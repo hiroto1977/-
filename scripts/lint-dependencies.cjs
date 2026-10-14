@@ -118,16 +118,39 @@ function presentInstallConfigs(root = REPO_ROOT, names = INSTALL_CONFIG_FILES) {
   return names.filter((n) => fs.existsSync(path.join(root, n)));
 }
 
+/**
+ * この package.json で npm が**自動発火する** lifecycle フックを数える (threat: T-024)。
+ *
+ * install 系 (`LIFECYCLE_KEYS`) に加え、npm は `npm run X` のたびに `preX` / `postX` を
+ * **全 script について**自動で走らせる。固定一覧 (install + prebuild/postbuild) だけを見ると
+ * `posttest` / `postverify:all` / `pretypecheck` / `postbuild:web` が素通りし、ci.yml が
+ * `verify:all` / `test` / `typecheck` / `build:web` を、release.yml が署名ビルドの前に
+ * `test` を走らせた瞬間に任意コードが走る (2026-10-13 · パス 517 で実測: 固定一覧だと 0 件)。
+ * 基底名 (`X`) が script キーのときだけフックと数える —— `view` が無ければ `preview` は
+ * フックではなく普通の script なので誤検出しない。
+ */
+function lifecycleHooksPresent(scripts, keys = LIFECYCLE_KEYS) {
+  const present = new Set(keys.filter((k) => Object.hasOwn(scripts, k)));
+  for (const k of Object.keys(scripts)) {
+    const m = /^(pre|post)(.+)$/.exec(k);
+    if (m && Object.hasOwn(scripts, m[2])) present.add(k);
+  }
+  return [...present];
+}
+
 /** 規則 8: 自分の lifecycle script。 */
 function checkOwnLifecycle(pkg, ledger = OWN_INSTALL_SCRIPTS, keys = LIFECYCLE_KEYS) {
   const problems = [];
   const scripts = pkg?.scripts ?? {};
-  const present = keys.filter((k) => Object.hasOwn(scripts, k));
+  const present = lifecycleHooksPresent(scripts, keys);
   for (const k of present) {
     if (!Object.hasOwn(ledger, k)) {
+      const base = k.replace(/^(pre|post)/, '');
       const when = BUILD_LIFECYCLE_HOOKS.has(k)
         ? 'npm run build のたびに自動で走ります (release.yml の梱包ジョブは署名鍵を env に持つ)'
-        : 'npm ci のたびに走ります (CI・release.yml の梱包ジョブ・全員の手元)';
+        : keys.includes(k)
+          ? 'npm ci のたびに走ります (CI・release.yml の梱包ジョブ・全員の手元)'
+          : `npm run ${base} のたびに自動で走ります (ci.yml は verify:all / test / build:web 等を、release.yml は署名ビルドの前に test を走らせる)`;
       problems.push(
         `package.json の "${k}" は ${when} — 理由を添えて OWN_INSTALL_SCRIPTS へ`,
       );
@@ -158,6 +181,66 @@ function checkInstallConfigs(present, ledger = INSTALL_CONFIG_ALLOW) {
     if (!present.includes(f)) problems.push(`台帳の ${f} は在りません — 消し忘れです`);
   }
   return problems;
+}
+
+/**
+ * **`stryker.config.json` は「コードを選ぶ設定」だが高チャーンなのでチェーンに入れない** (threat: T-026)。
+ *
+ * vite.config.ts / electron-builder.json / .claude/settings.json は「コードを選ぶ設定」で
+ * あり、**安定資産**なので整合性チェーン + CODEOWNERS で守る。`stryker.config.json` は同じ
+ * 「コードを選ぶ設定」(Stryker は `plugins` / `testRunner` / `reporters` / `checkers` の
+ * 各記述子を**モジュールとして解決して import** し、ローカルの相対パスなら `path.resolve` して
+ * 動的 import する) なのに、`mutate` 一覧を毎パス足すので 63 コミットの高チャーン ——
+ * チェーンの基準 (安定資産) を満たさない (`package.json` と同じ判断)。だから**中身を検める**:
+ * コードを選ぶ欄にローカルパスを入れさせない。`mutation.yml` (push to main / 週次) と、
+ * CLAUDE.md が全パスに回させる `npm run mutate` / `audit:mutate-changed` がこの設定を読む。
+ */
+function isLocalSpecifier(s) {
+  // npm の名前 (`vitest` / `@scope/x` / `name*` ワイルドカード) は安全。
+  // ローカルを指す形 (`.` `./` `../` `/` `\` `~` `C:`) は import すると任意コードが走る。
+  return typeof s === 'string' && /^(\.{0,2}[/\\]|~|[A-Za-z]:)/.test(s);
+}
+
+/** 規則 10: stryker.config.json のコードを選ぶ欄。 */
+function checkStrykerCodePicking(config) {
+  const problems = [];
+  if (config === null || typeof config !== 'object') return problems;
+  // モジュールとして解決され import される欄。ローカルパスは任意コードを走らせる。
+  const specFields = ['testRunner', 'plugins', 'reporters', 'checkers', 'htmlReporter'];
+  for (const field of specFields) {
+    const val = config[field];
+    const list = Array.isArray(val) ? val : val === undefined ? [] : [val];
+    for (const s of list) {
+      if (isLocalSpecifier(s)) {
+        problems.push(
+          `stryker.config.json の ${field} にローカルパス "${s}" — Stryker が path.resolve して ` +
+            'import し任意コードが走ります (npm の名前だけにすること)',
+        );
+      }
+    }
+  }
+  // シェルを走らせる欄は丸ごと拒む (今日は無い。vitest 構成では使わない)。
+  for (const field of ['buildCommand', 'commandRunner']) {
+    if (config[field] !== undefined) {
+      problems.push(
+        `stryker.config.json の ${field} はシェル / 任意コードを走らせます — この構成では使いません ` +
+          '(必要なら門に理由を書くこと)',
+      );
+    }
+  }
+  return problems;
+}
+
+/** 実在すれば stryker.config.json を読む (self-test が注入できるよう分ける)。無ければ null。 */
+function readStrykerConfig(root = REPO_ROOT) {
+  const p = path.join(root, 'stryker.config.json');
+  if (!fs.existsSync(p)) return null;
+  try {
+    return JSON.parse(fs.readFileSync(p, 'utf8'));
+  } catch {
+    // 壊れた JSON は Stryker 自身が読めず走らない (コードを load する道が無い) → 対象外。
+    return null;
+  }
 }
 
 /**
@@ -416,7 +499,7 @@ function diff(actual, ledger) {
   };
 }
 
-function evaluate({ lock, pkg, installConfigs = presentInstallConfigs() }) {
+function evaluate({ lock, pkg, installConfigs = presentInstallConfigs(), strykerConfig = readStrykerConfig() }) {
   const problems = [];
   const packages = lock?.packages;
   if (packages === null || typeof packages !== 'object') {
@@ -492,6 +575,9 @@ function evaluate({ lock, pkg, installConfigs = presentInstallConfigs() }) {
   // 8 / 9. **自分の**インストール時コードと、インストール時に読まれる設定。
   problems.push(...checkOwnLifecycle(pkg));
   problems.push(...checkInstallConfigs(installConfigs));
+
+  // 10. stryker.config.json のコードを選ぶ欄 (ローカルパス / シェルを拒む・threat: T-026)。
+  problems.push(...checkStrykerCodePicking(strykerConfig));
 
   // package.json の宣言と閉包の食い違い (宣言だけ消して lockfile に残る形)。
   const declared = Object.keys(pkg?.dependencies ?? {});
@@ -634,6 +720,12 @@ function selfTest() {
       ['★ 台帳に在って実物に無ければ鳴る (逆向き)', { scripts: {} }, L, 1],
       ['台帳の理由が空なら鳴る', { scripts: { postinstall: 'x' } }, { postinstall: '' }, 1],
       ['lifecycle でない script は見ない', { scripts: { build: 'x', e2e: 'y' } }, {}, 0],
+      // threat: T-024 — npm は `npm run X` のたびに preX / postX を自動で走らせる。
+      ['★ script の post フックも鳴る (threat: T-024)', { scripts: { 'verify:all': 'x', 'postverify:all': 'y' } }, {}, 1],
+      ['★ script の pre フックも鳴る', { scripts: { typecheck: 'x', pretypecheck: 'y' } }, {}, 1],
+      ['★ 複数の pre/post フックをそれぞれ数える', { scripts: { test: 'x', posttest: 'y', 'build:web': 'z', 'postbuild:web': 'w' } }, {}, 2],
+      ['★ 基底が script でない pre/post は見ない (preview: view が無ければ普通の script)', { scripts: { preview: 'x' } }, {}, 0],
+      ['★ post フックが台帳に理由つきで在れば通る', { scripts: { test: 'x', posttest: 'y' } }, { posttest: '理由' }, 0],
     ];
     for (const [label, pkg, ledger, want] of lifecycleCases) {
       const got = checkOwnLifecycle(pkg, ledger).length;
@@ -658,6 +750,29 @@ function selfTest() {
     const namesOk = INSTALL_CONFIG_FILES.includes('.npmrc') && INSTALL_CONFIG_FILES.length >= 4;
     if (!namesOk) bad++;
     console.log(`  ${namesOk ? '✓' : '✗'} 見る設定ファイルの名前が ${INSTALL_CONFIG_FILES.length} 件 (.npmrc を含む)`);
+  }
+
+  {
+    // 規則 10: stryker.config.json のコードを選ぶ欄 (threat: T-026)。
+    const strykerCases = [
+      ['今日の実物の形 (npm 名だけ) は通る', { testRunner: 'vitest', reporters: ['clear-text', 'json'] }, 0],
+      ['★ plugins にローカルパスは鳴る', { plugins: ['@stryker-mutator/*', './knowledge-graph/svc.cjs'] }, 1],
+      ['★ testRunner にローカルパスは鳴る', { testRunner: '../evil.cjs' }, 1],
+      ['★ reporters のローカルパスは鳴る', { reporters: ['json', '/abs/evil.cjs'] }, 1],
+      ['★ checkers のローカルパスは鳴る', { checkers: ['./c.cjs'] }, 1],
+      ['★ 親相対 ../ も鳴る', { plugins: ['..\\win\\evil.cjs'] }, 1],
+      ['★ buildCommand は丸ごと鳴る (シェル)', { buildCommand: 'node evil.cjs' }, 1],
+      ['★ commandRunner は丸ごと鳴る', { commandRunner: { command: 'sh -c evil' } }, 1],
+      ['npm のスコープ名・ワイルドカードは通る', { plugins: ['@stryker-mutator/vitest-runner', 'name*'] }, 0],
+      ['config が無ければ (null) 通る', null, 0],
+      ['★ 複数のローカルパスをそれぞれ数える', { plugins: ['./a.cjs'], testRunner: './b.cjs' }, 2],
+    ];
+    for (const [label, cfg, want] of strykerCases) {
+      const got = checkStrykerCodePicking(cfg).length;
+      const ok = got === want;
+      if (!ok) bad++;
+      console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} 件 (期待 ${want})`);
+    }
   }
 
   console.log('self-test:');
@@ -759,6 +874,7 @@ module.exports = {
   parseVersion,
   cmpVersion,
   rangeFloor,
-  checkOwnLifecycle, checkInstallConfigs, presentInstallConfigs,
+  checkOwnLifecycle, lifecycleHooksPresent, checkInstallConfigs, presentInstallConfigs,
+  checkStrykerCodePicking, isLocalSpecifier, readStrykerConfig,
   OWN_INSTALL_SCRIPTS, INSTALL_CONFIG_ALLOW, INSTALL_CONFIG_FILES, LIFECYCLE_KEYS,
 };

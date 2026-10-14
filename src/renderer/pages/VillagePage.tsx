@@ -35,6 +35,7 @@ import {
 } from '../data/villageLayout';
 import { buildOrgIndex, routeTopicScored, type RawOrg, type RawTeam, type OrgIndex } from '../data/chatOrg';
 import { replyTo, type ChatContext } from '../data/chatbot';
+import { externalTextOnOneLine } from '../data/assistantMarkdown';
 import { CAPABILITIES } from '../components/VoiceCommandBar';
 import { SERVICES } from '../services';
 import { isSubmitEnter } from '../keyIntent';
@@ -298,9 +299,14 @@ export function VillagePage() {
           }
           // 失敗 (と、本文が空の成功) を言う。文面はアシスタント本体と同じ形
           // 「AI 応答を利用できないため簡易モードで回答します: …」の村版。
-          setAiError(res.ok ? '応答が空でした' : res.message);
+          // `res.message` は第三者 (互換 API の攻撃者ホスト) の本文で、web-shim の
+          // `err()` / `redactForMessage` は伏字と長さは掛けるが**改行・双方向制御・
+          // 不可視字は残す**。この行は AI の失敗を描く最後の経路で、`externalTextOnOneLine`
+          // を通していない唯一の所だった (他は AssistantPage / bestAnswers / T-005 / T-020)。
+          // 畳んで双方向制御 (Trojan Source) を `\uXXXX` へ逃がす (threat: T-025)。
+          setAiError(externalTextOnOneLine(res.ok ? '応答が空でした' : res.message));
         } catch (e) {
-          setAiError(e instanceof Error ? e.message : String(e));
+          setAiError(externalTextOnOneLine(e instanceof Error ? e.message : String(e)));
         }
       })();
     }

@@ -461,3 +461,67 @@ describe('eraseDesktopData — 注入した io を使う (パス 502)', () => {
     expect(report.allDeleted).toBe(true);
   });
 });
+
+/**
+ * **ディレクトリに化けた目標でもワイプは完了する** (2026-10-13 · パス 517 · threat: T-023)。
+ *
+ * 書き出しの入口 (`isSafeExportPath`) は設計上 `data/` の下なら任意の深さを許す
+ * (パス 511 の T-002 回帰)。乗っ取られたレンダラーは
+ * `export-dashboard` に `…/data/dashboard.html/x.html` を渡し、書き出しの
+ * `mkdir(dirname)` でファイル目標 `data/dashboard.html` を**ディレクトリに化けさせ**、
+ * 中に攻撃者のファイルを残せる (control / litter も `dashboard.html.prev` /
+ * `dashboard.html.tmp-*` を同じ手でディレクトリ化できる)。非再帰 rm はそこで `EISDIR` を
+ * 投げて `failed` → `allDeleted=false` → ハードリセットが永久に完了せず、植えたファイルが
+ * ワイプを生き延びていた。`recursive: true` で化けたディレクトリごと消え、ワイプは必ず完了する。
+ *
+ * ここは**実物のファイルシステム**で測る。`recursive` を外すと (非再帰へ戻すと) 3 つとも
+ * `failed` になり、植えたファイルが残る (control)。
+ */
+describe('ディレクトリに化けた目標でもワイプは完了する (パス 517 · T-023)', () => {
+  let dir: string;
+  beforeEach(async () => {
+    dir = await fs.mkdtemp(path.join(os.tmpdir(), 'erase-clobber-'));
+  });
+  afterEach(async () => {
+    await fs.rm(dir, { recursive: true, force: true });
+  });
+
+  it('★ 本体がディレクトリに化けても deleted になり、植えたファイルも残らない (threat: T-023)', async () => {
+    const target = path.join(dir, 'dashboard.html');
+    // 攻撃: dashboard.html をディレクトリにし、中へ攻撃者のファイルを植える。
+    await fs.mkdir(target, { recursive: true });
+    const planted = path.join(target, 'payload.html');
+    await fs.writeFile(planted, '<html><script>evil</script></html>');
+    const outcome = await eraseFileAndLitter(target, fs);
+    expect(outcome, '非再帰 rm だと EISDIR で failed になり、植えたファイルがワイプを生き延びる').toBe('deleted');
+    expect(statSync(target, { throwIfNoEntry: false }), '化けたディレクトリが残っている').toBeUndefined();
+    expect(statSync(planted, { throwIfNoEntry: false }), '植えたファイルがワイプを生き延びた').toBeUndefined();
+  });
+
+  it('★ 控え (.prev) がディレクトリに化けても failed にしない', async () => {
+    const target = path.join(dir, 'dashboard.html');
+    await fs.writeFile(target, 'real file');
+    const prevDir = backupPathOf(target); // dashboard.html.prev
+    await fs.mkdir(prevDir, { recursive: true });
+    await fs.writeFile(path.join(prevDir, 'x'), 'planted-in-prev');
+    const outcome = await eraseFileAndLitter(target, fs);
+    expect(outcome).toBe('deleted');
+    expect(statSync(prevDir, { throwIfNoEntry: false })).toBeUndefined();
+  });
+
+  it('★ 残骸 (.tmp-*) がディレクトリに化けても failed にしない', async () => {
+    const target = path.join(dir, 'dashboard.html');
+    await fs.writeFile(target, 'real file');
+    const litterDir = path.join(dir, 'dashboard.html.tmp-abc123'); // isAtomicLitterOf に一致
+    await fs.mkdir(litterDir, { recursive: true });
+    await fs.writeFile(path.join(litterDir, 'y'), 'planted-in-litter');
+    const outcome = await eraseFileAndLitter(target, fs);
+    expect(outcome).toBe('deleted');
+    expect(statSync(litterDir, { throwIfNoEntry: false })).toBeUndefined();
+  });
+
+  it('★ 対照: 本体が無ければ従来どおり missing (recursive は ENOENT を潰さない)', async () => {
+    const outcome = await eraseFileAndLitter(path.join(dir, 'dashboard.html'), fs);
+    expect(outcome, 'force: true を付けると missing が消えて deleted になる').toBe('missing');
+  });
+});

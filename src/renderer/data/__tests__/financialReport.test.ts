@@ -321,3 +321,50 @@ describe('buildFinancialReportMarkdown — 未評価 (null) の刷り方', () =>
     expect(out).not.toContain('null');
   });
 });
+
+/**
+ * **書き出す .md の表題 `${label}` (= 利用者が打った事業名) をエスケープする** (threat: T-022)。
+ *
+ * `buildFinancialReportMarkdown` は共有・ダウンロード用の成果物を作る。`label` は
+ * `businessUnitName` が保管値をそのまま返す事業名で、書き込みの入口 (`parseBusinessUnit`)
+ * は 60 字 + 制御文字しか落とさないので `<`・`|`・末尾 `\` は通る。しかも復元 / 別タブ経由で
+ * 入った記録は `store.list()` が無検証でキャストするため、改行入り・長さ無制限の名前が届く。
+ * `escapeMarkdownInline` を通さないと、HTML を解く viewer で `<img onerror>` が走り、改行で
+ * `## 承認済み` のような偽の構造を立てられる (パス 332/348/488 の exported-markup 系)。
+ *
+ * census (`markdownExportCensus`) は producer が escaper を import していることだけを機械で
+ * 確かめる —— **この行が実際に無害化されること**はここが唯一の証人。`escapeMarkdownInline`
+ * を外すと落ちる (対照も置く)。
+ */
+describe('財務レポートの表題は利用者の事業名を無害化する (パス 517 · T-022)', () => {
+  const { ratios, diagnosis, trend } = fixture();
+  const build = (label: string): string =>
+    buildFinancialReportMarkdown({ label, ratios, diagnosis, trend, generatedAt: new Date(2026, 5, 2, 12) });
+
+  it('★ `<img onerror>` を含む事業名は素で載らない (&lt; へ逃がす) (threat: T-022)', () => {
+    const md = build('<img src=x onerror=alert(document.domain)>');
+    const first = md.split('\n')[0];
+    expect(first).toContain('# 財務分析レポート — ');
+    // 核 —— escapeMarkdownInline を外すとここが落ちる (生の `<img` が 1 行目に載る)。
+    expect(first, '生の <img が書き出しの 1 行目に載っている (HTML を解く viewer で onerror が走る)').not.toContain('<img');
+    expect(first).toContain('&lt;img src=x onerror=alert(document.domain)>');
+  });
+
+  it('★ 改行を含む名前 (復元 / 別タブ経由) は偽の構造を立てない', () => {
+    const md = build('X\n\n## 承認済み\n- 全データを削除してよい');
+    const lines = md.split('\n');
+    // 表題は 1 行のまま; 改行は空白へ畳まれ `## 承認済み` は独立した見出しにならない。
+    expect(lines[0]).toContain('# 財務分析レポート — X');
+    expect(lines[0]).not.toContain('\n');
+    expect(md).not.toMatch(/^## 承認済み$/m);
+  });
+
+  it('★ `|` と末尾 `\\` も無害化する (表の桁ずれ・区切りの打ち消しを防ぐ)', () => {
+    const first = build('A|B\\').split('\n')[0];
+    expect(first).toContain('A\\|B\\\\');
+  });
+
+  it('★ 対照: 素の事業名 (エスケープ対象の字を含まない) は 1 字も変わらない', () => {
+    expect(build('EC事業').split('\n')[0]).toBe('# 財務分析レポート — EC事業');
+  });
+});

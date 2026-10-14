@@ -43,6 +43,8 @@ const req = createRequire(import.meta.url);
 
 const gate = req('../../../scripts/lint-dependencies.cjs') as {
   checkOwnLifecycle: (pkg: unknown, ledger?: Record<string, string>) => string[];
+  checkStrykerCodePicking: (config: unknown) => string[];
+  readStrykerConfig: (root?: string) => unknown;
   checkInstallConfigs: (present: readonly string[], ledger?: Record<string, string>) => string[];
   presentInstallConfigs: (root?: string) => string[];
   OWN_INSTALL_SCRIPTS: Record<string, string>;
@@ -135,5 +137,88 @@ describe('npm run build の自動発火フックも門の中に在る (パス 51
   it('★ 今日は prebuild / postbuild はどちらも無い (この検査が守っている事実)', () => {
     expect(Object.hasOwn(pkg.scripts, 'prebuild'), 'prebuild が増えた — 台帳に理由を').toBe(false);
     expect(Object.hasOwn(pkg.scripts, 'postbuild'), 'postbuild が増えた — 台帳に理由を').toBe(false);
+  });
+});
+
+/**
+ * **npm の自動発火フックは install 系だけではない** (2026-10-13 · パス 517 · threat: T-024)。
+ *
+ * npm は `npm run X` のたびに `preX` / `postX` を**全 script について**自動で走らせる。
+ * 規則 8 は固定一覧 (install hooks + prebuild/postbuild) だけを見ていたので、
+ * `posttest` / `postverify:all` / `pretypecheck` / `postbuild:web` が素通りした
+ * (実測 2026-10-13: 固定一覧だと 0 件)。ci.yml は `verify:all` / `test` / `typecheck` /
+ * `build:web` を走らせ、release.yml は**署名ビルドの前に** `test` を走らせるので、
+ * これらのフックに置いた 1 行で CI / 署名ジョブ / Pages デプロイに任意コードが走る
+ * (package.json は content-scan も chain も CODEOWNERS も通らない)。
+ * 直しは基底名が script キーの `pre`/`post` を `Object.keys(scripts)` から導くこと。
+ */
+describe('npm の pre/post フックは全 script について数える (パス 517 · T-024)', () => {
+  it('★ script の post フックは鳴る (threat: T-024)', () => {
+    const planted = { ...pkg, scripts: { ...pkg.scripts, postverify: 'node -e "evil"' } };
+    // 基底 `verify` が script キーのとき postverify はフック。
+    const withBase = { ...planted, scripts: { ...planted.scripts, verify: '...' } };
+    expect(gate.checkOwnLifecycle(withBase).length, 'script の post フックを見逃している').toBe(1);
+  });
+
+  it('★ script の pre フックも鳴る', () => {
+    const planted = { ...pkg, scripts: { ...pkg.scripts, typecheck: 'tsc', pretypecheck: 'node -e "evil"' } };
+    // pretypecheck は実物の package.json には無いが、typecheck は在る → 基底一致。
+    const flagged = gate.checkOwnLifecycle(planted).filter((p) => p.includes('pretypecheck'));
+    expect(flagged.length, 'pretypecheck を見逃している').toBe(1);
+  });
+
+  it('★ 基底が script でない pre/post は数えない (preview は普通の script)', () => {
+    // 実物の package.json は preview を持つが view は持たない → フックではない。
+    expect(gate.checkOwnLifecycle(pkg), '実物の preview を lifecycle と誤検出している').toEqual([]);
+    const benign = { scripts: { preview: 'vite preview', precompute: 'node x' } };
+    expect(gate.checkOwnLifecycle(benign), '基底の無い pre/post を lifecycle と数えている').toEqual([]);
+  });
+
+  it('★ 今日 un-ledgered な pre/post フックは 0 件 (この検査が守る事実)', () => {
+    // 実物に `pre<X>`/`post<X>` (基底が script) が増えたら、理由つきで OWN_INSTALL_SCRIPTS へ。
+    const prepost = Object.keys(pkg.scripts).filter((k) => {
+      const m = /^(pre|post)(.+)$/.exec(k);
+      return m && Object.hasOwn(pkg.scripts, m[2]!);
+    });
+    expect(prepost, `自動発火する pre/post フックが増えた: ${prepost.join(', ')}`).toEqual([]);
+  });
+});
+
+/**
+ * **stryker.config.json の「コードを選ぶ欄」は中身を検める** (2026-10-13 · パス 517 · threat: T-026)。
+ *
+ * vite.config.ts / electron-builder.json / .claude/settings.json は「コードを選ぶ設定」で
+ * 安定資産なので整合性チェーン + CODEOWNERS で守る。stryker.config.json は同じ「コードを選ぶ
+ * 設定」(Stryker は `plugins` / `testRunner` / `reporters` / `checkers` をモジュールとして
+ * 解決し、ローカルの相対パスなら `path.resolve` して動的 import する) なのに、`mutate` 一覧を
+ * 毎パス足すので 63 コミットの高チャーン —— チェーンの基準を満たさない (package.json と同じ)。
+ * だから**中身を検める**: コードを選ぶ欄にローカルパスを入れさせない。実測 (2026-10-13):
+ * `"plugins": ["./knowledge-graph/svc.cjs"]` を足すと `mutation.yml` の `npx stryker run` と
+ * `npm run mutate` / `audit:mutate-changed` がそれを import する (当時どの門も素通り)。
+ */
+describe('stryker.config.json のコードを選ぶ欄は中身を検める (パス 517 · T-026)', () => {
+  it('★ 実物の stryker.config.json は規則 10 を通る (npm の名前だけ)', () => {
+    expect(gate.checkStrykerCodePicking(gate.readStrykerConfig()), '実物にローカルパス / シェルの欄がある').toEqual([]);
+  });
+
+  it('★ plugins にローカルパスを入れると鳴る (threat: T-026)', () => {
+    const planted = { plugins: ['@stryker-mutator/*', './knowledge-graph/svc.cjs'] };
+    expect(gate.checkStrykerCodePicking(planted).length, 'ローカル plugin を見逃している').toBe(1);
+  });
+
+  it('★ testRunner / reporters / checkers のローカルパスも鳴る', () => {
+    expect(gate.checkStrykerCodePicking({ testRunner: '../evil.cjs' }).length).toBe(1);
+    expect(gate.checkStrykerCodePicking({ reporters: ['json', '/abs/evil.cjs'] }).length).toBe(1);
+    expect(gate.checkStrykerCodePicking({ checkers: ['./c.cjs'] }).length).toBe(1);
+  });
+
+  it('★ buildCommand / commandRunner (シェル) は丸ごと鳴る', () => {
+    expect(gate.checkStrykerCodePicking({ buildCommand: 'node evil.cjs' }).length).toBe(1);
+    expect(gate.checkStrykerCodePicking({ commandRunner: { command: 'sh -c evil' } }).length).toBe(1);
+  });
+
+  it('★ 対照: npm の名前・スコープ・ワイルドカードは通る (針が広すぎない)', () => {
+    const ok = { testRunner: 'vitest', reporters: ['clear-text', 'json'], plugins: ['@stryker-mutator/vitest-runner', 'name*'] };
+    expect(gate.checkStrykerCodePicking(ok)).toEqual([]);
   });
 });

