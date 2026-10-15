@@ -3135,8 +3135,10 @@ describe('stocks state persistence', () => {
           },
         },
       );
-      expect(writes).toEqual(['/tmp/x.json.tmp']);
-      expect(renames).toEqual([['/tmp/x.json.tmp', '/tmp/x.json']]);
+      // 作業ファイルは一意な名前 (T-055)。rename の元は書いた先と同じ 1 つ。
+      expect(writes).toHaveLength(1);
+      expect(writes[0]).toMatch(/^\/tmp\/x\.json\.tmp-\d+-\d+-[0-9a-f]+$/);
+      expect(renames).toEqual([[writes[0], '/tmp/x.json']]);
       expect(mkdirs).toEqual(['/tmp']);
     });
 

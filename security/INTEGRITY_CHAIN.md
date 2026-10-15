@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 297
+- ブロック数: 301
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `18b777696ed924878b716a3fc661c4436805dfdc33f5adb8317fd2a3b6c3a4db`
-- 保護対象: 104 ファイル
+- 末尾(tip)ハッシュ: `e5d72506ac7e90b145420f7ee3465836f315611c56cecc6df2ed5ef9f4de2471`
+- 保護対象: 115 ファイル
 
 ## ブロック
 
@@ -310,6 +310,10 @@
 | 294 | `28b2751607e56c7a` | `bc89375c50238d87` | `f96d82d8d5819d3d` | update escape.ts |
 | 295 | `3d4e304444616052` | `f96d82d8d5819d3d` | `53c0f4d8d674fcfa` | update pages.yml,release.yml,integrity-chain.cjs,keychainBackend.ts,secrets.ts |
 | 296 | `447bd4561f9d05cf` | `53c0f4d8d674fcfa` | `18b777696ed92487` | update exportPaths.ts |
+| 297 | `2e41546fce340472` | `18b777696ed92487` | `ede2b79876ca2ff4` | update PROXY_EXAMPLE.md,public-host-guard.cjs,redact.ts |
+| 298 | `ed21ea23f269cd9e` | `ede2b79876ca2ff4` | `51b0002380b7f6b7` | update dependabot.yml,ci.yml,dependency-audit.yml,e2e.yml,knowledge-auto.yml,mutation.yml |
+| 299 | `468e7293b47ef358` | `51b0002380b7f6b7` | `1d8791f5129d8b1d` | update integrity-chain.cjs,knowledge-autopilot.cjs,merge-mutation-reports.cjs,mutate-changed.cjs,triage-mutations.cjs |
+| 300 | `ce51511d4c39c3b0` | `1d8791f5129d8b1d` | `e5d72506ac7e90b1` | update knowledge-context.cjs,knowledge-graph.cjs,integrity-chain.cjs |
 
 ## 保護対象ファイル
 
@@ -321,7 +325,12 @@
 - `.cursor/rules/10-boundaries.mdc`
 - `.cursor/rules/20-gates.mdc`
 - `.cursor/rules/30-conventions.mdc`
+- `.github/dependabot.yml`
 - `.github/workflows/ci.yml`
+- `.github/workflows/dependency-audit.yml`
+- `.github/workflows/e2e.yml`
+- `.github/workflows/knowledge-auto.yml`
+- `.github/workflows/mutation.yml`
 - `.github/workflows/pages.yml`
 - `.github/workflows/release.yml`
 - `assets/manifest.webmanifest`
@@ -331,11 +340,14 @@
 - `electron-builder.json`
 - `eslint.config.js`
 - `launcher/ServiceHubを開く.bat`
+- `orchestration/knowledge-context.cjs`
+- `orchestration/knowledge-graph.cjs`
 - `scripts/build-landing.cjs`
 - `scripts/checksum-release.cjs`
 - `scripts/inject-pwa.cjs`
 - `scripts/inline-html.cjs`
 - `scripts/integrity-chain.cjs`
+- `scripts/knowledge-autopilot.cjs`
 - `scripts/lib/artifact-freshness.cjs`
 - `scripts/lib/json-for-script.cjs`
 - `scripts/lib/population-floor.cjs`
@@ -344,13 +356,16 @@
 - `scripts/lint-sample-data.cjs`
 - `scripts/make-autoinstall.sh`
 - `scripts/make-live-usb.sh`
+- `scripts/merge-mutation-reports.cjs`
 - `scripts/migrate.sh`
+- `scripts/mutate-changed.cjs`
 - `scripts/public-host-guard.cjs`
 - `scripts/safe-vault-write.cjs`
 - `scripts/security-audit.sh`
 - `scripts/setup-linux.sh`
 - `scripts/setup-obsidian-docker.sh`
 - `scripts/smoke-app.cjs`
+- `scripts/triage-mutations.cjs`
 - `scripts/verify-release-artifacts.cjs`
 - `src/main/atomicWrite.ts`
 - `src/main/clients/assistant.ts`

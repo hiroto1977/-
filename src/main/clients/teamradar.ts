@@ -6,6 +6,8 @@ import * as path from 'node:path';
 import type { ActionContext, ActionMap, FetchContext } from './types';
 import { isSafeExportPath, writeExportFile } from './exportPaths';
 import { atRestUnreadableReason, sealJsonDocument, unsealJsonDocument } from '../atRest';
+import { atomicTmpPathOf } from '../atomicWrite';
+import { createWriteChain } from '../writeChain';
 import type { ActionData, ExportFileResult } from '../../shared/actionData';
 import {
   MAX_CHART_TITLE_CHARS,
@@ -125,6 +127,9 @@ async function writeTight(target: string, contents: string): Promise<void> {
   await fs.chmod(target, 0o600);
 }
 
+/** 評価の書き込みの鎖 (T-055)。同時の 2 つの保存を 1 列に並べる。 */
+const teamRadarWrites = createWriteChain();
+
 export async function saveTeamRadarState(
   state: TeamRadarState,
   deps: StateDeps = {},
@@ -133,8 +138,13 @@ export async function saveTeamRadarState(
   // 判定は shared の 1 つ (members → department → evaluatedAt の順・文面も同じ)。ブラウザ版の
   // save-state も同じ物を通す (パス 118 までブラウザ版は素通しだった)。
   validateTeamRadarState(state);
+  return teamRadarWrites(() => saveTeamRadarStateUnlocked(state, deps));
+}
+
+async function saveTeamRadarStateUnlocked(state: TeamRadarState, deps: StateDeps): Promise<void> {
   const p = (deps.statePath ?? defaultStatePath)();
-  const tmp = p + '.tmp';
+  // 一意な作業ファイル (T-055)。固定名 `p + '.tmp'` は同時の保存が切り詰め合った。
+  const tmp = atomicTmpPathOf(p);
   const mkdirFn = deps.mkdir ?? ((dir: string) => fs.mkdir(dir, { recursive: true }).then(() => undefined));
   /*
    * **0600 で書く。ここに入るのは他人の評価である。**
@@ -161,8 +171,8 @@ export async function saveTeamRadarState(
    * 644 のまま本体へ被さる。下の `writeFn` で書いた後に `chmod` して閉じた。
    *
    * `atomicWriteFile` に寄せなかったのは、`writeFile` / `rename` の
-   * 差し替え口を検査が使っているため —— 得られる性質は同じ
-   * (あちらは一意な tmp 名なのでこの形にはならない)。
+   * 差し替え口を検査が使っているため —— 得られる性質は同じ。
+   * 作業ファイルの名前だけは 2026-10-15 からあちらと同じ一意な形 (T-055)。
    *
    * (`fs.writeFile` の既定の符号化は utf8 で、options を渡しても変わらない。)
    */

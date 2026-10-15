@@ -160,6 +160,10 @@ const BLOCKED = [
   '64:ff9b:1::a9fe:a9fe',
   '64:ff9b:1::808:808',
   '64:ff9b:1:ffff::1',
+  // 2026-10-15 (パス 522 · threat: T-046) まで Worker と CI の関門が素通りさせていた SIIT (RFC 2765 §2.1)。
+  // アプリ側 (privateTarget.ts) は T-030 で塞いでおり、3 実装が割れていた。
+  '::ffff:0:7f00:1',
+  '::ffff:0:a9fe:a9fe',
 ];
 
 const ALLOWED = [
@@ -182,6 +186,7 @@ const ALLOWED = [
   '2001:db9::1', // db8 の隣
   '64:ff9b::808:808', // well-known NAT64 に公開の v4 —— 復号して通す (/48 の規則が広がり過ぎていないこと)
   '2064:ff9b:1::1', // 2000::/3 の公開 —— 先頭に錨の無い綴りなら当たってしまう隣
+  '::ffff:0:808:808', // SIIT に公開の v4 —— 復号して通す (範囲ごと塞いでいないこと)
 ];
 
 describe('proxy の宛先判定は client と Worker で同じ', () => {

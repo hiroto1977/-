@@ -208,6 +208,16 @@ const VARIABLE_PATH_ALLOWED: Readonly<Record<string, { count: number; why: strin
       + '読むのは `scripts/` の**一覧**で中身ではないし、この検査は前置きで `fs` を書き換えた状態を測るので'
       + '**この worker の中では走らせられない** (原文の道具へ移す先が無い)',
   },
+  'src/main/__tests__/stateWriterRace.test.ts': {
+    count: 2,
+    why: '一時ディレクトリ (`mkdtemp`) の**一覧**を読み、同時の保存の後に作業ファイルの残骸が無いことを主張する (パス 522 · T-055)。'
+      + 'repo のファイルではなく検査自身が書かせた物なので、原文の道具へ戻す物が無い',
+  },
+  'src/shared/__tests__/workflowSecurityWitness.test.ts': {
+    count: 2,
+    why: '`.github/workflows/` の**一覧**と各 yml を読み、actions/* の SHA 固定と checkout の persist-credentials を実物で留める (パス 522 · T-056 / T-057)。'
+      + 'yml は `mutate` の母集団の外 (Stryker は .ts しか書き換えない) なので sandbox の写しの問題が無く、原文の道具へ通す理由が無い',
+  },
   'src/shared/__tests__/importRequestsPath.test.ts': {
     count: 4,
     why: '一時ディレクトリに置いた**台帳の写し**を、取り込み口と `record` を走らせる前後で読み比べる —— '

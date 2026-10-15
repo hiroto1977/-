@@ -192,10 +192,34 @@ const PROTECTED = [
   // 全てのページ読み込みに介入する」として守っているのに、**その sw.js を
   // 置きに行く側**が守られていなかった。
   //
-  // 残る 3 つは足していない: `e2e.yml` / `mutation.yml` は contents: read だけで
-  // 何も配らない。`knowledge-auto.yml` は issues: write を持つが、書けるのは
-  // 課題票で、配布物にも実行環境にも触れない。
   '.github/workflows/pages.yml',
+  // 2026-10-15 (パス 522 · threat: T-058) に残りの 4 本と dependabot.yml を足した。
+  // それまでは「`e2e.yml` / `mutation.yml` は contents: read だけで何も配らず、
+  // `knowledge-auto.yml` が書けるのは課題票だけ」として外していた。**外す理由が
+  // 「配らない」なのは、守る物を配布物だけと見ていた**からで、どの workflow も
+  // `npm ci` を走らせ (supply-chain の実行面)、secrets を env に載せ、
+  // `GITHUB_TOKEN` を持つ。1 行の `run:` を足すだけで CI の runner から外へ
+  // 送れる —— そこは `lint:workflow-security` が形を見るが、鎖が見るのは
+  // 「気付かぬ変更」で役割が違う (pages.yml を足したときと同じ線引き)。
+  // `dependabot.yml` は**依存の更新 PR を作る側の設定**で、登録先・頻度・
+  // 無視する版を決める —— 供給網の入口そのもの。
+  '.github/workflows/e2e.yml',
+  '.github/workflows/mutation.yml',
+  '.github/workflows/knowledge-auto.yml',
+  '.github/workflows/dependency-audit.yml',
+  '.github/dependabot.yml',
+  // 上の workflow が `run:` で直接起こす本 (閉包)。どれも**CI が何を測り・何を報せるかを決める**:
+  //   mutate-changed.cjs          push 側の変異検査の**対象**を選ぶ。黙って空にすれば門は測らずに緑
+  //   merge-mutation-reports.cjs  週次の塊を 1 つの点数へ併合し、break (99.8) を割ったかを決める
+  //   triage-mutations.cjs        生存の一覧を刷る (報告の側)
+  //   knowledge-autopilot.cjs     確証コーパスの監査と再生成を走らせ、課題票の本文を作る
+  'scripts/mutate-changed.cjs',
+  'scripts/merge-mutation-reports.cjs',
+  'scripts/triage-mutations.cjs',
+  'scripts/knowledge-autopilot.cjs',
+  // knowledge-autopilot.cjs の閉包 (役員ロールへ注入する文脈と知識グラフの組み立て。どちらも 1〜2 コミットの安定資産)。
+  'orchestration/knowledge-context.cjs',
+  'orchestration/knowledge-graph.cjs',
   // 2026-08-26 に足した 3 つ。**同じ順番の逆転が、もう一段内側に残っていた。**
   //
   // `pages.yml` を足した理由はこう書いてある ——「sw.js を『公開版のオリジンで

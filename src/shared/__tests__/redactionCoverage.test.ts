@@ -5,7 +5,7 @@ import { resolve } from 'node:path';
 import { readOriginalDir, readOriginalSource } from './originalSource';
 import { extractOllamaError } from '../ollama';
 import { MAX_LOCAL_MODEL_ERROR_CHARS } from '../redact';
-import { redactSecrets } from '../redact';
+import { redactForMessage, redactSecrets } from '../redact';
 import { SERVICE_CREDENTIAL_USE, collectsCredential } from '../credentialUse';
 import type { ServiceId } from '../serviceId';
 import { stripComments } from './stripNonCode';
@@ -979,3 +979,50 @@ describe('★ 端末内モデルのエラー本文は、伏せてから切る (�
     expect(out).toBe('model "llama3" not found, try pulling it first');
   });
 });
+
+/**
+ * **path に秘密を持つ運び手** (2026-10-15 · パス 522 · threat: T-047)。
+ * Discord の incoming webhook は `https://discord.com/api/webhooks/<id>/<token>` で、
+ * ヘッダ名・JSON 項目名・クエリ引数・接頭辞のどの規則にも当たらない。`shopify/sync-to-discord`
+ * の `webhookUrl` がそれで、相手が失敗本文に URL を反射すると `postExpectOk` の文へ届く。
+ */
+describe('伏字の網羅 — path に秘密を持つ運び手 (パス 522 · T-047)', () => {
+  const TOKEN = 'QzN9kL2pX7vR4tW8mB1nH6cJ3dF5gS0yA9eU2iO4pL7kM1xV';
+  const URL_ = `https://discord.com/api/webhooks/1234567890123456789/${TOKEN}`;
+
+  it('★ Discord の webhook URL は token が伏せられ、残りの文は残る (threat: T-047)', () => {
+    const out = redactSecrets(`discord 400: {"message":"Unknown Webhook","url":"${URL_}"}`);
+    expect(out).not.toContain(TOKEN);
+    expect(out).toContain('discord.com/api/webhooks/[REDACTED]');
+    expect(out).toContain('Unknown Webhook');
+  });
+
+  it('discordapp.com の旧ホストも同じ', () => {
+    expect(redactSecrets(`https://discordapp.com/api/webhooks/42/${TOKEN}`)).not.toContain(TOKEN);
+  });
+
+  it('境界: token は 16 字で伏せ、15 字は触らない (短い綴りを巻き込まない)', () => {
+    const t16 = 'a'.repeat(16);
+    const t15 = 'a'.repeat(15);
+    expect(redactSecrets(`https://discord.com/api/webhooks/1/${t16}`)).toBe('https://discord.com/api/webhooks/[REDACTED]');
+    expect(redactSecrets(`https://discord.com/api/webhooks/1/${t15}`)).toBe(`https://discord.com/api/webhooks/1/${t15}`);
+  });
+
+  it('対照: id (数字) が無い形・数字でない形は当たらない', () => {
+    const noId = `https://discord.com/api/webhooks//${TOKEN}`;
+    expect(redactSecrets(noId)).toBe(noId);
+    const alphaId = `https://discord.com/api/webhooks/abc/${TOKEN}`;
+    expect(redactSecrets(alphaId)).toBe(alphaId);
+  });
+
+  it('対照: webhooks の path でない discord.com の URL は触らない', () => {
+    const plain = 'see https://discord.com/developers/docs/resources/webhook';
+    expect(redactSecrets(plain)).toBe(plain);
+  });
+
+  it('対照: 切ってから伏せると token の尾が残る形でも、先に伏せれば残らない (redactForMessage の順序)', () => {
+    const out = redactForMessage(`x ${URL_} y`, 40);
+    expect(out).not.toContain(TOKEN.slice(0, 16));
+  });
+});
+

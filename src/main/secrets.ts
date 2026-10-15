@@ -538,10 +538,36 @@ const inflightRefresh = new Map<ServiceId, Promise<string>>();
  *     (`StoredTokenRead`)。前者を後者と混同すると、画面が「未設定」と
  *     案内して利用者に平文相当での貼り直しをさせてしまう。
  */
+/**
+ * **保存値が JSON の包みで、その包みごと資格情報であるスロット** (2026-10-15 ·
+ * パス 522 · threat: T-054)。
+ *
+ * `assistant` は AI アシスタントの多提供者の鍵 (`{anthropicApiKey, openaiApiKey,
+ * …}`) を 1 つの JSON に包んで保管し、読み手 (`main/clients/assistant.ts` の
+ * `parseAiCredentials(ctx.token)`) はその JSON をそのまま受け取る。ところが
+ * パス 246 が「オブジェクトなら壊れた TokenSet」として生の JSON を Bearer に
+ * 載せる穴を塞いだとき、このスロットは**同じ門に当たって保存した瞬間から
+ * `broken-token-set` と断られる**ようになった —— デスクトップ版の
+ * `assistant/chat` / `chatAll` / `bestAnswers` は 2026-09-14 から 1 度も鍵を
+ * 受け取っていなかった (実測: `getValidToken('assistant')` は保存直後でも
+ * `{ ok: false, reason: 'broken-token-set' }`)。
+ *
+ * ここに載せたスロットは `readStoredToken` の結果 (復号した生の文字列) を
+ * そのまま返す。**TokenSet (OAuth) をこのスロットに書く道は無い**
+ * (`OAUTH_CONFIGS` に `assistant` は無い) ので、更新トークンの判定を
+ * 飛ばしても失う物は無い。載せるのは「読み手が JSON を自分で解く」
+ * スロットだけで、その読み手は `secretsTokenRead.test.ts` が名指しで留める。
+ */
+export const OPAQUE_JSON_SLOTS: ReadonlySet<ServiceId> = new Set<ServiceId>(['assistant']);
+
 export async function getValidToken(serviceId: ServiceId): Promise<StoredTokenRead> {
   const read = await readStoredToken(serviceId);
   if (!read.ok) return read;
   const raw = read.token;
+  // JSON の包みそのものが資格情報であるスロットは、TokenSet として読まない
+  // (下の「オブジェクトなら壊れた TokenSet」に当てると、保存した瞬間から
+  // 断られる —— パス 522 で実測した当のこと)。
+  if (OPAQUE_JSON_SLOTS.has(serviceId)) return { ok: true, token: raw };
 
   let parsed: unknown = null;
   try {

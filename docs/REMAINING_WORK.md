@@ -1,5 +1,39 @@
 # Service Hub — 残りの作業手順書
 
+## パス 522 (狩りの 12 回目 —— 5 面の監査役の指摘を自分で再現し、本物の 13 件を直す) (2026-10-15)
+
+5 面 (main-ipc / renderer / network / ai / supply-chain) の監査役 (read-only) を並行で走らせ、**各指摘を自分で再現してから**仕分けた (監査役の報告は権威を持たない)。パス 521 が「強める候補」として残した network の N-1 / N-2 も自分で測って閉じた。**13 件が本物** (network 2 / renderer 4 / ai 2 / main-ipc 2 / supply-chain 3)、**network の新しい指摘は確認できた欠陥 0** (強める候補 1 件を `huntBacklog` へ)。各修正は対照 (修正を外すと回帰検査が落ちる) で確かめ、元へ戻して md5 で照合した。
+
+### 直した 13 件
+
+- **T-046 (network・medium)** — 配る Worker (`docs/PROXY_EXAMPLE.md` の `isBlockedIp`) と CI の関門 (`scripts/public-host-guard.cjs`) は SIIT 形 (`::ffff:0:a.b.c.d` · RFC 2765) を通していた —— `::ffff:0:7f00:1` (loopback) と `::ffff:0:a9fe:a9fe` (IMDS) が「公開」。アプリ側 (`privateTarget.ts` · T-030) とは 3 実装が割れていた。mapped の隣へ 1 行ずつ足し、`proxyWorkerParity` の標本 (塞ぐ 2 形・通す 1 形) と CI の self-test 3 件で 3 実装の一致を留めた。
+- **T-047 (network・low)** — Discord の incoming webhook URL (秘密は path に在る) は `redact.ts` のどの規則にも当たらなかった。path の運び手の規則を 1 本足した (`redactionCoverage` +6)。`redact.ts` の変異検査: **100.00% (132 変異体・生存 0)**。
+- **T-048 (renderer・medium)** — 復元 (マージ) は id だけで突き合わせ、**バックアップ側が別の collection で同じ id を名乗ると既存の記録を `put()` で上書きして消した**。同じ id が控えに 3 度在れば計画は 3 件と数えて 1 件しか入らなかった。`importAll` は同じ取引で `get` → `put` を連ねて別の collection の既存行を飛ばし (置換では消える件数へ)、計画は `dedupeById` で畳んで `collectionClash` / `duplicateIds` を持ち、確認文と結果の文が理由を言う。
+- **T-049 (renderer・medium)** — `Vault.unlock()` は PBKDF2 の間に届いた `lock()` を解錠の完了が**上書き**し、施錠したつもりの保管庫が解錠されたままになった (実測: `lock()` 直後は locked、`unlock()` の解決後は unlocked)。施錠の世代 `lockEpoch` を最初の `await` より前に控え、鍵を据える直前に比べて断る。
+- **T-050 (renderer・medium)** — 台帳に無い collection の記録は、どの画面にも出ず・点検にも映らず・平文の書き出しの確認にも数えられず・以後のバックアップ全部に乗り続けた (実測: 2 MB の blob 1 件で点検は「調べた 0 件に形式の合わないレコードはありません」)。点検が `unknown` として返し、パネルが出して削除の対象に含め、`plaintextExposure` は知らない側を「持ち出すと困るかもしれない」へ数える。
+- **T-051 (renderer・low)** — `ConnectorsPage` の「削除」の aria-label は保管値を天井なしで載せていた。`displayField` を通す。
+- **T-052 (ai・high)** — 相談窓口を出すかどうかを決める唯一の門 `detectCrisis` は NFKC だけで照合し、**見えない字 1 つ・結合記号 1 つ・仮名の綴り (シニタイ / しにたい) のどれでも素通りさせた** (実測 14 形すべて false)。畳み込み (`\p{Cf}` / `\p{Mn}` を落とし、カタカナをひらがなへ) を text とマーカーの両側に掛け、ひらがなだけの綴り 4 語を足した (`counseling.test.ts` +17)。
+- **T-053 (ai・low)** — main の `ollama/chat` は相手の `message.content` を `?? ''` で受け、配列は文字列でない `reply` のまま画面へ、物・数・真偽は `value is not iterable` を投げていた (ブラウザ版は `typeof` を見ていた)。`typeof` で揃えた。
+- **T-054 (main-ipc・medium)** — `getValidToken('assistant')` は AI アシスタントの多提供者の鍵 (JSON の包み) を「オブジェクトなら壊れた TokenSet」(パス 246) として断り、**デスクトップ版の AI アシスタントは 2026-09-14 から保存した鍵を 1 度も受け取れていなかった**。`OPAQUE_JSON_SLOTS` (`assistant`) は生の文字列を返す (読み手 `parseAiCredentials(ctx.token)` を検査が名指し)。
+- **T-055 (main-ipc・medium)** — `stocks.ts` / `teamradar.ts` は固定名の `.tmp` へ書いて `rename` し、「読む → 直す → 書く」に鎖が無かった。同時の 2 つの保存で **300 回のうち 49 回が壊れた JSON** になり、同時の登録は片方の 1 件を消した。モジュールごとの書き込みの鎖 (`main/writeChain.ts`) と一意な作業ファイル名 (`atomicTmpPathOf`)。
+- **T-056 (supply-chain・medium)** — checkout 10 か所がすべて既定の `persist-credentials: true` で、`GITHUB_TOKEN` が `.git/config` に残って `npm ci` と組み立てから読めた。10 か所に `false` を書き、`lint:workflow-security` が要求する (self-test +4)。
+- **T-057 (supply-chain・medium)** — `actions/*` の 30 か所が版のタグ (`@v5` —— GitHub が動かす major タグ) で、門は「GitHub 自身は免除」していた。`git ls-remote` で引いた 40 桁の SHA へ (`# vN` の注記つき)。門の免除を外した。
+- **T-058 (supply-chain・low)** — 整合性チェーンは ci / release / pages しか守っておらず、残る 4 本の workflow と `dependabot.yml` は黙って書き換えられた。4 本 + dependabot + それらが `run:` で起こす 4 本 + 閉包 2 本を PROTECTED へ (block #298〜#300・保護対象 105 → **115**)。
+
+### network の新しい指摘 (確認できた欠陥 0)
+
+監査役は 60 ホストの battery (0.0.0.0 / 8 進・16 進・10 進の v4 / `::` / NAT64 / 6to4 / Teredo / `localhost.` / IMDS 名) を 3 実装へ当て、既知の N-3 と Teredo (トンネルの封入 —— Worker からは届かない) 以外は全部塞がっていることを実測した。候補 1 件 (NET-6: Worker が許可リストのホストへ非既定ポート・userinfo つきの上流も資格情報ごと転送 —— 実害は無い側) を `huntBacklog` へ。
+
+### 測って本物でなかった / 残した物
+
+- MAIN-3 (`lint:ipc-handlers` が式本体の handler を走査しない —— 今日 0 件) / MAIN-4 (`oauth:authorize` に同時実行の上限が無い —— state は毎回別で listener は 5 分で閉じる) は `huntBacklog` へ。
+- **F-1: `main` 枝に branch protection / ruleset が 1 つも無い** (GitHub API で実測)。CODEOWNERS (T-003) は Require review from Code Owners が有効でないと効かない。リポジトリの中からは直せないので、所有者の判断として `huntBacklog` に残した。
+- `symbolsOrEmpty` の「読めなかった保存値でも明示の登録・解除は警告のうえ通す」(パス 309 の判断) は変えていない —— T-055 で壊れる原因の側を塞いだ。
+
+### 検証 (パス 522)
+
+`typecheck` 緑・`npm test` **1069 ファイル / 21,572 件** (1 度目は 3 件落ちた —— どれも台帳の帳尻: `absenceSampleCensus` の行番号の鍵 (3696 → 3698) と `originalSourcePolicy` の「道が読めない生の読み」2 本 (新しい検査が一時ディレクトリと `.github/workflows/` の一覧を読む)。理由つきで台帳へ入れた)・`verify:all` exit 0 (`verify:arch` のユニット数 17732 → **17767**・stocks の ACTIONS の引用と `getValidToken` の行が動いた —— 予想せず門に訊いた。`lint:mutation-scope` は stocks.ts の広い `Stryker disable` が 30 → 40 行に伸びたと鳴り、保存の側を帯の外へ出した —— 新しい race の検査が実ファイルで既定の lambda を通すので、そこの変異体は殺せる)・`chain:verify` 緑 (block **#297〜#300**・保護対象 105 → **115**)・`lint:zero-fold` の census を再生成 (106 / 271 → 107 / 273 —— `backup.ts` の `unknownCounts.get(c) ?? 0` と点検パネルの `: 0`)。変異検査: `redact.ts` **100.00% (132 変異体)**。実機 (`e2e.yml` の順序・最終コード): `e2e` **758 件 ❌ 0**・`e2e:lite` **758 件 ❌ 0**・`e2e:ollama` ALL PASSED (main の ollama.ts を触ったので回した)・`perf` OK (LITE DCL 226 ms / heap 9.7 MB・FULL DCL 620 ms / heap 36.4 MB)。出荷物: FULL **11,878,266 B** (md5 `650a7961…`) / LITE **3,290,890 B** (md5 `cea7cfad…`) —— パス 521 後 (11,875,986 B / 3,288,610 B) から**両方 +2,280 B** (危機語の畳み込み・解錠の世代・復元の id 衝突と台帳に無い collection の扱い・点検パネルの節。`renderer/` は両ビルドが読むので同じだけ)。
+
 ## パス 521 (狩りの 11 回目 —— 5 面の監査役の指摘を自分で再現し、本物の 4 件を直す) (2026-10-14)
 
 5 面 (main-ipc / renderer / network / ai / supply-chain) の監査役 (read-only) を並行で走らせ、**各指摘を自分で再現してから**仕分けた (監査役の報告は権威を持たない)。**4 件が本物** (main-ipc 1 / supply-chain 1 / renderer 1 / ai 1)、**network は確認できた欠陥 0** —— 4 件は測った結果つきで「強める候補」として `huntBacklog` へ (N-1 / N-2 / N-3 / N-5)。各修正は対照 (修正を外すと回帰検査が落ちる) で確かめ、元へ戻して md5 で照合した。
@@ -14,7 +48,7 @@
 
 **ゲートが捕まえた物 (設計どおり)**: ① `commentStripperCensus` —— 新しい census が共有の `stripComments` を読むので「寄せた本の一覧」に載せろと鳴った (102 → 103 本) ② `threatLedger` —— T-043 の回帰検査の題名が実物と違った (書いたつもりの題名ではなく実物の題名を写す) ③ `typecheck` —— 自動で足した import 3 本が複数行の import 文の途中に入った (構文エラー · 最後の import 文の後ろへ)。
 
-**検証**: typecheck exit 0 / `chain:verify` 緑 (block #296) / 全件 `npm test` は 1 度目に **1 失敗 / 21,510 緑** (①) → 直して **1065 ファイル / 21,511 件すべて緑** (exit 0・ログへ落として読んだ) / `verify:all` exit 0 (`verify:arch` のユニット数 17717 → **17732** —— 予想せず門に訊いた。1 度目は `lint:charset` が私の検査 2 本の**生の U+202E / U+200B 6 か所**を鳴らした —— パス 519 と同じ罠で、`\uXXXX` の綴りへ直した)。**出荷物が動いた** (renderer の 30 ファイルと `store.ts`): 両方を組んで FULL **11,875,986 B** (md5 `d8b8ccbb…`) / LITE **3,288,610 B** (md5 `bb7ad374…`) —— パス 520 の 11,875,465 / 3,288,089 から**両方 +521 B** (深さの門 1 関数・取引の try / abort・畳みの呼び出し 50 か所と import 27 本 · docblock は最小化で落ちる。renderer は両ビルドが読むので LITE も同じだけ増える)。実機 (`e2e.yml` の順序・最終コード): `e2e` **758 件 ❌ 0**・`e2e:lite` **758 件 ❌ 0**・`e2e:ollama` ALL PASSED (OllamaPage の出口も畳んだので回した)・`perf` OK (LITE DCL 243 ms / heap 9.7 MB・FULL DCL 721 ms / heap 36.4 MB)。`018816f15` の CI `ci (typecheck + verify + lint + test + build)` は **success** (2026-10-14)。 `018816f15` の CI `ci (typecheck + verify + lint + test + build)` は **success** (2026-10-14)。
+**検証**: typecheck exit 0 / `chain:verify` 緑 (block #296) / 全件 `npm test` は 1 度目に **1 失敗 / 21,510 緑** (①) → 直して **1069 ファイル / 21,572 件すべて緑** (exit 0・ログへ落として読んだ) / `verify:all` exit 0 (`verify:arch` のユニット数 17717 → **17732** —— 予想せず門に訊いた。1 度目は `lint:charset` が私の検査 2 本の**生の U+202E / U+200B 6 か所**を鳴らした —— パス 519 と同じ罠で、`\uXXXX` の綴りへ直した)。**出荷物が動いた** (renderer の 30 ファイルと `store.ts`): 両方を組んで FULL **11,875,986 B** (md5 `d8b8ccbb…`) / LITE **3,288,610 B** (md5 `bb7ad374…`) —— パス 520 の 11,875,465 / 3,288,089 から**両方 +521 B** (深さの門 1 関数・取引の try / abort・畳みの呼び出し 50 か所と import 27 本 · docblock は最小化で落ちる。renderer は両ビルドが読むので LITE も同じだけ増える)。実機 (`e2e.yml` の順序・最終コード): `e2e` **758 件 ❌ 0**・`e2e:lite` **758 件 ❌ 0**・`e2e:ollama` ALL PASSED (OllamaPage の出口も畳んだので回した)・`perf` OK (LITE DCL 243 ms / heap 9.7 MB・FULL DCL 721 ms / heap 36.4 MB)。`018816f15` の CI `ci (typecheck + verify + lint + test + build)` は **success** (2026-10-14)。 `018816f15` の CI `ci (typecheck + verify + lint + test + build)` は **success** (2026-10-14)。
 
 ## パス 520 (狩りの 10 回目 —— backlog の残り 17 件のうち 9 件を自分で測り、本物の 4 件を直す) (2026-10-14)
 
@@ -18751,7 +18785,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/zero-fold-census.cjs。npm run lint:zero-fold は check だけ) -->
-合計 **106 ファイル / 271 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **107 ファイル / 273 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
@@ -18794,6 +18828,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/shared/taxConsumptionBusiness.ts` | 3 |
 | `src/renderer/App.tsx` | 2 |
 | `src/renderer/components/AxonometricCharts.tsx` | 2 |
+| `src/renderer/components/RecordShapeAuditPanel.tsx` | 2 |
 | `src/renderer/data/businessUnits.ts` | 2 |
 | `src/renderer/data/cloudSync.ts` | 2 |
 | `src/renderer/data/counselingResearch.ts` | 2 |
@@ -18821,9 +18856,9 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/main/clients/ollama.ts` | 1 |
 | `src/main/oauth.ts` | 1 |
 | `src/renderer/components/RealtimeTicker.tsx` | 1 |
-| `src/renderer/components/RecordShapeAuditPanel.tsx` | 1 |
 | `src/renderer/components/ShigyoConsole.tsx` | 1 |
 | `src/renderer/data/assistantContext.ts` | 1 |
+| `src/renderer/data/backup.ts` | 1 |
 | `src/renderer/data/balanceSheet.ts` | 1 |
 | `src/renderer/data/cashPlan.ts` | 1 |
 | `src/renderer/data/chartSelfCheck.ts` | 1 |

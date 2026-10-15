@@ -926,6 +926,201 @@
         "file": "src/renderer/components/__tests__/voiceErrorFold.test.ts",
         "test": "★ invoke の失敗本文は改行・双方向制御・不可視字を落として .voice-error に出る (threat: T-045)"
       }
+    },
+    {
+      "id": "T-046",
+      "found": "2026-10-15",
+      "foundBy": "hunt pass 522 (パス 521 の backlog N-2 を自分で測って閉じた)",
+      "surface": "network",
+      "class": "ssrf-and-credential-egress",
+      "severity": "medium",
+      "title": "配る Worker (docs/PROXY_EXAMPLE.md の isBlockedIp) と CI の関門 (scripts/public-host-guard.cjs) は SIIT 形 (::ffff:0:a.b.c.d · RFC 2765 §2.1) を通していた —— ::ffff:0:7f00:1 (loopback) と ::ffff:0:a9fe:a9fe (IMDS) が「公開」と判定され、アプリ側 (privateTarget.ts · T-030) とは 3 実装が割れていた",
+      "status": "fixed",
+      "fix": "Worker と CI の関門に mapped (::ffff:0:0/96) の隣へ SIIT (::ffff:0:0:0/96 → 低 32 bit を v4 の規則へ) の 1 行ずつ。proxyWorkerParity の標本に塞ぐ 2 形と通す 1 形 (::ffff:0:808:808 = 復号して公開) を足し、3 実装の一致を双方向で留める。CI の関門の self-test にも 3 件。対照: Worker の行を外す → ★ 3 件 / CI の行を外す → ★ 3 件 + self-test ✗ 2。Worker の AAAA の DoH 解決がこの形を返せば届く道 (Workers は IP リテラルの上流を許さないが、名前解決の答えは検める)。",
+      "regression": {
+        "file": "src/renderer/network/__tests__/proxyWorkerParity.test.ts",
+        "test": "★ %s は 3 実装すべてが塞ぐ"
+      }
+    },
+    {
+      "id": "T-047",
+      "found": "2026-10-15",
+      "foundBy": "hunt pass 522 (パス 521 の backlog N-1 を自分で測って閉じた)",
+      "surface": "network",
+      "class": "ssrf-and-credential-egress",
+      "severity": "low",
+      "title": "Discord の incoming webhook URL (https://discord.com/api/webhooks/<id>/<token> —— 秘密は path に在る) は redact.ts のどの規則 (ヘッダ名 / JSON 項目名 / クエリ引数 / 接頭辞) にも当たらず、shopify/sync-to-discord の相手が失敗本文に URL を反射すると token が画面の文へ届いた",
+      "status": "fixed",
+      "fix": "redact.ts に path の運び手の規則 1 本 (discord(app).com/api/webhooks/<数字>/<16 字以上> → [REDACTED])。redactionCoverage.test.ts に伏せる 2 形・触らない 1 形・切る前に伏せる順序の 4 件。対照: 規則を外す → ★ 3 件。今日届く本文は displayField / redactForMessage の天井を通るので実害は 0 (深さの守り)。",
+      "regression": {
+        "file": "src/shared/__tests__/redactionCoverage.test.ts",
+        "test": "★ Discord の webhook URL は token が伏せられ、残りの文は残る (threat: T-047)"
+      }
+    },
+    {
+      "id": "T-048",
+      "found": "2026-10-15",
+      "foundBy": "hunt pass 522 (監査役の指摘を自分で再現してから直した)",
+      "surface": "renderer",
+      "class": "ransomware-extortion",
+      "severity": "medium",
+      "title": "復元 (マージ) は id だけで突き合わせ、バックアップ側が別の collection で同じ id を名乗ると既存の記録を put() で上書きして消した (利用者の記録が消えて別の種類の行が入る)。同じ id が控えに 3 度在れば計画は 3 件と数えて 1 件しか入らなかった",
+      "status": "fixed",
+      "fix": "importAll のマージは get → put を同じ取引の中で連ね、別の collection の既存行は飛ばす (置換では消える件数へ数える)。計画 (planRestore) は dedupeById で畳んでから数え、collectionClash / duplicateIds を持ち、確認文と結果の文がその理由を言う。対照: マージの判定を外す → ★ 1 件 / 計画の畳み込みを外す → ★ 1 件 / 結果の文の理由を外す → ★ 1 件。",
+      "regression": {
+        "file": "src/renderer/data/__tests__/restoreIdCollision.test.ts",
+        "test": "★ マージ: 別の collection の行が同じ id を名乗っても、既存の記録は消えない (threat: T-048)"
+      }
+    },
+    {
+      "id": "T-049",
+      "found": "2026-10-15",
+      "foundBy": "hunt pass 522 (監査役の指摘を自分で再現してから直した)",
+      "surface": "renderer",
+      "class": "living-off-the-land",
+      "severity": "medium",
+      "title": "Vault.unlock() は PBKDF2 (600k 回・100〜300 ms) の間に届いた lock() (自動施錠・別のタブの中継・今すぐロック) を解錠の完了が上書きし、利用者が施錠したつもりの保管庫が解錠されたままになった (実測: lock() 直後は locked、unlock() の解決後は unlocked)",
+      "status": "fixed",
+      "fix": "施錠の世代 lockEpoch を lock() で進め、unlock() は最初の await より前に世代を控えて鍵を据える直前に比べ、動いていれば据えずに断る (masterRaw は zero してから)。対照: 世代の比較を外す → ★ 2 件。",
+      "regression": {
+        "file": "src/renderer/security/__tests__/vaultLockDuringUnlock.test.ts",
+        "test": "★ 導出中に lock() が届けば、unlock() は鍵を据えずに断り、施錠のまま (threat: T-049)"
+      }
+    },
+    {
+      "id": "T-050",
+      "found": "2026-10-15",
+      "foundBy": "hunt pass 522 (監査役の指摘を自分で再現してから直した)",
+      "surface": "renderer",
+      "class": "ransomware-extortion",
+      "severity": "medium",
+      "title": "復元の入口は collection 名の字だけを見るので、台帳 (COLLECTION_SHAPES) に無い collection の記録が入ると、どの画面にも出ず・点検 (auditRecordShapes) にも映らず・平文の書き出しの確認にも数えられず・以後のバックアップ全部に乗り続けた (実測: 2 MB の blob 1 件で点検は「調べた 0 件に形式の合わないレコードはありません」)",
+      "status": "fixed",
+      "fix": "auditRecordShapes が exportAll で台帳に無い collection の記録を unknown として返し、点検パネルがそれを出して削除の対象に含め (確認文は別に名乗る)、deleteRecords は unknown も消す。plaintextExposure は知らない collection を「持ち出すと困るかもしれない」側に数える。対照: unknown の走査を外す → ★ 3 件 / 削除から外す → ★ 2 件 / 平文の数えを外す → ★ 1 件。",
+      "regression": {
+        "file": "src/renderer/data/__tests__/orphanCollection.test.ts",
+        "test": "★ 点検が `unknown` として見つけ、形式不正とは混ぜない (threat: T-050)"
+      }
+    },
+    {
+      "id": "T-051",
+      "found": "2026-10-15",
+      "foundBy": "hunt pass 522 (監査役の指摘を自分で再現してから直した)",
+      "surface": "renderer",
+      "class": "ai-phishing",
+      "severity": "low",
+      "title": "ConnectorsPage の「削除」の aria-label は保管値の connectorId を天井なしで載せていた (セルの側だけが displayField を通り、読み上げ名には 5,000 字がそのまま入った)",
+      "status": "fixed",
+      "fix": "aria-label も displayField を通す。対照: 素へ戻す → ★ 1 件。",
+      "regression": {
+        "file": "src/renderer/pages/__tests__/connectorOutputOnScreen.test.ts",
+        "test": "★ 長い connectorId でも「削除」の名前は天井を通る (threat: T-051)"
+      }
+    },
+    {
+      "id": "T-052",
+      "found": "2026-10-15",
+      "foundBy": "hunt pass 522 (監査役の指摘を自分で再現してから直した)",
+      "surface": "ai",
+      "class": "ai-phishing",
+      "severity": "high",
+      "title": "相談窓口を出すかどうかを決める唯一の門 detectCrisis (chatbot / AssistantPage / VillagePage が読む) は NFKC だけで照合しており、見えない字 1 つ (ZWSP / SHY / BOM / RLM …)・結合記号 1 つ (異体字セレクタ・結合濁点)・仮名の綴り (シニタイ / しにたい) のどれでも危機語を素通りさせた (実測 14 形すべて false)",
+      "status": "fixed",
+      "fix": "照合の畳み込み foldForMarkerMatch (NFKC → \\p{Cf} と \\p{Mn} を落とす → カタカナをひらがなへ) を text とマーカーの両側に掛け、ひらがなだけの綴り 4 語を足した。対照: 畳み込みを NFKC だけへ戻す → ★ 13 件。",
+      "regression": {
+        "file": "src/renderer/data/__tests__/counseling.test.ts",
+        "test": "★ %s を挟んでも／で書いても危機と判定する (threat: T-052)"
+      }
+    },
+    {
+      "id": "T-053",
+      "found": "2026-10-15",
+      "foundBy": "hunt pass 522 (監査役の指摘を自分で再現してから直した)",
+      "surface": "ai",
+      "class": "ai-phishing",
+      "severity": "low",
+      "title": "main の ollama/chat は相手の message.content を `?? ''` で受けており、配列は capAssistantReply を素通りして文字列でない reply が画面へ届き (子として描かれる)、物・数・真偽は `value is not iterable` を投げて利用者がその文を読んだ (ブラウザ版は typeof を見ていた)",
+      "status": "fixed",
+      "fix": "typeof content === 'string' でなければ空の返答にする (ollamaWeb と同じ形)。対照: typeof を外す → ★ 5 件。",
+      "regression": {
+        "file": "src/main/clients/__tests__/ollama.test.ts",
+        "test": "★ 相手の content が文字列でない (%s) なら、投げずに空の返答にする (threat: T-053)"
+      }
+    },
+    {
+      "id": "T-054",
+      "found": "2026-10-15",
+      "foundBy": "hunt pass 522 (監査役の指摘を自分で再現してから直した)",
+      "surface": "main-ipc",
+      "class": "living-off-the-land",
+      "severity": "medium",
+      "title": "getValidToken('assistant') は AI アシスタントの多提供者の鍵 (JSON の包み) を「オブジェクトなら壊れた TokenSet」(パス 246) として断り、デスクトップ版の assistant/chat・chatAll・bestAnswers は 2026-09-14 から保存した鍵を 1 度も受け取れていなかった (保存した瞬間から broken-token-set)",
+      "status": "fixed",
+      "fix": "OPAQUE_JSON_SLOTS (['assistant']) は復号した生の文字列をそのまま返す。読み手 (main/clients/assistant.ts の parseAiCredentials(ctx.token)) を検査が名指しで留める。TokenSet をこのスロットへ書く道は無い (OAUTH_CONFIGS に無い)。対照: 分岐を外す → ★ 1 件。",
+      "regression": {
+        "file": "src/main/__tests__/secretsTokenRead.test.ts",
+        "test": "★ assistant スロットの JSON の包みは、そのまま返す (threat: T-054)"
+      }
+    },
+    {
+      "id": "T-055",
+      "found": "2026-10-15",
+      "foundBy": "hunt pass 522 (監査役の指摘を自分で再現してから直した)",
+      "surface": "main-ipc",
+      "class": "ransomware-extortion",
+      "severity": "medium",
+      "title": "stocks.ts のウォッチリストと teamradar.ts の評価は固定名の .tmp へ書いて rename し、読む → 直す → 書く に鎖が無かった。同時の 2 つの保存が同じ作業ファイルを切り詰め合い、300 回のうち 49 回で本体が壊れた JSON になり (chmod は ENOENT)、同時の 2 つの登録は片方の 1 件を消した (secrets.ts は同じ鎖を 2026-08 から持っていた)",
+      "status": "fixed",
+      "fix": "モジュールごとの書き込みの鎖 (main/writeChain.ts) に保存と登録・解除を並べ、作業ファイルは atomicTmpPathOf の一意な名前へ。対照: 登録を鎖の外へ戻す → ★ 1 件 / 固定名 + 鎖なしへ戻す → ★ 1 件。",
+      "regression": {
+        "file": "src/main/__tests__/stateWriterRace.test.ts",
+        "test": "★ 同時の登録 30 件は 1 件も失われず、本体は読める JSON のまま (threat: T-055)"
+      }
+    },
+    {
+      "id": "T-056",
+      "found": "2026-10-15",
+      "foundBy": "hunt pass 522 (監査役の指摘を自分で再現してから直した)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "7 本の workflow の checkout 10 か所がすべて既定の persist-credentials: true のままで、GITHUB_TOKEN が .git/config の http.extraheader に残り、その後の npm ci (postinstall)・組み立て・第三者 action がそれを読めた (どの workflow も push しないので残す理由が無い)",
+      "status": "fixed",
+      "fix": "10 か所に with: persist-credentials: false。lint:workflow-security に「checkout は persist-credentials: false を持つ」規則 (step の段で区切る・true は持たないと数える) と self-test 4 件。対照: ci.yml から外す → 門 ❌ 1。",
+      "regression": {
+        "file": "src/shared/__tests__/workflowSecurityWitness.test.ts",
+        "test": "★ 実物の checkout 10 か所はすべて persist-credentials: false (threat: T-056)"
+      }
+    },
+    {
+      "id": "T-057",
+      "found": "2026-10-15",
+      "foundBy": "hunt pass 522 (監査役の指摘を自分で再現してから直した)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "actions/* の 30 か所がすべて版のタグ (@v5 など) で、lint:workflow-security は「GitHub 自身は版のタグを免除」していた —— major タグは GitHub が動かす参照で不変ではない (release.yml は署名鍵と GH_TOKEN を env に持つ)",
+      "status": "fixed",
+      "fix": "30 か所を git ls-remote で引いた 40 桁の commit SHA へ (# vN の注記つき)。門の免除を外し、actions/* も SHA を要求する。対照: ci.yml を @v5 へ戻す → 門 ❌ 1。",
+      "regression": {
+        "file": "src/shared/__tests__/workflowSecurityWitness.test.ts",
+        "test": "★ 実物の 7 workflow は actions/* を全部 40 桁の SHA で固定し、版を注記に残す (threat: T-057)"
+      }
+    },
+    {
+      "id": "T-058",
+      "found": "2026-10-15",
+      "foundBy": "hunt pass 522 (監査役の指摘を自分で再現してから直した)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "整合性チェーンは ci / release / pages の 3 本しか守っておらず、e2e / mutation / knowledge-auto / dependency-audit (どれも npm ci と secrets と GITHUB_TOKEN を持つ runner で走る) と dependabot.yml (供給網の入口の設定) は黙って書き換えられた",
+      "status": "fixed",
+      "fix": "4 本の workflow と dependabot.yml、それらが run: で起こす 4 本 (mutate-changed / merge-mutation-reports / triage-mutations / knowledge-autopilot) とその閉包 2 本 (orchestration/knowledge-context / knowledge-graph) を PROTECTED へ (block #298〜#300・保護対象 105 → 115)。CODEOWNERS も同じ行を持つ。",
+      "regression": {
+        "file": "src/shared/__tests__/workflowSecurityWitness.test.ts",
+        "test": "★ 7 本の workflow と dependabot.yml は整合性チェーンの保護対象 (threat: T-058)"
+      }
     }
   ],
   "huntBacklog": [
@@ -971,16 +1166,6 @@
     },
     {
       "surface": "network",
-      "item": "N-1 Shopify の Discord webhook URL が断りの文で伏せられない",
-      "why": "2026-10-14 に測った: webhook URL (https://discord.com/api/webhooks/<id>/<token>) は path に秘密を持つが redact.ts の規則 (ヘッダ名・JSON 項目名・クエリ引数・接頭辞) のどれにも当たらない。届く道は shopify/notify-discord の失敗本文に相手が URL を反射したときだけで、今日その本文は displayField の天井を通る。伏せる規則を足すなら「discord.com/api/webhooks/ の後ろ」を 1 形として。"
-    },
-    {
-      "surface": "network",
-      "item": "N-2 配る Worker の isBlockedIp が SIIT 形 (::ffff:0:a.b.c.d · RFC 6052 §2.1) を見ない",
-      "why": "2026-10-14 に測った: docs/PROXY_EXAMPLE.md の isBlockedIp は ::ffff:a.b.c.d (IPv4-mapped) は落とすが ::ffff:0:a.b.c.d は通す。アプリ側 privateTarget.ts は同じ形を落とすので両者が割れている。Cloudflare Workers は fetch で IP リテラルの上流をそもそも許さない (実測は手元では取れない) ので危険度は低いが、パリティ検査 (proxyWorkerParity) の標本に足して揃える。"
-    },
-    {
-      "surface": "network",
       "item": "N-3 *.localdomain / *.internal の名前解決がプライベート帯へ向く形は判定していない",
       "why": "2026-10-14 に測った: isPrivateOrReservedTarget はホスト名の綴り (localhost / *.local / IP リテラル) を見るので、DNS がプライベート帯へ解く任意の名前は通る。解決後の IP を見るには main の fetch に lookup hook が要り、ブラウザ版からは構造的に見えない。この環境では DNS を操れず測れていない。"
     },
@@ -988,6 +1173,26 @@
       "surface": "network",
       "item": "N-5 encodeURIComponent した動的部分に `..` が来ると WHATWG URL が path を畳む",
       "why": "2026-10-14 に測った: encodeURIComponent('..') は '..' のまま (予約でない) なので https://host/a/../b は new URL で https://host/b になる。今日の動的部分 (Drive のファイル ID / Jira の issue key / Slack の domain) はどれも入口の正規表現が `.` を含まないか別の関門で落とすので届かない。関門の無い新しい補間が 1 つ増えた日に開く形なので、lint:url-encoding の標本として残す。"
+    },
+    {
+      "surface": "main-ipc",
+      "item": "MAIN-3 lint:ipc-handlers は式本体 (`=>` の後に block を持たない) の handler を走査しない",
+      "why": "2026-10-15 に監査役が静的に指摘。実物の handler は全部 block 本体なので今日の素通りは 0 件 —— 針の死角として記録し、次に式本体の handler が 1 つ増えた日に門が黙る形。"
+    },
+    {
+      "surface": "main-ipc",
+      "item": "MAIN-4 oauth:authorize に同時実行の上限が無い (renderer が連打すると loopback の listener が複数立つ)",
+      "why": "2026-10-15 に静的に指摘。listener は 5 分で閉じ、state は 32 byte で毎回別なので乗っ取りには繋がらない —— 資源の消費だけ。renderer 側の ConnectCard は busy で 2 度目を止めているので、今日届く道は renderer を乗っ取った後だけ。"
+    },
+    {
+      "surface": "supply-chain",
+      "item": "F-1 main 枝に branch protection / ruleset が 1 つも無い (GitHub の設定 —— リポジトリの中からは直せない)",
+      "why": "2026-10-15 に GitHub API で実測 (rulesets 0 件・protection 無し)。CODEOWNERS (T-003) は Require review from Code Owners が有効でないと効かず、整合性チェーンは署名を持たないので、直接 push で保護対象と鎖を一緒に書き換えられる。所有者が Settings → Rules で main に「PR 必須・Code Owners のレビュー必須・force push 禁止」を付ける判断。"
+    },
+    {
+      "surface": "network",
+      "item": "NET-6 配る Worker の denyReason は hostname しか見ず、許可リストのホストへ非既定のポート (api.notion.com:8443) や userinfo (user:pw@) を付けた上流へも資格情報ごと転送する",
+      "why": "2026-10-15 に監査役が probe で実測し、私はまだ再現していない。実害は無い側 (ホストは Notion のまま・アプリの fetchViaProxy はポートも userinfo も出さない・Workers の fetch は credentials 付きの URL を拒む) なので強める候補: u.port === '' と空の username / password を denyReason に足す (PROXY_EXAMPLE.md は保護対象なので chain:append が要る)。"
     }
   ],
   "clearedBacklog": [

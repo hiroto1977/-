@@ -294,7 +294,7 @@ export function ConnectorsPage() {
                       <button
                         type="button"
                         onClick={() => fireReported(stored.remove(r.id))}
-                        aria-label={`${r.connectorId} の記録を削除`}
+                        aria-label={`${displayField(r.connectorId)} の記録を削除`}
                         style={{ fontSize: 12 }}
                       >
                         削除

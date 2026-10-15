@@ -475,7 +475,13 @@ async function chat(ctx: ActionContext): Promise<ActionData<'ollama/chat'>> {
   return {
     // 応答の天井 (パス 113)。byte の天井 (10 MiB) は「画面に出す量」としては論外 ——
     // アシスタントと同じ 10 万字で打ち切り、切ったことを本文に残す。
-    reply: capAssistantReply(parsed.message?.content ?? ''),
+    // **型を見てから天井へ渡す** (2026-10-15 · パス 522 · threat: T-053)。
+    // `?? ''` は null / undefined しか受けず、配列は `capAssistantReply` を
+    // 素通りして `reply` が文字列でないまま画面へ届き (`["a","b"]` が
+    // 子として描かれる)、物・数・真偽は `value is not iterable` を投げて
+    // 利用者がその文を読む。ブラウザ版 (`ollamaWeb.ts`) は最初から
+    // `typeof content === 'string'` で、デスクトップ版だけが前提を持たなかった。
+    reply: capAssistantReply(typeof parsed.message?.content === 'string' ? parsed.message.content : ''),
     durationMs: Math.round((parsed.total_duration ?? 0) / 1_000_000),
   };
     },

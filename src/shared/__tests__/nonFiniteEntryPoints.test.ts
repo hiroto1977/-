@@ -212,6 +212,8 @@ const MERGE_PLAN: RestorePlan = {
   added: 1,
   overwritten: 0,
   newerLocal: 0,
+  collectionClash: 0,
+  duplicateIds: 0,
   lost: 0,
   localOnly: 0,
   unusableLocal: 0,

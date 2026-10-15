@@ -113,6 +113,13 @@ export const CRISIS_MARKERS: readonly string[] = [
   '人生を終わりに',
   '殺してほしい',
   'いっそ死',
+  // ひらがなだけの綴り (パス 522 · T-052)。漢字を打たない (急いでいる・
+  // 子ども・携帯の変換前) 入力を落とさない。カタカナは照合の畳み込みで
+  // ここへ寄るので別に書かない。
+  'しにたい',
+  'じさつ',
+  'きえたい',
+  'いきていたくない',
 ];
 
 /** 他害衝動を示す語 (誰か/他者を傷つけたい)。安全側で検知し鎮静・相談へ導く。 */
@@ -208,12 +215,38 @@ const CRISIS_DISCLAIMER =
 const CARE_DISCLAIMER =
   '※ これはセルフケアのサポートであり、診断や治療ではありません。つらさが続くときは専門家にご相談ください。';
 
-/** 文字列に危機マーカーが含まれるか (正規化後の部分一致)。 */
-/** 正規化後の text にマーカー群のいずれかが含まれるか。 */
+/**
+ * 照合のための畳み込み (2026-10-15 · パス 522 · threat: T-052)。
+ *
+ * 直す前は `normalize('NFKC')` だけで、**見えない字 1 つ・結合記号 1 つ・
+ * 仮名の綴り**のどれでも危機語を素通りさせていた (実測: `死に\u200Bたい` /
+ * `死に\u00ADたい` / `死\uFE0Fにたい` / `自\u3099殺` / `シニタイ` / `しにたい` は
+ * すべて `detectCrisis` が false)。この判定は相談窓口を出すかどうかを決める
+ * 唯一の門なので、取りこぼしの向きの誤りは窓口が出ないことを意味する。
+ *
+ * 1. NFKC (全角・半角・互換文字を揃える —— 半角ｶﾅはここで全角になる)
+ * 2. 書式制御 (`\p{Cf}`: ZWSP / ZWJ / ZWNJ / WJ / SHY / BOM / RLM …) と
+ *    結合記号 (`\p{Mn}`: 異体字セレクタ・結合濁点 …) を落とす —— どれも
+ *    **描画では見えないか、見えても語を変えない**ので、照合の側で持つ理由が無い
+ * 3. カタカナをひらがなへ (U+30A1..U+30F6 → U+3041..U+3096。長音符「ー」は残す)
+ *
+ * **マーカーの側にも同じ畳み込みを掛ける** (`リストカット` → `りすとかっと`)。
+ * 片側だけ畳むと、カタカナで書かれたマーカーが永久に当たらなくなる。
+ * 誤検知の向き (ひらがなの偶然の一致) は窓口を案内するだけで、この判定の
+ * 設計上の既定 (安全側) に合う。
+ */
+export function foldForMarkerMatch(text: string): string {
+  return text
+    .normalize('NFKC')
+    .replace(/[\p{Cf}\p{Mn}]/gu, '')
+    .replace(/[\u30A1-\u30F6]/g, (ch) => String.fromCharCode(ch.charCodeAt(0) - 0x60));
+}
+
+/** 畳み込んだ text にマーカー群 (同じく畳み込む) のいずれかが含まれるか。 */
 function matchesAny(text: string, markers: readonly string[]): boolean {
-  const s = text.normalize('NFKC');
+  const s = foldForMarkerMatch(text);
   for (const marker of markers) {
-    if (s.includes(marker)) return true;
+    if (s.includes(foldForMarkerMatch(marker))) return true;
   }
   return false;
 }

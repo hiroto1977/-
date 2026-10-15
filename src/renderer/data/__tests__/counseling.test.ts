@@ -283,6 +283,47 @@ describe('連続して落ち込んでいるときの声かけ', () => {
   });
 });
 
+/**
+ * 見えない字・結合記号・仮名の綴りで危機語が素通りしない (2026-10-15 · パス 522 ·
+ * threat: T-052)。直す前は `normalize('NFKC')` だけで、下の全形が false だった
+ * (実測)。この門は相談窓口を出すかどうかを決める唯一の判定である。
+ */
+describe('detectCrisis — 見えない字と綴りの揺れ (threat: T-052)', () => {
+  it.each([
+    ['ZWSP', '\u6B7B\u306B\u200B\u305F\u3044'],
+    ['ZWJ', '\u6B7B\u306B\u200D\u305F\u3044'],
+    ['ZWNJ', '\u6B7B\u306B\u200C\u305F\u3044'],
+    ['SHY', '\u6B7B\u306B\u00AD\u305F\u3044'],
+    ['WJ', '\u6B7B\u306B\u2060\u305F\u3044'],
+    ['BOM', '\u6B7B\u306B\uFEFF\u305F\u3044'],
+    ['RLM', '\u6B7B\u306B\u200F\u305F\u3044'],
+    ['VS16', '\u6B7B\uFE0F\u306B\u305F\u3044'],
+    ['異体字セレクタ', '\u6B7B\u{E0100}\u306B\u305F\u3044'],
+    ['結合濁点', '\u81EA\u3099\u6BBA'],
+    ['カタカナ', 'シニタイ'],
+    ['ひらがな', 'しにたい'],
+    ['半角カナ', '\uFF98\uFF7D\uFF76'],
+    ['カタカナのマーカー', 'リスカ'],
+  ])('★ %s を挟んでも／で書いても危機と判定する (threat: T-052)', (_name, text) => {
+    expect(detectCrisis(text)).toBe(true);
+  });
+
+  it('★ 他害・破壊の判定も同じ畳み込みを通る', () => {
+    expect(detectHarmToOthers('\u6BBA\u3057\u200B\u305F\u3044')).toBe(true);
+    expect(detectDestructiveUrge('\u58CA\u3057\u200B\u305F\u3044')).toBe(true);
+  });
+
+  it('★ 対照: 畳み込みは無関係な文を危機にしない (綴りの揺れだけを吸う)', () => {
+    expect(detectCrisis('仕事が\u200B忙しくて疲れた')).toBe(false);
+    expect(detectCrisis('カタカナノブンショウ')).toBe(false);
+    expect(detectCrisis('ひらがなのぶんしょう')).toBe(false);
+  });
+
+  it('★ マーカーの側も畳む (カタカナのマーカーに対し、ひらがなの入力が当たる)', () => {
+    expect(detectCrisis('りすとかっと')).toBe(true);
+  });
+});
+
 /*
  * 非空の床 (2026-08-22)。危機検知の語彙はどれも「全語について〜」の形で
  * 検査しているので、配列が空になると全部そのまま通る。人命に関わる経路なので、

@@ -116,3 +116,6 @@
 /vite.config.ts @hiroto1977
 /vitest.audit.config.ts @hiroto1977
 /vitest.config.ts @hiroto1977
+# 2026-10-15 (パス 522 · threat: T-058): knowledge-auto.yml の閉包 (役員ロールへ注入する文脈と知識グラフ)。
+/orchestration/knowledge-context.cjs @hiroto1977
+/orchestration/knowledge-graph.cjs @hiroto1977

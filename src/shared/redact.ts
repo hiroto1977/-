@@ -305,6 +305,15 @@ export function redactSecrets(input: string): string {
       .replace(/\bya29\.[A-Za-z0-9_-]{10,}/g, 'ya29.[REDACTED]')
       // Atlassian API token (Jira/Confluence PAT) — always begins `ATATT`.
       .replace(/\bATATT[A-Za-z0-9_=.-]{16,}/g, 'ATATT[REDACTED]')
+      /*
+       * Discord の incoming webhook (2026-10-15 · パス 522 · threat: T-047) —— 秘密は
+       * **path** に在る (`https://discord.com/api/webhooks/<id>/<token>`)。ヘッダ名・JSON の
+       * 項目名・クエリ引数・接頭辞のどの規則にも当たらない運び手で、`shopify/sync-to-discord`
+       * が受け取る `webhookUrl` そのもの。相手が本文に URL を反射すれば画面へ届く
+       * (`postExpectOk` は本文を `redactForMessage` に通してから文へ載せる)。
+       * id は数字、token は 60 字超の英数 `_-` なので 16 字以上で当てる。
+       */
+      .replace(/\bdiscord(?:app)?\.com\/api\/webhooks\/\d+\/[A-Za-z0-9_-]{16,}/g, 'discord.com/api/webhooks/[REDACTED]')
       // The value sub-pattern `(?:[^"\\]|\\.)*` correctly skips over
       // JSON-escaped characters (`\"`, `\\`, etc.) so a token rendered
       // inside a nested JSON-in-JSON error response can't smuggle a

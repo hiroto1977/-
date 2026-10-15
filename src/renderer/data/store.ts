@@ -848,15 +848,18 @@ class IndexedDBRecordStore implements RecordStore {
   async importAll(records: readonly StoredRecord[], opts?: { replace?: boolean }): Promise<number> {
     // 関門は `isImportableRecord` **ただ 1 つ** —— 復元の計画 (`planRestore`) が
     // 「何件入るか」を数えるのに同じ判定を要るため (パス 432)。捨てた件数は呼び出し側が利用者に言う。
-    const valid = records.filter(importableRecordGate(this.acceptsSealedRecords()));
+    const valid = dedupeById(records.filter(importableRecordGate(this.acceptsSealedRecords())));
     const prepared = await Promise.all(
       valid.map(async (rec) =>
         isSealedData(rec.data) ? rec : { ...rec, data: await this.cipher.encrypt(rec.data) },
       ),
     );
+    let written = 0;
     await withDb(async (db) => {
       const tx = db.transaction(STORE, 'readwrite');
       const store = tx.objectStore(STORE);
+      const done = txDone(tx);
+      let failure: unknown;
       // **置換も挿入も 1 つの取引で、途中で投げたら取引ごと中断する** (2026-10-14 · パス 521 ·
       // threat: T-044)。`put()` は structured clone を**同期で**行い、深さが約 1 万を超える
       // 値では `RangeError` を投げる (chromium / fake-indexeddb で実測)。2026-10-13 まで
@@ -865,19 +868,53 @@ class IndexedDBRecordStore implements RecordStore {
       // 控えからは 1 件も入らない**。深さの門 (`isValidStoredRecord`) が先に落とすので
       // 今日この行へ届く道は無いが、門と取引は別の層なので、投げた瞬間に `abort()` して
       // 「書いていない」を保つ。
+      const putOrAbort = (rec: StoredRecord): void => {
+        // 1 度投げたら以後は書かない —— 中断した取引への `put` は TransactionInactiveError で
+        // 投げ直し、**最初の理由を上書きする** (実測: RangeError が別の例外に化けた)。
+        if (failure !== undefined) return;
+        try {
+          store.put(rec); // put = upsert by id
+          written += 1;
+        } catch (e) {
+          failure = e;
+          tx.abort();
+        }
+      };
       try {
-        if (opts?.replace) store.clear();
-        for (const rec of prepared) store.put(rec); // put = upsert by id
+        if (opts?.replace) {
+          store.clear();
+          for (const rec of prepared) putOrAbort(rec);
+        } else {
+          // **マージは id が別の collection に在れば書かない** (2026-10-15 · パス 522 ·
+          // threat: T-048)。鍵は id だけ (`keyPath: 'id'`) なので、控えの `sales-entries` の
+          // 行がこの端末の `team-members` の id を名乗ると `put` は**そのメンバーを
+          // 消して売上に置き換える** —— 計画は「更新 1」と数え、消えた件数はどこにも
+          // 出ない (実測 · 監査役の探りを自分で走らせた)。読みと書きは同じ取引の中で、
+          // IndexedDB の要求を連ねる (非 IDB の promise を待つと取引が閉じる)。
+          // 計画 (`planRestore`) も同じ規則で数える —— 2 つ書くと割れる (パス 432)。
+          for (const rec of prepared) {
+            const req = store.get(rec.id);
+            req.onsuccess = () => {
+              const cur = req.result as StoredRecord | undefined;
+              if (cur !== undefined && cur.collection !== rec.collection) return;
+              putOrAbort(rec);
+            };
+          }
+        }
       } catch (e) {
+        failure = e;
         tx.abort();
-        throw e;
       }
-      await txDone(tx);
+      try {
+        await done;
+      } catch (e) {
+        throw failure ?? e;
+      }
     });
     // 書けたら知らせる (`collectionChange.ts`)。ここに置かないと、hook を通らない
     // 書き込みがどの画面にも届かない —— 実測は向こうの docblock に在る。
     notifyRecordStoreChanged();
-    return prepared.length;
+    return written;
   }
 
   async reencryptAll(from?: RecordCipher): Promise<number> {
@@ -926,6 +963,27 @@ class IndexedDBRecordStore implements RecordStore {
     }
     return migrated;
   }
+}
+
+/**
+ * 同じ id を持つ行は**後の行が勝つ** (`put` と同じ) ので、数える前に 1 件へ畳む
+ * (2026-10-15 · パス 522 · threat: T-048)。畳まないと計画と結果が「3 件」と言い、
+ * 保管層には 1 件しか残らない (実測)。順序は保つ (最後の出現の位置ではなく最初の位置に、
+ * 最後の中身を置く)。
+ */
+export function dedupeById<T extends { readonly id: string }>(records: readonly T[]): T[] {
+  const index = new Map<string, number>();
+  const out: T[] = [];
+  for (const rec of records) {
+    const at = index.get(rec.id);
+    if (at === undefined) {
+      index.set(rec.id, out.length);
+      out.push(rec);
+    } else {
+      out[at] = rec;
+    }
+  }
+  return out;
 }
 
 /** Validate a record coming from an untrusted backup file before it's

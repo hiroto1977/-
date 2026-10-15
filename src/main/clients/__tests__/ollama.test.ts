@@ -404,6 +404,29 @@ describe('ACTIONS["chat"]', () => {
     expect(result.reply.endsWith(ASSISTANT_REPLY_TRUNCATED_NOTICE)).toBe(true);
   });
 
+  it.each([
+    ['配列 (文字列)', ['a', 'b']],
+    ['配列 (物)', [{ x: 1 }]],
+    ['物', { a: 1 }],
+    ['数', 123],
+    ['真偽', true],
+    ['null', null],
+  ])('★ 相手の content が文字列でない (%s) なら、投げずに空の返答にする (threat: T-053)', async (_name, content) => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(JSON.stringify({ message: { role: 'assistant', content }, total_duration: 0 }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+    const result = (await ACTIONS['chat']!({ token: '', fetch: fetchMock, payload: { model: 'llama3.2', prompt: 'hi' } })) as {
+      reply: unknown;
+    };
+    // 直す前: 配列は配列のまま `reply` へ届き、物・数・真偽は
+    // `value is not iterable` を投げていた (2026-10-15 実測)。
+    expect(typeof result.reply).toBe('string');
+    expect(result.reply).toBe('');
+  });
+
   it('POSTs to /api/chat with stream=false and returns the assistant text', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
       new Response(

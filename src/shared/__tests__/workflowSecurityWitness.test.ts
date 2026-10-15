@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -25,10 +25,12 @@ const gate = req('../../../scripts/lint-workflow-security.cjs') as {
 const wf = (text: string) => gate.check([{ name: 'x.yml', text }], {}, {});
 const SHA = 'a'.repeat(40);
 const BASE = 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n';
+/** SHA で固定し資格情報を残さない checkout (2026-10-15 から門が要求する形)。 */
+const CHECKOUT = `      - uses: actions/checkout@${SHA} # v5\n        with:\n          persist-credentials: false\n`;
 
 describe('lint:workflow-security — 外側の証人', () => {
   it('陰性: 素直なワークフローは通る (この行が落ちると以下は無意味)', () => {
-    expect(wf(`${BASE}      - uses: actions/checkout@v4\n      - run: echo hi\n`)).toHaveLength(0);
+    expect(wf(`${BASE}${CHECKOUT}      - run: echo hi\n`)).toHaveLength(0);
   });
 
   it.each([
@@ -46,6 +48,16 @@ describe('lint:workflow-security — 外側の証人', () => {
     ['★ 第三者 action が枝', `${BASE}      - uses: third/act@main\n`],
     ['★ actions/* が @main (枝は固定ではない)', `${BASE}      - uses: actions/checkout@main\n`],
     ['★ actions/* が任意の枝', `${BASE}      - uses: actions/checkout@my-branch\n`],
+    ['★ actions/* が版のタグ (動く参照 · threat: T-057)', `${BASE}      - uses: actions/setup-node@v5\n`],
+    ['★ actions/* が細かい版のタグ (タグは動かせる · threat: T-057)', `${BASE}      - uses: actions/checkout@v4.1.2\n`],
+    [
+      '★ checkout が GITHUB_TOKEN を .git/config に残す (persist-credentials 無し · threat: T-056)',
+      `${BASE}      - uses: actions/checkout@${SHA}\n      - run: npm ci\n`,
+    ],
+    [
+      '★ checkout の persist-credentials: true (明示しても残す)',
+      `${BASE}      - uses: actions/checkout@${SHA}\n        with:\n          persist-credentials: true\n`,
+    ],
     [
       '★ pull_request_target (fork の PR が secrets 付きで走る)',
       'permissions:\n  contents: read\non:\n  pull_request_target:\njobs:\n  a:\n    steps:\n      - run: echo hi\n',
@@ -58,9 +70,8 @@ describe('lint:workflow-security — 外側の証人', () => {
   });
 
   it.each([
-    ['actions/* を版のタグで', `${BASE}      - uses: actions/checkout@v4\n`],
-    ['actions/* を細かい版で', `${BASE}      - uses: actions/checkout@v4.1.2\n`],
-    ['actions/* を SHA で (最も固い形)', `${BASE}      - uses: actions/checkout@${SHA}\n`],
+    ['actions/* を SHA で (最も固い形)・checkout は資格情報を残さない', `${BASE}${CHECKOUT}`],
+    ['actions/* を SHA で (checkout 以外は with: が要らない)', `${BASE}      - uses: actions/setup-node@${SHA} # v5\n`],
     ['第三者を SHA で', `${BASE}      - uses: third/act@${SHA}\n`],
     ['同じリポジトリの composite action', `${BASE}      - uses: ./.github/actions/x\n`],
     ['run: に埋め込みが無い', `${BASE}      - run: npm ci && npm test\n`],
@@ -73,6 +84,63 @@ describe('lint:workflow-security — 外側の証人', () => {
     const p = wf('jobs:\n  a:\n    steps:\n      - run: echo hi\n');
     expect(p[0]?.file).toBe('x.yml');
     expect((p[0]?.why ?? '').length).toBeGreaterThan(10);
+  });
+});
+
+/*
+ * **実物の 7 本の workflow は、GitHub 自身の action も SHA で固定し、checkout は資格情報を残さない**
+ * (2026-10-15 · パス 522 · threat: T-056 / T-057)。実測 (直す前): `actions/*` の 30 か所はすべて
+ * 版のタグ (`@v5` —— GitHub が動かす major タグ) で、checkout 10 か所はどれも既定の
+ * `persist-credentials: true` のまま `npm ci` と組み立てへ `GITHUB_TOKEN` を残していた。
+ * 門 (`lint:workflow-security`) がこの 2 つを要求するようになったので、ここは**門が外れた日**の
+ * ために実物を直接読む。
+ */
+describe('実物の workflow — actions/* の SHA 固定と checkout の persist-credentials (threat: T-056 / T-057)', () => {
+  const dir = path.resolve(__dirname, '../../../.github/workflows');
+  const files = readdirSync(dir).filter((f) => f.endsWith('.yml')).sort();
+  const texts = files.map((f) => [f, readFileSync(path.join(dir, f), 'utf8')] as const);
+
+  it('走査が生きている (workflow は 7 本)', () => {
+    expect(files).toHaveLength(7);
+  });
+
+  it('★ 実物の 7 workflow は actions/* を全部 40 桁の SHA で固定し、版を注記に残す (threat: T-057)', () => {
+    let seen = 0;
+    for (const [f, text] of texts) {
+      for (const line of text.split('\n')) {
+        const m = /^\s*-?\s*uses:\s*(actions\/\S+)(.*)$/.exec(line);
+        if (!m) continue;
+        seen += 1;
+        expect(m[1], `${f}: ${line.trim()}`).toMatch(/^actions\/[a-z-]+@[0-9a-f]{40}$/);
+        expect(m[2], `${f}: 版の注記が無い: ${line.trim()}`).toMatch(/#\s*v\d+/);
+      }
+    }
+    expect(seen).toBeGreaterThanOrEqual(30);
+  });
+
+  it('★ 実物の checkout 10 か所はすべて persist-credentials: false (threat: T-056)', () => {
+    let seen = 0;
+    for (const [f, text] of texts) {
+      const lines = text.split('\n');
+      lines.forEach((line, i) => {
+        if (!/^\s*-?\s*uses:\s*actions\/checkout@/.test(line)) return;
+        seen += 1;
+        const dash = /^(\s*)-/.exec(line)![1]!;
+        const step = lines.slice(i + 1).join('\n').split(new RegExp(`\n${dash}-`))[0]!;
+        expect(step, `${f}:${i + 1} の checkout`).toMatch(/persist-credentials:\s*false/);
+      });
+    }
+    expect(seen).toBe(10);
+  });
+
+  it('★ 7 本の workflow と dependabot.yml は整合性チェーンの保護対象 (threat: T-058)', () => {
+    const chain = req('../../../scripts/integrity-chain.cjs') as { PROTECTED: readonly string[] };
+    for (const f of files) expect(chain.PROTECTED, f).toContain(`.github/workflows/${f}`);
+    expect(chain.PROTECTED).toContain('.github/dependabot.yml');
+  });
+
+  it('★ 実物は門を通る (台帳どおり)', () => {
+    expect(gate.check(texts.map(([name, text]) => ({ name, text })), gate.UNPINNED_ALLOW, gate.JOB_PERMISSIONS_ALLOW)).toEqual([]);
   });
 });
 
@@ -167,7 +235,7 @@ describe('pages.yml の書く権限は公開の job だけ (threat: T-039)', () 
     const deploy = pagesYml.slice(pagesYml.indexOf('\n  deploy:'));
     expect(deploy).toMatch(/needs: build/);
     expect(deploy).not.toMatch(/run:|npm |actions\/checkout|actions\/setup-node/);
-    expect(deploy).toMatch(/uses: actions\/deploy-pages@v\d+/);
+    expect(deploy).toMatch(/uses: actions\/deploy-pages@[0-9a-f]{40} # v\d+/);
     const build = pagesYml.slice(pagesYml.indexOf('\n  build:'), pagesYml.indexOf('\n  deploy:'));
     expect(build).toMatch(/npm ci/);
     expect(build).not.toMatch(/permissions:|deploy-pages/);

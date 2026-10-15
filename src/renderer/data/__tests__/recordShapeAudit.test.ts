@@ -48,7 +48,7 @@ describe('auditRecordShapes', () => {
     const store = getRecordStore();
     await store.insert(SALES_COLLECTION, GOOD);
     const r = await auditRecordShapes(store);
-    expect(r).toEqual({ checked: 1, skippedSealed: 0, unreadable: [], malformed: [] });
+    expect(r).toEqual({ checked: 1, skippedSealed: 0, unreadable: [], malformed: [], unknown: [] });
     expect(summarizeMalformed(r.malformed)).toBe('');
   });
 

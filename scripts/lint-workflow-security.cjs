@@ -271,16 +271,41 @@ function check(list, allow = UNPINNED_ALLOW, jobAllow = JOB_PERMISSIONS_ALLOW) {
        */
       // **SHA 固定は誰であれ常に可**。ここを `actions/` の分岐より後ろに置くと、
       // `actions/checkout@<sha>` (最も固い形) を落とす —— 実際に落とした。
-      if (/@[0-9a-f]{40}$/.test(ref)) continue;
-      if (/^actions\/[^@]+@v\d+(?:\.\d+)*$/.test(ref)) continue; // GitHub 自身・版のタグ
+      if (/@[0-9a-f]{40}$/.test(ref)) {
+        if (/^actions\/checkout@/.test(ref) && !stepPersistsNoCredentials(lines, i)) {
+          /*
+           * **checkout は `persist-credentials: false` を要求する** (2026-10-15 · パス 522 ·
+           * threat: T-056)。既定 (true) では `GITHUB_TOKEN` が `.git/config` の
+           * `http.extraheader` に残り、その job のあとの全ステップ (`npm ci` の
+           * postinstall・組み立ての script・第三者 action) がそれを読める。
+           * この repo の workflow は 7 本とも push しない (release は action-gh-release が
+           * env の token を、pages は deploy-pages が自分の token を、knowledge-auto は
+           * github-script が `github.token` を使う) ので、残す理由が 1 つも無い。
+           * 実測 (2026-10-15): 10 の checkout すべてが既定のままだった。
+           */
+          problems.push({
+            file: `${name}:${i + 1}`,
+            why: `actions/checkout に \`with: persist-credentials: false\` が無い — 後続ステップへ GITHUB_TOKEN を残さないこと`,
+          });
+        }
+        continue;
+      }
+      /*
+       * **GitHub 自身 (`actions/*`) も SHA で固定する** (2026-10-15 · パス 522 · threat: T-057)。
+       * 2026-08-26 から「版のタグに限る」免除を持っていたが、`@v5` は動く参照であり
+       * (GitHub は major タグを新しい patch へ動かす)、`actions/` の名前空間は
+       * 第三者より信用できるだけで**不変ではない**。実物は 2026-10-15 まで 30 か所
+       * すべてが版のタグだった。版は `# v5` の注記で残し、動かすときは
+       * `git ls-remote https://github.com/actions/<name>.git refs/tags/<tag>` で
+       * 引き直す (lightweight tag なので ls-remote の SHA がそのまま commit)。
+       */
       if (ref.startsWith('actions/')) {
         problems.push({
-          file: name,
-          why: `actions/* が版のタグで固定されていません (${ref}) — @v4 のような版か SHA にすること`,
+          file: `${name}:${i + 1}`,
+          why: `actions/* が SHA で固定されていません (${ref}) — 40 桁の commit SHA にして \`# vN\` を注記に残すこと`,
         });
         continue;
       }
-      if (/@[0-9a-f]{40}$/.test(ref)) continue; // SHA 固定済み
       seenUnpinned.add(ref);
       // `in` / 素の添字はプロトタイプ鎖まで辿るので、`uses: constructor` の
       // ような名前が台帳に載っていることになり、**未固定の検査ごと飛ばされる**。
@@ -332,6 +357,24 @@ function check(list, allow = UNPINNED_ALLOW, jobAllow = JOB_PERMISSIONS_ALLOW) {
   return problems;
 }
 
+/**
+ * `uses: actions/checkout@…` の step (行 i) が `with: persist-credentials: false` を
+ * 持つか。step の範囲は「次の `- ` (同じ段) か、段が浅くなる行」まで。
+ * `persist-credentials: false` 以外の値 (`true` / 空) は持たないと数える。
+ */
+function stepPersistsNoCredentials(lines, i) {
+  const dash = /^(\s*)-/.exec(lines[i]);
+  if (!dash) return false;
+  const kid = `${dash[1]}  `;
+  for (let j = i + 1; j < lines.length; j++) {
+    const ln = lines[j];
+    if (ln.trim() === '') continue;
+    if (!ln.startsWith(kid) || ln.startsWith(`${dash[1]}-`)) break;
+    if (/^\s*persist-credentials:\s*false\b/.test(ln)) return true;
+  }
+  return false;
+}
+
 function selfTest() {
   const cases = [
     ['permissions 未宣言を落とす', [{ name: 'x.yml', text: 'name: x\non:\n  push:\n' }], 1],
@@ -352,8 +395,33 @@ function selfTest() {
       0,
     ],
     [
-      'actions/* のタグ固定は通す',
-      [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: actions/checkout@v4\n' }],
+      'actions/* の版のタグは落とす (動く参照 · T-057)',
+      [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: actions/setup-node@v5\n' }],
+      1,
+    ],
+    [
+      'actions/* の SHA 固定は通す (注記の # vN は読まない)',
+      [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: actions/setup-node@${'b'.repeat(40)} # v5\n` }],
+      0,
+    ],
+    [
+      'checkout が persist-credentials を持たなければ落とす (T-056)',
+      [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: actions/checkout@${'c'.repeat(40)}\n      - run: echo hi\n` }],
+      1,
+    ],
+    [
+      'checkout の persist-credentials: true は「持たない」と数える',
+      [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: actions/checkout@${'c'.repeat(40)}\n        with:\n          persist-credentials: true\n` }],
+      1,
+    ],
+    [
+      '次の step の with: は数えない (段で区切る)',
+      [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: actions/checkout@${'c'.repeat(40)}\n      - uses: actions/setup-node@${'b'.repeat(40)}\n        with:\n          persist-credentials: false\n` }],
+      1,
+    ],
+    [
+      'checkout に persist-credentials: false (他の with: と並んでも) は通す',
+      [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: actions/checkout@${'c'.repeat(40)}\n        with:\n          fetch-depth: 2\n          persist-credentials: false\n      - run: echo hi\n` }],
       0,
     ],
     [
@@ -395,12 +463,12 @@ function selfTest() {
     // 評価する) ので、シェル構文になる余地が無い。
     [
       'run: の外の展開は見ない (action の with: など)',
-      [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: actions/x@v1\n        with:\n          t: ${{ github.event.pull_request.title }}\n' }],
+      [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: actions/x@${'d'.repeat(40)}\n        with:\n          t: \${{ github.event.pull_request.title }}\n` }],
       0,
     ],
     [
       'if: / key: の式は見ない',
-      [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - if: steps.scope.outputs.mode == \'some\'\n        uses: actions/cache@v4\n        with:\n          key: stryker-${{ github.ref_name }}\n' }],
+      [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - if: steps.scope.outputs.mode == 'some'\n        uses: actions/cache@${'d'.repeat(40)}\n        with:\n          key: stryker-\${{ github.ref_name }}\n` }],
       0,
     ],
     // 許可台帳をプロトタイプ鎖経由ですり抜けられないこと。`UNPINNED_ALLOW[ref]`

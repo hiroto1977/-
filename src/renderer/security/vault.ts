@@ -705,6 +705,16 @@ async function unwrapMasterFromRecovery(
 // by the 20 integration tests (init / unlock / token CRUD / lock paths).
 class BrowserVault implements Vault {
   private currentKey: CryptoKey | null = null;
+  /**
+   * 施錠の世代 (2026-10-15 · パス 522 · threat: T-049)。`lock()` のたびに進む。
+   * `unlock()` は PBKDF2 (600k 回・実測 100〜300 ms) の**前**に世代を控え、
+   * 鍵を据える**直前**に世代が動いていれば据えずに断る。直す前は、導出中に
+   * 届いた `lock()` (自動施錠・別のタブからの施錠の中継・「今すぐロック」) を
+   * 解錠の完了が**上書き**しており、利用者が施錠したつもりの保管庫が
+   * 解錠されたままになっていた (実測: `lock()` の直後は locked、`unlock()` の
+   * 解決後は unlocked)。
+   */
+  private lockEpoch = 0;
   /** 解錠に使われたパスワードが下限を満たしたか (メモリのみ・保存しない)。 */
   private policyOk: boolean | null = null;
 
@@ -861,6 +871,9 @@ class BrowserVault implements Vault {
     if (typeof password !== 'string' || password.length === 0) {
       throw new Error('パスワードを入力してください');
     }
+    // 世代は**最初の await より前**に控える (T-049)。解錠を頼んだ後に届いた
+    // 施錠はどれも解錠より新しい意思なので、導出の前後を問わず勝たせる。
+    const epoch = this.lockEpoch;
     /*
      * **下限は強制しない (既存のヴォールトを閉め出さないため) が、測りはする。**
      * 2026-07 に 8 → 12 へ上げる前に作られたヴォールトは短いままで、
@@ -903,11 +916,14 @@ class BrowserVault implements Vault {
       // finally: zero the raw master even if the import rejects, matching
       // initialize() / recoverWithMnemonic() (2026-07 audit — memory hygiene).
       try {
-        this.currentKey = await importNonExtractable(masterRaw);
+        const key = await importNonExtractable(masterRaw);
+        this.assertNotLockedSince(epoch);
+        this.currentKey = key;
       } finally {
         masterRaw.fill(0);
       }
     } else {
+      this.assertNotLockedSince(epoch);
       this.currentKey = passwordKey;
     }
     // 解錠できたパスワードについてだけ記録する (失敗すればここへ来ない)。
@@ -916,7 +932,15 @@ class BrowserVault implements Vault {
     await this.rebindLegacyTokens().catch(() => {});
   }
 
+  /** 解錠の途中で `lock()` が届いていれば、鍵を据えずに断る (T-049)。 */
+  private assertNotLockedSince(epoch: number): void {
+    if (this.lockEpoch !== epoch) {
+      throw new Error('解錠の途中で施錠されました。もう一度お試しください');
+    }
+  }
+
   lock(): void {
+    this.lockEpoch += 1;
     this.currentKey = null;
     // 施錠したら「分からない」に戻す。前回の判定を持ち越さない。
     this.policyOk = null;

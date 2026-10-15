@@ -131,6 +131,20 @@ describe('ストレージに記録した実行結果 — 画面 (パス 448)', (
     expect(button('(読めません) の記録を削除')).toBeTruthy();
   });
 
+  it('★ 長い connectorId でも「削除」の名前は天井を通る (threat: T-051)', async () => {
+    await getRecordStore().insert(CONNECTOR_OUTPUT_COLLECTION, {
+      connectorId: 'x'.repeat(5_000),
+      key: 'K1',
+      payload: {},
+    });
+    await mount();
+    await waitForElement(() => container.querySelector('[data-connector-output-row]'), '長い id の行');
+    const del = container.querySelector<HTMLButtonElement>('[data-connector-output-row] button[aria-label$=" の記録を削除"]');
+    expect(del).toBeTruthy();
+    // 直す前: 5,000 字がそのまま読み上げ名に載っていた (セルの側だけが displayField を通っていた)。
+    expect(del!.getAttribute('aria-label')!.length).toBeLessThan(300);
+  });
+
   it('★ library 側の逃げ口を名指しする (storage だけが宙に浮かない)', async () => {
     await mount();
     expect(text(), 'library へ書いた分の行き先を言わない').toContain('ライブラリ');
