@@ -34,7 +34,7 @@ X-Proxy-Auth: <optional-shared-secret>
 }
 ```
 
-## 2. Cloudflare Worker 実装 (415 行)
+## 2. Cloudflare Worker 実装 (421 行)
 
 `workers.cloudflare.com/dashboard` で **Create Worker** → 下記コードを貼り
 付け → **Deploy**。`worker.dev` の URL を Settings → BYO プロキシに登録。
@@ -292,6 +292,12 @@ async function denyReason(u) {
   if (u.protocol !== 'https:' && u.protocol !== 'http:') return 'http(s) only';
   if (!UPSTREAM_ALLOWLIST.has(u.hostname)) return 'upstream host not in allowlist';
   if (u.protocol !== 'https:') return 'plaintext http upstream is not allowed (credentials would travel in the clear)';
+  // **ホスト名だけでは「調べた物と送る物」が一致しない** (2026-10-15 · パス 523 · threat: T-059)。
+  // `https://user:pw@api.notion.com/` は hostname が許可リストに在るまま userinfo を運び、
+  // `https://api.notion.com:8443/` は同じホストの**別のサービス**へ利用者の Authorization ごと届く。
+  // 許可リストが名指ししているのは「そのホストの既定のポートの https」だけ。
+  if (u.username !== '' || u.password !== '') return 'userinfo in upstream URL is not allowed';
+  if (u.port !== '') return 'non-default port on upstream is not allowed';
   return await resolvedIpDenyReason(u.hostname);
 }
 

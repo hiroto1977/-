@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
-import { readOriginalSource } from './originalSource';
+import { readFileSync } from 'node:fs';
+import { originalSourcePath, readOriginalSource } from './originalSource';
 import { createRequire } from 'node:module';
 import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -64,7 +65,10 @@ const hashOf = (b: { index: number; prevHash: string; merkleRoot: string; leafCo
 function manifestFromDisk(): Record<string, string> {
   const out: Record<string, string> = {};
   for (const rel of [...chainModule.PROTECTED].sort()) {
-    out[rel] = sha(readOriginalSource(join(REPO_ROOT, rel)));
+    // **バイトで読む** (2026-10-15 · パス 523 · T-071): 保護対象に `assets/og.png` (バイナリ) が入った。
+    // 文字列として読むと不正な UTF-8 が置換され、鎖 (`readFileSync(abs)` のバイト列) と
+    // 一致しない。道は計装の sandbox を避ける `originalSourcePath` が解く。
+    out[rel] = sha(readFileSync(originalSourcePath(join(REPO_ROOT, rel))));
   }
   return out;
 }

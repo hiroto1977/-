@@ -333,8 +333,13 @@ export function planRestore(
   // **入るのはこれだけ。** 関門は `importAll` と同じ 1 つ (`isImportableRecord`) ——
   // 2 つ書くと、数える側と実行する側が割れる (パス 432)。同じ id は後の行が勝つので
   // 1 件へ畳んでから数える (`dedupeById` —— `importAll` と同じ · T-048)。
-  const unique = dedupeById(incoming);
-  const usable = unique.filter(importableRecordGate(acceptSealed));
+  // threat: T-067 —— **順序も `importAll` と同じ: 関門 → 畳む** (2026-10-15 · パス 523)。
+  // 2026-10-15 までここは畳んでから関門を通していた (`importAll` は関門を通してから畳む) ので、
+  // 同じ id が「正しい行 → 後ろに壊れた写し」と並ぶ控えでは、計画は後の壊れた写しだけを残して
+  // 「形式不正 1 件」と数え **正しい行を捨て** (`toImport` が空)、`importAll` へ直に渡せば入っていた。
+  // パネルは `plan.toImport` を渡すので、利用者には正しい行が消えて見えた (実測)。
+  const valid = incoming.filter(importableRecordGate(acceptSealed));
+  const usable = dedupeById(valid);
   const fileIds = new Set<string>();
   for (const rec of incoming) fileIds.add(rec.id);
   const usableIds = new Set<string>();
@@ -375,8 +380,8 @@ export function planRestore(
   if (mode === 'replace') lost = localOnly + newerLocal + unusableLocal + collectionClash;
   return {
     mode, exportedAt,
-    incoming: incoming.length, existing: existing.length, dropped: unique.length - usable.length,
-    duplicateIds: incoming.length - unique.length,
+    incoming: incoming.length, existing: existing.length, dropped: incoming.length - valid.length,
+    duplicateIds: valid.length - usable.length,
     added, overwritten, newerLocal, localOnly, unusableLocal, collectionClash, lost, toImport,
   };
 }

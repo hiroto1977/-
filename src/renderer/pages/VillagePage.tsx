@@ -280,7 +280,16 @@ export function VillagePage() {
      * 旗艦の AI 画面 (AssistantPage) は pass 514 で同じ判定を入れている —— 村も同じ網で塞ぐ。
      */
     const crisisOrHarm = detectCrisis(text) || detectHarmToOthers(text);
-    if (aiOn && hub && reply.kind !== 'action' && !crisisOrHarm) {
+    /*
+     * threat: T-069 —— **相談の返答 (`kind: 'counsel'`) はモデルで上書きしない** (2026-10-15 · パス 523)。
+     * `replyTo` は危機でない心の不調 (「つらい、眠れない」) と破壊衝動 (「物を壊したい」) にも
+     * `counsel` (セルフケアの案内 + 免責) を返すが、上の判定は危機・他害しか見ないので、その
+     * 吹き出しを AI の返答で**置き換え**、読み上げも置き換えていた (実測: MODEL_REPLY が出て
+     * 相談の文・免責は消えた)。コンシェルジュ (`chatbot.replyTo` 経由) は同じ入力を端末内だけで
+     * 答えるので、2 つの入口が食い違っていた。AI への送信の開示 (チェックボックス) は変えない ——
+     * 直すのは順序と上書きだけ。
+     */
+    if (aiOn && hub && reply.kind !== 'action' && reply.kind !== 'counsel' && !crisisOrHarm) {
       /*
        * **マイクは欄を通らない** (パス 175)。footer の欄は超過を述べて押せなくできるが、
        * `startSpeechRecognition` の `onTranscript` はここへ直に来るので、`disabled` が効かない。

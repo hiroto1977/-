@@ -241,6 +241,14 @@ const PROTECTED = [
   'scripts/inline-html.cjs',
   'scripts/inject-pwa.cjs',
   'assets/manifest.webmanifest',
+  // threat: T-071 —— pages.yml が `_site/` へそのまま公開する 2 つ (2026-10-15 · パス 523)。
+  // `icon.svg` は `<link rel=icon>` としてはスクリプトを走らせないが、**同じ URL を直接開くと
+  // SVG 文書として `<script>` が走る** (実測: chromium の --dump-dom で属性が立った)。公開版の
+  // オリジン (`app.html` / `lite.html` と同じ) で動く script で、SVG 文書には CSP が無い (CSP は
+  // HTML の meta にだけ在る)。どの門も `assets/` を走査していなかった。`og.png` も同じく
+  // 公開されるので、差し替えを鎖に映す。
+  'assets/icon.svg',
+  'assets/og.png',
   //
   // `vite.config.ts` は足していない。バンドルの作り方を決めるので配布経路では
   // あるが、**通常の開発で動く**ファイルで、鎖に入れると日常の変更すべてに

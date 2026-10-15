@@ -193,6 +193,10 @@ const ALLOWED: Readonly<Record<string, string>> = {};
  * `count` は実測の件数で、**増えたら鳴る** (台帳が白紙委任にならないように)。
  */
 const VARIABLE_PATH_ALLOWED: Readonly<Record<string, { count: number; why: string }>> = {
+  'src/shared/__tests__/integrityChainWitness.test.ts': {
+    count: 1,
+    why: '**バイナリ (`assets/og.png`) をバイトで読む** (パス 523 · T-071) —— `readOriginalSource` は文字列を返すので不正な UTF-8 が置換され、鎖が取るバイト列と一致しない。道は計装の sandbox を避ける `originalSourcePath` が解いてから読む (変数の道だが原文の道)',
+  },
   'src/shared/__tests__/originalSource.ts': {
     count: 4,
     why: '**原文の道具そのもの** —— sandbox の道を原文の道へ写してから読むのが仕事なので、生の読みはその写し先 (変数) を読む。この 4 件が在るから他のすべての検査が原文を読める。helper を母集団へ入れた日 (パス 490) に初めて数えられた',

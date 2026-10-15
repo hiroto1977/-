@@ -1121,6 +1121,216 @@
         "file": "src/shared/__tests__/workflowSecurityWitness.test.ts",
         "test": "★ 7 本の workflow と dependabot.yml は整合性チェーンの保護対象 (threat: T-058)"
       }
+    },
+    {
+      "id": "T-059",
+      "found": "2026-10-15",
+      "foundBy": "hunt pass 523 (パス 522 の backlog NET-6 を自分で測って閉じた)",
+      "surface": "network",
+      "class": "ssrf-and-credential-egress",
+      "severity": "low",
+      "title": "配る Worker (docs/PROXY_EXAMPLE.md の denyReason) とアプリの fetchViaProxy は上流 URL の hostname しか見ず、許可リストのホストへ userinfo (https://user:pw@api.notion.com/) や既定以外のポート (https://api.notion.com:8443/) を付けた上流へも利用者の Authorization ごと転送していた —— パス 522 の backlog は「アプリ側はポートも userinfo も出さない」と書いていたが、実測ではどちらも封筒に載せていた",
+      "status": "fixed",
+      "fix": "Worker の denyReason とアプリの fetchViaProxy に同じ 2 行 (userinfo が空であること・port が空 = 既定であること) を https の判定の後ろへ。順序は「許可リスト外・平文」が先 (具体的な理由を先に答える)。proxyWorkerParity に Worker 3 形 + 順序 2 形・client 2 形 + 封筒が 1 つも出ないこと + :443 は正規化で通る対照。対照: Worker の 2 行を外す → ★ 1 件 (+ 見出しの行数) / アプリの 2 行を外す → ★ 1 件。正当な用途は 0 件 (呼び出し口 3 つは shared/api/*.ts の https リテラル)。Workers の fetch は credentials 付き URL を拒むので userinfo 側の実害は 0、ポート側は同じホストの別サービスへ届きうる (深さの守り)。",
+      "regression": {
+        "file": "src/renderer/network/__tests__/proxyWorkerParity.test.ts",
+        "test": "★ Worker は許可リストのホストでも userinfo と既定以外のポートを断る (threat: T-059)"
+      }
+    },
+    {
+      "id": "T-060",
+      "found": "2026-10-15",
+      "foundBy": "hunt pass 523 (監査役の指摘を自分で再現)",
+      "surface": "main-ipc",
+      "class": "living-off-the-land",
+      "severity": "medium",
+      "title": "書き出しの関門 isSafeExportPath は path.resolve した後の親で判定し、書き出しは生の filePath の親を mkdir -p していた —— `data/templates/../../state.json/../data/y.html` は resolve 後の親が data/ なので通り、mkdir が状態ファイルの名のディレクトリを作って以後の保存を EISDIR にした (T-042 の注記「親は固定の 2 つだけ」は調べた物についてだけ真で、書く物については偽だった)",
+      "status": "fixed",
+      "fix": "isSafeExportPath に「path.resolve(filePath) === filePath」(正規化済みの絶対パス) を要求する 1 行。`..` / 相対 / `./` / 重なった区切りは形が変わるので断る。調べた物と書く物が同じ文字列になる。exportPaths.test.ts に標本 6 形 (resolve 後の親は許可された親であることも同じ it で確かめる) と対照。対照: 1 行を外す → ★ 1 件。",
+      "regression": {
+        "file": "src/main/clients/__tests__/exportPaths.test.ts",
+        "test": "★ `..` / 相対 / 重なった区切り / 末尾の区切りは、resolve すると通る親でも断る (threat: T-060)"
+      }
+    },
+    {
+      "id": "T-061",
+      "found": "2026-10-15",
+      "foundBy": "hunt pass 523 (監査役の指摘を自分で再現)",
+      "surface": "main-ipc",
+      "class": "ransomware-extortion",
+      "severity": "medium",
+      "title": "atomicWrite.readFileWithBackup (secrets.ts の読み) は EACCES / EISDIR / EIO を「無い」(null) に畳んでいたので、読めなかっただけの保管ファイルは {} として読まれ、次の setToken がその上に書いて中身を全部消した (実測: 本体と .prev をディレクトリに置き換える → setToken(notion) が成功を返し .prev の鍵は [notion] だけ)。大きすぎる / 壊れた JSON の枝 (パス 313) は断っていたのに、読めない枝だけが素通りだった",
+      "status": "fixed",
+      "fix": "readIfWithinCap は ENOENT / ENOTDIR だけを「無い」とし、他の読み取りエラーは投げる。readFileWithBackup は本体が読めなければ控えを試し、控えも読めなければ投げる (null はどちらも本当に無いときだけ)。secrets.readStore はそれを捕まえて lastReadDegraded = 読み取りに失敗 (code) にするので、setToken / clearToken は SecretsUnreadableError で断り、listConfiguredServices は空を名乗らない。atomicWrite.test.ts の「ディレクトリなら null」(弱さを仕様にしていた検査) を「投げる」へ反転。対照: catch を戻す → ★ 1 件 + atomicWrite 2 件。",
+      "regression": {
+        "file": "src/main/__tests__/secretsUnreadableWrite.test.ts",
+        "test": "★ 本体も控えも読めない (EISDIR) とき、保存は断り、一覧は空を名乗らない (threat: T-061)"
+      }
+    },
+    {
+      "id": "T-062",
+      "found": "2026-10-15",
+      "foundBy": "hunt pass 523 (監査役の指摘を自分で再現)",
+      "surface": "main-ipc",
+      "class": "ai-phishing",
+      "severity": "low",
+      "title": "OAuth の loopback 待受 (listenForCallback) は wrong-path / bad host の迷い要求が 50 件来ると server.close() していたが、promise は解決も拒否もされないので、本物のコールバックは ECONNREFUSED になり利用者は 5 分の時間切れまで待たされ、認可コードはブラウザの URL 欄に未使用のまま残った (実測: GET /favicon.ico 50 件 → 121 ms で閉じ・正規のコールバックは ECONNREFUSED・promise は pending)。PNA / CORS の preflight も迷い要求に数えられたので、同じ端末の別プロセスやポート走査する頁は GET が通る必要すら無かった",
+      "status": "fixed",
+      "fix": "迷い要求では閉じない —— 待受の寿命を決めるのは外側タイムアウト (5 分) と cancel() と正規のコールバックの 3 つだけ (state-mismatch の枝が最初からそう書いていた)。STRAY_LIMIT / strayCount と 4 つの Stryker pragma を消した。oauth.test.ts に「60 件の迷い要求 (wrong-path 30 + bad host 30) の後でも本物のコールバックが 200 で解決する」を足し、既存の 49 件の検査の題名を実物へ。対照: 50 件で close する形へ戻す → ★ 1 件 (ECONNREFUSED)。",
+      "regression": {
+        "file": "src/main/__tests__/oauth.test.ts",
+        "test": "★ 迷い要求 (wrong-path / bad host) が 60 件来ても待受は閉じず、本物のコールバックが解決する (threat: T-062)"
+      }
+    },
+    {
+      "id": "T-063",
+      "found": "2026-10-15",
+      "foundBy": "hunt pass 523 (監査役の指摘を自分で再現)",
+      "surface": "renderer",
+      "class": "ransomware-extortion",
+      "severity": "medium",
+      "title": "T-049 (解錠中の施錠を解錠の完了が上書きしない) は unlock() だけに入れており、changePassword / recoverWithMnemonic / initialize の 3 つの書き込み口は PBKDF2 の窓に lock() (自動施錠・別タブの中継・今すぐロック) が届いても完了時に currentKey を据えていた (実測: 3 つとも isUnlocked() === true・トークンも読める)。施錠された保管庫のパスワード変更は解錠にまでなっていた",
+      "status": "fixed",
+      "fix": "3 つとも最初の await より前に世代 (lockToken) を取り、鍵を据えるのは操作の開始から施錠が 1 度も届いていないときだけ。保管庫の書き換え (新しいパスワード / 復旧) はそのまま通す —— 利用者の求めた 2 つを両方叶え、その後は新しいパスワードで解錠する。changePassword は施錠された保管庫を解錠にしない (unlockedAtStart)。recoverWithMnemonic の世代は decodeMnemonic (最初の await) より前 —— openDb の後ろに置いた 1 度目は検査が落ちて分かった。対照: 世代の判定を外す → ★ 4 件。",
+      "regression": {
+        "file": "src/renderer/security/__tests__/vaultLockDuringUnlock.test.ts",
+        "test": "★ 変更中に lock() が届けば鍵を据えない —— パスワードは変わっている (threat: T-063)"
+      }
+    },
+    {
+      "id": "T-064",
+      "found": "2026-10-15",
+      "foundBy": "hunt pass 523 (監査役の指摘を自分で再現)",
+      "surface": "renderer",
+      "class": "ransomware-extortion",
+      "severity": "medium",
+      "title": "initialize() の「既に在るか」(readonly 取引の idbGet) と書き込み (readwrite 取引の put) が別の取引だったので、初回の設定画面を 2 つの窓で同時に済ませると両方が成功し、後の方が meta / master-wrap を黙って上書きした (実測: A・B とも fulfilled・24 語を 2 組見せ・負けた窓は自分の master 鍵でその場では動くが、再読込後はその窓が保存したトークンが全部 null・その 24 語は「リカバリーキーが違います」)。黙った資格情報の喪失と死んだ復旧キー",
+      "status": "fixed",
+      "fix": "idbPutAll の項に add: true を足し、initialize は meta と master-wrap を add で書く —— 鍵が既に在れば ConstraintError で取引ごと abort し、2 つ目は「Vault は既に初期化されています」で断られる (1 つの取引の中で存在と書き込みが決まる)。tx.onerror は要求の error (ConstraintError) を先に読む (tx.error はその時点では空)。vaultPairedWrites の記録子は add も数える。vault.test.ts の半分だけ消して再初期化する fixture は master-wrap も消す形へ。対照: add を put へ戻す → ★ 1 件 (両方 fulfilled)。",
+      "regression": {
+        "file": "src/renderer/security/__tests__/vaultLockDuringUnlock.test.ts",
+        "test": "★ 同時に初期化すると 1 つだけ通り、もう 1 つは「既に初期化されています」で断られる (threat: T-064)"
+      }
+    },
+    {
+      "id": "T-065",
+      "found": "2026-10-15",
+      "foundBy": "hunt pass 523 (監査役の指摘を自分で再現)",
+      "surface": "renderer",
+      "class": "ai-phishing",
+      "severity": "low",
+      "title": "StatusBar の errorMessage (useServiceData が fetchSnapshot の result.message をそのまま渡す欄・58 画面が通る) は externalTextOnOneLine を通さず素で描いていた (隣の credentialError は T-045 で畳んでいた)。ブラウザ版の Ollama の失敗文は相手の本文を伏字と長さだけ掛けて運ぶので、改行・双方向制御 (U+202E)・不可視字 (U+200B) がそのまま DOM に入り、RLO が後ろの文の見え方を入れ替えた (実測)",
+      "status": "fixed",
+      "fix": "StatusBar.tsx の 1 か所を externalTextOnOneLine(errorMessage) に (58 画面を 1 か所で覆う)。statusBarErrorFold.test.ts が renderToStaticMarkup で描いて生の制御字が 1 つも残らないことを見る (標本: 畳む前の文は 3 種を持つ)。対照: 畳みを外す → ★ 1 件。",
+      "regression": {
+        "file": "src/renderer/components/__tests__/statusBarErrorFold.test.ts",
+        "test": "★ 改行・双方向制御・不可視字を持つ失敗文は、畳んだ形で描かれる (threat: T-065)"
+      }
+    },
+    {
+      "id": "T-066",
+      "found": "2026-10-15",
+      "foundBy": "hunt pass 523 (監査役の指摘を自分で再現)",
+      "surface": "network",
+      "class": "ssrf-and-credential-egress",
+      "severity": "low",
+      "title": "fetchViaProxy は封筒の status 204 / 205 / 304 を new Response(body, {status}) へそのまま渡し、Response は本文を持てない status では本文が空文字でも TypeError (Invalid response status code) を投げる (3 つとも実測)。上流の 204 を忠実に中継した Worker の封筒が、アプリの「封筒が壊れている」ではなくブラウザ内部の文で落ち、action_failed としてその文が画面へ出た (今日の 14 の中継 action に 204 を返す物は無いが、Worker は利用者が配る物)",
+      "status": "fixed",
+      "fix": "parseProxyEnvelope は null body status (NULL_BODY_STATUSES = 204 / 205 / 304) では本文を捨て、fetchViaProxy は new Response(null, …) を渡す。proxyEnvelope.test.ts に 3 status × (parse / fetchViaProxy) と対照。proxy.ts は鎖の保護対象 (chain:append)。対照: NULL_BODY の分岐を外す → ★ 1 件 (TypeError)。",
+      "regression": {
+        "file": "src/renderer/network/__tests__/proxyEnvelope.test.ts",
+        "test": "★ 204 / 205 / 304 は本文を捨て、fetchViaProxy は投げずにその status の Response を返す (threat: T-066)"
+      }
+    },
+    {
+      "id": "T-067",
+      "found": "2026-10-15",
+      "foundBy": "hunt pass 523 (監査役の指摘を自分で再現)",
+      "surface": "renderer",
+      "class": "ransomware-extortion",
+      "severity": "low",
+      "title": "planRestore (計画) は畳んでから関門を通し、importAll (実行) は関門を通してから畳んでいた (T-048 で「同じ判定」にしたはずの 2 つの順序が逆)。同じ id が「正しい行 → 後ろに壊れた写し」と並ぶ控えでは、計画は後の壊れた写しだけを残して「形式不正 1 件」と数え正しい行を捨て (toImport が空)、importAll へ直に渡せば入っていた。パネルは plan.toImport を渡すので、利用者には正しい行が消えて見えた (実測)",
+      "status": "fixed",
+      "fix": "planRestore も関門 → 畳む の順にし、dropped = 関門で落ちた件数・duplicateIds = 関門を通った中の重複、と数え直す。restoreIdCollision.test.ts に「正しい行 + 壊れた写し」で計画と importAll が同じ答え (X 1 件) を出すことと、正しい行 2 つなら後が勝つ対照。対照: 順序を戻す → ★ 1 件。",
+      "regression": {
+        "file": "src/renderer/data/__tests__/restoreIdCollision.test.ts",
+        "test": "★ 計画は正しい行を入れ、壊れた写しだけを形式不正に数える —— importAll と同じ答え (threat: T-067)"
+      }
+    },
+    {
+      "id": "T-068",
+      "found": "2026-10-15",
+      "foundBy": "hunt pass 523 (監査役の指摘を自分で再現)",
+      "surface": "ai",
+      "class": "ai-phishing",
+      "severity": "medium",
+      "title": "AssistantPage.send() は最新の発話だけを危機・他害で判定して replyOffline へ逃がす (パス 514) が、その発話は messages に残るので、次の発話を送るときに直前の危機の文が会話履歴 (turns = history.slice(-16)) として外のモデル (chat / chatAll / ベスト3・設定済みの全提供者) へ届いていた。アプリが出した窓口の全文も assistant 役の偽の発話として送られた (実測: 「もう死にたい」→ 送信 0 件、続けて「ありがとう」→ chat の messages = [危機の文, 窓口の全文, ありがとう])。履歴は localStorage に 50 発話残るので再読込後も同じ",
+      "status": "fixed",
+      "fix": "turnsForModel(history) を 1 つ置き、窓 (末尾 16 発話) を切った後に ① 危機・他害の判定に当たる利用者の発話 ② offline のアシスタント発話 (アプリ自身の声 —— モデルの前の返答ではない) を外す。chat / chatAll / ベスト3 の 3 経路とも同じ turns を読む。assistantCrisisDeterministic.test.ts (jsdom・実物の画面) に 2 発話目の payload を読む検査と turnsForModel の単体 (窓は先に切る)。対照: filter を外す → ★ 2 件。",
+      "regression": {
+        "file": "src/renderer/pages/__tests__/assistantCrisisDeterministic.test.ts",
+        "test": "★ 危機の文の次の発話で、chat の messages に危機の文も窓口の全文も入らない (threat: T-068)"
+      }
+    },
+    {
+      "id": "T-069",
+      "found": "2026-10-15",
+      "foundBy": "hunt pass 523 (監査役の指摘を自分で再現)",
+      "surface": "ai",
+      "class": "ai-phishing",
+      "severity": "low",
+      "title": "VillagePage は replyTo の相談の返答 (kind: counsel —— 危機でない心の不調「つらい、眠れない」と破壊衝動「物を壊したい」のセルフケアの案内 + 免責) を吹き出しに出した直後、AI の条件が危機・他害しか見ないのでその文を assistant/chat へ送り、返答で吹き出しと読み上げを置き換えていた (実測: MODEL_REPLY が出て相談の文・免責は消えた)。コンシェルジュ (chatbot.replyTo 経由) は同じ入力を端末内だけで答えるので 2 つの入口が食い違っていた",
+      "status": "fixed",
+      "fix": "AI の条件に reply.kind !== 'counsel' を足す (crisisOrHarm は多層防御として残す)。villageCrisisNoAi.test.ts の条件の正規表現と対照を新しい形へ、villageCounselNoOverwrite.test.ts (jsdom・実物の村) が「つらい、眠れない」「物を壊したい」で chat が呼ばれず端末内の相談の文が残ること + 普通の質問はモデルへ届く対照。対照: 条件を戻す → ★ 2 件 + 静的 1 件。",
+      "regression": {
+        "file": "src/renderer/pages/__tests__/villageCounselNoOverwrite.test.ts",
+        "test": "★ 危機でない心の不調の文は端末内の相談の返答のまま —— chat へ送らず、上書きもしない (threat: T-069)"
+      }
+    },
+    {
+      "id": "T-070",
+      "found": "2026-10-15",
+      "foundBy": "hunt pass 523 (監査役の指摘を自分で再現)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "app-builder-lib の findAndReadConfig は electron-builder.yml → .yaml → .json → .json5 → .toml → .js → .cjs → .ts の順に探して最初に在った物を読む (node_modules/app-builder-lib/out/util/config/load.js:54 で実測)。T-043 は package.json#build だけを塞いでおり、鎖と CODEOWNERS で守った electron-builder.json の隣に 2 行の .yml を置くだけで release.yml の署名ビルドが攻撃者の設定 (hook の afterPack / files / electronFuses の消失) で梱包され、chain:verify は緑のまま",
+      "status": "fixed",
+      "fix": "scripts.build を `electron-builder --config electron-builder.json` にして設定を名指しし (getConfig は configPath が在れば探索しない)、gateScriptsPinned.test.ts が綴りの固定を新しい形へ・7 つの影の綴りが 1 つも無いことを留める。対照: .yml を置く → ★ 1 件 / 綴りから --config を外す → ★ 1 件。",
+      "regression": {
+        "file": "src/shared/__tests__/gateScriptsPinned.test.ts",
+        "test": "★ electron-builder.json の隣に、先に読まれる綴りの設定が 1 つも無い (threat: T-070)"
+      }
+    },
+    {
+      "id": "T-071",
+      "found": "2026-10-15",
+      "foundBy": "hunt pass 523 (監査役の指摘を自分で再現)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "pages.yml は assets/icon.svg と assets/og.png を _site/ へそのまま公開するが、どの門も鎖も CODEOWNERS も assets/ のこの 2 つを見ていなかった (lint-artifact-csp に svg の扱いは無く lint-forbidden の SCAN_ROOTS に assets は無い)。icon.svg は <link rel=icon> としては script を走らせないが、同じ URL を直接開くと SVG 文書として <script> が走る (実測: chromium --dump-dom で属性が立った)。公開版のオリジン (app.html / lite.html と同じ) で動く script で、SVG 文書には CSP が無い。パス 480 の記録「icon.svg は読まれるだけでスクリプトは走らない」は icon としての使い方についてだけ真だった",
+      "status": "fixed",
+      "fix": "assets/icon.svg と assets/og.png を整合性チェーンの保護対象 (PROTECTED) と CODEOWNERS へ。publishedAssetsInert.test.ts が pages.yml の cp の行から公開する assets を走査で導いて全部が保護対象であること・公開する SVG が <script / on*= / foreignObject / iframe / embed / object / javascript: / use / 外部 href を 1 つも持たないことを留める (標本: 直す前の探りの <script> に針が当たる)。対照: PROTECTED から外す → ★ 1 件 / icon.svg に <script> → ★ 1 件。",
+      "regression": {
+        "file": "src/shared/__tests__/publishedAssetsInert.test.ts",
+        "test": "★ 公開する SVG は script も イベント属性も外部参照も持たない (threat: T-071)"
+      }
+    },
+    {
+      "id": "T-072",
+      "found": "2026-10-15",
+      "foundBy": "hunt pass 523 (監査役の指摘を自分で再現)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "vite は css.postcss がオブジェクトでないとき postcss-load-config で postcss.config.{js,cjs,mjs,ts} / .postcssrc* / package.json#postcss を探して require する。直下に postcss.config.cjs を 1 本置くだけで vite build (= release.yml の署名鍵を持つ Build・pages.yml・ci.yml) がそれを実行した (実測: 印が 1 度刷られ exit 0・lint:malware / lint:forbidden / lint:deps とも緑)。vite.config.ts は鎖の保護対象だが PostCSS の設定はどの門も見ていなかった",
+      "status": "fixed",
+      "fix": "vite.config.ts に css: { postcss: {} } (オブジェクトなら探索しない) を固定し、gateScriptsPinned.test.ts が vite.config.ts の綴り・12 の設定ファイル名が 1 つも無いこと・package.json に postcss キーが無いことを留める。vite.config.ts は鎖の保護対象 (chain:append)。対照: css の行を外す → ★ 1 件 / postcss.config.cjs を置く → ★ 1 件。",
+      "regression": {
+        "file": "src/shared/__tests__/gateScriptsPinned.test.ts",
+        "test": "★ 直下に PostCSS の設定ファイルが 1 本も無く、package.json にも postcss キーが無い (threat: T-072)"
+      }
     }
   ],
   "huntBacklog": [
@@ -1177,7 +1387,7 @@
     {
       "surface": "main-ipc",
       "item": "MAIN-3 lint:ipc-handlers は式本体 (`=>` の後に block を持たない) の handler を走査しない",
-      "why": "2026-10-15 に監査役が静的に指摘。実物の handler は全部 block 本体なので今日の素通りは 0 件 —— 針の死角として記録し、次に式本体の handler が 1 つ増えた日に門が黙る形。"
+      "why": "2026-10-15 に監査役が静的に指摘。実物の handler は全部 block 本体なので今日の素通りは 0 件 —— 針の死角として記録し、次に式本体の handler が 1 つ増えた日に門が黙る形。 ★ 2026-10-15 (パス 523) に測り直した: 式本体の handler は main.ts:254 / 412 / 416 / 583 に 4 つ在り、そのうち secrets:protection は stat の生の文を返さない (safeErrorMessage を通る) ので今日の実害は 0。門の針を式本体へ広げるか、4 つを block 本体へ書き換えるかの選択。"
     },
     {
       "surface": "main-ipc",
@@ -1190,9 +1400,9 @@
       "why": "2026-10-15 に GitHub API で実測 (rulesets 0 件・protection 無し)。CODEOWNERS (T-003) は Require review from Code Owners が有効でないと効かず、整合性チェーンは署名を持たないので、直接 push で保護対象と鎖を一緒に書き換えられる。所有者が Settings → Rules で main に「PR 必須・Code Owners のレビュー必須・force push 禁止」を付ける判断。"
     },
     {
-      "surface": "network",
-      "item": "NET-6 配る Worker の denyReason は hostname しか見ず、許可リストのホストへ非既定のポート (api.notion.com:8443) や userinfo (user:pw@) を付けた上流へも資格情報ごと転送する",
-      "why": "2026-10-15 に監査役が probe で実測し、私はまだ再現していない。実害は無い側 (ホストは Notion のまま・アプリの fetchViaProxy はポートも userinfo も出さない・Workers の fetch は credentials 付きの URL を拒む) なので強める候補: u.port === '' と空の username / password を denyReason に足す (PROXY_EXAMPLE.md は保護対象なので chain:append が要る)。"
+      "surface": "ai",
+      "item": "AI-6 アドバイザーの質問欄 (stocks/advise・business/advise と record-entry の 4 経路) に危機の判定 (detectCrisis) が無い —— 「もう死にたい。株をどうすれば」が checkAdvisorQuestion (空 / 長さ / 制御文字) だけを通って api.anthropic.com へ届く (2026-10-15 実測・main と web-shim の両方)",
+      "why": "detectCrisis は renderer/data/counseling.ts に住み、main は import できない (lint:imports の境界)。直すには CRISIS_MARKERS と畳み込みを shared へ出して checkAdvisorQuestion に 4 つ目の理由 (crisis) を足す形で、lint:shared-judgement と mutate の台帳が動く。設計の決定を含むので別パスで。"
     }
   ],
   "clearedBacklog": [

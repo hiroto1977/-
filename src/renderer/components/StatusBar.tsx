@@ -284,7 +284,12 @@ export function StatusBar({
         </span>
       ) : null}
       {errorMessage ? (
-        <span style={{ color: 'var(--danger)', fontSize: 12 }}>{errorMessage}</span>
+        // threat: T-065 —— 取得の失敗文も 1 行に畳む (2026-10-15 · パス 523)。隣の `credentialError` は
+        // T-045 で畳んでいたが、`useServiceData` が `fetchSnapshot` の `result.message` をそのまま渡す
+        // この欄は素だった —— 58 画面が通る 1 か所。ブラウザ版の Ollama の失敗文は相手の本文を
+        // 伏字と長さだけ掛けて運ぶので、改行・双方向制御 (U+202E)・不可視字がそのまま DOM に入り、
+        // RLO が後ろの文の見え方を入れ替えていた (実測)。
+        <span style={{ color: 'var(--danger)', fontSize: 12 }}>{externalTextOnOneLine(errorMessage)}</span>
       ) : null}
     </div>
   );

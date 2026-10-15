@@ -25,7 +25,9 @@
 /.cursor/rules/10-boundaries.mdc @hiroto1977
 /.cursor/rules/20-gates.mdc @hiroto1977
 /.cursor/rules/30-conventions.mdc @hiroto1977
+/assets/icon.svg @hiroto1977
 /assets/manifest.webmanifest @hiroto1977
+/assets/og.png @hiroto1977
 /assets/sw.js @hiroto1977
 /docs/PROXY_EXAMPLE.md @hiroto1977
 /docs/SECURITY_CHAIN.md @hiroto1977

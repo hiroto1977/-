@@ -288,7 +288,15 @@ export function isSafeExportPath(filePath: string, home: string, ext: string): b
   if (filePath.length > 1024) return false;
   if (/[\0\r\n]/.test(filePath)) return false;
   if (!filePath.endsWith(ext)) return false;
-  const resolved = path.resolve(filePath);
+  // threat: T-060 —— **正規化済みの絶対パスだけを受ける** (2026-10-15 · パス 523)。
+  // T-042 (下) は「親は固定の 2 つだけ」と述べたが、比べていたのは `path.resolve` した後の親で、
+  // 書き出しが `mkdir -p` へ渡すのは**生の** `filePath` の親だった —— `..` を挟んだ
+  // `data/templates/../../state.json/../data/y.html` は resolve すると `data/y.html` なので通り、
+  // mkdir は `state.json` という名のディレクトリを作っていた (実測・AI 監査の再現。以後の状態ファイルの
+  // 保存が EISDIR で失敗する T-002 の形が、親の検査を**通る綴り**で戻っていた)。調べた物と書く物を
+  // 同じにする —— `..` / 相対 / 末尾の区切り / 重なった区切りは resolve で形が変わるので、変わる物は断る。
+  if (path.resolve(filePath) !== filePath) return false;
+  const resolved = filePath;
   // threat: T-042 —— 親は固定の 2 つだけ。`startsWith(root + sep)` の「任意の深さ」は
   // mkdir -p に中間要素を作らせる (根そのものがファイル目標になることも、ここで同時に弾く)。
   return exportParentDirs(home).includes(path.dirname(resolved));

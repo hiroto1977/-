@@ -107,3 +107,32 @@ describe('復元の id の衝突 (パス 522 · T-048)', () => {
     expect(out).toEqual([{ id: 'a', v: 3 }, { id: 'b', v: 2 }]);
   });
 });
+
+/*
+ * **順序も importAll と同じ: 関門 → 畳む (2026-10-15 · パス 523 · threat: T-067)。**
+ *
+ * `planRestore` は畳んでから関門を通していたので、同じ id が「正しい行 → 後ろに壊れた写し」と並ぶ控えでは
+ * 後の壊れた写しだけを残して「形式不正 1 件」と数え、正しい行を捨てた (`toImport` が空)。`importAll` は
+ * 関門を通してから畳むので、同じ控えで正しい行を書いた —— 2 つの「同じ判定」が割れていた (実測)。
+ */
+describe('同じ id の正しい行と壊れた写し (threat: T-067)', () => {
+  it('★ 計画は正しい行を入れ、壊れた写しだけを形式不正に数える —— importAll と同じ答え (threat: T-067)', async () => {
+    const store = getRecordStore();
+    const incoming = [rec('X', SALES_COLLECTION, GOOD_SALE, 1), rec('X', SALES_COLLECTION, { date: 'bad' }, 2)];
+    const plan = planRestore([], incoming, 'merge', null, false);
+    expect(plan.toImport.map((r) => r.id)).toEqual(['X']);
+    expect(plan.added).toBe(1);
+    expect(plan.dropped).toBe(1);
+    expect(plan.duplicateIds).toBe(0);
+    expect(await store.importAll(incoming)).toBe(1);
+    expect((await store.list(SALES_COLLECTION)).map((r) => r.id)).toEqual(['X']);
+  });
+
+  it('対照: 正しい行が 2 つ並べば後が勝ち、重複 1 件・形式不正 0 件', () => {
+    const incoming = [rec('X', SALES_COLLECTION, GOOD_SALE, 1), rec('X', SALES_COLLECTION, { ...GOOD_SALE, amount: 2000 }, 2)];
+    const plan = planRestore([], incoming, 'merge', null, false);
+    expect(plan.toImport.map((r) => r.data['amount'])).toEqual([2000]);
+    expect(plan.duplicateIds).toBe(1);
+    expect(plan.dropped).toBe(0);
+  });
+});

@@ -61,3 +61,106 @@ describe('Vault — lock() during unlock() (threat: T-049)', () => {
     expect(await v.getToken('github')).toBe('ghp_x');
   });
 });
+
+/*
+ * **残る 3 つの書き込み口も同じ世代を見る (2026-10-15 · パス 523 · threat: T-063)。**
+ *
+ * `unlock()` だけが世代を見ており、`changePassword` / `recoverWithMnemonic` / `initialize` は
+ * PBKDF2 の窓に `lock()` が届いても完了時に鍵を据えていた (実測: 3 つとも `isUnlocked() === true`・
+ * トークンも読める)。保管庫の書き換え (新しいパスワード) は通し、鍵だけ据えない。
+ */
+describe('Vault — lock() during changePassword / recoverWithMnemonic / initialize (threat: T-063)', () => {
+  const NEW = 'new-password-long-enough-123';
+
+  it('★ 変更中に lock() が届けば鍵を据えない —— パスワードは変わっている (threat: T-063)', async () => {
+    const v = getVault();
+    await v.initialize(PW);
+    await v.setToken('github', 'ghp_secret');
+    const p = v.changePassword(PW, NEW);
+    v.lock();
+    await p;
+    expect(v.isUnlocked()).toBe(false);
+    await expect(v.getToken('github')).rejects.toThrow(/ロックされています/);
+    await v.unlock(NEW);
+    expect(await v.getToken('github')).toBe('ghp_secret');
+  });
+
+  it('★ 復旧中に lock() が届けば鍵を据えない —— 新しいパスワードで解錠できる (threat: T-063)', async () => {
+    const v = getVault();
+    const { mnemonic } = await v.initialize(PW);
+    await v.setToken('github', 'ghp_secret');
+    const p = v.recoverWithMnemonic(mnemonic, NEW);
+    v.lock();
+    await p;
+    expect(v.isUnlocked()).toBe(false);
+    await v.unlock(NEW);
+    expect(await v.getToken('github')).toBe('ghp_secret');
+  });
+
+  it('★ 初期化中に lock() が届けば鍵を据えない —— 決めたパスワードで解錠できる (threat: T-063)', async () => {
+    const v = getVault();
+    const p = v.initialize(PW);
+    v.lock();
+    await p;
+    expect(v.isUnlocked()).toBe(false);
+    await v.unlock(PW);
+    expect(v.isUnlocked()).toBe(true);
+  });
+
+  it('★ 施錠された保管庫のパスワード変更は解錠にならない (解錠の入口は unlock だけ) (threat: T-063)', async () => {
+    const v = getVault();
+    await v.initialize(PW);
+    v.lock();
+    await v.changePassword(PW, NEW);
+    expect(v.isUnlocked()).toBe(false);
+    await v.unlock(NEW);
+    expect(v.isUnlocked()).toBe(true);
+  });
+
+  it('対照: 施錠が届かなければ 3 つとも今までどおり解錠したまま', async () => {
+    const v = getVault();
+    const { mnemonic } = await v.initialize(PW);
+    expect(v.isUnlocked()).toBe(true);
+    await v.changePassword(PW, NEW);
+    expect(v.isUnlocked()).toBe(true);
+    await v.recoverWithMnemonic(mnemonic, PW);
+    expect(v.isUnlocked()).toBe(true);
+  });
+});
+
+/*
+ * **初回の初期化は 1 つしか通さない (2026-10-15 · パス 523 · threat: T-064)。**
+ *
+ * 「既に在るか」の読み取りと書き込みが別の取引だったので、初回の設定画面を 2 つの窓で同時に
+ * 済ませると両方が通り、後の方が meta / master-wrap を黙って上書きした (実測: 両方 fulfilled・
+ * 24 語を 2 組見せ・負けた窓が保存したトークンは再読込後に全部 null・その 24 語は
+ * 「リカバリーキーが違います」)。`add` で書くと 2 つ目は ConstraintError で abort する。
+ */
+describe('Vault — 2 つの窓の同時 initialize() (threat: T-064)', () => {
+  it('★ 同時に初期化すると 1 つだけ通り、もう 1 つは「既に初期化されています」で断られる (threat: T-064)', async () => {
+    const tabA = getVault();
+    _resetVaultForTests();
+    const tabB = getVault();
+    const [ra, rb] = await Promise.allSettled([tabA.initialize(PW), tabB.initialize(PW)]);
+    const settled = [ra, rb];
+    expect(settled.filter((r) => r.status === 'fulfilled')).toHaveLength(1);
+    const lost = settled.find((r) => r.status === 'rejected') as PromiseRejectedResult;
+    expect(lost.reason).toBeInstanceOf(Error);
+    expect((lost.reason as Error).message).toMatch(/既に初期化されています/);
+    // 勝った窓が保存した物は、再読込 (別の instance) から同じパスワードで読める。
+    const winner = ra.status === 'fulfilled' ? tabA : tabB;
+    const loser = ra.status === 'fulfilled' ? tabB : tabA;
+    expect(loser.isUnlocked(), '負けた窓は鍵を据えない').toBe(false);
+    await winner.setToken('github', 'ghp_from_winner');
+    _resetVaultForTests();
+    const reload = getVault();
+    await reload.unlock(PW);
+    expect(await reload.getToken('github')).toBe('ghp_from_winner');
+  });
+
+  it('対照: 1 つずつなら 2 回目は今までどおり「既に初期化されています」', async () => {
+    const v = getVault();
+    await v.initialize(PW);
+    await expect(v.initialize(PW)).rejects.toThrow(/既に初期化されています/);
+  });
+});

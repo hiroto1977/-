@@ -500,8 +500,9 @@ function ConnectionSetup({
             <strong>A. 同じ Wi-Fi で使う（追加ソフト不要）</strong>
             <ol style={{ margin: '4px 0 0', paddingLeft: '1.4em', color: 'var(--text-muted)' }}>
               <li>
-                PC で Ollama を LAN に公開して起動:{' '}
-                <code>OLLAMA_HOST=0.0.0.0 OLLAMA_ORIGINS=&quot;*&quot; ollama serve</code>
+                PC で Ollama を LAN に公開して起動 (許可するのはこのページのオリジンだけ —— {' '}
+                <code>*</code> にすると LAN 上のどの端末のどのサイトからも叩ける):{' '}
+                <code>OLLAMA_HOST=0.0.0.0 OLLAMA_ORIGINS=&quot;{origin.startsWith('http') ? origin : 'http://<PCのIP>:8080'}&quot; ollama serve</code>
               </li>
               <li>
                 同じフォルダの <code>standalone.html</code> を PC から配信:{' '}

@@ -501,6 +501,42 @@ describe('上流のスキームは client と Worker で同じ (パス 345)', ()
     await expect(denyReason(new URL('ftp://api.notion.com/x'))).resolves.toMatch(/http\(s\) only/);
   });
 
+  it('★ Worker は許可リストのホストでも userinfo と既定以外のポートを断る (threat: T-059)', async () => {
+    const denyReason = await workerDenyReason();
+    await expect(denyReason(new URL('https://user:pw@api.notion.com/v1/x'))).resolves.toMatch(/userinfo/);
+    await expect(denyReason(new URL('https://api.notion.com:8443/v1/x'))).resolves.toMatch(/non-default port/);
+    // 対照: 既定のポートは WHATWG URL が落とすので通る。大文字のホストも正規化で通る。
+    await expect(denyReason(new URL('https://api.notion.com:443/v1/x'))).resolves.toBeNull();
+    await expect(denyReason(new URL('https://API.NOTION.COM/v1/x'))).resolves.toBeNull();
+    // 順序: 許可リスト外・平文のほうが具体的なので先に答える。
+    await expect(denyReason(new URL('https://user:pw@evil.example/x'))).resolves.toMatch(/allowlist/);
+    await expect(denyReason(new URL('http://api.notion.com:8080/x'))).resolves.toMatch(/plaintext http/);
+  });
+
+  it('★ client も userinfo と既定以外のポートを封筒に載せる前に断る (threat: T-059)', async () => {
+    const sent: string[] = [];
+    const realFetch = globalThis.fetch;
+    globalThis.fetch = (async (_url: unknown, init?: RequestInit) => {
+      sent.push((JSON.parse(String(init?.body)) as { url: string }).url);
+      return new Response(JSON.stringify({ status: 200, headers: {}, body: '' }), { status: 200 });
+    }) as typeof fetch;
+    try {
+      await expect(
+        fetchViaProxy('https://user:pw@api.notion.com/v1/x', { method: 'GET' }, { url: 'https://proxy.example' }),
+      ).rejects.toThrow(/userinfo/);
+      await expect(
+        fetchViaProxy('https://api.notion.com:8443/v1/x', { method: 'GET' }, { url: 'https://proxy.example' }),
+      ).rejects.toThrow(/既定以外のポート/);
+      // 断ったら封筒は 1 つも送らない (直す前はどちらも Authorization ごと送っていた · 実測 2026-10-15)。
+      expect(sent).toEqual([]);
+      // 対照: 既定のポートの綴りは正規化されて通る。
+      await fetchViaProxy('https://api.notion.com:443/v1/x', { method: 'GET' }, { url: 'https://proxy.example' });
+      expect(sent).toEqual(['https://api.notion.com/v1/x']);
+    } finally {
+      globalThis.fetch = realFetch;
+    }
+  });
+
   it('★ client も同じ標本を同じように扱う (平文 http の公開ホストを断る)', async () => {
     await expect(
       fetchViaProxy('http://api.notion.com/v1/x', { method: 'GET' }, { url: 'https://proxy.example' }),

@@ -128,13 +128,24 @@ async function readStore(): Promise<Record<string, string>> {
   // Primary file, falling back to the `.prev` copy if the primary went missing
   // or corrupt afterwards. The copy holds the content **last written** (パス 134) —
   // never the previous one, so a cleared / rotated token cannot come back.
-  const text = await readFileWithBackup(secretsPath(), MAX_STORE_SIZE);
+  // threat: T-061 —— 読めなかった (EACCES / EISDIR / EIO) は「空」ではない。`readFileWithBackup` は
+  // 本体も控えも読めなければ投げるので、ここで degraded に倒す —— 書き込み側 (`readStoreForWrite`) と
+  // 一覧 (`listConfiguredServices`) が断り、読めなかった中身の上に `{}` を土台にして書かない。
+  let text: string | null;
+  try {
+    text = await readFileWithBackup(secretsPath(), MAX_STORE_SIZE);
+  } catch (err) {
+    const code = (err as NodeJS.ErrnoException).code ?? 'unknown';
+    console.error(`[secrets] secrets file at ${secretsPath()} exists but could not be read (${code}); treating as unreadable`);
+    lastReadDegraded = `読み取りに失敗 (${code})`;
+    return {};
+  }
   if (text == null) return {};
   const store = parseStore(text);
   if (store) return store;
 
   // Primary unparseable → try the backup explicitly before giving up.
-  const prev = await readFileWithBackup(backupPathOf(secretsPath()), MAX_STORE_SIZE); // reads `<path>.prev`
+  const prev = await readFileWithBackup(backupPathOf(secretsPath()), MAX_STORE_SIZE).catch(() => null); // reads `<path>.prev`
   const recovered = parseStore(prev);
   if (recovered) {
 

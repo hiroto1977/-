@@ -173,17 +173,23 @@ describe('readFileWithBackup', () => {
   });
 
   /*
-   * **本体も控えも「在るが読めない」ときは、`undefined` ではなく `null`** (パス 502)。
+   * **本体も控えも「在るが読めない」ときは投げる** (2026-10-15 · パス 523 · threat: T-061)。
    *
-   * 宣言は `Promise<string | null>` で、呼び手 (`secrets.ts`) は `=== null` で「どちらも無い」を見る。
-   * `stat` は通るが `readFile` が失敗する物 (ディレクトリ・権限) は、`??` の右へ倒れた先も同じ形で
-   * 失敗するので、両方が読めないときに**最後に返る値**が契約の値でなければならない。
+   * パス 502 までは `null` (=「どちらも無い」) を返していた。宣言は `Promise<string | null>` で、
+   * 呼び手 (`secrets.ts`) は `null` を「空の保管庫」と読むので、読めなかっただけの中身の上に次の保存が
+   * `{}` を土台にして書いた。`null` は本当にどちらも無い (か上限超え) ときだけ。
    */
-  it('★ 本体も控えも在るのに読めない (ディレクトリ) なら、undefined ではなく null', async () => {
+  it('★ 本体も控えも在るのに読めない (ディレクトリ) なら、null ではなく投げる (threat: T-061)', async () => {
     const target = path.join(dir, 'dirs.json');
     await fs.mkdir(target);
     await fs.mkdir(`${target}.prev`);
-    expect(await readFileWithBackup(target, CAP)).toBeNull();
+    await expect(readFileWithBackup(target, CAP)).rejects.toMatchObject({ code: 'EISDIR' });
+  });
+
+  it('★ 本体が無く控えが読めない (EISDIR) ときも投げる —— 無いと読めないを混ぜない (threat: T-061)', async () => {
+    const target = path.join(dir, 'absent-badprev.json');
+    await fs.mkdir(`${target}.prev`);
+    await expect(readFileWithBackup(target, CAP)).rejects.toMatchObject({ code: 'EISDIR' });
   });
 
   it('本体が読めなければ控えを読む (在るのに読めない本体は「無い」と同じに扱う)', async () => {

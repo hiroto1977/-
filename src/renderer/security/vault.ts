@@ -330,7 +330,7 @@ function idbPut(db: IDBDatabase, store: string, key: string, value: unknown): Pr
  */
 function idbPutAll(
   db: IDBDatabase,
-  entries: readonly { store: string; key: string; value: unknown }[],
+  entries: readonly { store: string; key: string; value: unknown; add?: boolean }[],
 ): Promise<void> {
   // **空なら何もしない。** `db.transaction([], …)` は仕様上 InvalidAccessError を
   // 投げる (実測で確認)。呼び出し側は今どこも空を渡さないが、「書くものが無い」を
@@ -343,10 +343,22 @@ function idbPutAll(
   return new Promise((resolve, reject) => {
     const stores = [...new Set(entries.map((e) => e.store))];
     const tx = db.transaction(stores, 'readwrite');
-    for (const e of entries) tx.objectStore(e.store).put(e.value, e.key);
+    // `add: true` の項は **鍵が既に在れば ConstraintError で取引ごと abort する** (threat: T-064)。
+    // 初期化が「既に在るか」を別の読み取り取引で見てから `put` で書くと、2 つの窓が同時に
+    // 初期化したとき両方が成功し、後の方が meta / master-wrap を**黙って上書き**する。
+    for (const e of entries) {
+      // (変数名を `store` にしない —— レコードストアの書き込み台帳の走査 (`store.add(`) は
+      // IndexedDB の objectStore と見分けられない。)
+      const idbStore = tx.objectStore(e.store);
+      if (e.add === true) idbStore.add(e.value, e.key);
+      else idbStore.put(e.value, e.key);
+    }
     tx.oncomplete = () => resolve();
-    // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では失敗させられない。
-    tx.onerror = () => reject(tx.error ?? new Error('idb put-all failed'));
+    // `add` の ConstraintError は**要求**のエラーとして上がり、`tx.error` はまだ空なので、
+    // event の target (要求) の error を先に見る (threat: T-064)。
+    tx.onerror = (ev) =>
+      // Stryker disable next-line LogicalOperator,StringLiteral: `tx.error` が入る経路は fake-indexeddb では失敗させられない。
+      reject((ev.target as IDBRequest | null)?.error ?? tx.error ?? new Error('idb put-all failed'));
     // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: 同上 (abort 経路)。
     tx.onabort = () => reject(tx.error ?? new Error('idb put-all aborted'));
   });
@@ -764,6 +776,9 @@ class BrowserVault implements Vault {
     if (moreThanChars(password, MAX_PASSWORD_CHARS)) {
       throw new Error(`パスワードが長すぎます (${MAX_PASSWORD_CHARS} 字以内)`);
     }
+    // threat: T-063 —— 初期化のあいだに届いた施錠を、初期化の完了が上書きしない (`unlock` の T-049 と同じ)。
+    // **最初の await より前に**世代を取る (openDb の後ろだと、その窓に届いた施錠を見落とす)。
+    const epoch = this.lockToken;
     const db = await openDb();
     try {
       const existing = await idbGet<VaultMeta>(db, META_STORE, 'vault');
@@ -844,18 +859,36 @@ class BrowserVault implements Vault {
         // その場で読めなくなり、復旧しても失われる結末は変わらない。master-wrap は
         // master 鍵が無いと作れず、master 鍵は復旧枝からしか出てこないので、
         // 解錠時に**直す**こともできない。だから塞ぐのは**作る側**だけにする。
-        await idbPutAll(db, [
-          { store: META_STORE, key: 'vault', value: meta },
-          {
-            store: META_STORE,
-            key: 'master-wrap',
-            value: { iv: passwordWrappedMaster.iv, ciphertext: passwordWrappedMaster.ciphertext },
-          },
-        ]);
+        //
+        // threat: T-064 —— **`add` で書く** (2026-10-15 · パス 523)。上の「既に在るか」の読み取りと
+        // この書き込みは別の取引なので、初回の設定画面を 2 つの窓で同時に済ませると両方が通り、
+        // 後の方の meta / master-wrap が前の方を上書きしていた (実測: A・B とも fulfilled・24 語を
+        // 2 組見せ・負けた窓はその場では動く (自分の master 鍵を持つ) が、再読込後はその窓が
+        // 保存したトークンが全部 null・その窓の 24 語は「リカバリーキーが違います」)。
+        // `add` は鍵が既に在れば ConstraintError で取引ごと abort するので、2 つ目は必ず断られる。
+        try {
+          await idbPutAll(db, [
+            { store: META_STORE, key: 'vault', value: meta, add: true },
+            {
+              store: META_STORE,
+              key: 'master-wrap',
+              value: { iv: passwordWrappedMaster.iv, ciphertext: passwordWrappedMaster.ciphertext },
+              add: true,
+            },
+          ]);
+        } catch (err) {
+          // DOMException は環境によって Error を継がないので名前だけで見る。
+          if ((err as { name?: unknown } | null)?.name === 'ConstraintError') {
+            throw new Error('Vault は既に初期化されています');
+          }
+          throw err;
+        }
 
         // 4. Re-import the key non-extractable for runtime use.
         const nonExtractable = await importNonExtractable(masterRaw);
-        this.currentKey = nonExtractable;
+        // threat: T-063 —— 導出のあいだに `lock()` が届いていれば鍵は据えない (保管庫は書けている。
+        // 利用者は今決めたパスワードで解錠する)。
+        if (this.lockToken === epoch) this.currentKey = nonExtractable;
         // ここに来る時点で下限を強制済み。
         this.policyOk = true;
         return { mnemonic };
@@ -1171,6 +1204,16 @@ class BrowserVault implements Vault {
     if (moreThanChars(newPassword, MAX_PASSWORD_CHARS)) {
       throw new Error(`新しいパスワードが長すぎます (${MAX_PASSWORD_CHARS} 字以内)`);
     }
+    // threat: T-063 —— 変更のあいだ (PBKDF2 ×2 の窓) に届いた施錠を、変更の完了が上書きしない
+    // (2026-10-15 · パス 523)。`unlock()` だけが T-049 の世代を見ており、`changePassword` /
+    // `recoverWithMnemonic` / `initialize` は見ていなかった —— 実測: 導出中に `lock()` → 完了後
+    // `isUnlocked() === true`・トークンも読める。施錠された保管庫で「パスワード変更」を押すと
+    // (旧パスワードを打つので正当な操作) **解錠までされていた**。鍵を据えるのは、操作の開始から
+    // 施錠が 1 度も届いていないときだけ。保管庫の書き換え (新しいパスワード) はそのまま通す ——
+    // 利用者の求めた 2 つ (パスワードを変える・施錠する) を両方そのまま叶える。
+    // 施錠された保管庫の変更は**解錠にしない** (変更は `unlock` ではない —— 解錠の入口は 1 つ)。
+    const epoch = this.lockToken;
+    const unlockedAtStart = this.currentKey !== null;
     const db = await openDb();
     try {
       const meta = await idbGet<VaultMeta>(db, META_STORE, 'vault');
@@ -1215,7 +1258,8 @@ class BrowserVault implements Vault {
               value: { iv: newMasterWrap.iv, ciphertext: newMasterWrap.ciphertext },
             },
           ]);
-          this.currentKey = await importNonExtractable(masterRaw);
+          const next = await importNonExtractable(masterRaw);
+          if (unlockedAtStart && this.lockToken === epoch) this.currentKey = next; // threat: T-063
           // newPassword は下限を強制済み —— ここで「短い」状態は解消する。
           // **この 1 行が下の枝にしか無かった** (2026-08-28)。master-wrap 枝は
           // Phase E の保管庫すべてが通る通常路なので、利用者が案内どおりに
@@ -1259,7 +1303,7 @@ class BrowserVault implements Vault {
         });
       }
       await idbPutAll(db, rewritten);
-      this.currentKey = newPasswordKey;
+      if (unlockedAtStart && this.lockToken === epoch) this.currentKey = newPasswordKey; // threat: T-063
       // newPassword は下限を強制済み —— ここで「短い」状態は解消する。
       this.policyOk = true;
     } finally {
@@ -1274,6 +1318,9 @@ class BrowserVault implements Vault {
     if (moreThanChars(newPassword, MAX_PASSWORD_CHARS)) {
       throw new Error(`新しいパスワードが長すぎます (${MAX_PASSWORD_CHARS} 字以内)`);
     }
+    // threat: T-063 —— 復旧のあいだに届いた施錠を、復旧の完了が上書きしない (changePassword と同じ)。
+    // **最初の await (decodeMnemonic) より前に**世代を取る。
+    const epoch = this.lockToken;
     // Validate mnemonic BEFORE opening IDB (cheap rejection → no leaked
     // connection if mnemonic is malformed / has unknown words / bad checksum).
     await decodeMnemonic(mnemonic);
@@ -1413,7 +1460,8 @@ class BrowserVault implements Vault {
             value: { iv: newMasterWrap.iv, ciphertext: newMasterWrap.ciphertext },
           },
         ]);
-        this.currentKey = await importNonExtractable(masterRaw);
+        const recovered = await importNonExtractable(masterRaw);
+        if (this.lockToken === epoch) this.currentKey = recovered; // threat: T-063
         // newPassword は下限を強制済み。
         this.policyOk = true;
       } finally {

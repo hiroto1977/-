@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 302
+- ブロック数: 305
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `993e473211289c58e0fc325f4d3e3633d18306d4a92d0364612b4b792197a2ce`
-- 保護対象: 115 ファイル
+- 末尾(tip)ハッシュ: `36612853fd566a7c5efad5fc8438ecf0622963512130fe678e82082e059ae3bb`
+- 保護対象: 117 ファイル
 
 ## ブロック
 
@@ -315,6 +315,9 @@
 | 299 | `468e7293b47ef358` | `51b0002380b7f6b7` | `1d8791f5129d8b1d` | update integrity-chain.cjs,knowledge-autopilot.cjs,merge-mutation-reports.cjs,mutate-changed.cjs,triage-mutations.cjs |
 | 300 | `ce51511d4c39c3b0` | `1d8791f5129d8b1d` | `e5d72506ac7e90b1` | update knowledge-context.cjs,knowledge-graph.cjs,integrity-chain.cjs |
 | 301 | `6c13960ce33c5869` | `e5d72506ac7e90b1` | `993e473211289c58` | update secrets.ts,vault.ts |
+| 302 | `e71d4b5219e3589b` | `993e473211289c58` | `3494cb21a9f364f0` | update PROXY_EXAMPLE.md,proxy.ts |
+| 303 | `d5f424f7d9254e02` | `3494cb21a9f364f0` | `833ce2b8c1c92afc` | update icon.svg,og.png,integrity-chain.cjs,atomicWrite.ts,exportPaths.ts,oauth.ts |
+| 304 | `506a216e405fb25c` | `833ce2b8c1c92afc` | `36612853fd566a7c` | update proxy.ts,vault.ts |
 
 ## 保護対象ファイル
 
@@ -334,7 +337,9 @@
 - `.github/workflows/mutation.yml`
 - `.github/workflows/pages.yml`
 - `.github/workflows/release.yml`
+- `assets/icon.svg`
 - `assets/manifest.webmanifest`
+- `assets/og.png`
 - `assets/sw.js`
 - `docs/PROXY_EXAMPLE.md`
 - `docs/SECURITY_CHAIN.md`

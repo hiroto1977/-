@@ -1,5 +1,39 @@
 # Service Hub — 残りの作業手順書
 
+## パス 523 (狩りの 13 回目 —— 5 面の監査役の指摘を自分で再現し、本物の 14 件を直す) (2026-10-15)
+
+5 面 (main-ipc / renderer / network / ai / supply-chain) の監査役 (read-only) を並行で走らせ、**各指摘を自分で再現してから**仕分けた (監査役の報告は権威を持たない)。パス 522 が「強める候補」として残した network の NET-6 を先に自分で測ると、backlog の前提 (「アプリ側はポートも userinfo も出さない」) が偽だった —— それが T-059。残りは **13 件が本物** (main-ipc 3 / renderer 5 / network 1 / ai 2 / supply-chain 3)。各修正は対照 (修正を外すと回帰検査が落ちる) で確かめ、元へ戻して md5 で照合した。
+
+### 直した 14 件
+
+- **T-059 (network・low)** — 配る Worker の `denyReason` とアプリの `fetchViaProxy` は上流 URL の hostname しか見ず、許可リストのホストへ userinfo (`https://user:pw@api.notion.com/`) や既定以外のポート (`:8443`) を付けた上流へも利用者の Authorization ごと転送していた。両方に同じ 2 行 (userinfo が空・port が空) を https の判定の後ろへ。順序は「許可リスト外・平文」が先。
+- **T-060 (main-ipc・medium)** — `isSafeExportPath` は `path.resolve` した後の親で判定し、書き出しは**生の** `filePath` の親を `mkdir -p` していた。`data/templates/../../state.json/../data/y.html` は resolve 後の親が `data/` なので通り、mkdir が `state.json` という名のディレクトリを作った (T-002 の形が、T-042 の検査を**通る綴り**で戻っていた)。正規化済みの絶対パス (`path.resolve(p) === p`) だけを受ける 1 行。
+- **T-061 (main-ipc・medium)** — `readFileWithBackup` は EACCES / EISDIR / EIO を「無い」(null) に畳み、読めなかっただけの保管ファイルは `{}` として読まれ、次の `setToken` がその上に書いて中身を全部消した (実測: 本体と `.prev` をディレクトリに置き換える → `setToken('notion')` が成功・`.prev` の鍵は `['notion']` だけ)。ENOENT だけが「無い」。他は投げ、`readStore` が degraded にするので保存は断り、一覧は空を名乗らない。`atomicWrite.test.ts` の「ディレクトリなら null」(弱さを仕様にしていた検査) を反転。
+- **T-062 (main-ipc・low)** — OAuth の loopback 待受は wrong-path / bad host の迷い要求 50 件で `server.close()` し、promise は解決も拒否もされないので、本物のコールバックは ECONNREFUSED・利用者は 5 分待ち・認可コードは URL 欄に未使用のまま (実測: `GET /favicon.ico` 50 件 → 121 ms で閉じる)。閉じるのをやめた —— 待受の寿命は外側タイムアウト・`cancel()`・正規のコールバックの 3 つだけ。network の監査役も独立に同じ物を見つけていた。
+- **T-063 (renderer・medium)** — T-049 の世代は `unlock()` だけで、`changePassword` / `recoverWithMnemonic` / `initialize` は PBKDF2 の窓に `lock()` が届いても鍵を据えていた (3 つとも実測)。3 つとも**最初の `await` より前**に世代を取り、鍵は施錠が届いていないときだけ。保管庫の書き換えは通す。施錠された保管庫のパスワード変更は解錠にしない。★ `recoverWithMnemonic` の世代を `openDb` の後ろに置いた 1 度目は検査が落ちて分かった —— 最初の await は `decodeMnemonic` だった。
+- **T-064 (renderer・medium)** — `initialize()` の「既に在るか」と書き込みが別の取引なので、初回の設定画面を 2 つの窓で同時に済ませると両方が通り、後の方が meta / master-wrap を黙って上書き (負けた窓のトークンは再読込後に全部 null・その 24 語は「リカバリーキーが違います」)。`idbPutAll` に `add: true` を足し、初期化は `add` で書く (ConstraintError で 2 つ目は断られる)。`tx.onerror` は要求の error を先に読む。
+- **T-065 (renderer・low)** — `StatusBar` の `errorMessage` (58 画面が通る 1 か所) は `externalTextOnOneLine` を通していなかった (隣の `credentialError` は T-045 で畳んでいた)。畳んだ。
+- **T-066 (network・low)** — `fetchViaProxy` は封筒の 204 / 205 / 304 を `new Response(body, …)` へ渡し、本文が空文字でも TypeError。null body status では本文を捨て `null` を渡す。
+- **T-067 (renderer・low)** — `planRestore` は畳んでから関門、`importAll` は関門を通してから畳む (順序が逆)。同じ id が「正しい行 → 壊れた写し」と並ぶ控えで計画は正しい行を捨てた。順序を揃え、`dropped` / `duplicateIds` を数え直す。
+- **T-068 (ai・medium)** — `AssistantPage` は最新の発話だけを危機で判定するが、その発話は `messages` に残るので**次の発話で直前の危機の文が会話履歴として外のモデルへ届いていた** (アプリの窓口の全文も assistant 役の偽の発話として)。`turnsForModel` が窓を切った後に危機・他害の利用者発話と offline のアシスタント発話を外す (chat / chatAll / ベスト3 の 3 経路)。
+- **T-069 (ai・low)** — 村は `kind: 'counsel'` の返答 (危機でない心の不調・破壊衝動) を吹き出しに出した直後に AI へ送り、返答で上書きしていた。条件に `reply.kind !== 'counsel'` を足した。
+- **T-070 (supply-chain・medium)** — app-builder-lib は `electron-builder.yml` → `.yaml` → `.json` → … の順に探して最初の物を読む (実測)。T-043 は `package.json#build` だけを塞いでいた。`scripts.build` を `electron-builder --config electron-builder.json` にして名指しし、影の綴り 7 つが無いことを留める。
+- **T-071 (supply-chain・medium)** — `pages.yml` が公開する `assets/icon.svg` / `og.png` をどの門も鎖も CODEOWNERS も見ていなかった。`icon.svg` を直接開くと SVG 文書として `<script>` が走る (実測・公開版のオリジン・CSP 無し)。2 つを鎖と CODEOWNERS へ、公開する SVG が script / イベント属性 / 外部参照を持たないことを留める。パス 480 の記録「icon.svg は読まれるだけでスクリプトは走らない」は icon としての使い方についてだけ真だった。
+- **T-072 (supply-chain・medium)** — 直下に `postcss.config.cjs` を置くだけで `vite build` (release.yml の署名鍵を持つ Build を含む) がそれを require して走らせた (実測・全門緑)。`vite.config.ts` の renderer + main + preload の 3 設定に `css: { postcss: {} }` を固定し (オブジェクトなら探索しない)、設定ファイル 12 名が無いことを留める。★ renderer 側だけに置いた 1 度目の対照は印が消えなかった —— 電子側の束ねは別の vite 設定で走る。
+
+### 測って欠陥ではなかった物・残した物
+
+- **AI-6 (`huntBacklog` へ)**: アドバイザーの質問欄 (stocks / business の advise・record-entry) に危機の判定が無い —— `detectCrisis` は renderer に住み main は import できないので、shared へ出す設計を含む。
+- **MAIN-3 の訂正**: 式本体の handler は 4 つ在り (`main.ts:254 / 412 / 416 / 583`)、`secrets:protection` は stat の生の文を返さない。
+- network の監査役の S-2 (Worker が `null` の封筒で 500) は情報 (共有シークレットが要る)。S-1 (Ollama の LAN 手順 A が `OLLAMA_ORIGINS="*"`) は手順の文を**このページのオリジン**へ狭めた (手順 B と同じ形)。
+- 監査役の HEALTHY の列 (SSRF の判定 71 形・`jsonFetch` の上限・Worker の転送・eraseAll の網羅・保管庫の AAD・プロンプトの組み立て・提供者の URL 検証ほか) は変更なし。
+
+### 検証
+
+- 対照: 16 方向すべて鳴り、それぞれ狙った検査に当たる (各 control は修正を外す → 狙った回帰検査が落ちる → 元へ戻し md5 で一致を確認)
+- 全件: typecheck 緑・`npm test` 1072 ファイル / 21612 件 全緑・`verify:all` exit 0 (`verify:arch` のユニットテスト数 17807)・`chain:verify` 緑 (ブロック 305 連結・保護対象 117 ファイル・tip `36612853fd56…`)
+- 実機: `e2e` 758 件 ❌ 0・`e2e:lite` 758 件 ❌ 0・`e2e:ollama` 全件 PASS・`perf` OK (LITE DCL 265 ms / heap 9.6 MB・FULL DCL 752 ms / heap 36.4 MB)。FULL 11,879,362 B / LITE 3,291,986 B (md5 `b93233a8…` / `e31fab61…`)
+
 ## パス 522 (狩りの 12 回目 —— 5 面の監査役の指摘を自分で再現し、本物の 13 件を直す) (2026-10-15)
 
 5 面 (main-ipc / renderer / network / ai / supply-chain) の監査役 (read-only) を並行で走らせ、**各指摘を自分で再現してから**仕分けた (監査役の報告は権威を持たない)。パス 521 が「強める候補」として残した network の N-1 / N-2 も自分で測って閉じた。**13 件が本物** (network 2 / renderer 4 / ai 2 / main-ipc 2 / supply-chain 3)、**network の新しい指摘は確認できた欠陥 0** (強める候補 1 件を `huntBacklog` へ)。各修正は対照 (修正を外すと回帰検査が落ちる) で確かめ、元へ戻して md5 で照合した。

@@ -39,14 +39,15 @@ describe('村の AI 送信は危機の文を通さない (パス 518 · T-029)',
     expect(invoke, 'assistant/chat の呼びが見つからない (走査が実物に当たっていない)').toBeGreaterThan(-1);
     expect(guard, '危機の判定が AI の呼びの後ろに在る').toBeLessThan(invoke);
     // AI の条件 (aiOn && hub && …) に危機の判定が入っている。
+    // `reply.kind !== 'counsel'` は T-069 (相談の返答をモデルで上書きしない)。
     expect(SRC, 'AI の条件に危機の判定が入っていない').toMatch(
-      /if\s*\(\s*aiOn\s*&&\s*hub\s*&&\s*reply\.kind\s*!==\s*'action'\s*&&\s*!crisisOrHarm\s*\)/,
+      /if\s*\(\s*aiOn\s*&&\s*hub\s*&&\s*reply\.kind\s*!==\s*'action'\s*&&\s*reply\.kind\s*!==\s*'counsel'\s*&&\s*!crisisOrHarm\s*\)/,
     );
   });
 
   it('★ 対照: 危機の判定を条件から外すと、上の検査の条件が成り立たない (針が死んでいない)', () => {
-    const withoutGuard = 'if (aiOn && hub && reply.kind !== \'action\') {';
-    expect(/if\s*\(\s*aiOn\s*&&\s*hub\s*&&\s*reply\.kind\s*!==\s*'action'\s*&&\s*!crisisOrHarm\s*\)/.test(withoutGuard)).toBe(false);
+    const withoutGuard = 'if (aiOn && hub && reply.kind !== \'action\' && reply.kind !== \'counsel\') {';
+    expect(/if\s*\(\s*aiOn\s*&&\s*hub\s*&&\s*reply\.kind\s*!==\s*'action'\s*&&\s*reply\.kind\s*!==\s*'counsel'\s*&&\s*!crisisOrHarm\s*\)/.test(withoutGuard)).toBe(false);
     expect(detectHarmToOthers('人を殺したい')).toBe(true);
   });
 });

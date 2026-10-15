@@ -129,6 +129,9 @@ export default defineConfig({
             sourcemap: isDev,
             emptyOutDir: false,
           },
+          // threat: T-072 —— main / preload の束ねは**別の vite 設定**で走るので、ここにも同じ固定が要る
+          // (下の renderer 側だけに置いた 1 度目は、電子側の束ねが postcss.config.cjs を読んで印を刷った · 実測)。
+          css: { postcss: {} },
         },
       },
       {
@@ -142,6 +145,7 @@ export default defineConfig({
             sourcemap: isDev ? 'inline' : false,
             emptyOutDir: false,
           },
+          css: { postcss: {} }, // threat: T-072 (上と同じ)
         },
       },
     ]),
@@ -151,6 +155,14 @@ export default defineConfig({
     outDir: '../../dist',
     emptyOutDir: true,
   },
+  // threat: T-072 —— PostCSS の設定は**ここで空に固定**する (2026-10-15 · パス 523)。
+  // オブジェクトを渡すと vite は `postcss.config.{js,cjs,mjs,ts}` / `.postcssrc*` /
+  // `package.json#postcss` を**探さない** (postcss-load-config の探索が走らない)。探す形のままだと、
+  // 直下に `postcss.config.cjs` を 1 本置くだけで `vite build` (= release.yml の署名鍵を持つ
+  // Build ステップ・pages.yml・ci.yml) がそれを require して走らせる (実測: 印が 1 度刷られ exit 0)。
+  // `vite.config.ts` は鎖と CODEOWNERS の保護対象だが、PostCSS の設定ファイルはどの門も見ていなかった。
+  // 設定ファイルが 1 本も無いことは gateScriptsPinned.test.ts が留める。
+  css: { postcss: {} },
   server: {
     port: 5173,
   },

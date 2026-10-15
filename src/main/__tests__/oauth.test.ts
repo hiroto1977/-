@@ -932,6 +932,7 @@ describe('listenForCallback (integration — real HTTP server)', () => {
     port: number,
     path: string,
     hostHeader?: string,
+    agent?: http.Agent,
   ): Promise<{
     status: number;
     body: string;
@@ -948,6 +949,7 @@ describe('listenForCallback (integration — real HTTP server)', () => {
           path,
           method: 'GET',
           headers,
+          ...(agent ? { agent } : {}),
         },
         (res) => {
           let body = '';
@@ -1147,16 +1149,9 @@ describe('listenForCallback (integration — real HTTP server)', () => {
     expect(msg).not.toMatch(/50000s/);
   });
 
-  it('returns 400 on EVERY stray request (kills strayCount increment direction and threshold)', async () => {
-    // After STRAY_LIMIT (50) strays, the server self-closes. The exact
-    // ordering of the "next request fails" assertion is racy, so test
-    // the strong invariant instead: every stray request gets the SAME
-    // 400 status (kills increment-direction and threshold equality
-    // mutations because if strayCount decremented or the threshold
-    // flipped, the counter would never reach STRAY_LIMIT and never
-    // affect behavior — but if it reached too early, some strays
-    // would be served by a closed socket and fail with ECONNREFUSED
-    // instead of 400).
+  it('returns 400 on EVERY stray request (state-mismatch is never counted and never closes the listener)', async () => {
+    // 2026-10-15 (T-062) まで wrong-path / bad host は 50 件で待受を閉じていた。
+    // state-mismatch は最初から数えていない —— ここは「毎回 400 で、閉じない」を留める。
     const STATE = 'stray-counter-test';
     const listener = listenForCallback(STATE);
     const trapped = trap(listener);
@@ -1174,6 +1169,36 @@ describe('listenForCallback (integration — real HTTP server)', () => {
     expect(statuses).toEqual(new Array(49).fill(400));
     listener.cancel();
     await trapped;
+  });
+
+  /*
+   * **迷い要求で待受を閉じない (2026-10-15 · パス 523 · threat: T-062)。**
+   *
+   * 2026-10-15 まで wrong-path / bad host の 50 件目で `server.close()` していた。閉じても promise は
+   * 解決も拒否もされないので、本物のコールバックは ECONNREFUSED になり、利用者は 5 分の時間切れまで
+   * 待たされ、認可コードはブラウザの URL 欄に使われないまま残った (実測: `GET /favicon.ico` 50 件 →
+   * 121 ms で閉じ、正規のコールバックは ECONNREFUSED・promise は pending)。待受の寿命を決めるのは
+   * 外側タイムアウトと cancel と正規のコールバックだけ。
+   */
+  it('★ 迷い要求 (wrong-path / bad host) が 60 件来ても待受は閉じず、本物のコールバックが解決する (threat: T-062)', async () => {
+    const STATE = 'strays-do-not-close';
+    const listener = listenForCallback(STATE);
+    const trapped = trap(listener);
+    const port = await listener.port();
+    // **毎回新しい接続で** —— Node の既定の agent は keep-alive なので、閉じた後も受け入れ済みの
+    // socket が使い回されて「閉じた」ことが見えない (ブラウザの転送は新しい接続で来る)。
+    const fresh = new http.Agent({ keepAlive: false });
+    const statuses: number[] = [];
+    for (let i = 0; i < 30; i++) {
+      statuses.push((await fireGet(port, `/favicon.ico?${i}`, undefined, fresh)).status);
+      statuses.push((await fireGet(port, '/oauth/callback?code=x&state=x', 'evil.example', fresh)).status);
+    }
+    expect(statuses.filter((s) => s === 404)).toHaveLength(30);
+    expect(statuses.filter((s) => s === 400)).toHaveLength(30);
+    // 直す前はここが ECONNREFUSED だった。
+    const real = await fireGet(port, `/oauth/callback?code=USER_AUTH_CODE&state=${STATE}`, undefined, fresh);
+    expect(real.status).toBe(200);
+    expect(await trapped).toEqual({ code: 'USER_AUTH_CODE', state: STATE });
   });
 
   it('cancel() rejects the listener and closes the server', async () => {

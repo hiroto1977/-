@@ -7,6 +7,13 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-10-15) — パス 523: 狩りの 13 回目。5 面の監査役の指摘を自分で再現し、本物の 14 件を直す
+
+- 詳細は `docs/REMAINING_WORK.md` の「パス 523」。直したのは T-059 (network: Worker とアプリの上流 URL の userinfo / 既定外ポート —— backlog NET-6 の前提が偽だった) / T-060〜T-062 (main-ipc: 書き出し先は正規化済みの絶対パスだけ・読めない保管ファイルの上に書かない・OAuth の待受を迷い要求で閉じない) / T-063〜T-065・T-067 (renderer: changePassword / recover / initialize の施錠の世代・初期化の `add`・StatusBar の失敗文の畳み・計画と実行の関門の順序) / T-066 (network: 204 / 205 / 304 の封筒) / T-068・T-069 (ai: 直前の危機の文を履歴として送らない・村の相談の返答を上書きしない) / T-070〜T-072 (supply-chain: builder 設定の影・公開する assets を鎖へ・PostCSS の設定の探索を止める) の 14 件。
+- **確立したパターン** —— **調べた物と書く物を同じ文字列にする** (resolve した後で判定して生の綴りで書くと、`..` が検査を通る)。**「無い」と「在るのに読めない」は別の答え** (null に畳むと次の保存が上書きする)。**世代は最初の `await` より前** —— `openDb` の後ろでは窓を見落とす (recover の最初の await は `decodeMnemonic`)。**存在の判定と書き込みは 1 つの取引で** (`add` は鍵が在れば abort する)。**危機の文は最新の発話だけでなく履歴からも外す**。**設定を探す道具 (builder / PostCSS) は名指しで止める** —— 探索の順序は攻撃者の綴りが先に来る。**公開する物は全部鎖へ** (icon も)。
+- **既知の罠 (このパスで踏んだ)**: `getToken` は施錠中は null ではなく投げる (検査の期待を直した)。vault の `add` の ConstraintError は要求の error に乗り `tx.error` はまだ空。半分だけ消して再初期化する古い fixture は `add` で落ちる (master-wrap も消す)。対照の計数器を `globalThis` の未定義で書くと NaN で鳴らない (「鳴らなかった」と「当てていなかった」は別)。vite の `css.postcss` は電子側の束ね (別の設定) には効かない。
+- 次に読む人へ: 残る backlog は 14 件 (`huntBacklog`) —— 設計判断 9 件 (C1〜C5 / MAIN-1 / MAIN-2 / C1 の連鎖 / AI-6)・MAIN-3 / MAIN-4・network の強める候補 2 件 (N-3 / N-5)・所有者の判断 1 件 (F-1)。全件・実機とも緑 (e2e 758 / e2e:lite 758 / ollama PASS / perf OK・npm test 21612 件・chain 305 ブロック)
+
 ## 直近の作業 (2026-10-15) — パス 522: 狩りの 12 回目。5 面の監査役の指摘を自分で再現し、本物の 13 件を直す
 
 - 詳細は `docs/REMAINING_WORK.md` の「パス 522」。直したのは T-046 / T-047 (network: Worker と CI の関門の SIIT 形・Discord webhook の伏字) / T-048〜T-051 (renderer: 復元の id 衝突・解錠中の施錠の上書き・台帳に無い collection の記録・aria-label の天井) / T-052 / T-053 (ai: 危機語の畳み込み・ollama の content の型) / T-054 / T-055 (main-ipc: assistant スロットの JSON・状態ファイルの書き込みの鎖と一意な tmp) / T-056〜T-058 (supply-chain: persist-credentials・actions/* の SHA 固定・残る workflow と dependabot を鎖へ) の 13 件。
