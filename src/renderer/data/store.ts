@@ -1029,17 +1029,24 @@ export const MAX_RECORD_DEPTH = 32;
  * 深さは「中身を持つ器 (物・配列) の段数」で、`{}` は 1・`{a:{}}` は 2。
  */
 export function withinRecordDepth(data: unknown, max: number = MAX_RECORD_DEPTH): boolean {
-  const stack: Array<{ v: unknown; d: number }> = [{ v: data, d: 1 }];
+  // 器かどうかの判定は 1 つ (`isContainer`)。stack には器しか積まない —— 積んでから
+  // 落とす形だと、落とす側の判定に到達しない変異体 (等価) が残る (パス 522 の変異検査)。
+  if (!isContainer(data)) return true;
+  const stack: Array<{ v: object; d: number }> = [{ v: data, d: 1 }];
   while (stack.length > 0) {
     const { v, d } = stack.pop()!;
-    if (typeof v !== 'object' || v === null) continue;
     if (d > max) return false;
-    const values = Array.isArray(v) ? v : Object.values(v as Record<string, unknown>);
+    const values: readonly unknown[] = Array.isArray(v) ? v : Object.values(v);
     for (const child of values) {
-      if (typeof child === 'object' && child !== null) stack.push({ v: child, d: d + 1 });
+      if (isContainer(child)) stack.push({ v: child, d: d + 1 });
     }
   }
   return true;
+}
+
+/** 中身を持つ器 (物・配列) か。`null` は `typeof === 'object'` なので別に落とす。 */
+function isContainer(v: unknown): v is object {
+  return typeof v === 'object' && v !== null;
 }
 
 /**

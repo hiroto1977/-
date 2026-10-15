@@ -57,10 +57,13 @@ describe('復元の id の衝突 (パス 522 · T-048)', () => {
     const store = getRecordStore();
     const memberId = (await store.insert(TEAM, MEMBER)).id;
     const existing = await store.exportAll();
-    const plan = planRestore(existing, [rec(memberId, SALES_COLLECTION, GOOD_SALE, 1e13)], 'replace', null, false);
+    const clash = rec(memberId, SALES_COLLECTION, GOOD_SALE, 1e13);
+    const plan = planRestore(existing, [clash], 'replace', null, false);
     expect(plan.collectionClash).toBe(1);
     expect(plan.overwritten).toBe(0);
     expect(plan.lost).toBe(1);
+    // 置換では消してから入れるので、衝突した行も**書く側に在る** (マージでは無い —— 上の it)。
+    expect(plan.toImport).toEqual([clash]);
     expect(replaceRestoreConfirmMessage(plan)).toContain('別の種類の記録で同じ id を名乗る 1 件');
     expect(replaceRestoreConfirmMessage(plan)).not.toContain('消える記録はありません');
     // 結果の文も同じ理由を言う (確認文だけが知っていて結果が黙る形にしない)。

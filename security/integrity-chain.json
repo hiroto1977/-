@@ -2526,6 +2526,14 @@
       "leafCount": 115,
       "note": "update knowledge-context.cjs,knowledge-graph.cjs,integrity-chain.cjs",
       "hash": "e5d72506ac7e90b145420f7ee3465836f315611c56cecc6df2ed5ef9f4de2471"
+    },
+    {
+      "index": 301,
+      "prevHash": "e5d72506ac7e90b145420f7ee3465836f315611c56cecc6df2ed5ef9f4de2471",
+      "merkleRoot": "6c13960ce33c5869fbde83c46ced68d015df83cd989f73b1366255606e699a2e",
+      "leafCount": 115,
+      "note": "update secrets.ts,vault.ts",
+      "hash": "993e473211289c58e0fc325f4d3e3633d18306d4a92d0364612b4b792197a2ce"
     }
   ],
   "tipManifest": {
@@ -2587,7 +2595,7 @@
     "src/main/keychainBackend.ts": "a9ac8c957100cc6aaa332973638fe4c6057daf017e022eb50fb134ce44ce5b93",
     "src/main/main.ts": "5cee72eef2512620bb2d67f06871c7d2c9d168c52a0777f0195f641c223e3bcf",
     "src/main/oauth.ts": "9c54fb2625d6fcac9a63f6e86728cd3dc9b873007d00b283ed6e5bf0b51d1c53",
-    "src/main/secrets.ts": "7466e2c5153fe61105eb29ee2b82a1ce5fc418bbf1f575c5d753aedf1609eec5",
+    "src/main/secrets.ts": "8ee34f59adb605e2749ce121068f735c3f90caa04c72bbc27d8dd9cdbb1b2828",
     "src/main/shellOpenGate.ts": "5192de0eb0a48f4eebedd17fa73df4ec5722f41f7290db5194eb58e2bdb28732",
     "src/main/stateFile.ts": "984eebe8582b3c6c88669d17e778932f6b87a682640d1f162acd182d5947169b",
     "src/main/windowPrefs.ts": "0bccea9e29b489da1b4a7962eaa53e237cf93fed9d4692371a3a43a6a4985dee",
@@ -2608,7 +2616,7 @@
     "src/renderer/security/frameGuard.ts": "66ad10cf7e5a48fcc4a406aa66b9de544609877944fd073c7bf3af8190991559",
     "src/renderer/security/lockWorkspace.ts": "b1e7210a61ed100c2bae43359482eaa696ad367f63a25ec463ab0ed44477aca7",
     "src/renderer/security/mnemonic.ts": "115603b18fe19a6bd651e9d7b55d6afcffa8f9695eaa1ef522b67a1b1fe71c2a",
-    "src/renderer/security/vault.ts": "9d2eee703d5ede8c7d8822bcc0819fb620f64328de950231adb3c305e7773aad",
+    "src/renderer/security/vault.ts": "fc8fb3ce431acbdb140979d6ffe7aeacdc9d5f18624000a788daff9bb18c0054",
     "src/renderer/security/webCrypto.ts": "d0be2ab7b15ba0315c7dff1e9c7da482ec17d9a021aa0921d580e39c7c631964",
     "src/renderer/security/webauthn.ts": "62218ba46fdfd0adaf8f3b7c42eb9e01315a619881b50d33acfbb51b0046ea76",
     "src/shared/advisorQuestionLimits.ts": "b1ade2abbfc367eb188ef16ba8e0c5b6327fe696e95cab2944df9f36de84b755",

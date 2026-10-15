@@ -714,7 +714,7 @@ class BrowserVault implements Vault {
    * 解錠されたままになっていた (実測: `lock()` の直後は locked、`unlock()` の
    * 解決後は unlocked)。
    */
-  private lockEpoch = 0;
+  private lockToken: object = {};
   /** 解錠に使われたパスワードが下限を満たしたか (メモリのみ・保存しない)。 */
   private policyOk: boolean | null = null;
 
@@ -873,7 +873,7 @@ class BrowserVault implements Vault {
     }
     // 世代は**最初の await より前**に控える (T-049)。解錠を頼んだ後に届いた
     // 施錠はどれも解錠より新しい意思なので、導出の前後を問わず勝たせる。
-    const epoch = this.lockEpoch;
+    const epoch = this.lockToken;
     /*
      * **下限は強制しない (既存のヴォールトを閉め出さないため) が、測りはする。**
      * 2026-07 に 8 → 12 へ上げる前に作られたヴォールトは短いままで、
@@ -933,14 +933,16 @@ class BrowserVault implements Vault {
   }
 
   /** 解錠の途中で `lock()` が届いていれば、鍵を据えずに断る (T-049)。 */
-  private assertNotLockedSince(epoch: number): void {
-    if (this.lockEpoch !== epoch) {
+  private assertNotLockedSince(epoch: object): void {
+    if (this.lockToken !== epoch) {
       throw new Error('解錠の途中で施錠されました。もう一度お試しください');
     }
   }
 
   lock(): void {
-    this.lockEpoch += 1;
+    // 世代は数ではなく**新しい物の同一性**で表す —— `+= 1` を `-= 1` にする変異体は
+    // 数だと等価 (値が違えば何でもよい) で残る (パス 522 の変異検査)。
+    this.lockToken = {};
     this.currentKey = null;
     // 施錠したら「分からない」に戻す。前回の判定を持ち越さない。
     this.policyOk = null;

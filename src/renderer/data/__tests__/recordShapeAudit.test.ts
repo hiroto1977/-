@@ -93,6 +93,19 @@ describe('auditRecordShapes', () => {
     expect(r.malformed).toEqual([]);
     expect(r.checked).toBe(0);
   });
+
+  it('★ 全件の読み出し (台帳に無い種類を探す側) が投げても点検は投げず、「読めなかった」に名指しで数える (threat: T-050)', async () => {
+    const failing = {
+      list: async () => [],
+      exportAll: async () => {
+        throw new Error('boom');
+      },
+    };
+    const r = await auditRecordShapes(failing);
+    expect(r.unreadable).toEqual(['(全件の読み出し)']);
+    expect(r.unknown).toEqual([]);
+    expect(r.malformed).toEqual([]);
+  });
 });
 
 describe('deleteRecords', () => {

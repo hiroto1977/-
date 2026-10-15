@@ -3866,6 +3866,13 @@ describe('saveStocksState の権限', () => {
 
     expect(await modeOf(target)).toBe('600');
   });
+
+  it('まだ無い入れ子のディレクトリへも保存できる (既定の mkdir は recursive)', async () => {
+    const target = path.join(dir, 'not', 'yet', 'state.json');
+    await saveStocksState({ watchlist: ['AAPL'] }, { statePath: () => target });
+    expect(JSON.parse(await fsp.readFile(target, 'utf8')).watchlist).toEqual(['AAPL']);
+    expect(await modeOf(target)).toBe('600');
+  });
 });
 
 describe('ウォッチリストの保存ファイル — 大きさの門 (パス 313 · 規則は main/stateFile.ts の 1 つ)', () => {

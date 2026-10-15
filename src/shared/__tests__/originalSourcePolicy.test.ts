@@ -309,8 +309,8 @@ const VARIABLE_PATH_ALLOWED: Readonly<Record<string, { count: number; why: strin
     why: '一時ディレクトリに組んだ skill の SKILL.md を読み戻す。repo のファイルではない',
   },
   'src/main/clients/__tests__/stocks.test.ts': {
-    count: 1,
-    why: '一時 userData のウォッチリスト状態ファイルを読み戻す。repo のファイルではない',
+    count: 2,
+    why: '一時 userData のウォッチリスト状態ファイルを読み戻す (まだ無い入れ子のディレクトリへの保存も)。repo のファイルではない',
   },
   'src/main/clients/__tests__/teamradar.realfs.test.ts': {
     count: 3,

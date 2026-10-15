@@ -253,9 +253,10 @@ export interface RestoreEnvelope {
    * この端末の行の collection (2026-10-15 · パス 522 · threat: T-048)。控えの同じ id が
    * **別の collection** を名乗るなら、マージでは書かず (`importAll` も同じ規則)、置換では
    * この端末の行が消えて別物が入る —— どちらも「更新」ではない。`exportAll()` の封筒は
-   * これを持つ。無い呼び手 (古い検査) は照合を飛ばす = 以前の答え。
+   * 必ずこれを持つ (任意にすると「無ければ照合を飛ばす」枝が生え、その枝は実物では
+   * 到達しないので変異検査に等価変異体として残る —— パス 522)。
    */
-  readonly collection?: string;
+  readonly collection: string;
 }
 
 export type RestoreMode = 'merge' | 'replace';
@@ -348,7 +349,7 @@ export function planRestore(
     if (mine === undefined) {
       added += 1;
       toImport.push(rec);
-    } else if (mine.collection !== undefined && mine.collection !== rec.collection) {
+    } else if (mine.collection !== rec.collection) {
       // 別の collection の行が同じ id を名乗る —— マージでは書かない (importAll も書かない)。
       // 置換では消してから入れるので入るが、この端末の行は**失われる** (下で lost に数える)。
       collectionClash += 1;

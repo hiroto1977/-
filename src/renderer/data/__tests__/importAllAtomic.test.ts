@@ -83,6 +83,20 @@ describe('復元の深さの門 (パス 521 · T-044)', () => {
     expect(withinRecordDepth({ crops: [{ k: { v: 1 } }] })).toBe(true); // 実物の最深 (3 段) より内側
     expect(withinRecordDepth({ s: 'x', n: 1, b: null })).toBe(true);
   });
+
+  it('器でない物は段を数えない (文字列・null・数は深さ 0 として通る)', () => {
+    // 文字列を器として歩くと `Object.values('x')` は ['x'] で、1 字の文字列が自分を
+    // 含む形になり深さが尽きるまで歩く —— 器の判定が緩むとここが false になる。
+    expect(withinRecordDepth('x')).toBe(true);
+    expect(withinRecordDepth('x'.repeat(100))).toBe(true);
+    expect(withinRecordDepth(null)).toBe(true);
+    expect(withinRecordDepth(42)).toBe(true);
+    expect(withinRecordDepth(undefined)).toBe(true);
+    // 欄の値として在る文字列・null も器ではない (`Object.values(null)` は投げる)。
+    expect(withinRecordDepth({ s: 'x'.repeat(100), b: null, arr: ['y', null, 1] })).toBe(true);
+    expect(withinRecordDepth({ s: 'x', nested: nested(MAX_RECORD_DEPTH - 1) })).toBe(true);
+    expect(withinRecordDepth({ s: 'x', nested: nested(MAX_RECORD_DEPTH) })).toBe(false);
+  });
 });
 
 describe('復元の取引は途中で投げたら巻き戻る (パス 521 · T-044)', () => {
@@ -110,6 +124,43 @@ describe('復元の取引は途中で投げたら巻き戻る (パス 521 · T-0
     expect(after.length, '置換の clear() だけが commit されて記録が消えた').toBe(2);
     expect(after.map((r) => r.id).sort()).not.toContain('ok-1');
     expect(after.map((r) => r.data.amount).sort()).toEqual([1000, 2000]);
+  });
+
+  it('★ マージでも put が途中で投げたら取引ごと中断し、先に書いた良い行も入らない (threat: T-044)', async () => {
+    const store = getRecordStore();
+    await store.insert(SALES_COLLECTION, GOOD);
+    IDBObjectStore.prototype.put = function (this: IDBObjectStore, value: unknown, key?: IDBValidKey) {
+      if ((value as { id?: unknown })?.id === 'poison') throw new RangeError('Maximum call stack size exceeded');
+      return originalPut.call(this, value, key);
+    };
+    const incoming = [rec('ok-1', SALES_COLLECTION, GOOD), rec('poison', SALES_COLLECTION, GOOD), rec('ok-2', SALES_COLLECTION, GOOD)];
+    // マージは `get` → `put` を連ねるので、投げるのは `onsuccess` の中 —— そこでも同じ `abort()`。
+    await expect(store.importAll(incoming)).rejects.toThrow(RangeError);
+    const after = await store.list<Record<string, unknown>>(SALES_COLLECTION);
+    expect(after.map((r) => r.id)).not.toContain('ok-1');
+    expect(after.map((r) => r.id)).not.toContain('ok-2');
+    expect(after).toHaveLength(1);
+  });
+
+  it('★ マージの読み (get) が同期で投げても取引ごと中断し、先に書いた良い行も入らない (threat: T-044)', async () => {
+    const store = getRecordStore();
+    await store.insert(SALES_COLLECTION, GOOD);
+    // `put` ではなく `get` が投げる形 —— `onsuccess` の外 (要求を並べる for の中) で投げるので、
+    // 受けるのは外側の catch。そこが abort しなければ取引は自動 commit され、ok-1 が入る。
+    const originalGet = IDBObjectStore.prototype.get;
+    IDBObjectStore.prototype.get = function (this: IDBObjectStore, key: IDBValidKey | IDBKeyRange) {
+      if (key === 'poison') throw new RangeError('get exploded');
+      return originalGet.call(this, key);
+    };
+    try {
+      const incoming = [rec('ok-1', SALES_COLLECTION, GOOD), rec('poison', SALES_COLLECTION, GOOD)];
+      await expect(store.importAll(incoming)).rejects.toThrow(RangeError);
+    } finally {
+      IDBObjectStore.prototype.get = originalGet;
+    }
+    const after = await store.list<Record<string, unknown>>(SALES_COLLECTION);
+    expect(after.map((r) => r.id)).not.toContain('ok-1');
+    expect(after).toHaveLength(1);
   });
 
   it('対照: 毒が無ければ同じ置換復元が通る (差し替えが復元を壊していない)', async () => {

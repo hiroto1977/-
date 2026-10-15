@@ -173,7 +173,7 @@ export class SecretsStoreFullError extends Error {
 
 async function writeStore(store: Record<string, string>): Promise<void> {
   const text = JSON.stringify(store);
-  const bytes = Buffer.byteLength(text, 'utf8');
+  const bytes = Buffer.byteLength(text); // utf8 (既定) —— 綴りを書くと等価変異体が残る (法則 115)
   if (bytes > MAX_STORE_SIZE) throw new SecretsStoreFullError(bytes);
   // Durable atomic write: temp + fsync + rename + dir fsync, then a `.prev` copy
   // of the same content so a later loss/corruption of the primary is recoverable.
