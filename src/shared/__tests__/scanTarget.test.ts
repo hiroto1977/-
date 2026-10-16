@@ -510,3 +510,31 @@ describe('断りの文面は 1 つだけ', () => {
     expect(/const SCAN_URL_MESSAGES\s*[:=]/.test(imp), 'import を宣言と読んだ').toBe(false);
   });
 });
+
+/**
+ * VirusTotal へ送る前の「社内ホスト」警告は、SSRF 用の分類器 (privateTarget) が内部と見る宛先を
+ * 取りこぼさない (2026-10-16 · パス 524 · threat: T-076)。手書きの判定は IPv4 互換・SIIT・
+ * fec0::/10・ff00::/8・64:ff9b:1::/48・192.0.0.0/24・198.18.0.0/15・224.0.0.0/3 を知らず、
+ * メタデータ用アドレスを `[::a9fe:a9fe]` と書くだけで警告をすり抜けた (実測 9 形)。
+ */
+describe('describeScanUrlRisk — 内部宛先の別表記 (threat: T-076)', () => {
+  it.each([
+    ['IPv4 互換 (メタデータ)', 'http://[::a9fe:a9fe]/'],
+    ['SIIT', 'http://[::ffff:0:7f00:1]/'],
+    ['IPv4 互換 (ループバック)', 'http://[::7f00:1]/'],
+    ['fec0::/10', 'http://[fec0::1]/'],
+    ['64:ff9b:1::/48', 'http://[64:ff9b:1::a00:1]/'],
+    ['ff00::/8', 'http://[ff02::1]/'],
+    ['198.18.0.0/15', 'http://198.18.0.1/'],
+    ['192.0.0.0/24', 'http://192.0.0.192/'],
+    ['224.0.0.0/3', 'http://224.0.0.1/'],
+  ])('★ %s も社内・手元のホストと警告する (threat: T-076)', (_name, url) => {
+    expect(describeScanUrlRisk(url)).toContain('社内・手元のホスト');
+  });
+
+  it('★ 対照: 公開ホストは警告しない (広げすぎて全部に警告しない)', () => {
+    expect(describeScanUrlRisk('https://example.com/')).toBeNull();
+    expect(describeScanUrlRisk('https://8.8.8.8/')).toBeNull();
+    expect(describeScanUrlRisk('http://[2606:4700:4700::1111]/')).toBeNull();
+  });
+});

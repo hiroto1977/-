@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 305
+- ブロック数: 306
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `36612853fd566a7c5efad5fc8438ecf0622963512130fe678e82082e059ae3bb`
+- 末尾(tip)ハッシュ: `3b6905b5c79db304ca94e7c80647c1bdee73769a291fa6d9e42d2e7256e17c7a`
 - 保護対象: 117 ファイル
 
 ## ブロック
@@ -318,6 +318,7 @@
 | 302 | `e71d4b5219e3589b` | `993e473211289c58` | `3494cb21a9f364f0` | update PROXY_EXAMPLE.md,proxy.ts |
 | 303 | `d5f424f7d9254e02` | `3494cb21a9f364f0` | `833ce2b8c1c92afc` | update icon.svg,og.png,integrity-chain.cjs,atomicWrite.ts,exportPaths.ts,oauth.ts |
 | 304 | `506a216e405fb25c` | `833ce2b8c1c92afc` | `36612853fd566a7c` | update proxy.ts,vault.ts |
+| 305 | `5a0ed0941cd68760` | `36612853fd566a7c` | `3b6905b5c79db304` | update eraseAll.ts,secrets.ts,autoLock.ts,escape.ts,redact.ts,scanTarget.ts |
 
 ## 保護対象ファイル
 

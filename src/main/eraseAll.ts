@@ -18,7 +18,7 @@ import { session } from 'electron';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import type { DesktopEraseReport, EraseFileOutcome } from '../shared/eraseReport';
-import { secretsPath } from './secrets';
+import { beginErase, endErase, secretsPath } from './secrets';
 import { backupPathOf, isAtomicLitterOf } from './atomicWrite';
 import { storePath as emotionsStorePath } from './clients/emotions';
 import { defaultStatePath as talentStatePath } from './clients/talent';
@@ -134,6 +134,8 @@ export async function eraseDesktopData(deps: DesktopEraseDeps = {}): Promise<Des
   const targets = deps.targets ?? desktopEraseTargets();
   const io = deps.io ?? fs;
   const files: Record<string, EraseFileOutcome> = {};
+  // 進行中の資格情報の保存が消した後に tmp を rename して中身を復活させない (T-079)。
+  await beginErase();
   for (const target of targets) files[target] = await eraseFileAndLitter(target, io);
   let renderer: 'deleted' | 'failed';
   try {
@@ -143,5 +145,7 @@ export async function eraseDesktopData(deps: DesktopEraseDeps = {}): Promise<Des
     renderer = 'failed';
   }
   const allDeleted = renderer === 'deleted' && Object.values(files).every((outcome) => outcome !== 'failed');
+  // 完了しなかった (再起動しない) ときは書き込みを再開する —— 再起動するなら旗は要らない。
+  if (!allDeleted) endErase();
   return { kind: 'desktop', files, renderer, allDeleted };
 }

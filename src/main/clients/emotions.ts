@@ -48,6 +48,7 @@ import { calendarDateMessage, isCalendarDate } from '../../shared/isoDate';
 import { localIsoDate } from '../../shared/localDate';
 import { asRecord, isAnalysisEntry, isMoodEntry, readStoredList } from '../../shared/emotionsShape';
 import type { ActionData } from '../../shared/actionData';
+import { createWriteChain } from '../writeChain';
 
 
 const EMOTION_KEYS = ['joy', 'sadness', 'anger', 'fear', 'surprise', 'disgust'] as const;
@@ -199,7 +200,10 @@ function todayLocal(): string {
   return localIsoDate();
 }
 
-async function logMood(ctx: ActionContext): Promise<ActionData<'emotions/log-mood'>> {
+/** 保存ファイルへの「読む → 直す → 書く」を直列にする鎖 (T-078)。 */
+const emotionsWrites = createWriteChain();
+
+async function logMoodUnchained(ctx: ActionContext): Promise<ActionData<'emotions/log-mood'>> {
   void ctx; // signature parity with other actions; no remote call needed
   const { date, score, note } = ctx.payload as unknown as LogMoodPayload;
   const finalScore = Number(score);
@@ -361,12 +365,15 @@ async function analyzeText(ctx: ActionContext): Promise<ActionData<'emotions/ana
     ...normalized,
   };
 
-  const store = await readStore({ forWrite: true });
-  store.analyses.unshift(entry);
-  // 上と同じ理由 — `slice(0, MAX)` は短い配列に対しては恒等。
-  store.analyses = store.analyses.slice(0, MAX_ANALYSES);
-  await writeStore(store);
-  return entry;
+  // 読む → 直す → 書く を鎖の中で (T-078)。外で読むと、同時の記録・解析・消去が互いの変更を消す。
+  return emotionsWrites(async () => {
+    const store = await readStore({ forWrite: true });
+    store.analyses.unshift(entry);
+    // 上と同じ理由 — `slice(0, MAX)` は短い配列に対しては恒等。
+    store.analyses = store.analyses.slice(0, MAX_ANALYSES);
+    await writeStore(store);
+    return entry;
+  });
 }
 
 /**
@@ -379,7 +386,7 @@ interface ClearHistoryPayload {
   kind?: 'moods' | 'analyses' | 'all';
 }
 
-async function clearHistory(ctx: ActionContext): Promise<ActionData<'emotions/clear-history'>> {
+async function clearHistoryUnchained(ctx: ActionContext): Promise<ActionData<'emotions/clear-history'>> {
   const { kind } = ctx.payload as unknown as ClearHistoryPayload;
   // 読めない記録 (鍵違い・壊れた封緘) も消せる —— ここが唯一の出口なので、読めないことで塞がない。
   // ただし**全消去 (`all`) だけ**。ファイルは気分と解析が 1 つの封緘に入っており、読めないとき
@@ -397,6 +404,17 @@ async function clearHistory(ctx: ActionContext): Promise<ActionData<'emotions/cl
   if (kind === 'analyses' || kind === 'all') store.analyses = [];
   await writeStore(store);
   return before;
+}
+
+// 気分の記録と消去は「読む → 直す → 書く」なので鎖に通す (T-078 —— 解析は保存の直前だけを鎖に入れる:
+// 送っている間の待ちまで鎖に入れると、API が遅い間ずっと他の保存が止まる)。
+// ACTIONS には素の関数名を置く (invokeDataTypes の走査が `'鍵': 関数名` の形を読むため)。
+async function logMood(ctx: ActionContext): Promise<ActionData<'emotions/log-mood'>> {
+  return emotionsWrites(() => logMoodUnchained(ctx));
+}
+
+async function clearHistory(ctx: ActionContext): Promise<ActionData<'emotions/clear-history'>> {
+  return emotionsWrites(() => clearHistoryUnchained(ctx));
 }
 
 export const ACTIONS: ActionMap = {

@@ -1,5 +1,40 @@
 # Service Hub — 残りの作業手順書
 
+## パス 524 (狩りの 14 回目 —— 5 面の監査役の指摘を自分で再現し、本物の 15 件を直す) (2026-10-16)
+
+5 面 (main-ipc / renderer / network / ai / supply-chain) の監査役 (read-only) を並行で走らせ、**各指摘を自分で再現してから**仕分けた (監査役の報告は権威を持たない)。直した 15 件はすべて回帰検査 (`threat: T-xxx`) と `security/threat-ledger.json` の行を持つ。
+
+### 直した 15 件
+
+- **T-073 (ai)** — 危機の語彙が活用形 (死にたくなる / 死にたくて / しにたかった ほか) と、他害の言い回し (殺してやる / ころしたい ほか) を取りこぼし、一致の前に飾りの字 (記号・結合文字・空白) を畳んでいなかった。`FILLER_CHARS` で畳み、活用形を足した (「生きていけない」と裸の「殺す」は偽陽性が大きいので足していない —— backlog)。
+- **T-074 (ai)** — 村の相談が返答を**声に出して読む**のに、音声の送信先の断りが無かった。`voiceEgressNotice` に `readsAloud` を足し、`speak` を import する画面は必ず渡すことを走査で留めた。
+- **T-075 (network)** — Cloudflare の新しい鍵の接頭辞 (`cfut_` / `cfat_` / `cfk_`) が伏字の対象外だった。
+- **T-076 (network)** — スキャン先の警告 `looksInternalHostname` が RFC1918 以外の予約帯 (loopback・link-local・CGNAT ほか) を見ていなかった。`isPrivateOrReservedTarget` を通す (文書用の帯は除く)。
+- **T-077 (renderer)** — 銘柄のウォッチリストに件数の天井が無かった。`MAX_WATCHLIST_SYMBOLS = 200` を両ビルドで (登録済みの再登録と削除は通す)。
+- **T-078 (main-ipc)** — `emotions` の `log-mood` / `analyze-text` / `clear-history` は「読む → 直す → 書く」を直列にしておらず、同時の呼び出しが互いの変更を消した。書き込み鎖に通した (解析は送信の待ちを鎖に入れず保存の直前だけ)。
+- **T-079 (main-ipc)** — 「すべてのデータを削除」の最中に別の書き込みが保管ファイルを作り直せた。`beginErase` / `endErase` の旗で書き込みを断る。
+- **T-080 (renderer)** — 自動施錠のタイマーが、スリープ復帰後の最初の操作で**施錠の期限切れを活動で延長**していた。期限を過ぎていれば施錠する。
+- **T-081 (renderer)** — CSV の取り込みに行数・エラー件数の天井が無かった (`MAX_CSV_IMPORT_ROWS` 20 万 / `MAX_CSV_ROW_ERRORS` 1,000)。
+- **T-082 (renderer)** — 音声コマンドの `quotedSpan` が閉じ引用符の無い入力で二乗時間になった。閉じが無いと分かった対を飛ばす。
+- **T-083 (supply-chain)** — vite の設定探索は js → mjs → ts → cjs の順で、`vite.config.js` を置くと `vite.config.ts` を**黙って差し替えられる**。`package.json` の dev / build / preview に `--config vite.config.ts` を明示した (`build:web` が実際に通ることを実機の連鎖で確認)。
+- **T-084 (supply-chain)** — ルートに `binding.gyp` を置くと npm が暗黙に `node-gyp rebuild` を走らせる。`"gypfile": false` と、`binding.gyp` を追跡しない門。
+- **T-085 (supply-chain)** — `lint:workflow-security` が `pull_request_target` を注記の中でしか見ず、`script:` の中の `${{ … }}` を見ていなかった。
+- **T-086 (supply-chain)** — 追跡された `.devcontainer/` / `.vscode/` / `.gitpod.*` / `.claude/commands/` / `.claude/skills/` は開くだけで走りうる。追跡を門で断る。
+- **T-087 (renderer)** — 書き出す Markdown の `![` と `](` が自由文に通り、画像・リンクを仕込めた。`escapeMarkdownInline` / `escapeMarkdownText` が中和する。
+
+### 台帳に残した backlog (4 件)
+
+workflow_run / issue_comment / id-token / `docker://` の固定・`eraseAll` が他モジュールの保管ファイルを覆うか・裸の鍵の伏字の取りこぼし (Asana / npm_ / xapp- / Discord bot / LINE)・`saveHistory` の QuotaExceeded と「もう生きていけない」。
+
+### 検証
+
+- `typecheck` 緑・`npm test` **1074 ファイル / 21698 件**・`verify:all` exit 0・`chain:verify` 緑 (block **#305** —— `redact.ts` / `scanTarget.ts` / `escape.ts` / `secrets.ts` / `eraseAll.ts` / `autoLock.ts` は保護対象)。
+- **1 度目の全件は 3 件落ちた** (`invokeDataTypes`): `emotions` の `ACTIONS` を `(ctx) => emotionsWrites(() => …)` の無名関数にすると、走査が `'鍵': 関数名` の形を読めず登録が 52 件に縮んだ。素の関数名 (`logMood` / `clearHistory`) を ACTIONS に置き、鎖は関数の中へ移した。
+- `verify:all` の 1 度目は 12 件: `secrets.ts` の行が +38 ずれて `docs/ARCHITECTURE.md` の参照 8 件が漂流・ユニットテスト数 17807 → **17837**・`lint:shared-judgement` が `privateTarget` を母集団に入れた (判定を実測して対称と書いた・両ビルド 80 → 81 / 否定 39 → 40・`CLAUDE.md` の写しも直した)。
+- **対照** (修正のあるファイルを HEAD に戻して対象検査を回し、必ず元へ戻して md5 照合): counseling 25 / redact 4 / scanTarget 9 / watchlist 2 / emotions 2 / secrets 3 / autoLock 2 / csv 2 / voiceCommand 3 / escape 2 / voiceEgressNotice 1 / VillagePage 1 件がそれぞれ落ち、復元後は一致。
+- **出荷物が動いたので実機も回した (最終コード)**: `build:web` / `build:web:lite` とも `--config vite.config.ts` で成功。`perf` OK (LITE DCL 217 ms / heap 9.5 MB・FULL DCL 585 ms / heap 36.3 MB)・`e2e` **758 件 ❌ 0**・`e2e:lite` **758 件 ❌ 0**・`e2e:ollama` 全件 PASS。両ビルド **11,881,725 B / 3,294,349 B** (パス 507 の 11,872,088 B / 3,284,712 B から両方 +9,637 B)・md5 `70951bd2…` / `8cfbdf45…`。
+- 自戒: `pgrep -f` 系で自分の shell を殺す罠を避け、PID で扱った。`ACTIONS` の形は census が読むので、無名関数で包まない。
+
 ## パス 523 (狩りの 13 回目 —— 5 面の監査役の指摘を自分で再現し、本物の 14 件を直す) (2026-10-15)
 
 5 面 (main-ipc / renderer / network / ai / supply-chain) の監査役 (read-only) を並行で走らせ、**各指摘を自分で再現してから**仕分けた (監査役の報告は権威を持たない)。パス 522 が「強める候補」として残した network の NET-6 を先に自分で測ると、backlog の前提 (「アプリ側はポートも userinfo も出さない」) が偽だった —— それが T-059。残りは **13 件が本物** (main-ipc 3 / renderer 5 / network 1 / ai 2 / supply-chain 3)。各修正は対照 (修正を外すと回帰検査が落ちる) で確かめ、元へ戻して md5 で照合した。
@@ -31505,7 +31540,7 @@ src/shared/ のモジュール                                        138
 「読んだ結果」か `未読 (…)` のどちらかで、読んでいない物に「対称だろう」とは書かない。
 
 <!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/shared-judgement-census.cjs。npm run lint:shared-judgement は check だけ) -->
-shared **158** モジュール / 両ビルドが import **80** / うち否定で答えられる **39**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
+shared **158** モジュール / 両ビルドが import **81** / うち否定で答えられる **40**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
 
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |
@@ -31535,6 +31570,7 @@ shared **158** モジュール / 両ビルドが import **80** / うち否定で
 | `isoDate` | 8 | 30 | 対称 (実測・パス 256) —— 負で答える関数は 8 つだが、**両ビルドが呼んでいるのは 2 つだけ** (main/preload 側の消費者を機械的に数えた): (1) `isCalendarDate` + `calendarDateMessage` —— main/clients/emotions.ts:212 と renderer/data/emotionsWeb.ts:177 が**同一の行**で投げる (`throw new Error(calendarDateMessage('date'))`)。 (2) `isoDateFromTimestamp` —— main/clients/stocks.ts:776 と renderer/data/stocksWatchlistWeb.ts:194 がともに `?? ''` で空文字に倒す。いずれも**見本のローソク生成の中**で、入力は `Date.now()` ± 日数なので `null` の枠は実質到達しない。 残り 6 つ (`parseIsoDate` / `isCalendarMonth` / `isCalendarDateOrMonth` / `parseTimestamp` / `addIsoDays` / `isoDaysBetween`) は **main/preload 側の消費者が 0 件** なので、ビルド間の非対称は**原理的に起きない**。 ★ **2026-09-22 (パス 394) に 9 つ目 `isoMonthOf` が増えた** —— 消費者は `main/clients/freee.ts` **だけ** (renderer は 0 件) なので、こちらも非対称は起きない (**片方のビルドしか呼ばない**)。ブラウザ版の bundle からは tree-shaking で落ちることを 両方組んで実測した (+0 B)。上の「負で答える関数は 8 つ」はこの行が足された時点の数で、**今は 9 つ**である。 ★ 台帳の粒度について: この台帳は**モジュール**単位で「両ビルドがimport」を数えるが、非対称が宿るのは**両ビルドが呼ぶ関数**だけである。isoDate はその差が最も大きい例 (33 のimport元・負で答える 8 関数・境界を越えるのは 2 つ)。 ★ **2026-09-22 (パス 410) に 10 個目 `displayDateOf` が増え、main 側の import 元が 3 → 8 になった** (`drive` / `github` / `microsoft-365` / `notion` / `wordpress` の 5 client を日付の読みへ寄せた)。**これは非対称ではなく、設計した対である** —— 境界 (main の client) が `string | null` へ正規化し、画面 (renderer) が同じ module の `dateText` でその `null` に**理由を与える** (「日付が読めません」)。`displayDateOf` を呼ぶのは main 側と `shared/ollama.ts` だけ、`dateText` を呼ぶのは画面だけで、**同じ関数が両側で違う扱いを受ける形は 1 つも無い** (実測)。`dateText` は `string | null` を受けて必ず文字列を返すので、そもそも否定で答えない。 ★ **2026-09-27 (パス 493) に 11 個目 `isTimestampMs` が増え、renderer 側の import 元が 29 → 30 になった** —— 読み手は `shared/emotionsShape.ts` の `isAnalysisEntry` (main の `emotions.ts` とブラウザ版の `emotionsWeb.ts` が**同じ 1 つの述語**として呼ぶ) と、ブラウザ版だけが持つ記録の保管層 `renderer/data/store.ts`。否定の答え (時刻が範囲外) は両ビルドとも「その要素・その記録を落とす」に倒れるので非対称は無い (実測)。 |
 | `mutualFundsMetrics` | 0 | 2 | 対称 (実測・パス 272) —— main の到達は `serviceAdvisor` 経由 (4 クライアント: real-estate / mutual-funds / uber-eats / demae-can)。`serviceAdvisor` がこのモジュールから取るのは**4 つ** (`serviceAdvisor.ts:37`): 定数 `RETURN_FLOOR_PCT` / `RETURN_ENTRY_CEILING_PCT` と述語 `isImpossibleReturnPct` / `isAboveEntryCeilingPct` (どちらも 1 行の比較。2026-09-27 · パス 493j に 2 → 4 —— 上端の外を「捨てずに言う」断りのため)。**2 つの述語は確かに越境する** —— `adviseService` の中で `isImpossibleReturnPct` は真の枝 (:586 警告を組む) と偽の枝 (:607 測れる集合から外す) の両方、`isAboveEntryCeilingPct` は真の枝 (:598 断りを組む) だけが使われる (偽の枝は何もしない —— 値は比較に残る)。だが**否定のあとの動作は両ビルドで同じ 1 つの実装の中に在る** —— `adviseService` が返す助言の*中身*を形づくるだけで `ok: false` を作らず、同じオブジェクトが両ビルドへ返る (`serviceAdvisor` の判定はパス 268 で対称と実測済み)。★ この行は **module 単位の到達と call 単位の到達が違う**ことの例である (`isoDate` の ★ と同じ話)。 |
 | `ollama` | 1 | 5 | **非対称だった → パス 248 で直した** (許可経路の台帳を読むのは renderer だけ) |
+| `privateTarget` | 0 | 1 | 対称 (実測・パス 524 で読んだ) —— 母集団に入ったのはパス 524 (T-076) で `scanTarget.ts` が `looksInternalHostname` の中で `isPrivateOrReservedTarget` を呼ぶようになったため。 main が `privateTarget` を直に import する所は **0 件**で、main の閉包に入るのは `scanTarget` → `privateTarget` の 1 辺だけ。しかも `looksInternalHostname` の呼び手は `describeScanUrlRisk` の中だけで、その読み手は `SecurityPage.tsx` (renderer) だけなので、 **否定のあとの動作は越境しない** (main の `validateScanUrl` はこの関数を通らない)。 他の読み手 (`renderer/network/proxy.ts` は断る・`imageUrlGate.ts` は描かない) は どちらも renderer の中で完結する。警告であって関門ではない点は `scanTarget` の判定と同じ |
 | `radarPlot` | 0 | 2 | **欠陥だった → パス 268 で直した** (実測) —— 否定で答える 2 つのうち `isPlottableScore` は renderer だけ (memberCare.ts)、`omittedRadarNote` は**両ビルドが呼ぶ**。`null` / 文字列の扱いは**関数の側では対称**だった (main の SVG は ⚠ の `<text>` を図の中へ書き、画面は ⚠ の `<div>` を図の下に出す)。**非対称は 1 段上に在った** —— 同じ `export-svg` action の実装が 2 つ在り、ブラウザ版は画面の `<svg>` を DOM から掻き取っていた。掻き取れるのは `<svg>` 要素だけで、⚠ の断り・標題・部署・評価時点・凡例はその**外側**に在る。実測 (jsdom・旧経路): `{ ok: true, bytes: 244, hasTitle: false, hasDept: false, hasDate: false, hasWarn: false, hasName: false }` —— しかも未評価の軸を持つ人が居る入力で**成功**していた (デスクトップ版は `score must be integer 1-5: 0` で断る)。組み立てを `shared/teamRadarSvg.ts` へ移し、両ビルドが同じ関数を通す。★ なお `omittedRadarNote` が非 `null` を返す枝は **`export-svg` の口からは到達しない** —— 上流の `validateTeamRadarState` が 5 軸すべて整数 1-5 を要求するので、未評価の形は図に届く前に断られる (両ビルドで同じ)。画面の ⚠ は下書きを直接読むので今日も出る |
 | `readNumeric` | 0 | 12 | 非対称は起きない (実測・パス 272) —— パス 80 で規則を 1 つにした所だが、**閉包で main へ繋がる道は `hydroponicCrops` 経由の 1 本だけ** (実測)。その鎖の main 側の入口 `buildHydroponicsSnapshot` は 2 つの定数表を射影するだけで、この数の読み取りを 1 度も呼ばない。★ renderer 側では 25 以上の呼び手が在るが、**片側しか呼ばない判定に非対称は宿らない** |
 | `rfc2822` | 1 | 1 | 対称 (実測・2026-09-19 パス 321) —— `buildRfc2822` / `isSafeHeaderValue` を shared の 1 つに畳み、両ビルドは同じ関数を re-export する (`refusalTwins` が `===` で留める —— 写しが再び生えれば落ちる)。断り (`RFC2822_HEADER_UNSAFE` の throw) の後の動作は両ビルドとも「上がった Error をそのまま呼び出し側へ」: main は `createDraft` / shopify の `syncToGmail` が投げて IPC の `err()` へ、ブラウザ版は `createGmailDraft` が投げて `invoke` の `withFloor` へ。到達は shared/api/google.ts の `gmailDraftInit` 経由 (両ビルド + shopify) と re-export の 2 本 |

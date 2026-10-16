@@ -7,6 +7,13 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-10-16) — パス 524: 狩りの 14 回目。5 面の監査役の指摘を自分で再現し、本物の 15 件を直す
+
+- 詳細は `docs/REMAINING_WORK.md` の「パス 524」。T-073〜T-087 (ai: 危機語彙の活用形と飾りの字・村の音声の断り / network: Cloudflare 新接頭辞の伏字・内部ホスト警告 / renderer: ウォッチリスト天井・自動施錠の期限・CSV の行数天井・音声の引用解析・Markdown の画像/リンク中和 / main-ipc: emotions の書き込み鎖・eraseAll 中の書き込み拒否 / supply-chain: vite の設定明示・binding.gyp・workflow・追跡禁止の設定)。
+- **確立したパターン** —— `ACTIONS` は `'鍵': 素の関数名` の形で書く (`invokeDataTypes` が読む)。鎖は関数の中へ。新しい `new URL(` / 生の読み / 内部の census 行は、足した瞬間に census が鳴るので台帳へ。
+- 検証: `npm test` 1074 / 21698・`verify:all` exit 0・chain #305・e2e / e2e:lite 758 件・両ビルド 11,881,725 B / 3,294,349 B。
+- **次**: backlog 18 件 (裸の鍵の伏字・workflow_run の固定ほか)。マージはしない (PR #806 に積む)。
+
 ## 直近の作業 (2026-10-15) — パス 523: 狩りの 13 回目。5 面の監査役の指摘を自分で再現し、本物の 14 件を直す
 
 - 詳細は `docs/REMAINING_WORK.md` の「パス 523」。直したのは T-059 (network: Worker とアプリの上流 URL の userinfo / 既定外ポート —— backlog NET-6 の前提が偽だった) / T-060〜T-062 (main-ipc: 書き出し先は正規化済みの絶対パスだけ・読めない保管ファイルの上に書かない・OAuth の待受を迷い要求で閉じない) / T-063〜T-065・T-067 (renderer: changePassword / recover / initialize の施錠の世代・初期化の `add`・StatusBar の失敗文の畳み・計画と実行の関門の順序) / T-066 (network: 204 / 205 / 304 の封筒) / T-068・T-069 (ai: 直前の危機の文を履歴として送らない・村の相談の返答を上書きしない) / T-070〜T-072 (supply-chain: builder 設定の影・公開する assets を鎖へ・PostCSS の設定の探索を止める) の 14 件。

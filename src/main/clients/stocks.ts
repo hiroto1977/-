@@ -3,9 +3,11 @@ import { readStateFile } from '../stateFile';
 import { isoDateFromTimestamp } from '../../shared/isoDate';
 import { countChars } from '../../shared/inputCeiling';
 import {
+  MAX_WATCHLIST_SYMBOLS,
   isSafeSymbol,
   readStoredWatchlist,
   symbolsOrEmpty,
+  watchlistFullMessage,
   watchlistStoredNote,
   type StoredWatchlist,
 } from '../../shared/watchlistState';
@@ -1788,6 +1790,7 @@ export async function addWatchlistEntry(symbol: string, deps: StateDeps = {}): P
     // 読めなかった保存値は空として扱う (明示の操作は警告のうえ通す —— shared の `symbolsOrEmpty` の注記)。
     const cur = symbolsOrEmpty(await loadStoredWatchlist(deps));
     if (cur.includes(upper)) return { watchlist: cur };
+    if (cur.length >= MAX_WATCHLIST_SYMBOLS) throw new Error(watchlistFullMessage());
     const next: StocksState = { watchlist: [...cur, upper] };
     await saveStocksStateUnlocked(next, deps);
     return next;

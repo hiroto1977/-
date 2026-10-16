@@ -26,7 +26,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 76 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **17807** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **17837** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` (**2026-09-01 の報告** —— 今のコードを測った物ではない。`docs/REMAINING_WORK.md` の「パス 494」) |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` (同上) |
@@ -2402,13 +2402,13 @@ classDiagram
   }
 
   class SecretsStore~secrets.ts~ {
-    +setToken(id, token) : secrets.ts:298
-    +getToken(id) : secrets.ts:354
-    +clearToken(id) : secrets.ts:359
-    +listConfiguredServices() : secrets.ts:381
-    +setOAuthTokens(id, ts) : secrets.ts:480
-    +getOAuthTokens(id) : secrets.ts:510
-    +getValidToken(id) : secrets.ts:563 ~auto-refresh~
+    +setToken(id, token) : secrets.ts:336
+    +getToken(id) : secrets.ts:392
+    +clearToken(id) : secrets.ts:397
+    +listConfiguredServices() : secrets.ts:419
+    +setOAuthTokens(id, ts) : secrets.ts:518
+    +getOAuthTokens(id) : secrets.ts:548
+    +getValidToken(id) : secrets.ts:599 ~auto-refresh~
   }
 
   class OAuthHelper~oauth.ts~ {
@@ -2496,7 +2496,7 @@ classDiagram
 | 10 | Skill name は path traversal を含まない | `skills.test.ts` + property fuzz 500 試行 |
 | 11 | Gmail `to` は CR/LF/NUL を含まない | `rfc2822.test.ts` (shared の 1 つ) + `gmail.test.ts` + property fuzz 400 試行 |
 | 12 | OAuth callback の Host ヘッダは loopback のみ | `isLoopbackHost` `src/main/oauth.ts:524-529` |
-| 13 | secrets.json は ≤ 1 MB かつ plain object | `MAX_STORE_SIZE` `src/main/secrets.ts:10` / `parseStore` `src/main/secrets.ts:37-50` |
+| 13 | secrets.json は ≤ 1 MB かつ plain object | `MAX_STORE_SIZE` `src/main/secrets.ts:10` / `parseStore` `src/main/secrets.ts:75-88` |
 | 14 | 新規 client は `LIVE_FETCHERS` (`src/main/clients/index.ts:81-90`) / `SERVICES` (`src/renderer/services.ts:102`) 両方に登録 | scaffold script + `lint:test-coverage` |
 | 15 | ブラウザ権限は**既定で拒否** — 許すのはクリップボードの 2 つだけ (Electron の既定は全部承認) | `ALLOWED_PERMISSIONS` `src/main/main.ts:127` + `src/main/__tests__/mainWindow.test.ts` 「権限要求 — 既定は拒否、クリップボードだけ許す」24 件 |
 | 16 | PR で `npm run typecheck && npm test && npm run verify:arch` が green | CI (`.github/workflows/ci.yml`) |

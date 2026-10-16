@@ -247,13 +247,41 @@ function check(list, allow = UNPINNED_ALLOW, jobAllow = JOB_PERMISSIONS_ALLOW) {
             'ここだけ変わります。要るなら JOB_PERMISSIONS_ALLOW へ job 名・scope・理由を書くこと',
       });
     }
-    if (/^\s*pull_request_target:/m.test(text)) {
+    // **綴りを問わず**: `on: pull_request_target` / `on: [push, pull_request_target]` /
+    // `- pull_request_target` / `"pull_request_target":` / `{pull_request_target: {…}}` はどれも有効な
+    // YAML で、以前の `^\s*pull_request_target:` は map の形 1 つしか見なかった (パス 524 · T-085 ·
+    // 実測 5 形が素通り)。注記を落としたうえで、語として現れたら断る。
+    const withoutComments = text
+      .split('\n')
+      .map((l) => l.replace(/(^|\s)#.*$/, '$1'))
+      .join('\n');
+    if (/(^|[^\w-])pull_request_target(?![\w-])/.test(withoutComments)) {
       problems.push({
         file: name,
         why: 'pull_request_target — fork の PR が secrets 付きで走る',
       });
     }
     const lines = text.split('\n');
+    // actions/github-script の `script:` は JavaScript なので、`${{ … }}` を埋め込むと信用できない値が
+    // コードになる (run: と同じ注入。パス 524 · T-085)。`script:` の本体 (ブロックの続き行) を見る。
+    for (let i = 0; i < lines.length; i++) {
+      const sm = /^(\s*)-?\s*script:\s*(.*)$/.exec(lines[i]);
+      if (!sm) continue;
+      const indent = sm[1].length;
+      const body = [sm[2]];
+      for (let j = i + 1; j < lines.length; j++) {
+        const l = lines[j];
+        if (l.trim() === '') { body.push(l); continue; }
+        if ((/^(\s*)/.exec(l)?.[1].length ?? 0) <= indent) break;
+        body.push(l);
+      }
+      if (body.some((l) => /\$\{\{/.test(l))) {
+        problems.push({
+          file: `${name}:${i + 1}`,
+          why: 'script: に ${{ … }} を埋め込んでいる — 信用できない値が JavaScript のコードになる。env: に渡して process.env から読むこと',
+        });
+      }
+    }
     for (let i = 0; i < lines.length; i++) {
       const m = /^\s*-?\s*uses:\s*([^\s#]+)/.exec(lines[i]);
       if (!m) continue;
@@ -384,6 +412,11 @@ function selfTest() {
       [{ name: 'x.yml', text: 'permissions:\n  contents: read\non:\n  pull_request_target:\n' }],
       1,
     ],
+    ['pull_request_target を `on: x` の形で落とす (T-085)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\non: pull_request_target\n' }], 1],
+    ['pull_request_target を flow 配列で落とす (T-085)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\non: [push, pull_request_target]\n' }], 1],
+    ['pull_request_target を引用符つきの鍵で落とす (T-085)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\non:\n  "pull_request_target":\n' }], 1],
+    ['注記の中の pull_request_target は落とさない (T-085)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\n# pull_request_target は使わない\non:\n  push:\n' }], 0],
+    ['github-script の script: への ${{ }} 展開を落とす (T-085)', [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: actions/github-script@${'d'.repeat(40)}\n        with:\n          script: |\n            core.info('${'$'}{{ github.event.inputs.x }}')\n` }], 1],
     [
       '第三者 action のタグ固定を落とす',
       [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: evil/thing@v1\n' }],

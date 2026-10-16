@@ -197,6 +197,10 @@ export function redactSecrets(input: string): string {
        * 2026-08-23 に「`sk-ant-…` を含む例外がそのまま renderer へ届いていた」
        * のを直したときに、**その事故の接頭辞だけを足して一般化しなかった**
        * 跡である。同じ事故が OpenAI の鍵で起きれば、今日でもそのまま漏れる。
+       * Cloudflare の接頭辞つきトークン `cfut_` (ユーザー) / `cfat_` (アカウント) /
+       * `cfk_` (Global API Key) を足した (パス 524 · T-075)。以前の注記は
+       * 「接頭辞が無い」と書いていたが、新しい発行物は 40 字 + チェックサムの接頭辞つき。
+       *
        * 実測して素通りを確認した形: `sk-proj-` / `sk-` / `sk_live_` /
        * `rk_live_` / `shpat_`。このアプリはどれも預かる
        * (OpenAI は 5 社の 1 つ、Stripe と Shopify はサービス一覧に在る)。
@@ -207,7 +211,7 @@ export function redactSecrets(input: string): string {
        * 伏字を通り抜けて表示される。
        */
       .replace(
-        /\b(sk-ant-|sk-proj-|ghp_|ghs_|ghu_|gho_|ghr_|github_pat_|xoxp-|xoxb-|xoxa-|secret_|ntn_|lin_api_|lin_oauth_|AIza|shpat_|shpss_|shpca_|sk_live_|sk_test_|rk_live_|rk_test_|whsec_)[A-Za-z0-9_-]{8,}/g,
+        /\b(sk-ant-|sk-proj-|ghp_|ghs_|ghu_|gho_|ghr_|github_pat_|xoxp-|xoxb-|xoxa-|secret_|ntn_|lin_api_|lin_oauth_|AIza|shpat_|shpss_|shpca_|sk_live_|sk_test_|rk_live_|rk_test_|whsec_|cfut_|cfat_|cfk_)[A-Za-z0-9_-]{8,}/g,
         '$1[REDACTED]',
       )
       /*

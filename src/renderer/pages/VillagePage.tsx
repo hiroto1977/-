@@ -409,7 +409,7 @@ export function VillagePage() {
           (ブラウザ任せ・経路を選べない)、下が「その文を何処へ送るか」(利用者が
           選んだプロバイダ)。`transcriptStaysLocal: false` にするのは、文の
           行き先を下の断りが送り先の内訳つきで述べるから (パス 108)。 */}
-      <VoiceEgressNotice subject={{ transcriptStaysLocal: false }} />
+      <VoiceEgressNotice subject={{ transcriptStaysLocal: false, readsAloud: true }} />
 
       <AiEgressNotice
         subject={{

@@ -16,6 +16,7 @@
  */
 
 import { countChars } from './inputCeiling';
+import { isPrivateOrReservedTarget } from './privateTarget';
 export type ScanUrlFailure = 'empty' | 'too-long' | 'not-a-url' | 'not-web';
 
 export type ScanUrlResult =
@@ -212,6 +213,20 @@ function embeddedIpv4FromV6(v6: string): string | null {
 export function looksInternalHostname(hostname: string): boolean {
   const h = hostname.toLowerCase().replace(/\.$/, '');
   if (h === '') return false;
+  // SSRF 用の分類器 (privateTarget) が内部と見る宛先は、ここでも内部と見る (パス 524 ·
+  // T-076)。ここの手書きの判定は IPv4 互換 `::a.b.c.d`・SIIT・fec0::/10・ff00::/8・
+  // 64:ff9b:1::/48・192.0.0.0/24・198.18.0.0/15・224.0.0.0/3 を知らず、メタデータ用
+  // アドレスを `[::a9fe:a9fe]` と書くだけで「社内のホスト」の警告をすり抜けた。
+  // 警告は広い方に倒してよい (止めない・余計な警告が出るだけ) ので OR で足す。
+  // ただし文書用の範囲 (RFC 5737 の TEST-NET-1/2/3 と RFC 3849 の 2001:db8::/32) は警告しない ——
+  // 説明用に貼られる偽の例で、利用者の社内情報ではない (既存の方針・検査が留めている)。
+  const documentation =
+    /^(?:192\.0\.2|198\.51\.100|203\.0\.113)\.\d{1,3}$/.test(h) || /^\[2001:0?db8:/.test(h);
+  try {
+    if (!documentation && isPrivateOrReservedTarget(new URL(`http://${h}/`))) return true;
+  } catch {
+    // 解析できない名前は URL としても送れない (validateScanUrl が先に断る)。下の判定へ。
+  }
   // IPv6 は URL の hostname では角括弧付きで来る。
   if (h.startsWith('[') && h.endsWith(']')) {
     const v6 = h.slice(1, -1);

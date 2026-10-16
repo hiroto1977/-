@@ -104,6 +104,8 @@ const LEDGER: readonly Row[] = [
     why: '返すのは parsed.href' },
   { file: 'src/shared/scanTarget.ts', needle: 'parsed = new URL(url)', kind: 'value-gate',
     why: 'パス 325 で生の文字列から parsed.href へ変えた —— VirusTotal へ送るのは調べた物' },
+  { file: 'src/shared/scanTarget.ts', needle: 'isPrivateOrReservedTarget(new URL(`http://${h}/`))', kind: 'internal',
+    why: '「社内ホスト」の警告が privateTarget の判定を借りるための再解析 (T-076)。通信にも画面にも出ない' },
   { file: 'src/shared/scanTarget.ts', needle: 'const parsed = new URL(checked.url)', kind: 'internal',
     why: '関門を通った URL の危険 (userinfo / 秘密の引数) を読むための再解析' },
   { file: 'src/shared/updateCheck.ts', needle: 'parsed = new URL(raw)', kind: 'predicate',
@@ -215,7 +217,7 @@ describe('value-gate は解析後の値を返す (振る舞いで確かめる)',
    * (このリポジトリが繰り返し直してきた形)。行が増減したらここが鳴り、
    * 書き換えるときに「どの種類が増えたのか」を読むことになる。
    */
-  it('★ 種類ごとの行数は実測どおり (台帳 28 行が 29 か所を覆う)', () => {
+  it('★ 種類ごとの行数は実測どおり (台帳 29 行が 30 か所を覆う)', () => {
     const byKind = (k: Row['kind']): number => LEDGER.filter((r) => r.kind === k).length;
     expect({
       'value-gate': byKind('value-gate'),
@@ -223,10 +225,10 @@ describe('value-gate は解析後の値を返す (振る舞いで確かめる)',
       pin: byKind('pin'),
       internal: byKind('internal'),
       display: byKind('display'),
-    }).toEqual({ 'value-gate': 11, predicate: 6, pin: 4, internal: 4, display: 3 });
-    expect(LEDGER).toHaveLength(28);
+    }).toEqual({ 'value-gate': 11, predicate: 6, pin: 4, internal: 5, display: 3 });
+    expect(LEDGER).toHaveLength(29);
     // web-shim の同じ綴りの 2 行が 1 行の台帳に対応するので、か所は台帳より 1 多い。
-    expect(SITES).toHaveLength(29);
+    expect(SITES).toHaveLength(30);
     expect(VALUE_GATE_BEHAVIOR.length).toBeGreaterThanOrEqual(5);
   });
 });

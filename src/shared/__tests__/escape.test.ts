@@ -246,3 +246,27 @@ describe('escapeInvisibleUnits — 見えない字を見える綴りへ (threat:
     expect(INVISIBLE_UNITS.global).toBe(true);
   });
 });
+
+/**
+ * 画像とリンクの入口は、書き出した `.md` の中で生きない (2026-10-16 · パス 524 · threat: T-087)。
+ * `![t](https://remote/pixel)` は Obsidian / GitHub 系の描画で開いただけで外へ取りに行き、
+ * `[x](javascript:…)` は押せるリンクになる。直す前は `<` 以外を通していた (実測)。
+ */
+describe('Markdown の画像・リンクの入口 (threat: T-087)', () => {
+  const hostile = '![t](https://evil.example/b.png?u=1) [x](javascript:alert(1))';
+  it.each([
+    ['inline', escapeMarkdownInline],
+    ['text', escapeMarkdownText],
+  ])('★ %s: ![ と ]( を無効にする (threat: T-087)', (_name, fn) => {
+    const out = fn(hostile);
+    expect(out).not.toContain('![');
+    expect(out).not.toContain('](');
+    expect(out).toBe('!\\[t]\\(https://evil.example/b.png?u=1) [x]\\(javascript:alert(1))');
+  });
+
+  it('★ 対照: 普通の [注] や (補足) は 1 字も変えない', () => {
+    for (const fn of [escapeMarkdownInline, escapeMarkdownText]) {
+      expect(fn('売上 [注1] と (補足) と ! と ] ( の単独')).toBe('売上 [注1] と (補足) と ! と ] ( の単独');
+    }
+  });
+});

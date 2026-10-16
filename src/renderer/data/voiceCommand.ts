@@ -365,10 +365,15 @@ const QUOTE_PAIRS: readonly (readonly [string, string])[] = [
 export function quotedSpan(raw: string): string | null {
   // 符号単位で歩く (`indexOf` / `slice` と同じ座標)。`i < raw.length` の添字ループは `i <= raw.length` が
   // 等価変異 (`raw[length]` は undefined でどの対にも当たらない) になるので比較そのものを持たない形で書く (法則 115)。
+  // 閉じ記号が**これより後ろに無い**と分かった対は、以後の開き記号でも必ず見つからない —— 覚えて
+  // 再び走査しない (2026-10-16 · パス 524 · threat: T-082)。開き記号だけを 2 万個並べた発話は
+  // 開き記号ごとに末尾まで走査し直し、1.5 秒かかった (5,000 個で 105 ms・二乗)。
+  const noCloserAfter = new Set<string>();
   for (const [i, ch] of raw.split('').entries()) {
     const pair = QUOTE_PAIRS.find(([open]) => open === ch);
-    if (pair === undefined) continue;
+    if (pair === undefined || noCloserAfter.has(pair[1])) continue;
     const end = raw.indexOf(pair[1], i + 1);
+    if (end === -1) noCloserAfter.add(pair[1]);
     // `end < 0` は `end <= 0` が等価変異 (`i + 1 >= 1` なので 0 は返らない) —— 見つからない値そのものを比べる。
     if (end === -1) continue;
     const value = raw.slice(i + 1, end).trim();

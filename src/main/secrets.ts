@@ -34,15 +34,40 @@ export function secretsPath(): string {
 
 let writeChain: Promise<void> = Promise.resolve();
 
+/**
+ * 消去中は書き込みを断る (2026-10-16 · パス 524 · threat: T-079)。
+ * 「すべてのデータを削除」(`eraseDesktopData`) は鎖に入らずファイルを消すので、消す瞬間に
+ * 進行中の `setToken` / 更新トークンの保存が後から tmp を rename すると、**消したはずの
+ * 資格情報が戻り**、報告は `allDeleted: true` のまま再起動する (実測 300 回中 221 回)。
+ * `beginErase()` が旗を立てて**待機中の書き込みを断らせ、進行中の分を待つ**。
+ */
+let erasing = false;
+export const ERASING_MESSAGE = 'データの削除中のため、資格情報を書き込めません。';
+
 function withWriteLock<T>(fn: () => Promise<T>): Promise<T> {
+  const guarded = (): Promise<T> => {
+    if (erasing) return Promise.reject(new Error(ERASING_MESSAGE));
+    return fn();
+  };
   // Run fn after the previous write completes (success OR failure).
   // The chain holds only completion signals, never throws.
-  const next = writeChain.then(fn, fn);
+  const next = writeChain.then(guarded, guarded);
   writeChain = next.then(
     () => undefined,
     () => undefined,
   );
   return next;
+}
+
+/** 消去の前に呼ぶ。以後の書き込みを断り、鎖に残っている書き込みが済むのを待つ。 */
+export async function beginErase(): Promise<void> {
+  erasing = true;
+  await writeChain;
+}
+
+/** 消去が完了しなかったとき (再起動しないとき) に書き込みを再開する。 */
+export function endErase(): void {
+  erasing = false;
 }
 
 /** Parse a stored-secrets JSON blob into a validated string map, or null if

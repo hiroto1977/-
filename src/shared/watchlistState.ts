@@ -24,6 +24,20 @@ import { countChars } from './inputCeiling';
 import { MAX_TICKER_CHARS } from './advisorQuestionLimits';
 
 /**
+ * ウォッチリストに登録できる銘柄数の天井 (2026-10-16 · パス 524 · threat: T-077)。
+ * 以前は無制限で、`register-ticker` を繰り返すと保存値が際限なく伸び (実測 3,000 件で
+ * `fetch:snapshot` の応答が 34.5 MB・50,000 件で `JSON.stringify` が `RangeError`)、
+ * 以後の株式画面の読み込みが毎回主プロセスを塞いだ。直す手は「すべてのデータを削除」しか無かった。
+ * アドバイザーの対象 (`MAX_ADVISOR_UNIVERSE_SYMBOLS` = 25) より十分広く、人が手で管理する数に収まる値。
+ * 天井を超える**新規**登録は断る (既に在る銘柄の再登録と解除は常に通す —— 逃げ口を塞がない)。
+ */
+export const MAX_WATCHLIST_SYMBOLS = 200;
+
+export function watchlistFullMessage(): string {
+  return `ウォッチリストは ${MAX_WATCHLIST_SYMBOLS} 銘柄までです。不要な銘柄を解除してから追加してください。`;
+}
+
+/**
  * 銘柄コードの形。1〜{@link MAX_TICKER_CHARS} 字の `[A-Za-z0-9.-^]` —— 日本の証券コード (`7203.T`)・
  * 米国 (`AAPL`)・指数 (`^N225`) を通し、空白・NUL・パス区切り・シェルのメタ文字を弾く。
  *

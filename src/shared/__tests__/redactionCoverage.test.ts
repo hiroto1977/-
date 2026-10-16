@@ -363,9 +363,12 @@ describe('伏字の網羅 — 母集団は「預かっているサービス」(�
     // (パス 516 · T-021 —— それまで `header-only` に `'H'.repeat(40)` という
     // 実形でない標本で置かれ、裸の `key_…` の反射が素通りする穴を隠していた)。
     { service: 'cursor', issuer: 'Cursor Admin API キー (key_ + 16 進)', carrier: 'prefix', sample: 'key_9f2c1a8e4b7d6c5f0a3e' },
+    // Cloudflare の接頭辞つきトークン (パス 524 · T-075)。以前は「接頭辞が無い」と見て
+    // header-only に置いていたが、新しい発行物は cfut_ (ユーザー) / cfat_ (アカウント) /
+    // cfk_ (Global API Key) + 40 字 + チェックサム。3 形は redact.test の別の検査が全部当てる。
+    { service: 'cloudflare', issuer: 'Cloudflare ユーザートークン (cfut_)', carrier: 'prefix', sample: 'cfut_Zx9Kq2Lm4Np7Rt0Vw3Yb6Cd8Fg1Hj5KsAb3dE9fG1a2b3c4d' },
     // ここから下は接頭辞を主張しない (控えめな側)。標本は「長い英数字」で、
     // 裸では伏せられないこと・名前が付けば伏せられることの両方を測る。
-    { service: 'cloudflare', issuer: 'Cloudflare API トークン (40 字)', carrier: 'header-only', sample: 'B'.repeat(40) },
     { service: 'security', issuer: 'HIBP / VirusTotal (16 進)', carrier: 'header-only', sample: 'c'.repeat(64) },
     { service: 'wordpress', issuer: 'WordPress.com OAuth', carrier: 'header-only', sample: 'D'.repeat(44) },
     { service: 'canva', issuer: 'Canva OAuth', carrier: 'header-only', sample: 'E'.repeat(48) },
@@ -1026,3 +1029,21 @@ describe('伏字の網羅 — path に秘密を持つ運び手 (パス 522 · T-
   });
 });
 
+
+/**
+ * Cloudflare の接頭辞つきトークン 3 形が、裸でエラー本文に反射されても伏せられる
+ * (2026-10-16 · パス 524 · threat: T-075)。直す前は 3 形とも素通りした (実測)。
+ */
+describe('Cloudflare の接頭辞つきトークン (threat: T-075)', () => {
+  it.each(['cfut_', 'cfat_', 'cfk_'])('★ %s の裸の反射を伏せる (threat: T-075)', (prefix) => {
+    const token = `${prefix}Zx9Kq2Lm4Np7Rt0Vw3Yb6Cd8Fg1Hj5KsAb3dE9fG1a2b3c4d`;
+    const out = redactForMessage(`{"errors":[{"message":"Invalid API token ${token}"}]}`, 300);
+    expect(out).not.toContain(token);
+    expect(out).toContain(`${prefix}[REDACTED]`);
+  });
+
+  it('★ 対照: 接頭辞に似た散文は伏せない (短い語・語中は巻き込まない)', () => {
+    expect(redactForMessage('cfk_ is a prefix', 300)).toBe('cfk_ is a prefix');
+    expect(redactForMessage('abcfut_Zx9Kq2Lm4Np7 is not one', 300)).toContain('abcfut_Zx9Kq2Lm4Np7');
+  });
+});

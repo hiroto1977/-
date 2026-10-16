@@ -14,6 +14,31 @@ const MiB = 1024 * 1024;
 
 /** 売上 / KPI 実績の CSV。1 行 100 バイトとして 20 万行 —— 表計算ソフトから出す量として十分。 */
 export const MAX_CSV_IMPORT_BYTES = 20 * MiB;
+/**
+ * CSV の行数の天井と、行ごとの誤りを集める天井 (2026-10-16 · パス 524 · threat: T-081)。
+ * 20 MiB の上限だけでは、`,,,,` を並べた 1 ファイルが 419 万行になり、全行が誤りとして
+ * 集められて 37 秒止まり RSS 3.7 GB を使った (実測)。画面が見せる理由は 3 件だけなので、
+ * 誤りを何百万件も溜める理由は無い。**超えたら一部だけ取り込まず、全体を断る** (途中までの
+ * 取り込みは「どこまで入ったか」を利用者が確かめられない)。
+ */
+export const MAX_CSV_IMPORT_ROWS = 200_000;
+export const MAX_CSV_ROW_ERRORS = 1_000;
+
+/** 改行の数で行数を概算し、天井を超えるなら断りの文を返す。解析の前に呼ぶ (安い)。 */
+export function csvRowLimitError(text: string): string | null {
+  let rows = 0;
+  for (let i = text.indexOf('\n'); i !== -1; i = text.indexOf('\n', i + 1)) {
+    rows += 1;
+    if (rows > MAX_CSV_IMPORT_ROWS) {
+      return `行が多すぎます（${MAX_CSV_IMPORT_ROWS.toLocaleString('ja-JP')} 行まで）。分けて取り込んでください。`;
+    }
+  }
+  return null;
+}
+
+/** 誤りの行が天井を超えたときの断りの文。 */
+export const CSV_TOO_MANY_ERRORS_MESSAGE = `誤りのある行が ${MAX_CSV_ROW_ERRORS.toLocaleString('ja-JP')} 件を超えたため、取り込みを中止しました。CSV の形（列名・区切り）を確かめてください。`;
+
 /** バックアップ (record store の JSON)。レコードは 1 件で数 KB なので、これで数十万件ぶん。 */
 export const MAX_BACKUP_IMPORT_BYTES = 256 * MiB;
 

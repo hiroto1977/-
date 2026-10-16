@@ -185,6 +185,29 @@ describe('ACTIONS["log-mood"]', () => {
     ).rejects.toThrow(/between 1 and 5/);
   });
 
+  // 同時の記録が互いを消さない (2026-10-16 · パス 524 · threat: T-078)。直す前は 5 件の同時
+  // 記録のうち 1 件しか残らなかった (実測)。
+  it('★ 同時に記録しても全部残る (threat: T-078)', async () => {
+    await Promise.all(
+      ['2026-05-01', '2026-05-02', '2026-05-03', '2026-05-04', '2026-05-05'].map((date) =>
+        ACTIONS['log-mood']!({ token: '', fetch: vi.fn<typeof fetch>(), payload: { date, score: 3 } }),
+      ),
+    );
+    const stored = await readStored();
+    expect(stored.moods).toHaveLength(5);
+  });
+
+  it('★ 記録と全消去が同時でも、消去の後に記録が戻らない／記録が黙って消えない (threat: T-078)', async () => {
+    await ACTIONS['log-mood']!({ token: '', fetch: vi.fn<typeof fetch>(), payload: { date: '2026-05-01', score: 3 } });
+    // 全消去 → 記録の順に積む。鎖が無いと消去が古い読みの上に書き、記録が先の中身を巻き込む。
+    await Promise.all([
+      ACTIONS['clear-history']!({ token: '', fetch: vi.fn<typeof fetch>(), payload: { kind: 'all' } }),
+      ACTIONS['log-mood']!({ token: '', fetch: vi.fn<typeof fetch>(), payload: { date: '2026-05-02', score: 4 } }),
+    ]);
+    const stored = await readStored();
+    expect(stored.moods).toEqual([expect.objectContaining({ date: '2026-05-02' })]);
+  });
+
   it('replaces same-date entry rather than appending', async () => {
     await ACTIONS['log-mood']!({ token: '', fetch: vi.fn<typeof fetch>(), payload: { date: '2026-05-01', score: 3 } });
     await ACTIONS['log-mood']!({ token: '', fetch: vi.fn<typeof fetch>(), payload: { date: '2026-05-01', score: 5 } });

@@ -261,3 +261,42 @@ describe('pages.yml の書く権限は公開の job だけ (threat: T-039)', () 
     expect(problems[0]?.why).toContain('contents: write');
   });
 });
+
+/**
+ * `pull_request_target` の別綴りと `github-script` の `script:` 注入 (2026-10-16 · パス 524 ·
+ * threat: T-085)。直す前は map の形 (`on:\n  pull_request_target:`) 1 つだけを見て、
+ * 他の有効な 5 形は permissions を宣言していれば exit 0 だった (実測)。
+ */
+describe('lint:workflow-security — 別綴りと script: 注入 (threat: T-085)', () => {
+  const on = (onBlock: string) => `permissions:\n  contents: read\n${onBlock}jobs:\n  a:\n    steps:\n      - run: echo hi\n`;
+  it.each([
+    ['on: pull_request_target', 'on: pull_request_target\n'],
+    ['flow 配列', 'on: [push, pull_request_target]\n'],
+    ['block 配列', 'on:\n  - pull_request_target\n'],
+    ['引用符つきの鍵', 'on:\n  "pull_request_target":\n'],
+    ['flow map', 'on: {pull_request_target: {types: [opened]}}\n'],
+    ['map (これまでの形)', 'on:\n  pull_request_target:\n'],
+  ])('★ pull_request_target を %s で書いても断る (threat: T-085)', (_label, block) => {
+    expect(wf(on(block)).map((p) => p.why).join('\n')).toContain('pull_request_target');
+  });
+
+  it('★ 対照: 注記の中の言及・似た名前は断らない', () => {
+    expect(wf(on('# pull_request_target は使わない\non:\n  push:\n'))).toHaveLength(0);
+    expect(wf(on('on:\n  pull_request:\n'))).toHaveLength(0);
+  });
+
+  it.each([
+    ['ブロック (|)', "          script: |\n            core.info('${{ github.event.inputs.x }}')\n"],
+    ['1 行', "          script: core.info('${{ github.event.inputs.x }}')\n"],
+  ])('★ github-script の script: に ${{ }} を埋め込むと断る: %s (threat: T-085)', (_label, script) => {
+    const text = `${BASE}      - uses: actions/github-script@${SHA}\n        with:\n${script}`;
+    expect(wf(text).map((p) => p.why).join('\n')).toContain('script: に');
+  });
+
+  it('★ 対照: env: 経由で読む script: は通す', () => {
+    const text =
+      `${BASE}      - uses: actions/github-script@${SHA}\n        env:\n          X: \${{ github.event.inputs.x }}\n        with:\n` +
+      "          script: |\n            core.info(process.env.X)\n";
+    expect(wf(text).filter((p) => p.why.includes('script: に'))).toHaveLength(0);
+  });
+});

@@ -1331,6 +1331,231 @@
         "file": "src/shared/__tests__/gateScriptsPinned.test.ts",
         "test": "★ 直下に PostCSS の設定ファイルが 1 本も無く、package.json にも postcss キーが無い (threat: T-072)"
       }
+    },
+    {
+      "id": "T-073",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 524 (監査役の指摘を自分で再現してから直した)",
+      "surface": "ai",
+      "class": "ai-phishing",
+      "severity": "high",
+      "title": "危機・他害の門 detectCrisis / detectHarmToOthers (T-052 の続き) は、語の途中に挟む空白・全角空白・中点・改行・タブ・ハングル空白 U+3164・点字空白 U+2800・絵文字・記号、および活用形 (死にたくなる / 死にたくて / 消えたくなる / 首吊り / 手首を切った / 死んでやる) とかな書きの他害語 (ころしたい / 殺してやる / ぶっ殺す) を素通りさせた (実測 20 形が false)。素通りは相談窓口が出ず、文が外部モデルへ送られることを意味する",
+      "status": "fixed",
+      "fix": "照合の畳み込み foldForMarkerMatch が \\p{Z} \\p{Cc} \\p{P} \\p{S} \\p{Default_Ignorable_Code_Point} と U+2800 も落とし、活用形・かな書きの語を足した。「死にたくない」「息を殺す」「時間を殺す」は引き続き危機・他害にしない (対照)。対照: 畳み込みを T-052 の形へ戻す → ★ 11 件。",
+      "regression": {
+        "file": "src/renderer/data/__tests__/counseling.test.ts",
+        "test": "★ %s でも危機と判定する (threat: T-073)"
+      }
+    },
+    {
+      "id": "T-074",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 524 (監査役の指摘を自分で再現してから直した)",
+      "surface": "ai",
+      "class": "ai-phishing",
+      "severity": "medium",
+      "title": "村の返答の読み上げ (speak) は scoreJaVoice がネットワーク経由の声 (Google 系・localService === false) を加点して選ぶのに、マイクの断りは認識だけを述べ、読み上げる文 (利用者の入力を引用する規則ベースの返答を含む) がブラウザの提供元へ送られうることをどこも述べていなかった。AI を切っても残る",
+      "status": "fixed",
+      "fix": "VoiceEgressSubject に readsAloud を足し、読み上げる画面 (村) の断りに「返答は読み上げます…選ばれた声によっては…ブラウザの提供元へ送られることがあります。AI を切っても読み上げは残ります」を出す。speak() を import する画面は readsAloud: true を渡すことを走査で要求。声の選択 (音質) は変えていない。",
+      "regression": {
+        "file": "src/renderer/components/__tests__/voiceEgressDisclosed.test.ts",
+        "test": "★ readsAloud を立てると、読み上げもブラウザに委ねていて文が送られうることを言う"
+      }
+    },
+    {
+      "id": "T-075",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 524 (監査役の指摘を自分で再現してから直した)",
+      "surface": "network",
+      "class": "ssrf-and-credential-egress",
+      "severity": "low",
+      "title": "Cloudflare の接頭辞つきトークン (cfut_ ユーザー / cfat_ アカウント / cfk_ Global API Key + 40 字 + チェックサム) は、redactForMessage / redactSecrets が裸のまま素通りした (Authorization ヘッダの形だけ伏せられた)。乗っ取られた proxy や反射する上流が本文に書けばエラー帯・バグ報告へ出る",
+      "status": "fixed",
+      "fix": "redact の接頭辞の規則へ cfut_ / cfat_ / cfk_ を足し、台帳 redactionCoverage の cloudflare を実形 (prefix) の標本へ。対照: 短い語・語中の綴りは伏せない。",
+      "regression": {
+        "file": "src/shared/__tests__/redactionCoverage.test.ts",
+        "test": "★ %s の裸の反射を伏せる (threat: T-075)"
+      }
+    },
+    {
+      "id": "T-076",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 524 (監査役の指摘を自分で再現してから直した)",
+      "surface": "network",
+      "class": "ssrf-and-credential-egress",
+      "severity": "low",
+      "title": "VirusTotal へ URL を送る前の「社内・手元のホスト」警告 looksInternalHostname は SSRF 用の分類器 (privateTarget) より狭い手書きで、IPv4 互換 ::a.b.c.d (メタデータ [::a9fe:a9fe])・SIIT・fec0::/10・ff00::/8・64:ff9b:1::/48・192.0.0.0/24・198.18.0.0/15・224.0.0.0/3 に警告を出さなかった (実測 9 形)。送ると社内の情報が第三者に検索できる形で残る",
+      "status": "fixed",
+      "fix": "looksInternalHostname が privateTarget の判定を OR で借りる (文書用の TEST-NET と 2001:db8::/32 は従来どおり警告しない)。",
+      "regression": {
+        "file": "src/shared/__tests__/scanTarget.test.ts",
+        "test": "★ %s も社内・手元のホストと警告する (threat: T-076)"
+      }
+    },
+    {
+      "id": "T-077",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 524 (監査役の指摘を自分で再現してから直した)",
+      "surface": "main-ipc",
+      "class": "ransomware-extortion",
+      "severity": "medium",
+      "title": "株式のウォッチリストに銘柄数の天井が無く、register-ticker を繰り返すと保存値が際限なく伸び (実測 3,000 件で fetch:snapshot の応答 34.5 MB・50,000 件で JSON.stringify が RangeError)、以後の株式画面の読み込みが毎回主プロセスを塞いだ。直す手は「すべてのデータを削除」だけ",
+      "status": "fixed",
+      "fix": "共有の MAX_WATCHLIST_SYMBOLS = 200 を main と ブラウザ版の登録が見て、超える新規は断る (既存銘柄の再登録と解除は通す)。",
+      "regression": {
+        "file": "src/main/clients/__tests__/stocks.test.ts",
+        "test": "★ 天井ちょうどまでは登録でき、超える新規は断る (threat: T-077)"
+      }
+    },
+    {
+      "id": "T-078",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 524 (監査役の指摘を自分で再現してから直した)",
+      "surface": "main-ipc",
+      "class": "ransomware-extortion",
+      "severity": "low",
+      "title": "emotions の log-mood / clear-history / analyze-text の保存は「読む → 直す → 書く」を直列にしておらず、同時の呼び出しが互いの変更を消した (実測: 同時 5 件の記録のうち 1 件しか残らない)。乗っ取られた renderer は消去を記録に競合させられる",
+      "status": "fixed",
+      "fix": "共有の createWriteChain で log-mood と clear-history を、analyze-text は保存の直前の読み書きだけを鎖に通す (API の待ちは鎖に入れない)。",
+      "regression": {
+        "file": "src/main/clients/__tests__/emotions.test.ts",
+        "test": "★ 同時に記録しても全部残る (threat: T-078)"
+      }
+    },
+    {
+      "id": "T-079",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 524 (監査役の指摘を自分で再現してから直した)",
+      "surface": "main-ipc",
+      "class": "ransomware-extortion",
+      "severity": "medium",
+      "title": "「すべてのデータを削除」(eraseDesktopData) は資格情報の書き込みの鎖に入らずファイルを消すため、進行中の setToken / 更新トークンの保存が後から tmp を rename して消したはずの資格情報を戻した。報告は allDeleted: true のまま再起動する (実測 300 回中 221 回で本体か .prev が復活)",
+      "status": "fixed",
+      "fix": "secrets.ts に beginErase / endErase を足し、消去の前に旗を立てて待機中の書き込みを断らせ進行中の分を待つ。完了しなかったときは endErase で再開。",
+      "regression": {
+        "file": "src/main/__tests__/eraseVsSecretsWrite.test.ts",
+        "test": "★ 消去と同時に走る保存があっても、消去の後にファイルは残らない (threat: T-079)"
+      }
+    },
+    {
+      "id": "T-080",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 524 (監査役の指摘を自分で再現してから直した)",
+      "surface": "renderer",
+      "class": "ransomware-extortion",
+      "severity": "medium",
+      "title": "自動ロックは lastActivity / hiddenSince を記録するだけで時計と比べず、スリープ・サスペンド・背景のタイマー間引きでタイマーが遅れている間に最初の操作が届くと、期限切れの金庫が再設定されて延命した (実測: 8 時間後の mousemove 1 回で onLock 0 回・10 分隠れた後に戻っても 0 回)",
+      "status": "fixed",
+      "fix": "onActivity と可視化の枝が now() の経過を上限と比べ、超えていればタイマーを待たずにロックする。",
+      "regression": {
+        "file": "src/renderer/security/__tests__/autoLock.test.ts",
+        "test": "★ 放置が上限を超えた後の最初の操作でロックする (タイマーは遅れている)"
+      }
+    },
+    {
+      "id": "T-081",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 524 (監査役の指摘を自分で再現してから直した)",
+      "surface": "renderer",
+      "class": "ransomware-extortion",
+      "severity": "medium",
+      "title": "売上・KPI 実績の CSV の取り込みは 20 MiB のバイト上限だけで、行数と誤りの数に天井が無かった。\",,,,,\" を並べた 1 ファイルが 419 万行になり、全行が誤りとして集められて売上で 37 秒止まり RSS 3.7 GB を使った (KPI も同様)",
+      "status": "fixed",
+      "fix": "MAX_CSV_IMPORT_ROWS = 200,000 を解析の前に改行数で確かめて全体を断り、誤りが MAX_CSV_ROW_ERRORS = 1,000 を超えたら良い行も取り込まず全体を断る。",
+      "regression": {
+        "file": "src/renderer/data/__tests__/csvImportLimits.test.ts",
+        "test": "★ 行数が天井を超える CSV は解析の前に全体を断る (売上・KPI とも)"
+      }
+    },
+    {
+      "id": "T-082",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 524 (監査役の指摘を自分で再現してから直した)",
+      "surface": "ai",
+      "class": "ai-phishing",
+      "severity": "low",
+      "title": "voiceCommand.quotedSpan は閉じ記号の無い開き記号ごとに末尾まで indexOf し直す二乗時間で、開き記号だけを 2 万個並べた書き込み発話の解析が 1.5 秒・4 万個で 6.3 秒かかった",
+      "status": "fixed",
+      "fix": "閉じ記号が後ろに無いと分かった対を覚えて再走査しない。",
+      "regression": {
+        "file": "src/renderer/data/__tests__/voiceCommand.test.ts",
+        "test": "★ 開き記号 %s を 4 万個並べても 1 秒かからない (threat: T-082)"
+      }
+    },
+    {
+      "id": "T-083",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 524 (監査役の指摘を自分で再現してから直した)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "vite の既定の探索順は vite.config.js → .mjs → .ts … で .ts は 3 番目。vite.config.mjs を 1 本置くだけで鎖の保護対象 vite.config.ts は読まれなくなり、置いた側が release.yml の署名鍵を持つ Build で走った (実測: CSC_KEY_PASSWORD を書き出した)。どの門も見ていなかった (T-070 と同じ家系)",
+      "status": "fixed",
+      "fix": "dev / build / build:renderer / build:web / preview を --config vite.config.ts で名指しし、影になる綴りが無いことと素の vite の呼び出しが無いことを検査で留める。",
+      "regression": {
+        "file": "src/shared/__tests__/gateScriptsPinned.test.ts",
+        "test": "★ %s は vite に --config vite.config.ts を渡す (threat: T-083)"
+      }
+    },
+    {
+      "id": "T-084",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 524 (監査役の指摘を自分で再現してから直した)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "直下の binding.gyp は npm に暗黙の install: node-gyp rebuild を足させ、gyp の type: none の actions は任意の命令を走らせる (実測: npm ci で印が残った)。release.yml は署名の前に npm ci を回す。lint:deps 規則 8 は package.json の scripts しか見ない",
+      "status": "fixed",
+      "fix": "package.json に \"gypfile\": false (暗黙の install を止める・実測) と、直下に binding.gyp が無いことの検査。",
+      "regression": {
+        "file": "src/shared/__tests__/gateScriptsPinned.test.ts",
+        "test": "★ package.json は gypfile: false を宣言し、直下に binding.gyp が無い (threat: T-084)"
+      }
+    },
+    {
+      "id": "T-085",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 524 (監査役の指摘を自分で再現してから直した)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "lint:workflow-security は pull_request_target を map の形 (on:\\n  pull_request_target:) 1 つでしか禁じず、on: pull_request_target / flow 配列 / block 配列 / 引用符つきの鍵 / flow map の 5 形が permissions を宣言していれば exit 0 だった。actions/github-script の script: への ${{ }} 展開 (JavaScript への注入) も見ていなかった",
+      "status": "fixed",
+      "fix": "注記を落とした本文で語として pull_request_target を探し、script: の本体 (ブロックの続き行) の ${{ を断る。",
+      "regression": {
+        "file": "src/shared/__tests__/workflowSecurityWitness.test.ts",
+        "test": "★ pull_request_target を %s で書いても断る (threat: T-085)"
+      }
+    },
+    {
+      "id": "T-086",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 524 (監査役の指摘を自分で再現してから直した)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": ".devcontainer/devcontainer.json (postCreateCommand)・.vscode/tasks.json (runOn: folderOpen)・.gitpod.yml (init:)・.claude/commands/** と .claude/skills/** は、置くだけで保守者がその枝を開いたときに命令が走りうるが、どの門も鎖も見ていなかった (git archive の写しに置いて 17 ゲート exit 0)",
+      "status": "fixed",
+      "fix": "追跡ファイルにこれらが無いことを検査で留める (必要になったら台帳に理由つきで足し、鎖と CODEOWNERS へ入れてから)。",
+      "regression": {
+        "file": "src/shared/__tests__/gateScriptsPinned.test.ts",
+        "test": "★ 追跡ファイルに devcontainer / .vscode / gitpod / .claude の commands・skills が無い (threat: T-086)"
+      }
+    },
+    {
+      "id": "T-087",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 524 (監査役の指摘を自分で再現してから直した)",
+      "surface": "ai",
+      "class": "ai-phishing",
+      "severity": "low",
+      "title": "書き出す Markdown の escapeMarkdownInline / escapeMarkdownText は < しか落とさず、![t](https://remote/pixel) (開いただけで外へ取りに行く画像) と [x](javascript:…) (押せるリンク) が生きた。AI の応答 (乗っ取られた提供元・proxy) と第三者の文字列が入る",
+      "status": "fixed",
+      "fix": "![ を !\\\\[ に、]( を ]\\\\( にする (普通の [注] や (補足) は 1 字も変えない)。",
+      "regression": {
+        "file": "src/shared/__tests__/escape.test.ts",
+        "test": "★ %s: ![ と ]( を無効にする (threat: T-087)"
+      }
     }
   ],
   "huntBacklog": [
@@ -1403,6 +1628,26 @@
       "surface": "ai",
       "item": "AI-6 アドバイザーの質問欄 (stocks/advise・business/advise と record-entry の 4 経路) に危機の判定 (detectCrisis) が無い —— 「もう死にたい。株をどうすれば」が checkAdvisorQuestion (空 / 長さ / 制御文字) だけを通って api.anthropic.com へ届く (2026-10-15 実測・main と web-shim の両方)",
       "why": "detectCrisis は renderer/data/counseling.ts に住み、main は import できない (lint:imports の境界)。直すには CRISIS_MARKERS と畳み込みを shared へ出して checkAdvisorQuestion に 4 つ目の理由 (crisis) を足す形で、lint:shared-judgement と mutate の台帳が動く。設計の決定を含むので別パスで。"
+    },
+    {
+      "surface": "supply-chain",
+      "item": "workflow_run / issue_comment / id-token: write と docker:// イメージの固定は lint:workflow-security が見ない (パス 524 の監査役の指摘)",
+      "why": "2026-10-16 に監査役が静的に指摘 (pull_request_target の別綴りと script: の注入は T-085 で閉じた)。実物の 7 本には今日どれも無い。要るなら on: を構造で読む (js-yaml は入っているが直の依存か未確認)。設計の判断を伴うので未対応。"
+    },
+    {
+      "surface": "main-ipc",
+      "item": "eraseAll は資格情報以外のファイル (emotions / talent / teamradar / stocks) の書き込みの鎖に入らない",
+      "why": "2026-10-16 に自分で再現したのは資格情報 (T-079) だけ。他の 4 つも同じ競合型だが、消去と同時に書くのは利用者自身の操作で、復活するのは直前の記録に限られる。各モジュールの鎖を eraseAll が待つ配線が要るので未対応。"
+    },
+    {
+      "surface": "network",
+      "item": "裸のトークンの伏字の網: Asana (2/…)・npm_・xapp-・Discord bot・LINE などは接頭辞の規則に無い",
+      "why": "2026-10-16 に監査役が指摘 (自分では未再現)。上流が本文に反射したときだけ効く。接頭辞を足すたびに散文との衝突を測る必要があるので、預かるサービスから順に別パスで。"
+    },
+    {
+      "surface": "ai",
+      "item": "saveHistory は QuotaExceeded を黙って飲む・「もう生きていけない」は危機の語に入れていない",
+      "why": "2026-10-16 に監査役が指摘。前者は会話履歴が保存されないだけ (画面は動く)。後者は仕事・家計の文脈で多発し誤検知になるため方針で外している (counseling.ts の精度方針)。判断を伴うので未対応。"
     }
   ],
   "clearedBacklog": [

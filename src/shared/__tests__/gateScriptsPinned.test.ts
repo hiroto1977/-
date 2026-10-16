@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { readOriginalSource } from './originalSource';
 import path from 'node:path';
@@ -103,9 +104,9 @@ describe('署名ビルドの本体と builder 設定の在り処 (threat: T-043)
   it('★ scripts.build は固定の綴り (release が署名鍵で走らせる唯一の script) (threat: T-043)', () => {
     // `--config electron-builder.json` は T-070 —— 名指ししないと app-builder-lib は
     // `electron-builder.{yml,yaml,json,json5,toml,js,cjs,ts}` をこの順に探し、最初に在った物を読む。
-    expect(scripts['build']).toMatch(/^tsc -b && vite build && electron-builder --config electron-builder\.json$/);
+    expect(scripts['build']).toMatch(/^tsc -b && vite build --config vite\.config\.ts && electron-builder --config electron-builder\.json$/);
     // 標本: 末尾に 1 手足した綴りは通らない。
-    expect('tsc -b && vite build && electron-builder --config electron-builder.json && node -e "1"').not.toMatch(/^tsc -b && vite build && electron-builder --config electron-builder\.json$/);
+    expect('tsc -b && vite build --config vite.config.ts && electron-builder --config electron-builder.json && node -e "1"').not.toMatch(/^tsc -b && vite build --config vite\.config\.ts && electron-builder --config electron-builder\.json$/);
   });
 
   it('★ package.json に build キーが無い —— electron-builder.json (鎖の保護対象) が唯一の設定 (threat: T-043)', () => {
@@ -174,5 +175,88 @@ describe('PostCSS の設定は探さない・無い (threat: T-072)', () => {
     ];
     expect(names.filter((n) => existsSync(path.join(ROOT, n)))).toEqual([]);
     expect(Object.hasOwn(pkgAll, 'postcss')).toBe(false);
+  });
+});
+
+/*
+ * **vite の設定は `vite.config.ts` を名指しする・影になる綴りが無い (2026-10-16 · パス 524 ·
+ * threat: T-083)。** vite の既定の探索順は `vite.config.js` → `.mjs` → `.ts` → `.cjs` → `.mts` →
+ * `.cts` (node_modules/vite の DEFAULT_CONFIG_FILES) で、**`.ts` は 3 番目**。`vite.config.mjs` を
+ * 1 本置くだけで鎖の保護対象の `vite.config.ts` は読まれなくなり、置いた側が
+ * `release.yml` の署名鍵を持つ Build で走る (実測: `CSC_KEY_PASSWORD` を書き出した)。
+ * T-070 (electron-builder) と同じ家系。
+ */
+describe('vite 設定の影 (threat: T-083)', () => {
+  const viteScripts = ['dev', 'build', 'build:renderer', 'build:web', 'preview'];
+
+  it.each(viteScripts)('★ %s は vite に --config vite.config.ts を渡す (threat: T-083)', (name) => {
+    const command = scripts[name];
+    expect(command, `${name} が package.json に無い`).toBeDefined();
+    // vite を呼ぶ各段が --config を持つ
+    const viteSegments = command!.split('&&').map((s) => s.trim()).filter((s) => /^vite(\s|$)/.test(s));
+    expect(viteSegments.length).toBeGreaterThanOrEqual(1);
+    for (const seg of viteSegments) expect(seg).toMatch(/--config vite\.config\.ts(\s|$)/);
+  });
+
+  it('★ package.json のどの script も、--config の無い素の vite を呼ばない (threat: T-083)', () => {
+    const bare: string[] = [];
+    for (const [name, command] of Object.entries(scripts)) {
+      for (const seg of command.split('&&').map((s) => s.trim())) {
+        if (/^vite(\s|$)/.test(seg) && !/--config /.test(seg)) bare.push(`${name}: ${seg}`);
+      }
+    }
+    expect(bare).toEqual([]);
+    // 標本: 針は素の vite に当たり、--config 付きには当たらない。
+    expect(/^vite(\s|$)/.test('vite build')).toBe(true);
+    expect(/--config /.test('vite build --config vite.config.ts')).toBe(true);
+  });
+
+  it('★ vite.config.ts の隣に、先に読まれる綴りの設定が 1 つも無い (threat: T-083)', () => {
+    const shadows = ['js', 'mjs', 'cjs', 'mts', 'cts'].map((ext) => `vite.config.${ext}`);
+    expect(shadows.filter((n) => existsSync(path.join(ROOT, n)))).toEqual([]);
+    expect(existsSync(path.join(ROOT, 'vite.config.ts'))).toBe(true);
+  });
+});
+
+/*
+ * **`binding.gyp` を直下に置いて `npm ci` に任意の命令を走らせられない (2026-10-16 · パス 524 ·
+ * threat: T-084)。** npm は直下に `binding.gyp` が在ると暗黙の `install: node-gyp rebuild` を足し、
+ * gyp の `"type":"none"` の target の `actions` は任意の命令を走らせる (実測: npm ci で印が残った)。
+ * `lint:deps` 規則 8 は package.json の scripts しか見ない。`"gypfile": false` が暗黙の install を
+ * 止め (実測)、`binding.gyp` が追跡されていないことをここで留める。
+ */
+describe('binding.gyp (threat: T-084)', () => {
+  it('★ package.json は gypfile: false を宣言し、直下に binding.gyp が無い (threat: T-084)', () => {
+    expect(pkgAll['gypfile']).toBe(false);
+    expect(existsSync(path.join(ROOT, 'binding.gyp'))).toBe(false);
+  });
+});
+
+/*
+ * **開いただけで走る設定・エージェントの手順は、追跡しない (2026-10-16 · パス 524 ·
+ * threat: T-086)。** 次の物はどのゲートも鎖も見ておらず、置くだけで「保守者がその枝を開いた」
+ * ときに命令が走る: `.devcontainer/devcontainer.json` の `postCreateCommand` (Codespaces)・
+ * `.vscode/tasks.json` の `runOn: folderOpen`・`.gitpod.yml` の `init:`、そして
+ * `.claude/commands/*.md` / `.claude/skills/**` (許可ツールと frontmatter の hooks を持てる)。
+ * 実測 (`git archive` の写しに置いて 17 ゲート): すべて exit 0。T-017 / T-036 / T-070 と同じ家系。
+ * 追跡されている `.claude/` は agents と settings.json だけ (鎖と CODEOWNERS が覆う)。
+ * 必要になったらこの台帳に理由つきで足し、鎖と CODEOWNERS へ入れてから。
+ */
+describe('開いただけで走る設定の不在 (threat: T-086)', () => {
+  const tracked = (): string[] =>
+    execFileSync('git', ['ls-files', '--cached'], { cwd: ROOT, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 })
+      .split('\n')
+      .filter((l) => l !== '');
+  const AUTO_RUN = /^(\.devcontainer\/|\.vscode\/|\.gitpod(\.|\/)|\.claude\/(commands|skills)\/)/;
+
+  it('★ 追跡ファイルに devcontainer / .vscode / gitpod / .claude の commands・skills が無い (threat: T-086)', () => {
+    const files = tracked();
+    expect(files.length, '追跡一覧が空 (git が使えない)').toBeGreaterThan(100);
+    expect(files.filter((f) => AUTO_RUN.test(f))).toEqual([]);
+    // 標本: 針は置き場所に当たり、既存の追跡ファイル (agents / settings.json) には当たらない。
+    for (const bad of ['.devcontainer/devcontainer.json', '.vscode/tasks.json', '.gitpod.yml', '.claude/commands/x.md', '.claude/skills/y/SKILL.md']) {
+      expect(AUTO_RUN.test(bad), bad).toBe(true);
+    }
+    for (const ok of ['.claude/agents/scout.md', '.claude/settings.json']) expect(AUTO_RUN.test(ok), ok).toBe(false);
   });
 });

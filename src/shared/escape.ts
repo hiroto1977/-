@@ -116,7 +116,21 @@ export function escapeMarkdownInline(input: string): string {
     .replace(/\\/g, '\\\\')
     .replace(/\|/g, '\\|')
     .replace(/\r\n|\r|\n/g, ' ')
-    .replace(/</g, '&lt;');
+    .replace(/</g, '&lt;')
+    .replace(MD_LINK_OPENERS, mdLinkNeutralizer);
+}
+
+/**
+ * 画像とリンクの**入口**だけを無効にする (2026-10-16 · パス 524 · threat: T-087)。
+ * `![t](https://remote/pixel)` は Obsidian / GitHub 系の描画で**開いただけで外へ取りに行く**
+ * (閲覧者の IP を第三者へ知らせる)・`[x](javascript:…)` は押せるリンクになる。AI の応答
+ * (乗っ取られた提供元・proxy が書ける) と第三者の文字列がここへ入る。`<` と同じく
+ * **能力が増える**形なので、地の文でも落とす。`![` は `!\[`、`](` は `]\(` にするだけで、
+ * 普通の文 (`[` 単独・`(` 単独) は 1 字も変わらない。
+ */
+const MD_LINK_OPENERS = /!\[|\]\(/g;
+function mdLinkNeutralizer(match: string): string {
+  return match === '![' ? '!\\[' : ']\\(';
 }
 
 /**
@@ -130,14 +144,14 @@ export function escapeMarkdownInline(input: string): string {
  * 増えたように見える。これは承知のうえで通している — 防ぐには行頭の
  * 記号を全部潰すことになり、まともな体裁の文章が書けなくなる。
  *
- * 落とすのは `<` だけ。**能力が増える**のはここだけだからで、見た目が
+ * 落とすのは `<` と、画像・リンクの入口 `![` / `](` (T-087) だけ。**能力が増える**のはここだけだからで、見た目が
  * 変わるだけの構造とは重みが違う。書き出した `.md` はライブラリに保存され、
  * ダウンロードして人に渡る (このリポジトリ自身が Obsidian の保管庫を
  * 持っている)。開いた人の環境でスクリプトが走る形は残せない —
  * `safeColor` が SVG について言っているのと同じ理由である。
  */
 export function escapeMarkdownText(input: string): string {
-  return input.replace(/</g, '&lt;');
+  return input.replace(/</g, '&lt;').replace(MD_LINK_OPENERS, mdLinkNeutralizer);
 }
 
 /**

@@ -395,6 +395,15 @@ const VERDICTS = {
     + '★ なお `omittedRadarNote` が非 `null` を返す枝は **`export-svg` の口からは'
     + '到達しない** —— 上流の `validateTeamRadarState` が 5 軸すべて整数 1-5 を要求するので、'
     + '未評価の形は図に届く前に断られる (両ビルドで同じ)。画面の ⚠ は下書きを直接読むので今日も出る',
+  privateTarget:
+    '対称 (実測・パス 524 で読んだ) —— 母集団に入ったのはパス 524 (T-076) で `scanTarget.ts` が'
+    + ' `looksInternalHostname` の中で `isPrivateOrReservedTarget` を呼ぶようになったため。'
+    + ' main が `privateTarget` を直に import する所は **0 件**で、main の閉包に入るのは'
+    + ' `scanTarget` → `privateTarget` の 1 辺だけ。しかも `looksInternalHostname` の呼び手は'
+    + ' `describeScanUrlRisk` の中だけで、その読み手は `SecurityPage.tsx` (renderer) だけなので、'
+    + ' **否定のあとの動作は越境しない** (main の `validateScanUrl` はこの関数を通らない)。'
+    + ' 他の読み手 (`renderer/network/proxy.ts` は断る・`imageUrlGate.ts` は描かない) は'
+    + ' どちらも renderer の中で完結する。警告であって関門ではない点は `scanTarget` の判定と同じ',
   scanTarget:
     '対称 (実測・パス 282 で辿り直した) —— パス 247 は「対称 (実測)」の 4 文字だけで、'
     + '**根拠が書かれていなかった**。パス 247 は母集団を初めて数えた回で、'

@@ -3,6 +3,7 @@
  * core (`csv.ts`) and the KPI model's validator (`parseKpiActual`).
  */
 import { recordsToCsv, parseCsvRecords } from './csv';
+import { CSV_TOO_MANY_ERRORS_MESSAGE, MAX_CSV_ROW_ERRORS, csvRowLimitError } from './importFile';
 import { actualKey, parseKpiActual, type KpiActual } from './kpiActuals';
 
 /**
@@ -60,13 +61,19 @@ export interface KpiImportResult {
  */
 // Stryker disable next-line ArrayDeclaration: 既定の空配列に要素 (記録でない文字列) を足しても答えは変わらない —— `actualKey` は `undefined|…` の鍵になり、検証済みの期 (YYYY-MM) を持つ行の鍵とは一致しえない (等価)
 export function kpiActualsFromCsv(text: string, existing: readonly KpiActual[] = []): KpiImportResult {
+  // 行数・誤りの数の天井 (T-081)。解析の前に断る —— 全行が誤りの 20 MiB で 37 秒止まっていた。
+  const tooMany = csvRowLimitError(text);
+  if (tooMany !== null) return { entries: [], errors: [{ row: 0, message: tooMany }], duplicates: 0 };
   const records = parseCsvRecords(text);
   const entries: KpiActual[] = [];
   const errors: { row: number; message: string }[] = [];
   const seen = new Set(existing.map(actualKey));
   let duplicates = 0;
 
-  records.forEach((rec, i) => {
+  for (const [i, rec] of records.entries()) {
+    if (errors.length >= MAX_CSV_ROW_ERRORS) {
+      return { entries: [], errors: [{ row: i + 1, message: CSV_TOO_MANY_ERRORS_MESSAGE }], duplicates: 0 };
+    }
     let entry: KpiActual;
     try {
       entry = parseKpiActual({
@@ -85,17 +92,17 @@ export function kpiActualsFromCsv(text: string, existing: readonly KpiActual[] =
       // parse は常に Error を throw するため else 側 '不正な行' は到達不能 (防御)。
       // Stryker disable next-line StringLiteral
       errors.push({ row: i + 1, message: e instanceof Error ? e.message : '不正な行' });
-      return;
+      continue;
     }
     const key = actualKey(entry);
     if (seen.has(key)) {
       duplicates += 1;
       errors.push({ row: i + 1, message: `${entry.period} の「${entry.unit}」は既に入力されています（同じ期・事業の重複行はスキップ）` });
-      return;
+      continue;
     }
     seen.add(key);
     entries.push(entry);
-  });
+  }
 
   return { entries, errors, duplicates };
 }

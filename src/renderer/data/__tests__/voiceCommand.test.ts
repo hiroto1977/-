@@ -973,3 +973,23 @@ describe('extractWriteParams — 送り先は引用の外から読む (パス 51
     });
   });
 });
+
+/**
+ * 閉じ記号の無い開き記号を大量に並べても、解析は発話の長さに比例する (2026-10-16 · パス 524 ·
+ * threat: T-082)。直す前は開き記号ごとに末尾まで走査し直す二乗時間で、4 万個で 6.3 秒かかった
+ * (2 万個で 1.5 秒・実測)。
+ */
+describe('quotedSpan — 閉じ記号の無い入力の計算量 (threat: T-082)', () => {
+  it.each(['「', '『', '“', '"'])('★ 開き記号 %s を 4 万個並べても 1 秒かからない (threat: T-082)', (open) => {
+    const hostile = open.repeat(40_000);
+    const started = Date.now();
+    expect(quotedSpan(hostile)).toBeNull();
+    expect(Date.now() - started).toBeLessThan(1000);
+  });
+
+  it('★ 対照: 後ろに閉じ記号が在る限り、これまでどおり最初に閉じた引用を返す', () => {
+    // 閉じ記号が無い対 (「) を覚えても、別の対 (『…』) の探索は止まらない
+    expect(quotedSpan('「「「 『x』')).toBe('x');
+    expect(quotedSpan('「「「x」')).toBe('「「x');
+  });
+});

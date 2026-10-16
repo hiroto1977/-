@@ -1,3 +1,4 @@
+import { MAX_WATCHLIST_SYMBOLS, watchlistFullMessage } from '../../../shared/watchlistState';
 import { MAX_STATE_FILE_BYTES, stateFileTooLargeReason } from '../../stateFile';
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { promises as fsp } from 'node:fs';
@@ -3180,6 +3181,26 @@ describe('stocks state persistence', () => {
     it('rejects unsafe symbols', async () => {
       const { deps } = memoryDeps();
       await expect(addWatchlistEntry('BAD;rm', deps)).rejects.toThrow(/1-16 chars/);
+    });
+
+    // ウォッチリストの天井 (2026-10-16 · パス 524 · threat: T-077)。直す前は無制限で、
+    // 3,000 件で fetch:snapshot の応答が 34.5 MB・50,000 件で JSON.stringify が RangeError。
+    it('★ 天井ちょうどまでは登録でき、超える新規は断る (threat: T-077)', async () => {
+      const full = Array.from({ length: MAX_WATCHLIST_SYMBOLS }, (_v, i) => `S${i}`);
+      const { deps, getStore } = memoryDeps(JSON.stringify({ watchlist: full.slice(0, MAX_WATCHLIST_SYMBOLS - 1) }));
+      const ok = await addWatchlistEntry('LAST', deps);
+      expect(ok.watchlist).toHaveLength(MAX_WATCHLIST_SYMBOLS);
+      const before = getStore();
+      await expect(addWatchlistEntry('ONEMORE', deps)).rejects.toThrow(watchlistFullMessage());
+      expect(getStore(), '断ったときは保存値を 1 バイトも変えない').toBe(before);
+    });
+
+    it('★ 対照: 天井でも、既に在る銘柄の再登録と解除は通す (逃げ口を塞がない)', async () => {
+      const full = Array.from({ length: MAX_WATCHLIST_SYMBOLS }, (_v, i) => `S${i}`);
+      const { deps } = memoryDeps(JSON.stringify({ watchlist: full }));
+      expect((await addWatchlistEntry('S0', deps)).watchlist).toHaveLength(MAX_WATCHLIST_SYMBOLS);
+      expect((await removeWatchlistEntry('S0', deps)).watchlist).toHaveLength(MAX_WATCHLIST_SYMBOLS - 1);
+      expect((await addWatchlistEntry('NEW1', deps)).watchlist).toHaveLength(MAX_WATCHLIST_SYMBOLS);
     });
 
     it('appends to an existing list', async () => {
