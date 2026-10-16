@@ -26,6 +26,8 @@ OAuth 更新のクライアント ID (R525-6)・shellOpenGate の realpath (R525
 
 `typecheck` 緑・`npm test` 1076 / 21825・`verify:all` exit 0・`chain:verify` 緑 (block #307・保護対象は `pure-data-module.cjs` と `scanTarget.ts`)。制御: T-088 / T-089 / T-090 は修正を戻して狙った検査が落ちることを md5 つきで確認。実測の大きさ: **FULL 11,883,721 B / LITE 3,296,345 B** (パス 524 後から両方 +1,996 B)・`perf` OK (LITE DCL 247 ms / heap 9.7 MB・FULL DCL 593 ms / heap 36.4 MB)。**実機: `e2e` 758 件 ❌ 0・`e2e:lite` 758 件 ❌ 0・`e2e:ollama` 全件 PASS** (連鎖は FULL → LITE → FULL 戻し → perf → e2e → e2e:lite → e2e:ollama の順)
 
+- CI: `3204d27df` の `ci (typecheck + verify + lint + test + build)` は **success** (2026-10-16)
+
 ### 測って決めた物 (正直に)
 
 - 監査役の指摘のうち再現しなかった物は直していない。`vm` の隔離を強める案は採らず「実行してよい形だけを通す」にした (ファイルの更新が頻繁で鎖に入れられないため)。
