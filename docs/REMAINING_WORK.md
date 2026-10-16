@@ -33,6 +33,7 @@ workflow_run / issue_comment / id-token / `docker://` の固定・`eraseAll` が
 - `verify:all` の 1 度目は 12 件: `secrets.ts` の行が +38 ずれて `docs/ARCHITECTURE.md` の参照 8 件が漂流・ユニットテスト数 17807 → **17837**・`lint:shared-judgement` が `privateTarget` を母集団に入れた (判定を実測して対称と書いた・両ビルド 80 → 81 / 否定 39 → 40・`CLAUDE.md` の写しも直した)。
 - **対照** (修正のあるファイルを HEAD に戻して対象検査を回し、必ず元へ戻して md5 照合): counseling 25 / redact 4 / scanTarget 9 / watchlist 2 / emotions 2 / secrets 3 / autoLock 2 / csv 2 / voiceCommand 3 / escape 2 / voiceEgressNotice 1 / VillagePage 1 件がそれぞれ落ち、復元後は一致。
 - **出荷物が動いたので実機も回した (最終コード)**: `build:web` / `build:web:lite` とも `--config vite.config.ts` で成功。`perf` OK (LITE DCL 217 ms / heap 9.5 MB・FULL DCL 585 ms / heap 36.3 MB)・`e2e` **758 件 ❌ 0**・`e2e:lite` **758 件 ❌ 0**・`e2e:ollama` 全件 PASS。両ビルド **11,881,725 B / 3,294,349 B** (パス 507 の 11,872,088 B / 3,284,712 B から両方 +9,637 B)・md5 `70951bd2…` / `8cfbdf45…`。
+- **push 後の CI**: `f5f05b34b` の `ci` job は success (e2e は設計どおり skipped)。
 - 自戒: `pgrep -f` 系で自分の shell を殺す罠を避け、PID で扱った。`ACTIONS` の形は census が読むので、無名関数で包まない。
 
 ## パス 523 (狩りの 13 回目 —— 5 面の監査役の指摘を自分で再現し、本物の 14 件を直す) (2026-10-15)
