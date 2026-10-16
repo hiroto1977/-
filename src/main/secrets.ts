@@ -594,7 +594,17 @@ const inflightRefresh = new Map<ServiceId, Promise<string>>();
  * 飛ばしても失う物は無い。載せるのは「読み手が JSON を自分で解く」
  * スロットだけで、その読み手は `secretsTokenRead.test.ts` が名指しで留める。
  */
-export const OPAQUE_JSON_SLOTS: ReadonlySet<ServiceId> = new Set<ServiceId>(['assistant']);
+export const OPAQUE_JSON_SLOTS: ReadonlySet<ServiceId> = new Set<ServiceId>([
+  'assistant',
+  // threat: T-091 (パス 525) —— T-054 は `assistant` だけを載せたが、設定の欄が JSON を要求する
+  // スロットは他に 3 つ在り、保存した瞬間から `broken-token-set` と断られていた (実測: 3 つとも
+  // `secrets:set` は ok・直後の `getValidToken` は断り・`fetch:snapshot` / `action:invoke` が
+  // 「壊れています。登録し直してください」で、登録し直しても同じ)。security は LOCAL なので
+  // 端末内の判定まで止まっていた。読み手は `ctx.token` を自分で解く (名指しの検査が留める)。
+  'atlassian', // {email, token, site}
+  'youtube', // {apiKey, channelId}
+  'security', // {hibp, vt}
+]);
 
 export async function getValidToken(serviceId: ServiceId): Promise<StoredTokenRead> {
   const read = await readStoredToken(serviceId);

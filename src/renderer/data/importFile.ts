@@ -24,13 +24,23 @@ export const MAX_CSV_IMPORT_BYTES = 20 * MiB;
 export const MAX_CSV_IMPORT_ROWS = 200_000;
 export const MAX_CSV_ROW_ERRORS = 1_000;
 
-/** 改行の数で行数を概算し、天井を超えるなら断りの文を返す。解析の前に呼ぶ (安い)。 */
+/**
+ * 改行の数で行数を概算し、天井を超えるなら断りの文を返す。解析の前に呼ぶ (安い)。
+ *
+ * threat: T-093 —— 数えるのは `\n` だけだった。`parseCsv` は**単独の `\r`** でも行を終えるので、
+ * `\r` 区切りの 20 MiB は関門を素通りし、全行を組んでから (RSS 1.6〜2.2 GB・実測) 落ちた。
+ * `\r\n` は 1 つの改行として数える (CRLF の 200,000 行を倍に数えない)。
+ */
 export function csvRowLimitError(text: string): string | null {
   let rows = 0;
-  for (let i = text.indexOf('\n'); i !== -1; i = text.indexOf('\n', i + 1)) {
-    rows += 1;
-    if (rows > MAX_CSV_IMPORT_ROWS) {
-      return `行が多すぎます（${MAX_CSV_IMPORT_ROWS.toLocaleString('ja-JP')} 行まで）。分けて取り込んでください。`;
+  for (let i = 0; i < text.length; i += 1) {
+    const ch = text.charCodeAt(i);
+    if (ch === 10 || ch === 13) {
+      if (ch === 13 && text.charCodeAt(i + 1) === 10) i += 1;
+      rows += 1;
+      if (rows > MAX_CSV_IMPORT_ROWS) {
+        return `行が多すぎます（${MAX_CSV_IMPORT_ROWS.toLocaleString('ja-JP')} 行まで）。分けて取り込んでください。`;
+      }
     }
   }
   return null;

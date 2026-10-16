@@ -1201,6 +1201,27 @@ describe('保存先の封緘 — 感情ログは secrets.json と同じ約束で
     },
   );
 
+  /**
+   * 一部の行だけ形の検査で落ちるファイルの部分消去 (2026-10-16 · パス 525 · threat: T-097)。
+   * T-028 は「ファイル全体が読めない」ときだけを断った。`readStore()` は落ちた行を黙って捨てて返すので、
+   * 気分だけ消して書き戻すと、頼んでいない解析の**形が合わない行**まで消えた (実測)。
+   */
+  it('★ 形の合わない行が在るファイルの部分消去は断り、ファイルを 1 バイトも変えない (threat: T-097)', async () => {
+    const good = { timestamp: 1, text: 'ok', excerpt: 'ok', scores: { joy: 0.5, sadness: 0, anger: 0, fear: 0, surprise: 0, disgust: 0 }, sentiment: 'neutral', dominant: 'joy' };
+    await seed({
+      moods: [{ date: '2026-10-01', score: 3, note: 'n' }],
+      analyses: [good, { ...good, scores: { ...good.scores, joy: 'high' } }],
+    });
+    const before = await fs.readFile(storeFile(), 'utf8');
+    await expect(ACTIONS['clear-history']!({ token: '', fetch: noFetch(), payload: { kind: 'moods' } })).rejects.toThrow('すべて消す');
+    expect(await fs.readFile(storeFile(), 'utf8'), '部分消去が形の合わない行を黙って消した').toBe(before);
+  });
+
+  it('対照: 全部の行が読めるファイルの部分消去は今までどおり通る', async () => {
+    await seed({ moods: [{ date: '2026-10-01', score: 3, note: 'n' }], analyses: [] });
+    expect(await ACTIONS['clear-history']!({ token: '', fetch: noFetch(), payload: { kind: 'moods' } })).toEqual({ moods: 1, analyses: 0 });
+  });
+
   it('「履歴を消去」は読めないファイルでも通り、空の封緘に置き換える (唯一の出口を塞がない)', async () => {
     await seed({ v: 2, sealed: Buffer.from('enc:not json at all', 'utf8').toString('base64') });
     const before = await ACTIONS['clear-history']!({ token: '', fetch: noFetch(), payload: { kind: 'all' } });

@@ -50,4 +50,19 @@ describe('CSV の行数・誤りの天井 (threat: T-081)', () => {
     expect(r.entries).toHaveLength(1);
     expect(r.errors).toHaveLength(3);
   });
+
+  /**
+   * 単独の `\r` でも行は終わる (2026-10-16 · パス 525 · threat: T-093)。関門が `\n` だけを数えていたので、
+   * `\r` 区切りの 20 MiB は素通りして全行を組み、メモリを 2 GB 近く使った (実測)。
+   */
+  it('★ CR 区切り・CRLF でも行数の天井が効く (threat: T-093)', () => {
+    expect(csvRowLimitError('a\r'.repeat(MAX_CSV_IMPORT_ROWS + 1))).not.toBeNull();
+    expect(csvRowLimitError('a\r\n'.repeat(MAX_CSV_IMPORT_ROWS + 1))).not.toBeNull();
+    // 対照: CRLF は 1 つの改行 (倍に数えない)・天井ちょうどは読む
+    expect(csvRowLimitError('a\r\n'.repeat(MAX_CSV_IMPORT_ROWS))).toBeNull();
+    expect(csvRowLimitError('a\r'.repeat(MAX_CSV_IMPORT_ROWS))).toBeNull();
+    const r = salesFromCsv(SALES_HEADER.replace(/\n/g, '\r') + 'bad,,,,\r'.repeat(MAX_CSV_IMPORT_ROWS + 5));
+    expect(r.entries).toEqual([]);
+    expect(r.errors).toHaveLength(1);
+  });
 });

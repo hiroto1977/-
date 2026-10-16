@@ -782,3 +782,32 @@ describe('assistant — 残りの境界 (2 巡目の実測から)', () => {
     expect(res.answers[0]!.text).toBe('');
   });
 });
+
+/**
+ * `model` は型と形を見てから転送する (2026-10-16 · パス 525 · threat: T-098)。直す前は 2,000 万字の
+ * `model` が 2,000 万字の要求になった (system・messages には天井が在る・実測)。
+ */
+describe("ACTIONS['chat'] — model の形 (threat: T-098)", () => {
+  const call = (model: unknown) => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(jsonResponse({ content: [{ type: 'text', text: 'ok' }] }));
+    const p = ACTIONS['chat']!({ token: 'sk-ant-xxx', fetch: fetchMock, payload: { messages: [{ role: 'user', content: 'hi' }], model } });
+    return { p, fetchMock };
+  };
+
+  it.each([['長すぎる', 'x'.repeat(20_000)], ['空白入り', 'a b'], ['スキーム風', 'http://evil/x'], ['..', 'a/../b']])(
+    '★ %s model は送らずに断る (threat: T-098)',
+    async (_n, model) => {
+      const { p, fetchMock } = call(model);
+      await expect(p).rejects.toThrow('model の形が正しくありません');
+      expect(fetchMock).not.toHaveBeenCalled();
+    },
+  );
+
+  it('対照: 正当な model 名・未指定はそのまま通る', async () => {
+    const a = call('claude-sonnet-4-5');
+    await a.p;
+    expect(JSON.parse(String((a.fetchMock.mock.calls[0]![1] as RequestInit).body)).model).toBe('claude-sonnet-4-5');
+    await call(undefined).p;
+    await call('').p;
+  });
+});

@@ -2578,6 +2578,42 @@ describe('exportDashboardImpl strategyComparison passthrough', () => {
   });
 });
 
+/**
+ * 行の中身を見ずに `<td>` へ素で入れていた (2026-10-16 · パス 525 · threat: T-092)。
+ * `tradeCount` に `</td></tr></table><script>…` を入れると、書き出した `.html` に生の
+ * `<script>` が残った (そのファイルは既定のブラウザで開く)。行の検証で戦略比較ごと省く。
+ */
+describe('exportDashboard — 戦略比較の行の検証 (threat: T-092)', () => {
+  const GOOD = { strategy: 'sma-crossover', finalEquity: 115_000, totalReturnPct: 15, maxDrawdownPct: 5, winRate: 1, tradeCount: 2 };
+  const run = async (row: Record<string, unknown>): Promise<string> => {
+    let html = '';
+    await exportDashboardImpl(
+      { token: '', payload: { strategyComparison: { symbol: 'AAPL', initialCash: 100_000, rows: [row], bestByReturn: null } } },
+      { fetchSnapshot: async () => emptySnapshot(), writeFile: async (_p, c) => { html = c; } },
+    );
+    return html;
+  };
+
+  it.each([
+    ['tradeCount が文字列', { ...GOOD, tradeCount: '</td></tr></table><script>fetch("https://evil.example")</script><td>' }],
+    ['tradeCount が小数', { ...GOOD, tradeCount: 1.5 }],
+    ['tradeCount が負', { ...GOOD, tradeCount: -1 }],
+    ['finalEquity が文字列', { ...GOOD, finalEquity: '<b>x</b>' }],
+    ['totalReturnPct が非有限', { ...GOOD, totalReturnPct: Number.NaN }],
+    ['strategy が物', { ...GOOD, strategy: { a: 1 } }],
+    ['winRate が文字列', { ...GOOD, winRate: '<i>' }],
+  ])('★ %s の行は戦略比較ごと省き、生の <script> を残さない (threat: T-092)', async (_n, row) => {
+    const html = await run(row);
+    expect(html).not.toContain('戦略比較');
+    expect(html).not.toContain('<script>fetch');
+  });
+
+  it('対照: 正しい行 (winRate が null でも) は今までどおり載せる', async () => {
+    expect(await run(GOOD)).toContain('戦略比較');
+    expect(await run({ ...GOOD, winRate: null })).toContain('戦略比較');
+  });
+});
+
 // --- BacktestResult.equityCurve --------------------------------------
 
 describe('backtest equityCurve', () => {

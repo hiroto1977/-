@@ -426,15 +426,22 @@ export function channelTokens(raw: string): readonly string[] {
 export function outsideQuotes(raw: string): string {
   let out = raw;
   for (const [open, close] of QUOTE_PAIRS) {
+    // 範囲を先に集めて 1 度だけ組む (threat: T-094 · パス 525)。対ごとに文字列全体を作り直すと
+    // 作業は「対の数 × 長さ」で、`「a」` を 5 万個並べた発話は 9.6 秒、10 万個では 36 秒かかった
+    // (T-082 は `quotedSpan` だけを直した)。範囲は互いに重ならない (次の探索は閉じ記号の後ろから)。
+    const parts: string[] = [];
     let from = 0;
+    let copied = 0;
     for (;;) {
       const i = out.indexOf(open, from);
       if (i === -1) break;
       const end = out.indexOf(close, i + 1);
       if (end === -1) break;
-      out = out.slice(0, i + 1) + ' '.repeat(end - i - 1) + out.slice(end);
+      parts.push(out.slice(copied, i + 1), ' '.repeat(end - i - 1));
+      copied = end;
       from = end + 1;
     }
+    if (parts.length > 0) out = parts.join('') + out.slice(copied);
   }
   return out;
 }

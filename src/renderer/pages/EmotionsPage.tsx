@@ -9,7 +9,7 @@ import { AiEgressNotice } from '../components/AiEgressNotice';
 import { AI_EGRESS_RECIPIENT_ANTHROPIC, remoteOnly } from '../../shared/aiEgressNotice';
 import { useParameters } from '../data/parameterOverrides';
 import { emotionThresholds } from '../../shared/parameters';
-import { counsel } from '../data/counseling';
+import { counsel, detectCrisis, detectHarmToOthers } from '../data/counseling';
 import { SELF_CARE_LIBRARY } from '../data/selfCareLibrary';
 import { MAX_ANALYZE_TEXT_CHARS, MAX_MOOD_NOTE_CHARS } from '../../shared/emotionsLimits';
 import { charsOverCeiling, clampToCeiling, clampedCeilingNote } from '../../shared/inputCeiling';
@@ -127,6 +127,10 @@ function ScoreBar({ name, score }: { name: string; score: number }) {
     </div>
   );
 }
+
+/** 危機の文面を外部へ送らずに止めたときの 1 文 (逃げ口は同じ画面の「寄り添いカウンセリング」)。 */
+const CRISIS_HELD_NOTE =
+  'つらい気持ちが書かれているため、外部サービスへは送っていません。下の「寄り添いカウンセリング」に相談窓口を表示しています。';
 
 /** 寄り添いカウンセリング — 縦断プロファイル + 危機検知つきの共感応答。 */
 function CounselingCard({ moods, analyses, draftNote, draftScore, profile }: {
@@ -262,12 +266,27 @@ export function EmotionsPage() {
   /** 天井を何字超えているか (0 なら送れる)。**切らずに断るため**に持つ (パス 168)。 */
   const textOver = charsOverCeiling(text, MAX_ANALYZE_TEXT_CHARS);
 
+  /**
+   * 危機の文面として**送らずに止めた**テキスト (threat: T-090 · パス 525)。「分析」は本文を外部の
+   * モデル (Anthropic) へ送るので、つらい気持ちを打った人の文が、窓口を出さないまま端末の外へ出ていた
+   * (実測: 「今日は本当に死にたい。もう終わりにしたい」が invoke へ渡り、画面に窓口は出なかった)。
+   * 村・コンシェルジュ・AI アシスタントと同じく、危機・他害の判定が先で、当たれば送らず窓口を出す。
+   */
+  const [crisisHeld, setCrisisHeld] = useState<string>();
+
   const analyze = async () => {
     if (!window.serviceHub) return;
+    const body = text.trim();
+    if (detectCrisis(body) || detectHarmToOthers(body)) {
+      setCrisisHeld(body);
+      setAnalyzeErr(CRISIS_HELD_NOTE);
+      return;
+    }
+    setCrisisHeld(undefined);
     setAnalyzing(true);
     setAnalyzeErr(undefined);
     const res = await window.serviceHub.invoke<ActionData<'emotions/analyze-text'>>('emotions', 'analyze-text', {
-      text: text.trim(),
+      text: body,
     });
     setAnalyzing(false);
     if (res.ok) {
@@ -365,7 +384,7 @@ export function EmotionsPage() {
       <CounselingCard
         moods={moods}
         analyses={analyses}
-        draftNote={moodNote}
+        draftNote={moodNote.trim() ? moodNote : (crisisHeld ?? '')}
         draftScore={moodScore}
         profile={profile}
       />

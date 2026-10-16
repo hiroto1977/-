@@ -1556,6 +1556,171 @@
         "file": "src/shared/__tests__/escape.test.ts",
         "test": "★ %s: ![ と ]( を無効にする (threat: T-087)"
       }
+    },
+    {
+      "id": "T-088",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 525 (監査役の指摘を自分で再現してから直した)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "high",
+      "title": "vite.config.ts の academicJsonParse は、ビルドのたびに academicKnowledge.ts (~8.8 MB・鎖にも CODEOWNERS にも無い) を vm.runInNewContext で実行する。vm は隔離ではなく、ホスト側の exports の constructor.constructor で process に届く: 末尾へ 1 行足すだけで release.yml の Build (署名鍵 4 本を env に持つ) で任意コードが走った (実測: env 144 件を読み、ファイルを書けた。verify:all の 39 門は全部 exit 0)",
+      "status": "fixed",
+      "fix": "実行の前に構文木で「型宣言 + export const VERIFIED_CONCEPTS = <リテラルだけ> の 1 文」であることを確かめ (scripts/lib/pure-data-module.cjs・鎖の保護対象)、通らなければビルドを落とす (this.error)。実ビルドに payload を埋めて exit 1・マーカー無しを確認。",
+      "regression": {
+        "file": "src/shared/__tests__/pureDataModule.test.ts",
+        "test": "★ 配線: vite.config.ts は vm の実行より前に、try の外で検査する"
+      }
+    },
+    {
+      "id": "T-089",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 525 (監査役の指摘を自分で再現してから直した)",
+      "surface": "ai",
+      "class": "ai-phishing",
+      "severity": "high",
+      "title": "CRISIS_MARKERS は「消えたい」「死にたい」の活用形に偏り、「消えてしまいたい」「命を絶ちたい」「生きている意味がない」「死ぬつもり」「首をくくる」「オーバードーズ」「私を殺して」ほか 22 形が detectCrisis=false のまま相談窓口を出さず、AI アシスタント・コンシェルジュ・村で外部のモデルへ届いた (実測)",
+      "status": "fixed",
+      "fix": "日常語と衝突しない『対象が明示された句』の語を足し、照合の畳み込みに小文字化を足した (単独の「死にます」「飛び降りる」は外す・対照で留める)。",
+      "regression": {
+        "file": "src/renderer/data/__tests__/counseling.test.ts",
+        "test": "★ %s を危機と判定する (threat: T-089)"
+      }
+    },
+    {
+      "id": "T-090",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 525 (監査役の指摘を自分で再現してから直した)",
+      "surface": "renderer",
+      "class": "ai-phishing",
+      "severity": "medium",
+      "title": "感情ページの『テキスト分析』は貼った本文を危機の判定なしに emotions/analyze-text (Anthropic) へ送り、CounselingCard は気分のメモしか読まないので窓口も出なかった (実測: 『今日は本当に死にたい。もう終わりにしたい』が invoke へ渡った)",
+      "status": "fixed",
+      "fix": "analyze() の先頭で detectCrisis / detectHarmToOthers を判定し、当たれば送らず、その文を CounselingCard へ渡して窓口を出す (村・コンシェルジュ・AI アシスタントと同じ向き)。",
+      "regression": {
+        "file": "src/renderer/pages/__tests__/emotionsCrisisHold.test.ts",
+        "test": "★ 危機の文面は外部へ送らず、相談窓口を出し、理由を言う (threat: T-090)"
+      }
+    },
+    {
+      "id": "T-091",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 525 (監査役の指摘を自分で再現してから直した)",
+      "surface": "main-ipc",
+      "class": "living-off-the-land",
+      "severity": "medium",
+      "title": "getValidToken は T-054 で assistant だけを JSON の包みとして返すようにしたが、設定の欄が JSON を要求する atlassian / youtube / security は保存した瞬間から broken-token-set と断られた (実測: 3 つとも secrets:set は ok・直後の getValidToken が断り。デスクトップ版で使えず、security は LOCAL なので端末内の判定まで止まった)",
+      "status": "fixed",
+      "fix": "OPAQUE_JSON_SLOTS に 3 スロットを足し、読み手 (parseAtlassianToken / parseYoutubeCredentials / parseSecurityKeys) を名指しの検査で留める。",
+      "regression": {
+        "file": "src/main/__tests__/secretsTokenRead.test.ts",
+        "test": "★ %s スロットの JSON の包みは、そのまま返す (threat: T-091)"
+      }
+    },
+    {
+      "id": "T-092",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 525 (監査役の指摘を自分で再現してから直した)",
+      "surface": "main-ipc",
+      "class": "living-off-the-land",
+      "severity": "medium",
+      "title": "stocks の export-dashboard は strategyComparison の行の中身を見ずに tradeCount を <td> へ素で入れ、</td></tr></table><script>… で書き出した .html に生の <script> が残った (そのファイルは app:openPath が許す data/ に書かれ、既定のブラウザで開く。.md も同じ文字列を持つ)",
+      "status": "fixed",
+      "fix": "isStrategyComparison が各行の型 (strategy: 文字列・金額と率: 有限・tradeCount: 0 以上の整数・winRate: null か有限) を検め、合わなければ戦略比較ごと省く。",
+      "regression": {
+        "file": "src/main/clients/__tests__/stocks.test.ts",
+        "test": "★ %s の行は戦略比較ごと省き、生の <script> を残さない (threat: T-092)"
+      }
+    },
+    {
+      "id": "T-093",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 525 (監査役の指摘を自分で再現してから直した)",
+      "surface": "renderer",
+      "class": "ransomware-extortion",
+      "severity": "medium",
+      "title": "csvRowLimitError は \\n だけを数えたが parseCsv は単独の \\r でも行を終えるので、\\r 区切りの 20 MiB は 20 万行の天井を素通りして全行を組み (RSS 1.6〜2.2 GB・最悪で heap 上限・タブが落ちる)、有効な行なら 87 万行が入った (実測)",
+      "status": "fixed",
+      "fix": "\\r\\n / \\r / \\n をそれぞれ 1 つの改行として数える (CRLF は倍に数えない)。",
+      "regression": {
+        "file": "src/renderer/data/__tests__/csvImportLimits.test.ts",
+        "test": "★ CR 区切り・CRLF でも行数の天井が効く (threat: T-093)"
+      }
+    },
+    {
+      "id": "T-094",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 525 (監査役の指摘を自分で再現してから直した)",
+      "surface": "renderer",
+      "class": "ai-automated-attack",
+      "severity": "low",
+      "title": "outsideQuotes は引用の対ごとに文字列全体を作り直し、作業が『対の数 × 長さ』になった: 「a」を 5 万個並べた発話で 9.6 秒、10 万個で 36 秒 UI が固まった (T-082 は quotedSpan だけを直した)。コンシェルジュ・音声バーの入力には長さの上限が無い",
+      "status": "fixed",
+      "fix": "範囲を集めて 1 度だけ組む線形の実装へ (基準の素朴な実装と標本で突き合わせて同じ答えを確認)。",
+      "regression": {
+        "file": "src/renderer/data/__tests__/voiceCommand.test.ts",
+        "test": "★ 引用 5 万個の発話が秒単位にならない (直す前は 9.6 秒)・長さは変わらない (threat: T-094)"
+      }
+    },
+    {
+      "id": "T-095",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 525 (監査役の指摘を自分で再現してから直した)",
+      "surface": "network",
+      "class": "ssrf-and-credential-egress",
+      "severity": "medium",
+      "title": "redactSecrets は預かる資格情報のうち gsk_ / xai- / pplx- / hf_ / nvapi- / fw_ (OpenAI 互換の提供元)・xoxe- xoxc- xoxd- xoxs- xoxr- xapp-・GOCSPX-・npm_・ya29.c.… を裸で反射されると伏せず、Authorization: token|Bot|OAuth|Digest の方式語を値と取り違え、id_token / accessToken / refreshToken の鍵と X-Shared-Secret 等のヘッダも伏せなかった (実測: 20 形中 19 形が素通り。runAiChat の 401 がキーをそのまま画面へ)",
+      "status": "fixed",
+      "fix": "接頭辞の規則に本体 20 字以上の追加 1 本 (識別子・散文を巻き込まない)・ya29 の .c. 形・方式語と鍵名の別綴りを足した。",
+      "regression": {
+        "file": "src/shared/__tests__/redactionCoverage.test.ts",
+        "test": "★ %s の裸の反射を伏せる (threat: T-095)"
+      }
+    },
+    {
+      "id": "T-096",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 525 (監査役の指摘を自分で再現してから直した)",
+      "surface": "network",
+      "class": "ssrf-and-credential-egress",
+      "severity": "low",
+      "title": "VirusTotal へ送る前の警告は資格情報らしき名前を完全一致でしか拾わず、S3 の署名付き URL (X-Amz-Signature / X-Amz-Credential)・client_secret・private_token・accessToken・jwt・bearer・SPA のハッシュ経路 (#/reset?token=…) が無警告で第三者に残る形になった。HIBP へ送る email は長さも @ も見ず、500 万字が要求の道になった (実測)",
+      "status": "fixed",
+      "fix": "名前を - _ を落として語尾一致で拾い (tokens / keyword のような別物は拾わない)・ハッシュの ? 以降も読む・email は 254 字以内で @ を含み制御文字なしに限る。",
+      "regression": {
+        "file": "src/shared/__tests__/scanTarget.test.ts",
+        "test": "★ %s は資格情報の警告を出す (threat: T-096)"
+      }
+    },
+    {
+      "id": "T-097",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 525 (監査役の指摘を自分で再現してから直した)",
+      "surface": "main-ipc",
+      "class": "ransomware-extortion",
+      "severity": "low",
+      "title": "emotions/clear-history の部分消去 (気分だけ) は、形の検査で落ちた行を黙って捨てて返す readStore で読んで書き戻すため、頼んでいない解析の形が合わない行まで消えた (T-028 はファイル全体が読めない場合だけを断った・実測)",
+      "status": "fixed",
+      "fix": "部分消去は forWrite で読み、落ちた行が在れば T-028 と同じ断りにしてファイルを変えない。全消去は従来どおり。",
+      "regression": {
+        "file": "src/main/clients/__tests__/emotions.test.ts",
+        "test": "★ 形の合わない行が在るファイルの部分消去は断り、ファイルを 1 バイトも変えない (threat: T-097)"
+      }
+    },
+    {
+      "id": "T-098",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 525 (監査役の指摘を自分で再現してから直した)",
+      "surface": "main-ipc",
+      "class": "ai-automated-attack",
+      "severity": "low",
+      "title": "assistant/chat・chatAll は system・messages に天井が在るのに model だけ型も長さも見ずに提供元へ転送し (2,000 万字の model が 2,000 万字の要求になった)、business/advise の categories は件数の上限が無く同じ id を 50 万個で 12 MB の要求になった (実測・株式側は上限あり)",
+      "status": "fixed",
+      "fix": "model は isSafeModelName で検め (空は指定なし・形が違えば送らずに断る)、categories は種類の数を超えたら断る。",
+      "regression": {
+        "file": "src/main/clients/__tests__/assistant.test.ts",
+        "test": "★ %s model は送らずに断る (threat: T-098)"
+      }
     }
   ],
   "huntBacklog": [
@@ -1648,6 +1813,26 @@
       "surface": "ai",
       "item": "saveHistory は QuotaExceeded を黙って飲む・「もう生きていけない」は危機の語に入れていない",
       "why": "2026-10-16 に監査役が指摘。前者は会話履歴が保存されないだけ (画面は動く)。後者は仕事・家計の文脈で多発し誤検知になるため方針で外している (counseling.ts の精度方針)。判断を伴うので未対応。"
+    },
+    {
+      "surface": "main-ipc",
+      "item": "R525-6 OAuth の更新 (getValidToken) は UI で入れたクライアント ID を使わない (oauth:authorize だけが上書きを適用)",
+      "why": "2026-10-16 に監査役が指摘 (自分では未再現)。『アプリ内かんたん接続』の更新が空の client_id で失敗し黙って期限切れの access token を返す、という機能の欠陥で攻撃ではない。クライアント ID を TokenSet と一緒に保存する設計判断を伴う。"
+    },
+    {
+      "surface": "main-ipc",
+      "item": "R525-7 shellOpenGate は root を realpath しない (/home が /var/home への symlink の環境で、書き出しは通るが開く・場所を表示が断られる)",
+      "why": "2026-10-16 に監査役が指摘 (自分では未再現)。断る側に倒れる機能の欠陥で、安全は損なわれない。"
+    },
+    {
+      "surface": "ai",
+      "item": "F-3 音声/チャットの宛先サービスが引用の本文の語で決まる (不動産に「投資信託の件」を記録して → mutual-funds)",
+      "why": "2026-10-16 に監査役が再現 (自分では未再現)。確認の画面は宛先を見せるので利用者が気付ける。引用の外から決める・曖昧なら尋ねる、は解析器の設計判断。"
+    },
+    {
+      "surface": "ai",
+      "item": "AI-6 の同類: skills/run-skill の prompt と Slack/Gmail の『Emotions で分析』(第三者の文) も危機の判定を通らずに外部のモデルへ届く",
+      "why": "2026-10-16 に監査役が指摘 (感情ページの『テキスト分析』は T-090 で閉じた)。detectCrisis を shared へ出して main で止める、が AI-6 の設計。"
     }
   ],
   "clearedBacklog": [

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { join } from 'node:path';
 import { readOriginalSource } from './originalSource';
-import { MAX_SCAN_URL_CHARS, SCAN_URL_MESSAGES, SECRET_PARAM_NAMES, describeScanUrlRisk, looksInternalHostname, type ScanUrlFailure, validateScanUrl } from '../scanTarget';
+import { MAX_BREACH_EMAIL_CHARS, MAX_SCAN_URL_CHARS, SCAN_URL_MESSAGES, SECRET_PARAM_NAMES, describeScanUrlRisk, looksInternalHostname, type ScanUrlFailure, validateBreachEmail, validateScanUrl } from '../scanTarget';
 import { rereadModule } from './rereadModule';
 
 describe('validateScanUrl', () => {
@@ -334,7 +334,10 @@ describe('scanTarget — 生存していた変異を塞ぐ', () => {
       'not-a-url': 'url を URL として解釈できません',
       'not-web': 'url は http:// または https:// で始まる必要があります',
     });
-    expect(m.BREACH_EMAIL_MESSAGES).toEqual({ empty: 'email は必須です' });
+    expect(m.BREACH_EMAIL_MESSAGES).toEqual({
+      empty: 'email は必須です',
+      invalid: 'email の形が正しくありません（254 文字以内で、@ を含み、制御文字を含まないこと）',
+    });
     expect(m.MAX_SCAN_URL_CHARS).toBe(2048);
   });
 
@@ -536,5 +539,50 @@ describe('describeScanUrlRisk — 内部宛先の別表記 (threat: T-076)', () 
     expect(describeScanUrlRisk('https://example.com/')).toBeNull();
     expect(describeScanUrlRisk('https://8.8.8.8/')).toBeNull();
     expect(describeScanUrlRisk('http://[2606:4700:4700::1111]/')).toBeNull();
+  });
+});
+
+/**
+ * 署名付き URL と email の形 (2026-10-16 · パス 525 · threat: T-096)。警告は名前の完全一致だけで、
+ * `X-Amz-Signature` / `client_secret` / `private_token` / `accessToken` / `jwt` / `bearer` と
+ * SPA のハッシュ経路 (`#/reset?token=…`) が素通りした。email は長さも `@` も見ず、
+ * 500 万字が要求の道になった (実測)。
+ */
+describe('scanTarget — 署名付き URL と email の形 (threat: T-096)', () => {
+  it.each([
+    'https://b.s3.amazonaws.com/o?X-Amz-Credential=AKIA%2F2026&X-Amz-Signature=abc',
+    'https://example.com/?client_secret=abc',
+    'https://example.com/?private_token=abc',
+    'https://example.com/?access-token=abc',
+    'https://example.com/?accessToken=abc',
+    'https://example.com/?jwt=abc',
+    'https://example.com/?bearer=abc',
+    'https://example.com/?X-Goog-Signature=abc',
+    'https://example.com/#/reset?token=abc',
+  ])('★ %s は資格情報の警告を出す (threat: T-096)', (url) => {
+    expect(describeScanUrlRisk(url)).toContain('資格情報らしき値');
+  });
+
+  it('★ 対照: 別物の名前・ただの経路は警告しない (警告を薄めない)', () => {
+    for (const url of ['https://example.com/?tokens=1', 'https://example.com/?keyword=1', 'https://example.com/#/home?tab=2', 'https://example.com/?page=2']) {
+      expect(describeScanUrlRisk(url), url).toBeNull();
+    }
+  });
+
+  it.each([
+    ['長すぎる', 'a'.repeat(300) + '@example.com'],
+    ['@ が無い', 'not-an-email'],
+    ['..', '..'],
+    ['制御文字', 'a\nb@example.com'],
+  ])('★ email が%sと断る (threat: T-096)', (_n, raw) => {
+    expect(validateBreachEmail(raw)).toEqual({ ok: false, reason: 'invalid' });
+  });
+
+  it('対照: 通常のアドレスは通る・254 字ちょうども通る', () => {
+    expect(validateBreachEmail('me@example.com')).toEqual({ ok: true, email: 'me@example.com' });
+    const edge = 'a'.repeat(MAX_BREACH_EMAIL_CHARS - '@example.com'.length) + '@example.com';
+    expect(edge).toHaveLength(MAX_BREACH_EMAIL_CHARS);
+    expect(MAX_BREACH_EMAIL_CHARS).toBe(254);
+    expect(validateBreachEmail(edge).ok).toBe(true);
   });
 });

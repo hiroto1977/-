@@ -192,14 +192,31 @@ describe('getValidToken', () => {
     const blob = JSON.stringify({ anthropicApiKey: 'sk-ant-x', openaiApiKey: 'sk-y' });
     await writeRawStore({ assistant: encrypted(blob) });
     expect(await getValidToken('assistant')).toEqual({ ok: true, token: blob });
-    expect([...OPAQUE_JSON_SLOTS]).toEqual(['assistant']);
+    expect([...OPAQUE_JSON_SLOTS]).toEqual(['assistant', 'atlassian', 'youtube', 'security']);
+  });
+
+  /**
+   * T-054 の兄弟 (パス 525 · threat: T-091)。T-054 は `assistant` だけを直し、設定の欄が JSON
+   * (`{email,token,site}` / `{apiKey,channelId}` / `{hibp,vt}`) を要求する 3 スロットは
+   * 保存した瞬間から「壊れた資格情報」と断られ、デスクトップ版で使えなかった (実測)。
+   */
+  it.each([
+    ['atlassian', JSON.stringify({ email: 'a@example.com', token: 'tok', site: 'https://x.atlassian.net' })],
+    ['youtube', JSON.stringify({ apiKey: 'AIza-x', channelId: 'UC1' })],
+    ['security', JSON.stringify({ hibp: 'h', vt: 'v' })],
+  ])('★ %s スロットの JSON の包みは、そのまま返す (threat: T-091)', async (id, blob) => {
+    const { getValidToken } = await secretsModule();
+    await writeRawStore({ [id]: encrypted(blob) });
+    expect(await getValidToken(id as never)).toEqual({ ok: true, token: blob });
   });
 
   it('★ 包みごと返すスロットは、読み手が JSON を自分で解く所だけ (読み手を名指しで留める)', async () => {
     const { OPAQUE_JSON_SLOTS } = await secretsModule();
     for (const id of OPAQUE_JSON_SLOTS) {
       const src = readOriginalSource(path.resolve(__dirname, `../clients/${id}.ts`));
-      expect(src, `${id}.ts が ctx.token を自分で解いていない`).toContain('parseAiCredentials(ctx.token)');
+      const reader = { assistant: 'parseAiCredentials(ctx.token)', atlassian: 'parseAtlassianToken(ctx.token)', youtube: 'parseYoutubeCredentials(ctx.token)', security: 'parseSecurityKeys(ctx.token)' }[id as string];
+      expect(reader, `${id} の読み手が台帳に無い`).toBeDefined();
+      expect(src, `${id}.ts が ctx.token を自分で解いていない`).toContain(reader);
     }
   });
 

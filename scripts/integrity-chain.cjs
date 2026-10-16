@@ -240,6 +240,7 @@ const PROTECTED = [
   // **結果**を見る。鎖が見るのは「気付かぬ変更」で、役割が違う。
   'scripts/inline-html.cjs',
   'scripts/inject-pwa.cjs',
+  'scripts/lib/pure-data-module.cjs', // threat: T-088 —— ビルドが実行するデータ・モジュールを構文木で確かめる (vite.config.ts が読む)
   'assets/manifest.webmanifest',
   // threat: T-071 —— pages.yml が `_site/` へそのまま公開する 2 つ (2026-10-15 · パス 523)。
   // `icon.svg` は `<link rel=icon>` としてはスクリプトを走らせないが、**同じ URL を直接開くと

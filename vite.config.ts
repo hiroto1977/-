@@ -33,6 +33,9 @@ const isDev = process.env.NODE_ENV !== 'production' && process.env.VITE_DEV !== 
 // the build can never be broken by the optimization. Build-only (dev keeps the
 // literal for fast HMR).
 function academicJsonParse(): Plugin {
+  const { assertPureDataModule } = createRequire(import.meta.url)('./scripts/lib/pure-data-module.cjs') as {
+    assertPureDataModule: (code: string, opts: { exportName: string; label?: string }) => void;
+  };
   const TARGET = /[/\\]academicKnowledge\.ts$/;
   // U+2028 / U+2029 are illegal un-escaped in JS string literals on older
   // engines; built from an ASCII string to avoid embedding the raw chars here.
@@ -50,6 +53,14 @@ function academicJsonParse(): Plugin {
       if (process.env.SERVICE_HUB_LITE === '1') {
         this.warn('LITE build: academic corpus stripped (VERIFIED_CONCEPTS = [])');
         return { code: 'export const VERIFIED_CONCEPTS = [];\n', map: null };
+      }
+      // threat: T-088 —— 次の `vm` は隔離ではない (ホスト側の `exports` の constructor.constructor で
+      // `process` に届く・実測) ので、**実行する前に**「型宣言 + リテラルだけの 1 文」であることを構文木で確かめる。
+      // `try` の外に置く: 通らなければビルドを落とす (黙って実行せず、黙って通常のリテラルへも倒さない)。
+      try {
+        assertPureDataModule(code, { exportName: 'VERIFIED_CONCEPTS', label: 'academicKnowledge.ts' });
+      } catch (err) {
+        this.error((err as Error).message);
       }
       try {
         const { code: cjs } = await transformWithEsbuild(code, id, {

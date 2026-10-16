@@ -1970,6 +1970,7 @@ function isAdvisorResult(v: unknown): v is AdvisorResponse {
   }
   return valid;
 }
+// Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator,BooleanLiteral
 
 function isStrategyComparison(v: unknown): v is StrategyComparisonResult {
   if (v === null || typeof v !== 'object') return false;
@@ -1977,10 +1978,27 @@ function isStrategyComparison(v: unknown): v is StrategyComparisonResult {
   return (
     typeof r['symbol'] === 'string' &&
     Number.isFinite(r['initialCash']) &&
-    Array.isArray(r['rows'])
+    Array.isArray(r['rows']) &&
+    // threat: T-092 —— 行の中身も見る。以前は配列であることしか見ず、`tradeCount` に文字列を入れると
+    // `.html` の `<td>` へ**素で**入り (`</td></table><script>…`)、そのファイルは `app:openPath` が許す
+    // `data/` に書かれて既定のブラウザで開く (レンダラーの外・CSP の外で走る)。
+    r['rows'].every(isStrategyRow)
   );
 }
-// Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator,BooleanLiteral
+
+function isStrategyRow(row: unknown): boolean {
+  if (row === null || typeof row !== 'object') return false;
+  const x = row as Record<string, unknown>;
+  return (
+    typeof x['strategy'] === 'string' &&
+    Number.isFinite(x['finalEquity']) &&
+    Number.isFinite(x['totalReturnPct']) &&
+    Number.isFinite(x['maxDrawdownPct']) &&
+    Number.isInteger(x['tradeCount']) &&
+    (x['tradeCount'] as number) >= 0 &&
+    (x['winRate'] === null || x['winRate'] === undefined || Number.isFinite(x['winRate']))
+  );
+}
 
 /** Validate that a path is under the user's home and ends in .html.
  *  Prevents the renderer from writing to arbitrary filesystem locations

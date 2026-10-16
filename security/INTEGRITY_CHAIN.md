@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 306
+- ブロック数: 308
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `3b6905b5c79db304ca94e7c80647c1bdee73769a291fa6d9e42d2e7256e17c7a`
-- 保護対象: 117 ファイル
+- 末尾(tip)ハッシュ: `3f3871a2c5528603af9715d3d86b1f2924c1e639bcc2ed3cb457ae238430d873`
+- 保護対象: 118 ファイル
 
 ## ブロック
 
@@ -319,6 +319,8 @@
 | 303 | `d5f424f7d9254e02` | `3494cb21a9f364f0` | `833ce2b8c1c92afc` | update icon.svg,og.png,integrity-chain.cjs,atomicWrite.ts,exportPaths.ts,oauth.ts |
 | 304 | `506a216e405fb25c` | `833ce2b8c1c92afc` | `36612853fd566a7c` | update proxy.ts,vault.ts |
 | 305 | `5a0ed0941cd68760` | `36612853fd566a7c` | `3b6905b5c79db304` | update eraseAll.ts,secrets.ts,autoLock.ts,escape.ts,redact.ts,scanTarget.ts |
+| 306 | `ad54bf29c9323825` | `3b6905b5c79db304` | `ad061da0c49a9ff1` | update integrity-chain.cjs,pure-data-module.cjs,assistant.ts,secrets.ts,redact.ts,scanTarget.ts |
+| 307 | `d0d34954238bde8b` | `ad061da0c49a9ff1` | `3f3871a2c5528603` | update scanTarget.ts |
 
 ## 保護対象ファイル
 
@@ -358,6 +360,7 @@
 - `scripts/lib/artifact-freshness.cjs`
 - `scripts/lib/json-for-script.cjs`
 - `scripts/lib/population-floor.cjs`
+- `scripts/lib/pure-data-module.cjs`
 - `scripts/lib/tracked-cross-check.cjs`
 - `scripts/lint-artifact-csp.cjs`
 - `scripts/lint-sample-data.cjs`

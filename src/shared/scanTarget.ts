@@ -15,7 +15,7 @@
  * この監査で繰り返し出た形なので。
  */
 
-import { countChars } from './inputCeiling';
+import { countChars, moreThanChars } from './inputCeiling';
 import { isPrivateOrReservedTarget } from './privateTarget';
 export type ScanUrlFailure = 'empty' | 'too-long' | 'not-a-url' | 'not-web';
 
@@ -70,7 +70,7 @@ export const MAX_SCAN_URL_CHARS = 2048;
  * 文面と写しを畳む今回の仕事に混ぜない (パス 284 で site の文面へ
  * 手を伸ばして検査に止められたのと同じ種類の線引き)。
  */
-export type BreachEmailFailure = 'empty';
+export type BreachEmailFailure = 'empty' | 'invalid';
 
 export type BreachEmailResult =
   | { readonly ok: true; readonly email: string }
@@ -79,12 +79,22 @@ export type BreachEmailResult =
 /** 断りの文面 —— **両ビルドがここを読む** (文を写さない)。 */
 export const BREACH_EMAIL_MESSAGES: Readonly<Record<BreachEmailFailure, string>> = {
   empty: 'email は必須です',
+  invalid: 'email の形が正しくありません（254 文字以内で、@ を含み、制御文字を含まないこと）',
 };
+
+/** RFC 5321 のメールアドレスの上限 (オクテット)。 */
+export const MAX_BREACH_EMAIL_CHARS = 254;
 
 export function validateBreachEmail(raw: unknown): BreachEmailResult {
   // 前後の空白を落とすのは**安全の判断に効く** (上の docblock の 2026-08-22)。
   const email = typeof raw === 'string' ? raw.trim() : '';
   if (!email) return { ok: false, reason: 'empty' };
+  // threat: T-096 —— 長さ・制御文字・`@` を見ない物が HIBP の道 (`/breachedaccount/<email>`) へ入っていた
+  // (実測: 5,000,006 字が 5,000,048 字の要求になった・`..` と `.` は道を畳む)。
+  // eslint-disable-next-line no-control-regex -- 制御文字の拒否が目的
+  if (moreThanChars(email, MAX_BREACH_EMAIL_CHARS) || !email.includes('@') || /[\u0000-\u001f\u007f]/.test(email)) {
+    return { ok: false, reason: 'invalid' };
+  }
   return { ok: true, email };
 }
 
@@ -149,7 +159,13 @@ export const SECRET_PARAM_NAMES = [
 
 function looksSecretName(name: string): boolean {
   const lower = name.toLowerCase();
-  return SECRET_PARAM_NAMES.includes(lower);
+  if (SECRET_PARAM_NAMES.includes(lower)) return true;
+  // threat: T-096 (パス 525) —— 完全一致だけだと `X-Amz-Signature` / `client_secret` / `private_token` /
+  // `accessToken` / `jwt` / `bearer` が素通りし、署名付き URL がそのまま VirusTotal に残った (実測)。
+  // `-` `_` を落として照合し、名前が資格情報の語**で終わる**物も拾う (`tokens` `keyword` `author` のような別物は
+  // 拾わない・`sig` `key` `code` は短く散文と衝突しやすいので完全一致のまま)。
+  const folded = lower.replace(/[-_]/g, '');
+  return /(token|secret|signature|credential|password|passwd|apikey|jwt|bearer)$/.test(folded);
 }
 
 /**
@@ -278,6 +294,13 @@ export function describeScanUrlRisk(raw: string): string | null {
   // どちらもテストで殺せない変異体になる。
   for (const [name] of new URLSearchParams(parsed.hash.slice(1))) {
     if (looksSecretName(name)) names.push(name);
+  }
+  // SPA のハッシュ経路 (`#/reset?token=…`) は、`?` の後ろを問い合わせとして読む (T-096)。
+  const hashQuery = parsed.hash.indexOf('?');
+  if (hashQuery !== -1) {
+    for (const [name] of new URLSearchParams(parsed.hash.slice(hashQuery + 1))) {
+      if (looksSecretName(name)) names.push(name);
+    }
   }
   if (names.length > 0) {
     const unique = [...new Set(names)].join(' / ');

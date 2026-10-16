@@ -123,7 +123,7 @@ export function redactSecrets(input: string): string {
       // `\s+` と書くと「1 個か 2 個以上か」で結果が変わらない = 確かめようの
       // ない指定になる。
       .replace(
-        /(["'])((?:[a-z0-9]+-)*(?:authorization|api-?key|proxy-auth))\1(\s*:\s*)\1(?:(Bearer|Basic)\s)?(?:\\.|(?!\1)[^\\])*\1/gi,
+        /(["'])((?:[a-z0-9]+-)*(?:authorization|api-?key|proxy-auth))\1(\s*:\s*)\1(?:(Bearer|Basic|Token|Bot|OAuth|Digest|Negotiate)\s)?(?:\\.|(?!\1)[^\\])*\1/gi,
         (_m, q: string, name: string, sep: string, scheme?: string) =>
           hideValue(`${q}${name}${q}`, `${sep}${q}`, scheme) + q,
       )
@@ -140,7 +140,7 @@ export function redactSecrets(input: string): string {
       // 出力が違うものは 0、漏れの有無も一致。**書いても効かない指定は、
       // 効いているように読める分だけ害がある** (変異検査でも生存し続ける)。
       .replace(
-        /\b(authorization|api-?key|proxy-auth)(\s*:\s*)(?:(Bearer|Basic)\s+)?\S+/gi,
+        /\b(authorization|api-?key|proxy-auth|shared-?secret|auth-token|subscription-key)(\s*:\s*)(?:(Bearer|Basic|Token|Bot|OAuth|Digest|Negotiate)\s+)?\S+/gi,
         (_m, name: string, sep: string, scheme?: string) => hideValue(name, sep, scheme),
       )
       // ヘッダ名が付いていない裸の `Bearer …` / `Basic …`。16 字以上に限る。
@@ -241,6 +241,18 @@ export function redactSecrets(input: string): string {
        */
       .replace(/\bkey_[0-9a-f]{16,}/g, 'key_[REDACTED]')
       /*
+       * **預かる資格情報のうち、接頭辞を持つのに伏せていなかった形** (2026-10-16 · パス 525 · threat: T-095)。
+       * 実測 (裸で反射された値): OpenAI 互換の提供元の鍵 (`gsk_` Groq / `xai-` / `pplx-` / `hf_` /
+       * `nvapi-` / `fw_`・AI アシスタントの `compat` が預かる)・Slack の `xoxe-` `xoxc-` `xoxd-` `xoxs-` `xoxr-` と
+       * `xapp-`・Google の `GOCSPX-` (OAuth クライアントの秘密)・`npm_` が素通りした。
+       * **本体は 20 字以上に限る** —— `hf_` `fw_` `npm_` は識別子や散文に現れる (`hf_hub_download` は
+       * 本体 12 字)。実物の鍵は 24 字以上なので、短い散文は当たらない。
+       */
+      .replace(
+        /\b(gsk_|xai-|pplx-|hf_|nvapi-|fw_|GOCSPX-|xoxe-|xoxc-|xoxd-|xoxs-|xoxr-|xapp-|npm_)[A-Za-z0-9_%=+.-]{20,}/g,
+        '$1[REDACTED]',
+      )
+      /*
        * **2026-09-14 (パス 231): 25 形のうち 14 形が裸で素通りしていた。**
        *
        * 2026-08-29 は「5 形が抜けていた」を直したが、抜けを**数える道**は
@@ -306,7 +318,7 @@ export function redactSecrets(input: string): string {
        * 実在の OpenAI 鍵は 40 字を超える。
        */
       .replace(/\bsk-[A-Za-z0-9_-]{20,}/g, 'sk-[REDACTED]')
-      .replace(/\bya29\.[A-Za-z0-9_-]{10,}/g, 'ya29.[REDACTED]')
+      .replace(/\bya29\.(?:[a-z]\.)?[A-Za-z0-9_-]{10,}/g, 'ya29.[REDACTED]')
       // Atlassian API token (Jira/Confluence PAT) — always begins `ATATT`.
       .replace(/\bATATT[A-Za-z0-9_=.-]{16,}/g, 'ATATT[REDACTED]')
       /*
@@ -325,7 +337,7 @@ export function redactSecrets(input: string): string {
       // like `{"error_description":"Token \"ATATT3xFfGF0…\" rejected"}`
       // would only redact `Token \` and leave the secret in the rest.
       .replace(
-        /"(access_token|refresh_token|token|api_key|apikey|client_?secret|shared_?secret|password)"\s*:\s*"(?:[^"\\]|\\.)*"/gi,
+        /"(access[_-]?token|refresh[_-]?token|id[_-]?token|token|api_key|apikey|client_?secret|shared_?secret|password)"\s*:\s*"(?:[^"\\]|\\.)*"/gi,
         '"$1":"[REDACTED]"',
       )
       /*

@@ -1047,3 +1047,44 @@ describe('Cloudflare の接頭辞つきトークン (threat: T-075)', () => {
     expect(redactForMessage('abcfut_Zx9Kq2Lm4Np7 is not one', 300)).toContain('abcfut_Zx9Kq2Lm4Np7');
   });
 });
+
+/**
+ * 預かる資格情報の接頭辞つきの形・Authorization の方式語・JSON の鍵の別綴り (2026-10-16 · パス 525 ·
+ * threat: T-095)。直す前は次の 19 形が裸で反射されると素通りした (実測)。
+ */
+describe('裸の反射・方式語・鍵の別綴り (threat: T-095)', () => {
+  const BODY = 'a1B2c3D4e5F6a1B2c3D4e5F6a1B2c3D4';
+  it.each([
+    'gsk_', 'xai-', 'pplx-', 'hf_', 'nvapi-', 'fw_', 'GOCSPX-', 'xoxe-1-', 'xoxc-', 'xoxd-', 'xoxs-', 'xoxr-', 'xapp-1-', 'npm_',
+  ])('★ %s の裸の反射を伏せる (threat: T-095)', (prefix) => {
+    const token = `${prefix}${BODY}`;
+    const out = redactForMessage(`{"error":{"message":"Invalid key ${token}"}}`, 300);
+    expect(out).not.toContain(BODY);
+  });
+
+  it('★ ya29 の `.c.` 形 (サービスアカウント・なりすまし) も伏せる (threat: T-095)', () => {
+    expect(redactSecrets('bad ya29.c.b0Aaekm1KxxxxxxxxxxxxxxxxxxxxQ end')).not.toContain('b0Aaekm1K');
+  });
+
+  it.each(['token', 'Bot', 'OAuth', 'Digest', 'Negotiate'])('★ Authorization: %s <値> の値を伏せ、方式語は残す (threat: T-095)', (scheme) => {
+    const out = redactSecrets(`Authorization: ${scheme} ${BODY}`);
+    expect(out).not.toContain(BODY);
+    expect(out).toContain(`${scheme} [REDACTED]`);
+    const json = redactSecrets(`{"authorization":"${scheme} ${BODY}"}`);
+    expect(json).not.toContain(BODY);
+  });
+
+  it.each(['X-Shared-Secret', 'x-auth-token', 'Ocp-Apim-Subscription-Key'])('★ ヘッダ %s の値を伏せる (threat: T-095)', (name) => {
+    expect(redactSecrets(`${name}: ${BODY}`)).not.toContain(BODY);
+  });
+
+  it.each(['id_token', 'idToken', 'accessToken', 'refreshToken', 'access-token'])('★ JSON の鍵 %s の値を伏せる (threat: T-095)', (key) => {
+    expect(redactSecrets(`{"${key}":"${BODY}"}`)).not.toContain(BODY);
+  });
+
+  it('★ 対照: 識別子・散文は巻き込まない (本体 20 字未満は伏せない)', () => {
+    for (const t of ['hf_hub_download failed', 'fw_rules_table is missing', 'npm_config_cache not set', 'xai-grok model not found', 'GOCSPX- is a prefix']) {
+      expect(redactSecrets(t)).toBe(t);
+    }
+  });
+});

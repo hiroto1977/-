@@ -392,9 +392,12 @@ async function clearHistoryUnchained(ctx: ActionContext): Promise<ActionData<'em
   // ただし**全消去 (`all`) だけ**。ファイルは気分と解析が 1 つの封緘に入っており、読めないとき
   // 部分だけ消す (`moods` / 未指定) と、消さないはずの解析まで空で書き戻して黙って失う
   // (threat: T-028 · パス 518)。部分消去は断り、ファイルは 1 バイトも変えない。
+  // 部分消去は `forWrite: true` で読む (threat: T-097 · パス 525)。ファイル全体は読めても**一部の行が形の検査で
+  // 落ちる**ときは、部分だけ消して書き戻すと、落ちた行 (消すよう頼んでいない) まで黙って失われた
+  // (実測: 気分だけ消すと、形が合わない解析の行が消えた)。落ちた行が在れば T-028 と同じ断りにする。
   let store: EmotionsStore;
   try {
-    store = await readStore();
+    store = await readStore({ forWrite: kind !== 'all' });
   } catch {
     if (kind !== 'all') throw new Error(EMOTIONS_CLEAR_UNREADABLE_NEEDS_ALL);
     store = { moods: [], analyses: [] };

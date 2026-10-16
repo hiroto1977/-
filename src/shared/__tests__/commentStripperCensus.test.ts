@@ -301,6 +301,7 @@ const MIGRATED: readonly string[] = [
   'src/shared/__tests__/permissionJustification.test.ts',
   'src/shared/__tests__/pluginPlanConsumers.test.ts',
   'src/shared/__tests__/populationGroupFloor.test.ts',
+  'src/shared/__tests__/pureDataModule.test.ts',
   'src/shared/__tests__/redactionCoverage.test.ts',
   'src/shared/__tests__/registryBundleCost.test.ts',
   'src/shared/__tests__/responseBodyCapCensus.test.ts',

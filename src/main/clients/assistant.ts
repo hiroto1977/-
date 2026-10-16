@@ -42,6 +42,7 @@ import {
   resolveProvider,
 } from '../../shared/ai/credentials';
 import { runAiChat } from '../../shared/ai/chat';
+import { isSafeModelName } from '../../shared/ollama';
 import type { ActionData, EnsembleAnswer } from '../../shared/actionData';
 
 
@@ -135,6 +136,17 @@ export function extractAssistantText(res: AnthropicResponse): string {
   return parts.join('').trim();
 }
 
+/**
+ * 要求の `model` (threat: T-098 · パス 525)。以前は型も長さも見ずに提供元へ転送し、2,000 万字の `model` が
+ * 2,000 万字の要求になった (system・messages は天井があるのに `model` だけ素通り・実測)。
+ * 空は「指定なし」、形が正しくなければ断る (黙って既定へ倒すと、選んだモデルと違う物で課金される)。
+ */
+function requestedModel(model: unknown): string | undefined {
+  if (typeof model !== 'string' || model.length === 0) return undefined;
+  if (!isSafeModelName(model)) throw new Error('model の形が正しくありません');
+  return model;
+}
+
 async function chat(
   ctx: ActionContext,
 ): Promise<ActionData<'assistant/chat'>> {
@@ -177,7 +189,7 @@ async function chat(
     provider: resolved.id,
     cfg: resolved.cfg,
     request: {
-      model: typeof model === 'string' && model.length > 0 ? model : undefined,
+      model: requestedModel(model),
       system: sys || undefined,
       messages: turns,
       maxTokens: ASSISTANT_MAX_TOKENS,
@@ -240,7 +252,7 @@ async function chatAll(ctx: ActionContext): Promise<ActionData<'assistant/chatAl
           provider: id,
           cfg: configForProvider(id, creds),
           request: {
-            model: typeof model === 'string' && model.length > 0 ? model : undefined,
+            model: requestedModel(model),
             system: sys || undefined,
             messages: turns,
             maxTokens: ASSISTANT_MAX_TOKENS,

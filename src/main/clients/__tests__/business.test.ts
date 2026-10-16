@@ -2261,3 +2261,21 @@ describe('BUSINESS_CATEGORY_IDS (shared) と BUSINESS_CATEGORIES (main の表)',
     );
   });
 });
+
+/**
+ * `categories` の件数は種類の数まで (2026-10-16 · パス 525 · threat: T-098)。同じ有効な id を 50 万個
+ * 送ると 12 MB の要求が api.anthropic.com へ出た (実測・株式側は `MAX_ADVISOR_UNIVERSE_SYMBOLS` で切る)。
+ */
+describe('askBusinessAdvisorImpl — categories の件数 (threat: T-098)', () => {
+  it('★ 種類の数を超える categories は送らずに断る (threat: T-098)', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      askBusinessAdvisorImpl({
+        token: 'sk-ant-test',
+        fetch: fetchMock,
+        payload: { question: '次は?', categories: Array.from({ length: 500_000 }, () => 'ec') },
+      }),
+    ).rejects.toThrow('too many entries');
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+});

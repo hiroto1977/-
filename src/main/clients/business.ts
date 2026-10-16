@@ -644,6 +644,11 @@ export async function askBusinessAdvisorImpl(
   // Stryker restore ConditionalExpression
 
   // Universe = either the caller's allowlist or all 10 mock IDs.
+  // 上限は種類の数 (threat: T-098 · パス 525)。重複を許すと同じ id を 50 万個送って、system プロンプトへ
+  // 12 MB を反射できた (実測)。株式側は `MAX_ADVISOR_UNIVERSE_SYMBOLS` で切っている。
+  if (Array.isArray(categories) && categories.length > BUSINESS_CATEGORIES.length) {
+    throw new Error('categories has too many entries');
+  }
   const universeList: BusinessCategoryId[] = Array.isArray(categories)
     ? categories.map((c) => {
         if (!isBusinessCategoryId(c)) {
