@@ -476,6 +476,11 @@ describe('detectCrisis / detectHarmToOthers — ひらがな・口語・否定�
     expect(foldForMarkerMatch('死にたぃ')).toBe(foldForMarkerMatch('死にたい'));
   });
 
+  it('★ 全角・半角カナは NFKC で畳んでから照合する (パス 526 · 変異検査の穴)', () => {
+    expect(foldForMarkerMatch('ｼﾆﾀｲ')).toBe(foldForMarkerMatch('しにたい'));
+    expect(foldForMarkerMatch('ＳＵＩＣＩＤＥ')).toBe('suicide');
+  });
+
   it('★ 対照: 日常語は危機にも他害にもしない', () => {
     for (const t of [
       '学校にいきたくない',

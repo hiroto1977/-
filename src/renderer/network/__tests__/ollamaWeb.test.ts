@@ -2103,6 +2103,8 @@ describe('案内コマンドの origin はシェルに貼ってよい形だけ (
     'https://a\nb.example.com',
     'https://a.example.com/path',
     'ftp://a.example.com',
+    'x";id;"https://ok.example.com',
+    'pwn https://ok.example.com:8080',
   ];
 
   it.each(EVIL)('★ %s は * に倒す', (origin) => {

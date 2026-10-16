@@ -109,3 +109,18 @@ describe('CSV の行数・誤りの天井 (threat: T-081)', () => {
     expect(csvRowLimitError('"x""y,z",b\n1,2\n')).toBeNull();
   });
 });
+
+describe('CSV の列数は 1 行目だけで数える (パス 526 · 変異検査の穴を閉じる)', () => {
+  it('★ 単独の CR でヘッダは終わる (CR のあとのカンマは列に数えない)', () => {
+    expect(csvRowLimitError('a\r' + ','.repeat(100))).toBeNull();
+    expect(csvRowLimitError('a\n' + ','.repeat(100))).toBeNull();
+    expect(csvRowLimitError('a,b\r\n' + ','.repeat(100))).toBeNull();
+    // 対照: 同じ 1 行目にあれば数える
+    expect(csvRowLimitError(','.repeat(100) + '\r')).toContain('列が多すぎます');
+  });
+  it('★ 行の数は最後の改行の無い行ごと数え、CRLF は 1 つ・CR と LF の混在は別々に数える', () => {
+    expect(csvRowLimitError('a\r\nb\nc\rd')).toBeNull();
+    expect(csvRowLimitError('\r\n'.repeat(MAX_CSV_IMPORT_ROWS))).toBeNull();
+    expect(csvRowLimitError('\r\n'.repeat(MAX_CSV_IMPORT_ROWS + 1))).toContain('行が多すぎます');
+  });
+});

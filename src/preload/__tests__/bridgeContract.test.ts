@@ -29,6 +29,7 @@ vi.mock('electron', () => ({
     getVersion: () => '1.2.3',
     getPath: () => '/tmp/x',
     isPackaged: true,
+    requestSingleInstanceLock: () => true,
     whenReady: () => new Promise(() => {}),
     on: () => {},
     quit: () => {},

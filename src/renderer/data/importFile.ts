@@ -41,15 +41,14 @@ export const MAX_CSV_IMPORT_CELLS = 2_000_000;
  * `\r\n` は 1 つの改行として数える (CRLF の 200,000 行を倍に数えない)。
  */
 export function csvRowLimitError(text: string): string | null {
+  // 改行は `\r\n` (1 つ) / 単独の `\r` / 単独の `\n`。正規表現の 1 つの選択肢列で数えるので、
+  // 添字の前後参照 (範囲の端の等価変異) を持たない。
+  const lineBreak = /\r\n|[\r\n]/g;
   let rows = 0;
-  for (let i = 0; i < text.length; i += 1) {
-    const ch = text.charCodeAt(i);
-    if (ch === 10 || ch === 13) {
-      if (ch === 13 && text.charCodeAt(i + 1) === 10) i += 1;
-      rows += 1;
-      if (rows > MAX_CSV_IMPORT_ROWS) {
-        return `行が多すぎます（${MAX_CSV_IMPORT_ROWS.toLocaleString('ja-JP')} 行まで）。分けて取り込んでください。`;
-      }
+  while (lineBreak.test(text)) {
+    rows += 1;
+    if (rows > MAX_CSV_IMPORT_ROWS) {
+      return `行が多すぎます（${MAX_CSV_IMPORT_ROWS.toLocaleString('ja-JP')} 行まで）。分けて取り込んでください。`;
     }
   }
   // 列数 (1 行目の、引用符の外のカンマ + 1) と、列数 × 行数。行数は最後の改行の無い行も数える。
@@ -67,11 +66,10 @@ export function csvRowLimitError(text: string): string | null {
 function csvHeaderColumns(text: string): number {
   let columns = 1;
   let quoted = false;
-  for (let i = 0; i < text.length; i += 1) {
-    const ch = text.charCodeAt(i);
-    if (ch === 34) quoted = !quoted;
-    else if (!quoted && (ch === 10 || ch === 13)) break;
-    else if (!quoted && ch === 44) columns += 1;
+  for (const ch of text) {
+    if (ch === '"') quoted = !quoted;
+    else if (!quoted && (ch === '\n' || ch === '\r')) break;
+    else if (!quoted && ch === ',') columns += 1;
   }
   return columns;
 }

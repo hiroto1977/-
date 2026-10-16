@@ -27,6 +27,13 @@
 
 制御: T-104 は main.ts を戻すと狙った 1 件が落ちる / T-105〜T-111 は植えると 6 検査が鳴り戻すと 7/7 緑 / T-099〜T-103 は修正を戻すと 50 件が落ちる。bestAnswersJob の既存検査 1 件は、新しい検索の切り詰めが文字列でない値を先に走査するため、投げ口を反復子にも置いて直した (製品は正しい)。
 
+### 仕上げの実測 (2026-10-16・最終コード)
+
+- **変異検査** (`audit:mutate-changed`・5 ファイル / 1,453 変異体 / 32 分 31 秒): 1 度目は **98.54% (生存 18)** で break (99.8) を割った。内訳は `redact.ts` 9 (エスケープ引用符の規則の名前の接頭辞・空白・`api-?key`・書き戻す名前と区切り・`shared-?secret`・`$1`) / `importFile.ts` 8 (添字の範囲の端 = 等価・CR の分岐) / `counseling.ts` 1 (NFKC) / `ollamaWeb.ts` 1 (正規表現の `^`)。**等価な範囲の端は形ごと消した** (行数は `/\r\n|[\r\n]/g` の正規表現・列数は `for (const ch of text)` —— 法則 115)。残りは出力全文の検査を足し、**18 件すべてを手で当てて狙った検査が落ちることを確かめた**。2 度目は **100.00% (Killed 1,210・生存 0・未到達 0)**。
+- ★ **自分の直しの誤りを 1 つ見つけて直した**: このパスで `mutation.yml` に足した `--configFile stryker.config.json` は、Stryker の CLI に存在しない選択肢 (`stryker run [options] [configFile]` —— 設定は位置引数) で、**渡すと unknown option で週次・push 側の変異検査が丸ごと動かなかった**。変異検査の測定中に `error: unknown option '--configFile'` で気付いた (実際に動かすまで検査も台帳も緑だった —— 文字列の存在を見る検査は、**その形が実在するか**を見ない)。位置引数 `stryker run stryker.config.json …` へ直し、dry run が通ることを実測 (1,599 件・11 分 8 秒)。`buildInputsClosed.test.ts` と T-xxx の台帳の文面も実物の形へ。
+- `typecheck` 緑・`npm test` 1078 ファイル中、最初の 2 件の落ち (`bridgeContract.test.ts` の electron モックに `requestSingleInstanceLock` が無い / 保護対象 `mutation.yml` を編集した後に `chain:append` していない) を直して通過・`verify:all` **0/39 落ち** (`audit:verify-keep-going`・233 秒)・`chain:verify` 緑 (ブロックを採掘)。`verify:arch` のユニットテスト数 17884 → **17889**。
+- **実機** (出荷物が動いたので回した): `perf` OK (LITE DCL 237 ms / heap 9.7 MB・FULL DCL 641 ms / heap 36.2 MB)・`e2e` **758 件 ❌ 0**・`e2e:lite` **758 件 ❌ 0**・`smoke:app` OK (`xvfb-run -a` が要る —— 実物のデスクトップアプリが単一インスタンスのロックを取って 8 秒生きた)。サイズ: FULL **11,885,089 B**・LITE **3,297,713 B** (LITE は警告線まで 102,287 B・ハード上限まで 702,287 B)。
+
 ## パス 525 (狩りの 15 回目 —— 5 面の監査役の指摘を自分で再現し、本物の 11 件を直す) (2026-10-16)
 
 5 面 (main-ipc / renderer / network / ai / supply-chain) の監査役 (read-only) を並行で走らせ、**各指摘を自分で再現してから**仕分けた (監査役の報告は権威を持たない)。直した 11 件はすべて回帰検査 (`threat: T-xxx`) と `security/threat-ledger.json` の行を持つ。

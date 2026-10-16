@@ -96,6 +96,6 @@ describe('設定の探索を固定する (threat: T-110 / T-111)', () => {
     const yml = src('.github/workflows/mutation.yml');
     const runs = yml.split('\n').filter((l) => /npx stryker run/.test(l));
     expect(runs.length).toBeGreaterThanOrEqual(2);
-    for (const l of runs) expect(l, l).toContain('--configFile stryker.config.json');
+    for (const l of runs) expect(l, l).toContain('stryker run stryker.config.json --mutate');
   });
 });

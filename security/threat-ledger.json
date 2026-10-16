@@ -1911,7 +1911,7 @@
       "severity": "low",
       "title": "stryker.conf.* が stryker.config.json を影にし、thresholds.break を 0 にできる (js 版ならコードも走る)。mutation.yml の stryker run は --configFile を渡していなかった",
       "status": "fixed",
-      "fix": "mutation.yml の 2 か所に --configFile stryker.config.json を渡し、stryker.conf.* が無いことを検査した。",
+      "fix": "mutation.yml の 2 か所に設定ファイルを位置引数 (`stryker run stryker.config.json …`。`--configFile` という選択肢は無く、渡すと unknown option で動かない) として渡し、stryker.conf.* が無いことを検査した。",
       "regression": {
         "file": "src/shared/__tests__/buildInputsClosed.test.ts",
         "test": "★ Stryker は設定ファイルを明示し、stryker.conf.* で影にされない (threat: T-111)"
