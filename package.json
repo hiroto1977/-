@@ -40,7 +40,7 @@
     "knowledge:md": "node scripts/build-academic-md.cjs",
     "ontology:md": "node scripts/build-ontology-md.cjs",
     "knowledge:export": "node scripts/export-notebooklm.cjs",
-    "lint": "eslint . --max-warnings 0",
+    "lint": "eslint --config eslint.config.js . --max-warnings 0",
     "lint:docs": "node scripts/cross-doc-consistency.cjs && node scripts/cross-doc-consistency.cjs --self-test",
     "lint:citations": "node scripts/lint-citations.cjs && node scripts/lint-citations.cjs --self-test",
     "lint:doi-prefix": "node scripts/lint-doi-prefix.cjs",
@@ -117,6 +117,7 @@
     "audit:e2e-wait-margin": "node scripts/audit-e2e-wait-margin.cjs --self-test && node scripts/audit-e2e-wait-margin.cjs",
     "audit:report": "node scripts/dependency-audit-report.cjs && node scripts/dependency-audit-report.cjs --self-test && node scripts/dependency-audit-issue.cjs --self-test",
     "audit:mutate-changed": "node scripts/audit-mutate-changed.cjs --self-test && node scripts/audit-mutate-changed.cjs",
+    "audit:verify-keep-going": "node scripts/audit-verify-keep-going.cjs --self-test && node scripts/audit-verify-keep-going.cjs",
     "audit:malformed-fields": "node scripts/audit-malformed-fields.cjs --self-test && node scripts/audit-malformed-fields.cjs"
   },
   "devDependencies": {

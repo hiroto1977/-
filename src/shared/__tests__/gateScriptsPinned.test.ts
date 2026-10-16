@@ -27,7 +27,7 @@ const pkgAll = JSON.parse(readOriginalSource(path.join(ROOT, 'package.json'))) a
 /** 綴りを固定する 3 つ (外部ツールを直接呼ぶ門)。 */
 const FIXED: Readonly<Record<string, RegExp>> = {
   typecheck: /^tsc -b --noEmit --force$/,
-  lint: /^eslint \. --max-warnings 0$/,
+  lint: /^eslint --config eslint\.config\.js \. --max-warnings 0$/,
   test: /^vitest run$/,
 };
 

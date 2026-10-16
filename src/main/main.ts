@@ -224,7 +224,25 @@ function createWindow(): BrowserWindow {
   return win;
 }
 
-app.whenReady().then(async () => {
+/*
+ * 単一インスタンス (パス 526 · T-104)。同じ userData を 2 つのプロセスが同時に開くと、保管ファイル
+ * (secrets.json) と窓の設定の「読んで → 書く」が互いに上書きし合い、更新した資格情報が黙って巻き戻る
+ * (どちらの書き込みも原子的だが、読み取り → 書き込みの間は排他されない)。ロックが取れない 2 つ目は
+ * 窓を作らず終了し、1 つ目の窓を前に出す。**2 つ目の argv / cwd は読まない** (開く先を外から決められる口にしない)。
+ */
+const gotInstanceLock = app.requestSingleInstanceLock();
+if (!gotInstanceLock) {
+  app.quit();
+} else {
+  app.on('second-instance', () => {
+    const [existing] = BrowserWindow.getAllWindows();
+    if (existing === undefined) return;
+    if (existing.isMinimized()) existing.restore();
+    existing.focus();
+  });
+}
+
+if (gotInstanceLock) app.whenReady().then(async () => {
   // 窓を作る前に配色を読む (パス 318) —— 読めなければ既定のライトで、renderer が起動後に伝え直す。
   windowPrefs = await readWindowPrefs();
   applyNativeTheme(windowPrefs.scheme);

@@ -13,6 +13,7 @@ release/
 tmp-screenshots/
 .env
 .env.local
+electron-builder.env
 *.log
 *.tsbuildinfo
 .DS_Store

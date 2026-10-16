@@ -1,5 +1,32 @@
 # Service Hub — 残りの作業手順書
 
+## パス 526 (狩りの 16 回目 —— 5 面の監査役の指摘を自分で再現し、本物の 14 件を直す) (2026-10-16)
+
+5 面 (main-ipc / renderer / network / ai / supply-chain) の監査役 (read-only) を並行で走らせ、**各指摘を自分で再現してから**仕分けた (監査役の報告は権威を持たない)。あわせて、パス 525 で「verify:all が最初に落ちた門で止まるので直しが 4 回に分かれた」件を、止まらずに全門を回す道具で塞いだ。
+
+### 直した 14 件
+
+- **T-099 (ai)** — 危機語彙に、ひらがな版・口語・否定形・準備・他害の双子が無く、「しんでしまいたい」「生きたくない」「遺書を書いた」「殺してやりたい」ほか 11 形が窓口なしで外部のモデルへ届いた (実物の AssistantPage で送信を数えて再現)。小書きの母音を畳む。「いきたくない」は日常語と区別できないので入れない (日常語 12 形の偽陽性対照つき)。
+- **T-100 (ai)** — 8,000 字の貼り付けで検索語が 4,620 個になり 2.4 秒画面が固まった。検索に見る先頭を 1,000 字・語を 120 個に切る (送る本文は切らない)。
+- **T-101 (network)** — 伏字のヘッダ規則が、エスケープした JSON や `[[名前, 値]]` の配列で返す Worker の失敗本文を取りこぼした。エスケープ引用符 (1〜8 段) 版を足した。
+- **T-102 (renderer)** — CSV の取り込みで、2,000 列のヘッダ (15 KB) が RSS +234 MB・40,000 行が heap の上限で落ちた。解析の前に列数 64・セル数 200 万を断る。
+- **T-103 (network)** — Ollama の案内コマンドが `location.origin` を二重引用符の中へ埋め、貼った端末でコマンド置換が走った (bash で再現)。シェルに貼ってよい origin だけを通す。
+- **T-104 (main-ipc)** — 単一インスタンスのロックが無く、同じ userData を 2 プロセスが開いて保管ファイルの読み → 書きが競合しうる。ロックが取れない 2 つ目は窓を作らず終了し、1 つ目を前に出す (argv / cwd は読まない)。
+- **T-105〜T-111 (supply-chain)** — データとして効く入力 7 つを閉じた: `electron-builder.env` (署名ビルドへ環境変数を注入) / `build/` の `installer.nsh`・plist / `workspaces` と `file:` 依存 / lockfile の名前 ↔ tarball の対応 / force-add された `release/` / 入れ子の `eslint.config.*` / `stryker.conf.*`。今日の実物はすべて 0 件 (偽陽性なし)。検査は `buildInputsClosed.test.ts`。
+- **T-112 (supply-chain)** — 台帳の回帰検査 59 本と `package.json` ほかが CODEOWNERS に無く、守りの無効化と被保護物の改変を同じ PR で通せた (実測: 10 門 exit 0)。CODEOWNERS に載せ、台帳の `regression.file` が全部覆われることを検査した。**効かせるには branch protection の Require review from Code Owners が要る (既知の F-1)。**
+
+### 道具: `npm run audit:verify-keep-going` (失敗の解析と対策)
+
+`verify:all` は `&&` 連結なので最初に落ちた門で止まる。パス 525 は 4 回に分けて 1 件ずつ見つかった (どれも数秒で判る設計どおりの鳴り方で、遅かったのは見つけ方)。全門を 1 本ずつ回して落ちた物を一度に挙げる (`--fast` は重い 5 本を飛ばして約 80 秒・名指しも可)。母集団は `verify:all` から導く。今回の初使用で、直す前に 2 件 (verify:arch の数・chain:verify) を一度に出した。
+
+### 台帳に残した backlog (13 件追加)
+
+**PKG-1 (所有者の判断が要る・優先度高)**: 電子ヒューズ `grantFileProtocolExtraPrivileges=false` と `win.loadFile(asar)` の衝突。最小の Electron アプリ + asar で実測すると、既定のヒューズでは読み込めるが、`false` にすると `ERR_FILE_NOT_FOUND` になった。未署名の実物の梱包では最後まで確かめていない。直す道は (a) ヒューズを戻す か (b) `app://` の独自スキーム (保存先の origin が変わり、利用者の IndexedDB / localStorage が見えなくなる移行問題)。ほか: `onlyLoadAppFromAsar` / asar 整合性ヒューズ・検査 job と署名 job の分離・エージェント指示書の追跡・`.gitattributes`・e2e の playwright の integrity・一覧の件数の天井・大きな復元のメモリ・localdomain の写し 3 つ・音声確認の 256 字・AI-6 の訂正 (外部のモデルへ助言を求めるのは stocks と business の 2 つだけ)・`apiFetchOkFlag` の死んだコード。
+
+### 検証
+
+制御: T-104 は main.ts を戻すと狙った 1 件が落ちる / T-105〜T-111 は植えると 6 検査が鳴り戻すと 7/7 緑 / T-099〜T-103 は修正を戻すと 50 件が落ちる。bestAnswersJob の既存検査 1 件は、新しい検索の切り詰めが文字列でない値を先に走査するため、投げ口を反復子にも置いて直した (製品は正しい)。
+
 ## パス 525 (狩りの 15 回目 —— 5 面の監査役の指摘を自分で再現し、本物の 11 件を直す) (2026-10-16)
 
 5 面 (main-ipc / renderer / network / ai / supply-chain) の監査役 (read-only) を並行で走らせ、**各指摘を自分で再現してから**仕分けた (監査役の報告は権威を持たない)。直した 11 件はすべて回帰検査 (`threat: T-xxx`) と `security/threat-ledger.json` の行を持つ。

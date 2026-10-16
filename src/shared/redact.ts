@@ -122,8 +122,17 @@ export function redactSecrets(input: string): string {
       // 方式のあとの空白は `\s` (1 個) で足りる — 2 個目以降は値側が飲み込む。
       // `\s+` と書くと「1 個か 2 個以上か」で結果が変わらない = 確かめようの
       // ない指定になる。
+      // 入れ子の JSON に入って引用符が `\"` になった形 (パス 526 · T-101)。下の規則は引用符が 1 字であることを
+      // 要求するので、失敗応答の本文に「転送した要求」を文字列で入れて返す Worker では
+      // `{"received":"{\"headers\":{\"hibp-api-key\":\"…\"}}"}` の値が素通りした。
+      // 逃がしの深さは 1〜8 (二重の入れ子まで) に限る —— 上限が無いと逆風の入力で二乗になる。
       .replace(
-        /(["'])((?:[a-z0-9]+-)*(?:authorization|api-?key|proxy-auth))\1(\s*:\s*)\1(?:(Bearer|Basic|Token|Bot|OAuth|Digest|Negotiate)\s)?(?:\\.|(?!\1)[^\\])*\1/gi,
+        /(\\{1,8}["'])((?:[a-z0-9]+-)*(?:authorization|api-?key|proxy-auth))\1(\s*[:,]\s*)\1(?:(Bearer|Basic|Token|Bot|OAuth|Digest|Negotiate)\s)?[\s\S]*?\1/gi,
+        (_m, q: string, name: string, sep: string, scheme?: string) =>
+          hideValue(`${q}${name}${q}`, `${sep}${q}`, scheme) + q,
+      )
+      .replace(
+        /(["'])((?:[a-z0-9]+-)*(?:authorization|api-?key|proxy-auth))\1(\s*[:,]\s*)\1(?:(Bearer|Basic|Token|Bot|OAuth|Digest|Negotiate)\s)?(?:\\.|(?!\1)[^\\])*\1/gi,
         (_m, q: string, name: string, sep: string, scheme?: string) =>
           hideValue(`${q}${name}${q}`, `${sep}${q}`, scheme) + q,
       )

@@ -1721,6 +1721,216 @@
         "file": "src/main/clients/__tests__/assistant.test.ts",
         "test": "★ %s model は送らずに断る (threat: T-098)"
       }
+    },
+    {
+      "id": "T-099",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 526 (監査役の指摘を自分で再現してから直した)",
+      "surface": "ai",
+      "class": "ai-phishing",
+      "severity": "medium",
+      "title": "危機語彙が既存の言い回しのひらがな版・口語・否定形・準備と他害の双子を持たず、「しんでしまいたい」「死にたすぎる」「生きたくない」「遺書を書いた」「殺してやりたい」ほか 11 形が detectCrisis / detectHarmToOthers=false のまま、AI アシスタントでは相談窓口なしで外部のモデルへ届いた (実物の AssistantPage で送信を数えて再現)",
+      "status": "fixed",
+      "fix": "ひらがな版・口語・否定形・準備・他害の双子の語を足し、小書きの母音 (ぁぃぅぇぉ) を大きい仮名へ畳む。「いきたくない」はかな書きだと「行きたくない」と区別できないので入れない (日常語 12 形が偽陽性にならない対照つき)。",
+      "regression": {
+        "file": "src/renderer/data/__tests__/counseling.test.ts",
+        "test": "★ %s を危機と判定する (threat: T-099)"
+      }
+    },
+    {
+      "id": "T-100",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 526 (監査役の指摘を自分で再現してから直した)",
+      "surface": "ai",
+      "class": "ai-automated-attack",
+      "severity": "low",
+      "title": "AI アシスタントに 8,000 字 (入力欄の上限) の日本語を貼って送るだけで、検索語が 4,620 個になり語 × コーパス 4,039 件の全走査で 2.4 秒画面が固まった (悪意のあるモデルは不要・メールなど第三者の文を貼るだけ)",
+      "status": "fixed",
+      "fix": "検索に見る先頭を 1,000 字、検索語の数を 120 に切る (重い語を残し元の出現順を保つ)。送るメッセージ本体は切らない。",
+      "regression": {
+        "file": "src/renderer/data/__tests__/assistantContext.test.ts",
+        "test": "★ 8,000 字の貼り付けでも検索語は天井で止まり、検索は時間内に終わる"
+      }
+    },
+    {
+      "id": "T-101",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 526 (監査役の指摘を自分で再現してから直した)",
+      "surface": "network",
+      "class": "ssrf-and-credential-egress",
+      "severity": "low",
+      "title": "伏字のヘッダ規則が引用符 1 字と区切りの : を要求し、失敗応答の本文に転送した要求を文字列 (エスケープ JSON) や [[名前, 値]] の配列で入れて返す Worker では、方式語の無い鍵 (HIBP の 32 桁 16 進・VirusTotal の 64 桁 16 進・Worker の共有秘密) が画面のエラー帯に素通りした (実物の fetchViaProxy に偽 Worker を当てて再現)",
+      "status": "fixed",
+      "fix": "エスケープ引用符 (1〜8 段) 版の規則を足し、区切りを [:,] にする。逃がしの深さに上限を置いて逆風の入力で二乗にならない。",
+      "regression": {
+        "file": "src/shared/__tests__/redactionCoverage.test.ts",
+        "test": "★ %s の値を伏せる (threat: T-101)"
+      }
+    },
+    {
+      "id": "T-102",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 526 (監査役の指摘を自分で再現してから直した)",
+      "surface": "renderer",
+      "class": "ransomware-extortion",
+      "severity": "medium",
+      "title": "CSV の取り込みは行数の天井しか見ず、ヘッダが 2,000 列の 15 KB で RSS +234 MB・95 KB (40,000 行) で heap の上限に届いて落ちた: parseCsvRecords が全行ぶんヘッダの列数個のキーの器を先に作る (T-081 / T-093 の天井の外側の軸)",
+      "status": "fixed",
+      "fix": "解析の前に列数 (64 まで) と列数 × 行数 (200 万セルまで) を断る。引用符の中のカンマ・改行は数えない。実物の売上 5 列・KPI 8 列の最大行数 (20 万行) は今までどおり読める。",
+      "regression": {
+        "file": "src/renderer/data/__tests__/csvImportLimits.test.ts",
+        "test": "★ 幅の広いヘッダは、解析の前に断る (threat: T-102)"
+      }
+    },
+    {
+      "id": "T-103",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 526 (監査役の指摘を自分で再現してから直した)",
+      "surface": "network",
+      "class": "living-off-the-land",
+      "severity": "low",
+      "title": "Ollama の案内コマンドが location.origin を二重引用符の中へそのまま埋めて「コピー」させ、host の $( ) { } などで貼った端末にコマンド置換が走った (bash で pwned が作られた)。配信元の host 名を攻撃者が決められる場合に限る",
+      "status": "fixed",
+      "fix": "シェルに貼ってよい origin (http(s)://英数字・. -・ポート) だけを通し、外れる形は * に倒す。2 つの手順 (setupCommands / originsSetupSteps) が同じ関数を読む。",
+      "regression": {
+        "file": "src/renderer/network/__tests__/ollamaWeb.test.ts",
+        "test": "★ %s は * に倒す"
+      }
+    },
+    {
+      "id": "T-104",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 526 (監査役の指摘を自分で再現してから直した)",
+      "surface": "main-ipc",
+      "class": "ransomware-extortion",
+      "severity": "low",
+      "title": "アプリを 2 つ起動できた (単一インスタンスのロックが無かった)。同じ userData を 2 つのプロセスが開き、保管ファイル (secrets.json) と窓の設定の「読んで → 書く」が互いに上書きし合って、更新した資格情報が黙って巻き戻る余地があった",
+      "status": "fixed",
+      "fix": "app.requestSingleInstanceLock() が取れない 2 つ目は窓を作らず終了し、1 つ目の窓を前に出す (second-instance)。2 つ目の argv / cwd は読まない。",
+      "regression": {
+        "file": "src/main/__tests__/mainWindow.test.ts",
+        "test": "★ 2 つ目のインスタンスは窓を作らず終了する・1 つ目は窓を前に出す (threat: T-104)"
+      }
+    },
+    {
+      "id": "T-105",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 526 (監査役の指摘を自分で再現してから直した)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "electron-builder が cwd の electron-builder.env を無条件に読み、process.env に無い鍵 (ELECTRON_MIRROR / HTTPS_PROXY / WIN_CSC_* ほか) を注入する。署名鍵を env に持つ release.yml の Build で、細工した Electron 本体が所有者の証明書で署名されうる (データなので lint:malware に映らない)",
+      "status": "fixed",
+      "fix": "追跡ファイルに electron-builder.env と root の .env* (例示を除く) を持たないことを検査し、.gitignore へ足した。",
+      "regression": {
+        "file": "src/shared/__tests__/buildInputsClosed.test.ts",
+        "test": "★ electron-builder.env と root の .env* (例示を除く) は追跡されない (threat: T-105)"
+      }
+    },
+    {
+      "id": "T-106",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 526 (監査役の指摘を自分で再現してから直した)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "build/ に置いた installer.nsh / entitlements.mac.plist / NSIS プラグインを electron-builder が自動採用する。installer.nsh は署名済みインストーラの一部として全 Windows 端末で走り、ビルド時にも !system で走る。CODEOWNERS に /build/ が無く、.nsh / .plist / .dll は誰も読まなかった",
+      "status": "fixed",
+      "fix": "build/ の追跡ファイルはアイコン 2 本だけ、と検査し、/build/ を CODEOWNERS へ足した。",
+      "regression": {
+        "file": "src/shared/__tests__/buildInputsClosed.test.ts",
+        "test": "★ build/ の追跡ファイルはアイコン 2 本だけ (installer.nsh・plist・NSIS プラグインを置けない) (threat: T-106)"
+      }
+    },
+    {
+      "id": "T-107",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 526 (監査役の指摘を自分で再現してから直した)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "workspaces と file: 依存が npm ci で lifecycle script を走らせるのに、lint:deps の規則 3・8 と lint:malware の install フック検出に映らなかった (7 本の workflow すべての npm ci に届く)",
+      "status": "fixed",
+      "fix": "workspaces キー・link:true・semver 以外の依存指定 (file: / link: / git / http / npm:) が無いことを検査した。",
+      "regression": {
+        "file": "src/shared/__tests__/buildInputsClosed.test.ts",
+        "test": "★ workspaces が無く、依存の指定は semver だけ (file: / link: / git / http / npm: を持ち込めない) (threat: T-107)"
+      }
+    },
+    {
+      "id": "T-108",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 526 (監査役の指摘を自分で再現してから直した)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "lockfile の resolved が registry.npmjs.org で始まるかしか見ず、行の名前と tarball の対応を誰も検めなかった。fast-check の行を ms の tarball へ替えた npm ci で node_modules/fast-check の name が ms になった (差分は lockfile の 1 行)",
+      "status": "fixed",
+      "fix": "各行の resolved のパスが /<name>/-/ で始まることを検査した (今日 648 行中 0 件の不一致)。",
+      "regression": {
+        "file": "src/shared/__tests__/buildInputsClosed.test.ts",
+        "test": "★ lockfile の各行は、名前の package の tarball を指す (別 package への差し替えを許さない) (threat: T-108)"
+      }
+    },
+    {
+      "id": "T-109",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 526 (監査役の指摘を自分で再現してから直した)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "release/ は .gitignore 済みだが force-add でき、verify-release-artifacts は不足しか見ないので、余分な実行ファイルが公式 Release と SHA256SUMS に載った",
+      "status": "fixed",
+      "fix": "git ls-files -ci --exclude-standard が空であることを検査した。",
+      "regression": {
+        "file": "src/shared/__tests__/buildInputsClosed.test.ts",
+        "test": "★ .gitignore 済みなのに追跡されている物は無い (release/ への force-add を含む) (threat: T-109)"
+      }
+    },
+    {
+      "id": "T-110",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 526 (監査役の指摘を自分で再現してから直した)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "ESLint 10 は入れ子の eslint.config.* を読む。置くとそのコードが走り、その部分木の lint 規則が全部消える (npm run lint は exit 0 のまま)",
+      "status": "fixed",
+      "fix": "lint を eslint --config eslint.config.js . に固定し、入れ子の設定ファイルが無いことを検査した。",
+      "regression": {
+        "file": "src/shared/__tests__/buildInputsClosed.test.ts",
+        "test": "★ lint は ESLint の設定ファイルを明示し、入れ子の設定を読ませない (threat: T-110)"
+      }
+    },
+    {
+      "id": "T-111",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 526 (監査役の指摘を自分で再現してから直した)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "stryker.conf.* が stryker.config.json を影にし、thresholds.break を 0 にできる (js 版ならコードも走る)。mutation.yml の stryker run は --configFile を渡していなかった",
+      "status": "fixed",
+      "fix": "mutation.yml の 2 か所に --configFile stryker.config.json を渡し、stryker.conf.* が無いことを検査した。",
+      "regression": {
+        "file": "src/shared/__tests__/buildInputsClosed.test.ts",
+        "test": "★ Stryker は設定ファイルを明示し、stryker.conf.* で影にされない (threat: T-111)"
+      }
+    },
+    {
+      "id": "T-112",
+      "found": "2026-10-16",
+      "foundBy": "hunt pass 526 (監査役の指摘を自分で再現してから直した)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "台帳の回帰検査 59 本と package.json / package-lock.json / tsconfig / stryker.config.json / .gitignore が CODEOWNERS にも鎖にも無く、守りの無効化 (gateScriptsPinned の正規表現から $ を外す) と被保護物の改変 (build に attacker への送出を足す) を、所有者のレビューなしに同じ PR で通せた (実測: 10 門 exit 0・落ちたのは 1 件)",
+      "status": "fixed",
+      "fix": "回帰検査と守られる設定を CODEOWNERS に載せ、台帳の regression.file が全部覆われることを検査した。効かせるには branch protection の Require review from Code Owners が要る (既知の F-1)。",
+      "regression": {
+        "file": "src/shared/__tests__/threatLedger.test.ts",
+        "test": "★ 台帳の回帰検査と守られる設定は、CODEOWNERS が覆う (守りの無効化と被保護物の改変を同じ PR で通さない) (threat: T-112)"
+      }
     }
   ],
   "huntBacklog": [
@@ -1833,6 +2043,66 @@
       "surface": "ai",
       "item": "AI-6 の同類: skills/run-skill の prompt と Slack/Gmail の『Emotions で分析』(第三者の文) も危機の判定を通らずに外部のモデルへ届く",
       "why": "2026-10-16 に監査役が指摘 (感情ページの『テキスト分析』は T-090 で閉じた)。detectCrisis を shared へ出して main で止める、が AI-6 の設計。"
+    },
+    {
+      "surface": "main-ipc",
+      "item": "PKG-1 電子ヒューズ grantFileProtocolExtraPrivileges=false と win.loadFile(asar) の衝突 (main.ts:221 / electron-builder.json)",
+      "why": "2026-10-16 に実測 (最小の Electron アプリ + asar): 既定のヒューズでは loadFile が読み込める。grantFileProtocolExtraPrivileges=false にすると asar 内の file:// の読み込みが ERR_FILE_NOT_FOUND で失敗した。梱包物 (未署名の実物) で最後まで確かめていない。直す道は (a) ヒューズを true に戻す (file:// の追加権限が戻る) か (b) app:// の独自スキームで配信する (保存先の origin が変わる = 利用者の IndexedDB / localStorage が見えなくなる移行問題)。**所有者の判断が要る**ため未修正。優先度: 高 (梱包版が白画面になりうる)。"
+    },
+    {
+      "surface": "main-ipc",
+      "item": "ヒューズ onlyLoadAppFromAsar / enableEmbeddedAsarIntegrityValidation は未設定",
+      "why": "2026-10-16 に electron-builder.json を読んだ: 改竄された app.asar を実行させない 2 つのヒューズが無い。PKG-1 の判断と同時に決める (asar の整合性検証は署名と対で効く)。"
+    },
+    {
+      "surface": "renderer",
+      "item": "R-3 一覧の描画に件数の天井が無い画面 (売上・KPI・相談記録など)",
+      "why": "2026-10-16 に読んだ: 保管層から読んだ行をそのまま map する一覧が複数ある。復元で数万行が入ると描画が重くなる (天井つきの入口は別にある)。仮想化か件数の天井が要る。未実測。"
+    },
+    {
+      "surface": "renderer",
+      "item": "ManualDataSection / バックアップ: 大きな復元のメモリ",
+      "why": "2026-10-16 に読んだ: 復元は読む前の大きさの門を通るが、通った後の行の展開で一時的にメモリを使う。実測していない。"
+    },
+    {
+      "surface": "renderer",
+      "item": "localdomain / svc の名前の判定が 3 か所に写されている (パリティ検査の対象外)",
+      "why": "2026-10-16 に読んだ: 同じ判定の写しが 3 つ在る。今日は一致している。1 つへ寄せるか、パリティ検査で結ぶ。"
+    },
+    {
+      "surface": "renderer",
+      "item": "音声コマンドの確認は欄の値を 256 字で切って見せる",
+      "why": "2026-10-16 に読んだ: displayField の天井で 256 字を超える値は確認に出る文字が切れる。送る物は切らないが、確認で見せる物と送る物が長い値で食い違いうる。切ったことは … で述べている。"
+    },
+    {
+      "surface": "ai",
+      "item": "AI-6 訂正: 外部のモデルへ助言を求めるのは stocks と business の 2 つだけ",
+      "why": "2026-10-16 に確かめた: record-entry 系のサービスは規則 (ローカル) で動き、外部のモデルへは送らない。以前の監査役の指摘のうち「全サービスが外へ送る」は偽。"
+    },
+    {
+      "surface": "renderer",
+      "item": "apiFetchOkFlag は死んだコード",
+      "why": "2026-10-16 に読んだ: 呼び出し元が 0 件。欠陥ではないが、残ると読み手を誤らせる。"
+    },
+    {
+      "surface": "supply-chain",
+      "item": "検査 job と署名 job が同一 runner (release.yml の Build が npm test / verify:all と同じ job)",
+      "why": "2026-10-16 に読んだ (Actions 上では未実走): 前段で走るコードが $GITHUB_ENV / PATH / node_modules を汚せば、署名鍵を持つ Build 段に届く。検査 job と署名 job を分けるのがよい。workflow の構成変更なので所有者の判断が要る。"
+    },
+    {
+      "surface": "supply-chain",
+      "item": "エージェント指示書 (AGENTS.md / src/**/CLAUDE.md / .claude/rules / .claude/output-styles / .github/copilot-instructions.md) を植えても全門が緑",
+      "why": "2026-10-16 の植え込み: クライアントが実際に読むかは未確認。T-086 の AUTO_RUN は commands と skills しか覆わない。読まれると分かってから CODEOWNERS / 台帳に足す。"
+    },
+    {
+      "surface": "supply-chain",
+      "item": ".gitattributes (linguist-generated / -diff) で PR の diff を折り畳める",
+      "why": "2026-10-16 に未追跡であることを確認。GitHub の描画は未確認。追跡しないことの検査か CODEOWNERS 行が候補。"
+    },
+    {
+      "surface": "supply-chain",
+      "item": "e2e.yml の npm install --no-save playwright@1.56.1 は版固定だが integrity が無い",
+      "why": "2026-10-16 に読んだ。lockfile へ入れるか、integrity を検める手が候補。e2e は既定で走らない。"
     }
   ],
   "clearedBacklog": [

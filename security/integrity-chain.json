@@ -2585,6 +2585,14 @@
       "leafCount": 118,
       "note": "update scanTarget.ts",
       "hash": "3f3871a2c5528603af9715d3d86b1f2924c1e639bcc2ed3cb457ae238430d873"
+    },
+    {
+      "index": 308,
+      "prevHash": "3f3871a2c5528603af9715d3d86b1f2924c1e639bcc2ed3cb457ae238430d873",
+      "merkleRoot": "9d11a3cdbd78c61ec2cfeda3e62d56e889d764ba6f895d64b8abb076b5641745",
+      "leafCount": 118,
+      "note": "update mutation.yml,main.ts,redact.ts",
+      "hash": "a5780875a6c99616d0adf67bc2432f2152771806b8fc1b45712ee6f9616e2534"
     }
   ],
   "tipManifest": {
@@ -2601,7 +2609,7 @@
     ".github/workflows/dependency-audit.yml": "5015d4251a837d1b04e9a92ac10abde333330f537275d89093360029f5381824",
     ".github/workflows/e2e.yml": "4e30890f93d2c538cce194613bda461260476e41ce826635079cf65ea7c6fe44",
     ".github/workflows/knowledge-auto.yml": "a8565ac4c0b0e45d0f37db2ae5b77e5808f2008203f015321f4a69cefd371ef8",
-    ".github/workflows/mutation.yml": "540e6d5c7788cfe7e8ab0509f5b3200a414824798061a23c976b3d1640cd2498",
+    ".github/workflows/mutation.yml": "d5bd5cb4ca46e708ac6b21bdae0b819cde56e5bd06f31145ad68593f5177a925",
     ".github/workflows/pages.yml": "853d2ff8257e75068f662c9f7f1564bd8ba3feaccab6e5f15ea6b687216bbb2a",
     ".github/workflows/release.yml": "8060ff28e01e3f167065a29c6f0d36b97cd6339d4ee948b503e3692e345d9427",
     "assets/icon.svg": "213373cc2e82c0255c103b47cfb880cad685935cd1d4c383746a6202315d540f",
@@ -2647,7 +2655,7 @@
     "src/main/clients/types.ts": "0f7eeae150418def1fb8f242f9f010bcb6d947690b2ad085d18276c041b239fa",
     "src/main/eraseAll.ts": "5fabdaeb36193d7cfd06ccbae8712ada1a5ad36787240cd35fb3dcf0a2fdd797",
     "src/main/keychainBackend.ts": "a9ac8c957100cc6aaa332973638fe4c6057daf017e022eb50fb134ce44ce5b93",
-    "src/main/main.ts": "5cee72eef2512620bb2d67f06871c7d2c9d168c52a0777f0195f641c223e3bcf",
+    "src/main/main.ts": "09d0e4962bf7f6430aa8b990af4f32dad10b849fd94eee4103194177eb76dfe4",
     "src/main/oauth.ts": "342b114ffe392ca17fc76334b0c596b5083e631a5e383744da1a0c8f6e64999e",
     "src/main/secrets.ts": "ddfe5ece7c6393fd8cd473f84eec8173cbc2435ffb163a638e130a9e4ef5ce17",
     "src/main/shellOpenGate.ts": "5192de0eb0a48f4eebedd17fa73df4ec5722f41f7290db5194eb58e2bdb28732",
@@ -2695,7 +2703,7 @@
     "src/shared/ollama.ts": "672ff00261aa63ae7e0b7567dbfaa54ad88da67a5fa55788c79b16c1bd6193c8",
     "src/shared/privateTarget.ts": "a3164b12eced1dec0d06a39a92564f11ea4a73fe1a97ad005730d2e582387789",
     "src/shared/proxyEndpoint.ts": "e43b36c93eeaf5515b474fa5be4ab3f070cb13f616382a5f636db711df0f995e",
-    "src/shared/redact.ts": "dce4d99ae13c226d7973a0970db5510cdaba1da862b45f0577076778ac6e6d5e",
+    "src/shared/redact.ts": "0f87ac977c493be02ba33bdc7550585215b9b008753c917fb9b446a90e6a725f",
     "src/shared/safeFilename.ts": "6c054facd96b064715f9e50ebeada09645486d5c599a3058f1b253a73ba7ff57",
     "src/shared/scanTarget.ts": "c6c887034c33e3f3d22a590e2dc86177fc21312ede7e3f4a0581ec6d5d1e6132",
     "src/shared/tokenInput.ts": "d1c869c86e057639de7b110d2fbdc56dcaf51ce20aa6b17a195b76a5001ba287",

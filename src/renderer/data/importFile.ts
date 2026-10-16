@@ -23,6 +23,15 @@ export const MAX_CSV_IMPORT_BYTES = 20 * MiB;
  */
 export const MAX_CSV_IMPORT_ROWS = 200_000;
 export const MAX_CSV_ROW_ERRORS = 1_000;
+/**
+ * CSV の列数と、列数 × 行数 (セル数) の天井 (2026-10-16 · パス 526 · threat: T-102)。
+ * 行数の天井だけでは、ヘッダが 2,000 列の 95 KB が通った: `parseCsvRecords` は全行ぶん
+ * 「ヘッダの列数」個のキーを持つ器を先に作るので、40,000 行で heap の上限に届いて落ちた
+ * (実測: 15 KB・2,000 列 × 2,000 行で RSS +234 MB)。売上は 5 列・KPI 実績は 8 列なので、
+ * 64 列は十分に余裕があり、20 万行 × 8 列 = 160 万セルは 200 万セルの中に収まる。
+ */
+export const MAX_CSV_IMPORT_COLUMNS = 64;
+export const MAX_CSV_IMPORT_CELLS = 2_000_000;
 
 /**
  * 改行の数で行数を概算し、天井を超えるなら断りの文を返す。解析の前に呼ぶ (安い)。
@@ -43,7 +52,28 @@ export function csvRowLimitError(text: string): string | null {
       }
     }
   }
+  // 列数 (1 行目の、引用符の外のカンマ + 1) と、列数 × 行数。行数は最後の改行の無い行も数える。
+  const columns = csvHeaderColumns(text);
+  if (columns > MAX_CSV_IMPORT_COLUMNS) {
+    return `列が多すぎます（${MAX_CSV_IMPORT_COLUMNS} 列まで）。売上・KPI 実績の CSV の形（列名）を確かめてください。`;
+  }
+  if (columns * (rows + 1) > MAX_CSV_IMPORT_CELLS) {
+    return `データが大きすぎます（列数 × 行数が ${MAX_CSV_IMPORT_CELLS.toLocaleString('ja-JP')} セルまで）。分けて取り込んでください。`;
+  }
   return null;
+}
+
+/** 1 行目の列数。引用符の中のカンマと改行は数えない (`""` は 2 回の切り替えで元に戻る)。 */
+function csvHeaderColumns(text: string): number {
+  let columns = 1;
+  let quoted = false;
+  for (let i = 0; i < text.length; i += 1) {
+    const ch = text.charCodeAt(i);
+    if (ch === 34) quoted = !quoted;
+    else if (!quoted && (ch === 10 || ch === 13)) break;
+    else if (!quoted && ch === 44) columns += 1;
+  }
+  return columns;
 }
 
 /** 誤りの行が天井を超えたときの断りの文。 */

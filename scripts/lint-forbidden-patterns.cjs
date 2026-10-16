@@ -909,6 +909,10 @@ const KNOWN_SUPPRESSIONS = [
   // `.stryker-incremental.json` と `reports/mutation` を消す (古い incremental は
   // **偽の生存**を作る —— config の `_commentEquivalentPragmas` が 2026-08 の実例を持つ)。
   'child_process exec/spawn :: scripts/audit-mutate-changed.cjs :: 1',
+  // `verify:all` を止まらずに全ゲート回して落ちた物を一度に挙げる定期点検の道具
+  // (`scripts/audit-verify-keep-going.cjs`・パス 526)。子プロセスは `npm run <ゲート名>` だけで、
+  // ゲート名は `package.json` の `verify:all` の本文から導く (外から任意の物は入らない)。シェルは経由しない。
+  'child_process exec/spawn :: scripts/audit-verify-keep-going.cjs :: 1',
   // オーケストレーションの書き手 (`record` / `import-requests`) が、書き上がる台帳を
   // **書く前に門そのもの** (`verify-orchestration.cjs --registry <一時ファイル>`) で検める
   // (パス 484)。門の中身を関数として写すと「書き手が正しいと思う台帳」と「CI の門が正しいと

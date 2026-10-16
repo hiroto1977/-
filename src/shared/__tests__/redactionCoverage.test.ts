@@ -1088,3 +1088,47 @@ describe('裸の反射・方式語・鍵の別綴り (threat: T-095)', () => {
     }
   });
 });
+
+/*
+ * 入れ子の JSON と、ヘッダ対の配列 (2026-10-16 · パス 526 · threat: T-101)。引用符つきのヘッダ規則は
+ * 引用符が 1 字であること・名前と値の区切りが `:` であることを要求したので、失敗応答の本文に「転送した要求」を
+ * 文字列 (`JSON.stringify` した物) や `[[名前, 値]]` の配列で入れて返す Worker では、方式語の無い値
+ * (HIBP の 32 桁 16 進・VirusTotal の 64 桁 16 進・Worker の共有秘密) が画面のエラー帯に素通りした
+ * (実物の `fetchViaProxy` に偽 Worker を当てて再現)。
+ */
+describe('伏字の網羅 — 入れ子の JSON とヘッダ対の配列 (threat: T-101)', () => {
+  const KEY = '3f9a1c7d5e2b48a69c0d1e7f8a2b3c4d';
+
+  it.each([
+    ['エスケープ JSON (1 段)', `{"received":"{\\"headers\\":{\\"hibp-api-key\\":\\"${KEY}\\"}}"}`],
+    ['エスケープ JSON (2 段)', `{"r":"{\\\\\\"x-proxy-auth\\\\\\":\\\\\\"${KEY}\\\\\\"}"}`],
+    ['ヘッダ対の配列', `[["x-proxy-auth","${KEY}"]]`],
+    ['ヘッダ対の配列 (空白つき)', `[ ["x-apikey", "${KEY}"] ]`],
+    ['単引用符の対 (inspect 風)', `[ 'x-proxy-auth', '${KEY}' ]`],
+    ['エスケープ + 配列', `"[[\\"x-api-key\\",\\"${KEY}\\"]]"`],
+  ])('★ %s の値を伏せる (threat: T-101)', (_name, text) => {
+    expect(redactSecrets(text)).not.toContain(KEY);
+    expect(redactSecrets(text)).toContain('[REDACTED]');
+  });
+
+  it('★ エスケープ引用符の形でも方式語は残す (原因究明に要る)', () => {
+    const out = redactSecrets(`{"r":"{\\"authorization\\":\\"Bearer ${KEY}\\"}"}`);
+    expect(out).not.toContain(KEY);
+    expect(out).toContain('Bearer [REDACTED]');
+  });
+
+  it('★ 対照: 通常の JSON と `名前: 値` は従来どおり、散文・無関係な鍵は触らない', () => {
+    expect(redactSecrets(`{"hibp-api-key":"${KEY}"}`)).not.toContain(KEY);
+    expect(redactSecrets(`hibp-api-key: ${KEY}`)).not.toContain(KEY);
+    for (const t of ['{"note":"authorization, then"}', '{"api":"fine","keyboard":"abc"}', 'the api key was rotated', '["name","value"]']) {
+      expect(redactSecrets(t), t).toBe(t);
+    }
+  });
+
+  it('★ 逆風の入力で時間が膨らまない (逃がしの深さに上限)', () => {
+    const t0 = Date.now();
+    redactSecrets('\\'.repeat(8000) + '"api-key');
+    redactSecrets('"'.concat('\\"api-key\\":\\"'.repeat(400)));
+    expect(Date.now() - t0).toBeLessThan(1500);
+  });
+});

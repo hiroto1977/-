@@ -235,7 +235,7 @@ jobs:
           echo "この塊の対象: $TARGETS"
           rm -f .stryker-incremental.json reports/mutation/mutation.json
           RC=0
-          npx stryker run --mutate "$TARGETS" --dryRunTimeoutMinutes 40 --reporters clear-text,json,progress-append-only || RC=$?
+          npx stryker run --configFile stryker.config.json --mutate "$TARGETS" --dryRunTimeoutMinutes 40 --reporters clear-text,json,progress-append-only || RC=$?
           if [ "$RC" -ne 0 ]; then
             if [ -s reports/mutation/mutation.json ]; then
               echo "::warning::Stryker が終了コード $RC で終わりました (塊の点数が break 未満のときもこうなります)。報告は書けているので、合否は merge-full の全体の点数で決めます。"
@@ -368,7 +368,7 @@ jobs:
           rm -f .stryker-incremental.json
           # --dryRunTimeoutMinutes / --reporters は mutate-full と同じ理由 (初回検査は検査の
           # 増加とともに config の 20 分へ近づく・10 秒ごとの心拍で止まったのかを見分ける)。
-          npx stryker run --mutate "$TARGETS" --dryRunTimeoutMinutes 40 --reporters clear-text,json,progress-append-only
+          npx stryker run --configFile stryker.config.json --mutate "$TARGETS" --dryRunTimeoutMinutes 40 --reporters clear-text,json,progress-append-only
 
       - name: Save Stryker JSON report
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5 (threat: T-057)

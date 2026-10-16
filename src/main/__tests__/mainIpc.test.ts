@@ -38,6 +38,7 @@ vi.mock('electron', () => ({
     getPath: () => '/tmp/does-not-matter',
     isPackaged: true,
     whenReady: () => new Promise(() => {}),
+    requestSingleInstanceLock: () => true,
     on: (name: string, fn: () => void) => {
       appListeners.set(name, fn);
     },

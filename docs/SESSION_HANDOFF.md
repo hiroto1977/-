@@ -7,6 +7,12 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-10-16) — パス 526: 狩りの 16 回目。5 面の監査役の指摘を自分で再現し、本物の 14 件を直す
+
+- 詳細は `docs/REMAINING_WORK.md` の「パス 526」。T-099〜T-112 (ai: 危機語彙の拡張・検索語の天井 / network: 伏字のエスケープ引用・Ollama 案内コマンドの origin / renderer: CSV の列数・セル数の天井 / main-ipc: 単一インスタンスのロック / supply-chain: electron-builder.env・build/・workspaces・lockfile の対応・force-add・入れ子 eslint 設定・stryker.conf・CODEOWNERS)。
+- 新しい道具: `npm run audit:verify-keep-going` (止まらずに全門を回し、落ちた物を一度に挙げる・`--fast` で約 80 秒)。
+- **所有者の判断待ち (PKG-1)**: 電子ヒューズ `grantFileProtocolExtraPrivileges=false` が `win.loadFile(asar)` を壊す可能性 (最小の再現で `ERR_FILE_NOT_FOUND`)。梱包物では未確認。直す道は 2 つ (ヒューズを戻す / `app://` スキームで origin を移行)。台帳の huntBacklog に実測つきで記録した。
+
 ## 直近の作業 (2026-10-16) — パス 525: 狩りの 15 回目。5 面の監査役の指摘を自分で再現し、本物の 11 件を直す
 
 - 詳細は `docs/REMAINING_WORK.md` の「パス 525」。T-088〜T-098 (supply-chain: ビルドが実行するデータ・モジュールを実行前に構文木で検める / ai: 危機語彙・model の形・categories の天井 / renderer: 感情ログの危機の文を送らない・CSV 行数の数え方・音声の線形化 / main-ipc: JSON の資格情報スロット・戦略比較の行検査・書き込み用の読み / network: 伏字の接頭辞と scheme・スキャン先の警告・HIBP の入力の天井)。

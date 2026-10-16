@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 308
+- ブロック数: 309
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `3f3871a2c5528603af9715d3d86b1f2924c1e639bcc2ed3cb457ae238430d873`
+- 末尾(tip)ハッシュ: `a5780875a6c99616d0adf67bc2432f2152771806b8fc1b45712ee6f9616e2534`
 - 保護対象: 118 ファイル
 
 ## ブロック
@@ -321,6 +321,7 @@
 | 305 | `5a0ed0941cd68760` | `36612853fd566a7c` | `3b6905b5c79db304` | update eraseAll.ts,secrets.ts,autoLock.ts,escape.ts,redact.ts,scanTarget.ts |
 | 306 | `ad54bf29c9323825` | `3b6905b5c79db304` | `ad061da0c49a9ff1` | update integrity-chain.cjs,pure-data-module.cjs,assistant.ts,secrets.ts,redact.ts,scanTarget.ts |
 | 307 | `d0d34954238bde8b` | `ad061da0c49a9ff1` | `3f3871a2c5528603` | update scanTarget.ts |
+| 308 | `9d11a3cdbd78c61e` | `3f3871a2c5528603` | `a5780875a6c99616` | update mutation.yml,main.ts,redact.ts |
 
 ## 保護対象ファイル
 

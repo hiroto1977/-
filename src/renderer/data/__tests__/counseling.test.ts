@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   detectCrisis,
   detectHarmToOthers,
+  foldForMarkerMatch,
   detectDestructiveUrge,
   classifyTone,
   counsel,
@@ -428,6 +429,70 @@ describe('detectCrisis — 明示的な言い回し (threat: T-089)', () => {
   it('★ 対照: 日常語は危機にしない (単独の「死にます」「死ぬほど」「飛び降りる」は外している)', () => {
     for (const t of ['疲れて死にますよ', '今日は死ぬほど忙しい', 'ジェットコースターから飛び降りる前に確認', '死にたくない', 'お疲れさまです']) {
       expect(detectCrisis(t), t).toBe(false);
+    }
+  });
+});
+
+/*
+ * 既存の言い回しのひらがな版・口語・否定形・準備と、他害の双子 (2026-10-16 · パス 526 · threat: T-099)。
+ * T-052 / T-073 / T-089 は漢字の言い回しの活用形を足したが、「しんでしまいたい」「死にたすぎる」
+ * 「生きたくない」「遺書を書いた」「殺してやりたい」ほか 11 形が detectCrisis / detectHarmToOthers=false の
+ * まま、AI アシスタントでは相談窓口なしで外部のモデルへ届いた (実物の AssistantPage で送信を数えた)。
+ */
+describe('detectCrisis / detectHarmToOthers — ひらがな・口語・否定形・他害の双子 (threat: T-099)', () => {
+  it.each([
+    'しんでしまいたい',
+    'しんじゃいたい',
+    '死んじゃおうかな',
+    'しのうかな',
+    'きえてしまいたい',
+    'きえてなくなりたい',
+    '死にたすぎる',
+    '死にたみ',
+    '死にてぇ',
+    '死にてえ',
+    '消えてぇ',
+    '死にたぃ',
+    '生きたくない',
+    '生きていたくありません',
+    '生きている価値がない',
+    '生きてる価値ない',
+    '楽に死ねる方法を教えて',
+    '苦しまずに死にたい',
+    '遺書を書いた',
+  ])('★ %s を危機と判定する (threat: T-099)', (text) => {
+    expect(detectCrisis(text), text).toBe(true);
+  });
+
+  it.each(['殺してやりたい', '殺しちゃいたい', '殺してぇ', 'ころしてぇ', '刺してやる', 'ぶち殺す'])(
+    '★ %s を他害と判定する (threat: T-099)',
+    (text) => {
+      expect(detectHarmToOthers(text), text).toBe(true);
+    },
+  );
+
+  it('★ 小書きの母音は大きい仮名へ畳む (語を変えない)', () => {
+    expect(foldForMarkerMatch('ぁぃぅぇぉ')).toBe('あいうえお');
+    expect(foldForMarkerMatch('死にたぃ')).toBe(foldForMarkerMatch('死にたい'));
+  });
+
+  it('★ 対照: 日常語は危機にも他害にもしない', () => {
+    for (const t of [
+      '学校にいきたくない',
+      '生きている',
+      '生きた証を残す',
+      '売上が死にかけている',
+      '遺言書の書き方を教えて',
+      '遺書という小説を読んだ',
+      '楽しく生きたい',
+      '仕事が忙しくて疲れた',
+      'このバグ、もう限界',
+      '息を殺して待つ',
+      '今日は死ぬほど忙しい',
+      '時間を殺す',
+    ]) {
+      expect(detectCrisis(t), t).toBe(false);
+      expect(detectHarmToOthers(t), t).toBe(false);
     }
   });
 });
