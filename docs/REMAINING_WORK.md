@@ -1,5 +1,41 @@
 # Service Hub — 残りの作業手順書
 
+## パス 527 (狩りの 17 回目 —— 初めて Workflow (監査役 → 独立した検証役) で回し、確定 13 件のうち 4 脅威を直す) (2026-10-17)
+
+5 面 (main-ipc / renderer / network / ai / supply-chain) の監査役 (読み取り専用) を Workflow の `pipeline` で走らせ、各指摘を**別の検証役 (effort xhigh・反証する側)** が再現して仕分けた。19 エージェント・約 105 分。確定 13 件 (SC-1 は既知項目と重複で除外)。**検証役の再現のあと、直す物は自分でもう 1 度再現してから直した。**
+
+### 直した 4 脅威 (T-113〜T-116)
+
+| 脅威 | 内容 | 留めた検査 |
+| --- | --- | --- |
+| T-113 (network・medium) | `objectRows` に行数の天井 `MAX_API_ROWS` (5,000)。3 byte の行を 8.6 MiB 並べた応答が 326 MiB の取得結果になった。cursor / cloudflare も `objectRows` を通し (null の行で取得ごと落ちていた)、cloudflare は 1 ページ 50 件まで、Gmail / GitHub の詳細要求は頼んだ 10 本まで | `apiResponse.test.ts` / `cursor.test.ts` / gmail / github / cloudflare |
+| T-114 (renderer・low) | T-103 の直しが Ollama 画面の `<code>` 2 か所に届いていなかった。`shellSafeOrigin` を通す | `ollamaPageOriginShell.test.ts` (配信元 URL に `$({touch,pwned})` を置いた jsdom) |
+| T-115 (ai・medium) | ベスト3 の括弧除去が `((((…` で二乗時間 (約 5 秒・全体で約 26 秒の固まり)。1 回の走査 `stripParenthesized` へ (旧い正規表現と長さ 7 の総当たりで同じ答え) | `bestAnswers.test.ts` |
+| T-116 (ai・low) | `skills/run-skill` に Anthropic 鍵の不在の門 (stocks / business / emotions はパス 451 から持つ) | `skills.test.ts` |
+
+### 台帳に残した backlog (7 件)
+
+H-1 (保管ファイル不調が資格情報を読まない LOCAL サービスまで止める) / AI-N1 (assistant 画面が ollama を無条件に「端末内」と名乗る) / AI-N4 (プロキシ運用者に触れない断り) / SC-2〜SC-5 (`lint:deps` が lockfile の flag を信じる・`PROD_ALLOW` が src の import を見ない・`lint:malware --artifact` をどの workflow も走らせない・`lint:workflow-security` が `uses: ./` と run の本文を見ない)。**どれも再現済みだが、設計の変更を伴う、または保護対象 (`main.ts` / `ci.yml`) に触れるので別パスにした。**
+
+### 検証
+
+- 対照 9 方向 (A ollama・B/B2 天井・C gmail・D github・E cloudflare・F skills・G 正規表現・H cursor) すべて、狙った検査が落ちる。**元へ戻したことは md5 で確認**。E は最初に対照の書き換えが構文を壊し「no tests」になった (落ちたが狙った検査ではない) ので、当て直して狙った 1 件が落ちることを確かめた。
+- 変異検査: 6 ファイルすべて 100.00% (`bestAnswers.ts` は 1 度目 99.85% / 生存 1 —— `i < s.length` → `i <= s.length`、`s[s.length]` は undefined で等価。比較を持たない `split('').entries()` の形へ直して 100.00% / 生存 0。法則 115)。
+- `typecheck` 緑・`npm test` **1079 ファイル / 21,937 件**・`verify:all` **0/39**・`chain:verify` 緑。
+- 実機 (最終コード): `perf` OK (LITE DCL 207 ms / heap 9.7 MB・FULL DCL 513 ms / heap 36.3 MB)・`e2e` 758 件 ❌ 0・`e2e:lite` 758 件 ❌ 0・`smoke:app` OK。
+- 出荷物: FULL 11,888,001 B / LITE 3,300,625 B (LITE は警告線まで 99,375 B)。
+
+### 同じセッションで足した機能
+
+チーム画面の給与パネルに「人件費の会社負担総額」の欄を追加 (`calcEmployerCost` を画面へ接続)。額面月給・人数・介護保険の有無から会社負担の法定福利費と 1 人あたり総額・年額を出す。読めない入力は 0 円を出さず判定ごと断る。`teamPayroll.test.ts` +3 件。
+
+### 道具・手順の学び
+
+- Workflow は 5 面の監査 → 指摘ごとの検証を**バリアなし**で流せる。検証役の「再現した」は権威ではなく、直す前に自分で再現する規約は変えない。
+- 先に Agent ツールで起動した同じ 5 面の監査は、Workflow に切り替える際に停止した (二重の作業を避ける)。
+- 作業の途中でコンテナが再起動され `node_modules` が空になっていた。`typecheck` が `vitest` / node の型を見つけられず `exit=1` — コードの誤りではなく `npm ci` で戻る。
+- Stryker の位置引数は `npx stryker run stryker.config.json --mutate <file> --reporters clear-text`。`--incremental false` は位置引数と解釈され「too many arguments」で走らない。
+
 ## パス 526 (狩りの 16 回目 —— 5 面の監査役の指摘を自分で再現し、本物の 14 件を直す) (2026-10-16)
 
 5 面 (main-ipc / renderer / network / ai / supply-chain) の監査役 (read-only) を並行で走らせ、**各指摘を自分で再現してから**仕分けた (監査役の報告は権威を持たない)。あわせて、パス 525 で「verify:all が最初に落ちた門で止まるので直しが 4 回に分かれた」件を、止まらずに全門を回す道具で塞いだ。
