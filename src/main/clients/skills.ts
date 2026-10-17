@@ -9,6 +9,7 @@ import {
   capAssistantReply,
   inputTooLongMessage,
 } from '../../shared/assistantLimits';
+import { MISSING_ANTHROPIC_KEY_MESSAGE } from '../../shared/advisorQuestionLimits';
 import { shadowedSkillIdNote, unsafeSkillIdNote } from '../../shared/skillIdentity';
 import {
   jsonFetch,
@@ -458,6 +459,10 @@ async function runSkill(ctx: ActionContext): Promise<ActionData<'skills/run-skil
   // 指示文の天井 (パス 112)。それまで prompt に天井が無く、貼り付けた物が丸ごと有料 API へ
   // 出ていた。1 発話の天井はアシスタントと同じ 1 つ (`MAX_ASSISTANT_CONTENT_CHARS`)。
   if (countChars(prompt) > MAX_ASSISTANT_CONTENT_CHARS) throw new Error(inputTooLongMessage('プロンプト'));
+  // 鍵が無ければ、スキル本文を読む前に・何も送る前に断る (パス 527)。stocks / business / emotions は
+  // パス 451 から同じ門を持つ。無いまま `x-api-key: ''` で送ると、~/.claude/skills の本文が
+  // 有料 API の宛先へ出たうえ、利用者は「鍵が不正」と読んで原因を取り違える。
+  if (!ctx.token) throw new Error(MISSING_ANTHROPIC_KEY_MESSAGE);
 
   const body = await readSkillBody(id);
 

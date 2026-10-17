@@ -17,6 +17,7 @@ import {
   MAX_BEST_ANSWER_CALLS,
   contentSimilarity,
   fabricatedCitations,
+  stripParenthesized,
   formatBestAnswers,
   pickBestThree,
   planCalls,
@@ -378,5 +379,36 @@ describe('チャットへ渡す形', () => {
     expect(head).toContain('応答できなかった回答者');
     expect(head).toContain('設定済みの AI プロバイダがありません');
     expect(head).toContain('示せるのは 2 件');
+  });
+});
+
+
+describe('stripParenthesized — 括弧の除去は 1 回の走査 (threat: T-115)', () => {
+  it('旧い正規表現 /[（(][^）)]*[）)]/g と同じ答え (長さ 7 までの総当たり)', () => {
+    const alphabet = ['(', '（', ')', '）', 'a', 'b'];
+    const old = (s: string) => s.replace(/[（(][^）)]*[）)]/g, '');
+    let n = 0;
+    const walk = (prefix: string, left: number): void => {
+      expect(stripParenthesized(prefix)).toBe(old(prefix));
+      n += 1;
+      if (left === 0) return;
+      for (const c of alphabet) walk(prefix + c, left - 1);
+    };
+    walk('', 7);
+    expect(n).toBeGreaterThan(40_000);
+  });
+
+  it('標本: 対のある括弧は中身ごと落とし、閉じない開き括弧は文字として残す', () => {
+    expect(stripParenthesized('法令（令和8年）の特例')).toBe('法令の特例');
+    expect(stripParenthesized('a(b)c(d')).toBe('ac(d');
+    expect(stripParenthesized('((x)y)')).toBe('y)');
+  });
+
+  it('閉じ括弧の無い開き括弧の並びで固まらない (旧い式は 10 万字で約 5 秒)', () => {
+    const t0 = performance.now();
+    const fake = `${LONG_GOOD}\n参照: ${'('.repeat(100_000)}`;
+    expect(fabricatedCitations(fake, DOCS).length).toBeGreaterThanOrEqual(0);
+    expect(stripParenthesized('('.repeat(100_000))).toHaveLength(100_000);
+    expect(performance.now() - t0).toBeLessThan(1000);
   });
 });

@@ -1931,6 +1931,66 @@
         "file": "src/shared/__tests__/threatLedger.test.ts",
         "test": "★ 台帳の回帰検査と守られる設定は、CODEOWNERS が覆う (守りの無効化と被保護物の改変を同じ PR で通さない) (threat: T-112)"
       }
+    },
+    {
+      "id": "T-113",
+      "found": "2026-10-17",
+      "foundBy": "hunt pass 527 (Workflow: 監査役 → 独立した検証役。再現してから直した)",
+      "surface": "network",
+      "class": "ai-automated-attack",
+      "severity": "medium",
+      "title": "第三者の応答の行数に天井が無く、バイトの天井 (10 MiB) の内側でも仕事量が膨らんだ: 3 byte の行を 8.6 MiB 並べた応答 1 つが 326 MiB の取得結果になり、Gmail / GitHub は返った行の数だけ Bearer つきの詳細要求を撃った (頼んだのは 10 件)。cursor と cloudflare は物でない行 (null) で取得ごと落ちた",
+      "status": "fixed",
+      "fix": "objectRows に行数の天井 MAX_API_ROWS (5,000) を置き、cursor.readRows と cloudflare の各ページも objectRows を通し (1 ページは 50 件まで)、Gmail / GitHub は頼んだ 10 件までしか詳細を撃たない。",
+      "regression": {
+        "file": "src/shared/__tests__/apiResponse.test.ts",
+        "test": "objectRows — 行数の天井 (threat: T-113)"
+      }
+    },
+    {
+      "id": "T-114",
+      "found": "2026-10-17",
+      "foundBy": "hunt pass 527",
+      "surface": "renderer",
+      "class": "ai-phishing",
+      "severity": "low",
+      "title": "T-103 の直しが Ollama 画面の <code> 2 か所に届いておらず、配信元の host 名 ($(…) や逆引用符) が二重引用符の中の案内コマンドへ生で入った。利用者がその行を端末へ貼ると host 名が決めた命令が走る (実測: pwned ができた)",
+      "status": "fixed",
+      "fix": "OllamaPage の 2 か所も shellSafeOrigin を通す。安全でない origin は『PC の IP』の見本か * へ倒れる。",
+      "regression": {
+        "file": "src/renderer/pages/__tests__/ollamaPageOriginShell.test.ts",
+        "test": "OllamaPage の案内コマンド — 配信元の origin (threat: T-114)"
+      }
+    },
+    {
+      "id": "T-115",
+      "found": "2026-10-17",
+      "foundBy": "hunt pass 527",
+      "surface": "ai",
+      "class": "ai-automated-attack",
+      "severity": "medium",
+      "title": "ベスト3 の捏造した参照の検出 (fabricatedCitations) の括弧除去が、閉じ括弧の無い開き括弧の並びで二乗時間だった。回答 1 件 (10 万字まで通る) で UI スレッドが約 5 秒、ベスト3 は最大 5 回答を同期で採点するので約 26 秒固まり、取り消せない (lint:regex は指数しか見ない)",
+      "status": "fixed",
+      "fix": "括弧の除去を 1 回の走査 stripParenthesized に替えた (旧い正規表現と長さ 7 までの総当たりで同じ答え)。",
+      "regression": {
+        "file": "src/renderer/data/__tests__/bestAnswers.test.ts",
+        "test": "stripParenthesized — 括弧の除去は 1 回の走査 (threat: T-115)"
+      }
+    },
+    {
+      "id": "T-116",
+      "found": "2026-10-17",
+      "foundBy": "hunt pass 527",
+      "surface": "ai",
+      "class": "ai-phishing",
+      "severity": "low",
+      "title": "skills/run-skill に Anthropic 鍵の不在の門が無く、鍵が未保存でも ~/.claude/skills の本文 (system) と指示文を x-api-key: '' で有料 API の宛先へ送り、利用者に『鍵が不正』と原因を取り違えさせた (stocks / business / emotions はパス 451 から門を持つ)",
+      "status": "fixed",
+      "fix": "スキル本文を読む前に鍵が空なら MISSING_ANTHROPIC_KEY_MESSAGE で断る。",
+      "regression": {
+        "file": "src/main/clients/__tests__/skills.test.ts",
+        "test": "Anthropic 鍵が無ければ読まず・送らず断る (threat: T-116)"
+      }
     }
   ],
   "huntBacklog": [
@@ -2103,6 +2163,41 @@
       "surface": "supply-chain",
       "item": "e2e.yml の npm install --no-save playwright@1.56.1 は版固定だが integrity が無い",
       "why": "2026-10-16 に読んだ。lockfile へ入れるか、integrity を検める手が候補。e2e は既定で走らない。"
+    },
+    {
+      "surface": "main-ipc",
+      "item": "H-1: fetch:snapshot / action:invoke が、トークンを読まない LOCAL サービス (約 46 件) でも先に getValidToken を呼び、保管ファイルが読めないと KPI・テンプレート・人材育成まで not_configured で止まる",
+      "why": "2026-10-17 狩り 527 が再現済み (重さ low・起点は外部要因のみ)。直しは TOKEN_CONSUMING_LOCAL を census で ctx.token の読み手と双方向に突き合わせてから main.ts で素通りさせる設計の変更で、main.ts は保護対象なので別パスで行う。"
+    },
+    {
+      "surface": "ai",
+      "item": "AI-N1: AI アシスタント画面と村の断りが、ollama 提供元を無条件に『端末内』と名乗る (資格情報の ollamaUrl に任意の https ホストを保存でき、そこへ会話が送られる)。コンシェルジュ側は T-010 で見分ける",
+      "why": "2026-10-17 狩り 527 が再現済み (low)。断りの文面と受け手の判定の追加で、文言の台帳に影響するため別パス。"
+    },
+    {
+      "surface": "ai",
+      "item": "AI-N4: ブラウザ版で OpenAI / OpenAI 互換が BYO プロキシ経由で送られるのに、AiEgressNotice がプロキシ運用者に触れない (docblock は『書くと嘘になる』と断言)",
+      "why": "2026-10-17 狩り 527 が再現済み (low)。断りの出し分け (実行形態) と文言の台帳の更新が要るので別パス。"
+    },
+    {
+      "surface": "supply-chain",
+      "item": "SC-3: lint:deps の規則 3 は lockfile の hasInstallScript を信じるが、npm ci は binding.gyp を持つ依存で node-gyp rebuild を hasInstallScript 無しでも走らせる",
+      "why": "2026-10-17 狩り 527 が再現済み (medium)。規則 3 を lockfile でなく実物 (tarball に binding.gyp があるか) へ寄せる設計の変更。"
+    },
+    {
+      "surface": "supply-chain",
+      "item": "SC-4: docs/SECURITY.md が『lint:malware を --artifact で全 PR で走らせる』と述べるが、どの workflow も package.json も --artifact を走らせない",
+      "why": "2026-10-17 狩り 527 が再現済み (medium)。成果物の走査を ci.yml の build:web の後へ足すか、文書を実態へ直す。ci.yml は保護対象なので別パス。"
+    },
+    {
+      "surface": "supply-chain",
+      "item": "SC-5: lint:workflow-security は uses: ./... を飛ばし、任意の 40 桁 16 進を受け、run: の本文を内容で走査しない (ローカル composite action の未固定・curl|sh・NODE_OPTIONS の乗っ取り)",
+      "why": "2026-10-17 狩り 527 が再現済み (medium)。規則の追加で workflow の台帳に影響するため別パス。"
+    },
+    {
+      "surface": "supply-chain",
+      "item": "SC-2: lint:deps の PROD_ALLOW は lockfile の dev フラグで本番閉包を決め、src/ が実際に import する devDependency を見ない (単一 HTML に畳み込まれても全ゲート緑)",
+      "why": "2026-10-17 狩り 527 が再現済み (low)。src の import を構文木で導く census を足す設計の変更。"
     }
   ],
   "clearedBacklog": [

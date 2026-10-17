@@ -32,7 +32,7 @@ import {
   readCloudflareEnvelope,
 } from '../../shared/api/cloudflare';
 import type { ActionData } from '../../shared/actionData';
-import { displayField, optionalStringArray } from '../../shared/apiResponse';
+import { displayField, objectRows, optionalStringArray } from '../../shared/apiResponse';
 
 /** 送り先は shared の 1 つ (書き込みも読みも同じ定数を通る)。 */
 const API_BASE = CLOUDFLARE_API;
@@ -147,9 +147,10 @@ async function fetchAllZones(
       init,
       fetchCtx,
     );
-    const batch = unwrap(wrap);
-    all.push(...batch);
-    if (batch.length < PER_PAGE) break;
+    const raw = unwrap(wrap);
+    // 1 ページは PER_PAGE 件まで —— 相手が 5,000 行返しても 1 ページ分しか取らない (パス 527)。
+    all.push(...objectRows<CfZone>(raw).slice(0, PER_PAGE));
+    if (!Array.isArray(raw) || raw.length < PER_PAGE) break;
   }
   return all;
 }

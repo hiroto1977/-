@@ -372,3 +372,35 @@ describe('ACTIONS["create-draft"]', () => {
     expect(decoded).toMatch(/\r\n\r\n$/);
   });
 });
+
+
+describe('fetchGmailSnapshot — 相手が頼んだ数を超えて返しても詳細の要求は 10 本まで (threat: T-113)', () => {
+  it('一覧が 500 件でも、Bearer つきの詳細要求は 10 本 + 一覧 1 本だけ', async () => {
+    const rows = Array.from({ length: 500 }, (_, i) => ({ id: `m${i}`, threadId: `t${i}` }));
+    const fetchMock = vi.fn<typeof fetch>().mockImplementation((input) => {
+      const url = String(input);
+      if (url.includes('/messages?')) return Promise.resolve(jsonResponse({ messages: rows }));
+      return Promise.resolve(jsonResponse({ id: 'x', payload: { headers: [] } }));
+    });
+    await fetchGmailSnapshot({ token: 't', fetch: fetchMock });
+    expect(fetchMock).toHaveBeenCalledTimes(1 + 10);
+    const detail = fetchMock.mock.calls.map((c) => String(c[0])).filter((u) => !u.includes('/messages?'));
+    expect(detail).toHaveLength(10);
+    expect(detail[9]).toContain('/messages/m9?');
+  });
+
+  it('標本: 10 件ちょうどなら 10 本、3 件なら 3 本 (天井は下限を削らない)', async () => {
+    for (const n of [10, 3]) {
+      const rows = Array.from({ length: n }, (_, i) => ({ id: `m${i}` }));
+      const fetchMock = vi.fn<typeof fetch>().mockImplementation((input) =>
+        Promise.resolve(
+          String(input).includes('/messages?')
+            ? jsonResponse({ messages: rows })
+            : jsonResponse({ id: 'x', payload: { headers: [] } }),
+        ),
+      );
+      await fetchGmailSnapshot({ token: 't', fetch: fetchMock });
+      expect(fetchMock).toHaveBeenCalledTimes(1 + n);
+    }
+  });
+});

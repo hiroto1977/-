@@ -226,10 +226,25 @@ export function readArrayField(obj: unknown, field: string): ArrayFieldRead {
  */
 export function objectRows<T = Record<string, unknown>>(v: unknown): readonly T[] {
   if (!Array.isArray(v)) return [];
-  return v.filter(
-    (x): x is T => x !== null && typeof x === 'object' && !Array.isArray(x),
-  );
+  const out: T[] = [];
+  for (const x of v) {
+    if (x === null || typeof x !== 'object' || Array.isArray(x)) continue;
+    out.push(x as T);
+    if (out.length >= MAX_API_ROWS) break;
+  }
+  return out;
 }
+
+/**
+ * 第三者の応答から読む**行の数の天井** (2026-10-17 · パス 527)。
+ *
+ * 実測 (直す前): 応答の大きさの天井 (`MAX_HTTP_RESPONSE_BYTES` 10 MiB) は**バイト**を縛るが
+ * 行数は縛らず、`{}` 1 つ 3 byte の行を 8.6 MiB 並べた応答 1 つが 326 MiB の取得結果になった。
+ * 行ごとに欄を `displayField` (256 字) へ広げるので、**バイトの天井は仕事量の天井にならない**。
+ * 画面の一覧も 2,000 件で切る (`MAX_LIST_ITEMS`) ので、その倍以上を超えた行は誰にも見えない。
+ * 超えた行は黙って落とす —— 数える画面は無く、数えさせる側 (相手) が決められる量を断つのが目的である。
+ */
+export const MAX_API_ROWS = 5000;
 
 /**
  * **第三者の応答の数値欄**を読む。有限な数でなければ `null`。 (2026-09-22 · パス 410)

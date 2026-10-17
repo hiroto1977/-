@@ -18,7 +18,7 @@
  * 混ぜると、使っていないのか取得に失敗したのか画面から判別できなくなる)。
  */
 
-import { displayField, finiteNumberOf } from '../apiResponse';
+import { displayField, finiteNumberOf, objectRows } from '../apiResponse';
 import { isFiniteNumber } from '../num';
 import { isoDateFromTimestamp } from '../isoDate';
 
@@ -265,10 +265,10 @@ export interface CursorRows<T> {
  * 直している混同を残すことになる。
  */
 export function readRows<T>(body: unknown, key: string): CursorRows<T> {
-  if (Array.isArray(body)) return { rows: body as T[], read: true };
+  if (Array.isArray(body)) return { rows: [...objectRows<T>(body)], read: true };
   if (body === null || typeof body !== 'object') return { rows: [], read: false };
   const v = (body as Record<string, unknown>)[key];
-  return Array.isArray(v) ? { rows: v as T[], read: true } : { rows: [], read: false };
+  return Array.isArray(v) ? { rows: [...objectRows<T>(v)], read: true } : { rows: [], read: false };
 }
 
 /** 節の行と素性。 */

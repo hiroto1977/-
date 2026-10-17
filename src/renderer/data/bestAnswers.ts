@@ -403,6 +403,32 @@ export function citedDocs(answer: string, docs: readonly KnowledgeDoc[]): Knowle
 }
 
 /**
+ * 括弧とその中身を落とす。**1 回の走査で終わる** (2026-10-17 · パス 527)。
+ *
+ * 直す前は `/[（(][^）)]*[）)]/g` で、閉じ括弧の無い開き括弧の並び「((((…」では
+ * 開き括弧ごとに末尾まで読んで失敗するので二乗時間だった。実測: 回答の本文は 10 万字まで通り、
+ * 1 回答で UI スレッドが約 5 秒、ベスト3 は最大 5 回答を同期で採点するので約 26 秒固まった。
+ * `lint:regex` は指数しか見ない。意味は同じ —— いちばん左の開き括弧から、最初の閉じ括弧までを落とし、
+ * 閉じられない開き括弧は文字として残す。
+ */
+export function stripParenthesized(s: string): string {
+  let out = '';
+  let from = 0;
+  let open = -1;
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if (open < 0 && (c === '（' || c === '(')) {
+      open = i;
+    } else if (open >= 0 && (c === '）' || c === ')')) {
+      out += s.slice(from, open);
+      from = i + 1;
+      open = -1;
+    }
+  }
+  return out + s.slice(from);
+}
+
+/**
  * 「参照:」の行に挙げた項目のうち、**注入していない物** (捏造した根拠)。
  * 項目名の揺れは許す (核の一致・包含・タイトル類似)。
  *
@@ -416,7 +442,7 @@ export function fabricatedCitations(answer: string, docs: readonly KnowledgeDoc[
     const m = /^\s*(?:[-*・]\s*)?参照\s*[:：](.+)/.exec(line);
     if (!m) continue;
     for (const raw of m[1]!.split(/[、,，;；]/)) {
-      const item = raw.replace(/[（(][^）)]*[）)]/g, '').replace(/[「」『』〈〉【】]/g, '').trim();
+      const item = stripParenthesized(raw).replace(/[「」『』〈〉【】]/g, '').trim();
       if (countChars(item) < 2) continue;
       const known = docs.some((d) => {
         const core = compact(titleCore(d.title));
