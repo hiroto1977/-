@@ -137,6 +137,13 @@ jobs:
             echo "::warning::standalone.html が上限 16MB の ${PCT}% ($SIZE B) に達しています。知識コーパスの増分か巨大アセットの誤同梱かを、次の増加で天井に当たる前に確認してください。"
           fi
 
+      # 配る単一 HTML のインラインの <script> を悪意のあるコードの形で走査する (docs/SECURITY.md の
+      # 『lint:malware は --artifact で配る HTML も見る』の実体)。2026-10-17 (パス 528) まで、この
+      # 走査をどの workflow も走らせておらず、依存の中身が畳み込まれる成果物 (保管庫と同じオリジンで
+      # 走る) は追跡ファイルの走査だけで守られていた。
+      - name: Scan the shipped artifact for malware shapes
+        run: node scripts/lint-malware.cjs --artifact dist/standalone.html
+
       # 公開経路と同じ後段 (inject-pwa) を、**実物**に当てる。
       #
       # 2026-07-24 の Pages 障害 (PWA タグがバンドルの真ん中へ splice されて

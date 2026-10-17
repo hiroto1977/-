@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 310
+- ブロック数: 313
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `2cd6c5bf824623f2beed656ed602b50d88625385cf140d6dcbf57efdbd621670`
-- 保護対象: 118 ファイル
+- 末尾(tip)ハッシュ: `0e9472838dd463d94e59a7cbe557f86143dd99726c480c8b730d787ec7e7a412`
+- 保護対象: 120 ファイル
 
 ## ブロック
 
@@ -323,6 +323,9 @@
 | 307 | `d0d34954238bde8b` | `ad061da0c49a9ff1` | `3f3871a2c5528603` | update scanTarget.ts |
 | 308 | `9d11a3cdbd78c61e` | `3f3871a2c5528603` | `a5780875a6c99616` | update mutation.yml,main.ts,redact.ts |
 | 309 | `98efa5826c826fe5` | `a5780875a6c99616` | `2cd6c5bf824623f2` | update mutation.yml |
+| 310 | `4c6e91d390153691` | `2cd6c5bf824623f2` | `3115ce31b4c20918` | update ci.yml |
+| 311 | `31567147841da5b7` | `3115ce31b4c20918` | `35dbb97bd8100b8b` | update integrity-chain.cjs,lint-malware.cjs |
+| 312 | `b9cce5ca2caeb5fb` | `35dbb97bd8100b8b` | `0e9472838dd463d9` | update integrity-chain.cjs,strip-non-code.cjs |
 
 ## 保護対象ファイル
 
@@ -363,8 +366,10 @@
 - `scripts/lib/json-for-script.cjs`
 - `scripts/lib/population-floor.cjs`
 - `scripts/lib/pure-data-module.cjs`
+- `scripts/lib/strip-non-code.cjs`
 - `scripts/lib/tracked-cross-check.cjs`
 - `scripts/lint-artifact-csp.cjs`
+- `scripts/lint-malware.cjs`
 - `scripts/lint-sample-data.cjs`
 - `scripts/make-autoinstall.sh`
 - `scripts/make-live-usb.sh`

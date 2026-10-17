@@ -296,6 +296,14 @@ const PROTECTED = [
   //                               **閉包に入る** —— ここが `missing: []` を返すように
   //                               書き換わると、走査が一部だけ死んでも 6 ゲートが緑になる。
   'scripts/lib/tracked-cross-check.cjs',
+  //   lint-malware.cjs            悪意のあるコードの形の検出器 (2026-10-17 · パス 528)。ci.yml (保護対象) が
+  //                               成果物を `--artifact` で走査するのでその step が読む —— 閉包に入る。ここが
+  //                               `process.exit(0)` に書き換わると、配る HTML に畳み込まれた依存のコードを
+  //                               何も見ずに緑にできる。守っている検査を黙らせられる物は、除外ではなく保護対象。
+  'scripts/lint-malware.cjs',
+  //   lib/strip-non-code.cjs      注記・文字列を落とす共有の字句解析器 (パス 528 · `lint-malware.cjs` が読むので閉包に入る)。
+  //                               ここが何も落とさない/全部落とす形に書き換わると、検出器が見る本文が変わる。
+  'scripts/lib/strip-non-code.cjs',
   'scripts/lint-artifact-csp.cjs',
   'scripts/verify-release-artifacts.cjs',
   'scripts/checksum-release.cjs',

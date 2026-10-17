@@ -39,8 +39,10 @@
     "scripts/lib/json-for-script.cjs",
     "scripts/lib/population-floor.cjs",
     "scripts/lib/pure-data-module.cjs",
+    "scripts/lib/strip-non-code.cjs",
     "scripts/lib/tracked-cross-check.cjs",
     "scripts/lint-artifact-csp.cjs",
+    "scripts/lint-malware.cjs",
     "scripts/lint-sample-data.cjs",
     "scripts/make-autoinstall.sh",
     "scripts/make-live-usb.sh",
@@ -2601,6 +2603,30 @@
       "leafCount": 118,
       "note": "update mutation.yml",
       "hash": "2cd6c5bf824623f2beed656ed602b50d88625385cf140d6dcbf57efdbd621670"
+    },
+    {
+      "index": 310,
+      "prevHash": "2cd6c5bf824623f2beed656ed602b50d88625385cf140d6dcbf57efdbd621670",
+      "merkleRoot": "4c6e91d390153691cfcaf4470d2e8388c5456b384c0e88fe97f45d6697dad9a3",
+      "leafCount": 118,
+      "note": "update ci.yml",
+      "hash": "3115ce31b4c20918fe10767112b6b9ec6315520800e540b2dcc4d10489688908"
+    },
+    {
+      "index": 311,
+      "prevHash": "3115ce31b4c20918fe10767112b6b9ec6315520800e540b2dcc4d10489688908",
+      "merkleRoot": "31567147841da5b7cfbe67939c908aaee6084069023ab56690e7a29a7cb884be",
+      "leafCount": 119,
+      "note": "update integrity-chain.cjs,lint-malware.cjs",
+      "hash": "35dbb97bd8100b8b973cf715ad09cc1ec86dea735807ac97a086b0d675680434"
+    },
+    {
+      "index": 312,
+      "prevHash": "35dbb97bd8100b8b973cf715ad09cc1ec86dea735807ac97a086b0d675680434",
+      "merkleRoot": "b9cce5ca2caeb5fb0e8ec5c088ce40416ad52bf77fc68bf1e439bb672c984e68",
+      "leafCount": 120,
+      "note": "update integrity-chain.cjs,strip-non-code.cjs",
+      "hash": "0e9472838dd463d94e59a7cbe557f86143dd99726c480c8b730d787ec7e7a412"
     }
   ],
   "tipManifest": {
@@ -2613,7 +2639,7 @@
     ".cursor/rules/20-gates.mdc": "821205069a9f0fae121e92be6826342bce6e765a34bea95c7ebc36c57b234da4",
     ".cursor/rules/30-conventions.mdc": "ecc268597f19300ff8c9e574d25ae92f34f6ddb9ec13776fb5162c32f6c0ba50",
     ".github/dependabot.yml": "5fb436726dc2b51f99162653885c40cafae5d57d6deb0f4f5b5449e6b202493f",
-    ".github/workflows/ci.yml": "93fefcd2011b59d82fc94d0160d0f1b408a499f7bbaf07f06a7bbf012c93b58b",
+    ".github/workflows/ci.yml": "9df2fc00557dcc5eabcce7d81ee2e54d0dbca2be81213d608396e1b70e93880b",
     ".github/workflows/dependency-audit.yml": "5015d4251a837d1b04e9a92ac10abde333330f537275d89093360029f5381824",
     ".github/workflows/e2e.yml": "4e30890f93d2c538cce194613bda461260476e41ce826635079cf65ea7c6fe44",
     ".github/workflows/knowledge-auto.yml": "a8565ac4c0b0e45d0f37db2ae5b77e5808f2008203f015321f4a69cefd371ef8",
@@ -2635,14 +2661,16 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "d385ddfc52ec74abf184207bfbb1ac655e730db2b7c6d7e758e35e67e79a5737",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "e062bb7600396c379c1819a089b68f1632dbc08b3b2a8e13ef244fbee7b04ef8",
+    "scripts/integrity-chain.cjs": "c01be2b3ff09d0b3c02101aa61ec1b47c36d23422c6e010a7f5b9416ae708e50",
     "scripts/knowledge-autopilot.cjs": "ee8f7ae4a4ad29dda6c02f83c113c45fa1648522f807e711aa86b7746f372968",
     "scripts/lib/artifact-freshness.cjs": "4fe8833bf59fe293cf8d34067caf7f9e80c27755ceebcd6e92b4e9d78f6a5a5c",
     "scripts/lib/json-for-script.cjs": "cb79bf1fb2f3c10c6854ec16d9c12bb0695dee5561751333db4531545702fd70",
     "scripts/lib/population-floor.cjs": "a114eb01aa920d7207bdc0cefde60c049721ca62e8daa75283445afa81c694b3",
     "scripts/lib/pure-data-module.cjs": "41acaa8525543f5b59720758a7955b13b933c59b4d5df1d9b3793d9426075a93",
+    "scripts/lib/strip-non-code.cjs": "64ee25ca006e9e566691a99526994dd36fc0ba6b05e536d39979701b96d681ed",
     "scripts/lib/tracked-cross-check.cjs": "c31f327dfb6e6a2d40bc8b3460cc8d9f4994c7cf84b6416086c644749021fee5",
     "scripts/lint-artifact-csp.cjs": "0909be86c33bd6aa8deaa5706e1dc7e1663bca42b314a9d127faf3cf6521a081",
+    "scripts/lint-malware.cjs": "1ada0a8c7a9792329aa71790b31da96d20c0d238e52f5a98c5778c0e47dd753a",
     "scripts/lint-sample-data.cjs": "55f548e97d05e03f409ccbb2f87c3ecceb1d66e4851d24f2100dedd7670f15ed",
     "scripts/make-autoinstall.sh": "71afe4bf3cb203f539be4b0c5624ab06448f7cbffd5caf0d3704a395c4284a8a",
     "scripts/make-live-usb.sh": "ece38ba927100fc42f4227fd149f88b9ffbdd67b9fc9d3a37dcbfebff74ca2b1",

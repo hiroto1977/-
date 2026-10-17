@@ -1991,6 +1991,21 @@
         "file": "src/main/clients/__tests__/skills.test.ts",
         "test": "Anthropic 鍵が無ければ読まず・送らず断る (threat: T-116)"
       }
+    },
+    {
+      "id": "T-117",
+      "found": "2026-10-17",
+      "foundBy": "hunt pass 527 の backlog SC-4 を pass 528 で直した",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "docs/SECURITY.md は lint:malware が --artifact で配る HTML も見ると述べたが、どの workflow も package.json もその引数で走らせておらず、依存の中身が畳み込まれて保管庫と同じオリジンで走る成果物は追跡ファイルの走査だけで守られていた",
+      "status": "fixed",
+      "fix": "ci.yml の build:web の後に node scripts/lint-malware.cjs --artifact dist/standalone.html を足し、走らせていることを検査で留めた。",
+      "regression": {
+        "file": "src/shared/__tests__/malwareArtifactWired.test.ts",
+        "test": "成果物の悪意コード走査 (threat: T-117)"
+      }
     }
   ],
   "huntBacklog": [
@@ -2183,11 +2198,6 @@
       "surface": "supply-chain",
       "item": "SC-3: lint:deps の規則 3 は lockfile の hasInstallScript を信じるが、npm ci は binding.gyp を持つ依存で node-gyp rebuild を hasInstallScript 無しでも走らせる",
       "why": "2026-10-17 狩り 527 が再現済み (medium)。規則 3 を lockfile でなく実物 (tarball に binding.gyp があるか) へ寄せる設計の変更。"
-    },
-    {
-      "surface": "supply-chain",
-      "item": "SC-4: docs/SECURITY.md が『lint:malware を --artifact で全 PR で走らせる』と述べるが、どの workflow も package.json も --artifact を走らせない",
-      "why": "2026-10-17 狩り 527 が再現済み (medium)。成果物の走査を ci.yml の build:web の後へ足すか、文書を実態へ直す。ci.yml は保護対象なので別パス。"
     },
     {
       "surface": "supply-chain",
