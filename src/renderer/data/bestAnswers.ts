@@ -415,8 +415,8 @@ export function stripParenthesized(s: string): string {
   let out = '';
   let from = 0;
   let open = -1;
-  for (let i = 0; i < s.length; i++) {
-    const c = s[i];
+  // UTF-16 の単位で数える (slice の添字と同じ)。`i < s.length` の比較を持たない形 (法則 115)。
+  for (const [i, c] of s.split('').entries()) {
     if (open < 0 && (c === '（' || c === '(')) {
       open = i;
     } else if (open >= 0 && (c === '）' || c === ')')) {
