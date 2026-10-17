@@ -5,7 +5,7 @@
  * (読めない保管ファイルが資格情報を要らない機能まで止めないため)。集合が実物の読み手より小さいと、
  * 読むサービスに空の token が黙って渡る。大きいと、巻き込みが残る。両方向で留める。
  */
-import { readFileSync, existsSync } from 'node:fs';
+import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -22,11 +22,12 @@ vi.mock('electron', () => ({
 import { LOCAL_SERVICES, TOKEN_CONSUMING_LOCAL, readsSavedToken } from '../index';
 import { SERVICE_IDS } from '../../../shared/serviceId';
 import { stripComments } from '../../../shared/__tests__/stripNonCode';
+import { readOriginalSource } from '../../../shared/__tests__/originalSource';
 
 const dir = resolve(__dirname, '..');
 const readsToken = (id: string): boolean => {
   const f = resolve(dir, `${id}.ts`);
-  return existsSync(f) && /\bctx\.token\b/.test(stripComments(readFileSync(f, 'utf8')));
+  return existsSync(f) && /\bctx\.token\b/.test(stripComments(readOriginalSource(f)));
 };
 
 describe('資格情報を読む LOCAL サービス (threat: T-118)', () => {

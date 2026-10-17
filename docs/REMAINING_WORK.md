@@ -1,5 +1,30 @@
 # Service Hub — 残りの作業手順書
 
+## パス 528 (狩りの 18 回目 —— パス 527 の backlog のうち、再現済みの 2 件を直す) (2026-10-17)
+
+パス 527 が `huntBacklog` に残した 7 件のうち、検証役が再現済みで直し方が確かな 2 件を直した。**新しい監査は回していない** (同じ監査役の指摘を、設計の変更が要るという理由で見送っていた分を片付けた)。
+
+| 脅威 | 内容 | 留めた検査 |
+| --- | --- | --- |
+| T-117 (supply-chain・medium・SC-4) | `docs/SECURITY.md` は `lint:malware` が `--artifact` で配る HTML も見ると述べたが、どの workflow も走らせていなかった。`ci.yml` の `build:web` の後に step を足した。`ci.yml` が `lint-malware.cjs` を読むようになったので、**整合性チェーンの閉包**に従い `lint-malware.cjs` と `lib/strip-non-code.cjs` を保護対象へ (保護対象 120) | `malwareArtifactWired.test.ts` (YAML の注記行を落としたうえで、build:web より後に走らせていること。注記の中の言及は数えない標本つき) |
+| T-118 (main-ipc・low・H-1) | `fetch:snapshot` / `action:invoke` が資格情報を読まない LOCAL サービス (40 件超) でも保管ファイルを先に読み、読めないと全部 `not_configured`。`TOKEN_CONSUMING_LOCAL` (ctx.token を読む 7 件) と `readsSavedToken` を置き、読まない物は token='' で進む | `localTokenReaders.test.ts` (集合と `ctx.token` の読み手を双方向に・走査は注記を落とす) / `mainIpc.test.ts` +2 |
+
+### 検証
+
+- 対照: SC-4 は step を `echo skipped` にすると検査が落ちる。H-1 は 4 方向 (ガードを外す・集合から抜く・集合に足す・判定を常に false) すべて狙った検査が落ち、元へ戻したことは md5 で確認。
+- 変異検査: `main.ts` 100.00% (404 変異体・生存 0)。`clients/index.ts` は `mutate` の外 (上の検査で受け持つ)。
+- `typecheck` 緑・`verify:all` 0/39・`chain:verify` 緑 (ブロック #310〜#314)・`smoke:app` OK (`build:web` で成果物を作り直してから)。
+- 全件の `npm test` は 1 度目に **2 件落ちた** —— どちらも今回足した検査ファイルが原因で、設計どおりの census の鳴り方だった: `originalSourcePolicy` (生の `readFileSync` → `readOriginalSource`) と `commentStripperCensus` (共有の `stripComments` を読む新しい本を「寄せた本」へ)。直して該当 4 ファイル 34 件が通る。
+
+### 台帳に残した backlog (5 件)
+
+AI-N1 / AI-N4 (assistant 画面の断りの文面)・SC-2 / SC-3 / SC-5 (`lint:deps` と `lint:workflow-security` の規則の追加)。
+
+### 学び
+
+- **保護対象が新しい物を読み始めると閉包が連鎖する**: `ci.yml` → `lint-malware.cjs` → `lib/strip-non-code.cjs` と 2 段続いた。`chain:verify` の断りが次の物を名指しするので、1 つずつ足して採掘し直す。
+- **`smoke:app` の鮮度の門**: `main.ts` を触った後は `build:web` を通してから回す (古い成果物は断られる)。
+
 ## パス 527 (狩りの 17 回目 —— 初めて Workflow (監査役 → 独立した検証役) で回し、確定 13 件のうち 4 脅威を直す) (2026-10-17)
 
 5 面 (main-ipc / renderer / network / ai / supply-chain) の監査役 (読み取り専用) を Workflow の `pipeline` で走らせ、各指摘を**別の検証役 (effort xhigh・反証する側)** が再現して仕分けた。19 エージェント・約 105 分。確定 13 件 (SC-1 は既知項目と重複で除外)。**検証役の再現のあと、直す物は自分でもう 1 度再現してから直した。**
