@@ -2627,6 +2627,14 @@
       "leafCount": 120,
       "note": "update integrity-chain.cjs,strip-non-code.cjs",
       "hash": "0e9472838dd463d94e59a7cbe557f86143dd99726c480c8b730d787ec7e7a412"
+    },
+    {
+      "index": 313,
+      "prevHash": "0e9472838dd463d94e59a7cbe557f86143dd99726c480c8b730d787ec7e7a412",
+      "merkleRoot": "2e929dce0601f34413186059395705afe6eac65054d0cb366d7aeb8344488990",
+      "leafCount": 120,
+      "note": "update main.ts",
+      "hash": "5aa52c34c8aad687032bbc4df89e84b6e384a81480f7a6eb8c94882a7d46348f"
     }
   ],
   "tipManifest": {
@@ -2691,7 +2699,7 @@
     "src/main/clients/types.ts": "0f7eeae150418def1fb8f242f9f010bcb6d947690b2ad085d18276c041b239fa",
     "src/main/eraseAll.ts": "5fabdaeb36193d7cfd06ccbae8712ada1a5ad36787240cd35fb3dcf0a2fdd797",
     "src/main/keychainBackend.ts": "a9ac8c957100cc6aaa332973638fe4c6057daf017e022eb50fb134ce44ce5b93",
-    "src/main/main.ts": "09d0e4962bf7f6430aa8b990af4f32dad10b849fd94eee4103194177eb76dfe4",
+    "src/main/main.ts": "afa3212c48430623d48a68aa30040e2570412edb898ce43ee80654befb128427",
     "src/main/oauth.ts": "342b114ffe392ca17fc76334b0c596b5083e631a5e383744da1a0c8f6e64999e",
     "src/main/secrets.ts": "ddfe5ece7c6393fd8cd473f84eec8173cbc2435ffb163a638e130a9e4ef5ce17",
     "src/main/shellOpenGate.ts": "5192de0eb0a48f4eebedd17fa73df4ec5722f41f7290db5194eb58e2bdb28732",

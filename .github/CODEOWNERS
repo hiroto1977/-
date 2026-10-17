@@ -198,3 +198,4 @@
 /src/renderer/data/__tests__/bestAnswers.test.ts @hiroto1977
 /src/main/clients/__tests__/skills.test.ts @hiroto1977
 /src/shared/__tests__/malwareArtifactWired.test.ts @hiroto1977
+/src/main/clients/__tests__/localTokenReaders.test.ts @hiroto1977

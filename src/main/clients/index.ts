@@ -210,6 +210,32 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
  * required", not as "no network" (pass 452 — the old wording was narrower than
  * the membership, and that matters when deciding whether a service belongs).
  */
+/*
+ * **LOCAL のうち、保存済みの資格情報を実際に読む 7 件** (2026-10-17 · パス 528 · 狩り 527 H-1)。
+ *
+ * `main.ts` の `fetch:snapshot` / `action:invoke` は資格情報を読む `getValidToken` を先に呼び、
+ * 保管ファイルが読めない (壊れた・上限超え・権限) と**全サービス**を `not_configured` で断る。
+ * 資格情報を読まない LOCAL サービス (KPI・テンプレート・人材育成ほか 40 件超) までその不調に
+ * 巻き込まれ、しかも復旧口 (`secrets:clear` / `secrets:set`) は読めない保管ファイルを上書きしない
+ * 設計 (T-061) で閉じているので、残る道は `app:eraseAll` だけで、それは止まっていた記録まで消す。
+ * 読まない物は読まない —— この集合に居ない LOCAL サービスは `getValidToken` を呼ばず token = '' で進む。
+ * 集合と `ctx.token` の読み手は `localTokenReaders.test.ts` が双方向に突き合わせる。
+ */
+export const TOKEN_CONSUMING_LOCAL: ReadonlySet<ServiceId> = new Set<ServiceId>([
+  'skills',
+  'security',
+  'emotions',
+  'stocks',
+  'business',
+  'teamradar',
+  'assistant',
+]);
+
+/** 保存済みの資格情報を読んでから呼ぶべきサービスか (LOCAL でない物と、LOCAL でも読む 7 件)。 */
+export function readsSavedToken(id: ServiceId): boolean {
+  return !LOCAL_SERVICES.has(id) || TOKEN_CONSUMING_LOCAL.has(id);
+}
+
 export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'home',
   // 書類スタジオ: テンプレートは renderer 内蔵。認証・ネットワーク不要。

@@ -2006,6 +2006,21 @@
         "file": "src/shared/__tests__/malwareArtifactWired.test.ts",
         "test": "成果物の悪意コード走査 (threat: T-117)"
       }
+    },
+    {
+      "id": "T-118",
+      "found": "2026-10-17",
+      "foundBy": "hunt pass 527 の backlog H-1 を pass 528 で直した",
+      "surface": "main-ipc",
+      "class": "ransomware-extortion",
+      "severity": "low",
+      "title": "fetch:snapshot / action:invoke が、資格情報を読まない LOCAL サービス (40 件超) でも先に保管ファイルを読み、読めない (壊れた・1 MiB 超・権限) と KPI・テンプレート・人材育成まで not_configured で止まった。復旧口 (secrets:clear / set) は読めない保管ファイルを上書きしない設計 (T-061) で閉じており、残る eraseAll は止まっていた記録まで消した",
+      "status": "fixed",
+      "fix": "clients/index.ts に TOKEN_CONSUMING_LOCAL (ctx.token を読む 7 件) と readsSavedToken を置き、main.ts の 2 つの入口は読まない LOCAL サービスでは保管ファイルに触れず token='' で進む。集合は ctx.token の読み手と双方向に突き合わせる。",
+      "regression": {
+        "file": "src/main/clients/__tests__/localTokenReaders.test.ts",
+        "test": "資格情報を読む LOCAL サービス (threat: T-118)"
+      }
     }
   ],
   "huntBacklog": [
@@ -2178,11 +2193,6 @@
       "surface": "supply-chain",
       "item": "e2e.yml の npm install --no-save playwright@1.56.1 は版固定だが integrity が無い",
       "why": "2026-10-16 に読んだ。lockfile へ入れるか、integrity を検める手が候補。e2e は既定で走らない。"
-    },
-    {
-      "surface": "main-ipc",
-      "item": "H-1: fetch:snapshot / action:invoke が、トークンを読まない LOCAL サービス (約 46 件) でも先に getValidToken を呼び、保管ファイルが読めないと KPI・テンプレート・人材育成まで not_configured で止まる",
-      "why": "2026-10-17 狩り 527 が再現済み (重さ low・起点は外部要因のみ)。直しは TOKEN_CONSUMING_LOCAL を census で ctx.token の読み手と双方向に突き合わせてから main.ts で素通りさせる設計の変更で、main.ts は保護対象なので別パスで行う。"
     },
     {
       "surface": "ai",

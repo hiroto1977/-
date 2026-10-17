@@ -8,7 +8,7 @@ import {
   setOAuthTokens,
   setToken,
 } from './secrets';
-import { LIVE_ACTIONS, LIVE_FETCHERS, LOCAL_SERVICES, type ServiceId } from './clients';
+import { LIVE_ACTIONS, LIVE_FETCHERS, LOCAL_SERVICES, readsSavedToken, type ServiceId } from './clients';
 import { authorize, isOAuthSupported, OAUTH_CONFIGS } from './oauth';
 import { repairExportPermissions } from './clients/exportPaths';
 import { isServiceId } from '../shared/serviceId';
@@ -498,7 +498,8 @@ ipcMain.handle('fetch:snapshot', async (_e, serviceId: unknown) => {
   // reject し、renderer 側 (`useServiceData`) は「読込中…」のまま止まっていた。
   let token = '';
   try {
-    const read = await getValidToken(serviceId);
+    // 資格情報を読まない LOCAL サービスは保管ファイルに触れない (その不調に巻き込まれない・T-118)。
+    const read = readsSavedToken(serviceId) ? await getValidToken(serviceId) : { ok: true as const, token: '' };
     if (!read.ok) {
       // LOCAL_SERVICES は資格情報なしでも動くので、読めないことは異常ではない。
       // ただし「保存済みだが復号できない」「保管ファイルが読めない」場合は
@@ -569,7 +570,8 @@ ipcMain.handle(
      */
     let token = '';
     try {
-      const read = await getValidToken(serviceId);
+      // 資格情報を読まない LOCAL サービスは保管ファイルに触れない (その不調に巻き込まれない・T-118)。
+    const read = readsSavedToken(serviceId) ? await getValidToken(serviceId) : { ok: true as const, token: '' };
       if (!read.ok) {
         // 未設定だけが「トークン未設定」。復号できない・保管ファイルが読めないは理由を出す。
         if (read.reason !== 'absent') {
