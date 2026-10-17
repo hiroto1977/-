@@ -165,7 +165,7 @@ const PRAGMA_BARE = {
   'src/main/clients/stocks.ts':                  8,
   'src/main/clients/storage.ts':                 2,
   'src/main/clients/uber-eats.ts':               4,
-  'src/main/oauth.ts':                           5,
+  'src/main/oauth.ts':                           2,
   'src/renderer/data/cloudBackup.ts':            1,
   'src/renderer/data/emotionsWeb.ts':            1,
   'src/renderer/data/managementHighlights.ts':   1,

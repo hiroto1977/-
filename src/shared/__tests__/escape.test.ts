@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { escapeXml, safeColor, isHexColor, escapeMarkdownInline, escapeMarkdownText } from '../escape';
+import { escapeXml, safeColor, isHexColor, escapeMarkdownInline, escapeMarkdownText, escapeInvisibleUnits, escapeUnits, INVISIBLE_UNITS } from '../escape';
 
 describe('escapeXml', () => {
   it('マークアップで意味を持つ 5 文字を落とす', () => {
@@ -207,5 +207,66 @@ describe('escapeMarkdownText — 段落', () => {
   it('普通の文字は変えない', () => {
     expect(escapeMarkdownText('売上が伸びています。')).toBe('売上が伸びています。');
     expect(escapeMarkdownText('')).toBe('');
+  });
+});
+
+describe('escapeInvisibleUnits — 見えない字を見える綴りへ (threat: T-034)', () => {
+  it('★ 双方向制御 (U+202E) は `\\u202e` になり、それ以後の字は字面どおり残る (threat: T-034)', () => {
+    const out = escapeInvisibleUnits('送金を中止\u202eを承認');
+    expect(out).toBe('送金を中止\\u202eを承認');
+    expect(out).not.toContain('\u202e');
+  });
+
+  it.each([
+    ['ZWSP', '\u200b', '\\u200b'],
+    ['BOM', '\ufeff', '\\ufeff'],
+    ['双方向の分離 (U+2066)', '\u2066', '\\u2066'],
+    ['C0 (BEL)', '\u0007', '\\u0007'],
+    ['DEL', '\u007F', '\\u007f'],
+    ['C1', '\u0085', '\\u0085'],
+    ['行区切り (U+2028)', '\u2028', '\\u2028'],
+    ['段落区切り (U+2029)', '\u2029', '\\u2029'],
+    ['改行', '\n', '\\u000a'],
+  ])('%s は逃がす', (_n, ch, expected) => {
+    expect(escapeInvisibleUnits(`a${ch}b`)).toBe(`a${expected}b`);
+  });
+
+  it('対照: 見える字 (日本語・絵文字・記号・空白) は 1 字も変えない', () => {
+    const plain = 'こんにちは 😀 #general a/b 「」 *x* `y` <z>';
+    expect(escapeInvisibleUnits(plain)).toBe(plain);
+  });
+
+  it('面を越える書式文字は UTF-16 の単位ごとに逃がす (U+E0001 → 2 単位)', () => {
+    expect(escapeInvisibleUnits('\u{E0001}')).toBe('\\udb40\\udc01');
+  });
+
+  it('INVISIBLE_UNITS は global なので `replace` で全部に当たる (1 字目だけではない)', () => {
+    expect(escapeInvisibleUnits('\u202e\u202e')).toBe('\\u202e\\u202e');
+    expect(escapeUnits('\u202e')).toBe('\\u202e');
+    expect(INVISIBLE_UNITS.global).toBe(true);
+  });
+});
+
+/**
+ * 画像とリンクの入口は、書き出した `.md` の中で生きない (2026-10-16 · パス 524 · threat: T-087)。
+ * `![t](https://remote/pixel)` は Obsidian / GitHub 系の描画で開いただけで外へ取りに行き、
+ * `[x](javascript:…)` は押せるリンクになる。直す前は `<` 以外を通していた (実測)。
+ */
+describe('Markdown の画像・リンクの入口 (threat: T-087)', () => {
+  const hostile = '![t](https://evil.example/b.png?u=1) [x](javascript:alert(1))';
+  it.each([
+    ['inline', escapeMarkdownInline],
+    ['text', escapeMarkdownText],
+  ])('★ %s: ![ と ]( を無効にする (threat: T-087)', (_name, fn) => {
+    const out = fn(hostile);
+    expect(out).not.toContain('![');
+    expect(out).not.toContain('](');
+    expect(out).toBe('!\\[t]\\(https://evil.example/b.png?u=1) [x]\\(javascript:alert(1))');
+  });
+
+  it('★ 対照: 普通の [注] や (補足) は 1 字も変えない', () => {
+    for (const fn of [escapeMarkdownInline, escapeMarkdownText]) {
+      expect(fn('売上 [注1] と (補足) と ! と ] ( の単独')).toBe('売上 [注1] と (補足) と ! と ] ( の単独');
+    }
   });
 });

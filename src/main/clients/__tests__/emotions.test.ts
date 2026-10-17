@@ -185,6 +185,29 @@ describe('ACTIONS["log-mood"]', () => {
     ).rejects.toThrow(/between 1 and 5/);
   });
 
+  // 同時の記録が互いを消さない (2026-10-16 · パス 524 · threat: T-078)。直す前は 5 件の同時
+  // 記録のうち 1 件しか残らなかった (実測)。
+  it('★ 同時に記録しても全部残る (threat: T-078)', async () => {
+    await Promise.all(
+      ['2026-05-01', '2026-05-02', '2026-05-03', '2026-05-04', '2026-05-05'].map((date) =>
+        ACTIONS['log-mood']!({ token: '', fetch: vi.fn<typeof fetch>(), payload: { date, score: 3 } }),
+      ),
+    );
+    const stored = await readStored();
+    expect(stored.moods).toHaveLength(5);
+  });
+
+  it('★ 記録と全消去が同時でも、消去の後に記録が戻らない／記録が黙って消えない (threat: T-078)', async () => {
+    await ACTIONS['log-mood']!({ token: '', fetch: vi.fn<typeof fetch>(), payload: { date: '2026-05-01', score: 3 } });
+    // 全消去 → 記録の順に積む。鎖が無いと消去が古い読みの上に書き、記録が先の中身を巻き込む。
+    await Promise.all([
+      ACTIONS['clear-history']!({ token: '', fetch: vi.fn<typeof fetch>(), payload: { kind: 'all' } }),
+      ACTIONS['log-mood']!({ token: '', fetch: vi.fn<typeof fetch>(), payload: { date: '2026-05-02', score: 4 } }),
+    ]);
+    const stored = await readStored();
+    expect(stored.moods).toEqual([expect.objectContaining({ date: '2026-05-02' })]);
+  });
+
   it('replaces same-date entry rather than appending', async () => {
     await ACTIONS['log-mood']!({ token: '', fetch: vi.fn<typeof fetch>(), payload: { date: '2026-05-01', score: 3 } });
     await ACTIONS['log-mood']!({ token: '', fetch: vi.fn<typeof fetch>(), payload: { date: '2026-05-01', score: 5 } });
@@ -1158,6 +1181,47 @@ describe('保存先の封緘 — 感情ログは secrets.json と同じ約束で
     await expect(fetchEmotionsSnapshot({ token: '', fetch: noFetch() })).rejects.toThrow('キーチェーンが使えないため読めません');
   });
 
+  /*
+   * **読めないファイルの部分消去は断る** (2026-10-13 · パス 518 · threat: T-028)。
+   * 気分と解析は 1 つの封緘に入っており、読めないとき `moods` だけ消すと、消さないはずの
+   * 解析まで空で書き戻して黙って失う。実測 (直す前): 壊れた封緘に kind:'moods' を送ると
+   * ファイルが `{moods:[],analyses:[]}` の封緘に置き換わり、読めなかった解析が消えた。
+   * 直した後は断り、ファイルのバイト列は 1 つも変えない。全消去 (all) だけが通る。
+   */
+  it.each([['moods'], [undefined]])(
+    '★ 読めないファイルへの部分消去 (kind: %s) は断り、ファイルを 1 バイトも変えない (threat: T-028)',
+    async (kind) => {
+      const corrupt = { v: 2, sealed: Buffer.from('enc:not json at all', 'utf8').toString('base64') };
+      await seed(corrupt);
+      const before = await fs.readFile(storeFile(), 'utf8');
+      await expect(
+        ACTIONS['clear-history']!({ token: '', fetch: noFetch(), payload: kind === undefined ? {} : { kind } }),
+      ).rejects.toThrow('すべて消す');
+      expect(await fs.readFile(storeFile(), 'utf8'), '部分消去がファイルを書き換えた (解析が黙って消える)').toBe(before);
+    },
+  );
+
+  /**
+   * 一部の行だけ形の検査で落ちるファイルの部分消去 (2026-10-16 · パス 525 · threat: T-097)。
+   * T-028 は「ファイル全体が読めない」ときだけを断った。`readStore()` は落ちた行を黙って捨てて返すので、
+   * 気分だけ消して書き戻すと、頼んでいない解析の**形が合わない行**まで消えた (実測)。
+   */
+  it('★ 形の合わない行が在るファイルの部分消去は断り、ファイルを 1 バイトも変えない (threat: T-097)', async () => {
+    const good = { timestamp: 1, text: 'ok', excerpt: 'ok', scores: { joy: 0.5, sadness: 0, anger: 0, fear: 0, surprise: 0, disgust: 0 }, sentiment: 'neutral', dominant: 'joy' };
+    await seed({
+      moods: [{ date: '2026-10-01', score: 3, note: 'n' }],
+      analyses: [good, { ...good, scores: { ...good.scores, joy: 'high' } }],
+    });
+    const before = await fs.readFile(storeFile(), 'utf8');
+    await expect(ACTIONS['clear-history']!({ token: '', fetch: noFetch(), payload: { kind: 'moods' } })).rejects.toThrow('すべて消す');
+    expect(await fs.readFile(storeFile(), 'utf8'), '部分消去が形の合わない行を黙って消した').toBe(before);
+  });
+
+  it('対照: 全部の行が読めるファイルの部分消去は今までどおり通る', async () => {
+    await seed({ moods: [{ date: '2026-10-01', score: 3, note: 'n' }], analyses: [] });
+    expect(await ACTIONS['clear-history']!({ token: '', fetch: noFetch(), payload: { kind: 'moods' } })).toEqual({ moods: 1, analyses: 0 });
+  });
+
   it('「履歴を消去」は読めないファイルでも通り、空の封緘に置き換える (唯一の出口を塞がない)', async () => {
     await seed({ v: 2, sealed: Buffer.from('enc:not json at all', 'utf8').toString('base64') });
     const before = await ACTIONS['clear-history']!({ token: '', fetch: noFetch(), payload: { kind: 'all' } });
@@ -1165,5 +1229,39 @@ describe('保存先の封緘 — 感情ログは secrets.json と同じ約束で
     expect(await readStored()).toEqual({ moods: [], analyses: [] });
     const snap = await fetchEmotionsSnapshot({ token: '', fetch: noFetch() });
     expect(snap.moods).toEqual([]);
+  });
+});
+
+describe('analyze-text の出所 (source) は型と長さを見る (threat: T-037)', () => {
+  const okBody = { scores: { joy: 0.9 }, sentiment: 'positive', dominant: 'joy' };
+  const reply = () =>
+    vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(JSON.stringify({ content: [{ type: 'text', text: JSON.stringify(okBody) }] }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+
+  it('★ 10 MB の出所を渡しても、保存される抜粋は天井 (80 字 × 2 + 札) に収まる (threat: T-037)', async () => {
+    const huge = 'x'.repeat(10 * 1024 * 1024);
+    const entry = (await ACTIONS['analyze-text']!({ token: 'sk-ant-x', fetch: reply(), payload: { text: 'あ', source: huge } })) as {
+      excerpt: string;
+    };
+    expect(entry.excerpt.length).toBeLessThan(200);
+    expect(entry.excerpt.startsWith('[' + 'x'.repeat(80) + '] ')).toBe(true);
+  });
+
+  it('★ 文字列でない出所は札を付けない (`[object Object]` を刷らない) (threat: T-037)', async () => {
+    const entry = (await ACTIONS['analyze-text']!({ token: 'sk-ant-x', fetch: reply(), payload: { text: 'あ', source: { a: 1 } } })) as {
+      excerpt: string;
+    };
+    expect(entry.excerpt).toBe('あ');
+  });
+
+  it('対照: 正当な札はそのまま', async () => {
+    const entry = (await ACTIONS['analyze-text']!({ token: 'sk-ant-x', fetch: reply(), payload: { text: 'あ', source: 'Gmail Inbox' } })) as {
+      excerpt: string;
+    };
+    expect(entry.excerpt).toBe('[Gmail Inbox] あ');
   });
 });

@@ -120,7 +120,7 @@ describe('復元: 計画と実行が同じ関門を読む', () => {
 
   it('★ 同じ id の控えが形式不正なら、置換で「消える」と数える', () => {
     const plan = planRestore(
-      [{ id: 'bs-1', updatedAt: 100 }],
+      [{ id: 'bs-1', updatedAt: 100, collection: BALANCE_SHEET_COLLECTION }],
       [rec('bs-1', BALANCE_SHEET_COLLECTION, OLD_BALANCE_SHEET, 200)],
       'replace',
       null, false,
@@ -134,7 +134,7 @@ describe('復元: 計画と実行が同じ関門を読む', () => {
 
   it('★ マージなら同じ形でも消えない (置換だけが消す)', () => {
     const plan = planRestore(
-      [{ id: 'bs-1', updatedAt: 100 }],
+      [{ id: 'bs-1', updatedAt: 100, collection: BALANCE_SHEET_COLLECTION }],
       [rec('bs-1', BALANCE_SHEET_COLLECTION, OLD_BALANCE_SHEET, 200)],
       'merge',
       null, false,
@@ -145,7 +145,7 @@ describe('復元: 計画と実行が同じ関門を読む', () => {
 
   it('★ 取り込める記録が 1 件も無い置換は、訊く前に断る', () => {
     const plan = planRestore(
-      [{ id: 'mine', updatedAt: 100 }],
+      [{ id: 'mine', updatedAt: 100, collection: SALES_COLLECTION }],
       [rec('b1', BALANCE_SHEET_COLLECTION, OLD_BALANCE_SHEET), rec('b2', BALANCE_SHEET_COLLECTION, OLD_BALANCE_SHEET)],
       'replace',
       null, false,
@@ -158,7 +158,7 @@ describe('復元: 計画と実行が同じ関門を読む', () => {
   });
 
   it('対照: 1 件でも入るなら断らない / マージは断らない', () => {
-    const local = [{ id: 'mine', updatedAt: 100 }];
+    const local = [{ id: 'mine', updatedAt: 100, collection: SALES_COLLECTION }];
     const mixed = [rec('g', SALES_COLLECTION, goodSale(1)), rec('b', BALANCE_SHEET_COLLECTION, OLD_BALANCE_SHEET)];
     expect(unusableBackupRefusal(planRestore(local, mixed, 'replace', null, false))).toBeNull();
     const allBad = [rec('b', BALANCE_SHEET_COLLECTION, OLD_BALANCE_SHEET)];
@@ -169,7 +169,7 @@ describe('復元: 計画と実行が同じ関門を読む', () => {
 
   it('★ 一部が落ちる置換では、確認文が取り込めない件数と消える理由を述べる', () => {
     const plan = planRestore(
-      [{ id: 'mine', updatedAt: 100 }, { id: 'shared', updatedAt: 100 }],
+      [{ id: 'mine', updatedAt: 100, collection: SALES_COLLECTION }, { id: 'shared', updatedAt: 100, collection: BALANCE_SHEET_COLLECTION }],
       [
         rec('g', SALES_COLLECTION, goodSale(1)),
         rec('shared', BALANCE_SHEET_COLLECTION, OLD_BALANCE_SHEET, 200),
@@ -187,7 +187,7 @@ describe('復元: 計画と実行が同じ関門を読む', () => {
 
   it('対照: 正しい控えなら文面は 1 字も変わらない (針が的に当たる標本つき)', () => {
     const plan = planRestore(
-      [{ id: 'mine', updatedAt: 100 }],
+      [{ id: 'mine', updatedAt: 100, collection: SALES_COLLECTION }],
       [rec('g', SALES_COLLECTION, goodSale(1))],
       'replace',
       null, false,
@@ -203,7 +203,7 @@ describe('復元: 計画と実行が同じ関門を読む', () => {
     expect(result).not.toContain('形式不正');
     // 上の 3 つの `not` が的に当たることを、同じ it の中で標本に対して示す。
     const dirty = planRestore(
-      [{ id: 'shared', updatedAt: 100 }],
+      [{ id: 'shared', updatedAt: 100, collection: BALANCE_SHEET_COLLECTION }],
       [rec('g', SALES_COLLECTION, goodSale(1)), rec('shared', BALANCE_SHEET_COLLECTION, OLD_BALANCE_SHEET, 200)],
       'replace',
       null, false,

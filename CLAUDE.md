@@ -1098,6 +1098,16 @@ npm run typecheck        # tsc -b --noEmit --force (uses tsconfig project refere
                          #   生えれば「教えろ」と落ちる)
 npm test                 # vitest run (src/**/__tests__/ 。件数は docs/ARCHITECTURE.md の表が持つ
                          #   — 数を 2 か所に書くと必ず食い違うので、ここには書かない)
+npm run audit:verify-keep-going  # **`verify:all` を止まらずに全ゲート回し、落ちた物を一度に挙げる**
+                         #   (定期点検の道具 11 本目。CI では走らせない)。`verify:all` は `&&` 連結なので
+                         #   最初に落ちたゲートで止まり、直して回し直すたびに次の 1 件が見える ——
+                         #   パス 525 は verify:arch (行ずれ 6) → lint:mutation-scope (Stryker の帯の延長) →
+                         #   lint:shared-judgement (census の再生成) → chain:verify (保護対象の編集後に
+                         #   chain:append していない) と **4 回に分けて 1 件ずつ**見つけた。どれも設計どおりに
+                         #   鳴ったゲートで、遅かったのは見つけ方のほう。実測 (2026-10-16): 39 ゲートで
+                         #   **約 270 秒**・`-- --fast` は重い 5 本 (typecheck / lint / lint:regex /
+                         #   verify:graph / vault:check) を飛ばして**約 80 秒** (push 前の最終確認ではない)。
+                         #   `-- lint:docs,chain:verify` のように名指しもできる。母集団は `verify:all` の本文から導く
 npm run audit:tick-sensitivity  # 固定回数で待つ検査が**その回数に依っているか**を実測する
                          #   (定期点検の道具 4 本目。CI では走らせない —— 判定のために
                          #   ソースを書き換えるし、落ちること自体は欠陥ではないため)。
@@ -1520,7 +1530,7 @@ npm run lint:zero-fold     # 「割れない値を 0 に倒す」箇所の**母�
 npm run lint:shared-judgement # 「述語は共有したが、no と言われたあとの動作が両ビルドで
                            #   違う」の**母集団**を数え、`docs/REMAINING_WORK.md` の
                            #   生成ブロックと突き合わせる (shared 158 / 両ビルドが
-                           #   import 80 / うち否定で答えられる 39。**この 3 つは
+                           #   import 81 / うち否定で答えられる 40。**この 3 つは
                            #   live metric なので散文だけが古びることはもう無い** ——
                            #   2026-09-15 まで 138 / 44 / 21 と書いたままだった。
                            #   44 / 21 はパス 247 が初めて数えた値で、

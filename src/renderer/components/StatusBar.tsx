@@ -7,6 +7,7 @@ import type { ErrorKind, Source, Status } from '../hooks/useServiceData';
 // 画像 URL のスキーム検証は 1 箇所だけに置く（2026-07 監査・多層防御）。
 // 3 つ目の呼び出し元が出たら components/ の共有ユーティリティへ切り出す。
 import { safeRemoteImageSrc } from '../../shared/imageUrlGate';
+import { externalTextOnOneLine } from '../data/assistantMarkdown';
 
 interface Props {
   who: ReactNode;
@@ -151,7 +152,7 @@ export function StatusBar({
       }
       // 画面に出す。出さないと、同意を拒否した場合と通信が失敗した場合と
       // 成功した場合が利用者から区別できない。
-      setCredentialError(`認証できませんでした: ${res.message}`);
+      setCredentialError(`認証できませんでした: ${externalTextOnOneLine(res.message)}`);
     },
     [serviceId, onRefresh],
   );
@@ -188,7 +189,7 @@ export function StatusBar({
     // ことを返してくるので、成功扱いで入力欄を閉じてはいけない。
     const res = await window.serviceHub.setToken(serviceId, token.trim());
     if (!res.ok) {
-      setCredentialError(`保存できませんでした: ${res.message}`);
+      setCredentialError(`保存できませんでした: ${externalTextOnOneLine(res.message)}`);
       return;
     }
     setToken('');
@@ -203,7 +204,7 @@ export function StatusBar({
     // 削除の失敗を黙ると「消したつもりの資格情報が残っている」状態になる。
     const res = await window.serviceHub.clearToken(serviceId);
     if (!res.ok) {
-      setCredentialError(`削除できませんでした: ${res.message}`);
+      setCredentialError(`削除できませんでした: ${externalTextOnOneLine(res.message)}`);
       return;
     }
     // **削除できたことは、札と「削除」ボタンの消滅で示す。** 親の判定は
@@ -283,7 +284,12 @@ export function StatusBar({
         </span>
       ) : null}
       {errorMessage ? (
-        <span style={{ color: 'var(--danger)', fontSize: 12 }}>{errorMessage}</span>
+        // threat: T-065 —— 取得の失敗文も 1 行に畳む (2026-10-15 · パス 523)。隣の `credentialError` は
+        // T-045 で畳んでいたが、`useServiceData` が `fetchSnapshot` の `result.message` をそのまま渡す
+        // この欄は素だった —— 58 画面が通る 1 か所。ブラウザ版の Ollama の失敗文は相手の本文を
+        // 伏字と長さだけ掛けて運ぶので、改行・双方向制御 (U+202E)・不可視字がそのまま DOM に入り、
+        // RLO が後ろの文の見え方を入れ替えていた (実測)。
+        <span style={{ color: 'var(--danger)', fontSize: 12 }}>{externalTextOnOneLine(errorMessage)}</span>
       ) : null}
     </div>
   );

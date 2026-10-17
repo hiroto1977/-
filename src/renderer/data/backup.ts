@@ -29,11 +29,11 @@
  *
  * IndexedDB の読み書きは `store.exportAll()` / `store.importAll()`。
  */
-import { importableRecordGate, type StoredRecord } from './store';
+import { dedupeById, importableRecordGate, type StoredRecord } from './store';
 import { parseTimestamp } from '../../shared/isoDate';
 import { encryptString, decryptString, isEncryptedBundle, type EncryptedBundle } from '../security/dataCrypto';
 import { MIN_PASSWORD_LENGTH, meetsPasswordPolicy } from '../security/vault';
-import { personalDataCollections } from './collectionShapes';
+import { COLLECTION_SHAPES, personalDataCollections } from './collectionShapes';
 
 export const BACKUP_VERSION = 1;
 
@@ -249,6 +249,14 @@ export function backupExportedAt(v: unknown): string | null {
 export interface RestoreEnvelope {
   readonly id: string;
   readonly updatedAt: number;
+  /**
+   * この端末の行の collection (2026-10-15 · パス 522 · threat: T-048)。控えの同じ id が
+   * **別の collection** を名乗るなら、マージでは書かず (`importAll` も同じ規則)、置換では
+   * この端末の行が消えて別物が入る —— どちらも「更新」ではない。`exportAll()` の封筒は
+   * 必ずこれを持つ (任意にすると「無ければ照合を飛ばす」枝が生え、その枝は実物では
+   * 到達しないので変異検査に等価変異体として残る —— パス 522)。
+   */
+  readonly collection: string;
 }
 
 export type RestoreMode = 'merge' | 'replace';
@@ -297,7 +305,16 @@ export interface RestorePlan {
    * 実測: 確認文が「**消える記録はありません**」と述べ、押すとその記録が消えた (パス 432)。
    */
   readonly unusableLocal: number;
-  /** 置換で失う (元に戻せない) 件数 = localOnly + newerLocal + unusableLocal。マージでは 0。 */
+  /**
+   * 控えの同じ id が**別の collection** を名乗る件数 (2026-10-15 · パス 522 · threat: T-048)。
+   * マージでは書かない (この端末の行が残る)・置換ではこの端末の行が消えて控えの行が入る
+   * (`lost` に数える)。「更新」には数えない —— 更新は同じ記録の新しい中身であって、別の
+   * collection の行で置き換えることではない。
+   */
+  readonly collectionClash: number;
+  /** 控えの中で同じ id が 2 度以上現れた分 (後の行が勝つ = `put` と同じ)。`incoming` には数え、入る数には数えない。 */
+  readonly duplicateIds: number;
+  /** 置換で失う (元に戻せない) 件数 = localOnly + newerLocal + unusableLocal + collectionClash。マージでは 0。 */
   readonly lost: number;
   /** 実際に書く物 —— マージでは newerLocal を除き、置換では全部。 */
   readonly toImport: readonly StoredRecord[];
@@ -311,17 +328,25 @@ export function planRestore(
   /** 封緘済みを受けてよいか —— `importAll` と同じ答え (`RecordStore.acceptsSealedRecords()`)。パス 511。 */
   acceptSealed: boolean,
 ): RestorePlan {
-  const local = new Map<string, number>();
-  for (const r of existing) local.set(r.id, r.updatedAt);
+  const local = new Map<string, RestoreEnvelope>();
+  for (const r of existing) local.set(r.id, r);
   // **入るのはこれだけ。** 関門は `importAll` と同じ 1 つ (`isImportableRecord`) ——
-  // 2 つ書くと、数える側と実行する側が割れる (パス 432)。
-  const usable = incoming.filter(importableRecordGate(acceptSealed));
+  // 2 つ書くと、数える側と実行する側が割れる (パス 432)。同じ id は後の行が勝つので
+  // 1 件へ畳んでから数える (`dedupeById` —— `importAll` と同じ · T-048)。
+  // threat: T-067 —— **順序も `importAll` と同じ: 関門 → 畳む** (2026-10-15 · パス 523)。
+  // 2026-10-15 までここは畳んでから関門を通していた (`importAll` は関門を通してから畳む) ので、
+  // 同じ id が「正しい行 → 後ろに壊れた写し」と並ぶ控えでは、計画は後の壊れた写しだけを残して
+  // 「形式不正 1 件」と数え **正しい行を捨て** (`toImport` が空)、`importAll` へ直に渡せば入っていた。
+  // パネルは `plan.toImport` を渡すので、利用者には正しい行が消えて見えた (実測)。
+  const valid = incoming.filter(importableRecordGate(acceptSealed));
+  const usable = dedupeById(valid);
   const fileIds = new Set<string>();
   for (const rec of incoming) fileIds.add(rec.id);
   const usableIds = new Set<string>();
   let added = 0;
   let overwritten = 0;
   let newerLocal = 0;
+  let collectionClash = 0;
   const toImport: StoredRecord[] = [];
   for (const rec of usable) {
     usableIds.add(rec.id);
@@ -329,7 +354,12 @@ export function planRestore(
     if (mine === undefined) {
       added += 1;
       toImport.push(rec);
-    } else if (mine > rec.updatedAt) {
+    } else if (mine.collection !== rec.collection) {
+      // 別の collection の行が同じ id を名乗る —— マージでは書かない (importAll も書かない)。
+      // 置換では消してから入れるので入るが、この端末の行は**失われる** (下で lost に数える)。
+      collectionClash += 1;
+      if (mode === 'replace') toImport.push(rec);
+    } else if (mine.updatedAt > rec.updatedAt) {
       newerLocal += 1;
       if (mode === 'replace') toImport.push(rec);
     } else {
@@ -347,11 +377,12 @@ export function planRestore(
     else localOnly += 1;
   }
   let lost = 0;
-  if (mode === 'replace') lost = localOnly + newerLocal + unusableLocal;
+  if (mode === 'replace') lost = localOnly + newerLocal + unusableLocal + collectionClash;
   return {
     mode, exportedAt,
-    incoming: incoming.length, existing: existing.length, dropped: incoming.length - usable.length,
-    added, overwritten, newerLocal, localOnly, unusableLocal, lost, toImport,
+    incoming: incoming.length, existing: existing.length, dropped: incoming.length - valid.length,
+    duplicateIds: valid.length - usable.length,
+    added, overwritten, newerLocal, localOnly, unusableLocal, collectionClash, lost, toImport,
   };
 }
 
@@ -383,6 +414,8 @@ export function replaceRestoreConfirmMessage(plan: RestorePlan): string {
     `この端末の方が新しい ${plan.newerLocal} 件`,
     // 形式不正の控えは「上書き」ではなく**消えるだけ** —— 消してから入れる物が無い。
     ...(plan.unusableLocal > 0 ? [`バックアップ側が形式不正で入れ替えられない ${plan.unusableLocal} 件`] : []),
+    // 別の collection の行が同じ id を名乗る —— 消えて別物が入る (「更新」ではない · T-048)。
+    ...(plan.collectionClash > 0 ? [`バックアップ側が別の種類の記録で同じ id を名乗る ${plan.collectionClash} 件`] : []),
   ];
   const loss =
     plan.lost === 0
@@ -434,9 +467,11 @@ export function restoreResultMessage(plan: RestorePlan, imported: number, droppe
   const droppedNote = Number.isFinite(dropped) && dropped > 0 ? `${dropped} 件は形式が不正なため取り込みませんでした。` : '';
   // 消えた理由は**確認文と同じ 3 つ**を同じ順序で並べる (形式不正が 0 件なら文面は変わらない)。
   const unusable = plan.unusableLocal > 0 ? ` + バックアップ側が形式不正だった ${plan.unusableLocal} 件` : '';
+  // 確認文と同じ 4 つ目 (T-048) —— 別の種類の記録が同じ id を名乗った分。
+  const clash = plan.collectionClash > 0 ? ` + バックアップ側が別の種類の記録で同じ id を名乗った ${plan.collectionClash} 件` : '';
   const detail =
     plan.mode === 'replace'
-      ? `既存データは置換。消えた ${plan.lost} 件 = バックアップに無い ${plan.localOnly} 件 + この端末の方が新しかった ${plan.newerLocal} 件${unusable}`
+      ? `既存データは置換。消えた ${plan.lost} 件 = バックアップに無い ${plan.localOnly} 件 + この端末の方が新しかった ${plan.newerLocal} 件${unusable}${clash}`
       : `マージ: 追加 ${plan.added}・更新 ${plan.overwritten}・この端末の方が新しい ${plan.newerLocal} 件はそのまま`;
   return `${importedLabel}のレコードを復元しました（${detail}）。${droppedNote}再読み込みで反映されます。`;
 }
@@ -471,6 +506,15 @@ export function plaintextExposure(records: readonly { readonly collection: strin
   for (const { collection } of personalDataCollections()) {
     const count = records.filter((r) => r.collection === collection).length;
     if (count > 0) parts.push({ collection, label: PERSONAL_DATA_LABELS[collection] ?? collection, count });
+  }
+  // **台帳に無い collection の記録は、中身が何かを知らない** (T-050)。知らない物を「個人情報ではない」と
+  // 数えると、復元で入った未知の記録が黙って平文へ乗る。知らない側は「持ち出すと困るかもしれない」へ倒す。
+  const unknownCounts = new Map<string, number>();
+  for (const r of records) {
+    if (!Object.hasOwn(COLLECTION_SHAPES, r.collection)) unknownCounts.set(r.collection, (unknownCounts.get(r.collection) ?? 0) + 1);
+  }
+  for (const [collection, count] of unknownCounts) {
+    parts.push({ collection, label: `台帳に無い種類の記録 (${collection})`, count });
   }
   return { total: parts.reduce((sum, p) => sum + p.count, 0), parts };
 }

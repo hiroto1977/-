@@ -876,4 +876,112 @@ describe('setToken — 積み重ねで保管庫を塞がない (threat: T-001)',
     await expect(m2.clearToken('github')).resolves.toBeUndefined();
     await expect(m2.setToken('github', 'ghp_NEW')).resolves.toBeUndefined();
   });
+
+  it('★ 断りは名前と全文を持つ (上限・保存すると何バイト・既存はそのまま・直す手)', async () => {
+    const m = await secretsModule();
+    // 1 MiB の値 1 つ: base64(`enc:` + 値) = 4·⌈(4 + 1048576)/3⌉ = 1,398,108 字 + JSON の枠 13 字。
+    const huge = 'a'.repeat(1024 * 1024);
+    await expect(m.setToken('notion', huge)).rejects.toThrow(m.SecretsStoreFullError);
+    let caught: unknown;
+    try {
+      await m.setToken('notion', huge);
+    } catch (e) {
+      caught = e;
+    }
+    const err = caught as Error;
+    expect(err.name).toBe('SecretsStoreFullError');
+    expect(err.message).toBe(
+      '保管ファイルの上限 (1048576 バイト) を超えるため保存しませんでした (保存すると 1398121 バイト)。' +
+        '既存の資格情報はそのままです。長すぎる値を貼っていないか確かめてください。',
+    );
+  });
+
+  it('★ 書く物がちょうど上限 (1 MiB) なら書き、1 バイトでも超えれば断る (writeStore の境界)', async () => {
+    const m = await secretsModule();
+    // 保存形は base64(`enc:` + 値) = 4·⌈(4 + n)/3⌉ 字。2 鍵の JSON の枠 `{"github":"…","slack":"…"}` は 24 字。
+    // n = 3k − 4 なら 4k 字ちょうどで、2 鍵で 8k = 1 MiB − 24 → k = 131069。
+    const n = 3 * 131069 - 4;
+    await m.setToken('github', 'a'.repeat(n));
+    await m.setToken('slack', 'b'.repeat(n));
+    expect((await fs.stat(storePath())).size).toBe(1024 * 1024);
+    // +1 字は base64 が 4 字伸びるので 1 MiB + 4 → 断る。断ったので本体は動かない。
+    await expect(m.setToken('slack', 'b'.repeat(n + 1))).rejects.toThrow(m.SecretsStoreFullError);
+    expect((await fs.stat(storePath())).size).toBe(1024 * 1024);
+    expect(await m.getToken('slack')).toBe('b'.repeat(n));
+  });
+});
+
+/*
+ * **更新の途中で消した資格情報は、更新の応答が後から届いても戻らない** (threat: T-031 · パス 518)。
+ *
+ * `getValidToken` は期限が近いと refresh を走らせ、応答が届いたら `setOAuthTokens` で
+ * 書き戻していた。その間に利用者が `clearToken` で消すと、書き戻しが消した値を
+ * 新しい TokenSet として復活させる (実測 2026-10-14: 消した後の store に github が残った)。
+ */
+describe('OAuth 更新の途中の削除 (threat: T-031)', () => {
+  it('★ 更新の途中で消した資格情報は、更新の応答が届いても復活しない (threat: T-031)', async () => {
+    const { setOAuthTokens, getValidToken, clearToken } = await secretsModule();
+    await setOAuthTokens('github', {
+      accessToken: 'at-old',
+      refreshToken: 'rt-old',
+      expiresAt: Date.now() + 1_000, // 期限が近い → refresh が走る
+    });
+    let release!: () => void;
+    const gate = new Promise<void>((r) => (release = r));
+    refreshImpl = async () => {
+      await gate;
+      return { accessToken: 'at-new', refreshToken: 'rt-new', expiresAt: Date.now() + 3_600_000 };
+    };
+    const pending = getValidToken('github');
+    await vi.waitFor(() => expect(refreshCalls).toBe(1));
+    await clearToken('github'); // 利用者が更新の途中で削除する
+    release();
+    // 応答そのものはこの呼び出しに返る (保存しないだけ) —— 書き戻しの判定が投げて
+    // 古い値へ倒れる形 (`now` が null のまま `.token` を読む) と見分けるため、値まで見る。
+    expect(await pending).toEqual({ ok: true, token: 'at-new' });
+    expect(await readRawStore(), '削除が更新の書き戻しで打ち消された').not.toHaveProperty('github');
+  });
+
+  it('★ 更新の途中で別の値へ差し替えた資格情報は、応答で上書きされない (threat: T-031)', async () => {
+    const { setOAuthTokens, setToken, getValidToken, getToken } = await secretsModule();
+    await setOAuthTokens('github', { accessToken: 'at-old', refreshToken: 'rt-old', expiresAt: Date.now() + 1_000 });
+    let release!: () => void;
+    const gate = new Promise<void>((r) => (release = r));
+    refreshImpl = async () => {
+      await gate;
+      return { accessToken: 'at-new', refreshToken: 'rt-new', expiresAt: Date.now() + 3_600_000 };
+    };
+    const pending = getValidToken('github');
+    await vi.waitFor(() => expect(refreshCalls).toBe(1));
+    await setToken('github', 'ghp_replaced_by_user'); // 利用者が更新の途中で PAT へ差し替える
+    release();
+    expect(await pending).toEqual({ ok: true, token: 'at-new' });
+    // 差し替えた値が残る —— 開始時の値 (`before`) と違うので書き戻さない。
+    expect(await getToken('github')).toBe('ghp_replaced_by_user');
+  });
+
+  it('★ 認可サーバの応答が保存できる形でなければ書き戻さず、古いアクセストークンへ倒れる (threat: T-031)', async () => {
+    const { setOAuthTokens, getValidToken } = await secretsModule();
+    await setOAuthTokens('github', { accessToken: 'at-old', refreshToken: 'rt-old', expiresAt: Date.now() + 1_000 });
+    const before = await readRawStore();
+    // `checkTokenSetForStorage` が断る形 (アクセストークンが文字列でない)。
+    refreshImpl = async () => ({ accessToken: 42, refreshToken: 'rt-new' });
+    await expect(getValidToken('github')).resolves.toEqual({ ok: true, token: 'at-old' });
+    expect(refreshCalls).toBe(1);
+    expect(await readRawStore(), '断った応答が保存されている').toEqual(before);
+  });
+
+  it('★ 対照: 更新の途中で削除していなければ、応答は従来どおり保存される (threat: T-031)', async () => {
+    const { setOAuthTokens, getValidToken } = await secretsModule();
+    await setOAuthTokens('github', {
+      accessToken: 'at-old',
+      refreshToken: 'rt-old',
+      expiresAt: Date.now() + 1_000,
+    });
+    refreshImpl = async () => ({ accessToken: 'at-new', refreshToken: 'rt-new', expiresAt: Date.now() + 3_600_000 });
+    await expect(getValidToken('github')).resolves.toEqual({ ok: true, token: 'at-new' });
+    expect(refreshCalls).toBe(1);
+    const stored = await (await secretsModule()).getOAuthTokens('github');
+    expect(stored?.accessToken).toBe('at-new');
+  });
 });

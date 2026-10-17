@@ -26,7 +26,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 76 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **17638** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **17916** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` (**2026-09-01 の報告** —— 今のコードを測った物ではない。`docs/REMAINING_WORK.md` の「パス 494」) |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` (同上) |
@@ -235,7 +235,7 @@ type OAuthResult =
   | { ok: false; code: 'not_supported' | 'authorize_failed'; message: string };
 ```
 
-`ok:false` の `message` は **必ず** `safeErrorMessage()` (`src/shared/redact.ts:532-534`。
+`ok:false` の `message` は **必ず** `safeErrorMessage()` (`src/shared/redact.ts:595-597`。
 2026-08-22 に main.ts の中から共有へ移した — ブラウザ版の `web-shim.ts` は main の
 役目を引き受けているのに同じ関門が無く、片側にしか無い状態だった) →
 `redactSecrets()` (`src/shared/redact.ts`、`src/main/clients/types.ts` が再輸出) を
@@ -1855,17 +1855,17 @@ union を参照する。
 | microsoft-365 | `create-event` | `{ subject, start, end, location? }` | **共有台帳 `MS365_EVENT_FIELDS`** を共有の `checkEvent` が読む (型・長さ) + Graph event envelope も共有 (`graphEventInit`・時間帯は `GRAPH_EVENT_TIME_ZONE`)。宣言は `CreateEventPayload` | `microsoft-365.ts:17-300` |
 | assistant | `chat` | `{ messages, system, model, provider }` | **最新の発話が 1 発話の天井を超えていれば切らずに断る (`latestTurnTooLong` · パス 112。履歴は窓)**。sanitizeMessages が role を user/assistant に限定し最後は user 必須。system は MAX_SYSTEM で切る。**maxTokens は payload から受けない** (ASSISTANT_MAX_TOKENS)。**model / provider は利用者が選ぶ設計**なので許可リストは掛けない —— provider は設定済み資格情報にしか解決せず、model が URL に入る Gemini 経路だけ encodeURIComponent で包む (shared/ai/providers.ts) | `assistant.ts:134-256` |
 | assistant | `chatAll` | `{ messages, system, model, provider }` | chat と同じ検証 (最新の発話の天井を含む)。設定済みプロバイダ全部へ同時に投げ、失敗も per-provider に畳んで返す | `assistant.ts:134-256` |
-| assistant | `providers` | (payload なし) | ctx.payload を読まない。資格情報の設定状況だけ返す | `assistant.ts:180-183` |
+| assistant | `providers` | (payload なし) | ctx.payload を読まない。資格情報の設定状況だけ返す | `assistant.ts:203-206` |
 | business | `advise` | `{ question, categories }` | **model / maxTokens は payload から受けない** (定数)。有料 API 呼び出しには 2 分の締切と本文上限 | `business.ts:1124-1128` |
 | business | `export-dashboard` | `{ path, advisorResult }` | path は書き出し関門 (clients/exportPaths.ts) を通る | `business.ts:1124-1128` |
 | business | `export-dashboard-md` | `{ path, advisorResult }` | 同上 (Markdown 版) | `business.ts:1124-1128` |
-| stocks | `register-ticker` | `{ symbol }` | **isSafeSymbol(symbol)** —— 英数と . - ^ のみ・空文字拒否 | `stocks.ts:2052-2060` |
-| stocks | `unregister-ticker` | `{ symbol }` | 同上 (RegisterTickerPayload を共用) | `stocks.ts:2052-2060` |
-| stocks | `backtest` | `{ symbol, strategy, initialCash }` | isSafeSymbol + strategy は登録済み戦略名のみ + initialCash は有限の正数 | `stocks.ts:2052-2060` |
-| stocks | `compare-strategies` | `{ symbol, initialCash }` | 同上 (全戦略を同じ足で回す) | `stocks.ts:2052-2060` |
-| stocks | `advise` | `{ question, universe }` | **model / maxTokens は payload から受けない** (定数)。universe 既定は MOCK_TICKERS。**応答の欄の天井は `advisorResponseLimits.ts` の株式用の定数** (パス 113 まで main / ブラウザ版に 5 / 400 / 200 が字面で) | `stocks.ts:2052-2060` |
-| stocks | `export-dashboard` | `{ path, advisorResult, strategyComparison }` | path は書き出し関門を通る | `stocks.ts:2052-2060` |
-| stocks | `export-dashboard-md` | `{ path, advisorResult, strategyComparison }` | 同上 (Markdown 版) | `stocks.ts:2052-2060` |
+| stocks | `register-ticker` | `{ symbol }` | **isSafeSymbol(symbol)** —— 英数と . - ^ のみ・空文字拒否 | `stocks.ts:2113-2121` |
+| stocks | `unregister-ticker` | `{ symbol }` | 同上 (RegisterTickerPayload を共用) | `stocks.ts:2113-2121` |
+| stocks | `backtest` | `{ symbol, strategy, initialCash }` | isSafeSymbol + strategy は登録済み戦略名のみ + initialCash は有限の正数 | `stocks.ts:2113-2121` |
+| stocks | `compare-strategies` | `{ symbol, initialCash }` | 同上 (全戦略を同じ足で回す) | `stocks.ts:2113-2121` |
+| stocks | `advise` | `{ question, universe }` | **model / maxTokens は payload から受けない** (定数)。universe 既定は MOCK_TICKERS。**応答の欄の天井は `advisorResponseLimits.ts` の株式用の定数** (パス 113 まで main / ブラウザ版に 5 / 400 / 200 が字面で) | `stocks.ts:2113-2121` |
+| stocks | `export-dashboard` | `{ path, advisorResult, strategyComparison }` | path は書き出し関門を通る | `stocks.ts:2113-2121` |
+| stocks | `export-dashboard-md` | `{ path, advisorResult, strategyComparison }` | 同上 (Markdown 版) | `stocks.ts:2113-2121` |
 | templates | `export-template` | `{ templateId, params, path }` | templateId は目録の id のみ、params は既定値へ clamp、path は書き出し関門 | `templates.ts:344-349` |
 | teamradar | `save-state` | `{ department, evaluatedAt, members, axes }` | members は形と件数を検証してから 0600 で保存。**axes はパス 190 で足した** —— それまで画面で付け直した軸名はブラウザの下書きにしか残らず、保存にも書き出しにも届かなかった (省略可: 既存の保存値をそのまま読む) | `teamradar.ts:312-315` |
 | teamradar | `export-svg` | `{ path, title, chart }` | path は書き出し関門。図の文字列は escapeXml を通してから書く。**chart はパス 190 で足した画面の図** (validateTeamRadarState が通す形) —— それまで title だけを受け、本体は保存済み状態から読んでいたので、1 枚の SVG が 2 つの部署・2 つの評価時点を名乗った。省略時だけ保存済みへ落ちる | `teamradar.ts:312-315` |
@@ -2253,7 +2253,7 @@ $ npm run mutate:next -- --top=5
 per-file の kill / survived / no-cov / ignored / invalid は `docs/QUALITY.md` が
 Stryker の JSON レポート (reports/mutation 配下の生成物) から機械生成して持つ
 (`npm run quality:report`)。
-Stryker の対象 (`stryker.config.json` の `mutate`) は **310 ファイル**。
+Stryker の対象 (`stryker.config.json` の `mutate`) は **311 ファイル**。
 2026-10-07 (パス 506) に `src/renderer/components/useDialogFocus.ts` (dialog の焦点の道 —— 開いたら印の操作子へ・Esc で閉じる / 取り消す・
 消えたら押した物へ戻す) を足した —— push した直後の CI で `mutateScopeCensus` が「同名の検査が在り 100 行以上なのに `mutate` の外」と
 名指ししたので、`audit:mutate-changed` で 62 変異体を測り (1 度目は **90.00% / 生存 6** —— `aria-disabled` を無効と読む 4 件・操作子の無い窓の `?.focus()`・省いた `returnTo` —— どれも「宣言した契約に標本が無い」だったので標本を 6 件足し、2 度目は **100.00% (Killed 60 / 生存 0 / 未到達 0・計装 62 のうち表に載らない 2 件は `ignoreStatic` が外した static 変異体と見ている)**) 載せた。
@@ -2402,13 +2402,13 @@ classDiagram
   }
 
   class SecretsStore~secrets.ts~ {
-    +setToken(id, token) : secrets.ts:298
-    +getToken(id) : secrets.ts:354
-    +clearToken(id) : secrets.ts:359
-    +listConfiguredServices() : secrets.ts:381
-    +setOAuthTokens(id, ts) : secrets.ts:480
-    +getOAuthTokens(id) : secrets.ts:487
-    +getValidToken(id) : secrets.ts:516 ~auto-refresh~
+    +setToken(id, token) : secrets.ts:336
+    +getToken(id) : secrets.ts:392
+    +clearToken(id) : secrets.ts:397
+    +listConfiguredServices() : secrets.ts:419
+    +setOAuthTokens(id, ts) : secrets.ts:518
+    +getOAuthTokens(id) : secrets.ts:548
+    +getValidToken(id) : secrets.ts:599 ~auto-refresh~
   }
 
   class OAuthHelper~oauth.ts~ {
@@ -2496,7 +2496,7 @@ classDiagram
 | 10 | Skill name は path traversal を含まない | `skills.test.ts` + property fuzz 500 試行 |
 | 11 | Gmail `to` は CR/LF/NUL を含まない | `rfc2822.test.ts` (shared の 1 つ) + `gmail.test.ts` + property fuzz 400 試行 |
 | 12 | OAuth callback の Host ヘッダは loopback のみ | `isLoopbackHost` `src/main/oauth.ts:524-529` |
-| 13 | secrets.json は ≤ 1 MB かつ plain object | `MAX_STORE_SIZE` `src/main/secrets.ts:10` / `parseStore` `src/main/secrets.ts:37-50` |
+| 13 | secrets.json は ≤ 1 MB かつ plain object | `MAX_STORE_SIZE` `src/main/secrets.ts:10` / `parseStore` `src/main/secrets.ts:75-88` |
 | 14 | 新規 client は `LIVE_FETCHERS` (`src/main/clients/index.ts:81-90`) / `SERVICES` (`src/renderer/services.ts:102`) 両方に登録 | scaffold script + `lint:test-coverage` |
 | 15 | ブラウザ権限は**既定で拒否** — 許すのはクリップボードの 2 つだけ (Electron の既定は全部承認) | `ALLOWED_PERMISSIONS` `src/main/main.ts:127` + `src/main/__tests__/mainWindow.test.ts` 「権限要求 — 既定は拒否、クリップボードだけ許す」24 件 |
 | 16 | PR で `npm run typecheck && npm test && npm run verify:arch` が green | CI (`.github/workflows/ci.yml`) |

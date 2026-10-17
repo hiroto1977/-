@@ -38,9 +38,9 @@ const DIRECT_WRITE_LEDGER: Record<string, string> = {
     '書き出した成果物 (HTML / MD / SVG) を作る唯一の口。成果物は利用者に見える物で作り直せるうえ、'
     + '途中で落ちれば次の書き出しで上書きされる。symlink と拡張子の門はこのファイルが持つ。',
   'src/main/clients/stocks.ts':
-    '`writeTight` が **tmp に**書く (`p + \'.tmp\'`)。本体へは `rename` で被せるので、落ちても本体は前の内容のまま。',
+    '`writeTight` が **一意な tmp に**書く (`atomicTmpPathOf`・T-055)。本体へは `rename` で被せるので、落ちても本体は前の内容のまま。',
   'src/main/clients/teamradar.ts':
-    '`writeTight` が **tmp に**書く (`p + \'.tmp\'`)。stocks と同じ形で、本体は `rename` で置き換える。',
+    '`writeTight` が **一意な tmp に**書く (`atomicTmpPathOf`・T-055)。stocks と同じ形で、本体は `rename` で置き換える。',
 };
 
 interface Site {

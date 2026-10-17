@@ -206,3 +206,45 @@ describe('「AI へは送りません」の根拠 — 音声から呼べる acti
     }
   });
 });
+
+/**
+ * 読み上げ (音声合成) も外へ出うる (2026-10-16 · パス 524 · threat: T-074)。
+ * `scoreJaVoice` はネットワーク経由の声 (`localService === false`・Google 系) を加点するので、
+ * 村の返答 (利用者の入力を引用する規則ベースの返答を含む) を読み上げると、AI を切っても
+ * ブラウザの提供元へ文が出うる。直す前は認識 (マイク) の断りしか無く、読み上げは
+ * どこにも述べられていなかった。
+ */
+describe('読み上げの断り (threat: T-074)', () => {
+  it('★ readsAloud を立てると、読み上げもブラウザに委ねていて文が送られうることを言う', () => {
+    const base = voiceEgressNoticeLines({ transcriptStaysLocal: false });
+    const spoken = voiceEgressNoticeLines({ transcriptStaysLocal: false, readsAloud: true });
+    expect(spoken.length).toBe(base.length + 1);
+    const added = spoken[spoken.length - 1] ?? '';
+    expect(added).toContain('読み上げ');
+    expect(added).toContain('ブラウザの提供元へ送られることがあります');
+    expect(added).toContain('AI を切っても読み上げは残ります');
+  });
+
+  it('★ 対照: 省略・false なら足さない (読み上げない入口に偽の断りを出さない)', () => {
+    const base = voiceEgressNoticeLines({ transcriptStaysLocal: true });
+    expect(voiceEgressNoticeLines({ transcriptStaysLocal: true, readsAloud: false })).toEqual(base);
+    expect(base.join('\n')).not.toContain('読み上げ');
+  });
+
+  it('★ speak() を呼ぶ画面は、断りに readsAloud: true を渡している (走査)', () => {
+    const SPEAKS = /import\s*\{[^}]*\bspeak\b[^}]*\}\s*from\s*['"][^'"]*ttsAdapter['"]/;
+    // 針が的に当たる標本 (空の走査で緑にならない)
+    expect(SPEAKS.test("import { speak } from '../voice/ttsAdapter';")).toBe(true);
+    expect(SPEAKS.test("import { splitSentences } from '../voice/ttsAdapter';")).toBe(false);
+    const speaking: string[] = [];
+    const missing: string[] = [];
+    for (const f of rendererFiles()) {
+      const src = readOriginalSource(f);
+      if (!SPEAKS.test(code(src))) continue;
+      speaking.push(path.relative(RENDERER, f));
+      if (!/readsAloud:\s*true/.test(code(src))) missing.push(path.relative(RENDERER, f));
+    }
+    expect(speaking.length, '読み上げる画面が 1 つも見つからない (走査が空)').toBeGreaterThanOrEqual(1);
+    expect(missing, '読み上げるのに声の行き先を述べていない画面:\n' + missing.join('\n')).toEqual([]);
+  });
+});

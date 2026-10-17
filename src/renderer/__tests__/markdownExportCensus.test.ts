@@ -127,8 +127,8 @@ const LEDGER: readonly {
     file: 'src/renderer/components/FinancialAnalysis.tsx',
     sites: 1,
     producer: 'src/renderer/data/financialReport.ts',
-    freeText: 'none',
-    why: '入るのは `ROWS` の固定ラベル・`financialDiagnosis` の `commentOf` が定数表から作る文・`fmtValue` / `fmtRate` を通した数字だけ。利用者が打った文字列は 1 つも通らない (2026-09-20 に読んで確かめた)。',
+    freeText: 'escaped',
+    why: '表題の `${label}` は利用者が打った事業名 (businessUnitName が保管値をそのまま返す)。2026-09-20 (パス 332) の判断「利用者が打った文字列は 1 つも通らない」は偽で、最初の補間がまさに事業名だった —— `<img onerror>` が書き出した .md の 1 行目に素で載った (threat: T-022)。`escapeMarkdownInline` を通す。残りの補間 (ROWS の固定ラベル・diagnosis の定数表の文・数字) は利用者が編集できない。',
   },
   {
     file: 'src/renderer/components/WelfareSchemeCard.tsx',
@@ -182,7 +182,7 @@ describe('text/markdown を書き出す所の母集団 (パス 332)', () => {
 
   it('数えた内訳を留める', () => {
     const n = (k: string) => LEDGER.filter((r) => r.freeText === k).length;
-    expect({ escaped: n('escaped'), none: n('none') }).toEqual({ escaped: 2, none: 3 });
+    expect({ escaped: n('escaped'), none: n('none') }).toEqual({ escaped: 3, none: 2 });
   });
 
   it('★ 標本: import の判定は、同名のローカル関数では満たされない (対照が鳴らなかった形)', () => {

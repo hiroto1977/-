@@ -98,14 +98,17 @@ function recordMetaWrites(): { batches: string[][]; restore: () => void } {
           const cached = wrapped.get(storeName);
           if (cached !== undefined) return cached;
           const store = realObjectStore(storeName);
-          const realPut = store.put.bind(store);
-          Object.defineProperty(store, 'put', {
-            value: (value: unknown, key?: IDBValidKey) => {
-              if (storeName === 'meta' && typeof key === 'string') keys.push(key);
-              return realPut(value, key as IDBValidKey);
-            },
-            configurable: true,
-          });
+          // `put` と `add` (初期化は T-064 から `add` で書く) の両方を記録する。
+          for (const method of ['put', 'add'] as const) {
+            const real = store[method].bind(store);
+            Object.defineProperty(store, method, {
+              value: (value: unknown, key?: IDBValidKey) => {
+                if (storeName === 'meta' && typeof key === 'string') keys.push(key);
+                return real(value, key as IDBValidKey);
+              },
+              configurable: true,
+            });
+          }
           wrapped.set(storeName, store);
           return store;
         },

@@ -9,6 +9,7 @@ import { CeilingNotice } from '../components/CeilingNotice';
 import { charsOverCeiling } from '../../shared/inputCeiling';
 import { DRIVE_FOLDER_FIELDS } from '../../shared/writeFieldLimits';
 import type { ActionData } from '../../shared/actionData';
+import { externalTextOnOneLine } from '../data/assistantMarkdown';
 
 const TYPE_LABEL: Record<string, string> = {
   'application/vnd.google-apps.document': 'Doc',
@@ -61,7 +62,7 @@ export function DrivePage() {
       // 作ったフォルダは「Recent Files」(modifiedTime 降順・種別で絞っていない) の先頭に入る —— 取り直す (パス 173)。
       refresh();
     } else {
-      setResult({ kind: 'error', message: res.message });
+      setResult({ kind: 'error', message: externalTextOnOneLine(res.message) });
     }
   };
 

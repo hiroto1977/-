@@ -12,6 +12,7 @@ import { GMAIL_DRAFT_FIELDS } from '../../shared/writeFieldLimits';
 import type { ActionData } from '../../shared/actionData';
 import { analyzeBatchNote, packAnalyzeText } from '../../shared/emotionsLimits';
 import { useSubmitGuard } from '../hooks/useSubmitGuard';
+import { externalTextOnOneLine } from '../data/assistantMarkdown';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -80,7 +81,7 @@ export function GmailPage() {
       setSubject('');
       setBody('');
     } else {
-      setResult({ kind: 'error', message: res.message });
+      setResult({ kind: 'error', message: externalTextOnOneLine(res.message) });
     }
   };
 
@@ -138,7 +139,7 @@ export function GmailPage() {
                   text: analyzeBatch.text,
                   source: 'Gmail Inbox',
                 });
-                if (!res.ok) alert('感情分析失敗: ' + res.message);
+                if (!res.ok) alert('感情分析失敗: ' + externalTextOnOneLine(res.message));
                 else alert(`Emotions タブに結果を保存しました (${analyzeBatch.included} 件を送信)`);
               })
             }

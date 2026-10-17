@@ -34,6 +34,8 @@ function planOf(over: Partial<RestorePlan>): RestorePlan {
     newerLocal: 0,
     localOnly: 0,
     unusableLocal: 0,
+    collectionClash: 0,
+    duplicateIds: 0,
     lost: 0,
     toImport: [],
     ...over,

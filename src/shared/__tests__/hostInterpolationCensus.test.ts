@@ -91,6 +91,11 @@ const LEDGER: readonly LedgerRow[] = [
     reason: '(c) 同上 (NAT64 / 6to4 の埋め込み)',
   },
   {
+    file: 'src/shared/scanTarget.ts',
+    needle: '`http://${h}/`',
+    reason: '(c) VirusTotal へ送る前の「社内ホスト」警告が、SSRF 用の分類器 (privateTarget) の判定を借りるための内部の再解析 (T-076)。h は URL.hostname で、通信にも画面にも出ない',
+  },
+  {
     file: 'src/renderer/data/sourceVerification.ts',
     needle: '`https://${parsed.hostname.toLowerCase()}',
     reason: '(b) 解析済み URL.hostname の再直列化。**この文字列は通信にも画面にも出ない** —— '

@@ -529,3 +529,47 @@ describe('操作イベントの一覧 (読み直してから確かめる — 静
     handle.dispose();
   });
 });
+
+/**
+ * タイマーが遅れても、時計が上限を超えていればロックする (2026-10-16 · パス 524 ·
+ * threat: T-080)。スリープ・サスペンド・背景のタイマー間引きでは、期限を過ぎた金庫が
+ * 最初の操作 1 回で「再設定」されて延命した (直す前の実測: 8 時間後の mousemove で onLock 0 回)。
+ * 下のハーネスは時計だけを進め、タイマーは発火させない —— 遅れたタイマーの再現。
+ */
+describe('時計の経過で判定する (threat: T-080)', () => {
+  it('★ 放置が上限を超えた後の最初の操作でロックする (タイマーは遅れている)', () => {
+    _resetAutoLockActiveForTests();
+    const h = makeHarness();
+    h.setNow(1_000_000 + 8 * 3_600_000); // タイマーを走らせずに 8 時間
+    h.fire(window, 'mousemove');
+    expect(h.onLock).toHaveBeenCalledTimes(1);
+  });
+
+  it('★ 隠れていた時間が上限を超えて戻ったら、タイマーを待たずにロックする', () => {
+    _resetAutoLockActiveForTests();
+    const h = makeHarness();
+    withHidden(true, () => h.fire(document, 'visibilitychange'));
+    h.setNow(1_000_000 + 600_000); // 10 分 (上限 5 分) —— タイマーは未発火
+    withHidden(false, () => h.fire(document, 'visibilitychange'));
+    expect(h.onLock).toHaveBeenCalledTimes(1);
+  });
+
+  it('★ 対照: 上限ちょうど手前の操作ではロックせず、期限を延ばす', () => {
+    _resetAutoLockActiveForTests();
+    const h = makeHarness();
+    h.setNow(1_000_000 + 899_999);
+    h.fire(window, 'mousemove');
+    expect(h.onLock).not.toHaveBeenCalled();
+    h.handle.dispose();
+  });
+
+  it('★ 対照: 隠れていた時間が上限の手前なら、戻ってもロックしない', () => {
+    _resetAutoLockActiveForTests();
+    const h = makeHarness();
+    withHidden(true, () => h.fire(document, 'visibilitychange'));
+    h.setNow(1_000_000 + 299_999);
+    withHidden(false, () => h.fire(document, 'visibilitychange'));
+    expect(h.onLock).not.toHaveBeenCalled();
+    h.handle.dispose();
+  });
+});

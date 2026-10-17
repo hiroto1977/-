@@ -28,6 +28,14 @@
  *     ブランチ名はいくらでも書ける。`${{ github.event.pull_request.title }}`
  *     をシェルへ展開すると、そのままコマンド注入になる。
  *
+ *  5. **job 単位の `permissions:` は台帳制** (2026-10-14 · パス 520 · threat: T-039) ——
+ *     トップレベルが `contents: read` でも job は広げられる。書く権限を持つ job は
+ *     `JOB_PERMISSIONS_ALLOW` に **job 名と scope を 1 つずつ**載せ、実物と双方向に
+ *     突き合わせる (台帳に無い job・台帳と違う scope・台帳に在るのに実物に無い job は
+ *     どれも落ちる)。それまでこの門は job 単位の `permissions:` を**一律に落とす**だけで、
+ *     `pages.yml` は「全体に `pages: write` / `id-token: write`」という**広い方**へ
+ *     逃げていた (`npm ci` と組み立てが公開の権限の下で走る)。
+ *
  * Run: node scripts/lint-workflow-security.cjs [--self-test]
  */
 const fs = require('fs');
@@ -42,22 +50,75 @@ const WF_DIR = path.join(REPO_ROOT, '.github', 'workflows');
  * 消せない理由と、消し方を書くこと。
  */
 const UNPINNED_ALLOW = {
-  'softprops/action-gh-release@v2': {
-    workflow: 'release.yml',
-    why:
-      'このセッションからは SHA を解決できない。**当てずっぽうの SHA を書くと ' +
-      'リリースが壊れる**ので、タグのまま残して台帳に載せた。' +
-      ' 2026-08-22 に 3 通り試して全部塞がっていることを確認済み: ' +
-      '(1) GitHub MCP —— セッションのリポジトリ範囲が hiroto1977/- に限られる、' +
-      '(2) curl で api.github.com —— プロキシが 403 で「Use add_repo to request ' +
-      'access」と返す、(3) WebFetch —— 同じく 403。' +
-      ' **同じ 3 つを試し直さないこと。** 解決には人手 (または範囲を広げた ' +
-      'セッション) が要る。',
-    howToFix:
-      'gh api repos/softprops/action-gh-release/git/ref/tags/v2 --jq .object.sha ' +
-      'で取得し、`softprops/action-gh-release@<sha> # v2` に置き換えてこの項目を消す',
+  // 2026-10-14 (パス 519) に空になった。唯一の項目 `softprops/action-gh-release@v2` は
+  // `git ls-remote --tags` (git プロキシは公開リポジトリを通す —— 台帳が「塞がっている」と
+  // 書いた 3 通りは GitHub の REST だけだった) で `refs/tags/v2` を解決し、軽量タグが
+  // `refs/tags/v2.6.2` と同じコミットを指すことを確かめてから SHA で固定した
+  // (`release.yml` の `# v2.6.2` の注記がそのタグ)。**空の台帳は床ではない** —— 次に
+  // タグ固定の action が入れば下の検査が鳴り、台帳へ載せるには理由と消し方が要る。
+};
+
+/**
+ * job 単位の `permissions:` の台帳 (threat: T-039)。**file → job 名 → { scopes, why }**。
+ *
+ * scope は `key: value` の綴りで、実物のブロックと**集合として一致**しなければ落ちる
+ * (1 つ足しても 1 つ消しても鳴る)。載せてよいのは「任意コードを走らせない job」だけ ——
+ * `npm ci` / 組み立て / 第三者 action を同じ job に置くなら、その権限はそのコードが持つ。
+ * 読むだけの job をここへ載せる必要は無い (トップレベルの `contents: read` で足りる)。
+ */
+const JOB_PERMISSIONS_ALLOW = {
+  'pages.yml': {
+    deploy: {
+      scopes: ['pages: write', 'id-token: write'],
+      why:
+        'Pages へ公開するのはこの job だけ。`needs: build` が検査済みの成果物を受け取り、' +
+        '`npm ci` も組み立ても走らせない (`actions/deploy-pages` 1 手だけ)。2026-10-14 まで' +
+        'この 2 つはワークフロー全体に付いており、依存の postinstall が公開の権限で走っていた',
+    },
   },
 };
+
+/**
+ * job 単位の `permissions:` ブロックを 1 つずつ返す —— `{ job, line, scopes }`。
+ *
+ * YAML を解析せず、GitHub Actions が受け付ける形だけを読む: `jobs:` の下の
+ * 2 空白の鍵が job 名、その下の `permissions:` の直後に深い字下げで並ぶ
+ * `key: value` が scope。`permissions: read-all` のような 1 行の値も scope 1 つとして
+ * 返す (台帳には `write-all` を載せられない —— 上の検査が先に落とす)。
+ * `jobs:` より前 (トップレベル) の `permissions:` はここでは返さない。
+ */
+function jobPermissionBlocks(text) {
+  const lines = text.split('\n');
+  const out = [];
+  let inJobs = false;
+  let job = null;
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (/^jobs:\s*$/.test(line)) { inJobs = true; job = null; continue; }
+    if (/^\S/.test(line)) { inJobs = false; job = null; }
+    if (!inJobs) continue;
+    const jm = /^ {2}([\w.-]+):\s*(?:#.*)?$/.exec(line);
+    if (jm) { job = jm[1]; continue; }
+    const pm = /^(\s+)permissions:\s*([^\s#]*)/.exec(line);
+    if (!pm) continue;
+    const indent = pm[1].length;
+    const scopes = [];
+    if (pm[2]) scopes.push(pm[2]);
+    for (let j = i + 1; j < lines.length; j++) {
+      const sm = /^(\s+)([\w-]+):\s*([^\s#]+)/.exec(lines[j]);
+      if (!sm || sm[1].length <= indent) break;
+      scopes.push(`${sm[2]}: ${sm[3]}`);
+    }
+    out.push({ job: job ?? '(job 外)', line: i + 1, scopes });
+  }
+  return out;
+}
+
+function sameScopes(a, b) {
+  const x = [...a].sort();
+  const y = [...b].sort();
+  return x.length === y.length && x.every((v, i) => v === y[i]);
+}
 
 /** シェルへ展開されると注入になりうる文脈値 (利用者が中身を書ける)。 */
 const UNTRUSTED_CONTEXT =
@@ -138,9 +199,10 @@ function runBlockLines(text) {
  * 動かず、実物では今その項目が使用中なので、**production では一度も通らない道**
  * だった (2026-08-25 の実測: この枝を潰しても本番スキャンも self-test も鳴らない)。
  */
-function check(list, allow = UNPINNED_ALLOW) {
+function check(list, allow = UNPINNED_ALLOW, jobAllow = JOB_PERMISSIONS_ALLOW) {
   const problems = [];
   const seenUnpinned = new Set();
+  const seenJobBlocks = new Set(); // `file::job` —— 台帳の逆向きに使う
   for (const { name, text } of list) {
     if (!/^permissions:/m.test(text)) {
       problems.push({
@@ -167,23 +229,59 @@ function check(list, allow = UNPINNED_ALLOW) {
         why: 'permissions: write-all — 絞る目的の宣言になっていない。要る権限だけを列挙すること',
       });
     }
-    for (const [i, line] of text.split('\n').entries()) {
-      if (/^\s+permissions:/.test(line)) {
-        problems.push({
-          file: name,
-          why:
-            `job 単位の permissions: (${i + 1} 行目) — トップレベルより広くできるので、` +
-            '実効の広さがここだけ変わります。要るなら JOB_PERMISSIONS_ALLOW へ理由を書くこと',
-        });
-      }
+    // 2026-10-14 (パス 520) まで、ここは job 単位の `permissions:` を一律に落としていた
+    // (台帳の名前を文面で呼ぶだけで、台帳そのものが無かった)。
+    const fileAllow = Object.hasOwn(jobAllow, name) ? jobAllow[name] : {};
+    for (const b of jobPermissionBlocks(text)) {
+      const entry = Object.hasOwn(fileAllow, b.job) ? fileAllow[b.job] : null;
+      // 台帳の job が実物に在ることはここで印を付ける (scope の食い違いは下で 1 度だけ報せる ——
+      // 逆向きの「実物に無い」と二重に鳴らさない)。
+      if (entry) seenJobBlocks.add(`${name}::${b.job}`);
+      if (entry && sameScopes(entry.scopes, b.scopes)) continue;
+      problems.push({
+        file: `${name}:${b.line}`,
+        why: entry
+          ? `job "${b.job}" の permissions が台帳と違う (実物: ${b.scopes.join(', ') || '(空)'} / ` +
+            `台帳: ${entry.scopes.join(', ')}) — 台帳の scope と 1 つずつ一致させること`
+          : `job "${b.job}" の permissions: — トップレベルより広くできるので、実効の広さが` +
+            'ここだけ変わります。要るなら JOB_PERMISSIONS_ALLOW へ job 名・scope・理由を書くこと',
+      });
     }
-    if (/^\s*pull_request_target:/m.test(text)) {
+    // **綴りを問わず**: `on: pull_request_target` / `on: [push, pull_request_target]` /
+    // `- pull_request_target` / `"pull_request_target":` / `{pull_request_target: {…}}` はどれも有効な
+    // YAML で、以前の `^\s*pull_request_target:` は map の形 1 つしか見なかった (パス 524 · T-085 ·
+    // 実測 5 形が素通り)。注記を落としたうえで、語として現れたら断る。
+    const withoutComments = text
+      .split('\n')
+      .map((l) => l.replace(/(^|\s)#.*$/, '$1'))
+      .join('\n');
+    if (/(^|[^\w-])pull_request_target(?![\w-])/.test(withoutComments)) {
       problems.push({
         file: name,
         why: 'pull_request_target — fork の PR が secrets 付きで走る',
       });
     }
     const lines = text.split('\n');
+    // actions/github-script の `script:` は JavaScript なので、`${{ … }}` を埋め込むと信用できない値が
+    // コードになる (run: と同じ注入。パス 524 · T-085)。`script:` の本体 (ブロックの続き行) を見る。
+    for (let i = 0; i < lines.length; i++) {
+      const sm = /^(\s*)-?\s*script:\s*(.*)$/.exec(lines[i]);
+      if (!sm) continue;
+      const indent = sm[1].length;
+      const body = [sm[2]];
+      for (let j = i + 1; j < lines.length; j++) {
+        const l = lines[j];
+        if (l.trim() === '') { body.push(l); continue; }
+        if ((/^(\s*)/.exec(l)?.[1].length ?? 0) <= indent) break;
+        body.push(l);
+      }
+      if (body.some((l) => /\$\{\{/.test(l))) {
+        problems.push({
+          file: `${name}:${i + 1}`,
+          why: 'script: に ${{ … }} を埋め込んでいる — 信用できない値が JavaScript のコードになる。env: に渡して process.env から読むこと',
+        });
+      }
+    }
     for (let i = 0; i < lines.length; i++) {
       const m = /^\s*-?\s*uses:\s*([^\s#]+)/.exec(lines[i]);
       if (!m) continue;
@@ -201,16 +299,41 @@ function check(list, allow = UNPINNED_ALLOW) {
        */
       // **SHA 固定は誰であれ常に可**。ここを `actions/` の分岐より後ろに置くと、
       // `actions/checkout@<sha>` (最も固い形) を落とす —— 実際に落とした。
-      if (/@[0-9a-f]{40}$/.test(ref)) continue;
-      if (/^actions\/[^@]+@v\d+(?:\.\d+)*$/.test(ref)) continue; // GitHub 自身・版のタグ
+      if (/@[0-9a-f]{40}$/.test(ref)) {
+        if (/^actions\/checkout@/.test(ref) && !stepPersistsNoCredentials(lines, i)) {
+          /*
+           * **checkout は `persist-credentials: false` を要求する** (2026-10-15 · パス 522 ·
+           * threat: T-056)。既定 (true) では `GITHUB_TOKEN` が `.git/config` の
+           * `http.extraheader` に残り、その job のあとの全ステップ (`npm ci` の
+           * postinstall・組み立ての script・第三者 action) がそれを読める。
+           * この repo の workflow は 7 本とも push しない (release は action-gh-release が
+           * env の token を、pages は deploy-pages が自分の token を、knowledge-auto は
+           * github-script が `github.token` を使う) ので、残す理由が 1 つも無い。
+           * 実測 (2026-10-15): 10 の checkout すべてが既定のままだった。
+           */
+          problems.push({
+            file: `${name}:${i + 1}`,
+            why: `actions/checkout に \`with: persist-credentials: false\` が無い — 後続ステップへ GITHUB_TOKEN を残さないこと`,
+          });
+        }
+        continue;
+      }
+      /*
+       * **GitHub 自身 (`actions/*`) も SHA で固定する** (2026-10-15 · パス 522 · threat: T-057)。
+       * 2026-08-26 から「版のタグに限る」免除を持っていたが、`@v5` は動く参照であり
+       * (GitHub は major タグを新しい patch へ動かす)、`actions/` の名前空間は
+       * 第三者より信用できるだけで**不変ではない**。実物は 2026-10-15 まで 30 か所
+       * すべてが版のタグだった。版は `# v5` の注記で残し、動かすときは
+       * `git ls-remote https://github.com/actions/<name>.git refs/tags/<tag>` で
+       * 引き直す (lightweight tag なので ls-remote の SHA がそのまま commit)。
+       */
       if (ref.startsWith('actions/')) {
         problems.push({
-          file: name,
-          why: `actions/* が版のタグで固定されていません (${ref}) — @v4 のような版か SHA にすること`,
+          file: `${name}:${i + 1}`,
+          why: `actions/* が SHA で固定されていません (${ref}) — 40 桁の commit SHA にして \`# vN\` を注記に残すこと`,
         });
         continue;
       }
-      if (/@[0-9a-f]{40}$/.test(ref)) continue; // SHA 固定済み
       seenUnpinned.add(ref);
       // `in` / 素の添字はプロトタイプ鎖まで辿るので、`uses: constructor` の
       // ような名前が台帳に載っていることになり、**未固定の検査ごと飛ばされる**。
@@ -242,7 +365,42 @@ function check(list, allow = UNPINNED_ALLOW) {
       problems.push({ file: '(台帳)', why: `${ref} はもう使われていない — 台帳から消すこと` });
     }
   }
+  // job 権限の台帳の逆向き: 載っている job が実物に (同じ scope で) 無ければ落とす。
+  // 残った項目は、その job が後で戻ってきたときにあらかじめ免除されている穴になる。
+  const names = new Set(list.map((w) => w.name));
+  for (const [file, jobs] of Object.entries(jobAllow)) {
+    for (const [job, entry] of Object.entries(jobs)) {
+      if (!entry || !Array.isArray(entry.scopes) || entry.scopes.length === 0 || !entry.why) {
+        problems.push({ file: '(台帳)', why: `${file} / ${job} — scopes と why を書くこと` });
+        continue;
+      }
+      if (!names.has(file) || !seenJobBlocks.has(`${file}::${job}`)) {
+        problems.push({
+          file: '(台帳)',
+          why: `${file} の job "${job}" に台帳どおりの permissions: が無い — 台帳から消すか実物を直すこと`,
+        });
+      }
+    }
+  }
   return problems;
+}
+
+/**
+ * `uses: actions/checkout@…` の step (行 i) が `with: persist-credentials: false` を
+ * 持つか。step の範囲は「次の `- ` (同じ段) か、段が浅くなる行」まで。
+ * `persist-credentials: false` 以外の値 (`true` / 空) は持たないと数える。
+ */
+function stepPersistsNoCredentials(lines, i) {
+  const dash = /^(\s*)-/.exec(lines[i]);
+  if (!dash) return false;
+  const kid = `${dash[1]}  `;
+  for (let j = i + 1; j < lines.length; j++) {
+    const ln = lines[j];
+    if (ln.trim() === '') continue;
+    if (!ln.startsWith(kid) || ln.startsWith(`${dash[1]}-`)) break;
+    if (/^\s*persist-credentials:\s*false\b/.test(ln)) return true;
+  }
+  return false;
 }
 
 function selfTest() {
@@ -254,6 +412,11 @@ function selfTest() {
       [{ name: 'x.yml', text: 'permissions:\n  contents: read\non:\n  pull_request_target:\n' }],
       1,
     ],
+    ['pull_request_target を `on: x` の形で落とす (T-085)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\non: pull_request_target\n' }], 1],
+    ['pull_request_target を flow 配列で落とす (T-085)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\non: [push, pull_request_target]\n' }], 1],
+    ['pull_request_target を引用符つきの鍵で落とす (T-085)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\non:\n  "pull_request_target":\n' }], 1],
+    ['注記の中の pull_request_target は落とさない (T-085)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\n# pull_request_target は使わない\non:\n  push:\n' }], 0],
+    ['github-script の script: への ${{ }} 展開を落とす (T-085)', [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: actions/github-script@${'d'.repeat(40)}\n        with:\n          script: |\n            core.info('${'$'}{{ github.event.inputs.x }}')\n` }], 1],
     [
       '第三者 action のタグ固定を落とす',
       [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: evil/thing@v1\n' }],
@@ -265,8 +428,33 @@ function selfTest() {
       0,
     ],
     [
-      'actions/* のタグ固定は通す',
-      [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: actions/checkout@v4\n' }],
+      'actions/* の版のタグは落とす (動く参照 · T-057)',
+      [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: actions/setup-node@v5\n' }],
+      1,
+    ],
+    [
+      'actions/* の SHA 固定は通す (注記の # vN は読まない)',
+      [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: actions/setup-node@${'b'.repeat(40)} # v5\n` }],
+      0,
+    ],
+    [
+      'checkout が persist-credentials を持たなければ落とす (T-056)',
+      [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: actions/checkout@${'c'.repeat(40)}\n      - run: echo hi\n` }],
+      1,
+    ],
+    [
+      'checkout の persist-credentials: true は「持たない」と数える',
+      [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: actions/checkout@${'c'.repeat(40)}\n        with:\n          persist-credentials: true\n` }],
+      1,
+    ],
+    [
+      '次の step の with: は数えない (段で区切る)',
+      [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: actions/checkout@${'c'.repeat(40)}\n      - uses: actions/setup-node@${'b'.repeat(40)}\n        with:\n          persist-credentials: false\n` }],
+      1,
+    ],
+    [
+      'checkout に persist-credentials: false (他の with: と並んでも) は通す',
+      [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: actions/checkout@${'c'.repeat(40)}\n        with:\n          fetch-depth: 2\n          persist-credentials: false\n      - run: echo hi\n` }],
       0,
     ],
     [
@@ -308,12 +496,12 @@ function selfTest() {
     // 評価する) ので、シェル構文になる余地が無い。
     [
       'run: の外の展開は見ない (action の with: など)',
-      [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: actions/x@v1\n        with:\n          t: ${{ github.event.pull_request.title }}\n' }],
+      [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: actions/x@${'d'.repeat(40)}\n        with:\n          t: \${{ github.event.pull_request.title }}\n` }],
       0,
     ],
     [
       'if: / key: の式は見ない',
-      [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - if: steps.scope.outputs.mode == \'some\'\n        uses: actions/cache@v4\n        with:\n          key: stryker-${{ github.ref_name }}\n' }],
+      [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - if: steps.scope.outputs.mode == 'some'\n        uses: actions/cache@${'d'.repeat(40)}\n        with:\n          key: stryker-\${{ github.ref_name }}\n` }],
       0,
     ],
     // 許可台帳をプロトタイプ鎖経由ですり抜けられないこと。`UNPINNED_ALLOW[ref]`
@@ -362,10 +550,40 @@ function selfTest() {
     ['台帳に無い未固定は台帳の掃除では鳴らない (別の枝の仕事)', [used], {}, 0],
   ];
   for (const [label, list, allow, expected] of ledgerCases) {
-    const n = check(list, allow).filter((p) => p.file === '(台帳)').length;
+    const n = check(list, allow, {}).filter((p) => p.file === '(台帳)').length;
     const ok = n === expected;
     if (!ok) bad++;
     console.log(`  ${ok ? '✓' : '✗'} 台帳の掃除: ${label}: ${n} 件 (期待 ${expected})`);
+  }
+
+  /*
+   * job 権限の台帳 (threat: T-039)。実物 (`pages.yml` の deploy) を縮めた標本で、
+   * 「台帳どおり → 0 件 / 台帳に無い job → 1 件 / scope が違う → 1 件 /
+   *  台帳に在るのに実物に無い → (台帳) 1 件 / 1 行の値も読む / トップレベルは数えない」。
+   */
+  const jobWf = (perm) => ({
+    name: 'p.yml',
+    text: `permissions:\n  contents: read\njobs:\n  build:\n    steps:\n      - run: npm ci\n  deploy:\n    needs: build\n${perm}    steps:\n      - uses: actions/deploy-pages@v4\n`,
+  });
+  const deployAllow = { 'p.yml': { deploy: { scopes: ['pages: write', 'id-token: write'], why: 'x' } } };
+  const jobCases = [
+    ['台帳どおりの job 権限は通る', [jobWf('    permissions:\n      pages: write\n      id-token: write\n')], deployAllow, 0, 0],
+    ['台帳に無い job の permissions: は落ちる', [jobWf('    permissions:\n      pages: write\n      id-token: write\n')], {}, 1, 0],
+    ['scope が 1 つ多いと落ちる', [jobWf('    permissions:\n      pages: write\n      id-token: write\n      contents: write\n')], deployAllow, 1, 0],
+    ['scope が 1 つ少なくても落ちる', [jobWf('    permissions:\n      pages: write\n')], deployAllow, 1, 0],
+    ['台帳に在るのに実物に無ければ (台帳) で落ちる', [jobWf('')], deployAllow, 0, 1],
+    ['別の job に同じ scope が付いても台帳の job ではない', [{ name: 'p.yml', text: 'permissions:\n  contents: read\njobs:\n  build:\n    permissions:\n      pages: write\n      id-token: write\n    steps:\n      - run: npm ci\n' }], deployAllow, 1, 1],
+    ['1 行の値 (read-all) も scope として読む', [jobWf('    permissions: read-all\n')], { 'p.yml': { deploy: { scopes: ['read-all'], why: 'x' } } }, 0, 0],
+    ['トップレベルの permissions: は job の台帳では数えない', [jobWf('')], {}, 0, 0],
+    ['台帳の scopes が空なら (台帳) で落ちる', [jobWf('    permissions:\n      pages: write\n')], { 'p.yml': { deploy: { scopes: [], why: 'x' } } }, 1, 1],
+  ];
+  for (const [label, list, jobAllow, expectJob, expectLedger] of jobCases) {
+    const ps = check(list, {}, jobAllow);
+    const nJob = ps.filter((p) => p.file !== '(台帳)' && /permissions/.test(p.why)).length;
+    const nLedger = ps.filter((p) => p.file === '(台帳)').length;
+    const ok = nJob === expectJob && nLedger === expectLedger;
+    if (!ok) bad++;
+    console.log(`  ${ok ? '✓' : '✗'} job 権限の台帳: ${label}: job ${nJob} / 台帳 ${nLedger} 件 (期待 ${expectJob} / ${expectLedger})`);
   }
 
   if (bad > 0) {
@@ -391,9 +609,10 @@ function main() {
   if (cross.code !== 0) process.exit(1);
   const problems = check(list);
   const ledger = Object.keys(UNPINNED_ALLOW).length;
+  const jobLedger = Object.values(JOB_PERMISSIONS_ALLOW).reduce((n, jobs) => n + Object.keys(jobs).length, 0);
   console.log(
     `Checked ${list.length} workflow(s): permissions / 第三者 action の SHA 固定 / ` +
-      `pull_request_target / run: への ${'$'}{{ }} 展開 (台帳: ${ledger} 件 · ${crossCheckSuffix(cross.source)})`,
+      `pull_request_target / run: への ${'$'}{{ }} 展開 / job 単位の permissions (台帳: 未固定 ${ledger} 件 · job 権限 ${jobLedger} 件 · ${crossCheckSuffix(cross.source)})`,
   );
   if (problems.length === 0) {
     console.log('✅ ワークフローの守りは台帳どおりです');
@@ -407,6 +626,6 @@ function main() {
   return 1;
 }
 
-module.exports = { check, runBlockLines, workflows, UNPINNED_ALLOW, CROSS_CHECK };
+module.exports = { check, runBlockLines, workflows, jobPermissionBlocks, UNPINNED_ALLOW, JOB_PERMISSIONS_ALLOW, CROSS_CHECK };
 
 if (require.main === module) process.exit(main());

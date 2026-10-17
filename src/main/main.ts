@@ -8,7 +8,7 @@ import {
   setOAuthTokens,
   setToken,
 } from './secrets';
-import { LIVE_ACTIONS, LIVE_FETCHERS, LOCAL_SERVICES, type ServiceId } from './clients';
+import { LIVE_ACTIONS, LIVE_FETCHERS, LOCAL_SERVICES, readsSavedToken, type ServiceId } from './clients';
 import { authorize, isOAuthSupported, OAUTH_CONFIGS } from './oauth';
 import { repairExportPermissions } from './clients/exportPaths';
 import { isServiceId } from '../shared/serviceId';
@@ -224,7 +224,25 @@ function createWindow(): BrowserWindow {
   return win;
 }
 
-app.whenReady().then(async () => {
+/*
+ * 単一インスタンス (パス 526 · T-104)。同じ userData を 2 つのプロセスが同時に開くと、保管ファイル
+ * (secrets.json) と窓の設定の「読んで → 書く」が互いに上書きし合い、更新した資格情報が黙って巻き戻る
+ * (どちらの書き込みも原子的だが、読み取り → 書き込みの間は排他されない)。ロックが取れない 2 つ目は
+ * 窓を作らず終了し、1 つ目の窓を前に出す。**2 つ目の argv / cwd は読まない** (開く先を外から決められる口にしない)。
+ */
+const gotInstanceLock = app.requestSingleInstanceLock();
+if (!gotInstanceLock) {
+  app.quit();
+} else {
+  app.on('second-instance', () => {
+    const [existing] = BrowserWindow.getAllWindows();
+    if (existing === undefined) return;
+    if (existing.isMinimized()) existing.restore();
+    existing.focus();
+  });
+}
+
+if (gotInstanceLock) app.whenReady().then(async () => {
   // 窓を作る前に配色を読む (パス 318) —— 読めなければ既定のライトで、renderer が起動後に伝え直す。
   windowPrefs = await readWindowPrefs();
   applyNativeTheme(windowPrefs.scheme);
@@ -480,7 +498,8 @@ ipcMain.handle('fetch:snapshot', async (_e, serviceId: unknown) => {
   // reject し、renderer 側 (`useServiceData`) は「読込中…」のまま止まっていた。
   let token = '';
   try {
-    const read = await getValidToken(serviceId);
+    // 資格情報を読まない LOCAL サービスは保管ファイルに触れない (その不調に巻き込まれない・T-118)。
+    const read = readsSavedToken(serviceId) ? await getValidToken(serviceId) : { ok: true as const, token: '' };
     if (!read.ok) {
       // LOCAL_SERVICES は資格情報なしでも動くので、読めないことは異常ではない。
       // ただし「保存済みだが復号できない」「保管ファイルが読めない」場合は
@@ -551,7 +570,8 @@ ipcMain.handle(
      */
     let token = '';
     try {
-      const read = await getValidToken(serviceId);
+      // 資格情報を読まない LOCAL サービスは保管ファイルに触れない (その不調に巻き込まれない・T-118)。
+    const read = readsSavedToken(serviceId) ? await getValidToken(serviceId) : { ok: true as const, token: '' };
       if (!read.ok) {
         // 未設定だけが「トークン未設定」。復号できない・保管ファイルが読めないは理由を出す。
         if (read.reason !== 'absent') {

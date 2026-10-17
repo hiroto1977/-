@@ -29,8 +29,10 @@ afterEach(() => rmSync(base, { recursive: true, force: true }));
 
 describe('書き出しの封じ込め — symlink', () => {
   it('★ 根の中の symlink を経由して外へ書けない', async () => {
-    symlinkSync(outside, join(exportWriteRoot(home), 'link'));
-    const target = join(exportWriteRoot(home), 'link', 'pwned.svg');
+    // 2026-10-14 (パス 521 · T-042) から字面の門は親を `data/` と `data/templates/` に限るので、
+    // 根の中で外を指せる symlink は **`templates` という名の物だけ**になった。その 1 つで測る。
+    symlinkSync(outside, join(exportWriteRoot(home), 'templates'));
+    const target = join(exportWriteRoot(home), 'templates', 'pwned.svg');
 
     // 字面の検査は通ってしまう —— これがこの検査の存在理由。
     expect(isSafeExportPath(target, home, '.svg')).toBe(true);

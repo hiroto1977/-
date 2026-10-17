@@ -41,6 +41,7 @@ let isPackaged = true;
 let windowsMade = 0;
 let allWindows: unknown[] = [];
 let quitCalls = 0;
+let instanceLock = true;
 const appListeners = new Map<string, () => void>();
 
 function freshCapture(): Captured {
@@ -66,6 +67,7 @@ vi.mock('electron', () => ({
       return isPackaged;
     },
     whenReady: async () => undefined,
+    requestSingleInstanceLock: () => instanceLock,
     on: (name: string, fn: () => void) => {
       appListeners.set(name, fn);
     },
@@ -154,8 +156,9 @@ vi.mock('../oauth', () => ({
 }));
 
 /** main.ts を読み直して、窓が作られるまで待つ。 */
-async function loadMain(opts: { packaged: boolean; devServerUrl?: string }): Promise<Captured> {
+async function loadMain(opts: { packaged: boolean; devServerUrl?: string; lock?: boolean }): Promise<Captured> {
   captured = freshCapture();
+  instanceLock = opts.lock ?? true;
   isPackaged = opts.packaged;
   if (opts.devServerUrl === undefined) delete process.env.VITE_DEV_SERVER_URL;
   else process.env.VITE_DEV_SERVER_URL = opts.devServerUrl;
@@ -184,6 +187,7 @@ beforeEach(() => {
   windowsMade = 0;
   allWindows = [];
   quitCalls = 0;
+  instanceLock = true;
   appListeners.clear();
   storedPrefs = { scheme: 'light', background: '#fff7fa' };
 });
@@ -680,5 +684,31 @@ describe('アプリの寿命', () => {
     } finally {
       Object.defineProperty(process, 'platform', { value: orig, configurable: true });
     }
+  });
+  it('★ 2 つ目のインスタンスは窓を作らず終了する・1 つ目は窓を前に出す (threat: T-104)', async () => {
+    // ロックが取れない = 同じ userData を既に別のプロセスが開いている。窓を作ると保管ファイルの
+    // 「読んで → 書く」が互いに上書きし合う。
+    await loadMain({ packaged: true, lock: false });
+    expect(windowsMade).toBe(0);
+    expect(quitCalls).toBe(1);
+    expect(appListeners.has('second-instance')).toBe(false);
+    // 対照: ロックが取れれば窓を作り、終了しない。
+    quitCalls = 0;
+    windowsMade = 0;
+    await loadMain({ packaged: true, lock: true });
+    expect(windowsMade).toBe(1);
+    expect(quitCalls).toBe(0);
+    // 1 つ目へ届く second-instance は、最小化を戻して焦点を移すだけ。窓が無ければ何もしない。
+    const calls: string[] = [];
+    allWindows = [{ isMinimized: () => true, restore: () => calls.push('restore'), focus: () => calls.push('focus') }];
+    appListeners.get('second-instance')!();
+    expect(calls).toEqual(['restore', 'focus']);
+    calls.length = 0;
+    allWindows = [{ isMinimized: () => false, restore: () => calls.push('restore'), focus: () => calls.push('focus') }];
+    appListeners.get('second-instance')!();
+    expect(calls).toEqual(['focus']);
+    allWindows = [];
+    expect(() => appListeners.get('second-instance')!()).not.toThrow();
+    expect(windowsMade).toBe(1);
   });
 });

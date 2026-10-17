@@ -19,6 +19,11 @@ import type { RecordStore } from './store';
 /** 点検に要る読み出しだけ。実物の `RecordStore.list` はこれを満たす (総称型は制約で具体化される)。 */
 export interface ShapeAuditSource {
   list(collection: string): Promise<readonly { readonly id: string; readonly data: Record<string, unknown> }[]>;
+  /**
+   * 全件 (collection 名つき)。**台帳に無い collection の記録**を見つけるのに要る (T-050)。
+   * 無ければ `unknown` は空 —— 点検だけの読み手 (検査の代役) は持たなくてよい。
+   */
+  exportAll?(): Promise<readonly { readonly id: string; readonly collection: string }[]>;
 }
 
 export interface MalformedRecord {
@@ -34,6 +39,17 @@ export interface ShapeAuditResult {
   /** 読み出しに失敗した collection。 */
   readonly unreadable: readonly string[];
   readonly malformed: readonly MalformedRecord[];
+  /**
+   * **台帳 (`COLLECTION_SHAPES`) に無い collection の記録** (2026-10-15 · パス 522 · threat: T-050)。
+   *
+   * 復元の入口は collection 名の字だけを見て (将来の版の記録を落とさないため) 中身の形は
+   * 台帳に在る collection しか見ない。すると、バックアップに書かれた `zz-not-a-collection` の
+   * 記録は入り、**どの画面にも出ず、この点検にも映らず、平文の書き出しの確認にも数えられず、
+   * 以後のバックアップすべてに乗り続けた** (実測: 2 MB の blob 1 件を置いた控えを復元すると
+   * `auditRecordShapes` は checked 0 / malformed 0 で「ありません」と言い、次の控えは 2 MB 増えた)。
+   * 形は判定できないので `malformed` には混ぜず、別の束として出し、削除の対象には含める。
+   */
+  readonly unknown: readonly MalformedRecord[];
 }
 
 /** 台帳にある collection を順に読み、形の合わないレコードを集める。 */
@@ -59,7 +75,17 @@ export async function auditRecordShapes(store: ShapeAuditSource): Promise<ShapeA
       if (!hasCollectionShape(collection, r.data)) malformed.push({ id: r.id, collection });
     }
   }
-  return { checked, skippedSealed, unreadable, malformed };
+  const unknown: MalformedRecord[] = [];
+  if (store.exportAll) {
+    try {
+      for (const r of await store.exportAll()) {
+        if (!Object.hasOwn(COLLECTION_SHAPES, r.collection)) unknown.push({ id: r.id, collection: r.collection });
+      }
+    } catch {
+      unreadable.push('(全件の読み出し)');
+    }
+  }
+  return { checked, skippedSealed, unreadable, malformed, unknown };
 }
 
 /** collection ごとの件数を「sales-entries 2 件 / kpi-actuals 1 件」の形に。 */
@@ -106,7 +132,8 @@ export async function deleteRecords(
   ids: readonly string[],
 ): Promise<DeleteOutcome> {
   const now = await auditRecordShapes(store);
-  const stillMalformed = new Set(now.malformed.map((m) => m.id));
+  // 台帳に無い collection の記録も「今もそうである物」だけ消す (T-050)。
+  const stillMalformed = new Set([...now.malformed, ...now.unknown].map((m) => m.id));
   let deleted = 0;
   for (const id of ids) {
     if (!stillMalformed.has(id)) continue;

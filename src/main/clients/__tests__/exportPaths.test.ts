@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import path from 'node:path';
 import os from 'node:os';
 import { promises as fs } from 'node:fs';
-import { exportRoot, exportWriteRoot, isSafeExportPath, writeExportFile, repairExportPermissions } from '../exportPaths';
+import { exportParentDirs, exportRoot, exportWriteRoot, isSafeExportPath, writeExportFile, repairExportPermissions } from '../exportPaths';
 
 // 2026-07 security audit: every renderer-supplied export path must land inside
 // ~/.local/business-hub. Before this module the four per-service copies of the
@@ -29,10 +29,33 @@ describe('exportRoot', () => {
 });
 
 describe('isSafeExportPath', () => {
-  it('accepts files inside the export root at any depth', () => {
+  it('accepts files whose parent is data/ or data/templates/ (the two fixed export dirs)', () => {
     expect(isSafeExportPath(inRoot('data/dashboard.html'), HOME, '.html')).toBe(true);
     expect(isSafeExportPath(inRoot('data/templates/card.svg'), HOME, '.svg')).toBe(true);
-    expect(isSafeExportPath(inRoot('data/a/b/c/deep.md'), HOME, '.md')).toBe(true);
+  });
+
+  /*
+   * **書き出し自身の既定名をディレクトリに化けさせられない (2026-10-14 · パス 521 · threat: T-042)。**
+   *
+   * 2026-10-14 までこの検査は「任意の深さを受ける」を仕様として留めていた
+   * (`data/a/b/c/deep.md` → true)。書き出しは書く前に `mkdir -p (親)` を呼ぶので、
+   * `data/business-dashboard.html/x.html` を渡すと**既定の書き出し名のディレクトリ**が
+   * でき、以後の既定の書き出しが永久に EISDIR で失敗した (実測・AI 監査の再現)。
+   * 親は `data/` と `data/templates/` の 2 つだけ。
+   */
+  it('★ 親が固定の 2 つでない書き出し先は断る —— 既定名をディレクトリに化けさせない (threat: T-042)', () => {
+    for (const rel of [
+      'data/business-dashboard.html/x.html',
+      'data/team-radar.svg/x.svg',
+      'data/dashboard.html/x.html',
+      'data/templates/business-card.svg/x.svg',
+      'data/a/b/c/deep.md',
+      'data/templates/deeper/x.svg',
+      'data/state.json.tmp/x.svg',
+    ]) {
+      expect(isSafeExportPath(inRoot(rel), HOME, path.extname(rel)), rel).toBe(false);
+    }
+    expect(exportParentDirs(HOME)).toEqual([path.join(ROOT, 'data'), path.join(ROOT, 'data', 'templates')]);
   });
 
   /*
@@ -53,8 +76,8 @@ describe('isSafeExportPath', () => {
     ]) {
       expect(isSafeExportPath(inRoot(rel), HOME, path.extname(rel)), rel).toBe(false);
     }
-    // 標本が的に当たる: 同じ名前でも data/ の下なら通る。
-    expect(isSafeExportPath(inRoot('data/state.json.tmp/x.svg'), HOME, '.svg')).toBe(true);
+    // 標本が的に当たる: 同じ名前でも data/ 直下のファイルなら通る (親の制限は T-042 の検査が持つ)。
+    expect(isSafeExportPath(inRoot('data/state.json.tmp.svg'), HOME, '.svg')).toBe(true);
     expect(exportWriteRoot(HOME)).toBe(path.join(ROOT, 'data'));
   });
 
@@ -268,5 +291,35 @@ describe('repairExportPermissions — 既存の書き出しを均す', () => {
   it('根がまだ無くても投げない', async () => {
     const root = path.join(os.tmpdir(), 'export-repair-does-not-exist-' + String(process.pid));
     await expect(repairExportPermissions(root)).resolves.toBe(0);
+  });
+});
+
+/*
+ * **調べた物と書く物を同じにする (2026-10-15 · パス 523 · threat: T-060)。**
+ *
+ * T-042 は「親は固定の 2 つだけ」と述べたが、比べていたのは `path.resolve` した後の親で、
+ * 書き出しが `mkdir -p` へ渡すのは生の `filePath` の親だった。`..` を挟んだ綴りは resolve すると
+ * `data/y.html` になって通り、mkdir は `state.json` という名のディレクトリを作っていた (実測・
+ * AI 監査の再現)。正規化済みの絶対パス以外は断る。
+ */
+describe('書き出し先は正規化済みの絶対パスだけ (threat: T-060)', () => {
+  it('★ `..` / 相対 / 重なった区切り / 末尾の区切りは、resolve すると通る親でも断る (threat: T-060)', () => {
+    const viaDotDot = `${inRoot('data/templates')}/../../state.json/../data/y.html`;
+    expect(path.dirname(path.resolve(viaDotDot)), '標本が的に当たる: resolve 後の親は許可された親').toBe(inRoot('data'));
+    expect(isSafeExportPath(viaDotDot, HOME, '.html')).toBe(false);
+    for (const raw of [
+      `${inRoot('data')}/../data/y.html`,
+      `${inRoot('data')}//y.html`,
+      `${inRoot('data')}/./y.html`,
+      'data/y.html',
+      './data/y.html',
+    ]) {
+      expect(isSafeExportPath(raw, HOME, '.html'), raw).toBe(false);
+    }
+  });
+
+  it('対照: 正規化済みの絶対パスは今までどおり通る (threat: T-060)', () => {
+    expect(isSafeExportPath(inRoot('data/y.html'), HOME, '.html')).toBe(true);
+    expect(isSafeExportPath(inRoot('data/templates/card.svg'), HOME, '.svg')).toBe(true);
   });
 });

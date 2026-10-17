@@ -192,10 +192,34 @@ const PROTECTED = [
   // 全てのページ読み込みに介入する」として守っているのに、**その sw.js を
   // 置きに行く側**が守られていなかった。
   //
-  // 残る 3 つは足していない: `e2e.yml` / `mutation.yml` は contents: read だけで
-  // 何も配らない。`knowledge-auto.yml` は issues: write を持つが、書けるのは
-  // 課題票で、配布物にも実行環境にも触れない。
   '.github/workflows/pages.yml',
+  // 2026-10-15 (パス 522 · threat: T-058) に残りの 4 本と dependabot.yml を足した。
+  // それまでは「`e2e.yml` / `mutation.yml` は contents: read だけで何も配らず、
+  // `knowledge-auto.yml` が書けるのは課題票だけ」として外していた。**外す理由が
+  // 「配らない」なのは、守る物を配布物だけと見ていた**からで、どの workflow も
+  // `npm ci` を走らせ (supply-chain の実行面)、secrets を env に載せ、
+  // `GITHUB_TOKEN` を持つ。1 行の `run:` を足すだけで CI の runner から外へ
+  // 送れる —— そこは `lint:workflow-security` が形を見るが、鎖が見るのは
+  // 「気付かぬ変更」で役割が違う (pages.yml を足したときと同じ線引き)。
+  // `dependabot.yml` は**依存の更新 PR を作る側の設定**で、登録先・頻度・
+  // 無視する版を決める —— 供給網の入口そのもの。
+  '.github/workflows/e2e.yml',
+  '.github/workflows/mutation.yml',
+  '.github/workflows/knowledge-auto.yml',
+  '.github/workflows/dependency-audit.yml',
+  '.github/dependabot.yml',
+  // 上の workflow が `run:` で直接起こす本 (閉包)。どれも**CI が何を測り・何を報せるかを決める**:
+  //   mutate-changed.cjs          push 側の変異検査の**対象**を選ぶ。黙って空にすれば門は測らずに緑
+  //   merge-mutation-reports.cjs  週次の塊を 1 つの点数へ併合し、break (99.8) を割ったかを決める
+  //   triage-mutations.cjs        生存の一覧を刷る (報告の側)
+  //   knowledge-autopilot.cjs     確証コーパスの監査と再生成を走らせ、課題票の本文を作る
+  'scripts/mutate-changed.cjs',
+  'scripts/merge-mutation-reports.cjs',
+  'scripts/triage-mutations.cjs',
+  'scripts/knowledge-autopilot.cjs',
+  // knowledge-autopilot.cjs の閉包 (役員ロールへ注入する文脈と知識グラフの組み立て。どちらも 1〜2 コミットの安定資産)。
+  'orchestration/knowledge-context.cjs',
+  'orchestration/knowledge-graph.cjs',
   // 2026-08-26 に足した 3 つ。**同じ順番の逆転が、もう一段内側に残っていた。**
   //
   // `pages.yml` を足した理由はこう書いてある ——「sw.js を『公開版のオリジンで
@@ -216,7 +240,16 @@ const PROTECTED = [
   // **結果**を見る。鎖が見るのは「気付かぬ変更」で、役割が違う。
   'scripts/inline-html.cjs',
   'scripts/inject-pwa.cjs',
+  'scripts/lib/pure-data-module.cjs', // threat: T-088 —— ビルドが実行するデータ・モジュールを構文木で確かめる (vite.config.ts が読む)
   'assets/manifest.webmanifest',
+  // threat: T-071 —— pages.yml が `_site/` へそのまま公開する 2 つ (2026-10-15 · パス 523)。
+  // `icon.svg` は `<link rel=icon>` としてはスクリプトを走らせないが、**同じ URL を直接開くと
+  // SVG 文書として `<script>` が走る** (実測: chromium の --dump-dom で属性が立った)。公開版の
+  // オリジン (`app.html` / `lite.html` と同じ) で動く script で、SVG 文書には CSP が無い (CSP は
+  // HTML の meta にだけ在る)。どの門も `assets/` を走査していなかった。`og.png` も同じく
+  // 公開されるので、差し替えを鎖に映す。
+  'assets/icon.svg',
+  'assets/og.png',
   //
   // `vite.config.ts` は足していない。バンドルの作り方を決めるので配布経路では
   // あるが、**通常の開発で動く**ファイルで、鎖に入れると日常の変更すべてに
@@ -263,6 +296,14 @@ const PROTECTED = [
   //                               **閉包に入る** —— ここが `missing: []` を返すように
   //                               書き換わると、走査が一部だけ死んでも 6 ゲートが緑になる。
   'scripts/lib/tracked-cross-check.cjs',
+  //   lint-malware.cjs            悪意のあるコードの形の検出器 (2026-10-17 · パス 528)。ci.yml (保護対象) が
+  //                               成果物を `--artifact` で走査するのでその step が読む —— 閉包に入る。ここが
+  //                               `process.exit(0)` に書き換わると、配る HTML に畳み込まれた依存のコードを
+  //                               何も見ずに緑にできる。守っている検査を黙らせられる物は、除外ではなく保護対象。
+  'scripts/lint-malware.cjs',
+  //   lib/strip-non-code.cjs      注記・文字列を落とす共有の字句解析器 (パス 528 · `lint-malware.cjs` が読むので閉包に入る)。
+  //                               ここが何も落とさない/全部落とす形に書き換わると、検出器が見る本文が変わる。
+  'scripts/lib/strip-non-code.cjs',
   'scripts/lint-artifact-csp.cjs',
   'scripts/verify-release-artifacts.cjs',
   'scripts/checksum-release.cjs',
@@ -301,6 +342,21 @@ const PROTECTED = [
   // 一度登録されると、書き換えられた sw.js は以後そのオリジンで任意の
   // 応答を返せる。保護対象として最も効く部類なのに漏れていた。
   'assets/sw.js',
+  // 2026-10-13 (パス 516 · T-019) に足した。**配る実行可能ランチャー。**
+  // `launcher/ServiceHubを開く.bat` は Windows 利用者が**ダブルクリックして** standalone.html を
+  // 開くために在る (ファイル自身がそう設計されている)。実行可能コードなのに、全コード走査門
+  // (`lint:malware` / `lint:forbidden` はトップレベル dir の固定 allowlist = src|scripts|
+  // orchestration|build|assets でしか走査せず `launcher/` を見ない・`.bat` はどの `SCAN_EXTS`/
+  // `isWalkedSourceName` にも無い) の母集団からも、改竄検知からも、CODEOWNERS からも漏れていた
+  // (T-016/T-018 と同じ走査母集団の死角の家系)。実測 (2026-10-13・直す前): この .bat に
+  // `powershell … iwr <url> -OutFile … ; Start-Process …` の download-and-exec を 1 行足すと
+  // `lint:malware`/`lint:forbidden`/`lint:shell`/`lint:charset` が **4 門すべて exit 0**。
+  // .bat は Windows シェルなので forbidden (JS の形) も shell (bash の形) の規則も当てはまらず、
+  // 無理に走査門へ入れても PowerShell は捕まらない —— **正しい機構は「黙った編集を可視化 +
+  // 所有者レビュー必須」** (assets/sw.js や配る maker と同じ・CODEOWNERS 被覆は T-003 検査が
+  // 自動で要求)。将来のランチャー (任意 dir・.bat/.cmd/.ps1/.vbs/.command) は
+  // `launcherExecutablesGuarded.test.ts` が「全部チェーン保護対象」で機械的に強制する。
+  'launcher/ServiceHubを開く.bat',
   // 2026-09-26 (パス 480) に足した。**公開サイトの根を組み立てる script。**
   // `pages.yml` は `dist/landing.html` を `_site/index.html` として publish するので、
   // ここが出す HTML が **`https://<owner>.github.io/<repo>/` を開いた人が最初に見る物**
@@ -427,6 +483,10 @@ const PROTECTED = [
   // 一時ファイルの置き場と `.prev` の扱いを決めるので、ここが変われば
   // 平文や旧世代が予期しない場所に残りうる。
   'src/main/atomicWrite.ts',
+  // 「鍵が本当に OS のキーチェーンに在るか」の述語 (2026-10-14 · パス 520 · threat: T-041)。
+  // secrets.ts / atRest.ts の書く側と名乗る側が読む。緩めば Linux の basic_text (ハードコードされた鍵) を
+  // 「OS キーチェーンで暗号化」と名乗る形へ戻る。
+  'src/main/keychainBackend.ts',
   // ハードリセット (2026-09-09 · パス 137): main のファイル (トークン・状態ファイル・控え・残骸) を消す手順と、
   // 両ビルドの報告の型・文面。消す先が黙って変わらないこと。
   'src/main/eraseAll.ts',

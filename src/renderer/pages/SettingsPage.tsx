@@ -64,6 +64,7 @@ import {
 } from '../oauth/callbackPaste';
 import { clearPkceSession, readPkceSession, savePkceSession } from '../oauth/pkceSession';
 import { isSubmitEnter } from '../keyIntent';
+import { externalTextOnOneLine } from '../data/assistantMarkdown';
 
 /**
  * Settings — 22 番目のサービス。
@@ -1107,7 +1108,7 @@ export function UnusedCredentialSection({ refreshKey }: { refreshKey: number }) 
       // 減らせていないことを黙るのは、この節の目的そのものに反する。
       const res = await hub.clearToken(id);
       if (!res.ok) {
-        setForgetError(`${labelOf(id)} を削除できませんでした: ${res.message}`);
+        setForgetError(`${labelOf(id)} を削除できませんでした: ${externalTextOnOneLine(res.message)}`);
         return;
       }
       await reload();

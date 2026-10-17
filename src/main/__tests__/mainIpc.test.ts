@@ -38,6 +38,7 @@ vi.mock('electron', () => ({
     getPath: () => '/tmp/does-not-matter',
     isPackaged: true,
     whenReady: () => new Promise(() => {}),
+    requestSingleInstanceLock: () => true,
     on: (name: string, fn: () => void) => {
       appListeners.set(name, fn);
     },
@@ -152,13 +153,19 @@ vi.mock('../clients', () => ({
   LIVE_FETCHERS: {
     github: async (a: unknown) => { fetcherCalls.push(a); return { rows: [] }; },
     skills: async (a: unknown) => { fetcherCalls.push(a); return { local: true }; },
+    // 資格情報を読まない LOCAL サービス (T-118)。保管ファイルの不調に巻き込まれてはならない。
+    kpi: async (a: unknown) => { fetcherCalls.push(a); return { local: 'kpi' }; },
   },
   LIVE_ACTIONS: {
     github: { 'create-issue': async (a: unknown) => { actionCalls.push(a); return { id: 1 }; } },
     // 資格情報の要らないサービスの action (パス 267 の実測対象)。
     skills: { run: async (a: unknown) => { actionCalls.push(a); return { ran: true }; } },
+    kpi: { save: async (a: unknown) => { actionCalls.push(a); return { saved: true }; } },
   },
-  LOCAL_SERVICES: new Set(['skills']),
+  LOCAL_SERVICES: new Set(['skills', 'kpi']),
+  // 本物は clients/index.ts (localTokenReaders.test.ts が ctx.token の読み手と双方向に突き合わせる)。
+  // ここは主プロセスの入口が**呼ぶ**ことだけを見るので、読む 1 件 (skills) と読まない 1 件 (kpi) を置く。
+  readsSavedToken: (id: string) => id !== 'kpi',
 }));
 
 let authorizeResult: unknown = { accessToken: 'SECRET_AT', refreshToken: 'SECRET_RT', scope: 'repo', expiresAt: 999 };
@@ -621,6 +628,25 @@ describe('fetch:snapshot — 取得の入口', () => {
     const r = (await invoke('fetch:snapshot', 'skills')) as { ok: boolean; message: string };
     expect(r.ok).toBe(false);
     expect(r.message).toContain('保管ファイルを読めませんでした');
+  });
+
+  it('★ 資格情報を読まない LOCAL サービスは、保管ファイルの不調に巻き込まれない (threat: T-118)', async () => {
+    validToken = { ok: false, reason: 'store-unreadable', message: '保管ファイルを読めませんでした (broken JSON)。' };
+    expect(await invoke('fetch:snapshot', 'kpi')).toEqual({ ok: true, data: { local: 'kpi' } });
+    expect(fetcherCalls).toEqual([{ token: '' }]);
+    expect(await invoke('action:invoke', 'kpi', 'save', {})).toEqual({ ok: true, data: { saved: true } });
+    expect(actionCalls).toEqual([{ token: '', payload: {} }]);
+  });
+
+  it('★ 資格情報を読む LOCAL サービスと、LOCAL でないサービスは、不調を伝えて断るまま (threat: T-118)', async () => {
+    validToken = { ok: false, reason: 'store-unreadable', message: '保管ファイルを読めませんでした (broken JSON)。' };
+    for (const id of ['skills', 'github']) {
+      const r = (await invoke('fetch:snapshot', id)) as { ok: boolean; code: string };
+      expect(r.ok, id).toBe(false);
+      expect(r.code, id).toBe('not_configured');
+    }
+    const a = (await invoke('action:invoke', 'skills', 'run', {})) as { ok: boolean; code: string };
+    expect(a).toMatchObject({ ok: false, code: 'not_configured' });
   });
 
   it('資格情報の読み出しが投げても reject しない (画面が止まらない)', async () => {

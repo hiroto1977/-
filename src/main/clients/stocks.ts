@@ -3,9 +3,11 @@ import { readStateFile } from '../stateFile';
 import { isoDateFromTimestamp } from '../../shared/isoDate';
 import { countChars } from '../../shared/inputCeiling';
 import {
+  MAX_WATCHLIST_SYMBOLS,
   isSafeSymbol,
   readStoredWatchlist,
   symbolsOrEmpty,
+  watchlistFullMessage,
   watchlistStoredNote,
   type StoredWatchlist,
 } from '../../shared/watchlistState';
@@ -43,6 +45,8 @@ import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { isSafeExportPath, writeExportFile } from './exportPaths';
+import { atomicTmpPathOf } from '../atomicWrite';
+import { createWriteChain } from '../writeChain';
 import { AI_PROVIDERS } from '../../shared/ai/providers';
 import type { ActionData, ExportFileResult } from '../../shared/actionData';
 import type {
@@ -1739,12 +1743,26 @@ export async function loadStoredWatchlist(deps: StateDeps = {}): Promise<StoredW
   if (file.kind !== 'read') return file;
   return readStoredWatchlist(file.text);
 }
+// Stryker restore ArrowFunction,BooleanLiteral
+// (保存の側は 2026-10-15 から外に出した —— `stateWriterRace.test.ts` が実ファイルで
+//  既定の lambda (mkdir / writeTight / rename) を通すので、そこの変異体は殺せる · T-055)
 
-/** Save state with atomic rename (write to tmp + rename). Throws on
- *  fs failure — caller can decide whether to surface to the user. */
-export async function saveStocksState(state: StocksState, deps: StateDeps = {}): Promise<void> {
+/**
+ * ウォッチリストの書き込みの鎖 (T-055)。「読む → 直す → 書く」(登録・解除) と
+ * 保存そのものを 1 列に並べる。鎖の中で呼ぶ側は `saveStocksStateUnlocked`。
+ */
+const stocksWrites = createWriteChain();
+
+/**
+ * 一意な作業ファイルへ書いて `rename` で被せる (T-055)。2026-10-15 まで
+ * `p + '.tmp'` の**固定名**だったので、同時の 2 つの保存が同じ作業ファイルを
+ * 切り詰め合い、本体が壊れた JSON になることが在った (実測: 300 回で 49 回)。
+ * 名前は `atomicWrite.ts` の `atomicTmpPathOf` と同じ形 (pid + 時刻 + 乱数) なので、
+ * 残骸は `isAtomicLitterOf` が見分けられる。
+ */
+async function saveStocksStateUnlocked(state: StocksState, deps: StateDeps): Promise<void> {
   const p = (deps.statePath ?? defaultStatePath)();
-  const tmp = p + '.tmp';
+  const tmp = atomicTmpPathOf(p);
   const mkdirFn = deps.mkdir ?? ((dir: string) => fs.mkdir(dir, { recursive: true }).then(() => undefined));
   // 0600 で書く理由は上の `Stryker disable` の手前の注記を参照。
   const writeFn = deps.writeFile ?? writeTight;
@@ -1753,7 +1771,13 @@ export async function saveStocksState(state: StocksState, deps: StateDeps = {}):
   await writeFn(tmp, JSON.stringify(state, null, 2));
   await renameFn(tmp, p);
 }
-// Stryker restore ArrowFunction,BooleanLiteral
+
+/** Save state with atomic rename (unique tmp + rename), serialized with the
+ *  other writers of this file. Throws on fs failure — caller can decide
+ *  whether to surface to the user. */
+export async function saveStocksState(state: StocksState, deps: StateDeps = {}): Promise<void> {
+  return stocksWrites(() => saveStocksStateUnlocked(state, deps));
+}
 
 /** Add a symbol to the persistent watchlist (idempotent; no duplicates). */
 export async function addWatchlistEntry(symbol: string, deps: StateDeps = {}): Promise<StocksState> {
@@ -1761,12 +1785,16 @@ export async function addWatchlistEntry(symbol: string, deps: StateDeps = {}): P
     throw new Error('symbol must be 1-16 chars from [A-Za-z0-9.-^]');
   }
   const upper = symbol.toUpperCase();
-  // 読めなかった保存値は空として扱う (明示の操作は警告のうえ通す —— shared の `symbolsOrEmpty` の注記)。
-  const cur = symbolsOrEmpty(await loadStoredWatchlist(deps));
-  if (cur.includes(upper)) return { watchlist: cur };
-  const next: StocksState = { watchlist: [...cur, upper] };
-  await saveStocksState(next, deps);
-  return next;
+  // 読む → 直す → 書く を鎖の中で (T-055)。外で読むと、同時の 2 つの登録が互いの 1 件を消す。
+  return stocksWrites(async () => {
+    // 読めなかった保存値は空として扱う (明示の操作は警告のうえ通す —— shared の `symbolsOrEmpty` の注記)。
+    const cur = symbolsOrEmpty(await loadStoredWatchlist(deps));
+    if (cur.includes(upper)) return { watchlist: cur };
+    if (cur.length >= MAX_WATCHLIST_SYMBOLS) throw new Error(watchlistFullMessage());
+    const next: StocksState = { watchlist: [...cur, upper] };
+    await saveStocksStateUnlocked(next, deps);
+    return next;
+  });
 }
 
 /** Remove a symbol from the persistent watchlist (idempotent). */
@@ -1775,11 +1803,13 @@ export async function removeWatchlistEntry(symbol: string, deps: StateDeps = {})
     throw new Error('symbol must be 1-16 chars from [A-Za-z0-9.-^]');
   }
   const upper = symbol.toUpperCase();
-  const cur = symbolsOrEmpty(await loadStoredWatchlist(deps));
-  if (!cur.includes(upper)) return { watchlist: cur };
-  const next: StocksState = { watchlist: cur.filter((s) => s !== upper) };
-  await saveStocksState(next, deps);
-  return next;
+  return stocksWrites(async () => {
+    const cur = symbolsOrEmpty(await loadStoredWatchlist(deps));
+    if (!cur.includes(upper)) return { watchlist: cur };
+    const next: StocksState = { watchlist: cur.filter((s) => s !== upper) };
+    await saveStocksStateUnlocked(next, deps);
+    return next;
+  });
 }
 
 /** Default Markdown path — sibling to the HTML, .md extension. */
@@ -1940,6 +1970,7 @@ function isAdvisorResult(v: unknown): v is AdvisorResponse {
   }
   return valid;
 }
+// Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator,BooleanLiteral
 
 function isStrategyComparison(v: unknown): v is StrategyComparisonResult {
   if (v === null || typeof v !== 'object') return false;
@@ -1947,10 +1978,27 @@ function isStrategyComparison(v: unknown): v is StrategyComparisonResult {
   return (
     typeof r['symbol'] === 'string' &&
     Number.isFinite(r['initialCash']) &&
-    Array.isArray(r['rows'])
+    Array.isArray(r['rows']) &&
+    // threat: T-092 —— 行の中身も見る。以前は配列であることしか見ず、`tradeCount` に文字列を入れると
+    // `.html` の `<td>` へ**素で**入り (`</td></table><script>…`)、そのファイルは `app:openPath` が許す
+    // `data/` に書かれて既定のブラウザで開く (レンダラーの外・CSP の外で走る)。
+    r['rows'].every(isStrategyRow)
   );
 }
-// Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator,BooleanLiteral
+
+function isStrategyRow(row: unknown): boolean {
+  if (row === null || typeof row !== 'object') return false;
+  const x = row as Record<string, unknown>;
+  return (
+    typeof x['strategy'] === 'string' &&
+    Number.isFinite(x['finalEquity']) &&
+    Number.isFinite(x['totalReturnPct']) &&
+    Number.isFinite(x['maxDrawdownPct']) &&
+    Number.isInteger(x['tradeCount']) &&
+    (x['tradeCount'] as number) >= 0 &&
+    (x['winRate'] === null || x['winRate'] === undefined || Number.isFinite(x['winRate']))
+  );
+}
 
 /** Validate that a path is under the user's home and ends in .html.
  *  Prevents the renderer from writing to arbitrary filesystem locations

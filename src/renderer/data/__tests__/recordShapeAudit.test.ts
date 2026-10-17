@@ -48,7 +48,7 @@ describe('auditRecordShapes', () => {
     const store = getRecordStore();
     await store.insert(SALES_COLLECTION, GOOD);
     const r = await auditRecordShapes(store);
-    expect(r).toEqual({ checked: 1, skippedSealed: 0, unreadable: [], malformed: [] });
+    expect(r).toEqual({ checked: 1, skippedSealed: 0, unreadable: [], malformed: [], unknown: [] });
     expect(summarizeMalformed(r.malformed)).toBe('');
   });
 
@@ -92,6 +92,19 @@ describe('auditRecordShapes', () => {
     expect(r.unreadable).toEqual([SALES_COLLECTION]);
     expect(r.malformed).toEqual([]);
     expect(r.checked).toBe(0);
+  });
+
+  it('★ 全件の読み出し (台帳に無い種類を探す側) が投げても点検は投げず、「読めなかった」に名指しで数える (threat: T-050)', async () => {
+    const failing = {
+      list: async () => [],
+      exportAll: async () => {
+        throw new Error('boom');
+      },
+    };
+    const r = await auditRecordShapes(failing);
+    expect(r.unreadable).toEqual(['(全件の読み出し)']);
+    expect(r.unknown).toEqual([]);
+    expect(r.malformed).toEqual([]);
   });
 });
 

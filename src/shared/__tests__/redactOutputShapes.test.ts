@@ -245,3 +245,37 @@ describe('redactSecrets — `name=value` の対 (出力全文・パス 271 / 289
     expect(redactSecrets('?id=1&key=abcdefgh&token=ijklmnop&next=2')).toBe('?id=1&key=[REDACTED]&token=[REDACTED]&next=2');
   });
 });
+
+/**
+ * 入れ子の JSON (引用符が `\"` になった形) の規則と、パス 525 の接頭辞つき鍵の規則を、出力全文で固定する
+ * (2026-10-16 · パス 526 · threat: T-101)。変異検査が 1 度目に 9 件を生き残らせた —— 名前の接頭辞の量指定子・
+ * 名前と値のあいだの空白・値の中の空白・`api-?key` の `-?`・書き戻す名前と区切りの字面・`shared-?secret` の `-?`・
+ * 置き換えの `$1`。どれも「秘密が消える」ことだけを見る `not.toContain` では殺せない。
+ * **期待値は手で書いた文字列**にする (原文の式から組まない)。
+ */
+describe('redactSecrets — 入れ子の JSON の引用符つきヘッダ (出力全文 · threat: T-101)', () => {
+  const Q = '\\"';
+  const wrap = (inner: string): string => `{${inner}}`;
+  it.each([
+    ['方式つきの値は方式を残して伏せる', wrap(`${Q}authorization${Q}:${Q}Bearer abcdefghijkl${Q}`), wrap(`${Q}authorization${Q}:${Q}Bearer [REDACTED]${Q}`)],
+    ['名前の接頭辞が 2 語でも伏せる (1 語に限らない)', wrap(`${Q}x-goog-api-key${Q}:${Q}Bearer secret${Q}`), wrap(`${Q}x-goog-api-key${Q}:${Q}Bearer [REDACTED]${Q}`)],
+    ['名前の接頭辞が 0 語でも伏せる (要求しない)', wrap(`${Q}apikey${Q}:${Q}secretvalue${Q}`), wrap(`${Q}apikey${Q}:${Q}[REDACTED]${Q}`)],
+    ['ハイフンつきの綴り (api-key) も伏せる', wrap(`${Q}api-key${Q}:${Q}secretvalue${Q}`), wrap(`${Q}api-key${Q}:${Q}[REDACTED]${Q}`)],
+    ['コロンの前に空白があっても伏せる', wrap(`${Q}api-key${Q} : ${Q}secretvalue${Q}`), wrap(`${Q}api-key${Q} : ${Q}[REDACTED]${Q}`)],
+    ['コロンの後ろに空白があっても伏せる', wrap(`${Q}api-key${Q}: ${Q}secretvalue${Q}`), wrap(`${Q}api-key${Q}: ${Q}[REDACTED]${Q}`)],
+    ['値の中に空白があっても丸ごと伏せる', wrap(`${Q}api-key${Q}:${Q}secret value here${Q}`), wrap(`${Q}api-key${Q}:${Q}[REDACTED]${Q}`)],
+  ])('%s', (_label, input, expected) => {
+    expect(redactSecrets(input)).toBe(expected);
+  });
+});
+
+describe('redactSecrets — 線上の `名前: 値` と接頭辞つきの鍵 (出力全文 · threat: T-101 / T-095)', () => {
+  it('shared-secret の `-` は無くてもよい (sharedsecret: も伏せる)', () => {
+    expect(redactSecrets('sharedsecret: topsecretvalue')).toBe('sharedsecret: [REDACTED]');
+    expect(redactSecrets('shared-secret: topsecretvalue')).toBe('shared-secret: [REDACTED]');
+  });
+  it('接頭辞つきの鍵は、接頭辞を残して本体だけを伏せる ($1 を保つ)', () => {
+    expect(redactSecrets(`token xai-${'a'.repeat(30)} end`)).toBe('token xai-[REDACTED] end');
+    expect(redactSecrets(`k=gsk_${'B'.repeat(30)}`)).toBe('k=gsk_[REDACTED]');
+  });
+});

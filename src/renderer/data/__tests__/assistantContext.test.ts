@@ -4,6 +4,8 @@ import {
   knowledgeCorpus,
   extractTerms,
   extractWeightedTerms,
+  MAX_RETRIEVAL_QUERY_CHARS,
+  MAX_RETRIEVAL_TERMS,
   extractContentRuns,
   retrieve,
   retrieveScored,
@@ -253,5 +255,52 @@ describe('ASSISTANT_BASE_INSTRUCTIONS v2', () => {
     expect(ASSISTANT_BASE_INSTRUCTIONS).toContain('参照:');
     expect(ASSISTANT_BASE_INSTRUCTIONS).toContain('出典 URL を創作しない');
     expect(ASSISTANT_BASE_INSTRUCTIONS).toContain('確認の質問');
+  });
+});
+
+/*
+ * 長文の貼り付けで検索が止まらない (2026-10-16 · パス 526 · threat: T-100)。入力欄は 8,000 字まで受けるので、
+ * メールなどを貼って送るだけで語 4,620 × コーパス 4,039 件を回し、2.4 秒画面が固まった (実測)。
+ */
+describe('検索語の天井 (threat: T-100)', () => {
+  const noisy = (n: number) => {
+    let seed = 7;
+    const rnd = () => (seed = (seed * 1103515245 + 12345) & 0x7fffffff);
+    return Array.from({ length: n }, () => String.fromCharCode(0x4e00 + (rnd() % 1200))).join('');
+  };
+
+  it('★ 8,000 字の貼り付けでも検索語は天井で止まり、検索は時間内に終わる', () => {
+    const q = noisy(8000);
+    expect(extractWeightedTerms(q).length).toBe(MAX_RETRIEVAL_TERMS);
+    const t0 = Date.now();
+    retrieveScored(q, 5);
+    expect(Date.now() - t0).toBeLessThan(1500); // 直す前は 2.4 秒 (語 4,620)
+  });
+
+  it('★ 先頭の MAX_RETRIEVAL_QUERY_CHARS 字より後ろは見ない (後ろに足した語は検索語に出ない)', () => {
+    const head = 'プロテウス効果';
+    const filler = 'あ'.repeat(MAX_RETRIEVAL_QUERY_CHARS);
+    const tail = '国民経済計算';
+    const terms = extractWeightedTerms(head + filler + tail).map((x) => x.t);
+    expect(terms).toContain('プロ');
+    expect(terms).not.toContain('国民');
+  });
+
+  it('★ 天井を超えるときは、重い語 (漢字・カタカナ) を残し、元の出現順を保つ', () => {
+    // ひらがなのバイグラム (重み 0.2) を大量に先に並べ、最後に重い語を置く
+    const glue = Array.from({ length: 300 }, (_, i) => String.fromCharCode(0x3042 + (i % 80)) + String.fromCharCode(0x3042 + ((i * 7) % 80))).join(' ');
+    const terms = extractWeightedTerms(`${glue} 補助金 申請`);
+    expect(terms.length).toBeLessThanOrEqual(MAX_RETRIEVAL_TERMS);
+    const names = terms.map((x) => x.t);
+    expect(names).toContain('補助');
+    expect(names).toContain('申請');
+    expect(names.indexOf('補助')).toBeLessThan(names.indexOf('申請'));
+  });
+
+  it('★ 対照: 通常の質問 (数十字) の検索語は天井の影響を受けない', () => {
+    const terms = extractWeightedTerms('プロテウス効果とは何ですか？消費税の簡易課税を教えて');
+    expect(terms.length).toBeGreaterThan(5);
+    expect(terms.length).toBeLessThan(MAX_RETRIEVAL_TERMS);
+    expect(extractWeightedTerms('GDP 補助金').map((x) => x.t)).toEqual(expect.arrayContaining(['gdp', '補助', '助金']));
   });
 });

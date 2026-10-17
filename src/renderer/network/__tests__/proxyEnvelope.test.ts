@@ -153,3 +153,25 @@ describe('fetchViaProxy — 壊れた封筒でも Response が返る', () => {
     expect(await res.json()).toEqual({ id: '1' });
   });
 });
+
+/*
+ * **本文を持てない status は本文を捨てる (2026-10-15 · パス 523 · threat: T-066)。**
+ *
+ * `new Response(body, { status: 204 })` は本文が `''` でも TypeError を投げる (204 / 205 / 304 の 3 つとも
+ * 「Invalid response status code」—— 実測)。上流の 204 を忠実に中継した Worker の封筒が、アプリの
+ * 「封筒が壊れている」ではなくブラウザ内部の文で落ちていた。
+ */
+describe('null body status の封筒 (threat: T-066)', () => {
+  it('★ 204 / 205 / 304 は本文を捨て、fetchViaProxy は投げずにその status の Response を返す (threat: T-066)', async () => {
+    for (const status of [204, 205, 304]) {
+      expect(parseProxyEnvelope(JSON.stringify({ status, headers: {}, body: 'x' })), String(status)).toEqual({ status, headers: {}, body: '' });
+      vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify({ status, headers: {}, body: 'x' }), { status: 200, headers: { 'content-type': 'application/json' } })));
+      const res = await fetchViaProxy('https://api.example.com/v1/x', { method: 'DELETE' }, cfg);
+      expect(res.status, String(status)).toBe(status);
+      expect(await res.text()).toBe('');
+    }
+  });
+  it('対照: 200 の本文は残る', () => {
+    expect(parseProxyEnvelope(JSON.stringify({ status: 200, headers: {}, body: 'x' })).body).toBe('x');
+  });
+});

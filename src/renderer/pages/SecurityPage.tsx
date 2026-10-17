@@ -22,6 +22,7 @@ import { currentDbSecurityInputs } from '../data/dbPosture';
 import { isAutoLockActive, subscribeAutoLockActive } from '../security/autoLock';
 import type { ActionData } from '../../shared/actionData';
 import { ProxyRequiredNote } from '../components/ProxyRequiredNote';
+import { externalTextOnOneLine } from '../data/assistantMarkdown';
 
 const GRADE_COLOR: Record<string, string> = {
   A: 'var(--success)',
@@ -114,7 +115,7 @@ export function SecurityPage() {
     });
     setBreachBusy(false);
     if (res.ok) setBreachResult(res.data);
-    else setBreachError(res.message);
+    else setBreachError(externalTextOnOneLine(res.message));
   };
 
   // --- URL scan form
@@ -146,7 +147,7 @@ export function SecurityPage() {
     });
     setScanBusy(false);
     if (res.ok) setScanResult(res.data);
-    else setScanError(res.message);
+    else setScanError(externalTextOnOneLine(res.message));
   };
 
   return (

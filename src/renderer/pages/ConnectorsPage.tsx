@@ -33,6 +33,7 @@ import {
   MCP_AGENT_BRIDGES,
   mcpConnectorCounts,
 } from '../../shared/connectors/mcpConnectors';
+import { externalTextOnOneLine } from '../data/assistantMarkdown';
 
 /**
  * コネクター / 自動化ページ。
@@ -246,7 +247,7 @@ export function ConnectorsPage() {
                       </button>
                       {res ? (
                         <div style={{ fontSize: 10, marginTop: 4, color: res.ok ? 'var(--success)' : 'var(--danger)' }}>
-                          {res.ok ? '✅' : '⛔'} {res.message}
+                          {res.ok ? '✅' : '⛔'} {externalTextOnOneLine(res.message)}
                         </div>
                       ) : null}
                     </td>
@@ -293,7 +294,7 @@ export function ConnectorsPage() {
                       <button
                         type="button"
                         onClick={() => fireReported(stored.remove(r.id))}
-                        aria-label={`${r.connectorId} の記録を削除`}
+                        aria-label={`${displayField(r.connectorId)} の記録を削除`}
                         style={{ fontSize: 12 }}
                       >
                         削除

@@ -621,32 +621,20 @@ export function listenForCallback(expectedState: string, timeoutMs = OAUTH_CALLB
     portReject = rej;
   });
 
-  // Stray-request rate limit: a malicious local process can spray the
-  // loopback port during the OAuth window. Cap non-resolving requests
-  // so the listener can't be kept alive indefinitely past the 5-min
-  // timeout, and so accidental browser preflights / favicon probes
-  // don't accumulate state.
-  //
-  // All the strayCount increment/threshold mutants below are
-  // defense-in-depth TUNING (50→0, ++→--, >=→>, etc.). They alter how
-  // aggressively we close the server but never compromise correctness:
-  // - The 5-minute outer timeout always fires
-  // - The legitimate callback resolves the listener regardless
-  // - Other strays just keep getting 400
-  // The "all 49 strays return 400" test pins behavior below STRAY_LIMIT;
-  // beyond that, the counter is a knob, not a contract. Suppress.
-  const STRAY_LIMIT = 50;
-  let strayCount = 0;
+  // threat: T-062 —— **迷い込んだ要求 (bad host / wrong path) では待受を閉じない**
+  // (2026-10-15 · パス 523)。2026-10-15 まで 50 件目の迷い要求で `server.close()` していた。
+  // その注記は「待受を 5 分の外側タイムアウトより長く生かさないため」と述べていたが、
+  // 外側タイムアウトは迷い要求の数に依らず必ず効くので、閉じることで得る物は無く、
+  // 失う物が在った —— 閉じても promise は解決も拒否もされないので、**本物のコールバックは
+  // ECONNREFUSED になり、利用者は 5 分の時間切れまで待たされ、認可コードはブラウザの URL 欄に
+  // 使われないまま残る** (実測: `GET /favicon.ico` 50 件 → 121 ms で閉じ、その後の正規の
+  // コールバックは ECONNREFUSED・promise は pending のまま)。PNA / CORS の preflight (任意の
+  // パスへの OPTIONS) も迷い要求に数えられるので、攻撃側は GET が通る必要すら無かった。
+  // 迷い要求には 400 / 404 を返し続けるだけでよい —— 待受の寿命を決めるのは外側タイムアウトと
+  // `cancel()` と正規のコールバックの 3 つだけ (state-mismatch の枝が最初からそう書いている)。
   const server = http.createServer((req, res) => {
     if (!isLoopbackHost(req.headers.host)) {
       res.writeHead(400, { 'Content-Type': 'text/plain' }).end('bad host');
-      // Stryker disable next-line UpdateOperator,ConditionalExpression,EqualityOperator: この計数は「上限を超えたら閉じる」という保険であって契約ではない。
-      // 上限未満で 400 / 404 を返し続けることは検査で固定してあり、上限そのものを
-      // 動かしても外から見える振る舞いは変わらない (正規のコールバックは常に解決し、
-      // 5 分の外側タイムアウトも必ず効く)。
-      strayCount++;
-      // Stryker disable next-line ConditionalExpression,EqualityOperator
-      if (strayCount >= STRAY_LIMIT) server.close();
       return;
     }
     // 多層防御: `classifyCallback` が投げたら **400 (非終端) に倒す**。
@@ -674,11 +662,8 @@ export function listenForCallback(expectedState: string, timeoutMs = OAUTH_CALLB
     }
     switch (outcome.kind) {
       case 'wrong-path':
+        // 404 を返すだけ。数えない・閉じない (threat: T-062 · 上の注記)。
         res.writeHead(404).end();
-        // Stryker disable next-line UpdateOperator
-        strayCount++;
-        // Stryker disable next-line ConditionalExpression,EqualityOperator
-        if (strayCount >= STRAY_LIMIT) server.close();
         return;
       case 'state-mismatch':
         // Non-terminal: a forged callback (no state / wrong state) is
@@ -686,10 +671,9 @@ export function listenForCallback(expectedState: string, timeoutMs = OAUTH_CALLB
         // legitimate provider callback. Without this, a local attacker
         // could DoS every OAuth flow by spraying the loopback port.
         //
-        // Deliberately NOT counted toward STRAY_LIMIT: state-mismatch is
-        // the exact shape a local attacker sprays, so counting it would
-        // re-introduce the DoS this branch exists to prevent (50 forged
-        // callbacks would close the server before the real one arrives).
+        // 2026-10-15 (T-062) までは「wrong-path / bad host だけを数えて 50 件で閉じ、
+        // state-mismatch は数えない」だった —— 数える側の 50 件も同じ DoS だったので
+        // (favicon / preflight で閉じられる)、今は**どの迷い要求も数えず閉じない**。
         // The 5-minute timeout remains the bound for this case.
         res.writeHead(400).end('state mismatch');
         return;

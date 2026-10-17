@@ -9,6 +9,7 @@ import {
 } from '../../shared/talent';
 import type { ActionData } from '../../shared/actionData';
 import type { SourceStrength } from '../../shared/provenance';
+import { externalTextOnOneLine } from '../data/assistantMarkdown';
 
 /**
  * 人材育成 — 手引きを「判定できる画面」にしたもの。
@@ -127,7 +128,7 @@ export function TalentPage(): React.JSX.Element {
       }
       // 失敗を黙って捨てない (パス 176)。判定は shared の純粋関数だが、通るのは IPC なので
       // 施錠・未登録・main の例外で落ちうる —— そのとき「押せていない」と読まれない形にする。
-      setJudgeError(res.message);
+      setJudgeError(externalTextOnOneLine(res.message));
     } catch (e) {
       setJudgeError(e instanceof Error ? e.message : String(e));
     } finally {
@@ -187,7 +188,7 @@ export function TalentPage(): React.JSX.Element {
         setSaveMsg(dropped === null ? '保存しました' : `保存しました — ただし ${dropped}`);
         refresh();
       } else {
-        setSaveMsg(`保存できませんでした: ${r.message}`);
+        setSaveMsg(`保存できませんでした: ${externalTextOnOneLine(r.message)}`);
       }
     } catch (e) {
       setSaveMsg(`保存できませんでした: ${e instanceof Error ? e.message : String(e)}`);

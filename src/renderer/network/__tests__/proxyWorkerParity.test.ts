@@ -160,6 +160,10 @@ const BLOCKED = [
   '64:ff9b:1::a9fe:a9fe',
   '64:ff9b:1::808:808',
   '64:ff9b:1:ffff::1',
+  // 2026-10-15 (パス 522 · threat: T-046) まで Worker と CI の関門が素通りさせていた SIIT (RFC 2765 §2.1)。
+  // アプリ側 (privateTarget.ts) は T-030 で塞いでおり、3 実装が割れていた。
+  '::ffff:0:7f00:1',
+  '::ffff:0:a9fe:a9fe',
 ];
 
 const ALLOWED = [
@@ -182,6 +186,7 @@ const ALLOWED = [
   '2001:db9::1', // db8 の隣
   '64:ff9b::808:808', // well-known NAT64 に公開の v4 —— 復号して通す (/48 の規則が広がり過ぎていないこと)
   '2064:ff9b:1::1', // 2000::/3 の公開 —— 先頭に錨の無い綴りなら当たってしまう隣
+  '::ffff:0:808:808', // SIIT に公開の v4 —— 復号して通す (範囲ごと塞いでいないこと)
 ];
 
 describe('proxy の宛先判定は client と Worker で同じ', () => {
@@ -265,6 +270,8 @@ const PUBLIC_NAMES_SAMPLE = [
  * 留めておく** —— 黙って揃えると、どちらかの役割が消えたのに気付けない。
  */
 const BY_DESIGN_DIFFERENT = [
+  'printer', // 単一ラベル (T-033): client は名前で落とし、CI の関門は解決後の IP で見る
+  'nas',
   'metadata.google.internal',
   'x.metadata.cloud.google.com',
   'printer.local',
@@ -492,6 +499,42 @@ describe('上流のスキームは client と Worker で同じ (パス 345)', ()
     await expect(denyReason(new URL('http://api.notion.com/v1/x'))).resolves.toMatch(/plaintext http/);
     await expect(denyReason(new URL('https://evil.example/x'))).resolves.toMatch(/allowlist/);
     await expect(denyReason(new URL('ftp://api.notion.com/x'))).resolves.toMatch(/http\(s\) only/);
+  });
+
+  it('★ Worker は許可リストのホストでも userinfo と既定以外のポートを断る (threat: T-059)', async () => {
+    const denyReason = await workerDenyReason();
+    await expect(denyReason(new URL('https://user:pw@api.notion.com/v1/x'))).resolves.toMatch(/userinfo/);
+    await expect(denyReason(new URL('https://api.notion.com:8443/v1/x'))).resolves.toMatch(/non-default port/);
+    // 対照: 既定のポートは WHATWG URL が落とすので通る。大文字のホストも正規化で通る。
+    await expect(denyReason(new URL('https://api.notion.com:443/v1/x'))).resolves.toBeNull();
+    await expect(denyReason(new URL('https://API.NOTION.COM/v1/x'))).resolves.toBeNull();
+    // 順序: 許可リスト外・平文のほうが具体的なので先に答える。
+    await expect(denyReason(new URL('https://user:pw@evil.example/x'))).resolves.toMatch(/allowlist/);
+    await expect(denyReason(new URL('http://api.notion.com:8080/x'))).resolves.toMatch(/plaintext http/);
+  });
+
+  it('★ client も userinfo と既定以外のポートを封筒に載せる前に断る (threat: T-059)', async () => {
+    const sent: string[] = [];
+    const realFetch = globalThis.fetch;
+    globalThis.fetch = (async (_url: unknown, init?: RequestInit) => {
+      sent.push((JSON.parse(String(init?.body)) as { url: string }).url);
+      return new Response(JSON.stringify({ status: 200, headers: {}, body: '' }), { status: 200 });
+    }) as typeof fetch;
+    try {
+      await expect(
+        fetchViaProxy('https://user:pw@api.notion.com/v1/x', { method: 'GET' }, { url: 'https://proxy.example' }),
+      ).rejects.toThrow(/userinfo/);
+      await expect(
+        fetchViaProxy('https://api.notion.com:8443/v1/x', { method: 'GET' }, { url: 'https://proxy.example' }),
+      ).rejects.toThrow(/既定以外のポート/);
+      // 断ったら封筒は 1 つも送らない (直す前はどちらも Authorization ごと送っていた · 実測 2026-10-15)。
+      expect(sent).toEqual([]);
+      // 対照: 既定のポートの綴りは正規化されて通る。
+      await fetchViaProxy('https://api.notion.com:443/v1/x', { method: 'GET' }, { url: 'https://proxy.example' });
+      expect(sent).toEqual(['https://api.notion.com/v1/x']);
+    } finally {
+      globalThis.fetch = realFetch;
+    }
   });
 
   it('★ client も同じ標本を同じように扱う (平文 http の公開ホストを断る)', async () => {

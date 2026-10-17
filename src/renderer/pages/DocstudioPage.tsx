@@ -110,6 +110,7 @@ import {
   type TaxLine,
 } from '../../shared/invoiceTax';
 import { readLocalJson, writeLocalJson, type LocalReadResult, type LocalWriteResult } from '../data/localWrite';
+import { externalTextOnOneLine } from '../data/assistantMarkdown';
 
 /**
  * 書類スタジオ — これまで単体 HTML として配布していた 3 ツール
@@ -1691,7 +1692,7 @@ export function DocstudioPage() {
      */
     if (readError !== null) return;
     const r = saveStore(store);
-    setSaveError(r.ok ? undefined : r.message);
+    setSaveError(r.ok ? undefined : externalTextOnOneLine(r.message));
   }, [store, readError]);
   /** 計算書類で見ている書面。store に持たせるので、開き直しても同じ書面から続けられる。 */
   // 保存値は型が守らない（古い版・手で直した JSON）。知らない値は「まとめて」に倒し、画面を壊さない。

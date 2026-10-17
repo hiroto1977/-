@@ -304,3 +304,14 @@ describe('静的な定数 —— 読み直して問う', () => {
     expect(() => m.logMood({ score: 3 })).toThrow(/「履歴を消去」で作り直せます/);
   });
 });
+
+describe('recordAnalysis の出所 (source) は長さを見る —— main と同じ 1 つの口 (threat: T-037)', () => {
+  it('★ 10 MB の出所は 80 字で切られ、localStorage の履歴を膨らませない (threat: T-037)', () => {
+    const entry = recordAnalysis('hi', 'x'.repeat(10 * 1024 * 1024), normalizeAnalysis({}), NOW);
+    expect(entry.excerpt).toBe('[' + 'x'.repeat(80) + '] hi');
+  });
+
+  it('対照: 正当な札はそのまま', () => {
+    expect(recordAnalysis('hi', 'Slack #general', normalizeAnalysis({}), NOW).excerpt).toBe('[Slack #general] hi');
+  });
+});

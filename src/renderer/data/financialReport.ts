@@ -12,6 +12,7 @@ import type { MarginTrend } from './financialTrend';
 import { calcCorporateTax, type CorporateTaxRates } from '../../shared/taxCorporate';
 import { localIsoDate } from '../../shared/localDate';
 import { finiteOr0 } from '../../shared/num';
+import { escapeMarkdownInline } from '../../shared/escape';
 
 /** レポートに載せる指標の表示定義 (15指標 + 金額系2)。 */
 const ROWS: { readonly key: keyof FinancialRatios; readonly label: string; readonly unit: string; readonly money?: boolean }[] = [
@@ -138,7 +139,12 @@ export function buildFinancialReportMarkdown(input: FinancialReportInput): strin
   // 作成日は利用者の時計で (UTC だと日本の朝 9 時までは前日になる)。
   const date = localIsoDate(input.generatedAt ?? new Date());
   const lines: string[] = [];
-  lines.push(`# 財務分析レポート — ${label}`);
+  // `label` は利用者が打った事業名 (businessUnitName が保管値をそのまま返す)。
+  // 書き出した .md はダウンロードして人へ渡る成果物で、HTML を解く viewer で開くと
+  // `<img onerror>` が走り、改行を含む名前 (復元・別タブ経由で 60 字 + 制御文字の
+  // 入口を越えた物) は `## 承認済み` のような偽の構造を立てられる。`escapeMarkdownInline`
+  // で `<`→`&lt;`・改行→空白・`|`→`\|`・末尾 `\` を無害化する (threat: T-022)。
+  lines.push(`# 財務分析レポート — ${escapeMarkdownInline(label)}`);
   lines.push('');
   lines.push(`作成日: ${date}`);
   lines.push('');

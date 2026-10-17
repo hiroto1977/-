@@ -8,6 +8,7 @@ import {
   brokenStoredCredentialMessage, checkTokenSetForStorage, hasUsableAccessToken,
 } from '../shared/vaultToken';
 import { atomicWriteFile, backupPathOf, readFileWithBackup } from './atomicWrite';
+import { realKeychainAvailable } from './keychainBackend';
 
 const FILE_NAME = 'service-hub-secrets.json';
 /*
@@ -33,15 +34,40 @@ export function secretsPath(): string {
 
 let writeChain: Promise<void> = Promise.resolve();
 
+/**
+ * 消去中は書き込みを断る (2026-10-16 · パス 524 · threat: T-079)。
+ * 「すべてのデータを削除」(`eraseDesktopData`) は鎖に入らずファイルを消すので、消す瞬間に
+ * 進行中の `setToken` / 更新トークンの保存が後から tmp を rename すると、**消したはずの
+ * 資格情報が戻り**、報告は `allDeleted: true` のまま再起動する (実測 300 回中 221 回)。
+ * `beginErase()` が旗を立てて**待機中の書き込みを断らせ、進行中の分を待つ**。
+ */
+let erasing = false;
+export const ERASING_MESSAGE = 'データの削除中のため、資格情報を書き込めません。';
+
 function withWriteLock<T>(fn: () => Promise<T>): Promise<T> {
+  const guarded = (): Promise<T> => {
+    if (erasing) return Promise.reject(new Error(ERASING_MESSAGE));
+    return fn();
+  };
   // Run fn after the previous write completes (success OR failure).
   // The chain holds only completion signals, never throws.
-  const next = writeChain.then(fn, fn);
+  const next = writeChain.then(guarded, guarded);
   writeChain = next.then(
     () => undefined,
     () => undefined,
   );
   return next;
+}
+
+/** 消去の前に呼ぶ。以後の書き込みを断り、鎖に残っている書き込みが済むのを待つ。 */
+export async function beginErase(): Promise<void> {
+  erasing = true;
+  await writeChain;
+}
+
+/** 消去が完了しなかったとき (再起動しないとき) に書き込みを再開する。 */
+export function endErase(): void {
+  erasing = false;
 }
 
 /** Parse a stored-secrets JSON blob into a validated string map, or null if
@@ -127,13 +153,24 @@ async function readStore(): Promise<Record<string, string>> {
   // Primary file, falling back to the `.prev` copy if the primary went missing
   // or corrupt afterwards. The copy holds the content **last written** (パス 134) —
   // never the previous one, so a cleared / rotated token cannot come back.
-  const text = await readFileWithBackup(secretsPath(), MAX_STORE_SIZE);
+  // threat: T-061 —— 読めなかった (EACCES / EISDIR / EIO) は「空」ではない。`readFileWithBackup` は
+  // 本体も控えも読めなければ投げるので、ここで degraded に倒す —— 書き込み側 (`readStoreForWrite`) と
+  // 一覧 (`listConfiguredServices`) が断り、読めなかった中身の上に `{}` を土台にして書かない。
+  let text: string | null;
+  try {
+    text = await readFileWithBackup(secretsPath(), MAX_STORE_SIZE);
+  } catch (err) {
+    const code = (err as NodeJS.ErrnoException).code ?? 'unknown';
+    console.error(`[secrets] secrets file at ${secretsPath()} exists but could not be read (${code}); treating as unreadable`);
+    lastReadDegraded = `読み取りに失敗 (${code})`;
+    return {};
+  }
   if (text == null) return {};
   const store = parseStore(text);
   if (store) return store;
 
   // Primary unparseable → try the backup explicitly before giving up.
-  const prev = await readFileWithBackup(backupPathOf(secretsPath()), MAX_STORE_SIZE); // reads `<path>.prev`
+  const prev = await readFileWithBackup(backupPathOf(secretsPath()), MAX_STORE_SIZE).catch(() => null); // reads `<path>.prev`
   const recovered = parseStore(prev);
   if (recovered) {
 
@@ -172,7 +209,7 @@ export class SecretsStoreFullError extends Error {
 
 async function writeStore(store: Record<string, string>): Promise<void> {
   const text = JSON.stringify(store);
-  const bytes = Buffer.byteLength(text, 'utf8');
+  const bytes = Buffer.byteLength(text); // utf8 (既定) —— 綴りを書くと等価変異体が残る (法則 115)
   if (bytes > MAX_STORE_SIZE) throw new SecretsStoreFullError(bytes);
   // Durable atomic write: temp + fsync + rename + dir fsync, then a `.prev` copy
   // of the same content so a later loss/corruption of the primary is recoverable.
@@ -182,7 +219,8 @@ async function writeStore(store: Record<string, string>): Promise<void> {
 let fallbackWarned = false;
 
 function encode(value: string): string {
-  if (safeStorage.isEncryptionAvailable()) {
+  // threat: T-041 —— 書く側は「本当のキーチェーンか」を訊く (Linux の basic_text は plain: へ倒す)。
+  if (realKeychainAvailable()) {
     return safeStorage.encryptString(value).toString('base64');
   }
   if (!fallbackWarned) {
@@ -282,7 +320,7 @@ function decode(value: string): StoredTokenRead {
  *  一つも無かった** (どちらの呼び出し側も直後に書き込むため)。返り値に残すと、
  *  誰も観測しない値を組み立てる分岐が 3 つ増えるだけなので落とした。 */
 async function upgradePlainValues(store: Record<string, string>): Promise<Record<string, string>> {
-  if (!safeStorage.isEncryptionAvailable()) return store;
+  if (!realKeychainAvailable()) return store; // threat: T-041 —— basic_text へは「昇格」しない
   const upgraded: Record<string, string> = {};
   for (const [k, v] of Object.entries(store)) {
     if (v.startsWith('plain:')) {
@@ -438,7 +476,7 @@ export interface StorageProtection {
  */
 export async function getStorageProtection(): Promise<StorageProtection> {
   const store = await readStore();
-  const available = safeStorage.isEncryptionAvailable();
+  const available = realKeychainAvailable(); // threat: T-041 —— basic_text を os-keychain と名乗らない
   return {
     encrypted: available,
     plainCount: Object.values(store).filter((v) => v.startsWith('plain:')).length,
@@ -484,6 +522,29 @@ export async function setOAuthTokens(serviceId: ServiceId, tokens: TokenSet): Pr
   await setToken(serviceId, check.serialized);
 }
 
+/**
+ * 更新の応答を書き戻す —— **保存値が更新の開始時 (`before`) と同じ時だけ**。
+ *
+ * 更新は `withWriteLock` の外で走るので、応答が届くまでの間に `clearToken` や
+ * `setToken` が保存値を変えうる。無条件に `setOAuthTokens` すると、消した資格情報を
+ * 古い応答で復活させる (threat: T-031 · 実測 2026-10-14)。比べるのは書き込みの
+ * 直列化の中なので、比較と書き込みの間に別の書き込みは入らない。
+ */
+async function saveRefreshedIfUnchanged(serviceId: ServiceId, before: string, fresh: TokenSet): Promise<void> {
+  const check = checkTokenSetForStorage(fresh);
+  if (!check.ok) throw new Error(check.message);
+  await withWriteLock(async () => {
+    const store = await readStoreForWrite();
+    const value = Object.hasOwn(store, serviceId) ? store[serviceId] : undefined;
+    const now = value === undefined ? null : decode(value);
+    // 消された・差し替えられた後の応答は書かない。読めない今の値も「同じ」とは言えないので書かない。
+    if (now === null || !now.ok || now.token !== before) return;
+    const upgraded = await upgradePlainValues(store);
+    upgraded[serviceId] = encode(check.serialized);
+    await writeStore(upgraded);
+  });
+}
+
 export async function getOAuthTokens(serviceId: ServiceId): Promise<TokenSet | null> {
   // 未設定 (`null`) も `String(null)` → `'null'` → `null` となり `isTokenSet` が
   // 落とす。手前でもう一度確かめると、どちらを通っても同じという枝が増えるだけ。
@@ -513,10 +574,46 @@ const inflightRefresh = new Map<ServiceId, Promise<string>>();
  *     (`StoredTokenRead`)。前者を後者と混同すると、画面が「未設定」と
  *     案内して利用者に平文相当での貼り直しをさせてしまう。
  */
+/**
+ * **保存値が JSON の包みで、その包みごと資格情報であるスロット** (2026-10-15 ·
+ * パス 522 · threat: T-054)。
+ *
+ * `assistant` は AI アシスタントの多提供者の鍵 (`{anthropicApiKey, openaiApiKey,
+ * …}`) を 1 つの JSON に包んで保管し、読み手 (`main/clients/assistant.ts` の
+ * `parseAiCredentials(ctx.token)`) はその JSON をそのまま受け取る。ところが
+ * パス 246 が「オブジェクトなら壊れた TokenSet」として生の JSON を Bearer に
+ * 載せる穴を塞いだとき、このスロットは**同じ門に当たって保存した瞬間から
+ * `broken-token-set` と断られる**ようになった —— デスクトップ版の
+ * `assistant/chat` / `chatAll` / `bestAnswers` は 2026-09-14 から 1 度も鍵を
+ * 受け取っていなかった (実測: `getValidToken('assistant')` は保存直後でも
+ * `{ ok: false, reason: 'broken-token-set' }`)。
+ *
+ * ここに載せたスロットは `readStoredToken` の結果 (復号した生の文字列) を
+ * そのまま返す。**TokenSet (OAuth) をこのスロットに書く道は無い**
+ * (`OAUTH_CONFIGS` に `assistant` は無い) ので、更新トークンの判定を
+ * 飛ばしても失う物は無い。載せるのは「読み手が JSON を自分で解く」
+ * スロットだけで、その読み手は `secretsTokenRead.test.ts` が名指しで留める。
+ */
+export const OPAQUE_JSON_SLOTS: ReadonlySet<ServiceId> = new Set<ServiceId>([
+  'assistant',
+  // threat: T-091 (パス 525) —— T-054 は `assistant` だけを載せたが、設定の欄が JSON を要求する
+  // スロットは他に 3 つ在り、保存した瞬間から `broken-token-set` と断られていた (実測: 3 つとも
+  // `secrets:set` は ok・直後の `getValidToken` は断り・`fetch:snapshot` / `action:invoke` が
+  // 「壊れています。登録し直してください」で、登録し直しても同じ)。security は LOCAL なので
+  // 端末内の判定まで止まっていた。読み手は `ctx.token` を自分で解く (名指しの検査が留める)。
+  'atlassian', // {email, token, site}
+  'youtube', // {apiKey, channelId}
+  'security', // {hibp, vt}
+]);
+
 export async function getValidToken(serviceId: ServiceId): Promise<StoredTokenRead> {
   const read = await readStoredToken(serviceId);
   if (!read.ok) return read;
   const raw = read.token;
+  // JSON の包みそのものが資格情報であるスロットは、TokenSet として読まない
+  // (下の「オブジェクトなら壊れた TokenSet」に当てると、保存した瞬間から
+  // 断られる —— パス 522 で実測した当のこと)。
+  if (OPAQUE_JSON_SLOTS.has(serviceId)) return { ok: true, token: raw };
 
   let parsed: unknown = null;
   try {
@@ -561,7 +658,9 @@ export async function getValidToken(serviceId: ServiceId): Promise<StoredTokenRe
     const refreshPromise = (async () => {
       try {
         const fresh = await refresh(config, tokens);
-        await setOAuthTokens(serviceId, fresh);
+        // 更新の応答は、保存値が更新の開始時と同じ時だけ書き戻す (threat: T-031)。
+        // 途中で利用者が消した・別の値へ差し替えた資格情報を、古い応答で復活させない。
+        await saveRefreshedIfUnchanged(serviceId, raw, fresh);
         return fresh.accessToken;
       } catch {
         // refresh failed (revoked / network) — fall through to the stale

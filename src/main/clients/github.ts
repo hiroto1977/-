@@ -96,7 +96,8 @@ export async function fetchGithubSnapshot(ctx: FetchContext): Promise<GithubSnap
    * 要素が `null` → `Cannot read properties of null (reading 'number')` ——
    * **どちらも GitHub の取得が丸ごと失敗する**。
    */
-  const items = objectRows<SearchItem>(search.items);
+  // 頼んだのは per_page=10 —— 相手が超えて返しても詳細の要求は 10 本まで (パス 527)。
+  const items = objectRows<SearchItem>(search.items).slice(0, 10);
   const pulls = await Promise.all(
     items.map(async (item): Promise<GithubSnapshot['pullRequests'][number]> => {
       const fallback = {

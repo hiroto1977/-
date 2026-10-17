@@ -11,6 +11,7 @@ import {
   loadEndpointSetting,
   originsSetupSteps,
   setupCommands,
+  shellSafeOrigin,
 } from '../network/ollamaWeb';
 import {
   DEFAULT_HTTP_TIMEOUT_MS,
@@ -29,6 +30,7 @@ import {
 import type { ActionData } from '../../shared/actionData';
 import { CeilingNotice } from '../components/CeilingNotice';
 import { charsOverCeiling } from '../../shared/inputCeiling';
+import { externalTextOnOneLine } from '../data/assistantMarkdown';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -90,7 +92,7 @@ export function OllamaPage() {
     if (res.ok) {
       setReply({ text: res.data.reply, durationMs: res.data.durationMs });
     } else {
-      setErrMsg(res.message);
+      setErrMsg(externalTextOnOneLine(res.message));
     }
   };
 
@@ -375,6 +377,8 @@ function ConnectionSetup({
   // 未起動でも errorMessage が無い。この差だけで確実に見分けられる。
   const desktopMode = !running && (errorMessage === undefined || errorMessage === '');
   const origin = typeof location !== 'undefined' ? location.origin : '';
+  // 案内コマンドへ埋める origin は**シェルに安全な形だけ**（配信元の host 名は呼び出し元が決める・T-103）。
+  const safeOrigin = shellSafeOrigin(origin);
   const pageHostname = typeof location !== 'undefined' ? location.hostname : '';
   // 別端末から使うには、アプリ自身をその端末から見えるホストで配信する必要がある。
   // ループバックで開いている限り、スマホからは到達できない (127.0.0.1 は各端末の自分自身)。
@@ -499,8 +503,9 @@ function ConnectionSetup({
             <strong>A. 同じ Wi-Fi で使う（追加ソフト不要）</strong>
             <ol style={{ margin: '4px 0 0', paddingLeft: '1.4em', color: 'var(--text-muted)' }}>
               <li>
-                PC で Ollama を LAN に公開して起動:{' '}
-                <code>OLLAMA_HOST=0.0.0.0 OLLAMA_ORIGINS=&quot;*&quot; ollama serve</code>
+                PC で Ollama を LAN に公開して起動 (許可するのはこのページのオリジンだけ —— {' '}
+                <code>*</code> にすると LAN 上のどの端末のどのサイトからも叩ける):{' '}
+                <code>OLLAMA_HOST=0.0.0.0 OLLAMA_ORIGINS=&quot;{safeOrigin === '*' ? 'http://<PCのIP>:8080' : safeOrigin}&quot; ollama serve</code>
               </li>
               <li>
                 同じフォルダの <code>standalone.html</code> を PC から配信:{' '}
@@ -532,7 +537,7 @@ function ConnectionSetup({
               </li>
               <li>
                 Ollama 側にこのページのオリジンを許可:{' '}
-                <code>OLLAMA_ORIGINS=&quot;{origin || '*'}&quot;</code> を設定して再起動
+                <code>OLLAMA_ORIGINS=&quot;{safeOrigin}&quot;</code> を設定して再起動
               </li>
             </ol>
             <p style={{ margin: '4px 0 0', color: 'var(--text-muted)' }}>

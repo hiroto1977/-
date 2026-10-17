@@ -51,6 +51,14 @@ export interface VoiceEgressSubject {
    * 2 か所が別々の送り先を書く形になる)。
    */
   readonly transcriptStaysLocal: boolean;
+  /**
+   * 返答を**読み上げる**画面か (パス 524 · T-074)。読み上げもブラウザの音声合成に
+   * 委ねており、この app は自然な声を優先して選ぶ (`scoreJaVoice` はネットワーク経由の
+   * 声 —— `localService === false` や Google 系 —— を加点する)。読み上げる文は
+   * 規則ベースの返答も含み、**利用者が打った文を引用する**ことがある。AI を切っても
+   * この経路は残るので、AI の断りとは別に述べる。省略は「読み上げない」。
+   */
+  readonly readsAloud?: boolean;
 }
 
 /**
@@ -68,6 +76,11 @@ export function voiceEgressNoticeLines(subject: VoiceEgressSubject): readonly st
   if (subject.transcriptStaysLocal) {
     lines.push(
       '書き起こした文は端末内で解釈してコマンドにします (AI へは送りません)。送信系の操作を選んだときはその内容が対象のサービスへ渡り、実行前に確認が出ます。',
+    );
+  }
+  if (subject.readsAloud === true) {
+    lines.push(
+      '返答は読み上げます。読み上げもブラウザの音声合成に委ねており、この app は自然な声を優先して選ぶため、選ばれた声によっては読み上げる文 (あなたの入力を引用した返答を含む) がブラウザの提供元へ送られることがあります。AI を切っても読み上げは残ります。',
     );
   }
   return lines;

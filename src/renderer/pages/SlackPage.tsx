@@ -12,6 +12,7 @@ import type { ActionData } from '../../shared/actionData';
 import { analyzeBatchNote, packAnalyzeText } from '../../shared/emotionsLimits';
 import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { ProxyRequiredNote } from '../components/ProxyRequiredNote';
+import { externalTextOnOneLine } from '../data/assistantMarkdown';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -72,7 +73,7 @@ export function SlackPage() {
       setResult({ kind: 'ok', message: `送信成功 (${res.data.channel} @ ${res.data.ts})` });
       setText('');
     } else {
-      setResult({ kind: 'error', message: res.message });
+      setResult({ kind: 'error', message: externalTextOnOneLine(res.message) });
     }
   };
 
@@ -125,7 +126,7 @@ export function SlackPage() {
                   text: analyzeBatch.text,
                   source: 'Slack channels',
                 });
-                if (!res.ok) alert('感情分析失敗: ' + res.message);
+                if (!res.ok) alert('感情分析失敗: ' + externalTextOnOneLine(res.message));
                 else alert(`Emotions タブに結果を保存しました (${analyzeBatch.included} 件を送信)`);
               })
             }

@@ -218,3 +218,39 @@ describe('断った理由を運ぶ', () => {
     expect((err as Error).name).toBe('SecretsUnreadableError');
   });
 });
+
+/*
+ * **「無い」と「在るのに読めない」を混ぜない (2026-10-15 · パス 523 · threat: T-061)。**
+ *
+ * `readFileWithBackup` の `readIfWithinCap` は EACCES / EISDIR / EIO も `null` に畳んでいたので、
+ * 上の検査が留めた「大きすぎる」「壊れた JSON」の枝と違い、**読めなかっただけ**の保管庫は `{}` として
+ * 読まれ、次の保存がその上に書いて中身を全部消した (実測: 本体と `.prev` をディレクトリに置き換える →
+ * `setToken('notion')` が成功を返し、`.prev` の鍵は `['notion']` だけになった)。
+ */
+describe('在るのに読めない保管ファイルの上には書かない (threat: T-061)', () => {
+  async function replaceWithDirectory(p: string): Promise<void> {
+    await fs.rm(p, { force: true });
+    await fs.mkdir(p);
+  }
+
+  it('★ 本体も控えも読めない (EISDIR) とき、保存は断り、一覧は空を名乗らない (threat: T-061)', async () => {
+    const { setToken, listConfiguredServices } = await secretsModule();
+    await setToken('github', 'ghp_real');
+    await setToken('slack', 'xoxb_real');
+    await replaceWithDirectory(storePath());
+    await replaceWithDirectory(`${storePath()}.prev`);
+    await expect(setToken('notion', 'secret_notion')).rejects.toThrow(/保存を中止/);
+    await expect(listConfiguredServices()).rejects.toThrow(/保管ファイルを読めませんでした/);
+    // **何も書いていない** = ディレクトリのまま (上書きで消えた資格情報を作らない)。
+    expect((await fs.stat(storePath())).isDirectory()).toBe(true);
+    expect((await fs.stat(`${storePath()}.prev`)).isDirectory()).toBe(true);
+  });
+
+  it('対照: 本体だけ読めなければ控え (最後に書いた中身) で読める —— 空にも読めないにも倒さない', async () => {
+    const { setToken, listConfiguredServices } = await secretsModule();
+    await setToken('github', 'ghp_real');
+    await setToken('slack', 'xoxb_real');
+    await replaceWithDirectory(storePath());
+    expect((await listConfiguredServices()).sort()).toEqual(['github', 'slack']);
+  });
+});

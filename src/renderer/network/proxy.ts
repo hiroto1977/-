@@ -245,8 +245,16 @@ export function parseProxyEnvelope(bodyText: string): ProxyResponseEnvelope {
       if (isHeaderValue(value)) headers[name] = value;
     }
   }
-  return { status, headers, body: typeof env.body === 'string' ? env.body : '' };
+  // threat: T-066 —— 本文を持てない status (204 / 205 / 304) では本文を捨てる (2026-10-15 · パス 523)。
+  // `new Response(body, { status: 204 })` は本文が `''` でも TypeError を投げる (実測: 3 つとも
+  // 「Invalid response status code」) ので、上流の 204 を忠実に中継した Worker の封筒が、アプリの
+  // 「封筒が壊れている」ではなくブラウザ内部の文で落ちていた。
+  const body = NULL_BODY_STATUSES.has(status) ? '' : typeof env.body === 'string' ? env.body : '';
+  return { status, headers, body };
 }
+
+/** 本文を持てない status (Fetch 標準の null body status)。`Response` は本文が空文字でも拒む。 */
+export const NULL_BODY_STATUSES: ReadonlySet<number> = new Set([204, 205, 304]);
 
 /** Stream-read a Response body with a hard byte cap. Throws if the cap
  *  is exceeded mid-stream (so we don't buffer the whole oversized payload). */
@@ -305,6 +313,24 @@ export async function fetchViaProxy(targetUrl: string, init: RequestInit, cfg: P
    */
   if (parsed.protocol !== 'https:') {
     throw new Error('target URL は https のみ対応 (平文 http は資格情報が素のまま流れます)');
+  }
+  /*
+   * **userinfo と既定以外のポートも断る** (2026-10-15 · パス 523 · threat: T-059)。
+   *
+   * Worker の許可リストは hostname しか見ないので、`https://<利用者>:<秘密>@api.notion.com/` は
+   * 許可されたまま userinfo を上流へ運び、`https://api.notion.com:8443/` は同じホストの
+   * **別のサービス**へ利用者の `Authorization` ごと届く。実測 (2026-10-15): どちらも
+   * この関数が封筒に載せ、Worker の `denyReason` も通していた (パス 522 の backlog は
+   * 「アプリ側は出さない」と書いていたが偽だった)。呼び出し口 3 つが渡すのは
+   * `shared/api/*.ts` の https リテラル (ポート無し・userinfo 無し) なので正当な用途は 0 件。
+   * Worker 側 (`docs/PROXY_EXAMPLE.md` の `denyReason`) も同じ 2 行を持ち、
+   * `proxyWorkerParity.test.ts` が同じ標本を両方へ当てる。
+   */
+  if (parsed.username !== '' || parsed.password !== '') {
+    throw new Error('target URL に userinfo (認証情報つきの URL) は使えません');
+  }
+  if (parsed.port !== '') {
+    throw new Error('target URL に既定以外のポートは使えません');
   }
 
   // Convert RequestInit headers to a flat object.
@@ -396,7 +422,8 @@ export async function fetchViaProxy(targetUrl: string, init: RequestInit, cfg: P
   // 封筒の形はここで確かめる (空・非 JSON・範囲外の status・壊れた headers は 502 に畳む —
   // `new Response()` に投げさせない)。呼び出し側は普通の Response として扱える。
   const env = parseProxyEnvelope(bodyText);
-  return new Response(env.body, { status: env.status, headers: env.headers });
+  // threat: T-066 —— null body status には `null` を渡す (空文字でも `Response` は投げる)。
+  return new Response(NULL_BODY_STATUSES.has(env.status) ? null : env.body, { status: env.status, headers: env.headers });
 }
 
 /*

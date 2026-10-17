@@ -14,6 +14,69 @@ const MiB = 1024 * 1024;
 
 /** 売上 / KPI 実績の CSV。1 行 100 バイトとして 20 万行 —— 表計算ソフトから出す量として十分。 */
 export const MAX_CSV_IMPORT_BYTES = 20 * MiB;
+/**
+ * CSV の行数の天井と、行ごとの誤りを集める天井 (2026-10-16 · パス 524 · threat: T-081)。
+ * 20 MiB の上限だけでは、`,,,,` を並べた 1 ファイルが 419 万行になり、全行が誤りとして
+ * 集められて 37 秒止まり RSS 3.7 GB を使った (実測)。画面が見せる理由は 3 件だけなので、
+ * 誤りを何百万件も溜める理由は無い。**超えたら一部だけ取り込まず、全体を断る** (途中までの
+ * 取り込みは「どこまで入ったか」を利用者が確かめられない)。
+ */
+export const MAX_CSV_IMPORT_ROWS = 200_000;
+export const MAX_CSV_ROW_ERRORS = 1_000;
+/**
+ * CSV の列数と、列数 × 行数 (セル数) の天井 (2026-10-16 · パス 526 · threat: T-102)。
+ * 行数の天井だけでは、ヘッダが 2,000 列の 95 KB が通った: `parseCsvRecords` は全行ぶん
+ * 「ヘッダの列数」個のキーを持つ器を先に作るので、40,000 行で heap の上限に届いて落ちた
+ * (実測: 15 KB・2,000 列 × 2,000 行で RSS +234 MB)。売上は 5 列・KPI 実績は 8 列なので、
+ * 64 列は十分に余裕があり、20 万行 × 8 列 = 160 万セルは 200 万セルの中に収まる。
+ */
+export const MAX_CSV_IMPORT_COLUMNS = 64;
+export const MAX_CSV_IMPORT_CELLS = 2_000_000;
+
+/**
+ * 改行の数で行数を概算し、天井を超えるなら断りの文を返す。解析の前に呼ぶ (安い)。
+ *
+ * threat: T-093 —— 数えるのは `\n` だけだった。`parseCsv` は**単独の `\r`** でも行を終えるので、
+ * `\r` 区切りの 20 MiB は関門を素通りし、全行を組んでから (RSS 1.6〜2.2 GB・実測) 落ちた。
+ * `\r\n` は 1 つの改行として数える (CRLF の 200,000 行を倍に数えない)。
+ */
+export function csvRowLimitError(text: string): string | null {
+  // 改行は `\r\n` (1 つ) / 単独の `\r` / 単独の `\n`。正規表現の 1 つの選択肢列で数えるので、
+  // 添字の前後参照 (範囲の端の等価変異) を持たない。
+  const lineBreak = /\r\n|[\r\n]/g;
+  let rows = 0;
+  while (lineBreak.test(text)) {
+    rows += 1;
+    if (rows > MAX_CSV_IMPORT_ROWS) {
+      return `行が多すぎます（${MAX_CSV_IMPORT_ROWS.toLocaleString('ja-JP')} 行まで）。分けて取り込んでください。`;
+    }
+  }
+  // 列数 (1 行目の、引用符の外のカンマ + 1) と、列数 × 行数。行数は最後の改行の無い行も数える。
+  const columns = csvHeaderColumns(text);
+  if (columns > MAX_CSV_IMPORT_COLUMNS) {
+    return `列が多すぎます（${MAX_CSV_IMPORT_COLUMNS} 列まで）。売上・KPI 実績の CSV の形（列名）を確かめてください。`;
+  }
+  if (columns * (rows + 1) > MAX_CSV_IMPORT_CELLS) {
+    return `データが大きすぎます（列数 × 行数が ${MAX_CSV_IMPORT_CELLS.toLocaleString('ja-JP')} セルまで）。分けて取り込んでください。`;
+  }
+  return null;
+}
+
+/** 1 行目の列数。引用符の中のカンマと改行は数えない (`""` は 2 回の切り替えで元に戻る)。 */
+function csvHeaderColumns(text: string): number {
+  let columns = 1;
+  let quoted = false;
+  for (const ch of text) {
+    if (ch === '"') quoted = !quoted;
+    else if (!quoted && (ch === '\n' || ch === '\r')) break;
+    else if (!quoted && ch === ',') columns += 1;
+  }
+  return columns;
+}
+
+/** 誤りの行が天井を超えたときの断りの文。 */
+export const CSV_TOO_MANY_ERRORS_MESSAGE = `誤りのある行が ${MAX_CSV_ROW_ERRORS.toLocaleString('ja-JP')} 件を超えたため、取り込みを中止しました。CSV の形（列名・区切り）を確かめてください。`;
+
 /** バックアップ (record store の JSON)。レコードは 1 件で数 KB なので、これで数十万件ぶん。 */
 export const MAX_BACKUP_IMPORT_BYTES = 256 * MiB;
 

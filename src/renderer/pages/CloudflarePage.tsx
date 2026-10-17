@@ -9,6 +9,7 @@ import { CLOUDFLARE_DNS_FIELDS } from '../../shared/writeFieldLimits';
 import { purgeEverythingConfirmMessage, purgeUrlList } from '../data/cachePurge';
 import type { ActionData } from '../../shared/actionData';
 import { ProxyRequiredNote } from '../components/ProxyRequiredNote';
+import { externalTextOnOneLine } from '../data/assistantMarkdown';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -68,7 +69,7 @@ export function CloudflarePage() {
       setDnsName('');
       setDnsContent('');
     } else {
-      setDnsResult({ kind: 'error', message: res.message });
+      setDnsResult({ kind: 'error', message: externalTextOnOneLine(res.message) });
     }
   };
 
@@ -116,7 +117,7 @@ export function CloudflarePage() {
       // 一覧を読まないので、打ってあった URL を消すと打ち直させることになる。
       if (purgeMode === 'urls') setPurgeUrls('');
     } else {
-      setPurgeResult({ kind: 'error', message: res.message });
+      setPurgeResult({ kind: 'error', message: externalTextOnOneLine(res.message) });
     }
   };
 

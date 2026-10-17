@@ -151,6 +151,15 @@ export interface WeightedTerm {
   readonly w: number;
 }
 
+/**
+ * 検索に使う先頭の文字数と、検索語の数の天井 (パス 526 · T-100)。AI アシスタントの入力欄は 8,000 字
+ * (`MAX_ASSISTANT_CONTENT_CHARS`) まで受けるので、メールなどを貼って送るだけで検索が語 × コーパス 4,039 件を
+ * 全部回した (語 4,620 で 2.4 秒・画面が固まる)。質問の中身は先頭の数百字に出るので、そこで切っても
+ * 通常の質問 (数十字) の答えは変わらない。送るメッセージ本体は切らない。
+ */
+export const MAX_RETRIEVAL_QUERY_CHARS = 1_000;
+export const MAX_RETRIEVAL_TERMS = 120;
+
 /** 膠着語 (ひらがなのみバイグラム) の重み。 */
 const GLUE_WEIGHT = 0.2;
 
@@ -163,7 +172,9 @@ const GLUE_WEIGHT = 0.2;
  * 返すのは小文字化・NFKC 正規化済みのユニーク語。
  */
 export function extractWeightedTerms(query: string): WeightedTerm[] {
-  const norm = query.normalize('NFKC').toLowerCase();
+  // 長文の貼り付けで検索が語 × コーパス全件を回し続けないよう、見る先頭と語数に上限を置く
+  // (パス 526 · T-100)。8,000 字の日本語は語 4,620 で 2.4 秒、画面が止まった (実測)。
+  const norm = clampToCeiling(query, MAX_RETRIEVAL_QUERY_CHARS).normalize('NFKC').toLowerCase();
   const seen = new Map<string, number>();
   const add = (t: string, w: number) => {
     const prev = seen.get(t);
@@ -189,7 +200,15 @@ export function extractWeightedTerms(query: string): WeightedTerm[] {
     else flush();
   }
   flush();
-  return [...seen.entries()].map(([t, w]) => ({ t, w }));
+  const all = [...seen.entries()].map(([t, w]) => ({ t, w }));
+  if (all.length <= MAX_RETRIEVAL_TERMS) return all;
+  // 重いもの (漢字・カタカナ・英数) を残し、同じ重みなら先に出た語を残す。並びは元の出現順に戻す。
+  return all
+    .map((x, i) => ({ x, i }))
+    .sort((a, b) => b.x.w - a.x.w || a.i - b.i)
+    .slice(0, MAX_RETRIEVAL_TERMS)
+    .sort((a, b) => a.i - b.i)
+    .map((o) => o.x);
 }
 
 /** 後方互換: 重みなしの語リスト (既存呼び出し・テスト向け)。 */

@@ -6,10 +6,10 @@
  * 行う (Vault のキーを使うため)。ここは純粋ロジック + localStorage のみ。
  */
 
-import { clampToCeiling, countChars } from '../../shared/inputCeiling';
+import { countChars } from '../../shared/inputCeiling';
 import {
   MAX_ANALYSES,
-  MAX_ANALYSIS_EXCERPT_CHARS,
+  analysisExcerpt,
   MAX_MOODS,
   MAX_MOOD_NOTE_CHARS,
 } from '../../shared/emotionsLimits';
@@ -256,7 +256,7 @@ export function recordAnalysis(
     // Stryker disable next-line StringLiteral,MethodExpression
     id: `${now.toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
     timestamp: now,
-    excerpt: (source ? `[${source}] ` : '') + clampToCeiling(text, MAX_ANALYSIS_EXCERPT_CHARS),
+    excerpt: analysisExcerpt(source, text),
     ...normalized,
   };
   const store = loadStoreForWrite();

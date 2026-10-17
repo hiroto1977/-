@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useBuildKind } from '../hooks/useBuildKind';
 import { exportCopyLabel } from '../../shared/buildDestinations';
+import { externalTextOnOneLine } from '../data/assistantMarkdown';
 
 /**
  * Common post-export quick-action buttons.
@@ -70,7 +71,7 @@ export function ExportActions({
     setOpFailure(undefined);
     try {
       const r = await op();
-      if (!r.ok) setOpFailure(r.message ?? '操作できませんでした');
+      if (!r.ok) setOpFailure(externalTextOnOneLine(r.message ?? '操作できませんでした'));
     } catch (e) {
       setOpFailure(e instanceof Error ? e.message : String(e));
     }

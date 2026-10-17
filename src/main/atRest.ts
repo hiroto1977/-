@@ -17,6 +17,7 @@
  * JSON として正しいか・形が合うか) は今までどおり各モジュールが持つ。
  */
 import { safeStorage } from 'electron';
+import { realKeychainAvailable } from './keychainBackend';
 
 export const PLAIN_PREFIX = 'plain:';
 
@@ -34,7 +35,8 @@ export function isAtRestEnvelope(v: unknown): v is AtRestEnvelope {
 
 /** 平文 → 保存形。キーチェーンが無ければ `plain:` (難読化)。 */
 export function sealAtRest(plaintext: string): string {
-  if (safeStorage.isEncryptionAvailable()) {
+  // threat: T-041 —— 書く側は「本当のキーチェーンか」を訊く (読む側 openAtRest は訊かない)。
+  if (realKeychainAvailable()) {
     return safeStorage.encryptString(plaintext).toString('base64');
   }
   // Stryker disable next-line StringLiteral: `'utf8'` を空にしても Node は utf8 へ落とすため同じ base64 になる
@@ -67,7 +69,7 @@ export function openAtRest(sealed: string): OpenAtRest {
 
 /** 今の環境でどう封緘されるか (設定画面や文書が言うため)。 */
 export function atRestMechanism(): 'os-keychain' | 'obfuscated' {
-  return safeStorage.isEncryptionAvailable() ? 'os-keychain' : 'obfuscated';
+  return realKeychainAvailable() ? 'os-keychain' : 'obfuscated'; // threat: T-041
 }
 
 /** 封緘して書く JSON 文書の封筒 (文字列)。呼ぶ側は中身の JSON 文字列だけ渡す。 */

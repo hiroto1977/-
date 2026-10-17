@@ -219,7 +219,11 @@ describe('仕事場の値と境目', () => {
 
   it('★ 失敗は理由を伏字に通して残す (例外なら message・例外でない値なら文字列)', async () => {
     const key = 'sk-ant-api03-' + 'A'.repeat(40);
-    const boom = { normalize: () => { throw new Error(`boom ${key}`); } } as unknown as string;
+    // 文字列のふり: 先頭の切り詰め (反復) でも正規化でも、どちらから投げても同じ理由になる (パス 526 · T-100)。
+    const boom = {
+      [Symbol.iterator]: () => { throw new Error(`boom ${key}`); },
+      normalize: () => { throw new Error(`boom ${key}`); },
+    } as unknown as string;
     const a = started(startBestJob({ ...REQ, ragQuery: boom }, echo, MAX_BEST_ANSWER_CALLS));
     await a.finished;
     expect(getBestJob()).toMatchObject({ status: 'failed', result: null, error: redactForMessage(`boom ${key}`, ERROR_MESSAGE_MAX_CHARS) });
@@ -227,14 +231,14 @@ describe('仕事場の値と境目', () => {
     // 標本: 伏字を通さなければ鍵が残る (針が当たる)。
     expect(`boom ${key}`).toContain(key);
 
-    const raw = { normalize: () => { throw '生の理由'; } } as unknown as string;
+    const raw = { [Symbol.iterator]: () => { throw '生の理由'; }, normalize: () => { throw '生の理由'; } } as unknown as string;
     const b = started(startBestJob({ ...REQ, ragQuery: raw }, echo, MAX_BEST_ANSWER_CALLS));
     await b.finished;
     expect(getBestJob()).toMatchObject({ id: b.id, status: 'failed', error: '生の理由' });
   });
 
   it('★ 取り消した後に届いた失敗は採らない (取り消しのまま)', async () => {
-    const raw = { normalize: () => { throw '生の理由'; } } as unknown as string;
+    const raw = { [Symbol.iterator]: () => { throw '生の理由'; }, normalize: () => { throw '生の理由'; } } as unknown as string;
     const r = started(startBestJob({ ...REQ, ragQuery: raw }, echo, MAX_BEST_ANSWER_CALLS));
     expect(cancelBestJob()).toBe(true); // 失敗の報せは次のマイクロタスクで届く
     await r.finished;

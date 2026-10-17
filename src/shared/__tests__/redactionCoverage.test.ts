@@ -5,7 +5,7 @@ import { resolve } from 'node:path';
 import { readOriginalDir, readOriginalSource } from './originalSource';
 import { extractOllamaError } from '../ollama';
 import { MAX_LOCAL_MODEL_ERROR_CHARS } from '../redact';
-import { redactSecrets } from '../redact';
+import { redactForMessage, redactSecrets } from '../redact';
 import { SERVICE_CREDENTIAL_USE, collectsCredential } from '../credentialUse';
 import type { ServiceId } from '../serviceId';
 import { stripComments } from './stripNonCode';
@@ -358,15 +358,22 @@ describe('伏字の網羅 — 母集団は「預かっているサービス」(�
     { service: 'skills', issuer: 'Anthropic API キー', carrier: 'prefix', sample: `sk-ant-api03-${FILL}` },
     { service: 'business', issuer: 'Anthropic API キー', carrier: 'prefix', sample: `sk-ant-api03-${FILL}` },
     { service: 'teamradar', issuer: 'Anthropic API キー', carrier: 'prefix', sample: `sk-ant-api03-${FILL}` },
+    // Cursor の Admin API キーは `key_` + 16 進 (types.test.ts が Cursor 風の
+    // TOKEN に使っている形)。発行元が分かる接頭辞を持つので裸でも伏せられる
+    // (パス 516 · T-021 —— それまで `header-only` に `'H'.repeat(40)` という
+    // 実形でない標本で置かれ、裸の `key_…` の反射が素通りする穴を隠していた)。
+    { service: 'cursor', issuer: 'Cursor Admin API キー (key_ + 16 進)', carrier: 'prefix', sample: 'key_9f2c1a8e4b7d6c5f0a3e' },
+    // Cloudflare の接頭辞つきトークン (パス 524 · T-075)。以前は「接頭辞が無い」と見て
+    // header-only に置いていたが、新しい発行物は cfut_ (ユーザー) / cfat_ (アカウント) /
+    // cfk_ (Global API Key) + 40 字 + チェックサム。3 形は redact.test の別の検査が全部当てる。
+    { service: 'cloudflare', issuer: 'Cloudflare ユーザートークン (cfut_)', carrier: 'prefix', sample: 'cfut_Zx9Kq2Lm4Np7Rt0Vw3Yb6Cd8Fg1Hj5KsAb3dE9fG1a2b3c4d' },
     // ここから下は接頭辞を主張しない (控えめな側)。標本は「長い英数字」で、
     // 裸では伏せられないこと・名前が付けば伏せられることの両方を測る。
-    { service: 'cloudflare', issuer: 'Cloudflare API トークン (40 字)', carrier: 'header-only', sample: 'B'.repeat(40) },
     { service: 'security', issuer: 'HIBP / VirusTotal (16 進)', carrier: 'header-only', sample: 'c'.repeat(64) },
     { service: 'wordpress', issuer: 'WordPress.com OAuth', carrier: 'header-only', sample: 'D'.repeat(44) },
     { service: 'canva', issuer: 'Canva OAuth', carrier: 'header-only', sample: 'E'.repeat(48) },
     { service: 'base', issuer: 'BASE OAuth', carrier: 'header-only', sample: 'F'.repeat(43) },
     { service: 'freee', issuer: 'freee OAuth', carrier: 'header-only', sample: 'G'.repeat(50) },
-    { service: 'cursor', issuer: 'Cursor API キー', carrier: 'header-only', sample: 'H'.repeat(40) },
     { service: 'stocks', issuer: '市場データ API キー', carrier: 'header-only', sample: 'J'.repeat(32) },
   ];
 
@@ -426,6 +433,40 @@ describe('伏字の網羅 — 母集団は「預かっているサービス」(�
     const unknown = `zz_unknown_issuer_${FILL}`;
     const out = redactSecrets(`upstream said: invalid credential ${unknown} please retry`);
     expect(out).toContain(unknown);
+  });
+
+  /*
+   * **Cursor の Admin API キー (`key_` + 16 進) の裸の反射** (パス 516 · T-021)。
+   *
+   * 乗っ取られた / 設定を誤った BYO proxy が、転送された Cursor の鍵を
+   * **ヘッダ名を伴わない素の形**でエラー本文に反射すると、`fetchViaProxy` の
+   * `!proxyRes.ok` 枝 (`proxy.ts`) がそれを `redactForMessage` に通して画面と
+   * バグ報告に出す。直す前 (実測): `Bearer key_…` と `{"authorization":…}` は
+   * 伏せるのに、`{"error":"Invalid API key: key_…"}` は素通りした。
+   * `key_` は散文に現れる接頭辞なので、本体を 16 進に絞って散文を巻き込まない。
+   */
+  describe('Cursor の key_ (16 進) は裸でも伏せる (T-021)', () => {
+    const CURSOR_KEY = 'key_9f2c1a8e4b7d6c5f0a3e';
+
+    it('★ JSON のエラー本文に裸で反射された Cursor の鍵を伏せる (threat: T-021)', () => {
+      const reflected = `{"error":"Invalid API key: ${CURSOR_KEY}, please retry"}`;
+      const out = redactSecrets(reflected);
+      expect(out, '裸の key_ が素通りしている (乗っ取られた proxy の反射)').not.toContain(CURSOR_KEY);
+      expect(out).toContain('key_[REDACTED]');
+      // 原因 (何の鍵が不正だったか) は読めるまま —— 鍵の値だけを消す。
+      expect(out).toContain('Invalid API key');
+    });
+
+    it('★ 散文の key_ は巻き込まない (規則が広すぎない・対照)', () => {
+      for (const prose of [
+        'the key_press_handler_function fired',
+        'primary_key_constraint_name violated',
+        'press the key_down arrow repeatedly',
+        'a foreign_key_9f2c1a8e4b7d6c5f0a3e reference', // `_` 直後なので \b が立たない
+      ]) {
+        expect(redactSecrets(prose), `散文を伏せている: ${prose}`).toBe(prose);
+      }
+    });
   });
 
   /*
@@ -939,5 +980,155 @@ describe('★ 端末内モデルのエラー本文は、伏せてから切る (�
   it('★ 対照: 秘密を含まない本文はそのまま読める (全部伏せてはいない)', () => {
     const out = extractOllamaError({ error: 'model "llama3" not found, try pulling it first' });
     expect(out).toBe('model "llama3" not found, try pulling it first');
+  });
+});
+
+/**
+ * **path に秘密を持つ運び手** (2026-10-15 · パス 522 · threat: T-047)。
+ * Discord の incoming webhook は `https://discord.com/api/webhooks/<id>/<token>` で、
+ * ヘッダ名・JSON 項目名・クエリ引数・接頭辞のどの規則にも当たらない。`shopify/sync-to-discord`
+ * の `webhookUrl` がそれで、相手が失敗本文に URL を反射すると `postExpectOk` の文へ届く。
+ */
+describe('伏字の網羅 — path に秘密を持つ運び手 (パス 522 · T-047)', () => {
+  const TOKEN = 'QzN9kL2pX7vR4tW8mB1nH6cJ3dF5gS0yA9eU2iO4pL7kM1xV';
+  const URL_ = `https://discord.com/api/webhooks/1234567890123456789/${TOKEN}`;
+
+  it('★ Discord の webhook URL は token が伏せられ、残りの文は残る (threat: T-047)', () => {
+    const out = redactSecrets(`discord 400: {"message":"Unknown Webhook","url":"${URL_}"}`);
+    expect(out).not.toContain(TOKEN);
+    expect(out).toContain('discord.com/api/webhooks/[REDACTED]');
+    expect(out).toContain('Unknown Webhook');
+  });
+
+  it('discordapp.com の旧ホストも同じ', () => {
+    expect(redactSecrets(`https://discordapp.com/api/webhooks/42/${TOKEN}`)).not.toContain(TOKEN);
+  });
+
+  it('境界: token は 16 字で伏せ、15 字は触らない (短い綴りを巻き込まない)', () => {
+    const t16 = 'a'.repeat(16);
+    const t15 = 'a'.repeat(15);
+    expect(redactSecrets(`https://discord.com/api/webhooks/1/${t16}`)).toBe('https://discord.com/api/webhooks/[REDACTED]');
+    expect(redactSecrets(`https://discord.com/api/webhooks/1/${t15}`)).toBe(`https://discord.com/api/webhooks/1/${t15}`);
+  });
+
+  it('対照: id (数字) が無い形・数字でない形は当たらない', () => {
+    const noId = `https://discord.com/api/webhooks//${TOKEN}`;
+    expect(redactSecrets(noId)).toBe(noId);
+    const alphaId = `https://discord.com/api/webhooks/abc/${TOKEN}`;
+    expect(redactSecrets(alphaId)).toBe(alphaId);
+  });
+
+  it('対照: webhooks の path でない discord.com の URL は触らない', () => {
+    const plain = 'see https://discord.com/developers/docs/resources/webhook';
+    expect(redactSecrets(plain)).toBe(plain);
+  });
+
+  it('対照: 切ってから伏せると token の尾が残る形でも、先に伏せれば残らない (redactForMessage の順序)', () => {
+    const out = redactForMessage(`x ${URL_} y`, 40);
+    expect(out).not.toContain(TOKEN.slice(0, 16));
+  });
+});
+
+
+/**
+ * Cloudflare の接頭辞つきトークン 3 形が、裸でエラー本文に反射されても伏せられる
+ * (2026-10-16 · パス 524 · threat: T-075)。直す前は 3 形とも素通りした (実測)。
+ */
+describe('Cloudflare の接頭辞つきトークン (threat: T-075)', () => {
+  it.each(['cfut_', 'cfat_', 'cfk_'])('★ %s の裸の反射を伏せる (threat: T-075)', (prefix) => {
+    const token = `${prefix}Zx9Kq2Lm4Np7Rt0Vw3Yb6Cd8Fg1Hj5KsAb3dE9fG1a2b3c4d`;
+    const out = redactForMessage(`{"errors":[{"message":"Invalid API token ${token}"}]}`, 300);
+    expect(out).not.toContain(token);
+    expect(out).toContain(`${prefix}[REDACTED]`);
+  });
+
+  it('★ 対照: 接頭辞に似た散文は伏せない (短い語・語中は巻き込まない)', () => {
+    expect(redactForMessage('cfk_ is a prefix', 300)).toBe('cfk_ is a prefix');
+    expect(redactForMessage('abcfut_Zx9Kq2Lm4Np7 is not one', 300)).toContain('abcfut_Zx9Kq2Lm4Np7');
+  });
+});
+
+/**
+ * 預かる資格情報の接頭辞つきの形・Authorization の方式語・JSON の鍵の別綴り (2026-10-16 · パス 525 ·
+ * threat: T-095)。直す前は次の 19 形が裸で反射されると素通りした (実測)。
+ */
+describe('裸の反射・方式語・鍵の別綴り (threat: T-095)', () => {
+  const BODY = 'a1B2c3D4e5F6a1B2c3D4e5F6a1B2c3D4';
+  it.each([
+    'gsk_', 'xai-', 'pplx-', 'hf_', 'nvapi-', 'fw_', 'GOCSPX-', 'xoxe-1-', 'xoxc-', 'xoxd-', 'xoxs-', 'xoxr-', 'xapp-1-', 'npm_',
+  ])('★ %s の裸の反射を伏せる (threat: T-095)', (prefix) => {
+    const token = `${prefix}${BODY}`;
+    const out = redactForMessage(`{"error":{"message":"Invalid key ${token}"}}`, 300);
+    expect(out).not.toContain(BODY);
+  });
+
+  it('★ ya29 の `.c.` 形 (サービスアカウント・なりすまし) も伏せる (threat: T-095)', () => {
+    expect(redactSecrets('bad ya29.c.b0Aaekm1KxxxxxxxxxxxxxxxxxxxxQ end')).not.toContain('b0Aaekm1K');
+  });
+
+  it.each(['token', 'Bot', 'OAuth', 'Digest', 'Negotiate'])('★ Authorization: %s <値> の値を伏せ、方式語は残す (threat: T-095)', (scheme) => {
+    const out = redactSecrets(`Authorization: ${scheme} ${BODY}`);
+    expect(out).not.toContain(BODY);
+    expect(out).toContain(`${scheme} [REDACTED]`);
+    const json = redactSecrets(`{"authorization":"${scheme} ${BODY}"}`);
+    expect(json).not.toContain(BODY);
+  });
+
+  it.each(['X-Shared-Secret', 'x-auth-token', 'Ocp-Apim-Subscription-Key'])('★ ヘッダ %s の値を伏せる (threat: T-095)', (name) => {
+    expect(redactSecrets(`${name}: ${BODY}`)).not.toContain(BODY);
+  });
+
+  it.each(['id_token', 'idToken', 'accessToken', 'refreshToken', 'access-token'])('★ JSON の鍵 %s の値を伏せる (threat: T-095)', (key) => {
+    expect(redactSecrets(`{"${key}":"${BODY}"}`)).not.toContain(BODY);
+  });
+
+  it('★ 対照: 識別子・散文は巻き込まない (本体 20 字未満は伏せない)', () => {
+    for (const t of ['hf_hub_download failed', 'fw_rules_table is missing', 'npm_config_cache not set', 'xai-grok model not found', 'GOCSPX- is a prefix']) {
+      expect(redactSecrets(t)).toBe(t);
+    }
+  });
+});
+
+/*
+ * 入れ子の JSON と、ヘッダ対の配列 (2026-10-16 · パス 526 · threat: T-101)。引用符つきのヘッダ規則は
+ * 引用符が 1 字であること・名前と値の区切りが `:` であることを要求したので、失敗応答の本文に「転送した要求」を
+ * 文字列 (`JSON.stringify` した物) や `[[名前, 値]]` の配列で入れて返す Worker では、方式語の無い値
+ * (HIBP の 32 桁 16 進・VirusTotal の 64 桁 16 進・Worker の共有秘密) が画面のエラー帯に素通りした
+ * (実物の `fetchViaProxy` に偽 Worker を当てて再現)。
+ */
+describe('伏字の網羅 — 入れ子の JSON とヘッダ対の配列 (threat: T-101)', () => {
+  const KEY = '3f9a1c7d5e2b48a69c0d1e7f8a2b3c4d';
+
+  it.each([
+    ['エスケープ JSON (1 段)', `{"received":"{\\"headers\\":{\\"hibp-api-key\\":\\"${KEY}\\"}}"}`],
+    ['エスケープ JSON (2 段)', `{"r":"{\\\\\\"x-proxy-auth\\\\\\":\\\\\\"${KEY}\\\\\\"}"}`],
+    ['ヘッダ対の配列', `[["x-proxy-auth","${KEY}"]]`],
+    ['ヘッダ対の配列 (空白つき)', `[ ["x-apikey", "${KEY}"] ]`],
+    ['単引用符の対 (inspect 風)', `[ 'x-proxy-auth', '${KEY}' ]`],
+    ['エスケープ + 配列', `"[[\\"x-api-key\\",\\"${KEY}\\"]]"`],
+  ])('★ %s の値を伏せる (threat: T-101)', (_name, text) => {
+    expect(redactSecrets(text)).not.toContain(KEY);
+    expect(redactSecrets(text)).toContain('[REDACTED]');
+  });
+
+  it('★ エスケープ引用符の形でも方式語は残す (原因究明に要る)', () => {
+    const out = redactSecrets(`{"r":"{\\"authorization\\":\\"Bearer ${KEY}\\"}"}`);
+    expect(out).not.toContain(KEY);
+    expect(out).toContain('Bearer [REDACTED]');
+  });
+
+  it('★ 対照: 通常の JSON と `名前: 値` は従来どおり、散文・無関係な鍵は触らない', () => {
+    expect(redactSecrets(`{"hibp-api-key":"${KEY}"}`)).not.toContain(KEY);
+    expect(redactSecrets(`hibp-api-key: ${KEY}`)).not.toContain(KEY);
+    for (const t of ['{"note":"authorization, then"}', '{"api":"fine","keyboard":"abc"}', 'the api key was rotated', '["name","value"]']) {
+      expect(redactSecrets(t), t).toBe(t);
+    }
+  });
+
+  it('★ 逆風の入力で時間が膨らまない (逃がしの深さに上限)', () => {
+    const t0 = Date.now();
+    redactSecrets('\\'.repeat(8000) + '"api-key');
+    redactSecrets('"'.concat('\\"api-key\\":\\"'.repeat(400)));
+    expect(Date.now() - t0).toBeLessThan(1500);
   });
 });

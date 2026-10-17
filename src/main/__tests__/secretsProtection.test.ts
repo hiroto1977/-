@@ -13,12 +13,14 @@ import * as secretsModule from '../secrets';
  * points userData at a temp dir and `safeStorage` is switched per test.
  */
 let encryptionAvailable = true;
+let backend = 'gnome_libsecret';
 let userDataDir = '';
 
 vi.mock('electron', () => ({
   app: { getPath: () => userDataDir },
   safeStorage: {
     isEncryptionAvailable: () => encryptionAvailable,
+    getSelectedStorageBackend: () => backend,
     // Reversible stand-in for the OS keychain: enough to prove the code path
     // does not take the `plain:` branch.
     encryptString: (v: string) => Buffer.from(`enc:${v}`, 'utf8'),
@@ -36,6 +38,7 @@ describe('getStorageProtection', () => {
   beforeEach(async () => {
     userDataDir = await fs.mkdtemp(path.join(os.tmpdir(), 'sh-secrets-'));
     encryptionAvailable = true;
+    backend = 'gnome_libsecret';
   });
 
   afterEach(async () => {
@@ -124,5 +127,57 @@ describe('getStorageProtection', () => {
 
     encryptionAvailable = false;
     expect((await getStorageProtection()).mechanism).toBe('obfuscated');
+  });
+});
+
+/*
+ * threat: T-041 (パス 520)。gnome-keyring も kwallet も無い Linux で Chromium は `basic_text`
+ * (ハードコードされた鍵) へ倒れ、`isEncryptionAvailable()` は true のまま。2026-10-14 まで
+ * この報告はそれを `os-keychain` と名乗り、書く側も basic_text で包んで ⚠ を出さなかった。
+ */
+describe('Linux の basic_text を os-keychain と名乗らない (threat: T-041)', () => {
+  const realPlatform = process.platform;
+  beforeEach(async () => {
+    userDataDir = await fs.mkdtemp(path.join(os.tmpdir(), 'sh-secrets-'));
+    encryptionAvailable = true;
+    backend = 'basic_text';
+    Object.defineProperty(process, 'platform', { value: 'linux', configurable: true });
+  });
+  afterEach(async () => {
+    Object.defineProperty(process, 'platform', { value: realPlatform, configurable: true });
+    await fs.rm(userDataDir, { recursive: true, force: true });
+  });
+
+  it('★ basic_text では encrypted: false / mechanism: obfuscated (threat: T-041)', async () => {
+    const { getStorageProtection } = secretsModule;
+    const r = await getStorageProtection();
+    expect(r.encrypted).toBe(false);
+    expect(r.mechanism).toBe('obfuscated');
+  });
+
+  it('★ basic_text では setToken が plain: で書き、plainCount に数えられる (threat: T-041)', async () => {
+    const { setToken, getStorageProtection } = secretsModule;
+    await setToken('github', 'ghp_' + 'a'.repeat(36));
+    const raw = JSON.parse(await fs.readFile(path.join(userDataDir, FILE_NAME), 'utf8')) as Record<string, string>;
+    expect(raw.github).toMatch(/^plain:/);
+    expect((await getStorageProtection()).plainCount).toBe(1);
+  });
+
+  it('★ basic_text へは plain: の値を「昇格」させない (threat: T-041)', async () => {
+    const { setToken } = secretsModule;
+    await writeRawStore({ slack: 'plain:' + Buffer.from('xoxb_y', 'utf8').toString('base64') });
+    await setToken('github', 'ghp_' + 'a'.repeat(36));
+    const raw = JSON.parse(await fs.readFile(path.join(userDataDir, FILE_NAME), 'utf8')) as Record<string, string>;
+    expect(raw.slack).toMatch(/^plain:/);
+  });
+
+  it('対照: gnome_libsecret なら封緘し os-keychain を名乗る', async () => {
+    backend = 'gnome_libsecret';
+    const { setToken, getStorageProtection } = secretsModule;
+    await setToken('github', 'ghp_' + 'a'.repeat(36));
+    const raw = JSON.parse(await fs.readFile(path.join(userDataDir, FILE_NAME), 'utf8')) as Record<string, string>;
+    expect(raw.github).not.toMatch(/^plain:/);
+    expect(Buffer.from(raw.github ?? '', 'base64').toString('utf8')).toMatch(/^enc:/);
+    expect((await getStorageProtection()).mechanism).toBe('os-keychain');
   });
 });
