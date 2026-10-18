@@ -196,10 +196,11 @@ export interface AiProviderStatus {
 
 /** 保存した Ollama の URL から、端末の外のホスト名を取り出す (読めない・ループバックは null)。 */
 export function remoteEndpointHost(url: unknown): string | null {
-  if (typeof url !== 'string' || url.length === 0) return null;
+  // 文字列かどうかの前置きの判定を持たない形 (法則 115): 文字列でない値・空・読めない URL は
+  // どれも `new URL` が投げるので同じ null になり、前置きの判定は結果を変えない等価な枝だった。
   let host: string;
   try {
-    host = new URL(url).hostname;
+    host = new URL(url as string).hostname;
   } catch {
     return null;
   }
