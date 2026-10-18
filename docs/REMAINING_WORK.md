@@ -1,5 +1,30 @@
 # Service Hub — 残りの作業手順書
 
+## パス 529 (狩りの 19 回目 —— パス 527 の backlog のうち AI の断りの 2 件を直す) (2026-10-18)
+
+パス 528 の続き。パス 527 の検証役が再現済みと判定した `huntBacklog` のうち、AI へ送る前の断りが**偽の安全表示**をしていた 2 件を直した (新しい監査は回していない)。
+
+| 脅威 | 内容 | 留めた検査 |
+| --- | --- | --- |
+| T-119 (ai・medium・AI-N1 / AI-N4) | (AI-N1) 保存した Ollama の URL は任意の https ホスト (トンネル含む) を指せるのに、AI アシスタント画面と村の断りは常に「端末の外へは出ません」と言った。(AI-N4) ブラウザ版で OpenAI / OpenAI 互換は設定したプロキシ (Cloudflare Worker) を通り、運用者に会話と API キーが見えるのに、断りは運用者に触れず、`aiEgressNotice.ts` の docblock が「書くと嘘になる」と断言していた (Anthropic 直結だけの頃の記述が複数提供元の層で偽になっていた)。`providerStatuses` が Ollama の接続先ホスト `endpointHost` (ループバックは null) を持ち、断りは端末の外のホストを外へ出る側に入れる (ページと同じホストは端末内のまま)。ブラウザ版で `browserDirect: false` の提供元は `viaProxy` に入れ、運用者にも会話と API キーが見えると言う。設定欄の表示名も実態に合わせた | `assistantProviders.test.ts` / `aiEgressDisclosed.test.ts` / `credentials.test.ts` |
+
+### 検証
+
+- 対照 5 方向 (M viaProxy を出さない・N 遠隔 Ollama を端末内扱い・O 断りが viaProxy を描かない・P endpointHost 常に null・Q ループバック判定を外す) すべて狙った検査が落ちる。元へ戻したことは md5 で確認。
+- 変異検査: `assistantProviders.ts` 100.00%。`credentials.ts` は 1 度目に **98.84% / 生存 2** (break 99.8 を下回る) —— `remoteEndpointHost` の入力ガード (`typeof` と空文字) を外しても `new URL()` が投げて同じ null になる**等価な枝**だった。ガードを持たない形 (`new URL(url as string)` を try/catch) へ直して **100.00% (killed 164・生存 0)**。法則 115。
+- 最終コードの実機: `verify:all` 0/39・`npm test` 1081 ファイル / 21,954 件・`perf` OK (FULL DCL 598 ms / heap 36.4 MB)・`e2e` 758 件 ❌ 0・`e2e:lite` 758 件 ❌ 0・`smoke:app` OK。出荷物 FULL 11,888,886 B / LITE 3,301,510 B (LITE は警告線まで 98,490 B)。
+- GitHub の CI: 最初の push は **`parsedUrlGateCensus` が 1 件落ちた** —— 新しい `new URL(` (`remoteEndpointHost`) を台帳に載せていなかった。全件の `npm test` を回す前に push したのが原因で、`display` 種として登録して解消 (台帳 30 行 / 31 か所)。直した後の push は CI success。
+
+### 台帳に残した backlog (3 件)
+
+SC-2 (`lint:deps` の `PROD_ALLOW` が src の import を見ない)・SC-3 (規則 3 が lockfile の `hasInstallScript` を信じる)・SC-5 (`lint:workflow-security` が `uses: ./` と run の本文を見ない)。どれも再現済みで、規則の追加を伴う。
+
+### 学び
+
+- **新しい `new URL(` を足したら `parsedUrlGateCensus` の台帳に載せる** (`display` なら通信に使わない解析)。census は全件の `npm test` でしか鳴らないので、push の前に全件を回す。
+- **入力ガードが `try/catch` と重なると等価変異になる**: 型を絞るための前置きの判定は、投げる処理が後ろにあれば結果を変えない。ガードを持たない形に直す。
+- **保護対象が新しい物を読み始めると閉包が連鎖する** (パス 528 と同じ): `shared-judgement` の census も、新しく母集団に入ったモジュールに判定文を求める。
+
 ## パス 528 (狩りの 18 回目 —— パス 527 の backlog のうち、再現済みの 2 件を直す) (2026-10-17)
 
 パス 527 が `huntBacklog` に残した 7 件のうち、検証役が再現済みで直し方が確かな 2 件を直した。**新しい監査は回していない** (同じ監査役の指摘を、設計の変更が要るという理由で見送っていた分を片付けた)。
