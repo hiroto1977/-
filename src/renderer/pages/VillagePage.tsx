@@ -8,6 +8,7 @@
  *   - 建物をクリックするとその街区だけを拡大表示（チーム名まで読める）。
  *   - 地面・道・池・木などの情景（絵文字＋インライン SVG のみ・画像ファイル不可＝CSP）。
  */
+import { useBuildKind } from '../hooks/useBuildKind';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   org as regOrg,
@@ -92,6 +93,7 @@ interface Bubble {
 }
 
 export function VillagePage() {
+  const buildKind = useBuildKind();
   const villagers = useMemo(() => buildVillagers(REG), []);
   const regions = useMemo(() => buildRegions(REG), []);
   const dispatchPlan = useMemo(() => buildDispatchPlan(REG), []);
@@ -165,9 +167,15 @@ export function VillagePage() {
   const egressRecipients = useMemo(
     () =>
       aiOn
-        ? assistantEgressRecipients({ providers, providersUnknown, selected: '' })
+        ? assistantEgressRecipients({
+          providers,
+          providersUnknown,
+          selected: '',
+          browser: buildKind === null ? null : buildKind === 'browser',
+          pageHostname: typeof location !== 'undefined' ? location.hostname : '',
+        })
         : { remote: [], local: [] },
-    [aiOn, providers, providersUnknown],
+    [aiOn, providers, providersUnknown, buildKind],
   );
 
   const activeStep = dispatchPlan.length > 0 ? dispatchPlan[step % dispatchPlan.length] : undefined;

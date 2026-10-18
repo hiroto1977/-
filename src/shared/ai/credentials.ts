@@ -20,6 +20,7 @@ import {
   type AiProviderConfig,
   type AiProviderId,
 } from './providers';
+import { isLoopbackHostname } from '../aiEndpoint';
 
 /** assistant トークンスロットに JSON で保存する資格情報の形。 */
 export interface AiCredentials {
@@ -185,6 +186,24 @@ export interface AiProviderStatus {
   browserDirect: boolean;
   needsApiKey: boolean;
   defaultModel: string;
+  /**
+   * 保存した接続先 (Ollama の URL) のホスト名。**ループバックなら null** (= この端末)。
+   * 任意の https ホスト (トンネル含む) を保存でき、その先へ会話が出るので、断りが
+   * 「端末内」と名乗るかの判断はこれを読む (2026-10-18 · パス 529 · AI-N1)。Ollama だけが持つ。
+   */
+  endpointHost: string | null;
+}
+
+/** 保存した Ollama の URL から、端末の外のホスト名を取り出す (読めない・ループバックは null)。 */
+export function remoteEndpointHost(url: unknown): string | null {
+  if (typeof url !== 'string' || url.length === 0) return null;
+  let host: string;
+  try {
+    host = new URL(url).hostname;
+  } catch {
+    return null;
+  }
+  return isLoopbackHostname(host) ? null : host;
 }
 
 /** UI 表示用: 全プロバイダの設定状況。 */
@@ -200,6 +219,7 @@ export function providerStatuses(c: AiCredentials): AiProviderStatus[] {
       browserDirect: spec.browserDirect,
       needsApiKey: spec.needsApiKey,
       defaultModel: spec.defaultModel,
+      endpointHost: id === 'ollama' ? remoteEndpointHost(c.ollamaUrl) : null,
     };
   });
 }

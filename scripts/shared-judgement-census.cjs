@@ -144,7 +144,15 @@ const VERDICTS = {
     + '呼び出し側へ」: main は `createDraft` / shopify の `syncToGmail` が投げて IPC の `err()` へ、'
     + 'ブラウザ版は `createGmailDraft` が投げて `invoke` の `withFloor` へ。到達は '
     + 'shared/api/google.ts の `gmailDraftInit` 経由 (両ビルド + shopify) と re-export の 2 本',
-  'api/cloudflare':
+  'ai/credentials':
+    '対称 (実測・パス 529) —— 新しい `remoteEndpointHost` (保存した Ollama の URL が端末の外のホストなら '
+    + 'そのホスト名、ループバック・未設定・読めない URL は null) の読み手は `providerStatuses` の中の 1 か所だけで、'
+    + 'その `providerStatuses` を呼ぶのは main の assistant クライアントとブラウザ版 `web-shim.ts` の '
+    + '`assistant/providers` アクション。**同じ関数が同じ状態を返す**ので、「null のあとの動作」は '
+    + '画面側 (`assistantEgressRecipients`) の 1 か所が決め、両ビルドで割れない。'
+    + 'null は「この端末として扱う」と読む向きなので、判定不能 (読めない URL) を端末内と読む側に倒すが、'
+    + '読めない URL では接続先を組み立てられず送れないので、外へ出る道にはならない',
+    'api/cloudflare':
     '対称 (実測・2026-09-19 パス 321) —— 欄の判定 (`checkDnsRecord` / `checkPurge`)・本文・URL・'
     + '封筒 (`readCloudflareEnvelope`: `success !== true` を断る) を両ビルドが同じ関数で通る。'
     + 'それまで封筒の条件は main が falsy・ブラウザ版が `!== true` と違い、文も '

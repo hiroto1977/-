@@ -83,6 +83,10 @@ export function assistantEgressRecipients(input: {
   readonly providers: readonly ProviderStatus[];
   readonly providersUnknown: boolean;
   readonly selected: string;
+  /** ブラウザ版か (プロキシ経由の提供元を名乗るため)。`null` / 省略は「分からない」= 名乗らない。 */
+  readonly browser?: boolean | null;
+  /** このページの host 名 (保存した Ollama の URL が同じホストなら端末内として扱う)。 */
+  readonly pageHostname?: string;
 }): AiEgressRecipients {
   if (input.providersUnknown) return { remote: [], unknown: true };
   const configured = input.providers.filter((p) => p.configured);
@@ -90,10 +94,19 @@ export function assistantEgressRecipients(input: {
     input.selected === ALL_AGENTS || input.selected === BEST3_AGENTS
       ? configured
       : configured.filter((p) => (input.selected ? p.id === input.selected : p.isDefault));
+  // 端末内のはずの提供元でも、保存した URL が**端末の外のホスト**を指していれば外へ出る
+  // (任意の https ホスト・トンネルを保存できる · パス 529 · AI-N1)。ページと同じホストは端末内のまま。
+  const isLocal = (p: ProviderStatus): boolean =>
+    LOCAL_PROVIDER_IDS.includes(p.id) && (p.endpointHost === null || p.endpointHost === input.pageHostname);
+  const remoteTargets = targets.filter((p) => !isLocal(p));
+  // ブラウザ版で CORS 非対応の提供元は、利用者のプロキシを通る。分からないとき (null / 省略) は名乗らない。
+  const viaProxy =
+    input.browser === true
+      ? remoteTargets.filter((p) => !p.browserDirect && !LOCAL_PROVIDER_IDS.includes(p.id)).map((p) => p.label)
+      : [];
   return {
-    remote: targets.filter((p) => !LOCAL_PROVIDER_IDS.includes(p.id)).map((p) => p.label),
-    local: targets
-      .filter((p) => LOCAL_PROVIDER_IDS.includes(p.id))
-      .map((p) => `${p.label} — この端末、または本アプリと同じホスト`),
+    remote: remoteTargets.map((p) => (LOCAL_PROVIDER_IDS.includes(p.id) ? `${p.label} (${p.endpointHost})` : p.label)),
+    local: targets.filter(isLocal).map((p) => `${p.label} — この端末、または本アプリと同じホスト`),
+    ...(viaProxy.length > 0 ? { viaProxy } : {}),
   };
 }

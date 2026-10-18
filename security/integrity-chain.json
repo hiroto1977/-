@@ -2635,6 +2635,14 @@
       "leafCount": 120,
       "note": "update main.ts",
       "hash": "5aa52c34c8aad687032bbc4df89e84b6e384a81480f7a6eb8c94882a7d46348f"
+    },
+    {
+      "index": 314,
+      "prevHash": "5aa52c34c8aad687032bbc4df89e84b6e384a81480f7a6eb8c94882a7d46348f",
+      "merkleRoot": "984f2f7edae83e1f2eb779aa0e43e44f69cb29c4f66877385ca2434e1c0982d4",
+      "leafCount": 120,
+      "note": "update credentials.ts",
+      "hash": "61c303b74d72cfd32808372acff12365bd8d0c4fc6865c3d9265e4716ad3cd86"
     }
   ],
   "tipManifest": {
@@ -2727,7 +2735,7 @@
     "src/renderer/security/webauthn.ts": "62218ba46fdfd0adaf8f3b7c42eb9e01315a619881b50d33acfbb51b0046ea76",
     "src/shared/advisorQuestionLimits.ts": "b1ade2abbfc367eb188ef16ba8e0c5b6327fe696e95cab2944df9f36de84b755",
     "src/shared/ai/chat.ts": "9f226eb4ab625c9445b5e13c8ec6fab8b109048fd0776b041f9016088d3f7cf8",
-    "src/shared/ai/credentials.ts": "2f0ff1a2f26ddd5aec1ab9beb682e53c898716e720bdcfb72a255945d2e12315",
+    "src/shared/ai/credentials.ts": "9f8c280fe6140f07ee2b729d31994f639d44b87f3a96674543ccc7697e2f869c",
     "src/shared/ai/providers.ts": "31e4637844d479c5c6b8c43bdd24e9196c2924e0d3e9b467141cbfb73d335e5b",
     "src/shared/aiEndpoint.ts": "806a29d8421e3757132f00ae81b2bac51c43d1d11f70939f52b5acb4160694e6",
     "src/shared/assistantLimits.ts": "5df97a39c2f9efc93ce067816de4eb3f3d8bd07cfe209e49660346ca7ba4f235",

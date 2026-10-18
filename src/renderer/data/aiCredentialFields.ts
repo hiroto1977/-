@@ -111,7 +111,7 @@ export const AI_CREDENTIAL_FIELDS: readonly AiCredentialField[] = [
   },
   {
     key: 'ollamaUrl',
-    label: 'Ollama URL (ローカル)',
+    label: 'Ollama URL (ローカル。https の別ホストは端末の外へ送られます)',
     aria: 'Ollama URL',
     placeholder: 'http://127.0.0.1:11434',
     secret: false,

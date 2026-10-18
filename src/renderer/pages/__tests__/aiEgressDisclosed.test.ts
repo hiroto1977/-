@@ -237,15 +237,34 @@ describe('機構 — 断りの文面は 1 か所が持ち、書けることだ�
     expect(withOthers.length).toBe(without.length + 1);
   });
 
-  it('★ プロキシの話を書かない (Anthropic へは直接送るので嘘になる)', () => {
+  it('★ 直結の提供元だけなら、プロキシの話を書かない (viaProxy が空なら嘘になる · パス 529 で条件つきに)', () => {
     const text = aiEgressNoticeLines({
       what: 'x',
       recipients: remoteOnly('Z'),
       mayIncludeOthers: true,
     }).join('\n');
-    // `fetchViaProxy` を通るのは notion / atlassian / cloudflare だけ。
+    // Anthropic・Gemini・Ollama は直結 (`viaProxy` に入らない)。プロキシを通る提供元だけが話に出る。
     expect(text).not.toContain('プロキシ');
     expect(text).not.toContain('Cloudflare');
+  });
+});
+
+describe('プロキシ経由の提供元は運用者に見えると言う (threat: T-119)', () => {
+  it('viaProxy に入った提供元だけを名指しして、会話と API キーが運用者に見えると言う', () => {
+    const lines = aiEgressNoticeLines({
+      what: '会話',
+      recipients: { remote: ['OpenAI (ChatGPT)', 'Anthropic (Claude)'], viaProxy: ['OpenAI (ChatGPT)'] },
+    });
+    const text = lines.join('\n');
+    expect(text).toContain('OpenAI (ChatGPT) は、設定したプロキシ (Cloudflare Worker) を経由して送られます');
+    expect(text).toContain('運用者にも、会話の内容と API キーが見えます');
+    // 直結の Anthropic はその一文の主語に入らない
+    expect(lines.find((l) => l.includes('プロキシ'))).not.toContain('Anthropic');
+  });
+
+  it('送り先を確認できないときは、プロキシの話もしない (主張しない)', () => {
+    const text = aiEgressNoticeLines({ what: '会話', recipients: { remote: [], unknown: true, viaProxy: ['OpenAI (ChatGPT)'] } }).join('\n');
+    expect(text).not.toContain('プロキシ');
   });
 });
 

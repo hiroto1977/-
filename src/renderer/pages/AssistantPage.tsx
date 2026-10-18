@@ -13,6 +13,7 @@
  *
  * 画面遷移は `servicehub:navigate` CustomEvent (App.tsx が listen)。
  */
+import { useBuildKind } from '../hooks/useBuildKind';
 import { navigateTo } from '../navigate';
 import { ERROR_MESSAGE_MAX_CHARS, redactForMessage } from '../../shared/redact';
 import {
@@ -341,6 +342,7 @@ async function storageMechanismOrNull(hub: Window['serviceHub']): Promise<Storag
 }
 
 export function AssistantPage() {
+  const buildKind = useBuildKind();
   const [messages, setMessages] = useState<ChatMessage[]>(() => loadHistory());
   const [input, setInput] = useState('');
   /*
@@ -413,8 +415,15 @@ export function AssistantPage() {
   }, [provider]);
 
   const egressRecipients = useMemo(
-    () => assistantEgressRecipients({ providers, providersUnknown, selected: provider }),
-    [providers, providersUnknown, provider],
+    () =>
+      assistantEgressRecipients({
+        providers,
+        providersUnknown,
+        selected: provider,
+        browser: buildKind === null ? null : buildKind === 'browser',
+        pageHostname: typeof location !== 'undefined' ? location.hostname : '',
+      }),
+    [providers, providersUnknown, provider, buildKind],
   );
 
   /** エージェント設定 (JSON マルチプロバイダ資格情報) を assistant スロットへ保存。 */

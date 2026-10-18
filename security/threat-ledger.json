@@ -2021,6 +2021,21 @@
         "file": "src/main/clients/__tests__/localTokenReaders.test.ts",
         "test": "資格情報を読む LOCAL サービス (threat: T-118)"
       }
+    },
+    {
+      "id": "T-119",
+      "found": "2026-10-17",
+      "foundBy": "hunt pass 527 の backlog AI-N1 / AI-N4 を pass 529 で直した",
+      "surface": "ai",
+      "class": "ai-phishing",
+      "severity": "medium",
+      "title": "AI へ送る前の断りが偽の安全表示をしていた: (AI-N1) 保存した Ollama の URL は任意の https ホスト (トンネル含む) を指せるのに、断りは常に『端末の外へは出ません』と言った。(AI-N4) ブラウザ版で OpenAI / OpenAI 互換は設定したプロキシ (Cloudflare Worker) を通り、運用者に会話と API キーが見えるのに、断りは運用者に一言も触れず、docblock は『書くと嘘になる』と断言していた",
+      "status": "fixed",
+      "fix": "providerStatuses が Ollama の接続先ホスト endpointHost (ループバックは null) を持ち、断りは端末の外のホストを外へ出る側に入れる (ページと同じホストは端末内のまま)。ブラウザ版で browserDirect:false の提供元は viaProxy に入れ、運用者にも会話と API キーが見えると言う。設定欄の表示名も実態に合わせた。",
+      "regression": {
+        "file": "src/renderer/data/__tests__/assistantProviders.test.ts",
+        "test": "assistantEgressRecipients — 遠隔の Ollama とプロキシ経由 (threat: T-119)"
+      }
     }
   ],
   "huntBacklog": [
@@ -2193,16 +2208,6 @@
       "surface": "supply-chain",
       "item": "e2e.yml の npm install --no-save playwright@1.56.1 は版固定だが integrity が無い",
       "why": "2026-10-16 に読んだ。lockfile へ入れるか、integrity を検める手が候補。e2e は既定で走らない。"
-    },
-    {
-      "surface": "ai",
-      "item": "AI-N1: AI アシスタント画面と村の断りが、ollama 提供元を無条件に『端末内』と名乗る (資格情報の ollamaUrl に任意の https ホストを保存でき、そこへ会話が送られる)。コンシェルジュ側は T-010 で見分ける",
-      "why": "2026-10-17 狩り 527 が再現済み (low)。断りの文面と受け手の判定の追加で、文言の台帳に影響するため別パス。"
-    },
-    {
-      "surface": "ai",
-      "item": "AI-N4: ブラウザ版で OpenAI / OpenAI 互換が BYO プロキシ経由で送られるのに、AiEgressNotice がプロキシ運用者に触れない (docblock は『書くと嘘になる』と断言)",
-      "why": "2026-10-17 狩り 527 が再現済み (low)。断りの出し分け (実行形態) と文言の台帳の更新が要るので別パス。"
     },
     {
       "surface": "supply-chain",

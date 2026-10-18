@@ -74,12 +74,13 @@
  * よって送り先は {@link AiEgressRecipients} で
  * **外へ出る / 端末内 / 確認できない**を分けて渡す。
  *
- * ## プロキシは経由しない (実測して確かめた)
+ * ## プロキシを経由するのは一部の提供元だけ (実測して確かめた)
  *
- * Anthropic への呼び出しは `web-shim.ts` の `timedFetchAi` が
- * `https://api.anthropic.com/v1/messages` を**直接**叩く。`fetchViaProxy` を通るのは
- * notion / atlassian / cloudflare だけなので、**AI の画面でプロキシ運用者の話を
- * 書くと嘘になる**。HIBP の断りから文面を借りるときに、この 1 行だけは持ってこない。
+ * Anthropic・Gemini・Ollama は `web-shim.ts` が**直接**叩く (CORS 対応)。**OpenAI と OpenAI 互換
+ * (`browserDirect: false`) はブラウザ版で BYO プロキシ (Cloudflare Worker) を通る** —— 会話と
+ * API キーを載せた封筒がその運用者に見える (パス 529 が実測。以前この節は「AI の画面で
+ * プロキシ運用者の話を書くと嘘になる」と断言していたが、Anthropic 直結だけの頃の記述が
+ * 複数提供元の層で偽になっていた)。だから運用者の話は `viaProxy` に入った提供元についてだけ書く。
  */
 
 /** 送り先の第三者。名前を 2 通りに書かない。 */
@@ -101,6 +102,13 @@ export interface AiEgressRecipients {
    * `remote: []` を「外へ出ない」と読ませないための欄。
    */
   readonly unknown?: boolean;
+  /**
+   * **ブラウザ版で、利用者が設定したプロキシ (Cloudflare Worker) を経由する**送り先の表示名
+   * (2026-10-18 · パス 529 · AI-N4)。OpenAI と OpenAI 互換は CORS 非対応で直接つなげず、会話と
+   * `Authorization` の API キーを載せた封筒がその Worker を通る —— **運用者にも見える**。
+   * Anthropic・Gemini・Ollama は直結なので入らない。`remote` に居る名前だけが入りうる。
+   */
+  readonly viaProxy?: readonly string[];
 }
 
 /** 外部の送り先が 1 つだけ、という最も多い形。 */
@@ -134,7 +142,7 @@ function joinNames(names: readonly string[]): string {
  * 落ちたのか分からない)。
  */
 export function aiEgressNoticeLines(subject: AiEgressSubject): readonly string[] {
-  const { remote, local = [], unknown = false } = subject.recipients;
+  const { remote, local = [], unknown = false, viaProxy = [] } = subject.recipients;
   const lines: string[] = [];
   if (unknown) {
     // **locality を主張しない。** 「読めなかった」を「送らない」と混ぜない。
@@ -148,6 +156,12 @@ export function aiEgressNoticeLines(subject: AiEgressSubject): readonly string[]
     lines.push(`送信内容: ${subject.what}が ${joinNames(remote)} へ送信されます。`);
     lines.push('この処理は端末内で完結しません。');
     if (local.length > 0) lines.push(`${joinNames(local)} はこの端末内で処理されます。`);
+  }
+  if (viaProxy.length > 0 && !unknown) {
+    // 運用者に見える物を名指しする (会話と API キー)。プロキシは利用者自身が設定した物。
+    lines.push(
+      `${joinNames(viaProxy)} は、設定したプロキシ (Cloudflare Worker) を経由して送られます。そのプロキシの運用者にも、会話の内容と API キーが見えます。`,
+    );
   }
   if (subject.mayIncludeOthers === true) {
     lines.push('第三者が書いた文面を貼る場合は、その人の同意を確認してください。');

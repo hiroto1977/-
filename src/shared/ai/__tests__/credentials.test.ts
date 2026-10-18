@@ -7,6 +7,7 @@ import {
   defaultProviderId,
   resolveProvider,
   providerStatuses,
+  remoteEndpointHost,
 } from '../credentials';
 import { AI_PROVIDER_IDS, type AiProviderId } from '../providers';
 
@@ -269,5 +270,25 @@ describe('parseAiCredentials — 壊れた保存内容', () => {
   it('null / undefined も何も設定されていない', () => {
     expect(parseAiCredentials(null)).toEqual({});
     expect(parseAiCredentials(undefined)).toEqual({});
+  });
+});
+
+
+describe('保存した Ollama の接続先が端末の外か (threat: T-119)', () => {
+  it('ループバック・未設定・読めない URL は null (= この端末として扱う)', () => {
+    for (const u of [undefined, null, '', 42, 'not a url', 'http://127.0.0.1:11434', 'http://localhost:11434', 'http://[::1]:11434']) {
+      expect(remoteEndpointHost(u), String(u)).toBeNull();
+    }
+  });
+
+  it('端末の外のホスト (トンネル・LAN の別機) はホスト名を返す', () => {
+    expect(remoteEndpointHost('https://tunnel.example.com/')).toBe('tunnel.example.com');
+    expect(remoteEndpointHost('http://192.168.0.7:11434')).toBe('192.168.0.7');
+  });
+
+  it('providerStatuses: ollama だけが endpointHost を持ち、他は null', () => {
+    const st = providerStatuses({ ollamaUrl: 'https://tunnel.example.com', openai: 'sk-x', anthropic: 'sk-ant-x' });
+    expect(st.find((s) => s.id === 'ollama')!.endpointHost).toBe('tunnel.example.com');
+    expect(st.filter((s) => s.id !== 'ollama').every((s) => s.endpointHost === null)).toBe(true);
   });
 });
