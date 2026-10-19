@@ -2051,6 +2051,21 @@
         "file": "src/shared/__tests__/workflowSecurityWitness.test.ts",
         "test": "lint:workflow-security — ローカル action と run: の本文 (threat: T-120)"
       }
+    },
+    {
+      "id": "T-121",
+      "found": "2026-10-17",
+      "foundBy": "hunt pass 527 の backlog SC-3 を pass 531 で直した",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "lint:deps の規則 3 は lockfile の hasInstallScript だけを信じた: npm は binding.gyp を持つだけの依存に node-gyp rebuild を暗黙に走らせ、旗はレジストリの申告なので実物の tarball と食い違いうる。旗の無い依存が npm ci で任意の C++ ビルドを走らせても、台帳に無いまま全ゲートが緑だった",
+      "status": "fixed",
+      "fix": "lockfile の各項目について node_modules の package.json と binding.gyp を実際に読み (scanInstalledInstallCode)、scripts.preinstall/install/postinstall か binding.gyp (gypfile:false を除く) を持つ依存を、lockfile の旗との和で INSTALL_SCRIPT_ALLOW と突き合わせる。読めた件数の床 (300) を CI では必須にし、手元で未インストールなら飛ばしてそう言う。これは検出であって阻止ではない (検出が走る時点で PR の npm ci は走り終わっている) —— 台帳に無い依存を main に入れないことを担う。",
+      "regression": {
+        "file": "src/shared/__tests__/installTimeCodeGuarded.test.ts",
+        "test": "実物の依存が npm ci で走らせるコード (threat: T-121)"
+      }
     }
   ],
   "huntBacklog": [
@@ -2223,11 +2238,6 @@
       "surface": "supply-chain",
       "item": "e2e.yml の npm install --no-save playwright@1.56.1 は版固定だが integrity が無い",
       "why": "2026-10-16 に読んだ。lockfile へ入れるか、integrity を検める手が候補。e2e は既定で走らない。"
-    },
-    {
-      "surface": "supply-chain",
-      "item": "SC-3: lint:deps の規則 3 は lockfile の hasInstallScript を信じるが、npm ci は binding.gyp を持つ依存で node-gyp rebuild を hasInstallScript 無しでも走らせる",
-      "why": "2026-10-17 狩り 527 が再現済み (medium)。規則 3 を lockfile でなく実物 (tarball に binding.gyp があるか) へ寄せる設計の変更。"
     },
     {
       "surface": "supply-chain",

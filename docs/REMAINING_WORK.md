@@ -1,5 +1,17 @@
 # Service Hub — 残りの作業手順書
 
+## パス 531 (狩りの 21 回目 —— パス 527 の backlog SC-3: install 時コードの旗を実物でも見る) (2026-10-19)
+
+パス 530 の続き。`lint:deps` の規則 3 は lockfile の `hasInstallScript` だけを信じていた (狩り 527 が再現済み・medium)。npm は `binding.gyp` を持つだけの依存に `node-gyp rebuild` を暗黙に走らせ (`scripts.install` が無く `gypfile` が `false` でないとき)、旗はレジストリの申告なので**実物の tarball と食い違いうる**。実測 (2026-10-19): 実物の node_modules は 648 項目のうち 599 件を読め、install 系の hook を持つのは `esbuild` / `electron-winstaller` の 2 件で lockfile の旗と一致、`binding.gyp` は 0 件 —— **今日の食い違いは 0**。直したのは「旗の無い依存が 1 つ入った日に黙る」門である。
+
+| 脅威 | 内容 | 留めた検査 |
+| --- | --- | --- |
+| T-121 (supply-chain・medium・SC-3) | `scanInstalledInstallCode` が lockfile の各項目について `node_modules/<経路>/package.json` と `binding.gyp` を読み、`preinstall` / `install` / `postinstall` か `binding.gyp` (`gypfile:false` を除く) を持つ依存を返す。規則 3 は lockfile の旗との**和**で `INSTALL_SCRIPT_ALLOW` と突き合わせる。読めた件数の床 (`MIN_INSTALLED_CHECKED` = 300・実測 599) は CI で必須、手元で未インストールなら飛ばして成功行がそう言う (入口は `checkRepo`)。成功行は読めた件数と読めなかった件数 (その環境に入らない optional 49) を名乗る | `installTimeCodeGuarded.test.ts` (+8 件)・`lint-dependencies.cjs --self-test` (+4 件) |
+
+**対照実験**: 9 方向 (和にしない / 床を外す / `gypfile:false` を無視 / `binding.gyp` を見ない / `preinstall` を落とす / link も読む / 読めない件数を数えない / `checkRepo` が走査を渡さない / CI でも空を飛ばす) がすべて狙った検査で鳴った (md5 で元へ戻したことを確認)。**最初の版では `main` が走査を渡さない対照 (H) が鳴らなかった** —— 成功行の文面が evaluate の入力と独立に刷られていたため。入口を `checkRepo` に出して、その戻り値を検査が見る形にしてから鳴った。
+
+**これは検出であって阻止ではない (正直に)**: 検出が走る時点 (CI の `verify:all`) には、その PR の `npm ci` が既に走り終わっている。守るのは「台帳に無い依存を main に入れない」ことで、CODEOWNERS と PR の必須チェックがそれを担う (F-1: main の保護設定は所有者の判断で未設定のまま)。`npm ci --ignore-scripts` は esbuild など必要な install 時コードを止めるので採らなかった。
+
 ## パス 530 (狩りの 20 回目 —— パス 527 の backlog SC-5: workflow の門が飛ばしていた 3 つの面) (2026-10-19)
 
 パス 529 の続き。`lint:workflow-security` は `uses: ./…` と `docker://…` を**無条件に飛ばし**、`run:` は `${{ }}` の形しか見なかった (狩り 527 が再現済み・medium)。実物の 7 workflow にローカル action / docker:// / 危険な run: は **0 件**なので今日の実害は無い —— 直したのは「次に 1 つ入った日に黙る」門である。

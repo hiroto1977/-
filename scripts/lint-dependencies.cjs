@@ -499,7 +499,67 @@ function diff(actual, ledger) {
   };
 }
 
-function evaluate({ lock, pkg, installConfigs = presentInstallConfigs(), strykerConfig = readStrykerConfig() }) {
+/**
+ * **実物 (`node_modules`) が `npm ci` の時点で走らせるコード** (2026-10-19 · パス 531 · threat: T-121)。
+ *
+ * 規則 3 は lockfile の `hasInstallScript` を信じる。ところが npm は、依存が**パッケージの根に
+ * `binding.gyp` を持つだけで** `node-gyp rebuild` を暗黙に走らせ (`scripts.install` が無く
+ * `gypfile` が `false` でないとき)、lockfile の旗はレジストリの packument 由来なので、
+ * **実物の tarball と食い違いうる** (狩り 527 が再現済み)。旗が立っていない依存が
+ * 任意の C++ のビルドを `npm ci` で走らせても、lockfile だけを読む規則は黙る。
+ *
+ * そこで lockfile の各項目について `node_modules/<経路>/package.json` と `binding.gyp` を
+ * 実際に読み、`preinstall` / `install` / `postinstall` を持つか・`binding.gyp` を持つ依存を
+ * 返す。**載っていない依存 (その環境に入らない optional な別 OS 用) は確かめようがない**ので
+ * `absent` として数え、成功行が「確かめた件数 / 確かめられなかった件数」を名乗る。
+ *
+ * ★ これは**検出**で、阻止ではない: 検出が走る時点 (CI の `verify:all`) には、その PR の
+ * `npm ci` が既に走り終わっている。守るのは「台帳に無い依存を main に入れない」ことで、
+ * CODEOWNERS と PR の必須チェックがそれを担う。
+ */
+function scanInstalledInstallCode(lock, root = REPO_ROOT) {
+  const found = new Map(); // 名前 → 理由の配列
+  let checked = 0;
+  let absent = 0;
+  for (const [key, meta] of Object.entries(lock?.packages ?? {})) {
+    if (key === '' || meta?.link) continue;
+    const dir = path.join(root, ...key.split('/'));
+    let manifest;
+    try {
+      manifest = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8'));
+    } catch {
+      absent += 1;
+      continue;
+    }
+    checked += 1;
+    const reasons = [];
+    const scripts = manifest?.scripts ?? {};
+    for (const hook of ['preinstall', 'install', 'postinstall']) {
+      if (Object.hasOwn(scripts, hook)) reasons.push(`scripts.${hook}`);
+    }
+    if (manifest?.gypfile !== false && fs.existsSync(path.join(dir, 'binding.gyp'))) {
+      reasons.push('binding.gyp (npm が node-gyp rebuild を暗黙に走らせる)');
+    }
+    if (reasons.length > 0) found.set(bareName(key), reasons);
+  }
+  return { found, checked, absent };
+}
+
+/**
+ * lockfile + 実物 (`root` の node_modules) を合わせて評価する —— `main` が使う唯一の入口。
+ * CI は必ず `npm ci` の後なので node_modules が読めなければ走査の故障として床で断る。
+ * 手元で未インストール (`checked === 0` かつ CI でない) なら実物の確認を飛ばし、lockfile の旗だけを見る。
+ */
+function checkRepo({ lock, pkg, root = REPO_ROOT, ci = false }) {
+  const scan = scanInstalledInstallCode(lock, root);
+  const installed = scan.checked === 0 && !ci ? null : scan;
+  return { problems: evaluate({ lock, pkg, installed }), scan };
+}
+
+/** 実物を確かめた件数の床 (実測 599 / 648)。node_modules が丸ごと読めない・一部しか読めない走査を「問題なし」と読まない。 */
+const MIN_INSTALLED_CHECKED = 300;
+
+function evaluate({ lock, pkg, installConfigs = presentInstallConfigs(), strykerConfig = readStrykerConfig(), installed = null }) {
   const problems = [];
   const packages = lock?.packages;
   if (packages === null || typeof packages !== 'object') {
@@ -529,11 +589,24 @@ function evaluate({ lock, pkg, installConfigs = presentInstallConfigs(), stryker
   }
 
   // 3. インストール時にコードを走らせる依存。
+  // 旗は lockfile (レジストリの申告) と実物 (`node_modules` の package.json / binding.gyp) の**和**で見る
+  // (パス 531 · T-121): どちらか一方が「走らせる」と言えば走らせる依存として台帳が要る。
   const scripted = new Set(entries.filter(([, m]) => m.hasInstallScript).map(([n]) => bareName(n)));
+  if (installed) for (const n of installed.found.keys()) scripted.add(n);
   const d3 = diff(scripted, INSTALL_SCRIPT_ALLOW);
   for (const n of d3.extra) {
+    const onDisk = installed?.found.get(n);
+    const flagged = entries.some(([k, m]) => bareName(k) === n && m.hasInstallScript);
     problems.push(
-      `${n} は npm ci の時点でコードを走らせます — 理由を添えて INSTALL_SCRIPT_ALLOW へ`,
+      `${n} は npm ci の時点でコードを走らせます${
+        onDisk && !flagged ? ` (lockfile は旗を立てていないが実物が ${onDisk.join(' / ')} を持つ)` : ''
+      } — 理由を添えて INSTALL_SCRIPT_ALLOW へ`,
+    );
+  }
+  if (installed && installed.checked < MIN_INSTALLED_CHECKED) {
+    problems.push(
+      `node_modules から ${installed.checked} 件しか読めませんでした (${MIN_INSTALLED_CHECKED} 件以上を期待) — ` +
+        '`npm ci` の後に走らせること。走査が壊れている可能性があります',
     );
   }
   for (const n of d3.stale) {
@@ -659,6 +732,27 @@ function selfTest() {
       'package.json の宣言が閉包に無ければ鳴る',
       mk(full(), { ...okPkg(), dependencies: { 'ghost-lib': '^1.0.0' } }),
       1,
+    ],
+    // パス 531 (threat: T-121): lockfile の旗と実物 (binding.gyp / scripts) の和で規則 3 を見る。
+    [
+      '旗が無くても実物が binding.gyp を持てば台帳が要る (T-121)',
+      (() => { const m = mk(full()); m.installed = { found: new Map([['native-thing', ['binding.gyp']]]), checked: MIN_INSTALLED_CHECKED, absent: 0 }; return m; })(),
+      1,
+    ],
+    [
+      '台帳にある依存を実物が示しても鳴らない (T-121)',
+      (() => { const m = mk(full()); m.installed = { found: new Map([['esbuild', ['scripts.postinstall']]]), checked: MIN_INSTALLED_CHECKED, absent: 0 }; return m; })(),
+      0,
+    ],
+    [
+      '実物を読めた件数が床未満なら鳴る (T-121)',
+      (() => { const m = mk(full()); m.installed = { found: new Map(), checked: MIN_INSTALLED_CHECKED - 1, absent: 10 }; return m; })(),
+      1,
+    ],
+    [
+      '実物の走査が床を満たし何も見つからなければ鳴らない (T-121)',
+      (() => { const m = mk(full()); m.installed = { found: new Map(), checked: MIN_INSTALLED_CHECKED, absent: 0 }; return m; })(),
+      0,
     ],
   ];
   // --- 規則 7 の対照 (合成の台帳) ---
@@ -832,13 +926,19 @@ function main(argv) {
   if (argv.includes('--self-test')) return selfTest();
   const lock = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'package-lock.json'), 'utf8'));
   const pkg = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'package.json'), 'utf8'));
-  const problems = evaluate({ lock, pkg });
+  const inCi = process.env.CI === 'true' || process.env.CI === '1';
+  const { problems, scan: installed } = checkRepo({ lock, pkg, ci: inCi });
   const total = Object.keys(lock.packages ?? {}).length - 1;
   const prod = Object.keys(PROD_ALLOW).length;
   const scripted = Object.keys(INSTALL_SCRIPT_ALLOW).length;
   console.log(
     `Checked ${total} locked package(s): 本番依存 ${prod} 件 / インストール時コード ${scripted} 件 / ` +
       `セキュリティの床 ${SECURITY_FLOORS.length} 件 (いずれも台帳) / 取得元と integrity`,
+  );
+  console.log(
+    installed.checked === 0 && !inCi
+      ? '実物の確認: node_modules が無いため lockfile の旗だけを見ています (npm ci の後に走らせると実物の package.json / binding.gyp も見ます)'
+      : `実物の確認: node_modules ${installed.checked} 件を読み、読めなかった ${installed.absent} 件 (その環境に入らない optional) は lockfile の旗だけ`,
   );
   const ownLifecycle = LIFECYCLE_KEYS.filter((k) => Object.hasOwn(pkg?.scripts ?? {}, k));
   const configs = presentInstallConfigs();
@@ -866,6 +966,9 @@ function main(argv) {
 if (require.main === module) process.exit(main(process.argv.slice(2)));
 module.exports = {
   evaluate,
+  scanInstalledInstallCode,
+  checkRepo,
+  MIN_INSTALLED_CHECKED,
   PROD_ALLOW,
   INSTALL_SCRIPT_ALLOW,
   SECURITY_FLOORS,

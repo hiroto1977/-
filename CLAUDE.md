@@ -1440,6 +1440,10 @@ npm run lint:deps          # 依存の供給網 (本番依存の閉包 5 件 / �
                            #   `registry=` を書いても **37 ゲートすべてが exit 0** だった。
                            #   実物がこの規則の下に居ることは
                            #   `shared/__tests__/installTimeCodeGuarded.test.ts` が npm test で見る。
+                           #   **規則 3 の旗は lockfile だけでなく実物 (`node_modules` の package.json の
+                           #   scripts と `binding.gyp`) との和で見る** (2026-10-19 · パス 531 · T-121 ——
+                           #   npm は binding.gyp を持つ依存に node-gyp rebuild を暗黙に走らせ、旗は
+                           #   レジストリの申告で実物と食い違いうる)。検出であって阻止ではない
                            #   **`package.json` は鎖には入れない** —— 全履歴 12 コミットで
                            #   「安定資産」の基準 (パス 347) を満たさないので、門で形を見る
 npm run lint:storage       # ブラウザに残す物の台帳 (IndexedDB 4 / Cache Storage 1 /

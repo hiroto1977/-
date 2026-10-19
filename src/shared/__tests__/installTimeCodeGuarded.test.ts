@@ -33,7 +33,9 @@
  * **`package.json` は整合性チェーンには入れない** —— 全履歴 12 コミットで
  * 「安定資産」の基準 (パス 347) を満たさない。門で形を見るのが正しい道具である。
  */
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { readOriginalSource } from './originalSource';
@@ -51,6 +53,14 @@ const gate = req('../../../scripts/lint-dependencies.cjs') as {
   INSTALL_CONFIG_ALLOW: Record<string, string>;
   INSTALL_CONFIG_FILES: readonly string[];
   LIFECYCLE_KEYS: readonly string[];
+  scanInstalledInstallCode: (
+    lock: unknown,
+    root?: string,
+  ) => { found: Map<string, string[]>; checked: number; absent: number };
+  evaluate: (input: { lock: unknown; pkg: unknown; installed?: unknown }) => string[];
+  checkRepo: (input: { lock: unknown; pkg: unknown; root?: string; ci?: boolean }) => { problems: string[]; scan: { found: Map<string, string[]>; checked: number; absent: number } };
+  MIN_INSTALLED_CHECKED: number;
+  INSTALL_SCRIPT_ALLOW: Record<string, string>;
 };
 
 const pkg = JSON.parse(readOriginalSource(join(REPO, 'package.json'))) as {
@@ -220,5 +230,110 @@ describe('stryker.config.json のコードを選ぶ欄は中身を検める (パ
   it('★ 対照: npm の名前・スコープ・ワイルドカードは通る (針が広すぎない)', () => {
     const ok = { testRunner: 'vitest', reporters: ['clear-text', 'json'], plugins: ['@stryker-mutator/vitest-runner', 'name*'] };
     expect(gate.checkStrykerCodePicking(ok)).toEqual([]);
+  });
+});
+
+/**
+ * 旗は lockfile だけでなく**実物**でも見る (2026-10-19 · パス 531 · threat: T-121)。npm は
+ * `binding.gyp` を持つだけの依存に `node-gyp rebuild` を暗黙に走らせ、lockfile の
+ * `hasInstallScript` はレジストリの申告なので実物の tarball と食い違いうる (狩り 527 が再現済み)。
+ */
+describe('実物の依存が npm ci で走らせるコード (threat: T-121)', () => {
+  const tmpRoot = () => mkdtempSync(join(tmpdir(), 'lintdeps-'));
+  const put = (root: string, rel: string, files: Record<string, string>) => {
+    mkdirSync(join(root, ...rel.split('/')), { recursive: true });
+    for (const [f, text] of Object.entries(files)) writeFileSync(join(root, ...rel.split('/'), f), text);
+  };
+  const lockOf = (...keys: string[]) => ({ packages: { '': {}, ...Object.fromEntries(keys.map((k) => [k, {}])) } });
+
+  it('★ binding.gyp・scripts.install/preinstall/postinstall を持つ依存だけを拾い、入れ子の経路も名前で返す', () => {
+    const root = tmpRoot();
+    try {
+      put(root, 'node_modules/native', { 'package.json': '{"name":"native"}', 'binding.gyp': '{}' });
+      put(root, 'node_modules/hooky', { 'package.json': '{"scripts":{"postinstall":"node x.js"}}' });
+      put(root, 'node_modules/pre', { 'package.json': '{"scripts":{"preinstall":"node x.js"}}' });
+      put(root, 'node_modules/a/node_modules/deep', { 'package.json': '{"scripts":{"install":"node x.js"}}' });
+      put(root, 'node_modules/plain', { 'package.json': '{"scripts":{"test":"vitest"}}' });
+      const res = gate.scanInstalledInstallCode(
+        lockOf('node_modules/native', 'node_modules/hooky', 'node_modules/pre', 'node_modules/a/node_modules/deep', 'node_modules/plain', 'node_modules/missing'),
+        root,
+      );
+      expect([...res.found.keys()].sort()).toEqual(['deep', 'hooky', 'native', 'pre']);
+      expect(res.found.get('native')?.[0]).toContain('binding.gyp');
+      expect(res.found.get('hooky')).toEqual(['scripts.postinstall']);
+      expect(res.checked).toBe(5);
+      expect(res.absent).toBe(1);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('★ gypfile: false は binding.gyp があっても走らせない (npm の規則どおり)', () => {
+    const root = tmpRoot();
+    try {
+      put(root, 'node_modules/optout', { 'package.json': '{"gypfile":false}', 'binding.gyp': '{}' });
+      expect(gate.scanInstalledInstallCode(lockOf('node_modules/optout'), root).found.size).toBe(0);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('★ link は読まず、lockfile に無い物は数えない', () => {
+    const root = tmpRoot();
+    try {
+      put(root, 'node_modules/stray', { 'package.json': '{"scripts":{"postinstall":"x"}}' });
+      const res = gate.scanInstalledInstallCode({ packages: { '': {}, 'node_modules/ln': { link: true } } }, root);
+      expect(res).toEqual({ found: new Map(), checked: 0, absent: 0 });
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('★ 実物の node_modules は読めて、台帳の外に走らせる依存が居ない (npm ci の後に限る)', () => {
+    const lock = JSON.parse(readOriginalSource(join(REPO, 'package-lock.json')));
+    const res = gate.scanInstalledInstallCode(lock);
+    if (res.checked === 0) return; // 未インストールの手元 (CI は必ず npm ci の後)
+    expect(res.checked).toBeGreaterThanOrEqual(gate.MIN_INSTALLED_CHECKED);
+    for (const n of res.found.keys()) expect(Object.keys(gate.INSTALL_SCRIPT_ALLOW), `${n} が台帳に無い`).toContain(n);
+  });
+
+  it('★ 旗が無くても実物が binding.gyp を持てば evaluate が名指しで断る (直す前は黙った)', () => {
+    const lock = { packages: { '': {}, 'node_modules/native': { dev: true, resolved: 'https://registry.npmjs.org/native', integrity: 'sha512-x' } } };
+    const installed = { found: new Map([['native', ['binding.gyp (npm が node-gyp rebuild を暗黙に走らせる)']]]), checked: gate.MIN_INSTALLED_CHECKED, absent: 0 };
+    const withScan = gate.evaluate({ lock, pkg: {}, installed });
+    expect(withScan.some((p) => p.includes('native') && p.includes('lockfile は旗を立てていない') && p.includes('binding.gyp'))).toBe(true);
+    const without = gate.evaluate({ lock, pkg: {} });
+    expect(without.some((p) => p.includes('native は npm ci'))).toBe(false);
+  });
+
+  it('★ 実物を読めた件数が床未満なら evaluate が断る (走査が一部しか読めない形)', () => {
+    const lock = { packages: { '': {} } };
+    const few = { found: new Map(), checked: gate.MIN_INSTALLED_CHECKED - 1, absent: 0 };
+    expect(gate.evaluate({ lock, pkg: {}, installed: few }).some((p) => p.includes('node_modules から'))).toBe(true);
+    const enough = { found: new Map(), checked: gate.MIN_INSTALLED_CHECKED, absent: 0 };
+    expect(gate.evaluate({ lock, pkg: {}, installed: enough }).some((p) => p.includes('node_modules から'))).toBe(false);
+  });
+
+  it('★ 入口 checkRepo は実物の走査を evaluate へ渡す (旗の無い binding.gyp 依存を名指しで断る)', () => {
+    const root = tmpRoot();
+    try {
+      put(root, 'node_modules/native', { 'package.json': '{}', 'binding.gyp': '{}' });
+      const lock = { packages: { '': {}, 'node_modules/native': { dev: true, resolved: 'https://registry.npmjs.org/native', integrity: 'sha512-x' } } };
+      const inCi = gate.checkRepo({ lock, pkg: {}, root, ci: true });
+      expect(inCi.problems.some((p) => p.includes('native は npm ci'))).toBe(true);
+      expect(inCi.scan.checked).toBe(1);
+      // 手元で node_modules が空なら飛ばす (床で鳴らない)・CI では空は走査の故障として床で鳴る
+      const empty = tmpRoot();
+      try {
+        const local = gate.checkRepo({ lock, pkg: {}, root: empty, ci: false });
+        expect(local.problems.some((p) => p.includes('node_modules から'))).toBe(false);
+        const ci = gate.checkRepo({ lock, pkg: {}, root: empty, ci: true });
+        expect(ci.problems.some((p) => p.includes('node_modules から'))).toBe(true);
+      } finally {
+        rmSync(empty, { recursive: true, force: true });
+      }
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
   });
 });
