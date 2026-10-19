@@ -2036,6 +2036,21 @@
         "file": "src/renderer/data/__tests__/assistantProviders.test.ts",
         "test": "assistantEgressRecipients — 遠隔の Ollama とプロキシ経由 (threat: T-119)"
       }
+    },
+    {
+      "id": "T-120",
+      "found": "2026-10-17",
+      "foundBy": "hunt pass 527 の backlog SC-5 を pass 530 で直した",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "lint:workflow-security は『uses: ./…』と『docker://…』を無条件に飛ばし、run: は ${{ }} の形しか見なかった: ローカルの composite action の中身 (未固定の第三者 action・curl | sh) は誰にも走査されず、run: に GITHUB_ENV / GITHUB_PATH への書き込みや NODE_OPTIONS=--require ./evil.js を書いても exit 0 だった。SHA 固定は任意の 40 桁 16 進を受けていた",
+      "status": "fixed",
+      "fix": "ローカル action (.github/actions/**/action.yml) を workflow と同じ規則で走査し、uses: ./ は走査に載る実在の action / 再利用 workflow だけを指させる (木の外・直下・無い物は断る)。docker:// は @sha256: のダイジェスト固定。SHA 固定には版の注記 (# v5) を要求。run: の遠隔コード実行 (curl | sh・bash <(curl …)・sh -c \"$(curl …)\")・GITHUB_ENV / GITHUB_PATH への書き込みと、ローダを差し替える環境変数 (NODE_OPTIONS ほか。--max-old-space-size=N だけ可) を env: でも run: でも断る。追跡ファイルとの照合にもローカル action を含めた。40 桁が実在の commit かは機械で確かめられない (残作業として記録)。",
+      "regression": {
+        "file": "src/shared/__tests__/workflowSecurityWitness.test.ts",
+        "test": "lint:workflow-security — ローカル action と run: の本文 (threat: T-120)"
+      }
     }
   ],
   "huntBacklog": [
@@ -2216,13 +2231,13 @@
     },
     {
       "surface": "supply-chain",
-      "item": "SC-5: lint:workflow-security は uses: ./... を飛ばし、任意の 40 桁 16 進を受け、run: の本文を内容で走査しない (ローカル composite action の未固定・curl|sh・NODE_OPTIONS の乗っ取り)",
-      "why": "2026-10-17 狩り 527 が再現済み (medium)。規則の追加で workflow の台帳に影響するため別パス。"
+      "item": "SC-2: lint:deps の PROD_ALLOW は lockfile の dev フラグで本番閉包を決め、src/ が実際に import する devDependency を見ない (単一 HTML に畳み込まれても全ゲート緑)",
+      "why": "2026-10-17 狩り 527 が再現済み (low)。src の import を構文木で導く census を足す設計の変更。"
     },
     {
       "surface": "supply-chain",
-      "item": "SC-2: lint:deps の PROD_ALLOW は lockfile の dev フラグで本番閉包を決め、src/ が実際に import する devDependency を見ない (単一 HTML に畳み込まれても全ゲート緑)",
-      "why": "2026-10-17 狩り 527 が再現済み (low)。src の import を構文木で導く census を足す設計の変更。"
+      "item": "SC-5 の残り: SHA 固定の 40 桁が実在の commit (注記の版と同じ commit) かは機械で確かめられない",
+      "why": "2026-10-19 (パス 530): 門は形 (40 桁 16 進) と版の注記 (# v5) の有無までしか見られない。実在の確認は git ls-remote のネットワークが要るため CI の決定的な門にできない。候補は定期点検の道具 (audit:*) として、各 uses の <repo> と注記の版を git ls-remote で引き直して SHA が一致するか比べる形。job の container: / services: のイメージの固定も同じ道具で見る。"
     }
   ],
   "clearedBacklog": [

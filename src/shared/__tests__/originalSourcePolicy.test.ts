@@ -218,9 +218,10 @@ const VARIABLE_PATH_ALLOWED: Readonly<Record<string, { count: number; why: strin
       + 'repo のファイルではなく検査自身が書かせた物なので、原文の道具へ戻す物が無い',
   },
   'src/shared/__tests__/workflowSecurityWitness.test.ts': {
-    count: 2,
+    count: 4,
     why: '`.github/workflows/` の**一覧**と各 yml を読み、actions/* の SHA 固定と checkout の persist-credentials を実物で留める (パス 522 · T-056 / T-057)。'
-      + 'yml は `mutate` の母集団の外 (Stryker は .ts しか書き換えない) なので sandbox の写しの問題が無く、原文の道具へ通す理由が無い',
+      + 'yml は `mutate` の母集団の外 (Stryker は .ts しか書き換えない) なので sandbox の写しの問題が無く、原文の道具へ通す理由が無い。'
+      + '+2 件 (パス 530 · T-120): 実物の workflow の一覧と各 yml にローカル action・docker:// が 0 件であることを読む (同じ理由)',
   },
   'src/shared/__tests__/importRequestsPath.test.ts': {
     count: 4,

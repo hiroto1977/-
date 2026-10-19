@@ -1,5 +1,17 @@
 # Service Hub — 残りの作業手順書
 
+## パス 530 (狩りの 20 回目 —— パス 527 の backlog SC-5: workflow の門が飛ばしていた 3 つの面) (2026-10-19)
+
+パス 529 の続き。`lint:workflow-security` は `uses: ./…` と `docker://…` を**無条件に飛ばし**、`run:` は `${{ }}` の形しか見なかった (狩り 527 が再現済み・medium)。実物の 7 workflow にローカル action / docker:// / 危険な run: は **0 件**なので今日の実害は無い —— 直したのは「次に 1 つ入った日に黙る」門である。
+
+| 脅威 | 内容 | 留めた検査 |
+| --- | --- | --- |
+| T-120 (supply-chain・medium・SC-5) | ① ローカルの composite action (`.github/actions/**/action.yml`) の中身 (未固定の第三者 action・`curl \| sh`) は誰にも走査されなかった → workflow と同じ規則で走査し、`uses: ./` は走査に載る実在の action / 再利用 workflow だけを指させる (木の外・直下・無い物は断る)。② `docker://` はタグでなく `@sha256:` で固定。③ SHA 固定に版の注記 (`# v5`) を要求。④ `run:` の遠隔コード実行 (`curl \| sh`・`bash <(curl …)`・`sh -c "$(curl …)"`・`eval "$(curl …)"`)、`GITHUB_ENV` / `GITHUB_PATH` への書き込み、ローダを差し替える環境変数 (`NODE_OPTIONS` ほか。`--max-old-space-size=N` だけ可 —— `mutation.yml` の実物) を `env:` でも `run:` でも断る。追跡ファイルとの照合にもローカル action を含めた | `workflowSecurityWitness.test.ts` (+32 件・`lint-workflow-security.cjs --self-test` +8 件) |
+
+**対照実験**: 10 方向 (ローカル参照の判定を潰す / docker 検査を外す / 版の注記を外す / `runBodyProblem` を潰す / ローダ環境変数を潰す / `GITHUB_ENV` を見ない / `NODE_OPTIONS` を全許可 / action に permissions を要求 / `curl|sh` を見ない / `workflows()` が action を無視) がすべて狙った検査で鳴った (md5 で元へ戻したことを確認)。**最初の対照 B (`..` の拒否を外す) は鳴らなかった** —— 実在の action 名の照合 (`names.has`) が既に `..` を落とすので**等価**で、形ごと消した (法則 115)。K (`workflows()` が action を無視) も最初は鳴らず、`workflows(wfDir, actionsDir)` を継ぎ目にして一時ディレクトリで留めた。
+
+**閉じていない物 (測った)**: 40 桁の 16 進が**実在の commit か**は機械で確かめられない (ネットワークが要る) —— 版の注記は手での確認 (`git ls-remote <repo> refs/tags/<tag>`) の足がかりであって保証ではない。`huntBacklog` に「SC-5 の残り」として、`git ls-remote` で引き直す定期点検の道具と job の `container:` / `services:` のイメージの固定を候補に残した。
+
 ## パス 529 (狩りの 19 回目 —— パス 527 の backlog のうち AI の断りの 2 件を直す) (2026-10-18)
 
 パス 528 の続き。パス 527 の検証役が再現済みと判定した `huntBacklog` のうち、AI へ送る前の断りが**偽の安全表示**をしていた 2 件を直した (新しい監査は回していない)。

