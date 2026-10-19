@@ -1,8 +1,7 @@
-import { readdirSync, statSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { readOriginalSource } from './originalSource';
+import { readOriginalDirEntries, readOriginalSource } from './originalSource';
 
 /*
  * **SHA 固定の実在確認の道具の形を留める** (2026-10-19 · パス 534 · threat: T-124)。
@@ -29,10 +28,10 @@ const remote = (tags: string[] | null, exists: boolean | null = false) => ({ tag
 
 function yamlFiles(dir: string): { file: string; text: string }[] {
   const out: { file: string; text: string }[] = [];
-  for (const n of readdirSync(dir)) {
-    const p = path.join(dir, n);
-    if (statSync(p).isDirectory()) out.push(...yamlFiles(p));
-    else if (/\.ya?ml$/.test(n)) out.push({ file: p, text: readOriginalSource(p) });
+  for (const e of readOriginalDirEntries(dir)) {
+    const p = path.join(dir, e.name);
+    if (e.isDirectory()) out.push(...yamlFiles(p));
+    else if (/\.ya?ml$/.test(e.name)) out.push({ file: p, text: readOriginalSource(p) });
   }
   return out;
 }
