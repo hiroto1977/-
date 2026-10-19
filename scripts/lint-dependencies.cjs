@@ -32,6 +32,13 @@
  *   7. **セキュリティの床**が、道 (overrides / devDependencies) を問わず台帳と一致
  *   8. **このリポジトリ自身の lifecycle script** が台帳と一致 (双方向・理由つき)
  *   9. **インストール時に読まれる設定ファイル** (`.npmrc` ほか) が台帳と一致 (双方向)
+ *  10. **`stryker.config.json` のコードを選ぶ欄** (ローカルパス / シェルを拒む)
+ *  11. **出荷される `src/` が import する外部パッケージは `dependencies` にある** (2026-10-19 ·
+ *      パス 532 · threat: T-122)。規則 2 は lockfile の `dev` フラグで本番閉包を決める —— つまり
+ *      `src/` が実際に import する devDependency は閉包に現れず、**単一 HTML へ畳み込まれて
+ *      保管庫と同じオリジンで走っても全ゲートが緑**だった (狩り 527 が再現済み)。
+ *      今日は `react` / `react-dom` (dependencies) と `electron` (実行時が提供・main / preload だけ) の
+ *      3 つだけ (541 ファイルの実測)。
  *
  * 4 と 5 は「lockfile を書き換えて別の場所から引く」形を塞ぐ。
  * git 参照や tarball の URL は、レジストリと違って**後から中身を差し替えられる**。
@@ -68,6 +75,9 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const { builtinModules } = require('node:module');
+const { stripComments } = require('./lib/strip-non-code.cjs');
+const { reportTrackedCrossCheck, crossCheckSuffix } = require('./lib/tracked-cross-check.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 
@@ -546,6 +556,107 @@ function scanInstalledInstallCode(lock, root = REPO_ROOT) {
 }
 
 /**
+ * **実行時が提供するので束ねない外部モジュール** (規則 11)。`devDependencies` にあってよい
+ * 唯一の種類で、**import してよい場所**まで台帳に書く —— renderer が `electron` を import すれば
+ * 単一 HTML へ畳み込まれる側に入る。
+ */
+const RUNTIME_PROVIDED = {
+  electron: {
+    why: 'Electron の実行時が提供する組み込みモジュール。main / preload のバンドルでは external で、梱包物にも入らない',
+    under: ['main/', 'preload/'],
+  },
+};
+
+const SHIPPED_SKIP_DIRS = ['__tests__', '__audits__', 'node_modules'];
+const isShippedSource = (name) => /\.(ts|tsx)$/.test(name) && !/\.test\.(ts|tsx)$/.test(name) && !/\.d\.ts$/.test(name);
+/** 出荷される `src/` の走査の条件 (走査と追跡ファイルとの照合が同じ定数を読む)。 */
+const SHIPPED_CROSS_CHECK = { roots: ['src'], skipDirs: SHIPPED_SKIP_DIRS, accept: isShippedSource };
+
+/** 出荷される `src/` の下限 (実測 541)。走査が死んで「import 0 件だから健全」にならないため。 */
+const MIN_SHIPPED_FILES = 300;
+
+const IMPORT_RE =
+  /\b(?:import|export)\b[^'"`;]*?\bfrom\s*(['"])([^'"\n]+)\1|\bimport\s*(['"])([^'"\n]+)\3|\b(?:import|require)\s*\(\s*(['"])([^'"\n]+)\5\s*\)/g;
+
+/** 指定子 → 外部パッケージ名 (`@scope/name`・`name/sub` → 先頭)。相対・絶対・組み込みは `null`。 */
+function bareImportName(spec) {
+  if (spec.startsWith('.') || spec.startsWith('/') || spec.startsWith('node:')) return null;
+  const name = spec.startsWith('@') ? spec.split('/').slice(0, 2).join('/') : spec.split('/')[0];
+  return builtinModules.includes(name) ? null : name;
+}
+
+/**
+ * 出荷される `src/` (検査・型定義を除く) が import する外部パッケージ —— `{ packages, files, walked }`。
+ * 注記は落としてから読む (docblock の例示を import と数えない)。`packages` は 名前 → `src/` 相対の経路の配列。
+ */
+function shippedBareImports(root = REPO_ROOT) {
+  const packages = new Map();
+  const walked = [];
+  const walk = (dir) => {
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, e.name);
+      if (e.isDirectory()) {
+        if (!SHIPPED_SKIP_DIRS.includes(e.name)) walk(full);
+      } else if (isShippedSource(e.name)) {
+        walked.push(full);
+        const text = stripComments(fs.readFileSync(full, 'utf8'));
+        const rel = path.relative(path.join(root, 'src'), full).split(path.sep).join('/');
+        IMPORT_RE.lastIndex = 0;
+        for (let m = IMPORT_RE.exec(text); m; m = IMPORT_RE.exec(text)) {
+          const name = bareImportName(m[2] ?? m[4] ?? m[6]);
+          if (name === null) continue;
+          if (!packages.has(name)) packages.set(name, []);
+          packages.get(name).push(rel);
+        }
+      }
+    }
+  };
+  if (fs.existsSync(path.join(root, 'src'))) walk(path.join(root, 'src'));
+  return { packages, files: walked.length, walked };
+}
+
+/** 規則 11 の判定。`runtimeProvided` は注入できる (self-test のため)。 */
+function checkShippedImports({ imports, pkg }, runtimeProvided = RUNTIME_PROVIDED) {
+  const problems = [];
+  if (imports.files < MIN_SHIPPED_FILES) {
+    problems.push(
+      `出荷される src/ から ${imports.files} 件しか読めませんでした (${MIN_SHIPPED_FILES} 件以上を期待) — 走査が壊れている可能性があります`,
+    );
+  }
+  const deps = new Set(Object.keys(pkg?.dependencies ?? {}));
+  const devs = new Set(Object.keys(pkg?.devDependencies ?? {}));
+  for (const [name, files] of [...imports.packages].sort(([a], [b]) => a.localeCompare(b))) {
+    const provided = Object.hasOwn(runtimeProvided, name) ? runtimeProvided[name] : null;
+    if (provided) {
+      const outside = files.filter((f) => !provided.under.some((u) => f.startsWith(u)));
+      if (outside.length > 0) {
+        problems.push(
+          `${name} は実行時が提供するので main / preload だけが import してよい — ` +
+            `${outside.slice(0, 3).join(', ')} が import している (renderer なら単一 HTML へ畳み込まれる)`,
+        );
+      }
+      continue;
+    }
+    if (deps.has(name)) continue;
+    problems.push(
+      devs.has(name)
+        ? `${name} は devDependencies なのに出荷される src/ が import している (${files[0]}) — ` +
+            '単一 HTML へ畳み込まれ保管庫と同じオリジンで走る。dependencies へ移して PROD_ALLOW に理由を書くこと'
+        : `${name} は package.json のどこにも無いのに出荷される src/ が import している (${files[0]})`,
+    );
+  }
+  for (const [name, entry] of Object.entries(runtimeProvided)) {
+    if (!entry || typeof entry.why !== 'string' || entry.why.trim() === '' || !Array.isArray(entry.under) || entry.under.length === 0) {
+      problems.push(`RUNTIME_PROVIDED の ${name} に理由と import してよい場所がありません`);
+    }
+    if (!imports.packages.has(name)) {
+      problems.push(`台帳の ${name} は出荷される src/ から import されていません — RUNTIME_PROVIDED から消すこと`);
+    }
+  }
+  return problems;
+}
+
+/**
  * lockfile + 実物 (`root` の node_modules) を合わせて評価する —— `main` が使う唯一の入口。
  * CI は必ず `npm ci` の後なので node_modules が読めなければ走査の故障として床で断る。
  * 手元で未インストール (`checked === 0` かつ CI でない) なら実物の確認を飛ばし、lockfile の旗だけを見る。
@@ -553,13 +664,14 @@ function scanInstalledInstallCode(lock, root = REPO_ROOT) {
 function checkRepo({ lock, pkg, root = REPO_ROOT, ci = false }) {
   const scan = scanInstalledInstallCode(lock, root);
   const installed = scan.checked === 0 && !ci ? null : scan;
-  return { problems: evaluate({ lock, pkg, installed }), scan };
+  const shipped = shippedBareImports(root);
+  return { problems: evaluate({ lock, pkg, installed, shipped }), scan, shipped };
 }
 
 /** 実物を確かめた件数の床 (実測 599 / 648)。node_modules が丸ごと読めない・一部しか読めない走査を「問題なし」と読まない。 */
 const MIN_INSTALLED_CHECKED = 300;
 
-function evaluate({ lock, pkg, installConfigs = presentInstallConfigs(), strykerConfig = readStrykerConfig(), installed = null }) {
+function evaluate({ lock, pkg, installConfigs = presentInstallConfigs(), strykerConfig = readStrykerConfig(), installed = null, shipped = null }) {
   const problems = [];
   const packages = lock?.packages;
   if (packages === null || typeof packages !== 'object') {
@@ -651,6 +763,9 @@ function evaluate({ lock, pkg, installConfigs = presentInstallConfigs(), stryker
 
   // 10. stryker.config.json のコードを選ぶ欄 (ローカルパス / シェルを拒む・threat: T-026)。
   problems.push(...checkStrykerCodePicking(strykerConfig));
+
+  // 11. 出荷される src/ が import する外部パッケージ (主入口 `checkRepo` が走査を渡す)。
+  if (shipped) problems.push(...checkShippedImports({ imports: shipped, pkg }));
 
   // package.json の宣言と閉包の食い違い (宣言だけ消して lockfile に残る形)。
   const declared = Object.keys(pkg?.dependencies ?? {});
@@ -754,6 +869,27 @@ function selfTest() {
       (() => { const m = mk(full()); m.installed = { found: new Map(), checked: MIN_INSTALLED_CHECKED, absent: 0 }; return m; })(),
       0,
     ],
+    // パス 532 (threat: T-122): 出荷される src/ が import する外部パッケージは dependencies にある。
+    ...(() => {
+      const ship = (extra = [], files = MIN_SHIPPED_FILES) => ({
+        packages: new Map([['electron', ['main/a.ts']], ['react', ['renderer/x.tsx']], ...extra]),
+        files,
+        walked: [],
+      });
+      const withShipped = (shipped, pkgMore = {}) => {
+        const m = mk(full(), { ...okPkg(), dependencies: { react: '^18' }, ...pkgMore });
+        m.shipped = shipped;
+        return m;
+      };
+      return [
+        ['出荷 src の import が dependencies と台帳どおりなら鳴らない (T-122)', withShipped(ship()), 0],
+        ['devDependency を出荷 src が import すれば鳴る (T-122)', withShipped(ship([['chart-lib', ['renderer/c.ts']]]), { devDependencies: { ...okPkg().devDependencies, 'chart-lib': '^1' } }), 1],
+        ['package.json に無い名前を出荷 src が import すれば鳴る (T-122)', withShipped(ship([['ghost-pkg', ['renderer/c.ts']]])), 1],
+        ['electron を renderer が import すれば鳴る (T-122)', withShipped(ship([['electron', ['renderer/bad.ts']]])), 1],
+        ['electron が import されなくなれば台帳が古いと鳴る (T-122)', withShipped({ packages: new Map([['react', ['renderer/x.tsx']]]), files: MIN_SHIPPED_FILES, walked: [] }), 1],
+        ['出荷 src を読めた件数が床未満なら鳴る (T-122)', withShipped(ship([], MIN_SHIPPED_FILES - 1)), 1],
+      ];
+    })(),
   ];
   // --- 規則 7 の対照 (合成の台帳) ---
   // 守っている物を実際に壊し、狙った項目が落ちることを見る。
@@ -927,13 +1063,21 @@ function main(argv) {
   const lock = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'package-lock.json'), 'utf8'));
   const pkg = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'package.json'), 'utf8'));
   const inCi = process.env.CI === 'true' || process.env.CI === '1';
-  const { problems, scan: installed } = checkRepo({ lock, pkg, ci: inCi });
+  const { problems, scan: installed, shipped } = checkRepo({ lock, pkg, ci: inCi });
+  // 2 つ目の数え方: 追跡されている出荷 src は、どれも走査に出る (パス 472 / 532)。
+  const cross = reportTrackedCrossCheck(
+    shipped.walked.map((f) => path.relative(REPO_ROOT, f)), SHIPPED_CROSS_CHECK, REPO_ROOT, 'lint:deps');
+  if (cross.code !== 0) return 1;
   const total = Object.keys(lock.packages ?? {}).length - 1;
   const prod = Object.keys(PROD_ALLOW).length;
   const scripted = Object.keys(INSTALL_SCRIPT_ALLOW).length;
   console.log(
     `Checked ${total} locked package(s): 本番依存 ${prod} 件 / インストール時コード ${scripted} 件 / ` +
       `セキュリティの床 ${SECURITY_FLOORS.length} 件 (いずれも台帳) / 取得元と integrity`,
+  );
+  console.log(
+    `出荷される src/ ${shipped.files} ファイルが import する外部パッケージ ${shipped.packages.size} 件 ` +
+      `(${[...shipped.packages.keys()].sort().join(' / ')}) · ${crossCheckSuffix(cross.source)}`,
   );
   console.log(
     installed.checked === 0 && !inCi
@@ -968,6 +1112,7 @@ module.exports = {
   evaluate,
   scanInstalledInstallCode,
   checkRepo,
+  shippedBareImports, checkShippedImports, bareImportName, RUNTIME_PROVIDED, MIN_SHIPPED_FILES, SHIPPED_CROSS_CHECK, CROSS_CHECK: SHIPPED_CROSS_CHECK,
   MIN_INSTALLED_CHECKED,
   PROD_ALLOW,
   INSTALL_SCRIPT_ALLOW,

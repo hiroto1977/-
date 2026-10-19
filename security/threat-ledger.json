@@ -2066,6 +2066,21 @@
         "file": "src/shared/__tests__/installTimeCodeGuarded.test.ts",
         "test": "実物の依存が npm ci で走らせるコード (threat: T-121)"
       }
+    },
+    {
+      "id": "T-122",
+      "found": "2026-10-17",
+      "foundBy": "hunt pass 527 の backlog SC-2 を pass 532 で直した",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "lint:deps の本番依存の閉包 (PROD_ALLOW) は lockfile の dev フラグで決まり、出荷される src/ が実際に import する devDependency を見なかった: devDependencies のパッケージを renderer が import すると単一 HTML へ畳み込まれ保管庫と同じオリジンで走るのに、lockfile 上は dev のままなので全ゲートが緑だった",
+      "status": "fixed",
+      "fix": "規則 11: 出荷される src/ (検査・型定義・__tests__・__audits__ を除く 541 ファイル) の import / export from / 動的 import / require を注記を落として読み、外部パッケージ名を導く。各名前は dependencies にあること (devDependencies なら『単一 HTML へ畳み込まれる』と名指しして断る・package.json に無い名前も断る)。実行時が提供する electron だけは台帳 RUNTIME_PROVIDED に理由と import してよい場所 (main / preload) つきで許し、renderer が import すれば断る。台帳の電子が import されなくなれば古いと断る。読めた件数の床 (300) と追跡ファイルとの照合つき。",
+      "regression": {
+        "file": "src/shared/__tests__/installTimeCodeGuarded.test.ts",
+        "test": "出荷される src/ の import は dependencies にある (threat: T-122)"
+      }
     }
   ],
   "huntBacklog": [
@@ -2238,11 +2253,6 @@
       "surface": "supply-chain",
       "item": "e2e.yml の npm install --no-save playwright@1.56.1 は版固定だが integrity が無い",
       "why": "2026-10-16 に読んだ。lockfile へ入れるか、integrity を検める手が候補。e2e は既定で走らない。"
-    },
-    {
-      "surface": "supply-chain",
-      "item": "SC-2: lint:deps の PROD_ALLOW は lockfile の dev フラグで本番閉包を決め、src/ が実際に import する devDependency を見ない (単一 HTML に畳み込まれても全ゲート緑)",
-      "why": "2026-10-17 狩り 527 が再現済み (low)。src の import を構文木で導く census を足す設計の変更。"
     },
     {
       "surface": "supply-chain",

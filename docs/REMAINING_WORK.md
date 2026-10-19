@@ -1,5 +1,19 @@
 # Service Hub — 残りの作業手順書
 
+## パス 532 (狩りの 22 回目 —— パス 527 の backlog SC-2: 出荷される src/ が import する外部パッケージを見る) (2026-10-19)
+
+パス 531 の続き。`lint:deps` の規則 2 は lockfile の `dev` フラグで本番閉包を決める。`src/` が実際に import する devDependency は閉包に現れず、単一 HTML へ畳み込まれて保管庫と同じオリジンで走っても全ゲートが緑だった (狩り 527 が再現済み・low)。実測 (2026-10-19・TypeScript の構文木と、gate が使う正規表現の 2 通りで一致): 出荷される `src/` 541 ファイルの外部 import は `react` (84 ファイル・dependencies) / `react-dom` (1) / `electron` (9・devDependency だが実行時が提供・main / preload だけ) の 3 つだけで、**今日の食い違いは 0**。直したのは「devDependency を 1 つ import した日に黙る」門である。
+
+| 脅威 | 内容 | 留めた検査 |
+| --- | --- | --- |
+| T-122 (supply-chain・low・SC-2) | 規則 11: 出荷される `src/` (検査・型定義・`__tests__`・`__audits__` を除く) の `import` / `export … from` / 動的 `import()` / `require()` を、注記を落として読み、外部パッケージ名を導く。各名前は `dependencies` にあること (devDependencies なら「単一 HTML へ畳み込まれる」と名指しして断る・package.json に無い名前も断る)。`electron` だけは台帳 `RUNTIME_PROVIDED` に理由と import してよい場所 (main / preload) つきで許し、renderer が import すれば断る・import されなくなれば台帳が古いと断る。読めた件数の床 (`MIN_SHIPPED_FILES` = 300・実測 541) と追跡ファイルとの照合つき | `installTimeCodeGuarded.test.ts` (+9 件)・`lint-dependencies.cjs --self-test` (+6 件) |
+
+**対照実験**: 13 方向 (devDependency を許す / 提供側の場所を見ない / 古い台帳を見ない / 床を外す / `__tests__` を除かない / test ファイルを読む / 注記を落とさない / `hasOwn` を `in` にする / `checkRepo` が走査を渡さない / 動的 import を見ない / 複数行 import を見ない / scope を畳まない / 台帳の形を見ない) がすべて狙った検査で鳴った (md5 で元へ戻したことを確認)。**最後の「台帳の形を見ない」は最初の変異が弱く (`false && …` が `||` の優先順位で効かなかった) 鳴らなかった** —— 条件ごと `false` に替えて鳴ることを確かめた (鳴らない対照は「当てていない」ことがある)。
+
+**一様な間引きの実測 (`audit:gate-partial`)**: 規則 11 の歩きが `readdirSync` を使うので、`lint:deps` は「走査が一部だけ死んだとき」の台帳に加わった (照合つき・`keep 99%` で 7 件を落として `rings`)。最初に回したときは `落とした=0` だった —— 道具の写しは **HEAD の** git worktree なので、未コミットの変更を持たない古い門を測っていた (`--worktree` に変更を入れた写しを渡して測り直した)。
+
+**閉じていない物 (測った)**: 正規表現は文字列リテラルの中の `from 'x'` を import と数えうる (今日は 0 件・誤検知なら loud に落ちる側)。`vite.config.ts` の `define` / alias で別名にしたパッケージは見ない。`scripts/` と `vite.config.ts` は出荷されないので対象外。
+
 ## パス 531 (狩りの 21 回目 —— パス 527 の backlog SC-3: install 時コードの旗を実物でも見る) (2026-10-19)
 
 パス 530 の続き。`lint:deps` の規則 3 は lockfile の `hasInstallScript` だけを信じていた (狩り 527 が再現済み・medium)。npm は `binding.gyp` を持つだけの依存に `node-gyp rebuild` を暗黙に走らせ (`scripts.install` が無く `gypfile` が `false` でないとき)、旗はレジストリの申告なので**実物の tarball と食い違いうる**。実測 (2026-10-19): 実物の node_modules は 648 項目のうち 599 件を読め、install 系の hook を持つのは `esbuild` / `electron-winstaller` の 2 件で lockfile の旗と一致、`binding.gyp` は 0 件 —— **今日の食い違いは 0**。直したのは「旗の無い依存が 1 つ入った日に黙る」門である。

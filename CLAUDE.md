@@ -1444,6 +1444,10 @@ npm run lint:deps          # 依存の供給網 (本番依存の閉包 5 件 / �
                            #   scripts と `binding.gyp`) との和で見る** (2026-10-19 · パス 531 · T-121 ——
                            #   npm は binding.gyp を持つ依存に node-gyp rebuild を暗黙に走らせ、旗は
                            #   レジストリの申告で実物と食い違いうる)。検出であって阻止ではない
+                           #   **規則 11: 出荷される `src/` が import する外部パッケージは dependencies に
+                           #   ある** (2026-10-19 · パス 532 · T-122 —— 規則 2 は lockfile の dev フラグで
+                           #   閉包を決めるので、`src/` が import する devDependency は閉包に現れず、
+                           #   単一 HTML へ畳み込まれても緑だった。`electron` だけは実行時提供の台帳)
                            #   **`package.json` は鎖には入れない** —— 全履歴 12 コミットで
                            #   「安定資産」の基準 (パス 347) を満たさないので、門で形を見る
 npm run lint:storage       # ブラウザに残す物の台帳 (IndexedDB 4 / Cache Storage 1 /

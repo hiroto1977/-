@@ -58,8 +58,13 @@ const gate = req('../../../scripts/lint-dependencies.cjs') as {
     root?: string,
   ) => { found: Map<string, string[]>; checked: number; absent: number };
   evaluate: (input: { lock: unknown; pkg: unknown; installed?: unknown }) => string[];
-  checkRepo: (input: { lock: unknown; pkg: unknown; root?: string; ci?: boolean }) => { problems: string[]; scan: { found: Map<string, string[]>; checked: number; absent: number } };
+  checkRepo: (input: { lock: unknown; pkg: unknown; root?: string; ci?: boolean }) => { problems: string[]; scan: { found: Map<string, string[]>; checked: number; absent: number }; shipped: { packages: Map<string, string[]>; files: number } };
   MIN_INSTALLED_CHECKED: number;
+  shippedBareImports: (root?: string) => { packages: Map<string, string[]>; files: number; walked: string[] };
+  checkShippedImports: (input: { imports: { packages: Map<string, string[]>; files: number }; pkg: unknown }, runtimeProvided?: unknown) => string[];
+  bareImportName: (spec: string) => string | null;
+  RUNTIME_PROVIDED: Record<string, { why: string; under: string[] }>;
+  MIN_SHIPPED_FILES: number;
   INSTALL_SCRIPT_ALLOW: Record<string, string>;
 };
 
@@ -332,6 +337,109 @@ describe('実物の依存が npm ci で走らせるコード (threat: T-121)', (
       } finally {
         rmSync(empty, { recursive: true, force: true });
       }
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+});
+
+/**
+ * 出荷される `src/` が import する外部パッケージは `dependencies` にある (2026-10-19 · パス 532 ·
+ * threat: T-122)。規則 2 は lockfile の `dev` フラグで本番閉包を決めるので、`src/` が実際に import する
+ * devDependency は閉包に現れず、単一 HTML へ畳み込まれても全ゲートが緑だった (狩り 527 が再現済み)。
+ */
+describe('出荷される src/ の import は dependencies にある (threat: T-122)', () => {
+  const tmpRoot = () => mkdtempSync(join(tmpdir(), 'shipped-'));
+  const put = (root: string, rel: string, text: string) => {
+    const full = join(root, ...rel.split('/'));
+    mkdirSync(join(full, '..'), { recursive: true });
+    writeFileSync(full, text);
+  };
+  const names = (root: string) => [...gate.shippedBareImports(root).packages.keys()].sort();
+
+  it('★ 指定子を外部パッケージ名へ畳む (scope・サブパス・相対・組み込み)', () => {
+    expect(gate.bareImportName('react')).toBe('react');
+    expect(gate.bareImportName('react-dom/client')).toBe('react-dom');
+    expect(gate.bareImportName('@scope/pkg/deep/file')).toBe('@scope/pkg');
+    expect(gate.bareImportName('./local')).toBeNull();
+    expect(gate.bareImportName('../up')).toBeNull();
+    expect(gate.bareImportName('/abs')).toBeNull();
+    expect(gate.bareImportName('node:fs')).toBeNull();
+    expect(gate.bareImportName('fs')).toBeNull();
+    expect(gate.bareImportName('fs/promises')).toBeNull();
+  });
+
+  it('★ import / export from / 動的 import / require / 副作用 import / 複数行を拾い、注記・検査・型定義は読まない', () => {
+    const root = tmpRoot();
+    try {
+      put(root, 'src/renderer/a.ts', "import x from 'static-dep';\nexport { y } from 'reexport-dep';\nimport 'side-effect-dep';\nconst z = await import('dynamic-dep');\nconst r = require('require-dep');\nimport {\n  m,\n  n,\n} from 'multiline-dep';\nimport type { T } from 'type-dep';\n");
+      put(root, 'src/renderer/c.ts', "// import q from 'in-line-comment-dep';\n/* import w from 'in-block-comment-dep' */\nimport k from './rel';\n");
+      put(root, 'src/renderer/__tests__/t.test.ts', "import v from 'test-only-dep';\n");
+      put(root, 'src/renderer/__tests__/helper.ts', "import v from 'tests-dir-dep';\n");
+      put(root, 'src/renderer/__audits__/a.audit.ts', "import v from 'audit-dep';\n");
+      put(root, 'src/renderer/b.test.tsx', "import v from 'colocated-test-dep';\n");
+      put(root, 'src/renderer/types.d.ts', "import v from 'dts-dep';\n");
+      put(root, 'src/renderer/node_modules/x/index.ts', "import v from 'vendored-dep';\n");
+      expect(names(root)).toEqual(['dynamic-dep', 'multiline-dep', 'reexport-dep', 'require-dep', 'side-effect-dep', 'static-dep', 'type-dep']);
+      expect(gate.shippedBareImports(root).files).toBe(2);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('★ 実物: 出荷 src の外部 import は react / react-dom / electron だけで、床を満たす', () => {
+    const res = gate.shippedBareImports();
+    expect(res.files).toBeGreaterThanOrEqual(gate.MIN_SHIPPED_FILES);
+    expect([...res.packages.keys()].sort()).toEqual(['electron', 'react', 'react-dom']);
+    expect(res.packages.get('electron')!.every((f) => f.startsWith('main/') || f.startsWith('preload/'))).toBe(true);
+  });
+
+  it('★ devDependency を出荷 src が import すれば名指しで断る (直す前は黙った)', () => {
+    const imports = { packages: new Map([['react', ['renderer/a.tsx']], ['electron', ['main/a.ts']], ['chart-lib', ['renderer/c.ts']]]), files: gate.MIN_SHIPPED_FILES };
+    const pkg = { dependencies: { react: '^18' }, devDependencies: { 'chart-lib': '^1', electron: '^1' } };
+    const p = gate.checkShippedImports({ imports, pkg });
+    expect(p).toHaveLength(1);
+    expect(p[0]).toContain('chart-lib');
+    expect(p[0]).toContain('devDependencies');
+    // 対照: dependencies へ移せば通る
+    expect(gate.checkShippedImports({ imports, pkg: { dependencies: { react: '^18', 'chart-lib': '^1' }, devDependencies: { electron: '^1' } } })).toEqual([]);
+  });
+
+  it('★ electron を renderer が import すれば断る (単一 HTML へ畳み込まれる側)', () => {
+    const imports = { packages: new Map([['electron', ['main/a.ts', 'renderer/bad.ts']]]), files: gate.MIN_SHIPPED_FILES };
+    const p = gate.checkShippedImports({ imports, pkg: {} });
+    expect(p.some((x) => x.includes('electron') && x.includes('renderer/bad.ts'))).toBe(true);
+  });
+
+  it('★ package.json のどこにも無い名前・床未満・古い台帳 (import されなくなった実行時提供) を断る', () => {
+    const base = { packages: new Map([['electron', ['main/a.ts']], ['ghost', ['renderer/g.ts']]]), files: gate.MIN_SHIPPED_FILES };
+    expect(gate.checkShippedImports({ imports: base, pkg: {} }).some((x) => x.includes('ghost') && x.includes('どこにも無い'))).toBe(true);
+    expect(gate.checkShippedImports({ imports: { ...base, files: gate.MIN_SHIPPED_FILES - 1 }, pkg: {} }).some((x) => x.includes('件しか読めません'))).toBe(true);
+    const stale = { packages: new Map(), files: gate.MIN_SHIPPED_FILES };
+    expect(gate.checkShippedImports({ imports: stale, pkg: {} }).some((x) => x.includes('electron') && x.includes('消すこと'))).toBe(true);
+  });
+
+  it('★ 実行時提供の台帳は理由と import してよい場所を持つ (空なら断る)', () => {
+    const imports = { packages: new Map([['electron', ['main/a.ts']]]), files: gate.MIN_SHIPPED_FILES };
+    const ok = { electron: { why: 'x', under: ['main/'] } };
+    expect(gate.checkShippedImports({ imports, pkg: {} }, ok)).toEqual([]);
+    expect(gate.checkShippedImports({ imports, pkg: {} }, { electron: { why: '  ', under: ['main/'] } }).some((x) => x.includes('理由'))).toBe(true);
+    expect(gate.checkShippedImports({ imports, pkg: {} }, { electron: { why: 'x', under: [] } }).some((x) => x.includes('理由'))).toBe(true);
+  });
+
+  it('★ プロトタイプ側の名前で台帳をすり抜けない (constructor)', () => {
+    const imports = { packages: new Map([['constructor', ['renderer/a.ts']], ['electron', ['main/a.ts']]]), files: gate.MIN_SHIPPED_FILES };
+    expect(gate.checkShippedImports({ imports, pkg: {} }).some((x) => x.includes('constructor'))).toBe(true);
+  });
+
+  it('★ 入口 checkRepo は出荷 src の走査を evaluate へ渡す (devDependency の import を名指しで断る)', () => {
+    const root = tmpRoot();
+    try {
+      put(root, 'src/renderer/a.ts', "import c from 'chart-lib';\n");
+      const lock = { packages: { '': {} } };
+      const r = gate.checkRepo({ lock, pkg: { devDependencies: { 'chart-lib': '^1' } }, root, ci: false });
+      expect(r.problems.some((x) => x.includes('chart-lib') && x.includes('devDependencies'))).toBe(true);
+      expect(r.shipped.packages.has('chart-lib')).toBe(true);
     } finally {
       rmSync(root, { recursive: true, force: true });
     }

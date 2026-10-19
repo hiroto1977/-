@@ -615,6 +615,11 @@ const ENFORCEMENT = {
     why: 'CI 自身を守る門。母集団は .github/workflows/ の直下で床は 3 本 (実測 7) なので、4 本消えても届かない。照合が 1'
       + '本の欠落でも鳴らす',
   },
+  'lint:deps': {
+    by: ['shared-floor', 'tracked-cross-check'],
+    why: '出荷される src/ の import を読む歩き (規則 11 · パス 532)。床 MIN_SHIPPED_FILES は 300 (実測 541) なので一部の死に'
+      + '届かない。照合が追跡されている出荷 src の欠落を 1 件でも名指しする',
+  },
   'lint:docs': {
     by: ['tracked-cross-check'],
     why: '「CLAUDE.md が not in CI と書くゲートを workflow が実行していない」を見る歩き。1'
@@ -720,6 +725,11 @@ const THINNING = {
     why: '追跡ファイルとの照合 (パス 472 で足した)。★ 直す前は 1 本落としても ✅ exit 0 —— 床 MIN_WORKFLOWS は 3'
       + 'で実測 7 なので 4 本消えても届かない。実測: 7 本それぞれに pull_request_target と未固定の第三者 action'
       + 'を植えると素の木は ❌ 2 件、その 1 本を走査から落とすと 7 / 7 で植えた違反が消え 6 / 7 は exit 0 だった',
+  },
+  'lint:deps': {
+    expect: 'rings',
+    why: '出荷される src/ の歩き (規則 11 · パス 532) に追跡ファイルとの照合を足した。床 MIN_SHIPPED_FILES は 300 (実測 541) なので'
+      + '半分近く死んでも届かず、照合が 1 件の欠落でも鳴らす',
   },
   'lint:network-targets': {
     expect: 'rings',
