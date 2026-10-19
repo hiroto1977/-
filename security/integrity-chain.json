@@ -56,6 +56,7 @@
     "scripts/setup-obsidian-docker.sh",
     "scripts/smoke-app.cjs",
     "scripts/triage-mutations.cjs",
+    "scripts/verify-e2e-playwright-pin.cjs",
     "scripts/verify-release-artifacts.cjs",
     "src/main/atomicWrite.ts",
     "src/main/clients/assistant.ts",
@@ -2659,6 +2660,30 @@
       "leafCount": 120,
       "note": "update dependency-audit.yml",
       "hash": "a4a1520d0ee9f8426c91b5fb92fc218bc714b2fc71d712afe2011b54503d2ac1"
+    },
+    {
+      "index": 317,
+      "prevHash": "a4a1520d0ee9f8426c91b5fb92fc218bc714b2fc71d712afe2011b54503d2ac1",
+      "merkleRoot": "84b459c981e07ff33990199918d48ca6a747793136af01a56b953611441572f6",
+      "leafCount": 120,
+      "note": "update e2e.yml",
+      "hash": "7d89ddb527396f27a0210f9c13d30ce5007ab0651c0d89ac01b83c673f737f1c"
+    },
+    {
+      "index": 318,
+      "prevHash": "7d89ddb527396f27a0210f9c13d30ce5007ab0651c0d89ac01b83c673f737f1c",
+      "merkleRoot": "a1750a483dfbf2ec1f0f919890d04909af950ef3f890ea874c3b4628071fd464",
+      "leafCount": 121,
+      "note": "update integrity-chain.cjs,verify-e2e-playwright-pin.cjs",
+      "hash": "1ee928f60802b58d325942c6585c3f9b626e9205c5b29a63ff53d2f63a9e8623"
+    },
+    {
+      "index": 319,
+      "prevHash": "1ee928f60802b58d325942c6585c3f9b626e9205c5b29a63ff53d2f63a9e8623",
+      "merkleRoot": "e1af72c87959b7f2868e9328898788424606e3d46c6ca946accd670ab576fa21",
+      "leafCount": 121,
+      "note": "update e2e.yml",
+      "hash": "c4389d0142079619e4a32c6ecaa4f7d39faa1549e531fd96e50e54241f64149d"
     }
   ],
   "tipManifest": {
@@ -2673,7 +2698,7 @@
     ".github/dependabot.yml": "5fb436726dc2b51f99162653885c40cafae5d57d6deb0f4f5b5449e6b202493f",
     ".github/workflows/ci.yml": "9df2fc00557dcc5eabcce7d81ee2e54d0dbca2be81213d608396e1b70e93880b",
     ".github/workflows/dependency-audit.yml": "3f7179e0d69f98cae5c687e3024102a4393b21aed614e2edf7e4509ff0873dbc",
-    ".github/workflows/e2e.yml": "4e30890f93d2c538cce194613bda461260476e41ce826635079cf65ea7c6fe44",
+    ".github/workflows/e2e.yml": "9e4a4f395896064334902ce4021153f422c33c999fb671ff2844493ca89a780e",
     ".github/workflows/knowledge-auto.yml": "a8565ac4c0b0e45d0f37db2ae5b77e5808f2008203f015321f4a69cefd371ef8",
     ".github/workflows/mutation.yml": "db2b72f69eb73be3ddd7ed4492d8069f806b5ce928a00df768bb806c673db2e0",
     ".github/workflows/pages.yml": "853d2ff8257e75068f662c9f7f1564bd8ba3feaccab6e5f15ea6b687216bbb2a",
@@ -2693,7 +2718,7 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "d385ddfc52ec74abf184207bfbb1ac655e730db2b7c6d7e758e35e67e79a5737",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "c01be2b3ff09d0b3c02101aa61ec1b47c36d23422c6e010a7f5b9416ae708e50",
+    "scripts/integrity-chain.cjs": "5467a06d54ebeaf6263c20fc960034be942bd45ac85a910284086ea42f5797f4",
     "scripts/knowledge-autopilot.cjs": "ee8f7ae4a4ad29dda6c02f83c113c45fa1648522f807e711aa86b7746f372968",
     "scripts/lib/artifact-freshness.cjs": "4fe8833bf59fe293cf8d34067caf7f9e80c27755ceebcd6e92b4e9d78f6a5a5c",
     "scripts/lib/json-for-script.cjs": "cb79bf1fb2f3c10c6854ec16d9c12bb0695dee5561751333db4531545702fd70",
@@ -2716,6 +2741,7 @@
     "scripts/setup-obsidian-docker.sh": "1d35ecc6518e3aeb1a9a1a23f9d89ba8a0f7f5cf87f439e544b3638145b248d3",
     "scripts/smoke-app.cjs": "e0ec8dd631cbdbcd075663b99bdc33b380dc5d61ea049df7a626e300fb544095",
     "scripts/triage-mutations.cjs": "1ee02f517585b980e4a7484e55b5efcb88c55fa1c83c6e330efba67a72bac2fa",
+    "scripts/verify-e2e-playwright-pin.cjs": "417854f96cbaa4af4dd30a378b722b58093d56e78aa7eaba9bd17df412f57d45",
     "scripts/verify-release-artifacts.cjs": "1bd668bc052b476a9b3f976dc80ddf8faa4f080aed5617d354a8c7647ee9f557",
     "src/main/atomicWrite.ts": "63b6ff1fb7d8990b76409c62556d69f99a14475f73662e89507e8899a32a9c3f",
     "src/main/clients/assistant.ts": "f7b45f94f3b24eeb4f6085437504eda897b67b55fa2815af5481401a0dce5613",

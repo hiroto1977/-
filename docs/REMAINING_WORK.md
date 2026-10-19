@@ -1,5 +1,18 @@
 # Service Hub — 残りの作業手順書
 
+## パス 536 (狩りの 26 回目 —— lockfile の外で入れる playwright の integrity を台帳に固定する) (2026-10-19)
+
+「他の未測の面」を huntBacklog から選んだ (所有者の判断が要らず・手元で測れる物)。`e2e.yml` は `npm install --no-save playwright@1.56.1` で**版だけ**を固定し、lockfile に行が無いので取得した tarball の integrity は誰も見ない。実測 (scratchpad で `npm install --no-save --ignore-scripts`): 入るのは **playwright と playwright-core の 2 パッケージだけ**で、どちらも registry の integrity が `node_modules/.package-lock.json` に残る。
+
+| 脅威 | 内容 | 留めた検査 |
+| --- | --- | --- |
+| T-125 (mitigated) | `scripts/verify-e2e-playwright-pin.cjs` が install の直後に version・resolved・integrity を台帳と突き合わせ、**リポジトリの lockfile にも台帳にも無い新しい依存**が増えたら落とす (基準が読めなければ緑にしない)。`e2e.yml` に step を足した (ブラウザを入れる前) | `e2ePlaywrightPin.test.ts` (6 件)・script の `--self-test` (10 件) |
+
+★ **最初の版は誤っていた** —— 「台帳に無い物が入っていたら落とす」と書いて実物の木 (リポジトリの `node_modules`) に当てると 600 件以上が落ちた。実際の workflow は `npm ci` の**後**に入れるので、隠し lockfile はプロジェクト全体を含む。基準を「リポジトリの `package-lock.json` にも台帳にも無い物」へ直し、**実際の workflow を再現した木 (`npm ci` + playwright) で合格**することを確かめた。
+★ **対照 4 方向すべて鳴り、md5 で復元を確認**: workflow の版を変える (版の一致の検査が鳴る) / 門の step を install の前へ (順序の検査が鳴る) / 台帳の integrity を 1 字変える (実物の木で exit 1) / 実物の木の integrity を改ざん (exit 1)。
+★ **閉包検査が 1 件捕まえた** —— 保護対象 `e2e.yml` がこの script を読むので、script が保護外だと pin の書き換えが鎖に映らない。script を保護対象へ (block #318)。
+**限界**: 台帳の値は 2026-10-19 に registry から実測した物 = 初回は registry を信じた値で (trust on first use)、守れるのはその後の差し替え。版を上げるときは台帳も実測して書き換える (版の一致の検査が鳴らせる)。`e2e.yml` は既定で走らないので、**Actions 上で実走した証拠は無い** (手元で workflow の手順を再現した)。
+
 ## パス 535 (狩りの 25 回目 —— パス 534 の道具を毎日の報告 (dependency-audit) へ載せる) (2026-10-19)
 
 パス 534 の `audit:pinned-action-shas` は手で回す点検で、**回さなければ作り話の SHA は見つからない**。週次 (実際は毎日) の `dependency-audit.yml` は「報告 JSON → 常設 Issue 1 つ → 片付いたら自動で閉じる」の型を既に持ち、PR を赤くしない。測ったところ、その型の `floors` と同じ位置に**収まる** (新しい workflow は要らない)。

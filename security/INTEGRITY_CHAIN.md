@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 317
+- ブロック数: 320
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `a4a1520d0ee9f8426c91b5fb92fc218bc714b2fc71d712afe2011b54503d2ac1`
-- 保護対象: 120 ファイル
+- 末尾(tip)ハッシュ: `c4389d0142079619e4a32c6ecaa4f7d39faa1549e531fd96e50e54241f64149d`
+- 保護対象: 121 ファイル
 
 ## ブロック
 
@@ -330,6 +330,9 @@
 | 314 | `984f2f7edae83e1f` | `5aa52c34c8aad687` | `61c303b74d72cfd3` | update credentials.ts |
 | 315 | `aacafd5da866e019` | `61c303b74d72cfd3` | `e4f7af95464107a6` | update credentials.ts |
 | 316 | `8278089dd0aae4a5` | `e4f7af95464107a6` | `a4a1520d0ee9f842` | update dependency-audit.yml |
+| 317 | `84b459c981e07ff3` | `a4a1520d0ee9f842` | `7d89ddb527396f27` | update e2e.yml |
+| 318 | `a1750a483dfbf2ec` | `7d89ddb527396f27` | `1ee928f60802b58d` | update integrity-chain.cjs,verify-e2e-playwright-pin.cjs |
+| 319 | `e1af72c87959b7f2` | `1ee928f60802b58d` | `c4389d0142079619` | update e2e.yml |
 
 ## 保護対象ファイル
 
@@ -387,6 +390,7 @@
 - `scripts/setup-obsidian-docker.sh`
 - `scripts/smoke-app.cjs`
 - `scripts/triage-mutations.cjs`
+- `scripts/verify-e2e-playwright-pin.cjs`
 - `scripts/verify-release-artifacts.cjs`
 - `src/main/atomicWrite.ts`
 - `src/main/clients/assistant.ts`

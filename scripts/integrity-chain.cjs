@@ -240,6 +240,7 @@ const PROTECTED = [
   // **結果**を見る。鎖が見るのは「気付かぬ変更」で、役割が違う。
   'scripts/inline-html.cjs',
   'scripts/inject-pwa.cjs',
+  'scripts/verify-e2e-playwright-pin.cjs', // threat: T-125 —— e2e.yml が install 直後に走らせる門で、台帳 (integrity) を持つ。書き換えれば差し替えを通せる
   'scripts/lib/pure-data-module.cjs', // threat: T-088 —— ビルドが実行するデータ・モジュールを構文木で確かめる (vite.config.ts が読む)
   'assets/manifest.webmanifest',
   // threat: T-071 —— pages.yml が `_site/` へそのまま公開する 2 つ (2026-10-15 · パス 523)。

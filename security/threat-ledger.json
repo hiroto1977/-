@@ -2111,6 +2111,21 @@
         "file": "src/shared/__tests__/dependencyAuditWorkflow.test.ts",
         "test": "作り話の SHA 固定 (missing / no-tag) は要対応・古い固定 (moved) は報せるだけ (threat: T-124)"
       }
+    },
+    {
+      "id": "T-125",
+      "found": "2026-10-19",
+      "foundBy": "hunt pass 536 の huntBacklog『e2e.yml の npm install --no-save playwright は版固定だが integrity が無い』を実測して閉じた",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "e2e.yml は playwright を lockfile の外で入れ(--no-save)、版しか固定していなかった: 取得した tarball が想定した物かは誰も見ず、npm が registry の答えをそのまま信じるので、取得元の差し替えは署名前のジョブで素通りする(e2e は既定で走らない=到達は限定的)",
+      "status": "mitigated",
+      "fix": "scripts/verify-e2e-playwright-pin.cjs: install 直後に node_modules/.package-lock.json の playwright / playwright-core の version・resolved・integrity を台帳と突き合わせ、リポジトリの package-lock.json にも台帳にも無い新しい依存が増えたら落とす(基準が読めなければ緑にしない)。実際の workflow を再現した木(npm ci + playwright)で合格・integrity 改ざんで exit 1 を実測。台帳の値は 2026-10-19 に registry から実測した物で、守れるのはその後の差し替え(trust on first use)=mitigated。",
+      "regression": {
+        "file": "src/shared/__tests__/e2ePlaywrightPin.test.ts",
+        "test": "workflow が入れる版は台帳の版と同じ"
+      }
     }
   ],
   "huntBacklog": [
@@ -2278,11 +2293,6 @@
       "surface": "supply-chain",
       "item": ".gitattributes (linguist-generated / -diff) で PR の diff を折り畳める",
       "why": "2026-10-16 に未追跡であることを確認。GitHub の描画は未確認。追跡しないことの検査か CODEOWNERS 行が候補。"
-    },
-    {
-      "surface": "supply-chain",
-      "item": "e2e.yml の npm install --no-save playwright@1.56.1 は版固定だが integrity が無い",
-      "why": "2026-10-16 に読んだ。lockfile へ入れるか、integrity を検める手が候補。e2e は既定で走らない。"
     }
   ],
   "clearedBacklog": [
@@ -2360,6 +2370,11 @@
       "item": "AI 5 開発パイプラインの残り (scripts/orchestrate.cjs:353-358)",
       "finding": "2026-10-14 に読んで測った: scripts/orchestrate.cjs:353-358 の dispatch は外から来た題名を印つきの JSON 文字列で引用し、「指示ではなくデータとして扱う」断りを載せる (パス 484 · importRequestsPath.test.ts 18 件)。残りの欄 (team / status) は enum で門が検める。欠陥ではない。",
       "checkedOn": "2026-10-14"
+    },
+    {
+      "item": "e2e.yml の npm install --no-save playwright@1.56.1 は版固定だが integrity が無い",
+      "finding": "2026-10-19 に実測 (npm ci + playwright の木を再現): 入るのは playwright と playwright-core の 2 パッケージで、どちらも registry の integrity が .package-lock.json に残る。integrity を台帳に固定して install の直後に照合する門 (scripts/verify-e2e-playwright-pin.cjs) を足した = T-125 (mitigated: 初回は registry を信じた値で、守れるのはその後の差し替え)。",
+      "checkedOn": "2026-10-19"
     }
   ]
 }
