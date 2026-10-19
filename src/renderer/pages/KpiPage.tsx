@@ -34,6 +34,8 @@ import { SALES_COLLECTION, readableSalesRows, unreadableSalesRowsNote, type Sale
 import { salesMonths, revenueForMonth } from '../data/salesKpiBridge';
 import { kpiActualsToCsv, kpiActualsFromCsv } from '../data/kpiActualsCsv';
 import { CSV_BOM } from '../data/csv';
+import { useRowWindow } from '../data/useRowWindow';
+import { RowWindowMore } from '../components/RowWindowMore';
 import { budgetComparedRangeLabel, budgetUnmatchedNote, KPI_BUDGETS_COLLECTION, computeBudgetVariance } from '../data/budgetVariance';
 import {
   MANUAL_OVERRIDES_COLLECTION,
@@ -408,6 +410,8 @@ function ActualsPanel() {
    * 合計だけが桁違いに膨らんだまま書面へ流れていた。
    */
   const readable = useMemo(() => readableKpiRows(records.map((r) => r.data)), [records]);
+  // 実績の一覧の窓 (パス 538 · R-3): CSV で入る行数に天井が無いので、全行を描くと画面が止まる。
+  const actualsWindow = useRowWindow(records);
   // 既に在る重複 (同じ期・事業が 2 件以上)。一覧の上で「合算されている」と言う (パス 124)。
   const duplicateNote = useMemo(() => duplicateActualsNote('実績', findDuplicateActuals(readable.rows)), [readable]);
   // 期・金額が読めず除いた件数を**原因ごとに**言う (黙って落とすと、合計が説明できない数字になる)。
@@ -621,7 +625,7 @@ function ActualsPanel() {
               </tr>
             </thead>
             <tbody>
-              {records.map((r) => {
+              {actualsWindow.visible.map((r) => {
                 /*
                  * **漏斗が落とした行は、その行の導出値も出さない** (2026-09-24 · パス 443)。
                  * 売上高を「—」と言いながら営業利益に確信のある数字を並べると、
@@ -653,6 +657,7 @@ function ActualsPanel() {
               })}
             </tbody>
           </table>
+          <RowWindowMore hidden={actualsWindow.hidden} total={actualsWindow.total} showMore={actualsWindow.showMore} />
         </>
       ) : (
         <p style={{ color: 'var(--text-mute)', fontSize: 13, marginTop: 12 }}>

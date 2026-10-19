@@ -24,6 +24,8 @@ import { displayField, finiteNumberOf } from '../../shared/apiResponse';
 import { DASH } from '../../shared/formatters';
 import { SALES_CSV_COLUMNS, salesToCsv, salesFromCsv } from '../data/salesCsv';
 import { CSV_BOM } from '../data/csv';
+import { useRowWindow } from '../data/useRowWindow';
+import { RowWindowMore } from '../components/RowWindowMore';
 import { readCollectionNow, unreadableForJudgementNote } from '../data/readCollectionNow';
 import {
   MANUAL_OVERRIDES_COLLECTION,
@@ -98,6 +100,8 @@ export function SalesPage() {
   const fileRef = useRef<HTMLInputElement>(null);
 
   const entries = useMemo(() => records.map((r) => r.data), [records]);
+  // 明細の窓 (パス 538 · R-3): CSV で 20 万行まで入るので、全行を描くと画面が止まる。
+  const rowWindow = useRowWindow(records);
   const computedSummary = useMemo(() => summarizeSales(entries), [entries]);
   // 手入力の上書きを重ねる。入力欄は App が全画面共通で描くので、
   // ここは読んで適用するだけ。上書きが無ければ計算値がそのまま出る。
@@ -382,7 +386,7 @@ export function SalesPage() {
                 </tr>
               </thead>
               <tbody>
-                {records.map((r) => (
+                {rowWindow.visible.map((r) => (
                   <tr key={r.id} style={{ borderTop: '1px solid var(--border)' }}>
                     {/*
                       一覧は**素の購読**を描く (日付が読めない行もここに出るから × で消せる・パス 425)。
@@ -403,6 +407,7 @@ export function SalesPage() {
                 ))}
               </tbody>
             </table>
+            <RowWindowMore hidden={rowWindow.hidden} total={rowWindow.total} showMore={rowWindow.showMore} />
           </Section>
         </>
       )}
