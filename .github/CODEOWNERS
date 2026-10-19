@@ -194,6 +194,7 @@
 /src/shared/__tests__/workflowSecurityWitness.test.ts @hiroto1977
 /src/shared/__tests__/dependencyAuditWorkflow.test.ts @hiroto1977
 /src/shared/__tests__/e2ePlaywrightPin.test.ts @hiroto1977
+/src/shared/__tests__/ipcUnawaitedLedger.test.ts @hiroto1977
 /src/shared/__tests__/buildInputsClosed.test.ts @hiroto1977
 /src/shared/__tests__/apiResponse.test.ts @hiroto1977
 /src/renderer/pages/__tests__/ollamaPageOriginShell.test.ts @hiroto1977

@@ -1,5 +1,26 @@
 # Service Hub — 残りの作業手順書
 
+## パス 537 (狩りの 27 回目 —— MAIN-3: `await` を書かずに reject しうる IPC handler を台帳に載せる) (2026-10-19)
+
+huntBacklog の MAIN-3 (「式本体の handler は `lint:ipc-handlers` が見ない」) を、ledger の記述を信じずに**植えて**測った。`await` の規則は綴りしか見ないので、**記録より広く**黙っていた:
+
+| 植えた形 | 旧い門 |
+| --- | --- |
+| `async (_e, u) => { await shell.openExternal(u); }` / `async … => await …` | 鳴る |
+| `async (_e, u) => shell.openExternal(u)` (式本体・await 無しで Promise を返す) | **黙る** |
+| `{ return shell.openExternal(u); }` (block 本体の try 外の return) | **黙る** |
+| `() => JSON.parse(readFileSync(…))` (同期の throw) / `.then(…)` の連鎖 | **黙る** |
+
+実物 15 handler を洗うと、式本体は 4 つ (`app:getVersion` / `secrets:list` / `secrets:protection` / `oauth:isSupported`)・try 外の `return <呼び出し>` は 1 つ (`app:checkUpdate` の `evaluateUpdate`)。**実際に reject しうるのは `secrets:list` / `secrets:protection` の 2 つ** (`readStore` は ENOENT 以外の stat の失敗を投げる —— 既存の検査が「握り潰さず投げる」と留めている)。ledger は「safeErrorMessage を通る」と書いていたが、**この 2 つは通らず reject する** —— ただしそれは**設計**で、読めなかった保管ファイルを「空」と混ぜないため (T-061) であり、renderer の呼び手 (`useServiceData` / `ConnectionHub` / 掃除の節 / `AssistantPage` / 保護の札) は全部 catch して「読めなかった」と「0 件」を分ける。**動作は変えない** (変えると renderer が空と読む)。
+
+| 脅威 | 内容 | 留めた検査 |
+| --- | --- | --- |
+| T-126 (fixed) | 不変条件 #5: 登録呼び出しを括弧の対応で正確に切り (最後の登録が**ファイルの残りまで含む**粗い範囲を使わない)、式本体・try (catch つき) の外の `return <呼び出し>`・インラインの矢印でない handler を、台帳 `UNAWAITED` (`cannot-reject` / `rejects-by-design` + 理由・**双方向**・鍵は `channel` または `channel :: 呼び出し先`) に載せない限り落とす。今日の台帳 5 件 | `ipcUnawaitedLedger.test.ts` (7 件)・門の `--self-test` (+11 件) |
+
+★ **対照 4 方向すべて実物の CLI で鳴り、md5 で復元を確認**: `main.ts` に式本体を植える (exit 1) / `await` 無しで Promise を返す handler を植える (exit 1・鍵は `zzz:ret :: shell.openExternal`) / 規則の配線を `main()` から外す (**CLI は緑のまま = 欠陥の再現**・検査 2 件が鳴る) / 台帳から 1 行消す (exit 1)。
+★ **自分の見立てを 1 つ訂正した** —— ledger の「実害は 0」は、reject しうる 2 handler を数えていなかった (結論は同じ = 設計で呼び手が受ける、だが理由は別)。
+**限界**: `return x` (変数) や `return cond ? a() : b()` は対象外 (呼び出しの形だけを見る)。block 内のネストした関数の `return` も拾う (過検出側)。式本体の中で投げるかは**台帳の理由が人の判断**で、門は「載せて理由を言わせる」ところまで。
+
 ## パス 536 (狩りの 26 回目 —— lockfile の外で入れる playwright の integrity を台帳に固定する) (2026-10-19)
 
 「他の未測の面」を huntBacklog から選んだ (所有者の判断が要らず・手元で測れる物)。`e2e.yml` は `npm install --no-save playwright@1.56.1` で**版だけ**を固定し、lockfile に行が無いので取得した tarball の integrity は誰も見ない。実測 (scratchpad で `npm install --no-save --ignore-scripts`): 入るのは **playwright と playwright-core の 2 パッケージだけ**で、どちらも registry の integrity が `node_modules/.package-lock.json` に残る。

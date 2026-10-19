@@ -2126,6 +2126,21 @@
         "file": "src/shared/__tests__/e2ePlaywrightPin.test.ts",
         "test": "workflow が入れる版は台帳の版と同じ"
       }
+    },
+    {
+      "id": "T-126",
+      "found": "2026-10-19",
+      "foundBy": "hunt pass 537 の huntBacklog MAIN-3 (式本体の handler は lint:ipc-handlers が見ない) を植えて実測し、記録より広い穴を見つけて閉じた",
+      "surface": "main-ipc",
+      "class": "ai-automated-attack",
+      "severity": "low",
+      "title": "lint:ipc-handlers の『reject しない』規則は await の綴りしか見ず、式本体・try 外の return <呼び出し>(Promise を await せず返す形)・インラインでない handler には黙った(植えて実測: await を書いた形だけが鳴る)。実物で reject しうるのは secrets:list / secrets:protection の 2 つで、読めなかった保管ファイルを空と混ぜないための設計(T-061)・renderer の呼び手は catch する=今日の実害は 0、門の死角",
+      "status": "fixed",
+      "fix": "不変条件 #5: handler の登録呼び出しを括弧の対応で正確に切り(最後の登録がファイルの残りまで含む粗い範囲を使わない)、式本体・try(catch つき)の外の return <呼び出し>・インラインの矢印でない handler を、台帳 UNAWAITED(cannot-reject / rejects-by-design + 理由・双方向・鍵は channel または channel :: 呼び出し先)に載せない限り落とす。動作は変えない(reject は設計)。台帳 5 件は実物の形と一致。",
+      "regression": {
+        "file": "src/shared/__tests__/ipcUnawaitedLedger.test.ts",
+        "test": "実物の main.ts は、台帳と双方向に一致する (載っていない形も、形の無い台帳も無い)"
+      }
     }
   ],
   "huntBacklog": [
@@ -2178,11 +2193,6 @@
       "surface": "network",
       "item": "N-5 encodeURIComponent した動的部分に `..` が来ると WHATWG URL が path を畳む",
       "why": "2026-10-14 に測った: encodeURIComponent('..') は '..' のまま (予約でない) なので https://host/a/../b は new URL で https://host/b になる。今日の動的部分 (Drive のファイル ID / Jira の issue key / Slack の domain) はどれも入口の正規表現が `.` を含まないか別の関門で落とすので届かない。関門の無い新しい補間が 1 つ増えた日に開く形なので、lint:url-encoding の標本として残す。"
-    },
-    {
-      "surface": "main-ipc",
-      "item": "MAIN-3 lint:ipc-handlers は式本体 (`=>` の後に block を持たない) の handler を走査しない",
-      "why": "2026-10-15 に監査役が静的に指摘。実物の handler は全部 block 本体なので今日の素通りは 0 件 —— 針の死角として記録し、次に式本体の handler が 1 つ増えた日に門が黙る形。 ★ 2026-10-15 (パス 523) に測り直した: 式本体の handler は main.ts:254 / 412 / 416 / 583 に 4 つ在り、そのうち secrets:protection は stat の生の文を返さない (safeErrorMessage を通る) ので今日の実害は 0。門の針を式本体へ広げるか、4 つを block 本体へ書き換えるかの選択。"
     },
     {
       "surface": "main-ipc",
@@ -2374,6 +2384,11 @@
     {
       "item": "e2e.yml の npm install --no-save playwright@1.56.1 は版固定だが integrity が無い",
       "finding": "2026-10-19 に実測 (npm ci + playwright の木を再現): 入るのは playwright と playwright-core の 2 パッケージで、どちらも registry の integrity が .package-lock.json に残る。integrity を台帳に固定して install の直後に照合する門 (scripts/verify-e2e-playwright-pin.cjs) を足した = T-125 (mitigated: 初回は registry を信じた値で、守れるのはその後の差し替え)。",
+      "checkedOn": "2026-10-19"
+    },
+    {
+      "item": "MAIN-3 lint:ipc-handlers は式本体 (`=>` の後に block を持たない) の handler を走査しない",
+      "finding": "2026-10-19 に植えて測った: 記録 (式本体 4 つ) より広く、await を書かずに Promise を返す形 (return <呼び出し>・async の式本体)・同期の throw・インラインでない handler にも黙っていた。実物 15 handler のうち式本体 4 つ・try 外の return 1 つを洗い、reject しうるのは secrets:list / secrets:protection の 2 つ (設計・renderer が catch)。動作は変えず、台帳 UNAWAITED に理由つきで載せる門にした = T-126。",
       "checkedOn": "2026-10-19"
     }
   ]

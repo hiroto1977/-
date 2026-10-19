@@ -163,11 +163,32 @@ function handlerBodies(source) {
   const re = /ipcMain\.handle\(\s*\n?\s*'([^']+)'/g;
   const marks = [];
   for (let m = re.exec(source); m !== null; m = re.exec(source)) {
-    marks.push({ channel: m[1], from: m.index + m[0].length });
+    marks.push({ channel: m[1], from: m.index + m[0].length, open: m.index + 'ipcMain.handle'.length });
   }
+  // 文字列・コメントの括弧を数えない写し (長さが同じなので添字は元と一致する)。
+  const blank = blankOutLiterals(source);
   for (let i = 0; i < marks.length; i += 1) {
     const to = i + 1 < marks.length ? marks[i + 1].from : source.length;
-    out.push({ channel: marks[i].channel, body: source.slice(marks[i].from, to) });
+    // 登録呼び出しそのもの (括弧の対応で切る)。`body` は次の登録までの粗い範囲で、
+    // 最後の登録ではファイルの残りまで含む (await の判定には過検出で足りる) ので、
+    // 「式本体か」「try の外で何を返すか」はこちらの正確な範囲で見る。
+    let depth = 0;
+    let end = -1;
+    for (let k = marks[i].open; k < blank.length; k += 1) {
+      if (blank[k] === '(') depth += 1;
+      else if (blank[k] === ')') {
+        depth -= 1;
+        if (depth === 0) {
+          end = k;
+          break;
+        }
+      }
+    }
+    out.push({
+      channel: marks[i].channel,
+      body: source.slice(marks[i].from, to),
+      exact: end < 0 ? null : source.slice(marks[i].from, end),
+    });
   }
   return out;
 }
@@ -325,6 +346,99 @@ function evaluateHandlers(handlers) {
   return [...problems, ...evaluateServiceIdGuard(handlers)];
 }
 
+/**
+ * 不変条件 #5 —— **`await` を書かずに reject しうる形は、台帳に載せて理由を言う** (パス 537 · MAIN-3)。
+ *
+ * 上の規則 (`evaluateHandlers`) が見るのは `await` の綴りだけで、次の 3 つの形には黙る
+ * (2026-10-19 に植えて実測: await の無い式本体・`return` で Promise を返す形・同期の呼び出しの throw は
+ * すべて「黙る」。`await` を書いた形だけが鳴る):
+ *
+ * - **式本体** (`() => listConfiguredServices()`) —— Promise をそのまま返すので、中で投げれば IPC が reject する
+ * - **try の外の `return <呼び出し>`** —— 同じ
+ * - **インラインの矢印でない handler** (`ipcMain.handle('x', fn)`) —— 本体がここから見えない
+ *
+ * どれも「今日 reject する」とは限らない (実測: 15 handler のうち式本体 4 つ・try 外の return 1 つ。
+ * 実際に reject しうるのは `secrets:list` / `secrets:protection` の 2 つで、それは**設計**だった —— 読めなかった
+ * 保管ファイルを「空」と混ぜないため (T-061) に投げ、renderer の呼び手 5 か所が catch する)。
+ * だから形を禁じるのではなく、**載せて理由を言わせる**。台帳は双方向 (載っているのに形が無ければ落ちる)。
+ * 種類は 2 つ: `cannot-reject` (同期で、中身が投げない) / `rejects-by-design` (投げるのが約束で、呼び手が受ける)。
+ */
+const UNAWAITED = {
+  'app:getVersion': {
+    kind: 'cannot-reject',
+    why: '`app.getVersion()` は同期で、パッケージの版を返すだけ。',
+  },
+  'secrets:list': {
+    kind: 'rejects-by-design',
+    why: '読めなかった保管ファイル (ENOENT 以外の stat の失敗・読めない本体と控え) は「空」ではないので投げる (T-061)。renderer の呼び手 (useServiceData / ConnectionHub / 掃除の節 / AssistantPage) は catch して「読めなかった」と「0 件」を分ける。',
+  },
+  'secrets:protection': {
+    kind: 'rejects-by-design',
+    why: '`getStorageProtection` は `readStore` を await し、その stat の失敗を投げる。呼び手 (設定画面の保護の札・AssistantPage) は catch して「確認できません」と言う。返す物に秘密は含まれない。',
+  },
+  'oauth:isSupported': {
+    kind: 'cannot-reject',
+    why: '`isServiceId` で絞ってから、設定表を引いて真偽を返すだけ (同期・I/O 無し)。',
+  },
+  'app:checkUpdate :: evaluateUpdate': {
+    kind: 'cannot-reject',
+    why: '`evaluateUpdate(current, null)` は純関数で、版の比較だけ (取得に失敗した枝の戻り値)。',
+  },
+};
+
+/** 台帳の鍵 (`channel` または `channel :: callee`) を作る。 */
+function unawaitedKey(channel, callee) {
+  return callee === undefined ? channel : `${channel} :: ${callee}`;
+}
+
+function unawaitedProblems(handlers, ledger = UNAWAITED) {
+  const problems = [];
+  const seen = new Set();
+  const note = (key, what) => {
+    seen.add(key);
+    const entry = Object.hasOwn(ledger, key) ? ledger[key] : undefined;
+    if (entry === undefined) {
+      problems.push(
+        `${key}: ${what}。await を書かずに reject しうる形は、台帳 UNAWAITED に ` +
+          `cannot-reject / rejects-by-design と理由を書いて載せてください`,
+      );
+    }
+  };
+  for (const { channel, exact } of handlers) {
+    if (exact === null || exact === undefined) {
+      note(unawaitedKey(channel), '登録の範囲を括弧の対応で切れません (本体が検査から見えない)');
+      continue;
+    }
+    const blank = blankOutLiterals(exact);
+    const arrow = blank.indexOf('=>');
+    if (arrow < 0) {
+      note(unawaitedKey(channel), 'インラインの矢印関数ではないので本体が見えません');
+      continue;
+    }
+    if (!/^\s*\{/.test(blank.slice(arrow + 2))) {
+      note(unawaitedKey(channel), '式本体の handler (Promise をそのまま返すので、中の throw が IPC を reject させる)');
+      continue;
+    }
+    const ranges = guardedTryRanges(blank);
+    const re = /\breturn\s+(?!await\b)([A-Za-z_$][\w$.]*)\s*\(/g;
+    for (let m = re.exec(blank); m !== null; m = re.exec(blank)) {
+      if (ranges.some(([s, e]) => m.index > s && m.index < e)) continue;
+      note(unawaitedKey(channel, m[1]), `try の外で ${m[1]}(…) の結果を await せずに返しています`);
+    }
+  }
+  const handled = new Set(handlers.map((h) => h.channel));
+  for (const key of Object.keys(ledger)) {
+    if (seen.has(key)) continue;
+    const channel = key.split(' :: ')[0];
+    problems.push(
+      handled.has(channel)
+        ? `${key}: 台帳に載っているのに、その形が handler に在りません (直したなら台帳から消してください)`
+        : `${key}: 台帳に載っているのに、その channel が走査に出ません`,
+    );
+  }
+  return problems;
+}
+
 function selfTest() {
   const cases = [
     ['await が無い', [{ channel: 'a', body: 'return listThings();' }], 0],
@@ -465,6 +579,28 @@ function selfTest() {
   }
   for (const [label, input, want] of cases) {
     const got = evaluateHandlers(input).length;
+    const ok = got === want;
+    if (!ok) failed += 1;
+    console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} 件 (期待 ${want})`);
+  }
+  // 不変条件 #5 (await を書かずに reject しうる形)。合成の台帳で回す。
+  const reg = (name, fn) => handlerBodies(`ipcMain.handle('${name}', ${fn});`);
+  const ledgerOf = (keys) => Object.fromEntries(keys.map((k) => [k, { kind: 'cannot-reject', why: '標本' }]));
+  const unawaitedCases = [
+    ['式本体は台帳が無ければ落とす', reg('x:expr', '() => riskySync()'), {}, 1],
+    ['式本体も台帳に載せれば通る', reg('x:expr', '() => riskySync()'), ledgerOf(['x:expr']), 0],
+    ['式本体 (async・await 無しで Promise を返す) も落とす', reg('x:p', 'async (_e, u) => launcher.open(u)'), {}, 1],
+    ['block 本体の try 外の return <呼び出し> を落とす', reg('x:ret', 'async (_e, u) => { return launcher.open(u); }'), {}, 1],
+    ['try (catch つき) の中の return は通す', reg('x:okret', 'async (_e, u) => { try { return shell.f(u); } catch { return null; } }'), {}, 0],
+    ['return await は await の規則の持ち分なので二重に数えない', reg('x:aw', 'async (_e, u) => { return await f(u); }'), {}, 0],
+    ['オブジェクト・null・真偽の return は対象外', reg('x:lit', "async () => { if (a) return null; return { ok: true }; }"), {}, 0],
+    ['インラインの矢印でない handler は本体が見えないので落とす', reg('x:ref', 'someFunction'), {}, 1],
+    ['台帳に載っているのに形が無ければ落とす (双方向)', reg('x:blk', 'async () => { return { ok: true }; }'), ledgerOf(['x:blk']), 1],
+    ['台帳の channel が走査に出なければ落とす', reg('x:blk', 'async () => { return { ok: true }; }'), ledgerOf(['x:gone']), 1],
+    ['鍵は channel :: 呼び出し先 (別の呼び出し先は別の鍵)', reg('x:k', 'async () => { return evaluateUpdate(a, null); }'), ledgerOf(['x:k :: otherFn']), 2],
+  ];
+  for (const [label, input, ledger, want] of unawaitedCases) {
+    const got = unawaitedProblems(input, ledger).length;
     const ok = got === want;
     if (!ok) failed += 1;
     console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} 件 (期待 ${want})`);
@@ -628,7 +764,7 @@ function main(argv) {
   const cross = reportTrackedCrossCheck(clients.map((f) => f.file), CROSS_CHECK, REPO_ROOT, 'lint:ipc-handlers');
   if (cross.code !== 0) return 1;
   const guarded = clients.filter((f) => TAKES_PAYLOAD_PATH.some((re) => re.test(f.text)));
-  const problems = [...evaluateHandlers(handlers), ...exportPathProblems(clients), ...preloadProblems()];
+  const problems = [...evaluateHandlers(handlers), ...unawaitedProblems(handlers), ...exportPathProblems(clients), ...preloadProblems()];
   console.log(
     `IPC ハンドラ ${handlers.length} 件を検査しました`
       + ` (${files.length} ファイル: ${files.map((f) => f.file).join(', ')})`,
@@ -655,6 +791,7 @@ function main(argv) {
 
 module.exports = {
   evaluateHandlers, handlerBodies, exportPathProblems, preloadProblems, CROSS_CHECK,
+  blankOutLiterals, guardedTryRanges, unawaitedProblems, UNAWAITED,
 };
 
 if (require.main === module) {
