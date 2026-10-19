@@ -1,5 +1,21 @@
 # Service Hub — 残りの作業手順書
 
+## パス 535 (狩りの 25 回目 —— パス 534 の道具を毎日の報告 (dependency-audit) へ載せる) (2026-10-19)
+
+パス 534 の `audit:pinned-action-shas` は手で回す点検で、**回さなければ作り話の SHA は見つからない**。週次 (実際は毎日) の `dependency-audit.yml` は「報告 JSON → 常設 Issue 1 つ → 片付いたら自動で閉じる」の型を既に持ち、PR を赤くしない。測ったところ、その型の `floors` と同じ位置に**収まる** (新しい workflow は要らない)。
+
+| 脅威 | 内容 | 留めた検査 |
+| --- | --- | --- |
+| T-124 (続き・mitigated) | `dependency-audit-report.cjs` が `auditPins()` (道具と同じ測定) を `pins` として受ける。`no-tag` / `missing` / `invalid` は**要対応** (Issue が開く)・`moved` (古い固定) は報せるだけで数えない・`unreachable` は 1 行にまとめて**測れなかった項目**に数える (緑にしない)・`pins` が `null` / 渡し忘れ (`undefined`) も測っていないとして数える (fail closed) | `dependencyAuditWorkflow.test.ts` (+4 件)・`dependency-audit-report.cjs --self-test` (+7 件) |
+
+**実物 (通しで実行)**: 固定 31 か所が全件整合・不正 0・測れず 0。同じ実行で dev の勧告 8 件 (electron-builder → global-agent → roarr → sprintf-js の連鎖 moderate) も出たが、**`docs/SECURITY_AUDIT.md` に既知** (出荷物に入らない・ビルド道具の DoS) で新規ではない。
+
+**対照実験**: ① `badPins` を数えない → 狙った 1 件が落ちる ② `unreachable` を問題にしない → 狙った 1 件が落ちる ③ `main` が `pins` を渡さない → 配線の検査が落ちる。復元は md5 で一致。
+
+**文面の古びを 3 つ直した**: 報告の「週次の実行日」「毎週自動更新します」と workflow のジョブ名「週次報告」は、パス 509 (2026-10-11) で毎日になった後も残っていた。
+
+**正直な限界**: 検出であって阻止ではない (PR の門には載せない — 網の不調が無関係な PR を赤くするため)。Actions の runner から `github.com` へ `git ls-remote` が届くことは**この場では確かめられない** (手元のプロキシ越しでは通る)。初回の実行で測れなければ「測れなかった項目」として Issue に出る (緑にはならない)。
+
 ## パス 534 (狩りの 24 回目 —— パス 527 の backlog SC-5 の残り: SHA 固定の実在確認) (2026-10-19)
 
 `lint:workflow-security` が見られるのは SHA 固定の**形** (40 桁の 16 進 + `# v5` の注記) までで、実在の確認は `git ls-remote` が要るので CI の決定的な門にできない (パス 530 が backlog に残した)。**実測 (再現)**: `ci.yml` の checkout の SHA を `c` の 40 桁に替えても門は exit 0。

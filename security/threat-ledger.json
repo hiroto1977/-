@@ -2106,10 +2106,10 @@
       "severity": "low",
       "title": "lint:workflow-security は SHA 固定の形(40 桁 + # v5 の注記)しか見ず、作り話・打ち間違いの SHA に版の注記を付けても exit 0 で通った(実測: ci.yml の checkout を 'c' の 40 桁に替えても緑)。実在の確認は git ls-remote が要り CI の決定的な門にできない",
       "status": "mitigated",
-      "fix": "定期点検の道具 audit:pinned-action-shas (手で回す・CI 非搭載): 各 uses の repo・SHA・注記の版を git ls-remote(annotated tag は peel 先)で引き直し、match / moved(古い固定·警告) / no-tag / missing(作り話·exit 1) に分ける。網が使えなければ緑にせず exit 2。子プロセスは git だけで repo・タグ・SHA を厳しい正規表現を通してから固定の形へ組む。実物 31 か所 8 種類は全件 match。CI で自動に止める門ではない(検出であって阻止ではない)ため mitigated。",
+      "fix": "定期点検の道具 audit:pinned-action-shas (手で回す) + 毎日の報告 dependency-audit-report.cjs が同じ測定 (auditPins) を pins として組み込む(パス 535): 各 uses の repo・SHA・注記の版を git ls-remote(annotated tag は peel 先)で引き直し、match / moved(古い固定·報せるだけ) / no-tag / missing(作り話·要対応=Issue) に分ける。網が使えず測れなければ緑にせず測れなかった項目に数える(exit 非 0)。子プロセスは git だけで repo・タグ・SHA を厳しい正規表現を通してから固定の形へ組む。実物 31 か所 8 種類は全件 match。PR の門(ci.yml)には載せない(網の不調が無関係な PR を赤くするため)ので、検出であって阻止ではない=mitigated。",
       "regression": {
-        "file": "src/shared/__tests__/pinnedActionShasTool.test.ts",
-        "test": "判定: タグが別の commit を指すとき、SHA が実在すれば moved (警告)・実在しなければ missing (落とす)"
+        "file": "src/shared/__tests__/dependencyAuditWorkflow.test.ts",
+        "test": "作り話の SHA 固定 (missing / no-tag) は要対応・古い固定 (moved) は報せるだけ (threat: T-124)"
       }
     }
   ],
@@ -2283,11 +2283,6 @@
       "surface": "supply-chain",
       "item": "e2e.yml の npm install --no-save playwright@1.56.1 は版固定だが integrity が無い",
       "why": "2026-10-16 に読んだ。lockfile へ入れるか、integrity を検める手が候補。e2e は既定で走らない。"
-    },
-    {
-      "surface": "supply-chain",
-      "item": "SC-5 の残り2: audit:pinned-action-shas を週次の定期実行(dependency-audit.yml)に載せるか",
-      "why": "2026-10-19 (パス 534): 道具は手で回す点検で、回さなければ作り話の SHA は検出されない。週次 workflow に載せれば自動で見える(予定実行なので誰の PR も赤くしない)が、workflow を足すこと自体が新しい実行面で、運用の判断(Issue 集約・権限・頻度)が要るためオーナー判断として残す。"
     }
   ],
   "clearedBacklog": [

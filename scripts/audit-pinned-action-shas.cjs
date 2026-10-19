@@ -198,15 +198,24 @@ function selfTest() {
   return 0;
 }
 
+/**
+ * 実物の `.github` の SHA 固定をすべて測る。固定が 1 件も読めなければ `null` (走査が死んでいる ——
+ * 「0 件だから健全」にしない)。`dependency-audit-report.cjs` (毎日の報告) も同じ関数を呼ぶ。
+ */
+function auditPins(remote = realRemote()) {
+  const pins = collectPins(readRepoFiles());
+  if (pins.length === 0) return null;
+  return pins.map((p) => ({ ...p, ...judge(p, remote) }));
+}
+
 function main(argv) {
   if (argv.includes('--self-test')) return selfTest();
-  const pins = collectPins(readRepoFiles());
-  if (pins.length === 0) {
+  const results = auditPins();
+  if (results === null) {
     console.error('❌ SHA 固定が 1 件も読めなかった (走査が死んでいる)');
     return 1;
   }
-  const remote = realRemote();
-  const results = pins.map((p) => ({ ...p, ...judge(p, remote) }));
+  const pins = results;
   for (const r of results.filter((x) => x.status !== 'match')) {
     console.log(`  ${r.status.padEnd(11)} ${r.file}:${r.line} ${r.repo}@${r.sha.slice(0, 12)} # ${r.tag ?? '(注記なし)'} — ${r.why}`);
   }
@@ -226,4 +235,4 @@ function main(argv) {
 }
 
 if (require.main === module) process.exit(main(process.argv.slice(2)));
-module.exports = { collectPins, judge, summarize, PIN_RE, FAILING };
+module.exports = { collectPins, judge, summarize, auditPins, PIN_RE, FAILING };

@@ -35,7 +35,7 @@ permissions:
 
 jobs:
   audit:
-    name: 依存の勧告とセキュリティの床（週次報告）
+    name: 依存の勧告・セキュリティの床・SHA 固定（毎日の報告）
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5 (threat: T-057)
@@ -51,7 +51,8 @@ jobs:
         env:
           ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
 
-      # 全体 / prod の npm audit と、床ちょうどの版の測り直し。
+      # 全体 / prod の npm audit と、床ちょうどの版の測り直し、workflow の SHA 固定の実在確認
+      # (`git ls-remote` · パス 535 · threat: T-124。`lint:workflow-security` は形までしか見られない)。
       # **勧告が在っても exit 0**（報告する道具なので、赤にしても見る人がいない）。
       # 測れなかったときだけ落ちる —— 「測れていない」を「0 件」として通さない。
       - name: 勧告と床を測る

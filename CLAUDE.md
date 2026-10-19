@@ -1109,7 +1109,11 @@ npm run audit:pinned-action-shas  # **workflow の SHA 固定の 40 桁が、実
                          #   `no-tag` `missing` (タグが無い / SHA が実在しない = 作り話か打ち間違い · exit 1) /
                          #   網が使えず測れなければ **緑にしない** (exit 2)。実物 (2026-10-19): 31 か所 8 種類が全件 `match`。
                          #   子プロセスは `git` だけで、repo・タグ・SHA は厳しい正規表現を通してから固定の形へ組む。
-                         #   形と配線は `shared/__tests__/pinnedActionShasTool.test.ts` が毎回の npm test で見る
+                         #   **毎日の `dependency-audit` (報告 → 常設 Issue) も同じ測定 `auditPins()` を組み込む**
+                         #   (パス 535): 作り話の固定は要対応として Issue が開く・古い固定は報せるだけ・
+                         #   測れなければ「測れなかった項目」(緑にしない)。PR の門には載せない。
+                         #   形と配線は `shared/__tests__/pinnedActionShasTool.test.ts` /
+                         #   `dependencyAuditWorkflow.test.ts` が毎回の npm test で見る
 npm run audit:verify-keep-going  # **`verify:all` を止まらずに全ゲート回し、落ちた物を一度に挙げる**
                          #   (定期点検の道具 11 本目。CI では走らせない)。`verify:all` は `&&` 連結なので
                          #   最初に落ちたゲートで止まり、直して回し直すたびに次の 1 件が見える ——
