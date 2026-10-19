@@ -2651,6 +2651,14 @@
       "leafCount": 120,
       "note": "update credentials.ts",
       "hash": "e4f7af95464107a66c556a775323949904f4c550abd70bdf06b68f5bd26955cd"
+    },
+    {
+      "index": 316,
+      "prevHash": "e4f7af95464107a66c556a775323949904f4c550abd70bdf06b68f5bd26955cd",
+      "merkleRoot": "8278089dd0aae4a5c5b665b267ff3a38bf4c494fe0958bc98feffcd39241aaeb",
+      "leafCount": 120,
+      "note": "update dependency-audit.yml",
+      "hash": "a4a1520d0ee9f8426c91b5fb92fc218bc714b2fc71d712afe2011b54503d2ac1"
     }
   ],
   "tipManifest": {
@@ -2664,7 +2672,7 @@
     ".cursor/rules/30-conventions.mdc": "ecc268597f19300ff8c9e574d25ae92f34f6ddb9ec13776fb5162c32f6c0ba50",
     ".github/dependabot.yml": "5fb436726dc2b51f99162653885c40cafae5d57d6deb0f4f5b5449e6b202493f",
     ".github/workflows/ci.yml": "9df2fc00557dcc5eabcce7d81ee2e54d0dbca2be81213d608396e1b70e93880b",
-    ".github/workflows/dependency-audit.yml": "5015d4251a837d1b04e9a92ac10abde333330f537275d89093360029f5381824",
+    ".github/workflows/dependency-audit.yml": "3f7179e0d69f98cae5c687e3024102a4393b21aed614e2edf7e4509ff0873dbc",
     ".github/workflows/e2e.yml": "4e30890f93d2c538cce194613bda461260476e41ce826635079cf65ea7c6fe44",
     ".github/workflows/knowledge-auto.yml": "a8565ac4c0b0e45d0f37db2ae5b77e5808f2008203f015321f4a69cefd371ef8",
     ".github/workflows/mutation.yml": "db2b72f69eb73be3ddd7ed4492d8069f806b5ce928a00df768bb806c673db2e0",
