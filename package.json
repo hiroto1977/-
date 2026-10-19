@@ -118,7 +118,8 @@
     "audit:report": "node scripts/dependency-audit-report.cjs && node scripts/dependency-audit-report.cjs --self-test && node scripts/dependency-audit-issue.cjs --self-test",
     "audit:mutate-changed": "node scripts/audit-mutate-changed.cjs --self-test && node scripts/audit-mutate-changed.cjs",
     "audit:verify-keep-going": "node scripts/audit-verify-keep-going.cjs --self-test && node scripts/audit-verify-keep-going.cjs",
-    "audit:malformed-fields": "node scripts/audit-malformed-fields.cjs --self-test && node scripts/audit-malformed-fields.cjs"
+    "audit:malformed-fields": "node scripts/audit-malformed-fields.cjs --self-test && node scripts/audit-malformed-fields.cjs",
+    "audit:pinned-action-shas": "node scripts/audit-pinned-action-shas.cjs --self-test && node scripts/audit-pinned-action-shas.cjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

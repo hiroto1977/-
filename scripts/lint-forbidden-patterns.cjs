@@ -913,6 +913,10 @@ const KNOWN_SUPPRESSIONS = [
   // (`scripts/audit-verify-keep-going.cjs`・パス 526)。子プロセスは `npm run <ゲート名>` だけで、
   // ゲート名は `package.json` の `verify:all` の本文から導く (外から任意の物は入らない)。シェルは経由しない。
   'child_process exec/spawn :: scripts/audit-verify-keep-going.cjs :: 1',
+  // SHA 固定の 40 桁が実在の commit で注記の版と同じ物かを `git ls-remote` / `git fetch` で測る
+  // 定期点検の道具 (`scripts/audit-pinned-action-shas.cjs`・パス 534)。子プロセスは `git` だけで、
+  // リポジトリ名・タグ・SHA は厳しい正規表現を通した後に固定の形へ組む。シェルは経由しない。
+  'child_process exec/spawn :: scripts/audit-pinned-action-shas.cjs :: 1',
   // オーケストレーションの書き手 (`record` / `import-requests`) が、書き上がる台帳を
   // **書く前に門そのもの** (`verify-orchestration.cjs --registry <一時ファイル>`) で検める
   // (パス 484)。門の中身を関数として写すと「書き手が正しいと思う台帳」と「CI の門が正しいと

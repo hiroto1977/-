@@ -1098,6 +1098,18 @@ npm run typecheck        # tsc -b --noEmit --force (uses tsconfig project refere
                          #   生えれば「教えろ」と落ちる)
 npm test                 # vitest run (src/**/__tests__/ 。件数は docs/ARCHITECTURE.md の表が持つ
                          #   — 数を 2 か所に書くと必ず食い違うので、ここには書かない)
+npm run audit:pinned-action-shas  # **workflow の SHA 固定の 40 桁が、実在の commit で、注記の版と
+                         #   同じ物か**を `git ls-remote` で実測する (定期点検の道具 12 本目。CI では走らせない ——
+                         #   落ちる理由が「網の不調」になり PR を無関係に赤くするため)。
+                         #   ★ **`lint:workflow-security` が見られるのは形まで** (40 桁の 16 進で終わる・
+                         #   `# v5` の注記がある) —— 実測 (2026-10-19): `ci.yml` の checkout の SHA を
+                         #   `c` の 40 桁に替えても門は **exit 0**。形は誰でも整えられる。
+                         #   判定: `match` (注記のタグが指す commit と一致 · annotated tag は peel 先) /
+                         #   `moved` (タグは別の commit を指すが SHA は実在 = 古い固定 · 警告 · exit 0) /
+                         #   `no-tag` `missing` (タグが無い / SHA が実在しない = 作り話か打ち間違い · exit 1) /
+                         #   網が使えず測れなければ **緑にしない** (exit 2)。実物 (2026-10-19): 31 か所 8 種類が全件 `match`。
+                         #   子プロセスは `git` だけで、repo・タグ・SHA は厳しい正規表現を通してから固定の形へ組む。
+                         #   形と配線は `shared/__tests__/pinnedActionShasTool.test.ts` が毎回の npm test で見る
 npm run audit:verify-keep-going  # **`verify:all` を止まらずに全ゲート回し、落ちた物を一度に挙げる**
                          #   (定期点検の道具 11 本目。CI では走らせない)。`verify:all` は `&&` 連結なので
                          #   最初に落ちたゲートで止まり、直して回し直すたびに次の 1 件が見える ——

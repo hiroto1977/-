@@ -2096,6 +2096,21 @@
         "file": "src/shared/__tests__/workflowSecurityWitness.test.ts",
         "test": "job の container: / services: のイメージもダイジェストで固定する (threat: T-123)"
       }
+    },
+    {
+      "id": "T-124",
+      "found": "2026-10-19",
+      "foundBy": "hunt pass 527 の backlog SC-5 の残り(SHA 実在)を pass 534 で道具にした",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "lint:workflow-security は SHA 固定の形(40 桁 + # v5 の注記)しか見ず、作り話・打ち間違いの SHA に版の注記を付けても exit 0 で通った(実測: ci.yml の checkout を 'c' の 40 桁に替えても緑)。実在の確認は git ls-remote が要り CI の決定的な門にできない",
+      "status": "mitigated",
+      "fix": "定期点検の道具 audit:pinned-action-shas (手で回す・CI 非搭載): 各 uses の repo・SHA・注記の版を git ls-remote(annotated tag は peel 先)で引き直し、match / moved(古い固定·警告) / no-tag / missing(作り話·exit 1) に分ける。網が使えなければ緑にせず exit 2。子プロセスは git だけで repo・タグ・SHA を厳しい正規表現を通してから固定の形へ組む。実物 31 か所 8 種類は全件 match。CI で自動に止める門ではない(検出であって阻止ではない)ため mitigated。",
+      "regression": {
+        "file": "src/shared/__tests__/pinnedActionShasTool.test.ts",
+        "test": "判定: タグが別の commit を指すとき、SHA が実在すれば moved (警告)・実在しなければ missing (落とす)"
+      }
     }
   ],
   "huntBacklog": [
@@ -2271,8 +2286,8 @@
     },
     {
       "surface": "supply-chain",
-      "item": "SC-5 の残り: SHA 固定の 40 桁が実在の commit (注記の版と同じ commit) かは機械で確かめられない",
-      "why": "2026-10-19 (パス 530 / 533): 門は形 (40 桁 16 進) と版の注記 (# v5) の有無までしか見られない。実在の確認は git ls-remote のネットワークが要るため CI の決定的な門にできない。候補は定期点検の道具 (audit:*) として、各 uses の <repo> と注記の版を git ls-remote で引き直して SHA が一致するか比べる形。(job の container: / services: のイメージ固定はパス 533 で T-123 として閉じた。)"
+      "item": "SC-5 の残り2: audit:pinned-action-shas を週次の定期実行(dependency-audit.yml)に載せるか",
+      "why": "2026-10-19 (パス 534): 道具は手で回す点検で、回さなければ作り話の SHA は検出されない。週次 workflow に載せれば自動で見える(予定実行なので誰の PR も赤くしない)が、workflow を足すこと自体が新しい実行面で、運用の判断(Issue 集約・権限・頻度)が要るためオーナー判断として残す。"
     }
   ],
   "clearedBacklog": [

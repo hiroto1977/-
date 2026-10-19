@@ -1,5 +1,17 @@
 # Service Hub — 残りの作業手順書
 
+## パス 534 (狩りの 24 回目 —— パス 527 の backlog SC-5 の残り: SHA 固定の実在確認) (2026-10-19)
+
+`lint:workflow-security` が見られるのは SHA 固定の**形** (40 桁の 16 進 + `# v5` の注記) までで、実在の確認は `git ls-remote` が要るので CI の決定的な門にできない (パス 530 が backlog に残した)。**実測 (再現)**: `ci.yml` の checkout の SHA を `c` の 40 桁に替えても門は exit 0。
+
+| 脅威 | 内容 | 留めた検査 |
+| --- | --- | --- |
+| T-124 (supply-chain・low・mitigated・SC-5 の残り) | 定期点検の道具 `audit:pinned-action-shas` (12 本目・手で回す・CI 非搭載)。各 `uses` の repo・SHA・注記の版を `git ls-remote` (annotated tag は peel 先) で引き直し、`match` / `moved` (タグは別 commit・SHA は実在 = 古い固定・警告 exit 0) / `no-tag` `missing` (作り話・exit 1) に分ける。網が使えなければ緑にしない (exit 2)。子プロセスは `git` だけで repo・タグ・SHA は厳しい正規表現を通してから固定の形に組む | `pinnedActionShasTool.test.ts` (+8 件)・`audit-pinned-action-shas.cjs --self-test` (17 件) |
+
+**実物**: 31 か所 (8 種類) が全件 `match`。**対照実験**: 作り話の SHA → `missing` exit 1 (既存の門は exit 0 のまま = 欠陥の再現)・古い実在の SHA (`checkout` v4.0.0) → `moved` exit 0・存在しない版の注記 → `no-tag` exit 1 (すべて実物の `git ls-remote` / `git fetch --depth=1` で確認)。テストの対照 3 方向 (moved/missing 反転 / unreachable を緑にする / 引数検証を外す) はそれぞれ狙った 1 件だけが落ち、復元は md5 で一致。
+
+**正直な限界**: 検出であって阻止ではない (回さなければ見えない)。週次の workflow に載せるかは運用の判断として backlog に残した (SC-5 の残り2)。`container:`/`services:` の固定はパス 533 で閉じ済み。
+
 ## パス 533 (狩りの 23 回目 —— パス 527 の backlog SC-5 の残り: job の container: / services: のイメージ固定) (2026-10-19)
 
 パス 530 は `uses: docker://` のダイジェスト固定を要求したが、job が実行環境として引く `container:` / `services:` のイメージ (`node:20` / `postgres:16`) は同じ供給網の入口なのに無縛だった。**今日の workflow は 0 件 (実測) — 罠の除去であって生きた欠陥ではない。**
