@@ -703,12 +703,24 @@ function ConnectionSetup({
               </pre>
             </div>
           ))}
-          <p style={{ margin: 0, fontSize: 11.5, color: 'var(--text-muted)' }}>
-            ※ <code>OLLAMA_ORIGINS</code> は「どのページからの読み取りを許可するか」の設定です。
-            上のコマンドはこのページのオリジンだけを許可します（
-            <code>*</code> は誰からでも読める状態になるため、単一ファイル版で
-            オリジンが特定できない場合の最後の手段です）。
-          </p>
+          {safeOrigin === '*' ? (
+            /*
+             * 配信元が file:// などで特定できないと、上のコマンドは `*` (どのウェブページからでも) を許可する。
+             * 以前の脚注は「上のコマンドはこのページのオリジンだけを許可します」と先に言い切り、`*` の
+             * 利用者にとっては偽だった (2026-10-20 · パス 543 · threat: T-132)。恒久設定にしないことを勧める。
+             */
+            <p role="note" data-ollama-wildcard-origin-warning style={{ margin: 0, fontSize: 11.5, color: 'var(--warning)' }}>
+              ⚠ このページの配信元を特定できないため、上のコマンドは <code>OLLAMA_ORIGINS=&quot;*&quot;</code>
+              （どのウェブページからでも）を許可します。ブラウザで開いた他のサイトが、この PC の Ollama を
+              読み書きできる状態になります。<strong>恒久設定にはせず</strong>、使うときだけターミナルで起動するか、
+              CORS の要らない <code>npm run ollama</code> やデスクトップ版を使ってください。
+            </p>
+          ) : (
+            <p style={{ margin: 0, fontSize: 11.5, color: 'var(--text-muted)' }}>
+              ※ <code>OLLAMA_ORIGINS</code> は「どのページからの読み取りを許可するか」の設定です。
+              上のコマンドはこのページのオリジンだけを許可します。
+            </p>
+          )}
         </div>
       )}
     </div>

@@ -98,3 +98,10 @@ describe('Ollama の案内 — 外から届く穴をあけさせない (threat: 
     expect(outside).toEqual([]);
   });
 });
+
+describe('Ollama の案内 — 配信元が特定できるときは、その origin だけを許可すると言う (threat: T-132 の対照)', () => {
+  it('警告は * の利用者にだけ出る (この環境の配信元は特定できる)', () => {
+    expect(container.querySelector('[data-ollama-wildcard-origin-warning]')).toBeNull();
+    expect(container.textContent ?? '').toContain('このページのオリジンだけを許可します');
+  });
+});

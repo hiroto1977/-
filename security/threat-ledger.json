@@ -2201,6 +2201,36 @@
         "file": "src/renderer/network/__tests__/proxyWorkerFailClosed.test.ts",
         "test": "配る Worker — 共有秘密が空なら閉じる (threat: T-130)"
       }
+    },
+    {
+      "id": "T-131",
+      "found": "2026-10-20",
+      "foundBy": "hunt pass 543(network/暗号の監査役 F-1)。実物の serializeEncryptedBackup / serializeBackup / parseBackupFile で再現",
+      "surface": "renderer",
+      "class": "ransomware-extortion",
+      "severity": "low",
+      "title": "合言葉の欄を埋めて復元しても、暗号化されていない(平文の)バックアップがそのまま受理された。平文の checksum は鍵なしの SHA-256 なので、バックアップ置き場(同期フォルダ・ダウンロード先)に書き込める者は中身を書き換えて計算し直せる。暗号化して守ったつもりの利用者に、偽の売上などが黙って取り込まれる(マージ復元では updatedAt を大きくした偽レコードが既存を上書きする)",
+      "status": "mitigated",
+      "fix": "BackupPanel の onRestore で、合言葉の欄が入力されているのにファイルが暗号化されていなければ取り込まず、理由と逃げ口(自分の平文バックアップなら欄を空にして選び直す)を述べる。平文バックアップは欄が空なら従来どおり復元できる(対照の検査つき)。平文の改ざん検知そのものは暗号化にしか無い(残余)。",
+      "regression": {
+        "file": "src/renderer/components/__tests__/restorePassphraseField.test.ts",
+        "test": "バックアップの復元 — 合言葉を入れたのに平文ファイルが来たら取り込まない (threat: T-131)"
+      }
+    },
+    {
+      "id": "T-132",
+      "found": "2026-10-20",
+      "foundBy": "hunt pass 543(network/暗号の監査役 F-2)。shellSafeOrigin を実物で呼んで再現",
+      "surface": "network",
+      "class": "ssrf-and-credential-egress",
+      "severity": "low",
+      "title": "配信元が file:// など(origin が \"null\")だと、Ollama 画面の案内コマンドは OLLAMA_ORIGINS=\"*\" に倒れ、macOS の launchctl・systemd・Windows のユーザー環境変数への永続設定にも入る。直前の脚注は「上のコマンドはこのページのオリジンだけを許可します」と言い切っており、この利用者には偽だった。永続の * は、ブラウザで開いた任意のサイトがローカルの Ollama を読み書きできる状態を作る",
+      "status": "mitigated",
+      "fix": "* に倒れる場合は、脚注を『どのウェブページからでも許可になる・恒久設定にはせず、使うときだけ起動するか CORS の要らない npm run ollama / デスクトップ版を使う』という警告に置き換える(特定できる origin のときは従来の説明)。ollamaWildcardOriginWarning.test.ts が * に倒れる配信元で警告の存在と偽の言い切りの不在を、ollamaExposureGuidance.test.ts が対照を留める。* のコマンド自体は残している(file:// 版の利用者に他の許可の書き方が無いため。Origin: null を許す最小の値は未確認)。",
+      "regression": {
+        "file": "src/renderer/pages/__tests__/ollamaWildcardOriginWarning.test.ts",
+        "test": "OllamaPage — 配信元が特定できないとき (threat: T-132)"
+      }
     }
   ],
   "huntBacklog": [

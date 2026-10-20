@@ -28,6 +28,15 @@ import { MAX_BACKUP_IMPORT_BYTES, readImportText } from '../data/importFile';
 export const ENCRYPTED_RESTORE_NEEDS_FIELD =
   '暗号化バックアップです。上の「暗号化パスワード」欄に合言葉を入力してから、もう一度ファイルを選んでください（合言葉はマスクされた欄でしか受け取りません）';
 
+/**
+ * 合言葉の欄が埋まっているのに、選んだファイルが暗号化されていないときの断り (2026-10-20 · パス 543 · threat: T-131)。
+ * 平文バックアップの checksum は鍵なしの SHA-256 なので、置き場に書き込める者は中身を書き換えて計算し直せる。
+ * 合言葉を入れた利用者は「暗号化して守ったつもり」なので、偽の平文ファイルを黙って受けてはいけない。
+ */
+export const PLAINTEXT_RESTORE_WITH_PASSPHRASE =
+  '合言葉の欄が入力されていますが、このファイルは暗号化されていません。暗号化されていないバックアップは改ざんを検知できないため、取り込みません。' +
+  '自分で作った平文のバックアップを戻すなら、合言葉の欄を空にしてからもう一度ファイルを選んでください。暗号化バックアップのつもりなら、ファイルがすり替えられていないか確認してください';
+
 export function BackupPanel() {
   const [msg, setMsg] = useState<string>();
   const [err, setErr] = useState<string>();
@@ -85,6 +94,10 @@ export function BackupPanel() {
           return;
         }
         pw = passphrase;
+      } else if (passphrase.length > 0) {
+        setErr(PLAINTEXT_RESTORE_WITH_PASSPHRASE);
+        if (fileRef.current) fileRef.current.value = '';
+        return;
       }
       const parsed = await parseBackupFile(text, pw);
       // 何が足され・上書きされ・残り・消えるかを**書く前に**数える (パス 129)。
