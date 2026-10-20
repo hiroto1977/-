@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { createServer, type Server } from 'node:http';
 import { execFile } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import os from 'node:os';
 import path from 'node:path';
@@ -105,6 +106,28 @@ describe('Ollama の公開の自己点検 (threat: T-129)', () => {
   it('実測: 127.0.0.1 だけで待ち受けるなら、公開されていないと判定される', async () => {
     const port = await listen('127.0.0.1');
     expect(await exposure.findExposed(os.networkInterfaces(), port)).toEqual([]);
+  });
+
+  it('CLI の exposure: 公開なら警告して終了コード 4、loopback だけなら 0', async () => {
+    const run = (port: number): Promise<{ code: number; out: string }> =>
+      new Promise((resolve) => {
+        execFile('node', [CLI, 'exposure', '--port', String(port)], { cwd: ROOT, timeout: 30_000 }, (err, stdout) => {
+          resolve({ code: err ? ((err as { code?: number }).code ?? 1) : 0, out: stdout });
+        });
+      });
+    const open = await run(await listen('0.0.0.0'));
+    expect(open.code).toBe(4);
+    expect(open.out).toContain('外から届くアドレスで待ち受けています');
+    const closed = await run(await listen('127.0.0.1'));
+    expect(closed.code).toBe(0);
+    expect(closed.out).toContain('待ち受けていません');
+  });
+
+  it('ollama-setup.sh が公開の点検を呼び、失敗させずに警告だけ出す', async () => {
+    const sh = readFileSync(path.join(ROOT, 'scripts', 'ollama-setup.sh'), 'utf8');
+    expect(sh).toContain('ollama-cli.cjs" exposure --port "$PORT"');
+    // 点検が 4 を返しても set -e で落ちない形 (if の条件に置く)。
+    expect(/if node "\$\(dirname "\$0"\)\/ollama-cli\.cjs" exposure/.test(sh)).toBe(true);
   });
 
   it('CLI: 公開されていれば警告を出し、loopback だけなら出さない', async () => {

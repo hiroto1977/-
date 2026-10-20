@@ -25,7 +25,7 @@
  * UI 版とまったく同じ (docs/OLLAMA_SECURITY.md)。/api/pull・/api/create・/api/push は
  * この CLI からも呼べない。
  *
- * 終了コード: 0 = 成功 / 1 = エラー / 2 = Ollama へ到達できない
+ * 終了コード: 0 = 成功 / 1 = エラー / 2 = Ollama へ到達できない / 4 = (exposure) 外へ公開されている
  */
 
 const fs = require('node:fs');
@@ -86,7 +86,7 @@ function parseArgs(argv) {
     else if (a === '--help' || a === '-h') out.cmd = 'help';
     else rest.push(a);
   }
-  if (rest[0] === 'chat' || rest[0] === 'status') {
+  if (rest[0] === 'chat' || rest[0] === 'status' || rest[0] === 'exposure') {
     out.cmd = rest[0];
     out.positional = rest.slice(1);
   } else if (rest.length > 0) {
@@ -248,6 +248,20 @@ async function cmdStatus(base, opts) {
   }
 }
 
+/**
+ * 公開の自己点検だけを行う (Ollama が応答しなくてもよい —— 待ち受けの有無だけを見る)。
+ * 終了コード: 0 = この PC の外から届くアドレスでは待ち受けていない / 4 = 待ち受けている。
+ * `ollama-setup.sh` が呼ぶ (T-129)。
+ */
+async function cmdExposure(base, opts) {
+  const portNum = Number(new URL(base).port);
+  const exposed = await exposure.findExposed(os.networkInterfaces(), portNum);
+  const note = exposure.exposureWarning(exposed, portNum);
+  if (opts.json) console.log(JSON.stringify({ port: portNum, exposedOn: exposed }, null, 2));
+  else console.log(note ?? `✅ ポート ${portNum} は、この PC の外から届くアドレスでは待ち受けていません`);
+  if (exposed.length > 0) process.exit(4);
+}
+
 async function cmdChat(base, opts) {
   const [model, ...promptParts] = opts.positional;
   const prompt = promptParts.join(' ');
@@ -308,6 +322,7 @@ function help() {
 
   npm run ollama                                   状態確認 (バージョン + モデル一覧)
   npm run ollama -- chat <モデル> "<プロンプト>"      1 往復のチャット
+  npm run ollama -- exposure                       外へ公開されていないかだけ調べる (公開なら終了コード 4)
   npm run ollama -- chat <モデル> "..." --system "…"  システムプロンプト付き
 
 オプション:
@@ -335,6 +350,7 @@ async function main() {
     process.exit(1);
   }
   if (opts.cmd === 'chat') await cmdChat(base, opts);
+  else if (opts.cmd === 'exposure') await cmdExposure(base, opts);
   else await cmdStatus(base, opts);
 }
 

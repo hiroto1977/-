@@ -137,6 +137,19 @@ if ! server_up; then
   exit 1
 fi
 
+# --- 2b. 外へ公開されていないか (Ollama は無認証) -------------------------
+# 失敗させない (利用者が LAN で使うと決めているかもしれない)。見せるだけ。
+step "2b. この PC の外から届く形で公開されていないか"
+if command -v node >/dev/null 2>&1; then
+  if node "$(dirname "$0")/ollama-cli.cjs" exposure --port "$PORT"; then
+    :
+  else
+    warn "上の警告を確認してください (Ollama には認証がありません)"
+  fi
+else
+  warn "node が無いため確認できません (npm run ollama -- exposure で後から確認できます)"
+fi
+
 # --- 3. モデル ------------------------------------------------------------
 step "3. モデル ${MODEL} があるか"
 TAGS="$(curl -fsS --max-time 10 "${BASE}/api/tags" || echo '')"
