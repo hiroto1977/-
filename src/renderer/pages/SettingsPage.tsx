@@ -1708,6 +1708,11 @@ export function ProxySection() {
             経由できます (中継先は Worker 側の allowlist に限られ、あなたの
             資格情報は渡りませんが、帯域と割り当ては消費されます)。
           </div>
+          <div data-proxy-worker-redeploy style={{ fontSize: 10, color: 'var(--text-mute)', lineHeight: 1.5 }}>
+            2026-10-20 以降の配布版の Worker は、Worker 側の SHARED_SECRET が空のままだと
+            すべての要求を 401 で断ります。それより前に配った Worker は空のままでも通すので、
+            作り直して SHARED_SECRET を設定し、ここにも同じ値を入れてください。
+          </div>
           <div style={{ display: 'flex', gap: 6 }}>
             <button
               type="button"

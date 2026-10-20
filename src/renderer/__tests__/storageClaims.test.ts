@@ -462,6 +462,14 @@ describe('BYO プロキシ — 共有秘密を省いたときの説明', () => {
     expect(SETTINGS).toMatch(/空欄[^。]*誰でも/);
   });
 
+  /* 配布版の Worker は秘密が空なら 401 で断る (threat: T-130)。旧い Worker を配った人へ作り直しを案内する。 */
+  it('★ 旧い Worker は空でも通す・新しい配布版は空なら 401、と述べて作り直しを案内する', () => {
+    expect(SETTINGS).toContain('data-proxy-worker-redeploy');
+    expect(SETTINGS).toContain('SHARED_SECRET が空のままだと');
+    expect(SETTINGS).toContain('401 で断ります');
+    expect(SETTINGS).toContain('作り直して SHARED_SECRET を設定し');
+  });
+
   /*
    * **逆向きが書かれていなかった (2026-08-25)。**
    *
