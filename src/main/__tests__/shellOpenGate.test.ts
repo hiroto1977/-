@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -289,4 +289,42 @@ describe('許可拡張子の中身 (表を読まずに字面で留める)', () =
       expect(await fresh(p, root)).toBeNull();
     },
   );
+});
+
+/*
+ * **根の外の字面は、realpath を呼ぶ前に落とす** (threat: T-138)。
+ * UNC (ホスト名つきの共有パス) は Windows では realpath が SMB/WebDAV 接続を起こしうる (NTLM ハッシュの送出)。
+ * 実測: 直す前は renderer の文字列がそのまま realpath に渡ってから null になった。
+ */
+describe('shellTargetOrNull — realpath の前に字面の閉じ込めを見る (threat: T-138)', () => {
+  const OUTSIDE = [
+    '\\\\attacker.example\\share\\report.html',
+    '//attacker.example/share/report.html',
+    '\\\\?\\UNC\\attacker.example\\share\\report.html',
+    '/etc/passwd.html',
+    '../../../../etc/x.html',
+  ];
+
+  it.each(OUTSIDE)('★ 根の外 (%s) は realpath を 1 度も呼ばずに断る', async (target) => {
+    const spy = vi.spyOn(fs, 'realpath');
+    try {
+      const fresh = shellTargetOrNull;
+      expect(await fresh(target, root)).toBeNull();
+      expect(spy).not.toHaveBeenCalled();
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
+  it('対照: 根の中の本物のファイルは、これまでどおり realpath を通って開ける', async () => {
+    const spy = vi.spyOn(fs, 'realpath');
+    try {
+      const fresh = shellTargetOrNull;
+      const p = await make('ok.html');
+      expect(await fresh(p, root)).not.toBeNull();
+      expect(spy).toHaveBeenCalled();
+    } finally {
+      spy.mockRestore();
+    }
+  });
 });

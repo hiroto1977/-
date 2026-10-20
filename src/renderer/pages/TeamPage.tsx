@@ -2,6 +2,8 @@ import { useMemo, useState } from 'react';
 import { Section } from '../components/StatusBar';
 import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
+import { useRowWindow } from '../data/useRowWindow';
+import { RowWindowMore } from '../components/RowWindowMore';
 import { readRecordsNow, unreadableForJudgementNote, vanishedRecordNote } from '../data/readCollectionNow';
 import { fireReported } from '../data/deviceStoreFailure';
 import { usePlan } from '../plan/usePlan';
@@ -210,6 +212,8 @@ function PayrollPanel() {
 export function TeamPage() {
   const { plan } = usePlan();
   const { records, add, edit, remove, reload } = useCollection<Member>(MEMBERS_COLLECTION);
+  // 窓 (threat: T-141): 全行を描くと、細工した大量行の控えで画面が固まる。
+  const rowWindow = useRowWindow(records);
   const [form, setForm] = useState(EMPTY);
   const [error, setError] = useState<string>();
   const submit = useSubmitGuard();
@@ -380,6 +384,7 @@ export function TeamPage() {
             まだメンバーがいません。最初のオーナーを招待してください。
           </p>
         ) : (
+          <>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
             <thead>
               <tr style={{ textAlign: 'left', color: 'var(--text-mute)' }}>
@@ -390,7 +395,7 @@ export function TeamPage() {
               </tr>
             </thead>
             <tbody>
-              {records.map((r) => (
+              {rowWindow.visible.map((r) => (
                 <tr key={r.id} style={{ borderTop: '1px solid var(--border)' }}>
                   <td style={{ padding: '4px 8px' }}>{displayField(r.data.name, MAX_MEMBER_NAME_CHARS)}</td>
                   <td style={{ padding: '4px 8px', color: 'var(--text-mute)' }}>{displayField(r.data.email, MAX_MEMBER_EMAIL_LEN)}</td>
@@ -427,6 +432,8 @@ export function TeamPage() {
               ))}
             </tbody>
           </table>
+          <RowWindowMore hidden={rowWindow.hidden} total={rowWindow.total} showMore={rowWindow.showMore} />
+          </>
         )}
       </Section>
 

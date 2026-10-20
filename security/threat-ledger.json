@@ -2231,6 +2231,141 @@
         "file": "src/renderer/pages/__tests__/ollamaWildcardOriginWarning.test.ts",
         "test": "OllamaPage — 配信元が特定できないとき (threat: T-132)"
       }
+    },
+    {
+      "id": "T-133",
+      "found": "2026-10-20",
+      "foundBy": "hunt pass 544(内部の監査役・バックドア面)。タグ文字で書いた命令が全ゲートを通ることを実測",
+      "surface": "supply-chain",
+      "class": "ai-phishing",
+      "severity": "medium",
+      "title": "エージェントが読む指示書 (CLAUDE.md・docs・.claude・.cursor/rules) へ、Unicode のタグ文字 (U+E0000 帯) や異体字選択子の補助面で人の目に見えない命令を忍ばせられる (ASCII smuggling)。lint:charset の不可視文字の群は BMP だけで、走査の置き場にも .claude / .cursor / .mdc が無かった。セッション開始のたびに読まれる文書なので、間接プロンプトインジェクションの入口になる",
+      "status": "mitigated",
+      "fix": "INVISIBLE_RANGES に補助面の規則 (u フラグ) と BMP の紛らわしい不可視字の規則を足し、SCAN_DIRS に .claude / .cursor、SCAN_EXTS に .mdc を足した。既存の文書に混ざっていた不可視字は文字として書き直した。lintCharsetAsciiSmuggling.test.ts がタグ文字の隠し命令・異体字選択子・走査範囲を留める。",
+      "regression": {
+        "file": "src/shared/__tests__/lintCharsetAsciiSmuggling.test.ts",
+        "test": "lint:charset — 補助面の不可視文字 (threat: T-133)"
+      }
+    },
+    {
+      "id": "T-134",
+      "found": "2026-10-20",
+      "foundBy": "hunt pass 544(内部の監査役)。偽 Ollama の応答で端末へ素の ESC が出ることを実測",
+      "surface": "main-ipc",
+      "class": "ai-phishing",
+      "severity": "low",
+      "title": "ollama CLI (npm run ollama / ollama:setup) が、Ollama の応答 (版・モデル詳細・チャット本文) をそのまま端末へ刷る。利用者が設定したホストの応答に ESC / BEL / RLO があれば、端末の画面消去・タイトル書き換え・表示順の入れ替えで偽の指示を見せられる",
+      "status": "mitigated",
+      "fix": "刷る口を say / sayErr / sayJson の 3 つに限り、制御文字を見える形へ逃がす (JSON は値を変えずに \\uXXXX へ)。ollamaCliTerminalSafe.test.ts が status / chat / --json の 3 経路で偽 Ollama の制御列が素で刷られないことを留める。",
+      "regression": {
+        "file": "src/shared/__tests__/ollamaCliTerminalSafe.test.ts",
+        "test": "ollama CLI — 端末制御列を素で刷らない (threat: T-134)"
+      }
+    },
+    {
+      "id": "T-135",
+      "found": "2026-10-20",
+      "foundBy": "hunt pass 544(AI 面の監査役)。main と shim の受理集合の差を実測",
+      "surface": "network",
+      "class": "ssrf-and-credential-egress",
+      "severity": "low",
+      "title": "ブラウザ版 shim が chat / chatAll の model と stocks/advise の universe を、main の handler と同じ形の関門に通さず、鍵を使う・ネットワークへ出る前に素通りさせていた (main は断る)。デスクトップ版とブラウザ版で受理集合が割れ、形の合わない値がそのまま提供者へのパス・本文へ入る",
+      "status": "mitigated",
+      "fix": "web-shim に readRequestedModel (isSafeModelName) と universe の isSafeSymbol 検査を足し、main と同じ文面で断る。webShimRequestedModel.test.ts が断る側と通る側の対照を留める。",
+      "regression": {
+        "file": "src/renderer/__tests__/webShimRequestedModel.test.ts",
+        "test": "ブラウザ版: model の形が正しくなければ、鍵を使う前・ネットワークへ出る前に断る (threat: T-135)"
+      }
+    },
+    {
+      "id": "T-136",
+      "found": "2026-10-20",
+      "foundBy": "hunt pass 544(AI 面の監査役)。4 カテゴリの 1 字で判定が false になることを実測",
+      "surface": "ai",
+      "class": "ai-phishing",
+      "severity": "medium",
+      "title": "危機語の検出 (detectCrisis) の正規化が、間に挟まれた Cf / Mn / Z / Cc だけを落としていたので、一般カテゴリ Me (囲み記号)・Mc (結合の間隔字)・Co (私用領域)・Cn (未割当) の 1 字を挟むだけで相談窓口の表示を素通りさせられた。つらいと打った人に番号が出ない",
+      "status": "mitigated",
+      "fix": "FILLER_CHARS に \\p{Me}\\p{Mc}\\p{Co}\\p{Cn} を足した。counseling.test.ts が 4 カテゴリそれぞれで危機判定が保たれることを留める。",
+      "regression": {
+        "file": "src/renderer/data/__tests__/counseling.test.ts",
+        "test": "detectCrisis — 挟まった字の一般カテゴリ (threat: T-136)"
+      }
+    },
+    {
+      "id": "T-137",
+      "found": "2026-10-20",
+      "foundBy": "hunt pass 544(main/IPC の監査役)。許可一覧を総当たりして実測",
+      "surface": "main-ipc",
+      "class": "living-off-the-land",
+      "severity": "medium",
+      "title": "デスクトップ版の窓が clipboard-read を許していた。正当な読み手は LockScreen (復元フレーズの 30 秒後の消去) だけで、その画面はブラウザ版でしか描かれない。乗っ取られたレンダラーが利用者のクリップボード (パスワード・2FA コード) をジェスチャ無しで黙って読めた (実 Electron で readText() が resolve した)",
+      "status": "mitigated",
+      "fix": "ALLOWED_PERMISSIONS を clipboard-sanitized-write だけにした (ブラウザ版は main の許可表を通らないので消去の機能は変わらない)。mainWindow.test.ts が Electron の型定義から採った全権限名で『許すのは書き込み 1 つだけ』を要求する。",
+      "regression": {
+        "file": "src/main/__tests__/mainWindow.test.ts",
+        "test": "★ Electron が挙げる権限のうち、許すのはクリップボードへの書き込みだけ (threat: T-137)"
+      }
+    },
+    {
+      "id": "T-138",
+      "found": "2026-10-20",
+      "foundBy": "hunt pass 544(main/IPC の監査役)",
+      "surface": "main-ipc",
+      "class": "living-off-the-land",
+      "severity": "medium",
+      "title": "shellTargetOrNull が realpath を先に呼んでから根の中かを見ていたので、レンダラーから UNC (ホスト名つきの共有パス) を渡されると、根の外でも realpath が呼ばれ、Windows では SMB/WebDAV 接続 (NTLM ハッシュの送出) を起こしうる",
+      "status": "mitigated",
+      "fix": "realpath の前に字面の閉じ込めを見て、根の外は即 null にする。shellOpenGate.test.ts が根の外の字面で realpath が呼ばれないことと、根の中の本物のファイルは従来どおり開けることを留める。",
+      "regression": {
+        "file": "src/main/__tests__/shellOpenGate.test.ts",
+        "test": "shellTargetOrNull — realpath の前に字面の閉じ込めを見る (threat: T-138)"
+      }
+    },
+    {
+      "id": "T-139",
+      "found": "2026-10-20",
+      "foundBy": "hunt pass 544(main/IPC の監査役)",
+      "surface": "main-ipc",
+      "class": "ssrf-and-credential-egress",
+      "severity": "low",
+      "title": "OAuth の authorize が並行に何本でも始められ、呼ぶたびに 127.0.0.1 の待受 socket とブラウザのタブが増える (実測: 乗っ取られたレンダラーの 800 呼び出しで待受 803 本が残り、同意画面が氾濫)。ブラウザを開く呼び出しが失敗しても待受が 5 分生き残った",
+      "status": "mitigated",
+      "fix": "authorizeInFlight で認可は同時に 1 つだけにし、終われば次を受ける。openExternal が失敗したときは待ち受けを解除する。mainIpc.test.ts が 2 つ目の断りと終了後の再開を留める。",
+      "regression": {
+        "file": "src/main/__tests__/mainIpc.test.ts",
+        "test": "★ 認可は同時に 1 つだけ: 進行中の間の 2 つ目は始めずに断り、終われば次を受ける (threat: T-139)"
+      }
+    },
+    {
+      "id": "T-140",
+      "found": "2026-10-20",
+      "foundBy": "hunt pass 544(main/IPC の監査役)。fuse 既定値の読みから",
+      "surface": "main-ipc",
+      "class": "ssrf-and-credential-egress",
+      "severity": "medium",
+      "title": "Electron の fuse grantFileProtocolExtraPrivileges が既定で有効なため、(XSS などで) レンダラーが乗っ取られると fetch('file:///…') でローカルファイルを読める。fuse を切るとプロトコル経由の asar 読み込みが壊れるので切れない",
+      "status": "mitigated",
+      "fix": "窓の session に webRequest.onBeforeRequest の file:// の門 (fileRequestAllowed) を付け、同梱の dist/ の中以外の file:// 要求をキャンセルする。実物の Electron で dist/index.html が読み込まれること (smoke:app と DevTools の url) を確認した。fileRequestGate.test.ts が dist の中は許可・外とトラバーサル・UNC を拒否することを、mainWindow.test.ts が門を窓の session に付けていることを留める。",
+      "regression": {
+        "file": "src/main/__tests__/fileRequestGate.test.ts",
+        "test": "fileRequestAllowed (threat: T-140)"
+      }
+    },
+    {
+      "id": "T-141",
+      "found": "2026-10-20",
+      "foundBy": "hunt pass 544(renderer の監査役)。細工した backup を Playwright の実 Chromium で復元して実測",
+      "surface": "renderer",
+      "class": "ransomware-extortion",
+      "severity": "medium",
+      "title": "復元に件数の天井が無く、窓を掛けていない一覧 (チーム・事業・手入力) が、形の正しい行を大量に並べた細工の backup 1 つで使えなくなる。team-members 20,000 行 (3.2 MB) で画面 9.7 秒・50,000 行で 27.8 秒、business-units 200,000 行では全画面に載る手入力パネルが 32 秒固まった。既定は確認の出ないマージで、checksum は鍵なしなので攻撃者が計算できる。点検パネルは形の不正な行しか消せず、実質の回復は全消去だけ",
+      "status": "mitigated",
+      "fix": "復元の前に件数を数え、全体 200,000 件・窓を掛けていない一覧の collection ごとの天井(team-members 5,000 / business-units 2,000 / manual-metrics・overrides 20,000)を超える控えは、切らずに全部断る(backupRecordLimitError)。TeamPage の一覧は useRowWindow + RowWindowMore を通す。backupRecordLimit.test.ts が境界・対照・復元画面が計画より前に見ること・チームの窓を留める。",
+      "regression": {
+        "file": "src/renderer/data/__tests__/backupRecordLimit.test.ts",
+        "test": "復元の件数の天井 (threat: T-141)"
+      }
     }
   ],
   "huntBacklog": [

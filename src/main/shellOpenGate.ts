@@ -78,6 +78,10 @@ export async function shellTargetOrNull(
   // NUL / 改行はパスの分断に使われうる。解決の前に落とす。
   if (/[\0\r\n]/.test(filePath)) return null;
   const resolved = path.resolve(filePath);
+  // 字面の閉じ込めを**先に**見る (threat: T-138)。以前は realpath が先で、UNC (ホスト名つきの共有パス) を
+  // レンダラーから渡されると、根の外でも realpath が呼ばれ、Windows ではそれが SMB/WebDAV 接続
+  // (NTLM ハッシュの送出) を起こしうる。根の外の字面は実体を調べる価値が無い。
+  if (!resolved.startsWith(root + path.sep)) return null;
   // 閉じ込めを見る前に symlink を実体まで辿る。存在しないファイルは
   // 字面のまま残す — その場合は開く側が失敗するので、ここでは通してよい。
   const real = await fs.realpath(resolved).catch(() => resolved);

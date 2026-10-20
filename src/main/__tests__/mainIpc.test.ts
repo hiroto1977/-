@@ -870,6 +870,28 @@ describe('oauth:isSupported / oauth:authorize', () => {
     }
   });
 
+  it('★ 認可は同時に 1 つだけ: 進行中の間の 2 つ目は始めずに断り、終われば次を受ける (threat: T-139)', async () => {
+    let release: (v: unknown) => void = () => undefined;
+    authorizeResult = new Promise((resolve) => {
+      release = resolve;
+    });
+    const first = invoke('oauth:authorize', 'github') as Promise<{ ok: boolean }>;
+    // 2 つ目以降は待受を作らない (authorize を呼ばない)。
+    await Promise.resolve();
+    const second = (await invoke('oauth:authorize', 'github')) as { ok: boolean; code: string };
+    const third = (await invoke('oauth:authorize', 'github', 'abcdefgh.apps.googleusercontent.com')) as { code: string };
+    expect(second).toMatchObject({ ok: false, code: 'authorize_busy' });
+    expect(third.code).toBe('authorize_busy');
+    expect(authorizeConfigs).toHaveLength(1);
+    release({ accessToken: 'SECRET_AT', refreshToken: 'SECRET_RT', scope: 'repo', expiresAt: 999 });
+    expect((await first).ok).toBe(true);
+    // 対照: 終わったあとは次の認可を受ける (フラグが残らない)。失敗で終わった場合も同じ。
+    authorizeResult = new Error('user cancelled');
+    expect(((await invoke('oauth:authorize', 'github')) as { code: string }).code).toBe('authorize_failed');
+    authorizeResult = { accessToken: 'a', refreshToken: 'r', scope: 'repo', expiresAt: 1 };
+    expect(((await invoke('oauth:authorize', 'github')) as { ok: boolean }).ok).toBe(true);
+  });
+
   it('OAuth 設定が無いサービスは断る', async () => {
     const r = (await invoke('oauth:authorize', 'notion')) as { ok: boolean; code: string };
     expect(r).toEqual({

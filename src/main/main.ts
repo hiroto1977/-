@@ -17,6 +17,7 @@ import type { OsOpResult, TokenSaveResult } from '../preload/preload';
 import { safeErrorMessage } from './clients/types';
 import { externalUrlOrNull } from '../shared/externalUrlGate';
 import { shellTargetOrNull } from './shellOpenGate';
+import { fileRequestAllowed } from './fileRequestGate';
 import { evaluateUpdate, parseLatestRelease, type UpdateVerdict } from '../shared/updateCheck';
 import {
   DEFAULT_HTTP_TIMEOUT_MS,
@@ -104,12 +105,14 @@ function createWindow(): BrowserWindow {
    * **万一レンダラーへ任意コードが入った場合に、マイク・カメラ・位置情報が
    * 確認なしで開くかどうか**はここで決まる。既定のままだと開く。
    *
-   * 許すのはクリップボードの 2 つだけ:
+   * 許すのはクリップボードへの**書き込み**だけ (2026-10-20 · パス 543 · threat: T-137):
    *
-   * - `clipboard-read` —— `LockScreen.tsx` が**復元フレーズを 30 秒後に
-   *   消す**ために使う。「まだ自分がコピーした値のままか」を読んでから
-   *   空にするので、読めないと**消せずに残る**。security のための読み取り。
-   * - `clipboard-sanitized-write` —— 上の消去と、各画面のコピーボタン。
+   * - `clipboard-sanitized-write` —— 各画面のコピーボタン。
+   * - `clipboard-read` は**外した**。読み手は `LockScreen.tsx` (復元フレーズを 30 秒後に消すために
+   *   「まだ自分がコピーした値か」を読む) だけで、その画面は `App.tsx` が `browserMode` のときにしか
+   *   描かない。デスクトップ版に正当な読み手が無いのに許していたので、乗っ取られたレンダラーが
+   *   利用者のクリップボード (パスワード・2FA コード) をジェスチャ無しで黙って読めた
+   *   (実 Electron で `readText()` が resolve した)。ブラウザ版は main の許可表を通らない。
    *
    * それ以外 (media / geolocation / notifications / midi / display-capture /
    * hid / serial / usb / idle-detection / window-management …) は**全部拒否**。
@@ -124,10 +127,7 @@ function createWindow(): BrowserWindow {
    * この実測は嘘になるのに何も鳴らない、という形だった。いまは両方向に鳴る:
    * API を足せば走査が落ち、許可表を広げれば `mainWindow.test.ts` が落ちる。
    */
-  const ALLOWED_PERMISSIONS: ReadonlySet<string> = new Set([
-    'clipboard-read',
-    'clipboard-sanitized-write',
-  ]);
+  const ALLOWED_PERMISSIONS: ReadonlySet<string> = new Set(['clipboard-sanitized-write']);
   /**
    * 判定は**ここ 1 つ**。要求側 (`setPermissionRequestHandler`) と
    * 問い合わせ側 (`setPermissionCheckHandler`) の 2 つの口があり、
@@ -149,6 +149,15 @@ function createWindow(): BrowserWindow {
    * **見ていた物が、設定した物と違っていた。**
    */
   win.webContents.session.setSpellCheckerEnabled(false);
+
+  /*
+   * レンダラーの `file://` 読み取りを同梱の `dist/` に閉じ込める (threat: T-140)。出荷の fuse の形
+   * (`grantFileProtocolExtraPrivileges`) に依らず、任意のローカルファイルを fetch/XHR で読ませない。
+   */
+  const distRoot = path.join(__dirname, '..', 'dist');
+  win.webContents.session.webRequest.onBeforeRequest({ urls: ['file://*/*'] }, (details, callback) => {
+    callback({ cancel: !fileRequestAllowed(details.url, distRoot) });
+  });
 
   win.webContents.session.setPermissionRequestHandler((_wc, permission, callback) => {
     callback(permissionAllowed(permission));
@@ -609,6 +618,14 @@ ipcMain.handle('oauth:isSupported', (_e, serviceId: unknown) =>
 // 制御文字・空白などの混入を IPC 境界で拒否する。
 const CLIENT_ID_RE = /^[A-Za-z0-9._-]{8,200}$/;
 
+/**
+ * 認可は**同時に 1 つだけ** (2026-10-20 · パス 543 · threat: T-139)。呼ぶたびに 127.0.0.1 の待受 socket と
+ * ブラウザのタブが 1 つ増え、完了しない認可は 5 分生き残る。乗っ取られたレンダラーが
+ * 上書きの clientId つきで並行に叩くと、実測で 800 呼び出し → 待受 803 本が残り、ブラウザへ同意画面が
+ * 氾濫した。正当な利用者は 1 度に 1 つのサービスしか認可しない。
+ */
+let authorizeInFlight = false;
+
 ipcMain.handle('oauth:authorize', async (_e, serviceId: unknown, clientIdOverride?: unknown) => {
   if (!isServiceId(serviceId)) {
     return { ok: false, code: 'not_supported', message: 'unknown service id' };
@@ -631,11 +648,21 @@ ipcMain.handle('oauth:authorize', async (_e, serviceId: unknown, clientIdOverrid
       message: 'このサービスは OAuth 未対応、または OAuth クライアント ID 未設定',
     };
   }
+  if (authorizeInFlight) {
+    return {
+      ok: false,
+      code: 'authorize_busy',
+      message: '別の認可が進行中です。開いたブラウザでの手続きを終えるか、5 分ほど待ってからやり直してください',
+    };
+  }
+  authorizeInFlight = true;
   try {
     const tokens = await authorize(config);
     await setOAuthTokens(serviceId, tokens);
     return { ok: true, data: { scope: tokens.scope, expiresAt: tokens.expiresAt } };
   } catch (err) {
     return { ok: false, code: 'authorize_failed', message: safeErrorMessage(err) };
+  } finally {
+    authorizeInFlight = false;
   }
 });

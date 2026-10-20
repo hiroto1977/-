@@ -81,6 +81,38 @@ export const CSV_TOO_MANY_ERRORS_MESSAGE = `誤りのある行が ${MAX_CSV_ROW_
 export const MAX_BACKUP_IMPORT_BYTES = 256 * MiB;
 
 /**
+ * 復元できる記録の件数の天井 (2026-10-20 · パス 544 · threat: T-141)。バイト数の天井だけでは、
+ * 形が正しい行を大量に並べた細工の控えが通る。窓を掛けていない一覧 (チーム・事業・手入力) は
+ * 全行を描くので、実測で team-members 20,000 行 (3.2 MB) の画面が 9.7 秒、50,000 行で 27.8 秒
+ * 固まり、business-units 200,000 行では全画面の手入力パネルが 32 秒固まった。
+ * 超える控えは**切らずに断る** (切ると黙って欠ける)。正当な利用はどれも桁が 1〜3 つ下。
+ */
+export const MAX_BACKUP_IMPORT_RECORDS = 200_000;
+/** 窓を掛けていない一覧を描く collection の天井 (全件を描くので、少ない数で止める)。 */
+export const BACKUP_COLLECTION_RECORD_LIMITS: Readonly<Record<string, number>> = {
+  'team-members': 5_000,
+  'business-units': 2_000,
+  'manual-metrics': 20_000,
+  'manual-overrides': 20_000,
+};
+
+/** 控えの件数が天井を超えていれば断りの文、収まっていれば null。 */
+export function backupRecordLimitError(records: readonly { readonly collection: string }[]): string | null {
+  if (records.length > MAX_BACKUP_IMPORT_RECORDS) {
+    return `バックアップの記録が多すぎます（${MAX_BACKUP_IMPORT_RECORDS.toLocaleString('ja-JP')} 件まで）。復元はしていません。`;
+  }
+  const counts = new Map<string, number>();
+  for (const r of records) counts.set(r.collection, (counts.get(r.collection) ?? 0) + 1);
+  for (const [collection, limit] of Object.entries(BACKUP_COLLECTION_RECORD_LIMITS)) {
+    const n = counts.get(collection) ?? 0;
+    if (n > limit) {
+      return `バックアップの「${collection}」が多すぎます（${limit.toLocaleString('ja-JP')} 件まで・この控えは ${n.toLocaleString('ja-JP')} 件）。復元はしていません。`;
+    }
+  }
+  return null;
+}
+
+/**
  * `File` のうち、読む前に分かる分 (`size`) と読む手段 (`text`) だけ。
  * 本物の `File` はこの形を満たす。テストは巨大なファイルを実際に作らずに `size` だけ偽装できる。
  */

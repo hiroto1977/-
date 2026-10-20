@@ -501,3 +501,19 @@ describe('detectCrisis / detectHarmToOthers — ひらがな・口語・否定�
     }
   });
 });
+
+/**
+ * 危機語の間に挟む「見えない・何も足さない」字の一般カテゴリ (2026-10-20 · パス 543 ·
+ * threat: T-136)。FILLER_CHARS が Cf/Mn/Z/Cc だけだったので、Me・Mc・Co・Cn の 1 字で
+ * 相談窓口の判定を素通りさせられた。
+ */
+describe('detectCrisis — 挟まった字の一般カテゴリ (threat: T-136)', () => {
+  it.each([
+    ['囲み記号 U+20DD (Me)', '\u6B7B\u20DD\u306B\u305F\u3044'],
+    ['結合の間隔字 U+0903 (Mc)', '\u6B7B\u0903\u306B\u305F\u3044'],
+    ['私用領域 U+E000 (Co)', '\u6B7B\uE000\u306B\u305F\u3044'],
+    ['未割当 U+FFFF (Cn)', '\u6B7B\uFFFF\u306B\u305F\u3044'],
+  ])('★ %s を挟んでも危機と判定する (threat: T-136)', (_name, text) => {
+    expect(detectCrisis(text)).toBe(true);
+  });
+});

@@ -16,7 +16,7 @@ import {
 } from '../data/backup';
 import { isEncryptionEnabled } from '../data/recordEncryption';
 import { localIsoDate } from '../../shared/localDate';
-import { MAX_BACKUP_IMPORT_BYTES, readImportText } from '../data/importFile';
+import { MAX_BACKUP_IMPORT_BYTES, backupRecordLimitError, readImportText } from '../data/importFile';
 
 /**
  * Backup / restore the entire local record store (sales, KPI actuals, team
@@ -100,6 +100,13 @@ export function BackupPanel() {
         return;
       }
       const parsed = await parseBackupFile(text, pw);
+      // 件数の天井 (T-141): 計画を立てる前に断る。切って入れず、全部やめる。
+      const limitRefusal = backupRecordLimitError(parsed.records);
+      if (limitRefusal !== null) {
+        setErr(limitRefusal);
+        if (fileRef.current) fileRef.current.value = '';
+        return;
+      }
       // 何が足され・上書きされ・残り・消えるかを**書く前に**数える (パス 129)。
       // 封筒 (id / updatedAt) は封緘済みでも平文なので exportAll で読める。
       const store = getRecordStore();

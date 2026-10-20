@@ -808,7 +808,15 @@ export async function authorize(config: OAuthConfig, fetchFn: FetchFn = fetch): 
     throw new Error('OAuth authorization URL was rejected by the external-URL gate');
   }
 
-  await shell.openExternal(safeAuthorizeUrl);
+  // ブラウザを開けなかったら待受を閉じる (threat: T-139)。以前は reject すると listener が 5 分生き残った。
+  try {
+    await shell.openExternal(safeAuthorizeUrl);
+  } catch (e) {
+    listener.cancel();
+    // cancel() が reject する待ちを先に消費する (未処理の拒否にしない)。
+    await listener.catch(() => undefined);
+    throw e;
+  }
 
   const { code } = await listener;
 

@@ -352,11 +352,12 @@ const CARE_DISCLAIMER =
 /**
  * 語の途中に挟んで照合をすり抜けさせる字 (パス 524 · T-073)。書式制御・結合記号に加え、
  * 空白 (全角・NBSP・改行・タブ)・制御・句読点・記号・Default_Ignorable (ハングルの
- * 空白 U+3164 / 半角ﾠ ほか) と点字の空白 U+2800 (記号 So だが空白として描かれる)。
+ * 空白 U+3164 / 半角(U+FFA0) ほか) と点字の空白 U+2800 (記号 So だが空白として描かれる)。
+ * 囲み記号 (Me)・結合の間隔字 (Mc)・私用領域 (Co)・未割当 (Cn) も落とす (2026-10-20 · パス 543 · T-136 —— 挟むと外れた)。
  * どれも描画では語を変えない。**畳みすぎる向き** (離れた 2 語が繋がる) の誤りは窓口を
  * 案内するだけで、この判定の設計上の既定 (安全側) に合う。「ー」(長音) は Lm なので残る。
  */
-const FILLER_CHARS = /[\p{Cf}\p{Mn}\p{Z}\p{Cc}\p{P}\p{S}\p{Default_Ignorable_Code_Point}\u2800]/gu;
+const FILLER_CHARS = /[\p{Cf}\p{Mn}\p{Me}\p{Mc}\p{Z}\p{Cc}\p{Co}\p{Cn}\p{P}\p{S}\p{Default_Ignorable_Code_Point}\u2800]/gu;
 
 export function foldForMarkerMatch(text: string): string {
   return text

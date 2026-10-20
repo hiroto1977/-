@@ -291,9 +291,10 @@ describe('題名の pattern と lint:charset の群 (+ 改行・タブ) は BMP 
     }
     expect(mismatch).toEqual([]);
     // 断る字の数そのもの: C0 (Tab・LF・CR を含む) 32 + DEL 1 + C1 32
-    // + 双方向制御 11 (U+200E/F・U+202A〜E・U+2066〜9) + 不可視 8 (U+00AD・U+200B・U+2060〜4・U+FEFF) = 84。
+    // + 双方向制御 11 (U+200E/F・U+202A〜E・U+2066〜9) + 不可視 8 (U+00AD・U+200B・U+2060〜4・U+FEFF)
+    // + 空に見える BMP の字 36 (パス 543 · T-133: U+034F・061C・115F・1160・17B4/5・180E・2028/9・206A〜F・2800・3164・FE00〜E・FFA0・FFF9〜B) = 120。
     // ZWJ / ZWNJ (U+200C/D) は絵文字の連結に要るので数えない (lint:charset と同じ判断)。
-    expect(unsafe).toBe(84);
+    expect(unsafe).toBe(120);
   });
 
   it('標本: 絵文字の連結 (ZWJ) と普通の文は通り、ESC・RLO・タブは断る', () => {

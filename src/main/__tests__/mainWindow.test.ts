@@ -31,6 +31,8 @@ interface Captured {
   devToolsOpened: boolean;
   devToolsMode: string | null;
   spellChecker: boolean | null;
+  fileGateFilter: { urls: string[] } | null;
+  fileGate: ((d: { url: string }, cb: (r: { cancel: boolean }) => void) => void) | null;
 }
 
 let captured: Captured;
@@ -56,6 +58,8 @@ function freshCapture(): Captured {
     devToolsOpened: false,
     devToolsMode: null,
     spellChecker: null,
+    fileGateFilter: null,
+    fileGate: null,
   };
 }
 
@@ -91,6 +95,15 @@ vi.mock('electron', () => ({
         },
         setSpellCheckerEnabled: (v: boolean) => {
           captured.spellChecker = v;
+        },
+        webRequest: {
+          onBeforeRequest: (
+            filter: { urls: string[] },
+            fn: (d: { url: string }, cb: (r: { cancel: boolean }) => void) => void,
+          ) => {
+            captured.fileGateFilter = filter;
+            captured.fileGate = fn;
+          },
         },
       },
       setWindowOpenHandler: (fn: (d: { url: string }) => unknown) => {
@@ -390,6 +403,24 @@ describe('権限要求 — 既定は拒否、クリップボードだけ許す',
     expect(c.spellChecker, 'session 側の綴り検査を切っていない').toBe(false);
   });
 
+  it('★ file:// の読み取りは同梱の dist/ に閉じ込める — 窓が作る session に要求の門を付けている (threat: T-140)', async () => {
+    const c = await loadMain({ packaged: true });
+    expect(c.fileGateFilter, 'webRequest.onBeforeRequest が無い').toEqual({ urls: ['file://*/*'] });
+    const decide = (url: string): boolean => {
+      let cancelled: boolean | null = null;
+      c.fileGate!({ url }, (r) => {
+        cancelled = r.cancel;
+      });
+      return cancelled === false;
+    };
+    // main.ts の __dirname は src/main (出荷では dist-electron) なので、根は <その親>/dist。
+    const dist = path.join(__dirname, '..', '..', 'dist');
+    const inside = `file://${path.join(dist, 'index.html').split(path.sep).join('/')}`;
+    expect(decide(inside)).toBe(true);
+    expect(decide('file:///etc/passwd')).toBe(false);
+    expect(decide('file://attacker.example/share/x.json')).toBe(false);
+  });
+
   it.each([
     ['マイク・カメラ', 'media'],
     ['画面共有', 'display-capture'],
@@ -434,7 +465,7 @@ describe('権限要求 — 既定は拒否、クリップボードだけ許す',
    * この形なら Electron を上げて権限が増えたときも自動で対象に入り、
    * **既定拒否のままであることが毎回確かめられる**。
    */
-  const ALLOWED = ['clipboard-read', 'clipboard-sanitized-write'];
+  const ALLOWED = ['clipboard-sanitized-write'];
 
   function electronPermissionNames(): string[] {
     const dts = readOriginalSource(path.join(__dirname, '../../../node_modules/electron/electron.d.ts'));
@@ -443,7 +474,7 @@ describe('権限要求 — 既定は拒否、クリップボードだけ許す',
     return [...m![1]!.matchAll(/'([a-zA-Z-]+)'/g)].map((x) => x[1]!);
   }
 
-  it('★ Electron が挙げる権限のうち、許すのはクリップボードの 2 つだけ', async () => {
+  it('★ Electron が挙げる権限のうち、許すのはクリップボードへの書き込みだけ (threat: T-137)', async () => {
     const names = electronPermissionNames();
     // 走査が死んで 0 件になったのを「違反なし」と読まない。
     expect(names.length, '権限の一覧が短すぎる — 型定義の書式が変わった可能性').toBeGreaterThanOrEqual(15);
@@ -469,14 +500,18 @@ describe('権限要求 — 既定は拒否、クリップボードだけ許す',
    * 消すため、「まだ自分がコピーした値のままか」を **読んでから** 空にする。
    * 読めないと消せずに残るので、これは security のための読み取りである。
    */
-  it.each([['読み取り', 'clipboard-read'], ['書き込み', 'clipboard-sanitized-write']])(
-    'クリップボードの%s (%s) は許す',
-    async (_label, permission) => {
-      const c = await loadMain({ packaged: true });
-      expect(ask(c, permission)).toBe(true);
-      expect(c.permissionCheck!({}, permission)).toBe(true);
-    },
-  );
+  it('クリップボードの書き込み (clipboard-sanitized-write) は許す', async () => {
+    const c = await loadMain({ packaged: true });
+    expect(ask(c, 'clipboard-sanitized-write')).toBe(true);
+    expect(c.permissionCheck!({}, 'clipboard-sanitized-write')).toBe(true);
+  });
+
+  /* 読み取りは外した (threat: T-137)。デスクトップ版に読み手が無い —— LockScreen はブラウザ版だけ。 */
+  it('★ クリップボードの読み取り (clipboard-read) は拒む — 乗っ取られたレンダラーに黙って読ませない (threat: T-137)', async () => {
+    const c = await loadMain({ packaged: true });
+    expect(ask(c, 'clipboard-read')).toBe(false);
+    expect(c.permissionCheck!({}, 'clipboard-read')).toBe(false);
+  });
 
   /*
    * **2 つの口が同じ答えを返すこと。** ずれると
@@ -509,7 +544,7 @@ describe('権限要求 — 既定は拒否、クリップボードだけ許す',
       expect(c.permissionCheck!({}, p), `${p} で 2 つの口の答えが違う`).toBe(ask(c, p));
     }
     // 「全部同じ値」で一致していないこと。
-    expect(ALL.filter((p) => ask(c, p)).length).toBe(2);
+    expect(ALL.filter((p) => ask(c, p)).length).toBe(1);
   });
 });
 

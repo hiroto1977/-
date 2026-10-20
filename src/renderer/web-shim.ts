@@ -147,6 +147,7 @@ import { LIBRARY_HATCH_TEXT } from './data/exportOutcome';
 import type { ExportSinks, SinkOutcome } from './data/exportOutcome';
 import { filenameFromTitle } from '../shared/safeFilename';
 import { chatOllama, loadEndpointSetting, probeOllama } from './network/ollamaWeb';
+import { isSafeModelName } from '../shared/ollama';
 import { parseJsonText } from '../shared/apiResponse';
 import {
   registerSymbol,
@@ -476,6 +477,16 @@ function timedFetchAi(url: string, init: RequestInit): Promise<Response> {
   });
 }
 
+/**
+ * 要求の `model` を読む (threat: T-135 · main の assistant.ts `requestedModel` と同じ規則)。
+ * 空・型違いは「指定なし」、形が正しくなければ断る —— 黙って既定へ倒すと選んだモデルと違う物で課金される。
+ * ブラウザ版だけが「空でない文字列」で通していて、main との非対称だった (パス 543)。
+ */
+function readRequestedModel(v: unknown): { model: string | undefined } | { refused: true } {
+  if (typeof v !== 'string' || v.length === 0) return { model: undefined };
+  return isSafeModelName(v) ? { model: v } : { refused: true };
+}
+
 function err<T = never>(code: string, message: string): ActionResult<T> {
   return { ok: false, code, message: redactForMessage(message, ERROR_MESSAGE_MAX_CHARS) };
 }
@@ -725,6 +736,11 @@ async function callStocksAdvisor(payload: Record<string, unknown>): Promise<Acti
   // 送れば両ビルドが**画面に出ている集合**について答える。送られなければ
   // 従来どおり保存済みウォッチリスト、それも空なら既定の主要銘柄。
   const sent = payload['universe'];
+  // main は universe の各要素に isSafeSymbol を通して断る (T-135)。ブラウザ版も同じ関門を通す
+  // —— 形の合わない銘柄は system prompt と分析へ入る前に断る。
+  if (Array.isArray(sent) && sent.some((v) => typeof v !== 'string' || !isSafeSymbol(v))) {
+    return err('action_failed', 'universe に形の正しくない銘柄が含まれています');
+  }
   const requested = Array.isArray(sent)
     ? sent.filter((v): v is string => typeof v === 'string')
     : loadWatchlistSymbols();
@@ -940,6 +956,8 @@ async function callAssistantChat(payload: Record<string, unknown>): Promise<Acti
     return err('action_failed', '最後の発話は user である必要があります');
   }
   const system = typeof payload['system'] === 'string' ? clampToCeiling(payload['system'] as string, MAX_ASSISTANT_SYSTEM_CHARS) : '';
+  const modelRead = readRequestedModel(payload['model']);
+  if ('refused' in modelRead) return err('action_failed', 'model の形が正しくありません');
 
   const credsRead = await readAssistantCredsRaw();
   if (!credsRead.ok) return credsRead.res;
@@ -982,10 +1000,7 @@ async function callAssistantChat(payload: Record<string, unknown>): Promise<Acti
       provider: resolved.id,
       cfg: { ...resolved.cfg, browser: true },
       request: {
-        model:
-          typeof payload['model'] === 'string' && (payload['model'] as string).length > 0
-            ? (payload['model'] as string)
-            : undefined,
+        model: modelRead.model,
         system: system || undefined,
         messages: turns,
         maxTokens: 2048,
@@ -1011,6 +1026,8 @@ async function callAssistantChatAll(payload: Record<string, unknown>): Promise<A
     return err('action_failed', '最後の発話は user である必要があります');
   }
   const system = typeof payload['system'] === 'string' ? clampToCeiling(payload['system'] as string, MAX_ASSISTANT_SYSTEM_CHARS) : '';
+  const modelRead = readRequestedModel(payload['model']);
+  if ('refused' in modelRead) return err('action_failed', 'model の形が正しくありません');
 
   const credsRead = await readAssistantCredsRaw();
   if (!credsRead.ok) return credsRead.res;
@@ -1052,10 +1069,7 @@ async function callAssistantChatAll(payload: Record<string, unknown>): Promise<A
           provider: id,
           cfg: { ...configForProvider(id, creds), browser: true },
           request: {
-            model:
-              typeof payload['model'] === 'string' && (payload['model'] as string).length > 0
-                ? (payload['model'] as string)
-                : undefined,
+            model: modelRead.model,
             system: system || undefined,
             messages: turns,
             maxTokens: 2048,
