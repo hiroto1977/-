@@ -500,23 +500,43 @@ function ConnectionSetup({
           </div>
 
           <div>
-            <strong>A. 同じ Wi-Fi で使う（追加ソフト不要）</strong>
+            <strong>A. 同じ Wi-Fi で使う（自宅など信頼できる網だけ）</strong>
+            {/*
+              **Ollama には認証が無い。** LAN へ出すと、同じ網の誰でもこの PC の GPU でモデルを動かし、
+              モデルを取得・作成・削除する書き込み系の口まで叩ける。古い版には任意コード実行
+              (CVE-2024-37032) もあった。`OLLAMA_ORIGINS` は**ブラウザの CORS を絞るだけ**で、curl など
+              ブラウザ以外の接続は止めない —— 以前の案内は「許可するのはこのページのオリジンだけ」と書き、
+              誰が繋げるかを絞ったように読めた (パス 541 · threat: T-129)。
+            */}
+            <p
+              role="note"
+              data-ollama-exposure-warning
+              style={{ margin: '4px 0 0', padding: '6px 8px', border: '1px solid var(--warning)', borderRadius: 6, color: 'var(--text)' }}
+            >
+              ⚠ Ollama には<strong>認証がありません</strong>。LAN へ公開すると、同じ網の誰でもあなたの PC でモデルを
+              動かし、モデルを取得・削除できます (古い版には任意コード実行の脆弱性もありました)。
+              <code>OLLAMA_ORIGINS</code> は「どのサイトのブラウザから読めるか」を絞るだけで、
+              <strong>curl などブラウザ以外の接続は止めません</strong>。公共の Wi-Fi・ルーターのポート開放 / UPnP が有効な
+              環境では使わないでください。
+            </p>
             <ol style={{ margin: '4px 0 0', paddingLeft: '1.4em', color: 'var(--text-muted)' }}>
               <li>
-                PC で Ollama を LAN に公開して起動 (許可するのはこのページのオリジンだけ —— {' '}
-                <code>*</code> にすると LAN 上のどの端末のどのサイトからも叩ける):{' '}
-                <code>OLLAMA_HOST=0.0.0.0 OLLAMA_ORIGINS=&quot;{safeOrigin === '*' ? 'http://<PCのIP>:8080' : safeOrigin}&quot; ollama serve</code>
+                PC の <strong>LAN 側の IP だけ</strong>で Ollama を起動 (<code>0.0.0.0</code> にしない —— 全部の網に出る):{' '}
+                <code>OLLAMA_HOST=&lt;PCのIP&gt;:11434 OLLAMA_ORIGINS=&quot;{safeOrigin === '*' ? 'http://<PCのIP>:8080' : safeOrigin}&quot; ollama serve</code>
+                。PC のファイアウォールでスマホの IP だけに絞るのが確実です
               </li>
               <li>
-                同じフォルダの <code>standalone.html</code> を PC から配信:{' '}
-                <code>python3 -m http.server 8080</code>
+                <code>standalone.html</code> <strong>だけを入れた空のフォルダ</strong>から配信:{' '}
+                <code>python3 -m http.server 8080 --bind &lt;PCのIP&gt;</code>
+                （リポジトリや書類のあるフォルダで実行すると、中身が LAN に一覧で見えます）
               </li>
               <li>
                 スマホで <code>http://&lt;PCのIP&gt;:8080/standalone.html</code> を開く
                 （IP は PC の設定で確認。例 192.168.1.10）
               </li>
               <li>
-                このページの「接続先」に <code>&lt;PCのIP&gt;:11434</code> を入れて「接続テスト」
+                このページの「接続先」に <code>&lt;PCのIP&gt;:11434</code> を入れて「接続テスト」。
+                使い終わったら Ollama を <code>127.0.0.1</code> の既定に戻して再起動
               </li>
             </ol>
             <p style={{ margin: '4px 0 0', color: 'var(--text-muted)' }}>
@@ -526,11 +546,11 @@ function ConnectionSetup({
           </div>
 
           <div>
-            <strong>B. https トンネルで使う（外出先でも可）</strong>
+            <strong>B. 自分の端末だけに繋ぐ私設のトンネルで使う（外出先でも可）</strong>
             <ol style={{ margin: '4px 0 0', paddingLeft: '1.4em', color: 'var(--text-muted)' }}>
               <li>
-                PC で <code>cloudflared tunnel --url http://127.0.0.1:11434</code>
-                （または Tailscale の <code>tailscale serve</code>）を実行
+                PC で Tailscale の <code>tailscale serve</code> を実行（<strong>自分の tailnet の端末だけ</strong>に出ます。
+                <code>tailscale funnel</code> は<strong>公開インターネット</strong>へ出すので使わない）
               </li>
               <li>
                 表示された <code>https://…</code> の URL を「接続先」に貼り付け
@@ -540,9 +560,15 @@ function ConnectionSetup({
                 <code>OLLAMA_ORIGINS=&quot;{safeOrigin}&quot;</code> を設定して再起動
               </li>
             </ol>
-            <p style={{ margin: '4px 0 0', color: 'var(--text-muted)' }}>
-              ※ トンネル URL を知る人は誰でもあなたの Ollama を叩けます。使い終わったら
-              トンネルを止めてください。
+            <p
+              role="note"
+              data-ollama-tunnel-warning
+              style={{ margin: '4px 0 0', color: 'var(--text-muted)' }}
+            >
+              ⚠ <code>cloudflared tunnel --url …</code> の<strong>クイックトンネルは使わないでください</strong>:
+              認証の無い<strong>公開 URL</strong>になり、URL を知る人 (履歴・画面共有・ログから漏れます) は
+              誰でもあなたの Ollama を叩けます。どうしても使うなら Cloudflare Access で認証を掛け、
+              使い終わったらトンネルを止めてください。
             </p>
           </div>
         </div>

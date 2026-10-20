@@ -2684,6 +2684,14 @@
       "leafCount": 121,
       "note": "update e2e.yml",
       "hash": "c4389d0142079619e4a32c6ecaa4f7d39faa1549e531fd96e50e54241f64149d"
+    },
+    {
+      "index": 320,
+      "prevHash": "c4389d0142079619e4a32c6ecaa4f7d39faa1549e531fd96e50e54241f64149d",
+      "merkleRoot": "fd7b60b466aa78cb6e4d3eda103f6037933d552f0fa1668b5eae21743c0e63b9",
+      "leafCount": 121,
+      "note": "update PROXY_EXAMPLE.md",
+      "hash": "f0ea1e1e25404084e9a4d2f936ad42d0c0914aebccca407839127a8ae1dbbaf8"
     }
   ],
   "tipManifest": {
@@ -2707,7 +2715,7 @@
     "assets/manifest.webmanifest": "2a36e499f82502b878302f7698aeb15aae992a8139b9dea774658ae8c36f959b",
     "assets/og.png": "1fcc1b3974eec00de79ab6d37272f39529905a3448017dc24ee0f03e979b7282",
     "assets/sw.js": "0320f925b8da1242c0aa3783e332a8abb87323331767aeebcab7dab309f6189d",
-    "docs/PROXY_EXAMPLE.md": "d829279bbb72cc87c3ac6d13b7ddb3f30e9b463c5b980104719910228af9cdd4",
+    "docs/PROXY_EXAMPLE.md": "97948e981e8fb5305e69d2bcbd6f57783523382ffb0ca6fada43305263de7cd0",
     "docs/SECURITY_CHAIN.md": "e6f2886fbab792b4c4ec27ee8849a8642d1b28576c05e3ca627f2daea05cda29",
     "electron-builder.json": "bf1de6e2b48e13444b527f8796af3636ab5061795fd772070e6f5dcfecfdf305",
     "eslint.config.js": "a2a56ffbe45108aeb9313c52c8c0e382febfc72c4cc78884b60cbb88a653fa7f",

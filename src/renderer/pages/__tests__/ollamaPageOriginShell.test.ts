@@ -76,7 +76,7 @@ describe('OllamaPage の案内コマンド — 配信元の origin (threat: T-11
     const lines = Array.from(container.querySelectorAll('code'))
       .map((c) => c.textContent ?? '')
       .filter((t) => t.includes('OLLAMA_ORIGINS='));
-    expect(lines.some((t) => t.includes('OLLAMA_HOST=0.0.0.0') && t.includes('http://<PCのIP>:8080'))).toBe(true);
+    expect(lines.some((t) => t.includes('OLLAMA_HOST=<PCのIP>:11434') && t.includes('http://<PCのIP>:8080'))).toBe(true);
     expect(lines.some((t) => t.trim() === 'OLLAMA_ORIGINS="*"')).toBe(true);
   });
 });

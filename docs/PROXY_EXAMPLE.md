@@ -34,7 +34,7 @@ X-Proxy-Auth: <optional-shared-secret>
 }
 ```
 
-## 2. Cloudflare Worker 実装 (421 行)
+## 2. Cloudflare Worker 実装 (427 行)
 
 `workers.cloudflare.com/dashboard` で **Create Worker** → 下記コードを貼り
 付け → **Deploy**。`worker.dev` の URL を Settings → BYO プロキシに登録。
@@ -52,7 +52,10 @@ Worker のように各ホップを再検査して進むのではなく、転送�
 
 ```js
 // proxy-worker.js
-const SHARED_SECRET = ''; // 任意。空文字なら未認証で受け入れる
+const SHARED_SECRET = ''; // 必須。ここに十分長いランダム文字列を入れ、アプリの設定にも同じ値を入れる
+// 認証なしで受け入れてよいのは、これを自分の手で true にしたときだけ (既定は閉じる)。
+// 空の SHARED_SECRET のまま配ると、URL を知る誰でも許可リストの全ホストへ中継できてしまう。
+const ALLOW_UNAUTHENTICATED = false;
 
 // 上流ホスト allowlist。BYO の前提でも、ここを絞っておくと
 // たとえクライアントが侵害されても被害を局所化できる。
@@ -145,6 +148,9 @@ export default {
       if (!timingSafeEqualStr(request.headers.get('X-Proxy-Auth'), SHARED_SECRET)) {
         return json({ error: 'unauthorized' }, 401);
       }
+    } else if (!ALLOW_UNAUTHENTICATED) {
+      // fail closed: 秘密を設定していない Worker は、誰の要求も中継しない。
+      return json({ error: 'unauthorized: SHARED_SECRET is not configured' }, 401);
     }
 
     // `envelope` と命名する: Workers の 2nd 引数 `env` (バインディング) と
@@ -478,11 +484,12 @@ function json(obj, status) {
 
 - URL は **公開リポジトリにコミットしない** (誰でも使われる)
 - **「誰が使えるか」と「どこへ繋げるか」は別の関門である** (2026-09-20 · パス 349):
-  - *誰が* — `SHARED_SECRET`。**既定は空文字で、そのとき認証は一切行われない**
-    (`if (SHARED_SECRET)` の中へ入らない)。応答は常に
-    `Access-Control-Allow-Origin: *` なので、**URL を知っている者は誰でも呼べる**。
-    設定しない場合、守りは URL の秘匿だけになる。Settings 画面で同じ値を入力すると
-    アプリ側が `X-Proxy-Auth` に載せる。
+  - *誰が* — `SHARED_SECRET`。**空のままなら Worker はすべての要求を 401 で断る**
+    (2026-10-20 · パス 541 · T-130 まで、既定は空文字で認証が一切行われなかった:
+    応答は常に `Access-Control-Allow-Origin: *` なので、URL を知っている者は誰でも
+    許可リストの全ホストへ呼べた)。認証なしで使いたいときは `ALLOW_UNAUTHENTICATED` を
+    **自分の手で** `true` にする —— そのとき守りは URL の秘匿だけになる。
+    Settings 画面で同じ値を入力するとアプリ側が `X-Proxy-Auth` に載せる。
   - *どこへ* — `UPSTREAM_ALLOWLIST`。緩めると繋げる先が広がる。
   **この節は 2026-09-20 まで「allowlist を空にしたり `*` 相当に緩めた時点で
   誰でも使えるオープンプロキシになる」と書いていた** —— 緩めなくても、

@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 320
+- ブロック数: 321
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `c4389d0142079619e4a32c6ecaa4f7d39faa1549e531fd96e50e54241f64149d`
+- 末尾(tip)ハッシュ: `f0ea1e1e25404084e9a4d2f936ad42d0c0914aebccca407839127a8ae1dbbaf8`
 - 保護対象: 121 ファイル
 
 ## ブロック
@@ -333,6 +333,7 @@
 | 317 | `84b459c981e07ff3` | `a4a1520d0ee9f842` | `7d89ddb527396f27` | update e2e.yml |
 | 318 | `a1750a483dfbf2ec` | `7d89ddb527396f27` | `1ee928f60802b58d` | update integrity-chain.cjs,verify-e2e-playwright-pin.cjs |
 | 319 | `e1af72c87959b7f2` | `1ee928f60802b58d` | `c4389d0142079619` | update e2e.yml |
+| 320 | `fd7b60b466aa78cb` | `c4389d0142079619` | `f0ea1e1e25404084` | update PROXY_EXAMPLE.md |
 
 ## 保護対象ファイル
 

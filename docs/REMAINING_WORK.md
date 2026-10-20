@@ -1,5 +1,21 @@
 # Service Hub — 残りの作業手順書
 
+## パス 541 (狩りの 31 回目 —— ネットワークの外側から穴をあけて入れるか) (2026-10-20)
+
+利用者の問い: 「ネットワークの外側から穴をあけこちらに侵入することは可能か」。攻撃者の位置ごとに測った。
+
+| 位置 | 実測 | 結論 |
+| --- | --- | --- |
+| インターネット側から直接 | 実アプリを起動して `lsof` で待受を測った。開く口は **127.0.0.1 の OAuth 受け 1 つだけ**(ランダムポート・Host 検査・32 バイトの state・1 回きり)。カスタムプロトコル・自動更新・リモートデバッグの口は 0 | 外向きの口は無い |
+| 同じ LAN / 公共 Wi-Fi | Ollama 画面の案内が `OLLAMA_HOST=0.0.0.0` と、フォルダ指定の無い `python3 -m http.server` を勧め、`OLLAMA_ORIGINS` を「許可するのはこのページのオリジンだけ」と説明していた | **穴あり (T-129)**。Ollama は無認証で、CORS は非ブラウザの接続を止めない |
+| 公開 URL(トンネル) | Quick Tunnel / `tailscale funnel` は認証の無い公開 URL を作る | 案内で警告 (T-129) |
+| 利用者が配る Worker | `SHARED_SECRET = ''` が既定で認証なし。URL が漏れれば誰でも許可リスト 10 ホストへ中継できた | **穴あり (T-130)** |
+| 供給網 / CI | パス 536〜540 で閉じた経路(playwright 固定・IPC 未 await・指示書の CODEOWNERS ほか) | 閉じ済み。F-1 (Code Owners 必須レビュー) は所有者の設定 |
+
+**直し**: (1) Ollama の案内を LAN の IP への束縛 + `--bind` + 空フォルダにし、認証が無いこと・非ブラウザは止まらないこと・公共 Wi-Fi / ポート開放をしないことを操作子より前に明記、外からは `tailscale serve` を先頭に。`ollamaExposureGuidance.test.ts` (5 件) が実画面で留める。(2) Worker を **fail closed** に(秘密が空なら 401、`ALLOW_UNAUTHENTICATED` を自分の手で `true` にしたときだけ認証なし)。`proxyWorkerFailClosed.test.ts` (5 件) が Worker 全体を読み込んで要求を投げる。対照は 2 方向とも狙った検査で鳴る(LAN 行を 0.0.0.0 に戻す ❌3 / 分岐を潰す ❌1)。
+
+**残余(正直に)**: 利用者が自分で Ollama を公開する操作そのものは止められない。すでに旧 Worker を配った利用者の Worker は自動では直らない(再配布と秘密の設定が要る)。`scripts/ollama-cli.cjs` に「LAN に出ていないか」の自己点検はまだ無い(次の候補)。
+
 ## パス 540 (狩りの 30 回目 —— エージェント指示書を CODEOWNERS で覆う) (2026-10-20)
 
 huntBacklog の「エージェント指示書を植えても全門が緑 (クライアントが読むかは未確認)」を、今日の木で再現した。AI エージェントは指示書を**読んだ瞬間に従う**ので、マージされた PR 1 つで以後の全セッションの指示を差し替えられる。悪意のある文面を 5 か所に植えた (`CLAUDE.md` への追記・`AGENTS.md`・`src/main/clients/CLAUDE.md`・`.claude/rules/zz.md`・`.github/copilot-instructions.md`):
