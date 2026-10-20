@@ -2156,6 +2156,21 @@
         "file": "src/renderer/pages/__tests__/rowWindowOnScreen.test.ts",
         "test": "窓を 2 回超える行数を入れても最初に描くのは窓の行数だけで、残りの件数を言う (threat: T-127)"
       }
+    },
+    {
+      "id": "T-128",
+      "found": "2026-10-20",
+      "foundBy": "hunt pass 540 の huntBacklog『エージェント指示書を植えても全門が緑』を今日の木で再現して閉じた",
+      "surface": "supply-chain",
+      "class": "ai-phishing",
+      "severity": "medium",
+      "title": "AI エージェントは CLAUDE.md / AGENTS.md / .claude/rules / .github/copilot-instructions.md を読んだ瞬間に従うが、悪意のある文面の指示書 5 か所(CLAUDE.md への追記・AGENTS.md・src/**/CLAUDE.md・.claude/rules/・.github/copilot-instructions.md)を植えても回した 34 ゲートがすべて緑だった(2026-10-20 実測)。CLAUDE.md は変更頻度が高い(183 コミット)ので整合性チェーンに入れられず、CODEOWNERS にも行が無かった。マージされた PR 1 つで、以後の全エージェントセッションの指示を差し替えられる",
+      "status": "mitigated",
+      "fix": "CODEOWNERS に /CLAUDE.md・**/CLAUDE.md・**/AGENTS.md・/.claude/・/.cursor/ を追加(新しく生える指示書も個別の行でなく名前とディレクトリで覆う。.github/ は既に覆われている)。threatLedger.test.ts が指示書 14 形の被覆と、指示書でない名前を覆わない標本を両方向で留める。CODEOWNERS はコミット頻度に依らない層。効かせるには GitHub の branch protection の『Code Owners のレビュー必須』が要る(F-1・所有者の設定)ので予防ではなくレビューの要求=mitigated。クライアントが各ファイルを実際に読むかは未確認(防御的に覆った)。",
+      "regression": {
+        "file": "src/shared/__tests__/threatLedger.test.ts",
+        "test": "エージェント指示書は、これから生える物も CODEOWNERS が覆う (threat: T-128)"
+      }
     }
   ],
   "huntBacklog": [
@@ -2306,11 +2321,6 @@
     },
     {
       "surface": "supply-chain",
-      "item": "エージェント指示書 (AGENTS.md / src/**/CLAUDE.md / .claude/rules / .claude/output-styles / .github/copilot-instructions.md) を植えても全門が緑",
-      "why": "2026-10-16 の植え込み: クライアントが実際に読むかは未確認。T-086 の AUTO_RUN は commands と skills しか覆わない。読まれると分かってから CODEOWNERS / 台帳に足す。"
-    },
-    {
-      "surface": "supply-chain",
       "item": ".gitattributes (linguist-generated / -diff) で PR の diff を折り畳める",
       "why": "2026-10-16 に未追跡であることを確認。GitHub の描画は未確認。追跡しないことの検査か CODEOWNERS 行が候補。"
     },
@@ -2414,6 +2424,11 @@
     {
       "item": "CSV 取り込みの書き込み時間が行数に対して重い (10 万行で 48 秒・2 万行で 6 秒)",
       "finding": "2026-10-20 に実 Chromium で切り分けた: 2 万行の取り込み 6.5 秒のうち、1 つの readwrite 取引 (add × 20,000) が 5.3 秒 (81%)、メインスレッドは 72% が idle (JS の計算は約 1.7 秒) = IndexedDB の I/O 待ち。素の IndexedDB (主キー + collection の索引・同じ形の 2 万件) は 5.6 秒でアプリと同じ。索引なし 7.1 秒・durability relaxed 9.9 秒・2000 件ずつ 10 取引 12.0 秒・200 件ずつ 100 取引 11.8 秒で、どれも速くならない = ブラウザ/ディスクの床でアプリ側の無駄は無い (この測定環境の値であり、実機の SSD では小さいはず)。欠陥ではない。",
+      "checkedOn": "2026-10-20"
+    },
+    {
+      "item": "エージェント指示書 (AGENTS.md / src/**/CLAUDE.md / .claude/rules / .claude/output-styles / .github/copilot-instructions.md) を植えても全門が緑",
+      "finding": "2026-10-20 に再現: 悪意のある文面を 5 か所に植えて(CLAUDE.md への追記を含む)34 ゲート(--fast・重い 5 本を除く)を回すと落ちたゲート 0。追跡済みの指示書は .claude/agents・.claude/settings.json・.cursor/rules が鎖と CODEOWNERS で守られているが、CLAUDE.md と未追跡の指示書は無縛だった。CODEOWNERS をディレクトリと名前のパターンで足した=T-128 (mitigated)。",
       "checkedOn": "2026-10-20"
     }
   ]

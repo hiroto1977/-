@@ -6,6 +6,18 @@
 # 一覧は src/shared/__tests__/threatLedger.test.ts が PROTECTED と双方向に突き合わせる。
 
 /.github/ @hiroto1977
+# エージェント指示書 (2026-10-20 · パス 540 · threat: T-128)。
+# AI エージェント (Claude Code / Cursor / Copilot ほか) は、リポジトリの指示書を**読んだ瞬間に従う**。
+# 実測 (2026-10-20): 悪意のある文面の指示書 5 か所 (CLAUDE.md への追記・AGENTS.md・
+# src/**/CLAUDE.md・.claude/rules/・.github/copilot-instructions.md) を植えても、39 ゲートのうち
+# 回した 34 本は**すべて緑**だった。CLAUDE.md は変更の頻度が高く (183 コミット) 整合性チェーンの
+# 保護対象には入れられないので、所有者のレビューを要求する層 (ここ) で覆う。
+# 指示書は新しく生えるので、個別のファイルではなく**ディレクトリとファイル名のパターン**で覆う。
+/CLAUDE.md @hiroto1977
+**/CLAUDE.md @hiroto1977
+**/AGENTS.md @hiroto1977
+/.claude/ @hiroto1977
+/.cursor/ @hiroto1977
 /security/ @hiroto1977
 # scripts/ の木全体 (2026-10-13 · パス 513 · threat: T-003 の延長)。
 # 39 の門の執行コード (lint:malware / lint:secrets / lint:forbidden / lint:workflow-security /

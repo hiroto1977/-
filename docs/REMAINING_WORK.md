@@ -1,5 +1,27 @@
 # Service Hub — 残りの作業手順書
 
+## パス 540 (狩りの 30 回目 —— エージェント指示書を CODEOWNERS で覆う) (2026-10-20)
+
+huntBacklog の「エージェント指示書を植えても全門が緑 (クライアントが読むかは未確認)」を、今日の木で再現した。AI エージェントは指示書を**読んだ瞬間に従う**ので、マージされた PR 1 つで以後の全セッションの指示を差し替えられる。悪意のある文面を 5 か所に植えた (`CLAUDE.md` への追記・`AGENTS.md`・`src/main/clients/CLAUDE.md`・`.claude/rules/zz.md`・`.github/copilot-instructions.md`):
+
+| 植えた物 | 回した門 | 落ちた門 |
+| --- | ---: | ---: |
+| 上の 5 か所すべて | `audit:verify-keep-going -- --fast` の 34 本 (重い 5 本を除く) | **0** |
+
+追跡済みの指示書 (`.claude/agents/*`・`.claude/settings.json`・`.cursor/rules/*`) は鎖と CODEOWNERS で守られているが、**`CLAUDE.md` 自身は `live-metrics` (数の古び) だけ**で、鎖にも CODEOWNERS にも無かった。鎖に入れられない理由は churn (183 コミット) だが、CODEOWNERS はコミット頻度に依らない。
+
+| 脅威 | 内容 | 留めた検査 |
+| --- | --- | --- |
+| T-128 (mitigated) | CODEOWNERS に `/CLAUDE.md`・`**/CLAUDE.md`・`**/AGENTS.md`・`/.claude/`・`/.cursor/` を追加。**これから生える指示書**は個別の行ではなく名前とディレクトリで覆う (`/.github/` は既に覆われていて `copilot-instructions.md` も入る) | `threatLedger.test.ts` (+1 件: 指示書 14 形の被覆と、指示書でない名前 4 形を覆わない標本) |
+
+★ **対照 5 方向すべて鳴り、md5 で復元を確認**: `**/AGENTS.md` を消す (`AGENTS.md` と `packages/a/AGENTS.md`) / `/.claude/` を消す (rules・commands・skills・output-styles) / `**/CLAUDE.md` を消す (nested) / 広すぎる `**/*.md` を足す (古い行の検査が鳴る) / 実在しない名前 `**/GEMINI.md` を足す (同)。
+★ **検査の側を 2 つ広げた** —— `isCovered` が `**/NAME` を扱う (任意の深さ・ルート直下を含む)・古い行の検査が「覆ってよい名前は `CLAUDE.md` / `AGENTS.md` だけ」を要求する (パターンが広がって何でも覆う検査になるのを防ぐ)。`OWNED_CONFIG` に `/CLAUDE.md` を足した。
+**限界 (正直に)**:
+1. **予防ではなくレビューの要求** —— CODEOWNERS は GitHub の branch protection の「Code Owners のレビュー必須」が有効なときだけ効く (F-1・所有者の設定で、今も無い)。だから `mitigated`。
+2. **クライアントが各ファイルを実際に読むかは確かめていない** (私の環境から他社クライアントの挙動は測れない)。`CLAUDE.md` と nested の `CLAUDE.md`・`.claude/` は Claude Code が読むと知られているが、`AGENTS.md` / Copilot の指示書は**防御的に覆った**。
+3. 指示書の**中身**を検める門は無い (「この文面は危ない」は機械に判断できない) —— 変更を所有者の目に通すところまで。
+4. `.gitattributes` で PR の diff を折り畳める件 (huntBacklog) は別件で未着手。
+
 ## パス 539 (狩りの 29 回目 —— パス 538 が残した「CSV 取り込み自体の重さ」の切り分け) (2026-10-20)
 
 パス 538 は窓で**描画**を一定にしたが、取り込み完了までの時間 (2 万行 6.0 秒・10 万行 47.9 秒) は残っていた。どこが重いかを実 Chromium で順に切り分けた (**欠陥ではなかった**):
