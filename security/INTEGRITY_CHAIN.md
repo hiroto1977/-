@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 324
+- ブロック数: 325
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `f8bcaec54c6bc580f122f839551c3e2dc458d2e9d7fe3b76fbb03cb4b3dc7efb`
+- 末尾(tip)ハッシュ: `5a67b214b2898b77f5f289b6485b65bd75c374cc2ef5ca6fcf42ae0fe2aa718e`
 - 保護対象: 122 ファイル
 
 ## ブロック
@@ -337,6 +337,7 @@
 | 321 | `923c0c5ebd57af4d` | `f0ea1e1e25404084` | `98f2db369a1f7932` | update main.ts,oauth.ts,shellOpenGate.ts |
 | 322 | `8a2230d0e8453248` | `98f2db369a1f7932` | `ca505bcd6d80305b` | update integrity-chain.cjs,fileRequestGate.ts |
 | 323 | `f14995f41e936da2` | `ca505bcd6d80305b` | `f8bcaec54c6bc580` | update fileRequestGate.ts |
+| 324 | `aabd0a61bc04750c` | `f8bcaec54c6bc580` | `5a67b214b2898b77` | update knowledge-auto.yml,pages.yml,release.yml |
 
 ## 保護対象ファイル
 

@@ -14,11 +14,61 @@ on:
         required: true
 
 permissions:
-  contents: write  # required for softprops/action-gh-release
+  contents: read
 
 jobs:
+  # **検査と署名を別の job (別の runner) にする** (threat: T-144)。
+  # 以前は `npm ci` / `npm test` / `verify:all` と、署名鍵 (CSC_LINK ほか) を env に持つ Build が
+  # 同じ job・同じ runner に居た。マージされた PR が 1 つ (または乗っ取られた devDependency が 1 つ)
+  # あれば、`npm test` が import する 1,000 本超のテストの 1 つが `$GITHUB_ENV` に
+  # `NODE_OPTIONS=--require …` を追記でき、続く Build の `node` が署名鍵を読める
+  # (隔離した複製で実測: 39 ゲート全部が exit 0 のまま鍵を持ち出せた)。
+  # ここは secrets を 1 つも持たず contents: read だけで、build job は検査の runner を引き継がない。
+  verify:
+    name: verify ${{ matrix.os }}
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5 (threat: T-057)
+        with:
+          persist-credentials: false # threat: T-056
+
+      - name: Setup Node
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5 (threat: T-057)
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install
+        run: npm ci
+
+      # **タグはどのコミットも指せる。** trigger は `tags: v*` なので、
+      # CI が一度も通っていないコミットにタグを打っても、ここは動く。
+      # ci.yml は push: main / PR にしか起動しないので、リリース経路には効かない。
+      # だから全ゲートもここで回す —— 出すのはこのワークフローである。
+      - name: Typecheck + test + gates
+        run: |
+          npm run typecheck
+          npm test
+          npm run verify:all
+
   build:
     name: build ${{ matrix.os }}
+    needs: verify
+    # デプロイできる ref は main と v* タグだけ (workflow_dispatch で任意の branch に置いた
+    # 改変版の release.yml が署名鍵を読めないようにする)。`release` environment に
+    # 必須レビュアーを置くと、署名鍵の使用に人の承認が要る (GitHub の設定 —— 未設定でも害は無い)。
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+    environment: release
+    permissions:
+      contents: write  # required for softprops/action-gh-release
     strategy:
       fail-fast: false
       matrix:
@@ -74,16 +124,8 @@ jobs:
       - name: Install
         run: npm ci
 
-      # **タグはどのコミットも指せる。** trigger は `tags: v*` なので、
-      # CI が一度も通っていないコミットにタグを打っても、ここは動いて
-      # 署名済みインストーラを公開まで運ぶ。ci.yml は push: main / PR にしか
-      # 起動しないので、リリース経路には効かない (2026-08-25 に構成を確認)。
-      # だから 33 ゲートもここで回す —— 出すのはこのワークフローである。
-      - name: Typecheck + test + gates
-        run: |
-          npm run typecheck
-          npm test
-          npm run verify:all
+      # 検査 (typecheck / npm test / verify:all) は上の verify job で済ませた (needs: verify)。
+      # この job は署名鍵を持つので、検査のコードを走らせた runner とは別である (threat: T-144)。
 
       # electron-builder は CI を検知すると **暗黙に** GitHub Releases へ publish
       # しようとする (v0.1.0 の失敗ランで実際に発火し、softprops ステップと二重

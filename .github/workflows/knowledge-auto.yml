@@ -82,7 +82,8 @@ jobs:
             const { data: issues } = await github.rest.issues.listForRepo({
               owner: context.repo.owner, repo: context.repo.repo, state: 'open', per_page: 100,
             });
-            const existing = issues.find((i) => i.title === title);
+            // PR と他人の Issue は除く (T-142): 題名は公開済みで、同じ題名を立てられると報告を横取りされる。
+            const existing = issues.find((i) => !i.pull_request && i.title === title && i.user?.login === 'github-actions[bot]');
             if (existing) {
               await github.rest.issues.update({
                 owner: context.repo.owner, repo: context.repo.repo,

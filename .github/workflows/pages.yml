@@ -109,6 +109,15 @@ jobs:
             --document _site/deliberation-demo.html \
             --document _site/research-demo.html
 
+      # 悪意コードの形も公開物の実物に当てる (T-142)。ci.yml の並行実行に頼ると、あちらが赤でも
+      # このワークフローは公開を終える (needs: が無い)。`--artifact` は 1 ファイルずつ。
+      - name: Scan the artifacts being published for malware shapes
+        run: |
+          for f in _site/app.html _site/index.html _site/lite.html _site/standalone.html \
+                   _site/counseling-demo.html _site/deliberation-demo.html _site/research-demo.html; do
+            node scripts/lint-malware.cjs --artifact "$f"
+          done
+
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3 (threat: T-057)
         with:
           path: _site

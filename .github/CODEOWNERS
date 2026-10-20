@@ -43,6 +43,12 @@
 /assets/sw.js @hiroto1977
 /docs/PROXY_EXAMPLE.md @hiroto1977
 /docs/SECURITY_CHAIN.md @hiroto1977
+# エージェントが「まず読め」と指示される文書 (CLAUDE.md / SessionStart hook が指す)。
+# ここへ命令文を足されると、次のセッションのエージェントがそれを読んで従う (T-142)。
+/docs/SESSION_HANDOFF.md @hiroto1977
+/docs/REMAINING_WORK.md @hiroto1977
+/docs/THREAT_HUNT.md @hiroto1977
+/docs/MODEL_EFFORT_POLICY.md @hiroto1977
 /electron-builder.json @hiroto1977
 /eslint.config.js @hiroto1977
 /launcher/ServiceHubを開く.bat @hiroto1977
@@ -227,3 +233,6 @@
 /src/shared/__tests__/lintCharsetAsciiSmuggling.test.ts @hiroto1977
 /src/renderer/data/__tests__/backupRecordLimit.test.ts @hiroto1977
 /src/main/fileRequestGate.ts @hiroto1977
+/src/shared/__tests__/sessionContextUntrusted.test.ts @hiroto1977
+/src/shared/__tests__/releaseJobSplit.test.ts @hiroto1977
+/src/shared/__tests__/workflowStructureGate.test.ts @hiroto1977

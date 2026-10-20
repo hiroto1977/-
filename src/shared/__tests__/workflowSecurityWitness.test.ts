@@ -122,7 +122,7 @@ describe('実物の workflow — actions/* の SHA 固定と checkout の persis
     expect(seen).toBeGreaterThanOrEqual(30);
   });
 
-  it('★ 実物の checkout 10 か所はすべて persist-credentials: false (threat: T-056)', () => {
+  it('★ 実物の checkout 11 か所はすべて persist-credentials: false (threat: T-056)', () => {
     let seen = 0;
     for (const [f, text] of texts) {
       const lines = text.split('\n');
@@ -134,7 +134,7 @@ describe('実物の workflow — actions/* の SHA 固定と checkout の persis
         expect(step, `${f}:${i + 1} の checkout`).toMatch(/persist-credentials:\s*false/);
       });
     }
-    expect(seen).toBe(10);
+    expect(seen).toBe(11);
   });
 
   it('★ 7 本の workflow と dependabot.yml は整合性チェーンの保護対象 (threat: T-058)', () => {
@@ -172,11 +172,12 @@ describe('release.yml の公開 action は SHA 固定 (threat: T-035)', () => {
     expect(Object.keys(gate.UNPINNED_ALLOW)).toEqual([]);
   });
 
-  it('対照: 実物の release.yml を可動タグへ戻すと門が鳴る (台帳が空なので免除されない)', () => {
+  const RELEASE_ALLOW = { 'release.yml': gate.JOB_PERMISSIONS_ALLOW['release.yml']! };
+  it('対照: 実物の release.yml を可動タグへ戻すと門が鳴る (未固定の台帳が空なので免除されない)', () => {
     const reverted = releaseYml.replace(/action-gh-release@[0-9a-f]{40}[^\n]*/, 'action-gh-release@v2');
-    const problems = gate.check([{ name: 'release.yml', text: reverted }], gate.UNPINNED_ALLOW, {});
+    const problems = gate.check([{ name: 'release.yml', text: reverted }], gate.UNPINNED_ALLOW, RELEASE_ALLOW);
     expect(problems.some((p) => p.why.includes('softprops/action-gh-release@v2'))).toBe(true);
-    expect(gate.check([{ name: 'release.yml', text: releaseYml }], gate.UNPINNED_ALLOW, {})).toHaveLength(0);
+    expect(gate.check([{ name: 'release.yml', text: releaseYml }], gate.UNPINNED_ALLOW, RELEASE_ALLOW)).toHaveLength(0);
   });
 });
 
@@ -226,12 +227,14 @@ describe('pages.yml の書く権限は公開の job だけ (threat: T-039)', () 
     expect(top).not.toMatch(/pages: write|id-token: write/);
   });
 
-  it('★ job 単位の permissions は deploy の 2 つだけで、台帳と一致する (threat: T-039)', () => {
+  const PAGES_ALLOW = { 'pages.yml': gate.JOB_PERMISSIONS_ALLOW['pages.yml']! };
+  it('★ job 単位の permissions は pages の deploy と release の build だけで、台帳と一致する (threat: T-039)', () => {
     expect(gate.jobPermissionBlocks(pagesYml)).toEqual([
       { job: 'deploy', line: expect.any(Number), scopes: ['pages: write', 'id-token: write'] },
     ]);
     expect(gate.JOB_PERMISSIONS_ALLOW).toEqual({
       'pages.yml': { deploy: { scopes: ['pages: write', 'id-token: write'], why: expect.any(String) } },
+      'release.yml': { build: { scopes: ['contents: write'], why: expect.any(String) } },
     });
   });
 
@@ -247,20 +250,20 @@ describe('pages.yml の書く権限は公開の job だけ (threat: T-039)', () 
   });
 
   it('実物の pages.yml は門を通る', () => {
-    expect(gate.check([{ name: 'pages.yml', text: pagesYml }], gate.UNPINNED_ALLOW, gate.JOB_PERMISSIONS_ALLOW)).toEqual([]);
+    expect(gate.check([{ name: 'pages.yml', text: pagesYml }], gate.UNPINNED_ALLOW, PAGES_ALLOW)).toEqual([]);
   });
 
   it('対照: 書く権限をトップレベルへ戻す (直す前の形) と門が鳴る', () => {
     const reverted = pagesYml
       .replace('permissions:\n  contents: read\n', 'permissions:\n  contents: read\n  pages: write\n  id-token: write\n')
       .replace('    permissions:\n      pages: write\n      id-token: write\n', '');
-    const problems = gate.check([{ name: 'pages.yml', text: reverted }], gate.UNPINNED_ALLOW, gate.JOB_PERMISSIONS_ALLOW);
+    const problems = gate.check([{ name: 'pages.yml', text: reverted }], gate.UNPINNED_ALLOW, PAGES_ALLOW);
     expect(problems.map((p) => p.file)).toEqual(['(台帳)']);
   });
 
   it('対照: deploy に contents: write を足すと scope の食い違いで鳴る', () => {
     const widened = pagesYml.replace('      id-token: write\n', '      id-token: write\n      contents: write\n');
-    const problems = gate.check([{ name: 'pages.yml', text: widened }], gate.UNPINNED_ALLOW, gate.JOB_PERMISSIONS_ALLOW);
+    const problems = gate.check([{ name: 'pages.yml', text: widened }], gate.UNPINNED_ALLOW, PAGES_ALLOW);
     expect(problems).toHaveLength(1);
     expect(problems[0]?.why).toContain('contents: write');
   });

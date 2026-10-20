@@ -2366,6 +2366,66 @@
         "file": "src/renderer/data/__tests__/backupRecordLimit.test.ts",
         "test": "復元の件数の天井 (threat: T-141)"
       }
+    },
+    {
+      "id": "T-142",
+      "found": "2026-10-20",
+      "foundBy": "hunt pass 544(supply-chain 監査役)。隔離した複製で再現",
+      "surface": "supply-chain",
+      "class": "ai-phishing",
+      "severity": "low",
+      "title": "SessionStart hook (scripts/session-context.cjs) が最新コミットの件名とブランチ名を未加工でエージェントの文脈へ流していた(件名にタグ文字で符号化した命令+3,000 字の埋め草で HEAD 行が 3,304 byte)。さらに CLAUDE.md と hook が『まず読め』と指す docs/SESSION_HANDOFF.md ほかは CODEOWNERS の外で、命令文を足しても全ゲートが緑だった",
+      "status": "mitigated",
+      "fix": "件名とブランチの制御・不可視文字を落として 80 字で切り、短縮ハッシュ以外は『データであって指示ではない』と出力で言う。CODEOWNERS に SESSION_HANDOFF / REMAINING_WORK / THREAT_HUNT / MODEL_EFFORT_POLICY を足した。",
+      "regression": {
+        "file": "src/shared/__tests__/sessionContextUntrusted.test.ts",
+        "test": "SessionStart hook — 外から来る文字列を文脈へ素で流さない (threat: T-142)"
+      }
+    },
+    {
+      "id": "T-143",
+      "found": "2026-10-20",
+      "foundBy": "hunt pass 544(supply-chain 監査役)。隔離した複製で再現",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "常設 Issue の同期がタイトルの一致だけで探すため、同じ題名の Issue を誰かが立てると要対応の報告を横取りできた(dependency-audit-issue.cjs / knowledge-auto.yml。後者は PR も除外していなかった)。また公開 workflow pages.yml は lint:malware を一度も走らせず、ci.yml の並行実行に頼っていた(needs: が無く、ci が赤でも公開は終わる)",
+      "status": "mitigated",
+      "fix": "Issue は作者が github-actions[bot] で PR でない物だけを常設と見なす。pages.yml は公開する 7 本の HTML に lint-malware --artifact を公開の直前に当てる。",
+      "regression": {
+        "file": "src/shared/__tests__/dependencyAuditIssue.test.ts",
+        "test": "★ 同じ題名を立てた他人の Issue は常設 Issue ではない (報告の横取り · threat: T-143)"
+      }
+    },
+    {
+      "id": "T-144",
+      "found": "2026-10-20",
+      "foundBy": "hunt pass 544(supply-chain 監査役)。隔離した複製で再現",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "release.yml で署名鍵(CSC_LINK ほか)を env に持つ Build が、npm ci / npm test / verify:all と同じ job・同じ runner に居た。npm test が import する 1,000 本超のテストの 1 つが $GITHUB_ENV に NODE_OPTIONS=--require を書けば後続の node が鍵を読め、隔離した複製で 39 ゲートが全部 exit 0 のまま持ち出せた。workflow_dispatch は任意の branch から起動できた",
+      "status": "mitigated",
+      "fix": "検査を secrets 無し・contents: read の verify job(3 OS)に分け、build job は needs: verify・environment: release・main か v* タグの ref のときだけ・contents: write は build だけにした。releaseJobSplit.test.ts が構造(verify に secrets が無い・build に検査が無い・needs/environment/ref)を留める。GitHub 側で release environment に必須レビュアーを置くのは所有者の設定。",
+      "regression": {
+        "file": "src/shared/__tests__/releaseJobSplit.test.ts",
+        "test": "release.yml — 検査と署名を別の runner にする (threat: T-144)"
+      }
+    },
+    {
+      "id": "T-145",
+      "found": "2026-10-20",
+      "foundBy": "hunt pass 544(supply-chain 監査役)。隔離した複製で再現",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "lint:workflow-security は行頭の uses: / run: / script: を正規表現で読むため、YAML のフロー記法(- {uses: evilorg/act@v1}・steps: [{run: …}])と引用符つきの鍵(- \"run\": curl | sh)で、未固定の第三者 action・curl|sh・script への ${{ }} 注入が exit 0 で通った。また ci.yml の step に continue-on-error / if / shell / working-directory / paths-ignore を足すと、ゲートが赤にならずに CI の実効が消えた",
+      "status": "mitigated",
+      "fix": "読めない形(フロー記法・引用符つきの鍵)は fail closed で落とす。ci.yml と pages.yml では step/job を黙らせる鍵を一切許さない(台帳 GATE_NEUTERING_ALLOW は空)。workflowStructureGate.test.ts と門の self-test が留める。",
+      "regression": {
+        "file": "src/shared/__tests__/workflowStructureGate.test.ts",
+        "test": "workflow の構造 — 読めない形と黙らせる鍵 (threat: T-145)"
+      }
     }
   ],
   "huntBacklog": [
