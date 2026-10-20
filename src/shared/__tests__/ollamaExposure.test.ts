@@ -1,11 +1,11 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { createServer, type Server } from 'node:http';
 import { execFile } from 'node:child_process';
-import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { readOriginalSource } from './originalSource';
 
 /*
  * **Ollama が LAN などへ公開されていないかを CLI が教える** (threat: T-129)
@@ -124,7 +124,7 @@ describe('Ollama の公開の自己点検 (threat: T-129)', () => {
   });
 
   it('ollama-setup.sh が公開の点検を呼び、失敗させずに警告だけ出す', async () => {
-    const sh = readFileSync(path.join(ROOT, 'scripts', 'ollama-setup.sh'), 'utf8');
+    const sh = readOriginalSource(path.join(ROOT, 'scripts', 'ollama-setup.sh'));
     expect(sh).toContain('ollama-cli.cjs" exposure --port "$PORT"');
     // 点検が 4 を返しても set -e で落ちない形 (if の条件に置く)。
     expect(/if node "\$\(dirname "\$0"\)\/ollama-cli\.cjs" exposure/.test(sh)).toBe(true);
