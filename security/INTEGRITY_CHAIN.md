@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 321
+- ブロック数: 324
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `f0ea1e1e25404084e9a4d2f936ad42d0c0914aebccca407839127a8ae1dbbaf8`
-- 保護対象: 121 ファイル
+- 末尾(tip)ハッシュ: `f8bcaec54c6bc580f122f839551c3e2dc458d2e9d7fe3b76fbb03cb4b3dc7efb`
+- 保護対象: 122 ファイル
 
 ## ブロック
 
@@ -334,6 +334,9 @@
 | 318 | `a1750a483dfbf2ec` | `7d89ddb527396f27` | `1ee928f60802b58d` | update integrity-chain.cjs,verify-e2e-playwright-pin.cjs |
 | 319 | `e1af72c87959b7f2` | `1ee928f60802b58d` | `c4389d0142079619` | update e2e.yml |
 | 320 | `fd7b60b466aa78cb` | `c4389d0142079619` | `f0ea1e1e25404084` | update PROXY_EXAMPLE.md |
+| 321 | `923c0c5ebd57af4d` | `f0ea1e1e25404084` | `98f2db369a1f7932` | update main.ts,oauth.ts,shellOpenGate.ts |
+| 322 | `8a2230d0e8453248` | `98f2db369a1f7932` | `ca505bcd6d80305b` | update integrity-chain.cjs,fileRequestGate.ts |
+| 323 | `f14995f41e936da2` | `ca505bcd6d80305b` | `f8bcaec54c6bc580` | update fileRequestGate.ts |
 
 ## 保護対象ファイル
 
@@ -398,6 +401,7 @@
 - `src/main/clients/exportPaths.ts`
 - `src/main/clients/types.ts`
 - `src/main/eraseAll.ts`
+- `src/main/fileRequestGate.ts`
 - `src/main/keychainBackend.ts`
 - `src/main/main.ts`
 - `src/main/oauth.ts`

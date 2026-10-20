@@ -112,12 +112,14 @@ const INVISIBLE_RANGES = [
    * (`u` フラグも無かった)、補助面の Tag 文字を置いても全門が緑だった (隔離した複製で実測)。
    * 異体字選択 (U+FE00-FE0E / U+E0100-E01EF) も同じ目的に使える。U+FE0F は絵文字の表示用なので外す。
    */
+  // eslint-disable-next-line no-misleading-character-class -- 異体字選択子の範囲を意図して列挙している (結合文字として読まれることが目的の字)
   { name: '不可視文字 (補助面: Tag / 異体字選択)', re: /[\u{E0000}-\u{E007F}\u{E0100}-\u{E01EF}]/gu },
   /*
    * 見た目が空白になる BMP の字: 結合用 CGJ・アラビア文字記号・ハングル充填・モンゴル母音区切り・
    * 行/段落区切り・廃止された書式制御・点字空白・ハングルの空白・半角ハングル充填・注釈アンカー。
    * 題名や指示の「空に見える」部分に隠せる。字は直接書かず範囲で持つ。
    */
+  // eslint-disable-next-line no-misleading-character-class -- CGJ・異体字選択子など結合文字扱いの字を意図して列挙している
   { name: '不可視文字 (BMP: 空に見える字)', re: /[\u034f\u061c\u115f\u1160\u17b4\u17b5\u180e\u2028\u2029\u206a-\u206f\u2800\u3164\ufe00-\ufe0e\uffa0\ufff9-\ufffb]/g },
 ];
 

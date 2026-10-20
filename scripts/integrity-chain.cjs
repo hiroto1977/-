@@ -124,6 +124,9 @@ const PROTECTED = [
   // レンダラーがホーム配下の任意のファイルを起動できる。
   // 2026-08-22 まで main.ts の中の非公開関数で、テストも変異検査も無かった。
   'src/main/shellOpenGate.ts',
+  // 2026-10-20 (threat: T-140)。レンダラーの file:// 読み取りを同梱の dist/ に閉じ込める門。
+  // ここが緩むと、乗っ取られたレンダラーが保管ファイルなど任意のローカルファイルを fetch で読める。
+  'src/main/fileRequestGate.ts',
   // 2026-08-22 に足した。`shellOpenGate.ts` の**双子**——あちらが「OS に
   // ファイルを開かせてよいか」なら、こちらは「OS に URL を開かせてよいか」。
   // `javascript:` / `file:` / OS 独自スキームを止める唯一の関門で、

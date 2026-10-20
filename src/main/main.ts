@@ -17,7 +17,7 @@ import type { OsOpResult, TokenSaveResult } from '../preload/preload';
 import { safeErrorMessage } from './clients/types';
 import { externalUrlOrNull } from '../shared/externalUrlGate';
 import { shellTargetOrNull } from './shellOpenGate';
-import { fileRequestAllowed } from './fileRequestGate';
+import { installFileRequestGate } from './fileRequestGate';
 import { evaluateUpdate, parseLatestRelease, type UpdateVerdict } from '../shared/updateCheck';
 import {
   DEFAULT_HTTP_TIMEOUT_MS,
@@ -155,9 +155,7 @@ function createWindow(): BrowserWindow {
    * (`grantFileProtocolExtraPrivileges`) に依らず、任意のローカルファイルを fetch/XHR で読ませない。
    */
   const distRoot = path.join(__dirname, '..', 'dist');
-  win.webContents.session.webRequest.onBeforeRequest({ urls: ['file://*/*'] }, (details, callback) => {
-    callback({ cancel: !fileRequestAllowed(details.url, distRoot) });
-  });
+  installFileRequestGate(win.webContents.session, distRoot);
 
   win.webContents.session.setPermissionRequestHandler((_wc, permission, callback) => {
     callback(permissionAllowed(permission));

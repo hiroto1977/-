@@ -226,3 +226,4 @@
 /src/shared/__tests__/ollamaCliTerminalSafe.test.ts @hiroto1977
 /src/shared/__tests__/lintCharsetAsciiSmuggling.test.ts @hiroto1977
 /src/renderer/data/__tests__/backupRecordLimit.test.ts @hiroto1977
+/src/main/fileRequestGate.ts @hiroto1977

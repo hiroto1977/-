@@ -53,6 +53,7 @@
     "src/main/clients/wordpress.ts",
     "src/main/clients/youtube.ts",
     "src/main/eraseAll.ts",
+    "src/main/fileRequestGate.ts",
     "src/main/main.ts",
     "src/main/oauth.ts",
     "src/main/secrets.ts",

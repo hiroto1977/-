@@ -63,6 +63,7 @@
     "src/main/clients/exportPaths.ts",
     "src/main/clients/types.ts",
     "src/main/eraseAll.ts",
+    "src/main/fileRequestGate.ts",
     "src/main/keychainBackend.ts",
     "src/main/main.ts",
     "src/main/oauth.ts",
@@ -2692,6 +2693,30 @@
       "leafCount": 121,
       "note": "update PROXY_EXAMPLE.md",
       "hash": "f0ea1e1e25404084e9a4d2f936ad42d0c0914aebccca407839127a8ae1dbbaf8"
+    },
+    {
+      "index": 321,
+      "prevHash": "f0ea1e1e25404084e9a4d2f936ad42d0c0914aebccca407839127a8ae1dbbaf8",
+      "merkleRoot": "923c0c5ebd57af4de0bc9c58cd7a699381899b6ee29f4d6c8616560c49443506",
+      "leafCount": 121,
+      "note": "update main.ts,oauth.ts,shellOpenGate.ts",
+      "hash": "98f2db369a1f7932f47e19908c4cfe62acff56c5e33eb33cfac0b5dcd596b641"
+    },
+    {
+      "index": 322,
+      "prevHash": "98f2db369a1f7932f47e19908c4cfe62acff56c5e33eb33cfac0b5dcd596b641",
+      "merkleRoot": "8a2230d0e8453248a7dd36df488ae16c7c4efeaefa6bfc2b8e199562aa4e91ff",
+      "leafCount": 122,
+      "note": "update integrity-chain.cjs,fileRequestGate.ts",
+      "hash": "ca505bcd6d80305b647b606063e487af69a8ea8ae7b98f447a2054aa92ad40e3"
+    },
+    {
+      "index": 323,
+      "prevHash": "ca505bcd6d80305b647b606063e487af69a8ea8ae7b98f447a2054aa92ad40e3",
+      "merkleRoot": "f14995f41e936da20a039aec5f94423323776978ff314bfa47631366ee3d666f",
+      "leafCount": 122,
+      "note": "update fileRequestGate.ts",
+      "hash": "f8bcaec54c6bc580f122f839551c3e2dc458d2e9d7fe3b76fbb03cb4b3dc7efb"
     }
   ],
   "tipManifest": {
@@ -2726,7 +2751,7 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "d385ddfc52ec74abf184207bfbb1ac655e730db2b7c6d7e758e35e67e79a5737",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "5467a06d54ebeaf6263c20fc960034be942bd45ac85a910284086ea42f5797f4",
+    "scripts/integrity-chain.cjs": "f0e1b40e20739c8d92339508cbd967de634b05739750383ef9ebb0cfe863ea98",
     "scripts/knowledge-autopilot.cjs": "ee8f7ae4a4ad29dda6c02f83c113c45fa1648522f807e711aa86b7746f372968",
     "scripts/lib/artifact-freshness.cjs": "4fe8833bf59fe293cf8d34067caf7f9e80c27755ceebcd6e92b4e9d78f6a5a5c",
     "scripts/lib/json-for-script.cjs": "cb79bf1fb2f3c10c6854ec16d9c12bb0695dee5561751333db4531545702fd70",
@@ -2756,11 +2781,12 @@
     "src/main/clients/exportPaths.ts": "3b01bb149b17bd5c05929649d1c6c387546c46796a0031993e09cf4bbb54928a",
     "src/main/clients/types.ts": "0f7eeae150418def1fb8f242f9f010bcb6d947690b2ad085d18276c041b239fa",
     "src/main/eraseAll.ts": "5fabdaeb36193d7cfd06ccbae8712ada1a5ad36787240cd35fb3dcf0a2fdd797",
+    "src/main/fileRequestGate.ts": "fd23a74b0a6342ecadd3ebced0fac12dac0eff610c79256540adecbb93a6b2c2",
     "src/main/keychainBackend.ts": "a9ac8c957100cc6aaa332973638fe4c6057daf017e022eb50fb134ce44ce5b93",
-    "src/main/main.ts": "afa3212c48430623d48a68aa30040e2570412edb898ce43ee80654befb128427",
-    "src/main/oauth.ts": "342b114ffe392ca17fc76334b0c596b5083e631a5e383744da1a0c8f6e64999e",
+    "src/main/main.ts": "e5a0bd125c296ead70a3084530a8675e1b4efe102bf416ff7f58f6ec974846e4",
+    "src/main/oauth.ts": "361df5884e2b332e721701fe677390450bf98c7b665fe331dd1e79620da7a5b7",
     "src/main/secrets.ts": "ddfe5ece7c6393fd8cd473f84eec8173cbc2435ffb163a638e130a9e4ef5ce17",
-    "src/main/shellOpenGate.ts": "5192de0eb0a48f4eebedd17fa73df4ec5722f41f7290db5194eb58e2bdb28732",
+    "src/main/shellOpenGate.ts": "83d21dd21674694edd0e835c9acfdc6c79fea3ff8eedd2d5e589dfeecbc7548b",
     "src/main/stateFile.ts": "984eebe8582b3c6c88669d17e778932f6b87a682640d1f162acd182d5947169b",
     "src/main/windowPrefs.ts": "0bccea9e29b489da1b4a7962eaa53e237cf93fed9d4692371a3a43a6a4985dee",
     "src/preload/preload.ts": "21fc645271dd2064f063fc439d888eb4dcef32d08d1030d92d9cb8ff2a4040a6",

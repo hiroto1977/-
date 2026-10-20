@@ -13,11 +13,16 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 /** `win32` は大文字小文字を区別しないので畳んで比べる。 */
-function fold(p: string): string {
-  return process.platform === 'win32' ? p.toLowerCase() : p;
+function fold(p: string, platform: string): string {
+  // Stryker disable next-line MethodExpression: 両辺を同じ関数で畳むので toUpperCase でも答えは同じ (等価変異)
+  return platform === 'win32' ? p.toLowerCase() : p;
 }
 
-export function fileRequestAllowed(url: string, distRoot: string): boolean {
+export function fileRequestAllowed(
+  url: string,
+  distRoot: string,
+  platform: string = process.platform,
+): boolean {
   let parsed: URL;
   try {
     parsed = new URL(url);
@@ -25,7 +30,9 @@ export function fileRequestAllowed(url: string, distRoot: string): boolean {
     return false;
   }
   if (parsed.protocol !== 'file:') return true;
-  if (parsed.hostname !== '' && parsed.hostname !== 'localhost') return false;
+  // WHATWG の URL は file://localhost/… のホストを '' へ正規化する —— 空でなければ UNC (他ホストの共有)。
+  // Stryker disable next-line ConditionalExpression: POSIX の fileURLToPath は非空ホストを自分で投げて下の catch が断るので、この行は Windows (UNC) のためだけに効く (等価変異)
+  if (parsed.hostname !== '') return false;
   let target: string;
   try {
     target = path.resolve(fileURLToPath(parsed));
@@ -33,5 +40,25 @@ export function fileRequestAllowed(url: string, distRoot: string): boolean {
     return false;
   }
   const root = path.resolve(distRoot);
-  return fold(target).startsWith(fold(root) + path.sep);
+  return fold(target, platform).startsWith(fold(root, platform) + path.sep);
+}
+
+/**
+ * 窓の session に file:// の門を付ける。`main.ts` にこの綴りを置かないための薄い口
+ * (`openExternal` を呼ぶファイルに `file://` の URL を置かない規則 · localFileOpenPolicy)。
+ */
+export function installFileRequestGate(
+  session: {
+    webRequest: {
+      onBeforeRequest(
+        filter: { urls: string[] },
+        listener: (details: { url: string }, callback: (response: { cancel: boolean }) => void) => void,
+      ): void;
+    };
+  },
+  distRoot: string,
+): void {
+  session.webRequest.onBeforeRequest({ urls: ['file://*/*'] }, (details, callback) => {
+    callback({ cancel: !fileRequestAllowed(details.url, distRoot) });
+  });
 }
