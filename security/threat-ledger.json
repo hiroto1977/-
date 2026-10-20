@@ -1089,7 +1089,7 @@
       "fix": "10 か所に with: persist-credentials: false。lint:workflow-security に「checkout は persist-credentials: false を持つ」規則 (step の段で区切る・true は持たないと数える) と self-test 4 件。対照: ci.yml から外す → 門 ❌ 1。",
       "regression": {
         "file": "src/shared/__tests__/workflowSecurityWitness.test.ts",
-        "test": "★ 実物の checkout 10 か所はすべて persist-credentials: false (threat: T-056)"
+        "test": "★ 実物の checkout 11 か所はすべて persist-credentials: false (threat: T-056)"
       }
     },
     {

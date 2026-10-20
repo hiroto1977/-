@@ -45,6 +45,7 @@
 /docs/SECURITY_CHAIN.md @hiroto1977
 # エージェントが「まず読め」と指示される文書 (CLAUDE.md / SessionStart hook が指す)。
 # ここへ命令文を足されると、次のセッションのエージェントがそれを読んで従う (T-142)。
+# 毎セッション書き換わるので整合性チェーンには入れず、所有者のレビューだけを要求する。
 /docs/SESSION_HANDOFF.md @hiroto1977
 /docs/REMAINING_WORK.md @hiroto1977
 /docs/THREAT_HUNT.md @hiroto1977
@@ -236,3 +237,4 @@
 /src/shared/__tests__/sessionContextUntrusted.test.ts @hiroto1977
 /src/shared/__tests__/releaseJobSplit.test.ts @hiroto1977
 /src/shared/__tests__/workflowStructureGate.test.ts @hiroto1977
+/src/shared/__tests__/dependencyAuditIssue.test.ts @hiroto1977

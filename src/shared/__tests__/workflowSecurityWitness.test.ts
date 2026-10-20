@@ -228,7 +228,7 @@ describe('pages.yml の書く権限は公開の job だけ (threat: T-039)', () 
   });
 
   const PAGES_ALLOW = { 'pages.yml': gate.JOB_PERMISSIONS_ALLOW['pages.yml']! };
-  it('★ job 単位の permissions は pages の deploy と release の build だけで、台帳と一致する (threat: T-039)', () => {
+  it('★ job 単位の permissions は deploy の 2 つだけで、台帳と一致する (threat: T-039)', () => {
     expect(gate.jobPermissionBlocks(pagesYml)).toEqual([
       { job: 'deploy', line: expect.any(Number), scopes: ['pages: write', 'id-token: write'] },
     ]);
