@@ -391,6 +391,15 @@ const REVIEWED_OUTSIDE_SENDS = [
       + ' の 3 つ (`/api/version` `/api/tags` `/api/chat`) だけ。判定は UI 版と同じ'
       + ' `src/shared/ollama.ts` を esbuild で読み込んで共有する。',
   },
+  {
+    file: 'scripts/lib/ollama-exposure.cjs',
+    needle: 'net.connect({ host, port })',
+    guard:
+      '**この PC 自身のアドレスへの TCP 接続確認だけ**。`host` は `os.networkInterfaces()` の外向き IPv4'
+      + ' (`candidateAddresses` が loopback・リンクローカル・IPv6 を除き 16 件で打ち切る) で、利用者の入力や'
+      + ' 第三者の応答からは来ない。`port` は `buildLoopbackBase` が検めた 10 進ポート。繋がったらすぐ'
+      + ' `destroy` し、**1 バイトも送らず**資格情報も載せない (Ollama が外へ公開されていないかの自己点検・T-129)。',
+  },
 ];
 
 /**

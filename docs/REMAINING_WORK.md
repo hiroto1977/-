@@ -14,7 +14,7 @@
 
 **直し**: (1) Ollama の案内を LAN の IP への束縛 + `--bind` + 空フォルダにし、認証が無いこと・非ブラウザは止まらないこと・公共 Wi-Fi / ポート開放をしないことを操作子より前に明記、外からは `tailscale serve` を先頭に。`ollamaExposureGuidance.test.ts` (5 件) が実画面で留める。(2) Worker を **fail closed** に(秘密が空なら 401、`ALLOW_UNAUTHENTICATED` を自分の手で `true` にしたときだけ認証なし)。`proxyWorkerFailClosed.test.ts` (5 件) が Worker 全体を読み込んで要求を投げる。対照は 2 方向とも狙った検査で鳴る(LAN 行を 0.0.0.0 に戻す ❌3 / 分岐を潰す ❌1)。
 
-**残余(正直に)**: 利用者が自分で Ollama を公開する操作そのものは止められない。すでに旧 Worker を配った利用者の Worker は自動では直らない(再配布と秘密の設定が要る)。`scripts/ollama-cli.cjs` に「LAN に出ていないか」の自己点検はまだ無い(次の候補)。
+**残余(正直に)**: 利用者が自分で Ollama を公開する操作そのものは止められない。すでに旧 Worker を配った利用者の Worker は自動では直らない(再配布と秘密の設定が要る)。`npm run ollama` に「LAN に出ていないか」の自己点検を足した(パス 542・`scripts/lib/ollama-exposure.cjs`)。`ollama:setup -- --check`(シェル側)にはまだ無い。
 
 ## パス 540 (狩りの 30 回目 —— エージェント指示書を CODEOWNERS で覆う) (2026-10-20)
 

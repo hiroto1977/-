@@ -32,6 +32,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const esbuild = require('esbuild');
+const exposure = require('./lib/ollama-exposure.cjs');
 
 const ROOT = path.join(__dirname, '..');
 const REQUEST_TIMEOUT_MS = 120_000; // 生成は長くかかるので UI より緩く
@@ -197,12 +198,16 @@ async function cmdStatus(base, opts) {
 
   const warnings = shared.buildWarnings(version);
   const versionSafe = shared.isVersionSafe(version);
+  // 外へ公開されていないか (T-129)。繋がるアドレスがあれば警告する。
+  const portNum = Number(new URL(base).port);
+  const exposed = await exposure.findExposed(os.networkInterfaces(), portNum);
+  const exposureNote = exposure.exposureWarning(exposed, portNum);
   const versionUnknown = version === '';
 
   if (opts.json) {
     console.log(
       JSON.stringify(
-        { running: true, base, version, versionSafe, models, warnings },
+        { running: true, base, version, versionSafe, models, warnings, exposedOn: exposed },
         null,
         2,
       ),
@@ -236,6 +241,10 @@ async function cmdStatus(base, opts) {
   if (!versionSafe && version !== '') {
     console.log('');
     console.log(`⚠ ${warnings[0]}`);
+  }
+  if (exposureNote !== null) {
+    console.log('');
+    console.log(exposureNote);
   }
 }
 
@@ -305,6 +314,9 @@ function help() {
   --port <番号>   Ollama のポート (既定 11434)
   --json          機械可読な JSON で出力
   -h, --help      このヘルプ
+
+状態確認では、Ollama がこの PC の外から届くアドレスで待ち受けていないかも調べ、公開されていれば警告します
+(認証が無いため。自分のアドレスへの接続確認だけで、何も送りません)。
 
 接続先は http://127.0.0.1:<ポート> に固定です。呼び出すのは /api/version ・
 /api/tags ・/api/chat の 3 つだけで、モデルを取得・削除する API は呼びません

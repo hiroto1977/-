@@ -176,8 +176,8 @@ describe('lint:network-targets — 外側の証人', () => {
       expect(pop).toContain('assets/sw.js');
     });
 
-    it('★ 台帳の 3 件は、守りを実際に書いている (空欄を理由として通さない)', () => {
-      expect(gate.REVIEWED_OUTSIDE_SENDS).toHaveLength(3);
+    it('★ 台帳の 4 件は、守りを実際に書いている (空欄を理由として通さない)', () => {
+      expect(gate.REVIEWED_OUTSIDE_SENDS).toHaveLength(4);
       for (const row of gate.REVIEWED_OUTSIDE_SENDS) {
         expect(row.guard.length).toBeGreaterThan(40);
         // 「あとで決める」を理由の欄に置けない (パス 336 と同じ規則)。
