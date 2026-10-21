@@ -173,7 +173,7 @@ vi.mock('../clients', () => ({
   },
   LIVE_ACTIONS: {
     github: { 'create-issue': async (a: unknown) => { actionCalls.push(a); return { id: 1 }; } },
-    assistant: { chat: async () => ({ ok: true }), chatAll: async () => ({ ok: true }) },
+    assistant: { chat: async () => ({ ok: true }), chatAll: async () => ({ ok: true }), providers: async () => ({ ok: true }) },
     // 資格情報の要らないサービスの action (パス 267 の実測対象)。
     skills: { run: async (a: unknown) => { actionCalls.push(a); return { ran: true }; } },
     kpi: { save: async (a: unknown) => { actionCalls.push(a); return { saved: true }; } },
@@ -1276,6 +1276,13 @@ describe('本人確認の門 — 画面から独立した確認が通らなけ�
     // 24 欄ちょうどは通常どおり確認へ進む。
     await invoke('action:invoke', 'github', 'create-issue', decoys);
     expect(presenceRequests).toHaveLength(1);
+  });
+
+  it('★ 読み取りの段階は欄が多くても断らない (確認を出さないので隠す先が無い・欄の幅の門は書き込み側だけ・threat: T-156)', async () => {
+    const wide = Object.fromEntries(Array.from({ length: 60 }, (_, i) => [`d${i}`, 'ok']));
+    const r = await invoke('action:invoke', 'assistant', 'providers', wide);
+    expect(r).not.toMatchObject({ code: 'action_failed', message: expect.stringContaining('欄が多すぎる') });
+    expect(presenceRequests.at(-1)).toMatchObject({ channel: 'assistant/providers', tier: 'read' });
   });
 
   it('台帳に無い action でも (登録があれば) 最も厳しい段階で確かめる', async () => {

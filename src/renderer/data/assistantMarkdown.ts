@@ -131,6 +131,9 @@ function isTableSeparator(line: string): boolean {
  * 正当な応答は `maxTokens: 2048` で縛られていて、1 行 1 ブロックに割っても
  * 数百に届かない。2 万は**その 2 桁上**で正当な応答では発火せず、当たれば
  * 上の表で 100ms 台に収まる。
+ *
+ * ブロック数を別に比べない: 1 ブロックの重み (`blockWeight`) は 1 以上で、この数は `MAX_RENDER_WEIGHT` と
+ * 同じなので、ブロック数が上限に届けば重みの天井が必ず先に効く (別に比べると片方が決して効かない等価な枝になる)。
  */
 export const MAX_RENDER_BLOCKS = 20_000;
 
@@ -267,7 +270,7 @@ export function parseMarkdown(src: string): Block[] {
   let weight = 0;
   for (const b of blocks) {
     const w = blockWeight(b);
-    if (kept.length >= MAX_RENDER_BLOCKS || weight + w > MAX_RENDER_WEIGHT) {
+    if (weight + w > MAX_RENDER_WEIGHT) {
       return [...kept, { type: 'paragraph', spans: [{ text: BLOCKS_TRUNCATED_NOTICE }] }];
     }
     kept.push(b);

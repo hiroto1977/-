@@ -544,6 +544,18 @@ describe('門自身が重くならない・締め出しすぎない (threat: T-1
     expect(d.endsWith(', …')).toBe(true);
   });
 
+  it('★ 「ほか N 欄」の名前一覧は 2 × 24 欄までで、それを超えたときだけ ", …" で打ち切る (境界ちょうどは打ち切らない)', () => {
+    const fields = (n: number): Record<string, number> => Object.fromEntries(Array.from({ length: n }, (_, i) => [`f${i}`, i]));
+    const at = (n: number): string => describePayload(fields(n));
+    // 25〜48 欄: 残りの名前を全部並べ、末尾は最後の名前そのもの (余計な字を足さない)。
+    expect(at(MAX_FIELDS_SHOWN * 2).endsWith(`: f${MAX_FIELDS_SHOWN * 2 - 1}`)).toBe(false);
+    expect(at(MAX_FIELDS_SHOWN * 2).endsWith(`, f${MAX_FIELDS_SHOWN * 2 - 1}`)).toBe(true);
+    expect(at(MAX_FIELDS_SHOWN + 6).endsWith(`, f${MAX_FIELDS_SHOWN + 5}`)).toBe(true);
+    // 49 欄: 名前の一覧が 1 つ溢れる。
+    expect(at(MAX_FIELDS_SHOWN * 2 + 1).endsWith(`, f${MAX_FIELDS_SHOWN * 2 - 1}, …`)).toBe(true);
+    expect(at(MAX_FIELDS_SHOWN * 2 + 1)).toContain('ほか 25 欄:');
+  });
+
   it('★ 欄が 24 を超える payload は多すぎる (24 ちょうどは正当)・配列・null・継承した欄は数えない', () => {
     const fields = (n: number): Record<string, number> => Object.fromEntries(Array.from({ length: n }, (_, i) => [`f${i}`, i]));
     expect(payloadTooWide(fields(MAX_FIELDS_SHOWN))).toBe(false);
@@ -551,6 +563,8 @@ describe('門自身が重くならない・締め出しすぎない (threat: T-1
     expect(payloadTooWide(Array.from({ length: 100 }, () => 1))).toBe(false);
     expect(payloadTooWide(null)).toBe(false);
     expect(payloadTooWide('x')).toBe(false);
+    // 文字列の添字は欄ではない (for…in が添字を列挙するので、型で弾かないと 30 字の文字列が「欄が多い」になる)。
+    expect(payloadTooWide('x'.repeat(MAX_FIELDS_SHOWN + 6))).toBe(false);
     const inherited = Object.create(fields(MAX_FIELDS_SHOWN + 5)) as Record<string, number>;
     inherited.own = 1;
     expect(payloadTooWide(inherited)).toBe(false);

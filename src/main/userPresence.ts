@@ -303,7 +303,8 @@ function keyLabel(k: string): string {
  * 超える物は無いので、超えたら見せ方を工夫せず断る (fail closed)。数えるのは固定個数まで。
  */
 export function payloadTooWide(payload: unknown): boolean {
-  if (payload === null || typeof payload !== 'object' || Array.isArray(payload)) return false;
+  // null は `for…in` が 0 回で終わるので別に弾かない。配列と文字列などは欄を持つ物ではないので数えない。
+  if (typeof payload !== 'object' || Array.isArray(payload)) return false;
   let n = 0;
   for (const k in payload as Record<string, unknown>) {
     if (!Object.hasOwn(payload as object, k)) continue;
@@ -371,7 +372,7 @@ export function createPresenceGate(deps: PresenceDeps): PresenceGate {
     alarms = alarms.filter((x) => within(t, x, ALARM_WINDOW_MS));
     alarms.push(t);
     // 警戒に要るのは「窓の中の新しい ALARMS_TO_ALERT 件」だけ (配列を伸ばさない · T-156)。
-    if (alarms.length > ALARMS_TO_ALERT) alarms = alarms.slice(-ALARMS_TO_ALERT);
+    alarms = alarms.slice(-ALARMS_TO_ALERT);
     if (alarms.length < ALARMS_TO_ALERT) return;
     const entering = postureAt(t) === 'normal';
     alertUntil = t + ALERT_MS;
@@ -408,11 +409,11 @@ export function createPresenceGate(deps: PresenceDeps): PresenceGate {
       for (let i = 0; i < weight; i += 1) list.push(t);
       // 保つのは「上限 + 1 件」まで (T-156): 連打で配列が伸びて 1 呼び出しの費用が増え、門自身が
       // 主プロセスを止める増幅器になった (20,000 回で 8 秒)。新しい側を残せば「上限を超えたか」は同じ答え。
-      if (list.length > RATE_LIMIT[req.tier] + 1) list.splice(0, list.length - (RATE_LIMIT[req.tier] + 1));
-      calls[req.tier] = list;
+      const kept = list.slice(-(RATE_LIMIT[req.tier] + 1));
+      calls[req.tier] = kept;
       const alert = postureAt(t) === 'alert';
       const limit = alert ? Math.max(1, Math.floor(RATE_LIMIT[req.tier] / ALERT_RATE_DIVISOR)) : RATE_LIMIT[req.tier];
-      if (list.length > limit) {
+      if (kept.length > limit) {
         return deny('rate-limited', req, '短時間に操作が集中したため断りました。しばらく待ってからやり直してください。');
       }
 
