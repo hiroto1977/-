@@ -63,7 +63,7 @@ describe('確かめる段階 (threat: T-147)', () => {
 
   it('許可すれば通り、見せた文は安全化された物 (制御文字・方向制御を空白へ)', async () => {
     const h = harness([true]);
-    const r = await h.gate.guard(req({ summary: 'a‮b\u0000c\n\nd' }), true);
+    const r = await h.gate.guard(req({ summary: 'a\u202Eb\u0000c\n\nd' }), true);
     expect(r).toEqual({ ok: true });
     expect(h.shown[0]!.summary).toBe('a b c d');
   });
@@ -269,11 +269,11 @@ describe('表示の安全化', () => {
 
   it('★ Unicode Tag・双方向制御・ゼロ幅・C1 を空白にする', () => {
     const tag = String.fromCodePoint(0xe0041);
-    expect(safeSummary(`a${tag}b‮c​d\u0085e`)).toBe('a b c d e');
+    expect(safeSummary(`a${tag}b\u202Ec\u200Bd\u0085e`)).toBe('a b c d e');
   });
 
   it('payload は欄ごとに値を切り、キーも安全化し、8 欄まで', () => {
-    const d = describePayload({ title: 'T', body: 'x'.repeat(200), 'k‮': 1 });
+    const d = describePayload({ title: 'T', body: 'x'.repeat(200), 'k\u202E': 1 });
     expect(d).toContain('title=「T」');
     expect(d).toContain(`body=「${'x'.repeat(80)}」`);
     expect(d).toContain('k=「1」');
