@@ -85,5 +85,5 @@
 
 - 確認の記録を端末内に残し、画面から見られるようにする (件数と種別のみ・中身は残さない)。
 - ブラウザ版の書き込み経路にも、保管庫の再入力 (step-up) を要求する。
-- `fetch:snapshot` の egress にも予算を置く (assistant など有料の `action:invoke` の egress は T-158 で 1 時間 300・1 日 1,500 の重みの予算を置いた。予算は保存しないので再起動で消える・ブラウザ版には届かない)。
+- 確認の対象外だった 5 つの口 (`fetch:snapshot` / `app:checkUpdate` / `app:setColorScheme` / `app:openPath` / `app:revealInFolder`) には T-159 で速度の上限と記録 (呼び出し元フレームの検査つき) を掛けた。`fetch:snapshot` の egress への予算は無い (assistant など有料の `action:invoke` の egress は T-158 で 1 時間 300・1 日 1,500 の重みの予算を置いた。予算は保存しないので再起動で消える・ブラウザ版には届かない)。
 - 通信の egress allowlist を主プロセスで強制 (現状は台帳と census)。

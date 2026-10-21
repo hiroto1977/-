@@ -2695,6 +2695,21 @@
         "file": "src/main/__tests__/userPresence.test.ts",
         "test": "全 AI 合議 (重み 5) を上限ぎりぎり (4 回/分) で 1 時間撃っても、通るのは重み 300 まで"
       }
+    },
+    {
+      "id": "T-159",
+      "found": "2026-10-21",
+      "foundBy": "防御側の自己点検 — T-157 が「限界(未修正): 門にも速度制限にも載らない 5 つの口」と記録した穴を、影響を測ってから塞いだ",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "low",
+      "title": "IPC の 5 つの口 (fetch:snapshot / app:checkUpdate / app:setColorScheme / app:openPath / app:revealInFolder) が門にも速度制限にも載らず、呼び出し元フレームの検査も受けていなかった。乗っ取られた画面から上限なしに呼べる: 76 サービスの取得の連打 (保存済みトークンで外部 API の速度制限を使い切らせる)・GitHub への通信・設定ファイルへの書き込み・書き出し物 (SVG / HTML など) を OS の既定アプリで開き続ける。警戒態勢の記録にも現れなかった",
+      "status": "fixed",
+      "fix": "確認は出さず、速度の上限と記録だけを門に掛ける (throttleMessage): fetch:snapshot・checkUpdate・setColorScheme は read 段階、openPath・revealInFolder は local-write 段階 (警戒中だけ確認が出て、何を開くかのパスを見せる)。門を引数の検査より先に置く (知らない id や文字列でない引数の連打も数える)。断られたら副作用の前に戻る (取得なし・配色の書き込みなし・OS を呼ばない・通信しない)。門が投げても reject しない。全 IPC ハンドラの台帳 (userPresenceCensus) に『速度だけを掛ける口』を段階つきで足した。限界(未修正): checkTokenInput の全長走査・HOME が symlink の環境で開く側が全部断る(可用性のみ)・oauth の認可中フラグの立て位置(docs/RED_BLUE.md ラウンド 3)。",
+      "regression": {
+        "file": "src/main/__tests__/mainIpc.test.ts",
+        "test": "門が断ったら、副作用 (取得・配色・OS で開く・通信) は 1 つも起きず、理由を返す"
+      }
     }
   ],
   "huntBacklog": [

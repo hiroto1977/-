@@ -1377,3 +1377,81 @@ describe('本人確認の門 — 画面から独立した確認が通らなけ�
     expect(authorizeConfigs).toEqual([]);
   });
 });
+
+describe('速度の上限と記録だけを掛ける 5 つの口 (threat: T-159)', () => {
+  const DENIED = { ok: false as const, message: '短時間に操作が集中したため断りました。' };
+
+  it('★ 各口は段階つきで門を呼ぶ (read は取得・更新確認・配色 / local-write は OS で開く 2 つ)・確認は出さない呼び方', async () => {
+    await invoke('fetch:snapshot', 'github');
+    await invoke('app:setColorScheme', 'dark', '#1b1520');
+    await invoke('app:revealInFolder', 'x');
+    await invoke('app:openPath', 'x');
+    const orig = globalThis.fetch;
+    globalThis.fetch = (async () => ({ ok: false, status: 500 })) as unknown as typeof fetch;
+    try {
+      await invoke('app:checkUpdate');
+    } finally {
+      globalThis.fetch = orig;
+    }
+    expect(presenceRequests.map((r) => [r.channel, r.tier])).toEqual([
+      ['fetch:snapshot', 'read'],
+      ['app:setColorScheme', 'read'],
+      ['app:revealInFolder', 'local-write'],
+      ['app:openPath', 'local-write'],
+      ['app:checkUpdate', 'read'],
+    ]);
+  });
+
+  it('★ 門が断ったら、副作用 (取得・配色・OS で開く・通信) は 1 つも起きず、理由を返す', async () => {
+    presenceVerdict = DENIED;
+    let netCalls = 0;
+    const orig = globalThis.fetch;
+    globalThis.fetch = (async () => {
+      netCalls += 1;
+      return { ok: true };
+    }) as unknown as typeof fetch;
+    try {
+      expect(await invoke('fetch:snapshot', 'github')).toEqual({ ok: false, code: 'fetch_failed', message: DENIED.message });
+      expect(await invoke('app:setColorScheme', 'dark', '#1b1520')).toEqual(DENIED);
+      expect(await invoke('app:revealInFolder', 'x')).toEqual(DENIED);
+      expect(await invoke('app:openPath', 'x')).toEqual(DENIED);
+      const verdict = (await invoke('app:checkUpdate')) as { kind: string };
+      expect(verdict.kind).not.toBe('update-available');
+    } finally {
+      globalThis.fetch = orig;
+    }
+    expect(fetcherCalls).toEqual([]);
+    expect(writtenPrefs).toEqual([]);
+    expect(shownInFolder).toEqual([]);
+    expect(openPathCalls).toEqual([]);
+    expect(netCalls).toBe(0);
+  });
+
+  it('★ 門が投げても IPC は reject せず、同じ形で断る', async () => {
+    presenceThrows = new Error('gate exploded');
+    expect(await invoke('fetch:snapshot', 'github')).toEqual({ ok: false, code: 'fetch_failed', message: 'gate exploded' });
+    expect(await invoke('app:setColorScheme', 'dark', '#1b1520')).toEqual({ ok: false, message: 'gate exploded' });
+    expect(await invoke('app:revealInFolder', 'x')).toEqual({ ok: false, message: 'gate exploded' });
+    expect(await invoke('app:openPath', 'x')).toEqual({ ok: false, message: 'gate exploded' });
+    expect(((await invoke('app:checkUpdate')) as { kind: string }).kind).not.toBe('update-available');
+    expect(openPathCalls).toEqual([]);
+    expect(writtenPrefs).toEqual([]);
+  });
+
+  it('★ 知らない id・文字列でない引数の連打も数える (門を引数の検査より先に置く)', async () => {
+    await invoke('fetch:snapshot', 'no-such-service');
+    await invoke('fetch:snapshot', { a: 1 });
+    await invoke('app:openPath', 42);
+    expect(presenceRequests.map((r) => [r.channel, r.summary])).toEqual([
+      ['fetch:snapshot', 'no-such-service'],
+      ['fetch:snapshot', '(文字列ではない)'],
+      ['app:openPath', '(文字列ではない)'],
+    ]);
+  });
+
+  it('★ 開く口の確認の見出しにはパスそのものが載る (警戒中に確認が出るとき、何を開くか見える)', async () => {
+    await invoke('app:openPath', '/exports/report.html');
+    await invoke('app:revealInFolder', '/exports/report.svg');
+    expect(presenceRequests.map((r) => r.summary)).toEqual(['/exports/report.html', '/exports/report.svg']);
+  });
+});
