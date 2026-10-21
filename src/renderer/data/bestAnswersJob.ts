@@ -26,6 +26,19 @@ import {
   type SendChat,
 } from './bestAnswers';
 
+/**
+ * **1 時間に始められる回数の上限** (2026-10-21 · threat: T-146)。
+ *
+ * 1 回の仕事は外へ最大 `MAX_BEST_ANSWER_CALLS` 回送る (有料 API の費用が出る)。
+ * 同時に走るのは 1 つだけ・1 回の送信回数も上限つきだが、**仕事を何度でも始め直せる**ので
+ * 画面を操作する自動化 (ブラウザ拡張・取り込んだ文書に仕込まれた指示に従う UI エージェント)
+ * が押し続ければ費用は無限に伸びる。窓は端末のメモリにだけ置く (保存しない —— 保存先の台帳に
+ * 2 つ目の置き場を作らない)。取り消した仕事も数える (送信はすでに出ているため)。
+ */
+export const BEST_JOB_WINDOW_MS = 60 * 60 * 1000;
+export const MAX_BEST_JOBS_PER_WINDOW = 12;
+let startedAt: number[] = [];
+
 export type BestJobStatus = 'running' | 'done' | 'failed' | 'cancelled';
 
 export interface BestJob {
@@ -111,6 +124,16 @@ export function startBestJob(req: BestAnswersRequest, send: SendChat, total: num
       reason: 'ベスト3 を作成中です。終わるのを待つか、入力欄の上の「取り消す」を押してから質問してください。',
     };
   }
+  const now = Date.now();
+  startedAt = startedAt.filter((t) => now - t < BEST_JOB_WINDOW_MS);
+  if (startedAt.length >= MAX_BEST_JOBS_PER_WINDOW) {
+    const wait = Math.ceil((BEST_JOB_WINDOW_MS - (now - startedAt[0]!)) / 60_000);
+    return {
+      ok: false,
+      reason: `ベスト3 は 1 時間に ${MAX_BEST_JOBS_PER_WINDOW} 回までです（外部の AI へ送る費用の暴走を防ぐため）。あと約 ${wait} 分で再び使えます。`,
+    };
+  }
+  startedAt.push(now);
   const id = nextId;
   nextId += 1;
   const ac = new AbortController();
@@ -176,5 +199,6 @@ export function _resetBestJobForTests(): void {
   controller.abort();
   controller = new AbortController();
   current = null;
+  startedAt = [];
   listeners.clear();
 }

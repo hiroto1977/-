@@ -5,8 +5,10 @@
  * 待ちは**固定回数で取らない** —— `startBestJob` が返す `finished` (仕事場を書き終えたら
  * 解ける) を待つ (法則 wait-for-condition-not-ticks)。
  */
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
+  BEST_JOB_WINDOW_MS,
+  MAX_BEST_JOBS_PER_WINDOW,
   _resetBestJobForTests,
   cancelBestJob,
   getBestJob,
@@ -243,5 +245,70 @@ describe('仕事場の値と境目', () => {
     expect(cancelBestJob()).toBe(true); // 失敗の報せは次のマイクロタスクで届く
     await r.finished;
     expect(getBestJob()).toMatchObject({ status: 'cancelled', error: null });
+  });
+});
+
+describe('1 時間あたりの回数の上限 (threat: T-146)', () => {
+  afterEach(() => vi.useRealTimers());
+
+  async function runOnce(): Promise<void> {
+    await started(startBestJob(REQ, echo, MAX_BEST_ANSWER_CALLS)).finished;
+  }
+
+  it('上限ちょうどまでは始められ、次の 1 回は理由つきで断る (送信は 1 回も出ない)', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(1_000_000);
+    for (let i = 0; i < MAX_BEST_JOBS_PER_WINDOW; i += 1) await runOnce();
+    const sent = vi.fn(echo);
+    const r = startBestJob(REQ, sent, MAX_BEST_ANSWER_CALLS);
+    expect(r.ok).toBe(false);
+    if (!r.ok) {
+      expect(r.reason).toContain(`1 時間に ${MAX_BEST_JOBS_PER_WINDOW} 回まで`);
+      expect(r.reason).toContain('あと約 60 分');
+    }
+    expect(sent).not.toHaveBeenCalled();
+  });
+
+  it('窓を過ぎれば古い分から数えから外れ、また始められる (境目ちょうどは外れる)', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(1_000_000);
+    for (let i = 0; i < MAX_BEST_JOBS_PER_WINDOW; i += 1) await runOnce();
+    vi.setSystemTime(1_000_000 + BEST_JOB_WINDOW_MS - 1);
+    expect(startBestJob(REQ, echo, MAX_BEST_ANSWER_CALLS).ok).toBe(false);
+    vi.setSystemTime(1_000_000 + BEST_JOB_WINDOW_MS);
+    await runOnce();
+  });
+
+  it('待ち時間の分は残りの窓から計算する (最後の 1 分の端数は切り上げ)', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(2_000_000);
+    for (let i = 0; i < MAX_BEST_JOBS_PER_WINDOW; i += 1) await runOnce();
+    vi.setSystemTime(2_000_000 + BEST_JOB_WINDOW_MS - 61_000);
+    const r = startBestJob(REQ, echo, MAX_BEST_ANSWER_CALLS);
+    expect(r.ok).toBe(false);
+    if (!r.ok) expect(r.reason).toContain('あと約 2 分');
+  });
+
+  it('取り消した仕事も数える (送信はすでに出ているため)', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(3_000_000);
+    for (let i = 0; i < MAX_BEST_JOBS_PER_WINDOW; i += 1) {
+      const h = held();
+      started(startBestJob(REQ, h.send, MAX_BEST_ANSWER_CALLS));
+      expect(cancelBestJob()).toBe(true);
+    }
+    expect(startBestJob(REQ, echo, MAX_BEST_ANSWER_CALLS).ok).toBe(false);
+  });
+
+  it('走っている最中の断りは回数を消費しない (断りは数えない)', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(4_000_000);
+    const h = held();
+    started(startBestJob(REQ, h.send, MAX_BEST_ANSWER_CALLS));
+    for (let i = 0; i < MAX_BEST_JOBS_PER_WINDOW * 2; i += 1) {
+      expect(startBestJob(REQ, echo, MAX_BEST_ANSWER_CALLS).ok).toBe(false);
+    }
+    cancelBestJob();
+    for (let i = 0; i < MAX_BEST_JOBS_PER_WINDOW - 1; i += 1) await runOnce();
   });
 });

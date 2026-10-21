@@ -268,6 +268,29 @@
       "gaps": [
         "公開の名前が私設 IP へ解決する形 (DNS rebinding) はクライアント側では見えない (Worker は DoH で見る)。"
       ]
+    },
+    {
+      "id": "denial-of-wallet",
+      "name": "費用の暴走 (Denial of Wallet)",
+      "howItReachesThisApp": "画面を操作する自動化や仕込まれた指示が、有料の外部 AI へ送る操作を繰り返し、利用者の API 費用を使い切らせる。",
+      "defenses": [
+        {
+          "what": "1 回の仕事の送信回数・同時 1 つ・1 時間あたりの開始回数の上限",
+          "enforcedBy": [
+            "src/renderer/data/bestAnswersJob.ts",
+            "src/renderer/data/__tests__/bestAnswersJob.test.ts"
+          ]
+        },
+        {
+          "what": "入力・出力の長さの天井",
+          "enforcedBy": [
+            "src/shared/assistantLimits.ts"
+          ]
+        }
+      ],
+      "gaps": [
+        "日次の費用上限は無い (窓は 1 時間・再読込で消える)。ベスト3 以外の AI 呼び出し (全AI合議・通常チャット) には開始回数の上限が無い。"
+      ]
     }
   ],
   "threats": [
@@ -2425,6 +2448,21 @@
       "regression": {
         "file": "src/shared/__tests__/workflowStructureGate.test.ts",
         "test": "workflow の構造 — 読めない形と黙らせる鍵 (threat: T-145)"
+      }
+    },
+    {
+      "id": "T-146",
+      "found": "2026-10-21",
+      "foundBy": "AI エージェントを使った攻撃の脅威モデル(Denial of Wallet)から測定",
+      "surface": "renderer",
+      "class": "denial-of-wallet",
+      "severity": "low",
+      "title": "AI アシスタントの「🏆 ベスト3」は 1 回の質問で外部の AI へ最大 5 回送る(有料 API の費用が出る)。同時に走るのは 1 つだけ・1 回の送信回数も上限つきだったが、仕事を始め直す回数に上限が無く、画面を操作する自動化(ブラウザ拡張・取り込んだ文書の指示に従う UI エージェント)が押し続ければ費用が無限に伸びた",
+      "status": "mitigated",
+      "fix": "bestAnswersJob.ts に 1 時間あたり 12 回の窓(端末のメモリのみ・保存しない)を置き、超えたら理由と待ち時間つきで断って送信を出さない。取り消した仕事も数え、走っている最中の断りは消費しない。実利用者が 1 時間に 12 回を超えて使う想定は無い(1 回 5 送信 = 最大 60 送信/時)。",
+      "regression": {
+        "file": "src/renderer/data/__tests__/bestAnswersJob.test.ts",
+        "test": "1 時間あたりの回数の上限 (threat: T-146)"
       }
     }
   ],
