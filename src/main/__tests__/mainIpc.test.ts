@@ -101,9 +101,13 @@ let eraseReportImpl: () => Promise<import('../../shared/eraseReport').DesktopEra
 /** 本人確認の門 (T-147)。既定は通す —— 番人の検査はこのファイルの他の describe が見る。 */
 let presenceVerdict: { ok: true } | { ok: false; message: string } = { ok: true };
 let presenceThrows: Error | null = null;
-const presenceRequests: { channel: string; tier: string; summary: string }[] = [];
+const presenceRequests: { channel: string; tier: string; summary: string; weight?: number }[] = [];
+const threatSignals: { kind: string; where: string }[] = [];
 vi.mock('../presenceWiring', () => ({
-  requirePresence: (_e: unknown, req: { channel: string; tier: string; summary: string }) => {
+  reportThreatSignal: (kind: string, where: string) => {
+    threatSignals.push({ kind, where });
+  },
+  requirePresence: (_e: unknown, req: { channel: string; tier: string; summary: string; weight?: number }) => {
     presenceRequests.push(req);
     return presenceThrows ? Promise.reject(presenceThrows) : Promise.resolve(presenceVerdict);
   },
@@ -169,6 +173,7 @@ vi.mock('../clients', () => ({
   },
   LIVE_ACTIONS: {
     github: { 'create-issue': async (a: unknown) => { actionCalls.push(a); return { id: 1 }; } },
+    assistant: { chat: async () => ({ ok: true }), chatAll: async () => ({ ok: true }) },
     // 資格情報の要らないサービスの action (パス 267 の実測対象)。
     skills: { run: async (a: unknown) => { actionCalls.push(a); return { ran: true }; } },
     kpi: { save: async (a: unknown) => { actionCalls.push(a); return { saved: true }; } },
@@ -894,7 +899,11 @@ describe('oauth:isSupported / oauth:authorize', () => {
     await Promise.resolve();
     const second = (await invoke('oauth:authorize', 'github')) as { ok: boolean; code: string };
     const third = (await invoke('oauth:authorize', 'github', 'abcdefgh.apps.googleusercontent.com')) as { code: string };
-    expect(second).toMatchObject({ ok: false, code: 'authorize_busy' });
+    expect(second).toEqual({
+      ok: false,
+      code: 'authorize_busy',
+      message: '別の認可が進行中です。開いたブラウザでの手続きを終えるか、5 分ほど待ってからやり直してください',
+    });
     expect(third.code).toBe('authorize_busy');
     expect(authorizeConfigs).toHaveLength(1);
     release({ accessToken: 'SECRET_AT', refreshToken: 'SECRET_RT', scope: 'repo', expiresAt: 999 });
@@ -1251,6 +1260,13 @@ describe('本人確認の門 — 画面から独立した確認が通らなけ�
     expect(presenceRequests[0]!.summary).toContain('title: "T"');
   });
 
+  it('★ action:invoke は呼び出しの重みを門へ渡す (全 AI 合議は提供者の数だけの費用・threat: T-152)', async () => {
+    await invoke('action:invoke', 'assistant', 'chatAll', { messages: [] });
+    expect(presenceRequests.at(-1)).toMatchObject({ channel: 'assistant/chatAll', weight: 5 });
+    await invoke('action:invoke', 'assistant', 'chat', { messages: [] });
+    expect(presenceRequests.at(-1)).toMatchObject({ channel: 'assistant/chat', weight: 1 });
+  });
+
   it('台帳に無い action でも (登録があれば) 最も厳しい段階で確かめる', async () => {
     await invoke('action:invoke', 'github', 'create-issue', {});
     expect(presenceRequests.at(-1)?.tier).toBe('external-write');
@@ -1262,18 +1278,37 @@ describe('本人確認の門 — 画面から独立した確認が通らなけ�
     expect(presenceRequests).toEqual([]);
   });
 
-  it('★ 確認の呼び出し自体が投げても IPC は reject せず、何も実行しない (4 つの口とも)', async () => {
+  it('★ 確認の呼び出し自体が投げても IPC は reject せず、何も実行しない (4 つの口とも・理由は伏字を通して返す)', async () => {
     presenceThrows = new Error('dialog exploded');
     const r1 = (await invoke('app:eraseAll')) as { allDeleted: boolean; error?: string };
-    expect(r1.allDeleted).toBe(false);
-    expect(r1.error).toContain('dialog exploded');
-    expect(await invoke('secrets:clear', 'github')).toMatchObject({ ok: false });
-    expect(await invoke('secrets:set', 'github', 'ghp_x1234567890abcdef')).toMatchObject({ ok: false });
-    expect(await invoke('action:invoke', 'github', 'create-issue', {})).toMatchObject({ ok: false, code: 'action_failed' });
+    expect(r1).toEqual({ kind: 'desktop', files: {}, renderer: 'failed', allDeleted: false, error: 'dialog exploded' });
+    expect(await invoke('secrets:clear', 'github')).toEqual({ ok: false, message: 'dialog exploded' });
+    expect(await invoke('secrets:set', 'github', 'ghp_x1234567890abcdef')).toEqual({
+      ok: false,
+      code: 'write_failed',
+      message: 'dialog exploded',
+    });
+    expect(await invoke('action:invoke', 'github', 'create-issue', {})).toEqual({
+      ok: false,
+      code: 'action_failed',
+      message: 'dialog exploded',
+    });
     expect(clearTokenCalls).toEqual([]);
     expect(setTokenCalls).toEqual([]);
     expect(actionCalls).toEqual([]);
     expect(relaunchCalls).toBe(0);
+  });
+
+  it('★ 確認の文面は何が起きるかを具体的に言う (削除・全消去)・断られた全消去の報告の形', async () => {
+    presenceVerdict = DENY;
+    await invoke('secrets:clear', 'github');
+    expect(presenceRequests.at(-1)).toMatchObject({ channel: 'secrets:clear', summary: 'github の保存済み資格情報を削除します。' });
+    const r = await invoke('app:eraseAll');
+    expect(presenceRequests.at(-1)).toMatchObject({
+      channel: 'app:eraseAll',
+      summary: 'このアプリの資格情報・記録・設定をすべて削除して再起動します。元に戻せません。',
+    });
+    expect(r).toEqual({ kind: 'desktop', files: {}, renderer: 'failed', allDeleted: false, error: DENY.message });
   });
 
   it('★ secrets:set の確認は新しい値の長さと末尾 4 文字を見せる (横取りされても見分けがつく)。全体は見せない', async () => {
@@ -1285,8 +1320,9 @@ describe('本人確認の門 — 画面から独立した確認が通らなけ�
     expect(summary).not.toContain('ABCDEFGH');
     presenceRequests.length = 0;
     await invoke('secrets:set', 'github', 'abcd1234');
-    expect(presenceRequests[0]!.summary).toContain('全 8 文字');
-    expect(presenceRequests[0]!.summary).not.toContain('末尾');
+    expect(presenceRequests[0]!.summary).toBe(
+      'github の資格情報を置き換えます。新しい値: 全 8 文字。心当たりが無ければ「実行しない」を選んでください。',
+    );
   });
 
   it('★ app:openExternal は速度の制限を通り、断られたら開かない (確認は出さない段階)', async () => {
@@ -1319,7 +1355,7 @@ describe('本人確認の門 — 画面から独立した確認が通らなけ�
   it('確認の呼び出しが投げても oauth:authorize は reject せず認可を始めない', async () => {
     presenceThrows = new Error('boom');
     const r = (await invoke('oauth:authorize', 'github', 'abcdefgh.apps.googleusercontent.com')) as { ok: boolean };
-    expect(r.ok).toBe(false);
+    expect(r).toEqual({ ok: false, code: 'authorize_failed', message: 'boom' });
     expect(authorizeConfigs).toEqual([]);
   });
 });

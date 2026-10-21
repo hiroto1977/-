@@ -2,9 +2,15 @@ import { describe, expect, it } from 'vitest';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import {
+  ALARMS_TO_ALERT,
+  ALARM_WINDOW_MS,
+  ALERT_MS,
+  ALERT_RATE_DIVISOR,
   BASE_LOCKOUT_MS,
   DENIALS_TO_LOCK,
+  DENIAL_WINDOW_MS,
   MAX_EVENTS,
+  MAX_CALL_WEIGHT,
   MAX_FIELDS_SHOWN,
   MAX_LOCKOUT_MS,
   MAX_SUMMARY_CHARS,
@@ -16,6 +22,7 @@ import {
   isTrustedSenderUrl,
   safeSummary,
   tierOfAction,
+  weightOfAction,
   type PresenceRequest,
   type Tier,
 } from '../userPresence';
@@ -190,6 +197,38 @@ describe('速度の制限', () => {
     h.advance(WINDOW_MS);
     expect((await h.gate.guard(req({ tier, summary: 'after' }), true)).ok).toBe(true);
   });
+
+  it('★ 重み: 全 AI 合議 (chatAll) は提供者の数だけの費用なので、上限に重みの分だけ数える (threat: T-152)', async () => {
+    expect(weightOfAction('assistant', 'chatAll')).toBe(MAX_CALL_WEIGHT);
+    expect(weightOfAction('assistant', 'chat')).toBe(1);
+    expect(weightOfAction('github', 'create-issue')).toBe(1);
+    expect(weightOfAction('constructor', '__proto__')).toBe(1);
+    const h = harness(() => true);
+    const calls = Math.floor(RATE_LIMIT.egress / MAX_CALL_WEIGHT);
+    for (let k = 0; k < calls; k += 1) {
+      expect((await h.gate.guard(req({ tier: 'egress', weight: MAX_CALL_WEIGHT, summary: `s${k}` }), true)).ok).toBe(true);
+    }
+    expect((await h.gate.guard(req({ tier: 'egress', weight: MAX_CALL_WEIGHT, summary: 'over' }), true)).ok).toBe(false);
+    expect(h.gate.recentEvents().at(-1)?.kind).toBe('rate-limited');
+  });
+
+  it.each([[0], [-3], [1.5], [Number.NaN], [Number.POSITIVE_INFINITY]])('重み %s は 1 として数える (不正な値で数え落とさない)', async (weight) => {
+    const h = harness(() => true);
+    for (let k = 0; k < RATE_LIMIT.egress; k += 1) {
+      expect((await h.gate.guard(req({ tier: 'egress', weight, summary: `s${k}` }), true)).ok).toBe(true);
+    }
+    expect((await h.gate.guard(req({ tier: 'egress', weight, summary: 'over' }), true)).ok).toBe(false);
+  });
+
+  it('重みは上限 MAX_CALL_WEIGHT で頭打ち (巨大な重みで 1 回で枠を使い切るのは同じ事: 上限を超える重みは上限と同じ)', async () => {
+    const a = harness(() => true);
+    const b = harness(() => true);
+    for (let k = 0; k < 3; k += 1) {
+      const ra = (await a.gate.guard(req({ tier: 'egress', weight: 10_000, summary: `s${k}` }), true)).ok;
+      const rb = (await b.gate.guard(req({ tier: 'egress', weight: MAX_CALL_WEIGHT, summary: `s${k}` }), true)).ok;
+      expect(ra).toBe(rb);
+    }
+  });
 });
 
 describe('文言と記録の種別 (断りの理由は読む人に届く)', () => {
@@ -339,5 +378,147 @@ describe('段階の台帳', () => {
     expect(tierOfAction('stocks', 'backtest')).toBe('read');
     expect(tierOfAction('security', 'scan-url')).toBe('external-write'); // VirusTotal へ公開される (レッドチーム #7)
     expect(tierOfAction('emotions', 'clear-history')).toBe('destructive');
+  });
+});
+
+describe('警戒態勢 — 不審な操作が重なると門が自分で締まる (threat: T-155)', () => {
+  /** 信頼できない呼び出し元を n 回出す (警戒の元)。 */
+  async function alarm(h: ReturnType<typeof harness>, n: number): Promise<void> {
+    for (let k = 0; k < n; k += 1) await h.gate.guard(req({ channel: `probe/${k}` }), false);
+  }
+
+  it('★ 平常から始まり、警戒の元が足りないうちは平常のまま', async () => {
+    const h = harness(() => true);
+    expect(h.gate.posture()).toBe('normal');
+    await alarm(h, ALARMS_TO_ALERT - 1);
+    expect(h.gate.posture()).toBe('normal');
+    expect(h.gate.recentEvents().some((e) => e.kind === 'posture-alert')).toBe(false);
+  });
+
+  it('★ 閾値に届くと警戒へ入り、入った印を 1 度だけ残す (届いたあとの追加では増えない)', async () => {
+    const h = harness(() => true);
+    await alarm(h, ALARMS_TO_ALERT + 3);
+    expect(h.gate.posture()).toBe('alert');
+    expect(h.gate.recentEvents().filter((e) => e.kind === 'posture-alert')).toHaveLength(1);
+  });
+
+  it('★ 警戒中は egress / local-write も毎回確かめ、read だけは確かめない', async () => {
+    const h = harness([false, false, false]);
+    await alarm(h, ALARMS_TO_ALERT);
+    h.advance(WINDOW_MS); // 速度の窓を空ける (警戒そのものは続く)
+    for (const tier of ['egress', 'local-write'] as Tier[]) {
+      const r = await h.gate.guard(req({ tier }), true);
+      expect(r.ok, `${tier} を確かめずに通した`).toBe(false);
+    }
+    expect(h.shown.map((x) => x.tier)).toEqual(['egress', 'local-write']);
+    expect((await h.gate.guard(req({ tier: 'read' }), true)).ok).toBe(true);
+    expect(h.shown).toHaveLength(2);
+  });
+
+  it('★ 警戒中のダイアログは態勢を告げる (平常は告げない)', async () => {
+    const h = harness(() => true);
+    await h.gate.guard(req(), true);
+    expect(h.shown[0]!.posture).toBe('normal');
+    await alarm(h, ALARMS_TO_ALERT);
+    h.advance(WINDOW_MS);
+    await h.gate.guard(req(), true);
+    expect(h.shown.at(-1)!.posture).toBe('alert');
+  });
+
+  it('★ 警戒中は速度の上限が 1/4 (最低 1)', async () => {
+    const h = harness(() => true);
+    await alarm(h, ALARMS_TO_ALERT);
+    h.advance(WINDOW_MS);
+    const limit = Math.floor(RATE_LIMIT['external-write'] / ALERT_RATE_DIVISOR);
+    expect(limit).toBe(Math.floor(RATE_LIMIT['external-write'] / ALERT_RATE_DIVISOR));
+    for (let k = 0; k < limit; k += 1) expect((await h.gate.guard(req({ summary: `s${k}` }), true)).ok).toBe(true);
+    expect((await h.gate.guard(req({ summary: 'over' }), true)).ok).toBe(false);
+    // 最低 1: destructive は 3/4 = 0 になるが 1 回は通る。
+    const d = harness(() => true);
+    await alarm(d, ALARMS_TO_ALERT);
+    d.advance(WINDOW_MS);
+    expect((await d.gate.guard(req({ tier: 'destructive' }), true)).ok).toBe(true);
+    expect((await d.gate.guard(req({ tier: 'destructive' }), true)).ok).toBe(false);
+  });
+
+  it('★ 警戒の元が途絶えれば ALERT_MS 後に平常へ戻る (自動で緩む)・続く間は延びる', async () => {
+    const h = harness(() => true);
+    await alarm(h, ALARMS_TO_ALERT);
+    h.advance(ALERT_MS - 1);
+    expect(h.gate.posture()).toBe('alert');
+    await alarm(h, ALARMS_TO_ALERT); // 警戒の元が閾値の勢いでまだ来る → 延びる
+    h.advance(ALERT_MS - 1);
+    expect(h.gate.posture()).toBe('alert');
+    h.advance(2);
+    expect(h.gate.posture()).toBe('normal');
+  });
+
+  it('★ 警戒の元は ALARM_WINDOW_MS を過ぎると数えない (ゆっくりした失敗の積み重ねでは入らない)', async () => {
+    const h = harness(() => true);
+    for (let k = 0; k < ALARMS_TO_ALERT * 2; k += 1) {
+      await alarm(h, 1);
+      h.advance(ALARM_WINDOW_MS);
+    }
+    expect(h.gate.posture()).toBe('normal');
+  });
+
+  it('★ 外の感知器 (report) も警戒の元になる。記録は種類と短い場所だけ (中身を持ち込めない)', () => {
+    const h = harness();
+    for (let k = 0; k < ALARMS_TO_ALERT; k += 1) h.gate.report('file-denied', 'x'.repeat(500));
+    expect(h.gate.posture()).toBe('alert');
+    const ev = h.gate.recentEvents().filter((e) => e.kind === 'external-signal');
+    expect(ev).toHaveLength(ALARMS_TO_ALERT);
+    expect(ev[0]!.channel.length).toBeLessThanOrEqual('file-denied:'.length + 60);
+    expect(ev[0]!.tier).toBe('read');
+  });
+
+  it('利用者が自分で断る (denied-by-user) は警戒の元に数えない (ロックアウトが別に数える)', async () => {
+    const h = harness(() => false);
+    for (let k = 0; k < ALARMS_TO_ALERT; k += 1) {
+      h.advance(DENIAL_WINDOW_MS); // ロックアウトに入らないよう間を空ける
+      await h.gate.guard(req({ summary: `s${k}` }), true);
+    }
+    expect(h.gate.posture()).toBe('normal');
+  });
+});
+
+describe('表示と記録の細部 (変異検査が示した未主張の値)', () => {
+  it('★ safeSummary は前後の空白を落とす', () => {
+    expect(safeSummary('  abc \n ')).toBe('abc');
+  });
+
+  it('★ 24 欄を超えた欄は名前を 24 字で切って「, 」で並べる', () => {
+    const fields: Record<string, unknown> = Object.fromEntries(Array.from({ length: MAX_FIELDS_SHOWN }, (_, i) => [`f${i}`, i]));
+    fields['a'.repeat(40)] = 1;
+    fields['b'] = 2;
+    const d = describePayload(fields);
+    expect(d).toContain(`ほか 2 欄: ${'a'.repeat(24)}, b`);
+    expect(d).not.toContain('a'.repeat(25));
+  });
+
+  it('★ 警戒は ALERT_MS ちょうどで終わる (境界は平常側)', async () => {
+    const h = harness(() => true);
+    for (let k = 0; k < ALARMS_TO_ALERT; k += 1) await h.gate.guard(req({ channel: `probe/${k}` }), false);
+    h.advance(ALERT_MS - 1);
+    expect(h.gate.posture()).toBe('alert');
+    h.advance(1);
+    expect(h.gate.posture()).toBe('normal');
+  });
+
+  it('★ 警戒に入った印と外の感知器の記録は、名前・場所・段階まで決まっている', () => {
+    const h = harness();
+    for (let k = 0; k < ALARMS_TO_ALERT; k += 1) h.gate.report('navigation-denied', 'will-navigate');
+    const ev = h.gate.recentEvents();
+    expect(ev[0]).toMatchObject({ kind: 'external-signal', channel: 'navigation-denied:will-navigate', tier: 'read' });
+    const alert = ev.find((e) => e.kind === 'posture-alert')!;
+    expect(alert).toMatchObject({ channel: 'posture', tier: 'read' });
+  });
+
+  it('重み 1 は 1 として数える (境界)', async () => {
+    const h = harness(() => true);
+    for (let k = 0; k < RATE_LIMIT.egress; k += 1) {
+      expect((await h.gate.guard(req({ tier: 'egress', weight: 1, summary: `s${k}` }), true)).ok).toBe(true);
+    }
+    expect((await h.gate.guard(req({ tier: 'egress', weight: 1, summary: 'over' }), true)).ok).toBe(false);
   });
 });

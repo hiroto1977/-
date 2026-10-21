@@ -105,6 +105,7 @@ import {
   inputTooLongMessage,
   latestTurnTooLong,
   MAX_ENSEMBLE_ERROR_CHARS,
+  stripSmuggledChars,
 } from '../shared/assistantLimits';
 import { externalUrlOrNull } from '../shared/externalUrlGate';
 import {
@@ -924,7 +925,7 @@ export function sanitizeAssistantTurns(raw: unknown): AssistantTurnWeb[] {
     const r = (item as { role?: unknown }).role;
     const c = (item as { content?: unknown }).content;
     if ((r !== 'user' && r !== 'assistant') || typeof c !== 'string') continue;
-    const content = clampToCeiling(c.trim(), MAX_ASSISTANT_CONTENT_CHARS);
+    const content = clampToCeiling(stripSmuggledChars(c).trim(), MAX_ASSISTANT_CONTENT_CHARS);
     if (content.length > 0) out.push({ role: r, content });
   }
   return out.slice(-MAX_ASSISTANT_MESSAGES);

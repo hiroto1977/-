@@ -18,8 +18,8 @@ import { safeErrorMessage } from './clients/types';
 import { externalUrlOrNull } from '../shared/externalUrlGate';
 import { shellTargetOrNull } from './shellOpenGate';
 import { installFileRequestGate } from './fileRequestGate';
-import { requirePresence } from './presenceWiring';
-import { describePayload, tierOfAction, type PresenceDecision } from './userPresence';
+import { reportThreatSignal, requirePresence } from './presenceWiring';
+import { describePayload, tierOfAction, weightOfAction, type PresenceDecision } from './userPresence';
 import { evaluateUpdate, parseLatestRelease, type UpdateVerdict } from '../shared/updateCheck';
 import {
   DEFAULT_HTTP_TIMEOUT_MS,
@@ -157,7 +157,8 @@ function createWindow(): BrowserWindow {
    * (`grantFileProtocolExtraPrivileges`) に依らず、任意のローカルファイルを fetch/XHR で読ませない。
    */
   const distRoot = path.join(__dirname, '..', 'dist');
-  installFileRequestGate(win.webContents.session, distRoot);
+  // 断った要求は警戒態勢の元として門へ知らせる (threat: T-155 —— 手探りの読み取りが重なると門が締まる)。
+  installFileRequestGate(win.webContents.session, distRoot, (where) => reportThreatSignal('file-denied', where));
 
   win.webContents.session.setPermissionRequestHandler((_wc, permission, callback) => {
     callback(permissionAllowed(permission));
@@ -219,6 +220,7 @@ function createWindow(): BrowserWindow {
   const guardNavigation = (event: { preventDefault: () => void }, navigationUrl: string): void => {
     if (allowNavigation(navigationUrl)) return;
     event.preventDefault();
+    reportThreatSignal('navigation-denied', 'will-navigate');
   };
   win.webContents.on('will-navigate', guardNavigation);
   win.webContents.on('will-redirect', guardNavigation);
@@ -614,6 +616,7 @@ ipcMain.handle(
         channel: `${serviceId}/${action}`,
         tier: tierOfAction(serviceId, action),
         summary: describePayload(payload),
+        weight: weightOfAction(serviceId, action),
       });
     } catch (err) {
       presence = { ok: false, message: safeErrorMessage(err) };

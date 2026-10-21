@@ -2537,6 +2537,111 @@
         "file": "src/main/__tests__/userPresence.test.ts",
         "test": "★ 承認は再利用しない — 同じ内容でも毎回訊く (承認の観測→差し替えを許さない・レッドチーム #1) (threat: T-148)"
       }
+    },
+    {
+      "id": "T-149",
+      "found": "2026-10-21",
+      "foundBy": "レッドチーム(独立した監査役)ラウンド 2 — 7 つの観点が攻撃し、14 件を別の検証役が再現・反証した。防御側が再現して確かめた",
+      "surface": "ai",
+      "class": "denial-of-wallet",
+      "severity": "medium",
+      "title": "ベスト3 の採点 STRUCTURE_MARK(/^\\s*…/m)は \\s* が改行まで食うので、空行ばかりの返答で行頭ごとに末尾まで走り直し二乗時間になる。互換 API・乗っ取られた Worker が返す 99,000 字(capAssistantReply は 10 万字で切るだけ)で採点 1 回 9 秒、ベスト3 全体で約 45 秒、同期処理なので画面が固まる",
+      "status": "fixed",
+      "fix": "行頭の空白を改行を跨がない文字クラスへ(印の判定の答えは変えない)。空行 99,000 字の 3 形(LF / 空白つき / CRLF)で 1.5 秒未満を留め、印の判定そのもの(空行・字下げの後ろの箇条書き・番号・見出し・表)は回帰として残した。",
+      "regression": {
+        "file": "src/renderer/data/__tests__/bestAnswers.test.ts",
+        "test": "印の判定は変えない: 空行・字下げの後ろの箇条書き・番号・見出し・表を拾い、印の無い行は拾わない"
+      }
+    },
+    {
+      "id": "T-150",
+      "found": "2026-10-21",
+      "foundBy": "レッドチーム(独立した監査役)ラウンド 2 — 7 つの観点が攻撃し、14 件を別の検証役が再現・反証した。防御側が再現して確かめた",
+      "surface": "ai",
+      "class": "compromised-renderer",
+      "severity": "low",
+      "title": "ベスト3 の見出し(失敗した回答者のエラー文を含むアプリの声)が offline 印も無しに履歴へ入り、次の発話で全プロバイダへ assistant 発話として再送される(外部の文が他の AI への指示の置き場になる。1 行化はされるので構造の偽造は不可)",
+      "status": "fixed",
+      "fix": "ChatMessage に appVoice を足して見出しに付け、turnsForModel が外す(簡易モードの札は付けない)。保存値の読み手も対で足した。",
+      "regression": {
+        "file": "src/renderer/pages/__tests__/assistantCrisisDeterministic.test.ts",
+        "test": "ベスト3 の見出し (appVoice) も外す —— 失敗した回答者のエラー文が他の AI へ再送されない"
+      }
+    },
+    {
+      "id": "T-151",
+      "found": "2026-10-21",
+      "foundBy": "レッドチーム(独立した監査役)ラウンド 2 — 7 つの観点が攻撃し、14 件を別の検証役が再現・反証した。防御側が再現して確かめた",
+      "surface": "ai",
+      "class": "ai-phishing",
+      "severity": "low",
+      "title": "AI へ送る履歴に、画面に描かれないのにモデルが符号として読める Unicode Tag 文字(U+E0000–E007F)と異体字選択子の補助面(U+E0100–E01EF)を落とす層が無い(ASCII smuggling)。42 個のタグ文字が 42/42 保持されて送信対象になった",
+      "status": "fixed",
+      "fix": "shared/assistantLimits.ts の stripSmuggledChars を両ビルドの履歴整形(main の sanitizeMessages / ブラウザ版の sanitizeAssistantTurns)に通す。ZWJ と通常の異体字選択子は触らない。境界(帯の両端と 1 つ外)と、両ビルドが同じ答えを出すことを留めた。",
+      "regression": {
+        "file": "src/renderer/__tests__/assistantTurnsParity.test.ts",
+        "test": "両ビルドの履歴整形が同じ答えを出す: 見える部分だけが残り、全部が運び屋の発話は黙って落ちる"
+      }
+    },
+    {
+      "id": "T-152",
+      "found": "2026-10-21",
+      "foundBy": "レッドチーム(独立した監査役)ラウンド 2 — 7 つの観点が攻撃し、14 件を別の検証役が再現・反証した。防御側が再現して確かめた",
+      "surface": "main-ipc",
+      "class": "denial-of-wallet",
+      "severity": "medium",
+      "title": "全 AI 合議(assistant/chatAll)は設定済みの全提供者へ約 38 万字ずつ送るのに、本人確認の門は 1 回と数える。egress の速度上限 20/分 でも実質 100 回分の課金が通る(3 社で 1 回の invoke が 3 回課金された・実測)",
+      "status": "fixed",
+      "fix": "呼び出しの重み(chatAll は提供者数の上限 5)を台帳 ACTION_WEIGHT に置き、速度の上限へ重みの分だけ数える。不正な重み(0・負・小数・NaN・Infinity)は 1、上限で頭打ち。action:invoke が重みを門へ渡すことも留めた。日別の上限は未実装(docs/RED_BLUE.md)。",
+      "regression": {
+        "file": "src/main/__tests__/userPresence.test.ts",
+        "test": "重み: 全 AI 合議 (chatAll) は提供者の数だけの費用なので、上限に重みの分だけ数える"
+      }
+    },
+    {
+      "id": "T-153",
+      "found": "2026-10-21",
+      "foundBy": "レッドチーム(独立した監査役)ラウンド 2 — 7 つの観点が攻撃し、14 件を別の検証役が再現・反証した。防御側が再現して確かめた",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "lint:artifact-csp が HTML の注記(<!-- -->)や title / textarea / style / script の中に書いた CSP meta を本物と数え、CSP が無い公開物で OK を出す(parse5 では meta 要素 0 件)",
+      "status": "fixed",
+      "fix": "ブラウザが meta として読まない場所を同じ長さの空白で潰してから数える。注記・title・textarea の 3 形と、本物の CSP の後ろの注記は邪魔をしないことを self-test に足した。",
+      "regression": {
+        "file": "scripts/lint-artifact-csp.cjs",
+        "test": "app: 注記の中の CSP meta は数えない (本物が無ければ鳴る)"
+      }
+    },
+    {
+      "id": "T-154",
+      "found": "2026-10-21",
+      "foundBy": "レッドチーム(独立した監査役)ラウンド 2 — 7 つの観点が攻撃し、14 件を別の検証役が再現・反証した。防御側が再現して確かめた",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "src/ に .mjs / .js / .cjs / .jsx を置いて副作用 import するだけで、境界・通信先・依存の各ゲートは同じ内容の .ts と違って 1 行も読まない(同一内容が .ts では落ち .mjs では通る・Vite は束ねる)",
+      "status": "fixed",
+      "fix": "lint:imports が src/ の .js / .mjs / .cjs / .jsx を見つけたら落とす(今日 0 件)。読まれない拡張子の一覧と判定を外側の証人が留める。他のゲート側の走査拡張は未実装。",
+      "regression": {
+        "file": "src/shared/__tests__/importBoundaryWitness.test.ts",
+        "test": "★ %s は読まれない実行可能ファイルとして数える"
+      }
+    },
+    {
+      "id": "T-155",
+      "found": "2026-10-21",
+      "foundBy": "利用者の依頼「外部から穴を開けたり瞬間移動的に侵入する高度なハッキングにも、瞬時に解析・対策できる自立進化型の仕組みを」への防御側の設計。ラウンド 1・2 で、画面を乗っ取った者が『手探りで穴を探す』形(信頼できない呼び出し元・速度超過・確認の割り込み・file:// の手探り・遷移の試行)が門に何も残さず重ならない限り摩擦が増えないことを確認",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "medium",
+      "title": "本人確認の門は、不審な操作が短時間に重なっても平常のまま振る舞う。画面を乗っ取った者は速度の上限の内側で、確認が要らない段階(egress / local-write)と file:// の読み取り・遷移の試行を手探りで繰り返せ、門は『いま攻撃されている』ことを自分では知らない",
+      "status": "mitigated",
+      "fix": "警戒態勢を足した: 5 分間に警戒の元(信頼できない呼び出し元・速度超過・ロックアウト・確認の割り込み・確認を出せない・外の感知器の知らせ)が 6 件に届くと『警戒』へ入り、(1) read 以外の全段階を毎回確かめる (2) 速度の上限を 1/4 (最低 1) (3) ダイアログが警戒を告げる。止めはしない(誤検知が可用性の事故にならない)。元が途絶えれば 10 分後に自動で平常へ戻る。file:// の門が断った要求と、窓の遷移の門が止めた遷移も警戒の元として知らせる(URL の中身は渡さない)。限界: 検知は主プロセスが観測できる信号だけ・未知の手口を『解析して新しい規則を作る』のは人と赤青の周回(docs/RED_BLUE.md)が担い、実行中のコードは書き換えない。",
+      "regression": {
+        "file": "src/main/__tests__/userPresence.test.ts",
+        "test": "閾値に届くと警戒へ入り、入った印を 1 度だけ残す"
+      }
     }
   ],
   "huntBacklog": [

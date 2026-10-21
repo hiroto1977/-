@@ -157,6 +157,30 @@ function* walkSrc(dir) {
   }
 }
 
+/**
+ * **この門が読まない実行可能ファイル** (threat: T-154)。
+ *
+ * 走査は `.ts` / `.tsx` だけを読む。`src/` に `.mjs` / `.js` / `.cjs` / `.jsx` を置いて副作用 import
+ * するだけで、境界・通信先・依存の各ゲートは同じ内容の `.ts` と違って**1 行も読まない**
+ * (レッドチーム実測: 同一内容が `.ts` では落ち `.mjs` では通る) —— Vite はそれを束ねる。
+ * 今日 `src/` に該当は 0 件なので、現れたら理由を書かせるために落とす (台帳は空・足すなら理由つき)。
+ */
+const UNSCANNED_EXEC_EXTS = ['.js', '.mjs', '.cjs', '.jsx'];
+function isUnscannedExecutable(name) {
+  return UNSCANNED_EXEC_EXTS.some((e) => name.endsWith(e));
+}
+function* walkUnscanned(dir) {
+  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, e.name);
+    if (e.isDirectory()) {
+      if (SKIP_DIRS.has(e.name)) continue;
+      yield* walkUnscanned(full);
+    } else if (isUnscannedExecutable(e.name)) {
+      yield full;
+    }
+  }
+}
+
 const IMPORT_RE = /^\s*import\s+(?<typeOnly>type\s+)?(?:[^'"]+\s+from\s+)?['"](?<spec>[^'"]+)['"];?/gm;
 
 /**
@@ -459,6 +483,15 @@ function main() {
     violations.push(...boundaryViolations(rel, text));
   }
 
+  for (const full of walkUnscanned(SRC)) {
+    const rel = path.relative(REPO_ROOT, full).replace(/\\/g, '/');
+    violations.push({
+      file: rel,
+      spec: '(ファイルそのもの)',
+      reason: `.ts / .tsx 以外の実行可能ファイル —— この門は読まない (${UNSCANNED_EXEC_EXTS.join(' / ')})。TypeScript で書くか、台帳に理由を足すこと`,
+    });
+  }
+
   console.log(
     `Scanned ${importCount} imports across ${fileCount} src/**/*.ts(x) files`,
   );
@@ -494,6 +527,6 @@ function main() {
  * **外側の証人のために公開する。** `require.main` の番をつけないと、
  * require した瞬間に CLI が走って process ごと落ちる。
  */
-module.exports = { boundaryViolations, detectZone, classifyTarget, isAllowedZoneTransition, ALLOW, ZONES, REQUIRED_GROUPS, CROSS_CHECK };
+module.exports = { boundaryViolations, detectZone, classifyTarget, isAllowedZoneTransition, ALLOW, ZONES, REQUIRED_GROUPS, CROSS_CHECK, isUnscannedExecutable, UNSCANNED_EXEC_EXTS };
 
 if (require.main === module) process.exit(main());

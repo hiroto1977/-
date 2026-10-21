@@ -162,6 +162,14 @@ vi.mock('../windowPrefs', async (importOriginal) => ({
   readWindowPrefs: async () => storedPrefs,
   writeWindowPrefs: async () => undefined,
 }));
+const threatSignals: { kind: string; where: string }[] = [];
+vi.mock('../presenceWiring', () => ({
+  requirePresence: async () => ({ ok: true }),
+  recentPresenceEvents: () => [],
+  reportThreatSignal: (kind: string, where: string) => {
+    threatSignals.push({ kind, where });
+  },
+}));
 vi.mock('../oauth', () => ({
   authorize: async () => ({ accessToken: 'a' }),
   isOAuthSupported: () => false,
@@ -419,6 +427,19 @@ describe('権限要求 — 既定は拒否、クリップボードだけ許す',
     expect(decide(inside)).toBe(true);
     expect(decide('file:///etc/passwd')).toBe(false);
     expect(decide('file://attacker.example/share/x.json')).toBe(false);
+    // 根は dist ちょうど: 1 つ上の兄弟 (保管ファイルが居る側) は読めない。
+    expect(decide(`file://${path.join(dist, '..', 'secret.json').split(path.sep).join('/')}`)).toBe(false);
+  });
+
+  it('★ 門が断った file:// の要求は、URL の中身を渡さずに警戒の元として知らせる (threat: T-155)', async () => {
+    const c = await loadMain({ packaged: true });
+    threatSignals.length = 0;
+    c.fileGate!({ url: 'file:///etc/passwd' }, () => undefined);
+    expect(threatSignals).toEqual([{ kind: 'file-denied', where: 'file-request' }]);
+    threatSignals.length = 0;
+    const dist = path.join(__dirname, '..', '..', 'dist');
+    c.fileGate!({ url: `file://${path.join(dist, 'index.html').split(path.sep).join('/')}` }, () => undefined);
+    expect(threatSignals).toEqual([]);
   });
 
   it.each([
@@ -580,6 +601,17 @@ describe('will-navigate / will-redirect — アプリ内の遷移を止める', 
         expect(e.was()).toBe(true);
       }
     }
+  });
+
+  it('★ 止めた遷移は警戒態勢の元として門へ知らせ、通した遷移は知らせない (threat: T-155)', async () => {
+    const c = await loadMain({ packaged: false, devServerUrl: 'http://localhost:5173' });
+    threatSignals.length = 0;
+    const ok = ev();
+    c.listeners.get('will-navigate')!(ok.ev, 'http://localhost:5173/');
+    expect(threatSignals).toEqual([]);
+    const bad = ev();
+    c.listeners.get('will-redirect')!(bad.ev, 'https://evil.example/');
+    expect(threatSignals).toEqual([{ kind: 'navigation-denied', where: 'will-navigate' }]);
   });
 
   it('開発時は読み込んだ開発サーバと同じ origin だけ通す', async () => {

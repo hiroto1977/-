@@ -242,3 +242,5 @@
 /src/shared/__tests__/releaseJobSplit.test.ts @hiroto1977
 /src/shared/__tests__/workflowStructureGate.test.ts @hiroto1977
 /src/shared/__tests__/dependencyAuditIssue.test.ts @hiroto1977
+/src/renderer/__tests__/assistantTurnsParity.test.ts @hiroto1977
+/src/shared/__tests__/importBoundaryWitness.test.ts @hiroto1977

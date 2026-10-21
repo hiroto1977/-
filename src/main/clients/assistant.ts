@@ -31,6 +31,7 @@ import {
   inputTooLongMessage,
   latestTurnTooLong,
   MAX_ENSEMBLE_ERROR_CHARS,
+  stripSmuggledChars,
 } from '../../shared/assistantLimits';
 import { redactForMessage } from './types';
 import { AI_PROVIDERS } from '../../shared/ai/providers';
@@ -117,7 +118,7 @@ export function sanitizeMessages(raw: unknown): ChatTurn[] {
     if (typeof c !== 'string') continue;
     // 窓に収めるのも**文字の境界で** (パス 196) —— `.slice()` は対を割り、
     // 壊れた文字列が有料 API へ送られる。
-    const content = clampToCeiling(c.trim(), MAX_CONTENT);
+    const content = clampToCeiling(stripSmuggledChars(c).trim(), MAX_CONTENT);
     if (content.length === 0) continue;
     out.push({ role: r, content });
   }
