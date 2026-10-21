@@ -319,9 +319,9 @@ ipcMain.handle('app:getVersion', () => app.getVersion());
  */
 ipcMain.handle('app:checkUpdate', async (e): Promise<UpdateVerdict> => {
   const current = app.getVersion();
-  // 断られたら「判定不能」(更新の確認が失敗してもアプリは使える)。
-  if ((await throttleMessage(e, 'app:checkUpdate', 'read')) !== null) return evaluateUpdate(current, null);
   try {
+    // 断られたら「判定不能」(更新の確認が失敗してもアプリは使える)。
+    if ((await throttleMessage(e, 'app:checkUpdate', 'read')) !== null) return evaluateUpdate(current, null);
     const res = await fetch('https://api.github.com/repos/hiroto1977/-/releases/latest', egressInit({
       headers: { accept: 'application/vnd.github+json' },
       /*
@@ -404,9 +404,9 @@ ipcMain.handle('app:revealInFolder', async (e, filePath: unknown): Promise<OsOpR
   // Reveal a saved file in the OS file manager (Finder / Explorer / Nautilus).
   // 弾いた時・失敗した時は理由を返す。黙って `undefined` を返すと、呼び出し側は
   // 握り潰すしかなく「押しても何も起きない」画面になる。
-  const refused = await throttleMessage(e, 'app:revealInFolder', 'local-write', filePath ?? null);
-  if (refused !== null) return { ok: false, message: refused };
   try {
+    const refused = await throttleMessage(e, 'app:revealInFolder', 'local-write', filePath ?? null);
+    if (refused !== null) return { ok: false, message: refused };
     const target = await shellTargetOrNull(filePath);
     if (target === null) return { ok: false, message: REJECTED_PATH_MESSAGE };
     shell.showItemInFolder(target);
@@ -423,9 +423,9 @@ ipcMain.handle('app:openPath', async (e, filePath: unknown): Promise<OsOpResult>
   // `shell.openPath` は成功で空文字、失敗でエラー文字列を返す契約。監査前は
   // その戻り値を捨てていたため (契約はこのコメントに書いてあった)、関連付けの
   // 無いファイル種別などで開けなくても呼び出し側には成功と見えていた。
-  const refused = await throttleMessage(e, 'app:openPath', 'local-write', filePath ?? null);
-  if (refused !== null) return { ok: false, message: refused };
   try {
+    const refused = await throttleMessage(e, 'app:openPath', 'local-write', filePath ?? null);
+    if (refused !== null) return { ok: false, message: refused };
     const target = await shellTargetOrNull(filePath);
     if (target === null) return { ok: false, message: REJECTED_PATH_MESSAGE };
     const failure = await shell.openPath(target);
@@ -555,13 +555,13 @@ ipcMain.handle('app:eraseAll', async (e): Promise<DesktopEraseReport> => {
  * 保存に失敗しても窓の色はもう変わっている —— 戻り値で言い、reject しない (lint:ipc-handlers)。
  */
 ipcMain.handle('app:setColorScheme', async (e, scheme: unknown, background: unknown): Promise<OsOpResult> => {
-  const refused = await throttleMessage(e, 'app:setColorScheme', 'read');
-  if (refused !== null) return { ok: false, message: refused };
-  if (!isWindowScheme(scheme) || !isBackgroundColor(background)) {
-    return { ok: false, message: '配色の値が不正です (light / dark と #rrggbb だけを受け取ります)' };
-  }
-  const prefs: WindowPrefs = { scheme, background: background.toLowerCase() };
   try {
+    const refused = await throttleMessage(e, 'app:setColorScheme', 'read');
+    if (refused !== null) return { ok: false, message: refused };
+    if (!isWindowScheme(scheme) || !isBackgroundColor(background)) {
+      return { ok: false, message: '配色の値が不正です (light / dark と #rrggbb だけを受け取ります)' };
+    }
+    const prefs: WindowPrefs = { scheme, background: background.toLowerCase() };
     windowPrefs = prefs;
     applyNativeTheme(prefs.scheme);
     for (const win of BrowserWindow.getAllWindows()) win.setBackgroundColor(prefs.background);
@@ -573,9 +573,13 @@ ipcMain.handle('app:setColorScheme', async (e, scheme: unknown, background: unkn
 });
 
 ipcMain.handle('fetch:snapshot', async (e, serviceId: unknown) => {
-  // 速度の上限と呼び出し元の検査 (T-159)。知らない id の連打も数える (門を先に置く)。
-  const refused = await throttleMessage(e, 'fetch:snapshot', 'read', serviceId ?? null);
-  if (refused !== null) return { ok: false, code: 'fetch_failed', message: refused };
+  // 速度の上限と呼び出し元の検査 (T-159)。知らない id の連打も数える (門を先に置く・id は使わない)。
+  try {
+    const refused = await throttleMessage(e, 'fetch:snapshot', 'read');
+    if (refused !== null) return { ok: false, code: 'fetch_failed', message: refused };
+  } catch (err) {
+    return { ok: false, code: 'fetch_failed', message: safeErrorMessage(err) };
+  }
   if (!isServiceId(serviceId)) {
     return { ok: false, code: 'not_implemented', message: 'unknown service id' };
   }

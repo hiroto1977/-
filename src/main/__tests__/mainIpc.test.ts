@@ -1443,13 +1443,13 @@ describe('速度の上限と記録だけを掛ける 5 つの口 (threat: T-159)
     await invoke('fetch:snapshot', { a: 1 });
     await invoke('app:openPath', 42);
     expect(presenceRequests.map((r) => [r.channel, r.summary])).toEqual([
-      ['fetch:snapshot', 'no-such-service'],
-      ['fetch:snapshot', '(文字列ではない)'],
+      ['fetch:snapshot', 'fetch:snapshot'],
+      ['fetch:snapshot', 'fetch:snapshot'],
       ['app:openPath', '(文字列ではない)'],
     ]);
   });
 
-  it('★ 見出しの決め方: 引数が無い口は口の名前・文字列はそのまま・それ以外 (undefined / null を含む) は「(文字列ではない)」', async () => {
+  it('★ 見出しの決め方: 引数を渡さない口は口の名前・パスを渡す口は文字列ならそのまま・それ以外 (undefined / null を含む) は「(文字列ではない)」', async () => {
     const orig = globalThis.fetch;
     globalThis.fetch = (async () => ({ ok: false, status: 500 })) as unknown as typeof fetch;
     try {
@@ -1468,7 +1468,7 @@ describe('速度の上限と記録だけを掛ける 5 つの口 (threat: T-159)
       ['app:revealInFolder', '(文字列ではない)'],
       ['app:revealInFolder', '(文字列ではない)'],
       ['app:openPath', '(文字列ではない)'],
-      ['fetch:snapshot', '(文字列ではない)'],
+      ['fetch:snapshot', 'fetch:snapshot'],
     ]);
   });
 
