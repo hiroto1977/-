@@ -1267,6 +1267,17 @@ describe('本人確認の門 — 画面から独立した確認が通らなけ�
     expect(presenceRequests.at(-1)).toMatchObject({ channel: 'assistant/chat', weight: 1 });
   });
 
+  it('★ 欄が 24 を超える payload は見せ方を工夫せず断る (先頭に飾りの欄を並べて本文を隠させない・threat: T-156)', async () => {
+    const decoys = Object.fromEntries(Array.from({ length: 24 }, (_, i) => [`d${i}`, 'ok']));
+    const r = await invoke('action:invoke', 'github', 'create-issue', { ...decoys, title: 'ATTACKER' });
+    expect(r).toEqual({ ok: false, code: 'action_failed', message: '送る欄が多すぎるため断りました (通常の操作は 24 欄以内です)。' });
+    expect(presenceRequests).toEqual([]);
+    expect(actionCalls).toEqual([]);
+    // 24 欄ちょうどは通常どおり確認へ進む。
+    await invoke('action:invoke', 'github', 'create-issue', decoys);
+    expect(presenceRequests).toHaveLength(1);
+  });
+
   it('台帳に無い action でも (登録があれば) 最も厳しい段階で確かめる', async () => {
     await invoke('action:invoke', 'github', 'create-issue', {});
     expect(presenceRequests.at(-1)?.tier).toBe('external-write');

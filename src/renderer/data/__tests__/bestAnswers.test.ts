@@ -15,6 +15,7 @@ import {
   ENGINEERING_LENSES,
   FABRICATED_CITATION_PENALTY,
   MAX_BEST_ANSWER_CALLS,
+  MAX_CHECKED_CITATIONS,
   contentSimilarity,
   fabricatedCitations,
   stripParenthesized,
@@ -340,6 +341,8 @@ describe('チャットへ渡す形', () => {
     expect(msgs[1]!.servedBy).toBeUndefined();
     expect(msgs[2]!.servedBy).toBe('Claude (Anthropic)');
     expect(msgs[2]!.text).toBe(r.best.ranked[0]!.text.trim());
+    // アプリの声 (見出し・採点) だけに appVoice が付き、回答者の吹き出しには付かない (threat: T-156 —— 履歴から再送しない印)。
+    msgs.forEach((m, i) => expect(m.appVoice, `吹き出し ${i}`).toBe(i === 0 || i % 2 === 1 ? true : undefined));
   });
 
   it('★ 既存の Markdown 描画が採点の表を表として読む (見出しの 1 行目は見出し)', async () => {
@@ -435,5 +438,26 @@ describe('採点の形の判定は返答の長さに対して直線 (threat: T-1
     expect(structure('平文だけの行です\n\n\t## 見出し')).toBeGreaterThan(base);
     expect(structure('平文だけの行です\n\n| 表 |')).toBeGreaterThan(base);
     expect(structure('平文だけの行です\n\n   普通の行')).toBe(base);
+  });
+});
+
+describe('「参照:」の項目は 1 回答につき MAX_CHECKED_CITATIONS 件まで確かめる (threat: T-156)', () => {
+  const docs = DOCS;
+  const known = docs[0]!.title;
+
+  it('★ 2 字の項目を 5 万個並べた 10 万字でも 1 秒未満で、超過は 1 件の捏造として数える', () => {
+    const answer = `結論です。\n参照: ${'ああ、'.repeat(50_000)}`;
+    const t0 = performance.now();
+    const out = fabricatedCitations(answer, docs);
+    expect(performance.now() - t0).toBeLessThan(1000);
+    expect(out).toHaveLength(MAX_CHECKED_CITATIONS + 1);
+    expect(out.at(-1)).toBe(`参照が ${MAX_CHECKED_CITATIONS} 件を超えています`);
+  });
+
+  it('ちょうど上限の件数は超過扱いにしない・実在の項目は何件並べても捏造にならない', () => {
+    const exact = Array.from({ length: MAX_CHECKED_CITATIONS }, () => known).join('、');
+    expect(fabricatedCitations(`参照: ${exact}`, docs)).toEqual([]);
+    const over = Array.from({ length: MAX_CHECKED_CITATIONS + 1 }, () => known).join('、');
+    expect(fabricatedCitations(`参照: ${over}`, docs)).toEqual([`参照が ${MAX_CHECKED_CITATIONS} 件を超えています`]);
   });
 });

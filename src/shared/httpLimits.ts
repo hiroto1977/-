@@ -103,6 +103,17 @@ export const MAX_HTTP_RESPONSE_BYTES = 10 * 1024 * 1024;
 export const MAX_OLLAMA_RESPONSE_BYTES = 2 * 1024 * 1024;
 
 /**
+ * **AI の応答 (チャット) の本文に許す上限。2 MiB** (threat: T-156)。
+ *
+ * 正当な応答の最大は `capAssistantReply` の 10 万字で、JSON のエスケープで最悪 6 倍
+ * (`\uXXXX`) に膨らんでも約 600 KB。汎用の {@link MAX_HTTP_RESPONSE_BYTES} (10 MiB) のままだと、
+ * 宛先を決められる相手 (互換 API の基底 URL・BYO プロキシ) が深い入れ子の本文で `JSON.parse` を
+ * 同期で 2.5〜4 秒止め、約 290 MB を確保させた (実測 · Node 22)。2 MiB なら同じ形で 0.3 秒未満。
+ * デスクトップ版では main のイベントループが止まるので全ウィンドウに効く。
+ */
+export const MAX_AI_CHAT_RESPONSE_BYTES = 2 * 1024 * 1024;
+
+/**
  * 1 回の HTTP 要求に許す時間。30 秒。
  *
  * `clients/ollama.ts` が先に置いていた値に揃えた。LLM の補完だけは長く

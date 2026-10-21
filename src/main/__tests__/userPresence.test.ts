@@ -6,6 +6,7 @@ import {
   ALARM_WINDOW_MS,
   ALERT_MS,
   ALERT_RATE_DIVISOR,
+  LOCKOUT_FORGET_MS,
   BASE_LOCKOUT_MS,
   DENIALS_TO_LOCK,
   DENIAL_WINDOW_MS,
@@ -20,6 +21,7 @@ import {
   createPresenceGate,
   describePayload,
   isTrustedSenderUrl,
+  payloadTooWide,
   safeSummary,
   tierOfAction,
   weightOfAction,
@@ -520,5 +522,91 @@ describe('表示と記録の細部 (変異検査が示した未主張の値)', (
       expect((await h.gate.guard(req({ tier: 'egress', weight: 1, summary: `s${k}` }), true)).ok).toBe(true);
     }
     expect((await h.gate.guard(req({ tier: 'egress', weight: 1, summary: 'over' }), true)).ok).toBe(false);
+  });
+});
+
+describe('門自身が重くならない・締め出しすぎない (threat: T-156, threat: T-157)', () => {
+  it('★ 長さ無制限の鍵でも確認の前に固まらない (5 MB の鍵が 1 秒未満・旧い実装は 1.3 秒以上)', () => {
+    const t0 = performance.now();
+    const d = describePayload({ ['A'.repeat(5_000_000)]: 1, text: 'x' });
+    expect(performance.now() - t0).toBeLessThan(300);
+    expect(d.length).toBeLessThan(200);
+    expect(d.startsWith(`${'A'.repeat(24)}: 1`)).toBe(true);
+  });
+
+  it('★ 鍵が 10 万個でも要約は固定の長さに収まり、残りの名前は ", …" で打ち切る', () => {
+    const many = Object.fromEntries(Array.from({ length: 100_000 }, (_, i) => [`k${i}`, i]));
+    const t0 = performance.now();
+    const d = describePayload(many);
+    expect(performance.now() - t0).toBeLessThan(1000);
+    expect(d.length).toBeLessThan(MAX_SUMMARY_CHARS);
+    expect(d).toContain('ほか 99976 欄:');
+    expect(d.endsWith(', …')).toBe(true);
+  });
+
+  it('★ 欄が 24 を超える payload は多すぎる (24 ちょうどは正当)・配列・null・継承した欄は数えない', () => {
+    const fields = (n: number): Record<string, number> => Object.fromEntries(Array.from({ length: n }, (_, i) => [`f${i}`, i]));
+    expect(payloadTooWide(fields(MAX_FIELDS_SHOWN))).toBe(false);
+    expect(payloadTooWide(fields(MAX_FIELDS_SHOWN + 1))).toBe(true);
+    expect(payloadTooWide(Array.from({ length: 100 }, () => 1))).toBe(false);
+    expect(payloadTooWide(null)).toBe(false);
+    expect(payloadTooWide('x')).toBe(false);
+    const inherited = Object.create(fields(MAX_FIELDS_SHOWN + 5)) as Record<string, number>;
+    inherited.own = 1;
+    expect(payloadTooWide(inherited)).toBe(false);
+  });
+
+  it('★ 連打しても 1 呼び出しの費用が伸びない (3 万回が 3 秒未満・旧い実装は二乗で 10 秒級)・判定は変わらない', async () => {
+    const h = harness(() => true);
+    let allowed = 0;
+    const t0 = performance.now();
+    for (let k = 0; k < 30_000; k += 1) {
+      if ((await h.gate.guard(req({ tier: 'read', summary: 's' }), true)).ok) allowed += 1;
+    }
+    expect(performance.now() - t0).toBeLessThan(3000);
+    expect(allowed).toBe(RATE_LIMIT.read);
+  });
+
+  it('★ ロックの長さは、ロックが明けて LOCKOUT_FORGET_MS 静かなら基準へ戻る (誤って断っても一生 1 時間にならない)', async () => {
+    const h = harness(() => false);
+    const lockOnce = async (): Promise<number> => {
+      for (let k = 0; k < DENIALS_TO_LOCK; k += 1) await h.gate.guard(req({ summary: `d${k}` }), true);
+      const start = h.at();
+      let waited = 0;
+      // どれだけ待てば再び通るか (ダイアログは出る = 断られる側に答える)
+      for (;;) {
+        const r = await h.gate.guard(req({ summary: 'probe' }), true);
+        if (!(r.ok === false && /あと約/.test(r.message))) break;
+        h.advance(60_000);
+        waited += 60_000;
+        if (waited > 2 * MAX_LOCKOUT_MS) break;
+      }
+      void start;
+      return waited;
+    };
+    const first = await lockOnce();
+    expect(first).toBeLessThanOrEqual(BASE_LOCKOUT_MS + 60_000);
+    h.advance(DENIAL_WINDOW_MS);
+    const second = await lockOnce();
+    expect(second).toBeGreaterThan(first); // 続けて断れば伸びる (既存の性質)
+    h.advance(LOCKOUT_FORGET_MS);
+    const third = await lockOnce();
+    expect(third).toBeLessThanOrEqual(BASE_LOCKOUT_MS + 60_000); // 静かな時間のあとは基準へ
+  });
+
+  it('★ 警戒中に広がった確認 (local-write / egress) の断りは、ロックにも数えず、ロック中でも出す (保存・送信・取り消しの道を塞がない)', async () => {
+    const h = harness(() => false);
+    for (let k = 0; k < ALARMS_TO_ALERT; k += 1) await h.gate.guard(req({ channel: `probe/${k}` }), false);
+    h.advance(WINDOW_MS);
+    for (let k = 0; k < DENIALS_TO_LOCK + 1; k += 1) {
+      h.advance(WINDOW_MS);
+      await h.gate.guard(req({ tier: 'local-write', summary: `w${k}` }), true);
+    }
+    h.advance(WINDOW_MS);
+    const shownBefore = h.shown.length;
+    const r = await h.gate.guard(req({ tier: 'destructive', channel: 'secrets:clear', summary: 'clear' }), true);
+    expect(h.shown.length).toBe(shownBefore + 1); // ロックされず、確認が出た
+    expect(r.ok).toBe(false); // 利用者が断ったので実行はしない
+    expect(r.ok === false && /あと約/.test(r.message)).toBe(false);
   });
 });

@@ -19,7 +19,7 @@ import { externalUrlOrNull } from '../shared/externalUrlGate';
 import { shellTargetOrNull } from './shellOpenGate';
 import { installFileRequestGate } from './fileRequestGate';
 import { reportThreatSignal, requirePresence } from './presenceWiring';
-import { describePayload, tierOfAction, weightOfAction, type PresenceDecision } from './userPresence';
+import { describePayload, payloadTooWide, tierOfAction, weightOfAction, type PresenceDecision } from './userPresence';
 import { evaluateUpdate, parseLatestRelease, type UpdateVerdict } from '../shared/updateCheck';
 import {
   DEFAULT_HTTP_TIMEOUT_MS,
@@ -610,11 +610,16 @@ ipcMain.handle(
     // 本人確認 (T-147): 外部へ書き込む action は、何が書かれるかを見せて毎回確かめる。
     // 段階は台帳 (userPresence.ts の ACTION_TIER) で決まり、載っていない action は最も厳しい扱い。
     // 確認の呼び出し自体が投げても IPC を reject させない (lint:ipc-handlers) —— 投げたら断る。
+    const tier = tierOfAction(serviceId, action);
+    // 欄が多すぎる payload は見せ方を工夫せず断る (T-156): 確認が値を見せるのは先頭 24 欄だけ。
+    if (tier !== 'read' && payloadTooWide(payload)) {
+      return { ok: false, code: 'action_failed', message: '送る欄が多すぎるため断りました (通常の操作は 24 欄以内です)。' };
+    }
     let presence: PresenceDecision;
     try {
       presence = await requirePresence(e, {
         channel: `${serviceId}/${action}`,
-        tier: tierOfAction(serviceId, action),
+        tier,
         summary: describePayload(payload),
         weight: weightOfAction(serviceId, action),
       });
