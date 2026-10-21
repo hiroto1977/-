@@ -280,6 +280,26 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
 
+/**
+ * **速度の上限と記録だけを掛ける** (確認は出さない · T-159)。確認の対象外だった 5 つの口
+ * (`fetch:snapshot` / `app:checkUpdate` / `app:setColorScheme` / `app:openPath` / `app:revealInFolder`) は、
+ * 乗っ取られた画面から**上限なしに**呼べた: 76 サービスの取得の連打 (保存済みトークンで外部 API の
+ * 速度制限を使い切らせる)・GitHub への通信・設定ファイルへの書き込み・書き出し物を OS の既定アプリで
+ * 開き続ける、そして**呼び出し元フレームの検査も受けていなかった**。断られた理由を返す (通れば null)。
+ * 門が投げたら**呼び手の `try` が受ける** (lint:ipc-handlers —— reject させない・呼び手が必ず `try` の中で `await` する)。
+ */
+async function throttleMessage(
+  e: Parameters<typeof requirePresence>[0],
+  channel: string,
+  tier: 'read' | 'local-write',
+  detail?: unknown,
+): Promise<string | null> {
+  // 確認 (警戒中の local-write) と記録に出す見出し: 引数が無ければ口の名前・文字列ならそれ・それ以外は種類だけ。
+  const summary = detail === undefined ? channel : typeof detail === 'string' ? detail : '(文字列ではない)';
+  const presence = await requirePresence(e, { channel, tier, summary });
+  return presence.ok ? null : presence.message;
+}
+
 ipcMain.handle('app:getVersion', () => app.getVersion());
 
 /**
@@ -293,9 +313,11 @@ ipcMain.handle('app:getVersion', () => app.getVersion());
  * 送り先は定数。応答は `parseLatestRelease` が形と URL のホストまで確かめる
  * ので、応答を差し替えられても任意の URL を案内先にはできない。
  */
-ipcMain.handle('app:checkUpdate', async (): Promise<UpdateVerdict> => {
+ipcMain.handle('app:checkUpdate', async (e): Promise<UpdateVerdict> => {
   const current = app.getVersion();
   try {
+    // 断られたら「判定不能」(更新の確認が失敗してもアプリは使える)。
+    if ((await throttleMessage(e, 'app:checkUpdate', 'read')) !== null) return evaluateUpdate(current, null);
     const res = await fetch('https://api.github.com/repos/hiroto1977/-/releases/latest', egressInit({
       headers: { accept: 'application/vnd.github+json' },
       /*
@@ -374,11 +396,13 @@ ipcMain.handle('app:openExternal', async (e, url: unknown) => {
 const REJECTED_PATH_MESSAGE =
   '指定されたパスは開けません。書き出し先の外にあるか、対応していない拡張子です。';
 
-ipcMain.handle('app:revealInFolder', async (_e, filePath: unknown): Promise<OsOpResult> => {
+ipcMain.handle('app:revealInFolder', async (e, filePath: unknown): Promise<OsOpResult> => {
   // Reveal a saved file in the OS file manager (Finder / Explorer / Nautilus).
   // 弾いた時・失敗した時は理由を返す。黙って `undefined` を返すと、呼び出し側は
   // 握り潰すしかなく「押しても何も起きない」画面になる。
   try {
+    const refused = await throttleMessage(e, 'app:revealInFolder', 'local-write', filePath ?? null);
+    if (refused !== null) return { ok: false, message: refused };
     const target = await shellTargetOrNull(filePath);
     if (target === null) return { ok: false, message: REJECTED_PATH_MESSAGE };
     shell.showItemInFolder(target);
@@ -388,7 +412,7 @@ ipcMain.handle('app:revealInFolder', async (_e, filePath: unknown): Promise<OsOp
   }
 });
 
-ipcMain.handle('app:openPath', async (_e, filePath: unknown): Promise<OsOpResult> => {
+ipcMain.handle('app:openPath', async (e, filePath: unknown): Promise<OsOpResult> => {
   // Open a file with the OS default application (SVG → image viewer,
   // HTML → browser, MD → text editor, etc.). Same gate as revealInFolder.
   //
@@ -396,6 +420,8 @@ ipcMain.handle('app:openPath', async (_e, filePath: unknown): Promise<OsOpResult
   // その戻り値を捨てていたため (契約はこのコメントに書いてあった)、関連付けの
   // 無いファイル種別などで開けなくても呼び出し側には成功と見えていた。
   try {
+    const refused = await throttleMessage(e, 'app:openPath', 'local-write', filePath ?? null);
+    if (refused !== null) return { ok: false, message: refused };
     const target = await shellTargetOrNull(filePath);
     if (target === null) return { ok: false, message: REJECTED_PATH_MESSAGE };
     const failure = await shell.openPath(target);
@@ -524,12 +550,14 @@ ipcMain.handle('app:eraseAll', async (e): Promise<DesktopEraseReport> => {
  * Electron 自身の配色を変え、次回の起動のために userData に残す。値は形で絞る (`light` / `dark` と `#rrggbb` だけ)。
  * 保存に失敗しても窓の色はもう変わっている —— 戻り値で言い、reject しない (lint:ipc-handlers)。
  */
-ipcMain.handle('app:setColorScheme', async (_e, scheme: unknown, background: unknown): Promise<OsOpResult> => {
-  if (!isWindowScheme(scheme) || !isBackgroundColor(background)) {
-    return { ok: false, message: '配色の値が不正です (light / dark と #rrggbb だけを受け取ります)' };
-  }
-  const prefs: WindowPrefs = { scheme, background: background.toLowerCase() };
+ipcMain.handle('app:setColorScheme', async (e, scheme: unknown, background: unknown): Promise<OsOpResult> => {
   try {
+    const refused = await throttleMessage(e, 'app:setColorScheme', 'read');
+    if (refused !== null) return { ok: false, message: refused };
+    if (!isWindowScheme(scheme) || !isBackgroundColor(background)) {
+      return { ok: false, message: '配色の値が不正です (light / dark と #rrggbb だけを受け取ります)' };
+    }
+    const prefs: WindowPrefs = { scheme, background: background.toLowerCase() };
     windowPrefs = prefs;
     applyNativeTheme(prefs.scheme);
     for (const win of BrowserWindow.getAllWindows()) win.setBackgroundColor(prefs.background);
@@ -540,7 +568,14 @@ ipcMain.handle('app:setColorScheme', async (_e, scheme: unknown, background: unk
   }
 });
 
-ipcMain.handle('fetch:snapshot', async (_e, serviceId: unknown) => {
+ipcMain.handle('fetch:snapshot', async (e, serviceId: unknown) => {
+  // 速度の上限と呼び出し元の検査 (T-159)。知らない id の連打も数える (門を先に置く・id は使わない)。
+  try {
+    const refused = await throttleMessage(e, 'fetch:snapshot', 'read');
+    if (refused !== null) return { ok: false, code: 'fetch_failed', message: refused };
+  } catch (err) {
+    return { ok: false, code: 'fetch_failed', message: safeErrorMessage(err) };
+  }
   if (!isServiceId(serviceId)) {
     return { ok: false, code: 'not_implemented', message: 'unknown service id' };
   }

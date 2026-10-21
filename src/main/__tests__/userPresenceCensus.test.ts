@@ -36,14 +36,21 @@ const GUARDED: Readonly<Record<string, string>> = {
 
 const NOT_GUARDED: Readonly<Record<string, string>> = {
   'app:getVersion': '版の文字列を返すだけ',
-  'app:checkUpdate': '固定の GitHub API へ読みの要求を 1 本。書き込みも資格情報も無い',
-  'app:revealInFolder': 'shellOpenGate (realpath + 閉じ込め) を通った書き出し先をファイラで示すだけ',
-  'app:openPath': 'shellOpenGate (realpath + 閉じ込め + 拡張子 allowlist) を通った書き出し物を開く',
-  'app:setColorScheme': '形で絞った配色 2 値だけ。値は light/dark と #rrggbb',
-  'fetch:snapshot': '読み取り。書き込みは無い (外部へ出るのは取得の要求で、資格情報は戻さない)',
   'secrets:list': '設定済みの id の一覧だけ (秘密は戻さない)',
   'secrets:protection': '件数と仕組みの名前だけ (秘密は戻さない)',
   'oauth:isSupported': '提供者が OAuth 対応かの真偽だけ',
+};
+
+/**
+ * **速度の上限と記録だけを掛ける口** (確認は出さない · threat: T-159)。呼び出し元フレームの検査と
+ * 段階ごとの速度の上限・警戒への記録を受ける。値は段階 (`read` は確認しない・`local-write` は警戒中だけ確認する)。
+ */
+const THROTTLED: Readonly<Record<string, 'read' | 'local-write'>> = {
+  'app:checkUpdate': 'read', // 固定の GitHub API へ読みの要求 1 本
+  'app:setColorScheme': 'read', // 配色 2 値 (形で絞る)・設定ファイルへ書く
+  'fetch:snapshot': 'read', // 保存済みトークンで外部 API を読む (書き込みは無い)
+  'app:revealInFolder': 'local-write', // shellOpenGate を通った書き出し先をファイラで示す
+  'app:openPath': 'local-write', // shellOpenGate を通った書き出し物を OS の既定アプリで開く
 };
 
 function handlerBodies(): Map<string, string> {
@@ -79,11 +86,28 @@ describe('本人確認の母集団 (threat: T-147)', () => {
     const bodies = handlerBodies();
     const names = [...bodies.keys()].sort();
     expect(names).toHaveLength(15);
-    const claimed = [...Object.keys(GUARDED), ...Object.keys(NOT_GUARDED)].sort();
+    const claimed = [...Object.keys(GUARDED), ...Object.keys(THROTTLED), ...Object.keys(NOT_GUARDED)].sort();
     expect(names).toEqual(claimed);
     for (const [name, why] of Object.entries(NOT_GUARDED)) {
       expect(why.length, `${name} の理由`).toBeGreaterThanOrEqual(10);
       expect(bodies.get(name)!, `${name} は確認を呼ばないと宣言している`).not.toContain('requirePresence(');
+    }
+  });
+
+  it('★ 速度だけを掛ける口は、副作用より前に throttleMessage を段階つきで呼び、断られたら戻る (threat: T-159)', () => {
+    const bodies = handlerBodies();
+    for (const [name, tier] of Object.entries(THROTTLED)) {
+      const body = bodies.get(name)!;
+      const call = `throttleMessage(e, '${name}', '${tier}'`;
+      const gate = body.indexOf(call);
+      expect(gate, `${name} は ${call} を呼ぶ`).toBeGreaterThan(-1);
+      expect(body, `${name} は確認を直には呼ばない (速度だけ)`).not.toContain('requirePresence(');
+      // 副作用 (取得・開く・書く・通信) より前に置き、断られたら戻る。
+      const effect = { 'app:checkUpdate': 'await fetch(', 'app:setColorScheme': 'windowPrefs = prefs', 'fetch:snapshot': 'isServiceId(', 'app:revealInFolder': 'shellTargetOrNull(', 'app:openPath': 'shellTargetOrNull(' }[name]!;
+      const side = body.indexOf(effect);
+      expect(side, `${name} の副作用 ${effect}`).toBeGreaterThan(-1);
+      expect(gate, `${name}: 門が副作用より前`).toBeLessThan(side);
+      expect(body.slice(gate, side), `${name}: 断られたら戻る`).toMatch(/return/);
     }
   });
 

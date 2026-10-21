@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 333
+- ブロック数: 335
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `540652df155d82b19668135300d902d714cf492566a3541d422a098dc7952be5`
+- 末尾(tip)ハッシュ: `f07de539289b4f03f22127428711a3769c2ce0e16c6d5636b95775cd9ec68377`
 - 保護対象: 124 ファイル
 
 ## ブロック
@@ -346,6 +346,8 @@
 | 330 | `7b5c40ae08d611c4` | `95ce7cdb947ca759` | `33b6801aca34f9ad` | update lint-artifact-csp.cjs,assistant.ts,fileRequestGate.ts,main.ts,presenceWiring.ts,userPresence.ts |
 | 331 | `cd0ee6d8b512b1e5` | `33b6801aca34f9ad` | `43f3418004177687` | update main.ts,userPresence.ts,assistantMarkdown.ts,chat.ts,httpLimits.ts |
 | 332 | `bee936bc7603e31f` | `43f3418004177687` | `540652df155d82b1` | update userPresence.ts |
+| 333 | `f9418e65309d21ec` | `540652df155d82b1` | `f16a6677421b0065` | update main.ts |
+| 334 | `0806707769de9b0a` | `f16a6677421b0065` | `f07de539289b4f03` | update main.ts |
 
 ## 保護対象ファイル
 
