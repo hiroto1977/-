@@ -127,6 +127,10 @@ const PROTECTED = [
   // 2026-10-20 (threat: T-140)。レンダラーの file:// 読み取りを同梱の dist/ に閉じ込める門。
   // ここが緩むと、乗っ取られたレンダラーが保管ファイルなど任意のローカルファイルを fetch で読める。
   'src/main/fileRequestGate.ts',
+  // 2026-10-21 (threat: T-147)。画面から独立した本人確認の門 (判定) と、それを Electron のダイアログに繋ぐ口。
+  // ここが緩む・外れると、乗っ取られた画面が資格情報の書き換え・全削除・外部への書き込みを無確認で呼べる。
+  'src/main/userPresence.ts',
+  'src/main/presenceWiring.ts',
   // 2026-08-22 に足した。`shellOpenGate.ts` の**双子**——あちらが「OS に
   // ファイルを開かせてよいか」なら、こちらは「OS に URL を開かせてよいか」。
   // `javascript:` / `file:` / OS 独自スキームを止める唯一の関門で、

@@ -18,6 +18,8 @@ import { safeErrorMessage } from './clients/types';
 import { externalUrlOrNull } from '../shared/externalUrlGate';
 import { shellTargetOrNull } from './shellOpenGate';
 import { installFileRequestGate } from './fileRequestGate';
+import { requirePresence } from './presenceWiring';
+import { describePayload, tierOfAction } from './userPresence';
 import { evaluateUpdate, parseLatestRelease, type UpdateVerdict } from '../shared/updateCheck';
 import {
   DEFAULT_HTTP_TIMEOUT_MS,
@@ -395,7 +397,7 @@ ipcMain.handle('app:openPath', async (_e, filePath: unknown): Promise<OsOpResult
 // 弾いた理由を **返す**。以前は `return;` で黙って捨てており、renderer からは
 // 保存できた場合と区別が付かなかった (上限超えの貼り付けが「保存した」ように
 // 見えていた)。規則は shared/tokenInput.ts に 1 つだけ置く。
-ipcMain.handle('secrets:set', async (_e, serviceId: unknown, token: unknown): Promise<TokenSaveResult> => {
+ipcMain.handle('secrets:set', async (e, serviceId: unknown, token: unknown): Promise<TokenSaveResult> => {
   if (!isServiceId(serviceId)) {
     return { ok: false, code: 'invalid_service', message: 'unknown service id' };
   }
@@ -403,6 +405,13 @@ ipcMain.handle('secrets:set', async (_e, serviceId: unknown, token: unknown): Pr
   if (!checked.ok) {
     return { ok: false, code: 'invalid_token', message: checked.message };
   }
+  // 本人確認 (T-147): 乗っ取られた画面が攻撃者の資格情報へ差し替えると、以後の書き込みが攻撃者の口座へ出る。
+  const presence = await requirePresence(e, {
+    channel: 'secrets:set',
+    tier: 'credential-write',
+    summary: `${serviceId} の資格情報を新しい値に置き換えます（値は表示しません）。`,
+  });
+  if (!presence.ok) return { ok: false, code: 'write_failed', message: presence.message };
   try {
     await setToken(serviceId, checked.value);
   } catch (e) {
@@ -424,8 +433,14 @@ ipcMain.handle('secrets:set', async (_e, serviceId: unknown, token: unknown): Pr
   }
   return { ok: true };
 });
-ipcMain.handle('secrets:clear', async (_e, serviceId: unknown): Promise<OsOpResult> => {
+ipcMain.handle('secrets:clear', async (e, serviceId: unknown): Promise<OsOpResult> => {
   if (!isServiceId(serviceId)) return { ok: false, message: 'unknown service id' };
+  const presence = await requirePresence(e, {
+    channel: 'secrets:clear',
+    tier: 'destructive',
+    summary: `${serviceId} の保存済み資格情報を削除します。`,
+  });
+  if (!presence.ok) return { ok: false, message: presence.message };
   // 削除の失敗を黙ると「消したつもりの資格情報が残っている」状態になる。
   try {
     await clearToken(serviceId);
@@ -453,7 +468,15 @@ function scheduleRelaunch(): void {
     app.exit(0);
   }, RELAUNCH_DELAY_MS);
 }
-ipcMain.handle('app:eraseAll', async (): Promise<DesktopEraseReport> => {
+ipcMain.handle('app:eraseAll', async (e): Promise<DesktopEraseReport> => {
+  const presence = await requirePresence(e, {
+    channel: 'app:eraseAll',
+    tier: 'destructive',
+    summary: 'このアプリの資格情報・記録・設定をすべて削除して再起動します。元に戻せません。',
+  });
+  if (!presence.ok) {
+    return { kind: 'desktop', files: {}, renderer: 'failed', allDeleted: false, error: presence.message };
+  }
   try {
     const report = await eraseDesktopData();
     if (report.allDeleted) scheduleRelaunch();
@@ -534,7 +557,7 @@ ipcMain.handle('fetch:snapshot', async (_e, serviceId: unknown) => {
 
 ipcMain.handle(
   'action:invoke',
-  async (_e, serviceId: unknown, action: unknown, payload: unknown) => {
+  async (e, serviceId: unknown, action: unknown, payload: unknown) => {
     if (!isServiceId(serviceId)) {
       return { ok: false, code: 'action_not_found', message: 'unknown service id' };
     }
@@ -552,6 +575,14 @@ ipcMain.handle(
         message: `${serviceId} に action "${action}" は登録されていません`,
       };
     }
+    // 本人確認 (T-147): 外部へ書き込む action は、何が書かれるかを見せて毎回確かめる。
+    // 段階は台帳 (userPresence.ts の ACTION_TIER) で決まり、載っていない action は最も厳しい扱い。
+    const presence = await requirePresence(e, {
+      channel: `${serviceId}/${action}`,
+      tier: tierOfAction(serviceId, action),
+      summary: describePayload(payload),
+    });
+    if (!presence.ok) return { ok: false, code: 'action_failed', message: presence.message };
     // fetch:snapshot と同じ理由で try の中に入れる。
     /*
      * **`LOCAL_SERVICES` の action はトークン無しで通す** (2026-09-15 · パス 267)。

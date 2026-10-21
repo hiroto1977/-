@@ -74,6 +74,7 @@
     "src/renderer/data/bankSubmission.ts",
     "src/renderer/data/bestAnswers.ts",
     "src/renderer/data/bestAnswersJob.ts",
+    "src/main/userPresence.ts",
     "src/renderer/data/budgetVariance.ts",
     "src/renderer/data/businessAxonometric.ts",
     "src/renderer/data/businessFinancials.ts",

@@ -294,6 +294,7 @@ const MUST_MEASURE = {
   // 非公開関数でテストすら無し。secrets.ts は保護対象なのに `mutate` から漏れ、
   // 実測 42.27% (未到達 78) — 保存時に本当に暗号化されるかを誰も見ていなかった。
   'src/main/shellOpenGate.ts':       '「OS で開く」の唯一の関門 (Windows では拡張子の関連付け次第でそのまま実行される)',
+  'src/main/userPresence.ts':        '画面から独立した本人確認の門 (資格情報の書き換え・全削除・外部への書き込みの前の確認と、断られるほど締まるロックアウト)',
   'src/main/secrets.ts':             '資格情報の暗号化と保存 (キーチェーンが使えるかの判定がここ 1 か所)',
   // 2026-09-01 追加。`decorativeDisables` が掘り出した ——「広い無効化が在るのに
   // mutate に無い」形で、14 種を 205 行に理由なしで掛けていた。外して実測すると
@@ -322,6 +323,9 @@ const MUST_MEASURE = {
  * 次に読む人が「まだ測っていない」と誤解する)。
  */
 const KNOWN_UNMEASURED = {
+  // 2026-10-21 (T-147)。判断は userPresence.ts (mutate に載せた) が持ち、ここは Electron のダイアログへ繋ぐ薄い口。
+  // 既定のボタン・窓が無いとき断る・呼び出し元の検査は presenceWiring.test.ts が実 API の偽物で留める。
+  'src/main/presenceWiring.ts': 'Electron のダイアログと senderFrame へ繋ぐ薄い口。判断は userPresence.ts にあり、既定の断り側は presenceWiring.test.ts が留める。',
 
   // 2026-09-01 追加。**新しい検査 `decorativeDisables` が形から掘り出した 9 件。**
   // どれも「広い Stryker disable が書いてあるのに mutate に無い」= pragma が

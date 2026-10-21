@@ -291,6 +291,49 @@
       "gaps": [
         "日次の費用上限は無い (窓は 1 時間・再読込で消える)。ベスト3 以外の AI 呼び出し (全AI合議・通常チャット) には開始回数の上限が無い。"
       ]
+    },
+    {
+      "id": "compromised-renderer",
+      "name": "画面の乗っ取り (XSS・仕込まれた指示に従う UI エージェント・悪意のある拡張)",
+      "howItReachesThisApp": "画面の JS を動かせる攻撃者が、正しい引数で window.serviceHub の口 (資格情報の書き換え・削除・全削除・外部への書き込み) を呼ぶ。画面側の確認 (window.confirm) は攻撃者自身が押せる。",
+      "defenses": [
+        {
+          "what": "主プロセスが出すネイティブの本人確認 (既定は「実行しない」・何が起きるかを見せる・窓が無ければ断る)",
+          "enforcedBy": [
+            "src/main/userPresence.ts",
+            "src/main/presenceWiring.ts"
+          ]
+        },
+        {
+          "what": "呼び出し元フレームの検査 (同梱 dist の最上位フレームだけ)",
+          "enforcedBy": [
+            "src/main/userPresence.ts"
+          ]
+        },
+        {
+          "what": "断られるほど締まるロックアウト・確認の連打を断る・段階ごとの速度制限",
+          "enforcedBy": [
+            "src/main/userPresence.ts"
+          ]
+        },
+        {
+          "what": "IPC 全ハンドラが確認の対象か理由つきの対象外かを両方向の台帳で持つ",
+          "enforcedBy": [
+            "src/main/__tests__/userPresenceCensus.test.ts"
+          ]
+        },
+        {
+          "what": "file:// を dist/ に閉じ込める",
+          "enforcedBy": [
+            "src/main/fileRequestGate.ts"
+          ]
+        }
+      ],
+      "gaps": [
+        "OS 全体を操る攻撃者 (OS 上の画面操作エージェント・マルウェア) はネイティブのダイアログも押せる。",
+        "ブラウザ版 (単一 HTML) には主プロセスが無く、この門は届かない (保管庫の解錠とマスターパスワードが唯一の門)。",
+        "承認の疲れ (正当な操作で何度も訊かれて習慣的に「はい」を押す) は設計上ゼロにできない。承認は書く内容を見せ、同じ内容の再試行だけを 30 秒まとめる。"
+      ]
     }
   ],
   "threats": [
@@ -2463,6 +2506,21 @@
       "regression": {
         "file": "src/renderer/data/__tests__/bestAnswersJob.test.ts",
         "test": "1 時間あたりの回数の上限 (threat: T-146)"
+      }
+    },
+    {
+      "id": "T-147",
+      "found": "2026-10-21",
+      "foundBy": "ゼロトラスト設計の逆算 (全 IPC に画面から独立した確認が 0 件であることを実測)",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "high",
+      "title": "主プロセスの IPC 15 本のうち、資格情報の書き換え (secrets:set)・削除 (secrets:clear)・全削除 (app:eraseAll)・外部サービスへの書き込み (action:invoke の create-/send-/sync- 系 20 件) に、画面とは別の経路で人に確かめる所が 0 件だった。画面を乗っ取った攻撃者は、正しい引数でこれらを無確認で呼べた(攻撃者の口座の資格情報への差し替え・全データ削除・仕込まれた本文の外部送信)",
+      "status": "mitigated",
+      "fix": "主プロセスが出すネイティブの確認(既定は「実行しない」・書く内容を見せる)を userPresence.ts に置き、4 つの口の副作用の前に呼ぶ。呼び出し元は同梱 dist の最上位フレームだけ。断られた回数でロックアウトが倍々に伸び、確認の連打・速度超過は断る。action の段階は台帳(未登録は最も厳しい扱い)で、LIVE_ACTIONS と両方向に突き合わせる。限界(OS 全体を操る攻撃者・ブラウザ版)は classes の gaps に書いた。",
+      "regression": {
+        "file": "src/main/__tests__/userPresence.test.ts",
+        "test": "確かめる段階 (threat: T-147)"
       }
     }
   ],

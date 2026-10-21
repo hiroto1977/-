@@ -98,6 +98,16 @@ function desktopReport(allDeleted: boolean): import('../../shared/eraseReport').
   };
 }
 let eraseReportImpl: () => Promise<import('../../shared/eraseReport').DesktopEraseReport> = async () => desktopReport(true);
+/** 本人確認の門 (T-147)。既定は通す —— 番人の検査はこのファイルの他の describe が見る。 */
+let presenceVerdict: { ok: true } | { ok: false; message: string } = { ok: true };
+const presenceRequests: { channel: string; tier: string; summary: string }[] = [];
+vi.mock('../presenceWiring', () => ({
+  requirePresence: (_e: unknown, req: { channel: string; tier: string; summary: string }) => {
+    presenceRequests.push(req);
+    return Promise.resolve(presenceVerdict);
+  },
+}));
+
 vi.mock('../eraseAll', () => ({
   eraseDesktopData: async () => eraseReportImpl(),
 }));
@@ -212,6 +222,8 @@ beforeEach(async () => {
   shownInFolder = [];
   openPathCalls = [];
   openPathResult = '';
+  presenceVerdict = { ok: true };
+  presenceRequests.length = 0;
   validToken = { ok: true, token: 'tok' };
   setTokenThrows = null;
   clearTokenThrows = null;
@@ -1193,5 +1205,58 @@ describe('アプリの寿命', () => {
     } finally {
       Object.defineProperty(process, 'platform', { value: orig, configurable: true });
     }
+  });
+});
+
+
+describe('本人確認の門 — 画面から独立した確認が通らなければ何も実行しない (threat: T-147)', () => {
+  const DENY = { ok: false as const, message: '確認が許可されなかったため実行しませんでした。' };
+
+  it('★ app:eraseAll は確認が通らなければ消さず、再起動もしない', async () => {
+    presenceVerdict = DENY;
+    const report = (await invoke('app:eraseAll')) as { allDeleted: boolean; error?: string };
+    expect(report.allDeleted).toBe(false);
+    expect(report.error).toBe(DENY.message);
+    expect(relaunchCalls).toBe(0);
+    expect(presenceRequests.map((r) => [r.channel, r.tier])).toEqual([['app:eraseAll', 'destructive']]);
+  });
+
+  it('★ secrets:clear は確認が通らなければ消さない', async () => {
+    presenceVerdict = DENY;
+    expect(await invoke('secrets:clear', 'github')).toEqual({ ok: false, message: DENY.message });
+    expect(clearTokenCalls).toEqual([]);
+    expect(presenceRequests[0]).toMatchObject({ channel: 'secrets:clear', tier: 'destructive' });
+  });
+
+  it('★ secrets:set は確認が通らなければ書かず、確認の文に値を載せない', async () => {
+    presenceVerdict = DENY;
+    const r = (await invoke('secrets:set', 'github', 'ghp_SECRETVALUE1234567890')) as { ok: boolean; message?: string };
+    expect(r.ok).toBe(false);
+    expect(setTokenCalls).toEqual([]);
+    expect(presenceRequests[0]).toMatchObject({ channel: 'secrets:set', tier: 'credential-write' });
+    expect(presenceRequests[0]!.summary).not.toContain('ghp_SECRETVALUE');
+  });
+
+  it('★ action:invoke は確認が通らなければ action を呼ばない (段階は台帳から・書く内容を見せる)', async () => {
+    presenceVerdict = DENY;
+    const r = (await invoke('action:invoke', 'github', 'create-issue', { title: 'T', body: 'B' })) as {
+      ok: boolean;
+      code?: string;
+    };
+    expect(r).toMatchObject({ ok: false, code: 'action_failed' });
+    expect(actionCalls).toEqual([]);
+    expect(presenceRequests[0]).toMatchObject({ channel: 'github/create-issue', tier: 'external-write' });
+    expect(presenceRequests[0]!.summary).toContain('title=「T」');
+  });
+
+  it('台帳に無い action でも (登録があれば) 最も厳しい段階で確かめる', async () => {
+    await invoke('action:invoke', 'github', 'create-issue', {});
+    expect(presenceRequests.at(-1)?.tier).toBe('external-write');
+  });
+
+  it('存在しない service / action の断りは確認より先 (ダイアログを出さない)', async () => {
+    await invoke('action:invoke', 'no-such', 'x', {});
+    await invoke('action:invoke', 'github', 'nope', {});
+    expect(presenceRequests).toEqual([]);
   });
 });
