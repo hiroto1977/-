@@ -34,7 +34,7 @@ X-Proxy-Auth: <optional-shared-secret>
 }
 ```
 
-## 2. Cloudflare Worker 実装 (412 行)
+## 2. Cloudflare Worker 実装 (427 行)
 
 `workers.cloudflare.com/dashboard` で **Create Worker** → 下記コードを貼り
 付け → **Deploy**。`worker.dev` の URL を Settings → BYO プロキシに登録。
@@ -52,7 +52,10 @@ Worker のように各ホップを再検査して進むのではなく、転送�
 
 ```js
 // proxy-worker.js
-const SHARED_SECRET = ''; // 任意。空文字なら未認証で受け入れる
+const SHARED_SECRET = ''; // 必須。ここに十分長いランダム文字列を入れ、アプリの設定にも同じ値を入れる
+// 認証なしで受け入れてよいのは、これを自分の手で true にしたときだけ (既定は閉じる)。
+// 空の SHARED_SECRET のまま配ると、URL を知る誰でも許可リストの全ホストへ中継できてしまう。
+const ALLOW_UNAUTHENTICATED = false;
 
 // 上流ホスト allowlist。BYO の前提でも、ここを絞っておくと
 // たとえクライアントが侵害されても被害を局所化できる。
@@ -145,6 +148,9 @@ export default {
       if (!timingSafeEqualStr(request.headers.get('X-Proxy-Auth'), SHARED_SECRET)) {
         return json({ error: 'unauthorized' }, 401);
       }
+    } else if (!ALLOW_UNAUTHENTICATED) {
+      // fail closed: 秘密を設定していない Worker は、誰の要求も中継しない。
+      return json({ error: 'unauthorized: SHARED_SECRET is not configured' }, 401);
     }
 
     // `envelope` と命名する: Workers の 2nd 引数 `env` (バインディング) と
@@ -292,6 +298,12 @@ async function denyReason(u) {
   if (u.protocol !== 'https:' && u.protocol !== 'http:') return 'http(s) only';
   if (!UPSTREAM_ALLOWLIST.has(u.hostname)) return 'upstream host not in allowlist';
   if (u.protocol !== 'https:') return 'plaintext http upstream is not allowed (credentials would travel in the clear)';
+  // **ホスト名だけでは「調べた物と送る物」が一致しない** (2026-10-15 · パス 523 · threat: T-059)。
+  // `https://user:pw@api.notion.com/` は hostname が許可リストに在るまま userinfo を運び、
+  // `https://api.notion.com:8443/` は同じホストの**別のサービス**へ利用者の Authorization ごと届く。
+  // 許可リストが名指ししているのは「そのホストの既定のポートの https」だけ。
+  if (u.username !== '' || u.password !== '') return 'userinfo in upstream URL is not allowed';
+  if (u.port !== '') return 'non-default port on upstream is not allowed';
   return await resolvedIpDenyReason(u.hostname);
 }
 
@@ -396,6 +408,9 @@ function isBlockedIp(ip) {
   // v4 を内包する形式は低 32bit を展開して v4 ルールに掛け直す。
   // ::ffff:0:0/96 IPv4-mapped (RFC 4291 §2.5.5.2)
   if (allZero(0, 5) && g[5] === 0xffff) return isBlockedIp(embedded(g[6], g[7]));
+  // ::ffff:0:0:0/96 SIIT (RFC 2765 §2.1)。URL パーサが `[::ffff:0:127.0.0.1]` を `[::ffff:0:7f00:1]` へ
+  // 正規化するので上の mapped には当たらない。2026-10-15 (threat: T-046) まで Worker と CI の関門は素通りさせていた。
+  if (allZero(0, 4) && g[4] === 0xffff && g[5] === 0) return isBlockedIp(embedded(g[6], g[7]));
   // 64:ff9b::/96 NAT64 well-known prefix (RFC 6052)。g[0..1] が prefix なので
   // ゼロ検査は g[2..5] に対して行う (g[0] から見ると当然ゼロではない)。
   if (g[0] === 0x64 && g[1] === 0xff9b && allZero(2, 6)) return isBlockedIp(embedded(g[6], g[7]));
@@ -469,11 +484,12 @@ function json(obj, status) {
 
 - URL は **公開リポジトリにコミットしない** (誰でも使われる)
 - **「誰が使えるか」と「どこへ繋げるか」は別の関門である** (2026-09-20 · パス 349):
-  - *誰が* — `SHARED_SECRET`。**既定は空文字で、そのとき認証は一切行われない**
-    (`if (SHARED_SECRET)` の中へ入らない)。応答は常に
-    `Access-Control-Allow-Origin: *` なので、**URL を知っている者は誰でも呼べる**。
-    設定しない場合、守りは URL の秘匿だけになる。Settings 画面で同じ値を入力すると
-    アプリ側が `X-Proxy-Auth` に載せる。
+  - *誰が* — `SHARED_SECRET`。**空のままなら Worker はすべての要求を 401 で断る**
+    (2026-10-20 · パス 541 · T-130 まで、既定は空文字で認証が一切行われなかった:
+    応答は常に `Access-Control-Allow-Origin: *` なので、URL を知っている者は誰でも
+    許可リストの全ホストへ呼べた)。認証なしで使いたいときは `ALLOW_UNAUTHENTICATED` を
+    **自分の手で** `true` にする —— そのとき守りは URL の秘匿だけになる。
+    Settings 画面で同じ値を入力するとアプリ側が `X-Proxy-Auth` に載せる。
   - *どこへ* — `UPSTREAM_ALLOWLIST`。緩めると繋げる先が広がる。
   **この節は 2026-09-20 まで「allowlist を空にしたり `*` 相当に緩めた時点で
   誰でも使えるオープンプロキシになる」と書いていた** —— 緩めなくても、

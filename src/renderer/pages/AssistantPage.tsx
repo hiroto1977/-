@@ -13,6 +13,7 @@
  *
  * 画面遷移は `servicehub:navigate` CustomEvent (App.tsx が listen)。
  */
+import { useBuildKind } from '../hooks/useBuildKind';
 import { navigateTo } from '../navigate';
 import { ERROR_MESSAGE_MAX_CHARS, redactForMessage } from '../../shared/redact';
 import {
@@ -116,6 +117,29 @@ const HISTORY_MAX = 50;
  */
 export const ASSISTANT_TURN_WINDOW = 16;
 const TURN_WINDOW = ASSISTANT_TURN_WINDOW;
+
+/**
+ * モデルへ渡す会話の窓 —— 末尾 `TURN_WINDOW` 発話のうち、**モデルの発話として成り立つ物だけ**。
+ *
+ * threat: T-068 (2026-10-15 · パス 523) —— `send()` は**最新の**発話だけを危機・他害で判定して
+ * `replyOffline` へ逃がす (パス 514) が、その発話は `messages` に残るので、**次の発話を送るときに
+ * 直前の危機の文が会話履歴として外のモデルへ届いていた** (実測: 「もう死にたい」→ 窓口・送信 0 件、
+ * 続けて「ありがとう」→ `chat` の messages = [危機の文, アプリが出した窓口の全文, 「ありがとう」])。
+ * 履歴は localStorage に 50 発話残るので再読込後も同じ。chatAll / ベスト3 も同じ `turns` を読む。
+ *
+ * 外す物は 2 つ: ① 危機・他害の判定に当たる利用者の発話 (端末の外へ出さない文) ② `offline` の
+ * アシスタント発話 —— これはモデルではなく**アプリ自身の声** (窓口の全文・簡易モードの断り) なので、
+ * モデルの「前の返答」として渡すのは偽の履歴である。窓は先に切る (天井は発話の数で決める)。
+ */
+export function turnsForModel(
+  history: readonly ChatMessage[],
+): { role: 'user' | 'assistant'; content: string }[] {
+  return history
+    .slice(-TURN_WINDOW)
+    .filter((m) => !(m.role === 'user' && (detectCrisis(m.text) || detectHarmToOthers(m.text))))
+    .filter((m) => !(m.role === 'assistant' && m.offline === true))
+    .map((m) => ({ role: m.role, content: m.text }));
+}
 
 /**
  * 既定 = **まだ色を選んでいない** (空文字) —— そのときはアプリの配色に追随する (`FOLLOW_BG` / `FOLLOW_FG`)。
@@ -318,6 +342,7 @@ async function storageMechanismOrNull(hub: Window['serviceHub']): Promise<Storag
 }
 
 export function AssistantPage() {
+  const buildKind = useBuildKind();
   const [messages, setMessages] = useState<ChatMessage[]>(() => loadHistory());
   const [input, setInput] = useState('');
   /*
@@ -390,8 +415,15 @@ export function AssistantPage() {
   }, [provider]);
 
   const egressRecipients = useMemo(
-    () => assistantEgressRecipients({ providers, providersUnknown, selected: provider }),
-    [providers, providersUnknown, provider],
+    () =>
+      assistantEgressRecipients({
+        providers,
+        providersUnknown,
+        selected: provider,
+        browser: buildKind === null ? null : buildKind === 'browser',
+        pageHostname: typeof location !== 'undefined' ? location.hostname : '',
+      }),
+    [providers, providersUnknown, provider, buildKind],
   );
 
   /** エージェント設定 (JSON マルチプロバイダ資格情報) を assistant スロットへ保存。 */
@@ -445,7 +477,7 @@ export function AssistantPage() {
       // 言い、入力欄まで空にしていた** (打ち直しになる)。
       const res = await hub.setToken('assistant', JSON.stringify(creds));
       if (!res.ok) {
-        setCredsMessage(`保存できませんでした: ${res.message}`);
+        setCredsMessage(`保存できませんでした: ${externalTextOnOneLine(res.message)}`);
         return; // 入力は残す
       }
       // 何が鍵を握っているかで文面を選ぶ (`data/credentialSaveMessage.ts`)。
@@ -494,7 +526,7 @@ export function AssistantPage() {
     try {
       const res = await hub.clearToken('assistant');
       if (!res.ok) {
-        setCredsMessage(`削除できませんでした: ${res.message}`);
+        setCredsMessage(`削除できませんでした: ${externalTextOnOneLine(res.message)}`);
         return;
       }
       setCredsMessage(deletedCredentialMessage());
@@ -603,9 +635,7 @@ export function AssistantPage() {
         replyOffline(text);
         return;
       }
-      const turns = history
-        .slice(-TURN_WINDOW)
-        .map((m) => ({ role: m.role, content: m.text }));
+      const turns = turnsForModel(history);
       // 追問 (「それを詳しく」等) で RAG 文脈が切れないよう、直前のユーザー発話を
       // 検索クエリへ連結する (AI へ渡す会話履歴 turns とは別物)。
       const prevUser = [...messages].reverse().find((m) => m.role === 'user')?.text ?? '';
@@ -626,7 +656,7 @@ export function AssistantPage() {
           });
           return r.ok
             ? { ok: true, text: r.data.text, provider: r.data.provider, model: r.data.model }
-            : { ok: false, message: r.message };
+            : { ok: false, message: externalTextOnOneLine(r.message) };
         };
         const started = startBestJob(
           { question: text, ragQuery, turns, catalog: serviceCatalog, providerIds: ids },

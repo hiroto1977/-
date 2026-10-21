@@ -29,7 +29,7 @@ import 'fake-indexeddb/auto';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { AssistantPage } from '../AssistantPage';
+import { AssistantPage, turnsForModel } from '../AssistantPage';
 import { SUPPORT_RESOURCES } from '../../data/counseling';
 import { settleUntil } from '../../__tests__/jsdomWait';
 
@@ -39,7 +39,7 @@ vi.mock('../../voice/speechAdapter', () => ({
 }));
 vi.mock('../../voice/ttsAdapter', () => ({ speak: () => undefined, cancelSpeech: () => undefined }));
 
-let chatCalls: { action: string }[] = [];
+let chatCalls: { action: string; payload: unknown }[] = [];
 let container: HTMLDivElement;
 let root: Root | null = null;
 
@@ -53,8 +53,8 @@ beforeEach(() => {
     getVersion: () => Promise.resolve('0.1.0-web'),
     listConfigured: () => Promise.resolve(['assistant']),
     fetchSnapshot: () => Promise.resolve({ ok: false, code: 'x', message: 'x' }),
-    invoke: (_s: string, action: string) => {
-      chatCalls.push({ action });
+    invoke: (_s: string, action: string, payload: unknown) => {
+      chatCalls.push({ action, payload });
       // モデルは窓口を 1 つも出さない (危機ネットをモデルに委ねた場合の最悪の形)。
       return Promise.resolve({ ok: true, data: { text: 'つらいですね。がんばってください。', provider: 'anthropic', model: 'x' } });
     },
@@ -83,6 +83,11 @@ async function ask(text: string): Promise<void> {
   await act(async () => {
     root!.render(createElement(AssistantPage));
   });
+  await type(text);
+}
+
+/** 描いたままの画面に、もう 1 発話打つ。 */
+async function type(text: string): Promise<void> {
   const input = [...container.querySelectorAll('input')].find(
     (i) => i.getAttribute('aria-label') === 'アシスタントへの入力',
   );
@@ -124,5 +129,50 @@ describe('旗艦 AI 画面は危機語をオンラインでもモデルへ送ら
     expect(chatCalls.some((c) => c.action === 'chat'), '普通の質問がモデルへ届いていない').toBe(true);
     // 普通の質問では確証済みの窓口は出さない (危機でないのに窓口を出さない)。
     expect(container.textContent ?? '').not.toContain(HOTLINE);
+  });
+});
+
+/*
+ * **直前の危機の文を、次の発話の会話履歴として送らない (2026-10-15 · パス 523 · threat: T-068)。**
+ *
+ * 上の検査は最新の発話だけを見ていた。危機の文は `messages` に残るので、続けて「ありがとう」と打つと
+ * `chat` の messages = [危機の文, アプリが出した窓口の全文 (assistant 役), 「ありがとう」] が外のモデルへ
+ * 届いていた (実測)。履歴は localStorage に残るので再読込後も同じ。
+ */
+describe('直前の危機の文は履歴としてもモデルへ送らない (threat: T-068)', () => {
+  it('★ 危機の文の次の発話で、chat の messages に危機の文も窓口の全文も入らない (threat: T-068)', async () => {
+    await ask('もう死にたい');
+    await settleUntil(() => (container.textContent ?? '').includes(HOTLINE), '確証済みの窓口が出る');
+    await type('ありがとう');
+    await settleUntil(() => chatCalls.some((c) => c.action === 'chat'), '普通の発話はモデルへ届く');
+    const call = chatCalls.find((c) => c.action === 'chat')!;
+    const messages = (call.payload as { messages: { role: string; content: string }[] }).messages;
+    const sent = messages.map((m) => m.content).join('\n');
+    expect(messages.map((m) => m.content)).toContain('ありがとう');
+    expect(sent, '危機の文が履歴として外へ出ている').not.toContain('死にたい');
+    expect(sent, 'アプリが出した窓口の全文が assistant の発話として外へ出ている').not.toContain(HOTLINE);
+    expect(messages.every((m) => m.role === 'user' || m.role === 'assistant')).toBe(true);
+  });
+
+  it('★ turnsForModel: 危機・他害の利用者発話と offline のアシスタント発話を外し、窓は先に切る (threat: T-068)', () => {
+    const msgs = [
+      { role: 'user' as const, text: 'もう死にたい' },
+      { role: 'assistant' as const, text: `窓口: ${HOTLINE}`, offline: true },
+      { role: 'user' as const, text: '誰かを傷つけたい' },
+      { role: 'assistant' as const, text: '（簡易モード）', offline: true },
+      { role: 'user' as const, text: 'インボイス制度とは' },
+      { role: 'assistant' as const, text: 'モデルの答え', provider: 'anthropic' },
+      { role: 'user' as const, text: 'ありがとう' },
+    ];
+    expect(turnsForModel(msgs)).toEqual([
+      { role: 'user', content: 'インボイス制度とは' },
+      { role: 'assistant', content: 'モデルの答え' },
+      { role: 'user', content: 'ありがとう' },
+    ]);
+    // 窓は先に切る (末尾 16 発話) —— 外した分だけ古い発話を繰り上げない。
+    const long = Array.from({ length: 40 }, (_, i) => ({ role: (i % 2 === 0 ? 'user' : 'assistant') as 'user' | 'assistant', text: `t${i}` }));
+    const turns = turnsForModel(long);
+    expect(turns).toHaveLength(16);
+    expect(turns[0]!.content).toBe('t24');
   });
 });

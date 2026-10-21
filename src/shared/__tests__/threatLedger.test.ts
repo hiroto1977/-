@@ -192,6 +192,19 @@ describe('CODEOWNERS は整合性チェーンの保護対象をすべて覆う',
     .map((l) => l.trim())
     .filter((l) => l !== '' && !l.startsWith('#'));
   const patterns = lines.map((l) => l.split(/\s+/)[0]!);
+  /** 台帳の回帰検査 (守りの本体)。弱められると守りが消えるので所有者のレビューを要求する。 */
+  const regressionFiles = [...new Set(ledger.threats.flatMap((t) => (t.regression === undefined ? [] : [t.regression.file])))];
+  /** 守られる側の設定 (データ)。ここが書き換わると、検査が緑のまま梱包・依存・lint の入力が変わる。 */
+  const OWNED_CONFIG = ['/CLAUDE.md', '/package.json', '/package-lock.json', '/tsconfig.json', '/tsconfig.app.json', '/tsconfig.node.json', '/stryker.config.json', '/.gitignore', '/docs/SESSION_HANDOFF.md', '/docs/REMAINING_WORK.md', '/docs/THREAT_HUNT.md', '/docs/MODEL_EFFORT_POLICY.md'];
+  /**
+   * `**\/NAME` は任意の深さの NAME (ルート直下も含む)。エージェント指示書のように**新しく生える**物を
+   * 個別の行ではなく名前で覆うための形 (パス 540 · T-128)。他の glob は台帳が使わないので扱わない。
+   */
+  const globCovers = (pat: string, p: string) => pat.startsWith('**/') && (p === pat.slice(3) || p.endsWith(`/${pat.slice(3)}`));
+  /** エージェントが読む指示書の名前 (パターンで覆ってよい名前はこれだけ · パス 540)。 */
+  const INSTRUCTION_NAMES = ['CLAUDE.md', 'AGENTS.md'];
+  const isCovered = (p: string) =>
+    patterns.some((pat) => (pat.endsWith('/') ? `/${p}`.startsWith(pat) : pat === `/${p}` || globCovers(pat, p)));
 
   it('★ CODEOWNERS は整合性チェーンの保護対象をすべて覆う (threat: T-003)', () => {
     const covered = (p: string) =>
@@ -202,12 +215,43 @@ describe('CODEOWNERS は整合性チェーンの保護対象をすべて覆う',
     for (const l of lines) expect(l, l).toMatch(/\s@[\w-]+$/);
   });
 
+  it('★ 台帳の回帰検査と守られる設定は、CODEOWNERS が覆う (守りの無効化と被保護物の改変を同じ PR で通さない) (threat: T-112)', () => {
+    expect(regressionFiles.length).toBeGreaterThan(40);
+    expect(regressionFiles.filter((f) => !isCovered(f)), '足す行: /<path> @hiroto1977').toEqual([]);
+    expect(OWNED_CONFIG.filter((f) => !isCovered(f.slice(1)))).toEqual([]);
+    // 標本: 覆われていない道は「覆われていない」と答える (空の検査にしない)。
+    expect(isCovered('src/shared/__tests__/zz-not-in-codeowners.test.ts')).toBe(false);
+  });
+
   it('★ ファイルを名指す行は、保護対象か実在するディレクトリだけ (古い行を残さない)', () => {
-    const protectedSet = new Set(PROTECTED.map((p) => `/${p}`));
+    // 保護対象 + 台帳の回帰検査 + 守られる設定 (パス 526 · T-105〜T-111)。**どれかに当たらない行は古い行**。
+    const protectedSet = new Set([
+      ...PROTECTED.map((p) => `/${p}`),
+      ...regressionFiles.map((f) => `/${f}`),
+      ...OWNED_CONFIG,
+    ]);
     const stale = patterns.filter((pat) =>
-      pat.endsWith('/') ? !existsSync(path.join(ROOT, pat)) : !protectedSet.has(pat),
+      pat.endsWith('/')
+        ? !existsSync(path.join(ROOT, pat))
+        : pat.startsWith('**/')
+          ? !INSTRUCTION_NAMES.includes(pat.slice(3))
+          : !protectedSet.has(pat),
     );
     expect(stale).toEqual([]);
     expect(PROTECTED.length).toBeGreaterThan(50);
+  });
+
+  it('★ エージェント指示書は、これから生える物も CODEOWNERS が覆う (threat: T-128)', () => {
+    const instructions = [
+      'CLAUDE.md', 'src/main/clients/CLAUDE.md', 'docs/CLAUDE.md', 'AGENTS.md', 'packages/a/AGENTS.md',
+      '.claude/settings.json', '.claude/rules/a.md', '.claude/commands/a.md', '.claude/skills/s/SKILL.md',
+      '.claude/output-styles/o.md', '.claude/agents/auditor.md', '.cursor/rules/a.mdc',
+      '.github/copilot-instructions.md', '.github/instructions/a.instructions.md',
+    ];
+    expect(instructions.filter((f) => !isCovered(f)), '足す行: /<path> @hiroto1977').toEqual([]);
+    // 標本: 指示書でない物は覆わない (パターンが広すぎて何でも覆う検査にしない)
+    for (const f of ['src/x/README.md', 'docs/CLAUDE-notes.md', 'src/NOTAGENTS.md', 'src/x/MYCLAUDE.md']) {
+      expect(isCovered(f), f).toBe(false);
+    }
   });
 });

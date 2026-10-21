@@ -9,6 +9,7 @@ import { CeilingNotice } from '../components/CeilingNotice';
 import { charsOverCeiling } from '../../shared/inputCeiling';
 import { useServiceData } from '../hooks/useServiceData';
 import type { ActionData } from '../../shared/actionData';
+import { externalTextOnOneLine } from '../data/assistantMarkdown';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -102,7 +103,7 @@ export function CalendarPage() {
       // 作った予定は「Upcoming Events」(timeMin=now の 10 件) に入る —— 取り直す (パス 173)。
       refresh();
     } else {
-      setResult({ kind: 'error', message: res.message });
+      setResult({ kind: 'error', message: externalTextOnOneLine(res.message) });
     }
   };
 

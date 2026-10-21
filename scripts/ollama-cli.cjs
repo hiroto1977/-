@@ -25,13 +25,31 @@
  * UI 版とまったく同じ (docs/OLLAMA_SECURITY.md)。/api/pull・/api/create・/api/push は
  * この CLI からも呼べない。
  *
- * 終了コード: 0 = 成功 / 1 = エラー / 2 = Ollama へ到達できない
+ * 終了コード: 0 = 成功 / 1 = エラー / 2 = Ollama へ到達できない / 4 = (exposure) 外へ公開されている
  */
 
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const esbuild = require('esbuild');
+const exposure = require('./lib/ollama-exposure.cjs');
+const { printableLines, jsonForTerminal } = require('./lib/untrusted-text.cjs');
+
+/**
+ * 端末へ出す口 (T-134)。Ollama の返信・版・エラー・モデルの詳細は**利用者が向けた相手**の文で、
+ * LAN やトンネル先の Ollama・モデルの出力が敵性なら、素のまま刷ると ESC 列 (タイトル書き換え・
+ * 行消し)・BEL・RLO が端末で効く (CWE-150)。刷る口はこの 3 つだけにして、危ない字は見える形
+ * (\u{1B}) へ置き換える。JSON は値を変えずに \uXXXX へ逃がす。
+ */
+function say(text = '') {
+  console.log(printableLines(text));
+}
+function sayErr(...parts) {
+  console.error(printableLines(parts.map(String).join(' ')));
+}
+function sayJson(value) {
+  console.log(jsonForTerminal(value));
+}
 
 const ROOT = path.join(__dirname, '..');
 const REQUEST_TIMEOUT_MS = 120_000; // 生成は長くかかるので UI より緩く
@@ -85,7 +103,7 @@ function parseArgs(argv) {
     else if (a === '--help' || a === '-h') out.cmd = 'help';
     else rest.push(a);
   }
-  if (rest[0] === 'chat' || rest[0] === 'status') {
+  if (rest[0] === 'chat' || rest[0] === 'status' || rest[0] === 'exposure') {
     out.cmd = rest[0];
     out.positional = rest.slice(1);
   } else if (rest.length > 0) {
@@ -116,13 +134,13 @@ async function fetchJson(url, init = {}) {
 }
 
 function unreachable(base, err) {
-  console.error(`❌ ${base} に接続できませんでした (${err.message})`);
-  console.error('');
-  console.error('確認してください:');
-  console.error('  1. Ollama が起動しているか — `ollama serve`');
-  console.error('  2. ポートが合っているか — 既定 11434 / 変更時は `--port <番号>`');
-  console.error('  3. この CLI は Ollama と **同じマシン** で実行する必要があります');
-  console.error('     (リモートのコンテナからは手元の PC の Ollama へは届きません)');
+  sayErr(`❌ ${base} に接続できませんでした (${err.message})`);
+  sayErr('');
+  sayErr('確認してください:');
+  sayErr('  1. Ollama が起動しているか — `ollama serve`');
+  sayErr('  2. ポートが合っているか — 既定 11434 / 変更時は `--port <番号>`');
+  sayErr('  3. この CLI は Ollama と **同じマシン** で実行する必要があります');
+  sayErr('     (リモートのコンテナからは手元の PC の Ollama へは届きません)');
   process.exit(2);
 }
 
@@ -139,22 +157,16 @@ async function listModels(base) {
 /** describeOllamaError の結果を人間向けに出す (JSON モードでは構造化して出す)。 */
 function reportError(advice, opts, exitCode = 1) {
   if (opts.json) {
-    console.log(
-      JSON.stringify(
-        { ok: false, kind: advice.kind, message: advice.message, detail: advice.detail, hints: advice.hints },
-        null,
-        2,
-      ),
-    );
+    sayJson({ ok: false, kind: advice.kind, message: advice.message, detail: advice.detail, hints: advice.hints });
   } else {
-    console.error(`❌ ${advice.message}`);
+    sayErr(`❌ ${advice.message}`);
     if (advice.hints.length > 0) {
-      console.error('');
-      for (const h of advice.hints) console.error(`  → ${h}`);
+      sayErr('');
+      for (const h of advice.hints) sayErr(`  → ${h}`);
     }
     if (advice.detail !== '' && advice.kind !== 'unknown') {
-      console.error('');
-      console.error(`  (Ollama からの応答: ${advice.detail.slice(0, 200)})`);
+      sayErr('');
+      sayErr(`  (Ollama からの応答: ${advice.detail.slice(0, 200)})`);
     }
   }
   process.exit(exitCode);
@@ -197,57 +209,73 @@ async function cmdStatus(base, opts) {
 
   const warnings = shared.buildWarnings(version);
   const versionSafe = shared.isVersionSafe(version);
+  // 外へ公開されていないか (T-129)。繋がるアドレスがあれば警告する。
+  const portNum = Number(new URL(base).port);
+  const exposed = await exposure.findExposed(os.networkInterfaces(), portNum);
+  const exposureNote = exposure.exposureWarning(exposed, portNum);
   const versionUnknown = version === '';
 
   if (opts.json) {
-    console.log(
-      JSON.stringify(
-        { running: true, base, version, versionSafe, models, warnings },
-        null,
-        2,
-      ),
-    );
+    sayJson({ running: true, base, version, versionSafe, models, warnings, exposedOn: exposed });
     return;
   }
 
-  console.log(`✅ ${base} に接続しました`);
-  console.log(
+  say(`✅ ${base} に接続しました`);
+  say(
     `   バージョン: ${version || '(不明)'} ${
       // バージョン不明は「古い」とは限らない (/api/version が無い古い版か、
       // 前段のプロキシが返さないだけ)。断定を避けて注記だけ出す。
       versionUnknown ? '— /api/version が読めませんでした' : versionSafe ? '' : `⚠ 推奨 ${shared.MIN_SAFE_VERSION} 未満`
     }`,
   );
-  console.log('');
+  say('');
   if (models.length === 0) {
-    console.log('モデルがまだありません。例: `ollama pull llama3.2`');
+    say('モデルがまだありません。例: `ollama pull llama3.2`');
   } else {
-    console.log(`インストール済みモデル (${models.length} 件):`);
+    say(`インストール済みモデル (${models.length} 件):`);
     const nameWidth = Math.max(...models.map((m) => m.name.length));
     for (const m of models) {
-      console.log(
+      say(
         `  ${m.name.padEnd(nameWidth)}  ${String(m.parameterSize).padStart(5)}  ` +
           `${m.quantization.padEnd(8)}  ${String(m.sizeMb).padStart(6)} MB`,
       );
     }
-    console.log('');
-    console.log(`使い方: npm run ollama -- chat ${models[0].name} "こんにちは"`);
+    say('');
+    say(`使い方: npm run ollama -- chat ${models[0].name} "こんにちは"`);
   }
   if (!versionSafe && version !== '') {
-    console.log('');
-    console.log(`⚠ ${warnings[0]}`);
+    say('');
+    say(`⚠ ${warnings[0]}`);
   }
+  if (exposureNote !== null) {
+    say('');
+    say(exposureNote);
+  }
+}
+
+/**
+ * 公開の自己点検だけを行う (Ollama が応答しなくてもよい —— 待ち受けの有無だけを見る)。
+ * 終了コード: 0 = この PC の外から届くアドレスでは待ち受けていない / 4 = 待ち受けている。
+ * `ollama-setup.sh` が呼ぶ (T-129)。
+ */
+async function cmdExposure(base, opts) {
+  const portNum = Number(new URL(base).port);
+  const exposed = await exposure.findExposed(os.networkInterfaces(), portNum);
+  const note = exposure.exposureWarning(exposed, portNum);
+  if (opts.json) sayJson({ port: portNum, exposedOn: exposed });
+  else say(note ?? `✅ ポート ${portNum} は、この PC の外から届くアドレスでは待ち受けていません`);
+  if (exposed.length > 0) process.exit(4);
 }
 
 async function cmdChat(base, opts) {
   const [model, ...promptParts] = opts.positional;
   const prompt = promptParts.join(' ');
   if (!model || prompt === '') {
-    console.error('使い方: npm run ollama -- chat <モデル> "<プロンプト>" [--system "..."]');
+    sayErr('使い方: npm run ollama -- chat <モデル> "<プロンプト>" [--system "..."]');
     process.exit(1);
   }
   if (!shared.isSafeModelName(model)) {
-    console.error(`❌ モデル名が不正です: ${model}`);
+    sayErr(`❌ モデル名が不正です: ${model}`);
     process.exit(1);
   }
 
@@ -286,25 +314,29 @@ async function cmdChat(base, opts) {
   const ms = Date.now() - started;
 
   if (opts.json) {
-    console.log(JSON.stringify({ model, reply, durationMs: ms }, null, 2));
+    sayJson({ model, reply, durationMs: ms });
     return;
   }
-  console.log(reply || '(空の応答)');
-  console.log('');
-  console.log(`— ${model} · ${(ms / 1000).toFixed(1)}s`);
+  say(reply || '(空の応答)');
+  say('');
+  say(`— ${model} · ${(ms / 1000).toFixed(1)}s`);
 }
 
 function help() {
-  console.log(`Ollama CLI — ブラウザを介さずローカル LLM を使う
+  say(`Ollama CLI — ブラウザを介さずローカル LLM を使う
 
   npm run ollama                                   状態確認 (バージョン + モデル一覧)
   npm run ollama -- chat <モデル> "<プロンプト>"      1 往復のチャット
+  npm run ollama -- exposure                       外へ公開されていないかだけ調べる (公開なら終了コード 4)
   npm run ollama -- chat <モデル> "..." --system "…"  システムプロンプト付き
 
 オプション:
   --port <番号>   Ollama のポート (既定 11434)
   --json          機械可読な JSON で出力
   -h, --help      このヘルプ
+
+状態確認では、Ollama がこの PC の外から届くアドレスで待ち受けていないかも調べ、公開されていれば警告します
+(認証が無いため。自分のアドレスへの接続確認だけで、何も送りません)。
 
 接続先は http://127.0.0.1:<ポート> に固定です。呼び出すのは /api/version ・
 /api/tags ・/api/chat の 3 つだけで、モデルを取得・削除する API は呼びません
@@ -319,14 +351,15 @@ async function main() {
   }
   const base = shared.buildLoopbackBase(opts.port === '' ? shared.DEFAULT_OLLAMA_PORT : opts.port);
   if (base === null) {
-    console.error(`❌ ポート番号が不正です: ${opts.port} (1〜65535 の整数で指定してください)`);
+    sayErr(`❌ ポート番号が不正です: ${opts.port} (1〜65535 の整数で指定してください)`);
     process.exit(1);
   }
   if (opts.cmd === 'chat') await cmdChat(base, opts);
+  else if (opts.cmd === 'exposure') await cmdExposure(base, opts);
   else await cmdStatus(base, opts);
 }
 
 main().catch((err) => {
-  console.error('❌ 想定外のエラー:', err.message);
+  sayErr('❌ 想定外のエラー:', err.message);
   process.exit(1);
 });

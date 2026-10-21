@@ -34,6 +34,10 @@
  *
  *   1. `npm audit --json` (全体) と `--omit=dev` (出荷物) —— 差が dev だけの勧告
  *   2. `npm run audit:floors` と同じ測定 (`probeFloors`) —— 床がまだ十分か
+ *   3. `npm run audit:pinned-action-shas` と同じ測定 (`auditPins` · パス 535 · threat: T-124) ——
+ *      workflow の SHA 固定が実在の commit で注記の版と整合するか。`lint:workflow-security` は
+ *      形までしか見られず、作り話の SHA に `# v5` を付けても通る。実在の確認は網が要るので、
+ *      PR の門ではなくここ (毎日の予定実行) が受け持つ。
  *
  * 評価は純関数 `buildReport()`。合成の入力を流し込めるようにしてある。
  */
@@ -43,6 +47,7 @@ const path = require('node:path');
 const { execFileSync } = require('node:child_process');
 
 const { probeFloors } = require('./audit-floors.cjs');
+const { auditPins, FAILING: PIN_FAILING } = require('./audit-pinned-action-shas.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const OUT = path.join(REPO_ROOT, 'orchestration', 'dependency-audit.json');
@@ -79,11 +84,21 @@ function severityRank(s) {
  * `all` / `prod` は `advisoriesOf()` の戻り値、`floors` は `probeFloors()` の戻り値。
  * どれかが null なら**測れていない**ので、0 件として報告せず `unmeasured` を立てる。
  */
-function buildReport({ all, prod, floors, generatedAt }) {
+function buildReport({ all, prod, floors, pins, generatedAt }) {
   const problems = [];
   if (all === null) problems.push('npm audit (全体) の出力を読めませんでした');
   if (prod === null) problems.push('npm audit --omit=dev の出力を読めませんでした');
   if (floors === null) problems.push('床の台帳が空です (走査の不具合)');
+  // `pins` は必須 (undefined も「測っていない」)。`null` = SHA 固定が 1 件も読めなかった。
+  if (!Array.isArray(pins)) problems.push('SHA 固定を 1 件も読めませんでした (走査の不具合)');
+  const pinList = Array.isArray(pins) ? pins : [];
+  const badPins = pinList.filter((x) => PIN_FAILING.has(x.status));
+  const unreachablePins = pinList.filter((x) => x.status === 'unreachable');
+  const movedPins = pinList.filter((x) => x.status === 'moved');
+  // 網が使えず測れなかった固定は「健全」にしない (1 行にまとめる —— 31 行並べると本物が埋もれる)。
+  if (unreachablePins.length > 0) {
+    problems.push(`SHA 固定 ${unreachablePins.length} 件の実在を確かめられませんでした (git ls-remote が使えない)`);
+  }
 
   const prodNames = new Set((prod ?? []).map((a) => a.name));
   const dev = (all ?? []).filter((a) => !prodNames.has(a.name));
@@ -94,7 +109,8 @@ function buildReport({ all, prod, floors, generatedAt }) {
   for (const f of unmeasuredFloors) problems.push(`床 ${f.package} を測れませんでした (${f.detail})`);
 
   // **出荷物の勧告は重大度を問わず要対応。** 文書が「prod 0 件」と言っている。
-  const actionable = prodList.length + devList.length + lowFloors.length + problems.length;
+  // 作り話の疑いのある固定 (`no-tag` / `missing` / `invalid`) は要対応。古い固定 (`moved`) は報せるだけ。
+  const actionable = prodList.length + devList.length + lowFloors.length + badPins.length + problems.length;
 
   const row = (a) => `| \`${a.name}\` | ${a.severity} | ${a.ghsa.map((g) => `[${g}](https://github.com/advisories/${g})`).join(' ') || '—'} |`;
   const section = (title, list, note) =>
@@ -103,13 +119,14 @@ function buildReport({ all, prod, floors, generatedAt }) {
       : [`### ${title}`, '', note, '', '| パッケージ | 重大度 | 勧告 |', '|---|---|---|', ...list.map(row), ''];
 
   const markdown = [
-    `基準日 **${generatedAt}** (UTC · 週次の実行日)`,
+    `基準日 **${generatedAt}** (UTC · 毎日の実行日)`,
     '',
     '| 区分 | 件数 |',
     '|---|---:|',
     `| 出荷される依存 (prod) の勧告 | ${prodList.length} |`,
     `| 開発だけの依存 (dev) の勧告 | ${devList.length} |`,
     `| 低すぎるセキュリティの床 | ${lowFloors.length} |`,
+    `| 実在しない / 不正な SHA 固定 | ${badPins.length} |`,
     `| 測れなかった項目 | ${problems.length} |`,
     '',
     ...section(
@@ -138,11 +155,21 @@ function buildReport({ all, prod, floors, generatedAt }) {
             : `測れませんでした (${f.detail})`),
     ),
     '',
+    '### workflow の SHA 固定',
+    '',
+    pinList.length === 0
+      ? '測れませんでした。'
+      : `固定 ${pinList.length} か所のうち、実在し注記の版と整合 ${pinList.filter((x) => x.status === 'match').length} 件 / ` +
+        `古い固定 ${movedPins.length} 件 / 実在しない・不正 ${badPins.length} 件 / 測れず ${unreachablePins.length} 件。`,
+    '',
+    ...badPins.map((x) => `- ❌ \`${x.file}:${x.line}\` \`${x.repo}@${String(x.sha).slice(0, 12)}\` # ${x.tag ?? '(注記なし)'} — ${x.why}`),
+    ...movedPins.map((x) => `- ⚠️ \`${x.file}:${x.line}\` \`${x.repo}\` # ${x.tag} — ${x.why}`),
+    ...(badPins.length + movedPins.length === 0 ? [] : ['']),
     ...(problems.length === 0 ? [] : ['### 測れなかった項目', '', ...problems.map((p) => `- ${p}`), '']),
     '手順は `docs/SECURITY_AUDIT.md` の「依存の勧告」。床の台帳は ' +
       '`scripts/lint-dependencies.cjs` の `SECURITY_FLOORS`、測り直しは `npm run audit:floors`。',
     '',
-    '_この Issue は dependency-audit ワークフローが毎週自動更新します。_',
+    '_この Issue は dependency-audit ワークフローが毎日自動更新します。_',
   ].join('\n');
 
   return {
@@ -151,12 +178,15 @@ function buildReport({ all, prod, floors, generatedAt }) {
       prod: prodList.length,
       dev: devList.length,
       lowFloors: lowFloors.length,
+      badPins: badPins.length,
+      movedPins: movedPins.length,
       unmeasured: problems.length,
       actionable,
     },
     prod: prodList,
     dev: devList,
     floors: floors ?? [],
+    pins: pinList,
     problems,
     actionable,
     markdown,
@@ -191,6 +221,7 @@ function selfTest() {
     ...extra,
   });
   const a = (name, severity, ghsa = ['GHSA-test']) => ({ name, severity, ghsa });
+  const pin = (status) => ({ file: 'w.yml', line: 3, repo: 'o/r', sha: 'a'.repeat(40), tag: 'v5', status, why: 'テスト' });
   const cases = [
     ['何も無ければ actionable 0', { all: [], prod: [], floors: [mkFloor('ok')] }, 0],
     ['prod の勧告は重大度を問わず数える (low でも)', { all: [a('p', 'low')], prod: [a('p', 'low')], floors: [] }, 1],
@@ -205,11 +236,17 @@ function selfTest() {
     ['audit を読めなければ数える (全体)', { all: null, prod: [], floors: [] }, 1],
     ['audit を読めなければ数える (prod)', { all: [], prod: null, floors: [] }, 1],
     ['台帳が空なら数える', { all: [], prod: [], floors: null }, 1],
+    ['実在しない SHA 固定 (missing) を数える', { all: [], prod: [], floors: [], pins: [pin('match'), pin('missing')] }, 1],
+    ['存在しない版の注記 (no-tag) を数える', { all: [], prod: [], floors: [], pins: [pin('no-tag')] }, 1],
+    ['古い固定 (moved) は報せるだけで数えない', { all: [], prod: [], floors: [], pins: [pin('moved'), pin('match')] }, 0],
+    ['測れなかった固定は「健全」にしない (1 行にまとめて数える)', { all: [], prod: [], floors: [], pins: [pin('unreachable'), pin('unreachable')] }, 1],
+    ['SHA 固定を読めなければ数える (null)', { all: [], prod: [], floors: [], pins: null }, 1],
+    ['pins を渡し忘れたら「測っていない」として数える', { all: [], prod: [], floors: [], pins: undefined }, 1],
   ];
   let bad = 0;
   console.log('self-test:');
   for (const [label, input, want] of cases) {
-    const got = buildReport({ ...input, generatedAt: at }).actionable;
+    const got = buildReport({ pins: [], ...input, generatedAt: at }).actionable;
     const ok = got === want;
     if (!ok) bad += 1;
     console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} (期待 ${want})`);
@@ -217,7 +254,7 @@ function selfTest() {
 
   // 重大度の並び (重い順)・知らない語は末尾。
   const order = [a('c', 'critical'), a('l', 'low'), a('h', 'high'), a('u', 'weird'), a('m', 'moderate')];
-  const sorted = buildReport({ all: order, prod: order, floors: [], generatedAt: at }).prod.map((x) => x.severity);
+  const sorted = buildReport({ all: order, prod: order, floors: [], pins: [], generatedAt: at }).prod.map((x) => x.severity);
   const wantOrder = ['critical', 'high', 'moderate', 'low', 'weird'];
   const orderOk = JSON.stringify(sorted) === JSON.stringify(wantOrder);
   if (!orderOk) bad += 1;
@@ -228,6 +265,7 @@ function selfTest() {
     all: [a('vitest', 'moderate', ['GHSA-82fw-gwwq-j7x9'])],
     prod: [],
     floors: [mkFloor('too-low', { package: 'qs', atLeast: '6.15.2', hits: ['GHSA-4mjr-xmp4-gh2g'] })],
+    pins: [pin('missing')],
     generatedAt: at,
   }).markdown;
   const mdChecks = [
@@ -235,6 +273,7 @@ function selfTest() {
     ['勧告がリンクになる', md.includes('https://github.com/advisories/GHSA-82fw-gwwq-j7x9')],
     ['低すぎる床が名指しされる', md.includes('**低すぎます**') && md.includes('`qs`')],
     ['prod が 0 件なら「0 件。」と書く', md.includes('### 出荷される依存 (prod)\n\n0 件。')],
+    ['実在しない固定が名指しされる', md.includes('### workflow の SHA 固定') && md.includes('w.yml:3') && md.includes('❌')],
   ];
   for (const [label, ok] of mdChecks) {
     if (!ok) bad += 1;
@@ -264,6 +303,7 @@ function main(argv) {
     all: runAudit([]),
     prod: runAudit(['--omit=dev']),
     floors: probeFloors(),
+    pins: auditPins(),
     generatedAt: new Date().toISOString().slice(0, 10),
   });
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
@@ -271,7 +311,7 @@ function main(argv) {
   console.log(report.markdown);
   console.log(
     `\n要対応 ${report.actionable} 件 (prod ${report.summary.prod} / dev ${report.summary.dev} / ` +
-      `低い床 ${report.summary.lowFloors} / 測れず ${report.summary.unmeasured})`,
+      `低い床 ${report.summary.lowFloors} / 不正な固定 ${report.summary.badPins} / 測れず ${report.summary.unmeasured})`,
   );
   // **報告する道具なので、勧告が在っても exit 0。** 週次の予定実行を赤くしても
   // 見る人がいない (誰の PR も待っていない)。要対応は Issue に出る。

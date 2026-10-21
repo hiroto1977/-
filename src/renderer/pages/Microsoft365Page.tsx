@@ -8,6 +8,7 @@ import { CeilingNotice } from '../components/CeilingNotice';
 import { charsOverCeiling } from '../../shared/inputCeiling';
 import { MS365_EVENT_FIELDS, MS365_MAIL_FIELDS } from '../../shared/writeFieldLimits';
 import type { ActionData } from '../../shared/actionData';
+import { externalTextOnOneLine } from '../data/assistantMarkdown';
 
 const inputStyle: React.CSSProperties = {
   width: '100%',
@@ -61,7 +62,7 @@ export function Microsoft365Page() {
       setSignInResult({ kind: 'ok', message: 'サインインしました。「更新」でデータを取得できます。' });
       refresh();
     } else {
-      setSignInResult({ kind: 'error', message: res.message });
+      setSignInResult({ kind: 'error', message: externalTextOnOneLine(res.message) });
     }
   };
 
@@ -110,7 +111,7 @@ export function Microsoft365Page() {
       setMailSubject('');
       setMailBody('');
     } else {
-      setResult({ kind: 'error', message: res.message });
+      setResult({ kind: 'error', message: externalTextOnOneLine(res.message) });
     }
   };
 
@@ -136,7 +137,7 @@ export function Microsoft365Page() {
       setEvEnd('');
       setEvLocation('');
     } else {
-      setResult({ kind: 'error', message: res.message });
+      setResult({ kind: 'error', message: externalTextOnOneLine(res.message) });
     }
   };
 

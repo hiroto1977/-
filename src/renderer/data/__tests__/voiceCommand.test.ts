@@ -16,6 +16,7 @@ import {
   channelToken,
   ownerRepoToken,
   extractWriteParams,
+  outsideQuotes,
 } from '../voiceCommand';
 import { SERVICE_IDS } from '../../../shared/serviceId';
 
@@ -971,5 +972,72 @@ describe('extractWriteParams — 送り先は引用の外から読む (パス 51
     expect(extractWriteParams('slackで「#general に送るべき文」を送って', 'send-message')).toEqual({
       text: '#general に送るべき文',
     });
+  });
+});
+
+/**
+ * 閉じ記号の無い開き記号を大量に並べても、解析は発話の長さに比例する (2026-10-16 · パス 524 ·
+ * threat: T-082)。直す前は開き記号ごとに末尾まで走査し直す二乗時間で、4 万個で 6.3 秒かかった
+ * (2 万個で 1.5 秒・実測)。
+ */
+describe('quotedSpan — 閉じ記号の無い入力の計算量 (threat: T-082)', () => {
+  it.each(['「', '『', '“', '"'])('★ 開き記号 %s を 4 万個並べても 1 秒かからない (threat: T-082)', (open) => {
+    const hostile = open.repeat(40_000);
+    const started = Date.now();
+    expect(quotedSpan(hostile)).toBeNull();
+    expect(Date.now() - started).toBeLessThan(1000);
+  });
+
+  it('★ 対照: 後ろに閉じ記号が在る限り、これまでどおり最初に閉じた引用を返す', () => {
+    // 閉じ記号が無い対 (「) を覚えても、別の対 (『…』) の探索は止まらない
+    expect(quotedSpan('「「「 『x』')).toBe('x');
+    expect(quotedSpan('「「「x」')).toBe('「「x');
+  });
+});
+
+/**
+ * `outsideQuotes` は対ごとに文字列全体を作り直していた (2026-10-16 · パス 525 · threat: T-094)。
+ * 作業は「対の数 × 長さ」で、`「a」` を 5 万個並べた発話は 9.6 秒 (T-082 は `quotedSpan` だけを直した)。
+ * 直した形は同じ答えを線形で返す。基準の実装 (直す前の素朴な形) と標本で突き合わせる。
+ */
+describe('outsideQuotes — 線形 (threat: T-094)', () => {
+  const PAIRS: ReadonlyArray<readonly [string, string]> = [['「', '」'], ['『', '』'], ['\u201C', '\u201D'], ['"', '"']];
+  function naive(raw: string): string {
+    let out = raw;
+    for (const [open, close] of PAIRS) {
+      let from = 0;
+      for (;;) {
+        const i = out.indexOf(open, from);
+        if (i === -1) break;
+        const end = out.indexOf(close, i + 1);
+        if (end === -1) break;
+        out = out.slice(0, i + 1) + ' '.repeat(end - i - 1) + out.slice(end);
+        from = end + 1;
+      }
+    }
+    return out;
+  }
+
+  it.each([
+    '',
+    'slackで「こんにちは」を #general に送って',
+    '「a」と『b』と"c"と\u201Cd\u201D',
+    '「閉じていない',
+    '「a」「b',
+    '"x"y"z"',
+    '「『入れ子』」と"「」"',
+    '「」空の引用「 」',
+    '開き\u201Cだけ"と閉じ\u201Dだけ',
+  ])('基準の実装と同じ答え: %s', (raw) => {
+    expect(outsideQuotes(raw)).toBe(naive(raw));
+  });
+
+  it('★ 引用 5 万個の発話が秒単位にならない (直す前は 9.6 秒)・長さは変わらない (threat: T-094)', () => {
+    const raw = '「a」'.repeat(50_000) + ' #g に送って';
+    const t0 = Date.now();
+    const out = outsideQuotes(raw);
+    expect(Date.now() - t0).toBeLessThan(1500);
+    expect(out.length).toBe(raw.length);
+    expect(out.endsWith(' #g に送って')).toBe(true);
   });
 });

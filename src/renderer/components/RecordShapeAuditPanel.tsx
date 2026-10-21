@@ -38,19 +38,24 @@ export function RecordShapeAuditPanel() {
    * 数え直しは `deleteRecords` の中にも在る (床) —— ここで数え直すのは**確認文を本当にする**ため。
    */
   async function remove(): Promise<void> {
-    if (!result || result.malformed.length === 0) return;
+    if (!result || result.malformed.length + result.unknown.length === 0) return;
     setErr(undefined);
     setMsg(undefined);
     setBusy(true);
     try {
       const fresh = await auditRecordShapes(getRecordStore());
       setResult(fresh);
-      const targets = fresh.malformed.map((m) => m.id);
+      const targets = [...fresh.malformed, ...fresh.unknown].map((m) => m.id);
       if (targets.length === 0) {
         setMsg('形式の合わないレコードはもうありません。削除していません。');
         return;
       }
-      if (!window.confirm(`形式の合わないレコード ${targets.length} 件を削除します。元に戻せません。よろしいですか？`)) return;
+      // 台帳に無い種類の記録 (T-050) は別に名乗る —— 「形式の合わない」ではなく「形を知らない」。
+      const what =
+        fresh.unknown.length > 0
+          ? `形式の合わないレコード ${fresh.malformed.length} 件と台帳に無い種類の記録 ${fresh.unknown.length} 件`
+          : `形式の合わないレコード ${targets.length} 件`;
+      if (!window.confirm(`${what}を削除します。元に戻せません。よろしいですか？`)) return;
       setMsg(deleteResultMessage(await deleteRecords(getRecordStore(), targets)));
       setResult(await auditRecordShapes(getRecordStore()));
     } catch (e) {
@@ -60,7 +65,8 @@ export function RecordShapeAuditPanel() {
     }
   }
 
-  const n = result?.malformed.length ?? 0;
+  const nMalformed = result?.malformed.length ?? 0;
+  const n = result ? nMalformed + result.unknown.length : 0;
   return (
     <div data-shape-audit style={{ background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 8, padding: 14 }}>
       <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 6 }}>形式の合わないレコードの点検</div>
@@ -80,9 +86,15 @@ export function RecordShapeAuditPanel() {
       </div>
       {result && (
         <div data-shape-audit-result={n} style={{ fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
-          {n === 0
+          {nMalformed === 0
             ? `調べた ${result.checked} 件に形式の合わないレコードはありません。`
-            : `調べた ${result.checked} 件のうち ${n} 件の形式が合いません (${summarizeMalformed(result.malformed)})。`}
+            : `調べた ${result.checked} 件のうち ${nMalformed} 件の形式が合いません (${summarizeMalformed(result.malformed)})。`}
+          {result.unknown.length > 0 && (
+            <div data-shape-audit-unknown={result.unknown.length}>
+              台帳に無い種類の記録が {result.unknown.length} 件あります ({summarizeMalformed(result.unknown)})。
+              どの画面にも出ず、バックアップには乗り続けます。削除の対象に含めます。
+            </div>
+          )}
           {result.unreadable.length > 0 && (
             <div>読めなかった collection: {result.unreadable.join(' / ')} (暗号化の鍵が違う可能性。削除の対象にはしません)</div>
           )}

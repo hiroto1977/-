@@ -105,6 +105,22 @@ const INVISIBLE_RANGES = [
   { name: '制御文字 (C1)', re: /[\u0080-\u009f]/g },
   { name: '双方向制御 (Trojan Source)', re: /[\u200e\u200f\u202a-\u202e\u2066-\u2069]/g },
   { name: '不可視文字', re: /[\u00ad\u200b\u2060-\u2064\ufeff]/g },
+  /*
+   * 2026-10-20 · パス 543 · threat: T-133。**Unicode の Tag ブロックは ASCII をそのまま不可視にする**
+   * (U+E0000 + 文字)。人には何も見えないのに、AI エージェントが読む CLAUDE.md / AGENTS.md / 指示書に
+   * 「前の指示を無視して…」を符号化して置ける (ASCII smuggling)。この門は BMP の不可視字しか見ておらず
+   * (`u` フラグも無かった)、補助面の Tag 文字を置いても全門が緑だった (隔離した複製で実測)。
+   * 異体字選択 (U+FE00-FE0E / U+E0100-E01EF) も同じ目的に使える。U+FE0F は絵文字の表示用なので外す。
+   */
+  // eslint-disable-next-line no-misleading-character-class -- 異体字選択子の範囲を意図して列挙している (結合文字として読まれることが目的の字)
+  { name: '不可視文字 (補助面: Tag / 異体字選択)', re: /[\u{E0000}-\u{E007F}\u{E0100}-\u{E01EF}]/gu },
+  /*
+   * 見た目が空白になる BMP の字: 結合用 CGJ・アラビア文字記号・ハングル充填・モンゴル母音区切り・
+   * 行/段落区切り・廃止された書式制御・点字空白・ハングルの空白・半角ハングル充填・注釈アンカー。
+   * 題名や指示の「空に見える」部分に隠せる。字は直接書かず範囲で持つ。
+   */
+  // eslint-disable-next-line no-misleading-character-class -- CGJ・異体字選択子など結合文字扱いの字を意図して列挙している
+  { name: '不可視文字 (BMP: 空に見える字)', re: /[\u034f\u061c\u115f\u1160\u17b4\u17b5\u180e\u2028\u2029\u206a-\u206f\u2800\u3164\ufe00-\ufe0e\uffa0\ufff9-\ufffb]/g },
 ];
 
 /**
@@ -173,6 +189,14 @@ function checkTable(table = SIMPLIFIED, never = NEVER_FLAG) {
  */
 const ALLOWLIST = new Map([
   [
+    '.cursor/rules/00-project.mdc::메',
+    { n: 1, why: '混入の実例『메일』を引用して「過去に起きた」と述べる文（2026-10-20 に走査範囲へ .cursor を入れたとき既に在った）' },
+  ],
+  [
+    '.cursor/rules/00-project.mdc::일',
+    { n: 1, why: '同上（『메일』の引用）' },
+  ],
+  [
     'orchestration/knowledge-merge-plan.json::엄',
     { n: 1, why: '混入を修正した記録そのもの（『엄밀にはPLTではない』→『厳密に』と書いてある）' },
   ],
@@ -236,7 +260,7 @@ const ALLOWLIST = new Map([
  * 指示そのもので、ここに簡体字が混ざるのはこのゲートが防ぎたい事故の中心にある。
  * `security/` (改竄検知の台帳) と `.github/` (ワークフロー) も同様に外だった。
  */
-const SCAN_DIRS = ['src', 'docs', 'orchestration', 'scripts', 'security', 'assets', '.github'];
+const SCAN_DIRS = ['src', 'docs', 'orchestration', 'scripts', 'security', 'assets', '.github', '.claude', '.cursor'];
 /** 直下のファイルは再帰では拾えない (`.` を足すと全部を二重に数えてしまう)。 */
 const SCAN_ROOT_FILES = true;
 /*
@@ -262,7 +286,7 @@ const SCAN_ROOT_FILES = true;
 const SCAN_EXTS = new Set([
   '.ts', '.tsx', '.md', '.json', '.cjs',
   '.sh', '.yml', '.yaml', '.html', '.css', '.js', '.mjs', '.svg', '.webmanifest',
-  '.txt', '.example',
+  '.txt', '.example', '.mdc',
 ]);
 
 /**
@@ -457,9 +481,18 @@ function selfTest() {
     ['C1 NEL (U+0085)', String.fromCodePoint(0x85), 1],
     ['双方向制御 RLO (U+202E ・ Trojan Source)', String.fromCodePoint(0x202e), 1],
     ['不可視 ZWSP (U+200B)', String.fromCodePoint(0x200b), 1],
+    ['Unicode Tag 文字 (U+E0041 ・ ASCII smuggling)', String.fromCodePoint(0xe0041), 1],
+    ['異体字選択 補助 (U+E0100)', String.fromCodePoint(0xe0100), 1],
+    // U+3164 はハングル互換字母の範囲にも入る (2 件に数えられる) ので、BMP の規則だけに当たる U+034F を標本にする。
+    ['結合用 CGJ (U+034F)', String.fromCodePoint(0x034f), 1],
+    ['点字空白 (U+2800)', String.fromCodePoint(0x2800), 1],
+    ['行区切り (U+2028)', String.fromCodePoint(0x2028), 1],
+    ['注釈アンカー (U+FFF9)', String.fromCodePoint(0xfff9), 1],
+    ['異体字選択 (U+FE00)', String.fromCodePoint(0xfe00), 1],
     // ★ 陰性対照: 通すと決めた字と、普通の空白は鳴ってはいけない。
     ['ZWJ (U+200D) は絵文字の連結なので鳴らない', String.fromCodePoint(0x200d), 0],
     ['ZWNJ (U+200C) も同じ', String.fromCodePoint(0x200c), 0],
+    ['絵文字の異体字選択 U+FE0F は鳴らない (表示用)', String.fromCodePoint(0x2764, 0xfe0f), 0],
     ['タブと改行は鳴らない', '\ta\nb', 0],
   ];
 

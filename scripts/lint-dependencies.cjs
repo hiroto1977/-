@@ -32,6 +32,13 @@
  *   7. **セキュリティの床**が、道 (overrides / devDependencies) を問わず台帳と一致
  *   8. **このリポジトリ自身の lifecycle script** が台帳と一致 (双方向・理由つき)
  *   9. **インストール時に読まれる設定ファイル** (`.npmrc` ほか) が台帳と一致 (双方向)
+ *  10. **`stryker.config.json` のコードを選ぶ欄** (ローカルパス / シェルを拒む)
+ *  11. **出荷される `src/` が import する外部パッケージは `dependencies` にある** (2026-10-19 ·
+ *      パス 532 · threat: T-122)。規則 2 は lockfile の `dev` フラグで本番閉包を決める —— つまり
+ *      `src/` が実際に import する devDependency は閉包に現れず、**単一 HTML へ畳み込まれて
+ *      保管庫と同じオリジンで走っても全ゲートが緑**だった (狩り 527 が再現済み)。
+ *      今日は `react` / `react-dom` (dependencies) と `electron` (実行時が提供・main / preload だけ) の
+ *      3 つだけ (541 ファイルの実測)。
  *
  * 4 と 5 は「lockfile を書き換えて別の場所から引く」形を塞ぐ。
  * git 参照や tarball の URL は、レジストリと違って**後から中身を差し替えられる**。
@@ -68,6 +75,9 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const { builtinModules } = require('node:module');
+const { stripComments } = require('./lib/strip-non-code.cjs');
+const { reportTrackedCrossCheck, crossCheckSuffix } = require('./lib/tracked-cross-check.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 
@@ -118,16 +128,39 @@ function presentInstallConfigs(root = REPO_ROOT, names = INSTALL_CONFIG_FILES) {
   return names.filter((n) => fs.existsSync(path.join(root, n)));
 }
 
+/**
+ * この package.json で npm が**自動発火する** lifecycle フックを数える (threat: T-024)。
+ *
+ * install 系 (`LIFECYCLE_KEYS`) に加え、npm は `npm run X` のたびに `preX` / `postX` を
+ * **全 script について**自動で走らせる。固定一覧 (install + prebuild/postbuild) だけを見ると
+ * `posttest` / `postverify:all` / `pretypecheck` / `postbuild:web` が素通りし、ci.yml が
+ * `verify:all` / `test` / `typecheck` / `build:web` を、release.yml が署名ビルドの前に
+ * `test` を走らせた瞬間に任意コードが走る (2026-10-13 · パス 517 で実測: 固定一覧だと 0 件)。
+ * 基底名 (`X`) が script キーのときだけフックと数える —— `view` が無ければ `preview` は
+ * フックではなく普通の script なので誤検出しない。
+ */
+function lifecycleHooksPresent(scripts, keys = LIFECYCLE_KEYS) {
+  const present = new Set(keys.filter((k) => Object.hasOwn(scripts, k)));
+  for (const k of Object.keys(scripts)) {
+    const m = /^(pre|post)(.+)$/.exec(k);
+    if (m && Object.hasOwn(scripts, m[2])) present.add(k);
+  }
+  return [...present];
+}
+
 /** 規則 8: 自分の lifecycle script。 */
 function checkOwnLifecycle(pkg, ledger = OWN_INSTALL_SCRIPTS, keys = LIFECYCLE_KEYS) {
   const problems = [];
   const scripts = pkg?.scripts ?? {};
-  const present = keys.filter((k) => Object.hasOwn(scripts, k));
+  const present = lifecycleHooksPresent(scripts, keys);
   for (const k of present) {
     if (!Object.hasOwn(ledger, k)) {
+      const base = k.replace(/^(pre|post)/, '');
       const when = BUILD_LIFECYCLE_HOOKS.has(k)
         ? 'npm run build のたびに自動で走ります (release.yml の梱包ジョブは署名鍵を env に持つ)'
-        : 'npm ci のたびに走ります (CI・release.yml の梱包ジョブ・全員の手元)';
+        : keys.includes(k)
+          ? 'npm ci のたびに走ります (CI・release.yml の梱包ジョブ・全員の手元)'
+          : `npm run ${base} のたびに自動で走ります (ci.yml は verify:all / test / build:web 等を、release.yml は署名ビルドの前に test を走らせる)`;
       problems.push(
         `package.json の "${k}" は ${when} — 理由を添えて OWN_INSTALL_SCRIPTS へ`,
       );
@@ -158,6 +191,66 @@ function checkInstallConfigs(present, ledger = INSTALL_CONFIG_ALLOW) {
     if (!present.includes(f)) problems.push(`台帳の ${f} は在りません — 消し忘れです`);
   }
   return problems;
+}
+
+/**
+ * **`stryker.config.json` は「コードを選ぶ設定」だが高チャーンなのでチェーンに入れない** (threat: T-026)。
+ *
+ * vite.config.ts / electron-builder.json / .claude/settings.json は「コードを選ぶ設定」で
+ * あり、**安定資産**なので整合性チェーン + CODEOWNERS で守る。`stryker.config.json` は同じ
+ * 「コードを選ぶ設定」(Stryker は `plugins` / `testRunner` / `reporters` / `checkers` の
+ * 各記述子を**モジュールとして解決して import** し、ローカルの相対パスなら `path.resolve` して
+ * 動的 import する) なのに、`mutate` 一覧を毎パス足すので 63 コミットの高チャーン ——
+ * チェーンの基準 (安定資産) を満たさない (`package.json` と同じ判断)。だから**中身を検める**:
+ * コードを選ぶ欄にローカルパスを入れさせない。`mutation.yml` (push to main / 週次) と、
+ * CLAUDE.md が全パスに回させる `npm run mutate` / `audit:mutate-changed` がこの設定を読む。
+ */
+function isLocalSpecifier(s) {
+  // npm の名前 (`vitest` / `@scope/x` / `name*` ワイルドカード) は安全。
+  // ローカルを指す形 (`.` `./` `../` `/` `\` `~` `C:`) は import すると任意コードが走る。
+  return typeof s === 'string' && /^(\.{0,2}[/\\]|~|[A-Za-z]:)/.test(s);
+}
+
+/** 規則 10: stryker.config.json のコードを選ぶ欄。 */
+function checkStrykerCodePicking(config) {
+  const problems = [];
+  if (config === null || typeof config !== 'object') return problems;
+  // モジュールとして解決され import される欄。ローカルパスは任意コードを走らせる。
+  const specFields = ['testRunner', 'plugins', 'reporters', 'checkers', 'htmlReporter'];
+  for (const field of specFields) {
+    const val = config[field];
+    const list = Array.isArray(val) ? val : val === undefined ? [] : [val];
+    for (const s of list) {
+      if (isLocalSpecifier(s)) {
+        problems.push(
+          `stryker.config.json の ${field} にローカルパス "${s}" — Stryker が path.resolve して ` +
+            'import し任意コードが走ります (npm の名前だけにすること)',
+        );
+      }
+    }
+  }
+  // シェルを走らせる欄は丸ごと拒む (今日は無い。vitest 構成では使わない)。
+  for (const field of ['buildCommand', 'commandRunner']) {
+    if (config[field] !== undefined) {
+      problems.push(
+        `stryker.config.json の ${field} はシェル / 任意コードを走らせます — この構成では使いません ` +
+          '(必要なら門に理由を書くこと)',
+      );
+    }
+  }
+  return problems;
+}
+
+/** 実在すれば stryker.config.json を読む (self-test が注入できるよう分ける)。無ければ null。 */
+function readStrykerConfig(root = REPO_ROOT) {
+  const p = path.join(root, 'stryker.config.json');
+  if (!fs.existsSync(p)) return null;
+  try {
+    return JSON.parse(fs.readFileSync(p, 'utf8'));
+  } catch {
+    // 壊れた JSON は Stryker 自身が読めず走らない (コードを load する道が無い) → 対象外。
+    return null;
+  }
 }
 
 /**
@@ -416,7 +509,169 @@ function diff(actual, ledger) {
   };
 }
 
-function evaluate({ lock, pkg, installConfigs = presentInstallConfigs() }) {
+/**
+ * **実物 (`node_modules`) が `npm ci` の時点で走らせるコード** (2026-10-19 · パス 531 · threat: T-121)。
+ *
+ * 規則 3 は lockfile の `hasInstallScript` を信じる。ところが npm は、依存が**パッケージの根に
+ * `binding.gyp` を持つだけで** `node-gyp rebuild` を暗黙に走らせ (`scripts.install` が無く
+ * `gypfile` が `false` でないとき)、lockfile の旗はレジストリの packument 由来なので、
+ * **実物の tarball と食い違いうる** (狩り 527 が再現済み)。旗が立っていない依存が
+ * 任意の C++ のビルドを `npm ci` で走らせても、lockfile だけを読む規則は黙る。
+ *
+ * そこで lockfile の各項目について `node_modules/<経路>/package.json` と `binding.gyp` を
+ * 実際に読み、`preinstall` / `install` / `postinstall` を持つか・`binding.gyp` を持つ依存を
+ * 返す。**載っていない依存 (その環境に入らない optional な別 OS 用) は確かめようがない**ので
+ * `absent` として数え、成功行が「確かめた件数 / 確かめられなかった件数」を名乗る。
+ *
+ * ★ これは**検出**で、阻止ではない: 検出が走る時点 (CI の `verify:all`) には、その PR の
+ * `npm ci` が既に走り終わっている。守るのは「台帳に無い依存を main に入れない」ことで、
+ * CODEOWNERS と PR の必須チェックがそれを担う。
+ */
+function scanInstalledInstallCode(lock, root = REPO_ROOT) {
+  const found = new Map(); // 名前 → 理由の配列
+  let checked = 0;
+  let absent = 0;
+  for (const [key, meta] of Object.entries(lock?.packages ?? {})) {
+    if (key === '' || meta?.link) continue;
+    const dir = path.join(root, ...key.split('/'));
+    let manifest;
+    try {
+      manifest = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8'));
+    } catch {
+      absent += 1;
+      continue;
+    }
+    checked += 1;
+    const reasons = [];
+    const scripts = manifest?.scripts ?? {};
+    for (const hook of ['preinstall', 'install', 'postinstall']) {
+      if (Object.hasOwn(scripts, hook)) reasons.push(`scripts.${hook}`);
+    }
+    if (manifest?.gypfile !== false && fs.existsSync(path.join(dir, 'binding.gyp'))) {
+      reasons.push('binding.gyp (npm が node-gyp rebuild を暗黙に走らせる)');
+    }
+    if (reasons.length > 0) found.set(bareName(key), reasons);
+  }
+  return { found, checked, absent };
+}
+
+/**
+ * **実行時が提供するので束ねない外部モジュール** (規則 11)。`devDependencies` にあってよい
+ * 唯一の種類で、**import してよい場所**まで台帳に書く —— renderer が `electron` を import すれば
+ * 単一 HTML へ畳み込まれる側に入る。
+ */
+const RUNTIME_PROVIDED = {
+  electron: {
+    why: 'Electron の実行時が提供する組み込みモジュール。main / preload のバンドルでは external で、梱包物にも入らない',
+    under: ['main/', 'preload/'],
+  },
+};
+
+const SHIPPED_SKIP_DIRS = ['__tests__', '__audits__', 'node_modules'];
+const isShippedSource = (name) => /\.(ts|tsx)$/.test(name) && !/\.test\.(ts|tsx)$/.test(name) && !/\.d\.ts$/.test(name);
+/** 出荷される `src/` の走査の条件 (走査と追跡ファイルとの照合が同じ定数を読む)。 */
+const SHIPPED_CROSS_CHECK = { roots: ['src'], skipDirs: SHIPPED_SKIP_DIRS, accept: isShippedSource };
+
+/** 出荷される `src/` の下限 (実測 541)。走査が死んで「import 0 件だから健全」にならないため。 */
+const MIN_SHIPPED_FILES = 300;
+
+const IMPORT_RE =
+  /\b(?:import|export)\b[^'"`;]*?\bfrom\s*(['"])([^'"\n]+)\1|\bimport\s*(['"])([^'"\n]+)\3|\b(?:import|require)\s*\(\s*(['"])([^'"\n]+)\5\s*\)/g;
+
+/** 指定子 → 外部パッケージ名 (`@scope/name`・`name/sub` → 先頭)。相対・絶対・組み込みは `null`。 */
+function bareImportName(spec) {
+  if (spec.startsWith('.') || spec.startsWith('/') || spec.startsWith('node:')) return null;
+  const name = spec.startsWith('@') ? spec.split('/').slice(0, 2).join('/') : spec.split('/')[0];
+  return builtinModules.includes(name) ? null : name;
+}
+
+/**
+ * 出荷される `src/` (検査・型定義を除く) が import する外部パッケージ —— `{ packages, files, walked }`。
+ * 注記は落としてから読む (docblock の例示を import と数えない)。`packages` は 名前 → `src/` 相対の経路の配列。
+ */
+function shippedBareImports(root = REPO_ROOT) {
+  const packages = new Map();
+  const walked = [];
+  const walk = (dir) => {
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, e.name);
+      if (e.isDirectory()) {
+        if (!SHIPPED_SKIP_DIRS.includes(e.name)) walk(full);
+      } else if (isShippedSource(e.name)) {
+        walked.push(full);
+        const text = stripComments(fs.readFileSync(full, 'utf8'));
+        const rel = path.relative(path.join(root, 'src'), full).split(path.sep).join('/');
+        IMPORT_RE.lastIndex = 0;
+        for (let m = IMPORT_RE.exec(text); m; m = IMPORT_RE.exec(text)) {
+          const name = bareImportName(m[2] ?? m[4] ?? m[6]);
+          if (name === null) continue;
+          if (!packages.has(name)) packages.set(name, []);
+          packages.get(name).push(rel);
+        }
+      }
+    }
+  };
+  if (fs.existsSync(path.join(root, 'src'))) walk(path.join(root, 'src'));
+  return { packages, files: walked.length, walked };
+}
+
+/** 規則 11 の判定。`runtimeProvided` は注入できる (self-test のため)。 */
+function checkShippedImports({ imports, pkg }, runtimeProvided = RUNTIME_PROVIDED) {
+  const problems = [];
+  if (imports.files < MIN_SHIPPED_FILES) {
+    problems.push(
+      `出荷される src/ から ${imports.files} 件しか読めませんでした (${MIN_SHIPPED_FILES} 件以上を期待) — 走査が壊れている可能性があります`,
+    );
+  }
+  const deps = new Set(Object.keys(pkg?.dependencies ?? {}));
+  const devs = new Set(Object.keys(pkg?.devDependencies ?? {}));
+  for (const [name, files] of [...imports.packages].sort(([a], [b]) => a.localeCompare(b))) {
+    const provided = Object.hasOwn(runtimeProvided, name) ? runtimeProvided[name] : null;
+    if (provided) {
+      const outside = files.filter((f) => !provided.under.some((u) => f.startsWith(u)));
+      if (outside.length > 0) {
+        problems.push(
+          `${name} は実行時が提供するので main / preload だけが import してよい — ` +
+            `${outside.slice(0, 3).join(', ')} が import している (renderer なら単一 HTML へ畳み込まれる)`,
+        );
+      }
+      continue;
+    }
+    if (deps.has(name)) continue;
+    problems.push(
+      devs.has(name)
+        ? `${name} は devDependencies なのに出荷される src/ が import している (${files[0]}) — ` +
+            '単一 HTML へ畳み込まれ保管庫と同じオリジンで走る。dependencies へ移して PROD_ALLOW に理由を書くこと'
+        : `${name} は package.json のどこにも無いのに出荷される src/ が import している (${files[0]})`,
+    );
+  }
+  for (const [name, entry] of Object.entries(runtimeProvided)) {
+    if (!entry || typeof entry.why !== 'string' || entry.why.trim() === '' || !Array.isArray(entry.under) || entry.under.length === 0) {
+      problems.push(`RUNTIME_PROVIDED の ${name} に理由と import してよい場所がありません`);
+    }
+    if (!imports.packages.has(name)) {
+      problems.push(`台帳の ${name} は出荷される src/ から import されていません — RUNTIME_PROVIDED から消すこと`);
+    }
+  }
+  return problems;
+}
+
+/**
+ * lockfile + 実物 (`root` の node_modules) を合わせて評価する —— `main` が使う唯一の入口。
+ * CI は必ず `npm ci` の後なので node_modules が読めなければ走査の故障として床で断る。
+ * 手元で未インストール (`checked === 0` かつ CI でない) なら実物の確認を飛ばし、lockfile の旗だけを見る。
+ */
+function checkRepo({ lock, pkg, root = REPO_ROOT, ci = false }) {
+  const scan = scanInstalledInstallCode(lock, root);
+  const installed = scan.checked === 0 && !ci ? null : scan;
+  const shipped = shippedBareImports(root);
+  return { problems: evaluate({ lock, pkg, installed, shipped }), scan, shipped };
+}
+
+/** 実物を確かめた件数の床 (実測 599 / 648)。node_modules が丸ごと読めない・一部しか読めない走査を「問題なし」と読まない。 */
+const MIN_INSTALLED_CHECKED = 300;
+
+function evaluate({ lock, pkg, installConfigs = presentInstallConfigs(), strykerConfig = readStrykerConfig(), installed = null, shipped = null }) {
   const problems = [];
   const packages = lock?.packages;
   if (packages === null || typeof packages !== 'object') {
@@ -446,11 +701,24 @@ function evaluate({ lock, pkg, installConfigs = presentInstallConfigs() }) {
   }
 
   // 3. インストール時にコードを走らせる依存。
+  // 旗は lockfile (レジストリの申告) と実物 (`node_modules` の package.json / binding.gyp) の**和**で見る
+  // (パス 531 · T-121): どちらか一方が「走らせる」と言えば走らせる依存として台帳が要る。
   const scripted = new Set(entries.filter(([, m]) => m.hasInstallScript).map(([n]) => bareName(n)));
+  if (installed) for (const n of installed.found.keys()) scripted.add(n);
   const d3 = diff(scripted, INSTALL_SCRIPT_ALLOW);
   for (const n of d3.extra) {
+    const onDisk = installed?.found.get(n);
+    const flagged = entries.some(([k, m]) => bareName(k) === n && m.hasInstallScript);
     problems.push(
-      `${n} は npm ci の時点でコードを走らせます — 理由を添えて INSTALL_SCRIPT_ALLOW へ`,
+      `${n} は npm ci の時点でコードを走らせます${
+        onDisk && !flagged ? ` (lockfile は旗を立てていないが実物が ${onDisk.join(' / ')} を持つ)` : ''
+      } — 理由を添えて INSTALL_SCRIPT_ALLOW へ`,
+    );
+  }
+  if (installed && installed.checked < MIN_INSTALLED_CHECKED) {
+    problems.push(
+      `node_modules から ${installed.checked} 件しか読めませんでした (${MIN_INSTALLED_CHECKED} 件以上を期待) — ` +
+        '`npm ci` の後に走らせること。走査が壊れている可能性があります',
     );
   }
   for (const n of d3.stale) {
@@ -492,6 +760,12 @@ function evaluate({ lock, pkg, installConfigs = presentInstallConfigs() }) {
   // 8 / 9. **自分の**インストール時コードと、インストール時に読まれる設定。
   problems.push(...checkOwnLifecycle(pkg));
   problems.push(...checkInstallConfigs(installConfigs));
+
+  // 10. stryker.config.json のコードを選ぶ欄 (ローカルパス / シェルを拒む・threat: T-026)。
+  problems.push(...checkStrykerCodePicking(strykerConfig));
+
+  // 11. 出荷される src/ が import する外部パッケージ (主入口 `checkRepo` が走査を渡す)。
+  if (shipped) problems.push(...checkShippedImports({ imports: shipped, pkg }));
 
   // package.json の宣言と閉包の食い違い (宣言だけ消して lockfile に残る形)。
   const declared = Object.keys(pkg?.dependencies ?? {});
@@ -574,6 +848,48 @@ function selfTest() {
       mk(full(), { ...okPkg(), dependencies: { 'ghost-lib': '^1.0.0' } }),
       1,
     ],
+    // パス 531 (threat: T-121): lockfile の旗と実物 (binding.gyp / scripts) の和で規則 3 を見る。
+    [
+      '旗が無くても実物が binding.gyp を持てば台帳が要る (T-121)',
+      (() => { const m = mk(full()); m.installed = { found: new Map([['native-thing', ['binding.gyp']]]), checked: MIN_INSTALLED_CHECKED, absent: 0 }; return m; })(),
+      1,
+    ],
+    [
+      '台帳にある依存を実物が示しても鳴らない (T-121)',
+      (() => { const m = mk(full()); m.installed = { found: new Map([['esbuild', ['scripts.postinstall']]]), checked: MIN_INSTALLED_CHECKED, absent: 0 }; return m; })(),
+      0,
+    ],
+    [
+      '実物を読めた件数が床未満なら鳴る (T-121)',
+      (() => { const m = mk(full()); m.installed = { found: new Map(), checked: MIN_INSTALLED_CHECKED - 1, absent: 10 }; return m; })(),
+      1,
+    ],
+    [
+      '実物の走査が床を満たし何も見つからなければ鳴らない (T-121)',
+      (() => { const m = mk(full()); m.installed = { found: new Map(), checked: MIN_INSTALLED_CHECKED, absent: 0 }; return m; })(),
+      0,
+    ],
+    // パス 532 (threat: T-122): 出荷される src/ が import する外部パッケージは dependencies にある。
+    ...(() => {
+      const ship = (extra = [], files = MIN_SHIPPED_FILES) => ({
+        packages: new Map([['electron', ['main/a.ts']], ['react', ['renderer/x.tsx']], ...extra]),
+        files,
+        walked: [],
+      });
+      const withShipped = (shipped, pkgMore = {}) => {
+        const m = mk(full(), { ...okPkg(), dependencies: { react: '^18' }, ...pkgMore });
+        m.shipped = shipped;
+        return m;
+      };
+      return [
+        ['出荷 src の import が dependencies と台帳どおりなら鳴らない (T-122)', withShipped(ship()), 0],
+        ['devDependency を出荷 src が import すれば鳴る (T-122)', withShipped(ship([['chart-lib', ['renderer/c.ts']]]), { devDependencies: { ...okPkg().devDependencies, 'chart-lib': '^1' } }), 1],
+        ['package.json に無い名前を出荷 src が import すれば鳴る (T-122)', withShipped(ship([['ghost-pkg', ['renderer/c.ts']]])), 1],
+        ['electron を renderer が import すれば鳴る (T-122)', withShipped(ship([['electron', ['renderer/bad.ts']]])), 1],
+        ['electron が import されなくなれば台帳が古いと鳴る (T-122)', withShipped({ packages: new Map([['react', ['renderer/x.tsx']]]), files: MIN_SHIPPED_FILES, walked: [] }), 1],
+        ['出荷 src を読めた件数が床未満なら鳴る (T-122)', withShipped(ship([], MIN_SHIPPED_FILES - 1)), 1],
+      ];
+    })(),
   ];
   // --- 規則 7 の対照 (合成の台帳) ---
   // 守っている物を実際に壊し、狙った項目が落ちることを見る。
@@ -634,6 +950,12 @@ function selfTest() {
       ['★ 台帳に在って実物に無ければ鳴る (逆向き)', { scripts: {} }, L, 1],
       ['台帳の理由が空なら鳴る', { scripts: { postinstall: 'x' } }, { postinstall: '' }, 1],
       ['lifecycle でない script は見ない', { scripts: { build: 'x', e2e: 'y' } }, {}, 0],
+      // threat: T-024 — npm は `npm run X` のたびに preX / postX を自動で走らせる。
+      ['★ script の post フックも鳴る (threat: T-024)', { scripts: { 'verify:all': 'x', 'postverify:all': 'y' } }, {}, 1],
+      ['★ script の pre フックも鳴る', { scripts: { typecheck: 'x', pretypecheck: 'y' } }, {}, 1],
+      ['★ 複数の pre/post フックをそれぞれ数える', { scripts: { test: 'x', posttest: 'y', 'build:web': 'z', 'postbuild:web': 'w' } }, {}, 2],
+      ['★ 基底が script でない pre/post は見ない (preview: view が無ければ普通の script)', { scripts: { preview: 'x' } }, {}, 0],
+      ['★ post フックが台帳に理由つきで在れば通る', { scripts: { test: 'x', posttest: 'y' } }, { posttest: '理由' }, 0],
     ];
     for (const [label, pkg, ledger, want] of lifecycleCases) {
       const got = checkOwnLifecycle(pkg, ledger).length;
@@ -658,6 +980,29 @@ function selfTest() {
     const namesOk = INSTALL_CONFIG_FILES.includes('.npmrc') && INSTALL_CONFIG_FILES.length >= 4;
     if (!namesOk) bad++;
     console.log(`  ${namesOk ? '✓' : '✗'} 見る設定ファイルの名前が ${INSTALL_CONFIG_FILES.length} 件 (.npmrc を含む)`);
+  }
+
+  {
+    // 規則 10: stryker.config.json のコードを選ぶ欄 (threat: T-026)。
+    const strykerCases = [
+      ['今日の実物の形 (npm 名だけ) は通る', { testRunner: 'vitest', reporters: ['clear-text', 'json'] }, 0],
+      ['★ plugins にローカルパスは鳴る', { plugins: ['@stryker-mutator/*', './knowledge-graph/svc.cjs'] }, 1],
+      ['★ testRunner にローカルパスは鳴る', { testRunner: '../evil.cjs' }, 1],
+      ['★ reporters のローカルパスは鳴る', { reporters: ['json', '/abs/evil.cjs'] }, 1],
+      ['★ checkers のローカルパスは鳴る', { checkers: ['./c.cjs'] }, 1],
+      ['★ 親相対 ../ も鳴る', { plugins: ['..\\win\\evil.cjs'] }, 1],
+      ['★ buildCommand は丸ごと鳴る (シェル)', { buildCommand: 'node evil.cjs' }, 1],
+      ['★ commandRunner は丸ごと鳴る', { commandRunner: { command: 'sh -c evil' } }, 1],
+      ['npm のスコープ名・ワイルドカードは通る', { plugins: ['@stryker-mutator/vitest-runner', 'name*'] }, 0],
+      ['config が無ければ (null) 通る', null, 0],
+      ['★ 複数のローカルパスをそれぞれ数える', { plugins: ['./a.cjs'], testRunner: './b.cjs' }, 2],
+    ];
+    for (const [label, cfg, want] of strykerCases) {
+      const got = checkStrykerCodePicking(cfg).length;
+      const ok = got === want;
+      if (!ok) bad++;
+      console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} 件 (期待 ${want})`);
+    }
   }
 
   console.log('self-test:');
@@ -717,13 +1062,27 @@ function main(argv) {
   if (argv.includes('--self-test')) return selfTest();
   const lock = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'package-lock.json'), 'utf8'));
   const pkg = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'package.json'), 'utf8'));
-  const problems = evaluate({ lock, pkg });
+  const inCi = process.env.CI === 'true' || process.env.CI === '1';
+  const { problems, scan: installed, shipped } = checkRepo({ lock, pkg, ci: inCi });
+  // 2 つ目の数え方: 追跡されている出荷 src は、どれも走査に出る (パス 472 / 532)。
+  const cross = reportTrackedCrossCheck(
+    shipped.walked.map((f) => path.relative(REPO_ROOT, f)), SHIPPED_CROSS_CHECK, REPO_ROOT, 'lint:deps');
+  if (cross.code !== 0) return 1;
   const total = Object.keys(lock.packages ?? {}).length - 1;
   const prod = Object.keys(PROD_ALLOW).length;
   const scripted = Object.keys(INSTALL_SCRIPT_ALLOW).length;
   console.log(
     `Checked ${total} locked package(s): 本番依存 ${prod} 件 / インストール時コード ${scripted} 件 / ` +
       `セキュリティの床 ${SECURITY_FLOORS.length} 件 (いずれも台帳) / 取得元と integrity`,
+  );
+  console.log(
+    `出荷される src/ ${shipped.files} ファイルが import する外部パッケージ ${shipped.packages.size} 件 ` +
+      `(${[...shipped.packages.keys()].sort().join(' / ')}) · ${crossCheckSuffix(cross.source)}`,
+  );
+  console.log(
+    installed.checked === 0 && !inCi
+      ? '実物の確認: node_modules が無いため lockfile の旗だけを見ています (npm ci の後に走らせると実物の package.json / binding.gyp も見ます)'
+      : `実物の確認: node_modules ${installed.checked} 件を読み、読めなかった ${installed.absent} 件 (その環境に入らない optional) は lockfile の旗だけ`,
   );
   const ownLifecycle = LIFECYCLE_KEYS.filter((k) => Object.hasOwn(pkg?.scripts ?? {}, k));
   const configs = presentInstallConfigs();
@@ -751,6 +1110,10 @@ function main(argv) {
 if (require.main === module) process.exit(main(process.argv.slice(2)));
 module.exports = {
   evaluate,
+  scanInstalledInstallCode,
+  checkRepo,
+  shippedBareImports, checkShippedImports, bareImportName, RUNTIME_PROVIDED, MIN_SHIPPED_FILES, SHIPPED_CROSS_CHECK, CROSS_CHECK: SHIPPED_CROSS_CHECK,
+  MIN_INSTALLED_CHECKED,
   PROD_ALLOW,
   INSTALL_SCRIPT_ALLOW,
   SECURITY_FLOORS,
@@ -759,6 +1122,7 @@ module.exports = {
   parseVersion,
   cmpVersion,
   rangeFloor,
-  checkOwnLifecycle, checkInstallConfigs, presentInstallConfigs,
+  checkOwnLifecycle, lifecycleHooksPresent, checkInstallConfigs, presentInstallConfigs,
+  checkStrykerCodePicking, isLocalSpecifier, readStrykerConfig,
   OWN_INSTALL_SCRIPTS, INSTALL_CONFIG_ALLOW, INSTALL_CONFIG_FILES, LIFECYCLE_KEYS,
 };

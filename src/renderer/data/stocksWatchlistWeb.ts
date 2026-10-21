@@ -19,9 +19,11 @@ import { round2 } from '../../shared/num';
 import { isoDateFromTimestamp, parseTimestamp } from '../../shared/isoDate';
 import type { RegisterResult, UnregisterResult } from '../../shared/stocksTypes';
 import {
+  MAX_WATCHLIST_SYMBOLS,
   isSafeSymbol,
   readStoredWatchlist,
   symbolsOrEmpty,
+  watchlistFullMessage,
   watchlistStoredNote,
   type StoredWatchlist,
 } from '../../shared/watchlistState';
@@ -118,6 +120,7 @@ export function registerSymbol(symbol: unknown): RegisterResult {
   // 読めなかった保存値は空として扱う (明示の操作は警告のうえ通す —— shared の `symbolsOrEmpty` の注記)。
   const current = symbolsOrEmpty(readWatchlist());
   const wasAlreadyThere = current.includes(upper);
+  if (!wasAlreadyThere && current.length >= MAX_WATCHLIST_SYMBOLS) throw new Error(watchlistFullMessage());
   const next = wasAlreadyThere ? current : [...current, upper];
   // 既存登録時は next===current で保存しても localStorage 内容は不変のため、この
   // 条件を true 固定する変異 (常に保存) は equivalent。

@@ -8,6 +8,7 @@
  *   - 建物をクリックするとその街区だけを拡大表示（チーム名まで読める）。
  *   - 地面・道・池・木などの情景（絵文字＋インライン SVG のみ・画像ファイル不可＝CSP）。
  */
+import { useBuildKind } from '../hooks/useBuildKind';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   org as regOrg,
@@ -35,6 +36,8 @@ import {
 } from '../data/villageLayout';
 import { buildOrgIndex, routeTopicScored, type RawOrg, type RawTeam, type OrgIndex } from '../data/chatOrg';
 import { replyTo, type ChatContext } from '../data/chatbot';
+import { detectCrisis, detectHarmToOthers } from '../data/counseling';
+import { externalTextOnOneLine } from '../data/assistantMarkdown';
 import { CAPABILITIES } from '../components/VoiceCommandBar';
 import { SERVICES } from '../services';
 import { isSubmitEnter } from '../keyIntent';
@@ -90,6 +93,7 @@ interface Bubble {
 }
 
 export function VillagePage() {
+  const buildKind = useBuildKind();
   const villagers = useMemo(() => buildVillagers(REG), []);
   const regions = useMemo(() => buildRegions(REG), []);
   const dispatchPlan = useMemo(() => buildDispatchPlan(REG), []);
@@ -163,9 +167,15 @@ export function VillagePage() {
   const egressRecipients = useMemo(
     () =>
       aiOn
-        ? assistantEgressRecipients({ providers, providersUnknown, selected: '' })
+        ? assistantEgressRecipients({
+          providers,
+          providersUnknown,
+          selected: '',
+          browser: buildKind === null ? null : buildKind === 'browser',
+          pageHostname: typeof location !== 'undefined' ? location.hostname : '',
+        })
         : { remote: [], local: [] },
-    [aiOn, providers, providersUnknown],
+    [aiOn, providers, providersUnknown, buildKind],
   );
 
   const activeStep = dispatchPlan.length > 0 ? dispatchPlan[step % dispatchPlan.length] : undefined;
@@ -271,7 +281,23 @@ export function VillagePage() {
     speak(reply.text);
 
     const hub = window.serviceHub;
-    if (aiOn && hub && reply.kind !== 'action') {
+    /*
+     * **危機の文は AI へ送らない** (threat: T-029 · パス 518)。`replyTo` は危機を最優先で
+     * 判定し、確認済みの相談窓口 (いのちの電話 / 119・110) を吹き出しに出す。ここで AI を
+     * 呼ぶと、その窓口の吹き出しを**モデルの返答で上書き**し、心の不調の文が端末の外へ出る。
+     * 旗艦の AI 画面 (AssistantPage) は pass 514 で同じ判定を入れている —— 村も同じ網で塞ぐ。
+     */
+    const crisisOrHarm = detectCrisis(text) || detectHarmToOthers(text);
+    /*
+     * threat: T-069 —— **相談の返答 (`kind: 'counsel'`) はモデルで上書きしない** (2026-10-15 · パス 523)。
+     * `replyTo` は危機でない心の不調 (「つらい、眠れない」) と破壊衝動 (「物を壊したい」) にも
+     * `counsel` (セルフケアの案内 + 免責) を返すが、上の判定は危機・他害しか見ないので、その
+     * 吹き出しを AI の返答で**置き換え**、読み上げも置き換えていた (実測: MODEL_REPLY が出て
+     * 相談の文・免責は消えた)。コンシェルジュ (`chatbot.replyTo` 経由) は同じ入力を端末内だけで
+     * 答えるので、2 つの入口が食い違っていた。AI への送信の開示 (チェックボックス) は変えない ——
+     * 直すのは順序と上書きだけ。
+     */
+    if (aiOn && hub && reply.kind !== 'action' && reply.kind !== 'counsel' && !crisisOrHarm) {
       /*
        * **マイクは欄を通らない** (パス 175)。footer の欄は超過を述べて押せなくできるが、
        * `startSpeechRecognition` の `onTranscript` はここへ直に来るので、`disabled` が効かない。
@@ -298,9 +324,14 @@ export function VillagePage() {
           }
           // 失敗 (と、本文が空の成功) を言う。文面はアシスタント本体と同じ形
           // 「AI 応答を利用できないため簡易モードで回答します: …」の村版。
-          setAiError(res.ok ? '応答が空でした' : res.message);
+          // `res.message` は第三者 (互換 API の攻撃者ホスト) の本文で、web-shim の
+          // `err()` / `redactForMessage` は伏字と長さは掛けるが**改行・双方向制御・
+          // 不可視字は残す**。この行は AI の失敗を描く最後の経路で、`externalTextOnOneLine`
+          // を通していない唯一の所だった (他は AssistantPage / bestAnswers / T-005 / T-020)。
+          // 畳んで双方向制御 (Trojan Source) を `\uXXXX` へ逃がす (threat: T-025)。
+          setAiError(externalTextOnOneLine(res.ok ? '応答が空でした' : res.message));
         } catch (e) {
-          setAiError(e instanceof Error ? e.message : String(e));
+          setAiError(externalTextOnOneLine(e instanceof Error ? e.message : String(e)));
         }
       })();
     }
@@ -386,7 +417,7 @@ export function VillagePage() {
           (ブラウザ任せ・経路を選べない)、下が「その文を何処へ送るか」(利用者が
           選んだプロバイダ)。`transcriptStaysLocal: false` にするのは、文の
           行き先を下の断りが送り先の内訳つきで述べるから (パス 108)。 */}
-      <VoiceEgressNotice subject={{ transcriptStaysLocal: false }} />
+      <VoiceEgressNotice subject={{ transcriptStaysLocal: false, readsAloud: true }} />
 
       <AiEgressNotice
         subject={{

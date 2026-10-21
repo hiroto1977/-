@@ -10,6 +10,7 @@ import { WORDPRESS_POST_FIELDS } from '../../shared/writeFieldLimits';
 import { mcpAccessNote } from '../data/wordpressMcpAccess';
 import type { ActionData } from '../../shared/actionData';
 import { ProxyRequiredNote } from '../components/ProxyRequiredNote';
+import { externalTextOnOneLine } from '../data/assistantMarkdown';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -56,7 +57,7 @@ export function WordPressPage() {
       setTitle('');
       setContent('');
     } else {
-      setResult({ kind: 'error', message: res.message });
+      setResult({ kind: 'error', message: externalTextOnOneLine(res.message) });
     }
   };
 

@@ -6,6 +6,8 @@
  */
 import { describe, expect, it } from 'vitest';
 import {
+  MAX_API_ROWS,
+  objectRows,
   optionalString,
   optionalStringArray,
   requireArray,
@@ -149,5 +151,29 @@ describe('readArrayField — 鍵が在ったのかを一緒に返す (パス 264
   it('★ prototype の鍵は拾わない (Object.hasOwn ではなく Array.isArray で落ちる)', () => {
     expect(readArrayField({}, 'constructor').read).toBe(false);
     expect(readArrayField({}, 'toString').read).toBe(false);
+  });
+});
+
+
+describe('objectRows — 行数の天井 (threat: T-113)', () => {
+  it('天井ちょうどは全部通し、天井を超えた行は落とす', () => {
+    const rows = (n: number) => Array.from({ length: n }, (_, i) => ({ i }));
+    expect(objectRows(rows(MAX_API_ROWS - 1))).toHaveLength(MAX_API_ROWS - 1);
+    expect(objectRows(rows(MAX_API_ROWS))).toHaveLength(MAX_API_ROWS);
+    expect(objectRows(rows(MAX_API_ROWS + 1))).toHaveLength(MAX_API_ROWS);
+    expect(objectRows(rows(MAX_API_ROWS * 3))).toHaveLength(MAX_API_ROWS);
+  });
+
+  it('天井は物の行だけを数える (null・数が先に並んでも物の行は天井まで取る)', () => {
+    const noise = Array.from({ length: 100 }, () => null);
+    const real = Array.from({ length: MAX_API_ROWS + 5 }, (_, i) => ({ i }));
+    const out = objectRows<{ i: number }>([...noise, ...real]);
+    expect(out).toHaveLength(MAX_API_ROWS);
+    expect(out[0]).toEqual({ i: 0 });
+    expect(out[MAX_API_ROWS - 1]).toEqual({ i: MAX_API_ROWS - 1 });
+  });
+
+  it('天井は桁違いに大きくない (相手が決められる量を断つ)', () => {
+    expect(MAX_API_ROWS).toBeLessThanOrEqual(5000);
   });
 });

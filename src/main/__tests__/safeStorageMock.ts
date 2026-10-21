@@ -13,16 +13,19 @@
  * 「書いたファイルに平文が残らない」ことを証明できれば足りる。キーチェーンの有無・復号の失敗は
  * `safeStorageState` で検査ごとに切り替える (emotions.test.ts / secretsProtection.test.ts と同じ形)。
  */
-export const safeStorageState = { encryptionAvailable: true, decryptThrows: false };
+export const safeStorageState = { encryptionAvailable: true, decryptThrows: false, backend: 'gnome_libsecret' };
 
 export function resetSafeStorageState(): void {
   safeStorageState.encryptionAvailable = true;
   safeStorageState.decryptThrows = false;
+  safeStorageState.backend = 'gnome_libsecret';
 }
 
 export interface SafeStorageMock {
   readonly safeStorage: {
     readonly isEncryptionAvailable: () => boolean;
+    /** Linux の backend (threat: T-041 —— `basic_text` はハードコードされた鍵)。 */
+    readonly getSelectedStorageBackend: () => string;
     readonly encryptString: (value: string) => Buffer;
     readonly decryptString: (buffer: Buffer) => string;
   };
@@ -32,6 +35,7 @@ export function electronSafeStorageMock(): SafeStorageMock {
   return {
     safeStorage: {
       isEncryptionAvailable: () => safeStorageState.encryptionAvailable,
+      getSelectedStorageBackend: () => safeStorageState.backend,
       encryptString: (v: string) => Buffer.from(`enc:${v}`, 'utf8'),
       decryptString: (b: Buffer) => {
         if (safeStorageState.decryptThrows) throw new Error('Error while decrypting the ciphertext provided to safeStorage');

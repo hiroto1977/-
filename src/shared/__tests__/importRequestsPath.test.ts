@@ -389,7 +389,7 @@ describe('端末へ刷る口は 1 つ —— 欄ごとには守らない (パス
       const c = String.fromCharCode(cp);
       if (unsafeCharsIn(c).length > 0) unsafe += c;
     }
-    expect([...unsafe]).toHaveLength(84);
+    expect([...unsafe]).toHaveLength(120);
     const value = { t: `前${unsafe}後`, keep: '👨‍👩‍👧', nested: [{ d: `${ESC}]0;x${BEL}` }] };
     const out = jsonForTerminal(value);
     expect(JSON.parse(out)).toEqual(value);

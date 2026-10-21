@@ -475,6 +475,35 @@ describe('揃っていても、台帳の天井を外れた値は確認の前に�
   });
 });
 
+describe('確認が見せる物は見えない字を逃がす (threat: T-034 · パス 519)', () => {
+  const RLO = '\u202E';
+
+  it('★ 本文に U+202E が在っても、確認の値は見える綴り (逆スラッシュ u202e) で並ぶ (threat: T-034)', () => {
+    const [channel, text] = voiceWritePreview('slack', 'send-message', { channel: '#general', text: `送金を中止${RLO}を承認 → 口座 999 へ送金` });
+    expect(channel).toEqual({ field: 'channel', value: '#general', truncated: false });
+    expect(text?.value).toBe('送金を中止\\u202eを承認 → 口座 999 へ送金');
+    expect(text?.value).not.toContain(RLO);
+  });
+
+  it('逃がすのは見せる側だけ —— 入力の params は 1 字も変えない', () => {
+    const params = { channel: '#g', text: `a${RLO}b` };
+    voiceWritePreview('slack', 'send-message', params);
+    expect(params.text).toBe(`a${RLO}b`);
+  });
+
+  it('天井で切ってから逃がす —— 逃がした綴り (`\\u202e`) が途中で切られない', () => {
+    const text = 'あ'.repeat(MAX_VOICE_PREVIEW_CHARS - 1) + RLO + 'い';
+    const [row] = voiceWritePreview('real-estate', 'record-entry', { note: text });
+    expect(row?.truncated).toBe(true);
+    expect(row?.value).toBe('あ'.repeat(MAX_VOICE_PREVIEW_CHARS - 1) + '\\u202e…');
+  });
+
+  it('対照: 見える字だけの値は今までどおり (絵文字も記号も変えない)', () => {
+    const [row] = voiceWritePreview('github', 'create-issue', { title: '落ちる 😀 a/b' });
+    expect(row).toEqual({ field: 'title', value: '落ちる 😀 a/b', truncated: false });
+  });
+});
+
 describe('確認が見せる物 (voiceWritePreview・パス 507)', () => {
   it('★ 台帳の欄の順に、intent が持つ値だけを並べる', () => {
     expect(voiceWritePreview('slack', 'send-message', { text: 'やあ', channel: '#general' })).toEqual([

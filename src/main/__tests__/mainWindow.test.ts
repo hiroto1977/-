@@ -31,6 +31,8 @@ interface Captured {
   devToolsOpened: boolean;
   devToolsMode: string | null;
   spellChecker: boolean | null;
+  fileGateFilter: { urls: string[] } | null;
+  fileGate: ((d: { url: string }, cb: (r: { cancel: boolean }) => void) => void) | null;
 }
 
 let captured: Captured;
@@ -41,6 +43,7 @@ let isPackaged = true;
 let windowsMade = 0;
 let allWindows: unknown[] = [];
 let quitCalls = 0;
+let instanceLock = true;
 const appListeners = new Map<string, () => void>();
 
 function freshCapture(): Captured {
@@ -55,6 +58,8 @@ function freshCapture(): Captured {
     devToolsOpened: false,
     devToolsMode: null,
     spellChecker: null,
+    fileGateFilter: null,
+    fileGate: null,
   };
 }
 
@@ -66,6 +71,7 @@ vi.mock('electron', () => ({
       return isPackaged;
     },
     whenReady: async () => undefined,
+    requestSingleInstanceLock: () => instanceLock,
     on: (name: string, fn: () => void) => {
       appListeners.set(name, fn);
     },
@@ -89,6 +95,15 @@ vi.mock('electron', () => ({
         },
         setSpellCheckerEnabled: (v: boolean) => {
           captured.spellChecker = v;
+        },
+        webRequest: {
+          onBeforeRequest: (
+            filter: { urls: string[] },
+            fn: (d: { url: string }, cb: (r: { cancel: boolean }) => void) => void,
+          ) => {
+            captured.fileGateFilter = filter;
+            captured.fileGate = fn;
+          },
         },
       },
       setWindowOpenHandler: (fn: (d: { url: string }) => unknown) => {
@@ -154,8 +169,9 @@ vi.mock('../oauth', () => ({
 }));
 
 /** main.ts を読み直して、窓が作られるまで待つ。 */
-async function loadMain(opts: { packaged: boolean; devServerUrl?: string }): Promise<Captured> {
+async function loadMain(opts: { packaged: boolean; devServerUrl?: string; lock?: boolean }): Promise<Captured> {
   captured = freshCapture();
+  instanceLock = opts.lock ?? true;
   isPackaged = opts.packaged;
   if (opts.devServerUrl === undefined) delete process.env.VITE_DEV_SERVER_URL;
   else process.env.VITE_DEV_SERVER_URL = opts.devServerUrl;
@@ -184,6 +200,7 @@ beforeEach(() => {
   windowsMade = 0;
   allWindows = [];
   quitCalls = 0;
+  instanceLock = true;
   appListeners.clear();
   storedPrefs = { scheme: 'light', background: '#fff7fa' };
 });
@@ -386,6 +403,24 @@ describe('権限要求 — 既定は拒否、クリップボードだけ許す',
     expect(c.spellChecker, 'session 側の綴り検査を切っていない').toBe(false);
   });
 
+  it('★ file:// の読み取りは同梱の dist/ に閉じ込める — 窓が作る session に要求の門を付けている (threat: T-140)', async () => {
+    const c = await loadMain({ packaged: true });
+    expect(c.fileGateFilter, 'webRequest.onBeforeRequest が無い').toEqual({ urls: ['file://*/*'] });
+    const decide = (url: string): boolean => {
+      let cancelled: boolean | null = null;
+      c.fileGate!({ url }, (r) => {
+        cancelled = r.cancel;
+      });
+      return cancelled === false;
+    };
+    // main.ts の __dirname は src/main (出荷では dist-electron) なので、根は <その親>/dist。
+    const dist = path.join(__dirname, '..', '..', 'dist');
+    const inside = `file://${path.join(dist, 'index.html').split(path.sep).join('/')}`;
+    expect(decide(inside)).toBe(true);
+    expect(decide('file:///etc/passwd')).toBe(false);
+    expect(decide('file://attacker.example/share/x.json')).toBe(false);
+  });
+
   it.each([
     ['マイク・カメラ', 'media'],
     ['画面共有', 'display-capture'],
@@ -430,7 +465,7 @@ describe('権限要求 — 既定は拒否、クリップボードだけ許す',
    * この形なら Electron を上げて権限が増えたときも自動で対象に入り、
    * **既定拒否のままであることが毎回確かめられる**。
    */
-  const ALLOWED = ['clipboard-read', 'clipboard-sanitized-write'];
+  const ALLOWED = ['clipboard-sanitized-write'];
 
   function electronPermissionNames(): string[] {
     const dts = readOriginalSource(path.join(__dirname, '../../../node_modules/electron/electron.d.ts'));
@@ -439,7 +474,7 @@ describe('権限要求 — 既定は拒否、クリップボードだけ許す',
     return [...m![1]!.matchAll(/'([a-zA-Z-]+)'/g)].map((x) => x[1]!);
   }
 
-  it('★ Electron が挙げる権限のうち、許すのはクリップボードの 2 つだけ', async () => {
+  it('★ Electron が挙げる権限のうち、許すのはクリップボードへの書き込みだけ (threat: T-137)', async () => {
     const names = electronPermissionNames();
     // 走査が死んで 0 件になったのを「違反なし」と読まない。
     expect(names.length, '権限の一覧が短すぎる — 型定義の書式が変わった可能性').toBeGreaterThanOrEqual(15);
@@ -465,14 +500,18 @@ describe('権限要求 — 既定は拒否、クリップボードだけ許す',
    * 消すため、「まだ自分がコピーした値のままか」を **読んでから** 空にする。
    * 読めないと消せずに残るので、これは security のための読み取りである。
    */
-  it.each([['読み取り', 'clipboard-read'], ['書き込み', 'clipboard-sanitized-write']])(
-    'クリップボードの%s (%s) は許す',
-    async (_label, permission) => {
-      const c = await loadMain({ packaged: true });
-      expect(ask(c, permission)).toBe(true);
-      expect(c.permissionCheck!({}, permission)).toBe(true);
-    },
-  );
+  it('クリップボードの書き込み (clipboard-sanitized-write) は許す', async () => {
+    const c = await loadMain({ packaged: true });
+    expect(ask(c, 'clipboard-sanitized-write')).toBe(true);
+    expect(c.permissionCheck!({}, 'clipboard-sanitized-write')).toBe(true);
+  });
+
+  /* 読み取りは外した (threat: T-137)。デスクトップ版に読み手が無い —— LockScreen はブラウザ版だけ。 */
+  it('★ クリップボードの読み取り (clipboard-read) は拒む — 乗っ取られたレンダラーに黙って読ませない (threat: T-137)', async () => {
+    const c = await loadMain({ packaged: true });
+    expect(ask(c, 'clipboard-read')).toBe(false);
+    expect(c.permissionCheck!({}, 'clipboard-read')).toBe(false);
+  });
 
   /*
    * **2 つの口が同じ答えを返すこと。** ずれると
@@ -505,7 +544,7 @@ describe('権限要求 — 既定は拒否、クリップボードだけ許す',
       expect(c.permissionCheck!({}, p), `${p} で 2 つの口の答えが違う`).toBe(ask(c, p));
     }
     // 「全部同じ値」で一致していないこと。
-    expect(ALL.filter((p) => ask(c, p)).length).toBe(2);
+    expect(ALL.filter((p) => ask(c, p)).length).toBe(1);
   });
 });
 
@@ -680,5 +719,31 @@ describe('アプリの寿命', () => {
     } finally {
       Object.defineProperty(process, 'platform', { value: orig, configurable: true });
     }
+  });
+  it('★ 2 つ目のインスタンスは窓を作らず終了する・1 つ目は窓を前に出す (threat: T-104)', async () => {
+    // ロックが取れない = 同じ userData を既に別のプロセスが開いている。窓を作ると保管ファイルの
+    // 「読んで → 書く」が互いに上書きし合う。
+    await loadMain({ packaged: true, lock: false });
+    expect(windowsMade).toBe(0);
+    expect(quitCalls).toBe(1);
+    expect(appListeners.has('second-instance')).toBe(false);
+    // 対照: ロックが取れれば窓を作り、終了しない。
+    quitCalls = 0;
+    windowsMade = 0;
+    await loadMain({ packaged: true, lock: true });
+    expect(windowsMade).toBe(1);
+    expect(quitCalls).toBe(0);
+    // 1 つ目へ届く second-instance は、最小化を戻して焦点を移すだけ。窓が無ければ何もしない。
+    const calls: string[] = [];
+    allWindows = [{ isMinimized: () => true, restore: () => calls.push('restore'), focus: () => calls.push('focus') }];
+    appListeners.get('second-instance')!();
+    expect(calls).toEqual(['restore', 'focus']);
+    calls.length = 0;
+    allWindows = [{ isMinimized: () => false, restore: () => calls.push('restore'), focus: () => calls.push('focus') }];
+    appListeners.get('second-instance')!();
+    expect(calls).toEqual(['focus']);
+    allWindows = [];
+    expect(() => appListeners.get('second-instance')!()).not.toThrow();
+    expect(windowsMade).toBe(1);
   });
 });

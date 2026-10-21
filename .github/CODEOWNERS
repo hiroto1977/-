@@ -6,6 +6,18 @@
 # 一覧は src/shared/__tests__/threatLedger.test.ts が PROTECTED と双方向に突き合わせる。
 
 /.github/ @hiroto1977
+# エージェント指示書 (2026-10-20 · パス 540 · threat: T-128)。
+# AI エージェント (Claude Code / Cursor / Copilot ほか) は、リポジトリの指示書を**読んだ瞬間に従う**。
+# 実測 (2026-10-20): 悪意のある文面の指示書 5 か所 (CLAUDE.md への追記・AGENTS.md・
+# src/**/CLAUDE.md・.claude/rules/・.github/copilot-instructions.md) を植えても、39 ゲートのうち
+# 回した 34 本は**すべて緑**だった。CLAUDE.md は変更の頻度が高く (183 コミット) 整合性チェーンの
+# 保護対象には入れられないので、所有者のレビューを要求する層 (ここ) で覆う。
+# 指示書は新しく生えるので、個別のファイルではなく**ディレクトリとファイル名のパターン**で覆う。
+/CLAUDE.md @hiroto1977
+**/CLAUDE.md @hiroto1977
+**/AGENTS.md @hiroto1977
+/.claude/ @hiroto1977
+/.cursor/ @hiroto1977
 /security/ @hiroto1977
 # scripts/ の木全体 (2026-10-13 · パス 513 · threat: T-003 の延長)。
 # 39 の門の執行コード (lint:malware / lint:secrets / lint:forbidden / lint:workflow-security /
@@ -16,6 +28,7 @@
 # 独立に見るので矛盾しない。
 /scripts/ @hiroto1977
 /scripts/integrity-chain.cjs @hiroto1977
+/src/main/keychainBackend.ts @hiroto1977
 /.claude/settings.json @hiroto1977
 /.claude/agents/auditor.md @hiroto1977
 /.claude/agents/mechanic.md @hiroto1977
@@ -24,12 +37,22 @@
 /.cursor/rules/10-boundaries.mdc @hiroto1977
 /.cursor/rules/20-gates.mdc @hiroto1977
 /.cursor/rules/30-conventions.mdc @hiroto1977
+/assets/icon.svg @hiroto1977
 /assets/manifest.webmanifest @hiroto1977
+/assets/og.png @hiroto1977
 /assets/sw.js @hiroto1977
 /docs/PROXY_EXAMPLE.md @hiroto1977
 /docs/SECURITY_CHAIN.md @hiroto1977
+# エージェントが「まず読め」と指示される文書 (CLAUDE.md / SessionStart hook が指す)。
+# ここへ命令文を足されると、次のセッションのエージェントがそれを読んで従う (T-142)。
+# 毎セッション書き換わるので整合性チェーンには入れず、所有者のレビューだけを要求する。
+/docs/SESSION_HANDOFF.md @hiroto1977
+/docs/REMAINING_WORK.md @hiroto1977
+/docs/THREAT_HUNT.md @hiroto1977
+/docs/MODEL_EFFORT_POLICY.md @hiroto1977
 /electron-builder.json @hiroto1977
 /eslint.config.js @hiroto1977
+/launcher/ServiceHubを開く.bat @hiroto1977
 /scripts/build-landing.cjs @hiroto1977
 /scripts/checksum-release.cjs @hiroto1977
 /scripts/inject-pwa.cjs @hiroto1977
@@ -59,7 +82,9 @@
 /src/main/oauth.ts @hiroto1977
 /src/main/secrets.ts @hiroto1977
 /src/main/shellOpenGate.ts @hiroto1977
+/src/main/presenceWiring.ts @hiroto1977
 /src/main/stateFile.ts @hiroto1977
+/src/main/userPresence.ts @hiroto1977
 /src/main/windowPrefs.ts @hiroto1977
 /src/preload/preload.ts @hiroto1977
 /src/renderer/data/assistantMarkdown.ts @hiroto1977
@@ -114,3 +139,106 @@
 /vite.config.ts @hiroto1977
 /vitest.audit.config.ts @hiroto1977
 /vitest.config.ts @hiroto1977
+# 2026-10-15 (パス 522 · threat: T-058): knowledge-auto.yml の閉包 (役員ロールへ注入する文脈と知識グラフ)。
+/orchestration/knowledge-context.cjs @hiroto1977
+/orchestration/knowledge-graph.cjs @hiroto1977
+
+# ビルド・梱包の入力と、守りの回帰検査 (2026-10-16 · パス 526 · threat: T-105〜T-111 / 監査役の指摘 5)。
+# 守りを無効化する変更 (検査の本体を弱める) と、守られる物 (package.json ほか) の変更を、同じ PR で
+# 所有者のレビューなしに通せないようにする。台帳の regression.file は threatLedger.test.ts が全部覆うことを見る。
+/build/ @hiroto1977
+/package.json @hiroto1977
+/package-lock.json @hiroto1977
+/tsconfig.json @hiroto1977
+/tsconfig.app.json @hiroto1977
+/tsconfig.node.json @hiroto1977
+/stryker.config.json @hiroto1977
+/.gitignore @hiroto1977
+/src/main/__tests__/eraseAll.test.ts @hiroto1977
+/src/main/__tests__/eraseVsSecretsWrite.test.ts @hiroto1977
+/src/main/__tests__/keychainBackend.test.ts @hiroto1977
+/src/main/__tests__/mainWindow.test.ts @hiroto1977
+/src/main/__tests__/oauth.test.ts @hiroto1977
+/src/main/__tests__/secretsTokenRead.test.ts @hiroto1977
+/src/main/__tests__/secretsUnreadableWrite.test.ts @hiroto1977
+/src/main/__tests__/secretsWrite.test.ts @hiroto1977
+/src/main/__tests__/userPresence.test.ts @hiroto1977
+/src/main/__tests__/shellOpenGate.test.ts @hiroto1977
+/src/main/__tests__/stateWriterRace.test.ts @hiroto1977
+/src/main/clients/__tests__/assistant.test.ts @hiroto1977
+/src/main/clients/__tests__/emotions.test.ts @hiroto1977
+/src/main/clients/__tests__/exportPaths.test.ts @hiroto1977
+/src/main/clients/__tests__/ollama.test.ts @hiroto1977
+/src/main/clients/__tests__/stocks.test.ts @hiroto1977
+/src/renderer/components/__tests__/chatbotInvokeFailureFold.test.ts @hiroto1977
+/src/renderer/components/__tests__/statusBarErrorFold.test.ts @hiroto1977
+/src/renderer/components/__tests__/voiceEgressDisclosed.test.ts @hiroto1977
+/src/renderer/components/__tests__/voiceErrorFold.test.ts @hiroto1977
+/src/renderer/data/__tests__/assistantContext.test.ts @hiroto1977
+/src/renderer/data/__tests__/bestAnswersJob.test.ts @hiroto1977
+/src/renderer/data/__tests__/chatbotOllamaModel.test.ts @hiroto1977
+/src/renderer/data/__tests__/counseling.test.ts @hiroto1977
+/src/renderer/data/__tests__/csvImportLimits.test.ts @hiroto1977
+/src/renderer/data/__tests__/financialReport.test.ts @hiroto1977
+/src/renderer/data/__tests__/importAllAtomic.test.ts @hiroto1977
+/src/renderer/data/__tests__/orphanCollection.test.ts @hiroto1977
+/src/renderer/data/__tests__/restoreIdCollision.test.ts @hiroto1977
+/src/renderer/data/__tests__/restorePlanMatchesImport.test.ts @hiroto1977
+/src/renderer/data/__tests__/voiceCommand.test.ts @hiroto1977
+/src/renderer/network/__tests__/ollamaWeb.test.ts @hiroto1977
+/src/renderer/network/__tests__/proxyEnvelope.test.ts @hiroto1977
+/src/renderer/network/__tests__/proxyWorkerParity.test.ts @hiroto1977
+/src/renderer/pages/__tests__/assistantCrisisDeterministic.test.ts @hiroto1977
+/src/renderer/pages/__tests__/connectorOutputOnScreen.test.ts @hiroto1977
+/src/renderer/pages/__tests__/emotionsCrisisHold.test.ts @hiroto1977
+/src/renderer/pages/__tests__/villageAiErrorFold.test.ts @hiroto1977
+/src/renderer/pages/__tests__/villageCounselNoOverwrite.test.ts @hiroto1977
+/src/renderer/pages/__tests__/villageCrisisNoAi.test.ts @hiroto1977
+/src/renderer/security/__tests__/autoLock.test.ts @hiroto1977
+/src/renderer/security/__tests__/vaultLockDuringUnlock.test.ts @hiroto1977
+/src/shared/__tests__/agentInstructionFiles.test.ts @hiroto1977
+/src/shared/__tests__/aiEndpoint.test.ts @hiroto1977
+/src/shared/__tests__/artifactCspWitness.test.ts @hiroto1977
+/src/shared/__tests__/escape.test.ts @hiroto1977
+/src/shared/__tests__/gateScriptsPinned.test.ts @hiroto1977
+/src/shared/__tests__/installTimeCodeGuarded.test.ts @hiroto1977
+/src/shared/__tests__/launcherExecutablesGuarded.test.ts @hiroto1977
+/src/shared/__tests__/localConfigNotTracked.test.ts @hiroto1977
+/src/shared/__tests__/malwareGate.test.ts @hiroto1977
+/src/shared/__tests__/networkTargetWitness.test.ts @hiroto1977
+/src/shared/__tests__/privateTarget.test.ts @hiroto1977
+/src/shared/__tests__/publishedAssetsInert.test.ts @hiroto1977
+/src/shared/__tests__/pureDataModule.test.ts @hiroto1977
+/src/shared/__tests__/redactionCoverage.test.ts @hiroto1977
+/src/shared/__tests__/rootConfigScanned.test.ts @hiroto1977
+/src/shared/__tests__/scanTarget.test.ts @hiroto1977
+/src/shared/__tests__/threatLedger.test.ts @hiroto1977
+/src/shared/__tests__/voiceWriteRequirements.test.ts @hiroto1977
+/src/shared/__tests__/workflowSecurityWitness.test.ts @hiroto1977
+/src/shared/__tests__/dependencyAuditWorkflow.test.ts @hiroto1977
+/src/shared/__tests__/e2ePlaywrightPin.test.ts @hiroto1977
+/src/shared/__tests__/ipcUnawaitedLedger.test.ts @hiroto1977
+/src/renderer/pages/__tests__/rowWindowOnScreen.test.ts @hiroto1977
+/src/shared/__tests__/buildInputsClosed.test.ts @hiroto1977
+/src/shared/__tests__/apiResponse.test.ts @hiroto1977
+/src/renderer/pages/__tests__/ollamaPageOriginShell.test.ts @hiroto1977
+/src/renderer/data/__tests__/bestAnswers.test.ts @hiroto1977
+/src/main/clients/__tests__/skills.test.ts @hiroto1977
+/src/shared/__tests__/malwareArtifactWired.test.ts @hiroto1977
+/src/main/clients/__tests__/localTokenReaders.test.ts @hiroto1977
+/src/renderer/data/__tests__/assistantProviders.test.ts @hiroto1977
+/src/renderer/pages/__tests__/ollamaExposureGuidance.test.ts @hiroto1977
+/src/renderer/network/__tests__/proxyWorkerFailClosed.test.ts @hiroto1977
+/src/renderer/components/__tests__/restorePassphraseField.test.ts @hiroto1977
+/src/renderer/pages/__tests__/ollamaWildcardOriginWarning.test.ts @hiroto1977
+/src/main/__tests__/fileRequestGate.test.ts @hiroto1977
+/src/main/__tests__/mainIpc.test.ts @hiroto1977
+/src/renderer/__tests__/webShimRequestedModel.test.ts @hiroto1977
+/src/shared/__tests__/ollamaCliTerminalSafe.test.ts @hiroto1977
+/src/shared/__tests__/lintCharsetAsciiSmuggling.test.ts @hiroto1977
+/src/renderer/data/__tests__/backupRecordLimit.test.ts @hiroto1977
+/src/main/fileRequestGate.ts @hiroto1977
+/src/shared/__tests__/sessionContextUntrusted.test.ts @hiroto1977
+/src/shared/__tests__/releaseJobSplit.test.ts @hiroto1977
+/src/shared/__tests__/workflowStructureGate.test.ts @hiroto1977
+/src/shared/__tests__/dependencyAuditIssue.test.ts @hiroto1977

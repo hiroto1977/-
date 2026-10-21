@@ -8,7 +8,7 @@ import {
   setOAuthTokens,
   setToken,
 } from './secrets';
-import { LIVE_ACTIONS, LIVE_FETCHERS, LOCAL_SERVICES, type ServiceId } from './clients';
+import { LIVE_ACTIONS, LIVE_FETCHERS, LOCAL_SERVICES, readsSavedToken, type ServiceId } from './clients';
 import { authorize, isOAuthSupported, OAUTH_CONFIGS } from './oauth';
 import { repairExportPermissions } from './clients/exportPaths';
 import { isServiceId } from '../shared/serviceId';
@@ -17,6 +17,9 @@ import type { OsOpResult, TokenSaveResult } from '../preload/preload';
 import { safeErrorMessage } from './clients/types';
 import { externalUrlOrNull } from '../shared/externalUrlGate';
 import { shellTargetOrNull } from './shellOpenGate';
+import { installFileRequestGate } from './fileRequestGate';
+import { requirePresence } from './presenceWiring';
+import { describePayload, tierOfAction, type PresenceDecision } from './userPresence';
 import { evaluateUpdate, parseLatestRelease, type UpdateVerdict } from '../shared/updateCheck';
 import {
   DEFAULT_HTTP_TIMEOUT_MS,
@@ -104,12 +107,14 @@ function createWindow(): BrowserWindow {
    * **万一レンダラーへ任意コードが入った場合に、マイク・カメラ・位置情報が
    * 確認なしで開くかどうか**はここで決まる。既定のままだと開く。
    *
-   * 許すのはクリップボードの 2 つだけ:
+   * 許すのはクリップボードへの**書き込み**だけ (2026-10-20 · パス 543 · threat: T-137):
    *
-   * - `clipboard-read` —— `LockScreen.tsx` が**復元フレーズを 30 秒後に
-   *   消す**ために使う。「まだ自分がコピーした値のままか」を読んでから
-   *   空にするので、読めないと**消せずに残る**。security のための読み取り。
-   * - `clipboard-sanitized-write` —— 上の消去と、各画面のコピーボタン。
+   * - `clipboard-sanitized-write` —— 各画面のコピーボタン。
+   * - `clipboard-read` は**外した**。読み手は `LockScreen.tsx` (復元フレーズを 30 秒後に消すために
+   *   「まだ自分がコピーした値か」を読む) だけで、その画面は `App.tsx` が `browserMode` のときにしか
+   *   描かない。デスクトップ版に正当な読み手が無いのに許していたので、乗っ取られたレンダラーが
+   *   利用者のクリップボード (パスワード・2FA コード) をジェスチャ無しで黙って読めた
+   *   (実 Electron で `readText()` が resolve した)。ブラウザ版は main の許可表を通らない。
    *
    * それ以外 (media / geolocation / notifications / midi / display-capture /
    * hid / serial / usb / idle-detection / window-management …) は**全部拒否**。
@@ -124,10 +129,7 @@ function createWindow(): BrowserWindow {
    * この実測は嘘になるのに何も鳴らない、という形だった。いまは両方向に鳴る:
    * API を足せば走査が落ち、許可表を広げれば `mainWindow.test.ts` が落ちる。
    */
-  const ALLOWED_PERMISSIONS: ReadonlySet<string> = new Set([
-    'clipboard-read',
-    'clipboard-sanitized-write',
-  ]);
+  const ALLOWED_PERMISSIONS: ReadonlySet<string> = new Set(['clipboard-sanitized-write']);
   /**
    * 判定は**ここ 1 つ**。要求側 (`setPermissionRequestHandler`) と
    * 問い合わせ側 (`setPermissionCheckHandler`) の 2 つの口があり、
@@ -149,6 +151,13 @@ function createWindow(): BrowserWindow {
    * **見ていた物が、設定した物と違っていた。**
    */
   win.webContents.session.setSpellCheckerEnabled(false);
+
+  /*
+   * レンダラーの `file://` 読み取りを同梱の `dist/` に閉じ込める (threat: T-140)。出荷の fuse の形
+   * (`grantFileProtocolExtraPrivileges`) に依らず、任意のローカルファイルを fetch/XHR で読ませない。
+   */
+  const distRoot = path.join(__dirname, '..', 'dist');
+  installFileRequestGate(win.webContents.session, distRoot);
 
   win.webContents.session.setPermissionRequestHandler((_wc, permission, callback) => {
     callback(permissionAllowed(permission));
@@ -224,7 +233,25 @@ function createWindow(): BrowserWindow {
   return win;
 }
 
-app.whenReady().then(async () => {
+/*
+ * 単一インスタンス (パス 526 · T-104)。同じ userData を 2 つのプロセスが同時に開くと、保管ファイル
+ * (secrets.json) と窓の設定の「読んで → 書く」が互いに上書きし合い、更新した資格情報が黙って巻き戻る
+ * (どちらの書き込みも原子的だが、読み取り → 書き込みの間は排他されない)。ロックが取れない 2 つ目は
+ * 窓を作らず終了し、1 つ目の窓を前に出す。**2 つ目の argv / cwd は読まない** (開く先を外から決められる口にしない)。
+ */
+const gotInstanceLock = app.requestSingleInstanceLock();
+if (!gotInstanceLock) {
+  app.quit();
+} else {
+  app.on('second-instance', () => {
+    const [existing] = BrowserWindow.getAllWindows();
+    if (existing === undefined) return;
+    if (existing.isMinimized()) existing.restore();
+    existing.focus();
+  });
+}
+
+if (gotInstanceLock) app.whenReady().then(async () => {
   // 窓を作る前に配色を読む (パス 318) —— 読めなければ既定のライトで、renderer が起動後に伝え直す。
   windowPrefs = await readWindowPrefs();
   applyNativeTheme(windowPrefs.scheme);
@@ -312,12 +339,21 @@ ipcMain.handle('app:checkUpdate', async (): Promise<UpdateVerdict> => {
     return evaluateUpdate(current, null);
   }
 });
-ipcMain.handle('app:openExternal', async (_e, url: unknown) => {
+ipcMain.handle('app:openExternal', async (e, url: unknown) => {
   // Defense-in-depth: the renderer is sandboxed and contextIsolated,
   // but the IPC channel accepts any value. 関門は `externalUrlGate.ts` に
   // 1 つだけ置く —— 新窓ハンドラも同じものを通る。
   const target = externalUrlOrNull(url);
   if (target === null) return;
+  // 速度の制限だけ (T-147 レッドチーム #5): 画面を乗っ取られても、偽のログインページを任意の回数・
+  // 任意の時刻に起動させない。確認は出さない (利用者が普通に押す口なので)。
+  let presence: PresenceDecision;
+  try {
+    presence = await requirePresence(e, { channel: 'app:openExternal', tier: 'egress', summary: target });
+  } catch {
+    return;
+  }
+  if (!presence.ok) return;
   // `shell` は OS 側が開けないと **reject する** (既定ブラウザ未設定、
   // Linux で xdg-open が無い等)。この口の約束は `Promise<void>` で、
   // レンダラー側に受け皿が無い —— reject をそのまま返すと呼び出し元で
@@ -370,7 +406,7 @@ ipcMain.handle('app:openPath', async (_e, filePath: unknown): Promise<OsOpResult
 // 弾いた理由を **返す**。以前は `return;` で黙って捨てており、renderer からは
 // 保存できた場合と区別が付かなかった (上限超えの貼り付けが「保存した」ように
 // 見えていた)。規則は shared/tokenInput.ts に 1 つだけ置く。
-ipcMain.handle('secrets:set', async (_e, serviceId: unknown, token: unknown): Promise<TokenSaveResult> => {
+ipcMain.handle('secrets:set', async (e, serviceId: unknown, token: unknown): Promise<TokenSaveResult> => {
   if (!isServiceId(serviceId)) {
     return { ok: false, code: 'invalid_service', message: 'unknown service id' };
   }
@@ -378,6 +414,22 @@ ipcMain.handle('secrets:set', async (_e, serviceId: unknown, token: unknown): Pr
   if (!checked.ok) {
     return { ok: false, code: 'invalid_token', message: checked.message };
   }
+  // 本人確認 (T-147): 乗っ取られた画面が攻撃者の資格情報へ差し替えると、以後の書き込みが攻撃者の口座へ出る。
+  // 確認の呼び出し自体が投げても IPC を reject させない (lint:ipc-handlers) —— 投げたら断る。
+  let presence: PresenceDecision;
+  try {
+    presence = await requirePresence(e, {
+      channel: 'secrets:set',
+      tier: 'credential-write',
+      // 確認が横取りされても見分けがつくよう、新しい値の長さと末尾 4 文字を見せる (全体は見せない)。
+    summary: `${serviceId} の資格情報を置き換えます。新しい値: 全 ${checked.value.length} 文字${
+      checked.value.length > 8 ? `・末尾「…${checked.value.slice(-4)}」` : ''
+    }。心当たりが無ければ「実行しない」を選んでください。`,
+    });
+  } catch (err) {
+    presence = { ok: false, message: safeErrorMessage(err) };
+  }
+  if (!presence.ok) return { ok: false, code: 'write_failed', message: presence.message };
   try {
     await setToken(serviceId, checked.value);
   } catch (e) {
@@ -399,8 +451,20 @@ ipcMain.handle('secrets:set', async (_e, serviceId: unknown, token: unknown): Pr
   }
   return { ok: true };
 });
-ipcMain.handle('secrets:clear', async (_e, serviceId: unknown): Promise<OsOpResult> => {
+ipcMain.handle('secrets:clear', async (e, serviceId: unknown): Promise<OsOpResult> => {
   if (!isServiceId(serviceId)) return { ok: false, message: 'unknown service id' };
+  // 確認の呼び出し自体が投げても IPC を reject させない (lint:ipc-handlers) —— 投げたら断る。
+  let presence: PresenceDecision;
+  try {
+    presence = await requirePresence(e, {
+      channel: 'secrets:clear',
+      tier: 'destructive',
+      summary: `${serviceId} の保存済み資格情報を削除します。`,
+    });
+  } catch (err) {
+    presence = { ok: false, message: safeErrorMessage(err) };
+  }
+  if (!presence.ok) return { ok: false, message: presence.message };
   // 削除の失敗を黙ると「消したつもりの資格情報が残っている」状態になる。
   try {
     await clearToken(serviceId);
@@ -428,7 +492,21 @@ function scheduleRelaunch(): void {
     app.exit(0);
   }, RELAUNCH_DELAY_MS);
 }
-ipcMain.handle('app:eraseAll', async (): Promise<DesktopEraseReport> => {
+ipcMain.handle('app:eraseAll', async (e): Promise<DesktopEraseReport> => {
+  // 確認の呼び出し自体が投げても IPC を reject させない (lint:ipc-handlers) —— 投げたら断る。
+  let presence: PresenceDecision;
+  try {
+    presence = await requirePresence(e, {
+      channel: 'app:eraseAll',
+      tier: 'destructive',
+      summary: 'このアプリの資格情報・記録・設定をすべて削除して再起動します。元に戻せません。',
+    });
+  } catch (err) {
+    presence = { ok: false, message: safeErrorMessage(err) };
+  }
+  if (!presence.ok) {
+    return { kind: 'desktop', files: {}, renderer: 'failed', allDeleted: false, error: presence.message };
+  }
   try {
     const report = await eraseDesktopData();
     if (report.allDeleted) scheduleRelaunch();
@@ -480,7 +558,8 @@ ipcMain.handle('fetch:snapshot', async (_e, serviceId: unknown) => {
   // reject し、renderer 側 (`useServiceData`) は「読込中…」のまま止まっていた。
   let token = '';
   try {
-    const read = await getValidToken(serviceId);
+    // 資格情報を読まない LOCAL サービスは保管ファイルに触れない (その不調に巻き込まれない・T-118)。
+    const read = readsSavedToken(serviceId) ? await getValidToken(serviceId) : { ok: true as const, token: '' };
     if (!read.ok) {
       // LOCAL_SERVICES は資格情報なしでも動くので、読めないことは異常ではない。
       // ただし「保存済みだが復号できない」「保管ファイルが読めない」場合は
@@ -508,7 +587,7 @@ ipcMain.handle('fetch:snapshot', async (_e, serviceId: unknown) => {
 
 ipcMain.handle(
   'action:invoke',
-  async (_e, serviceId: unknown, action: unknown, payload: unknown) => {
+  async (e, serviceId: unknown, action: unknown, payload: unknown) => {
     if (!isServiceId(serviceId)) {
       return { ok: false, code: 'action_not_found', message: 'unknown service id' };
     }
@@ -526,6 +605,20 @@ ipcMain.handle(
         message: `${serviceId} に action "${action}" は登録されていません`,
       };
     }
+    // 本人確認 (T-147): 外部へ書き込む action は、何が書かれるかを見せて毎回確かめる。
+    // 段階は台帳 (userPresence.ts の ACTION_TIER) で決まり、載っていない action は最も厳しい扱い。
+    // 確認の呼び出し自体が投げても IPC を reject させない (lint:ipc-handlers) —— 投げたら断る。
+    let presence: PresenceDecision;
+    try {
+      presence = await requirePresence(e, {
+        channel: `${serviceId}/${action}`,
+        tier: tierOfAction(serviceId, action),
+        summary: describePayload(payload),
+      });
+    } catch (err) {
+      presence = { ok: false, message: safeErrorMessage(err) };
+    }
+    if (!presence.ok) return { ok: false, code: 'action_failed', message: presence.message };
     // fetch:snapshot と同じ理由で try の中に入れる。
     /*
      * **`LOCAL_SERVICES` の action はトークン無しで通す** (2026-09-15 · パス 267)。
@@ -551,7 +644,8 @@ ipcMain.handle(
      */
     let token = '';
     try {
-      const read = await getValidToken(serviceId);
+      // 資格情報を読まない LOCAL サービスは保管ファイルに触れない (その不調に巻き込まれない・T-118)。
+    const read = readsSavedToken(serviceId) ? await getValidToken(serviceId) : { ok: true as const, token: '' };
       if (!read.ok) {
         // 未設定だけが「トークン未設定」。復号できない・保管ファイルが読めないは理由を出す。
         if (read.reason !== 'absent') {
@@ -589,7 +683,15 @@ ipcMain.handle('oauth:isSupported', (_e, serviceId: unknown) =>
 // 制御文字・空白などの混入を IPC 境界で拒否する。
 const CLIENT_ID_RE = /^[A-Za-z0-9._-]{8,200}$/;
 
-ipcMain.handle('oauth:authorize', async (_e, serviceId: unknown, clientIdOverride?: unknown) => {
+/**
+ * 認可は**同時に 1 つだけ** (2026-10-20 · パス 543 · threat: T-139)。呼ぶたびに 127.0.0.1 の待受 socket と
+ * ブラウザのタブが 1 つ増え、完了しない認可は 5 分生き残る。乗っ取られたレンダラーが
+ * 上書きの clientId つきで並行に叩くと、実測で 800 呼び出し → 待受 803 本が残り、ブラウザへ同意画面が
+ * 氾濫した。正当な利用者は 1 度に 1 つのサービスしか認可しない。
+ */
+let authorizeInFlight = false;
+
+ipcMain.handle('oauth:authorize', async (e, serviceId: unknown, clientIdOverride?: unknown) => {
   if (!isServiceId(serviceId)) {
     return { ok: false, code: 'not_supported', message: 'unknown service id' };
   }
@@ -611,11 +713,36 @@ ipcMain.handle('oauth:authorize', async (_e, serviceId: unknown, clientIdOverrid
       message: 'このサービスは OAuth 未対応、または OAuth クライアント ID 未設定',
     };
   }
+  if (authorizeInFlight) {
+    return {
+      ok: false,
+      code: 'authorize_busy',
+      message: '別の認可が進行中です。開いたブラウザでの手続きを終えるか、5 分ほど待ってからやり直してください',
+    };
+  }
+  // 利用者が用意した OAuth クライアント ID で認可するときだけ確かめる (T-147 レッドチーム #4):
+  // 差し替えられると、攻撃者のアプリに紐づく資格情報で保存値が置き換わる。
+  if (override !== '') {
+    let presence: PresenceDecision;
+    try {
+      presence = await requirePresence(e, {
+        channel: 'oauth:authorize',
+        tier: 'credential-write',
+        summary: `${serviceId} を、クライアント ID「${override}」で認可します。心当たりが無ければ「実行しない」を選んでください。`,
+      });
+    } catch (err) {
+      presence = { ok: false, message: safeErrorMessage(err) };
+    }
+    if (!presence.ok) return { ok: false, code: 'authorize_failed', message: presence.message };
+  }
+  authorizeInFlight = true;
   try {
     const tokens = await authorize(config);
     await setOAuthTokens(serviceId, tokens);
     return { ok: true, data: { scope: tokens.scope, expiresAt: tokens.expiresAt } };
   } catch (err) {
     return { ok: false, code: 'authorize_failed', message: safeErrorMessage(err) };
+  } finally {
+    authorizeInFlight = false;
   }
 });

@@ -41,10 +41,10 @@ describe('jsonForScript — データを <script> へ埋める', () => {
   });
 
   it('U+2028 / U+2029 を退避する (古いパーサで JS 文字列に生で置けない)', () => {
-    const out = jsonForScript('a b c');
-    expect(out).not.toContain(' ');
-    expect(out).not.toContain(' ');
-    expect(JSON.parse(out)).toBe('a b c');
+    const out = jsonForScript('a\u2028b\u2029c');
+    expect(out).not.toContain('\u2028');
+    expect(out).not.toContain('\u2029');
+    expect(JSON.parse(out)).toBe('a\u2028b\u2029c');
   });
 });
 

@@ -21,11 +21,11 @@
  */
 
 import { readStateFile } from '../stateFile';
-import { clampToCeiling, countChars } from '../../shared/inputCeiling';
+import { countChars } from '../../shared/inputCeiling';
 import { app } from 'electron';
 import {
   MAX_ANALYSES,
-  MAX_ANALYSIS_EXCERPT_CHARS,
+  analysisExcerpt,
   MAX_ANALYZE_TEXT_CHARS,
   MAX_MOODS,
   MAX_MOOD_NOTE_CHARS,
@@ -48,6 +48,7 @@ import { calendarDateMessage, isCalendarDate } from '../../shared/isoDate';
 import { localIsoDate } from '../../shared/localDate';
 import { asRecord, isAnalysisEntry, isMoodEntry, readStoredList } from '../../shared/emotionsShape';
 import type { ActionData } from '../../shared/actionData';
+import { createWriteChain } from '../writeChain';
 
 
 const EMOTION_KEYS = ['joy', 'sadness', 'anger', 'fear', 'surprise', 'disgust'] as const;
@@ -142,6 +143,9 @@ export const EMOTIONS_UNREADABLE_NO_KEYCHAIN =
   '気分の記録は OS のキーチェーンで封緘されていますが、この環境ではキーチェーンが使えないため読めません。「履歴を消去」で作り直せます。';
 export const EMOTIONS_UNREADABLE_CORRUPT =
   '保存された気分の記録を復号できません (値が壊れているか、保存時と別の鍵が使われています)。「履歴を消去」で作り直せます。';
+/** 読めないファイルへ部分消去を求めたときの断り (ファイルは変えない · threat: T-028)。 */
+export const EMOTIONS_CLEAR_UNREADABLE_NEEDS_ALL =
+  '保存された記録が読めないため、気分と解析を別々には消せません。すべて消す (kind: "all") ときだけ、読めないファイルを作り直せます。';
 
 /**
  * 保存形 → 中身。封緘済み (`{ v: 2, sealed }`) は開けてから、2026-09-09 までの平文はそのまま読む
@@ -196,7 +200,10 @@ function todayLocal(): string {
   return localIsoDate();
 }
 
-async function logMood(ctx: ActionContext): Promise<ActionData<'emotions/log-mood'>> {
+/** 保存ファイルへの「読む → 直す → 書く」を直列にする鎖 (T-078)。 */
+const emotionsWrites = createWriteChain();
+
+async function logMoodUnchained(ctx: ActionContext): Promise<ActionData<'emotions/log-mood'>> {
   void ctx; // signature parity with other actions; no remote call needed
   const { date, score, note } = ctx.payload as unknown as LogMoodPayload;
   const finalScore = Number(score);
@@ -354,16 +361,19 @@ async function analyzeText(ctx: ActionContext): Promise<ActionData<'emotions/ana
   const entry: AnalysisEntry = {
     id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
     timestamp: Date.now(),
-    excerpt: (source ? `[${source}] ` : '') + clampToCeiling(text, MAX_ANALYSIS_EXCERPT_CHARS),
+    excerpt: analysisExcerpt(source, text),
     ...normalized,
   };
 
-  const store = await readStore({ forWrite: true });
-  store.analyses.unshift(entry);
-  // 上と同じ理由 — `slice(0, MAX)` は短い配列に対しては恒等。
-  store.analyses = store.analyses.slice(0, MAX_ANALYSES);
-  await writeStore(store);
-  return entry;
+  // 読む → 直す → 書く を鎖の中で (T-078)。外で読むと、同時の記録・解析・消去が互いの変更を消す。
+  return emotionsWrites(async () => {
+    const store = await readStore({ forWrite: true });
+    store.analyses.unshift(entry);
+    // 上と同じ理由 — `slice(0, MAX)` は短い配列に対しては恒等。
+    store.analyses = store.analyses.slice(0, MAX_ANALYSES);
+    await writeStore(store);
+    return entry;
+  });
 }
 
 /**
@@ -376,13 +386,20 @@ interface ClearHistoryPayload {
   kind?: 'moods' | 'analyses' | 'all';
 }
 
-async function clearHistory(ctx: ActionContext): Promise<ActionData<'emotions/clear-history'>> {
+async function clearHistoryUnchained(ctx: ActionContext): Promise<ActionData<'emotions/clear-history'>> {
   const { kind } = ctx.payload as unknown as ClearHistoryPayload;
   // 読めない記録 (鍵違い・壊れた封緘) も消せる —— ここが唯一の出口なので、読めないことで塞がない。
+  // ただし**全消去 (`all`) だけ**。ファイルは気分と解析が 1 つの封緘に入っており、読めないとき
+  // 部分だけ消す (`moods` / 未指定) と、消さないはずの解析まで空で書き戻して黙って失う
+  // (threat: T-028 · パス 518)。部分消去は断り、ファイルは 1 バイトも変えない。
+  // 部分消去は `forWrite: true` で読む (threat: T-097 · パス 525)。ファイル全体は読めても**一部の行が形の検査で
+  // 落ちる**ときは、部分だけ消して書き戻すと、落ちた行 (消すよう頼んでいない) まで黙って失われた
+  // (実測: 気分だけ消すと、形が合わない解析の行が消えた)。落ちた行が在れば T-028 と同じ断りにする。
   let store: EmotionsStore;
   try {
-    store = await readStore();
+    store = await readStore({ forWrite: kind !== 'all' });
   } catch {
+    if (kind !== 'all') throw new Error(EMOTIONS_CLEAR_UNREADABLE_NEEDS_ALL);
     store = { moods: [], analyses: [] };
   }
   const before = { moods: store.moods.length, analyses: store.analyses.length };
@@ -390,6 +407,17 @@ async function clearHistory(ctx: ActionContext): Promise<ActionData<'emotions/cl
   if (kind === 'analyses' || kind === 'all') store.analyses = [];
   await writeStore(store);
   return before;
+}
+
+// 気分の記録と消去は「読む → 直す → 書く」なので鎖に通す (T-078 —— 解析は保存の直前だけを鎖に入れる:
+// 送っている間の待ちまで鎖に入れると、API が遅い間ずっと他の保存が止まる)。
+// ACTIONS には素の関数名を置く (invokeDataTypes の走査が `'鍵': 関数名` の形を読むため)。
+async function logMood(ctx: ActionContext): Promise<ActionData<'emotions/log-mood'>> {
+  return emotionsWrites(() => logMoodUnchained(ctx));
+}
+
+async function clearHistory(ctx: ActionContext): Promise<ActionData<'emotions/clear-history'>> {
+  return emotionsWrites(() => clearHistoryUnchained(ctx));
 }
 
 export const ACTIONS: ActionMap = {

@@ -9,6 +9,7 @@ import { localIsoDate } from '../../shared/localDate';
 import { CANVA_FOLDER_FIELDS } from '../../shared/writeFieldLimits';
 import type { ActionData } from '../../shared/actionData';
 import { ProxyRequiredNote } from '../components/ProxyRequiredNote';
+import { externalTextOnOneLine } from '../data/assistantMarkdown';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -57,7 +58,7 @@ export function CanvaPage() {
       setResult({ kind: 'ok', message: `作成: ${res.data.name} (${res.data.id})` });
       setName('');
     } else {
-      setResult({ kind: 'error', message: res.message });
+      setResult({ kind: 'error', message: externalTextOnOneLine(res.message) });
     }
   };
 

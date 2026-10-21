@@ -2,7 +2,7 @@
  * `main/atRest.ts` の単体検査 (パス 133)。パス 132 は感情ログ経由でしか測っていなかった。
  * 人材育成・チームレーダーも同じ口を通るので、口そのものをここで留める。
  */
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { resetSafeStorageState, safeStorageState } from './safeStorageMock';
 
 vi.mock('electron', async () => (await import('./safeStorageMock')).electronSafeStorageMock());
@@ -81,5 +81,37 @@ describe('atRest — 文書の封筒', () => {
     expect(atRestUnreadableReason('undecryptable')).toBe(
       '封緘を復号できません (値が壊れているか、保存時と別の鍵が使われています)',
     );
+  });
+});
+
+/*
+ * threat: T-041 (パス 520)。Linux の `basic_text` は `isEncryptionAvailable()` が true のまま
+ * ハードコードされた鍵で包む。**書く側と名乗る側**は `plain:` / `obfuscated` へ倒し、
+ * **読む側**は今までどおり開ける (basic_text で包んだ既存の値を消して見せない)。
+ */
+describe('Linux の basic_text は封緘を名乗らない (threat: T-041)', () => {
+  const realPlatform = process.platform;
+  beforeEach(() => Object.defineProperty(process, 'platform', { value: 'linux', configurable: true }));
+  afterEach(() => Object.defineProperty(process, 'platform', { value: realPlatform, configurable: true }));
+
+  it('★ basic_text では sealAtRest が plain: へ倒れ、atRestMechanism は obfuscated (threat: T-041)', () => {
+    safeStorageState.backend = 'basic_text';
+    expect(safeStorageState.encryptionAvailable).toBe(true); // 前提: API は「使える」と答える
+    expect(sealAtRest('x')).toMatch(/^plain:/);
+    expect(atRestMechanism()).toBe('obfuscated');
+    expect(JSON.parse(sealJsonDocument('{"a":1}')).sealed).toMatch(/^plain:/);
+  });
+
+  it('対照: gnome_libsecret では封緘し os-keychain を名乗る', () => {
+    safeStorageState.backend = 'gnome_libsecret';
+    expect(sealAtRest('x')).not.toMatch(/^plain:/);
+    expect(atRestMechanism()).toBe('os-keychain');
+  });
+
+  it('読む側は backend を見ない —— basic_text で包んだ既存の値は basic_text で開ける', () => {
+    safeStorageState.backend = 'gnome_libsecret';
+    const sealed = sealAtRest('secret');
+    safeStorageState.backend = 'basic_text';
+    expect(openAtRest(sealed)).toEqual({ ok: true, text: 'secret' });
   });
 });

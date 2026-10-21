@@ -14,6 +14,7 @@ import {
   probeOllama,
   REQUEST_TIMEOUT_MS,
   setupCommands,
+  shellSafeOrigin,
 } from '../ollamaWeb';
 import {
   DEFAULT_SETUP_MODEL,
@@ -2083,5 +2084,45 @@ describe('モデル一覧が取れなくても助言は返る', () => {
     const r = await chatOllama(base, f, '');
     expect(r.ok).toBe(false);
     expect(r.ok === false && r.kind).toBe('model-not-found');
+  });
+});
+
+/*
+ * 案内コマンドへ埋める origin (2026-10-16 · パス 526 · threat: T-103)。`location.origin` の host は
+ * `$ ( ) { } , ; " \`` を許すので、二重引用符の中へそのまま埋めて「コピー」させると、貼った端末で
+ * コマンド置換が走った (実測: `https://x$({touch,pwned}).example.com` で bash が `pwned` を作った)。
+ */
+describe('案内コマンドの origin はシェルに貼ってよい形だけ (threat: T-103)', () => {
+  const EVIL = [
+    'https://x$({touch,pwned}).example.com',
+    'https://x`id`.example.com',
+    'https://a";rm -rf ~;".example.com',
+    'https://a.example.com";id;"',
+    "https://a'b.example.com",
+    'https://a b.example.com',
+    'https://a\nb.example.com',
+    'https://a.example.com/path',
+    'ftp://a.example.com',
+    'x";id;"https://ok.example.com',
+    'pwn https://ok.example.com:8080',
+  ];
+
+  it.each(EVIL)('★ %s は * に倒す', (origin) => {
+    expect(shellSafeOrigin(origin)).toBe('*');
+  });
+
+  it.each(EVIL)('★ %s は 2 つの手順のどの出力にも載らない', (origin) => {
+    const all = [...setupCommands(origin).map((c) => c.command), ...originsSetupSteps(origin).map((c) => c.command)].join('\n');
+    expect(all).not.toContain('pwned');
+    expect(all).not.toContain('$(');
+    expect(all).not.toContain('`id`');
+    expect(all).not.toContain('rm -rf');
+  });
+
+  it('★ 対照: 普通の origin・ポート付き・localhost は今までどおり埋め込む', () => {
+    for (const o of ['https://hiroto1977.github.io', 'http://localhost:5173', 'https://claude.ai', 'http://127.0.0.1:8080']) {
+      expect(shellSafeOrigin(o)).toBe(o);
+      expect(originsSetupSteps(o)[0]?.command).toContain(o);
+    }
   });
 });

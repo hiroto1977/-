@@ -49,17 +49,20 @@ function headerValue(message: GmailMessage, name: string): unknown {
   return '';
 }
 
+const LIST_LIMIT = 10;
+
 export async function fetchGmailSnapshot(ctx: FetchContext): Promise<GmailSnapshot> {
   const fetchCtx = { fetch: ctx.fetch, serviceId: 'gmail' };
   const headers = { Authorization: `Bearer ${ctx.token}` };
 
   const list = await jsonFetch<GmailListResponse>(
-    'https://gmail.googleapis.com/gmail/v1/users/me/messages?q=in:inbox&maxResults=10',
+    `https://gmail.googleapis.com/gmail/v1/users/me/messages?q=in:inbox&maxResults=${LIST_LIMIT}`,
     { headers },
     fetchCtx,
   );
 
-  const ids = objectRows<{ id: string }>(list.messages).map((m) => m.id);
+  // 頼んだのは maxResults=10 —— 相手が超えて返しても詳細の要求は 10 本まで (パス 527)。
+  const ids = objectRows<{ id: string }>(list.messages).slice(0, LIST_LIMIT).map((m) => m.id);
   const messages = await Promise.all(
     ids.map((id) =>
       jsonFetch<GmailMessage>(

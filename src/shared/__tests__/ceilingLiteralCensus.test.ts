@@ -11,7 +11,7 @@
  * | `TeamRadarPage.updateNote` | `text.slice(0, 200)` | `MAX_MEMBER_NOTE_CHARS` (同じファイルが import 済み) |
  * | `teamRadarState.readStoredTeamRadar` | `slice(0, 64)` / `slice(0, 32)` | `MAX_DEPARTMENT_CHARS` / `MAX_EVALUATED_AT_CHARS` (**同じモジュールの中**) |
  * | `main/clients/talent.ts` + `web-shim.ts` | どちらも `slice(0, 64)` | 定数が**無かった** → `MAX_LEADER_CANDIDATE_CHARS` を新設 |
- * | `main/clients/emotions.ts` + `emotionsWeb.ts` | どちらも `slice(0, 80)` | 同上 → `MAX_ANALYSIS_EXCERPT_CHARS` |
+ * | `main/clients/emotions.ts` + `emotionsWeb.ts` | どちらも `slice(0, 80)` | 同上 → `MAX_ANALYSIS_EXCERPT_CHARS` (パス 519 からは `analysisExcerpt` 経由) |
  *
  * `teamRadarState` のは**同じモジュールの中で同じ天井を 2 通りに書いていた**のが厄介:
  * 検証 (`validateMembers` ほか) は定数で**断り**、読み出しは literal で**切る**。
@@ -136,16 +136,21 @@ describe('天井の写し — 切る所も数える (パス 174)', () => {
   });
 
   it('★ 両ビルドが写していた 2 つの天井は、いま共有の定数を読む', () => {
-    const pairs: readonly (readonly [string, string, string])[] = [
-      ['MAX_LEADER_CANDIDATE_CHARS', 'main/clients/talent.ts', 'renderer/web-shim.ts'],
-      ['MAX_ANALYSIS_EXCERPT_CHARS', 'main/clients/emotions.ts', 'renderer/data/emotionsWeb.ts'],
+    // 4 つ目は「両ビルドが実際に読む綴り」。emotions は 2026-10-14 (パス 519 · T-037) から
+    // 定数そのものではなく、それを読む共有の関数 `analysisExcerpt` を通る (抜粋の組み立てが
+    // 1 つになったので、定数を読むのは shared だけ)。読む側の綴りが変わっても天井は 1 つのまま。
+    const pairs: readonly (readonly [string, string, string, string])[] = [
+      ['MAX_LEADER_CANDIDATE_CHARS', 'main/clients/talent.ts', 'renderer/web-shim.ts', 'MAX_LEADER_CANDIDATE_CHARS'],
+      ['MAX_ANALYSIS_EXCERPT_CHARS', 'main/clients/emotions.ts', 'renderer/data/emotionsWeb.ts', 'analysisExcerpt('],
     ];
-    for (const [name, a, b] of pairs) {
+    for (const [name, a, b, reads] of pairs) {
       expect(ceilings.map((c) => c.name), `${name} が台帳に無い`).toContain(name);
       for (const f of [a, b]) {
-        expect(readOriginalSource(path.join(SRC, f)), `${f} が ${name} を読んでいない`).toContain(name);
+        expect(readOriginalSource(path.join(SRC, f)), `${f} が ${reads} を読んでいない`).toContain(reads);
       }
     }
+    // 共有の関数は定数を読む (関数へ寄せたことで定数が死んでいない)。
+    expect(readOriginalSource(path.join(SRC, 'shared/emotionsLimits.ts'))).toMatch(/analysisExcerpt[\s\S]*MAX_ANALYSIS_EXCERPT_CHARS/);
   });
 
   it('★ 対照: コメントと文字列の中の数は数えない', () => {

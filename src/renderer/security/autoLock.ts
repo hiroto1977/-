@@ -150,6 +150,14 @@ export function startAutoLock(opts: AutoLockOptions, deps: AutoLockDeps = {}): A
   }
 
   function onActivity(): void {
+    // 時計が自動ロックの時間を超えて進んでいたら、タイマーの発火を待たずにその場でロックする
+    // (パス 524 · T-080)。スリープ・サスペンド・背景のタイマー間引きでは、タイマーが遅れている間に
+    // 最初の操作が届くと、直前の「再設定」が期限切れの金庫を延命させた (実測: 8 時間後の
+    // mousemove 1 回で onLock 0 回)。
+    if (now() - lastActivity >= idleMs) {
+      lockAndDispose();
+      return;
+    }
     lastActivity = now();
     scheduleIdle();
   }
@@ -161,6 +169,12 @@ export function startAutoLock(opts: AutoLockOptions, deps: AutoLockDeps = {}): A
       hiddenSince = now();
       hiddenTimer = setTimeoutFn(lockAndDispose, hiddenMs);
     } else {
+      // 隠れていた時間が上限を超えていたら、タイマーを待たずにロックする (T-080)。
+      const wasHiddenFor = hiddenSince === null ? 0 : now() - hiddenSince;
+      if (wasHiddenFor >= hiddenMs) {
+        lockAndDispose();
+        return;
+      }
       hiddenSince = null;
       // Stryker disable next-line ConditionalExpression,EqualityOperator: null を渡しても clearTimeout は無害なので、この番人の有無で観測差が出ない (等価変異)。無駄な呼び出しを避けるため残す。
       if (hiddenTimer !== null) {

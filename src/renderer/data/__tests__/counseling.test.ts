@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   detectCrisis,
   detectHarmToOthers,
+  foldForMarkerMatch,
   detectDestructiveUrge,
   classifyTone,
   counsel,
@@ -283,6 +284,97 @@ describe('連続して落ち込んでいるときの声かけ', () => {
   });
 });
 
+/**
+ * 見えない字・結合記号・仮名の綴りで危機語が素通りしない (2026-10-15 · パス 522 ·
+ * threat: T-052)。直す前は `normalize('NFKC')` だけで、下の全形が false だった
+ * (実測)。この門は相談窓口を出すかどうかを決める唯一の判定である。
+ */
+describe('detectCrisis — 見えない字と綴りの揺れ (threat: T-052)', () => {
+  it.each([
+    ['ZWSP', '\u6B7B\u306B\u200B\u305F\u3044'],
+    ['ZWJ', '\u6B7B\u306B\u200D\u305F\u3044'],
+    ['ZWNJ', '\u6B7B\u306B\u200C\u305F\u3044'],
+    ['SHY', '\u6B7B\u306B\u00AD\u305F\u3044'],
+    ['WJ', '\u6B7B\u306B\u2060\u305F\u3044'],
+    ['BOM', '\u6B7B\u306B\uFEFF\u305F\u3044'],
+    ['RLM', '\u6B7B\u306B\u200F\u305F\u3044'],
+    ['VS16', '\u6B7B\uFE0F\u306B\u305F\u3044'],
+    ['異体字セレクタ', '\u6B7B\u{E0100}\u306B\u305F\u3044'],
+    ['結合濁点', '\u81EA\u3099\u6BBA'],
+    ['カタカナ', 'シニタイ'],
+    ['ひらがな', 'しにたい'],
+    ['半角カナ', '\uFF98\uFF7D\uFF76'],
+    ['カタカナのマーカー', 'リスカ'],
+  ])('★ %s を挟んでも／で書いても危機と判定する (threat: T-052)', (_name, text) => {
+    expect(detectCrisis(text)).toBe(true);
+  });
+
+  it('★ 他害・破壊の判定も同じ畳み込みを通る', () => {
+    expect(detectHarmToOthers('\u6BBA\u3057\u200B\u305F\u3044')).toBe(true);
+    expect(detectDestructiveUrge('\u58CA\u3057\u200B\u305F\u3044')).toBe(true);
+  });
+
+  it('★ 対照: 畳み込みは無関係な文を危機にしない (綴りの揺れだけを吸う)', () => {
+    expect(detectCrisis('仕事が\u200B忙しくて疲れた')).toBe(false);
+    expect(detectCrisis('カタカナノブンショウ')).toBe(false);
+    expect(detectCrisis('ひらがなのぶんしょう')).toBe(false);
+  });
+
+  it('★ マーカーの側も畳む (カタカナのマーカーに対し、ひらがなの入力が当たる)', () => {
+    expect(detectCrisis('りすとかっと')).toBe(true);
+  });
+});
+
+/**
+ * 語の途中の空白・区切り・点字空白と、活用形・かな書き (2026-10-16 · パス 524 ·
+ * threat: T-073)。T-052 は書式制御と結合記号だけを落としたので、空白 1 つ・中点 1 つ・
+ * 「死にたくなる」のような活用形で危機語を素通りさせられた (実測 21 形中 20 形が false)。
+ */
+describe('detectCrisis / detectHarmToOthers — 間隔・区切りと活用形 (threat: T-073)', () => {
+  it.each([
+    ['半角空白', '\u6B7B \u306B \u305F \u3044'],
+    ['全角空白', '\u6B7B\u306B\u3000\u305F\u3044'],
+    ['中点', '\u6B7B\u30FB\u306B\u305F\u3044'],
+    ['改行', '\u6B7B\u306B\n\u305F\u3044'],
+    ['タブ', '\u6B7B\u306B\t\u305F\u3044'],
+    ['ハングル空白 U+3164', '\u6B7B\u306B\u3164\u305F\u3044'],
+    ['点字空白 U+2800', '\u6B7B\u306B\u2800\u305F\u3044'],
+    ['半角ハングル空白 U+FFA0', '\u6B7B\u306B\uFFA0\u305F\u3044'],
+    ['絵文字', '\u6B7B\u{1F622}\u306B\u305F\u3044'],
+    ['記号', '\u6B7B|\u306B~\u305F\u3044'],
+    ['空白入りの自殺', '\u81EA \u6BBA'],
+    ['活用: 死にたくなる', '\u6B7B\u306B\u305F\u304F\u306A\u308B'],
+    ['活用: 死にたくて', '\u6B7B\u306B\u305F\u304F\u3066'],
+    ['活用: 死にたかった', '\u6B7B\u306B\u305F\u304B\u3063\u305F'],
+    ['活用: しにたくて', '\u3057\u306B\u305F\u304F\u3066'],
+    ['活用: 消えたくなる', '\u6D88\u3048\u305F\u304F\u306A\u308B'],
+    ['首吊り', '\u9996\u540A\u308A'],
+    ['手首を切った', '\u624B\u9996\u3092\u5207\u3063\u305F'],
+    ['死んでやる', '\u6B7B\u3093\u3067\u3084\u308B'],
+    ['死ぬしかない', '\u6B7B\u306C\u3057\u304B\u306A\u3044'],
+  ])('★ %s でも危機と判定する (threat: T-073)', (_name, text) => {
+    expect(detectCrisis(text)).toBe(true);
+  });
+
+  it.each([
+    ['かな書き', '\u3053\u308D\u3057\u305F\u3044'],
+    ['殺してやる', '\u6BBA\u3057\u3066\u3084\u308B'],
+    ['ぶっ殺す', '\u3076\u3063\u6BBA\u3059'],
+    ['あいつを殺す', '\u3042\u3044\u3064\u3092\u6BBA\u3059'],
+    ['殺すぞ (空白入り)', '\u6BBA \u3059 \u305E'],
+  ])('★ 他害: %s も判定する (threat: T-073)', (_name, text) => {
+    expect(detectHarmToOthers(text)).toBe(true);
+  });
+
+  it('★ 対照: 否定形・日常語は危機にしない (畳みすぎで誤検知を増やさない)', () => {
+    expect(detectCrisis('\u6B7B\u306B\u305F\u304F\u306A\u3044')).toBe(false);
+    expect(detectCrisis('\u6B7B \u306B \u305F \u304F \u306A \u3044')).toBe(false);
+    expect(detectCrisis('\u4ECA\u65E5\u306F\u5929\u6C17\u304C\u3044\u3044')).toBe(false);
+    expect(detectHarmToOthers('\u606F\u3092\u6BBA\u3057\u3066\u5F85\u3064')).toBe(false);
+    expect(detectHarmToOthers('\u6642\u9593\u3092\u6BBA\u3059')).toBe(false);
+  });
+});
+
 /*
  * 非空の床 (2026-08-22)。危機検知の語彙はどれも「全語について〜」の形で
  * 検査しているので、配列が空になると全部そのまま通る。人命に関わる経路なので、
@@ -295,5 +387,133 @@ describe('危機検知の語彙が空でないこと', () => {
     ['DESTRUCTIVE_MARKERS', DESTRUCTIVE_MARKERS],
   ])('%s は 1 語以上ある', (_name, list) => {
     expect(list.length).toBeGreaterThan(0);
+  });
+});
+
+/**
+ * 明示的な希死念慮の言い回し (2026-10-16 · パス 525 · threat: T-089)。語彙は「消えたい」
+ * 「死にたい」の活用形に偏っており、「消えてしまいたい」「命を絶ちたい」「生きている意味がない」
+ * ほか 22 形が detectCrisis=false のまま外部のモデルへ届いた (監査役の指摘を自分で測った)。
+ */
+describe('detectCrisis — 明示的な言い回し (threat: T-089)', () => {
+  it.each([
+    '消えてしまいたい',
+    '消えてなくなりたい',
+    'いなくなってしまいたい',
+    '命を絶ちたい',
+    '自ら命を絶つ',
+    '生きている意味がない',
+    '生きてる意味ない',
+    '生きる価値がない',
+    '死ぬつもりです',
+    '死ぬことにした',
+    '死んだほうがマシだ',
+    'もう死にます',
+    '首をくくる',
+    '首を括る',
+    'ビルから飛び降りる',
+    '屋上から飛び降りよう',
+    '電車に飛び込む',
+    '睡眠薬を大量に飲んだ',
+    'オーバードーズした',
+    '人生を終わらせたい',
+    '私を殺して',
+    '腕を切った',
+    'I want to die',
+    'Suicide',
+    'I will kill myself',
+  ])('★ %s を危機と判定する (threat: T-089)', (text) => {
+    expect(detectCrisis(text)).toBe(true);
+  });
+
+  it('★ 対照: 日常語は危機にしない (単独の「死にます」「死ぬほど」「飛び降りる」は外している)', () => {
+    for (const t of ['疲れて死にますよ', '今日は死ぬほど忙しい', 'ジェットコースターから飛び降りる前に確認', '死にたくない', 'お疲れさまです']) {
+      expect(detectCrisis(t), t).toBe(false);
+    }
+  });
+});
+
+/*
+ * 既存の言い回しのひらがな版・口語・否定形・準備と、他害の双子 (2026-10-16 · パス 526 · threat: T-099)。
+ * T-052 / T-073 / T-089 は漢字の言い回しの活用形を足したが、「しんでしまいたい」「死にたすぎる」
+ * 「生きたくない」「遺書を書いた」「殺してやりたい」ほか 11 形が detectCrisis / detectHarmToOthers=false の
+ * まま、AI アシスタントでは相談窓口なしで外部のモデルへ届いた (実物の AssistantPage で送信を数えた)。
+ */
+describe('detectCrisis / detectHarmToOthers — ひらがな・口語・否定形・他害の双子 (threat: T-099)', () => {
+  it.each([
+    'しんでしまいたい',
+    'しんじゃいたい',
+    '死んじゃおうかな',
+    'しのうかな',
+    'きえてしまいたい',
+    'きえてなくなりたい',
+    '死にたすぎる',
+    '死にたみ',
+    '死にてぇ',
+    '死にてえ',
+    '消えてぇ',
+    '死にたぃ',
+    '生きたくない',
+    '生きていたくありません',
+    '生きている価値がない',
+    '生きてる価値ない',
+    '楽に死ねる方法を教えて',
+    '苦しまずに死にたい',
+    '遺書を書いた',
+  ])('★ %s を危機と判定する (threat: T-099)', (text) => {
+    expect(detectCrisis(text), text).toBe(true);
+  });
+
+  it.each(['殺してやりたい', '殺しちゃいたい', '殺してぇ', 'ころしてぇ', '刺してやる', 'ぶち殺す'])(
+    '★ %s を他害と判定する (threat: T-099)',
+    (text) => {
+      expect(detectHarmToOthers(text), text).toBe(true);
+    },
+  );
+
+  it('★ 小書きの母音は大きい仮名へ畳む (語を変えない)', () => {
+    expect(foldForMarkerMatch('ぁぃぅぇぉ')).toBe('あいうえお');
+    expect(foldForMarkerMatch('死にたぃ')).toBe(foldForMarkerMatch('死にたい'));
+  });
+
+  it('★ 全角・半角カナは NFKC で畳んでから照合する (パス 526 · 変異検査の穴)', () => {
+    expect(foldForMarkerMatch('ｼﾆﾀｲ')).toBe(foldForMarkerMatch('しにたい'));
+    expect(foldForMarkerMatch('ＳＵＩＣＩＤＥ')).toBe('suicide');
+  });
+
+  it('★ 対照: 日常語は危機にも他害にもしない', () => {
+    for (const t of [
+      '学校にいきたくない',
+      '生きている',
+      '生きた証を残す',
+      '売上が死にかけている',
+      '遺言書の書き方を教えて',
+      '遺書という小説を読んだ',
+      '楽しく生きたい',
+      '仕事が忙しくて疲れた',
+      'このバグ、もう限界',
+      '息を殺して待つ',
+      '今日は死ぬほど忙しい',
+      '時間を殺す',
+    ]) {
+      expect(detectCrisis(t), t).toBe(false);
+      expect(detectHarmToOthers(t), t).toBe(false);
+    }
+  });
+});
+
+/**
+ * 危機語の間に挟む「見えない・何も足さない」字の一般カテゴリ (2026-10-20 · パス 543 ·
+ * threat: T-136)。FILLER_CHARS が Cf/Mn/Z/Cc だけだったので、Me・Mc・Co・Cn の 1 字で
+ * 相談窓口の判定を素通りさせられた。
+ */
+describe('detectCrisis — 挟まった字の一般カテゴリ (threat: T-136)', () => {
+  it.each([
+    ['囲み記号 U+20DD (Me)', '\u6B7B\u20DD\u306B\u305F\u3044'],
+    ['結合の間隔字 U+0903 (Mc)', '\u6B7B\u0903\u306B\u305F\u3044'],
+    ['私用領域 U+E000 (Co)', '\u6B7B\uE000\u306B\u305F\u3044'],
+    ['未割当 U+FFFF (Cn)', '\u6B7B\uFFFF\u306B\u305F\u3044'],
+  ])('★ %s を挟んでも危機と判定する (threat: T-136)', (_name, text) => {
+    expect(detectCrisis(text)).toBe(true);
   });
 });

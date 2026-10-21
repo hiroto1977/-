@@ -124,13 +124,14 @@ jobs:
       chunks: ${{ steps.scope.outputs.chunks }}
       count: ${{ steps.scope.outputs.count }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5 (threat: T-057)
         with:
+          persist-credentials: false # threat: T-056
           # 変更ファイルの割り出しに 1 つ前のコミットが要る。
           fetch-depth: 2
 
       - name: Setup Node
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5 (threat: T-057)
         with:
           node-version: '22'
 
@@ -205,10 +206,12 @@ jobs:
       matrix:
         chunk: ${{ fromJson(needs.scope.outputs.chunks) }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5 (threat: T-057)
+        with:
+          persist-credentials: false # threat: T-056
 
       - name: Setup Node
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5 (threat: T-057)
         with:
           node-version: '22'
           cache: 'npm'
@@ -232,7 +235,7 @@ jobs:
           echo "この塊の対象: $TARGETS"
           rm -f .stryker-incremental.json reports/mutation/mutation.json
           RC=0
-          npx stryker run --mutate "$TARGETS" --dryRunTimeoutMinutes 40 --reporters clear-text,json,progress-append-only || RC=$?
+          npx stryker run stryker.config.json --mutate "$TARGETS" --dryRunTimeoutMinutes 40 --reporters clear-text,json,progress-append-only || RC=$?
           if [ "$RC" -ne 0 ]; then
             if [ -s reports/mutation/mutation.json ]; then
               echo "::warning::Stryker が終了コード $RC で終わりました (塊の点数が break 未満のときもこうなります)。報告は書けているので、合否は merge-full の全体の点数で決めます。"
@@ -243,7 +246,7 @@ jobs:
           fi
 
       - name: Save Stryker JSON report (この塊)
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5 (threat: T-057)
         if: always()
         with:
           name: mutation-report-full-chunk-${{ strategy.job-index }}
@@ -261,10 +264,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5 (threat: T-057)
+        with:
+          persist-credentials: false # threat: T-056
 
       - name: Setup Node
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5 (threat: T-057)
         with:
           node-version: '22'
 
@@ -272,7 +277,7 @@ jobs:
         run: node scripts/merge-mutation-reports.cjs --self-test
 
       - name: 塊の報告を集める
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5 (threat: T-057)
         # 0 件でもここでは落とさず、併合 script が「塊の報告が 0 件」を名指しして落とす。
         continue-on-error: true
         with:
@@ -292,7 +297,7 @@ jobs:
             --chunks-result "$CHUNKS_RESULT"
 
       - name: Save merged Stryker JSON report
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5 (threat: T-057)
         if: always() && hashFiles('reports/mutation/mutation.json') != ''
         with:
           name: mutation-report
@@ -337,10 +342,12 @@ jobs:
       matrix:
         chunk: ${{ fromJson(needs.scope.outputs.chunks) }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5 (threat: T-057)
+        with:
+          persist-credentials: false # threat: T-056
 
       - name: Setup Node
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5 (threat: T-057)
         with:
           node-version: '22'
           cache: 'npm'
@@ -361,10 +368,10 @@ jobs:
           rm -f .stryker-incremental.json
           # --dryRunTimeoutMinutes / --reporters は mutate-full と同じ理由 (初回検査は検査の
           # 増加とともに config の 20 分へ近づく・10 秒ごとの心拍で止まったのかを見分ける)。
-          npx stryker run --mutate "$TARGETS" --dryRunTimeoutMinutes 40 --reporters clear-text,json,progress-append-only
+          npx stryker run stryker.config.json --mutate "$TARGETS" --dryRunTimeoutMinutes 40 --reporters clear-text,json,progress-append-only
 
       - name: Save Stryker JSON report
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5 (threat: T-057)
         if: always()
         with:
           name: mutation-report-chunk-${{ strategy.job-index }}

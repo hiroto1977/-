@@ -122,8 +122,17 @@ export function redactSecrets(input: string): string {
       // 方式のあとの空白は `\s` (1 個) で足りる — 2 個目以降は値側が飲み込む。
       // `\s+` と書くと「1 個か 2 個以上か」で結果が変わらない = 確かめようの
       // ない指定になる。
+      // 入れ子の JSON に入って引用符が `\"` になった形 (パス 526 · T-101)。下の規則は引用符が 1 字であることを
+      // 要求するので、失敗応答の本文に「転送した要求」を文字列で入れて返す Worker では
+      // `{"received":"{\"headers\":{\"hibp-api-key\":\"…\"}}"}` の値が素通りした。
+      // 逃がしの深さは 1〜8 (二重の入れ子まで) に限る —— 上限が無いと逆風の入力で二乗になる。
       .replace(
-        /(["'])((?:[a-z0-9]+-)*(?:authorization|api-?key|proxy-auth))\1(\s*:\s*)\1(?:(Bearer|Basic)\s)?(?:\\.|(?!\1)[^\\])*\1/gi,
+        /(\\{1,8}["'])((?:[a-z0-9]+-)*(?:authorization|api-?key|proxy-auth))\1(\s*[:,]\s*)\1(?:(Bearer|Basic|Token|Bot|OAuth|Digest|Negotiate)\s)?[\s\S]*?\1/gi,
+        (_m, q: string, name: string, sep: string, scheme?: string) =>
+          hideValue(`${q}${name}${q}`, `${sep}${q}`, scheme) + q,
+      )
+      .replace(
+        /(["'])((?:[a-z0-9]+-)*(?:authorization|api-?key|proxy-auth))\1(\s*[:,]\s*)\1(?:(Bearer|Basic|Token|Bot|OAuth|Digest|Negotiate)\s)?(?:\\.|(?!\1)[^\\])*\1/gi,
         (_m, q: string, name: string, sep: string, scheme?: string) =>
           hideValue(`${q}${name}${q}`, `${sep}${q}`, scheme) + q,
       )
@@ -140,7 +149,7 @@ export function redactSecrets(input: string): string {
       // 出力が違うものは 0、漏れの有無も一致。**書いても効かない指定は、
       // 効いているように読める分だけ害がある** (変異検査でも生存し続ける)。
       .replace(
-        /\b(authorization|api-?key|proxy-auth)(\s*:\s*)(?:(Bearer|Basic)\s+)?\S+/gi,
+        /\b(authorization|api-?key|proxy-auth|shared-?secret|auth-token|subscription-key)(\s*:\s*)(?:(Bearer|Basic|Token|Bot|OAuth|Digest|Negotiate)\s+)?\S+/gi,
         (_m, name: string, sep: string, scheme?: string) => hideValue(name, sep, scheme),
       )
       // ヘッダ名が付いていない裸の `Bearer …` / `Basic …`。16 字以上に限る。
@@ -197,6 +206,10 @@ export function redactSecrets(input: string): string {
        * 2026-08-23 に「`sk-ant-…` を含む例外がそのまま renderer へ届いていた」
        * のを直したときに、**その事故の接頭辞だけを足して一般化しなかった**
        * 跡である。同じ事故が OpenAI の鍵で起きれば、今日でもそのまま漏れる。
+       * Cloudflare の接頭辞つきトークン `cfut_` (ユーザー) / `cfat_` (アカウント) /
+       * `cfk_` (Global API Key) を足した (パス 524 · T-075)。以前の注記は
+       * 「接頭辞が無い」と書いていたが、新しい発行物は 40 字 + チェックサムの接頭辞つき。
+       *
        * 実測して素通りを確認した形: `sk-proj-` / `sk-` / `sk_live_` /
        * `rk_live_` / `shpat_`。このアプリはどれも預かる
        * (OpenAI は 5 社の 1 つ、Stripe と Shopify はサービス一覧に在る)。
@@ -207,7 +220,45 @@ export function redactSecrets(input: string): string {
        * 伏字を通り抜けて表示される。
        */
       .replace(
-        /\b(sk-ant-|sk-proj-|ghp_|ghs_|ghu_|gho_|ghr_|github_pat_|xoxp-|xoxb-|xoxa-|secret_|ntn_|lin_api_|lin_oauth_|AIza|shpat_|shpss_|shpca_|sk_live_|sk_test_|rk_live_|rk_test_|whsec_)[A-Za-z0-9_-]{8,}/g,
+        /\b(sk-ant-|sk-proj-|ghp_|ghs_|ghu_|gho_|ghr_|github_pat_|xoxp-|xoxb-|xoxa-|secret_|ntn_|lin_api_|lin_oauth_|AIza|shpat_|shpss_|shpca_|sk_live_|sk_test_|rk_live_|rk_test_|whsec_|cfut_|cfat_|cfk_)[A-Za-z0-9_-]{8,}/g,
+        '$1[REDACTED]',
+      )
+      /*
+       * **Cursor の Admin API キー (`key_` + 16 進)。** (2026-10-13 · パス 516 · threat: T-021)
+       *
+       * `cursor` は `credentialUse.ts` で `fetch` (資格情報を預かる) で、
+       * `api/cursor.ts` が `Authorization: Bearer <token>` で送る。鍵の形は
+       * `types.test.ts` が `key_9f2c1a8e4b7d6c5f0a3e` を Cursor 風の TOKEN として
+       * 使っている (16 進) —— 発行元が分かる**接頭辞を持つ**形である。
+       *
+       * ところが `redactionCoverage.test.ts` の census は cursor を
+       * `header-only` に置き、標本を**実形でない** `'H'.repeat(40)` (接頭辞なし)
+       * にしていたので、「裸では伏せられなくて正しい」と主張して**穴を隠して
+       * いた**。実測 (直す前・実物の `redactSecrets`): `Bearer key_…` と
+       * `{"authorization":"Bearer key_…"}` は伏せるのに、JSON のエラー本文に
+       * **裸で**反射された `{"error":"Invalid API key: key_…"}` は素通りした。
+       * 乗っ取られた / 設定を誤った BYO proxy (`redact.ts` 冒頭が名指しする脅威)
+       * がこの形で反射すると、伏字を通り抜けて画面とバグ報告に出る
+       * (T-008 / パス 231 / 289 と同じ害 —— 発行元が分かる接頭辞を持つのに
+       * 裸で伏せていなかった)。
+       *
+       * **本体を 16 進に絞る** —— `key_` は `sk-ant-` / `ghp_` と違い散文に
+       * 現れる接頭辞 (`key_press_handler` / `primary_key_constraint`) なので、
+       * 上の `[A-Za-z0-9_-]` の一括規則に混ぜると散文を巻き込む。実物の鍵は
+       * 16 進なので `[0-9a-f]{16,}` に限れば、英単語の続く `key_` は当たらない
+       * (実測で `key_press_handler` ほか 9 形の散文が素通りすることを確認した)。
+       */
+      .replace(/\bkey_[0-9a-f]{16,}/g, 'key_[REDACTED]')
+      /*
+       * **預かる資格情報のうち、接頭辞を持つのに伏せていなかった形** (2026-10-16 · パス 525 · threat: T-095)。
+       * 実測 (裸で反射された値): OpenAI 互換の提供元の鍵 (`gsk_` Groq / `xai-` / `pplx-` / `hf_` /
+       * `nvapi-` / `fw_`・AI アシスタントの `compat` が預かる)・Slack の `xoxe-` `xoxc-` `xoxd-` `xoxs-` `xoxr-` と
+       * `xapp-`・Google の `GOCSPX-` (OAuth クライアントの秘密)・`npm_` が素通りした。
+       * **本体は 20 字以上に限る** —— `hf_` `fw_` `npm_` は識別子や散文に現れる (`hf_hub_download` は
+       * 本体 12 字)。実物の鍵は 24 字以上なので、短い散文は当たらない。
+       */
+      .replace(
+        /\b(gsk_|xai-|pplx-|hf_|nvapi-|fw_|GOCSPX-|xoxe-|xoxc-|xoxd-|xoxs-|xoxr-|xapp-|npm_)[A-Za-z0-9_%=+.-]{20,}/g,
         '$1[REDACTED]',
       )
       /*
@@ -276,9 +327,18 @@ export function redactSecrets(input: string): string {
        * 実在の OpenAI 鍵は 40 字を超える。
        */
       .replace(/\bsk-[A-Za-z0-9_-]{20,}/g, 'sk-[REDACTED]')
-      .replace(/\bya29\.[A-Za-z0-9_-]{10,}/g, 'ya29.[REDACTED]')
+      .replace(/\bya29\.(?:[a-z]\.)?[A-Za-z0-9_-]{10,}/g, 'ya29.[REDACTED]')
       // Atlassian API token (Jira/Confluence PAT) — always begins `ATATT`.
       .replace(/\bATATT[A-Za-z0-9_=.-]{16,}/g, 'ATATT[REDACTED]')
+      /*
+       * Discord の incoming webhook (2026-10-15 · パス 522 · threat: T-047) —— 秘密は
+       * **path** に在る (`https://discord.com/api/webhooks/<id>/<token>`)。ヘッダ名・JSON の
+       * 項目名・クエリ引数・接頭辞のどの規則にも当たらない運び手で、`shopify/sync-to-discord`
+       * が受け取る `webhookUrl` そのもの。相手が本文に URL を反射すれば画面へ届く
+       * (`postExpectOk` は本文を `redactForMessage` に通してから文へ載せる)。
+       * id は数字、token は 60 字超の英数 `_-` なので 16 字以上で当てる。
+       */
+      .replace(/\bdiscord(?:app)?\.com\/api\/webhooks\/\d+\/[A-Za-z0-9_-]{16,}/g, 'discord.com/api/webhooks/[REDACTED]')
       // The value sub-pattern `(?:[^"\\]|\\.)*` correctly skips over
       // JSON-escaped characters (`\"`, `\\`, etc.) so a token rendered
       // inside a nested JSON-in-JSON error response can't smuggle a
@@ -286,7 +346,7 @@ export function redactSecrets(input: string): string {
       // like `{"error_description":"Token \"ATATT3xFfGF0…\" rejected"}`
       // would only redact `Token \` and leave the secret in the rest.
       .replace(
-        /"(access_token|refresh_token|token|api_key|apikey|client_?secret|shared_?secret|password)"\s*:\s*"(?:[^"\\]|\\.)*"/gi,
+        /"(access[_-]?token|refresh[_-]?token|id[_-]?token|token|api_key|apikey|client_?secret|shared_?secret|password)"\s*:\s*"(?:[^"\\]|\\.)*"/gi,
         '"$1":"[REDACTED]"',
       )
       /*

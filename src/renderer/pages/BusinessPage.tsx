@@ -17,6 +17,7 @@ import type { ActionData } from '../../shared/actionData';
 import { DESKTOP_PATHS, exportDestinationNote } from '../../shared/buildDestinations';
 import { useBuildKind } from '../hooks/useBuildKind';
 import { isSubmitEnter } from '../keyIntent';
+import { externalTextOnOneLine } from '../data/assistantMarkdown';
 
 // 助言の戻り値の形は台帳 (`shared/actionData.ts` → `shared/businessAdvisor.ts`) を読む (パス 117)。
 // それまでここの写しは `categoryId: string` に広がっていた (本物は 10 個の合併型)。
@@ -717,7 +718,7 @@ export function BusinessPage() {
       if (r.ok) {
         setLastExport({ path: r.data.path, bytes: r.data.bytes, saved: exportSavedNote(r.data), warning: exportWarning(r.data) });
       } else {
-        setExportMsg('エクスポート失敗: ' + r.message);
+        setExportMsg('エクスポート失敗: ' + externalTextOnOneLine(r.message));
       }
     } catch (e) {
       setExportMsg('エクスポート失敗: ' + (e instanceof Error ? e.message : String(e)));
@@ -753,7 +754,7 @@ export function BusinessPage() {
       if (r.ok) {
         setAdvisorResult(r.data);
       } else {
-        setAdvisorError(r.message);
+        setAdvisorError(externalTextOnOneLine(r.message));
       }
     } catch (e) {
       setAdvisorError(e instanceof Error ? e.message : String(e));

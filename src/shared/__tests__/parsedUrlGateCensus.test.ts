@@ -60,6 +60,12 @@ const LEDGER: readonly Row[] = [
     why: 'discord.com に絞り、POST 先は u.href (パス 325 で生から変えた)' },
   { file: 'src/main/clients/shopify.ts', needle: 'new URL(instanceUrl)', kind: 'pin',
     why: '*.salesforce.com に絞り、要求 URL は base.origin から組む' },
+  { file: 'src/main/fileRequestGate.ts', needle: 'parsed = new URL(url)', kind: 'predicate',
+    why: '返すのは真偽だけ (dist/ の中の file: か) —— T-140。解析後の protocol / host / pathname で判定し、生の文字列は使わない' },
+  { file: 'src/main/userPresence.ts', needle: 'parsed = new URL(url);', kind: 'predicate',
+    why: '返すのは真偽だけ (呼び出し元が同梱 dist の file: か) —— T-147。解析後の protocol を見て、判定は T-140 の門 fileRequestAllowed に委ねる。生の文字列は返さない' },
+  { file: 'src/main/userPresence.ts', needle: 'new URL(String(devUrl)).origin', kind: 'predicate',
+    why: '返すのは真偽だけ (開発サーバの origin と一致するか) —— T-147。両側を解析した origin で比べる' },
   { file: 'src/main/main.ts', needle: 'new URL(url).origin', kind: 'value-gate',
     why: '窓の遷移の判定に使う origin —— 解析後の値そのもの' },
   { file: 'src/renderer/data/sourceVerification.ts', needle: 'parsed = new URL(raw);', kind: 'value-gate',
@@ -70,6 +76,8 @@ const LEDGER: readonly Row[] = [
     why: 'loopback の要求行を解くための再解析 (基準は定数)' },
   { file: 'src/renderer/data/chatbotOllama.ts', needle: 'const host = new URL(base).hostname;', kind: 'display',
     why: '検め済みの Ollama の基底 URL から、送り先として名乗るホストだけを取り出す (送り先そのものは parseOllamaEndpoint が決める・T-010)' },
+  { file: 'src/shared/ai/credentials.ts', needle: 'host = new URL(url as string).hostname;', kind: 'display',
+    why: '保存した Ollama の URL から、断りに名乗るホスト名だけを取り出す (ループバックは null)。送り先そのものは providers.ts の assertOllamaHostAllowed が決め、ここは通信しない (T-119)' },
   { file: 'src/renderer/network/proxy.ts', needle: 'parsed = new URL(targetUrl)', kind: 'predicate',
     why: '送り先が private / reserved かを判定するだけ' },
   { file: 'src/renderer/oauth/callbackPaste.ts', needle: 'parsed = new URL(trimmed)', kind: 'predicate',
@@ -104,6 +112,8 @@ const LEDGER: readonly Row[] = [
     why: '返すのは parsed.href' },
   { file: 'src/shared/scanTarget.ts', needle: 'parsed = new URL(url)', kind: 'value-gate',
     why: 'パス 325 で生の文字列から parsed.href へ変えた —— VirusTotal へ送るのは調べた物' },
+  { file: 'src/shared/scanTarget.ts', needle: 'isPrivateOrReservedTarget(new URL(`http://${h}/`))', kind: 'internal',
+    why: '「社内ホスト」の警告が privateTarget の判定を借りるための再解析 (T-076)。通信にも画面にも出ない' },
   { file: 'src/shared/scanTarget.ts', needle: 'const parsed = new URL(checked.url)', kind: 'internal',
     why: '関門を通った URL の危険 (userinfo / 秘密の引数) を読むための再解析' },
   { file: 'src/shared/updateCheck.ts', needle: 'parsed = new URL(raw)', kind: 'predicate',
@@ -215,7 +225,7 @@ describe('value-gate は解析後の値を返す (振る舞いで確かめる)',
    * (このリポジトリが繰り返し直してきた形)。行が増減したらここが鳴り、
    * 書き換えるときに「どの種類が増えたのか」を読むことになる。
    */
-  it('★ 種類ごとの行数は実測どおり (台帳 28 行が 29 か所を覆う)', () => {
+  it('★ 種類ごとの行数は実測どおり (台帳 33 行が 34 か所を覆う)', () => {
     const byKind = (k: Row['kind']): number => LEDGER.filter((r) => r.kind === k).length;
     expect({
       'value-gate': byKind('value-gate'),
@@ -223,10 +233,10 @@ describe('value-gate は解析後の値を返す (振る舞いで確かめる)',
       pin: byKind('pin'),
       internal: byKind('internal'),
       display: byKind('display'),
-    }).toEqual({ 'value-gate': 11, predicate: 6, pin: 4, internal: 4, display: 3 });
-    expect(LEDGER).toHaveLength(28);
+    }).toEqual({ 'value-gate': 11, predicate: 9, pin: 4, internal: 5, display: 4 });
+    expect(LEDGER).toHaveLength(33);
     // web-shim の同じ綴りの 2 行が 1 行の台帳に対応するので、か所は台帳より 1 多い。
-    expect(SITES).toHaveLength(29);
+    expect(SITES).toHaveLength(34);
     expect(VALUE_GATE_BEHAVIOR.length).toBeGreaterThanOrEqual(5);
   });
 });

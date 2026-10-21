@@ -26,6 +26,7 @@ const reporter = req('../../../scripts/dependency-audit-report.cjs') as {
     all: { name: string; severity: string; ghsa: string[] }[] | null;
     prod: { name: string; severity: string; ghsa: string[] }[] | null;
     floors: { package: string; atLeast: string; checkedOn: string; recorded: string[]; hits: string[]; status: string; detail: string }[] | null;
+    pins?: { file: string; line: number; repo: string; sha: string; tag: string | null; status: string; why: string }[] | null;
     generatedAt: string;
   }) => { actionable: number; markdown: string; summary: Record<string, number> };
   advisoriesOf: (report: unknown) => unknown;
@@ -56,6 +57,13 @@ describe('週次の依存監査は、予定 → スクリプト → 報告 → I
     expect(src).toContain("require('./audit-floors.cjs')");
     expect(src).toContain('probeFloors');
     expect(PKG.scripts['audit:floors']).toContain('scripts/audit-floors.cjs');
+  });
+
+  it('★ SHA 固定の実在確認 (audit:pinned-action-shas) と同じ実装を使う (パス 535 · threat: T-124)', () => {
+    const src = read('scripts/dependency-audit-report.cjs');
+    expect(src).toContain("require('./audit-pinned-action-shas.cjs')");
+    expect(src).toContain('pins: auditPins()');
+    expect(PKG.scripts['audit:pinned-action-shas']).toContain('scripts/audit-pinned-action-shas.cjs');
   });
 
   it('★ 毎日の予定と手動起動の両方を持つ (2026-10-11 · パス 509 で週次から毎日へ)', () => {
@@ -111,7 +119,9 @@ describe('報告の組み立て — 数え落としと「測れていないの�
     ...extra,
   }) as never;
   const adv = (name: string, severity: string) => ({ name, severity, ghsa: ['GHSA-test'] });
-  const run = (input: Parameters<typeof reporter.buildReport>[0]) => reporter.buildReport(input);
+  // pins は必須 (渡し忘れは「測っていない」になる)。既存の検査は固定に無関係なので空を渡す。
+  const run = (input: Parameters<typeof reporter.buildReport>[0]) => reporter.buildReport({ pins: [], ...input });
+  const pin = (status: string) => ({ file: 'w.yml', line: 3, repo: 'o/r', sha: 'a'.repeat(40), tag: 'v5', status, why: 'テスト' });
 
   it('★ 出荷される依存の勧告は重大度を問わず要対応 (文書が「prod 0 件」と言っている)', () => {
     expect(run({ all: [adv('p', 'low')], prod: [adv('p', 'low')], floors: [], generatedAt: at }).actionable).toBe(1);
@@ -145,6 +155,28 @@ describe('報告の組み立て — 数え落としと「測れていないの�
     expect(r.summary.lowFloors).toBe(1);
     expect(r.markdown).toContain('**低すぎます**');
     expect(r.markdown).toContain('`qs`');
+  });
+
+  it('★ 作り話の SHA 固定 (missing / no-tag) は要対応・古い固定 (moved) は報せるだけ (threat: T-124)', () => {
+    const base = { all: [], prod: [], floors: [] as never[], generatedAt: at };
+    expect(run({ ...base, pins: [pin('match'), pin('missing')] }).actionable).toBe(1);
+    expect(run({ ...base, pins: [pin('no-tag')] }).actionable).toBe(1);
+    const moved = run({ ...base, pins: [pin('moved'), pin('match')] });
+    expect(moved.actionable).toBe(0);
+    expect(moved.summary.movedPins).toBe(1);
+    expect(moved.markdown).toContain('⚠️');
+    const bad = run({ ...base, pins: [pin('missing')] });
+    expect(bad.summary.badPins).toBe(1);
+    expect(bad.markdown).toContain('w.yml:3');
+    expect(bad.markdown).toContain('❌');
+  });
+
+  it('★ 測れなかった SHA 固定を「健全」にしない (網が使えない・読めない・渡し忘れ)', () => {
+    const base = { all: [], prod: [], floors: [] as never[], generatedAt: at };
+    expect(run({ ...base, pins: [pin('unreachable'), pin('unreachable')] }).actionable).toBe(1);
+    expect(run({ ...base, pins: null }).actionable).toBe(1);
+    // undefined は `{ pins: [], ...input }` の既定を上書きして届くので「測っていない」になる。
+    expect(run({ ...base, pins: undefined }).actionable).toBe(1);
   });
 
   it('対照: 何も無ければ要対応 0 で、Issue は閉じる側になる', () => {

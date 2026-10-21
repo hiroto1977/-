@@ -144,7 +144,15 @@ const VERDICTS = {
     + '呼び出し側へ」: main は `createDraft` / shopify の `syncToGmail` が投げて IPC の `err()` へ、'
     + 'ブラウザ版は `createGmailDraft` が投げて `invoke` の `withFloor` へ。到達は '
     + 'shared/api/google.ts の `gmailDraftInit` 経由 (両ビルド + shopify) と re-export の 2 本',
-  'api/cloudflare':
+  'ai/credentials':
+    '対称 (実測・パス 529) —— 新しい `remoteEndpointHost` (保存した Ollama の URL が端末の外のホストなら '
+    + 'そのホスト名、ループバック・未設定・読めない URL は null) の読み手は `providerStatuses` の中の 1 か所だけで、'
+    + 'その `providerStatuses` を呼ぶのは main の assistant クライアントとブラウザ版 `web-shim.ts` の '
+    + '`assistant/providers` アクション。**同じ関数が同じ状態を返す**ので、「null のあとの動作」は '
+    + '画面側 (`assistantEgressRecipients`) の 1 か所が決め、両ビルドで割れない。'
+    + 'null は「この端末として扱う」と読む向きなので、判定不能 (読めない URL) を端末内と読む側に倒すが、'
+    + '読めない URL では接続先を組み立てられず送れないので、外へ出る道にはならない',
+    'api/cloudflare':
     '対称 (実測・2026-09-19 パス 321) —— 欄の判定 (`checkDnsRecord` / `checkPurge`)・本文・URL・'
     + '封筒 (`readCloudflareEnvelope`: `success !== true` を断る) を両ビルドが同じ関数で通る。'
     + 'それまで封筒の条件は main が falsy・ブラウザ版が `!== true` と違い、文も '
@@ -395,6 +403,15 @@ const VERDICTS = {
     + '★ なお `omittedRadarNote` が非 `null` を返す枝は **`export-svg` の口からは'
     + '到達しない** —— 上流の `validateTeamRadarState` が 5 軸すべて整数 1-5 を要求するので、'
     + '未評価の形は図に届く前に断られる (両ビルドで同じ)。画面の ⚠ は下書きを直接読むので今日も出る',
+  privateTarget:
+    '対称 (実測・パス 524 で読んだ) —— 母集団に入ったのはパス 524 (T-076) で `scanTarget.ts` が'
+    + ' `looksInternalHostname` の中で `isPrivateOrReservedTarget` を呼ぶようになったため。'
+    + ' main が `privateTarget` を直に import する所は **0 件**で、main の閉包に入るのは'
+    + ' `scanTarget` → `privateTarget` の 1 辺だけ。しかも `looksInternalHostname` の呼び手は'
+    + ' `describeScanUrlRisk` の中だけで、その読み手は `SecurityPage.tsx` (renderer) だけなので、'
+    + ' **否定のあとの動作は越境しない** (main の `validateScanUrl` はこの関数を通らない)。'
+    + ' 他の読み手 (`renderer/network/proxy.ts` は断る・`imageUrlGate.ts` は描かない) は'
+    + ' どちらも renderer の中で完結する。警告であって関門ではない点は `scanTarget` の判定と同じ',
   scanTarget:
     '対称 (実測・パス 282 で辿り直した) —— パス 247 は「対称 (実測)」の 4 文字だけで、'
     + '**根拠が書かれていなかった**。パス 247 は母集団を初めて数えた回で、'

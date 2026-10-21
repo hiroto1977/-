@@ -11,6 +11,7 @@ import {
   mockCandles,
   readWatchlist,
 } from '../stocksWatchlistWeb';
+import { MAX_WATCHLIST_SYMBOLS, symbolsOrEmpty, watchlistFullMessage } from '../../../shared/watchlistState';
 import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 beforeEach(() => {
@@ -39,6 +40,22 @@ describe('isSafeSymbol', () => {
   });
   it('accepts exactly 16 chars (upper length boundary)', () => {
     expect(isSafeSymbol('A'.repeat(16))).toBe(true);
+  });
+});
+
+describe('registerSymbol — 天井 (threat: T-077)', () => {
+  it('★ 天井ちょうどまでは登録でき、超える新規は断る (threat: T-077)', () => {
+    for (let i = 0; i < MAX_WATCHLIST_SYMBOLS; i++) registerSymbol(`S${i}`);
+    expect(symbolsOrEmpty(readWatchlist())).toHaveLength(MAX_WATCHLIST_SYMBOLS);
+    expect(() => registerSymbol('ONEMORE')).toThrow(watchlistFullMessage());
+    expect(symbolsOrEmpty(readWatchlist())).toHaveLength(MAX_WATCHLIST_SYMBOLS);
+  });
+
+  it('★ 対照: 天井でも、既に在る銘柄の再登録と解除は通す', () => {
+    for (let i = 0; i < MAX_WATCHLIST_SYMBOLS; i++) registerSymbol(`S${i}`);
+    expect(registerSymbol('S0').added).toBe(false);
+    expect(unregisterSymbol('S0').removed).toBe(true);
+    expect(registerSymbol('NEW1').added).toBe(true);
   });
 });
 

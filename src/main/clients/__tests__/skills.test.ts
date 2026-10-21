@@ -13,6 +13,7 @@ import {
   skillTooLongNote,
 } from '../skills';
 import { MAX_ASSISTANT_SYSTEM_CHARS } from '../../../shared/assistantLimits';
+import { MISSING_ANTHROPIC_KEY_MESSAGE } from '../../../shared/advisorQuestionLimits';
 import type { SkillEntry } from '../skills';
 import { shadowedSkillIdNote, unsafeSkillIdNote } from '../../../shared/skillIdentity';
 import { SNAPSHOT } from '../../../renderer/data/snapshot';
@@ -1228,5 +1229,16 @@ describe('スキル本文の天井 (パス 308): 読む前に byte で、読ん�
     await fs.writeFile(path.join(tmpDir, 'ok.md'), head + 'a'.repeat(MAX_ASSISTANT_SYSTEM_CHARS - head.length));
     const result = await scanSkills(tmpDir, 'user');
     expect(result[0]).toMatchObject({ id: 'ok', runnable: true, unrunnableReason: '' });
+  });
+});
+
+
+describe('ACTIONS["run-skill"] — Anthropic 鍵が無ければ読まず・送らず断る (threat: T-116)', () => {
+  it('鍵が空なら MISSING_ANTHROPIC_KEY_MESSAGE で断り、fetch を呼ばない', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['run-skill']!({ token: '', fetch: fetchMock, payload: { id: 'echo', prompt: 'ping' } }),
+    ).rejects.toThrow(new Error(MISSING_ANTHROPIC_KEY_MESSAGE));
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });

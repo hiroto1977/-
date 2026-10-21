@@ -9,6 +9,7 @@
   "mutate": [
     "src/main/atRest.ts",
     "src/main/atomicWrite.ts",
+    "src/main/keychainBackend.ts",
     "src/main/clients/assistant.ts",
     "src/main/clients/atlassian.ts",
     "src/main/clients/base.ts",
@@ -52,6 +53,7 @@
     "src/main/clients/wordpress.ts",
     "src/main/clients/youtube.ts",
     "src/main/eraseAll.ts",
+    "src/main/fileRequestGate.ts",
     "src/main/main.ts",
     "src/main/oauth.ts",
     "src/main/secrets.ts",
@@ -72,6 +74,7 @@
     "src/renderer/data/bankSubmission.ts",
     "src/renderer/data/bestAnswers.ts",
     "src/renderer/data/bestAnswersJob.ts",
+    "src/main/userPresence.ts",
     "src/renderer/data/budgetVariance.ts",
     "src/renderer/data/businessAxonometric.ts",
     "src/renderer/data/businessFinancials.ts",

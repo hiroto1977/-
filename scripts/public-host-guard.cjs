@@ -135,6 +135,7 @@ function isPrivateOrReservedHost(host) {
   if (allZero(0, 8)) return true;                              // :: unspecified
   if (allZero(0, 7) && g[7] === 1) return true;                // ::1 loopback
   if (allZero(0, 5) && g[5] === 0xffff) return isPrivateOrReservedHost(embedded(g[6], g[7])); // ::ffff:0:0/96
+  if (allZero(0, 4) && g[4] === 0xffff && g[5] === 0) return isPrivateOrReservedHost(embedded(g[6], g[7])); // ::ffff:0:0:0/96 SIIT (RFC 2765) —— 2026-10-15 (T-046) まで素通り
   if (g[0] === 0x64 && g[1] === 0xff9b && allZero(2, 6)) return isPrivateOrReservedHost(embedded(g[6], g[7])); // 64:ff9b::/96
   if (g[0] === 0x64 && g[1] === 0xff9b && g[2] === 1) return true; // 64:ff9b:1::/48 local-use NAT64 (RFC 8215) —— 復号できないが範囲は固定で、IANA は Globally Reachable: False
   if (g[0] === 0x2002) return isPrivateOrReservedHost(embedded(g[1], g[2])); // 2002::/16 6to4
@@ -232,6 +233,9 @@ async function selfTest() {
     // ---- IPv6 に埋め込んだ IPv4 (IMDS への迂回路) ----
     ['IPv4-mapped で IMDS', '::ffff:169.254.169.254', true],
     ['IPv4-compatible で IMDS', '::169.254.169.254', true],
+    ['SIIT (RFC 2765 §2.1) で IMDS —— 2026-10-15 まで素通り (T-046)', '::ffff:0:a9fe:a9fe', true],
+    ['SIIT で loopback', '::ffff:0:7f00:1', true],
+    ['SIIT に公開の v4 は通す (復号して v4 の規則へ)', '::ffff:0:808:808', false],
     ['NAT64 (RFC 6052 の well-known prefix) で IMDS', '64:ff9b::a9fe:a9fe', true],
     ['6to4 (RFC 3056) で IMDS', '2002:a9fe:a9fe::1', true],
     ['NAT64 に公開 IPv4 を載せたものは通す', '64:ff9b::93.184.216.34', false],

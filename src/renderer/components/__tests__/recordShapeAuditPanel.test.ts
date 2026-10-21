@@ -96,6 +96,22 @@ describe('RecordShapeAuditPanel', () => {
     expect(await store.count(SALES_COLLECTION)).toBe(1);
   });
 
+  it('★ 台帳に無い種類の記録は、画面に出て削除の対象に含まれる (threat: T-050)', async () => {
+    const store = getRecordStore();
+    await store.insert(SALES_COLLECTION, GOOD);
+    await store.insert('zz-not-a-collection', { blob: 'x'.repeat(1_000) });
+    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(true);
+    await mount();
+    await click('[data-shape-audit-scan]');
+    await waitForText(() => container.textContent ?? '', '台帳に無い種類の記録が 1 件あります (zz-not-a-collection 1 件)', WAIT_LONG);
+    expect(container.querySelector('[data-shape-audit-delete]')?.textContent).toBe('1 件を削除');
+    await click('[data-shape-audit-delete]');
+    await settleUntil(() => confirm.mock.calls.length >= 1, '削除の確認ダイアログが出る', WAIT_LONG);
+    expect(confirm).toHaveBeenCalledWith('形式の合わないレコード 0 件と台帳に無い種類の記録 1 件を削除します。元に戻せません。よろしいですか？');
+    await waitForText(() => container.textContent ?? '', '1 件を削除しました', WAIT_LONG);
+    expect((await store.exportAll()).map((r) => r.collection)).toEqual([SALES_COLLECTION]);
+  });
+
   it('対照: 確認で「いいえ」なら何も消えない', async () => {
     const store = getRecordStore();
     await store.insert(SALES_COLLECTION, BAD as unknown as Record<string, unknown>);

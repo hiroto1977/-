@@ -400,8 +400,8 @@ describe('saveTeamRadarState', () => {
     );
     expect(mkdirs).toEqual(['/tmp']);
     expect(writes).toHaveLength(1);
-    expect(writes[0]!.path).toBe('/tmp/team-radar.json.tmp');
-    expect(renamed).toEqual({ from: '/tmp/team-radar.json.tmp', to: '/tmp/team-radar.json' });
+    expect(writes[0]!.path).toMatch(/^\/tmp\/team-radar\.json\.tmp-\d+-\d+-[0-9a-f]+$/);
+    expect(renamed).toEqual({ from: writes[0]!.path, to: '/tmp/team-radar.json' });
     // Round-trip the content
     const parsed = JSON.parse(unsealForTest(writes[0]!.content)) as TeamRadarState;
     expect(parsed.department).toBe('営業部');
@@ -673,7 +673,7 @@ describe('saveTeamRadarStateImpl', () => {
       },
     );
     expect(result.department).toBe('営業部');
-    expect(writes[0]).toBe('/tmp/team-radar.json.tmp');
+    expect(writes[0]).toMatch(/^\/tmp\/team-radar\.json\.tmp-/);
   });
 
   it('rejects bad department / evaluatedAt before saving', async () => {

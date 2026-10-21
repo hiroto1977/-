@@ -39,7 +39,7 @@ GitHub Issues / PR ベースで運用。
 | `<iframe>` 経由クリックジャック | `frame-src 'none'` |
 | `<object>` プラグイン | `object-src 'none'` |
 | ノードアクセス権限剥奪 | `contextIsolation: true` + `nodeIntegration: false` + `sandbox: true` |
-| renderer から file:// 等のスキーム経由でファイル読み出し | `app:openExternal` IPC が http(s) のみ受理 |
+| renderer から file:// 等のスキーム経由でファイル読み出し | `app:openExternal` IPC が http(s) のみ受理。加えて `webRequest` の file:// 門が `dist/` 配下以外の読み出しを拒否 (T-140) |
 | 新 window 開放 | `setWindowOpenHandler` で全部 deny + `openExternal` 経由 |
 
 ### A7: Ollama (ローカル LLM サーバ)

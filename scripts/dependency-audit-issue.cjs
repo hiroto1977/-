@@ -34,7 +34,9 @@ async function findIssue(github, context) {
     direction: 'desc',
     per_page: 100,
   });
-  return data.find((i) => !i.pull_request && i.title === TITLE) ?? null;
+  // 作者が github-actions[bot] の物だけ (T-142): タイトルは公開済みなので、同じ題名の Issue を誰かが立てると
+  // 報告 (要対応の一覧) がその Issue に書かれ、本物は古いまま残る。
+  return data.find((i) => !i.pull_request && i.title === TITLE && i.user?.login === 'github-actions[bot]') ?? null;
 }
 
 /**

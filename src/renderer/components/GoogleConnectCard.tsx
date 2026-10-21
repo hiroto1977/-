@@ -7,6 +7,7 @@ import {
   googleSignInUnsupportedNote,
   type GoogleServiceId,
 } from '../../shared/buildDestinations';
+import { externalTextOnOneLine } from '../data/assistantMarkdown';
 
 /**
  * Google ワークスペース「かんたん接続」カード (Drive / Calendar / Gmail 共通)。
@@ -122,7 +123,7 @@ export function GoogleConnectCard({ serviceId, onConnected }: GoogleConnectCardP
       setResult({ kind: 'ok', message: 'サインインしました。「更新」でデータを取得できます。' });
       onConnected?.();
     } else {
-      setResult({ kind: 'error', message: res.message });
+      setResult({ kind: 'error', message: externalTextOnOneLine(res.message) });
     }
   };
 

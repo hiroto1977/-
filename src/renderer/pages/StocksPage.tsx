@@ -30,6 +30,7 @@ import {
   watchlistPrices,
 } from '../../shared/paperAccount';
 import { isSubmitEnter } from '../keyIntent';
+import { externalTextOnOneLine } from '../data/assistantMarkdown';
 
 // 助言・戦略比較・登録の戻り値の形は台帳 (`shared/actionData.ts` → `shared/stocksTypes.ts`) を読む
 // (パス 117)。それまでここに `AdvisorResponse` の写しが在り、パス 105 まで `notForRealMoney` が
@@ -239,7 +240,7 @@ export function StocksPage() {
         // Refresh snapshot so the watchlist reflects the new state.
         refresh();
       } else {
-        setRegisterError(r.message);
+        setRegisterError(externalTextOnOneLine(r.message));
       }
     } catch (e) {
       setRegisterError(e instanceof Error ? e.message : String(e));
@@ -276,7 +277,7 @@ export function StocksPage() {
       if (r.ok) {
         setCompareResult(r.data);
       } else {
-        setCompareError(r.message);
+        setCompareError(externalTextOnOneLine(r.message));
       }
     } catch (e) {
       setCompareError(e instanceof Error ? e.message : String(e));
@@ -315,7 +316,7 @@ export function StocksPage() {
         setExportWarn(exportWarning(r.data));
         setExportSaved(exportSavedNote(r.data));
       } else {
-        setExportError(r.message);
+        setExportError(externalTextOnOneLine(r.message));
       }
     } catch (e) {
       setExportError(e instanceof Error ? e.message : String(e));
@@ -381,7 +382,7 @@ export function StocksPage() {
       if (r.ok) {
         setAdvisorResult(r.data);
       } else {
-        setAdvisorError(r.message);
+        setAdvisorError(externalTextOnOneLine(r.message));
       }
     } catch (e) {
       setAdvisorError(e instanceof Error ? e.message : String(e));

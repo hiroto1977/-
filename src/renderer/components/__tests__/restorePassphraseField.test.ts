@@ -12,7 +12,7 @@ import 'fake-indexeddb/auto';
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { BackupPanel, ENCRYPTED_RESTORE_NEEDS_FIELD } from '../BackupPanel';
+import { BackupPanel, ENCRYPTED_RESTORE_NEEDS_FIELD, PLAINTEXT_RESTORE_WITH_PASSPHRASE } from '../BackupPanel';
 import { _resetRecordStoreForTests, getRecordStore, type StoredRecord } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { SALES_COLLECTION } from '../../data/sales';
@@ -155,5 +155,26 @@ describe('バックアップの復元 — 合言葉はマスクされた欄で�
     await waitForText(text, '1 件のレコードを復元しました', WAIT_LONG);
     expect(text()).not.toContain(ENCRYPTED_RESTORE_NEEDS_FIELD);
     expect(promptCalls).toBe(0);
+  });
+});
+
+describe('バックアップの復元 — 合言葉を入れたのに平文ファイルが来たら取り込まない (threat: T-131)', () => {
+  it('★ 欄に合言葉があるとき、暗号化されていないファイル (すり替えを疑う形) は断って何も復元しない', async () => {
+    const plain = await serializeBackup([ROW]);
+    await mount();
+    await fillPassphrase(PASSPHRASE);
+    await chooseFile(plain, 'plain.json');
+    await waitForText(text, PLAINTEXT_RESTORE_WITH_PASSPHRASE, WAIT_LONG);
+    expect(text()).not.toContain('レコードを復元しました');
+    expect(await getRecordStore().count(SALES_COLLECTION)).toBe(0);
+  });
+
+  it('対照: 欄に合言葉があっても、暗号化されたファイルは復元できる (断りは平文にだけ)', async () => {
+    const encrypted = await serializeEncryptedBackup([ROW], PASSPHRASE);
+    await mount();
+    await fillPassphrase(PASSPHRASE);
+    await chooseFile(encrypted, 'enc.json');
+    await waitForText(text, '1 件のレコードを復元しました', WAIT_LONG);
+    expect(text()).not.toContain(PLAINTEXT_RESTORE_WITH_PASSPHRASE);
   });
 });

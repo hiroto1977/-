@@ -15,7 +15,8 @@
  * この監査で繰り返し出た形なので。
  */
 
-import { countChars } from './inputCeiling';
+import { countChars, moreThanChars } from './inputCeiling';
+import { isPrivateOrReservedTarget } from './privateTarget';
 export type ScanUrlFailure = 'empty' | 'too-long' | 'not-a-url' | 'not-web';
 
 export type ScanUrlResult =
@@ -69,7 +70,7 @@ export const MAX_SCAN_URL_CHARS = 2048;
  * 文面と写しを畳む今回の仕事に混ぜない (パス 284 で site の文面へ
  * 手を伸ばして検査に止められたのと同じ種類の線引き)。
  */
-export type BreachEmailFailure = 'empty';
+export type BreachEmailFailure = 'empty' | 'invalid';
 
 export type BreachEmailResult =
   | { readonly ok: true; readonly email: string }
@@ -78,12 +79,22 @@ export type BreachEmailResult =
 /** 断りの文面 —— **両ビルドがここを読む** (文を写さない)。 */
 export const BREACH_EMAIL_MESSAGES: Readonly<Record<BreachEmailFailure, string>> = {
   empty: 'email は必須です',
+  invalid: 'email の形が正しくありません（254 文字以内で、@ を含み、制御文字を含まないこと）',
 };
+
+/** RFC 5321 のメールアドレスの上限 (オクテット)。 */
+export const MAX_BREACH_EMAIL_CHARS = 254;
 
 export function validateBreachEmail(raw: unknown): BreachEmailResult {
   // 前後の空白を落とすのは**安全の判断に効く** (上の docblock の 2026-08-22)。
   const email = typeof raw === 'string' ? raw.trim() : '';
   if (!email) return { ok: false, reason: 'empty' };
+  // threat: T-096 —— 長さ・制御文字・`@` を見ない物が HIBP の道 (`/breachedaccount/<email>`) へ入っていた
+  // (実測: 5,000,006 字が 5,000,048 字の要求になった・`..` と `.` は道を畳む)。
+  // eslint-disable-next-line no-control-regex -- 制御文字の拒否が目的
+  if (moreThanChars(email, MAX_BREACH_EMAIL_CHARS) || !email.includes('@') || /[\u0000-\u001f\u007f]/.test(email)) {
+    return { ok: false, reason: 'invalid' };
+  }
   return { ok: true, email };
 }
 
@@ -148,7 +159,13 @@ export const SECRET_PARAM_NAMES = [
 
 function looksSecretName(name: string): boolean {
   const lower = name.toLowerCase();
-  return SECRET_PARAM_NAMES.includes(lower);
+  if (SECRET_PARAM_NAMES.includes(lower)) return true;
+  // threat: T-096 (パス 525) —— 完全一致だけだと `X-Amz-Signature` / `client_secret` / `private_token` /
+  // `accessToken` / `jwt` / `bearer` が素通りし、署名付き URL がそのまま VirusTotal に残った (実測)。
+  // `-` `_` を落として照合し、名前が資格情報の語**で終わる**物も拾う (`tokens` `keyword` `author` のような別物は
+  // 拾わない・`sig` `key` `code` は短く散文と衝突しやすいので完全一致のまま)。
+  const folded = lower.replace(/[-_]/g, '');
+  return /(token|secret|signature|credential|password|passwd|apikey|jwt|bearer)$/.test(folded);
 }
 
 /**
@@ -212,6 +229,20 @@ function embeddedIpv4FromV6(v6: string): string | null {
 export function looksInternalHostname(hostname: string): boolean {
   const h = hostname.toLowerCase().replace(/\.$/, '');
   if (h === '') return false;
+  // SSRF 用の分類器 (privateTarget) が内部と見る宛先は、ここでも内部と見る (パス 524 ·
+  // T-076)。ここの手書きの判定は IPv4 互換 `::a.b.c.d`・SIIT・fec0::/10・ff00::/8・
+  // 64:ff9b:1::/48・192.0.0.0/24・198.18.0.0/15・224.0.0.0/3 を知らず、メタデータ用
+  // アドレスを `[::a9fe:a9fe]` と書くだけで「社内のホスト」の警告をすり抜けた。
+  // 警告は広い方に倒してよい (止めない・余計な警告が出るだけ) ので OR で足す。
+  // ただし文書用の範囲 (RFC 5737 の TEST-NET-1/2/3 と RFC 3849 の 2001:db8::/32) は警告しない ——
+  // 説明用に貼られる偽の例で、利用者の社内情報ではない (既存の方針・検査が留めている)。
+  const documentation =
+    /^(?:192\.0\.2|198\.51\.100|203\.0\.113)\.\d{1,3}$/.test(h) || /^\[2001:0?db8:/.test(h);
+  try {
+    if (!documentation && isPrivateOrReservedTarget(new URL(`http://${h}/`))) return true;
+  } catch {
+    // 解析できない名前は URL としても送れない (validateScanUrl が先に断る)。下の判定へ。
+  }
   // IPv6 は URL の hostname では角括弧付きで来る。
   if (h.startsWith('[') && h.endsWith(']')) {
     const v6 = h.slice(1, -1);
@@ -263,6 +294,13 @@ export function describeScanUrlRisk(raw: string): string | null {
   // どちらもテストで殺せない変異体になる。
   for (const [name] of new URLSearchParams(parsed.hash.slice(1))) {
     if (looksSecretName(name)) names.push(name);
+  }
+  // SPA のハッシュ経路 (`#/reset?token=…`) は、`?` の後ろを問い合わせとして読む (T-096)。
+  const hashQuery = parsed.hash.indexOf('?');
+  if (hashQuery !== -1) {
+    for (const [name] of new URLSearchParams(parsed.hash.slice(hashQuery + 1))) {
+      if (looksSecretName(name)) names.push(name);
+    }
   }
   if (names.length > 0) {
     const unique = [...new Set(names)].join(' / ');

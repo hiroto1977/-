@@ -193,6 +193,10 @@ const ALLOWED: Readonly<Record<string, string>> = {};
  * `count` は実測の件数で、**増えたら鳴る** (台帳が白紙委任にならないように)。
  */
 const VARIABLE_PATH_ALLOWED: Readonly<Record<string, { count: number; why: string }>> = {
+  'src/shared/__tests__/integrityChainWitness.test.ts': {
+    count: 1,
+    why: '**バイナリ (`assets/og.png`) をバイトで読む** (パス 523 · T-071) —— `readOriginalSource` は文字列を返すので不正な UTF-8 が置換され、鎖が取るバイト列と一致しない。道は計装の sandbox を避ける `originalSourcePath` が解いてから読む (変数の道だが原文の道)',
+  },
   'src/shared/__tests__/originalSource.ts': {
     count: 4,
     why: '**原文の道具そのもの** —— sandbox の道を原文の道へ写してから読むのが仕事なので、生の読みはその写し先 (変数) を読む。この 4 件が在るから他のすべての検査が原文を読める。helper を母集団へ入れた日 (パス 490) に初めて数えられた',
@@ -207,6 +211,17 @@ const VARIABLE_PATH_ALLOWED: Readonly<Record<string, { count: number; why: strin
       + '「走査を一部だけ殺す細工が木を無傷のまま残しているか」を別のプロセスで確かめるためのもの (パス 470)。'
       + '読むのは `scripts/` の**一覧**で中身ではないし、この検査は前置きで `fs` を書き換えた状態を測るので'
       + '**この worker の中では走らせられない** (原文の道具へ移す先が無い)',
+  },
+  'src/main/__tests__/stateWriterRace.test.ts': {
+    count: 2,
+    why: '一時ディレクトリ (`mkdtemp`) の**一覧**を読み、同時の保存の後に作業ファイルの残骸が無いことを主張する (パス 522 · T-055)。'
+      + 'repo のファイルではなく検査自身が書かせた物なので、原文の道具へ戻す物が無い',
+  },
+  'src/shared/__tests__/workflowSecurityWitness.test.ts': {
+    count: 4,
+    why: '`.github/workflows/` の**一覧**と各 yml を読み、actions/* の SHA 固定と checkout の persist-credentials を実物で留める (パス 522 · T-056 / T-057)。'
+      + 'yml は `mutate` の母集団の外 (Stryker は .ts しか書き換えない) なので sandbox の写しの問題が無く、原文の道具へ通す理由が無い。'
+      + '+2 件 (パス 530 · T-120): 実物の workflow の一覧と各 yml にローカル action・docker:// が 0 件であることを読む (同じ理由)',
   },
   'src/shared/__tests__/importRequestsPath.test.ts': {
     count: 4,
@@ -267,12 +282,16 @@ const VARIABLE_PATH_ALLOWED: Readonly<Record<string, { count: number; why: strin
     why: 'mkdtemp で作った一時ディレクトリに atomicWriteFile が書いた物 (本体と .prev) を読み戻す。repo のファイルではない',
   },
   'src/main/__tests__/eraseAll.test.ts': {
-    count: 2,
-    why: 'mkdtemp で作った一時ディレクトリを readdir し、keepBackup が書いた本体と控えが在ること・消去の後に何も残らないことを見る (パス 493d)。repo のファイルではない',
+    count: 3,
+    why: 'mkdtemp で作った一時ディレクトリを readdir し、keepBackup が書いた本体と控えが在ること・消去の後に何も残らないことを見る (パス 493d)。加えて T-023 (パス 517) が、ディレクトリに化けた目標とその中へ植えたファイルが recursive rm で消えたことを statSync で読み戻す。どれも repo のファイルではない',
   },
   'src/main/__tests__/secretsUnreadableWrite.test.ts': {
     count: 4,
     why: 'userData を差し替えた一時ディレクトリの secrets.json を読み戻す。repo のファイルではない',
+  },
+  'src/main/__tests__/secretsProtection.test.ts': {
+    count: 3,
+    why: '一時 userData の secrets.json を読み戻す (threat: T-041 —— basic_text で plain: が書かれたか・昇格しないか)。repo のファイルではない',
   },
   'src/main/__tests__/secretsWrite.test.ts': {
     count: 5,
@@ -283,8 +302,8 @@ const VARIABLE_PATH_ALLOWED: Readonly<Record<string, { count: number; why: strin
     why: '一時ディレクトリを歩き (readdir)、そこへ書いた状態ファイル (封緘済み talent.json) を 2 度読み戻す。どれも repo のファイルではない。**件数は 2026-09-25 (パス 462) に 1 → 3 へ実測で直した** —— 自前の注記除去が glob の `**` から始まる偽の注記で 71 行 (68〜139 行) を食っており、3 件のうち 2 件が台帳に載っていなかった',
   },
   'src/main/clients/__tests__/emotions.test.ts': {
-    count: 10,
-    why: '一時 userData の service-hub-emotions.json (封緘済み) を読み戻す。repo のファイルではない',
+    count: 14,
+    why: '一時 userData の service-hub-emotions.json (封緘済み) を読み戻す。repo のファイルではない。T-028 の検査は、断られた部分消去がファイルを 1 バイトも変えないことを読み戻して比べる (threat: T-028)',
   },
   'src/main/clients/__tests__/exportPaths.test.ts': {
     count: 1,
@@ -295,8 +314,8 @@ const VARIABLE_PATH_ALLOWED: Readonly<Record<string, { count: number; why: strin
     why: '一時ディレクトリに組んだ skill の SKILL.md を読み戻す。repo のファイルではない',
   },
   'src/main/clients/__tests__/stocks.test.ts': {
-    count: 1,
-    why: '一時 userData のウォッチリスト状態ファイルを読み戻す。repo のファイルではない',
+    count: 2,
+    why: '一時 userData のウォッチリスト状態ファイルを読み戻す (まだ無い入れ子のディレクトリへの保存も)。repo のファイルではない',
   },
   'src/main/clients/__tests__/teamradar.realfs.test.ts': {
     count: 3,

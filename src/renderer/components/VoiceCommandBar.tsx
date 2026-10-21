@@ -36,6 +36,7 @@ import {
   voiceWriteRefusalMessage,
 } from '../../shared/voiceWriteRequirements';
 import { SERVICES } from '../services';
+import { externalTextOnOneLine } from '../data/assistantMarkdown';
 
 // 音声からルーティング可能な write action を serviceId 別に宣言。
 // (main の LIVE_ACTIONS は import 境界外なので renderer 側に最小の対応表を持つ。)
@@ -99,7 +100,7 @@ async function performIntent(intent: VoiceIntent): Promise<IntentOutcome> {
     const result = await window.serviceHub.invoke(intent.serviceId, intent.action, intent.params ?? {});
     const classified = classifyActionResult(result);
     if (classified.verdict === 'failed') {
-      return { ok: false, message: `実行できませんでした: ${classified.message}` };
+      return { ok: false, message: `実行できませんでした: ${externalTextOnOneLine(classified.message)}` };
     }
     // 実行後は対象サービスを開いて結果を確認できるようにする。
     navigateTo(intent.serviceId);
@@ -152,7 +153,7 @@ export function VoiceCommandBar() {
         if (!cancelled) {
           dispatch({
             type: 'error',
-            message: err instanceof Error ? err.message : '実行に失敗しました。',
+            message: err instanceof Error ? externalTextOnOneLine(err.message) : '実行に失敗しました。',
           });
         }
       });

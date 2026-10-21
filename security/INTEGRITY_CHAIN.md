@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 290
+- ブロック数: 330
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `3c5fcd1b99119fe1cba7066b1b9c46d80f33bfc4d3f01cedf912cee0bd02ef16`
-- 保護対象: 102 ファイル
+- 末尾(tip)ハッシュ: `95ce7cdb947ca7595fc80e88177fda87fb523e23e4e52b25b15789649ba6e9e7`
+- 保護対象: 124 ファイル
 
 ## ブロック
 
@@ -303,6 +303,46 @@
 | 287 | `1a32b87ad28e8187` | `a8b54204a8afec47` | `6515b2c0501af05a` | update lint-artifact-csp.cjs |
 | 288 | `1e132492fc4f6c94` | `6515b2c0501af05a` | `133a8673fafa41de` | update exportPaths.ts,shellOpenGate.ts,scanTarget.ts |
 | 289 | `7066b935fbe555e6` | `133a8673fafa41de` | `3c5fcd1b99119fe1` | update auditor.md,mechanic.md,scout.md,integrity-chain.cjs |
+| 290 | `7b421cf6e9b21a78` | `3c5fcd1b99119fe1` | `88d8f13849038fa6` | update ServiceHubを開く.bat,integrity-chain.cjs,redact.ts |
+| 291 | `658892ce56be1ce6` | `88d8f13849038fa6` | `37a1ecfea7c01b33` | update eraseAll.ts |
+| 292 | `4a32c27ccb855757` | `37a1ecfea7c01b33` | `133a7f40885c6a85` | update secrets.ts,privateTarget.ts |
+| 293 | `6df193b418f5dbd1` | `133a7f40885c6a85` | `bc89375c50238d87` | update release.yml,assistantMarkdown.ts,escape.ts,privateTarget.ts |
+| 294 | `28b2751607e56c7a` | `bc89375c50238d87` | `f96d82d8d5819d3d` | update escape.ts |
+| 295 | `3d4e304444616052` | `f96d82d8d5819d3d` | `53c0f4d8d674fcfa` | update pages.yml,release.yml,integrity-chain.cjs,keychainBackend.ts,secrets.ts |
+| 296 | `447bd4561f9d05cf` | `53c0f4d8d674fcfa` | `18b777696ed92487` | update exportPaths.ts |
+| 297 | `2e41546fce340472` | `18b777696ed92487` | `ede2b79876ca2ff4` | update PROXY_EXAMPLE.md,public-host-guard.cjs,redact.ts |
+| 298 | `ed21ea23f269cd9e` | `ede2b79876ca2ff4` | `51b0002380b7f6b7` | update dependabot.yml,ci.yml,dependency-audit.yml,e2e.yml,knowledge-auto.yml,mutation.yml |
+| 299 | `468e7293b47ef358` | `51b0002380b7f6b7` | `1d8791f5129d8b1d` | update integrity-chain.cjs,knowledge-autopilot.cjs,merge-mutation-reports.cjs,mutate-changed.cjs,triage-mutations.cjs |
+| 300 | `ce51511d4c39c3b0` | `1d8791f5129d8b1d` | `e5d72506ac7e90b1` | update knowledge-context.cjs,knowledge-graph.cjs,integrity-chain.cjs |
+| 301 | `6c13960ce33c5869` | `e5d72506ac7e90b1` | `993e473211289c58` | update secrets.ts,vault.ts |
+| 302 | `e71d4b5219e3589b` | `993e473211289c58` | `3494cb21a9f364f0` | update PROXY_EXAMPLE.md,proxy.ts |
+| 303 | `d5f424f7d9254e02` | `3494cb21a9f364f0` | `833ce2b8c1c92afc` | update icon.svg,og.png,integrity-chain.cjs,atomicWrite.ts,exportPaths.ts,oauth.ts |
+| 304 | `506a216e405fb25c` | `833ce2b8c1c92afc` | `36612853fd566a7c` | update proxy.ts,vault.ts |
+| 305 | `5a0ed0941cd68760` | `36612853fd566a7c` | `3b6905b5c79db304` | update eraseAll.ts,secrets.ts,autoLock.ts,escape.ts,redact.ts,scanTarget.ts |
+| 306 | `ad54bf29c9323825` | `3b6905b5c79db304` | `ad061da0c49a9ff1` | update integrity-chain.cjs,pure-data-module.cjs,assistant.ts,secrets.ts,redact.ts,scanTarget.ts |
+| 307 | `d0d34954238bde8b` | `ad061da0c49a9ff1` | `3f3871a2c5528603` | update scanTarget.ts |
+| 308 | `9d11a3cdbd78c61e` | `3f3871a2c5528603` | `a5780875a6c99616` | update mutation.yml,main.ts,redact.ts |
+| 309 | `98efa5826c826fe5` | `a5780875a6c99616` | `2cd6c5bf824623f2` | update mutation.yml |
+| 310 | `4c6e91d390153691` | `2cd6c5bf824623f2` | `3115ce31b4c20918` | update ci.yml |
+| 311 | `31567147841da5b7` | `3115ce31b4c20918` | `35dbb97bd8100b8b` | update integrity-chain.cjs,lint-malware.cjs |
+| 312 | `b9cce5ca2caeb5fb` | `35dbb97bd8100b8b` | `0e9472838dd463d9` | update integrity-chain.cjs,strip-non-code.cjs |
+| 313 | `2e929dce0601f344` | `0e9472838dd463d9` | `5aa52c34c8aad687` | update main.ts |
+| 314 | `984f2f7edae83e1f` | `5aa52c34c8aad687` | `61c303b74d72cfd3` | update credentials.ts |
+| 315 | `aacafd5da866e019` | `61c303b74d72cfd3` | `e4f7af95464107a6` | update credentials.ts |
+| 316 | `8278089dd0aae4a5` | `e4f7af95464107a6` | `a4a1520d0ee9f842` | update dependency-audit.yml |
+| 317 | `84b459c981e07ff3` | `a4a1520d0ee9f842` | `7d89ddb527396f27` | update e2e.yml |
+| 318 | `a1750a483dfbf2ec` | `7d89ddb527396f27` | `1ee928f60802b58d` | update integrity-chain.cjs,verify-e2e-playwright-pin.cjs |
+| 319 | `e1af72c87959b7f2` | `1ee928f60802b58d` | `c4389d0142079619` | update e2e.yml |
+| 320 | `fd7b60b466aa78cb` | `c4389d0142079619` | `f0ea1e1e25404084` | update PROXY_EXAMPLE.md |
+| 321 | `923c0c5ebd57af4d` | `f0ea1e1e25404084` | `98f2db369a1f7932` | update main.ts,oauth.ts,shellOpenGate.ts |
+| 322 | `8a2230d0e8453248` | `98f2db369a1f7932` | `ca505bcd6d80305b` | update integrity-chain.cjs,fileRequestGate.ts |
+| 323 | `f14995f41e936da2` | `ca505bcd6d80305b` | `f8bcaec54c6bc580` | update fileRequestGate.ts |
+| 324 | `aabd0a61bc04750c` | `f8bcaec54c6bc580` | `5a67b214b2898b77` | update knowledge-auto.yml,pages.yml,release.yml |
+| 325 | `d93ada0448728194` | `5a67b214b2898b77` | `17f68f701f927f94` | update integrity-chain.cjs,main.ts,presenceWiring.ts,userPresence.ts |
+| 326 | `13043da3fc42d71e` | `17f68f701f927f94` | `da3287b4ad58be5d` | update main.ts |
+| 327 | `56ce42c1bba9e607` | `da3287b4ad58be5d` | `f2040bd32664e875` | update main.ts,userPresence.ts |
+| 328 | `1e0f34eb00024611` | `f2040bd32664e875` | `f7b54c7e23ba6a98` | update userPresence.ts |
+| 329 | `c466e9e11256eb4e` | `f7b54c7e23ba6a98` | `95ce7cdb947ca759` | update userPresence.ts |
 
 ## 保護対象ファイル
 
@@ -314,46 +354,68 @@
 - `.cursor/rules/10-boundaries.mdc`
 - `.cursor/rules/20-gates.mdc`
 - `.cursor/rules/30-conventions.mdc`
+- `.github/dependabot.yml`
 - `.github/workflows/ci.yml`
+- `.github/workflows/dependency-audit.yml`
+- `.github/workflows/e2e.yml`
+- `.github/workflows/knowledge-auto.yml`
+- `.github/workflows/mutation.yml`
 - `.github/workflows/pages.yml`
 - `.github/workflows/release.yml`
+- `assets/icon.svg`
 - `assets/manifest.webmanifest`
+- `assets/og.png`
 - `assets/sw.js`
 - `docs/PROXY_EXAMPLE.md`
 - `docs/SECURITY_CHAIN.md`
 - `electron-builder.json`
 - `eslint.config.js`
+- `launcher/ServiceHubを開く.bat`
+- `orchestration/knowledge-context.cjs`
+- `orchestration/knowledge-graph.cjs`
 - `scripts/build-landing.cjs`
 - `scripts/checksum-release.cjs`
 - `scripts/inject-pwa.cjs`
 - `scripts/inline-html.cjs`
 - `scripts/integrity-chain.cjs`
+- `scripts/knowledge-autopilot.cjs`
 - `scripts/lib/artifact-freshness.cjs`
 - `scripts/lib/json-for-script.cjs`
 - `scripts/lib/population-floor.cjs`
+- `scripts/lib/pure-data-module.cjs`
+- `scripts/lib/strip-non-code.cjs`
 - `scripts/lib/tracked-cross-check.cjs`
 - `scripts/lint-artifact-csp.cjs`
+- `scripts/lint-malware.cjs`
 - `scripts/lint-sample-data.cjs`
 - `scripts/make-autoinstall.sh`
 - `scripts/make-live-usb.sh`
+- `scripts/merge-mutation-reports.cjs`
 - `scripts/migrate.sh`
+- `scripts/mutate-changed.cjs`
 - `scripts/public-host-guard.cjs`
 - `scripts/safe-vault-write.cjs`
 - `scripts/security-audit.sh`
 - `scripts/setup-linux.sh`
 - `scripts/setup-obsidian-docker.sh`
 - `scripts/smoke-app.cjs`
+- `scripts/triage-mutations.cjs`
+- `scripts/verify-e2e-playwright-pin.cjs`
 - `scripts/verify-release-artifacts.cjs`
 - `src/main/atomicWrite.ts`
 - `src/main/clients/assistant.ts`
 - `src/main/clients/exportPaths.ts`
 - `src/main/clients/types.ts`
 - `src/main/eraseAll.ts`
+- `src/main/fileRequestGate.ts`
+- `src/main/keychainBackend.ts`
 - `src/main/main.ts`
 - `src/main/oauth.ts`
+- `src/main/presenceWiring.ts`
 - `src/main/secrets.ts`
 - `src/main/shellOpenGate.ts`
 - `src/main/stateFile.ts`
+- `src/main/userPresence.ts`
 - `src/main/windowPrefs.ts`
 - `src/preload/preload.ts`
 - `src/renderer/data/assistantMarkdown.ts`

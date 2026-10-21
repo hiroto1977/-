@@ -13,7 +13,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { TeamPage } from '../TeamPage';
 import { _resetRecordStoreForTests } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
-import { bonusWithholdingTax, publicTransportCommute } from '../../../shared/payroll';
+import { bonusWithholdingTax, calcEmployerCost, publicTransportCommute } from '../../../shared/payroll';
 import { jpy } from '../../../shared/formatters';
 import { waitForText } from '../../__tests__/jsdomWait';
 
@@ -147,5 +147,37 @@ describe('チームページ — 給与計算の入力欄は黙って 0 にし�
     expect(q.input('公共交通機関の月額 (円)').getAttribute('data-guard')).toBe('warn');
     expect(q.guardText('公共交通機関の月額 (円)')).toContain('桁を間違えていないか確認してください');
     expect(q.stat('公共交通: 課税(超過)')).toBe(jpy(publicTransportCommute(1_600_000).taxable));
+  });
+});
+
+describe('チームページ — 人件費の会社負担総額', () => {
+  it('初期値 (額面 30 万円・1 人) は共有の計算と同じ数字で出る', () => {
+    const c = calcEmployerCost(300_000);
+    expect(q.stat('会社負担: 厚生年金')).toBe(jpy(c.pension));
+    expect(q.stat('会社負担: 健康保険')).toBe(jpy(c.health));
+    expect(q.stat('法定福利費 合計 (1 人・月)')).toBe(jpy(c.employerContributions));
+    expect(q.stat('人件費総額 (1 人・月)')).toBe(jpy(c.totalCost));
+    expect(q.stat('人件費総額 (1 人・年額)')).toBe(jpy(c.totalCost * 12));
+  });
+
+  it('人数を掛けた年額が出て、介護保険ありでは健康保険が増える', async () => {
+    await type('人数 (人)', '5');
+    await type('1 人あたり額面月給 (円)', '４００，０００');
+    const c = calcEmployerCost(400_000);
+    expect(q.stat('人件費総額 (5 人・年額)')).toBe(jpy(c.totalCost * 5 * 12));
+    await act(async () => { q.input('介護保険あり (40歳以上65歳未満)').click(); });
+    const care = calcEmployerCost(400_000, { withCare: true });
+    expect(care.health).toBeGreaterThan(c.health);
+    expect(q.stat('会社負担: 健康保険')).toBe(jpy(care.health));
+  });
+
+  it('読めない額面・人数は 0 の人件費を出さず、判定ごと断る', async () => {
+    await type('1 人あたり額面月給 (円)', '30万');
+    expect(q.input('1 人あたり額面月給 (円)').getAttribute('aria-invalid')).toBe('true');
+    expect(() => q.stat('人件費総額 (1 人・月)')).toThrow('not found');
+    await type('1 人あたり額面月給 (円)', '300000');
+    await type('人数 (人)', '0');
+    expect(q.input('人数 (人)').getAttribute('aria-invalid')).toBe('true');
+    expect(() => q.stat('法定福利費 合計 (1 人・月)')).toThrow('not found');
   });
 });

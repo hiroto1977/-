@@ -38,10 +38,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5 (threat: T-057)
+        with:
+          persist-credentials: false # threat: T-056
 
       - name: Setup Node
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5 (threat: T-057)
         with:
           node-version: '22'
           cache: 'npm'
@@ -67,6 +69,12 @@ jobs:
       # 自動取得) を走らせない —— ブラウザは次の段が明示的に入れる。
       - name: Install Playwright module (pinned, not saved)
         run: npm install --no-save --ignore-scripts --no-audit --no-fund playwright@1.56.1
+
+      # lockfile の外で入れるので、版だけでなく**取得した tarball が想定した物か**も見る
+      # (integrity を台帳に固定 · パス 536 · threat: T-125)。差し替わっていれば、
+      # ブラウザを入れる前・署名鍵に触れる前に落とす。
+      - name: Verify Playwright integrity (pinned ledger)
+        run: node scripts/verify-e2e-playwright-pin.cjs --self-test && node scripts/verify-e2e-playwright-pin.cjs
 
       - name: Install Playwright chromium
         run: npx playwright install --with-deps chromium

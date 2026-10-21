@@ -138,7 +138,10 @@ describe('Vault — token operations', () => {
       req.onsuccess = () => {
         const db = req.result;
         const tx = db.transaction('meta', 'readwrite');
+        // 対になる 2 つを消す —— `initialize` は T-064 から `add` で書くので、`master-wrap` が
+        // 残っていると (半分だけ消した保管庫) ConstraintError で「既に初期化されています」になる。
         tx.objectStore('meta').delete('vault');
+        tx.objectStore('meta').delete('master-wrap');
         tx.oncomplete = () => {
           db.close();
           resolve();

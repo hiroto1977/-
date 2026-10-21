@@ -38,6 +38,7 @@ vi.mock('electron', () => ({
     getPath: () => '/tmp/does-not-matter',
     isPackaged: true,
     whenReady: () => new Promise(() => {}),
+    requestSingleInstanceLock: () => true,
     on: (name: string, fn: () => void) => {
       appListeners.set(name, fn);
     },
@@ -97,6 +98,17 @@ function desktopReport(allDeleted: boolean): import('../../shared/eraseReport').
   };
 }
 let eraseReportImpl: () => Promise<import('../../shared/eraseReport').DesktopEraseReport> = async () => desktopReport(true);
+/** 本人確認の門 (T-147)。既定は通す —— 番人の検査はこのファイルの他の describe が見る。 */
+let presenceVerdict: { ok: true } | { ok: false; message: string } = { ok: true };
+let presenceThrows: Error | null = null;
+const presenceRequests: { channel: string; tier: string; summary: string }[] = [];
+vi.mock('../presenceWiring', () => ({
+  requirePresence: (_e: unknown, req: { channel: string; tier: string; summary: string }) => {
+    presenceRequests.push(req);
+    return presenceThrows ? Promise.reject(presenceThrows) : Promise.resolve(presenceVerdict);
+  },
+}));
+
 vi.mock('../eraseAll', () => ({
   eraseDesktopData: async () => eraseReportImpl(),
 }));
@@ -152,13 +164,19 @@ vi.mock('../clients', () => ({
   LIVE_FETCHERS: {
     github: async (a: unknown) => { fetcherCalls.push(a); return { rows: [] }; },
     skills: async (a: unknown) => { fetcherCalls.push(a); return { local: true }; },
+    // 資格情報を読まない LOCAL サービス (T-118)。保管ファイルの不調に巻き込まれてはならない。
+    kpi: async (a: unknown) => { fetcherCalls.push(a); return { local: 'kpi' }; },
   },
   LIVE_ACTIONS: {
     github: { 'create-issue': async (a: unknown) => { actionCalls.push(a); return { id: 1 }; } },
     // 資格情報の要らないサービスの action (パス 267 の実測対象)。
     skills: { run: async (a: unknown) => { actionCalls.push(a); return { ran: true }; } },
+    kpi: { save: async (a: unknown) => { actionCalls.push(a); return { saved: true }; } },
   },
-  LOCAL_SERVICES: new Set(['skills']),
+  LOCAL_SERVICES: new Set(['skills', 'kpi']),
+  // 本物は clients/index.ts (localTokenReaders.test.ts が ctx.token の読み手と双方向に突き合わせる)。
+  // ここは主プロセスの入口が**呼ぶ**ことだけを見るので、読む 1 件 (skills) と読まない 1 件 (kpi) を置く。
+  readsSavedToken: (id: string) => id !== 'kpi',
 }));
 
 let authorizeResult: unknown = { accessToken: 'SECRET_AT', refreshToken: 'SECRET_RT', scope: 'repo', expiresAt: 999 };
@@ -205,6 +223,9 @@ beforeEach(async () => {
   shownInFolder = [];
   openPathCalls = [];
   openPathResult = '';
+  presenceVerdict = { ok: true };
+  presenceThrows = null;
+  presenceRequests.length = 0;
   validToken = { ok: true, token: 'tok' };
   setTokenThrows = null;
   clearTokenThrows = null;
@@ -623,6 +644,25 @@ describe('fetch:snapshot — 取得の入口', () => {
     expect(r.message).toContain('保管ファイルを読めませんでした');
   });
 
+  it('★ 資格情報を読まない LOCAL サービスは、保管ファイルの不調に巻き込まれない (threat: T-118)', async () => {
+    validToken = { ok: false, reason: 'store-unreadable', message: '保管ファイルを読めませんでした (broken JSON)。' };
+    expect(await invoke('fetch:snapshot', 'kpi')).toEqual({ ok: true, data: { local: 'kpi' } });
+    expect(fetcherCalls).toEqual([{ token: '' }]);
+    expect(await invoke('action:invoke', 'kpi', 'save', {})).toEqual({ ok: true, data: { saved: true } });
+    expect(actionCalls).toEqual([{ token: '', payload: {} }]);
+  });
+
+  it('★ 資格情報を読む LOCAL サービスと、LOCAL でないサービスは、不調を伝えて断るまま (threat: T-118)', async () => {
+    validToken = { ok: false, reason: 'store-unreadable', message: '保管ファイルを読めませんでした (broken JSON)。' };
+    for (const id of ['skills', 'github']) {
+      const r = (await invoke('fetch:snapshot', id)) as { ok: boolean; code: string };
+      expect(r.ok, id).toBe(false);
+      expect(r.code, id).toBe('not_configured');
+    }
+    const a = (await invoke('action:invoke', 'skills', 'run', {})) as { ok: boolean; code: string };
+    expect(a).toMatchObject({ ok: false, code: 'not_configured' });
+  });
+
   it('資格情報の読み出しが投げても reject しない (画面が止まらない)', async () => {
     validToken = new Error('decrypt exploded');
     const r = (await invoke('fetch:snapshot', 'github')) as { ok: boolean; code: string };
@@ -842,6 +882,28 @@ describe('oauth:isSupported / oauth:authorize', () => {
       await invoke('oauth:authorize', 'github', id);
       expect(authorizeConfigs[0]!.clientId).toBe(id);
     }
+  });
+
+  it('★ 認可は同時に 1 つだけ: 進行中の間の 2 つ目は始めずに断り、終われば次を受ける (threat: T-139)', async () => {
+    let release: (v: unknown) => void = () => undefined;
+    authorizeResult = new Promise((resolve) => {
+      release = resolve;
+    });
+    const first = invoke('oauth:authorize', 'github') as Promise<{ ok: boolean }>;
+    // 2 つ目以降は待受を作らない (authorize を呼ばない)。
+    await Promise.resolve();
+    const second = (await invoke('oauth:authorize', 'github')) as { ok: boolean; code: string };
+    const third = (await invoke('oauth:authorize', 'github', 'abcdefgh.apps.googleusercontent.com')) as { code: string };
+    expect(second).toMatchObject({ ok: false, code: 'authorize_busy' });
+    expect(third.code).toBe('authorize_busy');
+    expect(authorizeConfigs).toHaveLength(1);
+    release({ accessToken: 'SECRET_AT', refreshToken: 'SECRET_RT', scope: 'repo', expiresAt: 999 });
+    expect((await first).ok).toBe(true);
+    // 対照: 終わったあとは次の認可を受ける (フラグが残らない)。失敗で終わった場合も同じ。
+    authorizeResult = new Error('user cancelled');
+    expect(((await invoke('oauth:authorize', 'github')) as { code: string }).code).toBe('authorize_failed');
+    authorizeResult = { accessToken: 'a', refreshToken: 'r', scope: 'repo', expiresAt: 1 };
+    expect(((await invoke('oauth:authorize', 'github')) as { ok: boolean }).ok).toBe(true);
   });
 
   it('OAuth 設定が無いサービスは断る', async () => {
@@ -1145,5 +1207,119 @@ describe('アプリの寿命', () => {
     } finally {
       Object.defineProperty(process, 'platform', { value: orig, configurable: true });
     }
+  });
+});
+
+
+describe('本人確認の門 — 画面から独立した確認が通らなければ何も実行しない (threat: T-147)', () => {
+  const DENY = { ok: false as const, message: '確認が許可されなかったため実行しませんでした。' };
+
+  it('★ app:eraseAll は確認が通らなければ消さず、再起動もしない', async () => {
+    presenceVerdict = DENY;
+    const report = (await invoke('app:eraseAll')) as { allDeleted: boolean; error?: string };
+    expect(report.allDeleted).toBe(false);
+    expect(report.error).toBe(DENY.message);
+    expect(relaunchCalls).toBe(0);
+    expect(presenceRequests.map((r) => [r.channel, r.tier])).toEqual([['app:eraseAll', 'destructive']]);
+  });
+
+  it('★ secrets:clear は確認が通らなければ消さない', async () => {
+    presenceVerdict = DENY;
+    expect(await invoke('secrets:clear', 'github')).toEqual({ ok: false, message: DENY.message });
+    expect(clearTokenCalls).toEqual([]);
+    expect(presenceRequests[0]).toMatchObject({ channel: 'secrets:clear', tier: 'destructive' });
+  });
+
+  it('★ secrets:set は確認が通らなければ書かず、確認の文に値を載せない', async () => {
+    presenceVerdict = DENY;
+    const r = (await invoke('secrets:set', 'github', 'ghp_SECRETVALUE1234567890')) as { ok: boolean; message?: string };
+    expect(r.ok).toBe(false);
+    expect(setTokenCalls).toEqual([]);
+    expect(presenceRequests[0]).toMatchObject({ channel: 'secrets:set', tier: 'credential-write' });
+    expect(presenceRequests[0]!.summary).not.toContain('ghp_SECRETVALUE');
+  });
+
+  it('★ action:invoke は確認が通らなければ action を呼ばない (段階は台帳から・書く内容を見せる)', async () => {
+    presenceVerdict = DENY;
+    const r = (await invoke('action:invoke', 'github', 'create-issue', { title: 'T', body: 'B' })) as {
+      ok: boolean;
+      code?: string;
+    };
+    expect(r).toMatchObject({ ok: false, code: 'action_failed' });
+    expect(actionCalls).toEqual([]);
+    expect(presenceRequests[0]).toMatchObject({ channel: 'github/create-issue', tier: 'external-write' });
+    expect(presenceRequests[0]!.summary).toContain('title: "T"');
+  });
+
+  it('台帳に無い action でも (登録があれば) 最も厳しい段階で確かめる', async () => {
+    await invoke('action:invoke', 'github', 'create-issue', {});
+    expect(presenceRequests.at(-1)?.tier).toBe('external-write');
+  });
+
+  it('存在しない service / action の断りは確認より先 (ダイアログを出さない)', async () => {
+    await invoke('action:invoke', 'no-such', 'x', {});
+    await invoke('action:invoke', 'github', 'nope', {});
+    expect(presenceRequests).toEqual([]);
+  });
+
+  it('★ 確認の呼び出し自体が投げても IPC は reject せず、何も実行しない (4 つの口とも)', async () => {
+    presenceThrows = new Error('dialog exploded');
+    const r1 = (await invoke('app:eraseAll')) as { allDeleted: boolean; error?: string };
+    expect(r1.allDeleted).toBe(false);
+    expect(r1.error).toContain('dialog exploded');
+    expect(await invoke('secrets:clear', 'github')).toMatchObject({ ok: false });
+    expect(await invoke('secrets:set', 'github', 'ghp_x1234567890abcdef')).toMatchObject({ ok: false });
+    expect(await invoke('action:invoke', 'github', 'create-issue', {})).toMatchObject({ ok: false, code: 'action_failed' });
+    expect(clearTokenCalls).toEqual([]);
+    expect(setTokenCalls).toEqual([]);
+    expect(actionCalls).toEqual([]);
+    expect(relaunchCalls).toBe(0);
+  });
+
+  it('★ secrets:set の確認は新しい値の長さと末尾 4 文字を見せる (横取りされても見分けがつく)。全体は見せない', async () => {
+    const token = 'ghp_ABCDEFGHIJKLMNOP1234';
+    await invoke('secrets:set', 'github', token);
+    const summary = presenceRequests[0]!.summary;
+    expect(summary).toContain(`全 ${token.length} 文字`);
+    expect(summary).toContain('末尾「…1234」');
+    expect(summary).not.toContain('ABCDEFGH');
+    presenceRequests.length = 0;
+    await invoke('secrets:set', 'github', 'abcd1234');
+    expect(presenceRequests[0]!.summary).toContain('全 8 文字');
+    expect(presenceRequests[0]!.summary).not.toContain('末尾');
+  });
+
+  it('★ app:openExternal は速度の制限を通り、断られたら開かない (確認は出さない段階)', async () => {
+    presenceVerdict = DENY;
+    await invoke('app:openExternal', 'https://example.com/a');
+    expect(openedExternal).toEqual([]);
+    expect(presenceRequests[0]).toMatchObject({ channel: 'app:openExternal', tier: 'egress', summary: 'https://example.com/a' });
+    presenceVerdict = { ok: true };
+    await invoke('app:openExternal', 'https://example.com/a');
+    expect(openedExternal).toEqual(['https://example.com/a']);
+    presenceThrows = new Error('x');
+    openedExternal.length = 0;
+    await invoke('app:openExternal', 'https://example.com/a');
+    expect(openedExternal).toEqual([]);
+  });
+
+  it('★ oauth:authorize は、自分のクライアント ID を渡したときだけ確かめる。断られたら認可を始めない', async () => {
+    await invoke('oauth:authorize', 'github');
+    expect(presenceRequests).toEqual([]);
+    expect(authorizeConfigs).toHaveLength(1);
+    authorizeConfigs.length = 0;
+    presenceVerdict = DENY;
+    const r = (await invoke('oauth:authorize', 'github', 'abcdefgh.apps.googleusercontent.com')) as { ok: boolean; code?: string };
+    expect(r).toMatchObject({ ok: false, code: 'authorize_failed' });
+    expect(authorizeConfigs).toEqual([]);
+    expect(presenceRequests[0]).toMatchObject({ channel: 'oauth:authorize', tier: 'credential-write' });
+    expect(presenceRequests[0]!.summary).toContain('abcdefgh.apps.googleusercontent.com');
+  });
+
+  it('確認の呼び出しが投げても oauth:authorize は reject せず認可を始めない', async () => {
+    presenceThrows = new Error('boom');
+    const r = (await invoke('oauth:authorize', 'github', 'abcdefgh.apps.googleusercontent.com')) as { ok: boolean };
+    expect(r.ok).toBe(false);
+    expect(authorizeConfigs).toEqual([]);
   });
 });

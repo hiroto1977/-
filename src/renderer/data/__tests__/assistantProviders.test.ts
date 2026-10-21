@@ -43,6 +43,7 @@ const mk = (
   browserDirect: true,
   needsApiKey: id !== 'ollama',
   defaultModel: 'm',
+  endpointHost: null,
 });
 
 const ANTHROPIC = mk('anthropic', 'Anthropic (Claude)', true, true);
@@ -221,5 +222,52 @@ describe('特別値と端末内の一覧 (読み直して留める)', () => {
     vi.stubGlobal('window', { serviceHub: { invoke: () => Promise.reject(new Error('boom')) } });
     const m = await fresh();
     expect(await m.readProviderStatuses()).toEqual({ providers: [], unknown: true });
+  });
+});
+
+
+describe('assistantEgressRecipients — 遠隔の Ollama とプロキシ経由 (threat: T-119)', () => {
+  const REMOTE_OLLAMA = { ...OLLAMA, endpointHost: 'tunnel.example.com' };
+  const PROXIED_OPENAI = { ...OPENAI, browserDirect: false };
+
+  it('保存した Ollama の URL が端末の外のホストなら、「端末内」ではなく外へ出る側に入れる', () => {
+    const r = assistantEgressRecipients({ providers: [REMOTE_OLLAMA], providersUnknown: false, selected: 'ollama' });
+    expect(r.remote).toEqual(['Ollama (ローカル) (tunnel.example.com)']);
+    expect(r.local).toEqual([]);
+  });
+
+  it('標本: ループバック (endpointHost null) と、ページと同じホストは端末内のまま', () => {
+    expect(assistantEgressRecipients({ providers: [OLLAMA], providersUnknown: false, selected: 'ollama' }).remote).toEqual([]);
+    const same = assistantEgressRecipients({
+      providers: [{ ...OLLAMA, endpointHost: '192.168.0.5' }],
+      providersUnknown: false,
+      selected: 'ollama',
+      pageHostname: '192.168.0.5',
+    });
+    expect(same.remote).toEqual([]);
+    expect(same.local?.length).toBe(1);
+  });
+
+  it('ブラウザ版で CORS 非対応の提供元だけが viaProxy に入る', () => {
+    const r = assistantEgressRecipients({
+      providers: [ANTHROPIC, PROXIED_OPENAI],
+      providersUnknown: false,
+      selected: ALL_AGENTS,
+      browser: true,
+    });
+    expect(r.viaProxy).toEqual(['OpenAI (ChatGPT)']);
+    expect(r.remote).toEqual(['Anthropic (Claude)', 'OpenAI (ChatGPT)']);
+  });
+
+  it('デスクトップ版・判定中 (null)・省略では viaProxy は空 (プロキシは使わない / 分からない)', () => {
+    for (const browser of [false, null, undefined]) {
+      const r = assistantEgressRecipients({
+        providers: [PROXIED_OPENAI],
+        providersUnknown: false,
+        selected: 'openai',
+        browser,
+      });
+      expect(r.viaProxy, String(browser)).toBeUndefined();
+    }
   });
 });

@@ -31,7 +31,7 @@ const run = async (issues: unknown[], report: unknown) => {
 
 describe('dependency-audit の常設 Issue の同期 (パス 306)', () => {
   it('★ 閉じた常設 Issue が在り要対応が戻った → 再開する (2 つ目を作らない)', async () => {
-    const { r, calls } = await run([{ number: 7, title: mod.TITLE, state: 'closed' }], { actionable: 2, markdown: 'm' });
+    const { r, calls } = await run([{ number: 7, title: mod.TITLE, state: 'closed', user: { login: 'github-actions[bot]' } }], { actionable: 2, markdown: 'm' });
     expect(r).toEqual({ action: 'reopened', number: 7 });
     expect(calls.map((c) => c[0])).toEqual(['list', 'update']);
     expect(calls[1]![1]).toMatchObject({ issue_number: 7, state: 'open', body: 'm' });
@@ -43,7 +43,7 @@ describe('dependency-audit の常設 Issue の同期 (パス 306)', () => {
   });
 
   it('要対応 0 なら開いている常設 Issue を閉じる', async () => {
-    const { r, calls } = await run([{ number: 7, title: mod.TITLE, state: 'open' }], { actionable: 0, markdown: 'm' });
+    const { r, calls } = await run([{ number: 7, title: mod.TITLE, state: 'open', user: { login: 'github-actions[bot]' } }], { actionable: 0, markdown: 'm' });
     expect(r).toEqual({ action: 'closed', number: 7 });
     expect(calls[1]![1]).toMatchObject({ state: 'closed' });
   });
@@ -58,6 +58,16 @@ describe('dependency-audit の常設 Issue の同期 (パス 306)', () => {
   it('listForRepo が返す PR (同じ題名) は常設 Issue ではない', async () => {
     const { r } = await run([{ number: 5, title: mod.TITLE, state: 'open', pull_request: { url: 'x' } }], { actionable: 1, markdown: 'm' });
     expect(r).toEqual({ action: 'created', number: 999 });
+  });
+
+  it('★ 同じ題名を立てた他人の Issue は常設 Issue ではない (報告の横取り · threat: T-143)', async () => {
+    const squatter = { number: 99, title: mod.TITLE, state: 'open', user: { login: 'attacker' } };
+    const real = { number: 12, title: mod.TITLE, state: 'open', user: { login: 'github-actions[bot]' } };
+    const { r, calls } = await run([squatter, real], { actionable: 1, markdown: 'm' });
+    expect(r).toEqual({ action: 'updated', number: 12 });
+    expect(calls.some((c) => (c[1] as { issue_number?: number }).issue_number === 99)).toBe(false);
+    // 他人の Issue しか無ければ、それを更新せず新しく作る。
+    expect((await run([squatter], { actionable: 1, markdown: 'm' })).r).toEqual({ action: 'created', number: 999 });
   });
 
   it('報告の形が違えば投げる (黙って none にしない)', async () => {

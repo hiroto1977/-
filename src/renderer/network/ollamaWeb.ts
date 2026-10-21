@@ -663,6 +663,20 @@ async function listInstalledModels(
 }
 
 /**
+ * シェルに貼る `OLLAMA_ORIGINS` の値にしてよい origin だけを通す (2026-10-16 · パス 526 · threat: T-103)。
+ * `location.origin` は WHATWG URL の host を返すが、host は `$ ( ) { } , ; " \` を許す
+ * (Node で `new URL('https://x$({touch,pwned}).example.com/').origin` がそのまま返る)。
+ * その値を二重引用符の中へ埋めて「コピー」させると、貼った端末でコマンド置換が走った
+ * (bash で `pwned` が作られた)。配信元の host 名を攻撃者が決められる場合に限る低リスクだが、
+ * 「コピーして貼る」文は利用者が端末で実行する唯一の文なので、通す形を狭める。
+ * 外れる形・`null` / 空は、どの配信元からでも読める `*` に倒す (許可の範囲は広くなるが、
+ * 手順の文面が利用者に述べる通り「このページ」を許す目的は変わらない)。
+ */
+export function shellSafeOrigin(origin: string): string {
+  return /^https?:\/\/[a-z0-9.-]+(?::\d{1,5})?$/i.test(origin) ? origin : '*';
+}
+
+/**
  * **初回セットアップの全手順**を OS ごとに 1 ブロックへまとめる。
  *
  * originsSetupSteps は「Ollama は入っていて、あとは許可だけ」の人向け。
@@ -678,7 +692,7 @@ export function setupCommands(
   origin: string,
   model: string = DEFAULT_SETUP_MODEL,
 ): { os: string; command: string }[] {
-  const value = origin === 'null' || origin === '' ? '*' : origin;
+  const value = shellSafeOrigin(origin);
   const verify = `sleep 3 && curl -s http://127.0.0.1:${DEFAULT_OLLAMA_PORT}/api/version`;
   return [
     {
@@ -770,7 +784,7 @@ export function desktopSetupCommands(model: string = DEFAULT_SETUP_MODEL): {
 
 /** OS ごとの OLLAMA_ORIGINS 設定手順 (UI に出す)。origin は実行中のページのもの。 */
 export function originsSetupSteps(origin: string): { os: string; command: string }[] {
-  const value = origin === 'null' || origin === '' ? '*' : origin;
+  const value = shellSafeOrigin(origin);
   return [
     {
       os: 'macOS',

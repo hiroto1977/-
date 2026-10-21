@@ -1137,7 +1137,10 @@ describe('isPrivateOrReservedTarget', () => {
       expect(pri('http://localhost/')).toBe(true);
       expect(pri('http://ip6-localhost/')).toBe(true);
       expect(pri('http://ip6-loopback/')).toBe(true);
-      expect(pri('http://notlocalhost/')).toBe(false); // 部分一致では弾かない
+      // 部分一致では弾かない —— 標本は 2 ラベルにする。単一ラベルの `notlocalhost` は
+      // 2026-10-14 (T-033) から「ラベルが 1 つ」の規則で別に遮断されるので、
+      // 部分一致の対照にはならない。
+      expect(pri('http://notlocalhost.example/')).toBe(false);
       expect(pri('http://localhost.example.com/')).toBe(false);
     });
 
@@ -1166,11 +1169,18 @@ describe('isPrivateOrReservedTarget', () => {
     // 単一ラベルのホストは検索ドメインの補完で解決する (`internal` →
     // `internal.corp.example`)。以前は「裸の TLD は解決しない」として通して
     // いたが、その前提が成り立っていなかったので遮断側へ寄せた。
-    it('ラベルが 1 つだけの内部名も弾く', () => {
+    it('ラベルが 1 つだけの名前は、内部 TLD でなくても弾く (threat: T-033)', () => {
       expect(pri('http://local/')).toBe(true);
       expect(pri('http://internal/')).toBe(true);
       expect(pri('http://corp/')).toBe(true);
-      expect(pri('http://example/')).toBe(false); // 内部 TLD でなければ通す
+      // 2026-10-14 まで `example` は「内部 TLD でなければ通す」と**弱さを仕様として**留めていた。
+      // 上の注記の理由 (検索ドメインの補完・公開 API は単一ラベルを使わない) は
+      // 7 語以外にも当てはまる —— `printer` / `nas` は LAN の名前そのものである。
+      expect(pri('http://example/')).toBe(true);
+      expect(pri('http://printer/')).toBe(true);
+      // 対照: 2 ラベル以上の公開名と、公開の IPv6 リテラルは通す (過遮断しない)。
+      expect(pri('http://example.com/')).toBe(false);
+      expect(pri('http://[2606:4700::1111]/')).toBe(false);
     });
 
     // 末尾ドットの回避策と同じ形が先頭にもあった。`URL` は `http://.local/` を

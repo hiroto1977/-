@@ -83,6 +83,9 @@ const DYNAMIC_IMPORT_LEDGER: Readonly<Record<string, string>> = {
     '読むのは `docs/PROXY_EXAMPLE.md` (利用者が自分の Cloudflare へ貼る Worker) から切り出して一時ディレクトリに' +
     '書いた `.mjs` で、`src` の外に在り import を 1 つも持たない (関数を切り出して `export` を足しただけ)。' +
     '変異検査が計器を入れるのは `src` の `mutate` のファイルだけなので、検査の中で評価しても被覆は動かない。',
+  'src/renderer/network/__tests__/proxyWorkerFailClosed.test.ts → (式)':
+    '読むのは `docs/PROXY_EXAMPLE.md` から切り出して一時ディレクトリに書いた `.mjs` (Worker 全体)。`src` の外で import を' +
+    '持たず、毎回の読み込みで認証の既定を書き換えた別の版を評価する必要がある (T-130)。計器は入らないので被覆は動かない。',
 };
 
 /** 規則 3 の例外 —— 読み込みの時点で読めない対象を読み直す所。鍵は `ファイル → 道`。**両方向**。 */

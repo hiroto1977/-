@@ -16,6 +16,7 @@ import {
   recordError,
   recordFeedback,
 } from './serviceActionMachine';
+import { externalTextOnOneLine } from '../data/assistantMarkdown';
 
 /**
  * 業務操作パネル — record-entry / advise を実行する UI。
@@ -120,7 +121,7 @@ export function ServiceActionPanel<S extends RecordEntryServiceId>({ serviceId, 
       // 分類は `data/actionOutcome.ts` に集約 — 音声・チャットと同じ読み方をする。
       const classified = classifyActionResult(r);
       if (classified.verdict === 'failed') {
-        dispatch({ type: 'record/error', text: `保存に失敗: ${classified.message}` });
+        dispatch({ type: 'record/error', text: `保存に失敗: ${externalTextOnOneLine(classified.message)}` });
         return;
       }
       const note2 =
@@ -144,7 +145,7 @@ export function ServiceActionPanel<S extends RecordEntryServiceId>({ serviceId, 
     try {
       const r = await window.serviceHub.invoke<ActionData<`${RecordEntryServiceId}/advise`>>(serviceId, 'advise', adviseInput);
       if (!r.ok) {
-        dispatch({ type: 'advise/error', text: `改善提案の取得に失敗: ${r.message}` });
+        dispatch({ type: 'advise/error', text: `改善提案の取得に失敗: ${externalTextOnOneLine(r.message)}` });
         return;
       }
       dispatch({ type: 'advise/success', advice: r.data });

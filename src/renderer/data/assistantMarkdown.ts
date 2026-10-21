@@ -9,6 +9,8 @@
  * フルスペックの Markdown ではなく、ビジネス成果物で多用する要素に絞る。
  */
 
+import { INVISIBLE_UNITS, escapeUnits } from '../../shared/escape';
+
 export interface InlineToken {
   readonly text: string;
   readonly bold?: boolean;
@@ -40,16 +42,13 @@ export function parseInline(text: string): InlineToken[] {
   return tokens.length > 0 ? tokens : [{ text }];
 }
 
-/** 見えない字 (制御・書式・行 / 段落区切り)。 */
-const INVISIBLE = /[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]/gu;
-
-/** 1 字を UTF-16 の単位ごとに `\uXXXX` へ (JSON が C0 を逃がすのと同じ綴り)。 */
-export function escapeUnits(c: string): string {
-  return c
-    .split('')
-    .map((unit) => `\\u${unit.charCodeAt(0).toString(16).padStart(4, '0')}`)
-    .join('');
-}
+/**
+ * 見えない字と、1 字を `\uXXXX` へ逃がす綴りは **shared の 1 つ** (`shared/escape.ts` ·
+ * パス 519)。書き込みの確認 (`voiceWriteRequirements.ts`) も同じ物を読むので、ここで
+ * 再定義しない。`escapeUnits` は `bestAnswers.ts` が今までどおりここから読む。
+ */
+const INVISIBLE = INVISIBLE_UNITS;
+export { escapeUnits };
 
 /**
  * **外から来た文を、アプリの声の 1 行に置く形** (2026-09-26 · パス 488)。

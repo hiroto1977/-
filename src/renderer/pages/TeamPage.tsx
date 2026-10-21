@@ -2,6 +2,8 @@ import { useMemo, useState } from 'react';
 import { Section } from '../components/StatusBar';
 import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
+import { useRowWindow } from '../data/useRowWindow';
+import { RowWindowMore } from '../components/RowWindowMore';
 import { readRecordsNow, unreadableForJudgementNote, vanishedRecordNote } from '../data/readCollectionNow';
 import { fireReported } from '../data/deviceStoreFailure';
 import { usePlan } from '../plan/usePlan';
@@ -25,7 +27,7 @@ import {
   sameEmailMember,
   type Member,
 } from '../data/members';
-import { publicTransportCommute, carCommuteNonTaxableLimit, bonusWithholdingTax } from '../../shared/payroll';
+import { publicTransportCommute, carCommuteNonTaxableLimit, bonusWithholdingTax, calcEmployerCost } from '../../shared/payroll';
 import { useParameters } from '../data/parameterOverrides';
 import { jpy } from '../../shared/formatters';
 import { GuardedNumber } from '../components/GuardedNumber';
@@ -46,6 +48,8 @@ const PAYROLL_SPECS = refusingSpecs('judgement', {
   bonus: { label: '賞与額 (円)', kind: 'money' },
   si: { label: '社会保険料 (円)', kind: 'money' },
   prevSalary: { label: '前月給与 (社保控除後・円)', kind: 'money' },
+  monthlyGross: { label: '1 人あたり額面月給 (円)', kind: 'money', sane: 10_000_000 },
+  headcount: { label: '人数 (人)', kind: 'people', min: 1, max: 100_000 },
 } as const satisfies Record<string, NumSpec>);
 
 /**
@@ -73,6 +77,7 @@ const PAYROLL_READS = {
   publicTransport: ['commute'],
   car: ['km'],
   bonus: ['bonus', 'si', 'prevSalary'],
+  employerCost: ['monthlyGross', 'headcount'],
 } as const satisfies Record<string, readonly (keyof typeof PAYROLL_SPECS)[]>;
 
 const EMPTY = { name: '', email: '', role: 'member' as Role };
@@ -83,6 +88,9 @@ function PayrollPanel() {
   const [bonus, setBonus] = useState('500000');
   const [si, setSi] = useState('75000');
   const [prevSalary, setPrevSalary] = useState('300000');
+  const [monthlyGross, setMonthlyGross] = useState('300000');
+  const [headcount, setHeadcount] = useState('1');
+  const [withCare, setWithCare] = useState(false);
   // 読めない値は 0 になるが、同じ欄の `GuardedNumber` がその旨を出す (黙って 0 にしない)。
   // 非課税限度は台帳の値 (設定画面で改正後の額に置ける)。
   const { values: params } = useParameters();
@@ -97,14 +105,22 @@ function PayrollPanel() {
     }),
     [bonus, si, prevSalary],
   );
+  // 人件費の会社負担総額 (額面 + 会社負担の法定福利費)。人数は読めた値をそのまま掛け、
+  // 読めない間は下の ⛔ が判定ごと断る (0 人として「¥0」を出さない)。
+  const ec = useMemo(
+    () => calcEmployerCost(readNumberOr0(monthlyGross), { withCare }),
+    [monthlyGross, withCare],
+  );
+  const people = readNumberOr0(headcount);
   const payrollRefusedBy = useMemo(() => {
-    const refused = refusedFields(PAYROLL_SPECS, { commute, km, bonus, si, prevSalary });
+    const refused = refusedFields(PAYROLL_SPECS, { commute, km, bonus, si, prevSalary, monthlyGross, headcount });
     return {
       publicTransport: refusalLabels(PAYROLL_SPECS, refused, PAYROLL_READS.publicTransport),
       car: refusalLabels(PAYROLL_SPECS, refused, PAYROLL_READS.car),
       bonus: refusalLabels(PAYROLL_SPECS, refused, PAYROLL_READS.bonus),
+      employerCost: refusalLabels(PAYROLL_SPECS, refused, PAYROLL_READS.employerCost),
     };
-  }, [commute, km, bonus, si, prevSalary]);
+  }, [commute, km, bonus, si, prevSalary, monthlyGross, headcount]);
   const stat = (l: string, v: string) => (
     <div style={{ border: '1px solid var(--border)', borderRadius: 8, padding: 12, minWidth: 150 }}>
       <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>{l}</div>
@@ -155,6 +171,40 @@ function PayrollPanel() {
           {stat('源泉徴収税額', jpy(bw.tax))}
         </div>
       )}
+      <div style={{ fontSize: 12, color: 'var(--text-mute)', margin: '16px 0 4px' }}>
+        人件費の会社負担総額 (額面 + 会社負担の法定福利費・月額の概算)
+      </div>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 10 }}>
+        <GuardedNumber spec={PAYROLL_SPECS.monthlyGross} value={monthlyGross} width={120} onChange={setMonthlyGross} />
+        <GuardedNumber spec={PAYROLL_SPECS.headcount} value={headcount} width={80} onChange={setHeadcount} />
+        <label style={{ fontSize: 12, display: 'flex', gap: 6, alignItems: 'center' }}>
+          <input type="checkbox" checked={withCare} onChange={(e) => setWithCare(e.target.checked)} aria-label="介護保険あり (40歳以上65歳未満)" />
+          介護保険あり (40歳以上65歳未満)
+        </label>
+      </div>
+      {payrollRefusedBy.employerCost.length > 0 ? (
+        <RefusedFieldsNote labels={payrollRefusedBy.employerCost} />
+      ) : (
+        <>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 8 }}>
+            {stat('会社負担: 厚生年金', jpy(ec.pension))}
+            {stat('会社負担: 健康保険', jpy(ec.health))}
+            {stat('会社負担: 雇用保険', jpy(ec.employment))}
+            {stat('会社負担: 労災保険', jpy(ec.workersAccident))}
+            {stat('会社負担: 子ども・子育て拠出金', jpy(ec.childCare))}
+          </div>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            {stat('法定福利費 合計 (1 人・月)', jpy(ec.employerContributions))}
+            {stat('人件費総額 (1 人・月)', jpy(ec.totalCost))}
+            {stat('法定福利費率', ec.gross > 0 ? `${((ec.employerContributions / ec.gross) * 100).toFixed(1)}%` : '—')}
+            {stat(`人件費総額 (${people} 人・年額)`, jpy(ec.totalCost * people * 12))}
+          </div>
+          <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 6 }}>
+            賞与・通勤手当・退職金・採用費は含みません。年額は月額 × 人数 × 12 です。料率は令和8年度の概算で、
+            健保の都道府県別料率・労災の業種別料率により実際の額は変わります。
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -162,6 +212,8 @@ function PayrollPanel() {
 export function TeamPage() {
   const { plan } = usePlan();
   const { records, add, edit, remove, reload } = useCollection<Member>(MEMBERS_COLLECTION);
+  // 窓 (threat: T-141): 全行を描くと、細工した大量行の控えで画面が固まる。
+  const rowWindow = useRowWindow(records);
   const [form, setForm] = useState(EMPTY);
   const [error, setError] = useState<string>();
   const submit = useSubmitGuard();
@@ -332,6 +384,7 @@ export function TeamPage() {
             まだメンバーがいません。最初のオーナーを招待してください。
           </p>
         ) : (
+          <>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
             <thead>
               <tr style={{ textAlign: 'left', color: 'var(--text-mute)' }}>
@@ -342,7 +395,7 @@ export function TeamPage() {
               </tr>
             </thead>
             <tbody>
-              {records.map((r) => (
+              {rowWindow.visible.map((r) => (
                 <tr key={r.id} style={{ borderTop: '1px solid var(--border)' }}>
                   <td style={{ padding: '4px 8px' }}>{displayField(r.data.name, MAX_MEMBER_NAME_CHARS)}</td>
                   <td style={{ padding: '4px 8px', color: 'var(--text-mute)' }}>{displayField(r.data.email, MAX_MEMBER_EMAIL_LEN)}</td>
@@ -379,6 +432,8 @@ export function TeamPage() {
               ))}
             </tbody>
           </table>
+          <RowWindowMore hidden={rowWindow.hidden} total={rowWindow.total} showMore={rowWindow.showMore} />
+          </>
         )}
       </Section>
 

@@ -5,6 +5,7 @@ import { useServiceData } from '../hooks/useServiceData';
 import { useShell, type ShellService } from '../shellContext';
 import type { ServiceId } from '../../shared/serviceId';
 import { exportSavedNote, exportWarning } from '../data/exportOutcome';
+import { externalTextOnOneLine } from '../data/assistantMarkdown';
 
 interface HomeSnapshot {
   greeting: string;
@@ -150,7 +151,7 @@ function ActionCard({ action }: { action: QuickAction }) {
         // explicitly chooses to view the result.
         setStatus({ kind: 'done', path: r.data.path, saved: exportSavedNote(r.data), warning: exportWarning(r.data) });
       } else {
-        setStatus({ kind: 'error', message: r.message });
+        setStatus({ kind: 'error', message: externalTextOnOneLine(r.message) });
       }
     } catch (e) {
       setStatus({ kind: 'error', message: e instanceof Error ? e.message : String(e) });
@@ -168,7 +169,7 @@ function ActionCard({ action }: { action: QuickAction }) {
     setOpenFailure(undefined);
     try {
       const r = await window.serviceHub.openPath(status.path);
-      if (!r.ok) setOpenFailure(r.message);
+      if (!r.ok) setOpenFailure(externalTextOnOneLine(r.message));
     } catch (e) {
       setOpenFailure(e instanceof Error ? e.message : String(e));
     }
