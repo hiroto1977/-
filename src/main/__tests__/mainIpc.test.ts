@@ -100,11 +100,12 @@ function desktopReport(allDeleted: boolean): import('../../shared/eraseReport').
 let eraseReportImpl: () => Promise<import('../../shared/eraseReport').DesktopEraseReport> = async () => desktopReport(true);
 /** 本人確認の門 (T-147)。既定は通す —— 番人の検査はこのファイルの他の describe が見る。 */
 let presenceVerdict: { ok: true } | { ok: false; message: string } = { ok: true };
+let presenceThrows: Error | null = null;
 const presenceRequests: { channel: string; tier: string; summary: string }[] = [];
 vi.mock('../presenceWiring', () => ({
   requirePresence: (_e: unknown, req: { channel: string; tier: string; summary: string }) => {
     presenceRequests.push(req);
-    return Promise.resolve(presenceVerdict);
+    return presenceThrows ? Promise.reject(presenceThrows) : Promise.resolve(presenceVerdict);
   },
 }));
 
@@ -223,6 +224,7 @@ beforeEach(async () => {
   openPathCalls = [];
   openPathResult = '';
   presenceVerdict = { ok: true };
+  presenceThrows = null;
   presenceRequests.length = 0;
   validToken = { ok: true, token: 'tok' };
   setTokenThrows = null;
@@ -1258,5 +1260,19 @@ describe('本人確認の門 — 画面から独立した確認が通らなけ�
     await invoke('action:invoke', 'no-such', 'x', {});
     await invoke('action:invoke', 'github', 'nope', {});
     expect(presenceRequests).toEqual([]);
+  });
+
+  it('★ 確認の呼び出し自体が投げても IPC は reject せず、何も実行しない (4 つの口とも)', async () => {
+    presenceThrows = new Error('dialog exploded');
+    const r1 = (await invoke('app:eraseAll')) as { allDeleted: boolean; error?: string };
+    expect(r1.allDeleted).toBe(false);
+    expect(r1.error).toContain('dialog exploded');
+    expect(await invoke('secrets:clear', 'github')).toMatchObject({ ok: false });
+    expect(await invoke('secrets:set', 'github', 'ghp_x1234567890abcdef')).toMatchObject({ ok: false });
+    expect(await invoke('action:invoke', 'github', 'create-issue', {})).toMatchObject({ ok: false, code: 'action_failed' });
+    expect(clearTokenCalls).toEqual([]);
+    expect(setTokenCalls).toEqual([]);
+    expect(actionCalls).toEqual([]);
+    expect(relaunchCalls).toBe(0);
   });
 });

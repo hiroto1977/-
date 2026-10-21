@@ -19,7 +19,7 @@ import { externalUrlOrNull } from '../shared/externalUrlGate';
 import { shellTargetOrNull } from './shellOpenGate';
 import { installFileRequestGate } from './fileRequestGate';
 import { requirePresence } from './presenceWiring';
-import { describePayload, tierOfAction } from './userPresence';
+import { describePayload, tierOfAction, type PresenceDecision } from './userPresence';
 import { evaluateUpdate, parseLatestRelease, type UpdateVerdict } from '../shared/updateCheck';
 import {
   DEFAULT_HTTP_TIMEOUT_MS,
@@ -406,11 +406,17 @@ ipcMain.handle('secrets:set', async (e, serviceId: unknown, token: unknown): Pro
     return { ok: false, code: 'invalid_token', message: checked.message };
   }
   // 本人確認 (T-147): 乗っ取られた画面が攻撃者の資格情報へ差し替えると、以後の書き込みが攻撃者の口座へ出る。
-  const presence = await requirePresence(e, {
-    channel: 'secrets:set',
-    tier: 'credential-write',
-    summary: `${serviceId} の資格情報を新しい値に置き換えます（値は表示しません）。`,
-  });
+  // 確認の呼び出し自体が投げても IPC を reject させない (lint:ipc-handlers) —— 投げたら断る。
+  let presence: PresenceDecision;
+  try {
+    presence = await requirePresence(e, {
+      channel: 'secrets:set',
+      tier: 'credential-write',
+      summary: `${serviceId} の資格情報を新しい値に置き換えます（値は表示しません）。`,
+    });
+  } catch (err) {
+    presence = { ok: false, message: safeErrorMessage(err) };
+  }
   if (!presence.ok) return { ok: false, code: 'write_failed', message: presence.message };
   try {
     await setToken(serviceId, checked.value);
@@ -435,11 +441,17 @@ ipcMain.handle('secrets:set', async (e, serviceId: unknown, token: unknown): Pro
 });
 ipcMain.handle('secrets:clear', async (e, serviceId: unknown): Promise<OsOpResult> => {
   if (!isServiceId(serviceId)) return { ok: false, message: 'unknown service id' };
-  const presence = await requirePresence(e, {
-    channel: 'secrets:clear',
-    tier: 'destructive',
-    summary: `${serviceId} の保存済み資格情報を削除します。`,
-  });
+  // 確認の呼び出し自体が投げても IPC を reject させない (lint:ipc-handlers) —— 投げたら断る。
+  let presence: PresenceDecision;
+  try {
+    presence = await requirePresence(e, {
+      channel: 'secrets:clear',
+      tier: 'destructive',
+      summary: `${serviceId} の保存済み資格情報を削除します。`,
+    });
+  } catch (err) {
+    presence = { ok: false, message: safeErrorMessage(err) };
+  }
   if (!presence.ok) return { ok: false, message: presence.message };
   // 削除の失敗を黙ると「消したつもりの資格情報が残っている」状態になる。
   try {
@@ -469,11 +481,17 @@ function scheduleRelaunch(): void {
   }, RELAUNCH_DELAY_MS);
 }
 ipcMain.handle('app:eraseAll', async (e): Promise<DesktopEraseReport> => {
-  const presence = await requirePresence(e, {
-    channel: 'app:eraseAll',
-    tier: 'destructive',
-    summary: 'このアプリの資格情報・記録・設定をすべて削除して再起動します。元に戻せません。',
-  });
+  // 確認の呼び出し自体が投げても IPC を reject させない (lint:ipc-handlers) —— 投げたら断る。
+  let presence: PresenceDecision;
+  try {
+    presence = await requirePresence(e, {
+      channel: 'app:eraseAll',
+      tier: 'destructive',
+      summary: 'このアプリの資格情報・記録・設定をすべて削除して再起動します。元に戻せません。',
+    });
+  } catch (err) {
+    presence = { ok: false, message: safeErrorMessage(err) };
+  }
   if (!presence.ok) {
     return { kind: 'desktop', files: {}, renderer: 'failed', allDeleted: false, error: presence.message };
   }
@@ -577,11 +595,17 @@ ipcMain.handle(
     }
     // 本人確認 (T-147): 外部へ書き込む action は、何が書かれるかを見せて毎回確かめる。
     // 段階は台帳 (userPresence.ts の ACTION_TIER) で決まり、載っていない action は最も厳しい扱い。
-    const presence = await requirePresence(e, {
-      channel: `${serviceId}/${action}`,
-      tier: tierOfAction(serviceId, action),
-      summary: describePayload(payload),
-    });
+    // 確認の呼び出し自体が投げても IPC を reject させない (lint:ipc-handlers) —— 投げたら断る。
+    let presence: PresenceDecision;
+    try {
+      presence = await requirePresence(e, {
+        channel: `${serviceId}/${action}`,
+        tier: tierOfAction(serviceId, action),
+        summary: describePayload(payload),
+      });
+    } catch (err) {
+      presence = { ok: false, message: safeErrorMessage(err) };
+    }
     if (!presence.ok) return { ok: false, code: 'action_failed', message: presence.message };
     // fetch:snapshot と同じ理由で try の中に入れる。
     /*
