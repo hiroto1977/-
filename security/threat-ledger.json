@@ -2725,6 +2725,21 @@
         "file": "src/shared/__tests__/workflowStructureGate.test.ts",
         "test": "workflow の構造 — 書き方の揺れでゲートを迂回できない (threat: T-160)"
       }
+    },
+    {
+      "id": "T-161",
+      "found": "2026-10-21",
+      "foundBy": "red/blue 一覧 #12 を測定(19 形の遠隔実行を checkScript に通した)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "lint:shell の遠隔コード実行の針は `(curl|wget)[^|]*|(ba)?sh` の 1 本で、19 形のうち素の `curl … | sh` と `| bash -s` の 2 形しか見なかった。`| sudo bash`・`| python3`・`| node`・`| /bin/bash`・`bash <(curl …)`・`bash -c \"$(curl …)\"`・`eval \"$(curl …)\"`・`curl … |` + 次行の `sh`・`curl -o X && sh X`・`base64 -d | sh` ほか 17 形が exit 0 で通った",
+      "status": "mitigated",
+      "fix": "針を 4 つの形(パイプでインタプリタへ・コマンド置換/プロセス置換・保存して実行・base64 を流す)に広げ、行末の | \\\\ で続く行を畳んでから見る。画面向けの文言(warn/echo)は引用符の中を除いたうえで見るので、引用符の外のパイプは拾う。限界: 別の行にまたがる「ダウンロード → 数行後に実行」は読まない(行単位)。敵対者向けでなくうっかり混入を拾う見張りであることは変わらない。",
+      "regression": {
+        "file": "src/shared/__tests__/shellGateWitness.test.ts",
+        "test": "lint:shell — 遠隔コードの実行の形 (threat: T-161)"
+      }
     }
   ],
   "huntBacklog": [

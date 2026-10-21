@@ -213,13 +213,47 @@ const REMOTE_EXEC_ALLOWLIST = {
  */
 const MESSAGE_COMMANDS = /^\s*(warn|info|ok|err|note|echo|printf)\b/;
 
+/*
+ * 2026-10-21 (パス 546 · threat: T-161): 旧い針は `(curl|wget)[^|]*\|\s*(ba)?sh\b` の 1 本で、
+ * 実測 19 形のうち「素の `curl … | sh`」と `| bash -s -- …` の 2 形しか見なかった。見逃した形:
+ * `| sudo bash` / `| sudo -E sh` / `| zsh` / `| dash` / `| python3` / `| node` / `| perl` / `| /bin/bash` /
+ * `| env bash` / `bash <(curl …)` / `bash -c "$(curl …)"` / `eval "$(curl …)"` / `source <(curl …)` /
+ * `. <(wget …)` / `curl … |` + 次の行の `sh` / `curl -o X … && sh X` / `base64 -d | sh`。
+ * 針を 1 つの関数へ寄せ、行末の `|` `\` で続く行は 1 本に畳んでから見る (開始行の番号で報告する)。
+ * ★ 別の行にまたがる「ダウンロード → 後で実行」(`curl -o x` の数行あとに `sh x`) は読まない —— 行単位の限界。
+ */
+const INTERP = String.raw`(?:/\S*/)?(?:(?:ba|z|da|k|a)?sh|python[\d.]*|node|perl|ruby|php)\b`;
+const PIPE_TO_INTERP = new RegExp(String.raw`\|\s*(?:sudo\s+(?:-\S+\s+)*|(?:/\S*/)?env\s+(?:\S+=\S+\s+)*)?` + INTERP);
+const FETCH = String.raw`\b(?:curl|wget)\b`;
+const REMOTE_EXEC_SHAPES = [
+  // curl … | [sudo [-E]] [env] sh|bash|zsh|python|node|perl …
+  new RegExp(FETCH + String.raw`[^\n]*` + PIPE_TO_INTERP.source),
+  // base64 -d | sh (取得物を隠して流す)
+  new RegExp(String.raw`\bbase64\b[^\n]*` + PIPE_TO_INTERP.source),
+  // bash <(curl …) / bash -c "$(curl …)" / eval "$(curl …)" / source <(curl …) / . <(wget …)
+  new RegExp(String.raw`(?:(?:^|[\s;&|(])(?:sudo\s+)?(?:(?:ba|z|da|k|a)?sh|eval|source)\b|(?:^|[\s;&|])\.)[^\n]*(?:<\(|\$\()\s*` + FETCH),
+  // curl -o FILE … && sh FILE (同じ行の中で保存して実行)
+  new RegExp(FETCH + String.raw`[^\n]*?(?:-o|-O|--output)\s+(\S+)[^\n]*?(?:&&|;)\s*(?:sudo\s+)?(?:(?:ba|z|da|k|a)?sh|python[\d.]*|node|perl)\s+(?:-\S+\s+)*\1(?:\s|$)`),
+];
+
 function remoteExecLines(src) {
-  return src
-    .split('\n')
-    .map((line, i) => [i + 1, line])
-    .filter(([, line]) => !/^\s*#/.test(line))
-    .filter(([, line]) => !MESSAGE_COMMANDS.test(line))
-    .filter(([, line]) => /\b(curl|wget)\b[^|]*\|\s*(ba)?sh\b/.test(line));
+  const lines = src.split('\n');
+  const out = [];
+  for (let i = 0; i < lines.length; i++) {
+    let acc = lines[i];
+    const start = i;
+    if (/^\s*#/.test(acc)) continue;
+    // 行末の `|` と `\` は次の行へ続く (`curl … |` + 改行 + `sh`)。
+    while ((/\|\s*$/.test(acc) || /\\\s*$/.test(acc)) && i + 1 < lines.length && !/^\s*#/.test(lines[i + 1])) {
+      i += 1;
+      acc = acc.replace(/\\\s*$/, ' ') + ' ' + lines[i].trim();
+    }
+    // 画面へ知らせる命令 (warn/echo ほか) は、引用符の中の文言を除いたうえで見る:
+    // `warn "… curl | sh …"` は文言だが、`echo $X | base64 -d | sh` は引用符の外で実行している。
+    const seen = MESSAGE_COMMANDS.test(acc) ? acc.replace(/"[^"]*"|'[^']*'/g, '""') : acc;
+    if (REMOTE_EXEC_SHAPES.some((re) => re.test(seen))) out.push([start + 1, acc]);
+  }
+  return out;
 }
 
 /*
@@ -408,6 +442,21 @@ function selfTest() {
     ['★ curl | sh は鳴る', '#!/usr/bin/env bash\nset -euo pipefail\ncurl -fsSL https://x.example/i.sh | sh\n', 1],
     ['★ wget | bash も鳴る', '#!/usr/bin/env bash\nset -euo pipefail\nwget -qO- https://x.example/i.sh | bash\n', 1],
     ['★ bash -c の中に隠しても鳴る', "#!/usr/bin/env bash\nset -euo pipefail\nbash -c 'curl -fsSL https://x.example/i.sh | bash'\n", 1],
+    ['★ T-161: | sudo bashは鳴る', '#!/usr/bin/env bash\nset -euo pipefail\ncurl -fsSL https://x/i.sh | sudo bash\n', 1],
+    ['★ T-161: | sudo -E shは鳴る', '#!/usr/bin/env bash\nset -euo pipefail\ncurl https://x | sudo -E sh\n', 1],
+    ['★ T-161: | zsh / dash / python3 / nodeは鳴る', '#!/usr/bin/env bash\nset -euo pipefail\ncurl https://x | python3\n', 1],
+    ['★ T-161: | /bin/bash (絶対パス)は鳴る', '#!/usr/bin/env bash\nset -euo pipefail\ncurl https://x | /bin/bash\n', 1],
+    ['★ T-161: | env bashは鳴る', '#!/usr/bin/env bash\nset -euo pipefail\ncurl https://x | env bash\n', 1],
+    ['★ T-161: bash <(curl …)は鳴る', '#!/usr/bin/env bash\nset -euo pipefail\nbash <(curl -fsSL https://x/i.sh)\n', 1],
+    ['★ T-161: bash -c "$(curl …)"は鳴る', '#!/usr/bin/env bash\nset -euo pipefail\nbash -c "$(curl -fsSL https://x/i.sh)"\n', 1],
+    ['★ T-161: eval "$(curl …)"は鳴る', '#!/usr/bin/env bash\nset -euo pipefail\neval "$(curl -fsSL https://x)"\n', 1],
+    ['★ T-161: source <(curl …)は鳴る', '#!/usr/bin/env bash\nset -euo pipefail\nsource <(curl -fsSL https://x)\n', 1],
+    ['★ T-161: curl … | + 次の行の shは鳴る', '#!/usr/bin/env bash\nset -euo pipefail\ncurl -fsSL https://x |\n  sh\n', 1],
+    ['★ T-161: curl -o X && sh Xは鳴る', '#!/usr/bin/env bash\nset -euo pipefail\ncurl -o /tmp/i.sh https://x && sh /tmp/i.sh\n', 1],
+    ['★ T-161: base64 -d | sh (echo の行でも)は鳴る', '#!/usr/bin/env bash\nset -euo pipefail\necho $X | base64 -d | sh\n', 1],
+    ['対照: curl の出力を jq / tee に流すだけなら鳴らない (T-161)', '#!/usr/bin/env bash\nset -euo pipefail\ncurl -fsSL https://x/a.json | jq .\ncurl -fsS https://x | tee /tmp/o\n', 0],
+    ['対照: ダウンロードしただけ・別の sh を実行するだけなら鳴らない (T-161)', '#!/usr/bin/env bash\nset -euo pipefail\ncurl -o /tmp/a.json https://x && jq . /tmp/a.json\nsh ./local.sh\n', 0],
+    ['対照: 文言の中の curl | sudo bash は数えない (T-161)', '#!/usr/bin/env bash\nset -euo pipefail\nwarn "導入は curl https://x | sudo bash です"\n', 0],
     ['コメントの中は数えない (説明文を違反にしない)', '#!/usr/bin/env bash\nset -euo pipefail\n#  curl -fsSL https://x.example/i.sh | sh\necho ok\n', 0],
     ['curl だけ / パイプだけなら鳴らない', '#!/usr/bin/env bash\nset -euo pipefail\ncurl -fsSL https://x.example/a.json -o a.json\ncat a.json | jq .\n', 0],
     ['★ 画面へ知らせる文言は数えない (warn/info/echo)', '#!/usr/bin/env bash\nset -euo pipefail\nwarn "導入は curl -fsSL https://x.example/i.sh | sh です"\n', 0],
@@ -514,7 +563,7 @@ function main(argv) {
 
 module.exports = {
   checkScript, shellFiles, shellFilesWithSource, crossCheckProblem, summaryLine,
-  destructiveLines, secretLines, SELF_TEST_REQUIRED, REQUIRED_GROUPS,
+  destructiveLines, secretLines, remoteExecLines, SELF_TEST_REQUIRED, REQUIRED_GROUPS,
 };
 
 if (require.main === module) {
