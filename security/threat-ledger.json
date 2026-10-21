@@ -2710,6 +2710,21 @@
         "file": "src/main/__tests__/mainIpc.test.ts",
         "test": "門が断ったら、副作用 (取得・配色・OS で開く・通信) は 1 つも起きず、理由を返す"
       }
+    },
+    {
+      "id": "T-160",
+      "found": "2026-10-21",
+      "foundBy": "red/blue 一覧 #7 を測定(隔離した scratch で workflow 13 形を check() に通した)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "lint:workflow-security は行頭の uses: / run: を正規表現で読むため、js-yaml が同じ step と読む書き方 — `uses : x@v1`(鍵と : の間の空白)・`uses:` の値を次の行へ送る・`- &a uses: x@v1`(アンカー) — で未固定の第三者 action が exit 0 で通った。また `curl … |` の次の行に `sh` が続く形と、名前を組み立てた GITHUB_ENV への書き込み(`F=GITHUB_E; >> \"${F}NV\"`)も run: の本文の規則を素通りした",
+      "status": "mitigated",
+      "fix": "読めない形は fail closed で落とす: 鍵と : の間の空白・uses: の値の改行・アンカー/エイリアス/タグ/マージキー(& * ! <<)。run: の本文は行末の | \\\\ && で続く行を 1 本に畳んでから curl|sh を見て(見出しの `run: |` は畳まない)、リダイレクト先の合成(${X}Y・$(…)・バッククォート)と eval を断る。実物の workflow 7 本は 0 件。限界: 行単位の走査であることは変わらず、本物の YAML 解析への置き換えではない(依存を足さない選択)。読めない書き方を増やす側は断る方針なので、書く人の自由度が少し減る。",
+      "regression": {
+        "file": "src/shared/__tests__/workflowStructureGate.test.ts",
+        "test": "workflow の構造 — 書き方の揺れでゲートを迂回できない (threat: T-160)"
+      }
     }
   ],
   "huntBacklog": [

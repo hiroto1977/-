@@ -46,7 +46,7 @@
 | 4 | 全 AI 合議が門で 1 回と数えられる(3 社で 3 回課金) | medium | **直した (T-152)**: 重み 5 |
 | 5 | `lint:artifact-csp` が注記・title の中の CSP meta を数える | low | **直した (T-153)** |
 | 6 | `src/` の `.mjs` 等を境界・通信先・依存のゲートが読まない | medium | **直した (T-154)**: `lint:imports` が落とす。他のゲート側の走査拡張は未実装 |
-| 7 | `lint:workflow-security` が YAML を正規表現で読み、書き方 5 形(`uses:` の改行・`uses :`・エスケープ鍵・GITHUB_ENV 難読化 ほか)と「秘密を持ち出す新規 workflow」を通す | medium(PoC で再現。悪用には main へ入れる権限が要る) | **未修正**: 本物の YAML 解析(js-yaml 相当)への置き換えが要る。依存を足す判断なので別パス |
+| 7 | `lint:workflow-security` が YAML を正規表現で読み、書き方の揺れ(`uses :`・`uses:` の改行・アンカー・`curl … |` の次行に `sh`・名前を組み立てた GITHUB_ENV)で未固定の第三者 action と持ち出しを通す | medium(PoC で再現。悪用には main へ入れる権限が要る) | **直した (T-160)**: 読めない形は fail closed で落とす(鍵の空白・値の改行・& * ! <<)、run: の継続行を畳んで curl\|sh を見、リダイレクト先の合成と eval を断る。**限界**: 本物の YAML 解析ではなく行単位の走査のまま(依存を足さない)。エスケープ鍵(`"\u0075ses"`)は引用符つきの鍵として既に断る。「秘密を持ち出す新規 workflow」は CODEOWNERS と人のレビューの領分で、この門では止まらない |
 | 8 | Vault の `unlock()` に試行制限が無い | low | **直さない(理由)**: 同じオリジンの JS は IndexedDB の meta を直接読んで自前で KCV を試せる(PoC で一致)ので、試行制限では防げない。オフライン総当たりは `SECURITY_AUDIT.md` R2-4 が既に認めている |
 | 9 | `pages.yml` が `ci` を待たずに公開 / `release.yml` の署名鍵 job が lifecycle つき `npm ci` | low | **GitHub 側の設定**(branch protection・必須チェック・環境の保護)が本体。リポジトリ内の対処は F-1 に記録済み |
 | 10 | 開発者端末の手順が `~/.zshrc` へ秘密を export させる | low | **未修正**: 手順書の注意書きを足す候補 |
