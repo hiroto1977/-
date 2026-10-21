@@ -207,7 +207,8 @@ function describeValue(v: unknown): string {
     const shown = clipped.slice(0, MAX_VALUE_CHARS);
     return v.length > shown.length ? `${JSON.stringify(shown)}…(全 ${v.length} 文字)` : JSON.stringify(shown);
   }
-  if (typeof v === 'number' || typeof v === 'boolean' || v === null) return String(v);
+  if (typeof v === 'number') return Number.isFinite(v) ? String(v) : '(有限でない数)';
+  if (typeof v === 'boolean' || v === null) return String(v);
   if (Array.isArray(v)) return `[配列 ${v.length} 件]`;
   if (typeof v === 'object') return `{入れ子 ${Object.keys(v as object).length} 欄}`;
   return `(${typeof v})`;

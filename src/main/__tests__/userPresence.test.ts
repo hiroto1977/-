@@ -288,6 +288,7 @@ describe('表示の安全化', () => {
       'a: {入れ子 2 欄} / b: [配列 3 件] / c: 5 / d: true / e: null',
     );
     expect(describePayload({ f: () => 1 })).toBe('f: (function)');
+    expect(describePayload({ a: Number.NaN, b: Number.POSITIVE_INFINITY })).toBe('a: (有限でない数) / b: (有限でない数)');
   });
 
   it('★ 巨大な値でも確認の前に固まらない (読むのは先頭だけ)', () => {

@@ -2751,6 +2751,14 @@
       "leafCount": 124,
       "note": "update main.ts,userPresence.ts",
       "hash": "f2040bd32664e875ccc1c94ecb746a80746a50accf88fab9190587aed091f042"
+    },
+    {
+      "index": 328,
+      "prevHash": "f2040bd32664e875ccc1c94ecb746a80746a50accf88fab9190587aed091f042",
+      "merkleRoot": "1e0f34eb000246117990b04564c1b4cd29a8e54c80e56d55fc58156bf3528286",
+      "leafCount": 124,
+      "note": "update userPresence.ts",
+      "hash": "f7b54c7e23ba6a98e9071baaa79963fdc29ae99e0a5309d218cf095e69d0ada5"
     }
   ],
   "tipManifest": {
@@ -2823,7 +2831,7 @@
     "src/main/secrets.ts": "ddfe5ece7c6393fd8cd473f84eec8173cbc2435ffb163a638e130a9e4ef5ce17",
     "src/main/shellOpenGate.ts": "83d21dd21674694edd0e835c9acfdc6c79fea3ff8eedd2d5e589dfeecbc7548b",
     "src/main/stateFile.ts": "984eebe8582b3c6c88669d17e778932f6b87a682640d1f162acd182d5947169b",
-    "src/main/userPresence.ts": "92869cc29c0b0d043ae51a8ddb3f75fc65fa94389f3d2824b2e03d5b0d93e601",
+    "src/main/userPresence.ts": "13441e63eec669af18000d24e02122b37ab4953fdace0dff8ab083e7d54f0f91",
     "src/main/windowPrefs.ts": "0bccea9e29b489da1b4a7962eaa53e237cf93fed9d4692371a3a43a6a4985dee",
     "src/preload/preload.ts": "21fc645271dd2064f063fc439d888eb4dcef32d08d1030d92d9cb8ff2a4040a6",
     "src/renderer/data/assistantMarkdown.ts": "a3a2d232703461ad47f9b582744393f179310ed8ba5b701a816e3eeca6c96937",
