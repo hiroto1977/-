@@ -311,4 +311,13 @@ describe('1 時間あたりの回数の上限 (threat: T-146)', () => {
     cancelBestJob();
     for (let i = 0; i < MAX_BEST_JOBS_PER_WINDOW - 1; i += 1) await runOnce();
   });
+
+  it('検査用の片付けは窓も空にする (前の検査の回数を持ち越さない)', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(5_000_000);
+    for (let i = 0; i < MAX_BEST_JOBS_PER_WINDOW; i += 1) await runOnce();
+    expect(startBestJob(REQ, echo, MAX_BEST_ANSWER_CALLS).ok).toBe(false);
+    _resetBestJobForTests();
+    await runOnce();
+  });
 });

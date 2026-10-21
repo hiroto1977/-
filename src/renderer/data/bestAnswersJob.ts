@@ -199,6 +199,6 @@ export function _resetBestJobForTests(): void {
   controller.abort();
   controller = new AbortController();
   current = null;
-  startedAt = [];
+  startedAt.length = 0;
   listeners.clear();
 }
