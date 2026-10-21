@@ -104,6 +104,22 @@ export function tierOfAction(serviceId: string, action: string): Tier {
   return Object.hasOwn(ACTION_TIER, key) ? ACTION_TIER[key]! : 'external-write';
 }
 
+/**
+ * 1 回の呼び出しが外部へ何回分の費用を出すか (threat: T-152)。`assistant/chatAll` は設定済みの
+ * 提供者すべてへ同じ要求 (最大 約 38 万字) を送る —— 門が 1 回と数えると、速度の上限 20/分 で
+ * 実質 100 回分 (5 社なら 100 リクエスト/分) の課金が通る。実測: 3 社で 1 回の invoke が 3 回課金された。
+ * 提供者の数は main の門から見えないので、上限の 5 (AI_PROVIDERS の数) で数える。
+ */
+export const MAX_CALL_WEIGHT = 5;
+const ACTION_WEIGHT: Readonly<Record<string, number>> = {
+  'assistant/chatAll': MAX_CALL_WEIGHT,
+};
+
+export function weightOfAction(serviceId: string, action: string): number {
+  const key = `${serviceId}/${action}`;
+  return Object.hasOwn(ACTION_WEIGHT, key) ? ACTION_WEIGHT[key]! : 1;
+}
+
 export const WINDOW_MS = 60_000;
 /** 1 分あたりの上限 (段階ごと)。確かめる段階は人の速さ以上に速く来たら怪しい。 */
 export const RATE_LIMIT: Readonly<Record<Tier, number>> = {
@@ -133,6 +149,8 @@ export interface PresenceRequest {
   readonly tier: Tier;
   /** 何が起きるか (人が読む文)。ダイアログにそのまま出す。 */
   readonly summary: string;
+  /** 速度の上限に何回分として数えるか (既定 1・上限 `MAX_CALL_WEIGHT`)。 */
+  readonly weight?: number;
 }
 
 export type PresenceDecision = { readonly ok: true } | { readonly ok: false; readonly message: string };
@@ -288,7 +306,8 @@ export function createPresenceGate(deps: PresenceDeps): PresenceGate {
 
       // 速度の制限 (段階ごと)。断った呼び出しも数える —— 連打で上限を押し続ける間は通らない。
       const list = (calls[req.tier] ??= []).filter((x) => within(t, x, WINDOW_MS));
-      list.push(t);
+      const weight = Number.isInteger(req.weight) && req.weight! >= 1 ? Math.min(req.weight!, MAX_CALL_WEIGHT) : 1;
+      for (let i = 0; i < weight; i += 1) list.push(t);
       calls[req.tier] = list;
       if (list.length > RATE_LIMIT[req.tier]) {
         return deny('rate-limited', req, '短時間に操作が集中したため断りました。しばらく待ってからやり直してください。');

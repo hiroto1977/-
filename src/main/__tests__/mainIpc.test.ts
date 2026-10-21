@@ -101,9 +101,9 @@ let eraseReportImpl: () => Promise<import('../../shared/eraseReport').DesktopEra
 /** 本人確認の門 (T-147)。既定は通す —— 番人の検査はこのファイルの他の describe が見る。 */
 let presenceVerdict: { ok: true } | { ok: false; message: string } = { ok: true };
 let presenceThrows: Error | null = null;
-const presenceRequests: { channel: string; tier: string; summary: string }[] = [];
+const presenceRequests: { channel: string; tier: string; summary: string; weight?: number }[] = [];
 vi.mock('../presenceWiring', () => ({
-  requirePresence: (_e: unknown, req: { channel: string; tier: string; summary: string }) => {
+  requirePresence: (_e: unknown, req: { channel: string; tier: string; summary: string; weight?: number }) => {
     presenceRequests.push(req);
     return presenceThrows ? Promise.reject(presenceThrows) : Promise.resolve(presenceVerdict);
   },
@@ -169,6 +169,7 @@ vi.mock('../clients', () => ({
   },
   LIVE_ACTIONS: {
     github: { 'create-issue': async (a: unknown) => { actionCalls.push(a); return { id: 1 }; } },
+    assistant: { chat: async () => ({ ok: true }), chatAll: async () => ({ ok: true }) },
     // 資格情報の要らないサービスの action (パス 267 の実測対象)。
     skills: { run: async (a: unknown) => { actionCalls.push(a); return { ran: true }; } },
     kpi: { save: async (a: unknown) => { actionCalls.push(a); return { saved: true }; } },
@@ -1249,6 +1250,13 @@ describe('本人確認の門 — 画面から独立した確認が通らなけ�
     expect(actionCalls).toEqual([]);
     expect(presenceRequests[0]).toMatchObject({ channel: 'github/create-issue', tier: 'external-write' });
     expect(presenceRequests[0]!.summary).toContain('title: "T"');
+  });
+
+  it('★ action:invoke は呼び出しの重みを門へ渡す (全 AI 合議は提供者の数だけの費用・threat: T-152)', async () => {
+    await invoke('action:invoke', 'assistant', 'chatAll', { messages: [] });
+    expect(presenceRequests.at(-1)).toMatchObject({ channel: 'assistant/chatAll', weight: 5 });
+    await invoke('action:invoke', 'assistant', 'chat', { messages: [] });
+    expect(presenceRequests.at(-1)).toMatchObject({ channel: 'assistant/chat', weight: 1 });
   });
 
   it('台帳に無い action でも (登録があれば) 最も厳しい段階で確かめる', async () => {

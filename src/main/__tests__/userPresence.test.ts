@@ -5,6 +5,7 @@ import {
   BASE_LOCKOUT_MS,
   DENIALS_TO_LOCK,
   MAX_EVENTS,
+  MAX_CALL_WEIGHT,
   MAX_FIELDS_SHOWN,
   MAX_LOCKOUT_MS,
   MAX_SUMMARY_CHARS,
@@ -16,6 +17,7 @@ import {
   isTrustedSenderUrl,
   safeSummary,
   tierOfAction,
+  weightOfAction,
   type PresenceRequest,
   type Tier,
 } from '../userPresence';
@@ -189,6 +191,38 @@ describe('速度の制限', () => {
     expect(h.gate.recentEvents().at(-1)?.kind).toBe('rate-limited');
     h.advance(WINDOW_MS);
     expect((await h.gate.guard(req({ tier, summary: 'after' }), true)).ok).toBe(true);
+  });
+
+  it('★ 重み: 全 AI 合議 (chatAll) は提供者の数だけの費用なので、上限に重みの分だけ数える (threat: T-152)', async () => {
+    expect(weightOfAction('assistant', 'chatAll')).toBe(MAX_CALL_WEIGHT);
+    expect(weightOfAction('assistant', 'chat')).toBe(1);
+    expect(weightOfAction('github', 'create-issue')).toBe(1);
+    expect(weightOfAction('constructor', '__proto__')).toBe(1);
+    const h = harness(() => true);
+    const calls = Math.floor(RATE_LIMIT.egress / MAX_CALL_WEIGHT);
+    for (let k = 0; k < calls; k += 1) {
+      expect((await h.gate.guard(req({ tier: 'egress', weight: MAX_CALL_WEIGHT, summary: `s${k}` }), true)).ok).toBe(true);
+    }
+    expect((await h.gate.guard(req({ tier: 'egress', weight: MAX_CALL_WEIGHT, summary: 'over' }), true)).ok).toBe(false);
+    expect(h.gate.recentEvents().at(-1)?.kind).toBe('rate-limited');
+  });
+
+  it.each([[0], [-3], [1.5], [Number.NaN], [Number.POSITIVE_INFINITY]])('重み %s は 1 として数える (不正な値で数え落とさない)', async (weight) => {
+    const h = harness(() => true);
+    for (let k = 0; k < RATE_LIMIT.egress; k += 1) {
+      expect((await h.gate.guard(req({ tier: 'egress', weight, summary: `s${k}` }), true)).ok).toBe(true);
+    }
+    expect((await h.gate.guard(req({ tier: 'egress', weight, summary: 'over' }), true)).ok).toBe(false);
+  });
+
+  it('重みは上限 MAX_CALL_WEIGHT で頭打ち (巨大な重みで 1 回で枠を使い切るのは同じ事: 上限を超える重みは上限と同じ)', async () => {
+    const a = harness(() => true);
+    const b = harness(() => true);
+    for (let k = 0; k < 3; k += 1) {
+      const ra = (await a.gate.guard(req({ tier: 'egress', weight: 10_000, summary: `s${k}` }), true)).ok;
+      const rb = (await b.gate.guard(req({ tier: 'egress', weight: MAX_CALL_WEIGHT, summary: `s${k}` }), true)).ok;
+      expect(ra).toBe(rb);
+    }
   });
 });
 

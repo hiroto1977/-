@@ -19,7 +19,7 @@ import { externalUrlOrNull } from '../shared/externalUrlGate';
 import { shellTargetOrNull } from './shellOpenGate';
 import { installFileRequestGate } from './fileRequestGate';
 import { requirePresence } from './presenceWiring';
-import { describePayload, tierOfAction, type PresenceDecision } from './userPresence';
+import { describePayload, tierOfAction, weightOfAction, type PresenceDecision } from './userPresence';
 import { evaluateUpdate, parseLatestRelease, type UpdateVerdict } from '../shared/updateCheck';
 import {
   DEFAULT_HTTP_TIMEOUT_MS,
@@ -614,6 +614,7 @@ ipcMain.handle(
         channel: `${serviceId}/${action}`,
         tier: tierOfAction(serviceId, action),
         summary: describePayload(payload),
+        weight: weightOfAction(serviceId, action),
       });
     } catch (err) {
       presence = { ok: false, message: safeErrorMessage(err) };

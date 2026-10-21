@@ -99,6 +99,26 @@ export const ASSISTANT_REPLY_TRUNCATED_NOTICE =
 // ---------------------------------------------------------------------------
 
 /**
+ * **目に見えない指示の運び屋を、AI へ送る前に落とす** (threat: T-151)。
+ *
+ * Unicode の Tag 文字 (U+E0000–E007F) と異体字選択子の補助面 (U+E0100–E01EF) は、画面に 1 字も
+ * 描かれないのに、モデルは符号として読める (ASCII smuggling)。貼り付けた文・取り込んだ文書・
+ * 第三者の応答の中に混ざった「見えない指示」は、利用者にもレビューにも見えないまま履歴として
+ * 外の AI へ届く。実測 (2026-10-21 レッドチーム): 42 個のタグ文字を付けた発話が 42/42 保持されて送信対象になった。
+ * 絵文字の連結 (ZWJ) や通常の異体字選択子 (U+FE0F) は正当な字なので**触らない**。
+ * 字は符号位置で数える (文字クラスに不可視の字を書かない · lint:charset)。
+ */
+export function stripSmuggledChars(text: string): string {
+  let out = '';
+  for (const ch of text) {
+    const cp = ch.codePointAt(0)!;
+    if ((cp >= 0xe0000 && cp <= 0xe007f) || (cp >= 0xe0100 && cp <= 0xe01ef)) continue;
+    out += ch;
+  }
+  return out;
+}
+
+/**
  * **いま送ろうとしている発話は、切らずに断る。**
  *
  * `sanitizeMessages` (main) / `sanitizeAssistantTurns` (ブラウザ版) は会話履歴を窓に

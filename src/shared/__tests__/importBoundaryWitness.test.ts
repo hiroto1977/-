@@ -81,3 +81,22 @@ describe('lint:imports — 外側の証人 (信頼境界)', () => {
     expect(check(rel, text)).toHaveLength(0);
   });
 });
+
+describe('lint:imports — .ts / .tsx 以外の実行可能ファイルは断る (threat: T-154)', () => {
+  const g = req('../../../scripts/check-import-boundaries.cjs') as {
+    isUnscannedExecutable: (name: string) => boolean;
+    UNSCANNED_EXEC_EXTS: readonly string[];
+  };
+
+  it.each(['x.mjs', 'x.js', 'x.cjs', 'x.jsx', 'a.b.mjs'])('★ %s は読まれない実行可能ファイルとして数える', (name) => {
+    expect(g.isUnscannedExecutable(name)).toBe(true);
+  });
+
+  it.each(['x.ts', 'x.tsx', 'x.d.ts', 'x.json', 'x.css', 'mjs', 'x.mjs.map', 'x.test.ts'])('%s は数えない', (name) => {
+    expect(g.isUnscannedExecutable(name)).toBe(false);
+  });
+
+  it('拡張子の一覧は 4 つ (足すなら門の読み手も足す)', () => {
+    expect([...g.UNSCANNED_EXEC_EXTS].sort()).toEqual(['.cjs', '.js', '.jsx', '.mjs']);
+  });
+});

@@ -412,3 +412,28 @@ describe('stripParenthesized — 括弧の除去は 1 回の走査 (threat: T-11
     expect(performance.now() - t0).toBeLessThan(1000);
   });
 });
+
+describe('採点の形の判定は返答の長さに対して直線 (threat: T-149)', () => {
+  const input = { question: 'インボイス制度で免税事業者から仕入れたら消費税は控除できますか', docs: DOCS, ontology: TAX_EXCLUSIVE, peers: [] };
+  const structure = (t: string): number => scoreAnswer(t, input).axes.find((x) => x.axis === 'structure')!.points;
+
+  it.each([
+    ['LF', '\n'],
+    ['空白つきの LF', ' \n'],
+    ['CRLF', '\r\n'],
+  ])('★ 空行ばかりの 99,000 字 (%s) でも固まらない (旧い式は 6〜9 秒)', (_name, sep) => {
+    const reply = `結論です。${sep.repeat(Math.floor(99_000 / sep.length))}参照: 何か`;
+    const t0 = performance.now();
+    scoreAnswer(reply, input);
+    expect(performance.now() - t0).toBeLessThan(1500);
+  });
+
+  it('印の判定は変えない: 空行・字下げの後ろの箇条書き・番号・見出し・表を拾い、印の無い行は拾わない', () => {
+    const base = structure('平文だけの行です');
+    expect(structure('平文だけの行です\n\n   - 項目')).toBeGreaterThan(base);
+    expect(structure('平文だけの行です\r\n\r\n1. 項目')).toBeGreaterThan(base);
+    expect(structure('平文だけの行です\n\n\t## 見出し')).toBeGreaterThan(base);
+    expect(structure('平文だけの行です\n\n| 表 |')).toBeGreaterThan(base);
+    expect(structure('平文だけの行です\n\n   普通の行')).toBe(base);
+  });
+});

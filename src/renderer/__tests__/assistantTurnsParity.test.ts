@@ -19,6 +19,7 @@ import {
   MAX_ASSISTANT_MESSAGES,
   MAX_ASSISTANT_SYSTEM_CHARS,
   MAX_ENSEMBLE_ERROR_CHARS,
+  stripSmuggledChars,
 } from '../../shared/assistantLimits';
 import { clampToCeiling, countChars } from '../../shared/inputCeiling';
 import { resolve } from 'node:path';
@@ -198,5 +199,37 @@ describe('★ system プロンプトの天井も、両ビルドが同じ単位�
   it('★ 共有の天井は応答の天井より狭い (積まれるので)', () => {
     expect(MAX_ENSEMBLE_ERROR_CHARS).toBe(300);
     expect(MAX_ENSEMBLE_ERROR_CHARS).toBeLessThan(ERROR_MESSAGE_MAX_CHARS);
+  });
+});
+
+describe('見えない指示の運び屋 (Unicode Tag / 異体字選択子の補助面) を AI へ送る前に落とす (threat: T-151)', () => {
+  const cp = (...xs: number[]): string => String.fromCodePoint(...xs);
+  const SMUGGLED = cp(0xe0000, 0xe0049, 0xe007f, 0xe0100, 0xe01ef);
+
+  it('★ 境界: 帯の両端は落とし、1 つ外の字 (U+DFFFF 側の隣・U+E0080・U+E00FF・U+E01F0) は残す', () => {
+    expect(stripSmuggledChars(SMUGGLED)).toBe('');
+    for (const keep of [0xdffff, 0xe0080, 0xe00ff, 0xe01f0]) {
+      expect(stripSmuggledChars(cp(keep))).toBe(cp(keep));
+    }
+  });
+
+  it('★ 正当な不可視の字は触らない: ZWJ の連結絵文字・U+FE0F・日本語・空文字', () => {
+    const family = cp(0x1f468, 0x200d, 0x1f469, 0x200d, 0x1f467);
+    expect(stripSmuggledChars(family + cp(0x2764, 0xfe0f) + '経営')).toBe(family + cp(0x2764, 0xfe0f) + '経営');
+    expect(stripSmuggledChars('')).toBe('');
+  });
+
+  it('★ 両ビルドの履歴整形が同じ答えを出す: 見える部分だけが残り、全部が運び屋の発話は黙って落ちる', () => {
+    const raw = [
+      { role: 'user', content: `今月の経営課題を3つ挙げて${SMUGGLED}` },
+      { role: 'assistant', content: SMUGGLED },
+      { role: 'user', content: `${SMUGGLED}続けて` },
+    ];
+    const expected = [
+      { role: 'user', content: '今月の経営課題を3つ挙げて' },
+      { role: 'user', content: '続けて' },
+    ];
+    expect(mainAssistant.sanitizeMessages(raw)).toEqual(expected);
+    expect(webShim.sanitizeAssistantTurns(raw)).toEqual(expected);
   });
 });

@@ -55,8 +55,24 @@ const { cspHash, inlineScriptSources, scriptEndIndex, isExecutableScriptTag } = 
  */
 const BEFORE_CSP_OK = new Set(['!doctype', 'html', 'head', 'meta', 'title']);
 
+/**
+ * **ブラウザが meta として読まない場所を、同じ長さの空白で潰す** (threat: T-153)。
+ *
+ * HTML の注記 (`<!-- … -->`) と RCDATA / rawtext の要素 (`title` / `textarea` / `style` / `script`) の中に
+ * 書いた `<meta http-equiv="Content-Security-Policy" …>` は**本物の meta ではない**。生の HTML に正規表現を
+ * 当てるとそれを数えてしまい、本物の CSP が無い公開物で OK を出す (レッドチーム実測: parse5 では meta 要素は
+ * 注記版 0 件・title 版 0 件なのに、門は問題 0 件)。長さを保つので位置 (`at`) は元の HTML と同じ。
+ */
+function maskInert(html) {
+  const blank = (m) => m.replace(/[^\n]/g, ' ');
+  return html
+    .replace(/<!--[\s\S]*?(?:-->|$)/g, blank)
+    .replace(/(<(title|textarea|style|script)\b[^>]*>)([\s\S]*?)(?=<\/\2\s*>|$)/gi, (_m, open, _n, body) => open + blank(body));
+}
+
 /** 最初の CSP meta より前に開く要素のうち、置いてはいけない物の名前。CSP が無ければ []。 */
-function elementsBeforeCsp(html) {
+function elementsBeforeCsp(rawHtml) {
+  const html = maskInert(rawHtml);
   let at = -1;
   for (const m of html.matchAll(/<meta\b[^>]*>/gi)) {
     if (/http-equiv\s*=\s*(["'])\s*Content-Security-Policy\s*\1/i.test(m[0])) {
@@ -105,7 +121,7 @@ function externalScriptCount(html) {
  */
 function cspMetas(html) {
   const out = [];
-  for (const tag of html.match(/<meta\b[^>]*>/gi) ?? []) {
+  for (const tag of maskInert(html).match(/<meta\b[^>]*>/gi) ?? []) {
     if (!/http-equiv\s*=\s*(["'])\s*Content-Security-Policy\s*\1/i.test(tag)) continue;
     const m = tag.match(/\bcontent\s*=\s*(["'])([\s\S]*?)\1/i);
     out.push(m ? m[2] : '');
@@ -296,6 +312,11 @@ function selfTest() {
     ['app: meta より前の <script> は鳴る (CSP の外で走る)', 'app', '<head><script>x()</script>' + APP_OK, 2],
     ['app: meta より前の <base> / <link> は鳴る', 'app', '<head><base href="https://e.example/"><link rel="stylesheet" href="x.css">' + APP_OK, 1],
     ['app: meta より前の charset / viewport / title は通る', 'app', '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="w"><title>t</title><!-- <script> -->' + APP_OK, 0],
+    // T-153: 注記・title・textarea の中の CSP meta は本物ではない (parse5 で meta 要素 0 件)。
+    ['app: 注記の中の CSP meta は数えない (本物が無ければ鳴る)', 'app', '<html><!-- ' + APP_OK + ' --><body>x</body></html>', 1],
+    ['app: title の中の CSP meta は数えない', 'app', '<html><head><title>' + APP_OK + '</title></head><body>x</body></html>', 1],
+    ['app: textarea の中の CSP meta は数えない', 'app', '<html><body><textarea>' + APP_OK + '</textarea></body></html>', 1],
+    ['app: 本物の CSP の後ろの注記は邪魔をしない', 'app', APP_OK + '<!-- メモ -->', 0],
     ['app: 固定されていない inline script は鳴る', 'app', APP_OK + '<script>evil()</script>', 1],
     ['app: 外から読む script は鳴る', 'app', APP_OK + '<script src="https://cdn.example/x.js"></script>', 1],
     ['app: データの script (ld+json) は数えない', 'app', APP_OK + '<script type="application/ld+json">{}</script>', 0],

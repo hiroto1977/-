@@ -82,6 +82,11 @@ interface ChatMessage {
   readonly services?: readonly AssistantService[];
   /** オフライン (ルールエンジン) 応答か。 */
   readonly offline?: boolean;
+  /**
+   * アプリ自身の声か (ベスト3 の見出しなど)。モデルの返答ではないので、`offline` の札 (簡易モード) は付けず、
+   * 次の発話の履歴としても外のモデルへ渡さない (threat: T-150 —— 見出しには失敗した回答者のエラー文が入る)。
+   */
+  readonly appVoice?: boolean;
   /** 応答した AI プロバイダ (assistant 発話・オンライン時)。 */
   readonly provider?: string;
 }
@@ -137,7 +142,7 @@ export function turnsForModel(
   return history
     .slice(-TURN_WINDOW)
     .filter((m) => !(m.role === 'user' && (detectCrisis(m.text) || detectHarmToOthers(m.text))))
-    .filter((m) => !(m.role === 'assistant' && m.offline === true))
+    .filter((m) => !(m.role === 'assistant' && (m.offline === true || m.appVoice === true)))
     .map((m) => ({ role: m.role, content: m.text }));
 }
 
@@ -182,6 +187,7 @@ const ORG_INDEX = buildOrgIndex(registryOrg as RawOrg, registryTeams as readonly
 const HISTORY_READERS: ChatFieldReaders<ChatMessage> = {
   services: storedServiceLinks,
   offline: storedTrue,
+  appVoice: storedTrue,
   provider: storedLabel,
 };
 
@@ -762,7 +768,7 @@ export function AssistantPage() {
       // 渡る時機で 2 通りに書かれた。
       const labelOf = (id: string): string => lookup(AI_PROVIDERS, id)?.label ?? (id || '既定の AI');
       const [header, ...ranked] = formatBestAnswers(bestJob.result, labelOf);
-      if (header) append({ role: 'assistant', text: header.text });
+      if (header) append({ role: 'assistant', text: header.text, appVoice: true });
       for (const m of ranked) append({ role: 'assistant', text: m.text, provider: m.servedBy });
       // 1 件も示せなければ、チャットと同じく端末内の簡易応答で答える (空にしない)。
       if (ranked.length === 0) replyOffline(bestJob.question);
