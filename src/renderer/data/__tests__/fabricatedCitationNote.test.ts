@@ -21,6 +21,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import {
+  MAX_CHECKED_CITATIONS,
   MAX_FABRICATED_CITATIONS_SHOWN,
   explainScore,
   fabricatedCitationNote,
@@ -67,12 +68,14 @@ function whyOf(refs: string): string {
 }
 
 describe('理由の長さは「参照:」の行の長さに依らない', () => {
-  it('★ 2,000 件でも 45,000 字 × 2 件でも、理由は 1,000 字未満 (件数は全部言う)', () => {
+  it('★ 2,000 件でも 45,000 字 × 2 件でも、理由は 1,000 字未満 (確かめる上限 MAX_CHECKED_CITATIONS で畳み、超えた合図 1 件を足して数える)', () => {
     const many = Array.from({ length: 2000 }, (_, i) => `偽の項目${i}`);
     const why = whyOf(many.join('、'));
     expect(why.length, `理由が ${why.length} 字`).toBeLessThan(1_000);
-    expect(why).toContain('注入していない項目を参照に挙げた (2000 件)');
-    expect(why).toContain(`ほか ${2000 - MAX_FABRICATED_CITATIONS_SHOWN} 件`);
+    // 確かめるのは先頭 MAX_CHECKED_CITATIONS 件まで。超えた分は「参照が N 件を超えています」の合図 1 件になる (threat: T-156)。
+    const counted = MAX_CHECKED_CITATIONS + 1;
+    expect(why).toContain(`注入していない項目を参照に挙げた (${counted} 件)`);
+    expect(why).toContain(`ほか ${counted - MAX_FABRICATED_CITATIONS_SHOWN} 件`);
     // 標本: 直す前の形なら同じ項目で 20,000 字を超える (上の上限は空の主張ではない)。
     expect(beforeFix(many).length).toBeGreaterThan(20_000);
 
@@ -173,7 +176,7 @@ describe('画面へ渡る形でも同じ (runBestAnswers → formatBestAnswers)'
       const line = m.text.split('\n').find((l) => l.startsWith('選んだ理由:'));
       expect(line, '選んだ理由の行が無い').toBeDefined();
       expect(line!.length, `理由が ${line!.length} 字`).toBeLessThan(1_000);
-      expect(line).toContain('(2000 件)');
+      expect(line).toContain(`(${MAX_CHECKED_CITATIONS + 1} 件)`);
       // 採点を真似た文 (「根拠 30/30」) は引用の中にしか無い。標本: 行そのものには在る
       // (引用の中) —— 無いことの主張が、そもそも的の無い空の検査になっていない。
       expect(line).toContain('根拠 30/30');
