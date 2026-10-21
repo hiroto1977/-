@@ -121,6 +121,19 @@ export function weightOfAction(serviceId: string, action: string): number {
 }
 
 export const WINDOW_MS = 60_000;
+/**
+ * **費用の予算** (threat: T-158)。速度の上限 (1 分あたり) は**瞬間**しか見ないので、上限ぎりぎりを守って
+ * 静かに撃ち続ける攻撃者は止まらない —— 実測: `assistant/chatAll` を 4 回/分で 1 時間撃つと重み 1,200 が通り
+ * (5 社へ最大 約 38 万字ずつ)、警戒態勢にも入らず、1 日で 28,800 になる。課金される段階 (確認を出さない
+ * `egress`) にだけ、**1 時間と 1 日の重みの合計**の上限を置く。確認を出す段階は人が毎回止めるので要らない。
+ * 数えるのは速度の上限を通った呼び出しだけ (費用が出た分)・警戒中は 1/4・超えた呼び出しは警戒に数えない
+ * (重く使う正規の利用者を警戒態勢へ落とさない)。
+ */
+export const BUDGET_HOUR_MS = 60 * 60_000;
+export const BUDGET_DAY_MS = 24 * BUDGET_HOUR_MS;
+export const BUDGET: Readonly<Partial<Record<Tier, { readonly perHour: number; readonly perDay: number }>>> = {
+  egress: { perHour: 300, perDay: 1500 },
+};
 /** 1 分あたりの上限 (段階ごと)。確かめる段階は人の速さ以上に速く来たら怪しい。 */
 export const RATE_LIMIT: Readonly<Record<Tier, number>> = {
   destructive: 3,
@@ -179,6 +192,7 @@ export type PresenceEventKind =
   | 'denied-by-user'
   | 'locked-out'
   | 'rate-limited'
+  | 'budget-exceeded'
   | 'busy'
   | 'untrusted-sender'
   | 'dialog-failed'
@@ -350,6 +364,8 @@ export function createPresenceGate(deps: PresenceDeps): PresenceGate {
   const now = deps.now ?? (() => Date.now());
   const events: PresenceEvent[] = [];
   const calls: Record<string, number[]> = {};
+  /** 通った呼び出しの重みを 1 件 1 要素で (費用の予算 · 1 日分・長さは 1 日の予算で頭打ち)。 */
+  const spent: Record<string, number[]> = {};
   let denials: number[] = [];
   let lockedUntil = 0;
   let lockoutMs = BASE_LOCKOUT_MS;
@@ -415,6 +431,20 @@ export function createPresenceGate(deps: PresenceDeps): PresenceGate {
       const limit = alert ? Math.max(1, Math.floor(RATE_LIMIT[req.tier] / ALERT_RATE_DIVISOR)) : RATE_LIMIT[req.tier];
       if (kept.length > limit) {
         return deny('rate-limited', req, '短時間に操作が集中したため断りました。しばらく待ってからやり直してください。');
+      }
+
+      // 費用の予算 (T-158): 速度の上限を通った呼び出しだけを数える。超える呼び出しは通さず、数えない。
+      const budget = BUDGET[req.tier];
+      if (budget !== undefined) {
+        const shrink = (n: number): number => (alert ? Math.max(1, Math.floor(n / ALERT_RATE_DIVISOR)) : n);
+        const history = (spent[req.tier] ??= []).filter((x) => within(t, x, BUDGET_DAY_MS));
+        const lastHour = history.filter((x) => within(t, x, BUDGET_HOUR_MS)).length;
+        if (history.length + weight > shrink(budget.perDay) || lastHour + weight > shrink(budget.perHour)) {
+          spent[req.tier] = history;
+          return deny('budget-exceeded', req, '費用の使用量の上限 (1 時間・1 日) に達したため断りました。しばらく待ってからやり直してください。');
+        }
+        for (let i = 0; i < weight; i += 1) history.push(t);
+        spent[req.tier] = history;
       }
 
       // 警戒中は `read` 以外の全段階を確かめる (平常は CONFIRMED_TIERS だけ)。

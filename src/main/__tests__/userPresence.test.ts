@@ -6,6 +6,9 @@ import {
   ALARM_WINDOW_MS,
   ALERT_MS,
   ALERT_RATE_DIVISOR,
+  BUDGET_DAY_MS,
+  BUDGET_HOUR_MS,
+  BUDGET,
   LOCKOUT_FORGET_MS,
   BASE_LOCKOUT_MS,
   DENIALS_TO_LOCK,
@@ -622,5 +625,136 @@ describe('門自身が重くならない・締め出しすぎない (threat: T-1
     expect(h.shown.length).toBe(shownBefore + 1); // ロックされず、確認が出た
     expect(r.ok).toBe(false); // 利用者が断ったので実行はしない
     expect(r.ok === false && /あと約/.test(r.message)).toBe(false);
+  });
+});
+
+describe('費用の予算 — 速度の上限ぎりぎりを守って静かに撃ち続けても止まる (threat: T-158)', () => {
+  const egress = (weight: number, channel = 'assistant/chat'): PresenceRequest => ({ channel, tier: 'egress', summary: 's', weight });
+
+  /** 1 分に `perMin` 回 (速度の上限の内) を `minutes` 分続け、通った重みの合計と最初に断られた理由を返す。 */
+  async function drive(h: ReturnType<typeof harness>, perMin: number, minutes: number, weight: number) {
+    let admitted = 0;
+    let firstDenied: string | undefined;
+    for (let m = 0; m < minutes; m += 1) {
+      for (let k = 0; k < perMin; k += 1) {
+        const d = await h.gate.guard(egress(weight), true);
+        if (d.ok) admitted += weight;
+        else firstDenied ??= d.message;
+      }
+      h.advance(WINDOW_MS);
+    }
+    return { admitted, firstDenied };
+  }
+
+  it('★ 予算の値: 課金される egress だけが 1 時間 300・1 日 1,500 (確認を出す段階と read には置かない)', () => {
+    expect(BUDGET).toEqual({ egress: { perHour: 300, perDay: 1500 } });
+    expect(BUDGET_HOUR_MS).toBe(3_600_000);
+    expect(BUDGET_DAY_MS).toBe(86_400_000);
+    // 1 日の予算は 1 時間の予算より大きく、1 時間の予算は 1 分の速度上限より大きい (どれかが無意味にならない)。
+    expect(BUDGET.egress!.perDay).toBeGreaterThan(BUDGET.egress!.perHour);
+    expect(BUDGET.egress!.perHour).toBeGreaterThan(RATE_LIMIT.egress);
+  });
+
+  it('★ 全 AI 合議 (重み 5) を上限ぎりぎり (4 回/分) で 1 時間撃っても、通るのは重み 300 まで (旧い門は 1,200)', async () => {
+    const h = harness();
+    const r = await drive(h, 4, 60, MAX_CALL_WEIGHT);
+    expect(r.admitted).toBe(300);
+    expect(r.firstDenied).toBe('費用の使用量の上限 (1 時間・1 日) に達したため断りました。しばらく待ってからやり直してください。');
+    // 警戒には数えない (重く使う正規の利用者を警戒態勢へ落とさない)。
+    expect(h.gate.posture()).toBe('normal');
+    expect(h.gate.recentEvents().some((e) => e.kind === 'rate-limited')).toBe(false);
+    expect(h.gate.recentEvents().some((e) => e.kind === 'budget-exceeded')).toBe(true);
+    // 断られ続けた 45 分間の呼び出しは予算を使っていない: 最初の 1 分の分が窓を出た今、また通る。
+    expect((await h.gate.guard(egress(MAX_CALL_WEIGHT), true)).ok).toBe(true);
+  });
+
+  it('★ 境界: 重み 1 を 20 回/分で撃つと、300 回目は通り 301 回目は断られる。1 時間後には空く', async () => {
+    const h = harness();
+    let ok = 0;
+    for (let m = 0; m < 15; m += 1) {
+      for (let k = 0; k < RATE_LIMIT.egress; k += 1) if ((await h.gate.guard(egress(1), true)).ok) ok += 1;
+      h.advance(WINDOW_MS);
+    }
+    expect(ok).toBe(300);
+    expect((await h.gate.guard(egress(1), true)).ok).toBe(false);
+    h.advance(BUDGET_HOUR_MS);
+    expect((await h.gate.guard(egress(1), true)).ok).toBe(true);
+  });
+
+  it('★ 速度の上限で断られた呼び出しは予算を使わない (費用が出ていない)', async () => {
+    const h = harness();
+    let ok = 0;
+    // 最初の 1 分だけ上限を 1 回超える (断られる 1 回は予算に数えない)。
+    for (let k = 0; k < RATE_LIMIT.egress + 1; k += 1) if ((await h.gate.guard(egress(1), true)).ok) ok += 1;
+    h.advance(WINDOW_MS);
+    for (let m = 0; m < 14; m += 1) {
+      for (let k = 0; k < RATE_LIMIT.egress; k += 1) if ((await h.gate.guard(egress(1), true)).ok) ok += 1;
+      h.advance(WINDOW_MS);
+    }
+    expect(ok).toBe(300);
+  });
+
+  it('★ 1 日の予算: 1 時間の予算に収まる使い方 (毎時 250) でも 1 日で 1,500 を超えたら断る・24 時間たてば空く', async () => {
+    const h = harness();
+    let total = 0;
+    for (let hour = 0; hour < 6; hour += 1) {
+      const r = await drive(h, 10, 25, 1); // 毎分 10 回 × 25 分 = 250
+      total += r.admitted;
+      h.advance(BUDGET_HOUR_MS - 25 * WINDOW_MS);
+    }
+    expect(total).toBe(1500);
+    // 1 時間の枠は空いているのに、1 日の枠が尽きている。
+    const d = await h.gate.guard(egress(1), true);
+    expect(d.ok).toBe(false);
+    h.advance(BUDGET_DAY_MS);
+    expect((await h.gate.guard(egress(1), true)).ok).toBe(true);
+  });
+
+  it('★ 警戒中は予算も 1/4 (75/時): 70 使用済みなら 1 回 (75) は通り、次 (80) は断られる。平常へ戻れば通る', async () => {
+    const h = harness(() => true);
+    for (let i = 0; i < 14; i += 1) {
+      expect((await h.gate.guard(egress(MAX_CALL_WEIGHT), true)).ok).toBe(true);
+      if (i % 4 === 3) h.advance(WINDOW_MS); // 速度の上限 (1 分に重み 20) の内で 1 分ごとに間を空ける。
+    }
+    // 70 を使った。ここで警戒へ入る (外の感知器が重なる)。平常の予算 (300) なら 80 以降も通る。
+    for (let i = 0; i < ALARMS_TO_ALERT; i += 1) h.gate.report('file-denied', 'x');
+    expect(h.gate.posture()).toBe('alert');
+    h.advance(WINDOW_MS);
+    expect((await h.gate.guard(egress(MAX_CALL_WEIGHT), true)).ok).toBe(true); // 75 ちょうどは通る (下限は 1/4 そのもの)
+    h.advance(WINDOW_MS);
+    const d = await h.gate.guard(egress(MAX_CALL_WEIGHT), true); // 80 は 75 を超える
+    expect(d).toEqual({
+      ok: false,
+      message: '費用の使用量の上限 (1 時間・1 日) に達したため断りました。しばらく待ってからやり直してください。',
+    });
+    // 警戒が解ければ (予算は 300 に戻り、使用済みは 75) また通る。
+    h.advance(ALERT_MS + ALARM_WINDOW_MS);
+    expect(h.gate.posture()).toBe('normal');
+    expect((await h.gate.guard(egress(MAX_CALL_WEIGHT), true)).ok).toBe(true);
+  });
+
+  it('★ 予算は課金される egress だけ: read と external-write (毎回確認) は何度呼んでも予算で断らない', async () => {
+    const h = harness(() => true);
+    for (let m = 0; m < 6; m += 1) {
+      for (let k = 0; k < 100; k += 1) {
+        expect((await h.gate.guard({ channel: 'stocks/backtest', tier: 'read', summary: 's' }, true)).ok).toBe(true);
+      }
+      h.advance(WINDOW_MS);
+    }
+    for (let m = 0; m < 40; m += 1) {
+      for (let k = 0; k < RATE_LIMIT['external-write']; k += 1) {
+        const d = await h.gate.guard({ channel: 'slack/send-message', tier: 'external-write', summary: 's' }, true);
+        expect(d.ok).toBe(true);
+      }
+      h.advance(WINDOW_MS);
+    }
+  });
+
+  it('★ 予算の履歴は予算で頭打ち (断られ続けても伸びず、1 呼び出しの費用が増えない)', async () => {
+    const h = harness();
+    await drive(h, 4, 60, MAX_CALL_WEIGHT);
+    const t0 = performance.now();
+    for (let i = 0; i < 20_000; i += 1) await h.gate.guard(egress(MAX_CALL_WEIGHT), true);
+    expect(performance.now() - t0).toBeLessThan(3000);
   });
 });
