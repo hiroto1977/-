@@ -131,8 +131,9 @@ export const WINDOW_MS = 60_000;
  */
 export const BUDGET_HOUR_MS = 60 * 60_000;
 export const BUDGET_DAY_MS = 24 * BUDGET_HOUR_MS;
-export const BUDGET_PER_HOUR: Readonly<Partial<Record<Tier, number>>> = { egress: 300 };
-export const BUDGET_PER_DAY: Readonly<Partial<Record<Tier, number>>> = { egress: 1500 };
+export const BUDGET: Readonly<Partial<Record<Tier, { readonly perHour: number; readonly perDay: number }>>> = {
+  egress: { perHour: 300, perDay: 1500 },
+};
 /** 1 分あたりの上限 (段階ごと)。確かめる段階は人の速さ以上に速く来たら怪しい。 */
 export const RATE_LIMIT: Readonly<Record<Tier, number>> = {
   destructive: 3,
@@ -433,13 +434,12 @@ export function createPresenceGate(deps: PresenceDeps): PresenceGate {
       }
 
       // 費用の予算 (T-158): 速度の上限を通った呼び出しだけを数える。超える呼び出しは通さず、数えない。
-      const daily = BUDGET_PER_DAY[req.tier];
-      const hourly = BUDGET_PER_HOUR[req.tier];
-      if (daily !== undefined && hourly !== undefined) {
+      const budget = BUDGET[req.tier];
+      if (budget !== undefined) {
         const shrink = (n: number): number => (alert ? Math.max(1, Math.floor(n / ALERT_RATE_DIVISOR)) : n);
         const history = (spent[req.tier] ??= []).filter((x) => within(t, x, BUDGET_DAY_MS));
         const lastHour = history.filter((x) => within(t, x, BUDGET_HOUR_MS)).length;
-        if (history.length + weight > shrink(daily) || lastHour + weight > shrink(hourly)) {
+        if (history.length + weight > shrink(budget.perDay) || lastHour + weight > shrink(budget.perHour)) {
           spent[req.tier] = history;
           return deny('budget-exceeded', req, '費用の使用量の上限 (1 時間・1 日) に達したため断りました。しばらく待ってからやり直してください。');
         }

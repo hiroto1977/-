@@ -8,8 +8,7 @@ import {
   ALERT_RATE_DIVISOR,
   BUDGET_DAY_MS,
   BUDGET_HOUR_MS,
-  BUDGET_PER_DAY,
-  BUDGET_PER_HOUR,
+  BUDGET,
   LOCKOUT_FORGET_MS,
   BASE_LOCKOUT_MS,
   DENIALS_TO_LOCK,
@@ -648,13 +647,12 @@ describe('費用の予算 — 速度の上限ぎりぎりを守って静かに�
   }
 
   it('★ 予算の値: 課金される egress だけが 1 時間 300・1 日 1,500 (確認を出す段階と read には置かない)', () => {
-    expect(BUDGET_PER_HOUR).toEqual({ egress: 300 });
-    expect(BUDGET_PER_DAY).toEqual({ egress: 1500 });
+    expect(BUDGET).toEqual({ egress: { perHour: 300, perDay: 1500 } });
     expect(BUDGET_HOUR_MS).toBe(3_600_000);
     expect(BUDGET_DAY_MS).toBe(86_400_000);
     // 1 日の予算は 1 時間の予算より大きく、1 時間の予算は 1 分の速度上限より大きい (どれかが無意味にならない)。
-    expect(BUDGET_PER_DAY.egress!).toBeGreaterThan(BUDGET_PER_HOUR.egress!);
-    expect(BUDGET_PER_HOUR.egress!).toBeGreaterThan(RATE_LIMIT.egress);
+    expect(BUDGET.egress!.perDay).toBeGreaterThan(BUDGET.egress!.perHour);
+    expect(BUDGET.egress!.perHour).toBeGreaterThan(RATE_LIMIT.egress);
   });
 
   it('★ 全 AI 合議 (重み 5) を上限ぎりぎり (4 回/分) で 1 時間撃っても、通るのは重み 300 まで (旧い門は 1,200)', async () => {
@@ -712,17 +710,19 @@ describe('費用の予算 — 速度の上限ぎりぎりを守って静かに�
     expect((await h.gate.guard(egress(1), true)).ok).toBe(true);
   });
 
-  it('★ 警戒中は予算も 1/4 (75/時): 平常は通る 80 目が、警戒中は断られる。平常へ戻れば通る', async () => {
+  it('★ 警戒中は予算も 1/4 (75/時): 70 使用済みなら 1 回 (75) は通り、次 (80) は断られる。平常へ戻れば通る', async () => {
     const h = harness(() => true);
-    for (let i = 0; i < 15; i += 1) {
+    for (let i = 0; i < 14; i += 1) {
       expect((await h.gate.guard(egress(MAX_CALL_WEIGHT), true)).ok).toBe(true);
       if (i % 4 === 3) h.advance(WINDOW_MS); // 速度の上限 (1 分に重み 20) の内で 1 分ごとに間を空ける。
     }
-    // 75 を使い切った。ここで警戒へ入る (外の感知器が重なる)。
+    // 70 を使った。ここで警戒へ入る (外の感知器が重なる)。平常の予算 (300) なら 80 以降も通る。
     for (let i = 0; i < ALARMS_TO_ALERT; i += 1) h.gate.report('file-denied', 'x');
     expect(h.gate.posture()).toBe('alert');
     h.advance(WINDOW_MS);
-    const d = await h.gate.guard(egress(MAX_CALL_WEIGHT), true);
+    expect((await h.gate.guard(egress(MAX_CALL_WEIGHT), true)).ok).toBe(true); // 75 ちょうどは通る (下限は 1/4 そのもの)
+    h.advance(WINDOW_MS);
+    const d = await h.gate.guard(egress(MAX_CALL_WEIGHT), true); // 80 は 75 を超える
     expect(d).toEqual({
       ok: false,
       message: '費用の使用量の上限 (1 時間・1 日) に達したため断りました。しばらく待ってからやり直してください。',
