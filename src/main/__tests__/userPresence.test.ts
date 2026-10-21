@@ -481,3 +481,44 @@ describe('警戒態勢 — 不審な操作が重なると門が自分で締ま�
     expect(h.gate.posture()).toBe('normal');
   });
 });
+
+describe('表示と記録の細部 (変異検査が示した未主張の値)', () => {
+  it('★ safeSummary は前後の空白を落とす', () => {
+    expect(safeSummary('  abc \n ')).toBe('abc');
+  });
+
+  it('★ 24 欄を超えた欄は名前を 24 字で切って「, 」で並べる', () => {
+    const fields: Record<string, unknown> = Object.fromEntries(Array.from({ length: MAX_FIELDS_SHOWN }, (_, i) => [`f${i}`, i]));
+    fields['a'.repeat(40)] = 1;
+    fields['b'] = 2;
+    const d = describePayload(fields);
+    expect(d).toContain(`ほか 2 欄: ${'a'.repeat(24)}, b`);
+    expect(d).not.toContain('a'.repeat(25));
+  });
+
+  it('★ 警戒は ALERT_MS ちょうどで終わる (境界は平常側)', async () => {
+    const h = harness(() => true);
+    for (let k = 0; k < ALARMS_TO_ALERT; k += 1) await h.gate.guard(req({ channel: `probe/${k}` }), false);
+    h.advance(ALERT_MS - 1);
+    expect(h.gate.posture()).toBe('alert');
+    h.advance(1);
+    expect(h.gate.posture()).toBe('normal');
+  });
+
+  it('★ 警戒に入った印と外の感知器の記録は、名前・場所・段階まで決まっている', () => {
+    const h = harness();
+    for (let k = 0; k < ALARMS_TO_ALERT; k += 1) h.gate.report('navigation-denied', 'will-navigate');
+    const ev = h.gate.recentEvents();
+    expect(ev[0]).toMatchObject({ kind: 'external-signal', channel: 'navigation-denied:will-navigate', tier: 'read' });
+    const alert = ev.find((e) => e.kind === 'posture-alert')!;
+    expect(alert).toMatchObject({ channel: 'posture', tier: 'read' });
+  });
+
+  it('重み 1 は 1 として数える (境界)', async () => {
+    const h = harness(() => true);
+    for (let k = 0; k < RATE_LIMIT.egress; k += 1) {
+      expect((await h.gate.guard(req({ tier: 'egress', weight: 1, summary: `s${k}` }), true)).ok).toBe(true);
+    }
+    expect((await h.gate.guard(req({ tier: 'egress', weight: 1, summary: 'over' }), true)).ok).toBe(false);
+  });
+});

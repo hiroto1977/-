@@ -427,6 +427,19 @@ describe('権限要求 — 既定は拒否、クリップボードだけ許す',
     expect(decide(inside)).toBe(true);
     expect(decide('file:///etc/passwd')).toBe(false);
     expect(decide('file://attacker.example/share/x.json')).toBe(false);
+    // 根は dist ちょうど: 1 つ上の兄弟 (保管ファイルが居る側) は読めない。
+    expect(decide(`file://${path.join(dist, '..', 'secret.json').split(path.sep).join('/')}`)).toBe(false);
+  });
+
+  it('★ 門が断った file:// の要求は、URL の中身を渡さずに警戒の元として知らせる (threat: T-155)', async () => {
+    const c = await loadMain({ packaged: true });
+    threatSignals.length = 0;
+    c.fileGate!({ url: 'file:///etc/passwd' }, () => undefined);
+    expect(threatSignals).toEqual([{ kind: 'file-denied', where: 'file-request' }]);
+    threatSignals.length = 0;
+    const dist = path.join(__dirname, '..', '..', 'dist');
+    c.fileGate!({ url: `file://${path.join(dist, 'index.html').split(path.sep).join('/')}` }, () => undefined);
+    expect(threatSignals).toEqual([]);
   });
 
   it.each([

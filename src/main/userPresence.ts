@@ -373,7 +373,7 @@ export function createPresenceGate(deps: PresenceDeps): PresenceGate {
 
       // 速度の制限 (段階ごと)。断った呼び出しも数える —— 連打で上限を押し続ける間は通らない。
       const list = (calls[req.tier] ??= []).filter((x) => within(t, x, WINDOW_MS));
-      const weight = Number.isInteger(req.weight) && req.weight! >= 1 ? Math.min(req.weight!, MAX_CALL_WEIGHT) : 1;
+      const weight = Math.min(Math.max(Number.isInteger(req.weight) ? req.weight! : 1, 1), MAX_CALL_WEIGHT);
       for (let i = 0; i < weight; i += 1) list.push(t);
       calls[req.tier] = list;
       const alert = postureAt(t) === 'alert';
