@@ -164,6 +164,16 @@ describe('適応 — 断られるほど締まる', () => {
     expect(expected).toBe(MAX_LOCKOUT_MS);
   });
 
+  it('★ ロックアウトに入ったら断りの数え直しは 0 から (明けた後の 2 回ではまたロックしない)', async () => {
+    const h = harness([]);
+    await deny(h, DENIALS_TO_LOCK);
+    h.advance(BASE_LOCKOUT_MS);
+    await deny(h, DENIALS_TO_LOCK - 1);
+    const shown = h.shown.length;
+    await h.gate.guard(req({ summary: 'まだロックされていない' }), true);
+    expect(h.shown.length).toBe(shown + 1);
+  });
+
   it('古い断りは数えない (窓の外)', async () => {
     const h = harness([]);
     await deny(h, 2);
