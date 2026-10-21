@@ -102,7 +102,11 @@ let eraseReportImpl: () => Promise<import('../../shared/eraseReport').DesktopEra
 let presenceVerdict: { ok: true } | { ok: false; message: string } = { ok: true };
 let presenceThrows: Error | null = null;
 const presenceRequests: { channel: string; tier: string; summary: string; weight?: number }[] = [];
+const threatSignals: { kind: string; where: string }[] = [];
 vi.mock('../presenceWiring', () => ({
+  reportThreatSignal: (kind: string, where: string) => {
+    threatSignals.push({ kind, where });
+  },
   requirePresence: (_e: unknown, req: { channel: string; tier: string; summary: string; weight?: number }) => {
     presenceRequests.push(req);
     return presenceThrows ? Promise.reject(presenceThrows) : Promise.resolve(presenceVerdict);

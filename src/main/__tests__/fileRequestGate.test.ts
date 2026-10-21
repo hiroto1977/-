@@ -74,3 +74,27 @@ describe('installFileRequestGate (threat: T-140)', () => {
     expect(cancelOf(url('/etc/passwd'))).toBe(true);
   });
 });
+
+describe('installFileRequestGate の知らせ (threat: T-155)', () => {
+  it('★ 断ったときだけ onDenied を呼び、URL の中身は渡さない。通した要求では呼ばない', () => {
+    let listener: ((d: { url: string }, cb: (r: { cancel: boolean }) => void) => void) | undefined;
+    const denied: string[] = [];
+    installFileRequestGate(
+      { webRequest: { onBeforeRequest: (_f, l) => { listener = l; } } },
+      DIST,
+      (where) => denied.push(where),
+    );
+    listener!({ url: url(path.join(DIST, 'index.html')) }, () => undefined);
+    expect(denied).toEqual([]);
+    listener!({ url: url('/etc/passwd') }, () => undefined);
+    expect(denied).toEqual(['file-request']);
+    expect(denied.join('')).not.toContain('passwd');
+  });
+  it('onDenied が無くても断る (任意の引数)', () => {
+    let out: boolean | undefined;
+    let listener: ((d: { url: string }, cb: (r: { cancel: boolean }) => void) => void) | undefined;
+    installFileRequestGate({ webRequest: { onBeforeRequest: (_f, l) => { listener = l; } } }, DIST);
+    listener!({ url: url('/etc/passwd') }, (r) => { out = r.cancel; });
+    expect(out).toBe(true);
+  });
+});

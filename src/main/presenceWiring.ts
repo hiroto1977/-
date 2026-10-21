@@ -6,7 +6,14 @@
  */
 import path from 'node:path';
 import { BrowserWindow, dialog, type IpcMainInvokeEvent } from 'electron';
-import { createPresenceGate, isTrustedSenderUrl, type PresenceDecision, type PresenceRequest, type Tier } from './userPresence';
+import {
+  createPresenceGate,
+  isTrustedSenderUrl,
+  type ExternalSignalKind,
+  type PresenceDecision,
+  type PresenceRequest,
+  type Tier,
+} from './userPresence';
 
 const TITLES: Readonly<Record<Tier, string>> = {
   destructive: 'データを削除します',
@@ -24,7 +31,7 @@ async function confirmNatively(req: PresenceRequest): Promise<boolean> {
     type: 'warning',
     title: '本人確認',
     message: TITLES[req.tier],
-    detail: `${req.channel}\n\n${req.summary}\n\nこの操作をあなた自身が行った場合だけ「実行する」を選んでください。`,
+    detail: `${req.posture === 'alert' ? '⚠ 警戒態勢: 短時間に不審な操作が重なったため、通常は確認しない操作も確かめています。\n\n' : ''}${req.channel}\n\n${req.summary}\n\nこの操作をあなた自身が行った場合だけ「実行する」を選んでください。`,
     buttons: ['実行しない', '実行する'],
     defaultId: 0,
     cancelId: 0,
@@ -50,4 +57,9 @@ export function requirePresence(e: IpcMainInvokeEvent, req: PresenceRequest): Pr
 
 export function recentPresenceEvents(): ReturnType<typeof gate.recentEvents> {
   return gate.recentEvents();
+}
+
+/** 外の感知器 (file:// の門など) が断ったことを門へ知らせる。警戒の元として数えられる。 */
+export function reportThreatSignal(kind: ExternalSignalKind, where: string): void {
+  gate.report(kind, where);
 }

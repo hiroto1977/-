@@ -25,7 +25,7 @@ vi.mock('electron', () => ({
   },
 }));
 
-import { recentPresenceEvents, requirePresence } from '../presenceWiring';
+import { recentPresenceEvents, reportThreatSignal, requirePresence } from '../presenceWiring';
 
 const GOOD = pathToFileURL(path.join(path.resolve(__dirname, '..'), '..', 'dist', 'index.html')).href;
 const ev = (url: string, parent: unknown = null) => ({ senderFrame: { url, parent } }) as never;
@@ -79,5 +79,29 @@ describe('requirePresence (threat: T-147)', () => {
     expect((await requirePresence(e, req())).ok).toBe(false);
     expect(dialogCalls.length).toBe(before);
     expect(recentPresenceEvents().at(-1)?.kind).toBe('untrusted-sender');
+  });
+});
+
+describe('警戒態勢の配線 (threat: T-155)', () => {
+  it('★ 外の感知器の知らせが重なると、次のダイアログが警戒態勢を告げる (平常は告げない)', async () => {
+    // 門はこのファイルの全検査で 1 つを共有する —— 速度の窓を空けてから測る。
+    vi.useFakeTimers({ toFake: ['Date'] });
+    try {
+      vi.setSystemTime(Date.now() + 600_000);
+      const before = dialogCalls.length;
+      await requirePresence(ev(GOOD), req());
+      expect(dialogCalls).toHaveLength(before + 1);
+      expect(String(dialogCalls.at(-1)!.opts.detail)).not.toContain('警戒態勢');
+      for (let k = 0; k < 6; k += 1) reportThreatSignal('file-denied', 'file-request');
+      vi.setSystemTime(Date.now() + 61_000);
+      await requirePresence(ev(GOOD), req());
+      expect(dialogCalls).toHaveLength(before + 2);
+    } finally {
+      vi.useRealTimers();
+    }
+    const detail = String(dialogCalls.at(-1)!.opts.detail);
+    expect(detail).toContain('警戒態勢');
+    expect(detail).toContain('slack/send-message');
+    expect(recentPresenceEvents().some((e) => e.kind === 'posture-alert')).toBe(true);
   });
 });

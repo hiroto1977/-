@@ -57,8 +57,12 @@ export function installFileRequestGate(
     };
   },
   distRoot: string,
+  /** 断ったことの知らせ (警戒態勢の元・T-155)。URL の中身は渡さず、`file:` と判るだけの短い印を渡す。 */
+  onDenied?: (where: string) => void,
 ): void {
   session.webRequest.onBeforeRequest({ urls: ['file://*/*'] }, (details, callback) => {
-    callback({ cancel: !fileRequestAllowed(details.url, distRoot) });
+    const allowed = fileRequestAllowed(details.url, distRoot);
+    if (!allowed) onDenied?.('file-request');
+    callback({ cancel: !allowed });
   });
 }

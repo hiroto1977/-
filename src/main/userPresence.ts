@@ -130,6 +130,21 @@ export const RATE_LIMIT: Readonly<Record<Tier, number>> = {
   'local-write': 60,
   read: 120,
 };
+/**
+ * **警戒態勢** (threat: T-155)。確認を断る・速度の上限・信頼できない呼び出し元・別の確認の割り込み・
+ * 確認を出せない、そして他の感知器 (`report`: file:// の門が断った要求など) が**短時間に重なる**のは、
+ * 画面を乗っ取った者が手探りで穴を探している形である。重なったら門が**自分で締まる**:
+ * 確認する範囲が `read` 以外の全段階へ広がり、速度の上限が 1/4 になる。**止めはしない**
+ * (止めると誤検知が可用性の事故になる) —— 摩擦を増やして、攻撃の速度を人の速さへ落とす。
+ * 警戒の元が途絶えれば `ALERT_MS` 後に平常へ戻る (自動で緩む)。
+ */
+export const ALARM_WINDOW_MS = 5 * 60_000;
+export const ALARMS_TO_ALERT = 6;
+export const ALERT_MS = 10 * 60_000;
+export const ALERT_RATE_DIVISOR = 4;
+export type Posture = 'normal' | 'alert';
+/** 外の感知器が門へ知らせる種類 (中身は運ばない・種類と場所の名前だけ)。 */
+export type ExternalSignalKind = 'file-denied' | 'navigation-denied';
 export const DENIAL_WINDOW_MS = 10 * 60_000;
 export const DENIALS_TO_LOCK = 3;
 export const BASE_LOCKOUT_MS = 5 * 60_000;
@@ -151,11 +166,32 @@ export interface PresenceRequest {
   readonly summary: string;
   /** 速度の上限に何回分として数えるか (既定 1・上限 `MAX_CALL_WEIGHT`)。 */
   readonly weight?: number;
+  /** 確認を出すときの態勢 (警戒中ならダイアログがそう告げる)。門が付ける —— 呼び出し側は渡さない。 */
+  readonly posture?: Posture;
 }
 
 export type PresenceDecision = { readonly ok: true } | { readonly ok: false; readonly message: string };
 
-export type PresenceEventKind = 'approved' | 'denied-by-user' | 'locked-out' | 'rate-limited' | 'busy' | 'untrusted-sender' | 'dialog-failed';
+export type PresenceEventKind =
+  | 'approved'
+  | 'denied-by-user'
+  | 'locked-out'
+  | 'rate-limited'
+  | 'busy'
+  | 'untrusted-sender'
+  | 'dialog-failed'
+  | 'external-signal'
+  | 'posture-alert';
+
+/** 警戒に数える種類。利用者が自分で断った (`denied-by-user`) は別の仕組み (ロックアウト) が数える。 */
+const ALARM_KINDS: ReadonlySet<PresenceEventKind> = new Set<PresenceEventKind>([
+  'locked-out',
+  'rate-limited',
+  'busy',
+  'untrusted-sender',
+  'dialog-failed',
+  'external-signal',
+]);
 
 export interface PresenceEvent {
   readonly at: number;
@@ -275,6 +311,10 @@ export function isTrustedSenderUrl(url: string, distRoot: string, devUrl?: strin
 export interface PresenceGate {
   guard(req: PresenceRequest, trustedSender: boolean): Promise<PresenceDecision>;
   recentEvents(): readonly PresenceEvent[];
+  /** いまの態勢。警戒の元が途絶えて `ALERT_MS` が過ぎれば `normal` に戻る。 */
+  posture(): Posture;
+  /** 外の感知器 (file:// の門・窓の遷移の門) が「断った」ことを知らせる。中身は受け取らない。 */
+  report(kind: ExternalSignalKind, where: string): void;
 }
 
 export function createPresenceGate(deps: PresenceDeps): PresenceGate {
@@ -285,10 +325,31 @@ export function createPresenceGate(deps: PresenceDeps): PresenceGate {
   let lockedUntil = 0;
   let lockoutMs = BASE_LOCKOUT_MS;
   let pending = false;
+  let alarms: number[] = [];
+  let alertUntil = 0;
+
+  function push(kind: PresenceEventKind, channel: string, tier: Tier): void {
+    events.push({ at: now(), kind, channel, tier });
+    if (events.length > MAX_EVENTS) events.shift();
+  }
+
+  function postureAt(t: number): Posture {
+    return t < alertUntil ? 'alert' : 'normal';
+  }
+
+  /** 警戒の元が `ALARMS_TO_ALERT` 件に届いたら警戒へ入る (届いている間は延び続ける)。 */
+  function noteAlarm(t: number): void {
+    alarms = alarms.filter((x) => within(t, x, ALARM_WINDOW_MS));
+    alarms.push(t);
+    if (alarms.length < ALARMS_TO_ALERT) return;
+    const entering = postureAt(t) === 'normal';
+    alertUntil = t + ALERT_MS;
+    if (entering) push('posture-alert', 'posture', 'read');
+  }
 
   function record(kind: PresenceEventKind, req: PresenceRequest): void {
-    events.push({ at: now(), kind, channel: req.channel, tier: req.tier });
-    if (events.length > MAX_EVENTS) events.shift();
+    push(kind, req.channel, req.tier);
+    if (ALARM_KINDS.has(kind)) noteAlarm(now());
   }
 
   function deny(kind: PresenceEventKind, req: PresenceRequest, message: string): PresenceDecision {
@@ -298,6 +359,12 @@ export function createPresenceGate(deps: PresenceDeps): PresenceGate {
 
   return {
     recentEvents: () => events.slice(),
+    posture: () => postureAt(now()),
+    report(kind, where) {
+      // 場所の名前は短く切る (呼び手が渡す文字列でも記録を膨らませない・中身は運ばない)。
+      push('external-signal', `${kind}:${clampToCeiling(String(where), 60)}`, 'read');
+      noteAlarm(now());
+    },
     async guard(req, trustedSender) {
       if (!trustedSender) {
         return deny('untrusted-sender', req, '信頼できない呼び出し元のため断りました。');
@@ -309,11 +376,15 @@ export function createPresenceGate(deps: PresenceDeps): PresenceGate {
       const weight = Number.isInteger(req.weight) && req.weight! >= 1 ? Math.min(req.weight!, MAX_CALL_WEIGHT) : 1;
       for (let i = 0; i < weight; i += 1) list.push(t);
       calls[req.tier] = list;
-      if (list.length > RATE_LIMIT[req.tier]) {
+      const alert = postureAt(t) === 'alert';
+      const limit = alert ? Math.max(1, Math.floor(RATE_LIMIT[req.tier] / ALERT_RATE_DIVISOR)) : RATE_LIMIT[req.tier];
+      if (list.length > limit) {
         return deny('rate-limited', req, '短時間に操作が集中したため断りました。しばらく待ってからやり直してください。');
       }
 
-      if (!CONFIRMED_TIERS.has(req.tier)) return { ok: true };
+      // 警戒中は `read` 以外の全段階を確かめる (平常は CONFIRMED_TIERS だけ)。
+      if (!alert && !CONFIRMED_TIERS.has(req.tier)) return { ok: true };
+      if (alert && req.tier === 'read') return { ok: true };
 
       if (t < lockedUntil) {
         const minutes = Math.ceil((lockedUntil - t) / 60_000);
@@ -327,7 +398,7 @@ export function createPresenceGate(deps: PresenceDeps): PresenceGate {
       pending = true;
       let allowed: boolean;
       try {
-        allowed = (await deps.confirm({ ...req, summary })) === true;
+        allowed = (await deps.confirm({ ...req, summary, posture: postureAt(now()) })) === true;
       } catch {
         return deny('dialog-failed', req, '確認を出せなかったため断りました。');
       } finally {

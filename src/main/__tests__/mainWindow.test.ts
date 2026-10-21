@@ -162,6 +162,14 @@ vi.mock('../windowPrefs', async (importOriginal) => ({
   readWindowPrefs: async () => storedPrefs,
   writeWindowPrefs: async () => undefined,
 }));
+const threatSignals: { kind: string; where: string }[] = [];
+vi.mock('../presenceWiring', () => ({
+  requirePresence: async () => ({ ok: true }),
+  recentPresenceEvents: () => [],
+  reportThreatSignal: (kind: string, where: string) => {
+    threatSignals.push({ kind, where });
+  },
+}));
 vi.mock('../oauth', () => ({
   authorize: async () => ({ accessToken: 'a' }),
   isOAuthSupported: () => false,
@@ -580,6 +588,17 @@ describe('will-navigate / will-redirect — アプリ内の遷移を止める', 
         expect(e.was()).toBe(true);
       }
     }
+  });
+
+  it('★ 止めた遷移は警戒態勢の元として門へ知らせ、通した遷移は知らせない (threat: T-155)', async () => {
+    const c = await loadMain({ packaged: false, devServerUrl: 'http://localhost:5173' });
+    threatSignals.length = 0;
+    const ok = ev();
+    c.listeners.get('will-navigate')!(ok.ev, 'http://localhost:5173/');
+    expect(threatSignals).toEqual([]);
+    const bad = ev();
+    c.listeners.get('will-redirect')!(bad.ev, 'https://evil.example/');
+    expect(threatSignals).toEqual([{ kind: 'navigation-denied', where: 'will-navigate' }]);
   });
 
   it('開発時は読み込んだ開発サーバと同じ origin だけ通す', async () => {
