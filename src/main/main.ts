@@ -286,7 +286,7 @@ app.on('window-all-closed', () => {
  * 乗っ取られた画面から**上限なしに**呼べた: 76 サービスの取得の連打 (保存済みトークンで外部 API の
  * 速度制限を使い切らせる)・GitHub への通信・設定ファイルへの書き込み・書き出し物を OS の既定アプリで
  * 開き続ける、そして**呼び出し元フレームの検査も受けていなかった**。断られた理由を返す (通れば null)。
- * 門が投げても IPC を reject させない (lint:ipc-handlers)。
+ * 門が投げたら**呼び手の `try` が受ける** (lint:ipc-handlers —— reject させない・呼び手が必ず `try` の中で `await` する)。
  */
 async function throttleMessage(
   e: Parameters<typeof requirePresence>[0],
@@ -296,12 +296,8 @@ async function throttleMessage(
 ): Promise<string | null> {
   // 確認 (警戒中の local-write) と記録に出す見出し: 引数が無ければ口の名前・文字列ならそれ・それ以外は種類だけ。
   const summary = detail === undefined ? channel : typeof detail === 'string' ? detail : '(文字列ではない)';
-  try {
-    const presence = await requirePresence(e, { channel, tier, summary });
-    return presence.ok ? null : presence.message;
-  } catch (err) {
-    return safeErrorMessage(err);
-  }
+  const presence = await requirePresence(e, { channel, tier, summary });
+  return presence.ok ? null : presence.message;
 }
 
 ipcMain.handle('app:getVersion', () => app.getVersion());
