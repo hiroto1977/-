@@ -8,7 +8,6 @@ import {
   MAX_LOCKOUT_MS,
   MAX_SUMMARY_CHARS,
   RATE_LIMIT,
-  REPEAT_APPROVAL_MS,
   WINDOW_MS,
   createPresenceGate,
   describePayload,
@@ -68,29 +67,21 @@ describe('確かめる段階 (threat: T-147)', () => {
     expect(h.shown[0]!.summary).toBe('a b c d');
   });
 
-  it('同じ内容を承認した直後の再試行はもう一度訊かず、時間が過ぎれば訊く', async () => {
-    const h = harness([true, true]);
+  it('★ 承認は再利用しない — 同じ内容でも毎回訊く (承認の観測→差し替えを許さない・レッドチーム #1) (threat: T-148)', async () => {
+    const h = harness([true, true, true]);
     await h.gate.guard(req(), true);
-    h.advance(REPEAT_APPROVAL_MS - 1);
-    expect(await h.gate.guard(req(), true)).toEqual({ ok: true });
-    expect(h.shown).toHaveLength(1);
-    h.advance(1);
     await h.gate.guard(req(), true);
-    expect(h.shown).toHaveLength(2);
+    await h.gate.guard(req(), true);
+    expect(h.shown).toHaveLength(3);
   });
 
-  it('★ 内容が違えば (攻撃者が中身を差し替えれば) 承認は持ち越さない', async () => {
+  it('★ 要約が同じでも、承認した直後に別の呼び出しが来れば確認はもう一度出る (見せない値を差し替えられない)', async () => {
     const h = harness([true, false]);
-    await h.gate.guard(req({ summary: 'text=「無害」' }), true);
-    const r = await h.gate.guard(req({ summary: 'text=「別の内容」' }), true);
-    expect(r.ok).toBe(false);
+    const fixed = '資格情報を置き換えます（値は表示しません）。';
+    expect((await h.gate.guard(req({ channel: 'secrets:set', tier: 'credential-write', summary: fixed }), true)).ok).toBe(true);
+    h.advance(20_000);
+    expect((await h.gate.guard(req({ channel: 'secrets:set', tier: 'credential-write', summary: fixed }), true)).ok).toBe(false);
     expect(h.shown).toHaveLength(2);
-  });
-
-  it('チャンネルが違えば承認は持ち越さない', async () => {
-    const h = harness([true, false]);
-    await h.gate.guard(req({ channel: 'a/x' }), true);
-    expect((await h.gate.guard(req({ channel: 'b/x' }), true)).ok).toBe(false);
   });
 
   it('★ ダイアログが出せない・投げるときは断る (fail closed)', async () => {
@@ -233,17 +224,6 @@ describe('文言と記録の種別 (断りの理由は読む人に届く)', () =
     copy.length = 0;
     expect(h.gate.recentEvents()).toHaveLength(1);
   });
-
-  it('★ 覚えているのは直前に承認した 1 件だけ (別の内容を承認したら前の内容は訊き直す)', async () => {
-    const h = harness([true, true, true]);
-    await h.gate.guard(req({ summary: 'A' }), true);
-    await h.gate.guard(req({ summary: 'B' }), true);
-    expect(h.shown).toHaveLength(2);
-    await h.gate.guard(req({ summary: 'B' }), true); // 直前の物は覚えている
-    expect(h.shown).toHaveLength(2);
-    await h.gate.guard(req({ summary: 'A' }), true); // その前の物は忘れている
-    expect(h.shown).toHaveLength(3);
-  });
 });
 
 describe('記録 — 件数だけで中身を残さない', () => {
@@ -272,18 +252,56 @@ describe('表示の安全化', () => {
     expect(safeSummary(`a${tag}b\u202Ec\u200Bd\u0085e`)).toBe('a b c d e');
   });
 
-  it('payload は欄ごとに値を切り、キーも安全化し、8 欄まで', () => {
-    const d = describePayload({ title: 'T', body: 'x'.repeat(200), 'k\u202E': 1 });
-    expect(d).toContain('title=「T」');
-    expect(d).toContain(`body=「${'x'.repeat(80)}」`);
-    expect(d).toContain('k=「1」');
-    const many = describePayload(Object.fromEntries(Array.from({ length: 12 }, (_, i) => [`f${i}`, i])));
-    expect(many.split(' / ')).toHaveLength(8);
+  it('★ 見えない埋め文字・異体字選択子も空白にする (レッドチーム #3 が素通りを実測した 7 種)', () => {
+    for (const cp of [0x3164, 0x2800, 0x034f, 0x115f, 0xfe0f, 0xffa0, 0xe0100]) {
+      expect(safeSummary(`a${String.fromCodePoint(cp)}b`), cp.toString(16)).toBe('a b');
+    }
+  });
+
+  it('★ 値は JSON の引用で示し、値の中の引用符で偽の欄を作れない', () => {
+    const d = describePayload({ title: '」 / status: "draft', status: 'publish' });
+    expect(d).toBe('title: "」 / status: \\"draft" / status: "publish"');
+    expect(d.match(/ \/ /g)).toHaveLength(2); // 欄は 2 つ + 値の中の区切り 1 つ
+  });
+
+  it('★ 長い値は切って全体の長さを添える。欄は 24 まで全部見せ、超えた欄は名前だけ見せる (隠れた欄を作らせない)', () => {
+    const long = describePayload({ body: 'x'.repeat(200) });
+    expect(long).toBe(`body: "${'x'.repeat(60)}"…(全 200 文字)`);
+    expect(describePayload({ body: 'x'.repeat(60) })).toBe(`body: "${'x'.repeat(60)}"`);
+    const fields = Object.fromEntries(Array.from({ length: 30 }, (_, i) => [`f${i}`, i]));
+    fields.status = 'publish' as never;
+    const d = describePayload(fields);
+    expect(d).toContain('ほか 7 欄:');
+    expect(d).toContain('status');
+    expect(d.split(' / ')).toHaveLength(25);
+  });
+
+  it('★ 長い欄を先に並べても、後ろの重要な欄 (status など) が見えなくならない', () => {
+    const payload: Record<string, unknown> = {};
+    for (let i = 0; i < 5; i += 1) payload[`long${i}`] = 'あ'.repeat(90);
+    payload.status = 'publish';
+    expect(safeSummary(describePayload(payload))).toContain('status: "publish"');
+  });
+
+  it('入れ子・配列・数値・真偽・null・関数は値を読まず種類と大きさだけ', () => {
+    expect(describePayload({ a: { x: 1, y: 2 }, b: [1, 2, 3], c: 5, d: true, e: null })).toBe(
+      'a: {入れ子 2 欄} / b: [配列 3 件] / c: 5 / d: true / e: null',
+    );
+    expect(describePayload({ f: () => 1 })).toBe('f: (function)');
+  });
+
+  it('★ 巨大な値でも確認の前に固まらない (読むのは先頭だけ)', () => {
+    const t0 = Date.now();
+    describePayload({ body: 'x'.repeat(50_000_000) });
+    expect(Date.now() - t0).toBeLessThan(500);
+  });
+
+  it('キーも安全化し、24 字で切る。空・配列・null は内容なし', () => {
+    expect(describePayload({ ['k'.repeat(40)]: 1 })).toBe(`${'k'.repeat(24)}: 1`);
     expect(describePayload(null)).toBe('(内容なし)');
     expect(describePayload([1])).toBe('(内容なし)');
     expect(describePayload({})).toBe('(内容なし)');
-    expect(describePayload({ n: undefined })).toBe('n=「」');
-    expect(describePayload({ ['k'.repeat(40)]: 1 })).toBe(`${'k'.repeat(24)}=「1」`);
+    expect(describePayload({ n: undefined })).toBe('n: (undefined)');
   });
 });
 
@@ -311,6 +329,7 @@ describe('段階の台帳', () => {
     expect(tierOfAction('github', 'unknown-new-action')).toBe('external-write');
     expect(tierOfAction('__proto__', 'constructor')).toBe('external-write');
     expect(tierOfAction('stocks', 'backtest')).toBe('read');
+    expect(tierOfAction('security', 'scan-url')).toBe('external-write'); // VirusTotal へ公開される (レッドチーム #7)
     expect(tierOfAction('emotions', 'clear-history')).toBe('destructive');
   });
 });

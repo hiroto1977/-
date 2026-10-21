@@ -1248,7 +1248,7 @@ describe('本人確認の門 — 画面から独立した確認が通らなけ�
     expect(r).toMatchObject({ ok: false, code: 'action_failed' });
     expect(actionCalls).toEqual([]);
     expect(presenceRequests[0]).toMatchObject({ channel: 'github/create-issue', tier: 'external-write' });
-    expect(presenceRequests[0]!.summary).toContain('title=「T」');
+    expect(presenceRequests[0]!.summary).toContain('title: "T"');
   });
 
   it('台帳に無い action でも (登録があれば) 最も厳しい段階で確かめる', async () => {
@@ -1274,5 +1274,52 @@ describe('本人確認の門 — 画面から独立した確認が通らなけ�
     expect(setTokenCalls).toEqual([]);
     expect(actionCalls).toEqual([]);
     expect(relaunchCalls).toBe(0);
+  });
+
+  it('★ secrets:set の確認は新しい値の長さと末尾 4 文字を見せる (横取りされても見分けがつく)。全体は見せない', async () => {
+    const token = 'ghp_ABCDEFGHIJKLMNOP1234';
+    await invoke('secrets:set', 'github', token);
+    const summary = presenceRequests[0]!.summary;
+    expect(summary).toContain(`全 ${token.length} 文字`);
+    expect(summary).toContain('末尾「…1234」');
+    expect(summary).not.toContain('ABCDEFGH');
+    presenceRequests.length = 0;
+    await invoke('secrets:set', 'github', 'abcd1234');
+    expect(presenceRequests[0]!.summary).toContain('全 8 文字');
+    expect(presenceRequests[0]!.summary).not.toContain('末尾');
+  });
+
+  it('★ app:openExternal は速度の制限を通り、断られたら開かない (確認は出さない段階)', async () => {
+    presenceVerdict = DENY;
+    await invoke('app:openExternal', 'https://example.com/a');
+    expect(openedExternal).toEqual([]);
+    expect(presenceRequests[0]).toMatchObject({ channel: 'app:openExternal', tier: 'egress', summary: 'https://example.com/a' });
+    presenceVerdict = { ok: true };
+    await invoke('app:openExternal', 'https://example.com/a');
+    expect(openedExternal).toEqual(['https://example.com/a']);
+    presenceThrows = new Error('x');
+    openedExternal.length = 0;
+    await invoke('app:openExternal', 'https://example.com/a');
+    expect(openedExternal).toEqual([]);
+  });
+
+  it('★ oauth:authorize は、自分のクライアント ID を渡したときだけ確かめる。断られたら認可を始めない', async () => {
+    await invoke('oauth:authorize', 'github');
+    expect(presenceRequests).toEqual([]);
+    expect(authorizeConfigs).toHaveLength(1);
+    authorizeConfigs.length = 0;
+    presenceVerdict = DENY;
+    const r = (await invoke('oauth:authorize', 'github', 'abcdefgh.apps.googleusercontent.com')) as { ok: boolean; code?: string };
+    expect(r).toMatchObject({ ok: false, code: 'authorize_failed' });
+    expect(authorizeConfigs).toEqual([]);
+    expect(presenceRequests[0]).toMatchObject({ channel: 'oauth:authorize', tier: 'credential-write' });
+    expect(presenceRequests[0]!.summary).toContain('abcdefgh.apps.googleusercontent.com');
+  });
+
+  it('確認の呼び出しが投げても oauth:authorize は reject せず認可を始めない', async () => {
+    presenceThrows = new Error('boom');
+    const r = (await invoke('oauth:authorize', 'github', 'abcdefgh.apps.googleusercontent.com')) as { ok: boolean };
+    expect(r.ok).toBe(false);
+    expect(authorizeConfigs).toEqual([]);
   });
 });

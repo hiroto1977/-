@@ -339,12 +339,21 @@ ipcMain.handle('app:checkUpdate', async (): Promise<UpdateVerdict> => {
     return evaluateUpdate(current, null);
   }
 });
-ipcMain.handle('app:openExternal', async (_e, url: unknown) => {
+ipcMain.handle('app:openExternal', async (e, url: unknown) => {
   // Defense-in-depth: the renderer is sandboxed and contextIsolated,
   // but the IPC channel accepts any value. 関門は `externalUrlGate.ts` に
   // 1 つだけ置く —— 新窓ハンドラも同じものを通る。
   const target = externalUrlOrNull(url);
   if (target === null) return;
+  // 速度の制限だけ (T-147 レッドチーム #5): 画面を乗っ取られても、偽のログインページを任意の回数・
+  // 任意の時刻に起動させない。確認は出さない (利用者が普通に押す口なので)。
+  let presence: PresenceDecision;
+  try {
+    presence = await requirePresence(e, { channel: 'app:openExternal', tier: 'egress', summary: target });
+  } catch {
+    return;
+  }
+  if (!presence.ok) return;
   // `shell` は OS 側が開けないと **reject する** (既定ブラウザ未設定、
   // Linux で xdg-open が無い等)。この口の約束は `Promise<void>` で、
   // レンダラー側に受け皿が無い —— reject をそのまま返すと呼び出し元で
@@ -412,7 +421,10 @@ ipcMain.handle('secrets:set', async (e, serviceId: unknown, token: unknown): Pro
     presence = await requirePresence(e, {
       channel: 'secrets:set',
       tier: 'credential-write',
-      summary: `${serviceId} の資格情報を新しい値に置き換えます（値は表示しません）。`,
+      // 確認が横取りされても見分けがつくよう、新しい値の長さと末尾 4 文字を見せる (全体は見せない)。
+    summary: `${serviceId} の資格情報を置き換えます。新しい値: 全 ${checked.value.length} 文字${
+      checked.value.length > 8 ? `・末尾「…${checked.value.slice(-4)}」` : ''
+    }。心当たりが無ければ「実行しない」を選んでください。`,
     });
   } catch (err) {
     presence = { ok: false, message: safeErrorMessage(err) };
@@ -679,7 +691,7 @@ const CLIENT_ID_RE = /^[A-Za-z0-9._-]{8,200}$/;
  */
 let authorizeInFlight = false;
 
-ipcMain.handle('oauth:authorize', async (_e, serviceId: unknown, clientIdOverride?: unknown) => {
+ipcMain.handle('oauth:authorize', async (e, serviceId: unknown, clientIdOverride?: unknown) => {
   if (!isServiceId(serviceId)) {
     return { ok: false, code: 'not_supported', message: 'unknown service id' };
   }
@@ -707,6 +719,21 @@ ipcMain.handle('oauth:authorize', async (_e, serviceId: unknown, clientIdOverrid
       code: 'authorize_busy',
       message: '別の認可が進行中です。開いたブラウザでの手続きを終えるか、5 分ほど待ってからやり直してください',
     };
+  }
+  // 利用者が用意した OAuth クライアント ID で認可するときだけ確かめる (T-147 レッドチーム #4):
+  // 差し替えられると、攻撃者のアプリに紐づく資格情報で保存値が置き換わる。
+  if (override !== '') {
+    let presence: PresenceDecision;
+    try {
+      presence = await requirePresence(e, {
+        channel: 'oauth:authorize',
+        tier: 'credential-write',
+        summary: `${serviceId} を、クライアント ID「${override}」で認可します。心当たりが無ければ「実行しない」を選んでください。`,
+      });
+    } catch (err) {
+      presence = { ok: false, message: safeErrorMessage(err) };
+    }
+    if (!presence.ok) return { ok: false, code: 'authorize_failed', message: presence.message };
   }
   authorizeInFlight = true;
   try {

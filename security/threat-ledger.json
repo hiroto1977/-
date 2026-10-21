@@ -2522,6 +2522,21 @@
         "file": "src/main/__tests__/userPresence.test.ts",
         "test": "確かめる段階 (threat: T-147)"
       }
+    },
+    {
+      "id": "T-148",
+      "found": "2026-10-21",
+      "foundBy": "レッドチーム(独立した監査役)ラウンド 1 — 本人確認の門 (T-147) を破りに行かせ、防御側が再現して確かめた",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "high",
+      "title": "T-147 の本人確認の門は、(1) 承認を『チャンネル + 見せた要約』で 30 秒再利用したため、要約が固定の secrets:set では利用者が正当に保存した直後に攻撃者が別の値を無確認で書けた(ダイアログ 0 回で ok・実行で再現)。外部書き込みも本文の先頭 80 字が同じなら末尾だけ違う 9 件が 1 回の承認で通った。(2) 確認の文面が値に依らず同一で、攻撃者が利用者の『保存』の直前に要求するとダイアログを占有し、利用者は自分の操作だと思って承認できた。(3) 表示は 8 欄・値 80 字で切り、切ったことを示さず、長い欄を先に並べると status: publish が見えなくなった。値に引用を混ぜると偽の欄も見せられた。不可視の埋め文字 7 種が素通り。(4) oauth:authorize の clientId 差し替えと app:openExternal が確認も速度制限も無し。(5) 50MB の文字列で確認より前に約 10 秒固まった。(6) security/scan-url が egress 扱いだが実際は VirusTotal へ公開される書き込み",
+      "status": "mitigated",
+      "fix": "承認の再利用を廃止(毎回訊く)。secrets:set の確認に新しい値の長さと末尾 4 文字を出し、横取りされても見分けがつくようにした。表示は欄名を全部見せ(24 欄超は名前だけ)、値は JSON の引用で示して切ったときは全体の長さを添える。値の読みは先頭 240 字で止める(巨大値で固まらない)。不可視の埋め文字・異体字選択子 7 群を空白化。oauth:authorize は自分のクライアント ID のときだけ確認し、app:openExternal は速度の制限を通す。scan-url を external-write に。限界(確認の横取りを完全には防げない・Enter での拒否を数えて最大 1 時間ロックされうる・local-write は確認なし)は docs/RED_BLUE.md に残した。",
+      "regression": {
+        "file": "src/main/__tests__/userPresence.test.ts",
+        "test": "★ 承認は再利用しない — 同じ内容でも毎回訊く (承認の観測→差し替えを許さない・レッドチーム #1) (threat: T-148)"
+      }
     }
   ],
   "huntBacklog": [

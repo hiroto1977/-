@@ -63,7 +63,8 @@ export const ACTION_TIER: Readonly<Record<string, Tier>> = {
   'shopify/sync-to-stripe': 'external-write',
   'skills/run-skill': 'egress',
   'security/check-email-breach': 'egress',
-  'security/scan-url': 'egress',
+  // VirusTotal へ URL を送ると他の利用者から検索できる状態で残り取り消せない (red team 2026-10-21)
+  'security/scan-url': 'external-write',
   'emotions/analyze-text': 'egress',
   'ollama/chat': 'egress',
   'stocks/advise': 'egress',
@@ -116,9 +117,7 @@ export const DENIAL_WINDOW_MS = 10 * 60_000;
 export const DENIALS_TO_LOCK = 3;
 export const BASE_LOCKOUT_MS = 5 * 60_000;
 export const MAX_LOCKOUT_MS = 60 * 60_000;
-/** 同じ内容を承認した直後の再試行 (二重押し・ネットワークの再送) で、もう一度訊かない時間。 */
-export const REPEAT_APPROVAL_MS = 30_000;
-export const MAX_SUMMARY_CHARS = 400;
+export const MAX_SUMMARY_CHARS = 2400;
 export const MAX_EVENTS = 50;
 
 /**
@@ -169,6 +168,15 @@ const UNSAFE_RANGES: ReadonlyArray<readonly [number, number]> = [
   [0x2066, 0x2069],
   [0xfeff, 0xfeff],
   [0xe0000, 0xe007f], // Unicode Tag (T-133)
+  // 見えない埋め文字・異体字選択子 (2026-10-21 レッドチームが素通りを実測): 欄や値を見えなくする / 偽の欄を見せる
+  [0x034f, 0x034f], // combining grapheme joiner
+  [0x115f, 0x1160], // hangul filler
+  [0x17b4, 0x17b5], // khmer inherent vowel
+  [0x2800, 0x2800], // braille blank
+  [0x3164, 0x3164], // hangul filler
+  [0xfe00, 0xfe0f], // variation selectors
+  [0xffa0, 0xffa0], // halfwidth hangul filler
+  [0xe0100, 0xe01ef], // variation selectors supplement
 ];
 
 function isUnsafe(cp: number): boolean {
@@ -186,16 +194,40 @@ export function safeSummary(text: string): string {
   return flat.length > MAX_SUMMARY_CHARS ? `${flat.slice(0, MAX_SUMMARY_CHARS)}…` : flat;
 }
 
-/** payload を「どの欄に何が入るか」の 1 文へ (値は切る)。キーも値も外から来るので安全化する。 */
+/** 1 つの値を見せる長さ。超えたら切って全体の長さを添える (切ったことを必ず述べる)。 */
+export const MAX_VALUE_CHARS = 60;
+/** 見せる欄の数。超えた分は名前と件数だけ。 */
+export const MAX_FIELDS_SHOWN = 24;
+/** 値を読む前に切る長さ (巨大な文字列で確認の前に固まらない)。 */
+const READ_CAP = MAX_VALUE_CHARS * 4;
+
+function describeValue(v: unknown): string {
+  if (typeof v === 'string') {
+    const clipped = safeSummary(v.slice(0, READ_CAP));
+    const shown = clipped.slice(0, MAX_VALUE_CHARS);
+    return v.length > shown.length ? `${JSON.stringify(shown)}…(全 ${v.length} 文字)` : JSON.stringify(shown);
+  }
+  if (typeof v === 'number' || typeof v === 'boolean' || v === null) return String(v);
+  if (Array.isArray(v)) return `[配列 ${v.length} 件]`;
+  if (typeof v === 'object') return `{入れ子 ${Object.keys(v as object).length} 欄}`;
+  return `(${typeof v})`;
+}
+
+/**
+ * payload を「どの欄に何が入るか」へ。**欄名は全部見せ**(隠れた欄に本物の指示を置かせない)、
+ * 値は JSON の引用で示す (値の中の引用符で偽の欄を作らせない)・長い値は切って全体の長さを添える。
+ * 値の読みは固定長で止める (巨大な値で確認の前に固まらない)。
+ */
 export function describePayload(payload: unknown): string {
   if (payload === null || typeof payload !== 'object' || Array.isArray(payload)) return '(内容なし)';
-  const parts: string[] = [];
-  for (const [k, v] of Object.entries(payload as Record<string, unknown>).slice(0, 8)) {
-    const text = typeof v === 'string' ? v : JSON.stringify(v) ?? '';
-    const clipped = safeSummary(text).slice(0, 80);
-    parts.push(`${safeSummary(k).slice(0, 24)}=「${clipped}」`);
+  const entries = Object.entries(payload as Record<string, unknown>);
+  if (entries.length === 0) return '(内容なし)';
+  const shown = entries.slice(0, MAX_FIELDS_SHOWN).map(([k, v]) => `${safeSummary(k).slice(0, 24)}: ${describeValue(v)}`);
+  if (entries.length > MAX_FIELDS_SHOWN) {
+    const rest = entries.slice(MAX_FIELDS_SHOWN).map(([k]) => safeSummary(k).slice(0, 24));
+    shown.push(`ほか ${rest.length} 欄: ${rest.join(', ')}`);
   }
-  return parts.length === 0 ? '(内容なし)' : parts.join(' / ');
+  return shown.join(' / ');
 }
 
 /**
@@ -234,8 +266,6 @@ export function createPresenceGate(deps: PresenceDeps): PresenceGate {
   let lockedUntil = 0;
   let lockoutMs = BASE_LOCKOUT_MS;
   let pending = false;
-  /** 直前に承認された内容だけを覚える (二重押し・再送をまとめるため)。別の内容が承認されれば忘れる。 */
-  let lastApproval: { key: string; at: number } | null = null;
 
   function record(kind: PresenceEventKind, req: PresenceRequest): void {
     events.push({ at: now(), kind, channel: req.channel, tier: req.tier });
@@ -271,11 +301,6 @@ export function createPresenceGate(deps: PresenceDeps): PresenceGate {
       }
 
       const summary = safeSummary(req.summary);
-      const approvalKey = `${req.channel}\u0000${summary}`;
-      if (lastApproval !== null && lastApproval.key === approvalKey && t - lastApproval.at < REPEAT_APPROVAL_MS) {
-        return { ok: true };
-      }
-
       if (pending) {
         return deny('busy', req, '別の確認が開いています。先にそちらへ答えてください。');
       }
@@ -291,7 +316,6 @@ export function createPresenceGate(deps: PresenceDeps): PresenceGate {
 
       const after = now();
       if (allowed) {
-        lastApproval = { key: approvalKey, at: after };
         record('approved', req);
         return { ok: true };
       }

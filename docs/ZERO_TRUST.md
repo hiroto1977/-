@@ -1,6 +1,6 @@
 # ゼロトラストの設計 — 「侵入させない」ではなく「動くたびに確かめ、被害を止める」
 
-最終更新: 2026-10-21 (パス 546・脅威 T-147)
+最終更新: 2026-10-21 (パス 546・脅威 T-147 / T-148)
 
 ## 0. 先に正直に
 
@@ -38,8 +38,10 @@
 
 ### 2.1 「動こうとする度に本人確認」の実装範囲
 
-確認の対象 (毎回): `secrets:set` (credential-write)・`secrets:clear` と `app:eraseAll` と `emotions/clear-history` (destructive)・
-外部へ書き込む `create-/send-/sync-/purge-` 系 20 action (external-write)。
+確認の対象 (毎回・承認は再利用しない): `secrets:set` と `oauth:authorize` (自分のクライアント ID のとき) (credential-write)・
+`secrets:clear` と `app:eraseAll` と `emotions/clear-history` (destructive)・
+外部へ書き込む `create-/send-/sync-/purge-` 系 20 action と `security/scan-url` (external-write)。
+`app:openExternal` は確認を出さず速度だけ制限する。
 確認しない (速度のみ): 外部 AI へ送る egress 13・端末内の local-write 15・read 5。**全部に確認を付けると承認の疲れで
 「はい」が反射になり、守りが逆に弱くなる** ため、被害が外へ出る・戻せない操作に絞った。
 
@@ -51,6 +53,8 @@
 - **ゼロデイ**: 未知の欠陥は塞げない。被害の上限を決めておく (確認・速度制限・費用の窓) ことで、悪用されても外へ出る量を小さくする。
 
 ## 4. 進化し続ける仕組み
+
+**攻撃側と防御側のラウンド制** (`docs/RED_BLUE.md`): 独立した監査役が破りに行き、私が再現して確かめ、本物だけを直して対照実験で留める。ラウンド 1 では本人確認の門に対し 9 件が見つかり、7 件を直した (T-148)。
 
 1. **見つけたら台帳に書く** — `security/threat-ledger.json` (T-番号・再現・直し・回帰検査)。
 2. **直したら対照で確かめる** — 守りを壊し、狙った検査だけが落ちることを見る。鳴らない対照は「検査についての報せ」。

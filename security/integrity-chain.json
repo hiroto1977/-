@@ -2743,6 +2743,14 @@
       "leafCount": 124,
       "note": "update main.ts",
       "hash": "da3287b4ad58be5d4a14d91ded4f6d034492d7f1332c7ed7b251765c51913bd0"
+    },
+    {
+      "index": 327,
+      "prevHash": "da3287b4ad58be5d4a14d91ded4f6d034492d7f1332c7ed7b251765c51913bd0",
+      "merkleRoot": "56ce42c1bba9e6071c3c2aacd1ea5a9a172a4956a3b241dc3bb0bdd6ba7f40b4",
+      "leafCount": 124,
+      "note": "update main.ts,userPresence.ts",
+      "hash": "f2040bd32664e875ccc1c94ecb746a80746a50accf88fab9190587aed091f042"
     }
   ],
   "tipManifest": {
@@ -2809,13 +2817,13 @@
     "src/main/eraseAll.ts": "5fabdaeb36193d7cfd06ccbae8712ada1a5ad36787240cd35fb3dcf0a2fdd797",
     "src/main/fileRequestGate.ts": "fd23a74b0a6342ecadd3ebced0fac12dac0eff610c79256540adecbb93a6b2c2",
     "src/main/keychainBackend.ts": "a9ac8c957100cc6aaa332973638fe4c6057daf017e022eb50fb134ce44ce5b93",
-    "src/main/main.ts": "9bb951d1efce84ae107d615a43c50da64478bc0ea4ca8451634ecb28cb53b995",
+    "src/main/main.ts": "9d256a3fa69194be5da0a0a0bb9ef293d7a7d67dae4511e0db2fee64f4e36c7e",
     "src/main/oauth.ts": "361df5884e2b332e721701fe677390450bf98c7b665fe331dd1e79620da7a5b7",
     "src/main/presenceWiring.ts": "d30dbd691f36d3016af74fe8ea26d3ab7a9d8f9e6d1b9eb863977f1d847c4501",
     "src/main/secrets.ts": "ddfe5ece7c6393fd8cd473f84eec8173cbc2435ffb163a638e130a9e4ef5ce17",
     "src/main/shellOpenGate.ts": "83d21dd21674694edd0e835c9acfdc6c79fea3ff8eedd2d5e589dfeecbc7548b",
     "src/main/stateFile.ts": "984eebe8582b3c6c88669d17e778932f6b87a682640d1f162acd182d5947169b",
-    "src/main/userPresence.ts": "d96d3c33bef94b24e1bd1eadfca89f70ebd7b89824ca3293dc59fe28c8c91bbb",
+    "src/main/userPresence.ts": "92869cc29c0b0d043ae51a8ddb3f75fc65fa94389f3d2824b2e03d5b0d93e601",
     "src/main/windowPrefs.ts": "0bccea9e29b489da1b4a7962eaa53e237cf93fed9d4692371a3a43a6a4985dee",
     "src/preload/preload.ts": "21fc645271dd2064f063fc439d888eb4dcef32d08d1030d92d9cb8ff2a4040a6",
     "src/renderer/data/assistantMarkdown.ts": "a3a2d232703461ad47f9b582744393f179310ed8ba5b701a816e3eeca6c96937",

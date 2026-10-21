@@ -30,12 +30,13 @@ const GUARDED: Readonly<Record<string, string>> = {
   'secrets:set': 'await setToken(',
   'secrets:clear': 'await clearToken(',
   'action:invoke': 'await fn(',
+  'app:openExternal': 'await shell.openExternal(',
+  'oauth:authorize': 'await authorize(',
 };
 
 const NOT_GUARDED: Readonly<Record<string, string>> = {
   'app:getVersion': '版の文字列を返すだけ',
   'app:checkUpdate': '固定の GitHub API へ読みの要求を 1 本。書き込みも資格情報も無い',
-  'app:openExternal': 'http(s) の allowlist 関門を通った URL を OS の既定ブラウザに渡す。アプリ内に副作用は無く、開いた先は利用者の目に見える',
   'app:revealInFolder': 'shellOpenGate (realpath + 閉じ込め) を通った書き出し先をファイラで示すだけ',
   'app:openPath': 'shellOpenGate (realpath + 閉じ込め + 拡張子 allowlist) を通った書き出し物を開く',
   'app:setColorScheme': '形で絞った配色 2 値だけ。値は light/dark と #rrggbb',
@@ -43,7 +44,6 @@ const NOT_GUARDED: Readonly<Record<string, string>> = {
   'secrets:list': '設定済みの id の一覧だけ (秘密は戻さない)',
   'secrets:protection': '件数と仕組みの名前だけ (秘密は戻さない)',
   'oauth:isSupported': '提供者が OAuth 対応かの真偽だけ',
-  'oauth:authorize': '利用者のブラウザで提供者の同意画面が開くだけで、同意が無ければ何も保存されない。loopback の待受は 1 回きり・state 検証つき',
 };
 
 function handlerBodies(): Map<string, string> {
