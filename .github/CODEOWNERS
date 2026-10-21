@@ -161,10 +161,8 @@
 /src/main/__tests__/oauth.test.ts @hiroto1977
 /src/main/__tests__/secretsTokenRead.test.ts @hiroto1977
 /src/main/__tests__/secretsUnreadableWrite.test.ts @hiroto1977
-/src/main/__tests__/presenceWiring.test.ts @hiroto1977
 /src/main/__tests__/secretsWrite.test.ts @hiroto1977
 /src/main/__tests__/userPresence.test.ts @hiroto1977
-/src/main/__tests__/userPresenceCensus.test.ts @hiroto1977
 /src/main/__tests__/shellOpenGate.test.ts @hiroto1977
 /src/main/__tests__/stateWriterRace.test.ts @hiroto1977
 /src/main/clients/__tests__/assistant.test.ts @hiroto1977
