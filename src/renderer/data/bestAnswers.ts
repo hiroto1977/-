@@ -379,6 +379,8 @@ const OVERCLAIM_PENALTY = 10;
  * 行頭ごとに末尾まで走り直して二乗時間になった (実測 9 秒・画面が固まる)。字下げだけを読む。
  */
 const STRUCTURE_MARK = /^[^\S\n\r\u2028\u2029]*(?:[-*・•]\s|\d+[.)．、]|#{1,4}\s|\|)/m;
+/** 1 回答で確かめる「参照」の項目数の天井 (threat: T-156)。 */
+export const MAX_CHECKED_CITATIONS = 50;
 const OVERCLAIM = /(?:必ず|絶対に?|確実に)(?:儲か|もうか|勝て|得をす)/;
 const CONSULT_WORDS = ['専門家', '一次情報', '確認', '相談'];
 
@@ -441,22 +443,27 @@ export function stripParenthesized(s: string): string {
  */
 export function fabricatedCitations(answer: string, docs: readonly KnowledgeDoc[]): string[] {
   const out: string[] = [];
+  // 注入した項目の核は 1 度だけ作る (参照の項目ごとに作り直すと、100,000 字の「参照:」で 0.7 秒かかった)。
+  const known = docs.map((d) => ({ title: d.title, flat: compact(d.title), core: compact(titleCore(d.title)) }));
+  let checked = 0;
   for (const line of answer.split('\n')) {
     const m = /^\s*(?:[-*・]\s*)?参照\s*[:：](.+)/.exec(line);
     if (!m) continue;
     for (const raw of m[1]!.split(/[、,，;；]/)) {
       const item = stripParenthesized(raw).replace(/[「」『』〈〉【】]/g, '').trim();
       if (countChars(item) < 2) continue;
-      const known = docs.some((d) => {
-        const core = compact(titleCore(d.title));
-        const it = compact(item);
-        return (
-          titleSimilarity(item, d.title) >= CITATION_MATCH_AT ||
-          compact(d.title).includes(it) ||
-          (core.length >= 2 && it.includes(core))
-        );
-      });
-      if (!known) out.push(item);
+      // 1 回答で確かめる項目の数に天井 (threat: T-156): 正当な回答の参照は数件。乗っ取られた回答者が
+      // 2 字の項目を 5 万個並べても、同期の採点が秒単位で固まらない。超えた分は 1 件の捏造として数える。
+      if (checked >= MAX_CHECKED_CITATIONS) {
+        out.push(`参照が ${MAX_CHECKED_CITATIONS} 件を超えています`);
+        return out;
+      }
+      checked += 1;
+      const it = compact(item);
+      const hit = known.some(
+        (d) => titleSimilarity(item, d.title) >= CITATION_MATCH_AT || d.flat.includes(it) || (d.core.length >= 2 && it.includes(d.core)),
+      );
+      if (!hit) out.push(item);
     }
   }
   return out;
@@ -851,6 +858,11 @@ export interface BestAnswersChatMessage {
    * (見出し・各順位の採点と理由) には付かない (パス 488)。
    */
   readonly servedBy?: string;
+  /**
+   * **アプリの声の吹き出しに付く印** (見出し・各順位の採点と理由 · threat: T-150 / T-156)。画面はこれを履歴へ写し、
+   * 次の発話でモデルの「前の返答」として外へ再送しない (失敗した回答者のエラー文や捏造した参照名の引用が入る)。
+   */
+  readonly appVoice?: true;
 }
 
 const MEDALS = ['🥇', '🥈', '🥉'];
@@ -929,7 +941,7 @@ export function formatBestAnswers(
   }
   if (best.shortfall !== null) header.push('', best.shortfall);
 
-  const out: BestAnswersChatMessage[] = [{ text: header.join('\n') }];
+  const out: BestAnswersChatMessage[] = [{ text: header.join('\n'), appVoice: true }];
   for (const r of best.ranked) {
     const axes = r.score.axes;
     out.push({
@@ -943,6 +955,7 @@ export function formatBestAnswers(
         '',
         `選んだ理由: ${r.why}`,
       ].join('\n'),
+      appVoice: true,
     });
     out.push({ text: r.text.trim(), servedBy: labelOf(r.servedBy ?? r.provider) });
   }

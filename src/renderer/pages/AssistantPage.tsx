@@ -24,7 +24,7 @@ import {
   type StorageMechanism,
 } from '../data/credentialSaveMessage';
 import { chatMessages, storedLabel, storedTrue, type ChatFieldReaders } from '../data/persistedShape';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { SERVICES } from '../services';
 import type { ServiceId } from '../../shared/serviceId';
 import {
@@ -253,6 +253,15 @@ function renderInline(spans: readonly InlineToken[], fg: string) {
 }
 
 /** Markdown ブロックを安全に描画 (HTML 文字列を使わない)。 */
+/**
+ * 1 件の返答を描く。**解析は本文が変わらない限りやり直さない** (threat: T-156): 入力欄の 1 打鍵ごとに
+ * 画面全体が再描画され、履歴 50 件を毎回 `parseMarkdown` し直していた (重い返答が並ぶと 1 打鍵に秒単位)。
+ */
+const MessageMarkdown = memo(function MessageMarkdown({ text, fg }: { text: string; fg: string }) {
+  const blocks = useMemo(() => parseMarkdown(text), [text]);
+  return <MarkdownView blocks={blocks} fg={fg} />;
+});
+
 function MarkdownView({ blocks, fg }: { blocks: Block[]; fg: string }) {
   const border = '1px solid rgba(127,127,127,0.4)';
   return (
@@ -768,8 +777,8 @@ export function AssistantPage() {
       // 渡る時機で 2 通りに書かれた。
       const labelOf = (id: string): string => lookup(AI_PROVIDERS, id)?.label ?? (id || '既定の AI');
       const [header, ...ranked] = formatBestAnswers(bestJob.result, labelOf);
-      if (header) append({ role: 'assistant', text: header.text, appVoice: true });
-      for (const m of ranked) append({ role: 'assistant', text: m.text, provider: m.servedBy });
+      if (header) append({ role: 'assistant', text: header.text, appVoice: header.appVoice });
+      for (const m of ranked) append({ role: 'assistant', text: m.text, provider: m.servedBy, appVoice: m.appVoice });
       // 1 件も示せなければ、チャットと同じく端末内の簡易応答で答える (空にしない)。
       if (ranked.length === 0) replyOffline(bestJob.question);
     } else if (bestJob.status === 'cancelled') {
@@ -1056,7 +1065,7 @@ export function AssistantPage() {
                   whiteSpace: isUser ? 'pre-wrap' : 'normal',
                 }}
               >
-                {isUser ? m.text : <MarkdownView blocks={parseMarkdown(m.text)} fg={fg} />}
+                {isUser ? m.text : <MessageMarkdown text={m.text} fg={fg} />}
                 {m.offline ? (
                   <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 4 }}>簡易モード（オフライン）</div>
                 ) : null}

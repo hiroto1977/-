@@ -149,6 +149,8 @@ export const DENIAL_WINDOW_MS = 10 * 60_000;
 export const DENIALS_TO_LOCK = 3;
 export const BASE_LOCKOUT_MS = 5 * 60_000;
 export const MAX_LOCKOUT_MS = 60 * 60_000;
+/** ロックが明けてからこの時間ロックが無ければ、伸びたロックの長さを基準へ戻す (T-156: 減衰が無く、誤って断った利用者も最大 1 時間ロックされ続けた)。 */
+export const LOCKOUT_FORGET_MS = 2 * 60 * 60_000;
 export const MAX_SUMMARY_CHARS = 2400;
 export const MAX_EVENTS = 50;
 
@@ -275,14 +277,41 @@ function describeValue(v: unknown): string {
  */
 export function describePayload(payload: unknown): string {
   if (payload === null || typeof payload !== 'object' || Array.isArray(payload)) return '(内容なし)';
-  const entries = Object.entries(payload as Record<string, unknown>);
-  if (entries.length === 0) return '(内容なし)';
-  const shown = entries.slice(0, MAX_FIELDS_SHOWN).map(([k, v]) => `${safeSummary(k).slice(0, 24)}: ${describeValue(v)}`);
-  if (entries.length > MAX_FIELDS_SHOWN) {
-    const rest = entries.slice(MAX_FIELDS_SHOWN).map(([k]) => safeSummary(k).slice(0, 24));
-    shown.push(`ほか ${rest.length} 欄: ${rest.join(', ')}`);
+  const obj = payload as Record<string, unknown>;
+  const keys = Object.keys(obj);
+  if (keys.length === 0) return '(内容なし)';
+  const shown = keys.slice(0, MAX_FIELDS_SHOWN).map((k) => `${keyLabel(k)}: ${describeValue(obj[k])}`);
+  if (keys.length > MAX_FIELDS_SHOWN) {
+    // 名前を並べるのも固定個数まで (鍵が 100 万個でも要約が膨らまず、確認の前に固まらない · T-156)。
+    const rest = keys.slice(MAX_FIELDS_SHOWN, MAX_FIELDS_SHOWN * 2).map(keyLabel);
+    const more = keys.length - MAX_FIELDS_SHOWN > rest.length ? ', …' : '';
+    shown.push(`ほか ${keys.length - MAX_FIELDS_SHOWN} 欄: ${rest.join(', ')}${more}`);
   }
   return shown.join(' / ');
+}
+
+/** 鍵の表示。**長さ無制限の鍵を丸ごと走査しない** (50 MB の鍵で確認より前に 13 秒固まった · T-156)。 */
+const KEY_READ_CAP = 96;
+const KEY_SHOWN_CHARS = 24;
+function keyLabel(k: string): string {
+  return safeSummary(clampToCeiling(k, KEY_READ_CAP)).slice(0, KEY_SHOWN_CHARS);
+}
+
+/**
+ * **欄が多すぎる payload か** (T-156)。確認のダイアログが値を見せるのは先頭 `MAX_FIELDS_SHOWN` 欄だけで、
+ * 先頭に無害な欄を 24 個置けば、後ろの本物の欄 (`text` など) の値が確認に出ない。正規の操作に 24 欄を
+ * 超える物は無いので、超えたら見せ方を工夫せず断る (fail closed)。数えるのは固定個数まで。
+ */
+export function payloadTooWide(payload: unknown): boolean {
+  // null は `for…in` が 0 回で終わるので別に弾かない。配列と文字列などは欄を持つ物ではないので数えない。
+  if (typeof payload !== 'object' || Array.isArray(payload)) return false;
+  let n = 0;
+  for (const k in payload as Record<string, unknown>) {
+    if (!Object.hasOwn(payload as object, k)) continue;
+    n += 1;
+    if (n > MAX_FIELDS_SHOWN) return true;
+  }
+  return false;
 }
 
 /**
@@ -324,6 +353,7 @@ export function createPresenceGate(deps: PresenceDeps): PresenceGate {
   let denials: number[] = [];
   let lockedUntil = 0;
   let lockoutMs = BASE_LOCKOUT_MS;
+  let lastLockEnd = 0;
   let pending = false;
   let alarms: number[] = [];
   let alertUntil = 0;
@@ -341,6 +371,8 @@ export function createPresenceGate(deps: PresenceDeps): PresenceGate {
   function noteAlarm(t: number): void {
     alarms = alarms.filter((x) => within(t, x, ALARM_WINDOW_MS));
     alarms.push(t);
+    // 警戒に要るのは「窓の中の新しい ALARMS_TO_ALERT 件」だけ (配列を伸ばさない · T-156)。
+    alarms = alarms.slice(-ALARMS_TO_ALERT);
     if (alarms.length < ALARMS_TO_ALERT) return;
     const entering = postureAt(t) === 'normal';
     alertUntil = t + ALERT_MS;
@@ -375,10 +407,13 @@ export function createPresenceGate(deps: PresenceDeps): PresenceGate {
       const list = (calls[req.tier] ??= []).filter((x) => within(t, x, WINDOW_MS));
       const weight = Math.min(Math.max(Number.isInteger(req.weight) ? req.weight! : 1, 1), MAX_CALL_WEIGHT);
       for (let i = 0; i < weight; i += 1) list.push(t);
-      calls[req.tier] = list;
+      // 保つのは「上限 + 1 件」まで (T-156): 連打で配列が伸びて 1 呼び出しの費用が増え、門自身が
+      // 主プロセスを止める増幅器になった (20,000 回で 8 秒)。新しい側を残せば「上限を超えたか」は同じ答え。
+      const kept = list.slice(-(RATE_LIMIT[req.tier] + 1));
+      calls[req.tier] = kept;
       const alert = postureAt(t) === 'alert';
       const limit = alert ? Math.max(1, Math.floor(RATE_LIMIT[req.tier] / ALERT_RATE_DIVISOR)) : RATE_LIMIT[req.tier];
-      if (list.length > limit) {
+      if (kept.length > limit) {
         return deny('rate-limited', req, '短時間に操作が集中したため断りました。しばらく待ってからやり直してください。');
       }
 
@@ -386,7 +421,10 @@ export function createPresenceGate(deps: PresenceDeps): PresenceGate {
       if (!alert && !CONFIRMED_TIERS.has(req.tier)) return { ok: true };
       if (alert && req.tier === 'read') return { ok: true };
 
-      if (t < lockedUntil) {
+      // ロックと断りの数えは、平常から確かめている段階だけ (T-156): 警戒中に広がった確認 (egress / local-write)
+      // の断りまでロックに数えると、保存や送信が止まり、漏えいを疑った利用者の取り消しの道まで塞がる。
+      const lockable = CONFIRMED_TIERS.has(req.tier);
+      if (lockable && t < lockedUntil) {
         const minutes = Math.ceil((lockedUntil - t) / 60_000);
         return deny('locked-out', req, `確認を断った回数が多いため、あと約 ${minutes} 分は操作できません。`);
       }
@@ -411,13 +449,17 @@ export function createPresenceGate(deps: PresenceDeps): PresenceGate {
         return { ok: true };
       }
 
-      denials = denials.filter((x) => within(after, x, DENIAL_WINDOW_MS));
-      denials.push(after);
       record('denied-by-user', req);
-      if (denials.length >= DENIALS_TO_LOCK) {
-        lockedUntil = after + lockoutMs;
-        lockoutMs = Math.min(lockoutMs * 2, MAX_LOCKOUT_MS);
-        denials = [];
+      if (lockable) {
+        denials = denials.filter((x) => within(after, x, DENIAL_WINDOW_MS));
+        denials.push(after);
+        if (denials.length >= DENIALS_TO_LOCK) {
+          if (after - lastLockEnd >= LOCKOUT_FORGET_MS) lockoutMs = BASE_LOCKOUT_MS;
+          lockedUntil = after + lockoutMs;
+          lastLockEnd = lockedUntil;
+          lockoutMs = Math.min(lockoutMs * 2, MAX_LOCKOUT_MS);
+          denials = [];
+        }
       }
       return { ok: false, message: '確認が許可されなかったため実行しませんでした。' };
     },

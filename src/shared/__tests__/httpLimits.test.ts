@@ -247,6 +247,11 @@ describe('既定値', () => {
    * 状態の集合) の変異体は、この検査だけで走って生き残る —— 静的 import の側は読み込み時の値を
    * 見るので変異体に届かない (GitHub の全掃引で 3 件: 上限の掛け算 2 通りと集合を空にする形)。
    */
+  it('★ AI の応答の上限は 2 MiB ちょうど (汎用の 10 MiB より厳しい・threat: T-156)', async () => {
+    const m = await rereadModule<typeof import('../httpLimits')>(import.meta.url, '../httpLimits');
+    expect(m.MAX_AI_CHAT_RESPONSE_BYTES).toBe(2097152);
+  });
+
   it('★ Ollama の応答上限は 2 MiB ちょうど・生成の締切は 120 秒・転送の状態は 5 つだけ', async () => {
     const m = await rereadModule<typeof import('../httpLimits')>(import.meta.url, '../httpLimits');
     expect(m.MAX_OLLAMA_RESPONSE_BYTES).toBe(2097152);

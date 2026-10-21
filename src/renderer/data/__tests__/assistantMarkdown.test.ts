@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest';
 import {
   BLOCKS_TRUNCATED_NOTICE,
   MAX_RENDER_BLOCKS,
+  MAX_RENDER_WEIGHT,
+  blockWeight,
   parseInline,
   parseMarkdown,
   type Block,
@@ -459,6 +461,47 @@ describe('描く量の上限 — 量で画面を止めさせない', () => {
     const blocks = parseMarkdown('# 見出し\n\n本文です。\n\n- a\n- b\n');
     expect(blocks.length).toBeLessThan(10);
     expect(JSON.stringify(blocks)).not.toContain(BLOCKS_TRUNCATED_NOTICE);
+  });
+});
+
+describe('描く要素の重さの上限 — 1 つの表・箇条書きが数万個の要素を持てない (threat: T-156)', () => {
+  const cell = (n: number): string => Array.from({ length: n }, () => 'a').join('|');
+
+  it('blockWeight: 見出し・段落・コードは 1、箇条書きは 1 + 項目数、表は 1 + 見出し + 全セル', () => {
+    expect(blockWeight({ type: 'heading', level: 1, spans: [] })).toBe(1);
+    expect(blockWeight({ type: 'paragraph', spans: [] })).toBe(1);
+    expect(blockWeight({ type: 'code', text: '' })).toBe(1);
+    expect(blockWeight({ type: 'list', ordered: false, items: [[], [], []] })).toBe(4);
+    expect(blockWeight({ type: 'table', headers: [[], []], rows: [[[], []], [[], []], [[]]] })).toBe(1 + 2 + 5);
+  });
+
+  it('★ 25,000 項目の箇条書き (ブロックは 1 つ) は打ち切り、注記が付く', () => {
+    const blocks = parseMarkdown('段落\n\n' + '- a\n'.repeat(25_000));
+    expect(blocks.map((b) => b.type)).toEqual(['paragraph', 'paragraph']);
+    expect(JSON.stringify(blocks.at(-1))).toContain(BLOCKS_TRUNCATED_NOTICE);
+  });
+
+  it('★ 5 万セルの表 (ブロックは 1 つ) は打ち切る', () => {
+    const header = cell(50_000);
+    const blocks = parseMarkdown(`|${header}|\n|${Array.from({ length: 50_000 }, () => '-').join('|')}|\n`);
+    expect(JSON.stringify(blocks)).toContain(BLOCKS_TRUNCATED_NOTICE);
+    expect(blocks.some((b) => b.type === 'table')).toBe(false);
+  });
+
+  it('★ 重さがちょうど上限の箇条書きは欠けず、1 つ多いと打ち切る (境界)', () => {
+    const exact = parseMarkdown('- a\n'.repeat(MAX_RENDER_WEIGHT - 1));
+    expect(exact).toHaveLength(1);
+    expect(JSON.stringify(exact)).not.toContain(BLOCKS_TRUNCATED_NOTICE);
+    const over = parseMarkdown('- a\n'.repeat(MAX_RENDER_WEIGHT));
+    expect(over).toHaveLength(1);
+    expect(JSON.stringify(over)).toContain(BLOCKS_TRUNCATED_NOTICE);
+  });
+
+  it('打ち切る前のブロックは残る (重さは積み上げ・最初に超えたブロックから落とす)', () => {
+    const md = '# 見出し\n\n' + '- a\n'.repeat(15_000) + '\n本文\n\n' + '- b\n'.repeat(15_000);
+    const blocks = parseMarkdown(md);
+    expect(blocks.map((b) => b.type)).toEqual(['heading', 'list', 'paragraph', 'paragraph']);
+    expect(JSON.stringify(blocks.at(-1))).toContain(BLOCKS_TRUNCATED_NOTICE);
   });
 });
 

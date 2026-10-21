@@ -15,7 +15,7 @@ import { redactForMessage, MAX_RESPONSE_BODY_IN_MESSAGE } from '../redact';
 import {
   egressInit,
   isRedirectResponse,
-  MAX_HTTP_RESPONSE_BYTES,
+  MAX_AI_CHAT_RESPONSE_BYTES,
   readBodyWithCap,
   redirectRefusal,
   withTimeout,
@@ -147,7 +147,7 @@ export async function runAiChat(opts: RunAiChatOptions): Promise<AiChatResult> {
      */
     let body: string;
     try {
-      body = await readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, spec.label);
+      body = await readBodyWithCap(res, MAX_AI_CHAT_RESPONSE_BYTES, spec.label);
     } catch (e) {
       // 本文の途中で締切が来たのなら、それも「時間内に応答しなかった」である。
       // `limitedFetch` と同じ言い換えをする —— undici の内部例外をそのまま

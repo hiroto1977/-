@@ -2642,6 +2642,36 @@
         "file": "src/main/__tests__/userPresence.test.ts",
         "test": "閾値に届くと警戒へ入り、入った印を 1 度だけ残す"
       }
+    },
+    {
+      "id": "T-156",
+      "found": "2026-10-21",
+      "foundBy": "レッドチーム(独立した監査役)ラウンド 3 — 範囲を絞った読み取り専用の点検役 2 人(IPC 境界 / AI の入出力)。防御側が再現して確かめた",
+      "surface": "ai",
+      "class": "denial-of-wallet",
+      "severity": "medium",
+      "title": "AI の応答・返答の量を縛る層に穴が 4 つ。(1) 応答の本文は汎用の 10 MiB まで JSON.parse され、深い入れ子で 2.5〜4 秒同期停止+約 290 MB 確保(デスクトップ版は main のイベントループが止まる)。(2) parseMarkdown の天井はブロック数だけで、1 つの表・箇条書きが数万要素を持て、10 万字の返答 1 件が DOM 要素 10 万個・履歴 50 件は入力の 1 打鍵ごとに全件再解析。(3) 「参照:」の項目に数の天井が無く、2 字の項目 5 万個で採点が約 0.7 秒×5 回答固まる。(4) ベスト3 の順位ごとの採点吹き出し(アプリの声)に appVoice が付かず次の発話で外部モデルへ再送される(T-150 の取りこぼし)",
+      "status": "fixed",
+      "fix": "(1) AI 応答専用の上限 MAX_AI_CHAT_RESPONSE_BYTES=2 MiB(正当な最大は約 600 KB)。(2) 描く要素の重さ(1+項目数|見出し+セル)の天井 MAX_RENDER_WEIGHT=2 万を足し、超える最初のブロックから注記つきで打ち切る。返答 1 件の解析は本文が変わらない限りやり直さない(memo)。(3) 1 回答で確かめる項目を 50 件までにし、注入した項目の核を 1 度だけ作る。超過は 1 件の捏造として数える。(4) formatBestAnswers が見出しと採点の吹き出しに appVoice を付け、画面が履歴へ写す。限界: 実ブラウザでの描画時間は未測定(jsdom と木の大きさのみ)・memo の再解析なしは実測の検査で留めていない。",
+      "regression": {
+        "file": "src/renderer/data/__tests__/assistantMarkdown.test.ts",
+        "test": "25,000 項目の箇条書き (ブロックは 1 つ) は打ち切り、注記が付く"
+      }
+    },
+    {
+      "id": "T-157",
+      "found": "2026-10-21",
+      "foundBy": "レッドチーム(独立した監査役)ラウンド 3 — 範囲を絞った読み取り専用の点検役 2 人(IPC 境界 / AI の入出力)。防御側が再現して確かめた",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "medium",
+      "title": "本人確認の門(T-147/T-155)自身の穴が 4 つ。(1) describePayload が鍵を長さ無制限で走査し、50 MB の鍵で確認の前に主プロセスが 13 秒固まる(鍵 100 万個で 889 万字の要約)。(2) 速度制限と警戒の配列が伸び続け、連打で 1 呼び出しの費用が増える二乗時間(2 万回で 8 秒・4 万回で 41 秒)=門が DoS の増幅器になる。(3) ロックの長さが減衰せず、警戒中は local-write / egress の断りまでロックに数え、保存・送信・漏えいを疑った利用者の取り消し(secrets:clear)の道まで塞ぐ。(4) 確認が値を見せるのは先頭 24 欄だけで、先頭に飾りの欄を 24 個置くと後ろの本物の欄(text など)の値が確認に出ない",
+      "status": "fixed",
+      "fix": "(1) 鍵の読みを 96 字で切り、残りの名前の列挙も固定個数まで。(2) 速度の記録は上限+1 件、警戒の元は閾値の件数までに頭打ち(判定は同じ)。(3) ロックの長さはロック明けから 2 時間静かなら基準へ戻る。ロックと断りの数えは、平常から確かめている段階(destructive / credential-write / external-write)だけ。(4) 非 read の action で欄が 24 を超える payload は見せ方を工夫せず断る(fail closed)。限界(未修正・記録): app:openPath / revealInFolder / fetch:snapshot / checkUpdate / setColorScheme は門にも速度制限にも載らない・checkTokenInput の全長走査・HOME が symlink の環境で開く側が全部断る(可用性のみ)・oauth の認可中フラグの立て位置(docs/RED_BLUE.md ラウンド 3)。",
+      "regression": {
+        "file": "src/main/__tests__/userPresence.test.ts",
+        "test": "長さ無制限の鍵でも確認の前に固まらない"
+      }
     }
   ],
   "huntBacklog": [

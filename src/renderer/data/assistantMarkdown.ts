@@ -131,8 +131,25 @@ function isTableSeparator(line: string): boolean {
  * 正当な応答は `maxTokens: 2048` で縛られていて、1 行 1 ブロックに割っても
  * 数百に届かない。2 万は**その 2 桁上**で正当な応答では発火せず、当たれば
  * 上の表で 100ms 台に収まる。
+ *
+ * ブロック数を別に比べない: 1 ブロックの重み (`blockWeight`) は 1 以上で、この数は `MAX_RENDER_WEIGHT` と
+ * 同じなので、ブロック数が上限に届けば重みの天井が必ず先に効く (別に比べると片方が決して効かない等価な枝になる)。
  */
 export const MAX_RENDER_BLOCKS = 20_000;
+
+/**
+ * 描く要素の重さの合計の天井 (threat: T-156)。ブロック数だけを縛ると、1 つの表や 1 つの箇条書きが
+ * 数万個の要素を持てる —— 10 万字の返答 1 件が DOM 要素 10 万個になった (実測: 表 5 万セル)。
+ * 重さ = 1 + (箇条書きの項目数 | 表の見出し数 + セル数)。超える最初のブロックから打ち切る。
+ */
+export const MAX_RENDER_WEIGHT = 20_000;
+
+/** ブロック 1 つが描く要素の数の目安 (自分 1 + 子の数)。 */
+export function blockWeight(b: Block): number {
+  if (b.type === 'list') return 1 + b.items.length;
+  if (b.type === 'table') return 1 + b.headers.length + b.rows.reduce((n, r) => n + r.length, 0);
+  return 1;
+}
 
 /** 打ち切ったことを黙らせない。最後の段落として必ず見える形で残す。 */
 export const BLOCKS_TRUNCATED_NOTICE = '…（応答が長すぎたため、ここで表示を打ち切りました）';
@@ -248,12 +265,16 @@ export function parseMarkdown(src: string): Block[] {
     i++;
   }
   flushParagraph(para);
-  if (blocks.length > MAX_RENDER_BLOCKS) {
-    // `slice` してから注記を足す。上限**ちょうど**の応答は 1 つも欠けない。
-    return [
-      ...blocks.slice(0, MAX_RENDER_BLOCKS),
-      { type: 'paragraph', spans: [{ text: BLOCKS_TRUNCATED_NOTICE }] },
-    ];
+  // ブロック数と描く要素の重さの両方で頭打ちにする。上限**ちょうど**の応答は 1 つも欠けない。
+  const kept: Block[] = [];
+  let weight = 0;
+  for (const b of blocks) {
+    const w = blockWeight(b);
+    if (weight + w > MAX_RENDER_WEIGHT) {
+      return [...kept, { type: 'paragraph', spans: [{ text: BLOCKS_TRUNCATED_NOTICE }] }];
+    }
+    kept.push(b);
+    weight += w;
   }
-  return blocks;
+  return kept;
 }

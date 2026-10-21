@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createServer, type Server } from 'node:http';
 import { AddressInfo } from 'node:net';
 import { runAiChat } from '../chat';
-import { MAX_HTTP_RESPONSE_BYTES } from '../../httpLimits';
+import { MAX_AI_CHAT_RESPONSE_BYTES, MAX_HTTP_RESPONSE_BYTES } from '../../httpLimits';
 import {
   ASSISTANT_REPLY_TRUNCATED_NOTICE,
   MAX_ASSISTANT_REPLY_CHARS,
@@ -75,14 +75,15 @@ beforeAll(async () => {
         res.end(JSON.stringify({ choices: [{ message: { content: '#### x\n'.repeat(60_000) } }] }));
         return;
       }
-      if (mode === 'huge') {
+      if (mode === 'huge' || mode === 'mid') {
         res.writeHead(200, { 'content-type': 'application/json' });
         res.flushHeaders();
         res.write('{"junk":"');
         const chunk = 'A'.repeat(1024 * 1024);
         let sent = 0;
+        const total = mode === 'mid' ? 3 : 12;
         const pump = (): void => {
-          while (sent < 12) {
+          while (sent < total) {
             sent += 1;
             if (!res.write(chunk)) {
               res.once('drain', pump);
@@ -171,6 +172,12 @@ describe('AI の応答 — 本文にも締切と上限が掛かる (実サーバ
 
   it('上限は共有の定数を見ている (二つ目の台帳を作らない)', () => {
     expect(MAX_HTTP_RESPONSE_BYTES).toBe(10 * 1024 * 1024);
+    expect(MAX_AI_CHAT_RESPONSE_BYTES).toBe(2 * 1024 * 1024);
+  });
+
+  it('★ AI の応答は汎用の 10 MiB ではなく 2 MiB で断る — 3 MiB の本文は読み切らずに落とす (threat: T-156)', async () => {
+    await expect(call('mid', 30000)).rejects.toThrow(/too large/);
+    expect(MAX_AI_CHAT_RESPONSE_BYTES).toBeLessThan(MAX_HTTP_RESPONSE_BYTES);
   });
 });
 

@@ -799,6 +799,7 @@ describe('チャットへ渡す形 (文面ごと)', () => {
     };
     const msgs = m.formatBestAnswers(result, labelOf);
     expect(msgs[0]).toEqual({
+      appVoice: true,
       text: [
         '## 🏆 ベスト3 —— 「商標の 出願は」',
         '7 つのエンジニアリングで、回答 5 件から選びました。',
@@ -818,6 +819,7 @@ describe('チャットへ渡す形 (文面ごと)', () => {
     });
     // 順位ごとに 2 つ: アプリの声 (見出し・採点・理由 —— 札なし) と、回答者の文だけの吹き出し (パス 488)。
     expect(msgs[1]).toEqual({
+      appVoice: true,
       text: [
         '### 🥇 1 位 · 🎯 結論先行の専門家 · 80 点',
         '',
