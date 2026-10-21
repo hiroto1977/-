@@ -30,6 +30,7 @@
  */
 import path from 'node:path';
 import { fileRequestAllowed } from './fileRequestGate';
+import { clampToCeiling, moreThanChars } from '../shared/inputCeiling';
 
 export type Tier = 'destructive' | 'credential-write' | 'external-write' | 'egress' | 'local-write' | 'read';
 
@@ -191,7 +192,7 @@ function stripUnsafe(text: string): string {
 
 export function safeSummary(text: string): string {
   const flat = stripUnsafe(text).replace(/\s+/g, ' ').trim();
-  return flat.length > MAX_SUMMARY_CHARS ? `${flat.slice(0, MAX_SUMMARY_CHARS)}…` : flat;
+  return moreThanChars(flat, MAX_SUMMARY_CHARS) ? `${clampToCeiling(flat, MAX_SUMMARY_CHARS)}…` : flat;
 }
 
 /** 1 つの値を見せる長さ。超えたら切って全体の長さを添える (切ったことを必ず述べる)。 */
@@ -203,9 +204,8 @@ const READ_CAP = MAX_VALUE_CHARS * 4;
 
 function describeValue(v: unknown): string {
   if (typeof v === 'string') {
-    const clipped = safeSummary(v.slice(0, READ_CAP));
-    const shown = clipped.slice(0, MAX_VALUE_CHARS);
-    return v.length > shown.length ? `${JSON.stringify(shown)}…(全 ${v.length} 文字)` : JSON.stringify(shown);
+    const shown = clampToCeiling(safeSummary(clampToCeiling(v, READ_CAP)), MAX_VALUE_CHARS);
+    return moreThanChars(v, MAX_VALUE_CHARS) ? `${JSON.stringify(shown)}…(全 ${v.length} 文字)` : JSON.stringify(shown);
   }
   if (typeof v === 'number') return Number.isFinite(v) ? String(v) : '(有限でない数)';
   if (typeof v === 'boolean' || v === null) return String(v);

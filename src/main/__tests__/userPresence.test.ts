@@ -5,8 +5,10 @@ import {
   BASE_LOCKOUT_MS,
   DENIALS_TO_LOCK,
   MAX_EVENTS,
+  MAX_FIELDS_SHOWN,
   MAX_LOCKOUT_MS,
   MAX_SUMMARY_CHARS,
+  MAX_VALUE_CHARS,
   RATE_LIMIT,
   WINDOW_MS,
   createPresenceGate,
@@ -266,14 +268,19 @@ describe('表示の安全化', () => {
 
   it('★ 長い値は切って全体の長さを添える。欄は 24 まで全部見せ、超えた欄は名前だけ見せる (隠れた欄を作らせない)', () => {
     const long = describePayload({ body: 'x'.repeat(200) });
-    expect(long).toBe(`body: "${'x'.repeat(60)}"…(全 200 文字)`);
-    expect(describePayload({ body: 'x'.repeat(60) })).toBe(`body: "${'x'.repeat(60)}"`);
-    const fields = Object.fromEntries(Array.from({ length: 30 }, (_, i) => [`f${i}`, i]));
-    fields.status = 'publish' as never;
+    expect(long).toBe(`body: "${'x'.repeat(MAX_VALUE_CHARS)}"…(全 200 文字)`);
+    expect(describePayload({ body: 'x'.repeat(MAX_VALUE_CHARS) })).toBe(`body: "${'x'.repeat(MAX_VALUE_CHARS)}"`);
+    expect(describePayload({ body: 'x'.repeat(MAX_VALUE_CHARS + 1) })).toContain('…(全');
+    const total = MAX_FIELDS_SHOWN + 6;
+    const fields: Record<string, unknown> = Object.fromEntries(Array.from({ length: total }, (_, i) => [`f${i}`, i]));
+    fields.status = 'publish';
     const d = describePayload(fields);
     expect(d).toContain('ほか 7 欄:');
     expect(d).toContain('status');
-    expect(d.split(' / ')).toHaveLength(25);
+    expect(d.split(' / ')).toHaveLength(MAX_FIELDS_SHOWN + 1);
+    // ちょうど上限なら「ほか」は出ない
+    const exact = Object.fromEntries(Array.from({ length: MAX_FIELDS_SHOWN }, (_, i) => [`f${i}`, i]));
+    expect(describePayload(exact)).not.toContain('ほか');
   });
 
   it('★ 長い欄を先に並べても、後ろの重要な欄 (status など) が見えなくならない', () => {

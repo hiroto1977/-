@@ -62,6 +62,10 @@ const LEDGER: readonly Row[] = [
     why: '*.salesforce.com に絞り、要求 URL は base.origin から組む' },
   { file: 'src/main/fileRequestGate.ts', needle: 'parsed = new URL(url)', kind: 'predicate',
     why: '返すのは真偽だけ (dist/ の中の file: か) —— T-140。解析後の protocol / host / pathname で判定し、生の文字列は使わない' },
+  { file: 'src/main/userPresence.ts', needle: 'parsed = new URL(url);', kind: 'predicate',
+    why: '返すのは真偽だけ (呼び出し元が同梱 dist の file: か) —— T-147。解析後の protocol を見て、判定は T-140 の門 fileRequestAllowed に委ねる。生の文字列は返さない' },
+  { file: 'src/main/userPresence.ts', needle: 'new URL(String(devUrl)).origin', kind: 'predicate',
+    why: '返すのは真偽だけ (開発サーバの origin と一致するか) —— T-147。両側を解析した origin で比べる' },
   { file: 'src/main/main.ts', needle: 'new URL(url).origin', kind: 'value-gate',
     why: '窓の遷移の判定に使う origin —— 解析後の値そのもの' },
   { file: 'src/renderer/data/sourceVerification.ts', needle: 'parsed = new URL(raw);', kind: 'value-gate',
@@ -221,7 +225,7 @@ describe('value-gate は解析後の値を返す (振る舞いで確かめる)',
    * (このリポジトリが繰り返し直してきた形)。行が増減したらここが鳴り、
    * 書き換えるときに「どの種類が増えたのか」を読むことになる。
    */
-  it('★ 種類ごとの行数は実測どおり (台帳 31 行が 32 か所を覆う)', () => {
+  it('★ 種類ごとの行数は実測どおり (台帳 33 行が 34 か所を覆う)', () => {
     const byKind = (k: Row['kind']): number => LEDGER.filter((r) => r.kind === k).length;
     expect({
       'value-gate': byKind('value-gate'),
@@ -229,10 +233,10 @@ describe('value-gate は解析後の値を返す (振る舞いで確かめる)',
       pin: byKind('pin'),
       internal: byKind('internal'),
       display: byKind('display'),
-    }).toEqual({ 'value-gate': 11, predicate: 7, pin: 4, internal: 5, display: 4 });
-    expect(LEDGER).toHaveLength(31);
+    }).toEqual({ 'value-gate': 11, predicate: 9, pin: 4, internal: 5, display: 4 });
+    expect(LEDGER).toHaveLength(33);
     // web-shim の同じ綴りの 2 行が 1 行の台帳に対応するので、か所は台帳より 1 多い。
-    expect(SITES).toHaveLength(32);
+    expect(SITES).toHaveLength(34);
     expect(VALUE_GATE_BEHAVIOR.length).toBeGreaterThanOrEqual(5);
   });
 });
