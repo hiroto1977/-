@@ -1449,6 +1449,29 @@ describe('速度の上限と記録だけを掛ける 5 つの口 (threat: T-159)
     ]);
   });
 
+  it('★ 見出しの決め方: 引数が無い口は口の名前・文字列はそのまま・それ以外 (undefined / null を含む) は「(文字列ではない)」', async () => {
+    const orig = globalThis.fetch;
+    globalThis.fetch = (async () => ({ ok: false, status: 500 })) as unknown as typeof fetch;
+    try {
+      await invoke('app:checkUpdate');
+    } finally {
+      globalThis.fetch = orig;
+    }
+    await invoke('app:setColorScheme', 'dark', '#1b1520');
+    await invoke('app:revealInFolder', 42);
+    await invoke('app:revealInFolder');
+    await invoke('app:openPath', null);
+    await invoke('fetch:snapshot');
+    expect(presenceRequests.map((r) => [r.channel, r.summary])).toEqual([
+      ['app:checkUpdate', 'app:checkUpdate'],
+      ['app:setColorScheme', 'app:setColorScheme'],
+      ['app:revealInFolder', '(文字列ではない)'],
+      ['app:revealInFolder', '(文字列ではない)'],
+      ['app:openPath', '(文字列ではない)'],
+      ['fetch:snapshot', '(文字列ではない)'],
+    ]);
+  });
+
   it('★ 開く口の確認の見出しにはパスそのものが載る (警戒中に確認が出るとき、何を開くか見える)', async () => {
     await invoke('app:openPath', '/exports/report.html');
     await invoke('app:revealInFolder', '/exports/report.svg');
