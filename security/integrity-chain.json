@@ -2783,6 +2783,14 @@
       "leafCount": 124,
       "note": "update main.ts,userPresence.ts,assistantMarkdown.ts,chat.ts,httpLimits.ts",
       "hash": "43f3418004177687c16b14c3e283ba2dac70edf19d72abc917a2c22de2dd0ef4"
+    },
+    {
+      "index": 332,
+      "prevHash": "43f3418004177687c16b14c3e283ba2dac70edf19d72abc917a2c22de2dd0ef4",
+      "merkleRoot": "bee936bc7603e31f83efc79ad4c8b52aaa00c2534296b47814d9452284e3ef15",
+      "leafCount": 124,
+      "note": "update userPresence.ts",
+      "hash": "540652df155d82b19668135300d902d714cf492566a3541d422a098dc7952be5"
     }
   ],
   "tipManifest": {
@@ -2855,7 +2863,7 @@
     "src/main/secrets.ts": "ddfe5ece7c6393fd8cd473f84eec8173cbc2435ffb163a638e130a9e4ef5ce17",
     "src/main/shellOpenGate.ts": "83d21dd21674694edd0e835c9acfdc6c79fea3ff8eedd2d5e589dfeecbc7548b",
     "src/main/stateFile.ts": "984eebe8582b3c6c88669d17e778932f6b87a682640d1f162acd182d5947169b",
-    "src/main/userPresence.ts": "61733d8e28dd954ed0ae537940bb1ebdc6396654290e23038e5d0a5f6577a54d",
+    "src/main/userPresence.ts": "f0e6ab1617123aa93801288d2aeb19855a5d8f5c6ddb7a42aad007d6e5657858",
     "src/main/windowPrefs.ts": "0bccea9e29b489da1b4a7962eaa53e237cf93fed9d4692371a3a43a6a4985dee",
     "src/preload/preload.ts": "21fc645271dd2064f063fc439d888eb4dcef32d08d1030d92d9cb8ff2a4040a6",
     "src/renderer/data/assistantMarkdown.ts": "25ead9bb21e7b59a9e35d3101664f6ecb426cc5b4771118726fc7d389c6a96cc",
