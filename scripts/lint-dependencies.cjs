@@ -342,20 +342,22 @@ const SECURITY_FLOORS = [
   },
   {
     package: 'vitest',
-    atLeast: '4.1.11',
+    atLeast: '4.1.12',
     mechanism: 'devDependency',
-    checkedOn: '2026-10-10',
-    advisories: ['GHSA-82fw-gwwq-j7x9'],
+    checkedOn: '2026-10-22',
+    advisories: ['GHSA-82fw-gwwq-j7x9', 'GHSA-qxg6-89mg-rqv8', 'GHSA-xp26-3454-mjgp'],
     why:
       '2026-09-10: @vitest/mocker の redirect mock を経由したパストラバーサル / 任意ファイル読み出し'
       + ' (>=2.1.0 <4.1.11)。検査を走らせる道具そのものなので、開発機と CI の両方で毎回動く。'
-      + '4.1.11 は patch なので API は変わらない',
+      + '2026-10-22: 4.1.11 に @vitest/mocker の勧告 2 件 (GHSA-qxg6-89mg-rqv8 / GHSA-xp26-3454-mjgp) が出て、'
+      + '毎日の dependency-audit が「床が低すぎる」と報せた。4.1.12 で 0 件 (床ちょうどの版を npm audit で実測)。'
+      + 'どちらも patch なので API は変わらない',
   },
   {
     package: '@vitest/coverage-v8',
-    atLeast: '4.1.11',
+    atLeast: '4.1.12',
     mechanism: 'devDependency',
-    checkedOn: '2026-10-10',
+    checkedOn: '2026-10-22',
     advisories: ['GHSA-82fw-gwwq-j7x9'],
     why:
       '2026-09-10: 同上。vitest は @vitest/coverage-v8 を厳密一致 (peerOptional) で見るので、'
