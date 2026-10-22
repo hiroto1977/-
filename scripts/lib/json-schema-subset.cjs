@@ -146,10 +146,18 @@ function walk(schema, value, where, out) {
   if (typeof value === 'string') {
     if (Object.hasOwn(schema, 'pattern')) {
       let re = null;
-      try {
-        re = new RegExp(schema.pattern, 'u');
-      } catch {
-        out.push(`schema: ${where} の pattern ${JSON.stringify(schema.pattern)} を正規表現として読めません`);
+      // 組む**前**に、指数時間に落ちる形 (入れ子の量指定子・量指定された選択・後方参照) を断る。
+      // 検証器は CI のゲートの中で走るので、宣言の pattern が壊れた形だと 29 文字の値 1 つで 14 秒、
+      // 33 文字で数時間止まる (2026-10-21 実測 · threat: T-162)。
+      const unsafe = typeof schema.pattern === 'string' ? unsafePatternReason(schema.pattern) : null;
+      if (unsafe) {
+        out.push(`schema: ${where} の pattern ${JSON.stringify(schema.pattern)} は${unsafe}ため受けません`);
+      } else {
+        try {
+          re = new RegExp(schema.pattern, 'u');
+        } catch {
+          out.push(`schema: ${where} の pattern ${JSON.stringify(schema.pattern)} を正規表現として読めません`);
+        }
       }
       if (re && !re.test(value)) out.push(`${where}: ${preview(value)} は ${schema.pattern} に合いません`);
     }
@@ -217,4 +225,64 @@ function preview(v) {
   return cs.length > 60 ? `${cs.slice(0, 57).join('')}…` : cs.join('');
 }
 
-module.exports = { validateAgainstSchema, SUPPORTED_KEYWORDS: SUPPORTED, ANNOTATION_KEYWORDS: ANNOTATIONS };
+/**
+ * pattern の文字列を**組む前に**読み、指数時間 (ReDoS) に落ちる形なら理由を返す。無ければ `null`。
+ *
+ * 断る形 (どれも**保守的**: 疑わしきは断る。宣言の pattern は 2 本の単純な形だけで、実物は 0 件):
+ *  - 後方参照 (`\1` / `\k<name>`)
+ *  - 量指定された (`* + {n,}` または 2 回以上の `{n,m}`) グループの中に、量指定子か `|` があるもの
+ *    —— `(a+)+` / `(a|a)*` / `(a*)*` / `(?:x+y?)+` のような入れ子。
+ * クラス `[...]` の中の `(` `)` と、エスケープした記号は数えない。
+ */
+function unsafePatternReason(pattern) {
+  const stack = []; // 各グループの「中に量指定子 / | があるか」
+  let inClass = false;
+  const quantAt = (i) => {
+    const c = pattern[i];
+    if (c === '*' || c === '+') return 'repeat';
+    if (c === '{') {
+      const m = /^\{(\d+)(,(\d*))?\}/.exec(pattern.slice(i));
+      if (!m) return null;
+      if (m[2] === undefined) return Number(m[1]) > 1 ? 'repeat' : null; // {n}
+      return m[3] === '' || Number(m[3]) > 1 ? 'repeat' : null; // {n,} / {n,m}
+    }
+    return null;
+  };
+  for (let i = 0; i < pattern.length; i++) {
+    const c = pattern[i];
+    if (c === '\\') {
+      const n = pattern[i + 1];
+      if (n !== undefined && (/[1-9]/.test(n) || (n === 'k' && pattern[i + 2] === '<'))) return '後方参照を含む';
+      i += 1;
+      continue;
+    }
+    if (inClass) {
+      if (c === ']') inClass = false;
+      continue;
+    }
+    if (c === '[') {
+      inClass = true;
+      continue;
+    }
+    if (c === '(') {
+      stack.push(false);
+      continue;
+    }
+    if (c === '|' && stack.length > 0) {
+      stack[stack.length - 1] = true;
+      continue;
+    }
+    if (c === ')') {
+      const inner = stack.pop() ?? false;
+      if (inner && quantAt(i + 1) === 'repeat') return '量指定されたグループの中に量指定子か選択を含む (指数時間に落ちる形)';
+      // 外側のグループから見ると、このグループ全体が「中に量指定子を持つ」ことになりうる
+      if (quantAt(i + 1) !== null && stack.length > 0) stack[stack.length - 1] = true;
+      if (inner && stack.length > 0) stack[stack.length - 1] = true;
+      continue;
+    }
+    if (stack.length > 0 && quantAt(i) === 'repeat') stack[stack.length - 1] = true;
+  }
+  return null;
+}
+
+module.exports = { validateAgainstSchema, unsafePatternReason, SUPPORTED_KEYWORDS: SUPPORTED, ANNOTATION_KEYWORDS: ANNOTATIONS };

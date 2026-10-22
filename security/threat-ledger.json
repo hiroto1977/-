@@ -2740,6 +2740,21 @@
         "file": "src/shared/__tests__/shellGateWitness.test.ts",
         "test": "lint:shell — 遠隔コードの実行の形 (threat: T-161)"
       }
+    },
+    {
+      "id": "T-162",
+      "found": "2026-10-22",
+      "foundBy": "red/blue 一覧 #11 を測定(悪い pattern を検証器に通して時間を測った)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "登録簿のスキーマの検証器は、宣言の `pattern` を無検証で RegExp 化して値に当てていた。入れ子の量指定子や量指定された選択を含む pattern を書くと、29 文字の値 1 つで 14 秒(`^(a+)+$`)・26 秒(`^(a|a)*$`)、1 文字増えるごとに約 2 倍かかり、33 文字で数時間止まる。検証器は CI のゲートの中で走り、ci.yml に timeout-minutes が無かったため、止まったゲートが既定の 360 分まで Actions の分を使い切れた",
+      "status": "mitigated",
+      "fix": "pattern を組む前に文字列を読み、後方参照・量指定されたグループの中の量指定子/選択(`(a+)+` `(a|a)*` `(a{2,})+` ほか)を断る(疑わしきは断る・クラスの中とエスケープは数えない)。実物の pattern 5 本は 0 件の断り。ci.yml のジョブに timeout-minutes: 45(実測 約 14.5 分の 3 倍)を置いた。限界: 悪用には registry.schema.json を書ける権限が要る(CODEOWNERS と鎖が守る)。静的な判定は保守的な近似で、悪い形を全て網羅する証明ではない。",
+      "regression": {
+        "file": "src/shared/__tests__/schemaPatternReDoS.test.ts",
+        "test": "登録簿のスキーマの pattern — 指数時間に落ちる形は組む前に断る (threat: T-162)"
+      }
     }
   ],
   "huntBacklog": [

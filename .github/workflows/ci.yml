@@ -27,6 +27,9 @@ jobs:
   ci:
     name: ci (typecheck + verify + lint + test + build)
     runs-on: ubuntu-latest
+    # 既定の上限は 360 分。ゲートが止まる (指数時間に落ちる正規表現ほか) と、その間の Actions の
+    # 分を使い切る。実測の所要は約 14.5 分なので、その 3 倍で打ち切る (threat: T-162)。
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5 (threat: T-057)
         with:
