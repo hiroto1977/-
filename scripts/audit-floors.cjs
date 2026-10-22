@@ -52,6 +52,9 @@ function advisoryIds(report) {
 }
 
 /** 床ちょうどの版だけを持つ使い捨ての依存関係を作り、audit に掛ける。 */
+/** npm の 1 呼び出しの締切 (dependency-audit-report.cjs と同じ理由: 遅いレジストリが全体を飲まない)。 */
+const NPM_TIMEOUT_MS = 120_000;
+
 function measure(floor, dir) {
   fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(
@@ -66,12 +69,12 @@ function measure(floor, dir) {
   execFileSync(
     'npm',
     ['install', '--package-lock-only', '--silent', '--no-audit', '--no-fund', '--legacy-peer-deps'],
-    { cwd: dir, stdio: 'ignore' },
+    { cwd: dir, stdio: 'ignore', timeout: NPM_TIMEOUT_MS, killSignal: 'SIGKILL' },
   );
   // `npm audit` は勧告が在れば exit 1 を返すので、出力を取ってから読む。
   let out;
   try {
-    out = execFileSync('npm', ['audit', '--json'], { cwd: dir, encoding: 'utf8' });
+    out = execFileSync('npm', ['audit', '--json'], { cwd: dir, encoding: 'utf8', timeout: NPM_TIMEOUT_MS, killSignal: 'SIGKILL' });
   } catch (err) {
     out = String(err?.stdout ?? '');
   }

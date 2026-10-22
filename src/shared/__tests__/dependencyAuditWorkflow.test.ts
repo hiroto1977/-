@@ -93,6 +93,24 @@ describe('週次の依存監査は、予定 → スクリプト → 報告 → I
     );
   });
 
+  it('★ 測定が「測れず」で落ちても、報告が在れば Issue に反映する (2026-10-22: step 失敗で反映が飛んでいた)', () => {
+    const at = WF.indexOf('name: 要対応を Issue に反映');
+    expect(at, 'Issue 反映の step が無い').toBeGreaterThan(0);
+    const step = WF.slice(at, WF.indexOf('uses:', at));
+    expect(step, '前の step が落ちたとき飛ばされる').toContain('!cancelled()');
+    expect(step, '報告ファイルが無いのに読みに行かない').toContain(`hashFiles('${REPORT_PATH}') != ''`);
+  });
+
+  it('★ npm の呼び出しには締切があり、job にも上限がある (遅いレジストリが 10 分を飲んだ 2026-10-22)', () => {
+    expect(WF).toMatch(/timeout-minutes:\s*\d+/);
+    for (const f of ['scripts/dependency-audit-report.cjs', 'scripts/audit-floors.cjs']) {
+      const src = read(f);
+      const calls = src.match(/execFileSync\(\s*'npm'[^;]*?\);/gs) ?? [];
+      expect(calls.length, `${f} に npm の呼び出しが無い`).toBeGreaterThan(0);
+      for (const c of calls) expect(c, `${f}: 締切の無い npm 呼び出し`).toContain('timeout: NPM_TIMEOUT_MS');
+    }
+  });
+
   it('報告ファイルは生成物なので追跡しない (作業樹を汚さない)', () => {
     expect(IGNORE).toContain(REPORT_PATH);
   });

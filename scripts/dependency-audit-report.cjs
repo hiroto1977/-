@@ -212,11 +212,18 @@ function buildReport({ all, prod, floors, pins, watch, map, generatedAt }) {
   };
 }
 
+/**
+ * npm の 1 呼び出しに掛ける締切。レジストリの audit 口が遅い日 (2026-10-22 の実走: 1 呼び出し数分 ×
+ * 数回で step が 10 分かかり、測れなかったとして落ちた) に、1 つの待ちが全体を飲まないため。
+ * 超えたら出力は空 = 「測れなかった」として報告に出る (0 件にはしない)。
+ */
+const NPM_TIMEOUT_MS = 120_000;
+
 /** `npm audit --json` を走らせて読む。勧告が在れば exit 1 なので出力を先に取る。 */
 function runAudit(args) {
   let out;
   try {
-    out = execFileSync('npm', ['audit', '--json', ...args], { cwd: REPO_ROOT, encoding: 'utf8' });
+    out = execFileSync('npm', ['audit', '--json', ...args], { cwd: REPO_ROOT, encoding: 'utf8', timeout: NPM_TIMEOUT_MS, killSignal: 'SIGKILL' });
   } catch (err) {
     out = String(err?.stdout ?? '');
   }
