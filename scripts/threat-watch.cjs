@@ -318,7 +318,7 @@ function analyze({ inventory, vulns, affects, kev, epss, map, now, windowDays = 
   };
 }
 
-/** 本物の継ぎ目。報告側 (`child_process` を持つ) にネットワークの綴りを持ち込ませないため、ここで渡す。 */
+/** 本物の継ぎ目。子プロセスを起こす報告側にネットワークの綴りを持ち込ませないため、ここで渡す。 */
 function realIo() {
   return { fetchImpl: fetch, sleep: sleepReal };
 }
