@@ -1,6 +1,7 @@
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { readOriginalSource } from './originalSource';
 
 /*
  * **弱点の種類 → このアプリの守り の対応表 (`security/weakness-map.json`) が散文でないこと。**
@@ -12,7 +13,7 @@ import { describe, expect, it } from 'vitest';
  */
 
 const ROOT = path.resolve(__dirname, '../../..');
-const read = (f: string) => readFileSync(path.join(ROOT, f), 'utf8');
+const read = (f: string) => readOriginalSource(path.join(ROOT, f));
 type Cls = { id: string; name: string; kind: string; cwes: string[]; defenses: { files: string[]; gates: string[]; threats: string[] } };
 const map = JSON.parse(read('security/weakness-map.json')) as {
   kinds: Record<string, string>;
@@ -23,7 +24,14 @@ const pkg = JSON.parse(read('package.json')) as { scripts: Record<string, string
 const ledger = JSON.parse(read('security/threat-ledger.json')) as { threats: { id: string }[] };
 const threatIds = new Set(ledger.threats.map((t) => t.id));
 
+const SHORTHAND = /^(同上|TBD|TODO|要検討)/;
+
 describe('弱点の対応表 (threat: T-164)', () => {
+  it('省略形の針は実際に省略形へ当たる (空の検査にしない)', () => {
+    expect('同上').toMatch(SHORTHAND);
+    expect('SQL を組み立てない (本物の理由)').not.toMatch(SHORTHAND);
+  });
+
   it('★ 種類の id は一意で、kind は決まった語彙、守りが 1 つ以上ある', () => {
     const ids = map.classes.map((c) => c.id);
     expect(new Set(ids).size).toBe(ids.length);
@@ -53,7 +61,7 @@ describe('弱点の対応表 (threat: T-164)', () => {
     expect(map.notApplicable.length).toBeGreaterThan(0);
     for (const n of map.notApplicable) {
       expect(n.reason.length, n.cwes.join(',')).toBeGreaterThanOrEqual(30);
-      expect(n.reason).not.toMatch(/^(同上|TBD|TODO|要検討)/);
+      expect(n.reason).not.toMatch(SHORTHAND);
     }
   });
 

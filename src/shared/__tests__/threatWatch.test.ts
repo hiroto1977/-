@@ -1,7 +1,7 @@
 import { createRequire } from 'node:module';
-import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { readOriginalSource } from './originalSource';
 
 /*
  * **脅威ウォッチ (`scripts/threat-watch.cjs`) — 世間で悪用されている弱点を毎日このアプリの守りと突き合わせる。**
@@ -45,7 +45,7 @@ const tw = req('../../../scripts/threat-watch.cjs') as {
 };
 
 const ROOT = path.resolve(__dirname, '../../..');
-const read = (f: string) => readFileSync(path.join(ROOT, f), 'utf8');
+const read = (f: string) => readOriginalSource(path.join(ROOT, f));
 const NOW = '2026-10-22';
 
 const MAP = {

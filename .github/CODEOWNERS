@@ -249,5 +249,3 @@
 /src/shared/__tests__/importBoundaryWitness.test.ts @hiroto1977
 /src/renderer/data/__tests__/assistantMarkdown.test.ts @hiroto1977
 /src/shared/__tests__/threatWatch.test.ts @hiroto1977
-/src/shared/__tests__/weaknessMap.test.ts @hiroto1977
-/security/weakness-map.json @hiroto1977

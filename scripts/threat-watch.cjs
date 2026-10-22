@@ -318,6 +318,11 @@ function analyze({ inventory, vulns, affects, kev, epss, map, now, windowDays = 
   };
 }
 
+/** 本物の継ぎ目。報告側 (`child_process` を持つ) にネットワークの綴りを持ち込ませないため、ここで渡す。 */
+function realIo() {
+  return { fetchImpl: fetch, sleep: sleepReal };
+}
+
 /** 全体の実行。`io = { fetchImpl, sleep }`。測れなかったことは `problems` に入れる (0 件にしない)。 */
 async function runThreatWatch({ lock, map, now, io }) {
   const problems = [];
@@ -548,7 +553,7 @@ async function main(argv) {
     lock: readJson('package-lock.json'),
     map,
     now: new Date().toISOString().slice(0, 10),
-    io: { fetchImpl: fetch, sleep: sleepReal },
+    io: realIo(),
   });
   console.log(renderWatch(watch, map));
   for (const p of watch.problems) console.error(`⚠ ${p}`);
@@ -568,6 +573,7 @@ module.exports = {
   inventoryFromLock,
   parseKev,
   parseVuln,
+  realIo,
   renderWatch,
   runThreatWatch,
   watchActionable,

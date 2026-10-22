@@ -54,7 +54,7 @@ const { execFileSync } = require('node:child_process');
 
 const { probeFloors } = require('./audit-floors.cjs');
 const { auditPins, FAILING: PIN_FAILING } = require('./audit-pinned-action-shas.cjs');
-const { runThreatWatch, renderWatch, watchActionable } = require('./threat-watch.cjs');
+const { runThreatWatch, renderWatch, watchActionable, realIo } = require('./threat-watch.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const OUT = path.join(REPO_ROOT, 'orchestration', 'dependency-audit.json');
@@ -345,7 +345,7 @@ async function main(argv) {
     lock: JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'package-lock.json'), 'utf8')),
     map,
     now: generatedAt,
-    io: { fetchImpl: fetch, sleep: (ms) => new Promise((r) => setTimeout(r, ms)) },
+    io: realIo(),
   });
   const report = buildReport({
     all: runAudit([]),
