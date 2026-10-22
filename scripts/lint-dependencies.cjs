@@ -354,6 +354,26 @@ const SECURITY_FLOORS = [
       + 'どちらも patch なので API は変わらない',
   },
   {
+    package: 'vite',
+    atLeast: '6.4.5',
+    mechanism: 'devDependency',
+    checkedOn: '2026-10-22',
+    advisories: [
+      'GHSA-9jrq-w75r-8gcw',
+      'GHSA-rq7h-c2jc-7f22',
+      'GHSA-587h-7wmj-h5pm',
+      'GHSA-698v-4r3x-3vcv',
+      'GHSA-r825-w8mm-5pxw',
+    ],
+    why:
+      '2026-10-22: 毎日の dependency-audit が dev 依存の high として報せた。Vite の dev サーバ (<=6.4.3) に'
+      + ' custom middleware 経由の別オリジンからのスクリプト実行 (GHSA-9jrq-w75r-8gcw) と'
+      + ' server.fs.allow の外のファイル配信 (GHSA-rq7h-c2jc-7f22)、同梱の launch-editor の'
+      + ' 任意コマンド実行ほか 3 件。ビルドの成果物には入らないが、開発機で `npm run dev` を'
+      + '走らせると効く。6.4.5 は同じ 6 系の patch (`^6.0.3` の内側) で API は変わらず、床ちょうどの版を'
+      + ' npm audit で実測して 0 件。7 / 8 系へは上げない (vite-plugin-electron / plugin-react の対応が別)',
+  },
+  {
     package: '@vitest/coverage-v8',
     atLeast: '4.1.12',
     mechanism: 'devDependency',
