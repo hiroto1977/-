@@ -1707,6 +1707,29 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
 .home-jump-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .home-jump-title { font-size: 12px; font-weight: var(--fw-label); color: var(--heading-accent); margin-right: 2px; }
 .home-jump-hint { font-size: 12px; color: var(--text-muted); }
+/* やりたいことから始める (ホームの先頭・初めての人の入口)。色は既存のトークンだけを使う。 */
+.home-start { display: flex; flex-direction: column; gap: 10px; }
+.home-start-title { margin: 0; font-size: 16px; font-weight: var(--fw-label); color: var(--text); }
+.home-start-lead { margin: 0; font-size: 13px; line-height: 1.7; color: var(--text-muted); }
+.home-start-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
+}
+.home-start-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius-card) + 2px);
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: var(--shadow-sm);
+}
+.home-start-card h4 { margin: 0; font-size: 15px; font-weight: var(--fw-label); color: var(--text); }
+.home-start-when, .home-start-prepare { margin: 0; font-size: 13px; line-height: 1.7; color: var(--text); }
+.home-start-steps { margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.7; color: var(--text); }
+.home-start-card button { align-self: flex-start; margin-top: auto; }
 .home-grid {
   display: grid;
   gap: 14px;
