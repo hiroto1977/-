@@ -374,6 +374,19 @@ const SECURITY_FLOORS = [
       + ' npm audit で実測して 0 件。7 / 8 系へは上げない (vite-plugin-electron / plugin-react の対応が別)',
   },
   {
+    package: 'electron',
+    atLeast: '43.7.0',
+    mechanism: 'devDependency',
+    checkedOn: '2026-10-22',
+    advisories: ['GHSA-fw47-9c62-h3vw'],
+    why:
+      '2026-10-22: 毎日の dependency-audit が dev 依存の moderate として報せた (>=43.0.0-alpha.1 <43.7.0)。'
+      + 'electron は主プロセスとレンダラを動かす実行基盤で、デスクトップ版の利用者の手元で毎回動く。'
+      + '43.7.0 は同じ 43 系の minor (`^43.2.0` の内側) で、床ちょうどの版を npm audit で実測して 0 件。'
+      + '実際には 43.8.3 (43 系の最新) まで上げ、範囲の下限もそこへ置いた。44 / 45 系へは上げない'
+      + ' (メジャーは別の判断)',
+  },
+  {
     package: '@vitest/coverage-v8',
     atLeast: '4.1.12',
     mechanism: 'devDependency',
