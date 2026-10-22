@@ -6,6 +6,7 @@ import { useShell, type ShellService } from '../shellContext';
 import type { ServiceId } from '../../shared/serviceId';
 import { exportSavedNote, exportWarning } from '../data/exportOutcome';
 import { externalTextOnOneLine } from '../data/assistantMarkdown';
+import { StartGuide } from '../components/StartGuide';
 
 interface HomeSnapshot {
   greeting: string;
@@ -281,11 +282,13 @@ export function HomePage() {
         </div>
         <h2 className="home-greeting">{data.greeting}</h2>
         <p className="home-lead">
-          作りたいものを選んで <strong>「今すぐ作る」</strong> ボタンを押すだけ。
-          数秒で完成します。出来上がったら「ファイルを開く」を押すと内容を確認でき、
-          「Canva で編集する」を押せばブラウザで Canva が開いて、文字や色を変更できます。
+          このアプリは、会社の仕事（売上の記録・書類づくり・税金や補助金の確認・相談）を 1 か所でまとめて行うための道具です。
+          はじめてのときは、下の <strong>「やりたいことから始める」</strong> から、用事に近いものを選んでください。
+          書類やチラシを今すぐ作りたいときは、さらに下のカードの <strong>「今すぐ作る」</strong> を押すだけで、数秒で下書きができます。
         </p>
       </section>
+
+      <StartGuide />
 
       <section className="home-jump" aria-label="すぐ開く">
         <div className="home-jump-row" data-home-favorites>

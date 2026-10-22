@@ -82,16 +82,6 @@ const LEDGER: readonly Row[] = [
     kind: 'settings-control',
     why: '設定の点検パネルの見出し。2026-09-23 まで文は「形式の合わない記録」と綴っており、その語は設定画面に 1 度も出なかった。',
   },
-  { name: 'Canva で編集する', kind: 'same-screen-control', renderedIn: 'src/renderer/pages/HomePage.tsx', why: '同じホーム画面の書き出しボタン (文も HomePage に在る)。' },
-  {
-    name: 'ファイルを開く',
-    kind: 'same-screen-control',
-    renderedIn: 'src/renderer/pages/HomePage.tsx',
-    why:
-      'ホームの出来上がりのカードのボタンで、**ホーム自身が描く** (2026-09-27 · パス 499 で訂正)。'
-      + 'それまでこの行は描画元を書き出し部品 `ExportActions.tsx` と書き「ホームが載せる部品」と理由を述べていたが、'
-      + 'ホームはその部品を 1 度も載せていない —— 名前で 1 件に畳んでいた走査では、どの画面が名指ししたかを誰も見なかった。',
-  },
   {
     name: '今すぐ作る',
     kind: 'service-page-control',

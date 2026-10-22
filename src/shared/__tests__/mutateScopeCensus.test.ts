@@ -93,6 +93,7 @@ const LEDGER: Readonly<Record<string, { kind: Kind; why: string }>> = {
   'src/renderer/data/portfolioAnnex.ts': { kind: 'measure-next', why: '計算書類に併記する別紙の組み立てと 3 つの断り。法定書類の外であることを述べる側。' },
   'src/renderer/data/professionalMap.ts': { kind: 'data', why: '士業 8 種の担当領域の単一データ源。行を書き換える変異体はデータを試すだけで、判定は読む側 (ShigyoPanel) に在る。' },
   'src/renderer/data/recordRelations.ts': { kind: 'measure-next', why: '保存する記録の欄と欄の関係 (内数 ≦ 親項目 ほか)。画面と復元の 2 入口が読む唯一の台帳。' },
+  'src/renderer/data/startGuide.ts': { kind: 'data', why: 'ホームの「やりたいことから始める」の用事の表と、初めての人に通じない語の台帳。文面の規則 (専門用語なし・手順の長さ・行き先の実在) は data/__tests__/startGuide.test.ts が、描画と遷移は __tests__/appShell.test.ts が見る。' },
   'src/renderer/data/subsidyKnowledge.ts': { kind: 'data', why: '補助金の確証済み知識ベース (出典つきの定数 2,665 行)。中身の正しさは lint:citations と vault:check が別に見る。' },
   'src/renderer/data/villageData.ts': { kind: 'measure-next', why: 'registry.json から村のシーンを組む決定論的ロジック。画面の見た目を決める。' },
   'src/renderer/data/wordpressMcpAccess.ts': { kind: 'measure-next', why: '取得した payload から「MCP ツールが使えるか」を述べる (パス 177)。名乗りを作る判断。' },

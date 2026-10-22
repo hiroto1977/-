@@ -387,3 +387,25 @@ describe('シェル: ドロワー (パス 322)', () => {
     expect(q('.topbar .description')?.textContent?.length).toBeGreaterThan(0);
   });
 });
+
+describe('ホーム — やりたいことから始める (初めての人の入口)', () => {
+  it('★ 用事のカードが並び、ボタンでその画面へ移る', async () => {
+    await mount(createElement(HomePage));
+    await waitForText(() => q('[data-start-guide]')?.textContent ?? '', 'やりたいことから始める');
+    const cards = qa('[data-start-goal]');
+    expect(cards.length).toBeGreaterThanOrEqual(8);
+    const sales = q('[data-start-goal="record-sales"] button');
+    expect(sales?.textContent).toContain('売上集計');
+    let navigated: string | undefined;
+    const handler = (e: Event): void => {
+      navigated = JSON.stringify((e as CustomEvent).detail);
+    };
+    window.addEventListener('servicehub:navigate', handler);
+    try {
+      await click(sales, '売上を記録したいのボタン');
+      expect(navigated, '画面遷移の通知が出ていない').toContain('sales');
+    } finally {
+      window.removeEventListener('servicehub:navigate', handler);
+    }
+  });
+});
