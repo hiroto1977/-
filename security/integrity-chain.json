@@ -2815,6 +2815,14 @@
       "leafCount": 124,
       "note": "update ci.yml",
       "hash": "5a25905b23ab6d9b51c0eccd01378414944b65c8f39ef5ebb228e0d9a56fc552"
+    },
+    {
+      "index": 336,
+      "prevHash": "5a25905b23ab6d9b51c0eccd01378414944b65c8f39ef5ebb228e0d9a56fc552",
+      "merkleRoot": "f2a797f99a1ad32489403f3e228c8c3bb80d8147c451d7a09fed10c015df7f88",
+      "leafCount": 124,
+      "note": "update safeFilename.ts",
+      "hash": "beecec68acc06ee974ee2b9b9f3f2e151a0c1d082befd5048ca65a63f4e9ecc6"
     }
   ],
   "tipManifest": {
@@ -2932,7 +2940,7 @@
     "src/shared/privateTarget.ts": "a3164b12eced1dec0d06a39a92564f11ea4a73fe1a97ad005730d2e582387789",
     "src/shared/proxyEndpoint.ts": "e43b36c93eeaf5515b474fa5be4ab3f070cb13f616382a5f636db711df0f995e",
     "src/shared/redact.ts": "0f87ac977c493be02ba33bdc7550585215b9b008753c917fb9b446a90e6a725f",
-    "src/shared/safeFilename.ts": "6c054facd96b064715f9e50ebeada09645486d5c599a3058f1b253a73ba7ff57",
+    "src/shared/safeFilename.ts": "a689e51d7490a672ecc65df5ff7c9972d131da4e7f75184e8272976d1e27143f",
     "src/shared/scanTarget.ts": "c6c887034c33e3f3d22a590e2dc86177fc21312ede7e3f4a0581ec6d5d1e6132",
     "src/shared/tokenInput.ts": "d1c869c86e057639de7b110d2fbdc56dcaf51ce20aa6b17a195b76a5001ba287",
     "src/shared/tokenResponse.ts": "47725e779acda9f6f0af1105aaf90bb7a9cf3016cd63869cec3841fc58d32121",

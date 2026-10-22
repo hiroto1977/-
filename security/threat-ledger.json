@@ -2755,6 +2755,21 @@
         "file": "src/shared/__tests__/schemaPatternReDoS.test.ts",
         "test": "登録簿のスキーマの pattern — 指数時間に落ちる形は組む前に断る (threat: T-162)"
       }
+    },
+    {
+      "id": "T-163",
+      "found": "2026-10-22",
+      "foundBy": "利用者の指示「PHP の問題も踏まえ対策して」を受けて、PHP が関わる経路を実測(リポジトリの PHP ファイルは 0 件。PHP が関わるのは WordPress 連携と、書き出し先に PHP サイトの公開ディレクトリを選んだ場合)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "書き出し先のフォルダに PHP サイトの公開ディレクトリを選ぶと、teamradar の題名(利用者が打つ)から組んだ名前の途中に実行される拡張子が残った。題名 `a.php.b` は `a.php.b-<時刻>.svg` になり、古い Apache の AddHandler は名前の途中の `.php` でも実行する。また isSafeFilename は `x.php` `x.phtml` `.htaccess` `.user.ini` `web.config` を通していた",
+      "status": "mitigated",
+      "fix": "filenameFromTitle は `.` を落として最後の拡張子 1 つだけにする(二重拡張子を作らない)。isSafeFilename は PHP 系の拡張子セグメント(php php[0-9] phtml pht phps phar)と、サーバ設定ファイル(.htaccess .user.ini web.config)を弾く(`php入門.pdf` `phpinfo.txt` は通す)。限界: 悪用には、書き出し先を公開ディレクトリに選び、題名に細工し、中身もスクリプトとして解釈される条件が重なる必要があり、他の書き出し名は固定の拡張子で終わる(実測)。WordPress への投稿は PHP を実行しない REST 経由で、このアプリは PHP を実行しない。",
+      "regression": {
+        "file": "src/shared/__tests__/safeFilename.test.ts",
+        "test": "サーバで実行される名前を作らない・受けない (threat: T-163)"
+      }
     }
   ],
   "huntBacklog": [
