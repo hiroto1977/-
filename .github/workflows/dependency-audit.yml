@@ -37,6 +37,8 @@ jobs:
   audit:
     name: 依存の勧告・セキュリティの床・SHA 固定（毎日の報告）
     runs-on: ubuntu-latest
+    # 遅いレジストリで 1 つの待ちが全体を飲まないよう、npm の各呼び出しにも締切がある (NPM_TIMEOUT_MS)。
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5 (threat: T-057)
         with:
@@ -70,7 +72,10 @@ jobs:
       # script は検査できず、実際に `state: 'open'` で探して閉じる形 —— 閉じた翌週に要対応が
       # 戻ると 2 つ目を作る —— が 2026-09-17 (パス 306) まで残っていた (この workflow は 1 度も
       # 走っていない)。github-script の `require` は workspace 相対で解決する。
+      # 測れなかった項目も要対応として Issue に載せる道具なので、測定の step が「測れず」で落ちても
+      # 報告ファイルが在れば反映する (2026-10-22: 測れず → step 失敗 → この step が飛び、Issue が更新されなかった)。
       - name: 要対応を Issue に反映
+        if: ${{ !cancelled() && hashFiles('orchestration/dependency-audit.json') != '' }}
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8 (threat: T-057)
         with:
           script: |
