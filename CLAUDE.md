@@ -1114,6 +1114,20 @@ npm run audit:pinned-action-shas  # **workflow の SHA 固定の 40 桁が、実
                          #   測れなければ「測れなかった項目」(緑にしない)。PR の門には載せない。
                          #   形と配線は `shared/__tests__/pinnedActionShasTool.test.ts` /
                          #   `dependencyAuditWorkflow.test.ts` が毎回の npm test で見る
+npm run audit:threat-watch  # **世間で今悪用されている弱点を、このアプリの依存と守りに突き合わせる**
+                         #   (定期点検の道具 13 本目・2026-10-22 · パス 545 · threat: T-164。CI の門には載せない ——
+                         #   網の不調が PR を赤くするため)。lockfile の全依存 (版つき) を OSV に引き、見つかった
+                         #   勧告の CVE が CISA KEV (悪用確認済み) に載れば exploited・EPSS≧10% なら likely。
+                         #   さらに直近 30 日に KEV へ入った脆弱性を弱点の種類 (CWE) ごとに数え、
+                         #   `security/weakness-map.json` (種類 → このアプリの守りの門・検査・台帳の脅威。
+                         #   該当しない種類は理由つき notApplicable) と突き合わせる。表に無い種類が 3 件以上
+                         #   悪用されたら要対応、Chromium/V8/Node/Electron の悪用は版を追う候補として別に挙げる。
+                         #   **毎日の `dependency-audit` (報告 → 常設 Issue) が同じ測定を組み込む**。
+                         #   測れなかった (配信が欠ける・落ちる・上限超え) は 0 件にせず exit 非 0。
+                         #   **自動なのは検知・分類・提案まで** (依存の書き換えやマージはしない)。
+                         #   表の各行が名指す守りの実在は `shared/__tests__/weaknessMap.test.ts` が、判定・失敗の向き・
+                         #   網の口 (定数 3 ホスト・redirect: error・送る物は名前と版だけ) は `threatWatch.test.ts` が
+                         #   毎回の npm test で見る (fetch を注入して網に出ずに全経路を通す)
 npm run audit:verify-keep-going  # **`verify:all` を止まらずに全ゲート回し、落ちた物を一度に挙げる**
                          #   (定期点検の道具 11 本目。CI では走らせない)。`verify:all` は `&&` 連結なので
                          #   最初に落ちたゲートで止まり、直して回し直すたびに次の 1 件が見える ——

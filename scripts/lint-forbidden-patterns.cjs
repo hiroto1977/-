@@ -381,6 +381,9 @@ const FORBIDDEN_PATTERNS = [
         // 週次の依存監査の実行日の刻印。走るのは UTC の CI (毎週日曜 22:00 UTC) で、
         // 利用者の画面には出ない。報告の文面も「(UTC)」と明記する。同上の import 制約。
         'scripts/dependency-audit-report.cjs',
+        // 脅威ウォッチの窓 (直近 30 日) の基準日。CISA KEV の `dateAdded` は UTC の日付なので、
+        // 比べる側も UTC で取るのが正しい (日本時間で取ると朝 9 時まで窓が 1 日ずれる)。同上の import 制約。
+        'scripts/threat-watch.cjs',
       ].includes(rel),
   },
   {
@@ -952,6 +955,8 @@ const KNOWN_SUPPRESSIONS = [
   // 利用者の画面には出ない。報告の文面も「(UTC)」と明記する。
   // TS の helper (`localIsoDate`) を .cjs から import できないのは orchestrate.cjs と同じ。
   '今日を UTC で取る (new Date().toISOString().slice(0, 10)) :: scripts/dependency-audit-report.cjs :: 1',
+  // 脅威ウォッチ (T-164) の窓の基準日。KEV の `dateAdded` が UTC の日付なので比べる側も UTC。
+  '今日を UTC で取る (new Date().toISOString().slice(0, 10)) :: scripts/threat-watch.cjs :: 1',
   'Ollama write-side endpoints in network code :: scripts/ollama-cli.cjs :: 1 (code 0)',
   // 2026-09-14 (パス 248): 3 → 2。許可表を `OLLAMA_READ_PATHS` から組み立てるようにした際、
   // ヘッダの docblock が同じ経路名を**もう一度**並べていたのをやめた —— 2 か所で数え上げても

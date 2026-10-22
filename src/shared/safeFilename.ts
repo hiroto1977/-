@@ -48,17 +48,31 @@
  */
 export const MAX_FILENAME_LENGTH = 256;
 
+/**
+ * サーバ側で**実行される**拡張子と、サーバの挙動を書き換える設定ファイル (2026-10-22 · threat: T-163)。
+ *
+ * 書き出し先に選ぶフォルダが PHP サイトの公開ディレクトリだと、そこへ置いた名前が実行の入口になる:
+ *  - `x.php` `x.phtml` `x.phar` ほか —— そのまま実行される
+ *  - **`x.php.svg` のような二重拡張子** —— 古い Apache の `AddHandler` は名前の**途中**の `.php` でも実行する
+ *  - `.htaccess` / `.user.ini` / `web.config` —— 任意の拡張子を PHP として動かす・前置きの実行を足す
+ * このアプリが書き出す名前はどれも固定の拡張子 (.svg .md .html ほか) で終わるので、これらは正当な名前ではない。
+ * 拡張子の**セグメント**で見る (`php入門.pdf` や `phpinfo.txt` は通す)。
+ */
+const SERVER_SCRIPT_SEGMENT = /(^|\.)(php[0-9]?|phtml|pht|phps|phar)(\.|$)/i;
+const SERVER_CONFIG_NAME = /^(\.htaccess|\.user\.ini|web\.config)$/i;
+
 export function isSafeFilename(s: unknown): s is string {
   if (typeof s !== 'string') return false;
   if (s === '.' || s === '..') return false;
   if (s.length === 0 || s.length > MAX_FILENAME_LENGTH) return false;
-  return !/[\0\r\n/\\]/.test(s);
+  if (/[\0\r\n/\\]/.test(s)) return false;
+  return !SERVER_SCRIPT_SEGMENT.test(s) && !SERVER_CONFIG_NAME.test(s);
 }
 
 /**
  * 題名から書き出し用のファイル名を組み立てる (ブラウザ版の SVG 書き出し)。
  *
- * `\w` (= `[A-Za-z0-9_]`) と `.` `-` だけを残し、それ以外の連なりを `-` へ畳む。
+ * `\w` (= `[A-Za-z0-9_]`) と `-` だけを残し (`.` も落とす —— 二重拡張子を作らせない)、それ以外の連なりを `-` へ畳む。
  * ここで落ちるもの: パス区切り (`/` `\`)、NUL / 改行、空白、シェルの記号、
  * 日本語などの多バイト文字 (名前としては読めなくなるが、**書き出し先の
  * 安全のほうを取る**)。
@@ -67,5 +81,7 @@ export function isSafeFilename(s: unknown): s is string {
  * 題名が空・`.`・`..` でも結果がそれらになることはない。
  */
 export function filenameFromTitle(title: string, nowMs: number, ext: string): string {
-  return `${title.replace(/[^\w.-]+/g, '-').slice(0, 64)}-${nowMs}${ext}`;
+  // `.` も落とす (2026-10-22 · T-163): 題名の `a.php.b` が名前に残ると `a.php.b-<時刻>.svg` の**途中**に
+  // 実行される拡張子が現れる。ドットは最後の拡張子の 1 つだけにして、二重拡張子を作れなくする。
+  return `${title.replace(/[^\w-]+/g, '-').slice(0, 64)}-${nowMs}${ext}`;
 }

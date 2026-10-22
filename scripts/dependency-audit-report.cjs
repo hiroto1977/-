@@ -39,6 +39,12 @@
  *      形までしか見られず、作り話の SHA に `# v5` を付けても通る。実在の確認は網が要るので、
  *      PR の門ではなくここ (毎日の予定実行) が受け持つ。
  *
+ *   4. `scripts/threat-watch.cjs` の脅威ウォッチ (パス 545 · threat: T-164) —— lockfile の全パッケージを
+ *      OSV に引いて CISA KEV (悪用が確認された脆弱性)・EPSS (悪用確率) と突き合わせ、さらに直近 30 日に
+ *      悪用された**弱点の種類**を `security/weakness-map.json` (種類 → このアプリの守り) と照らす。
+ *      `npm audit` は「名前の付いた勧告が我々の依存に在るか」しか見ず、世間で悪用が始まった種類の欠陥を
+ *      自前のコードが許していないかは見えない。網が要るのでここ (毎日の予定実行) が受け持つ。
+ *
  * 評価は純関数 `buildReport()`。合成の入力を流し込めるようにしてある。
  */
 
@@ -48,6 +54,7 @@ const { execFileSync } = require('node:child_process');
 
 const { probeFloors } = require('./audit-floors.cjs');
 const { auditPins, FAILING: PIN_FAILING } = require('./audit-pinned-action-shas.cjs');
+const { runThreatWatch, renderWatch, watchActionable, realIo } = require('./threat-watch.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const OUT = path.join(REPO_ROOT, 'orchestration', 'dependency-audit.json');
@@ -84,13 +91,21 @@ function severityRank(s) {
  * `all` / `prod` は `advisoriesOf()` の戻り値、`floors` は `probeFloors()` の戻り値。
  * どれかが null なら**測れていない**ので、0 件として報告せず `unmeasured` を立てる。
  */
-function buildReport({ all, prod, floors, pins, generatedAt }) {
+function buildReport({ all, prod, floors, pins, watch, map, generatedAt }) {
   const problems = [];
   if (all === null) problems.push('npm audit (全体) の出力を読めませんでした');
   if (prod === null) problems.push('npm audit --omit=dev の出力を読めませんでした');
   if (floors === null) problems.push('床の台帳が空です (走査の不具合)');
   // `pins` は必須 (undefined も「測っていない」)。`null` = SHA 固定が 1 件も読めなかった。
   if (!Array.isArray(pins)) problems.push('SHA 固定を 1 件も読めませんでした (走査の不具合)');
+  // `watch` も必須 (undefined も「測っていない」)。
+  if (watch === null || typeof watch !== 'object' || !Array.isArray(watch.problems)) {
+    problems.push('脅威ウォッチを実行できませんでした (測っていない)');
+  } else {
+    for (const p of watch.problems) problems.push(`脅威ウォッチ: ${p}`);
+  }
+  const watchOk = watch !== null && typeof watch === 'object' && Array.isArray(watch.problems);
+  const watchCount = watchOk ? watchActionable(watch) : 0;
   const pinList = Array.isArray(pins) ? pins : [];
   const badPins = pinList.filter((x) => PIN_FAILING.has(x.status));
   const unreachablePins = pinList.filter((x) => x.status === 'unreachable');
@@ -110,7 +125,7 @@ function buildReport({ all, prod, floors, pins, generatedAt }) {
 
   // **出荷物の勧告は重大度を問わず要対応。** 文書が「prod 0 件」と言っている。
   // 作り話の疑いのある固定 (`no-tag` / `missing` / `invalid`) は要対応。古い固定 (`moved`) は報せるだけ。
-  const actionable = prodList.length + devList.length + lowFloors.length + badPins.length + problems.length;
+  const actionable = prodList.length + devList.length + lowFloors.length + badPins.length + watchCount + problems.length;
 
   const row = (a) => `| \`${a.name}\` | ${a.severity} | ${a.ghsa.map((g) => `[${g}](https://github.com/advisories/${g})`).join(' ') || '—'} |`;
   const section = (title, list, note) =>
@@ -127,6 +142,7 @@ function buildReport({ all, prod, floors, pins, generatedAt }) {
     `| 開発だけの依存 (dev) の勧告 | ${devList.length} |`,
     `| 低すぎるセキュリティの床 | ${lowFloors.length} |`,
     `| 実在しない / 不正な SHA 固定 | ${badPins.length} |`,
+    `| 悪用中の脆弱性が当たる依存 / 急増した未対応の弱点の種類 | ${watchCount} |`,
     `| 測れなかった項目 | ${problems.length} |`,
     '',
     ...section(
@@ -165,6 +181,7 @@ function buildReport({ all, prod, floors, pins, generatedAt }) {
     ...badPins.map((x) => `- ❌ \`${x.file}:${x.line}\` \`${x.repo}@${String(x.sha).slice(0, 12)}\` # ${x.tag ?? '(注記なし)'} — ${x.why}`),
     ...movedPins.map((x) => `- ⚠️ \`${x.file}:${x.line}\` \`${x.repo}\` # ${x.tag} — ${x.why}`),
     ...(badPins.length + movedPins.length === 0 ? [] : ['']),
+    watchOk && watch.window !== undefined ? renderWatch(watch, map) : '',
     ...(problems.length === 0 ? [] : ['### 測れなかった項目', '', ...problems.map((p) => `- ${p}`), '']),
     '手順は `docs/SECURITY_AUDIT.md` の「依存の勧告」。床の台帳は ' +
       '`scripts/lint-dependencies.cjs` の `SECURITY_FLOORS`、測り直しは `npm run audit:floors`。',
@@ -179,6 +196,7 @@ function buildReport({ all, prod, floors, pins, generatedAt }) {
       dev: devList.length,
       lowFloors: lowFloors.length,
       badPins: badPins.length,
+      watch: watchCount,
       movedPins: movedPins.length,
       unmeasured: problems.length,
       actionable,
@@ -187,6 +205,7 @@ function buildReport({ all, prod, floors, pins, generatedAt }) {
     dev: devList,
     floors: floors ?? [],
     pins: pinList,
+    watch: watchOk ? watch : null,
     problems,
     actionable,
     markdown,
@@ -221,6 +240,7 @@ function selfTest() {
     ...extra,
   });
   const a = (name, severity, ghsa = ['GHSA-test']) => ({ name, severity, ghsa });
+  const CLEAN_WATCH = { exploited: [], likely: [], trend: [], gaps: [], hotGaps: [], naSeen: [], stackKev: [], notes: [], problems: [] };
   const pin = (status) => ({ file: 'w.yml', line: 3, repo: 'o/r', sha: 'a'.repeat(40), tag: 'v5', status, why: 'テスト' });
   const cases = [
     ['何も無ければ actionable 0', { all: [], prod: [], floors: [mkFloor('ok')] }, 0],
@@ -242,11 +262,16 @@ function selfTest() {
     ['測れなかった固定は「健全」にしない (1 行にまとめて数える)', { all: [], prod: [], floors: [], pins: [pin('unreachable'), pin('unreachable')] }, 1],
     ['SHA 固定を読めなければ数える (null)', { all: [], prod: [], floors: [], pins: null }, 1],
     ['pins を渡し忘れたら「測っていない」として数える', { all: [], prod: [], floors: [], pins: undefined }, 1],
+    ['脅威ウォッチを渡し忘れたら「測っていない」として数える', { all: [], prod: [], floors: [], watch: undefined }, 1],
+    ['脅威ウォッチが null (実行できず) なら数える', { all: [], prod: [], floors: [], watch: null }, 1],
+    ['悪用中 (KEV) の依存を数える', { all: [], prod: [], floors: [], watch: { ...CLEAN_WATCH, exploited: [{ id: 'GHSA-x' }] } }, 1],
+    ['急増した未対応の弱点の種類を数える', { all: [], prod: [], floors: [], watch: { ...CLEAN_WATCH, hotGaps: [{ cwe: 'CWE-1' }] } }, 1],
+    ['脅威ウォッチが測れなかった項目は 1 件ずつ数える', { all: [], prod: [], floors: [], watch: { ...CLEAN_WATCH, problems: ['KEV', 'OSV'] } }, 2],
   ];
   let bad = 0;
   console.log('self-test:');
   for (const [label, input, want] of cases) {
-    const got = buildReport({ pins: [], ...input, generatedAt: at }).actionable;
+    const got = buildReport({ pins: [], watch: CLEAN_WATCH, ...input, generatedAt: at }).actionable;
     const ok = got === want;
     if (!ok) bad += 1;
     console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} (期待 ${want})`);
@@ -254,7 +279,7 @@ function selfTest() {
 
   // 重大度の並び (重い順)・知らない語は末尾。
   const order = [a('c', 'critical'), a('l', 'low'), a('h', 'high'), a('u', 'weird'), a('m', 'moderate')];
-  const sorted = buildReport({ all: order, prod: order, floors: [], pins: [], generatedAt: at }).prod.map((x) => x.severity);
+  const sorted = buildReport({ all: order, prod: order, floors: [], pins: [], watch: CLEAN_WATCH, generatedAt: at }).prod.map((x) => x.severity);
   const wantOrder = ['critical', 'high', 'moderate', 'low', 'weird'];
   const orderOk = JSON.stringify(sorted) === JSON.stringify(wantOrder);
   if (!orderOk) bad += 1;
@@ -275,6 +300,21 @@ function selfTest() {
     ['prod が 0 件なら「0 件。」と書く', md.includes('### 出荷される依存 (prod)\n\n0 件。')],
     ['実在しない固定が名指しされる', md.includes('### workflow の SHA 固定') && md.includes('w.yml:3') && md.includes('❌')],
   ];
+  const watchMd = buildReport({
+    all: [],
+    prod: [],
+    floors: [],
+    pins: [],
+    map: { classes: [] },
+    watch: {
+      ...CLEAN_WATCH,
+      window: { from: '2026-09-22', to: at, days: 30, kevEntries: 4, kevReleased: at },
+      inventory: { total: 3, prod: 2, electron: '40.0.0' },
+      exploited: [{ id: 'GHSA-kev', cves: ['CVE-2026-1'], packages: ['x@1'], classId: null, ransomware: false }],
+    },
+    generatedAt: at,
+  }).markdown;
+  mdChecks.push(['脅威ウォッチの節に悪用中の依存が出る', watchMd.includes('### 脅威ウォッチ') && watchMd.includes('GHSA-kev')]);
   for (const [label, ok] of mdChecks) {
     if (!ok) bad += 1;
     console.log(`  ${ok ? '✓' : '✗'} 文面: ${label}`);
@@ -297,21 +337,31 @@ function selfTest() {
   return 0;
 }
 
-function main(argv) {
+async function main(argv) {
   if (argv.includes('--self-test')) return selfTest();
+  const map = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'security', 'weakness-map.json'), 'utf8'));
+  const generatedAt = new Date().toISOString().slice(0, 10);
+  const watch = await runThreatWatch({
+    lock: JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'package-lock.json'), 'utf8')),
+    map,
+    now: generatedAt,
+    io: realIo(),
+  });
   const report = buildReport({
     all: runAudit([]),
     prod: runAudit(['--omit=dev']),
     floors: probeFloors(),
     pins: auditPins(),
-    generatedAt: new Date().toISOString().slice(0, 10),
+    watch,
+    map,
+    generatedAt,
   });
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
   fs.writeFileSync(OUT, `${JSON.stringify(report, null, 2)}\n`);
   console.log(report.markdown);
   console.log(
     `\n要対応 ${report.actionable} 件 (prod ${report.summary.prod} / dev ${report.summary.dev} / ` +
-      `低い床 ${report.summary.lowFloors} / 不正な固定 ${report.summary.badPins} / 測れず ${report.summary.unmeasured})`,
+      `低い床 ${report.summary.lowFloors} / 不正な固定 ${report.summary.badPins} / 脅威ウォッチ ${report.summary.watch} / 測れず ${report.summary.unmeasured})`,
   );
   // **報告する道具なので、勧告が在っても exit 0。** 週次の予定実行を赤くしても
   // 見る人がいない (誰の PR も待っていない)。要対応は Issue に出る。
@@ -319,5 +369,5 @@ function main(argv) {
   return report.summary.unmeasured > 0 ? 1 : 0;
 }
 
-if (require.main === module) process.exit(main(process.argv.slice(2)));
+if (require.main === module) main(process.argv.slice(2)).then((code) => process.exit(code));
 module.exports = { buildReport, advisoriesOf, severityRank };

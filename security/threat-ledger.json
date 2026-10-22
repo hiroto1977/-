@@ -157,13 +157,23 @@
             "npm:lint:forbidden",
             "npm:lint:deps"
           ]
+        },
+        {
+          "what": "世間で今悪用されている弱点を毎日突き合わせる (脅威ウォッチ): lockfile の全依存を OSV に引き CISA KEV / EPSS と照合し、直近 30 日に悪用された弱点の種類 (CWE) を『種類 → このアプリの守り』の表と照らす",
+          "enforcedBy": [
+            "scripts/threat-watch.cjs",
+            "security/weakness-map.json",
+            "src/shared/__tests__/threatWatch.test.ts",
+            "src/shared/__tests__/weaknessMap.test.ts"
+          ]
         }
       ],
       "gaps": [
         "整合性チェーンは署名を持たない —— マージされた PR は保護対象とチェーンを一緒に書き換えられる (T-003)。CODEOWNERS が効くのは GitHub の設定で『Code Owners のレビュー必須』を有効にしたときだけ。",
         "純粋な child_process + curl (Node の fetch / process.env を使わないシェル経由の送出) は lint:malware の規則では捕まらない —— lint:forbidden の child_process census (直下・サブディレクトリの .ts/.tsx/.cjs/.mjs/.js/.jsx/.html を走査) と build フックの台帳が重なって塞ぐが、規則そのものの網羅ではない (T-016 / T-018 の実測)。",
         "GitHub 自身の action (actions/*) は可動タグで参照している (第三者の action は SHA 固定)。",
-        "依存の中身すべては読めない。"
+        "依存の中身すべては読めない。",
+        "脅威ウォッチは検知と提案までが自動で、直す手は人が PR で入れる (依存を自動で書き換えない)。KEV に載るのは公開・悪用の確認が済んだ後で、先回りできるのは『同じ種類の欠陥を自前のコードが許していないか』(種類の表) の側。基盤 (Chromium/V8/Node) の欠陥は Electron の更新でしか直らない。毎日の実行は GitHub Actions 上で網が要るので、PR の門 (verify:all) には載せない。"
       ]
     },
     {
@@ -2754,6 +2764,36 @@
       "regression": {
         "file": "src/shared/__tests__/schemaPatternReDoS.test.ts",
         "test": "登録簿のスキーマの pattern — 指数時間に落ちる形は組む前に断る (threat: T-162)"
+      }
+    },
+    {
+      "id": "T-163",
+      "found": "2026-10-22",
+      "foundBy": "利用者の指示「PHP の問題も踏まえ対策して」を受けて、PHP が関わる経路を実測(リポジトリの PHP ファイルは 0 件。PHP が関わるのは WordPress 連携と、書き出し先に PHP サイトの公開ディレクトリを選んだ場合)",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "書き出し先のフォルダに PHP サイトの公開ディレクトリを選ぶと、teamradar の題名(利用者が打つ)から組んだ名前の途中に実行される拡張子が残った。題名 `a.php.b` は `a.php.b-<時刻>.svg` になり、古い Apache の AddHandler は名前の途中の `.php` でも実行する。また isSafeFilename は `x.php` `x.phtml` `.htaccess` `.user.ini` `web.config` を通していた",
+      "status": "mitigated",
+      "fix": "filenameFromTitle は `.` を落として最後の拡張子 1 つだけにする(二重拡張子を作らない)。isSafeFilename は PHP 系の拡張子セグメント(php php[0-9] phtml pht phps phar)と、サーバ設定ファイル(.htaccess .user.ini web.config)を弾く(`php入門.pdf` `phpinfo.txt` は通す)。限界: 悪用には、書き出し先を公開ディレクトリに選び、題名に細工し、中身もスクリプトとして解釈される条件が重なる必要があり、他の書き出し名は固定の拡張子で終わる(実測)。WordPress への投稿は PHP を実行しない REST 経由で、このアプリは PHP を実行しない。",
+      "regression": {
+        "file": "src/shared/__tests__/safeFilename.test.ts",
+        "test": "サーバで実行される名前を作らない・受けない (threat: T-163)"
+      }
+    },
+    {
+      "id": "T-164",
+      "found": "2026-10-22",
+      "foundBy": "利用者の指示『世間を賑わせている PSP の脆弱性のような問題がこのシステムでも起きないよう先回りして解析・対策し続ける仕組みを』を受けて測定: 毎日の依存監査 (npm audit + 床 + SHA 固定) は『名前の付いた勧告が我々の依存に在るか』しか見ず、悪用が確認された種類 (KEV)・悪用確率 (EPSS)・基盤 (Chromium/V8/Node/Electron) の悪用を見る道が無かった",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "世間で悪用が始まった脆弱性・弱点の種類を、このアプリが見る道が無かった。npm audit は勧告が依存に載ってから、しかも名前の一致しか見ず、同じ種類 (パス細工・遠隔実行・ReDoS など) の欠陥を自前コードが許していないかは誰も突き合わせていなかった",
+      "status": "mitigated",
+      "fix": "scripts/threat-watch.cjs を毎日の dependency-audit-report に組み込んだ。(1) lockfile の全パッケージ (版つき) を OSV に引き、見つかった勧告の CVE が CISA KEV に載れば exploited(最優先)、EPSS≧10% なら likely。(2) 直近 30 日に KEV へ入った脆弱性を CWE ごとに数え、security/weakness-map.json (種類→守りの門・検査・台帳の脅威。該当しない種類は理由つき notApplicable) と突き合わせる。表に無い種類が 3 件以上悪用されたら要対応、基盤 (Chromium/V8/Node/Electron) の悪用は版を追う候補として別に挙げる。結果は常設 Issue 1 つ。表の各行が名指す守りの実在は weaknessMap.test.ts が留める。測れなかった(配信が欠ける・落ちる・上限超え)は 0 件として通さず測れなかった項目に数える。網の口は定数 3 ホスト・redirect: error・本文 8MiB 上限・送る物は lockfile の公開された名前と版と CVE ID だけ。限界: 検知と提案までが自動で依存の書き換えやマージはしない。KEV は悪用確認後の掲載なので『名前が載る前』は種類の表でしか先回りできない。基盤の欠陥は Electron の更新でしか直らない。PR の門には載せない(網の不調で PR を赤くしない)ので阻止ではなく検出=mitigated。GitHub Actions 上の実網の動作は未確認(この環境は api.osv.dev / cisa.gov に出られない)ため、fetch を注入した検査で全経路を通した。",
+      "regression": {
+        "file": "src/shared/__tests__/threatWatch.test.ts",
+        "test": "脅威ウォッチ — 悪用中の脆弱性と弱点の種類を毎日突き合わせる (threat: T-164)"
       }
     }
   ],

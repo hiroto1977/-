@@ -392,6 +392,16 @@ const REVIEWED_OUTSIDE_SENDS = [
       + ' `src/shared/ollama.ts` を esbuild で読み込んで共有する。',
   },
   {
+    file: 'scripts/threat-watch.cjs',
+    needle: 'io.fetchImpl(url',
+    guard:
+      '脅威ウォッチ (毎日の依存監査・T-164)。送り先は `FEEDS` の**定数 4 つ** (api.osv.dev / www.cisa.gov /'
+      + ' api.first.org) だけで、利用者の入力・第三者の応答からは決まらない (勧告 id は `VULN_ID_RE` を通してから'
+      + ' `encodeURIComponent` で URL に載せ、CVE は `CVE_RE`)。送る物は lockfile の**公開された名前と版**と CVE の'
+      + ' ID だけで、資格情報・環境変数・ファイルの中身は載せない。`redirect: \'error\'` (転送に追随しない)・本文は'
+      + ' 8 MiB の上限つきで読み・失敗は 3 回で諦めて「測れなかった」と報告する (0 件として通さない)。',
+  },
+  {
     file: 'scripts/lib/ollama-exposure.cjs',
     needle: 'net.connect({ host, port })',
     guard:

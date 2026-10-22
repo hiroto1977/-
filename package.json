@@ -119,7 +119,8 @@
     "audit:mutate-changed": "node scripts/audit-mutate-changed.cjs --self-test && node scripts/audit-mutate-changed.cjs",
     "audit:verify-keep-going": "node scripts/audit-verify-keep-going.cjs --self-test && node scripts/audit-verify-keep-going.cjs",
     "audit:malformed-fields": "node scripts/audit-malformed-fields.cjs --self-test && node scripts/audit-malformed-fields.cjs",
-    "audit:pinned-action-shas": "node scripts/audit-pinned-action-shas.cjs --self-test && node scripts/audit-pinned-action-shas.cjs"
+    "audit:pinned-action-shas": "node scripts/audit-pinned-action-shas.cjs --self-test && node scripts/audit-pinned-action-shas.cjs",
+    "audit:threat-watch": "node scripts/threat-watch.cjs --self-test && node scripts/threat-watch.cjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

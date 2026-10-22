@@ -119,8 +119,9 @@ describe('報告の組み立て — 数え落としと「測れていないの�
     ...extra,
   }) as never;
   const adv = (name: string, severity: string) => ({ name, severity, ghsa: ['GHSA-test'] });
-  // pins は必須 (渡し忘れは「測っていない」になる)。既存の検査は固定に無関係なので空を渡す。
-  const run = (input: Parameters<typeof reporter.buildReport>[0]) => reporter.buildReport({ pins: [], ...input });
+  // pins と watch は必須 (渡し忘れは「測っていない」になる)。既存の検査はどちらにも無関係なので空を渡す。
+  const cleanWatch = { exploited: [], likely: [], trend: [], gaps: [], hotGaps: [], naSeen: [], stackKev: [], notes: [], problems: [] };
+  const run = (input: Parameters<typeof reporter.buildReport>[0]) => reporter.buildReport({ pins: [], watch: cleanWatch, ...input } as never);
   const pin = (status: string) => ({ file: 'w.yml', line: 3, repo: 'o/r', sha: 'a'.repeat(40), tag: 'v5', status, why: 'テスト' });
 
   it('★ 出荷される依存の勧告は重大度を問わず要対応 (文書が「prod 0 件」と言っている)', () => {
