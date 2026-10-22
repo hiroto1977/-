@@ -73,7 +73,7 @@ npm audit: **prod / dev とも 0 件** (2026-09-10 実測)。
 - **勧告 4 件は宣言の範囲内で解消**した (2026-09-10): `vitest` / `@vitest/coverage-v8` 4.1.10 → **4.1.11**
   (`^4.1.10` の内側)、`js-yaml` 4.3.1 → **4.3.2** (electron-builder の `^4.1.0` の内側)。
   追加・削除されたパッケージは 0 件で、動いたのは 10 件の patch だけ。
-- **押さえた版は `scripts/lint-dependencies.cjs` の `SECURITY_FLOORS` (床 4 件) が持つ** (`lint:deps` / 規則 7)。
+- **押さえた版は `scripts/lint-dependencies.cjs` の `SECURITY_FLOORS` (床 5 件) が持つ** (`lint:deps` / 規則 7)。
   床は道 (`overrides` / `devDependencies` の範囲) を問わず 1 つの台帳に載り、
   **宣言の消失・指定の緩み・lockfile の解決版 (入れ子の複製も) の下回り**で落ちる。
   `js-yaml` は解決結果としてしか存在しなかったので `overrides` で宣言し直した ——
