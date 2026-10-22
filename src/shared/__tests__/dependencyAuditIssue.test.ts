@@ -7,7 +7,7 @@
  * 判断を module へ出し、偽の client で振る舞いを留める。workflow がその module を呼ぶことも留める
  * (YAML の中へ戻ると検査の外へ出るため)。
  */
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import * as path from 'node:path';
 import { createRequire } from 'node:module';
 import { readOriginalSource } from './originalSource';
@@ -18,6 +18,7 @@ const mod = req(path.join(REPO_ROOT, 'scripts/dependency-audit-issue.cjs')) as {
   TITLE: string;
   syncIssue: (a: { github: unknown; context: unknown; report: unknown }) => Promise<{ action: string; number: number | null }>;
   fakeGithub: (issues: unknown[]) => { calls: [string, Record<string, unknown>][]; rest: unknown };
+  selfTest: () => Promise<number>;
 };
 const { stripComments } = req(path.join(REPO_ROOT, 'scripts/shared-judgement-census.cjs')) as {
   stripComments: (s: string) => string;
@@ -100,5 +101,16 @@ describe('dependency-audit の常設 Issue の同期 (パス 306)', () => {
   it("★ package.json の audit:report は module の self-test を回す (workflow が使う前に壊れていれば止まる)", () => {
     const pkg = JSON.parse(readOriginalSource(path.join(REPO_ROOT, 'package.json'))) as { scripts: Record<string, string> };
     expect(pkg.scripts['audit:report']).toContain('node scripts/dependency-audit-issue.cjs --self-test');
+  });
+
+  it('★ self-test は npm test でも回る (毎日の workflow だけが走らせると、本体を直した日に偽物が古びて報告が止まる)', async () => {
+    // 2026-10-22: 作者の絞り込み (T-142) を足したとき、self-test の偽 Issue に user が無く、
+    // 毎日の dependency-audit が「Issue に反映」の手前で落ちていた (vitest は別の偽物を使うので緑のまま)。
+    const log = vi.spyOn(console, 'log').mockImplementation(() => undefined);
+    try {
+      expect(await mod.selfTest()).toBe(0);
+    } finally {
+      log.mockRestore();
+    }
   });
 });

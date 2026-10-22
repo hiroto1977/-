@@ -93,6 +93,7 @@ function fakeGithub(issues) {
 }
 
 function selfTest() {
+  const BOT = { login: 'github-actions[bot]' };
   const context = { repo: { owner: 'o', repo: 'r' } };
   let bad = 0;
   const check = (name, got, want) => {
@@ -107,19 +108,19 @@ function selfTest() {
   return (async () => {
     {
       // ★ 閉じた常設 Issue が在り、要対応が戻った → 再開する (2 つ目を作らない)
-      const { r, calls } = await run([{ number: 7, title: TITLE, state: 'closed' }], { actionable: 2, markdown: 'm' });
+      const { r, calls } = await run([{ number: 7, title: TITLE, state: 'closed', user: BOT }], { actionable: 2, markdown: 'm' });
       check('閉じた常設 Issue は再開する (作らない)', r, { action: 'reopened', number: 7 });
       check('  update が 1 回・create は 0 回', calls.map((c) => c[0]), ['list', 'update']);
       check('  update は state open', calls[1][1].state, 'open');
       check('  探すのは state all・更新順', [calls[0][1].state, calls[0][1].sort], ['all', 'updated']);
     }
     {
-      const { r, calls } = await run([{ number: 7, title: TITLE, state: 'open' }], { actionable: 0, markdown: 'm' });
+      const { r, calls } = await run([{ number: 7, title: TITLE, state: 'open', user: BOT }], { actionable: 0, markdown: 'm' });
       check('要対応 0 なら開いている常設 Issue を閉じる', r, { action: 'closed', number: 7 });
       check('  update は state closed', calls[1][1].state, 'closed');
     }
     {
-      const { r } = await run([{ number: 7, title: TITLE, state: 'open' }], { actionable: 3, markdown: 'm' });
+      const { r } = await run([{ number: 7, title: TITLE, state: 'open', user: BOT }], { actionable: 3, markdown: 'm' });
       check('開いていて要対応が在れば本文の更新だけ', r, { action: 'updated', number: 7 });
     }
     {
@@ -136,6 +137,11 @@ function selfTest() {
       // listForRepo は PR も返す —— 同じ題名の PR は常設 Issue ではない
       const { r } = await run([{ number: 5, title: TITLE, state: 'open', pull_request: { url: 'x' } }], { actionable: 1, markdown: 'm' });
       check('同じ題名の PR は無視する', r, { action: 'created', number: 999 });
+    }
+    {
+      // T-142: 同じ題名でも作者が bot でなければ常設 Issue ではない (報告を乗っ取らせない)
+      const { r } = await run([{ number: 8, title: TITLE, state: 'open', user: { login: 'someone' } }], { actionable: 1, markdown: 'm' });
+      check('bot 以外が立てた同題の Issue は無視する', r, { action: 'created', number: 999 });
     }
     {
       let threw = false;
@@ -155,7 +161,7 @@ function selfTest() {
   })();
 }
 
-module.exports = { TITLE, findIssue, syncIssue, fakeGithub };
+module.exports = { TITLE, findIssue, syncIssue, fakeGithub, selfTest };
 
 if (require.main === module) {
   if (process.argv.includes('--self-test')) {
