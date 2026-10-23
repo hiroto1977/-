@@ -1448,7 +1448,7 @@ npm run lint:csp           # 出荷 HTML の CSP を**実物**に当てる (self
                            #   注入口 (`innerHTML` ほか) は `lint:forbidden` が
                            #   `scripts/` を含めて 0 件で留めているのでそちらは数えない
 npm run lint:deps          # 依存の供給網 (本番依存の閉包 5 件 / インストール時コード 3 件 /
-                           #   **セキュリティの床 5 件** の台帳・取得元は registry のみ・integrity 必須。
+                           #   **セキュリティの床 6 件** の台帳・取得元は registry のみ・integrity 必須。
                            #   本番依存は単一 HTML へ畳み込まれ保管庫と同じオリジンで走るので、
                            #   増やすなら理由を書く。床は「上流が直るまで自分で押さえている版」で、
                            #   道 (overrides / devDependencies の範囲) を問わず 1 つの台帳に載せ、
