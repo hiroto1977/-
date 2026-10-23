@@ -102,12 +102,12 @@ let encryptionAvailable = true;
 let decryptThrows = false;
 vi.mock('electron', () => ({
   safeStorage: {
-    isEncryptionAvailable: () => encryptionAvailable,
+    isAsyncEncryptionAvailable: async () => encryptionAvailable,
     // 可逆な代役: `plain:` の枝を通っていないことを証明できれば足りる。
-    encryptString: (v: string) => Buffer.from(`enc:${v}`, 'utf8'),
-    decryptString: (b: Buffer) => {
+    encryptStringAsync: async (v: string) => Buffer.from(`enc:${v}`, 'utf8'),
+    decryptStringAsync: async (b: Buffer) => {
       if (decryptThrows) throw new Error('Error while decrypting the ciphertext provided to safeStorage');
-      return b.toString('utf8').replace(/^enc:/, '');
+      return { shouldReEncrypt: false, result: b.toString('utf8').replace(/^enc:/, '') };
     },
   },
   app: {

@@ -2,7 +2,7 @@
  * **端末に置く状態ファイルは封緘する** —— 母集団を実装から数える (パス 133)。
  *
  * 状態ファイルを持つモジュール = 置き場所を決める関数 (`defaultStatePath` / `storePath` / `secretsPath`)
- * を定義するファイル。それぞれ `sealJsonDocument(` (main/atRest.ts) か `safeStorage.encryptString(`
+ * を定義するファイル。それぞれ `sealJsonDocument(` (main/atRest.ts) か `safeStorage.encryptStringAsync(`
  * (secrets.ts) を通る。通らないなら台帳に理由を書く (双方向・理由は空でない)。
  *
  * 2026-09-09 (パス 132) まで、同じ端末に置く 5 つのうち封緘していたのは secrets.json だけで、
@@ -27,7 +27,7 @@ const PLAINTEXT_LEDGER: Record<string, string> = {
 };
 
 const STATE_PATH_DEF = /\bfunction (defaultStatePath|storePath|secretsPath)\(\): string\b/;
-const SEALS = /\bsealJsonDocument\(|\bsafeStorage\.encryptString\(/;
+const SEALS = /\bsealJsonDocument\(|\bsafeStorage\.encryptString(?:Async)?\(/;
 
 /**
  * 注記を落とす (説明の中で名前を挙げる箇所がある)。共有の字句解析器を通すので、
@@ -89,13 +89,13 @@ describe('main: 状態ファイルの封緘の台帳 (母集団は実装から)'
     expect(STATE_PATH_DEF.test('function secretsPath(): string {')).toBe(true);
     expect(STATE_PATH_DEF.test('export function defaultSvgExportPath(): string {')).toBe(false);
     expect(SEALS.test('  await write(p, sealJsonDocument(JSON.stringify(clean)));')).toBe(true);
-    expect(SEALS.test("    return safeStorage.encryptString(value).toString('base64');")).toBe(true);
+    expect(SEALS.test("    return safeStorage.encryptStringAsync(value).toString('base64');")).toBe(true);
     expect(SEALS.test('  await write(p, JSON.stringify(clean, null, 2));')).toBe(false);
     // 注記は数えない (説明の中で名前を挙げる)。**標本は走査に掛ける物と同じ形**で ——
     // 実物はファイル全体を渡すので、`*` の続き行は必ずブロック注記の内側に在る
     // (裸の `*` 行は掛け算の続きで、code として残るのが正しい)。
     expect(SEALS.test(code('// sealJsonDocument( を通す\nconst x = 1;'))).toBe(false);
-    expect(SEALS.test(code('/**\n * safeStorage.encryptString( の写し\n */\nconst y = 2;'))).toBe(false);
+    expect(SEALS.test(code('/**\n * safeStorage.encryptStringAsync( の写し\n */\nconst y = 2;'))).toBe(false);
     // **行末の注記**も落ちる —— 行頭で見る述語ではここが code として残っていた
     // (法則 `mention-vs-declaration`)。
     expect(SEALS.test(code('const z = 3; // sealJsonDocument( を通す'))).toBe(false);

@@ -289,6 +289,10 @@ const VARIABLE_PATH_ALLOWED: Readonly<Record<string, { count: number; why: strin
     count: 4,
     why: 'userData を差し替えた一時ディレクトリの secrets.json を読み戻す。repo のファイルではない',
   },
+  'src/main/__tests__/safeStorageAsyncOnly.test.ts': {
+    count: 2,
+    why: 'src/main の製品コードを歩き (readdir)、各ファイルを読んで safeStorage の同期 API の呼び出しが 0 件か数える。変異検査の sandbox でも製品の原文を読む走査であって、台帳のファイルではない',
+  },
   'src/main/__tests__/secretsProtection.test.ts': {
     count: 3,
     why: '一時 userData の secrets.json を読み戻す (threat: T-041 —— basic_text で plain: が書かれたか・昇格しないか)。repo のファイルではない',

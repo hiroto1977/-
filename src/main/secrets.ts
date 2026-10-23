@@ -218,10 +218,10 @@ async function writeStore(store: Record<string, string>): Promise<void> {
 
 let fallbackWarned = false;
 
-function encode(value: string): string {
+async function encode(value: string): Promise<string> {
   // threat: T-041 —— 書く側は「本当のキーチェーンか」を訊く (Linux の basic_text は plain: へ倒す)。
-  if (realKeychainAvailable()) {
-    return safeStorage.encryptString(value).toString('base64');
+  if (await realKeychainAvailable()) {
+    return (await safeStorage.encryptStringAsync(value)).toString('base64');
   }
   if (!fallbackWarned) {
     fallbackWarned = true;
@@ -295,17 +295,18 @@ const UNDECRYPTABLE_CORRUPT =
   '保存された資格情報を復号できません。値が壊れているか、保存時と別の鍵が使われています。' +
   '設定画面から削除して、もう一度登録してください。';
 
-function decode(value: string): StoredTokenRead {
+async function decode(value: string): Promise<StoredTokenRead> {
   if (value.startsWith('plain:')) {
     return { ok: true, token: Buffer.from(value.slice('plain:'.length), 'base64').toString('utf8') };
   }
-  if (!safeStorage.isEncryptionAvailable()) {
+  if (!(await safeStorage.isAsyncEncryptionAvailable())) {
     return { ok: false, reason: 'undecryptable', message: UNDECRYPTABLE_NO_KEYCHAIN };
   }
   try {
-    return { ok: true, token: safeStorage.decryptString(Buffer.from(value, 'base64')) };
+    // `shouldReEncrypt` は読まない: `result` は復号できた平文で、読む道は書かない (`atRest.ts` と同じ)。
+    return { ok: true, token: (await safeStorage.decryptStringAsync(Buffer.from(value, 'base64'))).result };
   } catch {
-    // decryptString は壊れた値や別の鍵で throw する。ここで受けないと IPC
+    // decryptStringAsync は壊れた値や別の鍵で reject する。ここで受けないと IPC
     // ハンドラごと reject し、renderer 側は「読込中…」のまま止まる。
     return { ok: false, reason: 'undecryptable', message: UNDECRYPTABLE_CORRUPT };
   }
@@ -320,12 +321,12 @@ function decode(value: string): StoredTokenRead {
  *  一つも無かった** (どちらの呼び出し側も直後に書き込むため)。返り値に残すと、
  *  誰も観測しない値を組み立てる分岐が 3 つ増えるだけなので落とした。 */
 async function upgradePlainValues(store: Record<string, string>): Promise<Record<string, string>> {
-  if (!realKeychainAvailable()) return store; // threat: T-041 —— basic_text へは「昇格」しない
+  if (!(await realKeychainAvailable())) return store; // threat: T-041 —— basic_text へは「昇格」しない
   const upgraded: Record<string, string> = {};
   for (const [k, v] of Object.entries(store)) {
     if (v.startsWith('plain:')) {
       const decoded = Buffer.from(v.slice('plain:'.length), 'base64').toString('utf8');
-      upgraded[k] = safeStorage.encryptString(decoded).toString('base64');
+      upgraded[k] = (await safeStorage.encryptStringAsync(decoded)).toString('base64');
     } else {
       upgraded[k] = v;
     }
@@ -357,7 +358,7 @@ export async function setToken(serviceId: string, token: string): Promise<void> 
   return withWriteLock(async () => {
     const store = await readStoreForWrite();
     const upgraded = await upgradePlainValues(store);
-    upgraded[serviceId] = encode(token);
+    upgraded[serviceId] = await encode(token);
     await writeStore(upgraded);
   });
 }
@@ -384,7 +385,7 @@ export async function readStoredToken(serviceId: string): Promise<StoredTokenRea
   }
   const value = Object.hasOwn(store, serviceId) ? store[serviceId] : undefined;
   if (!value) return { ok: false, reason: 'absent' };
-  return decode(value);
+  return await decode(value);
 }
 
 /** 読めた時だけ文字列を返す薄い読み口 (OAuth の TokenSet 復元に使う)。
@@ -476,7 +477,7 @@ export interface StorageProtection {
  */
 export async function getStorageProtection(): Promise<StorageProtection> {
   const store = await readStore();
-  const available = realKeychainAvailable(); // threat: T-041 —— basic_text を os-keychain と名乗らない
+  const available = await realKeychainAvailable(); // threat: T-041 —— basic_text を os-keychain と名乗らない
   return {
     encrypted: available,
     plainCount: Object.values(store).filter((v) => v.startsWith('plain:')).length,
@@ -536,11 +537,11 @@ async function saveRefreshedIfUnchanged(serviceId: ServiceId, before: string, fr
   await withWriteLock(async () => {
     const store = await readStoreForWrite();
     const value = Object.hasOwn(store, serviceId) ? store[serviceId] : undefined;
-    const now = value === undefined ? null : decode(value);
+    const now = value === undefined ? null : await decode(value);
     // 消された・差し替えられた後の応答は書かない。読めない今の値も「同じ」とは言えないので書かない。
     if (now === null || !now.ok || now.token !== before) return;
     const upgraded = await upgradePlainValues(store);
-    upgraded[serviceId] = encode(check.serialized);
+    upgraded[serviceId] = await encode(check.serialized);
     await writeStore(upgraded);
   });
 }

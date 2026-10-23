@@ -2831,6 +2831,14 @@
       "leafCount": 124,
       "note": "update dependency-audit.yml",
       "hash": "ece15b7b7d47030a260b5041619aed3469d8bccff3f8b4f0cc71d5760d8e47b6"
+    },
+    {
+      "index": 338,
+      "prevHash": "ece15b7b7d47030a260b5041619aed3469d8bccff3f8b4f0cc71d5760d8e47b6",
+      "merkleRoot": "b11a6b76345c63da65e1aa956302e82284143d93ae1d0e3119c2f56b6a1cc1a2",
+      "leafCount": 124,
+      "note": "update keychainBackend.ts,secrets.ts",
+      "hash": "6f432d09bccf57e1f8def2bbfcd55613dba23b10535979d4a24e160c9a88741e"
     }
   ],
   "tipManifest": {
@@ -2896,11 +2904,11 @@
     "src/main/clients/types.ts": "0f7eeae150418def1fb8f242f9f010bcb6d947690b2ad085d18276c041b239fa",
     "src/main/eraseAll.ts": "5fabdaeb36193d7cfd06ccbae8712ada1a5ad36787240cd35fb3dcf0a2fdd797",
     "src/main/fileRequestGate.ts": "d9a5d3f23e57c537d959b8aa2b63457b889563e5668964d4ff4576eea61a1746",
-    "src/main/keychainBackend.ts": "a9ac8c957100cc6aaa332973638fe4c6057daf017e022eb50fb134ce44ce5b93",
+    "src/main/keychainBackend.ts": "0b2787b70d038860d74648a9806258bdf84cc08e562497365b5d5d850506682a",
     "src/main/main.ts": "d69b8f5b76f5c8a5e34e0cd7825dac6ab40374f57e1ccd73e2b2abd4153b225c",
     "src/main/oauth.ts": "361df5884e2b332e721701fe677390450bf98c7b665fe331dd1e79620da7a5b7",
     "src/main/presenceWiring.ts": "7635c526db39c60913638072bf11e9802d0fc0bd0382cb3334bd49fa32ee6ab2",
-    "src/main/secrets.ts": "ddfe5ece7c6393fd8cd473f84eec8173cbc2435ffb163a638e130a9e4ef5ce17",
+    "src/main/secrets.ts": "3c9ce41d0077a2740c97232d12dd6641143546a0b463cae8eaa226ab24442bcb",
     "src/main/shellOpenGate.ts": "83d21dd21674694edd0e835c9acfdc6c79fea3ff8eedd2d5e589dfeecbc7548b",
     "src/main/stateFile.ts": "984eebe8582b3c6c88669d17e778932f6b87a682640d1f162acd182d5947169b",
     "src/main/userPresence.ts": "f0e6ab1617123aa93801288d2aeb19855a5d8f5c6ddb7a42aad007d6e5657858",

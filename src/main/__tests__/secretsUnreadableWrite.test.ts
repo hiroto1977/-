@@ -14,9 +14,9 @@ vi.mock('electron', () => ({
     getPath: (n: string) => (n === 'userData' ? userDataDir : path.join(userDataDir, `WRONG-${n}`)),
   },
   safeStorage: {
-    isEncryptionAvailable: () => true,
-    encryptString: (v: string) => Buffer.from(`enc:${v}`, 'utf8'),
-    decryptString: (b: Buffer) => b.toString('utf8').replace(/^enc:/, ''),
+    isAsyncEncryptionAvailable: async () => true,
+    encryptStringAsync: async (v: string) => Buffer.from(`enc:${v}`, 'utf8'),
+    decryptStringAsync: async (b: Buffer) => ({ shouldReEncrypt: false, result: b.toString('utf8').replace(/^enc:/, '') }),
   },
 }));
 vi.mock('../oauth', () => ({ OAUTH_CONFIGS: {}, refresh: async () => ({}) }));

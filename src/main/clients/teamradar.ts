@@ -106,7 +106,7 @@ export async function loadTeamRadarState(
   if (file.kind !== 'read') return file;
   // 封緘を開けてから中身を判定する (パス 133)。開けられなければ、その理由を「読めなかった」に載せる ——
   // 画面は「見本を表示 / 保存を押すと上書き」と言う (パス 120 の注記がそのまま出口になる)。
-  const opened = unsealJsonDocument(file.text);
+  const opened = await unsealJsonDocument(file.text);
   if (!opened.ok) return { kind: 'unreadable', reason: atRestUnreadableReason(opened.reason) };
   return readStoredTeamRadar(opened.json);
 }
@@ -180,7 +180,7 @@ async function saveTeamRadarStateUnlocked(state: TeamRadarState, deps: StateDeps
   const renameFn = deps.rename ?? ((a: string, b: string) => fs.rename(a, b));
   await mkdirFn(path.dirname(p));
   // 封緘して書く (パス 133): 他人の氏名と評価なので、secrets.json / 感情ログと同じ約束 (main/atRest.ts) を通す。
-  await writeFn(tmp, sealJsonDocument(JSON.stringify(state)));
+  await writeFn(tmp, await sealJsonDocument(JSON.stringify(state)));
   await renameFn(tmp, p);
 }
 

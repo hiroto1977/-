@@ -20,49 +20,49 @@ const {
 beforeEach(resetSafeStorageState);
 
 describe('atRest — 文書の封筒', () => {
-  it('★ 封緘した文書に平文が残らず、開けると元に戻る (sealed: true)', () => {
+  it('★ 封緘した文書に平文が残らず、開けると元に戻る (sealed: true)', async () => {
     const json = JSON.stringify({ name: '山田', note: '要フォロー' });
-    const doc = sealJsonDocument(json);
+    const doc = await sealJsonDocument(json);
     for (const needle of ['山田', '要フォロー', 'name']) expect(doc, needle).not.toContain(needle);
     expect(JSON.parse(doc)).toMatchObject({ v: 2 });
-    expect(unsealJsonDocument(doc)).toEqual({ ok: true, json, sealed: true });
+    expect(await unsealJsonDocument(doc)).toEqual({ ok: true, json, sealed: true });
   });
 
-  it('対照: キーチェーンが無ければ plain: (難読化) で往復し、封緘は名乗らない', () => {
+  it('対照: キーチェーンが無ければ plain: (難読化) で往復し、封緘は名乗らない', async () => {
     safeStorageState.encryptionAvailable = false;
     const json = '{"a":1}';
-    const doc = sealJsonDocument(json);
+    const doc = await sealJsonDocument(json);
     expect((JSON.parse(doc) as { sealed: string }).sealed).toMatch(/^plain:/);
-    expect(atRestMechanism()).toBe('obfuscated');
-    expect(unsealJsonDocument(doc)).toEqual({ ok: true, json, sealed: true });
+    expect(await atRestMechanism()).toBe('obfuscated');
+    expect(await unsealJsonDocument(doc)).toEqual({ ok: true, json, sealed: true });
     safeStorageState.encryptionAvailable = true;
-    expect(atRestMechanism()).toBe('os-keychain');
+    expect(await atRestMechanism()).toBe('os-keychain');
   });
 
-  it('封筒でない文字列 (2026-09-09 までの平文・壊れた JSON・別の版) はそのまま返す (sealed: false)', () => {
-    expect(unsealJsonDocument('{"a":1}')).toEqual({ ok: true, json: '{"a":1}', sealed: false });
-    expect(unsealJsonDocument('not json')).toEqual({ ok: true, json: 'not json', sealed: false });
-    expect(unsealJsonDocument('{"v":1,"sealed":"x"}')).toEqual({ ok: true, json: '{"v":1,"sealed":"x"}', sealed: false });
+  it('封筒でない文字列 (2026-09-09 までの平文・壊れた JSON・別の版) はそのまま返す (sealed: false)', async () => {
+    expect(await unsealJsonDocument('{"a":1}')).toEqual({ ok: true, json: '{"a":1}', sealed: false });
+    expect(await unsealJsonDocument('not json')).toEqual({ ok: true, json: 'not json', sealed: false });
+    expect(await unsealJsonDocument('{"v":1,"sealed":"x"}')).toEqual({ ok: true, json: '{"v":1,"sealed":"x"}', sealed: false });
   });
 
-  it('★ 封緘済みをキーチェーンの無い環境で開くと no-keychain、復号に失敗すれば undecryptable', () => {
-    const doc = sealJsonDocument('{"a":1}');
+  it('★ 封緘済みをキーチェーンの無い環境で開くと no-keychain、復号に失敗すれば undecryptable', async () => {
+    const doc = await sealJsonDocument('{"a":1}');
     safeStorageState.encryptionAvailable = false;
-    expect(unsealJsonDocument(doc)).toEqual({ ok: false, reason: 'no-keychain' });
+    expect(await unsealJsonDocument(doc)).toEqual({ ok: false, reason: 'no-keychain' });
     safeStorageState.encryptionAvailable = true;
     safeStorageState.decryptThrows = true;
-    expect(unsealJsonDocument(doc)).toEqual({ ok: false, reason: 'undecryptable' });
+    expect(await unsealJsonDocument(doc)).toEqual({ ok: false, reason: 'undecryptable' });
   });
 
-  it('plain: の文書はキーチェーンが無くても開ける (難読化に鍵は要らない)', () => {
+  it('plain: の文書はキーチェーンが無くても開ける (難読化に鍵は要らない)', async () => {
     safeStorageState.encryptionAvailable = false;
-    const doc = sealJsonDocument('{"a":1}');
+    const doc = await sealJsonDocument('{"a":1}');
     safeStorageState.encryptionAvailable = true;
     safeStorageState.decryptThrows = true; // キーチェーンが有っても plain: は復号を通らない
-    expect(unsealJsonDocument(doc)).toEqual({ ok: true, json: '{"a":1}', sealed: true });
+    expect(await unsealJsonDocument(doc)).toEqual({ ok: true, json: '{"a":1}', sealed: true });
   });
 
-  it('isAtRestEnvelope は v: 2 と文字列の sealed だけを封筒とみなす', () => {
+  it('isAtRestEnvelope は v: 2 と文字列の sealed だけを封筒とみなす', async () => {
     expect(isAtRestEnvelope({ v: 2, sealed: 'x' })).toBe(true);
     expect(isAtRestEnvelope({ v: 1, sealed: 'x' })).toBe(false);
     expect(isAtRestEnvelope({ v: 2, sealed: 1 })).toBe(false);
@@ -70,11 +70,11 @@ describe('atRest — 文書の封筒', () => {
     expect(isAtRestEnvelope('x')).toBe(false);
   });
 
-  it('openAtRest / sealAtRest は文字列で往復する (多バイト文字も)', () => {
-    expect(openAtRest(sealAtRest('こんにちは'))).toEqual({ ok: true, text: 'こんにちは' });
+  it('openAtRest / sealAtRest は文字列で往復する (多バイト文字も)', async () => {
+    expect(await openAtRest(await sealAtRest('こんにちは'))).toEqual({ ok: true, text: 'こんにちは' });
   });
 
-  it('理由の文は 2 つで、それぞれ何が起きたかを言う', () => {
+  it('理由の文は 2 つで、それぞれ何が起きたかを言う', async () => {
     expect(atRestUnreadableReason('no-keychain')).toBe(
       'OS のキーチェーンで封緘されていますが、この環境ではキーチェーンが使えません',
     );
@@ -94,24 +94,24 @@ describe('Linux の basic_text は封緘を名乗らない (threat: T-041)', () 
   beforeEach(() => Object.defineProperty(process, 'platform', { value: 'linux', configurable: true }));
   afterEach(() => Object.defineProperty(process, 'platform', { value: realPlatform, configurable: true }));
 
-  it('★ basic_text では sealAtRest が plain: へ倒れ、atRestMechanism は obfuscated (threat: T-041)', () => {
+  it('★ basic_text では sealAtRest が plain: へ倒れ、atRestMechanism は obfuscated (threat: T-041)', async () => {
     safeStorageState.backend = 'basic_text';
     expect(safeStorageState.encryptionAvailable).toBe(true); // 前提: API は「使える」と答える
-    expect(sealAtRest('x')).toMatch(/^plain:/);
-    expect(atRestMechanism()).toBe('obfuscated');
-    expect(JSON.parse(sealJsonDocument('{"a":1}')).sealed).toMatch(/^plain:/);
+    expect(await sealAtRest('x')).toMatch(/^plain:/);
+    expect(await atRestMechanism()).toBe('obfuscated');
+    expect(JSON.parse(await sealJsonDocument('{"a":1}')).sealed).toMatch(/^plain:/);
   });
 
-  it('対照: gnome_libsecret では封緘し os-keychain を名乗る', () => {
+  it('対照: gnome_libsecret では封緘し os-keychain を名乗る', async () => {
     safeStorageState.backend = 'gnome_libsecret';
-    expect(sealAtRest('x')).not.toMatch(/^plain:/);
-    expect(atRestMechanism()).toBe('os-keychain');
+    expect(await sealAtRest('x')).not.toMatch(/^plain:/);
+    expect(await atRestMechanism()).toBe('os-keychain');
   });
 
-  it('読む側は backend を見ない —— basic_text で包んだ既存の値は basic_text で開ける', () => {
+  it('読む側は backend を見ない —— basic_text で包んだ既存の値は basic_text で開ける', async () => {
     safeStorageState.backend = 'gnome_libsecret';
-    const sealed = sealAtRest('secret');
+    const sealed = await sealAtRest('secret');
     safeStorageState.backend = 'basic_text';
-    expect(openAtRest(sealed)).toEqual({ ok: true, text: 'secret' });
+    expect(await openAtRest(sealed)).toEqual({ ok: true, text: 'secret' });
   });
 });

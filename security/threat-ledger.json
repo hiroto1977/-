@@ -948,7 +948,7 @@
       "fix": "src/main/keychainBackend.ts の realKeychainAvailable (isEncryptionAvailable && !(linux && getSelectedStorageBackend() === 'basic_text')) を書く側 (encode / sealAtRest / upgradePlainValues) と名乗る側 (getStorageProtection / atRestMechanism) が通す。読む側 (decode / openAtRest) は通さない —— basic_text で包んだ既存の値はそのまま開ける。強さは basic_text と plain: で同じで、変わるのは名乗り (encrypted: false / obfuscated / ⚠ が出る)。鎖と mutate と CODEOWNERS に載せた。対照: 書く側と名乗る側の述語を isEncryptionAvailable へ戻す → ★ 4 件 (atRest 1 / secretsProtection 3)。述語そのものは keychainBackend.test.ts が backend 6 通り × platform で直に見る。",
       "regression": {
         "file": "src/main/__tests__/keychainBackend.test.ts",
-        "test": "★ Linux の basic_text (ハードコードされた鍵) は isEncryptionAvailable が true でも false (threat: T-041)"
+        "test": "★ Linux の basic_text (ハードコードされた鍵) は暗号化 API が true でも false (threat: T-041)"
       }
     },
     {

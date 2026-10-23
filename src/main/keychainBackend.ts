@@ -1,7 +1,7 @@
 /**
  * 鍵が**本当に** OS のキーチェーンに在るか (2026-10-14 · パス 520 · threat: T-041)。
  *
- * `safeStorage.isEncryptionAvailable()` は Linux で `basic_text` backend のときも **true** を返す
+ * `safeStorage` の「使えるか」は Linux で `basic_text` backend のときも **true** を返しうる
  * (Electron のドキュメント: basic_text は「ハードコードされた鍵」で、キーチェーンが無い環境へ
  * Chromium が倒す backend。`isEncryptionAvailable` は「暗号化の API が使えるか」であって
  * 「鍵が守られているか」ではない)。`secrets.ts` と `atRest.ts` はその答えで
@@ -18,15 +18,21 @@
  *
  * `getSelectedStorageBackend` は Linux 専用 (他の OS は `unknown` を返す) で、代役が持たない
  * ことも在るので関数であるときだけ訊く。`unknown` は `app.ready` の前に返る値で、ここは
- * ready の後にしか呼ばれない —— 答えが読めないときは今までどおり `isEncryptionAvailable` に従う。
+ * ready の後にしか呼ばれない —— 答えが読めないときは今までどおり暗号化 API の可否に従う。
+ *
+ * **非同期 (2026-10-23 · Electron 44 → 45 の準備)**: 同期の `isEncryptionAvailable` / `encryptString` /
+ * `decryptString` は Electron 45 で非推奨・46 で削除される。可否は `isAsyncEncryptionAvailable()` で訊く。
+ * ★ 実測 (Electron 44.9.3 · キーリングの無い Linux = `basic_text`): 同期は `false`、非同期は `true` を返す ——
+ * 非同期は `basic_text` でも封緘できる。だからこの述語の `basic_text` の枝は**前より重い**: ここを通さずに
+ * 非同期の可否だけで書くと、キーチェーンの無い環境でハードコードされた鍵の封緘を「OS キーチェーン」と名乗る。
  */
 import { safeStorage } from 'electron';
 
 /** Chromium が「鍵をハードコードした」backend を名乗る綴り (Electron の docs の値)。 */
 export const HARDCODED_KEY_BACKEND = 'basic_text';
 
-export function realKeychainAvailable(): boolean {
-  if (!safeStorage.isEncryptionAvailable()) return false;
+export async function realKeychainAvailable(): Promise<boolean> {
+  if (!(await safeStorage.isAsyncEncryptionAvailable())) return false;
   if (process.platform !== 'linux') return true;
   const read = (safeStorage as { getSelectedStorageBackend?: () => string }).getSelectedStorageBackend;
   if (typeof read !== 'function') return true;

@@ -103,7 +103,7 @@ async function readStore(opts: { forWrite?: boolean } = {}): Promise<EmotionsSto
   if (file.kind === 'none') return { moods: [], analyses: [] };
   if (file.kind === 'unreadable') throw new Error(file.reason);
   // オブジェクトでない JSON (null / 配列 / 数値) は「欄が無い古い形」と同じ扱い (空)。判定は共有側 1 か所。
-  const rec = asRecord(unsealStore(file.text));
+  const rec = asRecord(await unsealStore(file.text));
   const moods = readStoredList(rec.moods, isMoodEntry);
   const analyses = readStoredList(rec.analyses, isAnalysisEntry);
   if (opts.forWrite && (moods.dropped > 0 || analyses.dropped > 0)) {
@@ -151,9 +151,9 @@ export const EMOTIONS_CLEAR_UNREADABLE_NEEDS_ALL =
  * 保存形 → 中身。封緘済み (`{ v: 2, sealed }`) は開けてから、2026-09-09 までの平文はそのまま読む
  * (次の書き込みで封緘される —— 読めるものを移行のために失わない)。
  */
-function unsealStore(raw: string): unknown {
+async function unsealStore(raw: string): Promise<unknown> {
   // 封筒の扱いは main/atRest.ts の 1 組 (パス 133 で人材育成・チームレーダーと共有)。
-  const opened = unsealJsonDocument(raw);
+  const opened = await unsealJsonDocument(raw);
   if (!opened.ok) {
     throw new Error(opened.reason === 'no-keychain' ? EMOTIONS_UNREADABLE_NO_KEYCHAIN : EMOTIONS_UNREADABLE_CORRUPT);
   }
@@ -175,7 +175,7 @@ async function writeStore(store: EmotionsStore): Promise<void> {
   // `opts.mode ?? 0o600` なので、落としても同じ 600 で作られる (等価変異)。
   // 明示を残すのは意図の表明 —— 個人情報を持つファイルの権限を、
   // 呼び出し側の既定値に委ねない。
-  await atomicWriteFile(storePath(), sealJsonDocument(JSON.stringify(store)), { mode: 0o600 });
+  await atomicWriteFile(storePath(), await sealJsonDocument(JSON.stringify(store)), { mode: 0o600 });
 }
 
 export async function fetchEmotionsSnapshot(ctx: FetchContext): Promise<EmotionsSnapshot> {
