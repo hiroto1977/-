@@ -2871,6 +2871,14 @@
       "leafCount": 124,
       "note": "update lint-malware.cjs",
       "hash": "1ae266fcef58bce63c88625549558cc5d9cd3f7cf111ff0e41390aae43231e6a"
+    },
+    {
+      "index": 343,
+      "prevHash": "1ae266fcef58bce63c88625549558cc5d9cd3f7cf111ff0e41390aae43231e6a",
+      "merkleRoot": "f14f671af18270394709564587fe3790f7013d6453f32ae129b22aa034dccd7f",
+      "leafCount": 124,
+      "note": "update e2e.yml",
+      "hash": "25deb67338471519627985938287a853906dfe3090f49e42799f8dce5ea5a76d"
     }
   ],
   "tipManifest": {
@@ -2885,7 +2893,7 @@
     ".github/dependabot.yml": "5fb436726dc2b51f99162653885c40cafae5d57d6deb0f4f5b5449e6b202493f",
     ".github/workflows/ci.yml": "8c6cb8b9a401640f4deb61a51b7bad56a02bc971d52487cae94d035814ac504a",
     ".github/workflows/dependency-audit.yml": "cd3eb9fb07f260ce1541f231dea8a9fe4afaa4996e3e1f51b9ee7aece5fd24bc",
-    ".github/workflows/e2e.yml": "9fe7cc8e7289b94eac6af2c79abc553ed97fb6990e9ca27a6b6052d94beb0807",
+    ".github/workflows/e2e.yml": "27a711fa8396c953cb0d0b419733a7679ba49c7ea72471a47b38984d499dbfec",
     ".github/workflows/knowledge-auto.yml": "9f6f74353954cb50f345b3d258a324a01bb117ec08772cfd9a77852505cdbc20",
     ".github/workflows/mutation.yml": "db2b72f69eb73be3ddd7ed4492d8069f806b5ce928a00df768bb806c673db2e0",
     ".github/workflows/pages.yml": "42cc166f06c028477195e1243f5a85e277ad5d966840b6894d118635444a42e0",
