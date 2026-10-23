@@ -212,6 +212,7 @@ const MIGRATED: readonly string[] = [
   'src/__tests__/actionSurface.ts',
   'src/main/__tests__/atRestPolicy.test.ts',
   'src/main/__tests__/eraseAll.test.ts',
+  'src/main/__tests__/electronFuses.test.ts',
   'src/main/__tests__/fileReadSizeGateCensus.test.ts',
   'src/main/__tests__/safeStorageAsyncOnly.test.ts',
   'src/main/__tests__/shellOpenCallSites.test.ts',

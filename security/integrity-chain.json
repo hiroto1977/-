@@ -2839,6 +2839,22 @@
       "leafCount": 124,
       "note": "update keychainBackend.ts,secrets.ts",
       "hash": "6f432d09bccf57e1f8def2bbfcd55613dba23b10535979d4a24e160c9a88741e"
+    },
+    {
+      "index": 339,
+      "prevHash": "6f432d09bccf57e1f8def2bbfcd55613dba23b10535979d4a24e160c9a88741e",
+      "merkleRoot": "fada959eae1b8b65bd1de121157c6916bbf3e84bd03b19be605a3533959680f7",
+      "leafCount": 124,
+      "note": "update e2e.yml,electron-builder.json,artifact-freshness.cjs",
+      "hash": "7271480c31120940502aa375dc732ac8fa3bc5a2f22ef8691992e650253940c0"
+    },
+    {
+      "index": 340,
+      "prevHash": "7271480c31120940502aa375dc732ac8fa3bc5a2f22ef8691992e650253940c0",
+      "merkleRoot": "bfa0970cdc357059e46627b5d64c0f48f587906920779b55b01fc56c468f9b8d",
+      "leafCount": 124,
+      "note": "update lint-malware.cjs",
+      "hash": "d863604b8563b53f69f9e1992e692975af317aa373411d9274d12e9844ccb959"
     }
   ],
   "tipManifest": {
@@ -2853,7 +2869,7 @@
     ".github/dependabot.yml": "5fb436726dc2b51f99162653885c40cafae5d57d6deb0f4f5b5449e6b202493f",
     ".github/workflows/ci.yml": "8c6cb8b9a401640f4deb61a51b7bad56a02bc971d52487cae94d035814ac504a",
     ".github/workflows/dependency-audit.yml": "cd3eb9fb07f260ce1541f231dea8a9fe4afaa4996e3e1f51b9ee7aece5fd24bc",
-    ".github/workflows/e2e.yml": "9e4a4f395896064334902ce4021153f422c33c999fb671ff2844493ca89a780e",
+    ".github/workflows/e2e.yml": "9fe7cc8e7289b94eac6af2c79abc553ed97fb6990e9ca27a6b6052d94beb0807",
     ".github/workflows/knowledge-auto.yml": "9f6f74353954cb50f345b3d258a324a01bb117ec08772cfd9a77852505cdbc20",
     ".github/workflows/mutation.yml": "db2b72f69eb73be3ddd7ed4492d8069f806b5ce928a00df768bb806c673db2e0",
     ".github/workflows/pages.yml": "42cc166f06c028477195e1243f5a85e277ad5d966840b6894d118635444a42e0",
@@ -2864,7 +2880,7 @@
     "assets/sw.js": "0320f925b8da1242c0aa3783e332a8abb87323331767aeebcab7dab309f6189d",
     "docs/PROXY_EXAMPLE.md": "97948e981e8fb5305e69d2bcbd6f57783523382ffb0ca6fada43305263de7cd0",
     "docs/SECURITY_CHAIN.md": "e6f2886fbab792b4c4ec27ee8849a8642d1b28576c05e3ca627f2daea05cda29",
-    "electron-builder.json": "bf1de6e2b48e13444b527f8796af3636ab5061795fd772070e6f5dcfecfdf305",
+    "electron-builder.json": "afc968cc3b7816a44000753bc3bf80838c8afec04bd4850f44dc2fe55b6925d5",
     "eslint.config.js": "a2a56ffbe45108aeb9313c52c8c0e382febfc72c4cc78884b60cbb88a653fa7f",
     "launcher/ServiceHubを開く.bat": "83d4b252a777556d3830acc7e226cd009fea006bb3c47fb677ab57ecaeb9da82",
     "orchestration/knowledge-context.cjs": "2e31acac95ced213b569fe3e467e66f4aff3106c93188ee79d056d1481a022c3",
@@ -2875,14 +2891,14 @@
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
     "scripts/integrity-chain.cjs": "9524bb820b1da183a5ae029ba4c753ffb9a45e7cd34120d108d2a1f0bfe0a437",
     "scripts/knowledge-autopilot.cjs": "ee8f7ae4a4ad29dda6c02f83c113c45fa1648522f807e711aa86b7746f372968",
-    "scripts/lib/artifact-freshness.cjs": "4fe8833bf59fe293cf8d34067caf7f9e80c27755ceebcd6e92b4e9d78f6a5a5c",
+    "scripts/lib/artifact-freshness.cjs": "543a7ff9c57bcf9d4936374ac89b8a3a7e2cf7c27bac8bad595fc98778841828",
     "scripts/lib/json-for-script.cjs": "cb79bf1fb2f3c10c6854ec16d9c12bb0695dee5561751333db4531545702fd70",
     "scripts/lib/population-floor.cjs": "a114eb01aa920d7207bdc0cefde60c049721ca62e8daa75283445afa81c694b3",
     "scripts/lib/pure-data-module.cjs": "41acaa8525543f5b59720758a7955b13b933c59b4d5df1d9b3793d9426075a93",
     "scripts/lib/strip-non-code.cjs": "64ee25ca006e9e566691a99526994dd36fc0ba6b05e536d39979701b96d681ed",
     "scripts/lib/tracked-cross-check.cjs": "c31f327dfb6e6a2d40bc8b3460cc8d9f4994c7cf84b6416086c644749021fee5",
     "scripts/lint-artifact-csp.cjs": "4ad77f0358365ca03fdfbed5d6713358ecc487b958a608cf1d5bad78f0e90530",
-    "scripts/lint-malware.cjs": "1ada0a8c7a9792329aa71790b31da96d20c0d238e52f5a98c5778c0e47dd753a",
+    "scripts/lint-malware.cjs": "ee13e3dcb967a3bdc61459eb65f015eb33d24ac3c4be2dae1735dcae17af47db",
     "scripts/lint-sample-data.cjs": "55f548e97d05e03f409ccbb2f87c3ecceb1d66e4851d24f2100dedd7670f15ed",
     "scripts/make-autoinstall.sh": "71afe4bf3cb203f539be4b0c5624ab06448f7cbffd5caf0d3704a395c4284a8a",
     "scripts/make-live-usb.sh": "ece38ba927100fc42f4227fd149f88b9ffbdd67b9fc9d3a37dcbfebff74ca2b1",

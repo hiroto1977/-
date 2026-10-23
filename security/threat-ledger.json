@@ -2795,6 +2795,21 @@
         "file": "src/shared/__tests__/threatWatch.test.ts",
         "test": "脅威ウォッチ — 悪用中の脆弱性と弱点の種類を毎日突き合わせる (threat: T-164)"
       }
+    },
+    {
+      "id": "T-165",
+      "found": "2026-10-23",
+      "foundBy": "利用者の指示『先回りしてセキュリティを進化させ続けて』を受けて測定: 台帳の huntBacklog に『梱包物 (未署名の実物) で最後まで確かめていない』と残っていた PKG-1 を、Electron 45.0.0 の梱包物 (electron-builder --dir) を実際に起動して確かめた",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "high",
+      "title": "出荷設定の fuse grantFileProtocolExtraPrivileges=false が、梱包版 (app.asar) の読み込みを壊し、窓が白くなる。fuse は『file:// の追加特権を切る』つもりの守りだったが、実際は自分の UI を読めなくしていた (T-140 は『切れない』と書いていたのに設定とその検査は false のままだった)",
+      "status": "fixed",
+      "fix": "electron-builder.json の grantFileProtocolExtraPrivileges を true にし、electronFuses.test.ts の必要値も true へ (理由に実測を書いた)。file:// の任意読み取りは窓の session の門 (fileRequestAllowed · T-140) が要求の側で閉じる —— 梱包物で fuse=true のまま fetch('file:///etc/passwd') が『Failed to fetch』で止まることを実測した。fuse が true の間は主プロセスが門を窓へ付けていることを検査が結ぶ。実測 (Electron 45.0.0 · Linux · electron-builder --dir): fuse=false → 窓の url が chrome-error://chromewebdata/ (UI 0 字) · fuse=true → file:///…/app.asar/dist/index.html で『Service Hub』・UI が出る・bridge は object · どちらも file:///etc/passwd の fetch は止まる。限界: Linux の --dir 梱包物で測った (macOS / Windows のインストーラは未実測)・署名なし。onlyLoadAppFromAsar / enableEmbeddedAsarIntegrityValidation は別の判断で未設定のまま。",
+      "regression": {
+        "file": "src/main/__tests__/electronFuses.test.ts",
+        "test": "★ grantFileProtocolExtraPrivileges を true にする間は、主プロセスが file:// の門を窓へ付ける (threat: T-165)"
+      }
     }
   ],
   "huntBacklog": [
@@ -2902,11 +2917,6 @@
       "surface": "ai",
       "item": "AI-6 の同類: skills/run-skill の prompt と Slack/Gmail の『Emotions で分析』(第三者の文) も危機の判定を通らずに外部のモデルへ届く",
       "why": "2026-10-16 に監査役が指摘 (感情ページの『テキスト分析』は T-090 で閉じた)。detectCrisis を shared へ出して main で止める、が AI-6 の設計。"
-    },
-    {
-      "surface": "main-ipc",
-      "item": "PKG-1 電子ヒューズ grantFileProtocolExtraPrivileges=false と win.loadFile(asar) の衝突 (main.ts:221 / electron-builder.json)",
-      "why": "2026-10-16 に実測 (最小の Electron アプリ + asar): 既定のヒューズでは loadFile が読み込める。grantFileProtocolExtraPrivileges=false にすると asar 内の file:// の読み込みが ERR_FILE_NOT_FOUND で失敗した。梱包物 (未署名の実物) で最後まで確かめていない。直す道は (a) ヒューズを true に戻す (file:// の追加権限が戻る) か (b) app:// の独自スキームで配信する (保存先の origin が変わる = 利用者の IndexedDB / localStorage が見えなくなる移行問題)。**所有者の判断が要る**ため未修正。優先度: 高 (梱包版が白画面になりうる)。"
     },
     {
       "surface": "main-ipc",
@@ -3054,6 +3064,11 @@
       "item": "エージェント指示書 (AGENTS.md / src/**/CLAUDE.md / .claude/rules / .claude/output-styles / .github/copilot-instructions.md) を植えても全門が緑",
       "finding": "2026-10-20 に再現: 悪意のある文面を 5 か所に植えて(CLAUDE.md への追記を含む)34 ゲート(--fast・重い 5 本を除く)を回すと落ちたゲート 0。追跡済みの指示書は .claude/agents・.claude/settings.json・.cursor/rules が鎖と CODEOWNERS で守られているが、CLAUDE.md と未追跡の指示書は無縛だった。CODEOWNERS をディレクトリと名前のパターンで足した=T-128 (mitigated)。",
       "checkedOn": "2026-10-20"
+    },
+    {
+      "item": "PKG-1 電子ヒューズ grantFileProtocolExtraPrivileges=false と win.loadFile(asar) の衝突",
+      "finding": "2026-10-23 に Electron 45.0.0 の梱包物 (electron-builder --dir · Linux) で実測: 衝突は実在し fuse=false の梱包版は窓が白くなった (chrome-error://chromewebdata/)。fuse=true なら起動し、file:///etc/passwd の fetch は T-140 の門で止まる。fuse を true へ=T-165 (fixed)。",
+      "checkedOn": "2026-10-23"
     }
   ]
 }

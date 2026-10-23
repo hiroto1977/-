@@ -372,6 +372,14 @@ const REVIEWED_OUTSIDE_SENDS = [
       + ' (2026-07 の監査で、第三者 API の応答が平文で端末に残るのを閉じた)。',
   },
   {
+    file: 'scripts/smoke-packaged.cjs',
+    needle: "fetch('file:///etc/passwd')",
+    guard:
+      '梱包した実物の窓の中で `page.evaluate` が試す読み取り (threat: T-165 · T-140)。送り先は**定数の `file:///etc/passwd` 1 つ**で、'
+      + '外へは出ない —— レンダラーの任意の file:// 読み取りが門で止まること (`blocked`) を確かめるのが目的。'
+      + '資格情報は 1 つも載せず (このファイルに `Authorization` は 0 件)、応答の本文は読まない (状態だけ返す)。',
+  },
+  {
     file: 'scripts/knowledge-autopilot.cjs',
     needle: 'fetchImpl(current',
     guard:

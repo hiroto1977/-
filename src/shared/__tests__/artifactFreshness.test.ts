@@ -269,7 +269,7 @@ describe('BUILD_MATERIALS — 台帳と実物 (パス 302)', () => {
     return [...out].sort();
   }
 
-  it('★ 母集団は 8 本で、台帳と一致する (両方向 —— 道具が増えても減っても鳴る)', () => {
+  it('★ 母集団は 9 本で、台帳と一致する (両方向 —— 道具が増えても減っても鳴る)', () => {
     // パス 305: exp:* 3 本 (横はみ出し / 実行時の不変条件 / 耐久) も dist を読むのに鮮度を見ていなかった
     expect(artifactTools()).toEqual([
       'scripts/e2e/core.cjs',
@@ -279,6 +279,7 @@ describe('BUILD_MATERIALS — 台帳と実物 (パス 302)', () => {
       'scripts/runtime-security-exp.cjs',
       'scripts/screenshot.cjs',
       'scripts/smoke-app.cjs',
+      'scripts/smoke-packaged.cjs',
       'scripts/soak-test.cjs',
     ]);
   });
