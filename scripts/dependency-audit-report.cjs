@@ -55,6 +55,7 @@ const { execFileSync } = require('node:child_process');
 const { probeFloors } = require('./audit-floors.cjs');
 const { auditPins, FAILING: PIN_FAILING } = require('./audit-pinned-action-shas.cjs');
 const { runThreatWatch, renderWatch, watchActionable, realIo } = require('./threat-watch.cjs');
+const { analyzePosture, renderPosture } = require('./security-posture.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const OUT = path.join(REPO_ROOT, 'orchestration', 'dependency-audit.json');
@@ -91,8 +92,13 @@ function severityRank(s) {
  * `all` / `prod` は `advisoriesOf()` の戻り値、`floors` は `probeFloors()` の戻り値。
  * どれかが null なら**測れていない**ので、0 件として報告せず `unmeasured` を立てる。
  */
-function buildReport({ all, prod, floors, pins, watch, map, generatedAt }) {
+function buildReport({ all, prod, floors, pins, watch, map, posture, generatedAt }) {
   const problems = [];
+  // `posture` (台帳から導く次の一手 · scripts/security-posture.cjs) は省略できる (undefined = 載せない)。
+  // 渡して null なら導けなかったので「測れなかった」。止まった面・期限切れ・読めない台帳は要対応に数える。
+  if (posture === null) problems.push('セキュリティの姿勢 (台帳) を導けませんでした');
+  const postureOk = posture !== undefined && posture !== null && typeof posture === 'object' && Array.isArray(posture.problems);
+  const postureCount = postureOk ? posture.actionable : 0;
   if (all === null) problems.push('npm audit (全体) の出力を読めませんでした');
   if (prod === null) problems.push('npm audit --omit=dev の出力を読めませんでした');
   if (floors === null) problems.push('床の台帳が空です (走査の不具合)');
@@ -125,7 +131,7 @@ function buildReport({ all, prod, floors, pins, watch, map, generatedAt }) {
 
   // **出荷物の勧告は重大度を問わず要対応。** 文書が「prod 0 件」と言っている。
   // 作り話の疑いのある固定 (`no-tag` / `missing` / `invalid`) は要対応。古い固定 (`moved`) は報せるだけ。
-  const actionable = prodList.length + devList.length + lowFloors.length + badPins.length + watchCount + problems.length;
+  const actionable = prodList.length + devList.length + lowFloors.length + badPins.length + watchCount + postureCount + problems.length;
 
   const row = (a) => `| \`${a.name}\` | ${a.severity} | ${a.ghsa.map((g) => `[${g}](https://github.com/advisories/${g})`).join(' ') || '—'} |`;
   const section = (title, list, note) =>
@@ -143,6 +149,7 @@ function buildReport({ all, prod, floors, pins, watch, map, generatedAt }) {
     `| 低すぎるセキュリティの床 | ${lowFloors.length} |`,
     `| 実在しない / 不正な SHA 固定 | ${badPins.length} |`,
     `| 悪用中の脆弱性が当たる依存 / 急増した未対応の弱点の種類 | ${watchCount} |`,
+    `| 止まった狩り・期限切れの再確認・読めない台帳 | ${postureCount} |`,
     `| 測れなかった項目 | ${problems.length} |`,
     '',
     ...section(
@@ -182,6 +189,7 @@ function buildReport({ all, prod, floors, pins, watch, map, generatedAt }) {
     ...movedPins.map((x) => `- ⚠️ \`${x.file}:${x.line}\` \`${x.repo}\` # ${x.tag} — ${x.why}`),
     ...(badPins.length + movedPins.length === 0 ? [] : ['']),
     watchOk && watch.window !== undefined ? renderWatch(watch, map) : '',
+    ...(postureOk ? [renderPosture(posture), ''] : []),
     ...(problems.length === 0 ? [] : ['### 測れなかった項目', '', ...problems.map((p) => `- ${p}`), '']),
     '手順は `docs/SECURITY_AUDIT.md` の「依存の勧告」。床の台帳は ' +
       '`scripts/lint-dependencies.cjs` の `SECURITY_FLOORS`、測り直しは `npm run audit:floors`。',
@@ -197,6 +205,7 @@ function buildReport({ all, prod, floors, pins, watch, map, generatedAt }) {
       lowFloors: lowFloors.length,
       badPins: badPins.length,
       watch: watchCount,
+      posture: postureCount,
       movedPins: movedPins.length,
       unmeasured: problems.length,
       actionable,
@@ -206,6 +215,7 @@ function buildReport({ all, prod, floors, pins, watch, map, generatedAt }) {
     floors: floors ?? [],
     pins: pinList,
     watch: watchOk ? watch : null,
+    posture: postureOk ? posture : null,
     problems,
     actionable,
     markdown,
@@ -273,6 +283,9 @@ function selfTest() {
     ['脅威ウォッチが null (実行できず) なら数える', { all: [], prod: [], floors: [], watch: null }, 1],
     ['悪用中 (KEV) の依存を数える', { all: [], prod: [], floors: [], watch: { ...CLEAN_WATCH, exploited: [{ id: 'GHSA-x' }] } }, 1],
     ['急増した未対応の弱点の種類を数える', { all: [], prod: [], floors: [], watch: { ...CLEAN_WATCH, hotGaps: [{ cwe: 'CWE-1' }] } }, 1],
+    ['姿勢を渡さなければ載せない (省略できる)', { all: [], prod: [], floors: [], posture: undefined }, 0],
+    ['姿勢が null (導けず) なら数える', { all: [], prod: [], floors: [], posture: null }, 1],
+    ['止まった面・期限切れ・読めない台帳を数える', { all: [], prod: [], floors: [], posture: { surfaces: [], stalled: [], recheckDue: [], thinClasses: [], queue: [], problems: ['x'], actionable: 3 } }, 3],
     ['脅威ウォッチが測れなかった項目は 1 件ずつ数える', { all: [], prod: [], floors: [], watch: { ...CLEAN_WATCH, problems: ['KEV', 'OSV'] } }, 2],
   ];
   let bad = 0;
@@ -344,6 +357,15 @@ function selfTest() {
   return 0;
 }
 
+/** 台帳から次の一手を導く。読めなければ null (報告が「測れなかった」と言う)。 */
+function derivePosture(now) {
+  try {
+    return analyzePosture(JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'security', 'threat-ledger.json'), 'utf8')), now);
+  } catch {
+    return null;
+  }
+}
+
 async function main(argv) {
   if (argv.includes('--self-test')) return selfTest();
   const map = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'security', 'weakness-map.json'), 'utf8'));
@@ -361,6 +383,7 @@ async function main(argv) {
     pins: auditPins(),
     watch,
     map,
+    posture: derivePosture(generatedAt),
     generatedAt,
   });
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
@@ -368,7 +391,7 @@ async function main(argv) {
   console.log(report.markdown);
   console.log(
     `\n要対応 ${report.actionable} 件 (prod ${report.summary.prod} / dev ${report.summary.dev} / ` +
-      `低い床 ${report.summary.lowFloors} / 不正な固定 ${report.summary.badPins} / 脅威ウォッチ ${report.summary.watch} / 測れず ${report.summary.unmeasured})`,
+      `低い床 ${report.summary.lowFloors} / 不正な固定 ${report.summary.badPins} / 脅威ウォッチ ${report.summary.watch} / 姿勢 ${report.summary.posture} / 測れず ${report.summary.unmeasured})`,
   );
   // **報告する道具なので、勧告が在っても exit 0。** 週次の予定実行を赤くしても
   // 見る人がいない (誰の PR も待っていない)。要対応は Issue に出る。

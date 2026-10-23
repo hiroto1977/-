@@ -83,6 +83,13 @@ const REQUIRED_FUSES: Readonly<Record<string, { value: boolean; why: string }>> 
       '追加の特権の危険 (乗っ取られたレンダラーが fetch で任意の file:// を読む) は、窓の session の門 ' +
       '(fileRequestGate · threat: T-140) が要求の側で閉じる。fuse を false に戻す前に、梱包物で窓が出ることを測ること。',
   },
+  onlyLoadAppFromAsar: {
+    value: true,
+    why:
+      'Electron は app.asar → app/ の順に探す。false だと app.asar を消して resources/app/ にコードを置くだけで、' +
+      '署名済みバイナリが他人のコードを実行する (2026-10-23 に梱包物で実測: false = 置いたコードが走った · true = 走らない · threat: T-166)。' +
+      '実測は npm run smoke:packaged が毎回行う。',
+  },
 };
 
 describe('electron-builder の fuse は値まで固定する', () => {
@@ -99,8 +106,14 @@ describe('electron-builder の fuse は値まで固定する', () => {
    * 新しい fuse を足したとき、既定値のまま放置してよいとは限らない ——
    * 増減したらここで気付いて、判断してから台帳へ足す。
    */
-  it('★ fuse の鍵は 5 つ (増減したら中身を判断すること)', () => {
+  it('★ fuse の鍵は 6 つ (増減したら中身を判断すること)', () => {
     expect(Object.keys(config.electronFuses ?? {}).sort()).toEqual(Object.keys(REQUIRED_FUSES).sort());
+  });
+
+  it('★ onlyLoadAppFromAsar は true — app.asar を消して resources/app を置く差し替えを止める (threat: T-166)', () => {
+    expect(config.electronFuses?.onlyLoadAppFromAsar, REQUIRED_FUSES.onlyLoadAppFromAsar?.why).toBe(true);
+    // enableEmbeddedAsarIntegrityValidation は意図して未設定 (mac / win の署名つき梱包を測れるまで入れない。T-166 の fix に理由)
+    expect(config.electronFuses).not.toHaveProperty('enableEmbeddedAsarIntegrityValidation');
   });
 
   /*
