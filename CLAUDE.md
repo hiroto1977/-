@@ -1343,6 +1343,11 @@ npm run lint             # eslint . --max-warnings 0 (flat config in eslint.conf
 npm run smoke            # xvfb + Electron screenshot smoke test of every page
 npm run smoke:app        # 実物の `electron .` を起動して 8 秒生きているか
                          #   (主プロセス dist-electron/main.js を通す唯一の検査)
+npm run smoke:packaged   # 梱包した実物 (electron-builder --dir · app.asar + fuse 適用済み) を起動して窓に UI が出ることを見る
+                         #   (Linux 専用 · xvfb-run -a · playwright が要る)。smoke:app は梱包なしの `electron .` なので、
+                         #   出荷設定の fuse が梱包版の窓を白くする誤り (T-165 · 2026-10-23 実測) は映らない。
+                         #   梱包物の fuse が electron-builder.json と一致すること・窓が app.asar の index.html を読み UI が出ること・
+                         #   file:// の任意読み取りが止まること(T-140 の門)を見る。e2e.yml の手動 / ラベル実行に入っている
 npm run scaffold -- <id> "<Label>" <ICON> [bearer|oauth|json]   # generate a new service end-to-end
 ```
 

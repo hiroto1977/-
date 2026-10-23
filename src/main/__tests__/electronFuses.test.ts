@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { readOriginalSource } from '../../shared/__tests__/originalSource';
+import { stripComments } from '../../shared/__tests__/stripNonCode';
 
 /*
  * **配布物の fuse は、値まで留める。**
@@ -74,10 +76,12 @@ const REQUIRED_FUSES: Readonly<Record<string, { value: boolean; why: string }>> 
     why: 'true だと --inspect で主プロセスへデバッガを繋げる = 記憶の中の鍵まで読める。',
   },
   grantFileProtocolExtraPrivileges: {
-    value: false,
+    value: true,
     why:
-      'true だと file:// の文書に追加の特権が付く。取り込んだ HTML を開かせる経路が ' +
-      '将来できたときに効いてくる。',
+      'false にすると asar 内の file:// の読み込みが ERR_FILE_NOT_FOUND で失敗し、梱包版の窓が白くなる ' +
+      '(2026-10-23 に Electron 45.0.0 の梱包物で実測: false = chrome-error://chromewebdata/ · true = 起動して UI が出る · threat: T-165)。' +
+      '追加の特権の危険 (乗っ取られたレンダラーが fetch で任意の file:// を読む) は、窓の session の門 ' +
+      '(fileRequestGate · threat: T-140) が要求の側で閉じる。fuse を false に戻す前に、梱包物で窓が出ることを測ること。',
   },
 };
 
@@ -113,6 +117,19 @@ describe('electron-builder の fuse は値まで固定する', () => {
    */
   it('配布物に入れるのはビルド成果物だけ', () => {
     expect(config.files).toEqual(['dist/**/*', 'dist-electron/**/*', 'build/icon.png', 'package.json']);
+  });
+
+  /*
+   * **fuse を true にしている安全は、要求の門に依る** (threat: T-165 · T-140)。門 (`installFileRequestGate`) が
+   * 窓の session に付いていなければ、乗っ取られたレンダラーが `fetch('file:///…')` で任意のファイルを読める。
+   * 2 つを別々に留めても、片方だけが外れる形が開くので、ここで結ぶ。
+   */
+  it('★ grantFileProtocolExtraPrivileges を true にする間は、主プロセスが file:// の門を窓へ付ける (threat: T-165)', () => {
+    const main = stripComments(readOriginalSource(join(__dirname, '../main.ts')));
+    if (config.electronFuses?.grantFileProtocolExtraPrivileges === true) {
+      expect(main, 'fuse が true なのに file:// の門が付いていない (T-140)').toMatch(/installFileRequestGate\(\s*win\.webContents\.session/);
+    }
+    expect(config.electronFuses?.grantFileProtocolExtraPrivileges, 'false は梱包版を白画面にする (T-165)').toBe(true);
   });
 
   it('理由が空の項目が無い', () => {

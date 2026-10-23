@@ -101,6 +101,12 @@ jobs:
       - name: Smoke (real desktop app starts)
         run: xvfb-run -a npm run smoke:app
 
+      # **梱包した実物 (app.asar + fuse 適用済み) を起動する** (threat: T-165)。上の smoke:app は
+      # `electron .` (梱包なし・fuse は既定) なので、出荷設定の fuse が梱包版の窓を白くする誤りは映らない。
+      # 2026-10-23 に Electron 45.0.0 の梱包物で実測するまで、誰も梱包版を起動していなかった。
+      - name: Smoke (packaged app: fuses applied, window renders)
+        run: xvfb-run -a npm run smoke:packaged
+
       # フル版 → 退避 → LITE 版 → フル版を戻す。`build:web` は emptyOutDir で
       # dist/ を掃除するため、この順序でないと片方が消える (pages.yml と同じ罠)。
       - name: Build both browser targets

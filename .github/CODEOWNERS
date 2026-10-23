@@ -156,6 +156,7 @@
 /.gitignore @hiroto1977
 /src/main/__tests__/eraseAll.test.ts @hiroto1977
 /src/main/__tests__/eraseVsSecretsWrite.test.ts @hiroto1977
+/src/main/__tests__/electronFuses.test.ts @hiroto1977
 /src/main/__tests__/keychainBackend.test.ts @hiroto1977
 /src/main/__tests__/mainWindow.test.ts @hiroto1977
 /src/main/__tests__/oauth.test.ts @hiroto1977

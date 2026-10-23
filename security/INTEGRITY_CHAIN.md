@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 339
+- ブロック数: 341
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `6f432d09bccf57e1f8def2bbfcd55613dba23b10535979d4a24e160c9a88741e`
+- 末尾(tip)ハッシュ: `d863604b8563b53f69f9e1992e692975af317aa373411d9274d12e9844ccb959`
 - 保護対象: 124 ファイル
 
 ## ブロック
@@ -352,6 +352,8 @@
 | 336 | `f2a797f99a1ad324` | `5a25905b23ab6d9b` | `beecec68acc06ee9` | update safeFilename.ts |
 | 337 | `f5436e5173dbf8dc` | `beecec68acc06ee9` | `ece15b7b7d47030a` | update dependency-audit.yml |
 | 338 | `b11a6b76345c63da` | `ece15b7b7d47030a` | `6f432d09bccf57e1` | update keychainBackend.ts,secrets.ts |
+| 339 | `fada959eae1b8b65` | `6f432d09bccf57e1` | `7271480c31120940` | update e2e.yml,electron-builder.json,artifact-freshness.cjs |
+| 340 | `bfa0970cdc357059` | `7271480c31120940` | `d863604b8563b53f` | update lint-malware.cjs |
 
 ## 保護対象ファイル
 

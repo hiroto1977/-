@@ -14,9 +14,9 @@
  * 「検査したつもり」がいちばん危ない。壊れていないことを確かめたのではなく、
  * **壊す前のものを見ていた**うえ、出力は完全に正常で区別が付かない。
  *
- * 成果物を相手にする道具は 8 つある (`e2e` (= `e2e:lite`) / `e2e:ollama` / `perf` /
- * `smoke` / `smoke:app` / `exp:overflow` / `exp:runtime` / `exp:soak`)。**判定はここ 1 つ**に
- * 置く —— 8 か所へ書き写すと、比べているのが写しになる。母集団は `artifactFreshness.test.ts` が
+ * 成果物を相手にする道具は 9 つある (`e2e` (= `e2e:lite`) / `e2e:ollama` / `perf` /
+ * `smoke` / `smoke:app` / `smoke:packaged` / `exp:overflow` / `exp:runtime` / `exp:soak`)。**判定はここ 1 つ**に
+ * 置く —— 9 か所へ書き写すと、比べているのが写しになる。母集団は `artifactFreshness.test.ts` が
  * package.json の `e2e*` / `perf*` / `smoke*` / `exp*` から導く (2026-09-17 パス 304 まで検査は
  * 3 本を手で並べており、`e2e:ollama` と `smoke:app` が鮮度を見ていないことに誰も気づかなかった。
  * パス 305 で exp:* 3 本 —— 実験と呼ばれるが結論は同じく成果物から出る —— を母集団に足した)。

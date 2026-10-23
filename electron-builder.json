@@ -58,6 +58,6 @@
     "enableCookieEncryption": true,
     "enableNodeOptionsEnvironmentVariable": false,
     "enableNodeCliInspectArguments": false,
-    "grantFileProtocolExtraPrivileges": false
+    "grantFileProtocolExtraPrivileges": true
   }
 }
