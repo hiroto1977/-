@@ -11,7 +11,7 @@
  * `electron-builder --dir` で実測し、同じバイナリの fuse だけ `true` にすると起動して UI が出た。
  * `smoke:app` は `electron .` (fuse が既定) を起動するので、この設定の誤りは構造的に映らない。
  *
- * ## 何を見るか
+ * ## 何を見るか (4. resources/app に置いた外のコードが実行されない = onlyLoadAppFromAsar · T-166)
  *
  *   1. 梱包物の fuse が `electron-builder.json` の `electronFuses` と一致する (焼き込まれた値を読む)
  *   2. 窓が `app.asar` の `index.html` を読み込み、UI が出る (url が chrome-error でない・本文が空でない・bridge が在る)
@@ -177,6 +177,24 @@ async function run() {
       return 1;
     }
     console.log(`窓: ${w.url.replace(/^file:\/\/.*?(app\.asar)/, 'file://…/$1')} · 本文 ${w.bodyChars} 字 · bridge あり · file:// の任意読み取りは止まる`);
+    // 4. onlyLoadAppFromAsar: resources/app/ に置いた別のコードを Electron が先に読まないこと (T-166)。
+    //    Electron は app.asar → app/ の順に探す (実測: app.asar が在れば app/ は読まれない)。fuse が無いと
+    //    app.asar を消して app/ を置くだけで、梱包物の外から差し替えたコードが走る。fuse はその落とし先を塞ぐ。
+    child.kill('SIGTERM');
+    await new Promise((res) => setTimeout(res, 1500));
+    const marker = path.join(tmp, 'planted-code-ran');
+    const planted = path.join(out, 'linux-unpacked', 'resources', 'app');
+    fs.rmSync(path.join(out, 'linux-unpacked', 'resources', 'app.asar'), { force: true });
+    fs.mkdirSync(planted, { recursive: true });
+    fs.writeFileSync(path.join(planted, 'package.json'), JSON.stringify({ name: 'planted', main: 'main.js' }));
+    fs.writeFileSync(path.join(planted, 'main.js'), `require('node:fs').writeFileSync(${JSON.stringify(marker)}, 'ran'); require('electron').app.quit();`);
+    child = spawn(bin, ['--no-sandbox', `--user-data-dir=${path.join(tmp, 'ud2')}`], { stdio: 'ignore' });
+    await new Promise((res) => setTimeout(res, ALIVE_MS));
+    if (fs.existsSync(marker)) {
+      console.error('❌ app.asar を消して resources/app に置いた外のコードが実行された —— onlyLoadAppFromAsar が効いていない (T-166)');
+      return 1;
+    }
+    console.log('差し替え: app.asar を消して resources/app に置いた外のコードは実行されない (onlyLoadAppFromAsar)');
     console.log('✅ 梱包した実物が起動し、UI が出た');
     return 0;
   } finally {

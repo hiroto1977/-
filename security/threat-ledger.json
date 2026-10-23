@@ -2810,6 +2810,21 @@
         "file": "src/main/__tests__/electronFuses.test.ts",
         "test": "★ grantFileProtocolExtraPrivileges を true にする間は、主プロセスが file:// の門を窓へ付ける (threat: T-165)"
       }
+    },
+    {
+      "id": "T-166",
+      "found": "2026-10-23",
+      "foundBy": "利用者の指示『先回りしてセキュリティを進化させ続けて』を受けて測定: huntBacklog に未設定のまま残っていた fuse onlyLoadAppFromAsar を、T-165 で作った smoke:packaged の梱包物 (Electron 45.0.0 · Linux 未署名) で測った。",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "medium",
+      "title": "fuse onlyLoadAppFromAsar が未設定で、梱包物の app.asar を消して resources/app/ に別のコードを置くだけで、署名済みバイナリが他人のコードを実行できた。",
+      "status": "fixed",
+      "fix": "electron-builder.json の electronFuses に onlyLoadAppFromAsar: true を足した。実測 (smoke:packaged に差し替えの探りを足した): app.asar が在れば resources/app/ は読まれない (Electron は app.asar → app/ の順)。app.asar を消して resources/app/ に main を置くと、fuse=false では置いたコードが実行され (印のファイルが出来た)、fuse=true では実行されない。通常の起動 (窓に UI・bridge・file:// の止まり方) は fuse=true でも変わらない。electronFuses.test.ts の必要値に追加し、鍵の集合を 6 つにした。enableEmbeddedAsarIntegrityValidation は入れていない: electron-builder は mac / win だけ asar のハッシュを実行ファイルへ埋めるので、Linux のこの環境では効きも壊れ方も測れず、署名と対で効くため、mac / win の署名つき梱包を測れるまで見送る (huntBacklog に残した)。攻撃者がインストール先に書き込める時点で実行ファイル自体の差し替えも可能なので、これは署名の無い環境での多層防御であり、完全な防御ではない。",
+      "regression": {
+        "file": "src/main/__tests__/electronFuses.test.ts",
+        "test": "★ onlyLoadAppFromAsar は true — app.asar を消して resources/app を置く差し替えを止める (threat: T-166)"
+      }
     }
   ],
   "huntBacklog": [
@@ -2920,8 +2935,8 @@
     },
     {
       "surface": "main-ipc",
-      "item": "ヒューズ onlyLoadAppFromAsar / enableEmbeddedAsarIntegrityValidation は未設定",
-      "why": "2026-10-16 に electron-builder.json を読んだ: 改竄された app.asar を実行させない 2 つのヒューズが無い。PKG-1 の判断と同時に決める (asar の整合性検証は署名と対で効く)。"
+      "item": "ヒューズ enableEmbeddedAsarIntegrityValidation は未設定 (onlyLoadAppFromAsar は T-166 で設定済み)",
+      "why": "2026-10-23: electron-builder は mac / win だけ asar のヒューズ用ハッシュを実行ファイルへ埋める。Linux のこの環境では測れず、署名と対で効くため、mac / win の署名つき梱包 (release.yml の runner) で窓が出ることを測ってから入れる。白画面 (T-165) を再発させない。"
     },
     {
       "surface": "renderer",

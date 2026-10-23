@@ -58,6 +58,7 @@
     "enableCookieEncryption": true,
     "enableNodeOptionsEnvironmentVariable": false,
     "enableNodeCliInspectArguments": false,
-    "grantFileProtocolExtraPrivileges": true
+    "grantFileProtocolExtraPrivileges": true,
+    "onlyLoadAppFromAsar": true
   }
 }

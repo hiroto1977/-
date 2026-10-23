@@ -2855,6 +2855,22 @@
       "leafCount": 124,
       "note": "update lint-malware.cjs",
       "hash": "d863604b8563b53f69f9e1992e692975af317aa373411d9274d12e9844ccb959"
+    },
+    {
+      "index": 341,
+      "prevHash": "d863604b8563b53f69f9e1992e692975af317aa373411d9274d12e9844ccb959",
+      "merkleRoot": "3f1740b58e104a427e4e313ef351ff18948c8b3463a543a2ba25da63a25e9c32",
+      "leafCount": 124,
+      "note": "update electron-builder.json",
+      "hash": "094f9ff558f4e110342e289f8b955191773079e0d4788a3a3a5a2069c977e0c6"
+    },
+    {
+      "index": 342,
+      "prevHash": "094f9ff558f4e110342e289f8b955191773079e0d4788a3a3a5a2069c977e0c6",
+      "merkleRoot": "9fce4e97158073747658173d5fffa39ff91a7a0412a536aad4c67397209ac86c",
+      "leafCount": 124,
+      "note": "update lint-malware.cjs",
+      "hash": "1ae266fcef58bce63c88625549558cc5d9cd3f7cf111ff0e41390aae43231e6a"
     }
   ],
   "tipManifest": {
@@ -2880,7 +2896,7 @@
     "assets/sw.js": "0320f925b8da1242c0aa3783e332a8abb87323331767aeebcab7dab309f6189d",
     "docs/PROXY_EXAMPLE.md": "97948e981e8fb5305e69d2bcbd6f57783523382ffb0ca6fada43305263de7cd0",
     "docs/SECURITY_CHAIN.md": "e6f2886fbab792b4c4ec27ee8849a8642d1b28576c05e3ca627f2daea05cda29",
-    "electron-builder.json": "afc968cc3b7816a44000753bc3bf80838c8afec04bd4850f44dc2fe55b6925d5",
+    "electron-builder.json": "f8a974dbeef20a9476498df0247f3ed00fc85cdfb3e3033e7da22558a1bd968e",
     "eslint.config.js": "a2a56ffbe45108aeb9313c52c8c0e382febfc72c4cc78884b60cbb88a653fa7f",
     "launcher/ServiceHubを開く.bat": "83d4b252a777556d3830acc7e226cd009fea006bb3c47fb677ab57ecaeb9da82",
     "orchestration/knowledge-context.cjs": "2e31acac95ced213b569fe3e467e66f4aff3106c93188ee79d056d1481a022c3",
@@ -2898,7 +2914,7 @@
     "scripts/lib/strip-non-code.cjs": "64ee25ca006e9e566691a99526994dd36fc0ba6b05e536d39979701b96d681ed",
     "scripts/lib/tracked-cross-check.cjs": "c31f327dfb6e6a2d40bc8b3460cc8d9f4994c7cf84b6416086c644749021fee5",
     "scripts/lint-artifact-csp.cjs": "4ad77f0358365ca03fdfbed5d6713358ecc487b958a608cf1d5bad78f0e90530",
-    "scripts/lint-malware.cjs": "ee13e3dcb967a3bdc61459eb65f015eb33d24ac3c4be2dae1735dcae17af47db",
+    "scripts/lint-malware.cjs": "4f5990554ad8b2db1e116891af3df33fb187547086143b8a857cf6444925b207",
     "scripts/lint-sample-data.cjs": "55f548e97d05e03f409ccbb2f87c3ecceb1d66e4851d24f2100dedd7670f15ed",
     "scripts/make-autoinstall.sh": "71afe4bf3cb203f539be4b0c5624ab06448f7cbffd5caf0d3704a395c4284a8a",
     "scripts/make-live-usb.sh": "ece38ba927100fc42f4227fd149f88b9ffbdd67b9fc9d3a37dcbfebff74ca2b1",
