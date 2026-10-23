@@ -28,11 +28,11 @@ let userDataDir = '';
 vi.mock('electron', () => ({
   app: { getPath: () => userDataDir },
   safeStorage: {
-    isEncryptionAvailable: () => encryptionAvailable,
-    encryptString: (v: string) => Buffer.from(`enc:${v}`, 'utf8'),
-    decryptString: (b: Buffer) => {
+    isAsyncEncryptionAvailable: async () => encryptionAvailable,
+    encryptStringAsync: async (v: string) => Buffer.from(`enc:${v}`, 'utf8'),
+    decryptStringAsync: async (b: Buffer) => {
       if (decryptThrows) throw new Error('Error while decrypting the ciphertext provided to safeStorage');
-      return b.toString('utf8').replace(/^enc:/, '');
+      return { shouldReEncrypt: false, result: b.toString('utf8').replace(/^enc:/, '') };
     },
   },
 }));

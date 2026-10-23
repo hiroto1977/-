@@ -84,7 +84,7 @@ export async function loadTalentState(deps: StateDeps = {}): Promise<StoredTalen
   if (file.kind !== 'read') return file;
   // 封緘を開けてから中身を判定する (パス 133)。開けられなければ、その理由を「読めなかった」に載せる ——
   // 画面は「空の状態を表示 / このまま保存すると上書き」と言う (パス 121 の注記がそのまま出口になる)。
-  const opened = unsealJsonDocument(file.text);
+  const opened = await unsealJsonDocument(file.text);
   if (!opened.ok) return { kind: 'unreadable', reason: atRestUnreadableReason(opened.reason) };
   return readStoredTalent(opened.json);
 }
@@ -123,7 +123,7 @@ export async function saveTalentState(state: TalentState, deps: StateDeps = {}):
   const clean = sanitizeTalentState(state);
   await mkdir(path.dirname(p));
   // 封緘して書く (パス 133): 部署名・氏名を含むので、secrets.json / 感情ログと同じ約束 (main/atRest.ts) を通す。
-  await write(p, sealJsonDocument(JSON.stringify(clean)));
+  await write(p, await sealJsonDocument(JSON.stringify(clean)));
   return clean;
 }
 

@@ -23,23 +23,27 @@ export function resetSafeStorageState(): void {
 
 export interface SafeStorageMock {
   readonly safeStorage: {
-    readonly isEncryptionAvailable: () => boolean;
+    /**
+     * 非同期の可否。**同期の `isEncryptionAvailable` / `encryptString` / `decryptString` は意図して置かない**
+     * (Electron 45 で非推奨・46 で削除 —— 製品が同期へ戻ると、この代役に無いので呼んだ瞬間に落ちる)。
+     */
+    readonly isAsyncEncryptionAvailable: () => Promise<boolean>;
     /** Linux の backend (threat: T-041 —— `basic_text` はハードコードされた鍵)。 */
     readonly getSelectedStorageBackend: () => string;
-    readonly encryptString: (value: string) => Buffer;
-    readonly decryptString: (buffer: Buffer) => string;
+    readonly encryptStringAsync: (value: string) => Promise<Buffer>;
+    readonly decryptStringAsync: (buffer: Buffer) => Promise<{ readonly shouldReEncrypt: boolean; readonly result: string }>;
   };
 }
 
 export function electronSafeStorageMock(): SafeStorageMock {
   return {
     safeStorage: {
-      isEncryptionAvailable: () => safeStorageState.encryptionAvailable,
+      isAsyncEncryptionAvailable: async () => safeStorageState.encryptionAvailable,
       getSelectedStorageBackend: () => safeStorageState.backend,
-      encryptString: (v: string) => Buffer.from(`enc:${v}`, 'utf8'),
-      decryptString: (b: Buffer) => {
+      encryptStringAsync: async (v: string) => Buffer.from(`enc:${v}`, 'utf8'),
+      decryptStringAsync: async (b: Buffer) => {
         if (safeStorageState.decryptThrows) throw new Error('Error while decrypting the ciphertext provided to safeStorage');
-        return b.toString('utf8').replace(/^enc:/, '');
+        return { shouldReEncrypt: false, result: b.toString('utf8').replace(/^enc:/, '') };
       },
     },
   };

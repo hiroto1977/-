@@ -11,9 +11,9 @@ vi.mock('electron', () => ({
   app: { getPath: () => EMOTIONS_UD, getVersion: () => '1.0.0', isPackaged: false },
   // main 側の log-mood は保存先を OS のキーチェーンで封緘する (main/atRest.ts・パス 132)。可逆な代役で足りる。
   safeStorage: {
-    isEncryptionAvailable: () => true,
-    encryptString: (v: string) => Buffer.from(`enc:${v}`, 'utf8'),
-    decryptString: (b: Buffer) => b.toString('utf8').replace(/^enc:/, ''),
+    isAsyncEncryptionAvailable: async () => true,
+    encryptStringAsync: async (v: string) => Buffer.from(`enc:${v}`, 'utf8'),
+    decryptStringAsync: async (b: Buffer) => ({ shouldReEncrypt: false, result: b.toString('utf8').replace(/^enc:/, '') }),
   },
 }));
 

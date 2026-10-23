@@ -34,10 +34,10 @@ export function isAtRestEnvelope(v: unknown): v is AtRestEnvelope {
 }
 
 /** 平文 → 保存形。キーチェーンが無ければ `plain:` (難読化)。 */
-export function sealAtRest(plaintext: string): string {
+export async function sealAtRest(plaintext: string): Promise<string> {
   // threat: T-041 —— 書く側は「本当のキーチェーンか」を訊く (読む側 openAtRest は訊かない)。
-  if (realKeychainAvailable()) {
-    return safeStorage.encryptString(plaintext).toString('base64');
+  if (await realKeychainAvailable()) {
+    return (await safeStorage.encryptStringAsync(plaintext)).toString('base64');
   }
   // Stryker disable next-line StringLiteral: `'utf8'` を空にしても Node は utf8 へ落とすため同じ base64 になる
   // (実測: Buffer.from('é','') は Buffer.from('é','utf8') と同じ・`oauth.ts` の Basic 認証と同じ理由)。
@@ -55,26 +55,28 @@ export type OpenAtRest =
  * 保存形 → 平文。**投げない** —— 理由を返す (キーチェーンが無い / 壊れているか別の鍵)。
  * 呼ぶ側が利用者向けの文と「履歴を消去」の道を添える。
  */
-export function openAtRest(sealed: string): OpenAtRest {
+export async function openAtRest(sealed: string): Promise<OpenAtRest> {
   if (sealed.startsWith(PLAIN_PREFIX)) {
     return { ok: true, text: Buffer.from(sealed.slice(PLAIN_PREFIX.length), 'base64').toString('utf8') };
   }
-  if (!safeStorage.isEncryptionAvailable()) return { ok: false, reason: 'no-keychain' };
+  if (!(await safeStorage.isAsyncEncryptionAvailable())) return { ok: false, reason: 'no-keychain' };
   try {
-    return { ok: true, text: safeStorage.decryptString(Buffer.from(sealed, 'base64')) };
+    // `shouldReEncrypt` は読まない: 返る `result` は復号できた平文で、読む道は書かない (鍵の世代が
+    // 進んだ値は次に書くときに新しい鍵で包まれる)。
+    return { ok: true, text: (await safeStorage.decryptStringAsync(Buffer.from(sealed, 'base64'))).result };
   } catch {
     return { ok: false, reason: 'undecryptable' };
   }
 }
 
 /** 今の環境でどう封緘されるか (設定画面や文書が言うため)。 */
-export function atRestMechanism(): 'os-keychain' | 'obfuscated' {
-  return realKeychainAvailable() ? 'os-keychain' : 'obfuscated'; // threat: T-041
+export async function atRestMechanism(): Promise<'os-keychain' | 'obfuscated'> {
+  return (await realKeychainAvailable()) ? 'os-keychain' : 'obfuscated'; // threat: T-041
 }
 
 /** 封緘して書く JSON 文書の封筒 (文字列)。呼ぶ側は中身の JSON 文字列だけ渡す。 */
-export function sealJsonDocument(json: string): string {
-  return JSON.stringify({ v: 2, sealed: sealAtRest(json) });
+export async function sealJsonDocument(json: string): Promise<string> {
+  return JSON.stringify({ v: 2, sealed: await sealAtRest(json) });
 }
 
 export type UnsealedDocument =
@@ -90,7 +92,7 @@ export type UnsealedDocument =
  * `sealed` は「開けた物か」の印 —— 開けた中身が JSON でなければ壊れた封緘と言えるが、
  * 平文が JSON でないのは 2026-09-09 までの壊れ方で、読み手がその文を持っている。
  */
-export function unsealJsonDocument(raw: string): UnsealedDocument {
+export async function unsealJsonDocument(raw: string): Promise<UnsealedDocument> {
   let parsed: unknown;
   try {
     parsed = JSON.parse(raw);
@@ -99,7 +101,7 @@ export function unsealJsonDocument(raw: string): UnsealedDocument {
     // ここでも返すと、同じ結果の出口が 2 つになる (`secrets.ts` の `getValidToken` と同じ形)。
   }
   if (!isAtRestEnvelope(parsed)) return { ok: true, json: raw, sealed: false };
-  const opened = openAtRest(parsed.sealed);
+  const opened = await openAtRest(parsed.sealed);
   return opened.ok ? { ok: true, json: opened.text, sealed: true } : opened;
 }
 

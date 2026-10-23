@@ -40,10 +40,10 @@ vi.mock('electron', () => ({
     getPath: (name: string) => (name === 'userData' ? userDataDir : path.join(userDataDir, `WRONG-${name}`)),
   },
   safeStorage: {
-    isEncryptionAvailable: () => encryptionAvailable,
+    isAsyncEncryptionAvailable: async () => encryptionAvailable,
     // OS キーチェーンの可逆な代役。`plain:` 経路を通っていないことを示せれば足りる。
-    encryptString: (v: string) => Buffer.from(`enc:${v}`, 'utf8'),
-    decryptString: (b: Buffer) => b.toString('utf8').replace(/^enc:/, ''),
+    encryptStringAsync: async (v: string) => Buffer.from(`enc:${v}`, 'utf8'),
+    decryptStringAsync: async (b: Buffer) => ({ shouldReEncrypt: false, result: b.toString('utf8').replace(/^enc:/, '') }),
   },
 }));
 
