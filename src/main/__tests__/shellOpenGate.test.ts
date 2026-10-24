@@ -172,8 +172,17 @@ describe('shellTargetOrNull — 入力の形', () => {
   });
 
   it('上限ちょうどは長さでは弾かない', async () => {
-    const pad = MAX_SHELL_PATH_LENGTH - path.join(root, '.md').length;
-    const p = path.join(root, `${'a'.repeat(pad)}.md`);
+    // 長さは**ディレクトリ**で稼ぐ (葉の名前は T-177 から 256 字までなので、葉だけ伸ばすと長さの門に届く前に断られる)。
+    // 1 要素も 255 字が上限なので、200 字の階層を重ねて最後の 1 つで 1024 ちょうどに合わせる。
+    const leaf = 'a.md';
+    let dir = root;
+    const total = (d: string) => path.join(d, leaf).length;
+    while (total(dir) + path.sep.length + 200 <= MAX_SHELL_PATH_LENGTH) dir = path.join(dir, 'd'.repeat(200));
+    const rest = MAX_SHELL_PATH_LENGTH - total(dir) - path.sep.length;
+    if (rest > 0) dir = path.join(dir, 'e'.repeat(rest));
+    await fs.mkdir(dir, { recursive: true });
+    const p = path.join(dir, leaf);
+    await fs.writeFile(p, 'x');
     expect(p.length).toBe(MAX_SHELL_PATH_LENGTH);
     expect(await shellTargetOrNull(p, root)).toBe(p);
   });
@@ -326,5 +335,17 @@ describe('shellTargetOrNull — realpath の前に字面の閉じ込めを見る
     } finally {
       spy.mockRestore();
     }
+  });
+});
+
+/**
+ * 開く物の葉の名前も、書き出しの関門と同じ規則 (2026-10-24 · threat: T-177)。
+ */
+describe('shellTargetOrNull — 葉の名前 (threat: T-177)', () => {
+  it.each(['CON.md', 'nul.svg', 'x.txt:s.html', 'report.md.'])('★ %s は開かない', async (leaf) => {
+    const root2 = await fs.mkdtemp(path.join((await import('node:os')).tmpdir(), 'shell-leaf-'));
+    const p = path.join(root2, leaf);
+    await fs.writeFile(p, 'x').catch(() => undefined);
+    expect(await shellTargetOrNull(p, root2)).toBeNull();
   });
 });

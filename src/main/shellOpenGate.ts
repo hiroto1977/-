@@ -29,6 +29,7 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { exportWriteRoot } from './clients/exportPaths';
+import { isSafeFilename } from '../shared/safeFilename';
 
 /**
  * OS に開かせてよい拡張子。**実行され得るものは一つも入れない。**
@@ -89,5 +90,7 @@ export async function shellTargetOrNull(
   // 前方一致で通ってしまう (兄弟ディレクトリの取り違え)。
   if (!real.startsWith(root + path.sep)) return null;
   if (!SHELL_OPEN_EXTS.has(path.extname(real).toLowerCase())) return null;
+  // threat: T-177 —— 書き出しの関門 (`isSafeExportPath`) と同じ葉の名前の規則。
+  if (!isSafeFilename(path.basename(real))) return null;
   return real;
 }

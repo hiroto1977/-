@@ -121,16 +121,22 @@ describe('isSafeExportPath', () => {
   it('長さの上限はちょうど 1024 文字まで', () => {
     // 上限がどちら側に付いているか (1024 を含むのか外すのか) を固定する。
     // 実装は `> 1024` で弾くので、1024 ちょうどは通る。
-    const prefix = `${ROOT}${path.sep}data${path.sep}`;
+    // 葉の名前は T-177 から 256 字までなので、長さは**ホームの深さ**で稼ぐ (親は data/ 直下の固定なので、
+    // 葉以外に伸ばせるのはホームだけ)。
     const ext = '.html';
-    const fill = 1024 - prefix.length - ext.length;
-    const exact = `${prefix}${'a'.repeat(fill)}${ext}`;
-    expect(exact).toHaveLength(1024);
-    expect(isSafeExportPath(exact, HOME, ext)).toBe(true);
+    const leaf = `${'a'.repeat(60)}${ext}`;
+    const build = (n: number) => {
+      const home = path.join(HOME, 'h'.repeat(n));
+      return { home, file: path.join(exportWriteRoot(home), leaf) };
+    };
+    const n = 1 + (1024 - build(1).file.length);
+    const exact = build(n);
+    expect(exact.file).toHaveLength(1024);
+    expect(isSafeExportPath(exact.file, exact.home, ext)).toBe(true);
 
-    const oneOver = `${prefix}${'a'.repeat(fill + 1)}${ext}`;
-    expect(oneOver).toHaveLength(1025);
-    expect(isSafeExportPath(oneOver, HOME, ext)).toBe(false);
+    const oneOver = build(n + 1);
+    expect(oneOver.file).toHaveLength(1025);
+    expect(isSafeExportPath(oneOver.file, oneOver.home, ext)).toBe(false);
   });
 
   it('is not fooled by a sibling directory sharing the root prefix', () => {
@@ -369,5 +375,20 @@ describe('ensurePrivateExportRoot — 根を 0700 にする (threat: T-176)', ()
     const file = path.join(holder, 'f');
     await fs.writeFile(file, 'x');
     expect(await ensurePrivateExportRoot(file)).toBe(0);
+  });
+});
+
+/**
+ * 葉の名前が Windows で別物になる形は書き出さない (2026-10-24 · threat: T-177)。直す前は、予約された装置名
+ * (`CON.html`)・代替データストリーム (`x.txt:s.html`)・末尾のドットが書き出しの関門を通った。
+ */
+describe('isSafeExportPath — 葉の名前 (threat: T-177)', () => {
+  const dir = path.join(exportWriteRoot(HOME));
+  it.each(['CON.html', 'nul.html', 'aux.html', 'COM1.html', 'x.txt:s.html', 'a.html.'])('★ %s は断る', (leaf) => {
+    expect(isSafeExportPath(path.join(dir, leaf), HOME, leaf.endsWith('.') ? '.' : '.html')).toBe(false);
+  });
+  it('対照: ふつうの名前は通る', () => {
+    expect(isSafeExportPath(path.join(dir, 'business-dashboard.html'), HOME, '.html')).toBe(true);
+    expect(isSafeExportPath(path.join(dir, 'console.html'), HOME, '.html')).toBe(true);
   });
 });

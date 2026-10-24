@@ -44,6 +44,7 @@
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { isSafeFilename } from '../../shared/safeFilename';
 
 /**
  * 書き出しの既定の書き込み。**0600 で書き、既存ファイルの緩い権限も直す。**
@@ -315,6 +316,8 @@ export function isSafeExportPath(filePath: string, home: string, ext: string): b
   if (filePath.length > 1024) return false;
   if (/[\0\r\n]/.test(filePath)) return false;
   if (!filePath.endsWith(ext)) return false;
+  // threat: T-177 —— 葉の名前が Windows で別物になる形 (予約された装置名・`:` の代替データストリーム・末尾のドット/空白)。
+  if (!isSafeFilename(path.basename(filePath))) return false;
   // threat: T-060 —— **正規化済みの絶対パスだけを受ける** (2026-10-15 · パス 523)。
   // T-042 (下) は「親は固定の 2 つだけ」と述べたが、比べていたのは `path.resolve` した後の親で、
   // 書き出しが `mkdir -p` へ渡すのは**生の** `filePath` の親だった —— `..` を挟んだ

@@ -5,6 +5,7 @@ import {
   MAX_BACKUP_IMPORT_RECORDS,
   backupRecordLimitError,
 } from '../importFile';
+import { COLLECTION_SHAPES } from '../collectionShapes';
 import { readOriginalSource } from '../../../shared/__tests__/originalSource';
 import { stripComments } from '../../../shared/__tests__/stripNonCode';
 
@@ -63,8 +64,7 @@ describe('復元の件数の天井は、全行を描く一覧すべてに在る 
     'kpi-actuals',
   ];
 
-  it('★ 7 つとも台帳にあり、実在する collection 名である', async () => {
-    const { COLLECTION_SHAPES } = await import('../collectionShapes');
+  it('★ 7 つとも台帳にあり、実在する collection 名である', () => {
     for (const c of NAMES) {
       expect(BACKUP_COLLECTION_RECORD_LIMITS[c], c).toBeGreaterThan(0);
       expect(Object.hasOwn(COLLECTION_SHAPES, c), `${c} は形の表に無い (綴り違いで天井が効かない)`).toBe(true);

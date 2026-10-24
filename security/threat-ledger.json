@@ -2991,6 +2991,21 @@
         "file": "src/main/clients/__tests__/exportPaths.test.ts",
         "test": "★ 緩い根 (0755 / 0777) は 0700 に直す"
       }
+    },
+    {
+      "id": "T-177",
+      "found": "2026-10-24",
+      "foundBy": "AI による脅威の狩り(監査役 OS 固有 Linux/Windows)の報告 E1 を、防御側が path.win32 に差し替えた実物の関数で確かめた(isSafeExportPath は data\\\\x.html:a.html・CON.html を、shellTargetOrNull は x.txt:s.html・nul.svg を、isSafeFilename は CON・nul.svg・a:b.svg・末尾ドットを通した)。昇格(コード実行・外への書き込み)は示せていないので重さは low",
+      "surface": "main-ipc",
+      "class": "living-off-the-land",
+      "severity": "low",
+      "title": "書き出し・開く・ライブラリの 3 つの名前の関門が、Windows で別物になる葉の名前を通す: 予約された装置名(CON/NUL/COM1…、拡張子が付いても装置)・NTFS の代替データストリーム(a.txt:evil.html)・末尾のドットと空白(Windows が黙って落とす)。書き出しが消える/装置へ出る・本体 0 バイトの裏に隠れる・検査した名前と作られる名前が別になる",
+      "status": "fixed",
+      "fix": "isSafeFilename が `:`・末尾のドット/空白・予約された装置名(最初の `.` より前で見る)を断る。isSafeExportPath と shellTargetOrNull も葉の名前に同じ関門を通す(3 つの関門が同じ規則)。Linux でも断る(Linux で作った名前が Windows の同期先で別物になるため)。未確認: Windows の ShellExecute が代替データストリームをどう扱うか(実機未確認)・8.3 短縮名は葉に来ても無害と見て対象外。",
+      "regression": {
+        "file": "src/shared/__tests__/safeFilename.test.ts",
+        "test": "%s は断る (%j)"
+      }
     }
   ],
   "huntBacklog": [

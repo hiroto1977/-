@@ -61,11 +61,26 @@ export const MAX_FILENAME_LENGTH = 256;
 const SERVER_SCRIPT_SEGMENT = /(^|\.)(php[0-9]?|phtml|pht|phps|phar)(\.|$)/i;
 const SERVER_CONFIG_NAME = /^(\.htaccess|\.user\.ini|web\.config)$/i;
 
+/**
+ * Windows で別の意味になる名前 (2026-10-24 · threat: T-177)。書き出し先は利用者の選んだフォルダ・
+ * 同期フォルダ・USB で、Windows でも使われる。
+ *  - **予約された装置名** (`CON` `PRN` `AUX` `NUL` `COM1-9` `LPT1-9`、**拡張子が付いても同じ** —— `nul.svg` は装置)。
+ *    書き出しがファイルを作らず消える・装置へ出力される。
+ *  - **`:`** —— NTFS の代替データストリーム (`a.txt:evil.html`) とドライブの指定。本体は 0 バイトのまま裏に載る。
+ *  - **末尾の `.` と空白** —— Windows は黙って落とすので、検査した名前と作られる名前が別になる。
+ * どれも正当な名前ではない (アプリが組み立てる名前は固定の語 + 時刻 + 固定の拡張子)。Linux でも断るのは、
+ * 同じ関門を 2 つの OS で別々に持たない (Linux で作った名前が Windows の同期先で別物になる) ため。
+ */
+const WINDOWS_RESERVED_DEVICE = /^(con|prn|aux|nul|com[0-9\u00b9\u00b2\u00b3]|lpt[0-9\u00b9\u00b2\u00b3])$/i;
+
 export function isSafeFilename(s: unknown): s is string {
   if (typeof s !== 'string') return false;
   if (s === '.' || s === '..') return false;
   if (s.length === 0 || s.length > MAX_FILENAME_LENGTH) return false;
   if (/[\0\r\n/\\]/.test(s)) return false;
+  if (s.includes(':') || /[. ]$/.test(s)) return false;
+  // 予約名は**最初の `.` より前**で見る (`nul.svg` も `CON.tar.gz` も装置)。前後の空白は Windows が落とす。
+  if (WINDOWS_RESERVED_DEVICE.test(s.split('.')[0]!.trim())) return false;
   return !SERVER_SCRIPT_SEGMENT.test(s) && !SERVER_CONFIG_NAME.test(s);
 }
 
