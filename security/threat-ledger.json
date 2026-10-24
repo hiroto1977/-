@@ -1819,7 +1819,7 @@
       "fix": "model は isSafeModelName で検め (空は指定なし・形が違えば送らずに断る)、categories は種類の数を超えたら断る。",
       "regression": {
         "file": "src/main/clients/__tests__/assistant.test.ts",
-        "test": "★ %s model は送らずに断る (threat: T-098)"
+        "test": "★ %s model は要求に載らず、既定のモデルで送る (threat: T-098 / T-170)"
       }
     },
     {
@@ -2885,6 +2885,36 @@
       "regression": {
         "file": "src/shared/__tests__/crownJewels.test.ts",
         "test": "★ prevent と contain が同じ強制物に頼ると落ちる (threat: T-169)"
+      }
+    },
+    {
+      "id": "T-170",
+      "found": "2026-10-24",
+      "foundBy": "AI による脅威の狩り(監査役 surface: ai)の報告を、防御側が実物のコードで確かめた(requestedModel / readRequestedModel が payload の model をそのまま転送。skills・stocks・business・emotions は最初から外している)",
+      "surface": "ai",
+      "class": "denial-of-wallet",
+      "severity": "low",
+      "title": "assistant/chat と chatAll だけが、レンダラーから送られる model を有料 API へそのまま転送する。予算は呼び出し回数しか数えないので、乗っ取られたレンダラーが同じ鍵で最も高価なモデルを毎回選べて費用が増幅される。UI の呼び手で model を渡す物は 0 件",
+      "status": "fixed",
+      "fix": "payload の model を読まない(main の requestedModel と ブラウザ版の readRequestedModel を削除)。モデルは提供者の設定 cfg.model か既定だけで決まる。T-098 の model の形の検査も、巨大・不正な model が要求に載らず既定で送られることを確かめる形へ置き換えた。未確認: 実在のモデル名ごとの価格の倍率(価格表は見ていない)。",
+      "regression": {
+        "file": "src/main/clients/__tests__/assistant.test.ts",
+        "test": "★ payload の model は無視する —— 既定のモデルを送る (threat: T-170)"
+      }
+    },
+    {
+      "id": "T-171",
+      "found": "2026-10-24",
+      "foundBy": "AI による脅威の狩り(監査役 surface: ai)の報告を、防御側が実物のコードで確かめた(T-151 の stripSmuggledChars は assistant の履歴だけ。emotions と advisor の入口は素通し)",
+      "surface": "ai",
+      "class": "ai-phishing",
+      "severity": "low",
+      "title": "T-151(Unicode Tag 文字の除去)が assistant/chat の履歴だけに掛かっており、第三者の文(Gmail の件名・Slack の目的)を運ぶ emotions/analyze-text と、質問欄を送る stocks/advise・business/advise は素通しだった。タグ文字に符号化した指示 39 個が Anthropic への要求本文に 39 個残った",
+      "status": "fixed",
+      "fix": "shared/assistantLimits.ts の stripSmuggledIfString を、型の判定より前に両ビルドの emotions/analyze-text・stocks/advise・business/advise に通す。タグ文字だけの質問は空になって断られる。emotions の出力は 6 つの数と enum に畳まれるので、変えられるのは分類値だけという前提は変えていない。ollama/chat と skills/run-skill の prompt は利用者自身が打つ文なので対象にしていない(強化案)。",
+      "regression": {
+        "file": "src/main/clients/__tests__/advisorSmuggledChars.test.ts",
+        "test": "★ 質問にタグ文字を足しても、要求本文には 1 つも載らない"
       }
     }
   ],

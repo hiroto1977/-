@@ -20,6 +20,7 @@
  * complexity.
  */
 
+import { stripSmuggledIfString } from '../../shared/assistantLimits';
 import { readStateFile } from '../stateFile';
 import { countChars } from '../../shared/inputCeiling';
 import { app } from 'electron';
@@ -309,7 +310,9 @@ function pickDominant(scores: EmotionScores): string {
 }
 
 async function analyzeText(ctx: ActionContext): Promise<ActionData<'emotions/analyze-text'>> {
-  const { text, source } = ctx.payload as unknown as AnalyzeTextPayload;
+  const { source } = ctx.payload as unknown as AnalyzeTextPayload;
+  // 第三者の文 (Gmail / Slack) が来る口。タグ文字に符号化した指示を送る前に落とす (T-171)。
+  const text = stripSmuggledIfString((ctx.payload as unknown as AnalyzeTextPayload).text);
   if (!text || typeof text !== 'string' || text.trim().length === 0) {
     throw new Error('text is required');
   }

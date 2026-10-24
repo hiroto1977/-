@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 344
+- ブロック数: 345
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `25deb67338471519627985938287a853906dfe3090f49e42799f8dce5ea5a76d`
+- 末尾(tip)ハッシュ: `51cf88bf04f5ecf9864d1eadab63918e07def46efa2362ff21c98c9f1c60d151`
 - 保護対象: 124 ファイル
 
 ## ブロック
@@ -357,6 +357,7 @@
 | 341 | `3f1740b58e104a42` | `d863604b8563b53f` | `094f9ff558f4e110` | update electron-builder.json |
 | 342 | `9fce4e9715807374` | `094f9ff558f4e110` | `1ae266fcef58bce6` | update lint-malware.cjs |
 | 343 | `f14f671af1827039` | `1ae266fcef58bce6` | `25deb67338471519` | update e2e.yml |
+| 344 | `aa6d9aa06728ae8f` | `25deb67338471519` | `51cf88bf04f5ecf9` | update assistant.ts,assistantLimits.ts |
 
 ## 保護対象ファイル
 

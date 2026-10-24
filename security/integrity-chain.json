@@ -2879,6 +2879,14 @@
       "leafCount": 124,
       "note": "update e2e.yml",
       "hash": "25deb67338471519627985938287a853906dfe3090f49e42799f8dce5ea5a76d"
+    },
+    {
+      "index": 344,
+      "prevHash": "25deb67338471519627985938287a853906dfe3090f49e42799f8dce5ea5a76d",
+      "merkleRoot": "aa6d9aa06728ae8f104d340b0c17b49801643565d5ddbaf6863eb8ea555b40d8",
+      "leafCount": 124,
+      "note": "update assistant.ts,assistantLimits.ts",
+      "hash": "51cf88bf04f5ecf9864d1eadab63918e07def46efa2362ff21c98c9f1c60d151"
     }
   ],
   "tipManifest": {
@@ -2939,7 +2947,7 @@
     "scripts/verify-e2e-playwright-pin.cjs": "417854f96cbaa4af4dd30a378b722b58093d56e78aa7eaba9bd17df412f57d45",
     "scripts/verify-release-artifacts.cjs": "1bd668bc052b476a9b3f976dc80ddf8faa4f080aed5617d354a8c7647ee9f557",
     "src/main/atomicWrite.ts": "63b6ff1fb7d8990b76409c62556d69f99a14475f73662e89507e8899a32a9c3f",
-    "src/main/clients/assistant.ts": "7cec919b0afe218abb5e6e9b414c9fd1f88378ff9a7e31a7ebe3e6865b76d5db",
+    "src/main/clients/assistant.ts": "3db27c2cdd42569a7bc92c7d2841591b1464550a1905ab66fa4a100803b69c4f",
     "src/main/clients/exportPaths.ts": "3b01bb149b17bd5c05929649d1c6c387546c46796a0031993e09cf4bbb54928a",
     "src/main/clients/types.ts": "0f7eeae150418def1fb8f242f9f010bcb6d947690b2ad085d18276c041b239fa",
     "src/main/eraseAll.ts": "5fabdaeb36193d7cfd06ccbae8712ada1a5ad36787240cd35fb3dcf0a2fdd797",
@@ -2978,7 +2986,7 @@
     "src/shared/ai/credentials.ts": "8217520fe2da3aaacaeae8184d1425682ce75e9c5baf5559ea4eb9cf0d737881",
     "src/shared/ai/providers.ts": "31e4637844d479c5c6b8c43bdd24e9196c2924e0d3e9b467141cbfb73d335e5b",
     "src/shared/aiEndpoint.ts": "806a29d8421e3757132f00ae81b2bac51c43d1d11f70939f52b5acb4160694e6",
-    "src/shared/assistantLimits.ts": "f378f673737e89446232d8697129682d000b2ec34e03e13f51c99f645b045346",
+    "src/shared/assistantLimits.ts": "5f69ea2a0f94056c3e340059723a316bf2268ab64ef57b31103424b62230b367",
     "src/shared/atlassianSite.ts": "e3898d643e76b22877cf0990090a61dc249bc3ccd2058ff3166e13bafea7b931",
     "src/shared/constantTimeEquals.ts": "6656031b29c27a7676840a135aec8d24b97f2358db08e534db47388af1e9e868",
     "src/shared/controlChars.ts": "cf6992b1d0cc2795de1cc1ed605ad51ca375b56d8426cc5622a219658e5724e7",

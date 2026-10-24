@@ -486,14 +486,14 @@ describe('assistant — payload の model / provider の扱い', () => {
     return (JSON.parse(String((init as RequestInit).body)) as { model: string }).model;
   }
 
-  it('model を指定すればそれを送る', async () => {
+  it('★ payload の model は無視する —— 既定のモデルを送る (threat: T-170)', async () => {
     const fetchMock = okFetch();
     await ACTIONS['chat']!({
       token: 'sk-ant-xxx',
       fetch: fetchMock,
-      payload: { model: 'claude-3-5-haiku-latest', messages: [{ role: 'user', content: 'hi' }] },
+      payload: { model: 'claude-opus-4-1', messages: [{ role: 'user', content: 'hi' }] },
     });
-    expect(sentModel(fetchMock)).toBe('claude-3-5-haiku-latest');
+    expect(sentModel(fetchMock)).toBe(ASSISTANT_MODEL);
   });
 
   it('空文字の model は「指定なし」として既定へ倒す', async () => {
@@ -744,17 +744,15 @@ describe('assistant — 残りの境界 (2 巡目の実測から)', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it('chatAll: model を指定すればそれを送る', async () => {
+  it('★ chatAll: payload の model は無視する —— 既定のモデルを送る (threat: T-170)', async () => {
     const fetchMock = okFetch();
     await ACTIONS['chatAll']!({
       token: JSON.stringify({ anthropic: 'sk-ant-a' }),
       fetch: fetchMock,
-      payload: { model: 'claude-3-5-haiku-latest', messages: [{ role: 'user', content: 'hi' }] },
+      payload: { model: 'claude-opus-4-1', messages: [{ role: 'user', content: 'hi' }] },
     });
     const [, init] = fetchMock.mock.calls[0]!;
-    expect((JSON.parse(String((init as RequestInit).body)) as { model: string }).model).toBe(
-      'claude-3-5-haiku-latest',
-    );
+    expect((JSON.parse(String((init as RequestInit).body)) as { model: string }).model).toBe(ASSISTANT_MODEL);
   });
 
   it('chatAll: system が文字列でなければ送らない', async () => {
@@ -784,30 +782,31 @@ describe('assistant — 残りの境界 (2 巡目の実測から)', () => {
 });
 
 /**
- * `model` は型と形を見てから転送する (2026-10-16 · パス 525 · threat: T-098)。直す前は 2,000 万字の
- * `model` が 2,000 万字の要求になった (system・messages には天井が在る・実測)。
+ * `model` は**読まない** (2026-10-24 · threat: T-170。T-098 の 2,000 万字の `model` も、モデルを
+ * 選んで費用を増幅する道も、ここで同時に塞がる)。UI の呼び手で `model` を渡す物は 0 件で、
+ * skills / stocks / business / emotions は最初から外している。
  */
-describe("ACTIONS['chat'] — model の形 (threat: T-098)", () => {
+describe("ACTIONS['chat'] — model は読まない (threat: T-098 / T-170)", () => {
   const call = (model: unknown) => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(jsonResponse({ content: [{ type: 'text', text: 'ok' }] }));
     const p = ACTIONS['chat']!({ token: 'sk-ant-xxx', fetch: fetchMock, payload: { messages: [{ role: 'user', content: 'hi' }], model } });
     return { p, fetchMock };
   };
+  const sent = (fetchMock: ReturnType<typeof vi.fn<typeof fetch>>) =>
+    String((fetchMock.mock.calls[0]![1] as RequestInit).body);
 
-  it.each([['長すぎる', 'x'.repeat(20_000)], ['空白入り', 'a b'], ['スキーム風', 'http://evil/x'], ['..', 'a/../b']])(
-    '★ %s model は送らずに断る (threat: T-098)',
-    async (_n, model) => {
-      const { p, fetchMock } = call(model);
-      await expect(p).rejects.toThrow('model の形が正しくありません');
-      expect(fetchMock).not.toHaveBeenCalled();
-    },
-  );
-
-  it('対照: 正当な model 名・未指定はそのまま通る', async () => {
-    const a = call('claude-sonnet-4-5');
-    await a.p;
-    expect(JSON.parse(String((a.fetchMock.mock.calls[0]![1] as RequestInit).body)).model).toBe('claude-sonnet-4-5');
-    await call(undefined).p;
-    await call('').p;
+  it.each([
+    ['長すぎる', 'x'.repeat(20_000)],
+    ['空白入り', 'a b'],
+    ['スキーム風', 'http://evil/x'],
+    ['..', 'a/../b'],
+    ['高価なモデル', 'claude-opus-4-1'],
+    ['非文字列', { a: 1 }],
+  ])('★ %s model は要求に載らず、既定のモデルで送る (threat: T-098 / T-170)', async (_n, model) => {
+    const { p, fetchMock } = call(model);
+    await p;
+    const body = sent(fetchMock);
+    expect(JSON.parse(body).model).toBe(ASSISTANT_MODEL);
+    expect(body.length).toBeLessThan(2_000);
   });
 });

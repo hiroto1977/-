@@ -252,3 +252,4 @@
 /src/shared/__tests__/threatWatch.test.ts @hiroto1977
 /src/shared/__tests__/securityPosture.test.ts @hiroto1977
 /src/shared/__tests__/crownJewels.test.ts @hiroto1977
+/src/main/clients/__tests__/advisorSmuggledChars.test.ts @hiroto1977

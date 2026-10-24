@@ -1,3 +1,4 @@
+import { stripSmuggledIfString } from '../../shared/assistantLimits';
 import { readFailureBody } from '../../shared/httpLimits';
 import { readStateFile } from '../stateFile';
 import { isoDateFromTimestamp } from '../../shared/isoDate';
@@ -1271,7 +1272,8 @@ interface AnthropicMessagesResponse {
 }
 
 async function askAdvisor(ctx: ActionContext): Promise<ActionData<'stocks/advise'>> {
-  const { question, universe } = ctx.payload as AdvisorPayload;
+  const { universe } = ctx.payload as AdvisorPayload;
+  const question = stripSmuggledIfString((ctx.payload as AdvisorPayload).question);
   // Each input-validation branch is exhaustively tested (empty, oversize,
   // control-char). ConditionalExpression `false` would skip the throw;
   // downstream code would fail differently. Stryker mis-attributes; pin
