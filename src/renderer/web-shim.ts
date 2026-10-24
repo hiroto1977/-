@@ -106,6 +106,7 @@ import {
   latestTurnTooLong,
   MAX_ENSEMBLE_ERROR_CHARS,
   stripSmuggledChars,
+  stripSmuggledIfString,
 } from '../shared/assistantLimits';
 import { externalUrlOrNull } from '../shared/externalUrlGate';
 import {
@@ -148,7 +149,6 @@ import { LIBRARY_HATCH_TEXT } from './data/exportOutcome';
 import type { ExportSinks, SinkOutcome } from './data/exportOutcome';
 import { filenameFromTitle } from '../shared/safeFilename';
 import { chatOllama, loadEndpointSetting, probeOllama } from './network/ollamaWeb';
-import { isSafeModelName } from '../shared/ollama';
 import { parseJsonText } from '../shared/apiResponse';
 import {
   registerSymbol,
@@ -478,15 +478,6 @@ function timedFetchAi(url: string, init: RequestInit): Promise<Response> {
   });
 }
 
-/**
- * 要求の `model` を読む (threat: T-135 · main の assistant.ts `requestedModel` と同じ規則)。
- * 空・型違いは「指定なし」、形が正しくなければ断る —— 黙って既定へ倒すと選んだモデルと違う物で課金される。
- * ブラウザ版だけが「空でない文字列」で通していて、main との非対称だった (パス 543)。
- */
-function readRequestedModel(v: unknown): { model: string | undefined } | { refused: true } {
-  if (typeof v !== 'string' || v.length === 0) return { model: undefined };
-  return isSafeModelName(v) ? { model: v } : { refused: true };
-}
 
 function err<T = never>(code: string, message: string): ActionResult<T> {
   return { ok: false, code, message: redactForMessage(message, ERROR_MESSAGE_MAX_CHARS) };
@@ -627,7 +618,7 @@ async function readAnthropicKey(
 }
 
 async function callAnthropicAdvisor(payload: Record<string, unknown>): Promise<ActionResult<ActionData<'business/advise'>>> {
-  const question = payload['question'];
+  const question = stripSmuggledIfString(payload['question']);
   const qProblem = checkAdvisorQuestion(question);
   if (qProblem !== null) return err('action_failed', ADVISOR_QUESTION_MESSAGES[qProblem]);
 
@@ -724,7 +715,7 @@ async function callAnthropicAdvisor(payload: Record<string, unknown>): Promise<A
 // 指標で分析し、Anthropic に投げてランク提案を得る。投資助言ではない旨を
 // system prompt で制約し、固定の免責を必ず付ける。
 async function callStocksAdvisor(payload: Record<string, unknown>): Promise<ActionResult<ActionData<'stocks/advise'>>> {
-  const question = payload['question'];
+  const question = stripSmuggledIfString(payload['question']);
   const qProblem = checkAdvisorQuestion(question);
   if (qProblem !== null) return err('action_failed', ADVISOR_QUESTION_MESSAGES[qProblem]);
 
@@ -825,7 +816,7 @@ async function callStocksAdvisor(payload: Record<string, unknown>): Promise<Acti
 // emotions/analyze-text: Vault の emotions キーで Anthropic を直接呼び、
 // 感情スコアを正規化して localStorage の分析履歴に保存する。
 async function callEmotionsAnalyze(payload: Record<string, unknown>): Promise<ActionResult<ActionData<'emotions/analyze-text'>>> {
-  const text = payload['text'];
+  const text = stripSmuggledIfString(payload['text']);
   const source = typeof payload['source'] === 'string' ? (payload['source'] as string) : undefined;
   if (typeof text !== 'string' || text.trim().length === 0) return err('action_failed', 'text を入力してください');
   if (countChars(text) > MAX_ANALYZE_TEXT_CHARS)
@@ -957,8 +948,6 @@ async function callAssistantChat(payload: Record<string, unknown>): Promise<Acti
     return err('action_failed', '最後の発話は user である必要があります');
   }
   const system = typeof payload['system'] === 'string' ? clampToCeiling(payload['system'] as string, MAX_ASSISTANT_SYSTEM_CHARS) : '';
-  const modelRead = readRequestedModel(payload['model']);
-  if ('refused' in modelRead) return err('action_failed', 'model の形が正しくありません');
 
   const credsRead = await readAssistantCredsRaw();
   if (!credsRead.ok) return credsRead.res;
@@ -1001,7 +990,6 @@ async function callAssistantChat(payload: Record<string, unknown>): Promise<Acti
       provider: resolved.id,
       cfg: { ...resolved.cfg, browser: true },
       request: {
-        model: modelRead.model,
         system: system || undefined,
         messages: turns,
         maxTokens: 2048,
@@ -1027,8 +1015,6 @@ async function callAssistantChatAll(payload: Record<string, unknown>): Promise<A
     return err('action_failed', '最後の発話は user である必要があります');
   }
   const system = typeof payload['system'] === 'string' ? clampToCeiling(payload['system'] as string, MAX_ASSISTANT_SYSTEM_CHARS) : '';
-  const modelRead = readRequestedModel(payload['model']);
-  if ('refused' in modelRead) return err('action_failed', 'model の形が正しくありません');
 
   const credsRead = await readAssistantCredsRaw();
   if (!credsRead.ok) return credsRead.res;
@@ -1070,8 +1056,7 @@ async function callAssistantChatAll(payload: Record<string, unknown>): Promise<A
           provider: id,
           cfg: { ...configForProvider(id, creds), browser: true },
           request: {
-            model: modelRead.model,
-            system: system || undefined,
+                system: system || undefined,
             messages: turns,
             maxTokens: 2048,
           },

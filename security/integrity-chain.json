@@ -72,6 +72,7 @@
     "src/main/shellOpenGate.ts",
     "src/main/stateFile.ts",
     "src/main/userPresence.ts",
+    "src/main/windowOpen.ts",
     "src/main/windowPrefs.ts",
     "src/preload/preload.ts",
     "src/renderer/data/assistantMarkdown.ts",
@@ -2879,6 +2880,86 @@
       "leafCount": 124,
       "note": "update e2e.yml",
       "hash": "25deb67338471519627985938287a853906dfe3090f49e42799f8dce5ea5a76d"
+    },
+    {
+      "index": 344,
+      "prevHash": "25deb67338471519627985938287a853906dfe3090f49e42799f8dce5ea5a76d",
+      "merkleRoot": "aa6d9aa06728ae8f104d340b0c17b49801643565d5ddbaf6863eb8ea555b40d8",
+      "leafCount": 124,
+      "note": "update assistant.ts,assistantLimits.ts",
+      "hash": "51cf88bf04f5ecf9864d1eadab63918e07def46efa2362ff21c98c9f1c60d151"
+    },
+    {
+      "index": 345,
+      "prevHash": "51cf88bf04f5ecf9864d1eadab63918e07def46efa2362ff21c98c9f1c60d151",
+      "merkleRoot": "3b3826d8429c059d3c5ee11e74cf571ead7a385200d83f9a1bb1751405fc877f",
+      "leafCount": 124,
+      "note": "update userPresence.ts",
+      "hash": "65c0841d00db2354a3d1ed803543c916c18ccdf75eb671afb5df7d2905cc8daa"
+    },
+    {
+      "index": 346,
+      "prevHash": "65c0841d00db2354a3d1ed803543c916c18ccdf75eb671afb5df7d2905cc8daa",
+      "merkleRoot": "9b8f59a5f1edc90e745d38583e07c955f30339a6a775043a3c56bec9bfc6f8f7",
+      "leafCount": 124,
+      "note": "update main.ts,presenceWiring.ts,userPresence.ts",
+      "hash": "304738880784cef5e179b8f724ea095af1dfdec5d6924f38a46190ea4cdbbcae"
+    },
+    {
+      "index": 347,
+      "prevHash": "304738880784cef5e179b8f724ea095af1dfdec5d6924f38a46190ea4cdbbcae",
+      "merkleRoot": "c9687c3505731c4499862c18468683dd9ebf15a76424994bc46206d953ee3532",
+      "leafCount": 125,
+      "note": "update integrity-chain.cjs,windowOpen.ts",
+      "hash": "e54095171294627f175faa672d510d580ca4109f24dbb3db5dd3cc406a2bafc5"
+    },
+    {
+      "index": 348,
+      "prevHash": "e54095171294627f175faa672d510d580ca4109f24dbb3db5dd3cc406a2bafc5",
+      "merkleRoot": "2ecbd52ee5df0838bf91924ef1de0a8c4aad4557e7aaf6acda10b58c706e0c65",
+      "leafCount": 125,
+      "note": "update windowOpen.ts",
+      "hash": "14a185f753b2adae6bf337c505e790583c3dfa670137a9690313ef7b28cb16d9"
+    },
+    {
+      "index": 349,
+      "prevHash": "14a185f753b2adae6bf337c505e790583c3dfa670137a9690313ef7b28cb16d9",
+      "merkleRoot": "9d3ce8bfbdc55367b76915fd43d98e4730427831687b4243093d8d536a38c7c0",
+      "leafCount": 125,
+      "note": "update exportPaths.ts,main.ts",
+      "hash": "501622b1ca291af8788dca5c8642b355715e0013beff06900abd33b9c8a69720"
+    },
+    {
+      "index": 350,
+      "prevHash": "501622b1ca291af8788dca5c8642b355715e0013beff06900abd33b9c8a69720",
+      "merkleRoot": "f9bbb4e265681a698d9da6da1dec649016da83110e78cc8f35d1ef699e97cda4",
+      "leafCount": 125,
+      "note": "update exportPaths.ts,shellOpenGate.ts,safeFilename.ts",
+      "hash": "e2d67572484aab48a93d3da7cf57a8e5fad7ad0293cdfbd62d99f67aee48453f"
+    },
+    {
+      "index": 351,
+      "prevHash": "e2d67572484aab48a93d3da7cf57a8e5fad7ad0293cdfbd62d99f67aee48453f",
+      "merkleRoot": "47a427ea6d21cd0ab7131175aa8ea0b84cabdc6011ddbcf6c9eada11a521dea1",
+      "leafCount": 125,
+      "note": "update exportPaths.ts,main.ts,userPresence.ts,safeFilename.ts",
+      "hash": "6c9b4774a9f6e1ad0905fd48f3006988ece2fdab7a7010d97978a25564485d84"
+    },
+    {
+      "index": 352,
+      "prevHash": "6c9b4774a9f6e1ad0905fd48f3006988ece2fdab7a7010d97978a25564485d84",
+      "merkleRoot": "b4e41d7921221d0b3f306f3ad78fd73a1eb76498fd5e2902e50d5fa5fd780657",
+      "leafCount": 125,
+      "note": "update userPresence.ts",
+      "hash": "0312b0429354021646efc406088a0659c611372d4806975013a08a0ca35ffdfc"
+    },
+    {
+      "index": 353,
+      "prevHash": "0312b0429354021646efc406088a0659c611372d4806975013a08a0ca35ffdfc",
+      "merkleRoot": "3b8c4827414a006e3e1e59cbaf57a82ec1645695956c3bb43180874aea0bb4a9",
+      "leafCount": 125,
+      "note": "update main.ts,userPresence.ts",
+      "hash": "a2e7ac9714738a290f21c38c007ae4bd65e4c09fb99f898aaea4d86bd3a2f345"
     }
   ],
   "tipManifest": {
@@ -2913,7 +2994,7 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "d385ddfc52ec74abf184207bfbb1ac655e730db2b7c6d7e758e35e67e79a5737",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "9524bb820b1da183a5ae029ba4c753ffb9a45e7cd34120d108d2a1f0bfe0a437",
+    "scripts/integrity-chain.cjs": "42595c19c089b9248b17f1563f33fcba34e822ba005eca4a5058077e1bb7f346",
     "scripts/knowledge-autopilot.cjs": "ee8f7ae4a4ad29dda6c02f83c113c45fa1648522f807e711aa86b7746f372968",
     "scripts/lib/artifact-freshness.cjs": "543a7ff9c57bcf9d4936374ac89b8a3a7e2cf7c27bac8bad595fc98778841828",
     "scripts/lib/json-for-script.cjs": "cb79bf1fb2f3c10c6854ec16d9c12bb0695dee5561751333db4531545702fd70",
@@ -2939,19 +3020,20 @@
     "scripts/verify-e2e-playwright-pin.cjs": "417854f96cbaa4af4dd30a378b722b58093d56e78aa7eaba9bd17df412f57d45",
     "scripts/verify-release-artifacts.cjs": "1bd668bc052b476a9b3f976dc80ddf8faa4f080aed5617d354a8c7647ee9f557",
     "src/main/atomicWrite.ts": "63b6ff1fb7d8990b76409c62556d69f99a14475f73662e89507e8899a32a9c3f",
-    "src/main/clients/assistant.ts": "7cec919b0afe218abb5e6e9b414c9fd1f88378ff9a7e31a7ebe3e6865b76d5db",
-    "src/main/clients/exportPaths.ts": "3b01bb149b17bd5c05929649d1c6c387546c46796a0031993e09cf4bbb54928a",
+    "src/main/clients/assistant.ts": "3db27c2cdd42569a7bc92c7d2841591b1464550a1905ab66fa4a100803b69c4f",
+    "src/main/clients/exportPaths.ts": "c0821f65eed08078681fbcc3eec662a8e58d47d053300f6ba0b66665a46fbbca",
     "src/main/clients/types.ts": "0f7eeae150418def1fb8f242f9f010bcb6d947690b2ad085d18276c041b239fa",
     "src/main/eraseAll.ts": "5fabdaeb36193d7cfd06ccbae8712ada1a5ad36787240cd35fb3dcf0a2fdd797",
     "src/main/fileRequestGate.ts": "d9a5d3f23e57c537d959b8aa2b63457b889563e5668964d4ff4576eea61a1746",
     "src/main/keychainBackend.ts": "0b2787b70d038860d74648a9806258bdf84cc08e562497365b5d5d850506682a",
-    "src/main/main.ts": "d69b8f5b76f5c8a5e34e0cd7825dac6ab40374f57e1ccd73e2b2abd4153b225c",
+    "src/main/main.ts": "3e3892919f1b9aa59321f2fd7b6673e359a22df5d9d565132a211d0e44bce5cf",
     "src/main/oauth.ts": "361df5884e2b332e721701fe677390450bf98c7b665fe331dd1e79620da7a5b7",
-    "src/main/presenceWiring.ts": "7635c526db39c60913638072bf11e9802d0fc0bd0382cb3334bd49fa32ee6ab2",
+    "src/main/presenceWiring.ts": "84334ae2023fa2c2c4931571839f365ca228ff817788e5c146550f01ca790336",
     "src/main/secrets.ts": "3c9ce41d0077a2740c97232d12dd6641143546a0b463cae8eaa226ab24442bcb",
-    "src/main/shellOpenGate.ts": "83d21dd21674694edd0e835c9acfdc6c79fea3ff8eedd2d5e589dfeecbc7548b",
+    "src/main/shellOpenGate.ts": "ff1c7841ac01426d30754f7a1f049a9a4a43788734e78b4b52a27ff6dfc1e2b7",
     "src/main/stateFile.ts": "984eebe8582b3c6c88669d17e778932f6b87a682640d1f162acd182d5947169b",
-    "src/main/userPresence.ts": "f0e6ab1617123aa93801288d2aeb19855a5d8f5c6ddb7a42aad007d6e5657858",
+    "src/main/userPresence.ts": "3e900c2ec2494dabfd0cc74d754b45116941547fa7b05582bddebba84bd755ca",
+    "src/main/windowOpen.ts": "c8a61aa3e51991590950c909beab67ec5261eef64f6b8ab6c9e67b61eb3de42d",
     "src/main/windowPrefs.ts": "0bccea9e29b489da1b4a7962eaa53e237cf93fed9d4692371a3a43a6a4985dee",
     "src/preload/preload.ts": "21fc645271dd2064f063fc439d888eb4dcef32d08d1030d92d9cb8ff2a4040a6",
     "src/renderer/data/assistantMarkdown.ts": "25ead9bb21e7b59a9e35d3101664f6ecb426cc5b4771118726fc7d389c6a96cc",
@@ -2978,7 +3060,7 @@
     "src/shared/ai/credentials.ts": "8217520fe2da3aaacaeae8184d1425682ce75e9c5baf5559ea4eb9cf0d737881",
     "src/shared/ai/providers.ts": "31e4637844d479c5c6b8c43bdd24e9196c2924e0d3e9b467141cbfb73d335e5b",
     "src/shared/aiEndpoint.ts": "806a29d8421e3757132f00ae81b2bac51c43d1d11f70939f52b5acb4160694e6",
-    "src/shared/assistantLimits.ts": "f378f673737e89446232d8697129682d000b2ec34e03e13f51c99f645b045346",
+    "src/shared/assistantLimits.ts": "5f69ea2a0f94056c3e340059723a316bf2268ab64ef57b31103424b62230b367",
     "src/shared/atlassianSite.ts": "e3898d643e76b22877cf0990090a61dc249bc3ccd2058ff3166e13bafea7b931",
     "src/shared/constantTimeEquals.ts": "6656031b29c27a7676840a135aec8d24b97f2358db08e534db47388af1e9e868",
     "src/shared/controlChars.ts": "cf6992b1d0cc2795de1cc1ed605ad51ca375b56d8426cc5622a219658e5724e7",
@@ -2996,7 +3078,7 @@
     "src/shared/privateTarget.ts": "a3164b12eced1dec0d06a39a92564f11ea4a73fe1a97ad005730d2e582387789",
     "src/shared/proxyEndpoint.ts": "e43b36c93eeaf5515b474fa5be4ab3f070cb13f616382a5f636db711df0f995e",
     "src/shared/redact.ts": "0f87ac977c493be02ba33bdc7550585215b9b008753c917fb9b446a90e6a725f",
-    "src/shared/safeFilename.ts": "a689e51d7490a672ecc65df5ff7c9972d131da4e7f75184e8272976d1e27143f",
+    "src/shared/safeFilename.ts": "f84d319b882db4768b70c03d8c61b62e0dbaee9226d891cc100091c9c62b7f3e",
     "src/shared/scanTarget.ts": "c6c887034c33e3f3d22a590e2dc86177fc21312ede7e3f4a0581ec6d5d1e6132",
     "src/shared/tokenInput.ts": "d1c869c86e057639de7b110d2fbdc56dcaf51ce20aa6b17a195b76a5001ba287",
     "src/shared/tokenResponse.ts": "47725e779acda9f6f0af1105aaf90bb7a9cf3016cd63869cec3841fc58d32121",

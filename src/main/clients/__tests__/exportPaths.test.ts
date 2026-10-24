@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import path from 'node:path';
 import os from 'node:os';
 import { promises as fs } from 'node:fs';
-import { exportParentDirs, exportRoot, exportWriteRoot, isSafeExportPath, writeExportFile, repairExportPermissions } from '../exportPaths';
+import { exportParentDirs, exportRoot, exportWriteRoot, isSafeExportPath, writeExportFile, repairExportPermissions, ensurePrivateExportRoot } from '../exportPaths';
 
 // 2026-07 security audit: every renderer-supplied export path must land inside
 // ~/.local/business-hub. Before this module the four per-service copies of the
@@ -121,16 +121,22 @@ describe('isSafeExportPath', () => {
   it('長さの上限はちょうど 1024 文字まで', () => {
     // 上限がどちら側に付いているか (1024 を含むのか外すのか) を固定する。
     // 実装は `> 1024` で弾くので、1024 ちょうどは通る。
-    const prefix = `${ROOT}${path.sep}data${path.sep}`;
+    // 葉の名前は T-177 から 256 字までなので、長さは**ホームの深さ**で稼ぐ (親は data/ 直下の固定なので、
+    // 葉以外に伸ばせるのはホームだけ)。
     const ext = '.html';
-    const fill = 1024 - prefix.length - ext.length;
-    const exact = `${prefix}${'a'.repeat(fill)}${ext}`;
-    expect(exact).toHaveLength(1024);
-    expect(isSafeExportPath(exact, HOME, ext)).toBe(true);
+    const leaf = `${'a'.repeat(60)}${ext}`;
+    const build = (n: number) => {
+      const home = path.join(HOME, 'h'.repeat(n));
+      return { home, file: path.join(exportWriteRoot(home), leaf) };
+    };
+    const n = 1 + (1024 - build(1).file.length);
+    const exact = build(n);
+    expect(exact.file).toHaveLength(1024);
+    expect(isSafeExportPath(exact.file, exact.home, ext)).toBe(true);
 
-    const oneOver = `${prefix}${'a'.repeat(fill + 1)}${ext}`;
-    expect(oneOver).toHaveLength(1025);
-    expect(isSafeExportPath(oneOver, HOME, ext)).toBe(false);
+    const oneOver = build(n + 1);
+    expect(oneOver.file).toHaveLength(1025);
+    expect(isSafeExportPath(oneOver.file, oneOver.home, ext)).toBe(false);
   });
 
   it('is not fooled by a sibling directory sharing the root prefix', () => {
@@ -321,5 +327,68 @@ describe('書き出し先は正規化済みの絶対パスだけ (threat: T-060)
   it('対照: 正規化済みの絶対パスは今までどおり通る (threat: T-060)', () => {
     expect(isSafeExportPath(inRoot('data/y.html'), HOME, '.html')).toBe(true);
     expect(isSafeExportPath(inRoot('data/templates/card.svg'), HOME, '.svg')).toBe(true);
+  });
+});
+
+/**
+ * 書き出し根は本人だけ (2026-10-24 · threat: T-176)。直す前は umask 任せで、umask 000 では 777 になり、
+ * 別ユーザーが根の中のファイルを unlink / rename (差し替え) できた。
+ */
+describe('ensurePrivateExportRoot — 根を 0700 にする (threat: T-176)', () => {
+  const mk = async () => fs.mkdtemp(path.join(os.tmpdir(), 'export-root-'));
+  const modeOf = async (p: string) => (await fs.lstat(p)).mode & 0o777;
+
+  it('★ 緩い根 (0755 / 0777) は 0700 に直す', async () => {
+    for (const loose of [0o755, 0o775, 0o777]) {
+      const root = await mk();
+      await fs.chmod(root, loose);
+      expect(await ensurePrivateExportRoot(root)).toBe(1);
+      expect(await modeOf(root)).toBe(0o700);
+    }
+  });
+
+  it('★ 無ければ最初から 0700 で作る (作ってから chmod したのではない = 戻り値 0)', async () => {
+    const parent = await mk();
+    const root = path.join(parent, 'business-hub');
+    expect(await ensurePrivateExportRoot(root)).toBe(0);
+    expect(await modeOf(root)).toBe(0o700);
+  });
+
+  it('対照: 既に 0700 なら触らない (0)', async () => {
+    const root = await mk();
+    await fs.chmod(root, 0o700);
+    expect(await ensurePrivateExportRoot(root)).toBe(0);
+  });
+
+  it('★ 根が symlink なら辿らない (根の外の実体の権限を変えない)', async () => {
+    const outside = await mk();
+    await fs.chmod(outside, 0o755);
+    const holder = await mk();
+    const link = path.join(holder, 'root-link');
+    await fs.symlink(outside, link);
+    expect(await ensurePrivateExportRoot(link)).toBe(0);
+    expect(await modeOf(outside)).toBe(0o755);
+  });
+
+  it('根がファイルなら何もしない (投げない)', async () => {
+    const holder = await mk();
+    const file = path.join(holder, 'f');
+    await fs.writeFile(file, 'x');
+    expect(await ensurePrivateExportRoot(file)).toBe(0);
+  });
+});
+
+/**
+ * 葉の名前が Windows で別物になる形は書き出さない (2026-10-24 · threat: T-177)。直す前は、予約された装置名
+ * (`CON.html`)・代替データストリーム (`x.txt:s.html`)・末尾のドットが書き出しの関門を通った。
+ */
+describe('isSafeExportPath — 葉の名前 (threat: T-177)', () => {
+  const dir = path.join(exportWriteRoot(HOME));
+  it.each(['CON.html', 'nul.html', 'aux.html', 'COM1.html', 'x.txt:s.html', 'a.html.'])('★ %s は断る', (leaf) => {
+    expect(isSafeExportPath(path.join(dir, leaf), HOME, leaf.endsWith('.') ? '.' : '.html')).toBe(false);
+  });
+  it('対照: ふつうの名前は通る', () => {
+    expect(isSafeExportPath(path.join(dir, 'business-dashboard.html'), HOME, '.html')).toBe(true);
+    expect(isSafeExportPath(path.join(dir, 'console.html'), HOME, '.html')).toBe(true);
   });
 });

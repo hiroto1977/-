@@ -42,27 +42,27 @@ async function loadHub(): Promise<Hub> {
 const ASK = [{ role: 'user', content: 'こんにちは' }];
 const BAD_MODELS = ['../x', 'a b', `m${String.fromCharCode(0)}x`, 'x'.repeat(300), 'm\ninjected'];
 
-describe('ブラウザ版: model の形が正しくなければ、鍵を使う前・ネットワークへ出る前に断る (threat: T-135)', () => {
+describe('ブラウザ版: model は読まない (threat: T-170 · T-135 の model の形の検査はそれに置き換わった) と、universe の銘柄の関門 (threat: T-135)', () => {
   beforeEach(() => {
     vi.stubGlobal('fetch', vi.fn(() => Promise.reject(new Error('network'))));
   });
 
-  it('★ chat / chatAll: 形の合わない model は断る (文面は main と同じ)', async () => {
+  it('★ chat / chatAll: payload の model は読まない —— 形の合わない model も、正しい model も要求に載らない (threat: T-170)', async () => {
     const hub = await loadHub();
     for (const action of ['chat', 'chatAll']) {
-      for (const model of BAD_MODELS) {
-        const r = await hub.invoke('assistant', action, { messages: ASK, model });
-        expect(r, `${action} ${JSON.stringify(model).slice(0, 20)}`).toEqual({
-          ok: false,
-          code: 'action_failed',
-          message: 'model の形が正しくありません',
-        });
+      for (const model of [...BAD_MODELS, 'claude-opus-4-1']) {
+        await hub.invoke('assistant', action, { messages: ASK, model });
       }
     }
-    expect(globalThis.fetch).not.toHaveBeenCalled();
+    const f = globalThis.fetch as unknown as ReturnType<typeof vi.fn>;
+    expect(f).toHaveBeenCalled();
+    for (const call of f.mock.calls) {
+      const body = String((call[1] as RequestInit | undefined)?.body ?? '');
+      for (const model of [...BAD_MODELS, 'claude-opus-4-1']) expect(body).not.toContain(JSON.stringify(model).slice(1, -1));
+    }
   });
 
-  it('対照: 正しい model 名・空の model は断らず、次の関門 (ネットワーク) まで進む', async () => {
+  it('対照: 正しい model 名・空の model でも断らず、次の関門 (ネットワーク) まで進む', async () => {
     const hub = await loadHub();
     for (const model of ['claude-sonnet-4-5', 'llama3.2:latest', '']) {
       const r = await hub.invoke('assistant', 'chat', { messages: ASK, model });

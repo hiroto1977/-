@@ -43,7 +43,6 @@ import {
   resolveProvider,
 } from '../../shared/ai/credentials';
 import { runAiChat } from '../../shared/ai/chat';
-import { isSafeModelName } from '../../shared/ollama';
 import type { ActionData, EnsembleAnswer } from '../../shared/actionData';
 
 
@@ -94,6 +93,7 @@ export interface ChatTurn {
 interface ChatPayload {
   messages?: unknown;
   system?: unknown;
+  /** 読まない (T-170)。互換のため型にだけ残す。 */
   model?: unknown;
   /** 呼び出す AI プロバイダ ('anthropic'|'openai'|'gemini'|'ollama'|'compat')。省略時は既定。 */
   provider?: unknown;
@@ -138,20 +138,19 @@ export function extractAssistantText(res: AnthropicResponse): string {
 }
 
 /**
- * 要求の `model` (threat: T-098 · パス 525)。以前は型も長さも見ずに提供元へ転送し、2,000 万字の `model` が
- * 2,000 万字の要求になった (system・messages は天井があるのに `model` だけ素通り・実測)。
- * 空は「指定なし」、形が正しくなければ断る (黙って既定へ倒すと、選んだモデルと違う物で課金される)。
+ * 要求の `model` は**読まない** (threat: T-098 · パス 525 → T-170 · 2026-10-24)。
+ *
+ * T-098 は `model` の形 (長さ・文字種) を検めたが、**どのモデルを選べるか**は塞いでいなかった。
+ * 乗っ取られたレンダラーが同じ鍵で最も高価なモデルを毎回選べ、予算 (`userPresence`) は呼び出しの
+ * 回数しか数えないので費用が増幅された (Denial of Wallet)。UI の呼び手で `model` を渡す物は 0 件で、
+ * skills / stocks / business / emotions は最初から payload の `model` を外している。
+ * モデルは提供者の設定 (`cfg.model`) か既定だけで決まる。
  */
-function requestedModel(model: unknown): string | undefined {
-  if (typeof model !== 'string' || model.length === 0) return undefined;
-  if (!isSafeModelName(model)) throw new Error('model の形が正しくありません');
-  return model;
-}
 
 async function chat(
   ctx: ActionContext,
 ): Promise<ActionData<'assistant/chat'>> {
-  const { messages, system, model, provider } = ctx.payload as unknown as ChatPayload;
+  const { messages, system, provider } = ctx.payload as unknown as ChatPayload;
   // 最新の発話は切らずに断る (パス 112)。履歴の窓 (`sanitizeMessages`) とは別の判断。
   if (latestTurnTooLong(messages)) throw new Error(inputTooLongMessage('入力'));
   const turns = sanitizeMessages(messages);
@@ -190,7 +189,6 @@ async function chat(
     provider: resolved.id,
     cfg: resolved.cfg,
     request: {
-      model: requestedModel(model),
       system: sys || undefined,
       messages: turns,
       maxTokens: ASSISTANT_MAX_TOKENS,
@@ -217,7 +215,7 @@ async function providers(ctx: ActionContext): Promise<ActionData<'assistant/prov
  *   - 1 社も設定が無ければ chat と同趣旨のエラーを投げる (UI は決定論フォールバックへ)。
  */
 async function chatAll(ctx: ActionContext): Promise<ActionData<'assistant/chatAll'>> {
-  const { messages, system, model } = ctx.payload as unknown as ChatPayload;
+  const { messages, system } = ctx.payload as unknown as ChatPayload;
   // chat と同じ (パス 112)。
   if (latestTurnTooLong(messages)) throw new Error(inputTooLongMessage('入力'));
   const turns = sanitizeMessages(messages);
@@ -253,8 +251,7 @@ async function chatAll(ctx: ActionContext): Promise<ActionData<'assistant/chatAl
           provider: id,
           cfg: configForProvider(id, creds),
           request: {
-            model: requestedModel(model),
-            system: sys || undefined,
+                  system: sys || undefined,
             messages: turns,
             maxTokens: ASSISTANT_MAX_TOKENS,
           },

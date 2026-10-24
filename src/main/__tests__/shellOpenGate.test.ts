@@ -171,9 +171,29 @@ describe('shellTargetOrNull — 入力の形', () => {
     expect(await shellTargetOrNull(long, root)).toBeNull();
   });
 
+  it('★ 上限を超える長さは、葉が短くても (ディレクトリで伸びていても) 弾く (葉の名前の関門に頼らない)', async () => {
+    // 葉の名前は T-177 から 256 字までなので、上の検査の長い葉は長さの門に届く前に葉の関門が落とす。
+    // 長さの門そのものは、ディレクトリで 1 つ超える形で確かめる (存在しないパス —— realpath は字面のまま残す)。
+    let dir = root;
+    const leaf = 'a.md';
+    while (path.join(dir, leaf).length <= MAX_SHELL_PATH_LENGTH) dir = path.join(dir, 'd'.repeat(200));
+    const p = path.join(dir, leaf);
+    expect(p.length).toBeGreaterThan(MAX_SHELL_PATH_LENGTH);
+    expect(await shellTargetOrNull(p, root)).toBeNull();
+  });
+
   it('上限ちょうどは長さでは弾かない', async () => {
-    const pad = MAX_SHELL_PATH_LENGTH - path.join(root, '.md').length;
-    const p = path.join(root, `${'a'.repeat(pad)}.md`);
+    // 長さは**ディレクトリ**で稼ぐ (葉の名前は T-177 から 256 字までなので、葉だけ伸ばすと長さの門に届く前に断られる)。
+    // 1 要素も 255 字が上限なので、200 字の階層を重ねて最後の 1 つで 1024 ちょうどに合わせる。
+    const leaf = 'a.md';
+    let dir = root;
+    const total = (d: string) => path.join(d, leaf).length;
+    while (total(dir) + path.sep.length + 200 <= MAX_SHELL_PATH_LENGTH) dir = path.join(dir, 'd'.repeat(200));
+    const rest = MAX_SHELL_PATH_LENGTH - total(dir) - path.sep.length;
+    if (rest > 0) dir = path.join(dir, 'e'.repeat(rest));
+    await fs.mkdir(dir, { recursive: true });
+    const p = path.join(dir, leaf);
+    await fs.writeFile(p, 'x');
     expect(p.length).toBe(MAX_SHELL_PATH_LENGTH);
     expect(await shellTargetOrNull(p, root)).toBe(p);
   });
@@ -192,6 +212,14 @@ describe('shellTargetOrNull — 入力の形', () => {
     // POSIX のファイル名には改行を置けるので、これは作れる形である。
     for (const ch of ['\r', '\n']) {
       expect(await shellTargetOrNull(path.join(root, `ok${ch}evil.md`), root)).toBeNull();
+    }
+  });
+
+  it('★ ディレクトリの途中の NUL / CR / LF も弾く (葉の関門では見えない場所)', async () => {
+    // 葉の名前は T-177 の関門が落とすが、ディレクトリの要素にある制御文字はこの番人だけが落とす
+    // (存在しないパス —— realpath は字面のまま残し、拡張子も許可リストの内)。
+    for (const ch of ['\0', '\r', '\n']) {
+      expect(await shellTargetOrNull(path.join(root, `d${ch}x`, 'ok.md'), root)).toBeNull();
     }
   });
 });
@@ -326,5 +354,17 @@ describe('shellTargetOrNull — realpath の前に字面の閉じ込めを見る
     } finally {
       spy.mockRestore();
     }
+  });
+});
+
+/**
+ * 開く物の葉の名前も、書き出しの関門と同じ規則 (2026-10-24 · threat: T-177)。
+ */
+describe('shellTargetOrNull — 葉の名前 (threat: T-177)', () => {
+  it.each(['CON.md', 'nul.svg', 'x.txt:s.html', 'report.md.'])('★ %s は開かない', async (leaf) => {
+    const root2 = await fs.mkdtemp(path.join((await import('node:os')).tmpdir(), 'shell-leaf-'));
+    const p = path.join(root2, leaf);
+    await fs.writeFile(p, 'x').catch(() => undefined);
+    expect(await shellTargetOrNull(p, root2)).toBeNull();
   });
 });

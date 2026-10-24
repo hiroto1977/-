@@ -134,6 +134,12 @@ export const BUDGET_DAY_MS = 24 * BUDGET_HOUR_MS;
 export const BUDGET: Readonly<Partial<Record<Tier, { readonly perHour: number; readonly perDay: number }>>> = {
   egress: { perHour: 300, perDay: 1500 },
 };
+/**
+ * 費用の予算に数えない口 (T-180)。`egress` の予算は課金される AI 呼び出しの量を抑えるためで、無料の
+ * リンクを開く操作 (`app:openExternal` · 窓の遷移も同じ口) を数えると、1 時間に約 300 回開いただけで
+ * 有料の `assistant/chat` が「費用の上限」で断られる (リンクは黙って開かないだけ)。速度の上限は別に効く。
+ */
+export const BUDGET_FREE_CHANNELS: ReadonlySet<string> = new Set(['app:openExternal', 'oauth:authorize']);
 /** 1 分あたりの上限 (段階ごと)。確かめる段階は人の速さ以上に速く来たら怪しい。 */
 export const RATE_LIMIT: Readonly<Record<Tier, number>> = {
   destructive: 3,
@@ -260,28 +266,63 @@ function stripUnsafe(text: string): string {
   return out;
 }
 
+/** 要約を整える前に読む長さ。空白を畳むと縮むので天井の数倍を読む (巨大な文字列で確認の前に固まらない · T-174)。 */
+const SUMMARY_READ_CAP = MAX_SUMMARY_CHARS * 4;
+
 export function safeSummary(text: string): string {
-  const flat = stripUnsafe(text).replace(/\s+/g, ' ').trim();
-  return moreThanChars(flat, MAX_SUMMARY_CHARS) ? `${clampToCeiling(flat, MAX_SUMMARY_CHARS)}…` : flat;
+  // `throttleMessage` 経由 (openPath / revealInFolder ほか) は値を事前に切らずに渡す。警戒中は全 tier が
+  // ここを通るので、5,000 万字で main が 22 秒止まった (実測)。読む長さを先に固定する。
+  const overRead = moreThanChars(text, SUMMARY_READ_CAP);
+  const flat = stripUnsafe(overRead ? clampToCeiling(text, SUMMARY_READ_CAP) : text).replace(/\s+/g, ' ').trim();
+  if (moreThanChars(flat, MAX_SUMMARY_CHARS)) return `${clampToCeiling(flat, MAX_SUMMARY_CHARS)}…`;
+  return overRead ? `${flat}…` : flat;
 }
 
 /** 1 つの値を見せる長さ。超えたら切って全体の長さを添える (切ったことを必ず述べる)。 */
 export const MAX_VALUE_CHARS = 60;
 /** 見せる欄の数。超えた分は名前と件数だけ。 */
 export const MAX_FIELDS_SHOWN = 24;
-/** 値を読む前に切る長さ (巨大な文字列で確認の前に固まらない)。 */
-const READ_CAP = MAX_VALUE_CHARS * 4;
+/** 欄と欄の区切り。 */
+const FIELD_SEPARATOR = ' / ';
+/** 1 欄の行の最低の長さ (鍵の表示 24 字 + 区切りが必ず収まる)。 */
+const FIELD_LINE_MIN_CHARS = 40;
 
-function describeValue(v: unknown): string {
+/** 入れ子の中で見せる欄・要素の数と、1 つの値の長さ (T-179)。超えた分は件数で述べる。 */
+const MAX_NESTED_SHOWN = 8;
+const MAX_NESTED_VALUE_CHARS = 40;
+
+function describeScalar(v: unknown, max: number): string {
   if (typeof v === 'string') {
-    const shown = clampToCeiling(safeSummary(clampToCeiling(v, READ_CAP)), MAX_VALUE_CHARS);
-    return moreThanChars(v, MAX_VALUE_CHARS) ? `${JSON.stringify(shown)}…(全 ${v.length} 文字)` : JSON.stringify(shown);
+    const shown = clampToCeiling(safeSummary(clampToCeiling(v, max * 4)), max);
+    return moreThanChars(v, max) ? `${JSON.stringify(shown)}…(全 ${v.length} 文字)` : JSON.stringify(shown);
   }
   if (typeof v === 'number') return Number.isFinite(v) ? String(v) : '(有限でない数)';
   if (typeof v === 'boolean' || v === null) return String(v);
-  if (Array.isArray(v)) return `[配列 ${v.length} 件]`;
-  if (typeof v === 'object') return `{入れ子 ${Object.keys(v as object).length} 欄}`;
   return `(${typeof v})`;
+}
+
+/**
+ * 1 つの値を見せる。**入れ子は 1 段だけ中身を見せる** (T-179): 以前は `{入れ子 5 欄}` / `[配列 3 件]` と件数だけで、
+ * `shopify/sync-to-*` の `order` (本文・宛先・URL) や Gmail の宛先のように、書き込みの中身が入れ子の中に在る
+ * 操作で、確認が「何を書くか」を見せていなかった。2 段目より深い物は件数だけ (深さの上限を固定する)。
+ */
+function describeValue(v: unknown, depth = 0): string {
+  if (Array.isArray(v)) {
+    if (depth > 0) return `[配列 ${v.length} 件]`;
+    const items = v.slice(0, MAX_NESTED_SHOWN).map((x) => describeValue(x, 1));
+    const more = v.length > MAX_NESTED_SHOWN ? `, …ほか ${v.length - MAX_NESTED_SHOWN} 件` : '';
+    return `[${items.join(', ')}${more}]`;
+  }
+  if (v !== null && typeof v === 'object') {
+    const keys = Object.keys(v as object);
+    if (depth > 0) return `{入れ子 ${keys.length} 欄}`;
+    const fields = keys
+      .slice(0, MAX_NESTED_SHOWN)
+      .map((k) => `${keyLabel(k)}: ${describeValue((v as Record<string, unknown>)[k], 1)}`);
+    const more = keys.length > MAX_NESTED_SHOWN ? `, …ほか ${keys.length - MAX_NESTED_SHOWN} 欄` : '';
+    return `{${fields.join(', ')}${more}}`;
+  }
+  return describeScalar(v, depth === 0 ? MAX_VALUE_CHARS : MAX_NESTED_VALUE_CHARS);
 }
 
 /**
@@ -294,14 +335,30 @@ export function describePayload(payload: unknown): string {
   const obj = payload as Record<string, unknown>;
   const keys = Object.keys(obj);
   if (keys.length === 0) return '(内容なし)';
-  const shown = keys.slice(0, MAX_FIELDS_SHOWN).map((k) => `${keyLabel(k)}: ${describeValue(obj[k])}`);
+  const shownKeys = keys.slice(0, MAX_FIELDS_SHOWN);
+  // 「ほか N 欄」の行は先に組む (欄ごとの予算から引くため)。名前を並べるのも固定個数まで (鍵が 100 万個でも
+  // 要約が膨らまず、確認の前に固まらない · T-156)。
+  let restLine = '';
   if (keys.length > MAX_FIELDS_SHOWN) {
-    // 名前を並べるのも固定個数まで (鍵が 100 万個でも要約が膨らまず、確認の前に固まらない · T-156)。
     const rest = keys.slice(MAX_FIELDS_SHOWN, MAX_FIELDS_SHOWN * 2).map(keyLabel);
     const more = keys.length - MAX_FIELDS_SHOWN > rest.length ? ', …' : '';
-    shown.push(`ほか ${keys.length - MAX_FIELDS_SHOWN} 欄: ${rest.join(', ')}${more}`);
+    restLine = `ほか ${keys.length - MAX_FIELDS_SHOWN} 欄: ${rest.join(', ')}${more}`;
   }
-  return shown.join(' / ');
+  // **欄ごとに予算を割り当てる** (T-172)。以前は 24 欄を素のまま繋いでから全体を MAX_SUMMARY_CHARS で切っていたので、
+  // JSON の引用で倍に膨らむ値 (引用符・バックスラッシュ) を先頭の欄に置くと、後ろの欄 (宛先など) が
+  // 切り捨てられて確認に出なかった (24 欄は payloadTooWide を通る・実測で 3,668 字 → 2,400 字)。
+  // どの欄も予算の中で名前から始まるので、全部の欄名が必ず見える。
+  const lineCount = shownKeys.length + (restLine === '' ? 0 : 1);
+  const budget = Math.max(
+    FIELD_LINE_MIN_CHARS,
+    Math.floor((MAX_SUMMARY_CHARS - restLine.length - FIELD_SEPARATOR.length * lineCount) / Math.max(1, shownKeys.length)),
+  );
+  const shown = shownKeys.map((k) => {
+    const line = `${keyLabel(k)}: ${describeValue(obj[k])}`;
+    return moreThanChars(line, budget) ? `${clampToCeiling(line, budget - 1)}…` : line;
+  });
+  if (restLine !== '') shown.push(restLine);
+  return shown.join(FIELD_SEPARATOR);
 }
 
 /** 鍵の表示。**長さ無制限の鍵を丸ごと走査しない** (50 MB の鍵で確認より前に 13 秒固まった · T-156)。 */
@@ -434,7 +491,7 @@ export function createPresenceGate(deps: PresenceDeps): PresenceGate {
       }
 
       // 費用の予算 (T-158): 速度の上限を通った呼び出しだけを数える。超える呼び出しは通さず、数えない。
-      const budget = BUDGET[req.tier];
+      const budget = BUDGET_FREE_CHANNELS.has(req.channel) ? undefined : BUDGET[req.tier];
       if (budget !== undefined) {
         const shrink = (n: number): number => (alert ? Math.max(1, Math.floor(n / ALERT_RATE_DIVISOR)) : n);
         const history = (spent[req.tier] ??= []).filter((x) => within(t, x, BUDGET_DAY_MS));
@@ -453,7 +510,11 @@ export function createPresenceGate(deps: PresenceDeps): PresenceGate {
 
       // ロックと断りの数えは、平常から確かめている段階だけ (T-156): 警戒中に広がった確認 (egress / local-write)
       // の断りまでロックに数えると、保存や送信が止まり、漏えいを疑った利用者の取り消しの道まで塞がる。
-      const lockable = CONFIRMED_TIERS.has(req.tier);
+      // **取り消しの道 (destructive) はロックに数えず、ロックにも塞がれない** (T-178): 資格情報の削除と全消去は
+      // 利用者が「漏えいを疑って止める」ための口で、攻撃者が外への書き込み (external-write) を 3 回断らせるだけで
+      // その口まで 5 分〜60 分塞がると、読む・送る・保存する経路が残ったまま取り消しだけが使えなくなる。
+      // 確認は毎回出る (本人確認は外れない) し、1 分あたりの上限 (3 件・警戒中は 1 件) は別に効く。
+      const lockable = CONFIRMED_TIERS.has(req.tier) && req.tier !== 'destructive';
       if (lockable && t < lockedUntil) {
         const minutes = Math.ceil((lockedUntil - t) / 60_000);
         return deny('locked-out', req, `確認を断った回数が多いため、あと約 ${minutes} 分は操作できません。`);
@@ -494,4 +555,40 @@ export function createPresenceGate(deps: PresenceDeps): PresenceGate {
       return { ok: false, message: '確認が許可されなかったため実行しませんでした。' };
     },
   };
+}
+
+/** JSON の束で預かる資格情報のうち、送り先 (ホスト) を決める欄 (T-181 · `shared/ai/credentials.ts` の欄名)。 */
+const ENDPOINT_FIELDS: readonly string[] = ['ollamaUrl', 'compatUrl'];
+
+/**
+ * 資格情報を置き換える確認に見せる 1 文 (T-181)。値の「長さと末尾 4 文字」だけでは、JSON の束
+ * (AI の資格情報) は末尾が JSON の括りで、**以後のプロンプトの送り先 (compatUrl / ollamaUrl) が別物に
+ * 差し替わっても見分けがつかない**。束を解析できたら、送り先のホストと、どの欄に値が入るかを見せる
+ * (鍵そのものは見せない)。解析できない物は従来どおり長さと末尾だけ。
+ */
+export function describeCredentialWrite(serviceId: string, value: string): string {
+  const base = `${safeSummary(serviceId)} の資格情報を置き換えます。新しい値: 全 ${value.length} 文字${
+    value.length > 8 ? `・末尾「…${safeSummary(value.slice(-4))}」` : ''
+  }`;
+  let detail = '';
+  // `{` で始まる値だけ束として読む (JSON.parse が成功すれば、`{` で始まる値は必ず物 —— 型の検めは要らない)。
+  if (value.trimStart().startsWith('{') && value.length <= 64 * 1024) {
+    try {
+      const o = JSON.parse(value) as Record<string, unknown>;
+      const filledKeys = (keys: readonly string[]): string[] => keys.filter((k) => typeof o[k] === 'string' && o[k] !== '');
+      const hosts = filledKeys(ENDPOINT_FIELDS).map((k) => {
+        let host = '(読めない URL)';
+        try {
+          host = new URL(o[k] as string).host;
+        } catch {
+          /* 読めない URL は読めないと見せる */
+        }
+        return `${k} → ${safeSummary(host)}`;
+      });
+      detail = `。値が入る欄: ${safeSummary(filledKeys(Object.keys(o)).slice(0, 16).join(', '))}${hosts.length > 0 ? `。送り先: ${hosts.join(' / ')}` : ''}`;
+    } catch {
+      /* JSON でなければ長さと末尾だけ */
+    }
+  }
+  return `${base}${detail}。心当たりが無ければ「実行しない」を選んでください。`;
 }

@@ -16,6 +16,14 @@
 /CLAUDE.md @hiroto1977
 **/CLAUDE.md @hiroto1977
 **/AGENTS.md @hiroto1977
+# 他の AI ツールの指示書 (2026-10-24 · Red-B' の指摘): 今は無いが、置かれた瞬間にそのツールが従う。
+**/GEMINI.md @hiroto1977
+**/CONVENTIONS.md @hiroto1977
+/.cursorrules @hiroto1977
+/.windsurfrules @hiroto1977
+/.clinerules @hiroto1977
+/.clinerules/ @hiroto1977
+/.junie/ @hiroto1977
 /.claude/ @hiroto1977
 /.cursor/ @hiroto1977
 /security/ @hiroto1977
@@ -83,6 +91,7 @@
 /src/main/secrets.ts @hiroto1977
 /src/main/shellOpenGate.ts @hiroto1977
 /src/main/presenceWiring.ts @hiroto1977
+/src/main/windowOpen.ts @hiroto1977
 /src/main/stateFile.ts @hiroto1977
 /src/main/userPresence.ts @hiroto1977
 /src/main/windowPrefs.ts @hiroto1977
@@ -252,3 +261,6 @@
 /src/shared/__tests__/threatWatch.test.ts @hiroto1977
 /src/shared/__tests__/securityPosture.test.ts @hiroto1977
 /src/shared/__tests__/crownJewels.test.ts @hiroto1977
+/src/main/clients/__tests__/advisorSmuggledChars.test.ts @hiroto1977
+/src/main/__tests__/windowOpen.test.ts @hiroto1977
+/src/renderer/data/__tests__/storeImportShapes.test.ts @hiroto1977

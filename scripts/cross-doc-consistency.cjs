@@ -454,6 +454,23 @@ const FACTS = [
  * を読む。この 2 つが無いと、**このゲート自身が鳴るかを試せない** — 実ファイル
  * を壊して確かめるしかなくなり、確かめた事実は今日しか残らない。
  */
+/** workflow の全 step の `run` (前後の空白を落とす) の集合。jobs を持つ YAML として読めなければ null (断片の差し込み用)。 */
+function ciStepRuns(text) {
+  let doc;
+  try {
+    doc = require('js-yaml').load(text);
+  } catch {
+    return null;
+  }
+  if (doc === null || typeof doc !== 'object' || doc.jobs === null || typeof doc.jobs !== 'object') return null;
+  const runs = new Set();
+  for (const job of Object.values(doc.jobs)) {
+    for (const step of Array.isArray(job?.steps) ? job.steps : []) {
+      if (typeof step?.run === 'string') runs.add(step.run.trim());
+    }
+  }
+  return runs;
+}
 function checkCiGateCoverage(failures, allOverride, ciOverride) {
   const pkg =
     allOverride === undefined
@@ -472,11 +489,15 @@ function checkCiGateCoverage(failures, allOverride, ciOverride) {
     .split('&&')
     .map((s) => s.trim().replace(/^npm run /, ''))
     .filter((s) => s !== '');
+  const structuralSteps = ciStepRuns(ci);
   for (const g of gates) {
     // ci.yml の `- run: npm run <gate>` を行単位で照合する (前方一致では
     // lint:test-coverage が lint:test に誤ヒットするため行末まで見る)
     const re = new RegExp(`^\\s*-\\s*run:\\s*npm run ${g.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*$`, 'm');
-    if (!re.test(ci)) {
+    // 行の照合 (断片の差し込みでも動く) に加え、ci.yml が YAML として読めるときは**構造でも**確かめる (2026-10-24 · 防御側の点検 Red-B' の指摘 · T-182 と同じ回):
+    // 前の step の `run: |` の本文 (heredoc・echo) の中の `- run: npm run <gate>` でも行の照合は満たされ、
+    // 実際にはどの step もそのゲートを走らせない形が通った (js-yaml で step 0 件と確認)。
+    if (!re.test(ci) || (structuralSteps !== null && !structuralSteps.has(`npm run ${g}`))) {
       failures.push({
         fact: 'CI gate coverage',
         reason: `verify:all のゲート "${g}" が ci.yml で実行されていない — ゲートが存在するだけで何も守っていない状態`,
@@ -1387,7 +1408,13 @@ function selfTest() {
     }
   }
 
+  // YAML として読める ci.yml では、行の照合を満たすだけの偽の step (前の step の heredoc の中) を通さない (T-183)
+  const FAKE_CI =
+    'jobs:\n  a:\n    runs-on: x\n    steps:\n      - run: |\n          cat <<EOF\n          - run: npm run lint:a\n          EOF\n';
+  const REAL_CI = 'jobs:\n  a:\n    runs-on: x\n    steps:\n      - run: npm run lint:a\n';
   const cases = [
+    ['★ step の本文の中の `- run: npm run <gate>` では満たさない (構造で見る)', 'npm run lint:a', FAKE_CI, 1],
+    ['対照: 本物の step なら通る (YAML として読める形)', 'npm run lint:a', REAL_CI, 0],
     [
       'verify:all のゲートが ci.yml に無ければ鳴る',
       'npm run lint:a && npm run lint:b',

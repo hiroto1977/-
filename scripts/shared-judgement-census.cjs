@@ -177,6 +177,11 @@ const VERDICTS = {
     + '**このモジュールの外へ出ない** (`normalizeMembers` / `normalizeUsage` / '
     + '`normalizeSpend` が `state` に畳んでから返す)。応答の上限も '
     + 'MAX_PROXY_RESPONSE_BYTES = MAX_HTTP_RESPONSE_BYTES で 1 つ',
+  safeFilename:
+    '対称 (実測・2026-10-24 · T-177) —— isSafeFilename が no と言ったあとの動作は 4 つの消費者で同じ '
+    + '「その名前では書かない・開かない」: ライブラリの put と FSA の書き込み (renderer) は filename が不正です で投げ、'
+    + '書き出しの関門 isSafeExportPath は false・開く関門 shellTargetOrNull は null (main は呼び手が err に変える)。'
+    + '黙って別の名前へ直す消費者は無い (直すと検査した名前と作る名前が別になる)。',
   assistantLimits:
     '対称 (実測・パス 252) —— latestTurnTooLong の 4 つの消費者 (main の chat / chatAll、'
     + 'ブラウザ版の callAssistantChat / callAssistantChatAll) がすべて 1 つずつ断り、文面も '
