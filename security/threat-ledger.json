@@ -2920,16 +2920,6 @@
       "why": "注入点は見つからなかった (dangerouslySetInnerHTML / innerHTML / document.write / srcDoc は renderer と shared に 0 件)。防御の多層化の候補。CSP を狭めると、利用者が設定する Ollama・BYO プロキシ・第三者のアバター画像が止まるため、影響範囲を測ってから決める。"
     },
     {
-      "surface": "main-ipc",
-      "item": "MAIN-1 cloudflare の create-dns-record / purge-cache に主プロセス側の同意が無い",
-      "why": "監査役の報告の指摘。レンダラーが乗っ取られた場合の範囲 (本番 DNS の書き換え) は重いが、同意を足すと利用者の操作を減らす設計判断になる。未確認 (再現していない)。"
-    },
-    {
-      "surface": "main-ipc",
-      "item": "MAIN-2 app:eraseAll に同意トークンが無い",
-      "why": "監査役の報告の指摘。設定画面の「すべてのデータを削除」は利用者の操作だが、renderer が乗っ取られれば呼べる。確認ダイアログは renderer 側にしか無い。設計の判断 (同意の形) を伴うため未確認。"
-    },
-    {
       "surface": "network",
       "item": "N-3 *.localdomain / *.internal の名前解決がプライベート帯へ向く形は判定していない",
       "why": "2026-10-14 に測った: isPrivateOrReservedTarget はホスト名の綴り (localhost / *.local / IP リテラル) を見るので、DNS がプライベート帯へ解く任意の名前は通る。解決後の IP を見るには main の fetch に lookup hook が要り、ブラウザ版からは構造的に見えない。この環境では DNS を操れず測れていない。"
@@ -2938,11 +2928,6 @@
       "surface": "network",
       "item": "N-5 encodeURIComponent した動的部分に `..` が来ると WHATWG URL が path を畳む",
       "why": "2026-10-14 に測った: encodeURIComponent('..') は '..' のまま (予約でない) なので https://host/a/../b は new URL で https://host/b になる。今日の動的部分 (Drive のファイル ID / Jira の issue key / Slack の domain) はどれも入口の正規表現が `.` を含まないか別の関門で落とすので届かない。関門の無い新しい補間が 1 つ増えた日に開く形なので、lint:url-encoding の標本として残す。"
-    },
-    {
-      "surface": "main-ipc",
-      "item": "MAIN-4 oauth:authorize に同時実行の上限が無い (renderer が連打すると loopback の listener が複数立つ)",
-      "why": "2026-10-15 に静的に指摘。listener は 5 分で閉じ、state は 32 byte で毎回別なので乗っ取りには繋がらない —— 資源の消費だけ。renderer 側の ConnectCard は busy で 2 度目を止めているので、今日届く道は renderer を乗っ取った後だけ。"
     },
     {
       "surface": "supply-chain",
@@ -3145,6 +3130,21 @@
       "item": "PKG-1 電子ヒューズ grantFileProtocolExtraPrivileges=false と win.loadFile(asar) の衝突",
       "finding": "2026-10-23 に Electron 45.0.0 の梱包物 (electron-builder --dir · Linux) で実測: 衝突は実在し fuse=false の梱包版は窓が白くなった (chrome-error://chromewebdata/)。fuse=true なら起動し、file:///etc/passwd の fetch は T-140 の門で止まる。fuse を true へ=T-165 (fixed)。",
       "checkedOn": "2026-10-23"
+    },
+    {
+      "item": "MAIN-1 cloudflare の create-dns-record / purge-cache に主プロセス側の同意が無い",
+      "finding": "action:invoke は T-147 以降、登録された action すべてに requirePresence を通す (段階は userPresence.ts の ACTION_TIER・載っていない action は最も厳しい扱い)。cloudflare/create-dns-record・purge-cache も同じ入口を通るので主プロセス側の同意は在る。台帳の残りが古かった。",
+      "checkedOn": "2026-10-24"
+    },
+    {
+      "item": "MAIN-2 app:eraseAll に同意トークンが無い",
+      "finding": "app:eraseAll は main.ts で requirePresence(tier: destructive) を通してから消す。同意なしでは eraseDesktopData に届かない。台帳の残りが古かった。",
+      "checkedOn": "2026-10-24"
+    },
+    {
+      "item": "MAIN-4 oauth:authorize に同時実行の上限が無い (renderer が連打すると loopback の listener が複数立つ)",
+      "finding": "T-139 (パス 543) で authorizeInFlight により認可は同時に 1 つだけ (main.ts の oauth:authorize)。2 度目は authorize_busy で断る。台帳の残りが古かった。",
+      "checkedOn": "2026-10-24"
     }
   ]
 }
