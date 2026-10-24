@@ -391,6 +391,31 @@ function structureProblems(name, text) {
   return out;
 }
 
+/**
+ * workflow が YAML として**読めるか** (2026-10-23 · パス 546)。この門の規則は行単位の正規表現なので、
+ * YAML として壊れた workflow も通してしまう。実測: #827 が step 名に `: ` を含めた
+ * (`- name: Smoke (packaged app: fuses applied)`) だけで e2e.yml は読めなくなり、GitHub は push のたびに
+ * 0 秒の失敗 run を作り、手動実行 (workflow_dispatch) も `run-e2e` ラベルも効かなくなった。
+ * 門は exit 0・ci.yml も緑のまま、気付いたのは次のセッションの再確認。js-yaml は ESLint の依存として
+ * 常に node_modules に在る。読み込めなければ「読めるか確かめられない」を落とす (fail closed)。
+ */
+function yamlParseProblem(name, text) {
+  let yaml;
+  try {
+    yaml = require('js-yaml');
+  } catch {
+    return { file: name, why: 'js-yaml を読み込めず、YAML として読めるか確かめられない (npm ci を実行すること)' };
+  }
+  try {
+    yaml.load(text);
+    return null;
+  } catch (e) {
+    const where = e && e.mark ? `:${e.mark.line + 1}` : '';
+    const reason = String((e && e.reason) || 'parse error').slice(0, 120);
+    return { file: `${name}${where}`, why: `YAML として読めない (${reason}) — GitHub はこの workflow を実行できず、push のたびに 0 秒の失敗を作る。\`: \` を含む値は引用符で囲むこと` };
+  }
+}
+
 /*
  * `allow` は既定で実物の台帳。**差し替えられるのは self-test のため**である ——
  * 台帳の掃除を見る枝は「台帳に載っているものが使われなくなった」状態でしか
@@ -876,6 +901,19 @@ function selfTest() {
     console.log(`  ${ok ? '✓' : '✗'} job 権限の台帳: ${label}: job ${nJob} / 台帳 ${nLedger} 件 (期待 ${expectJob} / ${expectLedger})`);
   }
 
+  // YAML として読めるか (パス 546)。bad / ok は同じ関数に通して件数を見る。
+  const yamlCases = [
+    ['step 名に ": " を含む (引用符なし) を落とす', 'jobs:\n  a:\n    steps:\n      - name: Smoke (packaged app: fuses applied)\n        run: echo\n', 1],
+    ['対照: 引用符で囲めば通す', "jobs:\n  a:\n    steps:\n      - name: 'Smoke (packaged app: fuses applied)'\n        run: echo\n", 0],
+    ['対照: コメントの中の ": " は通す', 'jobs:\n  a:\n    steps:\n      # packaged app: fuses\n      - run: echo\n', 0],
+  ];
+  for (const [label, text, expected] of yamlCases) {
+    const n = yamlParseProblem('x.yml', text) ? 1 : 0;
+    const ok = n === expected;
+    if (!ok) bad++;
+    console.log(`  ${ok ? '✓' : '✗'} YAML の構文: ${label}: ${n} 件 (期待 ${expected})`);
+  }
+
   if (bad > 0) {
     console.error(`❌ self-test 不一致 ${bad} 件`);
     return 1;
@@ -899,7 +937,7 @@ function main() {
   const cross = reportTrackedCrossCheck(
     list.map((w) => scanRelPath(w.name)), CROSS_CHECK, REPO_ROOT, 'lint:workflow-security');
   if (cross.code !== 0) process.exit(1);
-  const problems = check(list);
+  const problems = [...list.map((w) => yamlParseProblem(w.name, w.text)).filter(Boolean), ...check(list)];
   const ledger = Object.keys(UNPINNED_ALLOW).length;
   const jobLedger = Object.values(JOB_PERMISSIONS_ALLOW).reduce((n, jobs) => n + Object.keys(jobs).length, 0);
   console.log(
@@ -918,6 +956,6 @@ function main() {
   return 1;
 }
 
-module.exports = { structureProblems, GATE_NEUTERING_ALLOW, check, runBlockLines, workflows, localActionFiles, localUsesProblem, loaderEnvProblem, runBodyProblem, scanRelPath, isLocalActionName, jobPermissionBlocks, UNPINNED_ALLOW, JOB_PERMISSIONS_ALLOW, CROSS_CHECK };
+module.exports = { yamlParseProblem, structureProblems, GATE_NEUTERING_ALLOW, check, runBlockLines, workflows, localActionFiles, localUsesProblem, loaderEnvProblem, runBodyProblem, scanRelPath, isLocalActionName, jobPermissionBlocks, UNPINNED_ALLOW, JOB_PERMISSIONS_ALLOW, CROSS_CHECK };
 
 if (require.main === module) process.exit(main());

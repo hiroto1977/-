@@ -12,6 +12,8 @@ import { readOriginalSource } from './originalSource';
 const req = createRequire(import.meta.url);
 const gate = req('../../../scripts/lint-workflow-security.cjs') as {
   structureProblems: (name: string, text: string) => { file: string; why: string }[];
+  yamlParseProblem: (name: string, text: string) => { file: string; why: string } | null;
+  workflows: () => { name: string; text: string }[];
   check: (list: { name: string; text: string }[], allow: object, jobAllow: object) => { file: string; why: string }[];
   runBodyProblem: (line: string) => string | null;
 };
@@ -122,5 +124,33 @@ describe('workflow の構造 — 書き方の揺れでゲートを迂回でき�
       const text = readOriginalSource(path.join(dir, f));
       expect(gate.structureProblems(f, text), f).toEqual([]);
     }
+  });
+});
+
+/**
+ * workflow は YAML として読めること (2026-10-23 · パス 546)。#827 が step 名に `: ` を含めて e2e.yml を壊し、
+ * GitHub は push のたびに 0 秒の失敗 run を作り、手動実行も `run-e2e` ラベルも効かなかった。
+ * 行単位の門は exit 0・ci.yml も緑のままだった。
+ */
+describe('workflow は YAML として読める (パス 546 · threat: T-168)', () => {
+  it('★ 実物の workflow は全部、読めて on / jobs を持つ', () => {
+    const list = gate.workflows().filter((w) => w.name.endsWith('.yml') && !w.name.includes('/'));
+    expect(list.length).toBeGreaterThanOrEqual(7);
+    for (const w of list) {
+      expect(gate.yamlParseProblem(w.name, w.text), w.name).toBeNull();
+    }
+  });
+
+  it('★ step 名に ": " を含む引用符なしの値は落とす (e2e.yml を壊した形)', () => {
+    const bad = 'jobs:\n  a:\n    steps:\n      - name: Smoke (packaged app: fuses applied)\n        run: echo\n';
+    const p = gate.yamlParseProblem('e2e.yml', bad);
+    expect(p).not.toBeNull();
+    expect(p?.file).toBe('e2e.yml:4');
+    expect(p?.why).toContain('YAML として読めない');
+  });
+
+  it('対照: 引用符で囲んだ値・コメントの ": " は通す', () => {
+    expect(gate.yamlParseProblem('x.yml', "jobs:\n  a:\n    steps:\n      - name: 'Smoke (a: b)'\n        run: echo\n")).toBeNull();
+    expect(gate.yamlParseProblem('x.yml', 'jobs:\n  a:\n    steps:\n      # a: b\n      - run: echo\n')).toBeNull();
   });
 });

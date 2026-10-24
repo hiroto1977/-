@@ -1141,6 +1141,9 @@ npm run audit:security-posture  # **「次はどこを狩るか」を台帳か�
                          #   狩りの起動 (監査役) は利用料が掛かるので `docs/THREAT_HUNT.md` の手順で人が回す。
                          #   読めない物 (暦に無い日付・台帳に無い面) は 0 件と混ぜない。
                          #   判定は `shared/__tests__/securityPosture.test.ts` が毎回の npm test で見る
+npm run audit:crown-jewels  # **確率に依らない守り**(2026-10-23 · T-169)。守る物 5 つ(security/crown-jewels.json)ごとに
+                         #   防ぐ・封じ込める・気付く・戻すの 4 層が別々の強制物で揃うかを見る。毎日の dependency-audit が同じ測定を載せる。
+                         #   判定は src/shared/__tests__/crownJewels.test.ts が npm test で見る。docs/ZERO_TRUST.md §2.9
 npm run audit:verify-keep-going  # **`verify:all` を止まらずに全ゲート回し、落ちた物を一度に挙げる**
                          #   (定期点検の道具 11 本目。CI では走らせない)。`verify:all` は `&&` 連結なので
                          #   最初に落ちたゲートで止まり、直して回し直すたびに次の 1 件が見える ——
