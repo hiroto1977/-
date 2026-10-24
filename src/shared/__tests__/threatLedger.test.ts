@@ -1,3 +1,4 @@
+import { stripComments } from './stripNonCode';
 import { createRequire } from 'node:module';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
@@ -91,6 +92,29 @@ describe('脅威台帳の形', () => {
   });
 });
 
+/**
+ * 題名が**実際の検査の宣言**として在るか。部分文字列の一致だけだと、コメントに題名が残っているだけ・
+ * `it.skip` / `it.todo` / `xit` に変えただけでも、台帳は「回帰検査が在る」と言い続ける (Red-B 2026-10-24)。
+ * 題名の直前が `(` + 引用符で、その行の宣言が skip / todo / only / x 接頭でない物が 1 つ在ればよい。
+ */
+function declaresRealTest(body: string, title: string): boolean {
+  // 注記は共有の道具で落とす (文字列の中身は残る・行番号は保たれる)。自前の注記判定は持たない (パス 461)。
+  return stripComments(body).split('\n').some((line) => {
+    const at = line.indexOf(title);
+    if (at === -1) return false;
+    const before = line.slice(0, at);
+    // 題名は文字列の中に在る (台帳の題名が全題名の一部のこともある): `(` + 引用符の後ろに引用符が閉じずに続くか、
+    // `it.each` の題名の行 (引用符で始まる行) であること。
+    const opener = /\(\s*(['"`])/g;
+    let inString = /^(['"`])/.test(before.trimStart()) && !before.trimStart().slice(1).includes(before.trimStart()[0]!);
+    for (let m = opener.exec(before); m !== null; m = opener.exec(before)) {
+      if (!before.slice(m.index + m[0].length).includes(m[1]!)) inString = true;
+    }
+    if (!inString) return false;
+    return !/\b(?:it|test|describe)\.(?:skip|todo)\b|\bx(?:it|test|describe)\(/.test(before);
+  });
+}
+
 describe('直した穴は、攻撃を再現する検査で留まっている (双方向)', () => {
   it('★ 直した行の回帰検査が在り、題名と印 (threat: T-xxx) を持つ', () => {
     for (const t of ledger.threats.filter((x) => x.status !== 'accepted')) {
@@ -116,6 +140,31 @@ describe('直した穴は、攻撃を再現する検査で留まっている (�
     // 走査が空でない (印を拾えている)。
     expect(seen).toBeGreaterThanOrEqual(ledger.threats.length);
     expect(orphans).toEqual([]);
+  });
+
+  it('★ 回帰検査の題名は、コメントではなく実際の検査の宣言で、skip / todo / only でない (Red-B 2026-10-24)', () => {
+    const bad: string[] = [];
+    for (const t of ledger.threats.filter((x) => x.status !== 'accepted')) {
+      // 検査ファイル (*.test.ts) だけ。script の自己検査 (標本の表) は it() ではない。
+      if (!t.regression!.file.endsWith('.test.ts')) continue;
+      const body = read(t.regression!.file);
+      if (!declaresRealTest(body, t.regression!.test)) bad.push(`${t.id}: ${t.regression!.file}`);
+    }
+    expect(bad).toEqual([]);
+  });
+
+  it('標本: 実際の宣言は通し、コメント・skip・todo・説明文の中の題名は通さない', () => {
+    const title = '★ 破れない';
+    expect(declaresRealTest(`it('${title}', () => {});`, title)).toBe(true);
+    expect(declaresRealTest(`it.each([1])('${title} %s', () => {});`, `${title} %s`)).toBe(true);
+    expect(declaresRealTest(`  ])('${title}', () => {`, title)).toBe(true);
+    expect(declaresRealTest(`// it('${title}', () => {});`, title)).toBe(false);
+    expect(declaresRealTest(` * ${title}`, title)).toBe(false);
+    expect(declaresRealTest(`it.skip('${title}', () => {});`, title)).toBe(false);
+    expect(declaresRealTest(`it.todo('${title}');`, title)).toBe(false);
+    expect(declaresRealTest(`xit('${title}', () => {});`, title)).toBe(false);
+    expect(declaresRealTest(`const note = '${title}';`, title)).toBe(false);
+    expect(declaresRealTest('it.skip.each([1])(\'x\', () => {});\nit(\'' + title + '\', () => {});', title)).toBe(true);
   });
 
   it('標本: 印の針は印に当たり、似た綴りには当たらない', () => {
@@ -202,7 +251,9 @@ describe('CODEOWNERS は整合性チェーンの保護対象をすべて覆う',
    */
   const globCovers = (pat: string, p: string) => pat.startsWith('**/') && (p === pat.slice(3) || p.endsWith(`/${pat.slice(3)}`));
   /** エージェントが読む指示書の名前 (パターンで覆ってよい名前はこれだけ · パス 540)。 */
-  const INSTRUCTION_NAMES = ['CLAUDE.md', 'AGENTS.md'];
+  const INSTRUCTION_NAMES = ['CLAUDE.md', 'AGENTS.md', 'GEMINI.md', 'CONVENTIONS.md'];
+  /** 今は無いが、置かれた瞬間にそのツールが従う指示書 (ルート直下のファイルと、まだ無い指示書のディレクトリ)。 */
+  const FUTURE_INSTRUCTION_PATHS = ['/.cursorrules', '/.windsurfrules', '/.clinerules', '/.clinerules/', '/.junie/'];
   const isCovered = (p: string) =>
     patterns.some((pat) => (pat.endsWith('/') ? `/${p}`.startsWith(pat) : pat === `/${p}` || globCovers(pat, p)));
 
@@ -231,7 +282,9 @@ describe('CODEOWNERS は整合性チェーンの保護対象をすべて覆う',
       ...OWNED_CONFIG,
     ]);
     const stale = patterns.filter((pat) =>
-      pat.endsWith('/')
+      FUTURE_INSTRUCTION_PATHS.includes(pat)
+        ? false
+        : pat.endsWith('/')
         ? !existsSync(path.join(ROOT, pat))
         : pat.startsWith('**/')
           ? !INSTRUCTION_NAMES.includes(pat.slice(3))
@@ -247,6 +300,7 @@ describe('CODEOWNERS は整合性チェーンの保護対象をすべて覆う',
       '.claude/settings.json', '.claude/rules/a.md', '.claude/commands/a.md', '.claude/skills/s/SKILL.md',
       '.claude/output-styles/o.md', '.claude/agents/auditor.md', '.cursor/rules/a.mdc',
       '.github/copilot-instructions.md', '.github/instructions/a.instructions.md',
+      'GEMINI.md', 'docs/CONVENTIONS.md', '.cursorrules', '.windsurfrules', '.clinerules', '.junie/guidelines.md', '.clinerules/a.md',
     ];
     expect(instructions.filter((f) => !isCovered(f)), '足す行: /<path> @hiroto1977').toEqual([]);
     // 標本: 指示書でない物は覆わない (パターンが広すぎて何でも覆う検査にしない)

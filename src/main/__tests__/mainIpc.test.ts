@@ -915,6 +915,28 @@ describe('oauth:isSupported / oauth:authorize', () => {
     expect(((await invoke('oauth:authorize', 'github')) as { ok: boolean }).ok).toBe(true);
   });
 
+  it('★ クライアント ID を上書きしない認可も、本人確認の門 (egress 段階) を通り、断られたら始めない (threat: T-185)', async () => {
+    presenceRequests.length = 0;
+    const ok = (await invoke('oauth:authorize', 'github')) as { ok: boolean };
+    expect(ok.ok).toBe(true);
+    expect(presenceRequests).toHaveLength(1);
+    expect(presenceRequests[0]).toMatchObject({ channel: 'oauth:authorize', tier: 'egress' });
+    // 門が断る (信頼できない送り手・速度超過・警戒) と、待受を作らず認可を始めない
+    presenceVerdict = { ok: false, message: '信頼できない呼び出し元のため断りました。' };
+    try {
+      authorizeConfigs.length = 0;
+      const refused = (await invoke('oauth:authorize', 'github')) as { ok: boolean; code: string; message: string };
+      expect(refused).toEqual({ ok: false, code: 'authorize_failed', message: '信頼できない呼び出し元のため断りました。' });
+      expect(authorizeConfigs).toEqual([]);
+    } finally {
+      presenceVerdict = { ok: true };
+    }
+    // 上書きするときは今までどおり資格情報の書き換えとして確認する
+    presenceRequests.length = 0;
+    await invoke('oauth:authorize', 'github', 'abcdefgh.apps.googleusercontent.com');
+    expect(presenceRequests[0]).toMatchObject({ channel: 'oauth:authorize', tier: 'credential-write' });
+  });
+
   it('OAuth 設定が無いサービスは断る', async () => {
     const r = (await invoke('oauth:authorize', 'notion')) as { ok: boolean; code: string };
     expect(r).toEqual({
@@ -1357,9 +1379,12 @@ describe('本人確認の門 — 画面から独立した確認が通らなけ�
     expect(openedExternal).toEqual([]);
   });
 
-  it('★ oauth:authorize は、自分のクライアント ID を渡したときだけ確かめる。断られたら認可を始めない', async () => {
+  it('★ oauth:authorize は、自分のクライアント ID を渡したときは資格情報の書き換えとして確かめる。断られたら認可を始めない', async () => {
+    // 上書きしない認可は egress 段階 (確認は出さず、送り手・速度・警戒だけ · T-185)
     await invoke('oauth:authorize', 'github');
-    expect(presenceRequests).toEqual([]);
+    expect(presenceRequests).toHaveLength(1);
+    expect(presenceRequests[0]).toMatchObject({ channel: 'oauth:authorize', tier: 'egress' });
+    presenceRequests.length = 0;
     expect(authorizeConfigs).toHaveLength(1);
     authorizeConfigs.length = 0;
     presenceVerdict = DENY;

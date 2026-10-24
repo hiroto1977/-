@@ -139,7 +139,7 @@ export const BUDGET: Readonly<Partial<Record<Tier, { readonly perHour: number; r
  * リンクを開く操作 (`app:openExternal` · 窓の遷移も同じ口) を数えると、1 時間に約 300 回開いただけで
  * 有料の `assistant/chat` が「費用の上限」で断られる (リンクは黙って開かないだけ)。速度の上限は別に効く。
  */
-export const BUDGET_FREE_CHANNELS: ReadonlySet<string> = new Set(['app:openExternal']);
+export const BUDGET_FREE_CHANNELS: ReadonlySet<string> = new Set(['app:openExternal', 'oauth:authorize']);
 /** 1 分あたりの上限 (段階ごと)。確かめる段階は人の速さ以上に速く来たら怪しい。 */
 export const RATE_LIMIT: Readonly<Record<Tier, number>> = {
   destructive: 3,

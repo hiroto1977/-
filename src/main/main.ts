@@ -769,21 +769,27 @@ ipcMain.handle('oauth:authorize', async (e, serviceId: unknown, clientIdOverride
       message: '別の認可が進行中です。開いたブラウザでの手続きを終えるか、5 分ほど待ってからやり直してください',
     };
   }
-  // 利用者が用意した OAuth クライアント ID で認可するときだけ確かめる (T-147 レッドチーム #4):
-  // 差し替えられると、攻撃者のアプリに紐づく資格情報で保存値が置き換わる。
-  if (override !== '') {
-    let presence: PresenceDecision;
-    try {
-      presence = await requirePresence(e, {
-        channel: 'oauth:authorize',
-        tier: 'credential-write',
-        summary: `${serviceId} を、クライアント ID「${override}」で認可します。心当たりが無ければ「実行しない」を選んでください。`,
-      });
-    } catch (err) {
-      presence = { ok: false, message: safeErrorMessage(err) };
-    }
-    if (!presence.ok) return { ok: false, code: 'authorize_failed', message: presence.message };
+  // 本人確認の門を**必ず通す** (T-185)。クライアント ID を上書きするときは資格情報の書き換えとして確認を出し
+  // (T-147 レッドチーム #4: 差し替えられると、攻撃者のアプリに紐づく資格情報で保存値が置き換わる)、
+  // 上書きしないときも送り手の確認・速度の上限・警戒の数えを通す。以前は後者が門の外で、乗っ取られた画面が
+  // 5 分ごとに掛け直して同意タブを開き続けても、何も記録されず警戒態勢にも入らなかった。
+  // 上書き無しは確認を出さない段階 (egress) —— 利用者の通常の「接続」を止めない。
+  let presence: PresenceDecision;
+  try {
+    presence = await requirePresence(
+      e,
+      override !== ''
+        ? {
+            channel: 'oauth:authorize',
+            tier: 'credential-write',
+            summary: `${serviceId} を、クライアント ID「${override}」で認可します。心当たりが無ければ「実行しない」を選んでください。`,
+          }
+        : { channel: 'oauth:authorize', tier: 'egress', summary: `${serviceId} の認可ページをブラウザで開きます` },
+    );
+  } catch (err) {
+    presence = { ok: false, message: safeErrorMessage(err) };
   }
+  if (!presence.ok) return { ok: false, code: 'authorize_failed', message: presence.message };
   authorizeInFlight = true;
   try {
     const tokens = await authorize(config);

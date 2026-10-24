@@ -248,6 +248,17 @@ describe('リンクを開く操作は費用の予算に数えない', () => {
   });
 });
 
+describe('認可ページを開く操作も費用の予算に数えない', () => {
+  it('★ oauth:authorize を予算より多く呼んでも、有料の egress は断られない (threat: T-185)', async () => {
+    const h = harness(() => true);
+    for (let k = 0; k < BUDGET.egress!.perHour + 10; k += 1) {
+      h.advance(10_000);
+      expect((await h.gate.guard(req({ channel: 'oauth:authorize', tier: 'egress', summary: `g${k}` }), true)).ok).toBe(true);
+    }
+    expect(await h.gate.guard(req({ channel: 'assistant/chat', tier: 'egress', summary: 'chat' }), true)).toEqual({ ok: true });
+  });
+});
+
 describe('速度の制限', () => {
   it.each(Object.keys(RATE_LIMIT) as Tier[])('★ %s は 1 分の上限を超えると断る', async (tier) => {
     const h = harness(() => true);

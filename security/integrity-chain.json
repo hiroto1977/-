@@ -2952,6 +2952,14 @@
       "leafCount": 125,
       "note": "update userPresence.ts",
       "hash": "0312b0429354021646efc406088a0659c611372d4806975013a08a0ca35ffdfc"
+    },
+    {
+      "index": 353,
+      "prevHash": "0312b0429354021646efc406088a0659c611372d4806975013a08a0ca35ffdfc",
+      "merkleRoot": "3b8c4827414a006e3e1e59cbaf57a82ec1645695956c3bb43180874aea0bb4a9",
+      "leafCount": 125,
+      "note": "update main.ts,userPresence.ts",
+      "hash": "a2e7ac9714738a290f21c38c007ae4bd65e4c09fb99f898aaea4d86bd3a2f345"
     }
   ],
   "tipManifest": {
@@ -3018,13 +3026,13 @@
     "src/main/eraseAll.ts": "5fabdaeb36193d7cfd06ccbae8712ada1a5ad36787240cd35fb3dcf0a2fdd797",
     "src/main/fileRequestGate.ts": "d9a5d3f23e57c537d959b8aa2b63457b889563e5668964d4ff4576eea61a1746",
     "src/main/keychainBackend.ts": "0b2787b70d038860d74648a9806258bdf84cc08e562497365b5d5d850506682a",
-    "src/main/main.ts": "1b6fdefbb749e41751ae8c19431b0a43001a3ee1b47097a26d0c7be950014fa4",
+    "src/main/main.ts": "3e3892919f1b9aa59321f2fd7b6673e359a22df5d9d565132a211d0e44bce5cf",
     "src/main/oauth.ts": "361df5884e2b332e721701fe677390450bf98c7b665fe331dd1e79620da7a5b7",
     "src/main/presenceWiring.ts": "84334ae2023fa2c2c4931571839f365ca228ff817788e5c146550f01ca790336",
     "src/main/secrets.ts": "3c9ce41d0077a2740c97232d12dd6641143546a0b463cae8eaa226ab24442bcb",
     "src/main/shellOpenGate.ts": "ff1c7841ac01426d30754f7a1f049a9a4a43788734e78b4b52a27ff6dfc1e2b7",
     "src/main/stateFile.ts": "984eebe8582b3c6c88669d17e778932f6b87a682640d1f162acd182d5947169b",
-    "src/main/userPresence.ts": "276926f656e3d5b0af1175fa3314f7493a5debdc41b8472787db44bb76e33c81",
+    "src/main/userPresence.ts": "3e900c2ec2494dabfd0cc74d754b45116941547fa7b05582bddebba84bd755ca",
     "src/main/windowOpen.ts": "c8a61aa3e51991590950c909beab67ec5261eef64f6b8ab6c9e67b61eb3de42d",
     "src/main/windowPrefs.ts": "0bccea9e29b489da1b4a7962eaa53e237cf93fed9d4692371a3a43a6a4985dee",
     "src/preload/preload.ts": "21fc645271dd2064f063fc439d888eb4dcef32d08d1030d92d9cb8ff2a4040a6",

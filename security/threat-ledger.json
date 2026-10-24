@@ -3111,6 +3111,21 @@
         "file": "src/renderer/data/__tests__/storeImportShapes.test.ts",
         "test": "★ 作成時刻が上限ちょうどの記録は入れず、入れた記録の次の保存も時刻の範囲に収まる (threat: T-184)"
       }
+    },
+    {
+      "id": "T-185",
+      "found": "2026-10-24",
+      "foundBy": "防御側の層の依存の点検(Red-A')の報告 4 を、main.ts の oauth:authorize を読んで確かめた(上書き無しの経路は requirePresence の外で、authorizeInFlight の 5 分の延命と同意タブの連打が何にも数えられない)",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "low",
+      "title": "oauth:authorize のクライアント ID を上書きしない経路が本人確認の門の外で、送り手の確認・速度の上限・警戒の数えを通らない。乗っ取られた画面が 5 分ごとに掛け直して同意タブを開き続け、利用者の本物の『接続』を authorize_busy にしても、何も記録されず警戒態勢にも入らなかった",
+      "status": "mitigated",
+      "fix": "上書き無しも egress 段階で門を通す(確認は出さない・送り手と速度と警戒の数えだけ)。費用の予算には数えない(BUDGET_FREE_CHANNELS)。限界: 認可中の latch を利用者が解く口(取り消し)は無いまま。5 分で自然に切れる。",
+      "regression": {
+        "file": "src/main/__tests__/mainIpc.test.ts",
+        "test": "★ クライアント ID を上書きしない認可も、本人確認の門 (egress 段階) を通り、断られたら始めない (threat: T-185)"
+      }
     }
   ],
   "huntBacklog": [
@@ -3256,11 +3271,6 @@
     },
     {
       "surface": "main-ipc",
-      "item": "OS-F4 oauth:authorize の no-override 経路に送り手の確認・本人確認の門・警戒の数えが無い(authorizeInFlight は全体で最大 5 分・取り消しの口なし)",
-      "why": "Red-A' 2026-10-24。コードを読んだだけで実行していない。乗っ取られた画面が 5 分ごとに掛け直すと、利用者の本物の『接続』が authorize_busy になり、同意タブが開き続ける。直すなら egress 段階の requirePresence を通し、取り消しの IPC か利用者の操作での解放を足す。"
-    },
-    {
-      "surface": "main-ipc",
       "item": "externalUrlOrNull / app:openExternal が loopback・私設網・平文 http を通す。速度の上限は漏えいの上限ではない(20/分 × 長い URL)",
       "why": "Red-A' 2026-10-24。再現は関数に標本を当てたもの。T-147/T-173 の『egress は絞られるので漏えいは有界』は CSP の img-src https:(C5)が開いている間は意味を持たない。直すなら私設・loopback の拒否(ローカルの Ollama ページだけ例外)か、速度の上限は連打の抑止であって漏えいの上限ではないと明記する。"
     },
@@ -3286,8 +3296,8 @@
     },
     {
       "surface": "supply-chain",
-      "item": "脅威台帳の回帰検査が『題名の部分文字列がファイルに在る』だけで、it.skip / コメントアウトを断らない。vitest の retry(CI は 2)が競合の回帰を隠す。GEMINI.md ほかの指示ファイルが CODEOWNERS 外",
-      "why": "Red-B' 2026-10-24。今日は skip も欠けも無い(175 件を走査)ので潜在。直すなら実在する未 skip の it( 宣言を要求し、T-xxx つきのファイルは retry 0、指示ファイルを CODEOWNERS に足す。"
+      "item": "vitest の retry(CI は 2)が、競合の回帰(stateWriterRace・eraseVsSecretsWrite ほか)を隠す",
+      "why": "Red-B' 2026-10-24。回帰検査が it.skip / コメントアウトでないこと(threatLedger.test.ts)と、他の AI ツールの指示書(GEMINI.md ほか)の CODEOWNERS は直した。残るのは retry: 間欠の競合は 26/27 で通る。mutation.yml は CI を空にしてこれを避けている。直すなら T-xxx つきの検査ファイルだけ retry 0(vitest は設定ではファイル単位に出来ないので、projects で分けるか、各 describe に retry: 0)。"
     },
     {
       "surface": "renderer",
