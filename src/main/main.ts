@@ -20,7 +20,7 @@ import { shellTargetOrNull } from './shellOpenGate';
 import { installFileRequestGate } from './fileRequestGate';
 import { reportThreatSignal, requirePresence, requirePresenceFromUrl } from './presenceWiring';
 import { openFromWindow } from './windowOpen';
-import { describePayload, payloadTooWide, tierOfAction, weightOfAction, type PresenceDecision } from './userPresence';
+import { describeCredentialWrite, describePayload, payloadTooWide, tierOfAction, weightOfAction, type PresenceDecision } from './userPresence';
 import { evaluateUpdate, parseLatestRelease, type UpdateVerdict } from '../shared/updateCheck';
 import {
   DEFAULT_HTTP_TIMEOUT_MS,
@@ -457,10 +457,8 @@ ipcMain.handle('secrets:set', async (e, serviceId: unknown, token: unknown): Pro
     presence = await requirePresence(e, {
       channel: 'secrets:set',
       tier: 'credential-write',
-      // 確認が横取りされても見分けがつくよう、新しい値の長さと末尾 4 文字を見せる (全体は見せない)。
-    summary: `${serviceId} の資格情報を置き換えます。新しい値: 全 ${checked.value.length} 文字${
-      checked.value.length > 8 ? `・末尾「…${checked.value.slice(-4)}」` : ''
-    }。心当たりが無ければ「実行しない」を選んでください。`,
+      // 確認が横取りされても見分けがつくよう、新しい値の長さ・末尾 4 文字・(束なら)送り先のホストを見せる (全体は見せない)。
+      summary: describeCredentialWrite(serviceId, checked.value),
     });
   } catch (err) {
     presence = { ok: false, message: safeErrorMessage(err) };

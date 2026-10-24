@@ -314,6 +314,7 @@ export function isSafeExportPath(filePath: string, home: string, ext: string): b
   // Stryker disable next-line ConditionalExpression: 後段と重なる保険 (単独では観測不能)
   if (filePath.length === 0) return false;
   if (filePath.length > 1024) return false;
+  // Stryker disable next-line ConditionalExpression: 後段 (葉の名前の関門・親が固定の 2 つのどちらか) と重なる保険 (単独では観測不能)
   if (/[\0\r\n]/.test(filePath)) return false;
   if (!filePath.endsWith(ext)) return false;
   // threat: T-177 —— 葉の名前が Windows で別物になる形 (予約された装置名・`:` の代替データストリーム・末尾のドット/空白)。
@@ -325,6 +326,7 @@ export function isSafeExportPath(filePath: string, home: string, ext: string): b
   // mkdir は `state.json` という名のディレクトリを作っていた (実測・AI 監査の再現。以後の状態ファイルの
   // 保存が EISDIR で失敗する T-002 の形が、親の検査を**通る綴り**で戻っていた)。調べた物と書く物を
   // 同じにする —— `..` / 相対 / 末尾の区切り / 重なった区切りは resolve で形が変わるので、変わる物は断る。
+  // Stryker disable next-line ConditionalExpression: 親が固定の 2 つの正規化済みの絶対パスと**完全一致**する検査 (下) が同じ物を落とす (単独では観測不能)
   if (path.resolve(filePath) !== filePath) return false;
   const resolved = filePath;
   // threat: T-042 —— 親は固定の 2 つだけ。`startsWith(root + sep)` の「任意の深さ」は

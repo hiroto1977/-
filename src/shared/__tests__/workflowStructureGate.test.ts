@@ -57,6 +57,51 @@ describe('workflow の構造 — 読めない形と黙らせる鍵 (threat: T-14
 });
 
 /**
+ * release.yml の `verify` ジョブ (署名する `build` が needs で待つ検査) の step を黙らせる鍵 (threat: T-182)。
+ * 実測: "Typecheck + test + gates" に `continue-on-error: true` を足しても structureProblems は [] を返した。
+ */
+describe('release.yml の verify ジョブは黙らせる鍵を置けない (threat: T-182)', () => {
+  const release = readOriginalSource(path.join(__dirname, '../../../.github/workflows/release.yml'));
+  const STEP = '      - name: Typecheck + test + gates\n';
+  it.each([
+    ['continue-on-error', '        continue-on-error: true\n'],
+    ['if', '        if: always()\n'],
+    ['shell', '        shell: sh\n'],
+    ['working-directory', '        working-directory: src\n'],
+  ])('★ verify の step に %s を足すと落とす', (_n, add) => {
+    expect(release).toContain(STEP);
+    const bad = release.replace(STEP, STEP + add);
+    expect(gate.structureProblems('release.yml', bad).length).toBeGreaterThan(0);
+  });
+
+  it('★ verify の job 直下に continue-on-error を足しても落とす', () => {
+    const bad = release.replace('    defaults:\n', '    continue-on-error: true\n    defaults:\n');
+    expect(bad).not.toBe(release);
+    expect(gate.structureProblems('release.yml', bad).length).toBeGreaterThan(0);
+  });
+
+  it('対照: 実物の release.yml は通る。build ジョブの if: と環境は対象外', () => {
+    expect(gate.structureProblems('release.yml', release)).toEqual([]);
+    expect(release).toContain('    environment: release');
+  });
+});
+
+describe('特権つきの起動条件は新しい workflow に置けない (threat: T-182)', () => {
+  const BODY = 'permissions:\n  contents: read\njobs:\n  a:\n    runs-on: ubuntu-latest\n    steps:\n      - run: echo hi\n';
+  it.each(['workflow_run', 'issue_comment', 'pull_request_review', 'pull_request_review_comment', 'discussion', 'discussion_comment'])(
+    '★ on: %s は落とす',
+    (trigger) => {
+      const text = `on:\n  ${trigger}:\n    types: [completed]\n${BODY}`;
+      expect(gate.check([{ name: 'x.yml', text }], {}, {}).some((p) => p.why.includes(trigger))).toBe(true);
+    },
+  );
+  it('対照: push / pull_request / workflow_dispatch と permissions の issues: write は落とさない', () => {
+    const text = `on:\n  push:\n  pull_request:\n  workflow_dispatch:\npermissions:\n  issues: write\njobs:\n  a:\n    runs-on: ubuntu-latest\n    steps:\n      - run: echo hi\n`;
+    expect(gate.check([{ name: 'x.yml', text }], {}, {})).toEqual([]);
+  });
+});
+
+/**
  * 公開する HTML に悪意コードの形の走査が掛かる (threat: T-143)。pages.yml は ci.yml と並行に走るだけで
  * `needs:` が無く、あちらが赤でも公開は終わる —— 公開の直前に自分で走査する。
  */

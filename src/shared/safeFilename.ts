@@ -75,7 +75,6 @@ const WINDOWS_RESERVED_DEVICE = /^(con|prn|aux|nul|com[0-9\u00b9\u00b2\u00b3]|lp
 
 export function isSafeFilename(s: unknown): s is string {
   if (typeof s !== 'string') return false;
-  if (s === '.' || s === '..') return false;
   if (s.length === 0 || s.length > MAX_FILENAME_LENGTH) return false;
   if (/[\0\r\n/\\]/.test(s)) return false;
   if (s.includes(':') || /[. ]$/.test(s)) return false;

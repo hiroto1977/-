@@ -20,7 +20,7 @@ import { IDENTITY_CIPHER, isSealedData, type RecordCipher } from './recordCipher
 import { hasCollectionShape } from './collectionShapes';
 import { notifyRecordStoreChanged } from './collectionChange';
 import { sameRecordData } from './sameRecordData';
-import { isTimestampMs } from '../../shared/isoDate';
+import { MAX_TIMESTAMP_MS, isTimestampMs } from '../../shared/isoDate';
 
 const DB_NAME = 'business-hub-data';
 const DB_VERSION = 1;
@@ -989,6 +989,9 @@ export function dedupeById<T extends { readonly id: string }>(records: readonly 
 /** Validate a record coming from an untrusted backup file before it's
  *  written back into IndexedDB. Drops anything malformed rather than throwing
  *  so a partly-corrupt backup still restores its good records. */
+/** 復元で受ける作成時刻の余白 (ms)。この分だけ「1 ms 後」を重ねられる (T-184)。 */
+export const CREATED_AT_HEADROOM_MS = 1_000_000;
+
 function isValidStoredRecord(v: unknown): v is StoredRecord {
   if (!isPlainJsonObject(v)) return false;
   const r = v as Record<string, unknown>;
@@ -1003,6 +1006,10 @@ function isValidStoredRecord(v: unknown): v is StoredRecord {
     // **有限でも時刻でない数は同じ扱い** (2026-09-27 · パス 493) —— `1e20` は有限だが
     // `Date` の範囲の外で、表示の側 (`parseTimestamp`) は読めないと断る。境界は 1 つ。
     isTimestampMs(r.createdAt) &&
+    // **作成時刻には、時刻の上限から余白を残す** (2026-10-24 · threat: T-184)。最新を採る書き込み
+    // (`insertIfLatest` ほか) は「先の最新の 1 ms 後」を作成時刻にして並びを保つので、上限ちょうどの行が
+    // 入ると次の保存が上限を超えた不正な時刻 (`new Date` が読めない・次の復元で捨てられる) を書いた。
+    r.createdAt <= MAX_TIMESTAMP_MS - CREATED_AT_HEADROOM_MS &&
     isTimestampMs(r.updatedAt) &&
     isPlainJsonObject(r.data) &&
     // **深さにも天井** (2026-10-14 · パス 521 · threat: T-044) —— `put()` の structured

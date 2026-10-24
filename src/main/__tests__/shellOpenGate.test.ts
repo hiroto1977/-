@@ -171,6 +171,17 @@ describe('shellTargetOrNull — 入力の形', () => {
     expect(await shellTargetOrNull(long, root)).toBeNull();
   });
 
+  it('★ 上限を超える長さは、葉が短くても (ディレクトリで伸びていても) 弾く (葉の名前の関門に頼らない)', async () => {
+    // 葉の名前は T-177 から 256 字までなので、上の検査の長い葉は長さの門に届く前に葉の関門が落とす。
+    // 長さの門そのものは、ディレクトリで 1 つ超える形で確かめる (存在しないパス —— realpath は字面のまま残す)。
+    let dir = root;
+    const leaf = 'a.md';
+    while (path.join(dir, leaf).length <= MAX_SHELL_PATH_LENGTH) dir = path.join(dir, 'd'.repeat(200));
+    const p = path.join(dir, leaf);
+    expect(p.length).toBeGreaterThan(MAX_SHELL_PATH_LENGTH);
+    expect(await shellTargetOrNull(p, root)).toBeNull();
+  });
+
   it('上限ちょうどは長さでは弾かない', async () => {
     // 長さは**ディレクトリ**で稼ぐ (葉の名前は T-177 から 256 字までなので、葉だけ伸ばすと長さの門に届く前に断られる)。
     // 1 要素も 255 字が上限なので、200 字の階層を重ねて最後の 1 つで 1024 ちょうどに合わせる。
@@ -201,6 +212,14 @@ describe('shellTargetOrNull — 入力の形', () => {
     // POSIX のファイル名には改行を置けるので、これは作れる形である。
     for (const ch of ['\r', '\n']) {
       expect(await shellTargetOrNull(path.join(root, `ok${ch}evil.md`), root)).toBeNull();
+    }
+  });
+
+  it('★ ディレクトリの途中の NUL / CR / LF も弾く (葉の関門では見えない場所)', async () => {
+    // 葉の名前は T-177 の関門が落とすが、ディレクトリの要素にある制御文字はこの番人だけが落とす
+    // (存在しないパス —— realpath は字面のまま残し、拡張子も許可リストの内)。
+    for (const ch of ['\0', '\r', '\n']) {
+      expect(await shellTargetOrNull(path.join(root, `d${ch}x`, 'ok.md'), root)).toBeNull();
     }
   });
 });

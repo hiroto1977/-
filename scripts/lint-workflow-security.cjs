@@ -388,6 +388,39 @@ function structureProblems(name, text) {
       }
     }
   });
+  out.push(...releaseVerifyProblems(name, lines));
+  return out;
+}
+
+/**
+ * release.yml の `verify` ジョブ (署名する `build` が `needs` で待つ検査の関門) を黙らせる鍵 (T-182)。
+ * GATE_WORKFLOWS は ci.yml / pages.yml だけを対象にしており、実測: `verify` の "Typecheck + test + gates"
+ * step に `continue-on-error: true` を足しても structureProblems は [] を返し、ゲートが落ちても job は緑のまま
+ * `build` (署名鍵を持つ) が進んだ。`verify` では job 直下の `if:` (ref の制限) だけが正当なので、
+ * step の `continue-on-error` / `if` / `working-directory` / `shell` (step 内) を断る。
+ */
+function releaseVerifyProblems(name, lines) {
+  if (name !== 'release.yml') return [];
+  const out = [];
+  let inVerify = false;
+  let inSteps = false;
+  lines.forEach((raw, i) => {
+    if (/^\s*#/.test(raw)) return;
+    const line = raw.replace(/\s+#.*$/, '');
+    const job = /^ {2}([\w-]+):\s*$/.exec(line);
+    if (job) {
+      inVerify = job[1] === 'verify';
+      inSteps = false;
+    }
+    if (!inVerify) return;
+    if (/^ {4}steps:\s*$/.test(line)) inSteps = true;
+    const m = /^\s*-?\s*["']?(continue-on-error|if|working-directory|shell)["']?\s*:/.exec(line);
+    if (!m) return;
+    // job 直下の `if:` (ref の制限) と `defaults.run.shell` は steps の外。steps の中はどの鍵も断る。
+    if (m[1] === 'continue-on-error' || inSteps) {
+      out.push({ file: `${name}:${i + 1}`, why: `\`${m[1]}:\` は verify ジョブ (署名する build が待つ検査) の step を黙らせる鍵 — 置けません` });
+    }
+  });
   return out;
 }
 
@@ -485,6 +518,17 @@ function check(list, allow = UNPINNED_ALLOW, jobAllow = JOB_PERMISSIONS_ALLOW) {
       problems.push({
         file: name,
         why: 'pull_request_target — fork の PR が secrets 付きで走る',
+      });
+    }
+    // 信用できない入力が特権つきで走る起動条件 (2026-10-24 · 防御側の点検 Red-B' の指摘)。pull_request_target と同じ
+    // 形 —— `workflow_run` (fork の PR の workflow が成果物を渡すと、こちらの権限で走る)・`issue_comment` ほか
+    // (誰でも書ける入力を、既定ブランチの権限で処理する)。実測: 合成した workflow に `on: workflow_run` と
+    // `contents: write` を置いても 0 件だった。実物に 0 件。要るなら台帳へ (今は無い)。
+    const privTrigger = /(^|[^\w-])(workflow_run|issue_comment|pull_request_review_comment|pull_request_review|discussion_comment|discussion)(?![\w-])/.exec(withoutComments);
+    if (privTrigger) {
+      problems.push({
+        file: name,
+        why: `${privTrigger[2]} — 誰でも書ける入力・fork の成果物を、このリポジトリの権限で処理する起動条件。要るなら scripts/lint-workflow-security.cjs に理由を書いて足すこと`,
       });
     }
     // ローダを差し替える環境変数は、`env:` の鍵にも `run:` の `export X=` にも現れる —— 注記を落とした全行で見る。
