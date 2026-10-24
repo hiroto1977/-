@@ -78,6 +78,33 @@ import path from 'node:path';
  * 利用者の既存ディレクトリの権限を勝手に締めるほうが影響が大きい。
  */
 /**
+ * **書き出し根そのものを本人だけにする** (2026-10-24 · threat: T-176)。
+ *
+ * ファイルは 0600 でも、根 (`~/.local/business-hub`) と `data/` は `fs.mkdir` の既定で **umask 任せ**だった
+ * (実測: umask 022 → 755・002 → 775・000 → **777**)。同じホストの別ユーザーが書ける根では、ファイルを
+ * 読めなくても **unlink と rename ができる** —— `team-radar.json` (他人の氏名と評価) や `talent.json` を
+ * 差し替えて評価データを偽造できた (読み込みは偽造を弾かない)。根を 0700 にすれば、配下の
+ * ディレクトリを辿れないので、配下は個別に直さなくてよい。
+ *
+ * - 根が無ければ **0700 で作る**。以後ここに作る子 (`data/` ほか) は根の下なので他人から届かない。
+ * - 根が **symlink なら触らない** (`lstat` が dir でない) —— 辿ると `chmod` が根の外の実体に当たる
+ *   (`repairExportPermissions` が同じ理由で symlink を辿らない)。
+ * - 直した (または既に 0700) なら 0/1 を返す。触れない (所有者でない等) なら 0 で、起動は続ける。
+ */
+export async function ensurePrivateExportRoot(root: string = exportRoot()): Promise<number> {
+  try {
+    await fs.mkdir(root, { recursive: true, mode: 0o700 });
+    const st = await fs.lstat(root);
+    if (!st.isDirectory()) return 0;
+    if ((st.mode & 0o077) === 0) return 0;
+    await fs.chmod(root, 0o700);
+    return 1;
+  } catch {
+    return 0;
+  }
+}
+
+/**
  * 既に書き出されているファイルの緩い権限を、一度だけ均す。直した数を返す。
  *
  * ## なぜ「次の書き込みで直る」では足りないか

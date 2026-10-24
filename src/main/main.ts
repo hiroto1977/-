@@ -10,7 +10,7 @@ import {
 } from './secrets';
 import { LIVE_ACTIONS, LIVE_FETCHERS, LOCAL_SERVICES, readsSavedToken, type ServiceId } from './clients';
 import { authorize, isOAuthSupported, OAUTH_CONFIGS } from './oauth';
-import { repairExportPermissions } from './clients/exportPaths';
+import { ensurePrivateExportRoot, repairExportPermissions } from './clients/exportPaths';
 import { isServiceId } from '../shared/serviceId';
 import { checkTokenInput } from '../shared/tokenInput';
 import type { OsOpResult, TokenSaveResult } from '../preload/preload';
@@ -274,7 +274,10 @@ if (gotInstanceLock) app.whenReady().then(async () => {
    * 窓を出してから走らせる —— 起動を待たせる価値のある処理ではない。
    * 失敗しても起動は続ける (権限を直せないことは、アプリが使えない理由にならない)。
    */
-  void repairExportPermissions().catch(() => undefined);
+  // 根を先に本人だけにする (T-176)。ファイルの権限の修復はその後。
+  void ensurePrivateExportRoot()
+    .then(() => repairExportPermissions())
+    .catch(() => undefined);
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();

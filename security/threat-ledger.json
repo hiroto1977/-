@@ -2976,6 +2976,21 @@
         "file": "src/renderer/data/__tests__/backupRecordLimit.test.ts",
         "test": "★ 7 つとも台帳にあり、実在する collection 名である"
       }
+    },
+    {
+      "id": "T-176",
+      "found": "2026-10-24",
+      "foundBy": "AI による脅威の狩り(監査役 OS 固有 Linux/Windows)の報告 F2 を、防御側が実物の atomicWriteFile で umask ごとに権限を測って確かめた(umask 022 → 根 755・002 → 775・000 → 777・ファイルは常に 600)",
+      "surface": "main-ipc",
+      "class": "living-off-the-land",
+      "severity": "low",
+      "title": "書き出し根 ~/.local/business-hub と data/ は fs.mkdir の既定で umask 任せの権限になる(umask 000 では 777)。人事評価(team-radar.json・talent.json)などの状態ファイルはその直下にあり、ファイルが 0600 でも、同じホストの別ユーザーは根に書ければ unlink と rename で差し替えられる(読み込みは偽造を弾かない)。秘密の本体と感情ログは userData(実 Electron で 700)に在るので影響しない",
+      "status": "fixed",
+      "fix": "ensurePrivateExportRoot が起動時に根を 0700 で作る/締める(symlink は辿らない・触れなければ 0 で起動は続ける)。根が 0700 なら配下のディレクトリは他人から辿れず、個別に直さなくてよい。未対応(強化案): atRest の昇格読み込みが素の JSON と plain: の封筒を本物のキーチェーンがあっても受理する(完全性が無い)点は、根の権限で攻撃者の経路を閉じた上で残している。Windows は ACL が既定で本人だけなので対象外。",
+      "regression": {
+        "file": "src/main/clients/__tests__/exportPaths.test.ts",
+        "test": "★ 緩い根 (0755 / 0777) は 0700 に直す"
+      }
     }
   ],
   "huntBacklog": [
