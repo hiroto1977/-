@@ -2912,6 +2912,14 @@
       "leafCount": 125,
       "note": "update integrity-chain.cjs,windowOpen.ts",
       "hash": "e54095171294627f175faa672d510d580ca4109f24dbb3db5dd3cc406a2bafc5"
+    },
+    {
+      "index": 348,
+      "prevHash": "e54095171294627f175faa672d510d580ca4109f24dbb3db5dd3cc406a2bafc5",
+      "merkleRoot": "2ecbd52ee5df0838bf91924ef1de0a8c4aad4557e7aaf6acda10b58c706e0c65",
+      "leafCount": 125,
+      "note": "update windowOpen.ts",
+      "hash": "14a185f753b2adae6bf337c505e790583c3dfa670137a9690313ef7b28cb16d9"
     }
   ],
   "tipManifest": {
@@ -2985,7 +2993,7 @@
     "src/main/shellOpenGate.ts": "83d21dd21674694edd0e835c9acfdc6c79fea3ff8eedd2d5e589dfeecbc7548b",
     "src/main/stateFile.ts": "984eebe8582b3c6c88669d17e778932f6b87a682640d1f162acd182d5947169b",
     "src/main/userPresence.ts": "dd8f8115ac6575a90fdc5f859e47322796931fcbfbae3e1ab390c2b7d5041f65",
-    "src/main/windowOpen.ts": "9274ecd5035a5eee5517399b49c9d5d1384f2972e09915f5d8512fe91b2beb9d",
+    "src/main/windowOpen.ts": "c8a61aa3e51991590950c909beab67ec5261eef64f6b8ab6c9e67b61eb3de42d",
     "src/main/windowPrefs.ts": "0bccea9e29b489da1b4a7962eaa53e237cf93fed9d4692371a3a43a6a4985dee",
     "src/preload/preload.ts": "21fc645271dd2064f063fc439d888eb4dcef32d08d1030d92d9cb8ff2a4040a6",
     "src/renderer/data/assistantMarkdown.ts": "25ead9bb21e7b59a9e35d3101664f6ecb426cc5b4771118726fc7d389c6a96cc",

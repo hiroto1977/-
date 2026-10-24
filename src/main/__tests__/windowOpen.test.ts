@@ -60,4 +60,55 @@ describe('openFromWindow — 速度制限を迂回しない (threat: T-173)', ()
     ).resolves.toBeUndefined();
     expect(log).toHaveBeenCalled();
   });
+
+  it('★ 門へ渡す要求は app:openExternal の口・egress・開く URL そのもの (IPC と速度の枠を共有する)', async () => {
+    const seen: Array<{ senderUrl: string; req: unknown }> = [];
+    await openFromWindow('https://example.com/a', {
+      senderUrl: () => 'file:///app/dist/index.html',
+      guard: async (senderUrl, req) => {
+        seen.push({ senderUrl, req });
+        return { ok: false, message: 'no' };
+      },
+      open: async () => {},
+    });
+    expect(seen).toEqual([
+      {
+        senderUrl: 'file:///app/dist/index.html',
+        req: { channel: 'app:openExternal', tier: 'egress', summary: 'https://example.com/a' },
+      },
+    ]);
+  });
+
+  it('記録先が無くても、門が投げて reject にならない', async () => {
+    await expect(
+      openFromWindow('https://example.com/a', {
+        senderUrl: () => 'x',
+        guard: async () => {
+          throw new Error('boom');
+        },
+        open: async () => {},
+      }),
+    ).resolves.toBeUndefined();
+  });
+
+  it('記録の文面: Error は message を、それ以外は文字列にして載せる', async () => {
+    const msgs: string[] = [];
+    const base = { senderUrl: () => 'x', open: async () => {}, log: (m: string) => msgs.push(m) };
+    await openFromWindow('https://example.com/a', {
+      ...base,
+      guard: async () => {
+        throw new Error('boom');
+      },
+    });
+    await openFromWindow('https://example.com/a', {
+      ...base,
+      guard: async () => {
+        throw 'plain-string'; // eslint-disable-line @typescript-eslint/only-throw-error
+      },
+    });
+    expect(msgs).toEqual([
+      '[window.open] 外部の URL を開けませんでした: boom',
+      '[window.open] 外部の URL を開けませんでした: plain-string',
+    ]);
+  });
 });

@@ -106,6 +106,7 @@ vi.mock('electron', () => ({
           },
         },
       },
+      getURL: () => 'file:///app/dist/index.html',
       setWindowOpenHandler: (fn: (d: { url: string }) => unknown) => {
         captured.windowOpenHandler = fn;
       },
@@ -165,6 +166,8 @@ vi.mock('../windowPrefs', async (importOriginal) => ({
 const threatSignals: { kind: string; where: string }[] = [];
 vi.mock('../presenceWiring', () => ({
   requirePresence: async () => ({ ok: true }),
+  // window.open も IPC と同じ門を通る (threat: T-173)。窓の扉は待たずに走るので、検査は flush してから数える。
+  requirePresenceFromUrl: async () => ({ ok: true }),
   recentPresenceEvents: () => [],
   reportThreatSignal: (kind: string, where: string) => {
     threatSignals.push({ kind, where });
@@ -304,6 +307,9 @@ describe('BrowserWindow の設定 — 隔離の三点セット', () => {
   });
 });
 
+/** 窓の扉は門を待たずに走る (T-173)。門と OS の呼び出しが終わるまで microtask を流す。 */
+const flushWindowOpen = () => new Promise<void>((r) => setTimeout(r, 0));
+
 describe('setWindowOpenHandler — 新しい窓は必ず拒否する', () => {
   it('どんな URL でも window.open は拒否する', async () => {
     const c = await loadMain({ packaged: true });
@@ -316,6 +322,7 @@ describe('setWindowOpenHandler — 新しい窓は必ず拒否する', () => {
     const c = await loadMain({ packaged: true });
     c.windowOpenHandler!({ url: 'https://example.com/a' });
     c.windowOpenHandler!({ url: 'http://example.com/b' });
+    await flushWindowOpen();
     expect(openedExternal).toEqual(['https://example.com/a', 'http://example.com/b']);
   });
 
@@ -332,6 +339,7 @@ describe('setWindowOpenHandler — 新しい窓は必ず拒否する', () => {
     ]) {
       c.windowOpenHandler!({ url });
     }
+    await flushWindowOpen();
     expect(openedExternal).toEqual([]);
   });
 
@@ -376,6 +384,7 @@ describe('setWindowOpenHandler — 新しい窓は必ず拒否する', () => {
       '',
     ];
     for (const url of probes) c.windowOpenHandler!({ url });
+    await flushWindowOpen();
 
     const expected = probes.map((u) => externalUrlOrNull(u)).filter((v): v is string => v !== null);
     expect(openedExternal).toEqual(expected);

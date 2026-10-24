@@ -11,7 +11,7 @@ import '../web-shim';
 
 vi.mock('../security/vault', () => ({
   getVault: () => ({
-    getToken: async () => 'sk-ant-test-key-DO-NOT-LEAK',
+    getToken: async () => 'sk-ant-x',
     setToken: async () => {},
     clearToken: async () => {},
     listServices: async () => ['emotions'],
