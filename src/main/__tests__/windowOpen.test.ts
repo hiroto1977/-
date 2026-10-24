@@ -103,7 +103,7 @@ describe('openFromWindow — 速度制限を迂回しない (threat: T-173)', ()
     await openFromWindow('https://example.com/a', {
       ...base,
       guard: async () => {
-        throw 'plain-string'; // eslint-disable-line @typescript-eslint/only-throw-error
+        throw 'plain-string';
       },
     });
     expect(msgs).toEqual([
