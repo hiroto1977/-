@@ -2371,10 +2371,10 @@
       "severity": "low",
       "title": "ブラウザ版 shim が chat / chatAll の model と stocks/advise の universe を、main の handler と同じ形の関門に通さず、鍵を使う・ネットワークへ出る前に素通りさせていた (main は断る)。デスクトップ版とブラウザ版で受理集合が割れ、形の合わない値がそのまま提供者へのパス・本文へ入る",
       "status": "mitigated",
-      "fix": "web-shim に readRequestedModel (isSafeModelName) と universe の isSafeSymbol 検査を足し、main と同じ文面で断る。webShimRequestedModel.test.ts が断る側と通る側の対照を留める。",
+      "fix": "web-shim に readRequestedModel (isSafeModelName) と universe の isSafeSymbol 検査を足し、main と同じ文面で断る。webShimRequestedModel.test.ts が断る側と通る側の対照を留める。 (2026-10-24: model の形の検査は T-170 で『model を読まない』に置き換わった。regression は universe の関門に残る。)",
       "regression": {
         "file": "src/renderer/__tests__/webShimRequestedModel.test.ts",
-        "test": "ブラウザ版: model の形が正しくなければ、鍵を使う前・ネットワークへ出る前に断る (threat: T-135)"
+        "test": "★ stocks/advise: universe に形の合わない銘柄が 1 つでもあれば断る"
       }
     },
     {
