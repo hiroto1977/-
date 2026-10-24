@@ -1,0 +1,439 @@
+{
+  "version": 1,
+  "purpose": "弱点の種類 (CWE) → このアプリの守り の対応表。脅威ウォッチ (scripts/threat-watch.cjs) が「今、実際に悪用されている弱点」と「依存の勧告」を種類に分け、この表に守りが在るかを毎日突き合わせる。表に無い種類・守りが実在しない種類は『先に守りを足す候補』として Issue に出る。表は進化する: 新しい種類が出たら、守り (門・検査) を足してからここへ載せる。実在は src/shared/__tests__/weaknessMap.test.ts が双方向に留める。",
+  "kinds": {
+    "ours": "このアプリ自身のコードで起こりうる種類。守りは門・検査・共有の関門",
+    "platform": "Electron / Chromium / Node など同梱の基盤の欠陥。自前コードでは直せず、更新で追う"
+  },
+  "classes": [
+    {
+      "id": "path-traversal",
+      "name": "パス・ファイル名の細工 (トラバーサル・二重拡張子)",
+      "kind": "ours",
+      "cwes": [
+        "CWE-22",
+        "CWE-23",
+        "CWE-24",
+        "CWE-25",
+        "CWE-26",
+        "CWE-27",
+        "CWE-28",
+        "CWE-29",
+        "CWE-30",
+        "CWE-31",
+        "CWE-32",
+        "CWE-33",
+        "CWE-34",
+        "CWE-35",
+        "CWE-36",
+        "CWE-37",
+        "CWE-38",
+        "CWE-39",
+        "CWE-40",
+        "CWE-41",
+        "CWE-59",
+        "CWE-61",
+        "CWE-73"
+      ],
+      "defenses": {
+        "files": [
+          "src/shared/safeFilename.ts",
+          "src/main/shellOpenGate.ts"
+        ],
+        "gates": [
+          "lint:forbidden"
+        ],
+        "threats": [
+          "T-163"
+        ]
+      }
+    },
+    {
+      "id": "command-injection",
+      "name": "コマンド・コード注入 (シェル・eval・テンプレート)",
+      "kind": "ours",
+      "cwes": [
+        "CWE-74",
+        "CWE-77",
+        "CWE-78",
+        "CWE-88",
+        "CWE-94",
+        "CWE-95",
+        "CWE-96",
+        "CWE-917"
+      ],
+      "defenses": {
+        "files": [
+          "scripts/lint-shell.cjs",
+          "scripts/lint-forbidden-patterns.cjs"
+        ],
+        "gates": [
+          "lint:shell",
+          "lint:forbidden",
+          "lint:workflow-security"
+        ],
+        "threats": [
+          "T-161",
+          "T-160"
+        ]
+      }
+    },
+    {
+      "id": "regex-dos",
+      "name": "正規表現のバックトラック爆発 (ReDoS)",
+      "kind": "ours",
+      "cwes": [
+        "CWE-1333",
+        "CWE-185"
+      ],
+      "defenses": {
+        "files": [
+          "scripts/lint-regex-complexity.cjs",
+          "scripts/lib/json-schema-subset.cjs"
+        ],
+        "gates": [
+          "lint:regex"
+        ],
+        "threats": [
+          "T-162"
+        ]
+      }
+    },
+    {
+      "id": "resource-exhaustion",
+      "name": "資源の枯渇 (巨大な本文・無制限の読み込み・再帰)",
+      "kind": "ours",
+      "cwes": [
+        "CWE-400",
+        "CWE-405",
+        "CWE-407",
+        "CWE-674",
+        "CWE-770",
+        "CWE-774",
+        "CWE-776",
+        "CWE-789"
+      ],
+      "defenses": {
+        "files": [
+          "src/shared/httpLimits.ts",
+          "src/shared/assistantLimits.ts"
+        ],
+        "gates": [
+          "lint:regex"
+        ],
+        "threats": []
+      }
+    },
+    {
+      "id": "ssrf-open-redirect",
+      "name": "SSRF・オープンリダイレクト (送り先の細工)",
+      "kind": "ours",
+      "cwes": [
+        "CWE-918",
+        "CWE-601"
+      ],
+      "defenses": {
+        "files": [
+          "src/shared/privateTarget.ts",
+          "src/shared/externalUrlGate.ts"
+        ],
+        "gates": [
+          "lint:network-targets"
+        ],
+        "threats": [
+          "T-009",
+          "T-030",
+          "T-033"
+        ]
+      }
+    },
+    {
+      "id": "prototype-pollution",
+      "name": "プロトタイプ汚染・継承された鍵の読み",
+      "kind": "ours",
+      "cwes": [
+        "CWE-1321",
+        "CWE-915"
+      ],
+      "defenses": {
+        "files": [
+          "src/shared/lookup.ts"
+        ],
+        "gates": [],
+        "threats": []
+      }
+    },
+    {
+      "id": "markup-injection",
+      "name": "マークアップ注入 (XSS・HTML/SVG/Markdown への混入)",
+      "kind": "ours",
+      "cwes": [
+        "CWE-79",
+        "CWE-80",
+        "CWE-83",
+        "CWE-87",
+        "CWE-116"
+      ],
+      "defenses": {
+        "files": [
+          "src/shared/escape.ts"
+        ],
+        "gates": [
+          "lint:forbidden",
+          "lint:csp"
+        ],
+        "threats": []
+      }
+    },
+    {
+      "id": "secret-exposure",
+      "name": "秘密・個人情報の漏出 (ログ・エラー文・平文保存・送信)",
+      "kind": "ours",
+      "cwes": [
+        "CWE-200",
+        "CWE-201",
+        "CWE-209",
+        "CWE-256",
+        "CWE-257",
+        "CWE-312",
+        "CWE-313",
+        "CWE-319",
+        "CWE-522",
+        "CWE-532",
+        "CWE-538",
+        "CWE-798"
+      ],
+      "defenses": {
+        "files": [
+          "src/shared/redact.ts",
+          "src/shared/tokenInput.ts"
+        ],
+        "gates": [
+          "lint:storage",
+          "lint:network-targets"
+        ],
+        "threats": [
+          "T-021",
+          "T-095"
+        ]
+      }
+    },
+    {
+      "id": "header-injection",
+      "name": "ヘッダ・改行の注入 (CRLF)",
+      "kind": "ours",
+      "cwes": [
+        "CWE-93",
+        "CWE-113",
+        "CWE-117"
+      ],
+      "defenses": {
+        "files": [
+          "src/shared/headerValue.ts"
+        ],
+        "gates": [],
+        "threats": []
+      }
+    },
+    {
+      "id": "input-validation",
+      "name": "入力検証の不備 (範囲・長さ・型)",
+      "kind": "ours",
+      "cwes": [
+        "CWE-20",
+        "CWE-129",
+        "CWE-1284",
+        "CWE-1287"
+      ],
+      "defenses": {
+        "files": [
+          "src/shared/writeFieldLimits.ts"
+        ],
+        "gates": [
+          "lint:ipc-handlers"
+        ],
+        "threats": []
+      }
+    },
+    {
+      "id": "unsafe-file-write",
+      "name": "危ないファイル書き込み (競合・アップロード・一時ファイル)",
+      "kind": "ours",
+      "cwes": [
+        "CWE-367",
+        "CWE-377",
+        "CWE-379",
+        "CWE-434"
+      ],
+      "defenses": {
+        "files": [
+          "src/main/atomicWrite.ts",
+          "src/shared/safeFilename.ts"
+        ],
+        "gates": [
+          "lint:forbidden"
+        ],
+        "threats": [
+          "T-002",
+          "T-163"
+        ]
+      }
+    },
+    {
+      "id": "supply-chain",
+      "name": "供給網 (依存・workflow・取得物の改ざん)",
+      "kind": "ours",
+      "cwes": [
+        "CWE-426",
+        "CWE-427",
+        "CWE-494",
+        "CWE-506",
+        "CWE-829",
+        "CWE-1104",
+        "CWE-1357"
+      ],
+      "defenses": {
+        "files": [
+          "scripts/lint-dependencies.cjs",
+          "scripts/audit-pinned-action-shas.cjs"
+        ],
+        "gates": [
+          "lint:deps",
+          "lint:workflow-security"
+        ],
+        "threats": [
+          "T-124"
+        ]
+      }
+    },
+    {
+      "id": "access-control",
+      "name": "権限・認可の不備 (IPC・プロセス境界)",
+      "kind": "ours",
+      "cwes": [
+        "CWE-250",
+        "CWE-269",
+        "CWE-284",
+        "CWE-285",
+        "CWE-287",
+        "CWE-306",
+        "CWE-862",
+        "CWE-863"
+      ],
+      "defenses": {
+        "files": [
+          "src/main/shellOpenGate.ts"
+        ],
+        "gates": [
+          "lint:ipc-handlers",
+          "lint:imports"
+        ],
+        "threats": []
+      }
+    },
+    {
+      "id": "data-format-injection",
+      "name": "データ形式への注入 (CSV 数式・デシリアライズ・スキーマ)",
+      "kind": "ours",
+      "cwes": [
+        "CWE-502",
+        "CWE-1236"
+      ],
+      "defenses": {
+        "files": [
+          "src/renderer/data/csv.ts",
+          "scripts/lib/json-schema-subset.cjs"
+        ],
+        "gates": [
+          "lint:forbidden"
+        ],
+        "threats": []
+      }
+    },
+    {
+      "id": "weak-crypto",
+      "name": "暗号の誤り (弱い鍵導出・固定の IV・乱数)",
+      "kind": "ours",
+      "cwes": [
+        "CWE-326",
+        "CWE-327",
+        "CWE-328",
+        "CWE-330",
+        "CWE-331",
+        "CWE-759",
+        "CWE-760",
+        "CWE-916"
+      ],
+      "defenses": {
+        "files": [
+          "src/renderer/security/vault.ts",
+          "src/shared/cryptoParams.ts"
+        ],
+        "gates": [
+          "lint:forbidden"
+        ],
+        "threats": []
+      }
+    },
+    {
+      "id": "memory-safety",
+      "name": "メモリ安全性の欠陥 (Chromium / V8 / Node など同梱の基盤)",
+      "kind": "platform",
+      "cwes": [
+        "CWE-119",
+        "CWE-120",
+        "CWE-121",
+        "CWE-122",
+        "CWE-125",
+        "CWE-190",
+        "CWE-191",
+        "CWE-415",
+        "CWE-416",
+        "CWE-476",
+        "CWE-787",
+        "CWE-843"
+      ],
+      "defenses": {
+        "files": [
+          "scripts/lint-dependencies.cjs",
+          "package.json"
+        ],
+        "gates": [
+          "lint:deps"
+        ],
+        "threats": []
+      }
+    }
+  ],
+  "notApplicable": [
+    {
+      "cwes": [
+        "CWE-89",
+        "CWE-564",
+        "CWE-943"
+      ],
+      "reason": "このアプリは SQL・NoSQL のクエリ言語を組み立てない (保存は IndexedDB の鍵引きと JSON だけ)。組み立てる経路が生えたら守りの種類へ移す"
+    },
+    {
+      "cwes": [
+        "CWE-352"
+      ],
+      "reason": "Cookie の暮らしを持つ web サーバではない (デスクトップ版は loopback の OAuth 待受だけで state を定時間比較。ブラウザ版は静的 HTML)"
+    },
+    {
+      "cwes": [
+        "CWE-384",
+        "CWE-613",
+        "CWE-639"
+      ],
+      "reason": "サーバ側のセッション・オブジェクト参照を持たない (資格情報は端末の保管庫で、利用者ごとの別アカウント面が無い)"
+    },
+    {
+      "cwes": [
+        "CWE-611",
+        "CWE-827"
+      ],
+      "reason": "XML を外から読む経路が無い (書き出しの SVG を組むだけで、XML パーサに外部入力を渡さない)。読む経路が生えたら守りの種類へ移す"
+    }
+  ]
+}

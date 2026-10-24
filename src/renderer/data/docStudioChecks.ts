@@ -1,0 +1,1330 @@
+/**
+ * 書類スタジオ — 事前チェック（人的ミスの検出）。
+ *
+ * テンプレートは正しくても、入力する人間の側で書類は壊れる。
+ * ここで潰すのは「書いた本人が気づけない」種類の失敗に限る。
+ *
+ *   fatal — その記載のままでは書類が無効・違法になる（極度額のない身元保証、
+ *           上限規制を超える36協定、利息制限法超過の利率、30日を切る解雇予告 等）
+ *   warn  — 無効ではないが、実務上ほぼ確実に問題になる（数値の矛盾、
+ *           必須記載事項の空欄、登録番号の形式誤り 等）
+ *   info  — 交付後に期限内でやることの取りこぼし（届出・登記・印紙 等）
+ *
+ * 判定はすべて純関数。UI を持たないので単体テストで固定できる
+ * （src/renderer/__tests__/docStudioChecks.test.ts）。
+ */
+
+import type { StudioDoc } from './docStudioData';
+import { utcMsFromParts } from '../../shared/isoDate';
+import { byIssueLevel, type IssueLevel } from '../../shared/issueLevel';
+import { namedShareholderCount, totalHeldShares } from './shareholders';
+// 明細の金額はこの厳しい読み取りで計算される。橋を掛けるために読む (パス 94)。
+import { readNumber } from './inputGuards';
+import { fromWareki } from '../../shared/bankFormat';
+
+/** 重大度はアプリ全体で 1 つ（`shared/issueLevel.ts`）。旧名は呼び出し側のために残す。 */
+export type CheckLevel = IssueLevel;
+
+export interface DocIssue {
+  readonly level: CheckLevel;
+  /** 該当する差込フィールドの k（画面で入力欄を強調するために使う）。 */
+  readonly field?: string;
+  readonly message: string;
+  /** 根拠となる条文・制度。 */
+  readonly basis?: string;
+}
+
+type Values = Record<string, string>;
+
+/**
+ * 全角数字・カンマ・単位つきの入力から数値を取り出す。取れなければ null。
+ *
+ * **この読み取りは意図して緩い。** 差込欄には「40時間」「第5条」「100個」のような
+ * 散文が入るので、そこから数を拾えないと 36協定の上限や議事録の定足数を
+ * 判定できない。金額の計算に使う `readNumber` (`shared/readNumeric.ts`) は
+ * 逆に厳しく読む —— **役割が違う 2 つの読み取りである**。
+ * 2 つの間で答えが分かれる欄については、下の `RULES.invoice` が橋を掛ける
+ * (2026-09-08 · パス 94)。
+ *
+ * **符号の取り違え (2026-09-08 に直した)**: 全角 `－` (U+FF0D) は畳んでいたが
+ * **U+2212 `−` を畳んでいなかった**ので、`'−500'` が **+500** と読まれていた。
+ * `num()` 経由で金額の規則に入るため、−500 と書いた数字が +500 として突合を
+ * 通り得た。U+2212 は数学の負符号そのものなので、ここで半角 `-` に畳む。
+ *
+ * **日本語会計の `△` / `▲` (負数) は、まだ負として読まない。**
+ * `'△500'` は今も **+500** になる。会計の慣行では負数だが、書面の数字の意味を
+ * 変える判断なので `docs/REMAINING_WORK.md` に残した。
+ */
+export function toNum(raw: string | undefined): number | null {
+  if (!raw) return null;
+  const half = raw
+    .replace(/\u2212/g, '-') // U+2212 MINUS SIGN → 半角ハイフンマイナス
+    .replace(/[０-９．－]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0));
+  // 桁区切りは半角 , だけとは限らない。日本語 IME は全角 ，や読点 、を平気で挟むので
+  // ここで一緒に落とす（\s は U+3000 全角スペースも含む）。落とし損ねると
+  // 「１，２３４」が 1 と読まれ、金額チェックが静かに的外れになる。
+  const m = half.replace(/[,，、\s]/g, '').match(/-?\d+(\.\d+)?/);
+  if (!m) return null;
+  const n = Number(m[0]);
+  return Number.isFinite(n) ? n : null;
+}
+
+/** 「2026年8月5日」「2026/8/5」「2026-08-05」を UTC ミリ秒に。取れなければ null。 */
+export function parseJpDate(raw: string | undefined): number | null {
+  if (!raw) return null;
+  const half = raw.replace(/[０-９]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0));
+  const m = half.match(/(\d{4})\s*[年/\-.]\s*(\d{1,2})\s*[月/\-.]\s*(\d{1,2})/) ?? matchWareki(half);
+  if (!m) return null;
+  const y = Number(m[1]);
+  const mo = Number(m[2]);
+  const d = Number(m[3]);
+  // 月だけは先に弾く。Date.UTC は 0 月を前年12月、13月を翌年1月として受け取ってしまい、
+  // 日は動かないので後段の照合をすり抜ける。
+  if (mo < 1 || mo > 12) return null;
+  const t = utcMsFromParts(y, mo, d);
+  // 2月30日・4月31日・0日のような実在しない日は Date.UTC が別の月へ繰り上げ／繰り下げるため、
+  // 日が入力どおりに戻ってこない。日の照合だけで足りる（月は上で範囲を保証済み）。
+  if (new Date(t).getUTCDate() !== d) return null;
+  return t;
+}
+
+/**
+ * **和暦の日付を西暦の組に直す。** 元号名 (`令和`)・1 文字 (`令`)・頭文字 (`R`) を受ける。
+ * `元` は 1 年。返す形は西暦の正規表現と同じ `[全体, 年, 月, 日]` なので、
+ * 呼び出し側は以降を 1 本で書ける。
+ *
+ * ## なぜ要るのか (2026-09-08 · パス 100 の実測)
+ *
+ * 直す前の `parseJpDate` は `(\d{4})` の年しか読まず、**和暦は 1 つも読めなかった** ——
+ * `令和8年9月30日` / `R8.9.30` / `平成31年4月30日` / `令8.9.30` はすべて null。
+ * 読めなければ `day()` が NaN を返し、**法定の判定が黙って行われない**。
+ * 実測 (解雇予告通知書・予告 4 日・手当「支給しない」):
+ *
+ * | 日付の書き方 | 交付前チェックの結論 |
+ * | --- | --- |
+ * | `2026年9月1日` → `2026年9月5日` | **fatal: 予告期間が 4 日しかありません…解雇予告手当の支払が必要です** |
+ * | `令和8年9月1日` → `令和8年9月5日` | **fatal が 1 件も出ない** |
+ *
+ * つまり**和暦で書いた解雇予告通知書は、労基法 20 条の検査を失っていた**。
+ * しかもこの app は**自分で和暦を刷る** (`formatDate(..., { era: 'wareki' })` が
+ * 税制の適用期限を「令和8年9月30日」と出す) —— **教えている書き方を読めなかった。**
+ *
+ * ★ 規準は手の届く所に在った (7 か所目): 元号の境目を持つ表 `ERAS` は
+ * `shared/bankFormat.ts` に在り、その注記に「和暦の組み立てはここ 1 か所に置く」と
+ * 書いてある。足りなかったのは**逆向きの変換**だけで、`fromWareki` は同じ表を読む。
+ */
+function matchWareki(half: string): RegExpMatchArray | null {
+  const m = half
+    .trim()
+    .match(/^(令和|平成|昭和|令|平|昭|[RrHhSs])\s*(元|\d{1,2})\s*[年/\-.]\s*(\d{1,2})\s*[月/\-.]\s*(\d{1,2})/);
+  if (!m) return null;
+  const eraYear = m[2] === '元' ? 1 : Number(m[2]);
+  const month = Number(m[3]);
+  const day = Number(m[4]);
+  const year = fromWareki(m[1]!, eraYear, month, day);
+  // 元号の外の日付 (令和元年4月30日 など) は、ここで「元号の外」として早く返す。
+  // Stryker disable next-line ConditionalExpression: 守りを false へ変える変異体は等価 —— year が null のまま進んでも String(null) = 'null' → parseJpDate の Number('null') = NaN → utcMsFromParts が NaN → 日の照合 (getUTCDate() !== d) が null を返し、答えは同じ (true へ変える変異体は和暦の検査が殺す)
+  if (year === null) return null;
+  // 西暦側と同じ形に揃える (以降の月・日の検査を 1 本で通す)。
+  return [m[0], String(year), String(month), String(day)] as unknown as RegExpMatchArray;
+}
+
+const DAY = 86_400_000;
+
+/**
+ * **日付欄が埋まっているのに読めないとき、その旨を言う。**
+ *
+ * 読めない日付は `day()` が NaN にし、差の比較はすべて false になる ——
+ * つまり**法定の判定が黙って行われない**。空欄は「まだ書いていない」と分かるが、
+ * 「読めない」は画面から見分けが付かない (パス 94 で請求書の単価に同じ橋を架けた:
+ * 「空欄と『読めない』の非対称がそのまま欠陥だった」)。
+ *
+ * 段階は `warn` —— 書面が違法だと言っているのではなく、**検査ができなかった**と
+ * 言っている。`fatal` にすると、私が覆えていない書き方 1 つで印刷が止まる。
+ */
+function unreadableDates(
+  v: Values,
+  doc: StudioDoc,
+  keys: readonly string[],
+  judgement: string,
+): DocIssue[] {
+  const out: DocIssue[] = [];
+  for (const key of keys) {
+    const raw = (v[key] ?? '').trim();
+    if (raw === '' || parseJpDate(raw) !== null) continue;
+    // **ラベルは実物の書式から引く。** 手で写すと食い違う ——
+    // 実測: `payday` は書式ごとに 7 通りのラベルを持ち (支払期日 / 代金の支払期日 /
+    // 支払予定日 / 賃金の支払日 / 支払日)、`kenshu` では「代金の支払期日」である。
+    // パス 100 で私は「支払期日」と写し、**画面に無い欄の名前**を出していた
+    // (2026-09-09 · パス 101。欄が見つからなければ鍵をそのまま出す ——
+    // 配線の誤りなので黙って隠さない。
+    //
+    // **訂正 (2026-09-23 · パス 434)**: この行は 2026-09-09 から「同じことを
+    // `docStudioDateFields.test.ts` が留める」と書いていたが、**そのファイルは 1 度も
+    // 存在したことがない** (実測: `git log --all` で 0 コミット)。名指しされた機械が無い
+    // ので、この不変条件は誰も留めていなかった。今は
+    // `pages/__tests__/docIssueFieldMarked.test.ts` が留める —— 同じファイルが
+    // 「指摘が指した欄に画面が印を出すか」も見るので、指す側と指される側が 1 つの検査に居る。
+    const label = doc.fields.find((f) => f.k === key)?.label ?? key;
+    out.push({
+      level: 'warn',
+      field: key,
+      message: `「${label}」を日付として読み取れません（入力値: ${raw}）。${judgement}を行いませんでした。`,
+    });
+  }
+  return out;
+}
+
+/** 利息制限法1条の上限利率（％）。元本の額で決まる。 */
+export function interestCap(principal: number): number {
+  if (principal < 100_000) return 20;
+  if (principal < 1_000_000) return 18;
+  return 15;
+}
+
+/** 適格請求書発行事業者の登録番号は T + 13 桁。 */
+export function isRegistrationNo(raw: string | undefined): boolean {
+  if (!raw) return false;
+  const half = raw.replace(/[０-９Ｔ]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0));
+  return /^T\d{13}$/.test(half.replace(/[-\s]/g, '').toUpperCase());
+}
+
+/** 入力欄の値。前後の空白は書式上の意味を持たないので落とす。 */
+function text(v: Values, key: string): string {
+  return (v[key] ?? '').trim();
+}
+
+/**
+ * 判定用に数値を読む。読めなければ NaN。
+ *
+ * null ではなく NaN を返すのは、「読めなかった値はどの閾値にも引っかからない」という
+ * この画面の方針をそのまま演算に載せるため。NaN との比較は常に false なので、
+ * 呼び出し側に `x !== null &&` を書き足す必要がない（書いても結果は変わらない）。
+ * 「読めないこと自体」で判定を止めたい箇所だけ Number.isFinite で明示する。
+ */
+function num(v: Values, key: string): number {
+  const parsed = toNum(v[key]);
+  return parsed === null ? Number.NaN : parsed;
+}
+
+/**
+ * 合計に足す金額。空欄は 0、読めない入力は NaN。
+ *
+ * `num` は空欄も読めない入力も同じ NaN にする。合計を取る欄ではこの区別が要る:
+ * 使わない調達手段を空欄にしただけで合計が NaN になると、書面の合計欄
+ * （空欄を 0 として集計する）と検算の結果が食い違い、「表は差額が出ているのに
+ * 何も指摘されない」という一番たちの悪い状態になる。空欄は 0、
+ * 「読めない文字が入っている」ときだけ判定を止める。
+ */
+/** 円の表示。判定の文面は画面と同じ桁区切りで出す。 */
+function fmtYen(n: number): string {
+  return `${n.toLocaleString('ja-JP')} 円`;
+}
+
+/**
+ * 差引支給額の欄を**書面の宣言そのものから**取る。
+ *
+ * `DocTable.sum` は `minus` を持つとき「支給額合計 − 控除額合計」の行で、
+ * その docblock が理由つきで **「差引は常に同じ欄から導く」** と規則にしている。
+ * 書面はその規則を守っていたが、**検算だけが同じ一覧を手で写していた**
+ * (2026-09-23 · パス 431)。実測: 4 書面 × 支給 / 控除 の 7 方向すべてで、
+ * 写した一覧から 1 欄落としても検査は 1 件も鳴らなかった —— 1 度だけ鳴ったのは
+ * 標本がたまたまその欄 (住民税) を埋めていたからで、標本が 0 のままの欄
+ * (`otherDed` / `otherPay`) を落とすと 4 書面とも黙った。
+ *
+ * 写しを消したので、**書面が足す欄と検算が足す欄はもう分かれようがない。**
+ */
+function netPaySumFields(doc: StudioDoc): { pay: readonly string[]; ded: readonly string[] } | null {
+  for (const b of doc.body) {
+    const sum = b.table?.sum;
+    if (sum?.minus !== undefined && sum.minus.length > 0 && sum.keys.length > 0) {
+      return { pay: sum.keys, ded: sum.minus };
+    }
+  }
+  return null;
+}
+
+/**
+ * 支払明細書の差引支給額。**書面の合計と同じ欄・同じ読み方で検算する** ——
+ * ここだけ別の欄を足すと、書面はマイナスを刷っているのに何も指摘されない。
+ * 欄は写さず `netPaySumFields` が書面から引く。
+ *
+ * 断るのは「控除が支給を超えた」ときだけ。料率が正しいかは判定しない
+ * (書式が料率を持たないので、判定できない物を「問題なし」と黙るより良い)。
+ */
+function netPayIssues(v: Values, doc: StudioDoc): DocIssue[] {
+  const f = netPaySumFields(doc);
+  // 差引の行を持たない書面ではこの検算は成り立たない (黙る)。
+  if (f === null) return [];
+  const paid = f.pay.reduce((n, k) => n + money(v, k), 0);
+  const deducted = f.ded.reduce((n, k) => n + money(v, k), 0);
+  if (!Number.isFinite(paid) || !Number.isFinite(deducted)) return [];
+  if (deducted <= paid) return [];
+  return [{
+    level: 'warn',
+    field: f.pay[0]!,
+    message: `控除額の合計（${fmtYen(deducted)}）が支給額の合計（${fmtYen(paid)}）を超えています。`
+      + `差引支給額が ${fmtYen(paid - deducted)} になります。`,
+    basis: '労働基準法24条1項',
+  }];
+}
+
+/**
+ * 標準賞与額の検算。**1,000 円未満を切り捨てた額**なので、賞与額を超えることはない。
+ * 超えていれば桁か欄の取り違えである (上限 —— 健保 年度 573 万円・厚年 1 回 150 万円 ——
+ * は判定しない: 年度累計は利用者が入れる値で、この書面だけでは確かめられない)。
+ */
+function standardBonusIssues(v: Values, bonusKey: string): DocIssue[] {
+  const bonus = num(v, bonusKey);
+  const std = num(v, 'stdBonus');
+  if (!Number.isFinite(bonus) || !Number.isFinite(std) || std <= 0) return [];
+  if (std <= bonus) return [];
+  return [{
+    level: 'warn',
+    field: 'stdBonus',
+    message: `標準賞与額（${fmtYen(std)}）が賞与額（${fmtYen(bonus)}）を超えています。`
+      + '標準賞与額は賞与額の 1,000 円未満を切り捨てた額なので、賞与額を超えることはありません。',
+    basis: '健康保険法45条',
+  }];
+}
+
+function money(v: Values, key: string): number {
+  return text(v, key) === '' ? 0 : num(v, key);
+}
+
+/** 判定用に日付を読む。読めなければ NaN（差を取っても NaN のまま伝播する）。 */
+function day(v: Values, key: string): number {
+  const t = parseJpDate(v[key]);
+  return t === null ? Number.NaN : t;
+}
+
+/** 選択肢が指定の書き出しかどうか。未選択なら false（判定しない）。 */
+function chose(v: Values, key: string, prefix: string): boolean {
+  return v[key]?.startsWith(prefix) ?? false;
+}
+
+/** 品目別の税率区分（i1..i6）に共通する検査。invoice / shiharai で共用する。 */
+function taxItemIssues(v: Values, max: number): DocIssue[] {
+  const out: DocIssue[] = [];
+  const usedCustom = new Set<string>();
+  let anyLine = false;
+  for (let n = 1; n <= max; n += 1) {
+    const kind = text(v, `i${n}kind`);
+    const name = text(v, `i${n}name`);
+    const price = text(v, `i${n}price`);
+    const filled = name !== '' || price !== '';
+    if (kind === '任意税率A') usedCustom.add('A');
+    if (kind === '任意税率B') usedCustom.add('B');
+    if (kind !== '' && kind !== '（使わない）') anyLine = true;
+    if (filled && (kind === '' || kind === '（使わない）')) {
+      out.push({
+        level: 'warn',
+        field: `i${n}kind`,
+        message: `品目${n} に入力がありますが、税率区分が「（使わない）」のため請求書に載りません。区分を選ぶか、入力を消してください。`,
+      });
+    }
+    if (filled && price === '') {
+      out.push({ level: 'warn', field: `i${n}price`, message: `品目${n} の単価が未入力です。金額 0 円として計算されます。` });
+    }
+    // **空欄は上で言っている。「読めない」は 2026-09-08 まで黙っていた** (パス 94)。
+    //
+    // 明細の金額は `DocstudioPage` が `readNumber(priceRaw) ?? 0` で計算する ——
+    // この本の `toNum` より**厳しい**読み取りである。だから
+    // 「`toNum` は読めるが `readNumber` は読めない」帯が存在し、そこに入る入力は
+    // **明細が ¥0 で計上されるのに交付前チェックが「無効リスクは見つかりません
+    // でした」と言っていた**。実測でその帯に入るもの:
+    //   `30 000` (空白区切り) / `1,23` (桁が 3 でない) / `1、234` (読点) / `100m2`
+    // 空欄だけを見ていたのが非対称の正体で、**読めない側にも同じ断りを出す**。
+    const qty = text(v, `i${n}qty`);
+    // **総称ループが既に言う分は言わない。** `checkDoc` は `f.num` の欄について
+    // `toNum` で読めなければ「数値として読み取れません」を出す。ここが狙うのは
+    // **`toNum` は読めるが `readNumber` は読めない帯** (`30 000` / `1,23` / `100m2`)
+    // —— そこだけ計算が黙って 0 になる。両方が拒む入力 (`abc`) で 2 件出すと
+    // 同じ欄に同じ趣旨の断りが並ぶ (2026-09-09 · パス 101 の実測で 2 件出ていた)。
+    //
+    // **単価は `toNum` だけで足りる。** `toNum('')` は null なので、`toNum(price) !== null` は
+    // 「何か入っている」= 品名が空でも明細の行である、ことまで言う。`filled` や
+    // `price !== ''` を重ねても答えは同じで、外しても検査が 1 件も落ちなかった
+    // (2026-09-30 · パス 502 の変異検査。観測できる差が無い守りは置かない)。
+    if (toNum(price) !== null && readNumber(price) === null) {
+      out.push({
+        level: 'warn',
+        field: `i${n}price`,
+        message: `品目${n} の単価「${price}」を金額として読み取れません。金額 0 円として計算されます。`,
+      });
+    }
+    // 数量は違う。**数量だけが入った行は明細ではない** (品名か単価が無い) ので、
+    // `filled` を見て言わない。空欄は単価と同じく `toNum` が言う。
+    if (filled && toNum(qty) !== null && readNumber(qty) === null) {
+      out.push({
+        level: 'warn',
+        field: `i${n}qty`,
+        message: `品目${n} の数量「${qty}」を数として読み取れません。数量 0 として計算されます。`,
+      });
+    }
+  }
+  for (const tag of usedCustom) {
+    // 空欄も「読めない」に含まれる（toNum は空文字で null を返す）ので、null 判定だけでよい。
+    const val = toNum(v[`rate${tag}`]);
+    if (val === null) {
+      out.push({
+        level: 'fatal',
+        field: `rate${tag}`,
+        message: `任意税率${tag} を使う品目がありますが、税率が未入力です。0% として計算され、消費税額が 0 になります。`,
+      });
+    } else if (val < 0 || val > 50) {
+      out.push({ level: 'fatal', field: `rate${tag}`, message: `任意税率${tag} は 0〜50% の範囲で入力してください（現在 ${val}）。` });
+    }
+  }
+  if (!anyLine) {
+    out.push({ level: 'warn', message: 'いずれの品目にも税率区分が選ばれていません。明細が空のまま交付されます。' });
+  }
+  out.push({
+    level: 'info',
+    message: '消費税額の端数処理は一の適格請求書につき税率ごとに1回です。行ごとに端数処理して積み上げる方法は認められません（本書式は区分ごとに1回だけ処理しています）。',
+    basis: '消費税法57条の4',
+  });
+  return out;
+}
+
+/**
+ * 受取書（領収書）の印紙税 —— **階級は記載金額で決まる**（印紙税法 別表第一 第17号の1）。
+ *
+ * ## なぜ表が要るのか（2026-09-24 · パス 438 の実測）
+ *
+ * 直す前の `ryoshu` は `num(v, 'amount') >= 50_000` と**利用者が入れた金額を使って発火**
+ * しながら、文が名乗る金額は「（5万円以上100万円以下は200円）」の **1 階級ぶんだけ**で、
+ * どの金額でも同じ文を返していた。実測（直す前・実物の `checkDoc` に食わせる）:
+ *
+ * | 受取金額 | 画面が名乗った額 | 実際の印紙税額 |
+ * | ---: | ---: | ---: |
+ * | 50,000 | 200 円 | 200 円 ✅ |
+ * | 5,000,000 | **200 円** | **1,000 円** |
+ * | 30,000,000 | **200 円** | **6,000 円** |
+ * | 2,000,000,000 | **200 円** | **200,000 円**（**1,000 倍**） |
+ *
+ * ★ **向きが過少申告である。** 印紙税法20条の過怠税は不足額の **3 倍**（税務調査より前に
+ * 自ら申し出た場合は 1.1 倍）。しかもこの数字は画面で読んで**紙に貼る**もので、
+ * この書式は `stamp: true` の収入印紙枠を実際に刷る。
+ *
+ * ★ **同じ studio の他の課税文書は、この誤りを犯していない** —— 第1号の3（消費貸借）と
+ * 第2号（請負）は階級制なので「記載金額に応じた収入印紙が必要」と述べて**金額を名乗らず**、
+ * 第7号（継続的取引 4,000円）と定款（4万円）は**本当に定額**である。
+ * **金額を手に持っている唯一の書式だけが、1 階級の数を答えとして名乗っていた。**
+ *
+ * ★ **階級の名前も一緒に出す。** 数だけ出すと、利用者は国税庁「印紙税額の一覧表」と
+ * 突き合わせられない。階級を名乗れば、この表が誤っていても利用者の側で気づける。
+ *
+ * ★ **売上代金以外の受取書（貸付金の返済・保証金の返還等）は第17号の2 で一律 200 円**だが、
+ * どちらに当たるかはアプリには観測できないので、そちらは書式の注意書きが述べる
+ * （ここで併記すると、計算した額の隣に別の額が並んで読み手が取り違える）。
+ */
+interface StampBand {
+  /** この階級の上限（円・以下）。最後の階級は上限なし。 */
+  readonly upTo: number;
+  /** 印紙税額（円）。 */
+  readonly yen: number;
+  /** 利用者に見せる階級の名前。 */
+  readonly band: string;
+}
+
+/**
+ * 売上代金に係る受取書の階級。**5 万円未満は非課税なので表に入れない**
+ * （床は `RECEIPT_STAMP_FLOOR` が持ち、`receiptStampDuty` が先に落とす）。
+ * 最後の階級は上限なし —— `receiptStampDuty` の `return null` は
+ * 「読めない金額（NaN）」のためだけに残っている。
+ */
+export const RECEIPT_STAMP_BANDS: readonly StampBand[] = [
+  { upTo: 1_000_000, yen: 200, band: '100万円以下' },
+  { upTo: 2_000_000, yen: 400, band: '100万円超200万円以下' },
+  { upTo: 3_000_000, yen: 600, band: '200万円超300万円以下' },
+  { upTo: 5_000_000, yen: 1_000, band: '300万円超500万円以下' },
+  { upTo: 10_000_000, yen: 2_000, band: '500万円超1,000万円以下' },
+  { upTo: 20_000_000, yen: 4_000, band: '1,000万円超2,000万円以下' },
+  { upTo: 30_000_000, yen: 6_000, band: '2,000万円超3,000万円以下' },
+  { upTo: 50_000_000, yen: 10_000, band: '3,000万円超5,000万円以下' },
+  { upTo: 100_000_000, yen: 20_000, band: '5,000万円超1億円以下' },
+  { upTo: 200_000_000, yen: 40_000, band: '1億円超2億円以下' },
+  { upTo: 300_000_000, yen: 60_000, band: '2億円超3億円以下' },
+  { upTo: 500_000_000, yen: 100_000, band: '3億円超5億円以下' },
+  { upTo: 1_000_000_000, yen: 150_000, band: '5億円超10億円以下' },
+  { upTo: Number.POSITIVE_INFINITY, yen: 200_000, band: '10億円超' },
+];
+
+/** 受取書が非課税になる床（これ未満は印紙不要）。 */
+export const RECEIPT_STAMP_FLOOR = 50_000;
+
+/**
+ * 受取金額 → 階級。非課税（5 万円未満）と、読めない金額（`num` の NaN）は null。
+ *
+ * **`Number.isFinite` の判定は足さない** —— `NaN < FLOOR` は false なので NaN は表の探索へ
+ * 進み、どの階級にも一致せず `return null` に落ちる。明示の判定を足すと、それを外した
+ * 変異体と答えが一致してしまう（等価変異）。
+ */
+export function receiptStampDuty(amount: number): StampBand | null {
+  if (amount < RECEIPT_STAMP_FLOOR) return null;
+  for (const b of RECEIPT_STAMP_BANDS) if (amount <= b.upTo) return b;
+  return null;
+}
+
+/** 書式ごとの個別ルール。値が入っていない項目は原則として空欄チェックに任せる。 */
+/**
+ * 書式ごとの規則。第 2 引数の書式は**欄のラベルを引くため**に渡す
+ * (規則の中でラベルを写すと実物とずれる —— パス 101 の実測)。
+ * 使わない規則は第 1 引数だけを宣言すればよい。
+ */
+const RULES: Record<string, (v: Values, doc: StudioDoc) => DocIssue[]> = {
+  mimoto(v) {
+    const out: DocIssue[] = [];
+    const limit = num(v, 'limit');
+    // 読めない（NaN）も 0 以下も「極度額の定めなし」。NaN > 0 は false なので一本で足りる。
+    if (!(limit > 0)) {
+      out.push({
+        level: 'fatal',
+        field: 'limit',
+        message: '極度額（保証の上限額）が定められていません。このままでは身元保証契約そのものが無効です。',
+        basis: '民法465条の2（個人根保証契約は極度額を定めなければ効力を生じない）',
+      });
+    }
+    const years = num(v, 'years');
+    if (years > 5) {
+      out.push({
+        level: 'fatal',
+        field: 'years',
+        message: `保証期間が ${years} 年になっています。5年を超える定めはできず、5年に短縮されます。`,
+        basis: '身元保証ニ関スル法律2条',
+      });
+    }
+    return out;
+  },
+
+  saburoku(v) {
+    const out: DocIssue[] = [];
+    const month = num(v, 'monthLimit');
+    const year = num(v, 'yearLimit');
+    if (month >= 100) {
+      out.push({
+        level: 'fatal',
+        field: 'monthLimit',
+        message: `1か月の延長時間が ${month} 時間です。休日労働を含めて1か月100時間未満でなければならず、特別条項でもこの上限は超えられません。`,
+        basis: '労働基準法36条6項2号',
+      });
+    } else if (month > 45) {
+      out.push({
+        level: 'warn',
+        field: 'monthLimit',
+        message: `1か月の延長時間が ${month} 時間で、原則の限度時間45時間を超えています。特別条項（様式第9号の2）による協定が必要で、45時間を超えられるのは1年に6か月までです。`,
+        basis: '労働基準法36条4項・5項',
+      });
+    }
+    if (year > 720) {
+      out.push({
+        level: 'fatal',
+        field: 'yearLimit',
+        message: `1年の延長時間が ${year} 時間です。特別条項を締結しても1年720時間を超えることはできません。`,
+        basis: '労働基準法36条5項',
+      });
+    } else if (year > 360) {
+      out.push({
+        level: 'warn',
+        field: 'yearLimit',
+        message: `1年の延長時間が ${year} 時間で、原則の限度時間360時間を超えています。特別条項による協定が必要です。`,
+        basis: '労働基準法36条4項',
+      });
+    }
+    if (year > month * 12) {
+      out.push({
+        level: 'warn',
+        field: 'yearLimit',
+        message: `1年の延長時間（${year} 時間）が、1か月の延長時間 × 12（${month * 12} 時間）を上回っています。月の上限を守ると年の枠を使い切れません。`,
+      });
+    }
+    const target = num(v, 'target');
+    const workers = num(v, 'workers');
+    if (target > workers) {
+      out.push({
+        level: 'warn',
+        field: 'target',
+        message: `対象労働者数（${target} 人）が事業場の労働者数（${workers} 人）を超えています。`,
+      });
+    }
+    out.push({
+      level: 'info',
+      message: '協定を締結しただけでは時間外労働はさせられません。所轄労働基準監督署長への届出（様式第9号／特別条項は様式第9号の2）と、労働者への周知まで完了させてください。',
+      basis: '労働基準法36条1項・106条',
+    });
+    return out;
+  },
+
+  shohi(v) {
+    const out: DocIssue[] = [];
+    const amount = num(v, 'amount');
+    const rate = num(v, 'rate');
+    // 元本が読めないと上限区分（20/18/15%）が決まらないので、利率だけでは判定しない。
+    if (Number.isFinite(amount) && rate > interestCap(amount)) {
+      out.push({
+        level: 'fatal',
+        field: 'rate',
+        message: `元本 ${amount.toLocaleString('ja-JP')} 円に対する上限利率は年 ${interestCap(amount)}% です。年 ${rate}% とした場合、超過部分は無効になります。`,
+        basis: '利息制限法1条',
+      });
+    }
+    if (amount >= 10_000) {
+      out.push({
+        level: 'info',
+        message: '紙で作成する場合は印紙税第1号の3文書として記載金額に応じた収入印紙が必要です。電子契約として交付すれば課税文書に当たりません。',
+        basis: '印紙税法（課税物件表第1号の3）',
+      });
+    }
+    return out;
+  },
+
+  chintai(v) {
+    const out: DocIssue[] = [];
+    const term = text(v, 'term');
+    // 「1年6か月」のように年が併記されていれば1年未満ではない。年の数値自体は使わない。
+    const hasYear = /\d\s*年/.test(term);
+    const months = /(\d+)\s*(?:か月|ヶ月|カ月|箇月)/.exec(term);
+    if (!hasYear && months && Number(months[1]) < 12) {
+      out.push({
+        level: 'warn',
+        field: 'term',
+        message: `契約期間が ${months[1]} か月です。期間を1年未満と定めた普通建物賃貸借は「期間の定めがない賃貸借」とみなされます。短期にするなら定期建物賃貸借にしてください。`,
+        basis: '借地借家法29条1項・38条',
+      });
+    }
+    const rent = num(v, 'rent');
+    const shiki = num(v, 'shikikin');
+    if (rent > 0 && shiki > rent * 12) {
+      out.push({
+        level: 'warn',
+        field: 'shikikin',
+        message: '敷金が賃料の12か月分を超えています。金額に誤りがないか確認してください。',
+      });
+    }
+    return out;
+  },
+
+  'kaiko-yokoku'(v, doc) {
+    const out: DocIssue[] = [];
+    // 読めない日付は NaN になり以下の比較はすべて false になる（＝判定しない）ので、
+    // **読めなかったこと自体を言う** (パス 100)。
+    out.push(...unreadableDates(v, doc, ['noticeDate', 'dismissDate'], '30日前の予告の判定'));
+    const days = Math.round((day(v, 'dismissDate') - day(v, 'noticeDate')) / DAY);
+    if (days < 0) {
+      out.push({ level: 'warn', field: 'dismissDate', message: '解雇の日が通知日より前になっています。' });
+    } else if (days < 30 && chose(v, 'teate', '支給しない')) {
+      out.push({
+        level: 'fatal',
+        field: 'teate',
+        message: `予告期間が ${days} 日しかありません。30日前の予告に満たない場合は、不足日数分以上の平均賃金（解雇予告手当）の支払が必要です。`,
+        basis: '労働基準法20条',
+      });
+    } else if (days < 30) {
+      out.push({
+        level: 'warn',
+        field: 'teateAmount',
+        message: `予告期間は ${days} 日です。不足する ${30 - days} 日分以上の平均賃金を解雇予告手当として支払ってください。`,
+        basis: '労働基準法20条2項',
+      });
+    }
+    if (!text(v, 'reason')) {
+      out.push({
+        level: 'warn',
+        field: 'reason',
+        message: '解雇の理由が空欄です。就業規則の該当条項と具体的な事実を記載しないと、解雇権濫用として無効を争われる余地が大きくなります。',
+        basis: '労働契約法16条',
+      });
+    }
+    // **交付「前」に確かめる事なので `info` ではない** (2026-09-24 · パス 437)。
+    //
+    // `info` は `shared/issueLevel.ts` が「**交付・提出のあとに**期限内でやることの
+    // 取りこぼし」と定義しており、画面では「🕒 交付後にやること」と名乗る。ところが
+    // 労基法19条の期間中の解雇は**無効**で、しかも同法119条1号の罰則 (6か月以下の懲役
+    // 又は30万円以下の罰金) を伴う —— 交付してしまった後に気付いても、その解雇は既に
+    // 無効である。**確かめる場所は交付の前**で、文自身が「該当しないか確認してください」
+    // と言っている。
+    //
+    // 実測 (2026-09-23 · 直す前 · 法に適う入力: 60 日前の予告・理由あり・数値欄も正):
+    //
+    //   🔍 交付前チェック — 無効リスクは見つかりませんでした
+    //     🕒 交付後にやること: 業務上の傷病…は原則として解雇できません。該当しないか確認してください。
+    //
+    // **同じ画面が、自分が今挙げた無効リスクについて「見つかりませんでした」と述べていた。**
+    // `info` は `clean` の判定 (`fatal === 0 && warn === 0`) に入らないためである。
+    //
+    // `fatal` にはしない —— アプリはこの前提条件 (休業期間中か) を**観測できない**ので、
+    // 「このままでは無効」と断定すると観測していない事実を主張することになる。`warn` は
+    // すぐ下の `taishoku-shomei` (労基法22条3項) と**同じ形**で、そちらは最初から `warn`
+    // だった: どちらも「アプリには分からない・利用者が確かめる・当てはまれば交付できない」。
+    // 同じ形が 2 つの段階に分かれていて、**重い方が低い段階に居た**。
+    out.push({
+      level: 'warn',
+      message: '業務上の傷病による休業期間及びその後30日間、産前産後の休業期間及びその後30日間は原則として解雇できません。該当しないか確認してください。',
+      basis: '労働基準法19条',
+    });
+    return out;
+  },
+
+  'taishoku-shomei'(v) {
+    const out: DocIssue[] = [];
+    if (chose(v, 'requested', 'はい')) {
+      out.push({
+        level: 'warn',
+        message: '本人が請求していない事項は記入できません。請求のなかった項目は空欄のままにするか、行ごと削除して交付してください。',
+        basis: '労働基準法22条3項',
+      });
+    }
+    return out;
+  },
+
+  roudou(v) {
+    const out: DocIssue[] = [];
+    if (!text(v, 'placeRange')) {
+      out.push({
+        level: 'fatal',
+        field: 'placeRange',
+        message: '「就業場所の変更の範囲」が空欄です。2024年4月から全ての労働者への明示が必須になった項目で、欠けると労働条件明示義務違反になります。',
+        basis: '労働基準法15条1項・同法施行規則5条',
+      });
+    }
+    if (!text(v, 'dutyRange')) {
+      out.push({
+        level: 'fatal',
+        field: 'dutyRange',
+        message: '「業務の変更の範囲」が空欄です。2024年4月から全ての労働者への明示が必須になった項目です。',
+        basis: '労働基準法15条1項・同法施行規則5条',
+      });
+    }
+    return out;
+  },
+
+  invoice(v) {
+    const out: DocIssue[] = [...taxItemIssues(v, 6)];
+    if (v['regno'] && !isRegistrationNo(v['regno'])) {
+      out.push({
+        level: 'warn',
+        field: 'regno',
+        message: '登録番号は「T」＋13桁の数字です。形式が違うと適格請求書の記載事項を満たさず、受け取った側が仕入税額控除を受けられません。',
+        basis: '消費税法57条の4',
+      });
+    }
+    return out;
+  },
+
+  shiharai(v) {
+    const out: DocIssue[] = [...taxItemIssues(v, 4)];
+    if (v['toReg'] && !isRegistrationNo(v['toReg'])) {
+      out.push({
+        level: 'warn',
+        field: 'toReg',
+        message: '仕入明細書には「相手方（売手）の登録番号」の記載が必要です。「T」＋13桁の形式を確認してください。自社の番号ではありません。',
+        basis: '消費税法30条9項3号',
+      });
+    }
+    out.push({
+      level: 'info',
+      message: '仕入明細書が仕入税額控除の要件を満たすには、相手方の確認を受ける必要があります。「期限までに連絡がなければ確認があったものとする」旨の記載か、返信による確認を残してください。',
+      basis: '消費税法30条9項3号',
+    });
+    return out;
+  },
+
+  nouhin(v) {
+    const out: DocIssue[] = [];
+    if (v['reg'] && !isRegistrationNo(v['reg'])) {
+      out.push({ level: 'warn', field: 'reg', message: '登録番号は「T」＋13桁の数字です。形式を確認してください。', basis: '消費税法57条の4' });
+    }
+    return out;
+  },
+
+  kenshu(v, doc) {
+    const out: DocIssue[] = [];
+    // 読めない日付は NaN になり 60 日の判定は行われないので、
+    // **読めなかったこと自体を言う** (パス 100)。
+    out.push(...unreadableDates(v, doc, ['receiveDate', 'payday'], '60日以内の判定'));
+    const days = Math.round((day(v, 'payday') - day(v, 'receiveDate')) / DAY);
+    if (days > 60) {
+      out.push({
+        level: 'fatal',
+        field: 'payday',
+        message: `支払期日が受領日から ${days} 日後になっています。支払期日は給付を受領した日から起算して60日以内に定める必要があります（起算日は検収日ではなく受領日）。`,
+        basis: '中小受託取引適正化法（2026年1月施行）・フリーランス法',
+      });
+    }
+    return out;
+  },
+
+  hacchu() {
+    return [{
+      level: 'info' as const,
+      message: '委託事業者は、給付の内容・代金の額・支払期日等を記載した発注書面を直ちに交付する義務を負います。取引書類は2年間保存してください。手形による代金の支払は禁止されています。',
+      basis: '中小受託取引適正化法4条（2026年1月施行）',
+    }];
+  },
+
+  'chuumon-uke'() {
+    return [{
+      level: 'info' as const,
+      message: '請負に関する注文請書は印紙税第2号文書として課税されます（1万円未満は非課税）。物品の売買のみなら原則不課税です。電子データで交付すれば課税文書に当たりません。',
+      basis: '印紙税法（課税物件表第2号）',
+    }];
+  },
+
+  baibai() {
+    return [{
+      level: 'info' as const,
+      message: '継続的取引の基本となる契約書は印紙税第7号文書に当たり、1通あたり4,000円の収入印紙が必要です（契約期間3か月以内かつ更新の定めがないものを除く）。電子契約なら不要です。',
+      basis: '印紙税法（課税物件表第7号）',
+    }];
+  },
+
+  ryoshu(v) {
+    const amount = num(v, 'amount');
+    const duty = receiptStampDuty(amount);
+    if (!duty) return [];
+    return [{
+      level: 'info' as const,
+      message: `紙で交付する受取書には収入印紙が必要です。受取金額 ${amount.toLocaleString('ja-JP')} 円は`
+        + `「${duty.band}」の階級にあたり、印紙税額は ${duty.yen.toLocaleString('ja-JP')} 円です。`
+        + '消費税額を区分記載していれば税抜金額で階級を判定できます。電子交付なら不要です。',
+      basis: '印紙税法（課税物件表第17号の1）',
+    }];
+  },
+
+  sokai: meetingQuorum('totalShares', 'presentShares', '出席株主の議決権数', '議決権の総数'),
+  'rinji-sokai': meetingQuorum('totalShares', 'presentShares', '出席株主の議決権数', '議決権の総数'),
+  torishimari: meetingQuorum('total', 'present', '出席取締役数', '取締役総数'),
+
+  /*
+   * 支払明細書 4 種 (2026-09-15)。
+   *
+   * 検算するのは**書面の中で食い違えること**だけにする —— 保険料率・税額表の
+   * 当てはめは書式が持たないので、料率が正しいかは判定できない (判定できない物を
+   * 「問題なし」として黙るのが最も悪い)。見るのは 3 つ:
+   *   ① 差引支給額がマイナス (控除が支給を超えている)
+   *   ② 役員賞与の**届出どおりでない支給** (原則として全額損金不算入)
+   *   ③ 標準賞与額が賞与額を超えている (1,000円未満切捨てなので超えるはずがない)
+   */
+  'kyuyo-meisai'(v, doc) {
+    return netPayIssues(v, doc);
+  },
+
+  'shoyo-meisai'(v, doc) {
+    return [...netPayIssues(v, doc), ...standardBonusIssues(v, 'bonus')];
+  },
+
+  'yakuin-hoshu-meisai'(v, doc) {
+    const out = netPayIssues(v, doc);
+    // 定期同額給与 (法人税法34条1項1号) —— 決議の月額と支給額が違えば、
+    // 期中改定として損金不算入の部分が生じ得る。**判定はしない** (改定が
+    // 定時改定か・業績の著しい悪化によるものかはこの書面から分からない)。
+    const decided = num(v, 'resolutionAmount');
+    const paid = num(v, 'hoshu');
+    if (Number.isFinite(decided) && Number.isFinite(paid) && decided > 0 && decided !== paid) {
+      out.push({
+        level: 'warn',
+        field: 'hoshu',
+        message: `決議による月額（${fmtYen(decided)}）と支給額（${fmtYen(paid)}）が一致しません。定期同額給与から外れると、その差額は原則として損金不算入です。定時改定・業績の著しい悪化による改定に当たるか確認してください。`,
+        basis: '法人税法34条1項1号',
+      });
+    }
+    return out;
+  },
+
+  'yakuin-shoyo-meisai'(v, doc) {
+    const out = netPayIssues(v, doc);
+    out.push(...standardBonusIssues(v, 'bonus'));
+    const kind = text(v, 'kind');
+    if (kind.startsWith('いずれにも当たらない')) {
+      out.push({
+        level: 'warn',
+        field: 'kind',
+        message: '事前確定届出給与・業績連動給与のいずれにも当たらない役員賞与は、全額が損金不算入です。',
+        basis: '法人税法34条1項',
+      });
+      return out;
+    }
+    if (!kind.startsWith('事前確定届出給与')) return out;
+    // **届出どおりでなければ原則として全額損金不算入** (一部ではない)。
+    // 日付は文字列で比べる —— 書式が和暦・西暦どちらでも入るので暦に直せない。
+    // 同じ綴りでなければ「確認してください」と言うにとどめ、判定はしない。
+    const notifiedDate = text(v, 'notifiedDate');
+    const payDate = text(v, 'payDate');
+    if (notifiedDate !== '' && payDate !== '' && notifiedDate !== payDate) {
+      out.push({
+        level: 'fatal',
+        field: 'payDate',
+        message: `届出した支給日（${notifiedDate}）と実際の支給日（${payDate}）が一致していません。事前確定届出給与を届出どおりに支給しない場合、原則として賞与の全額が損金不算入になります。`,
+        basis: '法人税法34条1項2号',
+      });
+    }
+    const notified = num(v, 'notifiedAmount');
+    const paid = num(v, 'bonus');
+    if (Number.isFinite(notified) && Number.isFinite(paid) && notified > 0 && notified !== paid) {
+      out.push({
+        level: 'fatal',
+        field: 'bonus',
+        message: `届出した支給額（${fmtYen(notified)}）と実際の支給額（${fmtYen(paid)}）が一致していません。事前確定届出給与を届出どおりに支給しない場合、原則として賞与の全額（差額ではなく全額）が損金不算入になります。`,
+        basis: '法人税法34条1項2号',
+      });
+    }
+    if (text(v, 'notifyDate') === '') {
+      out.push({
+        level: 'warn',
+        field: 'notifyDate',
+        message: '事前確定届出給与の届出日が空欄です。届出の期限は、決議日から1か月を経過する日または事業年度開始日から4か月を経過する日のいずれか早い日です。',
+        basis: '法人税法施行令69条4項',
+      });
+    }
+    return out;
+  },
+
+  'kabunushi-meibo'(v) {
+    const out: DocIssue[] = [];
+    const total = num(v, 'totalShares');
+    // 行数は可変なので、固定の s1..s3 ではなく現在の行数ぶんを合計する。
+    // ここを 3 人固定のままにすると、4 人目以降を書いても合計に入らず
+    // 「総数と一致しません」と誤って警告することになる。
+    const sum = totalHeldShares(v);
+    // 総数が読めないと突き合わせようがない。NaN は !== がつねに成立してしまうので明示的に外す。
+    if (Number.isFinite(total) && sum > 0 && sum !== total) {
+      out.push({
+        level: 'warn',
+        field: 'totalShares',
+        message: `記載された株式数の合計（${sum} 株）が発行済株式の総数（${total} 株）と一致しません。`,
+        basis: '会社法121条',
+      });
+    }
+    if (Number.isFinite(total) && sum > total) {
+      out.push({ level: 'fatal', field: 's1shares', message: '株主の保有株式数の合計が発行済株式の総数を超えています。' });
+    }
+    // 株主の欄は可変行になり、必須フィールドの空欄カウントから外れた。
+    // 名前が 1 つも無ければ名簿として成立しないので、ここで拾う。
+    if (namedShareholderCount(v) === 0) {
+      out.push({
+        level: 'fatal',
+        field: 's1name',
+        message: '株主が 1 名も記載されていません。株主名簿は株主全員を記載する必要があります。',
+        basis: '会社法121条',
+      });
+    }
+    return out;
+  },
+
+  shunin() {
+    return [{
+      level: 'info' as const,
+      message: '役員変更は原則として就任の日から2週間以内に本店の所在地で変更登記が必要です。就任承諾書のほか、本人確認証明書や印鑑証明書の添付が必要になる場合があります。',
+      basis: '会社法915条1項・商業登記法54条',
+    }];
+  },
+
+  annai() {
+    return [{
+      level: 'info' as const,
+      message: '本店移転・役員変更は2週間以内の変更登記が必要です。あわせて税務署・都道府県税事務所・市区町村・年金事務所・労働基準監督署・ハローワーク・許認可官庁への届出も期限内に済ませてください。',
+      basis: '会社法915条1項',
+    }];
+  },
+
+  naiyo() {
+    return [{
+      level: 'info' as const,
+      message: '催告による時効の完成猶予は6か月です。その間に訴えの提起・支払督促の申立て等をしなければ時効は完成します。到達日を証明するため配達証明を併用してください。',
+      basis: '民法150条',
+    }];
+  },
+
+  tokusoku() {
+    return [{
+      level: 'info' as const,
+      message: '督促状の送付（催告）は6か月の完成猶予にとどまります。繰り返しても猶予は延長されません。回収の見込みが立たない場合は支払督促・少額訴訟への切替えを検討してください。',
+      basis: '民法150条・民事訴訟法382条',
+    }];
+  },
+
+  kaijo(v) {
+    const out: DocIssue[] = [];
+    if (chose(v, 'kind', '催告を要せず')) {
+      out.push({
+        level: 'warn',
+        field: 'kind',
+        message: '無催告解除ができるのは、履行不能・明確な履行拒絶・定期行為の時期経過など民法542条の要件に該当する場合か、契約に無催告解除の特約がある場合に限られます。要件を満たさない解除は無効となり、逆に債務不履行を問われます。',
+        basis: '民法541条・542条',
+      });
+    }
+    return out;
+  },
+
+  // ── 法定帳簿（労基法107〜109条・施行規則24条の7） ─────────────
+  'roudousha-meibo'(v) {
+    const out: DocIssue[] = [];
+    if (text(v, 'retired') !== '' && text(v, 'retireReason') === '') {
+      out.push({
+        level: 'warn',
+        field: 'retireReason',
+        message: '退職年月日が入っているのに退職の事由が空欄です。解雇の場合はその理由まで記載が必要です。',
+        basis: '労働基準法施行規則53条1項',
+      });
+    }
+    if (text(v, 'duty') === '') {
+      out.push({
+        level: 'info',
+        field: 'duty',
+        message: '「従事する業務の種類」が空欄です。常時30人未満の労働者を使用する事業では記入不要ですが、'
+          + '30人以上なら必要です。',
+        basis: '労働基準法施行規則53条2項',
+      });
+    }
+    out.push({
+      level: 'info',
+      message: '保存期間は5年（経過措置により当分の間3年）で、起算日は死亡・退職・解雇の日です。'
+        + '在職中に破棄せず、退職後も期間が満了するまで保管してください。',
+      basis: '労働基準法109条・附則143条',
+    });
+    return out;
+  },
+
+  'chingin-daichou'(v) {
+    const out: DocIssue[] = [];
+    const total = money(v, 'workHours');
+    const inner = money(v, 'overtimeHours') + money(v, 'holidayHours') + money(v, 'nightHours');
+    // 時間外・休日・深夜は労働時間数の内数。外数として足すと総労働時間が二重計上になる。
+    if (inner > total) {
+      out.push({
+        level: 'warn',
+        field: 'workHours',
+        message: `時間外・休日・深夜の合計（${inner} 時間）が労働時間数（${total} 時間）を超えています。`
+          + 'これらは労働時間数の内数として記載します。別枠で足していないか確認してください。',
+        basis: '労働基準法施行規則54条',
+      });
+    }
+    const days = money(v, 'workDays');
+    if (days > 0 && total > days * 24) {
+      out.push({
+        level: 'warn',
+        field: 'workHours',
+        message: `労働時間数が出勤日数 × 24時間（${days * 24} 時間）を超えています。日数か時間数の取り違えがないか確認してください。`,
+      });
+    }
+    const paid = ['basic', 'overtimePay', 'commute', 'otherPay'].reduce((n, k) => n + money(v, k), 0);
+    const deducted = ['health', 'pension', 'employment', 'incomeTax', 'residentTax', 'otherDeduct']
+      .reduce((n, k) => n + money(v, k), 0);
+    if (deducted > paid) {
+      out.push({
+        level: 'warn',
+        field: 'otherDeduct',
+        message: `控除額の合計（${deducted.toLocaleString('ja-JP')} 円）が支給額の合計（${paid.toLocaleString('ja-JP')} 円）を超えています。`,
+      });
+    }
+    out.push({
+      level: 'info',
+      message: '給与明細を綴じただけでは賃金台帳の記載事項を満たさないことがあります。'
+        + '明細は労働者へ交付する通知、台帳は事業場に備え付ける帳簿で別物です。',
+      basis: '労働基準法108条・施行規則54条',
+    });
+    return out;
+  },
+
+  shukkinbo(v) {
+    const out: DocIssue[] = [];
+    const total = money(v, 'totalHours');
+    const inner = money(v, 'overtime') + money(v, 'holidayWork') + money(v, 'night');
+    if (inner > total) {
+      out.push({
+        level: 'warn',
+        field: 'totalHours',
+        message: `時間外・休日・深夜の合計（${inner} 時間）が総労働時間（${total} 時間）を超えています。`,
+      });
+    }
+    const days = money(v, 'workDays');
+    if (days > 0 && total > days * 24) {
+      out.push({
+        level: 'warn',
+        field: 'totalHours',
+        message: `総労働時間が出勤日数 × 24時間（${days * 24} 時間）を超えています。`,
+      });
+    }
+    if (chose(v, 'method', '自己申告')) {
+      out.push({
+        level: 'warn',
+        field: 'method',
+        message: '自己申告による把握です。労働時間の把握は客観的な記録によることが原則で、自己申告によるときは'
+          + '実態調査と乖離の是正が求められます。入退場記録やPCの使用時間と突き合わせてください。',
+        basis: '労働時間の適正な把握のために使用者が講ずべき措置に関するガイドライン',
+      });
+    }
+    out.push({
+      level: 'info',
+      message: '労働時間の状況の把握は管理監督者・裁量労働制の適用者も対象です。'
+        + '割増賃金の要否とは別に、時間そのものの把握義務があります。',
+      basis: '労働安全衛生法66条の8の3',
+    });
+    return out;
+  },
+
+  'yukyu-kanribo'(v) {
+    const out: DocIssue[] = [];
+    const granted = money(v, 'granted');
+    const taken = money(v, 'taken');
+    // 年10日以上付与される労働者は、基準日から1年以内に5日取得させる義務がある。
+    if (granted >= 10 && taken < 5) {
+      out.push({
+        level: 'fatal',
+        field: 'taken',
+        message: `付与日数が ${granted} 日（10日以上）なのに取得日数が ${taken} 日です。`
+          + '基準日から1年以内に5日を取得させる義務があり、不足するなら使用者が時季を指定して取得させる必要があります。'
+          + '「本人が希望しなかった」は理由になりません。',
+        basis: '労働基準法39条7項・120条（労働者1人につき30万円以下の罰金）',
+      });
+    }
+    const listed = ['d1', 'd2', 'd3', 'd4', 'd5', 'd6'].filter((k) => text(v, k) !== '').length;
+    if (listed > 0 && taken !== listed) {
+      out.push({
+        level: 'warn',
+        field: 'taken',
+        message: `記入された時季は ${listed} 件ですが、取得日数は ${taken} 日になっています。`
+          + '半日単位・時間単位の取得を含むなら差が出ますが、そうでなければ数え違いです。',
+      });
+    }
+    const available = granted + money(v, 'carried');
+    if (available > 0 && taken > available) {
+      out.push({
+        level: 'warn',
+        field: 'taken',
+        message: `取得日数（${taken} 日）が付与＋繰越（${available} 日）を超えています。`,
+      });
+    }
+    out.push({
+      level: 'info',
+      message: '時季・日数・基準日の3点を労働者ごとに明らかにし、その期間中および満了後3年間保存します。'
+        + '労働基準法109条の帳簿とは根拠が別で、施行規則が直接3年と定めています。',
+      basis: '労働基準法施行規則24条の7',
+    });
+    return out;
+  },
+
+  'chotatsu-keikaku'(v) {
+    const out: DocIssue[] = [];
+    const need = money(v, 'equip') + money(v, 'working');
+    const raise = ['selfFund', 'loanBank', 'loanPublic', 'subsidy', 'otherFund']
+      .reduce((s, k) => s + money(v, k), 0);
+    // 必要資金と調達額は必ず一致する。片方だけ直して他方を直し忘れるのが定番。
+    // 空欄は num() が NaN を返すので isFinite で落ちる。両方 0 のときは need !== raise が
+    // false になるので、「まだ何も入っていない」を別に見張る必要はない。
+    if (Number.isFinite(need) && Number.isFinite(raise) && need !== raise) {
+      out.push({
+        level: 'fatal',
+        field: 'selfFund',
+        message: `必要資金の合計（${need.toLocaleString('ja-JP')} 円）と調達の合計（${raise.toLocaleString('ja-JP')} 円）が`
+          + `${Math.abs(need - raise).toLocaleString('ja-JP')} 円 食い違っています。一致していない資金計画は内容を見てもらえません。`,
+      });
+    }
+    const self = num(v, 'selfFund');
+    // 「自己資金が調達総額の 1 割未満」を割り算せずに書く。raise が 0 のときに
+    // 0/0 や x/0 の退化へ依存しなくて済み、ちょうど 1 割の境界もそのまま出る。
+    if (self * 10 < raise) {
+      out.push({
+        level: 'warn',
+        field: 'selfFund',
+        message: '自己資金が調達総額の 1 割未満です。創業融資では自己資金の割合が返済能力の判断材料になります。',
+      });
+    }
+    if (num(v, 'subsidy') > 0) {
+      out.push({
+        level: 'warn',
+        field: 'subsidy',
+        message: '補助金は原則として事業完了後の精算払いです。交付が決まっていても入金までの資金は別途つなぐ必要があるため、'
+          + '当座の資金として当て込まないでください。',
+      });
+    }
+    const years = num(v, 'years');
+    if (years > 0) {
+      const debt = money(v, 'loanBank') + money(v, 'loanPublic');
+      if (debt > 0) {
+        out.push({
+          level: 'info',
+          message: `借入 ${debt.toLocaleString('ja-JP')} 円を ${years} 年で返す場合、元金だけで年 `
+            + `${Math.round(debt / years).toLocaleString('ja-JP')} 円 の返済になります。`
+            + '返済原資（営業利益＋減価償却費）がこれを上回るか確認してください。',
+        });
+      }
+    }
+    return out;
+  },
+
+  'jigyo-keikaku'(v) {
+    const out: DocIssue[] = [];
+    const years = [1, 2, 3].map((n) => ({ n, sales: num(v, `y${n}sales`), profit: num(v, `y${n}profit`) }));
+    for (const y of years) {
+      if (y.profit > y.sales) {
+        out.push({
+          level: 'warn',
+          field: `y${y.n}profit`,
+          message: `${y.n}年目の経常利益が売上高を上回っています。数字の入れ違いがないか確認してください。`,
+        });
+      }
+    }
+    const first = num(v, 'y1sales');
+    const third = num(v, 'y3sales');
+    if (first > 0 && third > first * 5) {
+      out.push({
+        level: 'warn',
+        field: 'y3sales',
+        message: '3年目の売上高が1年目の5倍を超えています。算出根拠に単価・件数・頻度の内訳がないと、審査では根拠なしと見られます。',
+      });
+    }
+    if (!(v['basis'] ?? '').trim()) {
+      out.push({
+        level: 'fatal',
+        field: 'basis',
+        message: '売上計画の算出根拠が空欄です。融資・補助金の審査で最も見られる項目で、ここが無い計画書は数字を信用してもらえません。',
+      });
+    }
+    return out;
+  },
+
+  'kojin-itaku'() {
+    return [{
+      level: 'info' as const,
+      message: '契約を結んだだけでは委託先の監督義務を果たしたことになりません。委託先の選定基準、取扱状況の定期確認、再委託の承諾記録まで残してください。委託先で漏えいが起きた場合、報告義務を負うのは原則として委託元です。',
+      basis: '個人情報保護法25条・26条',
+    }];
+  },
+
+  privacy() {
+    return [{
+      level: 'info' as const,
+      message: '公表しただけでは足りません。記載した利用目的・第三者提供・委託の運用が実態と一致しているか、年1回は突き合わせてください。実態と異なる公表はそれ自体がリスクです。',
+      basis: '個人情報保護法17条・21条',
+    }];
+  },
+
+  chingin() {
+    return [{
+      level: 'info' as const,
+      message: '常時10人以上の労働者を使用する事業場では、賃金規程も就業規則の一部として、過半数代表者の意見書を添えて所轄労働基準監督署長に届け出、労働者に周知する必要があります。',
+      basis: '労働基準法89条・90条・106条',
+    }];
+  },
+
+  harassment() {
+    return [{
+      level: 'info' as const,
+      message: '規程の制定だけでは措置義務を果たしたことになりません。相談窓口の周知、担当者への対応手順の共有、相談記録の作成・保管まで整備してください。',
+      basis: '労働施策総合推進法30条の2',
+    }];
+  },
+};
+
+/** 議事録の定足数チェック（出席数 > 総数 は明らかな記載誤り）。 */
+function meetingQuorum(totalKey: string, presentKey: string, presentLabel: string, totalLabel: string) {
+  return (v: Values): DocIssue[] => {
+    const total = num(v, totalKey);
+    const present = num(v, presentKey);
+    // どちらかが読めなければ present > total は false になり、そのまま [] を返す。
+    if (present > total) {
+      return [{
+        level: 'fatal',
+        field: presentKey,
+        message: `${presentLabel}（${present}）が${totalLabel}（${total}）を超えています。`,
+      }];
+    }
+    return [];
+  };
+}
+
+/**
+ * 個別ルールを持つ書式の id。
+ *
+ * ルールを足したのにテストの網羅リストへ入れ忘れると、その書式だけ検査から
+ * 静かに漏れる。実体から引けるようにしておき、テスト側で突き合わせる。
+ */
+export function ruleDocIds(): readonly string[] {
+  return Object.keys(RULES);
+}
+
+/**
+ * 書式と入力値から検出した問題を返す。
+ * 並びは fatal → warn → info の順（同レベル内は検出順）。
+ */
+export function checkDoc(doc: StudioDoc, values: Values): readonly DocIssue[] {
+  const out: DocIssue[] = [];
+
+  // 必須項目の空欄
+  for (const f of doc.fields) {
+    if (f.req && !text(values, f.k)) {
+      out.push({ level: 'warn', field: f.k, message: `「${f.label}」が未入力です。` });
+    }
+  }
+
+  // 数値項目に数値が入っていない
+  for (const f of doc.fields) {
+    const raw = text(values, f.k);
+    if (f.num && raw && toNum(raw) === null) {
+      out.push({ level: 'warn', field: f.k, message: `「${f.label}」を数値として読み取れません（入力値: ${raw}）。` });
+    }
+  }
+
+  out.push(...(RULES[doc.id]?.(values, doc) ?? []));
+
+  // sort は ES2019 以降 安定ソートが保証されるので、同順位は検出順のまま残る。
+  return [...out].sort(byIssueLevel);
+}
+
+/** 未入力の内訳。**必須 (`req`) とそれ以外を分けて数える。** */
+export interface BlankCounts {
+  /**
+   * ＊ の欄のうち未入力の数。**これが 0 なら交付前に埋める欄は残っていない。**
+   *
+   * 「成立しない」とは言わない —— パス 435 (この型を足した手) はこの 1 行に
+   * 「空欄のまま交付すると成立しない」と書いたが、それは `fatal` の定義の逐語で、
+   * この未入力を報告する段階は 56 書面すべて `warn` である (パス 436 で実測)。
+   * 根拠は `DocField.req` の宣言に在る。
+   */
+  readonly required: number;
+  /** ＊ の欄の総数。 */
+  readonly requiredTotal: number;
+  /** ＊ でない欄のうち未入力の数。 */
+  readonly optional: number;
+  /** ＊ でない欄の総数。 */
+  readonly optionalTotal: number;
+}
+
+/**
+ * 未入力のフィールド数を**必須とそれ以外に分けて**数える (2026-09-23 · パス 435)。
+ *
+ * 分けるのは、呼ぶ側がこの数を「＊ の未入力」として見せていたからである。実測
+ * (2026-09-23 · 直す前 · 適格請求書を実物の画面で開く):
+ *
+ * ```
+ *   空のとき            「＊ は…書類として成立しない項目。未入力 28 / 35 件。」
+ *   ＊ の 4 欄を埋めた後  「＊ は…書類として成立しない項目。未入力 24 / 35 件。」
+ *   同じ画面の交付前チェック「無効リスクは見つかりませんでした」
+ * ```
+ *
+ * **＊ の未入力は 0 になっているのに、その ＊ を説明した直後の数は 24 と出る。**
+ * 適格請求書 (消費税法57条の4) の ＊ は 4 欄 (宛先 / 自社名 / 登録番号 / 発行日) で、
+ * 残る 31 欄は任意である —— 旧実装は `f.req` を見ずに全欄を数えていたので、
+ * **この数はどの書面でも 0 にならない** (実測: 56 書面すべてで必須数と一致しない)。
+ * つまり「あと何を埋めれば交付できるか」に答えない数を、その問いの文の隣に置いていた。
+ * しかも同じ画面の交付前チェックは「無効リスクは見つかりませんでした」と答えており、
+ * **2 つのパネルが同じ問いに違う答えを出していた** (パス 392 と同じ形)。
+ *
+ * 合計を 1 つ返すのをやめて内訳を返すのは、呼ぶ側が足し直して
+ * また「どちらの数か分からない 1 つ」に戻すのを防ぐため (パス 433 の `{deleted, skipped}`
+ * と同じ形)。このファイルの 789 行目も、この数を
+ * 「必須フィールドの空欄カウント」と呼んでいる。
+ */
+export function blankCounts(doc: StudioDoc, values: Values): BlankCounts {
+  const blank = (f: { readonly k: string }) => !(values[f.k] ?? '').trim();
+  const req = doc.fields.filter((f) => f.req);
+  const opt = doc.fields.filter((f) => !f.req);
+  return {
+    required: req.filter(blank).length,
+    requiredTotal: req.length,
+    optional: opt.filter(blank).length,
+    optionalTotal: opt.length,
+  };
+}

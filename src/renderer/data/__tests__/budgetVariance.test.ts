@@ -1,0 +1,513 @@
+import { describe, expect, it } from 'vitest';
+import {
+  assessVariance,
+  classifyFavorability,
+  computeBudgetLandingForecast,
+  computeBudgetVariance,
+  computeBudgetVarianceFromFundamentals,
+  computeMonthlyAchievement,
+  decomposePriceVolumeVariance,
+  budgetPeriodAlignment,
+  budgetComparedRangeLabel,
+  budgetScopeSentence,
+  budgetUnmatchedNote,
+  KPI_BUDGETS_COLLECTION,
+} from '../budgetVariance';
+import type { KpiActual } from '../kpiActuals';
+
+describe('KPI_BUDGETS_COLLECTION', () => {
+  it('is the kpi-budgets collection key (paired with kpi-actuals)', () => {
+    expect(KPI_BUDGETS_COLLECTION).toBe('kpi-budgets');
+  });
+});
+
+const row = (revenue: number, cogs = 0, advertising = 0, sga = 0, depreciation = 0): KpiActual => ({
+  period: '2026-05',
+  unit: '全社',
+  revenue,
+  cogs,
+  advertising,
+  sga,
+  depreciation,
+});
+
+/** 期を指定した 1 行 (`row` は期を固定するので、期の突合は測れない)。 */
+const at = (period: string, revenue: number, unit = '全社'): KpiActual => ({
+  period, unit, revenue, cogs: 0, advertising: 0, sga: 0, depreciation: 0,
+});
+
+/** `from` 月から `count` か月ぶんの `YYYY-MM` (1 始まりの通し月で 12 を越えたら年が繰り上がる)。 */
+const months = (from: number, count: number): string[] =>
+  Array.from({ length: count }, (_, i) => {
+    const m = from + i;
+    return `${2026 + Math.floor((m - 1) / 12)}-${String(((m - 1) % 12) + 1).padStart(2, '0')}`;
+  });
+
+describe('computeBudgetVarianceFromFundamentals', () => {
+  it('computes revenue and operating-profit variance and achievement', () => {
+    // budget: rev 1000, op = 1000 - (300+100) - (200+0) = 400
+    // actual: rev 1100, op = 1100 - (300+100) - (200+0) = 500
+    const v = computeBudgetVarianceFromFundamentals(
+      { revenue: 1000, cogs: 300, advertising: 100, sga: 200, depreciation: 0 },
+      { revenue: 1100, cogs: 300, advertising: 100, sga: 200, depreciation: 0 },
+    );
+    expect(v.revenue).toEqual({ budget: 1000, actual: 1100, variance: 100, achievementPct: 110 });
+    expect(v.operatingProfit.budget).toBe(400);
+    expect(v.operatingProfit.actual).toBe(500);
+    expect(v.operatingProfit.variance).toBe(100);
+    expect(v.operatingProfit.achievementPct).toBe(125);
+  });
+
+  it('returns a null achievement when the budget is zero (no division by zero)', () => {
+    const v = computeBudgetVarianceFromFundamentals(
+      { revenue: 0, cogs: 0, advertising: 0, sga: 0, depreciation: 0 },
+      { revenue: 500, cogs: 0, advertising: 0, sga: 0, depreciation: 0 },
+    );
+    expect(v.revenue.achievementPct).toBeNull();
+    expect(v.revenue.variance).toBe(500);
+  });
+
+  it('reports under-achievement (below 100%) and negative variance when actual lags', () => {
+    const v = computeBudgetVarianceFromFundamentals(
+      { revenue: 1000, cogs: 0, advertising: 0, sga: 0, depreciation: 0 },
+      { revenue: 800, cogs: 0, advertising: 0, sga: 0, depreciation: 0 },
+    );
+    expect(v.revenue.achievementPct).toBe(80);
+    expect(v.revenue.variance).toBe(-200);
+  });
+});
+
+describe('computeBudgetVariance', () => {
+  it('returns null when either side is empty', () => {
+    expect(computeBudgetVariance([], [row(100)])).toBeNull();
+    expect(computeBudgetVariance([row(100)], [])).toBeNull();
+  });
+
+  it('sums multiple rows on each side before comparing', () => {
+    const budgets = [row(600), row(400)]; // 1000
+    const actuals = [row(500), row(700)]; // 1200
+    const v = computeBudgetVariance(budgets, actuals)!;
+    expect(v.revenue.budget).toBe(1000);
+    expect(v.revenue.actual).toBe(1200);
+    expect(v.revenue.achievementPct).toBe(120);
+  });
+
+  it('rounds achievement to one decimal place', () => {
+    // 1000 actual / 300 budget = 333.33% → 333.3
+    const v = computeBudgetVariance([row(300)], [row(1000)])!;
+    expect(v.revenue.achievementPct).toBe(333.3);
+  });
+
+  // -------------------------------------------------------------------------
+  // 期の突合 (2026-09-07)。直す前は**両側の全行**を合算して割っていたので、
+  // 通期予算と数か月の実績を突き合わせると達成率が期間の比になっていた。
+  // -------------------------------------------------------------------------
+
+  it('★ 通期予算 12 か月 vs 実績 3 か月 —— 突合できた 3 か月で測る (直す前は 25%)', () => {
+    const budgets = months(4, 12).map((m) => at(m, 4_000_000));
+    const actuals = months(4, 3).map((m) => at(m, 4_000_000));
+    const v = computeBudgetVariance(budgets, actuals)!;
+    expect(v.revenue.budget).toBe(12_000_000); // 直す前は 48,000,000
+    expect(v.revenue.actual).toBe(12_000_000);
+    expect(v.revenue.achievementPct).toBe(100); // 直す前は 25
+    expect(v.alignment.comparedPeriods).toEqual(['2026-04', '2026-05', '2026-06']);
+    expect(v.alignment.budgetOnlyPeriods).toHaveLength(9);
+    expect(v.alignment.actualOnlyPeriods).toEqual([]);
+  });
+
+  it('★ 予算 1 か月分だけ vs 実績 12 か月 —— 突合できた 1 か月で測る (直す前は 1200%)', () => {
+    const v = computeBudgetVariance([at('2026-04', 4_000_000)], months(4, 12).map((m) => at(m, 4_000_000)))!;
+    expect(v.revenue.achievementPct).toBe(100); // 直す前は 1200
+    expect(v.alignment.comparedPeriods).toEqual(['2026-04']);
+    expect(v.alignment.actualOnlyPeriods).toHaveLength(11);
+  });
+
+  it('★ 期が 1 つも重ならなければ null (去年の予算 vs 今年の実績で 125% を出さない)', () => {
+    const budgets = months(4, 12).map((m) => at(m, 4_000_000)); // 2026-04〜2027-03
+    const actuals = months(16, 12).map((m) => at(m, 5_000_000)); // 2027-04〜2028-03
+    expect(computeBudgetVariance(budgets, actuals)).toBeNull(); // 直す前は 達成率 125%
+  });
+
+  it('★ 突合できた期の中の複数事業は合算する (期が同じなら足す)', () => {
+    const v = computeBudgetVariance(
+      [at('2026-04', 600, 'A'), at('2026-04', 400, 'B'), at('2026-05', 999, 'A')],
+      [at('2026-04', 500, 'A'), at('2026-04', 700, 'B')],
+    )!;
+    expect(v.revenue.budget).toBe(1000); // 2026-05 の 999 は実績が無いので入らない
+    expect(v.revenue.actual).toBe(1200);
+    expect(v.alignment.comparedPeriods).toEqual(['2026-04']);
+    expect(v.alignment.budgetOnlyPeriods).toEqual(['2026-05']);
+  });
+});
+
+describe('budgetPeriodAlignment', () => {
+  it('splits the periods into compared / budget-only / actual-only, ascending', () => {
+    const a = budgetPeriodAlignment(
+      [{ period: '2026-05' }, { period: '2026-04' }, { period: '2026-03' }],
+      [{ period: '2026-06' }, { period: '2026-04' }, { period: '2026-05' }],
+    );
+    expect(a.comparedPeriods).toEqual(['2026-04', '2026-05']);
+    expect(a.budgetOnlyPeriods).toEqual(['2026-03']);
+    expect(a.actualOnlyPeriods).toEqual(['2026-06']);
+  });
+
+  it('★ 同じ期の複数事業は 1 か月として数える (行数ではなく月数)', () => {
+    const a = budgetPeriodAlignment(
+      [{ period: '2026-04' }, { period: '2026-04' }, { period: '2026-04' }],
+      [{ period: '2026-04' }, { period: '2026-04' }],
+    );
+    expect(a.comparedPeriods).toEqual(['2026-04']);
+  });
+
+  it('is empty on every axis for two empty series', () => {
+    expect(budgetPeriodAlignment([], [])).toEqual({
+      comparedPeriods: [], budgetOnlyPeriods: [], actualOnlyPeriods: [],
+    });
+  });
+});
+
+describe('budgetUnmatchedNote / budgetScopeSentence', () => {
+  const al = (compared: number, budgetOnly: number, actualOnly: number) => ({
+    comparedPeriods: months(1, compared),
+    budgetOnlyPeriods: months(30, budgetOnly),
+    actualOnlyPeriods: months(60, actualOnly),
+  });
+
+  it('★ 全期が突合できていれば断り書きは無い (null)', () => {
+    expect(budgetUnmatchedNote(al(3, 0, 0))).toBeNull();
+    expect(budgetScopeSentence(al(3, 0, 0))).toBeNull();
+  });
+
+  it('★ 実績待ちの月だけがあるとき', () => {
+    expect(budgetUnmatchedNote(al(3, 9, 0))).toBe('予算のみ 9 か月は対象外');
+    expect(budgetScopeSentence(al(3, 9, 0))).toBe('予算と実績の両方が在る 3 か月分の比較です (予算のみ 9 か月は対象外)。');
+  });
+
+  it('★ 予算を入れていない月だけがあるとき', () => {
+    expect(budgetUnmatchedNote(al(1, 0, 11))).toBe('実績のみ 11 か月は対象外');
+  });
+
+  /**
+   * **突合できた期が 0 のときに、範囲も「比較」も作らない。**
+   *
+   * どちらも export されていて、`budgetPeriodAlignment` も export されている ——
+   * つまり**直に組んだ突合を渡せる** (`overview.ts` の `budgetAlignment` がそれ)。
+   * 今の呼び手は 2 つとも `computeBudgetVariance` (空なら null) 経由なので届かないが、
+   * **関門は呼び手の並びではなく関数の側に置く**。直す前の実測:
+   *
+   * | 関数 | 突合 0 のときの返り |
+   * | --- | --- |
+   * | `budgetComparedRangeLabel` | `undefined〜undefined・0 か月` (添字が `undefined`・裸の補間) |
+   * | `budgetScopeSentence` | 「予算と実績の両方が在る **0 か月分の比較**です」= 比較していない |
+   */
+  it('★ 突合 0 のとき範囲ラベルは undefined を刷らない', () => {
+    expect(budgetComparedRangeLabel(al(0, 9, 3))).toBe('突合できた期なし');
+    expect(budgetComparedRangeLabel(al(0, 9, 3))).not.toContain('undefined');
+    // 全部が空でも同じ (添字の枝は突合の数だけで決まる)。
+    expect(budgetComparedRangeLabel(al(0, 0, 0))).toBe('突合できた期なし');
+  });
+
+  it('★ 対照: 突合が在れば範囲と月数を出す (床が邪魔をしない)', () => {
+    expect(budgetComparedRangeLabel(al(1, 0, 0))).toMatch(/^\d{4}-\d{2}〜\d{4}-\d{2}・1 か月$/);
+    expect(budgetComparedRangeLabel(al(3, 0, 0))).toContain('・3 か月');
+  });
+
+  it('★ 突合 0 のときは「0 か月分の比較」と述べず、算定していない旨を述べる', () => {
+    const s = budgetScopeSentence(al(0, 9, 3));
+    expect(s).toBe('予算と実績で期が重なっていないため、予実差異は算定していません (予算のみ 9 か月・実績のみ 3 か月は対象外)。');
+    expect(s).not.toContain('0 か月分の比較');
+    // 文面は managementReport の突合ゼロの枝と同じ事実を述べる。
+    expect(s).toContain('期が重なっていない');
+  });
+
+  it('★ 対照: 突合が在れば従来どおり「N か月分の比較です」', () => {
+    expect(budgetScopeSentence(al(2, 4, 5))).toContain('予算と実績の両方が在る 2 か月分の比較です');
+  });
+
+  it('★ 突合も対象外も無ければ述べることが無い (null のまま)', () => {
+    // 断り書きが要らない場合は突合 0 でも null —— 床を当てすぎない。
+    expect(budgetScopeSentence(al(0, 0, 0))).toBeNull();
+  });
+
+  it('★ 両側に対象外があるときは中黒で並べる', () => {
+    expect(budgetUnmatchedNote(al(2, 4, 5))).toBe('予算のみ 4 か月・実績のみ 5 か月は対象外');
+  });
+});
+
+// --- round 71: 加算的指標 ---
+
+describe('decomposePriceVolumeVariance', () => {
+  it('splits a revenue variance into price and volume contributions summing to total', () => {
+    // budget: 100 units @ 10 = 1000; actual: 120 units @ 11 = 1320
+    // price  = (11 - 10) * 120 = 120
+    // volume = (120 - 100) * 10 = 200
+    // total  = 1320 - 1000 = 320 = 120 + 200
+    const d = decomposePriceVolumeVariance(100, 1000, 120, 1320)!;
+    expect(d.budgetAmount).toBe(1000);
+    expect(d.actualAmount).toBe(1320);
+    expect(d.priceVariance).toBe(120);
+    expect(d.volumeVariance).toBe(200);
+    expect(d.totalVariance).toBe(320);
+    expect(d.priceVariance + d.volumeVariance).toBe(d.totalVariance);
+  });
+
+  it('handles a pure volume change (same unit price → zero price variance)', () => {
+    // budget 10/unit, actual 10/unit, qty 100→150
+    const d = decomposePriceVolumeVariance(100, 1000, 150, 1500)!;
+    expect(d.priceVariance).toBe(0);
+    expect(d.volumeVariance).toBe(500);
+    expect(d.totalVariance).toBe(500);
+  });
+
+  it('handles a pure price change (same qty → zero volume variance)', () => {
+    const d = decomposePriceVolumeVariance(100, 1000, 100, 1200)!;
+    expect(d.priceVariance).toBe(200);
+    expect(d.volumeVariance).toBe(0);
+    expect(d.totalVariance).toBe(200);
+  });
+
+  it('returns null when budget quantity is zero', () => {
+    expect(decomposePriceVolumeVariance(0, 1000, 120, 1320)).toBeNull();
+  });
+
+  it('returns null when actual quantity is zero', () => {
+    expect(decomposePriceVolumeVariance(100, 1000, 0, 1320)).toBeNull();
+  });
+
+  it('returns null when a quantity is negative', () => {
+    expect(decomposePriceVolumeVariance(-1, 1000, 120, 1320)).toBeNull();
+    expect(decomposePriceVolumeVariance(100, 1000, -5, 1320)).toBeNull();
+  });
+
+  it('returns null when a quantity is non-finite', () => {
+    expect(decomposePriceVolumeVariance(Infinity, 1000, 120, 1320)).toBeNull();
+    expect(decomposePriceVolumeVariance(100, 1000, NaN, 1320)).toBeNull();
+  });
+
+  it('returns null when an amount is non-finite', () => {
+    expect(decomposePriceVolumeVariance(100, Infinity, 120, 1320)).toBeNull();
+    expect(decomposePriceVolumeVariance(100, 1000, 120, NaN)).toBeNull();
+  });
+});
+
+describe('classifyFavorability', () => {
+  it('treats a positive revenue variance as favorable and negative as unfavorable', () => {
+    expect(classifyFavorability(100, 'revenue')).toBe('favorable');
+    expect(classifyFavorability(-100, 'revenue')).toBe('unfavorable');
+  });
+
+  it('treats a negative cost variance (under budget) as favorable and positive as unfavorable', () => {
+    expect(classifyFavorability(-100, 'cost')).toBe('favorable');
+    expect(classifyFavorability(100, 'cost')).toBe('unfavorable');
+  });
+
+  it('returns neutral on a zero variance for both kinds', () => {
+    expect(classifyFavorability(0, 'revenue')).toBe('neutral');
+    expect(classifyFavorability(0, 'cost')).toBe('neutral');
+  });
+
+  it('returns neutral on a non-finite variance', () => {
+    expect(classifyFavorability(NaN, 'revenue')).toBe('neutral');
+    expect(classifyFavorability(Infinity, 'cost')).toBe('neutral');
+  });
+});
+
+describe('assessVariance', () => {
+  it('computes variance, percent, favorability and materiality above the default threshold', () => {
+    // budget 1000, actual 1150 → variance +150, 15% > 10% default → material, revenue favorable
+    const a = assessVariance(1000, 1150, 'revenue');
+    expect(a.variance).toBe(150);
+    expect(a.variancePct).toBe(15);
+    expect(a.favorability).toBe('favorable');
+    expect(a.material).toBe(true);
+  });
+
+  it('marks a small variance within the threshold as immaterial', () => {
+    // budget 1000, actual 1050 → 5% <= 10% → not material
+    const a = assessVariance(1000, 1050, 'revenue');
+    expect(a.variancePct).toBe(5);
+    expect(a.material).toBe(false);
+  });
+
+  it('uses absolute budget for the percent denominator so cost overruns are positive pct', () => {
+    // cost budget 1000, actual 1300 → variance +300, 30% material, unfavorable
+    const a = assessVariance(1000, 1300, 'cost');
+    expect(a.variancePct).toBe(30);
+    expect(a.favorability).toBe('unfavorable');
+    expect(a.material).toBe(true);
+  });
+
+  it('returns a null percent and immaterial when the budget is zero', () => {
+    const a = assessVariance(0, 500, 'revenue');
+    expect(a.variancePct).toBeNull();
+    expect(a.material).toBe(false);
+    expect(a.variance).toBe(500);
+  });
+
+  it('honours a custom threshold (exactly at threshold is not material)', () => {
+    // 20% variance with threshold 20 → not material (strictly greater than)
+    const at = assessVariance(1000, 1200, 'revenue', 20);
+    expect(at.variancePct).toBe(20);
+    expect(at.material).toBe(false);
+    // threshold 19 → 20 > 19 → material
+    expect(assessVariance(1000, 1200, 'revenue', 19).material).toBe(true);
+  });
+
+  it('falls back to the default threshold when given a negative or non-finite threshold', () => {
+    // 15% variance; bad threshold → default 10 used → material
+    expect(assessVariance(1000, 1150, 'revenue', -5).material).toBe(true);
+    expect(assessVariance(1000, 1150, 'revenue', NaN).material).toBe(true);
+  });
+
+  it('does not let a negative threshold leak in (5% variance stays immaterial vs default 10)', () => {
+    // A negative threshold must fall back to 10, NOT be used directly: 5% > 10 is false.
+    // If the negative threshold leaked in, abs(5) > -5 would be true → material.
+    expect(assessVariance(1000, 1050, 'revenue', -5).material).toBe(false);
+    // threshold exactly 0 is valid and used → a tiny non-zero variance is material.
+    expect(assessVariance(1000, 1001, 'revenue', 0).material).toBe(true);
+    expect(assessVariance(1000, 1000, 'revenue', 0).material).toBe(false);
+  });
+});
+
+describe('computeMonthlyAchievement', () => {
+  it('returns an empty array when both series are empty', () => {
+    expect(computeMonthlyAchievement([], [])).toEqual([]);
+  });
+
+  it('computes per-month and YTD cumulative achievement, sorted by period', () => {
+    const budgets = [
+      { period: '2026-02', revenue: 200 },
+      { period: '2026-01', revenue: 100 },
+    ];
+    const actuals = [
+      { period: '2026-01', revenue: 120 },
+      { period: '2026-02', revenue: 150 },
+    ];
+    const rows = computeMonthlyAchievement(budgets, actuals);
+    expect(rows.map((r) => r.period)).toEqual(['2026-01', '2026-02']);
+    // Jan: 120/100 = 120%, YTD 120/100 = 120%
+    expect(rows[0]).toMatchObject({
+      budget: 100,
+      actual: 120,
+      achievementPct: 120,
+      cumulativeBudget: 100,
+      cumulativeActual: 120,
+      ytdAchievementPct: 120,
+    });
+    // Feb: 150/200 = 75%, YTD (120+150)/(100+200) = 270/300 = 90%
+    expect(rows[1]).toMatchObject({
+      budget: 200,
+      actual: 150,
+      achievementPct: 75,
+      cumulativeBudget: 300,
+      cumulativeActual: 270,
+      ytdAchievementPct: 90,
+    });
+  });
+
+  /**
+   * **この検査は 2026-09-07 まで、欠陥のほうを「仕様」として留めていた。**
+   * 旧: `treats a period missing from one side as zero` —— 実績がまだ無い月を
+   * 「実績 0・達成率 0%」と数え、累計にもその 0 を足していた。見本が食い違いを
+   * 固定していた形は **5 例目** (安全余裕率・決算期・事業計画書の月数・返済余力に次ぐ)。
+   */
+  it('★ 片側しか無い期は「0」ではなく null (達成率も累計も作らない)', () => {
+    const rows = computeMonthlyAchievement(
+      [{ period: '2026-01', revenue: 100 }],
+      [{ period: '2026-02', revenue: 80 }],
+    );
+    expect(rows).toHaveLength(2);
+    // Jan: 実績が無い → actual は null・達成率も null (0% ではない)
+    expect(rows[0]).toMatchObject({ period: '2026-01', budget: 100, actual: null, achievementPct: null });
+    // Feb: 予算が無い → budget は null・達成率も null
+    expect(rows[1]).toMatchObject({ period: '2026-02', budget: null, actual: 80, achievementPct: null });
+    // 突合できた月が 1 つも無いので累計は 0 のまま・YTD も null
+    expect(rows.map((r) => r.cumulativeBudget)).toEqual([0, 0]);
+    expect(rows.map((r) => r.cumulativeActual)).toEqual([0, 0]);
+    expect(rows.map((r) => r.ytdAchievementPct)).toEqual([null, null]);
+  });
+
+  it('★ 累計は突合できた期だけを足す (片側しか無い月を挟んでも増えない)', () => {
+    const rows = computeMonthlyAchievement(
+      [{ period: '2026-01', revenue: 100 }, { period: '2026-02', revenue: 200 }, { period: '2026-03', revenue: 400 }],
+      [{ period: '2026-01', revenue: 120 }, { period: '2026-03', revenue: 300 }],
+    );
+    // 2026-02 は実績が無いので累計に入らない → 3 月の YTD は (120+300)/(100+400) = 84%
+    expect(rows.map((r) => r.cumulativeBudget)).toEqual([100, 100, 500]);
+    expect(rows.map((r) => r.cumulativeActual)).toEqual([120, 120, 420]);
+    expect(rows[2]!.ytdAchievementPct).toBe(84);
+    expect(rows[1]!.achievementPct).toBeNull();
+  });
+
+  it('returns null achievement when the cumulative budget is still zero', () => {
+    const rows = computeMonthlyAchievement(
+      [{ period: '2026-01', revenue: 0 }],
+      [{ period: '2026-01', revenue: 50 }],
+    );
+    expect(rows[0]!.achievementPct).toBeNull();
+    expect(rows[0]!.ytdAchievementPct).toBeNull();
+  });
+});
+
+describe('computeBudgetLandingForecast', () => {
+  it('projects a run-rate landing and compares it to the full-year budget', () => {
+    // 600 over 6 months → run-rate 1200 for 12 months; budget 1000 → +200, 120%
+    const f = computeBudgetLandingForecast(600, 6, 1000)!;
+    expect(f.monthsElapsed).toBe(6);
+    expect(f.periodMonths).toBe(12);
+    expect(f.progressPct).toBe(50);
+    expect(f.actualToDate).toBe(600);
+    expect(f.forecast).toBe(1200);
+    expect(f.fullYearBudget).toBe(1000);
+    expect(f.forecastVariance).toBe(200);
+    expect(f.forecastAchievementPct).toBe(120);
+  });
+
+  it('rounds the forecast to the nearest yen', () => {
+    // 100 over 3 months → 100/3*12 = 400 exactly
+    expect(computeBudgetLandingForecast(100, 3, 500)!.forecast).toBe(400);
+    // 50 over 7 months → 50/7*12 = 85.7... → 86
+    expect(computeBudgetLandingForecast(50, 7, 500)!.forecast).toBe(86);
+  });
+
+  it('supports a custom period length', () => {
+    // 300 over 2 quarters → run-rate over 4 quarters = 600
+    const f = computeBudgetLandingForecast(300, 2, 500, 4)!;
+    expect(f.periodMonths).toBe(4);
+    expect(f.progressPct).toBe(50);
+    expect(f.forecast).toBe(600);
+  });
+
+  it('returns a null forecast achievement when the budget is zero', () => {
+    const f = computeBudgetLandingForecast(600, 6, 0)!;
+    expect(f.forecast).toBe(1200);
+    expect(f.forecastAchievementPct).toBeNull();
+  });
+
+  it('returns null when monthsElapsed is zero, negative or non-finite', () => {
+    expect(computeBudgetLandingForecast(600, 0, 1000)).toBeNull();
+    expect(computeBudgetLandingForecast(600, -1, 1000)).toBeNull();
+    expect(computeBudgetLandingForecast(600, NaN, 1000)).toBeNull();
+  });
+
+  it('returns null when periodMonths is zero, negative or non-finite', () => {
+    expect(computeBudgetLandingForecast(600, 6, 1000, 0)).toBeNull();
+    expect(computeBudgetLandingForecast(600, 6, 1000, -12)).toBeNull();
+    expect(computeBudgetLandingForecast(600, 6, 1000, Infinity)).toBeNull();
+  });
+
+  it('returns null when monthsElapsed exceeds periodMonths (data past period end)', () => {
+    expect(computeBudgetLandingForecast(600, 13, 1000)).toBeNull();
+  });
+
+  it('allows monthsElapsed equal to periodMonths (full period, forecast = actual)', () => {
+    const f = computeBudgetLandingForecast(1000, 12, 1000)!;
+    expect(f.forecast).toBe(1000);
+    expect(f.progressPct).toBe(100);
+  });
+
+  it('returns null when actualToDate or budget is non-finite', () => {
+    expect(computeBudgetLandingForecast(NaN, 6, 1000)).toBeNull();
+    expect(computeBudgetLandingForecast(600, 6, Infinity)).toBeNull();
+  });
+});

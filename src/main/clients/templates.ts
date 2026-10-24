@@ -1,7 +1,16 @@
+import { countChars } from '../../shared/inputCeiling';
+import { wrapLines } from '../../shared/textWrap';
+import {
+  TEMPLATE_FIELD_LIMITS,
+  renderTemplateSvg,
+  type TemplateSvgParams,
+} from '../../shared/templateSvg';
 import * as fs from 'node:fs/promises';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import type { ActionContext, ActionMap, FetchContext } from './types';
+import { isSafeExportPath, writeExportFile } from './exportPaths';
+import type { ActionData, ExportFileResult } from '../../shared/actionData';
 
 /**
  * Templates — 19 番目のサービス。
@@ -27,20 +36,14 @@ export type TemplateId =
   | 'invoice-header'
   | 'resume-header';
 
-export interface TemplateParams {
-  /** 主タイトル (40 字以内) */
-  title: string;
-  /** 副題 / リード文 (80 字以内) */
-  subtitle: string;
-  /** 本文 / フッター / 補足 (200 字以内) */
-  body: string;
-  /** メインアクセントカラー (HEX, e.g. #5b8def) */
-  accentColor: string;
-  /** セカンダリカラー (HEX) — 背景・装飾用 */
-  secondaryColor: string;
-  /** ブランド名・ロゴ代替テキスト (24 字以内) */
-  brandText: string;
-}
+/**
+ * 欄の名前と型。**中身の組み立ては `shared/templateSvg.ts` に 1 つだけ**
+ * (パス 184 でここ・ブラウザ版・画面の 3 写しを畳んだ)。字数の上限は
+ * `TEMPLATE_FIELD_LIMITS` が持つ —— 以前この JSDoc は「40 字以内 /
+ * 80 字以内 / 200 字以内 / 24 字以内」と書いていたが、実装は 80 / 120 /
+ * 400 / 48 で、**散文が実装の半分以下の数を説明していた**。
+ */
+export type TemplateParams = TemplateSvgParams;
 
 export interface TemplateDef {
   readonly id: TemplateId;
@@ -51,18 +54,9 @@ export interface TemplateDef {
   readonly defaults: TemplateParams;
 }
 
-// HEX regex pinned via positive (`#abcdef`/`#012345` accepted) + negative
-// (`red`, `#abc`, `#zzzzzz`) tests. Stryker Regex mutants on the anchor
-// or class internals are equivalent up to allowing strings the validator
-// is supposed to reject — but the surviving forms (`?` quantifier mutation
-// on `{6}`) admit shorter strings still matching the 5 rejection cases.
-// Stryker disable next-line Regex
-const HEX = /^#[0-9a-fA-F]{6}$/;
-
 // Catalog string-literals (label / description / default param text) are
 // decorative copy. The TemplateId list is pinned by structural tests
 // (toEqual on TEMPLATE_IDS). Hex defaults are pinned via validation tests.
-// Stryker disable StringLiteral,ArrayDeclaration,ObjectLiteral
 export const TEMPLATE_CATALOG: readonly TemplateDef[] = [
   {
     id: 'presentation-cover',
@@ -185,7 +179,6 @@ export const TEMPLATE_CATALOG: readonly TemplateDef[] = [
     },
   },
 ];
-// Stryker restore StringLiteral,ArrayDeclaration,ObjectLiteral
 
 export const TEMPLATE_IDS: readonly TemplateId[] = TEMPLATE_CATALOG.map((t) => t.id);
 
@@ -196,11 +189,9 @@ const CATALOG_BY_ID = Object.fromEntries(TEMPLATE_CATALOG.map((t) => [t.id, t]))
 // Use Object.hasOwn (not `in`) so prototype-chain entries like
 // '__proto__' / 'constructor' / 'toString' do not pass — 3 dedicated
 // tests pin this.
-// Stryker disable ConditionalExpression
 export function isTemplateId(value: unknown): value is TemplateId {
   return typeof value === 'string' && Object.hasOwn(CATALOG_BY_ID, value);
 }
-// Stryker restore ConditionalExpression
 
 export function getTemplateDef(id: TemplateId): TemplateDef {
   return CATALOG_BY_ID[id];
@@ -208,18 +199,13 @@ export function getTemplateDef(id: TemplateId): TemplateDef {
 
 // --- Validation -------------------------------------------------------
 
-const FIELD_LIMITS = {
-  title: 80,
-  subtitle: 120,
-  body: 400,
-  brandText: 48,
-} as const;
+/** 上限は共有台帳から読む (数を 2 か所に置かない・画面の入力欄も同じ物を読む)。 */
+const FIELD_LIMITS = TEMPLATE_FIELD_LIMITS;
 
 /** Validate + normalize template params, applying defaults for missing/invalid fields.
  *  Throws only on outright pathological input (control characters, oversize). */
 // Each guard is exhaustively tested via negative cases. perTest mis-attribution
 // on the chained `||` / boundary mutants is silenced.
-// Stryker disable ConditionalExpression,LogicalOperator,BooleanLiteral,EqualityOperator,MethodExpression
 export function validateParams(
   raw: unknown,
   defaults: TemplateParams,
@@ -232,7 +218,15 @@ export function validateParams(
   for (const k of ['title', 'subtitle', 'body', 'brandText'] as const) {
     const v = o[k];
     if (typeof v === 'string') {
-      if (v.length > FIELD_LIMITS[k]) {
+      /*
+       * **数えるのは「字」** (2026-09-13 · パス 197)。ここは `v.length`
+       * (UTF-16 コード単位) で見ながら、断りは `exceeds N chars` と言っていた
+       * —— 80 字のタイトルは絵文字なら 40 個で満杯になる。天井が
+       * `FIELD_LIMITS[k]` という別名に渡っていたので、名前で単位を判断する
+       * census (パス 195) の外に在った。判定は `shared/templateSvg.ts` の
+       * `tooLongTemplateFields` が 1 つ持ち、ブラウザ版も同じ物を読む。
+       */
+      if (countChars(v) > FIELD_LIMITS[k]) {
         throw new Error(`${k} exceeds ${FIELD_LIMITS[k]} chars`);
       }
       if (/[\0]/.test(v)) {
@@ -244,7 +238,7 @@ export function validateParams(
   for (const k of ['accentColor', 'secondaryColor'] as const) {
     const v = o[k];
     if (typeof v === 'string') {
-      if (!HEX.test(v)) {
+      if (!isHexColor(v)) {
         throw new Error(`${k} must be #RRGGBB hex color`);
       }
       out[k] = v;
@@ -252,201 +246,33 @@ export function validateParams(
   }
   return out;
 }
-// Stryker restore ConditionalExpression,LogicalOperator,BooleanLiteral,EqualityOperator,MethodExpression
 
 // --- SVG helpers ------------------------------------------------------
 
-export function escapeXml(input: string): string {
-  return input
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
+/** マークアップ用のエスケープ。実装は `shared/escape.ts` に 1 つだけ持つ。 */
+import { escapeXml, isHexColor } from '../../shared/escape';
 
-/** Split text into lines no longer than `maxChars`. Newlines force a break. */
-// Stryker disable ConditionalExpression,EqualityOperator,LogicalOperator,MethodExpression,ArithmeticOperator,BooleanLiteral
-export function wrapLines(text: string, maxChars: number): string[] {
-  const out: string[] = [];
-  for (const para of text.split(/\n/)) {
-    if (para.length === 0) {
-      out.push('');
-      continue;
-    }
-    let buf = '';
-    for (const ch of para) {
-      if (buf.length >= maxChars) {
-        out.push(buf);
-        buf = '';
-      }
-      buf += ch;
-    }
-    if (buf.length > 0) out.push(buf);
-  }
-  return out;
-}
-// Stryker restore ConditionalExpression,EqualityOperator,LogicalOperator,MethodExpression,ArithmeticOperator,BooleanLiteral
+export { escapeXml };
 
-// --- Individual template renderers ------------------------------------
+// --- SVG の組み立て ------------------------------------------------------
 //
-// Each renderer is a pure function (params, def) → SVG string. All numeric
-// coords / colors / font sizes are decorative; tests pin the structural
-// invariants (root <svg> with correct dims, presence of title, etc.) and
-// the rest is block-form-pragma'd.
+// **中身は `src/shared/templateSvg.ts` に 1 つだけ在る。** 2026-09-12 (パス 184)
+// まで、同じ 8 テンプレートを組む実装がここ・`renderer/web-templates.ts`・
+// `renderer/pages/TemplatesPage.tsx` に 3 つ在り、実測で**どの 2 つも一致
+// しなかった** (代替テキストと書体が付くのはここだけ・画面のプレビューは
+// どちらの書き出しとも別物)。経緯と実測表は共有側の冒頭にある。
+//
+// ここに残るのは **IPC 境界の番人** (`validateParams`) だけ —— レンダラーから
+// 来た payload がファイル書き出しへ渡る手前で throw する側である。
+// 緩い側 (既定値へ落とす) は共有の `normalizeTemplateParams` で、
+// 揃えてはいけない差として `shared/__tests__/templateParamsParity.test.ts`
+// が留めている。
 
-// Stryker disable StringLiteral,ArithmeticOperator,ConditionalExpression,EqualityOperator,LogicalOperator,MethodExpression,UnaryOperator,ArrowFunction,AssignmentOperator,BooleanLiteral,BlockStatement,ArrayDeclaration,ObjectLiteral
-
-function renderPresentationCover(p: TemplateParams, d: TemplateDef): string {
-  const lines = wrapLines(p.title, 24);
-  const titleY = d.height / 2 - lines.length * 30;
-  const titleTspans = lines
-    .map((l, i) => `<tspan x="${d.width / 2}" dy="${i === 0 ? 0 : 100}">${escapeXml(l)}</tspan>`)
-    .join('');
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="${d.width}" height="${d.height}" viewBox="0 0 ${d.width} ${d.height}" role="img" aria-label="${escapeXml(p.title)}">
-  <rect x="0" y="0" width="${d.width}" height="${d.height}" fill="${p.secondaryColor}" />
-  <rect x="0" y="0" width="14" height="${d.height}" fill="${p.accentColor}" />
-  <rect x="60" y="${d.height - 80}" width="120" height="6" fill="${p.accentColor}" />
-  <text x="${d.width / 2}" y="${titleY}" font-size="92" font-weight="800" fill="#ffffff" text-anchor="middle" font-family="'Hiragino Sans',sans-serif">${titleTspans}</text>
-  <text x="${d.width / 2}" y="${d.height / 2 + 100}" font-size="36" fill="#cbd5e1" text-anchor="middle" font-family="'Hiragino Sans',sans-serif">${escapeXml(p.subtitle)}</text>
-  <text x="60" y="${d.height - 32}" font-size="20" fill="#94a3b8" font-family="'Hiragino Sans',sans-serif">${escapeXml(p.body)}</text>
-  <text x="${d.width - 60}" y="${d.height - 32}" font-size="22" font-weight="600" fill="${p.accentColor}" text-anchor="end" font-family="'Hiragino Sans',sans-serif">${escapeXml(p.brandText)}</text>
-</svg>`;
-}
-
-function renderBusinessCard(p: TemplateParams, d: TemplateDef): string {
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="${d.width}" height="${d.height}" viewBox="0 0 ${d.width} ${d.height}" role="img" aria-label="${escapeXml(p.title)}">
-  <rect x="0" y="0" width="${d.width}" height="${d.height}" fill="${p.secondaryColor}" />
-  <rect x="0" y="0" width="${d.width}" height="22" fill="${p.accentColor}" />
-  <text x="60" y="180" font-size="64" font-weight="700" fill="#0f1117" font-family="'Hiragino Mincho',serif">${escapeXml(p.title)}</text>
-  <text x="60" y="240" font-size="28" fill="${p.accentColor}" font-family="'Hiragino Sans',sans-serif">${escapeXml(p.subtitle)}</text>
-  <line x1="60" y1="280" x2="${d.width - 60}" y2="280" stroke="${p.accentColor}" stroke-width="2" />
-  <text x="60" y="340" font-size="22" fill="#475569" font-family="'Hiragino Sans',sans-serif">${escapeXml(p.body)}</text>
-  <text x="${d.width - 60}" y="${d.height - 56}" font-size="28" font-weight="700" fill="${p.accentColor}" text-anchor="end" font-family="'Hiragino Sans',sans-serif">${escapeXml(p.brandText)}</text>
-</svg>`;
-}
-
-function renderSocialSquare(p: TemplateParams, d: TemplateDef): string {
-  const lines = wrapLines(p.title, 14);
-  const titleTspans = lines
-    .map((l, i) => `<tspan x="${d.width / 2}" dy="${i === 0 ? 0 : 90}">${escapeXml(l)}</tspan>`)
-    .join('');
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="${d.width}" height="${d.height}" viewBox="0 0 ${d.width} ${d.height}" role="img" aria-label="${escapeXml(p.title)}">
-  <rect x="0" y="0" width="${d.width}" height="${d.height}" fill="${p.secondaryColor}" />
-  <circle cx="${d.width - 100}" cy="100" r="180" fill="${p.accentColor}" opacity="0.18" />
-  <circle cx="80" cy="${d.height - 80}" r="240" fill="${p.accentColor}" opacity="0.12" />
-  <rect x="60" y="120" width="80" height="6" fill="${p.accentColor}" />
-  <text x="${d.width / 2}" y="${d.height / 2 - lines.length * 30}" font-size="80" font-weight="800" fill="#ffffff" text-anchor="middle" font-family="'Hiragino Sans',sans-serif">${titleTspans}</text>
-  <text x="${d.width / 2}" y="${d.height / 2 + 100}" font-size="34" fill="#cbd5e1" text-anchor="middle" font-family="'Hiragino Sans',sans-serif">${escapeXml(p.subtitle)}</text>
-  <text x="${d.width / 2}" y="${d.height - 80}" font-size="26" fill="${p.accentColor}" text-anchor="middle" font-family="'Hiragino Sans',sans-serif">${escapeXml(p.body)}</text>
-  <text x="60" y="80" font-size="22" font-weight="600" fill="#ffffff" font-family="'Hiragino Sans',sans-serif">${escapeXml(p.brandText)}</text>
-</svg>`;
-}
-
-function renderSocialStory(p: TemplateParams, d: TemplateDef): string {
-  const lines = wrapLines(p.title, 11);
-  const titleTspans = lines
-    .map((l, i) => `<tspan x="${d.width / 2}" dy="${i === 0 ? 0 : 120}">${escapeXml(l)}</tspan>`)
-    .join('');
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="${d.width}" height="${d.height}" viewBox="0 0 ${d.width} ${d.height}" role="img" aria-label="${escapeXml(p.title)}">
-  <defs>
-    <linearGradient id="bgG" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="${p.secondaryColor}" />
-      <stop offset="100%" stop-color="${p.accentColor}" stop-opacity="0.4" />
-    </linearGradient>
-  </defs>
-  <rect x="0" y="0" width="${d.width}" height="${d.height}" fill="url(#bgG)" />
-  <rect x="${d.width / 2 - 60}" y="${d.height / 2 - 360}" width="120" height="8" fill="${p.accentColor}" />
-  <text x="${d.width / 2}" y="${d.height / 2 - 80 - lines.length * 30}" font-size="120" font-weight="900" fill="#ffffff" text-anchor="middle" font-family="'Hiragino Sans',sans-serif">${titleTspans}</text>
-  <text x="${d.width / 2}" y="${d.height / 2 + 200}" font-size="56" fill="#fafafa" text-anchor="middle" font-family="'Hiragino Sans',sans-serif">${escapeXml(p.subtitle)}</text>
-  <rect x="${d.width / 2 - 200}" y="${d.height - 280}" width="400" height="80" rx="40" fill="${p.accentColor}" />
-  <text x="${d.width / 2}" y="${d.height - 224}" font-size="38" font-weight="700" fill="#ffffff" text-anchor="middle" font-family="'Hiragino Sans',sans-serif">${escapeXml(p.body)}</text>
-  <text x="${d.width / 2}" y="${d.height - 120}" font-size="32" fill="#cbd5e1" text-anchor="middle" font-family="'Hiragino Sans',sans-serif">${escapeXml(p.brandText)}</text>
-</svg>`;
-}
-
-function renderFlyerA4(p: TemplateParams, d: TemplateDef): string {
-  const lines = wrapLines(p.body, 36);
-  const bodyTspans = lines
-    .map((l, i) => `<tspan x="80" dy="${i === 0 ? 0 : 56}">${escapeXml(l)}</tspan>`)
-    .join('');
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="${d.width}" height="${d.height}" viewBox="0 0 ${d.width} ${d.height}" role="img" aria-label="${escapeXml(p.title)}">
-  <rect x="0" y="0" width="${d.width}" height="${d.height}" fill="#fdfbf7" />
-  <rect x="0" y="0" width="${d.width}" height="380" fill="${p.accentColor}" />
-  <rect x="0" y="380" width="${d.width}" height="14" fill="${p.secondaryColor}" />
-  <text x="80" y="200" font-size="96" font-weight="800" fill="#ffffff" font-family="'Hiragino Sans',sans-serif">${escapeXml(p.title)}</text>
-  <text x="80" y="280" font-size="42" fill="#fefefe" font-family="'Hiragino Sans',sans-serif">${escapeXml(p.subtitle)}</text>
-  <text x="80" y="500" font-size="40" fill="#1f2937" font-family="'Hiragino Sans',sans-serif">${bodyTspans}</text>
-  <rect x="80" y="${d.height - 200}" width="${d.width - 160}" height="100" fill="${p.accentColor}" opacity="0.1" />
-  <text x="${d.width / 2}" y="${d.height - 140}" font-size="38" font-weight="700" fill="${p.accentColor}" text-anchor="middle" font-family="'Hiragino Sans',sans-serif">${escapeXml(p.brandText)}</text>
-</svg>`;
-}
-
-function renderCertificate(p: TemplateParams, d: TemplateDef): string {
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="${d.width}" height="${d.height}" viewBox="0 0 ${d.width} ${d.height}" role="img" aria-label="${escapeXml(p.title)}">
-  <rect x="0" y="0" width="${d.width}" height="${d.height}" fill="${p.secondaryColor}" />
-  <rect x="40" y="40" width="${d.width - 80}" height="${d.height - 80}" fill="none" stroke="${p.accentColor}" stroke-width="6" />
-  <rect x="60" y="60" width="${d.width - 120}" height="${d.height - 120}" fill="none" stroke="${p.accentColor}" stroke-width="2" />
-  <text x="${d.width / 2}" y="${d.height / 2 - 220}" font-size="32" letter-spacing="12" fill="${p.accentColor}" text-anchor="middle" font-family="'Hiragino Mincho',serif">CERTIFICATE</text>
-  <text x="${d.width / 2}" y="${d.height / 2 - 140}" font-size="120" font-weight="700" fill="#1f2937" text-anchor="middle" font-family="'Hiragino Mincho',serif">${escapeXml(p.title)}</text>
-  <text x="${d.width / 2}" y="${d.height / 2 - 40}" font-size="56" fill="#1f2937" text-anchor="middle" font-family="'Hiragino Mincho',serif">${escapeXml(p.subtitle)}</text>
-  <line x1="${d.width / 2 - 200}" y1="${d.height / 2}" x2="${d.width / 2 + 200}" y2="${d.height / 2}" stroke="${p.accentColor}" stroke-width="2" />
-  <text x="${d.width / 2}" y="${d.height / 2 + 90}" font-size="34" fill="#374151" text-anchor="middle" font-family="'Hiragino Sans',sans-serif">${escapeXml(p.body.split('\n')[0] ?? '')}</text>
-  <text x="${d.width / 2}" y="${d.height / 2 + 150}" font-size="34" fill="#374151" text-anchor="middle" font-family="'Hiragino Sans',sans-serif">${escapeXml(p.body.split('\n')[1] ?? '')}</text>
-  <text x="${d.width / 2}" y="${d.height - 100}" font-size="32" font-weight="600" fill="${p.accentColor}" text-anchor="middle" font-family="'Hiragino Mincho',serif">${escapeXml(p.brandText)}</text>
-</svg>`;
-}
-
-function renderInvoiceHeader(p: TemplateParams, d: TemplateDef): string {
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="${d.width}" height="${d.height}" viewBox="0 0 ${d.width} ${d.height}" role="img" aria-label="${escapeXml(p.title)}">
-  <rect x="0" y="0" width="${d.width}" height="${d.height}" fill="${p.secondaryColor}" />
-  <rect x="0" y="0" width="${d.width}" height="${d.height}" fill="${p.accentColor}" opacity="0.07" />
-  <text x="80" y="130" font-size="84" font-weight="800" letter-spacing="6" fill="${p.accentColor}" font-family="'Hiragino Sans',sans-serif">${escapeXml(p.title)}</text>
-  <text x="80" y="190" font-size="28" fill="#475569" font-family="'Hiragino Sans',sans-serif">${escapeXml(p.subtitle)}</text>
-  <text x="80" y="240" font-size="22" fill="#94a3b8" font-family="'Hiragino Sans',sans-serif">${escapeXml(p.body)}</text>
-  <text x="${d.width - 80}" y="80" font-size="32" font-weight="700" fill="#1f2937" text-anchor="end" font-family="'Hiragino Sans',sans-serif">${escapeXml(p.brandText)}</text>
-  <rect x="0" y="${d.height - 6}" width="${d.width}" height="6" fill="${p.accentColor}" />
-</svg>`;
-}
-
-function renderResumeHeader(p: TemplateParams, d: TemplateDef): string {
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="${d.width}" height="${d.height}" viewBox="0 0 ${d.width} ${d.height}" role="img" aria-label="${escapeXml(p.title)}">
-  <rect x="0" y="0" width="${d.width}" height="${d.height}" fill="${p.secondaryColor}" />
-  <rect x="0" y="0" width="280" height="${d.height}" fill="${p.accentColor}" />
-  <circle cx="140" cy="${d.height / 2}" r="100" fill="#ffffff" opacity="0.18" />
-  <text x="320" y="200" font-size="88" font-weight="800" fill="#ffffff" font-family="'Hiragino Mincho',serif">${escapeXml(p.title)}</text>
-  <text x="320" y="280" font-size="36" fill="${p.accentColor}" font-family="'Hiragino Sans',sans-serif">${escapeXml(p.subtitle)}</text>
-  <text x="320" y="380" font-size="26" fill="#cbd5e1" font-family="'Hiragino Sans',sans-serif">${escapeXml(p.body)}</text>
-  <text x="320" y="${d.height - 60}" font-size="24" fill="${p.accentColor}" font-family="'Hiragino Sans',sans-serif">${escapeXml(p.brandText)}</text>
-</svg>`;
-}
-
-// Stryker restore StringLiteral,ArithmeticOperator,ConditionalExpression,EqualityOperator,LogicalOperator,MethodExpression,UnaryOperator,ArrowFunction,AssignmentOperator,BooleanLiteral,BlockStatement,ArrayDeclaration,ObjectLiteral
-
-const RENDERERS: Readonly<Record<TemplateId, (p: TemplateParams, d: TemplateDef) => string>> = {
-  'presentation-cover': renderPresentationCover,
-  'business-card': renderBusinessCard,
-  'social-square': renderSocialSquare,
-  'social-story': renderSocialStory,
-  'flyer-a4': renderFlyerA4,
-  certificate: renderCertificate,
-  'invoice-header': renderInvoiceHeader,
-  'resume-header': renderResumeHeader,
-};
-
-/** Public render entry: validates params, dispatches to the right renderer. */
+/** Public render entry: validates params, then hands them to the shared renderer. */
 export function renderTemplate(id: TemplateId, params: unknown): string {
   const def = getTemplateDef(id);
   const p = validateParams(params, def.defaults);
-  return RENDERERS[id](p, def);
+  return renderTemplateSvg(id, p, def);
 }
 
 // --- Snapshot ----------------------------------------------------------
@@ -457,7 +283,6 @@ export interface TemplatesSnapshot {
   readonly isMock: boolean;
 }
 
-// Stryker disable next-line StringLiteral
 const FETCHED_AT = '2035-05-15T00:00:00.000Z';
 
 export async function fetchTemplatesSnapshotImpl(
@@ -466,7 +291,6 @@ export async function fetchTemplatesSnapshotImpl(
   return { templates: TEMPLATE_CATALOG, fetchedAt: FETCHED_AT, isMock: true };
 }
 
-// Stryker disable next-line BlockStatement
 export async function fetchTemplatesSnapshot(
   ctx: FetchContext,
 ): Promise<TemplatesSnapshot> {
@@ -483,23 +307,11 @@ export function defaultExportPath(id: TemplateId): string {
   return path.join(defaultExportDir(), `${id}.svg`);
 }
 
-// Stryker disable ConditionalExpression,EqualityOperator,LogicalOperator,BooleanLiteral
 export function isSafeSvgExportPath(filePath: string, home: string): boolean {
-  if (typeof filePath !== 'string' || filePath.length === 0) return false;
-  if (filePath.length > 1024) return false;
-  if (/[\0\r\n]/.test(filePath)) return false;
-  if (!filePath.endsWith('.svg')) return false;
-  const resolved = path.resolve(filePath);
-  const resolvedHome = path.resolve(home);
-  return resolved.startsWith(resolvedHome + path.sep) || resolved === resolvedHome;
+  return isSafeExportPath(filePath, home, '.svg');
 }
-// Stryker restore ConditionalExpression,EqualityOperator,LogicalOperator,BooleanLiteral
 
-export interface ExportResult {
-  readonly path: string;
-  readonly bytes: number;
-  readonly generatedAt: string;
-}
+// 書き出しの結果の形は台帳 `shared/actionData.ts` の `ExportFileResult` (パス 116)。
 
 interface ExportPayload {
   templateId?: unknown;
@@ -513,11 +325,10 @@ export interface ExportDeps {
   now?: () => Date;
 }
 
-// Stryker disable ConditionalExpression,LogicalOperator,EqualityOperator,ArrowFunction,ObjectLiteral,StringLiteral,BooleanLiteral
 export async function exportTemplateImpl(
   ctx: ActionContext,
   deps: ExportDeps = {},
-): Promise<ExportResult> {
+): Promise<ExportFileResult> {
   const { templateId, params, path: customPath } = ctx.payload as ExportPayload;
   if (!isTemplateId(templateId)) {
     throw new Error(`unknown template id: ${String(templateId)}`);
@@ -532,20 +343,20 @@ export async function exportTemplateImpl(
   }
   const svg = renderTemplate(templateId, params);
   const mkdirFn = deps.mkdir ?? ((dir: string) => fs.mkdir(dir, { recursive: true }).then(() => undefined));
-  const writeFn = deps.writeFile ?? ((p: string, c: string) => fs.writeFile(p, c, 'utf8'));
+  const writeFn = deps.writeFile ?? writeExportFile;
   await mkdirFn(path.dirname(filePath));
   await writeFn(filePath, svg);
   const generatedAt = (deps.now ?? (() => new Date()))().toISOString();
-  return { path: filePath, bytes: Buffer.byteLength(svg, 'utf8'), generatedAt };
+  return { path: filePath, bytes: Buffer.byteLength(svg), generatedAt };
 }
-// Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator,ArrowFunction,ObjectLiteral,StringLiteral,BooleanLiteral
 
-// Stryker disable next-line BlockStatement
-async function exportTemplate(ctx: ActionContext): Promise<ExportResult> {
+async function exportTemplate(ctx: ActionContext): Promise<ActionData<'templates/export-template'>> {
   return exportTemplateImpl(ctx);
 }
 
-// Stryker disable next-line ObjectLiteral
 export const ACTIONS: ActionMap = {
   'export-template': exportTemplate,
 };
+
+/** 印刷幅の折り返し。実装は `shared/textWrap.ts` に 1 つだけ持つ。 */
+export { wrapLines };

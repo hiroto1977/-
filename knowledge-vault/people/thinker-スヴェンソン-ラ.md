@@ -1,0 +1,24 @@
+---
+title: "ラルス・スヴェンソン"
+type: thinker
+person_key: "スヴェンソン|ラ"
+concept_count: 2
+tags:
+  - person
+  - index
+---
+
+# ラルス・スヴェンソン
+
+> [!info] 人物索引 ・ 関連する検証済み概念 **2 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+
+## 学術概念（2件）
+- [[econ-krugman-target-zone-exchange|クルーグマンのターゲット・ゾーン・モデル——為替レート帯域と安定化の蜂蜜月効果]] — クルーグマンのターゲット・ゾーン・モデル（Krugmantargetzonemodel）は、ポール・クルーグマンが19…
+- [[econ-target-zone|ターゲット・ゾーン（為替レート目標帯モデル）]] — ターゲット・ゾーン（為替レート目標帯）モデルは、ポール・クルーグマンが1991年の論文「TargetZonesandE…
+
+## 関連
+- 索引: [[人物索引]]
+- ヴォルト入口: [[Home]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

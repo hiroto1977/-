@@ -1,0 +1,189 @@
+import { describe, expect, it } from 'vitest';
+import { deriveBusinessFinancials, shortTermDebtPortion, shortTermDebtShare } from '../businessFinancials';
+import { computeFinancialRatios, radarAxes } from '../financialRatios';
+
+const KPI = { revenue: 1_000_000, variableCost: 400_000, fixedCost: 300_000, profit: 200_000, profitMargin: 20 };
+
+describe('deriveBusinessFinancials', () => {
+  it('annualizes the PL (×12)', () => {
+    const f = deriveBusinessFinancials(KPI);
+    expect(f.revenue).toBe(12_000_000);
+    expect(f.cogs).toBe(4_800_000);
+    expect(f.operatingProfit).toBe(2_400_000);
+  });
+
+  it('balances the BS (equity + currentLiab + fixedLiab = totalAssets)', () => {
+    const f = deriveBusinessFinancials(KPI);
+    expect(f.equity + f.currentLiabilities + f.fixedLiabilities).toBe(f.totalAssets);
+  });
+
+  it('is deterministic', () => {
+    expect(deriveBusinessFinancials(KPI)).toEqual(deriveBusinessFinancials(KPI));
+  });
+
+  it('varies equity ratio with profitability (higher margin → thicker equity)', () => {
+    const lowMargin = deriveBusinessFinancials({ ...KPI, profitMargin: 2 });
+    const highMargin = deriveBusinessFinancials({ ...KPI, profitMargin: 30 });
+    const eqLow = lowMargin.equity / lowMargin.totalAssets;
+    const eqHigh = highMargin.equity / highMargin.totalAssets;
+    expect(eqHigh).toBeGreaterThan(eqLow);
+  });
+
+  it('clamps equity ratio into a sane band (15%–65%)', () => {
+    const extreme = deriveBusinessFinancials({ ...KPI, profitMargin: 999 });
+    expect(extreme.equity / extreme.totalAssets).toBeLessThanOrEqual(0.65);
+    const loss = deriveBusinessFinancials({ ...KPI, profitMargin: -999 });
+    expect(loss.equity / loss.totalAssets).toBeGreaterThanOrEqual(0.15);
+  });
+
+  it('golden: pins every derived BS/PL constant for the worked KPI', () => {
+    expect(deriveBusinessFinancials(KPI)).toEqual({
+      revenue: 12_000_000, cogs: 4_800_000, operatingProfit: 2_400_000,
+      ordinaryProfit: 2_355_840, netProfit: 1_649_088,
+      depreciation: 360_000, // 売上3%
+      laborCost: 1_800_000, // 固定費×12×0.5
+      interestExpense: 44_160, // 有利子負債×2%
+      totalAssets: 9_600_000, // 売上×0.8
+      equity: 4_800_000, // 自己資本比率 0.5 (0.3 + 20/100)
+      currentAssets: 5_280_000, // 0.55
+      currentLiabilities: 2_880_000, // 0.3
+      fixedAssets: 4_320_000, // 残り
+      fixedLiabilities: 1_920_000, // 残り
+      accountsReceivable: 1_500_000, // 1.5ヶ月
+      inventory: 400_000, // 1ヶ月 (原価)
+      accountsPayable: 480_000, // 1.2ヶ月 (原価)
+      interestBearingDebt: 2_208_000, // 固定負債0.7 + 流動負債0.3
+    });
+  });
+
+  it('損失時は課税せず netProfit = ordinaryProfit (税引きは黒字のみ)', () => {
+    // 営業赤字の事業。ordinaryProfit < 0 → 三項の false 側を通り、×0.7 されない。
+    // 条件を true 固定する mutant は ordinaryProfit×0.7 になるため、これで殺せる。
+    const f = deriveBusinessFinancials({
+      revenue: 1_000_000, variableCost: 400_000, fixedCost: 300_000, profit: -100_000, profitMargin: -10,
+    });
+    expect(f.ordinaryProfit).toBeLessThan(0);
+    expect(f.netProfit).toBe(f.ordinaryProfit);
+  });
+
+  it('feeds computeFinancialRatios to produce finite ratios', () => {
+    const r = computeFinancialRatios(deriveBusinessFinancials(KPI));
+    expect(r.equityRatioPct).not.toBeNull();
+    expect(r.operatingMarginPct).toBe(20); // 2.4M / 12M
+    expect(r.roePct).not.toBeNull();
+    expect(r.receivablesTurnover).not.toBeNull();
+  });
+});
+
+describe('人件費の実額', () => {
+  it('実額があれば年換算してそのまま使う', () => {
+    // 月次の実額を年に直す。÷12 にすると 1/144 の額になり、労働分配率が
+    // ほぼ 0% として出る (「人件費がかかっていない事業」に見える)。
+    const f = deriveBusinessFinancials({ ...KPI, laborCost: 250_000 });
+    expect(f.laborCost).toBe(3_000_000);
+  });
+
+  it('実額が無ければ固定費の約半分と置く', () => {
+    const f = deriveBusinessFinancials(KPI);
+    expect(f.laborCost).toBe(KPI.fixedCost * 12 * 0.5);
+  });
+
+  it('実額は置き値を上書きする (入れたのに効かない状態を作らない)', () => {
+    const guessed = deriveBusinessFinancials(KPI).laborCost;
+    const actual = deriveBusinessFinancials({ ...KPI, laborCost: 250_000 }).laborCost;
+    expect(actual).not.toBe(guessed);
+  });
+
+  it('実額 0 は「人件費なし」として尊重する (未指定と区別する)', () => {
+    // 0 を「未入力」と読み替えて置き値に落とすと、人を雇っていない事業の
+    // 労働分配率が勝手に 50% 相当まで持ち上がる。
+    expect(deriveBusinessFinancials({ ...KPI, laborCost: 0 }).laborCost).toBe(0);
+  });
+});
+
+/**
+ * **概算の置き方から決まる「事業に依らない定数」を留める。** (2026-09-07)
+ *
+ * `deriveBusinessFinancials` は事業別の貸借対照表が無いので運転資本を置き値で作る:
+ * 売上債権 = 月商 ×1.5 / 棚卸 = 月次原価 ×1 / 仕入債務 = 月次原価 ×1.2。
+ * すると比は**約分されて事業に依らず一定**になる:
+ *
+ *   売上債権回転率 = 売上 ÷ (売上/12×1.5) = 12/1.5 = 8 倍
+ *   棚卸資産回転率 = 原価 ÷ (原価/12)     = 12 倍
+ *   CCC = (365/12)×(1.5 + 1 − 1.2)        = 39.5 日
+ *
+ * これは**推計器の性質であって事業の性質ではない**。3 つとも `radarAxes` の
+ * 採点対象で、`diagnoseFinancials` の総合スコアは 15 軸の平均なので、
+ * **どの事業でも同じ寄与が 15 分の 3 だけ入る**。画面はその旨を明記している
+ * (`FinancialAnalysis.tsx` の但し書き) —— ここはその前提が崩れたら鳴るように留める。
+ * 置き値を変えるなら、画面の文言と総合スコアへの影響を同時に見直すこと。
+ */
+describe('概算の置き方から決まる定数 — 事業に依らない 3 指標', () => {
+  const CASES = [
+    { name: '高収益SaaS', revenue: 10_000_000, variableCost: 1_000_000, fixedCost: 2_000_000, profit: 7_000_000, profitMargin: 70 },
+    { name: '薄利小売', revenue: 50_000_000, variableCost: 45_000_000, fixedCost: 4_000_000, profit: 1_000_000, profitMargin: 2 },
+    { name: '赤字製造', revenue: 3_000_000, variableCost: 2_500_000, fixedCost: 1_000_000, profit: -500_000, profitMargin: -16.7 },
+    { name: '零細', revenue: 300_000, variableCost: 100_000, fixedCost: 150_000, profit: 50_000, profitMargin: 16.7 },
+  ] as const;
+
+  it('★ どの事業でも 売上債権回転率 8 倍・棚卸資産回転率 12 倍・CCC 39.5 日', () => {
+    for (const c of CASES) {
+      const r = computeFinancialRatios(deriveBusinessFinancials(c));
+      expect(r.receivablesTurnover, c.name).toBe(8);
+      expect(r.inventoryTurnover, c.name).toBe(12);
+      expect(r.cccDays, c.name).toBe(39.5);
+    }
+  });
+
+  it('★ 対照: 収益性で動く軸はちゃんと事業ごとに違う (走査が死んでいない)', () => {
+    const equity = CASES.map((c) => computeFinancialRatios(deriveBusinessFinancials(c)).equityRatioPct);
+    expect(new Set(equity).size, `自己資本比率: ${equity.join(', ')}`).toBe(CASES.length);
+  });
+
+  it('3 指標は採点対象の軸である (総合スコアに定数として入っている)', () => {
+    const axes = radarAxes(computeFinancialRatios(deriveBusinessFinancials(CASES[0])));
+    for (const key of ['receivablesTurnover', 'inventoryTurnover', 'ccc']) {
+      const axis = axes.find((a) => a.key === key);
+      expect(axis, key).toBeDefined();
+      expect(typeof axis!.score, key).toBe('number');
+    }
+  });
+});
+
+/**
+ * 短期借入相当の割合 —— **概算 BS と諸表が同じ 1 つを読む。**
+ *
+ * 2026-09-07 まで `0.3` は `businessFinancials.ts` (有利子負債の内訳) と
+ * `financialStatements.ts` (短期/長期の切り分け ×3) に別々のリテラルで
+ * 4 回書かれていた。片方を動かすと 附属明細書の「有利子負債 合計」と
+ * 個別注記表の「有利子負債の額」が黙って食い違う。
+ */
+describe('shortTermDebtShare / shortTermDebtPortion', () => {
+  it('割合は 0 と 1 の間の実数 (出荷値 0.3)', () => {
+    expect(shortTermDebtShare()).toBe(0.3);
+    expect(shortTermDebtShare()).toBeGreaterThan(0);
+    expect(shortTermDebtShare()).toBeLessThan(1);
+  });
+
+  it('額は割合を掛けただけ (丸めない — 呼び手が丸める)', () => {
+    expect(shortTermDebtPortion(1000)).toBe(300);
+    expect(shortTermDebtPortion(0)).toBe(0);
+    // 丸めていないことの標本: 1 円未満が残る。
+    expect(shortTermDebtPortion(1)).toBe(shortTermDebtShare());
+    expect(Number.isInteger(shortTermDebtPortion(1))).toBe(false);
+  });
+
+  it('★ 概算 BS の有利子負債は「固定負債×0.7 + この短期分」で組まれている', () => {
+    for (const revenue of [250_000, 1_000_000, 9_999_999]) {
+      const f = deriveBusinessFinancials({
+        revenue, variableCost: Math.round(revenue * 0.6), fixedCost: Math.round(revenue * 0.25),
+        profit: Math.round(revenue * 0.07), profitMargin: 7,
+      });
+      expect(f.interestBearingDebt).toBe(
+        Math.round(f.fixedLiabilities * 0.7 + shortTermDebtPortion(f.currentLiabilities)),
+      );
+      // 諸表側が切り出す短期分は、必ず有利子負債の内数に収まっている。
+      expect(shortTermDebtPortion(f.currentLiabilities)).toBeLessThanOrEqual(f.interestBearingDebt);
+    }
+  });
+});
