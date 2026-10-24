@@ -122,6 +122,7 @@
     "audit:malformed-fields": "node scripts/audit-malformed-fields.cjs --self-test && node scripts/audit-malformed-fields.cjs",
     "audit:pinned-action-shas": "node scripts/audit-pinned-action-shas.cjs --self-test && node scripts/audit-pinned-action-shas.cjs",
     "audit:threat-watch": "node scripts/threat-watch.cjs --self-test && node scripts/threat-watch.cjs",
+    "audit:crown-jewels": "node scripts/crown-jewels.cjs --self-test && node scripts/crown-jewels.cjs",
     "audit:security-posture": "node scripts/security-posture.cjs --self-test && node scripts/security-posture.cjs"
   },
   "devDependencies": {

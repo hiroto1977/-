@@ -56,6 +56,7 @@ const { probeFloors } = require('./audit-floors.cjs');
 const { auditPins, FAILING: PIN_FAILING } = require('./audit-pinned-action-shas.cjs');
 const { runThreatWatch, renderWatch, watchActionable, realIo } = require('./threat-watch.cjs');
 const { analyzePosture, renderPosture } = require('./security-posture.cjs');
+const { analyzeCrownJewels, renderCrownJewels, realExists } = require('./crown-jewels.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const OUT = path.join(REPO_ROOT, 'orchestration', 'dependency-audit.json');
@@ -190,6 +191,7 @@ function buildReport({ all, prod, floors, pins, watch, map, posture, generatedAt
     ...(badPins.length + movedPins.length === 0 ? [] : ['']),
     watchOk && watch.window !== undefined ? renderWatch(watch, map) : '',
     ...(postureOk ? [renderPosture(posture), ''] : []),
+    ...(postureOk && posture.jewels ? [renderCrownJewels(posture.jewels), ''] : []),
     ...(problems.length === 0 ? [] : ['### 測れなかった項目', '', ...problems.map((p) => `- ${p}`), '']),
     '手順は `docs/SECURITY_AUDIT.md` の「依存の勧告」。床の台帳は ' +
       '`scripts/lint-dependencies.cjs` の `SECURITY_FLOORS`、測り直しは `npm run audit:floors`。',
@@ -360,7 +362,10 @@ function selfTest() {
 /** 台帳から次の一手を導く。読めなければ null (報告が「測れなかった」と言う)。 */
 function derivePosture(now) {
   try {
-    return analyzePosture(JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'security', 'threat-ledger.json'), 'utf8')), now);
+    const posture = analyzePosture(JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'security', 'threat-ledger.json'), 'utf8')), now);
+    // 王冠の宝石 (T-169): 確率に依らない 4 層が宝石ごとに揃っているか。欠けた層・実在しない強制物は要対応に数える。
+    const jewels = analyzeCrownJewels(JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'security', 'crown-jewels.json'), 'utf8')), realExists(REPO_ROOT));
+    return { ...posture, jewels, problems: [...posture.problems, ...jewels.problems], actionable: posture.actionable + jewels.actionable };
   } catch {
     return null;
   }

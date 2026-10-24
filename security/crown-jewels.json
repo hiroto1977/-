@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "principle": "守りを決めるのは『侵入される確率』ではなく『破られたときに失う物』である。確率は攻撃の速度と数で動き、AI の自動化攻撃の下では見積もりが当たらない。だから守る物 (王冠の宝石) ごとに、破られた後を前提にした 4 種類の層 (防ぐ・封じ込める・気付く・戻す) を、確率に依らず必ず持つ。層の根拠に『起きにくい』『到達しない』を書けない (scripts/crown-jewels.cjs が落とす)。",
+  "jewels": [
+    {
+      "id": "credential-vault",
+      "name": "資格情報 (API トークン・OAuth の更新トークン・マスター鍵)",
+      "impact": "catastrophic",
+      "ifAllPreventionFails": "鍵が盗まれても、画面 (レンダラー) から鍵の平文は取れず、書き換え・削除・外への送信は本人の確認を毎回通り、控えの 24 語で戻せる。",
+      "layers": [
+        { "kind": "prevent", "what": "保管庫は AES-GCM-256 + PBKDF2 で暗号化し、デスクトップ版は OS のキーチェーンで包む", "enforcedBy": ["src/renderer/security/vault.ts", "src/main/secrets.ts"] },
+        { "kind": "contain", "what": "レンダラーに秘密を返す橋の口は 0 件。資格情報の書き換え・削除・全削除は主プロセスのネイティブ確認を通る", "enforcedBy": ["src/preload/__tests__/bridgeStatic.test.ts", "src/main/userPresence.ts"] },
+        { "kind": "detect", "what": "守りの実体を整合性チェーンと CODEOWNERS で覆い、書き換えを検知する", "enforcedBy": ["scripts/integrity-chain.cjs", ".github/CODEOWNERS"] },
+        { "kind": "recover", "what": "24 語の復旧と、すべてのデータを消して再起動するハードリセット", "enforcedBy": ["src/renderer/security/mnemonic.ts", "src/main/eraseAll.ts"] }
+      ]
+    },
+    {
+      "id": "main-process-execution",
+      "name": "主プロセスでのコード実行 (OS の権限)",
+      "impact": "catastrophic",
+      "ifAllPreventionFails": "レンダラーが乗っ取られても、OS へ渡る口 (ファイルを開く・URL を開く・file://) は関門を通り、梱包物の差し替えは起動時に止まり、変更は鎖に出る。",
+      "layers": [
+        { "kind": "prevent", "what": "Electron の fuse (RunAsNode 等の無効化・onlyLoadAppFromAsar) で、梱包物の差し替えと環境変数での乗っ取りを止める", "enforcedBy": ["electron-builder.json", "src/main/__tests__/electronFuses.test.ts"] },
+        { "kind": "contain", "what": "OS へ渡す口は realpath 封じ込めと拡張子の許可リスト、file:// は dist/ に閉じ込める", "enforcedBy": ["src/main/shellOpenGate.ts", "src/main/fileRequestGate.ts"] },
+        { "kind": "detect", "what": "梱包した実物を起動して、fuse の焼き込みと窓の描画を毎回確かめる", "enforcedBy": ["scripts/smoke-packaged.cjs", "scripts/lint-malware.cjs"] },
+        { "kind": "recover", "what": "新しい版の知らせと、全データ消去からの再開", "enforcedBy": ["src/shared/updateCheck.ts", "src/main/eraseAll.ts"] }
+      ]
+    },
+    {
+      "id": "release-supply-chain",
+      "name": "配布物の供給網 (依存・CI・署名)",
+      "impact": "catastrophic",
+      "ifAllPreventionFails": "依存や workflow が乗っ取られても、検査の job と署名の job は分かれ、固定した SHA は実在を実測され、毎日の監査が新しい悪用を報せる。",
+      "layers": [
+        { "kind": "prevent", "what": "workflow の権限・SHA 固定・構造と、依存の台帳・取得元・integrity を門で見る", "enforcedBy": ["scripts/lint-workflow-security.cjs", "scripts/lint-dependencies.cjs"] },
+        { "kind": "contain", "what": "release は検査と署名を別 job に分け、署名鍵を検査のコードに渡さない", "enforcedBy": [".github/workflows/release.yml"] },
+        { "kind": "detect", "what": "毎日、依存の勧告・悪用中の弱点 (KEV)・固定 SHA の実在を測って常設 Issue に出す", "enforcedBy": [".github/workflows/dependency-audit.yml", "scripts/threat-watch.cjs", "scripts/audit-pinned-action-shas.cjs"] },
+        { "kind": "recover", "what": "整合性チェーンが過去の正しい状態を残し、変更の履歴から戻せる", "enforcedBy": ["scripts/integrity-chain.cjs"] }
+      ]
+    },
+    {
+      "id": "business-records",
+      "name": "利用者の事業データ (売上・KPI・士業の記録)",
+      "impact": "catastrophic",
+      "ifAllPreventionFails": "記録が書き換えられても、形の合わない記録は点検で見つかり、控えから復元でき、書き出しは平文で出す前に確認が入る。",
+      "layers": [
+        { "kind": "prevent", "what": "書き込みの欄ごとに型と天井の関門を通し、形の合わない記録は復元の入口で落とす", "enforcedBy": ["src/shared/writeFieldLimits.ts", "src/renderer/data/store.ts"] },
+        { "kind": "contain", "what": "保存先は台帳に載った物だけで、レコードは暗号化の有無を画面が名乗る", "enforcedBy": ["scripts/lint-storage-ledger.cjs", "docs/DATA_PROTECTION.md"] },
+        { "kind": "detect", "what": "設定の点検パネルが形の合わない記録を一覧にして消せる", "enforcedBy": ["src/renderer/data/recordShapeAudit.ts"] },
+        { "kind": "recover", "what": "バックアップの書き出しと復元 (復元は形を検めてから入れる)", "enforcedBy": ["src/renderer/data/backup.ts"] }
+      ]
+    },
+    {
+      "id": "secret-egress",
+      "name": "秘密が外へ出る道 (通信・書き出し・画面の文)",
+      "impact": "catastrophic",
+      "ifAllPreventionFails": "秘密が通信の本文や例外の文に混ざっても、送り先は許可された先だけで、画面に出る前に伏せられ、応答の大きさは切られる。",
+      "layers": [
+        { "kind": "prevent", "what": "外へ開く URL は https などの許可された形だけで、送り先が変数の通信は台帳に載せる", "enforcedBy": ["src/shared/externalUrlGate.ts", "scripts/lint-network-targets.cjs"] },
+        { "kind": "contain", "what": "画面と例外の文に出す前に秘密の形を伏せ、応答の読みは上限で切る", "enforcedBy": ["src/shared/redact.ts", "src/shared/httpLimits.ts"] },
+        { "kind": "detect", "what": "悪意コードの形と、台帳に無い通信先を門で見つける", "enforcedBy": ["scripts/lint-malware.cjs", "scripts/lint-network-targets.cjs"] },
+        { "kind": "recover", "what": "資格情報を消してハードリセットで鍵ごと作り直せる", "enforcedBy": ["src/main/eraseAll.ts", "src/main/secrets.ts"] }
+      ]
+    }
+  ]
+}
