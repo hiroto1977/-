@@ -192,13 +192,18 @@ describe('externalUrlOrNull — OS へ渡してよい URL だけ', () => {
  * `buildAuthorizeUrl()` が組み立てた URL で、レンダラー由来ではない。
  */
 describe('main.ts の中で OS へ URL を渡す扉は、全部この関門を通る', () => {
-  const MAIN = readOriginalSource(path.resolve(__dirname, '../../main/main.ts'));
+  // 窓の扉 (`window.open`) は 2026-10-24 (T-173) から `windowOpen.ts` が関門 + 本人確認の門を通す。
+  // OS へ渡す行は main.ts に残り (IPC の扉と窓の扉の 2 つ)、関門の呼び出しは main.ts と windowOpen.ts に分かれる。
+  const MAIN_ONLY = readOriginalSource(path.resolve(__dirname, '../../main/main.ts'));
+  const WINDOW_OPEN = readOriginalSource(path.resolve(__dirname, '../../main/windowOpen.ts'));
+  const MAIN = `${MAIN_ONLY}\n${WINDOW_OPEN}`;
   const count = (re: RegExp): number => (MAIN.match(re) ?? []).length;
 
   it('shell.openExternal の呼び出しと externalUrlOrNull の呼び出しが同数', () => {
     const opens = count(/shell\.openExternal\s*\(/g);
     const gated = count(/\bexternalUrlOrNull\s*\(/g);
     expect(opens, 'main.ts から OS へ URL を渡す行が消えている').toBeGreaterThanOrEqual(2);
+    expect(count(/\bopenFromWindow\s*\(/g), 'main.ts が窓の扉を windowOpen.ts 経由にしていない (T-173)').toBeGreaterThanOrEqual(1);
     expect(gated, '関門を通さずに OS へ URL を渡す行がある (扉が増えた)').toBe(opens);
   });
 

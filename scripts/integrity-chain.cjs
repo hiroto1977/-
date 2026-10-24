@@ -131,6 +131,8 @@ const PROTECTED = [
   // ここが緩む・外れると、乗っ取られた画面が資格情報の書き換え・全削除・外部への書き込みを無確認で呼べる。
   'src/main/userPresence.ts',
   'src/main/presenceWiring.ts',
+  // 2026-10-24 (threat: T-173)。window.open を IPC の app:openExternal と同じ門へ通す口。外れると速度制限・警戒態勢を迂回できる。
+  'src/main/windowOpen.ts',
   // 2026-08-22 に足した。`shellOpenGate.ts` の**双子**——あちらが「OS に
   // ファイルを開かせてよいか」なら、こちらは「OS に URL を開かせてよいか」。
   // `javascript:` / `file:` / OS 独自スキームを止める唯一の関門で、

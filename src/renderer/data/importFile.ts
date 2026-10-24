@@ -94,6 +94,15 @@ export const BACKUP_COLLECTION_RECORD_LIMITS: Readonly<Record<string, number>> =
   'business-units': 2_000,
   'manual-metrics': 20_000,
   'manual-overrides': 20_000,
+  // 2026-10-24 (T-175): 下の 7 つも画面が全行を描く。実 Chromium で 20,000 行が 5〜25 秒、100,000 行が 123 秒
+  // (タブが固まる) と測った。正当な利用はどれも桁が 1〜3 つ下なので、少ない数で止める (切らずに断る)。
+  'mutualfund-holdings': 2_000,
+  'realestate-properties': 2_000,
+  'shigyo-contacts': 5_000,
+  'shigyo-consultations': 5_000,
+  'hydroponics-batches': 5_000,
+  'kpi-budgets': 5_000,
+  'kpi-actuals': 5_000,
 };
 
 /** 控えの件数が天井を超えていれば断りの文、収まっていれば null。 */

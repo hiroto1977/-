@@ -1,3 +1,4 @@
+import { stripSmuggledIfString } from '../../shared/assistantLimits';
 import { readFailureBody } from '../../shared/httpLimits';
 import {
   ADVISOR_QUESTION_MESSAGES,
@@ -633,7 +634,8 @@ export async function askBusinessAdvisorImpl(
   ctx: ActionContext,
   deps: AdvisorDeps = {},
 ): Promise<BusinessAdvisorResponse> {
-  const { question, categories } = ctx.payload as BusinessAdvisorPayload;
+  const { categories } = ctx.payload as BusinessAdvisorPayload;
+  const question = stripSmuggledIfString((ctx.payload as BusinessAdvisorPayload).question);
 
   // question is required and bounded; control chars rejected to keep prompt clean.
   // Stryker disable ConditionalExpression

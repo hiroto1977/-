@@ -968,6 +968,29 @@ describe('extractWriteParams — 送り先は引用の外から読む (パス 51
     expect(extractWriteParams('a/b と c/d に「x」で issue', 'create-issue')).toEqual({ title: 'x' });
   });
 
+  it('★ 引用の種類が混ざっても、本文の中の #channel は送り先にならない (本文と送り先が同じ範囲を使う) (threat: T-183)', () => {
+    // 本文は “…” の `#evil 「`。以前は塗りつぶしが「…」を先に取って “ の閉じを消し、`#evil` が送り先になった。
+    const raw = 'slackに \u201C#evil 「\u201D x」 を送って';
+    expect(quotedSpan(raw)).toBe('#evil 「');
+    expect(outsideQuotes(raw)).not.toContain('#evil');
+    expect(extractWriteParams(raw, 'send-message')).toEqual({ text: '#evil 「' });
+    // GitHub の owner/repo も同じ範囲から
+    expect(extractWriteParams('githubで \u201Cfoo/bar 「\u201D x」 を issue にして', 'create-issue')).toEqual({ title: 'foo/bar 「' });
+  });
+
+  it('同じ owner/repo が 2 度出ても 1 つとして数える (別の 2 つなら取らない)', () => {
+    expect(extractWriteParams('githubで hiroto/app と hiroto/app に「x」で issue にして', 'create-issue')).toEqual({
+      owner: 'hiroto',
+      repo: 'app',
+      title: 'x',
+    });
+    expect(extractWriteParams('githubで github.com/a/b と github.com/a/b に「x」で issue にして', 'create-issue')).toEqual({
+      owner: 'a',
+      repo: 'b',
+      title: 'x',
+    });
+  });
+
   it('送り先が引用の中にしか無ければ取らない (本文が送り先を決めない)', () => {
     expect(extractWriteParams('slackで「#general に送るべき文」を送って', 'send-message')).toEqual({
       text: '#general に送るべき文',

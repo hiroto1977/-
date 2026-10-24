@@ -44,6 +44,7 @@
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { isSafeFilename } from '../../shared/safeFilename';
 
 /**
  * 書き出しの既定の書き込み。**0600 で書き、既存ファイルの緩い権限も直す。**
@@ -77,6 +78,33 @@ import path from 'node:path';
  * 読まれないので、残るのは**ファイル名が見えること**だけで、
  * 利用者の既存ディレクトリの権限を勝手に締めるほうが影響が大きい。
  */
+/**
+ * **書き出し根そのものを本人だけにする** (2026-10-24 · threat: T-176)。
+ *
+ * ファイルは 0600 でも、根 (`~/.local/business-hub`) と `data/` は `fs.mkdir` の既定で **umask 任せ**だった
+ * (実測: umask 022 → 755・002 → 775・000 → **777**)。同じホストの別ユーザーが書ける根では、ファイルを
+ * 読めなくても **unlink と rename ができる** —— `team-radar.json` (他人の氏名と評価) や `talent.json` を
+ * 差し替えて評価データを偽造できた (読み込みは偽造を弾かない)。根を 0700 にすれば、配下の
+ * ディレクトリを辿れないので、配下は個別に直さなくてよい。
+ *
+ * - 根が無ければ **0700 で作る**。以後ここに作る子 (`data/` ほか) は根の下なので他人から届かない。
+ * - 根が **symlink なら触らない** (`lstat` が dir でない) —— 辿ると `chmod` が根の外の実体に当たる
+ *   (`repairExportPermissions` が同じ理由で symlink を辿らない)。
+ * - 直した (または既に 0700) なら 0/1 を返す。触れない (所有者でない等) なら 0 で、起動は続ける。
+ */
+export async function ensurePrivateExportRoot(root: string = exportRoot()): Promise<number> {
+  try {
+    await fs.mkdir(root, { recursive: true, mode: 0o700 });
+    const st = await fs.lstat(root);
+    if (!st.isDirectory()) return 0;
+    if ((st.mode & 0o077) === 0) return 0;
+    await fs.chmod(root, 0o700);
+    return 1;
+  } catch {
+    return 0;
+  }
+}
+
 /**
  * 既に書き出されているファイルの緩い権限を、一度だけ均す。直した数を返す。
  *
@@ -286,8 +314,11 @@ export function isSafeExportPath(filePath: string, home: string, ext: string): b
   // Stryker disable next-line ConditionalExpression: 後段と重なる保険 (単独では観測不能)
   if (filePath.length === 0) return false;
   if (filePath.length > 1024) return false;
+  // Stryker disable next-line ConditionalExpression: 後段 (葉の名前の関門・親が固定の 2 つのどちらか) と重なる保険 (単独では観測不能)
   if (/[\0\r\n]/.test(filePath)) return false;
   if (!filePath.endsWith(ext)) return false;
+  // threat: T-177 —— 葉の名前が Windows で別物になる形 (予約された装置名・`:` の代替データストリーム・末尾のドット/空白)。
+  if (!isSafeFilename(path.basename(filePath))) return false;
   // threat: T-060 —— **正規化済みの絶対パスだけを受ける** (2026-10-15 · パス 523)。
   // T-042 (下) は「親は固定の 2 つだけ」と述べたが、比べていたのは `path.resolve` した後の親で、
   // 書き出しが `mkdir -p` へ渡すのは**生の** `filePath` の親だった —— `..` を挟んだ
@@ -295,6 +326,7 @@ export function isSafeExportPath(filePath: string, home: string, ext: string): b
   // mkdir は `state.json` という名のディレクトリを作っていた (実測・AI 監査の再現。以後の状態ファイルの
   // 保存が EISDIR で失敗する T-002 の形が、親の検査を**通る綴り**で戻っていた)。調べた物と書く物を
   // 同じにする —— `..` / 相対 / 末尾の区切り / 重なった区切りは resolve で形が変わるので、変わる物は断る。
+  // Stryker disable next-line ConditionalExpression: 親が固定の 2 つの正規化済みの絶対パスと**完全一致**する検査 (下) が同じ物を落とす (単独では観測不能)
   if (path.resolve(filePath) !== filePath) return false;
   const resolved = filePath;
   // threat: T-042 —— 親は固定の 2 つだけ。`startsWith(root + sep)` の「任意の深さ」は

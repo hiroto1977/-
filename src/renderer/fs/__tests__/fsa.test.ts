@@ -411,7 +411,18 @@ describe('ファイル名の境界', () => {
     ).rejects.toThrow('filename が不正です');
   });
 
-  it.each([['..foo'], ['foo..'], ['...'], ['.hidden'], ['a.b']])(
+  // 末尾ドットの `foo..` と `...` は Windows が黙って落とす名前なので T-177 から断る (下)。
+  it.each([['foo..'], ['...'], ['nul.svg'], ['a.txt:s.html']])(
+    '★ %s は断る (Windows で別物になる名前 · threat: T-177)',
+    async (name) => {
+      const h = handleFor();
+      await expect(
+        writeBlobToFolder(h as unknown as FileSystemDirectoryHandle, name, new Blob(['x'])),
+      ).rejects.toThrow('filename が不正です');
+    },
+  );
+
+  it.each([['..foo'], ['.hidden'], ['a.b']])(
     '%s は通す (正当なファイル名を巻き込まない)',
     async (name) => {
       const h = handleFor();

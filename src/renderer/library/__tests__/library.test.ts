@@ -274,9 +274,15 @@ describe('Library.put — 受け付ける値の境界', () => {
     },
   );
 
-  it('紛らわしいが正当な名前は通す (..foo / foo.. / ... / 隠しファイル)', async () => {
-    for (const ok of ['..foo', 'foo..', '...', '.gitignore']) {
+  it('紛らわしいが正当な名前は通す (..foo / 隠しファイル)', async () => {
+    for (const ok of ['..foo', '.gitignore']) {
       await expect(lib().put('svc', ok, 'text/plain', blob())).resolves.toBeTruthy();
+    }
+  });
+
+  it('★ Windows で別物になる名前は断る (末尾ドット / 装置名 / 代替データストリーム · threat: T-177)', async () => {
+    for (const bad of ['foo..', '...', 'nul.svg', 'CON', 'a.txt:s.html', 'report.md ']) {
+      await expect(lib().put('svc', bad, 'text/plain', blob()), bad).rejects.toThrow('filename が不正です');
     }
   });
 

@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 344
+- ブロック数: 354
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `25deb67338471519627985938287a853906dfe3090f49e42799f8dce5ea5a76d`
-- 保護対象: 124 ファイル
+- 末尾(tip)ハッシュ: `a2e7ac9714738a290f21c38c007ae4bd65e4c09fb99f898aaea4d86bd3a2f345`
+- 保護対象: 125 ファイル
 
 ## ブロック
 
@@ -357,6 +357,16 @@
 | 341 | `3f1740b58e104a42` | `d863604b8563b53f` | `094f9ff558f4e110` | update electron-builder.json |
 | 342 | `9fce4e9715807374` | `094f9ff558f4e110` | `1ae266fcef58bce6` | update lint-malware.cjs |
 | 343 | `f14f671af1827039` | `1ae266fcef58bce6` | `25deb67338471519` | update e2e.yml |
+| 344 | `aa6d9aa06728ae8f` | `25deb67338471519` | `51cf88bf04f5ecf9` | update assistant.ts,assistantLimits.ts |
+| 345 | `3b3826d8429c059d` | `51cf88bf04f5ecf9` | `65c0841d00db2354` | update userPresence.ts |
+| 346 | `9b8f59a5f1edc90e` | `65c0841d00db2354` | `304738880784cef5` | update main.ts,presenceWiring.ts,userPresence.ts |
+| 347 | `c9687c3505731c44` | `304738880784cef5` | `e54095171294627f` | update integrity-chain.cjs,windowOpen.ts |
+| 348 | `2ecbd52ee5df0838` | `e54095171294627f` | `14a185f753b2adae` | update windowOpen.ts |
+| 349 | `9d3ce8bfbdc55367` | `14a185f753b2adae` | `501622b1ca291af8` | update exportPaths.ts,main.ts |
+| 350 | `f9bbb4e265681a69` | `501622b1ca291af8` | `e2d67572484aab48` | update exportPaths.ts,shellOpenGate.ts,safeFilename.ts |
+| 351 | `47a427ea6d21cd0a` | `e2d67572484aab48` | `6c9b4774a9f6e1ad` | update exportPaths.ts,main.ts,userPresence.ts,safeFilename.ts |
+| 352 | `b4e41d7921221d0b` | `6c9b4774a9f6e1ad` | `0312b04293540216` | update userPresence.ts |
+| 353 | `3b8c4827414a006e` | `0312b04293540216` | `a2e7ac9714738a29` | update main.ts,userPresence.ts |
 
 ## 保護対象ファイル
 
@@ -430,6 +440,7 @@
 - `src/main/shellOpenGate.ts`
 - `src/main/stateFile.ts`
 - `src/main/userPresence.ts`
+- `src/main/windowOpen.ts`
 - `src/main/windowPrefs.ts`
 - `src/preload/preload.ts`
 - `src/renderer/data/assistantMarkdown.ts`

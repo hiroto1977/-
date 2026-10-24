@@ -10,7 +10,7 @@ import {
 } from './secrets';
 import { LIVE_ACTIONS, LIVE_FETCHERS, LOCAL_SERVICES, readsSavedToken, type ServiceId } from './clients';
 import { authorize, isOAuthSupported, OAUTH_CONFIGS } from './oauth';
-import { repairExportPermissions } from './clients/exportPaths';
+import { ensurePrivateExportRoot, repairExportPermissions } from './clients/exportPaths';
 import { isServiceId } from '../shared/serviceId';
 import { checkTokenInput } from '../shared/tokenInput';
 import type { OsOpResult, TokenSaveResult } from '../preload/preload';
@@ -18,8 +18,9 @@ import { safeErrorMessage } from './clients/types';
 import { externalUrlOrNull } from '../shared/externalUrlGate';
 import { shellTargetOrNull } from './shellOpenGate';
 import { installFileRequestGate } from './fileRequestGate';
-import { reportThreatSignal, requirePresence } from './presenceWiring';
-import { describePayload, payloadTooWide, tierOfAction, weightOfAction, type PresenceDecision } from './userPresence';
+import { reportThreatSignal, requirePresence, requirePresenceFromUrl } from './presenceWiring';
+import { openFromWindow } from './windowOpen';
+import { describeCredentialWrite, describePayload, payloadTooWide, tierOfAction, weightOfAction, type PresenceDecision } from './userPresence';
 import { evaluateUpdate, parseLatestRelease, type UpdateVerdict } from '../shared/updateCheck';
 import {
   DEFAULT_HTTP_TIMEOUT_MS,
@@ -166,11 +167,15 @@ function createWindow(): BrowserWindow {
   win.webContents.session.setPermissionCheckHandler((_wc, permission) => permissionAllowed(permission));
 
   win.webContents.setWindowOpenHandler(({ url }) => {
-    // IPC の扉と**同じ関門**を通す。以前ここは手書きの http(s) 判定で、
-    // 関門の許可表を締めてもこちらだけ古い規則のまま開いた
-    // (対照実験は externalUrlGate.ts の頭に記録)。
-    const target = externalUrlOrNull(url);
-    if (target !== null) shell.openExternal(target);
+    // IPC の扉と**同じ関門 + 同じ本人確認の門**を通す (threat: T-173)。関門 (URL の許可表) だけだと
+    // `window.open` に切り替えるだけで速度制限・警戒態勢を迂回できた。決められるのは同期の返事だけなので、
+    // 開く処理は待たずに走らせて、窓は常に拒否する。
+    void openFromWindow(url, {
+      senderUrl: () => win.webContents.getURL(),
+      guard: requirePresenceFromUrl,
+      open: (target) => shell.openExternal(target),
+      log: (message) => console.error(message),
+    });
     return { action: 'deny' };
   });
 
@@ -269,7 +274,10 @@ if (gotInstanceLock) app.whenReady().then(async () => {
    * 窓を出してから走らせる —— 起動を待たせる価値のある処理ではない。
    * 失敗しても起動は続ける (権限を直せないことは、アプリが使えない理由にならない)。
    */
-  void repairExportPermissions().catch(() => undefined);
+  // 根を先に本人だけにする (T-176)。ファイルの権限の修復はその後。
+  void ensurePrivateExportRoot()
+    .then(() => repairExportPermissions())
+    .catch(() => undefined);
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
@@ -449,10 +457,8 @@ ipcMain.handle('secrets:set', async (e, serviceId: unknown, token: unknown): Pro
     presence = await requirePresence(e, {
       channel: 'secrets:set',
       tier: 'credential-write',
-      // 確認が横取りされても見分けがつくよう、新しい値の長さと末尾 4 文字を見せる (全体は見せない)。
-    summary: `${serviceId} の資格情報を置き換えます。新しい値: 全 ${checked.value.length} 文字${
-      checked.value.length > 8 ? `・末尾「…${checked.value.slice(-4)}」` : ''
-    }。心当たりが無ければ「実行しない」を選んでください。`,
+      // 確認が横取りされても見分けがつくよう、新しい値の長さ・末尾 4 文字・(束なら)送り先のホストを見せる (全体は見せない)。
+      summary: describeCredentialWrite(serviceId, checked.value),
     });
   } catch (err) {
     presence = { ok: false, message: safeErrorMessage(err) };
@@ -763,21 +769,27 @@ ipcMain.handle('oauth:authorize', async (e, serviceId: unknown, clientIdOverride
       message: '別の認可が進行中です。開いたブラウザでの手続きを終えるか、5 分ほど待ってからやり直してください',
     };
   }
-  // 利用者が用意した OAuth クライアント ID で認可するときだけ確かめる (T-147 レッドチーム #4):
-  // 差し替えられると、攻撃者のアプリに紐づく資格情報で保存値が置き換わる。
-  if (override !== '') {
-    let presence: PresenceDecision;
-    try {
-      presence = await requirePresence(e, {
-        channel: 'oauth:authorize',
-        tier: 'credential-write',
-        summary: `${serviceId} を、クライアント ID「${override}」で認可します。心当たりが無ければ「実行しない」を選んでください。`,
-      });
-    } catch (err) {
-      presence = { ok: false, message: safeErrorMessage(err) };
-    }
-    if (!presence.ok) return { ok: false, code: 'authorize_failed', message: presence.message };
+  // 本人確認の門を**必ず通す** (T-185)。クライアント ID を上書きするときは資格情報の書き換えとして確認を出し
+  // (T-147 レッドチーム #4: 差し替えられると、攻撃者のアプリに紐づく資格情報で保存値が置き換わる)、
+  // 上書きしないときも送り手の確認・速度の上限・警戒の数えを通す。以前は後者が門の外で、乗っ取られた画面が
+  // 5 分ごとに掛け直して同意タブを開き続けても、何も記録されず警戒態勢にも入らなかった。
+  // 上書き無しは確認を出さない段階 (egress) —— 利用者の通常の「接続」を止めない。
+  let presence: PresenceDecision;
+  try {
+    presence = await requirePresence(
+      e,
+      override !== ''
+        ? {
+            channel: 'oauth:authorize',
+            tier: 'credential-write',
+            summary: `${serviceId} を、クライアント ID「${override}」で認可します。心当たりが無ければ「実行しない」を選んでください。`,
+          }
+        : { channel: 'oauth:authorize', tier: 'egress', summary: `${serviceId} の認可ページをブラウザで開きます` },
+    );
+  } catch (err) {
+    presence = { ok: false, message: safeErrorMessage(err) };
   }
+  if (!presence.ok) return { ok: false, code: 'authorize_failed', message: presence.message };
   authorizeInFlight = true;
   try {
     const tokens = await authorize(config);

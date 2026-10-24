@@ -26,7 +26,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 76 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **18247** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **18309** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` (**2026-09-01 の報告** —— 今のコードを測った物ではない。`docs/REMAINING_WORK.md` の「パス 494」) |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` (同上) |
@@ -2253,7 +2253,7 @@ $ npm run mutate:next -- --top=5
 per-file の kill / survived / no-cov / ignored / invalid は `docs/QUALITY.md` が
 Stryker の JSON レポート (reports/mutation 配下の生成物) から機械生成して持つ
 (`npm run quality:report`)。
-Stryker の対象 (`stryker.config.json` の `mutate`) は **313 ファイル**。
+Stryker の対象 (`stryker.config.json` の `mutate`) は **314 ファイル**。
 2026-10-07 (パス 506) に `src/renderer/components/useDialogFocus.ts` (dialog の焦点の道 —— 開いたら印の操作子へ・Esc で閉じる / 取り消す・
 消えたら押した物へ戻す) を足した —— push した直後の CI で `mutateScopeCensus` が「同名の検査が在り 100 行以上なのに `mutate` の外」と
 名指ししたので、`audit:mutate-changed` で 62 変異体を測り (1 度目は **90.00% / 生存 6** —— `aria-disabled` を無効と読む 4 件・操作子の無い窓の `?.focus()`・省いた `returnTo` —— どれも「宣言した契約に標本が無い」だったので標本を 6 件足し、2 度目は **100.00% (Killed 60 / 生存 0 / 未到達 0・計装 62 のうち表に載らない 2 件は `ignoreStatic` が外した static 変異体と見ている)**) 載せた。

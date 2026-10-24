@@ -5,7 +5,7 @@
  */
 import 'fake-indexeddb/auto';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { getRecordStore, _resetRecordStoreForTests, type StoredRecord } from '../store';
+import { CREATED_AT_HEADROOM_MS, getRecordStore, latestTokenOf, _resetRecordStoreForTests, type StoredRecord } from '../store';
 import { createPassphraseRecordCipher } from '../recordCipher';
 import { randomSaltB64 } from '../../security/dataCrypto';
 import { SALES_COLLECTION } from '../sales';
@@ -75,12 +75,23 @@ describe('importAll — 封筒の時刻', () => {
     const n = await store.importAll([
       at('far-created', 1e20, 1),
       at('far-updated', 1, -1e20),
-      at('edge', 8_640_000_000_000_000, 8_640_000_000_000_000),
+      at('edge', 8_640_000_000_000_000 - CREATED_AT_HEADROOM_MS, 8_640_000_000_000_000),
+      at('over-edge', 8_640_000_000_000_000 - CREATED_AT_HEADROOM_MS + 1, 1),
       at('normal', 1_757_000_000_000, 1_757_000_000_000),
     ]);
     expect(n).toBe(2);
     const ids = (await store.list<Record<string, unknown>>(SALES_COLLECTION)).map((r) => r.id).sort();
     expect(ids).toEqual(['edge', 'normal']);
+  });
+
+  it('★ 作成時刻が上限ちょうどの記録は入れず、入れた記録の次の保存も時刻の範囲に収まる (threat: T-184)', async () => {
+    const store = getRecordStore();
+    expect(await store.importAll([at('max', 8_640_000_000_000_000, 8_640_000_000_000_000)])).toBe(0);
+    // 余白の端の行は入り、その次の保存 (最新の 1 ms 後) も有効な時刻になる
+    expect(await store.importAll([at('top', 8_640_000_000_000_000 - CREATED_AT_HEADROOM_MS, 1)])).toBe(1);
+    const r = await store.insertIfLatest(SALES_COLLECTION, latestTokenOf((await store.list(SALES_COLLECTION)).at(0) ?? null), GOOD);
+    expect(r.status).toBe('saved');
+    if (r.status === 'saved') expect(Number.isNaN(new Date(r.record.createdAt).getTime())).toBe(false);
   });
 
   it('対照: 非有限 (パス 98 の形) も今までどおり捨てる', async () => {

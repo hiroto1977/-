@@ -119,6 +119,18 @@ export function stripSmuggledChars(text: string): string {
 }
 
 /**
+ * 文字列のときだけ `stripSmuggledChars` を通す (threat: T-171 · 2026-10-24)。
+ *
+ * T-151 の除去は assistant/chat の履歴だけに掛かっていた。第三者の文 (Gmail の件名・Slack の目的) を
+ * 運ぶ emotions/analyze-text と、質問欄を送る stocks/advise・business/advise は素通しで、
+ * タグ文字に符号化した指示が外部のモデルへ届いた (実測: 39 個の U+E00xx が要求本文に 39 個残る)。
+ * 型の判定 (`checkAdvisorQuestion` ほか) の**前**に通す —— タグ文字だけの質問は空になって断られる。
+ */
+export function stripSmuggledIfString(v: unknown): unknown {
+  return typeof v === 'string' ? stripSmuggledChars(v) : v;
+}
+
+/**
  * **いま送ろうとしている発話は、切らずに断る。**
  *
  * `sanitizeMessages` (main) / `sanitizeAssistantTurns` (ブラウザ版) は会話履歴を窓に
