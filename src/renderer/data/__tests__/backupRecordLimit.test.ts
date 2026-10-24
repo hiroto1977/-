@@ -46,3 +46,33 @@ describe('復元の件数の天井 (threat: T-141)', () => {
     expect(team).not.toMatch(/\{records\.map\(/);
   });
 });
+
+/**
+ * 窓を掛けていない 7 つの collection も天井を持つ (2026-10-24 · threat: T-175)。T-141 の天井は 4 collection だけで、
+ * 細工したバックアップ 1 本を「マージ復元」(確認なし) させると、投資信託・不動産・士業・水耕・KPI の一覧が全行を描いて固まった
+ * (実 Chromium で 20,000 行が 5〜25 秒・100,000 行が 123 秒)。
+ */
+describe('復元の件数の天井は、全行を描く一覧すべてに在る (threat: T-175)', () => {
+  const NAMES = [
+    'mutualfund-holdings',
+    'realestate-properties',
+    'shigyo-contacts',
+    'shigyo-consultations',
+    'hydroponics-batches',
+    'kpi-budgets',
+    'kpi-actuals',
+  ];
+
+  it('★ 7 つとも台帳にあり、実在する collection 名である', async () => {
+    const { COLLECTION_SHAPES } = await import('../collectionShapes');
+    for (const c of NAMES) {
+      expect(BACKUP_COLLECTION_RECORD_LIMITS[c], c).toBeGreaterThan(0);
+      expect(Object.hasOwn(COLLECTION_SHAPES, c), `${c} は形の表に無い (綴り違いで天井が効かない)`).toBe(true);
+    }
+  });
+
+  it('★ 天井の 1 件超えで断る (投資信託 2,001 件)', () => {
+    expect(backupRecordLimitError(rows('mutualfund-holdings', 2_000))).toBeNull();
+    expect(backupRecordLimitError(rows('mutualfund-holdings', 2_001))).toContain('mutualfund-holdings');
+  });
+});
