@@ -758,3 +758,61 @@ describe('費用の予算 — 速度の上限ぎりぎりを守って静かに�
     expect(performance.now() - t0).toBeLessThan(3000);
   });
 });
+
+/**
+ * 確認の要約は 24 欄が全部入る (2026-10-24 · threat: T-172)。直す前は、先頭の欄に JSON の引用で倍に膨らむ値を
+ * 置くと要約が 3,668 字になり、2,400 字の天井で後ろの欄 (宛先など) が切り捨てられて確認に出なかった。
+ */
+describe('describePayload — 24 欄すべての欄名が確認に出る (threat: T-172)', () => {
+  const wide = (): Record<string, unknown> => {
+    const p: Record<string, unknown> = {};
+    for (let i = 0; i < 23; i++) p[`field_${String(i).padStart(2, '0')}_padding_key`] = '"'.repeat(60) + 'x'.repeat(200);
+    p['recipient'] = 'attacker@evil.example';
+    return p;
+  };
+
+  it('★ 後ろの欄 (recipient) とその値が、safeSummary を通っても残る', () => {
+    const p = wide();
+    expect(payloadTooWide(p)).toBe(false); // 24 欄は門を通る
+    const s = safeSummary(describePayload(p));
+    expect(s).toContain('recipient: "attacker@evil.example"');
+    expect(s.endsWith('…')).toBe(false);
+  });
+
+  it('★ 24 欄すべての欄名が出て、全体が MAX_SUMMARY_CHARS に収まる', () => {
+    const p = wide();
+    const d = describePayload(p);
+    for (const k of Object.keys(p)) expect(d).toContain(k.slice(0, 24));
+    expect(d.length).toBeLessThanOrEqual(MAX_SUMMARY_CHARS);
+  });
+
+  it('対照: 針が当たる —— 標本は素のままなら 2,400 字を超える', () => {
+    const raw = Object.entries(wide())
+      .map(([k, v]) => `${k}: ${JSON.stringify(v)}`)
+      .join(' / ');
+    expect(raw.length).toBeGreaterThan(MAX_SUMMARY_CHARS);
+  });
+});
+
+/**
+ * 要約を整える前に読む長さが固定 (2026-10-24 · threat: T-174)。直す前は、警戒態勢中に巨大な `filePath` を
+ * `openPath` へ渡すと、5,000 万字で main が 22 秒止まった (実測)。
+ */
+describe('safeSummary — 巨大な入力で固まらない (threat: T-174)', () => {
+  it('★ 2,000 万字でも 1 秒以内に整い、切ったことを … で述べる', () => {
+    const t0 = performance.now();
+    const s = safeSummary('a'.repeat(20_000_000));
+    expect(performance.now() - t0).toBeLessThan(1000);
+    expect(s.endsWith('…')).toBe(true);
+    expect(s.length).toBeLessThanOrEqual(MAX_SUMMARY_CHARS + 1);
+  });
+
+  it('★ 読む長さの中が全部空白でも、切ったことを … で述べる', () => {
+    const s = safeSummary(' '.repeat(100_000) + 'tail');
+    expect(s.endsWith('…')).toBe(true);
+  });
+
+  it('対照: 短い入力は今までどおり (… を足さない)', () => {
+    expect(safeSummary('  a   b ')).toBe('a b');
+  });
+});

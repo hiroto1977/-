@@ -2916,6 +2916,51 @@
         "file": "src/main/clients/__tests__/advisorSmuggledChars.test.ts",
         "test": "★ 質問にタグ文字を足しても、要求本文には 1 つも載らない"
       }
+    },
+    {
+      "id": "T-172",
+      "found": "2026-10-24",
+      "foundBy": "AI による脅威の狩り(監査役 surface: main-ipc · Living off the Land)の報告 F-1 を、防御側が実物の describePayload / safeSummary で再現した",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "medium",
+      "title": "本人確認の要約が 24 欄を素のまま繋いでから全体を 2,400 字で切っていた。先頭の欄に JSON の引用で倍に膨らむ値(引用符・バックスラッシュ)を置くと、24 欄は payloadTooWide を通るのに要約が 3,668 字になり、後ろの欄(宛先など)が切り捨てられて確認に出なかった(T-148 の『欄名は全部見せる』が崩れる)",
+      "status": "fixed",
+      "fix": "describePayload が欄ごとに予算を割り当て(2,400 字から『ほか』の行と区切りを引いて欄数で割る・最低 40 字)、予算を超える行は切って … を足す。どの欄も欄名から始まるので 24 欄すべての欄名が必ず見え、全体が MAX_SUMMARY_CHARS に収まる。長い値は切れて見えるが、隠れる欄は無い。",
+      "regression": {
+        "file": "src/main/__tests__/userPresence.test.ts",
+        "test": "★ 後ろの欄 (recipient) とその値が、safeSummary を通っても残る"
+      }
+    },
+    {
+      "id": "T-173",
+      "found": "2026-10-24",
+      "foundBy": "AI による脅威の狩り(監査役 surface: main-ipc)の報告 F-1 を、防御側がコードで確かめ、修正後は実物の門で数えた。監査役は実機の Electron(xvfb + CDP)で、IPC の openExternal は 200 回中 20 回・window.open は 200 回が OS に届くと測った",
+      "surface": "main-ipc",
+      "class": "living-off-the-land",
+      "severity": "medium",
+      "title": "setWindowOpenHandler が URL の関門(externalUrlOrNull)だけを通して shell.openExternal を直に呼んでいた。IPC の app:openExternal が通す本人確認の門(速度制限・警戒態勢・ロックアウト)を、乗っ取られたレンダラーが window.open に切り替えるだけで丸ごと迂回できた",
+      "status": "fixed",
+      "fix": "src/main/windowOpen.ts の openFromWindow が、URL の関門の後に app:openExternal と同じ門(口の名前・tier egress・速度の枠を共有)を通してから OS に渡す。送り手は窓の現在の URL で信用を決める(同梱の画面だけ)。窓は常に拒否を返し、開く処理は待たずに走る。",
+      "regression": {
+        "file": "src/main/__tests__/windowOpen.test.ts",
+        "test": "★ 200 回呼んでも OS に届くのは egress の枠 (20 回) まで"
+      }
+    },
+    {
+      "id": "T-174",
+      "found": "2026-10-24",
+      "foundBy": "AI による脅威の狩り(監査役 surface: main-ipc)の報告 F-3。監査役が警戒態勢中に巨大な filePath を渡して 1e7 字で 4.3 秒・5e7 字で 22 秒 main が止まると測った",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "low",
+      "title": "throttleMessage 経由(openPath / revealInFolder / fetch:snapshot など)は文字列の detail を切らずに safeSummary へ渡す。警戒態勢中は全 tier がここを通り、巨大な文字列で単一スレッドの main が数秒〜数十秒止まる(警戒態勢は攻撃者が自分で誘発できる)",
+      "status": "fixed",
+      "fix": "safeSummary が整える前に読む長さを MAX_SUMMARY_CHARS の 4 倍で固定し、切ったときは … で述べる。経路ごとに切る代わりに全呼び出しの入口 1 か所で止める。",
+      "regression": {
+        "file": "src/main/__tests__/userPresence.test.ts",
+        "test": "★ 2,000 万字でも 1 秒以内に整い、切ったことを … で述べる"
+      }
     }
   ],
   "huntBacklog": [

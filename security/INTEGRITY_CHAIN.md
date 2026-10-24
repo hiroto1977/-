@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 345
+- ブロック数: 348
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `51cf88bf04f5ecf9864d1eadab63918e07def46efa2362ff21c98c9f1c60d151`
-- 保護対象: 124 ファイル
+- 末尾(tip)ハッシュ: `e54095171294627f175faa672d510d580ca4109f24dbb3db5dd3cc406a2bafc5`
+- 保護対象: 125 ファイル
 
 ## ブロック
 
@@ -358,6 +358,9 @@
 | 342 | `9fce4e9715807374` | `094f9ff558f4e110` | `1ae266fcef58bce6` | update lint-malware.cjs |
 | 343 | `f14f671af1827039` | `1ae266fcef58bce6` | `25deb67338471519` | update e2e.yml |
 | 344 | `aa6d9aa06728ae8f` | `25deb67338471519` | `51cf88bf04f5ecf9` | update assistant.ts,assistantLimits.ts |
+| 345 | `3b3826d8429c059d` | `51cf88bf04f5ecf9` | `65c0841d00db2354` | update userPresence.ts |
+| 346 | `9b8f59a5f1edc90e` | `65c0841d00db2354` | `304738880784cef5` | update main.ts,presenceWiring.ts,userPresence.ts |
+| 347 | `c9687c3505731c44` | `304738880784cef5` | `e54095171294627f` | update integrity-chain.cjs,windowOpen.ts |
 
 ## 保護対象ファイル
 
@@ -431,6 +434,7 @@
 - `src/main/shellOpenGate.ts`
 - `src/main/stateFile.ts`
 - `src/main/userPresence.ts`
+- `src/main/windowOpen.ts`
 - `src/main/windowPrefs.ts`
 - `src/preload/preload.ts`
 - `src/renderer/data/assistantMarkdown.ts`

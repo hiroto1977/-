@@ -18,7 +18,8 @@ import { safeErrorMessage } from './clients/types';
 import { externalUrlOrNull } from '../shared/externalUrlGate';
 import { shellTargetOrNull } from './shellOpenGate';
 import { installFileRequestGate } from './fileRequestGate';
-import { reportThreatSignal, requirePresence } from './presenceWiring';
+import { reportThreatSignal, requirePresence, requirePresenceFromUrl } from './presenceWiring';
+import { openFromWindow } from './windowOpen';
 import { describePayload, payloadTooWide, tierOfAction, weightOfAction, type PresenceDecision } from './userPresence';
 import { evaluateUpdate, parseLatestRelease, type UpdateVerdict } from '../shared/updateCheck';
 import {
@@ -166,11 +167,15 @@ function createWindow(): BrowserWindow {
   win.webContents.session.setPermissionCheckHandler((_wc, permission) => permissionAllowed(permission));
 
   win.webContents.setWindowOpenHandler(({ url }) => {
-    // IPC の扉と**同じ関門**を通す。以前ここは手書きの http(s) 判定で、
-    // 関門の許可表を締めてもこちらだけ古い規則のまま開いた
-    // (対照実験は externalUrlGate.ts の頭に記録)。
-    const target = externalUrlOrNull(url);
-    if (target !== null) shell.openExternal(target);
+    // IPC の扉と**同じ関門 + 同じ本人確認の門**を通す (threat: T-173)。関門 (URL の許可表) だけだと
+    // `window.open` に切り替えるだけで速度制限・警戒態勢を迂回できた。決められるのは同期の返事だけなので、
+    // 開く処理は待たずに走らせて、窓は常に拒否する。
+    void openFromWindow(url, {
+      senderUrl: () => win.webContents.getURL(),
+      guard: requirePresenceFromUrl,
+      open: (target) => shell.openExternal(target),
+      log: (message) => console.error(message),
+    });
     return { action: 'deny' };
   });
 

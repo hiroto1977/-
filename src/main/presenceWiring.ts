@@ -55,6 +55,11 @@ export function requirePresence(e: IpcMainInvokeEvent, req: PresenceRequest): Pr
   return gate.guard(req, senderTrusted(e));
 }
 
+/** IPC の event を持たない扉 (`window.open` など) 用: 送り手の窓の URL で信用を決めて同じ門を通す (T-173)。 */
+export function requirePresenceFromUrl(senderUrl: string, req: PresenceRequest): Promise<PresenceDecision> {
+  return gate.guard(req, isTrustedSenderUrl(senderUrl, DIST_ROOT, process.env.VITE_DEV_SERVER_URL));
+}
+
 export function recentPresenceEvents(): ReturnType<typeof gate.recentEvents> {
   return gate.recentEvents();
 }

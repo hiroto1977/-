@@ -260,15 +260,26 @@ function stripUnsafe(text: string): string {
   return out;
 }
 
+/** 要約を整える前に読む長さ。空白を畳むと縮むので天井の数倍を読む (巨大な文字列で確認の前に固まらない · T-174)。 */
+const SUMMARY_READ_CAP = MAX_SUMMARY_CHARS * 4;
+
 export function safeSummary(text: string): string {
-  const flat = stripUnsafe(text).replace(/\s+/g, ' ').trim();
-  return moreThanChars(flat, MAX_SUMMARY_CHARS) ? `${clampToCeiling(flat, MAX_SUMMARY_CHARS)}…` : flat;
+  // `throttleMessage` 経由 (openPath / revealInFolder ほか) は値を事前に切らずに渡す。警戒中は全 tier が
+  // ここを通るので、5,000 万字で main が 22 秒止まった (実測)。読む長さを先に固定する。
+  const overRead = moreThanChars(text, SUMMARY_READ_CAP);
+  const flat = stripUnsafe(overRead ? clampToCeiling(text, SUMMARY_READ_CAP) : text).replace(/\s+/g, ' ').trim();
+  if (moreThanChars(flat, MAX_SUMMARY_CHARS)) return `${clampToCeiling(flat, MAX_SUMMARY_CHARS)}…`;
+  return overRead ? `${flat}…` : flat;
 }
 
 /** 1 つの値を見せる長さ。超えたら切って全体の長さを添える (切ったことを必ず述べる)。 */
 export const MAX_VALUE_CHARS = 60;
 /** 見せる欄の数。超えた分は名前と件数だけ。 */
 export const MAX_FIELDS_SHOWN = 24;
+/** 欄と欄の区切り。 */
+const FIELD_SEPARATOR = ' / ';
+/** 1 欄の行の最低の長さ (鍵の表示 24 字 + 区切りが必ず収まる)。 */
+const FIELD_LINE_MIN_CHARS = 40;
 /** 値を読む前に切る長さ (巨大な文字列で確認の前に固まらない)。 */
 const READ_CAP = MAX_VALUE_CHARS * 4;
 
@@ -294,14 +305,30 @@ export function describePayload(payload: unknown): string {
   const obj = payload as Record<string, unknown>;
   const keys = Object.keys(obj);
   if (keys.length === 0) return '(内容なし)';
-  const shown = keys.slice(0, MAX_FIELDS_SHOWN).map((k) => `${keyLabel(k)}: ${describeValue(obj[k])}`);
+  const shownKeys = keys.slice(0, MAX_FIELDS_SHOWN);
+  // 「ほか N 欄」の行は先に組む (欄ごとの予算から引くため)。名前を並べるのも固定個数まで (鍵が 100 万個でも
+  // 要約が膨らまず、確認の前に固まらない · T-156)。
+  let restLine = '';
   if (keys.length > MAX_FIELDS_SHOWN) {
-    // 名前を並べるのも固定個数まで (鍵が 100 万個でも要約が膨らまず、確認の前に固まらない · T-156)。
     const rest = keys.slice(MAX_FIELDS_SHOWN, MAX_FIELDS_SHOWN * 2).map(keyLabel);
     const more = keys.length - MAX_FIELDS_SHOWN > rest.length ? ', …' : '';
-    shown.push(`ほか ${keys.length - MAX_FIELDS_SHOWN} 欄: ${rest.join(', ')}${more}`);
+    restLine = `ほか ${keys.length - MAX_FIELDS_SHOWN} 欄: ${rest.join(', ')}${more}`;
   }
-  return shown.join(' / ');
+  // **欄ごとに予算を割り当てる** (T-172)。以前は 24 欄を素のまま繋いでから全体を MAX_SUMMARY_CHARS で切っていたので、
+  // JSON の引用で倍に膨らむ値 (引用符・バックスラッシュ) を先頭の欄に置くと、後ろの欄 (宛先など) が
+  // 切り捨てられて確認に出なかった (24 欄は payloadTooWide を通る・実測で 3,668 字 → 2,400 字)。
+  // どの欄も予算の中で名前から始まるので、全部の欄名が必ず見える。
+  const lineCount = shownKeys.length + (restLine === '' ? 0 : 1);
+  const budget = Math.max(
+    FIELD_LINE_MIN_CHARS,
+    Math.floor((MAX_SUMMARY_CHARS - restLine.length - FIELD_SEPARATOR.length * lineCount) / Math.max(1, shownKeys.length)),
+  );
+  const shown = shownKeys.map((k) => {
+    const line = `${keyLabel(k)}: ${describeValue(obj[k])}`;
+    return moreThanChars(line, budget) ? `${clampToCeiling(line, budget - 1)}…` : line;
+  });
+  if (restLine !== '') shown.push(restLine);
+  return shown.join(FIELD_SEPARATOR);
 }
 
 /** 鍵の表示。**長さ無制限の鍵を丸ごと走査しない** (50 MB の鍵で確認より前に 13 秒固まった · T-156)。 */
