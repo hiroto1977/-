@@ -135,6 +135,7 @@ vi.mock('electron', () => ({
   },
   shell: {
     openExternal: async (url: string) => {
+      if (openExternalThrows !== null) throw openExternalThrows;
       openedExternal.push(url);
     },
     showItemInFolder: () => {},
@@ -164,10 +165,26 @@ vi.mock('../windowPrefs', async (importOriginal) => ({
   writeWindowPrefs: async () => undefined,
 }));
 const threatSignals: { kind: string; where: string }[] = [];
+const presenceSenderUrls: string[] = [];
+let openExternalThrows: Error | null = null;
+const exportRootEvents: string[] = [];
+vi.mock('../clients/exportPaths', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../clients/exportPaths')>()),
+  ensurePrivateExportRoot: async () => {
+    await new Promise((r) => setTimeout(r, 5));
+    exportRootEvents.push('root');
+  },
+  repairExportPermissions: async () => {
+    exportRootEvents.push('repair');
+  },
+}));
 vi.mock('../presenceWiring', () => ({
   requirePresence: async () => ({ ok: true }),
   // window.open も IPC と同じ門を通る (threat: T-173)。窓の扉は待たずに走るので、検査は flush してから数える。
-  requirePresenceFromUrl: async () => ({ ok: true }),
+  requirePresenceFromUrl: async (senderUrl: string) => {
+    presenceSenderUrls.push(senderUrl);
+    return { ok: true };
+  },
   recentPresenceEvents: () => [],
   reportThreatSignal: (kind: string, where: string) => {
     threatSignals.push({ kind, where });
@@ -208,6 +225,8 @@ beforeAll(async () => {
 beforeEach(() => {
   nativeThemeStub = { themeSource: 'system' };
   openedExternal = [];
+  presenceSenderUrls.length = 0;
+  openExternalThrows = null;
   windowsMade = 0;
   allWindows = [];
   quitCalls = 0;
@@ -307,6 +326,18 @@ describe('BrowserWindow の設定 — 隔離の三点セット', () => {
   });
 });
 
+describe('起動時の書き出し先の権限 (threat: T-176)', () => {
+  it('★ 根を本人だけにする処理が終わってから、中のファイルの権限を直す', async () => {
+    exportRootEvents.length = 0;
+    await loadMain({ packaged: true });
+    await new Promise((r) => setTimeout(r, 30));
+    // 起動が複数回走っても、必ず「根 → 修復」の対で並ぶ (修復が根より先に走る順序は無い)。
+    expect(exportRootEvents.length).toBeGreaterThanOrEqual(2);
+    expect(exportRootEvents.length % 2).toBe(0);
+    exportRootEvents.forEach((ev, i) => expect(ev).toBe(i % 2 === 0 ? 'root' : 'repair'));
+  });
+});
+
 /** 窓の扉は門を待たずに走る (T-173)。門と OS の呼び出しが終わるまで microtask を流す。 */
 const flushWindowOpen = () => new Promise<void>((r) => setTimeout(r, 0));
 
@@ -324,6 +355,27 @@ describe('setWindowOpenHandler — 新しい窓は必ず拒否する', () => {
     c.windowOpenHandler!({ url: 'http://example.com/b' });
     await flushWindowOpen();
     expect(openedExternal).toEqual(['https://example.com/a', 'http://example.com/b']);
+  });
+
+  it('★ 門へは窓自身の今の URL を送り手として渡す (threat: T-173)', async () => {
+    const c = await loadMain({ packaged: true });
+    presenceSenderUrls.length = 0;
+    c.windowOpenHandler!({ url: 'https://example.com/a' });
+    await flushWindowOpen();
+    expect(presenceSenderUrls).toEqual(['file:///app/dist/index.html']);
+  });
+
+  it('★ OS が開けなかったときは理由を console.error へ残し、窓は拒否のまま (threat: T-173)', async () => {
+    const c = await loadMain({ packaged: true });
+    const err = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    try {
+      openExternalThrows = new Error('no browser');
+      expect(c.windowOpenHandler!({ url: 'https://example.com/a' })).toEqual({ action: 'deny' });
+      await flushWindowOpen();
+      expect(err).toHaveBeenCalledWith('[window.open] 外部の URL を開けませんでした: no browser');
+    } finally {
+      err.mockRestore();
+    }
   });
 
   it('http(s) 以外は OS へ回さない', async () => {

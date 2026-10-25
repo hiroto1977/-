@@ -2614,6 +2614,47 @@ describe('exportDashboard — 戦略比較の行の検証 (threat: T-092)', () =
   });
 });
 
+/**
+ * 戦略比較の検証の境界 (T-092 の既存の行の検査を、比較そのものの形・行の混在・0 の境界まで広げる ——
+ * 2026-10-24: main の変異検査が、この関数の生存 12 件を名指しした)。
+ */
+describe('exportDashboard — 戦略比較そのものの形と行の境界 (threat: T-092)', () => {
+  const GOOD = { strategy: 'sma-crossover', finalEquity: 115_000, totalReturnPct: 15, maxDrawdownPct: 5, winRate: 1, tradeCount: 2 };
+  const base = { symbol: 'AAPL', initialCash: 100_000, rows: [GOOD], bestByReturn: null };
+  const runCmp = async (cmp: unknown): Promise<string> => {
+    let html = '';
+    await exportDashboardImpl(
+      { token: '', payload: { strategyComparison: cmp } },
+      { fetchSnapshot: async () => emptySnapshot(), writeFile: async (_p, c) => { html = c; } },
+    );
+    return html;
+  };
+
+  it.each([
+    ['null', null],
+    ['文字列', 'x'],
+    ['数', 42],
+    ['symbol が数', { ...base, symbol: 1 }],
+    ['symbol が無い', { initialCash: 100_000, rows: [GOOD] }],
+    ['initialCash が文字列', { ...base, initialCash: '100000' }],
+    ['initialCash が非有限', { ...base, initialCash: Number.POSITIVE_INFINITY }],
+    ['rows が配列でない', { ...base, rows: { 0: GOOD, length: 1 } }],
+    ['rows が文字列', { ...base, rows: 'rows' }],
+    ['行に null が混ざる', { ...base, rows: [GOOD, null] }],
+    ['行が数', { ...base, rows: [5] }],
+    ['良い行の後ろに悪い行 (1 行でも悪ければ省く)', { ...base, rows: [GOOD, { ...GOOD, tradeCount: 'x' }] }],
+    ['悪い行の後ろに良い行', { ...base, rows: [{ ...GOOD, tradeCount: 'x' }, GOOD] }],
+  ])('★ %s は戦略比較を省き、落ちない', async (_n, cmp) => {
+    expect(await runCmp(cmp)).not.toContain('戦略比較');
+  });
+
+  it('対照: 取引 0 回・winRate が無い行は載せる (0 は境界の内側)', async () => {
+    expect(await runCmp({ ...base, rows: [{ ...GOOD, tradeCount: 0 }] })).toContain('戦略比較');
+    const { winRate: _omit, ...noWin } = GOOD;
+    expect(await runCmp({ ...base, rows: [noWin] })).toContain('戦略比較');
+  });
+});
+
 // --- BacktestResult.equityCurve --------------------------------------
 
 describe('backtest equityCurve', () => {

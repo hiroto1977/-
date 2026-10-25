@@ -1989,7 +1989,9 @@ function isStrategyComparison(v: unknown): v is StrategyComparisonResult {
 }
 
 function isStrategyRow(row: unknown): boolean {
-  if (row === null || typeof row !== 'object') return false;
+  if (row === null) return false;
+  // Stryker disable next-line ConditionalExpression: 数・文字列の行は下の `strategy` の型の検査で必ず落ちる (単独では観測不能)
+  if (typeof row !== 'object') return false;
   const x = row as Record<string, unknown>;
   return (
     typeof x['strategy'] === 'string' &&
