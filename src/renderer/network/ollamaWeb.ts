@@ -54,7 +54,7 @@ import {
   redirectRefusal,
   withBodyDeadline,
 } from '../../shared/httpLimits';
-import { capAssistantReply, inputTooLongMessage } from '../../shared/assistantLimits';
+import { capAssistantReply, inputTooLongMessage, stripSmuggledChars } from '../../shared/assistantLimits';
 
 /** 接続先設定の保存キー (localStorage)。UI と web-shim が共有する。
  *  値は「ポート番号のみ」または `http(s)://host:port`。旧 `…ollama.port` の値も読む。 */
@@ -490,8 +490,9 @@ export async function chatOllama(
   pageHostname: string = pageHost(),
 ): Promise<OllamaChatOutcome> {
   const model = (input.model ?? '').trim();
-  const prompt = (input.prompt ?? '').trim();
-  const system = (input.system ?? '').trim();
+  // 見えない指示 (Unicode Tag 文字) は送らない (T-193 · main の chat と同じ)。
+  const prompt = stripSmuggledChars(input.prompt ?? '').trim();
+  const system = stripSmuggledChars(input.system ?? '').trim();
 
   const base = parseOllamaEndpoint(input.endpoint ?? '', pageHostname);
   if (base === null) {

@@ -543,4 +543,17 @@ describe('打ち切りの注記はモジュール直下の定数を通る (読�
     expect(fresh.externalTextOnOneLine('a\n\n### b\tc\u2028d\u2029e')).toBe('a ### b c d e');
     expect(fresh.escapeUnits('\u202e')).toBe('\\u202e');
   });
+
+  it('★ インライン記法の要素も重さに数える: `a` を 5 万個並べた 10 万字の段落は打ち切る (threat: T-196)', () => {
+    const md = '`a`x'.repeat(25_000); // 10 万字・段落は 1 つ・DOM 要素は約 2.5 万 (直す前は重さ 2 で全部通った)
+    const blocks = parseMarkdown(md);
+    expect(blocks.map((b) => blockWeight(b)).reduce((a, b) => a + b, 0)).toBeLessThan(MAX_RENDER_WEIGHT + 30_000);
+    expect(JSON.stringify(blocks.at(-1))).toContain(BLOCKS_TRUNCATED_NOTICE);
+    // 太字・表のセル・箇条書きの項目でも同じ。
+    expect(blockWeight({ type: 'paragraph', spans: parseInline('**a**') })).toBe(2);
+    expect(blockWeight({ type: 'list', ordered: false, items: [parseInline('`a` **b** c')] })).toBe(1 + 1 + 2);
+    expect(blockWeight({ type: 'table', headers: [parseInline('**h**')], rows: [[parseInline('`x`')]] })).toBe(1 + 1 + 1 + 1 + 1);
+    // 地の文だけなら従来の重さのまま (正当な返答の見た目は変わらない)。
+    expect(blockWeight({ type: 'paragraph', spans: parseInline('ただの文') })).toBe(1);
+  });
 });

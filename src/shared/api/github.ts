@@ -8,6 +8,7 @@ import {
   checkWriteLabels,
   describeWriteFieldFailure,
 } from '../writeFieldLimits';
+import { pathSegment } from './pathSegment';
 
 /** 送り先は 1 つ。読み (下の class) も書き (課題の作成) も同じ定数を通る。 */
 export const GITHUB_API = 'https://api.github.com';
@@ -205,7 +206,7 @@ export function checkIssue(input: GithubIssueFields): CheckedIssue {
 
 /** パスの動的部分は encodeURIComponent (不変条件 #6)。 */
 export function githubIssuesPath(issue: CheckedIssue): string {
-  return `/repos/${encodeURIComponent(issue.owner)}/${encodeURIComponent(issue.repo)}/issues`;
+  return `/repos/${pathSegment(issue.owner)}/${pathSegment(issue.repo)}/issues`;
 }
 
 /**

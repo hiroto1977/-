@@ -69,7 +69,14 @@
  *  against the *last DNS label only* so that a public name like
  *  `example.localcom.` (no dot before "local") is not flagged. */
 /** loopback を指す名前。`ip6-*` は Debian / Ubuntu の `/etc/hosts` の既定の別名。 */
-const LOOPBACK_NAMES: ReadonlySet<string> = new Set(['localhost', 'ip6-localhost', 'ip6-loopback']);
+const LOOPBACK_NAMES: ReadonlySet<string> = new Set([
+  'localhost',
+  'ip6-localhost',
+  'ip6-loopback',
+  // RHEL / Fedora 系の `/etc/hosts` の既定の別名 (T-192): 静的に 127.0.0.1 / ::1 へ解ける。
+  'localhost.localdomain',
+  'localhost6.localdomain6',
+]);
 
 const INTERNAL_TLDS: ReadonlySet<string> = new Set([
   'local',     // mDNS (RFC 6762)
@@ -79,6 +86,9 @@ const INTERNAL_TLDS: ReadonlySet<string> = new Set([
   'intranet',  // Microsoft AD default
   'home',      // common ISP CPE
   'private',   // IETF draft-private-use
+  'localdomain',   // hosts ファイルの既定の別名 (`localhost.localdomain`) と同じ区画 (T-192)
+  'localdomain6',
+  'svc',           // Kubernetes の Service 名 (`kubernetes.default.svc`) —— 公開 DNS に無い
 ]);
 
 export function isPrivateOrReservedTarget(parsed: URL): boolean {
@@ -415,12 +425,17 @@ function extractEmbeddedV4FromTransitionPrefix(bare: string): string | null {
   // hex groups (16 bits each, big-endian). We only catch the common
   // `2002:HHHH:HHHH::` shape; longer forms with arbitrary subnet/iface
   // suffixes need the proxy-side resolved-IP check for full coverage.
+  // **下位の群が `::` に畳まれた短い形も同じ v4 を指す** (T-191): `2002:7f00::1` は 2 群目が 0 なので
+  // 127.0.0.0、`2002::` は 0.0.0.0。以前は 2 群の v4 を要求し、これらを取り出せずに通していた
+  // (配る Worker の `isBlockedIp` は遮断していた —— 同じレンジという注記は成り立っていなかった)。
   // Stryker disable next-line Regex
-  const sixToFour = /^2002:([0-9a-f]{1,4}):([0-9a-f]{1,4})::?/i.exec(bare);
+  const sixToFour = /^2002:([0-9a-f]{1,4})(?::([0-9a-f]{1,4}))?(?=:|$)/i.exec(bare);
   if (sixToFour) {
     const hi = parseInt(sixToFour[1]!, 16);
-    const lo = parseInt(sixToFour[2]!, 16);
+    const lo = parseInt(sixToFour[2] ?? '0', 16);
     return `${(hi >>> 8) & 0xff}.${hi & 0xff}.${(lo >>> 8) & 0xff}.${lo & 0xff}`;
   }
+  // `2002::` (1 群目も畳まれた形) は 0.0.0.0 を埋め込む。
+  if (/^2002::/.test(bare)) return '0.0.0.0';
   return null;
 }

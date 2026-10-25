@@ -2,6 +2,7 @@ import { NotConfiguredError, type ServiceClient, type ServiceCredentials } from 
 import { apiFetch, bearer, jsonBody, type FetchFn } from './http';
 import { displayField, requireNumber, requireObject, requireString } from '../apiResponse';
 import { WORDPRESS_POST_FIELDS, checkWriteFields, describeWriteFieldFailure } from '../writeFieldLimits';
+import { pathSegment, refuseDotSegment } from './pathSegment';
 
 /** 送り先は 1 つ。読み (下の class) も書き (下書きの作成) も同じ定数を通る。 */
 export const WORDPRESS_API = 'https://public-api.wordpress.com/rest/v1.1';
@@ -75,7 +76,7 @@ export class WordPressClient implements ServiceClient {
   async createPostDraft(siteId: string, payload: Record<string, unknown>): Promise<WordPressPost> {
     if (!this.isConfigured()) throw new NotConfiguredError(this.id);
     const raw = await apiFetch<RawPost>(
-      `${API}/sites/${encodeURIComponent(siteId)}/posts/new`,
+      `${API}/sites/${encodeURIComponent(refuseDotSegment(siteId))}/posts/new`,
       {
         method: 'POST',
         headers: jsonBody(String(this.creds.token)),
@@ -138,7 +139,7 @@ export function checkPost(input: WordPressPostFields): CheckedPost {
 
 /** パスの動的部分は encodeURIComponent (不変条件 #6)。 */
 export function wordpressPostsPath(post: CheckedPost): string {
-  return `/sites/${encodeURIComponent(post.siteId)}/posts/new`;
+  return `/sites/${pathSegment(post.siteId)}/posts/new`;
 }
 
 /** 要求の組み立て (`wordpress/create-post-draft`)。 */

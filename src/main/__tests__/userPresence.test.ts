@@ -25,6 +25,7 @@ import {
   describeCredentialWrite,
   describePayload,
   isTrustedSenderUrl,
+  isPlainPayload,
   payloadTooWide,
   safeSummary,
   tierOfAction,
@@ -658,9 +659,24 @@ describe('門自身が重くならない・締め出しすぎない (threat: T-1
     expect(payloadTooWide('x')).toBe(false);
     // 文字列の添字は欄ではない (for…in が添字を列挙するので、型で弾かないと 30 字の文字列が「欄が多い」になる)。
     expect(payloadTooWide('x'.repeat(MAX_FIELDS_SHOWN + 6))).toBe(false);
+    // 原型が素でない物は欄の入れ物として読まない (IPC の構造化複製は作らない形なので、来たら断る · T-188)。
     const inherited = Object.create(fields(MAX_FIELDS_SHOWN + 5)) as Record<string, number>;
     inherited.own = 1;
-    expect(payloadTooWide(inherited)).toBe(false);
+    expect(payloadTooWide(inherited)).toBe(true);
+    // 原型の無いオブジェクトは素の物として数える。
+    expect(payloadTooWide(Object.assign(Object.create(null), fields(MAX_FIELDS_SHOWN)))).toBe(false);
+    expect(payloadTooWide(Object.assign(Object.create(null), fields(MAX_FIELDS_SHOWN + 1)))).toBe(true);
+  });
+
+  it('★ isPlainPayload: 型付き配列・Map・Set・Date・原型つきの物は欄の入れ物ではない (キーを数え上げる前に断る · threat: T-188)', () => {
+    for (const ok of [null, undefined, 1, 'x', true, [1, 2], {}, { a: 1 }, Object.create(null)]) expect(isPlainPayload(ok)).toBe(true);
+    for (const bad of [new Uint8Array(4), new Float64Array(1), new ArrayBuffer(1), new DataView(new ArrayBuffer(1)), new Map(), new Set(), new Date(0), Object.create({ a: 1 }), new (class X {})()]) {
+      expect(isPlainPayload(bad)).toBe(false);
+    }
+    // payloadTooWide は for…in の前に断る: 2,000 万要素でも即座に返る (直す前は 7.6 秒・RSS 1 GB)。
+    const t = Date.now();
+    expect(payloadTooWide(new Uint8Array(20_000_000))).toBe(true);
+    expect(Date.now() - t).toBeLessThan(200);
   });
 
   it('★ 連打しても 1 呼び出しの費用が伸びない (3 万回が 3 秒未満・旧い実装は二乗で 10 秒級)・判定は変わらない', async () => {

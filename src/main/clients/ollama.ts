@@ -44,7 +44,7 @@ import {
   isVersionSafe,
   type OllamaSnapshot,
 } from '../../shared/ollama';
-import { capAssistantReply, inputTooLongMessage } from '../../shared/assistantLimits';
+import { capAssistantReply, inputTooLongMessage, stripSmuggledChars } from '../../shared/assistantLimits';
 import type { ActionData } from '../../shared/actionData';
 import {
   DEFAULT_HTTP_TIMEOUT_MS,
@@ -332,6 +332,11 @@ async function installedModelNames(fetchFn: typeof fetch): Promise<string[]> {
   }
 }
 
+/** 相手の `total_duration` (ナノ秒) をミリ秒へ。有限で 0 以上の数だけを採る。 */
+function durationMsOf(ns: unknown): number {
+  return typeof ns === 'number' && Number.isFinite(ns) && ns > 0 ? Math.round(ns / 1_000_000) : 0;
+}
+
 async function chat(ctx: ActionContext): Promise<ActionData<'ollama/chat'>> {
   const { model, prompt, system } = ctx.payload as unknown as ChatPayload;
   if (!model || !prompt) throw new Error('model and prompt are required');
@@ -343,7 +348,9 @@ async function chat(ctx: ActionContext): Promise<ActionData<'ollama/chat'>> {
   // upstream parser bugs (including the unpatched engine-file OOB read).
   // Newlines and other whitespace are legitimate in chat input and are
   // kept; only \0 is refused.
-  const promptStr = String(prompt);
+  // 見えない指示 (Unicode Tag 文字) は送らない (T-193)。落とした結果が空なら『無い』と同じ。
+  const promptStr = stripSmuggledChars(String(prompt));
+  if (promptStr === '') throw new Error('model and prompt are required');
   // Stryker disable next-line ConditionalExpression,StringLiteral: when
   // `system` is null/undefined, the ternary returns ''; the
   // ConditionalExpression mutant goes through String(undefined) =
@@ -351,7 +358,7 @@ async function chat(ctx: ActionContext): Promise<ActionData<'ollama/chat'>> {
   // "Stryker was here!" — either way, the `if (system)` gate later
   // excludes the system message from the request, so the string we
   // never use here cannot affect behavior. Equivalent.
-  const systemStr = system == null ? '' : String(system);
+  const systemStr = system == null ? '' : stripSmuggledChars(String(system));
   if (promptStr.includes('\0') || systemStr.includes('\0')) {
     throw new FetchError('null byte in chat input rejected', 0, 'ollama');
   }
@@ -471,6 +478,10 @@ async function chat(ctx: ActionContext): Promise<ActionData<'ollama/chat'>> {
   } catch {
     throw new FetchError('ollama returned non-JSON', 0, 'ollama');
   }
+  // 本文が `null` / 数 / 配列だと `parsed.message` が V8 の生の例外文で落ちて画面へ出る (T-194)。
+  if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) {
+    throw new FetchError('ollama returned non-JSON', 0, 'ollama');
+  }
 
   return {
     // 応答の天井 (パス 113)。byte の天井 (10 MiB) は「画面に出す量」としては論外 ——
@@ -482,7 +493,8 @@ async function chat(ctx: ActionContext): Promise<ActionData<'ollama/chat'>> {
     // 利用者がその文を読む。ブラウザ版 (`ollamaWeb.ts`) は最初から
     // `typeof content === 'string'` で、デスクトップ版だけが前提を持たなかった。
     reply: capAssistantReply(typeof parsed.message?.content === 'string' ? parsed.message.content : ''),
-    durationMs: Math.round((parsed.total_duration ?? 0) / 1_000_000),
+    // 相手の名乗る時間は信用しない (T-194): 数でなければ・負なら 0。ブラウザ版は自分で測るので前提が無かったのは main だけ。
+    durationMs: durationMsOf(parsed.total_duration),
   };
     },
     // **生成には生成の予算を渡す** (2026-09-23 · パス 424)。ここは第 5 引数を

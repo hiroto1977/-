@@ -1,5 +1,6 @@
 import { promises as fs } from 'node:fs';
 import { clampToCeiling, countChars } from '../../shared/inputCeiling';
+import { stripSmuggledChars } from '../../shared/assistantLimits';
 import os from 'node:os';
 import path from 'node:path';
 import { AI_PROVIDERS } from '../../shared/ai/providers';
@@ -452,7 +453,9 @@ export function isSafeSkillName(name: unknown): name is string {
 }
 
 async function runSkill(ctx: ActionContext): Promise<ActionData<'skills/run-skill'>> {
-  const { id, prompt } = ctx.payload as unknown as Partial<RunSkillPayload>;
+  const { id, prompt: rawPrompt } = ctx.payload as unknown as Partial<RunSkillPayload>;
+  // 見えない指示 (Unicode Tag 文字) は、第三者の文を貼る欄の入口で落とす (T-193 · T-171 の取りこぼし)。
+  const prompt = typeof rawPrompt === 'string' ? stripSmuggledChars(rawPrompt) : rawPrompt;
   if (typeof id !== 'string' || id.length === 0 || typeof prompt !== 'string' || prompt.length === 0) {
     throw new Error('id and prompt are required');
   }
@@ -464,7 +467,8 @@ async function runSkill(ctx: ActionContext): Promise<ActionData<'skills/run-skil
   // 有料 API の宛先へ出たうえ、利用者は「鍵が不正」と読んで原因を取り違える。
   if (!ctx.token) throw new Error(MISSING_ANTHROPIC_KEY_MESSAGE);
 
-  const body = await readSkillBody(id);
+  // 配られたスキルパックの SKILL.md に Tag 文字で符号化した指示が仕込まれていても、system には載せない。
+  const body = stripSmuggledChars(await readSkillBody(id));
 
   const res = await jsonFetch<AnthropicMessagesResponse>(
     'https://api.anthropic.com/v1/messages',

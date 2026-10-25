@@ -30,10 +30,15 @@
                                          (scripts/dev-csp.cjs)。
         - object-src  'none'           — no plugins, no flash
         - frame-src   'none'           — no embedded frames
+        - worker-src  'none'           — no Worker / SharedWorker. 未指定だと script-src 'self' へ
+                                         落ち、file: の任意の場所の .js が Worker として走った
+                                         (T-195・実 Electron で再現)。デスクトップ版は Worker を使わない
+                                         (Service Worker はブラウザ版だけ —— そちらの CSP は
+                                         scripts/inline-html.cjs の buildCsp が別に持つ)
         - base-uri    'self'           — block injected <base> tags
         - form-action 'none'           — block any form submission
     -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'none'" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self'; object-src 'none'; frame-src 'none'; worker-src 'none'; base-uri 'self'; form-action 'none'" />
     <title>Service Hub</title>
   </head>
   <body>

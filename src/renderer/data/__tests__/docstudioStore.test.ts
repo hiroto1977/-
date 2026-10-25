@@ -32,4 +32,14 @@ describe('sanitizeDocstudioStore', () => {
     expect(sanitizeDocstudioStore({ recent: ['a', 1, null, 'b'] })).toEqual({ recent: ['a', 'b'] });
     for (const bad of [null, 'x', 42, ['a']]) expect(sanitizeDocstudioStore(bad), String(bad)).toEqual({});
   });
+
+  it('★ studio の "__proto__" 鍵は prototype を置き換えない (保存していない書式 id に値が現れない・threat: T-189)', () => {
+    const parsed: unknown = JSON.parse('{"studio":{"__proto__":{"invoice":"x","yen":"y"},"keiyaku":{"a":"b"}}}');
+    const out = sanitizeDocstudioStore(parsed);
+    expect(Object.keys(out.studio ?? {})).toEqual(['keiyaku']);
+    expect(Object.getPrototypeOf(out.studio)).toBe(Object.prototype);
+    expect((out.studio as Record<string, unknown>).invoice).toBeUndefined();
+    // 大域の汚染も起きていない。
+    expect(({} as Record<string, unknown>).invoice).toBeUndefined();
+  });
 });

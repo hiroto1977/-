@@ -75,6 +75,7 @@ describe('同梱される CSP (デスクトップ版) — ディレクティブ�
       'object-src',
       'script-src',
       'style-src',
+      'worker-src',
     ]);
   });
 
@@ -130,9 +131,11 @@ describe('ブラウザ版の CSP とは意図的に違う', () => {
     expect(WEB.get('connect-src')!.length).toBeGreaterThan(DESKTOP.get('connect-src')!.length);
   });
 
-  it('worker-src: ブラウザ版だけが持つ (Service Worker を登録する側)', () => {
+  it('worker-src: ブラウザ版だけが self (Service Worker を登録する側)・デスクトップ版は none (threat: T-195)', () => {
     expect(WEB.get('worker-src')).toEqual(["'self'"]);
-    expect(DESKTOP.has('worker-src')).toBe(false);
+    // 未指定だと script-src 'self' へ落ち、file: の任意の場所の .js が Worker として走った
+    // (実 Electron で再現: dist の外の /tmp の .js が Worker・SharedWorker として実行された)。
+    expect(DESKTOP.get('worker-src')).toEqual(["'none'"]);
   });
 
   /** 締めている側は両方で同じ。ここが緩んだらどちらのビルドでも穴になる。 */

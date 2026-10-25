@@ -68,7 +68,12 @@ export function sanitizeDocstudioStore(value: unknown): StoreShape {
   const out: StoreShape = {};
   if (isRecord(value.studio)) {
     const studio: Record<string, Values> = {};
-    for (const [id, v] of Object.entries(value.studio)) if (isRecord(v)) studio[id] = stringRecord(v);
+    for (const [id, v] of Object.entries(value.studio)) {
+      // `JSON.parse` は "__proto__" を自前の鍵として作る。`studio[id] = …` はそれを own 鍵ではなく
+      // **prototype の置換**にし、保存していない書式 id の入力が攻撃者の選んだ値で出る (T-189)。
+      if (id === '__proto__') continue;
+      if (isRecord(v)) studio[id] = stringRecord(v);
+    }
     out.studio = studio;
   }
   if (isRecord(value.teikan)) {

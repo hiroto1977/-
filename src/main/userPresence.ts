@@ -369,6 +369,17 @@ function keyLabel(k: string): string {
 }
 
 /**
+ * **payload として受けてよい形か** (T-188)。原始値・配列・素のオブジェクト (`Object.prototype` か `null` が
+ * 原型) だけ。IPC の構造化複製は型付き配列・`Map`・`Set`・`Date` なども運べるが、どの action もそれを
+ * 欄の入れ物としては読まない。**キーを数え上げる処理 (`for…in` / `Object.keys`) は、これを通してから**。
+ */
+export function isPlainPayload(payload: unknown): boolean {
+  if (payload === null || typeof payload !== 'object' || Array.isArray(payload)) return true;
+  const proto = Object.getPrototypeOf(payload);
+  return proto === Object.prototype || proto === null;
+}
+
+/**
  * **欄が多すぎる payload か** (T-156)。確認のダイアログが値を見せるのは先頭 `MAX_FIELDS_SHOWN` 欄だけで、
  * 先頭に無害な欄を 24 個置けば、後ろの本物の欄 (`text` など) の値が確認に出ない。正規の操作に 24 欄を
  * 超える物は無いので、超えたら見せ方を工夫せず断る (fail closed)。数えるのは固定個数まで。
@@ -376,6 +387,9 @@ function keyLabel(k: string): string {
 export function payloadTooWide(payload: unknown): boolean {
   // null は `for…in` が 0 回で終わるので別に弾かない。配列と文字列などは欄を持つ物ではないので数えない。
   if (typeof payload !== 'object' || Array.isArray(payload)) return false;
+  // 型付き配列・Map・Date などは `for…in` の前に断る (T-188): V8 の `for…in` は 25 欄で打ち切る前に
+  // **全キーを列挙する**ので、2,000 万要素の Uint8Array 1 つで 7.6 秒・RSS 1 GB (実測)。
+  if (!isPlainPayload(payload)) return true;
   let n = 0;
   for (const k in payload as Record<string, unknown>) {
     if (!Object.hasOwn(payload as object, k)) continue;
