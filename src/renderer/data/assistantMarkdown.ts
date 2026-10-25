@@ -146,8 +146,16 @@ export const MAX_RENDER_WEIGHT = 20_000;
 
 /** ブロック 1 つが描く要素の数の目安 (自分 1 + 子の数)。 */
 export function blockWeight(b: Block): number {
-  if (b.type === 'list') return 1 + b.items.length;
-  if (b.type === 'table') return 1 + b.headers.length + b.rows.reduce((n, r) => n + r.length, 0);
+  // インライン記法が作る要素 (`**…**` / `` `…` ``) も 1 つずつ数える (T-196): 段落・見出し・項目・セルの中の
+  // 記法の数が天井の外だと、`` `a`x の繰り返し `` 10 万字が重さ 2 で通り、約 5 万の DOM 要素になった (実測)。
+  // 数えるのは**要素になる断片だけ** (地の文は 1 つの文字列ノードで、これまでの重さを変えない)。
+  const styled = (c: InlineToken[]): number => c.filter((t) => t.bold === true || t.code === true).length;
+  if (b.type === 'heading' || b.type === 'paragraph') return 1 + styled(b.spans);
+  if (b.type === 'list') return 1 + b.items.length + b.items.reduce((n, item) => n + styled(item), 0);
+  if (b.type === 'table') {
+    const cells = b.rows.reduce((n, r) => n + r.length + r.reduce((m, c) => m + styled(c), 0), 0);
+    return 1 + b.headers.length + b.headers.reduce((n, c) => n + styled(c), 0) + cells;
+  }
   return 1;
 }
 

@@ -7,6 +7,7 @@ import {
   checkWriteFields,
   describeWriteFieldFailure,
 } from '../writeFieldLimits';
+import { pathSegment } from './pathSegment';
 
 /**
  * **Cloudflare の書き込み 2 経路 (`create-dns-record` / `purge-cache`) —— 両ビルドが同じ関数を通る**
@@ -93,7 +94,7 @@ export function checkDnsRecord(input: CloudflareDnsFields): CheckedDnsRecord {
 }
 
 export function cloudflareDnsRecordsPath(record: CheckedDnsRecord): string {
-  return `/zones/${encodeURIComponent(record.zoneId)}/dns_records`;
+  return `/zones/${pathSegment(record.zoneId)}/dns_records`;
 }
 
 /** 要求の組み立て。両ビルドがこれを送る。 */
@@ -169,7 +170,7 @@ export function checkPurge(input: CloudflarePurgeFields): CheckedPurge {
 }
 
 export function cloudflarePurgePath(purge: CheckedPurge): string {
-  return `/zones/${encodeURIComponent(purge.zoneId)}/purge_cache`;
+  return `/zones/${pathSegment(purge.zoneId)}/purge_cache`;
 }
 
 /** 要求の組み立て。両ビルドがこれを送る。 */

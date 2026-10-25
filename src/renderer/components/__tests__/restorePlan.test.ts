@@ -16,6 +16,7 @@ import { _resetRecordStoreForTests, getRecordStore, type StoredRecord } from '..
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { SALES_COLLECTION } from '../../data/sales';
 import { serializeBackup } from '../../data/backup';
+import { PARAMETER_OVERRIDES_COLLECTION } from '../../data/parameterOverrides';
 import { settleUntil, waitForText } from '../../__tests__/jsdomWait';
 
 let container: HTMLDivElement;
@@ -218,5 +219,50 @@ describe('バックアップの復元 — 何が足され・残り・消える�
     await waitForText(text, '1 件のレコードを復元しました（既存データは置換。消えた 1 件 = バックアップに無い 1 件 + この端末の方が新しかった 0 件）');
     expect(await getRecordStore().get(local.id)).toBeNull();
     expect(await getRecordStore().count(SALES_COLLECTION)).toBe(1);
+  });
+
+  /**
+   * 数値パラメータ (法定税率ほか) の上書きが入るマージ復元は確認する (threat: T-186)。
+   * 以前のマージは確認を出さず、細工した控えが標準税率などの上書きを黙って入れられた
+   * (TaxPage・書類スタジオは上書きをそのまま計算に使う)。
+   */
+  const OVERRIDE: StoredRecord = {
+    id: 'override-1',
+    collection: PARAMETER_OVERRIDES_COLLECTION,
+    createdAt: 1,
+    updatedAt: 1,
+    data: { values: { 'tax.consumptionStandardRate': 0.25 } },
+  };
+
+  it('★ 数値パラメータの上書きが入るマージは確認を出し、断れば何も書かない (threat: T-186)', async () => {
+    const backup = await serializeBackup([OVERRIDE, FROM_BACKUP]);
+    const confirmSpy = vi.fn((_message?: string) => false);
+    window.confirm = confirmSpy;
+    await mount();
+    await chooseFile(backup, 'overrides.json');
+    await settleUntil(() => confirmSpy.mock.calls.length >= 1, '数値パラメータの確認が呼ばれる');
+    const message = String(confirmSpy.mock.calls[0]?.[0]);
+    expect(message).toContain('数値パラメータ（税率・しきい値など、計算に使う数字）の上書きが 1 件入ります');
+    expect(await getRecordStore().count(PARAMETER_OVERRIDES_COLLECTION)).toBe(0);
+    expect(await getRecordStore().count(SALES_COLLECTION)).toBe(0);
+  });
+
+  it('対照: 確認で OK すれば入り、結果の文が上書きを含むと言う (threat: T-186)', async () => {
+    const backup = await serializeBackup([OVERRIDE, FROM_BACKUP]);
+    window.confirm = vi.fn((_message?: string) => true);
+    await mount();
+    await chooseFile(backup, 'overrides-ok.json');
+    await waitForText(text, '数値パラメータの上書き 1 件を含みます');
+    expect(await getRecordStore().count(PARAMETER_OVERRIDES_COLLECTION)).toBe(1);
+  });
+
+  it('対照: 数値パラメータを含まないマージは今までどおり確認なしで通る', async () => {
+    const backup = await serializeBackup([FROM_BACKUP]);
+    const confirmSpy = vi.fn((_message?: string) => false);
+    window.confirm = confirmSpy;
+    await mount();
+    await chooseFile(backup, 'plain.json');
+    await waitForText(text, '1 件のレコードを復元しました（マージ: 追加 1');
+    expect(confirmSpy).not.toHaveBeenCalled();
   });
 });

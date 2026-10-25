@@ -123,7 +123,8 @@
     "audit:pinned-action-shas": "node scripts/audit-pinned-action-shas.cjs --self-test && node scripts/audit-pinned-action-shas.cjs",
     "audit:threat-watch": "node scripts/threat-watch.cjs --self-test && node scripts/threat-watch.cjs",
     "audit:crown-jewels": "node scripts/crown-jewels.cjs --self-test && node scripts/crown-jewels.cjs",
-    "audit:security-posture": "node scripts/security-posture.cjs --self-test && node scripts/security-posture.cjs"
+    "audit:security-posture": "node scripts/security-posture.cjs --self-test && node scripts/security-posture.cjs",
+    "audit:language-coverage": "node scripts/language-coverage.cjs --self-test && node scripts/language-coverage.cjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

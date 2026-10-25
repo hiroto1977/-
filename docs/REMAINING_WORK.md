@@ -31912,7 +31912,7 @@ src/shared/ のモジュール                                        138
 「読んだ結果」か `未読 (…)` のどちらかで、読んでいない物に「対称だろう」とは書かない。
 
 <!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/shared-judgement-census.cjs。npm run lint:shared-judgement は check だけ) -->
-shared **158** モジュール / 両ビルドが import **82** / うち否定で答えられる **42**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
+shared **159** モジュール / 両ビルドが import **83** / うち否定で答えられる **42**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
 
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |

@@ -148,6 +148,8 @@ describe('復元は、同じ画面の隣の欄に届く', () => {
 
   it('★ マージ復元でも届く (置換だけの直しにしない)', async () => {
     const local = await getRecordStore().insert(PARAMETER_OVERRIDES_COLLECTION, { values: { [PID]: 0.05 } });
+    // 数値パラメータの上書きが入るマージは確認が出る (threat: T-186)。ここでは受け入れて届き方を見る。
+    window.confirm = vi.fn(() => true);
     await mountBoth();
     await focusParameter();
     expect(shownValue()).toBe('5');

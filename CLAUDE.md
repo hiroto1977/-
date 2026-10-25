@@ -1144,6 +1144,13 @@ npm run audit:security-posture  # **「次はどこを狩るか」を台帳か�
 npm run audit:crown-jewels  # **確率に依らない守り**(2026-10-23 · T-169)。守る物 5 つ(security/crown-jewels.json)ごとに
                          #   防ぐ・封じ込める・気付く・戻すの 4 層が別々の強制物で揃うかを見る。毎日の dependency-audit が同じ測定を載せる。
                          #   判定は src/shared/__tests__/crownJewels.test.ts が npm test で見る。docs/ZERO_TRUST.md §2.9
+npm run audit:language-coverage  # **見張りが無い言語・依存の生態系を作らない**(2026-10-25 · T-187)。『すべての言語の弱点を先回りで探す』
+                         #   ことは誰にもできないので、**今在る**言語・起動子 (MCP の npx / uvx)・依存の生態系を追跡している実物から導き、
+                         #   台帳 (security/language-coverage.json) の見張る強制物と突き合わせる。新しい言語・定義ファイルが入ると
+                         #   落ち、`ifAdded` の足す守りを名指しする (検知と対策の入口が同時に出る)。起動子だけで入っている言語
+                         #   (python = uvx) はソースが入った瞬間に落ちる。毎日の dependency-audit が同じ測定を載せる。
+                         #   判定は src/shared/__tests__/languageCoverage.test.ts が npm test で見る (CI で PR を止める)。
+                         #   限界: 弱点そのものを見つけて直すのは狩りと回帰検査の仕事で、これは網の穴を作らないところまで。
 npm run audit:verify-keep-going  # **`verify:all` を止まらずに全ゲート回し、落ちた物を一度に挙げる**
                          #   (定期点検の道具 11 本目。CI では走らせない)。`verify:all` は `&&` 連結なので
                          #   最初に落ちたゲートで止まり、直して回し直すたびに次の 1 件が見える ——
@@ -1588,8 +1595,8 @@ npm run lint:zero-fold     # 「割れない値を 0 に倒す」箇所の**母�
                            #   母集団が 26 ファイル (実測 106) と 4 倍ずれていた
 npm run lint:shared-judgement # 「述語は共有したが、no と言われたあとの動作が両ビルドで
                            #   違う」の**母集団**を数え、`docs/REMAINING_WORK.md` の
-                           #   生成ブロックと突き合わせる (shared 158 / 両ビルドが
-                           #   import 82 / うち否定で答えられる 42。**この 3 つは
+                           #   生成ブロックと突き合わせる (shared 159 / 両ビルドが
+                           #   import 83 / うち否定で答えられる 42。**この 3 つは
                            #   live metric なので散文だけが古びることはもう無い** ——
                            #   2026-09-15 まで 138 / 44 / 21 と書いたままだった。
                            #   44 / 21 はパス 247 が初めて数えた値で、

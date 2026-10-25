@@ -76,3 +76,33 @@ describe('復元の件数の天井は、全行を描く一覧すべてに在る 
     expect(backupRecordLimitError(rows('mutualfund-holdings', 2_001))).toContain('mutualfund-holdings');
   });
 });
+
+/**
+ * 窓を掛けていなかった 2 つの一覧(コネクタの実行結果・貸借対照表の履歴)も天井と窓を持つ (2026-10-25 · threat: T-201)。
+ * 実 Chromium の実測: コネクタ結果 5,000 行で画面が開くまで 5.7 秒・行を 1 つ消すたび 12.5 秒。
+ */
+describe('復元の件数の天井は、コネクタの実行結果と貸借対照表にも在る (threat: T-201)', () => {
+  it('★ コネクタ実行結果 2,001 件・貸借対照表 501 件で断る (上限ちょうどは通す)', () => {
+    expect(backupRecordLimitError(rows('connector-output', 2_000))).toBeNull();
+    expect(backupRecordLimitError(rows('connector-output', 2_001))).toContain('connector-output');
+    expect(backupRecordLimitError(rows('balance-sheet', 500))).toBeNull();
+    expect(backupRecordLimitError(rows('balance-sheet', 501))).toContain('balance-sheet');
+  });
+
+  it('★ 2 つとも形の表に実在する collection 名である (綴り違いで天井が効かないことを防ぐ)', () => {
+    for (const c of ['connector-output', 'balance-sheet']) {
+      expect(Object.hasOwn(COLLECTION_SHAPES, c), c).toBe(true);
+    }
+  });
+
+  it('★ 2 画面とも全行を描く素の map を持たず、窓を通す', () => {
+    const connectors = stripComments(readOriginalSource(path.join(__dirname, '../../pages/ConnectorsPage.tsx')));
+    expect(connectors).toContain('useRowWindow(storedRows)');
+    expect(connectors).toContain('storedWindow.visible.map');
+    expect(connectors).not.toMatch(/\{storedRows\.map\(/);
+    const kpi = stripComments(readOriginalSource(path.join(__dirname, '../../pages/KpiPage.tsx')));
+    expect(kpi).toContain('useRowWindow(bsRows)');
+    expect(kpi).toContain('bsWindow.visible.map');
+    expect(kpi).not.toMatch(/\{bsRows\.map\(/);
+  });
+});

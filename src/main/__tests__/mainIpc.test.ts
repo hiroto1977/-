@@ -1300,6 +1300,26 @@ describe('本人確認の門 — 画面から独立した確認が通らなけ�
     expect(presenceRequests).toHaveLength(1);
   });
 
+  it('★ 型付き配列・Map・Date の payload は種類を問わず断る (for…in が全キーを先に列挙して主プロセスが固まる・threat: T-188)', async () => {
+    const big = new Uint8Array(5_000_000); // 直す前は 5,000,000 要素で約 0.8 秒・2,000 万で 7.6 秒 / RSS 1 GB (実測)
+    for (const [service, action] of [['github', 'create-issue'], ['assistant', 'providers']] as const) {
+      const t = Date.now();
+      const r = await invoke('action:invoke', service, action, big);
+      expect(r).toEqual({ ok: false, code: 'action_failed', message: '送る内容の形が正しくないため断りました。' });
+      expect(Date.now() - t).toBeLessThan(200);
+    }
+    for (const odd of [new Map([['a', 1]]), new Date(0), new Set([1])]) {
+      expect(await invoke('action:invoke', 'github', 'create-issue', odd)).toMatchObject({ ok: false, code: 'action_failed' });
+    }
+    expect(presenceRequests).toEqual([]);
+    expect(actionCalls).toEqual([]);
+    // 素のオブジェクトと原型の無いオブジェクト・配列・undefined は今までどおり確認へ進む。
+    await invoke('action:invoke', 'github', 'create-issue', Object.assign(Object.create(null), { title: 'T' }));
+    await invoke('action:invoke', 'github', 'create-issue', [1]);
+    await invoke('action:invoke', 'github', 'create-issue', undefined);
+    expect(presenceRequests).toHaveLength(3);
+  });
+
   it('★ 読み取りの段階は欄が多くても断らない (確認を出さないので隠す先が無い・欄の幅の門は書き込み側だけ・threat: T-156)', async () => {
     const wide = Object.fromEntries(Array.from({ length: 60 }, (_, i) => [`d${i}`, 'ok']));
     const r = await invoke('action:invoke', 'assistant', 'providers', wide);

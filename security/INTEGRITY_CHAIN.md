@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 354
+- ブロック数: 356
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `a2e7ac9714738a290f21c38c007ae4bd65e4c09fb99f898aaea4d86bd3a2f345`
+- 末尾(tip)ハッシュ: `90938e774189f4a970c81ab30e32485a53ce61679152ff7d35f5e65d6c019a1c`
 - 保護対象: 125 ファイル
 
 ## ブロック
@@ -367,6 +367,8 @@
 | 351 | `47a427ea6d21cd0a` | `e2d67572484aab48` | `6c9b4774a9f6e1ad` | update exportPaths.ts,main.ts,userPresence.ts,safeFilename.ts |
 | 352 | `b4e41d7921221d0b` | `6c9b4774a9f6e1ad` | `0312b04293540216` | update userPresence.ts |
 | 353 | `3b8c4827414a006e` | `0312b04293540216` | `a2e7ac9714738a29` | update main.ts,userPresence.ts |
+| 354 | `e5d45749d55a2a2d` | `a2e7ac9714738a29` | `57db21a532892935` | update main.ts,userPresence.ts,assistantMarkdown.ts,privateTarget.ts |
+| 355 | `03b5db1cd8a8f8c8` | `57db21a532892935` | `90938e774189f4a9` | update assistantMarkdown.ts |
 
 ## 保護対象ファイル
 

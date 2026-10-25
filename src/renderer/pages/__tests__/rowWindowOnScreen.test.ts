@@ -19,6 +19,8 @@ import { SalesPage } from '../SalesPage';
 import { KpiPage } from '../KpiPage';
 import { SALES_COLLECTION } from '../../data/sales';
 import { KPI_ACTUALS_COLLECTION } from '../../data/kpiActuals';
+import { CONNECTOR_OUTPUT_COLLECTION } from '../../data/connectorExecution';
+import { ConnectorsPage } from '../ConnectorsPage';
 import { ROW_WINDOW_STEP } from '../../data/rowWindow';
 import { getRecordStore } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
@@ -181,5 +183,25 @@ describe('窓は逃げ口を閉じない / 配線 (パス 538)', () => {
       expect(src, f).toContain('<RowWindowMore');
       expect(src, f).toMatch(/\.visible\.map\(/);
     }
+  });
+});
+
+describe('コネクタの実行結果の一覧も窓を通す (threat: T-201)', () => {
+  it('★ 窓を超える行数を入れても描くのは窓の行数だけで、「さらに表示」で全件に届く', async () => {
+    const n = ROW_WINDOW_STEP + 30;
+    await getRecordStore().insertMany(
+      CONNECTOR_OUTPUT_COLLECTION,
+      Array.from({ length: n }, (_, i) => ({ connectorId: 'c', key: `k${i}`, payload: {}, at: '2026-04-01T00:00:00Z' })),
+    );
+    root = createRoot(container);
+    const r = root;
+    await act(async () => {
+      r.render(createElement(ConnectorsPage as ComponentType));
+    });
+    await waitForElement(() => container.querySelector('[data-connector-output-row]'), '実行結果の行');
+    const rowsNow = (): number => container.querySelectorAll('[data-connector-output-row]').length;
+    expect(rowsNow()).toBe(ROW_WINDOW_STEP);
+    await clickMore();
+    expect(rowsNow()).toBe(n);
   });
 });

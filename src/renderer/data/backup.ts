@@ -316,9 +316,18 @@ export interface RestorePlan {
   readonly duplicateIds: number;
   /** 置換で失う (元に戻せない) 件数 = localOnly + newerLocal + unusableLocal + collectionClash。マージでは 0。 */
   readonly lost: number;
+  /**
+   * 実際に書く物のうち、数値パラメータ (法定税率・しきい値など、計算に使う数字) の上書きの件数
+   * (threat: T-186)。これは**画面の計算と書類の検査の入力**で、売上の行とは意味が違う ——
+   * 細工した控えをマージ復元させると、確認なしに標準税率などを書き換えられた (実測は偽の保管層)。
+   */
+  readonly parameterOverrides: number;
   /** 実際に書く物 —— マージでは newerLocal を除き、置換では全部。 */
   readonly toImport: readonly StoredRecord[];
 }
+
+/** 数値パラメータの上書きの collection 名 (`parameterOverrides.ts` の `PARAMETER_OVERRIDES_COLLECTION` と同じ。検査が結ぶ)。 */
+export const PARAMETER_OVERRIDES_COLLECTION_NAME = 'parameter-overrides';
 
 export function planRestore(
   existing: readonly RestoreEnvelope[],
@@ -382,7 +391,9 @@ export function planRestore(
     mode, exportedAt,
     incoming: incoming.length, existing: existing.length, dropped: incoming.length - valid.length,
     duplicateIds: valid.length - usable.length,
-    added, overwritten, newerLocal, localOnly, unusableLocal, collectionClash, lost, toImport,
+    added, overwritten, newerLocal, localOnly, unusableLocal, collectionClash, lost,
+    parameterOverrides: toImport.filter((r) => r.collection === PARAMETER_OVERRIDES_COLLECTION_NAME).length,
+    toImport,
   };
 }
 
@@ -408,6 +419,22 @@ export function exportedAtLabel(exportedAt: string | null): string {
  *   「取り込めない件数」と「その id が消えること」を別々に述べる。
  *   取り込めない物が 0 件なら文面は 1 字も変わらない。
  */
+/**
+ * 数値パラメータの上書きが入るときの注意 (threat: T-186)。入らなければ null。
+ * マージは確認を出さない操作だったので、これが入るときだけ確認を出す。置換の確認にも同じ文を足す。
+ */
+export function parameterOverrideNotice(plan: RestorePlan): string | null {
+  if (!(plan.parameterOverrides > 0)) return null;
+  return `数値パラメータ（税率・しきい値など、計算に使う数字）の上書きが ${plan.parameterOverrides} 件入ります。入ると、画面の計算と書類の検査に使う値がバックアップの値に変わります。心当たりが無ければ取り消してください。`;
+}
+
+/** マージ復元の確認文。数値パラメータが入らなければ null (今までどおり確認しない)。 */
+export function mergeRestoreConfirmMessage(plan: RestorePlan): string | null {
+  const notice = parameterOverrideNotice(plan);
+  if (plan.mode !== 'merge' || notice === null) return null;
+  return [notice, `バックアップ: ${exportedAtLabel(plan.exportedAt)}・${plan.incoming} 件`, 'よろしいですか？'].join('\n');
+}
+
 export function replaceRestoreConfirmMessage(plan: RestorePlan): string {
   const reasons = [
     `バックアップに無い ${plan.localOnly} 件`,
@@ -426,6 +453,7 @@ export function replaceRestoreConfirmMessage(plan: RestorePlan): string {
     '既存の業務データを全て削除してから復元します。',
     `バックアップ: ${exportedAtLabel(plan.exportedAt)}・${plan.incoming} 件${unusable}`,
     `この端末: ${plan.existing} 件 —— ${loss}`,
+    ...(parameterOverrideNotice(plan) === null ? [] : [parameterOverrideNotice(plan) as string]),
     'よろしいですか？',
   ].join('\n');
 }
@@ -473,7 +501,8 @@ export function restoreResultMessage(plan: RestorePlan, imported: number, droppe
     plan.mode === 'replace'
       ? `既存データは置換。消えた ${plan.lost} 件 = バックアップに無い ${plan.localOnly} 件 + この端末の方が新しかった ${plan.newerLocal} 件${unusable}${clash}`
       : `マージ: 追加 ${plan.added}・更新 ${plan.overwritten}・この端末の方が新しい ${plan.newerLocal} 件はそのまま`;
-  return `${importedLabel}のレコードを復元しました（${detail}）。${droppedNote}再読み込みで反映されます。`;
+  const overrides = plan.parameterOverrides > 0 ? `数値パラメータの上書き ${plan.parameterOverrides} 件を含みます。` : '';
+  return `${importedLabel}のレコードを復元しました（${detail}）。${droppedNote}${overrides}再読み込みで反映されます。`;
 }
 
 /**

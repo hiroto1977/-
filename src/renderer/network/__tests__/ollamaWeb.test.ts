@@ -2125,4 +2125,23 @@ describe('案内コマンドの origin はシェルに貼ってよい形だけ (
       expect(originsSetupSteps(o)[0]?.command).toContain(o);
     }
   });
+
+describe('chatOllama — 見えない指示 (Unicode Tag 文字) を送らない (threat: T-193)', () => {
+  it('★ prompt と system の Tag 文字は要求に残らない・Tag 文字だけなら空として断る', async () => {
+    const tag = (t: string): string => [...t].map((c) => String.fromCodePoint(0xe0000 + c.charCodeAt(0))).join('');
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(JSON.stringify({ message: { role: 'assistant', content: 'ok' } }), { status: 200, headers: { 'content-type': 'application/json' } }),
+    );
+    const out = await chatOllama(
+      { endpoint: 'http://127.0.0.1:11434', model: 'llama3.2', prompt: `hi${tag('EVIL')}`, system: `sys${tag('EVIL')}` },
+      fetchMock,
+      'example.com',
+    );
+    expect(out.ok).toBe(true);
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
+    expect(JSON.stringify(body.messages)).toBe(JSON.stringify([{ role: 'system', content: 'sys' }, { role: 'user', content: 'hi' }]));
+    const empty = await chatOllama({ endpoint: 'http://127.0.0.1:11434', model: 'llama3.2', prompt: tag('ONLY') }, fetchMock, 'example.com');
+    expect(empty).toMatchObject({ ok: false, kind: 'empty-prompt' });
+  });
+});
 });

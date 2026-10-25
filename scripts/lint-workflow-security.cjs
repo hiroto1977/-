@@ -284,8 +284,18 @@ function localUsesProblem(ref, names) {
 const LOADER_ENV =
   /\b(NODE_OPTIONS|LD_PRELOAD|LD_LIBRARY_PATH|DYLD_INSERT_LIBRARIES|BASH_ENV|NODE_PATH|PYTHONPATH|PYTHONSTARTUP)\s*[=:]\s*(.*)$/;
 
+/**
+ * 取得元・通信経路・証明書の検証を差し替える環境変数 (T-198 · 2026-10-25 の監査役の指摘)。`npm ci` や
+ * electron-builder の取得を別のホストへ誘導でき、TLS の検証も外せる。コードは走らないので上の `LOADER_ENV` には
+ * 入れていなかった。実物の workflow・script はどれも使っていない (実測 0 件)。
+ */
+const SOURCE_ENV =
+  /\b(HTTPS?_PROXY|ALL_PROXY|NODE_EXTRA_CA_CERTS|NODE_TLS_REJECT_UNAUTHORIZED|npm_config_[a-z_]*registry|ELECTRON_MIRROR|ELECTRON_CUSTOM_DIR|ELECTRON_BUILDER_BINARIES_MIRROR)\s*[=:]/i;
+
 /** 1 行 (注記を落とした後) の環境変数の問題。無ければ `null`。 */
 function loaderEnvProblem(line) {
+  const src = SOURCE_ENV.exec(line);
+  if (src) return `${src[1]} を設定している — 依存・バイナリの取得元や TLS の検証を差し替えられる`;
   const m = LOADER_ENV.exec(line);
   if (!m) return null;
   if (m[1] === 'NODE_OPTIONS' && /^["']?--max-old-space-size=\d+["']?\s*$/.test(m[2])) return null;
@@ -455,6 +465,89 @@ function yamlParseProblem(name, text) {
  * 動かず、実物では今その項目が使用中なので、**production では一度も通らない道**
  * だった (2026-08-25 の実測: この枝を潰しても本番スキャンも self-test も鳴らない)。
  */
+/**
+ * **二重引用符つき文字列のエスケープで綴りを隠さない** (2026-10-25 · T-197)。
+ *
+ * この門の規則は注記を剥いた**生のテキスト**を正規表現で読む。YAML の二重引用符つき文字列は `\xHH` / `\uHHHH` /
+ * `\UHHHHHHHH` / `\N` ほかのエスケープと、行末の `\` による行継続を認め、js-yaml (GitHub Actions と同じ読み)
+ * は `"pull_request_\x74arget"` を鍵 `pull_request_target` と読む —— 生のテキストには `pull_request_target` の
+ * 並びが 1 度も現れないので、`pull_request_target` / `workflow_run` / `issue_comment` の禁止も、`run:` 本体の
+ * `${{ }}` 注入・遠隔コード実行・GITHUB_ENV の規則も**同時に素通り**した (実測: `"pull_request_\x74arget"` の
+ * workflow と `"r\x75n":` のステップが、plain な対照では exit 1 の同じ内容で exit 0)。
+ * 綴りごとに規則を足す代わりに、**綴りを隠せる仕組みそのもの**を断る: 文字を作り出すエスケープは使わせない。
+ * 許すのは `\"` `\\` `\n` `\t` `\r` `\/` だけ (文字を組み立てられない)。ブロック記法 (`|` / `>`) の本文には
+ * エスケープが無いので読み飛ばす。単一引用符・素のスカラ・注記の中も対象外。
+ */
+function escapedSpellingProblems(name, text) {
+  const ALLOWED = '"\\ntr/';
+  const lines = text.split('\n');
+  const problems = [];
+  let inDq = false;
+  let blockCol = -1; // ブロック記法の本文は、鍵の桁より深い行
+  const flag = (lineNo, esc) =>
+    problems.push({
+      file: `${name}:${lineNo}`,
+      why:
+        `二重引用符つき文字列のエスケープ ${esc} — 綴りを作り出せるので、行単位の規則 (pull_request_target・run: の本文ほか) が読めなくなる。` +
+        'workflow では `\\"` `\\\\` `\\n` `\\t` `\\r` `\\/` 以外のエスケープと行継続を使わず、平文で書くこと',
+    });
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (!inDq && blockCol >= 0) {
+      if (line.trim() === '') continue;
+      const ind = /^\s*/.exec(line)[0].length;
+      if (ind > blockCol) continue; // ブロック記法の本文
+      blockCol = -1;
+    }
+    let j = 0;
+    while (j < line.length) {
+      const c = line[j];
+      if (inDq) {
+        if (c === '\\') {
+          const n = line[j + 1];
+          if (n === undefined) flag(i + 1, '`\\` + 改行 (行継続)');
+          else if (!ALLOWED.includes(n)) flag(i + 1, `\`\\${n}\``);
+          j += 2;
+          continue;
+        }
+        if (c === '"') inDq = false;
+        j++;
+        continue;
+      }
+      if (c === '#' && (j === 0 || /\s/.test(line[j - 1]))) break; // 注記
+      const prev = line.slice(0, j).trimEnd();
+      const startsToken = prev === '' || /[:\-,[{?]$/.test(prev);
+      if (c === '"' && startsToken) {
+        inDq = true;
+        j++;
+        continue;
+      }
+      if (c === "'" && startsToken) {
+        j++;
+        while (j < line.length) {
+          if (line[j] === "'") {
+            if (line[j + 1] === "'") {
+              j += 2;
+              continue;
+            }
+            break;
+          }
+          j++;
+        }
+        j++;
+        continue;
+      }
+      j++;
+    }
+    if (!inDq) {
+      const code = line.replace(/(^|\s)#.*$/, '$1');
+      const hm = /^(\s*(?:-\s+)*)(?:[^\s:#][^:]*:\s+|)[|>][+\-\d]*\s*$/.exec(code);
+      if (hm) blockCol = hm[1].length;
+    }
+  }
+  return problems;
+}
+
 function check(list, allow = UNPINNED_ALLOW, jobAllow = JOB_PERMISSIONS_ALLOW) {
   const problems = [];
   const seenUnpinned = new Set();
@@ -469,6 +562,7 @@ function check(list, allow = UNPINNED_ALLOW, jobAllow = JOB_PERMISSIONS_ALLOW) {
       });
     }
     problems.push(...structureProblems(name, text));
+    problems.push(...escapedSpellingProblems(name, text));
     /*
      * **宣言していることと、実効の広さは別である。**
      *
@@ -751,6 +845,13 @@ function selfTest() {
     ['pull_request_target を `on: x` の形で落とす (T-085)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\non: pull_request_target\n' }], 1],
     ['pull_request_target を flow 配列で落とす (T-085)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\non: [push, pull_request_target]\n' }], 1],
     ['pull_request_target を引用符つきの鍵で落とす (T-085)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\non:\n  "pull_request_target":\n' }], 1],
+    ['pull_request_target を \\x74 のエスケープで綴りごと隠して落とす (T-197)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\non:\n  "pull_request_\\x74arget":\n' }], 1],
+    ['run の鍵を \\x75 のエスケープで隠して落とす (T-197)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  t:\n    steps:\n      - "r\\x75n": echo hi\n' }], 1],
+    ['行末の \\ による行継続で綴りをつなげて落とす (T-197)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\non:\n  "pull_request_\\\n   target": {}\n' }], 1],
+    ['許す 3 種のエスケープ (\\" と \\n と \\\\) は落とさない (T-197)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\nname: "say \\"hi\\"\\n\\\\"\n' }], 0],
+    ['ブロック記法の本文の \\x は落とさない (T-197)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  t:\n    steps:\n      - run: |\n          printf "\\x41"\n' }], 0],
+    ['取得元を差し替える npm_config_registry を env に書いて落とす (T-198)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  t:\n    env:\n      npm_config_registry: https://evil.example\n' }], 1],
+    ['TLS の検証を外す NODE_TLS_REJECT_UNAUTHORIZED=0 を run に書いて落とす (T-198)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  t:\n    steps:\n      - run: NODE_TLS_REJECT_UNAUTHORIZED=0 npm ci\n' }], 1],
     ['注記の中の pull_request_target は落とさない (T-085)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\n# pull_request_target は使わない\non:\n  push:\n' }], 0],
     ['github-script の script: への ${{ }} 展開を落とす (T-085)', [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: actions/github-script@${'d'.repeat(40)} # v1\n        with:\n          script: |\n            core.info('${'$'}{{ github.event.inputs.x }}')\n` }], 1],
     [
@@ -1000,6 +1101,6 @@ function main() {
   return 1;
 }
 
-module.exports = { yamlParseProblem, structureProblems, GATE_NEUTERING_ALLOW, check, runBlockLines, workflows, localActionFiles, localUsesProblem, loaderEnvProblem, runBodyProblem, scanRelPath, isLocalActionName, jobPermissionBlocks, UNPINNED_ALLOW, JOB_PERMISSIONS_ALLOW, CROSS_CHECK };
+module.exports = { yamlParseProblem, structureProblems, escapedSpellingProblems, GATE_NEUTERING_ALLOW, check, runBlockLines, workflows, localActionFiles, localUsesProblem, loaderEnvProblem, runBodyProblem, scanRelPath, isLocalActionName, jobPermissionBlocks, UNPINNED_ALLOW, JOB_PERMISSIONS_ALLOW, CROSS_CHECK };
 
 if (require.main === module) process.exit(main());

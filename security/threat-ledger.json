@@ -3126,6 +3126,246 @@
         "file": "src/main/__tests__/mainIpc.test.ts",
         "test": "★ クライアント ID を上書きしない認可も、本人確認の門 (egress 段階) を通り、断られたら始めない (threat: T-185)"
       }
+    },
+    {
+      "id": "T-186",
+      "found": "2026-10-25",
+      "foundBy": "赤チームの連鎖 A(2026-10-24)の指摘を、BackupPanel と planRestore を読んで確かめた",
+      "surface": "renderer",
+      "class": "compromised-renderer",
+      "severity": "low",
+      "title": "マージ復元は確認を出さず、細工した控えの数値パラメータ(法定税率ほか)の上書きを黙って入れられた。TaxPage・書類スタジオは上書きをそのまま計算に使う",
+      "status": "mitigated",
+      "fix": "復元の計画が数値パラメータの上書きの件数を数え(RestorePlan.parameterOverrides)、マージでも入るときだけ確認を出す。置換の確認文と結果の文にも同じ件数を述べる。限界: 確認を出すだけで値は検めない(利用者の正当な上書きと区別できない)。書類の検査が標準税率の食い違いを指摘する案は未実装。",
+      "regression": {
+        "file": "src/renderer/components/__tests__/restorePlan.test.ts",
+        "test": "★ 数値パラメータの上書きが入るマージは確認を出し、断れば何も書かない (threat: T-186)"
+      }
+    },
+    {
+      "id": "T-187",
+      "found": "2026-10-25",
+      "foundBy": "利用者の依頼(『すべてのプログラミング言語の脆弱性を見つけ続け、対策も同時に行う仕組み』)を、実物の言語・起動子・依存の生態系を数えて確かめた。初回の測定で windows-batch (launcher/*.bat) が台帳の無い言語として出た",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "新しい言語・依存の生態系が入っても、検査の網が追随したかを誰も見ていなかった。起動子の uvx が Python を『その時の最新』で走らせるのに、言語としては台帳に無かった",
+      "status": "mitigated",
+      "fix": "security/language-coverage.json (今在る言語・生態系・起動子ごとの強制物と、まだ無い言語に足す守り ifAdded) と scripts/language-coverage.cjs。追跡している実物から導き、台帳に無い言語・定義ファイルが入ると npm test が落ちて足す守りを名指しする。起動子だけの言語 (python) はソースが入ると落ちる。毎日の dependency-audit に載せる。限界: 『すべての言語』を先回りで探すものではない。弱点そのものの発見と修正は狩りと回帰検査の仕事。threat-watch の OSV 照会は npm だけ (別の生態系が入った日に落ちて広げさせる)。",
+      "regression": {
+        "file": "src/shared/__tests__/languageCoverage.test.ts",
+        "test": "★ 新しい言語のファイルが入ると落ち、足す守りを名指しする (threat: T-187)"
+      }
+    },
+    {
+      "id": "T-188",
+      "found": "2026-10-25",
+      "foundBy": "利用者の依頼(『先回りしなくて良いから、徹底的に探して』)で、独立した監査役 6 体(main-ipc / renderer / network / ai / supply-chain / 横断)を並行で回し、報告を防御側が自分で再現して確かめた",
+      "surface": "main-ipc",
+      "class": "denial-of-wallet",
+      "severity": "medium",
+      "title": "action:invoke の payload に型付き配列(2,000 万要素)を渡すと、payloadTooWide の for…in が 25 欄で打ち切る前に全キーを列挙し、主プロセスが 7.6 秒固まり RSS が 1 GB 増える(preload は payload を無加工で渡す)",
+      "status": "fixed",
+      "fix": "isPlainPayload(原始値・配列・原型が Object.prototype / null のものだけ)を userPresence.ts に置き、action:invoke の入口で種類を問わず断る。payloadTooWide 自身も for…in の前に同じ判定で守る(fail closed)。 限界: 構造化複製そのものが運ぶ巨大な配列・型付き配列の受信メモリ(IPC の側)は止めていない。",
+      "regression": {
+        "file": "src/main/__tests__/mainIpc.test.ts",
+        "test": "★ 型付き配列・Map・Date の payload は種類を問わず断る (for…in が全キーを先に列挙して主プロセスが固まる・threat: T-188)"
+      }
+    },
+    {
+      "id": "T-189",
+      "found": "2026-10-25",
+      "foundBy": "利用者の依頼(『先回りしなくて良いから、徹底的に探して』)で、独立した監査役 6 体(main-ipc / renderer / network / ai / supply-chain / 横断)を並行で回し、報告を防御側が自分で再現して確かめた",
+      "surface": "renderer",
+      "class": "compromised-renderer",
+      "severity": "low",
+      "title": "書類スタジオの下書きの読みで、保存値の studio に \"__proto__\" 鍵が在ると代入が own 鍵でなく prototype の置換になり、保存していない書式 id の入力が攻撃者の選んだ値で出る",
+      "status": "fixed",
+      "fix": "sanitizeDocstudioStore が \"__proto__\" の鍵を飛ばす。大域の prototype 汚染ではなく、その 1 オブジェクトの置換だけ(実測)。 限界: 文字列キーの要素アクセス 151 か所の走査で実害が出たのはここ 1 件(他の読みは Object.create(null) か own 鍵の判定)。",
+      "regression": {
+        "file": "src/renderer/data/__tests__/docstudioStore.test.ts",
+        "test": "★ studio の \"__proto__\" 鍵は prototype を置き換えない (保存していない書式 id に値が現れない・threat: T-189)"
+      }
+    },
+    {
+      "id": "T-190",
+      "found": "2026-10-25",
+      "foundBy": "利用者の依頼(『先回りしなくて良いから、徹底的に探して』)で、独立した監査役 6 体(main-ipc / renderer / network / ai / supply-chain / 横断)を並行で回し、報告を防御側が自分で再現して確かめた",
+      "surface": "network",
+      "class": "ssrf-and-credential-egress",
+      "severity": "low",
+      "title": "GitHub の owner / repo・WordPress の siteId・Cloudflare の zoneId が \".\" / \"..\" を通し、encodeURIComponent が符号化しないため WHATWG URL が 1 段畳み、同じホスト・同じ Bearer のまま別のパスへ POST が届く(/repos/../user/issues → /user/issues)",
+      "status": "fixed",
+      "fix": "shared/api/pathSegment.ts の pathSegment(. と .. を断り、他は encodeURIComponent)を 5 つのパス組み立てに通す。%2e は %252e に符号化されるので畳まれない。畳んだ先に実在する書き込み口は見つけられていない(硬化)。 限界: 他のサービスの動的部分は入口の正規表現や別の関門で落ちる(2026-10-14 の測定)。関門の無い新しい補間は同じ形で開く。",
+      "regression": {
+        "file": "src/shared/api/__tests__/pathSegment.test.ts",
+        "test": "4 つの書き込みの path 組み立てが . と .. を通さない (実物の関数)"
+      }
+    },
+    {
+      "id": "T-191",
+      "found": "2026-10-25",
+      "foundBy": "利用者の依頼(『先回りしなくて良いから、徹底的に探して』)で、独立した監査役 6 体(main-ipc / renderer / network / ai / supply-chain / 横断)を並行で回し、報告を防御側が自分で再現して確かめた",
+      "surface": "network",
+      "class": "ssrf-and-credential-egress",
+      "severity": "low",
+      "title": "SSRF の遮断表(クライアント側)が、6to4 で下位の群が :: に畳まれた短い形(2002:7f00::1 / 2002:a9fe:: / 2002::)を取り出せず通す。配る Worker の isBlockedIp は遮断しており、「同じレンジ」という注記が成り立っていなかった",
+      "status": "fixed",
+      "fix": "6to4 の取り出しを、2 群目が無い形も 0 として読む形に(2002:H(:H)? の後が : か末尾)。2002:: は 0.0.0.0。公開 v4 を埋め込む 6to4 は止めない。 限界: 到達できるのは safeRemoteImageSrc の盲目の GET だけ(要求を投げる Worker は元から遮断)。Teredo / ISATAP / 100::/64 などは到達が未確認のため足していない。",
+      "regression": {
+        "file": "src/shared/__tests__/privateTargetAliases.test.ts",
+        "test": "★ 6to4 で下位の群が :: に畳まれた形も、埋め込まれた v4 で判定する (threat: T-191)"
+      }
+    },
+    {
+      "id": "T-192",
+      "found": "2026-10-25",
+      "foundBy": "利用者の依頼(『先回りしなくて良いから、徹底的に探して』)で、独立した監査役 6 体(main-ipc / renderer / network / ai / supply-chain / 横断)を並行で回し、報告を防御側が自分で再現して確かめた",
+      "surface": "network",
+      "class": "ssrf-and-credential-egress",
+      "severity": "low",
+      "title": "SSRF の遮断表が hosts の既定の別名 localhost.localdomain / localhost6.localdomain6 と Kubernetes の Service 名(*.svc)を通す(T-009 の残り)",
+      "status": "fixed",
+      "fix": "LOOPBACK_NAMES に 2 つの別名、INTERNAL_TLDS に localdomain / localdomain6 / svc を足す。最終ラベルだけを見るので、近い綴りの公開名は止めない。 限界: DNS が私設帯へ解く任意の名前は名前だけでは判定できない(N-3・huntBacklog)。",
+      "regression": {
+        "file": "src/shared/__tests__/privateTargetAliases.test.ts",
+        "test": "★ RHEL / Fedora 系の hosts の既定の別名・Kubernetes の Service 名を遮断する (threat: T-192)"
+      }
+    },
+    {
+      "id": "T-193",
+      "found": "2026-10-25",
+      "foundBy": "利用者の依頼(『先回りしなくて良いから、徹底的に探して』)で、独立した監査役 6 体(main-ipc / renderer / network / ai / supply-chain / 横断)を並行で回し、報告を防御側が自分で再現して確かめた",
+      "surface": "ai",
+      "class": "ai-automated-attack",
+      "severity": "low",
+      "title": "skills/run-skill(prompt と SKILL.md 本文を system に)と ollama/chat(main とブラウザ版)が、見えない指示(Unicode Tag 文字)を落とさず外部/端末内のモデルへ送る。T-171 は assistant / stocks / business / emotions だけを直していた",
+      "status": "fixed",
+      "fix": "stripSmuggledChars を skills(prompt と本文)・ollama main(prompt と system)・ollamaWeb(prompt と system)に通す。落とした結果が空なら「無い」と同じに断る。 限界: モデルが Tag 文字を符号として読むかはモデル依存。異体字選択子 U+FE00–FE0E や Hangul フィラーなど網の外の見えない字は落としていない(huntBacklog)。",
+      "regression": {
+        "file": "src/main/clients/__tests__/chatInputHardening.test.ts",
+        "test": "★ prompt と system の Tag 文字は要求の本文に残らない (threat: T-193)"
+      }
+    },
+    {
+      "id": "T-194",
+      "found": "2026-10-25",
+      "foundBy": "利用者の依頼(『先回りしなくて良いから、徹底的に探して』)で、独立した監査役 6 体(main-ipc / renderer / network / ai / supply-chain / 横断)を並行で回し、報告を防御側が自分で再現して確かめた",
+      "surface": "ai",
+      "class": "compromised-renderer",
+      "severity": "low",
+      "title": "main の ollama/chat が相手の total_duration と本文の形を検めない: \"abc\" で NaN・1e300 で 1e+294 が「応答 (…ms)」として画面に出て、本文が null だと V8 の生の例外文が出る(ブラウザ版は自分で時間を測り null を許容していた)",
+      "status": "fixed",
+      "fix": "durationMsOf(有限で正の数だけ・他は 0)を通し、JSON の結果が物でなければ「ollama returned non-JSON」で断る。 限界: 相手は 127.0.0.1 で応答するプロセスなので到達は弱い(主に誤表示の硬化)。",
+      "regression": {
+        "file": "src/main/clients/__tests__/chatInputHardening.test.ts",
+        "test": "★ total_duration は有限で正の数だけを採る (NaN / 巨大 / 負 / 文字列は 0・threat: T-194)"
+      }
+    },
+    {
+      "id": "T-195",
+      "found": "2026-10-25",
+      "foundBy": "利用者の依頼(『先回りしなくて良いから、徹底的に探して』)で、独立した監査役 6 体(main-ipc / renderer / network / ai / supply-chain / 横断)を並行で回し、報告を防御側が自分で再現して確かめた",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "medium",
+      "title": "デスクトップ版の CSP に worker-src が無く script-src 'self' へ落ち、file: の任意の場所の .js が Worker / SharedWorker として実行できる(実 Electron 45 で再現: dist の外の /tmp の .js が走り、Worker の中から file:///etc/passwd を fetch できる)。T-140 の file:// 門は Worker のスクリプト読み込みを覆っていなかった",
+      "status": "fixed",
+      "fix": "src/renderer/index.html の CSP に worker-src 'none' を足す(デスクトップ版は Worker を使わない。ブラウザ版の CSP は inline-html.cjs の buildCsp が別に持つ)。実 Electron で Worker・SharedWorker・Service Worker 登録のすべてが止まることを確認。 限界: 攻撃者が JS として解釈できる内容のファイルを既知のパスに置く道は確認していない(そのため重さは medium に留めた)。実 Electron の再現は監査役の手順(scratchpad)で、CI では走らない。",
+      "regression": {
+        "file": "src/shared/__tests__/shippedCsp.test.ts",
+        "test": "worker-src: ブラウザ版だけが self (Service Worker を登録する側)・デスクトップ版は none (threat: T-195)"
+      }
+    },
+    {
+      "id": "T-196",
+      "found": "2026-10-25",
+      "foundBy": "利用者の依頼(『先回りしなくて良いから、徹底的に探して』)で、独立した監査役 6 体(main-ipc / renderer / network / ai / supply-chain / 横断)を並行で回し、報告を防御側が自分で再現して確かめた",
+      "surface": "ai",
+      "class": "denial-of-wallet",
+      "severity": "low",
+      "title": "描画の重さの天井 MAX_RENDER_WEIGHT がインライン記法(**…** / `…`)の要素数を数えず、`a`x の繰り返し 10 万字の返答 1 件が重さ 2 で通り約 5 万の DOM 要素になる(T-156 の縁)。履歴 50 件で最悪 約 250 万要素",
+      "status": "fixed",
+      "fix": "blockWeight が段落・見出し・項目・セルの中の太字 / コードの断片(要素になる物だけ)を数える。地の文だけの返答の重さは変えない。 限界: 実ブラウザでの描画時間・メモリは未測定(要素数のみ)。敵対的な互換 API を利用者が設定した場合に限る。",
+      "regression": {
+        "file": "src/renderer/data/__tests__/assistantMarkdown.test.ts",
+        "test": "★ インライン記法の要素も重さに数える: `a` を 5 万個並べた 10 万字の段落は打ち切る (threat: T-196)"
+      }
+    },
+    {
+      "id": "T-197",
+      "found": "2026-10-25",
+      "foundBy": "利用者の依頼(『先回りしなくて良いから、徹底的に探して』)で回した独立した監査役 6 体のうち supply-chain の報告を、防御側が実物のゲートに通して再現した",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "high",
+      "title": "lint:workflow-security が生のテキストを正規表現で読むため、YAML の二重引用符つき文字列のエスケープ(\\x74 ほか)で綴りを隠すと、js-yaml が pull_request_target と読む workflow と run: 本体の ${{ }} 注入が両方とも素通りする(平文の対照は exit 1・隠すと exit 0 を実物の check() で再現)",
+      "status": "fixed",
+      "fix": "escapedSpellingProblems: 二重引用符つき文字列の中の、文字を作り出すエスケープ(\\x \\u \\U \\N ほか)と行末の \\ による行継続を断る。許すのは \\\" \\\\ \\n \\t \\r \\/ だけ。エスケープが意味を持つのは二重引用符の中だけなので、ブロック記法(| >)の本文・単一引用符・素のスカラ・注記の中は読み飛ばす。実物の workflow 7 本は 0 件。綴りごとに規則を足す代わりに、綴りを隠せる仕組みそのものを断つ。限界: YAML の他の符号化(タグ・アンカー)は文字を作れないので対象外。",
+      "regression": {
+        "file": "src/shared/__tests__/workflowYamlEscapeSpelling.test.ts",
+        "test": "★ エスケープで綴りごと隠した pull_request_target は落ちる (直す前は 0 件だった)"
+      }
+    },
+    {
+      "id": "T-198",
+      "found": "2026-10-25",
+      "foundBy": "利用者の依頼(『先回りしなくて良いから、徹底的に探して』)で回した独立した監査役 6 体のうち supply-chain の報告を、防御側が実物のゲートに通して再現した",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "workflow の env / run に npm_config_registry・ELECTRON_MIRROR・NODE_EXTRA_CA_CERTS・NODE_TLS_REJECT_UNAUTHORIZED・HTTPS_PROXY などを書いて依存・バイナリの取得元や TLS の検証を差し替えても、LOADER_ENV(コードを走らせる系)に無いので検出されない",
+      "status": "fixed",
+      "fix": "SOURCE_ENV を loaderEnvProblem に足す(実物の workflow・script は使っていない=0 件)。限界: 台帳制ではなく一律で断る(正当な用途が出たら理由つきの許可を足す)。",
+      "regression": {
+        "file": "src/shared/__tests__/workflowYamlEscapeSpelling.test.ts",
+        "test": "★ 取得元・TLS の検証を差し替える環境変数は env にも run にも書けない (threat: T-198)"
+      }
+    },
+    {
+      "id": "T-199",
+      "found": "2026-10-25",
+      "foundBy": "利用者の依頼(『先回りしなくて良いから、徹底的に探して』)で回した独立した監査役 6 体のうち supply-chain の報告を、防御側が実物のゲートに通して再現した",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "electron-builder.json に afterPack / afterSign / publish などビルド時に任意の JS を process.env ごと実行する鍵が足されても、署名鍵を持つ release.yml の Build 段で動くのに、どのゲートも検査も見ていなかった(今日は 0 件)",
+      "status": "fixed",
+      "fix": "electron-builder.json はコードを走らせる・取得元を変える・公開する鍵をどの階層にも持たず、トップレベルの鍵は台帳どおり、を npm test が見る。限界: 到達は electron-builder.json へのマージ済みの変更が前提(CODEOWNERS が見る)。実際に署名鍵が外へ出る送信までは再現していない。",
+      "regression": {
+        "file": "src/shared/__tests__/electronBuilderNoHooks.test.ts",
+        "test": "★ afterPack / afterSign / publish ほかの鍵が、どの階層にも無い"
+      }
+    },
+    {
+      "id": "T-200",
+      "found": "2026-10-25",
+      "foundBy": "利用者の依頼(『先回りしなくて良いから、徹底的に探して』)で回した独立した監査役 6 体のうち supply-chain の報告を、防御側が実物のゲートに通して再現した",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "lint:mcp-servers がパッケージ名と env の鍵の名前しか見ず、既存の MCP サーバに --registry=… などの起動子への旗や NPM_CONFIG_REGISTRY / NODE_OPTIONS / UV_INDEX_URL の env を足しても 0 件(実物の設定を書き換えて 3 形とも再現)。MCP は npx -y / uvx で「その時の最新」を取って資格情報つきで走る",
+      "status": "fixed",
+      "fix": "パッケージ名より前の起動子への旗は -y / --yes だけ許し、取得元・ローダ・TLS の検証を差し替える env の鍵(NODE_OPTIONS・NPM_CONFIG_*・UV_*・PIP_*・HTTPS?_PROXY ほか)を断る。実物の 25 件は 0 件。限界: 版の固定はしない(既出の huntBacklog)。",
+      "regression": {
+        "file": "src/shared/__tests__/mcpLauncherSource.test.ts",
+        "test": "★ パッケージ名の前の --registry=… は落ちる (直す前は 0 件だった)"
+      }
+    },
+    {
+      "id": "T-201",
+      "found": "2026-10-25",
+      "foundBy": "利用者の依頼(『先回りしなくて良いから、徹底的に探して』)で回した独立した監査役 6 体のうち renderer の報告を、防御側が実 Chromium で再現した(コネクタ実行結果 5,000 行で画面が開くまで 5.7 秒・行を 1 つ消すたび 12.5 秒)",
+      "surface": "renderer",
+      "class": "denial-of-wallet",
+      "severity": "medium",
+      "title": "T-141/T-175 の復元の件数の天井・窓が connector-output(コネクタの実行結果)と balance-sheet(貸借対照表の履歴)に掛かっておらず、細工したバックアップをマージ復元させるとコネクタ画面・KPI 画面が全行を描いて固まる。形が正しい行は点検パネルでも消せない",
+      "status": "fixed",
+      "fix": "BACKUP_COLLECTION_RECORD_LIMITS に connector-output 2,000・balance-sheet 500 を足し(超える控えは切らずに全部断る)、ConnectorsPage の実行結果と KpiPage の貸借対照表履歴を useRowWindow + RowWindowMore に通す(隠れた行も『さらに表示』の後なら × で消せる)。限界: 全 collection が天井・窓・最新 1 件のどれかを名乗る構造の census は未整備(huntBacklog)。",
+      "regression": {
+        "file": "src/renderer/data/__tests__/backupRecordLimit.test.ts",
+        "test": "★ コネクタ実行結果 2,001 件・貸借対照表 501 件で断る (上限ちょうどは通す)"
+      }
     }
   ],
   "huntBacklog": [
@@ -3300,9 +3540,69 @@
       "why": "Red-B' 2026-10-24。回帰検査が it.skip / コメントアウトでないこと(threatLedger.test.ts)と、他の AI ツールの指示書(GEMINI.md ほか)の CODEOWNERS は直した。残るのは retry: 間欠の競合は 26/27 で通る。mutation.yml は CI を空にしてこれを避けている。直すなら T-xxx つきの検査ファイルだけ retry 0(vitest は設定ではファイル単位に出来ないので、projects で分けるか、各 describe に retry: 0)。"
     },
     {
+      "surface": "main-ipc",
+      "item": "F2 app:getVersion / secrets:list / secrets:protection / oauth:isSupported に速度の門が無い(T-159 の残り)",
+      "why": "2026-10-25 に監査役が指摘・実測は 1 回 3〜5 ms(1 MiB の保管で)で可用性のみ。throttleMessage を通すと拒否時の戻り値が [](= 資格情報が未設定)になり誤読させるので、拒否の表し方(別の戻り値)を決めてから足す。"
+    },
+    {
+      "surface": "main-ipc",
+      "item": "action:invoke の payload が巨大な配列のとき、構造化複製の受信でメモリを使う(T-188 は for…in の増幅だけを止めた)",
+      "why": "2026-10-25。Electron の IPC 側の上限は無く、受け取った後のハンドラでは止められない。preload で長さを見る案は contextBridge が先に複製するので効かない。未実測。"
+    },
+    {
+      "surface": "network",
+      "item": "N-A の同類: Drive / Jira / Slack など他のパス補間が . と .. を通すか(関門ごとの確認が要る)",
+      "why": "2026-10-25。T-190 は 5 つの組み立てを直した。他は入口の正規表現が . を含まない(2026-10-14 の測定)が、関門の無い補間が増えた日に開く。全補間を pathSegment へ寄せるか census にするのが候補。"
+    },
+    {
+      "surface": "network",
+      "item": "SSRF 判定の IPv6: Teredo(2001::/32)・100::/64・3fff::/20・ISATAP(::5efe:)・ORCHID 系が公開扱い",
+      "why": "2026-10-25 に監査役が列挙(到達は未確認: トンネルの無い通常の端末では外へ落ちるだけ)。足すのは安いが、公開アドレスを巻き込まない確認が要る。"
+    },
+    {
+      "surface": "network",
+      "item": "compat プロバイダ(鍵なし)が内部サービスの 404 本文を画面へ返す(aiEndpoint.ts の注記は「送るのはプロンプトだけ」としか言わない)",
+      "why": "2026-10-25 に監査役が再現(127.0.0.1 の偽サーバ)。受容済みの判断の範囲内なので、まず注記に「応答の本文が画面に出る」を足す案。"
+    },
+    {
+      "surface": "ai",
+      "item": "ベスト3 の採点(100 点満点)は形で稼げ、点が内容の正しさでないと画面が言わない",
+      "why": "2026-10-25 に監査役が再現(誤った内容でも根拠語・網羅・構造で 83 点)。見出しに 1 文足す案は、見出しの文面を固定している検査(bestAnswersPinned ほか)の更新を伴う。"
+    },
+    {
+      "surface": "ai",
+      "item": "網の外の見えない字: 異体字選択子 U+FE00–FE0E・Hangul フィラー U+3164 / U+1160・点字空白 U+2800・CGJ・結合記号の洪水が、確認画面(voiceWritePreview)でも externalTextOnOneLine でも逃がされない",
+      "why": "2026-10-25 に監査役が再現(#general+U+3164 が #general と同じに見える)。害は確認できなかった(Slack 側で存在しないチャンネル名になって失敗)。\\p{Mn}\\p{Me} と個別字を逃がす案。"
+    },
+    {
       "surface": "renderer",
-      "item": "マージ復元は確認を出さず、parameter-overrides(法定税率ほか)の行を黙って入れる。TaxPage・書類スタジオなどは上書きを黙って使い、請求書の検査は標準税率の食い違いを指摘しない",
-      "why": "赤チーム C 連鎖 A 2026-10-24。再現は偽の保管層のみ。T-131(平文バックアップ)と同じ根。直すなら復元の結果の文に種類別の件数(数値パラメータを含むか)を述べる/法定値を上書きする行は確認を出す/書類の検査に税率の食い違いを足す。"
+      "item": "レコード封緘(dataCrypto.ts)が record id を AAD に束ねていない: 保管層を書ける者が同一鍵の下で暗号文を別 id へ差し替えられる",
+      "why": "2026-10-25 に監査役が指摘(IV は毎回乱数で再利用は無い)。vault.ts の包みには AAD がある。保管層を書ける者が前提。"
+    },
+    {
+      "surface": "supply-chain",
+      "item": "dependency-audit の Issue 本文: GHSA id は startsWith('GHSA-') だけを見る・KEV の product / name が Markdown へ素で入る",
+      "why": "2026-10-25 に監査役が指摘。上流(CISA / OSV)が悪意を持つ前提。"
+    },
+    {
+      "surface": "supply-chain",
+      "item": "F4 の続き: 実際に afterSign から署名鍵が外へ出る送信の再現",
+      "why": "2026-10-25。T-199 は鍵の追加を止めるだけ。electron-builder のフックが process.env を読めることは確認したが、外への送信は再現していない(スクラッチの最小プロジェクトで afterPack が呼ばれることのみ)。"
+    },
+    {
+      "surface": "supply-chain",
+      "item": "2 本目の追跡済み Windows .bat ランチャーを足したとき、CI のどの層が落とすか(npm test の回帰検査か verify:all か)",
+      "why": "2026-10-25 に監査役が指摘。npm test が ci.yml で走るので実質は捕まるが、ゲートとしての強制の層を確かめていない。"
+    },
+    {
+      "item": "COLLECTION_SHAPES の全 collection が BACKUP_COLLECTION_RECORD_LIMITS か『窓/最新 1 件/描かない』の理由つき台帳のどれかに載る構造の census(T-175・T-201 と 2 回続けて天井の漏れが見つかった)",
+      "surface": "renderer",
+      "why": "監査役 renderer の提案。台帳と COLLECTION_SHAPES を両方向で突き合わせる。"
+    },
+    {
+      "item": "T-175 の天井 5,000 は表の一覧には大きい(kpi-budgets 5,000 行でメインスレッド約 10 秒)。窓を広げる/天井を下げる判断",
+      "surface": "renderer",
+      "why": "T-201 の測定で観測した。kpi-budgets は 5,000 行まで復元でき、実 Chromium でメインスレッドが約 10 秒止まる。KPI 画面の行窓は未適用で、判断(天井を下げるか窓を足すか)は人が決める。"
     }
   ],
   "clearedBacklog": [
@@ -3420,6 +3720,11 @@
       "item": "MAIN-4 oauth:authorize に同時実行の上限が無い (renderer が連打すると loopback の listener が複数立つ)",
       "finding": "T-139 (パス 543) で authorizeInFlight により認可は同時に 1 つだけ (main.ts の oauth:authorize)。2 度目は authorize_busy で断る。台帳の残りが古かった。",
       "checkedOn": "2026-10-24"
+    },
+    {
+      "item": "マージ復元は確認を出さず、parameter-overrides(法定税率ほか)の行を黙って入れる。TaxPage・書類",
+      "finding": "T-186 でマージ復元に確認を足した(数値パラメータの上書きが入るときだけ)。書類の検査の標準税率の食い違い指摘は未実装として T-186 の限界に残した。",
+      "checkedOn": "2026-10-25"
     }
   ]
 }
