@@ -34,6 +34,8 @@ import {
   mcpConnectorCounts,
 } from '../../shared/connectors/mcpConnectors';
 import { externalTextOnOneLine } from '../data/assistantMarkdown';
+import { useRowWindow } from '../data/useRowWindow';
+import { RowWindowMore } from '../components/RowWindowMore';
 
 /**
  * コネクター / 自動化ページ。
@@ -95,6 +97,8 @@ export function ConnectorsPage() {
    */
   const stored = useCollection<Record<string, unknown>>(CONNECTOR_OUTPUT_COLLECTION);
   const storedRows = connectorOutputRows(stored.records);
+  // 行の窓 (T-201): 復元で入る大量の行を全部描くと表のレイアウトで画面が止まる (5,000 行で 12 秒)。
+  const storedWindow = useRowWindow(storedRows);
 
   const runConnector = async (id: string) => {
     setRunningId(id);
@@ -284,7 +288,7 @@ export function ConnectorsPage() {
                 </tr>
               </thead>
               <tbody>
-                {storedRows.map((r) => (
+                {storedWindow.visible.map((r) => (
                   <tr key={r.id} data-connector-output-row={r.id}>
                     <td style={{ ...tdStyle, fontFamily: 'monospace', fontSize: 12 }}>
                       {displayField(r.connectorId)}
@@ -304,6 +308,7 @@ export function ConnectorsPage() {
                 ))}
               </tbody>
             </table>
+            <RowWindowMore hidden={storedWindow.hidden} total={storedWindow.total} showMore={storedWindow.showMore} />
           </div>
         )}
       </Section>

@@ -3351,6 +3351,21 @@
         "file": "src/shared/__tests__/mcpLauncherSource.test.ts",
         "test": "★ パッケージ名の前の --registry=… は落ちる (直す前は 0 件だった)"
       }
+    },
+    {
+      "id": "T-201",
+      "found": "2026-10-25",
+      "foundBy": "利用者の依頼(『先回りしなくて良いから、徹底的に探して』)で回した独立した監査役 6 体のうち renderer の報告を、防御側が実 Chromium で再現した(コネクタ実行結果 5,000 行で画面が開くまで 5.7 秒・行を 1 つ消すたび 12.5 秒)",
+      "surface": "renderer",
+      "class": "denial-of-wallet",
+      "severity": "medium",
+      "title": "T-141/T-175 の復元の件数の天井・窓が connector-output(コネクタの実行結果)と balance-sheet(貸借対照表の履歴)に掛かっておらず、細工したバックアップをマージ復元させるとコネクタ画面・KPI 画面が全行を描いて固まる。形が正しい行は点検パネルでも消せない",
+      "status": "fixed",
+      "fix": "BACKUP_COLLECTION_RECORD_LIMITS に connector-output 2,000・balance-sheet 500 を足し(超える控えは切らずに全部断る)、ConnectorsPage の実行結果と KpiPage の貸借対照表履歴を useRowWindow + RowWindowMore に通す(隠れた行も『さらに表示』の後なら × で消せる)。限界: 全 collection が天井・窓・最新 1 件のどれかを名乗る構造の census は未整備(huntBacklog)。",
+      "regression": {
+        "file": "src/renderer/data/__tests__/backupRecordLimit.test.ts",
+        "test": "★ コネクタ実行結果 2,001 件・貸借対照表 501 件で断る (上限ちょうどは通す)"
+      }
     }
   ],
   "huntBacklog": [
@@ -3578,6 +3593,16 @@
       "surface": "supply-chain",
       "item": "2 本目の追跡済み Windows .bat ランチャーを足したとき、CI のどの層が落とすか(npm test の回帰検査か verify:all か)",
       "why": "2026-10-25 に監査役が指摘。npm test が ci.yml で走るので実質は捕まるが、ゲートとしての強制の層を確かめていない。"
+    },
+    {
+      "item": "COLLECTION_SHAPES の全 collection が BACKUP_COLLECTION_RECORD_LIMITS か『窓/最新 1 件/描かない』の理由つき台帳のどれかに載る構造の census(T-175・T-201 と 2 回続けて天井の漏れが見つかった)",
+      "surface": "renderer",
+      "why": "監査役 renderer の提案。台帳と COLLECTION_SHAPES を両方向で突き合わせる。"
+    },
+    {
+      "item": "T-175 の天井 5,000 は表の一覧には大きい(kpi-budgets 5,000 行でメインスレッド約 10 秒)。窓を広げる/天井を下げる判断",
+      "surface": "renderer",
+      "why": "T-201 の測定で観測した。kpi-budgets は 5,000 行まで復元でき、実 Chromium でメインスレッドが約 10 秒止まる。KPI 画面の行窓は未適用で、判断(天井を下げるか窓を足すか)は人が決める。"
     }
   ],
   "clearedBacklog": [

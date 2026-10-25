@@ -825,6 +825,8 @@ function BalanceSheetPanel() {
   // 控えを使い、古い基準日を後から入れると経営サマリー・書面 §4・計算書類が古い方を「現在」とした)。
   const latest = currentBalanceSheet(records) ?? undefined;
   const bsRows = useMemo(() => [...records].sort(compareBalanceSheetRecords), [records]);
+  // 履歴の表の窓 (T-201): 復元で入る大量の行を全部描くと画面が止まる (20,000 行で 211 秒)。
+  const bsWindow = useRowWindow(bsRows);
   const choiceNote = useMemo(() => balanceSheetChoiceNote(records, latest ?? null), [records, latest]);
   const submit = useSubmitGuard();
   /*
@@ -978,7 +980,7 @@ function BalanceSheetPanel() {
             </tr>
           </thead>
           <tbody>
-            {bsRows.map((r) => (
+            {bsWindow.visible.map((r) => (
               <tr key={r.id} data-bs-row={r.id === latest?.id ? 'current' : 'other'} style={{ borderTop: '1px solid var(--border)' }}>
                 <td style={{ padding: '4px 8px' }}>{balanceSheetAsOfKey(r.data.asOf) || '基準日なし'}</td>
                 <td style={{ padding: '4px 8px', color: 'var(--text-mute)' }}>{parseTimestamp(r.createdAt)?.toLocaleString('ja-JP') ?? '時刻不明'}</td>
@@ -992,6 +994,7 @@ function BalanceSheetPanel() {
           </tbody>
         </table>
       )}
+      {bsRows.length > 0 && <RowWindowMore hidden={bsWindow.hidden} total={bsWindow.total} showMore={bsWindow.showMore} />}
     </div>
   );
 }
