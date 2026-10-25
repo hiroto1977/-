@@ -168,7 +168,14 @@ const SECRET_ENV = /TOKEN|KEY|SECRET|PASSWORD|CREDENTIAL/i;
  */
 const CREDENTIALED_UNSCOPED = ['mcp-atlassian', 'mcp-server-linear', 'mcp-discord', 'youtube-mcp-server'];
 
-/** 設定から `{name, launcher, pkg, env}` を取り出す。 */
+/** 起動子 (npx / uvx) に渡してよい旗。パッケージ名より前に置く旗はこれだけ (T-200)。 */
+const ALLOWED_LAUNCHER_FLAGS = new Set(['-y', '--yes']);
+
+/** 取得元・ローダ・TLS の検証を差し替える env の鍵 (T-200)。資格情報の鍵 (`SECRET_ENV`) とは別の軸。 */
+const SOURCE_ENV_KEY =
+  /^(NODE_OPTIONS|NODE_PATH|NODE_EXTRA_CA_CERTS|NODE_TLS_\w+|HTTPS?_PROXY|ALL_PROXY|NPM_CONFIG_\w+|UV_\w+|PIP_\w+|PYTHONPATH|PYTHONSTARTUP|LD_PRELOAD|LD_LIBRARY_PATH|DYLD_\w+|BASH_ENV)$/i;
+
+/** 設定から `{name, launcher, pkg, env, launcherFlags}` を取り出す。 */
 function readServers(json) {
   const out = [];
   const servers = json?.mcpServers;
@@ -176,9 +183,13 @@ function readServers(json) {
   for (const [name, def] of Object.entries(servers)) {
     const args = Array.isArray(def?.args) ? def.args : [];
     // `npx -y <pkg>` / `uvx <pkg>` のどちらでも、旗でない最初の引数が名前。
-    const pkg = args.find((a) => typeof a === 'string' && !a.startsWith('-')) ?? null;
+    const pkgIndex = args.findIndex((a) => typeof a === 'string' && !a.startsWith('-'));
+    const pkg = pkgIndex >= 0 ? args[pkgIndex] : null;
+    // パッケージ名より**前**の旗は起動子 (npx / uvx) への旗 —— `--registry=…` / `--index-url …` は取得元を変える (T-200)。
+    // 名前より後ろの旗はそのサーバの引数なので見ない。
+    const launcherFlags = (pkgIndex >= 0 ? args.slice(0, pkgIndex) : args).filter((a) => typeof a === 'string');
     const env = def?.env !== null && typeof def?.env === 'object' ? Object.keys(def.env) : [];
-    out.push({ name, launcher: typeof def?.command === 'string' ? def.command : null, pkg, env });
+    out.push({ name, launcher: typeof def?.command === 'string' ? def.command : null, pkg, env, launcherFlags });
   }
   return out;
 }
@@ -298,8 +309,18 @@ function checkHooks(hooks, ledger = HOOK_LEDGER, exists = (rel) => fs.existsSync
 function check(servers, ledger = LEDGER, budget = UNSCOPED_BUDGET, credentialedUnscoped = CREDENTIALED_UNSCOPED) {
   const problems = [];
   const seen = new Set();
-  for (const { name, launcher, pkg } of servers) {
+  for (const { name, launcher, pkg, env, launcherFlags } of servers) {
     seen.add(name);
+    for (const f of launcherFlags ?? []) {
+      if (!ALLOWED_LAUNCHER_FLAGS.has(f)) {
+        problems.push(`${name}: 起動子への旗 "${f}" は認めていません (${[...ALLOWED_LAUNCHER_FLAGS].join(' / ')} のみ) —— 取得元 (--registry / --index-url ほか) を差し替えられる`);
+      }
+    }
+    for (const k of env ?? []) {
+      if (SOURCE_ENV_KEY.test(k)) {
+        problems.push(`${name}: env "${k}" は認めていません —— パッケージの取得元・ローダ・TLS の検証を差し替えられる (資格情報の鍵とは別)`);
+      }
+    }
     if (launcher === null || !ALLOWED_LAUNCHERS.has(launcher)) {
       problems.push(`${name}: 起動子 "${launcher}" は認めていません (${[...ALLOWED_LAUNCHERS].join(' / ')} のみ)`);
     }
@@ -371,6 +392,24 @@ function selfTest() {
     const ok = n === expected;
     if (!ok) bad++;
     console.log(`  ${ok ? '✓' : '✗'} ${label}: ${n} 件 (期待 ${expected})`);
+  }
+
+  // 起動子への旗と、取得元を差し替える env の鍵 (T-200)。
+  {
+    const L3 = { a: { registry: 'npm', pkg: '@x/a', why: 'これは理由です' } };
+    const S = (launcherFlags, env) => [{ name: 'a', launcher: 'npx', pkg: '@x/a', env, launcherFlags }];
+    for (const [label, servers, expected] of [
+      ['-y だけなら通る', S(['-y'], []), 0],
+      ['★ --registry=… を足すと鳴る', S(['-y', '--registry=https://evil.example'], []), 1],
+      ['★ NPM_CONFIG_REGISTRY を env に足すと鳴る', S(['-y'], ['NPM_CONFIG_REGISTRY']), 1],
+      ['★ NODE_OPTIONS / UV_INDEX_URL も鳴る', S(['-y'], ['NODE_OPTIONS', 'UV_INDEX_URL']), 2],
+      ['資格情報の鍵 (GITHUB_TOKEN) は別の軸なので通す', S(['-y'], ['GITHUB_TOKEN']), 0],
+    ]) {
+      const n = check(servers, L3, 99, []).length;
+      const ok = n === expected;
+      if (!ok) bad++;
+      console.log(`  ${ok ? '✓' : '✗'} ${label}: ${n} 件 (期待 ${expected})`);
+    }
   }
 
   // 素の名前 かつ 資格情報 の集合。
@@ -494,7 +533,7 @@ function main(argv) {
 }
 
 module.exports = {
-  readServers, check, LEDGER, UNSCOPED_BUDGET, CREDENTIALED_UNSCOPED, SECRET_ENV, ALLOWED_LAUNCHERS,
+  readServers, check, ALLOWED_LAUNCHER_FLAGS, SOURCE_ENV_KEY, LEDGER, UNSCOPED_BUDGET, CREDENTIALED_UNSCOPED, SECRET_ENV, ALLOWED_LAUNCHERS,
   readHooks, checkHooks, checkTopLevel, HOOK_LEDGER, HOOK_COMMAND_RE, KNOWN_TOP_LEVEL,
 };
 

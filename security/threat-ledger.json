@@ -3291,6 +3291,66 @@
         "file": "src/renderer/data/__tests__/assistantMarkdown.test.ts",
         "test": "★ インライン記法の要素も重さに数える: `a` を 5 万個並べた 10 万字の段落は打ち切る (threat: T-196)"
       }
+    },
+    {
+      "id": "T-197",
+      "found": "2026-10-25",
+      "foundBy": "利用者の依頼(『先回りしなくて良いから、徹底的に探して』)で回した独立した監査役 6 体のうち supply-chain の報告を、防御側が実物のゲートに通して再現した",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "high",
+      "title": "lint:workflow-security が生のテキストを正規表現で読むため、YAML の二重引用符つき文字列のエスケープ(\\x74 ほか)で綴りを隠すと、js-yaml が pull_request_target と読む workflow と run: 本体の ${{ }} 注入が両方とも素通りする(平文の対照は exit 1・隠すと exit 0 を実物の check() で再現)",
+      "status": "fixed",
+      "fix": "escapedSpellingProblems: 二重引用符つき文字列の中の、文字を作り出すエスケープ(\\x \\u \\U \\N ほか)と行末の \\ による行継続を断る。許すのは \\\" \\\\ \\n \\t \\r \\/ だけ。エスケープが意味を持つのは二重引用符の中だけなので、ブロック記法(| >)の本文・単一引用符・素のスカラ・注記の中は読み飛ばす。実物の workflow 7 本は 0 件。綴りごとに規則を足す代わりに、綴りを隠せる仕組みそのものを断つ。限界: YAML の他の符号化(タグ・アンカー)は文字を作れないので対象外。",
+      "regression": {
+        "file": "src/shared/__tests__/workflowYamlEscapeSpelling.test.ts",
+        "test": "★ エスケープで綴りごと隠した pull_request_target は落ちる (直す前は 0 件だった)"
+      }
+    },
+    {
+      "id": "T-198",
+      "found": "2026-10-25",
+      "foundBy": "利用者の依頼(『先回りしなくて良いから、徹底的に探して』)で回した独立した監査役 6 体のうち supply-chain の報告を、防御側が実物のゲートに通して再現した",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "workflow の env / run に npm_config_registry・ELECTRON_MIRROR・NODE_EXTRA_CA_CERTS・NODE_TLS_REJECT_UNAUTHORIZED・HTTPS_PROXY などを書いて依存・バイナリの取得元や TLS の検証を差し替えても、LOADER_ENV(コードを走らせる系)に無いので検出されない",
+      "status": "fixed",
+      "fix": "SOURCE_ENV を loaderEnvProblem に足す(実物の workflow・script は使っていない=0 件)。限界: 台帳制ではなく一律で断る(正当な用途が出たら理由つきの許可を足す)。",
+      "regression": {
+        "file": "src/shared/__tests__/workflowYamlEscapeSpelling.test.ts",
+        "test": "★ 取得元・TLS の検証を差し替える環境変数は env にも run にも書けない (threat: T-198)"
+      }
+    },
+    {
+      "id": "T-199",
+      "found": "2026-10-25",
+      "foundBy": "利用者の依頼(『先回りしなくて良いから、徹底的に探して』)で回した独立した監査役 6 体のうち supply-chain の報告を、防御側が実物のゲートに通して再現した",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "electron-builder.json に afterPack / afterSign / publish などビルド時に任意の JS を process.env ごと実行する鍵が足されても、署名鍵を持つ release.yml の Build 段で動くのに、どのゲートも検査も見ていなかった(今日は 0 件)",
+      "status": "fixed",
+      "fix": "electron-builder.json はコードを走らせる・取得元を変える・公開する鍵をどの階層にも持たず、トップレベルの鍵は台帳どおり、を npm test が見る。限界: 到達は electron-builder.json へのマージ済みの変更が前提(CODEOWNERS が見る)。実際に署名鍵が外へ出る送信までは再現していない。",
+      "regression": {
+        "file": "src/shared/__tests__/electronBuilderNoHooks.test.ts",
+        "test": "★ afterPack / afterSign / publish ほかの鍵が、どの階層にも無い"
+      }
+    },
+    {
+      "id": "T-200",
+      "found": "2026-10-25",
+      "foundBy": "利用者の依頼(『先回りしなくて良いから、徹底的に探して』)で回した独立した監査役 6 体のうち supply-chain の報告を、防御側が実物のゲートに通して再現した",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "lint:mcp-servers がパッケージ名と env の鍵の名前しか見ず、既存の MCP サーバに --registry=… などの起動子への旗や NPM_CONFIG_REGISTRY / NODE_OPTIONS / UV_INDEX_URL の env を足しても 0 件(実物の設定を書き換えて 3 形とも再現)。MCP は npx -y / uvx で「その時の最新」を取って資格情報つきで走る",
+      "status": "fixed",
+      "fix": "パッケージ名より前の起動子への旗は -y / --yes だけ許し、取得元・ローダ・TLS の検証を差し替える env の鍵(NODE_OPTIONS・NPM_CONFIG_*・UV_*・PIP_*・HTTPS?_PROXY ほか)を断る。実物の 25 件は 0 件。限界: 版の固定はしない(既出の huntBacklog)。",
+      "regression": {
+        "file": "src/shared/__tests__/mcpLauncherSource.test.ts",
+        "test": "★ パッケージ名の前の --registry=… は落ちる (直す前は 0 件だった)"
+      }
     }
   ],
   "huntBacklog": [
@@ -3508,6 +3568,16 @@
       "surface": "supply-chain",
       "item": "dependency-audit の Issue 本文: GHSA id は startsWith('GHSA-') だけを見る・KEV の product / name が Markdown へ素で入る",
       "why": "2026-10-25 に監査役が指摘。上流(CISA / OSV)が悪意を持つ前提。"
+    },
+    {
+      "surface": "supply-chain",
+      "item": "F4 の続き: 実際に afterSign から署名鍵が外へ出る送信の再現",
+      "why": "2026-10-25。T-199 は鍵の追加を止めるだけ。electron-builder のフックが process.env を読めることは確認したが、外への送信は再現していない(スクラッチの最小プロジェクトで afterPack が呼ばれることのみ)。"
+    },
+    {
+      "surface": "supply-chain",
+      "item": "2 本目の追跡済み Windows .bat ランチャーを足したとき、CI のどの層が落とすか(npm test の回帰検査か verify:all か)",
+      "why": "2026-10-25 に監査役が指摘。npm test が ci.yml で走るので実質は捕まるが、ゲートとしての強制の層を確かめていない。"
     }
   ],
   "clearedBacklog": [

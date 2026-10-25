@@ -271,3 +271,6 @@
 /src/shared/__tests__/privateTargetAliases.test.ts @hiroto1977
 /src/main/clients/__tests__/chatInputHardening.test.ts @hiroto1977
 /src/shared/__tests__/shippedCsp.test.ts @hiroto1977
+/src/shared/__tests__/workflowYamlEscapeSpelling.test.ts @hiroto1977
+/src/shared/__tests__/electronBuilderNoHooks.test.ts @hiroto1977
+/src/shared/__tests__/mcpLauncherSource.test.ts @hiroto1977
