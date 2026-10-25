@@ -2278,4 +2278,28 @@ describe('askBusinessAdvisorImpl — categories の件数 (threat: T-098)', () =
     ).rejects.toThrow('too many entries');
     expect(fetchMock).not.toHaveBeenCalled();
   });
+
+  it('対照: ちょうど種類の数の categories は断らない (境界は含む)', async () => {
+    // 送信まで進めば十分 (応答の中身はここの関心ではない): 件数の門は fetch より前にある。
+    const fetchMock = vi.fn<typeof fetch>().mockRejectedValue(new Error('stop here'));
+    await askBusinessAdvisorImpl({
+      token: 'sk-ant-test',
+      fetch: fetchMock,
+      payload: { question: '次は?', categories: Array.from({ length: BUSINESS_CATEGORIES.length }, () => 'ec') },
+    }).catch((e: unknown) => {
+      expect(String(e)).not.toContain('too many entries');
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('+1 件で断る (境界の外)', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      askBusinessAdvisorImpl({
+        token: 'sk-ant-test',
+        fetch: fetchMock,
+        payload: { question: '次は?', categories: Array.from({ length: BUSINESS_CATEGORIES.length + 1 }, () => 'ec') },
+      }),
+    ).rejects.toThrow('too many entries');
+  });
 });

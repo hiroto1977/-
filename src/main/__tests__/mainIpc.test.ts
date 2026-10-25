@@ -920,7 +920,7 @@ describe('oauth:isSupported / oauth:authorize', () => {
     const ok = (await invoke('oauth:authorize', 'github')) as { ok: boolean };
     expect(ok.ok).toBe(true);
     expect(presenceRequests).toHaveLength(1);
-    expect(presenceRequests[0]).toMatchObject({ channel: 'oauth:authorize', tier: 'egress' });
+    expect(presenceRequests[0]).toMatchObject({ channel: 'oauth:authorize', tier: 'egress', summary: 'github の認可ページをブラウザで開きます' });
     // 門が断る (信頼できない送り手・速度超過・警戒) と、待受を作らず認可を始めない
     presenceVerdict = { ok: false, message: '信頼できない呼び出し元のため断りました。' };
     try {

@@ -1217,6 +1217,15 @@ describe('保存先の封緘 — 感情ログは secrets.json と同じ約束で
     expect(await fs.readFile(storeFile(), 'utf8'), '部分消去が形の合わない行を黙って消した').toBe(before);
   });
 
+  it('対照: 形の合わない行が在っても「すべて消す」は読めた行を数えて全部消す (forWrite を全消去へ持ち込まない)', async () => {
+    await seed({
+      moods: [{ date: '2026-10-01', score: 3, note: 'n' }, { date: '2026-10-02', score: 'high', note: 'bad' }],
+      analyses: [],
+    });
+    expect(await ACTIONS['clear-history']!({ token: '', fetch: noFetch(), payload: { kind: 'all' } })).toEqual({ moods: 1, analyses: 0 });
+    expect(await readStored()).toEqual({ moods: [], analyses: [] });
+  });
+
   it('対照: 全部の行が読めるファイルの部分消去は今までどおり通る', async () => {
     await seed({ moods: [{ date: '2026-10-01', score: 3, note: 'n' }], analyses: [] });
     expect(await ACTIONS['clear-history']!({ token: '', fetch: noFetch(), payload: { kind: 'moods' } })).toEqual({ moods: 1, analyses: 0 });
