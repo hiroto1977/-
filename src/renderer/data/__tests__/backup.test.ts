@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
+import { PARAMETER_OVERRIDES_COLLECTION } from '../parameterOverrides';
 import { readFileSync } from 'node:fs';
 import {
   BACKUP_EXCLUSIONS,
+  PARAMETER_OVERRIDES_COLLECTION_NAME,
   serializeBackup,
   parseBackup,
   sha256Hex,
@@ -581,5 +583,11 @@ describe('平文バックアップは、個人情報の件数を言ってから�
     const scanned = personalDataCollections().map((p) => p.collection);
     for (const c of scanned) expect(PERSONAL_DATA_LABELS[c], `${c} の表示名が無い`).toBeDefined();
     for (const c of Object.keys(PERSONAL_DATA_LABELS)) expect(scanned, `${c} は走査に出ない (古い表示名)`).toContain(c);
+  });
+});
+
+describe('数値パラメータの上書きの復元 (threat: T-186)', () => {
+  it('backup.ts が数える collection 名は parameterOverrides.ts の物と同じ', () => {
+    expect(PARAMETER_OVERRIDES_COLLECTION_NAME).toBe(PARAMETER_OVERRIDES_COLLECTION);
   });
 });

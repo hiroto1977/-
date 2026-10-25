@@ -3126,6 +3126,36 @@
         "file": "src/main/__tests__/mainIpc.test.ts",
         "test": "★ クライアント ID を上書きしない認可も、本人確認の門 (egress 段階) を通り、断られたら始めない (threat: T-185)"
       }
+    },
+    {
+      "id": "T-186",
+      "found": "2026-10-25",
+      "foundBy": "赤チームの連鎖 A(2026-10-24)の指摘を、BackupPanel と planRestore を読んで確かめた",
+      "surface": "renderer",
+      "class": "compromised-renderer",
+      "severity": "low",
+      "title": "マージ復元は確認を出さず、細工した控えの数値パラメータ(法定税率ほか)の上書きを黙って入れられた。TaxPage・書類スタジオは上書きをそのまま計算に使う",
+      "status": "mitigated",
+      "fix": "復元の計画が数値パラメータの上書きの件数を数え(RestorePlan.parameterOverrides)、マージでも入るときだけ確認を出す。置換の確認文と結果の文にも同じ件数を述べる。限界: 確認を出すだけで値は検めない(利用者の正当な上書きと区別できない)。書類の検査が標準税率の食い違いを指摘する案は未実装。",
+      "regression": {
+        "file": "src/renderer/components/__tests__/restorePlan.test.ts",
+        "test": "★ 数値パラメータの上書きが入るマージは確認を出し、断れば何も書かない (threat: T-186)"
+      }
+    },
+    {
+      "id": "T-187",
+      "found": "2026-10-25",
+      "foundBy": "利用者の依頼(『すべてのプログラミング言語の脆弱性を見つけ続け、対策も同時に行う仕組み』)を、実物の言語・起動子・依存の生態系を数えて確かめた。初回の測定で windows-batch (launcher/*.bat) が台帳の無い言語として出た",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "新しい言語・依存の生態系が入っても、検査の網が追随したかを誰も見ていなかった。起動子の uvx が Python を『その時の最新』で走らせるのに、言語としては台帳に無かった",
+      "status": "mitigated",
+      "fix": "security/language-coverage.json (今在る言語・生態系・起動子ごとの強制物と、まだ無い言語に足す守り ifAdded) と scripts/language-coverage.cjs。追跡している実物から導き、台帳に無い言語・定義ファイルが入ると npm test が落ちて足す守りを名指しする。起動子だけの言語 (python) はソースが入ると落ちる。毎日の dependency-audit に載せる。限界: 『すべての言語』を先回りで探すものではない。弱点そのものの発見と修正は狩りと回帰検査の仕事。threat-watch の OSV 照会は npm だけ (別の生態系が入った日に落ちて広げさせる)。",
+      "regression": {
+        "file": "src/shared/__tests__/languageCoverage.test.ts",
+        "test": "★ 新しい言語のファイルが入ると落ち、足す守りを名指しする (threat: T-187)"
+      }
     }
   ],
   "huntBacklog": [
@@ -3298,11 +3328,6 @@
       "surface": "supply-chain",
       "item": "vitest の retry(CI は 2)が、競合の回帰(stateWriterRace・eraseVsSecretsWrite ほか)を隠す",
       "why": "Red-B' 2026-10-24。回帰検査が it.skip / コメントアウトでないこと(threatLedger.test.ts)と、他の AI ツールの指示書(GEMINI.md ほか)の CODEOWNERS は直した。残るのは retry: 間欠の競合は 26/27 で通る。mutation.yml は CI を空にしてこれを避けている。直すなら T-xxx つきの検査ファイルだけ retry 0(vitest は設定ではファイル単位に出来ないので、projects で分けるか、各 describe に retry: 0)。"
-    },
-    {
-      "surface": "renderer",
-      "item": "マージ復元は確認を出さず、parameter-overrides(法定税率ほか)の行を黙って入れる。TaxPage・書類スタジオなどは上書きを黙って使い、請求書の検査は標準税率の食い違いを指摘しない",
-      "why": "赤チーム C 連鎖 A 2026-10-24。再現は偽の保管層のみ。T-131(平文バックアップ)と同じ根。直すなら復元の結果の文に種類別の件数(数値パラメータを含むか)を述べる/法定値を上書きする行は確認を出す/書類の検査に税率の食い違いを足す。"
     }
   ],
   "clearedBacklog": [
@@ -3420,6 +3445,11 @@
       "item": "MAIN-4 oauth:authorize に同時実行の上限が無い (renderer が連打すると loopback の listener が複数立つ)",
       "finding": "T-139 (パス 543) で authorizeInFlight により認可は同時に 1 つだけ (main.ts の oauth:authorize)。2 度目は authorize_busy で断る。台帳の残りが古かった。",
       "checkedOn": "2026-10-24"
+    },
+    {
+      "item": "マージ復元は確認を出さず、parameter-overrides(法定税率ほか)の行を黙って入れる。TaxPage・書類",
+      "finding": "T-186 でマージ復元に確認を足した(数値パラメータの上書きが入るときだけ)。書類の検査の標準税率の食い違い指摘は未実装として T-186 の限界に残した。",
+      "checkedOn": "2026-10-25"
     }
   ]
 }

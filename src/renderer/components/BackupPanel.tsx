@@ -9,6 +9,7 @@ import {
   planRestore,
   replaceRestoreConfirmMessage,
   restoreResultMessage,
+  mergeRestoreConfirmMessage,
   unusableBackupRefusal,
   plaintextExposure,
   plaintextBackupConfirmMessage,
@@ -129,6 +130,12 @@ export function BackupPanel() {
         return;
       }
       if (plan.mode === 'replace' && !window.confirm(replaceRestoreConfirmMessage(plan))) {
+        if (fileRef.current) fileRef.current.value = '';
+        return;
+      }
+      // マージは確認を出さない操作だが、数値パラメータ (法定税率ほか) の上書きが入るときだけ確認する (T-186)。
+      const mergeNotice = mergeRestoreConfirmMessage(plan);
+      if (mergeNotice !== null && !window.confirm(mergeNotice)) {
         if (fileRef.current) fileRef.current.value = '';
         return;
       }

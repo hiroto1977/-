@@ -57,6 +57,7 @@ const { auditPins, FAILING: PIN_FAILING } = require('./audit-pinned-action-shas.
 const { runThreatWatch, renderWatch, watchActionable, realIo } = require('./threat-watch.cjs');
 const { analyzePosture, renderPosture } = require('./security-posture.cjs');
 const { analyzeCrownJewels, renderCrownJewels, realExists } = require('./crown-jewels.cjs');
+const { analyzeLanguageCoverage, renderLanguageCoverage, launchersOf, trackedFiles } = require('./language-coverage.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const OUT = path.join(REPO_ROOT, 'orchestration', 'dependency-audit.json');
@@ -192,6 +193,7 @@ function buildReport({ all, prod, floors, pins, watch, map, posture, generatedAt
     watchOk && watch.window !== undefined ? renderWatch(watch, map) : '',
     ...(postureOk ? [renderPosture(posture), ''] : []),
     ...(postureOk && posture.jewels ? [renderCrownJewels(posture.jewels), ''] : []),
+    ...(postureOk && posture.languages ? [renderLanguageCoverage(posture.languages), ''] : []),
     ...(problems.length === 0 ? [] : ['### 測れなかった項目', '', ...problems.map((p) => `- ${p}`), '']),
     '手順は `docs/SECURITY_AUDIT.md` の「依存の勧告」。床の台帳は ' +
       '`scripts/lint-dependencies.cjs` の `SECURITY_FLOORS`、測り直しは `npm run audit:floors`。',
@@ -365,7 +367,24 @@ function derivePosture(now) {
     const posture = analyzePosture(JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'security', 'threat-ledger.json'), 'utf8')), now);
     // 王冠の宝石 (T-169): 確率に依らない 4 層が宝石ごとに揃っているか。欠けた層・実在しない強制物は要対応に数える。
     const jewels = analyzeCrownJewels(JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'security', 'crown-jewels.json'), 'utf8')), realExists(REPO_ROOT));
-    return { ...posture, jewels, problems: [...posture.problems, ...jewels.problems], actionable: posture.actionable + jewels.actionable };
+    // 言語の網羅 (T-187): 新しい言語・依存の生態系が、見張りの無いまま入っていないか。追跡一覧が取れなければ測れなかったと言う。
+    const files = trackedFiles(REPO_ROOT);
+    const languages =
+      files === null
+        ? { rows: [], problems: ['言語の網羅を測れなかった (追跡している実物の一覧を取れない)'], actionable: 1, observed: { languages: [], ecosystems: [], launched: [] } }
+        : analyzeLanguageCoverage(
+            JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'security', 'language-coverage.json'), 'utf8')),
+            files,
+            launchersOf(REPO_ROOT),
+            realExists(REPO_ROOT),
+          );
+    return {
+      ...posture,
+      jewels,
+      languages,
+      problems: [...posture.problems, ...jewels.problems, ...languages.problems],
+      actionable: posture.actionable + jewels.actionable + languages.actionable,
+    };
   } catch {
     return null;
   }

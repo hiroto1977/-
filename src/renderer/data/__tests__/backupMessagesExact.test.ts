@@ -12,7 +12,10 @@
  */
 import { describe, expect, it } from 'vitest';
 import {
+  mergeRestoreConfirmMessage,
+  parameterOverrideNotice,
   plaintextBackupConfirmMessage,
+  exportedAtLabel,
   replaceRestoreConfirmMessage,
   restoreResultMessage,
   unusableBackupRefusal,
@@ -37,6 +40,7 @@ function planOf(over: Partial<RestorePlan>): RestorePlan {
     collectionClash: 0,
     duplicateIds: 0,
     lost: 0,
+    parameterOverrides: 0,
     toImport: [],
     ...over,
   };
@@ -166,5 +170,36 @@ describe('plaintextBackupConfirmMessage — 平文で書き出す前の確認文
 
   it('★ 対照: 持ち出すと困る記録が 0 件なら確認しない (null)', () => {
     expect(plaintextBackupConfirmMessage({ total: 0, parts: [] })).toBeNull();
+  });
+});
+
+describe('数値パラメータの上書きの確認文の全文 (threat: T-186)', () => {
+  const NOTICE =
+    '数値パラメータ（税率・しきい値など、計算に使う数字）の上書きが 2 件入ります。入ると、画面の計算と書類の検査に使う値がバックアップの値に変わります。心当たりが無ければ取り消してください。';
+
+  it('★ 件数を文に埋め、0 件・未設定なら null', () => {
+    expect(parameterOverrideNotice(planOf({ parameterOverrides: 2 }))).toBe(NOTICE);
+    expect(parameterOverrideNotice(planOf({ parameterOverrides: 0 }))).toBeNull();
+    expect(parameterOverrideNotice({ ...planOf({}), parameterOverrides: undefined } as unknown as RestorePlan)).toBeNull();
+  });
+
+  it('★ マージの確認は 注意 / 控えの行 / 問いかけ の 3 行を改行で繋ぐ', () => {
+    const plan = planOf({ mode: 'merge', parameterOverrides: 2, incoming: 5, exportedAt: null });
+    expect(mergeRestoreConfirmMessage(plan)).toBe(
+      [NOTICE, `バックアップ: ${exportedAtLabel(null)}・5 件`, 'よろしいですか？'].join('\n'),
+    );
+  });
+
+  it('マージの確認は、上書きが無いとき・置換のときは出さない (置換は自分の確認に含める)', () => {
+    expect(mergeRestoreConfirmMessage(planOf({ mode: 'merge', parameterOverrides: 0 }))).toBeNull();
+    expect(mergeRestoreConfirmMessage(planOf({ mode: 'replace', parameterOverrides: 2 }))).toBeNull();
+  });
+
+  it('★ 置換の確認は、上書きが入るときだけ注意を「この端末」の行の後・問いかけの前に足す', () => {
+    const base = replaceRestoreConfirmMessage(planOf({ mode: 'replace', parameterOverrides: 0 }));
+    const withNotice = replaceRestoreConfirmMessage(planOf({ mode: 'replace', parameterOverrides: 2 }));
+    expect(base).not.toContain('数値パラメータ');
+    const lines = base.split('\n');
+    expect(withNotice.split('\n')).toEqual([...lines.slice(0, -1), NOTICE, lines[lines.length - 1]]);
   });
 });

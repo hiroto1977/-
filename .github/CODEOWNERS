@@ -194,6 +194,7 @@
 /src/renderer/data/__tests__/orphanCollection.test.ts @hiroto1977
 /src/renderer/data/__tests__/restoreIdCollision.test.ts @hiroto1977
 /src/renderer/data/__tests__/restorePlanMatchesImport.test.ts @hiroto1977
+/src/renderer/components/__tests__/restorePlan.test.ts @hiroto1977
 /src/renderer/data/__tests__/voiceCommand.test.ts @hiroto1977
 /src/renderer/network/__tests__/ollamaWeb.test.ts @hiroto1977
 /src/renderer/network/__tests__/proxyEnvelope.test.ts @hiroto1977
@@ -261,6 +262,7 @@
 /src/shared/__tests__/threatWatch.test.ts @hiroto1977
 /src/shared/__tests__/securityPosture.test.ts @hiroto1977
 /src/shared/__tests__/crownJewels.test.ts @hiroto1977
+/src/shared/__tests__/languageCoverage.test.ts @hiroto1977
 /src/main/clients/__tests__/advisorSmuggledChars.test.ts @hiroto1977
 /src/main/__tests__/windowOpen.test.ts @hiroto1977
 /src/renderer/data/__tests__/storeImportShapes.test.ts @hiroto1977
