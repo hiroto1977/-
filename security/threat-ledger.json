@@ -3388,7 +3388,7 @@
       "foundBy": "T-175 / T-201 と 2 回続けて、全行を描く collection の天井の漏れを人が 1 件ずつ見つけた。母集団を手で挙げていたので、防御側が形の表から機械で引く census にした。同時に天井も窓も無い hydroponics-readings の費用を実測した(固まる形ではなかった)",
       "surface": "renderer",
       "class": "denial-of-wallet",
-      "severity": "info",
+      "severity": "low",
       "title": "形の表(COLLECTION_SHAPES)に collection が増えても、復元の件数の天井・窓・最新 1 件のどれで行の数を受けるかを名乗らせる機械が無く、T-175・T-201 と同じ漏れが次にも起きうる(罠の除去であって、今日固まる画面の発見ではない)",
       "status": "fixed",
       "fix": "collectionRowBoundCensus.test.ts: 全 collection が BACKUP_COLLECTION_RECORD_LIMITS か OTHER_BOUNDS(window / latest-one / unsubscribed / compute-only)のどれか 1 つにだけ載ることを両方向で見る。window は画面が useRowWindow を通すこと、latest-one は latestAdoptionCensus の ADOPTED と一致、unsubscribed は定数がデータ層の外から参照されないこと、compute-only は履歴の行を map で描かないことを要求する。hydroponics-readings は 200,000 件(復元の全体の天井)で読み 672 ms・最新の探索 209 ms と測り、天井は足さなかった。",
