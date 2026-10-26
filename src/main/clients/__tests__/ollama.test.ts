@@ -427,6 +427,45 @@ describe('ACTIONS["chat"]', () => {
     expect(result.reply).toBe('');
   });
 
+  it.each([
+    ['文字列', '1234000000', 0],
+    ['負の数', -5_000_000_000, 0],
+    ['0', 0, 0],
+    ['null', null, 0],
+    ['無限大 (1e999 は JSON で Infinity になる)', 'INF', 0],
+    ['有限の正の数', 2_500_000_000, 2500],
+  ])('★ total_duration=%s は有限で正の数だけをミリ秒にし、他は 0 にする (変異検査)', async (_n, ns, want) => {
+    const body =
+      ns === 'INF'
+        ? '{"message":{"role":"assistant","content":"x"},"total_duration":1e999}'
+        : JSON.stringify({ message: { role: 'assistant', content: 'x' }, total_duration: ns });
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(body, { status: 200, headers: { 'content-type': 'application/json' } }),
+    );
+    const result = (await ACTIONS['chat']!({ token: '', fetch: fetchMock, payload: { model: 'llama3.2', prompt: 'hi' } })) as {
+      durationMs: number;
+    };
+    expect(result.durationMs).toBe(want);
+  });
+
+  it.each([
+    ['JSON でない本文', 'not json at all'],
+    ['null', 'null'],
+    ['数', '123'],
+    ['配列', '[1,2]'],
+  ])('★ 相手の本文が %s なら、サービス ID と status を持つ FetchError で断る (変異検査)', async (_n, body) => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      new Response(body, { status: 200, headers: { 'content-type': 'application/json' } }),
+    );
+    const err = await ACTIONS['chat']!({ token: '', fetch: fetchMock, payload: { model: 'llama3.2', prompt: 'hi' } }).catch(
+      (e: unknown) => e,
+    );
+    expect(err).toBeInstanceOf(FetchError);
+    expect((err as FetchError).serviceId).toBe('ollama');
+    expect((err as FetchError).status).toBe(0);
+    expect((err as FetchError).message).toBe('ollama returned non-JSON');
+  });
+
   it('POSTs to /api/chat with stream=false and returns the assistant text', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
       new Response(
