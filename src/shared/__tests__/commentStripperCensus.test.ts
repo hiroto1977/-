@@ -210,6 +210,7 @@ function selfRolled(): string[] {
 const MIGRATED: readonly string[] = [
   'src/shared/__tests__/threatLedger.test.ts',
   'src/renderer/data/__tests__/backupRecordLimit.test.ts',
+  'src/renderer/data/__tests__/collectionRowBoundCensus.test.ts',
   'src/__tests__/actionSurface.ts',
   'src/main/__tests__/atRestPolicy.test.ts',
   'src/main/__tests__/eraseAll.test.ts',
