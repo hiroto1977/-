@@ -111,10 +111,13 @@ export function isPrivateOrReservedTarget(parsed: URL): boolean {
   // **同じ相手を指す別表記**であり、しかも `..internal` は最終ラベル判定に
   // 当たって遮断されるのに `.internal` は素通りする、という非対称があった
   // (`lastIndexOf('.')` が 0 になり `lastDot > 0` を満たさないため)。
-  // Stryker disable next-line StringLiteral: 置換文字列を別の文字列にすると名前の先頭に
+  // Stryker disable next-line StringLiteral,Regex: 置換文字列を別の文字列にすると名前の先頭に
   // 空白入りの語が付き、ドットを含まない単一ラベルになる。単一ラベル名は下の規則が
   // 必ず遮断するので、先頭ドット付きの内部名の答え (遮断) は変わらず、公開名
   // (`.example.com`) は元から遮断されない —— 結果で見分けられない等価変異。
+  // Regex も同じ行の既存の除外 (分割前は 1 行に同居): 先頭側だけを変える変異は
+  // 末尾側の置換が残り「片側だけ剥がす」形になる。両方向は proxy.test.ts の
+  // 先頭ドット / 末尾ドット検査で別々に固定している。
   const leadingTrimmed = bracketless.replace(/^\.+/, '');
   // Stryker disable next-line Regex: 先頭側・末尾側それぞれを消す変異は、もう一方の
   // 置換が残るため「片側だけ剥がす」形になる。両方向を剥がすことは
