@@ -22,6 +22,7 @@
 
 import type { ServiceId } from '../../shared/serviceId';
 import { addIsoDays, isCalendarDate, isoDaysBetween } from '../../shared/isoDate';
+import { isFiniteNumber } from '../../shared/num';
 import { detectCrisis, detectHarmToOthers, detectDestructiveUrge } from './counseling';
 
 // --- 型 ------------------------------------------------------------------
@@ -1195,7 +1196,7 @@ export function sanitizeCoachState(raw: unknown): CoachState | null {
   const splitFor = own(raw, 'splitFor');
   if (splitFor !== undefined) {
     // 保留は「いま割れる未完了のタスク」を指すときだけ有効 (指す先が無い保留は読めない保存値)。
-    const target = typeof splitFor === 'number' ? nodes.find((n) => n.id === splitFor) : undefined;
+    const target = isFiniteNumber(splitFor) ? nodes.find((n) => n.id === splitFor) : undefined;
     if (target === undefined || target.kind !== 'task' || target.done || target.repeat !== undefined) return null;
   }
   return {
