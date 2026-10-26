@@ -82,6 +82,7 @@ export const ERASE_LOCAL_STORAGE_KEYS: readonly string[] = [
   'chatbot-history',
   'chatbot-requests',
   'chatbot-ollama-model',
+  'coach-state',
   'emotions.store',
   'stocks.watchlist',
   'google-client-id',

@@ -1509,7 +1509,7 @@ npm run lint:deps          # 依存の供給網 (本番依存の閉包 5 件 / �
                            #   **`package.json` は鎖には入れない** —— 全履歴 12 コミットで
                            #   「安定資産」の基準 (パス 347) を満たさないので、門で形を見る
 npm run lint:storage       # ブラウザに残す物の台帳 (IndexedDB 4 / Cache Storage 1 /
-                           #   localStorage 23 / sessionStorage 4。cookie と OPFS は 0 件だが走査はする)。
+                           #   localStorage 24 / sessionStorage 4。cookie と OPFS は 0 件だが走査はする)。
                            #   新しい保存先が黙って増えないこと・バックアップが覆うのは 1 つだけ・
                            #   **媒体そのものが `docs/DATA_PROTECTION.md` の在庫に載っていること**・
                            #   **ハードリセット (すべてのデータを削除) が台帳の全行を覆うこと** (規則 11、パス 136)
