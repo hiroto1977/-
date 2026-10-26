@@ -87,6 +87,8 @@ const LEDGER: Readonly<Record<string, { kind: Kind; why: string }>> = {
   'src/renderer/cloud/cloudProviderAdapter.ts': { kind: 'measure-next', why: '同期計画を実 I/O へ写す薄いラッパ。純粋核 (cloudSync.ts) は分母に在るが、写す側が外。' },
   'src/renderer/data/aiCredentialFields.ts': { kind: 'data', why: 'エージェント設定の入力欄の表 (ラベルと placeholder の宣言)。「読める欄は書ける」の判定は data/__tests__/aiCredentialFields.test.ts が母集団 (AI_CREDENTIAL_STRING_KEYS) と両方向で、描画は pages/__tests__/aiCredentialFieldsWritable.test.ts が実物の DOM で見る。' },
   'src/renderer/data/goalCoach.ts': { kind: 'measure-next', why: 'ゴールコーチの純ロジック。目標の逆算・批判的な見直し・1 日の予定の組み立て・危機の言葉を渡さない門を決める。判断を持つので入れる側だが、未測定。' },
+  'src/renderer/data/goalDsl.ts': { kind: 'measure-next', why: 'ゴール・タスク・予定の業務 DSL の構文解析・検査・書き出し。外から貼られた文を受ける門 (天井・暦に在る日付・見えない字・葉の規則) を決める。判断を持つので入れる側だが、未測定 (検査は境界ちょうどと +1・往復の乱数 4,000 件・28 方向の対照で留めてある)。' },
+  'src/renderer/data/goalDslCoach.ts': { kind: 'measure-next', why: 'ゴール DSL とゴールコーチの状態の相互変換 (予定を捨てる・読めない節を除く・sanitizeCoachState を通す)。判断を持つので入れる側だが、未測定。' },
   'src/renderer/data/assistantContext.ts': { kind: 'measure-next', why: 'AI へ送る文脈を組む純ロジック。何を入れ何を落とすかを決めるので、送信内容そのものを左右する。' },
   'src/renderer/data/hydroponicsLog.ts': { kind: 'measure-next', why: '運転記録の保存と読み戻し。壊れた保存値の扱いを決める (パス 120 の家系)。' },
   'src/renderer/data/kessanSheets.ts': { kind: 'measure-next', why: '計算書類 4 点をどの紙に載せるかの切り分け。会社法435条2項の範囲を決める。' },
