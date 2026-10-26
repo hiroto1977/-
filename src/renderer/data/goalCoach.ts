@@ -307,6 +307,11 @@ function numberOf(raw: string): number | null {
   return k ?? null;
 }
 
+/** 暦に在る `YYYY-MM-DD` か (型の絞り込みを残さない包み —— 呼び先は別の形も読むので)。 */
+function isDay(v: string): boolean {
+  return isCalendarDate(v);
+}
+
 /**
  * 期限を ISO 日付にする。読めるのは ISO 日付・「M月D日」「M/D」(次に来るその日)・
  * 「N日後 / N週間後 / Nか月後 / N年後 / 半年後 / 年末」。読めなければ null
@@ -315,7 +320,7 @@ function numberOf(raw: string): number | null {
 export function parseDue(text: string, today: string): string | null {
   const t = fold(text).trim();
   // 型の絞り込みで `t` を `never` にしないよう、形を先に確かめてから暦の判定を重ねる。
-  if (/^\d{4}-\d{2}-\d{2}$/.test(t) && isCalendarDate(t)) return t;
+  if (isDay(t)) return t;
   const rel = /(\d+|[一二三四五六七八九十])\s*(日|週間|週|か月|ヶ月|ケ月|カ月|月|年)後/.exec(t);
   if (rel !== null) {
     const n = numberOf(rel[1] ?? '');

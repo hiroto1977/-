@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   COACH_ENTRY_MARKERS,
+  MAX_ANSWER_CHARS,
   MAX_NODES,
   MAX_TASK_MINUTES,
   PERSONAS,
@@ -407,5 +408,14 @@ describe('ゴールコーチ: 保存値の読み', () => {
     const g = good() as { answers: Record<string, string> };
     g.answers.goal = 'あ'.repeat(5000);
     expect(Array.from(sanitizeCoachState(g)?.answers.goal ?? '').length).toBeLessThanOrEqual(120);
+  });
+});
+
+describe('ゴールコーチ: 答えの長さの上限', () => {
+  it('上限を超える答えは MAX_ANSWER_CHARS 文字で切って持つ (木に長文を積まない)', () => {
+    const long = 'あ'.repeat(MAX_ANSWER_CHARS + 50);
+    const { state } = converse(['目標を決めたい', '1', long]);
+    const stored = state?.answers.goal ?? '';
+    expect(Array.from(stored).length).toBe(MAX_ANSWER_CHARS);
   });
 });

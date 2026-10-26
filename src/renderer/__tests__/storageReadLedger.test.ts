@@ -118,11 +118,6 @@ const LEDGER: Record<string, LedgerEntry> = {
     keys: ['chatbot-history', 'chatbot-requests', 'chatbot-ollama-model'],
     why: '会話の表示履歴は失うのは過去の吹き出しだけ (書きの台帳と同じ理由)。要望の記録は「壊れた保存値はもう誰にも読めないので空から積み直す」と code に理由が在り、記録の成否は recordRequest が返す。モデル名は既定に戻るだけ。',
   },
-  'src/renderer/data/coachStore.ts': {
-    policy: 'three-state',
-    keys: ['coach-state'],
-    why: '読めなければ readable: false と理由を返し、ChatbotWidget が会話に出す (黙って「目標が無い」にしない)。読めた壊れ値は検証を通らず始めからやり直す。',
-  },
   'src/renderer/pages/AssistantPage.tsx': {
     policy: 'fold',
     keys: ['assistant-history', 'assistant-theme', 'assistant-provider'],
