@@ -111,10 +111,15 @@ export function isPrivateOrReservedTarget(parsed: URL): boolean {
   // **同じ相手を指す別表記**であり、しかも `..internal` は最終ラベル判定に
   // 当たって遮断されるのに `.internal` は素通りする、という非対称があった
   // (`lastIndexOf('.')` が 0 になり `lastDot > 0` を満たさないため)。
+  // Stryker disable next-line StringLiteral: 置換文字列を別の文字列にすると名前の先頭に
+  // 空白入りの語が付き、ドットを含まない単一ラベルになる。単一ラベル名は下の規則が
+  // 必ず遮断するので、先頭ドット付きの内部名の答え (遮断) は変わらず、公開名
+  // (`.example.com`) は元から遮断されない —— 結果で見分けられない等価変異。
+  const leadingTrimmed = bracketless.replace(/^\.+/, '');
   // Stryker disable next-line Regex: 先頭側・末尾側それぞれを消す変異は、もう一方の
   // 置換が残るため「片側だけ剥がす」形になる。両方向を剥がすことは
   // proxy.test.ts の先頭ドット / 末尾ドット検査で別々に固定している。
-  const bare = bracketless.replace(/^\.+/, '').replace(/\.+$/, '');
+  const bare = leadingTrimmed.replace(/\.+$/, '');
 
   // Loopback / common local hostnames.
   //
@@ -432,10 +437,14 @@ function extractEmbeddedV4FromTransitionPrefix(bare: string): string | null {
   const sixToFour = /^2002:([0-9a-f]{1,4})(?::([0-9a-f]{1,4}))?(?=:|$)/i.exec(bare);
   if (sixToFour) {
     const hi = parseInt(sixToFour[1]!, 16);
+    // Stryker disable next-line StringLiteral: 下位の群が無いときの既定。空文字にしても
+    // `parseInt('', 16)` は NaN で、`>>> 8` と `& 0xff` が 0 に倒すため同じ v4 になる (等価変異)。
     const lo = parseInt(sixToFour[2] ?? '0', 16);
     return `${(hi >>> 8) & 0xff}.${hi & 0xff}.${(lo >>> 8) & 0xff}.${lo & 0xff}`;
   }
   // `2002::` (1 群目も畳まれた形) は 0.0.0.0 を埋め込む。
+  // Stryker disable next-line StringLiteral: 戻り値が空文字でも呼び出し側の `new URL('http:///')` が
+  // 投げ、catch が遮断 (true) を返すため結果は変わらない。値を '0.0.0.0' に保つのは読み手のため (等価変異)。
   if (/^2002::/.test(bare)) return '0.0.0.0';
   return null;
 }

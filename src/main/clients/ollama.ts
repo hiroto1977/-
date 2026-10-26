@@ -334,7 +334,10 @@ async function installedModelNames(fetchFn: typeof fetch): Promise<string[]> {
 
 /** 相手の `total_duration` (ナノ秒) をミリ秒へ。有限で 0 以上の数だけを採る。 */
 function durationMsOf(ns: unknown): number {
-  return typeof ns === 'number' && Number.isFinite(ns) && ns > 0 ? Math.round(ns / 1_000_000) : 0;
+  // Stryker disable next-line ConditionalExpression: `Number.isFinite` は数以外 (文字列など) を
+  // 必ず false にするので、この型の絞り込みを外しても 0 のまま —— 型のためだけに在る (等価変異)。
+  if (typeof ns !== 'number') return 0;
+  return Number.isFinite(ns) ? Math.max(0, Math.round(ns / 1_000_000)) : 0;
 }
 
 async function chat(ctx: ActionContext): Promise<ActionData<'ollama/chat'>> {
