@@ -66,6 +66,8 @@
     "src/renderer/components/useDialogFocus.ts",
     "src/renderer/data/accounting.ts",
     "src/renderer/data/actionOutcome.ts",
+    "src/renderer/data/aegisLang.ts",
+    "src/renderer/data/aegisLangSafety.ts",
     "src/renderer/data/assistantMarkdown.ts",
     "src/renderer/data/assistantProviders.ts",
     "src/renderer/data/backup.ts",
