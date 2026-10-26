@@ -210,6 +210,9 @@ const STORES = {
   'chatbot-history': { medium: 'localstorage', holds: 'チャットの会話履歴', backedUp: false, sensitive: true },
   'chatbot-requests': { medium: 'localstorage', holds: 'チャットの要求履歴', backedUp: false, sensitive: true },
   'chatbot-ollama-model': { medium: 'localstorage', holds: 'チャットで使うモデル名', backedUp: false },
+  // ゴールコーチの状態 (目標・その理由・障害・使える時間・逆算した計画)。利用者の私的な目標なので sensitive。
+  // 外へは送らない (AI を使わない純ロジック)。消す手は会話の「コーチをやめる」と「すべてのデータを削除」。
+  'coach-state': { medium: 'localstorage', holds: 'ゴールコーチの目標と計画 (目標・理由・障害・計画)', backedUp: false, sensitive: true },
   'emotions.store': { medium: 'localstorage', holds: '気分の記録', backedUp: false, sensitive: true },
   'stocks.watchlist': { medium: 'localstorage', holds: '銘柄のウォッチリスト', backedUp: false },
   'google-client-id': { medium: 'localstorage', holds: 'Google OAuth のクライアント ID (秘密ではない)', backedUp: false },
@@ -250,10 +253,10 @@ const INDIRECT_SITES = [
   {
     file: 'src/renderer/data/localWrite.ts',
     expr: 'key',
-    keys: ['servicehub.docstudio.v1', 'servicehub.teamradar.draft.v1', 'chatbot-requests', 'google-client-id', 'servicehub.theme', 'servicehub.design'],
+    keys: ['servicehub.docstudio.v1', 'servicehub.teamradar.draft.v1', 'chatbot-requests', 'google-client-id', 'servicehub.theme', 'servicehub.design', 'coach-state'],
     why:
       '成否を返す共通の入口 (書き 2026-09-06・読み 2026-09-12 パス 160)。鍵は呼び出し元の定数で、通るのは書類スタジオの'
-      + '差込値・Team Radar の下書き・チャットの要望 (2026-09-06)・Google のクライアント ID (書きはパス 155・読みはパス 310)・配色の選択 (パス 317・`theme.ts`)・デザインの選択 (2026-09-26・`theme.ts`) の 6 つ。'
+      + '差込値・Team Radar の下書き・チャットの要望 (2026-09-06)・Google のクライアント ID (書きはパス 155・読みはパス 310)・配色の選択 (パス 317・`theme.ts`)・デザインの選択 (2026-09-26・`theme.ts`)・ゴールコーチの目標 (`coachStore.ts`) の 7 つ。'
       + '**新しい呼び出し元を足したら、その鍵をここへ書く** —— `writeLocalJson(key, …)` は鍵を組み立てないので、台帳が唯一の一覧になる。'
       + '2026-09-17 (パス 310) まで後の 2 つが書かれておらず、直接の getItem が同じ鍵を名乗っていたので誰も鳴らなかった ——'
       + ' Google の読みを入口へ寄せた瞬間に「実在しない保存先」として出た。規則 10 が入口の呼び出しから鍵を解いて突き合わせる。',

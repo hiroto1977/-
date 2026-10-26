@@ -20,7 +20,10 @@ import { arrayOf, chatMessages, isRecord, storedLabel, type ChatFieldReaders } f
 import { classifyActionResult } from '../data/actionOutcome';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { SERVICES } from '../services';
-import { replyTo, type ChatReply } from '../data/chatbot';
+import { EMOTION_MARKERS, replyTo, type ChatReply } from '../data/chatbot';
+import { coachTurn, isSafeForCoach, personaOf, type CoachState } from '../data/goalCoach';
+import { clearCoachState, loadCoachState, saveCoachState } from '../data/coachStore';
+import { localIsoDate } from '../../shared/localDate';
 import { buildOrgIndex, type RawOrg, type RawTeam } from '../data/chatOrg';
 import { CAPABILITIES } from './VoiceCommandBar';
 import { isExecutableIntent, type VoiceIntent } from '../data/voiceCommand';
@@ -101,12 +104,19 @@ function loadHistory(): ChatMessage[] {
  * (パス 489) まで**消す手が「すべてのデータを削除」しか無かった** (法則 `escape-hatch-stays-open`)。
  */
 export function clearChatbotHistory(): boolean {
+  let ok = true;
   try {
     localStorage.removeItem(HISTORY_KEY);
-    return true;
   } catch {
-    return false;
+    ok = false;
   }
+  // コーチが預かった目標も会話の一部。履歴だけ消えて目標が残る「消した気になる」形にしない。
+  return clearCoachState() && ok;
+}
+
+/** 預かったコーチの目標と計画を消す (会話の「コーチをやめる」と同じ消し方・成否を返す)。 */
+export function clearCoachGoals(): boolean {
+  return clearCoachState();
 }
 
 function saveHistory(messages: ChatMessage[]): void {
@@ -342,7 +352,12 @@ export interface ChatbotWidgetProps {
 
 export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps = {}) {
   const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>(() => loadHistory());
+  /* ゴールコーチの保存を 1 度だけ読む。保存領域を読めなかったときは、その理由を会話の先頭に出す (黙って「目標が無い」にしない)。 */
+  const [coachLoad] = useState(() => loadCoachState());
+  const [messages, setMessages] = useState<ChatMessage[]>(() => {
+    const h = loadHistory();
+    return coachLoad.note === null ? h : [...h, { role: 'bot' as const, text: `⚠ 保存していたコーチの目標を読み出せませんでした。${coachLoad.note}` }];
+  });
   const [input, setInput] = useState('');
   /* 貼り付けを黙って切らない (パス 175)。解釈できない入力は Ollama へ回る (`tryOllama`)。 */
   const inputOver = charsOverCeiling(input, MAX_OLLAMA_PROMPT_CHARS);
@@ -354,6 +369,9 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
   );
   const ollamaEgressNote = remoteOllamaNotice(ollamaRecipient);
   const [busy, setBusy] = useState(false);
+  /* ゴールコーチ (聞き取り → 逆算 → 毎日のタスク)。状態は端末に残し、利用者に見えるのは会話だけ。 */
+  const [coach, setCoach] = useState<CoachState | null>(coachLoad.state);
+  const [coachChips, setCoachChips] = useState<readonly string[]>([]);
   const [pendingIntent, setPendingIntent] = useState<VoiceIntent | null>(null);
   /** 書き出した直後の「端末からも消すか」の問い (書き出した行)。`null` なら出さない。 */
   const [clearOffer, setClearOffer] = useState<readonly FeatureRequest[] | null>(null);
@@ -443,6 +461,25 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
     setInput('');
     append({ role: 'user', text });
 
+    // ゴールコーチ。**危機・感情の言葉は渡さない** (下の replyTo = 寄り添いへ回る)。
+    // コーチの言い回しでなければ `null` で、他の依頼 (操作・計算・質問) をそのまま答える。
+    if (isSafeForCoach(text, EMOTION_MARKERS)) {
+      const t = coachTurn(coach, text, localIsoDate());
+      if (t !== null) {
+        const saved = saveCoachState(t.state);
+        setCoach(t.state);
+        setCoachChips(t.state === null ? [] : t.suggestions);
+        // 保存できなかったら、**その返事に足す** (翌日の予定が消えるので黙らない)。
+        const storeWarn = saved.ok ? '' : `\n\n⚠ ${saved.message}`;
+        // 計画が出た瞬間 (確認・開始) にだけ、関連する画面を会話の中で案内する (探させない)。
+        const entered = t.state !== null && t.state.phase !== coach?.phase && (t.state.phase === 'review' || t.state.phase === 'active');
+        const labels = t.relatedServices.map((id) => SERVICES.find((sv) => sv.id === id)?.label).filter((l): l is string => l !== undefined);
+        const relatedNote = entered && labels.length > 0 ? `\n\n💡 関連する画面: ${labels.join(' / ')}（「${labels[0]}を開いて」と話しかければ開きます）` : '';
+        append({ role: 'bot', text: t.text + relatedNote + storeWarn, routedThrough: t.state?.persona == null ? 'ゴールコーチ' : `ゴールコーチ · ${personaOf(t.state.persona).label}` });
+        return;
+      }
+    }
+
     const reply: ChatReply = replyTo(text, CHAT_CONTEXT);
 
     // 記録できなかったら、**その返事に足す** (別の場所に出すと、言い切った文と
@@ -531,6 +568,8 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
             className="ghost"
             onClick={() => {
               clearChatbotHistory();
+              setCoach(null);
+              setCoachChips([]);
               setMessages([]);
             }}
             disabled={messages.length === 0}
@@ -647,7 +686,7 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
       </div>
 
       <div className="concierge-chips">
-        {suggestions.map((s) => (
+        {(coachChips.length > 0 ? coachChips : suggestions).map((s) => (
           <button key={s} type="button" onClick={() => void send(s)}>
             {s}
           </button>

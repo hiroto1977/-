@@ -683,6 +683,7 @@ function BudgetPanel() {
   // 「突合できなかった期」の断り書きは **1 回だけ**呼ぶ (関門と表示で同じ値を見る)。
   const unmatchedNote = variance === null ? null : budgetUnmatchedNote(variance.alignment);
   const submit = useSubmitGuard();
+  const budgetsWindow = useRowWindow(budgets);
   const readable = useMemo(() => readableKpiRows(budgets.map((r) => r.data)), [budgets]);
   const duplicateNote = useMemo(() => duplicateActualsNote('予算', findDuplicateActuals(readable.rows)), [readable]);
   // 期・金額が読めず除いた件数 (実績と同じ規則・パス 225 / 443)。
@@ -780,6 +781,7 @@ function BudgetPanel() {
         </p>
       )}
       {budgets.length > 0 ? (
+        <>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
           <thead>
             <tr style={{ textAlign: 'left', color: 'var(--text-mute)' }}>
@@ -790,7 +792,7 @@ function BudgetPanel() {
             </tr>
           </thead>
           <tbody>
-            {budgets.map((r) => (
+            {budgetsWindow.visible.map((r) => (
               <tr key={r.id} style={{ borderTop: '1px solid var(--border)' }}>
                 {/* 実績の一覧と同じ理由 (素の購読を描くので、値は画面の側で型から読む)。 */}
                 <td style={{ padding: '4px 8px' }}>{displayField(r.data.period)}</td>
@@ -803,6 +805,8 @@ function BudgetPanel() {
             ))}
           </tbody>
         </table>
+        <RowWindowMore hidden={budgetsWindow.hidden} total={budgetsWindow.total} showMore={budgetsWindow.showMore} />
+        </>
       ) : (
         <p style={{ color: 'var(--text-mute)', fontSize: 13, marginTop: 12 }}>
           予算を入力すると、実績との差異 (BVA) が算出されます。
