@@ -3381,6 +3381,21 @@
         "file": "src/renderer/pages/__tests__/rowWindowOnScreen.test.ts",
         "test": "★ 窓を超える行数の予算を入れても描くのは窓の行数だけで、「さらに表示」で全件に届く"
       }
+    },
+    {
+      "id": "T-203",
+      "found": "2026-10-26",
+      "foundBy": "T-175 / T-201 と 2 回続けて、全行を描く collection の天井の漏れを人が 1 件ずつ見つけた。母集団を手で挙げていたので、防御側が形の表から機械で引く census にした。同時に天井も窓も無い hydroponics-readings の費用を実測した(固まる形ではなかった)",
+      "surface": "renderer",
+      "class": "denial-of-wallet",
+      "severity": "low",
+      "title": "形の表(COLLECTION_SHAPES)に collection が増えても、復元の件数の天井・窓・最新 1 件のどれで行の数を受けるかを名乗らせる機械が無く、T-175・T-201 と同じ漏れが次にも起きうる(罠の除去であって、今日固まる画面の発見ではない)",
+      "status": "fixed",
+      "fix": "collectionRowBoundCensus.test.ts: 全 collection が BACKUP_COLLECTION_RECORD_LIMITS か OTHER_BOUNDS(window / latest-one / unsubscribed / compute-only)のどれか 1 つにだけ載ることを両方向で見る。window は画面が useRowWindow を通すこと、latest-one は latestAdoptionCensus の ADOPTED と一致、unsubscribed は定数がデータ層の外から参照されないこと、compute-only は履歴の行を map で描かないことを要求する。hydroponics-readings は 200,000 件(復元の全体の天井)で読み 672 ms・最新の探索 209 ms と測り、天井は足さなかった。",
+      "regression": {
+        "file": "src/renderer/data/__tests__/collectionRowBoundCensus.test.ts",
+        "test": "★ 形の表の collection は、天井の台帳か OTHER_BOUNDS のどれか 1 つにだけ載る (両方向)"
+      }
     }
   ],
   "huntBacklog": [
@@ -3608,11 +3623,6 @@
       "surface": "supply-chain",
       "item": "2 本目の追跡済み Windows .bat ランチャーを足したとき、CI のどの層が落とすか(npm test の回帰検査か verify:all か)",
       "why": "2026-10-25 に監査役が指摘。npm test が ci.yml で走るので実質は捕まるが、ゲートとしての強制の層を確かめていない。"
-    },
-    {
-      "item": "COLLECTION_SHAPES の全 collection が BACKUP_COLLECTION_RECORD_LIMITS か『窓/最新 1 件/描かない』の理由つき台帳のどれかに載る構造の census(T-175・T-201 と 2 回続けて天井の漏れが見つかった)",
-      "surface": "renderer",
-      "why": "監査役 renderer の提案。台帳と COLLECTION_SHAPES を両方向で突き合わせる。"
     }
   ],
   "clearedBacklog": [
@@ -3739,6 +3749,11 @@
     {
       "item": "T-175 の天井 5,000 は表の一覧には大きい(kpi-budgets 5,000 行でメインスレッド約 10 秒)。窓を広げる/天井を下げる判断",
       "finding": "T-202 で予算の一覧を窓に通した。天井は下げない(正当な履歴を切らない)。",
+      "checkedOn": "2026-10-26"
+    },
+    {
+      "item": "COLLECTION_SHAPES の全 collection が BACKUP_COLLECTION_RECORD_LIMITS か『窓/最新 1 件/描かない』の理由つき台帳のどれかに載る構造の census(T-175・T-201 と 2 回続けて天井の漏れが見つかった)",
+      "finding": "T-203 で census を足した(両方向・4 種類・対照 4 方向が狙った検査で鳴る)。hydroponics-readings は測って固まらないと分かったので compute-only として測定値を残した。",
       "checkedOn": "2026-10-26"
     }
   ]
