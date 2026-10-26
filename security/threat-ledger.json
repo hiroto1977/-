@@ -3366,6 +3366,21 @@
         "file": "src/renderer/data/__tests__/backupRecordLimit.test.ts",
         "test": "★ コネクタ実行結果 2,001 件・貸借対照表 501 件で断る (上限ちょうどは通す)"
       }
+    },
+    {
+      "id": "T-202",
+      "found": "2026-10-26",
+      "foundBy": "T-201 の測定で観測した huntBacklog の項目(kpi-budgets を 5,000 行まで復元でき、KPI 画面の予算の一覧が全行を描いて実 Chromium でメインスレッドが約 10 秒止まる)を、防御側が実物の画面で再現して直した",
+      "surface": "renderer",
+      "class": "denial-of-wallet",
+      "severity": "low",
+      "title": "KPI 画面の予算の一覧(kpi-budgets)だけ行窓を通っておらず、5,000 行まで復元できる控えを読み込むと全行を描いて固まる。実績の一覧は T-127 で窓を通っていた",
+      "status": "fixed",
+      "fix": "KpiPage の予算の一覧を useRowWindow + RowWindowMore に通した(隠れた行も『さらに表示』の後なら × で消せる)。復元の天井 5,000 は下げていない(正当な予算の履歴を切る向きなので、窓で受ける)。",
+      "regression": {
+        "file": "src/renderer/pages/__tests__/rowWindowOnScreen.test.ts",
+        "test": "★ 窓を超える行数の予算を入れても描くのは窓の行数だけで、「さらに表示」で全件に届く"
+      }
     }
   ],
   "huntBacklog": [
@@ -3598,11 +3613,6 @@
       "item": "COLLECTION_SHAPES の全 collection が BACKUP_COLLECTION_RECORD_LIMITS か『窓/最新 1 件/描かない』の理由つき台帳のどれかに載る構造の census(T-175・T-201 と 2 回続けて天井の漏れが見つかった)",
       "surface": "renderer",
       "why": "監査役 renderer の提案。台帳と COLLECTION_SHAPES を両方向で突き合わせる。"
-    },
-    {
-      "item": "T-175 の天井 5,000 は表の一覧には大きい(kpi-budgets 5,000 行でメインスレッド約 10 秒)。窓を広げる/天井を下げる判断",
-      "surface": "renderer",
-      "why": "T-201 の測定で観測した。kpi-budgets は 5,000 行まで復元でき、実 Chromium でメインスレッドが約 10 秒止まる。KPI 画面の行窓は未適用で、判断(天井を下げるか窓を足すか)は人が決める。"
     }
   ],
   "clearedBacklog": [
@@ -3725,6 +3735,11 @@
       "item": "マージ復元は確認を出さず、parameter-overrides(法定税率ほか)の行を黙って入れる。TaxPage・書類",
       "finding": "T-186 でマージ復元に確認を足した(数値パラメータの上書きが入るときだけ)。書類の検査の標準税率の食い違い指摘は未実装として T-186 の限界に残した。",
       "checkedOn": "2026-10-25"
+    },
+    {
+      "item": "T-175 の天井 5,000 は表の一覧には大きい(kpi-budgets 5,000 行でメインスレッド約 10 秒)。窓を広げる/天井を下げる判断",
+      "finding": "T-202 で予算の一覧を窓に通した。天井は下げない(正当な履歴を切らない)。",
+      "checkedOn": "2026-10-26"
     }
   ]
 }

@@ -19,6 +19,7 @@ import { SalesPage } from '../SalesPage';
 import { KpiPage } from '../KpiPage';
 import { SALES_COLLECTION } from '../../data/sales';
 import { KPI_ACTUALS_COLLECTION } from '../../data/kpiActuals';
+import { KPI_BUDGETS_COLLECTION } from '../../data/budgetVariance';
 import { CONNECTOR_OUTPUT_COLLECTION } from '../../data/connectorExecution';
 import { ConnectorsPage } from '../ConnectorsPage';
 import { ROW_WINDOW_STEP } from '../../data/rowWindow';
@@ -203,5 +204,34 @@ describe('コネクタの実行結果の一覧も窓を通す (threat: T-201)', 
     expect(rowsNow()).toBe(ROW_WINDOW_STEP);
     await clickMore();
     expect(rowsNow()).toBe(n);
+  });
+});
+
+describe('KPI の予算の一覧も窓を通す (threat: T-202)', () => {
+  it('★ 窓を超える行数の予算を入れても描くのは窓の行数だけで、「さらに表示」で全件に届く', async () => {
+    const n = ROW_WINDOW_STEP + 30;
+    await getRecordStore().insertMany(
+      KPI_BUDGETS_COLLECTION,
+      Array.from({ length: n }, (_, i) => ({
+        period: `${2000 + Math.floor(i / 12)}-${String((i % 12) + 1).padStart(2, '0')}`,
+        unit: '全社',
+        revenue: 1_000_000,
+        cogs: 300_000,
+        advertising: 50_000,
+        sga: 200_000,
+        depreciation: 10_000,
+      })),
+    );
+    await mount(KpiPage as ComponentType);
+    expect(bodyRows()).toBe(ROW_WINDOW_STEP);
+    await clickMore();
+    expect(bodyRows()).toBe(n);
+  });
+
+  it('★ 予算の一覧は全行を描く素の budgets.map を持たない (窓を通す)', () => {
+    const src = readOriginalSource(path.resolve(__dirname, '..', 'KpiPage.tsx'));
+    expect(src).toContain('useRowWindow(budgets)');
+    expect(src).toContain('budgetsWindow.visible.map(');
+    expect(src).not.toMatch(/\{budgets\.map\(/);
   });
 });
