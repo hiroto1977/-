@@ -32,6 +32,11 @@ export type CoachPhase = 'persona' | 'interview' | 'review' | 'active';
 
 export type NodeKind = 'purpose' | 'goal' | 'milestone' | 'task';
 
+export type HabitCycle = 'daily' | 'weekly';
+
+/** 「できなかった」の原因 (タスクの割り方が変わる)。 */
+export type SplitCause = 'large' | 'time' | 'start';
+
 /** 聞き取りの問い 1 つ (順番どおりに聞く)。 */
 export type QuestionKey = 'goal' | 'why' | 'due' | 'hours' | 'measure' | 'blocker';
 
@@ -45,6 +50,12 @@ export interface GoalNode {
   /** 見込みの所要分 (タスクだけが持つ。それ以外は 0)。 */
   readonly minutes: number;
   readonly done: boolean;
+  /** 優先度 (-MAX_PRIORITY〜MAX_PRIORITY・無ければ 0)。高いほど今日の予定の先頭へ寄る。 */
+  readonly priority?: number;
+  /** 習慣 (繰り返しタスク)。完了にしても `done` は立たず、周期が来るとまた予定へ戻る。 */
+  readonly repeat?: HabitCycle;
+  /** 最後に完了にした日 (習慣は「今日の分が済んだか」、ほかは 1 週間の振り返りに使う)。 */
+  readonly doneOn?: string;
 }
 
 export interface CoachState {
@@ -56,6 +67,8 @@ export interface CoachState {
   readonly startedOn: string;
   readonly nodes: readonly GoalNode[];
   readonly nextId: number;
+  /** 「できなかった」の原因を聞いている途中のタスク (答えが来たら割って消す)。 */
+  readonly splitFor?: number;
 }
 
 export interface CoachTurn {
@@ -76,6 +89,20 @@ export interface Critique {
 export const MAX_ANSWER_CHARS = 120;
 export const MAX_NODES = 200;
 const MAX_TITLE_CHARS = 160;
+/** 優先度の幅 (±)。これ以上は上げ下げしない。 */
+export const MAX_PRIORITY = 3;
+/** 習慣にできるタスクの数 (毎日の時間を習慣が食い尽くさないための上限)。 */
+export const MAX_HABITS = 5;
+/** 割ったタスクの最小の分 (これより小さくは割らない)。 */
+export const MIN_SPLIT_MINUTES = 5;
+/** 1 つのタスクを割る数の上限。 */
+export const MAX_SPLIT_PARTS = 3;
+/** 期限として受け取る先の上限 (日)。これより先は日付の打ち間違いとして断る。 */
+export const MAX_DUE_DAYS = 3650;
+/** 振り返りが数える直近の日数。 */
+export const REVIEW_WINDOW_DAYS = 7;
+/** 時間の経過率が完了率をこれ (ポイント) より上回ったら「遅れ」と言う。 */
+export const LATE_GAP_PCT = 20;
 /** 1 つのタスクの上限分 (これを超える見込みは割る)。 */
 export const MAX_TASK_MINUTES = 45;
 const DEFAULT_DAILY_MINUTES = 60;
@@ -259,6 +286,24 @@ const DONE_MARKERS: readonly string[] = ['完了', '済み', '済', 'できた',
 const OK_MARKERS: readonly string[] = ['ok', 'ｏｋ', 'はい', '進め', '開始', 'いいよ', '了解', 'ええ'];
 const ADD_MARKERS: readonly string[] = ['追加', '足して', '加えて'];
 const HELP_MARKERS: readonly string[] = ['コーチの使い方', 'コーチ 使い方', 'コーチって', 'コーチのヘルプ'];
+// 以下の合図もコーチ固有の言い回しに絞る (「振り返り」「習慣」だけの一般語は拾わない)。
+const WEEKLY_MARKERS: readonly string[] = ['今週の振り返り', '今週のふりかえり', '週次の振り返り', '週の振り返り', '週次レビュー', '週間レビュー', '1週間の振り返り'];
+const FAIL_MARKERS: readonly string[] = ['できなかった', '出来なかった', '終わらなかった', 'やれなかった', '間に合わなかった', '進まなかった'];
+const PRIORITY_UP_MARKERS: readonly string[] = ['優先度を上げ', '優先を上げ', '優先度アップ'];
+const PRIORITY_DOWN_MARKERS: readonly string[] = ['優先度を下げ', '優先を下げ', '優先度ダウン'];
+const HABIT_ON_MARKERS: readonly string[] = ['習慣にする', '習慣にして', '習慣化', '毎日やる', '毎週やる'];
+const HABIT_OFF_MARKERS: readonly string[] = ['習慣をやめ', '習慣を外', '習慣にしない', '習慣解除'];
+const CANCEL_MARKERS: readonly string[] = ['キャンセル', 'やめておく', '今はいい'];
+const SPLIT_CAUSE_MARKERS: Readonly<Record<SplitCause, readonly string[]>> = {
+  large: ['大きすぎ', '大きい', '重すぎ', '多すぎ'],
+  time: ['時間が', '時間を', '忙し', '取れな'],
+  start: ['何から', '始め方', '始められ', '手が付け', '手をつけ', '分からな', 'わからな'],
+};
+// 「目標を変える: ○○」「期限を変える: ○○」(コロンの後ろが新しい値。コロンが無ければ使い方を案内する)。
+const CHANGE_GOAL_HEAD = /(?:目標|ゴール)を(?:変え|かえ|書き換え)/;
+const CHANGE_DUE_HEAD = /期限を(?:変え|かえ|延ば|伸ば|のば|ずら|更新)/;
+const CHANGE_GOAL_VALUE = /(?:目標|ゴール)を(?:変え|かえ|書き換え)[^:：\n]{0,6}[:：]\s*(.+)$/;
+const CHANGE_DUE_VALUE = /期限を(?:変え|かえ|延ば|伸ば|のば|ずら|更新)[^:：\n]{0,6}[:：]\s*(.+)$/;
 
 const containsAny = (haystack: string, needles: readonly string[]): boolean => needles.some((n) => haystack.includes(n));
 
@@ -426,7 +471,21 @@ export function buildTree(state: CoachState, today: string): CoachState {
 
 // --- 批判的な見直し ----------------------------------------------------------
 
-const openTasks = (nodes: readonly GoalNode[]): GoalNode[] => nodes.filter((n) => n.kind === 'task' && !n.done);
+const isHabit = (n: GoalNode): boolean => n.repeat !== undefined;
+
+/** 優先度 (欄が無ければ中立 = 0。「割れない値を 0 に倒す」ではなく、任意の欄の既定)。 */
+const priorityOf = (n: GoalNode): number => n.priority ?? 0;
+
+/** 目標の達成に数える未完了タスク (習慣は終わらないので数えない)。 */
+const openTasks = (nodes: readonly GoalNode[]): GoalNode[] => nodes.filter((n) => n.kind === 'task' && !n.done && !isHabit(n));
+
+/** 習慣の今日の分が残っているか (周期が過ぎていれば残っている)。 */
+function habitDue(n: GoalNode, today: string): boolean {
+  if (n.repeat === undefined) return false;
+  if (n.doneOn === undefined) return true;
+  const d = isoDaysBetween(n.doneOn, today);
+  return d === null || d >= (n.repeat === 'weekly' ? 7 : 1);
+}
 
 /** 開始日から期限までが逆算の最短に満たないか。日付が読めなければ満たない側には倒さない (言わない)。 */
 function horizonShort(from: string, to: string): boolean {
@@ -493,8 +552,13 @@ export interface DailyPlan {
 /** 今日やる分: 期日の早い未完了タスクから、使える時間に収まる範囲 (最低 1 件)。 */
 export function dailyPlan(state: CoachState, today: string): DailyPlan {
   const budget = dailyMinutesOf(state);
-  const tasks = openTasks(state.nodes).sort((a, b) => {
-    const d = (a.due ?? '9999-12-31').localeCompare(b.due ?? '9999-12-31');
+  // 習慣は「今日が期日」として並べる (遅れた物の後ろ・期日が先の物の前)。優先度が高い物はさらに先頭へ寄る。
+  const dueKey = (n: GoalNode): string => (isHabit(n) ? today : (n.due ?? '9999-12-31'));
+  const habits = state.nodes.filter((n) => n.kind === 'task' && habitDue(n, today));
+  const tasks = [...openTasks(state.nodes), ...habits].sort((a, b) => {
+    const pr = priorityOf(b) - priorityOf(a);
+    if (pr !== 0) return pr;
+    const d = dueKey(a).localeCompare(dueKey(b));
     return d !== 0 ? d : a.id - b.id;
   });
   const items: GoalNode[] = [];
@@ -504,11 +568,13 @@ export function dailyPlan(state: CoachState, today: string): DailyPlan {
     items.push(t);
     used += t.minutes;
   }
-  const overdue = tasks.filter((t) => t.due !== null && t.due < today);
+  const overdue = tasks.filter((t) => !isHabit(t) && t.due !== null && t.due < today);
   return { items, overdue, minutes: used, budget };
 }
 
 // --- 表示 -------------------------------------------------------------------
+
+const habitLabel = (c: HabitCycle): string => (c === 'weekly' ? ' 🔁毎週' : ' 🔁毎日');
 
 const ICON: Readonly<Record<NodeKind, string>> = { purpose: '🌱', goal: '🎯', milestone: '🏁', task: '☐' };
 
@@ -519,7 +585,8 @@ export function renderTree(state: CoachState): string {
     const mark = n.kind === 'task' ? (n.done ? '☑' : '☐') : ICON[n.kind];
     const due = n.due === null ? '' : ` (〜${n.due})`;
     const min = n.kind === 'task' ? ` ${n.minutes}分` : '';
-    lines.push(`${'  '.repeat(depth)}${mark} ${n.kind === 'task' ? `#${n.id} ` : ''}${n.title}${due}${min}`);
+    const tags = n.kind === 'task' ? `${n.repeat === undefined ? '' : habitLabel(n.repeat)}${priorityOf(n) > 0 ? ' ⬆' : priorityOf(n) < 0 ? ' ⬇' : ''}` : '';
+    lines.push(`${'  '.repeat(depth)}${mark} ${n.kind === 'task' ? `#${n.id} ` : ''}${n.title}${due}${min}${tags}`);
     for (const c of children(n.id)) walk(c, depth + 1);
   };
   for (const root of state.nodes.filter((n) => n.parent === null)) walk(root, 0);
@@ -530,7 +597,9 @@ function renderPlan(state: CoachState, today: string): string {
   const plan = dailyPlan(state, today);
   if (plan.items.length === 0) return '未完了のタスクはありません。目標は達成済みです。新しい目標を決めますか？';
   const head = `📅 ${today} の予定 (使える時間 ${plan.budget} 分のうち ${plan.minutes} 分)`;
-  const body = plan.items.map((t) => `☐ #${t.id} ${t.title} (${t.minutes}分・〜${t.due ?? '期日なし'})`).join('\n');
+  const body = plan.items
+    .map((t) => `☐ #${t.id} ${t.title} (${t.minutes}分・${t.repeat === undefined ? `〜${t.due ?? '期日なし'}` : habitLabel(t.repeat).trim()})${priorityOf(t) > 0 ? ' ⬆' : ''}`)
+    .join('\n');
   const late = plan.overdue.length > 0 ? `\n\n⚠ 期日を過ぎた未完了が ${plan.overdue.length} 件あります。見直し (「見直して」) で時間・範囲・期限を決め直してください。` : '';
   return `${head}\n${body}${late}\n\n終わったら「#番号 完了」と教えてください。`;
 }
@@ -562,6 +631,341 @@ function nextQuestion(state: CoachState): (typeof QUESTIONS)[number] | null {
   return null;
 }
 
+
+// --- 会話の拡張: 目標・期限の変更 / 優先度 / 習慣 / 振り返り / できなかった --------------------
+// どれも状態を純関数で書き換えるだけ (AI・網・保存は使わない)。不変条件 (MAX_NODES・
+// MAX_TASK_MINUTES・MAX_ANSWER_CHARS) は呼ぶ側に頼らず、ここで守る。
+
+const taskIdIn = (t: string): number | null => {
+  const m = /#\s*(\d{1,3})/.exec(t);
+  return m === null ? null : Number(m[1]);
+};
+
+/** 保留 (`splitFor`) を外した状態 (任意の欄を残さず組み直す)。 */
+const withoutPending = (state: CoachState): CoachState => ({
+  v: 1,
+  phase: state.phase,
+  persona: state.persona,
+  answers: state.answers,
+  startedOn: state.startedOn,
+  nodes: state.nodes,
+  nextId: state.nextId,
+});
+
+/** 期限として受けてよいか。断る理由 (利用者へ言う文) を返し、受けてよければ null。 */
+function dueRefusal(due: string, today: string): string | null {
+  if (due < today) return `${due} はすでに過ぎています。これから先の日付で教えてください。`;
+  const span = isoDaysBetween(today, due);
+  if (span === null || span > MAX_DUE_DAYS) return `${due} は ${MAX_DUE_DAYS} 日 (約 10 年) より先です。日付の打ち間違いかもしれないので、もう一度教えてください。`;
+  return null;
+}
+
+/**
+ * 答えを変えて木を作り直す。**完了した物・優先度・習慣・自分で足した物は引き継ぐ**
+ * (作り直しで進捗を失わせない)。割ったタスクは元のタスクへ戻し、部品がすべて完了なら元も完了とする。
+ * 作り直した木が上限 (`MAX_NODES`) を超えるなら null (切らずに断る)。
+ */
+function rebuildKeeping(state: CoachState, today: string): { state: CoachState; keptDone: number; keptExtra: number } | null {
+  const fresh = buildTree({ ...withoutPending(state), nodes: [], nextId: 1 }, today);
+  const oldTasks = state.nodes.filter((n) => n.kind === 'task');
+  const used = new Set<number>();
+  let keptDone = 0;
+  const merged: GoalNode[] = fresh.nodes.map((n) => {
+    if (n.kind !== 'task') return n;
+    const same = oldTasks.find((o) => !used.has(o.id) && o.title === n.title);
+    if (same !== undefined) {
+      used.add(same.id);
+      if (same.done) keptDone += 1;
+      return {
+        ...n,
+        done: same.done,
+        ...(same.priority === undefined ? {} : { priority: same.priority }),
+        ...(same.repeat === undefined ? {} : { repeat: same.repeat }),
+        ...(same.doneOn === undefined ? {} : { doneOn: same.doneOn }),
+      };
+    }
+    // 割ったタスクの部品が全部完了なら、元のタスクも完了として引き継ぐ。
+    const parts = oldTasks.filter((o) => !used.has(o.id) && o.title.startsWith(`${n.title}（`));
+    if (parts.length > 0) {
+      for (const o of parts) used.add(o.id);
+      if (parts.every((o) => o.done)) {
+        keptDone += 1;
+        const last = parts.map((o) => o.doneOn).filter((d): d is string => d !== undefined).sort().pop();
+        return { ...n, done: true, ...(last === undefined ? {} : { doneOn: last }) };
+      }
+    }
+    return n;
+  });
+  const extras = oldTasks.filter((o) => !used.has(o.id));
+  const anchor = merged.find((n) => n.kind === 'milestone');
+  if (anchor === undefined || merged.length + extras.length > MAX_NODES) return null;
+  let next = fresh.nextId;
+  for (const o of extras) {
+    merged.push({ ...o, id: next, parent: anchor.id, due: anchor.due });
+    next += 1;
+  }
+  return { state: { ...withoutPending(fresh), nodes: merged, nextId: next }, keptDone, keptExtra: extras.length };
+}
+
+function changedPlanTurn(before: CoachState, answers: CoachState['answers'], today: string, head: string, related: readonly ServiceId[]): CoachTurn {
+  const state: CoachState = { ...before, answers };
+  const r = rebuildKeeping(state, today);
+  if (r === null) {
+    return turn(before, `計画を作り直すと大きくなりすぎます (上限 ${MAX_NODES})。完了した物を整理するか、「やり直し」で作り直してください。`, ['全体を見せて', 'やり直し'], related);
+  }
+  const carried = `完了済みの ${r.keptDone} 件と、自分で足した・割った ${r.keptExtra} 件は引き継ぎました。`;
+  const tail = r.state.phase === 'review' ? '\n\nこの計画で進めてよければ「進めて」と答えてください。' : '';
+  return turn(
+    r.state,
+    `${head}\n${carried}\n\n${renderTree(r.state)}\n\n--- 自分で疑ってみた点 ---\n${renderCritique(critique(r.state, today))}${tail}`,
+    r.state.phase === 'review' ? ['進めて', '見直して', 'やり直し'] : ['今日の予定', '全体を見せて', '見直して'],
+    related,
+  );
+}
+
+/** 「目標を変える: ○○」「期限を変える: ○○」(review / active)。コロンが無ければ使い方を案内する。 */
+function changeTurn(state: CoachState, text: string, today: string, related: readonly ServiceId[]): CoachTurn | null {
+  const goalV = CHANGE_GOAL_VALUE.exec(text);
+  if (goalV !== null && goalV[1] !== undefined) {
+    const value = clampText(goalV[1], MAX_ANSWER_CHARS);
+    if (value === (state.answers.goal ?? '')) return turn(state, 'いまの目標と同じです。変えていません。', ['今日の予定', '全体を見せて'], related);
+    return changedPlanTurn(state, { ...state.answers, goal: value }, today, `🎯 目標を「${value}」に変えて、期限から逆算し直しました。`, related);
+  }
+  const dueV = CHANGE_DUE_VALUE.exec(text);
+  if (dueV !== null && dueV[1] !== undefined) {
+    const due = parseDue(dueV[1], today);
+    if (due === null) {
+      return turn(state, '期限を日付として読めませんでした。ISO 日付 (2026-12-31)・「3か月後」・「半年後」・「年末」のどれかで教えてください。\n(日付は推測せず、読めたものだけを使います)', ['3か月後', '半年後', '年末'].map((d) => `期限を変える: ${d}`), related);
+    }
+    const refusal = dueRefusal(due, today);
+    if (refusal !== null) return turn(state, refusal, [], related);
+    if (due === state.answers.due) return turn(state, 'いまの期限と同じです。変えていません。', ['今日の予定', '全体を見せて'], related);
+    return changedPlanTurn(state, { ...state.answers, due }, today, `📆 期限を ${due} に変えて、逆算し直しました。`, related);
+  }
+  const t = fold(text);
+  if (CHANGE_GOAL_HEAD.test(t) || CHANGE_DUE_HEAD.test(t)) {
+    return turn(state, '変える内容をコロンの後ろに書いてください。\n例: 「目標を変える: 月の売上を 120 万円にする」「期限を変える: 2027-03-31」(「半年後」も読めます)', ['期限を変える: 半年後', '全体を見せて'], related);
+  }
+  return null;
+}
+
+/** 優先度の上げ下げ (`#番号` 必須)。幅は ±MAX_PRIORITY。 */
+function priorityTurn(state: CoachState, t: string, delta: 1 | -1, related: readonly ServiceId[]): CoachTurn {
+  const id = taskIdIn(t);
+  if (id === null) return turn(state, '番号を付けて教えてください。例: 「#3 優先度を上げて」(番号は「全体を見せて」で分かります)', ['全体を見せて'], related);
+  const node = state.nodes.find((n) => n.id === id && n.kind === 'task');
+  if (node === undefined) return turn(state, `#${id} というタスクは見当たりません。「全体を見せて」で番号を確かめてください。`, ['全体を見せて'], related);
+  if (node.done) return turn(state, `#${id} はすでに完了しているので、優先度は変えません。`, ['今日の予定'], related);
+  const next = priorityOf(node) + delta;
+  if (Math.abs(next) > MAX_PRIORITY) return turn(state, `#${id} はすでに${delta > 0 ? '最上位' : '最下位'}です (幅は ±${MAX_PRIORITY})。`, ['今日の予定'], related);
+  const nodes = state.nodes.map((n) => {
+    if (n.id !== id) return n;
+    const { priority: _drop, ...rest } = n;
+    return next === 0 ? rest : { ...rest, priority: next };
+  });
+  return turn({ ...state, nodes }, `#${id} 「${node.title}」の優先度を${delta > 0 ? '上げ' : '下げ'}ました (${next > 0 ? '+' : ''}${next})。今日の予定では、優先度の高い物が期日より先に並びます。`, ['今日の予定', '全体を見せて'], related);
+}
+
+/** 習慣にする / やめる (`#番号` 必須)。習慣は終わらず、周期が来るとまた予定へ戻る。 */
+function habitTurn(state: CoachState, t: string, on: boolean, related: readonly ServiceId[]): CoachTurn {
+  const id = taskIdIn(t);
+  if (id === null) return turn(state, '番号を付けて教えてください。例: 「#3 習慣にする」「#3 毎週やる」「#3 習慣をやめる」', ['全体を見せて'], related);
+  const node = state.nodes.find((n) => n.id === id && n.kind === 'task');
+  if (node === undefined) return turn(state, `#${id} というタスクは見当たりません。「全体を見せて」で番号を確かめてください。`, ['全体を見せて'], related);
+  if (!on) {
+    if (node.repeat === undefined) return turn(state, `#${id} は習慣ではありません。`, ['全体を見せて'], related);
+    const nodes = state.nodes.map((n) => {
+      if (n.id !== id) return n;
+      const { repeat: _r, doneOn: _d, ...rest } = n;
+      return rest;
+    });
+    return turn({ ...state, nodes }, `🔁 #${id} 「${node.title}」を習慣から外し、ふつうのタスク (未完了) に戻しました。`, ['今日の予定', '全体を見せて'], related);
+  }
+  if (node.repeat !== undefined) return turn(state, `#${id} はすでに習慣です。`, ['今日の予定'], related);
+  if (node.done) return turn(state, `#${id} はすでに完了しています。習慣にするのは未完了のタスクだけです。`, ['全体を見せて'], related);
+  if (state.nodes.filter((n) => n.repeat !== undefined).length >= MAX_HABITS) {
+    return turn(state, `習慣は ${MAX_HABITS} 件までです (毎日の時間を習慣が占めないため)。不要な習慣を「#番号 習慣をやめる」で外してください。`, ['全体を見せて'], related);
+  }
+  const cycle: HabitCycle = t.includes('毎週') || t.includes('週1') ? 'weekly' : 'daily';
+  const nodes = state.nodes.map((n) => (n.id === id ? { ...n, repeat: cycle } : n));
+  return turn(
+    { ...state, nodes },
+    `🔁 #${id} 「${node.title}」を${cycle === 'weekly' ? '毎週' : '毎日'}の習慣にしました。完了にしても、${cycle === 'weekly' ? '7 日後' : '翌日'}にまた今日の予定へ戻ります。習慣は目標の達成件数には数えません。外すときは「#${id} 習慣をやめる」。`,
+    ['今日の予定', '全体を見せて'],
+    related,
+  );
+}
+
+export interface WeeklyReview {
+  /** 習慣を除くタスクの総数と完了数。 */
+  readonly total: number;
+  readonly done: number;
+  readonly donePct: number | null;
+  /** 作業量 (分) で見た完了率。 */
+  readonly minutesPct: number | null;
+  /** 直近 REVIEW_WINDOW_DAYS 日に完了した数と、完了日が記録されていない完了の数。 */
+  readonly doneThisWeek: number;
+  readonly doneUndated: number;
+  readonly overdue: readonly GoalNode[];
+  /** 開始日から期限までのうち、今日までに経過した割合 (読めなければ null)。 */
+  readonly elapsedPct: number | null;
+  readonly habits: number;
+  readonly habitsDoneToday: number;
+  /** 利用者へ返す批判的な問い (1 つだけ)。 */
+  readonly question: string;
+}
+
+/** 割合 (%)。分母が 0 のときは割れないので null (0% と言わない)。 */
+const pct = (a: number, b: number): number | null => (b <= 0 ? null : Math.round((a * 100) / b));
+const pctText = (v: number | null): string => (v === null ? '—' : `${v}%`);
+
+/** 今週の振り返り: 完了率・遅れ・時間の経過を数字で言い、疑う問いを**1 つだけ**返す (客観・批判)。 */
+export function weeklyReview(state: CoachState, today: string): WeeklyReview {
+  const tasks = state.nodes.filter((n) => n.kind === 'task' && !isHabit(n));
+  const done = tasks.filter((n) => n.done);
+  const sum = (xs: readonly GoalNode[]): number => xs.reduce((a, n) => a + n.minutes, 0);
+  const recent = done.filter((n) => {
+    const d = n.doneOn === undefined ? null : isoDaysBetween(n.doneOn, today);
+    return d !== null && d >= 0 && d < REVIEW_WINDOW_DAYS;
+  });
+  const overdue = openTasks(state.nodes)
+    .filter((n) => n.due !== null && n.due < today)
+    .sort((a, b) => (a.due ?? '').localeCompare(b.due ?? '') || a.id - b.id);
+  const goalDue = state.nodes.find((n) => n.kind === 'goal')?.due ?? null;
+  const spanDays = goalDue === null ? null : isoDaysBetween(state.startedOn, goalDue);
+  const gone = isoDaysBetween(state.startedOn, today);
+  const elapsedPct = spanDays === null || gone === null || spanDays <= 0 ? null : Math.min(100, Math.max(0, Math.round((gone * 100) / spanDays)));
+  const habits = state.nodes.filter((n) => n.kind === 'task' && isHabit(n));
+  const donePct = pct(done.length, tasks.length);
+  const open = tasks.length - done.length;
+
+  let question: string;
+  const first = overdue[0];
+  if (first !== undefined) {
+    question = `期日を過ぎた「${clampText(first.title, 40)}」(〜${first.due ?? ''}) は、やらないと決めたのですか、それとも着手できなかったのですか？ 着手できなかったなら「#${first.id} できなかった」と教えてください。原因を 1 つ聞いて、小さく割って組み直します。`;
+  } else if (tasks.length === 0) {
+    question = '計画にタスクがありません。このままでは今日やることが決まりません。何から始めるか、「追加: ○○」で 1 つ足してください。';
+  } else if (open > 0 && recent.length === 0 && gone !== null && gone >= REVIEW_WINDOW_DAYS) {
+    question = `直近 ${REVIEW_WINDOW_DAYS} 日に完了したタスクは 0 件です。最初の一手を止めているのは、タスクの大きさ・時間・始め方のどれですか？ 「#番号 できなかった」と答えると、小さく割ります。`;
+  } else if (elapsedPct !== null && donePct !== null && elapsedPct - donePct > LATE_GAP_PCT) {
+    question = `期間の ${elapsedPct}% が過ぎたのに、完了は ${donePct}% です。このペースで期限に間に合うと言える根拠は何ですか？ 根拠が言えないなら、範囲を削るか期限を延ばす (「期限を変える: ○○」) 判断が先です。`;
+  } else {
+    question = '進みは今のところ遅れていません。ただ、順調な理由は来週も再現できる物ですか、それとも今週だけの事情ですか？ 達成の判断に使う数字 (聞き取りの「何で判断するか」) で実際に確かめましたか？';
+  }
+  return {
+    total: tasks.length,
+    done: done.length,
+    donePct,
+    minutesPct: pct(sum(done), sum(tasks)),
+    doneThisWeek: recent.length,
+    doneUndated: done.filter((n) => n.doneOn === undefined).length,
+    overdue,
+    elapsedPct,
+    habits: habits.length,
+    habitsDoneToday: habits.filter((n) => n.doneOn === today).length,
+    question,
+  };
+}
+
+function weeklyTurn(state: CoachState, today: string, related: readonly ServiceId[]): CoachTurn {
+  const r = weeklyReview(state, today);
+  const overdueIds = r.overdue.slice(0, 3).map((n) => `#${n.id}`).join('・');
+  const lines = [
+    `📊 今週の振り返り (${today} 時点・数字だけで言います)`,
+    `・完了 ${r.done} / ${r.total} 件 (${pctText(r.donePct)})・作業量 (分) では ${pctText(r.minutesPct)}`,
+    `・直近 ${REVIEW_WINDOW_DAYS} 日の完了: ${r.doneThisWeek} 件${r.doneUndated > 0 ? ` (完了日が記録されていない完了が ${r.doneUndated} 件あります)` : ''}`,
+    `・期日を過ぎた未完了: ${r.overdue.length} 件${r.overdue.length > 0 ? ` (${overdueIds}${r.overdue.length > 3 ? ' ほか' : ''})` : ''}`,
+    r.elapsedPct === null ? '・期間の経過: 日付を読めないので算出していません' : `・期間の経過: ${r.elapsedPct}%${r.donePct === null ? '' : ` (完了率との差 ${r.elapsedPct - r.donePct} ポイント)`}`,
+  ];
+  if (r.habits > 0) lines.push(`・習慣: ${r.habits} 件 (今日の分が済んだ物 ${r.habitsDoneToday} 件)`);
+  lines.push('', `❓ ${r.question}`);
+  const firstLate = r.overdue[0];
+  return turn(state, lines.join('\n'), firstLate !== undefined ? [`#${firstLate.id} できなかった`, '今日の予定'] : ['今日の予定', '見直して'], related);
+}
+
+/** 割る数 (最小 MIN_SPLIT_MINUTES 分・最大 MAX_SPLIT_PARTS)。割れなければ null。 */
+export function splitParts(minutes: number): number | null {
+  const n = Math.min(MAX_SPLIT_PARTS, Math.floor(minutes / MIN_SPLIT_MINUTES));
+  return n >= 2 ? n : null;
+}
+
+/** 割ったあとの各部の分。合計は元の分と一致し、どれも MIN_SPLIT_MINUTES 以上。 */
+export function splitMinutes(minutes: number, parts: number, cause: SplitCause): number[] {
+  const head = cause === 'start' ? MIN_SPLIT_MINUTES : 0;
+  const rest = minutes - head;
+  const count = cause === 'start' ? parts - 1 : parts;
+  const base = Math.floor(rest / count);
+  // 割り切れない分は最初の部へ寄せる (合計を元の分に保つ)。
+  const out = [base + (rest - base * count), ...Array.from({ length: count - 1 }, () => base)];
+  return cause === 'start' ? [head, ...out] : out;
+}
+
+const SPLIT_CAUSES: readonly SplitCause[] = ['large', 'time', 'start'];
+
+/** 発話から原因を読む (「1」〜「3」または言い回し)。読めなければ null。 */
+export function parseSplitCause(text: string): SplitCause | null {
+  const t = fold(text).trim();
+  const num = /^([1-3])\s*(?:番|\.|、|。)?$/.exec(t);
+  if (num !== null) return SPLIT_CAUSES[Number(num[1]) - 1] ?? null;
+  for (const c of SPLIT_CAUSES) {
+    if (containsAny(t, SPLIT_CAUSE_MARKERS[c])) return c;
+  }
+  return null;
+}
+
+const CAUSE_ASK = '原因はどれに近いですか？ 番号か言葉で教えてください。(やめるときは「キャンセル」)\n1. 大きすぎた\n2. 時間が取れなかった\n3. 何から始めるか分からなかった';
+
+const CAUSE_LABEL: Readonly<Record<SplitCause, string>> = { large: '大きすぎた', time: '時間が取れなかった', start: '何から始めるか分からなかった' };
+
+/** 「できなかった」: 対象を決め、原因を 1 つ聞く (原因が同じ発話にあればすぐ割る)。 */
+function failTurn(state: CoachState, text: string, today: string, related: readonly ServiceId[]): CoachTurn {
+  const plan = dailyPlan(state, today);
+  const id = taskIdIn(text) ?? plan.overdue[0]?.id ?? plan.items.find((n) => !isHabit(n))?.id ?? null;
+  if (id === null) return turn(state, 'どのタスクか分かりませんでした。「#番号 できなかった」と教えてください。(番号は「全体を見せて」で分かります)', ['全体を見せて'], related);
+  const node = state.nodes.find((n) => n.id === id && n.kind === 'task');
+  if (node === undefined) return turn(state, `#${id} というタスクは見当たりません。「全体を見せて」で番号を確かめてください。`, ['全体を見せて'], related);
+  if (node.done) return turn(withoutPending(state), `#${id} はすでに完了しています。`, ['今日の予定'], related);
+  if (isHabit(node)) return turn(withoutPending(state), `#${id} は習慣なので割りません。続かないなら、時間を短くするか「#${id} 習慣をやめる」で外してください。`, ['全体を見せて'], related);
+  if (splitParts(node.minutes) === null) {
+    return turn(withoutPending(state), `#${id} 「${node.title}」は ${node.minutes} 分で、これ以上は割れません (最小 ${MIN_SPLIT_MINUTES} 分)。割るより、「#${id} 優先度を上げて」今日の最初に置くか、「見直して」で時間が足りているか確かめてください。`, ['今日の予定', '見直して'], related);
+  }
+  const cause = parseSplitCause(text);
+  if (cause !== null) return splitTurn(state, id, cause, related);
+  return turn({ ...withoutPending(state), splitFor: id }, `#${id} 「${node.title}」(${node.minutes}分) がうまく進まなかったのですね。\n${CAUSE_ASK}`, ['1', '2', '3'], related);
+}
+
+function splitTurn(state: CoachState, id: number, cause: SplitCause, related: readonly ServiceId[]): CoachTurn {
+  const node = state.nodes.find((n) => n.id === id && n.kind === 'task');
+  const parts = node === undefined ? null : splitParts(node.minutes);
+  if (node === undefined || parts === null || node.done || isHabit(node)) return turn(withoutPending(state), `#${id} は割れません。「全体を見せて」で確かめてください。`, ['全体を見せて'], related);
+  if (state.nodes.length + parts - 1 > MAX_NODES) return turn(withoutPending(state), `計画が大きくなりすぎていて割れません (上限 ${MAX_NODES})。完了した物を整理してください。`, ['全体を見せて'], related);
+  const mins = splitMinutes(node.minutes, parts, cause);
+  const base = clampText(node.title, MAX_TITLE_CHARS - 24);
+  const titles = mins.map((_m, i) => {
+    if (cause === 'start') return i === 0 ? `${base}（最初の一歩: 何をやるかを 1 行で書く）` : `${base}（${i}/${parts - 1}）`;
+    return cause === 'time' ? `${base}（短く ${i + 1}/${parts}）` : `${base}（${i + 1}/${parts}）`;
+  });
+  let next = state.nextId;
+  const made: GoalNode[] = mins.map((m, i) => {
+    const part: GoalNode = { id: i === 0 ? node.id : next++, parent: node.parent, kind: 'task', title: clampText(titles[i] ?? base, MAX_TITLE_CHARS), due: node.due, minutes: m, done: false };
+    return node.priority === undefined ? part : { ...part, priority: node.priority };
+  });
+  const nodes = state.nodes.flatMap((n) => (n.id === node.id ? made : [n]));
+  const advice =
+    cause === 'time'
+      ? '使える時間が実態に合っていない可能性があります。「見直して」で、時間が足りているかを数字で確かめてください。'
+      : cause === 'start'
+        ? '最初の一歩だけで構いません。それが終われば、次は迷わず進められます。'
+        : '1 つが小さくなったので、今日は最初の 1 つだけやってみてください。';
+  const lines = made.map((n) => `☐ #${n.id} ${n.title} (${n.minutes}分)`).join('\n');
+  return turn(
+    { ...withoutPending(state), nodes, nextId: next },
+    `原因は「${CAUSE_LABEL[cause]}」ですね。#${node.id} 「${node.title}」(${node.minutes}分) を ${parts} つに割りました (合計 ${node.minutes}分は変わりません)。\n${lines}\n\n${advice}`,
+    ['今日の予定', '全体を見せて'],
+    related,
+  );
+}
+
 /**
  * 会話の 1 手。
  * - 状態が無く、入口の言葉でもなければ `null` (コーチの出番ではない)。
@@ -580,6 +984,12 @@ export function coachTurn(state: CoachState | null, rawText: string, today: stri
   }
 
   const t = fold(text);
+  // 目標・期限を変える言い回しは**終了・やり直しより先**に読む (新しい目標の文に「やり直し」が
+  // 含まれても、預かった計画を消さない —— 取り違えの害は消す側のほうが重い)。
+  if (state.phase === 'review' || state.phase === 'active') {
+    const changed = changeTurn(state, text, today, state.persona === null ? [] : personaOf(state.persona).services);
+    if (changed !== null) return changed;
+  }
   if (containsAny(t, EXIT_MARKERS)) {
     return turn(null, 'コーチを終了し、保存していた目標と計画を消しました。また始めるときは「目標を決めたい」と話しかけてください。', ['目標を決めたい', '何ができる？']);
   }
@@ -657,13 +1067,31 @@ export function coachTurn(state: CoachState | null, rawText: string, today: stri
     const next: CoachState = { ...state, nodes: [...state.nodes, node], nextId: state.nextId + 1 };
     return turn(next, `#${node.id} 「${node.title}」を追加しました (30分・〜${node.due ?? '期日なし'})。時間が違えば作り直しの時に直します。`, ['今日の予定'], related);
   }
+  // 「できなかった」の原因を聞いている途中: 原因が読めれば割る・「キャンセル」なら保留をやめる。
+  // 読めない発話は飲み込まず、ふつうのコーチの言い回しとして続けて読む。
+  if (state.splitFor !== undefined) {
+    if (containsAny(t, CANCEL_MARKERS)) return turn(withoutPending(state), '割るのをやめました。タスクはそのままです。', ['今日の予定', '全体を見せて'], related);
+    const cause = parseSplitCause(t);
+    if (cause !== null) return splitTurn(state, state.splitFor, cause, related);
+  }
+  if (containsAny(t, FAIL_MARKERS)) return failTurn(state, text, today, related);
+  if (containsAny(t, HABIT_OFF_MARKERS)) return habitTurn(state, t, false, related);
+  if (containsAny(t, HABIT_ON_MARKERS)) return habitTurn(state, t, true, related);
+  if (containsAny(t, PRIORITY_UP_MARKERS)) return priorityTurn(state, t, 1, related);
+  if (containsAny(t, PRIORITY_DOWN_MARKERS)) return priorityTurn(state, t, -1, related);
+  if (containsAny(t, WEEKLY_MARKERS)) return weeklyTurn(state, today, related);
   const doneNo = containsAny(t, DONE_MARKERS) ? /#?\s*(\d{1,3})/.exec(t) : null;
   if (doneNo !== null) {
     const id = Number(doneNo[1]);
     const node = state.nodes.find((n) => n.id === id && n.kind === 'task');
     if (node === undefined) return turn(state, `#${id} というタスクは見当たりません。「全体を見せて」で番号を確かめてください。`, ['全体を見せて'], related);
+    if (node.repeat !== undefined) {
+      if (!habitDue(node, today)) return turn(state, `#${id} 「${node.title}」は今日の分がすでに完了しています。`, ['今日の予定'], related);
+      const nextHabit: CoachState = { ...state, nodes: state.nodes.map((n) => (n.id === id ? { ...n, doneOn: today } : n)) };
+      return turn(nextHabit, `🔁 #${id} 「${node.title}」の${node.repeat === 'weekly' ? '今週' : '今日'}の分を完了にしました。習慣なので、${node.repeat === 'weekly' ? '7 日後' : '翌日'}にまた予定へ戻ります。\n\n${renderPlan(nextHabit, today)}`, ['今日の予定', '全体を見せて'], related);
+    }
     if (node.done) return turn(state, `#${id} はすでに完了しています。`, ['今日の予定'], related);
-    const next: CoachState = { ...state, nodes: state.nodes.map((n) => (n.id === id ? { ...n, done: true } : n)) };
+    const next: CoachState = { ...state, nodes: state.nodes.map((n) => (n.id === id ? { ...n, done: true, doneOn: today } : n)) };
     const left = openTasks(next.nodes).length;
     const tail = left === 0 ? '\n\n🎉 すべてのタスクが完了しました。目標を振り返り、次の目標を決めましょう。「目標を決めたい」と話しかけてください。' : `\n\n${renderPlan(next, today)}`;
     return turn(next, `☑ #${id} 「${node.title}」を完了にしました。残り ${left} 件。${tail}`, left === 0 ? ['やり直し'] : ['今日の予定', '全体を見せて'], related);
@@ -676,7 +1104,7 @@ export function coachTurn(state: CoachState | null, rawText: string, today: stri
   if (containsAny(t, HELP_MARKERS)) {
     return turn(
       state,
-      '使える言い方: 「今日の予定」「全体を見せて」「#3 完了」「追加: ○○」「見直して」「やり直し」「コーチをやめる」',
+      '使える言い方: 「今日の予定」「全体を見せて」「#3 完了」「追加: ○○」「見直して」「#3 優先度を上げて」「#3 習慣にする」「#3 できなかった」「今週の振り返り」「目標を変える: ○○」「期限を変える: ○○」「やり直し」「コーチをやめる」',
       ['今日の予定', '全体を見せて', '見直して'],
       related,
     );
@@ -702,6 +1130,9 @@ function sanitizeNode(raw: unknown): GoalNode | null {
   const due = own(raw, 'due');
   const minutes = own(raw, 'minutes');
   const done = own(raw, 'done');
+  const priority = own(raw, 'priority');
+  const repeat = own(raw, 'repeat');
+  const doneOn = own(raw, 'doneOn');
   if (typeof id !== 'number' || !Number.isInteger(id) || id < 1) return null;
   if (parent !== null && (typeof parent !== 'number' || !Number.isInteger(parent))) return null;
   if (typeof kind !== 'string' || !KINDS.includes(kind as NodeKind)) return null;
@@ -709,7 +1140,24 @@ function sanitizeNode(raw: unknown): GoalNode | null {
   if (due !== null && !isCalendarDate(due)) return null;
   if (typeof minutes !== 'number' || !Number.isFinite(minutes) || minutes < 0 || minutes > MAX_TASK_MINUTES) return null;
   if (typeof done !== 'boolean') return null;
-  return { id, parent: parent as number | null, kind: kind as NodeKind, title: clampText(title, MAX_TITLE_CHARS), due: due as string | null, minutes, done };
+  // 後から足した欄 (無くてよい)。あれば読めること・矛盾しないことを要求する (読めなければ捨てて始めから)。
+  if (priority !== undefined && (typeof priority !== 'number' || !Number.isInteger(priority) || Math.abs(priority) > MAX_PRIORITY)) return null;
+  if (repeat !== undefined && repeat !== 'daily' && repeat !== 'weekly') return null;
+  if (doneOn !== undefined && !isCalendarDate(doneOn)) return null;
+  if (repeat !== undefined && (kind !== 'task' || done)) return null;
+  if ((priority !== undefined || doneOn !== undefined) && kind !== 'task') return null;
+  return {
+    id,
+    parent: parent as number | null,
+    kind: kind as NodeKind,
+    title: clampText(title, MAX_TITLE_CHARS),
+    due: due as string | null,
+    minutes,
+    done,
+    ...(priority === undefined ? {} : { priority: priority as number }),
+    ...(repeat === undefined ? {} : { repeat }),
+    ...(doneOn === undefined ? {} : { doneOn: doneOn as string }),
+  };
 }
 
 /**
@@ -743,5 +1191,21 @@ export function sanitizeCoachState(raw: unknown): CoachState | null {
     nodes.push(node);
   }
   if (nodes.some((n) => n.id >= nextId)) return null;
-  return { v: 1, phase: phase as CoachPhase, persona: persona as PersonaId | null, answers, startedOn, nodes, nextId };
+  if (nodes.filter((n) => n.repeat !== undefined).length > MAX_HABITS) return null;
+  const splitFor = own(raw, 'splitFor');
+  if (splitFor !== undefined) {
+    // 保留は「いま割れる未完了のタスク」を指すときだけ有効 (指す先が無い保留は読めない保存値)。
+    const target = typeof splitFor === 'number' ? nodes.find((n) => n.id === splitFor) : undefined;
+    if (target === undefined || target.kind !== 'task' || target.done || target.repeat !== undefined) return null;
+  }
+  return {
+    v: 1,
+    phase: phase as CoachPhase,
+    persona: persona as PersonaId | null,
+    answers,
+    startedOn,
+    nodes,
+    nextId,
+    ...(splitFor === undefined ? {} : { splitFor: splitFor as number }),
+  };
 }

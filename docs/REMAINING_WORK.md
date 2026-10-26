@@ -19235,7 +19235,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/zero-fold-census.cjs。npm run lint:zero-fold は check だけ) -->
-合計 **109 ファイル / 277 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **109 ファイル / 279 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
@@ -19258,6 +19258,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/renderer/components/FinancialAnalysis.tsx` | 4 |
 | `src/renderer/data/connectionStatus.ts` | 4 |
 | `src/renderer/data/emotionInsights.ts` | 4 |
+| `src/renderer/data/goalCoach.ts` | 4 |
 | `src/renderer/data/members.ts` | 4 |
 | `src/renderer/data/overview.ts` | 4 |
 | `src/renderer/pages/VillagePage.tsx` | 4 |
@@ -19282,7 +19283,6 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/renderer/data/businessUnits.ts` | 2 |
 | `src/renderer/data/cloudSync.ts` | 2 |
 | `src/renderer/data/counselingResearch.ts` | 2 |
-| `src/renderer/data/goalCoach.ts` | 2 |
 | `src/renderer/data/hydroponicsLog.ts` | 2 |
 | `src/renderer/data/hydroponicsSetup.ts` | 2 |
 | `src/renderer/data/importFile.ts` | 2 |
