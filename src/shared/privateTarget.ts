@@ -299,6 +299,27 @@ export function isPrivateOrReservedTarget(parsed: URL): boolean {
     // Stryker disable next-line Regex
     if (/^2001:0*db8:/i.test(bare)) return true;
     /*
+     * **IANA の特殊用途表で Globally Reachable: False の IPv6 範囲** (2026-10-27 · T-204)。
+     * どれも公開の宛先になりえず、トンネルの無い端末では外へ落ちるだけだが、**範囲が固定**なので
+     * 中身を読まずに塞げる (64:ff9b:1::/48 と同じ扱い)。`2001::/16` 全体には当てない —— 公開空間が居る。
+     * - 100::/64 discard-only (RFC 6666)
+     * - 3fff::/20 文書用 (RFC 9637)
+     * - 2001:2::/48 ベンチマーク (RFC 5180)
+     * - 2001:10::/28 ORCHID (RFC 4843・廃止)
+     * - 5f00::/16 SRv6 SID (RFC 9602)
+     * 綴りは `URL` が正規化した形 (群の先頭の 0 を落とし、最長のゼロの並びを `::` へ) と、0 埋めの長形式の両方。
+     */
+    // Stryker disable next-line Regex
+    if (/^0*100:(?:0{1,4}:){3}/i.test(bare) || /^0*100:(?:0{1,4}:){0,2}:/i.test(bare)) return true;
+    // Stryker disable next-line Regex
+    if (/^3fff:(?::|0[0-9a-f]{3}(?::|$)|[0-9a-f]{1,3}(?::|$))/i.test(bare)) return true;
+    // Stryker disable next-line Regex
+    if (/^2001:0*2:(?::|0{1,4}:)/i.test(bare)) return true;
+    // Stryker disable next-line Regex
+    if (/^2001:0*1[0-9a-f]:/i.test(bare)) return true;
+    // Stryker disable next-line Regex
+    if (/^5f00:/i.test(bare)) return true;
+    /*
      * **site-local fec0::/10 と multicast ff00::/8。**
      *
      * この 2 つは利用者が配る Worker (docs/PROXY_EXAMPLE.md) 側には

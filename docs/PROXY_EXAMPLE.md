@@ -34,7 +34,7 @@ X-Proxy-Auth: <optional-shared-secret>
 }
 ```
 
-## 2. Cloudflare Worker 実装 (427 行)
+## 2. Cloudflare Worker 実装 (433 行)
 
 `workers.cloudflare.com/dashboard` で **Create Worker** → 下記コードを貼り
 付け → **Deploy**。`worker.dev` の URL を Settings → BYO プロキシに登録。
@@ -430,6 +430,12 @@ function isBlockedIp(ip) {
   // 2001:db8::/32 文書用 (RFC 3849)。IPv4 の TEST-NET と同じ理由。
   // client 側と同じく、2001::/16 全体には当てない (2001:4860:: など正当な公開空間が居る)。
   if (g[0] === 0x2001 && g[1] === 0x0db8) return true;
+  // IANA の特殊用途表で Globally Reachable: False の範囲 (T-204)。範囲が固定なので中身を読まずに塞ぐ。
+  if (g[0] === 0x100 && g[1] === 0 && g[2] === 0 && g[3] === 0) return true;  // 100::/64 discard-only (RFC 6666)
+  if (g[0] === 0x3fff && (g[1] & 0xf000) === 0) return true;                // 3fff::/20 文書用 (RFC 9637)
+  if (g[0] === 0x2001 && g[1] === 0x0002 && g[2] === 0) return true;        // 2001:2::/48 ベンチマーク (RFC 5180)
+  if (g[0] === 0x2001 && (g[1] & 0xfff0) === 0x0010) return true;           // 2001:10::/28 ORCHID (RFC 4843・廃止)
+  if (g[0] === 0x5f00) return true;                                         // 5f00::/16 SRv6 SID (RFC 9602)
   return false;
 }
 

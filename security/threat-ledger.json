@@ -3396,6 +3396,21 @@
         "file": "src/renderer/data/__tests__/collectionRowBoundCensus.test.ts",
         "test": "★ 形の表の collection は、天井の台帳か OTHER_BOUNDS のどれか 1 つにだけ載る (両方向)"
       }
+    },
+    {
+      "id": "T-204",
+      "found": "2026-10-27",
+      "foundBy": "huntBacklog の項目(SSRF 判定の IPv6: Teredo・100::/64・3fff::/20・ISATAP・ORCHID 系が公開扱い)を、防御側が IANA の特殊用途表と突き合わせて、Globally Reachable: False の範囲だけを実装 3 か所で数値の標本つきに塞いだ",
+      "surface": "network",
+      "class": "ssrf-and-credential-egress",
+      "severity": "low",
+      "title": "SSRF の宛先判定が、IANA の特殊用途表で Globally Reachable: False の IPv6 範囲(100::/64・3fff::/20・2001:2::/48・2001:10::/28・5f00::/16)を公開として通していた(トンネルの無い通常の端末では外へ落ちるだけで、到達は確認していない)",
+      "status": "fixed",
+      "fix": "アプリ側(privateTarget.ts)・利用者が配る Worker(docs/PROXY_EXAMPLE.md)・CI の関門(scripts/public-host-guard.cjs)の 3 実装へ同じ 5 範囲を足した。範囲が固定なので中身を読まずに塞ぎ、2001::/16 全体には当てない(PCP anycast 2001:1::1 などの公開空間を通す隣の標本つき)。Teredo(2001::/32)と ISATAP は IANA が到達性を N/A とし、埋め込みの v4 が宛先にならないので塞がない。",
+      "regression": {
+        "file": "src/renderer/network/__tests__/proxyWorkerParity.test.ts",
+        "test": "★ %s は 3 実装すべてが塞ぐ"
+      }
     }
   ],
   "huntBacklog": [
@@ -3586,11 +3601,6 @@
     },
     {
       "surface": "network",
-      "item": "SSRF 判定の IPv6: Teredo(2001::/32)・100::/64・3fff::/20・ISATAP(::5efe:)・ORCHID 系が公開扱い",
-      "why": "2026-10-25 に監査役が列挙(到達は未確認: トンネルの無い通常の端末では外へ落ちるだけ)。足すのは安いが、公開アドレスを巻き込まない確認が要る。"
-    },
-    {
-      "surface": "network",
       "item": "compat プロバイダ(鍵なし)が内部サービスの 404 本文を画面へ返す(aiEndpoint.ts の注記は「送るのはプロンプトだけ」としか言わない)",
       "why": "2026-10-25 に監査役が再現(127.0.0.1 の偽サーバ)。受容済みの判断の範囲内なので、まず注記に「応答の本文が画面に出る」を足す案。"
     },
@@ -3755,6 +3765,11 @@
       "item": "COLLECTION_SHAPES の全 collection が BACKUP_COLLECTION_RECORD_LIMITS か『窓/最新 1 件/描かない』の理由つき台帳のどれかに載る構造の census(T-175・T-201 と 2 回続けて天井の漏れが見つかった)",
       "finding": "T-203 で census を足した(両方向・4 種類・対照 4 方向が狙った検査で鳴る)。hydroponics-readings は測って固まらないと分かったので compute-only として測定値を残した。",
       "checkedOn": "2026-10-26"
+    },
+    {
+      "item": "SSRF 判定の IPv6: Teredo(2001::/32)・100::/64・3fff::/20・ISATAP(::5efe:)・ORCHID 系が公開扱い",
+      "finding": "T-204 で IANA が Globally Reachable: False と載せる 5 範囲を 3 実装へ足した。Teredo と ISATAP は到達性が N/A で、埋め込みの v4 は宛先にならないので意図して塞がない。",
+      "checkedOn": "2026-10-27"
     }
   ]
 }

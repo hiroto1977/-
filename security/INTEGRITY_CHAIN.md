@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 358
+- ブロック数: 359
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `fa8476f1f549e4930d1ee9800fd5a78dc5548896405818eff7ce929974140e9a`
+- 末尾(tip)ハッシュ: `4cb3bba91029c0154b9783a53879e0a38eda157559b2e3edc40a6a21c73fcc25`
 - 保護対象: 125 ファイル
 
 ## ブロック
@@ -371,6 +371,7 @@
 | 355 | `03b5db1cd8a8f8c8` | `57db21a532892935` | `90938e774189f4a9` | update assistantMarkdown.ts |
 | 356 | `b5bca2b946450daf` | `90938e774189f4a9` | `5c49300ee48f309c` | update privateTarget.ts |
 | 357 | `f16a3e745b7553a9` | `5c49300ee48f309c` | `fa8476f1f549e493` | update privateTarget.ts |
+| 358 | `8c4671e6dcce7b04` | `fa8476f1f549e493` | `4cb3bba91029c015` | update PROXY_EXAMPLE.md,public-host-guard.cjs,privateTarget.ts |
 
 ## 保護対象ファイル
 
