@@ -3426,6 +3426,21 @@
         "file": "src/shared/__tests__/escape.test.ts",
         "test": "★ %s は ASCII の後で逃がされる (threat: T-205)"
       }
+    },
+    {
+      "id": "T-206",
+      "found": "2026-10-27",
+      "foundBy": "huntBacklog の項目(N-A の同類: 他のパス補間が . と .. を通すか)を、防御側が出荷コードの path 位置の素の encodeURIComponent を全件数えて、資格情報つきの要求に届く 2 か所を特定し、census で全件を台帳にした",
+      "surface": "network",
+      "class": "ssrf-and-credential-egress",
+      "severity": "low",
+      "title": "WordPressClient.checkDomainAvailability と AtlassianClient.getConfluencePage が、パスの部品に . と .. を入れると同じホスト・同じ Bearer のまま別のパスへ畳まれた(製品からの呼び出しは 0 件の旧来クラス経路で、到達は確認していない)",
+      "status": "fixed",
+      "fix": "2 か所を pathSegment(. と .. を断って符号化)へ寄せた。出荷コードの素の encodeURIComponent を path の位置 / 代入に使う所を census が全件(8 ファイル・11 か所)台帳に載せ、増えれば落ちる。残りは表示用リンク・入口の文法が止める値・同じホストの応答の id・query だけの値で、理由つき。",
+      "regression": {
+        "file": "src/shared/api/__tests__/pathInterpolationCensus.test.ts",
+        "test": "★ 資格情報つきの 2 つの旧来クラス経路は . と .. を送らない (threat: T-206)"
+      }
     }
   ],
   "huntBacklog": [
@@ -3611,11 +3626,6 @@
     },
     {
       "surface": "network",
-      "item": "N-A の同類: Drive / Jira / Slack など他のパス補間が . と .. を通すか(関門ごとの確認が要る)",
-      "why": "2026-10-25。T-190 は 5 つの組み立てを直した。他は入口の正規表現が . を含まない(2026-10-14 の測定)が、関門の無い補間が増えた日に開く。全補間を pathSegment へ寄せるか census にするのが候補。"
-    },
-    {
-      "surface": "network",
       "item": "compat プロバイダ(鍵なし)が内部サービスの 404 本文を画面へ返す(aiEndpoint.ts の注記は「送るのはプロンプトだけ」としか言わない)",
       "why": "2026-10-25 に監査役が再現(127.0.0.1 の偽サーバ)。受容済みの判断の範囲内なので、まず注記に「応答の本文が画面に出る」を足す案。"
     },
@@ -3784,6 +3794,11 @@
     {
       "item": "網の外の見えない字: 異体字選択子・Hangul フィラー U+3164 / U+1160・点字空白 U+2800・CGJ・結合記号の洪水が、確認画面でも externalTextOnOneLine でも逃がされない",
       "finding": "T-205 で個別字と基底の無い異体字選択子を共有の INVISIBLE_UNITS へ足した。IVS・絵文字・濁点は壊さない。結合記号の洪水は逃がさず(正当な結合記号を壊す)、害も確認できていない。",
+      "checkedOn": "2026-10-27"
+    },
+    {
+      "item": "N-A の同類: Drive / Jira / Slack など他のパス補間が . と .. を通すか",
+      "finding": "T-206 で census を足した。資格情報つきで届く 2 か所(WordPress のドメイン確認・Confluence のページ取得。製品の呼び出しは 0 件)を pathSegment へ。Drive / Jira / Slack は表示用リンクで資格情報を載せず、Gmail は同じホストの応答の id。",
       "checkedOn": "2026-10-27"
     }
   ]

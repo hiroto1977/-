@@ -321,6 +321,7 @@ const MIGRATED: readonly string[] = [
   'src/shared/__tests__/typecheckCoverage.test.ts',
   'src/shared/__tests__/yenTemplateCensus.test.ts',
   'src/shared/api/__tests__/createdResponseFields.test.ts',
+  'src/shared/api/__tests__/pathInterpolationCensus.test.ts',
 ];
 
 describe('注記を落とす道具は 1 つ (パス 461)', () => {
