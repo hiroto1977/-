@@ -3000,6 +3000,14 @@
       "leafCount": 125,
       "note": "update PROXY_EXAMPLE.md,public-host-guard.cjs,privateTarget.ts",
       "hash": "4cb3bba91029c0154b9783a53879e0a38eda157559b2e3edc40a6a21c73fcc25"
+    },
+    {
+      "index": 359,
+      "prevHash": "4cb3bba91029c0154b9783a53879e0a38eda157559b2e3edc40a6a21c73fcc25",
+      "merkleRoot": "f64773ac2de8920d47c9839ec36c50bc54b7276713ef693409c4aff24b42a46a",
+      "leafCount": 125,
+      "note": "update privateTarget.ts",
+      "hash": "4b7671ff43e4c5a03b77986470f9e0483887ed34474214cb7830050ba3e21812"
     }
   ],
   "tipManifest": {
@@ -3115,7 +3123,7 @@
     "src/shared/isoDate.ts": "cfe317b22c6b482c42bca40a9d19a5cbd3204b5cbace6e7336befe77690f01cd",
     "src/shared/localDate.ts": "9220ae751caf1637071d5804fb67d4629125bed1c4a9a7913fdd2968c5294da1",
     "src/shared/ollama.ts": "672ff00261aa63ae7e0b7567dbfaa54ad88da67a5fa55788c79b16c1bd6193c8",
-    "src/shared/privateTarget.ts": "d9db896ea9c63205bebab4709f596fa84cc03e3a661c1415aff371a817a8084c",
+    "src/shared/privateTarget.ts": "b866e0ce8c6decedb3974b4bc96528df41b1712d732d9af8c84390343860cd0d",
     "src/shared/proxyEndpoint.ts": "e43b36c93eeaf5515b474fa5be4ab3f070cb13f616382a5f636db711df0f995e",
     "src/shared/redact.ts": "0f87ac977c493be02ba33bdc7550585215b9b008753c917fb9b446a90e6a725f",
     "src/shared/safeFilename.ts": "f84d319b882db4768b70c03d8c61b62e0dbaee9226d891cc100091c9c62b7f3e",
