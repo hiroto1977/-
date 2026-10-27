@@ -3032,6 +3032,14 @@
       "leafCount": 125,
       "note": "update escape.ts",
       "hash": "5eeeac3654f1adced65572f7559f02fc1887d0819f9f2854d2c6ec4813f7b617"
+    },
+    {
+      "index": 363,
+      "prevHash": "5eeeac3654f1adced65572f7559f02fc1887d0819f9f2854d2c6ec4813f7b617",
+      "merkleRoot": "c7373092e2a1a05adfcec6e126e4442929070b46ccd60cf02a77eb10aaea2f00",
+      "leafCount": 125,
+      "note": "update escape.ts",
+      "hash": "bd18a5d1f21c33142f450d2eac3c1a63e8f64803c7b9cd56d5470403dc982c7b"
     }
   ],
   "tipManifest": {
@@ -3138,7 +3146,7 @@
     "src/shared/controlChars.ts": "cf6992b1d0cc2795de1cc1ed605ad51ca375b56d8426cc5622a219658e5724e7",
     "src/shared/cryptoParams.ts": "e5c196eed641330430fb0725daf9dc28cfd38fc624ce5e46baca635ed9b8590e",
     "src/shared/eraseReport.ts": "06755b614c3c14664d3c445bb18779f815490a519fc2ff7ac03d5d36a62b9d49",
-    "src/shared/escape.ts": "9cca820d4e8b6645b25f7622a953de59f33da64d34554b3e267712f41d7cf709",
+    "src/shared/escape.ts": "8e6ae576ff9d9a366b204bc9cd39a7e123b7390f40a196dc2a245cf4a2113534",
     "src/shared/externalUrlGate.ts": "b103b6fdf04b058a0cae9be3bed2ad035758463dee7b1ed6cc9da778540475ce",
     "src/shared/headerValue.ts": "e1b3156dde741ff415b769a6a40a7630e7da580f29737005cf2583bda4512b82",
     "src/shared/httpLimits.ts": "358f19ecbc1b65d23a090e6d4e671f6986ec33648a2b4609a04345933d09768b",
