@@ -3411,6 +3411,21 @@
         "file": "src/renderer/network/__tests__/proxyWorkerParity.test.ts",
         "test": "★ %s は 3 実装すべてが塞ぐ"
       }
+    },
+    {
+      "id": "T-205",
+      "found": "2026-10-27",
+      "foundBy": "huntBacklog の項目(網の外の見えない字)を、防御側が Unicode の分類(Cf だけが逃がされる)と突き合わせ、Hangul フィラー・点字空白・CGJ・Khmer・異体字選択子が確認画面でも第三者の文でも生で通ることを実測し、正当な用法(IVS・絵文字・濁点)を壊さない形で塞いだ",
+      "surface": "ai",
+      "class": "ai-phishing",
+      "severity": "low",
+      "title": "確認画面と第三者の文を 1 行に置く口が、Cf 以外の「見える字なのに何も描かれない」字(Hangul フィラー・点字空白・CGJ・Khmer の固有母音・異体字選択子)を逃がさず、#general と #general+U+3164 が同じに見えた(害は確認できていない)",
+      "status": "fixed",
+      "fix": "escape.ts の INVISIBLE_UNITS に個別字と、基底の無い位置の異体字選択子・絵文字の基底の無い選択子を足した。voiceWritePreview と externalTextOnOneLine は同じ定義を読むので同時に塞がる。IVS・SVS・絵文字・キーキャップ・結合濁点は 1 字も変えない。結合記号の洪水(Zalgo)は逃がさない(濁点など正当な結合記号を壊すため)。",
+      "regression": {
+        "file": "src/shared/__tests__/escape.test.ts",
+        "test": "★ %s は ASCII の後で逃がされる (threat: T-205)"
+      }
     }
   ],
   "huntBacklog": [
@@ -3610,11 +3625,6 @@
       "why": "2026-10-25 に監査役が再現(誤った内容でも根拠語・網羅・構造で 83 点)。見出しに 1 文足す案は、見出しの文面を固定している検査(bestAnswersPinned ほか)の更新を伴う。"
     },
     {
-      "surface": "ai",
-      "item": "網の外の見えない字: 異体字選択子 U+FE00–FE0E・Hangul フィラー U+3164 / U+1160・点字空白 U+2800・CGJ・結合記号の洪水が、確認画面(voiceWritePreview)でも externalTextOnOneLine でも逃がされない",
-      "why": "2026-10-25 に監査役が再現(#general+U+3164 が #general と同じに見える)。害は確認できなかった(Slack 側で存在しないチャンネル名になって失敗)。\\p{Mn}\\p{Me} と個別字を逃がす案。"
-    },
-    {
       "surface": "renderer",
       "item": "レコード封緘(dataCrypto.ts)が record id を AAD に束ねていない: 保管層を書ける者が同一鍵の下で暗号文を別 id へ差し替えられる",
       "why": "2026-10-25 に監査役が指摘(IV は毎回乱数で再利用は無い)。vault.ts の包みには AAD がある。保管層を書ける者が前提。"
@@ -3769,6 +3779,11 @@
     {
       "item": "SSRF 判定の IPv6: Teredo(2001::/32)・100::/64・3fff::/20・ISATAP(::5efe:)・ORCHID 系が公開扱い",
       "finding": "T-204 で IANA が Globally Reachable: False と載せる 5 範囲を 3 実装へ足した。Teredo と ISATAP は到達性が N/A で、埋め込みの v4 は宛先にならないので意図して塞がない。",
+      "checkedOn": "2026-10-27"
+    },
+    {
+      "item": "網の外の見えない字: 異体字選択子・Hangul フィラー U+3164 / U+1160・点字空白 U+2800・CGJ・結合記号の洪水が、確認画面でも externalTextOnOneLine でも逃がされない",
+      "finding": "T-205 で個別字と基底の無い異体字選択子を共有の INVISIBLE_UNITS へ足した。IVS・絵文字・濁点は壊さない。結合記号の洪水は逃がさず(正当な結合記号を壊す)、害も確認できていない。",
       "checkedOn": "2026-10-27"
     }
   ]

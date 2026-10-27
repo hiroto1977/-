@@ -485,6 +485,12 @@ describe('確認が見せる物は見えない字を逃がす (threat: T-034 · 
     expect(text?.value).not.toContain(RLO);
   });
 
+  it('★ チャンネル名の末尾の Hangul フィラーは、確認で見える綴りになる (threat: T-205)', () => {
+    const [channel] = voiceWritePreview('slack', 'send-message', { channel: '#general\u3164', text: 'こんにちは' });
+    expect(channel?.value).toBe('#general\\u3164');
+    expect(channel?.value).not.toContain('\u3164');
+  });
+
   it('逃がすのは見せる側だけ —— 入力の params は 1 字も変えない', () => {
     const params = { channel: '#g', text: `a${RLO}b` };
     voiceWritePreview('slack', 'send-message', params);
