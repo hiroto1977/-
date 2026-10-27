@@ -309,15 +309,10 @@ export function isPrivateOrReservedTarget(parsed: URL): boolean {
      * - 5f00::/16 SRv6 SID (RFC 9602)
      * 綴りは `URL` が正規化した形 (群の先頭の 0 を落とし、最長のゼロの並びを `::` へ) と、0 埋めの長形式の両方。
      */
-    // Stryker disable next-line Regex
     if (/^0*100:(?:0{1,4}:){3}/i.test(bare) || /^0*100:(?:0{1,4}:){0,2}:/i.test(bare)) return true;
-    // Stryker disable next-line Regex
     if (/^3fff:(?::|0[0-9a-f]{3}(?::|$)|[0-9a-f]{1,3}(?::|$))/i.test(bare)) return true;
-    // Stryker disable next-line Regex
     if (/^2001:0*2:(?::|0{1,4}:)/i.test(bare)) return true;
-    // Stryker disable next-line Regex
     if (/^2001:0*1[0-9a-f]:/i.test(bare)) return true;
-    // Stryker disable next-line Regex
     if (/^5f00:/i.test(bare)) return true;
     /*
      * **site-local fec0::/10 と multicast ff00::/8。**
