@@ -247,6 +247,43 @@ describe('escapeInvisibleUnits — 見えない字を見える綴りへ (threat:
   });
 });
 
+describe('見える字なのに何も描かれない字も逃がす (threat: T-205)', () => {
+  it.each([
+    ['Hangul フィラー (U+3164)', '\u3164', '\\u3164'],
+    ['Hangul 中声フィラー (U+1160)', '\u1160', '\\u1160'],
+    ['Hangul 初声フィラー (U+115F)', '\u115F', '\\u115f'],
+    ['半角 Hangul フィラー (U+FFA0)', '\uFFA0', '\\uffa0'],
+    ['点字空白 (U+2800)', '\u2800', '\\u2800'],
+    ['CGJ (U+034F)', '\u034F', '\\u034f'],
+    ['Khmer 固有母音 (U+17B4)', '\u17B4', '\\u17b4'],
+    ['モンゴル自由異体字選択子 (U+180B)', '\u180B', '\\u180b'],
+    ['ASCII の後の異体字選択子 (U+FE00)', '\uFE00', '\\ufe00'],
+    ['ASCII の後の絵文字選択子 (U+FE0F)', '\uFE0F', '\\ufe0f'],
+  ])('★ %s は ASCII の後で逃がされる (threat: T-205)', (_n, ch, expected) => {
+    expect(escapeInvisibleUnits(`a${ch}b`)).toBe(`a${expected}b`);
+  });
+
+  it('★ `#general` と `#general` + フィラーは、見せる綴りで区別できる (threat: T-205)', () => {
+    expect(escapeInvisibleUnits('#general')).toBe('#general');
+    expect(escapeInvisibleUnits('#general\u3164')).toBe('#general\\u3164');
+  });
+
+  it('★ 選択子の連なりは、基底の直後の 1 つ以外を逃がす (隠し通信路にしない)', () => {
+    expect(escapeInvisibleUnits('葛\u{E0101}\u{E0101}\u{E0101}')).toBe('葛\u{E0101}\\udb40\\udd01\\udb40\\udd01');
+  });
+
+  it.each([
+    ['IVS (葛 + U+E0101)', '葛\u{E0101}飾'],
+    ['SVS (一 + U+FE00)', '一\uFE00'],
+    ['仮名 + 選択子', 'か\uFE00'],
+    ['絵文字 + FE0F', '❤\uFE0F ありがとう'],
+    ['キーキャップ', '1\uFE0F\u20E3'],
+    ['濁点の結合記号 (U+3099)', 'か\u3099'],
+  ])('対照: 正当な用法 %s は 1 字も変えない', (_n, text) => {
+    expect(escapeInvisibleUnits(text)).toBe(text);
+  });
+});
+
 /**
  * 画像とリンクの入口は、書き出した `.md` の中で生きない (2026-10-16 · パス 524 · threat: T-087)。
  * `![t](https://remote/pixel)` は Obsidian / GitHub 系の描画で開いただけで外へ取りに行き、

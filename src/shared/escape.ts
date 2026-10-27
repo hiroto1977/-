@@ -160,7 +160,21 @@ export function escapeMarkdownText(input: string): string {
  * Trojan Source と同じ仕組み)。`lint:charset` の `INVISIBLE_RANGES` が原文について
  * 鳴らす当の字で、ここは**実行時に第三者の文を画面へ出す側**の規則である。
  */
-export const INVISIBLE_UNITS = /[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]/gu;
+export const INVISIBLE_UNITS = new RegExp(
+  [
+    '[\\p{Cc}\\p{Cf}\\p{Zl}\\p{Zp}]',
+    // 「見える字なのに何も描かれない」字 (T-205): Hangul フィラー・点字空白・CGJ・Khmer の
+    // 固有母音。\p{Cf} ではないので上の群に入らず、`#general` と `#general\u3164` が
+    // 画面では同じに見えた。字の本体 (文字・記号・結合記号) なので個別に挙げる。
+    '[\\u034F\\u115F\\u1160\\u17B4\\u17B5\\u2800\\u3164\\uFFA0]',
+    // 異体字選択子は基底の漢字・仮名に付くのが正当な使い方 (葛飾の IVS など)。
+    // それ以外の位置に在る物 (先頭・ASCII の後・選択子の連なり) は何も変えない飾りなので逃がす。
+    '(?<![\\p{sc=Han}\\p{sc=Hiragana}\\p{sc=Katakana}])[\\uFE00-\\uFE0D\\u180B-\\u180D\\u180F\\u{E0100}-\\u{E01EF}]',
+    // 絵文字の表示切替 (U+FE0E / U+FE0F) は絵文字の基底の後なら正当 (❤️)。それ以外は逃がす。
+    '(?<!\\p{Emoji})[\\uFE0E\\uFE0F]',
+  ].join('|'),
+  'gu',
+);
 
 /** 1 字を UTF-16 の単位ごとに `\uXXXX` へ (JSON が C0 を逃がすのと同じ綴り)。 */
 export function escapeUnits(c: string): string {
