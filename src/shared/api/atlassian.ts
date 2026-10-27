@@ -13,6 +13,7 @@ import {
 } from './http';
 import { utf8ToBase64 } from '../base64';
 import { jiraBrowseUrl } from '../atlassianLinks';
+import { refuseDotSegment } from './pathSegment';
 import { displayField, requireObject, requireString } from '../apiResponse';
 import { ATLASSIAN_ISSUE_FIELDS, checkWriteFields, describeWriteFieldFailure } from '../writeFieldLimits';
 
@@ -98,7 +99,7 @@ export class AtlassianClient implements ServiceClient {
   async getConfluencePage(pageId: string): Promise<ConfluencePage> {
     const site = this.site();
     const raw = await apiFetch<RawPage>(
-      `${site}/wiki/api/v2/pages/${encodeURIComponent(pageId)}`,
+      `${site}/wiki/api/v2/pages/${encodeURIComponent(refuseDotSegment(pageId))}`,
       { headers: bearer(String(this.creds.token), { Accept: 'application/json' }) },
       this.ctx(),
     );

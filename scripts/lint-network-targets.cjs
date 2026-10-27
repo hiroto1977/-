@@ -143,7 +143,7 @@ const REVIEWED = [
   },
   {
     file: 'src/shared/api/atlassian.ts',
-    template: '`${site}/wiki/api/v2/pages/${encodeURIComponent(pageId)}`',
+    template: '`${site}/wiki/api/v2/pages/${encodeURIComponent(refuseDotSegment(pageId))}`',
     guard: 'normalizeAtlassianSite → shared/atlassianSite.ts',
   },
   {

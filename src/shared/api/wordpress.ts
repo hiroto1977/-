@@ -90,7 +90,7 @@ export class WordPressClient implements ServiceClient {
   async checkDomainAvailability(domain: string): Promise<DomainAvailability> {
     if (!this.isConfigured()) throw new NotConfiguredError(this.id);
     const raw = await apiFetch<RawAvailability>(
-      `${API}/domains/${encodeURIComponent(domain)}/is-available`,
+      `${API}/domains/${encodeURIComponent(refuseDotSegment(domain))}/is-available`,
       { headers: bearer(String(this.creds.token)) },
       this.ctx(),
     );
