@@ -299,6 +299,15 @@ export function isPrivateOrReservedTarget(parsed: URL): boolean {
     // Stryker disable next-line Regex
     if (/^2001:0*db8:/i.test(bare)) return true;
     /*
+     * **IANA の特殊用途表で Globally Reachable: False の IPv6 範囲** (2026-10-27 · T-204)。
+     * どれも公開の宛先になりえず、トンネルの無い端末では外へ落ちるだけだが、**範囲が固定**なので
+     * 中身を読まずに塞げる (64:ff9b:1::/48 と同じ扱い)。`2001::/16` 全体には当てない —— 公開空間が居る。
+     * 判定は綴りの正規表現ではなく**群を数値に展開して**行う (`isNonGloballyReachableV6`) —— 最初に書いた
+     * 正規表現版は `100:0:0:1:5:6:7:8` (100::/64 の外) を `100::` で始まる綴りだからと塞いでいた
+     * (`::` に畳まれる位置は値で変わるので、綴りの接頭辞は範囲を表さない)。
+     */
+    if (isNonGloballyReachableV6(bare)) return true;
+    /*
      * **site-local fec0::/10 と multicast ff00::/8。**
      *
      * この 2 つは利用者が配る Worker (docs/PROXY_EXAMPLE.md) 側には
@@ -450,4 +459,52 @@ function extractEmbeddedV4FromTransitionPrefix(bare: string): string | null {
   // 投げ、catch が遮断 (true) を返すため結果は変わらない。値を '0.0.0.0' に保つのは読み手のため (等価変異)。
   if (/^2002::/.test(bare)) return '0.0.0.0';
   return null;
+}
+
+/**
+ * `::` と省略を展開して 16 bit × 8 群にする。解析できなければ null (`%` や dotted-quad は扱わない)。
+ * 範囲の判定 (`isNonGloballyReachableV6`) の土台なので export する (展開そのものを値で検査するため)。
+ */
+export function expandV6Groups(bare: string): readonly number[] | null {
+  const halves = bare.split('::');
+  if (halves.length > 2) return null;
+  const parse = (part: string): number[] | null => {
+    if (part === '') return [];
+    const out: number[] = [];
+    for (const g of part.split(':')) {
+      if (!/^[0-9a-f]{1,4}$/i.test(g)) return null;
+      out.push(parseInt(g, 16));
+    }
+    return out;
+  };
+  const head = parse(halves[0]!);
+  if (head === null) return null;
+  if (halves.length === 1) return head.length === 8 ? head : null;
+  const tail = parse(halves[1]!);
+  if (tail === null) return null;
+  const fill = 8 - head.length - tail.length;
+  if (fill < 1) return null; // `::` は 1 群以上を表す
+  return [...head, ...new Array<number>(fill).fill(0), ...tail];
+}
+
+/**
+ * IANA の特殊用途表で Globally Reachable: False の IPv6 範囲 (T-204)。
+ * - 100::/64 discard-only (RFC 6666)
+ * - 3fff::/20 文書用 (RFC 9637)
+ * - 2001:2::/48 ベンチマーク (RFC 5180)
+ * - 2001:10::/28 ORCHID・廃止 (RFC 4843)
+ * - 5f00::/16 SRv6 SID (RFC 9602)
+ * 利用者が配る Worker と CI の関門 (`scripts/public-host-guard.cjs`) が同じ 5 範囲を数値で持ち、
+ * パリティ検査が 3 実装の一致を見る。**テストから直接呼べるよう export する** (綴りの正規表現ではなく数値の判定)。
+ */
+export function isNonGloballyReachableV6(bare: string): boolean {
+  const g = expandV6Groups(bare);
+  if (g === null) return false;
+  return (
+    (g[0] === 0x100 && g[1] === 0 && g[2] === 0 && g[3] === 0) ||
+    (g[0] === 0x3fff && (g[1]! & 0xf000) === 0) ||
+    (g[0] === 0x2001 && g[1] === 0x0002 && g[2] === 0) ||
+    (g[0] === 0x2001 && (g[1]! & 0xfff0) === 0x0010) ||
+    g[0] === 0x5f00
+  );
 }

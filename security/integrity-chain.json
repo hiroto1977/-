@@ -2992,6 +2992,38 @@
       "leafCount": 125,
       "note": "update privateTarget.ts",
       "hash": "fa8476f1f549e4930d1ee9800fd5a78dc5548896405818eff7ce929974140e9a"
+    },
+    {
+      "index": 358,
+      "prevHash": "fa8476f1f549e4930d1ee9800fd5a78dc5548896405818eff7ce929974140e9a",
+      "merkleRoot": "8c4671e6dcce7b0418805a67a20bc90207a2dd7616762555da8e01e0aad9ddff",
+      "leafCount": 125,
+      "note": "update PROXY_EXAMPLE.md,public-host-guard.cjs,privateTarget.ts",
+      "hash": "4cb3bba91029c0154b9783a53879e0a38eda157559b2e3edc40a6a21c73fcc25"
+    },
+    {
+      "index": 359,
+      "prevHash": "4cb3bba91029c0154b9783a53879e0a38eda157559b2e3edc40a6a21c73fcc25",
+      "merkleRoot": "f64773ac2de8920d47c9839ec36c50bc54b7276713ef693409c4aff24b42a46a",
+      "leafCount": 125,
+      "note": "update privateTarget.ts",
+      "hash": "4b7671ff43e4c5a03b77986470f9e0483887ed34474214cb7830050ba3e21812"
+    },
+    {
+      "index": 360,
+      "prevHash": "4b7671ff43e4c5a03b77986470f9e0483887ed34474214cb7830050ba3e21812",
+      "merkleRoot": "3ed546a3dc4a1d7a77d26f5db52552712481886155e36687ac2c865ee4c81cdb",
+      "leafCount": 125,
+      "note": "update privateTarget.ts",
+      "hash": "7f9248c3766835bd223b7f750d870e630ce0f1f5d04158248bb0f729ecf15f16"
+    },
+    {
+      "index": 361,
+      "prevHash": "7f9248c3766835bd223b7f750d870e630ce0f1f5d04158248bb0f729ecf15f16",
+      "merkleRoot": "14f7d4306e870fde6a07d80fc250daa016bf56a135be2f64dc9c77fd5f72c05d",
+      "leafCount": 125,
+      "note": "update privateTarget.ts",
+      "hash": "9734ef0a8a6404d14d5d9fc190569ae52a7ca52fcfc6791fd925319c2c4358a7"
     }
   ],
   "tipManifest": {
@@ -3015,7 +3047,7 @@
     "assets/manifest.webmanifest": "2a36e499f82502b878302f7698aeb15aae992a8139b9dea774658ae8c36f959b",
     "assets/og.png": "1fcc1b3974eec00de79ab6d37272f39529905a3448017dc24ee0f03e979b7282",
     "assets/sw.js": "0320f925b8da1242c0aa3783e332a8abb87323331767aeebcab7dab309f6189d",
-    "docs/PROXY_EXAMPLE.md": "97948e981e8fb5305e69d2bcbd6f57783523382ffb0ca6fada43305263de7cd0",
+    "docs/PROXY_EXAMPLE.md": "c2f4987d6e53a3cbfae921dcc33582522abb4c587b519795296e3b3dc4edd06b",
     "docs/SECURITY_CHAIN.md": "e6f2886fbab792b4c4ec27ee8849a8642d1b28576c05e3ca627f2daea05cda29",
     "electron-builder.json": "f8a974dbeef20a9476498df0247f3ed00fc85cdfb3e3033e7da22558a1bd968e",
     "eslint.config.js": "a2a56ffbe45108aeb9313c52c8c0e382febfc72c4cc78884b60cbb88a653fa7f",
@@ -3042,7 +3074,7 @@
     "scripts/merge-mutation-reports.cjs": "2f278c07cb7bada0861e5f0db5f7916a684b9dc74c79c132033d6fb5f9ae3902",
     "scripts/migrate.sh": "fe793636d6c87f42b663a42e300207346b40d6adbb057d0ba5696fd4604311ed",
     "scripts/mutate-changed.cjs": "5ba90a0917c8a37c60aa23db516f2d7f53a393f97f29c16fce6ba731892e2c33",
-    "scripts/public-host-guard.cjs": "7950b99f26d4367201debf41b38ab324dbf52161498b9ead82fb164299b1882f",
+    "scripts/public-host-guard.cjs": "6275b14b2baed632212143d741f15cd9fa856782b0ff66f1b09315533cba355d",
     "scripts/safe-vault-write.cjs": "263ad4e8e52952769cda1be6e25b31025e0f023439e93f6eccdc996ec15215f3",
     "scripts/security-audit.sh": "c50257fabca4b4c6def121dfc676539bd5db97679da6db4ef4961a48c6993064",
     "scripts/setup-linux.sh": "d759d679007975cf3cfbf9a26eb01a3240741ba769d6da9d886e9d57a17b5cba",
@@ -3107,7 +3139,7 @@
     "src/shared/isoDate.ts": "cfe317b22c6b482c42bca40a9d19a5cbd3204b5cbace6e7336befe77690f01cd",
     "src/shared/localDate.ts": "9220ae751caf1637071d5804fb67d4629125bed1c4a9a7913fdd2968c5294da1",
     "src/shared/ollama.ts": "672ff00261aa63ae7e0b7567dbfaa54ad88da67a5fa55788c79b16c1bd6193c8",
-    "src/shared/privateTarget.ts": "dc8836f906140faab10d6b3cc7138fb13ac1a7b4357f36ae069ca30e4592453c",
+    "src/shared/privateTarget.ts": "8610e3372367a7960faddf306c9e4210e882a1719bbf4426840191c314ed8035",
     "src/shared/proxyEndpoint.ts": "e43b36c93eeaf5515b474fa5be4ab3f070cb13f616382a5f636db711df0f995e",
     "src/shared/redact.ts": "0f87ac977c493be02ba33bdc7550585215b9b008753c917fb9b446a90e6a725f",
     "src/shared/safeFilename.ts": "f84d319b882db4768b70c03d8c61b62e0dbaee9226d891cc100091c9c62b7f3e",
