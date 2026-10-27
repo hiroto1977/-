@@ -461,8 +461,11 @@ function extractEmbeddedV4FromTransitionPrefix(bare: string): string | null {
   return null;
 }
 
-/** `::` と省略を展開して 16 bit × 8 群にする。解析できなければ null (`%` や dotted-quad は扱わない)。 */
-function expandV6Groups(bare: string): readonly number[] | null {
+/**
+ * `::` と省略を展開して 16 bit × 8 群にする。解析できなければ null (`%` や dotted-quad は扱わない)。
+ * 範囲の判定 (`isNonGloballyReachableV6`) の土台なので export する (展開そのものを値で検査するため)。
+ */
+export function expandV6Groups(bare: string): readonly number[] | null {
   const halves = bare.split('::');
   if (halves.length > 2) return null;
   const parse = (part: string): number[] | null => {
@@ -475,9 +478,10 @@ function expandV6Groups(bare: string): readonly number[] | null {
     return out;
   };
   const head = parse(halves[0]!);
-  const tail = halves.length === 2 ? parse(halves[1]!) : [];
-  if (head === null || tail === null) return null;
+  if (head === null) return null;
   if (halves.length === 1) return head.length === 8 ? head : null;
+  const tail = parse(halves[1]!);
+  if (tail === null) return null;
   const fill = 8 - head.length - tail.length;
   if (fill < 1) return null; // `::` は 1 群以上を表す
   return [...head, ...new Array<number>(fill).fill(0), ...tail];

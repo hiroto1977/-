@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isNonGloballyReachableV6, isPrivateOrReservedTarget } from '../../../shared/privateTarget';
+import { expandV6Groups, isNonGloballyReachableV6, isPrivateOrReservedTarget } from '../../../shared/privateTarget';
 
 /**
  * IANA の特殊用途表で Globally Reachable: False の IPv6 5 範囲 (2026-10-27 · threat: T-204)。
@@ -72,4 +72,34 @@ describe('IPv6 の特殊用途 5 範囲 (threat: T-204)', () => {
     // 8 群ちょうどに `::` は付けられない (fill < 1)
     expect(isNonGloballyReachableV6('100:0:0:0:0:0:0::1')).toBe(false);
   });
+
+  it('★ 展開そのものを値で確かめる (`::` の位置・群の数・不正な群)', () => {
+    expect(expandV6Groups('::1')).toEqual([0, 0, 0, 0, 0, 0, 0, 1]); // 先頭が空
+    expect(expandV6Groups('1::')).toEqual([1, 0, 0, 0, 0, 0, 0, 0]); // 末尾が空
+    expect(expandV6Groups('::')).toEqual([0, 0, 0, 0, 0, 0, 0, 0]);
+    expect(expandV6Groups('1:2::7:8')).toEqual([1, 2, 0, 0, 0, 0, 7, 8]);
+    expect(expandV6Groups('1:2:3:4:5:6:7:8')).toEqual([1, 2, 3, 4, 5, 6, 7, 8]); // 省略なしの 8 群
+    expect(expandV6Groups('FFFF:aBc::1')).toEqual([0xffff, 0xabc, 0, 0, 0, 0, 0, 1]); // 大文字小文字
+    // `::` が 1 群ちょうどを表す境界 (fill = 1) は通し、0 群 (fill = 0) は断る
+    expect(expandV6Groups('1:2:3:4:5:6:7::')).toEqual([1, 2, 3, 4, 5, 6, 7, 0]);
+    expect(expandV6Groups('::2:3:4:5:6:7:8')).toEqual([0, 2, 3, 4, 5, 6, 7, 8]);
+    expect(expandV6Groups('1:2:3:4::5:6:7:8')).toBeNull();
+  });
+
+  it('★ 展開は不正な綴りを null にする (群の形・群の数・`::` の数)', () => {
+    for (const bad of [
+      'zz::1', // 先頭側の群が 16 進でない
+      '1::zz', // 末尾側の群が 16 進でない
+      'g1::1', // 先頭に 16 進でない字 (末尾だけ合っても断る)
+      '12345::1', // 5 桁 (後ろの 4 桁だけ合っても断る)
+      '1:2:3:4:5:6:7', // `::` が無いのに 7 群
+      '1:2:3:4:5:6:7:8:9', // 9 群
+      '1::2::3', // `::` が 2 つ
+      '1:::2', // コロンが 3 つ
+      ':1::2', // 先頭に単独のコロン
+    ]) {
+      expect(expandV6Groups(bad), bad).toBeNull();
+    }
+  });
 });
+
