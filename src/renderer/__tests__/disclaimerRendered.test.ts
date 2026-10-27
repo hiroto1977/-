@@ -109,6 +109,12 @@ const LEDGER: Readonly<Record<string, Row>> = {
     companion: 'response.message',
     why: '感情分析の応答。医療・心理の助言ではない旨',
   },
+  'components/CrisisHeldNotice.tsx': {
+    expr: 'response.disclaimer',
+    count: 1,
+    companion: 'response.message',
+    why: 'アドバイザーの質問欄で、危機・他害の質問を止めたときの窓口。医療・心理の専門的ケアの代わりにはならない旨 (T-207)',
+  },
   'components/ServiceActionPanel.tsx': {
     expr: 'advice.disclaimer',
     count: 1,

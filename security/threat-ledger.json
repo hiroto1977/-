@@ -3441,6 +3441,21 @@
         "file": "src/shared/api/__tests__/pathInterpolationCensus.test.ts",
         "test": "★ 資格情報つきの 2 つの旧来クラス経路は . と .. を送らない (threat: T-206)"
       }
+    },
+    {
+      "id": "T-207",
+      "found": "2026-10-27",
+      "foundBy": "huntBacklog の AI-6 を、防御側が jsdom で実物の 2 画面に危機の質問を打って測った(両画面とも invoke が呼ばれ、窓口は出なかった)。感情ページ(T-090)と同じ型で、画面が送る前に止める形で閉じた",
+      "surface": "renderer",
+      "class": "ai-phishing",
+      "severity": "medium",
+      "title": "AI 投資アドバイザー / AI 経営アドバイザーの質問欄は、危機・他害の質問を判定せずに stocks/advise・business/advise(Anthropic)へ送り、窓口も出さなかった(実測: 『もう死にたい。株をどうすればいいですか』が invoke へ渡った)",
+      "status": "fixed",
+      "fix": "共有の表示部品 CrisisHeldNotice(窓口は counseling.ts の counsel が決める=台帳は 1 つ)と判定の口 shouldHoldFromExternalModel(detectCrisis と detectHarmToOthers)を足し、2 画面の runAdvisor で空判定の直後(長さの門より前)に止める。当たれば送らず、理由と窓口を出し、次の質問を始めたら消す。限界: 判定は renderer にあり、main の handler は止めない(invoke を直接叩く経路には効かない)。skills/run-skill の prompt と Slack/Gmail の『Emotions で分析』の第三者の文は未対応(backlog)。",
+      "regression": {
+        "file": "src/renderer/pages/__tests__/advisorCrisisHold.test.ts",
+        "test": "★ 危機の文面は外部へ送らず、相談窓口と理由を出す (threat: T-207)"
+      }
     }
   ],
   "huntBacklog": [
@@ -3488,11 +3503,6 @@
       "surface": "supply-chain",
       "item": "F-1 main 枝に branch protection / ruleset が 1 つも無い (GitHub の設定 —— リポジトリの中からは直せない)",
       "why": "2026-10-15 に GitHub API で実測 (rulesets 0 件・protection 無し)。CODEOWNERS (T-003) は Require review from Code Owners が有効でないと効かず、整合性チェーンは署名を持たないので、直接 push で保護対象と鎖を一緒に書き換えられる。所有者が Settings → Rules で main に「PR 必須・Code Owners のレビュー必須・force push 禁止」を付ける判断。"
-    },
-    {
-      "surface": "ai",
-      "item": "AI-6 アドバイザーの質問欄 (stocks/advise・business/advise と record-entry の 4 経路) に危機の判定 (detectCrisis) が無い —— 「もう死にたい。株をどうすれば」が checkAdvisorQuestion (空 / 長さ / 制御文字) だけを通って api.anthropic.com へ届く (2026-10-15 実測・main と web-shim の両方)",
-      "why": "detectCrisis は renderer/data/counseling.ts に住み、main は import できない (lint:imports の境界)。直すには CRISIS_MARKERS と畳み込みを shared へ出して checkAdvisorQuestion に 4 つ目の理由 (crisis) を足す形で、lint:shared-judgement と mutate の台帳が動く。設計の決定を含むので別パスで。"
     },
     {
       "surface": "supply-chain",
@@ -3799,6 +3809,11 @@
     {
       "item": "N-A の同類: Drive / Jira / Slack など他のパス補間が . と .. を通すか",
       "finding": "T-206 で census を足した。資格情報つきで届く 2 か所(WordPress のドメイン確認・Confluence のページ取得。製品の呼び出しは 0 件)を pathSegment へ。Drive / Jira / Slack は表示用リンクで資格情報を載せず、Gmail は同じホストの応答の id。",
+      "checkedOn": "2026-10-27"
+    },
+    {
+      "item": "AI-6 アドバイザーの質問欄(stocks/advise・business/advise)に危機の判定が無い",
+      "finding": "T-207 で 2 画面の runAdvisor が送る前に危機・他害を判定して止め、窓口を出す形にした(感情ページの T-090 と同じ型)。判定を shared へ出して main でも止める設計は採らず、残りの経路(skills/run-skill・Slack/Gmail の Emotions 分析)は backlog に残した。",
       "checkedOn": "2026-10-27"
     }
   ]
