@@ -1,3 +1,4 @@
+import { CrisisHeldNotice, shouldHoldFromExternalModel } from '../components/CrisisHeldNotice';
 import { useMemo, useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
@@ -200,6 +201,8 @@ export function StocksPage() {
 
   // --- AI advisor state -------------------------------------------------
   const [advisorQuestion, setAdvisorQuestion] = useState('');
+  // 危機・他害の質問は外部へ送らず窓口を出す (T-207)。止めた質問を持ち、次の質問を始めたら消す。
+  const [crisisHeld, setCrisisHeld] = useState<string | null>(null);
   /* 貼り付けを黙って切らない (パス 175)。経営ダッシュボードの助言欄と同じ判断・同じ天井。 */
   const advisorQuestionOver = charsOverCeiling(advisorQuestion, MAX_ADVISOR_QUESTION_CHARS);
   const [advisorBusy, setAdvisorBusy] = useState(false);
@@ -355,6 +358,15 @@ export function StocksPage() {
       setAdvisorError('質問を入力してください');
       return;
     }
+    // 危機・他害の質問は外部のモデルへ送らず、窓口を出す (threat: T-207)。長さの門より先に判定する
+    // (長すぎる危機の文面でも、断りの文より窓口が先に出る)。
+    if (shouldHoldFromExternalModel(advisorQuestion)) {
+      setCrisisHeld(advisorQuestion.trim());
+      setAdvisorError(null);
+      setAdvisorResult(null);
+      return;
+    }
+    setCrisisHeld(null);
     /*
      * **Enter は `disabled` を見ない** (パス 175)。欄は超過を述べて押せなくなるが、
      * 下の `onKeyDown` は `advisorBusy` だけを見てここへ来るので、押せない状態のまま
@@ -771,6 +783,7 @@ export function StocksPage() {
           </button>
         </div>
         <CeilingNotice label="質問" value={advisorQuestion} max={MAX_ADVISOR_QUESTION_CHARS} />
+        {crisisHeld !== null && <CrisisHeldNotice text={crisisHeld} />}
         {advisorError && (
           <div
             /* 断りの出所を言い分けられるようにする (パス 175 —— 欄の注記と、
