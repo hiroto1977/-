@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { CrisisHeldNotice, shouldHoldFromExternalModel } from '../components/CrisisHeldNotice';
 import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
@@ -46,9 +47,18 @@ export function SkillsPage() {
   const promptOver = charsOverCeiling(prompt, MAX_ASSISTANT_CONTENT_CHARS);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{ kind: 'ok' | 'error'; message: string }>();
+  // 危機・他害の指示文は外部のモデルへ送らず窓口を出す (T-208)。止めた文を持ち、次の実行で消す。
+  const [crisisHeld, setCrisisHeld] = useState<string | null>(null);
 
   const run = async () => {
     if (!window.serviceHub) return;
+    // 利用者が打った指示文は、危機・他害なら外部のモデルへ送らない (threat: T-208)。
+    if (shouldHoldFromExternalModel(prompt)) {
+      setCrisisHeld(prompt.trim());
+      setResult(undefined);
+      return;
+    }
+    setCrisisHeld(null);
     setSubmitting(true);
     setResult(undefined);
     const res = await window.serviceHub.invoke<ActionData<'skills/run-skill'>>(
@@ -189,6 +199,7 @@ export function SkillsPage() {
               style={{ ...inputStyle, fontFamily: 'inherit', resize: 'vertical' }}
             />
             <CeilingNotice label="プロンプト" value={prompt} max={MAX_ASSISTANT_CONTENT_CHARS} />
+            {crisisHeld !== null && <CrisisHeldNotice text={crisisHeld} />}
             <div style={{ display: 'flex', gap: 8 }}>
               <button
                 className="primary"

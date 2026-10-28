@@ -3456,6 +3456,21 @@
         "file": "src/renderer/pages/__tests__/advisorCrisisHold.test.ts",
         "test": "★ 危機の文面は外部へ送らず、相談窓口と理由を出す (threat: T-207)"
       }
+    },
+    {
+      "id": "T-208",
+      "found": "2026-10-28",
+      "foundBy": "huntBacklog の AI-6 の同類(skills/run-skill・Slack/Gmail の『Emotions で分析』)を、防御側が経路ごとに『誰の言葉か』で仕分けた。利用者が打つ指示文(スキル実行)は jsdom で実測し、窓口なしで invoke へ渡ることを確かめて塞いだ",
+      "surface": "renderer",
+      "class": "ai-phishing",
+      "severity": "low",
+      "title": "スキル実行の指示文は、危機・他害の文面を判定せずに skills/run-skill(Anthropic)へ送り、窓口も出さなかった(アドバイザーの質問欄 T-207・感情ページ T-090 と同じ穴)",
+      "status": "fixed",
+      "fix": "T-207 の CrisisHeldNotice と shouldHoldFromExternalModel を SkillsPage の run に使い、送る前に止めて理由と窓口を出す。Slack/Gmail の『Emotions で分析』は送る物がチャンネル名・件名・送信者という第三者の文で、利用者自身の言葉ではないので、利用者に窓口を出すのは筋違い(分析の目的はトーン検出)として止めない(判断を台帳に残した)。限界: 判定は renderer にあり main の handler は止めない。",
+      "regression": {
+        "file": "src/renderer/pages/__tests__/skillsCrisisHold.test.ts",
+        "test": "★ 危機の文面は外部へ送らず、相談窓口と理由を出す (threat: T-208)"
+      }
     }
   ],
   "huntBacklog": [
@@ -3538,11 +3553,6 @@
       "surface": "ai",
       "item": "F-3 音声/チャットの宛先サービスが引用の本文の語で決まる (不動産に「投資信託の件」を記録して → mutual-funds)",
       "why": "2026-10-16 に監査役が再現 (自分では未再現)。確認の画面は宛先を見せるので利用者が気付ける。引用の外から決める・曖昧なら尋ねる、は解析器の設計判断。"
-    },
-    {
-      "surface": "ai",
-      "item": "AI-6 の同類: skills/run-skill の prompt と Slack/Gmail の『Emotions で分析』(第三者の文) も危機の判定を通らずに外部のモデルへ届く",
-      "why": "2026-10-16 に監査役が指摘 (感情ページの『テキスト分析』は T-090 で閉じた)。detectCrisis を shared へ出して main で止める、が AI-6 の設計。"
     },
     {
       "surface": "main-ipc",
@@ -3815,6 +3825,11 @@
       "item": "AI-6 アドバイザーの質問欄(stocks/advise・business/advise)に危機の判定が無い",
       "finding": "T-207 で 2 画面の runAdvisor が送る前に危機・他害を判定して止め、窓口を出す形にした(感情ページの T-090 と同じ型)。判定を shared へ出して main でも止める設計は採らず、残りの経路(skills/run-skill・Slack/Gmail の Emotions 分析)は backlog に残した。",
       "checkedOn": "2026-10-27"
+    },
+    {
+      "item": "AI-6 の同類: skills/run-skill の prompt と Slack/Gmail の『Emotions で分析』(第三者の文)が危機の判定を通らずに外部のモデルへ届く",
+      "finding": "T-208 で skills の指示文(利用者自身の言葉)を送る前に止めた。Slack/Gmail は送る物がチャンネル名・件名・送信者の第三者の文で、利用者に窓口を出すのは筋違いなので止めない(判断)。",
+      "checkedOn": "2026-10-28"
     }
   ]
 }
