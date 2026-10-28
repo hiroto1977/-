@@ -14,6 +14,7 @@ const SENTINEL = 'sk-ant-api03-SENTINELKEY0000';
 
 vi.mock('../security/vault', () => ({
   getVault: () => ({
+    takeExpiredNotice: () => null, // T-213: 期限切れの理由 (この偽物は期限を持たない)
     getToken: async () => JSON.stringify({ anthropic: SENTINEL, openai: SENTINEL }),
     status: async () => 'unlocked',
     setToken: async () => {},

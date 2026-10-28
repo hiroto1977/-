@@ -26,6 +26,7 @@ const reads: string[] = [];
 
 vi.mock('../security/vault', () => ({
   getVault: () => ({
+    takeExpiredNotice: () => null, // T-213: 期限切れの理由 (この偽物は期限を持たない)
     getToken: async (id: string) => {
       reads.push(id);
       if (vaultThrows) throw vaultThrows;

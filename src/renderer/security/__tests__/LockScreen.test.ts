@@ -53,6 +53,7 @@ vi.mock('../vault', async (importOriginal) => ({
   // 「画面が結果どおりの理由を出しているか」を見ている当の検査が嘘をつく。
   describeWipeOutcome: (await importOriginal<typeof import('../vault')>()).describeWipeOutcome,
   getVault: () => ({
+    takeExpiredNotice: () => null, // T-213: 期限切れの理由 (この偽物は期限を持たない)
     status: async () => statusImpl(),
     unlock: async (pw: string) => {
       calls.push({ name: 'unlock', args: [pw] });

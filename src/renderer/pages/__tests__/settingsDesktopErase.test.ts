@@ -24,6 +24,7 @@ vi.mock('../../security/vault', async (importOriginal) => {
     MAX_TOKEN_CHARS: real.MAX_TOKEN_CHARS,
     describeWipeOutcome: real.describeWipeOutcome,
     getVault: () => ({
+      takeExpiredNotice: () => null, // T-213: 期限切れの理由 (この偽物は期限を持たない)
       isUnlocked: () => false,
       lock: () => {},
       changePassword: async () => {},

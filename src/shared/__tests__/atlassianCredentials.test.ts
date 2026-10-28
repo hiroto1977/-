@@ -41,7 +41,7 @@ vi.mock('electron', () => ({
   },
 }));
 vi.mock('../../renderer/security/vault', () => ({
-  getVault: () => ({ getToken: async () => null, setToken: async () => {}, clearToken: async () => {}, listServices: async () => [], status: async () => 'locked' }),
+  getVault: () => ({ takeExpiredNotice: () => null, getToken: async () => null, setToken: async () => {}, clearToken: async () => {}, listServices: async () => [], status: async () => 'locked' }),
 }));
 vi.mock('../../renderer/library/library', () => ({ getLibrary: () => ({ put: async () => {}, list: async () => [] }) }));
 

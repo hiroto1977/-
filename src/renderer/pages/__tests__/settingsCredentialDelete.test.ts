@@ -34,6 +34,7 @@ vi.mock('../../security/vault', async (importOriginal) => {
     MAX_TOKEN_CHARS: real.MAX_TOKEN_CHARS,
     MIN_PASSWORD_LENGTH: real.MIN_PASSWORD_LENGTH,
     getVault: () => ({
+      takeExpiredNotice: () => null, // T-213: 期限切れの理由 (この偽物は期限を持たない)
       listConfigured: async () => ['anthropic'],
       clearToken: (key: string) => vaultClear(key),
       setToken: async () => {},

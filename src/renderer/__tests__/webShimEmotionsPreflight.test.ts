@@ -16,6 +16,7 @@ import '../web-shim';
 
 vi.mock('../security/vault', () => ({
   getVault: () => ({
+    takeExpiredNotice: () => null, // T-213: 期限切れの理由 (この偽物は期限を持たない)
     getToken: async (id: string) => (id === 'emotions' ? 'sk-ant-test-key' : null),
     setToken: async () => {},
     clearToken: async () => {},
