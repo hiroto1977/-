@@ -317,16 +317,19 @@ const INSTALL_SCRIPT_ALLOW = {
 const SECURITY_FLOORS = [
   {
     package: 'qs',
-    atLeast: '6.16.0',
+    atLeast: '6.16.1',
     mechanism: 'overrides',
-    checkedOn: '2026-10-10',
-    advisories: ['GHSA-q8mj-m7cp-5q26', 'GHSA-x5fp-wj9c-mxmx', 'GHSA-4mjr-xmp4-gh2g'],
+    checkedOn: '2026-10-28',
+    advisories: ['GHSA-q8mj-m7cp-5q26', 'GHSA-x5fp-wj9c-mxmx', 'GHSA-4mjr-xmp4-gh2g', 'GHSA-6pq8-jhm2-2vcw'],
     why:
       '2026-08-17 に qs.stringify の DoS (GHSA-q8mj-m7cp-5q26 / <=6.15.1) を @stryker-mutator/core → '
       + 'typed-rest-client → qs@6.15.1 に対して ^6.15.2 で押さえた。**2026-09-10 に測ったらその床は'
       + '既に低すぎた** —— 後から出た GHSA-x5fp-wj9c-mxmx (<=6.15.3) と GHSA-4mjr-xmp4-gh2g (<6.16.0) が'
       + '6.15.2 / 6.15.3 を覆っており、床が許す版が脆弱なままだった (lockfile はたまたま 6.16.0 に'
-      + '解決されていたので npm audit は緑だった)。床は 6.16.0。typed-rest-client の API は変わらない',
+      + '解決されていたので npm audit は緑だった)。床は 6.16.0。typed-rest-client の API は変わらない。'
+      + '2026-10-28: 毎日の dependency-audit が床 6.16.0 に GHSA-6pq8-jhm2-2vcw (<=6.16.0 · arrayFormat comma の'
+      + ' TypeError) を報せた。床は 6.16.1 (一時プロジェクトで 6.16.1 を npm audit に掛けて 0 件)。'
+      + 'typed-rest-client@2.3.1 は qs を 6.15.1 に固定しているので、この床を持つ道は overrides だけ',
   },
   {
     package: 'js-yaml',
@@ -375,10 +378,10 @@ const SECURITY_FLOORS = [
   },
   {
     package: 'electron',
-    atLeast: '44.5.0',
+    atLeast: '44.9.1',
     mechanism: 'devDependency',
-    checkedOn: '2026-10-23',
-    advisories: ['GHSA-fw47-9c62-h3vw', 'GHSA-3qxv-5xgr-q7w9', 'GHSA-h3v5-h239-pg29', 'GHSA-x562-297c-g43g'],
+    checkedOn: '2026-10-28',
+    advisories: ['GHSA-fw47-9c62-h3vw', 'GHSA-3qxv-5xgr-q7w9', 'GHSA-h3v5-h239-pg29', 'GHSA-x562-297c-g43g', 'GHSA-jr5w-w6x2-84p9'],
     why:
       '2026-10-22: 毎日の dependency-audit が dev 依存の moderate として報せた (GHSA-fw47-9c62-h3vw · 43.7.0 未満)。'
       + 'electron は主プロセスとレンダラを動かす実行基盤で、デスクトップ版の利用者の手元で毎回動く。'
@@ -387,7 +390,10 @@ const SECURITY_FLOORS = [
       + '44.0.0 / 44.1.0 / 44.3.0 は 1 件、44.4.0〜44.4.5 は上の 3 件で 1 件、44.5.0 以降 (6・7・8・9.0・44.9.3) は 0 件。'
       + 'いま入っている版は 45.0.0 (範囲 `^45.0.0` の下限) でこの床より上で、npm audit は 0 件 (2026-10-23 実測)。'
       + '45 系は safeStorage の同期 API が非推奨 (46 で削除) なので、非同期化 (secrets.ts / atRest.ts / keychainBackend.ts · PR #825) を済ませてから上げた。'
-      + '床は「勧告 0 件の最初の版」であり、45 系へ移ったことでは動かさない (45.0.0 は 44.5.0 以降の修正を含む新しい系)',
+      + '床は「勧告 0 件の最初の版」であり、45 系へ移ったことでは動かさない (45.0.0 は 44.5.0 以降の修正を含む新しい系)。'
+      + '2026-10-28: 毎日の dependency-audit が床 44.5.0 に GHSA-jr5w-w6x2-84p9 (high · 侵害された eMudhra 中間証明書の'
+      + ' 緩和 · >=44.0.0-alpha.1 <44.9.1) を報せた。床は 44.9.1 (一時プロジェクトで 44.9.1 と 45.0.0 を npm audit に'
+      + ' 掛けてどちらも 0 件)。いま入っている 45.0.0 はこの勧告の範囲外で、動かしていない',
   },
   {
     package: '@vitest/coverage-v8',
