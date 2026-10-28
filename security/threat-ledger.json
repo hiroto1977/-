@@ -3501,6 +3501,21 @@
         "file": "src/shared/__tests__/gitattributesGenerated.test.ts",
         "test": "★ .gitattributes が折り畳む物は台帳の生成物だけで、レビューの要る木は 1 行も覆わない (threat: T-210)"
       }
+    },
+    {
+      "id": "T-211",
+      "found": "2026-10-28",
+      "foundBy": "release.yml の secrets の置き場を 1 段上げて (build の environment: release の直後に env: で CSC_LINK) 隔離した複製で実測 —— lint:workflow-security は exit 0・release.yml の検査 4 本 131 件は全部緑。どの網も「secrets がどの段に在るか」を問うていなかった",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "release.yml の署名鍵 (CSC_LINK / APPLE_*) を job 単位・workflow 単位の env: へ置いても、どの門も検査も落とさなかった —— そこに置いた鍵は Build より前の checkout・npm ci の postinstall・第三者 action まで読め、T-144 が整えた「検査と署名を別の runner に」の隔離が 1 行で中から破れる",
+      "status": "fixed",
+      "fix": "lint:workflow-security に規則を足した (secretPlacementProblems): `${{ secrets.* }}` は step の env:/with: の中にだけ置ける。字下げで親を辿り、最も近い env/with の親が steps: 直下の項目に在れば通し、workflow の env:・job の env:・job 単位の secrets: (再利用 workflow へ渡す map)・secrets: inherit は落とす。注記の中の言及は数えない。self-test 8 件 (落とす 4 / 通す 4)。releaseJobSplit.test.ts は release.yml の secrets の行の集合が Build step の env: の行の集合と両方向で一致することと、複製へ job 単位の env: を植えると門が落とすことを見る。対照 3 方向 (配線を外す / 判定を緩める / release.yml へ植える) すべてが狙った検査に当たることを確かめた。限界: YAML を解析せず字下げで親を辿るので、フロー記法 (`env: {X: ${{ secrets.X }}}`) は行そのものの鍵が env になり job 単位でも落ちるが、step の項目の中にフロー記法で書いた step は structureProblems (T-145) が先に落とす。",
+      "regression": {
+        "file": "src/shared/__tests__/releaseJobSplit.test.ts",
+        "test": "★ secrets を参照する行は、build の Build step の env: の行と両方向で一致する (threat: T-211)"
+      }
     }
   ],
   "huntBacklog": [
