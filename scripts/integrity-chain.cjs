@@ -491,6 +491,7 @@ const PROTECTED = [
   // 壊れた TokenSet を raw に落とすと **refresh token が相手に出る**
   // (2026-08-20 に実際に踏んだ形)。secrets.ts が読む先。
   'src/shared/vaultToken.ts',
+  'src/shared/credentialTtl.ts', // 保存した資格情報の有効時間 —— 両保管層が読む判定 (T-213)
   // 暗号化された資格情報ファイルがディスクに載る経路 (secrets.ts の書き込み)。
   // 一時ファイルの置き場と `.prev` の扱いを決めるので、ここが変われば
   // 平文や旧世代が予期しない場所に残りうる。

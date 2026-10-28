@@ -54,10 +54,19 @@
             "scripts/crown-jewels.cjs",
             "src/shared/__tests__/crownJewels.test.ts"
           ]
+        },
+        {
+          "what": "狩りの輪を回す側: 週 1 の予約が次の面を brief で決めて狩り、4 段の記録を record で台帳へ、止まれば毎日の報告が要対応に出す (起動・記録まで自動。マージは人)",
+          "enforcedBy": [
+            "scripts/hunt-cycle.cjs",
+            "security/hunt-cycles.json",
+            "docs/HUNT_CYCLE_PROMPT.md",
+            "src/shared/__tests__/huntCycle.test.ts"
+          ]
         }
       ],
       "gaps": [
-        "狩りの起動 (監査役) は人が回す。止まったことは毎日検知して Issue に出すが、自動で狩らないのは利用料が掛かる判断だから (docs/THREAT_HUNT.md の『回す頻度』)。"
+        "予約そのもの (Claude Code の予定実行) はリポジトリの外に在り、止まったことは検知できる (毎日の報告 · 14 日) が、リポジトリの中から再び動かすことはできない。マージも人 —— 対策が main に入るまでの時間は人のレビューに依る。"
       ]
     },
     {
@@ -3500,6 +3509,66 @@
       "regression": {
         "file": "src/shared/__tests__/gitattributesGenerated.test.ts",
         "test": "★ .gitattributes が折り畳む物は台帳の生成物だけで、レビューの要る木は 1 行も覆わない (threat: T-210)"
+      }
+    },
+    {
+      "id": "T-211",
+      "found": "2026-10-28",
+      "foundBy": "release.yml の secrets の置き場を 1 段上げて (build の environment: release の直後に env: で CSC_LINK) 隔離した複製で実測 —— lint:workflow-security は exit 0・release.yml の検査 4 本 131 件は全部緑。どの網も「secrets がどの段に在るか」を問うていなかった",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "release.yml の署名鍵 (CSC_LINK / APPLE_*) を job 単位・workflow 単位の env: へ置いても、どの門も検査も落とさなかった —— そこに置いた鍵は Build より前の checkout・npm ci の postinstall・第三者 action まで読め、T-144 が整えた「検査と署名を別の runner に」の隔離が 1 行で中から破れる",
+      "status": "fixed",
+      "fix": "lint:workflow-security に規則を足した (secretPlacementProblems): `${{ secrets.* }}` は step の env:/with: の中にだけ置ける。字下げで親を辿り、最も近い env/with の親が steps: 直下の項目に在れば通し、workflow の env:・job の env:・job 単位の secrets: (再利用 workflow へ渡す map)・secrets: inherit は落とす。注記の中の言及は数えない。self-test 8 件 (落とす 4 / 通す 4)。releaseJobSplit.test.ts は release.yml の secrets の行の集合が Build step の env: の行の集合と両方向で一致することと、複製へ job 単位の env: を植えると門が落とすことを見る。対照 3 方向 (配線を外す / 判定を緩める / release.yml へ植える) すべてが狙った検査に当たることを確かめた。限界: YAML を解析せず字下げで親を辿るので、フロー記法 (`env: {X: ${{ secrets.X }}}`) は行そのものの鍵が env になり job 単位でも落ちるが、step の項目の中にフロー記法で書いた step は structureProblems (T-145) が先に落とす。",
+      "regression": {
+        "file": "src/shared/__tests__/releaseJobSplit.test.ts",
+        "test": "★ secrets を参照する行は、build の Build step の env: の行と両方向で一致する (threat: T-211)"
+      }
+    },
+    {
+      "id": "T-212",
+      "found": "2026-10-28",
+      "foundBy": "伏字 (redact.ts) に、このアプリが預かる・配る物が実際に取りうる 28 形を裸で通して数えた。15 形が素通りし、逆に出荷コードの文字列リテラル 95,637 本に通すと学術コーパスの散文 2 本が伏せられていた (精度は両方向で測る)",
+      "surface": "network",
+      "class": "ssrf-and-credential-egress",
+      "severity": "medium",
+      "title": "伏字は発行元の分かる接頭辞とヘッダ名の列挙にしか当たらず、cookie / set-cookie の線上・\"private_key\" / \"secret_key\" / \"api_token\" ほか名前だけが手がかりの JSON の鍵・URL の userinfo のパスワード・2 段以上の接頭辞を持つ環境変数 (CSC_KEY_PASSWORD=) の 15 形を素通りさせ、一方で裸の `Basic ` は日本語の散文まで伏せていた",
+      "status": "fixed",
+      "fix": "redact.ts の規則を 5 か所広げ・狭めた: ① JSON の鍵は `(接頭辞)?(token|secret|password|passwd|passphrase|cookie)` と private_key / secret_key / set-cookie (camelCase も) ② 線上の形に client_secret / signing_secret / private_key / secret_key / *_token を足す ③ cookie / set-cookie は行の残りを丸ごと伏せる (`\\S+` では 2 つ目以降の対が残る) ④ URL の userinfo はパスワードだけ伏せる ⑤ 環境変数の接頭辞を 3 段まで。逆に裸の Bearer / Basic の本体を ASCII の token 字に限り、散文を飲まなくした。redactOutputShapes.test.ts が伏せる 17 形と伏せてはいけない 8 形を出力全文で留め、知識コーパスの文字列リテラル (床 20,000 本) が 1 本も変わらないことを母集団として留める。対照 6 方向 (規則を 1 つずつ戻す) すべて狙った検査に当たる。lint:regex 緑。限界: 名前の手がかりも接頭辞も無い裸の値は今も伏せられない (設計上の限界・redactionCoverage.test.ts が記録)。cookie が失敗の文へ流れる道は配る Worker の outHeaders に在り、アプリ自身の要求は cookie を送らない。",
+      "regression": {
+        "file": "src/shared/__tests__/redactOutputShapes.test.ts",
+        "test": "★ renderer/data/*Knowledge.ts の文字列リテラルは伏字で 1 本も変わらない"
+      }
+    },
+    {
+      "id": "T-213",
+      "found": "2026-10-28",
+      "foundBy": "利用者の指示「API キーを使い捨て並に有効時間を短くして」を受けて両ビルドの保管層を読んだ —— 保存した資格情報に保存時刻が無く、デスクトップ版の保管ファイル (secrets.json) もブラウザ版の保管庫 (IndexedDB) も、1 度保存した API キー・PAT・JSON の鍵束を利用者が消すまで無期限に信用していた",
+      "surface": "renderer",
+      "class": "compromised-renderer",
+      "severity": "medium",
+      "title": "保存した API キー・PAT は無期限に信用され、端末から持ち出された保管ファイル・IndexedDB の写しは (マスターパスワード・OS のキーチェーンが破られれば) いつまでも使えた —— 第三者が発行する鍵の期限はアプリから変えられないが、アプリが写しを信用する時間は変えられる",
+      "status": "fixed",
+      "fix": "shared/credentialTtl.ts に有効時間 (8 時間) の規則を 1 つ置き、両ビルドの保管層が同じ判定を読む。書く側は保存した時刻を平文の付随データとして残し (secrets.ts は `at:<ms>:` の包み・vault.ts は記録の storedAt)、読む時と一覧 (と解錠) で期限切れを**復号せずに消す**。日付の無い記録 (規則より前の物) には最初に見た時刻が付く (版上げで全員を締め出す代わりに 1 度だけ最大 8 時間の猶予)。未来の時刻・壊れた時刻は期限切れ。更新トークンを持つ OAuth の TokenSet はデスクトップ版では `oauth:` として認可サーバの期限に従う (ブラウザ版の保管庫は貼り付け式の accessToken だけなので一律に掛ける)。消した理由は読み口が返し (secrets: reason 'expired'・vault: takeExpiredNotice) 画面は「未設定」と混ぜない。パスワード変更は時刻を引き継ぐ。限界: 時刻は秘密ではないので書き換えられるが、未来へ書き換えると期限切れに倒れ、過去へ書き換えても早く消えるだけ (信用を延ばす向きには働かない)。",
+      "regression": {
+        "file": "src/main/__tests__/secretsCredentialTtl.test.ts",
+        "test": "★ 有効時間を過ぎた鍵は読まずに消し、理由を言う (使い捨て · threat: T-213)"
+      }
+    },
+    {
+      "id": "T-214",
+      "found": "2026-10-28",
+      "foundBy": "利用者の指示「探索→解析→対策→報告を繰り返す仕組みを仕込んで」を受けて、守りを増やす輪の『起動と記録』の側を測った —— 姿勢の測定 (T-167) は次に狩る面を導くが、狩りを起動するのは人で (docs/THREAT_HUNT.md「回す頻度」は『予約していない』と明記)、輪が回ったこと (いつ・どの面を・何を直し・どこへ報告したか) を数える台帳も無かった。人が忘れれば止まり、止まった面の検知 (21 日) まで誰にも見えない。",
+      "surface": "supply-chain",
+      "class": "ai-automated-attack",
+      "severity": "medium",
+      "title": "狩りの輪 (探索 → 解析 → 対策 → 報告) は起動が人任せで、回ったことを記録する物も無かった —— 攻撃側の AI は止まらないので、人が忘れた週から守りが古くなる",
+      "status": "fixed",
+      "fix": "scripts/hunt-cycle.cjs: brief が台帳・姿勢・過去の周から次に狩る面を決定的に決め (止まった面 → 最後に狩った日が最も古い面 → 収穫)、その面の手順書の節・狩り残し・再確認の期限・記録の雛形を 1 枚にする。record は 1 周の記録を 4 段すべて検めてから security/hunt-cycles.json へ足す (解析・対策の穴は脅威台帳に実在する id、対策に挙げられるのは閉じた物だけ、確認した穴は対策に在る、報告は PR 番号か出さなかった理由)。status は最後の周から cadence (7 日) × 2 で『止まった』と言い、毎日の dependency-audit が同じ測定を報告に載せて要対応として常設 Issue に出す。起動は Claude Code の予約 (週 1・新しいセッション・指示文は docs/HUNT_CYCLE_PROMPT.md と同じ物) で、指示文は 4 段を道具と同じ順で名指しし draft PR までで止まる (マージは人)。限界: 予約そのものはリポジトリの外 (Claude Code の予定実行) に在り、止めるのは利用者の判断 —— 止まれば Issue が言う。費用は 1 周 = 1 セッション分。",
+      "regression": {
+        "file": "src/shared/__tests__/huntCycle.test.ts",
+        "test": "★ 4 段そろった記録は通り、段を 1 つでも落とすと断る (飛ばした段は記録できない)"
       }
     }
   ],

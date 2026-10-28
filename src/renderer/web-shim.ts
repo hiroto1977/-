@@ -284,7 +284,8 @@ async function runProxyBearer<R>(
     return err('not_configured', 'Vault がロックされています。再読み込みしてマスターパスワードを入力してください');
   }
   if (!token) {
-    return err('not_configured', `${serviceId} のトークンが未設定です。設定から登録してください`);
+    // 期限切れで消した直後なら「未設定」ではなく理由を言う (threat: T-213)。
+    return err('not_configured', vault.takeExpiredNotice(serviceId) ?? `${serviceId} のトークンが未設定です。設定から登録してください`);
   }
   // **壊れた TokenSet は送らない。** JSON として読めるのに accessToken が無い
   // 値をそのまま Bearer に載せると、中に入っている refreshToken まで相手

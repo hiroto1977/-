@@ -27,6 +27,9 @@
 /.claude/ @hiroto1977
 /.cursor/ @hiroto1977
 /security/ @hiroto1977
+# 狩りの輪の予約へ渡す指示文 (2026-10-28 · threat: T-214)。予約されたセッションはこの文に従って狩り・直し・PR を出す。
+# 文を書き換えられると自律的に走る側の向きが変わるので、所有者のレビューを要求する。
+/docs/HUNT_CYCLE_PROMPT.md @hiroto1977
 # scripts/ の木全体 (2026-10-13 · パス 513 · threat: T-003 の延長)。
 # 39 の門の執行コード (lint:malware / lint:secrets / lint:forbidden / lint:workflow-security /
 # lint:charset / lint:shell / verify-architecture ほか) はここに住む。門の script は頻繁に
@@ -253,6 +256,10 @@
 /src/renderer/data/__tests__/collectionRowBoundCensus.test.ts @hiroto1977
 /src/main/fileRequestGate.ts @hiroto1977
 /src/shared/__tests__/sessionContextUntrusted.test.ts @hiroto1977
+/src/shared/__tests__/redactOutputShapes.test.ts @hiroto1977
+/src/main/__tests__/secretsCredentialTtl.test.ts @hiroto1977
+/src/shared/__tests__/huntCycle.test.ts @hiroto1977
+/src/shared/credentialTtl.ts @hiroto1977
 /src/shared/__tests__/releaseJobSplit.test.ts @hiroto1977
 /src/shared/__tests__/workflowStructureGate.test.ts @hiroto1977
 /src/shared/__tests__/shellGateWitness.test.ts @hiroto1977

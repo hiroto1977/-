@@ -501,6 +501,14 @@ const VERDICTS = {
     + '★ 教訓: 「理由はどこにも無い」と書けたなら、それは**書いた時点で欠陥**である ——'
     + '記録しただけで 32 パス残った',
   vaultToken: '**欠陥だった → パス 246 で直した** (main が生の JSON を Bearer に載せていた)',
+  credentialTtl:
+    '対称 (実測 · 2026-10-28 · T-213) —— 保存した資格情報の有効時間。`storedCredentialExpired` は両保管層'
+    + ' (`main/secrets.ts` / `renderer/security/vault.ts`) が同じ引数で呼び、否定 (期限切れ) のあとは'
+    + '両側とも**復号せずに消して「未設定」と混ぜない理由を返す** (secrets は reason \'expired\'・'
+    + 'vault は `takeExpiredNotice`)。違うのは OAuth の TokenSet の扱いだけで、それは意図した非対称'
+    + ' (デスクトップ版は更新トークンを持つので認可サーバの期限に従わせ、ブラウザ版の貼り付け式は'
+    + ' accessToken だけなので一律に掛ける) —— `secretsCredentialTtl.test.ts` / `vaultCredentialTtl.test.ts`'
+    + ' が両側を留める。',
   writeFieldLimits:
     '対称 (実測・パス 282 で辿り直した) —— `scanTarget` と同じく、パス 247 は'
     + '「対称 (実測)」の 4 文字だけで根拠が書かれていなかった。'

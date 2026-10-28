@@ -203,7 +203,7 @@ function renderPosture(p) {
     for (const c of p.thinClasses) lines.push(`- ${c.name}: 守り ${c.defenses} / 穴 ${c.gaps}`);
     lines.push('');
   }
-  lines.push('_自動なのは検知と順位づけまで。狩りの起動は費用が掛かるので、`docs/THREAT_HUNT.md` の手順で人が回す。_');
+  lines.push('_自動なのは検知と順位づけまでで、起動は週 1 の予約 (狩りの輪 · `docs/HUNT_CYCLE_PROMPT.md`) が担う。直しは draft PR に出し、マージは人が決める。_');
   return lines.join('\n');
 }
 

@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 368
+- ブロック数: 370
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `45ba43efd4ea545a6d0134e58c7f6c3c012945020bc58fc108ba713ec650f680`
-- 保護対象: 127 ファイル
+- 末尾(tip)ハッシュ: `63d2990574dcd8345639ef3144147ae1776250d13c463991971f635d94d162d3`
+- 保護対象: 128 ファイル
 
 ## ブロック
 
@@ -381,6 +381,8 @@
 | 365 | `a728385d06940620` | `ef3a5c6e07035ef5` | `8dbad928f9c579df` | update integrity-chain.cjs,verify-packaged-fuses.cjs |
 | 366 | `fcc0efea1db94617` | `8dbad928f9c579df` | `040515026238c582` | update integrity-chain.cjs,smoke-packaged.cjs |
 | 367 | `962b8d4d8531dde0` | `040515026238c582` | `45ba43efd4ea545a` | update release.yml,verify-packaged-fuses.cjs |
+| 368 | `47d1f344c9792a23` | `45ba43efd4ea545a` | `f39acc52fd3e09fc` | update redact.ts |
+| 369 | `3a202a757d460717` | `f39acc52fd3e09fc` | `63d2990574dcd834` | update integrity-chain.cjs,secrets.ts,vault.ts,credentialTtl.ts |
 
 ## 保護対象ファイル
 
@@ -487,6 +489,7 @@
 - `src/shared/atlassianSite.ts`
 - `src/shared/constantTimeEquals.ts`
 - `src/shared/controlChars.ts`
+- `src/shared/credentialTtl.ts`
 - `src/shared/cryptoParams.ts`
 - `src/shared/eraseReport.ts`
 - `src/shared/escape.ts`

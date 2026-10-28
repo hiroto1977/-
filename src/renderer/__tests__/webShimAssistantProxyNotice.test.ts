@@ -52,6 +52,7 @@ vi.mock('../network/proxy', () => ({
 }));
 vi.mock('../security/vault', () => ({
   getVault: () => ({
+    takeExpiredNotice: () => null, // T-213: 期限切れの理由 (この偽物は期限を持たない)
     // OpenAI だけを設定済みにする (browserDirect: false → プロキシが要る)。
     getToken: async (id: string) => (id === 'assistant' ? JSON.stringify({ openai: 'sk-test' }) : null),
     setToken: async () => {},

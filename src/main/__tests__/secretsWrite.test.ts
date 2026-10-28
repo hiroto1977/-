@@ -65,6 +65,8 @@ function encrypted(token: string): string {
 function plain(token: string): string {
   return `plain:${Buffer.from(token, 'utf8').toString('base64')}`;
 }
+/** 保存した時刻の包み (`at:<ms>:` / `oauth:`) を外して中身だけを比べる (threat: T-213 で包みが付いた)。 */
+const inner = (v: string | undefined): string | undefined => v?.replace(/^at:\d+:/, '').replace(/^oauth:/, '');
 async function writeRawStore(store: Record<string, string>): Promise<void> {
   await fs.writeFile(storePath(), JSON.stringify(store), 'utf8');
 }
@@ -104,7 +106,7 @@ describe('setToken — 保存時の暗号化', () => {
     await setToken('github', 'ghp_super_secret_value');
 
     const raw = await readRawStore();
-    expect(raw.github).toBe(encrypted('ghp_super_secret_value'));
+    expect(inner(raw.github)).toBe(encrypted('ghp_super_secret_value'));
     // 保存形だけでなく、ファイル全体を見て生の値が無いことを言う。
     const text = await fs.readFile(storePath(), 'utf8');
     expect(text).not.toContain('ghp_super_secret_value');
@@ -123,7 +125,7 @@ describe('setToken — 保存時の暗号化', () => {
     const { setToken } = await secretsModule();
     await setToken('github', 'ghp_x');
 
-    expect((await readRawStore()).github).toBe(plain('ghp_x'));
+    expect(inner((await readRawStore()).github)).toBe(plain('ghp_x'));
   });
 
   it('plain: へ落ちるときは警告するが、繰り返しても一度だけ', async () => {
@@ -157,8 +159,8 @@ describe('setToken — 保存時の暗号化', () => {
     await setToken('github', 'new');
 
     const raw = await readRawStore();
-    expect(raw.github).toBe(encrypted('new'));
-    expect(raw.slack).toBe(encrypted('keep'));
+    expect(inner(raw.github)).toBe(encrypted('new'));
+    expect(inner(raw.slack)).toBe(encrypted('keep'));
   });
 
   it('秘密ファイルは所有者だけが読める権限 (0o600) で書かれる', async () => {
@@ -175,7 +177,7 @@ describe('setToken — 保存時の暗号化', () => {
 
     const prev = JSON.parse(await fs.readFile(`${storePath()}.prev`, 'utf8')) as Record<string, string>;
     // 2026-09-09 まで控えは 'first' だった (直前の内容)。
-    expect(prev.github).toBe(encrypted('second'));
+    expect(inner(prev.github)).toBe(encrypted('second'));
     expect(JSON.stringify(prev)).not.toContain(encrypted('first'));
   });
 
@@ -236,7 +238,7 @@ describe('書き込みの直列化', () => {
     await fs.mkdir(userDataDir, { recursive: true });
 
     await setToken('slack', 'b');
-    expect((await readRawStore()).slack).toBe(encrypted('b'));
+    expect(inner((await readRawStore()).slack)).toBe(encrypted('b'));
   });
 
   it('同時の clearToken と setToken が両方反映される', async () => {
@@ -246,8 +248,8 @@ describe('書き込みの直列化', () => {
 
     const raw = await readRawStore();
     expect(raw.github).toBeUndefined();
-    expect(raw.slack).toBe(encrypted('keep'));
-    expect(raw.notion).toBe(encrypted('new'));
+    expect(inner(raw.slack)).toBe(encrypted('keep'));
+    expect(inner(raw.notion)).toBe(encrypted('new'));
   });
 });
 
@@ -296,9 +298,9 @@ describe('plain: 値の繰り上げ暗号化', () => {
     await setToken('notion', 'new');
 
     const raw = await readRawStore();
-    expect(raw.github).toBe(encrypted('ghp_old'));
-    expect(raw.slack).toBe(encrypted('xoxb_old'));
-    expect(raw.notion).toBe(encrypted('new'));
+    expect(inner(raw.github)).toBe(encrypted('ghp_old'));
+    expect(inner(raw.slack)).toBe(encrypted('xoxb_old'));
+    expect(inner(raw.notion)).toBe(encrypted('new'));
   });
 
   it('clearToken でも繰り上げる (書き込む機会は等しく使う)', async () => {
@@ -306,14 +308,14 @@ describe('plain: 値の繰り上げ暗号化', () => {
     const { clearToken } = await secretsModule();
     await clearToken('slack');
 
-    expect((await readRawStore()).github).toBe(encrypted('ghp_old'));
+    expect(inner((await readRawStore()).github)).toBe(encrypted('ghp_old'));
   });
 
   it('既に暗号化済みの値には触らない', async () => {
     await writeRawStore({ github: encrypted('a') });
     const { setToken } = await secretsModule();
     await setToken('slack', 'b');
-    expect((await readRawStore()).github).toBe(encrypted('a'));
+    expect(inner((await readRawStore()).github)).toBe(encrypted('a'));
   });
 
   it('キーチェーンが無いままなら plain: のまま残す (壊さない)', async () => {
@@ -323,7 +325,7 @@ describe('plain: 値の繰り上げ暗号化', () => {
     const { setToken } = await secretsModule();
     await setToken('slack', 'b');
 
-    expect((await readRawStore()).github).toBe(plain('ghp_old'));
+    expect(inner((await readRawStore()).github)).toBe(plain('ghp_old'));
   });
 });
 
@@ -880,6 +882,7 @@ describe('setToken — 積み重ねで保管庫を塞がない (threat: T-001)',
   it('★ 断りは名前と全文を持つ (上限・保存すると何バイト・既存はそのまま・直す手)', async () => {
     const m = await secretsModule();
     // 1 MiB の値 1 つ: base64(`enc:` + 値) = 4·⌈(4 + 1048576)/3⌉ = 1,398,108 字 + JSON の枠 13 字。
+    // 保存した時刻の包み `at:<13 桁>:` が 17 字 (threat: T-213) → 1,398,138。
     const huge = 'a'.repeat(1024 * 1024);
     await expect(m.setToken('notion', huge)).rejects.toThrow(m.SecretsStoreFullError);
     let caught: unknown;
@@ -891,23 +894,23 @@ describe('setToken — 積み重ねで保管庫を塞がない (threat: T-001)',
     const err = caught as Error;
     expect(err.name).toBe('SecretsStoreFullError');
     expect(err.message).toBe(
-      '保管ファイルの上限 (1048576 バイト) を超えるため保存しませんでした (保存すると 1398121 バイト)。' +
+      '保管ファイルの上限 (1048576 バイト) を超えるため保存しませんでした (保存すると 1398138 バイト)。' +
         '既存の資格情報はそのままです。長すぎる値を貼っていないか確かめてください。',
     );
   });
 
   it('★ 書く物がちょうど上限 (1 MiB) なら書き、1 バイトでも超えれば断る (writeStore の境界)', async () => {
     const m = await secretsModule();
-    // 保存形は base64(`enc:` + 値) = 4·⌈(4 + n)/3⌉ 字。2 鍵の JSON の枠 `{"github":"…","slack":"…"}` は 24 字。
-    // n = 3k − 4 なら 4k 字ちょうどで、2 鍵で 8k = 1 MiB − 24 → k = 131069。
-    const n = 3 * 131069 - 4;
-    await m.setToken('github', 'a'.repeat(n));
-    await m.setToken('slack', 'b'.repeat(n));
+    // 保存形は `at:<13 桁>:` (17 字 · threat: T-213) + base64(`enc:` + 値) = 4·⌈(4 + n)/3⌉ 字。
+    // 鍵 4 つの JSON の枠は `{"github":"","slack":"","notion":"","linear":""}` = 48 字。固定分 48 + 4×17 = 116 で、
+    // 1 MiB − 116 = 1,048,460 = 4·Σk → Σk = 262,115 (2 鍵・3 鍵では 4 の倍数にならず、ちょうどに届かない)。
+    const ks = { github: 65528, slack: 65529, notion: 65529, linear: 65529 } as const;
+    for (const [id, k] of Object.entries(ks)) await m.setToken(id, id[0]!.repeat(3 * k - 4));
     expect((await fs.stat(storePath())).size).toBe(1024 * 1024);
     // +1 字は base64 が 4 字伸びるので 1 MiB + 4 → 断る。断ったので本体は動かない。
-    await expect(m.setToken('slack', 'b'.repeat(n + 1))).rejects.toThrow(m.SecretsStoreFullError);
+    await expect(m.setToken('slack', 's'.repeat(3 * ks.slack - 4 + 1))).rejects.toThrow(m.SecretsStoreFullError);
     expect((await fs.stat(storePath())).size).toBe(1024 * 1024);
-    expect(await m.getToken('slack')).toBe('b'.repeat(n));
+    expect(await m.getToken('slack')).toBe('s'.repeat(3 * ks.slack - 4));
   });
 });
 

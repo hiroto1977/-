@@ -244,7 +244,7 @@ describe('CODEOWNERS は整合性チェーンの保護対象をすべて覆う',
   /** 台帳の回帰検査 (守りの本体)。弱められると守りが消えるので所有者のレビューを要求する。 */
   const regressionFiles = [...new Set(ledger.threats.flatMap((t) => (t.regression === undefined ? [] : [t.regression.file])))];
   /** 守られる側の設定 (データ)。ここが書き換わると、検査が緑のまま梱包・依存・lint の入力が変わる。 */
-  const OWNED_CONFIG = ['/CLAUDE.md', '/package.json', '/package-lock.json', '/tsconfig.json', '/tsconfig.app.json', '/tsconfig.node.json', '/stryker.config.json', '/.gitignore', '/.gitattributes', '/docs/SESSION_HANDOFF.md', '/docs/REMAINING_WORK.md', '/docs/THREAT_HUNT.md', '/docs/MODEL_EFFORT_POLICY.md'];
+  const OWNED_CONFIG = ['/CLAUDE.md', '/package.json', '/package-lock.json', '/tsconfig.json', '/tsconfig.app.json', '/tsconfig.node.json', '/stryker.config.json', '/.gitignore', '/.gitattributes', '/docs/SESSION_HANDOFF.md', '/docs/REMAINING_WORK.md', '/docs/THREAT_HUNT.md', '/docs/MODEL_EFFORT_POLICY.md', '/docs/HUNT_CYCLE_PROMPT.md'];
   /**
    * `**\/NAME` は任意の深さの NAME (ルート直下も含む)。エージェント指示書のように**新しく生える**物を
    * 個別の行ではなく名前で覆うための形 (パス 540 · T-128)。他の glob は台帳が使わないので扱わない。

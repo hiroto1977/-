@@ -292,6 +292,71 @@ const LOADER_ENV =
 const SOURCE_ENV =
   /\b(HTTPS?_PROXY|ALL_PROXY|NODE_EXTRA_CA_CERTS|NODE_TLS_REJECT_UNAUTHORIZED|npm_config_[a-z_]*registry|ELECTRON_MIRROR|ELECTRON_CUSTOM_DIR|ELECTRON_BUILDER_BINARIES_MIRROR)\s*[=:]/i;
 
+/**
+ * `${{ secrets.* }}` は **step の `env:` / `with:` の中にしか置けない** (2026-10-28 · threat: T-211)。
+ *
+ * GitHub Actions は workflow 単位・job 単位の `env:` も受け付け、そこに置いた secret は
+ * **その job (workflow) の全 step** —— checkout の後に走る `npm ci` の postinstall・検査の
+ * import・第三者 action —— が `process.env` から読める。release.yml の build は署名鍵と
+ * Apple の資格情報を持つので、置き場が 1 段上がるだけで T-144 (検査と署名を別の runner にする)
+ * が整えた隔離は中から破れる。実測 (隔離した複製): build の `environment: release` の直後に
+ * `env:` で CSC_LINK を置いても、この門は exit 0・release.yml の検査 4 本 131 件も全部緑だった
+ * —— どの網も「secrets がどの段に在るか」を問うていなかった。
+ *
+ * 判定は字下げで親を辿る (YAML を解析しない —— この門の他の規則と同じ)。secrets を含む行から
+ * 上へ、字下げの浅い行だけを親として拾い、最も近い親の鍵が `env` か `with` で、その親 (か
+ * その上) が `steps:` 直下の項目 (`- …`) であれば通す。それ以外 —— workflow の `env:`・job の
+ * `env:`・job 単位の `secrets:` (再利用 workflow へ渡す map)・`secrets: inherit` —— は落とす。
+ * 注記は呼び手が落としてから渡す (注記の中の言及は数えない)。
+ */
+function secretPlacementProblems(lines) {
+  const problems = [];
+  const parse = (l) => {
+    const m = /^(\s*)(-\s+)?(?:"([^"]+)"|'([^']+)'|([\w.-]+))?\s*:/.exec(l);
+    const indent = /^(\s*)/.exec(l)[1].length;
+    return { indent, isItem: /^\s*-(\s|$)/.test(l), key: m ? (m[3] ?? m[4] ?? m[5] ?? null) : null };
+  };
+  const ancestors = (i) => {
+    const out = [];
+    let limit = parse(lines[i]).indent;
+    for (let j = i - 1; j >= 0; j--) {
+      if (lines[j].trim() === '') continue;
+      const a = parse(lines[j]);
+      if (a.indent >= limit) continue;
+      out.push({ ...a, line: j });
+      limit = a.indent;
+      if (limit === 0) break;
+    }
+    return out;
+  };
+  for (let i = 0; i < lines.length; i++) {
+    const l = lines[i];
+    if (/^\s*secrets:\s*inherit\s*$/.test(l)) {
+      problems.push({ line: i + 1, why: 'secrets: inherit — このリポジトリの secret を全部、呼んだ workflow へ渡す。要る名前だけを step の with:/env: で渡すこと' });
+      continue;
+    }
+    if (!/(^|[^\w])secrets\./.test(l)) continue;
+    const chain = [{ ...parse(l), line: i }, ...ancestors(i)];
+    const holderIdx = chain.findIndex((c) => c.key === 'env' || c.key === 'with');
+    let ok = false;
+    if (holderIdx >= 0) {
+      // holder (env/with) から上へ: 最初に出会う項目 (`- …`) の親が `steps:` なら step の中。
+      for (let k = holderIdx; k < chain.length; k++) {
+        if (!chain[k].isItem) continue;
+        ok = chain[k + 1]?.key === 'steps';
+        break;
+      }
+    }
+    if (!ok) {
+      problems.push({
+        line: i + 1,
+        why: 'secrets の置き場が step の env:/with: ではない — workflow / job 単位の env: に置くと、その後の全 step (npm ci の postinstall・検査・第三者 action) が読める。渡したい step の env: か with: にだけ置くこと',
+      });
+    }
+  }
+  return problems;
+}
+
 /** 1 行 (注記を落とした後) の環境変数の問題。無ければ `null`。 */
 function loaderEnvProblem(line) {
   const src = SOURCE_ENV.exec(line);
@@ -630,6 +695,10 @@ function check(list, allow = UNPINNED_ALLOW, jobAllow = JOB_PERMISSIONS_ALLOW) {
       const why = loaderEnvProblem(l);
       if (why) problems.push({ file: `${name}:${idx + 1}`, why });
     });
+    // secrets は step の env:/with: の中にだけ (T-211)。注記を落とした行で見る。
+    for (const p of secretPlacementProblems(withoutComments.split('\n'))) {
+      problems.push({ file: `${name}:${p.line}`, why: p.why });
+    }
     const lines = text.split('\n');
     // actions/github-script の `script:` は JavaScript なので、`${{ … }}` を埋め込むと信用できない値が
     // コードになる (run: と同じ注入。パス 524 · T-085)。`script:` の本体 (ブロックの続き行) を見る。
@@ -852,6 +921,14 @@ function selfTest() {
     ['ブロック記法の本文の \\x は落とさない (T-197)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  t:\n    steps:\n      - run: |\n          printf "\\x41"\n' }], 0],
     ['取得元を差し替える npm_config_registry を env に書いて落とす (T-198)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  t:\n    env:\n      npm_config_registry: https://evil.example\n' }], 1],
     ['TLS の検証を外す NODE_TLS_REJECT_UNAUTHORIZED=0 を run に書いて落とす (T-198)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  t:\n    steps:\n      - run: NODE_TLS_REJECT_UNAUTHORIZED=0 npm ci\n' }], 1],
+    ['job 単位の env: に secrets を置くと落とす (T-211)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  b:\n    environment: release\n    env:\n      CSC_LINK: ${{ secrets.CSC_LINK }}\n    steps:\n      - run: npm ci\n' }], 1],
+    ['workflow 単位の env: に secrets を置くと落とす (T-211)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\nenv:\n  TOKEN: ${{ secrets.TOKEN }}\njobs:\n  b:\n    steps:\n      - run: npm ci\n' }], 1],
+    ['job 単位の secrets: (再利用 workflow へ渡す map) を落とす (T-211)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  b:\n    uses: ./.github/workflows/x.yml\n    secrets:\n      TOKEN: ${{ secrets.TOKEN }}\n' }], 1],
+    ['secrets: inherit を落とす (T-211)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  b:\n    uses: ./.github/workflows/x.yml\n    secrets: inherit\n' }], 1],
+    ['対照: step の env: の secrets は通す (T-211)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  b:\n    steps:\n      - name: Build\n        run: npm run build\n        env:\n          CSC_LINK: ${{ secrets.CSC_LINK }}\n' }], 0],
+    ['対照: step の with: の secrets は通す (T-211)', [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  b:\n    steps:\n      - uses: evil/thing@${'a'.repeat(40)} # v1\n        with:\n          token: ${'$'}{{ secrets.TOKEN }}\n` }], 0],
+    ['対照: step の先頭の鍵が env: (- env:) でも通す (T-211)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\njobs:\n  b:\n    steps:\n      - env:\n          CSC_LINK: ${{ secrets.CSC_LINK }}\n        run: npm run build\n' }], 0],
+    ['対照: 注記の中の secrets. は数えない (T-211)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\n# env: に ${{ secrets.X }} は書かない\njobs:\n  b:\n    steps:\n      - run: echo\n' }], 0],
     ['注記の中の pull_request_target は落とさない (T-085)', [{ name: 'x.yml', text: 'permissions:\n  contents: read\n# pull_request_target は使わない\non:\n  push:\n' }], 0],
     ['github-script の script: への ${{ }} 展開を落とす (T-085)', [{ name: 'x.yml', text: `permissions:\n  contents: read\njobs:\n  a:\n    steps:\n      - uses: actions/github-script@${'d'.repeat(40)} # v1\n        with:\n          script: |\n            core.info('${'$'}{{ github.event.inputs.x }}')\n` }], 1],
     [
@@ -1101,6 +1178,6 @@ function main() {
   return 1;
 }
 
-module.exports = { yamlParseProblem, structureProblems, escapedSpellingProblems, GATE_NEUTERING_ALLOW, check, runBlockLines, workflows, localActionFiles, localUsesProblem, loaderEnvProblem, runBodyProblem, scanRelPath, isLocalActionName, jobPermissionBlocks, UNPINNED_ALLOW, JOB_PERMISSIONS_ALLOW, CROSS_CHECK };
+module.exports = { yamlParseProblem, structureProblems, escapedSpellingProblems, GATE_NEUTERING_ALLOW, check, secretPlacementProblems, runBlockLines, workflows, localActionFiles, localUsesProblem, loaderEnvProblem, runBodyProblem, scanRelPath, isLocalActionName, jobPermissionBlocks, UNPINNED_ALLOW, JOB_PERMISSIONS_ALLOW, CROSS_CHECK };
 
 if (require.main === module) process.exit(main());

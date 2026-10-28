@@ -7,6 +7,14 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-10-28) — パス 549: 探索 → 解析 → 対策 → 報告 の輪を、起動と記録まで機械にする (T-214)
+
+- 詳細は `docs/REMAINING_WORK.md` の「パス 549」と `docs/THREAT_HUNT.md` の「輪を回す仕組み」。
+- 新しい道具 `npm run hunt:cycle -- brief|record <json>|status` (`scripts/hunt-cycle.cjs`)・輪の台帳 `security/hunt-cycles.json` (HC-001 = 今日の人手の周: T-211〜T-213 · PR #843)・予約の指示文 `docs/HUNT_CYCLE_PROMPT.md`。毎日の dependency-audit が `status` を載せ、14 日止まれば常設 Issue に要対応が出る。
+- **予約はリポジトリの外** (Claude Code の予定実行 · 週 1 · 火曜 04:17 JST · 新しいセッション)。止めるのは利用者の判断で、止めても Issue が言う。**1 周 = 1 セッション分の利用料。**
+- 同じ日: T-211 (release.yml の secrets の置き場の門)・T-212 (伏字の精度を両方向)・T-213 (保存した API キーの 8 時間 TTL)。T-213 は vault の偽物 35 本に `takeExpiredNotice` が無く、変異検査の dry run で初めて 9 件落ちた (手元の `--fast` の門と対象の検査だけでは映らない —— **全件の `npm test` を push 前に回す**)。
+- ★ **同じ罠を同じ日に 2 度踏んだ**: T-214 の `huntCycle.test.ts` は共有の `stripComments` を読むので `commentStripperCensus` の「寄せた本」の台帳 (両方向) に載せる必要があり、CI (head d46e8c2a) で 1 件落ちた。変異検査の dry run (= 全件の vitest) がコンテナの再起動で途中で消えていたのに、全件を回し直す前に push していた。台帳に 1 行 (84a1286e)。**背景の長い命令は、終わったことをログの `exit=` で確かめてから次へ進む。**
+
 ## 直近の作業 (2026-10-16) — パス 526: 狩りの 16 回目。5 面の監査役の指摘を自分で再現し、本物の 14 件を直す
 
 - 詳細は `docs/REMAINING_WORK.md` の「パス 526」。T-099〜T-112 (ai: 危機語彙の拡張・検索語の天井 / network: 伏字のエスケープ引用・Ollama 案内コマンドの origin / renderer: CSV の列数・セル数の天井 / main-ipc: 単一インスタンスのロック / supply-chain: electron-builder.env・build/・workspaces・lockfile の対応・force-add・入れ子 eslint 設定・stryker.conf・CODEOWNERS)。

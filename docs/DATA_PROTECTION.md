@@ -303,7 +303,7 @@ docblock にも最初から「入力値は localStorage に自動保存」と書
 
 | ファイル | 中身 | 保護 |
 |---|---|---|
-| `service-hub-secrets.json` | API キー・トークン | **OS のキーチェーン (`safeStorage`)**。無い環境では `plain:` (難読化) —— 設定画面がその状態を言う |
+| `service-hub-secrets.json` | API キー・トークン | **OS のキーチェーン (`safeStorage`)**。無い環境では `plain:` (難読化) —— 設定画面がその状態を言う。**保存から 8 時間で無効にして消す** (`shared/credentialTtl.ts` · T-213 · 更新トークンを持つ OAuth の TokenSet は認可サーバの期限に従う) |
 | `service-hub-emotions.json` | 気分の点数・メモ・解析に貼った文の抜粋（**健康に関わる記録**） | **OS のキーチェーン (`safeStorage`)**（2026-09-09 · パス 132。それまで**平文** 0600）。無い環境では `plain:`。封緘は `main/atRest.ts`（`secrets.ts` と同じ約束） |
 | `~/.local/business-hub/talent.json` | 人材育成の入力（部署名・個人名） | **OS のキーチェーン (`safeStorage`)**（2026-09-09 · パス 133。それまで平文 0600）。無い環境では `plain:`。封緘は `main/atRest.ts` |
 | `~/.local/business-hub/team-radar.json` | チームレーダー（氏名・軸ごとの評価・付箋） | **OS のキーチェーン (`safeStorage`)**（2026-09-09 · パス 133。それまで平文 0600）。無い環境では `plain:`。封緘は `main/atRest.ts` |

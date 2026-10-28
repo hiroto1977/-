@@ -5,6 +5,11 @@ import type { ServiceId } from '../shared/serviceId';
 import { CONTROL_CHAR_MESSAGE, hasControlChars } from '../shared/tokenInput';
 import { OAUTH_CONFIGS, refresh, type TokenSet } from './oauth';
 import {
+  expiredStoredCredentialMessage,
+  isRefreshableTokenSetJson,
+  storedCredentialExpired,
+} from '../shared/credentialTtl';
+import {
   brokenStoredCredentialMessage, checkTokenSetForStorage, hasUsableAccessToken,
 } from '../shared/vaultToken';
 import { atomicWriteFile, backupPathOf, readFileWithBackup } from './atomicWrite';
@@ -257,6 +262,7 @@ export type StoredTokenRead =
   | { readonly ok: false; readonly reason: 'absent' }
   /** 保存はされているが今は読めない (キーチェーン不在 / 値の破損 / 鍵の変化)。 */
   | { readonly ok: false; readonly reason: 'undecryptable'; readonly message: string }
+  | { readonly ok: false; readonly reason: 'expired'; readonly message: string }
   /**
    * **保管ファイルそのものが読めなかった** (大きすぎる / JSON が壊れて控えも無い)。
    *
@@ -295,7 +301,83 @@ const UNDECRYPTABLE_CORRUPT =
   '保存された資格情報を復号できません。値が壊れているか、保存時と別の鍵が使われています。' +
   '設定画面から削除して、もう一度登録してください。';
 
+/**
+ * 保存した値の包み (2026-10-28 · threat: T-213)。`encode()` の出力の前に保存した時刻を付ける:
+ *   `at:<epoch ms>:<encode の出力>`  —— 有効時間の規則が掛かる (API キー・PAT・JSON の鍵束)
+ *   `oauth:<encode の出力>`          —— 更新トークンを持つ TokenSet (認可サーバの期限に従う)
+ *   `<encode の出力>`                 —— この規則より前の記録 (日付が無い)
+ * `encode()` の出力は base64 か `plain:` + base64 なので、先頭の `at:` / `oauth:` と取り違えない。
+ */
+const STAMP_AT = 'at:';
+const STAMP_OAUTH = 'oauth:';
+type Stamped = { readonly kind: 'at'; readonly storedAt: number; readonly inner: string }
+  | { readonly kind: 'oauth'; readonly inner: string }
+  | { readonly kind: 'undated'; readonly inner: string };
+
+function unstamp(value: string): Stamped {
+  if (value.startsWith(STAMP_OAUTH)) return { kind: 'oauth', inner: value.slice(STAMP_OAUTH.length) };
+  if (value.startsWith(STAMP_AT)) {
+    const rest = value.slice(STAMP_AT.length);
+    const sep = rest.indexOf(':');
+    // 区切りが無い = 壊れた包み。日付が無い物と同じく期限切れへ倒す (`storedAt` は NaN)。
+    if (sep < 0) return { kind: 'at', storedAt: Number.NaN, inner: rest };
+    return { kind: 'at', storedAt: Number(rest.slice(0, sep)), inner: rest.slice(sep + 1) };
+  }
+  return { kind: 'undated', inner: value };
+}
+
+/** 書く側: 値の形で包みを決める。時刻は `Date.now()` (平文の付随データ —— 秘密ではない)。 */
+function stamp(token: string, encoded: string, now: number): string {
+  return isRefreshableTokenSetJson(token) ? `${STAMP_OAUTH}${encoded}` : `${STAMP_AT}${now}:${encoded}`;
+}
+
+/** 包みを保ったまま中身を差し替える (`upgradePlainValues` が使う)。 */
+function restamp(original: string, inner: string): string {
+  const s = unstamp(original);
+  if (s.kind === 'oauth') return `${STAMP_OAUTH}${inner}`;
+  if (s.kind === 'at') return `${STAMP_AT}${s.storedAt}:${inner}`;
+  return inner;
+}
+
+/**
+ * 期限切れか。`at` は時刻で決まる (日付が壊れていれば期限切れ)。`oauth` は認可サーバの期限に
+ * 従うのでここでは切らない。日付の無い記録 (この規則より前の物) は**期限切れにしない** ——
+ * `migrateUndated` が最初に見た時刻を付け、そこから有効時間が始まる (版上げで全員を締め出す
+ * 代わりに、1 度だけ最大 8 時間の猶予を置く)。
+ */
+function expiredStamp(s: Stamped, now: number): boolean {
+  if (s.kind === 'at') return storedCredentialExpired(s.storedAt, now);
+  return false;
+}
+
+/**
+ * 日付の無い記録に時刻を付ける (threat: T-213)。中身を読んで OAuth の TokenSet なら `oauth:`、
+ * それ以外は `at:<now>:`。読めない中身 (別の鍵・壊れた値) はそのまま残す —— 分類できない物に
+ * 時刻を付けても意味が無く、読めない以上は漏れもしない。保管ファイルが読めない状態では書かない。
+ */
+async function migrateUndated(ids: readonly string[]): Promise<void> {
+  const now = Date.now();
+  await withWriteLock(async () => {
+    const store = await readStoreForWrite();
+    const upgraded = await upgradePlainValues(store);
+    let changed = false;
+    for (const id of ids) {
+      const value = Object.hasOwn(upgraded, id) ? upgraded[id] : undefined;
+      if (value === undefined || unstamp(value).kind !== 'undated') continue;
+      const read = await decodeInner(value);
+      if (!read.ok) continue;
+      upgraded[id] = stamp(read.token, value, now);
+      changed = true;
+    }
+    if (changed) await writeStore(upgraded);
+  });
+}
+
 async function decode(value: string): Promise<StoredTokenRead> {
+  return decodeInner(unstamp(value).inner);
+}
+
+async function decodeInner(value: string): Promise<StoredTokenRead> {
   if (value.startsWith('plain:')) {
     return { ok: true, token: Buffer.from(value.slice('plain:'.length), 'base64').toString('utf8') };
   }
@@ -324,9 +406,10 @@ async function upgradePlainValues(store: Record<string, string>): Promise<Record
   if (!(await realKeychainAvailable())) return store; // threat: T-041 —— basic_text へは「昇格」しない
   const upgraded: Record<string, string> = {};
   for (const [k, v] of Object.entries(store)) {
-    if (v.startsWith('plain:')) {
-      const decoded = Buffer.from(v.slice('plain:'.length), 'base64').toString('utf8');
-      upgraded[k] = (await safeStorage.encryptStringAsync(decoded)).toString('base64');
+    const inner = unstamp(v).inner;
+    if (inner.startsWith('plain:')) {
+      const decoded = Buffer.from(inner.slice('plain:'.length), 'base64').toString('utf8');
+      upgraded[k] = restamp(v, (await safeStorage.encryptStringAsync(decoded)).toString('base64'));
     } else {
       upgraded[k] = v;
     }
@@ -358,7 +441,7 @@ export async function setToken(serviceId: string, token: string): Promise<void> 
   return withWriteLock(async () => {
     const store = await readStoreForWrite();
     const upgraded = await upgradePlainValues(store);
-    upgraded[serviceId] = await encode(token);
+    upgraded[serviceId] = stamp(token, await encode(token), Date.now());
     await writeStore(upgraded);
   });
 }
@@ -385,7 +468,25 @@ export async function readStoredToken(serviceId: string): Promise<StoredTokenRea
   }
   const value = Object.hasOwn(store, serviceId) ? store[serviceId] : undefined;
   if (!value) return { ok: false, reason: 'absent' };
+  // 有効時間 (threat: T-213)。期限切れは**読まずに消す** —— 使い捨て。消せなくても (書けない状態)
+  // 読みはしない。日付の無い記録には最初に見た時刻を付ける。
+  const stamped = unstamp(value);
+  if (expiredStamp(stamped, Date.now())) {
+    await purgeExpired([serviceId]).catch(() => {});
+    return { ok: false, reason: 'expired', message: expiredStoredCredentialMessage(serviceId) };
+  }
+  if (stamped.kind === 'undated') await migrateUndated([serviceId]).catch(() => {});
   return await decode(value);
+}
+
+/** 期限切れの記録を消す (読み・一覧から呼ぶ)。保管ファイルが読めない状態では書かない。 */
+async function purgeExpired(ids: readonly string[]): Promise<void> {
+  await withWriteLock(async () => {
+    const store = await readStoreForWrite();
+    const upgraded = await upgradePlainValues(store);
+    for (const id of ids) delete upgraded[id];
+    await writeStore(upgraded);
+  });
 }
 
 /** 読めた時だけ文字列を返す薄い読み口 (OAuth の TokenSet 復元に使う)。
@@ -420,7 +521,19 @@ export async function clearToken(serviceId: string): Promise<void> {
 export async function listConfiguredServices(): Promise<string[]> {
   const store = await readStore();
   if (lastReadDegraded !== null) throw new SecretsUnreadableError(lastReadDegraded);
-  return Object.keys(store);
+  // 期限切れは一覧にも出さず、その場で消す (threat: T-213)。「設定済み」と名乗ったまま読むと
+  // 断られる形を作らない。
+  const now = Date.now();
+  const expired: string[] = [];
+  const undated: string[] = [];
+  for (const [id, value] of Object.entries(store)) {
+    const s = unstamp(value);
+    if (expiredStamp(s, now)) expired.push(id);
+    else if (s.kind === 'undated') undated.push(id);
+  }
+  if (expired.length > 0) await purgeExpired(expired).catch(() => {});
+  if (undated.length > 0) await migrateUndated(undated).catch(() => {});
+  return Object.keys(store).filter((id) => !expired.includes(id));
 }
 
 /** How tokens are protected at rest, for display in the UI. */
@@ -480,7 +593,7 @@ export async function getStorageProtection(): Promise<StorageProtection> {
   const available = await realKeychainAvailable(); // threat: T-041 —— basic_text を os-keychain と名乗らない
   return {
     encrypted: available,
-    plainCount: Object.values(store).filter((v) => v.startsWith('plain:')).length,
+    plainCount: Object.values(store).filter((v) => unstamp(v).inner.startsWith('plain:')).length,
     durability: 'file',
     file: secretsPath(),
     mechanism: available ? 'os-keychain' : 'obfuscated',
@@ -541,7 +654,7 @@ async function saveRefreshedIfUnchanged(serviceId: ServiceId, before: string, fr
     // 消された・差し替えられた後の応答は書かない。読めない今の値も「同じ」とは言えないので書かない。
     if (now === null || !now.ok || now.token !== before) return;
     const upgraded = await upgradePlainValues(store);
-    upgraded[serviceId] = await encode(check.serialized);
+    upgraded[serviceId] = stamp(check.serialized, await encode(check.serialized), Date.now());
     await writeStore(upgraded);
   });
 }

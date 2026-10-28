@@ -19,6 +19,7 @@
 
 import { atLeastChars, countChars, moreThanChars } from '../../shared/inputCeiling';
 import { CONTROL_CHAR_MESSAGE, hasControlChars } from '../../shared/tokenInput';
+import { expiredStoredCredentialMessage, storedCredentialExpired } from '../../shared/credentialTtl';
 import { decodeMnemonic, encodeMnemonic, generateEntropy, normalizeMnemonic } from './mnemonic';
 import { assertKdfIterations, assertSaltBytes } from './dataCrypto';
 import { webCryptoUnavailableReason } from './webCrypto';
@@ -220,6 +221,8 @@ export interface Vault {
   getToken(serviceId: string): Promise<string | null>;
   clearToken(serviceId: string): Promise<void>;
   listConfigured(): Promise<string[]>;
+  /** 期限切れで消した資格情報の知らせを 1 度だけ返す (threat: T-213)。無ければ null。 */
+  takeExpiredNotice(serviceId: string): string | null;
   /** 旧パスワードで認証して、新パスワードへ**包み直す**。
    *
    *  トークンはマスター鍵で暗号化されており、パスワードはそのマスター鍵を
@@ -444,6 +447,13 @@ interface EncryptedToken {
    * meta 側の blob (kcv / master-wrap / recovery) はこの欄を持たない。
    */
   v?: number;
+  /**
+   * 保存した時刻 (epoch ms · 平文の付随データ · 2026-10-28 · threat: T-213)。有効時間の規則
+   * (`shared/credentialTtl.ts`) はこれを読み、期限切れ・日付の無い記録を**復号せずに消す**。
+   * 秘密ではないので AAD にも暗号文にも入れない (時刻を書き換えても復号は影響を受けず、
+   * 未来へ書き換えた物は規則が期限切れとして消す)。
+   */
+  storedAt?: number;
 }
 
 /** 現在のトークンレコードの版。 */
@@ -729,6 +739,8 @@ class BrowserVault implements Vault {
   private lockToken: object = {};
   /** 解錠に使われたパスワードが下限を満たしたか (メモリのみ・保存しない)。 */
   private policyOk: boolean | null = null;
+  /** 期限切れで消した記録の知らせ (serviceId → 文)。`takeExpiredNotice` が 1 度だけ返す (threat: T-213)。 */
+  private readonly expiredNotices = new Map<string, string>();
 
   /**
    * 状態を見る。**投げない** —— 投げると呼び出し側 (App) がハングして
@@ -962,6 +974,7 @@ class BrowserVault implements Vault {
     // 解錠できたパスワードについてだけ記録する (失敗すればここへ来ない)。
     this.policyOk = meetsPolicy;
     // 解錠できて初めて旧形式を読めるので、ここで束ね直す。
+    await this.sweepExpiredTokens().catch(() => []); // threat: T-213 —— 期限切れは解錠のたびに消す
     await this.rebindLegacyTokens().catch(() => {});
   }
 
@@ -1042,7 +1055,7 @@ class BrowserVault implements Vault {
       // 書き込みを続けることになる。
       this.requireKey();
       const blob = await encryptString(key, token, tokenAad(serviceId));
-      await idbPut(db, TOKEN_STORE, serviceId, { ...blob, v: TOKEN_RECORD_V1 });
+      await idbPut(db, TOKEN_STORE, serviceId, { ...blob, v: TOKEN_RECORD_V1, storedAt: Date.now() });
     } finally {
       db.close();
     }
@@ -1060,6 +1073,17 @@ class BrowserVault implements Vault {
     // Stryker disable next-line ConditionalExpression: 早期 return を外しても
     // `decryptString(key, undefined)` が throw し、下の catch が null を返すため同じ結果 (等価変異)。
     if (!blob) return null;
+    // 有効時間 (threat: T-213)。期限切れの記録は**復号せずに消す** —— 使い捨て。
+    // 消したことは `takeExpiredNotice` で 1 度だけ利用者に言える (「未設定」と混ぜない)。
+    // 日付の無い記録 (この規則より前の物) には最初に見た時刻を付け、そこから有効時間が始まる。
+    if (blob.storedAt === undefined) {
+      blob = { ...blob, storedAt: Date.now() };
+      await this.stampToken(serviceId, blob).catch(() => {});
+    } else if (storedCredentialExpired(blob.storedAt, Date.now())) {
+      await this.purgeToken(serviceId).catch(() => {});
+      this.expiredNotices.set(serviceId, expiredStoredCredentialMessage(serviceId));
+      return null;
+    }
     // 待っている間に施錠されたなら、それは「未設定」ではない。
     // 下の catch は**復号の失敗** (鍵違い・壊れた blob) だけを飲む。
     this.requireKey();
@@ -1089,20 +1113,70 @@ class BrowserVault implements Vault {
     } catch {
       return null;
     }
-    await this.rebindToken(serviceId, plain).catch(() => {});
+    await this.rebindToken(serviceId, plain, blob.storedAt).catch(() => {});
     return plain;
   }
 
   /** 旧形式のトークンを AAD つきで保存し直す。失敗しても読み出しは成功させる。 */
-  private async rebindToken(serviceId: string, token: string): Promise<void> {
+  private async rebindToken(serviceId: string, token: string, storedAt: number | undefined): Promise<void> {
     const key = this.requireKey();
     const blob = await encryptString(key, token, tokenAad(serviceId));
     const db = await openDb();
     try {
-      await idbPut(db, TOKEN_STORE, serviceId, { ...blob, v: TOKEN_RECORD_V1 });
+      await idbPut(db, TOKEN_STORE, serviceId, { ...blob, v: TOKEN_RECORD_V1, storedAt });
     } finally {
       db.close();
     }
+  }
+
+  /** 日付の無い記録に時刻を付けて書き戻す (復号しない・鍵も要らない)。 */
+  private async stampToken(serviceId: string, blob: EncryptedToken): Promise<void> {
+    const db = await openDb();
+    try {
+      await idbPut(db, TOKEN_STORE, serviceId, blob);
+    } finally {
+      db.close();
+    }
+  }
+
+  /** 期限切れの記録を消す (復号しない・鍵も要らない)。 */
+  private async purgeToken(serviceId: string): Promise<void> {
+    const db = await openDb();
+    try {
+      await idbDelete(db, TOKEN_STORE, serviceId);
+    } finally {
+      db.close();
+    }
+  }
+
+  /**
+   * 保存した時刻だけを見て、期限切れの記録を全部消し、日付の無い記録に時刻を付ける
+   * (解錠時と一覧で呼ぶ · threat: T-213)。復号しないので鍵は要らない。
+   */
+  private async sweepExpiredTokens(): Promise<string[]> {
+    const now = Date.now();
+    const db = await openDb();
+    const expired: string[] = [];
+    try {
+      for (const id of await idbKeys(db, TOKEN_STORE)) {
+        const found = await idbGet<EncryptedToken>(db, TOKEN_STORE, id);
+        if (!found) continue;
+        if (found.storedAt === undefined) await idbPut(db, TOKEN_STORE, id, { ...found, storedAt: now });
+        else if (storedCredentialExpired(found.storedAt, now)) expired.push(id);
+      }
+      for (const id of expired) await idbDelete(db, TOKEN_STORE, id);
+    } finally {
+      db.close();
+    }
+    for (const id of expired) this.expiredNotices.set(id, expiredStoredCredentialMessage(id));
+    return expired;
+  }
+
+  /** 期限切れで消したことを 1 度だけ返す (画面が「未設定」の代わりに理由を言うため)。 */
+  takeExpiredNotice(serviceId: string): string | null {
+    const notice = this.expiredNotices.get(serviceId) ?? null;
+    this.expiredNotices.delete(serviceId);
+    return notice;
   }
 
   /**
@@ -1160,7 +1234,7 @@ class BrowserVault implements Vault {
       if (!key) return; // 途中で施錠されたら止める
       try {
         const plain = await decryptString(key, blob);
-        await this.rebindToken(id, plain);
+        await this.rebindToken(id, plain, blob.storedAt);
       } catch {
         // 読めないレコードは触らない (壊れている / 別の鍵で書かれている)
       }
@@ -1184,6 +1258,8 @@ class BrowserVault implements Vault {
   }
 
   async listConfigured(): Promise<string[]> {
+    // 期限切れは一覧にも出さず、その場で消す (threat: T-213)。鍵は要らない (時刻は平文)。
+    await this.sweepExpiredTokens();
     const db = await openDb();
     try {
       return await idbKeys(db, TOKEN_STORE);
@@ -1299,7 +1375,8 @@ class BrowserVault implements Vault {
         rewritten.push({
           store: TOKEN_STORE,
           key: id,
-          value: { ...next, v: TOKEN_RECORD_V1 },
+          // 保存した時刻は引き継ぐ (落とすと「日付が無い = 期限切れ」で全部消える · threat: T-213)。
+          value: { ...next, v: TOKEN_RECORD_V1, storedAt: blob.storedAt },
         });
       }
       await idbPutAll(db, rewritten);

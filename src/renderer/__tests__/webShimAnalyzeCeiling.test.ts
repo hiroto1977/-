@@ -50,6 +50,7 @@ import '../web-shim';
 const tokenReads: string[] = [];
 vi.mock('../security/vault', () => ({
   getVault: () => ({
+    takeExpiredNotice: () => null, // T-213: 期限切れの理由 (この偽物は期限を持たない)
     getToken: async (id: string) => {
       tokenReads.push(id);
       return id === 'emotions' ? 'sk-ant-test-key' : null;
