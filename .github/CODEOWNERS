@@ -203,6 +203,7 @@
 /src/renderer/pages/__tests__/connectorOutputOnScreen.test.ts @hiroto1977
 /src/renderer/pages/__tests__/emotionsCrisisHold.test.ts @hiroto1977
 /src/renderer/pages/__tests__/advisorCrisisHold.test.ts @hiroto1977
+/src/renderer/pages/__tests__/skillsCrisisHold.test.ts @hiroto1977
 /src/renderer/pages/__tests__/villageAiErrorFold.test.ts @hiroto1977
 /src/renderer/pages/__tests__/villageCounselNoOverwrite.test.ts @hiroto1977
 /src/renderer/pages/__tests__/villageCrisisNoAi.test.ts @hiroto1977
