@@ -76,6 +76,14 @@ describe('secrets — 読めなかった理由は断りの文に載る (threat: 
     expect(read).toMatchObject({ ok: false, reason: 'store-unreadable', message: '保管ファイルを読めませんでした (読み取りに失敗 (unknown))。' });
   });
 
+  it('★ 読み直したモジュール直下の文 (ERASING_MESSAGE) は字面で主張する (読み直す検査は直下の値を全部覆う)', async () => {
+    // この検査は secrets.ts を読み直すので、その直下の定数の変異体は**この検査だけ**で走る
+    // (`rereadModule.ts` の docblock)。`eraseVsSecretsWrite.test.ts` の同じ主張は読み込み時点の値を
+    // 見るので変異体に届かず、run #215 で `ERASING_MESSAGE = ""` が唯一の生存だった。
+    const m = await secretsModule();
+    expect(m.ERASING_MESSAGE).toBe('データの削除中のため、資格情報を書き込めません。');
+  });
+
   it('対照: 読めるようになれば、断りは消えて普通に読める', async () => {
     const m = await secretsModule();
     vi.spyOn(console, 'error').mockImplementation(() => {});
