@@ -297,6 +297,10 @@ const VARIABLE_PATH_ALLOWED: Readonly<Record<string, { count: number; why: strin
     count: 3,
     why: '一時 userData の secrets.json を読み戻す (threat: T-041 —— basic_text で plain: が書かれたか・昇格しないか)。repo のファイルではない',
   },
+  'src/main/__tests__/secretsCredentialTtl.test.ts': {
+    count: 1,
+    why: '一時 userData の secrets.json を読み戻し、保存した値の時刻の印 (at:<ms>:) と期限切れの消去を確かめる。repo のファイルではない (threat: T-213)',
+  },
   'src/main/__tests__/secretsWrite.test.ts': {
     count: 5,
     why: '同じく一時 userData の secrets.json と .prev を読み戻す。repo のファイルではない',

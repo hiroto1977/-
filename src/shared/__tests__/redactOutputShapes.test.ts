@@ -340,11 +340,12 @@ describe('redactSecrets — 精度: 名前の手がかりだけを持つ秘密�
  */
 describe('redactSecrets — 過剰伏字の母集団: 知識コーパスの文字列リテラル (threat: T-212)', () => {
   it('★ renderer/data/*Knowledge.ts の文字列リテラルは伏字で 1 本も変わらない', async () => {
-    const { readOriginalSource } = await import('./originalSource');
-    const { readdirSync } = await import('node:fs');
+    const { readOriginalSource, readOriginalDir } = await import('./originalSource');
     const path = await import('node:path');
     const dir = path.resolve(__dirname, '../../renderer/data');
-    const files = readdirSync(dir).filter((f) => /Knowledge\.ts$/.test(f));
+    // 一覧も原文の道具で取る —— Stryker の sandbox の中で生の readdirSync を呼ぶと、
+    // 写しの木 (変異体入り) を歩くことになる (originalSourcePolicy.test.ts の規則)
+    const files = readOriginalDir(dir).filter((f) => /Knowledge\.ts$/.test(f));
     expect(files.length).toBeGreaterThanOrEqual(5);
     const changed: string[] = [];
     let literals = 0;
