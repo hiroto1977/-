@@ -159,7 +159,7 @@ describe('Linux の basic_text を os-keychain と名乗らない (threat: T-041
     const { setToken, getStorageProtection } = secretsModule;
     await setToken('github', 'ghp_' + 'a'.repeat(36));
     const raw = JSON.parse(await fs.readFile(path.join(userDataDir, FILE_NAME), 'utf8')) as Record<string, string>;
-    expect(raw.github).toMatch(/^plain:/);
+    expect(raw.github).toMatch(/^at:\d+:plain:/);
     expect((await getStorageProtection()).plainCount).toBe(1);
   });
 
@@ -168,7 +168,7 @@ describe('Linux の basic_text を os-keychain と名乗らない (threat: T-041
     await writeRawStore({ slack: 'plain:' + Buffer.from('xoxb_y', 'utf8').toString('base64') });
     await setToken('github', 'ghp_' + 'a'.repeat(36));
     const raw = JSON.parse(await fs.readFile(path.join(userDataDir, FILE_NAME), 'utf8')) as Record<string, string>;
-    expect(raw.slack).toMatch(/^plain:/);
+    expect(raw.slack).toMatch(/^plain:/); // 日付の無い値は setToken では触らない (読み・一覧が時刻を付ける · T-213)
   });
 
   it('対照: gnome_libsecret なら封緘し os-keychain を名乗る', async () => {
@@ -176,8 +176,8 @@ describe('Linux の basic_text を os-keychain と名乗らない (threat: T-041
     const { setToken, getStorageProtection } = secretsModule;
     await setToken('github', 'ghp_' + 'a'.repeat(36));
     const raw = JSON.parse(await fs.readFile(path.join(userDataDir, FILE_NAME), 'utf8')) as Record<string, string>;
-    expect(raw.github).not.toMatch(/^plain:/);
-    expect(Buffer.from(raw.github ?? '', 'base64').toString('utf8')).toMatch(/^enc:/);
+    expect(raw.github).not.toMatch(/^(at:\d+:)?plain:/);
+    expect(Buffer.from((raw.github ?? '').replace(/^at:\d+:/, ''), 'base64').toString('utf8')).toMatch(/^enc:/);
     expect((await getStorageProtection()).mechanism).toBe('os-keychain');
   });
 });

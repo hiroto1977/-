@@ -39,6 +39,7 @@ const bearersSeen: string[] = [];
 
 vi.mock('../security/vault', () => ({
   getVault: () => ({
+    takeExpiredNotice: () => null,
     getToken: async () => {
       if (vaultThrows) throw vaultThrows;
       return stored;

@@ -3531,6 +3531,21 @@
         "file": "src/shared/__tests__/redactOutputShapes.test.ts",
         "test": "★ renderer/data/*Knowledge.ts の文字列リテラルは伏字で 1 本も変わらない"
       }
+    },
+    {
+      "id": "T-213",
+      "found": "2026-10-28",
+      "foundBy": "利用者の指示「API キーを使い捨て並に有効時間を短くして」を受けて両ビルドの保管層を読んだ —— 保存した資格情報に保存時刻が無く、デスクトップ版の保管ファイル (secrets.json) もブラウザ版の保管庫 (IndexedDB) も、1 度保存した API キー・PAT・JSON の鍵束を利用者が消すまで無期限に信用していた",
+      "surface": "renderer",
+      "class": "compromised-renderer",
+      "severity": "medium",
+      "title": "保存した API キー・PAT は無期限に信用され、端末から持ち出された保管ファイル・IndexedDB の写しは (マスターパスワード・OS のキーチェーンが破られれば) いつまでも使えた —— 第三者が発行する鍵の期限はアプリから変えられないが、アプリが写しを信用する時間は変えられる",
+      "status": "fixed",
+      "fix": "shared/credentialTtl.ts に有効時間 (8 時間) の規則を 1 つ置き、両ビルドの保管層が同じ判定を読む。書く側は保存した時刻を平文の付随データとして残し (secrets.ts は `at:<ms>:` の包み・vault.ts は記録の storedAt)、読む時と一覧 (と解錠) で期限切れを**復号せずに消す**。日付の無い記録 (規則より前の物) には最初に見た時刻が付く (版上げで全員を締め出す代わりに 1 度だけ最大 8 時間の猶予)。未来の時刻・壊れた時刻は期限切れ。更新トークンを持つ OAuth の TokenSet はデスクトップ版では `oauth:` として認可サーバの期限に従う (ブラウザ版の保管庫は貼り付け式の accessToken だけなので一律に掛ける)。消した理由は読み口が返し (secrets: reason 'expired'・vault: takeExpiredNotice) 画面は「未設定」と混ぜない。パスワード変更は時刻を引き継ぐ。限界: 時刻は秘密ではないので書き換えられるが、未来へ書き換えると期限切れに倒れ、過去へ書き換えても早く消えるだけ (信用を延ばす向きには働かない)。",
+      "regression": {
+        "file": "src/main/__tests__/secretsCredentialTtl.test.ts",
+        "test": "★ 有効時間を過ぎた鍵は読まずに消し、理由を言う (使い捨て · threat: T-213)"
+      }
     }
   ],
   "huntBacklog": [

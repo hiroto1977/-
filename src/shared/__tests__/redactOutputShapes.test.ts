@@ -309,6 +309,11 @@ describe('redactSecrets — 精度: 名前の手がかりだけを持つ秘密�
     ['接頭辞が 2 段の環境変数 (CSC_KEY_PASSWORD=) も伏せる', `CSC_KEY_PASSWORD=${V}`, 'CSC_KEY_PASSWORD=[REDACTED]'],
     ['接頭辞が 3 段でも伏せる', `APPLE_APP_SPECIFIC_PASSWORD=${V}`, 'APPLE_APP_SPECIFIC_PASSWORD=[REDACTED]'],
     ['裸の Basic は ASCII の本体を伏せる (狭めても漏れは増えない)', `Basic ${V}`, 'Basic [REDACTED]'],
+    // 区切りの `[_-]?` は 3 形 (`_` / `-` / 無し) をそれぞれ留める (変異検査 2026-10-28: `?` を外す・`[^_-]` に
+    // 反転する変異体が、1 形しか標本に無い名前で生き残った)。
+    ['線上の複合名は区切りが `_` でも `-` でも無しでも伏せる', `clientsecret: ${V} client-secret: ${V} signingsecret: ${V} signing_secret: ${V} privatekey: ${V} private-key: ${V} secretkey: ${V} secret-key: ${V} accesstoken: ${V} access-token: ${V}`, 'clientsecret: [REDACTED] client-secret: [REDACTED] signingsecret: [REDACTED] signing_secret: [REDACTED] privatekey: [REDACTED] private-key: [REDACTED] secretkey: [REDACTED] secret-key: [REDACTED] accesstoken: [REDACTED] access-token: [REDACTED]'],
+    ['JSON の鍵も区切りの 3 形', `{"privatekey":"${V}","private-key":"${V}","secretkey":"${V}","secret-key":"${V}"}`, '{"privatekey":"[REDACTED]","private-key":"[REDACTED]","secretkey":"[REDACTED]","secret-key":"[REDACTED]"}'],
+    ['cookie: はコロンの前後の空白が 0 個でも 2 個でも (区切りは書き戻す)', `cookie:a=${V}\nCookie  :  b=${V}`, 'cookie:[REDACTED]\nCookie  :  [REDACTED]'],
     ['裸の Bearer は JWT の形 (ドット入り) も丸ごと伏せる', `Bearer abc.def.${V}`, 'Bearer [REDACTED]'],
   ])('★ %s', (_label, input, expected) => {
     expect(redactSecrets(input)).toBe(expected);
