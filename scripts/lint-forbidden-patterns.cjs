@@ -863,6 +863,7 @@ const KNOWN_SUPPRESSIONS = [
   // @electron/fuses の読み取り) とバイナリの起動そのものが目的なので、プロセスを作らずには成り立たない。
   // 引数は固定の配列でシェルを経由せず、渡す値はリポジトリ内の道と一時ディレクトリだけ。
   'child_process exec/spawn :: scripts/smoke-packaged.cjs :: 1',
+  'child_process exec/spawn :: scripts/verify-packaged-fuses.cjs :: 1',
   // セキュリティの床を測り直す道具 (`npm run audit:floors`)。床ちょうどの版だけを持つ
   // **使い捨ての依存関係**を一時ディレクトリに作り、`npm install --package-lock-only` と
   // `npm audit --json` を子プロセスで走らせる。npm の解決と勧告データベースを使うのが目的

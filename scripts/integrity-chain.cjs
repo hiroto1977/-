@@ -316,6 +316,8 @@ const PROTECTED = [
   'scripts/lib/strip-non-code.cjs',
   'scripts/lint-artifact-csp.cjs',
   'scripts/verify-release-artifacts.cjs',
+  'scripts/verify-packaged-fuses.cjs', // release.yml の build が公開前に梱包物の fuse を照合する門 (T-209)
+  'scripts/smoke-packaged.cjs', // 上の門が読む fuse の照合の判定 (fuseProblems) を持つ (T-165 / T-166 / T-209)
   'scripts/checksum-release.cjs',
   'scripts/smoke-app.cjs',
   'scripts/lib/artifact-freshness.cjs',

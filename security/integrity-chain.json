@@ -55,8 +55,10 @@
     "scripts/setup-linux.sh",
     "scripts/setup-obsidian-docker.sh",
     "scripts/smoke-app.cjs",
+    "scripts/smoke-packaged.cjs",
     "scripts/triage-mutations.cjs",
     "scripts/verify-e2e-playwright-pin.cjs",
+    "scripts/verify-packaged-fuses.cjs",
     "scripts/verify-release-artifacts.cjs",
     "src/main/atomicWrite.ts",
     "src/main/clients/assistant.ts",
@@ -3040,6 +3042,38 @@
       "leafCount": 125,
       "note": "update escape.ts",
       "hash": "bd18a5d1f21c33142f450d2eac3c1a63e8f64803c7b9cd56d5470403dc982c7b"
+    },
+    {
+      "index": 364,
+      "prevHash": "bd18a5d1f21c33142f450d2eac3c1a63e8f64803c7b9cd56d5470403dc982c7b",
+      "merkleRoot": "c0415317bf4c03e2b5fe8d1ef5eb8ac49082088a6bde6f276027a972dfb0cea5",
+      "leafCount": 125,
+      "note": "update release.yml",
+      "hash": "ef3a5c6e07035ef5f1092c02bb411df185416cc992bb9a0fca22a10b4c7e52f9"
+    },
+    {
+      "index": 365,
+      "prevHash": "ef3a5c6e07035ef5f1092c02bb411df185416cc992bb9a0fca22a10b4c7e52f9",
+      "merkleRoot": "a728385d06940620fe7f7492ec05efc515b8931564a0a27f3aeff8b26f2a05f1",
+      "leafCount": 126,
+      "note": "update integrity-chain.cjs,verify-packaged-fuses.cjs",
+      "hash": "8dbad928f9c579dfc1a77740bf798f3f8846db6ad96c7a626fbbbf6f9d2f1637"
+    },
+    {
+      "index": 366,
+      "prevHash": "8dbad928f9c579dfc1a77740bf798f3f8846db6ad96c7a626fbbbf6f9d2f1637",
+      "merkleRoot": "fcc0efea1db946178c89bcc82ccc713aeb4cff24529b371974a04fb063843523",
+      "leafCount": 127,
+      "note": "update integrity-chain.cjs,smoke-packaged.cjs",
+      "hash": "040515026238c582033f8ebdd42e9c200f6f3a21450a5e60986a7f2eee0233a8"
+    },
+    {
+      "index": 367,
+      "prevHash": "040515026238c582033f8ebdd42e9c200f6f3a21450a5e60986a7f2eee0233a8",
+      "merkleRoot": "962b8d4d8531dde00e1ffc26cdf04175bef01cba0f03954c95e5e17b83a99aaa",
+      "leafCount": 127,
+      "note": "update release.yml,verify-packaged-fuses.cjs",
+      "hash": "45ba43efd4ea545a6d0134e58c7f6c3c012945020bc58fc108ba713ec650f680"
     }
   ],
   "tipManifest": {
@@ -3058,7 +3092,7 @@
     ".github/workflows/knowledge-auto.yml": "9f6f74353954cb50f345b3d258a324a01bb117ec08772cfd9a77852505cdbc20",
     ".github/workflows/mutation.yml": "db2b72f69eb73be3ddd7ed4492d8069f806b5ce928a00df768bb806c673db2e0",
     ".github/workflows/pages.yml": "42cc166f06c028477195e1243f5a85e277ad5d966840b6894d118635444a42e0",
-    ".github/workflows/release.yml": "0848c4010e69806216864b7f44467e17e2b42572d761c129aff63091dc8ae50f",
+    ".github/workflows/release.yml": "bcdba014a91d2d2f3c86d767bc89fa3610472de8e0af204b7ef9428abe3ca2de",
     "assets/icon.svg": "213373cc2e82c0255c103b47cfb880cad685935cd1d4c383746a6202315d540f",
     "assets/manifest.webmanifest": "2a36e499f82502b878302f7698aeb15aae992a8139b9dea774658ae8c36f959b",
     "assets/og.png": "1fcc1b3974eec00de79ab6d37272f39529905a3448017dc24ee0f03e979b7282",
@@ -3074,7 +3108,7 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "d385ddfc52ec74abf184207bfbb1ac655e730db2b7c6d7e758e35e67e79a5737",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "42595c19c089b9248b17f1563f33fcba34e822ba005eca4a5058077e1bb7f346",
+    "scripts/integrity-chain.cjs": "d2d9646a4e07bf1253351c2b31338692321dc99ddd7468d0c6da239ee163144c",
     "scripts/knowledge-autopilot.cjs": "ee8f7ae4a4ad29dda6c02f83c113c45fa1648522f807e711aa86b7746f372968",
     "scripts/lib/artifact-freshness.cjs": "543a7ff9c57bcf9d4936374ac89b8a3a7e2cf7c27bac8bad595fc98778841828",
     "scripts/lib/json-for-script.cjs": "cb79bf1fb2f3c10c6854ec16d9c12bb0695dee5561751333db4531545702fd70",
@@ -3096,8 +3130,10 @@
     "scripts/setup-linux.sh": "d759d679007975cf3cfbf9a26eb01a3240741ba769d6da9d886e9d57a17b5cba",
     "scripts/setup-obsidian-docker.sh": "1d35ecc6518e3aeb1a9a1a23f9d89ba8a0f7f5cf87f439e544b3638145b248d3",
     "scripts/smoke-app.cjs": "e0ec8dd631cbdbcd075663b99bdc33b380dc5d61ea049df7a626e300fb544095",
+    "scripts/smoke-packaged.cjs": "4e865be2ccfa6e8f4db1ab6d297f27b9115f03b9f6ba94f9443df8817e2cfc3b",
     "scripts/triage-mutations.cjs": "1ee02f517585b980e4a7484e55b5efcb88c55fa1c83c6e330efba67a72bac2fa",
     "scripts/verify-e2e-playwright-pin.cjs": "417854f96cbaa4af4dd30a378b722b58093d56e78aa7eaba9bd17df412f57d45",
+    "scripts/verify-packaged-fuses.cjs": "4162ab0e5d390c5cccf4cd8ac533027bd1d8a5cbceb0a069059d4f3800643d9f",
     "scripts/verify-release-artifacts.cjs": "1bd668bc052b476a9b3f976dc80ddf8faa4f080aed5617d354a8c7647ee9f557",
     "src/main/atomicWrite.ts": "63b6ff1fb7d8990b76409c62556d69f99a14475f73662e89507e8899a32a9c3f",
     "src/main/clients/assistant.ts": "3db27c2cdd42569a7bc92c7d2841591b1464550a1905ab66fa4a100803b69c4f",

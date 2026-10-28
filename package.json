@@ -81,6 +81,7 @@
     "scaffold": "node scripts/scaffold-service.cjs",
     "smoke:app": "node scripts/smoke-app.cjs && node scripts/smoke-app.cjs --self-test",
     "smoke:packaged": "node scripts/smoke-packaged.cjs --self-test && node scripts/smoke-packaged.cjs",
+    "verify:packaged-fuses": "node scripts/verify-packaged-fuses.cjs --self-test && node scripts/verify-packaged-fuses.cjs",
     "smoke": "xvfb-run -a electron --no-sandbox scripts/screenshot.cjs",
     "test": "vitest run",
     "test:cov": "vitest run src/main --coverage --coverage.include=src/main/** --coverage.reporter=text --coverage.reporter=json-summary",

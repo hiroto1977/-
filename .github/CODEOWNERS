@@ -278,3 +278,7 @@
 /src/shared/__tests__/workflowYamlEscapeSpelling.test.ts @hiroto1977
 /src/shared/__tests__/electronBuilderNoHooks.test.ts @hiroto1977
 /src/shared/__tests__/mcpLauncherSource.test.ts @hiroto1977
+/src/shared/__tests__/packagedFuseGate.test.ts @hiroto1977
+/src/shared/__tests__/gitattributesGenerated.test.ts @hiroto1977
+# PR の diff で折り畳む物を決めるファイル (2026-10-28 · threat: T-210) —— 1 行で守りの変更を見えなくできる。
+/.gitattributes @hiroto1977
