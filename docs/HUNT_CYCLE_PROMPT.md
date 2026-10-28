@@ -12,6 +12,7 @@
 | 間隔 | 週 1 (`CRON_TZ=Asia/Tokyo 17 4 * * 2` = 火曜 04:17 JST) | 毎日の dependency-audit (07:00 JST) と重ねない。米国太平洋 6〜9 時 (JST 22〜1 時) の混む帯を避ける |
 | セッション | 毎回新しいセッション (`create_new_session_on_fire`) | 前の周の文脈を引きずらない。指示文だけで完結する |
 | モデル | 主セッションと同じ (deep の仕事 —— `docs/MODEL_EFFORT_POLICY.md` §4) | 穴を探す判断を軽いモデルに任せない |
+| 予約の id | `trig_018x9FJf4AjgmEnYSGzu7xud` (2026-10-28 作成 · 初回 2026-11-03 04:17 JST) | 予約の中身はリポジトリの外。確かめるときはこの id を Claude Code の予定実行の一覧で引く |
 | 止め方 | Claude Code の予定実行の一覧から無効化 | **実行のたびに利用料が掛かる**。止めれば毎日の報告が「止まった」と Issue に出す (`hunt:cycle -- status`) |
 
 ## 指示文
