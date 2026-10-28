@@ -1,5 +1,17 @@
 # Service Hub — 残りの作業手順書
 
+## パス 550 (main の変異検査が割った 95.87% —— 生存 46 件を仕分けて 100% へ) (2026-10-28)
+
+PR #843 を main へ入れた push が `mutation.yml` の run #214 (塊 0 · 43 分 58 秒) を起こし、変わった 4 本を測った: `redact.ts` 100.00% / `credentialTtl.ts` 94.87% (生存 2) / `vault.ts` 96.71% (生存 16 + 未到達 1) / `secrets.ts` 92.66% (生存 25 + 未到達 2) —— **合計 95.87% で break (99.8) を割った**。手元の `audit:mutate-changed` は **2 度ともコンテナの休止で dry run の途中で消え** (ログが「Starting initial test run」で止まる)、結果は GitHub の runner でしか読めなかった。
+
+- **仕分け (46 件)**: ★ **本物の穴 15 件** (検査が値を主張していない) / **等価 26 件** (形ごと消した) / **等価で形を消せない 5 件** (理由つき pragma)。
+  - **本物の穴**: `secrets.ts` —— 読めなかった理由 (`code ?? 'unknown'` / `読み取りに失敗 (${code})` / `console.error` の文) を誰も見ていなかった (断りの `reason` だけ)・`at:` の区切りが無い包みを `Number(先頭)` が生きた時刻に読む形・plain: の繰り上げが `oauth:` の包みを落とす形・`migrateUndated` が日付のある物に**もう 1 枚包む** (2 つの一覧が重なった窓)・一覧を読むだけで保管ファイルを書き直す形・`ERASING_MESSAGE` を定数で比べていた (空にしても `toThrow('')` は通る)。`vault.ts` —— 旧世代路 (master-wrap なし) の `changePassword` が T-063 の世代を見ない 3 形・初期化の書き込みが ConstraintError 以外で落ちても「既に初期化」と偽る形・`idbPutAll` の `add` が**項ごと**だったので片方を `put` に替える変異がもう片方の `add` に隠れていた (取引ごとの旗へ)。
+  - **形ごと消した等価** (法則 115): `sep < 0` → `sep === -1` / `.catch(() => null)` → 空の catch / `typeof !== 'number' || !isFinite` → `!Number.isFinite` 1 つ / `catch { return false }` → 空の catch と null の初期値 / 一覧の `undated` 配列と `if (undated.length > 0)` → 一覧をそのまま `migrateUndated` へ (日付の無い物の判定を 2 か所に書かない) / `initialize` の「既に在るか」の先読み → 消す (T-064 の `add` が唯一の門) / Phase E の `changePassword` が同じ master 鍵を据え直す行 → 消す / `sweepExpiredTokens` の配列と戻り値 → `Set` と `void` / `.catch(() => [])` → `.catch(() => {})`。
+  - **pragma (理由つき)**: `readStoredToken` の `if (kind === 'undated')` (`migrateUndated` は日付の無い物しか書かない)・`tx.onerror` の矢印 (abort 経路が同じ誤りを拾う)・その行の `?.` 2 か所 (null は来ない)・`sweep` の `if (!found)` (鍵の一覧と取得の間の窓)。
+- **機械**: `secretsCredentialTtl.test.ts` +6・`secretsReadFailure.test.ts` 3 (新設 —— `atomicWrite` の `readFileWithBackup` を注入で落とす)・`vaultLockDuringUnlock.test.ts` +4 (旧世代路の T-063 2 件 + 対照 + QuotaExceeded)・`eraseVsSecretsWrite.test.ts` は文面を字面で。**対照 15 方向すべて鳴り、それぞれ狙った検査に当たる** (A〜M · 元へ戻して md5 で確かめた)。
+- ★ **既知の罠 (このパスで踏んだ)**: 対照用の偽物 `decryptStringAsync` は何でも復号する (実物は壊れた値で reject) —— 「読めない値」の標本を作るには偽物に**その値だけ**を断らせる (`CORRUPT`)。緩い偽物のままだと「包みの上に包む」変異が `decodeInner(包み全体)` を通して観測でき、厳しい偽物だとそれが見えなくなる —— **偽物の強さは、殺したい変異ごとに決める**。/ `at:` の `slack` を T0 で置いて `T0 + TTL + 1` で一覧を読むと消える (自分の検査の期待を 1 度外した)。
+- **残した物**: 測り直しは GitHub の `workflow_dispatch` (`files=src/main/secrets.ts,src/renderer/security/vault.ts,src/shared/credentialTtl.ts`) で読む —— 手元ではコンテナの休止で完走しない。
+
 ## パス 549 (探索 → 解析 → 対策 → 報告 の輪を、起動と記録まで機械にする · T-214) (2026-10-28)
 
 「探索→解析→対策→報告を繰り返す仕組みを仕込んで」への答え。測ると、輪のうち**起動と記録**だけが人任せだった —— 姿勢の測定 (T-167) は次に狩る面を導き、止まった面も 21 日で検知するが、`docs/THREAT_HUNT.md` は『予約していない』と明記し、回ったこと (いつ・どの面を・何を直し・どこへ報告したか) を数える台帳も無かった。

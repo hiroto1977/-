@@ -3091,6 +3091,14 @@
       "leafCount": 128,
       "note": "update integrity-chain.cjs,secrets.ts,vault.ts,credentialTtl.ts",
       "hash": "63d2990574dcd8345639ef3144147ae1776250d13c463991971f635d94d162d3"
+    },
+    {
+      "index": 370,
+      "prevHash": "63d2990574dcd8345639ef3144147ae1776250d13c463991971f635d94d162d3",
+      "merkleRoot": "b63cae4414368a65d08fd04aad8e9aa2f699b2d64d4fee381befa44be7a897f7",
+      "leafCount": 128,
+      "note": "update secrets.ts,vault.ts,credentialTtl.ts",
+      "hash": "208dc542c68e178d0f7c44755cbd74e7bbbcc83d7245b2b221e56d90b8510495"
     }
   ],
   "tipManifest": {
@@ -3162,7 +3170,7 @@
     "src/main/main.ts": "d4ffad980e61c0b8239b9390df25bbe38ded968bfadba3b2ac2c69b6cdaffbfa",
     "src/main/oauth.ts": "361df5884e2b332e721701fe677390450bf98c7b665fe331dd1e79620da7a5b7",
     "src/main/presenceWiring.ts": "84334ae2023fa2c2c4931571839f365ca228ff817788e5c146550f01ca790336",
-    "src/main/secrets.ts": "f66f191fef06b9249018f75131bf7b9b34d899a3237a4e0de958912b026faa5b",
+    "src/main/secrets.ts": "6fa31f23ce7c7bdd5faa9c0e528be9ab4e0ca754052fe3e061499dac3e452d5a",
     "src/main/shellOpenGate.ts": "ff1c7841ac01426d30754f7a1f049a9a4a43788734e78b4b52a27ff6dfc1e2b7",
     "src/main/stateFile.ts": "984eebe8582b3c6c88669d17e778932f6b87a682640d1f162acd182d5947169b",
     "src/main/userPresence.ts": "cd3c070836081f8b0ee4c1946cd078772508aec0dc3371c5635db5064715d36a",
@@ -3185,7 +3193,7 @@
     "src/renderer/security/frameGuard.ts": "66ad10cf7e5a48fcc4a406aa66b9de544609877944fd073c7bf3af8190991559",
     "src/renderer/security/lockWorkspace.ts": "b1e7210a61ed100c2bae43359482eaa696ad367f63a25ec463ab0ed44477aca7",
     "src/renderer/security/mnemonic.ts": "115603b18fe19a6bd651e9d7b55d6afcffa8f9695eaa1ef522b67a1b1fe71c2a",
-    "src/renderer/security/vault.ts": "fbf35c87f4919b3c54896ccd1420b37d3c9f9605b095228910db8788d3e76cdc",
+    "src/renderer/security/vault.ts": "8f2638184c5cc9a3d48ac6a5c4d964aa713dfbcfeeef3dc8a5c0c24da4a26d16",
     "src/renderer/security/webCrypto.ts": "d0be2ab7b15ba0315c7dff1e9c7da482ec17d9a021aa0921d580e39c7c631964",
     "src/renderer/security/webauthn.ts": "62218ba46fdfd0adaf8f3b7c42eb9e01315a619881b50d33acfbb51b0046ea76",
     "src/shared/advisorQuestionLimits.ts": "b1ade2abbfc367eb188ef16ba8e0c5b6327fe696e95cab2944df9f36de84b755",
@@ -3197,7 +3205,7 @@
     "src/shared/atlassianSite.ts": "e3898d643e76b22877cf0990090a61dc249bc3ccd2058ff3166e13bafea7b931",
     "src/shared/constantTimeEquals.ts": "6656031b29c27a7676840a135aec8d24b97f2358db08e534db47388af1e9e868",
     "src/shared/controlChars.ts": "cf6992b1d0cc2795de1cc1ed605ad51ca375b56d8426cc5622a219658e5724e7",
-    "src/shared/credentialTtl.ts": "ed61e0f216015004af3cc7f5a0c7fef40456bad8d4714c3aee7369ef9bc3430d",
+    "src/shared/credentialTtl.ts": "7fb6593b3a5672ddc6782c3c27def40042261ed73c7fdf0f907fd248acc97245",
     "src/shared/cryptoParams.ts": "e5c196eed641330430fb0725daf9dc28cfd38fc624ce5e46baca635ed9b8590e",
     "src/shared/eraseReport.ts": "06755b614c3c14664d3c445bb18779f815490a519fc2ff7ac03d5d36a62b9d49",
     "src/shared/escape.ts": "8e6ae576ff9d9a366b204bc9cd39a7e123b7390f40a196dc2a245cf4a2113534",

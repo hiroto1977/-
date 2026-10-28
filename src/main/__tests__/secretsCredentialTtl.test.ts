@@ -20,9 +20,15 @@ vi.mock('electron', () => ({
   safeStorage: {
     isAsyncEncryptionAvailable: async () => true,
     encryptStringAsync: async (v: string) => Buffer.from(`enc:${v}`, 'utf8'),
-    decryptStringAsync: async (b: Buffer) => ({ shouldReEncrypt: false, result: b.toString('utf8').replace(/^enc:/, '') }),
+    decryptStringAsync: async (b: Buffer) => {
+      const text = b.toString('utf8');
+      // 「復号できない値」の標本: `CORRUPT` と読める物だけ、本物の safeStorage と同じく reject する。
+      if (text === 'CORRUPT') throw new Error('decrypt failed');
+      return { shouldReEncrypt: false, result: text.replace(/^enc:/, '') };
+    },
   },
 }));
+const CORRUPT_VALUE = Buffer.from('CORRUPT', 'utf8').toString('base64');
 const FILE_NAME = 'service-hub-secrets.json';
 const encrypted = (token: string): string => Buffer.from(`enc:${token}`, 'utf8').toString('base64');
 const readRaw = async (): Promise<Record<string, string>> =>
@@ -134,6 +140,75 @@ describe('secrets — 保存した資格情報の有効時間 (threat: T-213)', 
     await writeRaw({ github: `at:${T0 - 1000}:${plain}` });
     await m.setToken('slack', 'xoxb-y');
     expect((await readRaw()).github).toBe(`at:${T0 - 1000}:${encrypted('ghp_old')}`);
+  });
+
+  it('★ 区切りの無い包みは、数字だけで時刻に読めても期限切れ (`at:<数字>` を日付として拾わない)', async () => {
+    // `at:` の後に `:` が無い = 壊れた包み。末尾の 1 字を落とすと今の時刻になる数字を置き、
+    // 「区切りが無い」の判定を外すと `Number(先頭)` が生きた時刻に読めてしまう形を当てる。
+    const m = await secretsModule();
+    await writeRaw({ github: `at:${T0}0` });
+    const read = await m.readStoredToken('github');
+    expect(read.ok).toBe(false);
+    expect((read as { reason: string }).reason).toBe('expired');
+    expect(await readRaw()).toEqual({});
+  });
+
+  it('対照: plain: の繰り上げ暗号化は `oauth:` の包みも保つ (包みの種類を落とさない)', async () => {
+    const m = await secretsModule();
+    const json = JSON.stringify({ accessToken: 'at', refreshToken: 'rt' });
+    const plain = `plain:${Buffer.from(json, 'utf8').toString('base64')}`;
+    await writeRaw({ github: `oauth:${plain}` });
+    await m.setToken('slack', 'xoxb-y');
+    expect((await readRaw()).github).toBe(`oauth:${encrypted(json)}`);
+    now = T0 + CREDENTIAL_TTL_MS + 1; // oauth: は有効時間の外のまま (at: の slack は期限切れで消える)
+    expect(await m.listConfiguredServices()).toEqual(['github']);
+  });
+
+  it('★ 日付のある記録だけの一覧・読みは、保管ファイルを書き直さない (読むだけで更新時刻が動かない)', async () => {
+    const m = await secretsModule();
+    await m.setToken('github', 'ghp_x');
+    await m.setToken('slack', 'xoxb-y');
+    const file = path.join(userDataDir, FILE_NAME);
+    const before = await fs.readFile(file, 'utf8');
+    const mtime = (await fs.stat(file)).mtimeMs;
+    now = T0 + 1000;
+    expect((await m.listConfiguredServices()).sort()).toEqual(['github', 'slack']);
+    expect(await m.readStoredToken('github')).toEqual({ ok: true, token: 'ghp_x' });
+    expect(await fs.readFile(file, 'utf8')).toBe(before);
+    expect((await fs.stat(file)).mtimeMs).toBe(mtime);
+  });
+
+  it('★ 2 つの一覧が重なっても、日付の無い記録は 1 重に包まれ、読める (包みの上に包まない)', async () => {
+    const m = await secretsModule();
+    await writeRaw({ github: encrypted('ghp_old') });
+    const [a, b] = await Promise.all([m.listConfiguredServices(), m.listConfiguredServices()]);
+    expect(a).toEqual(['github']);
+    expect(b).toEqual(['github']);
+    expect((await readRaw()).github).toBe(`at:${T0}:${encrypted('ghp_old')}`);
+    expect(await m.readStoredToken('github')).toEqual({ ok: true, token: 'ghp_old' });
+  });
+
+  it('★ 期限切れを消した同じ一覧で、日付の無い記録には時刻が付く (消した鍵は飛ばして続ける)', async () => {
+    const m = await secretsModule();
+    await writeRaw({ old: `at:${T0 - CREDENTIAL_TTL_MS - 1}:${encrypted('x')}`, github: encrypted('ghp_old') });
+    expect(await m.listConfiguredServices()).toEqual(['github']);
+    const raw = await readRaw();
+    expect(raw).not.toHaveProperty('old');
+    expect(raw.github).toBe(`at:${T0}:${encrypted('ghp_old')}`);
+  });
+
+  it('★ 日付の無い記録のうち、読めない物 (壊れた値) には時刻を付けず、ファイルも書き直さない', async () => {
+    const m = await secretsModule();
+    await m.setToken('slack', 'xoxb-y');
+    const file = path.join(userDataDir, FILE_NAME);
+    const stored = await readRaw();
+    await writeRaw({ ...stored, github: CORRUPT_VALUE });
+    const before = await fs.readFile(file, 'utf8');
+    const mtime = (await fs.stat(file)).mtimeMs;
+    now = T0 + 1000;
+    expect((await m.listConfiguredServices()).sort()).toEqual(['github', 'slack']);
+    expect(await fs.readFile(file, 'utf8')).toBe(before);
+    expect((await fs.stat(file)).mtimeMs).toBe(mtime);
   });
 
   it('対照: 保管ファイルが読めない状態では、期限切れでも消しに行かない (読めないものの上に書かない)', async () => {

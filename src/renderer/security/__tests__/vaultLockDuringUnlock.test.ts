@@ -9,7 +9,7 @@
  * `unlock()` の解決後は unlocked)。
  */
 import 'fake-indexeddb/auto';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { _resetVaultForTests, getVault } from '../vault';
 
 const PW = 'correct-horse-battery-staple';
@@ -117,6 +117,58 @@ describe('Vault — lock() during changePassword / recoverWithMnemonic / initial
     expect(v.isUnlocked()).toBe(true);
   });
 
+  // Phase E 以前の保管庫 (master-wrap が無い) は、記録を全部読み替える旧世代路を通る。
+  // 鍵を据える判断はその枝にしか無い (Phase E の枝は master 鍵が変わらないので据え直さない)。
+  const dropMasterWrap = (): Promise<void> =>
+    new Promise((resolve, reject) => {
+      const req = indexedDB.open('business-hub-vault');
+      req.onsuccess = () => {
+        const db = req.result;
+        const tx = db.transaction('meta', 'readwrite');
+        tx.objectStore('meta').delete('master-wrap');
+        tx.oncomplete = () => { db.close(); resolve(); };
+        tx.onerror = () => { db.close(); reject(tx.error); };
+      };
+      req.onerror = () => reject(req.error);
+    });
+
+  it('★ 旧世代路 (master-wrap なし) でも、変更中に lock() が届けば鍵を据えない (threat: T-063)', async () => {
+    const v = getVault();
+    await v.initialize(PW);
+    await dropMasterWrap();
+    v.lock();
+    await v.unlock(PW);
+    await v.setToken('github', 'ghp_secret');
+    const p = v.changePassword(PW, NEW);
+    v.lock();
+    await p;
+    expect(v.isUnlocked()).toBe(false);
+    await expect(v.getToken('github')).rejects.toThrow(/ロックされています/);
+    await v.unlock(NEW);
+    expect(await v.getToken('github')).toBe('ghp_secret');
+  });
+
+  it('★ 旧世代路でも、施錠された保管庫のパスワード変更は解錠にならない (threat: T-063)', async () => {
+    const v = getVault();
+    await v.initialize(PW);
+    await dropMasterWrap();
+    v.lock();
+    await v.changePassword(PW, NEW);
+    expect(v.isUnlocked()).toBe(false);
+    await v.unlock(NEW);
+    expect(v.isUnlocked()).toBe(true);
+  });
+
+  it('対照: 旧世代路で施錠が届かなければ、変更後も解錠したまま', async () => {
+    const v = getVault();
+    await v.initialize(PW);
+    await dropMasterWrap();
+    v.lock();
+    await v.unlock(PW);
+    await v.changePassword(PW, NEW);
+    expect(v.isUnlocked()).toBe(true);
+  });
+
   it('対照: 施錠が届かなければ 3 つとも今までどおり解錠したまま', async () => {
     const v = getVault();
     const { mnemonic } = await v.initialize(PW);
@@ -162,5 +214,24 @@ describe('Vault — 2 つの窓の同時 initialize() (threat: T-064)', () => {
     const v = getVault();
     await v.initialize(PW);
     await expect(v.initialize(PW)).rejects.toThrow(/既に初期化されています/);
+  });
+
+  it('★ 初期化の書き込みが別の理由で落ちたら、その理由のまま投げる (「既に初期化」と偽らない)', async () => {
+    // `add` が ConstraintError 以外 (容量・閉じた DB) で落ちた形。既に初期化されていると告げると
+    // 利用者は「解錠」を探しに行くが、保管庫は無い。
+    const add = vi.spyOn(IDBObjectStore.prototype, 'add').mockImplementation(() => {
+      throw new DOMException('quota', 'QuotaExceededError');
+    });
+    try {
+      const v = getVault();
+      const failed = await v.initialize(PW).then(() => null, (e: unknown) => e);
+      expect(failed).not.toBeNull();
+      expect((failed as { name?: string }).name).toBe('QuotaExceededError');
+      // 文面も元の誤りのまま (「既に初期化されています」に書き換えない) —— 肯定形で留める。
+      expect((failed as { message?: string }).message).toBe('quota');
+      expect(v.isUnlocked()).toBe(false);
+    } finally {
+      add.mockRestore();
+    }
   });
 });
