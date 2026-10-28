@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 364
+- ブロック数: 368
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `bd18a5d1f21c33142f450d2eac3c1a63e8f64803c7b9cd56d5470403dc982c7b`
-- 保護対象: 125 ファイル
+- 末尾(tip)ハッシュ: `45ba43efd4ea545a6d0134e58c7f6c3c012945020bc58fc108ba713ec650f680`
+- 保護対象: 127 ファイル
 
 ## ブロック
 
@@ -377,6 +377,10 @@
 | 361 | `14f7d4306e870fde` | `7f9248c3766835bd` | `9734ef0a8a6404d1` | update privateTarget.ts |
 | 362 | `c968ac11083fe4ca` | `9734ef0a8a6404d1` | `5eeeac3654f1adce` | update escape.ts |
 | 363 | `c7373092e2a1a05a` | `5eeeac3654f1adce` | `bd18a5d1f21c3314` | update escape.ts |
+| 364 | `c0415317bf4c03e2` | `bd18a5d1f21c3314` | `ef3a5c6e07035ef5` | update release.yml |
+| 365 | `a728385d06940620` | `ef3a5c6e07035ef5` | `8dbad928f9c579df` | update integrity-chain.cjs,verify-packaged-fuses.cjs |
+| 366 | `fcc0efea1db94617` | `8dbad928f9c579df` | `040515026238c582` | update integrity-chain.cjs,smoke-packaged.cjs |
+| 367 | `962b8d4d8531dde0` | `040515026238c582` | `45ba43efd4ea545a` | update release.yml,verify-packaged-fuses.cjs |
 
 ## 保護対象ファイル
 
@@ -433,8 +437,10 @@
 - `scripts/setup-linux.sh`
 - `scripts/setup-obsidian-docker.sh`
 - `scripts/smoke-app.cjs`
+- `scripts/smoke-packaged.cjs`
 - `scripts/triage-mutations.cjs`
 - `scripts/verify-e2e-playwright-pin.cjs`
+- `scripts/verify-packaged-fuses.cjs`
 - `scripts/verify-release-artifacts.cjs`
 - `src/main/atomicWrite.ts`
 - `src/main/clients/assistant.ts`

@@ -22,7 +22,7 @@
       "layers": [
         { "kind": "prevent", "what": "Electron の fuse (RunAsNode 等の無効化・onlyLoadAppFromAsar) で、梱包物の差し替えと環境変数での乗っ取りを止める", "enforcedBy": ["electron-builder.json", "src/main/__tests__/electronFuses.test.ts"] },
         { "kind": "contain", "what": "OS へ渡す口は realpath 封じ込めと拡張子の許可リスト、file:// は dist/ に閉じ込める", "enforcedBy": ["src/main/shellOpenGate.ts", "src/main/fileRequestGate.ts"] },
-        { "kind": "detect", "what": "梱包した実物を起動して、fuse の焼き込みと窓の描画を確かめる(e2e.yml の手動実行・run-e2e ラベルで走る。release.yml の build はまだ fuse を読んで照合しない —— 台帳の huntBacklog)", "enforcedBy": ["scripts/smoke-packaged.cjs", "scripts/lint-malware.cjs"] },
+        { "kind": "detect", "what": "梱包した実物の fuse の焼き込みを確かめる —— release.yml の build は署名して公開する前に梱包物から読んで electron-builder.json と照合し (T-209)、e2e.yml の手動実行・run-e2e ラベルでは起動して窓の描画まで見る", "enforcedBy": ["scripts/verify-packaged-fuses.cjs", "scripts/smoke-packaged.cjs", "scripts/lint-malware.cjs"] },
         { "kind": "recover", "what": "新しい版の知らせと、全データ消去からの再開", "enforcedBy": ["src/shared/updateCheck.ts", "src/main/eraseAll.ts"] }
       ]
     },

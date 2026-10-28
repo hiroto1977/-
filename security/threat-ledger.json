@@ -3471,6 +3471,36 @@
         "file": "src/renderer/pages/__tests__/skillsCrisisHold.test.ts",
         "test": "★ 危機の文面は外部へ送らず、相談窓口と理由を出す (threat: T-208)"
       }
+    },
+    {
+      "id": "T-209",
+      "found": "2026-10-28",
+      "foundBy": "audit:security-posture の次の候補 5 件を 1 つずつ実物と突き合わせた。release.yml を読み、fuse を読む step が無いことと、@electron/fuses write で RunAsNode を on にした梱包物を同じ job が通すことを手元の linux-unpacked で実測した",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "release.yml の build は梱包物の fuse を読まずに署名して公開していた —— 焼き込みを確かめるのは手動・ラベル実行の smoke:packaged だけで、electron-builder が fuse を黙って飛ばす形は設定 JSON を読む検査には映らない",
+      "status": "fixed",
+      "fix": "scripts/verify-packaged-fuses.cjs が release/ の unpacked の app (linux-unpacked / win-unpacked / mac*) を OS ごとに探し、@electron/fuses read で焼き込まれた値を読んで smoke-packaged と同じ fuseProblems で照合する。1 つも見つからなければ落ちる。release.yml の build は Build の直後・公開の前にそれを通す。対照: RunAsNode を on に書き換えた梱包物で exit 1 (手元の実測)。限界: release は v* タグでしか走らないので、Actions 上の実走はまだ無い。",
+      "regression": {
+        "file": "src/shared/__tests__/packagedFuseGate.test.ts",
+        "test": "★ release.yml の build は、署名して公開する前に梱包物の fuse を electron-builder.json と照合する (threat: T-209)"
+      }
+    },
+    {
+      "id": "T-210",
+      "found": "2026-10-28",
+      "foundBy": "audit:security-posture の次の候補 (huntBacklog の .gitattributes) を実物で確かめた —— 追跡されておらず、PR の diff で何が折り畳まれるかを誰も決めていなかった",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": ".gitattributes が無く、PR の diff で折り畳まれる (linguist-generated) 物を誰も決めていなかった —— 生成物 (知識保管庫 7,000 本ほか) の差分がレビューを埋め、逆に誰かが src/ を生成物と名乗れば守りの変更が折り畳まれて見えなくなる",
+      "status": "mitigated",
+      "fix": ".gitattributes を置き、折り畳めるのは台帳の生成物 (knowledge-vault/ · knowledge-graph/ · docs/ONTOLOGY.md) だけで、属性は linguist-generated だけ (diff / merge の属性でレビューの見え方を変えない)。src/ · scripts/ · .github/ · security/ · 整合性チェーンの保護対象を覆う行は検査が落とす。CODEOWNERS で所有者のレビューを要求する。限界: GitHub の描画 (折り畳み) そのものは実機で確かめていない。",
+      "regression": {
+        "file": "src/shared/__tests__/gitattributesGenerated.test.ts",
+        "test": "★ .gitattributes が折り畳む物は台帳の生成物だけで、レビューの要る木は 1 行も覆わない (threat: T-210)"
+      }
     }
   ],
   "huntBacklog": [
@@ -3518,11 +3548,6 @@
       "surface": "supply-chain",
       "item": "F-1 main 枝に branch protection / ruleset が 1 つも無い (GitHub の設定 —— リポジトリの中からは直せない)",
       "why": "2026-10-15 に GitHub API で実測 (rulesets 0 件・protection 無し)。CODEOWNERS (T-003) は Require review from Code Owners が有効でないと効かず、整合性チェーンは署名を持たないので、直接 push で保護対象と鎖を一緒に書き換えられる。所有者が Settings → Rules で main に「PR 必須・Code Owners のレビュー必須・force push 禁止」を付ける判断。"
-    },
-    {
-      "surface": "supply-chain",
-      "item": "workflow_run / issue_comment / id-token: write と docker:// イメージの固定は lint:workflow-security が見ない (パス 524 の監査役の指摘)",
-      "why": "2026-10-16 に監査役が静的に指摘 (pull_request_target の別綴りと script: の注入は T-085 で閉じた)。実物の 7 本には今日どれも無い。要るなら on: を構造で読む (js-yaml は入っているが直の依存か未確認)。設計の判断を伴うので未対応。"
     },
     {
       "surface": "main-ipc",
@@ -3585,16 +3610,6 @@
       "why": "2026-10-16 に読んだ: 呼び出し元が 0 件。欠陥ではないが、残ると読み手を誤らせる。"
     },
     {
-      "surface": "supply-chain",
-      "item": "検査 job と署名 job が同一 runner (release.yml の Build が npm test / verify:all と同じ job)",
-      "why": "2026-10-16 に読んだ (Actions 上では未実走): 前段で走るコードが $GITHUB_ENV / PATH / node_modules を汚せば、署名鍵を持つ Build 段に届く。検査 job と署名 job を分けるのがよい。workflow の構成変更なので所有者の判断が要る。"
-    },
-    {
-      "surface": "supply-chain",
-      "item": ".gitattributes (linguist-generated / -diff) で PR の diff を折り畳める",
-      "why": "2026-10-16 に未追跡であることを確認。GitHub の描画は未確認。追跡しないことの検査か CODEOWNERS 行が候補。"
-    },
-    {
       "surface": "renderer",
       "item": "窓を掛けていない保管行の一覧 (チーム・手入力の置き換え・投資信託・不動産・水耕栽培のロット ほか)",
       "why": "2026-10-19 に洗った: 売上と KPI 実績以外は 1 件ずつのフォームが入口で、製品の通常の道で数千行になる経路は CSV 取り込みしか無い (復元は理論上いくらでも入る)。窓を足すなら `useRowWindow` を通すだけ。未実測。"
@@ -3613,11 +3628,6 @@
       "surface": "main-ipc",
       "item": "AI の資格情報の束の送り先(compatUrl / ollamaUrl)に isPrivateOrReservedTarget が掛からない。https なら LAN も通り、ollama は平文 http の LAN・loopback も通る",
       "why": "Red-A' 2026-10-24。T-181 で確認文に送り先ホストを見せるようにしたが、制限はしていない(aiEndpoint は任意の https を設計として許す。リバースプロキシのトンネルが正当なため)。直すなら私設・予約済みの https を既定で断り、設定で許す。"
-    },
-    {
-      "surface": "supply-chain",
-      "item": "release.yml の build 側で梱包物の fuse を @electron/fuses で読み、electron-builder.json と照合していない(crown-jewels の『毎回確かめる』は e2e.yml の手動・ラベル実行だけ)",
-      "why": "Red-B' 2026-10-24。release.yml は smoke-app --check-bundle と verify-release-artifacts だけ。electronFuses.test.ts は設定 JSON を読むだけ。直すなら build ジョブの各 OS の出力で fuse を読み smoke-packaged の fuseProblems で照合。台帳の crown-jewels の記述も実際に合わせる。"
     },
     {
       "surface": "supply-chain",
@@ -3829,6 +3839,26 @@
     {
       "item": "AI-6 の同類: skills/run-skill の prompt と Slack/Gmail の『Emotions で分析』(第三者の文)が危機の判定を通らずに外部のモデルへ届く",
       "finding": "T-208 で skills の指示文(利用者自身の言葉)を送る前に止めた。Slack/Gmail は送る物がチャンネル名・件名・送信者の第三者の文で、利用者に窓口を出すのは筋違いなので止めない(判断)。",
+      "checkedOn": "2026-10-28"
+    },
+    {
+      "item": "workflow_run / issue_comment / id-token: write と docker:// イメージの固定は lint:workflow-security が見ない (パス 524 の監査役の指摘)",
+      "finding": "台帳が古かった。実物の lint:workflow-security は 2026-10-24 から workflow_run / issue_comment / pull_request_review(_comment) / discussion(_comment) を特権つきの起動条件として断り (privTrigger)、docker:// はダイジェスト固定を要求する (T-120 / T-123)。実物の 7 本に 0 件。残るのは id-token: write の job 権限で、それは台帳 (pages.yml の deploy) で見ている。",
+      "checkedOn": "2026-10-28"
+    },
+    {
+      "item": "検査 job と署名 job が同一 runner (release.yml の Build が npm test / verify:all と同じ job)",
+      "finding": "台帳が古かった。T-144 (2026-10-20) で release.yml は検査を secrets 無しの verify job (3 OS) に分け、build は needs: verify で別の runner に居る。releaseJobSplit.test.ts が構造を留める。",
+      "checkedOn": "2026-10-28"
+    },
+    {
+      "item": ".gitattributes (linguist-generated / -diff) で PR の diff を折り畳める",
+      "finding": "T-210 で .gitattributes を置いた (生成物 3 本だけ linguist-generated)。gitattributesGenerated.test.ts が台帳と両方向に突き合わせ、レビューの要る木を覆う行を落とす。",
+      "checkedOn": "2026-10-28"
+    },
+    {
+      "item": "release.yml の build 側で梱包物の fuse を @electron/fuses で読み、electron-builder.json と照合していない(crown-jewels の『毎回確かめる』は e2e.yml の手動・ラベル実行だけ)",
+      "finding": "T-209 で release.yml の build が Build の直後に scripts/verify-packaged-fuses.cjs を通す (梱包物から fuse を読んで照合・0 件なら落ちる)。手元の linux-unpacked で RunAsNode を on に書き換えると exit 1 を実測。crown-jewels の detect 層の記述も実物に合わせた。",
       "checkedOn": "2026-10-28"
     }
   ]

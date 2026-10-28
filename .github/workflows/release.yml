@@ -160,6 +160,14 @@ jobs:
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
 
+      # 梱包物に焼き込まれた fuse を、署名して公開する前に electron-builder.json と照合する (threat: T-209)。
+      # fuse は「主プロセスでのコード実行」を防ぐ層 (RunAsNode の無効化・onlyLoadAppFromAsar ほか) だが、
+      # 焼き込まれたかを見ていたのは手動・ラベル実行の smoke:packaged だけで、この job は読まずに公開していた。
+      # 設定 JSON を読む検査には映らない (electron-builder が黙って飛ばす形) ので、梱包物そのものから読む。
+      # 1 つも見つからなければ落ちる (読む物が無かったことを「食い違いが無かった」と混ぜない)。
+      - name: Verify the packaged fuses match electron-builder.json
+        run: npm run verify:packaged-fuses
+
       # electron-builder は「失敗せずに何も出さない」ことがある (target 設定の
       # 取り違え、arch の取りこぼしなど)。下の softprops は
       # fail_on_unmatched_files: false なので、そのまま **配布物ゼロでも緑**に
