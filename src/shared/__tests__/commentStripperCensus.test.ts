@@ -291,6 +291,7 @@ const MIGRATED: readonly string[] = [
   'src/shared/__tests__/finiteShapeGuards.test.ts',
   'src/shared/__tests__/hostChromeColorCensus.test.ts',
   'src/shared/__tests__/hostInterpolationCensus.test.ts',
+  'src/shared/__tests__/huntCycle.test.ts',
   'src/shared/__tests__/importRequestsPath.test.ts',
   'src/shared/__tests__/inTestModuleLoadCensus.test.ts',
   'src/shared/__tests__/jsonBodyCensus.test.ts',
