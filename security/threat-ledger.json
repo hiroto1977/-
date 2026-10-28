@@ -54,10 +54,19 @@
             "scripts/crown-jewels.cjs",
             "src/shared/__tests__/crownJewels.test.ts"
           ]
+        },
+        {
+          "what": "狩りの輪を回す側: 週 1 の予約が次の面を brief で決めて狩り、4 段の記録を record で台帳へ、止まれば毎日の報告が要対応に出す (起動・記録まで自動。マージは人)",
+          "enforcedBy": [
+            "scripts/hunt-cycle.cjs",
+            "security/hunt-cycles.json",
+            "docs/HUNT_CYCLE_PROMPT.md",
+            "src/shared/__tests__/huntCycle.test.ts"
+          ]
         }
       ],
       "gaps": [
-        "狩りの起動 (監査役) は人が回す。止まったことは毎日検知して Issue に出すが、自動で狩らないのは利用料が掛かる判断だから (docs/THREAT_HUNT.md の『回す頻度』)。"
+        "予約そのもの (Claude Code の予定実行) はリポジトリの外に在り、止まったことは検知できる (毎日の報告 · 14 日) が、リポジトリの中から再び動かすことはできない。マージも人 —— 対策が main に入るまでの時間は人のレビューに依る。"
       ]
     },
     {
@@ -3545,6 +3554,21 @@
       "regression": {
         "file": "src/main/__tests__/secretsCredentialTtl.test.ts",
         "test": "★ 有効時間を過ぎた鍵は読まずに消し、理由を言う (使い捨て · threat: T-213)"
+      }
+    },
+    {
+      "id": "T-214",
+      "found": "2026-10-28",
+      "foundBy": "利用者の指示「探索→解析→対策→報告を繰り返す仕組みを仕込んで」を受けて、守りを増やす輪の『起動と記録』の側を測った —— 姿勢の測定 (T-167) は次に狩る面を導くが、狩りを起動するのは人で (docs/THREAT_HUNT.md「回す頻度」は『予約していない』と明記)、輪が回ったこと (いつ・どの面を・何を直し・どこへ報告したか) を数える台帳も無かった。人が忘れれば止まり、止まった面の検知 (21 日) まで誰にも見えない。",
+      "surface": "supply-chain",
+      "class": "ai-automated-attack",
+      "severity": "medium",
+      "title": "狩りの輪 (探索 → 解析 → 対策 → 報告) は起動が人任せで、回ったことを記録する物も無かった —— 攻撃側の AI は止まらないので、人が忘れた週から守りが古くなる",
+      "status": "fixed",
+      "fix": "scripts/hunt-cycle.cjs: brief が台帳・姿勢・過去の周から次に狩る面を決定的に決め (止まった面 → 最後に狩った日が最も古い面 → 収穫)、その面の手順書の節・狩り残し・再確認の期限・記録の雛形を 1 枚にする。record は 1 周の記録を 4 段すべて検めてから security/hunt-cycles.json へ足す (解析・対策の穴は脅威台帳に実在する id、対策に挙げられるのは閉じた物だけ、確認した穴は対策に在る、報告は PR 番号か出さなかった理由)。status は最後の周から cadence (7 日) × 2 で『止まった』と言い、毎日の dependency-audit が同じ測定を報告に載せて要対応として常設 Issue に出す。起動は Claude Code の予約 (週 1・新しいセッション・指示文は docs/HUNT_CYCLE_PROMPT.md と同じ物) で、指示文は 4 段を道具と同じ順で名指しし draft PR までで止まる (マージは人)。限界: 予約そのものはリポジトリの外 (Claude Code の予定実行) に在り、止めるのは利用者の判断 —— 止まれば Issue が言う。費用は 1 周 = 1 セッション分。",
+      "regression": {
+        "file": "src/shared/__tests__/huntCycle.test.ts",
+        "test": "★ 4 段そろった記録は通り、段を 1 つでも落とすと断る (飛ばした段は記録できない)"
       }
     }
   ],

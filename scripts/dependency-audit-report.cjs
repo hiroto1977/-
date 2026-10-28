@@ -58,6 +58,7 @@ const { runThreatWatch, renderWatch, watchActionable, realIo } = require('./thre
 const { analyzePosture, renderPosture } = require('./security-posture.cjs');
 const { analyzeCrownJewels, renderCrownJewels, realExists } = require('./crown-jewels.cjs');
 const { analyzeLanguageCoverage, renderLanguageCoverage, launchersOf, trackedFiles } = require('./language-coverage.cjs');
+const { loopStatus, renderLoop } = require('./hunt-cycle.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const OUT = path.join(REPO_ROOT, 'orchestration', 'dependency-audit.json');
@@ -194,6 +195,7 @@ function buildReport({ all, prod, floors, pins, watch, map, posture, generatedAt
     ...(postureOk ? [renderPosture(posture), ''] : []),
     ...(postureOk && posture.jewels ? [renderCrownJewels(posture.jewels), ''] : []),
     ...(postureOk && posture.languages ? [renderLanguageCoverage(posture.languages), ''] : []),
+    ...(postureOk && posture.loop ? [renderLoop(posture.loop), ''] : []),
     ...(problems.length === 0 ? [] : ['### 測れなかった項目', '', ...problems.map((p) => `- ${p}`), '']),
     '手順は `docs/SECURITY_AUDIT.md` の「依存の勧告」。床の台帳は ' +
       '`scripts/lint-dependencies.cjs` の `SECURITY_FLOORS`、測り直しは `npm run audit:floors`。',
@@ -378,12 +380,15 @@ function derivePosture(now) {
             launchersOf(REPO_ROOT),
             realExists(REPO_ROOT),
           );
+    // 狩りの輪 (T-214): 探索 → 解析 → 対策 → 報告 が回っているか。cadence × 2 日止まれば要対応。
+    const loop = loopStatus(JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'security', 'hunt-cycles.json'), 'utf8')), now);
     return {
       ...posture,
       jewels,
       languages,
-      problems: [...posture.problems, ...jewels.problems, ...languages.problems],
-      actionable: posture.actionable + jewels.actionable + languages.actionable,
+      loop,
+      problems: [...posture.problems, ...jewels.problems, ...languages.problems, ...loop.problems],
+      actionable: posture.actionable + jewels.actionable + languages.actionable + loop.actionable,
     };
   } catch {
     return null;

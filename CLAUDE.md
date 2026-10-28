@@ -1141,6 +1141,19 @@ npm run audit:security-posture  # **「次はどこを狩るか」を台帳か�
                          #   狩りの起動 (監査役) は利用料が掛かるので `docs/THREAT_HUNT.md` の手順で人が回す。
                          #   読めない物 (暦に無い日付・台帳に無い面) は 0 件と混ぜない。
                          #   判定は `shared/__tests__/securityPosture.test.ts` が毎回の npm test で見る
+npm run hunt:cycle -- brief|record <json>|status  # **探索 → 解析 → 対策 → 報告 の輪を止まらずに回す**
+                         #   (2026-10-28 · threat: T-214)。姿勢の測定 (上) は「次はどこを狩るか」までで、
+                         #   **起動は人任せ・回ったことを数える物も無かった** (`docs/THREAT_HUNT.md` は
+                         #   『予約していない』と明記していた)。`brief` が台帳・姿勢・過去の周から**次に狩る面を
+                         #   決定的に決め** (止まった面 → 最後に狩った日が最も古い面 → 収穫)、その面の手順書の節・
+                         #   狩り残し・再確認の期限・記録の雛形を 1 枚にする。`record` は 1 周の記録を **4 段すべて**
+                         #   検めてから `security/hunt-cycles.json` へ足す (穴は脅威台帳に実在する id・対策は閉じた物だけ・
+                         #   確認した穴は対策に在る・報告は PR 番号か出さなかった理由)。`status` は最後の周から
+                         #   cadence (7 日) × 2 で「止まった」と言い、**毎日の dependency-audit が同じ測定を載せて
+                         #   要対応として常設 Issue に出す**。起動は Claude Code の予約 (週 1 · 新しいセッション ·
+                         #   指示文は `docs/HUNT_CYCLE_PROMPT.md` と同じ物)。自動なのは検知・順位づけ・起動・解析・
+                         #   対策の提案 (draft PR)・記録まで —— **マージは人が決める**。1 周 = 1 セッション分の利用料。
+                         #   判定・実物の台帳の再生・配線・指示文と道具の一致は `shared/__tests__/huntCycle.test.ts`
 npm run audit:crown-jewels  # **確率に依らない守り**(2026-10-23 · T-169)。守る物 5 つ(security/crown-jewels.json)ごとに
                          #   防ぐ・封じ込める・気付く・戻すの 4 層が別々の強制物で揃うかを見る。毎日の dependency-audit が同じ測定を載せる。
                          #   判定は src/shared/__tests__/crownJewels.test.ts が npm test で見る。docs/ZERO_TRUST.md §2.9
