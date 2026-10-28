@@ -3074,6 +3074,14 @@
       "leafCount": 127,
       "note": "update release.yml,verify-packaged-fuses.cjs",
       "hash": "45ba43efd4ea545a6d0134e58c7f6c3c012945020bc58fc108ba713ec650f680"
+    },
+    {
+      "index": 368,
+      "prevHash": "45ba43efd4ea545a6d0134e58c7f6c3c012945020bc58fc108ba713ec650f680",
+      "merkleRoot": "47d1f344c9792a23bb3abda8a0b42911369c946e8ad3dd2ee230b3fc67d100f0",
+      "leafCount": 127,
+      "note": "update redact.ts",
+      "hash": "f39acc52fd3e09fc5ead324e36a06c556f43f1e4ee35485765e62ad25c1c65d9"
     }
   ],
   "tipManifest": {
@@ -3193,7 +3201,7 @@
     "src/shared/ollama.ts": "672ff00261aa63ae7e0b7567dbfaa54ad88da67a5fa55788c79b16c1bd6193c8",
     "src/shared/privateTarget.ts": "8610e3372367a7960faddf306c9e4210e882a1719bbf4426840191c314ed8035",
     "src/shared/proxyEndpoint.ts": "e43b36c93eeaf5515b474fa5be4ab3f070cb13f616382a5f636db711df0f995e",
-    "src/shared/redact.ts": "0f87ac977c493be02ba33bdc7550585215b9b008753c917fb9b446a90e6a725f",
+    "src/shared/redact.ts": "a3f60f9dafc8915c79bf5bbc0b42c88a116a65e5d4efe1f53082afc1c81cdaec",
     "src/shared/safeFilename.ts": "f84d319b882db4768b70c03d8c61b62e0dbaee9226d891cc100091c9c62b7f3e",
     "src/shared/scanTarget.ts": "c6c887034c33e3f3d22a590e2dc86177fc21312ede7e3f4a0581ec6d5d1e6132",
     "src/shared/tokenInput.ts": "d1c869c86e057639de7b110d2fbdc56dcaf51ce20aa6b17a195b76a5001ba287",

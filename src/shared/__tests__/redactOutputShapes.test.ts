@@ -279,3 +279,82 @@ describe('redactSecrets — 線上の `名前: 値` と接頭辞つきの鍵 (�
     expect(redactSecrets(`k=gsk_${'B'.repeat(30)}`)).toBe('k=gsk_[REDACTED]');
   });
 });
+
+/**
+ * **伏字の精度 —— 漏れる側と伏せすぎる側を同じ表で留める** (2026-10-28 · threat: T-212)。
+ *
+ * 実測 (直す前・実物の `redactSecrets` に 28 形): 発行元の分かる接頭辞を持たない鍵が
+ * `cookie:` / `set-cookie:` / `client_secret:` の線上・`"private_key"` / `"secret_key"` / `"api_token"` ほかの
+ * JSON の鍵・URL の userinfo・2 段の接頭辞を持つ環境変数 (`CSC_KEY_PASSWORD=`) に載ると **15 形が素通り**した。
+ * 逆に裸の `Basic ` の規則は本体を `[^\s"'…]{16,}` で取っていたので日本語を飲み、出荷コードの文字列リテラル
+ * 95,637 本のうち学術コーパスの散文 2 本 (「（Basic Books、1977年）…」) を伏せていた。
+ * 漏れを塞ぐだけだと伏せすぎが増えるので、**伏せてはいけない側**も同じ表に置く。
+ */
+describe('redactSecrets — 精度: 名前の手がかりだけを持つ秘密と、伏せてはいけない散文 (出力全文 · threat: T-212)', () => {
+  const V = 'A1b2C3d4E5f6G7h8I9j0K1l2M3n4O5p6';
+  it.each([
+    ['cookie: は行の残りを丸ごと伏せる (2 つ目以降の対も残さない)', `cookie: session=${V}; other=${V}`, 'cookie: [REDACTED]'],
+    ['Set-Cookie: も同じ (大文字小文字を問わない)', `Set-Cookie: sid=${V}; Path=/; HttpOnly`, 'Set-Cookie: [REDACTED]'],
+    ['"cookie" の JSON の鍵', `{"cookie":"sid=${V}"}`, '{"cookie":"[REDACTED]"}'],
+    ['"private_key" の JSON の鍵', `{"private_key":"${V}"}`, '{"private_key":"[REDACTED]"}'],
+    ['"secret_key" の JSON の鍵', `{"secret_key":"${V}"}`, '{"secret_key":"[REDACTED]"}'],
+    ['"signing_secret" の JSON の鍵', `{"signing_secret":"${V}"}`, '{"signing_secret":"[REDACTED]"}'],
+    ['"api_token" / "session_token" / "bearer_token" の JSON の鍵', `{"api_token":"${V}","session_token":"${V}","bearer_token":"${V}"}`, '{"api_token":"[REDACTED]","session_token":"[REDACTED]","bearer_token":"[REDACTED]"}'],
+    ['"passwd" の JSON の鍵', `{"passwd":"${V}"}`, '{"passwd":"[REDACTED]"}'],
+    ['camelCase の鍵 (clientSecret / accessToken) は区切りが無くても伏せる', `{"clientSecret":"${V}","accessToken":"${V}"}`, '{"clientSecret":"[REDACTED]","accessToken":"[REDACTED]"}'],
+    ['client_secret: の線上の形', `client_secret: ${V}`, 'client_secret: [REDACTED]'],
+    ['private_key: / secret_key: の線上の形', `private_key: ${V} secret_key: ${V}`, 'private_key: [REDACTED] secret_key: [REDACTED]'],
+    ['accessToken: の線上の形', `accessToken: ${V}`, 'accessToken: [REDACTED]'],
+    ['URL の userinfo はパスワードだけ伏せ、利用者名と host は残す', `fetch failed: https://user:${V}@api.example.com/x`, 'fetch failed: https://user:[REDACTED]@api.example.com/x'],
+    ['接頭辞が 2 段の環境変数 (CSC_KEY_PASSWORD=) も伏せる', `CSC_KEY_PASSWORD=${V}`, 'CSC_KEY_PASSWORD=[REDACTED]'],
+    ['接頭辞が 3 段でも伏せる', `APPLE_APP_SPECIFIC_PASSWORD=${V}`, 'APPLE_APP_SPECIFIC_PASSWORD=[REDACTED]'],
+    ['裸の Basic は ASCII の本体を伏せる (狭めても漏れは増えない)', `Basic ${V}`, 'Basic [REDACTED]'],
+    ['裸の Bearer は JWT の形 (ドット入り) も丸ごと伏せる', `Bearer abc.def.${V}`, 'Bearer [REDACTED]'],
+  ])('★ %s', (_label, input, expected) => {
+    expect(redactSecrets(input)).toBe(expected);
+  });
+
+  it.each([
+    ['"token_type":"Bearer" (方式の名前は秘密ではない)', '{"token_type":"Bearer","expires_in":"3600"}'],
+    ['Jira の課題キー "key":"PROJ-123" (資格情報ではない)', '{"key":"PROJ-123","id":"10001"}'],
+    ['学術コーパスの散文「（Basic Books、1977年）」(直す前は伏せていた)', '『Men and Women of the Corporation』（Basic Books、1977年）で提唱した'],
+    ['英文の説明 "Invalid token: expired" (値ではなく説明)', 'Invalid token: expired at 2026-01-01'],
+    ['userinfo の無い URL', 'https://api.example.com/x?a=b'],
+    ['メールアドレスの @ は userinfo ではない', 'contact: foo@example.com'],
+    ['"cookie_consent":"accepted" (鍵の尻尾が cookie でない)', '{"cookie_consent":"accepted"}'],
+    ['"tokenizer":"gpt2" (鍵の尻尾が token でない)', '{"tokenizer":"gpt2"}'],
+  ])('★ 伏せない: %s', (_label, input) => {
+    expect(redactSecrets(input)).toBe(input);
+  });
+});
+
+/**
+ * **出荷する散文 (確証つき知識コーパス) は、伏字に通しても 1 字も変わらない。**
+ * 規則を広げるたびにここが過剰伏字の母集団になる (実測 2026-10-28: 直す前は 2 本が変わっていた)。
+ * 文字列リテラルの数に床を置き、走査が死んで「0 本変わった」にならないようにする。
+ */
+describe('redactSecrets — 過剰伏字の母集団: 知識コーパスの文字列リテラル (threat: T-212)', () => {
+  it('★ renderer/data/*Knowledge.ts の文字列リテラルは伏字で 1 本も変わらない', async () => {
+    const { readOriginalSource } = await import('./originalSource');
+    const { readdirSync } = await import('node:fs');
+    const path = await import('node:path');
+    const dir = path.resolve(__dirname, '../../renderer/data');
+    const files = readdirSync(dir).filter((f) => /Knowledge\.ts$/.test(f));
+    expect(files.length).toBeGreaterThanOrEqual(5);
+    const changed: string[] = [];
+    let literals = 0;
+    for (const f of files) {
+      const text = readOriginalSource(path.join(dir, f));
+      const re = /'((?:[^'\\\n]|\\.)*)'|"((?:[^"\\\n]|\\.)*)"/g;
+      let m: RegExpExecArray | null;
+      while ((m = re.exec(text)) !== null) {
+        const s = m[1] ?? m[2] ?? '';
+        if (s.length < 8) continue;
+        literals += 1;
+        if (redactSecrets(s) !== s) changed.push(`${f}: ${s.slice(0, 80)}`);
+      }
+    }
+    expect(literals).toBeGreaterThanOrEqual(20_000);
+    expect(changed).toEqual([]);
+  });
+});

@@ -3516,6 +3516,21 @@
         "file": "src/shared/__tests__/releaseJobSplit.test.ts",
         "test": "★ secrets を参照する行は、build の Build step の env: の行と両方向で一致する (threat: T-211)"
       }
+    },
+    {
+      "id": "T-212",
+      "found": "2026-10-28",
+      "foundBy": "伏字 (redact.ts) に、このアプリが預かる・配る物が実際に取りうる 28 形を裸で通して数えた。15 形が素通りし、逆に出荷コードの文字列リテラル 95,637 本に通すと学術コーパスの散文 2 本が伏せられていた (精度は両方向で測る)",
+      "surface": "network",
+      "class": "ssrf-and-credential-egress",
+      "severity": "medium",
+      "title": "伏字は発行元の分かる接頭辞とヘッダ名の列挙にしか当たらず、cookie / set-cookie の線上・\"private_key\" / \"secret_key\" / \"api_token\" ほか名前だけが手がかりの JSON の鍵・URL の userinfo のパスワード・2 段以上の接頭辞を持つ環境変数 (CSC_KEY_PASSWORD=) の 15 形を素通りさせ、一方で裸の `Basic ` は日本語の散文まで伏せていた",
+      "status": "fixed",
+      "fix": "redact.ts の規則を 5 か所広げ・狭めた: ① JSON の鍵は `(接頭辞)?(token|secret|password|passwd|passphrase|cookie)` と private_key / secret_key / set-cookie (camelCase も) ② 線上の形に client_secret / signing_secret / private_key / secret_key / *_token を足す ③ cookie / set-cookie は行の残りを丸ごと伏せる (`\\S+` では 2 つ目以降の対が残る) ④ URL の userinfo はパスワードだけ伏せる ⑤ 環境変数の接頭辞を 3 段まで。逆に裸の Bearer / Basic の本体を ASCII の token 字に限り、散文を飲まなくした。redactOutputShapes.test.ts が伏せる 17 形と伏せてはいけない 8 形を出力全文で留め、知識コーパスの文字列リテラル (床 20,000 本) が 1 本も変わらないことを母集団として留める。対照 6 方向 (規則を 1 つずつ戻す) すべて狙った検査に当たる。lint:regex 緑。限界: 名前の手がかりも接頭辞も無い裸の値は今も伏せられない (設計上の限界・redactionCoverage.test.ts が記録)。cookie が失敗の文へ流れる道は配る Worker の outHeaders に在り、アプリ自身の要求は cookie を送らない。",
+      "regression": {
+        "file": "src/shared/__tests__/redactOutputShapes.test.ts",
+        "test": "★ renderer/data/*Knowledge.ts の文字列リテラルは伏字で 1 本も変わらない"
+      }
     }
   ],
   "huntBacklog": [

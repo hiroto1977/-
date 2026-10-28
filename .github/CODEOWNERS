@@ -253,6 +253,7 @@
 /src/renderer/data/__tests__/collectionRowBoundCensus.test.ts @hiroto1977
 /src/main/fileRequestGate.ts @hiroto1977
 /src/shared/__tests__/sessionContextUntrusted.test.ts @hiroto1977
+/src/shared/__tests__/redactOutputShapes.test.ts @hiroto1977
 /src/shared/__tests__/releaseJobSplit.test.ts @hiroto1977
 /src/shared/__tests__/workflowStructureGate.test.ts @hiroto1977
 /src/shared/__tests__/shellGateWitness.test.ts @hiroto1977

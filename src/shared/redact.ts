@@ -149,7 +149,7 @@ export function redactSecrets(input: string): string {
       // 出力が違うものは 0、漏れの有無も一致。**書いても効かない指定は、
       // 効いているように読める分だけ害がある** (変異検査でも生存し続ける)。
       .replace(
-        /\b(authorization|api-?key|proxy-auth|shared-?secret|auth-token|subscription-key)(\s*:\s*)(?:(Bearer|Basic|Token|Bot|OAuth|Digest|Negotiate)\s+)?\S+/gi,
+        /\b(authorization|api-?key|proxy-auth|shared-?secret|auth-token|subscription-key|client[_-]?secret|signing[_-]?secret|private[_-]?key|secret[_-]?key|(?:access|refresh|session|api|bearer)[_-]?token)(\s*:\s*)(?:(Bearer|Basic|Token|Bot|OAuth|Digest|Negotiate)\s+)?\S+/gi,
         (_m, name: string, sep: string, scheme?: string) => hideValue(name, sep, scheme),
       )
       // ヘッダ名が付いていない裸の `Bearer …` / `Basic …`。16 字以上に限る。
@@ -157,7 +157,21 @@ export function redactSecrets(input: string): string {
       // ような**英文を伏せてしまうと、読めば分かるはずの 401 の説明が消える**。
       // 区切り文字を値から除いてあるので、伏せたあとの `[REDACTED]` (10 字)
       // に再び当たることもない (`[` も除外文字に入っている)。
-      .replace(/\b(Bearer|Basic)\s+[^\s"'\\,;)[\]}]{16,}/g, '$1 [REDACTED]')
+      // 本体は ASCII の token 字 (base64 / base64url / JWT / 英数の鍵) に限る (2026-10-28 · threat: T-212) ——
+      // 以前の `[^\s"'…]{16,}` は日本語も飲み、学術コーパスの「（Basic Books、1977年）…」を伏せていた
+      // (実測: 出荷コードの文字列リテラル 95,637 本のうち散文 2 本)。実在の資格情報は全部 ASCII なので
+      // 狭めても漏れは増えない。
+      .replace(/\b(Bearer|Basic)\s+[A-Za-z0-9+/=._~-]{16,}/g, '$1 [REDACTED]')
+      /*
+       * **cookie / set-cookie は行の残りを丸ごと伏せる** (2026-10-28 · threat: T-212)。値は `a=1; b=2` と
+       * 空白を含むので `\S+` では 2 つ目以降が残る。利用者が配る Worker は上流の応答ヘッダを封筒に
+       * そのまま写す (`docs/PROXY_EXAMPLE.md` の `outHeaders`) ので、`set-cookie` が失敗の文へ
+       * 流れる道は Worker の側に在る。
+       */
+      .replace(/\b(set-cookie|cookie)(\s*:\s*)[^\r\n"'`]+/gi, (_m, name: string, sep: string) => `${name}${sep}[REDACTED]`)
+      // URL の userinfo (`https://user:pass@host`)。利用者が打つ基底 URL や BYO proxy の URL が失敗の文へ
+      // 入るとき、パスワードの側だけ伏せる (利用者名は原因究明に要るので残す)。
+      .replace(/(:\/\/[^\s/:@"'`]+:)[^\s/@"'`]+(@)/g, '$1[REDACTED]$2')
       /*
        * **プラットフォーム自身のエラー文面 —— ヘッダ名を持たない引用。**
        *
@@ -346,7 +360,7 @@ export function redactSecrets(input: string): string {
       // like `{"error_description":"Token \"ATATT3xFfGF0…\" rejected"}`
       // would only redact `Token \` and leave the secret in the rest.
       .replace(
-        /"(access[_-]?token|refresh[_-]?token|id[_-]?token|token|api_key|apikey|client_?secret|shared_?secret|password)"\s*:\s*"(?:[^"\\]|\\.)*"/gi,
+        /"((?:[a-z0-9]+[_-]?)?(?:token|secret|password|passwd|passphrase|cookie)|api_key|apikey|private[_-]?key|secret[_-]?key|set-cookie)"\s*:\s*"(?:[^"\\]|\\.)*"/gi,
         '"$1":"[REDACTED]"',
       )
       /*
@@ -435,7 +449,7 @@ export function redactSecrets(input: string): string {
        * **これは深さの守りで、塞いだのは運び手の残り半分である。**
        */
       .replace(
-        /(^|[?&\n])((?:[a-z0-9]+[_-])?(?:api[_-]?key|access[_-]?token|refresh[_-]?token|client[_-]?secret|code[_-]?verifier|token|secret|password|auth|key))(=)([^&\s"'`#<>]{8,})/gi,
+        /(^|[?&\n])((?:[a-z0-9]+[_-]){0,3}(?:api[_-]?key|access[_-]?token|refresh[_-]?token|client[_-]?secret|code[_-]?verifier|token|secret|password|auth|key))(=)([^&\s"'`#<>]{8,})/gi,
         (_m, lead: string, name: string, eq: string) => `${lead}${name}${eq}[REDACTED]`,
       )
   );
