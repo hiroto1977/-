@@ -104,7 +104,8 @@ export const SECRET_SHAPES: readonly { readonly id: string; readonly re: RegExp 
  * 組織固有の止める形 (正規表現)。**既定は空** —— 顧客コードの形は組織ごとに違い、
  * ここに手で足す (次の段階で設定画面から入れられるようにする)。
  */
-export const CUSTOM_DENY_PATTERNS: readonly { readonly id: string; readonly re: RegExp }[] = [];
+export type CustomDenyPatterns = readonly { readonly id: string; readonly re: RegExp }[];
+export const CUSTOM_DENY_PATTERNS: CustomDenyPatterns = [];
 
 /**
  * 正当に資格情報を運ぶ欄 (`service/action` → 欄名)。検めない。
@@ -120,35 +121,45 @@ export const CREDENTIAL_PAYLOAD_FIELDS: Readonly<Record<string, { readonly field
   'shopify/sync-to-stripe': { fields: ['token'], why: 'Stripe の secret key を payload で受ける (shopify.ts)。' },
 };
 
+// Stryker disable next-line ArrayDeclaration: 空の一覧の中身へ届く欄名は無い (検める欄を 1 つも飛ばさない、が意味)
+const NO_SKIP: readonly string[] = [];
+
 /** マイナンバー (12 桁) の検査数字 —— 番号法施行令 §8: Q_n = n ≦ 6 ? n + 1 : n − 5。 */
 export function isValidMyNumber(digits: string): boolean {
-  if (!/^\d{12}$/.test(digits)) return false;
+  // 計算は正規表現が切り出した 11 桁 + 検査数字だけから行う (入力の添字を直に読むと、
+  // 錨を落とした形 —— 前後に字が付いた並び —— が同じ答えを出してしまう)。
+  const m = /^(\d{11})(\d)$/.exec(digits);
+  if (m === null) return false;
+  const body = m[1]!;
   let sum = 0;
   for (let n = 1; n <= 11; n++) {
-    const p = Number(digits[11 - n]);
+    const p = Number(body[11 - n]);
     const q = n <= 6 ? n + 1 : n - 5;
     sum += p * q;
   }
   const r = sum % 11;
   const check = r <= 1 ? 0 : 11 - r;
-  return Number(digits[11]) === check;
+  return Number(m[2]) === check;
 }
+
+/** 2 倍した桁の各桁の和 (Luhn)。比較を持たない表にする —— `d > 9` の境目は偶数の 2 倍には存在しない。 */
+const DOUBLED = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9] as const;
 
 /** Luhn (mod 10)。 */
 export function passesLuhn(digits: string): boolean {
-  if (!/^\d{12,19}$/.test(digits)) return false;
+  const m = /^(\d{12,19})$/.exec(digits);
+  if (m === null) return false;
+  // 和は mod 10 で持ち続ける (符号を反転しても割り切れるかは変わらないので、素の和では
+  // `+=` → `-=` が観測できない)。
   let sum = 0;
   let double = false;
-  for (const ch of [...digits].reverse()) {
-    let d = Number(ch);
-    if (double) {
-      d *= 2;
-      if (d > 9) d -= 9;
-    }
-    sum += d;
+  for (const ch of [...m[1]!].reverse()) {
+    const d = Number(ch);
+    // Stryker disable next-line ArithmeticOperator: 和を −和 に替えても 10 で割り切れるかは変わらない (等価)
+    sum = (sum + (double ? DOUBLED[d]! : d)) % 10;
     double = !double;
   }
-  return sum % 10 === 0;
+  return sum === 0;
 }
 
 /** 主要ブランドの先頭 (Visa / Mastercard / Amex / JCB / Discover / Diners)。 */
@@ -156,7 +167,7 @@ export function passesLuhn(digits: string): boolean {
 const CARD_PREFIX = /^(?:4\d{15}(?:\d{3})?|5[1-5]\d{14}|2(?:2[2-9]\d|[3-6]\d{2}|7[01]\d|720)\d{12}|3[47]\d{13}|35(?:2[89]|[3-8]\d)\d{12}|6(?:011|5\d{2})\d{12}|3(?:0[0-5]|[68]\d)\d{11})$/;
 
 /** 文の中の「数字の並び」(空白・ハイフン区切りを許す) を 1 つずつ取り出す。 */
-function digitRuns(text: string): string[] {
+export function digitRuns(text: string): string[] {
   const out: string[] = [];
   // 数字と単独の区切り (空白 / ハイフン) の並びを 1 つの「走り」として取り、区切りで群に分ける。
   // 群の連続する並びのうち桁の合計が 12〜19 の物をすべて候補にする —— 「鍵 … 0123456789 1234-5678-9018」
@@ -164,21 +175,22 @@ function digitRuns(text: string): string[] {
   const re = /(?<!\d)\d(?:[ -]?\d){10,}(?!\d)/g;
   let m: RegExpExecArray | null;
   while ((m = re.exec(text)) !== null) {
-    const groups = m[0].split(/[ -]/).filter((g) => g.length > 0);
-    for (let i = 0; i < groups.length; i++) {
+    // 区切りは単独なので空の群は出ない (正規表現が `[ -]?\d` で 1 つしか許さない)。
+    const groups = m[0].split(/[ -]/);
+    groups.forEach((_, i) => {
       let digits = '';
-      for (let j = i; j < groups.length; j++) {
-        digits += groups[j];
+      for (const g of groups.slice(i)) {
+        digits += g;
         if (digits.length > 19) break;
         if (digits.length >= 12) out.push(digits);
       }
-    }
+    });
   }
   return out;
 }
 
 export function findMyNumber(text: string): boolean {
-  return digitRuns(text).some((d) => d.length === 12 && isValidMyNumber(d));
+  return digitRuns(text).some((d) => isValidMyNumber(d));
 }
 
 export function findCardNumber(text: string): boolean {
@@ -192,12 +204,12 @@ export function findSecret(text: string): boolean {
 }
 
 /** 1 つの文字列に当たる形を全部返す (順序は固定)。 */
-export function scanText(text: string): readonly OutboundFindingKind[] {
+export function scanText(text: string, custom: CustomDenyPatterns = CUSTOM_DENY_PATTERNS): readonly OutboundFindingKind[] {
   const found: OutboundFindingKind[] = [];
   if (findSecret(text)) found.push('secret');
   if (findMyNumber(text)) found.push('my-number');
   if (findCardNumber(text)) found.push('card-number');
-  if (CUSTOM_DENY_PATTERNS.some((p) => p.re.test(text))) found.push('custom');
+  if (custom.some((p) => p.re.test(text))) found.push('custom');
   return found;
 }
 
@@ -209,11 +221,12 @@ export type OutboundVerdict =
 /**
  * payload を歩き、文字列の葉を検める。`skipFields` はその action で資格情報を正当に運ぶ**最上位の**欄名。
  */
-export function scanPayload(payload: unknown, skipFields: readonly string[] = []): OutboundVerdict {
+export function scanPayload(payload: unknown, skipFields: readonly string[]): OutboundVerdict {
   const findings: OutboundFinding[] = [];
   let count = 0;
   let tooDeep = false;
   const walk = (v: unknown, path: string, depth: number, top: boolean): void => {
+    // Stryker disable next-line ConditionalExpression,LogicalOperator: 費用の短絡 —— 答えは末尾の判定 (tooDeep / count) が同じに決める
     if (tooDeep || count > MAX_SCANNED_STRINGS) return;
     if (depth > MAX_PAYLOAD_DEPTH) {
       tooDeep = true;
@@ -244,14 +257,8 @@ export function scanPayload(payload: unknown, skipFields: readonly string[] = []
     return { kind: 'unreadable', message: '送る内容が大きすぎる・深すぎるため、中身を検められません。送りません。' };
   }
   if (findings.length === 0) return { kind: 'clear' };
-  const seen = new Set<string>();
-  const parts: string[] = [];
-  for (const f of findings) {
-    const key = `${f.kind}@${f.path}`;
-    if (seen.has(key)) continue;
-    seen.add(key);
-    parts.push(`${f.label} (欄: ${f.path || '(全体)'})`);
-  }
+  // 同じ欄は 1 度しか歩かず、1 つの欄の中では scanText が種類を 1 度ずつ返すので、名指しは重ならない。
+  const parts = findings.map((f) => `${f.label} (欄: ${f.path || '(全体)'})`);
   return {
     kind: 'refused',
     findings,
@@ -269,7 +276,7 @@ export function scanPayload(payload: unknown, skipFields: readonly string[] = []
 export function outboundContentRefusal(serviceId: string, action: string, payload: unknown): string | null {
   const tier = tierOfAction(serviceId, action);
   if (!OUTBOUND_TIERS.has(tier)) return null;
-  const skip = CREDENTIAL_PAYLOAD_FIELDS[`${serviceId}/${action}`]?.fields ?? [];
-  const verdict = scanPayload(payload, skip);
+  const key = `${serviceId}/${action}`;
+  const verdict = scanPayload(payload, Object.hasOwn(CREDENTIAL_PAYLOAD_FIELDS, key) ? CREDENTIAL_PAYLOAD_FIELDS[key]!.fields : NO_SKIP);
   return verdict.kind === 'clear' ? null : verdict.message;
 }

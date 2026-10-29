@@ -321,18 +321,14 @@ export function isPlainPayload(payload: unknown): boolean {
  * 超える物は無いので、超えたら見せ方を工夫せず断る (fail closed)。数えるのは固定個数まで。
  */
 export function payloadTooWide(payload: unknown): boolean {
-  // null は `for…in` が 0 回で終わるので別に弾かない。配列と文字列などは欄を持つ物ではないので数えない。
-  if (typeof payload !== 'object' || Array.isArray(payload)) return false;
+  // null・配列・文字列などは欄を持つ物ではないので数えない。
+  if (payload === null || typeof payload !== 'object' || Array.isArray(payload)) return false;
   // 型付き配列・Map・Date などは `for…in` の前に断る (T-188): V8 の `for…in` は 25 欄で打ち切る前に
   // **全キーを列挙する**ので、2,000 万要素の Uint8Array 1 つで 7.6 秒・RSS 1 GB (実測)。
   if (!isPlainPayload(payload)) return true;
-  let n = 0;
-  for (const k in payload as Record<string, unknown>) {
-    if (!Object.hasOwn(payload as object, k)) continue;
-    n += 1;
-    if (n > MAX_FIELDS_SHOWN) return true;
-  }
-  return false;
+  // 自分の欄だけを数える (`for…in` + `hasOwn` の形は、平らな物では継承した欄が無いので
+  // `hasOwn` の門が等価になる —— 形ごと消した · パス 552)。
+  return Object.keys(payload as object).length > MAX_FIELDS_SHOWN;
 }
 
 /**

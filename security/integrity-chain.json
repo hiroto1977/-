@@ -3134,6 +3134,22 @@
       "leafCount": 131,
       "note": "update outboundContentGate.ts",
       "hash": "5d14b178bcaef1a3fa697701af789c7ae170b126868c3b02330368d16d82d7c6"
+    },
+    {
+      "index": 375,
+      "prevHash": "5d14b178bcaef1a3fa697701af789c7ae170b126868c3b02330368d16d82d7c6",
+      "merkleRoot": "f21529a2ab6b2fa4da9b17747c9e27351353917d9e21f019e71f7379a8e36e27",
+      "leafCount": 131,
+      "note": "update userPresence.ts,outboundContentGate.ts",
+      "hash": "5bbede6d884170b0089f67804b1e2a86c8bfbbcc86622effd4a3bbdafa31a0a6"
+    },
+    {
+      "index": 376,
+      "prevHash": "5bbede6d884170b0089f67804b1e2a86c8bfbbcc86622effd4a3bbdafa31a0a6",
+      "merkleRoot": "aeb6d4c7cec746e521d4d5a4e2d449ea415f19a488156f1713fb9634aab4d768",
+      "leafCount": 131,
+      "note": "update outboundContentGate.ts",
+      "hash": "aaa75718151fce6c375ac016d1cf825f976bd5d64ef228811da474fc1b5ae7be"
     }
   ],
   "tipManifest": {
@@ -3208,7 +3224,7 @@
     "src/main/secrets.ts": "6fa31f23ce7c7bdd5faa9c0e528be9ab4e0ca754052fe3e061499dac3e452d5a",
     "src/main/shellOpenGate.ts": "ff1c7841ac01426d30754f7a1f049a9a4a43788734e78b4b52a27ff6dfc1e2b7",
     "src/main/stateFile.ts": "984eebe8582b3c6c88669d17e778932f6b87a682640d1f162acd182d5947169b",
-    "src/main/userPresence.ts": "a7f34c28c99d3ade8ad83b0ce2af7227fadef7b67e01900f53409e71e0ba9b37",
+    "src/main/userPresence.ts": "9092ae077824586caa9f177185eb80c643f5ee77794a51e993b1b76ba17a064f",
     "src/main/windowOpen.ts": "c8a61aa3e51991590950c909beab67ec5261eef64f6b8ab6c9e67b61eb3de42d",
     "src/main/windowPrefs.ts": "0bccea9e29b489da1b4a7962eaa53e237cf93fed9d4692371a3a43a6a4985dee",
     "src/preload/preload.ts": "21fc645271dd2064f063fc439d888eb4dcef32d08d1030d92d9cb8ff2a4040a6",
@@ -3253,7 +3269,7 @@
     "src/shared/isoDate.ts": "cfe317b22c6b482c42bca40a9d19a5cbd3204b5cbace6e7336befe77690f01cd",
     "src/shared/localDate.ts": "9220ae751caf1637071d5804fb67d4629125bed1c4a9a7913fdd2968c5294da1",
     "src/shared/ollama.ts": "672ff00261aa63ae7e0b7567dbfaa54ad88da67a5fa55788c79b16c1bd6193c8",
-    "src/shared/outboundContentGate.ts": "d126a42ed8f69710262c9ff73c2e9dbc62252b1e27f57ba792ca4610d8eb1e10",
+    "src/shared/outboundContentGate.ts": "56f7383c0e56285d5cc6e7793b6574bf4327d6edb9352fb3a9cd3e16ddc33326",
     "src/shared/privateTarget.ts": "8610e3372367a7960faddf306c9e4210e882a1719bbf4426840191c314ed8035",
     "src/shared/promptInjection.ts": "e22df7ed00929fcf1770a76353a9b1adb44cdc50c5920ba5472144c065f24472",
     "src/shared/proxyEndpoint.ts": "e43b36c93eeaf5515b474fa5be4ab3f070cb13f616382a5f636db711df0f995e",

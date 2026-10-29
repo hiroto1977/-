@@ -14,6 +14,7 @@ import {
   MAX_SCANNED_CHARS,
   MAX_SCANNED_STRINGS,
   SECRET_SHAPES,
+  digitRuns,
   findCardNumber,
   findMyNumber,
   findSecret,
@@ -78,6 +79,20 @@ describe('マイナンバーの形', () => {
     expect(isValidMyNumber('1234567890123')).toBe(false);
   });
 
+  it('★ 12 桁ちょうどで前後に字が無いときだけ (切り出した桁から計算する)', () => {
+    expect(isValidMyNumber(MY_NUMBER + '0')).toBe(false);
+    expect(isValidMyNumber(MY_NUMBER + 'a')).toBe(false);
+    expect(isValidMyNumber('a' + MY_NUMBER)).toBe(false);
+    // 余り 0 と 1 は検査数字 0 (番号法施行令 §8 の「1 以下なら 0」)
+    expect(isValidMyNumber('000000000000')).toBe(true);
+    expect(isValidMyNumber('000000010430')).toBe(true);
+    expect(isValidMyNumber('000000010431')).toBe(false);
+  });
+
+  it('12 桁でも検査数字が合わなければ findMyNumber は当たらない', () => {
+    expect(findMyNumber('番号 123456789019')).toBe(false);
+  });
+
   it('空白・ハイフン区切りでも当たり、電話番号や注文番号には当たらない', () => {
     expect(findMyNumber('個人番号 1234 5678 9018')).toBe(true);
     expect(findMyNumber('1234-5678-9018')).toBe(true);
@@ -89,6 +104,23 @@ describe('クレジットカード番号の形', () => {
   it('Luhn', () => {
     expect(passesLuhn('4111111111111111')).toBe(true);
     expect(passesLuhn('4111111111111112')).toBe(false);
+  });
+
+  it('Luhn は数字だけ・12〜19 桁だけを受け、19 桁の Visa は当たる', () => {
+    expect(passesLuhn('4111 1111 1111 1111')).toBe(false);
+    expect(passesLuhn('4000000000000000006')).toBe(true);
+    expect(passesLuhn('40000000000000000060')).toBe(false);
+    // 錨 —— 前に字が付いた並びは当たらない (末尾の 19 桁だけを読まない)
+    expect(passesLuhn('a4000000000000000006')).toBe(false);
+    expect(findCardNumber('カード 4000000000000000006')).toBe(true);
+  });
+
+  it('数字の走り (digitRuns) —— 区切りの群の連続する並びのうち 12〜19 桁を全部', () => {
+    expect(digitRuns('a 1234 5678 9018 b')).toEqual(['123456789018']);
+    expect(digitRuns('1234-5678-9018-1234')).toEqual(['123456789018', '1234567890181234', '567890181234']);
+    expect(digitRuns('12345678901234567890')).toEqual([]);
+    expect(digitRuns('4000000000000000006')).toEqual(['4000000000000000006']);
+    expect(digitRuns('電話 090-1234-5678')).toEqual([]);
   });
 
   it('主要ブランドの先頭 + Luhn のときだけ当たる', () => {
@@ -108,7 +140,7 @@ describe('scanText / scanPayload', () => {
   });
 
   it('入れ子の欄も歩き、場所 (値ではない) を名指しする', () => {
-    const v = scanPayload({ messages: [{ role: 'user', content: `鍵 ${ANTHROPIC}` }], system: 'x' });
+    const v = scanPayload({ messages: [{ role: 'user', content: `鍵 ${ANTHROPIC}` }], system: 'x' }, []);
     expect(v.kind).toBe('refused');
     if (v.kind !== 'refused') throw new Error('unreachable');
     expect(v.findings).toEqual([{ kind: 'secret', path: 'messages[0].content', label: FINDING_LABELS.secret }]);
@@ -124,25 +156,58 @@ describe('scanText / scanPayload', () => {
     if (v.kind === 'refused') expect(v.findings.map((f) => f.path)).toEqual(['order.note']);
   });
 
-  it('深すぎる payload は「安全」と見なさず断る (読めない = 通さない)', () => {
-    let deep: unknown = 'x';
-    for (let i = 0; i <= MAX_PAYLOAD_DEPTH + 1; i++) deep = { a: deep };
-    expect(scanPayload(deep).kind).toBe('unreadable');
+  it('深さの境目 —— MAX_PAYLOAD_DEPTH までは読み、1 つ深いと「読めない」(物も配列も)', () => {
+    let ok: unknown = 'x';
+    for (let i = 0; i < MAX_PAYLOAD_DEPTH; i++) ok = { a: ok };
+    expect(scanPayload(ok, []).kind).toBe('clear');
+    expect(scanPayload({ a: ok }, []).kind).toBe('unreadable');
+    let arr: unknown = 'x';
+    for (let i = 0; i <= MAX_PAYLOAD_DEPTH; i++) arr = [arr];
+    const v = scanPayload(arr, []);
+    expect(v.kind).toBe('unreadable');
+    if (v.kind === 'unreadable') expect(v.message).toContain('検められません');
+  });
+
+  it('skipFields は最上位だけ —— 入れ子の物・配列の中の同じ欄名は検める', () => {
+    expect(scanPayload({ order: { token: SLACK } }, ['token']).kind).toBe('refused');
+    expect(scanPayload({ items: [{ token: SLACK }] }, ['token']).kind).toBe('refused');
+  });
+
+  it('最上位が文字列なら欄は「(全体)」と名乗る', () => {
+    const v = scanPayload(ANTHROPIC, []);
+    expect(v.kind).toBe('refused');
+    if (v.kind === 'refused') expect(v.message).toContain('(欄: (全体))');
+  });
+
+  it('複数の欄は「・」で並べ、文は値を持たない', () => {
+    const v = scanPayload({ a: ANTHROPIC, b: MY_NUMBER }, []);
+    expect(v.kind).toBe('refused');
+    if (v.kind === 'refused') {
+      expect(v.message).toContain(`${FINDING_LABELS.secret} (欄: a)・${FINDING_LABELS['my-number']} (欄: b)`);
+      expect(v.message).not.toContain(MY_NUMBER);
+    }
+  });
+
+  it('組織固有の形 (CUSTOM_DENY_PATTERNS) は足せば当たり、今日の台帳は空', () => {
+    const custom = [{ id: 'cust', re: /CUST-\d{4}/ }];
+    expect(scanText('顧客コード CUST-0001 を送ります', custom)).toEqual(['custom']);
+    expect(scanText('顧客コード CUST-0001 を送ります')).toEqual([]);
+    expect(FINDING_LABELS.custom.length).toBeGreaterThan(0);
   });
 
   it('大きすぎる文字列・多すぎる文字列は「安全」と見なさず断る (上限は文字で数える)', () => {
     const ok = 'あ'.repeat(MAX_SCANNED_CHARS);
-    expect(scanPayload({ note: ok }).kind).toBe('clear');
+    expect(scanPayload({ note: ok }, []).kind).toBe('clear');
     // 絵文字 1 字は 2 符号単位 —— 文字で数えるので上限ちょうどは通る
-    expect(scanPayload({ note: '😀'.repeat(MAX_SCANNED_CHARS) }).kind).toBe('clear');
-    expect(scanPayload({ note: ok + 'あ' }).kind).toBe('unreadable');
+    expect(scanPayload({ note: '😀'.repeat(MAX_SCANNED_CHARS) }, []).kind).toBe('clear');
+    expect(scanPayload({ note: ok + 'あ' }, []).kind).toBe('unreadable');
     const many = Array.from({ length: MAX_SCANNED_STRINGS }, () => 'x');
-    expect(scanPayload({ many }).kind).toBe('clear');
-    expect(scanPayload({ many: [...many, 'x'] }).kind).toBe('unreadable');
+    expect(scanPayload({ many }, []).kind).toBe('clear');
+    expect(scanPayload({ many: [...many, 'x'] }, []).kind).toBe('unreadable');
   });
 
   it('同じ欄の同じ形は 1 度だけ名指しする', () => {
-    const v = scanPayload({ note: `${ANTHROPIC} と ${ANTHROPIC}` });
+    const v = scanPayload({ note: `${ANTHROPIC} と ${ANTHROPIC}` }, []);
     expect(v.kind).toBe('refused');
     if (v.kind === 'refused') expect(v.message.split('資格情報の形').length - 1).toBe(1);
   });
