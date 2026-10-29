@@ -128,6 +128,8 @@ const UNIT_OF_UNLABELLED: Readonly<Record<string, string>> = {
   繰越欠損金: '円',
   課税売上: '円',
   課税仕入: '円',
+  // 業務の割当 (WorkAssignmentsPanel · パス 556)
+  週の時間: 'h',
   // 物件 (data/investments)
   '月次経費 (任意)': '円',
   '月次返済 (任意)': '円',

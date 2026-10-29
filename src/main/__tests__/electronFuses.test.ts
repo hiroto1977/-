@@ -129,7 +129,10 @@ describe('electron-builder の fuse は値まで固定する', () => {
    * 混ざれば、ソースや設定がそのまま配られる。
    */
   it('配布物に入れるのはビルド成果物だけ', () => {
-    expect(config.files).toEqual(['dist/**/*', 'dist-electron/**/*', 'build/icon.png', 'package.json']);
+    // `!node_modules/**` は 2026-10-29 (パス 553 · T-218): 主プロセスも preload も node_modules を require しない
+    // (束は node の組み込みと electron だけ · `selfAttestationWiring.test.ts` が見る) ので、検算 (integrity.json) の外に
+    // 走る物を同梱しない。実測で asar は 100 → 12 件。
+    expect(config.files).toEqual(['dist/**/*', 'dist-electron/**/*', 'build/icon.png', 'package.json', '!node_modules/**']);
   });
 
   /*

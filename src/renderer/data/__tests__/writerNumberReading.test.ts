@@ -61,6 +61,7 @@ import { orderToSalesEntry } from '../shopifyImport';
 import { parseBusinessUnit } from '../businessUnits';
 import { fundValuation, parseHoldingEntry, parsePropertyEntry } from '../investments';
 import { parseCropNumber } from '../../../shared/hydroponicCrops';
+import { parseAssignment } from '../../../shared/workAssignment';
 import { parseAmountInput } from '../../components/serviceActionUtils';
 import { parseNumericInput } from '../eligibility';
 import { readOriginalDirEntries, readOriginalSource } from '../../../shared/__tests__/originalSource';
@@ -260,6 +261,14 @@ probes.push({
   pick: get('panels'),
   blank: { refuse: true },
 });
+// 業務の割当 (パス 556): 週の時間。空欄は 0 にせず断る (0 時間の割当は記録する意味が無い)。
+probes.push({
+  writer: 'parseAssignment',
+  field: 'hoursPerWeek',
+  write: (s) => attempt(() => parseAssignment({ member: 'a@example.com', title: '月次決算', hoursPerWeek: s })),
+  pick: get('hoursPerWeek'),
+  blank: { refuse: true },
+});
 /** 空欄を「未入力」(null) として持つ調製の欄。残りは空欄を既定へ倒す (入力欄の初期値と同じ)。 */
 const CONTROL_OPTIONAL = new Set(['tankLiters', 'stockEcRisePerMlPerL', 'alkalinityMgCaCO3PerL', 'acidNormality']);
 for (const key of Object.keys(HYDROPONICS_CONTROL_DEFAULTS)) {
@@ -445,6 +454,7 @@ const WRITER_LEDGER: Readonly<Record<string, LedgerRow>> = {
   parseHoldingEntry: { kind: 'numbers', why: '銘柄の口数・基準価額・評価額・取得額・年初来リターン' },
   parseCropNumber: { kind: 'numbers', why: '品目の下書きの数値の欄' },
   parseMember: { kind: 'no-numbers', why: 'チームの氏名・メール・役割だけを読む' },
+  parseAssignment: { kind: 'numbers', why: '業務の割当の週の時間 (パス 556)' },
   parseShigyoContact: { kind: 'no-numbers', why: '士業の連絡先 (氏名・事務所・電話・メール) —— 電話番号は文字列のまま持つ' },
   parseShigyoConsultation: { kind: 'no-numbers', why: '相談の日付・テーマ・状態だけを読む' },
   parseSubmissionProfile: { kind: 'no-numbers', why: '書面の代表者名・所在地などの文字列だけを読む' },

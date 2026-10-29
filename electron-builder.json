@@ -9,7 +9,8 @@
     "dist/**/*",
     "dist-electron/**/*",
     "build/icon.png",
-    "package.json"
+    "package.json",
+    "!node_modules/**"
   ],
   "mac": {
     "target": [

@@ -104,9 +104,12 @@ describe('署名ビルドの本体と builder 設定の在り処 (threat: T-043)
   it('★ scripts.build は固定の綴り (release が署名鍵で走らせる唯一の script) (threat: T-043)', () => {
     // `--config electron-builder.json` は T-070 —— 名指ししないと app-builder-lib は
     // `electron-builder.{yml,yaml,json,json5,toml,js,cjs,ts}` をこの順に探し、最初に在った物を読む。
-    expect(scripts['build']).toMatch(/^tsc -b && vite build --config vite\.config\.ts && electron-builder --config electron-builder\.json$/);
+    // `node scripts/build-integrity-manifest.cjs` は T-218 (2026-10-29 · パス 553) —— vite build の後・梱包の前に
+    // 同梱する全ファイルの sha256 の表 (dist-electron/integrity.json) を書く。梱包版はその表を起動時に検算する。
+    const PINNED = /^tsc -b && vite build --config vite\.config\.ts && node scripts\/build-integrity-manifest\.cjs && electron-builder --config electron-builder\.json$/;
+    expect(scripts['build']).toMatch(PINNED);
     // 標本: 末尾に 1 手足した綴りは通らない。
-    expect('tsc -b && vite build --config vite.config.ts && electron-builder --config electron-builder.json && node -e "1"').not.toMatch(/^tsc -b && vite build --config vite\.config\.ts && electron-builder --config electron-builder\.json$/);
+    expect('tsc -b && vite build --config vite.config.ts && node scripts/build-integrity-manifest.cjs && electron-builder --config electron-builder.json && node -e "1"').not.toMatch(PINNED);
   });
 
   it('★ package.json に build キーが無い —— electron-builder.json (鎖の保護対象) が唯一の設定 (threat: T-043)', () => {

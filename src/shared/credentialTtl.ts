@@ -34,18 +34,23 @@ export const CREDENTIAL_CLOCK_SKEW_MS = 5 * 60 * 1000;
  * 日付が無い・数でない・非有限・未来・TTL を超えた —— どれも `true`。
  */
 export function storedCredentialExpired(storedAt: unknown, now: number): boolean {
-  if (typeof storedAt !== 'number' || !Number.isFinite(storedAt)) return true;
-  if (storedAt > now + CREDENTIAL_CLOCK_SKEW_MS) return true;
-  return now - storedAt > CREDENTIAL_TTL_MS;
+  // 数でない・非有限 (undefined / 文字列 / NaN / ±∞) は 1 つの判定で落とす —— `typeof` を
+  // 別に書くと、その枝は `Number.isFinite` が非数を既に落とすので等価変異になる (パス 550)。
+  if (!Number.isFinite(storedAt)) return true;
+  const at = storedAt as number;
+  if (at > now + CREDENTIAL_CLOCK_SKEW_MS) return true;
+  return now - at > CREDENTIAL_TTL_MS;
 }
 
 /** 保存した値が OAuth の TokenSet (更新トークンを持つ JSON) か。期限の規則の外に置く側。 */
 export function isRefreshableTokenSetJson(raw: string): boolean {
-  let parsed: unknown;
+  // 読めない JSON は TokenSet ではない —— `parsed` を null のままにして下の判定に落とす
+  // (catch の中で return すると、その本体を空にする変異が等価になる · パス 550)。
+  let parsed: unknown = null;
   try {
     parsed = JSON.parse(raw) as unknown;
   } catch {
-    return false;
+    // 読めない JSON: parsed は null のまま
   }
   if (!hasUsableAccessToken(parsed)) return false;
   const refreshToken = (parsed as { refreshToken?: unknown }).refreshToken;

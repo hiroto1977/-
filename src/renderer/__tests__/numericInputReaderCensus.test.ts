@@ -202,6 +202,10 @@ const NO_LOCAL_READER: Readonly<Record<string, { readonly writers: readonly stri
     writers: ['parseBusinessUnit', 'parseManualMetric', 'parseOverrideValue'],
     why: '事業の登録・任意項目・計算値の置き換えの下書きを、そのまま書き手へ渡す',
   },
+  'renderer/components/WorkAssignmentsPanel.tsx': {
+    writers: ['parseAssignment'],
+    why: '業務の割当の下書き (週の時間) を、そのまま書き手へ渡す (書き手は readEntryNumber で読み、空欄は断る)',
+  },
   'renderer/pages/HydroponicsPage.tsx': {
     writers: ['parseReading', 'parseBatch', 'parseControlRecord'],
     why: '測定・ロット・運転設定の下書きを、そのまま書き手へ渡す (運転設定は関門 HYDROPONICS_CONTROL_SPECS も通る)',

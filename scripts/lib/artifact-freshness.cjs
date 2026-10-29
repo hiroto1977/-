@@ -63,6 +63,7 @@ const BUNDLED_EXT = /\.(tsx?|css|html|json)$/;
 const BUILD_MATERIALS = Object.freeze([
   'vite.config.ts',
   'scripts/inline-html.cjs',
+  'scripts/build-integrity-manifest.cjs', // build の vite と electron-builder の間で検算表を書く (パス 553 · T-218)
   'tsconfig.json',
   'tsconfig.app.json',
   'tsconfig.node.json',

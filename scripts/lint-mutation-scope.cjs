@@ -230,6 +230,15 @@ const MUST_MEASURE = {
   // 測られない。読む側は BYO プロキシと `imageUrlGate.safeRemoteImageSrc` の 2 つ。
   'src/shared/privateTarget.ts':     'プライベート帯 / 予約帯の送り先判定 (BYO プロキシと第三者由来の <img src> が同じ 1 つを読む)',
   'src/shared/ollama.ts':            'Ollama の接続先判定 (任意ホストへの http を許すと内部探索の踏み台になる)',
+  // 2026-10-29 (パス 552) 追加。AI の判断に依らない 3 層の守り。どれも「規則を 1 本消しても
+  // 0 件のまま緑に見える」側 (断る門) なので、測らないと穴が増えたことに気付けない。
+  'src/shared/actionTier.ts':        'action の段階の台帳 (出力インターセプターと本人確認の両方が読む・無い action は fail closed)',
+  'src/shared/outboundContentGate.ts': '出力インターセプター (端末の外へ出る本文に資格情報 / マイナンバー / カード番号の形が無いか)',
+  'src/shared/promptInjection.ts':   '入力の無害化 (第三者の文に混ざった AI への指示の形を、AI へ届く前に規則で止める)',
+  // 2026-10-29 (パス 553) 追加。起動時の自己検算 —— 比較を 1 つ緩めても正しい出荷物は緑のまま起動するので、測らないと穴に気付けない。
+  'src/main/selfAttestation.ts':     '起動時の自己検算 (同梱物の sha256 を表と両方向に突き合わせ、外れれば起動しない)',
+  // 2026-10-29 (パス 554) 追加。送り先の変更の門 —— 判定を 1 つ緩めても正しい操作は緑のまま通るので、測らないと穴に気付けない。
+  'src/renderer/security/egressStepUp.ts': '送り先の変更に持ち主の確認が要るかの判定と文面 (プロキシは常に・Ollama は端末の外へ向くときだけ)',
   'src/renderer/security/vault.ts':  'マスターパスワードから鍵を作る所',
   'src/renderer/security/autoLock.ts': '離席時の施錠',
   // 2026-08-23 追加。**足した当人が名簿へ入れ忘れていた。** 枠 (iframe) の中では

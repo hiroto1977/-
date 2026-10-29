@@ -59,6 +59,7 @@ describe('復元の件数の天井は、全行を描く一覧すべてに在る 
     'realestate-properties',
     'shigyo-contacts',
     'shigyo-consultations',
+    'mentor-sessions',
     'hydroponics-batches',
     'kpi-budgets',
     'kpi-actuals',

@@ -47,7 +47,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `document` **文書** | ARCHITECTURE の file:line と live metric・CLAUDE.md の数・REMAINING_WORK の生成ブロック。散文で述べた規則は落ちないので、数は機械が持つ。 | `docs/ARCHITECTURE.md`<br>`CLAUDE.md`<br>`docs/SESSION_HANDOFF.md`<br>`docs/REMAINING_WORK.md`<br>`docs/ONTOLOGY.md` | `scripts/verify-architecture.cjs`<br>`scripts/cross-doc-consistency.cjs`<br>`src/shared/__tests__/ontologyDoc.test.ts` |
 | `workflow` **CI の workflow** | permissions 明示・第三者 action の SHA 固定・pull_request_target 禁止。週次の依存監査は常設 Issue 1 つ。 | `.github/workflows/ci.yml`<br>`.github/workflows/e2e.yml`<br>`.github/workflows/dependency-audit.yml`<br>`.github/workflows/release.yml` | `scripts/lint-workflow-security.cjs`<br>`src/shared/__tests__/workflowSecurityWitness.test.ts`<br>`src/shared/__tests__/dependencyAuditWorkflow.test.ts` |
 
-## 3. サービスの facet 行列 (76)
+## 3. サービスの facet 行列 (77)
 
 | id | 配置 | 出所 | 資格情報 | local | OAuth | 士業 | デスクトップの action | ブラウザ版の action | デスクトップだけ |
 |---|---|---|---|:---:|:---:|:---:|---|---|---|
@@ -91,6 +91,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `line` | integrations | sample | none |  |  |  | — | — | — |
 | `linear` | integrations | sample | none |  |  |  | — | — | — |
 | `linux` | tools | local | none | ✅ |  |  | — | — | — |
+| `mentor` | tools | sample | none | ✅ |  |  | — | — | — |
 | `microsoft-365` | integrations | remote | fetch |  | ✅ |  | `create-event` `send-mail` | `create-event` `send-mail` | — |
 | `moneyforward` | integrations | sample | none | ✅ |  |  | — | — | — |
 | `mutual-funds` | tools | sample | none | ✅ |  |  | `advise` `record-entry` | `advise` `record-entry` | — |
@@ -130,10 +131,10 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 
 集計:
 
-- 配置: おすすめ 12 / 士業連携 8 / 分析・ツール 21 / 外部サービス連携 33 / 消費されるだけ 2
-- 出所: remote 15 / local 19 / sample 42
-- 資格情報の読み手 — fetch 15 / action 7 / none 54
-- LOCAL_SERVICES 53 / OAuth 10 / action を持つ 27 / デスクトップだけの action 10
+- 配置: おすすめ 12 / 士業連携 8 / 分析・ツール 22 / 外部サービス連携 33 / 消費されるだけ 2
+- 出所: remote 15 / local 19 / sample 43
+- 資格情報の読み手 — fetch 15 / action 7 / none 55
+- LOCAL_SERVICES 54 / OAuth 10 / action を持つ 27 / デスクトップだけの action 10
 
 ## 4. facet の公理と例外
 
@@ -150,7 +151,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `desktop-only-is-the-difference` | デスクトップ版に在ってブラウザ版に無い action は、種類つきの台帳 (DESKTOP_ONLY) にちょうど載っている。 | — |
 | `actions-need-reader-or-local` | action を持つサービスは、資格情報を読むか local である (どちらでもない書き込みは行き先が無い)。 | — |
 
-## 5. 法則と執行者 (121)
+## 5. 法則と執行者 (124)
 
 各法則は「何を守るか」「どのパス / パターンで学んだか」「何がそれを守っているか」を持つ。
 執行者が**散文だけ**の法則は次の節に集める —— 散文で述べた規則は落ちない。
@@ -202,7 +203,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `no-weakness-as-spec` | **弱さを仕様として書き留めない** — 検査の題名が「前置き一致なので弾く側」「Never throws」と弱さに名前を与えると、落ちる検査が無くなり読んで気付くしかない。**「揃えることを要求しない」「分かる人が決めること」と書いた保留も同じ** —— 理由の欄が埋まるので検査は通り続け、実測で 1 か月近く誰も決めなかった。弱さは閉じるか、`docs/REMAINING_WORK.md` に「閉じていない物」として書く (台帳は片付いた物の説明を置く所)。**そして訂正は写しの数だけ要る** —— 「プレリリース/ビルドタグは無視する」"ignores -rc / -beta ... (compares numeric prefix only)" という**題名が欠陥そのものを述べる**検査が `src/shared/__tests__/ollama.test.ts` と `src/main/clients/__tests__/ollama.test.ts` に**1 件ずつ**在り、片方を直しただけでは全件が緑にならなかった (パス 402・パス 362 と同じ形)。 | パス 291 / パス 309 / パス 336 / パス 402 (同じ弱さが 2 ファイルに仕様として在った) | 検査 `src/shared/__tests__/dualBuildDecisions.test.ts`<br>散文だけ `docs/SESSION_HANDOFF.md` — 題名の意味は機械に映らない。機械が在るのは両ビルド台帳の理由の欄だけ (保留の決まり文句を落とす) で、検査の題名そのものは各パスの「閉じていない物」の節が持つ |
 | `instruction-tier-picks-effort-and-hands` | **指示のティアが effort と任せる手を決める —— 基準は表 1 つで、hook・agent 定義・文書はそれに従う** — 利用者の 1 つの指示から「どれだけ深く・長く・何に任せて」働くかを、指示ごとに同じ基準で決める。基準は `scripts/task-tier.cjs` の表 `TIERS` **ただ 1 つ** (light / standard / deep —— 主セッションへ推奨する effort・任せる agent とその model / effort・Workflow を提案するか)。指示のたびに走る `UserPromptSubmit` hook が指示の文からティアを決めて**根拠 (一致した印) つきの 1 行**を文脈へ足し、`.claude/agents/&lt;agent>.md` の frontmatter と `docs/MODEL_EFFORT_POLICY.md` の表はその `TIERS` と検査で突き合わせる (名前と値を 2 度書かない)。**主セッションのモデルと effort は利用者が `/model` / `/effort` で決める物**で、hook にもアシスタントにも変える口は無い —— だから hook は推奨を見せる所までを受け持ち、アシスタントは推奨と違えば応答の冒頭 1 行で案内する (作業は止めない)。hook は stdin の JSON を読むだけで、子プロセスを作らず・網へ出ず・ファイルを書かず・**必ず exit 0** (UserPromptSubmit の hook が exit 2 で終わると指示そのものが止まるので、指示を止める判断を 1 つも持たない)。**なぜ要るか**: 基準が散文にしか無いと、軽い指示に重い検証を掛け、重い指示を軽い手で片付ける形が繰り返される。「続けて」はこのリポジトリでは「次のパスを回す」の合図なので deep に置く。**閉じていない物**: 印は綴りの一致なので、綴りに現れない重さ (短い指示の裏にある大きな仕事) は standard に落ちる —— そのときはアシスタントが読んで上げる (hook はそれを止めない)。 | 2026-10-07 (パス 505) | 検査 `src/shared/__tests__/taskTierPolicy.test.ts`<br>検査 `src/shared/__tests__/sessionStartCodeGuarded.test.ts`<br>ゲート `npm run lint:mcp-servers`<br>整合性チェーン (`scripts/integrity-chain.cjs`) |
 
-### 境界と信頼 (20)
+### 境界と信頼 (22)
 
 | id | 法則 | 出典 | 執行者 |
 |---|---|---|---|
@@ -226,6 +227,8 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `ollama-allowlist` | **Ollama は読む endpoint だけを呼ぶ** — pull / create / push / copy / delete / blobs / upload を呼ばない (GGUF 経由の脆弱性の面を絶つ)。許可表は共有台帳 OLLAMA_READ_PATHS から組み立てる。脆弱性台帳は日付つき。 | 不変条件 #7 / 不変条件 #8 / パス 141 / パス 248 | ゲート `npm run lint:forbidden`<br>検査 `src/shared/__tests__/ollama.test.ts`<br>ゲート `npm run lint:rate-freshness` |
 | `loopback-oauth-host-pin` | **OAuth callback の Host は loopback だけ** — DNS リバインディングを Host header の固定で断つ。判定は ollama / aiEndpoint のループバック判定とは別の問い (揃えない)。 | 不変条件 #12 / パターン 0-a-14 | 検査 `src/shared/__tests__/loopbackChecks.test.ts`<br>整合性チェーン (`scripts/integrity-chain.cjs`) |
 | `header-values-one-rule` | **Headers が何を受理するかは 1 つの判定** — 資格情報の入口は shared/headerValue.ts の 1 つで受理を判定し、プラットフォームの例外文面 (ヘッダ名を含まない) が鍵を画面へ出さない。 | パス 244 / パス 296 | 検査 `src/shared/__tests__/headerValue.test.ts`<br>検査 `src/shared/__tests__/headerValueLeak.test.ts` |
+| `ai-defense-is-deterministic` | **AI の頭は騙せても、システムの手足は動かない —— 守りの成否は AI の判断に委ねず、決定論の規則が 3 層で担保する** — AI は入力の中の「指示」と「データ」を構造的に区別できないので、プロンプトで「秘密を漏らすな」と言っても守りにはならない (攻撃側は言い回しを変えるだけでよい)。だから守りは**AI の外**に、規則として 3 層で置く (2026-10-29 · パス 552)。① **出力インターセプター** (threat: T-215) —— 端末の外へ出る action (段階が external-write / egress · `actionTier.ts` の台帳が決め、台帳に無い action は external-write へ倒す fail closed) の本文を、**送る直前・本人確認より前**に `outboundContentGate.ts` が検める。資格情報 (16 形 + `redactSecrets` の規則)・マイナンバー (番号法施行令 §8 の検査数字)・カード番号 (主要ブランドの先頭 + Luhn) の形が在れば断り、断りの文は欄の場所と種類だけを言って**値を 1 字も引用しない**。main の `action:invoke` とブラウザ版の `shim.invoke` が**同じ 1 つの関数**を呼ぶ (片方のビルドだけが止める形にしない)。実測 (直す前): github/create-issue の body に ghp_ の形・assistant/chat の messages にマイナンバーの形を置いても両ビルドとも送った。② **入力の無害化** (threat: T-216) —— 第三者の文 (Gmail / Slack の本文・SKILL.md) が AI へ届く口は 2 つ 3 か所で、`promptInjection.ts` が 4 群 (役割の乗っ取り / 指示の上書き / 隠蔽・漏洩の指示 / 区切りの偽装) の形を NFKC + 小文字 + 不可視文字の除去で正規化した本文に当て、当たれば**鍵を読む前**に断る (群と規則 id だけを言い、本文は引用しない)。業務の文に普通に出る言い回し (「今後は必ず」「System: 保守のお知らせ」) は当たらないことを標本で留める —— 偽陽性は製品を使えなくする側。利用者自身が打つ文は検めない (自分の AI に自分で指示するのは正当。そこで止めるのは出力の側 ①)。③ **最小権限** (threat: T-217) —— AI の応答を受ける束縛 (egress の action の戻り・12 画面) は、外向きの手足 (`invoke` の外向きの段階・`openExternal` / `fetch` / `window.open`) の引数に現れない。今日は 0 件で、その 0 件を census が両方向の台帳つきで固定する。**限界を正直に書く**: ① が止めるのは 3 類の形だけで氏名・メール・電話・取引先コードは止めない (止めると Gmail / Slack の下書きが書けない。業務固有の形は `CUSTOM_DENY_PATTERNS` に足す)。② は形の規則なので言い換えは通る。③ は綴りの走査なので別の名前へ写した値は映らず、それは外へ出る時点で ① が中身を見る —— **3 層は重ねて初めて守りになる**。 | 2026-10-29 (パス 552) | 検査 `src/shared/__tests__/outboundContentGate.test.ts`<br>検査 `src/shared/__tests__/promptInjection.test.ts`<br>検査 `src/shared/__tests__/aiDefenseWiring.test.ts`<br>検査 `src/main/__tests__/mainIpc.test.ts`<br>検査 `src/main/clients/__tests__/emotions.test.ts`<br>検査 `src/main/clients/__tests__/skills.test.ts`<br>検査 `src/renderer/__tests__/webShimOutboundGate.test.ts`<br>検査 `src/renderer/__tests__/aiReplyInert.test.ts`<br>検査 `src/shared/__tests__/threatLedger.test.ts` |
+| `egress-destination-change-needs-step-up` | **送り先を変える操作には、この端末の持ち主の確認が要る —— 資格情報の書き込みと同じ重さを、資格情報が渡る先の変更にも掛ける** — 免疫チェックポイントを外す薬が効くのは、守りを止める信号が「本物の自己」からしか出せないときである。アプリがどこへ資格情報と本文を送るかを決める設定は 2 つ (BYO プロキシ = 経由する全要求に `Authorization` が乗る / Ollama の接続先 = 会話の本文が行く先) で、2026-10-29 (パス 554) まで**どちらも通常の保存と同じ 1 押しで書けた**(本人確認 T-183 は main の IPC にだけ掛かり、この 2 つは IPC を通らない)。資格情報そのものの書き込みには本人確認が要るのに、**その資格情報が丸ごと渡る先**を変える操作には何も要らなかった —— 貼り付けを促す 1 行の指示 (「この URL を入れてください」) で以後の全要求が他人の Worker を通る。だから送り先の変更は書く前に**持ち主の証** (保管庫のパスワード · `vault.verifyPassword` = 状態を変えない照合) を求め、違えば「送り先は変えていません」と言い、やめれば何も変えない (`security/egressStepUp.ts` · threat: T-219)。判定は**重さで分ける**: プロキシは常に (どの URL も端末の外)・Ollama は解決した先が loopback でないときだけ (同じ端末なら本文は端末を出ない)。文面は**送り先のホストだけ**を名乗る (共有秘密も path も映さない —— 秘密を映す面を増やさない)。**消す口は門の外** (`setProxyConfig(null)` は確認なし · 法則 `escape-hatch-stays-open`)。母集団 (この設定を書く出荷コード) は census が両方向で持ち、新しい書き手は「どの門を通るか」を名乗る。**限界を正直に書く**: 門はレンダラーの中に在る。レンダラーを乗っ取った相手 (別の `file://` の HTML · backlog C1) は保管層へ直接書ける —— この門が止めるのは**人の手**で、保管層を主プロセスか保管庫 (暗号化) へ移すのは C1 の設計判断である。 | 2026-10-29 (パス 554) | 検査 `src/renderer/__tests__/egressSettingWriterCensus.test.ts`<br>検査 `src/renderer/pages/__tests__/proxyStepUpOnScreen.test.ts`<br>検査 `src/renderer/pages/__tests__/ollamaEndpointStepUp.test.ts`<br>検査 `src/renderer/security/__tests__/egressStepUp.test.ts`<br>検査 `src/renderer/security/__tests__/vaultVerifyPassword.test.ts`<br>検査 `src/shared/__tests__/threatLedger.test.ts` |
 
 ### 保存と復元 (18)
 
@@ -308,7 +311,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `vault-and-graph-in-sync` | **生成物は本体と同期し、本体を網羅する** — vault・graph・概念表は本体から生成し、committed == 再生成に加えて本体との網羅を検査する。手で行を書かない。 registry の派生索引 (`teamFirstRound` —— チーム → 初出 round / `teamBacklogStatus` —— チーム → backlog の状態) も 本体 (`rounds` / `backlog`) から導いた物と両方向に一致する (`verify:orchestration` の不変条件 13 / 15)。導出は 1 つずつで、台帳を書く口 (`writeRegistryChecked`) が**必ず**引き直す —— 書き手ごとに「どの索引に効くか」を覚えさせると 2 つ目の索引で破れる (パス 486: 取り込み口は backlog を足しても何も引き直していなかった)。手で書き換えた台帳は門が落とし、直す手 (`npm run orchestrate:reindex`) を名指しする。 | パターン 0-a-5 / CLAUDE.md knowledge:md / パス 483 / パス 486 | ゲート `npm run vault:check`<br>ゲート `npm run verify:graph`<br>ゲート `npm run verify:orchestration`<br>検査 `src/shared/__tests__/teamFirstRoundIndex.test.ts`<br>検査 `src/shared/__tests__/teamBacklogStatusIndex.test.ts` |
 | `legal-text-current` | **法令の記述は現行法** — 刑名の表記ゆれは 1 行ずつ裁定する (拘禁刑へ・旧刑名は括弧・米国法は対象外)。日付の無い率は lint:rate-freshness が期限で落とす。 | 刑名の裁定 (残作業 8) / lint:rate-freshness | ゲート `npm run lint:rate-freshness`<br>散文だけ `docs/SESSION_HANDOFF.md` — 「現行法か」は機械に映らない。率と日付の期限だけを機械が見る |
 
-### 供給網と CI (8)
+### 供給網と CI (9)
 
 | id | 法則 | 出典 | 執行者 |
 |---|---|---|---|
@@ -320,6 +323,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `mutation-scope-protected` | **保護対象は変異検査の中** — 権限・資格情報・書き出し先を決める壁が mutate から外れると変異体が 1 つも作られず、測っていないのに緑になる。 | lint:mutation-scope の docblock / パス 318 | ゲート `npm run lint:mutation-scope`<br>実機 `npm run mutate` |
 | `release-artifacts-reread` | **公開先は前のランの残骸を溜める — 置いてある一覧を読み返す** — CI の緑はそのランが何を出したかしか保証しない。追記しかしない置き場 (リリース資産) は公開後に一覧を読み返す。数は宣言側 (electron-builder.json) から導く。 | パターン 0-a-19 | ゲート `npm run verify:release-artifacts` |
 | `repo-size-ceiling` | **追跡ファイルの大きさに天井** — 履歴に入った blob は後から追跡を外しても消えない。1 ファイル 12 MB / 追跡合計 120 MB (85% で警告)。出荷 HTML は 16 MB / 4 MB。 ★ **落とさない警告は読まれない** —— 80 MB の天井には 2026-10-07 に生成物ではなく記録 3 本と検査の増え方 (0.41 MB/日・コーパスは +0.1 MB) で当たり、85% の警告は 2026-09-11 ごろから毎回刷られて誰も動かなかった (実測はゲートの docblock · パス 506)。 出荷物へ畳み込む JSON は製品が読む鍵だけ —— 名前付き import は鍵の単位でしか落ちないので、読まない開発側の履歴 (registry の `rounds` 160,558 B) と着手候補 (`backlog` 7,323 B —— 外から来た文を含む) は派生索引へ置き換え、import してはいけない鍵として理由つきで名指しする。 **名前付き import 以外の形 (default / namespace / 動的 import / export from) は禁じる** —— Rollup は読まれないプロパティを落とすので全体が入るわけではないが、どの鍵が入るかを字面から読めず台帳が見えなくなる (実測: default import のまま `registry.backlog` を読むと外から来た題名 43 / 43 が出荷物へ入るのに、名前付き import しか読まない census は緑だった · パス 486)。 | CLAUDE.md lint:repo-size / ci.yml の出荷物の天井 / パス 396 / パス 483 / パス 486 / パス 506 | ゲート `npm run lint:repo-size`<br>CI `.github/workflows/ci.yml`<br>検査 `src/shared/__tests__/registryBundleCost.test.ts` |
+| `shipped-code-attested-at-startup` | **出荷した物は、起動のたびに自分を検算する —— 容器の中の 1 ファイルの改竄は、署名の無い Linux でも起動前に鳴る** — 正常な細胞は分裂の前に DNA を検算し、直せない損傷が在れば自死する。マルウェアが正規のアプリに擬態する最も安い道は**インストール先のファイルを書き換える**ことで、Electron の fuse `enableEmbeddedAsarIntegrityValidation` は macOS / Windows では署名済みバイナリに埋めた値と app.asar を照合するが、**Linux では照合する値を持たない** (実測 2026-10-29 · パス 553: fuse を焼いた梱包物の app.asar に 1 byte 足しても起動して UI が出た)。Linux のインストーラは署名も無い。だから梱包版は `app.whenReady()` の**窓を作る前**に、ビルドが書いた表 (`dist-electron/integrity.json` —— 同梱する全ファイルの sha256 と root) と同梱物を突き合わせ、① 表が読めて形が正しい ② 容器の根に表の外の物が無い ③ 両方向に同じ一覧 ④ 1 つずつの sha256 が一致、の 1 つでも外れれば理由を stderr に刷り `app.exit(1)` で止まる (`src/main/selfAttestation.ts` · threat: T-218)。**読めない = 通さない** (表が無い・大きすぎる・ファイルが多すぎる、はどれも断る理由)。断りの文は道と理由だけで中身もハッシュも引用しない。書き手 (`.cjs`) と読み手 (`.ts`) は同じ算法の写しなのでパリティ検査で結ぶ。主プロセスも preload も node_modules を require しないので`!node_modules/**` で同梱しない (検算の外に走る物を置かない)。**限界を正直に書く**: 表は出荷物と同じ容器に居るので、容器ごと差し替える相手は表も書き換えられる —— それを止めるのは OS の署名で、Linux には無い。「Linux は 1 ファイルの改竄に気付く」が正しく、「守られている」ではない。開発中 (`electron .`) は dist が変わるたびに表が古びるので走らせない (梱包していない物は配布物ではない)。 | 2026-10-29 (パス 553) | 検査 `src/main/__tests__/selfAttestation.test.ts`<br>検査 `src/main/__tests__/selfAttestationParity.test.ts`<br>検査 `src/main/__tests__/selfAttestationWiring.test.ts`<br>実機 `npm run smoke:packaged`<br>検査 `src/shared/__tests__/threatLedger.test.ts` |
 
 ## 6. 機械の無い法則 (3)
 
@@ -329,6 +333,6 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 
 ## 7. 集計
 
-- 法則 121 (機械あり 118 / 散文だけ 3)
+- 法則 124 (機械あり 121 / 散文だけ 3)
 - facet の公理 10・実体クラス 15・層 4・ビルド 3
 - `verify:all` のゲート 39: `typecheck` `verify:arch` `lint:forbidden` `lint:workflow-security` `lint:secrets` `lint:malware` `lint:network-targets` `lint:url-encoding` `lint:regex` `lint:imports` `lint:docs` `lint:citations` `lint:doi-prefix` `lint:charset` `lint:knowledge-refs` `lint:sample-data` `lint:test-coverage` `verify:release-artifacts` `lint:shell` `lint:repo-size` `lint:deps` `lint:mcp-servers` `lint:storage` `lint:csp` `lint:data-origin` `lint:credential-use` `lint:ipc-handlers` `lint:mutation-scope` `lint:collection-time` `lint:parameter-prose` `lint:zero-fold` `lint:shared-judgement` `lint:rate-freshness` `verify:orchestration` `vault:check` `verify:graph` `verify:knowledge` `chain:verify` `lint`

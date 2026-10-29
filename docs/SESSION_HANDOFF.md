@@ -7,6 +7,71 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-10-29) — パス 556: 業務の割当と、時間で見た負担 (誰に・何を・週何時間)
+
+- 詳細は `docs/REMAINING_WORK.md` の「パス 556」。パス 555 の負担率は体感の比で、割当や工数を持つ記録はアプリのどこにも無かった。
+- **直し**: collection `work-assignments` (25 個目) と判断 `shared/workAssignment.ts` (`assignmentLoad` —— 1 人ずつ週の時間・法定労働時間に対する割合・チーム内の比率・均等との差 / 断り 3 つ: 法定超え (36 協定を名指し)・偏り・集計から外した物)。法定労働時間は台帳 `team.weeklyStatutoryHours` (40 時間・特例 44 時間)。画面はチーム管理の節 (部品 `components/WorkAssignmentsPanel.tsx`)。
+- **確立したパターン**: 割当の記録が無い人は帯も割合も出さず分母に入れない / 名簿から消えた人への割当と読めない記録は外して件数を言い、一覧の × が逃げ口 / 足すときは `readRecordsNow` で今の名簿を見る。
+- ★ **新しい census**: `data/__tests__/collectionConstantShapes.test.ts` —— 出荷コードが宣言する collection 名はどれも `COLLECTION_SHAPES` に在る (両方向)。**表に載せ忘れても全件の `npm test` は鳴らなかった** (表に無い collection は復元が形を見ずに通し、見本・往復・行の上限・機微の分類の台帳はどれも表を起点に数える)。
+- ★ **既知の罠**: ① 台帳 (`parameters.ts`) が import する名前は `lint:parameter-prose` が「上書きできる値」と数える —— 入力の範囲の定数を `max` のために import すると、画面のその定数の使用が鳴る (`max` は数で書く) ② 頁全体の `tbody tr` を数える検査は、表が 1 つ増えると倍に数える (`data-member-list` で絞った)。
+- ★ **変異検査が名簿の重複を教えた** —— 名簿の読み (`mentorRoster`) は同じメールの 2 件を畳まないので、`assignmentLoad` は同じ人を 2 行に出し、パス 555 の `workloadDistribution` は同じ人の平均を 2 度分母に足していた。どちらも鍵ごとに 1 行 (先の名前) にした。**名簿から 1 人ずつの集計を作る新しい関数は、鍵で畳む**。
+- **次**: メンバーごとの契約時間・体感と時間の食い違いの 1 行・割当の期間。PR #844 は draft のまま。
+
+## 直近の作業 (2026-10-29) — パス 555: ひとりひとりの負担率 (専属カウンセラーのチェックインを 1 人 1 行でチーム管理にも)
+
+- 詳細は `docs/REMAINING_WORK.md` の「パス 555」。依頼「従業員ひとりひとりの仕事の負担率等も見てわかるようにして」。負担を 1 人ずつ数える物が無かった (`teamSignals` は高い / 落ち着いているの 2 値だけ)。
+- **直し**: `shared/mentor.ts` の `workloadDistribution` (直近 / 直近 4 回の平均 / 負担率 = 平均の比 / 均等との差 / 高い・ふつう・余裕 / stale) と `workloadImbalanceNote` (均等の 1.5 倍以上で名指し)。部品 `components/WorkloadShareTable.tsx` を **チーム管理と専属カウンセラーの 2 画面**が読む。名簿と記録の読みは `data/mentorRoster.ts` の 1 つ。
+- **確立したパターン**: 同意の無い人は行にならず人数だけ / 記録の無い人は `unknown` で分母に入れない (0 = 余裕にしない) / 帯の上に字を載せない・平均の無い人は帯を引かない。
+- ★ **既知の罠**: `MentorPage` に既に `workload` (チェックインの欄の state) が在るので、集計の変数名は別に (`shares`)。
+- ★ **実機がパス 554 の退行を捕まえた**: `proxyEnvelope` suite 7 件 (保存に持ち主の確認が要るようになった) と `vaultOpacity` 1 件 (`storedAt` · パス 550)。suite を直して実測 758 → 761。**CI の `e2e` はラベル無しでは走らない —— 出荷物が動いたら手元で回す**。LITE は警告線 3,400,000 B を 8,234 B 超 (落ちない)。
+- ★ **その直しが CI を 1 度落とした** (head `ef9edd1a` · `e2eWaitMargin` が「時間切れを飲む待ちが台帳に無い」と 2 件を名指し) —— 足した 2 つの `waitFor` を `.catch(() => {})` で飲んでいた。飲む理由が無いので `.catch` を外した (待ちが落ちれば suite がそこで落ちる)。**手元で映らなかったのは、全件の `npm test` を e2e の直しより前に回していたから** (パス 405 と同じ形・2 度目)。**最後に触ったファイルを見る門を回す** —— `scripts/e2e/core.cjs` を読む検査は `src/shared/__tests__/` に在る。`.claude/worktrees/` の古い agent の worktree 3 つも外した (`lint:charset` / `lint` が手元でだけ落ちていた原因・branch は残した)。
+- **次**: 業務の割当 (誰が何を何時間) を記録して体感ではない負担率を出すのは別パス。PR #844 は draft のまま。
+
+## 直近の作業 (2026-10-29) — パス 554: 守りを決める設定の書き換えに別の承認 (癌細胞の比喩の「免疫チェックポイント」· T-219)
+
+- 詳細は `docs/REMAINING_WORK.md` の「パス 554」。パス 553 が残した問いの 3。**送り先を決める設定 2 つ** (BYO プロキシ / Ollama の接続先) が通常の保存と同じ 1 押しで書けた (本人確認 T-183 は main の IPC にだけ在り、この 2 つは IPC を通らない)。
+- **直し**: 判定と文面 `src/renderer/security/egressStepUp.ts` (プロキシは常に・Ollama は端末の外へ向くときだけ・文はホストだけ) + 部品 `components/StepUpPassword.tsx` + 保管庫の `verifyPassword` (状態を変えない照合)。`SettingsPage` の「保存」と `OllamaPage` の「接続テスト」は書かずに pending へ置き、確認後の関数だけが書く。削除は門の外。
+- **確立したパターン**: 「送り先・守りを決める設定」を書く新しい口は `egressStepUp.ts` の判定を通し `StepUpPassword` で確認してから書く —— `egressSettingWriterCensus.test.ts` が両方向で鳴る。持ち主の証は保管庫のパスワード (ブラウザ版にネイティブダイアログは無い)。
+- ★ **既知の罠**: 保管庫の IDB 名は `business-hub-vault` / `ERROR_MESSAGE_MAX_CHARS` は `shared/redact.ts` / 法則の family は 9 語だけ / CODEOWNERS の行は保護対象・回帰検査・守られる設定だけ。
+- **限界**: 門はレンダラーの中 —— 乗っ取られたレンダラー (C1) は保管層へ直接書ける。止めるのは人の手。
+- **次**: 問いの 4 (区画の切り離し)。PR #844 は draft のまま (マージは利用者の判断)。
+
+## 直近の作業 (2026-10-29) — パス 553: 起動時の自己検算 (癌細胞の比喩の「DNA 修復機構」· T-218)
+
+- 詳細は `docs/REMAINING_WORK.md` の「パス 553」。利用者の問い (癌細胞のように振る舞うウイルスへの対策) を対応表で分け、無い物 4 つのうち 1 (自己検算) と 2 (複製の天井) を測った。**2 は何も無かった** (`child_process` 0 件・速度と費用の上限は在る)。**1 は生きた欠陥**: Linux では fuse `enableEmbeddedAsarIntegrityValidation` が何も照合せず、app.asar を 1 byte 改竄した梱包物が起動して UI を出した (対照で実測)。
+- **直し**: `scripts/build-integrity-manifest.cjs` (build の vite と electron-builder の間で `dist-electron/integrity.json` を書く) + `src/main/selfAttestation.ts` (`verifyShippedFiles` —— 梱包版の `whenReady` の窓を作る前・両方向の一覧 + 根の他人 + sha256・外れれば stderr + ダイアログ + `app.exit(1)`) + `electron-builder.json` (`!node_modules/**` —— fuse の asar integrity は T-166 の判断どおり未設定のまま) + `smoke:packaged` の段 4 (asar を改竄して起動を断る)。
+- **確立したパターン**: 梱包物の中身を測るなら `electron-builder --linux dir` を scratch へ組み `@electron/asar` で `listPackage` / `extractFile` / `extractAll` → `createPackage`。**electron-builder は package.json を梱包時に書き換える**ので表に載せない。`.cjs` と `.ts` の写しはパリティ検査で結ぶ。
+- ★ **既知の罠**: 対照の script に `git checkout --` を書くと auto mode の分類器が止める —— 控えの写しから `cp` で戻す / 背景の `( … ) &` の「完了」は包みの物。
+- **限界**: 表は出荷物と同じ容器に居る (容器ごと差し替える相手は表も書き換えられる —— Linux に署名が無い限界)。
+- **次**: 問いの 3 (守りの書き換えに別の承認) と 4 (区画の切り離し) は `docs/REMAINING_WORK.md` の「残した候補」。
+
+## 直近の作業 (2026-10-29) — パス 552: AI の頭は騙せても、システムの手足は動かない (3 層の決定論の守り · T-215 / T-216 / T-217)
+
+- 詳細は `docs/REMAINING_WORK.md` の「パス 552」。利用者の依頼 (出力インターセプター / 入力の二段階検証 / 強制的な最小権限 —— AI の判断に委ねない) を、3 つの shared module と census で実装。
+- **① `outboundContentGate.ts`** —— 端末の外へ出る段階 (external-write / egress · `actionTier.ts` の台帳) の本文に資格情報・マイナンバー・カード番号の形が在れば、**本人確認より前**に断る。main の `action:invoke` と web-shim の `shim.invoke` が同じ 1 つ。**止めるのは 3 類の形だけ** (氏名・メール・電話は止めない —— `CUSTOM_DENY_PATTERNS` は空)。
+- **② `promptInjection.ts`** —— 第三者の文 (emotions の Gmail / Slack 本文・skills の SKILL.md) に AI への指示の形が在れば、鍵を読む前に断る。利用者自身の文は検めない。
+- **③ `aiReplyInert.test.ts`** —— AI の応答の束縛が外向きの手足 (invoke / openExternal / fetch / window.open) に届かないことを 12 画面の両方向の台帳で固定。
+- **確立したパターン**: `ACTION_TIER` は `src/shared/actionTier.ts` に住む (`userPresence.ts` は re-export) —— 段階を読む新しい門は shared から import する。3 本は保護対象 + `mutate` + `MUST_MEASURE` + CODEOWNERS。**新しい external-write / egress の action は、payload に資格情報を正当に載せるなら `CREDENTIAL_PAYLOAD_FIELDS` に理由つきで**。
+- ★ **既知の罠**: 資格情報の形の見本を検査に字面で書くと、`lint:secrets` を通しても **GitHub の push protection (GH013) が止める** (Shopify / Stripe の形で実測) —— 見本は `'shpat_' + '…'` と組み立てる。
+- **対照 12 方向すべて鳴る**。**変異検査**: 初回 97.52% (outboundContentGate 83.68%) → 仕分けて **7 本とも 100%** (本物の穴 = 錨を落とした形・検査数字 0・19 桁の Visa・深さの境目ほか / 等価は形ごと消す)。**測っていない物**: 実機 e2e・言い換えた指示。
+- **次**: PR #844 は draft のまま (マージは利用者の判断)。
+
+## 直近の作業 (2026-10-29) — パス 551: 専属カウンセラー (`mentor`) —— 1 人に 1 人の AI 相談役を端末内に足す
+
+- 詳細は `docs/REMAINING_WORK.md` の「パス 551」。利用者の依頼 (人員育成のための専属 AI カウンセラー: ペルソナに寄り添う問い・チームでの動き方・関係・悩みへの助言・仲裁) を、新しいサービス `mentor` (専属カウンセラー · 分析・ツール) として実装。サービス 77・collection 24 (`mentor-sessions` · 1 人 1 行 · 機微)。
+- **設計の背骨**: 判断は `src/shared/mentor.ts` 1 つ (聞き取り 6 問 → その人に合う言い方 / 週 1 のチェックイン / 関係 / `nextPrompt` / `adviseMember` / `teamSignals` `teamPairs` / `mediationPlan` / `aiDeepDivePrompt`)。**危機が記録に在れば助言は窓口 1 件だけで AI へは送らない**・**チームへ出るのは本人が同意した集計だけ・組は両方の同意**・**仲裁の計画は本音のメモを構造上持たない**・**AI へ送るのは本人の記録と相談文だけ**。
+- **確立したパターン**: 新しいサービス + 新しい collection を足すと、両方向の census が十数本名指しする (collectionShapes / collectionSamples / roundTrip / backup / importFile / disclaimer / aiEgress / aiInputCaps / snapshotJudgement / submitGuard / namedControlExists / sampleOrigin / sidebarNumberClaims / mutateScope / dataOrigin / credentialUse / ontologyDoc / shared-judgement / zero-fold / manifest / CLAUDE.md) —— 落ちた順に台帳へ理由を書けば、それがそのまま手順書になる。`assets/manifest.webmanifest` と `.cursor/rules/00-project.mdc` は保護対象なので数を直したら `chain:append`。
+- **既知の罠 (このパスで踏んだ)**: 壊れた `team-members` の行で画面が投げる (`malformedStoreRenders`) —— 名簿は文字列の email だけに絞る / 丸ごとの `edit` は `editIfUnchanged` へ / 組の並びは保管層の順に依らせない。
+- **対照 9 方向すべて鳴る** (同意 2 / 危機 / 本音 / 断り / 送る範囲 / 比べずに書く / 天井 / 関門)。**測っていない物**: 実機 e2e の suite・実物の AI 提供者・`shared/mentor.ts` の変異検査 (`measure-next`)。
+- **次**: PR は draft のまま (マージは利用者の判断)。候補は `docs/REMAINING_WORK.md` の「残した候補」。
+
+## 直近の作業 (2026-10-28) — パス 550: main の変異検査 (run #214 · 95.87%) の生存 46 件を仕分けて直す
+
+- 詳細は `docs/REMAINING_WORK.md` の「パス 550」。PR #843 のマージが起こした `mutation.yml` の run #214 が break (99.8) を割った (`secrets.ts` 92.66 / `vault.ts` 96.71 / `credentialTtl.ts` 94.87 / `redact.ts` 100)。
+- 仕分け: 本物の穴 15 (検査が値を主張していない: 読めなかった理由の文・`at:` の区切り・`oauth:` の包み・包みの上に包む・読むだけで書き直す・旧世代路の T-063・初期化の別の失敗・`idbPutAll` の項ごとの `add`) / 等価 26 は形ごと消した (法則 115) / 形を消せない等価 5 は理由つき pragma。対照 15 方向すべて狙った検査に当たる。
+- 測り直し (GitHub · run #215): **99.89%** · `vault.ts` / `credentialTtl.ts` は 100.00%・`secrets.ts` の生存 1 (`ERASING_MESSAGE = ""`) は**読み直す検査が主張していなかった偽の生存** —— 読み直す側に字面の主張を足した (手で当てて 2 件だけが落ちる)。
+- ★ **手元の変異検査はコンテナの休止で 2 度とも消えた** —— 測り直しは GitHub の `workflow_dispatch` (`files=` に 3 本) で読む。**偽物の強さは殺したい変異ごとに決める** (何でも復号する偽物は「包みの上に包む」を見せ、厳しい偽物は「読めない値」を見せる)。
+
 ## 直近の作業 (2026-10-28) — パス 549: 探索 → 解析 → 対策 → 報告 の輪を、起動と記録まで機械にする (T-214)
 
 - 詳細は `docs/REMAINING_WORK.md` の「パス 549」と `docs/THREAT_HUNT.md` の「輪を回す仕組み」。

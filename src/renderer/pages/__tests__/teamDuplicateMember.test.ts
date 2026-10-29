@@ -38,7 +38,7 @@ let container: HTMLDivElement;
 let root: Root | null = null;
 
 /** メンバー一覧の行数 (この画面の表は 1 つ —— 見出しは「氏名 / メール / 役割」)。 */
-const memberRows = (): number => container.querySelectorAll('tbody tr').length;
+const memberRows = (): number => container.querySelectorAll('[data-member-list] tbody tr').length;
 
 /**
  * 一覧が `n` 行になるまで**条件で**待って描く (2026-09-21 · パス 378)。

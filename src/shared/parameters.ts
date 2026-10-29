@@ -35,6 +35,7 @@ import {
 } from './hydroponics';
 import { BALANCE_SHEET_STALE_AFTER_MONTHS } from './balanceSheetFreshness';
 import { COMMUTE_PUBLIC_TRANSPORT_CAP } from './payroll';
+import { STATUTORY_WEEKLY_HOURS } from './workAssignment';
 import { DSCR_DANGER_THRESHOLD, DSCR_CAUTION_THRESHOLD, type DscrThresholds } from './realEstateMetrics';
 import { ADVISOR_CONCENTRATION_SHARE, ADVISOR_YIELD_GAP_PT, type AdvisorThresholds } from './serviceAdvisor';
 import {
@@ -282,6 +283,14 @@ export function parameterDefinitions() {
     id: 'payroll.commutePublicTransportCap', feature: '給与', label: '通勤手当 (公共交通機関) の非課税限度 / 月', unit: '円',
     defaultValue: COMMUTE_PUBLIC_TRANSPORT_CAP, min: 0, max: 1_000_000, integer: true, kind: 'law',
     source: '所得税法施行令 20 条の 2 (月 15 万円)',
+  },
+  // --- チーム (業務の割当 · パス 556) ------------------------------------------
+  {
+    id: 'team.weeklyStatutoryHours', feature: 'チーム', label: '1 週の法定労働時間', unit: '時間',
+    // max は入力の範囲 (1 週 = 168 時間)。上書きできる値の裏づけではないので定数を import しない (lint:parameter-prose が数える)。
+    defaultValue: STATUTORY_WEEKLY_HOURS, min: 1, max: 168, integer: true, kind: 'law',
+    source: '労働基準法32条1項 (40 時間)',
+    note: '特例措置対象事業場 (常時 10 人未満の商業・映画演劇業・保健衛生業・接客娯楽業) は 44 時間 (労働基準法施行規則25条の2)',
   },
   // --- 不動産 -------------------------------------------------------------
   {

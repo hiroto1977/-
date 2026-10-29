@@ -45,6 +45,11 @@ let allWindows: unknown[] = [];
 let quitCalls = 0;
 let instanceLock = true;
 const appListeners = new Map<string, () => void>();
+/** 起動時の自己検算の代役 (パス 553 · T-218)。既定は「通る」—— 検算の中身は `selfAttestation.test.ts` が見る。 */
+let attestationVerdict: import('../selfAttestation').AttestationVerdict = { ok: true, checked: 6, root: 'r' };
+let attestationCalls: string[] = [];
+let errorBoxes: { title: string; content: string }[] = [];
+let exitCodes: number[] = [];
 
 function freshCapture(): Captured {
   return {
@@ -77,6 +82,14 @@ vi.mock('electron', () => ({
     },
     quit: () => {
       quitCalls += 1;
+    },
+    exit: (code: number) => {
+      exitCodes.push(code);
+    },
+  },
+  dialog: {
+    showErrorBox: (title: string, content: string) => {
+      errorBoxes.push({ title, content });
     },
   },
   BrowserWindow: class {
@@ -157,6 +170,13 @@ vi.mock('../secrets', () => ({
   setOAuthTokens: async () => {},
 }));
 vi.mock('../clients', () => ({ LIVE_FETCHERS: {}, LIVE_ACTIONS: {}, LOCAL_SERVICES: new Set() }));
+vi.mock('../selfAttestation', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../selfAttestation')>()),
+  verifyShippedFiles: async (appRoot: string) => {
+    attestationCalls.push(appRoot);
+    return attestationVerdict;
+  },
+}));
 /** 起動時に読む窓の配色 (パス 318)。検査ごとに差し替える。 */
 let storedPrefs: { scheme: 'light' | 'dark'; background: string } = { scheme: 'light', background: '#fff7fa' };
 vi.mock('../windowPrefs', async (importOriginal) => ({
@@ -233,6 +253,10 @@ beforeEach(() => {
   instanceLock = true;
   appListeners.clear();
   storedPrefs = { scheme: 'light', background: '#fff7fa' };
+  attestationVerdict = { ok: true, checked: 6, root: 'r' };
+  attestationCalls = [];
+  errorBoxes = [];
+  exitCodes = [];
 });
 
 describe('BrowserWindow の設定 — 隔離の三点セット', () => {
@@ -777,6 +801,45 @@ describe('窓の見た目とアイコン', () => {
     const c = await loadMain({ packaged: false, devServerUrl: 'http://localhost:5173' });
     expect(c.devToolsOpened).toBe(true);
     expect(c.devToolsMode).toBe('detach');
+  });
+});
+
+describe('起動時の自己検算 (threat: T-218 · パス 553)', () => {
+  it('★ 梱包版は窓を作る前に同梱物を検算し、通れば窓を 1 つ作る (検算の根はアプリの根 = dist-electron の 1 つ上)', async () => {
+    await loadMain({ packaged: true });
+    expect(attestationCalls).toHaveLength(1);
+    expect(path.basename(attestationCalls[0]!)).toBe(path.basename(path.resolve(__dirname, '..', '..')));
+    expect(windowsMade).toBe(1);
+    expect(errorBoxes).toEqual([]);
+    expect(exitCodes).toEqual([]);
+  });
+
+  it('★ 検算が通らなければ理由を stderr に刷り、ダイアログを出して exit(1) —— 窓は作らない・配色も読まない', async () => {
+    attestationVerdict = { ok: false, reason: 'hash-mismatch', detail: 'dist-electron/main.js' };
+    const errors: string[] = [];
+    const spy = vi.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
+      errors.push(args.map(String).join(' '));
+    });
+    try {
+      await loadMain({ packaged: true });
+    } finally {
+      spy.mockRestore();
+    }
+    expect(windowsMade, '窓が作られた —— 改竄された同梱物で起動している').toBe(0);
+    expect(exitCodes).toEqual([1]);
+    expect(errorBoxes).toHaveLength(1);
+    expect(errorBoxes[0]!.title).toBe('Service Hub を起動できません');
+    expect(errorBoxes[0]!.content).toContain('ファイルの中身が組んだときと違います (dist-electron/main.js)');
+    expect(errors.some((l) => l.includes('[self-attestation] hash-mismatch: dist-electron/main.js'))).toBe(true);
+    // 順序: stderr → ダイアログ → exit (ダイアログは同期・modal なので、先に刷らないと無人の環境で理由が残らない)
+  });
+
+  it('開発中 (梱包していない) は検算しない —— dist が変わるたびに表が古びる', async () => {
+    attestationVerdict = { ok: false, reason: 'manifest-missing', detail: 'dist-electron/integrity.json' };
+    await loadMain({ packaged: false });
+    expect(attestationCalls).toEqual([]);
+    expect(windowsMade).toBe(1);
+    expect(exitCodes).toEqual([]);
   });
 });
 

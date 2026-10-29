@@ -1523,3 +1523,37 @@ describe('速度の上限と記録だけを掛ける 5 つの口 (threat: T-159)
     expect(presenceRequests.map((r) => r.summary)).toEqual(['/exports/report.html', '/exports/report.svg']);
   });
 });
+
+/*
+ * **出力インターセプター (threat: T-215)** —— 端末の外へ出る段階の本文は、本人確認を出す前に規則で検める。
+ * 資格情報・マイナンバー・カード番号の形が在れば、`requirePresence` も action 関数も**呼ばれない**。
+ * 判定は `shared/outboundContentGate.ts` (単体は outboundContentGate.test.ts)。ここは**配線**を見る。
+ */
+describe('出力インターセプター —— 外へ出る本文を確認の前に検める (threat: T-215)', () => {
+  const SECRET = 'sk-ant-api03-' + 'abcdefghijklmnopqrstuvwxyz' + '0123456789';
+
+  it('★ external-write (github/create-issue) の本文に資格情報の形が在れば、確認も実行も起きない', async () => {
+    const r = (await invoke('action:invoke', 'github', 'create-issue', { title: 't', body: `key ${SECRET}` })) as { ok: boolean; code: string; message: string };
+    expect(r.ok).toBe(false);
+    expect(r.code).toBe('action_failed');
+    expect(r.message).toContain('資格情報の形');
+    expect(r.message).toContain('欄: body');
+    expect(r.message).not.toContain(SECRET);
+    expect(presenceRequests).toEqual([]);
+    expect(actionCalls).toEqual([]);
+  });
+
+  it('★ egress (assistant/chat) の本文にマイナンバーの形が在れば送らない', async () => {
+    const r = (await invoke('action:invoke', 'assistant', 'chat', { messages: [{ role: 'user', content: '番号 1234-5678-9018' }] })) as { ok: boolean; message: string };
+    expect(r.ok).toBe(false);
+    expect(r.message).toContain('マイナンバー');
+    expect(presenceRequests).toEqual([]);
+  });
+
+  it('対照: きれいな本文は今までどおり確認へ進み、実行される', async () => {
+    const r = (await invoke('action:invoke', 'github', 'create-issue', { title: 't', body: '普通の本文 03-1234-5678' })) as { ok: boolean };
+    expect(r.ok).toBe(true);
+    expect(presenceRequests.length).toBe(1);
+    expect(actionCalls.length).toBe(1);
+  });
+});

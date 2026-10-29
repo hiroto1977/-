@@ -202,8 +202,8 @@ const VARIABLE_PATH_ALLOWED: Readonly<Record<string, { count: number; why: strin
     why: '**原文の道具そのもの** —— sandbox の道を原文の道へ写してから読むのが仕事なので、生の読みはその写し先 (変数) を読む。この 4 件が在るから他のすべての検査が原文を読める。helper を母集団へ入れた日 (パス 490) に初めて数えられた',
   },
   'src/main/__tests__/fileReadSizeGateCensus.test.ts': {
-    count: 9,
-    why: 'この census の母集団は `readFile` の呼び出しそのものなので、台帳の needle と標本が**数える綴りを引用する**。実際の読みは `readOriginalSource` だけを通しており、引用は文字列リテラルで走らない —— 綴りを分割して走査を避けるより、理由つきで載せる方が読める (パス 326)。**件数は 2026-09-25 (パス 462) に 6 → 9 へ実測で直した** —— 自前の注記除去が glob の `**` から始まる偽の注記で 45 行を食っており、その中の引用 3 件が見えていなかった',
+    count: 12,
+    why: 'この census の母集団は `readFile` の呼び出しそのものなので、台帳の needle と標本が**数える綴りを引用する**。実際の読みは `readOriginalSource` だけを通しており、引用は文字列リテラルで走らない —— 綴りを分割して走査を避けるより、理由つきで載せる方が読める (パス 326)。**件数は 2026-09-25 (パス 462) に 6 → 9 へ実測で直した** —— 自前の注記除去が glob の `**` から始まる偽の注記で 45 行を食っており、その中の引用 3 件が見えていなかった。**2026-10-29 (パス 553) に 9 → 12** —— `selfAttestation.ts` の読み 3 件 (表・同梱ファイル・stat) を台帳に載せたので、その needle の引用が 3 件増えた',
   },
   'src/shared/__tests__/trackedPopulationWitness.test.ts': {
     count: 1,
@@ -211,6 +211,12 @@ const VARIABLE_PATH_ALLOWED: Readonly<Record<string, { count: number; why: strin
       + '「走査を一部だけ殺す細工が木を無傷のまま残しているか」を別のプロセスで確かめるためのもの (パス 470)。'
       + '読むのは `scripts/` の**一覧**で中身ではないし、この検査は前置きで `fs` を書き換えた状態を測るので'
       + '**この worker の中では走らせられない** (原文の道具へ移す先が無い)',
+  },
+  'src/main/__tests__/selfAttestation.test.ts': {
+    count: 23,
+    why: '**読むのは一時の木** (`mkdtemp` に植えた出荷物の写し) で、ソースの原文ではない (パス 553 · T-218)。検算の契約は'
+      + '「実物の `fs/promises` を `AttestationFs` として当てて壊し方ごとに 1 件」なので、偽の fs が実物の `readFile` / `readdir` を'
+      + '包む形で道が変数になる。sandbox の計装された本文を読む余地は無い (一時の木に検査対象のソースは無い)',
   },
   'src/main/__tests__/stateWriterRace.test.ts': {
     count: 2,
@@ -298,8 +304,8 @@ const VARIABLE_PATH_ALLOWED: Readonly<Record<string, { count: number; why: strin
     why: '一時 userData の secrets.json を読み戻す (threat: T-041 —— basic_text で plain: が書かれたか・昇格しないか)。repo のファイルではない',
   },
   'src/main/__tests__/secretsCredentialTtl.test.ts': {
-    count: 1,
-    why: '一時 userData の secrets.json を読み戻し、保存した値の時刻の印 (at:<ms>:) と期限切れの消去を確かめる。repo のファイルではない (threat: T-213)',
+    count: 5,
+    why: '一時 userData の secrets.json を読み戻し、保存した値の時刻の印 (at:<ms>:) と期限切れの消去を確かめる (1 件)。パス 550 で足した 4 件は「一覧・読みで保管ファイルを書き直さない」を中身と更新時刻で見るため、同じ一時ファイルを前後で読む。repo のファイルではない (threat: T-213)',
   },
   'src/main/__tests__/secretsWrite.test.ts': {
     count: 5,

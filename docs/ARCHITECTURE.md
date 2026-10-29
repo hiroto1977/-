@@ -1,6 +1,6 @@
 # Service Hub — Architecture
 
-> 自己検証: `npm run verify:arch` で 697 個の `file:line` 参照 + 43 個のライブメトリクスが
+> 自己検証: `npm run verify:arch` で 698 個の `file:line` 参照 + 44 個のライブメトリクスが
 > 毎 push 検証されます (`.github/workflows/ci.yml`)。**この 2 つの数もライブメトリクス
 > なので、ゲートが大きくなれば一緒に動く** —— 2026-09-15 (パス 279) まで
 > 「170 個 + 5 個」と書いたままで、実測の 4 倍・7 倍の過小申告だった。
@@ -21,12 +21,12 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 
 | 軸 | 値 | 出典 |
 |---|---:|---|
-| サービス数 | 76 | `src/shared/serviceId.ts:9-43` |
+| サービス数 | 77 | `src/shared/serviceId.ts:9-43` |
 | IPC ハンドラ数 | 15 | `src/main/main.ts:254-592` |
-| client モジュール (fetcher + actions) | 76 | `src/main/clients/index.ts:44-83` |
+| client モジュール (fetcher + actions) | 77 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **18719** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **18954** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` (**2026-09-01 の報告** —— 今のコードを測った物ではない。`docs/REMAINING_WORK.md` の「パス 494」) |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` (同上) |
@@ -34,7 +34,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod / dev) | 0 vulnerabilities (2026-09-10 実測。CI が `--omit=dev --audit-level=high` で毎回確認 —— dev 依存と moderate 以下を落とさないのは意図的で、理由は `ci.yml` の注記。**その外側は `lint:deps` のセキュリティの床 6 件**が受け持つ: 自分で押さえた版は道を問わず台帳に載り、緩めば落ちる) | `package-lock.json` |
 | 陰性対照つきゲート | 36 / 39 (`lint:malware` を足した · パス 510。残る 3 件は外部ツール 2 (`typecheck` / eslint) と `chain:verify` (対照は `integrityChainWitness.test.ts` が持つ)。★ 2026-09-25 (パス 467) に `lint:knowledge-refs` と `verify:orchestration` へ `--self-test` を付けた —— 2 本は「2026-08-25 に実物へ違反を植えて鳴ることを確認済み」という理由で免除されていたが、それは**母集団が非空のとき**の対照で、**空にする側**は 1 度も試されておらず、実測すると壊れた台帳も `rounds: []` も `org.secretaries` 削除も**すべて ✅ exit 0** だった。`lint:doi-prefix` は同じ理由で今も免除だが、空にする側は測っていない) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
-| `file:line` 参照数 | 697 | 自己検証 |
+| `file:line` 参照数 | 698 | 自己検証 |
 | 図の中の `file:line` 参照数 | 29 | 自己検証 (mermaid のクラス図・パス 180) |
 
 ### 統合フロー図
@@ -1736,7 +1736,7 @@ flowchart LR
 ```
 
 OAuth サービスは値が `JSON.stringify(TokenSet)`、それ以外は生 bearer 文字列。
-`getValidToken()` (`src/main/secrets.ts:723-791`) が `JSON.parse` → `isTokenSet` で振り分け。
+`getValidToken()` (`src/main/secrets.ts:739-807`) が `JSON.parse` → `isTokenSet` で振り分け。
 
 ---
 
@@ -1767,6 +1767,7 @@ union を参照する。
 | `ollama` | Ollama (local) | none | ✅ | | `chat` |
 | `kpi` | KPI / BEP (local mock) | none | ✅ | | (read-only — Phase 6 で API 接続) |
 | `hydroponics` | 水耕栽培 — 運転管理 (測定の判定 / 今日やること / 栽培ロットの日程) | none | ✅ | | (read-only — fetcher は「何を測るか」の台帳だけを返す。測定・ロット・設定は端末内の record store。組み立ては `src/shared/hydroponicsControl.ts` に 1 つ) |
+| `mentor` | 専属カウンセラー — メンバー 1 人に 1 人の相談役 (聞き取り / 週 1 のチェックイン / 関係の仲介 / 助言) | none | ✅ | | (read-only — fetcher は聞き取りの問いの台帳だけを返す。記録は端末内の record store `mentor-sessions`。判断は `src/shared/mentor.ts` に 1 つ。AI へ送るのは本人の記録と相談文だけで、画面が送る前に断る) |
 | `stocks` | Stocks (local mock) | Bearer (Anthropic, advisor のみ) | ✅ | | `register-ticker`, `unregister-ticker`, `backtest`, `compare-strategies`, `advise`, `export-dashboard`, `export-dashboard-md` (永続化済み、Phase 7 で broker 接続) |
 | `business` | 事業ダッシュボード (10 categories) | none | ✅ | | `advise`, `export-dashboard`, `export-dashboard-md` (EC / dropship / OEM/ODM / blog / blog-affiliate / PPC-affiliate / video-production / video-upload / video-distribution / sns-ops, Phase 6 で 実 API 接続) |
 | `funding` | 資金調達レーダー — 補助金/助成金/融資/公庫/給付金/CF を会計・株式連携で可視化 (レーダー/折れ線/円/棒) | none (local mock) | ✅ | | (read-only — 集計は src/shared/funding.ts の純粋関数。Phase 6 で会計/公庫 API 接続) |
@@ -2253,7 +2254,7 @@ $ npm run mutate:next -- --top=5
 per-file の kill / survived / no-cov / ignored / invalid は `docs/QUALITY.md` が
 Stryker の JSON レポート (reports/mutation 配下の生成物) から機械生成して持つ
 (`npm run quality:report`)。
-Stryker の対象 (`stryker.config.json` の `mutate`) は **317 ファイル**。
+Stryker の対象 (`stryker.config.json` の `mutate`) は **323 ファイル**。
 2026-10-26 に `renderer/data` の `aegisLang` と `aegisLangSafety` の 2 モジュール (外へ何も出さない小さな言語の実行系と、実行前の安全の走査・規則ベースの修復の提案 —— Python の原型 AegisLang の考え方だけを移した純ロジック) を足した —— 1 度目の測定は **88.65% (生存 154)** で、生存の大半は利用者に見せる日本語の断りの文を値で主張していない物 (文面を空にしても検査が落ちない) と、走査の上限の添字の等価変異だった。文面を全件そのまま留める検査と、境界・状態の検査を足し、等価な添字は走査の形ごと消して (sticky 正規表現・`indexOf`・`split` と `map`)、**100.00% (Killed 1,286 / 生存 0 / 未到達 0)**。残した 2 つの `Stryker disable` は理由つき (収束しない入力への保険の周回上限・空の編集を適用しても変わらない最適化)。
 2026-10-07 (パス 506) に `src/renderer/components/useDialogFocus.ts` (dialog の焦点の道 —— 開いたら印の操作子へ・Esc で閉じる / 取り消す・
 消えたら押した物へ戻す) を足した —— push した直後の CI で `mutateScopeCensus` が「同名の検査が在り 100 行以上なのに `mutate` の外」と
@@ -2407,9 +2408,9 @@ classDiagram
     +getToken(id) : secrets.ts:494
     +clearToken(id) : secrets.ts:499
     +listConfiguredServices() : secrets.ts:521
-    +setOAuthTokens(id, ts) : secrets.ts:632
-    +getOAuthTokens(id) : secrets.ts:662
-    +getValidToken(id) : secrets.ts:723 ~auto-refresh~
+    +setOAuthTokens(id, ts) : secrets.ts:648
+    +getOAuthTokens(id) : secrets.ts:678
+    +getValidToken(id) : secrets.ts:739 ~auto-refresh~
   }
 
   class OAuthHelper~oauth.ts~ {

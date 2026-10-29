@@ -128,6 +128,12 @@ const LEDGER: Readonly<Record<string, { kind: Kind; why: string }>> = {
     kind: 'value',
     why: '戦略 1 件 (関数値)。同上。',
   },
+  // 2026-10-29 (パス 553 · T-218): 名前が同じだけで別の物 —— renderer の `data/cloudBackup.ts` はクラウド控えの表
+  // (記録の塊ごとの hash)、main の `selfAttestation.ts` は同梱ファイルの表 (起動時の検算)。両ビルドが同じ問いに
+  // 答えているのではなく、別の問いに同じ語を使っている。後者の写しは `.cjs` の側に在り `selfAttestationParity.test.ts` が結ぶ。
+  MANIFEST_VERSION: { kind: 'different', why: '表の版 —— クラウド控えの表 (renderer) と同梱物の検算表 (main) は別の表' },
+  buildManifest: { kind: 'different', why: '組む物が違う (renderer は記録の塊の hash・main は同梱ファイルの sha256)。引数の型も違う' },
+  sha256Hex: { kind: 'different', why: 'renderer は WebCrypto の digest (非同期)・main は node:crypto。同じ名前の別の実装で、交わる呼び手は無い' },
 };
 
 /**

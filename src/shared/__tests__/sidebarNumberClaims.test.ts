@@ -33,6 +33,7 @@ import { STUDIO_TEMPLATES } from '../../renderer/data/docStudioData';
 import { MAX_BYTES, MAX_ITEMS } from '../../renderer/library/library';
 import { BUSINESS_CATEGORY_IDS } from '../businessAdvisor';
 import { SCORE_MAX, SCORE_MIN } from '../teamRadarState';
+import { CHECKIN_INTERVAL_DAYS } from '../mentor';
 import type { ServiceId } from '../serviceId';
 import { org as regOrg, teams as regTeams } from '../../../orchestration/registry.json';
 import { readFileSync } from 'node:fs';
@@ -76,6 +77,10 @@ const LEDGER: Partial<Record<ServiceId, readonly Claim[]>> = {
     { text: 'Phase 6', why: '行程の名前' },
   ],
   stocks: [{ text: 'Phase 7', why: '行程の名前' }],
+  mentor: [
+    { text: '1 人に 1 人', why: '専属 (1 対 1) の言い回し。測る数ではない' },
+    { text: '週 1', measure: () => `週 ${CHECKIN_INTERVAL_DAYS / 7}`, why: 'チェックインの間隔 (CHECKIN_INTERVAL_DAYS = 7 日を週で言う)' },
+  ],
   business: [
     { text: '10 事業', measure: () => String(BUSINESS_CATEGORY_IDS.length), why: '事業カテゴリの数' },
     { text: 'Phase 6', why: '行程の名前' },

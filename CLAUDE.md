@@ -11,7 +11,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Service Hub — a Japanese-facing business dashboard exposing **76 services** through a unified,
+Service Hub — a Japanese-facing business dashboard exposing **77 services** through a unified,
 category-grouped sidebar (おすすめ / 士業連携 / 分析・ツール / 外部サービス連携). **Not every service has a sidebar
 entry of its own**: `uber-eats` and `demae-can` are consumed inside the Business Dashboard instead
 (`BusinessPage.tsx` reads their snapshots directly). That split is a reasoned, bidirectional ledger in
@@ -1040,9 +1040,9 @@ npm run dev              # Vite + Electron, hot reload (desktop dev)
 npm run build:web        # → dist/standalone.html (browser build; runs inline-html.cjs)
 npm run build:web:lite   # → dist/standalone-lite.html (~2MB モバイル版・学術コーパス非搭載)
 npm run e2e              # Playwright 実機 E2E (desktop/phone/tablet)。e2e:lite で LITE 版を検証
-                         #   **39 suite / 実測 758 件** (FULL・LITE とも・2026-10-08 パス 507 の実測 —— `opened` に書き込みの確認 3 × (デスクトップ 4 配色 + スマホのシート 4 配色) を足した後。パス 506 後は 734)。床は「黙って縮んだら落とす」ための物で、
+                         #   **39 suite / 実測 761 件** (FULL・LITE とも・2026-10-29 パス 555 の実測 —— `proxyEnvelope` に持ち主の確認 (T-219) の 2 件・`vaultOpacity` に `storedAt` の 1 件を足した後。パス 507 後は 758)。床は「黙って縮んだら落とす」ための物で、
                          #   **表に書くのは実測値ただ 1 つ、床は `floorOf()` が導く** (実測の 85%・切り捨て・最低 1。
-                         #   合計の床は実測合計の 85% = **644**)。2026-09-20 (パス 346) まで表は
+                         #   合計の床は実測合計の 85% = **646**)。2026-09-20 (パス 346) まで表は
                          #   **床と `// 実測 N` の 2 つを手書き**で持っており、実測すると 3 つの文がずれていた ——
                          #   `paperAccount` は注記 10 に対し実物 13 で、**その床 8 は実測の 62%** (5 件減っても鳴らない)、
                          #   `theme` の床 10 は 71%、runner の docblock は「実測 (合計 395 件) の 85%」と
@@ -1380,6 +1380,9 @@ npm run smoke            # xvfb + Electron screenshot smoke test of every page
 npm run smoke:app        # 実物の `electron .` を起動して 8 秒生きているか
                          #   (主プロセス dist-electron/main.js を通す唯一の検査)
 npm run smoke:packaged   # 梱包した実物 (electron-builder --dir · app.asar + fuse 適用済み) を起動して窓に UI が出ることを見る
+                         #   **加えて app.asar を 1 byte 改竄して固め直し、起動時の自己検算 (T-218 · パス 553) が理由を stderr に刷って
+                         #   窓を作らないことを見る** —— Linux では fuse の asar integrity が何も照合しない (実測) のでこれが唯一の段。
+                         #   梱包の前に `scripts/build-integrity-manifest.cjs` で表を書く (npm run build と同じ順序)
                          #   (Linux 専用 · xvfb-run -a · playwright が要る)。smoke:app は梱包なしの `electron .` なので、
                          #   出荷設定の fuse が梱包版の窓を白くする誤り (T-165 · 2026-10-23 実測) は映らない。
                          #   梱包物の fuse が electron-builder.json と一致すること・窓が app.asar の index.html を読み UI が出ること・
@@ -1466,7 +1469,7 @@ npm run lint:test-coverage # サービスごとに `<id>.test.ts` が在り、**
                            #   直書きした action は検査を素通りする)、`ACTIONS` を export する
                            #   クライアントは全部 `LIVE_ACTIONS` に載る (逆向き)。
                            #   **action を持たないサービスは許される** —— 2026-09-15 実測で
-                           #   **76 のうち 48 が action を 1 つも登録していない** (ゲートの
+                           #   **77 のうち 49 が action を 1 つも登録していない** (ゲートの
                            #   self-test にも「テストはあるが action 0 件 → 0 件鳴る」が在る)。
                            #   2026-09-15 まで、この行は「every service must have a test +
                            #   an action registered」と書かれていた —— **後半は偽**で、
@@ -1593,7 +1596,7 @@ npm run lint:regex         # 正規表現の破滅的バックトラック (ReDo
                            #   台帳の形と「引いている上限が実物の最大か」は
                            #   `regexPolynomialLedger.test.ts` が毎回の npm test で見る
 npm run lint:parameter-prose # 画面が刷る数字と、計算に使う数字の出所が同じか
-                           #   (`parameters.ts` の台帳で上書きできる 115 の定数について、
+                           #   (`parameters.ts` の台帳で上書きできる 116 の定数について、
                            #   renderer が既定定数を**直接**刷っていないか。上書きすると
                            #   「効いているのに画面が古い数字で説明する」形になる。
                            #   倒し込み (`??` / 既定引数 / `=== 既定`) は規則の外・
@@ -1608,8 +1611,8 @@ npm run lint:zero-fold     # 「割れない値を 0 に倒す」箇所の**母�
                            #   母集団が 26 ファイル (実測 106) と 4 倍ずれていた
 npm run lint:shared-judgement # 「述語は共有したが、no と言われたあとの動作が両ビルドで
                            #   違う」の**母集団**を数え、`docs/REMAINING_WORK.md` の
-                           #   生成ブロックと突き合わせる (shared 160 / 両ビルドが
-                           #   import 84 / うち否定で答えられる 43。**この 3 つは
+                           #   生成ブロックと突き合わせる (shared 165 / 両ビルドが
+                           #   import 89 / うち否定で答えられる 47。**この 3 つは
                            #   live metric なので散文だけが古びることはもう無い** ——
                            #   2026-09-15 まで 138 / 44 / 21 と書いたままだった。
                            #   44 / 21 はパス 247 が初めて数えた値で、
@@ -1831,6 +1834,26 @@ The browser target adds: `web-shim.ts` (a `window.serviceHub` polyfill imported 
   全件の門 → 実機 → push まで止めない。正は `scripts/task-tier.cjs` の `TIERS` で、方針は
   `docs/MODEL_EFFORT_POLICY.md` (`taskTierPolicy.test.ts` が表・agent 定義・文書を双方向に留める)。
 - **部品ごとの偽物が緑でも、つなぎ目は別に通す。実物の部品を架空のデータでつないで端から端まで回す** (2026-10-22)。毎日の依存監査は、部品の検査 (脅威ウォッチ・報告・Issue 同期) がそれぞれ自前の偽物で緑のまま、つなぎ目 (self-test の偽 Issue に作者が無い) で 1 週間止まっていた。`dependencyAuditEndToEnd.test.ts` が手本: 実物の `weakness-map.json`・`buildReport`・`syncIssue` を、状態を持つ偽の GitHub と架空の勧告・KEV・EPSS (CVE は 2099 年・パッケージは `acme-*`・GHSA は `GHSA-fake-*`) でつなぎ、何日か続けて回す。架空データは実在の個人・会社・CVE を使わない (取り違えられない)。偽の GitHub は本物と同じく**呼ぶたびに複製を返す** (生の参照を返すと update が先に state を書き換えて比較が壊れる)。
+- **AI の判断に守りを委ねない —— 3 層は規則で、AI の外に置く** (2026-10-29 · パス 552)。端末の外へ出る
+  action (段階が `external-write` / `egress` · `src/shared/actionTier.ts`) を足したら、本文は `outboundContentRefusal`
+  を通る漏斗 (main の `action:invoke` / web-shim の `shim.invoke`) の中に置く —— 枝ごとに `invoke` を迂回しない。
+  payload で資格情報を正当に運ぶ欄は `CREDENTIAL_PAYLOAD_FIELDS` に理由つきで。第三者の文 (メール・チャット・配られた
+  文書) を AI へ渡す新しい口は `promptInjectionRefusal` を**鍵を読む前**に通し、`aiDefenseWiring.test.ts` の母集団に足す。
+  AI の応答を受けた値を外向きの `invoke` / `openExternal` / `fetch` へ渡さない (`aiReplyInert.test.ts` が鳴る)。
+  プロンプトに「秘密を漏らすな」と書くことは守りに数えない。
+- **送り先を決める設定は、書く前に持ち主の確認を通す** (2026-10-29 · パス 554 · T-219)。アプリがどこへ資格情報と本文を
+  送るかを決める設定 (BYO プロキシ・端末の外へ向く Ollama の接続先) を書く新しい口は、`security/egressStepUp.ts` の判定
+  (`proxyChangeNeedsStepUp` / `ollamaEndpointNeedsStepUp`) を通し、`components/StepUpPassword.tsx` が保管庫の
+  `verifyPassword` (状態を変えない照合) で合ったときだけ書く。「保存」は書かずに pending へ置き、確認後の関数だけが書く。
+  文は送り先のホストだけを名乗る (秘密も path も映さない)。消す口 (削除) は門の外。`egressSettingWriterCensus.test.ts` が
+  書き手を両方向で数える。門はレンダラーの中に在り、乗っ取られたレンダラーには効かない —— 止めるのは人の手である。
+- **出荷した物は起動のたびに自分を検算する —— 同梱するファイルを足したら、表の歩く範囲に入っているかを見る** (2026-10-29 · パス 553 · T-218)。
+  `npm run build` は vite build の後に `scripts/build-integrity-manifest.cjs` で `dist-electron/integrity.json` (dist / dist-electron /
+  build/icon.png の sha256) を書き、梱包版の主プロセスは窓を作る前に `src/main/selfAttestation.ts` で突き合わせ、1 byte でも違えば
+  起動しない。`electron-builder.json` の `files` に新しい場所を足すなら `SHIPPED_DIRS` / `SHIPPED_FILES` (`.ts` と `.cjs` の両方 ——
+  パリティ検査が鳴る) と `ALLOWED_ROOT_ENTRIES` にも足す。**package.json は表に載せない** (electron-builder が梱包時に書き換える)。
+  node_modules は同梱しない (`!node_modules/**` —— 主プロセスも preload も require しない)。Linux には署名が無いので、
+  この検算が止めるのは「1 ファイルの改竄」であって「容器ごとの差し替え」ではない。
 - **対照を回すまで、検査は信用しない。** 守っている物を実際に壊し、狙った項目が
   落ちることを見る。**鳴らない対照は「合格」ではなく「その検査についての報せ」である。**
 

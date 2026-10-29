@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 370
+- ブロック数: 383
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `63d2990574dcd8345639ef3144147ae1776250d13c463991971f635d94d162d3`
-- 保護対象: 128 ファイル
+- 末尾(tip)ハッシュ: `0f82fae8c348b10921fcc2d9ad4691ad83bc3710d20175c86347b96c9aec15a0`
+- 保護対象: 134 ファイル
 
 ## ブロック
 
@@ -383,6 +383,19 @@
 | 367 | `962b8d4d8531dde0` | `040515026238c582` | `45ba43efd4ea545a` | update release.yml,verify-packaged-fuses.cjs |
 | 368 | `47d1f344c9792a23` | `45ba43efd4ea545a` | `f39acc52fd3e09fc` | update redact.ts |
 | 369 | `3a202a757d460717` | `f39acc52fd3e09fc` | `63d2990574dcd834` | update integrity-chain.cjs,secrets.ts,vault.ts,credentialTtl.ts |
+| 370 | `b63cae4414368a65` | `63d2990574dcd834` | `208dc542c68e178d` | update secrets.ts,vault.ts,credentialTtl.ts |
+| 371 | `e2226754991e5c46` | `208dc542c68e178d` | `8a7a0455d3002dd9` | update 00-project.mdc,manifest.webmanifest |
+| 372 | `1632c6ebecc548f5` | `8a7a0455d3002dd9` | `7e8db84e5e9a20ec` | update integrity-chain.cjs,main.ts,userPresence.ts,actionTier.ts,outboundContentGate.ts,promptInjection.ts |
+| 373 | `fcfdb6029d58f67f` | `7e8db84e5e9a20ec` | `19a08b86ab8ea05a` | update outboundContentGate.ts |
+| 374 | `eb99626448fac019` | `19a08b86ab8ea05a` | `5d14b178bcaef1a3` | update outboundContentGate.ts |
+| 375 | `f21529a2ab6b2fa4` | `5d14b178bcaef1a3` | `5bbede6d884170b0` | update userPresence.ts,outboundContentGate.ts |
+| 376 | `aeb6d4c7cec746e5` | `5bbede6d884170b0` | `aaa75718151fce6c` | update outboundContentGate.ts |
+| 377 | `ced4dc890a9be2fa` | `aaa75718151fce6c` | `89e29145bf14259f` | update electron-builder.json,build-integrity-manifest.cjs,integrity-chain.cjs,smoke-packaged.cjs,main.ts,selfAttestation.ts |
+| 378 | `a2cb8f344ad2d7b5` | `89e29145bf14259f` | `e7a1560a49760321` | update selfAttestation.ts |
+| 379 | `7a1453e286227601` | `e7a1560a49760321` | `f214d0465494d791` | update electron-builder.json,build-integrity-manifest.cjs,artifact-freshness.cjs,lint-malware.cjs,selfAttestation.ts |
+| 380 | `3b250467883d391d` | `f214d0465494d791` | `49993e94e04950d0` | update vault.ts |
+| 381 | `9983fa57821e82ab` | `49993e94e04950d0` | `409f948e647640fd` | update integrity-chain.cjs,egressStepUp.ts |
+| 382 | `9393a650f568c6a7` | `409f948e647640fd` | `0f82fae8c348b109` | update vault.ts |
 
 ## 保護対象ファイル
 
@@ -413,6 +426,7 @@
 - `launcher/ServiceHubを開く.bat`
 - `orchestration/knowledge-context.cjs`
 - `orchestration/knowledge-graph.cjs`
+- `scripts/build-integrity-manifest.cjs`
 - `scripts/build-landing.cjs`
 - `scripts/checksum-release.cjs`
 - `scripts/inject-pwa.cjs`
@@ -455,6 +469,7 @@
 - `src/main/oauth.ts`
 - `src/main/presenceWiring.ts`
 - `src/main/secrets.ts`
+- `src/main/selfAttestation.ts`
 - `src/main/shellOpenGate.ts`
 - `src/main/stateFile.ts`
 - `src/main/userPresence.ts`
@@ -474,12 +489,14 @@
 - `src/renderer/security/autoLock.ts`
 - `src/renderer/security/bip39-wordlist.ts`
 - `src/renderer/security/dataCrypto.ts`
+- `src/renderer/security/egressStepUp.ts`
 - `src/renderer/security/frameGuard.ts`
 - `src/renderer/security/lockWorkspace.ts`
 - `src/renderer/security/mnemonic.ts`
 - `src/renderer/security/vault.ts`
 - `src/renderer/security/webCrypto.ts`
 - `src/renderer/security/webauthn.ts`
+- `src/shared/actionTier.ts`
 - `src/shared/advisorQuestionLimits.ts`
 - `src/shared/ai/chat.ts`
 - `src/shared/ai/credentials.ts`
@@ -501,7 +518,9 @@
 - `src/shared/isoDate.ts`
 - `src/shared/localDate.ts`
 - `src/shared/ollama.ts`
+- `src/shared/outboundContentGate.ts`
 - `src/shared/privateTarget.ts`
+- `src/shared/promptInjection.ts`
 - `src/shared/proxyEndpoint.ts`
 - `src/shared/redact.ts`
 - `src/shared/safeFilename.ts`

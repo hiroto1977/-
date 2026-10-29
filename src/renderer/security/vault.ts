@@ -216,6 +216,20 @@ export interface Vault {
   /** Initialize a new vault. Returns the one-time recovery mnemonic. */
   initialize(password: string): Promise<InitResult>;
   unlock(password: string): Promise<void>;
+  /**
+   * **状態を変えずに**パスワードが合うかを答える (2026-10-29 · パス 554 · threat: T-219)。
+   *
+   * 「送り先を変える」操作 (BYO プロキシの保存・Ollama の接続先を同じ端末の外へ) は、
+   * 資格情報の書き込みと同じ重さなので、この端末の持ち主の確認を要る —— ブラウザ版には
+   * main が無く、ネイティブダイアログ (T-183) が構造上持てないので、持ち主の証は
+   * 保管庫のパスワードただ 1 つである。`unlock()` を流用すると鍵を据え直し世代を進める
+   * 副作用が在るので、照合だけを切り出す。
+   *
+   * 返す物は真偽だけ: 合えば true・違えば false。**保管庫が未初期化なら投げる**
+   * (「無い」を「違う」と混ぜると、初期化していない端末で永久に断られる理由が読めない)。
+   * 空文字は照合せず false。パスワードは保持しない。
+   */
+  verifyPassword(password: string): Promise<boolean>;
   lock(): void;
   setToken(serviceId: string, token: string): Promise<void>;
   getToken(serviceId: string): Promise<string | null>;
@@ -333,7 +347,11 @@ function idbPut(db: IDBDatabase, store: string, key: string, value: unknown): Pr
  */
 function idbPutAll(
   db: IDBDatabase,
-  entries: readonly { store: string; key: string; value: unknown; add?: boolean }[],
+  entries: readonly { store: string; key: string; value: unknown }[],
+  // `add: true` なら全項を `add` で書く (鍵が既に在れば ConstraintError で取引ごと abort · T-064)。
+  // 項ごとの旗にしない —— 2 項のうち片方だけ `put` に替える変異は、もう片方の `add` が同じ
+  // 取引を abort するので等価になり、守りが 1 項に痩せても測れない (パス 550)。
+  opts: { readonly add?: boolean } = {},
 ): Promise<void> {
   // **空なら何もしない。** `db.transaction([], …)` は仕様上 InvalidAccessError を
   // 投げる (実測で確認)。呼び出し側は今どこも空を渡さないが、「書くものが無い」を
@@ -353,14 +371,18 @@ function idbPutAll(
       // (変数名を `store` にしない —— レコードストアの書き込み台帳の走査 (`store.add(`) は
       // IndexedDB の objectStore と見分けられない。)
       const idbStore = tx.objectStore(e.store);
-      if (e.add === true) idbStore.add(e.value, e.key);
+      if (opts.add === true) idbStore.add(e.value, e.key);
       else idbStore.put(e.value, e.key);
     }
     tx.oncomplete = () => resolve();
     // `add` の ConstraintError は**要求**のエラーとして上がり、`tx.error` はまだ空なので、
     // event の target (要求) の error を先に見る (threat: T-064)。
+    // Stryker disable next-line ArrowFunction: この handler を外しても、abort 経路 (下の `onabort`) が
+    // 同じ ConstraintError を `tx.error` から拾って reject するので答えは同じ (等価変異)。
+    // ここに在るのは「要求の誤りをその場で返す」意図のため。
     tx.onerror = (ev) =>
-      // Stryker disable next-line LogicalOperator,StringLiteral: `tx.error` が入る経路は fake-indexeddb では失敗させられない。
+      // Stryker disable next-line LogicalOperator,StringLiteral,OptionalChaining: `tx.error` が入る経路は
+      // fake-indexeddb では失敗させられない。`ev.target` が無い event も作れない (`?.` は型のため)。
       reject((ev.target as IDBRequest | null)?.error ?? tx.error ?? new Error('idb put-all failed'));
     // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: 同上 (abort 経路)。
     tx.onabort = () => reject(tx.error ?? new Error('idb put-all aborted'));
@@ -793,10 +815,10 @@ class BrowserVault implements Vault {
     const epoch = this.lockToken;
     const db = await openDb();
     try {
-      const existing = await idbGet<VaultMeta>(db, META_STORE, 'vault');
-      if (existing) {
-        throw new Error('Vault は既に初期化されています');
-      }
+      // 「既に在るか」は**書く所の `add`** (下 · T-064) だけが決める。以前はここで meta を先読みして
+      // 断っていたが、その読みと書きは別の取引なので 2 つの窓の同時初期化を止められず、`add` を
+      // 足した後は先読みが何も決めない写しになっていた (先読みを外しても答えが同じ = 等価変異 ·
+      // パス 550)。門は 1 つにする。
       // 1. Generate raw master key (extractable so we can wrap it).
       const masterKey = await generateMasterKey();
       const masterRaw = await exportRawKey(masterKey);
@@ -879,17 +901,22 @@ class BrowserVault implements Vault {
         // 保存したトークンが全部 null・その窓の 24 語は「リカバリーキーが違います」)。
         // `add` は鍵が既に在れば ConstraintError で取引ごと abort するので、2 つ目は必ず断られる。
         try {
-          await idbPutAll(db, [
-            { store: META_STORE, key: 'vault', value: meta, add: true },
-            {
-              store: META_STORE,
-              key: 'master-wrap',
-              value: { iv: passwordWrappedMaster.iv, ciphertext: passwordWrappedMaster.ciphertext },
-              add: true,
-            },
-          ]);
+          await idbPutAll(
+            db,
+            [
+              { store: META_STORE, key: 'vault', value: meta },
+              {
+                store: META_STORE,
+                key: 'master-wrap',
+                value: { iv: passwordWrappedMaster.iv, ciphertext: passwordWrappedMaster.ciphertext },
+              },
+            ],
+            { add: true },
+          );
         } catch (err) {
           // DOMException は環境によって Error を継がないので名前だけで見る。
+          // 別の理由 (容量・閉じた DB) はそのまま投げる —— 「既に初期化」と偽らない。
+          // Stryker disable next-line OptionalChaining: reject に null は来ない (`?? new Error(…)` の床) —— `?.` は型のため。
           if ((err as { name?: unknown } | null)?.name === 'ConstraintError') {
             throw new Error('Vault は既に初期化されています');
           }
@@ -974,8 +1001,35 @@ class BrowserVault implements Vault {
     // 解錠できたパスワードについてだけ記録する (失敗すればここへ来ない)。
     this.policyOk = meetsPolicy;
     // 解錠できて初めて旧形式を読めるので、ここで束ね直す。
-    await this.sweepExpiredTokens().catch(() => []); // threat: T-213 —— 期限切れは解錠のたびに消す
+    await this.sweepExpiredTokens().catch(() => {}); // threat: T-213 —— 期限切れは解錠のたびに消す (失敗しても解錠は通す)
     await this.rebindLegacyTokens().catch(() => {});
+  }
+
+  async verifyPassword(password: string): Promise<boolean> {
+    if (typeof password !== 'string' || password.length === 0) return false;
+    const db = await openDb();
+    let meta: VaultMeta | undefined;
+    try {
+      meta = await idbGet<VaultMeta>(db, META_STORE, 'vault');
+    } finally {
+      db.close();
+    }
+    if (!meta) throw new Error('Vault が未初期化です。初回設定を完了してください');
+    // `unlock()` と同じ門 (壊れた・差し替えられた meta で PBKDF2 が返らない形を断る)。
+    assertKdfIterations(meta.iterations);
+    assertSaltBytes(meta.salt);
+    const passwordKey = await deriveKey(password, meta.salt, meta.iterations);
+    try {
+      // AES-GCM は認証付きなので、鍵が違えば復号が投げる —— それが「違う」の答え。
+      const plain = await decryptString(passwordKey, { iv: meta.iv, ciphertext: meta.kcv });
+      // AES-GCM は認証付きなので、鍵が違えば decryptString が先に throw して下の catch が false を返す。
+      // 復号に成功して中身だけ違う状態は作れず到達しない (unlock の同じ比較と同じ理由 · 実測 2026-10-29:
+      // vault.ts の変異検査で唯一生き残った 1 件)。多重防御として残す。
+      // Stryker disable next-line ConditionalExpression: AES-GCM の認証が先に投げるので、復号できて中身だけ違う状態は作れない (等価)
+      return plain === KCV_PLAINTEXT;
+    } catch {
+      return false;
+    }
   }
 
   /** 解錠の途中で `lock()` が届いていれば、鍵を据えずに断る (T-049)。 */
@@ -1153,23 +1207,26 @@ class BrowserVault implements Vault {
    * 保存した時刻だけを見て、期限切れの記録を全部消し、日付の無い記録に時刻を付ける
    * (解錠時と一覧で呼ぶ · threat: T-213)。復号しないので鍵は要らない。
    */
-  private async sweepExpiredTokens(): Promise<string[]> {
+  private async sweepExpiredTokens(): Promise<void> {
     const now = Date.now();
     const db = await openDb();
-    const expired: string[] = [];
+    // 集合にする —— 配列の初期値に異物を入れる変異は「無い鍵の削除」が何もせず外から見えない
+    // (`rebindLegacyTokens` の `pending` と同じ形の等価変異)。戻り値も誰も読まないので返さない。
+    const expired = new Set<string>();
     try {
       for (const id of await idbKeys(db, TOKEN_STORE)) {
         const found = await idbGet<EncryptedToken>(db, TOKEN_STORE, id);
+        // Stryker disable next-line ConditionalExpression: `idbKeys` が返した鍵は在る。無いのは鍵の一覧と
+        // 取得の間に消された記録だけで、その窓は fake-indexeddb では作れない (等価変異)。
         if (!found) continue;
         if (found.storedAt === undefined) await idbPut(db, TOKEN_STORE, id, { ...found, storedAt: now });
-        else if (storedCredentialExpired(found.storedAt, now)) expired.push(id);
+        else if (storedCredentialExpired(found.storedAt, now)) expired.add(id);
       }
       for (const id of expired) await idbDelete(db, TOKEN_STORE, id);
     } finally {
       db.close();
     }
     for (const id of expired) this.expiredNotices.set(id, expiredStoredCredentialMessage(id));
-    return expired;
   }
 
   /** 期限切れで消したことを 1 度だけ返す (画面が「未設定」の代わりに理由を言うため)。 */
@@ -1334,8 +1391,10 @@ class BrowserVault implements Vault {
               value: { iv: newMasterWrap.iv, ciphertext: newMasterWrap.ciphertext },
             },
           ]);
-          const next = await importNonExtractable(masterRaw);
-          if (unlockedAtStart && this.lockToken === epoch) this.currentKey = next; // threat: T-063
+          // 実効鍵 (master 鍵) は変わらないので、据え直す物は無い —— 解錠中ならそのまま解錠中、
+          // 施錠中 (開始時・変更の途中 · T-063) ならそのまま施錠中。以前はここで同じ master 鍵を
+          // import し直して据えていたが、同じ鍵を同じ所へ置くだけなので外から見えず、その条件は
+          // 等価変異だった (パス 550)。鍵を据える判断は旧世代路 (下) だけに在る。
           // newPassword は下限を強制済み —— ここで「短い」状態は解消する。
           // **この 1 行が下の枝にしか無かった** (2026-08-28)。master-wrap 枝は
           // Phase E の保管庫すべてが通る通常路なので、利用者が案内どおりに

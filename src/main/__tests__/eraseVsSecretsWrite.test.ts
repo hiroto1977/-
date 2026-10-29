@@ -68,7 +68,9 @@ describe('消去と資格情報の保存の競合 (threat: T-079)', () => {
     await setToken('github', 'OLD');
     const report = await eraseDesktopData({ targets: [secretsPath()], clearRenderer: async () => undefined });
     expect(report.allDeleted).toBe(true);
-    await expect(setToken('slack', 'late')).rejects.toThrow(ERASING_MESSAGE);
+    // 文面は定数ではなく字面で留める —— 定数を空にする変異は `toThrow(定数)` では映らない (パス 550)。
+    await expect(setToken('slack', 'late')).rejects.toThrow(new Error('データの削除中のため、資格情報を書き込めません。'));
+    expect(ERASING_MESSAGE).toBe('データの削除中のため、資格情報を書き込めません。');
     expect(await exists(secretsPath())).toBe(false);
   });
 

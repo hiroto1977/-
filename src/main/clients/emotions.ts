@@ -21,6 +21,7 @@
  */
 
 import { stripSmuggledIfString } from '../../shared/assistantLimits';
+import { promptInjectionRefusal } from '../../shared/promptInjection';
 import { readStateFile } from '../stateFile';
 import { countChars } from '../../shared/inputCeiling';
 import { app } from 'electron';
@@ -321,6 +322,10 @@ async function analyzeText(ctx: ActionContext): Promise<ActionData<'emotions/ana
   if (countChars(text) > MAX_ANALYZE_TEXT_CHARS) {
     throw new Error(`text exceeds ${MAX_ANALYZE_TEXT_CHARS} chars`);
   }
+  // 入力の無害化 (threat: T-216): 第三者の文に「これまでの指示を無視」「system prompt を出力」のような
+  // 指示の形が在れば、鍵を読む前・送る前に断る (タグ文字の除去 T-171 は符号化した指示しか見ない)。
+  const injection = promptInjectionRefusal(text, '分析する本文');
+  if (injection !== null) throw new Error(injection);
   // **日本語の画面に英語を出さない** —— 文は 3 画面と両ビルドで 1 つ (パス 451)。
   // `ADVISOR_QUESTION_MESSAGES` の docblock が同じ形を 2026-09-15 に直した当のこと。
   if (!ctx.token) throw new Error(MISSING_ANTHROPIC_KEY_MESSAGE);

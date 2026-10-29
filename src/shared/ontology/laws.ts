@@ -2051,6 +2051,96 @@ export const LAWS: readonly Law[] = [
       test(T.shared('threatLedger')),
     ],
   },
+  {
+    id: 'ai-defense-is-deterministic',
+    family: 'boundary',
+    name: 'AI の頭は騙せても、システムの手足は動かない —— 守りの成否は AI の判断に委ねず、決定論の規則が 3 層で担保する',
+    statement:
+      'AI は入力の中の「指示」と「データ」を構造的に区別できないので、プロンプトで「秘密を漏らすな」と言っても守りにはならない '
+      + '(攻撃側は言い回しを変えるだけでよい)。だから守りは**AI の外**に、規則として 3 層で置く (2026-10-29 · パス 552)。'
+      + '① **出力インターセプター** (threat: T-215) —— 端末の外へ出る action (段階が external-write / egress · `actionTier.ts` の台帳が決め、'
+      + '台帳に無い action は external-write へ倒す fail closed) の本文を、**送る直前・本人確認より前**に `outboundContentGate.ts` が検める。'
+      + '資格情報 (16 形 + `redactSecrets` の規則)・マイナンバー (番号法施行令 §8 の検査数字)・カード番号 (主要ブランドの先頭 + Luhn) の形が'
+      + '在れば断り、断りの文は欄の場所と種類だけを言って**値を 1 字も引用しない**。main の `action:invoke` とブラウザ版の `shim.invoke` が'
+      + '**同じ 1 つの関数**を呼ぶ (片方のビルドだけが止める形にしない)。実測 (直す前): github/create-issue の body に ghp_ の形・'
+      + 'assistant/chat の messages にマイナンバーの形を置いても両ビルドとも送った。'
+      + '② **入力の無害化** (threat: T-216) —— 第三者の文 (Gmail / Slack の本文・SKILL.md) が AI へ届く口は 2 つ 3 か所で、'
+      + '`promptInjection.ts` が 4 群 (役割の乗っ取り / 指示の上書き / 隠蔽・漏洩の指示 / 区切りの偽装) の形を NFKC + 小文字 + 不可視文字の'
+      + '除去で正規化した本文に当て、当たれば**鍵を読む前**に断る (群と規則 id だけを言い、本文は引用しない)。業務の文に普通に出る言い回し'
+      + ' (「今後は必ず」「System: 保守のお知らせ」) は当たらないことを標本で留める —— 偽陽性は製品を使えなくする側。'
+      + '利用者自身が打つ文は検めない (自分の AI に自分で指示するのは正当。そこで止めるのは出力の側 ①)。'
+      + '③ **最小権限** (threat: T-217) —— AI の応答を受ける束縛 (egress の action の戻り・12 画面) は、外向きの手足 (`invoke` の外向きの段階・'
+      + '`openExternal` / `fetch` / `window.open`) の引数に現れない。今日は 0 件で、その 0 件を census が両方向の台帳つきで固定する。'
+      + '**限界を正直に書く**: ① が止めるのは 3 類の形だけで氏名・メール・電話・取引先コードは止めない (止めると Gmail / Slack の下書きが書けない。'
+      + '業務固有の形は `CUSTOM_DENY_PATTERNS` に足す)。② は形の規則なので言い換えは通る。③ は綴りの走査なので別の名前へ写した値は映らず、'
+      + 'それは外へ出る時点で ① が中身を見る —— **3 層は重ねて初めて守りになる**。',
+    provenance: ['2026-10-29 (パス 552)'],
+    enforcedBy: [
+      test(T.shared('outboundContentGate')),
+      test(T.shared('promptInjection')),
+      test(T.shared('aiDefenseWiring')),
+      test('src/main/__tests__/mainIpc.test.ts'),
+      test('src/main/clients/__tests__/emotions.test.ts'),
+      test('src/main/clients/__tests__/skills.test.ts'),
+      test(T.renderer('webShimOutboundGate')),
+      test(T.renderer('aiReplyInert')),
+      test(T.shared('threatLedger')),
+    ],
+  },
+  {
+    id: 'shipped-code-attested-at-startup',
+    family: 'supply-chain',
+    name: '出荷した物は、起動のたびに自分を検算する —— 容器の中の 1 ファイルの改竄は、署名の無い Linux でも起動前に鳴る',
+    statement:
+      '正常な細胞は分裂の前に DNA を検算し、直せない損傷が在れば自死する。マルウェアが正規のアプリに擬態する最も安い道は'
+      + '**インストール先のファイルを書き換える**ことで、Electron の fuse `enableEmbeddedAsarIntegrityValidation` は macOS / Windows では'
+      + '署名済みバイナリに埋めた値と app.asar を照合するが、**Linux では照合する値を持たない** (実測 2026-10-29 · パス 553: fuse を焼いた'
+      + '梱包物の app.asar に 1 byte 足しても起動して UI が出た)。Linux のインストーラは署名も無い。だから梱包版は `app.whenReady()` の'
+      + '**窓を作る前**に、ビルドが書いた表 (`dist-electron/integrity.json` —— 同梱する全ファイルの sha256 と root) と同梱物を突き合わせ、'
+      + '① 表が読めて形が正しい ② 容器の根に表の外の物が無い ③ 両方向に同じ一覧 ④ 1 つずつの sha256 が一致、の 1 つでも外れれば'
+      + '理由を stderr に刷り `app.exit(1)` で止まる (`src/main/selfAttestation.ts` · threat: T-218)。**読めない = 通さない** (表が無い・'
+      + '大きすぎる・ファイルが多すぎる、はどれも断る理由)。断りの文は道と理由だけで中身もハッシュも引用しない。書き手 (`.cjs`) と'
+      + '読み手 (`.ts`) は同じ算法の写しなのでパリティ検査で結ぶ。主プロセスも preload も node_modules を require しないので'
+      + '`!node_modules/**` で同梱しない (検算の外に走る物を置かない)。**限界を正直に書く**: 表は出荷物と同じ容器に居るので、容器ごと'
+      + '差し替える相手は表も書き換えられる —— それを止めるのは OS の署名で、Linux には無い。「Linux は 1 ファイルの改竄に気付く」が'
+      + '正しく、「守られている」ではない。開発中 (`electron .`) は dist が変わるたびに表が古びるので走らせない (梱包していない物は配布物ではない)。',
+    provenance: ['2026-10-29 (パス 553)'],
+    enforcedBy: [
+      test('src/main/__tests__/selfAttestation.test.ts'),
+      test('src/main/__tests__/selfAttestationParity.test.ts'),
+      test('src/main/__tests__/selfAttestationWiring.test.ts'),
+      harness('smoke:packaged'),
+      test(T.shared('threatLedger')),
+    ],
+  },
+  {
+    id: 'egress-destination-change-needs-step-up',
+    family: 'boundary',
+    name: '送り先を変える操作には、この端末の持ち主の確認が要る —— 資格情報の書き込みと同じ重さを、資格情報が渡る先の変更にも掛ける',
+    statement:
+      '免疫チェックポイントを外す薬が効くのは、守りを止める信号が「本物の自己」からしか出せないときである。'
+      + 'アプリがどこへ資格情報と本文を送るかを決める設定は 2 つ (BYO プロキシ = 経由する全要求に `Authorization` が乗る /'
+      + ' Ollama の接続先 = 会話の本文が行く先) で、2026-10-29 (パス 554) まで**どちらも通常の保存と同じ 1 押しで書けた**'
+      + '(本人確認 T-183 は main の IPC にだけ掛かり、この 2 つは IPC を通らない)。資格情報そのものの書き込みには本人確認が要るのに、'
+      + '**その資格情報が丸ごと渡る先**を変える操作には何も要らなかった —— 貼り付けを促す 1 行の指示 (「この URL を入れてください」) で'
+      + '以後の全要求が他人の Worker を通る。だから送り先の変更は書く前に**持ち主の証** (保管庫のパスワード · `vault.verifyPassword` ='
+      + ' 状態を変えない照合) を求め、違えば「送り先は変えていません」と言い、やめれば何も変えない (`security/egressStepUp.ts` · threat: T-219)。'
+      + '判定は**重さで分ける**: プロキシは常に (どの URL も端末の外)・Ollama は解決した先が loopback でないときだけ (同じ端末なら本文は端末を出ない)。'
+      + '文面は**送り先のホストだけ**を名乗る (共有秘密も path も映さない —— 秘密を映す面を増やさない)。'
+      + '**消す口は門の外** (`setProxyConfig(null)` は確認なし · 法則 `escape-hatch-stays-open`)。'
+      + '母集団 (この設定を書く出荷コード) は census が両方向で持ち、新しい書き手は「どの門を通るか」を名乗る。'
+      + '**限界を正直に書く**: 門はレンダラーの中に在る。レンダラーを乗っ取った相手 (別の `file://` の HTML · backlog C1) は保管層へ'
+      + '直接書ける —— この門が止めるのは**人の手**で、保管層を主プロセスか保管庫 (暗号化) へ移すのは C1 の設計判断である。',
+    provenance: ['2026-10-29 (パス 554)'],
+    enforcedBy: [
+      test(T.renderer('egressSettingWriterCensus')),
+      test('src/renderer/pages/__tests__/proxyStepUpOnScreen.test.ts'),
+      test('src/renderer/pages/__tests__/ollamaEndpointStepUp.test.ts'),
+      test('src/renderer/security/__tests__/egressStepUp.test.ts'),
+      test('src/renderer/security/__tests__/vaultVerifyPassword.test.ts'),
+      test(T.shared('threatLedger')),
+    ],
+  },
 ];
 
 export interface LawLedgerProblem {

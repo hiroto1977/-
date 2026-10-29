@@ -207,7 +207,9 @@ const LEDGER: readonly Row[] = [
       '画面の名前 (2026-09-24 · パス 449)。AI コンシェルジュの自由質問にモデルを選ぶ口は無いので、' +
       '導入済みの一覧が出るこの画面を名乗る —— 下の ★ がこの綴りを `SERVICES` のラベルと突き合わせる。',
   },
+  { name: 'チーム管理', kind: 'screen-label', why: '専属カウンセラーの画面が、メンバーが 1 人も居ないときに登録の場所として名指しする画面の名前 (パス 551)。`SERVICES` のラベル (team) と突き合わせる。' },
   { name: '売上集計', kind: 'screen-label', why: '同じく画面の名前で、同じ検査が `SERVICES` と突き合わせる。' },
+  { name: '専属カウンセラー', kind: 'screen-label', why: '画面の名前 (2026-10-29 · パス 555)。「ひとりひとりの負担」の表 (`WorkloadShareTable`) が、まだ誰の記録も無いときにチェックインと同意の場所として名指しする。`SERVICES` のラベル (mentor) と突き合わせる。' },
   {
     name: 'ライブラリ',
     kind: 'screen-label',

@@ -23,6 +23,8 @@ import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { PARAMETER_OVERRIDES_COLLECTION, useParameters } from '../../data/parameterOverrides';
 import { KPI_ACTUALS_COLLECTION } from '../../data/kpiActuals';
 import { BALANCE_SHEET_COLLECTION } from '../../data/balanceSheet';
+import { MEMBERS_COLLECTION } from '../../data/members';
+import { WORK_ASSIGNMENTS_COLLECTION } from '../../../shared/workAssignment';
 import {
   HYDROPONICS_COLLECTION,
   HYDROPONICS_DEFAULTS,
@@ -285,6 +287,37 @@ describe('給与 — 通勤手当の非課税限度', () => {
     expect(statValue('公共交通: 課税(超過)')).toBe(jpy(60_000));
     await waitForText(text, `公共交通機関の非課税限度は月 ${jpy(100_000)}`);
     expect(text()).not.toContain(`月 ${jpy(150_000)}`);
+  });
+});
+
+// --- チーム (業務の割当 · パス 556) -------------------------------------------
+
+describe('チーム — 1 週の法定労働時間 (業務の割当の「法定超え」)', () => {
+  async function seedAssignments(): Promise<void> {
+    const store = getRecordStore();
+    await store.insert(MEMBERS_COLLECTION, { name: '青木', email: 'a@example.com', role: 'owner' });
+    await store.insert(WORK_ASSIGNMENTS_COLLECTION, { member: 'a@example.com', title: '月次決算', hoursPerWeek: 42 });
+  }
+  const level = (): string | null => container.querySelector('[data-assignment-row="a@example.com"]')?.getAttribute('data-assignment-level') ?? null;
+
+  it('対照: 既定の 40 時間では週 42 時間の割当は法定超えで、文言もその時間を言う', async () => {
+    await seedAssignments();
+    await mount(TeamPage);
+    await settleUntil(() => level() !== null, '割当の行が出る');
+    expect(level()).toBe('over');
+    await waitForText(text, '週の法定労働時間（40 時間）を超えます');
+    expect(container.querySelector('[data-assignment-utilization="a@example.com"]')?.textContent).toBe('105%');
+  });
+
+  it('上書きした 44 時間 (特例措置対象事業場) では同じ 42 時間が法定内になり、断りが消える', async () => {
+    await seed({ 'team.weeklyStatutoryHours': 44 });
+    await seedAssignments();
+    await mount(TeamPage);
+    await settleUntil(() => level() !== null, '割当の行が出る');
+    expect(level()).toBe('within');
+    await waitForText(text, '法定労働時間に対する割合（週 44 時間）');
+    expect(container.querySelector('[data-assignment-over]')).toBeNull();
+    expect(container.querySelector('[data-assignment-utilization="a@example.com"]')?.textContent).toBe('95.5%');
   });
 });
 

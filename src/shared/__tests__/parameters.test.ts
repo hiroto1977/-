@@ -69,6 +69,7 @@ import {
 } from '../hydroponics';
 import { BALANCE_SHEET_STALE_AFTER_MONTHS } from '../balanceSheetFreshness';
 import { COMMUTE_PUBLIC_TRANSPORT_CAP } from '../payroll';
+import { STATUTORY_WEEKLY_HOURS } from '../workAssignment';
 import { DEFAULT_DSCR_THRESHOLDS, DSCR_CAUTION_THRESHOLD, DSCR_DANGER_THRESHOLD } from '../realEstateMetrics';
 import { ADVISOR_CONCENTRATION_SHARE, ADVISOR_YIELD_GAP_PT, DEFAULT_ADVISOR_THRESHOLDS } from '../serviceAdvisor';
 import {
@@ -235,6 +236,7 @@ const DEFAULT_SOURCE: Readonly<Record<ParameterId, number>> = {
   'hydroponics.ckdPotassiumLimitG4': CKD_POTASSIUM_LIMIT_MG.G4!,
   'hydroponics.ckdPotassiumLimitG5': CKD_POTASSIUM_LIMIT_MG.G5!,
   'payroll.commutePublicTransportCap': COMMUTE_PUBLIC_TRANSPORT_CAP,
+  'team.weeklyStatutoryHours': STATUTORY_WEEKLY_HOURS,
   'realEstate.dscrDangerThreshold': DSCR_DANGER_THRESHOLD,
   'realEstate.dscrCautionThreshold': DSCR_CAUTION_THRESHOLD,
   'advisor.yieldGapPt': ADVISOR_YIELD_GAP_PT,
@@ -409,7 +411,7 @@ describe('台帳の形', () => {
 
   it('画面のまとまりは登場順で、重複しない', () => {
     expect(parameterFeatures()).toEqual([
-      '水耕栽培', '給与', '不動産', '改善提案', '税', '所得税・住民税', '所得控除・税額控除', '不動産・登記・印紙の税', '譲渡所得',
+      '水耕栽培', '給与', 'チーム', '不動産', '改善提案', '税', '所得税・住民税', '所得控除・税額控除', '不動産・登記・印紙の税', '譲渡所得',
       '法人税', '消費税 (事業者)', '年金・一時所得・ふるさと納税', '貿易', '社会保険', '財務',
       '敷地計画 (建築基準法)', '水循環 (排水基準)', '財務診断', '消費税 (申告・納付)', '配当所得', '感情ログ',
       '貯蓄・資産形成', '経営サマリー',
@@ -912,6 +914,7 @@ describe('台帳の表 (静的な値の固定)', () => {
       ['hydroponics.ckdPotassiumLimitG4', 'mg', 1, 100, 10_000, true, 'reference'],
       ['hydroponics.ckdPotassiumLimitG5', 'mg', 1, 100, 10_000, true, 'reference'],
       ['payroll.commutePublicTransportCap', '円', 1, 0, 1_000_000, true, 'law'],
+      ['team.weeklyStatutoryHours', '時間', 1, 1, 168, true, 'law'],
       ['realEstate.dscrDangerThreshold', '倍', 1, 0.1, 10, false, 'threshold'],
       ['realEstate.dscrCautionThreshold', '倍', 1, 0.1, 10, false, 'threshold'],
       ['advisor.yieldGapPt', 'pt', 1, 0.1, 20, false, 'threshold'],

@@ -175,7 +175,13 @@ async function readStore(): Promise<Record<string, string>> {
   if (store) return store;
 
   // Primary unparseable → try the backup explicitly before giving up.
-  const prev = await readFileWithBackup(backupPathOf(secretsPath()), MAX_STORE_SIZE).catch(() => null); // reads `<path>.prev`
+  let prev: string | null = null; // reads `<path>.prev`
+  try {
+    prev = await readFileWithBackup(backupPathOf(secretsPath()), MAX_STORE_SIZE);
+  } catch {
+    // 控えも読めない = 復旧できない (prev は null のまま)。`.catch(() => null)` だと
+    // `undefined` に替える変異が等価になる (`parseStore` はどちらも null を返す · パス 550)。
+  }
   const recovered = parseStore(prev);
   if (recovered) {
 
@@ -320,7 +326,9 @@ function unstamp(value: string): Stamped {
     const rest = value.slice(STAMP_AT.length);
     const sep = rest.indexOf(':');
     // 区切りが無い = 壊れた包み。日付が無い物と同じく期限切れへ倒す (`storedAt` は NaN)。
-    if (sep < 0) return { kind: 'at', storedAt: Number.NaN, inner: rest };
+    // `indexOf` が「無い」で返す値は -1 の 1 つなので、その値そのものを比べる (`< 0` だと
+    // `<= 0` にする変異が等価 · 法則 115)。
+    if (sep === -1) return { kind: 'at', storedAt: Number.NaN, inner: rest };
     return { kind: 'at', storedAt: Number(rest.slice(0, sep)), inner: rest.slice(sep + 1) };
   }
   return { kind: 'undated', inner: value };
@@ -362,8 +370,12 @@ async function migrateUndated(ids: readonly string[]): Promise<void> {
     const upgraded = await upgradePlainValues(store);
     let changed = false;
     for (const id of ids) {
-      const value = Object.hasOwn(upgraded, id) ? upgraded[id] : undefined;
-      if (value === undefined || unstamp(value).kind !== 'undated') continue;
+      // 呼び手は「今の一覧」をそのまま渡す (期限切れとして消した直後の id も混ざる) ので、無い id は
+      // ここで飛ばす。日付のある物も飛ばす —— 飛ばさないと包みの上にもう 1 枚包む (`at:今:at:元:…`)
+      // 形になり、次の読みで復号できない (2 つの `listConfiguredServices` が重なった窓の実測)。
+      if (!Object.hasOwn(upgraded, id)) continue;
+      const value = upgraded[id] as string; // hasOwn を通った鍵の値 (型の絞り込みだけ)
+      if (unstamp(value).kind !== 'undated') continue;
       const read = await decodeInner(value);
       if (!read.ok) continue;
       upgraded[id] = stamp(read.token, value, now);
@@ -475,6 +487,9 @@ export async function readStoredToken(serviceId: string): Promise<StoredTokenRea
     await purgeExpired([serviceId]).catch(() => {});
     return { ok: false, reason: 'expired', message: expiredStoredCredentialMessage(serviceId) };
   }
+  // Stryker disable next-line ConditionalExpression: `migrateUndated` は日付の無い物しか書かないので、
+  // 条件を外しても答えは変わらない (読み 1 回が余分になるだけ · 等価変異)。日付の無い物だけを
+  // 通す意図を残すために書く。
   if (stamped.kind === 'undated') await migrateUndated([serviceId]).catch(() => {});
   return await decode(value);
 }
@@ -525,14 +540,15 @@ export async function listConfiguredServices(): Promise<string[]> {
   // 断られる形を作らない。
   const now = Date.now();
   const expired: string[] = [];
-  const undated: string[] = [];
   for (const [id, value] of Object.entries(store)) {
-    const s = unstamp(value);
-    if (expiredStamp(s, now)) expired.push(id);
-    else if (s.kind === 'undated') undated.push(id);
+    if (expiredStamp(unstamp(value), now)) expired.push(id);
   }
+  // `purgeExpired` は無条件に書くので、空のときは呼ばない (呼ぶと保管ファイルを無駄に書き直す ——
+  // 一覧を読むだけで更新時刻が動く形)。`migrateUndated` は日付の無い物しか書かないので、
+  // 一覧をそのまま渡す (日付のある物・消した直後の物は中で飛ばす。「日付の無い物」をここで
+  // 選び直すと、同じ判定が 2 か所に分かれて片方が等価変異になる · パス 550)。
   if (expired.length > 0) await purgeExpired(expired).catch(() => {});
-  if (undated.length > 0) await migrateUndated(undated).catch(() => {});
+  await migrateUndated(Object.keys(store)).catch(() => {});
   return Object.keys(store).filter((id) => !expired.includes(id));
 }
 

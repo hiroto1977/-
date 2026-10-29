@@ -91,6 +91,9 @@ function changedFiles(ref) {
     for (const line of git(['diff', '--name-only', ref, 'HEAD']).split('\n')) out.push(line);
     for (const line of git(['diff', '--name-only']).split('\n')) out.push(line);
     for (const line of git(['diff', '--name-only', '--cached']).split('\n')) out.push(line);
+    // ★ まだ追跡していない新しいファイル (2026-10-29 · パス 556) —— `git diff` に映らないので、
+    // `mutate` へ足したばかりの新しい判断のファイルが「触っていない」側に落ちて 1 度も測られなかった。
+    for (const line of git(['ls-files', '--others', '--exclude-standard']).split('\n')) out.push(line);
     return out.filter((l) => l.trim() !== '');
   } catch {
     return null;
@@ -130,12 +133,39 @@ function selfTest() {
   const pathsOk = INCREMENTAL.endsWith('.stryker-incremental.json') && REPORT_DIR.endsWith(path.join('reports', 'mutation'));
   if (!pathsOk) bad++;
   console.log(`  ${pathsOk ? '✓' : '✗'} 後片付けの先が config の incrementalFile / reporter の出力先`);
+  // 知らない引数は断る (黙って読み飛ばすと、名指ししたつもりの物を測らない)。
+  const argCases = [
+    ['知っている引数は通す', ['--list', '--ref=main'], []],
+    ['★ 無い --files は断る', ['--files=src/a.ts'], ['--files=src/a.ts']],
+    ['位置引数も断る', ['src/a.ts'], ['src/a.ts']],
+  ];
+  for (const [label, argv, want] of argCases) {
+    const got = unknownArgs(argv);
+    const ok = JSON.stringify(got) === JSON.stringify(want);
+    if (!ok) bad++;
+    console.log(`  ${ok ? '✓' : '✗'} ${label}: ${JSON.stringify(got)} (期待 ${JSON.stringify(want)})`);
+  }
   console.log(bad === 0 ? '✅ self-test 全件一致' : `❌ self-test ${bad} 件不一致`);
   return bad === 0 ? 0 : 1;
 }
 
+/**
+ * 知らない引数 (2026-10-29 · パス 556)。**純関数**。黙って読み飛ばすと、利用者は名指ししたつもりの
+ * ファイルではなく「変更したファイル」を測った結果を受け取る —— パス 554 の記録は `--files` で名指しせよと
+ * 書いていたが、この道具に `--files` は 1 度も無かった (`--files=src/x.ts` は無視され、x.ts は測られなかった)。
+ */
+function unknownArgs(argv) {
+  return argv.filter((a) => a !== '--self-test' && a !== '--list' && !a.startsWith('--ref='));
+}
+
 function main(argv) {
   if (argv.includes('--self-test')) return selfTest();
+  const unknown = unknownArgs(argv);
+  if (unknown.length > 0) {
+    console.error(`❌ 知らない引数: ${unknown.join(' ')} (使えるのは --ref=<ref> と --list だけ。`
+      + '新しいファイルは追跡していなくても対象に入る。1 本だけ測るなら npx stryker run --mutate <file>)');
+    return 1;
+  }
   const refArg = argv.find((a) => a.startsWith('--ref='));
   const ref = refArg ? refArg.slice('--ref='.length) : 'HEAD~1';
   const changed = changedFiles(ref);
@@ -169,6 +199,6 @@ function main(argv) {
   }
 }
 
-module.exports = { changedInScope, mutateScope };
+module.exports = { changedInScope, mutateScope, unknownArgs };
 
 if (require.main === module) process.exit(main(process.argv.slice(2)));

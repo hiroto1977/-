@@ -77,6 +77,15 @@ const PROTECTED = [
   // 持ち、13 本の IPC ハンドラを登録している main.ts が入っていなかった。
   // ここが 1 行変わるだけで、下流の関門は全部迂回できる。
   'src/main/main.ts',
+  // 起動時の自己検算 (2026-10-29 · パス 553 · T-218)。読み手と書き手の両方 —— 片方だけ緩めても正しい出荷物は起動する。
+  'src/main/selfAttestation.ts',
+  'scripts/build-integrity-manifest.cjs',
+  // 送り先の変更に持ち主の確認 (2026-10-29 · パス 554 · T-219)。プロキシの保存と端末の外へ向く Ollama の
+  // 接続先に「保管庫のパスワードが要るか」を決める判定と、確認の文面。判定を常に偽へ書き換えると
+  // 1 押しで書ける形 (直す前) へ戻る。読むのは保護対象の `shared/ollama.ts` だけ (閉包の費用 0)。
+  // 描く部品 `components/StepUpPassword.tsx` は入れない —— `.tsx` は `mutate` の外で、迂回
+  // (照合を飛ばす) は回帰検査 `proxyStepUpOnScreen.test.ts` (CODEOWNERS) が実物の保管庫で留める。
+  'src/renderer/security/egressStepUp.ts',
   // 秘密を伏せる唯一の合流点 (17 箇所がここへ寄せてある)。ここが素通しに
   // 変われば、失敗応答に混ざったトークンがそのまま画面と不具合報告に出る。
   'src/shared/redact.ts',
@@ -578,6 +587,15 @@ const PROTECTED = [
    *   書いてあったが実行時の判断を持っていた · 2026-08-23) の **2 件目**である。
    */
   'src/shared/assistantLimits.ts',     // AI へ送る量の関門 (述語 latestTurnTooLong と返答の天井)
+
+  // 2026-10-29 (パス 552) に足した 3 本 —— AI の判断に依らない 3 層の守り。
+  // `main.ts` (保護対象) が `actionTier` と `outboundContentGate` を読むので、閉包の規則で
+  // 保護対象でなければならない (判定が保護の外に出る)。`promptInjection` は main の
+  // emotions / skills と web-shim が読む (どちらも保護対象ではない) が、中身は**第三者の文が
+  // AI へ届く前の唯一の関門**で、規則を 1 本消しても 0 件のまま緑に見える側なので入れる。
+  'src/shared/actionTier.ts',          // action の段階の台帳 (無い action は external-write へ倒す fail closed)
+  'src/shared/outboundContentGate.ts', // 出力インターセプター (資格情報 / マイナンバー / カード番号の形を外へ出さない)
+  'src/shared/promptInjection.ts',     // 入力の無害化 (第三者の文に混ざった AI への指示の形)
 
   // 2026-09-15 (パス 287) に足した。**数える助けは封緘されているのに、
   // 何を数えるかの表が封緘されていなかった。**

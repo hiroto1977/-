@@ -96,6 +96,7 @@ export const SERVICE_DATA_ORIGIN: Record<ServiceId, DataOrigin> = {
   'amazon-associates': 'sample',
   sales: 'sample',
   team: 'sample',
+  mentor: 'sample',
   youtube: 'remote',
   overview: 'sample',
   coconala: 'sample',

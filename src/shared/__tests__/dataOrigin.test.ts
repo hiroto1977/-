@@ -52,6 +52,7 @@ const EXPECTED: ReadonlyArray<readonly [ServiceId, DataOrigin]> = [
   ['line', 'sample'],
   ['storage', 'sample'],
   ['tax-accountant', 'sample'],
+  ['mentor', 'sample'],
   ['labor-consultant', 'sample'],
   ['lawyer', 'sample'],
   ['judicial-scrivener', 'sample'],
@@ -101,7 +102,7 @@ describe('SERVICE_DATA_ORIGIN', () => {
 
   it('3 分類の件数を固定する — 片方向に倒れた表を検出する', () => {
     const count = (o: DataOrigin) => EXPECTED.filter(([, v]) => v === o).length;
-    expect(count('sample')).toBe(42);
+    expect(count('sample')).toBe(43);
     expect(count('local')).toBe(19);
     expect(count('remote')).toBe(15);
   });

@@ -32,77 +32,13 @@ import path from 'node:path';
 import { fileRequestAllowed } from './fileRequestGate';
 import { clampToCeiling, moreThanChars } from '../shared/inputCeiling';
 
-export type Tier = 'destructive' | 'credential-write' | 'external-write' | 'egress' | 'local-write' | 'read';
-
-/** 毎回、人に確かめる段階。 */
-export const CONFIRMED_TIERS: ReadonlySet<Tier> = new Set<Tier>(['destructive', 'credential-write', 'external-write']);
-
-/**
- * 登録 action の段階の台帳 (`service/action`)。**載っていない action は `external-write` として扱う**
- * (fail closed)。台帳は LIVE_ACTIONS と両方向に突き合わせる (`userPresenceCensus.test.ts`)。
+/*
+ * 段階の台帳は 2026-10-29 (パス 552 · threat: T-215) に `shared/actionTier.ts` へ移した ——
+ * 出力インターセプター (`outboundContentGate.ts`) が両ビルドで同じ台帳を読むため。
+ * ここは再輸出で、読み手 (本人確認・census) の綴りは変えない。
  */
-export const ACTION_TIER: Readonly<Record<string, Tier>> = {
-  'github/create-issue': 'external-write',
-  'notion/create-page': 'external-write',
-  'slack/send-message': 'external-write',
-  'calendar/create-event': 'external-write',
-  'atlassian/create-issue': 'external-write',
-  'wordpress/create-post-draft': 'external-write',
-  'gmail/create-draft': 'external-write',
-  'drive/create-folder': 'external-write',
-  'canva/create-folder': 'external-write',
-  'cloudflare/create-dns-record': 'external-write',
-  'cloudflare/purge-cache': 'external-write',
-  'microsoft-365/send-mail': 'external-write',
-  'microsoft-365/create-event': 'external-write',
-  'shopify/sync-to-slack': 'external-write',
-  'shopify/sync-to-discord': 'external-write',
-  'shopify/sync-to-line': 'external-write',
-  'shopify/sync-to-gmail': 'external-write',
-  'shopify/sync-to-notion': 'external-write',
-  'shopify/sync-to-salesforce': 'external-write',
-  'shopify/sync-to-stripe': 'external-write',
-  'skills/run-skill': 'egress',
-  'security/check-email-breach': 'egress',
-  // VirusTotal へ URL を送ると他の利用者から検索できる状態で残り取り消せない (red team 2026-10-21)
-  'security/scan-url': 'external-write',
-  'emotions/analyze-text': 'egress',
-  'ollama/chat': 'egress',
-  'stocks/advise': 'egress',
-  'business/advise': 'egress',
-  'uber-eats/advise': 'egress',
-  'demae-can/advise': 'egress',
-  'real-estate/advise': 'egress',
-  'mutual-funds/advise': 'egress',
-  'assistant/chat': 'egress',
-  'assistant/chatAll': 'egress',
-  'emotions/log-mood': 'local-write',
-  'emotions/clear-history': 'destructive',
-  'stocks/register-ticker': 'local-write',
-  'stocks/unregister-ticker': 'local-write',
-  'stocks/export-dashboard': 'local-write',
-  'stocks/export-dashboard-md': 'local-write',
-  'business/export-dashboard': 'local-write',
-  'business/export-dashboard-md': 'local-write',
-  'teamradar/save-state': 'local-write',
-  'teamradar/export-svg': 'local-write',
-  'templates/export-template': 'local-write',
-  'talent/save-state': 'local-write',
-  'uber-eats/record-entry': 'local-write',
-  'demae-can/record-entry': 'local-write',
-  'real-estate/record-entry': 'local-write',
-  'mutual-funds/record-entry': 'local-write',
-  'stocks/backtest': 'read',
-  'stocks/compare-strategies': 'read',
-  'talent/judge-leader': 'read',
-  'assistant/providers': 'read',
-  'docstudio/list-collections': 'read',
-};
-
-export function tierOfAction(serviceId: string, action: string): Tier {
-  const key = `${serviceId}/${action}`;
-  return Object.hasOwn(ACTION_TIER, key) ? ACTION_TIER[key]! : 'external-write';
-}
+export { ACTION_TIER, CONFIRMED_TIERS, OUTBOUND_TIERS, tierOfAction, type Tier } from '../shared/actionTier';
+import { CONFIRMED_TIERS, type Tier } from '../shared/actionTier';
 
 /**
  * 1 回の呼び出しが外部へ何回分の費用を出すか (threat: T-152)。`assistant/chatAll` は設定済みの
@@ -385,18 +321,14 @@ export function isPlainPayload(payload: unknown): boolean {
  * 超える物は無いので、超えたら見せ方を工夫せず断る (fail closed)。数えるのは固定個数まで。
  */
 export function payloadTooWide(payload: unknown): boolean {
-  // null は `for…in` が 0 回で終わるので別に弾かない。配列と文字列などは欄を持つ物ではないので数えない。
-  if (typeof payload !== 'object' || Array.isArray(payload)) return false;
+  // null・配列・文字列などは欄を持つ物ではないので数えない。
+  if (payload === null || typeof payload !== 'object' || Array.isArray(payload)) return false;
   // 型付き配列・Map・Date などは `for…in` の前に断る (T-188): V8 の `for…in` は 25 欄で打ち切る前に
   // **全キーを列挙する**ので、2,000 万要素の Uint8Array 1 つで 7.6 秒・RSS 1 GB (実測)。
   if (!isPlainPayload(payload)) return true;
-  let n = 0;
-  for (const k in payload as Record<string, unknown>) {
-    if (!Object.hasOwn(payload as object, k)) continue;
-    n += 1;
-    if (n > MAX_FIELDS_SHOWN) return true;
-  }
-  return false;
+  // 自分の欄だけを数える (`for…in` + `hasOwn` の形は、平らな物では継承した欄が無いので
+  // `hasOwn` の門が等価になる —— 形ごと消した · パス 552)。
+  return Object.keys(payload as object).length > MAX_FIELDS_SHOWN;
 }
 
 /**

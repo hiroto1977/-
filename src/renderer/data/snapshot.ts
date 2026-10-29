@@ -16,6 +16,7 @@ import { MIN_SAFE_VERSION } from '../../shared/ollama';
 import { NO_DEAL_INTAKE } from '../../shared/freeeIntake';
 import type { CursorSnapshot } from '../../shared/api/cursor';
 import { buildHydroponicsSnapshot } from '../../shared/hydroponicsControl';
+import { buildMentorSnapshot } from '../../shared/mentor';
 
 /**
  * 見本の画像は **インライン (`data:`) にする**。
@@ -1229,6 +1230,13 @@ export const SNAPSHOT = {
    * 測定・ロット・設定は record store (端末内) に在り、**ここには入らない**。
    */
   hydroponics: buildHydroponicsSnapshot(),
+
+  /**
+   * 専属カウンセラー (2026-10-29 · パス 551)。見本は**聞き取りの問いの台帳**だけ ——
+   * 記録 (answers / checkins / relations) は record store (`mentor-sessions`) に在り、
+   * 画面が直接読む。ここに人の記録は 1 字も入らない。
+   */
+  mentor: buildMentorSnapshot(),
 
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)
 

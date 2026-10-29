@@ -111,6 +111,7 @@ export const SERVICE_CREDENTIAL_USE: Record<ServiceId, CredentialUse> = {
   'amazon-associates': 'none',
   sales: 'none',
   team: 'none',
+  mentor: 'none',
   youtube: 'fetch',
   overview: 'none',
   coconala: 'none',

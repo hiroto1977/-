@@ -29,6 +29,9 @@ import {
 } from '../../shared/ollama';
 import type { ActionData } from '../../shared/actionData';
 import { CeilingNotice } from '../components/CeilingNotice';
+import { StepUpPassword } from '../components/StepUpPassword';
+import { useBuildKind } from '../hooks/useBuildKind';
+import { STEP_UP_CANCELLED, ollamaEndpointNeedsStepUp, stepUpReason } from '../security/egressStepUp';
 import { charsOverCeiling } from '../../shared/inputCeiling';
 import { externalTextOnOneLine } from '../data/assistantMarkdown';
 
@@ -348,7 +351,8 @@ export function OllamaPage() {
  *
  * Electron 版では main プロセスが直接叩くため CORS は関係なく、この案内も出ない。
  */
-function ConnectionSetup({
+/** 検査のために公開している (`ProxySection` と同じ理由 · パス 554)。 */
+export function ConnectionSetup({
   running,
   errorMessage,
   onReconnect,
@@ -362,6 +366,15 @@ function ConnectionSetup({
   );
   const [saved, setSaved] = useState(false);
   const [copied, setCopied] = useState<string>();
+  const [cancelled, setCancelled] = useState(false);
+  /**
+   * **同じ端末の外へ向く接続先は、持ち主の確認を通ってから書く** (2026-10-29 · パス 554 · threat: T-219)。
+   * ブラウザ版だけ —— デスクトップ版の接続先は main が loopback に固定しており、この欄は効かない
+   * (下の「セキュリティポリシー」がそう述べる)。分からないあいだ (`null`) は掛けない (パス 454 / 456 と同じ判断:
+   * 橋の `getVersion` が一瞬遅れただけで保管庫の無いデスクトップ版が「未初期化」で断る形を作らない)。
+   */
+  const buildKind = useBuildKind();
+  const [pendingEndpoint, setPendingEndpoint] = useState<string | null>(null);
 
   // ビルド種別を推測するのはやめる (どちらのブリッジも同じメソッドを持つため脆い)。
   // 代わりに **診断結果** で出し分ける: OLLAMA_ORIGINS の案内が要るのは
@@ -391,8 +404,20 @@ function ConnectionSetup({
   const desktopSetup = desktopSetupCommands();
 
   function applyEndpoint() {
+    const next = endpoint.trim();
+    setCancelled(false);
+    if (buildKind === 'browser' && ollamaEndpointNeedsStepUp(next, pageHostname)) {
+      setPendingEndpoint(next);
+      return;
+    }
+    writeEndpoint(next);
+  }
+
+  /** 持ち主の確認を通った後 (または確認の要らない同じ端末への接続先) にだけ書く。 */
+  function writeEndpoint(next: string) {
+    setPendingEndpoint(null);
     try {
-      localStorage.setItem(OLLAMA_ENDPOINT_KEY, endpoint.trim());
+      localStorage.setItem(OLLAMA_ENDPOINT_KEY, next);
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } catch {
@@ -424,8 +449,18 @@ function ConnectionSetup({
             aria-label="Ollama の接続先"
           />
         </label>
-        <button onClick={applyEndpoint}>接続テスト</button>
+        <button onClick={applyEndpoint} disabled={pendingEndpoint !== null}>接続テスト</button>
       </div>
+      {pendingEndpoint !== null && (
+        <StepUpPassword
+          reason={stepUpReason('ollama', parseOllamaEndpoint(pendingEndpoint, pageHostname) ?? '')}
+          onApproved={() => writeEndpoint(pendingEndpoint)}
+          onCancel={() => { setPendingEndpoint(null); setCancelled(true); }}
+        />
+      )}
+      {cancelled && (
+        <p data-step-up-cancelled style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)' }}>{STEP_UP_CANCELLED}</p>
+      )}
       <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.7 }}>
         指定できるのは次の 3 通りだけです —{' '}
         <strong>①同じ端末</strong> (ポート番号のみ)、

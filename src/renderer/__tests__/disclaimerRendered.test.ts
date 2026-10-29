@@ -103,6 +103,12 @@ const LEDGER: Readonly<Record<string, Row>> = {
     companion: 'advisorResult.recommendations',
     why: '事業カテゴリの改善提案。「投資助言・財務助言ではありません」',
   },
+  'pages/MentorPage.tsx': {
+    expr: 'aiReply.disclaimer',
+    count: 1,
+    companion: 'aiReply.text',
+    why: '専属カウンセラーの AI 深掘りの返答。「診断・治療・人事の決定ではありません」(パス 551)',
+  },
   'pages/EmotionsPage.tsx': {
     expr: 'response.disclaimer',
     count: 1,

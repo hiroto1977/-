@@ -1,6 +1,7 @@
 import { promises as fs } from 'node:fs';
 import { clampToCeiling, countChars } from '../../shared/inputCeiling';
 import { stripSmuggledChars } from '../../shared/assistantLimits';
+import { promptInjectionRefusal } from '../../shared/promptInjection';
 import os from 'node:os';
 import path from 'node:path';
 import { AI_PROVIDERS } from '../../shared/ai/providers';
@@ -469,6 +470,10 @@ async function runSkill(ctx: ActionContext): Promise<ActionData<'skills/run-skil
 
   // 配られたスキルパックの SKILL.md に Tag 文字で符号化した指示が仕込まれていても、system には載せない。
   const body = stripSmuggledChars(await readSkillBody(id));
+  // 入力の無害化 (threat: T-216): 配られたスキルパックの本文は第三者の文。役割の乗っ取り・隠された指示の
+  // 形が在れば system に載せない (タグ文字の除去は符号化した指示しか見ない)。
+  const injection = promptInjectionRefusal(body, 'スキル本文 (SKILL.md)');
+  if (injection !== null) throw new Error(injection);
 
   const res = await jsonFetch<AnthropicMessagesResponse>(
     'https://api.anthropic.com/v1/messages',

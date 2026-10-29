@@ -74,6 +74,7 @@ import { fetchDocstudioSnapshot, ACTIONS as DOCSTUDIO_ACTIONS } from './docstudi
 import { fetchCursorSnapshot, ACTIONS as CURSOR_ACTIONS } from './cursor';
 import { fetchTalentSnapshot, ACTIONS as TALENT_ACTIONS } from './talent';
 import { fetchHydroponicsSnapshot } from './hydroponics';
+import { fetchMentorSnapshot } from './mentor';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import { SERVICE_IDS, type ServiceId } from '../../shared/serviceId';
@@ -157,6 +158,7 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   cursor: fetchCursorSnapshot,
   talent: fetchTalentSnapshot,
   hydroponics: fetchHydroponicsSnapshot,
+  mentor: fetchMentorSnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
@@ -253,6 +255,8 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'teamradar',
   // 人材育成: 判定はすべて純粋関数、状態は ~/.local/business-hub/。認証・通信なし。
   'talent',
+  // 専属カウンセラー: 判断は shared/mentor.ts の純関数、記録は renderer の record store。認証・通信なし。
+  'mentor',
   'templates',
   'library',
   'settings',
