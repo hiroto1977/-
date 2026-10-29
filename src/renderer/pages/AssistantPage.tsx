@@ -800,7 +800,9 @@ export function AssistantPage() {
     : undefined;
   const pageStyle: React.CSSProperties = {
     ...inkScope,
-    background: theme.bg || FOLLOW_BG,
+    // 一括指定 (`background`) に個別指定 (下の backgroundImage / Size / Position) を重ねない —— React が警告する形で、
+    // jsdom 30 はその一括指定を丸ごと落とす。地は色だけなので backgroundColor で足りる。
+    backgroundColor: theme.bg || FOLLOW_BG,
     // 生の文字列を url() へ差し込まない。スキーム検証と引用は safeCssUrl に 1 つだけ置く
     // (safeImageSrc の冒頭が「CSS url() へ流れた瞬間に危険」と書いていた当の経路)。
     backgroundImage: safeCssUrl(theme.image),

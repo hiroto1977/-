@@ -262,8 +262,7 @@ const PROD_ALLOW = {
   react: '画面の描画そのもの。単一 HTML へ同梱される',
   'react-dom': '同上 (DOM への描画)',
   scheduler: 'react-dom の推移的依存',
-  'loose-envify': 'react / react-dom の推移的依存 (NODE_ENV の畳み込み)',
-  'js-tokens': 'loose-envify の推移的依存',
+  // React 19 (2026-10-29) で loose-envify と js-tokens は閉包から抜けた (React 18 の推移的依存だった)。
 };
 
 /**
