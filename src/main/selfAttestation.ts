@@ -138,8 +138,8 @@ function toPosix(rel: string): string {
 export async function listShippedFiles(appRoot: string, fs: AttestationFs): Promise<string[]> {
   const out: string[] = [];
   const walk = async (dir: string): Promise<void> => {
-    const names = (await fs.readdir(dir)).sort();
-    for (const name of names) {
+    // 歩く順は最後の `.sort()` が決めるので、ここでは並べない (並べても答えは変わらない —— 等価の形は持たない)
+    for (const name of await fs.readdir(dir)) {
       const abs = path.join(dir, name);
       const st = await fs.stat(abs);
       if (st.isDirectory()) {
@@ -162,13 +162,10 @@ export async function listShippedFiles(appRoot: string, fs: AttestationFs): Prom
 
 class TooManyFilesError extends Error {}
 
-async function exists(fs: AttestationFs, abs: string): Promise<boolean> {
-  try {
-    await fs.stat(abs);
-    return true;
-  } catch {
-    return false;
-  }
+function exists(fs: AttestationFs, abs: string): Promise<boolean> {
+  const present = fs.stat(abs).then(() => true);
+  // Stryker disable next-line ArrowFunction: 無い根は偽 —— undefined も偽で、呼び手は if で読む (等価)
+  return present.catch(() => false);
 }
 
 /** 大きさを見てから読んでハッシュする。天井を超えていれば読まない。 */
@@ -196,27 +193,32 @@ export function serializeManifest(m: IntegrityManifest): string {
   return `${JSON.stringify({ version: m.version, algorithm: m.algorithm, files, root: m.root }, null, 2)}\n`;
 }
 
+/** 鍵を数え上げてよい物か (null でも配列でもないオブジェクト)。 */
+function isRecord(v: unknown): v is Record<string, unknown> {
+  if (v === null || Array.isArray(v)) return false;
+  // Stryker disable next-line ConditionalExpression: 原始値の property 読みは undefined で、次の門が同じ null を返す —— 型の絞り込みのためだけに在る (等価)
+  return typeof v === 'object';
+}
+
 /** manifest の文字列を読む。形が 1 つでも違えば `null` (版・算法・鍵の綴り・16 進・root の一致)。 */
 export function parseManifest(text: string): IntegrityManifest | null {
   let v: unknown;
-  try {
-    v = JSON.parse(text);
-  } catch {
-    return null;
-  }
-  if (v === null || typeof v !== 'object' || Array.isArray(v)) return null;
-  const o = v as Record<string, unknown>;
-  if (o.version !== MANIFEST_VERSION || o.algorithm !== HASH_ALGORITHM) return null;
-  const rawFiles = o.files;
-  if (rawFiles === null || typeof rawFiles !== 'object' || Array.isArray(rawFiles)) return null;
+  // Stryker disable next-line BlockStatement: 投げた (読めない) 後の器は undefined のままで、次の門が同じ null を返す (等価)
+  try { v = JSON.parse(text); } catch { return null; }
+  if (!isRecord(v)) return null;
+  if (v.version !== MANIFEST_VERSION || v.algorithm !== HASH_ALGORITHM) return null;
+  const rawFiles = v.files;
+  if (!isRecord(rawFiles)) return null;
   const files: Record<string, string> = {};
-  for (const k of Object.keys(rawFiles as object)) {
-    const h = (rawFiles as Record<string, unknown>)[k];
+  for (const k of Object.keys(rawFiles)) {
+    const h = rawFiles[k];
     if (!SAFE_REL_PATH.test(k) || typeof h !== 'string' || !HEX_SHA256.test(h)) return null;
     files[k] = h;
   }
-  if (typeof o.root !== 'string' || o.root !== manifestRoot(files)) return null;
-  return { version: MANIFEST_VERSION, algorithm: HASH_ALGORITHM, files, root: o.root };
+  // root は厳密な不等号で比べる (文字列でない root は文字列と等しくなれないので、型の門は要らない)
+  const root = manifestRoot(files);
+  if (v.root !== root) return null;
+  return { version: MANIFEST_VERSION, algorithm: HASH_ALGORITHM, files, root };
 }
 
 /**

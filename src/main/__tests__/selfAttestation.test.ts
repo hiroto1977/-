@@ -81,6 +81,33 @@ describe('出荷物の歩き', () => {
     ]);
   });
 
+  it('ファイルでもディレクトリでもない物 (socket など) は歩きに載らない', async () => {
+    const odd: AttestationFs = {
+      readdir: async (p) => (p === path.join(root, 'dist') ? [...(await fsp.readdir(p)), 'weird.sock'] : fsp.readdir(p)),
+      stat: async (p) => (p.endsWith('weird.sock') ? { size: 0, isFile: () => false, isDirectory: () => false } : fsp.stat(p)),
+      readFile: (p) => fsp.readFile(p),
+    };
+    expect(await listShippedFiles(root, odd)).not.toContain('dist/weird.sock');
+    await writeManifest();
+    expect((await verifyShippedFiles(root, odd)).ok).toBe(true);
+  });
+
+  it('件数の天井: ちょうど MAX_SHIPPED_FILES は歩け、+1 で投げる', async () => {
+    const make = (n: number): AttestationFs => {
+      const names = Array.from({ length: n }, (_, i) => `f${i}.js`);
+      return {
+        readdir: (p) => (p === path.join(root, 'dist') ? Promise.resolve(names) : fsp.readdir(p)),
+        stat: (p) => (p.includes(`${path.sep}dist${path.sep}f`) ? Promise.resolve({ size: 1, isFile: () => true, isDirectory: () => false }) : fsp.stat(p)),
+        readFile: (p) => fsp.readFile(p),
+      };
+    };
+    // dist の下は n 件だけ (他の根の 3 件が足される)
+    await fsp.rm(path.join(root, 'dist-electron'), { recursive: true });
+    await fsp.rm(path.join(root, 'build'), { recursive: true });
+    expect((await listShippedFiles(root, make(MAX_SHIPPED_FILES))).length).toBe(MAX_SHIPPED_FILES);
+    await expect(listShippedFiles(root, make(MAX_SHIPPED_FILES + 1))).rejects.toThrow();
+  });
+
   it('根が無ければその根は空 (ビルド前の木でも歩ける)', async () => {
     await fsp.rm(path.join(root, 'dist'), { recursive: true });
     expect(await listShippedFiles(root, fsp)).toEqual(['build/icon.png', 'dist-electron/main.js', 'dist-electron/preload.js']);
@@ -88,6 +115,25 @@ describe('出荷物の歩き', () => {
 });
 
 describe('manifest の形', () => {
+  it('root は鍵の順に依らない (同じ files なら同じ root)', () => {
+    const a = { 'dist/a.js': 'a'.repeat(64), 'dist/b.js': 'b'.repeat(64) };
+    const b = { 'dist/b.js': 'b'.repeat(64), 'dist/a.js': 'a'.repeat(64) };
+    expect(manifestRoot(a)).toBe(manifestRoot(b));
+    expect(manifestRoot(a)).not.toBe(manifestRoot({ 'dist/a.js': 'a'.repeat(64) }));
+  });
+
+  it('表を組むとき天井を超えるファイルが在れば、その道を名指しして投げる', async () => {
+    const big: AttestationFs = {
+      readdir: (p) => fsp.readdir(p),
+      readFile: (p) => fsp.readFile(p),
+      stat: async (p) => {
+        const st = await fsp.stat(p);
+        return p.endsWith('preload.js') ? { size: MAX_SHIPPED_FILE_BYTES + 1, isFile: () => true, isDirectory: () => false } : st;
+      },
+    };
+    await expect(buildManifest(root, big)).rejects.toThrow('dist-electron/preload.js');
+  });
+
   it('組んだ表は往復で同じ物に戻り、鍵は昇順・root は files から導いた値', async () => {
     const m = await buildManifest(root, fsp);
     expect(Object.keys(m.files)).toEqual([...Object.keys(m.files)].sort());
@@ -99,28 +145,35 @@ describe('manifest の形', () => {
     expect(serializeManifest(m).endsWith('}\n')).toBe(true);
   });
 
-  it.each([
-    ['JSON でない', 'nope'],
-    ['配列', '[]'],
-    ['null', 'null'],
-    ['版が違う', JSON.stringify({ version: 2, algorithm: 'sha256', files: {}, root: manifestRoot({}) })],
-    ['算法が違う', JSON.stringify({ version: 1, algorithm: 'md5', files: {}, root: manifestRoot({}) })],
-    ['files が配列', JSON.stringify({ version: 1, algorithm: 'sha256', files: [], root: manifestRoot({}) })],
-    ['root が files と合わない', JSON.stringify({ version: 1, algorithm: 'sha256', files: {}, root: 'f'.repeat(64) })],
-    ['root が無い', JSON.stringify({ version: 1, algorithm: 'sha256', files: {} })],
-  ])('読めない形は null: %s', (_label, text) => {
-    expect(parseManifest(text)).toBeNull();
+  /*
+   * ★ `it.each` ではなく 1 つの `it` で回す —— Stryker の perTest の被覆は `it.each` が作る検査を
+   * この関数の変異体の「覆う検査」に数えず、全件を走らせれば落ちる 4 変異体が「生存」と報告された
+   * (2026-10-29 · 手で当てて 1 / 1 / 6 / 3 件が落ちることを確かめた)。
+   */
+  it('読めない形は null (JSON でない / 配列 / null / 版 / 算法 / files が配列 / root の不一致 / root が無い)', () => {
+    const samples: [string, string][] = [
+      ['JSON でない', 'nope'],
+      ['配列', '[]'],
+      ['null', 'null'],
+      ['版が違う', JSON.stringify({ version: 2, algorithm: 'sha256', files: {}, root: manifestRoot({}) })],
+      ['算法が違う', JSON.stringify({ version: 1, algorithm: 'md5', files: {}, root: manifestRoot({}) })],
+      ['files が配列', JSON.stringify({ version: 1, algorithm: 'sha256', files: [], root: manifestRoot({}) })],
+      ['files が null', JSON.stringify({ version: 1, algorithm: 'sha256', files: null, root: manifestRoot({}) })],
+      ['files が文字列', JSON.stringify({ version: 1, algorithm: 'sha256', files: 'x', root: manifestRoot({}) })],
+      ['files が数 (鍵を数え上げると空になる形)', JSON.stringify({ version: 1, algorithm: 'sha256', files: 0, root: manifestRoot({}) })],
+      ['値が 16 進の配列 (文字列化すると 16 進に見える形)', JSON.stringify({ version: 1, algorithm: 'sha256', files: { 'dist/a.js': ['a'.repeat(64)] }, root: manifestRoot({ 'dist/a.js': 'a'.repeat(64) }) })],
+      ['root が数', JSON.stringify({ version: 1, algorithm: 'sha256', files: {}, root: 0 })],
+      ['root が files と合わない', JSON.stringify({ version: 1, algorithm: 'sha256', files: {}, root: 'f'.repeat(64) })],
+      ['root が無い', JSON.stringify({ version: 1, algorithm: 'sha256', files: {} })],
+    ];
+    for (const [label, text] of samples) expect(parseManifest(text), label).toBeNull();
   });
 
-  it.each([
-    ['上へ出る道', '../x.js'],
-    ['絶対の道', '/etc/passwd'],
-    ['空の節', 'dist//a.js'],
-    ['空白', 'dist/a b.js'],
-    ['バックスラッシュ', 'dist\\a.js'],
-  ])('鍵の綴りが外れていれば null: %s', (_label, key) => {
-    const files = { [key]: 'a'.repeat(64) };
-    expect(parseManifest(JSON.stringify({ version: 1, algorithm: 'sha256', files, root: manifestRoot(files) }))).toBeNull();
+  it('鍵の綴りが外れていれば null (上へ出る道 / 絶対の道 / 空の節 / 空白 / バックスラッシュ)', () => {
+    for (const key of ['../x.js', '/etc/passwd', 'dist//a.js', 'dist/a b.js', 'dist\\a.js']) {
+      const files = { [key]: 'a'.repeat(64) };
+      expect(parseManifest(JSON.stringify({ version: 1, algorithm: 'sha256', files, root: manifestRoot(files) })), key).toBeNull();
+    }
   });
 
   it('値が 16 進の sha256 でなければ null (大文字・短い・空)', () => {
@@ -163,8 +216,12 @@ describe('検算', () => {
     expect(refusal(await verifyShippedFiles(root, fsp)).reason).toBe('manifest-malformed');
   });
 
-  it('表が天井を超えていれば読まずに manifest-too-large', async () => {
+  it('表が天井を超えていれば読まずに manifest-too-large (ちょうど天井は読む)', async () => {
     await writeManifest();
+    const text = await fsp.readFile(path.join(root, MANIFEST_FILE), 'utf8');
+    // JSON は末尾の空白を許すので、ちょうど天井まで空白で埋めた表は読めて通る
+    await fsp.writeFile(path.join(root, MANIFEST_FILE), text + ' '.repeat(MAX_MANIFEST_BYTES - Buffer.byteLength(text)));
+    expect((await verifyShippedFiles(root, fsp)).ok).toBe(true);
     await fsp.writeFile(path.join(root, MANIFEST_FILE), 'x'.repeat(MAX_MANIFEST_BYTES + 1));
     expect(refusal(await verifyShippedFiles(root, fsp))).toEqual({ ok: false, reason: 'manifest-too-large', detail: MANIFEST_FILE });
   });
@@ -190,6 +247,14 @@ describe('検算', () => {
     await fsp.rm(path.join(root, 'node_modules'), { recursive: true });
     await fsp.writeFile(path.join(root, 'README.md'), 'x');
     expect(refusal(await verifyShippedFiles(root, fsp))).toEqual({ ok: false, reason: 'file-unlisted', detail: 'README.md' });
+    // 他人が 2 つ在れば名指しは昇順の先頭 (readdir の順に依らず決定的)
+    await fsp.writeFile(path.join(root, 'AAA.txt'), 'x');
+    const ordered: AttestationFs = {
+      readdir: async (p) => (p === root ? [...(await fsp.readdir(p))].sort().reverse() : fsp.readdir(p)),
+      stat: (p) => fsp.stat(p),
+      readFile: (p) => fsp.readFile(p),
+    };
+    expect(refusal(await verifyShippedFiles(root, ordered)).detail).toBe('AAA.txt');
   });
 
   it('★ ファイルを消すと file-missing', async () => {
