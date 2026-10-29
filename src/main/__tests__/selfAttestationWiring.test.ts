@@ -2,13 +2,13 @@
  * **自己検算が起動の道に配線されていること**を原文で留める (2026-10-29 · パス 553 · T-218)。
  * 関数が在ることと、窓を作る前に呼ばれることは別 (法則 `mention-vs-declaration`)。
  */
-import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { stripComments } from '../../shared/__tests__/stripNonCode';
+import { readOriginalSource } from '../../shared/__tests__/originalSource';
 
 const REPO = path.resolve(__dirname, '..', '..', '..');
-const read = (rel: string): string => readFileSync(path.join(REPO, rel), 'utf8');
+const read = (rel: string): string => readOriginalSource(path.join(REPO, rel));
 
 describe('起動時の自己検算の配線', () => {
   const main = stripComments(read('src/main/main.ts'));
@@ -57,10 +57,16 @@ describe('起動時の自己検算の配線', () => {
     expect(smoke).toContain('[self-attestation] hash-mismatch');
   });
 
-  it('出荷設定の fuse は asar の integrity を 2 段とも持つ (onlyLoadAppFromAsar + enableEmbeddedAsarIntegrityValidation)', () => {
+  /**
+   * fuse `enableEmbeddedAsarIntegrityValidation` は**意図して未設定のまま** (T-166 の判断: electron-builder は
+   * mac / win だけ asar のハッシュを実行ファイルへ埋め、署名と対で効く。この環境では効きも壊れ方も測れない ——
+   * 実測 (2026-10-29) で Linux では true にしても何も照合しなかった)。だから Linux の検算は `selfAttestation.ts`
+   * だけが持ち、ここで留めるのは「app.asar の外のコードを読まない」側 (onlyLoadAppFromAsar · T-166) である。
+   */
+  it('出荷設定の fuse は onlyLoadAppFromAsar を持ち、asar integrity の fuse は T-166 の判断どおり未設定', () => {
     const cfg = JSON.parse(read('electron-builder.json')) as { electronFuses: Record<string, boolean> };
     expect(cfg.electronFuses.onlyLoadAppFromAsar).toBe(true);
-    expect(cfg.electronFuses.enableEmbeddedAsarIntegrityValidation).toBe(true);
+    expect(cfg.electronFuses).not.toHaveProperty('enableEmbeddedAsarIntegrityValidation');
   });
 
   it('梱包版の主プロセスは node_modules を 1 つも require しない (検算の範囲の外に走る物が無い)', () => {

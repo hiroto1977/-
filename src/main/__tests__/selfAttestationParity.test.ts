@@ -21,6 +21,9 @@ const cjs = require('../../../scripts/build-integrity-manifest.cjs') as {
   serializeManifest(m: unknown): string;
   writeManifest(root: string): number;
 };
+// `.cjs` の陰性対照 (`--self-test` の 8 件) はここから走らせる —— npm script の `smoke*` に置くと
+// 鮮度検査の母集団に入り (`artifactFreshness.test.ts`)、検算表の書き手は成果物を相手にする道具ではない。
+const { selfTest } = require('../../../scripts/build-integrity-manifest.cjs') as { selfTest: () => number };
 
 let root = '';
 beforeEach(async () => {
@@ -44,6 +47,10 @@ afterEach(async () => {
 describe('書き手 (.cjs) と読み手 (.ts) のパリティ', () => {
   it('表の置き場は同じ 1 つ', () => {
     expect(cjs.MANIFEST_FILE).toBe(MANIFEST_FILE);
+  });
+
+  it('.cjs の自己検査 8 件が全部通る (陰性対照はここから走る)', () => {
+    expect(selfTest()).toBe(0);
   });
 
   it('同じ木を歩いて同じ一覧 (根の外の src は入らない・manifest 自身は入らない)', async () => {

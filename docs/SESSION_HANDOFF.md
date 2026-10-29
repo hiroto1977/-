@@ -10,7 +10,7 @@
 ## 直近の作業 (2026-10-29) — パス 553: 起動時の自己検算 (癌細胞の比喩の「DNA 修復機構」· T-218)
 
 - 詳細は `docs/REMAINING_WORK.md` の「パス 553」。利用者の問い (癌細胞のように振る舞うウイルスへの対策) を対応表で分け、無い物 4 つのうち 1 (自己検算) と 2 (複製の天井) を測った。**2 は何も無かった** (`child_process` 0 件・速度と費用の上限は在る)。**1 は生きた欠陥**: Linux では fuse `enableEmbeddedAsarIntegrityValidation` が何も照合せず、app.asar を 1 byte 改竄した梱包物が起動して UI を出した (対照で実測)。
-- **直し**: `scripts/build-integrity-manifest.cjs` (build の vite と electron-builder の間で `dist-electron/integrity.json` を書く) + `src/main/selfAttestation.ts` (`verifyShippedFiles` —— 梱包版の `whenReady` の窓を作る前・両方向の一覧 + 根の他人 + sha256・外れれば stderr + ダイアログ + `app.exit(1)`) + `electron-builder.json` (fuse の asar integrity と `!node_modules/**`) + `smoke:packaged` の段 4 (asar を改竄して起動を断る)。
+- **直し**: `scripts/build-integrity-manifest.cjs` (build の vite と electron-builder の間で `dist-electron/integrity.json` を書く) + `src/main/selfAttestation.ts` (`verifyShippedFiles` —— 梱包版の `whenReady` の窓を作る前・両方向の一覧 + 根の他人 + sha256・外れれば stderr + ダイアログ + `app.exit(1)`) + `electron-builder.json` (`!node_modules/**` —— fuse の asar integrity は T-166 の判断どおり未設定のまま) + `smoke:packaged` の段 4 (asar を改竄して起動を断る)。
 - **確立したパターン**: 梱包物の中身を測るなら `electron-builder --linux dir` を scratch へ組み `@electron/asar` で `listPackage` / `extractFile` / `extractAll` → `createPackage`。**electron-builder は package.json を梱包時に書き換える**ので表に載せない。`.cjs` と `.ts` の写しはパリティ検査で結ぶ。
 - ★ **既知の罠**: 対照の script に `git checkout --` を書くと auto mode の分類器が止める —— 控えの写しから `cp` で戻す / 背景の `( … ) &` の「完了」は包みの物。
 - **限界**: 表は出荷物と同じ容器に居る (容器ごと差し替える相手は表も書き換えられる —— Linux に署名が無い限界)。

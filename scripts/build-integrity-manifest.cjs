@@ -159,6 +159,6 @@ function main(argv) {
   }
 }
 
-module.exports = { MANIFEST_FILE, listShippedFiles, buildManifest, serializeManifest, manifestRoot, writeManifest };
+module.exports = { MANIFEST_FILE, listShippedFiles, buildManifest, serializeManifest, manifestRoot, writeManifest, selfTest };
 
 if (require.main === module) process.exit(main(process.argv.slice(2)));

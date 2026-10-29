@@ -380,6 +380,15 @@ const REVIEWED_OUTSIDE_SENDS = [
       + '資格情報は 1 つも載せず (このファイルに `Authorization` は 0 件)、応答の本文は読まない (状態だけ返す)。',
   },
   {
+    file: 'scripts/smoke-packaged.cjs',
+    needle: 'fetch(`http://127.0.0.1:${port}/json/list`',
+    guard:
+      '改竄した app.asar で起動した梱包物に、窓が開いていないことを CDP に訊く (threat: T-218 · パス 553)。送り先は'
+      + '**ループバック 127.0.0.1 とこのファイルの定数のポート** (`DEBUG_PORT + 1`) だけで、外へは出ない。'
+      + '資格情報は載せず、読むのは頁の URL の一覧 (3 秒で諦める)。'
+      + '自己検算が止めていれば CDP は開かない (= 空) ので、答えが無いことも「止まった」側として読む。',
+  },
+  {
     file: 'scripts/knowledge-autopilot.cjs',
     needle: 'fetchImpl(current',
     guard:

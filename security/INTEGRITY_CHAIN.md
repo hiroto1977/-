@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 379
+- ブロック数: 380
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `e7a1560a4976032165dccbe51fe948d82fea0a575e25a692081ad4b696fb90c5`
+- 末尾(tip)ハッシュ: `f214d0465494d791698a7727cdf5117b0bc44643c40f69fa3d2d3f11de66ef08`
 - 保護対象: 133 ファイル
 
 ## ブロック
@@ -392,6 +392,7 @@
 | 376 | `aeb6d4c7cec746e5` | `5bbede6d884170b0` | `aaa75718151fce6c` | update outboundContentGate.ts |
 | 377 | `ced4dc890a9be2fa` | `aaa75718151fce6c` | `89e29145bf14259f` | update electron-builder.json,build-integrity-manifest.cjs,integrity-chain.cjs,smoke-packaged.cjs,main.ts,selfAttestation.ts |
 | 378 | `a2cb8f344ad2d7b5` | `89e29145bf14259f` | `e7a1560a49760321` | update selfAttestation.ts |
+| 379 | `7a1453e286227601` | `e7a1560a49760321` | `f214d0465494d791` | update electron-builder.json,build-integrity-manifest.cjs,artifact-freshness.cjs,lint-malware.cjs,selfAttestation.ts |
 
 ## 保護対象ファイル
 

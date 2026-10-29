@@ -8,16 +8,16 @@
  * 壊れたまま増える。マルウェアが「正規のアプリに擬態する」最も安い道は、**インストール先のファイルを書き換える**
  * ことである (`app.asar` の中の `main.js` に 1 行足せば、署名の無い Linux の AppImage / deb では誰も気付かない)。
  *
- * 出荷設定の fuse (`electron-builder.json`) は 2 段構えで、
- * - `onlyLoadAppFromAsar` —— `app.asar` を消して `resources/app/` に別のコードを置く形を塞ぐ (T-166)
- * - `enableEmbeddedAsarIntegrityValidation` —— **macOS / Windows では** Electron 自身が `app.asar` のハッシュを
- *   署名済みのバイナリに埋めた値と照合する
+ * 出荷設定の fuse (`electron-builder.json`) が持つのは `onlyLoadAppFromAsar` —— `app.asar` を消して
+ * `resources/app/` に別のコードを置く形を塞ぐ (T-166) —— だけで、Electron 自身の asar のハッシュ照合
+ * (`enableEmbeddedAsarIntegrityValidation`) は**意図して未設定**である (T-166 の判断: electron-builder は
+ * macOS / Windows だけ値を実行ファイルへ埋め、署名と対で効く —— この環境では効きも壊れ方も測れない)。
  *
- * ところが **Linux ではその fuse は何も照合しない** (実測 2026-10-29: fuse を true にして
+ * そして **Linux ではその fuse は何も照合しない** (実測 2026-10-29: fuse を true にして
  * `electron-builder --linux dir` で組んだ物は、`app.asar` を書き換えても起動して UI を出す —— Electron の
  * asar integrity は macOS の Info.plist / Windows のリソースにしか埋められない)。Linux のインストーラは
- * 署名も持たないので、**このファイルが Linux における唯一の自己検算**になる。macOS / Windows では fuse の
- * 2 段目として重なる (別の算法・別の置き場 —— 片方が外れてももう片方が鳴る)。
+ * 署名も持たないので、**このファイルが Linux における唯一の自己検算**になる。macOS / Windows で署名つきの
+ * 梱包を測れる日が来れば、fuse はこの検算の 1 段目として重なる (別の算法・別の置き場)。
  *
  * ## 何をするか
  *
