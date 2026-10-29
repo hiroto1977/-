@@ -15,7 +15,7 @@
 
 - **台帳**: 整合性チェーン block **#383** (workflow は保護対象)・`hostChromeColorCensus` に `AssistantPage.tsx` (`names-only` —— 画面の地を inline で塗るだけで母体へは伝えない)・`lint:deps` の本番依存 5 → 3。
 - **出荷物**: FULL **12,089,652 B** / LITE **3,502,276 B** (md5 `9e1b1a61…` / `950d01ee…`)。パス 556 から **両方 +81,506 B** (ほぼ React 19 の分)。★ **LITE は CI の警告線 3,400,000 B を 102,276 B 超えた** (落ちない・ハード上限まで 497,724 B)。
-- **検証**: `typecheck` 緑・`npm test` **1158 ファイル / 23,516 件**・`audit:verify-keep-going` **39 / 39**・`smoke:app` OK。@@E2E557@@
+- **検証**: `typecheck` 緑・`npm test` **1158 ファイル / 23,516 件**・`audit:verify-keep-going` **39 / 39**・`smoke:app` OK。**出荷物が動いたので実機も回した**: `perf` OK (LITE DCL 291 ms / heap 10 MB・FULL DCL 780 ms / heap 36.8 MB)・`e2e` **761 件 ❌ 0**・`e2e:lite` **761 件 ❌ 0**。
 
 ## パス 556 (業務の割当と、時間で見た負担 —— 誰に・何を・週何時間を記録して、1 人ずつ法定労働時間と比べる) (2026-10-29)
 
