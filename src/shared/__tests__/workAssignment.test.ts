@@ -188,14 +188,19 @@ describe('assignmentLoad (1 人ずつの合計と割合)', () => {
   });
 
   it('★ 丸めると 0 時間になる割当の人も、割当の無い人より前 (割当の有無で並べる)', () => {
-    const load = assignmentLoad([row(B.key, 0.01)], [A, B], 40);
-    expect(load.rows.map((r) => [r.member, r.level])).toEqual([[B.key, 'within'], [A.key, 'none']]);
-    expect(load.rows[0]!.hours).toBe(0);
+    // 名簿の並びを 2 通り —— 並べ替えの比較子は両側 (割当の無い人が左 / 右) で呼ばれる。
+    for (const members of [[A, B], [B, A]]) {
+      const load = assignmentLoad([row(B.key, 0.01)], members, 40);
+      expect(load.rows.map((r) => [r.member, r.level])).toEqual([[B.key, 'within'], [A.key, 'none']]);
+      expect(load.rows[0]!.hours).toBe(0);
+    }
   });
 
   it('★ 時間が小さくても、割当の無い人より後ろにはならない', () => {
-    const load = assignmentLoad([row(B.key, 0.5)], [A, B], 40);
-    expect(load.rows.map((r) => r.member)).toEqual([B.key, A.key]);
+    for (const members of [[A, B], [B, A]]) {
+      const load = assignmentLoad([row(B.key, 0.5)], members, 40);
+      expect(load.rows.map((r) => r.member)).toEqual([B.key, A.key]);
+    }
   });
 
   it('★ 同じ時間なら鍵の順 (名簿の並びに依らない)', () => {

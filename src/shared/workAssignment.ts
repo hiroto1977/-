@@ -175,7 +175,8 @@ export function assignmentLoad(
   rows.sort((a, b) => {
     const ha = a.level === 'none' ? -1 : a.hours;
     const hb = b.level === 'none' ? -1 : b.hours;
-    // 鍵は 1 人 1 行なので等しい鍵は来ない (`< ? -1 : 1` で足りる)。
+    // 鍵は 1 人 1 行なので等しい鍵は来ない (`< ? -1 : 1` で足りる)。`<` を `<=` にしても同じ答え (等価変異)。
+    // Stryker disable next-line EqualityOperator: 名簿は assignmentLoad の頭で鍵ごとに 1 行へ畳むので、比べる 2 行の鍵は必ず違う
     return hb - ha || (a.member < b.member ? -1 : 1);
   });
   return {
