@@ -7,6 +7,16 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-10-29) — パス 552: AI の頭は騙せても、システムの手足は動かない (3 層の決定論の守り · T-215 / T-216 / T-217)
+
+- 詳細は `docs/REMAINING_WORK.md` の「パス 552」。利用者の依頼 (出力インターセプター / 入力の二段階検証 / 強制的な最小権限 —— AI の判断に委ねない) を、3 つの shared module と census で実装。
+- **① `outboundContentGate.ts`** —— 端末の外へ出る段階 (external-write / egress · `actionTier.ts` の台帳) の本文に資格情報・マイナンバー・カード番号の形が在れば、**本人確認より前**に断る。main の `action:invoke` と web-shim の `shim.invoke` が同じ 1 つ。**止めるのは 3 類の形だけ** (氏名・メール・電話は止めない —— `CUSTOM_DENY_PATTERNS` は空)。
+- **② `promptInjection.ts`** —— 第三者の文 (emotions の Gmail / Slack 本文・skills の SKILL.md) に AI への指示の形が在れば、鍵を読む前に断る。利用者自身の文は検めない。
+- **③ `aiReplyInert.test.ts`** —— AI の応答の束縛が外向きの手足 (invoke / openExternal / fetch / window.open) に届かないことを 12 画面の両方向の台帳で固定。
+- **確立したパターン**: `ACTION_TIER` は `src/shared/actionTier.ts` に住む (`userPresence.ts` は re-export) —— 段階を読む新しい門は shared から import する。3 本は保護対象 + `mutate` + `MUST_MEASURE` + CODEOWNERS。**新しい external-write / egress の action は、payload に資格情報を正当に載せるなら `CREDENTIAL_PAYLOAD_FIELDS` に理由つきで**。
+- **対照 12 方向すべて鳴る**。**測っていない物**: 3 本の変異検査 (次に `audit:mutate-changed`)・実機 e2e・言い換えた指示。
+- **次**: PR #844 は draft のまま (マージは利用者の判断)。
+
 ## 直近の作業 (2026-10-29) — パス 551: 専属カウンセラー (`mentor`) —— 1 人に 1 人の AI 相談役を端末内に足す
 
 - 詳細は `docs/REMAINING_WORK.md` の「パス 551」。利用者の依頼 (人員育成のための専属 AI カウンセラー: ペルソナに寄り添う問い・チームでの動き方・関係・悩みへの助言・仲裁) を、新しいサービス `mentor` (専属カウンセラー · 分析・ツール) として実装。サービス 77・collection 24 (`mentor-sessions` · 1 人 1 行 · 機微)。

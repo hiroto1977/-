@@ -309,6 +309,13 @@ const VERDICTS = {
     + ' 残り 6 つ (`parseIsoDate` / `isCalendarMonth` / `isCalendarDateOrMonth` / `parseTimestamp` / `addIsoDays` / `isoDaysBetween`) は **main/preload 側の消費者が 0 件** なので、ビルド間の非対称は**原理的に起きない**。 ★ **2026-09-22 (パス 394) に 9 つ目 `isoMonthOf` が増えた** —— 消費者は `main/clients/freee.ts` **だけ** (renderer は 0 件) なので、こちらも非対称は起きない (**片方のビルドしか呼ばない**)。ブラウザ版の bundle からは tree-shaking で落ちることを 両方組んで実測した (+0 B)。上の「負で答える関数は 8 つ」はこの行が足された時点の数で、**今は 9 つ**である。'
     + ' ★ 台帳の粒度について: この台帳は**モジュール**単位で「両ビルドがimport」を数えるが、非対称が宿るのは**両ビルドが呼ぶ関数**だけである。isoDate はその差が最も大きい例 (33 のimport元・負で答える 8 関数・境界を越えるのは 2 つ)。 ★ **2026-09-22 (パス 410) に 10 個目 `displayDateOf` が増え、main 側の import 元が 3 → 8 になった** (`drive` / `github` / `microsoft-365` / `notion` / `wordpress` の 5 client を日付の読みへ寄せた)。**これは非対称ではなく、設計した対である** —— 境界 (main の client) が `string | null` へ正規化し、画面 (renderer) が同じ module の `dateText` でその `null` に**理由を与える** (「日付が読めません」)。`displayDateOf` を呼ぶのは main 側と `shared/ollama.ts` だけ、`dateText` を呼ぶのは画面だけで、**同じ関数が両側で違う扱いを受ける形は 1 つも無い** (実測)。`dateText` は `string | null` を受けて必ず文字列を返すので、そもそも否定で答えない。 ★ **2026-09-27 (パス 493) に 11 個目 `isTimestampMs` が増え、renderer 側の import 元が 29 → 30 になった** —— 読み手は `shared/emotionsShape.ts` の `isAnalysisEntry` (main の `emotions.ts` とブラウザ版の `emotionsWeb.ts` が**同じ 1 つの述語**として呼ぶ) と、ブラウザ版だけが持つ記録の保管層 `renderer/data/store.ts`。否定の答え (時刻が範囲外) は両ビルドとも「その要素・その記録を落とす」に倒れるので非対称は無い (実測)。',
   ollama: '**非対称だった → パス 248 で直した** (許可経路の台帳を読むのは renderer だけ)',
+  outboundContentGate:
+    '対称 (実測・パス 552 · T-215) —— 否定で答えるのは `outboundContentRefusal` (断りの文か null) と '
+    + '`scanPayload` (`refused` / `unreadable`) で、**両ビルドが同じ 1 つを同じ場所で呼ぶ**: main の '
+    + '`action:invoke` (`payloadTooWide` の直後・`requirePresence` の前) とブラウザ版の `shim.invoke` '
+    + '(`unguarded.invoke` の前)。否定のあとの動作はどちらも `{ ok: false, code: \'action_failed\', '
+    + 'message }` で送らない (`aiDefenseWiring.test.ts` が順序を、`mainIpc` / `webShimOutboundGate` が'
+    + '振る舞いを両側で留める)。段階の台帳 `actionTier.ts` も同じ 1 つ (main の `userPresence` は re-export)',
   aiEndpoint:
     '対称 (実測・パス 269) —— 直接の import は **両ビルドとも 0 件** (表の 0 / 0)。'
     + '越境するのは shared を 2 段たどった先だけで、辿ると否定は 1 つに絞れる: '
@@ -408,6 +415,13 @@ const VERDICTS = {
     + '★ なお `omittedRadarNote` が非 `null` を返す枝は **`export-svg` の口からは'
     + '到達しない** —— 上流の `validateTeamRadarState` が 5 軸すべて整数 1-5 を要求するので、'
     + '未評価の形は図に届く前に断られる (両ビルドで同じ)。画面の ⚠ は下書きを直接読むので今日も出る',
+  promptInjection:
+    '対称 (実測・パス 552 · T-216) —— 否定で答えるのは `detectPromptInjection` (当たった規則か null) と '
+    + '`promptInjectionRefusal` (断りの文か null)。読み手は 3 か所: main の `emotions.ts` (鍵の門の前で throw)・'
+    + 'main の `skills.ts` (SKILL.md を読んだ直後で throw)・ブラウザ版 `web-shim.ts` の `callEmotionsAnalyze` '
+    + '(`vault.getToken` の前で `err`)。throw と `err` は IPC の床 (`withFloor` / main の catch) で同じ '
+    + '`action_failed` + 文 になるので、**利用者が読む答えは両ビルドで同じ** (`webShimOutboundGate` と '
+    + '`emotions.test.ts` が同じ標本で確かめる)。skills はデスクトップ版にしか無いので 3 か所目は片側だけ',
   privateTarget:
     '対称 (実測・パス 524 で読んだ) —— 母集団に入ったのはパス 524 (T-076) で `scanTarget.ts` が'
     + ' `looksInternalHostname` の中で `isPrivateOrReservedTarget` を呼ぶようになったため。'

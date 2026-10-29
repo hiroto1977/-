@@ -228,6 +228,8 @@ const MIGRATED: readonly string[] = [
   'src/main/clients/__tests__/nullableSnapshotFieldWidth.test.ts',
   'src/main/clients/__tests__/responseRowGuards.test.ts',
   'src/renderer/__tests__/appShellPartBoundary.test.ts',
+  'src/renderer/__tests__/aiReplyInert.test.ts',
+  'src/shared/__tests__/aiDefenseWiring.test.ts',
   'src/renderer/__tests__/browserSendClaimCensus.test.ts',
   'src/renderer/__tests__/ceilingUnitCensus.test.ts',
   'src/renderer/__tests__/cloudSyncClaims.test.ts',

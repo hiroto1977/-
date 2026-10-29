@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 372
+- ブロック数: 374
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `8a7a0455d3002dd96576ada32285ff7f5629548d645dd0d38f9f700176d6f66e`
-- 保護対象: 128 ファイル
+- 末尾(tip)ハッシュ: `19a08b86ab8ea05a9b64dc5249a046adfb767466cd9d311fa7301e9c77e77363`
+- 保護対象: 131 ファイル
 
 ## ブロック
 
@@ -385,6 +385,8 @@
 | 369 | `3a202a757d460717` | `f39acc52fd3e09fc` | `63d2990574dcd834` | update integrity-chain.cjs,secrets.ts,vault.ts,credentialTtl.ts |
 | 370 | `b63cae4414368a65` | `63d2990574dcd834` | `208dc542c68e178d` | update secrets.ts,vault.ts,credentialTtl.ts |
 | 371 | `e2226754991e5c46` | `208dc542c68e178d` | `8a7a0455d3002dd9` | update 00-project.mdc,manifest.webmanifest |
+| 372 | `1632c6ebecc548f5` | `8a7a0455d3002dd9` | `7e8db84e5e9a20ec` | update integrity-chain.cjs,main.ts,userPresence.ts,actionTier.ts,outboundContentGate.ts,promptInjection.ts |
+| 373 | `fcfdb6029d58f67f` | `7e8db84e5e9a20ec` | `19a08b86ab8ea05a` | update outboundContentGate.ts |
 
 ## 保護対象ファイル
 
@@ -482,6 +484,7 @@
 - `src/renderer/security/vault.ts`
 - `src/renderer/security/webCrypto.ts`
 - `src/renderer/security/webauthn.ts`
+- `src/shared/actionTier.ts`
 - `src/shared/advisorQuestionLimits.ts`
 - `src/shared/ai/chat.ts`
 - `src/shared/ai/credentials.ts`
@@ -503,7 +506,9 @@
 - `src/shared/isoDate.ts`
 - `src/shared/localDate.ts`
 - `src/shared/ollama.ts`
+- `src/shared/outboundContentGate.ts`
 - `src/shared/privateTarget.ts`
+- `src/shared/promptInjection.ts`
 - `src/shared/proxyEndpoint.ts`
 - `src/shared/redact.ts`
 - `src/shared/safeFilename.ts`

@@ -579,6 +579,15 @@ const PROTECTED = [
    */
   'src/shared/assistantLimits.ts',     // AI へ送る量の関門 (述語 latestTurnTooLong と返答の天井)
 
+  // 2026-10-29 (パス 552) に足した 3 本 —— AI の判断に依らない 3 層の守り。
+  // `main.ts` (保護対象) が `actionTier` と `outboundContentGate` を読むので、閉包の規則で
+  // 保護対象でなければならない (判定が保護の外に出る)。`promptInjection` は main の
+  // emotions / skills と web-shim が読む (どちらも保護対象ではない) が、中身は**第三者の文が
+  // AI へ届く前の唯一の関門**で、規則を 1 本消しても 0 件のまま緑に見える側なので入れる。
+  'src/shared/actionTier.ts',          // action の段階の台帳 (無い action は external-write へ倒す fail closed)
+  'src/shared/outboundContentGate.ts', // 出力インターセプター (資格情報 / マイナンバー / カード番号の形を外へ出さない)
+  'src/shared/promptInjection.ts',     // 入力の無害化 (第三者の文に混ざった AI への指示の形)
+
   // 2026-09-15 (パス 287) に足した。**数える助けは封緘されているのに、
   // 何を数えるかの表が封緘されていなかった。**
   //

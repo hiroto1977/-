@@ -1608,8 +1608,8 @@ npm run lint:zero-fold     # 「割れない値を 0 に倒す」箇所の**母�
                            #   母集団が 26 ファイル (実測 106) と 4 倍ずれていた
 npm run lint:shared-judgement # 「述語は共有したが、no と言われたあとの動作が両ビルドで
                            #   違う」の**母集団**を数え、`docs/REMAINING_WORK.md` の
-                           #   生成ブロックと突き合わせる (shared 161 / 両ビルドが
-                           #   import 86 / うち否定で答えられる 45。**この 3 つは
+                           #   生成ブロックと突き合わせる (shared 164 / 両ビルドが
+                           #   import 89 / うち否定で答えられる 47。**この 3 つは
                            #   live metric なので散文だけが古びることはもう無い** ——
                            #   2026-09-15 まで 138 / 44 / 21 と書いたままだった。
                            #   44 / 21 はパス 247 が初めて数えた値で、
@@ -1831,6 +1831,13 @@ The browser target adds: `web-shim.ts` (a `window.serviceHub` polyfill imported 
   全件の門 → 実機 → push まで止めない。正は `scripts/task-tier.cjs` の `TIERS` で、方針は
   `docs/MODEL_EFFORT_POLICY.md` (`taskTierPolicy.test.ts` が表・agent 定義・文書を双方向に留める)。
 - **部品ごとの偽物が緑でも、つなぎ目は別に通す。実物の部品を架空のデータでつないで端から端まで回す** (2026-10-22)。毎日の依存監査は、部品の検査 (脅威ウォッチ・報告・Issue 同期) がそれぞれ自前の偽物で緑のまま、つなぎ目 (self-test の偽 Issue に作者が無い) で 1 週間止まっていた。`dependencyAuditEndToEnd.test.ts` が手本: 実物の `weakness-map.json`・`buildReport`・`syncIssue` を、状態を持つ偽の GitHub と架空の勧告・KEV・EPSS (CVE は 2099 年・パッケージは `acme-*`・GHSA は `GHSA-fake-*`) でつなぎ、何日か続けて回す。架空データは実在の個人・会社・CVE を使わない (取り違えられない)。偽の GitHub は本物と同じく**呼ぶたびに複製を返す** (生の参照を返すと update が先に state を書き換えて比較が壊れる)。
+- **AI の判断に守りを委ねない —— 3 層は規則で、AI の外に置く** (2026-10-29 · パス 552)。端末の外へ出る
+  action (段階が `external-write` / `egress` · `src/shared/actionTier.ts`) を足したら、本文は `outboundContentRefusal`
+  を通る漏斗 (main の `action:invoke` / web-shim の `shim.invoke`) の中に置く —— 枝ごとに `invoke` を迂回しない。
+  payload で資格情報を正当に運ぶ欄は `CREDENTIAL_PAYLOAD_FIELDS` に理由つきで。第三者の文 (メール・チャット・配られた
+  文書) を AI へ渡す新しい口は `promptInjectionRefusal` を**鍵を読む前**に通し、`aiDefenseWiring.test.ts` の母集団に足す。
+  AI の応答を受けた値を外向きの `invoke` / `openExternal` / `fetch` へ渡さない (`aiReplyInert.test.ts` が鳴る)。
+  プロンプトに「秘密を漏らすな」と書くことは守りに数えない。
 - **対照を回すまで、検査は信用しない。** 守っている物を実際に壊し、狙った項目が
   落ちることを見る。**鳴らない対照は「合格」ではなく「その検査についての報せ」である。**
 

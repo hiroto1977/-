@@ -124,6 +124,10 @@
 /src/shared/ai/providers.ts @hiroto1977
 /src/shared/aiEndpoint.ts @hiroto1977
 /src/shared/assistantLimits.ts @hiroto1977
+# AI の判断に依らない 3 層の守り (2026-10-29 · パス 552 · threat: T-215 / T-216 / T-217)。
+/src/shared/actionTier.ts @hiroto1977
+/src/shared/outboundContentGate.ts @hiroto1977
+/src/shared/promptInjection.ts @hiroto1977
 /src/shared/atlassianSite.ts @hiroto1977
 /src/shared/constantTimeEquals.ts @hiroto1977
 /src/shared/controlChars.ts @hiroto1977
@@ -289,3 +293,4 @@
 /src/shared/__tests__/gitattributesGenerated.test.ts @hiroto1977
 # PR の diff で折り畳む物を決めるファイル (2026-10-28 · threat: T-210) —— 1 行で守りの変更を見えなくできる。
 /.gitattributes @hiroto1977
+/src/renderer/__tests__/aiReplyInert.test.ts @hiroto1977

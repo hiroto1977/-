@@ -12,6 +12,7 @@ import { LIVE_ACTIONS, LIVE_FETCHERS, LOCAL_SERVICES, readsSavedToken, type Serv
 import { authorize, isOAuthSupported, OAUTH_CONFIGS } from './oauth';
 import { ensurePrivateExportRoot, repairExportPermissions } from './clients/exportPaths';
 import { isServiceId } from '../shared/serviceId';
+import { outboundContentRefusal } from '../shared/outboundContentGate';
 import { checkTokenInput } from '../shared/tokenInput';
 import type { OsOpResult, TokenSaveResult } from '../preload/preload';
 import { safeErrorMessage } from './clients/types';
@@ -660,6 +661,12 @@ ipcMain.handle(
     if (tier !== 'read' && payloadTooWide(payload)) {
       return { ok: false, code: 'action_failed', message: '送る欄が多すぎるため断りました (通常の操作は 24 欄以内です)。' };
     }
+    // 出力インターセプター (threat: T-215): 端末の外へ出る段階 (external-write / egress) の本文を、
+    // 確認を出す前に**規則**で検める。資格情報・マイナンバー・カード番号の形が在れば送らない ——
+    // AI が騙されて「送れ」と判断しても、送る側 (ここ) が止める。判定は shared の純関数で
+    // ブラウザ版 (`web-shim.ts` の invoke) と同じ 1 つ。
+    const outbound = outboundContentRefusal(serviceId, action, payload);
+    if (outbound !== null) return { ok: false, code: 'action_failed', message: outbound };
     let presence: PresenceDecision;
     try {
       presence = await requirePresence(e, {

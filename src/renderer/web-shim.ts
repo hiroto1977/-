@@ -108,6 +108,8 @@ import {
   stripSmuggledChars,
   stripSmuggledIfString,
 } from '../shared/assistantLimits';
+import { outboundContentRefusal } from '../shared/outboundContentGate';
+import { promptInjectionRefusal } from '../shared/promptInjection';
 import { externalUrlOrNull } from '../shared/externalUrlGate';
 import {
   TALENT_STORAGE_KEY,
@@ -822,6 +824,9 @@ async function callEmotionsAnalyze(payload: Record<string, unknown>): Promise<Ac
   if (typeof text !== 'string' || text.trim().length === 0) return err('action_failed', 'text を入力してください');
   if (countChars(text) > MAX_ANALYZE_TEXT_CHARS)
     return err('action_failed', `text が長すぎます (${MAX_ANALYZE_TEXT_CHARS} 字以内)`);
+  // 入力の無害化 (threat: T-216): 第三者の文 (Gmail / Slack) に指示の形が在れば送らない (main と同じ 1 つの規則)。
+  const injection = promptInjectionRefusal(text, '分析する本文');
+  if (injection !== null) return err('action_failed', injection);
 
   let apiKey: string | null = null;
   try {
@@ -1998,7 +2003,13 @@ const shim = {
   fetchSnapshot: <T>(serviceId?: string): Promise<ActionResult<T>> =>
     withFloor<T>('fetch_failed', () => unguarded.fetchSnapshot<T>(serviceId)),
   invoke: <T>(serviceId: string, action: string, payload: Record<string, unknown>): Promise<ActionResult<T>> =>
-    withFloor<T>('action_failed', () => unguarded.invoke<T>(serviceId, action, payload)),
+    withFloor<T>('action_failed', async () => {
+      // 出力インターセプター (threat: T-215) —— main の `action:invoke` と同じ 1 つの判定を、
+      // 枝へ入る前に掛ける (枝ごとに置くと新しい枝が通し忘れる)。
+      const outbound = outboundContentRefusal(serviceId, action, payload);
+      if (outbound !== null) return err<T>('action_failed', outbound);
+      return unguarded.invoke<T>(serviceId, action, payload);
+    }),
 };
 
 // Install only if no Electron preload has populated serviceHub already.

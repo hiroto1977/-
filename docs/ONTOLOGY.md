@@ -151,7 +151,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `desktop-only-is-the-difference` | デスクトップ版に在ってブラウザ版に無い action は、種類つきの台帳 (DESKTOP_ONLY) にちょうど載っている。 | — |
 | `actions-need-reader-or-local` | action を持つサービスは、資格情報を読むか local である (どちらでもない書き込みは行き先が無い)。 | — |
 
-## 5. 法則と執行者 (121)
+## 5. 法則と執行者 (122)
 
 各法則は「何を守るか」「どのパス / パターンで学んだか」「何がそれを守っているか」を持つ。
 執行者が**散文だけ**の法則は次の節に集める —— 散文で述べた規則は落ちない。
@@ -203,7 +203,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `no-weakness-as-spec` | **弱さを仕様として書き留めない** — 検査の題名が「前置き一致なので弾く側」「Never throws」と弱さに名前を与えると、落ちる検査が無くなり読んで気付くしかない。**「揃えることを要求しない」「分かる人が決めること」と書いた保留も同じ** —— 理由の欄が埋まるので検査は通り続け、実測で 1 か月近く誰も決めなかった。弱さは閉じるか、`docs/REMAINING_WORK.md` に「閉じていない物」として書く (台帳は片付いた物の説明を置く所)。**そして訂正は写しの数だけ要る** —— 「プレリリース/ビルドタグは無視する」"ignores -rc / -beta ... (compares numeric prefix only)" という**題名が欠陥そのものを述べる**検査が `src/shared/__tests__/ollama.test.ts` と `src/main/clients/__tests__/ollama.test.ts` に**1 件ずつ**在り、片方を直しただけでは全件が緑にならなかった (パス 402・パス 362 と同じ形)。 | パス 291 / パス 309 / パス 336 / パス 402 (同じ弱さが 2 ファイルに仕様として在った) | 検査 `src/shared/__tests__/dualBuildDecisions.test.ts`<br>散文だけ `docs/SESSION_HANDOFF.md` — 題名の意味は機械に映らない。機械が在るのは両ビルド台帳の理由の欄だけ (保留の決まり文句を落とす) で、検査の題名そのものは各パスの「閉じていない物」の節が持つ |
 | `instruction-tier-picks-effort-and-hands` | **指示のティアが effort と任せる手を決める —— 基準は表 1 つで、hook・agent 定義・文書はそれに従う** — 利用者の 1 つの指示から「どれだけ深く・長く・何に任せて」働くかを、指示ごとに同じ基準で決める。基準は `scripts/task-tier.cjs` の表 `TIERS` **ただ 1 つ** (light / standard / deep —— 主セッションへ推奨する effort・任せる agent とその model / effort・Workflow を提案するか)。指示のたびに走る `UserPromptSubmit` hook が指示の文からティアを決めて**根拠 (一致した印) つきの 1 行**を文脈へ足し、`.claude/agents/&lt;agent>.md` の frontmatter と `docs/MODEL_EFFORT_POLICY.md` の表はその `TIERS` と検査で突き合わせる (名前と値を 2 度書かない)。**主セッションのモデルと effort は利用者が `/model` / `/effort` で決める物**で、hook にもアシスタントにも変える口は無い —— だから hook は推奨を見せる所までを受け持ち、アシスタントは推奨と違えば応答の冒頭 1 行で案内する (作業は止めない)。hook は stdin の JSON を読むだけで、子プロセスを作らず・網へ出ず・ファイルを書かず・**必ず exit 0** (UserPromptSubmit の hook が exit 2 で終わると指示そのものが止まるので、指示を止める判断を 1 つも持たない)。**なぜ要るか**: 基準が散文にしか無いと、軽い指示に重い検証を掛け、重い指示を軽い手で片付ける形が繰り返される。「続けて」はこのリポジトリでは「次のパスを回す」の合図なので deep に置く。**閉じていない物**: 印は綴りの一致なので、綴りに現れない重さ (短い指示の裏にある大きな仕事) は standard に落ちる —— そのときはアシスタントが読んで上げる (hook はそれを止めない)。 | 2026-10-07 (パス 505) | 検査 `src/shared/__tests__/taskTierPolicy.test.ts`<br>検査 `src/shared/__tests__/sessionStartCodeGuarded.test.ts`<br>ゲート `npm run lint:mcp-servers`<br>整合性チェーン (`scripts/integrity-chain.cjs`) |
 
-### 境界と信頼 (20)
+### 境界と信頼 (21)
 
 | id | 法則 | 出典 | 執行者 |
 |---|---|---|---|
@@ -227,6 +227,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `ollama-allowlist` | **Ollama は読む endpoint だけを呼ぶ** — pull / create / push / copy / delete / blobs / upload を呼ばない (GGUF 経由の脆弱性の面を絶つ)。許可表は共有台帳 OLLAMA_READ_PATHS から組み立てる。脆弱性台帳は日付つき。 | 不変条件 #7 / 不変条件 #8 / パス 141 / パス 248 | ゲート `npm run lint:forbidden`<br>検査 `src/shared/__tests__/ollama.test.ts`<br>ゲート `npm run lint:rate-freshness` |
 | `loopback-oauth-host-pin` | **OAuth callback の Host は loopback だけ** — DNS リバインディングを Host header の固定で断つ。判定は ollama / aiEndpoint のループバック判定とは別の問い (揃えない)。 | 不変条件 #12 / パターン 0-a-14 | 検査 `src/shared/__tests__/loopbackChecks.test.ts`<br>整合性チェーン (`scripts/integrity-chain.cjs`) |
 | `header-values-one-rule` | **Headers が何を受理するかは 1 つの判定** — 資格情報の入口は shared/headerValue.ts の 1 つで受理を判定し、プラットフォームの例外文面 (ヘッダ名を含まない) が鍵を画面へ出さない。 | パス 244 / パス 296 | 検査 `src/shared/__tests__/headerValue.test.ts`<br>検査 `src/shared/__tests__/headerValueLeak.test.ts` |
+| `ai-defense-is-deterministic` | **AI の頭は騙せても、システムの手足は動かない —— 守りの成否は AI の判断に委ねず、決定論の規則が 3 層で担保する** — AI は入力の中の「指示」と「データ」を構造的に区別できないので、プロンプトで「秘密を漏らすな」と言っても守りにはならない (攻撃側は言い回しを変えるだけでよい)。だから守りは**AI の外**に、規則として 3 層で置く (2026-10-29 · パス 552)。① **出力インターセプター** (threat: T-215) —— 端末の外へ出る action (段階が external-write / egress · `actionTier.ts` の台帳が決め、台帳に無い action は external-write へ倒す fail closed) の本文を、**送る直前・本人確認より前**に `outboundContentGate.ts` が検める。資格情報 (16 形 + `redactSecrets` の規則)・マイナンバー (番号法施行令 §8 の検査数字)・カード番号 (主要ブランドの先頭 + Luhn) の形が在れば断り、断りの文は欄の場所と種類だけを言って**値を 1 字も引用しない**。main の `action:invoke` とブラウザ版の `shim.invoke` が**同じ 1 つの関数**を呼ぶ (片方のビルドだけが止める形にしない)。実測 (直す前): github/create-issue の body に ghp_ の形・assistant/chat の messages にマイナンバーの形を置いても両ビルドとも送った。② **入力の無害化** (threat: T-216) —— 第三者の文 (Gmail / Slack の本文・SKILL.md) が AI へ届く口は 2 つ 3 か所で、`promptInjection.ts` が 4 群 (役割の乗っ取り / 指示の上書き / 隠蔽・漏洩の指示 / 区切りの偽装) の形を NFKC + 小文字 + 不可視文字の除去で正規化した本文に当て、当たれば**鍵を読む前**に断る (群と規則 id だけを言い、本文は引用しない)。業務の文に普通に出る言い回し (「今後は必ず」「System: 保守のお知らせ」) は当たらないことを標本で留める —— 偽陽性は製品を使えなくする側。利用者自身が打つ文は検めない (自分の AI に自分で指示するのは正当。そこで止めるのは出力の側 ①)。③ **最小権限** (threat: T-217) —— AI の応答を受ける束縛 (egress の action の戻り・12 画面) は、外向きの手足 (`invoke` の外向きの段階・`openExternal` / `fetch` / `window.open`) の引数に現れない。今日は 0 件で、その 0 件を census が両方向の台帳つきで固定する。**限界を正直に書く**: ① が止めるのは 3 類の形だけで氏名・メール・電話・取引先コードは止めない (止めると Gmail / Slack の下書きが書けない。業務固有の形は `CUSTOM_DENY_PATTERNS` に足す)。② は形の規則なので言い換えは通る。③ は綴りの走査なので別の名前へ写した値は映らず、それは外へ出る時点で ① が中身を見る —— **3 層は重ねて初めて守りになる**。 | 2026-10-29 (パス 552) | 検査 `src/shared/__tests__/outboundContentGate.test.ts`<br>検査 `src/shared/__tests__/promptInjection.test.ts`<br>検査 `src/shared/__tests__/aiDefenseWiring.test.ts`<br>検査 `src/main/__tests__/mainIpc.test.ts`<br>検査 `src/main/clients/__tests__/emotions.test.ts`<br>検査 `src/main/clients/__tests__/skills.test.ts`<br>検査 `src/renderer/__tests__/webShimOutboundGate.test.ts`<br>検査 `src/renderer/__tests__/aiReplyInert.test.ts`<br>検査 `src/shared/__tests__/threatLedger.test.ts` |
 
 ### 保存と復元 (18)
 
@@ -330,6 +331,6 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 
 ## 7. 集計
 
-- 法則 121 (機械あり 118 / 散文だけ 3)
+- 法則 122 (機械あり 119 / 散文だけ 3)
 - facet の公理 10・実体クラス 15・層 4・ビルド 3
 - `verify:all` のゲート 39: `typecheck` `verify:arch` `lint:forbidden` `lint:workflow-security` `lint:secrets` `lint:malware` `lint:network-targets` `lint:url-encoding` `lint:regex` `lint:imports` `lint:docs` `lint:citations` `lint:doi-prefix` `lint:charset` `lint:knowledge-refs` `lint:sample-data` `lint:test-coverage` `verify:release-artifacts` `lint:shell` `lint:repo-size` `lint:deps` `lint:mcp-servers` `lint:storage` `lint:csp` `lint:data-origin` `lint:credential-use` `lint:ipc-handlers` `lint:mutation-scope` `lint:collection-time` `lint:parameter-prose` `lint:zero-fold` `lint:shared-judgement` `lint:rate-freshness` `verify:orchestration` `vault:check` `verify:graph` `verify:knowledge` `chain:verify` `lint`
