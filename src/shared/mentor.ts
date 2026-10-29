@@ -525,6 +525,129 @@ export function aiDeepDivePrompt(session: MentorSession, member: MentorMember, q
   ].join('\n\n');
 }
 
+// --- ひとりひとりの負担 (同意した集計だけ · パス 555) -------------------------
+
+/** 負担率に使う直近のチェックインの数 (窓)。1 回の数字で人を決めない。 */
+export const WORKLOAD_WINDOW = 4;
+/** 均等な分担に対して、この倍以上を 1 人が負っていたら「偏り」と言う。 */
+export const WORKLOAD_SKEW_RATIO = 1.5;
+/** 平均の負荷がこれ以上なら「高い」。 */
+export const WORKLOAD_HIGH = 4;
+/** 平均の負荷がこれ以下なら「余裕」。 */
+export const WORKLOAD_LIGHT = 2;
+
+export type WorkloadLevel = 'high' | 'normal' | 'light' | 'unknown';
+
+/**
+ * メンバー 1 人分の負担。**同意した人だけ**が行になる (同意の無い人は人数にしか出ない)。
+ * 数は全部チェックインの「負荷 1〜5」から導く —— メモ (本音) は 1 字も持たない。
+ */
+export interface WorkloadShare {
+  readonly member: string;
+  readonly name: string;
+  /** 直近のチェックインの負荷 (1〜5)。1 度も無ければ null。 */
+  readonly latest: number | null;
+  /** 直近 `WORKLOAD_WINDOW` 回の平均 (小数第 1 位)。1 度も無ければ null。 */
+  readonly average: number | null;
+  /** 窓に入った回数 (平均の分母)。 */
+  readonly samples: number;
+  /** 負担率 (%) = この人の平均 ÷ 平均を持つ全員の平均の合計 × 100 (小数第 1 位)。平均が無ければ null。 */
+  readonly sharePct: number | null;
+  /** 均等 (100 ÷ 人数) との差 (ポイント)。平均が無ければ null。 */
+  readonly skewPt: number | null;
+  readonly level: WorkloadLevel;
+  /** 最後のチェックインの日。1 度も無ければ null。 */
+  readonly lastOn: string | null;
+  /** 最後のチェックインから `CHECKIN_INTERVAL_DAYS` を超えて空いている (1 度も無い場合も)。 */
+  readonly stale: boolean;
+}
+
+export interface WorkloadDistribution {
+  /** 同意した人の行。負担率の大きい順 (同率は鍵の順)。平均の無い人は末尾。 */
+  readonly rows: readonly WorkloadShare[];
+  /** 平均を持つ人数 (負担率の分母)。 */
+  readonly counted: number;
+  /** 均等なら 1 人が負う割合 (%)。平均を持つ人が居なければ null。 */
+  readonly evenSharePct: number | null;
+  /** 名簿に居るが同意していない (または記録が無い) 人数 —— 名前は出さない。 */
+  readonly withoutConsent: number;
+}
+
+const round1 = (n: number): number => Math.round(n * 10) / 10;
+
+/**
+ * **ひとりひとりの負担率** —— 同意した人のチェックインの負荷を、1 人ずつ・チーム全体に対する割合で出す。
+ *
+ * 守る物:
+ * - **同意の無い人は行にならない** (`teamSignals` と同じ約束)。人数だけを `withoutConsent` で言う。
+ * - **記録の無い人を 0 (余裕) にしない** —— 平均が無い人は `unknown` で、負担率の分母にも入れない。
+ *   入れると「まだ書いていないだけの人」が一番楽に見え、残りの人の負担率が実物より高く出る。
+ * - 1 回の数字で決めない —— 平均は直近 `WORKLOAD_WINDOW` 回。
+ * - 並びは保管層の順に依らない (負担率 → 鍵)。
+ */
+export function workloadDistribution(
+  sessions: readonly MentorSession[],
+  members: readonly MentorMember[],
+  today: string,
+): WorkloadDistribution {
+  const byKey = new Map(sessions.map((s) => [s.member, s] as const));
+  const consented: { member: MentorMember; session: MentorSession }[] = [];
+  let withoutConsent = 0;
+  for (const m of members) {
+    const s = byKey.get(m.key);
+    if (s === undefined || !s.shareWithTeam) {
+      withoutConsent += 1;
+      continue;
+    }
+    consented.push({ member: m, session: s });
+  }
+  const partial = consented.map(({ member, session }) => {
+    const window = session.checkins.slice(-WORKLOAD_WINDOW);
+    const last = latestCheckIn(session);
+    const gap = daysSinceLastCheckIn(session, today);
+    const average = window.length === 0 ? null : round1(window.reduce((acc, c) => acc + c.workload, 0) / window.length);
+    const level: WorkloadLevel = average === null ? 'unknown' : average >= WORKLOAD_HIGH ? 'high' : average <= WORKLOAD_LIGHT ? 'light' : 'normal';
+    return { member, average, samples: window.length, latest: last === null ? null : last.workload, lastOn: last === null ? null : last.on, stale: gap === null || gap > CHECKIN_INTERVAL_DAYS, level };
+  });
+  const withAverage = partial.filter((p): p is typeof p & { average: number } => p.average !== null);
+  const total = withAverage.reduce((acc, p) => acc + p.average, 0);
+  const counted = withAverage.length;
+  const evenSharePct = counted === 0 ? null : round1(100 / counted);
+  const rows: WorkloadShare[] = partial.map((p) => {
+    const sharePct = p.average === null || total <= 0 ? null : round1((p.average / total) * 100);
+    return {
+      member: p.member.key,
+      name: p.member.name,
+      latest: p.latest,
+      average: p.average,
+      samples: p.samples,
+      sharePct,
+      skewPt: sharePct === null || evenSharePct === null ? null : round1(sharePct - evenSharePct),
+      level: p.level,
+      lastOn: p.lastOn,
+      stale: p.stale,
+    };
+  });
+  rows.sort((a, b) => {
+    const sa = a.sharePct ?? -1;
+    const sb = b.sharePct ?? -1;
+    return sb - sa || (a.member < b.member ? -1 : a.member > b.member ? 1 : 0);
+  });
+  return { rows, counted, evenSharePct, withoutConsent };
+}
+
+/**
+ * 偏りの 1 文。均等の `WORKLOAD_SKEW_RATIO` 倍以上を負う人が居るときだけ言う (2 人以上で測れる)。
+ * 名指しするのは**同意した人**だけ (行がその人しか持たない)。
+ */
+export function workloadImbalanceNote(d: WorkloadDistribution): string | null {
+  if (d.counted < 2 || d.evenSharePct === null) return null;
+  const top = d.rows[0];
+  if (top === undefined || top.sharePct === null) return null;
+  if (top.sharePct < d.evenSharePct * WORKLOAD_SKEW_RATIO) return null;
+  return `${top.name} さんに負担が偏っています（均等なら ${d.evenSharePct}% のところ ${top.sharePct}%）。渡せる仕事を 1 つ決めて、今週のうちに頼む相手を決めてください。`;
+}
+
 // --- 見本 (同梱の静的スナップショット) ----------------------------------------
 
 /** `SNAPSHOT.mentor` の形。聞き取りの問いの台帳だけで、人の記録は持たない。 */

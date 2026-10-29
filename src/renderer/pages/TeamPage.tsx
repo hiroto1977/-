@@ -35,6 +35,10 @@ import { readNumberOr0, refusalLabels, refusedFields, refusingSpecs, type NumSpe
 import { RefusedFieldsNote } from '../components/RefusedFieldsNote';
 import { displayField } from '../../shared/apiResponse';
 import { MAX_MEMBER_NAME_CHARS, MAX_MEMBER_EMAIL_LEN } from '../data/members';
+import { mentorRoster, storedMentorSessions } from '../data/mentorRoster';
+import { WorkloadShareTable } from '../components/WorkloadShareTable';
+import { localIsoDate } from '../../shared/localDate';
+import { MENTOR_COLLECTION, workloadDistribution, type MentorSession } from '../../shared/mentor';
 
 /**
  * 給与計算の入力欄の性質。読み取り (`readNumberOr0`) と警告 (`GuardedNumber`) が
@@ -219,6 +223,17 @@ export function TeamPage() {
   const submit = useSubmitGuard();
 
   const members = useMemo(() => records.map((r) => r.data), [records]);
+  /**
+   * **ひとりひとりの負担** (2026-10-29 · パス 555) —— 専属カウンセラーのチェックインの集計を、
+   * メンバーを管理するこの画面にも出す (パス 551 の「残した候補」)。判断は `workloadDistribution` 1 つで、
+   * 専属カウンセラーの画面と同じ数が出る。同意していない人は行にならず人数だけ。
+   */
+  const sessions = useCollection<MentorSession>(MENTOR_COLLECTION);
+  const today = localIsoDate();
+  const workload = useMemo(
+    () => workloadDistribution(storedMentorSessions(sessions.records).map((s) => s.session), mentorRoster(records), today),
+    [sessions.records, records, today],
+  );
   const planDef = getPlan(plan);
   const usage = { used: records.length, limit: planDef.maxSeats };
   const remaining = seatsRemaining(usage);
@@ -435,6 +450,10 @@ export function TeamPage() {
           <RowWindowMore hidden={rowWindow.hidden} total={rowWindow.total} showMore={rowWindow.showMore} />
           </>
         )}
+      </Section>
+
+      <Section title="ひとりひとりの負担（専属カウンセラーのチェックインの集計）" count={workload.rows.length}>
+        <WorkloadShareTable distribution={workload} />
       </Section>
 
       <Section title="給与・賞与の概算 (通勤手当の非課税限度・賞与の源泉徴収)">

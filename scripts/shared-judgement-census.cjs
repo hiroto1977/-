@@ -469,7 +469,7 @@ const VERDICTS = {
   mentor:
     '非対称は起きない (実測・パス 551) —— 否定で答えるのは `sanitizeMentorSession` (読めない保存値は '
     + 'null) と、`mediationPlan` の `steps: null` (同意が揃わない) の 2 つで、**読み手は renderer だけ** '
-    + '(MentorPage.tsx)。main が import するのは `buildMentorSnapshot` と型 `MentorSnapshot` だけ '
+    + '(MentorPage.tsx と、パス 555 で足した data/mentorRoster.ts · TeamPage.tsx · WorkloadShareTable.tsx)。main が import するのは `buildMentorSnapshot` と型 `MentorSnapshot` だけ '
     + '(main/clients/mentor.ts) で、それは null を返さない。危機の判定は renderer の `counseling.ts` を '
     + '注入で受けるので、この module 自身は判定を持たない',
   team:

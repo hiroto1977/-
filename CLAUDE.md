@@ -1040,9 +1040,9 @@ npm run dev              # Vite + Electron, hot reload (desktop dev)
 npm run build:web        # → dist/standalone.html (browser build; runs inline-html.cjs)
 npm run build:web:lite   # → dist/standalone-lite.html (~2MB モバイル版・学術コーパス非搭載)
 npm run e2e              # Playwright 実機 E2E (desktop/phone/tablet)。e2e:lite で LITE 版を検証
-                         #   **39 suite / 実測 758 件** (FULL・LITE とも・2026-10-08 パス 507 の実測 —— `opened` に書き込みの確認 3 × (デスクトップ 4 配色 + スマホのシート 4 配色) を足した後。パス 506 後は 734)。床は「黙って縮んだら落とす」ための物で、
+                         #   **39 suite / 実測 761 件** (FULL・LITE とも・2026-10-29 パス 555 の実測 —— `proxyEnvelope` に持ち主の確認 (T-219) の 2 件・`vaultOpacity` に `storedAt` の 1 件を足した後。パス 507 後は 758)。床は「黙って縮んだら落とす」ための物で、
                          #   **表に書くのは実測値ただ 1 つ、床は `floorOf()` が導く** (実測の 85%・切り捨て・最低 1。
-                         #   合計の床は実測合計の 85% = **644**)。2026-09-20 (パス 346) まで表は
+                         #   合計の床は実測合計の 85% = **646**)。2026-09-20 (パス 346) まで表は
                          #   **床と `// 実測 N` の 2 つを手書き**で持っており、実測すると 3 つの文がずれていた ——
                          #   `paperAccount` は注記 10 に対し実物 13 で、**その床 8 は実測の 62%** (5 件減っても鳴らない)、
                          #   `theme` の床 10 は 71%、runner の docblock は「実測 (合計 395 件) の 85%」と

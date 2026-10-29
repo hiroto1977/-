@@ -2139,7 +2139,19 @@ async function proxyEnvelopeSuite(browser) {
     return 'not-found';
   });
   ok(savedAt.startsWith('depth'), `proxyEnvelope: プロキシ欄の保存を押せた (${savedAt})`);
-  await page.waitForTimeout(1200);
+  /*
+   * **保存は書かずに、持ち主の確認 (保管庫のパスワード) を先に出す** (2026-10-29 · パス 554 · T-219)。
+   * 送り先 (= 経由する全要求に Authorization が乗る先) を変える操作なので、1 押しでは書かれない。
+   * 確認が出て、正しいパスワードで初めて書かれる —— それを実機でも留める。
+   */
+  const stepUp = page.locator('[data-step-up]');
+  await stepUp.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
+  ok((await stepUp.count()) === 1, '★ proxyEnvelope: 保存の前に持ち主の確認 (保管庫のパスワード) が出る (T-219)');
+  await stepUp.locator('input[type="password"]').fill(PASS);
+  await stepUp.getByRole('button', { name: '確認して変更する' }).click();
+  await stepUp.waitFor({ state: 'detached', timeout: 10000 }).catch(() => {});
+  ok((await stepUp.count()) === 0, 'proxyEnvelope: 確認を通ると窓が消える (書かれた)');
+  await page.waitForTimeout(600);
 
   await page.evaluate(async (k) => {
     await window.serviceHub.setToken('security', JSON.stringify({ hibp: k, vt: 'E2E-VT-PROBE-NOT-REAL' }));
@@ -2486,11 +2498,13 @@ async function vaultOpacitySuite(browser) {
     });
     db.close();
     const r = rows[0] ?? {};
-    return { keys: Object.keys(r).sort().join(','), ivLen: r.iv?.byteLength ?? -1, ctLen: r.ciphertext?.byteLength ?? -1 };
+    return { keys: Object.keys(r).sort().join(','), ivLen: r.iv?.byteLength ?? -1, ctLen: r.ciphertext?.byteLength ?? -1, storedAt: r.storedAt };
   });
   ok(shape.ivLen === 12, `★ vaultOpacity: IV は 12 バイト (実際 ${shape.ivLen})`);
   ok(shape.ctLen >= SECRET.length + 16, `vaultOpacity: 暗号文は平文 + GCM タグ以上 (実際 ${shape.ctLen})`);
-  ok(shape.keys === 'ciphertext,iv,v', `vaultOpacity: 残るのは iv/ciphertext/v だけ (実際 ${shape.keys})`);
+  // `storedAt` は預けた時刻 (数値・T-183 の有効期限の判定に使う) で、秘密ではない。
+  ok(shape.keys === 'ciphertext,iv,storedAt,v', `vaultOpacity: 残るのは iv/ciphertext/storedAt/v だけ (実際 ${shape.keys})`);
+  ok(typeof shape.storedAt === 'number', `vaultOpacity: storedAt は数値の時刻 (実際 ${typeof shape.storedAt})`);
 
   /*
    * **順序が意味を持つ。** 下の陽性対照は保存層へ平文を植えるので、
@@ -5623,9 +5637,9 @@ function installWaitMarginRecorder(browser) {
     ['noBeacon', noBeaconSuite, 11],
     ['vaultPassword', vaultPasswordSuite, 6],
     ['credentialEgress', credentialEgressSuite, 13],
-    ['proxyEnvelope', proxyEnvelopeSuite, 13],
+    ['proxyEnvelope', proxyEnvelopeSuite, 15],
     ['cspEnforced', cspEnforcedSuite, 5],
-    ['vaultOpacity', vaultOpacitySuite, 18],
+    ['vaultOpacity', vaultOpacitySuite, 19],
     ['crossTabLock', crossTabLockSuite, 5],
     // パス 499: 別のタブの書き込みが開いたままの画面に届き、古い欄の保存は断る
     ['crossTabData', crossTabDataSuite, 11],

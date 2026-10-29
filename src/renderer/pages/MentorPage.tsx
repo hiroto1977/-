@@ -8,13 +8,15 @@ import { useCollection } from '../data/useCollection';
 import { changedRecordNote, readRecordsNow, unreadableForJudgementNote, vanishedRecordNote } from '../data/readCollectionNow';
 import { fireReported } from '../data/deviceStoreFailure';
 import { MEMBERS_COLLECTION, type Member } from '../data/members';
+import { mentorRoster, storedMentorSessions } from '../data/mentorRoster';
+import { WorkloadShareTable } from '../components/WorkloadShareTable';
 import { detectCrisis, detectHarmToOthers } from '../data/counseling';
 import { externalTextOnOneLine } from '../data/assistantMarkdown';
 import { localIsoDate } from '../../shared/localDate';
 import { AI_EGRESS_RECIPIENT_ANTHROPIC, remoteOnly } from '../../shared/aiEgressNotice';
 import { ERROR_MESSAGE_MAX_CHARS, redactForMessage } from '../../shared/redact';
 import { displayField } from '../../shared/apiResponse';
-import { isRole, ROLE_LABEL } from '../../shared/team';
+import { ROLE_LABEL } from '../../shared/team';
 import type { ActionData } from '../../shared/actionData';
 import { MAX_ASSISTANT_CONTENT_CHARS } from '../../shared/assistantLimits';
 import { charsOverCeiling, refusedCeilingNote } from '../../shared/inputCeiling';
@@ -27,7 +29,6 @@ import {
   MAX_MENTOR_ANSWER_CHARS,
   MAX_MENTOR_NOTE_CHARS,
   mediationPlan,
-  memberKeyOf,
   MENTOR_COLLECTION,
   MENTOR_QUESTIONS,
   nextPrompt,
@@ -35,6 +36,7 @@ import {
   setRelation,
   teamPairs,
   teamSignals,
+  workloadDistribution,
   type MentorAdvice,
   type MentorMember,
   type MentorPrompt,
@@ -87,26 +89,13 @@ export function MentorPage(): React.JSX.Element {
   const submit = useSubmitGuard();
   const today = localIsoDate();
 
-  /** 保管値は型が守らない (復元・古い版): メールが読めない行は名簿に入れず、役割が読めなければ member として扱う。 */
-  const roster = useMemo<readonly MentorMember[]>(
-    () =>
-      members.records
-        .filter((r) => typeof r.data.email === 'string' && r.data.email.trim() !== '')
-        .map((r) => ({ key: memberKeyOf(r.data.email), name: displayField(r.data.name) || r.data.email, role: isRole(r.data.role) ? r.data.role : 'member' })),
-    [members.records],
-  );
+  /** 名簿と記録の読みは `data/mentorRoster.ts` の 1 つ (チーム管理の「ひとりひとりの負担」と同じ規則)。 */
+  const roster = useMemo<readonly MentorMember[]>(() => mentorRoster(members.records), [members.records]);
   const [selectedKey, setSelectedKey] = useState<string>('');
   const selected = roster.find((m) => m.key === selectedKey) ?? null;
 
   /** 保存値は読める項目だけを採る (読めない項目は落とし、行は残す)。 */
-  const stored = useMemo(() => {
-    const out: { id: string; raw: MentorSession; session: MentorSession }[] = [];
-    for (const r of sessions.records) {
-      const s = sanitizeMentorSession(r.data);
-      if (s !== null) out.push({ id: r.id, raw: r.data, session: s });
-    }
-    return out;
-  }, [sessions.records]);
+  const stored = useMemo(() => storedMentorSessions(sessions.records), [sessions.records]);
   const mine = stored.find((s) => s.session.member === selectedKey) ?? null;
   const session = mine?.session ?? (selected ? emptyMentorSession(selected.key) : null);
 
@@ -238,6 +227,7 @@ export function MentorPage(): React.JSX.Element {
 
   const signals = teamSignals(stored.map((s) => s.session), roster, today);
   const pairs = teamPairs(stored.map((s) => s.session), roster);
+  const shares = workloadDistribution(stored.map((s) => s.session), roster, today);
   const others = roster.filter((m) => m.key !== selectedKey);
   const nameOf = (key: string): string => roster.find((m) => m.key === key)?.name ?? key;
 
@@ -411,6 +401,10 @@ export function MentorPage(): React.JSX.Element {
           </Section>
         </>
       )}
+
+      <Section title="ひとりひとりの負担（同意した人だけ）" count={shares.rows.length}>
+        <WorkloadShareTable distribution={shares} />
+      </Section>
 
       <Section title="チームの様子（同意した人の集計だけ）" count={signals.length}>
         {signals.length === 0 ? (
