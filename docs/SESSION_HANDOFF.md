@@ -14,6 +14,7 @@
 - **② `promptInjection.ts`** —— 第三者の文 (emotions の Gmail / Slack 本文・skills の SKILL.md) に AI への指示の形が在れば、鍵を読む前に断る。利用者自身の文は検めない。
 - **③ `aiReplyInert.test.ts`** —— AI の応答の束縛が外向きの手足 (invoke / openExternal / fetch / window.open) に届かないことを 12 画面の両方向の台帳で固定。
 - **確立したパターン**: `ACTION_TIER` は `src/shared/actionTier.ts` に住む (`userPresence.ts` は re-export) —— 段階を読む新しい門は shared から import する。3 本は保護対象 + `mutate` + `MUST_MEASURE` + CODEOWNERS。**新しい external-write / egress の action は、payload に資格情報を正当に載せるなら `CREDENTIAL_PAYLOAD_FIELDS` に理由つきで**。
+- ★ **既知の罠**: 資格情報の形の見本を検査に字面で書くと、`lint:secrets` を通しても **GitHub の push protection (GH013) が止める** (Shopify / Stripe の形で実測) —— 見本は `'shpat_' + '…'` と組み立てる。
 - **対照 12 方向すべて鳴る**。**測っていない物**: 3 本の変異検査 (次に `audit:mutate-changed`)・実機 e2e・言い換えた指示。
 - **次**: PR #844 は draft のまま (マージは利用者の判断)。
 
