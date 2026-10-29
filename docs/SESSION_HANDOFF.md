@@ -7,6 +7,13 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-10-29) — パス 558: 詳細版の事業計画書・資金調達計画書・キャッシュフロー計画書 (書類スタジオ)
+
+- 書類スタジオ (`docStudioData.ts` の `STUDIO_TEMPLATES`) に `jigyo-keikaku-shosai` / `chotatsu-keikaku-shosai` / `cf-keikaku` を足した (書式 56 → 59)。汎用版 3 つは残す。
+- 検算は `docStudioChecks.ts` の `RULES` に 3 つ。見本の数字は式が全部合う (検査が `[]` を要求する) —— 見本を変えるときは式も合わせる。
+- 書式を足すと鳴る台帳: `docLegalStatus` / `businessTriage` (行数と書式数の検査・スナップショット) / `docStudioChecks.test` の `RULE_IDS` / `services.ts` の書式数と `sidebarNumberClaims`。
+- ★ **squash マージの既定の本文に `[skip ci]` が混ざると main の push の workflow が 1 本も走らない** (パス 557 の #845 で起きた)。マージするときは本文を明示する。
+
 ## 直近の作業 (2026-10-29) — パス 557: 失敗していた依存の更新 (dependabot 6 本) を今の main で当てて直す
 
 - 詳細は `docs/REMAINING_WORK.md` の「パス 557」。6 本とも古い `main` から作られていたので、**ブランチを取り込まず中身だけを当てた**。

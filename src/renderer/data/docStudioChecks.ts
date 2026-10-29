@@ -1185,6 +1185,212 @@ const RULES: Record<string, (v: Values, doc: StudioDoc) => DocIssue[]> = {
     return out;
   },
 
+  /**
+   * 詳細版の事業計画書 (5 か年)。汎用版の 2 つ (根拠の空欄・急な伸び) に、詳細版だけが持つ
+   * 欄どうしの関係を 4 つ足す: 営業利益の式・人件費 ≦ 販管費・資金の合計の一致・返済原資。
+   * 式の検算は**その年の売上高と営業利益の両方が書かれているときだけ**行う (書きかけの年に
+   * 「合っていない」と言わない)。原価・販管費の空欄は 0 として足す (`money`)。
+   */
+  'jigyo-keikaku-shosai'(v) {
+    const out: DocIssue[] = [];
+    for (const n of [1, 2, 3, 4, 5]) {
+      const sales = money(v, `y${n}sales`);
+      const cost = money(v, `y${n}cost`);
+      const sga = money(v, `y${n}sga`);
+      const op = money(v, `y${n}op`);
+      const expected = sales - cost - sga;
+      if (text(v, `y${n}sales`) !== '' && text(v, `y${n}op`) !== '' && Number.isFinite(expected)
+        && Number.isFinite(op) && op !== expected) {
+        out.push({
+          level: 'warn',
+          field: `y${n}op`,
+          message: `${n}年目の営業利益（${fmtYen(op)}）が「売上高 − 売上原価 − 販売費及び一般管理費」`
+            + `（${fmtYen(expected)}）と一致しません。どちらかの数字を直してください。`,
+        });
+      }
+      if (num(v, `y${n}labor`) > num(v, `y${n}sga`)) {
+        out.push({
+          level: 'warn',
+          field: `y${n}labor`,
+          message: `${n}年目の人件費が販売費及び一般管理費を上回っています。人件費は販管費の内訳なので、販管費より大きくはなりません。`,
+        });
+      }
+      if (num(v, `y${n}ord`) > num(v, `y${n}sales`)) {
+        out.push({
+          level: 'warn',
+          field: `y${n}ord`,
+          message: `${n}年目の経常利益が売上高を上回っています。数字の入れ違いがないか確認してください。`,
+        });
+      }
+    }
+    const first = num(v, 'y1sales');
+    const third = num(v, 'y3sales');
+    if (first > 0 && third > first * 5) {
+      out.push({
+        level: 'warn',
+        field: 'y3sales',
+        message: '3年目の売上高が1年目の5倍を超えています。算出根拠に単価・件数・頻度の内訳がないと、審査では根拠なしと見られます。',
+      });
+    }
+    if (text(v, 'basis') === '') {
+      out.push({
+        level: 'fatal',
+        field: 'basis',
+        message: '売上計画の算出根拠が空欄です。融資・補助金の審査で最も見られる項目で、ここが無い計画書は数字を信用してもらえません。',
+      });
+    }
+    const need = money(v, 'equip') + money(v, 'working');
+    const raise = ['selfFund', 'loanBank', 'loanPublic', 'subsidy', 'otherFund']
+      .reduce((s, k) => s + money(v, k), 0);
+    if (Number.isFinite(need) && Number.isFinite(raise) && need !== raise) {
+      out.push({
+        level: 'fatal',
+        field: 'selfFund',
+        message: `必要資金の合計（${fmtYen(need)}）と調達の合計（${fmtYen(raise)}）が`
+          + `${fmtYen(Math.abs(need - raise))} 食い違っています。一致していない資金計画は内容を見てもらえません。`,
+      });
+    }
+    const years = num(v, 'years');
+    const debt = money(v, 'loanBank') + money(v, 'loanPublic');
+    const cash = money(v, 'y1op') + money(v, 'y1dep');
+    if (years > 0 && debt > 0 && text(v, 'y1op') !== '' && Number.isFinite(cash)) {
+      const principal = Math.round(debt / years);
+      if (principal > cash) {
+        out.push({
+          level: 'warn',
+          field: 'years',
+          message: `借入 ${fmtYen(debt)} を ${years} 年で返すと元金だけで年 ${fmtYen(principal)} ですが、`
+            + `1年目の返済原資（営業利益＋減価償却費）は ${fmtYen(cash)} です。返済期間・借入額・利益計画のどれかを見直してください。`,
+        });
+      }
+    }
+    return out;
+  },
+
+  /**
+   * 詳細版の資金調達計画書。汎用版の検算 (合計の一致・自己資金の割合) に、借入ごとの
+   * 相手先の空欄・年ごとの返済原資・補助金のつなぎ資金・返済の総額を足す。
+   */
+  'chotatsu-keikaku-shosai'(v) {
+    const out: DocIssue[] = [];
+    const need = ['e1amt', 'e2amt', 'e3amt', 'working'].reduce((s, k) => s + money(v, k), 0);
+    const raise = ['selfFund', 'loan1Amt', 'loan2Amt', 'subsidy', 'equity', 'otherFund']
+      .reduce((s, k) => s + money(v, k), 0);
+    if (Number.isFinite(need) && Number.isFinite(raise) && need !== raise) {
+      out.push({
+        level: 'fatal',
+        field: 'selfFund',
+        message: `必要資金の合計（${fmtYen(need)}）と調達の合計（${fmtYen(raise)}）が`
+          + `${fmtYen(Math.abs(need - raise))} 食い違っています。一致していない資金計画は内容を見てもらえません。`,
+      });
+    }
+    if (money(v, 'selfFund') * 10 < raise) {
+      out.push({
+        level: 'warn',
+        field: 'selfFund',
+        message: '自己資金が調達総額の 1 割未満です。創業融資では自己資金の割合が返済能力の判断材料になります。',
+      });
+    }
+    for (const n of [1, 2]) {
+      if (money(v, `loan${n}Amt`) > 0 && text(v, `loan${n}Lender`) === '') {
+        out.push({
+          level: 'warn',
+          field: `loan${n}Lender`,
+          message: `借入 ${n} の金額が入っていますが、借入先が空欄です。どこから借りるかが無い資金計画は審査で確かめようがありません。`,
+        });
+      }
+    }
+    if (money(v, 'subsidy') > 0 && text(v, 'bridge') === '') {
+      out.push({
+        level: 'warn',
+        field: 'bridge',
+        message: '補助金を調達に入れていますが、入金までのつなぎ資金が空欄です。補助金は原則として事業完了後の精算払いなので、その間の資金を別に手当てしてください。',
+      });
+    }
+    for (const n of [1, 2, 3, 4, 5]) {
+      const repay = money(v, `repay${n}`);
+      const source = money(v, `source${n}`);
+      if (text(v, `repay${n}`) !== '' && text(v, `source${n}`) !== '' && repay > source) {
+        out.push({
+          level: 'warn',
+          field: `repay${n}`,
+          message: `${n}年目の元金返済額（${fmtYen(repay)}）が返済原資（${fmtYen(source)}）を上回っています。`
+            + '返済期間・据置期間・借入額のどれかを見直さないと、手元資金を取り崩して返すことになります。',
+        });
+      }
+    }
+    const loans = money(v, 'loan1Amt') + money(v, 'loan2Amt');
+    const repaid = [1, 2, 3, 4, 5].reduce((s, n) => s + money(v, `repay${n}`), 0);
+    if (Number.isFinite(loans) && Number.isFinite(repaid) && repaid > loans) {
+      out.push({
+        level: 'warn',
+        field: 'repay5',
+        message: `5 年間の元金返済額の合計（${fmtYen(repaid)}）が借入額の合計（${fmtYen(loans)}）を超えています。数字の入れ違いがないか確認してください。`,
+      });
+    }
+    return out;
+  },
+
+  /**
+   * キャッシュフロー計画書 (5 か年)。3 つの式 (営業 CF・財務 CF・期末残高) を年ごとに検算し、
+   * 期末残高が負になる年と、手元に置きたい最低額を下回る年を名指しする。
+   * 式の検算は**結果の欄が書かれているときだけ**行い、前年の残高が空欄の年は残高を検算しない
+   * (書きかけの年に「合っていない」と言わない)。内訳の空欄は 0 として足す (`money`)。
+   */
+  'cf-keikaku'(v) {
+    const out: DocIssue[] = [];
+    let prev = text(v, 'opening') === '' ? Number.NaN : money(v, 'opening');
+    const floor = text(v, 'minBalance') === '' ? Number.NaN : money(v, 'minBalance');
+    for (const n of [1, 2, 3, 4, 5]) {
+      const opcf = money(v, `y${n}opcf`);
+      const opExpected = money(v, `y${n}net`) + money(v, `y${n}dep`) + money(v, `y${n}wc`);
+      if (text(v, `y${n}opcf`) !== '' && Number.isFinite(opExpected) && Number.isFinite(opcf) && opcf !== opExpected) {
+        out.push({
+          level: 'warn',
+          field: `y${n}opcf`,
+          message: `${n}年目の営業キャッシュフロー（${fmtYen(opcf)}）が「税引後当期純利益 ＋ 減価償却費 ＋ 運転資本の増減」`
+            + `（${fmtYen(opExpected)}）と一致しません。`,
+        });
+      }
+      const fincf = money(v, `y${n}fincf`);
+      const finExpected = money(v, `y${n}borrow`) - money(v, `y${n}repay`) + money(v, `y${n}equity`);
+      if (text(v, `y${n}fincf`) !== '' && Number.isFinite(finExpected) && Number.isFinite(fincf) && fincf !== finExpected) {
+        out.push({
+          level: 'warn',
+          field: `y${n}fincf`,
+          message: `${n}年目の財務キャッシュフロー（${fmtYen(fincf)}）が「借入による収入 − 借入金の返済 ＋ 増資・出資による収入」`
+            + `（${fmtYen(finExpected)}）と一致しません。`,
+        });
+      }
+      const ending = text(v, `y${n}ending`) === '' ? Number.NaN : money(v, `y${n}ending`);
+      const endExpected = prev + opcf - money(v, `y${n}capex`) + fincf;
+      if (Number.isFinite(ending) && Number.isFinite(endExpected) && ending !== endExpected) {
+        out.push({
+          level: 'warn',
+          field: `y${n}ending`,
+          message: `${n}年目の期末残高（${fmtYen(ending)}）が「${n === 1 ? '期首' : '前年の期末'}残高 ＋ 営業キャッシュフロー − 設備投資 ＋ 財務キャッシュフロー」`
+            + `（${fmtYen(endExpected)}）と一致しません。繰越の転記ずれがあると、以降の残高がすべて狂います。`,
+        });
+      }
+      if (ending < 0) {
+        out.push({
+          level: 'fatal',
+          field: `y${n}ending`,
+          message: `${n}年目の期末に現預金がマイナス（${fmtYen(ending)}）になります。この計画のままでは資金が尽きます。`
+            + '借入・増資の時期を早めるか、設備投資・返済の時期を見直してください。',
+        });
+      } else if (ending < floor) {
+        out.push({
+          level: 'warn',
+          field: `y${n}ending`,
+          message: `${n}年目の期末残高（${fmtYen(ending)}）が、手元に置いておきたい最低額（${fmtYen(floor)}）を下回ります。`,
+        });
+      }
+      prev = ending;
+    }
+    return out;
+  },
+
   'kojin-itaku'() {
     return [{
       level: 'info' as const,

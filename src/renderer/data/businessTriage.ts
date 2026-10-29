@@ -418,6 +418,32 @@ const ROWS: readonly DocTriage[] = [
     consult: ['sme-consultant', 'tax-accountant'],
   },
   {
+    doc: 'jigyo-keikaku-shosai',
+    ownUse: 'ok',
+    ownNote: '詳細版も自社で書ける。章が多いぶん数字どうしの関係 (営業利益の式・資金の合計・返済原資) が崩れやすいので、'
+      + '書き終えたら交付前チェックの検算を通してから提出先の様式へ写すこと。',
+    exclusiveTo: [],
+    consult: ['sme-consultant', 'tax-accountant'],
+  },
+  {
+    doc: 'chotatsu-keikaku-shosai',
+    ownUse: 'ok-with-care',
+    ownNote: '必要資金の合計と調達の合計を一致させ、設備資金は見積書の金額と揃えること。補助金を計上するなら、'
+      + '事業完了後の精算払いまでのつなぎ資金も書いておく。',
+    exclusiveTo: [],
+    caseByCase: '補助金・許認可の申請書を他人のために業として作成すると、官公署提出書類として行政書士の領域に入る。'
+      + '自社の申請を自社で出す分は制限されない。',
+    consult: ['sme-consultant', 'admin-scrivener'],
+  },
+  {
+    doc: 'cf-keikaku',
+    ownUse: 'ok',
+    ownNote: 'キャッシュフロー計画は自社で書ける。利益の計画と並べて、返済と設備投資で現金がどう減るかを'
+      + '自分で説明できることに意味がある。月ごとの山谷は資金繰り表で確かめる。',
+    exclusiveTo: [],
+    consult: ['tax-accountant', 'sme-consultant'],
+  },
+  {
     doc: 'chotatsu-keikaku',
     ownUse: 'ok-with-care',
     ownNote: '必要資金の合計と調達の合計は必ず一致させること。補助金は原則として事業完了後の精算払いなので、'
