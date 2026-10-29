@@ -3,6 +3,7 @@
  * 関数が在ることと、窓を作る前に呼ばれることは別 (法則 `mention-vs-declaration`)。
  */
 import path from 'node:path';
+import { build } from 'esbuild';
 import { describe, expect, it } from 'vitest';
 import { stripComments } from '../../shared/__tests__/stripNonCode';
 import { readOriginalSource } from '../../shared/__tests__/originalSource';
@@ -69,10 +70,35 @@ describe('起動時の自己検算の配線', () => {
     expect(cfg.electronFuses).not.toHaveProperty('enableEmbeddedAsarIntegrityValidation');
   });
 
-  it('梱包版の主プロセスは node_modules を 1 つも require しない (検算の範囲の外に走る物が無い)', () => {
-    const bundle = read('dist-electron/main.js');
+  /**
+   * **成果物 (`dist-electron/main.js`) は読まない** —— CI は検査より前に主プロセスを組まないので、
+   * それを読む形は CI で ENOENT になった (run 4268 · 2026-10-29)。ここで esbuild に同じ入口を
+   * 同じ条件 (node 向け · `electron` だけ外部化 · node の組み込みは platform が外部化する) で
+   * 束ねさせ、残る `require` を数える。vite の電子側 (vite-plugin-electron) も `electron` と
+   * 組み込みだけを外部化し npm の依存は束に畳むので、見ている不変条件は同じである ——
+   * **梱包版の主プロセスは node_modules を 1 つも require しない** = `!node_modules/**` で
+   * 同梱しない判断 (electron-builder.json) が破れない。
+   */
+  it('梱包版の主プロセスは node_modules を 1 つも require しない (検算の範囲の外に走る物が無い)', async () => {
+    const out = await build({
+      entryPoints: [path.join(REPO, 'src/main/main.ts')],
+      bundle: true,
+      write: false,
+      platform: 'node',
+      format: 'cjs',
+      external: ['electron'],
+      metafile: true,
+      logLevel: 'silent',
+    });
+    const bundle = out.outputFiles.map((f) => f.text).join('\n');
     const requires = [...bundle.matchAll(/require\("([^"]+)"\)/g)].map((m) => m[1]!);
     expect(requires.length).toBeGreaterThan(0);
+    expect(requires).toContain('electron');
     for (const r of requires) expect(r === 'electron' || r.startsWith('node:'), r).toBe(true);
+    // 束に畳まれた npm の依存も 0 件 (実測 2026-10-29: 入力 181 本・node_modules 0 本)。
+    // 1 つ足した日にここが鳴る —— 束に畳む (同梱は不要) か同梱する (検算の表に載る) かを決めてから直す。
+    const inputs = Object.keys(out.metafile.inputs);
+    expect(inputs.length).toBeGreaterThan(50);
+    expect(inputs.filter((i) => i.startsWith('node_modules/'))).toEqual([]);
   });
 });
