@@ -80,6 +80,12 @@ const PROTECTED = [
   // 起動時の自己検算 (2026-10-29 · パス 553 · T-218)。読み手と書き手の両方 —— 片方だけ緩めても正しい出荷物は起動する。
   'src/main/selfAttestation.ts',
   'scripts/build-integrity-manifest.cjs',
+  // 送り先の変更に持ち主の確認 (2026-10-29 · パス 554 · T-219)。プロキシの保存と端末の外へ向く Ollama の
+  // 接続先に「保管庫のパスワードが要るか」を決める判定と、確認の文面。判定を常に偽へ書き換えると
+  // 1 押しで書ける形 (直す前) へ戻る。読むのは保護対象の `shared/ollama.ts` だけ (閉包の費用 0)。
+  // 描く部品 `components/StepUpPassword.tsx` は入れない —— `.tsx` は `mutate` の外で、迂回
+  // (照合を飛ばす) は回帰検査 `proxyStepUpOnScreen.test.ts` (CODEOWNERS) が実物の保管庫で留める。
+  'src/renderer/security/egressStepUp.ts',
   // 秘密を伏せる唯一の合流点 (17 箇所がここへ寄せてある)。ここが素通しに
   // 変われば、失敗応答に混ざったトークンがそのまま画面と不具合報告に出る。
   'src/shared/redact.ts',

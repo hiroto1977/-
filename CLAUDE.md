@@ -1841,6 +1841,12 @@ The browser target adds: `web-shim.ts` (a `window.serviceHub` polyfill imported 
   文書) を AI へ渡す新しい口は `promptInjectionRefusal` を**鍵を読む前**に通し、`aiDefenseWiring.test.ts` の母集団に足す。
   AI の応答を受けた値を外向きの `invoke` / `openExternal` / `fetch` へ渡さない (`aiReplyInert.test.ts` が鳴る)。
   プロンプトに「秘密を漏らすな」と書くことは守りに数えない。
+- **送り先を決める設定は、書く前に持ち主の確認を通す** (2026-10-29 · パス 554 · T-219)。アプリがどこへ資格情報と本文を
+  送るかを決める設定 (BYO プロキシ・端末の外へ向く Ollama の接続先) を書く新しい口は、`security/egressStepUp.ts` の判定
+  (`proxyChangeNeedsStepUp` / `ollamaEndpointNeedsStepUp`) を通し、`components/StepUpPassword.tsx` が保管庫の
+  `verifyPassword` (状態を変えない照合) で合ったときだけ書く。「保存」は書かずに pending へ置き、確認後の関数だけが書く。
+  文は送り先のホストだけを名乗る (秘密も path も映さない)。消す口 (削除) は門の外。`egressSettingWriterCensus.test.ts` が
+  書き手を両方向で数える。門はレンダラーの中に在り、乗っ取られたレンダラーには効かない —— 止めるのは人の手である。
 - **出荷した物は起動のたびに自分を検算する —— 同梱するファイルを足したら、表の歩く範囲に入っているかを見る** (2026-10-29 · パス 553 · T-218)。
   `npm run build` は vite build の後に `scripts/build-integrity-manifest.cjs` で `dist-electron/integrity.json` (dist / dist-electron /
   build/icon.png の sha256) を書き、梱包版の主プロセスは窓を作る前に `src/main/selfAttestation.ts` で突き合わせ、1 byte でも違えば

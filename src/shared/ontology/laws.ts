@@ -2113,6 +2113,34 @@ export const LAWS: readonly Law[] = [
       test(T.shared('threatLedger')),
     ],
   },
+  {
+    id: 'egress-destination-change-needs-step-up',
+    family: 'boundary',
+    name: '送り先を変える操作には、この端末の持ち主の確認が要る —— 資格情報の書き込みと同じ重さを、資格情報が渡る先の変更にも掛ける',
+    statement:
+      '免疫チェックポイントを外す薬が効くのは、守りを止める信号が「本物の自己」からしか出せないときである。'
+      + 'アプリがどこへ資格情報と本文を送るかを決める設定は 2 つ (BYO プロキシ = 経由する全要求に `Authorization` が乗る /'
+      + ' Ollama の接続先 = 会話の本文が行く先) で、2026-10-29 (パス 554) まで**どちらも通常の保存と同じ 1 押しで書けた**'
+      + '(本人確認 T-183 は main の IPC にだけ掛かり、この 2 つは IPC を通らない)。資格情報そのものの書き込みには本人確認が要るのに、'
+      + '**その資格情報が丸ごと渡る先**を変える操作には何も要らなかった —— 貼り付けを促す 1 行の指示 (「この URL を入れてください」) で'
+      + '以後の全要求が他人の Worker を通る。だから送り先の変更は書く前に**持ち主の証** (保管庫のパスワード · `vault.verifyPassword` ='
+      + ' 状態を変えない照合) を求め、違えば「送り先は変えていません」と言い、やめれば何も変えない (`security/egressStepUp.ts` · threat: T-219)。'
+      + '判定は**重さで分ける**: プロキシは常に (どの URL も端末の外)・Ollama は解決した先が loopback でないときだけ (同じ端末なら本文は端末を出ない)。'
+      + '文面は**送り先のホストだけ**を名乗る (共有秘密も path も映さない —— 秘密を映す面を増やさない)。'
+      + '**消す口は門の外** (`setProxyConfig(null)` は確認なし · 法則 `escape-hatch-stays-open`)。'
+      + '母集団 (この設定を書く出荷コード) は census が両方向で持ち、新しい書き手は「どの門を通るか」を名乗る。'
+      + '**限界を正直に書く**: 門はレンダラーの中に在る。レンダラーを乗っ取った相手 (別の `file://` の HTML · backlog C1) は保管層へ'
+      + '直接書ける —— この門が止めるのは**人の手**で、保管層を主プロセスか保管庫 (暗号化) へ移すのは C1 の設計判断である。',
+    provenance: ['2026-10-29 (パス 554)'],
+    enforcedBy: [
+      test(T.renderer('egressSettingWriterCensus')),
+      test('src/renderer/pages/__tests__/proxyStepUpOnScreen.test.ts'),
+      test('src/renderer/pages/__tests__/ollamaEndpointStepUp.test.ts'),
+      test('src/renderer/security/__tests__/egressStepUp.test.ts'),
+      test('src/renderer/security/__tests__/vaultVerifyPassword.test.ts'),
+      test(T.shared('threatLedger')),
+    ],
+  },
 ];
 
 export interface LawLedgerProblem {

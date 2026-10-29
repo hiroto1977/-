@@ -7,6 +7,15 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-10-29) — パス 554: 守りを決める設定の書き換えに別の承認 (癌細胞の比喩の「免疫チェックポイント」· T-219)
+
+- 詳細は `docs/REMAINING_WORK.md` の「パス 554」。パス 553 が残した問いの 3。**送り先を決める設定 2 つ** (BYO プロキシ / Ollama の接続先) が通常の保存と同じ 1 押しで書けた (本人確認 T-183 は main の IPC にだけ在り、この 2 つは IPC を通らない)。
+- **直し**: 判定と文面 `src/renderer/security/egressStepUp.ts` (プロキシは常に・Ollama は端末の外へ向くときだけ・文はホストだけ) + 部品 `components/StepUpPassword.tsx` + 保管庫の `verifyPassword` (状態を変えない照合)。`SettingsPage` の「保存」と `OllamaPage` の「接続テスト」は書かずに pending へ置き、確認後の関数だけが書く。削除は門の外。
+- **確立したパターン**: 「送り先・守りを決める設定」を書く新しい口は `egressStepUp.ts` の判定を通し `StepUpPassword` で確認してから書く —— `egressSettingWriterCensus.test.ts` が両方向で鳴る。持ち主の証は保管庫のパスワード (ブラウザ版にネイティブダイアログは無い)。
+- ★ **既知の罠**: 保管庫の IDB 名は `business-hub-vault` / `ERROR_MESSAGE_MAX_CHARS` は `shared/redact.ts` / 法則の family は 9 語だけ / CODEOWNERS の行は保護対象・回帰検査・守られる設定だけ。
+- **限界**: 門はレンダラーの中 —— 乗っ取られたレンダラー (C1) は保管層へ直接書ける。止めるのは人の手。
+- **次**: 問いの 4 (区画の切り離し)。PR #844 は draft のまま (マージは利用者の判断)。
+
 ## 直近の作業 (2026-10-29) — パス 553: 起動時の自己検算 (癌細胞の比喩の「DNA 修復機構」· T-218)
 
 - 詳細は `docs/REMAINING_WORK.md` の「パス 553」。利用者の問い (癌細胞のように振る舞うウイルスへの対策) を対応表で分け、無い物 4 つのうち 1 (自己検算) と 2 (複製の天井) を測った。**2 は何も無かった** (`child_process` 0 件・速度と費用の上限は在る)。**1 は生きた欠陥**: Linux では fuse `enableEmbeddedAsarIntegrityValidation` が何も照合せず、app.asar を 1 byte 改竄した梱包物が起動して UI を出した (対照で実測)。

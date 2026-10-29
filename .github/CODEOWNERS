@@ -132,6 +132,9 @@
 /src/main/selfAttestation.ts @hiroto1977
 /scripts/build-integrity-manifest.cjs @hiroto1977
 /src/main/__tests__/selfAttestation.test.ts @hiroto1977
+# 送り先の変更に持ち主の確認 (2026-10-29 · パス 554 · threat: T-219)。判定と文面 (鎖の保護対象) と回帰検査。
+/src/renderer/security/egressStepUp.ts @hiroto1977
+/src/renderer/pages/__tests__/proxyStepUpOnScreen.test.ts @hiroto1977
 /src/shared/atlassianSite.ts @hiroto1977
 /src/shared/constantTimeEquals.ts @hiroto1977
 /src/shared/controlChars.ts @hiroto1977

@@ -216,6 +216,20 @@ export interface Vault {
   /** Initialize a new vault. Returns the one-time recovery mnemonic. */
   initialize(password: string): Promise<InitResult>;
   unlock(password: string): Promise<void>;
+  /**
+   * **状態を変えずに**パスワードが合うかを答える (2026-10-29 · パス 554 · threat: T-219)。
+   *
+   * 「送り先を変える」操作 (BYO プロキシの保存・Ollama の接続先を同じ端末の外へ) は、
+   * 資格情報の書き込みと同じ重さなので、この端末の持ち主の確認を要る —— ブラウザ版には
+   * main が無く、ネイティブダイアログ (T-183) が構造上持てないので、持ち主の証は
+   * 保管庫のパスワードただ 1 つである。`unlock()` を流用すると鍵を据え直し世代を進める
+   * 副作用が在るので、照合だけを切り出す。
+   *
+   * 返す物は真偽だけ: 合えば true・違えば false。**保管庫が未初期化なら投げる**
+   * (「無い」を「違う」と混ぜると、初期化していない端末で永久に断られる理由が読めない)。
+   * 空文字は照合せず false。パスワードは保持しない。
+   */
+  verifyPassword(password: string): Promise<boolean>;
   lock(): void;
   setToken(serviceId: string, token: string): Promise<void>;
   getToken(serviceId: string): Promise<string | null>;
@@ -989,6 +1003,29 @@ class BrowserVault implements Vault {
     // 解錠できて初めて旧形式を読めるので、ここで束ね直す。
     await this.sweepExpiredTokens().catch(() => {}); // threat: T-213 —— 期限切れは解錠のたびに消す (失敗しても解錠は通す)
     await this.rebindLegacyTokens().catch(() => {});
+  }
+
+  async verifyPassword(password: string): Promise<boolean> {
+    if (typeof password !== 'string' || password.length === 0) return false;
+    const db = await openDb();
+    let meta: VaultMeta | undefined;
+    try {
+      meta = await idbGet<VaultMeta>(db, META_STORE, 'vault');
+    } finally {
+      db.close();
+    }
+    if (!meta) throw new Error('Vault が未初期化です。初回設定を完了してください');
+    // `unlock()` と同じ門 (壊れた・差し替えられた meta で PBKDF2 が返らない形を断る)。
+    assertKdfIterations(meta.iterations);
+    assertSaltBytes(meta.salt);
+    const passwordKey = await deriveKey(password, meta.salt, meta.iterations);
+    try {
+      // AES-GCM は認証付きなので、鍵が違えば復号が投げる —— それが「違う」の答え。
+      const plain = await decryptString(passwordKey, { iv: meta.iv, ciphertext: meta.kcv });
+      return plain === KCV_PLAINTEXT;
+    } catch {
+      return false;
+    }
   }
 
   /** 解錠の途中で `lock()` が届いていれば、鍵を据えずに断る (T-049)。 */

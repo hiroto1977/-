@@ -40,6 +40,19 @@ import { settleUntil, waitForElement } from '../../__tests__/jsdomWait';
 import { proxyUnusedNote } from '../../../shared/buildDestinations';
 import { ProxySection } from '../SettingsPage';
 import { setProxyConfig, getProxyConfig } from '../../network/proxy';
+import { _resetVaultForTests, getVault } from '../../security/vault';
+
+/** 持ち主の確認 (パス 554 · T-219) に打つ保管庫のパスワード。 */
+const PW = 'correct-horse-battery-9';
+
+async function dropDb(name: string): Promise<void> {
+  await new Promise<void>((resolve) => {
+    const req = indexedDB.deleteDatabase(name);
+    req.onsuccess = () => resolve();
+    req.onerror = () => resolve();
+    req.onblocked = () => resolve();
+  });
+}
 
 const ROOT = join(__dirname, '..', '..');
 // **原文の道具を通す** —— 変異検査の sandbox では書き換え後のソースが置かれる。
@@ -89,6 +102,10 @@ describe('BYO プロキシ: 読まない実行形態では貼らせない (パ�
   beforeEach(async () => {
     document.body.innerHTML = '';
     await setProxyConfig(null);
+    _resetVaultForTests();
+    await dropDb('business-hub-vault');
+    _resetVaultForTests();
+    await getVault().initialize(PW);
   });
 
   it('★ デスクトップ版: 断りが出て、設定する も欄も出ない (保管層は空のまま)', async () => {
@@ -114,7 +131,12 @@ describe('BYO プロキシ: 読まない実行形態では貼らせない (パ�
     expect(note!).toContain('読みません');
   });
 
-  it('★ ブラウザ版の答えは 1 文字も変わらない (断りなし・打てて・入る)', async () => {
+  /*
+   * 2026-10-29 (パス 554 · T-219) までこの題名は「ブラウザ版の答えは 1 文字も変わらない」だった。
+   * 今は保存の前に**持ち主の確認** (保管庫のパスワード) が 1 段入る —— 断りなし・打てる・
+   * 確認を通れば入る、は変わらない。確認そのものの振る舞いは `proxyStepUpOnScreen.test.ts`。
+   */
+  it('★ ブラウザ版: 断りなし・打てて・持ち主の確認を通れば入る', async () => {
     const { container, text } = await mount(BROWSER);
     expect(container.querySelector('[data-proxy-unused]'), 'ブラウザ版で断っている').toBeNull();
     expect(proxyUnusedNote('browser')).toBeNull();
@@ -139,6 +161,19 @@ describe('BYO プロキシ: 読まない実行形態では貼らせない (パ�
     expect(save?.disabled).toBe(false);
     await act(async () => {
       save!.click();
+    });
+    // 持ち主の確認 (パス 554): 書く前に保管庫のパスワードを求める。
+    const pwIn = await waitForElement<HTMLInputElement>(
+      () => container.querySelector<HTMLInputElement>('[data-step-up] input[type="password"]'),
+      '確認のパスワード欄',
+    );
+    expect(await getProxyConfig(), '確認の前に書かれている').toBeNull();
+    typeInto(pwIn, PW);
+    const ok = buttons(container).find((b) => b.textContent === '確認して変更する');
+    expect(ok, '「確認して変更する」が無い').not.toBeUndefined();
+    await settleUntil(() => ok!.disabled === false, '確認のボタンが押せる');
+    await act(async () => {
+      ok!.click();
     });
     await settleUntil(() => /保存しました/.test(text()), '保存の結果');
     expect(await getProxyConfig()).toEqual({

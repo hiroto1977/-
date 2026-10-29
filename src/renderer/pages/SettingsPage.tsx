@@ -28,6 +28,8 @@ import { EVICTION_RECOVERY, isEvictableStorage } from '../../shared/storageDurab
 import { describeStateStores } from '../../shared/atRestInventory';
 import type { ServiceId } from '../../shared/serviceId';
 import { inspectStoredProxyConfig, setProxyConfig, type ProxyConfig } from '../network/proxy';
+import { StepUpPassword } from '../components/StepUpPassword';
+import { STEP_UP_CANCELLED, proxyChangeNeedsStepUp, stepUpReason } from '../security/egressStepUp';
 import { deviceStoreFailureMessage, reportDeviceStoreFailure } from '../data/deviceStoreFailure';
 import {
   MAX_PROXY_SECRET_CHARS,
@@ -1552,6 +1554,14 @@ export function ProxySection() {
    * URL と共有シークレットを打ち直した末に同じ所で失敗する。
    */
   const [unreadable, setUnreadable] = useState<string | null>(null);
+  /**
+   * **保存は持ち主の確認を通ってから書く** (2026-10-29 · パス 554 · threat: T-219)。
+   * ここに置いた設定 (URL + 共有秘密) は、以後の経由する要求に `Authorization` ごと渡る先を
+   * 決める —— 資格情報の書き込みと同じ重さなのに、2026-10-29 まで 1 押しで書けた。
+   * 「保存」は書かずにここへ置き、`StepUpPassword` が保管庫のパスワードで照合してから
+   * `applySave` が書く。判定と文面は `security/egressStepUp.ts`。
+   */
+  const [pending, setPending] = useState<ProxyConfig | null>(null);
 
   /*
    * **この実行形態は、ここが書く設定を読むのか** (2026-09-25 · パス 456)。
@@ -1591,10 +1601,20 @@ export function ProxySection() {
       setErr(unused);
       return;
     }
+    const next: ProxyConfig = secret.length > 0
+      ? { url, sharedSecret: secret }
+      : { url };
+    if (proxyChangeNeedsStepUp(next)) {
+      setPending(next);
+      return;
+    }
+    await applySave(next);
+  }
+
+  /** 持ち主の確認を通った後にだけ呼ばれる書き込み。 */
+  async function applySave(next: ProxyConfig) {
+    setPending(null);
     try {
-      const next: ProxyConfig = secret.length > 0
-        ? { url, sharedSecret: secret }
-        : { url };
       await setProxyConfig(next);
       await refresh();
       setEditing(false);
@@ -1713,11 +1733,18 @@ export function ProxySection() {
             すべての要求を 401 で断ります。それより前に配った Worker は空のままでも通すので、
             作り直して SHARED_SECRET を設定し、ここにも同じ値を入れてください。
           </div>
+          {pending !== null && (
+            <StepUpPassword
+              reason={stepUpReason('proxy', pending.url)}
+              onApproved={() => applySave(pending)}
+              onCancel={() => { setPending(null); setMsg(STEP_UP_CANCELLED); }}
+            />
+          )}
           <div style={{ display: 'flex', gap: 6 }}>
             <button
               type="button"
               onClick={save}
-              disabled={charsOverCeiling(url, MAX_PROXY_URL_CHARS) > 0 || charsOverCeiling(secret, MAX_PROXY_SECRET_CHARS) > 0}
+              disabled={pending !== null || charsOverCeiling(url, MAX_PROXY_URL_CHARS) > 0 || charsOverCeiling(secret, MAX_PROXY_SECRET_CHARS) > 0}
               style={btn('accent', charsOverCeiling(url, MAX_PROXY_URL_CHARS) > 0 || charsOverCeiling(secret, MAX_PROXY_SECRET_CHARS) > 0)}
             >
               保存
