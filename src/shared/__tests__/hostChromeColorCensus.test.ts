@@ -171,6 +171,10 @@ const HOST_CHROME: Readonly<Record<string, Row>> = {
   'scripts/screenshot-dashboard.cjs': { kind: 'observes', why: '全画面を撮る道具。背景色を指定して撮るだけで、公開物の色は決めない' },
   'scripts/overflow-check.cjs': { kind: 'observes', why: '横はみ出しを測る道具。測るために背景を置くだけで、公開物の色は決めない' },
   'scripts/runtime-security-exp.cjs': { kind: 'observes', why: '実行時の守り (contextIsolation ほか) を実機で測る道具。公開物の色は決めない' },
+  'src/renderer/pages/AssistantPage.tsx': {
+    kind: 'names-only',
+    why: 'AI アシスタントの画面の地を inline の backgroundColor で塗るだけ (一括指定の background と個別指定を混ぜない形へ直した · jsdom 30)。母体 (theme-color / 窓の下地) へは伝えない',
+  },
   'scripts/integrity-chain.cjs': {
     kind: 'names-only',
     why: '完全性チェーンの保護対象の説明文に windowPrefs.ts が出てくるだけ。色そのものは持たない',

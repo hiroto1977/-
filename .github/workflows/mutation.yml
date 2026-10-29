@@ -124,14 +124,14 @@ jobs:
       chunks: ${{ steps.scope.outputs.chunks }}
       count: ${{ steps.scope.outputs.count }}
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5 (threat: T-057)
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7 (threat: T-057)
         with:
           persist-credentials: false # threat: T-056
           # 変更ファイルの割り出しに 1 つ前のコミットが要る。
           fetch-depth: 2
 
       - name: Setup Node
-        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5 (threat: T-057)
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7 (threat: T-057)
         with:
           node-version: '22'
 
@@ -206,12 +206,12 @@ jobs:
       matrix:
         chunk: ${{ fromJson(needs.scope.outputs.chunks) }}
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5 (threat: T-057)
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7 (threat: T-057)
         with:
           persist-credentials: false # threat: T-056
 
       - name: Setup Node
-        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5 (threat: T-057)
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7 (threat: T-057)
         with:
           node-version: '22'
           cache: 'npm'
@@ -246,7 +246,7 @@ jobs:
           fi
 
       - name: Save Stryker JSON report (この塊)
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5 (threat: T-057)
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7 (threat: T-057)
         if: always()
         with:
           name: mutation-report-full-chunk-${{ strategy.job-index }}
@@ -264,12 +264,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5 (threat: T-057)
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7 (threat: T-057)
         with:
           persist-credentials: false # threat: T-056
 
       - name: Setup Node
-        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5 (threat: T-057)
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7 (threat: T-057)
         with:
           node-version: '22'
 
@@ -277,7 +277,7 @@ jobs:
         run: node scripts/merge-mutation-reports.cjs --self-test
 
       - name: 塊の報告を集める
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5 (threat: T-057)
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8 (threat: T-057)
         # 0 件でもここでは落とさず、併合 script が「塊の報告が 0 件」を名指しして落とす。
         continue-on-error: true
         with:
@@ -297,7 +297,7 @@ jobs:
             --chunks-result "$CHUNKS_RESULT"
 
       - name: Save merged Stryker JSON report
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5 (threat: T-057)
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7 (threat: T-057)
         if: always() && hashFiles('reports/mutation/mutation.json') != ''
         with:
           name: mutation-report
@@ -342,12 +342,12 @@ jobs:
       matrix:
         chunk: ${{ fromJson(needs.scope.outputs.chunks) }}
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5 (threat: T-057)
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7 (threat: T-057)
         with:
           persist-credentials: false # threat: T-056
 
       - name: Setup Node
-        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5 (threat: T-057)
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7 (threat: T-057)
         with:
           node-version: '22'
           cache: 'npm'
@@ -371,7 +371,7 @@ jobs:
           npx stryker run stryker.config.json --mutate "$TARGETS" --dryRunTimeoutMinutes 40 --reporters clear-text,json,progress-append-only
 
       - name: Save Stryker JSON report
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5 (threat: T-057)
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7 (threat: T-057)
         if: always()
         with:
           name: mutation-report-chunk-${{ strategy.job-index }}

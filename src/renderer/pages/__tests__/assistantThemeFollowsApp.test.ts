@@ -105,7 +105,7 @@ describe('アシスタントの既定の色はアプリの配色に追随する 
   it('★ 何も選んでいなければ、地は var(--bg-elev)・字は var(--text) (固定の白 + 黒ではない)', async () => {
     const page = await mount();
     const s = styleOf(page);
-    expect(s, '地').toContain('background: var(--bg-elev)');
+    expect(s, '地').toContain('background-color: var(--bg-elev)');
     expect(s, '字').toContain('color: var(--text)');
     expect(s, '色を選んでいないので文字のトークンは言い直さない').not.toContain('--text-muted');
     // 標本: 針が当たる (固定の白や黒が書かれていれば拾える形)
@@ -115,7 +115,7 @@ describe('アシスタントの既定の色はアプリの配色に追随する 
 
   it('★ 以前の既定 (白 + 黒) の保存値は「選んでいない」へ戻る・背景画像は残す', async () => {
     const page = await mount({ bg: '#ffffff', fg: '#000000', image: 'https://example.com/bg.png' });
-    expect(styleOf(page)).toContain('background: var(--bg-elev)');
+    expect(styleOf(page)).toContain('background-color: var(--bg-elev)');
     expect(styleOf(page)).toContain('color: var(--text)');
     // この画面は開くたびに保存するので、保存値も「選んでいない」へ書き換わる (画像はそのまま)
     await settleUntil(() => stored().bg === '', '保存値が書き換わる');
@@ -125,7 +125,7 @@ describe('アシスタントの既定の色はアプリの配色に追随する 
   it('★ 利用者が選んだ色は今までどおり使う (地だけ・字だけ・両方)', async () => {
     const both = await mount({ bg: '#112233', fg: '#eeeeee', image: '' });
     const s = styleOf(both);
-    expect(s).toMatch(/background: (#112233|rgb\(17, 34, 51\))/);
+    expect(s).toMatch(/background-color: (#112233|rgb\(17, 34, 51\))/);
     expect(s).toMatch(/(^|;) ?color: (#eeeeee|rgb\(238, 238, 238\))/);
     // 字を選んだので、この面の中でだけ文字のトークンを選んだ色へ言い直す (別名の --text-mute も)
     for (const name of ['--text', '--text-muted', '--text-mute']) {
@@ -135,13 +135,13 @@ describe('アシスタントの既定の色はアプリの配色に追随する 
 
   it('★ 字だけ選んだときも、地は追随し、文字のトークンは選んだ色へ言い直す', async () => {
     const page = await mount({ bg: '', fg: '#222222', image: '' });
-    expect(styleOf(page)).toContain('background: var(--bg-elev)');
+    expect(styleOf(page)).toContain('background-color: var(--bg-elev)');
     for (const name of ['--text', '--text-muted', '--text-mute']) expect(page.style.getPropertyValue(name), name).toBe('#222222');
   });
 
   it('★ 地だけ選んだときは、字は追随のまま (文字のトークンは言い直さない)', async () => {
     const page = await mount({ bg: '#112233', fg: '', image: '' });
-    expect(styleOf(page)).toMatch(/background: (#112233|rgb\(17, 34, 51\))/);
+    expect(styleOf(page)).toMatch(/background-color: (#112233|rgb\(17, 34, 51\))/);
     expect(styleOf(page)).toContain('color: var(--text)');
     expect(page.style.getPropertyValue('--text-muted')).toBe('');
   });
@@ -167,7 +167,7 @@ describe('アシスタントの既定の色はアプリの配色に追随する 
     await openThemePanel();
     await pick('背景色', '#334455');
     await pick('文字色', '#fafafa');
-    expect(styleOf(page)).toMatch(/background: (#334455|rgb\(51, 68, 85\))/);
+    expect(styleOf(page)).toMatch(/background-color: (#334455|rgb\(51, 68, 85\))/);
     expect(page.style.getPropertyValue('--text-muted')).toBe('#fafafa');
     await settleUntil(() => stored().bg === '#334455', '選んだ色が保存される');
     const reset = [...container.querySelectorAll('button')].find((b) => (b.textContent ?? '').includes('既定に戻す'));
@@ -175,7 +175,7 @@ describe('アシスタントの既定の色はアプリの配色に追随する 
     await act(async () => {
       reset.click();
     });
-    expect(styleOf(page)).toContain('background: var(--bg-elev)');
+    expect(styleOf(page)).toContain('background-color: var(--bg-elev)');
     expect(page.style.getPropertyValue('--text-muted')).toBe('');
     await settleUntil(() => stored().bg === '', '保存値が空へ戻る');
     expect(stored()).toEqual({ bg: '', fg: '', image: '' });

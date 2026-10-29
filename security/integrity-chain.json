@@ -3201,6 +3201,14 @@
       "leafCount": 134,
       "note": "update vault.ts",
       "hash": "0f82fae8c348b10921fcc2d9ad4691ad83bc3710d20175c86347b96c9aec15a0"
+    },
+    {
+      "index": 383,
+      "prevHash": "0f82fae8c348b10921fcc2d9ad4691ad83bc3710d20175c86347b96c9aec15a0",
+      "merkleRoot": "88144216ca3df10d5074b6e711ade1dc797e05df5c514eac54c00973fef7e505",
+      "leafCount": 134,
+      "note": "update ci.yml,dependency-audit.yml,e2e.yml,knowledge-auto.yml,mutation.yml,pages.yml",
+      "hash": "31eea771527ba19b423f22c094e58a6d4f145733b21320ffe256a59a1fdbbe4f"
     }
   ],
   "tipManifest": {
@@ -3213,13 +3221,13 @@
     ".cursor/rules/20-gates.mdc": "821205069a9f0fae121e92be6826342bce6e765a34bea95c7ebc36c57b234da4",
     ".cursor/rules/30-conventions.mdc": "ecc268597f19300ff8c9e574d25ae92f34f6ddb9ec13776fb5162c32f6c0ba50",
     ".github/dependabot.yml": "5fb436726dc2b51f99162653885c40cafae5d57d6deb0f4f5b5449e6b202493f",
-    ".github/workflows/ci.yml": "8c6cb8b9a401640f4deb61a51b7bad56a02bc971d52487cae94d035814ac504a",
-    ".github/workflows/dependency-audit.yml": "cd3eb9fb07f260ce1541f231dea8a9fe4afaa4996e3e1f51b9ee7aece5fd24bc",
-    ".github/workflows/e2e.yml": "27a711fa8396c953cb0d0b419733a7679ba49c7ea72471a47b38984d499dbfec",
-    ".github/workflows/knowledge-auto.yml": "9f6f74353954cb50f345b3d258a324a01bb117ec08772cfd9a77852505cdbc20",
-    ".github/workflows/mutation.yml": "db2b72f69eb73be3ddd7ed4492d8069f806b5ce928a00df768bb806c673db2e0",
-    ".github/workflows/pages.yml": "42cc166f06c028477195e1243f5a85e277ad5d966840b6894d118635444a42e0",
-    ".github/workflows/release.yml": "bcdba014a91d2d2f3c86d767bc89fa3610472de8e0af204b7ef9428abe3ca2de",
+    ".github/workflows/ci.yml": "acbaa7077d557e08d6cb9cd849f951f0b708ca579f2eb191ab0e069abec4b702",
+    ".github/workflows/dependency-audit.yml": "ee4ffebe5bcd8b99da476964718bea4a15914e95f6cddfbd85f9837b2d2e578d",
+    ".github/workflows/e2e.yml": "5f8ce62b784de2ae3280fcccca20eef9f4ffed018066581617f06bf4a9f345a6",
+    ".github/workflows/knowledge-auto.yml": "fcd9a876356278d4b347fe53df4cbee0733f1884fe0786eb42ba01f51d1a2834",
+    ".github/workflows/mutation.yml": "fc3fa01fc8775ef8e0b9751ea414b254536770d5e858f6516e5b8dfe1fa60fe0",
+    ".github/workflows/pages.yml": "72dd545faa7edc54d3332d19f87b24212df2cd3be3178812d5561e2722603cec",
+    ".github/workflows/release.yml": "f348cadc5d4d7e456b230bdd57bd73ebe25f30acc4a11162a97a2d4c808205ea",
     "assets/icon.svg": "213373cc2e82c0255c103b47cfb880cad685935cd1d4c383746a6202315d540f",
     "assets/manifest.webmanifest": "3906cd174c46400b36821d7358deb6d93da7197b6815d0d851b2517e8f370b9e",
     "assets/og.png": "1fcc1b3974eec00de79ab6d37272f39529905a3448017dc24ee0f03e979b7282",

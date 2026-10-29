@@ -1,5 +1,22 @@
 # Service Hub — 残りの作業手順書
 
+## パス 557 (失敗していた依存の更新を解析して終わらせる —— dependabot の 6 本を今の main で当てて直す) (2026-10-29)
+
+利用者の依頼「失敗したものを解析して終わらせて」。#844 のマージ後の `main` は CI・Pages とも緑で、失敗していたのは開いたままの dependabot の PR だった。**6 本とも 10-13〜10-23 の古い `main` から作られており**、そのまま取り込むとその後に足した守りを消す形だったので、**ブランチを取り込まず、更新の中身だけを今の `main` に当てた**。
+
+| PR | 失敗の原因 (測った) | 直し |
+| --- | --- | --- |
+| #800 actions 8 種 | ブランチの workflow は 10-13 の物で、**その後に足した守り (公開前に梱包物の fuse を照合する step · T-209 ほか) が消える** —— 当てると `packagedFuseGate` が落ちた。しかも SHA は新しいメジャー版 (checkout / setup-node / upload-artifact v7・download-artifact v8・github-script v9・upload-pages-artifact v5・deploy-pages v5・action-gh-release v3) なのに**注記は `# v5` のまま** (`audit:pinned-action-shas` で 32 件が moved) | 今の workflow に SHA だけを当て、注記を実物のタグへ (`git ls-remote` で引いた · **33 / 33 が match**)。変更点を突き合わせ: upload-pages-artifact v4 以降は dotfile を落とすので `include-hidden-files: true` で公開する木 (`.nojekyll`) を保つ。github-script v9 の破壊的変更は `require('@actions/github')` と `getOctokit` の宣言だけで、使っていない (`github.rest.issues.*` と `require` の相対読みだけ)。checkout v7 の fork PR の制限は `pull_request_target` / `workflow_run` だけで、どちらも使っていない (`lint:workflow-security` が前者を禁じる) |
+| #805 jsdom 30 | `AssistantPage` が地を一括指定 `background` と個別指定 (`backgroundImage` / `Size` / `Position`) で重ねて書いており、**jsdom 30 はその一括指定を丸ごと落とす** (React も警告する形) | `backgroundColor` へ (地は色だけ · `--bg-elev` はどの配色でも単色)。混在はアプリ全体でこの 1 か所 (走査で数えた)。検査は jsdom 29 / 30 の両方で緑 |
+| #804 React 19 | `react` だけを上げ、**`react-dom` と型を 18 のまま**残していた | `react` / `react-dom` / `@types/react` / `@types/react-dom` を 19 で揃えた。型の誤りは `JSX.Element` (大域の名前空間) 1 か所だけ (`React.JSX.Element` へ)。**本番依存の閉包が 5 → 3 件** (React 18 の推移的依存 `loose-envify` / `js-tokens` が抜けた —— `lint:deps` の台帳が「もう使われていない」と名指しした) |
+| #802 Stryker 10 | `@stryker-mutator/vitest-runner@10` は **`@stryker-mutator/core` の同じ版を peer に要求する**のに、runner だけを上げていた (`npm ci` が依存の衝突で落ちる) | core と runner を 10.1.1 で揃えた (Node 22 以上 —— CI は 22) |
+| #821 dev group (緑) | —— | eslint 10.13 / typescript-eslint 8.72 / fast-check 4.10 / fake-indexeddb 6.2.6 |
+| #803 vite-plugin-electron 1.x (緑) | **CI はブラウザ版しか組まないので、主プロセスの束は誰も通していなかった** | 手元で主プロセスを組み (束の形は同じ —— CJS・残る require は electron と node の組み込みだけ)、`smoke:app` で実物のデスクトップアプリが 8 秒生き続けることを確かめた。vite が `Unknown input options: platform` の警告を 1 行出す (出来た束は同じ) |
+
+- **台帳**: 整合性チェーン block **#383** (workflow は保護対象)・`hostChromeColorCensus` に `AssistantPage.tsx` (`names-only` —— 画面の地を inline で塗るだけで母体へは伝えない)・`lint:deps` の本番依存 5 → 3。
+- **出荷物**: FULL **12,089,652 B** / LITE **3,502,276 B** (md5 `9e1b1a61…` / `950d01ee…`)。パス 556 から **両方 +81,506 B** (ほぼ React 19 の分)。★ **LITE は CI の警告線 3,400,000 B を 102,276 B 超えた** (落ちない・ハード上限まで 497,724 B)。
+- **検証**: `typecheck` 緑・`npm test` **1158 ファイル / 23,516 件**・`audit:verify-keep-going` **39 / 39**・`smoke:app` OK。@@E2E557@@
+
 ## パス 556 (業務の割当と、時間で見た負担 —— 誰に・何を・週何時間を記録して、1 人ずつ法定労働時間と比べる) (2026-10-29)
 
 パス 555 が「残した候補」の先頭に書いた物。パス 555 の負担率は**本人が書いた体感の負荷の比**で、勤務時間でも担当業務の数でもない (画面の脚注がそう言う)。測ると、**割当や工数を持つ記録はアプリのどこにも無かった** —— 24 の collection のどれも割当・時間の欄を持たず、`goalCoach` の時間は本人 1 人の目標のため、`talent` の「担当者」は散文だけ。依頼「従業員ひとりひとりの仕事の負担率等も見てわかるようにして」の「仕事の」側は、記録が無いので答えられていなかった。

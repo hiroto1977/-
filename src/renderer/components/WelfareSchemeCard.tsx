@@ -506,7 +506,7 @@ const MECHANISM_ORDER: readonly BenefitMechanism[] = [
  * 受け取る時点が違い、特に給与振替には将来の給付が下がるという代償がある。
  * 並べて一括りにすると、その違いが読み手から消える。
  */
-function BenefitCatalogue(): JSX.Element {
+function BenefitCatalogue(): React.JSX.Element {
   const all = employerBenefits();
   return (
     <details style={{ marginTop: 14 }}>
