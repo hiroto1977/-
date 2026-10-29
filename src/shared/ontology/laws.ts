@@ -2087,6 +2087,32 @@ export const LAWS: readonly Law[] = [
       test(T.shared('threatLedger')),
     ],
   },
+  {
+    id: 'shipped-code-attested-at-startup',
+    family: 'supply-chain',
+    name: '出荷した物は、起動のたびに自分を検算する —— 容器の中の 1 ファイルの改竄は、署名の無い Linux でも起動前に鳴る',
+    statement:
+      '正常な細胞は分裂の前に DNA を検算し、直せない損傷が在れば自死する。マルウェアが正規のアプリに擬態する最も安い道は'
+      + '**インストール先のファイルを書き換える**ことで、Electron の fuse `enableEmbeddedAsarIntegrityValidation` は macOS / Windows では'
+      + '署名済みバイナリに埋めた値と app.asar を照合するが、**Linux では照合する値を持たない** (実測 2026-10-29 · パス 553: fuse を焼いた'
+      + '梱包物の app.asar に 1 byte 足しても起動して UI が出た)。Linux のインストーラは署名も無い。だから梱包版は `app.whenReady()` の'
+      + '**窓を作る前**に、ビルドが書いた表 (`dist-electron/integrity.json` —— 同梱する全ファイルの sha256 と root) と同梱物を突き合わせ、'
+      + '① 表が読めて形が正しい ② 容器の根に表の外の物が無い ③ 両方向に同じ一覧 ④ 1 つずつの sha256 が一致、の 1 つでも外れれば'
+      + '理由を stderr に刷り `app.exit(1)` で止まる (`src/main/selfAttestation.ts` · threat: T-218)。**読めない = 通さない** (表が無い・'
+      + '大きすぎる・ファイルが多すぎる、はどれも断る理由)。断りの文は道と理由だけで中身もハッシュも引用しない。書き手 (`.cjs`) と'
+      + '読み手 (`.ts`) は同じ算法の写しなのでパリティ検査で結ぶ。主プロセスも preload も node_modules を require しないので'
+      + '`!node_modules/**` で同梱しない (検算の外に走る物を置かない)。**限界を正直に書く**: 表は出荷物と同じ容器に居るので、容器ごと'
+      + '差し替える相手は表も書き換えられる —— それを止めるのは OS の署名で、Linux には無い。「Linux は 1 ファイルの改竄に気付く」が'
+      + '正しく、「守られている」ではない。開発中 (`electron .`) は dist が変わるたびに表が古びるので走らせない (梱包していない物は配布物ではない)。',
+    provenance: ['2026-10-29 (パス 553)'],
+    enforcedBy: [
+      test('src/main/__tests__/selfAttestation.test.ts'),
+      test('src/main/__tests__/selfAttestationParity.test.ts'),
+      test('src/main/__tests__/selfAttestationWiring.test.ts'),
+      harness('smoke:packaged'),
+      test(T.shared('threatLedger')),
+    ],
+  },
 ];
 
 export interface LawLedgerProblem {

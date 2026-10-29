@@ -128,6 +128,10 @@
 /src/shared/actionTier.ts @hiroto1977
 /src/shared/outboundContentGate.ts @hiroto1977
 /src/shared/promptInjection.ts @hiroto1977
+# 起動時の自己検算 (2026-10-29 · パス 553 · threat: T-218)。表の書き手と読み手は同じ算法の写し。
+/src/main/selfAttestation.ts @hiroto1977
+/scripts/build-integrity-manifest.cjs @hiroto1977
+/src/main/__tests__/selfAttestation.test.ts @hiroto1977
 /src/shared/atlassianSite.ts @hiroto1977
 /src/shared/constantTimeEquals.ts @hiroto1977
 /src/shared/controlChars.ts @hiroto1977

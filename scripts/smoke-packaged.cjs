@@ -16,6 +16,9 @@
  *   1. 梱包物の fuse が `electron-builder.json` の `electronFuses` と一致する (焼き込まれた値を読む)
  *   2. 窓が `app.asar` の `index.html` を読み込み、UI が出る (url が chrome-error でない・本文が空でない・bridge が在る)
  *   3. レンダラーから `fetch('file:///etc/passwd')` が通らない (fuse が true でも T-140 の門が閉じている)
+ *   4. app.asar を 1 byte 改竄すると起動時の自己検算 (T-218 · `selfAttestation.ts`) が理由を stderr に刷って窓を作らない
+ *      —— ★ Linux では fuse `enableEmbeddedAsarIntegrityValidation` が何も照合しない (実測 2026-10-29) ので、この段が唯一の検算
+ *   5. app.asar を消して resources/app に置いた外のコードが実行されない (onlyLoadAppFromAsar · T-166)
  *
  * Linux 専用 (`electron-builder --dir` の unpacked を起動する)。macOS / Windows のインストーラは測らない。
  *
@@ -114,6 +117,15 @@ async function run() {
     return 2;
   }
 
+  // 梱包の前に検算表を書く (npm run build と同じ順序 —— 表の無い梱包物は起動時の自己検算が断る)
+  const manifest = spawnSync(process.execPath, [path.join(REPO_ROOT, 'scripts', 'build-integrity-manifest.cjs')], { cwd: REPO_ROOT, encoding: 'utf8' });
+  if (manifest.status !== 0) {
+    console.error('❌ 検算表を書けません');
+    console.error(String(manifest.stderr || manifest.stdout).trim());
+    return 1;
+  }
+  console.log(String(manifest.stdout).trim());
+
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'smoke-packaged-'));
   let child = null;
   try {
@@ -177,11 +189,27 @@ async function run() {
       return 1;
     }
     console.log(`窓: ${w.url.replace(/^file:\/\/.*?(app\.asar)/, 'file://…/$1')} · 本文 ${w.bodyChars} 字 · bridge あり · file:// の任意読み取りは止まる`);
-    // 4. onlyLoadAppFromAsar: resources/app/ に置いた別のコードを Electron が先に読まないこと (T-166)。
-    //    Electron は app.asar → app/ の順に探す (実測: app.asar が在れば app/ は読まれない)。fuse が無いと
-    //    app.asar を消して app/ を置くだけで、梱包物の外から差し替えたコードが走る。fuse はその落とし先を塞ぐ。
+    // 4. 起動時の自己検算 (T-218): app.asar の中の 1 ファイルを 1 byte 変えると、主プロセスは窓を作らず
+    //    理由を stderr に刷って止まる。★ Linux では fuse の asar integrity は何も照合しない (実測: 自己検算の
+    //    無い束で同じ改竄をすると起動して UI が出た) —— だからこの段を fuse の有無に依らず見る。
     child.kill('SIGTERM');
     await new Promise((res) => setTimeout(res, 1500));
+    const asarPath = path.join(out, 'linux-unpacked', 'resources', 'app.asar');
+    const tampered = await tamperedAsarStderr(asarPath, path.join(tmp, 'tamper'), bin, path.join(tmp, 'ud-tamper'));
+    if (!tampered.stderr.includes('[self-attestation] hash-mismatch: dist/index.html')) {
+      console.error('❌ app.asar を 1 byte 改竄しても自己検算が鳴らない (T-218) —— stderr:');
+      console.error(tampered.stderr.split('\n').slice(-6).join('\n'));
+      return 1;
+    }
+    if (tampered.pages.some((u) => u.includes('app.asar'))) {
+      console.error(`❌ 改竄した app.asar で窓が開いた: ${tampered.pages.join(' | ')}`);
+      return 1;
+    }
+    console.log('改竄: app.asar の dist/index.html を 1 byte 変えると、自己検算が理由を刷って窓を作らない (T-218)');
+
+    // 5. onlyLoadAppFromAsar: resources/app/ に置いた別のコードを Electron が先に読まないこと (T-166)。
+    //    Electron は app.asar → app/ の順に探す (実測: app.asar が在れば app/ は読まれない)。fuse が無いと
+    //    app.asar を消して app/ を置くだけで、梱包物の外から差し替えたコードが走る。fuse はその落とし先を塞ぐ。
     const marker = path.join(tmp, 'planted-code-ran');
     const planted = path.join(out, 'linux-unpacked', 'resources', 'app');
     fs.rmSync(path.join(out, 'linux-unpacked', 'resources', 'app.asar'), { force: true });
@@ -200,6 +228,35 @@ async function run() {
   } finally {
     if (child !== null) child.kill('SIGTERM');
     fs.rmSync(tmp, { recursive: true, force: true });
+  }
+}
+
+/**
+ * app.asar を展開して `dist/index.html` に 1 byte 足し、固め直して起動する。stderr と (CDP で見える) 頁の URL を返す。
+ * 起動した子は必ず止める。`@electron/asar` は electron-builder の依存なので同梱されている。
+ */
+async function tamperedAsarStderr(asarPath, workDir, bin, userData) {
+  const asar = require('@electron/asar');
+  asar.extractAll(asarPath, workDir);
+  fs.appendFileSync(path.join(workDir, 'dist', 'index.html'), ' ');
+  await asar.createPackage(workDir, asarPath);
+  const port = DEBUG_PORT + 1;
+  const child = spawn(bin, ['--no-sandbox', `--remote-debugging-port=${port}`, `--user-data-dir=${userData}`], { stdio: ['ignore', 'ignore', 'pipe'] });
+  let stderr = '';
+  child.stderr.on('data', (d) => { stderr += String(d); });
+  try {
+    await new Promise((res) => setTimeout(res, ALIVE_MS));
+    let pages = [];
+    try {
+      const list = await (await fetch(`http://127.0.0.1:${port}/json/list`, { signal: AbortSignal.timeout(3000) })).json();
+      pages = list.map((p) => String(p.url));
+    } catch {
+      pages = []; // 止まっていれば CDP も開かない (開いていても modal の裏で答えなければ 3 秒で諦める)
+    }
+    return { stderr, pages };
+  } finally {
+    // 断った主プロセスは `dialog.showErrorBox` (同期・modal) の中で止まっており SIGTERM を受け取らない (実測) —— SIGKILL
+    child.kill('SIGKILL');
   }
 }
 

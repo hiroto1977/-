@@ -77,6 +77,9 @@ const PROTECTED = [
   // 持ち、13 本の IPC ハンドラを登録している main.ts が入っていなかった。
   // ここが 1 行変わるだけで、下流の関門は全部迂回できる。
   'src/main/main.ts',
+  // 起動時の自己検算 (2026-10-29 · パス 553 · T-218)。読み手と書き手の両方 —— 片方だけ緩めても正しい出荷物は起動する。
+  'src/main/selfAttestation.ts',
+  'scripts/build-integrity-manifest.cjs',
   // 秘密を伏せる唯一の合流点 (17 箇所がここへ寄せてある)。ここが素通しに
   // 変われば、失敗応答に混ざったトークンがそのまま画面と不具合報告に出る。
   'src/shared/redact.ts',

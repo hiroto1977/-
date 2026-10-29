@@ -81,6 +81,27 @@ const LEDGER: readonly Row[] = [
     cap: 'MAX_STATE_FILE_BYTES',
     why: '状態ファイル 4 つの入口。前門 (stat) + 後門 (byte) の 3 状態 (パス 313)',
   },
+  {
+    file: 'src/main/selfAttestation.ts',
+    needle: 'readFile(p: string): Promise<Uint8Array>;',
+    gate: 'st.size > MAX_SHIPPED_FILE_BYTES',
+    cap: 'MAX_SHIPPED_FILE_BYTES',
+    why: '読みではなく検算が受け取るファイル API の**型の宣言** (`AttestationFs`)。針は綴りで当たるので理由つきで載せる (パス 553)',
+  },
+  {
+    file: 'src/main/selfAttestation.ts',
+    needle: 'sha256Hex(await fs.readFile(abs))',
+    gate: 'st.size > MAX_SHIPPED_FILE_BYTES',
+    cap: 'MAX_SHIPPED_FILE_BYTES',
+    why: '起動時の自己検算: 出荷物を 1 つずつハッシュする読み。天井を超えるファイルは読まずに断る (パス 553 · T-218)',
+  },
+  {
+    file: 'src/main/selfAttestation.ts',
+    needle: 'await fs.readFile(manifestAbs)',
+    gate: 'st.size > MAX_MANIFEST_BYTES',
+    cap: 'MAX_MANIFEST_BYTES',
+    why: '起動時の自己検算: 検算表そのものの読み。表が大きすぎれば読まずに断る (パス 553 · T-218)',
+  },
 ];
 
 function shippedSources(): string[] {

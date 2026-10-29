@@ -151,7 +151,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `desktop-only-is-the-difference` | デスクトップ版に在ってブラウザ版に無い action は、種類つきの台帳 (DESKTOP_ONLY) にちょうど載っている。 | — |
 | `actions-need-reader-or-local` | action を持つサービスは、資格情報を読むか local である (どちらでもない書き込みは行き先が無い)。 | — |
 
-## 5. 法則と執行者 (122)
+## 5. 法則と執行者 (123)
 
 各法則は「何を守るか」「どのパス / パターンで学んだか」「何がそれを守っているか」を持つ。
 執行者が**散文だけ**の法則は次の節に集める —— 散文で述べた規則は落ちない。
@@ -310,7 +310,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `vault-and-graph-in-sync` | **生成物は本体と同期し、本体を網羅する** — vault・graph・概念表は本体から生成し、committed == 再生成に加えて本体との網羅を検査する。手で行を書かない。 registry の派生索引 (`teamFirstRound` —— チーム → 初出 round / `teamBacklogStatus` —— チーム → backlog の状態) も 本体 (`rounds` / `backlog`) から導いた物と両方向に一致する (`verify:orchestration` の不変条件 13 / 15)。導出は 1 つずつで、台帳を書く口 (`writeRegistryChecked`) が**必ず**引き直す —— 書き手ごとに「どの索引に効くか」を覚えさせると 2 つ目の索引で破れる (パス 486: 取り込み口は backlog を足しても何も引き直していなかった)。手で書き換えた台帳は門が落とし、直す手 (`npm run orchestrate:reindex`) を名指しする。 | パターン 0-a-5 / CLAUDE.md knowledge:md / パス 483 / パス 486 | ゲート `npm run vault:check`<br>ゲート `npm run verify:graph`<br>ゲート `npm run verify:orchestration`<br>検査 `src/shared/__tests__/teamFirstRoundIndex.test.ts`<br>検査 `src/shared/__tests__/teamBacklogStatusIndex.test.ts` |
 | `legal-text-current` | **法令の記述は現行法** — 刑名の表記ゆれは 1 行ずつ裁定する (拘禁刑へ・旧刑名は括弧・米国法は対象外)。日付の無い率は lint:rate-freshness が期限で落とす。 | 刑名の裁定 (残作業 8) / lint:rate-freshness | ゲート `npm run lint:rate-freshness`<br>散文だけ `docs/SESSION_HANDOFF.md` — 「現行法か」は機械に映らない。率と日付の期限だけを機械が見る |
 
-### 供給網と CI (8)
+### 供給網と CI (9)
 
 | id | 法則 | 出典 | 執行者 |
 |---|---|---|---|
@@ -322,6 +322,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `mutation-scope-protected` | **保護対象は変異検査の中** — 権限・資格情報・書き出し先を決める壁が mutate から外れると変異体が 1 つも作られず、測っていないのに緑になる。 | lint:mutation-scope の docblock / パス 318 | ゲート `npm run lint:mutation-scope`<br>実機 `npm run mutate` |
 | `release-artifacts-reread` | **公開先は前のランの残骸を溜める — 置いてある一覧を読み返す** — CI の緑はそのランが何を出したかしか保証しない。追記しかしない置き場 (リリース資産) は公開後に一覧を読み返す。数は宣言側 (electron-builder.json) から導く。 | パターン 0-a-19 | ゲート `npm run verify:release-artifacts` |
 | `repo-size-ceiling` | **追跡ファイルの大きさに天井** — 履歴に入った blob は後から追跡を外しても消えない。1 ファイル 12 MB / 追跡合計 120 MB (85% で警告)。出荷 HTML は 16 MB / 4 MB。 ★ **落とさない警告は読まれない** —— 80 MB の天井には 2026-10-07 に生成物ではなく記録 3 本と検査の増え方 (0.41 MB/日・コーパスは +0.1 MB) で当たり、85% の警告は 2026-09-11 ごろから毎回刷られて誰も動かなかった (実測はゲートの docblock · パス 506)。 出荷物へ畳み込む JSON は製品が読む鍵だけ —— 名前付き import は鍵の単位でしか落ちないので、読まない開発側の履歴 (registry の `rounds` 160,558 B) と着手候補 (`backlog` 7,323 B —— 外から来た文を含む) は派生索引へ置き換え、import してはいけない鍵として理由つきで名指しする。 **名前付き import 以外の形 (default / namespace / 動的 import / export from) は禁じる** —— Rollup は読まれないプロパティを落とすので全体が入るわけではないが、どの鍵が入るかを字面から読めず台帳が見えなくなる (実測: default import のまま `registry.backlog` を読むと外から来た題名 43 / 43 が出荷物へ入るのに、名前付き import しか読まない census は緑だった · パス 486)。 | CLAUDE.md lint:repo-size / ci.yml の出荷物の天井 / パス 396 / パス 483 / パス 486 / パス 506 | ゲート `npm run lint:repo-size`<br>CI `.github/workflows/ci.yml`<br>検査 `src/shared/__tests__/registryBundleCost.test.ts` |
+| `shipped-code-attested-at-startup` | **出荷した物は、起動のたびに自分を検算する —— 容器の中の 1 ファイルの改竄は、署名の無い Linux でも起動前に鳴る** — 正常な細胞は分裂の前に DNA を検算し、直せない損傷が在れば自死する。マルウェアが正規のアプリに擬態する最も安い道は**インストール先のファイルを書き換える**ことで、Electron の fuse `enableEmbeddedAsarIntegrityValidation` は macOS / Windows では署名済みバイナリに埋めた値と app.asar を照合するが、**Linux では照合する値を持たない** (実測 2026-10-29 · パス 553: fuse を焼いた梱包物の app.asar に 1 byte 足しても起動して UI が出た)。Linux のインストーラは署名も無い。だから梱包版は `app.whenReady()` の**窓を作る前**に、ビルドが書いた表 (`dist-electron/integrity.json` —— 同梱する全ファイルの sha256 と root) と同梱物を突き合わせ、① 表が読めて形が正しい ② 容器の根に表の外の物が無い ③ 両方向に同じ一覧 ④ 1 つずつの sha256 が一致、の 1 つでも外れれば理由を stderr に刷り `app.exit(1)` で止まる (`src/main/selfAttestation.ts` · threat: T-218)。**読めない = 通さない** (表が無い・大きすぎる・ファイルが多すぎる、はどれも断る理由)。断りの文は道と理由だけで中身もハッシュも引用しない。書き手 (`.cjs`) と読み手 (`.ts`) は同じ算法の写しなのでパリティ検査で結ぶ。主プロセスも preload も node_modules を require しないので`!node_modules/**` で同梱しない (検算の外に走る物を置かない)。**限界を正直に書く**: 表は出荷物と同じ容器に居るので、容器ごと差し替える相手は表も書き換えられる —— それを止めるのは OS の署名で、Linux には無い。「Linux は 1 ファイルの改竄に気付く」が正しく、「守られている」ではない。開発中 (`electron .`) は dist が変わるたびに表が古びるので走らせない (梱包していない物は配布物ではない)。 | 2026-10-29 (パス 553) | 検査 `src/main/__tests__/selfAttestation.test.ts`<br>検査 `src/main/__tests__/selfAttestationParity.test.ts`<br>検査 `src/main/__tests__/selfAttestationWiring.test.ts`<br>実機 `npm run smoke:packaged`<br>検査 `src/shared/__tests__/threatLedger.test.ts` |
 
 ## 6. 機械の無い法則 (3)
 
@@ -331,6 +332,6 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 
 ## 7. 集計
 
-- 法則 122 (機械あり 119 / 散文だけ 3)
+- 法則 123 (機械あり 120 / 散文だけ 3)
 - facet の公理 10・実体クラス 15・層 4・ビルド 3
 - `verify:all` のゲート 39: `typecheck` `verify:arch` `lint:forbidden` `lint:workflow-security` `lint:secrets` `lint:malware` `lint:network-targets` `lint:url-encoding` `lint:regex` `lint:imports` `lint:docs` `lint:citations` `lint:doi-prefix` `lint:charset` `lint:knowledge-refs` `lint:sample-data` `lint:test-coverage` `verify:release-artifacts` `lint:shell` `lint:repo-size` `lint:deps` `lint:mcp-servers` `lint:storage` `lint:csp` `lint:data-origin` `lint:credential-use` `lint:ipc-handlers` `lint:mutation-scope` `lint:collection-time` `lint:parameter-prose` `lint:zero-fold` `lint:shared-judgement` `lint:rate-freshness` `verify:orchestration` `vault:check` `verify:graph` `verify:knowledge` `chain:verify` `lint`

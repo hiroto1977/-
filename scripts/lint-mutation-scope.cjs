@@ -235,6 +235,8 @@ const MUST_MEASURE = {
   'src/shared/actionTier.ts':        'action の段階の台帳 (出力インターセプターと本人確認の両方が読む・無い action は fail closed)',
   'src/shared/outboundContentGate.ts': '出力インターセプター (端末の外へ出る本文に資格情報 / マイナンバー / カード番号の形が無いか)',
   'src/shared/promptInjection.ts':   '入力の無害化 (第三者の文に混ざった AI への指示の形を、AI へ届く前に規則で止める)',
+  // 2026-10-29 (パス 553) 追加。起動時の自己検算 —— 比較を 1 つ緩めても正しい出荷物は緑のまま起動するので、測らないと穴に気付けない。
+  'src/main/selfAttestation.ts':     '起動時の自己検算 (同梱物の sha256 を表と両方向に突き合わせ、外れれば起動しない)',
   'src/renderer/security/vault.ts':  'マスターパスワードから鍵を作る所',
   'src/renderer/security/autoLock.ts': '離席時の施錠',
   // 2026-08-23 追加。**足した当人が名簿へ入れ忘れていた。** 枠 (iframe) の中では

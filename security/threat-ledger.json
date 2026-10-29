@@ -218,6 +218,16 @@
             "src/shared/__tests__/threatWatch.test.ts",
             "src/shared/__tests__/weaknessMap.test.ts"
           ]
+        },
+        {
+          "what": "起動時の自己検算 —— 梱包版は窓を作る前に同梱した全ファイルの sha256 をビルドが書いた表と突き合わせ、1 byte でも違えば起動しない (Linux では fuse の asar integrity が何も照合しないので、これが唯一の段)。容器の根に表の外の物が在っても断る。node_modules は同梱しない",
+          "enforcedBy": [
+            "src/main/selfAttestation.ts",
+            "scripts/build-integrity-manifest.cjs",
+            "src/main/main.ts",
+            "scripts/smoke-packaged.cjs",
+            "src/main/__tests__/selfAttestationWiring.test.ts"
+          ]
         }
       ],
       "gaps": [
@@ -225,7 +235,8 @@
         "純粋な child_process + curl (Node の fetch / process.env を使わないシェル経由の送出) は lint:malware の規則では捕まらない —— lint:forbidden の child_process census (直下・サブディレクトリの .ts/.tsx/.cjs/.mjs/.js/.jsx/.html を走査) と build フックの台帳が重なって塞ぐが、規則そのものの網羅ではない (T-016 / T-018 の実測)。",
         "GitHub 自身の action (actions/*) は可動タグで参照している (第三者の action は SHA 固定)。",
         "依存の中身すべては読めない。",
-        "脅威ウォッチは検知と提案までが自動で、直す手は人が PR で入れる (依存を自動で書き換えない)。KEV に載るのは公開・悪用の確認が済んだ後で、先回りできるのは『同じ種類の欠陥を自前のコードが許していないか』(種類の表) の側。基盤 (Chromium/V8/Node) の欠陥は Electron の更新でしか直らない。毎日の実行は GitHub Actions 上で網が要るので、PR の門 (verify:all) には載せない。"
+        "脅威ウォッチは検知と提案までが自動で、直す手は人が PR で入れる (依存を自動で書き換えない)。KEV に載るのは公開・悪用の確認が済んだ後で、先回りできるのは『同じ種類の欠陥を自前のコードが許していないか』(種類の表) の側。基盤 (Chromium/V8/Node) の欠陥は Electron の更新でしか直らない。毎日の実行は GitHub Actions 上で網が要るので、PR の門 (verify:all) には載せない。",
+        "起動時の自己検算の表 (integrity.json) は出荷物と同じ app.asar に居る —— 容器ごと差し替える相手は表も書き換えられる。それを止めるのは OS の署名 (macOS の公証 / Windows の Authenticode · release.yml の CSC_LINK) と fuse の asar integrity で、Linux (AppImage / deb) には署名も照合する値も無い (T-218)。"
       ]
     },
     {
@@ -3641,6 +3652,21 @@
       "regression": {
         "file": "src/renderer/__tests__/aiReplyInert.test.ts",
         "test": "★ どの画面でも、AI の束縛は外向きの invoke / openExternal / fetch / window.open の引数に現れない"
+      }
+    },
+    {
+      "id": "T-218",
+      "found": "2026-10-29",
+      "foundBy": "利用者の問い「癌細胞のように振る舞うウイルスへの対策」を防御側の比喩で分けた (無限増殖 = 自己複製 / 変異 = 署名の回避 / 擬態 = 正規バイナリの差し替え / DNA 修復 = 自己検算)。擬態の軸で梱包物を測った: `electron-builder --linux dir` で組み、fuse `enableEmbeddedAsarIntegrityValidation` を焼いた上で app.asar の `dist/index.html` に 1 byte 足して起動すると **窓が開いて UI が出た** (Linux では Electron の asar integrity は照合する値を持たない —— macOS の Info.plist / Windows のリソースにしか埋められない)。Linux のインストーラは署名も持たないので、インストール先の 1 ファイルを書き換える形を止める物が 0 件だった。asar には主プロセスも preload も require しない node_modules (react ほか 88 件) も入っていた (検算の外の死んだ重さ)。",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "Linux の梱包物は、同梱ファイルを 1 つ書き換えられても起動して UI を出した (fuse の asar integrity は Linux では何も照合しない・署名も無い)",
+      "status": "mitigated",
+      "fix": "起動時の自己検算。`npm run build` は vite build の後に `scripts/build-integrity-manifest.cjs` で同梱する全ファイル (dist / dist-electron / build/icon.png / package.json) の sha256 と root を `dist-electron/integrity.json` に書き、梱包版の主プロセスは `app.whenReady()` の窓を作る前に `src/main/selfAttestation.ts` の `verifyShippedFiles` で ① 表が読めて形が正しい ② 容器の根に表の外の物が無い ③ 同梱の全ファイルが表に・表の全ファイルが同梱に (両方向) ④ 1 つずつの sha256 が一致、を確かめ、1 つでも外れれば理由を stderr に刷り `dialog.showErrorBox` → `app.exit(1)` (窓は作らない・読めない = 通さない)。`electron-builder.json` は `enableEmbeddedAsarIntegrityValidation: true` (macOS / Windows では署名済みバイナリの値と照合する 1 段目) と `!node_modules/**` (検算の外に走る物を同梱しない)。`smoke:packaged` が梱包物の asar を 1 byte 改竄して起動を断ることを実測で見る。**限界**: 表は出荷物と同じ容器に居るので、容器ごと差し替える相手は表も書き換えられる —— それを止めるのは OS の署名 (macOS の公証 / Windows の Authenticode) で、Linux には無い。「Linux は 1 ファイルの改竄に気付く」が正しく、「守られている」ではない。",
+      "regression": {
+        "file": "src/main/__tests__/selfAttestation.test.ts",
+        "test": "★ 1 ファイルを 1 byte 変えると hash-mismatch で、その道を名指しする (threat: T-218)"
       }
     }
   ],

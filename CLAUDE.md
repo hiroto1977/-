@@ -1380,6 +1380,9 @@ npm run smoke            # xvfb + Electron screenshot smoke test of every page
 npm run smoke:app        # 実物の `electron .` を起動して 8 秒生きているか
                          #   (主プロセス dist-electron/main.js を通す唯一の検査)
 npm run smoke:packaged   # 梱包した実物 (electron-builder --dir · app.asar + fuse 適用済み) を起動して窓に UI が出ることを見る
+                         #   **加えて app.asar を 1 byte 改竄して固め直し、起動時の自己検算 (T-218 · パス 553) が理由を stderr に刷って
+                         #   窓を作らないことを見る** —— Linux では fuse の asar integrity が何も照合しない (実測) のでこれが唯一の段。
+                         #   梱包の前に `scripts/build-integrity-manifest.cjs` で表を書く (npm run build と同じ順序)
                          #   (Linux 専用 · xvfb-run -a · playwright が要る)。smoke:app は梱包なしの `electron .` なので、
                          #   出荷設定の fuse が梱包版の窓を白くする誤り (T-165 · 2026-10-23 実測) は映らない。
                          #   梱包物の fuse が electron-builder.json と一致すること・窓が app.asar の index.html を読み UI が出ること・
@@ -1838,6 +1841,13 @@ The browser target adds: `web-shim.ts` (a `window.serviceHub` polyfill imported 
   文書) を AI へ渡す新しい口は `promptInjectionRefusal` を**鍵を読む前**に通し、`aiDefenseWiring.test.ts` の母集団に足す。
   AI の応答を受けた値を外向きの `invoke` / `openExternal` / `fetch` へ渡さない (`aiReplyInert.test.ts` が鳴る)。
   プロンプトに「秘密を漏らすな」と書くことは守りに数えない。
+- **出荷した物は起動のたびに自分を検算する —— 同梱するファイルを足したら、表の歩く範囲に入っているかを見る** (2026-10-29 · パス 553 · T-218)。
+  `npm run build` は vite build の後に `scripts/build-integrity-manifest.cjs` で `dist-electron/integrity.json` (dist / dist-electron /
+  build/icon.png の sha256) を書き、梱包版の主プロセスは窓を作る前に `src/main/selfAttestation.ts` で突き合わせ、1 byte でも違えば
+  起動しない。`electron-builder.json` の `files` に新しい場所を足すなら `SHIPPED_DIRS` / `SHIPPED_FILES` (`.ts` と `.cjs` の両方 ——
+  パリティ検査が鳴る) と `ALLOWED_ROOT_ENTRIES` にも足す。**package.json は表に載せない** (electron-builder が梱包時に書き換える)。
+  node_modules は同梱しない (`!node_modules/**` —— 主プロセスも preload も require しない)。Linux には署名が無いので、
+  この検算が止めるのは「1 ファイルの改竄」であって「容器ごとの差し替え」ではない。
 - **対照を回すまで、検査は信用しない。** 守っている物を実際に壊し、狙った項目が
   落ちることを見る。**鳴らない対照は「合格」ではなく「その検査についての報せ」である。**
 

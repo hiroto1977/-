@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 377
+- ブロック数: 378
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `aaa75718151fce6c375ac016d1cf825f976bd5d64ef228811da474fc1b5ae7be`
-- 保護対象: 131 ファイル
+- 末尾(tip)ハッシュ: `89e29145bf14259f18418693996a6de0ac303beaac66128412cbd28f6da83855`
+- 保護対象: 133 ファイル
 
 ## ブロック
 
@@ -390,6 +390,7 @@
 | 374 | `eb99626448fac019` | `19a08b86ab8ea05a` | `5d14b178bcaef1a3` | update outboundContentGate.ts |
 | 375 | `f21529a2ab6b2fa4` | `5d14b178bcaef1a3` | `5bbede6d884170b0` | update userPresence.ts,outboundContentGate.ts |
 | 376 | `aeb6d4c7cec746e5` | `5bbede6d884170b0` | `aaa75718151fce6c` | update outboundContentGate.ts |
+| 377 | `ced4dc890a9be2fa` | `aaa75718151fce6c` | `89e29145bf14259f` | update electron-builder.json,build-integrity-manifest.cjs,integrity-chain.cjs,smoke-packaged.cjs,main.ts,selfAttestation.ts |
 
 ## 保護対象ファイル
 
@@ -420,6 +421,7 @@
 - `launcher/ServiceHubを開く.bat`
 - `orchestration/knowledge-context.cjs`
 - `orchestration/knowledge-graph.cjs`
+- `scripts/build-integrity-manifest.cjs`
 - `scripts/build-landing.cjs`
 - `scripts/checksum-release.cjs`
 - `scripts/inject-pwa.cjs`
@@ -462,6 +464,7 @@
 - `src/main/oauth.ts`
 - `src/main/presenceWiring.ts`
 - `src/main/secrets.ts`
+- `src/main/selfAttestation.ts`
 - `src/main/shellOpenGate.ts`
 - `src/main/stateFile.ts`
 - `src/main/userPresence.ts`

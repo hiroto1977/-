@@ -77,6 +77,7 @@
     "src/renderer/data/bestAnswers.ts",
     "src/renderer/data/bestAnswersJob.ts",
     "src/main/userPresence.ts",
+    "src/main/selfAttestation.ts",
     "src/main/windowOpen.ts",
     "src/renderer/data/budgetVariance.ts",
     "src/renderer/data/businessAxonometric.ts",

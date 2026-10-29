@@ -1,5 +1,7 @@
-import { app, BrowserWindow, ipcMain, nativeTheme, shell } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain, nativeTheme, shell } from 'electron';
+import { promises as fsPromises } from 'node:fs';
 import path from 'node:path';
+import { attestationMessage, verifyShippedFiles } from './selfAttestation';
 import {
   clearToken,
   getStorageProtection,
@@ -260,6 +262,24 @@ if (!gotInstanceLock) {
 }
 
 if (gotInstanceLock) app.whenReady().then(async () => {
+  /*
+   * **起動時の自己検算** (threat: T-218 · パス 553) —— 梱包版は、窓を作る前に同梱した全ファイルの sha256 を
+   * ビルドが書いた検算表 (`dist-electron/integrity.json`) と突き合わせ、1 byte でも違えば起動しない。
+   * macOS / Windows では fuse の asar integrity (署名済みバイナリに埋めた値) が 1 段目で、これは 2 段目。
+   * **Linux ではその fuse が何も照合しない** (実測) のでこれが唯一の段。開発中 (`electron .`) は dist が
+   * 変わるたびに表が古びるので走らせない —— 梱包していない物は守る対象 (配布物) ではない。
+   * 理由は stderr にも刷る (ダイアログを閉じる人が居ない環境 —— smoke:packaged —— がそこを読む)。
+   */
+  if (app.isPackaged) {
+    const verdict = await verifyShippedFiles(path.join(__dirname, '..'), fsPromises);
+    if (!verdict.ok) {
+      const message = attestationMessage(verdict);
+      console.error(`[self-attestation] ${verdict.reason}: ${verdict.detail}`);
+      dialog.showErrorBox('Service Hub を起動できません', message);
+      app.exit(1);
+      return;
+    }
+  }
   // 窓を作る前に配色を読む (パス 318) —— 読めなければ既定のライトで、renderer が起動後に伝え直す。
   windowPrefs = await readWindowPrefs();
   applyNativeTheme(windowPrefs.scheme);
