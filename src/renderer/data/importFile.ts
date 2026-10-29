@@ -100,6 +100,8 @@ export const BACKUP_COLLECTION_RECORD_LIMITS: Readonly<Record<string, number>> =
   'realestate-properties': 2_000,
   'shigyo-contacts': 5_000,
   'shigyo-consultations': 5_000,
+  // 専属カウンセラー: メンバー 1 人に 1 行なので、席数の上限 (Business 25) より十分広い天井。
+  'mentor-sessions': 500,
   'hydroponics-batches': 5_000,
   'kpi-budgets': 5_000,
   'kpi-actuals': 5_000,

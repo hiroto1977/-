@@ -255,6 +255,17 @@ const PAGE_CAPS: Readonly<Record<string, PageCap>> = {
       },
     },
   },
+  'pages/MentorPage.tsx': {
+    submitFn: 'onAskAi',
+    constants: {
+      MAX_ASSISTANT_CONTENT_CHARS: {
+        reads: 1,
+        bypass: [],
+        why: '専属カウンセラーへの相談文 —— 人は 1 週間分の出来事や会議の経緯を貼る。打ち止めると末尾が黙って落ち、本人の記録ごと送る口なので何が送られたか分からなくなる',
+        provenBy: 'pages/__tests__/mentorOnScreen.test.ts',
+      },
+    },
+  },
   'pages/GmailPage.tsx': {
     constants: null,
     why: '受信スレッドの件名と送信者 (取得済みデータ) を送る。利用者の入力欄 (下書き) は AI へ行かない',

@@ -452,6 +452,17 @@ const VERDICTS = {
     + '★ ただし**到達性**は 2026-09-15 まで非対称だった —— この 4 サービスは '
     + '`LOCAL_SERVICES` なのに `action:invoke` が全サービスにトークンを要求しており、'
     + 'デスクトップ版では 4 つの advise が 1 度も呼ばれなかった (パス 267 で直した)',
+  mentor:
+    '非対称は起きない (実測・パス 551) —— 否定で答えるのは `sanitizeMentorSession` (読めない保存値は '
+    + 'null) と、`mediationPlan` の `steps: null` (同意が揃わない) の 2 つで、**読み手は renderer だけ** '
+    + '(MentorPage.tsx)。main が import するのは `buildMentorSnapshot` と型 `MentorSnapshot` だけ '
+    + '(main/clients/mentor.ts) で、それは null を返さない。危機の判定は renderer の `counseling.ts` を '
+    + '注入で受けるので、この module 自身は判定を持たない',
+  team:
+    '非対称は起きない (実測・パス 551) —— この module が母集団に入ったのは `shared/mentor.ts` が '
+    + '型 `Role` を import したため (型だけの辺・値は 1 つも読まない)。否定で答える `isRole` / `can` / '
+    + '`canAssignRole` / `seatsRemaining` の読み手は renderer (members.ts / TeamPage.tsx / usePlan) だけで、'
+    + 'main 側の**出荷コード**に `src/shared/team` の読み手は 0 件 (実測: `src/main` で当たる 12 行はすべて `__tests__/` の検査)',
   talent:
     '対称 (実測・パス 260) —— 否定の枝を両側で読んだ: main は `loadTalentState` が '
     + "`{ kind: 'unreadable', reason }` を返し (talent.ts:85 / :90)、ブラウザ版は "

@@ -7,6 +7,15 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-10-29) — パス 551: 専属カウンセラー (`mentor`) —— 1 人に 1 人の AI 相談役を端末内に足す
+
+- 詳細は `docs/REMAINING_WORK.md` の「パス 551」。利用者の依頼 (人員育成のための専属 AI カウンセラー: ペルソナに寄り添う問い・チームでの動き方・関係・悩みへの助言・仲裁) を、新しいサービス `mentor` (専属カウンセラー · 分析・ツール) として実装。サービス 77・collection 24 (`mentor-sessions` · 1 人 1 行 · 機微)。
+- **設計の背骨**: 判断は `src/shared/mentor.ts` 1 つ (聞き取り 6 問 → その人に合う言い方 / 週 1 のチェックイン / 関係 / `nextPrompt` / `adviseMember` / `teamSignals` `teamPairs` / `mediationPlan` / `aiDeepDivePrompt`)。**危機が記録に在れば助言は窓口 1 件だけで AI へは送らない**・**チームへ出るのは本人が同意した集計だけ・組は両方の同意**・**仲裁の計画は本音のメモを構造上持たない**・**AI へ送るのは本人の記録と相談文だけ**。
+- **確立したパターン**: 新しいサービス + 新しい collection を足すと、両方向の census が十数本名指しする (collectionShapes / collectionSamples / roundTrip / backup / importFile / disclaimer / aiEgress / aiInputCaps / snapshotJudgement / submitGuard / namedControlExists / sampleOrigin / sidebarNumberClaims / mutateScope / dataOrigin / credentialUse / ontologyDoc / shared-judgement / zero-fold / manifest / CLAUDE.md) —— 落ちた順に台帳へ理由を書けば、それがそのまま手順書になる。`assets/manifest.webmanifest` と `.cursor/rules/00-project.mdc` は保護対象なので数を直したら `chain:append`。
+- **既知の罠 (このパスで踏んだ)**: 壊れた `team-members` の行で画面が投げる (`malformedStoreRenders`) —— 名簿は文字列の email だけに絞る / 丸ごとの `edit` は `editIfUnchanged` へ / 組の並びは保管層の順に依らせない。
+- **対照 9 方向すべて鳴る** (同意 2 / 危機 / 本音 / 断り / 送る範囲 / 比べずに書く / 天井 / 関門)。**測っていない物**: 実機 e2e の suite・実物の AI 提供者・`shared/mentor.ts` の変異検査 (`measure-next`)。
+- **次**: PR は draft のまま (マージは利用者の判断)。候補は `docs/REMAINING_WORK.md` の「残した候補」。
+
 ## 直近の作業 (2026-10-28) — パス 550: main の変異検査 (run #214 · 95.87%) の生存 46 件を仕分けて直す
 
 - 詳細は `docs/REMAINING_WORK.md` の「パス 550」。PR #843 のマージが起こした `mutation.yml` の run #214 が break (99.8) を割った (`secrets.ts` 92.66 / `vault.ts` 96.71 / `credentialTtl.ts` 94.87 / `redact.ts` 100)。

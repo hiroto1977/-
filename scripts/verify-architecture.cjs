@@ -989,7 +989,10 @@ const METRICS = [
      */
     name: 'CLAUDE.md: services registering no action',
     docFile: 'CLAUDE.md',
-    docPattern: /\*\*76 のうち (\d+) が action を 1 つも登録していない\*\*/,
+    // 「N のうち M」の M。分母 N は次の metric が別に検算する —— 2026-10-29 (パス 551) まで
+    // 分母を `76` と針に直書きしており、サービスが 77 になった日に散文を直すと
+    // 「pattern not found」で落ちた (分母の古びを「針が当たらない」としか言えない形)。
+    docPattern: /\*\*\d+ のうち (\d+) が action を 1 つも登録していない\*\*/,
     compute: () => {
       const idSrc = readFileSafe(path.join(REPO_ROOT, 'src/shared/serviceId.ts'));
       const m = idSrc.match(/SERVICE_IDS = \[([\s\S]*?)\]/);
@@ -1004,6 +1007,19 @@ const METRICS = [
         if (!readFileSafe(f).includes('export const ACTIONS')) none += 1;
       }
       return none;
+    },
+  },
+  {
+    /** 上の行の分母 —— サービス数は `SERVICE_IDS` から導く (直書きしない)。 */
+    name: 'CLAUDE.md: services registering no action (denominator)',
+    docFile: 'CLAUDE.md',
+    docPattern: /\*\*(\d+) のうち \d+ が action を 1 つも登録していない\*\*/,
+    compute: () => {
+      const idSrc = readFileSafe(path.join(REPO_ROOT, 'src/shared/serviceId.ts'));
+      const m = idSrc.match(/SERVICE_IDS = \[([\s\S]*?)\]/);
+      if (!m) return null;
+      const ids = [...m[1].matchAll(/^\s*'([a-z][a-z0-9-]*)'\s*,/gm)].map((x) => x[1]);
+      return ids.length === 0 ? null : ids.length;
     },
   },
   /*

@@ -79,6 +79,11 @@ export const SAMPLES: Readonly<Record<string, Sample>> = {
     optional: [],
     enumOut: [['status', '不明']],
   },
+  'mentor-sessions': {
+    good: { member: 'a@example.com', answers: { style: '率直に' }, checkins: [], relations: [], shareWithTeam: false },
+    required: ['member', 'answers', 'checkins', 'relations', 'shareWithTeam'],
+    optional: [],
+  },
   'realestate-properties': {
     good: { name: 'A', type: 'apartment', monthlyRent: 100, purchasePrice: 1000, occupied: true, monthlyExpenses: 1, monthlyLoan: 2 },
     required: ['name', 'type', 'monthlyRent', 'purchasePrice', 'occupied'],

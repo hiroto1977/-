@@ -528,6 +528,7 @@ export const PERSONAL_DATA_LABELS: Readonly<Record<string, string>> = {
   'shigyo-contacts': '士業の連絡先 (電話番号・メールアドレス)',
   'bank-submission-settings': '提出者情報 (代表者名・住所)',
   'shigyo-consultations': '士業の相談記録 (相談日・相談テーマ)',
+  'mentor-sessions': '専属カウンセラーの記録 (聞き取り・チェックイン・同僚との関係)',
 };
 
 export function plaintextExposure(records: readonly { readonly collection: string }[]): PlaintextExposure {

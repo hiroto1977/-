@@ -3099,6 +3099,14 @@
       "leafCount": 128,
       "note": "update secrets.ts,vault.ts,credentialTtl.ts",
       "hash": "208dc542c68e178d0f7c44755cbd74e7bbbcc83d7245b2b221e56d90b8510495"
+    },
+    {
+      "index": 371,
+      "prevHash": "208dc542c68e178d0f7c44755cbd74e7bbbcc83d7245b2b221e56d90b8510495",
+      "merkleRoot": "e2226754991e5c460d2b5fed2c1f631dbaa5c76b4714992e05028377e7808598",
+      "leafCount": 128,
+      "note": "update 00-project.mdc,manifest.webmanifest",
+      "hash": "8a7a0455d3002dd96576ada32285ff7f5629548d645dd0d38f9f700176d6f66e"
     }
   ],
   "tipManifest": {
@@ -3106,7 +3114,7 @@
     ".claude/agents/mechanic.md": "fedb7fe67017550081fc9fcae90805362f3557823d56fbed83b3d2922dac3960",
     ".claude/agents/scout.md": "78db2996e39470b38ec29df5a10791a49f65d04594fbe4d77b739770f9330bef",
     ".claude/settings.json": "f3add3b9e10ff80d5c7e4877232164abcdb5dad3f2a4e7ba2d6a17cd54284a42",
-    ".cursor/rules/00-project.mdc": "44a587314329017bbc7f83033ca3c9bcafbfc1fbdcac0776f9ba66685bc49092",
+    ".cursor/rules/00-project.mdc": "5945e78dfabb45faed69b7d9460ed5d48a021abbceb6f5e49f3c0d770909a66d",
     ".cursor/rules/10-boundaries.mdc": "14c2aad731d81125a16c07a78ded8098126642432fdd36aea50dce409e706972",
     ".cursor/rules/20-gates.mdc": "821205069a9f0fae121e92be6826342bce6e765a34bea95c7ebc36c57b234da4",
     ".cursor/rules/30-conventions.mdc": "ecc268597f19300ff8c9e574d25ae92f34f6ddb9ec13776fb5162c32f6c0ba50",
@@ -3119,7 +3127,7 @@
     ".github/workflows/pages.yml": "42cc166f06c028477195e1243f5a85e277ad5d966840b6894d118635444a42e0",
     ".github/workflows/release.yml": "bcdba014a91d2d2f3c86d767bc89fa3610472de8e0af204b7ef9428abe3ca2de",
     "assets/icon.svg": "213373cc2e82c0255c103b47cfb880cad685935cd1d4c383746a6202315d540f",
-    "assets/manifest.webmanifest": "2a36e499f82502b878302f7698aeb15aae992a8139b9dea774658ae8c36f959b",
+    "assets/manifest.webmanifest": "3906cd174c46400b36821d7358deb6d93da7197b6815d0d851b2517e8f370b9e",
     "assets/og.png": "1fcc1b3974eec00de79ab6d37272f39529905a3448017dc24ee0f03e979b7282",
     "assets/sw.js": "0320f925b8da1242c0aa3783e332a8abb87323331767aeebcab7dab309f6189d",
     "docs/PROXY_EXAMPLE.md": "c2f4987d6e53a3cbfae921dcc33582522abb4c587b519795296e3b3dc4edd06b",

@@ -71,6 +71,7 @@ import { DocstudioPage } from './pages/DocstudioPage';
 import { CursorPage } from './pages/CursorPage';
 import { ChartsPage } from './pages/ChartsPage';
 import { TalentPage } from './pages/TalentPage';
+import { MentorPage } from './pages/MentorPage';
 import { HydroponicsPage } from './pages/HydroponicsPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
@@ -697,6 +698,14 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'JI',
     description: '組織病の診断・登用判定・達成確率100%キープ・育成ロードマップ',
     page: TalentPage,
+    category: 'tools',
+  },
+  {
+    id: 'mentor',
+    label: '専属カウンセラー',
+    icon: 'MC',
+    description: 'メンバー 1 人に 1 人の相談役 — 聞き取り・週 1 のチェックイン・関係の仲介・その人に合う助言 (端末内・同意した集計だけチームへ)',
+    page: MentorPage,
     category: 'tools',
   },
   {

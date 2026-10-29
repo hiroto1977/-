@@ -47,7 +47,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `document` **文書** | ARCHITECTURE の file:line と live metric・CLAUDE.md の数・REMAINING_WORK の生成ブロック。散文で述べた規則は落ちないので、数は機械が持つ。 | `docs/ARCHITECTURE.md`<br>`CLAUDE.md`<br>`docs/SESSION_HANDOFF.md`<br>`docs/REMAINING_WORK.md`<br>`docs/ONTOLOGY.md` | `scripts/verify-architecture.cjs`<br>`scripts/cross-doc-consistency.cjs`<br>`src/shared/__tests__/ontologyDoc.test.ts` |
 | `workflow` **CI の workflow** | permissions 明示・第三者 action の SHA 固定・pull_request_target 禁止。週次の依存監査は常設 Issue 1 つ。 | `.github/workflows/ci.yml`<br>`.github/workflows/e2e.yml`<br>`.github/workflows/dependency-audit.yml`<br>`.github/workflows/release.yml` | `scripts/lint-workflow-security.cjs`<br>`src/shared/__tests__/workflowSecurityWitness.test.ts`<br>`src/shared/__tests__/dependencyAuditWorkflow.test.ts` |
 
-## 3. サービスの facet 行列 (76)
+## 3. サービスの facet 行列 (77)
 
 | id | 配置 | 出所 | 資格情報 | local | OAuth | 士業 | デスクトップの action | ブラウザ版の action | デスクトップだけ |
 |---|---|---|---|:---:|:---:|:---:|---|---|---|
@@ -91,6 +91,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `line` | integrations | sample | none |  |  |  | — | — | — |
 | `linear` | integrations | sample | none |  |  |  | — | — | — |
 | `linux` | tools | local | none | ✅ |  |  | — | — | — |
+| `mentor` | tools | sample | none | ✅ |  |  | — | — | — |
 | `microsoft-365` | integrations | remote | fetch |  | ✅ |  | `create-event` `send-mail` | `create-event` `send-mail` | — |
 | `moneyforward` | integrations | sample | none | ✅ |  |  | — | — | — |
 | `mutual-funds` | tools | sample | none | ✅ |  |  | `advise` `record-entry` | `advise` `record-entry` | — |
@@ -130,10 +131,10 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 
 集計:
 
-- 配置: おすすめ 12 / 士業連携 8 / 分析・ツール 21 / 外部サービス連携 33 / 消費されるだけ 2
-- 出所: remote 15 / local 19 / sample 42
-- 資格情報の読み手 — fetch 15 / action 7 / none 54
-- LOCAL_SERVICES 53 / OAuth 10 / action を持つ 27 / デスクトップだけの action 10
+- 配置: おすすめ 12 / 士業連携 8 / 分析・ツール 22 / 外部サービス連携 33 / 消費されるだけ 2
+- 出所: remote 15 / local 19 / sample 43
+- 資格情報の読み手 — fetch 15 / action 7 / none 55
+- LOCAL_SERVICES 54 / OAuth 10 / action を持つ 27 / デスクトップだけの action 10
 
 ## 4. facet の公理と例外
 

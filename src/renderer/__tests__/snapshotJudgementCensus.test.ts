@@ -175,6 +175,30 @@ const LEDGER: readonly { file: string; handler: string; kind: 'export' | 'apply-
     why: '連絡先の行を編集の欄へ写すだけで、保管層へは書かない。保存は編集の欄の値 (利用者が見て直した値) を行ごと書く —— 利用者が確かめた値で、保管層の記録について何かを決めるのではない。',
   },
   {
+    file: 'src/renderer/pages/MentorPage.tsx',
+    handler: 'onAnswer',
+    kind: 'apply-shown',
+    why: '画面に出している問いへの答えを、本人の行 (開いた時の中身) に重ねて書く。書く側は `editIfUnchanged(id, 開いた時の中身, next)` で**開いた時の行と比べてから書き**、行が無ければ `readRecordsNow` で保管層を読み直してから足す (パス 499 / 500 の形)。写しは「何を見せたか」を決めるだけで、保管層の記録についての判定は書く口が持つ。',
+  },
+  {
+    file: 'src/renderer/pages/MentorPage.tsx',
+    handler: 'onRelation',
+    kind: 'apply-shown',
+    why: '同上 —— 相手との関係 (信頼度・メモ) を本人の行に重ねる。書く口は `onAnswer` と同じ `persist` (比べてから書く)。',
+  },
+  {
+    file: 'src/renderer/pages/MentorPage.tsx',
+    handler: 'onConsent',
+    kind: 'apply-shown',
+    why: '同上 —— 「チームで使ってよい」の同意を本人の行に重ねる。書く口は `onAnswer` と同じ `persist` (比べてから書く)。',
+  },
+  {
+    file: 'src/renderer/pages/MentorPage.tsx',
+    handler: 'onAskAi',
+    kind: 'export',
+    why: '画面に出している本人の記録 (聞き取り・直近 3 回のチェックイン) と相談文を AI へ送る。送るのは利用者が今見ている物で、保管層へは書かない。',
+  },
+  {
     file: 'src/renderer/pages/MutualFundsPage.tsx',
     handler: '<onClick>→onStartEditHolding',
     kind: 'show',

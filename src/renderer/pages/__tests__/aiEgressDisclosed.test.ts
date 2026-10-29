@@ -362,6 +362,7 @@ describe('画面ごとに「何を送るか」を自分の言葉で埋めてい�
     'SkillsPage.tsx',
     'AssistantPage.tsx',
     'VillagePage.tsx',
+    'MentorPage.tsx',
   ];
 
   it('★ 走査規則が実物に当たる (入れ子のテンプレートで切れない)', () => {

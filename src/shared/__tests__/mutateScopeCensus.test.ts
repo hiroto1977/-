@@ -112,6 +112,7 @@ const LEDGER: Readonly<Record<string, { kind: Kind; why: string }>> = {
   'src/shared/connectors/mcpConnectors.ts': { kind: 'data', why: 'MCP サーバの宣言的レジストリ。docs/MCP_SETUP.md と 1 対 1 で、判断は持たない。' },
   'src/shared/freeeIntake.ts': { kind: 'measure-next', why: '会計連携で落ちた取引を数えて述べる (パス 153)。数え落としは画面の数字を静かに変える。' },
   'src/shared/hydroponicsControl.ts': { kind: 'measure-next', why: '**1,417 行の運転管理**。日々の測定から判定と次の作業を出す、この機能の中核の判断。2026-09-22 (パス 399) に測った —— **67.15% / 覆われた分 68.20%・Killed 652 / Survived 304 / NoCoverage 15**。`thresholds.break = 99.8` を大きく下回るので**入れれば週次 CI が永続的に赤くなる**。生存を潰すのが先で、`audit:survivors` はここでは全件に使えない (1 変異体 3 分 02 秒 × 321 件 ≒ 16 時間・`--top=N` の標本で見る)。2026-09-23 (パス 420) に **1,390 → 1,417 行** —— 保管値の id を文へ入れる天井 (`batchIdText` / `cropIdText`) を足した分で、**この数はこの検査が機械で引き直させた**。' },
+  'src/shared/mentor.ts': { kind: 'measure-next', why: '専属カウンセラーの純ロジック (パス 551)。聞き取りの順序・助言の重さ (危機は 1 件だけ)・チームへ出す集計の同意の門・仲裁の手順がメモを引用しないこと、を決める。判断を持つので入れる側だが、未測定。' },
   'src/shared/nortonDetection.ts': { kind: 'measure-next', why: '「見た結果」と「見られなかった」を分ける (パス 165)。安全の名乗りを作る側。' },
   'src/shared/paperAccount.ts': { kind: 'measure-next', why: '取引 0 件の口座を「損益 ±0」と言わない判断 (パス 189)。e2e の suite が別に在る。' },
   'src/shared/parameterConsistency.ts': { kind: 'measure-next', why: '台帳 (parameters.ts) の欄と欄の順序・相異を検める。ここが緩むと設定できる値の関門が消える。' },

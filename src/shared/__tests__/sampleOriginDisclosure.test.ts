@@ -58,6 +58,7 @@ const LEDGER: Partial<Record<ServiceId, string>> = {
   'sme-consultant': 'records — 同上',
   'patent-attorney': 'records — 同上',
   tax: 'records — 試算の入力は利用者のもの。説明も「概算」と述べている',
+  mentor: 'records — 画面は記録ストア (mentor-sessions) と team-members から作る。fetcher が返すのは聞き取りの問いの台帳だけで、人の記録の見本は 1 件も持たない。説明は「端末内」と述べている (パス 551)',
   sales: 'derived — 画面は記録ストアから作る。実測でバッジも出ない。説明は「ローカル保存・実データ」',
   team: 'derived — 同上 (メンバーはプランと記録から)',
   overview: 'derived — 同上。説明は「実データ集約」',
