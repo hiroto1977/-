@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 374
+- ブロック数: 375
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `19a08b86ab8ea05a9b64dc5249a046adfb767466cd9d311fa7301e9c77e77363`
+- 末尾(tip)ハッシュ: `5d14b178bcaef1a3fa697701af789c7ae170b126868c3b02330368d16d82d7c6`
 - 保護対象: 131 ファイル
 
 ## ブロック
@@ -387,6 +387,7 @@
 | 371 | `e2226754991e5c46` | `208dc542c68e178d` | `8a7a0455d3002dd9` | update 00-project.mdc,manifest.webmanifest |
 | 372 | `1632c6ebecc548f5` | `8a7a0455d3002dd9` | `7e8db84e5e9a20ec` | update integrity-chain.cjs,main.ts,userPresence.ts,actionTier.ts,outboundContentGate.ts,promptInjection.ts |
 | 373 | `fcfdb6029d58f67f` | `7e8db84e5e9a20ec` | `19a08b86ab8ea05a` | update outboundContentGate.ts |
+| 374 | `eb99626448fac019` | `19a08b86ab8ea05a` | `5d14b178bcaef1a3` | update outboundContentGate.ts |
 
 ## 保護対象ファイル
 

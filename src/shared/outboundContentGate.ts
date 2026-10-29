@@ -161,10 +161,10 @@ function digitRuns(text: string): string[] {
   // 数字と単独の区切り (空白 / ハイフン) の並びを 1 つの「走り」として取り、区切りで群に分ける。
   // 群の連続する並びのうち桁の合計が 12〜19 の物をすべて候補にする —— 「鍵 … 0123456789 1234-5678-9018」
   // のように別の数字が隣接しても、個人番号の 12 桁が長い走りに飲まれて見えなくならないように。
-  const re = /(?<!\d)\d(?:[ \-]?\d){10,}(?!\d)/g;
+  const re = /(?<!\d)\d(?:[ -]?\d){10,}(?!\d)/g;
   let m: RegExpExecArray | null;
   while ((m = re.exec(text)) !== null) {
-    const groups = m[0].split(/[ \-]/).filter((g) => g.length > 0);
+    const groups = m[0].split(/[ -]/).filter((g) => g.length > 0);
     for (let i = 0; i < groups.length; i++) {
       let digits = '';
       for (let j = i; j < groups.length; j++) {
