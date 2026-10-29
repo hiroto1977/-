@@ -593,7 +593,12 @@ export function workloadDistribution(
   const byKey = new Map(sessions.map((s) => [s.member, s] as const));
   const consented: { member: MentorMember; session: MentorSession }[] = [];
   let withoutConsent = 0;
+  // 名簿の鍵は 1 人 1 行 (同じ鍵が 2 度来たら先を採る) —— 名簿の保存値に同じメールが 2 件在ると
+  // (招待は断るが、復元や古い控えで入りうる・パス 125)、同じ人の平均を 2 度分母に足して全員の負担率が薄まる。
+  const seen = new Set<string>();
   for (const m of members) {
+    if (seen.has(m.key)) continue;
+    seen.add(m.key);
     const s = byKey.get(m.key);
     if (s === undefined || !s.shareWithTeam) {
       withoutConsent += 1;

@@ -102,6 +102,8 @@ export const BACKUP_COLLECTION_RECORD_LIMITS: Readonly<Record<string, number>> =
   'shigyo-consultations': 5_000,
   // 専属カウンセラー: メンバー 1 人に 1 行なので、席数の上限 (Business 25) より十分広い天井。
   'mentor-sessions': 500,
+  // 業務の割当 (パス 556): 一覧は窓を掛けるが表は全行を集計する。1 人 20 件 × 席数の上限より十分広い天井。
+  'work-assignments': 5_000,
   'hydroponics-batches': 5_000,
   'kpi-budgets': 5_000,
   'kpi-actuals': 5_000,

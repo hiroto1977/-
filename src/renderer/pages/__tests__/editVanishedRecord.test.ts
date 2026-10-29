@@ -265,7 +265,7 @@ describe('士業 — 編集中の連絡先・相談が別のタブで消され�
 });
 
 describe('チーム — 役割を変える間に別のタブで消された (読み直しの後・書く前)', () => {
-  const memberRows = (): HTMLTableRowElement[] => Array.from(container.querySelectorAll('tbody tr'));
+  const memberRows = (): HTMLTableRowElement[] => Array.from(container.querySelectorAll('[data-member-list] tbody tr'));
 
   it('★ 断りを出し、消えたメンバーを作り直さない', async () => {
     await getRecordStore().insert(MEMBERS_COLLECTION, { name: 'A', email: 'a@example.com', role: 'owner' });

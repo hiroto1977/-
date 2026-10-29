@@ -327,6 +327,7 @@
     "src/shared/waterCyclePlanner.ts",
     "src/shared/welfareDocs.ts",
     "src/shared/welfareScheme.ts",
+    "src/shared/workAssignment.ts",
     "src/shared/writeFieldLimits.ts",
     "src/shared/zoningPlanner.ts"
   ],

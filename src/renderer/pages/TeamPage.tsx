@@ -37,6 +37,7 @@ import { displayField } from '../../shared/apiResponse';
 import { MAX_MEMBER_NAME_CHARS, MAX_MEMBER_EMAIL_LEN } from '../data/members';
 import { mentorRoster, storedMentorSessions } from '../data/mentorRoster';
 import { WorkloadShareTable } from '../components/WorkloadShareTable';
+import { WorkAssignmentsPanel } from '../components/WorkAssignmentsPanel';
 import { localIsoDate } from '../../shared/localDate';
 import { MENTOR_COLLECTION, workloadDistribution, type MentorSession } from '../../shared/mentor';
 
@@ -230,9 +231,10 @@ export function TeamPage() {
    */
   const sessions = useCollection<MentorSession>(MENTOR_COLLECTION);
   const today = localIsoDate();
+  const roster = useMemo(() => mentorRoster(records), [records]);
   const workload = useMemo(
-    () => workloadDistribution(storedMentorSessions(sessions.records).map((s) => s.session), mentorRoster(records), today),
-    [sessions.records, records, today],
+    () => workloadDistribution(storedMentorSessions(sessions.records).map((s) => s.session), roster, today),
+    [sessions.records, roster, today],
   );
   const planDef = getPlan(plan);
   const usage = { used: records.length, limit: planDef.maxSeats };
@@ -400,7 +402,7 @@ export function TeamPage() {
           </p>
         ) : (
           <>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+          <table data-member-list style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
             <thead>
               <tr style={{ textAlign: 'left', color: 'var(--text-mute)' }}>
                 <th style={{ padding: '4px 8px' }}>氏名</th>
@@ -454,6 +456,10 @@ export function TeamPage() {
 
       <Section title="ひとりひとりの負担（専属カウンセラーのチェックインの集計）" count={workload.rows.length}>
         <WorkloadShareTable distribution={workload} />
+      </Section>
+
+      <Section title="業務の割当と、時間で見た負担" count={roster.length}>
+        <WorkAssignmentsPanel roster={roster} />
       </Section>
 
       <Section title="給与・賞与の概算 (通勤手当の非課税限度・賞与の源泉徴収)">

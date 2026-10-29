@@ -128,6 +128,9 @@ const FIELD_SHAPES: Readonly<Record<string, CollectionShape>> = {
   // 専属カウンセラー (パス 551): 入れ子 (answers / checkins / relations) の中身は `shared/mentor.ts` の
   // `sanitizeMentorSession` が読むときに項目ごとに落とす (形で行ごと捨てると復元で記録を失う)。
   'mentor-sessions': shape({ member: str, answers: rec, checkins: arr, relations: arr, shareWithTeam: bool }),
+  // 業務の割当 (パス 556): 時間は数としてだけ見る —— 範囲の外 (0 以下・168 超え) は読み手 (`sanitizeAssignment`) が
+  // 「読めない記録」として集計から外し、一覧の × で消せる。形で落とすと復元で行ごと消え、利用者が消す手を失う。
+  'work-assignments': shape({ member: str, title: str, hoursPerWeek: num, note: opt(str) }),
   'realestate-properties': shape({
     name: str,
     type: str,
@@ -316,6 +319,11 @@ export const SENSITIVE_BY_CONTENT: Readonly<Record<string, { readonly fields: re
     fields: ['answers', 'checkins', 'relations', 'member'],
     why: '専属カウンセラーへの聞き取り・気分と負荷のチェックイン・同僚との関係の本音 (メールアドレスで本人に結ぶ)。'
       + '欄の名前に手がかりは無いが、持ち出せば人事と人間関係の機微そのもので、本人以外は読まない約束の記録。',
+  },
+  'work-assignments': {
+    fields: ['member', 'title', 'hoursPerWeek', 'note'],
+    why: '誰に・どの業務を・週何時間割り当てたかの記録 (メールアドレスで本人に結ぶ)。欄の名前に手がかりは無いが、'
+      + '1 人ずつの予定の労働時間と担当業務そのもので、持ち出せば労務の記録として扱うべき物。',
   },
 };
 

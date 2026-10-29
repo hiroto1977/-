@@ -111,6 +111,7 @@ const LEDGER: Readonly<Record<string, { readonly sites: number; readonly source:
   'src/renderer/components/ServiceActionPanel.tsx': { sites: 2, source: 'invoke' },
   'src/renderer/components/ShigyoConsole.tsx': { sites: 2, source: 'ownThrow' },
   'src/renderer/components/VoiceCommandBar.tsx': { sites: 1, source: 'invoke' },
+  'src/renderer/components/WorkAssignmentsPanel.tsx': { sites: 1, source: 'ownThrow', note: '`parseAssignment` (shared/workAssignment.ts) の定数の断りだけを捕まえる (try は書き手 1 つを包む)' },
   'src/renderer/data/importFile.ts': { sites: 1, source: 'ownThrow', note: '`skippedRowsDetail` (パス 496) は捕まえない —— `salesCsv` / `kpiActualsCsv` が捕まえた行ごとの理由 (この台帳のその 2 行) を取り込みの知らせへ並べて運ぶ。文は書き手の定数と、KPI の重複の文に入る利用者自身の事業名 (64 文字まで) だけ' },
   'src/renderer/data/kpiActualsCsv.ts': { sites: 1, source: 'ownThrow', note: 'CSV の行ごとの解析' },
   'src/renderer/data/salesCsv.ts': { sites: 1, source: 'ownThrow', note: 'CSV の行ごとの解析' },

@@ -53,6 +53,14 @@ describe('負担率 (workloadDistribution)', () => {
     expect(Math.abs(sum - 100)).toBeLessThan(0.11);
   });
 
+  it('★ 名簿に同じ鍵が 2 度来ても 1 人 1 行 (先の名前を採り、平均を 2 度分母に足さない)', () => {
+    const d = workloadDistribution([withLoads(A.key, [4, 4]), withLoads(B.key, [4, 4])], [A, { ...A, name: '別名' }, B], TODAY);
+    expect(d.rows.map((r) => [r.name, r.sharePct])).toEqual([['青木', 50], ['坂本', 50]]);
+    expect(d.counted).toBe(2);
+    expect(d.evenSharePct).toBe(50);
+    expect(d.withoutConsent).toBe(0);
+  });
+
   it('★ 同意の無い人は行にならず、人数だけが withoutConsent に出る (名前は出ない)', () => {
     const d = workloadDistribution([withLoads(A.key, [4]), withLoads(B.key, [5], false)], ROSTER, TODAY);
     expect(d.rows.map((r) => r.member)).toEqual([A.key]);

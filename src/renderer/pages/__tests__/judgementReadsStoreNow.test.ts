@@ -226,7 +226,7 @@ async function invite(name: string, email: string): Promise<void> {
   await click(buttonExact('招待'));
 }
 
-const memberRows = (): HTMLTableRowElement[] => Array.from(container.querySelectorAll('tbody tr'));
+const memberRows = (): HTMLTableRowElement[] => Array.from(container.querySelectorAll('[data-member-list] tbody tr'));
 
 describe('チーム — 同じメールと最後のオーナーを、写しではなく保管層で断る', () => {
   it('★ 一覧が届く前に同じメールで招待しても断られる', async () => {
