@@ -2145,11 +2145,11 @@ async function proxyEnvelopeSuite(browser) {
    * 確認が出て、正しいパスワードで初めて書かれる —— それを実機でも留める。
    */
   const stepUp = page.locator('[data-step-up]');
-  await stepUp.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
+  await stepUp.waitFor({ state: 'visible', timeout: 10000 });
   ok((await stepUp.count()) === 1, '★ proxyEnvelope: 保存の前に持ち主の確認 (保管庫のパスワード) が出る (T-219)');
   await stepUp.locator('input[type="password"]').fill(PASS);
   await stepUp.getByRole('button', { name: '確認して変更する' }).click();
-  await stepUp.waitFor({ state: 'detached', timeout: 10000 }).catch(() => {});
+  await stepUp.waitFor({ state: 'detached', timeout: 10000 });
   ok((await stepUp.count()) === 0, 'proxyEnvelope: 確認を通ると窓が消える (書かれた)');
   await page.waitForTimeout(600);
 
