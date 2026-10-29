@@ -3193,6 +3193,14 @@
       "leafCount": 134,
       "note": "update integrity-chain.cjs,egressStepUp.ts",
       "hash": "409f948e647640fd6fe3033263f201203713922d2a3537ed41b9127dbdb1f201"
+    },
+    {
+      "index": 382,
+      "prevHash": "409f948e647640fd6fe3033263f201203713922d2a3537ed41b9127dbdb1f201",
+      "merkleRoot": "9393a650f568c6a7892be61603045d0d116c294abea304277501063887ce6cba",
+      "leafCount": 134,
+      "note": "update vault.ts",
+      "hash": "0f82fae8c348b10921fcc2d9ad4691ad83bc3710d20175c86347b96c9aec15a0"
     }
   ],
   "tipManifest": {
@@ -3290,7 +3298,7 @@
     "src/renderer/security/frameGuard.ts": "66ad10cf7e5a48fcc4a406aa66b9de544609877944fd073c7bf3af8190991559",
     "src/renderer/security/lockWorkspace.ts": "b1e7210a61ed100c2bae43359482eaa696ad367f63a25ec463ab0ed44477aca7",
     "src/renderer/security/mnemonic.ts": "115603b18fe19a6bd651e9d7b55d6afcffa8f9695eaa1ef522b67a1b1fe71c2a",
-    "src/renderer/security/vault.ts": "587db8e882930400374cde7bd0a6af7def88e3d9861cc9baa265844544a1dc10",
+    "src/renderer/security/vault.ts": "c4ffc12dcc71afd5a455f87d5be98af3727f327f8758cc3c3e6304ab48d83ee8",
     "src/renderer/security/webCrypto.ts": "d0be2ab7b15ba0315c7dff1e9c7da482ec17d9a021aa0921d580e39c7c631964",
     "src/renderer/security/webauthn.ts": "62218ba46fdfd0adaf8f3b7c42eb9e01315a619881b50d33acfbb51b0046ea76",
     "src/shared/actionTier.ts": "4f3115a5282622956e55f3b19cbcb8ce06951a877e842bd20b01345a31abf065",

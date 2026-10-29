@@ -1022,6 +1022,10 @@ class BrowserVault implements Vault {
     try {
       // AES-GCM は認証付きなので、鍵が違えば復号が投げる —— それが「違う」の答え。
       const plain = await decryptString(passwordKey, { iv: meta.iv, ciphertext: meta.kcv });
+      // AES-GCM は認証付きなので、鍵が違えば decryptString が先に throw して下の catch が false を返す。
+      // 復号に成功して中身だけ違う状態は作れず到達しない (unlock の同じ比較と同じ理由 · 実測 2026-10-29:
+      // vault.ts の変異検査で唯一生き残った 1 件)。多重防御として残す。
+      // Stryker disable next-line ConditionalExpression: AES-GCM の認証が先に投げるので、復号できて中身だけ違う状態は作れない (等価)
       return plain === KCV_PLAINTEXT;
     } catch {
       return false;
