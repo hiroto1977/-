@@ -232,6 +232,7 @@ const MIGRATED: readonly string[] = [
   'src/shared/__tests__/aiDefenseWiring.test.ts',
   'src/main/__tests__/selfAttestationWiring.test.ts',
   'src/renderer/__tests__/browserSendClaimCensus.test.ts',
+  'src/renderer/__tests__/egressSettingWriterCensus.test.ts',
   'src/renderer/__tests__/ceilingUnitCensus.test.ts',
   'src/renderer/__tests__/cloudSyncClaims.test.ts',
   'src/renderer/__tests__/demoMixDisclosureCensus.test.ts',

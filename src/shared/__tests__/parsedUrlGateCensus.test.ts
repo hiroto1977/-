@@ -98,6 +98,10 @@ const LEDGER: readonly Row[] = [
     why: '不変条件 #5。OS へ渡すのは解析後の href' },
   { file: 'src/shared/httpLimits.ts', needle: 'new URL(location, requestUrl).host', kind: 'display',
     why: '転送を断る文に載せる行き先のホストだけ' },
+  { file: 'src/renderer/security/egressStepUp.ts', needle: 'isLoopbackHostname(new URL(base).hostname)', kind: 'predicate',
+    why: '返すのは真偽だけ (Ollama の接続先が同じ端末か) —— T-219。base は parseOllamaEndpoint が解析して組み直した物で、解析後の hostname だけを見る' },
+  { file: 'src/renderer/security/egressStepUp.ts', needle: 'const h = new URL(url).hostname;', kind: 'display',
+    why: '持ち主の確認の文に載せる送り先のホストだけ (共有秘密も path / query も映さない) —— T-219。読めなければ生の文字列ではなく「(読めない URL)」' },
   { file: 'src/shared/imageUrlGate.ts', needle: 'parsed = new URL(normalized)', kind: 'value-gate',
     why: 'パス 299。<img src> へ渡すのは解析後の href' },
   { file: 'src/shared/imageUrlGate.ts', needle: 'isPrivateOrReservedTarget(new URL(src))', kind: 'predicate',
@@ -227,7 +231,7 @@ describe('value-gate は解析後の値を返す (振る舞いで確かめる)',
    * (このリポジトリが繰り返し直してきた形)。行が増減したらここが鳴り、
    * 書き換えるときに「どの種類が増えたのか」を読むことになる。
    */
-  it('★ 種類ごとの行数は実測どおり (台帳 34 行が 35 か所を覆う)', () => {
+  it('★ 種類ごとの行数は実測どおり (台帳 36 行が 37 か所を覆う)', () => {
     const byKind = (k: Row['kind']): number => LEDGER.filter((r) => r.kind === k).length;
     expect({
       'value-gate': byKind('value-gate'),
@@ -235,10 +239,10 @@ describe('value-gate は解析後の値を返す (振る舞いで確かめる)',
       pin: byKind('pin'),
       internal: byKind('internal'),
       display: byKind('display'),
-    }).toEqual({ 'value-gate': 11, predicate: 9, pin: 4, internal: 5, display: 5 });
-    expect(LEDGER).toHaveLength(34);
+    }).toEqual({ 'value-gate': 11, predicate: 10, pin: 4, internal: 5, display: 6 });
+    expect(LEDGER).toHaveLength(36);
     // web-shim の同じ綴りの 2 行が 1 行の台帳に対応するので、か所は台帳より 1 多い。
-    expect(SITES).toHaveLength(35);
+    expect(SITES).toHaveLength(37);
     expect(VALUE_GATE_BEHAVIOR.length).toBeGreaterThanOrEqual(5);
   });
 });
