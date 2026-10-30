@@ -47,8 +47,21 @@ const PUNCT = [
 function regexAllowedAfter(prev: Tok | undefined): boolean {
   if (prev === undefined) return true;
   if (prev.kind === 'punct') return !(prev.text === ')' || prev.text === ']' || prev.text === '}');
+  // 名前以外の字句 (数・文字列・正規表現) の綴りは return / typeof / await にならないので、この判定を外しても
+  // 下の綴りの比べで同じ false になる (等価)。
+  // Stryker disable next-line ConditionalExpression: 上の注記のとおり等価 (名前でない字句の綴りは予約語にならない)
   if (prev.kind === 'ident') return prev.text === 'return' || prev.text === 'typeof' || prev.text === 'await';
   return false;
+}
+
+/**
+ * 字句が記号 `texts` のどれかか。**記号の綴りを持てるのは記号の字句だけ**で (名前・数・文字列は記号を綴りに持てない)、
+ * 注記の字句 (綴りが `)` の注記など) は構文の段がどの位置でも先に断るので、種類の判定を外す変異体は等価になる。
+ * 判定をここ 1 か所に集め、等価の理由を 1 度だけ書く。
+ */
+export function isPunctTok(t: Tok, ...texts: readonly string[]): boolean {
+  // Stryker disable next-line ConditionalExpression: 上の注記のとおり等価 (記号の綴りを持つ字句は記号か、構文の段が断る注記だけ)
+  return t.kind === 'punct' && texts.includes(t.text);
 }
 
 export function lex(file: string, src: string): Tok[] {
@@ -97,6 +110,8 @@ export function lex(file: string, src: string): Tok[] {
     }
     if (ch === "'" || ch === '"') {
       let j = i + 1;
+      // 終わりの 1 つ先 (src[length] は undefined) まで回っても、閉じていない文字列は下で同じく断る (等価)。
+      // Stryker disable next-line EqualityOperator: 上の注記のとおり等価 (閉じない文字列は下の門が同じ文で断る)
       while (j < src.length && src[j] !== ch) {
         if (src[j] === '\n') throw new MamoriError(file, pos, '文字列が行の内で閉じていません');
         j += src[j] === '\\' ? 2 : 1;
@@ -110,13 +125,15 @@ export function lex(file: string, src: string): Tok[] {
       throw new MamoriError(file, pos, 'テンプレート文字列は在りません —— `+` で繋ぎます (補間の中に式を隠させない)');
     }
     if (/[0-9]/.test(ch)) {
-      const m = /^[0-9][0-9_]*(\.[0-9]+)?/.exec(src.slice(i))!;
+      // 先頭の 1 字は数字だと上で確かめたので、一致は必ず先頭から始まる (錨 `^` は要らない —— 書くと消す変異体が等価になる)
+      const m = /[0-9][0-9_]*(\.[0-9]+)?/.exec(src.slice(i))!;
       out.push({ kind: 'number', text: m[0], pos });
       advance(m[0].length);
       continue;
     }
     if (/[A-Za-z_$]/.test(ch)) {
-      const m = /^[A-Za-z_$][\w$]*/.exec(src.slice(i))!;
+      // 先頭の 1 字は名前の頭だと上で確かめたので、一致は必ず先頭から始まる (錨は要らない)
+      const m = /[A-Za-z_$][\w$]*/.exec(src.slice(i))!;
       const word = m[0];
       // 表は自分の鍵だけで引く (`toString` などの prototype の鍵を禁止語と読まない)。
       if (Object.hasOwn(FORBIDDEN_WORDS, word)) throw new MamoriError(file, pos, FORBIDDEN_WORDS[word]!);
@@ -127,6 +144,8 @@ export function lex(file: string, src: string): Tok[] {
     if (ch === '/' && regexAllowedAfter(significant())) {
       let j = i + 1;
       let inClass = false;
+      // 終わりの 1 つ先まで回っても、閉じない正規表現は下の門が同じ文で断る (等価)。
+      // Stryker disable next-line EqualityOperator: 上の注記のとおり等価 (閉じない正規表現は下の門が断る)
       while (j < src.length) {
         const c = src[j]!;
         if (c === '\n') throw new MamoriError(file, pos, '正規表現が行の内で閉じていません');
@@ -139,6 +158,8 @@ export function lex(file: string, src: string): Tok[] {
         else if (c === '/' && !inClass) break;
         j++;
       }
+      // ★ ファイルの終わりまで閉じなかった (2026-10-30 まで黙って正規表現の字句にしていた —— 変異検査が教えた)
+      if (j >= src.length) throw new MamoriError(file, pos, '正規表現が閉じていません');
       j++;
       while (j < src.length && /[a-z]/.test(src[j]!)) j++;
       out.push({ kind: 'regex', text: src.slice(i, j), pos });
@@ -150,6 +171,8 @@ export function lex(file: string, src: string): Tok[] {
     out.push({ kind: 'punct', text: p, pos });
     advance(p.length);
   }
+  // 終わりの字句の綴りは誰も読まない (describe は種類で「ファイルの終わり」と言い、比べる所は種類を先に見る)。
+  // Stryker disable next-line StringLiteral: 上の注記のとおり等価 (終わりの字句の綴りは読まれない)
   out.push({ kind: 'eof', text: '', pos: at() });
   return out;
 }
@@ -159,11 +182,16 @@ const STOP_WORDS = new Set(['true', 'false', 'null', 'undefined', 'unknown', 'st
 export function parse(file: string, src: string): Module {
   const toks = lex(file, src);
   let k = 0;
+  // 先読みは終わりの字句で止める。構文の段は終わりの字句より先を読まない (どの先読みも終わりで止まる) ので、
+  // 上限を 1 つ外へずらしても答えは変わらない (等価)。
+  // Stryker disable next-line ArithmeticOperator: 上の注記のとおり等価 (終わりの字句より先は読まれない)
   const peek = (n = 0): Tok => toks[Math.min(k + n, toks.length - 1)]!;
   const fail = (t: Tok, reason: string): never => {
     throw new MamoriError(file, t.pos, reason);
   };
-  const isP = (text: string, n = 0): boolean => peek(n).kind === 'punct' && peek(n).text === text;
+  const isP = (text: string, n = 0): boolean => isPunctTok(peek(n), text);
+  // 語の綴りを持つ字句は名前か注記で、注記は文・項目の位置で先に読み飛ばすか断るので、種類の判定を外しても等価。
+  // Stryker disable next-line ConditionalExpression: 上の注記のとおり等価 (語の位置に注記は届かない)
   const isW = (text: string, n = 0): boolean => peek(n).kind === 'ident' && peek(n).text === text;
   const next = (): Tok => toks[k++]!;
   /** その語が在れば読んで true。 */
@@ -202,9 +230,9 @@ export function parse(file: string, src: string): Module {
       const t = peek();
       if (t.kind === 'eof') fail(t, '型が閉じていません');
       if (t.kind === 'comment' || t.kind === 'doc' || t.kind === 'header') fail(t, '型の途中に注記は置けません');
-      if (depth === 0 && t.kind === 'punct' && terminators.includes(t.text)) break;
-      if (t.kind === 'punct' && (t.text === '<' || t.text === '(' || t.text === '[' || t.text === '{')) depth++;
-      if (t.kind === 'punct' && (t.text === '>' || t.text === ')' || t.text === ']' || t.text === '}')) depth--;
+      if (depth === 0 && isPunctTok(t, ...terminators)) break;
+      if (isPunctTok(t, '<', '(', '[', '{')) depth++;
+      if (isPunctTok(t, '>', ')', ']', '}')) depth--;
       if (depth < 0) fail(t, '型の括弧が合いません');
       parts.push(next());
     }
@@ -335,7 +363,7 @@ export function parse(file: string, src: string): Module {
   const binary = (level: number): Expr => {
     if (level >= BINARY.length) return unary();
     let left = binary(level + 1);
-    while (peek().kind === 'punct' && BINARY[level]!.includes(peek().text)) {
+    while (isPunctTok(peek(), ...BINARY[level]!)) {
       const op = next();
       const right = binary(level + 1);
       left = { kind: 'binary', op: op.text, left, right, pos: op.pos };
@@ -441,8 +469,8 @@ export function parse(file: string, src: string): Module {
     for (let n = 0; ; n++) {
       const t = peek(n);
       if (t.kind === 'eof') return false;
-      if (t.kind === 'punct' && t.text === '(') depth++;
-      if (t.kind === 'punct' && t.text === ')') {
+      if (isPunctTok(t, '(')) depth++;
+      if (isPunctTok(t, ')')) {
         depth--;
         if (depth === 0) return isP('=>', n + 1);
       }
@@ -530,6 +558,8 @@ export function parse(file: string, src: string): Module {
       expectP(';');
       return { kind: 'const', exported, name, type, init, doc, pos: t.pos };
     }
+    // 'plain' は「gate でも sink でもない」の意味だけを持つ (検査器も変換も 'gate' / 'sink' と比べるだけ) —— 等価。
+    // Stryker disable next-line StringLiteral: 上の注記のとおり等価 (役割は 'gate' / 'sink' と比べられるだけ)
     let role: 'gate' | 'sink' | 'plain' = 'plain';
     if (isW('gate') || isW('sink')) role = next().text as 'gate' | 'sink';
     const isAsync = take('async');

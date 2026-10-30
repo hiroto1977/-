@@ -26,17 +26,25 @@ function prec(e: Expr): number {
       return PREC[e.op]!;
     case 'unary':
       return 8;
+    // 名前・字面・呼び出し・メンバ・new・配列はいちばん強い (9)。比べる側の強さは 1〜9 なので「より弱い」には
+    // 決してならず、枝を空にして undefined を返しても比べ (undefined < n) は同じく false になる (等価)。
+    // Stryker disable next-line ConditionalExpression: 上の注記のとおり等価 (9 と undefined はどちらも括弧を要さない)
     default:
       return 9;
   }
 }
 
-/** `??` と `||` / `&&` を括弧なしで混ぜると TypeScript が断るので、混ざる所は必ず括る。 */
+/**
+ * `??` と `||` / `&&` を括弧なしで混ぜると TypeScript が断るので、混ざる所は必ず括る。
+ *
+ * 括弧が強さの比べだけでは付かないのは「`??` の子に `||` / `&&`」の向きだけである —— 逆の向き
+ * (`||` / `&&` の子に `??`) は `??` がいちばん弱いので強さの比べで必ず括られる (変異検査が教えた:
+ * 以前の版はその向きも判定しており、その枝はどの入力でも答えを変えなかった)。
+ */
 function mixesNullish(parent: string, child: Expr): boolean {
-  if (child.kind !== 'binary') return false;
-  const a = parent === '??';
-  const b = child.op === '??';
-  return a !== b && (a ? child.op === '||' || child.op === '&&' : parent === '||' || parent === '&&');
+  // 単項の子の op は `!` / `-` / `typeof` / `await` で `||` / `&&` にならないので、種類の判定を外しても等価。
+  // Stryker disable next-line ConditionalExpression: 上の注記のとおり等価 (単項の op は || / && にならない)
+  return parent === '??' && child.kind === 'binary' && (child.op === '||' || child.op === '&&');
 }
 
 export function expr(e: Expr): string {
@@ -113,8 +121,9 @@ function stmt(s: Stmt, depth: number): string[] {
       const out = [...head, `${ind}if (${expr(s.test)}) {`, ...block(s.then, depth + 1)];
       let rest = s.otherwise;
       while (rest !== null) {
-        const elif = rest.length === 1 && rest[0]!.kind === 'if' && rest[0]!.comments.length === 0 ? rest[0]! : null;
-        if (elif !== null && elif.kind === 'if') {
+        // else の本体が注記の無い if 文 1 つだけなら `else if` に畳む (それ以外は `else { … }`)。
+        const elif = rest.length === 1 ? rest[0]! : null;
+        if (elif !== null && elif.kind === 'if' && elif.comments.length === 0) {
           out.push(`${ind}} else if (${expr(elif.test)}) {`, ...block(elif.then, depth + 1));
           rest = elif.otherwise;
         } else {
@@ -180,6 +189,9 @@ function item(it: Item, vettedLabels: readonly string[], preludeDone: { value: b
 /** 1 つのモジュールを TypeScript へ。`source` は生成物の頭に書く元の道 (リポジトリからの相対)。 */
 export function emitModule(module: Module, source: string): string {
   const labels = module.items.flatMap((it) => (it.kind === 'vetted' ? [it.label] : []));
+  // 印の前置き (VETTED / VettedKind / Vetted) は最初の vetted の前に 1 度だけ。`value` を持たない器でも
+  // `!undefined` が true なので最初の 1 度は同じく出る (器の字面を空にする変異体は等価)。
+  // Stryker disable next-line ObjectLiteral: 上の注記のとおり等価 (value を欠いた器でも最初の 1 度は出て、以後は true が入る)
   const preludeDone = { value: false };
   const lines: string[] = [
     `// 生成物 —— ${source} から Mamori のコンパイラが組んだ。手で編集しない (\`npm run mamori:build\`)。`,
@@ -191,8 +203,9 @@ export function emitModule(module: Module, source: string): string {
     const chunk = item(it, labels, preludeDone);
     if (chunk.length === 0) continue;
     const imports = (k: Item['kind'] | null): boolean => k === 'use' || k === 'extern';
-    if (prevKind !== null && !(imports(prevKind) && imports(it.kind) && it.doc.length === 0)) lines.push('');
-    else if (prevKind === null) lines.push('');
+    // 項目の間には空行 1 つ。続く import (説明の無い物) だけは詰める。最初の項目の前 (prevKind が null) も
+    // imports(null) が false なので空行になる —— null を別に判定する枝は要らない (変異検査が教えた)。
+    if (!(imports(prevKind) && imports(it.kind) && it.doc.length === 0)) lines.push('');
     lines.push(...chunk);
     prevKind = it.kind;
   }

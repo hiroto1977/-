@@ -30,6 +30,7 @@ describe('字句の誤りは文と場所を名乗る', () => {
     ['テンプレート文字列', 'const A = `x`;\n', at(1, 11, 'テンプレート文字列は在りません —— `+` で繋ぎます (補間の中に式を隠させない)')],
     ['知らない文字', 'const A = 1 @ 2;\n', at(1, 13, '知らない文字です: "@"')],
     ['行を跨ぐ正規表現', FN('  return /ab\n/;'), at(2, 10, '正規表現が行の内で閉じていません')],
+    ['ファイルの終わりで閉じない正規表現', 'const A = /ab', at(1, 11, '正規表現が閉じていません')],
   ];
   for (const [name, src, want] of CASES) {
     it(`★ ${name}`, () => expect(m0(src)).toBe(want));
@@ -70,6 +71,8 @@ describe('字句の境目', () => {
     expect(kinds('x // c\n/ 2')).toEqual(['ident:x', 'comment:c', 'punct:/', 'number:2']);
     expect(kinds('= /// d\n/a/')).toEqual(['punct:=', 'doc:d', 'regex:/a/']);
     expect(kinds('//! h\n/a/')).toEqual(['header:h', 'regex:/a/']);
+    // 注記の前の字句が正規表現を許すなら、注記を挟んでも正規表現 (注記を直前の字句に数えると割り算になる)
+    expect(kinds('= // c\n/a/')).toEqual(['punct:=', 'comment:c', 'regex:/a/']);
   });
 
   it('★ 正規表現の中の [ ] と \\/ は閉じに数えない・旗は小文字だけ', () => {
@@ -78,6 +81,9 @@ describe('字句の境目', () => {
     expect(kinds('= /[a]/b/')).toEqual(['punct:=', 'regex:/[a]/b', 'punct:/']);
     expect(kinds('= /a/gim;')).toEqual(['punct:=', 'regex:/a/gim', 'punct:;']);
     expect(kinds('= /a/G')).toEqual(['punct:=', 'regex:/a/', 'ident:G']);
+    // 旗で終わるファイルの終わりの位置 (旗の読みが 1 字先へ行き過ぎない)
+    const eof = lex('x', '/a/g').at(-1)!;
+    expect([eof.kind, eof.pos.line, eof.pos.col]).toEqual(['eof', 1, 5]);
   });
 
   it('★ 文字列の中の \\ は次の 1 字を飛ばす・逆の引用符は閉じない', () => {
@@ -127,6 +133,11 @@ describe('構文の誤りは文と場所を名乗る', () => {
     ['文の前の ///', FN('  /// 説明\n  return 1;'), at(2, 3, '`///` は関数・定数の前に置きます (文の前は `//`)')],
     ['型が閉じない', 'fn f(x: Array<string', at(1, 21, '型が閉じていません')],
     ['型の途中の注記', 'fn f(x: Array< // c\nstring>) -> void {\n}\n', at(1, 16, '型の途中に注記は置けません')],
+    ['型の途中の ///', 'fn f(x: Array< /// d\nstring>) -> void {\n}\n', at(1, 16, '型の途中に注記は置けません')],
+    ['型の途中の //!', 'fn f(x: Array< //! h\nstring>) -> void {\n}\n', at(1, 16, '型の途中に注記は置けません')],
+    ['名前でない物への代入', FN('  1 = 2;'), at(2, 5, '`;` が要ります (在ったのは `=`)')],
+    ['arrow の頭が名前でない', FN("  return 'a' => 1;"), at(2, 14, '`;` が要ります (在ったのは `=>`)')],
+    ['extern の名前の区切りが無い', 'extern sink { a b } from "x";\n', at(1, 17, '`,` が要ります (在ったのは `b`)')],
     ['型の括弧が合わない', 'fn f(x: a>) -> void {\n}\n', at(1, 10, '型の括弧が合いません')],
     ['括弧が閉じない (arrow の先読みはファイルの終わりで止まる)', FN('  return (x'), at(3, 1, '`)` が要ります (在ったのは `}`)')],
     ['型が無い', 'fn f(x: ) -> void {\n}\n', at(1, 9, '型が要ります')],
@@ -187,11 +198,11 @@ describe('構文木の形', () => {
     expect(b.map((s) => [s.kind, s.comments])).toEqual([['return', ['前']], ['comment', ['後']]]);
   });
 
-  it('★ else if は if の文 1 つを else に持つ', () => {
+  it('★ else if は if の文 1 つを else に持つ (注記は持たない)', () => {
     const b = body(FN('  if (x) {\n    return 1;\n  } else if (x) {\n    return 2;\n  }'));
     const s = b[0]!;
     if (s.kind !== 'if') throw new Error('if ではない');
-    expect(s.otherwise!.map((x) => x.kind)).toEqual(['if']);
+    expect(s.otherwise!.map((x) => [x.kind, x.comments])).toEqual([['if', []]]);
   });
 
   it('★ arrow は括弧の対で先読みする (括弧つきの式は arrow ではない)', () => {
@@ -205,6 +216,16 @@ describe('構文木の形', () => {
     expect(e('x => x').kind).toBe('arrow');
     expect(e('((x))').kind).toBe('ident');
     expect(e('(x)').kind).toBe('ident');
+  });
+
+  it('★ true / false / null / undefined は字面 (名前ではない)', () => {
+    for (const w of ['true', 'false', 'null', 'undefined']) {
+      const s = body(FN(`  return ${w};`))[0]!;
+      if (s.kind !== 'return' || s.value === null) throw new Error('return ではない');
+      expect([s.value.kind, s.value.kind === 'literal' ? s.value.value : null]).toEqual(['literal', w]);
+    }
+    const s = body(FN('  return truthy;'))[0]!;
+    if (s.kind === 'return') expect(s.value?.kind).toBe('ident');
   });
 
   it('★ new は名前とメンバの鎖を呼ぶ側に取る', () => {

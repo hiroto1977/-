@@ -332,13 +332,9 @@ const MUST_MEASURE = {
  * 次に読む人が「まだ測っていない」と誤解する)。
  */
 const KNOWN_UNMEASURED = {
-  // 2026-10-30 (T-221 · パス 560)。Mamori のコンパイラ。判断の中身 (来歴の規則 M0〜M6) は mamoriRules.test.ts が規則ごとに
-  // 破るプログラムで留め (7 方向の対照がそれぞれ狙った検査で鳴る)、変換は mamoriGenerated.test.ts が実物の 5 本の
-  // 生成物と 1 byte の一致で留める。変異検査はまだ測っていない —— 測って 100% にしてから mutate へ入れる (残作業)。
-  'src/shared/mamori/parser.ts': 'Mamori の字句・構文解析。規則は mamoriRules.test.ts が破るプログラムで、変換は mamoriGenerated.test.ts が 1 byte の一致で留める。変異検査は未測定 (残作業)。',
-  'src/shared/mamori/checker.ts': 'Mamori の来歴の規則 (M1〜M6)。規則ごとに破るプログラムを mamoriRules.test.ts が当て、7 方向の対照で確かめた。変異検査は未測定 (残作業)。',
-  'src/shared/mamori/emit.ts': 'Mamori → TypeScript の変換。実物の 5 本の生成物と 1 byte の一致を mamoriGenerated.test.ts が見る。変異検査は未測定 (残作業)。',
-  'src/shared/mamori/compile.ts': 'Mamori のコンパイラの入口 (誤りが在れば何も出さない)。mamoriRules.test.ts が留める。変異検査は未測定 (残作業)。',
+  // 2026-10-30 (T-221 · パス 560)。Mamori のコンパイラの parser / checker / emit / compile は変異検査を測り 100% にして
+  // mutate へ移した (初回 75.51% / 77.18% —— 生存は規則を式の奥に置く検査・誤りの文・変換の全形の golden が無かったこと)。
+  // 残るのは型だけのファイル。
   'src/shared/mamori/ast.ts': '構文木の型だけ (実行時に何も残らない)。',
   // 2026-10-30 (T-220 · パス 559)。印の型だけのファイル —— 実行時に何も残らない (`declare const` と `type` だけ) ので
   // 変異体が 1 つも作れない。守りは**コンパイル時**に在り、それは osSinks.test.ts / vettedSinks.test.ts / vettedTypes.test.ts の
