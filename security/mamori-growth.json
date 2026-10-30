@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.1"
+    "version": "0.2"
   },
   "constructs": {
     "class": {
@@ -168,5 +168,86 @@
       "risk": "来歴には触れない (数を作る演算)。"
     }
   },
-  "cycles": []
+  "cycles": [
+    {
+      "id": "MG-001",
+      "date": "2026-10-30",
+      "kind": "feature",
+      "target": "src/shared/mamori/parser.ts",
+      "pickedBy": "manual",
+      "deviation": "この輪 (brief) はこの周の中で作った —— brief が在る前に、利用者の依頼「言語を育てて」で 0.2 の構文と T-224 の直しを先に決めた",
+      "briefPick": "port:src/shared/controlChars.ts",
+      "version": "0.2",
+      "features": [
+        "オブジェクトリテラル (__proto__ 鍵・spread・計算した鍵は断る)",
+        "三項演算子 (印は両方の枝が同じ印のときだけ残る)",
+        "switch (落ち抜けを作らない・case の終わりは return / throw / break)",
+        "throw",
+        "for (const x of xs) + break / continue (ループ変数は印を持たない)",
+        "type 別名 (先頭の | で複数行) と interface",
+        "field x.k (unknown から欄を読む唯一の形)"
+      ],
+      "added": [],
+      "rewrite": [],
+      "ported": [
+        "src/shared/proxyEndpoint.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "String.constructor(code)() で eval の代わりに文字列をコードとして走らせる (0.1 では通り、生成した TS を node で走らせると 42 が返った)",
+          "result": "hole"
+        },
+        {
+          "tried": "''.constructor.constructor(code) / [].constructor で Function へ届く",
+          "result": "hole"
+        },
+        {
+          "tried": "Object.setPrototypeOf / Object.defineProperty で組み込みの原型を書き換える (0.1 では純粋な組み込みとして素通り)",
+          "result": "hole"
+        },
+        {
+          "tried": "オブジェクトリテラルの { __proto__: x } / { '__proto__': x } で原型を差し替える",
+          "result": "refused"
+        },
+        {
+          "tried": "三項の片方の枝だけ印つきの値にして印を偽造する",
+          "result": "refused"
+        },
+        {
+          "tried": "switch の落ち抜けで印を確かめる case を飛ばす",
+          "result": "refused"
+        },
+        {
+          "tried": "for…of のループ変数を印つきとして sink へ渡す",
+          "result": "refused"
+        },
+        {
+          "tried": "オブジェクトの値に危ない口を包んで sink の外へ持ち出す",
+          "result": "refused"
+        },
+        {
+          "tried": "引数・const・回す変数・このモジュールの関数の名前へ代入する (0.1 は「このモジュールの名前か」しか見ず tsc に任せていた —— 引数への代入は tsc も通す。変異検査の生存が教えた)",
+          "result": "refused"
+        }
+      ],
+      "threats": [
+        "T-224"
+      ],
+      "controls": 12,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/checker.ts",
+          "src/shared/mamori/emit.ts",
+          "src/shared/mamori/compile.ts",
+          "src/shared/proxyEndpoint.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 847,
+        "summary": "0.1 の穴 T-224 (constructor 経由の Function・Object の原型書き換え) を塞ぎ、0.2 の構文 7 種を足し、proxyEndpoint を Mamori へ移した"
+      }
+    }
+  ]
 }
