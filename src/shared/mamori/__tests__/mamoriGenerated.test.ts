@@ -24,6 +24,7 @@ const EXPECTED = [
   'src/renderer/vettedSinks.mamori',
   'src/shared/externalUrlGate.mamori',
   'src/shared/imageUrlGate.mamori',
+  'src/shared/proxyEndpoint.mamori',
   'src/shared/vetted.mamori',
 ];
 

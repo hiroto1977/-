@@ -162,6 +162,8 @@ const PROTECTED = [
   'src/main/clients/exportSink.ts',
   // 画像の取得先の関門 (Mamori) と <img> の唯一の口 (パス 560 · SINK_LEDGER の typed)。生成物 imageUrlGate.ts は既に保護対象。
   'src/shared/imageUrlGate.mamori',
+  // BYO プロキシの送り先の検証 (資格情報のほぼ全部が通る口) —— Mamori 0.2 で書き直した (パス 563)。生成物 proxyEndpoint.ts は既に保護対象。
+  'src/shared/proxyEndpoint.mamori',
   'src/renderer/components/VettedImg.tsx',
   'src/renderer/components/VettedLink.tsx',
   'src/shared/mamori/ast.ts',

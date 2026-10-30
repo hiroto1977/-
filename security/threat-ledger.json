@@ -3778,6 +3778,21 @@
         "file": "src/shared/__tests__/threatWatchDigest.test.ts",
         "test": "★ 急増した種類 1 つずつに判断が要る: 足す / 既にいる赤が受け持つ / 該当しない理由"
       }
+    },
+    {
+      "id": "T-224",
+      "found": "2026-10-30",
+      "foundBy": "利用者の依頼「言語を育てて」。構文を足す前に、0.1 が `eval` を禁じながら同じことのできる道を持っていないかを実物のコンパイラで試した —— `String.constructor(code)()` と `''.constructor.constructor(code)()` はコンパイラも変換後の `tsc --strict` も通し、node で実行すると文字列がコードとして走った (`String.constructor('return 6*7')()` が 42)。宣言なしで使える組み込み `Object` も `Object.setPrototypeOf(Object.getPrototypeOf(''), null)` (文字列の組み込みメソッドをアプリ全体で消す) を書けた。",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "medium",
+      "title": "守りの層を書く言語 Mamori 0.1 が `eval` を禁じながら、メンバの連鎖 (`.constructor`) で文字列をコードとして走らせ、組み込みの `Object` で原型を書き換えられた —— M0 / M6 は名前を見て、連鎖と組み込みのメンバを見ていなかった",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/parser.ts の FORBIDDEN_MEMBERS: `.` の後ろの `constructor` / `prototype` / `__proto__` を字句の後の段で断る (M0 · 文はどの道を塞ぐかを名乗る。メンバの呼ぶ側の連鎖・new の呼ぶ側・field の欄のすべてが同じ 1 つを通る)。src/shared/mamori/checker.ts の OBJECT_MEMBERS: 組み込みの Object は読むだけ・凍らせるだけのメンバ (hasOwn / keys / values / entries / fromEntries / freeze / isFrozen) に絞り、値として持ち出す形 (`const o = Object;` —— 別名で表を迂回する) も断る (M6)。同じパスで足したオブジェクトの字面は `__proto__` の鍵 (文字列で書いても) を断る —— 字面の `__proto__: x` は欄ではなく原型の差し替えで、この台帳の直しを TypeScript で書いたとき表の 1 行が実際にそうなって素通りした (計算した鍵で書き直した)。限界: 計算した鍵・添字 (`x[k]`) は 0.2 に入れていない —— 入れるなら鍵を実行時に組める道がこの表を迂回するので、来歴と同じく先に塞ぎ方を決める。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV02.test.ts",
+        "test": "★ String.constructor(code)() は M0 で断る (何も出さない)"
+      }
     }
   ],
   "huntBacklog": [

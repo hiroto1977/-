@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 393
+- ブロック数: 394
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `f6cfb1e38249707ce381a7b6daa6e106a6732f0d51ae201753529bc31edd5b55`
-- 保護対象: 153 ファイル
+- 末尾(tip)ハッシュ: `b90bf1ca0e5c2284f201dd9a13f843b7ff5ddd5c6facba8a813e99ef30021682`
+- 保護対象: 154 ファイル
 
 ## ブロック
 
@@ -406,6 +406,7 @@
 | 390 | `95ac773211290ab6` | `481cab63766de6c2` | `0698643af3a72623` | update checker.ts |
 | 391 | `ad6850f327de7cb5` | `0698643af3a72623` | `03aa04535e364620` | update parser.ts |
 | 392 | `da81754a5147af1d` | `03aa04535e364620` | `f6cfb1e38249707c` | update emit.ts,parser.ts |
+| 393 | `679d2ea479835b9f` | `f6cfb1e38249707c` | `b90bf1ca0e5c2284` | update integrity-chain.cjs,ast.ts,checker.ts,emit.ts,parser.ts,proxyEndpoint.mamori |
 
 ## 保護対象ファイル
 
@@ -548,6 +549,7 @@
 - `src/shared/outboundContentGate.ts`
 - `src/shared/privateTarget.ts`
 - `src/shared/promptInjection.ts`
+- `src/shared/proxyEndpoint.mamori`
 - `src/shared/proxyEndpoint.ts`
 - `src/shared/redact.ts`
 - `src/shared/safeFilename.ts`

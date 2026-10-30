@@ -30,6 +30,8 @@
 # 狩りの輪の予約へ渡す指示文 (2026-10-28 · threat: T-214)。予約されたセッションはこの文に従って狩り・直し・PR を出す。
 # 文を書き換えられると自律的に走る側の向きが変わるので、所有者のレビューを要求する。
 /docs/HUNT_CYCLE_PROMPT.md @hiroto1977
+# 言語を育てる輪の予約へ渡す指示文 (2026-10-30 · パス 563)。予約されたセッションはこの文に従って Mamori を育て、PR を出す。
+/docs/MAMORI_GROWTH_PROMPT.md @hiroto1977
 # scripts/ の木全体 (2026-10-13 · パス 513 · threat: T-003 の延長)。
 # 39 の門の執行コード (lint:malware / lint:secrets / lint:forbidden / lint:workflow-security /
 # lint:charset / lint:shell / verify-architecture ほか) はここに住む。門の script は頻繁に
@@ -106,6 +108,7 @@
 /src/main/clients/exportSink.mamori @hiroto1977
 /src/main/clients/exportSink.ts @hiroto1977
 /src/shared/imageUrlGate.mamori @hiroto1977
+/src/shared/proxyEndpoint.mamori @hiroto1977
 /src/renderer/components/VettedImg.tsx @hiroto1977
 /src/renderer/components/VettedLink.tsx @hiroto1977
 /src/shared/mamori/ @hiroto1977
@@ -286,6 +289,7 @@
 /src/shared/__tests__/huntCycle.test.ts @hiroto1977
 /src/shared/__tests__/hackerTeam.test.ts @hiroto1977
 /src/shared/__tests__/threatWatchDigest.test.ts @hiroto1977
+/src/shared/__tests__/mamoriGrowth.test.ts @hiroto1977
 /src/shared/credentialTtl.ts @hiroto1977
 /src/shared/__tests__/releaseJobSplit.test.ts @hiroto1977
 /src/shared/__tests__/workflowStructureGate.test.ts @hiroto1977

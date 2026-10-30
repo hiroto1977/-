@@ -7,6 +7,14 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-10-30) — パス 563: Mamori 0.2 を育て、育てる輪を半永久的に回す (threat: T-224)
+
+- **0.1 の穴を先に破って見つけた (T-224)**: `eval` / `Function` を禁じているのに、`String.constructor(code)()` (= `Function(code)()`) と `''.constructor.constructor` が通り、生成した TS を走らせると任意のコードが動いた (実測: 42 が返った)。`Object.setPrototypeOf` ほか原型を書き換える組み込みも素で呼べた。直し: `.` の後ろの `constructor` / `prototype` / `__proto__` を M0 で断る (`FORBIDDEN_MEMBERS`) ・組み込みの `Object` は許可した読み手 (`hasOwn` / `keys` / `values` / `entries` / `fromEntries` / `freeze` / `isFrozen`) だけで、値として持ち出すのも断る (M6)。
+- **0.2 の構文**: オブジェクトリテラル (`__proto__` の鍵・spread・計算した鍵は断る) / 三項演算子 (印は両方の枝が同じ印のときだけ残る) / `switch` (case の終わりは return / throw / break 必須 —— 落ち抜けを作らない) / `throw` / `for (const x of xs)` + break / continue (ループ変数は印を持たない) / `type` と `interface` / `field x.k` (unknown から欄を読む唯一の形)。
+- **移した壁**: `src/shared/proxyEndpoint.ts` (BYO プロキシの接続先の関門・両ビルドの出荷物) を `proxyEndpoint.mamori` の生成物に。判定は 1 つも変えていない (差は注記の位置と、テンプレート文字列を `+` へ替えた所だけ)。
+- **育てる輪**: `npm run mamori:grow -- brief|record|status` (`scripts/mamori-growth.cjs`) と台帳 `security/mamori-growth.json`。brief は守りの壁 (`lint:mutation-scope` の必ず測る壁) のうち TypeScript のままの物を数え、移せる壁 → 構文を足す → 破る、の順に 1 つ選ぶ。record は「言語を破るプログラム 3 つ以上・変異検査 100%・対照・PR」が無い周を断る。止まり (7 日 × 2) は毎日の dependency-audit が要対応として出す。週 1 の予約 `trig_01SFM9gWmvpjfYoqy1BDkF5q` (金曜 03:43 JST · 新しいセッション) が `docs/MAMORI_GROWTH_PROMPT.md` の指示文で回す —— 指示文を変えたら予約も更新する。
+- 機械: `mamoriV02.test.ts` (T-224 の回帰・変換の全形を 1 byte で・構文の誤り 25 形)・`mamoriGrowth.test.ts` 31 件。対照 12 方向すべて狙った検査で鳴る。
+
 ## 直近の作業 (2026-10-30) — パス 562: 進化役は毎日の脅威ウォッチを読む (threat: T-223)
 
 - 予約のセッションは網の方針で OSV / CISA KEV に届かない (実測: CONNECT 403)。だから毎日の dependency-audit (GitHub Actions) が常設 Issue「🔐 依存の勧告とセキュリティの床（自動更新）」の本文末尾に要約 `<!-- threat-watch-digest:v1 … -->` を埋め、狩りのセッションが GitHub の MCP でそれを読む (`scripts/lib/threat-watch-digest.cjs` が作る側と読む側の両方を持つ)。

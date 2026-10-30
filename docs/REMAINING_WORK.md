@@ -1,5 +1,28 @@
 # Service Hub — 残りの作業手順書
 
+## パス 563 (Mamori 0.2 を育てる —— 先に言語を破り (T-224)、構文を足し、守りの壁を 1 本移し、育てる輪を予約で回す) (2026-10-30)
+
+- **見つけた物 (測った)**: 構文を足す前に 0.1 を破った。`eval` / `Function` / `new Function` は M6 で断っていたが、
+  `String.constructor('return 42')()` は**何の規則にも当たらず**、生成した TS を tsc で通して node で走らせると 42 が返った (= 文字列をコードとして走らせる口)。
+  `''.constructor.constructor` / `[].constructor` も同じ。さらに `Object.setPrototypeOf(...)` / `Object.defineProperty(...)` が「純粋な組み込み」として素通りし、
+  他のモジュールの関門の判定を書き換えられた。T-224 として台帳へ。
+- **直し**: ① `FORBIDDEN_MEMBERS` (`constructor` / `prototype` / `__proto__`) を `.` の後ろ・`new` の callee の鎖・`field` の欄名で M0 として断る
+  (`__proto__` は計算した鍵で持つ —— 素のリテラル鍵は原型を設定するだけで鍵にならず、最初の版はその穴で `.__proto__` を通した)
+  ② 組み込みの `Object` は `OBJECT_MEMBERS` の 7 つだけ、値として持ち出す・`new Object()` も M6。
+- **0.2 の構文** (足すたびに「その構文で来歴の規則を外す道」を先に塞いだ): オブジェクトリテラル (`__proto__` 鍵・spread・計算した鍵は断る・
+  値は来歴の検査を通る) / 三項 (印は両方の枝が同じ印のときだけ) / `switch` (落ち抜けを作らない・積んだ label の間に注記を置かない) / `throw` /
+  `for…of` + break / continue / `type` (先頭の `|` で複数行) / `interface` / `field x.k`。
+- **移した壁**: `src/shared/proxyEndpoint.ts`。生成物と元の差は `git diff` で読み、判定の差は 0。
+- **育てる輪**: `scripts/mamori-growth.cjs` + `security/mamori-growth.json` (構文 35 種を detector と判断 (feature / rewrite / added) と risk の台帳で両方向) +
+  `docs/MAMORI_GROWTH_PROMPT.md` (予約の指示文) + 毎日の dependency-audit の節。実測の brief: 移していない壁 37 本のうち
+  書き直しだけで移せる物 3 本 (`controlChars.ts` 24 行が先頭)・次に足す構文は `index` (足すと 4 本が移せ、23 本が使う)。
+- **機械**: `mamoriV02.test.ts` (T-224 ×7・位置・Object の許可 / 拒否・変換の全形を 1 byte で・`topLevelUnion`・構文の誤り 25 形・来歴) /
+  `mamoriGrowth.test.ts` 31 件 (detector ごとの標本・注記の中では数えない・実物の台帳・brief の決定性と選ぶ順・record の断り 13 形・status・報告の配線・指示文)。
+- **対照 12 方向すべて鳴る**: A `.constructor` を通す ❌8 / B Object の許可を外す ❌2 / C 素の Object ❌1 / D `__proto__` 鍵 ❌2 / E 三項の来歴 ❌1 /
+  F 落ち抜け ❌2 / G オブジェクトの値を検めない ❌3 / H arrow の括弧 ❌1 / I 試しの数 ❌2 / J 選ぶ順 ❌2 / K 報告の要対応 ❌1 / L 変異 100 ❌2。
+- **残した物**: ① detector は正規表現の heuristic —— 「移せる」は実際に `.mamori` を書いて build が通るかで決まる (指示文にそう書いた)
+  ② 添字 (`a[i]`) / `while` / 分割代入 / 正規表現リテラル はまだ無い (台帳の feature) ③ 予約のセッションが probe を形だけ書けば通る —— 記録と PR に残るので人が見る。
+
 ## パス 562 (進化役は毎日の脅威ウォッチを読む —— 常設 Issue の要約を週 1 の狩りの brief へ) (2026-10-30)
 
 - **見つけた物 (測った)**: パス 561 が残した ③ (脅威ウォッチの「表に無い弱点の種類」を進化役へ渡す配線が無い) を閉じに行き、

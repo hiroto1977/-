@@ -1,3 +1,5 @@
+// 生成物 —— src/shared/proxyEndpoint.mamori から Mamori のコンパイラが組んだ。手で編集しない (`npm run mamori:build`)。
+// 言語の仕様は docs/MAMORI.md。生成物が元と食い違えば src/shared/mamori/__tests__/mamoriGenerated.test.ts が落ちる。
 /**
  * BYO プロキシの送り先 URL の検証 — アプリ全体で 1 つだけ持つ。
  *
@@ -6,6 +8,13 @@
  * **呼び出し側のヘッダをそのまま封筒に入れて** worker へ POST するので、
  * `Authorization: Bearer <token>` も `x-api-key` もこの URL へ流れる。
  * つまりここは**アプリが持つ資格情報のほぼ全部が通る 1 本の口**である。
+ *
+ * ## Mamori で書いてある (2026-10-30 · パス 563)
+ *
+ * 元は TypeScript で、Mamori 0.2 (オブジェクトの字面・条件演算子・switch・type / interface・`field`) を
+ * 足して書き直した。中身の判定は 1 つも変えていない。Mamori の規則のうち、ここに効くのは M0 と M6 である ——
+ * 資格情報のほぼ全部が通る口の判定から、`as` (型の書き換え)・`.constructor` (文字列をコードとして走らせる道)・
+ * 宣言していない外の名前 (`fetch` / `window` / `localStorage` ほか) が**書けない**。
  *
  * ## なぜ「保存するとき」だけでは足りないのか
  *
@@ -75,22 +84,17 @@ export function normalizeProxyEndpoint(raw: unknown): ProxyEndpointResult {
   if (countChars(text) > MAX_PROXY_URL_CHARS) return { ok: false, reason: 'too-long' };
   // 制御文字はヘッダ / URL の分断に使われうる。解析の前に落とす。
   if (hasControlChar(text)) return { ok: false, reason: 'control-char' };
-
   let parsed: URL;
   try {
     parsed = new URL(text);
   } catch {
     return { ok: false, reason: 'not-a-url' };
   }
-
   if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return { ok: false, reason: 'not-http' };
   // `https://user:pass@evil.example` のように本当の送り先を隠す形。
   if (parsed.username !== '' || parsed.password !== '') return { ok: false, reason: 'has-userinfo' };
   if (parsed.hash !== '') return { ok: false, reason: 'has-fragment' };
-  if (parsed.protocol === 'http:' && !isLoopbackHostname(parsed.hostname)) {
-    return { ok: false, reason: 'insecure-remote' };
-  }
-
+  if (parsed.protocol === 'http:' && !isLoopbackHostname(parsed.hostname)) return { ok: false, reason: 'insecure-remote' };
   return { ok: true, url: parsed.href };
 }
 
@@ -100,7 +104,7 @@ export function describeProxyEndpointFailure(reason: ProxyEndpointFailure): stri
     case 'empty':
       return 'proxy URL が不正です (空です)。';
     case 'too-long':
-      return `proxy URL が長すぎます (${MAX_PROXY_URL_CHARS} 文字まで)。`;
+      return 'proxy URL が長すぎます (' + MAX_PROXY_URL_CHARS + ' 文字まで)。';
     case 'control-char':
       return 'proxy URL に制御文字が含まれています。';
     case 'not-a-url':
@@ -114,7 +118,7 @@ export function describeProxyEndpointFailure(reason: ProxyEndpointFailure): stri
     case 'insecure-remote':
       return 'このプロキシには API トークンが乗るため http:// は使えません (平文で流れるため)。https:// にするか、localhost / 127.0.0.1 のローカル worker を指定してください。';
     case 'secret-too-long':
-      return `共有秘密が不正です (${MAX_PROXY_SECRET_CHARS} 字以内)。`;
+      return '共有秘密が不正です (' + MAX_PROXY_SECRET_CHARS + ' 字以内)。';
     case 'secret-control-char':
       return '共有秘密に改行や制御文字が含まれています (貼り付け時の折り返しをご確認ください)。';
     case 'secret-non-latin1':
@@ -123,7 +127,7 @@ export function describeProxyEndpointFailure(reason: ProxyEndpointFailure): stri
 }
 
 /**
- * 共有秘密の検証。無指定は許す (worker 側が認証を要らないこともある)。
+ * 共有秘密の検証の答え。無指定は許す (worker 側が認証を要らないこともある)。
  *
  * **この値は `x-proxy-auth` ヘッダになる** (`renderer/network/proxy.ts`)。
  * 2026-09-16 (パス 296) まで、ここは**型と長さしか見ていなかった** —— 同じ
@@ -147,6 +151,7 @@ export type ProxySecretCheck =
   | { readonly ok: true; readonly value: string | undefined }
   | { readonly ok: false; readonly reason: ProxyEndpointFailure };
 
+/** 共有秘密の検証 (答えの形と理由は {@link ProxySecretCheck} の説明)。 */
 export function checkProxySecret(secret: unknown): ProxySecretCheck {
   if (secret === undefined) return { ok: true, value: undefined };
   if (typeof secret !== 'string') return { ok: false, reason: 'secret-too-long' };
@@ -191,7 +196,8 @@ export interface StoredProxyReview {
  * という抜けができる。実際 2026-08 の監査で見つかったのがその形だった。
  *
  * `raw` は `unknown` で受ける — IndexedDB から出てくる値も、呼び出し側が
- * 組み立てた値も、型が保証されているわけではないため。
+ * 組み立てた値も、型が保証されているわけではないため。欄は `field` で読む
+ * (読んだ値は必ず `unknown` —— 型を広げる向きにしか書き換えない)。
  */
 export function reviewStoredProxyConfig(raw: unknown): StoredProxyReview {
   if (raw === null || raw === undefined) return { config: null, rejected: null };
@@ -202,8 +208,6 @@ export function reviewStoredProxyConfig(raw: unknown): StoredProxyReview {
   // **正規化後の値を持つ** —— `Headers` が前後の空白を落とすので、素の値を保存すると
   // 保存した秘密と送る秘密が違ってしまう (パス 296)。読み出しもこの 1 本を通るので、
   // 既に汚れた値が入っている端末でもここで揃う。
-  const config: ProxyCredentials = secret.value === undefined
-    ? { url: checked.url }
-    : { url: checked.url, sharedSecret: secret.value };
+  const config: ProxyCredentials = secret.value === undefined ? { url: checked.url } : { url: checked.url, sharedSecret: secret.value };
   return { config, rejected: null };
 }

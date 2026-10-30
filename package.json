@@ -41,6 +41,7 @@
     "ontology:md": "node scripts/build-ontology-md.cjs",
     "mamori:build": "node scripts/mamori.cjs",
     "mamori:check": "node scripts/mamori.cjs --check",
+    "mamori:grow": "node scripts/mamori-growth.cjs --self-test > /dev/null && node scripts/mamori-growth.cjs",
     "knowledge:export": "node scripts/export-notebooklm.cjs",
     "lint": "eslint --config eslint.config.js . --max-warnings 0",
     "lint:docs": "node scripts/cross-doc-consistency.cjs && node scripts/cross-doc-consistency.cjs --self-test",

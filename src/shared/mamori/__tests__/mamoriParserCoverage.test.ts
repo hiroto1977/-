@@ -142,8 +142,8 @@ describe('構文の誤りは文と場所を名乗る', () => {
     ['括弧が閉じない (arrow の先読みはファイルの終わりで止まる)', FN('  return (x'), at(3, 1, '`)` が要ります (在ったのは `}`)')],
     ['型が無い', 'fn f(x: ) -> void {\n}\n', at(1, 9, '型が要ります')],
     ['extern の権限が無い', 'extern foo { a } from "x";\n', at(1, 1, '`extern` の後には `sink` か `pure` を書きます (その値が危ない口か)')],
-    ['項目でない語', 'export banana;\n', at(1, 8, '項目が要ります —— use / extern / vetted / const / fn (在ったのは `banana`)')],
-    ['項目の途中でファイルが終わる', 'export', at(1, 7, '項目が要ります —— use / extern / vetted / const / fn (在ったのは ファイルの終わり)')],
+    ['項目でない語', 'export banana;\n', at(1, 8, '項目が要ります —— use / extern / vetted / type / interface / const / fn (在ったのは `banana`)')],
+    ['項目の途中でファイルが終わる', 'export', at(1, 7, '項目が要ります —— use / extern / vetted / type / interface / const / fn (在ったのは ファイルの終わり)')],
     ['先頭でない //!', 'const A = 1;\n//! 後ろ\n', at(2, 1, '`//!` はファイルの先頭だけに置きます')],
     ['/// の後に項目が無い', 'const A = 1;\n/// 説明\n', at(3, 1, '`///` の後に項目がありません')],
   ];

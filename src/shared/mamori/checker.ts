@@ -32,6 +32,17 @@ export const PURE_GLOBALS: ReadonlySet<string> = new Set([
   'URL', 'Set', 'Map', 'Promise', 'Number', 'String', 'Boolean', 'Math', 'JSON', 'Object', 'Array', 'Error', 'RegExp', 'TypeError', 'RangeError',
 ]);
 
+/**
+ * 組み込みの `Object` で使ってよいメンバ (2026-10-30 · パス 563 · threat: T-224)。
+ *
+ * `Object` は「副作用の判断を持たない」として宣言なしで使えたが、**メンバの半分はそうではない** ——
+ * `Object.setPrototypeOf(Object.getPrototypeOf(''), null)` は文字列の組み込みメソッドをアプリ全体で消し、
+ * `Object.defineProperty(…)` / `Object.assign(…)` は既にある値を書き換える。どれも 0.1 で書けた。
+ * 読むだけ・凍らせるだけのメンバに絞り、`Object` を値として持ち出す形 (`const o = Object;`) も断る
+ * (持ち出すと、この表を名前の別名で迂回できる)。
+ */
+export const OBJECT_MEMBERS: ReadonlySet<string> = new Set(['hasOwn', 'keys', 'values', 'entries', 'fromEntries', 'freeze', 'isFrozen']);
+
 /** 関数の外形 (他のモジュールから引くため)。 */
 export interface FnSignature {
   readonly module: string;
@@ -165,6 +176,11 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     switch (e.kind) {
       case 'mint':
         return e.vetted;
+      case 'cond': {
+        // 両方の枝が同じ印を持つときだけ印を運ぶ (片方でも素の値なら、その枝を通った値は関門を通っていない)。
+        const a = provenance(e.then, scopes);
+        return a === provenance(e.otherwise, scopes) ? a : null;
+      }
       case 'ident':
         return lookup(scopes, e.name)?.vetted ?? null;
       case 'unary':
@@ -226,7 +242,24 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       case 'expr':
         checkExpr(s.expr, scopes, ctx);
         return;
-      // 'comment' は何も検めない (注記の文は名前ではない) —— 枝を書かずに switch を抜ける。
+      case 'throw':
+        checkExpr(s.value, scopes, ctx);
+        return;
+      case 'for': {
+        checkExpr(s.iterable, scopes, ctx);
+        // 回す変数は印を運ばない (印の配列から取り出しても素の値 —— 失敗は閉じる向き)。
+        const loopVar = new Map<string, Binding>([[s.name, { vetted: null, authority: 'local' }]]);
+        checkBlock(s.body, [...scopes, loopVar], ctx);
+        return;
+      }
+      case 'switch':
+        checkExpr(s.test, scopes, ctx);
+        for (const c of s.cases) {
+          for (const t of c.tests) if (t !== null) checkExpr(t, scopes, ctx);
+          checkBlock(c.body, scopes, ctx);
+        }
+        return;
+      // 'comment' / 'jump' は何も検めない (注記の文は名前ではない) —— 枝を書かずに switch を抜ける。
     }
   }
 
@@ -235,7 +268,9 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       case 'ident': {
         const b = lookup(scopes, e.name);
         if (b === undefined) {
-          if (!PURE_GLOBALS.has(e.name)) {
+          if (e.name === 'Object') {
+            report('M6', e.pos, '組み込みの Object は値として持ち出せません —— `Object.hasOwn(…)` のように許したメンバを直に呼びます (持ち出すと、使ってよいメンバの表を別名で迂回できる)');
+          } else if (!PURE_GLOBALS.has(e.name)) {
             report('M6', e.pos, `宣言していない名前 ${e.name} —— 外の値は \`use\` / \`extern\` で宣言します (網・記憶・OS へ届く名前は暗黙に使えません)`);
           }
           return;
@@ -251,7 +286,25 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         e.items.forEach((x) => checkExpr(x, scopes, ctx));
         return;
       case 'member':
+        // 組み込みの Object (このモジュールの名前で隠れていない物) は、許したメンバだけ。
+        if (e.object.kind === 'ident' && e.object.name === 'Object' && lookup(scopes, 'Object') === undefined) {
+          if (!OBJECT_MEMBERS.has(e.prop)) {
+            report('M6', e.pos, `Object.${e.prop} は使えません —— 組み込みの Object で使えるのは ${[...OBJECT_MEMBERS].join(' / ')} だけです (原型や既にある値を書き換えるメンバは、他のモジュールの関門の判定まで変える)`);
+          }
+          return;
+        }
         checkExpr(e.object, scopes, ctx);
+        return;
+      case 'field':
+        checkExpr(e.object, scopes, ctx);
+        return;
+      case 'object':
+        for (const p of e.props) checkExpr(p.value, scopes, ctx);
+        return;
+      case 'cond':
+        checkExpr(e.test, scopes, ctx);
+        checkExpr(e.then, scopes, ctx);
+        checkExpr(e.otherwise, scopes, ctx);
         return;
       case 'unary':
         checkExpr(e.operand, scopes, ctx);

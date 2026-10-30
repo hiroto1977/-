@@ -1,0 +1,172 @@
+{
+  "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
+  "cadenceDays": 7,
+  "language": {
+    "version": "0.1"
+  },
+  "constructs": {
+    "class": {
+      "decision": "feature",
+      "why": "クラスは守りの層の数本 (vault ほか) が使う。",
+      "risk": "メソッドの中の this・private の欄・メソッドに gate / sink の役割を持たせるか。役割を持たせるなら、メソッドの呼び出しも M4 で印を検める (今の M4 は名前で呼んだ関数しか見ない)。"
+    },
+    "index": {
+      "decision": "feature",
+      "why": "配列とテーブルの引きに要る。",
+      "risk": "鍵を実行時に組めるので `x[\"constructor\"]` が T-224 の表を迂回する。字面の鍵は FORBIDDEN_MEMBERS を通し、字面でない鍵は数 (number) だけに限るなど、先に塞ぎ方を決める。"
+    },
+    "optional-chain": {
+      "decision": "feature",
+      "why": "null かもしれない値を読む所で多い。",
+      "risk": "`?.constructor` も T-224 の表を通す (memberName を共有する)。印の値に ?. を付けた結果は印を運ばない。"
+    },
+    "non-null": {
+      "decision": "rewrite",
+      "why": "後置の ! は null でないと型に言わせるだけで確かめない。=== null で確かめてから使う形へ書き直す。"
+    },
+    "spread": {
+      "decision": "feature",
+      "why": "引数の並べ替え・配列の結合に使う。",
+      "risk": "`f(...xs)` で印の型の引数に素の値を流し込める —— 印の型を受ける位置への展開は M4 で断る。オブジェクトの展開は原型を写さないが、欄を字面で見られなくなる。"
+    },
+    "while": {
+      "decision": "feature",
+      "why": "読み進める走査 (字句解析器ほか) に要る。",
+      "risk": "止まらない形はコンパイラでは見分けられない —— 来歴の規則には触れないが、上限のある for…of で書けるならそちらを先に選ぶ。"
+    },
+    "c-for": {
+      "decision": "rewrite",
+      "why": "添字で回す形は for…of と entries() で書き直せる (変異検査で等価になりやすい比べを消せる · 法則 115)。"
+    },
+    "for-in": {
+      "decision": "rewrite",
+      "why": "原型の鍵まで回る。Object.keys(…) を for…of で回す形へ書き直す。"
+    },
+    "as-cast": {
+      "decision": "rewrite",
+      "why": "型の書き換えは印の偽造の唯一の道なので言語に置かない (M0)。欄を読むなら field、型を絞るなら typeof / === で確かめる。"
+    },
+    "as-const": {
+      "decision": "rewrite",
+      "why": "as の綴りを言語に置かない。字面の型を readonly の型注釈で書く。"
+    },
+    "template": {
+      "decision": "rewrite",
+      "why": "補間の中に式を隠させない (M0)。`+` で繋ぐ。"
+    },
+    "arrow-block": {
+      "decision": "feature",
+      "why": "arrow の中に文が要る所 (map の中の if ほか) で使う。",
+      "risk": "arrow の中の文は外の関数の役割 (gate / sink) を継ぐ —— mint・危ない口の参照は外の関数の役割で判定する。sink の中で作った arrow を外へ渡すと sink の外で危ない口を呼べるので、sink の中の arrow を外へ出す形を断る。"
+    },
+    "generic-call": {
+      "decision": "feature",
+      "why": "Promise.all<T>(…) など型引数を書く呼び出し。",
+      "risk": "型引数に印の型を書けば tsc は印を名乗る値として扱う —— 型引数に印の型を置く形を M4 と同じく断る。"
+    },
+    "generic-decl": {
+      "decision": "feature",
+      "why": "型引数を持つ型・関数の宣言。",
+      "risk": "型引数の制約に印の型を置いて、素の値を印として通す道を作らない (generic-call と同じ判定)。"
+    },
+    "instanceof": {
+      "decision": "feature",
+      "why": "例外の種類を見分ける所で使う。",
+      "risk": "右辺の値は宣言した名前だけ (宣言していない Function などへ届かない —— M6 が見る)。"
+    },
+    "in-op": {
+      "decision": "feature",
+      "why": "鍵の在否を見る所で使う。",
+      "risk": "原型の鍵にも true を返す —— 自分の鍵を問うなら Object.hasOwn を先に選ぶ。"
+    },
+    "destructure": {
+      "decision": "feature",
+      "why": "戻り値の組を受ける所で多い。",
+      "risk": "`const { constructor } = x` は T-224 の表を迂回する —— 分割代入の鍵も FORBIDDEN_MEMBERS を通す。印の欄を分割しても印は運ばない。"
+    },
+    "compound-assign": {
+      "decision": "rewrite",
+      "why": "x = x + 1 と書く (印の洗浄を見る M5 の判定を 1 つの形に保つ)。"
+    },
+    "member-assign": {
+      "decision": "feature",
+      "why": "組み立てた物の欄を埋める所で使う。",
+      "risk": "共有の物 (import した物・組み込み) へ書くと他のモジュールの判定まで変わる —— 書けるのはこの関数の中で作った物の欄だけにする。"
+    },
+    "loose-eq": {
+      "decision": "rewrite",
+      "why": "== は型を変換して比べる。=== で書く。"
+    },
+    "catch-binding": {
+      "decision": "feature",
+      "why": "例外の文を伏字にして返す所で要る。",
+      "risk": "束ねた例外は unknown で印を運ばない。例外の文を画面へ流すなら伏字の関門 (redactForMessage) を通すのは呼ぶ側の TypeScript の census が見る。"
+    },
+    "finally": {
+      "decision": "feature",
+      "why": "後片付け (鍵を消す・錠を外す) で要る。",
+      "risk": "finally の中の return が try の return を上書きする —— finally の中の return を断る。"
+    },
+    "optional-param": {
+      "decision": "feature",
+      "why": "省ける引数を持つ公開の関数で使う。",
+      "risk": "省いた引数は undefined —— 印の型の引数は省けない形にする。"
+    },
+    "export-from": {
+      "decision": "feature",
+      "why": "まとめの入口 (index.ts) が使う。",
+      "risk": "extern sink の危ない口を再輸出すると TypeScript の側へ素の口が漏れる —— 危ない口の再輸出を断る。"
+    },
+    "export-default": {
+      "decision": "rewrite",
+      "why": "名前つきの export で書く (名前で引く M4 の外形表と揃える)。"
+    },
+    "namespace-import": {
+      "decision": "feature",
+      "why": "import * as path ほか。",
+      "risk": "`import * as electron` は `electron.shell` で extern sink の宣言を迂回する —— 名前空間の import は危ない口を持つモジュールに使えない形にする。"
+    },
+    "inline-type-import": {
+      "decision": "feature",
+      "why": "型と値を 1 行で import する形。",
+      "risk": "型だけの名前を値として使えないことは tsc が見る。来歴には触れない。"
+    },
+    "side-effect-import": {
+      "decision": "rewrite",
+      "why": "読み込むだけでコードが走る import は、何が走るかを言語の外に置く —— extern で名前を宣言して使う形へ書き直す。"
+    },
+    "interface-extends": {
+      "decision": "feature",
+      "why": "型を重ねる宣言 (共通の欄を持つ型を 2 つ書かない)。",
+      "risk": "印の型を extends しても印は運ばない (印は mint でだけ作る)。"
+    },
+    "declare": {
+      "decision": "rewrite",
+      "why": "ambient の宣言・enum・namespace は使わない (和の型と extern で書く)。"
+    },
+    "delete": {
+      "decision": "rewrite",
+      "why": "既にある物から欄を消すと他の読み手の判定が変わる。新しい物を組み直す。"
+    },
+    "generator": {
+      "decision": "feature",
+      "why": "遅延の列 (大きな走査) で使う。",
+      "risk": "yield した値は印を運ばない (for…of の回す変数と同じ)。"
+    },
+    "satisfies": {
+      "decision": "feature",
+      "why": "型を絞らずに検める宣言。",
+      "risk": "型の検査だけで実行時に何もしない —— 来歴には触れない。"
+    },
+    "nested-function": {
+      "decision": "rewrite",
+      "why": "関数の中の function は arrow かモジュールの fn で書く (役割 gate / sink は fn にしか付けない)。"
+    },
+    "bitwise": {
+      "decision": "feature",
+      "why": "暗号・ハッシュの周り (IV ・CRC ほか) で要る。",
+      "risk": "来歴には触れない (数を作る演算)。"
+    }
+  },
+  "cycles": []
+}

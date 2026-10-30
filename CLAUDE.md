@@ -1644,6 +1644,13 @@ npm run knowledge:auto     # knowledge autopilot: audit → regen (vault+Noteboo
 npm run mamori:build       # 守りの層の元 (src/**/*.mamori · 言語は docs/MAMORI.md) を TypeScript へ変換し、隣の .ts を書き直す
                            #   (生成物 — 手で編集しない。2026-10-30 · パス 560 · T-221。`mamori:check` は書かずに誤りと古びを報せる。
                            #   同じ判定を src/shared/mamori/__tests__/mamoriGenerated.test.ts が npm test で見る)
+npm run mamori:grow -- brief|record <json>|status  # **言語を育てる輪** (2026-10-30 · パス 563)。週 1 の予約のセッションが
+                           #   Mamori を 1 周ぶん育てる: brief が守りの壁 (lint:mutation-scope の必ず測る壁) のうちまだ TypeScript の物を
+                           #   実測して Mamori に無い構文を数え、「移す (書き直しだけで移せる壁)」→「構文を足す (足すとそれだけで移せる
+                           #   壁が最多の物)」→「破る (言語の穴を探す)」の順に 1 つ選ぶ。record は 1 周を検めてから
+                           #   security/mamori-growth.json へ足す (言語を破るプログラムを 3 つ以上試した記録・変異検査 100%・
+                           #   対照・PR が要る)。status は cadence × 2 で止まりを報せ、毎日の dependency-audit が要対応として載せる。
+                           #   指示文は docs/MAMORI_GROWTH_PROMPT.md。判定は src/shared/__tests__/mamoriGrowth.test.ts
 npm run ontology:md        # docs/ONTOLOGY.md を src/shared/ontology/ (語彙・facet の公理・法則と執行者) と
                            #   実物 (台帳・ゲート・両ビルドの action の面) から再生成 (生成物 — 手で編集しない。
                            #   `--check` で committed と一致するか。`ontologyDoc.test.ts` が npm test で同じ事を留める)
@@ -1880,7 +1887,10 @@ The browser target adds: `web-shim.ts` (a `window.serviceHub` polyfill imported 
   隣の `.mamori` から `npm run mamori:build` で組む生成物である (手で直すと `mamoriGenerated.test.ts` が落ちる)。
   関門は `gate fn` (印は `mint` でだけ作る)、危ない口は `extern sink` + `sink fn` (印の型しか受けない) で書く。
   `as` / `any` / 宣言していない外の名前は Mamori に無い。新しい危ない口を足すなら、gate と sink の組として Mamori で書き、
-  `SINK_LEDGER` の pending を減らす (規則と文法は `docs/MAMORI.md`)。
+  `SINK_LEDGER` の pending を減らす (規則と文法は `docs/MAMORI.md`)。`src/shared/proxyEndpoint.ts` も生成物である (0.2 · パス 563)。
+  **構文を足すときは、先にその構文で言語を破る** —— 0.1 は `eval` を禁じながら `String.constructor(code)()` で同じことができた (T-224)。
+  `.` の後ろの `constructor` / `prototype` / `__proto__` と、組み込みの `Object` の書き換えるメンバは断る。足す候補の構文と、その構文が
+  来歴の規則を外す道 (risk) は `security/mamori-growth.json` が持ち、育てるのは週 1 の輪 (`npm run mamori:grow`) である。
 - **対照を回すまで、検査は信用しない。** 守っている物を実際に壊し、狙った項目が
   落ちることを見る。**鳴らない対照は「合格」ではなく「その検査についての報せ」である。**
 

@@ -60,6 +60,7 @@ const { analyzePosture, renderPosture } = require('./security-posture.cjs');
 const { analyzeCrownJewels, renderCrownJewels, realExists } = require('./crown-jewels.cjs');
 const { analyzeLanguageCoverage, renderLanguageCoverage, launchersOf, trackedFiles } = require('./language-coverage.cjs');
 const { loopStatus, renderLoop } = require('./hunt-cycle.cjs');
+const { growthStatus, renderGrowth } = require('./mamori-growth.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const OUT = path.join(REPO_ROOT, 'orchestration', 'dependency-audit.json');
@@ -197,6 +198,7 @@ function buildReport({ all, prod, floors, pins, watch, map, posture, generatedAt
     ...(postureOk && posture.jewels ? [renderCrownJewels(posture.jewels), ''] : []),
     ...(postureOk && posture.languages ? [renderLanguageCoverage(posture.languages), ''] : []),
     ...(postureOk && posture.loop ? [renderLoop(posture.loop), ''] : []),
+    ...(postureOk && posture.growth ? [renderGrowth(posture.growth), ''] : []),
     ...(problems.length === 0 ? [] : ['### 測れなかった項目', '', ...problems.map((p) => `- ${p}`), '']),
     '手順は `docs/SECURITY_AUDIT.md` の「依存の勧告」。床の台帳は ' +
       '`scripts/lint-dependencies.cjs` の `SECURITY_FLOORS`、測り直しは `npm run audit:floors`。',
@@ -385,13 +387,16 @@ function derivePosture(now) {
           );
     // 狩りの輪 (T-214): 探索 → 解析 → 対策 → 報告 が回っているか。cadence × 2 日止まれば要対応。
     const loop = loopStatus(JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'security', 'hunt-cycles.json'), 'utf8')), now);
+    // 言語を育てる輪 (パス 563): Mamori を週 1 で育てる予約が止まっていないか。cadence × 2 日止まれば要対応。
+    const growth = growthStatus(JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'security', 'mamori-growth.json'), 'utf8')), now);
     return {
       ...posture,
       jewels,
       languages,
       loop,
-      problems: [...posture.problems, ...jewels.problems, ...languages.problems, ...loop.problems],
-      actionable: posture.actionable + jewels.actionable + languages.actionable + loop.actionable,
+      growth,
+      problems: [...posture.problems, ...jewels.problems, ...languages.problems, ...loop.problems, ...growth.problems],
+      actionable: posture.actionable + jewels.actionable + languages.actionable + loop.actionable + growth.actionable,
     };
   } catch {
     return null;
