@@ -1,0 +1,142 @@
+{
+  "version": 1,
+  "purpose": "台帳の穴を 1 つずつ開け直す書き換え。1 行 = 守りを直す前の形へ戻す 1 つの書き換えで、`npm run audit:threat-ablation` が原文へ当て、台帳がその脅威に名指しした回帰検査だけを走らせて落ちるかを見る (threat: T-226)。find はファイルの中にちょうど 1 回現れること (守りの形が変わったら書き換えも直す —— npm test の threatAblationLedger.test.ts が見る)。",
+  "ablations": [
+    {
+      "id": "A-001",
+      "threat": "T-052",
+      "file": "src/renderer/data/counseling.ts",
+      "why": "危機の門の照合から見えない字・結合記号を落とす段を外す (直す前の NFKC だけの照合へ戻す)",
+      "edits": [
+        {
+          "find": "    .replace(FILLER_CHARS, '')\n",
+          "replace": ""
+        }
+      ]
+    },
+    {
+      "id": "A-002",
+      "threat": "T-073",
+      "file": "src/renderer/data/counseling.ts",
+      "why": "落とす字の集合を T-052 の形 (書式制御と結合記号だけ) へ戻す —— 空白・中点・記号を挟んだ綴りが素通りする",
+      "edits": [
+        {
+          "find": "const FILLER_CHARS = /[\\p{Cf}\\p{Mn}\\p{Me}\\p{Mc}\\p{Z}\\p{Cc}\\p{Co}\\p{Cn}\\p{P}\\p{S}\\p{Default_Ignorable_Code_Point}\\u2800]/gu;",
+          "replace": "const FILLER_CHARS = /[\\p{Cf}\\p{Mn}]/gu;"
+        }
+      ]
+    },
+    {
+      "id": "A-003",
+      "threat": "T-089",
+      "file": "src/renderer/data/counseling.ts",
+      "why": "明示的な希死念慮の言い回しを 1 語 (「消えてしまいたい」) 危機の語彙から抜く",
+      "edits": [
+        {
+          "find": "  '消えてしまいたい',\n",
+          "replace": ""
+        }
+      ]
+    },
+    {
+      "id": "A-004",
+      "threat": "T-088",
+      "file": "vite.config.ts",
+      "why": "vm で実行する前の「リテラルだけの 1 文か」の検めを外す (ビルドが学術コーパスの任意コードを実行しうる形へ戻す)",
+      "edits": [
+        {
+          "find": "        assertPureDataModule(code, { exportName: 'VERIFIED_CONCEPTS', label: 'academicKnowledge.ts' });\n",
+          "replace": ""
+        }
+      ]
+    },
+    {
+      "id": "A-005",
+      "threat": "T-165",
+      "file": "src/main/main.ts",
+      "why": "窓の session に file:// の門を付ける 1 行を外す (fuse が true のまま任意のローカルファイルを読める形へ戻す)",
+      "edits": [
+        {
+          "find": "  installFileRequestGate(win.webContents.session, distRoot, (where) => reportThreatSignal('file-denied', where));\n",
+          "replace": ""
+        }
+      ]
+    },
+    {
+      "id": "A-006",
+      "threat": "T-197",
+      "file": "scripts/lint-workflow-security.cjs",
+      "why": "YAML の二重引用符のエスケープで綴りを隠す形の検めを外す",
+      "edits": [
+        {
+          "find": "    problems.push(...escapedSpellingProblems(name, text));\n",
+          "replace": ""
+        }
+      ]
+    },
+    {
+      "id": "A-007",
+      "threat": "T-215",
+      "file": "src/main/main.ts",
+      "why": "主プロセスの action:invoke から出力インターセプター (本文の資格情報・個人番号の検め) の断りを外す",
+      "edits": [
+        {
+          "find": "    if (outbound !== null) return { ok: false, code: 'action_failed', message: outbound };\n",
+          "replace": ""
+        }
+      ]
+    },
+    {
+      "id": "A-008",
+      "threat": "T-215",
+      "file": "src/renderer/web-shim.ts",
+      "why": "ブラウザ版の invoke から出力インターセプターの断りを外す (main の半分は残る —— 名指しの回帰検査が両ビルドを見ているかを測る)",
+      "edits": [
+        {
+          "find": "      if (outbound !== null) return err<T>('action_failed', outbound);\n",
+          "replace": ""
+        }
+      ]
+    },
+    {
+      "id": "A-009",
+      "threat": "T-147",
+      "file": "src/main/userPresence.ts",
+      "why": "平常時に確かめる段階 (destructive / credential-write / external-write) でも本人確認を出さずに通す",
+      "edits": [
+        {
+          "find": "      if (!alert && !CONFIRMED_TIERS.has(req.tier)) return { ok: true };",
+          "replace": "      if (!alert) return { ok: true };"
+        }
+      ]
+    },
+    {
+      "id": "A-010",
+      "threat": "T-148",
+      "file": "src/main/userPresence.ts",
+      "why": "承認を『チャンネル + 見せた要約』で再利用する形を戻す (承認を観測した直後に別の値を無確認で書ける)",
+      "edits": [
+        {
+          "find": "      const summary = safeSummary(req.summary);\n      if (pending) {",
+          "replace": "      const summary = safeSummary(req.summary);\n      if ((globalThis as Record<string, unknown>).__ablationLastOk === req.channel + summary) return { ok: true };\n      if (pending) {"
+        },
+        {
+          "find": "        record('approved', req);\n        return { ok: true };",
+          "replace": "        record('approved', req);\n        (globalThis as Record<string, unknown>).__ablationLastOk = req.channel + summary;\n        return { ok: true };"
+        }
+      ]
+    },
+    {
+      "id": "A-011",
+      "threat": "T-226",
+      "file": "scripts/threat-ablation.cjs",
+      "why": "名指しの検査の状態を見ず、走り終えれば捕まえたと読む形 (verify-survivors が 2026-09 に踏んだ「非 0 = 殺された」) へ戻す",
+      "edits": [
+        {
+          "find": "  return { verdict: failed > 0 ? 'caught' : 'missed', matched, failed };",
+          "replace": "  return { verdict: 'caught', matched, failed };"
+        }
+      ]
+    }
+  ]
+}

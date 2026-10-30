@@ -3657,7 +3657,13 @@
       "regression": {
         "file": "src/main/__tests__/mainIpc.test.ts",
         "test": "★ external-write (github/create-issue) の本文に資格情報の形が在れば、確認も実行も起きない"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/renderer/__tests__/webShimOutboundGate.test.ts",
+          "test": "★ external-write の本文に資格情報の形が在れば、保管庫も網も触らずに断る"
+        }
+      ]
     },
     {
       "id": "T-216",
@@ -3807,6 +3813,21 @@
       "regression": {
         "file": "src/shared/mamori/__tests__/mamoriV03.test.ts",
         "test": "★ 印を受ける関数の .call で素の値を渡す形は断る (threat: T-225)"
+      }
+    },
+    {
+      "id": "T-226",
+      "found": "2026-10-30",
+      "foundBy": "パス 565 の測定。台帳の 224 件はどれも回帰検査を名指しするが、台帳の検査 (threatLedger.test.ts) が見ていたのは「その題名の検査が在ること」までで、穴を実際に開け直して名指しの検査が鳴るかは 1 度も測っていなかった。high の 9 件の守りを 1 つずつ外して名指しの検査だけを走らせると、T-215 のブラウザ版の半分 (web-shim の出力インターセプター) を外しても名指しの検査 (mainIpc.test.ts) は通った —— 名指しが主プロセスの層しか見ていなかった (別の検査 webShimOutboundGate.test.ts は捕まえていたが、台帳はそれを名指ししていなかった)。",
+      "surface": "supply-chain",
+      "class": "ai-automated-attack",
+      "severity": "medium",
+      "title": "脅威台帳の回帰検査は「在ること」しか測られておらず、穴を開け直したとき本当に鳴るかは誰も確かめていなかった (T-215 のブラウザ側の層は名指しの検査が見ていなかった)",
+      "status": "fixed",
+      "fix": "scripts/threat-ablation.cjs と security/threat-ablations.json: 1 行 = 守りを直す前の形へ戻す書き換え。原文へ当て、台帳が名指す回帰検査 (regression と、層ごとの alsoRegressions) だけを走らせ、vitest の JSON 報告から caught / missed / unmatched / load-error を分ける (非 0 終了を捕まえたと読まない)。原文でも 1 度走らせ (baseline)、書き換えは finally で戻し内容で照合する。npm test の threatAblation.test.ts が、書き換えがどれも今のファイルにちょうど 1 回当たること・high の脅威と 2026-10-31 以降の脅威がすべて書き換えを持つことを見る。毎日の dependency-audit が開け直しを走らせ、捕まえ損ねを要対応として常設 Issue に出す。T-215 には webShimOutboundGate.test.ts を alsoRegressions として名指した。限界: 書き換えは人 (と狩りの班) が書くので、書いていない穴は測られない —— 床と日付の規則で増やす向きにだけ縛る。",
+      "regression": {
+        "file": "src/shared/__tests__/threatAblation.test.ts",
+        "test": "★ 名指しの検査が assertion で落ちれば caught・全部通れば missed"
       }
     }
   ],

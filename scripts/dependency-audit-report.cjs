@@ -61,6 +61,7 @@ const { analyzeCrownJewels, renderCrownJewels, realExists } = require('./crown-j
 const { analyzeLanguageCoverage, renderLanguageCoverage, launchersOf, trackedFiles } = require('./language-coverage.cjs');
 const { loopStatus, renderLoop } = require('./hunt-cycle.cjs');
 const { growthStatus, renderGrowth } = require('./mamori-growth.cjs');
+const { ablationStatus, renderAblation, staticProblems: ablationStaticProblems } = require('./threat-ablation.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const OUT = path.join(REPO_ROOT, 'orchestration', 'dependency-audit.json');
@@ -199,6 +200,7 @@ function buildReport({ all, prod, floors, pins, watch, map, posture, generatedAt
     ...(postureOk && posture.languages ? [renderLanguageCoverage(posture.languages), ''] : []),
     ...(postureOk && posture.loop ? [renderLoop(posture.loop), ''] : []),
     ...(postureOk && posture.growth ? [renderGrowth(posture.growth), ''] : []),
+    ...(postureOk && posture.ablation ? [renderAblation(posture.ablation), ''] : []),
     ...(problems.length === 0 ? [] : ['### 測れなかった項目', '', ...problems.map((p) => `- ${p}`), '']),
     '手順は `docs/SECURITY_AUDIT.md` の「依存の勧告」。床の台帳は ' +
       '`scripts/lint-dependencies.cjs` の `SECURITY_FLOORS`、測り直しは `npm run audit:floors`。',
@@ -368,6 +370,22 @@ function selfTest() {
   return 0;
 }
 
+/** 台帳の穴の開け直し (T-226) の結果。結果の置き場は workflow の前の step と同じ 1 つ。 */
+const ABLATION_RESULT = path.join(REPO_ROOT, 'orchestration', 'threat-ablation.json');
+
+function deriveAblation() {
+  const ledger = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'security', 'threat-ledger.json'), 'utf8'));
+  const { ablations } = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'security', 'threat-ablations.json'), 'utf8'));
+  const staticList = ablationStaticProblems(ablations, ledger, (rel) => fs.readFileSync(path.join(REPO_ROOT, rel), 'utf8'));
+  let summary = null;
+  try {
+    summary = JSON.parse(fs.readFileSync(ABLATION_RESULT, 'utf8'));
+  } catch {
+    summary = null;
+  }
+  return ablationStatus(summary, ablations, ledger, staticList);
+}
+
 /** 台帳から次の一手を導く。読めなければ null (報告が「測れなかった」と言う)。 */
 function derivePosture(now) {
   try {
@@ -389,14 +407,18 @@ function derivePosture(now) {
     const loop = loopStatus(JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'security', 'hunt-cycles.json'), 'utf8')), now);
     // 言語を育てる輪 (パス 563): Mamori を週 1 で育てる予約が止まっていないか。cadence × 2 日止まれば要対応。
     const growth = growthStatus(JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'security', 'mamori-growth.json'), 'utf8')), now);
+    // 台帳の穴を開け直す (T-226): 前の step (`audit:threat-ablation -- --report`) の結果を読む。
+    // 無い・読めないは「測れなかった」 —— 0 件と混ぜない。
+    const ablation = deriveAblation(posture);
     return {
       ...posture,
       jewels,
       languages,
       loop,
       growth,
-      problems: [...posture.problems, ...jewels.problems, ...languages.problems, ...loop.problems, ...growth.problems],
-      actionable: posture.actionable + jewels.actionable + languages.actionable + loop.actionable + growth.actionable,
+      ablation,
+      problems: [...posture.problems, ...jewels.problems, ...languages.problems, ...loop.problems, ...growth.problems, ...ablation.problems],
+      actionable: posture.actionable + jewels.actionable + languages.actionable + loop.actionable + growth.actionable + ablation.actionable,
     };
   } catch {
     return null;

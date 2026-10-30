@@ -38,7 +38,8 @@ jobs:
     name: 依存の勧告・セキュリティの床・SHA 固定（毎日の報告）
     runs-on: ubuntu-latest
     # 遅いレジストリで 1 つの待ちが全体を飲まないよう、npm の各呼び出しにも締切がある (NPM_TIMEOUT_MS)。
-    timeout-minutes: 30
+    # 台帳の穴の開け直し (T-226) が vitest を穴の数だけ走らせるので、その分を足した (30 → 75 分)。
+    timeout-minutes: 75
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7 (threat: T-057)
         with:
@@ -57,7 +58,15 @@ jobs:
       # (`git ls-remote` · パス 535 · threat: T-124。`lint:workflow-security` は形までしか見られない)。
       # **勧告が在っても exit 0**（報告する道具なので、赤にしても見る人がいない）。
       # 測れなかったときだけ落ちる —— 「測れていない」を「0 件」として通さない。
+      # 台帳の穴を 1 つずつ開け直し、名指しの回帰検査が鳴るかを測る (パス 565 · threat: T-226)。
+      # 捕まえ損ねは報告 (Issue) が要対応として言うので `--report` で exit 0 —— 道具の誤りだけ落ちる。
+      # 網に触れない (書き換えて vitest を走らせ、必ず元へ戻す)。結果は次の step が読む。
+      - name: 台帳の穴を開け直す
+        timeout-minutes: 45
+        run: npm run audit:threat-ablation -- --report --json orchestration/threat-ablation.json
+
       - name: 勧告と床を測る
+        if: ${{ !cancelled() }}
         run: npm run audit:report
 
       - name: 報告をアーティファクトとして保存

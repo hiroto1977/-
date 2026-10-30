@@ -1128,6 +1128,18 @@ npm run audit:threat-watch  # **世間で今悪用されている弱点を、こ
                          #   表の各行が名指す守りの実在は `shared/__tests__/weaknessMap.test.ts` が、判定・失敗の向き・
                          #   網の口 (定数 3 ホスト・redirect: error・送る物は名前と版だけ) は `threatWatch.test.ts` が
                          #   毎回の npm test で見る (fetch を注入して網に出ずに全経路を通す)
+npm run audit:threat-ablation  # **台帳の穴を 1 つずつ開け直し、名指しの回帰検査が本当に鳴るかを測る**
+                         #   (2026-10-30 · パス 565 · threat: T-226。CI の門には載せない —— 原文を書き換えて vitest を穴の数だけ走らせる)。
+                         #   台帳の検査が見ていたのは「回帰検査の題名が在ること」までで、穴を開け直して鳴るかは誰も測っていなかった。
+                         #   `security/threat-ablations.json` の 1 行 = 守りを直す前の形へ戻す書き換えで、原文へ当て、台帳が名指す
+                         #   回帰検査 (`regression` と層ごとの `alsoRegressions`) だけを走らせ、vitest の JSON 報告から
+                         #   caught / missed / unmatched / load-error を分ける (**非 0 終了を「捕まえた」と読まない**)。
+                         #   原文でも 1 度走らせて通ることを確かめ、書き換えは `finally` で戻して内容で照合する。
+                         #   初回の実測: high の 9 件を開け直すと、T-215 のブラウザ側の層は名指しの検査が鳴らなかった
+                         #   (名指しが主プロセスの層だけを見ていた —— 別の検査を `alsoRegressions` に名指して閉じた)。
+                         #   **2026-10-31 以降に台帳へ入る脅威は、書き換えを持たないと npm test が落ちる**
+                         #   (`shared/__tests__/threatAblation.test.ts`)。毎日の dependency-audit が `--report` で走らせ、
+                         #   捕まえ損ねを要対応として常設 Issue に出す
 npm run audit:security-posture  # **「次はどこを狩るか」を台帳から決定的に導く**
                          #   (定期点検の道具 14 本目・2026-10-23 · threat: T-167)。守りを増やす輪
                          #   (狩り → 台帳 → 回帰検査 → 門 → 毎日の脅威ウォッチ) は揃っていたが、その輪を

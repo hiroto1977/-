@@ -52,7 +52,10 @@ docs/THREAT_HUNT.md を読む。security/hacker-team.json がまだ無い木 (�
    示せない限り数えない。確認した穴は、見つけた役の名を控える (記録の team[].confirmed)。
 3. 対策 (countermeasure): 本物だけを最小で直す (守りを足す向き)。攻撃を再現する回帰検査を書き (題名に
    `threat: T-xxx`)、修正を外すと落ちることを対照で確かめる。security/threat-ledger.json に 1 行
-   (面・型・重さ・修正・回帰検査)。確かめて健全だった物は clearedBacklog へ日付つきで。
+   (面・型・重さ・修正・回帰検査)。直した穴には security/threat-ablations.json に「守りを直す前の形へ戻す
+   書き換え」を 1 行足し、`npm run audit:threat-ablation -- --only T-xxx` で名指しの回帰検査が caught になることを
+   確かめる (missed なら検査を強めるか、その層を見る検査を alsoRegressions に名指す · T-226)。
+   確かめて健全だった物は clearedBacklog へ日付つきで。
    `npm test && npm run verify:all` を全部回す (verify:all だけでは CI で落ちる)。出荷物が動いたら
    `perf` / `e2e` / `e2e:lite`。
 4. 報告 (report): 進化役 (evolver の mission) を 1 体の auditor として起動し、この周の指摘・確認・直しを渡して
