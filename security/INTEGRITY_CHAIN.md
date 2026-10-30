@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 385
+- ブロック数: 387
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `fb6ee92fe5b3411d3dd3143cc3ac3713b45e73e1e8d4f426952cd4347b1d27fc`
-- 保護対象: 136 ファイル
+- 末尾(tip)ハッシュ: `47321d862cb64cfb6f33da2b9a09d274debb8ffe5be8d475c25bd3dfd4d52087`
+- 保護対象: 148 ファイル
 
 ## ブロック
 
@@ -398,6 +398,8 @@
 | 382 | `9393a650f568c6a7` | `409f948e647640fd` | `0f82fae8c348b109` | update vault.ts |
 | 383 | `88144216ca3df10d` | `0f82fae8c348b109` | `31eea771527ba19b` | update ci.yml,dependency-audit.yml,e2e.yml,knowledge-auto.yml,mutation.yml,pages.yml |
 | 384 | `38f3bd8768a4a749` | `31eea771527ba19b` | `fb6ee92fe5b3411d` | update integrity-chain.cjs,main.ts,oauth.ts,osSinks.ts,shellOpenGate.ts,windowOpen.ts |
+| 385 | `c916396010b91921` | `fb6ee92fe5b3411d` | `b21dd5819f09f2fe` | update integrity-chain.cjs,mamori.cjs,osSinks.mamori,osSinks.ts,shellOpenGate.mamori,shellOpenGate.ts |
+| 386 | `3157108e951aef10` | `b21dd5819f09f2fe` | `47321d862cb64cfb` | update parser.ts |
 
 ## 保護対象ファイル
 
@@ -446,6 +448,7 @@
 - `scripts/lint-sample-data.cjs`
 - `scripts/make-autoinstall.sh`
 - `scripts/make-live-usb.sh`
+- `scripts/mamori.cjs`
 - `scripts/merge-mutation-reports.cjs`
 - `scripts/migrate.sh`
 - `scripts/mutate-changed.cjs`
@@ -469,10 +472,12 @@
 - `src/main/keychainBackend.ts`
 - `src/main/main.ts`
 - `src/main/oauth.ts`
+- `src/main/osSinks.mamori`
 - `src/main/osSinks.ts`
 - `src/main/presenceWiring.ts`
 - `src/main/secrets.ts`
 - `src/main/selfAttestation.ts`
+- `src/main/shellOpenGate.mamori`
 - `src/main/shellOpenGate.ts`
 - `src/main/stateFile.ts`
 - `src/main/userPresence.ts`
@@ -499,6 +504,8 @@
 - `src/renderer/security/vault.ts`
 - `src/renderer/security/webCrypto.ts`
 - `src/renderer/security/webauthn.ts`
+- `src/renderer/vettedSinks.mamori`
+- `src/renderer/vettedSinks.ts`
 - `src/shared/actionTier.ts`
 - `src/shared/advisorQuestionLimits.ts`
 - `src/shared/ai/chat.ts`
@@ -513,6 +520,7 @@
 - `src/shared/cryptoParams.ts`
 - `src/shared/eraseReport.ts`
 - `src/shared/escape.ts`
+- `src/shared/externalUrlGate.mamori`
 - `src/shared/externalUrlGate.ts`
 - `src/shared/headerValue.ts`
 - `src/shared/httpLimits.ts`
@@ -520,6 +528,11 @@
 - `src/shared/inputCeiling.ts`
 - `src/shared/isoDate.ts`
 - `src/shared/localDate.ts`
+- `src/shared/mamori/ast.ts`
+- `src/shared/mamori/checker.ts`
+- `src/shared/mamori/compile.ts`
+- `src/shared/mamori/emit.ts`
+- `src/shared/mamori/parser.ts`
 - `src/shared/ollama.ts`
 - `src/shared/outboundContentGate.ts`
 - `src/shared/privateTarget.ts`
@@ -532,6 +545,7 @@
 - `src/shared/tokenResponse.ts`
 - `src/shared/vaultToken.ts`
 - `src/shared/versionOrder.ts`
+- `src/shared/vetted.mamori`
 - `src/shared/vetted.ts`
 - `src/shared/writeFieldLimits.ts`
 - `vite.config.ts`

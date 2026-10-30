@@ -7,6 +7,13 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-10-30) — パス 560: 新しい言語 Mamori (守りの層を書き直す · threat: T-221)
+
+- 守りの層 5 本 (`vetted` / `externalUrlGate` / `shellOpenGate` / `osSinks` / `vettedSinks`) は `.mamori` が正で、隣の `.ts` は**生成物** —— 直すのは `.mamori` で、`npm run mamori:build` で組み直す (手で `.ts` を直すと `mamoriGenerated.test.ts` が落ちる)。
+- 言語の仕様と規則 (M0〜M6) は `docs/MAMORI.md`。コンパイラは `src/shared/mamori/` と `scripts/mamori.cjs` (どれも整合性チェーンの保護対象 —— 触ったら `chain:append`)。
+- ★ 表を `obj[word]` で引くと `toString` が prototype に当たる (コンパイラで実際に踏んだ)。`Object.hasOwn` で引く。
+- 残作業: コンパイラの変異検査 (未測定)・`SINK_LEDGER` の pending 4 本を Mamori へ移す。
+
 ## 直近の作業 (2026-10-30) — パス 559: 型で守る (Vetted 型 · threat: T-220)
 
 - 依頼「プログラム言語自体にセキュリティ機能を組み込んでその精度を高め続けて」を、**TypeScript の型に守りの規則を乗せる**こととして実装した。

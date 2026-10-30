@@ -287,6 +287,8 @@ const SCAN_EXTS = new Set([
   '.ts', '.tsx', '.md', '.json', '.cjs',
   '.sh', '.yml', '.yaml', '.html', '.css', '.js', '.mjs', '.svg', '.webmanifest',
   '.txt', '.example', '.mdc',
+  // 2026-10-30 (パス 560 · T-221): 守りの層の元 (Mamori)。生成物の .ts も読むが、双方向制御は元で見る (直すのは元)。
+  '.mamori',
 ]);
 
 /**

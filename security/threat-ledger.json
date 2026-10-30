@@ -418,6 +418,15 @@
             "src/shared/__tests__/vettedTypes.test.ts",
             "npm:typecheck"
           ]
+        },
+        {
+          "what": "守りの層は守りの規則を構文に持つ言語 Mamori で書く —— 印の偽造 (型の書き換え) と危ない口の直呼びは書けず、規則を破るプログラムはコンパイラが TypeScript にしない",
+          "enforcedBy": [
+            "docs/MAMORI.md",
+            "src/shared/mamori/checker.ts",
+            "src/shared/mamori/__tests__/mamoriRules.test.ts",
+            "src/shared/mamori/__tests__/mamoriGenerated.test.ts"
+          ]
         }
       ],
       "gaps": [
@@ -3707,6 +3716,21 @@
       "regression": {
         "file": "src/shared/__tests__/vettedTypes.test.ts",
         "test": "★ 素の shell.* / window.open は包みの外に 1 つも無い (両方向)"
+      }
+    },
+    {
+      "id": "T-221",
+      "found": "2026-10-30",
+      "foundBy": "利用者の依頼「全く新しいプログラム言語を構築し、そのプログラム言語でシステムを構築し直して」(進め方は守りの層から)。パス 559 の型の印 (T-220) は TypeScript の中では型の書き換え 1 行 (`x as VettedExternalUrl`) で偽造でき、危ない口 (electron の shell・window.open) はどの関数からも呼べた —— 止めていたのは綴りを数える census だけで、言語そのものはその 2 つを許していた。",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "medium",
+      "title": "守りの層を書く言語が、印の偽造 (型の書き換え) と危ない口の直呼びを許していた —— 規則は検査の網に在り、言語には無かった",
+      "status": "mitigated",
+      "fix": "守りの規則を構文に持つ言語 Mamori (docs/MAMORI.md) を作り、守りの層 5 本 (vetted / externalUrlGate / shellOpenGate / osSinks / vettedSinks) をそれで書き直した。コンパイラ (src/shared/mamori/ —— 字句・構文・来歴の検査・TypeScript への変換) は規則を破るプログラムを 1 つも出力しない: M0 `as`・`any`・`eval`・テンプレート文字列は字句の段で断る / M1 印は gate 関数の `mint` でだけ作る / M2 `extern sink` の危ない口は sink 関数の中だけ / M3 sink は印の型しか受けない / M4 印の型の引数へは印を持つ値だけ (モジュールをまたいでも) / M5 印つきの変数を素の値で上書きしない / M6 宣言していない外の名前 (window / fetch / process / require / globalThis ほか) は使えない。生成物 (.ts) は commit し、既存の門 (tsc・vitest・Stryker・lint:forbidden・整合性チェーン) は今までどおり生成物に掛かる。生成物が元と 1 byte でも違えば mamoriGenerated.test.ts と mamori:check が落ちる (手で直した生成物を見逃さない)。元とコンパイラは整合性チェーンの保護対象 (コンパイラの改竄は一致の検査に映らないため)。**限界**: 規則が効くのは Mamori で書いた中だけで、呼ぶ側の手書きの TypeScript は T-220 の型の印と census が守る。コンパイラは変異検査をまだ測っていない。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriRules.test.ts",
+        "test": "★ plain 関数の mint は断る"
       }
     }
   ],

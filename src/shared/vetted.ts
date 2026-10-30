@@ -1,5 +1,7 @@
+// 生成物 —— src/shared/vetted.mamori から Mamori のコンパイラが組んだ。手で編集しない (`npm run mamori:build`)。
+// 言語の仕様は docs/MAMORI.md。生成物が元と食い違えば src/shared/mamori/__tests__/mamoriGenerated.test.ts が落ちる。
 /**
- * vetted — **関門を通った値にだけ付く型の印** (2026-10-30 · パス 559 · threat: T-220)。
+ * vetted — **関門を通った値にだけ付く型の印** (2026-10-30 · パス 559 · threat: T-220 / パス 560 · T-221)。
  *
  * ## 何を守るか
  *
@@ -24,11 +26,12 @@
  * 出荷物に 1 byte も入らない)。中身は素の文字列のままなので、`string` を受ける所
  * (ログ・本人確認の要約) へはそのまま渡せる —— 逆向き (素 → 印) だけが閉じている。
  *
- * ## 印を作ってよい所
+ * ## 印を作ってよい所 —— Mamori が言語として持つ (パス 560)
  *
- * `as Vetted…` のキャストは**鋳造する関数の中だけ**に置く。どこに何個在るかは
- * `src/shared/__tests__/vettedTypes.test.ts` が両方向の台帳で数える (関門の外でキャストを
- * 書けば型の守りは自分で外せるので、それを鳴らすのは型ではなく census の仕事である)。
+ * このファイルは Mamori (`docs/MAMORI.md`) で書いてある。印は `vetted` 宣言で作り、値に印を付けられるのは
+ * **`gate` 関数の中の `mint` だけ** —— Mamori には `as` (型の書き換え) が無いので、関門の外で印を偽造する
+ * 1 行は**構文として書けない** (コンパイラが M1 で断る)。手書きの TypeScript から印を付ける道 (`as Vetted…`) は
+ * `src/shared/__tests__/vettedTypes.test.ts` が両方向の台帳で数える。
  *
  * ## 精度を上げ続ける
  *
@@ -39,10 +42,10 @@
 
 declare const VETTED: unique symbol;
 
-/** 関門の種類。印の種類ごとに別の型になるので、URL の印をパスの口へは渡せない。 */
+/** 関門の種類。印の種類ごとに別の型になるので、ある印を別の種類の口へは渡せない。 */
 export type VettedKind = 'external-url' | 'shell-path';
 
-/** 関門 `K` を通った文字列。作れるのは関門の `return` だけ。 */
+/** 関門 `K` を通った文字列。作れるのは gate 関数の `mint` だけ (変換後は gate の `return` の 1 か所)。 */
 export type Vetted<K extends VettedKind> = string & { readonly [VETTED]: K };
 
 /** `externalUrlOrNull` を通った URL (http / https・認証情報なし・8,000 オクテット以下・正規化済み)。 */

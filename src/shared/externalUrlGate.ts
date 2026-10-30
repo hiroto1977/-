@@ -1,3 +1,5 @@
+// 生成物 —— src/shared/externalUrlGate.mamori から Mamori のコンパイラが組んだ。手で編集しない (`npm run mamori:build`)。
+// 言語の仕様は docs/MAMORI.md。生成物が元と食い違えば src/shared/mamori/__tests__/mamoriGenerated.test.ts が落ちる。
 /**
  * externalUrlGate — 外へ開く URL を判定する関門。
  * デスクトップ版は electron の `shell` へ、ブラウザ版は `window.open` へ渡す。
@@ -144,37 +146,36 @@ export function externalUrlOrNull(url: unknown): VettedExternalUrl | null {
   }
   // `URL.protocol` は小文字へ正規化済みなので `JavaScript:` もここで落ちる。
   if (!EXTERNAL_URL_SCHEMES.has(parsed.protocol)) return null;
-  /*
-   * **本当の送り先を、見せかけで隠す形を落とす。**
-   *
-   * `https://accounts.google.com@evil.example/` の送り先は `evil.example`
-   * だが、頭から読むと信用できる名前で始まる。この関門を通った文字列は
-   *
-   *   1. 画面のカードにそのまま出ることがあり
-   *   2. `app:openExternal` を通って OS のブラウザへ渡る
-   *
-   * ので、**読んだ人が思う送り先と、実際に開く先が食い違う**。
-   *
-   * この判断はリポジトリの中で既に 3 か所が下していた ——
-   * `proxyEndpoint.ts` / `aiEndpoint.ts` / `ollama.ts` はどれも
-   * 「認証情報付き URL は拒否」と書いて `username` / `password` を見る。
-   * **外へ開く唯一の関門だけが、それを見ていなかった** (2026-08-25 に実測。
-   * URL を検証する 17 関数のうち、落としていたのは 3 つだけだった)。
-   *
-   * ここへ来る URL には**遠隔の応答から来たもの**がある ——
-   * `DataList` は `item.href` を押されたら開くが、その値は
-   * ライブ取得した相手先の応答である。名前を出せる立場の相手なら誰でも
-   * 仕込める形なので、字面の信用と送り先を割らせない。
-   *
-   * パスやクエリの `@` は巻き添えにしない (`https://github.com/@handle` は
-   * `username` が空)。落とすのは**ホストの手前**に認証情報がある形だけ。
-   */
+  // **本当の送り先を、見せかけで隠す形を落とす。**
+  //
+  // `https://accounts.google.com@evil.example/` の送り先は `evil.example`
+  // だが、頭から読むと信用できる名前で始まる。この関門を通った文字列は
+  //
+  //   1. 画面のカードにそのまま出ることがあり
+  //   2. `app:openExternal` を通って OS のブラウザへ渡る
+  //
+  // ので、**読んだ人が思う送り先と、実際に開く先が食い違う**。
+  //
+  // この判断はリポジトリの中で既に 3 か所が下していた ——
+  // `proxyEndpoint.ts` / `aiEndpoint.ts` / `ollama.ts` はどれも
+  // 「認証情報付き URL は拒否」と書いて `username` / `password` を見る。
+  // **外へ開く唯一の関門だけが、それを見ていなかった** (2026-08-25 に実測。
+  // URL を検証する 17 関数のうち、落としていたのは 3 つだけだった)。
+  //
+  // ここへ来る URL には**遠隔の応答から来たもの**がある ——
+  // `DataList` は `item.href` を押されたら開くが、その値は
+  // ライブ取得した相手先の応答である。名前を出せる立場の相手なら誰でも
+  // 仕込める形なので、字面の信用と送り先を割らせない。
+  //
+  // パスやクエリの `@` は巻き添えにしない (`https://github.com/@handle` は
+  // `username` が空)。落とすのは**ホストの手前**に認証情報がある形だけ。
   if (parsed.username !== '' || parsed.password !== '') return null;
   // 開く物の長さ (オクテット) —— 非 ASCII はパーセント符号化で膨らむので、
   // 入力が天井の内でも出力が超えることがある。**開く物そのもの**を測る。
   const href = parsed.toString();
   if (href.length > MAX_EXTERNAL_URL_LEN) return null;
-  // 印を作るのはここだけ (threat: T-220)。OS の口は素の string を受けないので、この return を
-  // 通らない URL は `tsc` が断る。キャストの在りかは `vettedTypes.test.ts` が両方向で数える。
+  // 印を作るのはここだけ (threat: T-220)。Mamori では mint を書けるのは gate 関数の中だけで (M1)、
+  // 変換後の TypeScript ではこの return が `as VettedExternalUrl` の唯一の 1 か所になる。
+  // キャストの在りかは `vettedTypes.test.ts` が両方向で数える。
   return href as VettedExternalUrl;
 }

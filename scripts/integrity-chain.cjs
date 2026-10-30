@@ -148,6 +148,21 @@ const PROTECTED = [
   // 生成 JS は変わらないが、コンパイラが断る範囲が変わる)。
   'src/main/osSinks.ts',
   'src/shared/vetted.ts',
+  // 2026-10-30 (threat: T-221 · パス 560)。守りの層は Mamori で書いてあり、上の .ts はその生成物。元 (.mamori) と
+  // コンパイラ (src/shared/mamori/) と CLI も保護する —— コンパイラが書き換えられると、元を変えずに生成物へ何でも混ぜられる
+  // (生成物の一致を見る検査はコンパイラ自身を使うので、コンパイラの改竄は一致の検査に映らない)。
+  'src/shared/vetted.mamori',
+  'src/shared/externalUrlGate.mamori',
+  'src/main/shellOpenGate.mamori',
+  'src/main/osSinks.mamori',
+  'src/renderer/vettedSinks.mamori',
+  'src/renderer/vettedSinks.ts',
+  'src/shared/mamori/ast.ts',
+  'src/shared/mamori/parser.ts',
+  'src/shared/mamori/checker.ts',
+  'src/shared/mamori/emit.ts',
+  'src/shared/mamori/compile.ts',
+  'scripts/mamori.cjs',
   // 2026-08-22 に足した。`shellOpenGate.ts` の**双子**——あちらが「OS に
   // ファイルを開かせてよいか」なら、こちらは「OS に URL を開かせてよいか」。
   // `javascript:` / `file:` / OS 独自スキームを止める唯一の関門で、

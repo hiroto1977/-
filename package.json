@@ -39,6 +39,8 @@
     "knowledge:auto": "node scripts/knowledge-autopilot.cjs",
     "knowledge:md": "node scripts/build-academic-md.cjs",
     "ontology:md": "node scripts/build-ontology-md.cjs",
+    "mamori:build": "node scripts/mamori.cjs",
+    "mamori:check": "node scripts/mamori.cjs --check",
     "knowledge:export": "node scripts/export-notebooklm.cjs",
     "lint": "eslint --config eslint.config.js . --max-warnings 0",
     "lint:docs": "node scripts/cross-doc-consistency.cjs && node scripts/cross-doc-consistency.cjs --self-test",

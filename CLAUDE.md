@@ -1611,7 +1611,7 @@ npm run lint:zero-fold     # 「割れない値を 0 に倒す」箇所の**母�
                            #   母集団が 26 ファイル (実測 106) と 4 倍ずれていた
 npm run lint:shared-judgement # 「述語は共有したが、no と言われたあとの動作が両ビルドで
                            #   違う」の**母集団**を数え、`docs/REMAINING_WORK.md` の
-                           #   生成ブロックと突き合わせる (shared 166 / 両ビルドが
+                           #   生成ブロックと突き合わせる (shared 171 / 両ビルドが
                            #   import 90 / うち否定で答えられる 47。**この 3 つは
                            #   live metric なので散文だけが古びることはもう無い** ——
                            #   2026-09-15 まで 138 / 44 / 21 と書いたままだった。
@@ -1631,6 +1631,9 @@ npm run verify:all         # typecheck + all of the above + eslint (39 ゲート
                            #   (verify:all だけを見て「全 green」と言うと CI で落ちる)
 npm run mutate             # Stryker mutation testing (target: 100%); mutate:triage / mutate:next help; mutate:merge merges the weekly chunk reports
 npm run knowledge:auto     # knowledge autopilot: audit → regen (vault+NotebookLM) → verify → work queue
+npm run mamori:build       # 守りの層の元 (src/**/*.mamori · 言語は docs/MAMORI.md) を TypeScript へ変換し、隣の .ts を書き直す
+                           #   (生成物 — 手で編集しない。2026-10-30 · パス 560 · T-221。`mamori:check` は書かずに誤りと古びを報せる。
+                           #   同じ判定を src/shared/mamori/__tests__/mamoriGenerated.test.ts が npm test で見る)
 npm run ontology:md        # docs/ONTOLOGY.md を src/shared/ontology/ (語彙・facet の公理・法則と執行者) と
                            #   実物 (台帳・ゲート・両ビルドの action の面) から再生成 (生成物 — 手で編集しない。
                            #   `--check` で committed と一致するか。`ontologyDoc.test.ts` が npm test で同じ事を留める)
@@ -1862,6 +1865,12 @@ The browser target adds: `web-shim.ts` (a `window.serviceHub` polyfill imported 
   素の `shell.*` / `window.open` を包みの外で呼ばない (同じ検査と `lint:forbidden` が鳴る)。素の `string` を受ける危ない口を
   新しく足すなら、印を持たせるか、`SINK_LEDGER` に理由と守り手を書いて pending の天井を上げる差分をレビューに出す。
   型の守りの対照は `@ts-expect-error` で書く (`npm run typecheck` が検査する —— 守りが外れると「不要な @ts-expect-error」で落ちる)。
+- **守りの層は Mamori で書く —— `.ts` の生成物を手で直さない** (2026-10-30 · パス 560 · T-221)。
+  `src/shared/vetted.ts` / `externalUrlGate.ts` / `src/main/shellOpenGate.ts` / `osSinks.ts` / `src/renderer/vettedSinks.ts` は
+  隣の `.mamori` から `npm run mamori:build` で組む生成物である (手で直すと `mamoriGenerated.test.ts` が落ちる)。
+  関門は `gate fn` (印は `mint` でだけ作る)、危ない口は `extern sink` + `sink fn` (印の型しか受けない) で書く。
+  `as` / `any` / 宣言していない外の名前は Mamori に無い。新しい危ない口を足すなら、gate と sink の組として Mamori で書き、
+  `SINK_LEDGER` の pending を減らす (規則と文法は `docs/MAMORI.md`)。
 - **対照を回すまで、検査は信用しない。** 守っている物を実際に壊し、狙った項目が
   落ちることを見る。**鳴らない対照は「合格」ではなく「その検査についての報せ」である。**
 

@@ -2169,6 +2169,27 @@ export const LAWS: readonly Law[] = [
       chain,
     ],
   },
+  {
+    id: 'security-rule-in-the-language',
+    family: 'boundary',
+    name: '守りの層は、守りの規則を構文に持つ言語で書く —— 破れる規則を網で探すより、破れない書き方しか無い言語にする',
+    statement:
+      '型の印 (法則 `security-rule-in-the-type`) は TypeScript の中では型の書き換え 1 行で偽造でき、危ない口はどの関数からも呼べた。'
+      + 'それを止めていたのは綴りを数える census で、**言語そのものは許していた**。だから守りの層 (関門と OS の口) は Mamori (`docs/MAMORI.md`) で書く —— '
+      + '`as` が無い (印は `gate` 関数の `mint` でだけ作る)・危ない口は `extern sink` で宣言し `sink` 関数の中でだけ呼べる・`sink` は印の型しか受けない・'
+      + '印の型の引数へは印を持つ値しか渡せない・印つきの変数を素の値で上書きできない・宣言していない外の名前 (`window` / `fetch` / `process` ほか) は使えない (M0〜M6)。'
+      + '規則を破るプログラムは**TypeScript にならない**。生成物は commit して既存の門をすべて掛け、元と 1 byte の一致を毎回見る。'
+      + '**コンパイラ自身も守る物である** —— 一致の検査はコンパイラを使うので、コンパイラの改竄は一致に映らない (整合性チェーンが見る)。'
+      + '**限界**: 規則が効くのは Mamori で書いた中だけで、呼ぶ側の TypeScript は型の印と census が守る (threat: T-221)。',
+    provenance: ['2026-10-30 (パス 560)'],
+    enforcedBy: [
+      test('src/shared/mamori/__tests__/mamoriRules.test.ts'),
+      test('src/shared/mamori/__tests__/mamoriGenerated.test.ts'),
+      harness('mamori:check'),
+      test(T.shared('threatLedger')),
+      chain,
+    ],
+  },
 ];
 
 export interface LawLedgerProblem {

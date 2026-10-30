@@ -1,5 +1,28 @@
 # Service Hub — 残りの作業手順書
 
+## パス 560 (新しい言語 Mamori を作り、守りの層をそれで書き直す) (2026-10-30)
+
+- **依頼**: 「全く新しいプログラム言語を構築し、そのプログラム言語で今まで作ってきたシステムを構築し直して」。製品コードは約 22 万行 / 577 ファイル、検査は約 29 万行 / 約 19,000 件で、CI・整合性チェーン・変異検査は TypeScript が前提 —— 全部の書き直しは数か月規模なので、進め方を利用者に訊き、**守りの層から**を選んでもらった。
+- **言語**: Mamori (守り · `docs/MAMORI.md`)。守りの規則を構文に持つ: `as` / `any` / `eval` / テンプレート文字列が無い (M0)・印は `gate fn` の `mint` でだけ作る (M1)・`extern sink` の危ない口は `sink fn` の中だけ (M2)・`sink` は印の型しか受けない (M3)・印の型の引数へは印を持つ値だけ (M4 · モジュールをまたいで来歴を引く)・印つきの変数を素の値で上書きしない (M5)・宣言していない外の名前 (`window` / `fetch` / `process` / `require` / `globalThis` ほか) は使えない (M6)。
+- **コンパイラ**: `src/shared/mamori/` (`parser.ts` 字句・構文 / `checker.ts` 来歴 / `emit.ts` TypeScript への変換 / `compile.ts` 入口) と CLI `scripts/mamori.cjs` (`npm run mamori:build` / `mamori:check`)。誤りが 1 つでも在れば何も出さない。変換は決定的で、生成物 (`.ts`) は commit する —— 既存の門はすべて生成物に掛かる。
+- **書き直した物** (元 → 生成物): `vetted.mamori` / `externalUrlGate.mamori` / `shellOpenGate.mamori` / `osSinks.mamori` / `vettedSinks.mamori`。2 つの関門は元の TypeScript と**コードが同じ** (差は注記の形と改行の位置だけ —— 既存の 43 ファイル 1,064 件が編集なしで緑)。
+- **自分のコンパイラで prototype の鍵の取り違えを 1 つ踏んだ**: 禁止語の表を `FORBIDDEN_WORDS[word]` で引いたので `parsed.toString()` の `toString` が `Object.prototype.toString` に当たり、「禁止語」として止まった。`Object.hasOwn` で引く形へ直し、標本 (`toString` / `constructor`) を検査に置いた。
+- **検査**: `mamoriRules.test.ts` (41 件 —— 規則ごとに破るプログラムをコンパイルして狙った番号で断ること) / `mamoriGenerated.test.ts` (3 件 —— 守りの層 5 本が Mamori で書いてあること・生成物が元と 1 byte も違わないこと)。
+- **対照 8 方向すべて鳴る**: M1 を外す ❌2 / M2 ❌3 / M3 ❌3 / M4 ❌4 / M5 ❌1 / M6 ❌9 / `as`・`any` を許す ❌2 / 生成物を手で書き換える (認証情報つき URL の門を消す) → 検査 ❌1 + `mamori:check` exit 1。
+- **台帳**: 整合性チェーン (元 5 本・コンパイラ 5 本・CLI・`vettedSinks.ts` を保護対象へ —— コンパイラの改竄は一致の検査に映らないため)・CODEOWNERS・`lint:charset` に `.mamori`・`stryker.config.json` に `vettedSinks.ts`・`lint:mutation-scope` の KNOWN_UNMEASURED にコンパイラ 5 本 (理由つき)・脅威台帳 T-221・法則 `security-rule-in-the-language`。
+- **残した物 (正直に)**:
+  1. **コンパイラの変異検査は未測定** —— 測って 100% にしてから `mutate` へ入れる。
+  2. **書き直したのは守りの層の 5 本だけ** —— 残り約 570 ファイルは TypeScript のまま (呼ぶ側には T-220 の型の印が掛かる)。次は `SINK_LEDGER` の pending 4 本 (書き出しのファイル書き込み・`<a href>`・`<img src>`・fetch の送り先) を gate と sink の組として Mamori へ移し、移すたびに天井を下げる。
+  3. 言語は 0.1 で、ループ・クラス・オブジェクトの字面を持たない (守りの層を書くのに要らなかった)。足すときは、その構文が来歴の規則を外す道にならないかを先に考える。
+
+## パス 559 (型で守る —— 関門だけが作る印つきの型と、OS の口の包み) (2026-10-30)
+
+- **依頼**: 「プログラム言語自体にセキュリティ機能を組み込んでその精度を高め続けて」。OS に開かせる口 4 つ (electron の shell の 3 つ・`window.open`) は素の `string` を受け、関門を通ったかを `tsc` は知らなかった (止めていたのは綴りの census だけ)。
+- **直し**: 印 `Vetted<K>` (`src/shared/vetted.ts` · 実行時の費用 0) を関門の `return` でだけ作り、OS の口は印つきの型だけを受ける包み (`src/main/osSinks.ts` / `src/renderer/vettedSinks.ts`) で呼ぶ。main.ts (IPC と窓の扉)・oauth.ts・windowOpen.ts・web-shim が包みを通る。
+- **検査**: `vettedTypes.test.ts` (素の口は包みの中だけ・印の作り所は関門だけ・両方向 / 型の陰性対照 / 精度の台帳 `SINK_LEDGER` —— typed 4・pending 4・天井 4) / `main/__tests__/osSinks.test.ts` / `renderer/__tests__/vettedSinks.test.ts` (`@ts-expect-error` の対照を typecheck が見る)。
+- **対照 5 方向すべて鳴る**: 包みが素の string を受ける → tsc 3 件 / 関門の外で印を偽造 → census ❌2 / main が素の shell を呼ぶ → census ❌2 / web-shim が素の window.open → tsc 1 + census ❌3 / 関門が印を返さない → tsc 9 件 + census ❌2。
+- **台帳**: 脅威台帳 T-220・法則 `security-rule-in-the-type`・`lint:forbidden` の許可を包みへ移した・CODEOWNERS・整合性チェーン・`lint:mutation-scope` (osSinks.ts を mutate へ・vetted.ts は型だけなので KNOWN_UNMEASURED)・`docs/ZERO_TRUST.md`。
+
 ## パス 558 (事業計画書・資金調達計画書・キャッシュフロー計画書の詳細版を書類スタジオへ) (2026-10-29)
 
 - **依頼**: 「詳細な事業計画書のテンプレートを作って適切な場所に保管して」「資金調達計画書とキャッシュフロー計画書も作って保存して」。
@@ -32057,7 +32080,7 @@ src/shared/ のモジュール                                        138
 「読んだ結果」か `未読 (…)` のどちらかで、読んでいない物に「対称だろう」とは書かない。
 
 <!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/shared-judgement-census.cjs。npm run lint:shared-judgement は check だけ) -->
-shared **166** モジュール / 両ビルドが import **90** / うち否定で答えられる **47**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
+shared **171** モジュール / 両ビルドが import **90** / うち否定で答えられる **47**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
 
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |
