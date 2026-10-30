@@ -15,6 +15,7 @@
 - 書き出しのファイル書き込みも Mamori の gate/sink の組 (`src/main/clients/exportSink.mamori` → `exportTargetOrNull` / `writeExportFileVetted`) にした。書き手 4 本は印つきの行き先しか書けない。
 - `<img src>` も移した —— 関門 `imageUrlGate` は Mamori (`safeImageSrc` / `safeRemoteImageSrc` が `VettedImageSrc` を mint)・口は部品 `src/renderer/components/VettedImg.tsx` 1 つ (素の `<img` はこの外に無い —— census)。新しい画像を描くなら関門を通した値を `VettedImg` へ。
 - 外へ出る `<a href>` も移した —— 口は部品 `src/renderer/components/VettedLink.tsx` 1 つ (`href` は `VettedExternalUrl` だけ・`rel="noopener noreferrer"` 固定・左クリックは `openExternal`)。動的な素の `<a href={…}>` はこの外に無い (census)。`href="#"` + ハンドラの形はそのまま許す。`SINK_LEDGER` は pending 1 (fetch の送り先)・天井 1。
+- Mamori のコンパイラ 4 本 (`checker` / `compile` / `emit` / `parser`) は変異検査 **100.00%** で `mutate` に載っている。言語を変えたら、規則は `mamoriCheckerCoverage.test.ts` の位置の行列・誤りの文は `mamoriParserCoverage.test.ts`・変換は `mamoriEmitGolden.test.ts` (出力を目で確かめてから期待を直す —— 変換は it の中で走らせる) に足す。
 - 残作業: コンパイラの変異検査 (未測定)・`SINK_LEDGER` の pending 2 本 (`<a href>` / fetch) を移す。
 
 ## 直近の作業 (2026-10-30) — パス 559: 型で守る (Vetted 型 · threat: T-220)
