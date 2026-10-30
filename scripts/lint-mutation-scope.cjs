@@ -348,6 +348,7 @@ const KNOWN_UNMEASURED = {
   // **コンパイル時** (src が VettedImageSrc しか受けない) と census (素の `<img` はこの外に無い) に在る。
   // 関門の判定そのもの (imageUrlGate.ts) は mutate に載っている。
   'src/renderer/components/VettedImg.tsx': '判断を持たない JSX の口 (src をそのまま <img> に置く)。型の守りは VettedImg.test.ts の @ts-expect-error を typecheck が、素の <img の不在は vettedTypes.test.ts が留める。関門の判定は imageUrlGate.ts (mutate 済み)。',
+  'src/renderer/components/VettedLink.tsx': '判断を持たない JSX の口 (href をそのまま <a> に置き、左クリックを openExternal へ回す)。型の守りは VettedLink.test.ts の @ts-expect-error を typecheck が、素の動的な <a href> の不在は vettedTypes.test.ts が、左クリックの経路は VettedLink.test.ts (jsdom) が留める。関門の判定は externalUrlGate.ts (mutate 済み)。',
   // 2026-10-21 (T-147)。判断は userPresence.ts (mutate に載せた) が持ち、ここは Electron のダイアログへ繋ぐ薄い口。
   // 既定のボタン・窓が無いとき断る・呼び出し元の検査は presenceWiring.test.ts が実 API の偽物で留める。
   'src/main/presenceWiring.ts': 'Electron のダイアログと senderFrame へ繋ぐ薄い口。判断は userPresence.ts にあり、既定の断り側は presenceWiring.test.ts が留める。',

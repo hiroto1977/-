@@ -163,6 +163,7 @@ const PROTECTED = [
   // 画像の取得先の関門 (Mamori) と <img> の唯一の口 (パス 560 · SINK_LEDGER の typed)。生成物 imageUrlGate.ts は既に保護対象。
   'src/shared/imageUrlGate.mamori',
   'src/renderer/components/VettedImg.tsx',
+  'src/renderer/components/VettedLink.tsx',
   'src/shared/mamori/ast.ts',
   'src/shared/mamori/parser.ts',
   'src/shared/mamori/checker.ts',

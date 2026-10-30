@@ -118,8 +118,10 @@ export sink fn openExternalVetted(url: VettedExternalUrl) -> Promise<void> {
 (パス 559)。書き出しのファイル書き込みはパス 560 で gate と sink の組として移し、pending の天井を 4 → 3 へ下げた。
 続けて `<img src>` を移した (関門 `imageUrlGate` を Mamori へ・口は印 `VettedImageSrc` しか受けない部品 `VettedImg` 1 つ —— 第三者の
 応答 (DataList / StatusBar) も自分で組んだ data: URL (TemplatesPage / LibraryPage) も同じ関門を通る)。天井は 3 → 2。
-**次に移すなら**、まだ素の `string` を受けている危ない口 (`SINK_LEDGER` の pending 2 本 —— `<a href>`・
-fetch の送り先) を、同じく gate と sink の組として移す。移すたびに pending の天井を下げる。
+外へ出る `<a href>` も移した (口は印 `VettedExternalUrl` しか受けない部品 `src/renderer/components/VettedLink.tsx` 1 つ・関門は既に Mamori の
+`externalUrlGate`)。中クリック・右クリック・ドラッグは `click` を起こさず素の属性を辿るので、属性に載る値そのものが関門を通る。天井は 2 → 1。
+**次に移すなら**、まだ素の `string` を受けている危ない口 (`SINK_LEDGER` の pending 1 本 —— fetch の送り先) を、
+同じく gate と sink の組として移す。移すたびに pending の天井を下げる。
 
 ## 限界 (正直に書く)
 
@@ -127,7 +129,7 @@ fetch の送り先) を、同じく gate と sink の組として移す。移す
   `shell` を直接呼んだりする道は、TypeScript の側の検査 (`vettedTypes.test.ts` の census・`lint:forbidden`) が塞ぐ。
 - 変換した TypeScript は `tsc` が検査するが、実行時の守りは今までどおり**関門の中身**そのものである。
   Mamori が止めるのは「関門を飛ばす書き方」で、関門の判定の誤りは関門の検査 (変異検査 100% の対象) が見る。
-- 言語は 0.1 で、守りの層を書くのに要る構文しか持たない (ループ・クラス・オブジェクトの字面は無い)。**JSX も無い**ので、`<img>` の口 (`VettedImg.tsx`) は TypeScript で書き、守りは型の印と census (素の `<img` はこの部品の外に無い) が持つ。
+- 言語は 0.1 で、守りの層を書くのに要る構文しか持たない (ループ・クラス・オブジェクトの字面は無い)。**JSX も無い**ので、`<img>` の口 (`VettedImg.tsx`) と `<a href>` の口 (`VettedLink.tsx`) は TypeScript で書き、守りは型の印と census (素の `<img` と動的な素の `<a href={…}>` はこの部品の外に無い) が持つ。
   足すときは、その構文が来歴の規則を外す道にならないかを先に考える (`as` を入れなかったのと同じ理由)。
 
 ## 道具

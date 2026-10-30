@@ -86,6 +86,7 @@
     "src/main/windowPrefs.ts",
     "src/preload/preload.ts",
     "src/renderer/components/VettedImg.tsx",
+    "src/renderer/components/VettedLink.tsx",
     "src/renderer/data/assistantMarkdown.ts",
     "src/renderer/data/localWrite.ts",
     "src/renderer/data/recordCipher.ts",
@@ -3267,6 +3268,14 @@
       "leafCount": 152,
       "note": "update integrity-chain.cjs,VettedImg.tsx,imageUrlGate.mamori,imageUrlGate.ts,vetted.mamori,vetted.ts",
       "hash": "4d7e9b00876f8058994625844c1579434694fd976462412f641a110efcae12fb"
+    },
+    {
+      "index": 389,
+      "prevHash": "4d7e9b00876f8058994625844c1579434694fd976462412f641a110efcae12fb",
+      "merkleRoot": "f3f9eda6bca9657886ddb620b55c66b0c6b0c887a17731f009c0c2ff35a10612",
+      "leafCount": 153,
+      "note": "update integrity-chain.cjs,VettedLink.tsx",
+      "hash": "481cab63766de6c2d7a3dc2f7648443261f161279e5d30bb313861d5d03c2132"
     }
   ],
   "tipManifest": {
@@ -3302,7 +3311,7 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "d385ddfc52ec74abf184207bfbb1ac655e730db2b7c6d7e758e35e67e79a5737",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "be6c8bd4e34564025c3e31e607720daee1cbc9dd10628a460ae4ea30522bd0f7",
+    "scripts/integrity-chain.cjs": "943758749c33bf6f2b06e693e9f0bb595b2015c046453b64a667f84928d40f58",
     "scripts/knowledge-autopilot.cjs": "ee8f7ae4a4ad29dda6c02f83c113c45fa1648522f807e711aa86b7746f372968",
     "scripts/lib/artifact-freshness.cjs": "add621dfe55e0eab31354f0d6979c9c67b513ed8b8348b9137ca7fa53dd569c1",
     "scripts/lib/json-for-script.cjs": "cb79bf1fb2f3c10c6854ec16d9c12bb0695dee5561751333db4531545702fd70",
@@ -3354,6 +3363,7 @@
     "src/main/windowPrefs.ts": "0bccea9e29b489da1b4a7962eaa53e237cf93fed9d4692371a3a43a6a4985dee",
     "src/preload/preload.ts": "21fc645271dd2064f063fc439d888eb4dcef32d08d1030d92d9cb8ff2a4040a6",
     "src/renderer/components/VettedImg.tsx": "d55ffb54b76cafa0a314c2a6ac1704e9a7f35d4770bd159e0c489e6f272cda27",
+    "src/renderer/components/VettedLink.tsx": "5907fa72ba0c5f5ba1d9035aa8be67f3e72d872c69b83a57d8a9862f0f73b7a1",
     "src/renderer/data/assistantMarkdown.ts": "681b935d47b7d0781581a542eb9bf225314484cb5665a1cccabb7e78a77759d0",
     "src/renderer/data/localWrite.ts": "5f8ce8c143e6213eebc1d3214c6701e5d0d0bf59a00d9c2cee0911733d398ac8",
     "src/renderer/data/recordCipher.ts": "fc1669348ae06264b58391730ea2fa682d6a9032f44e7c821b507e1533c58ed4",

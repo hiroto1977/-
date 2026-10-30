@@ -49,10 +49,12 @@ function shippedFiles(): { rel: string; code: string }[] {
 
 /**
  * 素の危ない口。どれも素の string を受ける。`writeExportFile` は書き出しのファイル書き込み (パス 560 で足した ——
- * 定義の `function writeExportFile(` は呼び出しではないので数えない)。
+ * 定義の `function writeExportFile(` は呼び出しではないので数えない)。`<a … href={…}>` は**動的な** href を持つ素の
+ * アンカー (`href="#"` の文字列は数えない —— 辿られても '#')。属性の値の波括弧は 2 段まで読み飛ばすので、
+ * `onClick={(e) => { … }}` や `style={{ … }}` が href より前に在っても当たる。
  */
 export const RAW_SINK =
-  /\bshell\s*\.\s*(openExternal|openPath|showItemInFolder)\s*\(|\bwindow\s*\.\s*open\s*\(|(?<!function\s+)\bwriteExportFile\s*\(|<img\b/g;
+  /\bshell\s*\.\s*(openExternal|openPath|showItemInFolder)\s*\(|\bwindow\s*\.\s*open\s*\(|(?<!function\s+)\bwriteExportFile\s*\(|<img\b|<a\b(?:[^>{]|\{(?:[^{}]|\{[^{}]*\})*\})*?\bhref=\{/g;
 
 /** 印を作る形 —— キャスト (`as Vetted…` / `as unknown as Vetted…`) と型の述語 (`is Vetted…`)。 */
 export const MINT = /\bas\s+(?:unknown\s+as\s+)?Vetted[A-Za-z]*\b|\bis\s+Vetted[A-Za-z]*\b/g;
@@ -63,6 +65,7 @@ const SINK_WRAPPERS: Readonly<Record<string, number>> = {
   'renderer/vettedSinks.ts': 1,
   'main/clients/exportSink.ts': 1,
   'renderer/components/VettedImg.tsx': 1,
+  'renderer/components/VettedLink.tsx': 1,
 };
 
 /** 印を作ってよいファイルと、そこでの数 (どれも関門の `return` 1 か所)。 */
@@ -104,6 +107,11 @@ describe('型で守る: 素の OS の口は包みの中だけ (T-220)', () => {
     expect(hit('<img src={u} alt="" />')).toBe(1);
     expect(hit('<VettedImg src={u} alt="" />')).toBe(0);
     expect(hit('// <img src={u}> と書いていた\n')).toBe(0);
+    expect(hit('<a href={u}>x</a>')).toBe(1);
+    expect(hit('<a\n  onClick={(e) => { e.preventDefault(); }}\n  style={{ color: "x" }}\n  href={u}\n>')).toBe(1);
+    expect(hit('<a href="#" onClick={() => go()}>x</a>')).toBe(0);
+    expect(hit('<VettedLink href={u}>x</VettedLink>')).toBe(0);
+    expect(hit('<abbr title={t} href={u}>')).toBe(0);
   });
 });
 
@@ -202,12 +210,7 @@ export const SINK_LEDGER: readonly SinkRow[] = [
   { sink: 'window.open', state: 'typed', by: 'src/renderer/vettedSinks.ts', why: 'VettedExternalUrl だけを受ける (openWindowVetted)。noopener,noreferrer を包みが固定する。' },
   { sink: 'writeExportFile', state: 'typed', by: 'src/main/clients/exportSink.ts', why: 'VettedExportPath だけを行き先に受ける (writeExportFileVetted · パス 560 で Mamori へ移した)。書き手 4 本 (templates / teamradar / stocks / business) は exportTargetOrNull の戻り値を渡す。実行時の閉じ込めは writeExportFile がそのまま掛ける。' },
   { sink: '<img src>', state: 'typed', by: 'src/renderer/components/VettedImg.tsx', why: 'VettedImageSrc だけを src に受ける (VettedImg · パス 560)。印は Mamori の gate (safeImageSrc / safeRemoteImageSrc) の mint でだけ作れる。第三者の応答 (DataList / StatusBar) も自分で組んだ data: URL (TemplatesPage / LibraryPage) も同じ関門を通る。' },
-  {
-    sink: '外部リンクの <a href>',
-    state: 'pending',
-    by: 'src/shared/__tests__/followableUrlCensus.test.ts',
-    why: 'JSX の属性は React の型 (string) を受け、ここでは狭められない。href に載せる値が externalUrlOrNull の戻り値であることは census が両方向で数える。',
-  },
+  { sink: '外部リンクの <a href>', state: 'typed', by: 'src/renderer/components/VettedLink.tsx', why: 'VettedExternalUrl だけを href に受ける (VettedLink · パス 560)。中クリック・右クリック・ドラッグは click を起こさず素の属性を辿るので、属性そのものが関門を通る。rel="noopener noreferrer" を包みが固定する。' },
   {
     sink: '網の送り先 (fetch の URL)',
     state: 'pending',
@@ -217,12 +220,12 @@ export const SINK_LEDGER: readonly SinkRow[] = [
 ];
 
 /** pending の天井。**下げるのが正しい向き** —— 型で守る口が増えたら下げる。 */
-const PENDING_CEILING = 2;
+const PENDING_CEILING = 1;
 
 describe('型で守る: 精度の台帳 (ratchet · T-220)', () => {
   it('★ 印で守る口は台帳の typed と一致する (包みの数と両方向)', () => {
     const typed = SINK_LEDGER.filter((r) => r.state === 'typed');
-    expect(typed.map((r) => r.sink).sort()).toEqual(['<img src>', 'shell.openExternal', 'shell.openPath', 'shell.showItemInFolder', 'window.open', 'writeExportFile']);
+    expect(typed.map((r) => r.sink).sort()).toEqual(['<img src>', 'shell.openExternal', 'shell.openPath', 'shell.showItemInFolder', 'window.open', 'writeExportFile', '外部リンクの <a href>']);
     const perWrapper = new Map<string, number>();
     for (const r of typed) perWrapper.set(r.by.replace(/^src\//, ''), (perWrapper.get(r.by.replace(/^src\//, '')) ?? 0) + 1);
     expect(Object.fromEntries(perWrapper)).toEqual(SINK_WRAPPERS);
