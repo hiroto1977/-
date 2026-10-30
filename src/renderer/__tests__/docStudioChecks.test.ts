@@ -986,8 +986,23 @@ describe('資金調達計画書（詳細版）の検算', () => {
     expect(at({ repay2: '5600001' }).some((i) => i.field === 'repay2')).toBe(true);
   });
 
-  it('返済額か返済原資が空欄の年は比べない', () => {
+  it('返済原資が空欄の年は比べない・返済額の空欄は 0 として比べる', () => {
     expect(at({ repay4: '99999999', source4: '' }).some((i) => i.field === 'repay4')).toBe(false);
+    expect(at({ repay4: '', source4: '0' }).some((i) => i.field === 'repay4')).toBe(false);
+    expect(at({ repay4: '', source4: '-1' }).some((i) => i.field === 'repay4')).toBe(true);
+  });
+
+  it('出資・増資も調達の合計に入る', () => {
+    expect(at({ equity: '1' }).some((i) => i.field === 'selfFund' && i.level === 'fatal')).toBe(true);
+  });
+
+  it('読めない金額があれば合計の一致を判定しない', () => {
+    expect(at({ e1amt: '三百万' }).some((i) => i.field === 'selfFund' && i.level === 'fatal')).toBe(false);
+    expect(at({ loan1Amt: '七百万' }).some((i) => i.field === 'selfFund' && i.level === 'fatal')).toBe(false);
+  });
+
+  it('返済の合計は読めない欄があれば比べない', () => {
+    expect(at({ repay1: '不明', repay2: '99999999' }).some((i) => i.field === 'repay5')).toBe(false);
   });
 
   it('5 年間の返済の合計が借入額の合計を超えたら警告・同額なら通す', () => {
@@ -1016,8 +1031,27 @@ describe('キャッシュフロー計画書の検算', () => {
     expect(hit?.message).toContain('7,700,000 円');
   });
 
-  it('財務キャッシュフローの式が合わない年を名指しする', () => {
+  it('財務キャッシュフローの式が合わない年を名指しする・増資は収入として足す', () => {
     expect(at({ y5fincf: '0' }).some((i) => i.field === 'y5fincf')).toBe(true);
+    expect(at({ y2equity: '1000000' }).some((i) => i.field === 'y2fincf')).toBe(true);
+    expect(at({ y2equity: '1000000', y2fincf: '-700000' }).some((i) => i.field === 'y2fincf')).toBe(false);
+  });
+
+  it('営業・財務キャッシュフローの欄が空欄か読めなければ式を検算しない', () => {
+    // 読めない欄そのものは共通の検査が「数値として読み取れません」と言う —— ここで見るのは式の不一致だけ。
+    const op = (over: Record<string, string>) => at(over).some((i) => i.field === 'y2opcf' && i.message.includes('一致しません'));
+    expect(op({ y2opcf: '' })).toBe(false);
+    expect(op({ y2opcf: '不明' })).toBe(false);
+    expect(op({ y2net: '不明' })).toBe(false);
+    const fin = (over: Record<string, string>) => at(over).some((i) => i.field === 'y2fincf' && i.message.includes('一致しません'));
+    expect(fin({ y2fincf: '' })).toBe(false);
+    expect(fin({ y2fincf: '不明' })).toBe(false);
+    expect(fin({ y2borrow: '不明' })).toBe(false);
+  });
+
+  it('期末残高の断りは 1年目なら期首残高、2年目以降なら前年の期末残高から、と言う', () => {
+    expect(at({ opening: '3000001' }).find((i) => i.field === 'y1ending')?.message).toContain('「期首残高');
+    expect(at({ y2ending: '8400001' }).find((i) => i.field === 'y2ending')?.message).toContain('「前年の期末残高');
   });
 
   it('期末残高は前年の期末残高から検算する (1年目は期首残高から)', () => {
@@ -1070,6 +1104,30 @@ describe('事業計画書（詳細版）の検算', () => {
 
   it('読めない数字があれば式を検算しない', () => {
     expect(at({ y2cost: '六百万' }).some((i) => i.field === 'y2op')).toBe(false);
+  });
+
+  it('経常利益が売上高と同額なら指摘しない・上回れば指摘する', () => {
+    expect(at({ y2sales: '100', y2cost: '0', y2sga: '0', y2op: '100', y2ord: '100' }).some((i) => i.field === 'y2ord')).toBe(false);
+    expect(at({ y2sales: '100', y2cost: '0', y2sga: '0', y2op: '100', y2ord: '101' }).some((i) => i.field === 'y2ord')).toBe(true);
+  });
+
+  it('3年目がちょうど1年目の5倍なら通す・1年目が 0 なら伸び率を判定しない', () => {
+    const y1 = { y1sales: '1000', y1cost: '0', y1sga: '0', y1op: '1000' };
+    const y3 = (sales: string) => ({ y3sales: sales, y3cost: '0', y3sga: '0', y3op: sales });
+    expect(at({ ...y1, ...y3('5000') }).some((i) => i.field === 'y3sales')).toBe(false);
+    expect(at({ ...y1, ...y3('5001') }).some((i) => i.field === 'y3sales')).toBe(true);
+    expect(at({ y1sales: '0', y1cost: '0', y1sga: '0', y1op: '0', ...y3('99999999') }).some((i) => i.field === 'y3sales')).toBe(false);
+  });
+
+  it('補助金も調達の合計に入る・読めない金額があれば合計の一致を判定しない', () => {
+    expect(at({ subsidy: '1' }).some((i) => i.field === 'selfFund' && i.level === 'fatal')).toBe(true);
+    expect(at({ equip: '五百万' }).some((i) => i.field === 'selfFund')).toBe(false);
+    expect(at({ loanBank: '七百万' }).some((i) => i.field === 'selfFund')).toBe(false);
+  });
+
+  it('返済期間が 0 年なら返済原資を判定しない・借入が無ければ利益が負でも判定しない', () => {
+    expect(at({ years: '0' }).some((i) => i.field === 'years')).toBe(false);
+    expect(at({ loanBank: '0', loanPublic: '0', selfFund: '15000000', y1op: '-1000000' }).some((i) => i.field === 'years')).toBe(false);
   });
 
   it('人件費が販管費と同額なら指摘しない・上回れば指摘する', () => {

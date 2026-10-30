@@ -1310,7 +1310,8 @@ const RULES: Record<string, (v: Values, doc: StudioDoc) => DocIssue[]> = {
     for (const n of [1, 2, 3, 4, 5]) {
       const repay = money(v, `repay${n}`);
       const source = money(v, `source${n}`);
-      if (text(v, `repay${n}`) !== '' && text(v, `source${n}`) !== '' && repay > source) {
+      // 返済額の空欄は 0 として比べる (0 が原資を上回るのは原資が負のときだけで、それは知らせるべき形)。
+      if (text(v, `source${n}`) !== '' && repay > source) {
         out.push({
           level: 'warn',
           field: `repay${n}`,
@@ -1321,7 +1322,8 @@ const RULES: Record<string, (v: Values, doc: StudioDoc) => DocIssue[]> = {
     }
     const loans = money(v, 'loan1Amt') + money(v, 'loan2Amt');
     const repaid = [1, 2, 3, 4, 5].reduce((s, n) => s + money(v, `repay${n}`), 0);
-    if (Number.isFinite(loans) && Number.isFinite(repaid) && repaid > loans) {
+    // 読めない欄は NaN になり、NaN との大小比較は常に偽なので、別に isFinite を見なくてよい。
+    if (repaid > loans) {
       out.push({
         level: 'warn',
         field: 'repay5',
@@ -1340,7 +1342,8 @@ const RULES: Record<string, (v: Values, doc: StudioDoc) => DocIssue[]> = {
   'cf-keikaku'(v) {
     const out: DocIssue[] = [];
     let prev = text(v, 'opening') === '' ? Number.NaN : money(v, 'opening');
-    const floor = text(v, 'minBalance') === '' ? Number.NaN : money(v, 'minBalance');
+    // 空欄は 0 (= 負の残高は上の fatal が先に拾うので、最低額の警告は出ない)。読めなければ NaN で比較が偽。
+    const floor = money(v, 'minBalance');
     for (const n of [1, 2, 3, 4, 5]) {
       const opcf = money(v, `y${n}opcf`);
       const opExpected = money(v, `y${n}net`) + money(v, `y${n}dep`) + money(v, `y${n}wc`);
