@@ -1977,6 +1977,30 @@
           "replace": "  /* self-scan removed (ablation) */"
         }
       ]
+    },
+    {
+      "id": "A-538",
+      "threat": "T-230",
+      "file": "src/renderer/security/vault.ts",
+      "why": "ブラウザ版 vault の v2 AAD から storedAt を落とす (serviceId だけで束ねる前へ戻す) —— 保存時刻が認証されなくなり、前倒しした記録が復号できて若返る",
+      "edits": [
+        {
+          "find": "service-hub-token-v2:${serviceId}:${storedAt}",
+          "replace": "service-hub-token-v2:${serviceId}"
+        }
+      ]
+    },
+    {
+      "id": "A-539",
+      "threat": "T-230",
+      "file": "src/main/secrets.ts",
+      "why": "デスクトップ版 secrets の atv2 の読みから『暗号文の中の時刻 == 平文の時刻』の一致検査を落とす —— 前倒しした atv2 記録が復号できて若返る",
+      "edits": [
+        {
+          "find": "    if (sep === -1 || Number(body.slice(0, sep)) !== s.storedAt) {",
+          "replace": "    if (sep === -1) {"
+        }
+      ]
     }
   ]
 }

@@ -308,42 +308,60 @@ const UNDECRYPTABLE_CORRUPT =
   '設定画面から削除して、もう一度登録してください。';
 
 /**
- * 保存した値の包み (2026-10-28 · threat: T-213)。`encode()` の出力の前に保存した時刻を付ける:
- *   `at:<epoch ms>:<encode の出力>`  —— 有効時間の規則が掛かる (API キー・PAT・JSON の鍵束)
+ * 保存した値の包み (2026-10-28 · threat: T-213 / 2026-10-30 · threat: T-230)。`encode()` の出力の前に保存した時刻を付ける:
+ *   `atv2:<epoch ms>:<encode(ts1:<epoch ms>:<token>)>`  —— 有効時間つき・**時刻を暗号文の中にも束ねる** (現行)
+ *   `at:<epoch ms>:<encode の出力>`  —— 有効時間つき・時刻は平文だけ (T-213 の旧形式・後方互換で読む)
  *   `oauth:<encode の出力>`          —— 更新トークンを持つ TokenSet (認可サーバの期限に従う)
  *   `<encode の出力>`                 —— この規則より前の記録 (日付が無い)
- * `encode()` の出力は base64 か `plain:` + base64 なので、先頭の `at:` / `oauth:` と取り違えない。
+ * `encode()` の出力は base64 か `plain:` + base64 なので、先頭の `atv2:` / `at:` / `oauth:` と取り違えない。
+ *
+ * ## なぜ時刻を暗号文の中にも束ねるのか (T-230)
+ *
+ * `at:` の時刻は平文で**認証されない**。保管ファイル (secrets.json) へ書ける相手は、OS キーチェーンを
+ * 破らなくても `at:<ms>:` の時刻を前倒しできる。本来 8 時間で期限切れになる記録を「今」へ若返らせると、
+ * 持ち出された写しが期限を越えて使える (ブラウザ版 vault の T-213 残り穴と同じ · safeStorage は AAD を
+ * 持たないので、時刻を暗号文の中 `ts1:<ms>:<token>` へ入れ、読む時に平文の時刻と一致するか検める ——
+ * 書き換えると不一致で復号を断る)。平文の時刻は復号前の有効時間判定に残す (安い事前検査)。
  */
 const STAMP_AT = 'at:';
+const STAMP_AT_V2 = 'atv2:';
 const STAMP_OAUTH = 'oauth:';
-type Stamped = { readonly kind: 'at'; readonly storedAt: number; readonly inner: string }
+/** 暗号文の中に束ねた時刻の印。復号して得た平文が `ts1:<ms>:<token>` の形で、`<ms>` が平文の時刻と一致する。 */
+const TS_INNER = 'ts1:';
+type Stamped = { readonly kind: 'at'; readonly version: 1 | 2; readonly storedAt: number; readonly inner: string }
   | { readonly kind: 'oauth'; readonly inner: string }
   | { readonly kind: 'undated'; readonly inner: string };
 
+function parseAtBody(rest: string, version: 1 | 2): Stamped {
+  const sep = rest.indexOf(':');
+  // 区切りが無い = 壊れた包み。日付が無い物と同じく期限切れへ倒す (`storedAt` は NaN)。
+  // `indexOf` が「無い」で返す値は -1 の 1 つなので、その値そのものを比べる (`< 0` だと
+  // `<= 0` にする変異が等価 · 法則 115)。
+  if (sep === -1) return { kind: 'at', version, storedAt: Number.NaN, inner: rest };
+  return { kind: 'at', version, storedAt: Number(rest.slice(0, sep)), inner: rest.slice(sep + 1) };
+}
+
 function unstamp(value: string): Stamped {
   if (value.startsWith(STAMP_OAUTH)) return { kind: 'oauth', inner: value.slice(STAMP_OAUTH.length) };
-  if (value.startsWith(STAMP_AT)) {
-    const rest = value.slice(STAMP_AT.length);
-    const sep = rest.indexOf(':');
-    // 区切りが無い = 壊れた包み。日付が無い物と同じく期限切れへ倒す (`storedAt` は NaN)。
-    // `indexOf` が「無い」で返す値は -1 の 1 つなので、その値そのものを比べる (`< 0` だと
-    // `<= 0` にする変異が等価 · 法則 115)。
-    if (sep === -1) return { kind: 'at', storedAt: Number.NaN, inner: rest };
-    return { kind: 'at', storedAt: Number(rest.slice(0, sep)), inner: rest.slice(sep + 1) };
-  }
+  if (value.startsWith(STAMP_AT_V2)) return parseAtBody(value.slice(STAMP_AT_V2.length), 2);
+  if (value.startsWith(STAMP_AT)) return parseAtBody(value.slice(STAMP_AT.length), 1);
   return { kind: 'undated', inner: value };
 }
 
-/** 書く側: 値の形で包みを決める。時刻は `Date.now()` (平文の付随データ —— 秘密ではない)。 */
-function stamp(token: string, encoded: string, now: number): string {
-  return isRefreshableTokenSetJson(token) ? `${STAMP_OAUTH}${encoded}` : `${STAMP_AT}${now}:${encoded}`;
+/**
+ * 書く側: 値の形で包みを決め、暗号化まで行う。時刻は `now` (平文の付随データ —— 秘密ではない) だが、
+ * at 形式では**暗号文の中にも束ねる** (`ts1:<now>:<token>` を暗号化 · T-230)。
+ */
+async function stampAndEncode(token: string, now: number): Promise<string> {
+  if (isRefreshableTokenSetJson(token)) return `${STAMP_OAUTH}${await encode(token)}`;
+  return `${STAMP_AT_V2}${now}:${await encode(`${TS_INNER}${now}:${token}`)}`;
 }
 
 /** 包みを保ったまま中身を差し替える (`upgradePlainValues` が使う)。 */
 function restamp(original: string, inner: string): string {
   const s = unstamp(original);
   if (s.kind === 'oauth') return `${STAMP_OAUTH}${inner}`;
-  if (s.kind === 'at') return `${STAMP_AT}${s.storedAt}:${inner}`;
+  if (s.kind === 'at') return `${s.version === 2 ? STAMP_AT_V2 : STAMP_AT}${s.storedAt}:${inner}`;
   return inner;
 }
 
@@ -378,7 +396,9 @@ async function migrateUndated(ids: readonly string[]): Promise<void> {
       if (unstamp(value).kind !== 'undated') continue;
       const read = await decodeInner(value);
       if (!read.ok) continue;
-      upgraded[id] = stamp(read.token, value, now);
+      // 日付を付けるときに現行形式 (atv2 · 時刻を暗号文の中にも束ねる) で包み直す —— 復号した
+      // 生トークンから作る (元の inner は時刻を含まないので再暗号化が要る · T-230)。
+      upgraded[id] = await stampAndEncode(read.token, now);
       changed = true;
     }
     if (changed) await writeStore(upgraded);
@@ -386,7 +406,24 @@ async function migrateUndated(ids: readonly string[]): Promise<void> {
 }
 
 async function decode(value: string): Promise<StoredTokenRead> {
-  return decodeInner(unstamp(value).inner);
+  const s = unstamp(value);
+  const read = await decodeInner(s.inner);
+  if (!read.ok) return read;
+  // atv2: 暗号文の中の時刻が平文の時刻と一致するか検める (threat: T-230)。平文の `atv2:<ms>:` を
+  // 前倒しして若返らせても、暗号文は元の時刻で封緘されているので不一致で断る (= 復号できない扱い)。
+  if (s.kind === 'at' && s.version === 2) {
+    if (!read.token.startsWith(TS_INNER)) return { ok: false, reason: 'undecryptable', message: UNDECRYPTABLE_CORRUPT };
+    // 復号して得た平文の中身 (`ts1:<ms>:<token>` の `ts1:` を外した残り)。応答の本文ではない
+    // ので `lint:forbidden` の `body.slice(` の網には掛けない (名前を `tsInner` にして区別する)。
+    const tsInner = read.token.slice(TS_INNER.length);
+    const sep = tsInner.indexOf(':');
+    // 区切りが無い (`-1`) か、暗号文の中の時刻が平文の時刻と違えば改竄。
+    if (sep === -1 || Number(tsInner.slice(0, sep)) !== s.storedAt) {
+      return { ok: false, reason: 'undecryptable', message: UNDECRYPTABLE_CORRUPT };
+    }
+    return { ok: true, token: tsInner.slice(sep + 1) };
+  }
+  return read;
 }
 
 async function decodeInner(value: string): Promise<StoredTokenRead> {
@@ -453,7 +490,7 @@ export async function setToken(serviceId: string, token: string): Promise<void> 
   return withWriteLock(async () => {
     const store = await readStoreForWrite();
     const upgraded = await upgradePlainValues(store);
-    upgraded[serviceId] = stamp(token, await encode(token), Date.now());
+    upgraded[serviceId] = await stampAndEncode(token, Date.now());
     await writeStore(upgraded);
   });
 }
@@ -670,7 +707,8 @@ async function saveRefreshedIfUnchanged(serviceId: ServiceId, before: string, fr
     // 消された・差し替えられた後の応答は書かない。読めない今の値も「同じ」とは言えないので書かない。
     if (now === null || !now.ok || now.token !== before) return;
     const upgraded = await upgradePlainValues(store);
-    upgraded[serviceId] = stamp(check.serialized, await encode(check.serialized), Date.now());
+    // TokenSet は `oauth:` 包みへ (isRefreshableTokenSetJson が真)。at の時刻束ねは掛からない。
+    upgraded[serviceId] = await stampAndEncode(check.serialized, Date.now());
     await writeStore(upgraded);
   });
 }

@@ -31,6 +31,8 @@ vi.mock('electron', () => ({
 const CORRUPT_VALUE = Buffer.from('CORRUPT', 'utf8').toString('base64');
 const FILE_NAME = 'service-hub-secrets.json';
 const encrypted = (token: string): string => Buffer.from(`enc:${token}`, 'utf8').toString('base64');
+/** 現行 (atv2) の保存形: 外側 `atv2:<ms>:` + 暗号文の中に `ts1:<ms>:` を束ねる (threat: T-230)。 */
+const stampedV2 = (token: string, at: number): string => `atv2:${at}:${encrypted(`ts1:${at}:${token}`)}`;
 const readRaw = async (): Promise<Record<string, string>> =>
   JSON.parse(await fs.readFile(path.join(userDataDir, FILE_NAME), 'utf8')) as Record<string, string>;
 const writeRaw = (store: Record<string, string>): Promise<void> =>
@@ -54,10 +56,10 @@ afterEach(async () => {
 });
 
 describe('secrets — 保存した資格情報の有効時間 (threat: T-213)', () => {
-  it('★ 保存した値は時刻の包み `at:<ms>:` を持ち、有効時間の中は読める', async () => {
+  it('★ 保存した値は時刻の包み `atv2:<ms>:` を持ち、有効時間の中は読める', async () => {
     const m = await secretsModule();
     await m.setToken('github', 'ghp_x');
-    expect((await readRaw()).github).toBe(`at:${T0}:${encrypted('ghp_x')}`);
+    expect((await readRaw()).github).toBe(stampedV2('ghp_x', T0));
     now = T0 + CREDENTIAL_TTL_MS; // 境界ちょうどは生きている
     expect(await m.readStoredToken('github')).toEqual({ ok: true, token: 'ghp_x' });
     expect(await m.listConfiguredServices()).toEqual(['github']);
@@ -95,6 +97,33 @@ describe('secrets — 保存した資格情報の有効時間 (threat: T-213)', 
     expect(await readRaw()).toEqual({});
   });
 
+  it('★ 期限切れの包みを前倒しして若返らせても、暗号文の中の時刻と食い違い復号を断る (若返り攻撃 · threat: T-230)', async () => {
+    // T-213 の有効時間は平文の時刻を読む安い事前検査で、平文の時刻は**認証されない**。保管ファイルへ
+    // 書ける相手は OS キーチェーンを破らなくても `atv2:<ms>:` の時刻を「今」へ前倒しして期限切れを
+    // 外せる (未来へ書くと期限切れに倒れるが、「古いが now 以下」へ戻すと若返る —— T-213 の fix が
+    // 「信用を延ばす向きには働かない」と書いたのは誤りだった)。だが atv2 は暗号文の中にも元の時刻
+    // (`ts1:<ms>:`) を束ねており、前倒しすると平文の時刻と不一致で復号を断る (= 使えない)。
+    const m = await secretsModule();
+    await m.setToken('github', 'ghp_x'); // atv2:T0:encode(ts1:T0:ghp_x)
+    const fresh = T0 + 100 * CREDENTIAL_TTL_MS; // ずっと後。でも「今」以下にして期限切れを外す
+    now = fresh;
+    // 攻撃者が平文の時刻だけ「今」へ前倒しする (暗号文はそのまま = 元の T0 を封緘)
+    await writeRaw({ github: `atv2:${fresh}:${encrypted(`ts1:${T0}:ghp_x`)}` });
+    const read = await m.readStoredToken('github');
+    expect(read.ok).toBe(false);
+    // 平文の有効時間 (now - fresh = 0) は通り抜けるが、暗号文の中の時刻 (T0) と食い違うので復号できない
+    expect((read as { reason: string }).reason).toBe('undecryptable');
+  });
+
+  it('★ 暗号文はそのまま平文の時刻を 1 ms ずらしても復号を断る (時刻の束ねは厳密一致)', async () => {
+    const m = await secretsModule();
+    await m.setToken('github', 'ghp_x');
+    await writeRaw({ github: `atv2:${T0 + 1}:${encrypted(`ts1:${T0}:ghp_x`)}` });
+    const read = await m.readStoredToken('github');
+    expect(read.ok).toBe(false);
+    expect((read as { reason: string }).reason).toBe('undecryptable');
+  });
+
   it('★ 更新トークンを持つ OAuth の TokenSet は `oauth:` で保存され、有効時間の外 (認可サーバの期限に従う)', async () => {
     const m = await secretsModule();
     await m.setOAuthTokens('github', { accessToken: 'at', refreshToken: 'rt', expiresAt: T0 + 10 * 24 * 60 * 60 * 1000 });
@@ -107,7 +136,7 @@ describe('secrets — 保存した資格情報の有効時間 (threat: T-213)', 
   it('対照: refreshToken の無い TokenSet (貼り付け式) は普通の鍵と同じく有効時間が掛かる', async () => {
     const m = await secretsModule();
     await m.setToken('drive', JSON.stringify({ accessToken: 'ya29.x' }));
-    expect((await readRaw()).drive).toMatch(/^at:\d+:/);
+    expect((await readRaw()).drive).toMatch(/^atv2:\d+:/);
     now = T0 + CREDENTIAL_TTL_MS + 1;
     expect((await m.getValidToken('drive')).ok).toBe(false);
   });
@@ -116,7 +145,7 @@ describe('secrets — 保存した資格情報の有効時間 (threat: T-213)', 
     const m = await secretsModule();
     await writeRaw({ github: encrypted('ghp_old') });
     expect(await m.readStoredToken('github')).toEqual({ ok: true, token: 'ghp_old' });
-    expect((await readRaw()).github).toBe(`at:${T0}:${encrypted('ghp_old')}`);
+    expect((await readRaw()).github).toBe(stampedV2('ghp_old', T0));
     now = T0 + CREDENTIAL_TTL_MS + 1;
     expect((await m.readStoredToken('github')).ok).toBe(false);
   });
@@ -184,7 +213,7 @@ describe('secrets — 保存した資格情報の有効時間 (threat: T-213)', 
     const [a, b] = await Promise.all([m.listConfiguredServices(), m.listConfiguredServices()]);
     expect(a).toEqual(['github']);
     expect(b).toEqual(['github']);
-    expect((await readRaw()).github).toBe(`at:${T0}:${encrypted('ghp_old')}`);
+    expect((await readRaw()).github).toBe(stampedV2('ghp_old', T0));
     expect(await m.readStoredToken('github')).toEqual({ ok: true, token: 'ghp_old' });
   });
 
@@ -194,7 +223,7 @@ describe('secrets — 保存した資格情報の有効時間 (threat: T-213)', 
     expect(await m.listConfiguredServices()).toEqual(['github']);
     const raw = await readRaw();
     expect(raw).not.toHaveProperty('old');
-    expect(raw.github).toBe(`at:${T0}:${encrypted('ghp_old')}`);
+    expect(raw.github).toBe(stampedV2('ghp_old', T0));
   });
 
   it('★ 日付の無い記録のうち、読めない物 (壊れた値) には時刻を付けず、ファイルも書き直さない', async () => {

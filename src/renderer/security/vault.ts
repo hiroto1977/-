@@ -472,14 +472,23 @@ interface EncryptedToken {
   /**
    * 保存した時刻 (epoch ms · 平文の付随データ · 2026-10-28 · threat: T-213)。有効時間の規則
    * (`shared/credentialTtl.ts`) はこれを読み、期限切れ・日付の無い記録を**復号せずに消す**。
-   * 秘密ではないので AAD にも暗号文にも入れない (時刻を書き換えても復号は影響を受けず、
-   * 未来へ書き換えた物は規則が期限切れとして消す)。
+   * 秘密ではないので平文で持つが、**v2 からは AAD に束ねて認証する** (`tokenAadV2`) —— 書き換えると
+   * 復号が失敗する。平文で持つのは有効時間の事前判定を復号前に走らせるため。
    */
   storedAt?: number;
 }
 
-/** 現在のトークンレコードの版。 */
+/**
+ * トークンレコードの版。
+ * - `1` = serviceId を AAD で束ねた物 (2026-08-24)。`storedAt` は平文で**認証されない**。
+ * - `2` = serviceId **と storedAt** を AAD で束ねた物 (2026-10-30 · threat: T-230)。
+ *   保存時刻を書き換えると復号自体が失敗する。
+ *
+ * 現在書き出すのは常に v2。v1 / 版なしは読めたらその場で v2 へ束ね直す (後方互換)。
+ * 有効時間が 8 時間なので、この修正の後 8 時間で保管庫の全記録は v2 になる。
+ */
 const TOKEN_RECORD_V1 = 1;
+const TOKEN_RECORD_V2 = 2;
 
 /**
  * トークンを**保管場所に束ねる**ための付随データ (AES-GCM の additionalData)。
@@ -502,6 +511,28 @@ const TOKEN_RECORD_V1 = 1;
  */
 function tokenAad(serviceId: string): Uint8Array {
   return new TextEncoder().encode(`service-hub-token-v1:${serviceId}`);
+}
+
+/**
+ * v2 の付随データ —— serviceId に加えて**保存時刻を束ねる** (2026-10-30 · threat: T-230)。
+ *
+ * ## なぜ storedAt まで束ねるのか
+ *
+ * `storedAt` は有効時間 (`credentialTtl.ts`) が**復号せずに**読む平文なので、それだけでは
+ * 認証されない。IndexedDB へ書ける相手 (プロファイルに触れる者・ページに script を通せる者) は
+ * 鍵を知らなくても `storedAt` を書き換えられる。前方 (まだ `now` 以下) へ戻すと、本来 8 時間で
+ * 期限切れになる記録が**若返り**、持ち出された保管庫の写しが期限を越えて使える (T-213 の残り穴 = T-230 ——
+ * 旧版の docblock は「未来へ書き換えた物は規則が消すから信用を延ばす向きには働かない」と書いて
+ * いたが**偽だった**。未来ではなく「古いが `now` 以下」へ書き換えれば若返る)。
+ *
+ * storedAt を AAD に入れると、書き換えた記録は**復号自体が失敗する** (GCM が AAD を認証する)。
+ * 平文のままなので有効時間の事前判定 (復号前に期限切れを消す安い検査) はそのまま使え、
+ * 認証は復号のときに掛かる —— 平文で読める × 書き換えると壊れる、の両立が AAD の役目である。
+ *
+ * encode と decode は同じ記録の `serviceId` (IDB の鍵) と `storedAt` から AAD を組むので必ず一致する。
+ */
+function tokenAadV2(serviceId: string, storedAt: number): Uint8Array {
+  return new TextEncoder().encode(`service-hub-token-v2:${serviceId}:${storedAt}`);
 }
 
 // AES-GCM / PBKDF2 wrappers — security-critical correctness is pinned by
@@ -1108,8 +1139,10 @@ class BrowserVault implements Vault {
       // 掴んだ鍵で書き切る手も有るが、それは「施錠した」と言いながら
       // 書き込みを続けることになる。
       this.requireKey();
-      const blob = await encryptString(key, token, tokenAad(serviceId));
-      await idbPut(db, TOKEN_STORE, serviceId, { ...blob, v: TOKEN_RECORD_V1, storedAt: Date.now() });
+      // storedAt は AAD と保存欄で**同じ値**を使う (threat: T-213) —— 1 度だけ読む。
+      const storedAt = Date.now();
+      const blob = await encryptString(key, token, tokenAadV2(serviceId, storedAt));
+      await idbPut(db, TOKEN_STORE, serviceId, { ...blob, v: TOKEN_RECORD_V2, storedAt });
     } finally {
       db.close();
     }
@@ -1141,23 +1174,29 @@ class BrowserVault implements Vault {
     // 待っている間に施錠されたなら、それは「未設定」ではない。
     // 下の catch は**復号の失敗** (鍵違い・壊れた blob) だけを飲む。
     this.requireKey();
+    // AAD が合わない = **置き場所が違う / 保存時刻が書き換えられている**。鍵違いと同じ
+    // 扱いで黙って断る。ここより下の分岐はすべて `.catch(() => null)` で書く:
+    //
+    // `try/catch` ではなく `.catch()` で書く理由 (2026-08-31): catch の
+    // **中身を空にする変異が等価**だった —— 空にすると下の経路へ落ちるが、AAD つきで
+    // 封緘された物を違う AAD (無し・v1) で開こうとして必ず失敗する (GCM が AAD まで
+    // 認証するのが、まさにこの AAD の目的である) ので、結局 null を返す。
+    // **同じ結果に 2 つの道がある形**が変異体を測れなくしていた。
+    // `.catch(() => null)` の `null` は `vaultRecordBinding.test.ts` の
+    // `toBeNull()` が留めている (undefined へ変えると鳴る)。
+    if (blob.v === TOKEN_RECORD_V2) {
+      // serviceId と storedAt を束ねた現行形式 (threat: T-213)。保存時刻を書き換えると
+      // AAD が合わず復号が失敗する —— ここが鮮度の認証そのもの。
+      return await decryptString(key, blob, tokenAadV2(serviceId, blob.storedAt as number)).catch(
+        () => null,
+      );
+    }
     if (blob.v === TOKEN_RECORD_V1) {
-      // AAD が合わない = **置き場所が違う**。鍵違いと同じ扱いで黙って断る。
-      //
-      // `try/catch` ではなく `.catch()` で書く理由 (2026-08-31): catch の
-      // **中身を空にする変異が等価**だった —— 空にすると下の「版の無いレコード」
-      // 経路へ落ちるが、AAD つきで封緘された物を AAD 無しで開こうとして必ず
-      // 失敗する (GCM が AAD まで認証するのが、まさにこの AAD の目的である)
-      // ので、結局 null を返す。**同じ結果に 2 つの道がある形**が変異体を
-      // 測れなくしていた。
-      //
-      // `next-line` の pragma では黙らせられなかった —— 指示は次の**文**の
-      // 先頭に付くので、try ブロックの末尾に書いた注記は catch 節へ届かない
-      // (このリポジトリで 3 度目)。ブロック形で囲むと try 側の測定まで
-      // 落ちるので、**分岐そのものを 1 本にした**。
-      // `.catch(() => null)` の `null` は `vaultRecordBinding.test.ts` の
-      // `toBeNull()` が留めている (undefined へ変えると鳴る)。
-      return await decryptString(key, blob, tokenAad(serviceId)).catch(() => null);
+      // serviceId だけ束ねた旧形式。読めたら storedAt まで束ねた v2 へその場で上げ直す
+      // (有効時間 8 時間なので、残る v1 はこの 1 度の読みか再保存で必ず消える)。
+      const plainV1 = await decryptString(key, blob, tokenAad(serviceId)).catch(() => null);
+      if (plainV1 !== null) await this.rebindToken(serviceId, plainV1, blob.storedAt).catch(() => {});
+      return plainV1;
     }
     // 版の無いレコードは AAD を導入する前のもの。読めたらその場で束ね直す
     // (この 1 回だけ付け替え攻撃が通る窓が残るので、解錠時にも一括で直す)。
@@ -1171,13 +1210,15 @@ class BrowserVault implements Vault {
     return plain;
   }
 
-  /** 旧形式のトークンを AAD つきで保存し直す。失敗しても読み出しは成功させる。 */
+  /** 旧形式のトークンを現行 (v2 · serviceId + storedAt を束ねる) で保存し直す。失敗しても読み出しは成功させる。 */
   private async rebindToken(serviceId: string, token: string, storedAt: number | undefined): Promise<void> {
     const key = this.requireKey();
-    const blob = await encryptString(key, token, tokenAad(serviceId));
+    // storedAt が無い (版なしの古い記録) なら今の時刻から有効時間を数え直す。AAD と保存欄で同じ値。
+    const stamp = typeof storedAt === 'number' ? storedAt : Date.now();
+    const blob = await encryptString(key, token, tokenAadV2(serviceId, stamp));
     const db = await openDb();
     try {
-      await idbPut(db, TOKEN_STORE, serviceId, { ...blob, v: TOKEN_RECORD_V1, storedAt });
+      await idbPut(db, TOKEN_STORE, serviceId, { ...blob, v: TOKEN_RECORD_V2, storedAt: stamp });
     } finally {
       db.close();
     }
@@ -1261,7 +1302,7 @@ class BrowserVault implements Vault {
      * 何も変わらない。実測 2026-08-31 で 5 件が等価と分かった:
      *
      *   - 初期値の配列に異物が入る → 分割代入が undefined になり復号が投げる
-     *   - 条件を `true` に      → v1 のレコードまで積むが、AAD 無しで開こうと
+     *   - 条件を `true` に      → v1 / v2 のレコードまで積むが、AAD 無しで開こうと
      *                             して必ず失敗する (GCM が AAD を認証する)
      *   - `&&` を `||` に        → `found` が undefined なら TypeError だが、
      *                             `idbKeys` が返した鍵なので undefined は無い。
@@ -1276,9 +1317,11 @@ class BrowserVault implements Vault {
     try {
       for (const id of await idbKeys(db, TOKEN_STORE)) {
         const found = await idbGet<EncryptedToken>(db, TOKEN_STORE, id);
-        // 既に v1 なら読み替える物が無い。**ここで落とすので I/O も起きない。**
+        // ここは AAD 無しで復号する (下のループ) ので、束ね直せるのは**版の無い**
+        // (AAD 導入前の) レコードだけ。v1 / v2 は既に AAD 付きで、v1 → v2 の昇格は
+        // `getToken` が読んだときに行う。**ここで落とすので I/O も起きない。**
         // Stryker disable next-line ConditionalExpression,LogicalOperator
-        if (found && found.v !== TOKEN_RECORD_V1) pending.push({ id, blob: found });
+        if (found && found.v === undefined) pending.push({ id, blob: found });
       }
     } finally {
       db.close();
@@ -1420,22 +1463,27 @@ class BrowserVault implements Vault {
         // `idbKeys` が返した実在の鍵なので `blob` が空になる経路が無い。
         // 潰すと `blob.v` で TypeError になるが、そこへ到達できない (等価変異)。
         if (!blob) continue;
-        // **読む側は 2 つの形を扱う。** `getToken` と同じ判定 —— 版が付いて
-        // いるものは AAD つきで封緘されており、版の無いものは AAD 導入前
-        // (2026-08-24) の記録である。Phase E 以前の保管庫は AAD 以前より
-        // 更に古いので、**ここは必ず後者を通る**。無条件に AAD を要求すると
-        // レガシー利用者はパスワードを変更できなくなる (最初そう書いていた)。
+        // **読む側は 3 つの形を扱う。** `getToken` と同じ判定 —— v2 は serviceId と
+        // storedAt を、v1 は serviceId だけを AAD で束ね、版の無いものは AAD 導入前
+        // (2026-08-24) の記録である。Phase E 以前の保管庫は AAD 以前より更に古いので、
+        // **ここは必ず最後を通る**。無条件に AAD を要求するとレガシー利用者は
+        // パスワードを変更できなくなる (最初そう書いていた)。
         const plain =
-          blob.v === TOKEN_RECORD_V1
-            ? await decryptString(oldPasswordKey, blob, tokenAad(id))
-            : await decryptString(oldPasswordKey, blob);
-        // 書く側は常に新しい形にする —— 変更を機に AAD へ束ね直す。
-        const next = await encryptString(newPasswordKey, plain, tokenAad(id));
+          blob.v === TOKEN_RECORD_V2
+            ? await decryptString(oldPasswordKey, blob, tokenAadV2(id, blob.storedAt as number))
+            : blob.v === TOKEN_RECORD_V1
+              ? await decryptString(oldPasswordKey, blob, tokenAad(id))
+              : await decryptString(oldPasswordKey, blob);
+        // 書く側は常に新しい形 (v2) にする —— 変更を機に serviceId と storedAt へ束ね直す。
+        // 保存した時刻は引き継ぐ (落とすと「日付が無い = 期限切れ」で全部消える · threat: T-213)。
+        // 版の無い記録には時刻が無いので、`getToken` の束ね直しと同じく今の時刻を付ける
+        // (AAD と保存欄で同じ値を使う)。
+        const stamp = typeof blob.storedAt === 'number' ? blob.storedAt : Date.now();
+        const next = await encryptString(newPasswordKey, plain, tokenAadV2(id, stamp));
         rewritten.push({
           store: TOKEN_STORE,
           key: id,
-          // 保存した時刻は引き継ぐ (落とすと「日付が無い = 期限切れ」で全部消える · threat: T-213)。
-          value: { ...next, v: TOKEN_RECORD_V1, storedAt: blob.storedAt },
+          value: { ...next, v: TOKEN_RECORD_V2, storedAt: stamp },
         });
       }
       await idbPutAll(db, rewritten);

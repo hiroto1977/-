@@ -159,7 +159,7 @@ describe('Linux の basic_text を os-keychain と名乗らない (threat: T-041
     const { setToken, getStorageProtection } = secretsModule;
     await setToken('github', 'ghp_' + 'a'.repeat(36));
     const raw = JSON.parse(await fs.readFile(path.join(userDataDir, FILE_NAME), 'utf8')) as Record<string, string>;
-    expect(raw.github).toMatch(/^at:\d+:plain:/);
+    expect(raw.github).toMatch(/^atv2:\d+:plain:/);
     expect((await getStorageProtection()).plainCount).toBe(1);
   });
 
@@ -176,8 +176,8 @@ describe('Linux の basic_text を os-keychain と名乗らない (threat: T-041
     const { setToken, getStorageProtection } = secretsModule;
     await setToken('github', 'ghp_' + 'a'.repeat(36));
     const raw = JSON.parse(await fs.readFile(path.join(userDataDir, FILE_NAME), 'utf8')) as Record<string, string>;
-    expect(raw.github).not.toMatch(/^(at:\d+:)?plain:/);
-    expect(Buffer.from((raw.github ?? '').replace(/^at:\d+:/, ''), 'base64').toString('utf8')).toMatch(/^enc:/);
+    expect(raw.github).not.toMatch(/^(atv2:\d+:)?plain:/);
+    expect(Buffer.from((raw.github ?? '').replace(/^atv2:\d+:/, ''), 'base64').toString('utf8')).toMatch(/^enc:/);
     expect((await getStorageProtection()).mechanism).toBe('os-keychain');
   });
 });

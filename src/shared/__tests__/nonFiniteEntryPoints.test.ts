@@ -219,6 +219,7 @@ const MERGE_PLAN: RestorePlan = {
   unusableLocal: 0,
   dropped: 0,
   parameterOverrides: 0,
+  financialWrites: [],
 };
 
 const ENTRY_POINTS: readonly EntryPoint[] = [

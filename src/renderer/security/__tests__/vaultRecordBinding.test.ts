@@ -153,7 +153,7 @@ describe('Vault — 暗号文は保管場所に束ねる', () => {
     await vault.initialize(PW);
     await vault.setToken('github', 'ghp_TOKEN');
     const rec = await rawIdb((db) => idbGetRaw(db, 'github'));
-    expect(rec?.v).toBe(1);
+    expect(rec?.v).toBe(2);
   }, 60_000);
 
   it('AAD 導入前のレコードは読めて、その場で束ね直される', async () => {
@@ -168,7 +168,7 @@ describe('Vault — 暗号文は保管場所に束ねる', () => {
 
     // 読み出しで移行されること
     expect(await vault.getToken('notion')).toBe('legacy-notion-token');
-    expect((await rawIdb((db) => idbGetRaw(db, 'notion')))?.v).toBe(1);
+    expect((await rawIdb((db) => idbGetRaw(db, 'notion')))?.v).toBe(2);
   }, 60_000);
 
   it('一度も読まれない旧レコードも、解錠時に束ね直される', async () => {
@@ -183,7 +183,7 @@ describe('Vault — 暗号文は保管場所に束ねる', () => {
     vault.lock();
     await vault.unlock(PW); // ← 読まずに解錠するだけ
 
-    expect((await rawIdb((db) => idbGetRaw(db, 'notion')))?.v).toBe(1);
+    expect((await rawIdb((db) => idbGetRaw(db, 'notion')))?.v).toBe(2);
     expect(await vault.getToken('notion')).toBe('legacy-notion-token');
   }, 60_000);
 
@@ -201,10 +201,10 @@ describe('Vault — 暗号文は保管場所に束ねる', () => {
     // 移行前: 旧形式には束縛が無いので通る (これが直す前の世界)
     expect(await vault.getToken('linear')).toBe('legacy-notion-token');
 
-    // その読み出しで linear は v1 になった。もう一度付け替えると通らない
+    // その読み出しで linear は v2 になった。もう一度付け替えると通らない
     await rawIdb(async (db) => {
       const l = await idbGetRaw(db, 'linear');
-      expect(l?.v).toBe(1);
+      expect(l?.v).toBe(2);
       await idbPutRaw(db, 'asana', l);
     });
     expect(await vault.getToken('asana')).toBeNull();

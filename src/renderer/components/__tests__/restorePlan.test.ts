@@ -126,12 +126,18 @@ describe('バックアップの復元 — 何が足され・残り・消える�
     expect(await getRecordStore().count(SALES_COLLECTION)).toBe(1);
   });
 
-  it('対照: バックアップの方が新しければ上書きし、無い id は足す', async () => {
+  it('対照: バックアップの方が新しければ上書きし、無い id は足す (財務データが加わるので確認を経る · threat: T-227)', async () => {
     const local = await seedLocal();
     const backup = await serializeBackup([{ ...local, updatedAt: local.updatedAt + 60_000, data: ROW }, FROM_BACKUP]);
+    // 売上は財務の collection で、既にこの端末に記録が在るので、マージは黙って進まず確認を経る
+    // (T-227 —— 黙って足すと金融機関提出用の書面の数字に手入力の印なしで流れる)。承認して進む。
+    const confirm = vi.fn((_message?: string) => true);
+    window.confirm = confirm;
     await mount();
     await chooseFile(backup, 'newer.json');
     await waitForText(text, '2 件のレコードを復元しました（マージ: 追加 1・更新 1・この端末の方が新しい 0 件はそのまま）');
+    expect(confirm).toHaveBeenCalledTimes(1);
+    expect(String(confirm.mock.calls[0]?.[0])).toContain('既にある財務データに、バックアップの記録が加わります');
     expect((await getRecordStore().get<SalesRow>(local.id))?.data.amount).toBe(1000);
     expect(await getRecordStore().count(SALES_COLLECTION)).toBe(2);
   });
