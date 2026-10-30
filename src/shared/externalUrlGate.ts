@@ -88,6 +88,8 @@
  * 同じ問いなら、答えが違うのはただの欠陥である。
  */
 
+import type { VettedExternalUrl } from './vetted';
+
 /**
  * OS へ渡すことを許すスキーム。**不変条件 #5 の本体。**
  *
@@ -128,7 +130,7 @@ export const MAX_EXTERNAL_URL_LEN = 8000;
  * 前後の空白や制御文字は落ちているので、**解析に使った文字列そのもの**を
  * 渡すことになり、「検査した文字列」と「開く文字列」がずれない。
  */
-export function externalUrlOrNull(url: unknown): string | null {
+export function externalUrlOrNull(url: unknown): VettedExternalUrl | null {
   if (typeof url !== 'string') return null;
   // 天井は解析の**前**にも掛ける —— 入力は IPC の境界を越えて来るので、何 MB でも
   // 解析してから断るのでは費用を払い終えている。入力の長さ (UTF-16) が天井を超える物は
@@ -172,5 +174,7 @@ export function externalUrlOrNull(url: unknown): string | null {
   // 入力が天井の内でも出力が超えることがある。**開く物そのもの**を測る。
   const href = parsed.toString();
   if (href.length > MAX_EXTERNAL_URL_LEN) return null;
-  return href;
+  // 印を作るのはここだけ (threat: T-220)。OS の口は素の string を受けないので、この return を
+  // 通らない URL は `tsc` が断る。キャストの在りかは `vettedTypes.test.ts` が両方向で数える。
+  return href as VettedExternalUrl;
 }

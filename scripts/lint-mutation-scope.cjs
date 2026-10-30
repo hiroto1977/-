@@ -332,6 +332,10 @@ const MUST_MEASURE = {
  * 次に読む人が「まだ測っていない」と誤解する)。
  */
 const KNOWN_UNMEASURED = {
+  // 2026-10-30 (T-220 · パス 559)。印の型だけのファイル —— 実行時に何も残らない (`declare const` と `type` だけ) ので
+  // 変異体が 1 つも作れない。守りは**コンパイル時**に在り、それは osSinks.test.ts / vettedSinks.test.ts / vettedTypes.test.ts の
+  // `@ts-expect-error` の陰性対照を `npm run typecheck` が検査して留める (印を素の string に戻すと「不要な @ts-expect-error」で落ちる)。
+  'src/shared/vetted.ts': '実行時に何も残らない型だけのファイル (変異体が作れない)。型の守りは @ts-expect-error の陰性対照を typecheck が留める。',
   // 2026-10-21 (T-147)。判断は userPresence.ts (mutate に載せた) が持ち、ここは Electron のダイアログへ繋ぐ薄い口。
   // 既定のボタン・窓が無いとき断る・呼び出し元の検査は presenceWiring.test.ts が実 API の偽物で留める。
   'src/main/presenceWiring.ts': 'Electron のダイアログと senderFrame へ繋ぐ薄い口。判断は userPresence.ts にあり、既定の断り側は presenceWiring.test.ts が留める。',

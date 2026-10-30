@@ -30,7 +30,7 @@ const GUARDED: Readonly<Record<string, string>> = {
   'secrets:set': 'await setToken(',
   'secrets:clear': 'await clearToken(',
   'action:invoke': 'await fn(',
-  'app:openExternal': 'await shell.openExternal(',
+  'app:openExternal': 'await openExternalVetted(',
   'oauth:authorize': 'await authorize(',
 };
 

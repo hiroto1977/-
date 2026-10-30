@@ -30,6 +30,7 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { exportWriteRoot } from './clients/exportPaths';
 import { isSafeFilename } from '../shared/safeFilename';
+import type { VettedShellPath } from '../shared/vetted';
 
 /**
  * OS に開かせてよい拡張子。**実行され得るものは一つも入れない。**
@@ -69,7 +70,7 @@ export const MAX_SHELL_PATH_LENGTH = 1024;
 export async function shellTargetOrNull(
   filePath: unknown,
   root: string = exportWriteRoot(),
-): Promise<string | null> {
+): Promise<VettedShellPath | null> {
   // 空文字も別に見ていたが、`path.resolve('')` は作業ディレクトリになり、
   // それは書き出し先そのものか外側にしかならない — どちらも下の閉じ込め
   // (根そのものは `+ path.sep` で落ちる) と拡張子の検査が必ず落とす。
@@ -92,5 +93,7 @@ export async function shellTargetOrNull(
   if (!SHELL_OPEN_EXTS.has(path.extname(real).toLowerCase())) return null;
   // threat: T-177 —— 書き出しの関門 (`isSafeExportPath`) と同じ葉の名前の規則。
   if (!isSafeFilename(path.basename(real))) return null;
-  return real;
+  // 印を作るのはここだけ (threat: T-220)。`openPathVetted` / `showItemInFolderVetted` は
+  // この型しか受けないので、関門を飛ばしたパスは `tsc` が断る。
+  return real as VettedShellPath;
 }

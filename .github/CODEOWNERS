@@ -95,6 +95,8 @@
 /src/main/shellOpenGate.ts @hiroto1977
 /src/main/presenceWiring.ts @hiroto1977
 /src/main/windowOpen.ts @hiroto1977
+/src/main/osSinks.ts @hiroto1977
+/src/shared/vetted.ts @hiroto1977
 /src/main/stateFile.ts @hiroto1977
 /src/main/userPresence.ts @hiroto1977
 /src/main/windowPrefs.ts @hiroto1977
@@ -286,6 +288,7 @@
 /src/shared/__tests__/languageCoverage.test.ts @hiroto1977
 /src/main/clients/__tests__/advisorSmuggledChars.test.ts @hiroto1977
 /src/main/__tests__/windowOpen.test.ts @hiroto1977
+/src/shared/__tests__/vettedTypes.test.ts @hiroto1977
 /src/renderer/data/__tests__/storeImportShapes.test.ts @hiroto1977
 /src/renderer/data/__tests__/docstudioStore.test.ts @hiroto1977
 /src/shared/api/__tests__/pathSegment.test.ts @hiroto1977

@@ -80,6 +80,7 @@
     "src/main/selfAttestation.ts",
     "src/renderer/security/egressStepUp.ts",
     "src/main/windowOpen.ts",
+    "src/main/osSinks.ts",
     "src/renderer/data/budgetVariance.ts",
     "src/renderer/data/businessAxonometric.ts",
     "src/renderer/data/businessFinancials.ts",

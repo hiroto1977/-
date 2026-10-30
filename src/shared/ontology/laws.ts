@@ -2141,6 +2141,34 @@ export const LAWS: readonly Law[] = [
       test(T.shared('threatLedger')),
     ],
   },
+  {
+    id: 'security-rule-in-the-type',
+    family: 'boundary',
+    name: '守りの規則はコンパイラに乗せる —— 関門を通った値にだけ型の印が付き、危ない口は印しか受けない',
+    statement:
+      '外へ開く URL は `externalUrlOrNull`、OS に開かせるパスは `shellTargetOrNull` を通す —— この規則は 2026-10-30 (パス 559) まで'
+      + '**綴りの census だけ**が守っており、口 (electron の `shell` の 3 つ —— 外部 URL を開く・既定アプリで開く・フォルダで示す —— と `window.open`) は素の `string` を受けた。'
+      + '関門を飛ばした 1 行は `tsc` を通り、針が綴りを外せば何も鳴らない (法則 `mention-vs-declaration` の、言語の側での現れ)。'
+      + 'だから規則を**型**にする: 印 `Vetted<K>` (`unique symbol` の型だけの欄 —— 実行時の費用 0) は**関門の `return` 1 か所**でだけ鋳造し、'
+      + '口は印つきの型だけを受ける包み (`main/osSinks.ts` / `renderer/vettedSinks.ts`) で呼ぶ。素の値・`null` を含む値・**別の種類の印**は'
+      + '`tsc` が断る (`@ts-expect-error` の陰性対照を typecheck が留める —— 口を素の `string` に戻すと「不要な @ts-expect-error」で落ちる)。'
+      + '**型を外す道は 2 つで、どちらも型には見えない**: 包みの迂回 (素の口を呼ぶ) と印の偽造 (`as Vetted…` / `is Vetted…`) —— '
+      + 'census が両方向の台帳で数える。**精度は台帳で上げ続ける**: 印で守る口と、まだ素の `string` を受ける口 (理由と守り手つき) を'
+      + '1 つの台帳 (`SINK_LEDGER`) に並べ、pending の数に天井を置く —— 新しい口は印を持つか、天井を上げる差分をレビューに出す。'
+      + '**限界**: 型は `any`・`ts-ignore`・JS からの呼び出しで剥がれる。実行時に止めるのは今までどおり関門で、型はそれを飛ばす書き間違いを'
+      + 'コンパイル時に止める層である (threat: T-220)。',
+    provenance: ['2026-10-30 (パス 559)'],
+    enforcedBy: [
+      gate('typecheck'),
+      test(T.shared('vettedTypes')),
+      test(T.main('osSinks')),
+      test(T.renderer('vettedSinks')),
+      test(T.shared('externalUrlGate')),
+      test(T.main('shellOpenCallSites')),
+      test(T.shared('threatLedger')),
+      chain,
+    ],
+  },
 ];
 
 export interface LawLedgerProblem {

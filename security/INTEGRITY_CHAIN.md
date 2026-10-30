@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 384
+- ブロック数: 385
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `31eea771527ba19b423f22c094e58a6d4f145733b21320ffe256a59a1fdbbe4f`
-- 保護対象: 134 ファイル
+- 末尾(tip)ハッシュ: `fb6ee92fe5b3411d3dd3143cc3ac3713b45e73e1e8d4f426952cd4347b1d27fc`
+- 保護対象: 136 ファイル
 
 ## ブロック
 
@@ -397,6 +397,7 @@
 | 381 | `9983fa57821e82ab` | `49993e94e04950d0` | `409f948e647640fd` | update integrity-chain.cjs,egressStepUp.ts |
 | 382 | `9393a650f568c6a7` | `409f948e647640fd` | `0f82fae8c348b109` | update vault.ts |
 | 383 | `88144216ca3df10d` | `0f82fae8c348b109` | `31eea771527ba19b` | update ci.yml,dependency-audit.yml,e2e.yml,knowledge-auto.yml,mutation.yml,pages.yml |
+| 384 | `38f3bd8768a4a749` | `31eea771527ba19b` | `fb6ee92fe5b3411d` | update integrity-chain.cjs,main.ts,oauth.ts,osSinks.ts,shellOpenGate.ts,windowOpen.ts |
 
 ## 保護対象ファイル
 
@@ -468,6 +469,7 @@
 - `src/main/keychainBackend.ts`
 - `src/main/main.ts`
 - `src/main/oauth.ts`
+- `src/main/osSinks.ts`
 - `src/main/presenceWiring.ts`
 - `src/main/secrets.ts`
 - `src/main/selfAttestation.ts`
@@ -530,6 +532,7 @@
 - `src/shared/tokenResponse.ts`
 - `src/shared/vaultToken.ts`
 - `src/shared/versionOrder.ts`
+- `src/shared/vetted.ts`
 - `src/shared/writeFieldLimits.ts`
 - `vite.config.ts`
 - `vitest.audit.config.ts`

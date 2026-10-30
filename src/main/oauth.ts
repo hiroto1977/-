@@ -13,7 +13,7 @@
  * body construction are pure functions and exported for unit tests.
  */
 
-import { shell } from 'electron';
+import { openExternalVetted } from './osSinks';
 import http from 'node:http';
 import { AddressInfo } from 'node:net';
 import { createHash, randomBytes } from 'node:crypto';
@@ -810,7 +810,7 @@ export async function authorize(config: OAuthConfig, fetchFn: FetchFn = fetch): 
 
   // ブラウザを開けなかったら待受を閉じる (threat: T-139)。以前は reject すると listener が 5 分生き残った。
   try {
-    await shell.openExternal(safeAuthorizeUrl);
+    await openExternalVetted(safeAuthorizeUrl);
   } catch (e) {
     listener.cancel();
     // cancel() が reject する待ちを先に消費する (未処理の拒否にしない)。

@@ -142,6 +142,12 @@ const PROTECTED = [
   'src/main/presenceWiring.ts',
   // 2026-10-24 (threat: T-173)。window.open を IPC の app:openExternal と同じ門へ通す口。外れると速度制限・警戒態勢を迂回できる。
   'src/main/windowOpen.ts',
+  // 2026-10-30 (threat: T-220 · パス 559)。OS に開かせる唯一の口 (electron の shell を印つきの型でだけ受ける包み) と、
+  // その印の型。中身は 1 行ずつだが、ここを素の string を受ける形へ戻すと、関門を飛ばした値を `tsc` が断らなくなる
+  // (vetted.ts は実行時に何も残さないが、**型の守りそのもの**を持つので除外ではなく保護対象にする —— 書き換えても
+  // 生成 JS は変わらないが、コンパイラが断る範囲が変わる)。
+  'src/main/osSinks.ts',
+  'src/shared/vetted.ts',
   // 2026-08-22 に足した。`shellOpenGate.ts` の**双子**——あちらが「OS に
   // ファイルを開かせてよいか」なら、こちらは「OS に URL を開かせてよいか」。
   // `javascript:` / `file:` / OS 独自スキームを止める唯一の関門で、

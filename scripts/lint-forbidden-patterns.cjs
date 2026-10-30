@@ -489,10 +489,10 @@ const FORBIDDEN_PATTERNS = [
   {
     name: 'shell.openExternal direct call outside main process',
     pattern: /shell\.openExternal/,
-    // main.ts holds the IPC handler with URL validation; oauth.ts uses
-    // it to launch the consent browser (URL is buildAuthorizeUrl, fully
-    // constructed by us, not user-supplied).
-    allowFile: (rel) => rel === 'src/main/main.ts' || rel === 'src/main/oauth.ts',
+    // 2026-10-30 (パス 559 · T-220) から OS の口は `osSinks.ts` の包みだけが呼ぶ —— 包みは関門が作る印つきの型
+    // (VettedExternalUrl) しか受けないので、main.ts (IPC と窓の扉) と oauth.ts (同意画面) は包みを通る。
+    // それまでは main.ts と oauth.ts の 2 本が素で呼んでいた。
+    allowFile: (rel) => rel === 'src/main/osSinks.ts',
     rationale: 'invariant #5 — external URLs flow through app:openExternal',
   },
   {
@@ -520,9 +520,10 @@ const FORBIDDEN_PATTERNS = [
   {
     name: 'window.open',
     pattern: /\bwindow\.open\s*\(/,
-    // 唯一の例外がブラウザ版の openExternal 実装そのもの。そこは
-    // `^https?://` を確かめてから開いており、この規約の実体がそれ。
-    allowFile: (rel) => rel === 'src/renderer/web-shim.ts',
+    // 唯一の例外がブラウザ版の外へ開く口の包み (`vettedSinks.ts` · パス 559 · T-220)。包みは関門
+    // (externalUrlOrNull) が作る印つきの型しか受けず、noopener,noreferrer を固定する。web-shim の
+    // openExternal はその包みを呼ぶ (2026-10-30 まで web-shim が素で呼んでいた)。
+    allowFile: (rel) => rel === 'src/renderer/vettedSinks.ts',
     // 散文で経緯を書けるように、コメント行は数えない。コメントの中の
     // 呼び出しは実行されないので、見逃しにはならない。
     codeOnly: true,
@@ -1039,9 +1040,8 @@ const KNOWN_SUPPRESSIONS = [
   'sandbox: false (レンダラープロセスの OS サンドボックスを外す) :: scripts/screenshot-dashboard.cjs :: 1',
   'sandbox: false (レンダラープロセスの OS サンドボックスを外す) :: scripts/screenshot.cjs :: 1',
   'sandbox: false (レンダラープロセスの OS サンドボックスを外す) :: scripts/soak-test.cjs :: 1',
-  'shell.openExternal direct call outside main process :: src/main/main.ts :: 2',
-  'shell.openExternal direct call outside main process :: src/main/oauth.ts :: 1',
-  'window.open :: src/renderer/web-shim.ts :: 1',
+  'shell.openExternal direct call outside main process :: src/main/osSinks.ts :: 1',
+  'window.open :: src/renderer/vettedSinks.ts :: 1',
   '食事補助の非課税限度額を地の文に書いている (3,500 円は改正前の値) :: src/shared/welfareScheme.ts :: 2 (code 0)',
 ];
 

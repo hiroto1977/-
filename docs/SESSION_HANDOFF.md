@@ -7,6 +7,15 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-10-30) — パス 559: 型で守る (Vetted 型 · threat: T-220)
+
+- 依頼「プログラム言語自体にセキュリティ機能を組み込んでその精度を高め続けて」を、**TypeScript の型に守りの規則を乗せる**こととして実装した。
+- 印 `Vetted<K>` (`src/shared/vetted.ts` · `unique symbol` の型だけの欄 · 実行時の費用 0) を関門の `return` 1 か所でだけ作る: `externalUrlOrNull` → `VettedExternalUrl` / `shellTargetOrNull` → `VettedShellPath`。
+- OS の口は包みだけが呼ぶ: `src/main/osSinks.ts` (`openExternalVetted` / `openPathVetted` / `showItemInFolderVetted`) と `src/renderer/vettedSinks.ts` (`openWindowVetted` · noopener,noreferrer を固定)。main.ts (IPC と窓の扉)・oauth.ts・windowOpen.ts の `open`・web-shim の openExternal が包みを通る。
+- 型を外す 2 つの道 (包みの迂回 / `as Vetted…` の偽造) は `src/shared/__tests__/vettedTypes.test.ts` が両方向の台帳で数える。型の守りそのものは `@ts-expect-error` の陰性対照 (vettedTypes / `main/__tests__/osSinks` / `renderer/__tests__/vettedSinks`) を typecheck が留める。
+- 精度の台帳 `SINK_LEDGER`: typed 4 (shell 3 + window.open) / pending 4 (書き出しの書き込み・`<a href>`・`<img src>`・fetch の送り先) で天井 4。**次に上げるなら** 書き出しの書き込み (`isSafeExportPath` は真偽を返す形 —— 4 つの書き手の関門を `VettedExportPath` を返す形へ揃えれば pending が 1 減る)。
+- 書き換えたので鳴った台帳: `lint:forbidden` の allowFile と例外 (main.ts / oauth.ts / web-shim → osSinks.ts / vettedSinks.ts)・`externalUrlGate.test` / `userPresenceCensus` / `shellOpenCallSites` の綴り・CODEOWNERS・整合性チェーン (block #384)・`lint:mutation-scope` (osSinks.ts を mutate へ / vetted.ts は型だけなので KNOWN_UNMEASURED)・shared-judgement の census。
+
 ## 直近の作業 (2026-10-29) — パス 558: 詳細版の事業計画書・資金調達計画書・キャッシュフロー計画書 (書類スタジオ)
 
 - 書類スタジオ (`docStudioData.ts` の `STUDIO_TEMPLATES`) に `jigyo-keikaku-shosai` / `chotatsu-keikaku-shosai` / `cf-keikaku` を足した (書式 56 → 59)。汎用版 3 つは残す。

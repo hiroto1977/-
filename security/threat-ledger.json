@@ -408,6 +408,16 @@
           "enforcedBy": [
             "src/main/fileRequestGate.ts"
           ]
+        },
+        {
+          "what": "型で守る —— OS に開かせる口 (shell.openExternal / openPath / showItemInFolder・window.open) は関門だけが作れる印つきの型しか受けず、関門を飛ばした値は tsc が断る (包みの迂回と印の偽造は census が両方向で数え、素の string を受ける口は精度の台帳の天井を超えさせない)",
+          "enforcedBy": [
+            "src/shared/vetted.ts",
+            "src/main/osSinks.ts",
+            "src/renderer/vettedSinks.ts",
+            "src/shared/__tests__/vettedTypes.test.ts",
+            "npm:typecheck"
+          ]
         }
       ],
       "gaps": [
@@ -3682,6 +3692,21 @@
       "regression": {
         "file": "src/renderer/pages/__tests__/proxyStepUpOnScreen.test.ts",
         "test": "★ 「保存」を押しただけでは書かれず、確認の段が出る —— 文は送り先のホストを名乗り共有秘密を映さない (threat: T-219)"
+      }
+    },
+    {
+      "id": "T-220",
+      "found": "2026-10-30",
+      "foundBy": "「プログラム言語自体にセキュリティ機能を組み込む」の依頼を受け、OS に開かせる口 (electron の shell.openExternal / shell.openPath / shell.showItemInFolder・ブラウザ版の window.open) が何を受けるかを型で測った: 4 つとも素の string を受け、関門 (externalUrlOrNull / shellTargetOrNull) を通ったことはコンパイラから見えなかった。関門を飛ばして 1 行書いても tsc は通り、止めていたのは綴りの census (externalUrlGate.test の『同数』・shellOpenCallSites) だけで、どちらも呼び出しの綴りが変われば黙る形だった (実測: main.ts で関門を飛ばして shell.openExternal(String(url)) と書くと tsc 0 件)。",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "medium",
+      "title": "OS に開かせる口は素の string を受け、関門を通ったかをコンパイラが知らなかった —— 関門を飛ばした 1 行は型検査を通った",
+      "status": "mitigated",
+      "fix": "規則を型にした (src/shared/vetted.ts)。印 Vetted<K> = string & { readonly [VETTED]: K } (unique symbol の型だけの欄・実行時の費用 0) を関門の return 1 か所でだけ鋳造し (externalUrlOrNull → VettedExternalUrl / shellTargetOrNull → VettedShellPath)、OS の口は印つきの型だけを受ける包みで呼ぶ (src/main/osSinks.ts の openExternalVetted / openPathVetted / showItemInFolderVetted・src/renderer/vettedSinks.ts の openWindowVetted —— noopener,noreferrer も包みが固定)。関門を飛ばした値・null を含む値・別の種類の印 (URL をパスの口へ) は tsc が断る (@ts-expect-error の陰性対照を typecheck が留める)。型を外す 2 つの道 —— 包みの迂回 (素の shell.* / window.open) と印の偽造 (as Vetted… / is Vetted…) —— は src/shared/__tests__/vettedTypes.test.ts が両方向の台帳で数える。精度の台帳 SINK_LEDGER は印で守る口 4 つと素の string を受ける口 4 つ (書き出しの書き込み・<a href>・<img src>・fetch の送り先) を理由と守り手つきで並べ、pending の天井 (4) を超えさせない —— 下げるのが正しい向き。**限界**: 印は TypeScript の型なので、型を剥がす道 (any・ts-ignore・JS から呼ぶ) には効かない。実行時の守りは今までどおり関門そのもので、型はそれを飛ばす書き間違いをコンパイル時に止める層である。",
+      "regression": {
+        "file": "src/shared/__tests__/vettedTypes.test.ts",
+        "test": "★ 素の shell.* / window.open は包みの外に 1 つも無い (両方向)"
       }
     }
   ],

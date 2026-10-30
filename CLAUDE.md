@@ -1611,8 +1611,8 @@ npm run lint:zero-fold     # 「割れない値を 0 に倒す」箇所の**母�
                            #   母集団が 26 ファイル (実測 106) と 4 倍ずれていた
 npm run lint:shared-judgement # 「述語は共有したが、no と言われたあとの動作が両ビルドで
                            #   違う」の**母集団**を数え、`docs/REMAINING_WORK.md` の
-                           #   生成ブロックと突き合わせる (shared 165 / 両ビルドが
-                           #   import 89 / うち否定で答えられる 47。**この 3 つは
+                           #   生成ブロックと突き合わせる (shared 166 / 両ビルドが
+                           #   import 90 / うち否定で答えられる 47。**この 3 つは
                            #   live metric なので散文だけが古びることはもう無い** ——
                            #   2026-09-15 まで 138 / 44 / 21 と書いたままだった。
                            #   44 / 21 はパス 247 が初めて数えた値で、
@@ -1854,6 +1854,14 @@ The browser target adds: `web-shim.ts` (a `window.serviceHub` polyfill imported 
   パリティ検査が鳴る) と `ALLOWED_ROOT_ENTRIES` にも足す。**package.json は表に載せない** (electron-builder が梱包時に書き換える)。
   node_modules は同梱しない (`!node_modules/**` —— 主プロセスも preload も require しない)。Linux には署名が無いので、
   この検算が止めるのは「1 ファイルの改竄」であって「容器ごとの差し替え」ではない。
+- **守りの規則は型に乗せる —— 危ない口は関門が作る印つきの型しか受けない** (2026-10-30 · パス 559 · T-220)。
+  OS に開かせる口は包み (`src/main/osSinks.ts` の `openExternalVetted` / `openPathVetted` / `showItemInFolderVetted`・
+  `src/renderer/vettedSinks.ts` の `openWindowVetted`) だけを呼び、包みは `VettedExternalUrl` / `VettedShellPath`
+  (`src/shared/vetted.ts` · 実行時の費用 0) しか受けない。印は関門 (`externalUrlOrNull` / `shellTargetOrNull`) の `return` でだけ作る ——
+  関門の外で `as Vetted…` を書かない (書けば型の守りを自分で外すことになり、`vettedTypes.test.ts` が鳴る)。
+  素の `shell.*` / `window.open` を包みの外で呼ばない (同じ検査と `lint:forbidden` が鳴る)。素の `string` を受ける危ない口を
+  新しく足すなら、印を持たせるか、`SINK_LEDGER` に理由と守り手を書いて pending の天井を上げる差分をレビューに出す。
+  型の守りの対照は `@ts-expect-error` で書く (`npm run typecheck` が検査する —— 守りが外れると「不要な @ts-expect-error」で落ちる)。
 - **対照を回すまで、検査は信用しない。** 守っている物を実際に壊し、狙った項目が
   落ちることを見る。**鳴らない対照は「合格」ではなく「その検査についての報せ」である。**
 
