@@ -7,6 +7,49 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-10-30) — パス 562: 進化役は毎日の脅威ウォッチを読む (threat: T-223)
+
+- 予約のセッションは網の方針で OSV / CISA KEV に届かない (実測: CONNECT 403)。だから毎日の dependency-audit (GitHub Actions) が常設 Issue「🔐 依存の勧告とセキュリティの床（自動更新）」の本文末尾に要約 `<!-- threat-watch-digest:v1 … -->` を埋め、狩りのセッションが GitHub の MCP でそれを読む (`scripts/lib/threat-watch-digest.cjs` が作る側と読む側の両方を持つ)。
+- **要約が運ぶのは CWE / CVE / 勧告の id と件数と日付だけ** —— KEV の名前・説明・製品名は AI の入力へ運ばない。読む側は 1 つでも形が外れた・2 つ在る・3 日より古い・未来の要約を使わず `unavailable` の理由を返す。
+- `npm run hunt:cycle -- brief --watch <本文のファイル>` が「進化役への入力」の節を載せ、記録の雛形に `evolution.watch` (`asOf` / `hotGaps` / `decisions`) を置く。`record` は急増した種類 1 つずつに `add:<役>` / `covered:<赤>` / `na:<10 字以上の理由>` を要求し、渡せなかった周は `unavailable` の理由を要求する。`record <json> --watch <file>` なら要約そのものとの一致も見る。
+- 予約の指示文 (`docs/HUNT_CYCLE_PROMPT.md`) に 0 段 (Issue の本文を読んで置く) を足した。予約 `trig_018x9FJf4AjgmEnYSGzu7xud` も同じ指示文へ更新する。
+- 機械: `threatWatchDigest.test.ts` 10 件・`dependencyAuditEndToEnd.test.ts` に「常設 Issue の本文 → 週 1 の狩りの brief」1 件。対照 7 方向すべて狙った検査で鳴る。
+
+## 直近の作業 (2026-10-30) — パス 561: 常設の AI ホワイトハッカー班 (threat: T-222)
+
+- 週 1 の狩りの輪を回すのは**班** —— 名簿 `security/hacker-team.json` (赤 8 役・変種狩り・反証役・進化役)・道具 `scripts/hacker-team.cjs` (hunt-cycle の brief / record から呼ばれる)。
+- `npm run hunt:cycle -- brief` が今週の班 (偵察 + 面に効く赤を出番の古い順に 2 + 3 役) と変種狩りの種・収穫の無い役を出す。予約の指示文 (`docs/HUNT_CYCLE_PROMPT.md`) は赤と変種狩りを auditor として並べて起動する。
+- `record` は brief で選んだ周に班の段 (`team` / `learned` / `evolution`) を要求する: 確認した穴はどれかの役に帰属・1 つにつき型 (shape / look)・進化役の判断。型は `P-NNN` として名簿へ入り、役の追加・引退も名簿と同じ規則で検めてから入る (core は引退不可・赤は編成の人数を割らない)。
+- 名簿を手で直すなら `teamProblems` が通ること (`hackerTeam.test.ts` が実物を見る)。新しい攻撃の型を台帳の `classes` に足したら、それを受け持つ赤も名簿に要る (検査が鳴る)。
+- 予約 `trig_018x9FJf4AjgmEnYSGzu7xud` の指示文は文書と同じ物に更新済み。1 周の利用料は 1 人の頃の数倍 (最大 6 体)。
+
+## 直近の作業 (2026-10-30) — パス 560: 新しい言語 Mamori (守りの層を書き直す · threat: T-221)
+
+- 守りの層 5 本 (`vetted` / `externalUrlGate` / `shellOpenGate` / `osSinks` / `vettedSinks`) は `.mamori` が正で、隣の `.ts` は**生成物** —— 直すのは `.mamori` で、`npm run mamori:build` で組み直す (手で `.ts` を直すと `mamoriGenerated.test.ts` が落ちる)。
+- 言語の仕様と規則 (M0〜M6) は `docs/MAMORI.md`。コンパイラは `src/shared/mamori/` と `scripts/mamori.cjs` (どれも整合性チェーンの保護対象 —— 触ったら `chain:append`)。
+- ★ 表を `obj[word]` で引くと `toString` が prototype に当たる (コンパイラで実際に踏んだ)。`Object.hasOwn` で引く。
+- 書き出しのファイル書き込みも Mamori の gate/sink の組 (`src/main/clients/exportSink.mamori` → `exportTargetOrNull` / `writeExportFileVetted`) にした。書き手 4 本は印つきの行き先しか書けない。
+- `<img src>` も移した —— 関門 `imageUrlGate` は Mamori (`safeImageSrc` / `safeRemoteImageSrc` が `VettedImageSrc` を mint)・口は部品 `src/renderer/components/VettedImg.tsx` 1 つ (素の `<img` はこの外に無い —— census)。新しい画像を描くなら関門を通した値を `VettedImg` へ。
+- 外へ出る `<a href>` も移した —— 口は部品 `src/renderer/components/VettedLink.tsx` 1 つ (`href` は `VettedExternalUrl` だけ・`rel="noopener noreferrer"` 固定・左クリックは `openExternal`)。動的な素の `<a href={…}>` はこの外に無い (census)。`href="#"` + ハンドラの形はそのまま許す。`SINK_LEDGER` は pending 1 (fetch の送り先)・天井 1。
+- Mamori のコンパイラ 4 本 (`checker` / `compile` / `emit` / `parser`) は変異検査 **100.00%** で `mutate` に載っている。言語を変えたら、規則は `mamoriCheckerCoverage.test.ts` の位置の行列・誤りの文は `mamoriParserCoverage.test.ts`・変換は `mamoriEmitGolden.test.ts` (出力を目で確かめてから期待を直す —— 変換は it の中で走らせる) に足す。
+- 残作業: `SINK_LEDGER` の pending 1 本 (fetch の送り先) を移す (変異検査はパス 560 続き 4〜6 で 100.00%)。
+
+## 直近の作業 (2026-10-30) — パス 559: 型で守る (Vetted 型 · threat: T-220)
+
+- 依頼「プログラム言語自体にセキュリティ機能を組み込んでその精度を高め続けて」を、**TypeScript の型に守りの規則を乗せる**こととして実装した。
+- 印 `Vetted<K>` (`src/shared/vetted.ts` · `unique symbol` の型だけの欄 · 実行時の費用 0) を関門の `return` 1 か所でだけ作る: `externalUrlOrNull` → `VettedExternalUrl` / `shellTargetOrNull` → `VettedShellPath`。
+- OS の口は包みだけが呼ぶ: `src/main/osSinks.ts` (`openExternalVetted` / `openPathVetted` / `showItemInFolderVetted`) と `src/renderer/vettedSinks.ts` (`openWindowVetted` · noopener,noreferrer を固定)。main.ts (IPC と窓の扉)・oauth.ts・windowOpen.ts の `open`・web-shim の openExternal が包みを通る。
+- 型を外す 2 つの道 (包みの迂回 / `as Vetted…` の偽造) は `src/shared/__tests__/vettedTypes.test.ts` が両方向の台帳で数える。型の守りそのものは `@ts-expect-error` の陰性対照 (vettedTypes / `main/__tests__/osSinks` / `renderer/__tests__/vettedSinks`) を typecheck が留める。
+- 精度の台帳 `SINK_LEDGER`: typed 4 (shell 3 + window.open) / pending 4 (書き出しの書き込み・`<a href>`・`<img src>`・fetch の送り先) で天井 4。**次に上げるなら** 書き出しの書き込み (`isSafeExportPath` は真偽を返す形 —— 4 つの書き手の関門を `VettedExportPath` を返す形へ揃えれば pending が 1 減る)。
+- 書き換えたので鳴った台帳: `lint:forbidden` の allowFile と例外 (main.ts / oauth.ts / web-shim → osSinks.ts / vettedSinks.ts)・`externalUrlGate.test` / `userPresenceCensus` / `shellOpenCallSites` の綴り・CODEOWNERS・整合性チェーン (block #384)・`lint:mutation-scope` (osSinks.ts を mutate へ / vetted.ts は型だけなので KNOWN_UNMEASURED)・shared-judgement の census。
+
+## 直近の作業 (2026-10-29) — パス 558: 詳細版の事業計画書・資金調達計画書・キャッシュフロー計画書 (書類スタジオ)
+
+- 書類スタジオ (`docStudioData.ts` の `STUDIO_TEMPLATES`) に `jigyo-keikaku-shosai` / `chotatsu-keikaku-shosai` / `cf-keikaku` を足した (書式 56 → 59)。汎用版 3 つは残す。
+- 検算は `docStudioChecks.ts` の `RULES` に 3 つ。見本の数字は式が全部合う (検査が `[]` を要求する) —— 見本を変えるときは式も合わせる。
+- 書式を足すと鳴る台帳: `docLegalStatus` / `businessTriage` (行数と書式数の検査・スナップショット) / `docStudioChecks.test` の `RULE_IDS` / `services.ts` の書式数と `sidebarNumberClaims`。
+- ★ **squash マージの既定の本文に `[skip ci]` が混ざると main の push の workflow が 1 本も走らない** (パス 557 の #845 で起きた)。マージするときは本文を明示する。
+
 ## 直近の作業 (2026-10-29) — パス 557: 失敗していた依存の更新 (dependabot 6 本) を今の main で当てて直す
 
 - 詳細は `docs/REMAINING_WORK.md` の「パス 557」。6 本とも古い `main` から作られていたので、**ブランチを取り込まず中身だけを当てた**。

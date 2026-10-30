@@ -332,6 +332,19 @@ const MUST_MEASURE = {
  * 次に読む人が「まだ測っていない」と誤解する)。
  */
 const KNOWN_UNMEASURED = {
+  // 2026-10-30 (T-221 · パス 560)。Mamori のコンパイラの parser / checker / emit / compile は変異検査を測り 100% にして
+  // mutate へ移した (初回 75.51% / 77.18% —— 生存は規則を式の奥に置く検査・誤りの文・変換の全形の golden が無かったこと)。
+  // 残るのは型だけのファイル。
+  'src/shared/mamori/ast.ts': '構文木の型だけ (実行時に何も残らない)。',
+  // 2026-10-30 (T-220 · パス 559)。印の型だけのファイル —— 実行時に何も残らない (`declare const` と `type` だけ) ので
+  // 変異体が 1 つも作れない。守りは**コンパイル時**に在り、それは osSinks.test.ts / vettedSinks.test.ts / vettedTypes.test.ts の
+  // `@ts-expect-error` の陰性対照を `npm run typecheck` が検査して留める (印を素の string に戻すと「不要な @ts-expect-error」で落ちる)。
+  'src/shared/vetted.ts': '実行時に何も残らない型だけのファイル (変異体が作れない)。型の守りは @ts-expect-error の陰性対照を typecheck が留める。',
+  // 2026-10-30 (T-221 · パス 560)。`<img>` の唯一の口。判断を持たず `src` をそのまま `<img>` へ置くだけで、守りは
+  // **コンパイル時** (src が VettedImageSrc しか受けない) と census (素の `<img` はこの外に無い) に在る。
+  // 関門の判定そのもの (imageUrlGate.ts) は mutate に載っている。
+  'src/renderer/components/VettedImg.tsx': '判断を持たない JSX の口 (src をそのまま <img> に置く)。型の守りは VettedImg.test.ts の @ts-expect-error を typecheck が、素の <img の不在は vettedTypes.test.ts が留める。関門の判定は imageUrlGate.ts (mutate 済み)。',
+  'src/renderer/components/VettedLink.tsx': '判断を持たない JSX の口 (href をそのまま <a> に置き、左クリックを openExternal へ回す)。型の守りは VettedLink.test.ts の @ts-expect-error を typecheck が、素の動的な <a href> の不在は vettedTypes.test.ts が、左クリックの経路は VettedLink.test.ts (jsdom) が留める。関門の判定は externalUrlGate.ts (mutate 済み)。',
   // 2026-10-21 (T-147)。判断は userPresence.ts (mutate に載せた) が持ち、ここは Electron のダイアログへ繋ぐ薄い口。
   // 既定のボタン・窓が無いとき断る・呼び出し元の検査は presenceWiring.test.ts が実 API の偽物で留める。
   'src/main/presenceWiring.ts': 'Electron のダイアログと senderFrame へ繋ぐ薄い口。判断は userPresence.ts にあり、既定の断り側は presenceWiring.test.ts が留める。',

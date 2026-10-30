@@ -1,5 +1,8 @@
 import { isHexColor } from '../../shared/escape';
 import { CeilingNotice } from '../components/CeilingNotice';
+import { VettedImg } from '../components/VettedImg';
+import { safeImageSrc } from '../../shared/imageUrlGate';
+import type { VettedImageSrc } from '../../shared/vetted';
 import { countChars, charsOverCeiling } from '../../shared/inputCeiling';
 import {
   TEMPLATE_FIELD_LABEL,
@@ -37,9 +40,10 @@ interface TemplatesSnapshot {
   readonly isMock: boolean;
 }
 
-function svgDataUrl(svg: string): string {
+function svgDataUrl(svg: string): VettedImageSrc | undefined {
   // Encode as data URL for <img src=...> preview (handles UTF-8 cleanly via encodeURIComponent).
-  return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+  // `<img>` の口は印つきの値しか受けない (パス 560 · T-221) —— 自分で組んだ data: URL も同じ関門を通す。
+  return safeImageSrc('data:image/svg+xml;utf8,' + encodeURIComponent(svg));
 }
 
 export function TemplatesPage() {
@@ -88,6 +92,7 @@ export function TemplatesPage() {
     () => renderTemplateSvg(selected.id, normalizeTemplateParams(params, selected.defaults), selected),
     [selected, params],
   );
+  const previewSrc = svgDataUrl(svgPreview);
 
   function applyPreset(preset: 'default' | 'cool' | 'light' | 'mono') {
     if (preset === 'default') {
@@ -223,11 +228,13 @@ export function TemplatesPage() {
             <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 8 }}>
               {selected.label} · {selected.width}×{selected.height} px
             </div>
-            <img
-              src={svgDataUrl(svgPreview)}
-              alt={selected.label}
-              style={{ width: '100%', maxWidth: 560, height: 'auto', borderRadius: 4, display: 'block' }}
-            />
+            {previewSrc ? (
+              <VettedImg
+                src={previewSrc}
+                alt={selected.label}
+                style={{ width: '100%', maxWidth: 560, height: 'auto', borderRadius: 4, display: 'block' }}
+              />
+            ) : null}
           </div>
         </Section>
 

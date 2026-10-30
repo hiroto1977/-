@@ -63,6 +63,22 @@
             "docs/HUNT_CYCLE_PROMPT.md",
             "src/shared/__tests__/huntCycle.test.ts"
           ]
+        },
+        {
+          "what": "常設の班: 角度の違う赤を出番の古い順に並べ、反証役が再現し、確認した穴は型として名簿へ残して次の周の変種狩りの種にし、進化役が役の追加・引退を提案する (record が検めてから入る)",
+          "enforcedBy": [
+            "security/hacker-team.json",
+            "scripts/hacker-team.cjs",
+            "src/shared/__tests__/hackerTeam.test.ts"
+          ]
+        },
+        {
+          "what": "毎日の脅威ウォッチの要約 (急増した表に無い弱点の種類 · id と数と日付だけ) が常設 Issue から週 1 の狩りの brief へ届き、record は急増した種類 1 つずつに進化役の判断を要求する (T-223)",
+          "enforcedBy": [
+            "scripts/lib/threat-watch-digest.cjs",
+            "scripts/hacker-team.cjs",
+            "src/shared/__tests__/threatWatchDigest.test.ts"
+          ]
         }
       ],
       "gaps": [
@@ -407,6 +423,25 @@
           "what": "file:// を dist/ に閉じ込める",
           "enforcedBy": [
             "src/main/fileRequestGate.ts"
+          ]
+        },
+        {
+          "what": "型で守る —— OS に開かせる口 (shell.openExternal / openPath / showItemInFolder・window.open) は関門だけが作れる印つきの型しか受けず、関門を飛ばした値は tsc が断る (包みの迂回と印の偽造は census が両方向で数え、素の string を受ける口は精度の台帳の天井を超えさせない)",
+          "enforcedBy": [
+            "src/shared/vetted.ts",
+            "src/main/osSinks.ts",
+            "src/renderer/vettedSinks.ts",
+            "src/shared/__tests__/vettedTypes.test.ts",
+            "npm:typecheck"
+          ]
+        },
+        {
+          "what": "守りの層は守りの規則を構文に持つ言語 Mamori で書く —— 印の偽造 (型の書き換え) と危ない口の直呼びは書けず、規則を破るプログラムはコンパイラが TypeScript にしない",
+          "enforcedBy": [
+            "docs/MAMORI.md",
+            "src/shared/mamori/checker.ts",
+            "src/shared/mamori/__tests__/mamoriRules.test.ts",
+            "src/shared/mamori/__tests__/mamoriGenerated.test.ts"
           ]
         }
       ],
@@ -3682,6 +3717,66 @@
       "regression": {
         "file": "src/renderer/pages/__tests__/proxyStepUpOnScreen.test.ts",
         "test": "★ 「保存」を押しただけでは書かれず、確認の段が出る —— 文は送り先のホストを名乗り共有秘密を映さない (threat: T-219)"
+      }
+    },
+    {
+      "id": "T-220",
+      "found": "2026-10-30",
+      "foundBy": "「プログラム言語自体にセキュリティ機能を組み込む」の依頼を受け、OS に開かせる口 (electron の shell.openExternal / shell.openPath / shell.showItemInFolder・ブラウザ版の window.open) が何を受けるかを型で測った: 4 つとも素の string を受け、関門 (externalUrlOrNull / shellTargetOrNull) を通ったことはコンパイラから見えなかった。関門を飛ばして 1 行書いても tsc は通り、止めていたのは綴りの census (externalUrlGate.test の『同数』・shellOpenCallSites) だけで、どちらも呼び出しの綴りが変われば黙る形だった (実測: main.ts で関門を飛ばして shell.openExternal(String(url)) と書くと tsc 0 件)。",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "medium",
+      "title": "OS に開かせる口は素の string を受け、関門を通ったかをコンパイラが知らなかった —— 関門を飛ばした 1 行は型検査を通った",
+      "status": "mitigated",
+      "fix": "規則を型にした (src/shared/vetted.ts)。印 Vetted<K> = string & { readonly [VETTED]: K } (unique symbol の型だけの欄・実行時の費用 0) を関門の return 1 か所でだけ鋳造し (externalUrlOrNull → VettedExternalUrl / shellTargetOrNull → VettedShellPath)、OS の口は印つきの型だけを受ける包みで呼ぶ (src/main/osSinks.ts の openExternalVetted / openPathVetted / showItemInFolderVetted・src/renderer/vettedSinks.ts の openWindowVetted —— noopener,noreferrer も包みが固定)。関門を飛ばした値・null を含む値・別の種類の印 (URL をパスの口へ) は tsc が断る (@ts-expect-error の陰性対照を typecheck が留める)。型を外す 2 つの道 —— 包みの迂回 (素の shell.* / window.open) と印の偽造 (as Vetted… / is Vetted…) —— は src/shared/__tests__/vettedTypes.test.ts が両方向の台帳で数える。精度の台帳 SINK_LEDGER は印で守る口 4 つと素の string を受ける口 4 つ (書き出しの書き込み・<a href>・<img src>・fetch の送り先) を理由と守り手つきで並べ、pending の天井 (4) を超えさせない —— 下げるのが正しい向き。**限界**: 印は TypeScript の型なので、型を剥がす道 (any・ts-ignore・JS から呼ぶ) には効かない。実行時の守りは今までどおり関門そのもので、型はそれを飛ばす書き間違いをコンパイル時に止める層である。",
+      "regression": {
+        "file": "src/shared/__tests__/vettedTypes.test.ts",
+        "test": "★ 素の shell.* / window.open は包みの外に 1 つも無い (両方向)"
+      }
+    },
+    {
+      "id": "T-221",
+      "found": "2026-10-30",
+      "foundBy": "利用者の依頼「全く新しいプログラム言語を構築し、そのプログラム言語でシステムを構築し直して」(進め方は守りの層から)。パス 559 の型の印 (T-220) は TypeScript の中では型の書き換え 1 行 (`x as VettedExternalUrl`) で偽造でき、危ない口 (electron の shell・window.open) はどの関数からも呼べた —— 止めていたのは綴りを数える census だけで、言語そのものはその 2 つを許していた。",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "medium",
+      "title": "守りの層を書く言語が、印の偽造 (型の書き換え) と危ない口の直呼びを許していた —— 規則は検査の網に在り、言語には無かった",
+      "status": "mitigated",
+      "fix": "守りの規則を構文に持つ言語 Mamori (docs/MAMORI.md) を作り、守りの層 5 本 (vetted / externalUrlGate / shellOpenGate / osSinks / vettedSinks) をそれで書き直した。コンパイラ (src/shared/mamori/ —— 字句・構文・来歴の検査・TypeScript への変換) は規則を破るプログラムを 1 つも出力しない: M0 `as`・`any`・`eval`・テンプレート文字列は字句の段で断る / M1 印は gate 関数の `mint` でだけ作る / M2 `extern sink` の危ない口は sink 関数の中だけ / M3 sink は印の型しか受けない / M4 印の型の引数へは印を持つ値だけ (モジュールをまたいでも) / M5 印つきの変数を素の値で上書きしない / M6 宣言していない外の名前 (window / fetch / process / require / globalThis ほか) は使えない。生成物 (.ts) は commit し、既存の門 (tsc・vitest・Stryker・lint:forbidden・整合性チェーン) は今までどおり生成物に掛かる。生成物が元と 1 byte でも違えば mamoriGenerated.test.ts と mamori:check が落ちる (手で直した生成物を見逃さない)。元とコンパイラは整合性チェーンの保護対象 (コンパイラの改竄は一致の検査に映らないため)。**限界**: 規則が効くのは Mamori で書いた中だけで、呼ぶ側の手書きの TypeScript は T-220 の型の印と census が守る。コンパイラは変異検査をまだ測っていない。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriRules.test.ts",
+        "test": "★ plain 関数の mint は断る"
+      }
+    },
+    {
+      "id": "T-222",
+      "found": "2026-10-30",
+      "foundBy": "利用者の依頼「完全自律学習自動進化型のプロアクティブ AI ホワイトハッカー集団を常設して」を受けて、狩りの輪 (T-214) の『誰が・どの角度で狩るか』の側を測った —— 週 1 の予約が起動するのは毎回同じ 1 人の監査役で、見つけた穴の型を次の周へ渡す物も、収穫の無い角度を外し新しい攻撃の型を受け持つ角度を足す手も無かった (名簿は存在しなかった)。",
+      "surface": "supply-chain",
+      "class": "ai-automated-attack",
+      "severity": "medium",
+      "title": "狩りの輪は 1 人の監査役が毎回同じ角度で狩り、見つけた穴の型を次の周へ渡さず、班を作り替える手も無かった —— 攻撃側の AI は角度を変え続けるのに、こちらの角度は固定だった",
+      "status": "mitigated",
+      "fix": "security/hacker-team.json (常設の班の名簿: 赤 8 役 = 偵察・注入・流出・OS の境界・供給網・保管庫・財布・AI の口 / 変種狩り / 反証役 / 進化役) と scripts/hacker-team.cjs。brief は面に効く赤から『最後に出た日が最も古い → 収穫が多い → id』の順で今週の班 (偵察 + 2 + 変種狩り + 反証役 + 進化役 = 最大 6) を決定的に選び、変種狩りの種 (学んだ型・この面の最近の穴) と収穫の無い役 (3 周以上で確認 0) を載せる。record は班の段を検める: 確認した穴はどれかの役に帰属し、1 つにつき学んだ型 (shape と look) が要り (学ばずに閉じた穴は記録できない)、進化役の判断 (evolution: add / retire / notes) が要る。足す役は名簿と同じ規則 (面と型が脅威台帳に在る・赤だけ)、core の 4 役は引退できず、活動中の赤が編成の人数を割る引退は断る。検め終えた周の型は P-NNN として名簿へ書き戻り次の周の種になり、役の追加・引退も名簿へ入る。予約の指示文 (docs/HUNT_CYCLE_PROMPT.md) は赤と変種狩りを並べて起動し、反証役が再現し、進化役が学びと名簿の変更を提案する形に書き直した。限界: 自動なのは編成・学習・進化の記録と draft PR まで —— 名簿の変更も PR を通り、マージは人 (security/ は CODEOWNERS)。役を並べるぶん 1 周の利用料は 1 人の頃の数倍。予約そのものはリポジトリの外。",
+      "regression": {
+        "file": "src/shared/__tests__/hackerTeam.test.ts",
+        "test": "★ 名簿を渡した record は、brief で選んだ周に班の段を要求する (手で回した周は要求しない)"
+      }
+    },
+    {
+      "id": "T-223",
+      "found": "2026-10-30",
+      "foundBy": "パス 561 が残した『毎日の脅威ウォッチが出す「表に無い弱点の種類」を進化役へ渡す配線が無い』を閉じに行き、狩りの輪を回す予約のセッションから脅威ウォッチの配信へ届くかを測った —— 網の方針で OSV と CISA KEV はどちらも CONNECT 403 で、セッションの中で走らせ直す道も無かった。",
+      "surface": "supply-chain",
+      "class": "ai-automated-attack",
+      "severity": "medium",
+      "title": "世間で悪用が急増した弱点の種類 (weakness-map.json に無い物) を、常設の班の進化役は 1 度も見ないまま名簿を作り替えていた —— 毎日の脅威ウォッチは数えて Issue に出すだけで、狩りの輪へ渡す道が無かった",
+      "status": "mitigated",
+      "fix": "scripts/lib/threat-watch-digest.cjs。毎日の dependency-audit の報告 (常設 Issue の本文) の末尾に要約を 1 行 (`<!-- threat-watch-digest:v1 … -->`) 埋める。運ぶのは正規表現で形を確かめた CWE / CVE / 勧告の id と 0 以上の整数と暦に在る日付だけで、KEV の名前・説明・製品名は運ばない (間接プロンプトインジェクションの運び手にしない)。狩りのセッションは GitHub の MCP で Issue の本文を読み `hunt:cycle -- brief --watch <file>` へ渡し、brief は急増した種類を『進化役への入力』として載せ、記録の雛形に 1 つずつ判断の欄 (evolution.watch.decisions) を置く。読む側は 1 つでも形が外れれば要約ごと使わず、要約が 2 つ在れば (誰かが本文へ足した) どれも使わず、3 日より古い・未来の要約も使わない (理由つきで unavailable)。record は急増した種類 1 つずつに add:<役> (evolution.add に在る) / covered:<活動中の赤> / na:<10 字以上の理由> のどれかを要求し、要約を渡せなかった周は unavailable の理由を要求する。record に --watch を渡すと、記録の基準日と急増した種類が要約そのものと一致することも見る。限界: 狩りのセッションが Issue を読まずに unavailable と書けば判断は飛ばせる (記録と PR に残る)・Issue が 1 度も作られていなければ要約は無い (要対応 0 件の日が続くと bot は Issue を作らない)・判断の中身 (covered と言った赤が本当に受け持てるか) は人が PR で見る。",
+      "regression": {
+        "file": "src/shared/__tests__/threatWatchDigest.test.ts",
+        "test": "★ 急増した種類 1 つずつに判断が要る: 足す / 既にいる赤が受け持つ / 該当しない理由"
       }
     }
   ],

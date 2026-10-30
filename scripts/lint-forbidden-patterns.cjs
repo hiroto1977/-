@@ -150,9 +150,13 @@ const FORBIDDEN_PATTERNS = [
   //
   // **予告だけでは止まらなかった**ので字面で止める。CSS へ差し込むなら
   // `safeCssUrl` を通すこと (スキーム検証と引用がそこに 1 つだけ在る)。
+  //
+  // 2026-10-30 (パス 560): 針は**テンプレート文字列**の形 (`url(${…})`) だけを見ており、**文字列の連結**
+  // (`'url("' + raw + '")'`) は木のどこに書いても素通りだった。関門を Mamori へ移した日 (言語にテンプレート
+  // 文字列が無いので連結で書いた) に、この例外が「効いていない」として鳴って分かった。連結の形も同じ規則で止める。
   {
     name: 'CSS の url() へ生の値を差し込んでいる',
-    pattern: /url\(["']?\$\{/,
+    pattern: /url\(["']?\$\{|url\(["']?["']\s*\+/,
     codeOnly: true,
     // 関門そのもの。ここだけが url(...) を組み立ててよい。
     allowFile: (rel) => rel === 'src/shared/imageUrlGate.ts',
@@ -489,10 +493,10 @@ const FORBIDDEN_PATTERNS = [
   {
     name: 'shell.openExternal direct call outside main process',
     pattern: /shell\.openExternal/,
-    // main.ts holds the IPC handler with URL validation; oauth.ts uses
-    // it to launch the consent browser (URL is buildAuthorizeUrl, fully
-    // constructed by us, not user-supplied).
-    allowFile: (rel) => rel === 'src/main/main.ts' || rel === 'src/main/oauth.ts',
+    // 2026-10-30 (パス 559 · T-220) から OS の口は `osSinks.ts` の包みだけが呼ぶ —— 包みは関門が作る印つきの型
+    // (VettedExternalUrl) しか受けないので、main.ts (IPC と窓の扉) と oauth.ts (同意画面) は包みを通る。
+    // それまでは main.ts と oauth.ts の 2 本が素で呼んでいた。
+    allowFile: (rel) => rel === 'src/main/osSinks.ts',
     rationale: 'invariant #5 — external URLs flow through app:openExternal',
   },
   {
@@ -520,9 +524,10 @@ const FORBIDDEN_PATTERNS = [
   {
     name: 'window.open',
     pattern: /\bwindow\.open\s*\(/,
-    // 唯一の例外がブラウザ版の openExternal 実装そのもの。そこは
-    // `^https?://` を確かめてから開いており、この規約の実体がそれ。
-    allowFile: (rel) => rel === 'src/renderer/web-shim.ts',
+    // 唯一の例外がブラウザ版の外へ開く口の包み (`vettedSinks.ts` · パス 559 · T-220)。包みは関門
+    // (externalUrlOrNull) が作る印つきの型しか受けず、noopener,noreferrer を固定する。web-shim の
+    // openExternal はその包みを呼ぶ (2026-10-30 まで web-shim が素で呼んでいた)。
+    allowFile: (rel) => rel === 'src/renderer/vettedSinks.ts',
     // 散文で経緯を書けるように、コメント行は数えない。コメントの中の
     // 呼び出しは実行されないので、見逃しにはならない。
     codeOnly: true,
@@ -1039,9 +1044,8 @@ const KNOWN_SUPPRESSIONS = [
   'sandbox: false (レンダラープロセスの OS サンドボックスを外す) :: scripts/screenshot-dashboard.cjs :: 1',
   'sandbox: false (レンダラープロセスの OS サンドボックスを外す) :: scripts/screenshot.cjs :: 1',
   'sandbox: false (レンダラープロセスの OS サンドボックスを外す) :: scripts/soak-test.cjs :: 1',
-  'shell.openExternal direct call outside main process :: src/main/main.ts :: 2',
-  'shell.openExternal direct call outside main process :: src/main/oauth.ts :: 1',
-  'window.open :: src/renderer/web-shim.ts :: 1',
+  'shell.openExternal direct call outside main process :: src/main/osSinks.ts :: 1',
+  'window.open :: src/renderer/vettedSinks.ts :: 1',
   '食事補助の非課税限度額を地の文に書いている (3,500 円は改正前の値) :: src/shared/welfareScheme.ts :: 2 (code 0)',
 ];
 
@@ -1283,6 +1287,10 @@ function selfTest() {
     ["単引用でも弾く", "const s = `url('${raw}')`;", 1],
     ['定数の url() は弾かない', "const s = 'url(./icon.svg)';", 0],
     ['補間の無い url() は弾かない', 'const s = `url(#gradient)`;', 0],
+    // 連結の形 (2026-10-30 · パス 560 まで素通りだった)
+    ['連結で url() へ差し込むのも弾く', "const s = 'url(\"' + raw + '\")';", 1],
+    ['引用なしの連結も弾く', 'const s = "url(" + raw + ")";', 1],
+    ['連結でも定数だけの url() は弾かない', "const s = 'url(./a.svg)' + suffix;", 0],
     ['sandbox: false を弾く', 'sandbox: false,', 1],
     ['webSecurity: false を弾く', 'webSecurity: false,', 1],
     ['allowRunningInsecureContent: true を弾く', 'allowRunningInsecureContent: true,', 1],

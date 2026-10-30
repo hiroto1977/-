@@ -37,6 +37,7 @@
 | **AI の応答は手足を動かさない (新・T-217)** | AI の応答を受ける束縛は外向きの `invoke` / `openExternal` / `fetch` / `window.open` の引数に現れない (今日 0 件を census で固定) | `aiReplyInert.test.ts` |
 | **起動時の自己検算 (新・T-218)** | 梱包版は窓を作る前に同梱した全ファイルの sha256 をビルドが書いた表と突き合わせ、1 byte でも違えば起動しない (**読めない = 通さない**)。Linux では fuse の asar integrity が何も照合しないのでこれが唯一の段 —— 容器ごと差し替える相手は表も書き換えられる (署名の無い Linux の限界) | `selfAttestation.ts`・`build-integrity-manifest.cjs`・`smoke:packaged` |
 | **送り先の変更に持ち主の確認 (新・T-219)** | BYO プロキシの保存と、端末の外へ向く Ollama の接続先の変更は、書く前に**保管庫のパスワード** (状態を変えない照合 `vault.verifyPassword`) を求める。文は送り先のホストだけを名乗り、違えば「送り先は変えていません」、やめれば何も変えない。消す口 (削除) は門の外。限界: 門はレンダラーの中 —— 乗っ取られたレンダラー (別の `file://` の HTML · backlog C1) は保管層へ直接書ける。止めるのは人の手 | `egressStepUp.ts`・`StepUpPassword.tsx`・`egressSettingWriterCensus.test.ts` |
+| **型で守る (新・T-220)** | OS に開かせる口 (外部 URL・既定アプリ・フォルダで示す・`window.open`) は関門が作る印つきの型 (`VettedExternalUrl` / `VettedShellPath`) しか受けず、関門を飛ばした値・`null` を含む値・別の種類の印は**コンパイラが断る** (実行時の費用 0)。包みの迂回と印の偽造は census が数え、素の `string` を受ける危ない口は精度の台帳の天井 (pending 4) を超えさせない。限界: 型は `any`・`ts-ignore`・JS からの呼び出しで剥がれる —— 実行時に止めるのは今までどおり関門 | `vetted.ts`・`osSinks.ts`・`vettedSinks.ts`・`vettedTypes.test.ts` |
 | 費用の暴走 | 1 回の送信回数・同時 1 つ・1 時間 12 回 | `bestAnswersJob.ts` (T-146) |
 | 改竄検知 | 守りの実体と、それを守る検査・設定を整合性チェーンと CODEOWNERS で覆う | `integrity-chain.cjs`・`CODEOWNERS` |
 | 供給網 | release の検査/署名の分離・workflow の構造門・依存の台帳 | T-142〜T-145 |

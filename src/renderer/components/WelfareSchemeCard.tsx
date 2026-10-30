@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Section } from './StatusBar';
 import { Stat } from './Stat';
+import { VettedLink } from './VettedLink';
 import { tableStyle, thStyle, tdStyle } from './tableStyles';
 import { parseAmountInput } from './serviceActionUtils';
 import { jpyWhole } from '../../shared/formatters';
@@ -572,16 +573,9 @@ function BenefitCatalogue(): React.JSX.Element {
                               ⚠ {src.label}（URL が http(s) ではないため開けません）
                             </span>
                           ) : (
-                            <a
-                              href={safeUrl}
-                              onClick={(e) => {
-                                e.preventDefault();
-                                void window.serviceHub.openExternal(safeUrl);
-                              }}
-                              style={{ color: 'inherit' }}
-                            >
+                            <VettedLink href={safeUrl} style={{ color: 'inherit' }}>
                               {src.label}
-                            </a>
+                            </VettedLink>
                           )}
                         </span>
                       );

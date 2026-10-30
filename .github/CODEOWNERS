@@ -95,6 +95,20 @@
 /src/main/shellOpenGate.ts @hiroto1977
 /src/main/presenceWiring.ts @hiroto1977
 /src/main/windowOpen.ts @hiroto1977
+/src/main/osSinks.ts @hiroto1977
+/src/shared/vetted.ts @hiroto1977
+/src/shared/vetted.mamori @hiroto1977
+/src/shared/externalUrlGate.mamori @hiroto1977
+/src/main/shellOpenGate.mamori @hiroto1977
+/src/main/osSinks.mamori @hiroto1977
+/src/renderer/vettedSinks.mamori @hiroto1977
+/src/renderer/vettedSinks.ts @hiroto1977
+/src/main/clients/exportSink.mamori @hiroto1977
+/src/main/clients/exportSink.ts @hiroto1977
+/src/shared/imageUrlGate.mamori @hiroto1977
+/src/renderer/components/VettedImg.tsx @hiroto1977
+/src/renderer/components/VettedLink.tsx @hiroto1977
+/src/shared/mamori/ @hiroto1977
 /src/main/stateFile.ts @hiroto1977
 /src/main/userPresence.ts @hiroto1977
 /src/main/windowPrefs.ts @hiroto1977
@@ -270,6 +284,8 @@
 /src/shared/__tests__/redactOutputShapes.test.ts @hiroto1977
 /src/main/__tests__/secretsCredentialTtl.test.ts @hiroto1977
 /src/shared/__tests__/huntCycle.test.ts @hiroto1977
+/src/shared/__tests__/hackerTeam.test.ts @hiroto1977
+/src/shared/__tests__/threatWatchDigest.test.ts @hiroto1977
 /src/shared/credentialTtl.ts @hiroto1977
 /src/shared/__tests__/releaseJobSplit.test.ts @hiroto1977
 /src/shared/__tests__/workflowStructureGate.test.ts @hiroto1977
@@ -286,6 +302,7 @@
 /src/shared/__tests__/languageCoverage.test.ts @hiroto1977
 /src/main/clients/__tests__/advisorSmuggledChars.test.ts @hiroto1977
 /src/main/__tests__/windowOpen.test.ts @hiroto1977
+/src/shared/__tests__/vettedTypes.test.ts @hiroto1977
 /src/renderer/data/__tests__/storeImportShapes.test.ts @hiroto1977
 /src/renderer/data/__tests__/docstudioStore.test.ts @hiroto1977
 /src/shared/api/__tests__/pathSegment.test.ts @hiroto1977

@@ -1,6 +1,7 @@
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { readOriginalSource } from './originalSource';
 
 /*
  * **毎日の依存監査を、架空のデータで端から端まで通す** (脅威ウォッチ → 報告 → 常設 Issue)。
@@ -37,6 +38,12 @@ const issue = req(path.join(ROOT, 'scripts/dependency-audit-issue.cjs')) as {
   syncIssue: (a: { github: unknown; context: unknown; report: unknown }) => Promise<{ action: string; number: number | null }>;
 };
 const MAP = req(path.join(ROOT, 'security/weakness-map.json')) as unknown;
+const digestLib = req(path.join(ROOT, 'scripts/lib/threat-watch-digest.cjs')) as {
+  readWatchDigest: (text: unknown, now: string) => { digest?: { asOf: string; hotGaps: { cwe: string; count: number }[] }; unavailable?: string };
+};
+const hunt = req(path.join(ROOT, 'scripts/hunt-cycle.cjs')) as {
+  buildBrief: (a: Record<string, unknown>) => { markdown: string; problems: string[]; watch: { asOf?: string; hotGaps?: string[] } | null };
+};
 
 const LOCK = {
   packages: {
@@ -195,5 +202,29 @@ describe('毎日の依存監査 — 架空のデータで脅威ウォッチ → 
     const { report } = await oneDay({ ...CALM, hotGap: true }, gh, '2026-10-22');
     expect(report.markdown).not.toContain('CVE-2099-0001');
     expect(report.markdown).not.toContain('acme-widget');
+  });
+
+  it('★ 常設 Issue の本文 → 週 1 の狩りの brief: 急増した「表に無い種類」が進化役への入力に届き、名前・説明は届かない (threat: T-223)', async () => {
+    const gh = statefulGithub();
+    await oneDay({ ...CALM, hotGap: true }, gh, '2026-10-22');
+    const body = gh.issues[0]!.body;
+    const read = digestLib.readWatchDigest(body, '2026-10-23');
+    expect(read.unavailable).toBeUndefined();
+    expect(read.digest?.hotGaps.map((g) => g.cwe)).toEqual([UNMAPPED_CWE]);
+    const brief = hunt.buildBrief({
+      ledger: req(path.join(ROOT, 'security/threat-ledger.json')),
+      cycles: req(path.join(ROOT, 'security/hunt-cycles.json')),
+      doc: readOriginalSource('docs/THREAT_HUNT.md'),
+      now: '2026-10-23',
+      team: req(path.join(ROOT, 'security/hacker-team.json')),
+      watch: read,
+    });
+    expect(brief.problems).toEqual([]);
+    expect(brief.watch).toEqual({ asOf: '2026-10-22', hotGaps: [UNMAPPED_CWE] });
+    const section = brief.markdown.slice(brief.markdown.indexOf('## 進化役への入力'), brief.markdown.indexOf('## 面の手順書'));
+    expect(section).toContain(`🔥 ${UNMAPPED_CWE}`);
+    // 配信の名前 (vulnerabilityName '架空')・製品 ('Acme Thing') は運ばない。標本: 同じ日の本文の表には製品名が在りうる。
+    expect(section).not.toContain('架空');
+    expect(section).not.toContain('Acme');
   });
 });

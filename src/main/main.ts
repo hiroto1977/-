@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, ipcMain, nativeTheme, shell } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain, nativeTheme } from 'electron';
 import { promises as fsPromises } from 'node:fs';
 import path from 'node:path';
 import { attestationMessage, verifyShippedFiles } from './selfAttestation';
@@ -20,6 +20,7 @@ import type { OsOpResult, TokenSaveResult } from '../preload/preload';
 import { safeErrorMessage } from './clients/types';
 import { externalUrlOrNull } from '../shared/externalUrlGate';
 import { shellTargetOrNull } from './shellOpenGate';
+import { openExternalVetted, openPathVetted, showItemInFolderVetted } from './osSinks';
 import { installFileRequestGate } from './fileRequestGate';
 import { reportThreatSignal, requirePresence, requirePresenceFromUrl } from './presenceWiring';
 import { openFromWindow } from './windowOpen';
@@ -176,7 +177,7 @@ function createWindow(): BrowserWindow {
     void openFromWindow(url, {
       senderUrl: () => win.webContents.getURL(),
       guard: requirePresenceFromUrl,
-      open: (target) => shell.openExternal(target),
+      open: (target) => openExternalVetted(target),
       log: (message) => console.error(message),
     });
     return { action: 'deny' };
@@ -414,7 +415,7 @@ ipcMain.handle('app:openExternal', async (e, url: unknown) => {
   // (`secrets.ts` と同じ扱い。GUI 利用者には見えないが、不具合報告の
   // ログには出る)。
   try {
-    await shell.openExternal(target);
+    await openExternalVetted(target);
   } catch (e) {
     console.error(`[openExternal] OS が URL を開けませんでした: ${safeErrorMessage(e)}`);
   }
@@ -434,7 +435,7 @@ ipcMain.handle('app:revealInFolder', async (e, filePath: unknown): Promise<OsOpR
     if (refused !== null) return { ok: false, message: refused };
     const target = await shellTargetOrNull(filePath);
     if (target === null) return { ok: false, message: REJECTED_PATH_MESSAGE };
-    shell.showItemInFolder(target);
+    showItemInFolderVetted(target);
     return { ok: true };
   } catch (e) {
     return { ok: false, message: safeErrorMessage(e) };
@@ -453,7 +454,7 @@ ipcMain.handle('app:openPath', async (e, filePath: unknown): Promise<OsOpResult>
     if (refused !== null) return { ok: false, message: refused };
     const target = await shellTargetOrNull(filePath);
     if (target === null) return { ok: false, message: REJECTED_PATH_MESSAGE };
-    const failure = await shell.openPath(target);
+    const failure = await openPathVetted(target);
     return failure === '' ? { ok: true } : { ok: false, message: failure };
   } catch (e) {
     return { ok: false, message: safeErrorMessage(e) };

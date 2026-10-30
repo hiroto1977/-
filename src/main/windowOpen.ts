@@ -11,14 +11,15 @@
  */
 import { externalUrlOrNull } from '../shared/externalUrlGate';
 import type { PresenceDecision, PresenceRequest } from './userPresence';
+import type { VettedExternalUrl } from '../shared/vetted';
 
 export interface WindowOpenDeps {
   /** 呼び出し元の窓の URL (同梱の画面か。門が信用する送り手かを決める)。 */
   senderUrl: () => string;
   /** 本人確認の門。 */
   guard: (senderUrl: string, req: PresenceRequest) => Promise<PresenceDecision>;
-  /** OS に URL を開かせる。 */
-  open: (url: string) => Promise<void>;
+  /** OS に URL を開かせる。関門を通った印つきの URL だけを受ける (threat: T-220)。 */
+  open: (url: VettedExternalUrl) => Promise<void>;
   /** OS が開けなかった・門が投げたときの記録先。 */
   log?: (message: string) => void;
 }

@@ -1154,6 +1154,16 @@ npm run hunt:cycle -- brief|record <json>|status  # **探索 → 解析 → 対�
                          #   指示文は `docs/HUNT_CYCLE_PROMPT.md` と同じ物)。自動なのは検知・順位づけ・起動・解析・
                          #   対策の提案 (draft PR)・記録まで —— **マージは人が決める**。1 周 = 1 セッション分の利用料。
                          #   判定・実物の台帳の再生・配線・指示文と道具の一致は `shared/__tests__/huntCycle.test.ts`
+                         #   ★ **狩るのは常設の班** (2026-10-30 · パス 561 · threat: T-222) —— 名簿
+                         #   `security/hacker-team.json` (赤 8 役・変種狩り・反証役・進化役) を `scripts/hacker-team.cjs` が
+                         #   編成し (偵察 + 面に効く赤を出番の古い順に 2 + 3 役 = 最大 6 体)、`record` は確認した穴 1 つにつき
+                         #   学んだ型 (learned) と進化役の判断 (evolution) を要求して名簿へ書き戻す (型は次の周の変種狩りの種・
+                         #   役の追加と引退も検めてから)。判定は `shared/__tests__/hackerTeam.test.ts`
+                         #   ★ **進化役は毎日の脅威ウォッチを読む** (2026-10-30 · パス 562 · T-223) —— 予約のセッションは
+                         #   網の方針で OSV / KEV に届かないので、毎日の報告が常設 Issue の本文に要約
+                         #   (`<!-- threat-watch-digest:v1 … -->` · id と件数と日付だけ) を埋め、`brief --watch <file>` が読む。
+                         #   急増した「表に無い種類」1 つずつに evolution.watch.decisions (add / covered / na) が無いと
+                         #   `record` が断る。判定は `shared/__tests__/threatWatchDigest.test.ts`
 npm run audit:crown-jewels  # **確率に依らない守り**(2026-10-23 · T-169)。守る物 5 つ(security/crown-jewels.json)ごとに
                          #   防ぐ・封じ込める・気付く・戻すの 4 層が別々の強制物で揃うかを見る。毎日の dependency-audit が同じ測定を載せる。
                          #   判定は src/shared/__tests__/crownJewels.test.ts が npm test で見る。docs/ZERO_TRUST.md §2.9
@@ -1611,8 +1621,8 @@ npm run lint:zero-fold     # 「割れない値を 0 に倒す」箇所の**母�
                            #   母集団が 26 ファイル (実測 106) と 4 倍ずれていた
 npm run lint:shared-judgement # 「述語は共有したが、no と言われたあとの動作が両ビルドで
                            #   違う」の**母集団**を数え、`docs/REMAINING_WORK.md` の
-                           #   生成ブロックと突き合わせる (shared 165 / 両ビルドが
-                           #   import 89 / うち否定で答えられる 47。**この 3 つは
+                           #   生成ブロックと突き合わせる (shared 171 / 両ビルドが
+                           #   import 90 / うち否定で答えられる 47。**この 3 つは
                            #   live metric なので散文だけが古びることはもう無い** ——
                            #   2026-09-15 まで 138 / 44 / 21 と書いたままだった。
                            #   44 / 21 はパス 247 が初めて数えた値で、
@@ -1631,6 +1641,9 @@ npm run verify:all         # typecheck + all of the above + eslint (39 ゲート
                            #   (verify:all だけを見て「全 green」と言うと CI で落ちる)
 npm run mutate             # Stryker mutation testing (target: 100%); mutate:triage / mutate:next help; mutate:merge merges the weekly chunk reports
 npm run knowledge:auto     # knowledge autopilot: audit → regen (vault+NotebookLM) → verify → work queue
+npm run mamori:build       # 守りの層の元 (src/**/*.mamori · 言語は docs/MAMORI.md) を TypeScript へ変換し、隣の .ts を書き直す
+                           #   (生成物 — 手で編集しない。2026-10-30 · パス 560 · T-221。`mamori:check` は書かずに誤りと古びを報せる。
+                           #   同じ判定を src/shared/mamori/__tests__/mamoriGenerated.test.ts が npm test で見る)
 npm run ontology:md        # docs/ONTOLOGY.md を src/shared/ontology/ (語彙・facet の公理・法則と執行者) と
                            #   実物 (台帳・ゲート・両ビルドの action の面) から再生成 (生成物 — 手で編集しない。
                            #   `--check` で committed と一致するか。`ontologyDoc.test.ts` が npm test で同じ事を留める)
@@ -1854,6 +1867,20 @@ The browser target adds: `web-shim.ts` (a `window.serviceHub` polyfill imported 
   パリティ検査が鳴る) と `ALLOWED_ROOT_ENTRIES` にも足す。**package.json は表に載せない** (electron-builder が梱包時に書き換える)。
   node_modules は同梱しない (`!node_modules/**` —— 主プロセスも preload も require しない)。Linux には署名が無いので、
   この検算が止めるのは「1 ファイルの改竄」であって「容器ごとの差し替え」ではない。
+- **守りの規則は型に乗せる —— 危ない口は関門が作る印つきの型しか受けない** (2026-10-30 · パス 559 · T-220)。
+  OS に開かせる口は包み (`src/main/osSinks.ts` の `openExternalVetted` / `openPathVetted` / `showItemInFolderVetted`・
+  `src/renderer/vettedSinks.ts` の `openWindowVetted`) だけを呼び、包みは `VettedExternalUrl` / `VettedShellPath`
+  (`src/shared/vetted.ts` · 実行時の費用 0) しか受けない。印は関門 (`externalUrlOrNull` / `shellTargetOrNull`) の `return` でだけ作る ——
+  関門の外で `as Vetted…` を書かない (書けば型の守りを自分で外すことになり、`vettedTypes.test.ts` が鳴る)。
+  素の `shell.*` / `window.open` を包みの外で呼ばない (同じ検査と `lint:forbidden` が鳴る)。素の `string` を受ける危ない口を
+  新しく足すなら、印を持たせるか、`SINK_LEDGER` に理由と守り手を書いて pending の天井を上げる差分をレビューに出す。
+  型の守りの対照は `@ts-expect-error` で書く (`npm run typecheck` が検査する —— 守りが外れると「不要な @ts-expect-error」で落ちる)。
+- **守りの層は Mamori で書く —— `.ts` の生成物を手で直さない** (2026-10-30 · パス 560 · T-221)。
+  `src/shared/vetted.ts` / `externalUrlGate.ts` / `src/main/shellOpenGate.ts` / `osSinks.ts` / `src/renderer/vettedSinks.ts` / `src/main/clients/exportSink.ts` / `src/shared/imageUrlGate.ts` は
+  隣の `.mamori` から `npm run mamori:build` で組む生成物である (手で直すと `mamoriGenerated.test.ts` が落ちる)。
+  関門は `gate fn` (印は `mint` でだけ作る)、危ない口は `extern sink` + `sink fn` (印の型しか受けない) で書く。
+  `as` / `any` / 宣言していない外の名前は Mamori に無い。新しい危ない口を足すなら、gate と sink の組として Mamori で書き、
+  `SINK_LEDGER` の pending を減らす (規則と文法は `docs/MAMORI.md`)。
 - **対照を回すまで、検査は信用しない。** 守っている物を実際に壊し、狙った項目が
   落ちることを見る。**鳴らない対照は「合格」ではなく「その検査についての報せ」である。**
 

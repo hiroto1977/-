@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Section, StatusBar } from '../components/StatusBar';
+import { VettedImg } from '../components/VettedImg';
+import { safeImageSrc } from '../../shared/imageUrlGate';
+import type { VettedImageSrc } from '../../shared/vetted';
 import { getLibrary, type LibraryItem, type LibraryItemMeta } from '../library/library';
 import { reportDeviceStoreFailure } from '../data/deviceStoreFailure';
 import { parseTimestamp } from '../../shared/isoDate';
@@ -190,12 +193,15 @@ export function LibraryPage() {
       // data: URL の <img> にする。<img> 経由の SVG は secure static mode に
       // なりスクリプトが動かない。data: は両ビルドの img-src に元から入って
       // いるので CSP を緩めずに済む (blob: は Electron 版の img-src に無い)。
+      // `<img>` の口は印つきの値しか受けない (パス 560 · T-221) —— data: URL も同じ関門を通す。
+      // 中身の型が空 (`data:;base64,…` / `application/octet-stream`) なら関門が断るので、壊れた画像を出さずに断る。
       const dataUrl = await blobToDataUrl(item.blob).catch(() => null);
-      if (dataUrl === null) {
+      const src = dataUrl === null ? undefined : safeImageSrc(dataUrl);
+      if (src === undefined) {
         setMsg('プレビューを生成できませんでした');
         return;
       }
-      setShown({ filename: item.filename, mime: item.mime, kind: 'image', body: dataUrl, truncated: false });
+      setShown({ filename: item.filename, mime: item.mime, kind: 'image', body: src, truncated: false });
       return;
     }
     // 読む所と切る所は `readTextForPreview` の中で 1 つになっている
@@ -442,7 +448,7 @@ export function LibraryPage() {
               </button>
             </div>
             {shown.kind === 'image' ? (
-              <img
+              <VettedImg
                 data-preview="image"
                 src={shown.body}
                 alt={shown.filename}
@@ -520,14 +526,22 @@ function actionBtn(kind?: 'accent'): React.CSSProperties {
   };
 }
 
-interface ShownPreview {
-  readonly filename: string;
-  readonly mime: string;
-  readonly kind: 'image' | 'text';
-  /** kind='image' なら data: URL、kind='text' なら本文そのもの。 */
-  readonly body: string;
-  readonly truncated: boolean;
-}
+/** kind='image' なら関門を通った data: URL、kind='text' なら本文そのもの。 */
+type ShownPreview =
+  | {
+      readonly filename: string;
+      readonly mime: string;
+      readonly kind: 'image';
+      readonly body: VettedImageSrc;
+      readonly truncated: false;
+    }
+  | {
+      readonly filename: string;
+      readonly mime: string;
+      readonly kind: 'text';
+      readonly body: string;
+      readonly truncated: boolean;
+    };
 
 /** Blob を data: URL にする。`<img src>` に入れるためだけに使う。 */
 function blobToDataUrl(blob: Blob): Promise<string> {

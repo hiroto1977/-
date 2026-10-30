@@ -142,6 +142,34 @@ const PROTECTED = [
   'src/main/presenceWiring.ts',
   // 2026-10-24 (threat: T-173)。window.open を IPC の app:openExternal と同じ門へ通す口。外れると速度制限・警戒態勢を迂回できる。
   'src/main/windowOpen.ts',
+  // 2026-10-30 (threat: T-220 · パス 559)。OS に開かせる唯一の口 (electron の shell を印つきの型でだけ受ける包み) と、
+  // その印の型。中身は 1 行ずつだが、ここを素の string を受ける形へ戻すと、関門を飛ばした値を `tsc` が断らなくなる
+  // (vetted.ts は実行時に何も残さないが、**型の守りそのもの**を持つので除外ではなく保護対象にする —— 書き換えても
+  // 生成 JS は変わらないが、コンパイラが断る範囲が変わる)。
+  'src/main/osSinks.ts',
+  'src/shared/vetted.ts',
+  // 2026-10-30 (threat: T-221 · パス 560)。守りの層は Mamori で書いてあり、上の .ts はその生成物。元 (.mamori) と
+  // コンパイラ (src/shared/mamori/) と CLI も保護する —— コンパイラが書き換えられると、元を変えずに生成物へ何でも混ぜられる
+  // (生成物の一致を見る検査はコンパイラ自身を使うので、コンパイラの改竄は一致の検査に映らない)。
+  'src/shared/vetted.mamori',
+  'src/shared/externalUrlGate.mamori',
+  'src/main/shellOpenGate.mamori',
+  'src/main/osSinks.mamori',
+  'src/renderer/vettedSinks.mamori',
+  'src/renderer/vettedSinks.ts',
+  // 書き出しのファイル書き込みの関門と口の組 (パス 560 で Mamori へ移した · SINK_LEDGER の typed)。
+  'src/main/clients/exportSink.mamori',
+  'src/main/clients/exportSink.ts',
+  // 画像の取得先の関門 (Mamori) と <img> の唯一の口 (パス 560 · SINK_LEDGER の typed)。生成物 imageUrlGate.ts は既に保護対象。
+  'src/shared/imageUrlGate.mamori',
+  'src/renderer/components/VettedImg.tsx',
+  'src/renderer/components/VettedLink.tsx',
+  'src/shared/mamori/ast.ts',
+  'src/shared/mamori/parser.ts',
+  'src/shared/mamori/checker.ts',
+  'src/shared/mamori/emit.ts',
+  'src/shared/mamori/compile.ts',
+  'scripts/mamori.cjs',
   // 2026-08-22 に足した。`shellOpenGate.ts` の**双子**——あちらが「OS に
   // ファイルを開かせてよいか」なら、こちらは「OS に URL を開かせてよいか」。
   // `javascript:` / `file:` / OS 独自スキームを止める唯一の関門で、

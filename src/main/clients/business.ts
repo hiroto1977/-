@@ -15,7 +15,9 @@ import * as path from 'node:path';
 import type { ActionContext, ActionMap, FetchContext } from './types';
 import { limitedFetch, readCapped, redactForMessage, MAX_RESPONSE_BODY_IN_MESSAGE } from './types';
 import { AI_CHAT_TIMEOUT_MS } from '../../shared/ai/chat';
-import { isSafeExportPath, writeExportFile } from './exportPaths';
+import { isSafeExportPath } from './exportPaths';
+import { exportTargetOrNull, writeExportFileVetted } from './exportSink';
+import type { VettedExportPath } from '../../shared/vetted';
 import { AI_PROVIDERS } from '../../shared/ai/providers';
 import type { ActionData, ExportFileResult } from '../../shared/actionData';
 import {
@@ -1051,7 +1053,7 @@ interface ExportPayload {
 
 export interface ExportDeps {
   fetchSnapshot?: (ctx: FetchContext) => Promise<BusinessOpsSnapshot>;
-  writeFile?: (p: string, c: string) => Promise<void>;
+  writeFile?: (p: VettedExportPath, c: string) => Promise<void>;
   now?: () => Date;
 }
 
@@ -1071,7 +1073,8 @@ export async function exportBusinessDashboardImpl(
     typeof customPath === 'string' && customPath.length > 0
       ? customPath
       : defaultBusinessDashboardPath();
-  if (!isSafeBusinessDashboardPath(filePath, home)) {
+  const target = exportTargetOrNull(filePath, home, '.html');
+  if (target === null) {
     throw new Error('business-dashboard path must be a .html file under the user home directory');
   }
   const snap = await (deps.fetchSnapshot ?? fetchBusinessOpsSnapshot)({
@@ -1085,8 +1088,8 @@ export async function exportBusinessDashboardImpl(
     advisorResult: advisor,
     generatedAt,
   });
-  await fs.mkdir(path.dirname(filePath), { recursive: true });
-  await (deps.writeFile ?? writeExportFile)(filePath, html);
+  await fs.mkdir(path.dirname(target), { recursive: true });
+  await (deps.writeFile ?? writeExportFileVetted)(target, html);
   return { path: filePath, bytes: Buffer.byteLength(html, 'utf8'), generatedAt };
 }
 // Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator,ArrowFunction,ObjectLiteral
@@ -1108,7 +1111,8 @@ export async function exportBusinessDashboardMdImpl(
     typeof customPath === 'string' && customPath.length > 0
       ? customPath
       : defaultBusinessDashboardMdPath();
-  if (!isSafeBusinessDashboardMdPath(filePath, home)) {
+  const target = exportTargetOrNull(filePath, home, '.md');
+  if (target === null) {
     throw new Error('business-dashboard path must be a .md file under the user home directory');
   }
   const snap = await (deps.fetchSnapshot ?? fetchBusinessOpsSnapshot)({
@@ -1122,8 +1126,8 @@ export async function exportBusinessDashboardMdImpl(
     advisorResult: advisor,
     generatedAt,
   });
-  await fs.mkdir(path.dirname(filePath), { recursive: true });
-  await (deps.writeFile ?? writeExportFile)(filePath, md);
+  await fs.mkdir(path.dirname(target), { recursive: true });
+  await (deps.writeFile ?? writeExportFileVetted)(target, md);
   return { path: filePath, bytes: Buffer.byteLength(md, 'utf8'), generatedAt };
 }
 // Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator,ArrowFunction,ObjectLiteral

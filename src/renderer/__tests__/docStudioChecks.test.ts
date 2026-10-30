@@ -308,7 +308,7 @@ const RULE_IDS = [
   'sokai', 'rinji-sokai', 'torishimari',
   'kabunushi-meibo', 'shunin', 'annai', 'naiyo', 'tokusoku', 'kaijo', 'kojin-itaku',
   'privacy', 'chingin', 'harassment',
-  'chotatsu-keikaku', 'jigyo-keikaku',
+  'chotatsu-keikaku', 'jigyo-keikaku', 'jigyo-keikaku-shosai', 'chotatsu-keikaku-shosai', 'cf-keikaku',
   'roudousha-meibo', 'chingin-daichou', 'shukkinbo', 'yukyu-kanribo',
   // 支払明細書 4 種 (2026-09-15)。従業員と役員で別の書式・別のルールにしてある。
   'kyuyo-meisai', 'shoyo-meisai', 'yakuin-hoshu-meisai', 'yakuin-shoyo-meisai',
@@ -665,6 +665,27 @@ describe('分岐ごとの文面を丸ごと固定する', () => {
     ['jigyo-keikaku', '利益が売上を上回る', { y1sales: '1000000', y1profit: '2000000' }],
     ['jigyo-keikaku', '3年で5倍超', { y1sales: '1000000', y3sales: '6000000' }],
     ['jigyo-keikaku', '算出根拠が空欄', { basis: '' }],
+    // 事業計画書（詳細版・5か年）
+    ['jigyo-keikaku-shosai', '営業利益の式が合わない', { y2sales: '30000000', y2cost: '6000000', y2sga: '19000000', y2op: '6000000' }],
+    ['jigyo-keikaku-shosai', '人件費が販管費を上回る', { y1sga: '12400000', y1labor: '13000000' }],
+    ['jigyo-keikaku-shosai', '経常利益が売上を上回る', { y4ord: '60000000' }],
+    ['jigyo-keikaku-shosai', '3年で5倍超', { y3sales: '100000000', y3op: '66000000' }],
+    ['jigyo-keikaku-shosai', '算出根拠が空欄', { basis: '' }],
+    ['jigyo-keikaku-shosai', '必要資金と調達が食い違う', { equip: '5000000', working: '10000000', selfFund: '3000000', loanBank: '7000000', loanPublic: '0', subsidy: '0', otherFund: '0' }],
+    ['jigyo-keikaku-shosai', '返済原資が元金に足りない', { loanBank: '7000000', loanPublic: '5000000', years: '2', y1op: '2000000', y1dep: '500000' }],
+    // 資金調達計画書（詳細版）
+    ['chotatsu-keikaku-shosai', '必要資金と調達が食い違う', { loan2Amt: '4000000' }],
+    ['chotatsu-keikaku-shosai', '自己資金が1割未満', { selfFund: '1000000', loan1Amt: '9000000' }],
+    ['chotatsu-keikaku-shosai', '借入先が空欄', { loan2Lender: '' }],
+    ['chotatsu-keikaku-shosai', '補助金のつなぎ資金が空欄', { subsidy: '1000000', otherFund: '0', loan2Amt: '4000000', bridge: '' }],
+    ['chotatsu-keikaku-shosai', '返済が原資を上回る', { source3: '1900000' }],
+    ['chotatsu-keikaku-shosai', '返済の合計が借入を超える', { repay1: '2000000', repay2: '2000000', repay3: '3000000', repay4: '3000000', repay5: '3000000' }],
+    // キャッシュフロー計画書（5か年）
+    ['cf-keikaku', '営業CFの式が合わない', { y2opcf: '3000000', y2ending: '8200000', y3ending: '11000000', y4ending: '16000000', y5ending: '23200000' }],
+    ['cf-keikaku', '財務CFの式が合わない', { y1fincf: '10000000', y1ending: '8900000', y2ending: '7400000', y3ending: '10200000', y4ending: '15200000', y5ending: '22400000' }],
+    ['cf-keikaku', '期末残高の転記ずれ', { y3ending: '12000000' }],
+    ['cf-keikaku', '期末残高がマイナス', { y1capex: '20000000', y1ending: '-5100000', y2ending: '-6600000', y3ending: '-3800000', y4ending: '1200000', y5ending: '8400000' }],
+    ['cf-keikaku', '最低額を下回る', { minBalance: '10000000' }],
     // 法定帳簿
     ['roudousha-meibo', '退職日だけ入って事由が空', { retired: '2027年3月31日', retireReason: '' }],
     ['roudousha-meibo', '業務の種類が空', { duty: '' }],
@@ -927,6 +948,208 @@ describe('資金調達計画書の検算', () => {
     expect(at({ ...BALANCED, years: '0' }).some((i) => i.message.includes('元金だけで年'))).toBe(false);
     const noDebt = { equip: '3000000', working: '0', selfFund: '3000000', loanBank: '0', loanPublic: '0', subsidy: '0', otherFund: '0', years: '5' };
     expect(at(noDebt).some((i) => i.message.includes('元金だけで年'))).toBe(false);
+  });
+});
+
+describe('資金調達計画書（詳細版）の検算', () => {
+  const at = (over: Record<string, string>) => checkDoc(doc('chotatsu-keikaku-shosai'), filled('chotatsu-keikaku-shosai', over));
+
+  it('見本どおりに埋めれば指摘は出ない (合計・自己資金の割合・返済原資が全部合っている)', () => {
+    expect(at({})).toEqual([]);
+  });
+
+  it('合計が 1 円でも食い違えば fatal・食い違いの額を文に出す', () => {
+    const hit = at({ otherFund: '1' }).find((i) => i.field === 'selfFund' && i.level === 'fatal');
+    expect(hit?.message).toContain('15,000,000 円');
+    expect(hit?.message).toContain('15,000,001 円');
+  });
+
+  it('自己資金がちょうど 1 割なら通し、下回れば警告する', () => {
+    expect(at({ selfFund: '1500000', loan1Amt: '8500000' }).some((i) => i.field === 'selfFund' && i.level === 'warn')).toBe(false);
+    expect(at({ selfFund: '1499999', loan1Amt: '8500001' }).some((i) => i.field === 'selfFund' && i.level === 'warn')).toBe(true);
+  });
+
+  it('借入の金額があって借入先が空欄なら名指しする・金額が 0 なら問わない', () => {
+    expect(at({ loan1Lender: '' }).some((i) => i.field === 'loan1Lender')).toBe(true);
+    expect(at({ loan1Lender: '', loan1Amt: '0', selfFund: '10000000' }).some((i) => i.field === 'loan1Lender')).toBe(false);
+  });
+
+  it('補助金を計上してつなぎ資金が空欄なら警告・補助金が 0 なら問わない', () => {
+    const withSubsidy = { subsidy: '1000000', loan2Amt: '4000000' };
+    expect(at({ ...withSubsidy, bridge: '' }).some((i) => i.field === 'bridge')).toBe(true);
+    expect(at({ ...withSubsidy, bridge: '当座貸越 100 万円で手当て' }).some((i) => i.field === 'bridge')).toBe(false);
+    expect(at({ bridge: '' }).some((i) => i.field === 'bridge')).toBe(false);
+  });
+
+  it('元金返済額が返済原資と同額なら通し、上回れば年を名指しする', () => {
+    expect(at({ repay2: '5600000' }).some((i) => i.field === 'repay2')).toBe(false);
+    expect(at({ repay2: '5600001' }).some((i) => i.field === 'repay2')).toBe(true);
+  });
+
+  it('返済原資が空欄の年は比べない・返済額の空欄は 0 として比べる', () => {
+    expect(at({ repay4: '99999999', source4: '' }).some((i) => i.field === 'repay4')).toBe(false);
+    expect(at({ repay4: '', source4: '0' }).some((i) => i.field === 'repay4')).toBe(false);
+    expect(at({ repay4: '', source4: '-1' }).some((i) => i.field === 'repay4')).toBe(true);
+  });
+
+  it('出資・増資も調達の合計に入る', () => {
+    expect(at({ equity: '1' }).some((i) => i.field === 'selfFund' && i.level === 'fatal')).toBe(true);
+  });
+
+  it('読めない金額があれば合計の一致を判定しない', () => {
+    expect(at({ e1amt: '三百万' }).some((i) => i.field === 'selfFund' && i.level === 'fatal')).toBe(false);
+    expect(at({ loan1Amt: '七百万' }).some((i) => i.field === 'selfFund' && i.level === 'fatal')).toBe(false);
+  });
+
+  it('返済の合計は読めない欄があれば比べない', () => {
+    expect(at({ repay1: '不明', repay2: '99999999' }).some((i) => i.field === 'repay5')).toBe(false);
+  });
+
+  it('5 年間の返済の合計が借入額の合計を超えたら警告・同額なら通す', () => {
+    const total = { repay1: '2400000', repay2: '2400000', repay3: '2400000', repay4: '2400000', repay5: '2400000' };
+    expect(at(total).some((i) => i.field === 'repay5')).toBe(false);
+    expect(at({ ...total, repay5: '2400001' }).some((i) => i.field === 'repay5')).toBe(true);
+  });
+});
+
+describe('キャッシュフロー計画書の検算', () => {
+  const at = (over: Record<string, string>) => checkDoc(doc('cf-keikaku'), filled('cf-keikaku', over));
+
+  it('見本どおりに埋めれば指摘は出ない (3 つの式と繰越が全部合っている)', () => {
+    expect(at({})).toEqual([]);
+  });
+
+  it('運転資本の減少をマイナスで書いた見本を、マイナスとして読んでいる', () => {
+    // 1年目: 1,200,000 + 500,000 + (-800,000) = 900,000。マイナスを正と読めば 2,500,000 になり指摘が出る。
+    expect(at({}).some((i) => i.field === 'y1opcf')).toBe(false);
+    expect(at({ y1wc: '800000' }).some((i) => i.field === 'y1opcf')).toBe(true);
+  });
+
+  it('営業キャッシュフローの式が合わない年を名指しし、正しい値を文に出す', () => {
+    const hit = at({ y4opcf: '1' }).find((i) => i.field === 'y4opcf');
+    expect(hit?.level).toBe('warn');
+    expect(hit?.message).toContain('7,700,000 円');
+  });
+
+  it('財務キャッシュフローの式が合わない年を名指しする・増資は収入として足す', () => {
+    expect(at({ y5fincf: '0' }).some((i) => i.field === 'y5fincf')).toBe(true);
+    expect(at({ y2equity: '1000000' }).some((i) => i.field === 'y2fincf')).toBe(true);
+    expect(at({ y2equity: '1000000', y2fincf: '-700000' }).some((i) => i.field === 'y2fincf')).toBe(false);
+  });
+
+  it('営業・財務キャッシュフローの欄が空欄か読めなければ式を検算しない', () => {
+    // 読めない欄そのものは共通の検査が「数値として読み取れません」と言う —— ここで見るのは式の不一致だけ。
+    const op = (over: Record<string, string>) => at(over).some((i) => i.field === 'y2opcf' && i.message.includes('一致しません'));
+    expect(op({ y2opcf: '' })).toBe(false);
+    expect(op({ y2opcf: '不明' })).toBe(false);
+    expect(op({ y2net: '不明' })).toBe(false);
+    const fin = (over: Record<string, string>) => at(over).some((i) => i.field === 'y2fincf' && i.message.includes('一致しません'));
+    expect(fin({ y2fincf: '' })).toBe(false);
+    expect(fin({ y2fincf: '不明' })).toBe(false);
+    expect(fin({ y2borrow: '不明' })).toBe(false);
+  });
+
+  it('期末残高の断りは 1年目なら期首残高、2年目以降なら前年の期末残高から、と言う', () => {
+    expect(at({ opening: '3000001' }).find((i) => i.field === 'y1ending')?.message).toContain('「期首残高');
+    expect(at({ y2ending: '8400001' }).find((i) => i.field === 'y2ending')?.message).toContain('「前年の期末残高');
+  });
+
+  it('期末残高は前年の期末残高から検算する (1年目は期首残高から)', () => {
+    expect(at({ opening: '3000001' }).some((i) => i.field === 'y1ending')).toBe(true);
+    expect(at({ y2ending: '8400001' }).filter((i) => i.field === 'y2ending' || i.field === 'y3ending').map((i) => i.field))
+      .toEqual(['y2ending', 'y3ending']);
+  });
+
+  it('前年の期末残高が空欄の年は残高を検算しない (書きかけの年に「合っていない」と言わない)', () => {
+    expect(at({ y2ending: '' }).some((i) => i.field === 'y3ending')).toBe(false);
+    expect(at({ opening: '' }).some((i) => i.field === 'y1ending')).toBe(false);
+  });
+
+  it('期末残高が負なら fatal・0 ちょうどは負ではない', () => {
+    expect(at({ y1ending: '-1' }).some((i) => i.field === 'y1ending' && i.level === 'fatal')).toBe(true);
+    expect(at({ y1ending: '0', minBalance: '' }).some((i) => i.field === 'y1ending' && i.level === 'fatal')).toBe(false);
+  });
+
+  it('最低額を下回る年を名指しし、同額なら通す・最低額が空欄なら問わない', () => {
+    expect(at({ minBalance: '8400000' }).filter((i) => i.message.includes('最低額')).map((i) => i.field)).toEqual([]);
+    expect(at({ minBalance: '8400001' }).filter((i) => i.message.includes('最低額')).map((i) => i.field)).toEqual(['y2ending']);
+    expect(at({ minBalance: '' }).some((i) => i.message.includes('最低額'))).toBe(false);
+  });
+});
+
+describe('事業計画書（詳細版）の検算', () => {
+  const at = (over: Record<string, string>) => checkDoc(doc('jigyo-keikaku-shosai'), filled('jigyo-keikaku-shosai', over));
+
+  it('見本どおりに埋めれば指摘は出ない (見本の数字は式・合計・返済原資が全部合っている)', () => {
+    expect(at({})).toEqual([]);
+  });
+
+  it('営業利益の式が合わない年を名指しし、正しい値を文に出す', () => {
+    const issues = at({ y3sales: '42000000', y3cost: '8400000', y3sga: '25600000', y3op: '9000000' });
+    const hit = issues.find((i) => i.field === 'y3op');
+    expect(hit?.level).toBe('warn');
+    expect(hit?.message).toContain('8,000,000 円');
+    expect(hit?.message).toContain('9,000,000 円');
+  });
+
+  it('原価・販管費の空欄は 0 として検算する', () => {
+    expect(at({ y5sales: '1000', y5cost: '', y5sga: '', y5op: '1000' }).some((i) => i.field === 'y5op')).toBe(false);
+    expect(at({ y5sales: '1000', y5cost: '', y5sga: '', y5op: '999' }).some((i) => i.field === 'y5op')).toBe(true);
+  });
+
+  it('売上高か営業利益が空欄の年は式を検算しない (書きかけの年に「合っていない」と言わない)', () => {
+    expect(at({ y4sales: '', y4op: '5' }).some((i) => i.field === 'y4op')).toBe(false);
+    expect(at({ y4sales: '100', y4op: '' }).some((i) => i.field === 'y4op')).toBe(false);
+  });
+
+  it('読めない数字があれば式を検算しない', () => {
+    expect(at({ y2cost: '六百万' }).some((i) => i.field === 'y2op')).toBe(false);
+  });
+
+  it('経常利益が売上高と同額なら指摘しない・上回れば指摘する', () => {
+    expect(at({ y2sales: '100', y2cost: '0', y2sga: '0', y2op: '100', y2ord: '100' }).some((i) => i.field === 'y2ord')).toBe(false);
+    expect(at({ y2sales: '100', y2cost: '0', y2sga: '0', y2op: '100', y2ord: '101' }).some((i) => i.field === 'y2ord')).toBe(true);
+  });
+
+  it('3年目がちょうど1年目の5倍なら通す・1年目が 0 なら伸び率を判定しない', () => {
+    const y1 = { y1sales: '1000', y1cost: '0', y1sga: '0', y1op: '1000' };
+    const y3 = (sales: string) => ({ y3sales: sales, y3cost: '0', y3sga: '0', y3op: sales });
+    expect(at({ ...y1, ...y3('5000') }).some((i) => i.field === 'y3sales')).toBe(false);
+    expect(at({ ...y1, ...y3('5001') }).some((i) => i.field === 'y3sales')).toBe(true);
+    expect(at({ y1sales: '0', y1cost: '0', y1sga: '0', y1op: '0', ...y3('99999999') }).some((i) => i.field === 'y3sales')).toBe(false);
+  });
+
+  it('補助金も調達の合計に入る・読めない金額があれば合計の一致を判定しない', () => {
+    expect(at({ subsidy: '1' }).some((i) => i.field === 'selfFund' && i.level === 'fatal')).toBe(true);
+    expect(at({ equip: '五百万' }).some((i) => i.field === 'selfFund')).toBe(false);
+    expect(at({ loanBank: '七百万' }).some((i) => i.field === 'selfFund')).toBe(false);
+  });
+
+  it('返済期間が 0 年なら返済原資を判定しない・借入が無ければ利益が負でも判定しない', () => {
+    expect(at({ years: '0' }).some((i) => i.field === 'years')).toBe(false);
+    expect(at({ loanBank: '0', loanPublic: '0', selfFund: '15000000', y1op: '-1000000' }).some((i) => i.field === 'years')).toBe(false);
+  });
+
+  it('人件費が販管費と同額なら指摘しない・上回れば指摘する', () => {
+    expect(at({ y2sga: '100', y2labor: '100' }).some((i) => i.field === 'y2labor')).toBe(false);
+    expect(at({ y2sga: '100', y2labor: '101' }).some((i) => i.field === 'y2labor')).toBe(true);
+  });
+
+  it('資金の合計が 1 円でも食い違えば fatal・一致すれば出さない', () => {
+    expect(at({ otherFund: '1' }).some((i) => i.field === 'selfFund' && i.level === 'fatal')).toBe(true);
+    expect(at({}).some((i) => i.field === 'selfFund')).toBe(false);
+  });
+
+  it('返済原資が元金の年額を下回れば警告・ちょうど同じなら通す', () => {
+    // 借入 12,000,000 円を 6 年 → 年 2,000,000 円。1年目の営業利益＋減価償却費 = 2,000,000 円。
+    expect(at({ years: '6', y1op: '1500000', y1dep: '500000' }).some((i) => i.field === 'years')).toBe(false);
+    expect(at({ years: '6', y1op: '1499999', y1dep: '500000' }).some((i) => i.field === 'years')).toBe(true);
+  });
+
+  it('返済期間か借入か 1 年目の営業利益が無ければ返済原資を判定しない', () => {
+    expect(at({ years: '' }).some((i) => i.field === 'years')).toBe(false);
+    expect(at({ years: '1', loanBank: '0', loanPublic: '0', selfFund: '15000000' }).some((i) => i.field === 'years')).toBe(false);
+    expect(at({ years: '1', y1op: '' }).some((i) => i.field === 'years')).toBe(false);
   });
 });
 

@@ -111,6 +111,7 @@ import {
 import { outboundContentRefusal } from '../shared/outboundContentGate';
 import { promptInjectionRefusal } from '../shared/promptInjection';
 import { externalUrlOrNull } from '../shared/externalUrlGate';
+import { openWindowVetted } from './vettedSinks';
 import {
   TALENT_STORAGE_KEY,
   buildTalentSnapshot,
@@ -1241,7 +1242,7 @@ const unguarded = {
      */
     const safe = externalUrlOrNull(url);
     if (safe !== null) {
-      window.open(safe, '_blank', 'noopener,noreferrer');
+      openWindowVetted(safe);
     }
     return Promise.resolve();
   },

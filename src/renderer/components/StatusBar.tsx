@@ -7,6 +7,7 @@ import type { ErrorKind, Source, Status } from '../hooks/useServiceData';
 // 画像 URL のスキーム検証は 1 箇所だけに置く（2026-07 監査・多層防御）。
 // 3 つ目の呼び出し元が出たら components/ の共有ユーティリティへ切り出す。
 import { safeRemoteImageSrc } from '../../shared/imageUrlGate';
+import { VettedImg } from './VettedImg';
 import { externalTextOnOneLine } from '../data/assistantMarkdown';
 
 interface Props {
@@ -225,7 +226,7 @@ export function StatusBar({
     <div className="status-bar">
       <span className={badge.cls}>{badge.text}</span>
       <div className="who">
-        {avatarSrc ? <img src={avatarSrc} alt="" /> : null}
+        {avatarSrc ? <VettedImg src={avatarSrc} alt="" /> : null}
         <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{who}</span>
       </div>
       <DutyOwner serviceId={serviceId} />

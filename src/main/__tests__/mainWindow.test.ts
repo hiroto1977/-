@@ -462,7 +462,7 @@ describe('setWindowOpenHandler — 新しい窓は必ず拒否する', () => {
     for (const url of probes) c.windowOpenHandler!({ url });
     await flushWindowOpen();
 
-    const expected = probes.map((u) => externalUrlOrNull(u)).filter((v): v is string => v !== null);
+    const expected = probes.map((u) => externalUrlOrNull(u)).filter((v) => v !== null);
     expect(openedExternal).toEqual(expected);
 
     // 空撃ちでないこと —— 1 つも通らなければ、この検査は何も言っていない。

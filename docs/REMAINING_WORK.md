@@ -1,5 +1,86 @@
 # Service Hub — 残りの作業手順書
 
+## パス 562 (進化役は毎日の脅威ウォッチを読む —— 常設 Issue の要約を週 1 の狩りの brief へ) (2026-10-30)
+
+- **見つけた物 (測った)**: パス 561 が残した ③ (脅威ウォッチの「表に無い弱点の種類」を進化役へ渡す配線が無い) を閉じに行き、
+  狩りの輪を回す予約のセッションから脅威ウォッチの配信へ届くかを測った —— **OSV も CISA KEV も CONNECT 403** (このクラウド環境の
+  網の方針)。パス 561 が書いた案 (「予約のセッションが脅威ウォッチを走らせて結果を進化役へ渡す」) は**この環境では走らない**。
+  網に届くのは毎日の GitHub Actions (dependency-audit) だけで、その結果は常設 Issue に出るだけだった。T-223 として台帳へ。
+- **直し**: `scripts/lib/threat-watch-digest.cjs` (作る側 `evolverDigest` / `renderDigestMarker` と読む側 `readWatchDigest` を 1 つに)。
+  毎日の報告の本文末尾に要約を HTML の注記 1 行で埋め (`dependency-audit-report.cjs`)、狩りのセッションは GitHub の MCP で Issue の本文を
+  読んでファイルに置き `brief --watch <file>` へ渡す。brief は「進化役への入力」の節 (急増した種類 🔥・少数の種類・悪用中の依存・基盤の悪用) を載せ、
+  記録の雛形に `evolution.watch` を置く。`record` は `watchDecisionProblems` で判断を検める (`hacker-team.cjs`)。
+- **外から来る文字列の扱い**: 要約が運ぶのは正規表現で形を確かめた id と整数と日付だけ —— KEV の `vulnerabilityName` / 製品名 / OSV の `summary` は
+  運ばない (brief は監査役・進化役の入力なので、間接プロンプトインジェクションの運び手にしない)。読む側は組み直して、知らない鍵も残さない。
+  要約が 2 つ在る本文 (bot の書いた物か分からない) はどちらも使わない。
+- **機械**: `threatWatchDigest.test.ts` 10 件 (往復で名前を運ばない・測れなかった日は埋めない・読めない本文 9 形・古い / 未来・brief の節と雛形・
+  渡していない時の案内 (常設 Issue の題名は実物と同じ)・判断の 3 形と断る 7 形・unavailable の扱い・要約との一致・指示文)・
+  `dependencyAuditEndToEnd.test.ts` +1 (架空のデータで毎日の報告 → 常設 Issue の本文 → brief まで通し、配信の名前が届かない)。
+- **対照 7 方向すべて鳴る** (控えの md5 で元へ戻したことを確かめた): A 要約が名前を運ぶ ❌1 / B 要約が 2 つでも先頭を使う ❌1 / C 古さを見ない ❌1 /
+  D 急増した種類に判断が無くても通す ❌1 / E 報告が要約を埋めない ❌2 / F brief が急増した種類を載せない ❌2 / G record が要約との一致を見ない ❌1。
+- **残した物**: ① 狩りのセッションが Issue を読まずに `unavailable` と書けば判断を飛ばせる (記録と PR に残るので人が見る)
+  ② 要対応 0 件の日が続くと bot は常設 Issue を作らないので、その間は要約が無い (閉じた Issue の本文は毎日更新されるので、1 度作られれば読める)
+  ③ 判断の中身 (`covered` と言った赤が本当にその種類を受け持てるか・`na` の理由が正しいか) は機械では検められない —— PR で人が見る。
+
+## パス 561 (常設の AI ホワイトハッカー班 —— 編成・自己学習・自己進化) (2026-10-30)
+
+- **見つけた物 (測った)**: 狩りの輪 (T-214) が週 1 で起動するのは毎回同じ 1 人の監査役 (指示文が `auditor` を 1 体だけ起動) で、
+  ① 角度が固定 ② 見つけた穴の**型**を次の周へ渡す物が無い (輪の台帳 `hunt-cycles.json` は穴の id しか持たない) ③ 収穫の無い角度を外す・
+  新しい攻撃の型を受け持つ角度を足す手が無い (名簿そのものが存在しない) —— の 3 つ。T-222 として台帳へ。
+- **直し**: 名簿 `security/hacker-team.json` (赤 8 役 = 偵察・注入・流出・OS の境界・供給網・保管庫・財布・AI の口 / 変種狩り / 反証役 / 進化役)
+  と `scripts/hacker-team.cjs` (編成 `pickLineup`・種 `variantSeeds`・収穫の無い役 `droughtRoles`・班の段の検め `teamCycleProblems`・反映 `applyCycle`)。
+  `hunt-cycle.cjs` の brief は名簿を読んで今週の班と種を載せ、record は班の段を検めてから学んだ型と名簿の変更を書き戻す。指示文を班の形に書き直し、予約も更新した。
+- **機械**: `hackerTeam.test.ts` 17 件 (名簿の健全・**台帳のどの型にも受け持つ赤が居る**・**どの面にも偵察のほかの赤が居る**・編成の順・学ばずに閉じない・進化の規則・
+  brief / record / 指示文の配線・self-test)。`hacker-team.cjs --self-test` 20 件を `npm run hunt:cycle` が先に回す。
+- **対照 5 方向すべて鳴る** (控えの md5 で元へ戻したことを確かめた): A 確認した穴の型を要求しない ❌2 / B 出番の古い順をやめる ❌3 / C core の引退を許す ❌2 / D record が班の段を見ない ❌1 / E 面に効かない赤も出す ❌3。
+- **残した物**: ① 班は**まだ 1 周も回っていない** (初回は 2026-11-03 04:17 JST の予約) —— 編成の順・型の書き戻しが実物で働くかは、その周の記録で確かめる
+  ② 進化は**提案と記録**まで —— 名簿の変更も PR を通り、マージは人 ③ ~~毎日の脅威ウォッチ (`audit:threat-watch`) が出す「表に無い弱点の種類」を進化役へ渡す配線は無い~~ → **パス 562 で閉じた** (ただし下の案は網の方針で走らなかった —— 常設 Issue の要約を読む形にした)
+  (brief は網に触れない純関数なので、足すなら予約のセッションが脅威ウォッチを走らせて結果を進化役へ渡す形)。
+
+## パス 560 (新しい言語 Mamori を作り、守りの層をそれで書き直す) (2026-10-30)
+
+- **依頼**: 「全く新しいプログラム言語を構築し、そのプログラム言語で今まで作ってきたシステムを構築し直して」。製品コードは約 22 万行 / 577 ファイル、検査は約 29 万行 / 約 19,000 件で、CI・整合性チェーン・変異検査は TypeScript が前提 —— 全部の書き直しは数か月規模なので、進め方を利用者に訊き、**守りの層から**を選んでもらった。
+- **言語**: Mamori (守り · `docs/MAMORI.md`)。守りの規則を構文に持つ: `as` / `any` / `eval` / テンプレート文字列が無い (M0)・印は `gate fn` の `mint` でだけ作る (M1)・`extern sink` の危ない口は `sink fn` の中だけ (M2)・`sink` は印の型しか受けない (M3)・印の型の引数へは印を持つ値だけ (M4 · モジュールをまたいで来歴を引く)・印つきの変数を素の値で上書きしない (M5)・宣言していない外の名前 (`window` / `fetch` / `process` / `require` / `globalThis` ほか) は使えない (M6)。
+- **コンパイラ**: `src/shared/mamori/` (`parser.ts` 字句・構文 / `checker.ts` 来歴 / `emit.ts` TypeScript への変換 / `compile.ts` 入口) と CLI `scripts/mamori.cjs` (`npm run mamori:build` / `mamori:check`)。誤りが 1 つでも在れば何も出さない。変換は決定的で、生成物 (`.ts`) は commit する —— 既存の門はすべて生成物に掛かる。
+- **書き直した物** (元 → 生成物): `vetted.mamori` / `externalUrlGate.mamori` / `shellOpenGate.mamori` / `osSinks.mamori` / `vettedSinks.mamori`。2 つの関門は元の TypeScript と**コードが同じ** (差は注記の形と改行の位置だけ —— 既存の 43 ファイル 1,064 件が編集なしで緑)。
+- **自分のコンパイラで prototype の鍵の取り違えを 1 つ踏んだ**: 禁止語の表を `FORBIDDEN_WORDS[word]` で引いたので `parsed.toString()` の `toString` が `Object.prototype.toString` に当たり、「禁止語」として止まった。`Object.hasOwn` で引く形へ直し、標本 (`toString` / `constructor`) を検査に置いた。
+- **検査**: `mamoriRules.test.ts` (41 件 —— 規則ごとに破るプログラムをコンパイルして狙った番号で断ること) / `mamoriGenerated.test.ts` (3 件 —— 守りの層 5 本が Mamori で書いてあること・生成物が元と 1 byte も違わないこと)。
+- **対照 8 方向すべて鳴る**: M1 を外す ❌2 / M2 ❌3 / M3 ❌3 / M4 ❌4 / M5 ❌1 / M6 ❌9 / `as`・`any` を許す ❌2 / 生成物を手で書き換える (認証情報つき URL の門を消す) → 検査 ❌1 + `mamori:check` exit 1。
+- **台帳**: 整合性チェーン (元 5 本・コンパイラ 5 本・CLI・`vettedSinks.ts` を保護対象へ —— コンパイラの改竄は一致の検査に映らないため)・CODEOWNERS・`lint:charset` に `.mamori`・`stryker.config.json` に `vettedSinks.ts`・`lint:mutation-scope` の KNOWN_UNMEASURED にコンパイラ 5 本 (理由つき)・脅威台帳 T-221・法則 `security-rule-in-the-language`。
+- **続き: 書き出しのファイル書き込みを Mamori の gate と sink の組へ** (`src/main/clients/exportSink.mamori` → `.ts`)。書き手 4 本 (templates / teamradar / stocks / business) は真偽の関門 (`isSafeExportPath`) で調べてから**同じ素の string** を `writeExportFile` へ渡しており、検査を飛ばして書く 1 行は `tsc` を通った。今は `exportTargetOrNull` (gate · 判定は `isSafeExportPath` を 1 字も変えずに使う) が印 `VettedExportPath` を返し、`writeExportFileVetted` (sink) は印つきの行き先しか受けない。書き手の `deps.writeFile` の型も印つきへ。そのために **M3 を「最初の引数 (行き先) が印の型」へ精密にした** (本文は第 2 引数で型を問わない · 引数の無い sink は断る · 標本 3 件)。`SINK_LEDGER` は typed 4 → **5**・pending 4 → **3**・天井 **3**。census は `RAW_SINK` に `writeExportFile(` (定義は数えない)・`SINK_WRAPPERS` / `MINTERS` に `exportSink.ts`。対照 3 方向すべて鳴る (書き手が素の string を渡す → tsc / 書き手が `as VettedExportPath` で偽造 → census ❌1 / 書き手が素の `writeExportFile` を呼ぶ → census ❌1)。検査 `main/clients/__tests__/exportSink.test.ts` (判定は `isSafeExportPath` と 1 つずつ一致・口は何も足さない・型の陰性対照)。整合性チェーン block #387・CODEOWNERS・`mutate` に `exportSink.ts`。
+- **変異検査** (パス 559 / 560 の口と関門 5 本 —— `externalUrlGate.ts` / `shellOpenGate.ts` / `osSinks.ts` / `vettedSinks.ts` / `windowOpen.ts`): **100.00% (Killed 87 / 生存 0 / 未到達 0・13 分 12 秒)** —— 生成物に変えても関門の検査は 1 つも緩んでいない。
+- **検証 (最終コード)**: `typecheck` 緑・`npm test` **1164 ファイル / 23,635 件**・`audit:verify-keep-going` **39 / 39** (verify:arch のユニットテスト数 19040 → **19047**・mutate 325 → **326**)・整合性チェーン block #387。出荷物 FULL **12,130,328 B** / LITE **3,542,952 B** (md5 `089d7139…` / `d10af3e7…` —— exportSink は main だけなので byte 単位で不変)。**実機**: `perf` OK (LITE DCL 292 ms / heap 10.1 MB・FULL DCL 669 ms / heap 36.9 MB)・`e2e` **761 件 ❌ 0**・`e2e:lite` **761 件 ❌ 0**。
+- **続き 2: `<img src>` を Mamori の gate と印つきの口へ** (pending 3 → **2**)。関門 `imageUrlGate` を `.mamori` へ書き直し (`safeImageSrc` / `safeRemoteImageSrc` が `VettedImageSrc` を mint —— 判定は 1 字も変えていない・`safeCssUrl` はテンプレート文字列を連結に)。口は部品 `src/renderer/components/VettedImg.tsx` 1 つで `src` に `VettedImageSrc` しか受けない (Mamori は JSX を持たないので口は TypeScript —— 守りは型と census)。4 か所 (DataList / StatusBar の第三者の画像・TemplatesPage / LibraryPage の自分で組んだ data: URL) が通る。LibraryPage は中身の型の無い data: URL を関門が断るので、壊れた画像ではなく「プレビューを生成できませんでした」を出す (答えが変わる入力)。**対照 5 方向すべて狙った層で鳴る** (素の `<img>` → census / 部品が string を受ける → tsc / `as VettedImageSrc` の偽造 → mint の census / 素の string を渡す → TS2322 / gate の外の mint → Mamori の M1)。★ **門が別の死角を 1 つ教えた** —— `lint:forbidden` の「CSS の url() へ生の値を差し込んでいる」の針はテンプレート文字列 (`url(${…})`) しか見ておらず、**連結 (`'url("' + raw`) は木のどこでも素通りだった**。関門を連結で書き直した瞬間に関門の例外が「効いていない」と鳴って分かった —— 連結の形も止める針に広げた (標本 3 つ・木の中の該当は関門の 1 件だけ)。検証: `npm test` **1165 ファイル / 23,638 件**・`audit:verify-keep-going` **39 / 39**・chain block #388・出荷物 FULL **12,130,423 B** / LITE **3,543,047 B** (両方 +95 B)・`perf` OK (LITE DCL 228 ms / heap 10.3 MB・FULL DCL 593 ms / heap 36.9 MB)・`e2e` **761 件 ❌ 0**・`e2e:lite` **761 件 ❌ 0**。
+- **続き 3: 外部リンクの `<a href>` を印つきの口へ** (pending 2 → **1**)。口は部品 `src/renderer/components/VettedLink.tsx` 1 つで `href` に `VettedExternalUrl` (= Mamori の関門 `externalUrlGate` の戻り値) しか受けない。中クリック・右クリックの「新しいタブで開く」・ドラッグは `click` を起こさず素の属性を辿るので (パス 298 の実測)、属性に載る値そのものが関門を通る。左クリックは今までどおり `openExternal`・`rel="noopener noreferrer"` を包みが固定。2 画面 (EligibilityChecker / WelfareSchemeCard) が通る。census の針 (`<a … href={…}>` · 属性の値の波括弧は 2 段まで読み飛ばす・標本 5 つ) で動的な素のアンカーは包みの外に 0 件。`href="#"` + ハンドラの形は辿られても '#' なので許す。**対照 2 方向とも狙った層で鳴る** (部品が string を受ける → tsc の「不要な @ts-expect-error」×2 / 画面に素の `<a href={…}>` を戻す → vettedTypes の census)。検証: `npm test` **1166 ファイル / 23,641 件**・`audit:verify-keep-going` 39 本 (1 度目は verify:arch のユニットテスト数 19050 → **19053** だけ —— 直して単独で通した)・chain block #389・出荷物 FULL **12,130,494 B** / LITE **3,543,118 B** (両方 +71 B)・`perf` OK (LITE DCL 229 ms / heap 10.3 MB・FULL DCL 604 ms / heap 36.9 MB)・`e2e` **761 件 ❌ 0**・`e2e:lite` **761 件 ❌ 0**。
+- **続き 4〜6: Mamori のコンパイラの変異検査を 100% にして `mutate` へ** (残した物 1 を閉じた)。初回の測定は `checker.ts` **73.14%**・`compile.ts` 95.24%・`emit.ts` **73.51%**・`parser.ts` **78.51%** (生存と未到達の合計 426 件)。仕分けると 3 つの家系だった: ① **規則を式・文の奥に置く検査が無かった** —— `mamoriRules.test.ts` は破る所がいつも `return` の直下で、検査器の辿る枝 (if の then / else・try / catch・単項・二項・new・配列・arrow・既定値・定数の初期値) を 1 つ消しても**危ない口が黙って変換を通った**。21 の位置に同じ違反 (M2) を置く行列を足した (`mamoriCheckerCoverage.test.ts`) ② **誤りの文と場所を留めていなかった** —— 構文の誤り 20 形・来歴の誤り全規則の文を 1 字ずつ (`mamoriParserCoverage.test.ts`)・コンパイラの故障を M0 に化けさせない (`mamoriCompileCrash.test.ts`) ③ **変換の全形を誰も見ていなかった** —— 実物の 7 本に無い形 (二項の括弧・`??` の混ざり・else if の鎖・try・注記・mint を子に持つ式) の golden を、出力を目で確かめてから固定した (`mamoriEmitGolden.test.ts`)。★ **golden の 1 版目は describe の本体で変換しており、変異体が効く前に走っていた** (法則 `module-evaluated-at-file-load` —— emit の生存 51 件がそのまま残った)。it の中へ移して閉じた。**測る途中で 2 つの欠陥を直した**: ファイルの終わりで閉じない正規表現を黙って字句にしていた (今は「正規表現が閉じていません」)・型の綴りが `(x : string) => void` と `:` の前に空白を入れていた (実物の 7 本の生成物は不変)。等価な形は消すか理由つきの pragma にした (判定が答えを変えない枝 —— `??` の括弧の逆向き・else if の二重判定・空行の null 判定 —— を消し、記号の種類の判定は `isPunctTok` 1 か所に集めて理由を 1 度だけ書いた)。**最終 (4 本まとめて): 100.00% (Killed 1,646 / Timeout 53 / 生存 0 / 未到達 0・5 分 25 秒)**。4 本を `stryker.config.json` の `mutate` へ (KNOWN_UNMEASURED から外した —— 残るのは型だけの `ast.ts`)。chain block #390〜#392。検証: `npm test` **1170 ファイル / 23,751 件**・`audit:verify-keep-going` 39 本 (落ちたのは verify:arch のユニットテスト数 19053 → **19114**・mutate 326 → **330** だけ —— 直して単独で通した)。出荷物には入らない (コンパイラは開発時の道具で、生成物の 7 本は 1 byte も動いていない —— `mamori:check`)。
+- **残した物 (正直に)**:
+  1. ~~コンパイラの変異検査は未測定~~ → **続き 4〜6 で 100.00% にして `mutate` へ入れた** (下の「続き 4〜6」)。
+  2. **書き直したのは守りの層の 6 本だけ** —— 残り約 570 ファイルは TypeScript のまま (呼ぶ側には T-220 の型の印が掛かる)。次は `SINK_LEDGER` の pending 3 本 (`<a href>`・`<img src>`・fetch の送り先) を gate と sink の組として Mamori へ移し、移すたびに天井を下げる。`<a href>` / `<img src>` は JSX の属性が React の型 (string) を受けるので、印つきの値を描く部品 (`<ExternalLink url={Vetted}>` 等) を sink として置く形になる。
+  3. 言語は 0.1 で、ループ・クラス・オブジェクトの字面を持たない (守りの層を書くのに要らなかった)。足すときは、その構文が来歴の規則を外す道にならないかを先に考える。
+
+## パス 559 (型で守る —— 関門だけが作る印つきの型と、OS の口の包み) (2026-10-30)
+
+- **依頼**: 「プログラム言語自体にセキュリティ機能を組み込んでその精度を高め続けて」。OS に開かせる口 4 つ (electron の shell の 3 つ・`window.open`) は素の `string` を受け、関門を通ったかを `tsc` は知らなかった (止めていたのは綴りの census だけ)。
+- **直し**: 印 `Vetted<K>` (`src/shared/vetted.ts` · 実行時の費用 0) を関門の `return` でだけ作り、OS の口は印つきの型だけを受ける包み (`src/main/osSinks.ts` / `src/renderer/vettedSinks.ts`) で呼ぶ。main.ts (IPC と窓の扉)・oauth.ts・windowOpen.ts・web-shim が包みを通る。
+- **検査**: `vettedTypes.test.ts` (素の口は包みの中だけ・印の作り所は関門だけ・両方向 / 型の陰性対照 / 精度の台帳 `SINK_LEDGER` —— typed 4・pending 4・天井 4) / `main/__tests__/osSinks.test.ts` / `renderer/__tests__/vettedSinks.test.ts` (`@ts-expect-error` の対照を typecheck が見る)。
+- **対照 5 方向すべて鳴る**: 包みが素の string を受ける → tsc 3 件 / 関門の外で印を偽造 → census ❌2 / main が素の shell を呼ぶ → census ❌2 / web-shim が素の window.open → tsc 1 + census ❌3 / 関門が印を返さない → tsc 9 件 + census ❌2。
+- **台帳**: 脅威台帳 T-220・法則 `security-rule-in-the-type`・`lint:forbidden` の許可を包みへ移した・CODEOWNERS・整合性チェーン・`lint:mutation-scope` (osSinks.ts を mutate へ・vetted.ts は型だけなので KNOWN_UNMEASURED)・`docs/ZERO_TRUST.md`。
+
+## パス 558 (事業計画書・資金調達計画書・キャッシュフロー計画書の詳細版を書類スタジオへ) (2026-10-29)
+
+- **依頼**: 「詳細な事業計画書のテンプレートを作って適切な場所に保管して」「資金調達計画書とキャッシュフロー計画書も作って保存して」。
+- **置き場所**: アプリの書類スタジオ (`src/renderer/data/docStudioData.ts` の `STUDIO_TEMPLATES` · 分類「事業計画」)。既に在った汎用版 (`jigyo-keikaku` 11 章 / `chotatsu-keikaku` / `shikin-guri` 12 か月) は残し、隣に詳細版を 3 つ足した (書式 56 → **59**):
+  | id | 名前 | 中身 | 交付前チェック (検算) |
+  |---|---|---|---|
+  | `jigyo-keikaku-shosai` | 事業計画書（詳細版・5か年） | 15 章 (会社概要・理念・外部環境・市場規模 3 段・顧客・競合と SWOT・商品・販売・業務運営・組織・**損益計画 5 か年 8 行**・設備投資・資金計画・KPI と到達点・リスクと見直し基準) | 営業利益 = 売上高 − 原価 − 販管費 (年ごと)・人件費 ≦ 販管費・経常利益 ≦ 売上高・3 年で 5 倍超・算出根拠の空欄 (fatal)・必要資金 = 調達 (fatal)・借入の元金の年額 ≦ 1 年目の営業利益＋減価償却費 |
+  | `chotatsu-keikaku-shosai` | 資金調達計画書（詳細版） | 設備資金 3 件 (見積先つき)・運転資金の算出根拠・調達 6 区分 (自己資金の出所・借入 2 件の条件)・**返済計画 5 か年**・補助金の入金時期とつなぎ資金・担保と保証・日程 | 必要資金 = 調達 (fatal)・自己資金 1 割未満・借入先の空欄・補助金のつなぎ資金の空欄・年ごとの元金返済 ≦ 返済原資・返済の合計 ≦ 借入の合計 |
+  | `cf-keikaku` | キャッシュフロー計画書（5か年） | 期首残高・税引後利益・減価償却・運転資本の増減・営業 CF・設備投資・借入・返済・増資・財務 CF・期末残高 (5 か年)・前提・最低額と不足時の手当て | 営業 CF の式・財務 CF の式・期末残高の繰越 (1 年目は期首から)・期末残高がマイナス (fatal)・最低額を下回る |
+- **見本 (placeholder) は 3 書式とも式・合計・繰越が全部合う数字にした** —— 「見本どおりに埋めれば指摘は出ない」を検査が留める (`expect(at({})).toEqual([])`)。式の検算は結果の欄が書かれているときだけ行う (書きかけの年に「合っていない」と言わない)。
+- **負の数は `-` で入れる** (`toNum` は `△` をまだ負と読まない —— 既知の残作業)。キャッシュフロー計画書の入力欄と注記がそう言い、「運転資本の減少をマイナスとして読んでいる」検査が留める。
+- **台帳**: `docLegalStatus` (3 つとも optional)・`businessTriage` (行 60 → 63・資金調達の詳細版は汎用版と同じく行政書士の caseByCase)・`docStudioChecks.test` の `RULE_IDS` と分岐 18 件・スナップショット・書式の数 (`services.ts` と `sidebarNumberClaims`)。
+- **対照 8 方向すべて鳴る** (営業利益の式 ❌4 / 人件費 ❌3 / 返済原資 ❌3 / 年ごとの返済 ❌3 / つなぎ資金 ❌3 / 期末残高の繰越 ❌3 / 最低額 ❌4 / 運転資本の符号 ❌9 —— md5 で元へ戻した)。
+- **検証**: `typecheck` 緑・`npm test` **1158 ファイル / 23,568 件**。**変異検査** (`audit:mutate-changed` · businessTriage / docLegalStatus / docStudioChecks): 1 度目 97.83% (生存 38)。38 件を検査ファイルに当て直すと 8 件は新しい検査が殺し (Stryker の報告が覆う検査を取り違えた偽の生存)、残る 30 件のうち等価 3 件は形ごと消し (返済額の空欄の判定・返済の合計の isFinite・最低額の空欄の分岐 —— どれも答えが変わらない)、穴 27 件に検査を足した。2 度目は **3 本とも 100.00%** (1,734 変異体・生存 0・17 分 8 秒)。**出荷物**: FULL **12,130,305 B** / LITE **3,542,929 B** (両方 +40,653 B —— 書式 3 つの欄・本文・注記の日本語と検算 3 つ)。LITE は警告線 3,400,000 B を 142,929 B 超 (CI は落とさない・ハード上限まで 457,071 B)。md5 `0cee1f47…` / `1be78e46…`。**実機**: `perf` OK (LITE DCL 220 ms / heap 10.1 MB・FULL DCL 520 ms / heap 37.1 MB)・`e2e` **761 件 ❌ 0**・`e2e:lite` **761 件 ❌ 0**。`audit:verify-keep-going` **39 / 39** (verify:arch のユニットテスト数 18954 → **18988**)。
+
 ## パス 557 (失敗していた依存の更新を解析して終わらせる —— dependabot の 6 本を今の main で当てて直す) (2026-10-29)
 
 利用者の依頼「失敗したものを解析して終わらせて」。#844 のマージ後の `main` は CI・Pages とも緑で、失敗していたのは開いたままの dependabot の PR だった。**6 本とも 10-13〜10-23 の古い `main` から作られており**、そのまま取り込むとその後に足した守りを消す形だったので、**ブランチを取り込まず、更新の中身だけを今の `main` に当てた**。
@@ -32042,7 +32123,7 @@ src/shared/ のモジュール                                        138
 「読んだ結果」か `未読 (…)` のどちらかで、読んでいない物に「対称だろう」とは書かない。
 
 <!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/shared-judgement-census.cjs。npm run lint:shared-judgement は check だけ) -->
-shared **165** モジュール / 両ビルドが import **89** / うち否定で答えられる **47**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
+shared **171** モジュール / 両ビルドが import **90** / うち否定で答えられる **47**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
 
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |

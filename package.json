@@ -39,6 +39,8 @@
     "knowledge:auto": "node scripts/knowledge-autopilot.cjs",
     "knowledge:md": "node scripts/build-academic-md.cjs",
     "ontology:md": "node scripts/build-ontology-md.cjs",
+    "mamori:build": "node scripts/mamori.cjs",
+    "mamori:check": "node scripts/mamori.cjs --check",
     "knowledge:export": "node scripts/export-notebooklm.cjs",
     "lint": "eslint --config eslint.config.js . --max-warnings 0",
     "lint:docs": "node scripts/cross-doc-consistency.cjs && node scripts/cross-doc-consistency.cjs --self-test",
@@ -126,7 +128,7 @@
     "audit:crown-jewels": "node scripts/crown-jewels.cjs --self-test && node scripts/crown-jewels.cjs",
     "audit:security-posture": "node scripts/security-posture.cjs --self-test && node scripts/security-posture.cjs",
     "audit:language-coverage": "node scripts/language-coverage.cjs --self-test && node scripts/language-coverage.cjs",
-    "hunt:cycle": "node scripts/hunt-cycle.cjs --self-test > /dev/null && node scripts/hunt-cycle.cjs"
+    "hunt:cycle": "node scripts/hunt-cycle.cjs --self-test > /dev/null && node scripts/hacker-team.cjs --self-test > /dev/null && node scripts/hunt-cycle.cjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

@@ -1,3 +1,5 @@
+// 生成物 —— src/main/shellOpenGate.mamori から Mamori のコンパイラが組んだ。手で編集しない (`npm run mamori:build`)。
+// 言語の仕様は docs/MAMORI.md。生成物が元と食い違えば src/shared/mamori/__tests__/mamoriGenerated.test.ts が落ちる。
 /**
  * shellOpenGate — レンダラーが「OS の既定アプリで開く」「ファイル管理ソフトで
  * 表示する」に渡してくるパスを検査する**唯一の関門**。
@@ -30,22 +32,14 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { exportWriteRoot } from './clients/exportPaths';
 import { isSafeFilename } from '../shared/safeFilename';
+import type { VettedShellPath } from '../shared/vetted';
 
 /**
  * OS に開かせてよい拡張子。**実行され得るものは一つも入れない。**
  * ここに `.exe` / `.bat` / `.command` / `.desktop` の類を足すと、
  * この関門の意味が無くなる。
  */
-export const SHELL_OPEN_EXTS: ReadonlySet<string> = new Set([
-  '.html',
-  '.md',
-  '.svg',
-  '.png',
-  '.pdf',
-  '.json',
-  '.csv',
-  '.txt',
-]);
+export const SHELL_OPEN_EXTS: ReadonlySet<string> = new Set(['.html', '.md', '.svg', '.png', '.pdf', '.json', '.csv', '.txt']);
 
 /** パス長の上限。書き出し先のファイル名がこれを超えることは無い。 */
 export const MAX_SHELL_PATH_LENGTH = 1024;
@@ -66,10 +60,7 @@ export const MAX_SHELL_PATH_LENGTH = 1024;
  * のは書き出した成果物 (`ExportActions` / `HomePage` が渡す `path`・すべて `data/` の下)
  * だけなので、`data/` へ狭めても失う機能は無い。
  */
-export async function shellTargetOrNull(
-  filePath: unknown,
-  root: string = exportWriteRoot(),
-): Promise<string | null> {
+export async function shellTargetOrNull(filePath: unknown, root: string = exportWriteRoot()): Promise<VettedShellPath | null> {
   // 空文字も別に見ていたが、`path.resolve('')` は作業ディレクトリになり、
   // それは書き出し先そのものか外側にしかならない — どちらも下の閉じ込め
   // (根そのものは `+ path.sep` で落ちる) と拡張子の検査が必ず落とす。
@@ -92,5 +83,7 @@ export async function shellTargetOrNull(
   if (!SHELL_OPEN_EXTS.has(path.extname(real).toLowerCase())) return null;
   // threat: T-177 —— 書き出しの関門 (`isSafeExportPath`) と同じ葉の名前の規則。
   if (!isSafeFilename(path.basename(real))) return null;
-  return real;
+  // 印を作るのはここだけ (threat: T-220)。`openPathVetted` / `showItemInFolderVetted` は
+  // この型しか受けないので、関門を飛ばしたパスは `tsc` が断る (Mamori では mint は gate の中だけ · M1)。
+  return real as VettedShellPath;
 }

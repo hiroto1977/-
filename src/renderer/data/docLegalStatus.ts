@@ -274,7 +274,10 @@ export const DOC_LEGAL_STATUS: Readonly<Record<string, DocLegalInfo>> = {
   'plantfactory-plan': { status: 'optional' },
   'plantfactory-funding': { status: 'optional' },
   'jigyo-keikaku': { status: 'optional' },
+  'jigyo-keikaku-shosai': { status: 'optional' },
   'chotatsu-keikaku': { status: 'optional' },
+  'chotatsu-keikaku-shosai': { status: 'optional' },
+  'cf-keikaku': { status: 'optional' },
   'shikin-guri': { status: 'optional' },
 
   // --- 別コレクション（定款 / 就業規則 / 決算書） ---

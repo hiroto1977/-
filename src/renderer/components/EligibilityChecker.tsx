@@ -28,6 +28,7 @@ import {
 import { refusalLabels, refusedFields, refusingSpecs, type NumSpec } from '../data/inputGuards';
 import { GuardedNumber } from './GuardedNumber';
 import { RefusedFieldsNote } from './RefusedFieldsNote';
+import { VettedLink } from './VettedLink';
 
 /**
  * **年齢と経営管理の従事年数の欄** (2026-09-27 · パス 493q)。
@@ -128,12 +129,8 @@ function Card({ j }: { j: ProgramJudgement }): ReactElement {
           ⚠ 出典を開けません（{j.authority}）— 台帳の URL が http(s) ではありません
         </div>
       ) : (
-        <a
+        <VettedLink
           href={safeSourceUrl}
-          onClick={(e) => {
-            e.preventDefault();
-            void window.serviceHub?.openExternal(safeSourceUrl);
-          }}
           style={{
             display: 'inline-block',
             marginTop: 6,
@@ -143,7 +140,7 @@ function Card({ j }: { j: ProgramJudgement }): ReactElement {
           }}
         >
           出典を開く（{j.authority}）
-        </a>
+        </VettedLink>
       )}
     </li>
   );

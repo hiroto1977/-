@@ -30,7 +30,10 @@ import { stripComments } from '../../shared/__tests__/stripNonCode';
  */
 
 const MAIN = join(__dirname, '..');
-const OPENERS = ['shell.openPath', 'shell.showItemInFolder'] as const;
+// 2026-10-30 (パス 559 · T-220) から OS の口は `osSinks.ts` の包みを通る —— 母集団は包みの呼び出し。
+// 包み自身 (`osSinks.ts`) は印つきの型を受けて素の `shell` を呼ぶだけなので母集団の外
+// (素の `shell.*` が包みの外に無いことは `vettedTypes.test.ts` が見る)。
+const OPENERS = ['openPathVetted', 'showItemInFolderVetted'] as const;
 
 function walk(dir: string, out: string[]): void {
   for (const name of readOriginalDir(dir)) {
@@ -39,7 +42,7 @@ function walk(dir: string, out: string[]): void {
       if (name !== '__tests__' && name !== 'node_modules') walk(full, out);
       continue;
     }
-    if (/\.ts$/.test(name)) out.push(full);
+    if (/\.ts$/.test(name) && name !== 'osSinks.ts') out.push(full);
   }
 }
 

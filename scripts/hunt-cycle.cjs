@@ -21,6 +21,10 @@
  *   status  —— 輪が回っているか。最後の周からの日数・cadence (7 日) の 2 倍を過ぎたら「止まった」。
  *              毎日の dependency-audit が同じ測定を報告に載せ、止まった輪は要対応として常設 Issue に出る。
  *
+ * **班 (2026-10-30 · T-222)**: 狩るのは 1 人の監査役ではなく security/hacker-team.json の班 (赤・変種狩り・
+ * 反証役・進化役)。brief は `team` を渡されたとき今週の編成と変種狩りの種を載せ、record は班の段 (team /
+ * learned / evolution) を検めてから学んだ型と名簿の変更を名簿へ書き戻す (scripts/hacker-team.cjs)。
+ *
  * 輪を実際に回すのは Claude Code の予約 (週 1 · 新しいセッション · 指示文は docs/HUNT_CYCLE_PROMPT.md)。
  * **自動なのは検知・順位づけ・起動・記録まで** —— 直しは draft PR に出し、マージは人が決める。
  *
@@ -35,11 +39,14 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { analyzePosture, dayNumber } = require('./security-posture.cjs');
+const team = require('./hacker-team.cjs');
+const { readWatchDigest } = require('./lib/threat-watch-digest.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const LEDGER = path.join(REPO_ROOT, 'security', 'threat-ledger.json');
 const CYCLES = path.join(REPO_ROOT, 'security', 'hunt-cycles.json');
 const HUNT_DOC = path.join(REPO_ROOT, 'docs', 'THREAT_HUNT.md');
+const TEAM = path.join(REPO_ROOT, 'security', 'hacker-team.json');
 
 /** 1 周の段。順序も名前もここが正 (台帳・指示文・検査が同じ物を読む)。 */
 const STAGES = ['explore', 'analyze', 'countermeasure', 'report'];
@@ -125,7 +132,7 @@ function nextId(cycles) {
  * @returns {{surface: string, reason: string, id: string, backlog: object[], recheckDue: object[], thinClasses: object[],
  *   problems: string[], markdown: string}}
  */
-function buildBrief({ ledger, cycles, doc, now }) {
+function buildBrief({ ledger, cycles, doc, now, team: roster, watch }) {
   const problems = [...ledgerProblems(cycles)];
   const rows = Array.isArray(cycles?.cycles) ? cycles.cycles : [];
   const posture = analyzePosture(ledger, now);
@@ -135,6 +142,8 @@ function buildBrief({ ledger, cycles, doc, now }) {
   const section = surfaceSection(doc, pick.surface);
   if (section === null) problems.push(`docs/THREAT_HUNT.md に \`## surface: ${pick.surface}\` の節が無い`);
   const id = nextId(rows);
+  const squad = roster === undefined ? null : team.renderTeamBrief(roster, ledger, rows, pick.surface);
+  if (roster !== undefined) problems.push(...team.teamProblems(roster, ledger));
   const template = {
     id,
     date: now,
@@ -144,6 +153,7 @@ function buildBrief({ ledger, cycles, doc, now }) {
     analyze: { confirmed: ['<T-xxx>'], unconfirmed: 0, healthy: 0 },
     countermeasure: { threats: ['<T-xxx>'], backlog: 0 },
     report: { pr: null, reason: '<PR を出さなかった理由 (出したなら pr に番号)>', summary: '<1 行>' },
+    ...(squad === null ? {} : team.teamTemplate(squad.lineup, watch)),
   };
   const lines = [
     `# 狩りの輪 ${id} —— ${now}`,
@@ -159,6 +169,8 @@ function buildBrief({ ledger, cycles, doc, now }) {
     '- 対策: 本物だけを最小で直し、**攻撃を再現する回帰検査** (`threat: T-xxx` の印) と台帳の 1 行を足す。対照を回す。',
     '- 報告: draft PR (マージしない) に 見つけた物 / 直し / 機械 / 対照 / 残した物 を書き、`npm run hunt:cycle -- record <json>` で 1 周を台帳へ。',
     '',
+    ...(squad === null ? [] : squad.lines),
+    ...(squad === null ? [] : team.renderWatchInput(watch)),
     `## 面の手順書 (docs/THREAT_HUNT.md の節)`,
     '',
     section ?? '(節が無い —— 手順書を直すこと)',
@@ -183,14 +195,17 @@ function buildBrief({ ledger, cycles, doc, now }) {
     '',
     ...(problems.length === 0 ? [] : ['## 読めない物 (0 件と混ぜない)', '', ...problems.map((p) => `- ❌ ${p}`), '']),
   ];
-  return { id, surface: pick.surface, reason: pick.reason, backlog, recheckDue: posture.recheckDue, thinClasses: posture.thinClasses, problems, markdown: lines.join('\n') };
+  const lineup = squad === null ? null : Object.fromEntries(['variant', 'blue', 'evolver'].map((k) => [k, squad.lineup[k]?.id ?? null]).concat([['red', squad.lineup.red.map((r) => r.id)]]));
+  const watchSummary = watch === undefined ? null : watch.digest === undefined ? { unavailable: watch.unavailable } : { asOf: watch.digest.asOf, hotGaps: watch.digest.hotGaps.map((g) => g.cwe) };
+  return { id, surface: pick.surface, reason: pick.reason, backlog, recheckDue: posture.recheckDue, thinClasses: posture.thinClasses, lineup, watch: watchSummary, problems, markdown: lines.join('\n') };
 }
 
 /**
  * 1 周の記録を検める (純関数)。問題の一覧 (空なら台帳へ足してよい)。
  * 4 段すべてが要り、解析・対策の穴は脅威台帳に実在する id、報告は PR 番号か理由を持つ。
+ * 名簿 (roster) を渡したとき、brief で選んだ周は班の段 (team / learned / evolution) も要る (T-222)。
  */
-function cycleProblems(cycle, ledger, cycles) {
+function cycleProblems(cycle, ledger, cycles, roster, watchDigest) {
   const out = [];
   if (cycle === null || typeof cycle !== 'object') return ['記録がオブジェクトでない'];
   const rows = Array.isArray(cycles?.cycles) ? cycles.cycles : [];
@@ -245,6 +260,7 @@ function cycleProblems(cycle, ledger, cycles) {
       if (!isNonEmptyString(rp.reason) || rp.reason.startsWith('<')) out.push('report.pr が無いなら report.reason (出さなかった理由) が要る');
     } else if (!(Number.isInteger(rp.pr) && rp.pr > 0)) out.push(`report.pr は PR 番号 (${JSON.stringify(rp.pr)})`);
   }
+  if (roster !== undefined && (cycle.pickedBy === 'brief' || cycle.team !== undefined)) out.push(...team.teamCycleProblems(cycle, roster, ledger, watchDigest));
   return out;
 }
 
@@ -389,7 +405,15 @@ function main(argv) {
   const json = argv.includes('--json');
   const now = localToday();
   if (cmd === 'brief') {
-    const b = buildBrief({ ledger: readJson(LEDGER), cycles: readJson(CYCLES), doc: fs.readFileSync(HUNT_DOC, 'utf8'), now });
+    // 脅威ウォッチの要約 (T-223): 常設 Issue の本文を置いたファイル。渡さなければ「渡していない」と書く (0 件と混ぜない)。
+    const watchAt = argv.indexOf('--watch');
+    const watchFile = watchAt === -1 ? undefined : argv[watchAt + 1];
+    if (watchAt !== -1 && (!watchFile || watchFile.startsWith('--'))) {
+      console.error('使い方: hunt-cycle.cjs brief --watch <常設 Issue の本文を置いたファイル>');
+      return 2;
+    }
+    const watch = watchFile === undefined ? undefined : readWatchDigest(fs.readFileSync(path.resolve(watchFile), 'utf8'), now);
+    const b = buildBrief({ ledger: readJson(LEDGER), cycles: readJson(CYCLES), doc: fs.readFileSync(HUNT_DOC, 'utf8'), now, team: readJson(TEAM), watch });
     console.log(json ? JSON.stringify({ ...b, markdown: undefined }, null, 2) : b.markdown);
     return b.problems.length > 0 ? 1 : 0;
   }
@@ -408,18 +432,44 @@ function main(argv) {
     const ledger = readJson(LEDGER);
     const cycles = readJson(CYCLES);
     const cycle = readJson(path.resolve(file));
-    const problems = cycleProblems(cycle, ledger, cycles);
+    const roster = readJson(TEAM);
+    // `--watch <file>` を渡すと、記録の基準日と急増した種類が要約そのものと一致することも見る (T-223)。
+    const watchAt = argv.indexOf('--watch');
+    let watchDigest;
+    if (watchAt !== -1) {
+      const wf = argv[watchAt + 1];
+      if (!wf || wf.startsWith('--')) {
+        console.error('使い方: hunt-cycle.cjs record <記録の JSON> --watch <常設 Issue の本文を置いたファイル>');
+        return 2;
+      }
+      const w = readWatchDigest(fs.readFileSync(path.resolve(wf), 'utf8'), cycle.date ?? now);
+      if (w.digest === undefined) {
+        console.error(`❌ 要約を読めませんでした: ${w.unavailable}`);
+        return 1;
+      }
+      watchDigest = w.digest;
+    }
+    const problems = cycleProblems(cycle, ledger, cycles, roster, watchDigest);
     if (problems.length > 0) {
       console.error(`❌ 記録を断りました (${problems.length} 件):`);
       for (const p of problems) console.error(`  - ${p}`);
       return 1;
     }
+    const nextRoster = cycle.team === undefined ? roster : team.applyCycle(roster, cycle);
+    const rosterProblems = team.teamProblems(nextRoster, ledger);
+    if (rosterProblems.length > 0) {
+      console.error(`❌ 反映した名簿が壊れるので断りました (${rosterProblems.length} 件):`);
+      for (const p of rosterProblems) console.error(`  - ${p}`);
+      return 1;
+    }
     cycles.cycles.push(cycle);
     fs.writeFileSync(CYCLES, `${JSON.stringify(cycles, null, 2)}\n`);
-    console.log(`✅ ${cycle.id} を security/hunt-cycles.json へ記録しました (${cycle.surface} · 対策 ${cycle.countermeasure.threats.length} 件)`);
+    if (nextRoster !== roster) fs.writeFileSync(TEAM, `${JSON.stringify(nextRoster, null, 2)}\n`);
+    const learnedN = Array.isArray(cycle.learned) ? cycle.learned.length : 0;
+    console.log(`✅ ${cycle.id} を security/hunt-cycles.json へ記録しました (${cycle.surface} · 対策 ${cycle.countermeasure.threats.length} 件 · 学んだ型 ${learnedN} 件)`);
     return 0;
   }
-  console.error('使い方: hunt-cycle.cjs brief|record <file>|status [--json] | --self-test');
+  console.error('使い方: hunt-cycle.cjs brief [--watch <file>]|record <file>|status [--json] | --self-test');
   return 2;
 }
 

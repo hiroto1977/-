@@ -2141,6 +2141,55 @@ export const LAWS: readonly Law[] = [
       test(T.shared('threatLedger')),
     ],
   },
+  {
+    id: 'security-rule-in-the-type',
+    family: 'boundary',
+    name: '守りの規則はコンパイラに乗せる —— 関門を通った値にだけ型の印が付き、危ない口は印しか受けない',
+    statement:
+      '外へ開く URL は `externalUrlOrNull`、OS に開かせるパスは `shellTargetOrNull` を通す —— この規則は 2026-10-30 (パス 559) まで'
+      + '**綴りの census だけ**が守っており、口 (electron の `shell` の 3 つ —— 外部 URL を開く・既定アプリで開く・フォルダで示す —— と `window.open`) は素の `string` を受けた。'
+      + '関門を飛ばした 1 行は `tsc` を通り、針が綴りを外せば何も鳴らない (法則 `mention-vs-declaration` の、言語の側での現れ)。'
+      + 'だから規則を**型**にする: 印 `Vetted<K>` (`unique symbol` の型だけの欄 —— 実行時の費用 0) は**関門の `return` 1 か所**でだけ鋳造し、'
+      + '口は印つきの型だけを受ける包み (`main/osSinks.ts` / `renderer/vettedSinks.ts`) で呼ぶ。素の値・`null` を含む値・**別の種類の印**は'
+      + '`tsc` が断る (`@ts-expect-error` の陰性対照を typecheck が留める —— 口を素の `string` に戻すと「不要な @ts-expect-error」で落ちる)。'
+      + '**型を外す道は 2 つで、どちらも型には見えない**: 包みの迂回 (素の口を呼ぶ) と印の偽造 (`as Vetted…` / `is Vetted…`) —— '
+      + 'census が両方向の台帳で数える。**精度は台帳で上げ続ける**: 印で守る口と、まだ素の `string` を受ける口 (理由と守り手つき) を'
+      + '1 つの台帳 (`SINK_LEDGER`) に並べ、pending の数に天井を置く —— 新しい口は印を持つか、天井を上げる差分をレビューに出す。'
+      + '**限界**: 型は `any`・`ts-ignore`・JS からの呼び出しで剥がれる。実行時に止めるのは今までどおり関門で、型はそれを飛ばす書き間違いを'
+      + 'コンパイル時に止める層である (threat: T-220)。',
+    provenance: ['2026-10-30 (パス 559)'],
+    enforcedBy: [
+      gate('typecheck'),
+      test(T.shared('vettedTypes')),
+      test(T.main('osSinks')),
+      test(T.renderer('vettedSinks')),
+      test(T.shared('externalUrlGate')),
+      test(T.main('shellOpenCallSites')),
+      test(T.shared('threatLedger')),
+      chain,
+    ],
+  },
+  {
+    id: 'security-rule-in-the-language',
+    family: 'boundary',
+    name: '守りの層は、守りの規則を構文に持つ言語で書く —— 破れる規則を網で探すより、破れない書き方しか無い言語にする',
+    statement:
+      '型の印 (法則 `security-rule-in-the-type`) は TypeScript の中では型の書き換え 1 行で偽造でき、危ない口はどの関数からも呼べた。'
+      + 'それを止めていたのは綴りを数える census で、**言語そのものは許していた**。だから守りの層 (関門と OS の口) は Mamori (`docs/MAMORI.md`) で書く —— '
+      + '`as` が無い (印は `gate` 関数の `mint` でだけ作る)・危ない口は `extern sink` で宣言し `sink` 関数の中でだけ呼べる・`sink` は印の型しか受けない・'
+      + '印の型の引数へは印を持つ値しか渡せない・印つきの変数を素の値で上書きできない・宣言していない外の名前 (`window` / `fetch` / `process` ほか) は使えない (M0〜M6)。'
+      + '規則を破るプログラムは**TypeScript にならない**。生成物は commit して既存の門をすべて掛け、元と 1 byte の一致を毎回見る。'
+      + '**コンパイラ自身も守る物である** —— 一致の検査はコンパイラを使うので、コンパイラの改竄は一致に映らない (整合性チェーンが見る)。'
+      + '**限界**: 規則が効くのは Mamori で書いた中だけで、呼ぶ側の TypeScript は型の印と census が守る (threat: T-221)。',
+    provenance: ['2026-10-30 (パス 560)'],
+    enforcedBy: [
+      test('src/shared/mamori/__tests__/mamoriRules.test.ts'),
+      test('src/shared/mamori/__tests__/mamoriGenerated.test.ts'),
+      harness('mamori:check'),
+      test(T.shared('threatLedger')),
+      chain,
+    ],
+  },
 ];
 
 export interface LawLedgerProblem {

@@ -115,7 +115,7 @@ describe('externalUrlOrNull — OS へ渡してよい URL だけ', () => {
       'https://example.com/a\u001fb',
       'https://example.com/ x',
     ];
-    const passed = probes.map((p) => externalUrlOrNull(p)).filter((v): v is string => v !== null);
+    const passed = probes.map((p) => externalUrlOrNull(p)).filter((v) => v !== null);
     // 空撃ちでないこと —— 1 つも通らなければ、この検査は何も言っていない。
     expect(passed.length, '標本が 1 つも通っていない (検査が空撃ち)').toBeGreaterThan(0);
     for (const v of passed) {
@@ -199,8 +199,10 @@ describe('main.ts の中で OS へ URL を渡す扉は、全部この関門を�
   const MAIN = `${MAIN_ONLY}\n${WINDOW_OPEN}`;
   const count = (re: RegExp): number => (MAIN.match(re) ?? []).length;
 
-  it('shell.openExternal の呼び出しと externalUrlOrNull の呼び出しが同数', () => {
-    const opens = count(/shell\.openExternal\s*\(/g);
+  // OS へ渡す行は 2026-10-30 (パス 559 · T-220) から `osSinks.ts` の包み `openExternalVetted` を通る
+  // (素の `shell.openExternal` は包みの外に 1 つも無い —— `vettedTypes.test.ts` が見る)。
+  it('openExternalVetted の呼び出しと externalUrlOrNull の呼び出しが同数', () => {
+    const opens = count(/\bopenExternalVetted\s*\(/g);
     const gated = count(/\bexternalUrlOrNull\s*\(/g);
     expect(opens, 'main.ts から OS へ URL を渡す行が消えている').toBeGreaterThanOrEqual(2);
     expect(count(/\bopenFromWindow\s*\(/g), 'main.ts が窓の扉を windowOpen.ts 経由にしていない (T-173)').toBeGreaterThanOrEqual(1);
@@ -231,8 +233,9 @@ describe('web-shim.ts の中で外へ開く扉も、全部この関門を通る'
   const code = stripComments(SHIM);
   const count = (re: RegExp): number => (code.match(re) ?? []).length;
 
-  it('window.open の呼び出しと externalUrlOrNull の呼び出しが同数', () => {
-    const opens = count(/\bwindow\.open\s*\(/g);
+  // 外へ開く行は 2026-10-30 (パス 559 · T-220) から `vettedSinks.ts` の包み `openWindowVetted` を通る。
+  it('openWindowVetted の呼び出しと externalUrlOrNull の呼び出しが同数', () => {
+    const opens = count(/\bopenWindowVetted\s*\(/g);
     const gated = count(/\bexternalUrlOrNull\s*\(/g);
     expect(opens, 'ブラウザ版から外へ開く行が消えている').toBeGreaterThanOrEqual(1);
     expect(gated, '関門を通さずに外へ開く行がある (扉が増えた)').toBe(opens);
@@ -244,9 +247,9 @@ describe('web-shim.ts の中で外へ開く扉も、全部この関門を通る'
   });
 
   it('開くのは関門が返した正規化済みの値 (生の入力ではない)', () => {
-    // `window.open(safe, ...)` の形。生の `url` を渡していれば落ちる。
-    expect(code).toMatch(/window\.open\(\s*safe\s*,/);
-    expect(code, '生の入力をそのまま開いている').not.toMatch(/window\.open\(\s*url\s*,/);
+    // `openWindowVetted(safe)` の形。生の `url` を渡していれば落ちる (型も断る —— T-220)。
+    expect(code).toMatch(/openWindowVetted\(\s*safe\s*\)/);
+    expect(code, '生の入力をそのまま開いている').not.toMatch(/openWindowVetted\(\s*url\s*\)/);
   });
 });
 

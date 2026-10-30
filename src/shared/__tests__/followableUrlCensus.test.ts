@@ -76,6 +76,13 @@ const RENDERER = path.join(REPO_ROOT, 'src/renderer');
 const MIN_ANCHORS = 12;
 /** 動的な `href` の実測 (2026-09-16 パス 298 時点)。増えたら読んで判断する。 */
 const DYNAMIC_HREF_SITES = 2;
+/**
+ * 外へ出る `<a href>` の唯一の口 (2026-10-30 · パス 560)。中の `href={href}` は印つきの型
+ * `VettedExternalUrl` で受けた引数なので、`externalUrlOrNull` の代入ではなく**型**が守る
+ * (`vettedTypes.test.ts` が素の `<a href={…}>` をこのファイルの外に 1 つも置かせない)。
+ * 呼び出し側の 2 本 (`<VettedLink href={…}>`) は引き続き下の検査が関門の戻り値であることを見る。
+ */
+const LINK_WRAPPER = 'src/renderer/components/VettedLink.tsx';
 
 function tsxFiles(dir: string): string[] {
   const out: string[] = [];
@@ -158,7 +165,9 @@ describe('プラットフォームが辿る URL の母集団 (パス 298)', () =
      * 直し方: 注記を落とした原文で、**`href` に渡す識別子がその場で
      * `externalUrlOrNull(...)` から作られている**ことを要求する。
      */
-    const dynamic = anchors.filter((a) => a.href.startsWith('{'));
+    const dynamic = anchors.filter((a) => a.href.startsWith('{') && a.file !== LINK_WRAPPER);
+    // 包みの中の動的な href は 1 本ちょうど (`href={href}`)
+    expect(anchors.filter((a) => a.file === LINK_WRAPPER).map((a) => a.href)).toEqual(['{href}']);
     const offenders: string[] = [];
     for (const a of dynamic) {
       const code = stripComments(readOriginalSource(path.join(REPO_ROOT, a.file)));
