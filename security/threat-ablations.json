@@ -1941,6 +1941,30 @@
           "replace": "  if (false) {\n    for (const collection of FINANCIAL_COLLECTION_NAMES) {"
         }
       ]
+    },
+    {
+      "id": "A-535",
+      "threat": "T-228",
+      "file": "src/main/selfAttestation.ts",
+      "why": "実行時の全歩き (listFilesUnderRoots) を明示の listShippedFiles へ戻す —— build/ の中を歩かなくなり、build/evil.js が検算を素通りする M1 の穴を開け直す",
+      "edits": [
+        {
+          "find": "    actual = await listFilesUnderRoots(appRoot, fs);",
+          "replace": "    actual = await listShippedFiles(appRoot, fs);"
+        }
+      ]
+    },
+    {
+      "id": "A-536",
+      "threat": "T-228",
+      "file": "src/main/selfAttestation.ts",
+      "why": "入口 (package.json の main) の検めを殺す —— main を別の出荷物へすげ替える 2 ファイル改竄が通る S2 の穴を開け直す",
+      "edits": [
+        {
+          "find": "    if (main !== ENTRY_POINT) return { ok: false, reason: 'bad-entry-point', detail: 'package.json' };",
+          "replace": "    if (false && main !== ENTRY_POINT) return { ok: false, reason: 'bad-entry-point', detail: 'package.json' };"
+        }
+      ]
     }
   ]
 }

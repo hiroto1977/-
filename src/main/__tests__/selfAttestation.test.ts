@@ -38,7 +38,7 @@ async function plantTree(): Promise<void> {
   await fsp.writeFile(path.join(root, 'dist', 'assets', 'index-abc.js'), 'console.log(1)');
   await fsp.writeFile(path.join(root, 'dist-electron', 'main.js'), 'main');
   await fsp.writeFile(path.join(root, 'dist-electron', 'preload.js'), 'preload');
-  await fsp.writeFile(path.join(root, 'package.json'), '{"name":"x"}');
+  await fsp.writeFile(path.join(root, 'package.json'), '{"name":"x","main":"dist-electron/main.js"}');
   await fsp.writeFile(path.join(root, 'build', 'icon.png'), Buffer.from([0x89, 0x50]));
 }
 
@@ -263,14 +263,30 @@ describe('検算', () => {
     expect(refusal(await verifyShippedFiles(root, fsp))).toEqual({ ok: false, reason: 'file-missing', detail: 'build/icon.png' });
   });
 
-  it('package.json は表に載らず、書き換えても検算は通る (electron-builder が梱包時に書き換える —— 入口は容器の中から検めない)', async () => {
+  it('package.json は表に載らないが、他の欄を書き換えても main が入口なら通る (electron-builder が梱包時に name 等を書き換える)', async () => {
     await writeManifest();
-    await fsp.writeFile(path.join(root, 'package.json'), '{"name":"rewritten-by-electron-builder"}');
+    await fsp.writeFile(path.join(root, 'package.json'), '{"name":"rewritten-by-electron-builder","main":"dist-electron/main.js"}');
     expect((await verifyShippedFiles(root, fsp)).ok).toBe(true);
     expect(Object.keys((await buildManifest(root, fsp)).files)).not.toContain('package.json');
-    // 根の一覧には居てよい (消しても断らない)
+  });
+
+  it('★ 入口 (package.json の main) を別の出荷物へすげ替えると bad-entry-point (threat: T-228 の S2)', async () => {
+    await writeManifest();
+    // main を既存の出荷物 (preload.js) へ向ける —— 2 ファイル改竄の片割れ。main.js が走る限り鳴る。
+    await fsp.writeFile(path.join(root, 'package.json'), '{"name":"x","main":"dist-electron/preload.js"}');
+    expect(refusal(await verifyShippedFiles(root, fsp))).toEqual({ ok: false, reason: 'bad-entry-point', detail: 'package.json' });
+    // main 欄が無い・package.json が無い・読めない形も bad-entry-point (入口が確かめられない)。
+    await fsp.writeFile(path.join(root, 'package.json'), '{"name":"x"}');
+    expect(refusal(await verifyShippedFiles(root, fsp)).reason).toBe('bad-entry-point');
     await fsp.rm(path.join(root, 'package.json'));
-    expect((await verifyShippedFiles(root, fsp)).ok).toBe(true);
+    expect(refusal(await verifyShippedFiles(root, fsp)).reason).toBe('bad-entry-point');
+  });
+
+  it('★ 許された根 build/ の中へ足した物は file-unlisted —— 根の名前 build を許すだけで中を見ていなかった穴 (threat: T-228 の M1)', async () => {
+    await writeManifest();
+    // build/ は asar では icon.png だけ。中へ evil.js を足す = tamper。以前は build を根として許し、中は歩いていなかった。
+    await fsp.writeFile(path.join(root, 'build', 'evil.js'), 'require("child_process")');
+    expect(refusal(await verifyShippedFiles(root, fsp))).toEqual({ ok: false, reason: 'file-unlisted', detail: 'build/evil.js' });
   });
 
   it('天井を超えるファイルは読まずに file-too-large (stat の大きさで決める)', async () => {

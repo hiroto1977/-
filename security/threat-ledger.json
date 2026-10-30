@@ -3988,6 +3988,27 @@
         "file": "src/renderer/data/__tests__/backup.test.ts",
         "test": "★ 既に売上の在る端末へ売上をマージ復元すると、確認が鳴り collection と件数を名乗る"
       }
+    },
+    {
+      "id": "T-228",
+      "found": "2026-10-30",
+      "foundBy": "パス 566 の赤対青の演習 (main-process / supply の赤)。起動時の自己検算 (T-218) に 2 つの継ぎ目。M1: listShippedFiles は dist / dist-electron を再帰で歩くが build/ は明示の build/icon.png だけ足す —— 根の一覧は build を許すのに中は歩かないので、build/evil.js が検算に 1 度も見られなかった (遅延・LATENT・実行時に誰も読まないが、同梱物に manifest 外の物が在る)。S2: package.json の main が検められておらず (SHIPPED_FILES から除外・ALLOWED_ROOT が許す)、main を別の出荷物へすげ替える 2 ファイル改竄が docblock の『1 ファイルの改竄に気付く』を破った。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "起動時の自己検算が、同梱できる根 build/ の中を歩かず、入口 (package.json の main) を検めていなかった (2 ファイル改竄で入口をすげ替えられた)",
+      "status": "fixed",
+      "fix": "src/main/selfAttestation.ts: 実行時は listFilesUnderRoots が ALLOWED_ROOT_ENTRIES のディレクトリ (build/ を含む) を丸ごと歩き、manifest に無いファイルは file-unlisted で鳴る (buildManifest はビルド時の木に icon.svg が居るので電子ビルダーの glob を写した明示のまま —— 梱包物 asar の build/ は icon.png だけなので実行時に食い違わない)。verifyShippedFiles が package.json の main === ENTRY_POINT (dist-electron/main.js) を検め、別の出荷物へのすげ替えを bad-entry-point で断る。限界: main を新しいファイルへ向けてそれを実際の入口にする相手は、main.js (= この検算) を走らせないので止められない —— 入口を入口の中から検める構造上の穴 (docblock に明記)。正しい主張を『1 ファイルの改竄に気付く』から『入口の main.js が走る限り、出荷物への改竄・追加・入口のすげ替えに気付く』へ訂正。",
+      "regression": {
+        "file": "src/main/__tests__/selfAttestation.test.ts",
+        "test": "★ 入口 (package.json の main) を別の出荷物へすげ替えると bad-entry-point (threat: T-228 の S2)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/main/__tests__/selfAttestation.test.ts",
+          "test": "★ 許された根 build/ の中へ足した物は file-unlisted —— 根の名前 build を許すだけで中を見ていなかった穴 (threat: T-228 の M1)"
+        }
+      ]
     }
   ],
   "huntBacklog": [

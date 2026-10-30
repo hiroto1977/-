@@ -3342,6 +3342,14 @@
       "leafCount": 155,
       "note": "update dependency-audit.yml,checker.ts",
       "hash": "23585fa17a9e8aff7a8d99c9550d44a6a99a681e3f7f3188539a9e1a53a987d9"
+    },
+    {
+      "index": 398,
+      "prevHash": "23585fa17a9e8aff7a8d99c9550d44a6a99a681e3f7f3188539a9e1a53a987d9",
+      "merkleRoot": "a2ae11977f1fdf4fed06e08cca38f0c874774d2a842539e890ed8dcc8ebe7f78",
+      "leafCount": 155,
+      "note": "update selfAttestation.ts",
+      "hash": "bd57abb5d38b8775e1d14a51907f9b725e7b389181274a72bfcb405cc3c2a713"
     }
   ],
   "tipManifest": {
@@ -3420,7 +3428,7 @@
     "src/main/osSinks.ts": "ddebba759d05d69186e58abab7c881e6295a010554d4bd4d27e5fec58fe0344b",
     "src/main/presenceWiring.ts": "84334ae2023fa2c2c4931571839f365ca228ff817788e5c146550f01ca790336",
     "src/main/secrets.ts": "6fa31f23ce7c7bdd5faa9c0e528be9ab4e0ca754052fe3e061499dac3e452d5a",
-    "src/main/selfAttestation.ts": "5f1b0b2622da9a2f06b0d927cfc65691a77e4708f5ae05a096dcaca723e7927d",
+    "src/main/selfAttestation.ts": "eb17b1562aaf67b496a3f8b0c76be445c4d52828ffff808c15debf809866472b",
     "src/main/shellOpenGate.mamori": "e0a9c53ce86e9869d27730d84e452db31929c9b1f1be87ce522c0bbb67f5421a",
     "src/main/shellOpenGate.ts": "4612d8cc9c61827225a11b61dbdfff4f200bb28524eb86dd1ba471a471b645c9",
     "src/main/stateFile.ts": "984eebe8582b3c6c88669d17e778932f6b87a682640d1f162acd182d5947169b",

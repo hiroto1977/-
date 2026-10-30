@@ -30,10 +30,20 @@
  * ## 限界を正直に書く
  *
  * manifest は出荷物と**同じ容器** (`app.asar`) に居る。asar を丸ごと書き換えられる相手は manifest も書き換えられる
- * ので、これが止めるのは ① 部分的な破損・差し替え (1 ファイルだけ触る形 —— 実際の改竄の大半) ②
+ * ので、これが止めるのは ① 部分的な破損・差し替え (出荷物のファイルを触る・足す形 —— 実際の改竄の大半) ②
  * manifest の存在を知らない相手、である。**容器ごと差し替える相手を止めるのは OS の署名** (macOS の公証 /
  * Windows の Authenticode · `release.yml` の `CSC_LINK`) と fuse の asar integrity で、Linux にはそれが無い ——
- * だからこの検算を「Linux は守られている」と読んではいけない。「Linux は 1 ファイルの改竄に気付く」が正しい。
+ * だからこの検算を「Linux は守られている」と読んではいけない。
+ *
+ * ★ **入口の構造上の穴 (2026-10-30 · パス 566 · 赤対青の演習の M1 / S2 で測った)**: この検算は `main.js` の
+ *   中に在るので、**入口そのものをすげ替えられると走らない**。塞いだのは 2 つ —— ① 同梱できる根の
+ *   ディレクトリ (`build/` を含む) を実行時に**丸ごと歩く** ({@link listFilesUnderRoots}) ので、`build/evil.js`
+ *   のような「許された根の中へ足した物」は `file-unlisted` で鳴る (以前は根の名前 `build` だけ許して中は
+ *   見ていなかった)。② package.json の `main` が {@link ENTRY_POINT} ちょうどであることを確かめる
+ *   (`bad-entry-point`) ので、`main` を別の既存の出荷物へすげ替える形は鳴る。**残る穴**: `main` を
+ *   新しいファイルへ向け、そのファイルを実際の入口にする相手は、`main.js` (= この検算) を走らせないので
+ *   止められない —— それは「入口を入口の中から検める」ことが構造上できないため。だから正しいのは
+ *   「Linux は、入口の `main.js` が走る限り、出荷物への 1〜複数ファイルの改竄・追加・入口のすげ替えに気付く」。
  *
  * ## 契約
  *
@@ -52,6 +62,13 @@ import path from 'node:path';
 
 /** manifest の置き場 (アプリの根からの相対)。出荷物の歩きからは**この 1 つだけ**を外す。 */
 export const MANIFEST_FILE = 'dist-electron/integrity.json';
+/**
+ * 出荷物の入口 (package.json の `main`)。梱包版の package.json はこれを指し、この検算はこの main.js の中に在る
+ * (2026-10-30 · パス 566 · threat: T-228)。package.json は manifest に載せられない (builder が
+ * 梱包時に書き換える) が、`main` が**この値ちょうど**であることは確かめられる —— `main` を別の既存の出荷物へ
+ * すげ替える 2 ファイル改竄を断る。限界は docblock 参照 (入口を入口の中から検める構造上の穴)。
+ */
+export const ENTRY_POINT = 'dist-electron/main.js';
 /** manifest の形の版。形を変えたら上げる (古い版は「読めない」として断る)。 */
 export const MANIFEST_VERSION = 1;
 /** ハッシュの算法 (Node の `createHash` の名前)。 */
@@ -104,6 +121,7 @@ export type AttestationReason =
   | 'file-too-large'
   | 'too-many-files'
   | 'hash-mismatch'
+  | 'bad-entry-point'
   | 'unreadable';
 
 export type AttestationVerdict =
@@ -137,27 +155,56 @@ function toPosix(rel: string): string {
  */
 export async function listShippedFiles(appRoot: string, fs: AttestationFs): Promise<string[]> {
   const out: string[] = [];
-  const walk = async (dir: string): Promise<void> => {
-    // 歩く順は最後の `.sort()` が決めるので、ここでは並べない (並べても答えは変わらない —— 等価の形は持たない)
-    for (const name of await fs.readdir(dir)) {
-      const abs = path.join(dir, name);
-      const st = await fs.stat(abs);
-      if (st.isDirectory()) {
-        await walk(abs);
-      } else if (st.isFile()) {
-        out.push(toPosix(path.relative(appRoot, abs)));
-        if (out.length > MAX_SHIPPED_FILES) throw new TooManyFilesError();
-      }
-    }
-  };
   for (const d of SHIPPED_DIRS) {
     const abs = path.join(appRoot, d);
-    if (await exists(fs, abs)) await walk(abs);
+    if (await exists(fs, abs)) await walkFiles(abs, appRoot, fs, out);
   }
   for (const f of SHIPPED_FILES) {
     if (await exists(fs, path.join(appRoot, f))) out.push(f);
   }
   return out.filter((p) => p !== MANIFEST_FILE).sort();
+}
+
+/**
+ * **実行時**に、同梱できる根 (`ALLOWED_ROOT_ENTRIES`) の**ディレクトリを丸ごと**歩いて全ファイルを返す
+ * (2026-10-30 · パス 566 · threat: T-228)。
+ *
+ * ★ `listShippedFiles` (ビルドが manifest を組むのに使う) は electron-builder の `files` の glob を**写して**
+ *   `build/icon.png` だけを明示で足す —— ビルド時の木 (repo) の `build/` には `icon.svg` も居るが、梱包物
+ *   (asar) には `build/icon.png` しか入らないので、`build/` を丸ごと歩くと manifest に icon.svg が入って
+ *   梱包版が `file-missing` で止まる。だからビルド側は明示のままにする。
+ *
+ * ★ ところがその明示のせいで、**`build/` の中へ置かれた物は検算に 1 度も見られなかった** (根の一覧は
+ *   `build` を許すが、中は歩かない)。梱包物では `build/` に `icon.png` しか居ないので、歩いて見つかる物は
+ *   すべて manifest に在るはず —— 1 つでも無ければ (`build/evil.js` を足すなど) tamper である。
+ *   実行時はこの全歩きで「同梱できる根の下に、manifest に無いファイルは 1 つも無い」を確かめる。
+ */
+export async function listFilesUnderRoots(appRoot: string, fs: AttestationFs): Promise<string[]> {
+  const out: string[] = [];
+  for (const entry of ALLOWED_ROOT_ENTRIES) {
+    const abs = path.join(appRoot, entry);
+    if (!(await exists(fs, abs))) continue;
+    const st = await fs.stat(abs);
+    // 根に居てよい**ファイル** (package.json) は manifest に載らない (builder が書き換える) ので歩かない ——
+    // その代わり `main` の値だけを verifyShippedFiles が別に検める。ディレクトリだけを丸ごと歩く。
+    if (st.isDirectory()) await walkFiles(abs, appRoot, fs, out);
+  }
+  return out.filter((p) => p !== MANIFEST_FILE).sort();
+}
+
+/** 1 つのディレクトリを再帰で歩き、ファイルの相対パス (posix) を `out` に積む。件数の天井で暴走を止める。 */
+async function walkFiles(dir: string, appRoot: string, fs: AttestationFs, out: string[]): Promise<void> {
+  // 歩く順は呼び手の `.sort()` が決めるので、ここでは並べない (並べても答えは変わらない —— 等価の形は持たない)
+  for (const name of await fs.readdir(dir)) {
+    const abs = path.join(dir, name);
+    const st = await fs.stat(abs);
+    if (st.isDirectory()) {
+      await walkFiles(abs, appRoot, fs, out);
+    } else if (st.isFile()) {
+      out.push(toPosix(path.relative(appRoot, abs)));
+      if (out.length > MAX_SHIPPED_FILES) throw new TooManyFilesError();
+    }
+  }
 }
 
 class TooManyFilesError extends Error {}
@@ -248,9 +295,25 @@ export async function verifyShippedFiles(appRoot: string, fs: AttestationFs): Pr
     if (!allowedRoot.has(name)) return { ok: false, reason: 'file-unlisted', detail: name };
   }
 
+  // 入口 (package.json の `main`) が、この検算を持つ main.js を指しているか (threat: T-228 の S2)。
+  // package.json は manifest に載らない (builder が書き換える) ので、`main` の値だけをここで検める ——
+  // `main` を別の既存の出荷物へすげ替える 2 ファイル改竄を断る。入口を新しいファイルへ向けて
+  // そこを実際の入口にする相手はこの検算を走らせないので止められない (docblock の構造上の限界)。
+  try {
+    const pkgAbs = path.join(appRoot, 'package.json');
+    const st = await fs.stat(pkgAbs);
+    if (st.size > MAX_MANIFEST_BYTES) return { ok: false, reason: 'bad-entry-point', detail: 'package.json' };
+    const pkg: unknown = JSON.parse(new TextDecoder().decode(await fs.readFile(pkgAbs)));
+    const main = isRecord(pkg) ? pkg.main : undefined;
+    if (main !== ENTRY_POINT) return { ok: false, reason: 'bad-entry-point', detail: 'package.json' };
+  } catch {
+    return { ok: false, reason: 'bad-entry-point', detail: 'package.json' };
+  }
+
   let actual: string[];
   try {
-    actual = await listShippedFiles(appRoot, fs);
+    // 実行時は同梱できる根のディレクトリを**丸ごと**歩く (build/ の中も) —— manifest に無い物は tamper。
+    actual = await listFilesUnderRoots(appRoot, fs);
   } catch (e) {
     return e instanceof TooManyFilesError
       ? { ok: false, reason: 'too-many-files', detail: String(MAX_SHIPPED_FILES) }
@@ -286,6 +349,7 @@ const REASON_TEXT: Readonly<Record<AttestationReason, string>> = {
   'file-too-large': 'ファイルが大きすぎて検算できません',
   'too-many-files': '同梱されたファイルが多すぎます',
   'hash-mismatch': 'ファイルの中身が組んだときと違います',
+  'bad-entry-point': 'アプリの入口 (package.json の main) が組んだときと違います',
   unreadable: 'ファイルを読めません',
 };
 

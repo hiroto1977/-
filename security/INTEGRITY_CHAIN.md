@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 398
+- ブロック数: 399
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `23585fa17a9e8aff7a8d99c9550d44a6a99a681e3f7f3188539a9e1a53a987d9`
+- 末尾(tip)ハッシュ: `bd57abb5d38b8775e1d14a51907f9b725e7b389181274a72bfcb405cc3c2a713`
 - 保護対象: 155 ファイル
 
 ## ブロック
@@ -411,6 +411,7 @@
 | 395 | `4843d8a8d9d6a96d` | `ee967358076aa390` | `c3ae67ba4c08746d` | update checker.ts |
 | 396 | `6c0373db2dbbb7d1` | `c3ae67ba4c08746d` | `cb9b5216e75d9167` | update integrity-chain.cjs,controlChars.mamori,controlChars.ts,checker.ts,parser.ts |
 | 397 | `ef62abf990b8192f` | `cb9b5216e75d9167` | `23585fa17a9e8aff` | update dependency-audit.yml,checker.ts |
+| 398 | `a2ae11977f1fdf4f` | `23585fa17a9e8aff` | `bd57abb5d38b8775` | update selfAttestation.ts |
 
 ## 保護対象ファイル
 
