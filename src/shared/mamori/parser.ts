@@ -212,7 +212,7 @@ export function parse(file: string, src: string): Module {
     let text = '';
     parts.forEach((t, idx) => {
       const prev = parts[idx - 1];
-      const tight = prev !== undefined && (t.text === '<' || t.text === '>' || t.text === '[' || t.text === ']' || t.text === ',' || prev.text === '<' || prev.text === '[' || prev.text === '(' || t.text === ')' || t.text === '.' || prev.text === '.');
+      const tight = prev !== undefined && (t.text === '<' || t.text === '>' || t.text === '[' || t.text === ']' || t.text === ',' || prev.text === '<' || prev.text === '[' || prev.text === '(' || t.text === ')' || t.text === '.' || prev.text === '.' || t.text === ':' || t.text === ';');
       text += prev === undefined ? t.text : tight ? t.text : ` ${t.text}`;
       if (t.text === ',') text += ' ';
     });
