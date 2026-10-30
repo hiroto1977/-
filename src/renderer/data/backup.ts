@@ -322,12 +322,52 @@ export interface RestorePlan {
    * 細工した控えをマージ復元させると、確認なしに標準税率などを書き換えられた (実測は偽の保管層)。
    */
   readonly parameterOverrides: number;
+  /**
+   * 既に記録の在る財務の collection に、このマージ/置換で**書かれる**記録の件数 (threat: T-227)。
+   * collection ごと・0 件の物は挙げない・`FINANCIAL_COLLECTION_NAMES` の順。
+   * **店が非空のときだけ**数える —— 空の端末への初回の復元 (自分の控えを戻す正当な流れ) は
+   * 数字の水増しではないので確認で煩わさない。これが 0 件でない財務データへ記録が加わるときに
+   * マージの確認を鳴らす (数値パラメータの注意と並べて出す)。
+   */
+  readonly financialWrites: readonly { readonly collection: string; readonly count: number }[];
   /** 実際に書く物 —— マージでは newerLocal を除き、置換では全部。 */
   readonly toImport: readonly StoredRecord[];
 }
 
 /** 数値パラメータの上書きの collection 名 (`parameterOverrides.ts` の `PARAMETER_OVERRIDES_COLLECTION` と同じ。検査が結ぶ)。 */
 export const PARAMETER_OVERRIDES_COLLECTION_NAME = 'parameter-overrides';
+
+/**
+ * 金融機関提出用の書類・売上集計の数字へ流れる財務の collection (2026-10-30 · パス 566 · threat: T-227)。
+ *
+ * ★ **マージ復元は確認を出さない操作だった** —— `mergeRestoreConfirmMessage` は数値パラメータ
+ *   (T-186) が入るときだけ鳴り、形式の合う**売上・KPI の記録**がマージで**黙って足されて**いた。
+ *   既に数字の在る端末で、第三者が配った「テンプレート」バックアップをマージ復元すると、
+ *   売上の行が水増しされ、その合計が金融機関提出用の書面 §2 へ **手入力の印なし**で流れる
+ *   (`manualOverrideNote` は手入力の上書きだけを印す —— 復元した記録は印さない)。実測 3/3。
+ *
+ *   各名は定義元の定数と同じ (下の `financialCollectionLabel` の鍵も同じ集合)。
+ *   `backup.test.ts` が定義元の定数と**両方向**に結ぶ —— 新しい財務の collection が増えたのに
+ *   ここへ足し忘れれば、その collection の黙ったマージ復元が戻る。
+ */
+export const FINANCIAL_COLLECTION_NAMES = [
+  'sales-entries',
+  'kpi-actuals',
+  'kpi-budgets',
+  'balance-sheet',
+  'realestate-properties',
+  'mutualfund-holdings',
+] as const;
+
+/** 財務の collection の、利用者に見せる名前。確認文と結果の文が読む。 */
+const FINANCIAL_COLLECTION_LABELS: Record<string, string> = {
+  'sales-entries': '売上',
+  'kpi-actuals': 'KPI 実績',
+  'kpi-budgets': 'KPI 予算',
+  'balance-sheet': '貸借対照表',
+  'realestate-properties': '不動産',
+  'mutualfund-holdings': '投資信託',
+};
 
 export function planRestore(
   existing: readonly RestoreEnvelope[],
@@ -387,12 +427,27 @@ export function planRestore(
   }
   let lost = 0;
   if (mode === 'replace') lost = localOnly + newerLocal + unusableLocal + collectionClash;
+  // 財務の collection へ書かれる記録 (threat: T-227)。**マージのときだけ・既にその collection に
+  // 記録が在るときだけ**数える —— 置換は既に「全部消してから復元する」と声高に確認するし
+  // (`replaceRestoreConfirmMessage`)、空の端末への初回の復元は数字の水増しではない。
+  // R1 が指した穴は**黙ったマージ**だけなので、ここもマージに限る。順序は `FINANCIAL_COLLECTION_NAMES`。
+  const existingByCollection = new Map<string, number>();
+  for (const r of existing) existingByCollection.set(r.collection, (existingByCollection.get(r.collection) ?? 0) + 1);
+  const financialWrites: { collection: string; count: number }[] = [];
+  if (mode === 'merge') {
+    for (const collection of FINANCIAL_COLLECTION_NAMES) {
+      if ((existingByCollection.get(collection) ?? 0) === 0) continue;
+      const count = toImport.filter((r) => r.collection === collection).length;
+      if (count > 0) financialWrites.push({ collection, count });
+    }
+  }
   return {
     mode, exportedAt,
     incoming: incoming.length, existing: existing.length, dropped: incoming.length - valid.length,
     duplicateIds: valid.length - usable.length,
     added, overwritten, newerLocal, localOnly, unusableLocal, collectionClash, lost,
     parameterOverrides: toImport.filter((r) => r.collection === PARAMETER_OVERRIDES_COLLECTION_NAME).length,
+    financialWrites,
     toImport,
   };
 }
@@ -428,11 +483,28 @@ export function parameterOverrideNotice(plan: RestorePlan): string | null {
   return `数値パラメータ（税率・しきい値など、計算に使う数字）の上書きが ${plan.parameterOverrides} 件入ります。入ると、画面の計算と書類の検査に使う値がバックアップの値に変わります。心当たりが無ければ取り消してください。`;
 }
 
-/** マージ復元の確認文。数値パラメータが入らなければ null (今までどおり確認しない)。 */
+/**
+ * 既に数字の在る財務の collection に記録が加わるときの注意 (threat: T-227)。加わらなければ null。
+ * マージは確認を出さない操作だったので、これが入るときだけ確認を出す (数値パラメータの注意と並べる)。
+ * collection と件数を名乗る —— 「追加 N 件」だけでは、どの数字が動くのか読む側に分からない。
+ */
+export function financialMergeNotice(plan: RestorePlan): string | null {
+  if (plan.financialWrites.length === 0) return null;
+  const parts = plan.financialWrites.map((w) => `${FINANCIAL_COLLECTION_LABELS[w.collection] ?? w.collection} ${w.count} 件`);
+  return (
+    `既にある財務データに、バックアップの記録が加わります（${parts.join('・')}）。`
+    + 'これらは売上集計や金融機関提出用の書類の数字に反映されます。心当たりが無ければ取り消してください。'
+  );
+}
+
+/** マージ復元の確認文。数値パラメータも財務データへの追加も無ければ null (今までどおり確認しない)。 */
 export function mergeRestoreConfirmMessage(plan: RestorePlan): string | null {
-  const notice = parameterOverrideNotice(plan);
-  if (plan.mode !== 'merge' || notice === null) return null;
-  return [notice, `バックアップ: ${exportedAtLabel(plan.exportedAt)}・${plan.incoming} 件`, 'よろしいですか？'].join('\n');
+  if (plan.mode !== 'merge') return null;
+  const notices = [parameterOverrideNotice(plan), financialMergeNotice(plan)].filter(
+    (x): x is string => x !== null,
+  );
+  if (notices.length === 0) return null;
+  return [...notices, `バックアップ: ${exportedAtLabel(plan.exportedAt)}・${plan.incoming} 件`, 'よろしいですか？'].join('\n');
 }
 
 export function replaceRestoreConfirmMessage(plan: RestorePlan): string {
@@ -502,7 +574,14 @@ export function restoreResultMessage(plan: RestorePlan, imported: number, droppe
       ? `既存データは置換。消えた ${plan.lost} 件 = バックアップに無い ${plan.localOnly} 件 + この端末の方が新しかった ${plan.newerLocal} 件${unusable}${clash}`
       : `マージ: 追加 ${plan.added}・更新 ${plan.overwritten}・この端末の方が新しい ${plan.newerLocal} 件はそのまま`;
   const overrides = plan.parameterOverrides > 0 ? `数値パラメータの上書き ${plan.parameterOverrides} 件を含みます。` : '';
-  return `${importedLabel}のレコードを復元しました（${detail}）。${droppedNote}${overrides}再読み込みで反映されます。`;
+  // 既にある財務データに加わった記録を名指しで述べる (threat: T-227)。0 件なら文面は変わらない。
+  const financial =
+    plan.financialWrites.length > 0
+      ? `既存の財務データに加わった記録: ${plan.financialWrites
+          .map((w) => `${FINANCIAL_COLLECTION_LABELS[w.collection] ?? w.collection} ${w.count} 件`)
+          .join('・')}。`
+      : '';
+  return `${importedLabel}のレコードを復元しました（${detail}）。${droppedNote}${overrides}${financial}再読み込みで反映されます。`;
 }
 
 /**

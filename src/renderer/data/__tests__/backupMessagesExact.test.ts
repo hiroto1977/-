@@ -12,6 +12,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import {
+  financialMergeNotice,
   mergeRestoreConfirmMessage,
   parameterOverrideNotice,
   plaintextBackupConfirmMessage,
@@ -41,6 +42,7 @@ function planOf(over: Partial<RestorePlan>): RestorePlan {
     duplicateIds: 0,
     lost: 0,
     parameterOverrides: 0,
+    financialWrites: [],
     toImport: [],
     ...over,
   };
@@ -201,5 +203,62 @@ describe('数値パラメータの上書きの確認文の全文 (threat: T-186)
     expect(base).not.toContain('数値パラメータ');
     const lines = base.split('\n');
     expect(withNotice.split('\n')).toEqual([...lines.slice(0, -1), NOTICE, lines[lines.length - 1]]);
+  });
+});
+
+describe('財務データへの追加の確認文の全文 (threat: T-227 · パス 566)', () => {
+  const FIN_NOTICE =
+    '既にある財務データに、バックアップの記録が加わります（売上 3 件・KPI 実績 2 件）。'
+    + 'これらは売上集計や金融機関提出用の書類の数字に反映されます。心当たりが無ければ取り消してください。';
+  const PARAM_NOTICE =
+    '数値パラメータ（税率・しきい値など、計算に使う数字）の上書きが 2 件入ります。入ると、画面の計算と書類の検査に使う値がバックアップの値に変わります。心当たりが無ければ取り消してください。';
+
+  it('★ collection と件数を名乗り、0 件なら null', () => {
+    expect(
+      financialMergeNotice(planOf({ financialWrites: [{ collection: 'sales-entries', count: 3 }, { collection: 'kpi-actuals', count: 2 }] })),
+    ).toBe(FIN_NOTICE);
+    expect(financialMergeNotice(planOf({ financialWrites: [] }))).toBeNull();
+  });
+
+  it('★ マージの確認は、財務データへの追加だけでも 注意 / 控えの行 / 問いかけ を繋ぐ', () => {
+    const plan = planOf({
+      mode: 'merge',
+      incoming: 5,
+      exportedAt: null,
+      financialWrites: [{ collection: 'sales-entries', count: 3 }, { collection: 'kpi-actuals', count: 2 }],
+    });
+    expect(mergeRestoreConfirmMessage(plan)).toBe(
+      [FIN_NOTICE, `バックアップ: ${exportedAtLabel(null)}・5 件`, 'よろしいですか？'].join('\n'),
+    );
+  });
+
+  it('★ 数値パラメータと財務データの両方が入るときは、両方の注意を並べる (数値パラメータが先)', () => {
+    const plan = planOf({
+      mode: 'merge',
+      incoming: 5,
+      exportedAt: null,
+      parameterOverrides: 2,
+      financialWrites: [{ collection: 'sales-entries', count: 3 }, { collection: 'kpi-actuals', count: 2 }],
+    });
+    expect(mergeRestoreConfirmMessage(plan)).toBe(
+      [PARAM_NOTICE, FIN_NOTICE, `バックアップ: ${exportedAtLabel(null)}・5 件`, 'よろしいですか？'].join('\n'),
+    );
+  });
+
+  it('★ 結果の文も、既存の財務データに加わった記録を名指しで述べる (0 件なら文面は変わらない)', () => {
+    const plan = planOf({
+      mode: 'merge',
+      incoming: 5,
+      existing: 2,
+      added: 3,
+      overwritten: 2,
+      financialWrites: [{ collection: 'sales-entries', count: 3 }, { collection: 'kpi-actuals', count: 2 }],
+    });
+    expect(restoreResultMessage(plan, 5, 0)).toBe(
+      '5 件のレコードを復元しました（マージ: 追加 3・更新 2・この端末の方が新しい 0 件はそのまま）。'
+      + '既存の財務データに加わった記録: 売上 3 件・KPI 実績 2 件。再読み込みで反映されます。',
+    );
+    // 対照: 財務データへの追加が 0 件なら、この句は 1 字も出ない。
+    expect(restoreResultMessage(planOf({ mode: 'merge', added: 3, overwritten: 2 }), 5, 0)).not.toContain('既存の財務データに加わった記録');
   });
 });

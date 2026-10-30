@@ -1929,6 +1929,18 @@
           "replace": "if (b.authority === 'sink' && false) {\n          report('M2', e.pos, ctx.role"
         }
       ]
+    },
+    {
+      "id": "A-534",
+      "threat": "T-227",
+      "file": "src/renderer/data/backup.ts",
+      "why": "マージ復元が財務の collection へ書く記録を数える段を殺す (if (false)) —— 既に数字の在る端末への黙った財務のマージ復元が戻り、確認が鳴らなくなる穴を開け直す",
+      "edits": [
+        {
+          "find": "  if (mode === 'merge') {\n    for (const collection of FINANCIAL_COLLECTION_NAMES) {",
+          "replace": "  if (false) {\n    for (const collection of FINANCIAL_COLLECTION_NAMES) {"
+        }
+      ]
     }
   ]
 }

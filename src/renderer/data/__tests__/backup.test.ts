@@ -1,9 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import { PARAMETER_OVERRIDES_COLLECTION } from '../parameterOverrides';
+import { SALES_COLLECTION } from '../sales';
+import { KPI_ACTUALS_COLLECTION } from '../kpiActuals';
+import { KPI_BUDGETS_COLLECTION } from '../budgetVariance';
+import { BALANCE_SHEET_COLLECTION } from '../balanceSheet';
+import { PROPERTIES_COLLECTION, HOLDINGS_COLLECTION } from '../investments';
 import { readFileSync } from 'node:fs';
 import {
   BACKUP_EXCLUSIONS,
   PARAMETER_OVERRIDES_COLLECTION_NAME,
+  FINANCIAL_COLLECTION_NAMES,
+  mergeRestoreConfirmMessage,
   serializeBackup,
   parseBackup,
   sha256Hex,
@@ -551,7 +558,8 @@ describe('復元の計画 — 何が足され・残り・消えるか (パス 12
 
   it('結果の文は「N 件のレコードを復元しました」で始まる (importSizeGuard の pin) —— マージと置換で内訳が違う', () => {
     const merge = restoreResultMessage(planRestore(EXISTING, INCOMING, 'merge', null, false), 2, 0);
-    expect(merge).toBe('2 件のレコードを復元しました（マージ: 追加 1・更新 1・この端末の方が新しい 1 件はそのまま）。再読み込みで反映されます。');
+    // EXISTING は売上の記録を持つので、マージで加わった売上 2 件を結果が名指しする (threat: T-227)。
+    expect(merge).toBe('2 件のレコードを復元しました（マージ: 追加 1・更新 1・この端末の方が新しい 1 件はそのまま）。既存の財務データに加わった記録: 売上 2 件。再読み込みで反映されます。');
     const replace = restoreResultMessage(planRestore(EXISTING, INCOMING, 'replace', null, false), 2, 1);
     expect(replace).toBe('2 件のレコードを復元しました（既存データは置換。消えた 2 件 = バックアップに無い 1 件 + この端末の方が新しかった 1 件）。1 件は形式が不正なため取り込みませんでした。再読み込みで反映されます。');
   });
@@ -589,5 +597,61 @@ describe('平文バックアップは、個人情報の件数を言ってから�
 describe('数値パラメータの上書きの復元 (threat: T-186)', () => {
   it('backup.ts が数える collection 名は parameterOverrides.ts の物と同じ', () => {
     expect(PARAMETER_OVERRIDES_COLLECTION_NAME).toBe(PARAMETER_OVERRIDES_COLLECTION);
+  });
+});
+
+/**
+ * **マージ復元が財務の記録を黙って足す** (2026-10-30 · パス 566 · threat: T-227 · 赤対青の演習 R1)。
+ *
+ * マージ復元は確認を出さない操作で、数値パラメータ (T-186) が入るときだけ鳴っていた。形式の合う
+ * 売上・KPI の記録は、既に数字の在る端末でも**黙って足され**、その合計が金融機関提出用の書面 §2 へ
+ * 手入力の印なしで流れた (第三者が配った「テンプレート」バックアップをマージ復元する筋)。
+ * 直し: 既に記録の在る財務の collection にマージで記録が加わるとき、確認を鳴らし collection と件数を名乗る。
+ */
+describe('財務データへの黙ったマージ復元 (threat: T-227)', () => {
+  const sale = (id: string, amount: number): StoredRecord => ({
+    id, collection: 'sales-entries', createdAt: 1, updatedAt: 1,
+    data: { date: '2026-04-01', channel: 'amazon', amount, orders: 1 },
+  });
+
+  it('backup.ts が数える財務の collection 名は、定義元の定数と同じ集合 (両方向)', () => {
+    // 1 方向: 台帳の各名は、定義元の定数のどれか。逆: 定義元の定数は、どれも台帳に在る。
+    const canonical = [
+      SALES_COLLECTION, KPI_ACTUALS_COLLECTION, KPI_BUDGETS_COLLECTION,
+      BALANCE_SHEET_COLLECTION, PROPERTIES_COLLECTION, HOLDINGS_COLLECTION,
+    ];
+    expect([...FINANCIAL_COLLECTION_NAMES].sort()).toEqual([...canonical].sort());
+  });
+
+  it('★ 既に売上の在る端末へ売上をマージ復元すると、確認が鳴り collection と件数を名乗る', () => {
+    const existing = [sale('old-1', 1000)];
+    const incoming = [sale('new-1', 9_999_999), sale('new-2', 8_888_888)];
+    const plan = planRestore(existing, incoming, 'merge', null, false);
+    expect(plan.financialWrites).toEqual([{ collection: 'sales-entries', count: 2 }]);
+    const confirm = mergeRestoreConfirmMessage(plan);
+    expect(confirm).not.toBeNull();
+    expect(confirm).toContain('既にある財務データに、バックアップの記録が加わります（売上 2 件）');
+    expect(confirm).toContain('金融機関提出用の書類の数字に反映されます');
+    expect(restoreResultMessage(plan, 2, 0)).toContain('既存の財務データに加わった記録: 売上 2 件。');
+  });
+
+  it('★ 対照 (直す前の黙り): 財務でない collection のマージは、既存が非空でも確認を鳴らさない', () => {
+    const existing: StoredRecord[] = [{ id: 'm-1', collection: 'team-members', createdAt: 1, updatedAt: 1, data: { email: 'a@b.co' } }];
+    const incoming: StoredRecord[] = [{ id: 'm-2', collection: 'team-members', createdAt: 1, updatedAt: 1, data: { email: 'c@d.co' } }];
+    const plan = planRestore(existing, incoming, 'merge', null, false);
+    expect(plan.financialWrites).toEqual([]);
+    expect(mergeRestoreConfirmMessage(plan)).toBeNull();
+  });
+
+  it('★ 対照 (初回の復元): 空の端末への財務のマージは、水増しではないので鳴らさない', () => {
+    const plan = planRestore([], [sale('new-1', 9_999_999)], 'merge', null, false);
+    expect(plan.financialWrites).toEqual([]);
+    expect(mergeRestoreConfirmMessage(plan)).toBeNull();
+  });
+
+  it('★ 置換は財務の追加を数えない (既に声高に確認し、全部を入れ替えるので「加わった」ではない)', () => {
+    const plan = planRestore([sale('old-1', 1000)], [sale('new-1', 9_999_999)], 'replace', null, false);
+    expect(plan.financialWrites).toEqual([]);
+    expect(restoreResultMessage(plan, 1, 0)).not.toContain('既存の財務データに加わった記録');
   });
 });

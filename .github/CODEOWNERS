@@ -217,6 +217,7 @@
 /src/renderer/components/__tests__/voiceEgressDisclosed.test.ts @hiroto1977
 /src/renderer/components/__tests__/voiceErrorFold.test.ts @hiroto1977
 /src/renderer/data/__tests__/assistantContext.test.ts @hiroto1977
+/src/renderer/data/__tests__/backup.test.ts @hiroto1977
 /src/renderer/data/__tests__/bestAnswersJob.test.ts @hiroto1977
 /src/renderer/data/__tests__/chatbotOllamaModel.test.ts @hiroto1977
 /src/renderer/data/__tests__/counseling.test.ts @hiroto1977

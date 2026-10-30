@@ -3973,6 +3973,21 @@
         "file": "src/shared/__tests__/threatAblation.test.ts",
         "test": "★ 名指しの検査が assertion で落ちれば caught・全部通れば missed"
       }
+    },
+    {
+      "id": "T-227",
+      "found": "2026-10-30",
+      "foundBy": "パス 566 の赤対青の演習 (records の赤 a135c462 の R1)。マージ復元は確認を出さない操作で、数値パラメータ (T-186) が入るときだけ鳴っていた。形式の合う売上・KPI の記録は、既に数字の在る端末でも黙って足され、その合計が金融機関提出用の書面 §2 へ手入力の印なしで流れた (manualOverrideNote は手入力の上書きだけを印す —— 復元した記録は印さない)。第三者が配った「テンプレート」バックアップをマージ復元する筋で、3/3 再現。遠隔の破りではない (利用者が信用できない共有バックアップを復元する)。",
+      "surface": "renderer",
+      "class": "living-off-the-land",
+      "severity": "medium",
+      "title": "マージ復元が、既に数字の在る財務の collection (売上・KPI・貸借対照表・不動産・投資信託) へ記録を黙って足し、金融機関提出用の書面の数字を確認なしに水増しできた",
+      "status": "fixed",
+      "fix": "src/renderer/data/backup.ts: RestorePlan に financialWrites を足し、planRestore がマージのとき・既にその collection に記録が在るとき (FINANCIAL_COLLECTION_NAMES) に書かれる記録を collection ごとに数える。mergeRestoreConfirmMessage が financialMergeNotice を数値パラメータの注意と並べて鳴らし、collection と件数を名乗る (「追加 N 件」だけでは、どの数字が動くか読む側に分からない)。restoreResultMessage も加わった記録を名指しする。空の端末への初回の復元は水増しではないので鳴らさない・置換は既に声高に確認するので対象外 (R1 が指したのは黙ったマージ)。backup.test.ts が FINANCIAL_COLLECTION_NAMES を定義元の定数と両方向に結ぶ。限界: マージの確認はレンダラーの中に在り、乗っ取られたレンダラーには効かない —— 止めるのは利用者の目である。",
+      "regression": {
+        "file": "src/renderer/data/__tests__/backup.test.ts",
+        "test": "★ 既に売上の在る端末へ売上をマージ復元すると、確認が鳴り collection と件数を名乗る"
+      }
     }
   ],
   "huntBacklog": [
