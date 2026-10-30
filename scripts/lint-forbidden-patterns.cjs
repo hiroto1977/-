@@ -150,9 +150,13 @@ const FORBIDDEN_PATTERNS = [
   //
   // **予告だけでは止まらなかった**ので字面で止める。CSS へ差し込むなら
   // `safeCssUrl` を通すこと (スキーム検証と引用がそこに 1 つだけ在る)。
+  //
+  // 2026-10-30 (パス 560): 針は**テンプレート文字列**の形 (`url(${…})`) だけを見ており、**文字列の連結**
+  // (`'url("' + raw + '")'`) は木のどこに書いても素通りだった。関門を Mamori へ移した日 (言語にテンプレート
+  // 文字列が無いので連結で書いた) に、この例外が「効いていない」として鳴って分かった。連結の形も同じ規則で止める。
   {
     name: 'CSS の url() へ生の値を差し込んでいる',
-    pattern: /url\(["']?\$\{/,
+    pattern: /url\(["']?\$\{|url\(["']?["']\s*\+/,
     codeOnly: true,
     // 関門そのもの。ここだけが url(...) を組み立ててよい。
     allowFile: (rel) => rel === 'src/shared/imageUrlGate.ts',
@@ -1283,6 +1287,10 @@ function selfTest() {
     ["単引用でも弾く", "const s = `url('${raw}')`;", 1],
     ['定数の url() は弾かない', "const s = 'url(./icon.svg)';", 0],
     ['補間の無い url() は弾かない', 'const s = `url(#gradient)`;', 0],
+    // 連結の形 (2026-10-30 · パス 560 まで素通りだった)
+    ['連結で url() へ差し込むのも弾く', "const s = 'url(\"' + raw + '\")';", 1],
+    ['引用なしの連結も弾く', 'const s = "url(" + raw + ")";', 1],
+    ['連結でも定数だけの url() は弾かない', "const s = 'url(./a.svg)' + suffix;", 0],
     ['sandbox: false を弾く', 'sandbox: false,', 1],
     ['webSecurity: false を弾く', 'webSecurity: false,', 1],
     ['allowRunningInsecureContent: true を弾く', 'allowRunningInsecureContent: true,', 1],

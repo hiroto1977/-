@@ -344,6 +344,10 @@ const KNOWN_UNMEASURED = {
   // 変異体が 1 つも作れない。守りは**コンパイル時**に在り、それは osSinks.test.ts / vettedSinks.test.ts / vettedTypes.test.ts の
   // `@ts-expect-error` の陰性対照を `npm run typecheck` が検査して留める (印を素の string に戻すと「不要な @ts-expect-error」で落ちる)。
   'src/shared/vetted.ts': '実行時に何も残らない型だけのファイル (変異体が作れない)。型の守りは @ts-expect-error の陰性対照を typecheck が留める。',
+  // 2026-10-30 (T-221 · パス 560)。`<img>` の唯一の口。判断を持たず `src` をそのまま `<img>` へ置くだけで、守りは
+  // **コンパイル時** (src が VettedImageSrc しか受けない) と census (素の `<img` はこの外に無い) に在る。
+  // 関門の判定そのもの (imageUrlGate.ts) は mutate に載っている。
+  'src/renderer/components/VettedImg.tsx': '判断を持たない JSX の口 (src をそのまま <img> に置く)。型の守りは VettedImg.test.ts の @ts-expect-error を typecheck が、素の <img の不在は vettedTypes.test.ts が留める。関門の判定は imageUrlGate.ts (mutate 済み)。',
   // 2026-10-21 (T-147)。判断は userPresence.ts (mutate に載せた) が持ち、ここは Electron のダイアログへ繋ぐ薄い口。
   // 既定のボタン・窓が無いとき断る・呼び出し元の検査は presenceWiring.test.ts が実 API の偽物で留める。
   'src/main/presenceWiring.ts': 'Electron のダイアログと senderFrame へ繋ぐ薄い口。判断は userPresence.ts にあり、既定の断り側は presenceWiring.test.ts が留める。',
