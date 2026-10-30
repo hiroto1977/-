@@ -65,6 +65,11 @@ describe('T-224: 0.1 で書けた「文字列をコードとして走らせる�
     ['new の呼ぶ側の連鎖', FN('  return new URL.prototype(code);'), reasonOf('prototype')],
     ['field の欄', FN('  return field x.constructor;'), reasonOf('constructor')],
   ];
+  it('★ String.constructor(code)() は M0 で断る (threat: T-224)', () => {
+    const r = compile(FN('  return String.constructor(code)();'));
+    expect(r.ok).toBe(false);
+    expect(r.ok ? [] : r.diagnostics.map((d) => [d.rule, d.message])).toEqual([['M0', reasonOf('constructor')]]);
+  });
   for (const [name, src, reason] of CASES) {
     it(`★ ${name} は M0 で断る (何も出さない)`, () => {
       const d = diags(src);

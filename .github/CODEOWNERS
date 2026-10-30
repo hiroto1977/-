@@ -289,7 +289,6 @@
 /src/shared/__tests__/huntCycle.test.ts @hiroto1977
 /src/shared/__tests__/hackerTeam.test.ts @hiroto1977
 /src/shared/__tests__/threatWatchDigest.test.ts @hiroto1977
-/src/shared/__tests__/mamoriGrowth.test.ts @hiroto1977
 /src/shared/credentialTtl.ts @hiroto1977
 /src/shared/__tests__/releaseJobSplit.test.ts @hiroto1977
 /src/shared/__tests__/workflowStructureGate.test.ts @hiroto1977

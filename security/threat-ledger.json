@@ -3791,7 +3791,7 @@
       "fix": "src/shared/mamori/parser.ts の FORBIDDEN_MEMBERS: `.` の後ろの `constructor` / `prototype` / `__proto__` を字句の後の段で断る (M0 · 文はどの道を塞ぐかを名乗る。メンバの呼ぶ側の連鎖・new の呼ぶ側・field の欄のすべてが同じ 1 つを通る)。src/shared/mamori/checker.ts の OBJECT_MEMBERS: 組み込みの Object は読むだけ・凍らせるだけのメンバ (hasOwn / keys / values / entries / fromEntries / freeze / isFrozen) に絞り、値として持ち出す形 (`const o = Object;` —— 別名で表を迂回する) も断る (M6)。同じパスで足したオブジェクトの字面は `__proto__` の鍵 (文字列で書いても) を断る —— 字面の `__proto__: x` は欄ではなく原型の差し替えで、この台帳の直しを TypeScript で書いたとき表の 1 行が実際にそうなって素通りした (計算した鍵で書き直した)。限界: 計算した鍵・添字 (`x[k]`) は 0.2 に入れていない —— 入れるなら鍵を実行時に組める道がこの表を迂回するので、来歴と同じく先に塞ぎ方を決める。",
       "regression": {
         "file": "src/shared/mamori/__tests__/mamoriV02.test.ts",
-        "test": "★ String.constructor(code)() は M0 で断る (何も出さない)"
+        "test": "★ String.constructor(code)() は M0 で断る (threat: T-224)"
       }
     }
   ],
