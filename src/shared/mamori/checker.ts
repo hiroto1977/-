@@ -97,7 +97,13 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
   const localFns = new Map<string, FnSignature>();
   for (const it of module.items) {
     if (it.kind === 'use') {
+      // ★ 'pure' は「sink でも、このモジュールの名前でもない」の意味だけを持ち、比べられるのは 'sink' と 'local' だけ
+      // なので、その綴りを別の文字列に替えても答えは変わらない (等価)。既定の名前が無い (null) ときに null を鍵として
+      // 置いても、名前は文字列で引くので誰にも当たらない (等価)。どちらも mamoriCheckerCoverage.test.ts の
+      // 「use で引いた名前へは代入できない」「use default で引いた名前も同じ」が答えのほうを留める。
+      // Stryker disable next-line ConditionalExpression,StringLiteral: 上の注記のとおり等価 (null の鍵は引かれない・'pure' は 'sink' / 'local' でないことだけを意味する)
       if (it.defaultName !== null) moduleScope.set(it.defaultName, { vetted: null, authority: 'pure' });
+      // Stryker disable next-line StringLiteral: 上の注記のとおり等価 ('pure' は 'sink' / 'local' でないことだけを意味する)
       for (const n of it.names) moduleScope.set(n.alias ?? n.name, { vetted: null, authority: 'pure' });
     } else if (it.kind === 'extern') {
       for (const n of it.names) moduleScope.set(n, { vetted: null, authority: it.authority });
@@ -113,6 +119,10 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
   const signatureOf = (name: string): FnSignature | undefined => localFns.get(name) ?? table.fns.get(name);
 
   for (const it of module.items) {
+    // 定数の初期値は役割を持たない。role は 'sink' / 'gate' との比べにしか使われないので、'plain' の綴りや
+    // 器そのものを替えても答えは変わらない (等価) —— 答えは「定数の初期値からも参照できない」(M2) と
+    // 「定数の初期値の奥 (配列の中)」が留める。
+    // Stryker disable next-line StringLiteral,ObjectLiteral: 上の注記のとおり等価 (role は 'sink' / 'gate' でないことだけを意味する)
     if (it.kind === 'const') checkExpr(it.init, [moduleScope], { role: 'plain', returnVetted: null });
     if (it.kind !== 'fn') continue;
     const sig = localFns.get(it.name)!;
@@ -121,9 +131,10 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       if (dest === undefined) {
         report('M3', it.pos, `sink 関数 ${it.name} に行き先の引数がありません (第 1 引数を印の型で受けます)`);
       } else {
-        const t = dest.type?.text ?? '';
-        if (!table.vetted.has(t)) {
-          report('M3', dest.pos, `sink 関数 ${it.name} の行き先 ${dest.name} (第 1 引数) は印の型 1 つで受けます (在ったのは ${dest.type === null ? '型なし' : `\`${t}\``}) —— 素の値を行き先に受ける危ない口は作れません`);
+        if (dest.type === null) {
+          report('M3', dest.pos, `sink 関数 ${it.name} の行き先 ${dest.name} (第 1 引数) は印の型 1 つで受けます (在ったのは 型なし) —— 素の値を行き先に受ける危ない口は作れません`);
+        } else if (!table.vetted.has(dest.type.text)) {
+          report('M3', dest.pos, `sink 関数 ${it.name} の行き先 ${dest.name} (第 1 引数) は印の型 1 つで受けます (在ったのは \`${dest.type.text}\`) —— 素の値を行き先に受ける危ない口は作れません`);
         }
       }
     }
@@ -150,11 +161,23 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
 
   /** 式が運ぶ印 (無ければ null)。 */
   function provenance(e: Expr, scopes: readonly Map<string, Binding>[]): string | null {
-    if (e.kind === 'mint') return e.vetted;
-    if (e.kind === 'ident') return lookup(scopes, e.name)?.vetted ?? null;
-    if (e.kind === 'unary' && e.op === 'await') return provenance(e.operand, scopes);
-    if (e.kind === 'call' && e.callee.kind === 'ident') return signatureOf(e.callee.name)?.returnVetted ?? null;
-    return null;
+    // 式の種類ごとに 1 つの枝 (if を並べると、種類の判定を true にする変異体が他の種類で等価になり測れない)。
+    switch (e.kind) {
+      case 'mint':
+        return e.vetted;
+      case 'ident':
+        return lookup(scopes, e.name)?.vetted ?? null;
+      case 'unary':
+        // await だけが印を運ぶ (typeof / ! / - は別の値を作る)
+        return e.op === 'await' ? provenance(e.operand, scopes) : null;
+      case 'call':
+        // 名前で呼んだ関数の外形だけが印を名乗れる。メンバの呼び出し (u.trim()) の呼ぶ側は名前を持たず、
+        // その場合に名前を引いても undefined の鍵で何も当たらない (判定を true にする変異体は等価)。
+        // Stryker disable next-line ConditionalExpression: 上の注記のとおり等価 (メンバの呼ぶ側を名前で引いても外形は無い)
+        return e.callee.kind === 'ident' ? (signatureOf(e.callee.name)?.returnVetted ?? null) : null;
+      default:
+        return null;
+    }
   }
 
   function checkBlock(stmts: readonly Stmt[], scopes: Map<string, Binding>[], ctx: Ctx): void {
@@ -203,8 +226,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       case 'expr':
         checkExpr(s.expr, scopes, ctx);
         return;
-      case 'comment':
-        return;
+      // 'comment' は何も検めない (注記の文は名前ではない) —— 枝を書かずに switch を抜ける。
     }
   }
 
@@ -223,11 +245,8 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         }
         return;
       }
-      case 'string':
-      case 'number':
-      case 'regex':
-      case 'literal':
-        return;
+      // 'string' / 'number' / 'regex' / 'literal' は名前を持たないので何も検めない —— 枝を書かずに switch を抜ける
+      // (空の枝を書くと、その枝の label を消す変異体が等価になり、測っても何も分からない)。
       case 'array':
         e.items.forEach((x) => checkExpr(x, scopes, ctx));
         return;
@@ -247,6 +266,9 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         return;
       case 'arrow': {
         const inner = new Map<string, Binding>();
+        // arrow の本体は式なので、その中で引数へ代入する文は書けない —— 'local' の綴りは代入の判定にしか効かず、
+        // ここでは届かない (等価)。印 (vetted) のほうは「arrow の引数の印の型は、arrow の中で印を運ぶ」が留める。
+        // Stryker disable next-line StringLiteral: 上の注記のとおり等価 (arrow の引数へは代入できない)
         for (const p of e.params as readonly Param[]) inner.set(p.name, { vetted: vettedOf(p.type, table.vetted), authority: 'local' });
         checkExpr(e.body, [...scopes, inner], ctx);
         return;
@@ -265,6 +287,9 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       case 'call': {
         checkExpr(e.callee, scopes, ctx);
         e.args.forEach((x) => checkExpr(x, scopes, ctx));
+        // メンバの呼び出しは外形を持たない。この門を外しても、名前の無い呼ぶ側を引いて undefined が返り、
+        // 下の門で同じく抜ける (等価)。
+        // Stryker disable next-line ConditionalExpression: 上の注記のとおり等価 (名前の無い呼ぶ側は外形を引けない)
         if (e.callee.kind !== 'ident') return;
         const sig = signatureOf(e.callee.name);
         if (sig === undefined) return;
