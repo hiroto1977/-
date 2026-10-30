@@ -23,6 +23,7 @@ const EXPECTED = [
   'src/main/shellOpenGate.mamori',
   'src/renderer/vettedSinks.mamori',
   'src/shared/externalUrlGate.mamori',
+  'src/shared/imageUrlGate.mamori',
   'src/shared/vetted.mamori',
 ];
 

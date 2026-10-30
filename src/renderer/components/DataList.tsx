@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { safeRemoteImageSrc } from '../../shared/imageUrlGate';
+import { VettedImg } from './VettedImg';
 
 export interface DataListItem {
   key: string;
@@ -79,7 +80,7 @@ export function DataList({ items, empty }: Props) {
         return (
           <li key={item.key} className="data-list-item">
             {thumbSrc ? (
-              <img className="data-list-thumb" src={thumbSrc} alt="" loading="lazy" />
+              <VettedImg className="data-list-thumb" src={thumbSrc} alt="" loading="lazy" />
             ) : null}
             <div className="data-list-body">
               <div className="data-list-title">{item.title}</div>

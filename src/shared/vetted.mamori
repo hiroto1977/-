@@ -44,3 +44,6 @@ export vetted VettedShellPath = "shell-path";
 
 /// `exportTargetOrNull` を通った書き出し先 (書き出し根の中・正規化済みの絶対パス・拡張子が合う・安全な葉の名前 · パス 560 で足した)。
 export vetted VettedExportPath = "export-path";
+
+/// `safeImageSrc` / `safeRemoteImageSrc` を通った画像の取得先 (http(s) は解析後の形で認証情報なし・それ以外は `data:image/*` だけ · パス 560 で足した)。
+export vetted VettedImageSrc = "image-src";

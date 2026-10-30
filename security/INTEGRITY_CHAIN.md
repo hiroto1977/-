@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 388
+- ブロック数: 389
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `33bfb25a8cb7bcba60809ebcb17f1b2eb60af1c5a9ebce2a9a9da7fd5556a824`
-- 保護対象: 150 ファイル
+- 末尾(tip)ハッシュ: `4d7e9b00876f8058994625844c1579434694fd976462412f641a110efcae12fb`
+- 保護対象: 152 ファイル
 
 ## ブロック
 
@@ -401,6 +401,7 @@
 | 385 | `c916396010b91921` | `fb6ee92fe5b3411d` | `b21dd5819f09f2fe` | update integrity-chain.cjs,mamori.cjs,osSinks.mamori,osSinks.ts,shellOpenGate.mamori,shellOpenGate.ts |
 | 386 | `3157108e951aef10` | `b21dd5819f09f2fe` | `47321d862cb64cfb` | update parser.ts |
 | 387 | `b1bd8727097ae82f` | `47321d862cb64cfb` | `33bfb25a8cb7bcba` | update integrity-chain.cjs,exportSink.mamori,exportSink.ts,checker.ts,vetted.mamori,vetted.ts |
+| 388 | `8dd8099cf6b2c1a1` | `33bfb25a8cb7bcba` | `4d7e9b00876f8058` | update integrity-chain.cjs,VettedImg.tsx,imageUrlGate.mamori,imageUrlGate.ts,vetted.mamori,vetted.ts |
 
 ## 保護対象ファイル
 
@@ -487,6 +488,7 @@
 - `src/main/windowOpen.ts`
 - `src/main/windowPrefs.ts`
 - `src/preload/preload.ts`
+- `src/renderer/components/VettedImg.tsx`
 - `src/renderer/data/assistantMarkdown.ts`
 - `src/renderer/data/localWrite.ts`
 - `src/renderer/data/recordCipher.ts`
@@ -527,6 +529,7 @@
 - `src/shared/externalUrlGate.ts`
 - `src/shared/headerValue.ts`
 - `src/shared/httpLimits.ts`
+- `src/shared/imageUrlGate.mamori`
 - `src/shared/imageUrlGate.ts`
 - `src/shared/inputCeiling.ts`
 - `src/shared/isoDate.ts`

@@ -160,6 +160,9 @@ const PROTECTED = [
   // 書き出しのファイル書き込みの関門と口の組 (パス 560 で Mamori へ移した · SINK_LEDGER の typed)。
   'src/main/clients/exportSink.mamori',
   'src/main/clients/exportSink.ts',
+  // 画像の取得先の関門 (Mamori) と <img> の唯一の口 (パス 560 · SINK_LEDGER の typed)。生成物 imageUrlGate.ts は既に保護対象。
+  'src/shared/imageUrlGate.mamori',
+  'src/renderer/components/VettedImg.tsx',
   'src/shared/mamori/ast.ts',
   'src/shared/mamori/parser.ts',
   'src/shared/mamori/checker.ts',

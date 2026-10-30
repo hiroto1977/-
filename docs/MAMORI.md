@@ -111,12 +111,15 @@ export sink fn openExternalVetted(url: VettedExternalUrl) -> Promise<void> {
 | `src/main/shellOpenGate.mamori` | `src/main/shellOpenGate.ts` | gate: OS に開かせるパスの関門 |
 | `src/main/osSinks.mamori` | `src/main/osSinks.ts` | sink: electron の `shell` の 3 つの口 |
 | `src/renderer/vettedSinks.mamori` | `src/renderer/vettedSinks.ts` | sink: ブラウザ版の `window.open` |
+| `src/shared/imageUrlGate.mamori` | `src/shared/imageUrlGate.ts` | gate: 画像の取得先 (`safeImageSrc` / `safeRemoteImageSrc` → `VettedImageSrc`)。口は JSX の部品 `src/renderer/components/VettedImg.tsx` で、言語が JSX を持たないので TypeScript の型が守る |
 | `src/main/clients/exportSink.mamori` | `src/main/clients/exportSink.ts` | gate + sink: 書き出しのファイル書き込み (`exportTargetOrNull` → `writeExportFileVetted` · 書き手 4 本が通る) |
 
 残りの TypeScript は Mamori で書いた gate / sink を呼ぶ側で、呼ぶ側には TypeScript の型の印が掛かる
 (パス 559)。書き出しのファイル書き込みはパス 560 で gate と sink の組として移し、pending の天井を 4 → 3 へ下げた。
-**次に移すなら**、まだ素の `string` を受けている危ない口 (`SINK_LEDGER` の pending 3 本 —— `<a href>`・
-`<img src>`・fetch の送り先) を、同じく gate と sink の組として Mamori へ移す。移すたびに pending の天井を下げる。
+続けて `<img src>` を移した (関門 `imageUrlGate` を Mamori へ・口は印 `VettedImageSrc` しか受けない部品 `VettedImg` 1 つ —— 第三者の
+応答 (DataList / StatusBar) も自分で組んだ data: URL (TemplatesPage / LibraryPage) も同じ関門を通る)。天井は 3 → 2。
+**次に移すなら**、まだ素の `string` を受けている危ない口 (`SINK_LEDGER` の pending 2 本 —— `<a href>`・
+fetch の送り先) を、同じく gate と sink の組として移す。移すたびに pending の天井を下げる。
 
 ## 限界 (正直に書く)
 
@@ -124,7 +127,7 @@ export sink fn openExternalVetted(url: VettedExternalUrl) -> Promise<void> {
   `shell` を直接呼んだりする道は、TypeScript の側の検査 (`vettedTypes.test.ts` の census・`lint:forbidden`) が塞ぐ。
 - 変換した TypeScript は `tsc` が検査するが、実行時の守りは今までどおり**関門の中身**そのものである。
   Mamori が止めるのは「関門を飛ばす書き方」で、関門の判定の誤りは関門の検査 (変異検査 100% の対象) が見る。
-- 言語は 0.1 で、守りの層を書くのに要る構文しか持たない (ループ・クラス・オブジェクトの字面は無い)。
+- 言語は 0.1 で、守りの層を書くのに要る構文しか持たない (ループ・クラス・オブジェクトの字面は無い)。**JSX も無い**ので、`<img>` の口 (`VettedImg.tsx`) は TypeScript で書き、守りは型の印と census (素の `<img` はこの部品の外に無い) が持つ。
   足すときは、その構文が来歴の規則を外す道にならないかを先に考える (`as` を入れなかったのと同じ理由)。
 
 ## 道具

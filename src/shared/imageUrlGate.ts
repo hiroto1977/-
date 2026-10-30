@@ -1,4 +1,6 @@
-/*
+// 生成物 —— src/shared/imageUrlGate.mamori から Mamori のコンパイラが組んだ。手で編集しない (`npm run mamori:build`)。
+// 言語の仕様は docs/MAMORI.md。生成物が元と食い違えば src/shared/mamori/__tests__/mamoriGenerated.test.ts が落ちる。
+/**
  * 第三者由来の画像 URL の関門 — スキーム検証と、沈み先ごとの正しい包み方。
  *
  * **なぜ `src/shared/` に居るか**: 2026-08-24 に数えたら、この関門だけが
@@ -16,7 +18,9 @@
  * (同じ形は `exportPaths.ts` と `frameGuard.ts` で既に踏んでいる ——
  *  どちらも「壁なのに測られていなかった」。名簿はそのために在る。)
  */
+
 import { isPrivateOrReservedTarget } from './privateTarget';
+import type { VettedImageSrc } from './vetted';
 
 /**
  * 第三者 API 由来の画像 URL を `https:` / `http:` / `data:image/*` に限定する。
@@ -118,30 +122,28 @@ import { isPrivateOrReservedTarget } from './privateTarget';
  *
  * 認証情報の側は迷う余地が無い (authority に資格情報を持つ正当な画像 URL は無い)。
  */
-export function safeImageSrc(url: unknown): string | undefined {
-  /*
-   * **文字列でなければ落とす** (2026-09-22 · パス 410)。
-   *
-   * 直す前の宣言は `url: string | undefined | null` で、`if (!url)` は
-   * その型を信じて書かれていた。ところが**ここへ来る値の大半は第三者の
-   * 応答**で、その型は `jsonFetch<T>` のキャストが作った見せかけである
-   * (canva は `d.thumbnail?.url ?? ''` と書くが、`??` は null / undefined
-   * しか受けないので `{url: 42}` はそのまま通る)。
-   *
-   * 実測 (2026-09-22 · 直す前): `safeImageSrc(42)` / `(true)` / `({})` /
-   * `(['https://x/y.png'])` は **4 形とも `url.replace is not a function` で
-   * 投げ**、実物の `fetchCanvaSnapshot` に `thumbnail: {url: 42}` を返すと
-   * **Canva の画面が丸ごと落ちた**。
-   *
-   * ★ **ここが funnel なので、ここに床を置く** —— この関門は
-   * `DataList` の thumbnail と `StatusBar` の avatar、つまり**全 76 画面**の
-   * 第三者の画像 URL が通る 1 つである (`jpy` の docblock と同じ理由)。
-   * 境界 (client) 側の型の確かめはそれとして要るが、**次に 1 つ足された
-   * 呼び手が確かめ忘れた日**に効くのはこちらである。
-   *
-   * 空文字は専用の分岐を持たない —— 下の 2 つのどちらにも当たらず `undefined` へ落ちる
-   * (`imageUrlGate.test.ts` が `safeImageSrc('')` を留める)。
-   */
+export function safeImageSrc(url: unknown): VettedImageSrc | undefined {
+  // **文字列でなければ落とす** (2026-09-22 · パス 410)。
+  //
+  // 直す前の宣言は `url: string | undefined | null` で、`if (!url)` は
+  // その型を信じて書かれていた。ところが**ここへ来る値の大半は第三者の
+  // 応答**で、その型は `jsonFetch<T>` のキャストが作った見せかけである
+  // (canva は `d.thumbnail?.url ?? ''` と書くが、`??` は null / undefined
+  // しか受けないので `{url: 42}` はそのまま通る)。
+  //
+  // 実測 (2026-09-22 · 直す前): `safeImageSrc(42)` / `(true)` / `({})` /
+  // `(['https://x/y.png'])` は **4 形とも `url.replace is not a function` で
+  // 投げ**、実物の `fetchCanvaSnapshot` に `thumbnail: {url: 42}` を返すと
+  // **Canva の画面が丸ごと落ちた**。
+  //
+  // ★ **ここが funnel なので、ここに床を置く** —— この関門は
+  // `DataList` の thumbnail と `StatusBar` の avatar、つまり**全 76 画面**の
+  // 第三者の画像 URL が通る 1 つである (`jpy` の docblock と同じ理由)。
+  // 境界 (client) 側の型の確かめはそれとして要るが、**次に 1 つ足された
+  // 呼び手が確かめ忘れた日**に効くのはこちらである。
+  //
+  // 空文字は専用の分岐を持たない —— 下の 2 つのどちらにも当たらず `undefined` へ落ちる
+  // (`imageUrlGate.test.ts` が `safeImageSrc('')` を留める)。
   if (typeof url !== 'string') return undefined;
   const normalized = url.replace(/[\t\n\r]/g, '').trim();
   if (/^https?:\/\//i.test(normalized)) {
@@ -154,10 +156,10 @@ export function safeImageSrc(url: unknown): string | undefined {
     // `externalUrlGate` と同じ判断: 本当の送り先を見せかけで隠す形を落とす。
     if (parsed.username !== '' || parsed.password !== '') return undefined;
     // 解析後の形を返す —— これで「調べた文字列」と「取りに行く文字列」が一致する。
-    return parsed.toString();
+    return parsed.toString() as VettedImageSrc;
   }
   // `data:image/<subtype>` のみ。`;base64,` でも `,` 直結でも可。
-  if (/^data:image\/[a-z0-9.+-]+[;,]/i.test(normalized)) return normalized;
+  if (/^data:image\/[a-z0-9.+-]+[;,]/i.test(normalized)) return normalized as VettedImageSrc;
   return undefined;
 }
 
@@ -176,7 +178,7 @@ export function safeImageSrc(url: unknown): string | undefined {
  * 自分で打った値 (アシスタントの背景画像) には掛けない —— `safeCssUrl` は
  * `safeImageSrc` を読む。理由は上の docblock「パス 300 で閉じた」。
  */
-export function safeRemoteImageSrc(url: unknown): string | undefined {
+export function safeRemoteImageSrc(url: unknown): VettedImageSrc | undefined {
   const src = safeImageSrc(url);
   // Stryker disable next-line ConditionalExpression: `src` が undefined のとき、次の行の `/^https?:/i.test(src)` は
   // 'undefined' と読んで一致せず `return src` (= undefined) へ落ちるので、この早期 return の有無で答えは変わらない
@@ -207,5 +209,5 @@ export function safeCssUrl(url: unknown): string | undefined {
   if (src === undefined) return undefined;
   // 置換は関数形にする。文字列形だと `$&` が特別扱いされる
   // (R2-13 で同じ足元を掬われている)。
-  return `url("${src.replace(/["\\]/g, (c) => `\\${c}`)}")`;
+  return 'url("' + src.replace(/["\\]/g, (c) => '\\' + c) + '")';
 }
