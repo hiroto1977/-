@@ -192,29 +192,30 @@ function testFilesMentioning(name) {
  * 書き換えた状態で `vitest related <書き換えたファイル>` を走らせ、落ちた検査の場所と題名を出す。
  * 鳴る検査が在ればそれを台帳の alsoRegressions に名指す。無ければ検査を足す —— その穴は今、何にも見られていない。
  */
-function triage(ablations, args) {
+function triage(ablations, ledger, args) {
   const chosen = ablations.filter((a) => args.only !== null && (args.only.has(a.threat) || args.only.has(a.id)));
   if (chosen.length === 0) {
     console.error('triage は --only で書き換えを名指す');
     return 2;
   }
+  const threats = new Map(ledger.threats.map((t) => [t.id, t]));
   const found = [];
   for (const a of chosen) {
     const abs = path.join(WORK, a.file);
     const original = fs.readFileSync(abs, 'utf8');
-    const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'ablation-triage-')), 'report.json');
+    let failed = [];
+    let scope = 'sibling';
     try {
       fs.writeFileSync(abs, applyEdits(original, editsOf(a)));
-      // `vitest related` は import の繋がりしか辿らない —— 検査が fs で読む YAML / JSON / SVG / 手順書は映らない
-      // (A-110 の pages.yml は「落ちた検査 0 件」と出た)。だから、そのファイルの名前を本文に持つ検査も走らせる。
-      const readers = testFilesMentioning(path.basename(a.file));
-      spawnSync('npx', ['vitest', 'related', a.file, ...readers, '--run', '--reporter=json', `--outputFile=${out}`], {
-        cwd: WORK,
-        env: { ...process.env, CI: '' },
-        encoding: 'utf8',
-        timeout: RUN_TIMEOUT_MS * 3,
-        maxBuffer: 64 * 1024 * 1024,
-      });
+      // 1 段目: 名指しの検査ファイルを丸ごと (隣の検査) —— 名指しが同じファイルの別の it を指し損ねている形が多い。
+      const files = [...new Set(regressionsOf(threats.get(a.threat)).map((r) => r.file))];
+      failed = failedTests(['vitest', 'run', ...files]);
+      // 2 段目: 鳴らなければ、そのファイルに繋がる検査と、名前を本文に持つ検査へ広げる。
+      // (`vitest related` は import の繋がりしか辿らない —— fs で読まれる YAML / JSON / SVG は名前で探す)
+      if (failed !== null && failed.length === 0) {
+        scope = 'related';
+        failed = failedTests(['vitest', 'related', a.file, ...testFilesMentioning(path.basename(a.file)), '--run']);
+      }
     } finally {
       fs.writeFileSync(abs, original);
     }
@@ -222,25 +223,39 @@ function triage(ablations, args) {
       console.error(`✗✗ ${a.file} を元へ戻せなかった —— 手で戻すこと`);
       return 2;
     }
-    let report = null;
-    try {
-      report = JSON.parse(fs.readFileSync(out, 'utf8'));
-    } catch {
-      report = null;
-    }
-    fs.rmSync(path.dirname(out), { recursive: true, force: true });
-    const failed = [];
-    for (const file of report?.testResults ?? []) {
-      for (const r of file.assertionResults ?? []) {
-        if (r.status === 'failed') failed.push({ file: path.relative(WORK, file.name), test: r.title, ancestors: r.ancestorTitles ?? [] });
-      }
-    }
-    found.push({ id: a.id, threat: a.threat, measured: report !== null, failed });
-    console.log(`${a.id} ${a.threat}: ${report === null ? '測れなかった' : `落ちた検査 ${failed.length} 件`}`);
-    for (const f of failed.slice(0, 8)) console.log(`   - ${f.file} :: ${f.test}`);
+    found.push({ id: a.id, threat: a.threat, scope, measured: failed !== null, failed: failed ?? [] });
+    console.log(`${a.id} ${a.threat}: ${failed === null ? '測れなかった' : `${scope === 'sibling' ? '名指しのファイルの中で' : '関係する検査全体で'}落ちた検査 ${failed.length} 件`}`);
+    for (const f of (failed ?? []).slice(0, 8)) console.log(`   - ${f.file} :: ${f.test}`);
   }
   if (args.json) fs.writeFileSync(args.json, JSON.stringify(found, null, 2) + '\n');
   return 0;
+}
+
+/** vitest を走らせ、落ちた検査 (場所と題名) を返す。報告が読めなければ null。 */
+function failedTests(argv) {
+  const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'ablation-triage-')), 'report.json');
+  spawnSync('npx', [...argv, '--reporter=json', `--outputFile=${out}`], {
+    cwd: WORK,
+    env: { ...process.env, CI: '' },
+    encoding: 'utf8',
+    timeout: RUN_TIMEOUT_MS * 3,
+    maxBuffer: 64 * 1024 * 1024,
+  });
+  let report = null;
+  try {
+    report = JSON.parse(fs.readFileSync(out, 'utf8'));
+  } catch {
+    report = null;
+  }
+  fs.rmSync(path.dirname(out), { recursive: true, force: true });
+  if (report === null) return null;
+  const failed = [];
+  for (const file of report.testResults ?? []) {
+    for (const r of file.assertionResults ?? []) {
+      if (r.status === 'failed') failed.push({ file: path.relative(WORK, file.name), test: r.title });
+    }
+  }
+  return failed;
 }
 
 /** 書き換えを順に当てる (どれも 1 回きり当たることは staticProblems が先に確かめている)。 */
@@ -393,7 +408,7 @@ function main(argv) {
   const ws = args.inPlace ? null : prepareWorkspace();
   if (ws !== null) WORK = ws.root;
   try {
-    return args.cmd === 'triage' ? triage(ablations, args) : runAll(ablations, ledger, args);
+    return args.cmd === 'triage' ? triage(ablations, ledger, args) : runAll(ablations, ledger, args);
   } finally {
     if (ws !== null) ws.cleanup();
     WORK = ROOT;
