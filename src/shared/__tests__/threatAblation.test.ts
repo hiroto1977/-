@@ -121,7 +121,7 @@ describe('書き換えの台帳 —— どれも今の守りにちょうど 1 �
   });
 
   it('被覆は床より下がらない (書き換えを消して測る数を減らさない)', () => {
-    expect(new Set(ablations.map((a) => a.threat)).size).toBeGreaterThanOrEqual(9);
+    expect(new Set(ablations.map((a) => a.threat)).size).toBeGreaterThanOrEqual(115);
   });
 });
 
