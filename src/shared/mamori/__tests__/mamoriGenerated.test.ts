@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync, existsSync } from 'node:fs';
+import { existsSync } from 'node:fs';
+import { readOriginalSource } from '../../__tests__/originalSource';
 import { join } from 'node:path';
 import { createRequire } from 'node:module';
 import { compileProject, formatDiagnostic } from '../compile';
@@ -25,7 +26,7 @@ const EXPECTED = [
 ];
 
 describe('Mamori の生成物 (threat: T-221)', () => {
-  const files = sources().map((p) => ({ path: p, source: readFileSync(join(ROOT, p), 'utf8') }));
+  const files = sources().map((p) => ({ path: p, source: readOriginalSource(join(ROOT, p)) }));
 
   it('★ 守りの層は Mamori で書いてある (母集団の床・黙って TypeScript へ戻らない)', () => {
     expect(files.map((f) => f.path)).toEqual(expect.arrayContaining(EXPECTED));
@@ -37,13 +38,13 @@ describe('Mamori の生成物 (threat: T-221)', () => {
     for (const [out, text] of r.outputs) {
       const abs = join(ROOT, out);
       expect(existsSync(abs), `${out} が無い (npm run mamori:build)`).toBe(true);
-      expect(readFileSync(abs, 'utf8'), `${out} が .mamori と食い違う —— 生成物を手で直さず npm run mamori:build`).toBe(text);
+      expect(readOriginalSource(abs), `${out} が .mamori と食い違う —— 生成物を手で直さず npm run mamori:build`).toBe(text);
     }
   });
 
   it('生成物は自分が生成物であることと元の道を名乗る', () => {
     for (const f of files) {
-      const ts = readFileSync(join(ROOT, f.path.replace(/\.mamori$/, '.ts')), 'utf8');
+      const ts = readOriginalSource(join(ROOT, f.path.replace(/\.mamori$/, '.ts')));
       expect(ts.startsWith(`// 生成物 —— ${f.path} から Mamori のコンパイラが組んだ。`)).toBe(true);
     }
   });

@@ -117,6 +117,8 @@ const REREAD_QUERY_LEDGER: Readonly<Record<string, string>> = {
  */
 const TS_LOADER_SCRIPTS: Readonly<Record<string, readonly string[]>> = {
   'build-ontology-md.cjs': ['render', 'loadRenderer', 'selfTest'],
+  // 2026-10-30 (パス 560): Mamori の CLI。.ts の読み手を登録するのは loadCompiler だけ (sources は走査だけ)。
+  'mamori.cjs': ['loadCompiler'],
 };
 
 /** 規則 5 の例外 —— 検査の中でその口を呼んでよい所。鍵は `ファイル → 関数`。**両方向**。 */
