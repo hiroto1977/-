@@ -220,7 +220,7 @@ function triage(ablations, ledger, args) {
   for (const a of chosen) {
     const abs = path.join(WORK, a.file);
     const original = fs.readFileSync(abs, 'utf8');
-    let failed = [];
+    let failed;
     let scope = 'sibling';
     try {
       fs.writeFileSync(abs, applyEdits(original, editsOf(a)));
@@ -258,7 +258,7 @@ function failedTests(argv) {
     timeout: RUN_TIMEOUT_MS * 3,
     maxBuffer: 64 * 1024 * 1024,
   });
-  let report = null;
+  let report;
   try {
     report = JSON.parse(fs.readFileSync(out, 'utf8'));
   } catch {
@@ -292,7 +292,7 @@ function runVitest(file, title) {
     // 1 回目で状態を消費する検査が「通った」に化ける (パス 501 の実測)。
     { cwd: WORK, env: { ...process.env, CI: '' }, encoding: 'utf8', timeout: RUN_TIMEOUT_MS, maxBuffer: 64 * 1024 * 1024 },
   );
-  let report = null;
+  let report;
   try {
     report = JSON.parse(fs.readFileSync(out, 'utf8'));
   } catch {

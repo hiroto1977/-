@@ -377,7 +377,7 @@ function deriveAblation() {
   const ledger = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'security', 'threat-ledger.json'), 'utf8'));
   const { ablations } = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'security', 'threat-ablations.json'), 'utf8'));
   const staticList = ablationStaticProblems(ablations, ledger, (rel) => fs.readFileSync(path.join(REPO_ROOT, rel), 'utf8'));
-  let summary = null;
+  let summary;
   try {
     summary = JSON.parse(fs.readFileSync(ABLATION_RESULT, 'utf8'));
   } catch {
