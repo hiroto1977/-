@@ -47,8 +47,11 @@ function shippedFiles(): { rel: string; code: string }[] {
   }));
 }
 
-/** 素の OS の口。どれも素の string を受ける。 */
-export const RAW_SINK = /\bshell\s*\.\s*(openExternal|openPath|showItemInFolder)\s*\(|\bwindow\s*\.\s*open\s*\(/g;
+/**
+ * 素の危ない口。どれも素の string を受ける。`writeExportFile` は書き出しのファイル書き込み (パス 560 で足した ——
+ * 定義の `function writeExportFile(` は呼び出しではないので数えない)。
+ */
+export const RAW_SINK = /\bshell\s*\.\s*(openExternal|openPath|showItemInFolder)\s*\(|\bwindow\s*\.\s*open\s*\(|(?<!function\s+)\bwriteExportFile\s*\(/g;
 
 /** 印を作る形 —— キャスト (`as Vetted…` / `as unknown as Vetted…`) と型の述語 (`is Vetted…`)。 */
 export const MINT = /\bas\s+(?:unknown\s+as\s+)?Vetted[A-Za-z]*\b|\bis\s+Vetted[A-Za-z]*\b/g;
@@ -57,12 +60,14 @@ export const MINT = /\bas\s+(?:unknown\s+as\s+)?Vetted[A-Za-z]*\b|\bis\s+Vetted[
 const SINK_WRAPPERS: Readonly<Record<string, number>> = {
   'main/osSinks.ts': 3,
   'renderer/vettedSinks.ts': 1,
+  'main/clients/exportSink.ts': 1,
 };
 
 /** 印を作ってよいファイルと、そこでの数 (どれも関門の `return` 1 か所)。 */
 const MINTERS: Readonly<Record<string, number>> = {
   'shared/externalUrlGate.ts': 1,
   'main/shellOpenGate.ts': 1,
+  'main/clients/exportSink.ts': 1,
 };
 
 function countBy(re: RegExp): Map<string, number> {
@@ -87,6 +92,9 @@ describe('型で守る: 素の OS の口は包みの中だけ (T-220)', () => {
     expect(hit('shell . openPath (p);')).toBe(1);
     expect(hit('shell.showItemInFolder(p);')).toBe(1);
     expect(hit("window.open(u, '_blank');")).toBe(1);
+    expect(hit('await writeExportFile(p, body);')).toBe(1);
+    expect(hit('export async function writeExportFile(\n  filePath: string,')).toBe(0);
+    expect(hit('await writeExportFileVetted(target, body);')).toBe(0);
     expect(hit('openExternalVetted(url); openWindowVetted(u);')).toBe(0);
     expect(hit('// かつて shell.openExternal(url) と書いていた\n')).toBe(0);
     expect(hit("const s = 'window.open(x)';")).toBe(0);
@@ -105,6 +113,8 @@ describe('型で守る: 印を作るのは関門の中だけ (T-220)', () => {
     expect(gate).toMatch(/return\s+href\s+as\s+VettedExternalUrl;/);
     const shell = stripNonCode(readOriginalSource(join(SRC, 'main/shellOpenGate.ts')));
     expect(shell).toMatch(/return\s+real\s+as\s+VettedShellPath;/);
+    const exp = stripNonCode(readOriginalSource(join(SRC, 'main/clients/exportSink.ts')));
+    expect(exp).toMatch(/return\s+filePath\s+as\s+VettedExportPath;/);
   });
 
   it('標本: 針はキャストと述語に当たり、型の import・引数の注釈には当たらない', () => {
@@ -181,12 +191,7 @@ export const SINK_LEDGER: readonly SinkRow[] = [
   { sink: 'shell.openPath', state: 'typed', by: 'src/main/osSinks.ts', why: 'VettedShellPath だけを受ける (openPathVetted)。Windows では関連付け次第で実行される口。' },
   { sink: 'shell.showItemInFolder', state: 'typed', by: 'src/main/osSinks.ts', why: 'VettedShellPath だけを受ける (showItemInFolderVetted)。' },
   { sink: 'window.open', state: 'typed', by: 'src/renderer/vettedSinks.ts', why: 'VettedExternalUrl だけを受ける (openWindowVetted)。noopener,noreferrer を包みが固定する。' },
-  {
-    sink: '書き出しのファイル書き込み (writeExportFile)',
-    state: 'pending',
-    by: 'src/main/clients/exportPaths.ts',
-    why: '関門 isSafeExportPath は真偽を返す形で、書き込み口 writeExportFile が実行時に閉じ込め (assertExportTargetContained) を自分で掛ける。印つきの型へ移すには 4 つの書き手の関門の形を揃える要がある。',
-  },
+  { sink: 'writeExportFile', state: 'typed', by: 'src/main/clients/exportSink.ts', why: 'VettedExportPath だけを行き先に受ける (writeExportFileVetted · パス 560 で Mamori へ移した)。書き手 4 本 (templates / teamradar / stocks / business) は exportTargetOrNull の戻り値を渡す。実行時の閉じ込めは writeExportFile がそのまま掛ける。' },
   {
     sink: '外部リンクの <a href>',
     state: 'pending',
@@ -208,12 +213,12 @@ export const SINK_LEDGER: readonly SinkRow[] = [
 ];
 
 /** pending の天井。**下げるのが正しい向き** —— 型で守る口が増えたら下げる。 */
-const PENDING_CEILING = 4;
+const PENDING_CEILING = 3;
 
 describe('型で守る: 精度の台帳 (ratchet · T-220)', () => {
   it('★ 印で守る口は台帳の typed と一致する (包みの数と両方向)', () => {
     const typed = SINK_LEDGER.filter((r) => r.state === 'typed');
-    expect(typed.map((r) => r.sink).sort()).toEqual(['shell.openExternal', 'shell.openPath', 'shell.showItemInFolder', 'window.open']);
+    expect(typed.map((r) => r.sink).sort()).toEqual(['shell.openExternal', 'shell.openPath', 'shell.showItemInFolder', 'window.open', 'writeExportFile']);
     const perWrapper = new Map<string, number>();
     for (const r of typed) perWrapper.set(r.by.replace(/^src\//, ''), (perWrapper.get(r.by.replace(/^src\//, '')) ?? 0) + 1);
     expect(Object.fromEntries(perWrapper)).toEqual(SINK_WRAPPERS);

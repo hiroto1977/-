@@ -18,6 +18,7 @@ const { sources } = req(join(ROOT, 'scripts', 'mamori.cjs')) as { sources: () =>
 
 /** Mamori で書いた守りの層。増やすのは正しい向き (減ったら鳴る)。 */
 const EXPECTED = [
+  'src/main/clients/exportSink.mamori',
   'src/main/osSinks.mamori',
   'src/main/shellOpenGate.mamori',
   'src/renderer/vettedSinks.mamori',

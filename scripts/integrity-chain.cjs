@@ -157,6 +157,9 @@ const PROTECTED = [
   'src/main/osSinks.mamori',
   'src/renderer/vettedSinks.mamori',
   'src/renderer/vettedSinks.ts',
+  // 書き出しのファイル書き込みの関門と口の組 (パス 560 で Mamori へ移した · SINK_LEDGER の typed)。
+  'src/main/clients/exportSink.mamori',
+  'src/main/clients/exportSink.ts',
   'src/shared/mamori/ast.ts',
   'src/shared/mamori/parser.ts',
   'src/shared/mamori/checker.ts',

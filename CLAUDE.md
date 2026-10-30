@@ -1866,7 +1866,7 @@ The browser target adds: `web-shim.ts` (a `window.serviceHub` polyfill imported 
   新しく足すなら、印を持たせるか、`SINK_LEDGER` に理由と守り手を書いて pending の天井を上げる差分をレビューに出す。
   型の守りの対照は `@ts-expect-error` で書く (`npm run typecheck` が検査する —— 守りが外れると「不要な @ts-expect-error」で落ちる)。
 - **守りの層は Mamori で書く —— `.ts` の生成物を手で直さない** (2026-10-30 · パス 560 · T-221)。
-  `src/shared/vetted.ts` / `externalUrlGate.ts` / `src/main/shellOpenGate.ts` / `osSinks.ts` / `src/renderer/vettedSinks.ts` は
+  `src/shared/vetted.ts` / `externalUrlGate.ts` / `src/main/shellOpenGate.ts` / `osSinks.ts` / `src/renderer/vettedSinks.ts` / `src/main/clients/exportSink.ts` は
   隣の `.mamori` から `npm run mamori:build` で組む生成物である (手で直すと `mamoriGenerated.test.ts` が落ちる)。
   関門は `gate fn` (印は `mint` でだけ作る)、危ない口は `extern sink` + `sink fn` (印の型しか受けない) で書く。
   `as` / `any` / 宣言していない外の名前は Mamori に無い。新しい危ない口を足すなら、gate と sink の組として Mamori で書き、

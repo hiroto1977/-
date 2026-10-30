@@ -41,3 +41,6 @@ export vetted VettedExternalUrl = "external-url";
 
 /// `shellTargetOrNull` を通った実体パス (書き出し先の中・実行され得ない拡張子・安全な葉の名前)。
 export vetted VettedShellPath = "shell-path";
+
+/// `exportTargetOrNull` を通った書き出し先 (書き出し根の中・正規化済みの絶対パス・拡張子が合う・安全な葉の名前 · パス 560 で足した)。
+export vetted VettedExportPath = "export-path";

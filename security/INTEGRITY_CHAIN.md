@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 387
+- ブロック数: 388
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `47321d862cb64cfb6f33da2b9a09d274debb8ffe5be8d475c25bd3dfd4d52087`
-- 保護対象: 148 ファイル
+- 末尾(tip)ハッシュ: `33bfb25a8cb7bcba60809ebcb17f1b2eb60af1c5a9ebce2a9a9da7fd5556a824`
+- 保護対象: 150 ファイル
 
 ## ブロック
 
@@ -400,6 +400,7 @@
 | 384 | `38f3bd8768a4a749` | `31eea771527ba19b` | `fb6ee92fe5b3411d` | update integrity-chain.cjs,main.ts,oauth.ts,osSinks.ts,shellOpenGate.ts,windowOpen.ts |
 | 385 | `c916396010b91921` | `fb6ee92fe5b3411d` | `b21dd5819f09f2fe` | update integrity-chain.cjs,mamori.cjs,osSinks.mamori,osSinks.ts,shellOpenGate.mamori,shellOpenGate.ts |
 | 386 | `3157108e951aef10` | `b21dd5819f09f2fe` | `47321d862cb64cfb` | update parser.ts |
+| 387 | `b1bd8727097ae82f` | `47321d862cb64cfb` | `33bfb25a8cb7bcba` | update integrity-chain.cjs,exportSink.mamori,exportSink.ts,checker.ts,vetted.mamori,vetted.ts |
 
 ## 保護対象ファイル
 
@@ -466,6 +467,8 @@
 - `src/main/atomicWrite.ts`
 - `src/main/clients/assistant.ts`
 - `src/main/clients/exportPaths.ts`
+- `src/main/clients/exportSink.mamori`
+- `src/main/clients/exportSink.ts`
 - `src/main/clients/types.ts`
 - `src/main/eraseAll.ts`
 - `src/main/fileRequestGate.ts`

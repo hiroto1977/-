@@ -8,7 +8,7 @@
  * | --- | --- |
  * | M1 印は gate で作る | `mint K(…)` は `gate fn` の中にだけ置け、その関数の戻り値の型が `K` を名乗る |
  * | M2 危ない口は sink で呼ぶ | `extern sink` で宣言した値は `sink fn` の中でだけ参照できる |
- * | M3 sink は印しか受けない | `sink fn` の引数の型はどれも宣言した印の型 1 つ (素の `string` を受ける sink を作れない) |
+ * | M3 sink の行き先は印 | `sink fn` の**第 1 引数 (行き先)** の型は宣言した印の型 1 つ (素の `string` を行き先に受ける sink を作れない)。2 つ目からは送る中身で、型は問わない (パス 560 で「全部の引数」から精密にした —— 書き出しの sink は本文を受ける) |
  * | M4 印の型の引数には印つきの値だけ | 印の型を受ける関数 (sink も gate も) へは、印を持つ値しか渡せない —— 文字列の字面・素の引数・外の値は断る |
  * | M5 印つきの変数を素の値で上書きしない | `let u = 関門(x); u = '…';` の形 (印の洗浄) を断る |
  * | M6 外の名前は宣言する | 使ってよい外の名前は `use` / `extern` で宣言した物と、副作用の判断を持たない組み込み (`URL` / `Set` ほか) だけ。`window` / `fetch` / `process` / `require` / `globalThis` は宣言しなければ使えない |
@@ -117,10 +117,13 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     if (it.kind !== 'fn') continue;
     const sig = localFns.get(it.name)!;
     if (it.role === 'sink') {
-      for (const p of it.params) {
-        const t = p.type?.text ?? '';
+      const dest = it.params[0];
+      if (dest === undefined) {
+        report('M3', it.pos, `sink 関数 ${it.name} に行き先の引数がありません (第 1 引数を印の型で受けます)`);
+      } else {
+        const t = dest.type?.text ?? '';
         if (!table.vetted.has(t)) {
-          report('M3', p.pos, `sink 関数 ${it.name} の引数 ${p.name} は印の型 1 つで受けます (在ったのは ${p.type === null ? '型なし' : `\`${t}\``}) —— 素の値を受ける危ない口は作れません`);
+          report('M3', dest.pos, `sink 関数 ${it.name} の行き先 ${dest.name} (第 1 引数) は印の型 1 つで受けます (在ったのは ${dest.type === null ? '型なし' : `\`${t}\``}) —— 素の値を行き先に受ける危ない口は作れません`);
         }
       }
     }

@@ -103,6 +103,8 @@
 /src/main/osSinks.mamori @hiroto1977
 /src/renderer/vettedSinks.mamori @hiroto1977
 /src/renderer/vettedSinks.ts @hiroto1977
+/src/main/clients/exportSink.mamori @hiroto1977
+/src/main/clients/exportSink.ts @hiroto1977
 /src/shared/mamori/ @hiroto1977
 /src/main/stateFile.ts @hiroto1977
 /src/main/userPresence.ts @hiroto1977

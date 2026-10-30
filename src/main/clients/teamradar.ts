@@ -4,7 +4,9 @@ import { countChars } from '../../shared/inputCeiling';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import type { ActionContext, ActionMap, FetchContext } from './types';
-import { isSafeExportPath, writeExportFile } from './exportPaths';
+import { isSafeExportPath } from './exportPaths';
+import { exportTargetOrNull, writeExportFileVetted } from './exportSink';
+import type { VettedExportPath } from '../../shared/vetted';
 import { atRestUnreadableReason, sealJsonDocument, unsealJsonDocument } from '../atRest';
 import { atomicTmpPathOf } from '../atomicWrite';
 import { createWriteChain } from '../writeChain';
@@ -244,7 +246,7 @@ interface ExportSvgPayload {
 
 export interface ExportSvgDeps {
   fetchSnapshot?: (ctx: FetchContext) => Promise<TeamRadarSnapshot>;
-  writeFile?: (p: string, c: string) => Promise<void>;
+  writeFile?: (p: VettedExportPath, c: string) => Promise<void>;
   mkdir?: (p: string) => Promise<void>;
   now?: () => Date;
 }
@@ -257,7 +259,8 @@ export async function exportTeamRadarSvgImpl(
   const home = os.homedir();
   const filePath =
     typeof customPath === 'string' && customPath.length > 0 ? customPath : defaultSvgExportPath();
-  if (!isSafeSvgExportPath(filePath, home)) {
+  const target = exportTargetOrNull(filePath, home, '.svg');
+  if (target === null) {
     throw new Error('team-radar svg path must be a .svg file under the user home directory');
   }
   // **画面が送ってきた図を描く。** 判定は保存と同じ 1 つ (`validateTeamRadarState`) を
@@ -273,9 +276,9 @@ export async function exportTeamRadarSvgImpl(
     : 'チームレーダーチャート';
   const svg = renderTeamRadarSvg(snap, { title: titleStr });
   const mkdirFn = deps.mkdir ?? ((dir: string) => fs.mkdir(dir, { recursive: true }).then(() => undefined));
-  const writeFn = deps.writeFile ?? writeExportFile;
-  await mkdirFn(path.dirname(filePath));
-  await writeFn(filePath, svg);
+  const writeFn = deps.writeFile ?? writeExportFileVetted;
+  await mkdirFn(path.dirname(target));
+  await writeFn(target, svg);
   const generatedAt = (deps.now ?? (() => new Date()))().toISOString();
   return { path: filePath, bytes: Buffer.byteLength(svg), generatedAt };
 }

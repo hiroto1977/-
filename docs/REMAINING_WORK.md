@@ -10,9 +10,11 @@
 - **検査**: `mamoriRules.test.ts` (41 件 —— 規則ごとに破るプログラムをコンパイルして狙った番号で断ること) / `mamoriGenerated.test.ts` (3 件 —— 守りの層 5 本が Mamori で書いてあること・生成物が元と 1 byte も違わないこと)。
 - **対照 8 方向すべて鳴る**: M1 を外す ❌2 / M2 ❌3 / M3 ❌3 / M4 ❌4 / M5 ❌1 / M6 ❌9 / `as`・`any` を許す ❌2 / 生成物を手で書き換える (認証情報つき URL の門を消す) → 検査 ❌1 + `mamori:check` exit 1。
 - **台帳**: 整合性チェーン (元 5 本・コンパイラ 5 本・CLI・`vettedSinks.ts` を保護対象へ —— コンパイラの改竄は一致の検査に映らないため)・CODEOWNERS・`lint:charset` に `.mamori`・`stryker.config.json` に `vettedSinks.ts`・`lint:mutation-scope` の KNOWN_UNMEASURED にコンパイラ 5 本 (理由つき)・脅威台帳 T-221・法則 `security-rule-in-the-language`。
+- **続き: 書き出しのファイル書き込みを Mamori の gate と sink の組へ** (`src/main/clients/exportSink.mamori` → `.ts`)。書き手 4 本 (templates / teamradar / stocks / business) は真偽の関門 (`isSafeExportPath`) で調べてから**同じ素の string** を `writeExportFile` へ渡しており、検査を飛ばして書く 1 行は `tsc` を通った。今は `exportTargetOrNull` (gate · 判定は `isSafeExportPath` を 1 字も変えずに使う) が印 `VettedExportPath` を返し、`writeExportFileVetted` (sink) は印つきの行き先しか受けない。書き手の `deps.writeFile` の型も印つきへ。そのために **M3 を「最初の引数 (行き先) が印の型」へ精密にした** (本文は第 2 引数で型を問わない · 引数の無い sink は断る · 標本 3 件)。`SINK_LEDGER` は typed 4 → **5**・pending 4 → **3**・天井 **3**。census は `RAW_SINK` に `writeExportFile(` (定義は数えない)・`SINK_WRAPPERS` / `MINTERS` に `exportSink.ts`。対照 3 方向すべて鳴る (書き手が素の string を渡す → tsc / 書き手が `as VettedExportPath` で偽造 → census ❌1 / 書き手が素の `writeExportFile` を呼ぶ → census ❌1)。検査 `main/clients/__tests__/exportSink.test.ts` (判定は `isSafeExportPath` と 1 つずつ一致・口は何も足さない・型の陰性対照)。整合性チェーン block #387・CODEOWNERS・`mutate` に `exportSink.ts`。
+- **変異検査** (パス 559 / 560 の口と関門 5 本 —— `externalUrlGate.ts` / `shellOpenGate.ts` / `osSinks.ts` / `vettedSinks.ts` / `windowOpen.ts`): **100.00% (Killed 87 / 生存 0 / 未到達 0・13 分 12 秒)** —— 生成物に変えても関門の検査は 1 つも緩んでいない。
 - **残した物 (正直に)**:
   1. **コンパイラの変異検査は未測定** —— 測って 100% にしてから `mutate` へ入れる。
-  2. **書き直したのは守りの層の 5 本だけ** —— 残り約 570 ファイルは TypeScript のまま (呼ぶ側には T-220 の型の印が掛かる)。次は `SINK_LEDGER` の pending 4 本 (書き出しのファイル書き込み・`<a href>`・`<img src>`・fetch の送り先) を gate と sink の組として Mamori へ移し、移すたびに天井を下げる。
+  2. **書き直したのは守りの層の 6 本だけ** —— 残り約 570 ファイルは TypeScript のまま (呼ぶ側には T-220 の型の印が掛かる)。次は `SINK_LEDGER` の pending 3 本 (`<a href>`・`<img src>`・fetch の送り先) を gate と sink の組として Mamori へ移し、移すたびに天井を下げる。`<a href>` / `<img src>` は JSX の属性が React の型 (string) を受けるので、印つきの値を描く部品 (`<ExternalLink url={Vetted}>` 等) を sink として置く形になる。
   3. 言語は 0.1 で、ループ・クラス・オブジェクトの字面を持たない (守りの層を書くのに要らなかった)。足すときは、その構文が来歴の規則を外す道にならないかを先に考える。
 
 ## パス 559 (型で守る —— 関門だけが作る印つきの型と、OS の口の包み) (2026-10-30)

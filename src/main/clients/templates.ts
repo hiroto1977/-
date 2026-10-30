@@ -9,7 +9,9 @@ import * as fs from 'node:fs/promises';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import type { ActionContext, ActionMap, FetchContext } from './types';
-import { isSafeExportPath, writeExportFile } from './exportPaths';
+import { isSafeExportPath } from './exportPaths';
+import { exportTargetOrNull, writeExportFileVetted } from './exportSink';
+import type { VettedExportPath } from '../../shared/vetted';
 import type { ActionData, ExportFileResult } from '../../shared/actionData';
 
 /**
@@ -320,7 +322,7 @@ interface ExportPayload {
 }
 
 export interface ExportDeps {
-  writeFile?: (p: string, c: string) => Promise<void>;
+  writeFile?: (p: VettedExportPath, c: string) => Promise<void>;
   mkdir?: (p: string) => Promise<void>;
   now?: () => Date;
 }
@@ -338,14 +340,15 @@ export async function exportTemplateImpl(
     typeof customPath === 'string' && customPath.length > 0
       ? customPath
       : defaultExportPath(templateId);
-  if (!isSafeSvgExportPath(filePath, home)) {
+  const target = exportTargetOrNull(filePath, home, '.svg');
+  if (target === null) {
     throw new Error('template export path must be a .svg file under the user home directory');
   }
   const svg = renderTemplate(templateId, params);
   const mkdirFn = deps.mkdir ?? ((dir: string) => fs.mkdir(dir, { recursive: true }).then(() => undefined));
-  const writeFn = deps.writeFile ?? writeExportFile;
-  await mkdirFn(path.dirname(filePath));
-  await writeFn(filePath, svg);
+  const writeFn = deps.writeFile ?? writeExportFileVetted;
+  await mkdirFn(path.dirname(target));
+  await writeFn(target, svg);
   const generatedAt = (deps.now ?? (() => new Date()))().toISOString();
   return { path: filePath, bytes: Buffer.byteLength(svg), generatedAt };
 }

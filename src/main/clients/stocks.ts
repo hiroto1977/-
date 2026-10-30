@@ -45,7 +45,9 @@ import { AI_CHAT_TIMEOUT_MS } from '../../shared/ai/chat';
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { isSafeExportPath, writeExportFile } from './exportPaths';
+import { isSafeExportPath } from './exportPaths';
+import { exportTargetOrNull, writeExportFileVetted } from './exportSink';
+import type { VettedExportPath } from '../../shared/vetted';
 import { atomicTmpPathOf } from '../atomicWrite';
 import { createWriteChain } from '../writeChain';
 import { AI_PROVIDERS } from '../../shared/ai/providers';
@@ -1932,7 +1934,7 @@ interface ExportPayload {
 /** Optional dependency-injection seam for tests. */
 export interface ExportDeps {
   fetchSnapshot?: (ctx: FetchContext) => Promise<StocksSnapshot>;
-  writeFile?: (filePath: string, content: string) => Promise<void>;
+  writeFile?: (filePath: VettedExportPath, content: string) => Promise<void>;
   now?: () => Date;
 }
 
@@ -2039,7 +2041,8 @@ export async function exportDashboardImpl(
   const home = os.homedir();
   const filePath =
     typeof customPath === 'string' && customPath.length > 0 ? customPath : defaultDashboardPath();
-  if (!isSafeDashboardPath(filePath, home)) {
+  const target = exportTargetOrNull(filePath, home, '.html');
+  if (target === null) {
     throw new Error('dashboard path must be a .html file under the user home directory');
   }
   const snap = await (deps.fetchSnapshot ?? fetchStocksSnapshot)({
@@ -2055,8 +2058,8 @@ export async function exportDashboardImpl(
     strategyComparison: comparison,
     generatedAt,
   });
-  await fs.mkdir(path.dirname(filePath), { recursive: true });
-  await (deps.writeFile ?? writeExportFile)(filePath, html);
+  await fs.mkdir(path.dirname(target), { recursive: true });
+  await (deps.writeFile ?? writeExportFileVetted)(target, html);
   return { path: filePath, bytes: Buffer.byteLength(html, 'utf8'), generatedAt };
 }
 // Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator,ArrowFunction
@@ -2087,7 +2090,8 @@ export async function exportDashboardMdImpl(
   const home = os.homedir();
   const filePath =
     typeof customPath === 'string' && customPath.length > 0 ? customPath : defaultDashboardMdPath();
-  if (!isSafeDashboardMdPath(filePath, home)) {
+  const target = exportTargetOrNull(filePath, home, '.md');
+  if (target === null) {
     throw new Error('dashboard path must be a .md file under the user home directory');
   }
   const snap = await (deps.fetchSnapshot ?? fetchStocksSnapshot)({
@@ -2103,8 +2107,8 @@ export async function exportDashboardMdImpl(
     strategyComparison: comparison,
     generatedAt,
   });
-  await fs.mkdir(path.dirname(filePath), { recursive: true });
-  await (deps.writeFile ?? writeExportFile)(filePath, md);
+  await fs.mkdir(path.dirname(target), { recursive: true });
+  await (deps.writeFile ?? writeExportFileVetted)(target, md);
   return { path: filePath, bytes: Buffer.byteLength(md, 'utf8'), generatedAt };
 }
 // Stryker restore ConditionalExpression,LogicalOperator,EqualityOperator,ArrowFunction

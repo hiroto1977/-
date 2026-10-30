@@ -43,7 +43,7 @@
 declare const VETTED: unique symbol;
 
 /** 関門の種類。印の種類ごとに別の型になるので、ある印を別の種類の口へは渡せない。 */
-export type VettedKind = 'external-url' | 'shell-path';
+export type VettedKind = 'external-url' | 'shell-path' | 'export-path';
 
 /** 関門 `K` を通った文字列。作れるのは gate 関数の `mint` だけ (変換後は gate の `return` の 1 か所)。 */
 export type Vetted<K extends VettedKind> = string & { readonly [VETTED]: K };
@@ -53,3 +53,6 @@ export type VettedExternalUrl = Vetted<'external-url'>;
 
 /** `shellTargetOrNull` を通った実体パス (書き出し先の中・実行され得ない拡張子・安全な葉の名前)。 */
 export type VettedShellPath = Vetted<'shell-path'>;
+
+/** `exportTargetOrNull` を通った書き出し先 (書き出し根の中・正規化済みの絶対パス・拡張子が合う・安全な葉の名前 · パス 560 で足した)。 */
+export type VettedExportPath = Vetted<'export-path'>;

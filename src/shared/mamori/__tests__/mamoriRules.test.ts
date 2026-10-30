@@ -80,7 +80,16 @@ describe('M2: 危ない口 (extern sink) は sink 関数の中だけ', () => {
   });
 });
 
-describe('M3: sink 関数は印の型しか受けない', () => {
+describe('M3: sink 関数の行き先 (第 1 引数) は印の型', () => {
+  it('★ 2 つ目からは送る中身で、素の string でよい (書き出しの本文)', () => {
+    expect(rulesOf(VETTED + 'export sink fn write(u: VettedUrl, body: string) -> void {\n  return;\n}\n')).toEqual([]);
+  });
+  it('★ 中身が先・行き先が後ろの形は断る (行き先を素で受けることになる)', () => {
+    expect(rulesOf(VETTED + 'export sink fn write(body: string, u: VettedUrl) -> void {\n  return;\n}\n')).toEqual(['M3']);
+  });
+  it('引数の無い sink は断る (行き先が無い)', () => {
+    expect(rulesOf('export sink fn nothing() -> void {\n  return;\n}\n')).toEqual(['M3']);
+  });
   it('★ 素の string を受ける sink は断る', () => {
     expect(rulesOf(VETTED + 'extern sink { shell } from "electron";\nexport sink fn open(u: string) -> Promise<void> {\n  return shell.openExternal(u);\n}\n')).toEqual(['M3']);
   });

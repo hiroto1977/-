@@ -43,7 +43,7 @@ Mamori では、その 2 つは**書けない**:
 | M0 | 書けない綴り: `as` / `any` / `eval` / テンプレート文字列 / `/* */` | 字句の段で止まる |
 | M1 | 印は `gate` 関数の中の `mint 型名(値)` でだけ作れ、その関数の戻り値の型が同じ印を名乗る | `sink` / 普通の関数の `mint`・戻り値が名乗らない印 |
 | M2 | `extern sink` で宣言した値は `sink` 関数の中でだけ参照できる | 普通の関数・`gate` 関数・定数の初期値から危ない口を呼ぶ |
-| M3 | `sink` 関数の引数の型は、どれも宣言した印の型 1 つ (`T \| null` も不可) | 素の `string` を受ける危ない口を作る |
+| M3 | `sink` 関数の**最初の引数 (行き先)** の型は、宣言した印の型 1 つ (`T \| null` も不可)。2 つ目からは本文で型を問わない。引数の無い sink も断る | 素の `string` を行き先に受ける危ない口を作る |
 | M4 | 印の型を受ける引数には、印を持つ値だけを渡せる (モジュールをまたいでも) | 文字列の字面・素の引数・別の種類の印を渡す |
 | M5 | 印を持つ変数を、印の無い値で上書きできない | `let u = 関門(x); u = '…';` (印の洗浄) |
 | M6 | 外の名前は `use` / `extern` で宣言する。宣言なしで使えるのは副作用の判断を持たない組み込み (`URL` / `Set` / `Map` / `Promise` / `Number` / `String` / `Boolean` / `Math` / `JSON` / `Object` / `Array` / `Error` / `RegExp` / `TypeError` / `RangeError`) だけ | `window` / `fetch` / `process` / `require` / `globalThis` / `document` / `localStorage` / `indexedDB` / `navigator` を暗黙に使う |
@@ -111,11 +111,12 @@ export sink fn openExternalVetted(url: VettedExternalUrl) -> Promise<void> {
 | `src/main/shellOpenGate.mamori` | `src/main/shellOpenGate.ts` | gate: OS に開かせるパスの関門 |
 | `src/main/osSinks.mamori` | `src/main/osSinks.ts` | sink: electron の `shell` の 3 つの口 |
 | `src/renderer/vettedSinks.mamori` | `src/renderer/vettedSinks.ts` | sink: ブラウザ版の `window.open` |
+| `src/main/clients/exportSink.mamori` | `src/main/clients/exportSink.ts` | gate + sink: 書き出しのファイル書き込み (`exportTargetOrNull` → `writeExportFileVetted` · 書き手 4 本が通る) |
 
 残りの TypeScript は Mamori で書いた gate / sink を呼ぶ側で、呼ぶ側には TypeScript の型の印が掛かる
-(パス 559)。**次に移すなら**、まだ素の `string` を受けている危ない口 (`SINK_LEDGER` の pending 4 本 ——
-書き出しのファイル書き込み・`<a href>`・`<img src>`・fetch の送り先) を、それぞれ gate と sink の組として
-Mamori へ移す。移すたびに pending の天井を下げる。
+(パス 559)。書き出しのファイル書き込みはパス 560 で gate と sink の組として移し、pending の天井を 4 → 3 へ下げた。
+**次に移すなら**、まだ素の `string` を受けている危ない口 (`SINK_LEDGER` の pending 3 本 —— `<a href>`・
+`<img src>`・fetch の送り先) を、同じく gate と sink の組として Mamori へ移す。移すたびに pending の天井を下げる。
 
 ## 限界 (正直に書く)
 
