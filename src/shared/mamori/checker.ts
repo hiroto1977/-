@@ -168,7 +168,8 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       }
     }
     // sink 関数の行き先の印 (第 1 引数) —— 危ない口へ渡してよい第 1 引数はこの印を持つ値だけ (0.3 · T-225)。
-    const ctx: Ctx = { role: it.role, returnVetted: sig.returnVetted, destVetted: it.role === 'sink' ? (sig.paramVetted[0] ?? null) : null };
+    // 読むのは sink 関数の中 (checkCallee の role === 'sink' の枝) だけなので、役で分けずに置く。
+    const ctx: Ctx = { role: it.role, returnVetted: sig.returnVetted, destVetted: sig.paramVetted[0] ?? null };
     const scope = new Map<string, Binding>();
     for (const p of it.params) {
       scope.set(p.name, { vetted: vettedOf(p.type, table.vetted), authority: 'local' });
@@ -182,6 +183,15 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     readonly returnVetted: string | null;
     /** sink 関数の行き先 (第 1 引数) の印。sink 関数の外と、行き先の型が印でない (M3 を出した) ときは null。 */
     readonly destVetted: string | null;
+  }
+
+  /** 名前の式ならその束縛、そうでなければ undefined (`f()()` / `a.b.c(…)` の頭は名前ではない)。 */
+  function bindingOf(e: Expr, scopes: readonly Map<string, Binding>[]): Binding | undefined {
+    switch (e.kind) {
+      case 'ident':
+        return lookup(scopes, e.name);
+    }
+    return undefined;
   }
 
   function lookup(scopes: readonly Map<string, Binding>[], name: string): Binding | undefined {
@@ -294,7 +304,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     // 危ない口の名前そのもの (`shell` / `writeFile`) —— 断りの場所もその名前を指す。
     const head = callee.kind === 'member' ? callee.object : callee;
     const name = identName(head);
-    const b = name === null ? undefined : lookup(scopes, name);
+    const b = bindingOf(head, scopes);
     if (b?.authority === 'sink') {
       if (ctx.role !== 'sink') {
         report('M2', head.pos, `危ない口 ${name} (extern sink) は sink 関数の中でだけ使えます`);

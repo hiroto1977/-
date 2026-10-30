@@ -99,6 +99,14 @@ describe('T-225: sink 関数の中でも、危ない口は行き先だけを渡�
   it('対照: 行き先の型が印でない sink 関数は M3 だけを出す (危ない口の呼び出しで重ねて断らない)', () => {
     const r = compileProject([{ path: 'src/x/m0.mamori', source: `${EXTERN}export sink fn s(u: string) -> unknown {\n  return shell.openExternal(u);\n}\n` }]);
     expect(r.ok ? [] : r.diagnostics.map((d) => d.rule)).toEqual(['M3']);
+    // 行き先の型が印でないと、危ない口へ何を渡しても M2 を重ねない —— 印つきの値でも・引数が無くても (M3 が先に断っている)。
+    const r2 = compileProject([{ path: 'src/x/m0.mamori', source: `${VETTED}${EXTERN}export sink fn s(u: string, v: VettedUrl) -> unknown {\n  shell.openExternal();\n  return shell.openExternal(v);\n}\n` }]);
+    expect(r2.ok ? [] : r2.diagnostics.map((d) => d.rule)).toEqual(['M3']);
+  });
+  it('★ 名前を直に呼ぶ形でも、宣言していない名前は M6 (呼ぶ形は値の検めを通らないが、宣言の検めは通る)', () => {
+    expect(diags('export fn go() -> unknown {\n  return g();\n}\n')).toEqual([
+      'src/x/m0.mamori:2:10: [M6] 宣言していない名前 g —— 外の値は `use` / `extern` で宣言します (網・記憶・OS へ届く名前は暗黙に使えません)',
+    ]);
   });
 });
 
