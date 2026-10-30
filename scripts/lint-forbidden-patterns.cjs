@@ -889,6 +889,11 @@ const KNOWN_SUPPRESSIONS = [
   // プロセスを作らずには成り立たない。母集団は `git ls-files` に聞き、
   // どちらも引数を配列で渡す (シェルを経由しない)。
   'child_process exec/spawn :: scripts/audit-tick-sensitivity.cjs :: 1',
+  // 台帳の穴を開け直す道具 (パス 565 · threat: T-226)。守りを直す前の形へ戻す書き換えを
+  // 当てて、名指しの回帰検査が鳴るかを `npx vitest run` で測る —— 「本当に鳴るか」は
+  // 走らせないと答えが出ないので、プロセスを作らずには成り立たない。引数は配列で渡し、
+  // 書き換えは git worktree の写しの上で当てて `finally` で戻す (シェルを経由しない)。
+  'child_process exec/spawn :: scripts/threat-ablation.cjs :: 1',
   // 「正しい行 + 1 欄だけ壊す」全面走査の定期点検の道具 (パス 441)。
   // `npx vitest run --config vitest.audit.config.ts` を子プロセスで走らせる ——
   // 「壊れた 1 行の下で 74 画面が投げるか」は**実際に描かないと答えが出ない**ので、
