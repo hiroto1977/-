@@ -13,6 +13,7 @@
 - **0.2 の構文**: オブジェクトリテラル (`__proto__` の鍵・spread・計算した鍵は断る) / 三項演算子 (印は両方の枝が同じ印のときだけ残る) / `switch` (case の終わりは return / throw / break 必須 —— 落ち抜けを作らない) / `throw` / `for (const x of xs)` + break / continue (ループ変数は印を持たない) / `type` と `interface` / `field x.k` (unknown から欄を読む唯一の形)。
 - **移した壁**: `src/shared/proxyEndpoint.ts` (BYO プロキシの接続先の関門・両ビルドの出荷物) を `proxyEndpoint.mamori` の生成物に。判定は 1 つも変えていない (差は注記の位置と、テンプレート文字列を `+` へ替えた所だけ)。
 - **育てる輪**: `npm run mamori:grow -- brief|record|status` (`scripts/mamori-growth.cjs`) と台帳 `security/mamori-growth.json`。brief は守りの壁 (`lint:mutation-scope` の必ず測る壁) のうち TypeScript のままの物を数え、移せる壁 → 構文を足す → 破る、の順に 1 つ選ぶ。record は「言語を破るプログラム 3 つ以上・変異検査 100%・対照・PR」が無い周を断る。止まり (7 日 × 2) は毎日の dependency-audit が要対応として出す。週 1 の予約 `trig_01SFM9gWmvpjfYoqy1BDkF5q` (金曜 03:43 JST · 新しいセッション) が `docs/MAMORI_GROWTH_PROMPT.md` の指示文で回す —— 指示文を変えたら予約も更新する。
+- **変異検査が 1 つ教えた**: 0.1 の代入は「このモジュールの名前か」しか見ず、引数・`const`・回す変数・関数の名前への代入を通していた (引数への代入は tsc も通す)。0.2 は `let` だけに代入を許す (M6)。既存の検査 2 件がこの弱さを仕様として留めていたので反転した。
 - 機械: `mamoriV02.test.ts` (T-224 の回帰・変換の全形を 1 byte で・構文の誤り 25 形)・`mamoriGrowth.test.ts` 31 件。対照 12 方向すべて狙った検査で鳴る。
 
 ## 直近の作業 (2026-10-30) — パス 562: 進化役は毎日の脅威ウォッチを読む (threat: T-223)

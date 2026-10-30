@@ -351,7 +351,7 @@ export function parse(file: string, src: string): Module {
     }
     if (isW('break') || isW('continue')) {
       const word = next().text as 'break' | 'continue';
-      if (word === 'continue' ? loops === 0 : breakables === 0) fail(t, `\`${word}\` は ${word === 'continue' ? 'for' : 'for か switch'} の中にだけ置けます`);
+      if (word === 'continue' ? loops <= 0 : breakables <= 0) fail(t, `\`${word}\` は ${word === 'continue' ? 'for' : 'for か switch'} の中にだけ置けます`);
       expectP(';');
       return { kind: 'jump', word, comments: cs, pos: t.pos };
     }

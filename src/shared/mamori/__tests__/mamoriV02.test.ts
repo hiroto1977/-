@@ -188,6 +188,18 @@ const SRC = [
   "  }",
   "  return out;",
   "}",
+  "export fn q(a: number | null) -> unknown {",
+  "  const l = a ?? (() => 1);",
+  "  return l;",
+  "}",
+  "export fn d(n: number) -> string {",
+  "  switch (n) {",
+  "    case 1:",
+  "      return 'a';",
+  "    default:",
+  "      return 'b';",
+  "  }",
+  "}",
   "",
 ].join('\n');
 
@@ -287,6 +299,20 @@ const WANT = [
   "  }",
   "  return out;",
   "}",
+  "",
+  "export function q(a: number | null): unknown {",
+  "  const l = a ?? (() => 1);",
+  "  return l;",
+  "}",
+  "",
+  "export function d(n: number): string {",
+  "  switch (n) {",
+  "    case 1:",
+  "      return 'a';",
+  "    default:",
+  "      return 'b';",
+  "  }",
+  "}",
 ].join('\n') + '\n';
 
 describe('0.2 の構文: 変換の全形を 1 byte で留める', () => {
@@ -308,6 +334,8 @@ describe('0.2 の構文: 変換の全形を 1 byte で留める', () => {
     expect(topLevelUnion("'a' | { k: 'x' | 'y' } | Array<1 | 2> | 'q|r' | (a | b) | [1 | 2] | \"s\\\"|t\"")).toEqual([
       "'a'", "{ k: 'x' | 'y' }", 'Array<1 | 2>', "'q|r'", '(a | b)', '[1 | 2]', '"s\\"|t"',
     ]);
+    // 逃がしの後ろでも分け続ける (逃がした字を 1 つだけ飛ばす —— 2 つ目以降を飛ばし続けない)。
+    expect(topLevelUnion("'a\\'b' | 'c' | 'x\\\\' | 'y'")).toEqual(["'a\\'b'", "'c'", "'x\\\\'", "'y'"]);
     expect(topLevelUnion('string')).toEqual(['string']);
   });
 });
@@ -327,12 +355,15 @@ describe('0.2 の構文の誤りは文と場所を名乗る', () => {
     ['for の外の continue', FN('  continue;'), at(2, 3, '`continue` は for の中にだけ置けます')],
     ['switch の中の continue', FN('  switch (code) {\n    case \'a\':\n      continue;\n  }'), at(4, 7, '`continue` は for の中にだけ置けます')],
     ['for の後ろの break', FN('  for (const k of [1]) {\n    break;\n  }\n  break;'), at(5, 3, '`break` は for か switch の中にだけ置けます')],
+    ['for の後ろの continue', FN('  for (const k of [1]) {\n    continue;\n  }\n  continue;'), at(5, 3, '`continue` は for の中にだけ置けます')],
+    ['switch の後ろの break', FN("  switch (code) {\n    case 'a':\n      break;\n  }\n  break;"), at(6, 3, '`break` は for か switch の中にだけ置けます')],
     ['let で回す', FN('  for (let k of [1]) {\n  }'), at(2, 8, '`const` が要ります (在ったのは `let`)')],
     ['of が無い', FN('  for (const k in x) {\n  }'), at(2, 16, '`of` が要ります (在ったのは `in`)')],
     ['落ちる case', FN("  switch (code) {\n    case 'a':\n      code.trim();\n    case 'b':\n      return 1;\n  }"), at(3, 5, 'case の本体は return / throw / break で終えます (次の case へ落ちる形は書けません)')],
     ['空の case', FN("  switch (code) {\n    case 'a':\n  }"), at(3, 5, 'case の本体は return / throw / break で終えます (次の case へ落ちる形は書けません)')],
     ['label の無い文', FN('  switch (code) {\n    return 1;\n  }'), at(3, 5, '`case` か `default` が要ります (在ったのは `return`)')],
     ['積んだ label の間の注記', FN("  switch (code) {\n    case 'a':\n    // 間\n    case 'b':\n      return 1;\n  }"), at(4, 5, '積んだ label の間に注記は置けません (注記は最初の label の前へ)')],
+    ['積んだ default の前の注記', FN("  switch (code) {\n    case 'a':\n    // 間\n    default:\n      return 1;\n  }"), at(4, 5, '積んだ label の間に注記は置けません (注記は最初の label の前へ)')],
     ['switch の終わりの注記', FN("  switch (code) {\n    case 'a':\n      return 1;\n    // 終わり\n  }"), at(6, 3, 'switch の終わりの前に注記は置けません')],
     ['interface の // 注記', 'interface I {\n  // x\n  a: string;\n}\n', at(2, 3, 'interface の中は `///` の説明だけ置けます (`//` は置けません)')],
     ['interface の欄の無い ///', 'interface I {\n  /// x\n}\n', at(3, 1, '`///` の後に欄がありません')],
@@ -392,5 +423,26 @@ describe('0.2 の構文は来歴の規則を外す道にならない', () => {
   });
   it('★ オブジェクトの字面の中の mint も gate だけ (M1)', () => {
     expect(rulesOf(VETTED + FN('  return { u: mint VettedU(code) };'))).toEqual(['M1']);
+  });
+});
+
+describe('let ではない名前へは代入できない (0.1 は tsc に任せていた —— Mamori の規則として断る)', () => {
+  const REASON = 'は let ではないので代入できません (const・引数・回す変数・関数の名前は書き換えない)';
+  const CASES: readonly [string, string, string][] = [
+    ['引数', FN('  code = "x";\n  return code;'), 'code'],
+    ['const の名前', FN('  const c = 1;\n  c = 2;\n  return c;'), 'c'],
+    ['回す変数', FN('  for (const k of [1, 2]) {\n    k = 3;\n  }\n  return x;'), 'k'],
+    ['このモジュールの const', 'const C = 1;\n' + FN('  C = 2;\n  return C;'), 'C'],
+    ['このモジュールの関数', 'fn g() -> number {\n  return 1;\n}\n' + FN('  g = 2;\n  return g;'), 'g'],
+  ];
+  for (const [name, src, target] of CASES) {
+    it(`★ ${name} へは代入できない (M6)`, () => {
+      const ds = compile(src);
+      expect(ds.ok).toBe(false);
+      expect(ds.ok ? [] : ds.diagnostics.map((d) => [d.rule, d.message])).toEqual([['M6', `${target} ${REASON}`]]);
+    });
+  }
+  it('対照: let の名前へは代入できる (回す変数を足しても let はそのまま)', () => {
+    expect(diags(FN('  let n = 0;\n  for (const k of [1, 2]) {\n    n = n + k;\n  }\n  n = n + 1;\n  return n;'))).toEqual([]);
   });
 });

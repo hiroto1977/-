@@ -232,10 +232,13 @@ export function topLevelUnion(text: string): string[] {
   let depth = 0;
   let quote: string | null = null;
   let start = 0;
-  for (let i = 0; i < text.length; i++) {
-    const c = text[i]!;
-    if (quote !== null) {
-      if (c === '\\') i++;
+  // 添字で回すと「長さの 1 つ先まで回る」変異体が等価になる (先は undefined でどの字にも当たらない) ので、字の並びで回す。
+  let escaped = false;
+  for (const [i, c] of text.split('').entries()) {
+    if (escaped) {
+      escaped = false;
+    } else if (quote !== null) {
+      if (c === '\\') escaped = true;
       else if (c === quote) quote = null;
     } else if (c === "'" || c === '"') {
       quote = c;

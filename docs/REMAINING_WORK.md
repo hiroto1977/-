@@ -12,6 +12,7 @@
 - **0.2 の構文** (足すたびに「その構文で来歴の規則を外す道」を先に塞いだ): オブジェクトリテラル (`__proto__` 鍵・spread・計算した鍵は断る・
   値は来歴の検査を通る) / 三項 (印は両方の枝が同じ印のときだけ) / `switch` (落ち抜けを作らない・積んだ label の間に注記を置かない) / `throw` /
   `for…of` + break / continue / `type` (先頭の `|` で複数行) / `interface` / `field x.k`。
+- **変異検査の 1 回目 (99.54% · 生存 11) を仕分けた**: 等価 2 (`Object` の判定の `kind` の比べ → 名前を返す関数 `identName` へ寄せて形ごと消した・`topLevelUnion` の添字ループ → 字の並びで回す) / 検査の不足 8 (ループの数の上下・積んだ `default`・`default` で終わる case・arrow の括弧) / **本物の穴 1** —— 回す変数の束縛を `{}` にしても誰も鳴らず、辿ると**代入の相手が `let` かを誰も見ていなかった** (引数・`const`・回す変数・関数の名前への代入が通った)。`Binding.mutable` を足して `let` だけに許す (M6)。既存の 2 件 (`mamoriCheckerCoverage.test.ts`) が「Mamori では断らない (tsc が断る)」を仕様として留めていたので反転した —— 引数への代入は tsc も通すので、その理由は半分偽だった。
 - **移した壁**: `src/shared/proxyEndpoint.ts`。生成物と元の差は `git diff` で読み、判定の差は 0。
 - **育てる輪**: `scripts/mamori-growth.cjs` + `security/mamori-growth.json` (構文 35 種を detector と判断 (feature / rewrite / added) と risk の台帳で両方向) +
   `docs/MAMORI_GROWTH_PROMPT.md` (予約の指示文) + 毎日の dependency-audit の節。実測の brief: 移していない壁 37 本のうち

@@ -96,6 +96,22 @@ export function collectTable(modules: readonly { readonly file: string; readonly
 interface Binding {
   readonly vetted: string | null;
   readonly authority: 'sink' | 'pure' | 'local';
+  /**
+   * 代入できるか。`let` だけが `true` を持ち、ほか (`const`・引数・回す変数・このモジュールの関数) は持たない
+   * (2026-10-30 · パス 563)。0.1 は代入の相手が「このモジュールの名前か」しか見ておらず、`const` や引数への代入を
+   * 変換後の `tsc` に任せていた —— Mamori の規則として断る (無い = 代入できない、で失敗は閉じる)。
+   */
+  readonly mutable?: boolean;
+}
+
+/** 素の名前の式ならその名前、ほかは null (`kind` の比べを 1 か所に置く —— 名前を持つ式は ident だけ)。 */
+function identName(e: Expr): string | null {
+  switch (e.kind) {
+    case 'ident':
+      return e.name;
+    default:
+      return null;
+  }
 }
 
 export function checkModule(file: string, module: Module, table: ProjectTable): MamoriDiagnostic[] {
@@ -211,7 +227,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         if (declared !== null && s.init !== null && carried !== declared) {
           report('M4', s.pos, `${s.name} は印 ${declared} の型ですが、入れる値は印を持ちません`);
         }
-        own.set(s.name, { vetted: declared ?? carried, authority: 'local' });
+        own.set(s.name, { vetted: declared ?? carried, authority: 'local', mutable: s.mutable });
         return;
       }
       case 'assign': {
@@ -222,6 +238,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
           return;
         }
         if (target.authority !== 'local') report('M6', s.pos, `外の名前 ${s.target} へは代入できません`);
+        else if (target.mutable !== true) report('M6', s.pos, `${s.target} は let ではないので代入できません (const・引数・回す変数・関数の名前は書き換えない)`);
         if (target.vetted !== null && provenance(s.value, scopes) !== target.vetted) {
           report('M5', s.pos, `印 ${target.vetted} を持つ ${s.target} を、印の無い値で上書きしています (印の洗浄)`);
         }
@@ -287,7 +304,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         return;
       case 'member':
         // 組み込みの Object (このモジュールの名前で隠れていない物) は、許したメンバだけ。
-        if (e.object.kind === 'ident' && e.object.name === 'Object' && lookup(scopes, 'Object') === undefined) {
+        if (identName(e.object) === 'Object' && lookup(scopes, 'Object') === undefined) {
           if (!OBJECT_MEMBERS.has(e.prop)) {
             report('M6', e.pos, `Object.${e.prop} は使えません —— 組み込みの Object で使えるのは ${[...OBJECT_MEMBERS].join(' / ')} だけです (原型や既にある値を書き換えるメンバは、他のモジュールの関門の判定まで変える)`);
           }
