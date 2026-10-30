@@ -7,12 +7,20 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-10-30) — パス 565: 台帳の穴を開け直して、回帰検査が本当に鳴るかを測る (threat: T-226)
+
+- 台帳の検査は「名指しの回帰検査の題名が在ること」までしか見ていなかった。`npm run audit:threat-ablation` (`scripts/threat-ablation.cjs`) が `security/threat-ablations.json` の書き換え (守りを直す前の形へ戻す 1 行) を git worktree の写しへ当て、名指しの検査だけを走らせ、vitest の JSON 報告から caught / missed / unmatched / load-error を分ける (非 0 終了を「捕まえた」と読まない)。原文でも 1 度走らせて通ることを確かめ、`finally` で戻して内容で照合する。
+- **実測**: 157 の書き換え (115 の脅威・high 9 件は全部) で **131 caught / 26 missed**。`triage` (名指しのファイルの隣 → `vitest related` + 名前で読む検査) で 26 件とも別の検査が捕まえていた —— 台帳の名指しが同じ守りの別の層・別の枝を見ていなかった (T-215 のブラウザ側の層・T-216 の skills と web-shim の層・T-219 の Ollama の接続先 ほか)。台帳に `alsoRegressions` (層ごとの名指し) を足して測り直した。
+- 機械: `threatAblation.test.ts` (判定の標本・書き換えがちょうど 1 回当たる・high は全部書き換えを持つ・**2026-10-31 以降の脅威は書き換えを持たないと落ちる**・床 115・`--only` の空 / 当たらない名前は断る・毎日の workflow の配線)。`threatLedger.test.ts` は `alsoRegressions` も題名・印・宣言・CODEOWNERS で見る。毎日の dependency-audit が `--report` で走らせ、捕まえ損ねを常設 Issue の要対応に出す。
+- 罠: `it.each` で展開した題名は原文に無い —— 名指しは雛形 (`%s`) か `describe` の題名。台帳の題名は部分一致 (★ や (threat: …) を省いた行が在る)。道を打ち間違えて「0 件のうち 0 件」を exit 0 で返した —— 0 件の選択は断るようにした。
+
 ## 直近の作業 (2026-10-30) — パス 564: 育てる輪の 2 周目 MG-002 —— controlChars を移し、16 進の数 (0.3)、sink の呼び方の穴を塞ぐ (threat: T-225)
 
 - brief どおり `src/shared/controlChars.ts` (24 行) を `controlChars.mamori` の生成物にした。判定は `c < 0x20 || c === 0x7f` のまま —— そのために 16 進の数 (`0x20` / `0X1F`) を字句へ足した (0.3 · 数字の無い `0x` は断る)。
 - **「破る」段が足す構文と関係の無い穴を出した (T-225)**: 印を受ける関数を値として持ち出す 8 形 (`openUrl.call(null, raw)` / `.apply` / `.bind`・別名・オブジェクト / 配列・三項・for) で素の値を渡せた (変換後の tsc は型で断る)。**より重いのは sink 関数の中**で、`shell.openExternal(raw)` (行き先以外の素の値)・`return shell;` / `return { s: shell };` を**コンパイラも tsc も通した**。0.3 は印を受ける関数を「直に呼ぶ」ことしか許さず (M4)、危ない口は sink 関数の中でも呼ぶ形でしか使えず、その第 1 引数は行き先の印を持つ値だけ (M2 · `checkCallee`)。
 - 既存の検査 1 件が「sink 関数の引数の既定値に `shell` を値として置ける」を許容として留めていたので反転した。
 - 機械: `mamoriV03.test.ts` (T-225 の回帰・16 進)。対照 6 方向すべて狙った検査で鳴る。
+- 変異検査: 1 度目は checker.ts 98.91% (生存 5 件・4 か所)。等価の形 2 つを消し (`destVetted` を役割で分けない・`bindingOf` で名前の引きを 1 つに)、本物の穴 2 つ (行き先の型が印でない sink 関数・直に呼ぶ未宣言の名前) に検査を足して、checker.ts 454 / controlChars.ts 12 とも **100.00%** (18 分 9 秒)。
 
 ## 直近の作業 (2026-10-30) — パス 563: Mamori 0.2 を育て、育てる輪を半永久的に回す (threat: T-224)
 

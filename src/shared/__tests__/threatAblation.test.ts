@@ -33,6 +33,7 @@ const tool = req('../../../scripts/threat-ablation.cjs') as {
   ablationStatus: (summary: unknown, ablations: unknown[], ledger: unknown, staticList: string[]) => { actionable: number; problems: string[]; notCaught: unknown[]; measured: boolean };
   renderAblation: (st: unknown) => string;
   parseArgs: (argv: string[]) => { cmd: string; report: boolean };
+  selectAblations: (ablations: unknown[], only: Set<string> | null) => { chosen: unknown[]; problem: string | null };
 };
 const ROOT = path.resolve(__dirname, '../../..');
 const ledger = req('../../../security/threat-ledger.json') as { threats: { id: string; severity: string; status: string; found: string; regression?: { file: string; test: string } }[] };
@@ -84,6 +85,16 @@ describe('判定 —— 名指しの検査の状態だけで決める (threat: T
     expect(tool.occurrences('aaaa', 'aa')).toBe(2);
     expect(tool.occurrences('abc', '')).toBe(0);
     expect(tool.editsOf({ find: 'x', replace: 'y' })).toEqual([{ find: 'x', replace: 'y' }]);
+  });
+
+  it('★ --only の名指しが 1 つも当たらない・当たらない名前が混ざるなら測らずに断る (0 件で緑にしない)', () => {
+    const list = [{ id: 'A-001', threat: 'T-1' }, { id: 'A-002', threat: 'T-2' }];
+    expect(tool.selectAblations(list, new Set(['T-2']))).toEqual({ chosen: [list[1]], problem: null });
+    expect(tool.selectAblations(list, new Set(['A-001', 'T-2'])).chosen).toHaveLength(2);
+    expect(tool.selectAblations(list, null)).toEqual({ chosen: list, problem: null });
+    expect(tool.selectAblations(list, new Set()).problem).toContain('1 つも無い');
+    expect(tool.selectAblations(list, new Set(['T-2', 'T-9'])).problem).toContain('T-9');
+    expect(tool.selectAblations([], null).problem).toContain('空');
   });
 
   it('`--report` は捕まえ損ねで落とさない形 (毎日の報告が言う)', () => {

@@ -1017,7 +1017,13 @@
       "regression": {
         "file": "src/shared/__tests__/workflowSecurityWitness.test.ts",
         "test": "★ job 単位の permissions は deploy の 2 つだけで、台帳と一致する (threat: T-039)"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/__tests__/workflowSecurityWitness.test.ts",
+          "test": "★ トップレベルは contents: read だけ (threat: T-039)"
+        }
+      ]
     },
     {
       "id": "T-040",
@@ -1092,7 +1098,13 @@
       "regression": {
         "file": "src/renderer/data/__tests__/importAllAtomic.test.ts",
         "test": "★ put が途中で投げても、置換復元は既存の記録を 1 件も消さず、良い行も入れない (threat: T-044)"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/renderer/data/__tests__/importAllAtomic.test.ts",
+          "test": "★ 深さ 20,000 の記録は門が落とし、importAll は 0 件・計画も dropped に数える (threat: T-044)"
+        }
+      ]
     },
     {
       "id": "T-045",
@@ -1182,7 +1194,17 @@
       "regression": {
         "file": "src/renderer/data/__tests__/orphanCollection.test.ts",
         "test": "★ 点検が `unknown` として見つけ、形式不正とは混ぜない (threat: T-050)"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/renderer/data/__tests__/orphanCollection.test.ts",
+          "test": "★ deleteRecords は unknown の id も消す (唯一の出口)"
+        },
+        {
+          "file": "src/renderer/data/__tests__/orphanCollection.test.ts",
+          "test": "★ 平文の書き出しの確認は、台帳に無い種類の記録を「持ち出すと困るかもしれない」側に数える"
+        }
+      ]
     },
     {
       "id": "T-051",
@@ -1377,7 +1399,17 @@
       "regression": {
         "file": "src/renderer/security/__tests__/vaultLockDuringUnlock.test.ts",
         "test": "★ 変更中に lock() が届けば鍵を据えない —— パスワードは変わっている (threat: T-063)"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/renderer/security/__tests__/vaultLockDuringUnlock.test.ts",
+          "test": "★ 旧世代路 (master-wrap なし) でも、変更中に lock() が届けば鍵を据えない (threat: T-063)"
+        },
+        {
+          "file": "src/renderer/security/__tests__/vaultLockDuringUnlock.test.ts",
+          "test": "★ 復旧中に lock() が届けば鍵を据えない —— 新しいパスワードで解錠できる (threat: T-063)"
+        }
+      ]
     },
     {
       "id": "T-064",
@@ -1482,7 +1514,13 @@
       "regression": {
         "file": "src/shared/__tests__/gateScriptsPinned.test.ts",
         "test": "★ electron-builder.json の隣に、先に読まれる綴りの設定が 1 つも無い (threat: T-070)"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/__tests__/gateScriptsPinned.test.ts",
+          "test": "★ scripts.build は固定の綴り (release が署名鍵で走らせる唯一の script) (threat: T-043)"
+        }
+      ]
     },
     {
       "id": "T-071",
@@ -1497,7 +1535,13 @@
       "regression": {
         "file": "src/shared/__tests__/publishedAssetsInert.test.ts",
         "test": "★ 公開する SVG は script も イベント属性も外部参照も持たない (threat: T-071)"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/__tests__/publishedAssetsInert.test.ts",
+          "test": "★ pages.yml が公開する assets はどれも鎖の保護対象 (threat: T-071)"
+        }
+      ]
     },
     {
       "id": "T-072",
@@ -1512,7 +1556,13 @@
       "regression": {
         "file": "src/shared/__tests__/gateScriptsPinned.test.ts",
         "test": "★ 直下に PostCSS の設定ファイルが 1 本も無く、package.json にも postcss キーが無い (threat: T-072)"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/__tests__/gateScriptsPinned.test.ts",
+          "test": "★ vite.config.ts は css.postcss をオブジェクトで固定する (探索を止める) (threat: T-072)"
+        }
+      ]
     },
     {
       "id": "T-073",
@@ -1587,7 +1637,13 @@
       "regression": {
         "file": "src/main/clients/__tests__/stocks.test.ts",
         "test": "★ 天井ちょうどまでは登録でき、超える新規は断る (threat: T-077)"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/renderer/data/__tests__/stocksWatchlistWeb.test.ts",
+          "test": "★ 天井ちょうどまでは登録でき、超える新規は断る (threat: T-077)"
+        }
+      ]
     },
     {
       "id": "T-078",
@@ -1632,7 +1688,13 @@
       "regression": {
         "file": "src/renderer/security/__tests__/autoLock.test.ts",
         "test": "★ 放置が上限を超えた後の最初の操作でロックする (タイマーは遅れている)"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/renderer/security/__tests__/autoLock.test.ts",
+          "test": "★ 隠れていた時間が上限を超えて戻ったら、タイマーを待たずにロックする"
+        }
+      ]
     },
     {
       "id": "T-081",
@@ -1707,7 +1769,13 @@
       "regression": {
         "file": "src/shared/__tests__/workflowSecurityWitness.test.ts",
         "test": "★ pull_request_target を %s で書いても断る (threat: T-085)"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/__tests__/workflowSecurityWitness.test.ts",
+          "test": "★ github-script の script: に ${{ }} を埋め込むと断る: %s (threat: T-085)"
+        }
+      ]
     },
     {
       "id": "T-086",
@@ -1857,7 +1925,13 @@
       "regression": {
         "file": "src/shared/__tests__/redactionCoverage.test.ts",
         "test": "★ %s の裸の反射を伏せる (threat: T-095)"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/__tests__/redactionCoverage.test.ts",
+          "test": "★ ya29 の `.c.` 形 (サービスアカウント・なりすまし) も伏せる (threat: T-095)"
+        }
+      ]
     },
     {
       "id": "T-096",
@@ -1917,7 +1991,13 @@
       "regression": {
         "file": "src/renderer/data/__tests__/counseling.test.ts",
         "test": "★ %s を危機と判定する (threat: T-099)"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/renderer/data/__tests__/counseling.test.ts",
+          "test": "★ %s を他害と判定する (threat: T-099)"
+        }
+      ]
     },
     {
       "id": "T-100",
@@ -2667,7 +2747,13 @@
       "regression": {
         "file": "src/renderer/data/__tests__/bestAnswers.test.ts",
         "test": "印の判定は変えない: 空行・字下げの後ろの箇条書き・番号・見出し・表を拾い、印の無い行は拾わない"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/renderer/data/__tests__/bestAnswers.test.ts",
+          "test": "★ 空行ばかりの 99,000 字 (%s) でも固まらない (旧い式は 6〜9 秒)"
+        }
+      ]
     },
     {
       "id": "T-150",
@@ -3252,7 +3338,13 @@
       "regression": {
         "file": "src/main/__tests__/mainIpc.test.ts",
         "test": "★ 型付き配列・Map・Date の payload は種類を問わず断る (for…in が全キーを先に列挙して主プロセスが固まる・threat: T-188)"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/main/__tests__/userPresence.test.ts",
+          "test": "★ 欄が 24 を超える payload は多すぎる (24 ちょうどは正当)・配列・null・継承した欄は数えない"
+        }
+      ]
     },
     {
       "id": "T-189",
@@ -3432,7 +3524,13 @@
       "regression": {
         "file": "src/shared/__tests__/mcpLauncherSource.test.ts",
         "test": "★ パッケージ名の前の --registry=… は落ちる (直す前は 0 件だった)"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/__tests__/mcpLauncherSource.test.ts",
+          "test": "★ 取得元・ローダ・TLS を変える env の鍵は落ちる"
+        }
+      ]
     },
     {
       "id": "T-201",
@@ -3597,7 +3695,13 @@
       "regression": {
         "file": "src/shared/__tests__/releaseJobSplit.test.ts",
         "test": "★ secrets を参照する行は、build の Build step の env: の行と両方向で一致する (threat: T-211)"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/__tests__/releaseJobSplit.test.ts",
+          "test": "★ 門は job 単位の env: に置いた secrets を落とす (release.yml を複製して植えた形 · threat: T-211)"
+        }
+      ]
     },
     {
       "id": "T-212",
@@ -3612,7 +3716,13 @@
       "regression": {
         "file": "src/shared/__tests__/redactOutputShapes.test.ts",
         "test": "★ renderer/data/*Knowledge.ts の文字列リテラルは伏字で 1 本も変わらない"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/__tests__/redactOutputShapes.test.ts",
+          "test": "redactSecrets — 精度: 名前の手がかりだけを持つ秘密と、伏せてはいけない散文 (出力全文 · threat: T-212)"
+        }
+      ]
     },
     {
       "id": "T-213",
@@ -3678,7 +3788,17 @@
       "regression": {
         "file": "src/main/clients/__tests__/emotions.test.ts",
         "test": "★ 指示の形が在れば、鍵が在っても fetch は 0 回で、理由は群の名前を言い本文を引用しない"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/main/clients/__tests__/skills.test.ts",
+          "test": "★ 役割の乗っ取りの形を持つ本文は送らない (fetch 0 回・本文は引用しない)"
+        },
+        {
+          "file": "src/renderer/__tests__/webShimOutboundGate.test.ts",
+          "test": "★ emotions/analyze-text の第三者の文に指示の形が在れば、鍵を読む前に断る"
+        }
+      ]
     },
     {
       "id": "T-217",
@@ -3708,7 +3828,13 @@
       "regression": {
         "file": "src/main/__tests__/selfAttestation.test.ts",
         "test": "★ 1 ファイルを 1 byte 変えると hash-mismatch で、その道を名指しする (threat: T-218)"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/main/__tests__/mainWindow.test.ts",
+          "test": "★ 梱包版は窓を作る前に同梱物を検算し、通れば窓を 1 つ作る (検算の根はアプリの根 = dist-electron の 1 つ上)"
+        }
+      ]
     },
     {
       "id": "T-219",
@@ -3723,7 +3849,13 @@
       "regression": {
         "file": "src/renderer/pages/__tests__/proxyStepUpOnScreen.test.ts",
         "test": "★ 「保存」を押しただけでは書かれず、確認の段が出る —— 文は送り先のホストを名乗り共有秘密を映さない (threat: T-219)"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/renderer/security/__tests__/egressStepUp.test.ts",
+          "test": "★ https のトンネルと、このページと同じ別ホストへの http には要る (threat: T-219)"
+        }
+      ]
     },
     {
       "id": "T-220",
@@ -3798,7 +3930,13 @@
       "regression": {
         "file": "src/shared/mamori/__tests__/mamoriV02.test.ts",
         "test": "★ String.constructor(code)() は M0 で断る (threat: T-224)"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV02.test.ts",
+          "test": "★ 組み込みの Object は許したメンバだけ (setPrototypeOf / getPrototypeOf / defineProperty / assign を断る)"
+        }
+      ]
     },
     {
       "id": "T-225",
@@ -3813,7 +3951,13 @@
       "regression": {
         "file": "src/shared/mamori/__tests__/mamoriV03.test.ts",
         "test": "★ 印を受ける関数の .call で素の値を渡す形は断る (threat: T-225)"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV03.test.ts",
+          "test": "T-225: sink 関数の中でも、危ない口は行き先だけを渡して呼ぶ (M2)"
+        }
+      ]
     },
     {
       "id": "T-226",

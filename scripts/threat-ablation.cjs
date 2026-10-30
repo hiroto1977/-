@@ -192,10 +192,27 @@ function testFilesMentioning(name) {
  * 書き換えた状態で `vitest related <書き換えたファイル>` を走らせ、落ちた検査の場所と題名を出す。
  * 鳴る検査が在ればそれを台帳の alsoRegressions に名指す。無ければ検査を足す —— その穴は今、何にも見られていない。
  */
+/**
+ * `--only` の名指しから書き換えを選ぶ。名指しが 1 つも当たらない・当たらない名前が混ざるなら `problem` を返す ——
+ * 0 件を測って「捕まえた 0 件のうち 0 件」と緑で終えない (パス 565 で道の打ち間違いが実際にそうなった)。
+ */
+function selectAblations(ablations, only) {
+  if (only === null) return { chosen: ablations, problem: ablations.length === 0 ? '書き換えの台帳が空' : null };
+  const chosen = ablations.filter((a) => only.has(a.threat) || only.has(a.id));
+  const unknown = [...only].filter((n) => !ablations.some((a) => a.id === n || a.threat === n));
+  if (only.size === 0) return { chosen, problem: '--only に名前が 1 つも無い' };
+  if (unknown.length > 0) return { chosen, problem: `--only の名前が台帳の書き換えに当たらない: ${unknown.join(', ')}` };
+  return { chosen, problem: null };
+}
+
 function triage(ablations, ledger, args) {
-  const chosen = ablations.filter((a) => args.only !== null && (args.only.has(a.threat) || args.only.has(a.id)));
-  if (chosen.length === 0) {
+  if (args.only === null) {
     console.error('triage は --only で書き換えを名指す');
+    return 2;
+  }
+  const { chosen, problem } = selectAblations(ablations, args.only);
+  if (problem !== null) {
+    console.error(problem);
     return 2;
   }
   const threats = new Map(ledger.threats.map((t) => [t.id, t]));
@@ -417,7 +434,11 @@ function main(argv) {
 
 function runAll(ablations, ledger, args) {
   const threats = new Map(ledger.threats.map((t) => [t.id, t]));
-  const chosen = ablations.filter((a) => args.only === null || args.only.has(a.threat) || args.only.has(a.id));
+  const { chosen, problem } = selectAblations(ablations, args.only);
+  if (problem !== null) {
+    console.error(problem);
+    return 2;
+  }
   const baselines = new Map();
   const rows = [];
   for (const a of chosen) {
@@ -467,7 +488,8 @@ function runAll(ablations, ledger, args) {
   return bad.length === 0 ? 0 : 1;
 }
 
-module.exports = { ablationStatus, renderAblation, regressionsOf, combineVerdicts, editsOf, applyEdits, occurrences, titlePattern, titleMatcher, staticProblems, verdictOf, parseArgs, RUN_TIMEOUT_MS };
+module.exports = {
+  selectAblations, ablationStatus, renderAblation, regressionsOf, combineVerdicts, editsOf, applyEdits, occurrences, titlePattern, titleMatcher, staticProblems, verdictOf, parseArgs, RUN_TIMEOUT_MS };
 
 if (require.main === module) {
   process.exitCode = main(process.argv.slice(2));

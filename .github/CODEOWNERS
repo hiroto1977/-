@@ -291,6 +291,8 @@
 # 台帳の穴を開け直す道具の検査と、名指しの層 (パス 565 · threat: T-226)。
 /src/shared/__tests__/threatAblation.test.ts @hiroto1977
 /src/renderer/__tests__/webShimOutboundGate.test.ts @hiroto1977
+/src/renderer/data/__tests__/stocksWatchlistWeb.test.ts @hiroto1977
+/src/renderer/security/__tests__/egressStepUp.test.ts @hiroto1977
 /src/shared/__tests__/hackerTeam.test.ts @hiroto1977
 /src/shared/__tests__/threatWatchDigest.test.ts @hiroto1977
 /src/shared/credentialTtl.ts @hiroto1977
