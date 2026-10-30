@@ -3334,6 +3334,14 @@
       "leafCount": 155,
       "note": "update integrity-chain.cjs,controlChars.mamori,controlChars.ts,checker.ts,parser.ts",
       "hash": "cb9b5216e75d9167edbbf24e1a7cb993339639f771a66ad837a797d029846284"
+    },
+    {
+      "index": 397,
+      "prevHash": "cb9b5216e75d9167edbbf24e1a7cb993339639f771a66ad837a797d029846284",
+      "merkleRoot": "ef62abf990b8192f2d62bfc6b4ab4d1d2773ae5608f68a73ee68030ed83e31b3",
+      "leafCount": 155,
+      "note": "update dependency-audit.yml,checker.ts",
+      "hash": "23585fa17a9e8aff7a8d99c9550d44a6a99a681e3f7f3188539a9e1a53a987d9"
     }
   ],
   "tipManifest": {
@@ -3347,7 +3355,7 @@
     ".cursor/rules/30-conventions.mdc": "ecc268597f19300ff8c9e574d25ae92f34f6ddb9ec13776fb5162c32f6c0ba50",
     ".github/dependabot.yml": "5fb436726dc2b51f99162653885c40cafae5d57d6deb0f4f5b5449e6b202493f",
     ".github/workflows/ci.yml": "acbaa7077d557e08d6cb9cd849f951f0b708ca579f2eb191ab0e069abec4b702",
-    ".github/workflows/dependency-audit.yml": "ee4ffebe5bcd8b99da476964718bea4a15914e95f6cddfbd85f9837b2d2e578d",
+    ".github/workflows/dependency-audit.yml": "c089648472bc7879701a996aeba69a6ff5dcb55e8efa2e0d996e4d9a9c3ee026",
     ".github/workflows/e2e.yml": "5f8ce62b784de2ae3280fcccca20eef9f4ffed018066581617f06bf4a9f345a6",
     ".github/workflows/knowledge-auto.yml": "fcd9a876356278d4b347fe53df4cbee0733f1884fe0786eb42ba01f51d1a2834",
     ".github/workflows/mutation.yml": "fc3fa01fc8775ef8e0b9751ea414b254536770d5e858f6516e5b8dfe1fa60fe0",
@@ -3469,7 +3477,7 @@
     "src/shared/isoDate.ts": "cfe317b22c6b482c42bca40a9d19a5cbd3204b5cbace6e7336befe77690f01cd",
     "src/shared/localDate.ts": "9220ae751caf1637071d5804fb67d4629125bed1c4a9a7913fdd2968c5294da1",
     "src/shared/mamori/ast.ts": "53d9b01b1828d5d2ccbd1dfbc89a947cb62e8f5f143f0903754b7f4bbb47f40b",
-    "src/shared/mamori/checker.ts": "821fb62f8fddc976b4b21d9b0d8a1ded8c12780f81ecee7f52a2ac5c1d25b0e7",
+    "src/shared/mamori/checker.ts": "7afd74670b93e93009025982166fde80fef17d0298f336a3ba9f88cb5879f428",
     "src/shared/mamori/compile.ts": "389e89e1d3d0458d4842d0d09e14233b4fb5fbcbd2cc084abc1b7b225a4c53c8",
     "src/shared/mamori/emit.ts": "6a4eb34c57ed358e237e0330645e206d89b62639c13558621300be9658938293",
     "src/shared/mamori/parser.ts": "a4fafe3d15ba34f118dd6f688d4a09d8de4d47d3e15389bd724dab701e448b84",
