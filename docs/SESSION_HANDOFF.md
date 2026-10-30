@@ -7,6 +7,14 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-10-30) — パス 562: 進化役は毎日の脅威ウォッチを読む (threat: T-223)
+
+- 予約のセッションは網の方針で OSV / CISA KEV に届かない (実測: CONNECT 403)。だから毎日の dependency-audit (GitHub Actions) が常設 Issue「🔐 依存の勧告とセキュリティの床（自動更新）」の本文末尾に要約 `<!-- threat-watch-digest:v1 … -->` を埋め、狩りのセッションが GitHub の MCP でそれを読む (`scripts/lib/threat-watch-digest.cjs` が作る側と読む側の両方を持つ)。
+- **要約が運ぶのは CWE / CVE / 勧告の id と件数と日付だけ** —— KEV の名前・説明・製品名は AI の入力へ運ばない。読む側は 1 つでも形が外れた・2 つ在る・3 日より古い・未来の要約を使わず `unavailable` の理由を返す。
+- `npm run hunt:cycle -- brief --watch <本文のファイル>` が「進化役への入力」の節を載せ、記録の雛形に `evolution.watch` (`asOf` / `hotGaps` / `decisions`) を置く。`record` は急増した種類 1 つずつに `add:<役>` / `covered:<赤>` / `na:<10 字以上の理由>` を要求し、渡せなかった周は `unavailable` の理由を要求する。`record <json> --watch <file>` なら要約そのものとの一致も見る。
+- 予約の指示文 (`docs/HUNT_CYCLE_PROMPT.md`) に 0 段 (Issue の本文を読んで置く) を足した。予約 `trig_018x9FJf4AjgmEnYSGzu7xud` も同じ指示文へ更新する。
+- 機械: `threatWatchDigest.test.ts` 10 件・`dependencyAuditEndToEnd.test.ts` に「常設 Issue の本文 → 週 1 の狩りの brief」1 件。対照 7 方向すべて狙った検査で鳴る。
+
 ## 直近の作業 (2026-10-30) — パス 561: 常設の AI ホワイトハッカー班 (threat: T-222)
 
 - 週 1 の狩りの輪を回すのは**班** —— 名簿 `security/hacker-team.json` (赤 8 役・変種狩り・反証役・進化役)・道具 `scripts/hacker-team.cjs` (hunt-cycle の brief / record から呼ばれる)。

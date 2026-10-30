@@ -55,6 +55,7 @@ const { execFileSync } = require('node:child_process');
 const { probeFloors } = require('./audit-floors.cjs');
 const { auditPins, FAILING: PIN_FAILING } = require('./audit-pinned-action-shas.cjs');
 const { runThreatWatch, renderWatch, watchActionable, realIo } = require('./threat-watch.cjs');
+const { evolverDigest, renderDigestMarker } = require('./lib/threat-watch-digest.cjs');
 const { analyzePosture, renderPosture } = require('./security-posture.cjs');
 const { analyzeCrownJewels, renderCrownJewels, realExists } = require('./crown-jewels.cjs');
 const { analyzeLanguageCoverage, renderLanguageCoverage, launchersOf, trackedFiles } = require('./language-coverage.cjs');
@@ -201,6 +202,8 @@ function buildReport({ all, prod, floors, pins, watch, map, posture, generatedAt
       '`scripts/lint-dependencies.cjs` の `SECURITY_FLOORS`、測り直しは `npm run audit:floors`。',
     '',
     '_この Issue は dependency-audit ワークフローが毎日自動更新します。_',
+    // 週 1 の狩りの進化役へ渡す要約 (T-223)。id と数と日付だけ —— 狩りのセッションは網に届かないので、ここから読む。
+    ...(watchOk && evolverDigest(watch) !== null ? ['', renderDigestMarker(evolverDigest(watch))] : []),
   ].join('\n');
 
   return {

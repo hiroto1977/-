@@ -74,7 +74,7 @@ const goodCycle = {
     { role: 'evolver', reports: 0, confirmed: [] },
   ],
   learned: [{ threat: 'T-002', shape: '素の .length で文字数を数える', look: 'grep -n "\\.length >"' }],
-  evolution: { add: [], retire: [], notes: '名簿は変えない' },
+  evolution: { add: [], retire: [], notes: '名簿は変えない', watch: { unavailable: '検査では網に出ない (要約は threatWatchDigest.test.ts が見る)' } },
 };
 
 describe('ハッカー班 — 名簿 (threat: T-222)', () => {

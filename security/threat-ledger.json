@@ -71,6 +71,14 @@
             "scripts/hacker-team.cjs",
             "src/shared/__tests__/hackerTeam.test.ts"
           ]
+        },
+        {
+          "what": "毎日の脅威ウォッチの要約 (急増した表に無い弱点の種類 · id と数と日付だけ) が常設 Issue から週 1 の狩りの brief へ届き、record は急増した種類 1 つずつに進化役の判断を要求する (T-223)",
+          "enforcedBy": [
+            "scripts/lib/threat-watch-digest.cjs",
+            "scripts/hacker-team.cjs",
+            "src/shared/__tests__/threatWatchDigest.test.ts"
+          ]
         }
       ],
       "gaps": [
@@ -3754,6 +3762,21 @@
       "regression": {
         "file": "src/shared/__tests__/hackerTeam.test.ts",
         "test": "★ 名簿を渡した record は、brief で選んだ周に班の段を要求する (手で回した周は要求しない)"
+      }
+    },
+    {
+      "id": "T-223",
+      "found": "2026-10-30",
+      "foundBy": "パス 561 が残した『毎日の脅威ウォッチが出す「表に無い弱点の種類」を進化役へ渡す配線が無い』を閉じに行き、狩りの輪を回す予約のセッションから脅威ウォッチの配信へ届くかを測った —— 網の方針で OSV と CISA KEV はどちらも CONNECT 403 で、セッションの中で走らせ直す道も無かった。",
+      "surface": "supply-chain",
+      "class": "ai-automated-attack",
+      "severity": "medium",
+      "title": "世間で悪用が急増した弱点の種類 (weakness-map.json に無い物) を、常設の班の進化役は 1 度も見ないまま名簿を作り替えていた —— 毎日の脅威ウォッチは数えて Issue に出すだけで、狩りの輪へ渡す道が無かった",
+      "status": "mitigated",
+      "fix": "scripts/lib/threat-watch-digest.cjs。毎日の dependency-audit の報告 (常設 Issue の本文) の末尾に要約を 1 行 (`<!-- threat-watch-digest:v1 … -->`) 埋める。運ぶのは正規表現で形を確かめた CWE / CVE / 勧告の id と 0 以上の整数と暦に在る日付だけで、KEV の名前・説明・製品名は運ばない (間接プロンプトインジェクションの運び手にしない)。狩りのセッションは GitHub の MCP で Issue の本文を読み `hunt:cycle -- brief --watch <file>` へ渡し、brief は急増した種類を『進化役への入力』として載せ、記録の雛形に 1 つずつ判断の欄 (evolution.watch.decisions) を置く。読む側は 1 つでも形が外れれば要約ごと使わず、要約が 2 つ在れば (誰かが本文へ足した) どれも使わず、3 日より古い・未来の要約も使わない (理由つきで unavailable)。record は急増した種類 1 つずつに add:<役> (evolution.add に在る) / covered:<活動中の赤> / na:<10 字以上の理由> のどれかを要求し、要約を渡せなかった周は unavailable の理由を要求する。record に --watch を渡すと、記録の基準日と急増した種類が要約そのものと一致することも見る。限界: 狩りのセッションが Issue を読まずに unavailable と書けば判断は飛ばせる (記録と PR に残る)・Issue が 1 度も作られていなければ要約は無い (要対応 0 件の日が続くと bot は Issue を作らない)・判断の中身 (covered と言った赤が本当に受け持てるか) は人が PR で見る。",
+      "regression": {
+        "file": "src/shared/__tests__/threatWatchDigest.test.ts",
+        "test": "★ 急増した種類 1 つずつに判断が要る: 足す / 既にいる赤が受け持つ / 該当しない理由"
       }
     }
   ],

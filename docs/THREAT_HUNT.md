@@ -124,6 +124,22 @@ PR が汚せるか / 門そのものに素通りの道があるか (種類・置
 - 機械: `src/shared/__tests__/hackerTeam.test.ts` (名簿の健全・台帳のどの型にも赤が居る・どの面にも偵察のほかの赤が居る・
   編成の順・学ばずに閉じない・進化の規則・brief と record と指示文の配線)。
 
+### 進化役は毎日の脅威ウォッチを読む —— 2026-10-30 · パス 562 · T-223
+
+毎日の脅威ウォッチは「直近 30 日に悪用されたのに `security/weakness-map.json` に無い弱点の種類」を数えるが、
+それを進化役へ渡す道が無く、予約のセッションは網の方針で OSV / CISA KEV に届かない (実測: どちらも CONNECT 403)。
+
+- 毎日の dependency-audit の報告 (常設 Issue「🔐 依存の勧告とセキュリティの床（自動更新）」の本文) の末尾に、
+  要約を 1 行 `<!-- threat-watch-digest:v1 … -->` で埋める (`scripts/lib/threat-watch-digest.cjs`)。
+  **運ぶのは CWE / CVE / 勧告の id と件数と日付だけ** —— KEV の名前・説明・製品名は AI の入力へ運ばない。
+- 狩りのセッションは GitHub の MCP で本文を読んでファイルに置き、`npm run hunt:cycle -- brief --watch <file>`。
+  brief は「進化役への入力」の節に急増した種類を載せ、記録の雛形に 1 つずつ判断の欄を置く。
+- 読む側は 1 つでも形が外れた要約・2 つ在る要約・3 日より古い / 未来の要約を使わない (理由つきで `unavailable`)。
+- `record` は急増した種類 1 つずつに `add:<役>` (evolution.add に在る) / `covered:<活動中の赤>` / `na:<10 字以上の理由>`
+  を要求し、要約を渡せなかった周は `evolution.watch.unavailable` の理由を要求する。`record <json> --watch <file>` なら
+  記録の基準日と急増した種類が要約そのものと一致することも見る。
+- 機械: `src/shared/__tests__/threatWatchDigest.test.ts` と `dependencyAuditEndToEnd.test.ts` の「常設 Issue の本文 → 週 1 の狩りの brief」。
+
 ## 輪を回し続ける側 (姿勢の測定)
 
 `npm run audit:security-posture` (毎日の `dependency-audit` も同じ測定を報告に載せる) が、台帳から

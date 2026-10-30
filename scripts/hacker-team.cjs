@@ -161,7 +161,7 @@ function droughtRoles(team, cycles) {
  * 1 周の記録のうち班の段 (team / learned / evolution) を検める (純関数)。
  * cycle.analyze.confirmed と突き合わせる: 確認した穴はどれかの役に帰属し、どれも型を 1 つ残す。
  */
-function teamCycleProblems(cycle, team, ledger) {
+function teamCycleProblems(cycle, team, ledger, watchDigest) {
   const out = [];
   const confirmed = Array.isArray(cycle?.analyze?.confirmed) ? cycle.analyze.confirmed : [];
   const byId = new Map(rolesOf(team).map((r) => [r.id, r]));
@@ -229,7 +229,81 @@ function teamCycleProblems(cycle, team, ledger) {
         if (after < redQuota(team)) out.push(`evolution: 引退の後の活動中の赤 ${after} 人が編成の人数 ${redQuota(team)} を割る`);
       }
     }
+    out.push(...watchDecisionProblems(cycle, team, Array.isArray(ev.add) ? ev.add : [], watchDigest));
   }
+  return out;
+}
+
+const CWE_RE = /^CWE-\d{1,5}$/;
+const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+const DECISION_RE = /^(add|covered|na):(.+)$/s;
+/** 「該当しない」の理由の下限 (字数)。短い 1 語 (「なし」「対象外」) では何が該当しないのかを次の人が確かめ直すことになる。 */
+const MIN_NA_REASON_CHARS = 10;
+
+/**
+ * 脅威ウォッチ (T-223) への進化役の判断を検める。表に無い弱点の種類が直近で急増していたら、その 1 つずつに
+ * 受け持つ赤を足す (`add:<役>`)・既にいる赤が受け持つ (`covered:<役>`)・このアプリには該当しない (`na:<理由>`)
+ * のどれかを書く。要約を渡せなかった周は `unavailable` に理由 (0 件と混ぜない)。
+ * `digest` を渡すと (record に `--watch`)、記録の基準日と急増した種類が要約そのものと一致することも見る。
+ */
+function watchDecisionProblems(cycle, team, add, digest) {
+  const out = [];
+  const w = cycle?.evolution?.watch;
+  if (w === null || typeof w !== 'object' || Array.isArray(w)) {
+    out.push('evolution.watch が無い —— 脅威ウォッチの要約を brief --watch で渡して判断するか、unavailable に渡せなかった理由を書く');
+    return out;
+  }
+  if ('unavailable' in w) {
+    if (!isNonEmptyString(w.unavailable)) out.push('evolution.watch.unavailable (要約を渡せなかった理由) が空か雛形のまま');
+    if ('hotGaps' in w || 'decisions' in w) out.push('evolution.watch: unavailable と hotGaps / decisions を同時に書かない');
+    if (digest !== undefined) out.push('evolution.watch: 要約が読めているのに unavailable と書いている');
+    return out;
+  }
+  if (typeof w.asOf !== 'string' || !ISO_DATE_RE.test(w.asOf)) out.push('evolution.watch.asOf が YYYY-MM-DD でない');
+  else if (typeof cycle?.date === 'string' && w.asOf > cycle.date) out.push(`evolution.watch.asOf ${w.asOf} が周の日付 ${cycle.date} より後`);
+  const hot = Array.isArray(w.hotGaps) && w.hotGaps.every((c) => typeof c === 'string' && CWE_RE.test(c)) ? w.hotGaps : null;
+  if (hot === null) {
+    out.push('evolution.watch.hotGaps が CWE-NNN の配列でない');
+    return out;
+  }
+  if (new Set(hot).size !== hot.length) out.push('evolution.watch.hotGaps に同じ CWE が 2 度ある');
+  if (digest !== undefined) {
+    if (w.asOf !== digest.asOf) out.push(`evolution.watch.asOf ${w.asOf} が要約の基準日 ${digest.asOf} と違う`);
+    const want = digest.hotGaps.map((g) => g.cwe).sort();
+    if (JSON.stringify([...hot].sort()) !== JSON.stringify(want)) out.push(`evolution.watch.hotGaps が要約の急増した種類 (${want.join(', ') || 'なし'}) と違う`);
+  }
+  const decisions = Array.isArray(w.decisions) ? w.decisions : null;
+  if (decisions === null) {
+    out.push('evolution.watch.decisions が配列でない');
+    return out;
+  }
+  const byId = new Map(rolesOf(team).map((r) => [r.id, r]));
+  const addIds = new Set(add.map((r) => r?.id));
+  const decided = new Set();
+  for (const d of decisions) {
+    const cwe = d?.cwe;
+    if (!hot.includes(cwe)) {
+      out.push(`evolution.watch.decisions: ${JSON.stringify(cwe)} は hotGaps に無い`);
+      continue;
+    }
+    if (decided.has(cwe)) out.push(`evolution.watch.decisions: ${cwe} が 2 度書かれている`);
+    decided.add(cwe);
+    const m = typeof d?.decision === 'string' ? DECISION_RE.exec(d.decision.trim()) : null;
+    if (m === null) {
+      out.push(`evolution.watch.decisions: ${cwe} の decision は add:<役> / covered:<役> / na:<理由> のどれか (雛形のまま?)`);
+      continue;
+    }
+    const [, kind, rest] = m;
+    if (kind === 'add' && !addIds.has(rest)) out.push(`evolution.watch.decisions: ${cwe} の add:${rest} は evolution.add に無い`);
+    if (kind === 'covered') {
+      const r = byId.get(rest);
+      if (!addIds.has(rest) && (r === undefined || !active(r) || r.kind !== 'red')) out.push(`evolution.watch.decisions: ${cwe} の covered:${rest} は活動中の赤の役でない`);
+    }
+    if (kind === 'na' && ([...rest.trim()].length < MIN_NA_REASON_CHARS || rest.trim().startsWith('<'))) {
+      out.push(`evolution.watch.decisions: ${cwe} の na: の理由が ${MIN_NA_REASON_CHARS} 字に満たないか雛形のまま`);
+    }
+  }
+  for (const cwe of hot) if (!decided.has(cwe)) out.push(`evolution.watch: 急増した ${cwe} に判断が無い —— 受け持つ赤を足す / 既にいる赤が受け持つ / 該当しない理由 のどれか`);
   return out;
 }
 
@@ -280,13 +354,60 @@ function renderTeamBrief(team, ledger, cycles, surface) {
 }
 
 /** 記録の雛形のうち班の段。 */
-function teamTemplate(lineup) {
+function teamTemplate(lineup, watch) {
   const members = [...lineup.red, lineup.variant, lineup.blue, lineup.evolver].filter(Boolean);
+  const watchTemplate =
+    watch === undefined
+      ? { unavailable: '<脅威ウォッチの要約を渡せなかった理由>' }
+      : watch.digest === undefined
+        ? { unavailable: `要約を読めなかった: ${watch.unavailable}` }
+        : {
+            asOf: watch.digest.asOf,
+            hotGaps: watch.digest.hotGaps.map((g) => g.cwe),
+            decisions: watch.digest.hotGaps.map((g) => ({ cwe: g.cwe, decision: '<add:役 id | covered:役 id | na:該当しない理由>' })),
+          };
   return {
     team: members.map((r) => ({ role: r.id, reports: 0, confirmed: [] })),
     learned: [{ threat: '<T-xxx>', shape: '<型 (1 行)>', look: '<次に探すときの探し方 (grep の針・見る場所)>' }],
-    evolution: { add: [], retire: [], notes: '<名簿を変えた / 変えなかった理由>' },
+    evolution: { add: [], retire: [], notes: '<名簿を変えた / 変えなかった理由>', watch: watchTemplate },
   };
+}
+
+/**
+ * brief に載せる「進化役への入力」(脅威ウォッチの要約 · T-223)。運ぶのは id と数と日付だけ。
+ * @param {undefined | {digest: object} | {unavailable: string}} watch
+ */
+function renderWatchInput(watch) {
+  const head = '## 進化役への入力: 世間で悪用されている弱点 (脅威ウォッチ)';
+  const how =
+    '常設 Issue「🔐 依存の勧告とセキュリティの床（自動更新）」(作者 github-actions[bot] のものだけ) の本文をファイルに置き、`npm run hunt:cycle -- brief --watch <file>` で渡す。';
+  if (watch === undefined) {
+    return [head, '', `**渡していない。** ${how} 渡せないなら記録の \`evolution.watch.unavailable\` に理由を書く。`, ''];
+  }
+  if (watch.digest === undefined) {
+    return [head, '', `**読めなかった** —— ${watch.unavailable}。記録の \`evolution.watch.unavailable\` にそのまま残る (0 件と混ぜない)。`, ''];
+  }
+  const d = watch.digest;
+  const others = d.gaps.filter((g) => !d.hotGaps.some((h) => h.cwe === g.cwe));
+  return [
+    head,
+    '',
+    `基準日 ${d.asOf} (直近 ${d.days} 日に CISA KEV へ入った ${d.kevEntries} 件)。外から来た物は id と件数だけ —— 名前・説明は運ばない。`,
+    '',
+    `### 急増しているのに \`security/weakness-map.json\` に無い種類 (${d.hotGaps.length})`,
+    '',
+    ...(d.hotGaps.length === 0
+      ? ['なし —— 進化役はこの節について判断しなくてよい (記録の decisions は空のまま)。']
+      : [
+          '**進化役は 1 つずつ判断し、記録の `evolution.watch.decisions` に書く**: 受け持つ赤を足す (`add:<役 id>` —— `evolution.add` にも書く) / 既にいる赤が受け持つ (`covered:<役 id>`) / このアプリには該当しない (`na:<理由>` —— `weakness-map.json` の `notApplicable` にも足す PR を出す)。',
+          '',
+          ...d.hotGaps.map((g) => `- 🔥 ${g.cwe} —— ${g.count} 件${g.cves.length === 0 ? '' : ` (${g.cves.join(' ')})`}`),
+        ]),
+    '',
+    ...(others.length === 0 ? [] : [`表に無い種類 (少数 · 参考): ${others.map((g) => `${g.cwe} ×${g.count}`).join(' / ')}`, '']),
+    ...(d.exploited.length === 0 ? [] : [`悪用が確認された脆弱性が当たる依存の勧告: ${d.exploited.map((f) => f.id).join(' / ')} (赤の供給網の役が最優先で見る)`, '']),
+    ...(d.stack.length === 0 ? [] : [`同梱の基盤・部品の悪用 ${d.stack.length} 件: ${d.stack.map((s) => s.cve).join(' / ')}`, '']),
+  ];
 }
 
 function selfTest() {
@@ -343,7 +464,7 @@ function selfTest() {
     analyze: { confirmed: ['T-002'] },
     team: [{ role: 'recon', reports: 2, confirmed: ['T-002'] }, { role: 'variant', reports: 0, confirmed: [] }, { role: 'blue', reports: 1, confirmed: [] }, { role: 'evolver', reports: 0, confirmed: [] }],
     learned: [{ threat: 'T-002', shape: '素の .length で文字数を数える', look: 'grep -n "\\.length >"' }],
-    evolution: { add: [], retire: [], notes: '名簿は変えない (初回)' },
+    evolution: { add: [], retire: [], notes: '名簿は変えない (初回)', watch: { unavailable: 'self-test では網に出ない' } },
   };
   check('班の段がそろった記録は通る', teamCycleProblems(ok, team, ledger).length === 0);
   check('確認した穴に型が無ければ断る', teamCycleProblems({ ...ok, learned: [] }, team, ledger).some((p) => p.includes('T-002')));
@@ -376,7 +497,10 @@ module.exports = {
   teamCycleProblems,
   applyCycle,
   renderTeamBrief,
+  renderWatchInput,
   teamTemplate,
+  watchDecisionProblems,
+  MIN_NA_REASON_CHARS,
   KINDS,
   DROUGHT_USES,
 };

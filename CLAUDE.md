@@ -1159,6 +1159,11 @@ npm run hunt:cycle -- brief|record <json>|status  # **探索 → 解析 → 対�
                          #   編成し (偵察 + 面に効く赤を出番の古い順に 2 + 3 役 = 最大 6 体)、`record` は確認した穴 1 つにつき
                          #   学んだ型 (learned) と進化役の判断 (evolution) を要求して名簿へ書き戻す (型は次の周の変種狩りの種・
                          #   役の追加と引退も検めてから)。判定は `shared/__tests__/hackerTeam.test.ts`
+                         #   ★ **進化役は毎日の脅威ウォッチを読む** (2026-10-30 · パス 562 · T-223) —— 予約のセッションは
+                         #   網の方針で OSV / KEV に届かないので、毎日の報告が常設 Issue の本文に要約
+                         #   (`<!-- threat-watch-digest:v1 … -->` · id と件数と日付だけ) を埋め、`brief --watch <file>` が読む。
+                         #   急増した「表に無い種類」1 つずつに evolution.watch.decisions (add / covered / na) が無いと
+                         #   `record` が断る。判定は `shared/__tests__/threatWatchDigest.test.ts`
 npm run audit:crown-jewels  # **確率に依らない守り**(2026-10-23 · T-169)。守る物 5 つ(security/crown-jewels.json)ごとに
                          #   防ぐ・封じ込める・気付く・戻すの 4 層が別々の強制物で揃うかを見る。毎日の dependency-audit が同じ測定を載せる。
                          #   判定は src/shared/__tests__/crownJewels.test.ts が npm test で見る。docs/ZERO_TRUST.md §2.9
