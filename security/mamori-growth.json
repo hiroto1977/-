@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.2"
+    "version": "0.3"
   },
   "constructs": {
     "class": {
@@ -247,6 +247,76 @@
       "report": {
         "pr": 847,
         "summary": "0.1 の穴 T-224 (constructor 経由の Function・Object の原型書き換え) を塞ぎ、0.2 の構文 7 種を足し、proxyEndpoint を Mamori へ移した"
+      }
+    },
+    {
+      "id": "MG-002",
+      "date": "2026-10-30",
+      "kind": "feature",
+      "target": "src/shared/mamori/parser.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/shared/controlChars.ts",
+      "deviation": "brief の選んだ port (controlChars.ts) は 16 進の数 (0x20 / 0x7f) が言語に無く書き直しだけでは移せなかった —— 16 進の数を足す feature に切り替え、同じ周で移した",
+      "version": "0.3",
+      "features": [
+        "16 進の数 (0x20 / 0X1F · 数字の無い 0x は M0)",
+        "印を受ける関数は直に呼ぶことしかできない (値として持ち出すと M4 · T-225)",
+        "危ない口は sink 関数の中でも呼ぶ形でしか使えず、第 1 引数は行き先の印を持つ値だけ (M2 · T-225)"
+      ],
+      "added": [],
+      "rewrite": [],
+      "ported": [
+        "src/shared/controlChars.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "openUrl.call(null, raw) / .apply / .bind で印を受ける関数へ素の値を渡す (0.2 は通した · tsc は型で断る)",
+          "result": "hole"
+        },
+        {
+          "tried": "const f = openUrl; f(raw) / { g: openUrl }.g(raw) / [openUrl].map(…) / (c ? openUrl : openUrl)(raw) / for (const f of [openUrl]) (0.2 は通した)",
+          "result": "hole"
+        },
+        {
+          "tried": "sink 関数の中で shell.openExternal(raw) —— 行き先以外の素の引数を危ない口へ流す (0.2 も tsc も通した)",
+          "result": "hole"
+        },
+        {
+          "tried": "sink 関数から return shell; / return { s: shell }; / return shell.openExternal; で危ない口を外へ持ち出す (0.2 も tsc も通した)",
+          "result": "hole"
+        },
+        {
+          "tried": "arrow の中で印を受ける関数を直に呼んで素の値を渡す",
+          "result": "refused"
+        },
+        {
+          "tried": "0x1.constructor で 16 進の数から原型へ届く",
+          "result": "refused"
+        },
+        {
+          "tried": "数字の無い 0x / 0X",
+          "result": "refused"
+        },
+        {
+          "tried": "(field raw.f)(raw) で unknown を呼ぶ (コンパイラは通す · tsc が unknown を呼べないと断る · 印の無い値なので来歴の穴ではない)",
+          "result": "refused"
+        }
+      ],
+      "threats": [
+        "T-225"
+      ],
+      "controls": 6,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/checker.ts",
+          "src/shared/controlChars.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 847,
+        "summary": "controlChars を Mamori へ移し (16 進の数を足して 0.3)、破る段で出た T-225 (印を受ける関数を値として持ち出す 8 形・sink の中で危ない口へ行き先以外を流す / 持ち出す 6 形) を塞いだ"
       }
     }
   ]
