@@ -1965,6 +1965,18 @@
           "replace": "    if (false && main !== ENTRY_POINT) return { ok: false, reason: 'bad-entry-point', detail: 'package.json' };"
         }
       ]
+    },
+    {
+      "id": "A-537",
+      "threat": "T-229",
+      "file": "scripts/build-docs-studio.cjs",
+      "why": "経営書類スタジオの自己走査の呼び出しを取り除く —— 配る maker の 1 本が組んだ HTML を悪意のコードの形で走査しなくなる穴を開け直す (census の両方向と main()-走査が鳴る)",
+      "edits": [
+        {
+          "find": "  assertInlineScriptsClean(html, path.basename(OUT));",
+          "replace": "  /* self-scan removed (ablation) */"
+        }
+      ]
     }
   ]
 }

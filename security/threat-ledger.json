@@ -4009,6 +4009,27 @@
           "test": "★ 許された根 build/ の中へ足した物は file-unlisted —— 根の名前 build を許すだけで中を見ていなかった穴 (threat: T-228 の M1)"
         }
       ]
+    },
+    {
+      "id": "T-229",
+      "found": "2026-10-30",
+      "foundBy": "パス 566 の赤対青の演習 (供給網の赤 S1)。CSP は artifactCspCensus が出荷物 8 本すべてを覆うのに、malware (lint-malware.cjs) には双子が無かった。lint:malware --artifact が CI で当たるのは pages.yml が publish するデモ 4 本と app 本体 (ci.yml:148 / pages.yml:118) だけで、利用者がダウンロードして開く maker 4 本 (経営書類スタジオ / 業務自動化ダッシュボード / 就業規則メーカー / 電子定款メーカー) は CI では組まないので 1 度も走査されていなかった。",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "配る maker HTML 4 本が lint:malware --artifact で 1 度も走査されず、CSP にはある census の双子が malware に無かった",
+      "status": "fixed",
+      "fix": "scripts/lib/maker-self-scan.cjs の assertInlineScriptsClean を 4 本の maker が main() で呼び、組んだ HTML のインライン script を lint-malware の規則で走査して重大な一致 (decoded-code-exec など) が在ればビルドを止める (CSP census が『ここが唯一の門』と呼んだのと同じ形 —— maker は CI では組まないので builder 自身が門)。makerMalwareCensus.test.ts が ① 4 本の buildHtml() の出力を同じ規則で実際に走査して CI でも覆い (behavioural)、② 自己走査を配線している build-*.cjs == download maker を両方向で留める。pages デモ・app 本体は既存の門 (ci.yml / pages.yml の --artifact) が覆うので二重に見ない。",
+      "regression": {
+        "file": "src/shared/__tests__/makerMalwareCensus.test.ts",
+        "test": "★ 母集団と台帳が両方向に一致する (自己走査を配線している build-*.cjs == download maker)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/__tests__/makerMalwareCensus.test.ts",
+          "test": "★ 各 maker が main() で自分の出力を走査する (ビルド時の唯一の門)"
+        }
+      ]
     }
   ],
   "huntBacklog": [

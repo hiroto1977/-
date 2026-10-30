@@ -25,6 +25,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { assertInlineScriptsClean } = require('./lib/maker-self-scan.cjs');
 
 const ROOT = path.join(__dirname, '..');
 const OUT = path.join(ROOT, 'dist', '業務自動化ダッシュボード.html');
@@ -433,10 +434,13 @@ function main() {
     }
   }
   if (html.length < 10_000) throw new Error('self-check failed: output too small');
+  // 配る HTML のインライン script を悪意のコードの形で走査 (threat: T-229)。重大な一致が在れば投げる。
+  assertInlineScriptsClean(html, path.basename(OUT));
 
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
   fs.writeFileSync(OUT, html);
   console.log(`Wrote ${OUT} (${(html.length / 1024).toFixed(1)} KB) — 自己検証 OK`);
 }
 
-main();
+module.exports = { buildHtml };
+if (require.main === module) main();

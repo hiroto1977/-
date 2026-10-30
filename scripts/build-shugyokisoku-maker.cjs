@@ -28,6 +28,7 @@
 const fs = require('fs');
 const path = require('path');
 const { replaceJsonToken } = require('./lib/json-for-script.cjs');
+const { assertInlineScriptsClean } = require('./lib/maker-self-scan.cjs');
 
 const ROOT = path.join(__dirname, '..');
 const OUT = path.join(ROOT, 'dist', '就業規則メーカー.html');
@@ -415,10 +416,13 @@ function main() {
   const articleCount = CHAPTERS.reduce((n, c) => n + c.articles.length, 0);
   if (articleCount < 38) throw new Error(`self-check failed: too few articles (${articleCount})`);
   if (html.length < 15_000) throw new Error('self-check failed: output too small');
+  // 配る HTML のインライン script を悪意のコードの形で走査 (threat: T-229)。重大な一致が在れば投げる。
+  assertInlineScriptsClean(html, path.basename(OUT));
 
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
   fs.writeFileSync(OUT, html);
   console.log(`Wrote ${OUT} (${(html.length / 1024).toFixed(1)} KB) — 自己検証 OK（10章・全${articleCount}条）`);
 }
 
-main();
+module.exports = { buildHtml };
+if (require.main === module) main();

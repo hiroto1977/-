@@ -250,6 +250,7 @@
 /src/shared/__tests__/installTimeCodeGuarded.test.ts @hiroto1977
 /src/shared/__tests__/launcherExecutablesGuarded.test.ts @hiroto1977
 /src/shared/__tests__/localConfigNotTracked.test.ts @hiroto1977
+/src/shared/__tests__/makerMalwareCensus.test.ts @hiroto1977
 /src/shared/__tests__/malwareGate.test.ts @hiroto1977
 /src/shared/__tests__/networkTargetWitness.test.ts @hiroto1977
 /src/shared/__tests__/privateTarget.test.ts @hiroto1977
