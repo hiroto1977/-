@@ -104,14 +104,16 @@ interface Binding {
   readonly mutable?: boolean;
 }
 
-/** 素の名前の式ならその名前、ほかは null (`kind` の比べを 1 か所に置く —— 名前を持つ式は ident だけ)。 */
+/**
+ * 素の名前の式ならその名前、ほかは null (`kind` の比べを 1 か所に置く —— 名前を持つ式は ident だけ)。
+ * `default:` の枝を書かないのは、その枝を消す変異体が等価になる (switch を抜けて同じ null に届く) ため。
+ */
 function identName(e: Expr): string | null {
   switch (e.kind) {
     case 'ident':
       return e.name;
-    default:
-      return null;
   }
+  return null;
 }
 
 export function checkModule(file: string, module: Module, table: ProjectTable): MamoriDiagnostic[] {
