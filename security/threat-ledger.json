@@ -63,6 +63,14 @@
             "docs/HUNT_CYCLE_PROMPT.md",
             "src/shared/__tests__/huntCycle.test.ts"
           ]
+        },
+        {
+          "what": "常設の班: 角度の違う赤を出番の古い順に並べ、反証役が再現し、確認した穴は型として名簿へ残して次の周の変種狩りの種にし、進化役が役の追加・引退を提案する (record が検めてから入る)",
+          "enforcedBy": [
+            "security/hacker-team.json",
+            "scripts/hacker-team.cjs",
+            "src/shared/__tests__/hackerTeam.test.ts"
+          ]
         }
       ],
       "gaps": [
@@ -3731,6 +3739,21 @@
       "regression": {
         "file": "src/shared/mamori/__tests__/mamoriRules.test.ts",
         "test": "★ plain 関数の mint は断る"
+      }
+    },
+    {
+      "id": "T-222",
+      "found": "2026-10-30",
+      "foundBy": "利用者の依頼「完全自律学習自動進化型のプロアクティブ AI ホワイトハッカー集団を常設して」を受けて、狩りの輪 (T-214) の『誰が・どの角度で狩るか』の側を測った —— 週 1 の予約が起動するのは毎回同じ 1 人の監査役で、見つけた穴の型を次の周へ渡す物も、収穫の無い角度を外し新しい攻撃の型を受け持つ角度を足す手も無かった (名簿は存在しなかった)。",
+      "surface": "supply-chain",
+      "class": "ai-automated-attack",
+      "severity": "medium",
+      "title": "狩りの輪は 1 人の監査役が毎回同じ角度で狩り、見つけた穴の型を次の周へ渡さず、班を作り替える手も無かった —— 攻撃側の AI は角度を変え続けるのに、こちらの角度は固定だった",
+      "status": "mitigated",
+      "fix": "security/hacker-team.json (常設の班の名簿: 赤 8 役 = 偵察・注入・流出・OS の境界・供給網・保管庫・財布・AI の口 / 変種狩り / 反証役 / 進化役) と scripts/hacker-team.cjs。brief は面に効く赤から『最後に出た日が最も古い → 収穫が多い → id』の順で今週の班 (偵察 + 2 + 変種狩り + 反証役 + 進化役 = 最大 6) を決定的に選び、変種狩りの種 (学んだ型・この面の最近の穴) と収穫の無い役 (3 周以上で確認 0) を載せる。record は班の段を検める: 確認した穴はどれかの役に帰属し、1 つにつき学んだ型 (shape と look) が要り (学ばずに閉じた穴は記録できない)、進化役の判断 (evolution: add / retire / notes) が要る。足す役は名簿と同じ規則 (面と型が脅威台帳に在る・赤だけ)、core の 4 役は引退できず、活動中の赤が編成の人数を割る引退は断る。検め終えた周の型は P-NNN として名簿へ書き戻り次の周の種になり、役の追加・引退も名簿へ入る。予約の指示文 (docs/HUNT_CYCLE_PROMPT.md) は赤と変種狩りを並べて起動し、反証役が再現し、進化役が学びと名簿の変更を提案する形に書き直した。限界: 自動なのは編成・学習・進化の記録と draft PR まで —— 名簿の変更も PR を通り、マージは人 (security/ は CODEOWNERS)。役を並べるぶん 1 周の利用料は 1 人の頃の数倍。予約そのものはリポジトリの外。",
+      "regression": {
+        "file": "src/shared/__tests__/hackerTeam.test.ts",
+        "test": "★ 名簿を渡した record は、brief で選んだ周に班の段を要求する (手で回した周は要求しない)"
       }
     }
   ],

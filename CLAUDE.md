@@ -1154,6 +1154,11 @@ npm run hunt:cycle -- brief|record <json>|status  # **探索 → 解析 → 対�
                          #   指示文は `docs/HUNT_CYCLE_PROMPT.md` と同じ物)。自動なのは検知・順位づけ・起動・解析・
                          #   対策の提案 (draft PR)・記録まで —— **マージは人が決める**。1 周 = 1 セッション分の利用料。
                          #   判定・実物の台帳の再生・配線・指示文と道具の一致は `shared/__tests__/huntCycle.test.ts`
+                         #   ★ **狩るのは常設の班** (2026-10-30 · パス 561 · threat: T-222) —— 名簿
+                         #   `security/hacker-team.json` (赤 8 役・変種狩り・反証役・進化役) を `scripts/hacker-team.cjs` が
+                         #   編成し (偵察 + 面に効く赤を出番の古い順に 2 + 3 役 = 最大 6 体)、`record` は確認した穴 1 つにつき
+                         #   学んだ型 (learned) と進化役の判断 (evolution) を要求して名簿へ書き戻す (型は次の周の変種狩りの種・
+                         #   役の追加と引退も検めてから)。判定は `shared/__tests__/hackerTeam.test.ts`
 npm run audit:crown-jewels  # **確率に依らない守り**(2026-10-23 · T-169)。守る物 5 つ(security/crown-jewels.json)ごとに
                          #   防ぐ・封じ込める・気付く・戻すの 4 層が別々の強制物で揃うかを見る。毎日の dependency-audit が同じ測定を載せる。
                          #   判定は src/shared/__tests__/crownJewels.test.ts が npm test で見る。docs/ZERO_TRUST.md §2.9

@@ -284,6 +284,7 @@
 /src/shared/__tests__/redactOutputShapes.test.ts @hiroto1977
 /src/main/__tests__/secretsCredentialTtl.test.ts @hiroto1977
 /src/shared/__tests__/huntCycle.test.ts @hiroto1977
+/src/shared/__tests__/hackerTeam.test.ts @hiroto1977
 /src/shared/credentialTtl.ts @hiroto1977
 /src/shared/__tests__/releaseJobSplit.test.ts @hiroto1977
 /src/shared/__tests__/workflowStructureGate.test.ts @hiroto1977
