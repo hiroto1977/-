@@ -172,6 +172,21 @@ function staticProblems(ablations, ledger, readFile) {
   return problems;
 }
 
+/** 追跡している検査ファイルのうち、本文に `name` を持つ物 (WORK からの相対パス)。 */
+function testFilesMentioning(name) {
+  const ls = spawnSync('git', ['ls-files', '-z', '--', '*.test.ts', '*.test.tsx'], { cwd: WORK, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
+  return String(ls.stdout)
+    .split('\0')
+    .filter(Boolean)
+    .filter((rel) => {
+      try {
+        return fs.readFileSync(path.join(WORK, rel), 'utf8').includes(name);
+      } catch {
+        return false;
+      }
+    });
+}
+
 /**
  * 名指しの検査が鳴らなかった (missed) 書き換えについて、**ほかに鳴る検査が在るか**を探す。
  * 書き換えた状態で `vitest related <書き換えたファイル>` を走らせ、落ちた検査の場所と題名を出す。
@@ -190,7 +205,10 @@ function triage(ablations, args) {
     const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'ablation-triage-')), 'report.json');
     try {
       fs.writeFileSync(abs, applyEdits(original, editsOf(a)));
-      spawnSync('npx', ['vitest', 'related', a.file, '--run', '--reporter=json', `--outputFile=${out}`], {
+      // `vitest related` は import の繋がりしか辿らない —— 検査が fs で読む YAML / JSON / SVG / 手順書は映らない
+      // (A-110 の pages.yml は「落ちた検査 0 件」と出た)。だから、そのファイルの名前を本文に持つ検査も走らせる。
+      const readers = testFilesMentioning(path.basename(a.file));
+      spawnSync('npx', ['vitest', 'related', a.file, ...readers, '--run', '--reporter=json', `--outputFile=${out}`], {
         cwd: WORK,
         env: { ...process.env, CI: '' },
         encoding: 'utf8',
