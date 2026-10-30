@@ -164,6 +164,8 @@ const PROTECTED = [
   'src/shared/imageUrlGate.mamori',
   // BYO プロキシの送り先の検証 (資格情報のほぼ全部が通る口) —— Mamori 0.2 で書き直した (パス 563)。生成物 proxyEndpoint.ts は既に保護対象。
   'src/shared/proxyEndpoint.mamori',
+  // 制御文字の判定 (資格情報と URL の入口が読む 1 つ) —— Mamori 0.3 で書き直した (パス 564)。生成物 controlChars.ts は既に保護対象。
+  'src/shared/controlChars.mamori',
   'src/renderer/components/VettedImg.tsx',
   'src/renderer/components/VettedLink.tsx',
   'src/shared/mamori/ast.ts',

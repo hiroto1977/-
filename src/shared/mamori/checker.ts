@@ -152,7 +152,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     // 器そのものを替えても答えは変わらない (等価) —— 答えは「定数の初期値からも参照できない」(M2) と
     // 「定数の初期値の奥 (配列の中)」が留める。
     // Stryker disable next-line StringLiteral,ObjectLiteral: 上の注記のとおり等価 (role は 'sink' / 'gate' でないことだけを意味する)
-    if (it.kind === 'const') checkExpr(it.init, [moduleScope], { role: 'plain', returnVetted: null });
+    if (it.kind === 'const') checkExpr(it.init, [moduleScope], { role: 'plain', returnVetted: null, destVetted: null });
     if (it.kind !== 'fn') continue;
     const sig = localFns.get(it.name)!;
     if (it.role === 'sink') {
@@ -167,17 +167,21 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         }
       }
     }
+    // sink 関数の行き先の印 (第 1 引数) —— 危ない口へ渡してよい第 1 引数はこの印を持つ値だけ (0.3 · T-225)。
+    const ctx: Ctx = { role: it.role, returnVetted: sig.returnVetted, destVetted: it.role === 'sink' ? (sig.paramVetted[0] ?? null) : null };
     const scope = new Map<string, Binding>();
     for (const p of it.params) {
       scope.set(p.name, { vetted: vettedOf(p.type, table.vetted), authority: 'local' });
-      if (p.init !== null) checkExpr(p.init, [moduleScope], { role: it.role, returnVetted: sig.returnVetted });
+      if (p.init !== null) checkExpr(p.init, [moduleScope], ctx);
     }
-    checkBlock(it.body, [moduleScope, scope], { role: it.role, returnVetted: sig.returnVetted });
+    checkBlock(it.body, [moduleScope, scope], ctx);
   }
 
   interface Ctx {
     readonly role: 'gate' | 'sink' | 'plain';
     readonly returnVetted: string | null;
+    /** sink 関数の行き先 (第 1 引数) の印。sink 関数の外と、行き先の型が印でない (M3 を出した) ときは null。 */
+    readonly destVetted: string | null;
   }
 
   function lookup(scopes: readonly Map<string, Binding>[], name: string): Binding | undefined {
@@ -282,6 +286,31 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     }
   }
 
+  /**
+   * 呼ぶ側の式を検める。名前を直に呼ぶ形 (`f(…)`) と、危ない口のメンバを呼ぶ形 (`shell.m(…)`) だけは値の検めを通さない
+   * —— 印を受ける関数と危ない口は「呼ぶこと」しか許さないので、ここで呼ぶ形を見分ける (0.3 · パス 564 · T-225)。
+   */
+  function checkCallee(callee: Expr, args: readonly Expr[], scopes: readonly Map<string, Binding>[], ctx: Ctx): void {
+    // 危ない口の名前そのもの (`shell` / `writeFile`) —— 断りの場所もその名前を指す。
+    const head = callee.kind === 'member' ? callee.object : callee;
+    const name = identName(head);
+    const b = name === null ? undefined : lookup(scopes, name);
+    if (b?.authority === 'sink') {
+      if (ctx.role !== 'sink') {
+        report('M2', head.pos, `危ない口 ${name} (extern sink) は sink 関数の中でだけ使えます`);
+      } else if (ctx.destVetted !== null && (args[0] === undefined || provenance(args[0], scopes) !== ctx.destVetted)) {
+        report('M2', head.pos, `危ない口 ${name} へ渡す第 1 引数は、行き先 (印 ${ctx.destVetted} を持つ値) だけです —— 行き先以外の値を流すと、sink 関数の印の型が意味を失う`);
+      }
+      return;
+    }
+    if (callee.kind === 'ident') {
+      // 名前を直に呼ぶ形: 宣言していない名前の検め (M6) だけを通す (印を受ける関数を呼ぶのは正しい使い方)。
+      if (b === undefined) checkExpr(callee, scopes, ctx);
+      return;
+    }
+    checkExpr(callee, scopes, ctx);
+  }
+
   function checkExpr(e: Expr, scopes: readonly Map<string, Binding>[], ctx: Ctx): void {
     switch (e.kind) {
       case 'ident': {
@@ -294,8 +323,14 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
           }
           return;
         }
-        if (b.authority === 'sink' && ctx.role !== 'sink') {
-          report('M2', e.pos, `危ない口 ${e.name} (extern sink) は sink 関数の中でだけ使えます`);
+        if (b.authority === 'sink') {
+          report('M2', e.pos, ctx.role !== 'sink'
+            ? `危ない口 ${e.name} (extern sink) は sink 関数の中でだけ使えます`
+            : `危ない口 ${e.name} は sink 関数の中でも呼ぶ形 (${e.name}(…) / ${e.name}.m(…)) でしか使えません —— 値として持ち出す・返すと、関門の外から素の値で呼べてしまう`);
+          return;
+        }
+        if (b === moduleScope.get(e.name) && signatureOf(e.name)?.paramVetted.some((v) => v !== null) === true) {
+          report('M4', e.pos, `${e.name} は印を受ける関数なので、直に呼ぶことしかできません —— 値として持ち出すと (.call / .apply / .bind・別名・オブジェクトや配列・条件演算子)、引数の印の検めを迂回できる`);
         }
         return;
       }
@@ -357,7 +392,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         return;
       }
       case 'call': {
-        checkExpr(e.callee, scopes, ctx);
+        checkCallee(e.callee, e.args, scopes, ctx);
         e.args.forEach((x) => checkExpr(x, scopes, ctx));
         // メンバの呼び出しは外形を持たない。この門を外しても、名前の無い呼ぶ側を引いて undefined が返り、
         // 下の門で同じく抜ける (等価)。

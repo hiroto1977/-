@@ -3793,6 +3793,21 @@
         "file": "src/shared/mamori/__tests__/mamoriV02.test.ts",
         "test": "★ String.constructor(code)() は M0 で断る (threat: T-224)"
       }
+    },
+    {
+      "id": "T-225",
+      "found": "2026-10-30",
+      "foundBy": "言語を育てる輪の 2 周目 (MG-002) の「破る」段。足した構文 (16 進の数) と既存の構文で、印を受ける関数と危ない口の呼び方を総当たりした —— 0.2 のコンパイラは `openUrl.call(null, raw)` / `.apply` / `.bind`・`const f = openUrl; f(raw)`・`{ g: openUrl }.g(raw)`・`[openUrl].map(…)`・`(c ? openUrl : openUrl)(raw)`・`for (const f of [openUrl])` の 8 形を通し (変換後の `tsc --strict` は型で断る)、sink 関数の中の `shell.openExternal(raw)` (行き先以外の素の引数)・`return shell;`・`return { s: shell };` は**コンパイラも `tsc` も通した**。",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "medium",
+      "title": "守りの層を書く言語 Mamori 0.2 の M4 / M2 は名前を直に呼ぶ形しか見ておらず、印を受ける関数を値として持ち出す 8 形で素の値を渡せ、sink 関数の中では危ない口へ行き先以外の素の値を流す・危ない口そのものを返すことができた",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: ① 印を受ける関数 (引数のどれかが印の型) は、このモジュールの名前として値の位置に現れたら M4 (直に呼ぶことしかできない) ② 危ない口 (extern sink) は sink 関数の中でも呼ぶ形 (`shell(…)` / `shell.m(…)`) でしか使えず、値として現れたら M2 ③ その呼び出しの第 1 引数は sink 関数の行き先の印を持つ値だけ (`checkCallee` · Ctx.destVetted)。既存の検査 1 件が「sink 関数の引数の既定値に shell を値として置ける」を許容として留めていたので反転した。限界: 第 2 引数以降は検めない (`window.open(url, '_blank', 'noopener')` の窓の名前・`writeFile(path, body)` の中身は行き先ではない)。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV03.test.ts",
+        "test": "★ 印を受ける関数の .call で素の値を渡す形は断る (threat: T-225)"
+      }
     }
   ],
   "huntBacklog": [

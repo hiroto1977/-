@@ -7,6 +7,13 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-10-30) — パス 564: 育てる輪の 2 周目 MG-002 —— controlChars を移し、16 進の数 (0.3)、sink の呼び方の穴を塞ぐ (threat: T-225)
+
+- brief どおり `src/shared/controlChars.ts` (24 行) を `controlChars.mamori` の生成物にした。判定は `c < 0x20 || c === 0x7f` のまま —— そのために 16 進の数 (`0x20` / `0X1F`) を字句へ足した (0.3 · 数字の無い `0x` は断る)。
+- **「破る」段が足す構文と関係の無い穴を出した (T-225)**: 印を受ける関数を値として持ち出す 8 形 (`openUrl.call(null, raw)` / `.apply` / `.bind`・別名・オブジェクト / 配列・三項・for) で素の値を渡せた (変換後の tsc は型で断る)。**より重いのは sink 関数の中**で、`shell.openExternal(raw)` (行き先以外の素の値)・`return shell;` / `return { s: shell };` を**コンパイラも tsc も通した**。0.3 は印を受ける関数を「直に呼ぶ」ことしか許さず (M4)、危ない口は sink 関数の中でも呼ぶ形でしか使えず、その第 1 引数は行き先の印を持つ値だけ (M2 · `checkCallee`)。
+- 既存の検査 1 件が「sink 関数の引数の既定値に `shell` を値として置ける」を許容として留めていたので反転した。
+- 機械: `mamoriV03.test.ts` (T-225 の回帰・16 進)。対照 6 方向すべて狙った検査で鳴る。
+
 ## 直近の作業 (2026-10-30) — パス 563: Mamori 0.2 を育て、育てる輪を半永久的に回す (threat: T-224)
 
 - **0.1 の穴を先に破って見つけた (T-224)**: `eval` / `Function` を禁じているのに、`String.constructor(code)()` (= `Function(code)()`) と `''.constructor.constructor` が通り、生成した TS を走らせると任意のコードが動いた (実測: 42 が返った)。`Object.setPrototypeOf` ほか原型を書き換える組み込みも素で呼べた。直し: `.` の後ろの `constructor` / `prototype` / `__proto__` を M0 で断る (`FORBIDDEN_MEMBERS`) ・組み込みの `Object` は許可した読み手 (`hasOwn` / `keys` / `values` / `entries` / `fromEntries` / `freeze` / `isFrozen`) だけで、値として持ち出すのも断る (M6)。

@@ -42,9 +42,9 @@ Mamori では、その 2 つは**書けない**:
 | --- | --- | --- |
 | M0 | 書けない綴り: `as` / `any` / `eval` / テンプレート文字列 / `/* */`・**`.` の後ろの `constructor` / `prototype` / `__proto__`** (0.2)・オブジェクトの字面の `__proto__` の鍵・展開 `...`・計算した鍵 | 字句・構文の段で止まる |
 | M1 | 印は `gate` 関数の中の `mint 型名(値)` でだけ作れ、その関数の戻り値の型が同じ印を名乗る | `sink` / 普通の関数の `mint`・戻り値が名乗らない印 |
-| M2 | `extern sink` で宣言した値は `sink` 関数の中でだけ参照できる | 普通の関数・`gate` 関数・定数の初期値から危ない口を呼ぶ |
+| M2 | `extern sink` で宣言した値は `sink` 関数の中でだけ参照できる。**sink 関数の中でも呼ぶ形 (`shell(…)` / `shell.m(…)`) でしか使えず、その第 1 引数は行き先 (第 1 引数の印) を持つ値だけ** (0.3 · T-225) | 普通の関数・`gate` 関数・定数の初期値から危ない口を呼ぶ・sink 関数の中で `shell.openExternal(raw)` (行き先以外の素の値)・`return shell;` / `return { s: shell };` (危ない口を外へ持ち出す) |
 | M3 | `sink` 関数の**最初の引数 (行き先)** の型は、宣言した印の型 1 つ (`T \| null` も不可)。2 つ目からは本文で型を問わない。引数の無い sink も断る | 素の `string` を行き先に受ける危ない口を作る |
-| M4 | 印の型を受ける引数には、印を持つ値だけを渡せる (モジュールをまたいでも) | 文字列の字面・素の引数・別の種類の印を渡す |
+| M4 | 印の型を受ける引数には、印を持つ値だけを渡せる (モジュールをまたいでも)。**印を受ける関数は直に呼ぶことしかできない** —— 値として持ち出すと検めを迂回できる (0.3 · T-225) | 文字列の字面・素の引数・別の種類の印を渡す・`openUrl.call(null, raw)` / `.apply` / `.bind`・`const f = openUrl;`・`{ g: openUrl }`・`[openUrl]`・`c ? openUrl : …`・`for (const f of [openUrl])` |
 | M5 | 印を持つ変数を、印の無い値で上書きできない | `let u = 関門(x); u = '…';` (印の洗浄) |
 | M6 | 外の名前は `use` / `extern` で宣言する。宣言なしで使えるのは副作用の判断を持たない組み込み (`URL` / `Set` / `Map` / `Promise` / `Number` / `String` / `Boolean` / `Math` / `JSON` / `Object` / `Array` / `Error` / `RegExp` / `TypeError` / `RangeError`) だけ。**`Object` は読むだけ・凍らせるだけのメンバ (`hasOwn` / `keys` / `values` / `entries` / `fromEntries` / `freeze` / `isFrozen`) に限り、値として持ち出せない** (0.2)。**代入できるのは `let` の名前だけ** —— 外の名前・`const`・引数・回す変数・関数の名前へは代入できない (0.2。0.1 は「このモジュールの名前か」しか見ず、`const` と引数への代入を変換後の `tsc` に任せていた —— 引数への代入は `tsc` も通す) | `window` / `fetch` / `process` / `require` / `globalThis` / `document` / `localStorage` / `indexedDB` / `navigator` を暗黙に使う・`Object.setPrototypeOf` / `defineProperty` / `assign`・`const o = Object;`・`code = 'x';` (引数)・`for (const k of xs) { k = 1; }` |
 
@@ -61,7 +61,17 @@ Mamori では、その 2 つは**書けない**:
 `Object.setPrototypeOf(Object.getPrototypeOf(''), null)` で文字列の組み込みメソッドをアプリ全体で消せた。
 0.2 はどちらも断る (`mamoriV02.test.ts` が規則を破るプログラムで留める)。
 
-## 文法 (0.2)
+## 0.2 の穴 (T-225 · 2026-10-30 · パス 564)
+
+0.2 の M4 は**名前を直に呼ぶ形** (`openUrl(raw)`) しか見ていなかった。印を受ける関数を値として持ち出すと ——
+`openUrl.call(null, raw)` / `.apply` / `.bind`・別名・オブジェクトや配列に入れる・条件演算子・`for` で回す ——
+素の値を渡すのを通した (この 8 形は変換後の `tsc --strict` が型で断るので、Mamori の規則としての穴)。
+**より重いのは sink 関数の中**で、行き先を印の型で受けていても、本体は危ない口へ**別の素の引数**を流せた
+(`shell.openExternal(raw)`)・危ない口そのものを返せた (`return shell;`) —— こちらは `tsc` も通す。
+0.3 はどちらも断る (`mamoriV03.test.ts` が規則を破るプログラムで留める)。言語を育てる輪の 2 周目 (MG-002) の
+「破る」段で、足す構文 (16 進の数) と関係の無い既存の構文の組み合わせから出た —— **破る段は足す構文だけを見ない**。
+
+## 文法 (0.3)
 
 ```
 module    := header* item*
@@ -84,7 +94,7 @@ fn        := 'export'? ('gate' | 'sink')? 'async'? 'fn' 名前 '(' 引数* ')' '
            | 'switch' '(' 式 ')' '{' (('case' 式 | 'default') ':')+ 文+ … '}'
            | 名前 '=' 式 ';' | 式 ';'
 式        := 2 項 (?? || && === !== < > <= >= + - * / %) | 単項 (! - typeof await)
-           | 呼び出し・メンバ・new | 配列 | 文字列・数・正規表現・true/false/null/undefined
+           | 呼び出し・メンバ・new | 配列 | 文字列・数 (10 進 / 16 進 `0x1f` · 0.3)・正規表現・true/false/null/undefined
            | '(' 引数 ')' '=>' 式 | 'mint' 印 '(' 式 ')'
            | 式 '?' 式 ':' 式 | '{' (鍵 ':' 式 | 名前) (',' …)* '}' | 'field' 式 '.' 名前      (0.2)
 鍵        := 名前 | 文字列            (`__proto__` は書けない・展開 `...` と計算した鍵 `[k]` は無い)
@@ -134,6 +144,7 @@ export sink fn openExternalVetted(url: VettedExternalUrl) -> Promise<void> {
 | `src/renderer/vettedSinks.mamori` | `src/renderer/vettedSinks.ts` | sink: ブラウザ版の `window.open` |
 | `src/shared/imageUrlGate.mamori` | `src/shared/imageUrlGate.ts` | gate: 画像の取得先 (`safeImageSrc` / `safeRemoteImageSrc` → `VettedImageSrc`)。口は JSX の部品 `src/renderer/components/VettedImg.tsx` で、言語が JSX を持たないので TypeScript の型が守る |
 | `src/main/clients/exportSink.mamori` | `src/main/clients/exportSink.ts` | gate + sink: 書き出しのファイル書き込み (`exportTargetOrNull` → `writeExportFileVetted` · 書き手 4 本が通る) |
+| `src/shared/controlChars.mamori` | `src/shared/controlChars.ts` | 制御文字 (C0 と DEL) の判定 (資格情報・URL の入口の 5 本が読む唯一の規則 · 0.3 の 16 進の数で書き直した · パス 564) |
 | `src/shared/proxyEndpoint.mamori` | `src/shared/proxyEndpoint.ts` | BYO プロキシの送り先と共有秘密の検証 (**資格情報のほぼ全部が通る 1 本の口** · 0.2 の構文で書き直した最初の物 · パス 563) |
 
 残りの TypeScript は Mamori で書いた gate / sink を呼ぶ側で、呼ぶ側には TypeScript の型の印が掛かる
@@ -151,7 +162,7 @@ export sink fn openExternalVetted(url: VettedExternalUrl) -> Promise<void> {
   `shell` を直接呼んだりする道は、TypeScript の側の検査 (`vettedTypes.test.ts` の census・`lint:forbidden`) が塞ぐ。
 - 変換した TypeScript は `tsc` が検査するが、実行時の守りは今までどおり**関門の中身**そのものである。
   Mamori が止めるのは「関門を飛ばす書き方」で、関門の判定の誤りは関門の検査 (変異検査 100% の対象) が見る。
-- 言語は 0.2 で、守りの層を書くのに要る構文しか持たない (0.2 でオブジェクトの字面・条件演算子・switch・throw・for…of・type / interface・field を足した。**クラス・添字 `x[k]`・計算した鍵・展開・後置の `!`・optional chaining は無い** —— 添字と計算した鍵は鍵を実行時に組めるので、T-224 の表 (`.constructor` を断る) を迂回する道になる。足すなら先に塞ぎ方を決める)。**JSX も無い**ので、`<img>` の口 (`VettedImg.tsx`) と `<a href>` の口 (`VettedLink.tsx`) は TypeScript で書き、守りは型の印と census (素の `<img` と動的な素の `<a href={…}>` はこの部品の外に無い) が持つ。
+- 言語は 0.3 で、守りの層を書くのに要る構文しか持たない (0.3 で 16 進の数を、0.2 でオブジェクトの字面・条件演算子・switch・throw・for…of・type / interface・field を足した。**クラス・添字 `x[k]`・計算した鍵・展開・後置の `!`・optional chaining は無い** —— 添字と計算した鍵は鍵を実行時に組めるので、T-224 の表 (`.constructor` を断る) を迂回する道になる。足すなら先に塞ぎ方を決める)。**JSX も無い**ので、`<img>` の口 (`VettedImg.tsx`) と `<a href>` の口 (`VettedLink.tsx`) は TypeScript で書き、守りは型の印と census (素の `<img` と動的な素の `<a href={…}>` はこの部品の外に無い) が持つ。
   足すときは、その構文が来歴の規則を外す道にならないかを先に考える (`as` を入れなかったのと同じ理由)。
 
 ## 育て方 (半永久的に育てる輪)

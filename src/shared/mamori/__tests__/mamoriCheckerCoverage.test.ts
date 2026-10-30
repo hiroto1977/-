@@ -71,8 +71,10 @@ describe('M2 はどの位置でも効く (検査器が式と文を辿りきる)'
     expect(rules(`${EXTERN}export const W: unknown = [shell];\n`)).toEqual(['M2']);
   });
 
-  it('対照: sink 関数の引数の既定値なら使える (役割は関数の役割)', () => {
-    expect(rules(`${VETTED}${EXTERN}export sink fn s(u: VettedUrl, b: unknown = shell) -> void {\n  return;\n}\n`)).toEqual([]);
+  it('★ sink 関数の引数の既定値でも、危ない口を値として持ち出せない (0.3 · T-225) —— 役割は関数の役割なので「呼ぶ形でしか」の文になる', () => {
+    const ds = diags(`${VETTED}${EXTERN}export sink fn s(u: VettedUrl, b: unknown = shell) -> void {\n  return;\n}\n`);
+    expect(ds.map((d) => d.rule)).toEqual(['M2']);
+    expect(ds[0]!.message).toContain('sink 関数の中でも呼ぶ形');
   });
 
   it('対照: arrow の引数が同じ名前なら、それは外の口ではない (内側の名前が勝つ)', () => {

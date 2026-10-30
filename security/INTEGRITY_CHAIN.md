@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 396
+- ブロック数: 397
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `c3ae67ba4c08746d6933f9ef1a5a390e5adffedd9570360928093e5b6e5f67cb`
-- 保護対象: 154 ファイル
+- 末尾(tip)ハッシュ: `cb9b5216e75d9167edbbf24e1a7cb993339639f771a66ad837a797d029846284`
+- 保護対象: 155 ファイル
 
 ## ブロック
 
@@ -409,6 +409,7 @@
 | 393 | `679d2ea479835b9f` | `f6cfb1e38249707c` | `b90bf1ca0e5c2284` | update integrity-chain.cjs,ast.ts,checker.ts,emit.ts,parser.ts,proxyEndpoint.mamori |
 | 394 | `9180ad493c9cbbe8` | `b90bf1ca0e5c2284` | `ee967358076aa390` | update checker.ts,emit.ts,parser.ts |
 | 395 | `4843d8a8d9d6a96d` | `ee967358076aa390` | `c3ae67ba4c08746d` | update checker.ts |
+| 396 | `6c0373db2dbbb7d1` | `c3ae67ba4c08746d` | `cb9b5216e75d9167` | update integrity-chain.cjs,controlChars.mamori,controlChars.ts,checker.ts,parser.ts |
 
 ## 保護対象ファイル
 
@@ -528,6 +529,7 @@
 - `src/shared/assistantLimits.ts`
 - `src/shared/atlassianSite.ts`
 - `src/shared/constantTimeEquals.ts`
+- `src/shared/controlChars.mamori`
 - `src/shared/controlChars.ts`
 - `src/shared/credentialTtl.ts`
 - `src/shared/cryptoParams.ts`

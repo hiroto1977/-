@@ -143,7 +143,9 @@ export function lex(file: string, src: string): Tok[] {
     }
     if (/[0-9]/.test(ch)) {
       // 先頭の 1 字は数字だと上で確かめたので、一致は必ず先頭から始まる (錨 `^` は要らない —— 書くと消す変異体が等価になる)
-      const m = /[0-9][0-9_]*(\.[0-9]+)?/.exec(src.slice(i))!;
+      // 16 進 (`0x20`) は 0.3 から (パス 564) —— 制御文字やビットの境目は 16 進で書くほうが読み手が確かめやすい。
+      const m = /0[xX][0-9a-fA-F]*|[0-9][0-9_]*(\.[0-9]+)?/.exec(src.slice(i))!;
+      if (m[0] === '0x' || m[0] === '0X') throw new MamoriError(file, pos, '`' + m[0] + '` の後に 16 進の数字 (0-9 / a-f) が要ります');
       out.push({ kind: 'number', text: m[0], pos });
       advance(m[0].length);
       continue;
