@@ -64,6 +64,8 @@ describe('判定 —— 名指しの検査の状態だけで決める (threat: T
   it('it.each の題名 (%s / $name) と describe の名指しも当たる', () => {
     expect(tool.titleMatcher('★ %s を危機と判定する (threat: T-089)').test('★ 消えてしまいたい を危機と判定する (threat: T-089)')).toBe(true);
     expect(tool.titleMatcher('★ $name で断る').test('★ ZWSP で断る')).toBe(true);
+    // 台帳の名指しは題名の一部でよい (★ と (threat: T-xxx) を省いた行が在る —— 台帳の検査も部分一致)。
+    expect(tool.titleMatcher('重み: 全 AI 合議 (chatAll) は数える').test('★ 重み: 全 AI 合議 (chatAll) は数える (threat: T-152)')).toBe(true);
     // 正規表現の字は字のまま (題名の括弧や `.` が任意の字に化けない)。
     expect(tool.titleMatcher('a.b (c)').test('axb (c)')).toBe(false);
     expect(tool.verdictOf(report([{ title: '★ x', status: 'failed', ancestorTitles: ['確かめる段階 (threat: T-147)'] }]), '確かめる段階 (threat: T-147)').verdict).toBe('caught');

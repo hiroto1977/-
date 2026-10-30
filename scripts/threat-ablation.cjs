@@ -45,6 +45,47 @@ const ROOT = path.resolve(__dirname, '..');
 const ABLATIONS = path.join(ROOT, 'security', 'threat-ablations.json');
 const LEDGER = path.join(ROOT, 'security', 'threat-ledger.json');
 
+/**
+ * 書き換えて検査を走らせる木。既定は **git worktree** (今の変更を重ねた写し) で、利用者の作業ツリーには
+ * 1 字も触れない —— 作業ツリーで当てると、測っている間は守りを外したファイルが「変更」に見え、
+ * 誤ってコミットすると穴の開いたコードが branch に載る (2026-10-30 · パス 565 の 1 回目がそうだった)。
+ * `--in-place` で作業ツリーを使う (git の無い所だけ)。
+ */
+let WORK = ROOT;
+
+/** worktree を作り、作業ツリーの未コミットの変更 (追跡外も) を重ね、node_modules を繋ぐ。 */
+function prepareWorkspace() {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ablation-work-'));
+  const tree = path.join(dir, 'tree');
+  const git = (argv) => spawnSync('git', argv, { cwd: ROOT, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
+  const add = git(['worktree', 'add', '--detach', '--quiet', tree, 'HEAD']);
+  if (add.status !== 0) throw new Error(`git worktree add に失敗: ${String(add.stderr).trim()}`);
+  const st = git(['status', '--porcelain=v1', '-z', '--untracked-files=all']);
+  const parts = String(st.stdout).split('\0').filter(Boolean);
+  for (let i = 0; i < parts.length; i++) {
+    const code = parts[i].slice(0, 2);
+    const rel = parts[i].slice(3);
+    if (code.startsWith('R') || code.startsWith('C')) i++; // 改名は次の欄が元の名前
+    const from = path.join(ROOT, rel);
+    const to = path.join(tree, rel);
+    if (code.includes('D') || !fs.existsSync(from)) {
+      fs.rmSync(to, { force: true });
+      continue;
+    }
+    if (fs.statSync(from).isDirectory()) continue;
+    fs.mkdirSync(path.dirname(to), { recursive: true });
+    fs.copyFileSync(from, to);
+  }
+  fs.symlinkSync(path.join(ROOT, 'node_modules'), path.join(tree, 'node_modules'), 'dir');
+  return {
+    root: tree,
+    cleanup() {
+      git(['worktree', 'remove', '--force', tree]);
+      fs.rmSync(dir, { recursive: true, force: true });
+    },
+  };
+}
+
 /** 1 回の vitest に許す時間。名指しのファイル 1 本だけを走らせるので、これを超えるのは固まったとき。 */
 const RUN_TIMEOUT_MS = 10 * 60 * 1000;
 
@@ -69,8 +110,13 @@ function titlePattern(title) {
   return parts.map((p) => p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('.+?');
 }
 
+/**
+ * 台帳の名指しは**題名の一部**でよい (`threatLedger.test.ts` は `body.includes(test)` で確かめる —— 先頭の `★ ` や
+ * 末尾の `(threat: T-xxx)` を省いて書く行が在る)。だから照合も部分一致にする。最初の版は題名全体の完全一致で、
+ * 原文でも走る検査を「1 件も走らなかった」(baseline-unmatched) と 10 件誤って言った (2026-10-30 · パス 565)。
+ */
 function titleMatcher(title) {
-  return new RegExp(`^${titlePattern(title)}$`, 'u');
+  return new RegExp(titlePattern(title), 'u');
 }
 
 /** 1 行の書き換えの束。`find` / `replace` の 1 組でも、同じファイルへの `edits` の列でもよい。 */
@@ -139,13 +185,13 @@ function triage(ablations, args) {
   }
   const found = [];
   for (const a of chosen) {
-    const abs = path.join(ROOT, a.file);
+    const abs = path.join(WORK, a.file);
     const original = fs.readFileSync(abs, 'utf8');
     const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'ablation-triage-')), 'report.json');
     try {
       fs.writeFileSync(abs, applyEdits(original, editsOf(a)));
       spawnSync('npx', ['vitest', 'related', a.file, '--run', '--reporter=json', `--outputFile=${out}`], {
-        cwd: ROOT,
+        cwd: WORK,
         env: { ...process.env, CI: '' },
         encoding: 'utf8',
         timeout: RUN_TIMEOUT_MS * 3,
@@ -168,7 +214,7 @@ function triage(ablations, args) {
     const failed = [];
     for (const file of report?.testResults ?? []) {
       for (const r of file.assertionResults ?? []) {
-        if (r.status === 'failed') failed.push({ file: path.relative(ROOT, file.name), test: r.title, ancestors: r.ancestorTitles ?? [] });
+        if (r.status === 'failed') failed.push({ file: path.relative(WORK, file.name), test: r.title, ancestors: r.ancestorTitles ?? [] });
       }
     }
     found.push({ id: a.id, threat: a.threat, measured: report !== null, failed });
@@ -194,7 +240,7 @@ function runVitest(file, title) {
     ['vitest', 'run', file, '-t', titlePattern(title), '--reporter=json', `--outputFile=${out}`],
     // CI を空にする: vitest.config.ts は CI のとき失敗した検査を 2 回やり直すので、
     // 1 回目で状態を消費する検査が「通った」に化ける (パス 501 の実測)。
-    { cwd: ROOT, env: { ...process.env, CI: '' }, encoding: 'utf8', timeout: RUN_TIMEOUT_MS, maxBuffer: 64 * 1024 * 1024 },
+    { cwd: WORK, env: { ...process.env, CI: '' }, encoding: 'utf8', timeout: RUN_TIMEOUT_MS, maxBuffer: 64 * 1024 * 1024 },
   );
   let report = null;
   try {
@@ -256,12 +302,13 @@ function combineVerdicts(list) {
 }
 
 function parseArgs(argv) {
-  const out = { cmd: argv[0] ?? 'check', only: null, json: null, report: false };
+  const out = { cmd: argv[0] ?? 'check', only: null, json: null, report: false, inPlace: false };
   for (let i = 1; i < argv.length; i++) {
     if (argv[i] === '--only') out.only = new Set(String(argv[++i] ?? '').split(',').filter(Boolean));
     else if (argv[i] === '--json') out.json = argv[++i] ?? null;
     // 毎日の報告から走らせる形: 捕まえ損ねは報告 (Issue) が言うので exit 0。道具の誤りだけ非 0。
     else if (argv[i] === '--report') out.report = true;
+    else if (argv[i] === '--in-place') out.inPlace = true;
   }
   return out;
 }
@@ -321,11 +368,21 @@ function main(argv) {
     console.log(`✓ 穴を開ける書き換え ${ablations.length} 件 (脅威 ${new Set(ablations.map((a) => a.threat)).size} 件) はどれも 1 回きり当たる`);
     return 0;
   }
-  if (args.cmd === 'triage') return triage(ablations, args);
-  if (args.cmd !== 'run') {
+  if (args.cmd !== 'run' && args.cmd !== 'triage') {
     console.error(`知らない命令: ${args.cmd} (check | run | triage)`);
     return 2;
   }
+  const ws = args.inPlace ? null : prepareWorkspace();
+  if (ws !== null) WORK = ws.root;
+  try {
+    return args.cmd === 'triage' ? triage(ablations, args) : runAll(ablations, ledger, args);
+  } finally {
+    if (ws !== null) ws.cleanup();
+    WORK = ROOT;
+  }
+}
+
+function runAll(ablations, ledger, args) {
   const threats = new Map(ledger.threats.map((t) => [t.id, t]));
   const chosen = ablations.filter((a) => args.only === null || args.only.has(a.threat) || args.only.has(a.id));
   const baselines = new Map();
@@ -347,7 +404,7 @@ function main(argv) {
       console.log(`… ${a.id} ${a.threat}: ${base}`);
       continue;
     }
-    const abs = path.join(ROOT, a.file);
+    const abs = path.join(WORK, a.file);
     const original = fs.readFileSync(abs, 'utf8');
     let result;
     try {

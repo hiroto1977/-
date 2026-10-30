@@ -1521,6 +1521,414 @@
           "replace": ""
         }
       ]
+    },
+    {
+      "id": "A-500",
+      "threat": "T-178",
+      "file": "src/main/userPresence.ts",
+      "why": "取り消しの道 (destructive) をロックの数えと締めに戻す —— 外への書き込みを 3 回断らせるだけで資格情報の削除・全消去が数分〜1 時間塞がる穴を開け直す",
+      "edits": [
+        {
+          "find": "const lockable = CONFIRMED_TIERS.has(req.tier) && req.tier !== 'destructive';",
+          "replace": "const lockable = CONFIRMED_TIERS.has(req.tier);"
+        }
+      ]
+    },
+    {
+      "id": "A-501",
+      "threat": "T-181",
+      "file": "src/main/userPresence.ts",
+      "why": "AI 資格情報の束を解析して送り先のホストと値が入る欄を確認に見せる段を外す —— 末尾 4 文字だけの確認に戻り、compatUrl / ollamaUrl の差し替えが見分けられない",
+      "edits": [
+        {
+          "find": "if (value.trimStart().startsWith('{') && value.length <= 64 * 1024) {",
+          "replace": "if (false && value.trimStart().startsWith('{') && value.length <= 64 * 1024) {"
+        }
+      ]
+    },
+    {
+      "id": "A-502",
+      "threat": "T-182",
+      "file": "scripts/lint-workflow-security.cjs",
+      "why": "release.yml の verify ジョブの step を黙らせる鍵 (continue-on-error / if / shell / working-directory) を断る規則を無効にする —— ゲートが落ちても job が緑のまま署名の job が進める穴を開け直す",
+      "edits": [
+        {
+          "find": "if (name !== 'release.yml') return [];",
+          "replace": "return [];"
+        }
+      ]
+    },
+    {
+      "id": "A-503",
+      "threat": "T-188",
+      "file": "src/main/main.ts",
+      "why": "action:invoke の入口で型付き配列・Map・Date の payload を断る isPlainPayload の門を外す —— 2,000 万要素の型付き配列で for…in が全キーを列挙し主プロセスが固まる穴を開け直す",
+      "edits": [
+        {
+          "find": "if (!isPlainPayload(payload)) {\n      return { ok: false, code: 'action_failed', message: '送る内容の形が正しくないため断りました。' };",
+          "replace": "if (false) {\n      return { ok: false, code: 'action_failed', message: '送る内容の形が正しくないため断りました。' };"
+        }
+      ]
+    },
+    {
+      "id": "A-504",
+      "threat": "T-188",
+      "file": "src/main/userPresence.ts",
+      "why": "payloadTooWide 自身の for…in 前の isPlainPayload 守りを外す (入口の門と二重の防御の 2 層目) —— 入口を迂回した呼び出しで全キー列挙が起きる",
+      "edits": [
+        {
+          "find": "if (!isPlainPayload(payload)) return true;",
+          "replace": ""
+        }
+      ]
+    },
+    {
+      "id": "A-505",
+      "threat": "T-195",
+      "file": "src/renderer/index.html",
+      "why": "デスクトップ版 CSP の worker-src 'none' を外す —— 未指定は script-src 'self' へ落ち、file: の任意の場所の .js が Worker / SharedWorker として実行できる穴を開け直す",
+      "edits": [
+        {
+          "find": "worker-src 'none'; base-uri 'self'",
+          "replace": "base-uri 'self'"
+        }
+      ]
+    },
+    {
+      "id": "A-506",
+      "threat": "T-200",
+      "file": "scripts/lint-mcp-servers.cjs",
+      "why": "パッケージ名より前の起動子への旗 (--registry=… ほか) を許可制で断る規則を無効にする —— MCP の取得元を差し替える旗が 0 件で通る穴を開け直す",
+      "edits": [
+        {
+          "find": "if (!ALLOWED_LAUNCHER_FLAGS.has(f)) {",
+          "replace": "if (false) {"
+        }
+      ]
+    },
+    {
+      "id": "A-507",
+      "threat": "T-200",
+      "file": "scripts/lint-mcp-servers.cjs",
+      "why": "取得元・ローダ・TLS を差し替える env の鍵 (NODE_OPTIONS / NPM_CONFIG_* / UV_* ほか) を断る規則を無効にする —— env 経由の取得元差し替えが通る穴を開け直す",
+      "edits": [
+        {
+          "find": "if (SOURCE_ENV_KEY.test(k)) {",
+          "replace": "if (false) {"
+        }
+      ]
+    },
+    {
+      "id": "A-508",
+      "threat": "T-201",
+      "file": "src/renderer/data/importFile.ts",
+      "why": "バックアップ復元の件数の天井から connector-output (2,000) を外す —— 細工した控えのマージ復元でコネクタ画面が全行を描いて固まる穴を開け直す",
+      "edits": [
+        {
+          "find": "  'connector-output': 2_000,\n",
+          "replace": ""
+        }
+      ]
+    },
+    {
+      "id": "A-509",
+      "threat": "T-201",
+      "file": "src/renderer/data/importFile.ts",
+      "why": "バックアップ復元の件数の天井から balance-sheet (500) を外す —— 細工した控えのマージ復元で KPI 画面が全行を描いて固まる穴を開け直す",
+      "edits": [
+        {
+          "find": "  'balance-sheet': 500,\n",
+          "replace": ""
+        }
+      ]
+    },
+    {
+      "id": "A-510",
+      "threat": "T-207",
+      "file": "src/renderer/pages/StocksPage.tsx",
+      "why": "AI 投資アドバイザーの質問欄で危機・他害の文面を送る前に止める判定を外す —— 「もう死にたい」が窓口なしで stocks/advise へ送られる穴を開け直す",
+      "edits": [
+        {
+          "find": "if (shouldHoldFromExternalModel(advisorQuestion)) {",
+          "replace": "if (false) {"
+        }
+      ]
+    },
+    {
+      "id": "A-511",
+      "threat": "T-207",
+      "file": "src/renderer/pages/BusinessPage.tsx",
+      "why": "AI 経営アドバイザーの質問欄で危機・他害の文面を送る前に止める判定を外す —— 危機の文面が窓口なしで business/advise へ送られる穴を開け直す",
+      "edits": [
+        {
+          "find": "if (shouldHoldFromExternalModel(q)) {\n      setCrisisHeld(q);",
+          "replace": "if (false) {\n      setCrisisHeld(q);"
+        }
+      ]
+    },
+    {
+      "id": "A-512",
+      "threat": "T-211",
+      "file": ".github/workflows/release.yml",
+      "why": "署名鍵 (secrets.CSC_LINK) を build ジョブ直下の env: に置く —— Build より前の checkout・npm ci の postinstall・第三者 action まで署名鍵が読める隔離破りを再現する",
+      "edits": [
+        {
+          "find": "    environment: release\n",
+          "replace": "    environment: release\n    env:\n      CSC_LINK: ${{ secrets.CSC_LINK }}\n"
+        }
+      ]
+    },
+    {
+      "id": "A-513",
+      "threat": "T-211",
+      "file": "scripts/lint-workflow-security.cjs",
+      "why": "secretPlacementProblems (secrets は step の env:/with: の中にだけ置ける) の呼び出しを外す —— job 単位 env: への署名鍵が門を素通りする穴を開け直す",
+      "edits": [
+        {
+          "find": "for (const p of secretPlacementProblems(withoutComments.split('\\n'))) {",
+          "replace": "for (const p of []) {"
+        }
+      ]
+    },
+    {
+      "id": "A-514",
+      "threat": "T-212",
+      "file": "src/shared/redact.ts",
+      "why": "裸の Bearer/Basic の本体を ASCII の token 字に限る狭めを戻し、日本語も飲む広い字種にする —— 学術コーパスの散文「（Basic Books、1977年）…」を過剰に伏せる穴を開け直す",
+      "edits": [
+        {
+          "find": "/\\b(Bearer|Basic)\\s+[A-Za-z0-9+/=._~-]{16,}/g",
+          "replace": "/\\b(Bearer|Basic)\\s+[^\\s\"']{8,}/g"
+        }
+      ]
+    },
+    {
+      "id": "A-515",
+      "threat": "T-212",
+      "file": "src/shared/redact.ts",
+      "why": "cookie / set-cookie の線上の形を行の残りまで伏せる規則を外す —— cookie の値が失敗の文へそのまま流れる穴 (15 形素通りの一つ) を開け直す",
+      "edits": [
+        {
+          "find": ".replace(/\\b(set-cookie|cookie)(\\s*:\\s*)[^\\r\\n\"'`]+/gi, (_m, name: string, sep: string) => `${name}${sep}[REDACTED]`)",
+          "replace": ""
+        }
+      ]
+    },
+    {
+      "id": "A-516",
+      "threat": "T-213",
+      "file": "src/shared/credentialTtl.ts",
+      "why": "保存した資格情報の有効時間 (8 時間) の期限判定を常に「期限内」にする —— 持ち出された保管ファイルの写しが期限なしに使い続けられる穴を開け直す",
+      "edits": [
+        {
+          "find": "return now - at > CREDENTIAL_TTL_MS;",
+          "replace": "return false;"
+        }
+      ]
+    },
+    {
+      "id": "A-517",
+      "threat": "T-214",
+      "file": "scripts/hunt-cycle.cjs",
+      "why": "record の検めから「4 段すべて要る」判定を外す —— 探索・解析・対策・報告の段を飛ばした周が台帳に積める穴を開け直す",
+      "edits": [
+        {
+          "find": "  for (const s of STAGES) {\n    if (cycle[s] === null || typeof cycle[s] !== 'object')",
+          "replace": "  for (const s of []) {\n    if (cycle[s] === null || typeof cycle[s] !== 'object')"
+        }
+      ]
+    },
+    {
+      "id": "A-518",
+      "threat": "T-216",
+      "file": "src/main/clients/emotions.ts",
+      "why": "Gmail / Slack の第三者の文を Anthropic へ送る前の promptInjectionRefusal の断りを外す —— 「これまでの指示を無視」の形の文が検めずに送られる穴を開け直す",
+      "edits": [
+        {
+          "find": "if (injection !== null) throw new Error(injection);",
+          "replace": ""
+        }
+      ]
+    },
+    {
+      "id": "A-519",
+      "threat": "T-216",
+      "file": "src/main/clients/skills.ts",
+      "why": "配られた SKILL.md の本文を system に載せる前の promptInjectionRefusal の断りを外す —— 指示の形が混ざったスキル本文がそのまま有料 API へ送られる穴を開け直す",
+      "edits": [
+        {
+          "find": "if (injection !== null) throw new Error(injection);",
+          "replace": ""
+        }
+      ]
+    },
+    {
+      "id": "A-520",
+      "threat": "T-216",
+      "file": "src/renderer/web-shim.ts",
+      "why": "ブラウザ版 callEmotionsAnalyze の promptInjectionRefusal の断りを外す —— ブラウザ版だけ第三者の文の指示の形が検めずに送られる穴を開け直す",
+      "edits": [
+        {
+          "find": "if (injection !== null) return err('action_failed', injection);",
+          "replace": ""
+        }
+      ]
+    },
+    {
+      "id": "A-521",
+      "threat": "T-218",
+      "file": "src/main/selfAttestation.ts",
+      "why": "1 ファイルずつの sha256 照合の不一致判定を外す —— 同梱ファイルを 1 つ書き換えられても起動して UI を出す穴 (Linux の唯一の段) を開け直す",
+      "edits": [
+        {
+          "find": "if (r.hash !== manifest.files[rel]) return",
+          "replace": "if (false) return"
+        }
+      ]
+    },
+    {
+      "id": "A-522",
+      "threat": "T-218",
+      "file": "src/main/main.ts",
+      "why": "梱包版の起動時に verifyShippedFiles を呼ぶ段を飛ばす —— 検算の関数が正しくても主プロセスが呼ばなければ改竄された梱包物がそのまま起動する穴を開け直す",
+      "edits": [
+        {
+          "find": "if (app.isPackaged) {\n    const verdict = await verifyShippedFiles",
+          "replace": "if (false) {\n    const verdict = await verifyShippedFiles"
+        }
+      ]
+    },
+    {
+      "id": "A-523",
+      "threat": "T-219",
+      "file": "src/renderer/security/egressStepUp.ts",
+      "why": "BYO プロキシの送り先変更に持ち主の確認 (step-up) を要求する判定を常に「不要」にする —— 「保存」1 押しで資格情報が丸ごと渡る先を書き換えられる穴を開け直す",
+      "edits": [
+        {
+          "find": "return next !== null;",
+          "replace": "return false;"
+        }
+      ]
+    },
+    {
+      "id": "A-524",
+      "threat": "T-219",
+      "file": "src/renderer/security/egressStepUp.ts",
+      "why": "Ollama の接続先が端末の外 (loopback でない) のときの持ち主の確認を常に「不要」にする —— 会話の本文が確認なしで外のホストへ向けられる穴を開け直す",
+      "edits": [
+        {
+          "find": "return !isLoopbackHostname(new URL(base).hostname);",
+          "replace": "return false;"
+        }
+      ]
+    },
+    {
+      "id": "A-525",
+      "threat": "T-220",
+      "file": "src/main/main.ts",
+      "why": "openExternal の口で印つきの包み openExternalVetted を使わず素の shell.openExternal を直に呼ぶ —— 関門を飛ばした 1 行が型検査を通る穴 (包みの迂回) を開け直す",
+      "edits": [
+        {
+          "find": "await openExternalVetted(target);",
+          "replace": "await shell.openExternal(target);"
+        }
+      ]
+    },
+    {
+      "id": "A-526",
+      "threat": "T-221",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "Mamori の M1 (印は gate 関数の mint でだけ作る) の role 検査を外す —— plain 関数でも印を偽造できる穴を開け直す",
+      "edits": [
+        {
+          "find": "} else if (ctx.role !== 'gate') {",
+          "replace": "} else if (false) {"
+        }
+      ]
+    },
+    {
+      "id": "A-527",
+      "threat": "T-222",
+      "file": "scripts/hunt-cycle.cjs",
+      "why": "名簿を渡した record が brief で選んだ周に班の段 (team / learned / evolution) を要求する検めを外す —— 班の学習・進化の記録を飛ばした周が積める穴を開け直す",
+      "edits": [
+        {
+          "find": "if (roster !== undefined && (cycle.pickedBy === 'brief'",
+          "replace": "if (false && roster !== undefined && (cycle.pickedBy === 'brief'"
+        }
+      ]
+    },
+    {
+      "id": "A-528",
+      "threat": "T-223",
+      "file": "scripts/hacker-team.cjs",
+      "why": "急増した弱点の種類 1 つずつに進化役の判断 (add / covered / na) を要求する検めを外す —— 脅威ウォッチが挙げた種類を 1 度も見ないまま周を記録できる穴を開け直す",
+      "edits": [
+        {
+          "find": "for (const cwe of hot) if (!decided.has(cwe)) out.push(",
+          "replace": "for (const cwe of []) if (!decided.has(cwe)) out.push("
+        }
+      ]
+    },
+    {
+      "id": "A-529",
+      "threat": "T-224",
+      "file": "src/shared/mamori/parser.ts",
+      "why": "Mamori の `.constructor` / `.prototype` / `.__proto__` を断る FORBIDDEN_MEMBERS の検めを外す —— String.constructor(code)() で文字列をコードとして走らせられる穴を開け直す",
+      "edits": [
+        {
+          "find": "if (Object.hasOwn(FORBIDDEN_MEMBERS, name)) fail(t, FORBIDDEN_MEMBERS[name]!);",
+          "replace": ""
+        }
+      ]
+    },
+    {
+      "id": "A-530",
+      "threat": "T-224",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "組み込みの Object で使えるメンバの許可表に setPrototypeOf / getPrototypeOf を足す —— 文字列の組み込みメソッドをアプリ全体で消す原型の書き換えが書ける穴を開け直す",
+      "edits": [
+        {
+          "find": "'freeze', 'isFrozen']);",
+          "replace": "'freeze', 'isFrozen', 'setPrototypeOf', 'getPrototypeOf']);"
+        }
+      ]
+    },
+    {
+      "id": "A-531",
+      "threat": "T-225",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "印を受ける関数を値として持ち出す形 (.call / .apply / 別名 ほか) を断る M4 の検めを外す —— 素の値を渡して印の検めを迂回できる穴を開け直す",
+      "edits": [
+        {
+          "find": "if (b === moduleScope.get(e.name) && signatureOf(e.name)?.paramVetted.some((v) => v !== null) === true) {",
+          "replace": "if (false) {"
+        }
+      ]
+    },
+    {
+      "id": "A-532",
+      "threat": "T-225",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "sink 関数の中で危ない口へ渡す第 1 引数が行き先の印を持つ値かの検めを外す —— 行き先以外の素の値を危ない口へ流せる穴を開け直す",
+      "edits": [
+        {
+          "find": "} else if (ctx.destVetted !== null && (args[0] === undefined",
+          "replace": "} else if (false && ctx.destVetted !== null && (args[0] === undefined"
+        }
+      ]
+    },
+    {
+      "id": "A-533",
+      "threat": "T-225",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "危ない口 (extern sink) を値として持ち出す・返す形を断る M2 の検めを外す —— 関門の外から素の値で呼べる口を持ち出せる穴を開け直す",
+      "edits": [
+        {
+          "find": "if (b.authority === 'sink') {\n          report('M2', e.pos, ctx.role",
+          "replace": "if (b.authority === 'sink' && false) {\n          report('M2', e.pos, ctx.role"
+        }
+      ]
     }
   ]
 }
