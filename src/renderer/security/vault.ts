@@ -1213,8 +1213,9 @@ class BrowserVault implements Vault {
   /** 旧形式のトークンを現行 (v2 · serviceId + storedAt を束ねる) で保存し直す。失敗しても読み出しは成功させる。 */
   private async rebindToken(serviceId: string, token: string, storedAt: number | undefined): Promise<void> {
     const key = this.requireKey();
-    // storedAt が無い (版なしの古い記録) なら今の時刻から有効時間を数え直す。AAD と保存欄で同じ値。
-    const stamp = typeof storedAt === 'number' ? storedAt : Date.now();
+    // storedAt が無い (版なしの古い記録) か有限でない (壊れた値) なら今の時刻から有効時間を数え直す。
+    // AAD と保存欄で同じ値。`typeof x === 'number'` だと NaN が素通りするので `Number.isFinite`。
+    const stamp = Number.isFinite(storedAt) ? (storedAt as number) : Date.now();
     const blob = await encryptString(key, token, tokenAadV2(serviceId, stamp));
     const db = await openDb();
     try {
@@ -1477,8 +1478,8 @@ class BrowserVault implements Vault {
         // 書く側は常に新しい形 (v2) にする —— 変更を機に serviceId と storedAt へ束ね直す。
         // 保存した時刻は引き継ぐ (落とすと「日付が無い = 期限切れ」で全部消える · threat: T-213)。
         // 版の無い記録には時刻が無いので、`getToken` の束ね直しと同じく今の時刻を付ける
-        // (AAD と保存欄で同じ値を使う)。
-        const stamp = typeof blob.storedAt === 'number' ? blob.storedAt : Date.now();
+        // (AAD と保存欄で同じ値を使う)。`typeof x === 'number'` だと NaN が素通りするので `Number.isFinite`。
+        const stamp = Number.isFinite(blob.storedAt) ? (blob.storedAt as number) : Date.now();
         const next = await encryptString(newPasswordKey, plain, tokenAadV2(id, stamp));
         rewritten.push({
           store: TOKEN_STORE,

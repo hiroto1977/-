@@ -1,5 +1,11 @@
 # Service Hub — 残りの作業手順書
 
+## パス 566-C の残り穴と follow-up (保存時刻の若返り攻撃 · T-230) (2026-10-30)
+
+- **単調カウンタの残り穴 (severity low · 別パス候補)**: T-230 の直しは保存時刻を暗号に束ねたので、時刻を**前倒し**して若返らせる攻撃は塞がった。だが「**まだ有効だった頃に捕らえた記録を丸ごと**」書き戻す rollback は、利用者が鍵を差し替えた後でも 8 時間の窓の中なら旧い鍵が蘇る (暗号文も時刻も本物なので AAD / ms 一致の検めを通る)。塞ぐには **サービスごとの単調カウンタ** (保管庫のメタに最後に書いた世代を持ち、AAD へ束ね、読む時に「保管庫の今の世代以上か」を検める) が要る —— 記録の版管理と、別のタブ / 窓での同時書き込みの扱いが要るので別パス。攻撃者は ① 保管庫 / 保管ファイルへの書き込み ② 古い有効な記録の控え ③ 8 時間の窓、の 3 つが揃う必要があり、severity は low。
+- **変異検査の全掃引 (非 OOM 環境の follow-up)**: `audit:mutate-changed` は secrets.ts / vault.ts で 96.13% を出したが、生存は v2 分岐・atv2 の読みに集まり、それらを覆う検査は `rereadModule` / 動的 import を使うため **Stryker の related-test-selection に映らない** (パス 490 / 495 の人工物)。ablation (A-538 / A-539 が caught) が守りの検査されていることを直接証明しているので、OOM で何度も回し直さずここに残す。非 OOM 環境で `--mutate src/main/secrets.ts,src/renderer/security/vault.ts` を全掃引し、生存を `audit:survivors` で「実は殺されている / 本物の穴 / 等価」に仕分けるのが正しい追い方 (手で 1 件ずつ当てる —— OOM するので並列は 2 まで)。
+- **やり方の罠 (このパスで実証)**: 重い変異検査 / `audit:survivors` の最中は対象ファイルを**読み書きしない** —— コンテナが OOM (exit 137) で落ちると、`audit:survivors` が `finally` に届かず対象が書き換わったまま残る (vault.ts の `tokenAad` の本体が空になり `git checkout` で戻した)。
+
 ## パス 565 (台帳の穴を開け直して、名指しの回帰検査が本当に鳴るかを測る —— threat-ablation · T-226) (2026-10-30)
 
 - **欠けていた物**: 脅威台帳 (225 件) の各行は回帰検査を名指すが、台帳の検査が見るのは**題名の検査が在ること**まで。守りを外して本当に鳴るかは誰も測っていなかった (変異検査は `mutate` の 310 本だけ・台帳の穴そのものは測らない)。
@@ -19499,7 +19505,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/zero-fold-census.cjs。npm run lint:zero-fold は check だけ) -->
-合計 **110 ファイル / 281 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **110 ファイル / 283 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
@@ -19533,6 +19539,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/shared/tradeTax.ts` | 4 |
 | `src/shared/waterCyclePlanner.ts` | 4 |
 | `src/main/clients/kpi.ts` | 3 |
+| `src/renderer/data/backup.ts` | 3 |
 | `src/renderer/data/charts.ts` | 3 |
 | `src/renderer/data/financialStatements.ts` | 3 |
 | `src/renderer/pages/StocksPage.tsx` | 3 |
@@ -19575,7 +19582,6 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/renderer/components/RealtimeTicker.tsx` | 1 |
 | `src/renderer/components/ShigyoConsole.tsx` | 1 |
 | `src/renderer/data/assistantContext.ts` | 1 |
-| `src/renderer/data/backup.ts` | 1 |
 | `src/renderer/data/balanceSheet.ts` | 1 |
 | `src/renderer/data/cashPlan.ts` | 1 |
 | `src/renderer/data/chartSelfCheck.ts` | 1 |

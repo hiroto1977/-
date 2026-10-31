@@ -1997,7 +1997,7 @@
       "why": "デスクトップ版 secrets の atv2 の読みから『暗号文の中の時刻 == 平文の時刻』の一致検査を落とす —— 前倒しした atv2 記録が復号できて若返る",
       "edits": [
         {
-          "find": "    if (sep === -1 || Number(body.slice(0, sep)) !== s.storedAt) {",
+          "find": "    if (sep === -1 || Number(tsInner.slice(0, sep)) !== s.storedAt) {",
           "replace": "    if (sep === -1) {"
         }
       ]

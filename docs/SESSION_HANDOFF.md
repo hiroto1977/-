@@ -7,6 +7,17 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-10-30) — パス 566-C: 保存時刻を暗号に束ねて認証する (若返り攻撃 · threat: T-230)
+
+- **穴**: 保存した資格情報の有効時間 (T-213・8 時間) は保存時刻を読んで期限切れを消すが、その時刻 (ブラウザ版 vault の `storedAt`・デスクトップ版 secrets.json の `at:<ms>:` 平文) は**認証されていなかった**。保管庫 / 保管ファイルへ書ける攻撃者は、OS キーチェーン・マスターパスワードを破らなくても、期限切れの記録の時刻を「古いが今以下」へ前倒しして若返らせ、持ち出した写しを 8 時間の壁を越えて使えた。**T-213 の fix「過去へ書き換えても早く消えるだけ (信用を延ばす向きには働かない)」は偽だった** —— 未来ではなく「古いが今以下」へ戻せば若返る (脅威台帳の T-213 を T-230 へ訂正)。
+- **直し (両ビルド対称・版で切り分けて後方互換)**: ブラウザ版 `vault.ts` は記録を v2 (`TOKEN_RECORD_V2`) にし AES-GCM の AAD へ serviceId に加え storedAt を束ねる (`tokenAadV2`) —— 時刻を書き換えると復号自体が失敗する。平文 storedAt は復号前の有効時間の事前判定に残す。v1 / 版なしは読めたら v2 へ束ね直す (`rebindToken` · 遅延移行)。デスクトップ版 `secrets.ts` は safeStorage に AAD が無いので時刻を暗号文の中へ束ねる (`atv2:<ms>:<encode(ts1:<ms>:<token>)>`)。読む時に平文の ms と暗号文の中の ms の一致を検め、不一致なら復号できない扱い。`at:` の旧形式はそのまま読め、読めたら atv2 へ上げ直す。**有効時間 8 時間なので修正後 8 時間で全記録が認証つきになる (brick 無し)**。
+- **移行の stamp は `Number.isFinite`** (パス 566-C 仕上げ) —— `typeof storedAt === 'number'` だと NaN が素通りする (`typeof NaN === 'number'`)。`Number.isFinite(storedAt) ? storedAt : Date.now()` にして壊れた時刻を今へ倒す。`finiteShapeGuards` の台帳はこれで鳴らない。
+- **対照 (ablation A-538 / A-539)**: A-538 (ブラウザ: v2 AAD から storedAt を落とす)・A-539 (デスクトップ: atv2 の ms 一致検査を落とす) が `node scripts/threat-ablation.cjs run --only T-230` で両方 caught。回帰検査は `secretsCredentialTtl.test.ts` / `vaultCredentialTtl.test.ts` の若返り検査 (前倒しした記録を書いて復号を断ることを見る)。
+- **残り穴 (限界・severity low)**: 「まだ有効だった頃に捕らえた記録を丸ごと」書き戻す rollback は、利用者が鍵を差し替えた後でも 8 時間の窓の中なら旧い鍵が蘇る。サービスごとの単調カウンタを AAD に足せば塞げるが記録の版管理が要るので別パス候補 (攻撃者は保管庫への書き込みと古い有効な記録の控えが要り、窓は 8 時間)。
+- **変異検査は測定の人工物で汚れた (正直に記録)**: `audit:mutate-changed` は secrets.ts / vault.ts で 96.13% を出したが、生存は decode / binding のコード (v2 分岐・atv2 の読み) に集まっており、それらを覆う検査は `rereadModule` / 動的 import を使うため **Stryker の related-test-selection に映らない** (パス 490 / 495 の既知の人工物)。**ablation (A-538 / A-539 が caught) が守りの検査されていることを直接証明している**ので、OOM で何度も回し直して追わず、ここに記録する。全掃引での仕分けは非 OOM 環境の follow-up。
+- **罠 (このパスで踏んだ)**: ① `audit:survivors` / 重い変異検査は**コンテナを OOM で落とす** (exit 137) —— その最中は対象ファイルを読み書きしない (vault.ts が書き換わったまま残り `git checkout` で戻した)。② census の `why` に綴りを再現すると、その検査自身がその綴りを「生の読み」「禁止パターン」と数える —— `fs.readFile(` (originalSourcePolicy) と `eval(atob(` (lint:forbidden) の両方で踏んだ。綴りは再現せず「…の形」と述べる。③ stale な git worktree (`.claude/worktrees/`) が残ると `lint:charset` が中の ALLOWLIST 対象を別パスで拾って verify:all を落とす (CI の fresh checkout には無いので local のみ)。`git worktree remove` で片付ける。
+- **整合性チェーン**: vault.ts / secrets.ts / lint-malware.cjs を触ったので block #399 → #400 → #401 を採掘。`npm test` 23937 件 ❌ 0・`verify:all` 39 ゲート exit 0。
+
 ## 直近の作業 (2026-10-30) — パス 565: 台帳の穴を開け直して、回帰検査が本当に鳴るかを測る (threat: T-226)
 
 - 台帳の検査は「名指しの回帰検査の題名が在ること」までしか見ていなかった。`npm run audit:threat-ablation` (`scripts/threat-ablation.cjs`) が `security/threat-ablations.json` の書き換え (守りを直す前の形へ戻す 1 行) を git worktree の写しへ当て、名指しの検査だけを走らせ、vitest の JSON 報告から caught / missed / unmatched / load-error を分ける (非 0 終了を「捕まえた」と読まない)。原文でも 1 度走らせて通ることを確かめ、`finally` で戻して内容で照合する。

@@ -3350,6 +3350,30 @@
       "leafCount": 155,
       "note": "update selfAttestation.ts",
       "hash": "bd57abb5d38b8775e1d14a51907f9b725e7b389181274a72bfcb405cc3c2a713"
+    },
+    {
+      "index": 399,
+      "prevHash": "bd57abb5d38b8775e1d14a51907f9b725e7b389181274a72bfcb405cc3c2a713",
+      "merkleRoot": "e97f81e7b2d229c8a9cd16a3c2c7bbef00a1e248040a0d6baab0c684e6b2f278",
+      "leafCount": 155,
+      "note": "update secrets.ts,vault.ts",
+      "hash": "8541d760dbebae1b337710d66712e91789ec3e6653789da44f4c966abdf78525"
+    },
+    {
+      "index": 400,
+      "prevHash": "8541d760dbebae1b337710d66712e91789ec3e6653789da44f4c966abdf78525",
+      "merkleRoot": "c08a43af5e544ebb307be9acb7177646473b72c40a8259ce81156883a73b679d",
+      "leafCount": 155,
+      "note": "update lint-malware.cjs,vault.ts",
+      "hash": "efd5f12832c6bfca119c4852afdd2354b15395a8da11e563f545b9f668c0ec0e"
+    },
+    {
+      "index": 401,
+      "prevHash": "efd5f12832c6bfca119c4852afdd2354b15395a8da11e563f545b9f668c0ec0e",
+      "merkleRoot": "a5a217f8d4d187249f05bc30f8a4b817b74c73111271de13d6789e4cdd028369",
+      "leafCount": 155,
+      "note": "update lint-malware.cjs",
+      "hash": "64a6201e17ac5c47ce8b2dde17fb8dc234195337a9e15292bb5acafce46d092a"
     }
   ],
   "tipManifest": {
@@ -3394,7 +3418,7 @@
     "scripts/lib/strip-non-code.cjs": "64ee25ca006e9e566691a99526994dd36fc0ba6b05e536d39979701b96d681ed",
     "scripts/lib/tracked-cross-check.cjs": "c31f327dfb6e6a2d40bc8b3460cc8d9f4994c7cf84b6416086c644749021fee5",
     "scripts/lint-artifact-csp.cjs": "4ad77f0358365ca03fdfbed5d6713358ecc487b958a608cf1d5bad78f0e90530",
-    "scripts/lint-malware.cjs": "ff31e38d53166992449286682b608b001bedb90efb66366ec1a43cfc7119888b",
+    "scripts/lint-malware.cjs": "a09c7fe46ff517d5a627ee1f5205a0a31c203f738ef8193ed0b38722ee58f811",
     "scripts/lint-sample-data.cjs": "55f548e97d05e03f409ccbb2f87c3ecceb1d66e4851d24f2100dedd7670f15ed",
     "scripts/make-autoinstall.sh": "71afe4bf3cb203f539be4b0c5624ab06448f7cbffd5caf0d3704a395c4284a8a",
     "scripts/make-live-usb.sh": "ece38ba927100fc42f4227fd149f88b9ffbdd67b9fc9d3a37dcbfebff74ca2b1",
@@ -3427,7 +3451,7 @@
     "src/main/osSinks.mamori": "d380c0a3ec003701c417977cc3eff8bee9019e2abd8854cd37312c2f237e13e8",
     "src/main/osSinks.ts": "ddebba759d05d69186e58abab7c881e6295a010554d4bd4d27e5fec58fe0344b",
     "src/main/presenceWiring.ts": "84334ae2023fa2c2c4931571839f365ca228ff817788e5c146550f01ca790336",
-    "src/main/secrets.ts": "6fa31f23ce7c7bdd5faa9c0e528be9ab4e0ca754052fe3e061499dac3e452d5a",
+    "src/main/secrets.ts": "2a12b77334bc972e8f96b0a9c7c5d9c1891851c9a6e5791cb2b53b7eb56948cd",
     "src/main/selfAttestation.ts": "eb17b1562aaf67b496a3f8b0c76be445c4d52828ffff808c15debf809866472b",
     "src/main/shellOpenGate.mamori": "e0a9c53ce86e9869d27730d84e452db31929c9b1f1be87ce522c0bbb67f5421a",
     "src/main/shellOpenGate.ts": "4612d8cc9c61827225a11b61dbdfff4f200bb28524eb86dd1ba471a471b645c9",
@@ -3455,7 +3479,7 @@
     "src/renderer/security/frameGuard.ts": "66ad10cf7e5a48fcc4a406aa66b9de544609877944fd073c7bf3af8190991559",
     "src/renderer/security/lockWorkspace.ts": "b1e7210a61ed100c2bae43359482eaa696ad367f63a25ec463ab0ed44477aca7",
     "src/renderer/security/mnemonic.ts": "115603b18fe19a6bd651e9d7b55d6afcffa8f9695eaa1ef522b67a1b1fe71c2a",
-    "src/renderer/security/vault.ts": "c4ffc12dcc71afd5a455f87d5be98af3727f327f8758cc3c3e6304ab48d83ee8",
+    "src/renderer/security/vault.ts": "c06042b4ff6d4f4757410bb94a2f8a4aa3f0227bf5aa36fbbc4aa94ee2586b48",
     "src/renderer/security/webCrypto.ts": "d0be2ab7b15ba0315c7dff1e9c7da482ec17d9a021aa0921d580e39c7c631964",
     "src/renderer/security/webauthn.ts": "62218ba46fdfd0adaf8f3b7c42eb9e01315a619881b50d33acfbb51b0046ea76",
     "src/renderer/vettedSinks.mamori": "a7c70e8bf41114af58db79417c568db1b86188d6150f24c0ebc4ddc63ddb69c0",
