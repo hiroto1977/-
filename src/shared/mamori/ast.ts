@@ -26,7 +26,7 @@ export type Expr =
   | { readonly kind: 'regex'; readonly raw: string; readonly pos: Pos }
   | { readonly kind: 'literal'; readonly value: 'true' | 'false' | 'null' | 'undefined'; readonly pos: Pos }
   | { readonly kind: 'array'; readonly items: readonly Expr[]; readonly pos: Pos }
-  | { readonly kind: 'member'; readonly object: Expr; readonly prop: string; readonly pos: Pos }
+  | { readonly kind: 'member'; readonly object: Expr; readonly prop: string; readonly optional: boolean; readonly pos: Pos }
   | { readonly kind: 'call'; readonly callee: Expr; readonly args: readonly Expr[]; readonly pos: Pos }
   | { readonly kind: 'new'; readonly callee: Expr; readonly args: readonly Expr[]; readonly pos: Pos }
   | { readonly kind: 'unary'; readonly op: '!' | '-' | 'typeof' | 'await'; readonly operand: Expr; readonly pos: Pos }
