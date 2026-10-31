@@ -69,7 +69,7 @@ export const BUILTIN_MEMBERS: ReadonlyMap<string, ReadonlySet<string>> = new Map
 ]);
 
 /** `new X(…)` / `X(…)` の形でだけ名前で使える組み込み (`Object` は構築する形も無い)。 */
-const CONSTRUCTIBLE: ReadonlySet<string> = new Set(['RegExp', 'Error', 'TypeError', 'RangeError', 'URL']);
+const CONSTRUCTIBLE: ReadonlySet<string | null> = new Set(['RegExp', 'Error', 'TypeError', 'RangeError', 'URL']);
 
 /** 関数の外形 (他のモジュールから引くため)。 */
 export interface FnSignature {
@@ -326,8 +326,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
 
   /** この名前は、このモジュールの名前に隠されていない組み込みで、構築する形 (`new X(…)` / `X(…)`) で使ってよい物か。 */
   function isConstructibleBuiltin(callee: Expr, scopes: readonly Map<string, Binding>[]): boolean {
-    const n = identName(callee);
-    return n !== undefined && CONSTRUCTIBLE.has(n) && lookup(scopes, n) === undefined;
+    return CONSTRUCTIBLE.has(identName(callee)) && bindingOf(callee, scopes) === undefined;
   }
 
   /**
@@ -394,10 +393,8 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
           return;
         }
         // 共有の状態を持つ組み込み (RegExp の旧式の静的な欄・Error の captureStackTrace ・URL の blob) は、許したメンバだけ (0.4 · T-232)。
-        {
-          const builtin = identName(e.object);
-          const allowed = builtin === undefined ? undefined : BUILTIN_MEMBERS.get(builtin);
-          if (builtin !== undefined && allowed !== undefined && lookup(scopes, builtin) === undefined) {
+        for (const [builtin, allowed] of BUILTIN_MEMBERS) {
+          if (identName(e.object) === builtin && lookup(scopes, builtin) === undefined) {
             if (!allowed.has(e.prop)) {
               report('M6', e.pos, `${builtin}.${e.prop} は使えません —— 組み込みの ${builtin} は${allowed.size === 0 ? ' `new ' + builtin + '(…)` と構築する形' : ` ${[...allowed].join(' / ')} と構築する形`}だけです (同じ realm のどのモジュールの正規表現・例外・blob にも届く共有の状態は、宣言していない外の値と同じ)`);
             }
