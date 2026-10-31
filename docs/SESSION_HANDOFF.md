@@ -7,6 +7,16 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-10-31) — パス 569: チームレーダーの下書き (localStorage) の保存値の天井
+
+- **穴**: 入口 (`TeamRadarPage` の `fieldsOverCeiling`) と snapshot の `validateMembers` はチャート名・部署・評価時点・軸名・メンバー名・付箋を上限で断るのに、**下書き `servicehub.teamradar.draft.v1` の読み** (`sanitizeRadarDraft` / `sanitizeTeamMember`) は `typeof === 'string'` だけで長さを見なかった (パス 359 / 419 / 568 の「入口が出口より厳しい」)。届く道は手編集 JSON・旧版。
+- **実測 (実物の TeamRadarPage を jsdom で描く · 各欄 200,000 字)**: 画面の総文字数 **2,201,386** (可視テキストの最長 200,000・編集欄 `<input>` の値も 6 欄 × 200,000)。直した後は **1,503**。
+- **直し (パス 420 / 568 の規律)**: 表示専用の 6 欄を `clampToCeiling` (入力の付箋が既に使う物・末尾 '…' なし) で**読むときに**畳む。`id` は同一性の鍵なので畳まない。正当な値 (≤ 上限) は 1 字も変わらない。
+- **機械**: `teamRadarDraftCeiling.test.ts` (6 件・sanitizer 単体 + 実物の画面)。対照 4 方向 (name / 付箋 / title / 軸の clamp を外す) が狙った検査に当たる (md5 で復帰確認)。
+- **門と実機**: `npm test` 23,962 ❌0・`verify:all` exit 0 (unit test count 19254 → 19260・`lint:shared-judgement` census 再生成)・`perf` OK・`e2e` 762 ❌0・`e2e:lite` 762 ❌0。FULL 12,133,955 B / LITE 3,546,579 B (+52 B)。teamradar の下書きは鎖の保護対象外。
+- **測って何も無かった軸**: 水耕の品目 (`sanitizeCropList` が over-length を行ごと落とす)・WorkAssignmentsPanel (パス 556 で天井済み)・MentorPage の AI 口 (funnel の `outboundContentRefusal` と `aiReplyInert` census が覆う)。
+- **残した物**: HydroponicsPage `removeBatch` の status 文 3 か所が保管値 batch id を素で補間 (表は `batchIdText` で天井済み・action 起点で view-time ではない)。`docs/REMAINING_WORK.md` のパス 569。
+
 ## 直近の作業 (2026-10-31) — パス 568: 専属カウンセラー MentorPage の保存値の天井 (メンバー鍵)
 
 - **穴**: 保管した自由文の天井 (パス 419) の census `storedFreeTextCeiling.test.ts` は 5 画面 (team / mutual-funds / real-estate / 士業 CRM / ManualDataSection) を覆うが、**後から足された画面 MentorPage (専属カウンセラー · パス 551 以降) が入っていなかった**。自由文 (聞き取りの答え・チェックイン / 関係のメモ) は `sanitizeMentorSession` の `readText` が既に天井済み (長すぎは落とす) だが、**メンバー鍵には天井が無かった** (`memberKeyOf` = trim + lower だけ・`readRelation` は `with` の長さを見ない)。
