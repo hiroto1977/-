@@ -146,6 +146,7 @@ export sink fn openExternalVetted(url: VettedExternalUrl) -> Promise<void> {
 | `src/main/clients/exportSink.mamori` | `src/main/clients/exportSink.ts` | gate + sink: 書き出しのファイル書き込み (`exportTargetOrNull` → `writeExportFileVetted` · 書き手 4 本が通る) |
 | `src/shared/controlChars.mamori` | `src/shared/controlChars.ts` | 制御文字 (C0 と DEL) の判定 (資格情報・URL の入口の 5 本が読む唯一の規則 · 0.3 の 16 進の数で書き直した · パス 564) |
 | `src/shared/proxyEndpoint.mamori` | `src/shared/proxyEndpoint.ts` | BYO プロキシの送り先と共有秘密の検証 (**資格情報のほぼ全部が通る 1 本の口** · 0.2 の構文で書き直した最初の物 · パス 563) |
+| `src/shared/tokenInput.mamori` | `src/shared/tokenInput.ts` | 資格情報の保存要求の検証 (`checkTokenInput` · main と renderer で同じ規則 · 空 / 長すぎ / 制御文字 / 非 Latin1 を理由つきで断る · 0.3 で書き直した · パス 567 · MG-003) |
 
 残りの TypeScript は Mamori で書いた gate / sink を呼ぶ側で、呼ぶ側には TypeScript の型の印が掛かる
 (パス 559)。書き出しのファイル書き込みはパス 560 で gate と sink の組として移し、pending の天井を 4 → 3 へ下げた。

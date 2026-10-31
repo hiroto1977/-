@@ -147,6 +147,7 @@
     "src/shared/redact.ts",
     "src/shared/safeFilename.ts",
     "src/shared/scanTarget.ts",
+    "src/shared/tokenInput.mamori",
     "src/shared/tokenInput.ts",
     "src/shared/tokenResponse.ts",
     "src/shared/vaultToken.ts",
@@ -3382,6 +3383,14 @@
       "leafCount": 155,
       "note": "update proxy.ts,vault.ts",
       "hash": "1e79af33475cfb9270025a1eb5fda3c13947f4b362ec7f5a03fe9ccfecf71ae6"
+    },
+    {
+      "index": 403,
+      "prevHash": "1e79af33475cfb9270025a1eb5fda3c13947f4b362ec7f5a03fe9ccfecf71ae6",
+      "merkleRoot": "7a88c53d3ff2a08cffb92253410270e42bf919387b9fafd4a1956300b2950bb2",
+      "leafCount": 156,
+      "note": "update integrity-chain.cjs,tokenInput.mamori,tokenInput.ts",
+      "hash": "3bb97a6877a9c2ef10a1859fbe4eb3cb537114dbdb1b8b4ef9c2ae920dd09f55"
     }
   ],
   "tipManifest": {
@@ -3417,7 +3426,7 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "d385ddfc52ec74abf184207bfbb1ac655e730db2b7c6d7e758e35e67e79a5737",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "a8483d0895ba40d6d619e7dd831ab5767780f85dc0a073d92bb49fa5ede3e891",
+    "scripts/integrity-chain.cjs": "b45fd35092a1e547f9c9b6853df4d75bd4c9c18f48184133afb56001be41c2f3",
     "scripts/knowledge-autopilot.cjs": "ee8f7ae4a4ad29dda6c02f83c113c45fa1648522f807e711aa86b7746f372968",
     "scripts/lib/artifact-freshness.cjs": "add621dfe55e0eab31354f0d6979c9c67b513ed8b8348b9137ca7fa53dd569c1",
     "scripts/lib/json-for-script.cjs": "cb79bf1fb2f3c10c6854ec16d9c12bb0695dee5561751333db4531545702fd70",
@@ -3530,7 +3539,8 @@
     "src/shared/redact.ts": "a3f60f9dafc8915c79bf5bbc0b42c88a116a65e5d4efe1f53082afc1c81cdaec",
     "src/shared/safeFilename.ts": "f84d319b882db4768b70c03d8c61b62e0dbaee9226d891cc100091c9c62b7f3e",
     "src/shared/scanTarget.ts": "c6c887034c33e3f3d22a590e2dc86177fc21312ede7e3f4a0581ec6d5d1e6132",
-    "src/shared/tokenInput.ts": "d1c869c86e057639de7b110d2fbdc56dcaf51ce20aa6b17a195b76a5001ba287",
+    "src/shared/tokenInput.mamori": "ee94a04ca908afb7b2ce7ee2f8f6af83b4d44791b9b702ae7071503b7cd66a8c",
+    "src/shared/tokenInput.ts": "62368485693664e9e30709b93e9be983f6ede3f5f2d8046aac66bf5ba5cff47c",
     "src/shared/tokenResponse.ts": "47725e779acda9f6f0af1105aaf90bb7a9cf3016cd63869cec3841fc58d32121",
     "src/shared/vaultToken.ts": "8a6566d313ca1ca8551aa3dc2a77d0abe30c9a536c8274388fc45bf96021f4a7",
     "src/shared/versionOrder.ts": "2a70283bc54f74023e9e4a6f002d2678440d9cfcffeb5ac60fc047ee8b604d37",

@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 403
+- ブロック数: 404
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `1e79af33475cfb9270025a1eb5fda3c13947f4b362ec7f5a03fe9ccfecf71ae6`
-- 保護対象: 155 ファイル
+- 末尾(tip)ハッシュ: `3bb97a6877a9c2ef10a1859fbe4eb3cb537114dbdb1b8b4ef9c2ae920dd09f55`
+- 保護対象: 156 ファイル
 
 ## ブロック
 
@@ -416,6 +416,7 @@
 | 400 | `c08a43af5e544ebb` | `8541d760dbebae1b` | `efd5f12832c6bfca` | update lint-malware.cjs,vault.ts |
 | 401 | `a5a217f8d4d18724` | `efd5f12832c6bfca` | `64a6201e17ac5c47` | update lint-malware.cjs |
 | 402 | `fb263eee5d23b6a6` | `64a6201e17ac5c47` | `1e79af33475cfb92` | update proxy.ts,vault.ts |
+| 403 | `7a88c53d3ff2a08c` | `1e79af33475cfb92` | `3bb97a6877a9c2ef` | update integrity-chain.cjs,tokenInput.mamori,tokenInput.ts |
 
 ## 保護対象ファイル
 
@@ -564,6 +565,7 @@
 - `src/shared/redact.ts`
 - `src/shared/safeFilename.ts`
 - `src/shared/scanTarget.ts`
+- `src/shared/tokenInput.mamori`
 - `src/shared/tokenInput.ts`
 - `src/shared/tokenResponse.ts`
 - `src/shared/vaultToken.ts`

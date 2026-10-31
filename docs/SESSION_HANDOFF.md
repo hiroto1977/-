@@ -7,6 +7,15 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-10-31) — パス 567 (MG-003): `tokenInput.ts` を Mamori 0.3 へ移植 (index は break-first で先送り)
+
+- **育てる輪の 1 周 (MG-003)**: `mamori:grow -- brief` が「移せる壁を先に移す → 無ければ構文を足す → 無ければ破る」の順で、今週は**移せる壁** `tokenInput.ts` を deterministic に選んだ。当初タスク (#48) は「添字 `index` を足す」だったが、**構文を足す前に 0.3 を破ったら穴が出たので先送り**にした (break-first の正しい結果 = 「まだ出荷しない」)。
+- **index を足すと開く穴 (実測)**: `x[k]` で `k` が literal なら `x['constructor']` で `FORBIDDEN_MEMBERS` (M6) を迂回・`k` が computed なら来歴 (taint) を運べない形で危ない口へ届く (`const f = x[k]; f('code')` の laundering)。閉じるには literal 鍵を `FORBIDDEN_MEMBERS` へ通し・computed 鍵の結果を inert にして taint を伝播させ・代入の左辺 (`out[i]=v`) の prototype 汚染を塞ぐ必要がある。`docs/REMAINING_WORK.md` のパス 567 の節に測って残した (別パス・T-232 以降)。tokenInput を移したことで `index` を書くと今も M0 で断る (probe で実測)。
+- **移植の実際**: `tokenInput.mamori` を書き (`use { … }` で `controlChars` / `headerValue` / `inputCeiling` の判定を借り・`checkTokenInput` を `fn` で)・too-long の文面だけ template を `+` の連結へ書き直し (組み上がる文字列は 1 字も変えない —— Mamori は M0 で template を持たない)・`mamori:build` で `tokenInput.ts` を再生成 (`mamoriGenerated.test.ts` が byte 一致を見る・EXPECTED 10 本)。判定が 1 字も変わっていないことは既存の `tokenInput.test.ts` が編集なしで緑であることが示す。
+- ★ **変異検査で本物の穴が 1 つ**: template → `+` は too-long の文面を 3 つの文字列リテラル (前 / 中 / 後) に分け、数字の存在だけを `toContain` で見ていた検査では**中間・末尾のリテラルを空にする StringLiteral 変異体が 2 つ生き残った** (初回 94.74%)。文面を丸ごと `toBe` で留めて潰した (手で両変異体を当てて検査が落ちることを確かめ、再測定 40 変異体 **100.00%**)。
+- ★ **5 つの破る試しはすべて refused** (`.constructor` を書く T-224 の道 / 文面を template にする / `as` / 添字 `value[0]` / 宣言していない `new Headers(value)`)。
+- **波及**: 保護対象に `tokenInput.mamori` を足し (生成物 `tokenInput.ts` は既に保護対象)・CODEOWNERS に 1 行・`chain:append` で block **#403**・`docs/MAMORI.md` の移した壁の表に 1 行・成長台帳 `security/mamori-growth.json` に MG-003 (版 0.3 のまま・構文は 1 字も育てていない —— それが break-first の正しい結果)。`npm test` 23,950 件 ❌ 0・`verify:all` 39 ゲート exit 0 (unit test count 19248 不変)・実機 `perf` / `smoke:app` / `e2e` 762 / `e2e:lite` 762 とも ❌ 0。FULL 12,133,891 B / LITE 3,546,515 B (両方 −4 B)。
+
 ## 直近の作業 (2026-10-31) — パス 566-B: BYO プロキシ設定の保存時 MAC (master 鍵 · threat: T-231)
 
 - **穴**: ブラウザ版の BYO プロキシ設定 (`network/proxy.ts`・送り先 URL + 共有秘密) は**平文の別 DB** (`business-hub-preferences`) に残る —— 解錠の前後を問わず読めるようにする設計。ところが平文ゆえに IndexedDB へ書ける相手 (別プロファイル・別の `file://` の HTML・拡張) は、OS キーチェーン・マスターパスワードを破らなくても送り先 URL を自分の Worker へ差し替えられる。`fetchViaProxy` は呼び出し側の `Authorization` をそのまま封筒に載せる (**資格情報のほぼ全部が通る 1 本の口**) ので、差し替えればまるごと盗れる。**T-219 の step-up は画面の書き手 (`SettingsPage`) にしか効かず、`setProxyConfig` を迂回する生の IDB 書き込みを素通りさせていた。**

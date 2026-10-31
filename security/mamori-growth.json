@@ -318,6 +318,58 @@
         "pr": 847,
         "summary": "controlChars を Mamori へ移し (16 進の数を足して 0.3)、破る段で出た T-225 (印を受ける関数を値として持ち出す 8 形・sink の中で危ない口へ行き先以外を流す / 持ち出す 6 形) を塞いだ"
       }
+    },
+    {
+      "id": "MG-003",
+      "date": "2026-10-31",
+      "kind": "port",
+      "target": "src/shared/tokenInput.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/shared/tokenInput.ts",
+      "version": "0.3",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "template"
+      ],
+      "ported": [
+        "src/shared/tokenInput.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "入口の関門に `.constructor` を書く (value.constructor) —— T-224 の Function への道",
+          "result": "refused"
+        },
+        {
+          "tried": "too-long の文面をテンプレート文字列 `v=${value}` にする (補間でコードを運ぶ道)",
+          "result": "refused"
+        },
+        {
+          "tried": "`(raw as string).trim()` で型を書き換える (as)",
+          "result": "refused"
+        },
+        {
+          "tried": "添字 `value[0]` を書く (0.3 に index は無い —— 足すなら REMAINING の break-first を先に閉じる)",
+          "result": "refused"
+        },
+        {
+          "tried": "宣言していない外の名前 `new Headers(value)` を呼ぶ",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 1,
+      "mutation": {
+        "files": [
+          "src/shared/tokenInput.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 847,
+        "reason": null,
+        "summary": "資格情報の入口 checkTokenInput を Mamori 0.3 で書き直した (port)。判定は 1 字も変えず (template→+ の連結だけ・生成物は byte 比較で検査)、入口のソースが .constructor/as/template/未宣言グローバルを書けない形に。brief が port を deterministic に選んだ (cadence は移せる壁を先に移す)。index の break-first の測定は REMAINING に記録して別パスへ (computed 鍵の laundering を inert+taint で閉じる必要)。"
+      }
     }
   ]
 }

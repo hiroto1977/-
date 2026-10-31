@@ -42,6 +42,11 @@ describe('checkTokenInput — 拒否', () => {
     expect(r.reason).toBe('too-long');
     expect(r.message).toContain(String(MAX_TOKEN_INPUT_CHARS + 1));
     expect(r.message).toContain(String(MAX_TOKEN_INPUT_CHARS));
+    // 文面を丸ごと留める —— `tokenInput.ts` を Mamori へ移したとき template を
+    // `+` の連結へ書き直したので、文面は 3 つの文字列リテラル (前・中・後) に分かれた。
+    // 数字の存在だけを見ると、中間 `' 文字 / 上限 '`・末尾 `' 文字)'` を空にする
+    // StringLiteral 変異体が生き残る (パス 567 · MG-003 の変異検査で実測)。全体を固定して潰す。
+    expect(r.message).toBe(`資格情報が長すぎます (${MAX_TOKEN_INPUT_CHARS + 1} 文字 / 上限 ${MAX_TOKEN_INPUT_CHARS} 文字)`);
   });
 
   /*

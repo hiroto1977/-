@@ -110,6 +110,7 @@
 /src/shared/imageUrlGate.mamori @hiroto1977
 /src/shared/proxyEndpoint.mamori @hiroto1977
 /src/shared/controlChars.mamori @hiroto1977
+/src/shared/tokenInput.mamori @hiroto1977
 /src/renderer/components/VettedImg.tsx @hiroto1977
 /src/renderer/components/VettedLink.tsx @hiroto1977
 /src/shared/mamori/ @hiroto1977

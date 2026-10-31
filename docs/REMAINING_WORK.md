@@ -1,5 +1,15 @@
 # Service Hub — 残りの作業手順書
 
+## パス 567 (MG-003) —— `index` (添字) を足すときの break-first の結論 (2026-10-31)
+
+MG-003 は `index` を足す前提で始めたが、**break-first の測定で「今は足さない」が結論になった** —— 以下はその測定と、将来足すときに先に閉じる穴。
+
+- **cadence が port を先に選んだ**: `mamori:grow -- brief` は「移せる壁を先に移す・構文は移せる壁が尽きてから足す」の順で、`tokenInput.ts` (template↻ 1 つだけで移せる) を deterministic に選んだ。だから MG-003 は port にした。`index` を足すのは、移せる壁 (`tokenInput` → 済 · 次は `escape.ts`) が尽きてから。
+- **`index` が解き放つ 4 壁** (実測): `safeFilename.ts` (`s.split('.')[0]!.trim()` —— **字面 `[0]` の結果にメンバ**)・`aiEndpoint.ts` (`octets[0]` —— 字面・比較)・`vaultToken.ts` (`fields[key]` —— **computed string・data-leaf**)・`dataCrypto.ts` (`out[i] = v` —— **computed numeric・代入の左辺**)。
+- **破った設計 (もし素朴に足したら)**: computed な鍵はどんなオブジェクトの `constructor` / `prototype` / `__proto__` にも届く (全オブジェクトが持つ)。`x['constructor']['constructor']('code')()` で `Function` に届き、`checkCallee` は**宣言済みの local binding を無条件に呼ばせる**ので `const f = x[k]; f('code')` で laundering が通る。字面の鍵だけ `FORBIDDEN_MEMBERS` に通しても computed は素通り。ledger の「字面でない鍵は数だけ」は `vaultToken` の `fields[key]` (computed string) を落とすので**狭すぎる** (壁が要る形を切る)。
+- **先に閉じる穴 (足すときの設計)**: ① 字面 (string / number) の鍵は `FORBIDDEN_MEMBERS` を通す (parser・`.member` と同じ保証) ② computed な鍵の**結果は inert** —— callee / `new` の callee / `.member` の base / `[…]` の base になれない ③ **taint 伝播** —— computed subscript から束縛した binding も inert (laundering `const f = x[k]; f(…)` を塞ぐ)。`Binding` に taint の印を足して `checkCallee` / `member` / `index` の base で見る ④ **代入の左辺** (`out[i] = v`) は prototype 汚染の口 (`out['__proto__'] = evil`) —— 字面鍵は `FORBIDDEN_MEMBERS`、computed 鍵は数だけ (代入先は配列の添字が正当な唯一の形)。これは security コンパイラ自身への大きめの変更なので、変異検査 100% + 対照 + T-232 以降の脅威台帳 + break-first の再測定を揃えて別パスで。tokenInput を移したことで `index` を書くと今も M0 で断る (probe 4 で実測)。
+- **id**: MG-003 で足していないので脅威 id は使っていない。足すときは次の空き id (ledger の最大を見る)。
+
 ## パス 566-B の残り穴と follow-up (BYO プロキシ設定の保存時 MAC · T-231) (2026-10-31)
 
 - **解錠中の偽造 (残余・severity low)**: 保存時 MAC は**静止時の改竄** (アプリが動いていない間・別プロセス・別拡張からの IDB 書き込み) を検知するが、同一オリジンで**解錠中**に script を走らせられる相手は `vault.authTag('proxy-config', …)` を自分で呼んで正しいタグを作れる (在メモリの鍵を持つ相手は何でもできる)。これは T-230 と同じ形で、同一オリジンの in-page 攻撃者は本質的に止められない —— 守る線は「保管庫を解錠していない間に書かれた物」である。

@@ -166,6 +166,8 @@ const PROTECTED = [
   'src/shared/proxyEndpoint.mamori',
   // 制御文字の判定 (資格情報と URL の入口が読む 1 つ) —— Mamori 0.3 で書き直した (パス 564)。生成物 controlChars.ts は既に保護対象。
   'src/shared/controlChars.mamori',
+  // 資格情報の保存要求の検証 (main と renderer で同じ規則) —— Mamori 0.3 で書き直した (パス 567 · MG-003)。生成物 tokenInput.ts は既に保護対象。
+  'src/shared/tokenInput.mamori',
   'src/renderer/components/VettedImg.tsx',
   'src/renderer/components/VettedLink.tsx',
   'src/shared/mamori/ast.ts',
