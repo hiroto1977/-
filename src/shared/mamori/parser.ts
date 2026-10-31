@@ -81,6 +81,9 @@ export function isPunctTok(t: Tok, ...texts: readonly string[]): boolean {
   return t.kind === 'punct' && texts.includes(t.text);
 }
 
+/** 行注記の本体 (JS の行終端 LF / CR / U+2028 / U+2029 の手前まで)。sticky なので `lastIndex` から読む。 */
+const LINE_COMMENT_BODY = /[^\n\r\u2028\u2029]*/y;
+
 export function lex(file: string, src: string): Tok[] {
   const out: Tok[] = [];
   let i = 0;
@@ -113,8 +116,11 @@ export function lex(file: string, src: string): Tok[] {
     }
     const pos = at();
     if (src.startsWith('//', i)) {
-      const end = src.indexOf('\n', i);
-      const stop = end === -1 ? src.length : end;
+      // 行注記は **JS が行を終える字すべて** (LF / CR / U+2028 / U+2029) で終わる (0.4 · T-233)。
+      // `\n` だけで終えると、注記の中の U+2028 / U+2029 / 単独の CR のあとの字は Mamori には注記の続き (検めない) だが、
+      // 生成した TypeScript では行が終わっていて**コードとして走る**。検めを受けないコードが生成物へ入る道だった。
+      LINE_COMMENT_BODY.lastIndex = i;
+      const stop = i + (LINE_COMMENT_BODY.exec(src)?.[0].length ?? 0);
       const raw = src.slice(i, stop);
       const kind: TokKind = raw.startsWith('//!') ? 'header' : raw.startsWith('///') ? 'doc' : 'comment';
       const rest = kind === 'comment' ? raw.slice(2) : raw.slice(3);

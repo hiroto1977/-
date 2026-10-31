@@ -4101,6 +4101,60 @@
           "test": "★ URL.createObjectURL / revokeObjectURL は断り、許したメンバを案内する (threat: T-232)"
         }
       ]
+    },
+    {
+      "id": "T-233",
+      "found": "2026-10-31",
+      "foundBy": "T-232 の直後に開いた対戦 (他のハッキング方法を考えて対戦して) の赤の 2 本目: パーサの差分攻撃。Mamori の字句解析は行注記を `[^\\n]*` で終えるが、JavaScript は LF のほか CR・U+2028・U+2029 も行終端として扱う。注記の中に U+2028 (または単独の CR) を置き、その後ろへ検めに掛からない字を書くと、Mamori は『注記の続き』として読み飛ばし (M6 も M0 も検めない)、生成される TypeScript では行終端のあとのコードとして走った。",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "medium",
+      "title": "守りの層を書く言語 Mamori 0.4 の字句解析が行注記を LF だけで終え、JavaScript が行終端と扱う CR / U+2028 / U+2029 のあとの字を注記として読み飛ばしたため、検め (M0 の禁じた綴り・M6 の宣言していない外の名前) を通らないコードを生成物へ運べた",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/parser.ts: 行注記の本体を LF / CR / U+2028 / U+2029 のいずれかで終える (LINE_COMMENT_BODY)。行終端のあとの字は字句として読まれ、M0 / M6 が検める。`///` の説明も同じ本体を通る。正当な注記 (普通の字・CRLF の行末・空の注記) の生成物は 1 字も変わらない。限界: ブロック注記は Mamori に無い (行注記のみ)。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+        "test": "★ 注記の中の U+2028 は注記を終え、そのあとは字句として検められる (threat: T-233)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+          "test": "★ 注記の中の U+2029 も同じ (threat: T-233)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+          "test": "★ 注記の中の単独の CR のあとの字は、コードとして字句にされ M6 が検める (threat: T-233)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+          "test": "★ `///` の説明の中の行終端も同じ (説明のあとの字を注記に隠せない) (threat: T-233)"
+        }
+      ]
+    },
+    {
+      "id": "T-234",
+      "found": "2026-10-31",
+      "foundBy": "T-232 の直後に開いた対戦の赤の 3 本目: 型の綴りの攻撃。M4 は『引数・変数の型の綴りに印の名前 (VU) が在れば印を運ぶ』と見ていたので、`u: VU | string` や `readonly VU[]` や `type Maybe = VU | string` の `u` (素の文字列かもしれない・配列かもしれない) を、印を持つ値として危ない口 (sink fn) へ通せた。変換後の tsc は型で断るが、Mamori の検めが 1 層欠けていた。",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "low",
+      "title": "守りの層を書く言語 Mamori 0.4 の M4 が、型の綴りに印の名前を含む union・配列・別名 (VU | string など) の引数と変数を『印を持つ値』と見なし、印の無い値を印つきしか受けない危ない口へ通す検めを素通りさせた",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: 印を運ぶのは型が印そのもの、または印 + null / undefined のときだけにした (carriedMark)。引数・arrow の引数・局所の型注釈のすべてが同じ関数を通る。union の他の項・配列・別名の union は印を運ばない。限界: 変換後の tsc は元から型で断るので、出荷された物の安全は変わらない (Mamori の検めの欠けの補い)。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+        "test": "★ `VU | string` の引数は印を持つ値として扱わない (threat: T-234)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+          "test": "★ 印の配列・別名の union も印を運ばない (threat: T-234)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+          "test": "★ 変数の型注釈と arrow の引数でも同じ (threat: T-234)"
+        }
+      ]
     }
   ],
   "huntBacklog": [

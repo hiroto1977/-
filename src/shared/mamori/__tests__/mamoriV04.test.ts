@@ -99,3 +99,74 @@ describe('0.4: 構築する形と許したメンバは今までどおり通る (
     for (const n of ['RegExp', 'Error', 'TypeError', 'RangeError']) expect(BUILTIN_MEMBERS.get(n)?.size).toBe(0);
   });
 });
+
+/*
+ * ## 0.4 の穴その 2 (T-233 · 2026-10-31 · パス 571 · 対戦: 赤の 2 本目)
+ *
+ * 行注記 (`//`) を LF でだけ終えていたので、注記の中の U+2028 / U+2029 / 単独の CR のあとの字は
+ * Mamori には「注記の続き」(検めない) だったが、生成した TypeScript では**行が終わっていてコードとして走った**
+ * (`// x\u2028 globalThis.__evil = 41 + 1;` → 実行すると `__evil` が 42)。M0 / M6 を通らないコードが生成物へ入る道。
+ * 字句解析器が JS と同じ字で注記を終えるようにした —— 後ろの字はコードとして字句にされ、検めを受ける。
+ */
+const LS = String.fromCharCode(0x2028);
+const PS = String.fromCharCode(0x2029);
+const CR = String.fromCharCode(13);
+const body = (terminator: string, smuggled: string): string => `export fn go() -> unknown {\n  // 注記${terminator} ${smuggled}\n  return 1;\n}\n`;
+
+describe('T-233: 行注記は JS が行を終える字すべてで終わる (M0 / M6)', () => {
+  it('★ 注記の中の U+2028 は注記を終え、そのあとは字句として検められる (threat: T-233)', () => {
+    expect(diags(body(LS, 'const e = globalThis;'))).toEqual([`src/x/m0.mamori:2:8: [M0] 知らない文字です: "${LS}"`]);
+  });
+  it('★ 注記の中の U+2029 も同じ (threat: T-233)', () => {
+    expect(diags(body(PS, 'const e = globalThis;'))).toEqual([`src/x/m0.mamori:2:8: [M0] 知らない文字です: "${PS}"`]);
+  });
+  it('★ 注記の中の単独の CR のあとの字は、コードとして字句にされ M6 が検める (threat: T-233)', () => {
+    expect(diags(body(CR, 'const e = globalThis;'))).toEqual([
+      'src/x/m0.mamori:2:20: [M6] 宣言していない名前 globalThis —— 外の値は `use` / `extern` で宣言します (網・記憶・OS へ届く名前は暗黙に使えません)',
+    ]);
+  });
+  it('★ `///` の説明の中の行終端も同じ (説明のあとの字を注記に隠せない) (threat: T-233)', () => {
+    expect(diags(`/// 説明${CR} const e = globalThis;\nexport fn go() -> number {\n  return 1;\n}\n`)).not.toEqual([]);
+  });
+  it('対照: 注記の中の普通の字・CRLF の行末・空の注記は今までどおり通り、生成物は LF の時と同じ', () => {
+    const lf = 'export fn go() -> number {\n  // 注記 ok\n  return 1;\n}\n';
+    const crlf = lf.replace(/\n/g, '\r\n');
+    expect(diags(lf)).toEqual([]);
+    expect(diags(crlf)).toEqual([]);
+    const emit = (s: string): string => {
+      const r = compileProject([{ path: 'src/x/m0.mamori', source: s }]);
+      return r.ok ? [...r.outputs.values()][0] ?? '' : 'ERR';
+    };
+    expect(emit(crlf)).toBe(emit(lf));
+    expect(diags('export fn go() -> number {\n  //\n  return 1;\n}\n')).toEqual([]);
+  });
+});
+
+/*
+ * ## 0.4 の穴その 3 (T-234 · 対戦: 赤の 3 本目)
+ *
+ * 引数・変数の型の綴りに印の名前が在れば「印を運ぶ」と見ていたので、`u: VU | string` の `u` (素の文字列かもしれない) を
+ * 印を持つ値として危ない口へ通せた。変換後の `tsc` は型で断るが、Mamori の検めが 1 層欠けていた。
+ * 印を運ぶのは**型が印そのもの、または印 + null / undefined**のときだけにした。
+ */
+const MARKED = 'export vetted VU = "u";\nextern sink { shell } from "electron";\nexport sink fn openUrl(u: VU) -> Promise<void> {\n  return shell.openExternal(u);\n}\n';
+const NOT_MARKED = 'openUrl の引数 1 は印 VU を持つ値だけを受けます (渡したのは印の無い値)';
+
+describe('T-234: 印を運ぶのは型が印そのもの (または印 + null) のときだけ (M4)', () => {
+  it('★ `VU | string` の引数は印を持つ値として扱わない (threat: T-234)', () => {
+    expect(diags(MARKED + 'export fn go(u: VU | string) -> unknown {\n  return openUrl(u);\n}\n')).toEqual([`src/x/m0.mamori:7:18: [M4] ${NOT_MARKED}`]);
+  });
+  it('★ 印の配列・別名の union も印を運ばない (threat: T-234)', () => {
+    expect(diags(MARKED + 'export fn go(us: readonly VU[]) -> unknown {\n  return openUrl(us);\n}\n')).toEqual([`src/x/m0.mamori:7:18: [M4] ${NOT_MARKED}`]);
+    expect(diags(MARKED + 'type Maybe = VU | string;\nexport fn go(u: Maybe) -> unknown {\n  return openUrl(u);\n}\n')).toEqual([`src/x/m0.mamori:8:18: [M4] ${NOT_MARKED}`]);
+  });
+  it('★ 変数の型注釈と arrow の引数でも同じ (threat: T-234)', () => {
+    expect(diags(MARKED + 'export fn go(raw: string) -> unknown {\n  const u: VU | string = raw;\n  return openUrl(u);\n}\n')).toEqual([`src/x/m0.mamori:8:18: [M4] ${NOT_MARKED}`]);
+    expect(diags(MARKED + 'export fn go(us: readonly string[]) -> unknown {\n  return us.map((u: VU | string) => openUrl(u));\n}\n')).toEqual([`src/x/m0.mamori:7:45: [M4] ${NOT_MARKED}`]);
+  });
+  it('対照: 印そのもの・印 + null / undefined は今までどおり印を運ぶ', () => {
+    expect(diags(MARKED + 'export fn go(u: VU) -> unknown {\n  return openUrl(u);\n}\n')).toEqual([]);
+    expect(diags(MARKED + 'export fn go(u: VU | null) -> unknown {\n  return openUrl(u);\n}\n')).toEqual([]);
+    expect(diags(MARKED + 'export fn go(u: null | VU | undefined) -> unknown {\n  return openUrl(u);\n}\n')).toEqual([]);
+  });
+});

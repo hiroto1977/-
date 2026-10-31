@@ -419,15 +419,30 @@
         {
           "tried": "`const r = RegExp; r.$1` (組み込みを値として持ち出して表を迂回する) —— 0.4 の修正後に再試行",
           "result": "refused"
+        },
+        {
+          "tried": "対戦 (赤): 行注記の中に U+2028 / U+2029 / 単独の CR を置き、そのあとへ検めに掛けたくない字を書く (Mamori は LF だけで注記を終えるが JavaScript は他も行終端) ",
+          "result": "hole"
+        },
+        {
+          "tried": "対戦 (赤): `u: VU | string` / `readonly VU[]` / `type Maybe = VU | string` の値を印つきしか受けない sink fn へ渡す (型の綴りに印の名前が在れば運ぶと見ていた)",
+          "result": "hole"
+        },
+        {
+          "tried": "対戦 (赤): 持ち出し・`.constructor` の連鎖・テンプレート・`as`・宣言なしの外の名前・sink の呼び方・mint の置き場所の組み合わせ",
+          "result": "refused"
         }
       ],
       "threats": [
-        "T-232"
+        "T-232",
+        "T-233",
+        "T-234"
       ],
-      "controls": 5,
+      "controls": 7,
       "mutation": {
         "files": [
           "src/shared/mamori/checker.ts",
+          "src/shared/mamori/parser.ts",
           "src/shared/escape.ts"
         ],
         "score": 100
@@ -435,7 +450,7 @@
       "report": {
         "pr": 847,
         "reason": null,
-        "summary": "出力側の関門 escape.ts (escapeXml / safeColor / isHexColor / escapeMarkdown* / escapeInvisibleUnits ほか) を Mamori で書き直した (port)。判定は 1 字も変えず (template→+ の連結と呼び出しの連鎖の改行だけ・生成物は byte 比較で検査)。移す前に使う組み込みを総当たりで破ったところ、宣言なしで使える組み込みのうち RegExp の旧式の静的な欄 (他のモジュールの直近の一致と入力 = 秘密)・Error.captureStackTrace・URL の blob がメンバ経由で M6 を通る穴 (T-232) が出たので、M6 を組み込みのメンバの表へ広げて 0.4 にした (構築する形と許したメンバだけ・値としての持ち出しも断る)。対照 3 方向 + 台帳の書き換え 2 件が鳴り、checker.ts / escape.ts の変異検査は 100%。"
+        "summary": "出力側の関門 escape.ts (escapeXml / safeColor / isHexColor / escapeMarkdown* / escapeInvisibleUnits ほか) を Mamori で書き直した (port)。判定は 1 字も変えず (template→+ の連結と呼び出しの連鎖の改行だけ・生成物は byte 比較で検査)。移す前に使う組み込みを総当たりで破ったところ、宣言なしで使える組み込みのうち RegExp の旧式の静的な欄 (他のモジュールの直近の一致と入力 = 秘密)・Error.captureStackTrace・URL の blob がメンバ経由で M6 を通る穴 (T-232) が出たので、M6 を組み込みのメンバの表へ広げて 0.4 にした (構築する形と許したメンバだけ・値としての持ち出しも断る)。対照 3 方向 + 台帳の書き換え 2 件が鳴り、checker.ts / escape.ts の変異検査は 100%。 続けて対戦 (赤 vs 青) で言語自身を攻め、行終端の差分 (T-233・パーサ)と印の型の綴り (T-234・M4) の穴を塞いだ。"
       }
     }
   ]

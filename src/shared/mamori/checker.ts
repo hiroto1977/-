@@ -95,6 +95,18 @@ function vettedOf(t: TypeRef | null, vetted: ReadonlyMap<string, string>): strin
   return t.names.find((n) => vetted.has(n)) ?? null;
 }
 
+/**
+ * 値が運ぶ印 (引数・変数の型が名乗る印) —— **型が印そのもの (`VettedUrl`) か、印 + null / undefined (`VettedUrl | null`) のときだけ** (0.4 · T-234)。
+ * `VettedUrl | string` や `readonly VettedUrl[]` は印を含む綴りだが、値は素の文字列かもしれない・配列かもしれない。
+ * 0.3 は綴りに印の名前が在れば印を運ぶと見て、`u: VettedUrl | string` の `u` を印を持つ値として危ない口へ通した
+ * (変換後の `tsc` は型で断るので出荷はされないが、Mamori の検めが 1 層欠けていた)。
+ */
+function carriedMark(t: TypeRef | null, vetted: ReadonlyMap<string, string>): string | null {
+  const mark = vettedOf(t, vetted);
+  if (mark === null || t === null) return null;
+  return t.text.split('|').every((part) => ['null', 'undefined', mark].includes(part.trim())) ? mark : null;
+}
+
 export function collectTable(modules: readonly { readonly file: string; readonly module: Module }[]): { table: ProjectTable; diagnostics: MamoriDiagnostic[] } {
   const vetted = new Map<string, string>();
   const fns = new Map<string, FnSignature>();
@@ -109,7 +121,7 @@ export function collectTable(modules: readonly { readonly file: string; readonly
         module: file,
         name: it.name,
         role: it.role,
-        paramVetted: it.params.map((p) => vettedOf(p.type, vetted)),
+        paramVetted: it.params.map((p) => carriedMark(p.type, vetted)),
         returnVetted: vettedOf(it.returns, vetted),
       };
       if (it.exported && fns.has(it.name)) {
@@ -200,7 +212,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     const ctx: Ctx = { role: it.role, returnVetted: sig.returnVetted, destVetted: sig.paramVetted[0] ?? null };
     const scope = new Map<string, Binding>();
     for (const p of it.params) {
-      scope.set(p.name, { vetted: vettedOf(p.type, table.vetted), authority: 'local' });
+      scope.set(p.name, { vetted: carriedMark(p.type, table.vetted), authority: 'local' });
       if (p.init !== null) checkExpr(p.init, [moduleScope], ctx);
     }
     checkBlock(it.body, [moduleScope, scope], ctx);
@@ -266,7 +278,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     switch (s.kind) {
       case 'let': {
         if (s.init !== null) checkExpr(s.init, scopes, ctx);
-        const declared = vettedOf(s.type, table.vetted);
+        const declared = carriedMark(s.type, table.vetted);
         const carried = s.init === null ? null : provenance(s.init, scopes);
         if (declared !== null && s.init !== null && carried !== declared) {
           report('M4', s.pos, `${s.name} は印 ${declared} の型ですが、入れる値は印を持ちません`);
@@ -431,7 +443,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         // arrow の本体は式なので、その中で引数へ代入する文は書けない —— 'local' の綴りは代入の判定にしか効かず、
         // ここでは届かない (等価)。印 (vetted) のほうは「arrow の引数の印の型は、arrow の中で印を運ぶ」が留める。
         // Stryker disable next-line StringLiteral: 上の注記のとおり等価 (arrow の引数へは代入できない)
-        for (const p of e.params as readonly Param[]) inner.set(p.name, { vetted: vettedOf(p.type, table.vetted), authority: 'local' });
+        for (const p of e.params as readonly Param[]) inner.set(p.name, { vetted: carriedMark(p.type, table.vetted), authority: 'local' });
         checkExpr(e.body, [...scopes, inner], ctx);
         return;
       }

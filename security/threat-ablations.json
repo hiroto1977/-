@@ -2041,6 +2041,30 @@
           "replace": "          } else if (false /* ablation */) {"
         }
       ]
+    },
+    {
+      "id": "A-543",
+      "threat": "T-233",
+      "file": "src/shared/mamori/parser.ts",
+      "why": "行注記の終わりを LF だけへ戻す —— 0.4 の穴その 2 (CR / U+2028 / U+2029 のあとの字を注記として読み飛ばし、検めを通らないコードを生成物へ運べる) を開け直す",
+      "edits": [
+        {
+          "find": "const LINE_COMMENT_BODY = /[^\\n\\r\\u2028\\u2029]*/y;",
+          "replace": "const LINE_COMMENT_BODY = /[^\\n]*/y;"
+        }
+      ]
+    },
+    {
+      "id": "A-544",
+      "threat": "T-234",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "印を運ぶ型の判定を『綴りに印の名前が在れば運ぶ』へ戻す —— 0.4 の穴その 3 (VU | string や VU[] の値が印つきの口へ通る) を開け直す",
+      "edits": [
+        {
+          "find": "  const mark = vettedOf(t, vetted);\n  if (mark === null || t === null) return null;",
+          "replace": "  return vettedOf(t, vetted);\n  const mark = vettedOf(t, vetted);\n  if (mark === null || t === null) return null;"
+        }
+      ]
     }
   ]
 }

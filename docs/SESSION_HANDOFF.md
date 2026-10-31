@@ -13,7 +13,8 @@
 - **破る段で穴 (T-232)**: 移す前に使う組み込みを総当たりで破った。宣言なしで使える組み込みは「副作用の判断を持たない」と名乗るが、**名前ではなくメンバ**が共有の状態を持つ物が 3 組あり、0.3 のコンパイラは全部通した —— `RegExp.$1` / `lastMatch` / `input` (**同じ realm の他のモジュールが最後に走らせた正規表現の一致と入力 = 秘密**。node で `/(sek)/.exec('a sek b'); RegExp.$1` は `'sek'`)・`Error.captureStackTrace` / `stackTraceLimit`・`URL.createObjectURL` / `revokeObjectURL`。直し: `checker.ts` の `BUILTIN_MEMBERS` で RegExp / Error / TypeError / RangeError は構築する形 (`new X(…)` / `X(…)`) だけ、URL は構築する形 + `canParse` / `parse`、値としての持ち出し (`const r = RegExp;`) も M6。同名を宣言した値は組み込みではないので表は掛からない。
 - **機械**: `mamoriV04.test.ts` 20 件 (規則を破るプログラム 8 欄 × RegExp・Error 系・URL・持ち出し 4 形 + 対照: 構築する形/許したメンバ/隠した名前は通る・表の中身)。対照 3 方向 (表を戻す / 持ち出しの断りを殺す / 構築する形を禁じる) と台帳の書き換え 2 件 (A-541 / A-542) がそれぞれ狙った検査で鳴る。変異検査: `checker.ts` 100.00% (494 killed) · `escape.ts` 100.00% (49 killed)。初回は 99.21% で生存 4 件 —— 3 件は `identName` が null を返すのに `undefined` と比べていた冗長な条件 (TS2345 で CI の typecheck も落とした)・1 件は隠した sink 名の検査が無かった。
 - **台帳・記録**: T-232 (`security/threat-ledger.json`)・`security/mamori-growth.json` に MG-004 (版 0.4・probes 8 つのうち hole 3)・`docs/MAMORI.md` (0.3 の穴の節・M6 の表・移植の行)・ブロック #404。`lint:forbidden` の `escape.ts` の例外件数 10 → 5。
-- **次**: MG-003 で先送りした添字 `index` は T-233 以降 (REMAINING の break-first を先に)。`String.raw` と `Object.freeze(use で宣言した値)` は測って絞らなかった (REMAINING)。
+- **対戦 (赤 vs 青) の続き**: 「他のハッキング方法を考えて対戦して」で言語自身を攻めて 2 件。**T-233** = 行注記を LF だけで終えていたので、CR / U+2028 / U+2029 のあとの字を注記として読み飛ばし検め (M0 / M6) を通らないコードを生成物へ運べた (パーサ差分) → `LINE_COMMENT_BODY`。**T-234** = 型の綴りに印の名前が在れば印を運ぶと見ていたので `VU | string` / `VU[]` を印つきの口へ通せた → `carriedMark` (印そのもの、または印 + null / undefined)。テスト 29 件 (mamoriV04) + A-543 / A-544 (ablation caught)。対照は parser / checker を元の形へ戻して狙った検査だけが落ちることを確認。
+- **次**: MG-003 で先送りした添字 `index` は T-235 以降 (REMAINING の break-first を先に)。`String.raw` と `Object.freeze(use で宣言した値)` は測って絞らなかった (REMAINING)。
 - **出荷物**: FULL 12,133,963 B / LITE 3,546,587 B (両方 −2 B)。
 
 ## 直近の作業 (2026-10-31) — パス 570: ロット削除後の status 文に保管 id の天井
@@ -63,7 +64,7 @@
 - **残り穴 (残余・severity low)**: 同一オリジンで**解錠中**の攻撃者は `vault.authTag` を自分で呼んで正しいタグを作れる (在メモリの鍵を持つ相手は何でもできる)。守るのは**静止時の改竄** —— アプリが動いていない間・別プロセス・別拡張からの IDB 書き込み。T-230 と同じ形。レガシー (この修正より前に保存した設定) は解錠後の最初の読みで `unstamped` として断られ、設定画面で 1 度保存し直せば署名が付く (fail closed)。
 - **波及**: `../network/proxy` を mock する 14 の web-shim 検査に `PROXY_UNVERIFIED_MESSAGE` の export を足し (静的 import なので mock に無いと落ちる)、web-shim の未検証の分岐を**真偽**で見る (mock が `unverified` を省いても throw しない)。
 - **整合性チェーン**: `proxy.ts` / `vault.ts` を触ったので block **#402** を採掘。`verify:arch` のユニットテスト数を 19235 → **19248** (+13 · proxyMac)。`lint:shared-judgement` の census を再生成 (`constantTimeEquals` の読み手 1 → 2)。
-- ★ **MG-003 (task #48) の脅威 id は T-232 以降へ** —— 以前の計画メモは「T-231 へ retag」と書いていたが、566-B がこの id を取った (ledger の最大は T-231 になった)。
+- ★ **MG-003 (task #48) の脅威 id は T-235 以降へ** —— 以前の計画メモは「T-231 へ retag」と書いていたが、566-B がこの id を取った (ledger の最大は T-231 になった)。
 
 ## 直近の作業 (2026-10-30) — パス 566-C: 保存時刻を暗号に束ねて認証する (若返り攻撃 · threat: T-230)
 
