@@ -5,7 +5,7 @@
 - **閉じた穴 (T-232)**: Mamori の M6 が組み込みの名前だけを見て、共有の状態を持つメンバ (RegExp の旧式の静的な欄・Error の captureStackTrace / stackTraceLimit・URL の blob) を通していた。`BUILTIN_MEMBERS` の表で構築する形と許したメンバだけにした。`mamoriV04.test.ts` 20 件 + 台帳の書き換え A-541 / A-542。詳細は SESSION_HANDOFF のパス 571。
 - **測って絞らなかった物**: `String` / `Math` / `JSON` / `Number` / `Array` / `Map` / `Set` / `Promise` の静的メンバは共有の状態を持たない (測った)。`Object.freeze(use で宣言した値)` は宣言した値への操作で、宣言していない外へ届く道ではない。`new RegExp(動的なパターン)` は availability (ReDoS) の話で来歴の規則ではない —— 書くなら `lint:regex` 相当を Mamori の出力にも掛けるかをまず測る。
 - **status / confirm / aria-label / title / 日付の走査 (パス 570 の続き)**: 保管値を素で出す補間は 0 件。`confirm`/`alert` の補間は固定ラベルのみ・`aria-label`/`title` の `selected.name` (MentorPage) と `m.name` (TeamRadar) は読み込み時に天井済み・`toISOString()` は現在時刻か解析済みの値だけ。今日の欠陥 0 件 (census の機械化は引き続き別パス)。
-- **MG-003 の添字 `index`**: 脅威 id は **T-242 以降**を使う (T-232〜T-241 は MG-004 とその対戦・攻撃の電池が取った)。
+- **MG-003 の添字 `index`**: 脅威 id は **T-243 以降**を使う (T-232〜T-242 は MG-004 とその対戦・攻撃の電池が取った)。
 
 ## パス 570 —— ロット削除後の status 文の天井 (2026-10-31)
 
@@ -65,7 +65,7 @@ MG-003 は `index` を足す前提で始めたが、**break-first の測定で�
 - **解錠中の偽造 (残余・severity low)**: 保存時 MAC は**静止時の改竄** (アプリが動いていない間・別プロセス・別拡張からの IDB 書き込み) を検知するが、同一オリジンで**解錠中**に script を走らせられる相手は `vault.authTag('proxy-config', …)` を自分で呼んで正しいタグを作れる (在メモリの鍵を持つ相手は何でもできる)。これは T-230 と同じ形で、同一オリジンの in-page 攻撃者は本質的に止められない —— 守る線は「保管庫を解錠していない間に書かれた物」である。
 - **レガシーの 1 度の再保存**: この修正より前に保存した BYO プロキシ設定 (mac 無し) は解錠後の最初の読みで `unstamped` として断られ、設定画面で 1 度保存し直すまでプロキシが効かない (fail closed を選んだ —— 未署名を受け入れると剥がし→差し替えが通る)。ニッチな機能で、設定画面に警告を出すので許容。
 - **汎用 `vault.authTag` の他の使い道**: 保管庫の外に残す平文で「静止時の改竄を検知したい」物が他に出たら、同じ `authTag(domain, data)` / `verifyAuthTag` を別 `domain` で使える (トークン名前空間を汚さずに MAC を付けられる)。今の読み手は proxy だけ。
-- ★ **MG-003 (Mamori 添字) の脅威 id は T-242 以降へ (T-232〜T-241 はパス 571〜572 が取った)** —— 566-B が T-231 を取った (ledger の最大は T-231)。MG-003 を統合するときは次の空き id を使う。
+- ★ **MG-003 (Mamori 添字) の脅威 id は T-243 以降へ (T-232〜T-242 はパス 571〜572 が取った)** —— 566-B が T-231 を取った (ledger の最大は T-231)。MG-003 を統合するときは次の空き id を使う。
 
 ## パス 566-C の残り穴と follow-up (保存時刻の若返り攻撃 · T-230) (2026-10-30)
 
@@ -32251,7 +32251,7 @@ src/shared/ のモジュール                                        138
 「読んだ結果」か `未読 (…)` のどちらかで、読んでいない物に「対称だろう」とは書かない。
 
 <!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/shared-judgement-census.cjs。npm run lint:shared-judgement は check だけ) -->
-shared **171** モジュール / 両ビルドが import **90** / うち否定で答えられる **47**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
+shared **172** モジュール / 両ビルドが import **90** / うち否定で答えられる **47**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
 
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |

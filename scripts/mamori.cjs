@@ -16,6 +16,8 @@ const { createRequire } = require('node:module');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const ENTRY = path.join(REPO_ROOT, 'src', 'shared', 'mamori', 'compile.ts');
+/** 能力の台帳 (M7 · 0.5)。守りの層が何に届くかを固定する —— 足す変更はこの 1 行の差分をレビューする。 */
+const CAPABILITIES = path.join(REPO_ROOT, 'security', 'mamori-capabilities.json');
 
 function loadCompiler() {
   const esbuild = require('esbuild');
@@ -28,6 +30,27 @@ function loadCompiler() {
   };
   try {
     return createRequire(ENTRY)(ENTRY);
+  } finally {
+    if (previous) Module._extensions['.ts'] = previous;
+    else delete Module._extensions['.ts'];
+  }
+}
+
+/** 能力の導出 (台帳を書き直すときだけ使う)。構文木はコンパイラと同じ parse から取る。 */
+function loadCapabilities() {
+  const capEntry = path.join(REPO_ROOT, 'src', 'shared', 'mamori', 'capabilities.ts');
+  const parserEntry = path.join(REPO_ROOT, 'src', 'shared', 'mamori', 'parser.ts');
+  const esbuild = require('esbuild');
+  const Module = require('node:module');
+  const previous = Module._extensions['.ts'];
+  Module._extensions['.ts'] = (module, filename) => {
+    const { code } = esbuild.transformSync(fs.readFileSync(filename, 'utf8'), { loader: 'ts', format: 'cjs', target: 'node20', sourcefile: filename });
+    module._compile(code, filename);
+  };
+  try {
+    const { deriveCapabilities } = createRequire(capEntry)(capEntry);
+    const { parse } = createRequire(parserEntry)(parserEntry);
+    return { derive: (files) => deriveCapabilities(files.map((f) => ({ file: f.path, module: parse(f.path, f.source) }))) };
   } finally {
     if (previous) Module._extensions['.ts'] = previous;
     else delete Module._extensions['.ts'];
@@ -51,13 +74,29 @@ function sources(root = path.join(REPO_ROOT, 'src')) {
 
 function main(argv) {
   const check = argv.includes('--check');
+  const writeCapabilities = argv.includes('--write-capabilities');
   const { compileProject, formatDiagnostic } = loadCompiler();
   const files = sources().map((p) => ({ path: p, source: fs.readFileSync(path.join(REPO_ROOT, p), 'utf8') }));
   if (files.length === 0) {
     console.error('❌ .mamori が 1 本も見つかりません (走査が死んでいる)');
     return 1;
   }
-  const result = compileProject(files);
+  // 台帳を書き直す (能力を足す・外す変更を意図して行うときだけ)。導いた表をそのまま書く —— 差分が変更の中身になる。
+  if (writeCapabilities) {
+    const { derive } = loadCapabilities();
+    fs.writeFileSync(CAPABILITIES, `${JSON.stringify({ modules: derive(files) }, null, 2)}\n`);
+    console.log('✅ 能力の台帳を書き直しました (security/mamori-capabilities.json) —— 差分をレビューしてください');
+    return 0;
+  }
+  // 台帳が無い・読めないときは検めずに通さず、断る (失敗は閉じる向き)。
+  let policy;
+  try {
+    policy = JSON.parse(fs.readFileSync(CAPABILITIES, 'utf8'));
+  } catch (e) {
+    console.error(`❌ 能力の台帳 (security/mamori-capabilities.json) が読めません: ${e instanceof Error ? e.message : String(e)} —— npm run mamori:build -- --write-capabilities で作る`);
+    return 1;
+  }
+  const result = compileProject(files, { capabilities: policy });
   if (!result.ok) {
     console.error(`❌ Mamori のコンパイルが ${result.diagnostics.length} 件の誤りで止まりました:`);
     for (const d of result.diagnostics) console.error(`  ${formatDiagnostic(d)}`);

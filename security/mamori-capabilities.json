@@ -1,0 +1,98 @@
+{
+  "modules": {
+    "src/main/clients/exportSink.mamori": {
+      "externals": [
+        "sink ./exportPaths: writeExportFile"
+      ],
+      "imports": [],
+      "gates": [
+        "exportTargetOrNull -> VettedExportPath | null"
+      ],
+      "sinks": [
+        "writeExportFileVetted(VettedExportPath)"
+      ]
+    },
+    "src/main/osSinks.mamori": {
+      "externals": [
+        "sink electron: shell"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": [
+        "openExternalVetted(VettedExternalUrl)",
+        "openPathVetted(VettedShellPath)",
+        "showItemInFolderVetted(VettedShellPath)"
+      ]
+    },
+    "src/main/shellOpenGate.mamori": {
+      "externals": [],
+      "imports": [
+        "node:fs: promises",
+        "node:path: default path"
+      ],
+      "gates": [
+        "shellTargetOrNull -> Promise<VettedShellPath | null>"
+      ],
+      "sinks": []
+    },
+    "src/renderer/vettedSinks.mamori": {
+      "externals": [
+        "sink global: window"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": [
+        "openWindowVetted(VettedExternalUrl)"
+      ]
+    },
+    "src/shared/controlChars.mamori": {
+      "externals": [],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/shared/escape.mamori": {
+      "externals": [],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/shared/externalUrlGate.mamori": {
+      "externals": [],
+      "imports": [],
+      "gates": [
+        "externalUrlOrNull -> VettedExternalUrl | null"
+      ],
+      "sinks": []
+    },
+    "src/shared/imageUrlGate.mamori": {
+      "externals": [
+        "pure ./privateTarget: isPrivateOrReservedTarget"
+      ],
+      "imports": [],
+      "gates": [
+        "safeImageSrc -> VettedImageSrc | undefined",
+        "safeRemoteImageSrc -> VettedImageSrc | undefined"
+      ],
+      "sinks": []
+    },
+    "src/shared/proxyEndpoint.mamori": {
+      "externals": [],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/shared/tokenInput.mamori": {
+      "externals": [],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/shared/vetted.mamori": {
+      "externals": [],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    }
+  }
+}

@@ -82,6 +82,7 @@
     "src/main/windowOpen.ts",
     "src/main/osSinks.ts",
     "src/renderer/vettedSinks.ts",
+    "src/shared/mamori/capabilities.ts",
     "src/shared/mamori/checker.ts",
     "src/shared/mamori/compile.ts",
     "src/shared/mamori/emit.ts",

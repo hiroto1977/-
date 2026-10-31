@@ -175,6 +175,8 @@ const PROTECTED = [
   'src/shared/mamori/checker.ts',
   'src/shared/mamori/emit.ts',
   'src/shared/mamori/compile.ts',
+  'src/shared/mamori/capabilities.ts',
+  'security/mamori-capabilities.json',
   'scripts/mamori.cjs',
   // 2026-08-22 に足した。`shellOpenGate.ts` の**双子**——あちらが「OS に
   // ファイルを開かせてよいか」なら、こちらは「OS に URL を開かせてよいか」。
