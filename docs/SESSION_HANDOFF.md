@@ -7,6 +7,17 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-10-31) — パス 568: 専属カウンセラー MentorPage の保存値の天井 (メンバー鍵)
+
+- **穴**: 保管した自由文の天井 (パス 419) の census `storedFreeTextCeiling.test.ts` は 5 画面 (team / mutual-funds / real-estate / 士業 CRM / ManualDataSection) を覆うが、**後から足された画面 MentorPage (専属カウンセラー · パス 551 以降) が入っていなかった**。自由文 (聞き取りの答え・チェックイン / 関係のメモ) は `sanitizeMentorSession` の `readText` が既に天井済み (長すぎは落とす) だが、**メンバー鍵には天井が無かった** (`memberKeyOf` = trim + lower だけ・`readRelation` は `with` の長さを見ない)。
+- **実測 (実物の MentorPage を jsdom で描く · 1 欄 200,000 字)**: (a) `relations[].with` が roster 不一致 → `nameOf` の `?? key` fallback = 関係行 **200,012** / 画面 **201,163** · (b) 名前が空で email が長い member → `mentorRoster` の `|| r.data.email` fallback = option **200,001** / 画面 **200,571** · (c) `teamPairs` の `aName`/`bName` (両者同意の mutual · 純関数) → `?? k` fallback = 鍵そのもの (convoluted)。届く道は**復元・手編集 JSON・旧版データ** (`COLLECTION_SHAPES` の `str` は長さを見ず、入口のフォームは断るが復元は入口を通らない —— パス 419 の「入口が出口より厳しい」)。
+- **直し (パス 420 の規律「同一性の鍵は天井を掛けず、表示だけ天井」)**: 鍵は join (`byKey.get` / dedup `seen` / pair id / roster lookup) に使うので切ると別の鍵を指す。だから 3 か所の**表示の fallback だけ**を `displayField` (既定 256 字 + '…') へ —— `MentorPage.nameOf` の `?? key`・`mentorRoster` の `|| r.data.email`・`teamPairs.nameOf` の `?? k`。判定は 1 つも変えない。
+- **正当な値は 1 字も変わらない** (実測): roster 名 (`mentorRoster` が既に `displayField(r.data.name)`) も正当なメール鍵 (≤254) も既定 256 未満なので素通し。退team したメンバーの正当な email 鍵は全文そのまま・名前が在る member は roster 名をそのまま (検査で留めた)。直した後は (a) 269 字・(b) 263 字 で天井に収まる。
+- **機械**: `mentorStoredCeiling.test.ts` (**6 件**・背骨は振る舞い —— (a)(b) は実物を描き・(c) は純関数 `teamPairs`)。**対照 3 方向すべて鳴る** (fixed 版を控えて md5 で戻した): A `?? key` へ戻す → (a) ❌1 / B `|| r.data.email` へ戻す → (b) ❌1 / C `?? k` へ戻す → (c) ❌1 —— 正当な値の 3 件は fallback に依らず通ったまま。
+- ★ **自戒**: probe は緑でも `typecheck` だけが 6 件捕まえた —— `waitForElement` / `settleUntil` は第 2 引数 (label) が必須で `querySelector` に `<HTMLSelectElement>` の型引数が要る (vitest は型を剥がす。パス 373 以来の同じ罠)。
+- **測って何も無かった軸**: 自由文は `readText` が天井済み・`teamSignals` の `name` は roster 一致を要求するので常に roster 名 (天井済み)・`data-mentor-signal={s.member}` は属性で可視文字ではなく member は roster 鍵。mentor ファイルは整合性チェーンの保護対象ではない (chain:append 不要)。**T-id は付けない** (パス 417-420 と同じ番号のみの硬化パス)。
+- **門と実機**: `npm test` 23,956 件 ❌ 0・`verify:all` 39 ゲート exit 0 (unit test count 19248 → **19254**・Stryker mutate scope 330 不変)・`chain:verify` 緑・`perf` OK (LITE DCL 233 / FULL 606 ms)・`e2e` 762 / `e2e:lite` 762 とも ❌ 0。FULL 12,133,903 B / LITE 3,546,527 B (両方 +12 B)。`smoke:app` / `e2e:ollama` は回していない (主プロセスも Ollama も触っていない)。
+
 ## 直近の作業 (2026-10-31) — パス 567 (MG-003): `tokenInput.ts` を Mamori 0.3 へ移植 (index は break-first で先送り)
 
 - **育てる輪の 1 周 (MG-003)**: `mamori:grow -- brief` が「移せる壁を先に移す → 無ければ構文を足す → 無ければ破る」の順で、今週は**移せる壁** `tokenInput.ts` を deterministic に選んだ。当初タスク (#48) は「添字 `index` を足す」だったが、**構文を足す前に 0.3 を破ったら穴が出たので先送り**にした (break-first の正しい結果 = 「まだ出荷しない」)。

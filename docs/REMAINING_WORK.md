@@ -1,5 +1,11 @@
 # Service Hub — 残りの作業手順書
 
+## パス 568 —— 専属カウンセラー MentorPage の保存値の天井 (メンバー鍵) (2026-10-31)
+
+- **閉じた穴**: パス 419 の census `storedFreeTextCeiling.test.ts` が後発の MentorPage を覆っておらず、**メンバー鍵**が画面へ天井なしで出ていた (3 経路: `nameOf` の `?? key` / `mentorRoster` の `|| r.data.email` / `teamPairs` の `?? k` の fallback)。表示の fallback だけ `displayField` で天井 (同一性の鍵は保持)。`mentorStoredCeiling.test.ts` 6 件 + 対照 3 方向。詳細は CLAUDE.md / SESSION_HANDOFF.md のパス 568。
+- **残作業なし** —— 3 経路すべて閉じた。家系の確認で測って何も無かった軸: 自由文 (答え・チェックイン / 関係のメモ) は `readText` が天井済み・`teamSignals.name` は roster 一致で常に roster 名・`data-mentor-signal` は属性。
+- **他画面の同じ家系 (将来の候補・今は穴ではない)**: MentorPage を census の母集団へ足したのは**専用の検査**でであって、`storedFreeTextCeiling.test.ts` 本体の母集団は 5 画面のまま。新しい画面が足されるたびに同じ「鍵の表示 fallback に天井が無いか」を測るのは、画面ごとの jsdom harness が要るので census 1 本に機械化しにくい —— 新画面を足す時の手順として SESSION_HANDOFF の規律に委ねる (保管値を画面へ出す新画面は天井を測る)。
+
 ## パス 567 (MG-003) —— `index` (添字) を足すときの break-first の結論 (2026-10-31)
 
 MG-003 は `index` を足す前提で始めたが、**break-first の測定で「今は足さない」が結論になった** —— 以下はその測定と、将来足すときに先に閉じる穴。

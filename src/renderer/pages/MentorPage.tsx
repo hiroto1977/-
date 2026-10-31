@@ -229,7 +229,7 @@ export function MentorPage(): React.JSX.Element {
   const pairs = teamPairs(stored.map((s) => s.session), roster);
   const shares = workloadDistribution(stored.map((s) => s.session), roster, today);
   const others = roster.filter((m) => m.key !== selectedKey);
-  const nameOf = (key: string): string => roster.find((m) => m.key === key)?.name ?? key;
+  const nameOf = (key: string): string => roster.find((m) => m.key === key)?.name ?? displayField(key);
 
   return (
     <div>
