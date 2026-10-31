@@ -7,6 +7,15 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-10-31) — パス 571 (MG-004): `escape.ts` を Mamori 0.3 へ移植し、言語の穴 T-232 を塞いで 0.4 に
+
+- **周の選び方**: `npm run mamori:grow -- brief` が port `src/shared/escape.ts` (移せる 1 本・足りない構文は template だけ) を選んだ。出力側の関門 (`escapeXml` / `safeColor` / `isHexColor` / `escapeMarkdownInline` / `escapeMarkdownText` / `escapeInvisibleUnits` ほか)。判定は 1 字も変えず、`escapeUnits` の template を `+` の連結へ・連鎖呼び出しの改行が生成物で 1 行になっただけ。
+- **破る段で穴 (T-232)**: 移す前に使う組み込みを総当たりで破った。宣言なしで使える組み込みは「副作用の判断を持たない」と名乗るが、**名前ではなくメンバ**が共有の状態を持つ物が 3 組あり、0.3 のコンパイラは全部通した —— `RegExp.$1` / `lastMatch` / `input` (**同じ realm の他のモジュールが最後に走らせた正規表現の一致と入力 = 秘密**。node で `/(sek)/.exec('a sek b'); RegExp.$1` は `'sek'`)・`Error.captureStackTrace` / `stackTraceLimit`・`URL.createObjectURL` / `revokeObjectURL`。直し: `checker.ts` の `BUILTIN_MEMBERS` で RegExp / Error / TypeError / RangeError は構築する形 (`new X(…)` / `X(…)`) だけ、URL は構築する形 + `canParse` / `parse`、値としての持ち出し (`const r = RegExp;`) も M6。同名を宣言した値は組み込みではないので表は掛からない。
+- **機械**: `mamoriV04.test.ts` 20 件 (規則を破るプログラム 8 欄 × RegExp・Error 系・URL・持ち出し 4 形 + 対照: 構築する形/許したメンバ/隠した名前は通る・表の中身)。対照 3 方向 (表を戻す / 持ち出しの断りを殺す / 構築する形を禁じる) と台帳の書き換え 2 件 (A-541 / A-542) がそれぞれ狙った検査で鳴る。変異検査: `checker.ts` 100.00% (494 killed) · `escape.ts` 100.00% (49 killed)。初回は 99.21% で生存 4 件 —— 3 件は `identName` が null を返すのに `undefined` と比べていた冗長な条件 (TS2345 で CI の typecheck も落とした)・1 件は隠した sink 名の検査が無かった。
+- **台帳・記録**: T-232 (`security/threat-ledger.json`)・`security/mamori-growth.json` に MG-004 (版 0.4・probes 8 つのうち hole 3)・`docs/MAMORI.md` (0.3 の穴の節・M6 の表・移植の行)・ブロック #404。`lint:forbidden` の `escape.ts` の例外件数 10 → 5。
+- **次**: MG-003 で先送りした添字 `index` は T-233 以降 (REMAINING の break-first を先に)。`String.raw` と `Object.freeze(use で宣言した値)` は測って絞らなかった (REMAINING)。
+- **出荷物**: FULL 12,133,963 B / LITE 3,546,587 B (両方 −2 B)。
+
 ## 直近の作業 (2026-10-31) — パス 570: ロット削除後の status 文に保管 id の天井
 
 - **穴**: `HydroponicsPage.removeBatch` の status 文 3 つ (見つかりません / 削除できませんでした / 削除しました) が保管した batch id を素で補間。表は `batchIdText` で天井済みだが、× を押した後の文だけが素 (パス 569 が残した物)。届く道は復元・手編集 JSON・旧版。action 起点 (view-time ではない)。

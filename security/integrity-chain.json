@@ -3391,6 +3391,14 @@
       "leafCount": 156,
       "note": "update integrity-chain.cjs,tokenInput.mamori,tokenInput.ts",
       "hash": "3bb97a6877a9c2ef10a1859fbe4eb3cb537114dbdb1b8b4ef9c2ae920dd09f55"
+    },
+    {
+      "index": 404,
+      "prevHash": "3bb97a6877a9c2ef10a1859fbe4eb3cb537114dbdb1b8b4ef9c2ae920dd09f55",
+      "merkleRoot": "d5cdc43554d30f653bcd6e4724bf49b700238ef8af9f539b84336153fdb9f32b",
+      "leafCount": 156,
+      "note": "update escape.ts,checker.ts",
+      "hash": "9beedd49011a04224598a8d775185dfdede4e9c616d97e8c685a1526064db62b"
     }
   ],
   "tipManifest": {
@@ -3515,7 +3523,7 @@
     "src/shared/credentialTtl.ts": "7fb6593b3a5672ddc6782c3c27def40042261ed73c7fdf0f907fd248acc97245",
     "src/shared/cryptoParams.ts": "e5c196eed641330430fb0725daf9dc28cfd38fc624ce5e46baca635ed9b8590e",
     "src/shared/eraseReport.ts": "06755b614c3c14664d3c445bb18779f815490a519fc2ff7ac03d5d36a62b9d49",
-    "src/shared/escape.ts": "8e6ae576ff9d9a366b204bc9cd39a7e123b7390f40a196dc2a245cf4a2113534",
+    "src/shared/escape.ts": "222626078c66d58d8b3db05f5391dc5b8f4af50b8452587a114532e3b4554cfc",
     "src/shared/externalUrlGate.mamori": "62c8d39a8f00f54ddb88bf7541d7e43d5c918b6291c78b9f17e9b59fc0068ae5",
     "src/shared/externalUrlGate.ts": "2e670e502326eb6778c91ef79f90b918d69fa367d2fd391d459ef139c77bf475",
     "src/shared/headerValue.ts": "e1b3156dde741ff415b769a6a40a7630e7da580f29737005cf2583bda4512b82",
@@ -3526,7 +3534,7 @@
     "src/shared/isoDate.ts": "cfe317b22c6b482c42bca40a9d19a5cbd3204b5cbace6e7336befe77690f01cd",
     "src/shared/localDate.ts": "9220ae751caf1637071d5804fb67d4629125bed1c4a9a7913fdd2968c5294da1",
     "src/shared/mamori/ast.ts": "53d9b01b1828d5d2ccbd1dfbc89a947cb62e8f5f143f0903754b7f4bbb47f40b",
-    "src/shared/mamori/checker.ts": "7afd74670b93e93009025982166fde80fef17d0298f336a3ba9f88cb5879f428",
+    "src/shared/mamori/checker.ts": "68a16f983a837defec2c64dd5664f5f79d3163d97a057ae7fc465d837fd3a96c",
     "src/shared/mamori/compile.ts": "389e89e1d3d0458d4842d0d09e14233b4fb5fbcbd2cc084abc1b7b225a4c53c8",
     "src/shared/mamori/emit.ts": "6a4eb34c57ed358e237e0330645e206d89b62639c13558621300be9658938293",
     "src/shared/mamori/parser.ts": "a4fafe3d15ba34f118dd6f688d4a09d8de4d47d3e15389bd724dab701e448b84",

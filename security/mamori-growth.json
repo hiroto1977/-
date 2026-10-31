@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.3"
+    "version": "0.4"
   },
   "constructs": {
     "class": {
@@ -369,6 +369,73 @@
         "pr": 847,
         "reason": null,
         "summary": "資格情報の入口 checkTokenInput を Mamori 0.3 で書き直した (port)。判定は 1 字も変えず (template→+ の連結だけ・生成物は byte 比較で検査)、入口のソースが .constructor/as/template/未宣言グローバルを書けない形に。brief が port を deterministic に選んだ (cadence は移せる壁を先に移す)。index の break-first の測定は REMAINING に記録して別パスへ (computed 鍵の laundering を inert+taint で閉じる必要)。"
+      }
+    },
+    {
+      "id": "MG-004",
+      "date": "2026-10-31",
+      "kind": "port",
+      "target": "src/shared/escape.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/shared/escape.ts",
+      "version": "0.4",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "template"
+      ],
+      "ported": [
+        "src/shared/escape.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "印を受ける関数を値で渡す `us.map(openUrl)` / `s.replace(/a/g, openUrl)` (組み込みのコールバックに持ち出す)",
+          "result": "refused"
+        },
+        {
+          "tried": "sink 関数の中で `t.replace(/a/g, shell.openExternal)` (危ない口をコールバックとして渡す) / `(() => shell)()`",
+          "result": "refused"
+        },
+        {
+          "tried": "正規表現の字面から `/a/.constructor(\"return 1\")()` / `RegExp.prototype` / `s.__proto__` / `new Function(c)`",
+          "result": "refused"
+        },
+        {
+          "tried": "正規表現の字面を代入で書き換える `R.lastIndex = 5;` (欄への代入) と、gate の外の `mint`",
+          "result": "refused"
+        },
+        {
+          "tried": "`RegExp.$1` / `RegExp.lastMatch` / `RegExp.input` を宣言なしで読む (node で `/(sek)/.exec('a sek b'); RegExp.$1` は 'sek' —— 他のモジュールの直近の一致と入力)",
+          "result": "hole"
+        },
+        {
+          "tried": "`Error.captureStackTrace(o)` / `Error.stackTraceLimit` / `TypeError.captureStackTrace` (共有の例外の積み方・渡した物への書き込み)",
+          "result": "hole"
+        },
+        {
+          "tried": "`URL.revokeObjectURL(u)` / `URL.createObjectURL(b)` (他のモジュールが作った blob の URL を失効させる)",
+          "result": "hole"
+        },
+        {
+          "tried": "`const r = RegExp; r.$1` (組み込みを値として持ち出して表を迂回する) —— 0.4 の修正後に再試行",
+          "result": "refused"
+        }
+      ],
+      "threats": [
+        "T-232"
+      ],
+      "controls": 5,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/checker.ts",
+          "src/shared/escape.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 847,
+        "reason": null,
+        "summary": "出力側の関門 escape.ts (escapeXml / safeColor / isHexColor / escapeMarkdown* / escapeInvisibleUnits ほか) を Mamori で書き直した (port)。判定は 1 字も変えず (template→+ の連結と呼び出しの連鎖の改行だけ・生成物は byte 比較で検査)。移す前に使う組み込みを総当たりで破ったところ、宣言なしで使える組み込みのうち RegExp の旧式の静的な欄 (他のモジュールの直近の一致と入力 = 秘密)・Error.captureStackTrace・URL の blob がメンバ経由で M6 を通る穴 (T-232) が出たので、M6 を組み込みのメンバの表へ広げて 0.4 にした (構築する形と許したメンバだけ・値としての持ち出しも断る)。対照 3 方向 + 台帳の書き換え 2 件が鳴り、checker.ts / escape.ts の変異検査は 100%。"
       }
     }
   ]
