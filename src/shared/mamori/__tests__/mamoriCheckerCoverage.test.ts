@@ -232,8 +232,8 @@ describe('変異検査が教えた残りの形 (2 回目の測定)', () => {
     expect(rules(VETTED + 'export sink fn write(u: VettedUrl, body: unknown) -> void {\n  return;\n}\nexport fn go(u: VettedUrl) -> void {\n  return write(u, u);\n}\n')).toEqual([]);
   });
 
-  it('★ 引数が足りない呼び出しは Mamori では断らない (数は tsc が断る) —— 投げない', () => {
-    expect(rules(VETTED + SINK + 'export fn go() -> Promise<void> {\n  return openUrl();\n}\n')).toEqual([]);
+  it('★ 印を受ける引数を渡さない呼び出しは M4 で断る (0.4 · T-238 —— 以前は「数は tsc に任せる」と素通りさせていた)・投げない', () => {
+    expect(rules(VETTED + SINK + 'export fn go() -> Promise<void> {\n  return openUrl();\n}\n')).toEqual(['M4']);
   });
 
   it('★ 印の名前は値ではない (宣言していない名前として断る)', () => {

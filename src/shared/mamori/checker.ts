@@ -103,8 +103,9 @@ function vettedOf(t: TypeRef | null, vetted: ReadonlyMap<string, string>): strin
  */
 function carriedMark(t: TypeRef | null, vetted: ReadonlyMap<string, string>): string | null {
   const mark = vettedOf(t, vetted);
-  if (mark === null || t === null) return null;
-  return t.text.split('|').every((part) => ['null', 'undefined', mark].includes(part.trim())) ? mark : null;
+  if (mark === null) return null;
+  // 印が見つかったなら型は在る (`null` の型に印は見つからない)。
+  return t!.text.split('|').every((part) => ['null', 'undefined', mark].includes(part.trim())) ? mark : null;
 }
 
 export function collectTable(modules: readonly { readonly file: string; readonly module: Module }[]): { table: ProjectTable; diagnostics: MamoriDiagnostic[] } {
@@ -470,7 +471,11 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         sig.paramVetted.forEach((want, i) => {
           if (want === null) return;
           const arg = e.args[i];
-          if (arg === undefined) return;
+          // 印を受ける引数を**渡さない**呼び出しも断る (0.4 · T-238: `openUrl()` は M4 を素通りしていた —— 変換後の tsc は止めるが検めが 1 層欠けていた)。
+          if (arg === undefined) {
+            report('M4', e.pos, `${sig.name} の引数 ${i + 1} は印 ${want} を持つ値が要ります (渡していません)`);
+            return;
+          }
           const got = provenance(arg, scopes);
           if (got !== want) {
             report('M4', arg.pos, `${sig.name} の引数 ${i + 1} は印 ${want} を持つ値だけを受けます (渡したのは${got === null ? '印の無い値' : `印 ${got}`})`);

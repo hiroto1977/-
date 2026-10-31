@@ -2061,8 +2061,92 @@
       "why": "印を運ぶ型の判定を『綴りに印の名前が在れば運ぶ』へ戻す —— 0.4 の穴その 3 (VU | string や VU[] の値が印つきの口へ通る) を開け直す",
       "edits": [
         {
-          "find": "  const mark = vettedOf(t, vetted);\n  if (mark === null || t === null) return null;",
-          "replace": "  return vettedOf(t, vetted);\n  const mark = vettedOf(t, vetted);\n  if (mark === null || t === null) return null;"
+          "find": "  const mark = vettedOf(t, vetted);\n  if (mark === null) return null;",
+          "replace": "  return vettedOf(t, vetted);\n  const mark = vettedOf(t, vetted);\n  if (mark === null) return null;"
+        }
+      ]
+    },
+    {
+      "id": "A-545",
+      "threat": "T-235",
+      "file": "src/shared/mamori/parser.ts",
+      "why": "文字列の中の隠し字の断りを殺す —— 文字列に裸の bidi / 不可視 / 制御の字を置いて生成物へ運べる穴を開け直す",
+      "edits": [
+        {
+          "find": "      if (HIDDEN_CHARS.test(literal)) throw new MamoriError(file, pos, HIDDEN_CHARS_MESSAGE);\n      out.push({ kind: 'string'",
+          "replace": "      if (false) throw new MamoriError(file, pos, HIDDEN_CHARS_MESSAGE);\n      out.push({ kind: 'string'"
+        }
+      ]
+    },
+    {
+      "id": "A-546",
+      "threat": "T-235",
+      "file": "src/shared/mamori/parser.ts",
+      "why": "注記の中の隠し字の断りを殺す —— 注記に裸の bidi / 不可視 / 制御の字を置いて生成物へ運べる穴を開け直す",
+      "edits": [
+        {
+          "find": "if (HIDDEN_CHARS.test(raw)) throw",
+          "replace": "if (false) throw"
+        }
+      ]
+    },
+    {
+      "id": "A-547",
+      "threat": "T-236",
+      "file": "src/shared/mamori/parser.ts",
+      "why": "文字列の読めない綴りの断りを殺す —— JSON に無い逃がしでコンパイラが例外で落ちる穴を開け直す",
+      "edits": [
+        {
+          "find": "    } catch {\n      // `\\'` や `\\x41` のように JSON に無い綴りは読めない",
+          "replace": "    } catch (e) {\n      throw e;\n      // `\\'` や `\\x41` のように JSON に無い綴りは読めない"
+        }
+      ]
+    },
+    {
+      "id": "A-548",
+      "threat": "T-237",
+      "file": "src/shared/mamori/parser.ts",
+      "why": "正規表現の字面の隠し字の断りを殺す —— 正規表現の中へ裸の bidi を置いて生成物へ運べる穴を開け直す",
+      "edits": [
+        {
+          "find": "      if (HIDDEN_CHARS.test(literal)) throw new MamoriError(file, pos, HIDDEN_CHARS_MESSAGE);\n      out.push({ kind: 'regex'",
+          "replace": "      if (false) throw new MamoriError(file, pos, HIDDEN_CHARS_MESSAGE);\n      out.push({ kind: 'regex'"
+        }
+      ]
+    },
+    {
+      "id": "A-549",
+      "threat": "T-238",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "印つきの引数を渡さない呼び出しの断りを殺す —— `openUrl()` が M4 を素通りする穴を開け直す",
+      "edits": [
+        {
+          "find": "          if (arg === undefined) {\n            report('M4', e.pos,",
+          "replace": "          if (arg === undefined) {\n            if (false) report('M4', e.pos,"
+        }
+      ]
+    },
+    {
+      "id": "A-550",
+      "threat": "T-239",
+      "file": "src/shared/mamori/parser.ts",
+      "why": "型の綴りの深さ 0 の `;` の断りを殺す —— 型の位置へ別の文を隠して生成物へ運べる穴を開け直す",
+      "edits": [
+        {
+          "find": "      if (depth === 0 && isPunctTok(t, ';')) fail(",
+          "replace": "      if (false && isPunctTok(t, ';')) fail("
+        }
+      ]
+    },
+    {
+      "id": "A-551",
+      "threat": "T-240",
+      "file": "src/shared/mamori/parser.ts",
+      "why": "古い getter / setter の禁止を外す —— どの物にも getter を差し込める口を開け直す",
+      "edits": [
+        {
+          "find": "  __defineGetter__: '",
+          "replace": "  ['__defineGetter__-off']: '"
         }
       ]
     }

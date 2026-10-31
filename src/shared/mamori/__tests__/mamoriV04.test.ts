@@ -170,3 +170,116 @@ describe('T-234: 印を運ぶのは型が印そのもの (または印 + null) �
     expect(diags(MARKED + 'export fn go(u: null | VU | undefined) -> unknown {\n  return openUrl(u);\n}\n')).toEqual([]);
   });
 });
+
+/*
+ * ## 0.4 の穴その 4・5 (T-235 · T-236 · 対戦 572: 攻撃の電池が見つけた)
+ *
+ * 電池 (`mamoriBattery.test.ts`) が弾 × 文脈 × 環境を掛け合わせて数千のプログラムを引いて見つけた 2 件。
+ * - **T-235**: 注記と文字列の中に、方向を変える字 (bidi · U+202E ほか)・不可視の字・制御の字・行/段落区切りを**裸で**置けた。
+ *   生成した TypeScript へそのまま運ばれ、読み手の見る物と走る物が食い違う (Trojan Source · CVE-2021-42574)。
+ * - **T-236**: 文字列の中の JSON に無い `\'` や `\x41` で、コンパイラが**位置つきの断りではなく例外**で落ちた (`SyntaxError`)。
+ */
+const HIDDEN = (where: string): string => `制御・不可視・方向を変える字は注記と文字列の中に裸で置けません —— \`\\uXXXX\` と綴ります (見える物と走る物が食い違う · Trojan Source)`.replace('注記と文字列', where);
+
+describe('T-235: 注記と文字列の中の見えない字・方向を変える字は裸で置けない (M0)', () => {
+  for (const [name, ch] of [['bidi の上書き U+202E', '\u202E'], ['bidi の分離 U+2066', '\u2066'], ['幅ゼロ U+200B', '\u200B'], ['不可視 U+2060', '\u2060'], ['BOM U+FEFF', '\uFEFF'], ['NUL', '\u0000'], ['垂直タブ', '\u000B'], ['DEL', '\u007F']] as const) {
+    it(`★ 注記の中の ${name} は断る (threat: T-235)`, () => {
+      expect(diags(`export fn go() -> unknown {\n  // a${ch}b\n  return 1;\n}\n`)).toEqual([`src/x/m0.mamori:2:3: [M0] ${HIDDEN('注記と文字列')}`]);
+    });
+    it(`★ 文字列の中の ${name} も断る (threat: T-235)`, () => {
+      expect(diags(`export fn go() -> unknown {\n  return "a${ch}b";\n}\n`)).toEqual([`src/x/m0.mamori:2:10: [M0] ${HIDDEN('注記と文字列')}`]);
+    });
+  }
+  it('★ 注記の中の bidi の上書きは断る (threat: T-235)', () => {
+    expect(diags('export fn go() -> unknown {\n  // a\u202Eb\n  return 1;\n}\n')).toEqual([`src/x/m0.mamori:2:3: [M0] ${HIDDEN('注記と文字列')}`]);
+  });
+  it('★ 文字列の中の bidi の上書きは断る (threat: T-235)', () => {
+    expect(diags('export fn go() -> unknown {\n  return "a\u202Eb";\n}\n')).toEqual([`src/x/m0.mamori:2:10: [M0] ${HIDDEN('注記と文字列')}`]);
+  });
+  it('★ 説明 (`///`) と表題 (`//!`) の中も同じ (threat: T-235)', () => {
+    expect(diags('/// a\u202Eb\nexport fn go() -> unknown {\n  return 1;\n}\n')).toEqual([`src/x/m0.mamori:1:1: [M0] ${HIDDEN('注記と文字列')}`]);
+    expect(diags('//! a\u202Eb\nexport fn go() -> unknown {\n  return 1;\n}\n')).toEqual([`src/x/m0.mamori:1:1: [M0] ${HIDDEN('注記と文字列')}`]);
+  });
+  it('対照: `\\uXXXX` で綴れば書ける・ZWJ / ZWNJ (絵文字の連結) と日本語と普通の注記は通る', () => {
+    expect(diags('export fn go() -> unknown {\n  return "\\u202E\\u200B";\n}\n')).toEqual([]);
+    expect(diags('export fn go() -> unknown {\n  // 日本語の注記 \u200D \u200C\n  return "👨\u200D👩";\n}\n')).toEqual([]);
+    expect(diags('export fn go() -> unknown {\n  // tab\there\n  return "a\\tb";\n}\n')).toEqual([]);
+  });
+});
+
+describe('T-236: 読めない文字列の綴りでコンパイラが例外で落ちない (M0)', () => {
+  const READ = '文字列の中の `\\` の綴りが読めません —— `\\n` `\\t` `\\"` `\\\\` `\\uXXXX` だけを使います';
+  it('★ 文字列の中の読めない綴り (単引用符の逃がし) は例外ではなく位置つきで断る (threat: T-236)', () => {
+    expect(diags('export vetted V = "\'\\\'\'";\n')).toEqual([`src/x/m0.mamori:1:19: [M0] ${READ}`]);
+  });
+  it('★ 16 進の逃がしも同じ (threat: T-236)', () => {
+    expect(diags('export vetted V = "\\x41";\n')).toEqual([`src/x/m0.mamori:1:19: [M0] ${READ}`]);
+  });
+  it('対照: 読める綴りは通る', () => {
+    expect(diags('export vetted V = "a\\nb\\u0041\\"";\n')).toEqual([]);
+  });
+});
+
+/*
+ * ## 0.4 の穴その 6・7 (T-237 · T-238 · 対戦 572: 電池の揺さぶり (fuzz) が見つけた)
+ * - **T-237**: 正規表現の字面の中の bidi / 不可視 / 制御の字は T-235 の断りの外だった (`/‮//` が通った)。
+ * - **T-238**: 印を受ける引数を**渡さない**呼び出し (`openUrl()`) を M4 が素通りさせた (変換後の tsc は止めるが検めが 1 層欠けていた)。
+ */
+describe('T-237: 正規表現の字面の中の見えない字・方向を変える字も裸で置けない (M0)', () => {
+  it('★ 正規表現の中の bidi の上書きは断る (threat: T-237)', () => {
+    expect(diags('export const C = [/a\u202Eb/, 1];\n')).toEqual([`src/x/m0.mamori:1:19: [M0] ${HIDDEN('注記と文字列')}`]);
+  });
+  it('対照: 正規表現の普通の字・`\\uXXXX` の綴りは通る', () => {
+    expect(diags('export const C = [/a\\u202Eb[/]/gi, 1];\n')).toEqual([]);
+  });
+});
+
+describe('T-238: 印を受ける引数を渡さない呼び出しも断る (M4)', () => {
+  it('★ 印つきの引数を 1 つも渡さない呼び出しは断る (threat: T-238)', () => {
+    expect(diags(MARKED + 'export fn go() -> unknown {\n  return openUrl();\n}\n')).toEqual(['src/x/m0.mamori:7:17: [M4] openUrl の引数 1 は印 VU を持つ値が要ります (渡していません)']);
+  });
+  it('対照: 印つきの引数を渡せば通る・印を受けない関数は引数が足りなくても M4 の対象ではない', () => {
+    expect(diags(MARKED + 'export fn go(u: VU) -> unknown {\n  return openUrl(u);\n}\n')).toEqual([]);
+    expect(diags('export fn f(a: string) -> unknown {\n  return a;\n}\nexport fn go() -> unknown {\n  return f();\n}\n')).toEqual([]);
+  });
+});
+
+/*
+ * ## 0.4 の穴その 8・9 (T-239 · T-240 · 対戦 572: 揺さぶりが見つけた)
+ * - **T-239**: 型の綴りは生成物へそのまま写されるが、深さ 0 の `;` を断らなかったので `export const C: number; fetch("x"); const D: number = 1;`
+ *   のように**型の綴りの中へ文を隠せた** (Mamori の M6 を受けない `fetch` が生成物に入る)。変換後の tsc は `const` の初期化の欠落で止めるが、検めが 1 層欠けていた。
+ * - **T-240**: 古い getter / setter の定義・参照 (`.__defineGetter__` ほか) は `Object.defineProperty` と同じ口なのに表に無かった。
+ */
+describe('T-239: 型の綴りの中の深さ 0 の `;` は断る (M0)', () => {
+  const SEMI = '型の中に `;` は置けません —— 文の切れ目になり、型の綴りに別の文を隠せてしまいます';
+  it('★ 最上位の const の型の綴りへ文を隠す形は断る (threat: T-239)', () => {
+    expect(diags('export const C: number; fetch("x"); const D: number = 1;\n')).toEqual([`src/x/m0.mamori:1:23: [M0] ${SEMI}`]);
+  });
+  it('★ 戻り値の型・引数の型の綴りでも同じ (threat: T-239)', () => {
+    expect(diags('export fn go() -> unknown; fetch("x"); export fn go2() -> unknown {\n  return 1;\n}\n')).toEqual([`src/x/m0.mamori:1:26: [M0] ${SEMI}`]);
+    expect(diags('export fn go(p: number; q: number) -> unknown {\n  return p;\n}\n')).toEqual([`src/x/m0.mamori:1:23: [M0] ${SEMI}`]);
+  });
+  it('対照: オブジェクト型の欄の区切り (深さ 1 の `;`) と型の別名の終わりは通る', () => {
+    expect(diags('export type T = { a: string; b: number };\nexport const C: { a: string; b: number } = { a: "x", b: 1 };\n')).toEqual([]);
+  });
+});
+
+describe('T-240: 古い getter / setter の定義・参照のメンバは使えない (M0)', () => {
+  for (const name of ['__defineGetter__', '__defineSetter__', '__lookupGetter__', '__lookupSetter__']) {
+    it(`★ .${name} は断る (threat: T-240)`, () => {
+      expect(diags(`export fn go(x: string) -> unknown {\n  return x.${name}("a");\n}\n`)).toEqual([expect.stringContaining(`[M0] \`.${name}\` は Mamori に在りません`)]);
+    });
+  }
+});
+
+describe('T-240 (静的な題名)', () => {
+  it('★ .__defineGetter__ は断る (threat: T-240)', () => {
+    expect(diags('export fn go(x: string) -> unknown {\n  return x.__defineGetter__("a");\n}\n').length).toBe(1);
+  });
+  it('★ .__defineSetter__ は断る (threat: T-240)', () => {
+    expect(diags('export fn go(x: string) -> unknown {\n  return x.__defineSetter__("a");\n}\n').length).toBe(1);
+  });
+  it('★ .__lookupGetter__ は断る (threat: T-240)', () => {
+    expect(diags('export fn go(x: string) -> unknown {\n  return x.__lookupGetter__("a");\n}\n').length).toBe(1);
+  });
+});

@@ -52,6 +52,11 @@ export const FORBIDDEN_MEMBERS: Readonly<Record<string, string>> = {
   prototype: '`.prototype` は Mamori に在りません —— 組み込みの原型を書き換えると、他のモジュールの関門の判定まで変わります',
   // ★ 計算した鍵で書く —— 字面の `__proto__: …` は欄ではなく**原型の差し替え**で、表に入らない
   // (この表を初めて書いたとき、そうなって `.__proto__` が素通りした。Mamori の字面が `__proto__` の鍵を断る理由そのもの)。
+  // 古い getter / setter の定義・参照 (0.4 · T-240): どの物にも getter を差し込める・原型の物を引き出せる、`Object.defineProperty` と同じ口。
+  __defineGetter__: '`.__defineGetter__` は Mamori に在りません —— `Object.defineProperty` と同じ、どの物にも getter を差し込む口です',
+  __defineSetter__: '`.__defineSetter__` は Mamori に在りません —— `Object.defineProperty` と同じ、どの物にも setter を差し込む口です',
+  __lookupGetter__: '`.__lookupGetter__` は Mamori に在りません —— 原型をたどって getter を引き出す口です',
+  __lookupSetter__: '`.__lookupSetter__` は Mamori に在りません —— 原型をたどって setter を引き出す口です',
   ['__proto__']: '`.__proto__` は Mamori に在りません —— 原型に届く道で、`.prototype` と同じ理由で断ります',
 };
 
@@ -81,8 +86,17 @@ export function isPunctTok(t: Tok, ...texts: readonly string[]): boolean {
   return t.kind === 'punct' && texts.includes(t.text);
 }
 
-/** 行注記の本体 (JS の行終端 LF / CR / U+2028 / U+2029 の手前まで)。sticky なので `lastIndex` から読む。 */
+/** 行注記の本体 (JS の行終端 LF / CR / U+2028 / U+2029 の手前まで)。sticky なので `lastIndex` から読む (`*` なので必ず一致する)。 */
 const LINE_COMMENT_BODY = /[^\n\r\u2028\u2029]*/y;
+
+/**
+ * 注記と文字列の中に**裸で**置けない字 (0.4 · T-235 · 対戦 572)。C0 (タブと LF を除く) / DEL / C1 / 幅ゼロと方向の印
+ * (U+200B・U+200E・U+200F) / 行・段落区切り / bidi の制御 (U+202A〜U+202E・U+2066〜U+2069) / 不可視 (U+2060〜U+2064) / BOM。
+ * 見えない字は読み手の見ている物と走る物を食い違わせる (Trojan Source · CVE-2021-42574)。書きたいときは `\uXXXX` で綴る。
+ * ZWJ / ZWNJ (U+200C / U+200D) は絵文字の連結に要るので除く (`lint:charset` と同じ判断)。
+ */
+const HIDDEN_CHARS = /[\u0000-\u0008\u000B-\u001F\u007F-\u009F\u200B\u200E\u200F\u2028\u2029\u202A-\u202E\u2060-\u2064\u2066-\u2069\uFEFF]/;
+const HIDDEN_CHARS_MESSAGE = '制御・不可視・方向を変える字は注記と文字列の中に裸で置けません —— `\\uXXXX` と綴ります (見える物と走る物が食い違う · Trojan Source)';
 
 export function lex(file: string, src: string): Tok[] {
   const out: Tok[] = [];
@@ -120,8 +134,9 @@ export function lex(file: string, src: string): Tok[] {
       // `\n` だけで終えると、注記の中の U+2028 / U+2029 / 単独の CR のあとの字は Mamori には注記の続き (検めない) だが、
       // 生成した TypeScript では行が終わっていて**コードとして走る**。検めを受けないコードが生成物へ入る道だった。
       LINE_COMMENT_BODY.lastIndex = i;
-      const stop = i + (LINE_COMMENT_BODY.exec(src)?.[0].length ?? 0);
+      const stop = i + LINE_COMMENT_BODY.exec(src)![0].length;
       const raw = src.slice(i, stop);
+      if (HIDDEN_CHARS.test(raw)) throw new MamoriError(file, pos, HIDDEN_CHARS_MESSAGE);
       const kind: TokKind = raw.startsWith('//!') ? 'header' : raw.startsWith('///') ? 'doc' : 'comment';
       const rest = kind === 'comment' ? raw.slice(2) : raw.slice(3);
       out.push({ kind, text: rest.startsWith(' ') ? rest.slice(1) : rest, pos });
@@ -140,7 +155,9 @@ export function lex(file: string, src: string): Tok[] {
         j += src[j] === '\\' ? 2 : 1;
       }
       if (j >= src.length) throw new MamoriError(file, pos, '文字列が閉じていません');
-      out.push({ kind: 'string', text: src.slice(i, j + 1), pos });
+      const literal = src.slice(i, j + 1);
+      if (HIDDEN_CHARS.test(literal)) throw new MamoriError(file, pos, HIDDEN_CHARS_MESSAGE);
+      out.push({ kind: 'string', text: literal, pos });
       advance(j + 1 - i);
       continue;
     }
@@ -187,7 +204,9 @@ export function lex(file: string, src: string): Tok[] {
       if (j >= src.length) throw new MamoriError(file, pos, '正規表現が閉じていません');
       j++;
       while (j < src.length && /[a-z]/.test(src[j]!)) j++;
-      out.push({ kind: 'regex', text: src.slice(i, j), pos });
+      const literal = src.slice(i, j);
+      if (HIDDEN_CHARS.test(literal)) throw new MamoriError(file, pos, HIDDEN_CHARS_MESSAGE);
+      out.push({ kind: 'regex', text: literal, pos });
       advance(j - i);
       continue;
     }
@@ -245,7 +264,12 @@ export function parse(file: string, src: string): Module {
     const t = peek();
     if (t.kind !== 'string') fail(t, `文字列が要ります (在ったのは ${describe(t)})`);
     next();
-    return JSON.parse(t.text.startsWith("'") ? `"${t.text.slice(1, -1).replace(/"/g, '\\"')}"` : t.text) as string;
+    try {
+      return JSON.parse(t.text.startsWith("'") ? `"${t.text.slice(1, -1).replace(/"/g, '\\"')}"` : t.text) as string;
+    } catch {
+      // `\'` や `\x41` のように JSON に無い綴りは読めない (読めない綴りでコンパイラごと落ちず、位置つきで断る)。
+      return fail(t, '文字列の中の `\\` の綴りが読めません —— `\\n` `\\t` `\\"` `\\\\` `\\uXXXX` だけを使います');
+    }
   };
 
   const takeLeading = (kinds: readonly TokKind[]): string[] => {
@@ -269,6 +293,10 @@ export function parse(file: string, src: string): Module {
       if (t.kind === 'eof') fail(t, '型が閉じていません');
       if (t.kind === 'comment' || t.kind === 'doc' || t.kind === 'header') fail(t, '型の途中に注記は置けません');
       if (depth === 0 && isPunctTok(t, ...terminators)) break;
+      // 深さ 0 の `;` は文の切れ目で、型には要らない (オブジェクト型の欄の区切りは `{ … }` の中 = 深さ 1)。
+      // 通すと `const C: number; fetch("x"); const D: number = 1;` のように**型の綴りの中へ文を隠せる** —— 型の綴りは
+      // そのまま写されるので、Mamori の検め (M6) を受けない文が生成物へ入った (0.4 · T-239 · 電池の対戦が見つけた)。
+      if (depth === 0 && isPunctTok(t, ';')) fail(t, '型の中に `;` は置けません —— 文の切れ目になり、型の綴りに別の文を隠せてしまいます');
       if (isPunctTok(t, '<', '(', '[', '{')) depth++;
       if (isPunctTok(t, '>', ')', ']', '}')) depth--;
       if (depth < 0) fail(t, '型の括弧が合いません');

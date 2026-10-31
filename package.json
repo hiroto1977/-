@@ -130,6 +130,7 @@
     "audit:crown-jewels": "node scripts/crown-jewels.cjs --self-test && node scripts/crown-jewels.cjs",
     "audit:security-posture": "node scripts/security-posture.cjs --self-test && node scripts/security-posture.cjs",
     "audit:language-coverage": "node scripts/language-coverage.cjs --self-test && node scripts/language-coverage.cjs",
+    "audit:mamori-battery": "MAMORI_BATTERY_SEED=$(date +%s) MAMORI_BATTERY_ROUNDS=6000 vitest run src/shared/mamori/__tests__/mamoriBattery.test.ts",
     "hunt:cycle": "node scripts/hunt-cycle.cjs --self-test > /dev/null && node scripts/hacker-team.cjs --self-test > /dev/null && node scripts/hunt-cycle.cjs"
   },
   "devDependencies": {

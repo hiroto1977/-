@@ -1179,6 +1179,14 @@ npm run hunt:cycle -- brief|record <json>|status  # **探索 → 解析 → 対�
 npm run audit:crown-jewels  # **確率に依らない守り**(2026-10-23 · T-169)。守る物 5 つ(security/crown-jewels.json)ごとに
                          #   防ぐ・封じ込める・気付く・戻すの 4 層が別々の強制物で揃うかを見る。毎日の dependency-audit が同じ測定を載せる。
                          #   判定は src/shared/__tests__/crownJewels.test.ts が npm test で見る。docs/ZERO_TRUST.md §2.9
+npm run audit:mamori-battery  # **Mamori への攻撃の電池を、時刻から引いた新しい種で多めに回す** (2026-10-31 · パス 572 · 対戦)。
+                         #   弾 (約 300) × 文脈 (約 40) × 環境 (約 35) を掛け合わせた数万のプログラムと、文字レベルの揺さぶり (fuzz) を
+                         #   Mamori のコンパイラへ当て、**受け入れた生成物を TypeScript の構文木で独立に判定**する
+                         #   (宣言していない名前・禁じたメンバ・添字/テンプレート/as/動的 import・非 ASCII の名前・bidi/不可視/制御の裸の字・
+                         #   印の無い値を危ない口へ渡す形)。通常の `npm test` は固定の種 3 つ (再現できる)。
+                         #   落ちたら種と組を刷る —— その組を `mamoriV04.test.ts` の固定の回帰検査へ移し、台帳 (T-xxx) に足す。
+                         #   初回の対戦で T-235〜T-240 の 6 件 (隠し字・文字列の例外・正規表現の隠し字・引数の欠落・型へ文を隠す・古い getter) を見つけた。
+                         #   物差し自体の対照は同じファイルが持つ (穴の開いた生成物を落とす / 実物の .mamori 11 本を通す)
 npm run audit:language-coverage  # **見張りが無い言語・依存の生態系を作らない**(2026-10-25 · T-187)。『すべての言語の弱点を先回りで探す』
                          #   ことは誰にもできないので、**今在る**言語・起動子 (MCP の npx / uvx)・依存の生態系を追跡している実物から導き、
                          #   台帳 (security/language-coverage.json) の見張る強制物と突き合わせる。新しい言語・定義ファイルが入ると

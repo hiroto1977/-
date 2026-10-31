@@ -4155,6 +4155,130 @@
           "test": "★ 変数の型注釈と arrow の引数でも同じ (threat: T-234)"
         }
       ]
+    },
+    {
+      "id": "T-235",
+      "found": "2026-10-31",
+      "foundBy": "攻撃の電池 (mamoriBattery.test.ts · 弾 約 300 × 文脈 約 40 × 環境 約 35 を掛け合わせ、受け入れた生成物を TypeScript の構文木で独立に判定する) が最初の実行で見つけた。注記と文字列の中に bidi の上書き (U+202E)・不可視の字・制御の字・行/段落区切りを裸で置いたプログラムを Mamori が受け入れ、生成した TypeScript へそのまま運んだ。",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "low",
+      "title": "守りの層を書く言語 Mamori 0.4 が、注記と文字列の中の方向を変える字 (bidi)・不可視の字・制御の字を検めず、生成した TypeScript へそのまま運んだため、読み手が見る物と走る物が食い違う源 (Trojan Source · CVE-2021-42574) を作れた",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/parser.ts: 注記 (`//` `///` `//!`) と文字列の字面に HIDDEN_CHARS (C0 のうちタブと LF を除く・DEL・C1・U+200B / U+200E / U+200F・U+2028 / U+2029・bidi の制御 U+202A〜U+202E / U+2066〜U+2069・U+2060〜U+2064・BOM) が在れば M0 で断り、`\\uXXXX` と綴らせる。ZWJ / ZWNJ (U+200C / U+200D) は絵文字の連結に要るので通す (lint:charset と同じ判断)。限界: リポジトリへ入った .mamori は lint:charset も同じ字を断る (二重の網) —— これは lint を通る前の、コンパイラ自身の守り。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+        "test": "★ 注記の中の bidi の上書きは断る (threat: T-235)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+          "test": "★ 文字列の中の bidi の上書きは断る (threat: T-235)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+          "test": "★ 説明 (`///`) と表題 (`//!`) の中も同じ (threat: T-235)"
+        }
+      ]
+    },
+    {
+      "id": "T-236",
+      "found": "2026-10-31",
+      "foundBy": "攻撃の電池が見つけた。vetted の印の名前に `\\'` を含む文字列を与えると、コンパイラが位置つきの断り (MamoriError) ではなく JSON.parse の SyntaxError で落ちた。",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "low",
+      "title": "守りの層を書く言語 Mamori 0.4 が、文字列の中の JSON に無い逃がし (`\\'` や `\\x41`) で、診断を返さずコンパイラごと例外で落ちた (JavaScript の文字列と JSON の綴りの差)",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/parser.ts: 文字列の値を読む JSON.parse を try / catch で包み、読めない綴りは M0 の位置つきの断りにする (`\\n` `\\t` `\\\"` `\\\\` `\\uXXXX` だけを使う)。落ちるのは可用性 (ビルド時) の話で、検めを通る事は無いので重大度は低い。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+        "test": "★ 文字列の中の読めない綴り (単引用符の逃がし) は例外ではなく位置つきで断る (threat: T-236)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+          "test": "★ 16 進の逃がしも同じ (threat: T-236)"
+        }
+      ]
+    },
+    {
+      "id": "T-237",
+      "found": "2026-10-31",
+      "foundBy": "攻撃の電池の文字レベルの揺さぶり (fuzz · 種 77) が見つけた。`[/‮//1, 2]` のように正規表現の字面の中へ bidi の上書き (U+202E) を置いたプログラムを受け入れた (T-235 の断りは注記と文字列だけで、正規表現の字面は外だった)。",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "low",
+      "title": "守りの層を書く言語 Mamori 0.4 が、正規表現の字面の中の方向を変える字・不可視の字・制御の字を検めず、生成した TypeScript へそのまま運んだ (T-235 の断りの外だった)",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/parser.ts: 正規表現の字面にも HIDDEN_CHARS の検めを掛ける (注記・文字列・正規表現が、裸の字を持ちうる字句の全部)。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+        "test": "★ 正規表現の中の bidi の上書きは断る (threat: T-237)"
+      },
+      "alsoRegressions": []
+    },
+    {
+      "id": "T-238",
+      "found": "2026-10-31",
+      "foundBy": "揺さぶりが見つけた。印を受ける引数を渡さない呼び出し `openUrl()` を M4 が素通りさせた (引数が無ければ検める物が無いと読んでいた)。以前の検査が『数は tsc が断る』と素通りを仕様として固定していた。",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "low",
+      "title": "守りの層を書く言語 Mamori 0.4 の M4 が、印を受ける引数を渡さない呼び出し (openUrl()) を検めず素通りさせ、検めが変換後の tsc 任せになっていた",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: 印つきの引数の位置に引数が無ければ M4 で断る (『印 X を持つ値が要ります (渡していません)』)。以前の『引数が足りない呼び出しは断らない』という検査は反転した (弱さを仕様にしていた形)。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+        "test": "★ 印つきの引数を 1 つも渡さない呼び出しは断る (threat: T-238)"
+      },
+      "alsoRegressions": []
+    },
+    {
+      "id": "T-239",
+      "found": "2026-10-31",
+      "foundBy": "揺さぶりが見つけ、手で最小の再現を組んだ: `export const C: number; fetch(\"x\"); const D: number = 1;` を Mamori が受け入れ、型の綴りの中に隠した宣言していない `fetch` (M6 を受けない) を生成物へ運んだ。型の綴りは深さ 0 の `;` を断らず、そのまま写される。変換後の tsc は `const` の初期化の欠落 (TS1155) で止めるが、Mamori の検めが 1 層欠けていた。",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "medium",
+      "title": "守りの層を書く言語 Mamori 0.4 が、型の綴りの中の深さ 0 の `;` を断らず、型の位置へ別の文 (宣言していない外の名前の呼び出しなど) を隠して生成物へ運べた (M6 を受けない文)",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/parser.ts: 型の綴りの読みで、深さ 0 の `;` (その場の終端でない物) を M0 で断る。オブジェクト型の欄の区切り (深さ 1 の `;`) と型の別名の終わりは通る。限界: 型の綴りはなお『そのまま写す』ので、深さ 1 以上の中身 (オブジェクト型・関数型) は型として正しいかを変換後の tsc に任せる —— 型は実行されず、不正な型は tsc が止める。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+        "test": "★ 最上位の const の型の綴りへ文を隠す形は断る (threat: T-239)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+          "test": "★ 戻り値の型・引数の型の綴りでも同じ (threat: T-239)"
+        }
+      ]
+    },
+    {
+      "id": "T-240",
+      "found": "2026-10-31",
+      "foundBy": "揺さぶりが見つけた。`x.__defineGetter__(…)` を Mamori が受け入れた (FORBIDDEN_MEMBERS は constructor / prototype / __proto__ の 3 つだけだった)。",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "low",
+      "title": "守りの層を書く言語 Mamori 0.4 が、古い getter / setter の定義・参照 (__defineGetter__ / __defineSetter__ / __lookupGetter__ / __lookupSetter__) を禁じず、どの物にも getter を差し込める口が残っていた",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/parser.ts: FORBIDDEN_MEMBERS へ 4 つを足す (`.name` の後ろに置けない名前)。`Object.defineProperty` を断るのと同じ理由。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+        "test": "★ .__defineGetter__ は断る (threat: T-240)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+          "test": "★ .__defineSetter__ は断る (threat: T-240)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+          "test": "★ .__lookupGetter__ は断る (threat: T-240)"
+        }
+      ]
     }
   ],
   "huntBacklog": [
