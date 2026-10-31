@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 408
+- ブロック数: 409
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `17547ec31806449419742f638bc0e8e0c98f240dabe6d2ef14ad66c0036a5853`
-- 保護対象: 156 ファイル
+- 末尾(tip)ハッシュ: `b7d686bc3bc673c4bd9b83b15317404d46b0ceebc77b118c1459ccf216fecb24`
+- 保護対象: 158 ファイル
 
 ## ブロック
 
@@ -421,6 +421,7 @@
 | 405 | `35bf4202074f1aa1` | `9beedd49011a0422` | `a6e261fb26e6f74b` | update checker.ts,parser.ts |
 | 406 | `71a0b563f354bb2a` | `a6e261fb26e6f74b` | `7a7701fdcaf13c27` | update parser.ts |
 | 407 | `5df0aef8d21e2ffb` | `7a7701fdcaf13c27` | `17547ec318064494` | update checker.ts |
+| 408 | `e3bd8b52bc7efb78` | `17547ec318064494` | `b7d686bc3bc673c4` | update integrity-chain.cjs,mamori.cjs,mamori-capabilities.json,capabilities.ts,checker.ts,compile.ts |
 
 ## 保護対象ファイル
 
@@ -484,6 +485,7 @@
 - `scripts/verify-e2e-playwright-pin.cjs`
 - `scripts/verify-packaged-fuses.cjs`
 - `scripts/verify-release-artifacts.cjs`
+- `security/mamori-capabilities.json`
 - `src/main/atomicWrite.ts`
 - `src/main/clients/assistant.ts`
 - `src/main/clients/exportPaths.ts`
@@ -556,6 +558,7 @@
 - `src/shared/isoDate.ts`
 - `src/shared/localDate.ts`
 - `src/shared/mamori/ast.ts`
+- `src/shared/mamori/capabilities.ts`
 - `src/shared/mamori/checker.ts`
 - `src/shared/mamori/compile.ts`
 - `src/shared/mamori/emit.ts`

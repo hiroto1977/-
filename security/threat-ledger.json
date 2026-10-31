@@ -4308,6 +4308,51 @@
           "test": "★ use した名前と同じ名前の関数・定数・extern を宣言できない (threat: T-241)"
         }
       ]
+    },
+    {
+      "id": "T-242",
+      "found": "2026-10-31",
+      "foundBy": "利用者の依頼 (「セキュリティ・マイナスデイ・マインド」を言語の規則として組み込む)。守りの層が**何に届くか** (外の値・外の module・印を作れる関数・危ない口を呼べる関数) を固定する物が言語に無く、能力を足す変更がレビューの目に見える 1 行にならなかった。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "守りの層を書く言語 Mamori 0.4 は来歴 (印の流れ) しか検めず、守りの層が届く先の集合 (extern・外の module の import・gate・sink) の増減を固定していなかったので、新しい危ない口や関門が黙って加わりえた",
+      "status": "mitigated",
+      "fix": "Mamori 0.5: src/shared/mamori/capabilities.ts (M7) が構文木から能力 4 種を導き、security/mamori-capabilities.json と両方向に突き合わせる (台帳に無い・古い申告・台帳だけのモジュールを断る)。CLI (scripts/mamori.cjs) は必ず台帳を渡し、読めなければ断る。台帳と capabilities.ts は整合性チェーンの保護対象・変異検査 100%。台帳の書き直しは意図して行う `--write-capabilities` だけ。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriCapabilities.test.ts",
+        "test": "★ 台帳に無い外の値 (extern) は断る (threat: T-242)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriCapabilities.test.ts",
+          "test": "★ 台帳に無い外の module の import は断る (threat: T-242)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriCapabilities.test.ts",
+          "test": "★ 台帳に無い gate (印を作れる関数の追加) は断る (threat: T-242)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriCapabilities.test.ts",
+          "test": "★ 台帳に無い sink (危ない口を呼べる関数の追加) は断る (threat: T-242)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriCapabilities.test.ts",
+          "test": "★ 台帳に在るのに実在しない能力 (古い申告) も断る (threat: T-242)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriCapabilities.test.ts",
+          "test": "★ 実物の .mamori の導いた能力は、コミットした台帳と 1 つも違わない (threat: T-242)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriCapabilities.test.ts",
+          "test": "★ 出荷の道 (CLI) は必ず台帳を渡し、読めなければ断る (threat: T-242)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriCapabilities.test.ts",
+          "test": "★ 台帳を渡さない呼び方は検めない (ライブラリとしての呼び方)・渡せば M7 で断る (threat: T-242)"
+        }
+      ]
     }
   ],
   "huntBacklog": [

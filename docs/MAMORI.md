@@ -47,9 +47,24 @@ Mamori では、その 2 つは**書けない**:
 | M4 | 印の型を受ける引数には、印を持つ値だけを渡せる (モジュールをまたいでも)。**印を受ける関数は直に呼ぶことしかできない** —— 値として持ち出すと検めを迂回できる (0.3 · T-225) | 文字列の字面・素の引数・別の種類の印を渡す・`openUrl.call(null, raw)` / `.apply` / `.bind`・`const f = openUrl;`・`{ g: openUrl }`・`[openUrl]`・`c ? openUrl : …`・`for (const f of [openUrl])` |
 | M5 | 印を持つ変数を、印の無い値で上書きできない | `let u = 関門(x); u = '…';` (印の洗浄) |
 | M6 | 外の名前は `use` / `extern` で宣言する。宣言なしで使えるのは副作用の判断を持たない組み込み (`URL` / `Set` / `Map` / `Promise` / `Number` / `String` / `Boolean` / `Math` / `JSON` / `Object` / `Array` / `Error` / `RegExp` / `TypeError` / `RangeError`) だけ。**`Object` は読むだけ・凍らせるだけのメンバ (`hasOwn` / `keys` / `values` / `entries` / `fromEntries` / `freeze` / `isFrozen`) に限り、値として持ち出せない** (0.2)。**代入できるのは `let` の名前だけ** —— 外の名前・`const`・引数・回す変数・関数の名前へは代入できない (0.2。0.1 は「このモジュールの名前か」しか見ず、`const` と引数への代入を変換後の `tsc` に任せていた —— 引数への代入は `tsc` も通す) | `window` / `fetch` / `process` / `require` / `globalThis` / `document` / `localStorage` / `indexedDB` / `navigator` を暗黙に使う・`Object.setPrototypeOf` / `defineProperty` / `assign`・`const o = Object;`・`code = 'x';` (引数)・`for (const k of xs) { k = 1; }`・**`RegExp.$1` / `RegExp.input` / `RegExp.lastMatch` (他のモジュールの直近の正規表現の一致と入力)・`Error.captureStackTrace` / `Error.stackTraceLimit`・`URL.createObjectURL` / `URL.revokeObjectURL`・`const r = RegExp;` (0.4 · T-232)** |
+| M7 | **能力の台帳 (0.5 · T-242)**: 守りの層が届く先 4 種 (`extern` の外の値・相対でない `use` の外の module・`gate fn` (印を作れる関数)・`sink fn` (危ない口を呼べる関数)) を構文木から導き、`security/mamori-capabilities.json` と**両方向**に突き合わせる。出荷の道 (CLI と生成物の検査) は必ず台帳を渡し、台帳が読めなければ断る | 台帳に無い `extern` / import / gate / sink を足す・台帳に在るのに実在しない能力 (古い申告)・台帳だけに在るモジュール |
 
 1 つの関数は `gate` と `sink` を兼ねられない (頭に書ける役割は 1 語だけで、`sink` が印を作れば M1、
 `gate` が危ない口を呼べば M2 が断る)。印を作る所と危ない口を呼ぶ所を同じにすると、関門の検査を飛ばして呼べるからである。
+
+## マイナスデイ・マインド —— 能力の台帳 (M7 · 0.5 · T-242 · 2026-10-31)
+
+「脆弱性は発見される前、**書いた時点ですでに入っている**」という前提 (想定侵害・シフトレフト) を、言語の規則にした。
+(この言い方は業界で定着した用語ではなく、既存のシフトレフトとゼロトラストをまとめて呼んだ物として使う。)
+
+- **何を固定するか**: M0〜M6 は**来歴** (印がどう流れるか) を見る。M7 は**届く先の集合**を見る —— 守りの層に `extern` が 1 つ、外の module の import が 1 つ、
+  印を作れる `gate fn` が 1 つ、危ない口を呼べる `sink fn` が 1 つ増えることは、それぞれ**攻撃面が増える**ことなので、台帳の 1 行の差分として必ずレビューの目に見える。
+- **導く側と申告する側を分ける**: 能力はコンパイラが構文木から導く (書き手の申告ではない)。台帳は導いた表をそのまま書き出した物で、`npm run mamori:build -- --write-capabilities` が書く。
+  **意図して能力を足す・外すときだけ**そのコマンドを使い、差分を読む。台帳と `capabilities.ts` は整合性チェーンの保護対象で、CODEOWNERS にも載る。
+- **失敗は閉じる向き**: CLI は台帳を必ず渡す。台帳が無い・壊れていれば検めずに通さず断る。ライブラリとして `compileProject(files)` を台帳なしで呼ぶ形は検めない (単体検査の便宜) が、
+  出荷の道がそれを使わないことを `mamoriCapabilities.test.ts` が見る。他の誤り (M0〜M6) が在れば台帳は見ない (誤りを直してから出る)。
+- **限界 (正直に)**: 台帳が固定するのは**名前と型の綴り**で、`gate fn` の中身が正しい関門かは見ない (それは回帰検査と変異検査の仕事)。台帳を書き直す人が悪意なら、
+  差分をレビューする人間が最後の砦 —— M7 が保証するのは「黙って増えない」ことであって「増えた物が安全」ではない。外の module の**版**は見ない (版は `lint:deps` と lockfile の仕事)。
 
 ## 0.1 の穴 (T-224 · 2026-10-30 · パス 563)
 

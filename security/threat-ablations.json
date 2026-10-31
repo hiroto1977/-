@@ -2197,6 +2197,54 @@
           "replace": "    if (false) report('M6', pos,"
         }
       ]
+    },
+    {
+      "id": "A-556",
+      "threat": "T-242",
+      "file": "src/shared/mamori/capabilities.ts",
+      "why": "台帳に無い能力を断らない —— 新しい危ない口や関門が黙って加わる口を開け直す",
+      "edits": [
+        {
+          "find": "if (!have.has(e.text)) out.push(",
+          "replace": "if (false) out.push("
+        }
+      ]
+    },
+    {
+      "id": "A-557",
+      "threat": "T-242",
+      "file": "src/shared/mamori/capabilities.ts",
+      "why": "台帳に在るのに実在しない能力 (古い申告) を断らない —— 台帳が現実から離れていく口を開け直す",
+      "edits": [
+        {
+          "find": "if (!real.has(text)) out.push(",
+          "replace": "if (false) out.push("
+        }
+      ]
+    },
+    {
+      "id": "A-558",
+      "threat": "T-242",
+      "file": "scripts/mamori.cjs",
+      "why": "CLI が台帳を渡さずにコンパイルする —— 出荷の道で M7 が働かない口を開け直す",
+      "edits": [
+        {
+          "find": "compileProject(files, { capabilities: policy })",
+          "replace": "compileProject(files)"
+        }
+      ]
+    },
+    {
+      "id": "A-559",
+      "threat": "T-242",
+      "file": "src/shared/mamori/compile.ts",
+      "why": "台帳を渡されても検めない —— 台帳の突き合わせを配線から外す",
+      "edits": [
+        {
+          "find": "if (options.capabilities !== undefined && diagnostics.length === 0)",
+          "replace": "if (false)"
+        }
+      ]
     }
   ]
 }

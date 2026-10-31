@@ -23,7 +23,7 @@ export interface MamoriDiagnostic {
   readonly line: number;
   readonly col: number;
   /** M0 は構文の誤り (字句・構文の段で止まった)。 */
-  readonly rule: 'M0' | 'M1' | 'M2' | 'M3' | 'M4' | 'M5' | 'M6';
+  readonly rule: 'M0' | 'M1' | 'M2' | 'M3' | 'M4' | 'M5' | 'M6' | 'M7';
   readonly message: string;
 }
 

@@ -8,6 +8,7 @@
  * 破った所が `tsc` には正しいコードに見えたまま出荷されうる。
  */
 import { checkModule, collectTable, type MamoriDiagnostic } from './checker';
+import { checkCapabilities, type CapabilityPolicy } from './capabilities';
 import { emitModule } from './emit';
 import { MamoriError, parse } from './parser';
 import type { Module } from './ast';
@@ -28,7 +29,15 @@ export function outputPathOf(path: string): string {
   return `${path.slice(0, -'.mamori'.length)}.ts`;
 }
 
-export function compileProject(files: readonly SourceFile[]): CompileResult {
+export interface CompileOptions {
+  /**
+   * 能力の台帳 (M7)。渡せば、導いた能力 (外の値・外の module・印を作る関数・危ない口を呼ぶ関数) が台帳と
+   * 両方向に一致しなければ断る。出荷の道 (CLI・生成物の検査) は必ず渡す。
+   */
+  readonly capabilities?: CapabilityPolicy;
+}
+
+export function compileProject(files: readonly SourceFile[], options: CompileOptions = {}): CompileResult {
   const diagnostics: MamoriDiagnostic[] = [];
   const parsed: { file: string; module: Module }[] = [];
   for (const f of files) {
@@ -43,6 +52,8 @@ export function compileProject(files: readonly SourceFile[]): CompileResult {
   const { table, diagnostics: tableProblems } = collectTable(parsed);
   diagnostics.push(...tableProblems);
   for (const { file, module } of parsed) diagnostics.push(...checkModule(file, module, table));
+  // 他の誤りが在れば台帳は見ない (誤りを直したあとに出る)。sink 関数の行き先の型は M3 が保証した後でないと読めない。
+  if (options.capabilities !== undefined && diagnostics.length === 0) diagnostics.push(...checkCapabilities(parsed, options.capabilities));
   if (diagnostics.length > 0) return { ok: false, diagnostics };
   const outputs = new Map<string, string>();
   for (const { file, module } of parsed) outputs.set(outputPathOf(file), emitModule(module, file));
