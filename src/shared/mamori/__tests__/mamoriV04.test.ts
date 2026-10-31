@@ -31,11 +31,14 @@ const CTOR_ONLY = (name: string, prop: string): string => `${name}.${prop} は�
 const VALUE = (name: string): string => `組み込みの ${name} は値として持ち出せません —— \`new ${name}(…)\` と構築する形か、許したメンバを直に呼ぶ形だけです (持ち出すと、使ってよいメンバの表を別名で迂回できる)`;
 
 describe('T-232: RegExp の旧式の静的な欄 (他のモジュールの直近の一致) は読めない (M6)', () => {
-  for (const prop of ['$1', '$9', 'lastMatch', 'lastParen', 'leftContext', 'rightContext', 'input', '$_']) {
+  for (const prop of ['$9', 'lastMatch', 'lastParen', 'leftContext', 'rightContext', 'input', '$_']) {
     it(`★ RegExp.${prop} を読む形は断る (threat: T-232)`, () => {
       expect(diags(go(`  return RegExp.${prop};`))).toEqual([at(2, 16, CTOR_ONLY('RegExp', prop))]);
     });
   }
+  it('★ RegExp.$1 を読む形は断る (threat: T-232)', () => {
+    expect(diags(go('  return RegExp.$1;'))).toEqual([at(2, 16, CTOR_ONLY('RegExp', '$1'))]);
+  });
   it('★ RegExp を値に取ってから読む形も断る (threat: T-232)', () => {
     expect(diags(go('  const r = RegExp;\n  return r;'))).toEqual([at(2, 13, VALUE('RegExp'))]);
   });
