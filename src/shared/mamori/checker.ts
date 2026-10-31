@@ -43,6 +43,34 @@ export const PURE_GLOBALS: ReadonlySet<string> = new Set([
  */
 export const OBJECT_MEMBERS: ReadonlySet<string> = new Set(['hasOwn', 'keys', 'values', 'entries', 'fromEntries', 'freeze', 'isFrozen']);
 
+/**
+ * 組み込みのうち、**共有の状態を持つ**ので使えるメンバを絞る物 (2026-10-31 · パス 571 · threat: T-232 · 0.4)。
+ *
+ * `PURE_GLOBALS` は「副作用の判断を持たない」と名乗るが、**名前ではなくメンバ**が判断を持つ物が 3 組あった:
+ *
+ * - `RegExp` の旧式の静的な欄 (`RegExp.$1` ほか `$2`〜`$9`・`lastMatch`・`lastParen`・`leftContext`・`rightContext`・`input`・`$_`):
+ *   **同じ realm のどのモジュールでも、最後に走った正規表現の一致と入力を返す**。資格情報の入口や伏字が走らせた
+ *   正規表現の一致 (= 秘密そのもの) を、`use` も `extern` も無い Mamori のモジュールが読めた。M6 は
+ *   「宣言していない外の値へ届かない」と言うのに、これは**名前を経由しない読み**だった。
+ * - `Error` / `TypeError` / `RangeError` の `captureStackTrace` / `stackTraceLimit` / `prepareStackTrace`:
+ *   渡された物へ欄を書く・全モジュールの例外の積み方を変える。
+ * - `URL.createObjectURL` / `revokeObjectURL`: 他のモジュールが作った blob の URL を失効させる (全 realm で共有)。
+ *
+ * この 3 組は**構築する形** (`new RegExp(…)` / `new Error(…)` / `new URL(…)`) 以外では使えず、メンバは絞る。
+ * 値として持ち出す形 (`const r = RegExp;`) も断る (持ち出すと、この表を別名で迂回できる)。
+ */
+export const BUILTIN_MEMBERS: ReadonlyMap<string, ReadonlySet<string>> = new Map([
+  ['Object', OBJECT_MEMBERS],
+  ['RegExp', new Set<string>()],
+  ['Error', new Set<string>()],
+  ['TypeError', new Set<string>()],
+  ['RangeError', new Set<string>()],
+  ['URL', new Set(['canParse', 'parse'])],
+]);
+
+/** `new X(…)` / `X(…)` の形でだけ名前で使える組み込み (`Object` は構築する形も無い)。 */
+const CONSTRUCTIBLE: ReadonlySet<string> = new Set(['RegExp', 'Error', 'TypeError', 'RangeError', 'URL']);
+
 /** 関数の外形 (他のモジュールから引くため)。 */
 export interface FnSignature {
   readonly module: string;
@@ -296,6 +324,12 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     }
   }
 
+  /** この名前は、このモジュールの名前に隠されていない組み込みで、構築する形 (`new X(…)` / `X(…)`) で使ってよい物か。 */
+  function isConstructibleBuiltin(callee: Expr, scopes: readonly Map<string, Binding>[]): boolean {
+    const n = identName(callee);
+    return n !== undefined && CONSTRUCTIBLE.has(n) && lookup(scopes, n) === undefined;
+  }
+
   /**
    * 呼ぶ側の式を検める。名前を直に呼ぶ形 (`f(…)`) と、危ない口のメンバを呼ぶ形 (`shell.m(…)`) だけは値の検めを通さない
    * —— 印を受ける関数と危ない口は「呼ぶこと」しか許さないので、ここで呼ぶ形を見分ける (0.3 · パス 564 · T-225)。
@@ -315,7 +349,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     }
     if (callee.kind === 'ident') {
       // 名前を直に呼ぶ形: 宣言していない名前の検め (M6) だけを通す (印を受ける関数を呼ぶのは正しい使い方)。
-      if (b === undefined) checkExpr(callee, scopes, ctx);
+      if (b === undefined && !isConstructibleBuiltin(callee, scopes)) checkExpr(callee, scopes, ctx);
       return;
     }
     checkExpr(callee, scopes, ctx);
@@ -328,6 +362,8 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         if (b === undefined) {
           if (e.name === 'Object') {
             report('M6', e.pos, '組み込みの Object は値として持ち出せません —— `Object.hasOwn(…)` のように許したメンバを直に呼びます (持ち出すと、使ってよいメンバの表を別名で迂回できる)');
+          } else if (BUILTIN_MEMBERS.has(e.name)) {
+            report('M6', e.pos, `組み込みの ${e.name} は値として持ち出せません —— \`new ${e.name}(…)\` と構築する形か、許したメンバを直に呼ぶ形だけです (持ち出すと、使ってよいメンバの表を別名で迂回できる)`);
           } else if (!PURE_GLOBALS.has(e.name)) {
             report('M6', e.pos, `宣言していない名前 ${e.name} —— 外の値は \`use\` / \`extern\` で宣言します (網・記憶・OS へ届く名前は暗黙に使えません)`);
           }
@@ -357,6 +393,17 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
           }
           return;
         }
+        // 共有の状態を持つ組み込み (RegExp の旧式の静的な欄・Error の captureStackTrace ・URL の blob) は、許したメンバだけ (0.4 · T-232)。
+        {
+          const builtin = identName(e.object);
+          const allowed = builtin === undefined ? undefined : BUILTIN_MEMBERS.get(builtin);
+          if (builtin !== undefined && allowed !== undefined && lookup(scopes, builtin) === undefined) {
+            if (!allowed.has(e.prop)) {
+              report('M6', e.pos, `${builtin}.${e.prop} は使えません —— 組み込みの ${builtin} は${allowed.size === 0 ? ' `new ' + builtin + '(…)` と構築する形' : ` ${[...allowed].join(' / ')} と構築する形`}だけです (同じ realm のどのモジュールの正規表現・例外・blob にも届く共有の状態は、宣言していない外の値と同じ)`);
+            }
+            return;
+          }
+        }
         checkExpr(e.object, scopes, ctx);
         return;
       case 'field':
@@ -378,7 +425,8 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         checkExpr(e.right, scopes, ctx);
         return;
       case 'new':
-        checkExpr(e.callee, scopes, ctx);
+        // 構築する形で名前を使うのは許す (`new RegExp(…)`)。値として持ち出す形は 'ident' の枝が断る。
+        if (!isConstructibleBuiltin(e.callee, scopes)) checkExpr(e.callee, scopes, ctx);
         e.args.forEach((x) => checkExpr(x, scopes, ctx));
         return;
       case 'arrow': {

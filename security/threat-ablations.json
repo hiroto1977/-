@@ -2017,6 +2017,30 @@
           "replace": "  if (false /* ablation */) return { config: null, rejected: null, unverified: 'tampered' };"
         }
       ]
+    },
+    {
+      "id": "A-541",
+      "threat": "T-232",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "組み込みのメンバ表から RegExp / Error / TypeError / RangeError / URL の行を全部消す —— 0.3 の形に戻し、RegExp.$1 (他のモジュールの直近の一致)・Error.captureStackTrace・URL.revokeObjectURL が M6 を通る穴を開け直す",
+      "edits": [
+        {
+          "find": "  ['RegExp', new Set<string>()],\n  ['Error', new Set<string>()],\n  ['TypeError', new Set<string>()],\n  ['RangeError', new Set<string>()],\n  ['URL', new Set(['canParse', 'parse'])],\n",
+          "replace": ""
+        }
+      ]
+    },
+    {
+      "id": "A-542",
+      "threat": "T-232",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "組み込みを値として持ち出す形の断りを殺す —— `const r = RegExp; r.$1` のように別名でメンバの表を迂回する穴を開け直す",
+      "edits": [
+        {
+          "find": "          } else if (BUILTIN_MEMBERS.has(e.name)) {",
+          "replace": "          } else if (false /* ablation */) {"
+        }
+      ]
     }
   ]
 }

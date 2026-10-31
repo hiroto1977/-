@@ -46,7 +46,7 @@ Mamori では、その 2 つは**書けない**:
 | M3 | `sink` 関数の**最初の引数 (行き先)** の型は、宣言した印の型 1 つ (`T \| null` も不可)。2 つ目からは本文で型を問わない。引数の無い sink も断る | 素の `string` を行き先に受ける危ない口を作る |
 | M4 | 印の型を受ける引数には、印を持つ値だけを渡せる (モジュールをまたいでも)。**印を受ける関数は直に呼ぶことしかできない** —— 値として持ち出すと検めを迂回できる (0.3 · T-225) | 文字列の字面・素の引数・別の種類の印を渡す・`openUrl.call(null, raw)` / `.apply` / `.bind`・`const f = openUrl;`・`{ g: openUrl }`・`[openUrl]`・`c ? openUrl : …`・`for (const f of [openUrl])` |
 | M5 | 印を持つ変数を、印の無い値で上書きできない | `let u = 関門(x); u = '…';` (印の洗浄) |
-| M6 | 外の名前は `use` / `extern` で宣言する。宣言なしで使えるのは副作用の判断を持たない組み込み (`URL` / `Set` / `Map` / `Promise` / `Number` / `String` / `Boolean` / `Math` / `JSON` / `Object` / `Array` / `Error` / `RegExp` / `TypeError` / `RangeError`) だけ。**`Object` は読むだけ・凍らせるだけのメンバ (`hasOwn` / `keys` / `values` / `entries` / `fromEntries` / `freeze` / `isFrozen`) に限り、値として持ち出せない** (0.2)。**代入できるのは `let` の名前だけ** —— 外の名前・`const`・引数・回す変数・関数の名前へは代入できない (0.2。0.1 は「このモジュールの名前か」しか見ず、`const` と引数への代入を変換後の `tsc` に任せていた —— 引数への代入は `tsc` も通す) | `window` / `fetch` / `process` / `require` / `globalThis` / `document` / `localStorage` / `indexedDB` / `navigator` を暗黙に使う・`Object.setPrototypeOf` / `defineProperty` / `assign`・`const o = Object;`・`code = 'x';` (引数)・`for (const k of xs) { k = 1; }` |
+| M6 | 外の名前は `use` / `extern` で宣言する。宣言なしで使えるのは副作用の判断を持たない組み込み (`URL` / `Set` / `Map` / `Promise` / `Number` / `String` / `Boolean` / `Math` / `JSON` / `Object` / `Array` / `Error` / `RegExp` / `TypeError` / `RangeError`) だけ。**`Object` は読むだけ・凍らせるだけのメンバ (`hasOwn` / `keys` / `values` / `entries` / `fromEntries` / `freeze` / `isFrozen`) に限り、値として持ち出せない** (0.2)。**代入できるのは `let` の名前だけ** —— 外の名前・`const`・引数・回す変数・関数の名前へは代入できない (0.2。0.1 は「このモジュールの名前か」しか見ず、`const` と引数への代入を変換後の `tsc` に任せていた —— 引数への代入は `tsc` も通す) | `window` / `fetch` / `process` / `require` / `globalThis` / `document` / `localStorage` / `indexedDB` / `navigator` を暗黙に使う・`Object.setPrototypeOf` / `defineProperty` / `assign`・`const o = Object;`・`code = 'x';` (引数)・`for (const k of xs) { k = 1; }`・**`RegExp.$1` / `RegExp.input` / `RegExp.lastMatch` (他のモジュールの直近の正規表現の一致と入力)・`Error.captureStackTrace` / `Error.stackTraceLimit`・`URL.createObjectURL` / `URL.revokeObjectURL`・`const r = RegExp;` (0.4 · T-232)** |
 
 1 つの関数は `gate` と `sink` を兼ねられない (頭に書ける役割は 1 語だけで、`sink` が印を作れば M1、
 `gate` が危ない口を呼べば M2 が断る)。印を作る所と危ない口を呼ぶ所を同じにすると、関門の検査を飛ばして呼べるからである。
@@ -71,7 +71,26 @@ Mamori では、その 2 つは**書けない**:
 0.3 はどちらも断る (`mamoriV03.test.ts` が規則を破るプログラムで留める)。言語を育てる輪の 2 周目 (MG-002) の
 「破る」段で、足す構文 (16 進の数) と関係の無い既存の構文の組み合わせから出た —— **破る段は足す構文だけを見ない**。
 
-## 文法 (0.3)
+## 0.3 の穴 (T-232 · 2026-10-31 · パス 571)
+
+M6 は「宣言していない外の値へ届かない」と言い、宣言なしで使える組み込みは「副作用の判断を持たない」物だけだった。
+ところが**名前ではなくメンバ**が共有の状態を持つ組み込みが 3 組あり、0.3 は名前だけを見ていたのでどれも書けた
+(node で `/(sek)/.exec('a sek b'); RegExp.$1` は `'sek'` を返す —— 旧式の静的な欄は**同じ realm のどのモジュールでも
+最後に走った正規表現の一致と入力**を返すので、資格情報の入口や伏字が走らせた正規表現の一致 = 秘密そのものを、
+`use` も `extern` も無いモジュールが読める):
+
+| 組み込み | 共有の状態 | 0.4 |
+| --- | --- | --- |
+| `RegExp` | `$1`〜`$9`・`lastMatch`・`lastParen`・`leftContext`・`rightContext`・`input`・`$_` | 構築する形だけ |
+| `Error` / `TypeError` / `RangeError` | `captureStackTrace`・`stackTraceLimit` (全モジュールの例外の積み方・渡した物への書き込み) | 構築する形だけ |
+| `URL` | `createObjectURL` / `revokeObjectURL` (他のモジュールが作った blob の URL を失効させる) | 構築する形 + `canParse` / `parse` |
+
+`String` / `Math` / `JSON` / `Number` / `Array` / `Map` / `Set` / `Promise` の静的メンバは共有の状態を持たないので絞っていない
+(測った)。`Object.freeze(use で宣言した値)` は宣言した値への操作で、宣言していない外へ届く道ではない。
+言語を育てる輪の 4 周目 (MG-004) の「破る」段で、`escape.ts` を移すときに出た ——
+**移す前に、移すモジュールが使う組み込みを総当たりで試す**。`mamoriV04.test.ts` が規則を破るプログラムで留める。
+
+## 文法 (0.4 —— 構文は 0.3 と同じ・変わったのは M6 の表)
 
 ```
 module    := header* item*
@@ -147,6 +166,7 @@ export sink fn openExternalVetted(url: VettedExternalUrl) -> Promise<void> {
 | `src/shared/controlChars.mamori` | `src/shared/controlChars.ts` | 制御文字 (C0 と DEL) の判定 (資格情報・URL の入口の 5 本が読む唯一の規則 · 0.3 の 16 進の数で書き直した · パス 564) |
 | `src/shared/proxyEndpoint.mamori` | `src/shared/proxyEndpoint.ts` | BYO プロキシの送り先と共有秘密の検証 (**資格情報のほぼ全部が通る 1 本の口** · 0.2 の構文で書き直した最初の物 · パス 563) |
 | `src/shared/tokenInput.mamori` | `src/shared/tokenInput.ts` | 資格情報の保存要求の検証 (`checkTokenInput` · main と renderer で同じ規則 · 空 / 長すぎ / 制御文字 / 非 Latin1 を理由つきで断る · 0.3 で書き直した · パス 567 · MG-003) |
+| `src/shared/escape.mamori` | `src/shared/escape.ts` | 出力側の関門 (`escapeXml` / `safeColor` / `isHexColor` / `escapeMarkdownInline` / `escapeMarkdownText` / `escapeInvisibleUnits` ほか · HTML / XML / Markdown に第三者の文を埋める所と色を属性へ埋める所 · 0.3 で書き直した —— template を `+` の連結へ替えただけ · パス 571 · MG-004) |
 
 残りの TypeScript は Mamori で書いた gate / sink を呼ぶ側で、呼ぶ側には TypeScript の型の印が掛かる
 (パス 559)。書き出しのファイル書き込みはパス 560 で gate と sink の組として移し、pending の天井を 4 → 3 へ下げた。
@@ -163,7 +183,7 @@ export sink fn openExternalVetted(url: VettedExternalUrl) -> Promise<void> {
   `shell` を直接呼んだりする道は、TypeScript の側の検査 (`vettedTypes.test.ts` の census・`lint:forbidden`) が塞ぐ。
 - 変換した TypeScript は `tsc` が検査するが、実行時の守りは今までどおり**関門の中身**そのものである。
   Mamori が止めるのは「関門を飛ばす書き方」で、関門の判定の誤りは関門の検査 (変異検査 100% の対象) が見る。
-- 言語は 0.3 で、守りの層を書くのに要る構文しか持たない (0.3 で 16 進の数を、0.2 でオブジェクトの字面・条件演算子・switch・throw・for…of・type / interface・field を足した。**クラス・添字 `x[k]`・計算した鍵・展開・後置の `!`・optional chaining は無い** —— 添字と計算した鍵は鍵を実行時に組めるので、T-224 の表 (`.constructor` を断る) を迂回する道になる。足すなら先に塞ぎ方を決める)。**JSX も無い**ので、`<img>` の口 (`VettedImg.tsx`) と `<a href>` の口 (`VettedLink.tsx`) は TypeScript で書き、守りは型の印と census (素の `<img` と動的な素の `<a href={…}>` はこの部品の外に無い) が持つ。
+- 言語は 0.4 で、守りの層を書くのに要る構文しか持たない (0.3 で 16 進の数を、0.2 でオブジェクトの字面・条件演算子・switch・throw・for…of・type / interface・field を足した。**クラス・添字 `x[k]`・計算した鍵・展開・後置の `!`・optional chaining は無い** —— 添字と計算した鍵は鍵を実行時に組めるので、T-224 の表 (`.constructor` を断る) を迂回する道になる。足すなら先に塞ぎ方を決める)。**JSX も無い**ので、`<img>` の口 (`VettedImg.tsx`) と `<a href>` の口 (`VettedLink.tsx`) は TypeScript で書き、守りは型の印と census (素の `<img` と動的な素の `<a href={…}>` はこの部品の外に無い) が持つ。
   足すときは、その構文が来歴の規則を外す道にならないかを先に考える (`as` を入れなかったのと同じ理由)。
 
 ## 育て方 (半永久的に育てる輪)

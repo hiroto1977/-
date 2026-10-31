@@ -4072,6 +4072,35 @@
           "test": "解錠中・署名の無い生書き込み (レガシー / 剥がし) は使わない (threat: T-231)"
         }
       ]
+    },
+    {
+      "id": "T-232",
+      "found": "2026-10-31",
+      "foundBy": "言語を育てる輪の 4 周目 (MG-004) の「破る」段。escape.ts を Mamori へ移す前に、書き直すモジュールが使う組み込み (RegExp / String / Error / URL) を総当たりで試した —— 宣言なしで使える組み込みは『副作用の判断を持たない』と名乗るが、**名前ではなくメンバ**が共有の状態を持つ物が 3 組あった。node で `/(sek)/.exec('a sek b'); RegExp.$1` は 'sek' を返す (同じ realm のどのモジュールが走らせた正規表現の一致と入力も読める)。0.3 のコンパイラは `RegExp.$1` / `RegExp.lastMatch` / `RegExp.input`・`Error.captureStackTrace` / `Error.stackTraceLimit`・`URL.createObjectURL` / `URL.revokeObjectURL` と、`const r = RegExp;` の持ち出しをすべて通した。",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "medium",
+      "title": "守りの層を書く言語 Mamori 0.3 の M6 は組み込みの名前だけを見て、共有の状態を持つメンバ (RegExp の旧式の静的な欄 = 他のモジュールの直近の正規表現の一致と入力・Error.captureStackTrace / stackTraceLimit・URL の blob) を断らず、use も extern も無いモジュールが他のモジュールが走らせた正規表現が見た秘密を読めた",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: 組み込みのうち共有の状態を持つ物の使えるメンバを表 (BUILTIN_MEMBERS) で絞る —— Object は従来の 7 メンバ・RegExp / Error / TypeError / RangeError はメンバ無し (構築する形 `new X(…)` と呼ぶ形 `X(…)` だけ)・URL は canParse / parse と構築する形。メンバを許さない形は M6 で断り、値として持ち出す形 (`const r = RegExp;` / 配列・オブジェクトに包む) も M6 (持ち出すと表を別名で迂回できる)。このモジュールが同名の値を宣言していれば組み込みでは無いので表は掛からない。言語の版を 0.4 へ。限界: String / Math / JSON / Number / Array / Map / Set / Promise の静的メンバは共有の状態を持たないので絞っていない (測った)。Object.freeze(use で宣言した値) は宣言した値への操作で、宣言していない外へ届く道ではない。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+        "test": "★ RegExp.$1 を読む形は断る (threat: T-232)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+          "test": "★ RegExp を値に取ってから読む形も断る (threat: T-232)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+          "test": "★ Error.captureStackTrace / stackTraceLimit は断る (threat: T-232)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+          "test": "★ URL.createObjectURL / revokeObjectURL は断り、許したメンバを案内する (threat: T-232)"
+        }
+      ]
     }
   ],
   "huntBacklog": [
