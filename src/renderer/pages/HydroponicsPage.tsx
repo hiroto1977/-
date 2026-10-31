@@ -320,19 +320,22 @@ export function HydroponicsPage() {
   async function removeBatch(batchId: string): Promise<void> {
     setBatchError(null);
     setBatchOk(null);
+    // **文に入れる名前だけ天井** (パス 570)。保管した id は復元・手編集で 200,000 字になりうる
+    // (表は `batchIdText` で天井済み)。探す・消すのは全文の id のまま (同一性の鍵・パス 420)。
+    const shown = batchIdText(batchId);
     const rec = batchCol.records.find((r) => (r.data as { id?: unknown }).id === batchId);
     if (rec === undefined) {
       // 別のタブで消された / 控えが読めない。**黙って何もしないのではなく言う。**
-      setBatchError(`ロット "${batchId}" の控えが見つかりません (他のタブで消された可能性)。更新してください`);
+      setBatchError(`ロット "${shown}" の控えが見つかりません (他のタブで消された可能性)。更新してください`);
       return;
     }
     try {
       await batchCol.remove(rec.id);
     } catch {
-      setBatchError(`ロット "${batchId}" を削除できませんでした (端末の保存領域を確認してください)`);
+      setBatchError(`ロット "${shown}" を削除できませんでした (端末の保存領域を確認してください)`);
       return;
     }
-    setBatchOk(`ロット "${batchId}" を削除しました`);
+    setBatchOk(`ロット "${shown}" を削除しました`);
   }
 
   // --- 運転の設定 --------------------------------------------------------

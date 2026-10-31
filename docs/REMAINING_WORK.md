@@ -1,12 +1,18 @@
 # Service Hub — 残りの作業手順書
 
+## パス 570 —— ロット削除後の status 文の天井 (2026-10-31)
+
+- **閉じた穴**: パス 569 が残した `HydroponicsPage.removeBatch` の status 文 3 か所が保管値の batch id を素で補間していた。文に入れる名前を `batchIdText(batchId)` (40 字 + '…') にし、探す・消すのは全文の id のまま。`hydroponicsRemoveStatusCeiling.test.ts` 3 件 (成功 / 失敗 / 正当な id は不変)。
+- **測って残した物**: 3 つ目の文 (「控えが見つかりません」) は他のタブとの競合でしか届かず、jsdom では再現できなかったので**振る舞いでは留めていない** (同じ `shown` 変数を 3 文が読む)。
+- **一般形は未着手**: 「status / confirm / aria-label が保管値を素で補間しない」を機械で数える census (status setter の template に保管値の var が入るなら天井を通る)。走査 (パス 569) で素の補間は removeBatch だけだったので、今日の欠陥は 0 件になった。
+
 ## パス 569 —— チームレーダーの下書きの保存値の天井 (2026-10-31)
 
 - **閉じた穴**: `sanitizeRadarDraft` / `sanitizeTeamMember` が長さを見ず、下書きの 6 欄が画面へ天井なしで出ていた (実測 2,201,386 → 1,503 字)。`clampToCeiling` で読むときに畳む (`id` は全文)。`teamRadarDraftCeiling.test.ts` 6 件 + 対照 4 方向。詳細は CLAUDE.md / SESSION_HANDOFF.md のパス 569。
 
 ## パス 569 で測って残した物 (別パス)
 
-### HydroponicsPage の `removeBatch` の status 文が保管値の batch id を素で描く
+### HydroponicsPage の `removeBatch` の status 文が保管値の batch id を素で描く (パス 570 で閉じた)
 
 `src/renderer/pages/HydroponicsPage.tsx` の `removeBatch(batchId)` (320-336) は 3 つの status 文
 (326 「控えが見つかりません」/ 332 「削除できませんでした」/ 335 「削除しました」) に

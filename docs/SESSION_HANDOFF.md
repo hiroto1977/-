@@ -7,6 +7,14 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-10-31) — パス 570: ロット削除後の status 文に保管 id の天井
+
+- **穴**: `HydroponicsPage.removeBatch` の status 文 3 つ (見つかりません / 削除できませんでした / 削除しました) が保管した batch id を素で補間。表は `batchIdText` で天井済みだが、× を押した後の文だけが素 (パス 569 が残した物)。届く道は復元・手編集 JSON・旧版。action 起点 (view-time ではない)。
+- **直し (パス 420 の規律)**: 文に入れる名前だけ `batchIdText` (40 字 + '…')。lookup / remove は全文の id のまま。正当な id (≤ 40) は不変。
+- **機械**: `hydroponicsRemoveStatusCeiling.test.ts` 3 件 (200,000 字の id で成功文・失敗文が天井で切れる・正当 id 不変)。対照: 失敗文 / 成功文を素へ戻すとそれぞれ狙った 1 件が落ちる (md5 で復帰確認)。「見つかりません」文は他タブとの競合でしか届かず jsdom で再現できなかった (振る舞いでは未測)。
+- **残した物**: status / confirm / aria-label の補間が保管値を素で出さないことの census (今日の欠陥 0 件・機械化は別パス)。
+- **出荷物**: FULL 12,133,965 B / LITE 3,546,589 B (+10 B)。
+
 ## 直近の作業 (2026-10-31) — パス 569: チームレーダーの下書き (localStorage) の保存値の天井
 
 - **穴**: 入口 (`TeamRadarPage` の `fieldsOverCeiling`) と snapshot の `validateMembers` はチャート名・部署・評価時点・軸名・メンバー名・付箋を上限で断るのに、**下書き `servicehub.teamradar.draft.v1` の読み** (`sanitizeRadarDraft` / `sanitizeTeamMember`) は `typeof === 'string'` だけで長さを見なかった (パス 359 / 419 / 568 の「入口が出口より厳しい」)。届く道は手編集 JSON・旧版。
