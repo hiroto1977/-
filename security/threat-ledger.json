@@ -4051,6 +4051,27 @@
           "test": "★ storedAt を前へ (まだ now 以下) 書き換えても v2 記録は復号できない —— 若返り攻撃 (threat: T-230)"
         }
       ]
+    },
+    {
+      "id": "T-231",
+      "found": "2026-10-31",
+      "foundBy": "パス 566 の赤対青の演習 (守る物『保管した資格情報』の赤 B)。ブラウザ版の BYO プロキシ設定 (network/proxy.ts) は平文の別 DB (business-hub-preferences) に残る —— 解錠の前後を問わず読めるようにする設計。ところが平文ゆえに IndexedDB へ書ける相手 (別プロファイル・別の file:// の HTML・拡張) は、OS キーチェーン・マスターパスワードを破らなくても送り先 URL を自分の Worker へ差し替えられる。fetchViaProxy は呼び出し側の Authorization をそのまま封筒に載せる (資格情報のほぼ全部が通る 1 本の口) ので、差し替えればまるごと盗れる。T-219 の step-up は画面の書き手 (SettingsPage) にしか効かず、setProxyConfig を迂回する生の IDB 書き込みを素通りさせていた。",
+      "surface": "renderer",
+      "class": "ssrf-and-credential-egress",
+      "severity": "medium",
+      "title": "BYO プロキシ設定の送り先 URL が平文で認証されず、保管庫へ書ける相手が自分の Worker へ差し替えて資格情報 (Authorization) をまるごと奪えた —— T-219 の step-up は UI の書き手にしか効かなかった",
+      "status": "mitigated",
+      "fix": "保存時 MAC (566-B · T-230 と同じ形)。解錠中に master 鍵で認証タグ (vault.authTag — AES-GCM で平文を封じる汎用の認証タグ・domain で用途を分ける service-hub-authtag-v1:proxy-config) を付けて平文の隣に置き (保管庫のトークン名前空間は汚さない)、読み出し側 (reviewAndVerify: getProxyConfig / inspectStoredProxyConfig の funnel) が vault.verifyAuthTag で検証して未検証なら使わない。3 状態: 解錠中×一致=使う / 解錠中×未署名 (unstamped: レガシー or 剥がし) =断る / 解錠中×不一致 (tampered) =断る / ロック中=検証を保留して素の設定を返す (資格情報が乗る読みは必ず vault.getToken の後 = 解錠後なので、ロック中の読みに秘密は乗らない)。保存は SettingsPage でブラウザ版では解錠必須 (パス 455) なので常にタグが付く。web-shim の getProxyTransport / AI chat 2 経路と SettingsPage が未検証を言い分ける (文は PROXY_UNVERIFIED_MESSAGE が 1 か所)。限界 (残余): 同一オリジンで解錠中の攻撃者は vault.authTag を自分で呼んで正しいタグを作れる (在メモリの鍵を持つ相手は何でもできる)。この MAC が守るのは静止時の改竄 —— アプリが動いていない間・別プロセス・別拡張からの IDB 書き込み。T-230 (保存時刻の認証) と同じ形。レガシー (この修正より前に保存した設定) は解錠後の最初の読みで unstamped として断られ、設定画面で 1 度保存し直せば署名が付く (fail closed)。",
+      "regression": {
+        "file": "src/renderer/security/__tests__/proxyMac.test.ts",
+        "test": "解錠中・送り先 URL を差し替えた改竄 (古い mac を残す) は使わない (threat: T-231)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/renderer/security/__tests__/proxyMac.test.ts",
+          "test": "解錠中・署名の無い生書き込み (レガシー / 剥がし) は使わない (threat: T-231)"
+        }
+      ]
     }
   ],
   "huntBacklog": [

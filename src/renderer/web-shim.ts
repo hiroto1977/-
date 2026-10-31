@@ -203,7 +203,7 @@ import {
   parseSecurityKeys,
   type Transport,
 } from './data/saasWriteWeb';
-import { inspectStoredProxyConfig, fetchViaProxy } from './network/proxy';
+import { inspectStoredProxyConfig, fetchViaProxy, PROXY_UNVERIFIED_MESSAGE } from './network/proxy';
 import { deviceStoreFailureMessage } from './data/deviceStoreFailure';
 import { liveRead, canLiveRead } from './network/liveRead';
 import { AI_PROVIDERS, ANTHROPIC_FAST_MODEL } from '../shared/ai/providers';
@@ -254,9 +254,13 @@ async function requestAndReadDurability(): Promise<'persistent' | 'best-effort'>
  *  登録し直せと言う**ことになり、URL と共有シークレットを打ち直した末に
  *  同じ所で失敗する。 */
 async function getProxyTransport(): Promise<Transport> {
-  const { config: cfg, unreadable } = await inspectStoredProxyConfig();
+  const { config: cfg, unverified, unreadable } = await inspectStoredProxyConfig();
   if (unreadable !== null) {
     throw new Error(deviceStoreFailureMessage('settings', 'read', unreadable));
+  }
+  // 保存時 MAC が検証できない設定へは資格情報を送らない (566-B)。文言は proxy.ts が 1 か所に持つ。
+  if (unverified) {
+    throw new Error(PROXY_UNVERIFIED_MESSAGE);
   }
   if (!cfg) {
     throw new Error(
@@ -986,7 +990,9 @@ async function callAssistantChat(payload: Record<string, unknown>): Promise<Acti
         'not_configured',
         proxy.unreadable !== null
           ? deviceStoreFailureMessage('settings', 'read', proxy.unreadable)
-          : `${spec.label} はブラウザから直接呼び出せません。「設定」ページでプロキシ (Cloudflare Worker) を構成するか、Claude / Gemini / Ollama を利用してください`,
+          : proxy.unverified
+            ? PROXY_UNVERIFIED_MESSAGE
+            : `${spec.label} はブラウザから直接呼び出せません。「設定」ページでプロキシ (Cloudflare Worker) を構成するか、Claude / Gemini / Ollama を利用してください`,
       );
     }
     fetchFn = (input, init) => fetchViaProxy(String(input), init ?? {}, proxyCfg);
@@ -1052,7 +1058,9 @@ async function callAssistantChatAll(payload: Record<string, unknown>): Promise<A
             error:
               proxy.unreadable !== null
                 ? deviceStoreFailureMessage('settings', 'read', proxy.unreadable)
-                : `${spec.label} はブラウザから直接呼び出せません (プロキシ未設定)`,
+                : proxy.unverified
+                  ? PROXY_UNVERIFIED_MESSAGE
+                  : `${spec.label} はブラウザから直接呼び出せません (プロキシ未設定)`,
           };
         }
         fetchFn = (input: Parameters<typeof fetch>[0], init?: Parameters<typeof fetch>[1]) =>

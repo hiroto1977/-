@@ -38,6 +38,7 @@ import {
   type ProxyCredentials,
   type ProxyEndpointFailure,
 } from '../../shared/proxyEndpoint';
+import { getVault, type VaultAuthTag } from '../security/vault';
 
 // Constants + IDB infra below — decorative error strings, default-arrow
 // fallbacks, and the request/response envelope structure are pinned by
@@ -65,6 +66,55 @@ const KEY = 'proxy';
 
 /** 設定の形そのものは shared 側が持つ (保存時・読み出し時で同じ検証を通すため)。 */
 export type ProxyConfig = ProxyCredentials;
+
+/**
+ * **保存時 MAC** (2026-10-31 · threat: T-230 の隣 · 566-B)。
+ *
+ * この設定は上の DB_NAME の docblock どおり**平文**で残る (解錠前も読めるようにするため)。
+ * ところが平文ゆえに IndexedDB へ書ける相手は送り先 URL を自分の Worker へ差し替えられる ——
+ * `fetchViaProxy` は呼び出し側の `Authorization` をそのまま封筒に載せるので、差し替えれば
+ * 資格情報がまるごと盗れる。T-219 の step-up は画面の書き手にしか効かず、**生の IDB 書き込みを
+ * 素通りさせていた** (`setProxyConfig` を迂回する直接書き込み)。
+ *
+ * 対策: 解錠中に master 鍵で認証タグ (`vault.authTag`) を付けて平文の隣に置き、読み出し側が
+ * 検証して**未検証なら使わない**。差し替えられた URL はタグと一致しない (または未署名) ので断られる。
+ * タグは平文を保管庫の外に残したまま隣に置くだけ —— 保管庫のトークン名前空間は汚さない。
+ *
+ * ## 検証の 3 状態
+ * - **解錠中 × タグが一致** → 使う。
+ * - **解錠中 × 未署名 (`unstamped`)** → この修正より前の記録 (レガシー) か剥がされた物。区別できないので断る。
+ * - **解錠中 × 不一致 (`tampered`)** → 鍵違い・改竄。断る。
+ * - **ロック中** → 検証できない。だが**資格情報が乗る読みは必ず getToken の後 = 解錠後**なので、
+ *   ロック中の読みに秘密は乗らない。検証を保留して素の設定を返す (旧挙動 · 下の reviewAndVerify)。
+ *
+ * ## 残余
+ * 同一オリジンで**解錠中**の攻撃者は `vault.authTag` を自分で呼んで正しいタグを作れる (在メモリの
+ * 鍵を持つ相手は何でもできる)。この MAC が守るのは**静止時の改竄** —— アプリが動いていない間・
+ * 別プロセス・別の拡張からの IDB 書き込み。T-230 (保存時刻の認証) と同じ形である。
+ */
+const PROXY_MAC_DOMAIN = 'proxy-config';
+
+/** 未検証の理由。`rejected` (URL/秘密の形) とは別の軸 (改竄 / 未署名)。 */
+export type ProxyMacProblem = 'unstamped' | 'tampered';
+
+/** 画面・shim が「検証できない設定は使えない」を言うときの一文 (1 か所に持つ)。 */
+export const PROXY_UNVERIFIED_MESSAGE =
+  'プロキシ設定を検証できませんでした（未署名または改竄の可能性があります）。設定画面でプロキシを保存し直してください。';
+
+/** IndexedDB に入る形そのもの (平文の設定 + 任意の認証タグ)。 */
+interface StoredProxyRecord {
+  url: string;
+  sharedSecret?: string;
+  mac?: VaultAuthTag;
+}
+
+/**
+ * 認証タグに束ねる正準形。**保存される正規化済みの値から作る** (`reviewStoredProxyConfig`
+ * が返す config) ので、保存時と読み出し時で必ず一致する。固定順の配列なので鍵順や
+ * `undefined` の曖昧さが無い。 */
+function proxyMacCanonical(cfg: ProxyConfig): string {
+  return JSON.stringify([cfg.url, cfg.sharedSecret ?? null]);
+}
 
 function openDb(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -104,19 +154,54 @@ export async function inspectStoredProxyConfig(): Promise<{
   config: ProxyConfig | null;
   rejected: ProxyEndpointFailure | null;
   /**
+   * 認証タグの検証に落ちた理由 (`unstamped` / `tampered`)。URL/秘密の形 (`rejected`) とは
+   * 別の軸で、保存時 MAC (566-B) の結果。`config` が null の理由が「形が不正」なのか
+   * 「検証できない」なのかを分ける。
+   */
+  unverified: ProxyMacProblem | null;
+  /**
    * 保管先そのものが読めなかったときの例外。**`config: null` の理由が
    * 「設定していない」なのか「確認できない」なのかを分ける** ——
    * 混ぜると、設定済みの利用者に「登録してください」と言うことになる。
    */
   unreadable: unknown;
 }> {
-  let stored: ProxyConfig | null;
+  let raw: unknown;
   try {
-    stored = await readStoredProxyConfig();
+    raw = await readStoredProxyRecord();
   } catch (err) {
-    return { config: null, rejected: null, unreadable: err };
+    return { config: null, rejected: null, unverified: null, unreadable: err };
   }
-  return { ...reviewStoredProxyConfig(stored), unreadable: null };
+  return { ...(await reviewAndVerify(raw)), unreadable: null };
+}
+
+/**
+ * 保存されていた生の値を、形 (shared) と認証タグ (566-B) の両方で検める。
+ *
+ * 形の検証は `reviewStoredProxyConfig` が 1 本持つ (保存時・読み出し時で同じ)。
+ * その上に MAC の検証を重ねる —— **検証できない設定は資格情報の送り先として使わない**
+ * (`ProxyConfig` の下の DB docblock の脅威そのもの)。3 状態の切り分けは
+ * `StoredProxyRecord` の MAC docblock に在る。
+ */
+async function reviewAndVerify(
+  raw: unknown,
+): Promise<{ config: ProxyConfig | null; rejected: ProxyEndpointFailure | null; unverified: ProxyMacProblem | null }> {
+  const review = reviewStoredProxyConfig(raw);
+  if (review.config === null) return { config: null, rejected: review.rejected, unverified: null };
+  const vault = getVault();
+  // ロック中は検証できない。資格情報が乗る読みは必ず `vault.getToken` の後 = 解錠後なので
+  // (web-shim の `runProxyBearer` / security 鍵の経路)、ロック中の読みに秘密は乗らない。
+  // 検証を保留して素の設定を返す (旧挙動)。
+  if (!vault.isUnlocked()) return { config: review.config, rejected: null, unverified: null };
+  const mac = (raw as { mac?: VaultAuthTag }).mac;
+  if (mac === undefined) {
+    // 未署名 —— この修正より前に保存された物 (レガシー) か、タグを剥がされた物。区別できない
+    // ので断る (fail closed · 未検証なら使わない)。利用者は設定画面で保存し直せば署名が付く。
+    return { config: null, rejected: null, unverified: 'unstamped' };
+  }
+  const verified = await vault.verifyAuthTag(PROXY_MAC_DOMAIN, proxyMacCanonical(review.config), mac);
+  if (!verified) return { config: null, rejected: null, unverified: 'tampered' };
+  return { config: review.config, rejected: null, unverified: null };
 }
 
 /**
@@ -128,7 +213,7 @@ export async function inspectStoredProxyConfig(): Promise<{
  * 構わない」と決めているなら、その場で `.catch()` を書けばよい。
  */
 export async function getProxyConfig(): Promise<ProxyConfig | null> {
-  return reviewStoredProxyConfig(await readStoredProxyConfig()).config;
+  return (await reviewAndVerify(await readStoredProxyRecord())).config;
 }
 
 /**
@@ -143,14 +228,17 @@ export async function getProxyConfig(): Promise<ProxyConfig | null> {
  * 「無い」と「確認できない」を分けるのは、`dbPosture.ts` が診断について
  * 書いているのと同じ理由である。使える設定だけが要る側 (`getProxyConfig`) は
  * これまでどおり `null` を受け取る。
+ *
+ * 2026-10-31 (566-B) に生の値をそのまま返す形へ変えた —— 認証タグ (`mac`) も読み出す
+ * ため。形と MAC の検証は `reviewAndVerify` が重ねて行う。
  */
-async function readStoredProxyConfig(): Promise<ProxyConfig | null> {
+async function readStoredProxyRecord(): Promise<unknown> {
   const db = await openDb();
   try {
-    const cfg = await new Promise<ProxyConfig | undefined>((resolve, reject) => {
+    const cfg = await new Promise<unknown>((resolve, reject) => {
       const tx = db.transaction(STORE, 'readonly');
       const req = tx.objectStore(STORE).get(KEY);
-      req.onsuccess = () => resolve(req.result as ProxyConfig | undefined);
+      req.onsuccess = () => resolve(req.result);
       // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では失敗させられず、`?? new Error(...)` は req/tx.error が必ず入るため到達しない防御。文言も観測されない。
       req.onerror = () => reject(req.error ?? new Error('get failed'));
     });
@@ -163,7 +251,7 @@ async function readStoredProxyConfig(): Promise<ProxyConfig | null> {
 export async function setProxyConfig(cfg: ProxyConfig | null): Promise<void> {
   // 保存するのは**正規化した URL**。検証した文字列と保存する文字列を
   // 一致させておかないと、読み出し側の再検証が別のものを見ることになる。
-  let toStore: ProxyConfig | null = null;
+  let toStore: StoredProxyRecord | null = null;
   if (cfg !== null) {
     const review = reviewStoredProxyConfig(cfg);
     if (review.config === null) {
@@ -172,7 +260,15 @@ export async function setProxyConfig(cfg: ProxyConfig | null): Promise<void> {
       // Stryker disable next-line StringLiteral
       throw new Error(describeProxyEndpointFailure(review.rejected ?? 'not-a-url'));
     }
-    toStore = review.config;
+    const record: StoredProxyRecord = { ...review.config };
+    // **解錠中は master 鍵で認証タグを付ける** (保存時 MAC · 566-B · `StoredProxyRecord` の docblock)。
+    // 画面 (SettingsPage) はブラウザ版では解錠済みのときしか描かれない (パス 455) ので、実際の保存は
+    // 常にここを通ってタグが付く。ロック中は付けられない —— その記録は読み出し側が `unstamped` として
+    // 断る (生の設定が検証されずに資格情報の送り先になるのを防ぐ)。
+    if (getVault().isUnlocked()) {
+      record.mac = await getVault().authTag(PROXY_MAC_DOMAIN, proxyMacCanonical(review.config));
+    }
+    toStore = record;
   }
   const db = await openDb();
   try {

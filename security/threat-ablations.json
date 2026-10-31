@@ -2001,6 +2001,22 @@
           "replace": "    if (sep === -1) {"
         }
       ]
+    },
+    {
+      "id": "A-540",
+      "threat": "T-231",
+      "file": "src/renderer/network/proxy.ts",
+      "why": "保存時 MAC の 2 つの判定 (未署名を断る・不一致を断る) を両方殺す —— 解錠中に差し替えられた URL・署名の無い生書き込みがそのまま資格情報の送り先として使われる穴を開け直す (config が null にならず evil な URL が通る)",
+      "edits": [
+        {
+          "find": "  if (mac === undefined) {",
+          "replace": "  if (false /* ablation */) {"
+        },
+        {
+          "find": "  if (!verified) return { config: null, rejected: null, unverified: 'tampered' };",
+          "replace": "  if (false /* ablation */) return { config: null, rejected: null, unverified: 'tampered' };"
+        }
+      ]
     }
   ]
 }

@@ -45,6 +45,7 @@ import '../web-shim';
 const h = vi.hoisted(() => ({ unreadable: null as unknown }));
 
 vi.mock('../network/proxy', () => ({
+  PROXY_UNVERIFIED_MESSAGE: 'PROXY_UNVERIFIED',
   getProxyConfig: async () => null,
   inspectStoredProxyConfig: async () => ({ config: null, rejected: null, unreadable: h.unreadable }),
   fetchViaProxy: async () => new Response('{}', { status: 200 }),

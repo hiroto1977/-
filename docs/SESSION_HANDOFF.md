@@ -7,6 +7,17 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-10-31) — パス 566-B: BYO プロキシ設定の保存時 MAC (master 鍵 · threat: T-231)
+
+- **穴**: ブラウザ版の BYO プロキシ設定 (`network/proxy.ts`・送り先 URL + 共有秘密) は**平文の別 DB** (`business-hub-preferences`) に残る —— 解錠の前後を問わず読めるようにする設計。ところが平文ゆえに IndexedDB へ書ける相手 (別プロファイル・別の `file://` の HTML・拡張) は、OS キーチェーン・マスターパスワードを破らなくても送り先 URL を自分の Worker へ差し替えられる。`fetchViaProxy` は呼び出し側の `Authorization` をそのまま封筒に載せる (**資格情報のほぼ全部が通る 1 本の口**) ので、差し替えればまるごと盗れる。**T-219 の step-up は画面の書き手 (`SettingsPage`) にしか効かず、`setProxyConfig` を迂回する生の IDB 書き込みを素通りさせていた。**
+- **直し (保存時 MAC · T-230 と同じ形)**: `vault.ts` に汎用の認証タグ `authTag(domain, data)` / `verifyAuthTag(domain, data, tag)` を足す (master 鍵で AES-GCM・既知平文を封じるのが MAC・`domain` = `service-hub-authtag-v1:<domain>` で用途を分離)。`proxy.ts` は解錠中に `authTag('proxy-config', canonical)` を平文の隣に置き (保管庫のトークン名前空間は汚さない)、読み出しの funnel `reviewAndVerify` (`getProxyConfig` / `inspectStoredProxyConfig`) が検証して**未検証なら使わない**。3 状態 —— 解錠中×一致=使う / 解錠中×未署名 (`unstamped`: レガシー or 剥がし) =断る / 解錠中×不一致 (`tampered`) =断る / **ロック中=検証を保留して素の設定を返す** (資格情報が乗る読みは必ず `vault.getToken` の後 = 解錠後なので、ロック中の読みに秘密は乗らない —— web-shim の `runProxyBearer` / security 鍵の経路で確かめた)。保存は `SettingsPage` でブラウザ版では解錠必須 (パス 455) なので常にタグが付く。文は `PROXY_UNVERIFIED_MESSAGE` が 1 か所、web-shim の `getProxyTransport` と AI chat 2 経路・`SettingsPage` が言い分ける。
+- **`ArrayBuffer.isView` で見る** (`instanceof Uint8Array` ではなく) —— preferences IDB の structured clone / jsdom とのレルム違いで Uint8Array の同一性が崩れ、**保存した直後の mac すら検証に落ちた** (実測。crypto.subtle が受ける BufferSource の条件で見る)。
+- **対照**: `proxyMac.test.ts` の「対照: MAC 検証の下の層 (shared の `reviewStoredProxyConfig`) は差し替えた URL を受ける」が MAC の層が load-bearing であることを示す (形だけ見る下の層は evil な URL を通し、MAC の層が止める)。ablation **A-540** (threat T-231・`reviewAndVerify` の 2 判定を両方殺す) が回帰検査「送り先 URL を差し替えた改竄…は使わない」「署名の無い生書き込み…は使わない」で caught。
+- **残り穴 (残余・severity low)**: 同一オリジンで**解錠中**の攻撃者は `vault.authTag` を自分で呼んで正しいタグを作れる (在メモリの鍵を持つ相手は何でもできる)。守るのは**静止時の改竄** —— アプリが動いていない間・別プロセス・別拡張からの IDB 書き込み。T-230 と同じ形。レガシー (この修正より前に保存した設定) は解錠後の最初の読みで `unstamped` として断られ、設定画面で 1 度保存し直せば署名が付く (fail closed)。
+- **波及**: `../network/proxy` を mock する 14 の web-shim 検査に `PROXY_UNVERIFIED_MESSAGE` の export を足し (静的 import なので mock に無いと落ちる)、web-shim の未検証の分岐を**真偽**で見る (mock が `unverified` を省いても throw しない)。
+- **整合性チェーン**: `proxy.ts` / `vault.ts` を触ったので block **#402** を採掘。`verify:arch` のユニットテスト数を 19235 → **19248** (+13 · proxyMac)。`lint:shared-judgement` の census を再生成 (`constantTimeEquals` の読み手 1 → 2)。
+- ★ **MG-003 (task #48) の脅威 id は T-232 以降へ** —— 以前の計画メモは「T-231 へ retag」と書いていたが、566-B がこの id を取った (ledger の最大は T-231 になった)。
+
 ## 直近の作業 (2026-10-30) — パス 566-C: 保存時刻を暗号に束ねて認証する (若返り攻撃 · threat: T-230)
 
 - **穴**: 保存した資格情報の有効時間 (T-213・8 時間) は保存時刻を読んで期限切れを消すが、その時刻 (ブラウザ版 vault の `storedAt`・デスクトップ版 secrets.json の `at:<ms>:` 平文) は**認証されていなかった**。保管庫 / 保管ファイルへ書ける攻撃者は、OS キーチェーン・マスターパスワードを破らなくても、期限切れの記録の時刻を「古いが今以下」へ前倒しして若返らせ、持ち出した写しを 8 時間の壁を越えて使えた。**T-213 の fix「過去へ書き換えても早く消えるだけ (信用を延ばす向きには働かない)」は偽だった** —— 未来ではなく「古いが今以下」へ戻せば若返る (脅威台帳の T-213 を T-230 へ訂正)。

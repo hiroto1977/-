@@ -20,6 +20,7 @@
 import { atLeastChars, countChars, moreThanChars } from '../../shared/inputCeiling';
 import { CONTROL_CHAR_MESSAGE, hasControlChars } from '../../shared/tokenInput';
 import { expiredStoredCredentialMessage, storedCredentialExpired } from '../../shared/credentialTtl';
+import { constantTimeEquals } from '../../shared/constantTimeEquals';
 import { decodeMnemonic, encodeMnemonic, generateEntropy, normalizeMnemonic } from './mnemonic';
 import { assertKdfIterations, assertSaltBytes } from './dataCrypto';
 import { webCryptoUnavailableReason } from './webCrypto';
@@ -237,6 +238,13 @@ export interface Vault {
   listConfigured(): Promise<string[]>;
   /** 期限切れで消した資格情報の知らせを 1 度だけ返す (threat: T-213)。無ければ null。 */
   takeExpiredNotice(serviceId: string): string | null;
+  /**
+   * master 鍵で任意の文字列に認証タグを付ける (保存時 MAC · 566-B · `VaultAuthTag` の docblock)。
+   * 保管庫の外に残すデータ (平文のプロキシ設定など) の静止時改竄を検知するため。ロック中は投げる。
+   */
+  authTag(domain: string, data: string): Promise<VaultAuthTag>;
+  /** `authTag` が付けたタグが今の `data` を (この `domain` で) 認証しているか。検証できない物はすべて false。 */
+  verifyAuthTag(domain: string, data: string, tag: VaultAuthTag | null | undefined): Promise<boolean>;
   /** 旧パスワードで認証して、新パスワードへ**包み直す**。
    *
    *  トークンはマスター鍵で暗号化されており、パスワードはそのマスター鍵を
@@ -533,6 +541,38 @@ function tokenAad(serviceId: string): Uint8Array {
  */
 function tokenAadV2(serviceId: string, storedAt: number): Uint8Array {
   return new TextEncoder().encode(`service-hub-token-v2:${serviceId}:${storedAt}`);
+}
+
+/**
+ * master 鍵で任意の文字列に付ける**認証タグ** (`authTag` / `verifyAuthTag`)。
+ *
+ * ## なぜ保管庫の外のデータを保管庫で守るのか (2026-10-31 · threat: T-230 の隣 · 566-B)
+ *
+ * ブラウザ版の BYO プロキシ設定 (`network/proxy.ts`) は**平文の別 DB**
+ * (`business-hub-preferences`) に残る —— 解錠の前後を問わず読めるようにするためで、
+ * これ自体は設計 (その docblock に書いてある)。ところが平文ゆえに IndexedDB へ書ける相手は
+ * 送り先 URL を**自分の Worker へ差し替えられる** —— 資格情報のほぼ全部がその口を通るので、
+ * 差し替えればまるごと盗れる。T-219 の step-up は**画面の書き手**にしか効かず、生の IDB 書き込みを
+ * 素通りさせていた。
+ *
+ * タグは平文を master 鍵で AES-GCM 暗号化した物で、**それ自体が MAC である** (AEAD は
+ * 既知平文を鍵で封じれば改竄を検知する)。検証は復号して平文が一致するかを見る —— 鍵違い・改竄・
+ * ロック中はすべて false。保管庫の鍵は非 extractable なので、保管庫を解錠できない相手は
+ * 正しいタグを作れない。**保管先は呼び出し側が持つ** (プロキシ設定の平文は今までどおり別 DB に残り、
+ * タグはその隣に置く) —— 保管庫のトークン名前空間を汚さない (`listConfigured` に出さない)。
+ *
+ * `domain` で用途を分ける (`service-hub-authtag-v1:<domain>`) —— ある用途のタグを別の用途へ
+ * 使い回せない。残余: **同一オリジンで解錠中の相手**はこの `authTag` を自分で呼んで正しいタグを
+ * 作れる (在メモリの鍵を持つ攻撃者は何でもできる)。守るのは**静止時の改竄** (アプリが動いていない
+ * 間・別プロセスの書き込み) で、T-230 と同じ形である。
+ */
+export interface VaultAuthTag {
+  readonly iv: Uint8Array;
+  readonly ciphertext: Uint8Array;
+}
+
+function authTagAad(domain: string): Uint8Array {
+  return new TextEncoder().encode(`service-hub-authtag-v1:${domain}`);
 }
 
 // AES-GCM / PBKDF2 wrappers — security-critical correctness is pinned by
@@ -1208,6 +1248,35 @@ class BrowserVault implements Vault {
     }
     await this.rebindToken(serviceId, plain, blob.storedAt).catch(() => {});
     return plain;
+  }
+
+  /**
+   * `data` に master 鍵で認証タグを付ける (`VaultAuthTag` の docblock に用途と限界)。
+   * **ロック中は投げる** (鍵が無いと作れない —— `setToken` と同じ扱い)。
+   */
+  async authTag(domain: string, data: string): Promise<VaultAuthTag> {
+    const key = this.requireKey();
+    const { iv, ciphertext } = await encryptString(key, data, authTagAad(domain));
+    return { iv, ciphertext };
+  }
+
+  /**
+   * `tag` が今の `data` を (この `domain` で) 認証しているか。
+   * **ロック中・タグの形が壊れている・鍵違い・改竄はすべて false** —— 「検証できない」はすべて
+   * 「検証失敗」に畳む (呼び出し側が「使える」と誤認しないため)。GCM が改竄を検知し、復号できた
+   * 平文を元の `data` と**定数時間**で比べる。
+   */
+  async verifyAuthTag(domain: string, data: string, tag: VaultAuthTag | null | undefined): Promise<boolean> {
+    if (!this.currentKey) return false;
+    // IndexedDB の structured clone や jsdom とのレルム違いで Uint8Array の同一性が崩れうるので、
+    // `instanceof` ではなく `ArrayBuffer.isView` で見る (crypto.subtle が受ける BufferSource の条件)。
+    if (!tag || !ArrayBuffer.isView(tag.iv) || !ArrayBuffer.isView(tag.ciphertext)) return false;
+    try {
+      const plain = await decryptString(this.currentKey, { iv: tag.iv, ciphertext: tag.ciphertext }, authTagAad(domain));
+      return constantTimeEquals(plain, data);
+    } catch {
+      return false;
+    }
   }
 
   /** 旧形式のトークンを現行 (v2 · serviceId + storedAt を束ねる) で保存し直す。失敗しても読み出しは成功させる。 */

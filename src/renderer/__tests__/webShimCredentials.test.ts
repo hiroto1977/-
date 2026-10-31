@@ -60,6 +60,7 @@ vi.mock('../library/library', () => ({
   getLibrary: () => ({ put: async () => {}, list: async () => [] }),
 }));
 vi.mock('../network/proxy', () => ({
+  PROXY_UNVERIFIED_MESSAGE: 'PROXY_UNVERIFIED',
   getProxyConfig: async () => proxyConfig,
   // 読み出しの新しい入口 (「未設定」と「読めない」を分ける)。ここでは常に「読めた」。
   inspectStoredProxyConfig: async () => ({ config: proxyConfig, rejected: null, unreadable: null }),

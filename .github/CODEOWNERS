@@ -291,6 +291,8 @@
 /src/main/__tests__/secretsCredentialTtl.test.ts @hiroto1977
 # 保存時刻の認証 (若返り攻撃の回帰検査 · パス 566-C · threat: T-230)。
 /src/renderer/security/__tests__/vaultCredentialTtl.test.ts @hiroto1977
+# BYO プロキシ設定の保存時 MAC (回帰検査 · パス 566-B · threat: T-231)。
+/src/renderer/security/__tests__/proxyMac.test.ts @hiroto1977
 /src/shared/__tests__/huntCycle.test.ts @hiroto1977
 # 台帳の穴を開け直す道具の検査と、名指しの層 (パス 565 · threat: T-226)。
 /src/shared/__tests__/threatAblation.test.ts @hiroto1977

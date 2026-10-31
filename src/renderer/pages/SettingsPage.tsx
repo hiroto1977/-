@@ -27,7 +27,7 @@ import { credentialUseOf, unusedStoredCredentials } from '../../shared/credentia
 import { EVICTION_RECOVERY, isEvictableStorage } from '../../shared/storageDurability';
 import { describeStateStores } from '../../shared/atRestInventory';
 import type { ServiceId } from '../../shared/serviceId';
-import { inspectStoredProxyConfig, setProxyConfig, type ProxyConfig } from '../network/proxy';
+import { inspectStoredProxyConfig, setProxyConfig, PROXY_UNVERIFIED_MESSAGE, type ProxyConfig, type ProxyMacProblem } from '../network/proxy';
 import { StepUpPassword } from '../components/StepUpPassword';
 import { STEP_UP_CANCELLED, proxyChangeNeedsStepUp, stepUpReason } from '../security/egressStepUp';
 import { deviceStoreFailureMessage, reportDeviceStoreFailure } from '../data/deviceStoreFailure';
@@ -1547,6 +1547,12 @@ export function ProxySection() {
   // 利用者はプロキシが効かない理由に辿り着けない。
   const [rejected, setRejected] = useState<ProxyEndpointFailure | null>(null);
   /**
+   * **保存時 MAC が検証できない状態** (2026-10-31 · 566-B · threat: T-230)。保存されている設定が
+   * 署名されていない (レガシー / 剥がされた) か、改竄されている。資格情報の送り先なので、検証できない
+   * 設定は使わず、保存し直しを促す。判定と文面は `network/proxy.ts`。
+   */
+  const [unverified, setUnverified] = useState<ProxyMacProblem | null>(null);
+  /**
    * **「未設定」と「確認できない」を分ける。**
    *
    * 保管先 (IndexedDB) が開けないと `config` は `null` になる。それを「未設定」の
@@ -1581,10 +1587,11 @@ export function ProxySection() {
   const unused = buildKind === null ? null : proxyUnusedNote(buildKind);
 
   async function refresh() {
-    const { config, rejected: why, unreadable: cause } = await inspectStoredProxyConfig();
+    const { config, rejected: why, unverified: mac, unreadable: cause } = await inspectStoredProxyConfig();
     setUnreadable(cause === null ? null : deviceStoreFailureMessage('settings', 'read', cause));
     setCfg(config);
     setRejected(why);
+    setUnverified(mac);
     setUrl(config?.url ?? '');
     setSecret(config?.sharedSecret ?? '');
   }
@@ -1810,6 +1817,19 @@ export function ProxySection() {
         >
           保存されているプロキシ設定は、今の規則では使えないので<strong>無効にしています</strong>。
           {' '}{describeProxyEndpointFailure(rejected)} 設定し直してください。
+        </div>
+      )}
+      {unverified !== null && (
+        <div
+          role="alert"
+          data-proxy-unverified
+          style={{ fontSize: 11, color: 'var(--danger)', marginTop: 6, lineHeight: 1.6, border: '1px solid var(--danger)', borderRadius: 6, padding: '6px 8px' }}
+        >
+          ⚠ {PROXY_UNVERIFIED_MESSAGE}
+          {' '}
+          {unverified === 'tampered'
+            ? '(保存された設定が書き換えられている可能性があります —— 心当たりが無ければ、送り先が自分の Worker か確認してください。)'
+            : '(この設定はまだ署名されていません —— この更新より前に保存した設定です。)'}
         </div>
       )}
       {msg && <div style={{ fontSize: 11, color: 'var(--success)', marginTop: 6 }}>{msg}</div>}
