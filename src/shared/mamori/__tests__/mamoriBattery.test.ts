@@ -93,7 +93,7 @@ const LEXICAL_TRAPS = [
   // 数
   '0x', '0xG', '1__0', '1_', '08', '0.0.0', '1e', '1e+', '0b2', '9'.repeat(400),
   // 見た目の同じ字・不可視の字・bidi
-  'еval("1")', 'ｅval("1")', 'ev\u200Dal("1")', 'ev\u200Bal("1")', 'evál("1")', 'e\u0000val("1")', '\u202Eeval("1")',
+  '\u0435val("1")', 'ｅval("1")', 'ev\u200Dal("1")', 'ev\u200Bal("1")', 'evál("1")', 'e\u0000val("1")', '\u202Eeval("1")',
   '"\u202E" + eval("1")', 'eval\u00A0("1")', 'eval\u2003("1")', 'eval\uFEFF("1")', 'eval\u000B("1")', 'eval\u000C("1")',
   '\\u0065val("1")', 'ev\\u0061l("1")', '\\u{65}val("1")', 'a\u2028eval("1")', 'a\u2029eval("1")', 'a\reval("1")',
   '\ud800', '"\ud800"', 'x😀', '$', '_', '$$', '__', 'a$b', 'ａｂ',
@@ -500,7 +500,7 @@ export function runBattery(seed: number, rounds: number): Report {
 const SPECIAL = [
   '\u2028', '\u2029', '\r', '\n', '\u202E', '\u2066', '\u200B', '\u200D', '\u00A0', '\uFEFF', '\u0000', '\u000B', '\u3000',
   '\\', '"', "'", '`', '$', '${', '{', '}', '(', ')', '[', ']', '/', '/*', '*/', '//', '///', '//!', '#', '@', ';', ',', ':', '.', '?.', '??',
-  '=>', '->', '...', '\\u0065', '\\x41', '<', '>', '|', '&', '!', '=', '+', '-', '*', '%', '0x', '1_0', 'ｅ', 'е',
+  '=>', '->', '...', '\\u0065', '\\x41', '<', '>', '|', '&', '!', '=', '+', '-', '*', '%', '0x', '1_0', 'ｅ', '\u0435',
 ];
 const FUZZ_SEEDS: readonly string[] = [
   CONTEXTS.ret!('1'), CONTEXTS.sinkArg!('"x"'), CONTEXTS.gateBody!('1'), CONTEXTS.arrow!('q'), CONTEXTS.obj!('1'),
@@ -583,7 +583,7 @@ describe('物差しの対照: 判定は穴の開いた生成物を実際に落�
     動的import: 'export function go() {\n  return import("fs");\n}\n',
     'RegExp.$1': 'export function go() {\n  return RegExp.$1;\n}\n',
     '注記の外へ出た行終端': 'export function go() {\n  // a\u2028eval("1");\n  return 1;\n}\n',
-    非ASCIIの名前: 'export function go() {\n  return еval("1");\n}\n',
+    非ASCIIの名前: 'export function go() {\n  return \u0435val("1");\n}\n',
     構文の誤り: 'export function go( {\n  return 1;\n}\n',
     'Object.assign': 'export function go(x: object) {\n  return Object.assign(x, x);\n}\n',
     'new Function': 'export function go() {\n  return new Function("return 1");\n}\n',
