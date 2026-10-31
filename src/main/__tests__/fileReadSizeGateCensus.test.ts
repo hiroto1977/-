@@ -102,6 +102,13 @@ const LEDGER: readonly Row[] = [
     cap: 'MAX_MANIFEST_BYTES',
     why: '起動時の自己検算: 検算表そのものの読み。表が大きすぎれば読まずに断る (パス 553 · T-218)',
   },
+  {
+    file: 'src/main/selfAttestation.ts',
+    needle: 'await fs.readFile(pkgAbs)',
+    gate: 'st.size > MAX_MANIFEST_BYTES',
+    cap: 'MAX_MANIFEST_BYTES',
+    why: '起動時の自己検算: 入口 (package.json の main) を検める読み。大きすぎれば読まずに断る (パス 566-D · T-228)',
+  },
 ];
 
 function shippedSources(): string[] {

@@ -7,6 +7,103 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-10-31) — パス 571 (MG-004): `escape.ts` を Mamori 0.3 へ移植し、言語の穴 T-232 を塞いで 0.4 に
+
+- **周の選び方**: `npm run mamori:grow -- brief` が port `src/shared/escape.ts` (移せる 1 本・足りない構文は template だけ) を選んだ。出力側の関門 (`escapeXml` / `safeColor` / `isHexColor` / `escapeMarkdownInline` / `escapeMarkdownText` / `escapeInvisibleUnits` ほか)。判定は 1 字も変えず、`escapeUnits` の template を `+` の連結へ・連鎖呼び出しの改行が生成物で 1 行になっただけ。
+- **破る段で穴 (T-232)**: 移す前に使う組み込みを総当たりで破った。宣言なしで使える組み込みは「副作用の判断を持たない」と名乗るが、**名前ではなくメンバ**が共有の状態を持つ物が 3 組あり、0.3 のコンパイラは全部通した —— `RegExp.$1` / `lastMatch` / `input` (**同じ realm の他のモジュールが最後に走らせた正規表現の一致と入力 = 秘密**。node で `/(sek)/.exec('a sek b'); RegExp.$1` は `'sek'`)・`Error.captureStackTrace` / `stackTraceLimit`・`URL.createObjectURL` / `revokeObjectURL`。直し: `checker.ts` の `BUILTIN_MEMBERS` で RegExp / Error / TypeError / RangeError は構築する形 (`new X(…)` / `X(…)`) だけ、URL は構築する形 + `canParse` / `parse`、値としての持ち出し (`const r = RegExp;`) も M6。同名を宣言した値は組み込みではないので表は掛からない。
+- **機械**: `mamoriV04.test.ts` 20 件 (規則を破るプログラム 8 欄 × RegExp・Error 系・URL・持ち出し 4 形 + 対照: 構築する形/許したメンバ/隠した名前は通る・表の中身)。対照 3 方向 (表を戻す / 持ち出しの断りを殺す / 構築する形を禁じる) と台帳の書き換え 2 件 (A-541 / A-542) がそれぞれ狙った検査で鳴る。変異検査: `checker.ts` 100.00% (494 killed) · `escape.ts` 100.00% (49 killed)。初回は 99.21% で生存 4 件 —— 3 件は `identName` が null を返すのに `undefined` と比べていた冗長な条件 (TS2345 で CI の typecheck も落とした)・1 件は隠した sink 名の検査が無かった。
+- **台帳・記録**: T-232 (`security/threat-ledger.json`)・`security/mamori-growth.json` に MG-004 (版 0.4・probes 8 つのうち hole 3)・`docs/MAMORI.md` (0.3 の穴の節・M6 の表・移植の行)・ブロック #404。`lint:forbidden` の `escape.ts` の例外件数 10 → 5。
+- **対戦 (赤 vs 青) の続き**: 「他のハッキング方法を考えて対戦して」で言語自身を攻めて 2 件。**T-233** = 行注記を LF だけで終えていたので、CR / U+2028 / U+2029 のあとの字を注記として読み飛ばし検め (M0 / M6) を通らないコードを生成物へ運べた (パーサ差分) → `LINE_COMMENT_BODY`。**T-234** = 型の綴りに印の名前が在れば印を運ぶと見ていたので `VU | string` / `VU[]` を印つきの口へ通せた → `carriedMark` (印そのもの、または印 + null / undefined)。テスト 29 件 (mamoriV04) + A-543 / A-544 (ablation caught)。対照は parser / checker を元の形へ戻して狙った検査だけが落ちることを確認。
+- **T-241 (パス 572 続き · 複数ファイルの手探り)**: `use { open alias o }` の別名と、別のモジュールの同名の非 export の関数が、本物の sink の外形を隠し M4 が外れた (ファイルの並び順にも依った)。`checker.ts` の外形の鍵を `道 + 名前` にし、`resolveUse` で use を道で解く。export していない名前の use と名前の二重宣言は M6 で断る。回帰 `mamoriV04.test.ts` (T-241)・ablation A-552〜A-555 caught・`checker.ts` 変異検査 100% (565)・block #407。電池の複数ファイルの環境に別名と同名の別の関数 2 形を足した。
+- **攻撃の電池 (パス 572 · 「毎回違う方法・何十通り・同時多層多重攻撃で対戦」)**: `src/shared/mamori/__tests__/mamoriBattery.test.ts` —— 弾約 300 × 文脈約 40 × 環境約 35 を掛け合わせ、文字レベルの揺さぶり (fuzz) も加え、**受け入れた生成物を TypeScript の構文木で独立に判定**する (宣言していない名前・禁じたメンバ・添字/テンプレート/as/動的 import・非 ASCII・bidi/不可視の裸の字・印の無い値を sink へ渡す形・整形で断りが失われないこと)。固定の種 3 つが `npm test`、`npm run audit:mamori-battery` が時刻の種で多く回す。**初回で 6 件 (T-235〜T-240)**: 隠し字 (注記/文字列/正規表現)・文字列の例外落ち・引数の欠落・**型の綴りへ文を隠せた (T-239 · 最重)**・古い getter。対照: 修正を 1 つずつ戻すと電池が落ちる (T-233/234/232/.constructor/M6/T-235/T-239)。判定の物差しは実物の .mamori 11 本を通し、穴の開いた生成物 13 形を落とす。限界は docs/MAMORI.md。
+- **検証 (パス 572 の最終)**: `npm test` **24,052 件 ❌ 0**・`verify:all` 39 ゲート exit 0・変異検査 `parser.ts` **100.00%** (Killed 1225 / Timeout 56 / 生存 0)・`checker.ts` **100.00%** (Killed 509)・`chain:verify` 緑 (block #406)・ablation A-543〜A-551 すべて caught。出荷物 (FULL / LITE の HTML) は動いていない —— Mamori のコンパイラ・検査・台帳・docs・`package.json` の script だけを触り、生成物 `.ts` は `mamori:check` で最新のまま。実機 (perf / e2e) は回していない。
+- **次**: MG-003 で先送りした添字 `index` は T-241 以降 (REMAINING の break-first を先に)。`String.raw` と `Object.freeze(use で宣言した値)` は測って絞らなかった (REMAINING)。
+- **出荷物**: FULL 12,133,963 B / LITE 3,546,587 B (両方 −2 B)。
+
+## 直近の作業 (2026-10-31) — パス 570: ロット削除後の status 文に保管 id の天井
+
+- **穴**: `HydroponicsPage.removeBatch` の status 文 3 つ (見つかりません / 削除できませんでした / 削除しました) が保管した batch id を素で補間。表は `batchIdText` で天井済みだが、× を押した後の文だけが素 (パス 569 が残した物)。届く道は復元・手編集 JSON・旧版。action 起点 (view-time ではない)。
+- **直し (パス 420 の規律)**: 文に入れる名前だけ `batchIdText` (40 字 + '…')。lookup / remove は全文の id のまま。正当な id (≤ 40) は不変。
+- **機械**: `hydroponicsRemoveStatusCeiling.test.ts` 3 件 (200,000 字の id で成功文・失敗文が天井で切れる・正当 id 不変)。対照: 失敗文 / 成功文を素へ戻すとそれぞれ狙った 1 件が落ちる (md5 で復帰確認)。「見つかりません」文は他タブとの競合でしか届かず jsdom で再現できなかった (振る舞いでは未測)。
+- **残した物**: status / confirm / aria-label の補間が保管値を素で出さないことの census (今日の欠陥 0 件・機械化は別パス)。
+- **出荷物**: FULL 12,133,965 B / LITE 3,546,589 B (+10 B)。
+
+## 直近の作業 (2026-10-31) — パス 569: チームレーダーの下書き (localStorage) の保存値の天井
+
+- **穴**: 入口 (`TeamRadarPage` の `fieldsOverCeiling`) と snapshot の `validateMembers` はチャート名・部署・評価時点・軸名・メンバー名・付箋を上限で断るのに、**下書き `servicehub.teamradar.draft.v1` の読み** (`sanitizeRadarDraft` / `sanitizeTeamMember`) は `typeof === 'string'` だけで長さを見なかった (パス 359 / 419 / 568 の「入口が出口より厳しい」)。届く道は手編集 JSON・旧版。
+- **実測 (実物の TeamRadarPage を jsdom で描く · 各欄 200,000 字)**: 画面の総文字数 **2,201,386** (可視テキストの最長 200,000・編集欄 `<input>` の値も 6 欄 × 200,000)。直した後は **1,503**。
+- **直し (パス 420 / 568 の規律)**: 表示専用の 6 欄を `clampToCeiling` (入力の付箋が既に使う物・末尾 '…' なし) で**読むときに**畳む。`id` は同一性の鍵なので畳まない。正当な値 (≤ 上限) は 1 字も変わらない。
+- **機械**: `teamRadarDraftCeiling.test.ts` (6 件・sanitizer 単体 + 実物の画面)。対照 4 方向 (name / 付箋 / title / 軸の clamp を外す) が狙った検査に当たる (md5 で復帰確認)。
+- **門と実機**: `npm test` 23,962 ❌0・`verify:all` exit 0 (unit test count 19254 → 19260・`lint:shared-judgement` census 再生成)・`perf` OK・`e2e` 762 ❌0・`e2e:lite` 762 ❌0。FULL 12,133,955 B / LITE 3,546,579 B (+52 B)。teamradar の下書きは鎖の保護対象外。
+- **測って何も無かった軸**: 水耕の品目 (`sanitizeCropList` が over-length を行ごと落とす)・WorkAssignmentsPanel (パス 556 で天井済み)・MentorPage の AI 口 (funnel の `outboundContentRefusal` と `aiReplyInert` census が覆う)。
+- **残した物**: HydroponicsPage `removeBatch` の status 文 3 か所が保管値 batch id を素で補間 (表は `batchIdText` で天井済み・action 起点で view-time ではない)。`docs/REMAINING_WORK.md` のパス 569。
+
+## 直近の作業 (2026-10-31) — パス 568: 専属カウンセラー MentorPage の保存値の天井 (メンバー鍵)
+
+- **穴**: 保管した自由文の天井 (パス 419) の census `storedFreeTextCeiling.test.ts` は 5 画面 (team / mutual-funds / real-estate / 士業 CRM / ManualDataSection) を覆うが、**後から足された画面 MentorPage (専属カウンセラー · パス 551 以降) が入っていなかった**。自由文 (聞き取りの答え・チェックイン / 関係のメモ) は `sanitizeMentorSession` の `readText` が既に天井済み (長すぎは落とす) だが、**メンバー鍵には天井が無かった** (`memberKeyOf` = trim + lower だけ・`readRelation` は `with` の長さを見ない)。
+- **実測 (実物の MentorPage を jsdom で描く · 1 欄 200,000 字)**: (a) `relations[].with` が roster 不一致 → `nameOf` の `?? key` fallback = 関係行 **200,012** / 画面 **201,163** · (b) 名前が空で email が長い member → `mentorRoster` の `|| r.data.email` fallback = option **200,001** / 画面 **200,571** · (c) `teamPairs` の `aName`/`bName` (両者同意の mutual · 純関数) → `?? k` fallback = 鍵そのもの (convoluted)。届く道は**復元・手編集 JSON・旧版データ** (`COLLECTION_SHAPES` の `str` は長さを見ず、入口のフォームは断るが復元は入口を通らない —— パス 419 の「入口が出口より厳しい」)。
+- **直し (パス 420 の規律「同一性の鍵は天井を掛けず、表示だけ天井」)**: 鍵は join (`byKey.get` / dedup `seen` / pair id / roster lookup) に使うので切ると別の鍵を指す。だから 3 か所の**表示の fallback だけ**を `displayField` (既定 256 字 + '…') へ —— `MentorPage.nameOf` の `?? key`・`mentorRoster` の `|| r.data.email`・`teamPairs.nameOf` の `?? k`。判定は 1 つも変えない。
+- **正当な値は 1 字も変わらない** (実測): roster 名 (`mentorRoster` が既に `displayField(r.data.name)`) も正当なメール鍵 (≤254) も既定 256 未満なので素通し。退team したメンバーの正当な email 鍵は全文そのまま・名前が在る member は roster 名をそのまま (検査で留めた)。直した後は (a) 269 字・(b) 263 字 で天井に収まる。
+- **機械**: `mentorStoredCeiling.test.ts` (**6 件**・背骨は振る舞い —— (a)(b) は実物を描き・(c) は純関数 `teamPairs`)。**対照 3 方向すべて鳴る** (fixed 版を控えて md5 で戻した): A `?? key` へ戻す → (a) ❌1 / B `|| r.data.email` へ戻す → (b) ❌1 / C `?? k` へ戻す → (c) ❌1 —— 正当な値の 3 件は fallback に依らず通ったまま。
+- ★ **自戒**: probe は緑でも `typecheck` だけが 6 件捕まえた —— `waitForElement` / `settleUntil` は第 2 引数 (label) が必須で `querySelector` に `<HTMLSelectElement>` の型引数が要る (vitest は型を剥がす。パス 373 以来の同じ罠)。
+- **測って何も無かった軸**: 自由文は `readText` が天井済み・`teamSignals` の `name` は roster 一致を要求するので常に roster 名 (天井済み)・`data-mentor-signal={s.member}` は属性で可視文字ではなく member は roster 鍵。mentor ファイルは整合性チェーンの保護対象ではない (chain:append 不要)。**T-id は付けない** (パス 417-420 と同じ番号のみの硬化パス)。
+- **門と実機**: `npm test` 23,956 件 ❌ 0・`verify:all` 39 ゲート exit 0 (unit test count 19248 → **19254**・Stryker mutate scope 330 不変)・`chain:verify` 緑・`perf` OK (LITE DCL 233 / FULL 606 ms)・`e2e` 762 / `e2e:lite` 762 とも ❌ 0。FULL 12,133,903 B / LITE 3,546,527 B (両方 +12 B)。`smoke:app` / `e2e:ollama` は回していない (主プロセスも Ollama も触っていない)。
+
+## 直近の作業 (2026-10-31) — パス 567 (MG-003): `tokenInput.ts` を Mamori 0.3 へ移植 (index は break-first で先送り)
+
+- **育てる輪の 1 周 (MG-003)**: `mamori:grow -- brief` が「移せる壁を先に移す → 無ければ構文を足す → 無ければ破る」の順で、今週は**移せる壁** `tokenInput.ts` を deterministic に選んだ。当初タスク (#48) は「添字 `index` を足す」だったが、**構文を足す前に 0.3 を破ったら穴が出たので先送り**にした (break-first の正しい結果 = 「まだ出荷しない」)。
+- **index を足すと開く穴 (実測)**: `x[k]` で `k` が literal なら `x['constructor']` で `FORBIDDEN_MEMBERS` (M6) を迂回・`k` が computed なら来歴 (taint) を運べない形で危ない口へ届く (`const f = x[k]; f('code')` の laundering)。閉じるには literal 鍵を `FORBIDDEN_MEMBERS` へ通し・computed 鍵の結果を inert にして taint を伝播させ・代入の左辺 (`out[i]=v`) の prototype 汚染を塞ぐ必要がある。`docs/REMAINING_WORK.md` のパス 567 の節に測って残した (別パス・T-232 以降)。tokenInput を移したことで `index` を書くと今も M0 で断る (probe で実測)。
+- **移植の実際**: `tokenInput.mamori` を書き (`use { … }` で `controlChars` / `headerValue` / `inputCeiling` の判定を借り・`checkTokenInput` を `fn` で)・too-long の文面だけ template を `+` の連結へ書き直し (組み上がる文字列は 1 字も変えない —— Mamori は M0 で template を持たない)・`mamori:build` で `tokenInput.ts` を再生成 (`mamoriGenerated.test.ts` が byte 一致を見る・EXPECTED 10 本)。判定が 1 字も変わっていないことは既存の `tokenInput.test.ts` が編集なしで緑であることが示す。
+- ★ **変異検査で本物の穴が 1 つ**: template → `+` は too-long の文面を 3 つの文字列リテラル (前 / 中 / 後) に分け、数字の存在だけを `toContain` で見ていた検査では**中間・末尾のリテラルを空にする StringLiteral 変異体が 2 つ生き残った** (初回 94.74%)。文面を丸ごと `toBe` で留めて潰した (手で両変異体を当てて検査が落ちることを確かめ、再測定 40 変異体 **100.00%**)。
+- ★ **5 つの破る試しはすべて refused** (`.constructor` を書く T-224 の道 / 文面を template にする / `as` / 添字 `value[0]` / 宣言していない `new Headers(value)`)。
+- **波及**: 保護対象に `tokenInput.mamori` を足し (生成物 `tokenInput.ts` は既に保護対象)・CODEOWNERS に 1 行・`chain:append` で block **#403**・`docs/MAMORI.md` の移した壁の表に 1 行・成長台帳 `security/mamori-growth.json` に MG-003 (版 0.3 のまま・構文は 1 字も育てていない —— それが break-first の正しい結果)。`npm test` 23,950 件 ❌ 0・`verify:all` 39 ゲート exit 0 (unit test count 19248 不変)・実機 `perf` / `smoke:app` / `e2e` 762 / `e2e:lite` 762 とも ❌ 0。FULL 12,133,891 B / LITE 3,546,515 B (両方 −4 B)。
+
+## 直近の作業 (2026-10-31) — パス 566-B: BYO プロキシ設定の保存時 MAC (master 鍵 · threat: T-231)
+
+- **穴**: ブラウザ版の BYO プロキシ設定 (`network/proxy.ts`・送り先 URL + 共有秘密) は**平文の別 DB** (`business-hub-preferences`) に残る —— 解錠の前後を問わず読めるようにする設計。ところが平文ゆえに IndexedDB へ書ける相手 (別プロファイル・別の `file://` の HTML・拡張) は、OS キーチェーン・マスターパスワードを破らなくても送り先 URL を自分の Worker へ差し替えられる。`fetchViaProxy` は呼び出し側の `Authorization` をそのまま封筒に載せる (**資格情報のほぼ全部が通る 1 本の口**) ので、差し替えればまるごと盗れる。**T-219 の step-up は画面の書き手 (`SettingsPage`) にしか効かず、`setProxyConfig` を迂回する生の IDB 書き込みを素通りさせていた。**
+- **直し (保存時 MAC · T-230 と同じ形)**: `vault.ts` に汎用の認証タグ `authTag(domain, data)` / `verifyAuthTag(domain, data, tag)` を足す (master 鍵で AES-GCM・既知平文を封じるのが MAC・`domain` = `service-hub-authtag-v1:<domain>` で用途を分離)。`proxy.ts` は解錠中に `authTag('proxy-config', canonical)` を平文の隣に置き (保管庫のトークン名前空間は汚さない)、読み出しの funnel `reviewAndVerify` (`getProxyConfig` / `inspectStoredProxyConfig`) が検証して**未検証なら使わない**。3 状態 —— 解錠中×一致=使う / 解錠中×未署名 (`unstamped`: レガシー or 剥がし) =断る / 解錠中×不一致 (`tampered`) =断る / **ロック中=検証を保留して素の設定を返す** (資格情報が乗る読みは必ず `vault.getToken` の後 = 解錠後なので、ロック中の読みに秘密は乗らない —— web-shim の `runProxyBearer` / security 鍵の経路で確かめた)。保存は `SettingsPage` でブラウザ版では解錠必須 (パス 455) なので常にタグが付く。文は `PROXY_UNVERIFIED_MESSAGE` が 1 か所、web-shim の `getProxyTransport` と AI chat 2 経路・`SettingsPage` が言い分ける。
+- **`ArrayBuffer.isView` で見る** (`instanceof Uint8Array` ではなく) —— preferences IDB の structured clone / jsdom とのレルム違いで Uint8Array の同一性が崩れ、**保存した直後の mac すら検証に落ちた** (実測。crypto.subtle が受ける BufferSource の条件で見る)。
+- **対照**: `proxyMac.test.ts` の「対照: MAC 検証の下の層 (shared の `reviewStoredProxyConfig`) は差し替えた URL を受ける」が MAC の層が load-bearing であることを示す (形だけ見る下の層は evil な URL を通し、MAC の層が止める)。ablation **A-540** (threat T-231・`reviewAndVerify` の 2 判定を両方殺す) が回帰検査「送り先 URL を差し替えた改竄…は使わない」「署名の無い生書き込み…は使わない」で caught。
+- **残り穴 (残余・severity low)**: 同一オリジンで**解錠中**の攻撃者は `vault.authTag` を自分で呼んで正しいタグを作れる (在メモリの鍵を持つ相手は何でもできる)。守るのは**静止時の改竄** —— アプリが動いていない間・別プロセス・別拡張からの IDB 書き込み。T-230 と同じ形。レガシー (この修正より前に保存した設定) は解錠後の最初の読みで `unstamped` として断られ、設定画面で 1 度保存し直せば署名が付く (fail closed)。
+- **波及**: `../network/proxy` を mock する 14 の web-shim 検査に `PROXY_UNVERIFIED_MESSAGE` の export を足し (静的 import なので mock に無いと落ちる)、web-shim の未検証の分岐を**真偽**で見る (mock が `unverified` を省いても throw しない)。
+- **整合性チェーン**: `proxy.ts` / `vault.ts` を触ったので block **#402** を採掘。`verify:arch` のユニットテスト数を 19235 → **19248** (+13 · proxyMac)。`lint:shared-judgement` の census を再生成 (`constantTimeEquals` の読み手 1 → 2)。
+- ★ **MG-003 (task #48) の脅威 id は T-241 以降へ** —— 以前の計画メモは「T-231 へ retag」と書いていたが、566-B がこの id を取った (ledger の最大は T-231 になった)。
+
+## 直近の作業 (2026-10-30) — パス 566-C: 保存時刻を暗号に束ねて認証する (若返り攻撃 · threat: T-230)
+
+- **穴**: 保存した資格情報の有効時間 (T-213・8 時間) は保存時刻を読んで期限切れを消すが、その時刻 (ブラウザ版 vault の `storedAt`・デスクトップ版 secrets.json の `at:<ms>:` 平文) は**認証されていなかった**。保管庫 / 保管ファイルへ書ける攻撃者は、OS キーチェーン・マスターパスワードを破らなくても、期限切れの記録の時刻を「古いが今以下」へ前倒しして若返らせ、持ち出した写しを 8 時間の壁を越えて使えた。**T-213 の fix「過去へ書き換えても早く消えるだけ (信用を延ばす向きには働かない)」は偽だった** —— 未来ではなく「古いが今以下」へ戻せば若返る (脅威台帳の T-213 を T-230 へ訂正)。
+- **直し (両ビルド対称・版で切り分けて後方互換)**: ブラウザ版 `vault.ts` は記録を v2 (`TOKEN_RECORD_V2`) にし AES-GCM の AAD へ serviceId に加え storedAt を束ねる (`tokenAadV2`) —— 時刻を書き換えると復号自体が失敗する。平文 storedAt は復号前の有効時間の事前判定に残す。v1 / 版なしは読めたら v2 へ束ね直す (`rebindToken` · 遅延移行)。デスクトップ版 `secrets.ts` は safeStorage に AAD が無いので時刻を暗号文の中へ束ねる (`atv2:<ms>:<encode(ts1:<ms>:<token>)>`)。読む時に平文の ms と暗号文の中の ms の一致を検め、不一致なら復号できない扱い。`at:` の旧形式はそのまま読め、読めたら atv2 へ上げ直す。**有効時間 8 時間なので修正後 8 時間で全記録が認証つきになる (brick 無し)**。
+- **移行の stamp は `Number.isFinite`** (パス 566-C 仕上げ) —— `typeof storedAt === 'number'` だと NaN が素通りする (`typeof NaN === 'number'`)。`Number.isFinite(storedAt) ? storedAt : Date.now()` にして壊れた時刻を今へ倒す。`finiteShapeGuards` の台帳はこれで鳴らない。
+- **対照 (ablation A-538 / A-539)**: A-538 (ブラウザ: v2 AAD から storedAt を落とす)・A-539 (デスクトップ: atv2 の ms 一致検査を落とす) が `node scripts/threat-ablation.cjs run --only T-230` で両方 caught。回帰検査は `secretsCredentialTtl.test.ts` / `vaultCredentialTtl.test.ts` の若返り検査 (前倒しした記録を書いて復号を断ることを見る)。
+- **残り穴 (限界・severity low)**: 「まだ有効だった頃に捕らえた記録を丸ごと」書き戻す rollback は、利用者が鍵を差し替えた後でも 8 時間の窓の中なら旧い鍵が蘇る。サービスごとの単調カウンタを AAD に足せば塞げるが記録の版管理が要るので別パス候補 (攻撃者は保管庫への書き込みと古い有効な記録の控えが要り、窓は 8 時間)。
+- **変異検査は測定の人工物で汚れた (正直に記録)**: `audit:mutate-changed` は secrets.ts / vault.ts で 96.13% を出したが、生存は decode / binding のコード (v2 分岐・atv2 の読み) に集まっており、それらを覆う検査は `rereadModule` / 動的 import を使うため **Stryker の related-test-selection に映らない** (パス 490 / 495 の既知の人工物)。**ablation (A-538 / A-539 が caught) が守りの検査されていることを直接証明している**ので、OOM で何度も回し直して追わず、ここに記録する。全掃引での仕分けは非 OOM 環境の follow-up。
+- **罠 (このパスで踏んだ)**: ① `audit:survivors` / 重い変異検査は**コンテナを OOM で落とす** (exit 137) —— その最中は対象ファイルを読み書きしない (vault.ts が書き換わったまま残り `git checkout` で戻した)。② census の `why` に綴りを再現すると、その検査自身がその綴りを「生の読み」「禁止パターン」と数える —— `fs.readFile(` (originalSourcePolicy) と `eval(atob(` (lint:forbidden) の両方で踏んだ。綴りは再現せず「…の形」と述べる。③ stale な git worktree (`.claude/worktrees/`) が残ると `lint:charset` が中の ALLOWLIST 対象を別パスで拾って verify:all を落とす (CI の fresh checkout には無いので local のみ)。`git worktree remove` で片付ける。
+- **整合性チェーン**: vault.ts / secrets.ts / lint-malware.cjs を触ったので block #399 → #400 → #401 を採掘。`npm test` 23937 件 ❌ 0・`verify:all` 39 ゲート exit 0。
+
+## 直近の作業 (2026-10-30) — パス 565: 台帳の穴を開け直して、回帰検査が本当に鳴るかを測る (threat: T-226)
+
+- 台帳の検査は「名指しの回帰検査の題名が在ること」までしか見ていなかった。`npm run audit:threat-ablation` (`scripts/threat-ablation.cjs`) が `security/threat-ablations.json` の書き換え (守りを直す前の形へ戻す 1 行) を git worktree の写しへ当て、名指しの検査だけを走らせ、vitest の JSON 報告から caught / missed / unmatched / load-error を分ける (非 0 終了を「捕まえた」と読まない)。原文でも 1 度走らせて通ることを確かめ、`finally` で戻して内容で照合する。
+- **実測**: 157 の書き換え (115 の脅威・high 9 件は全部) で **131 caught / 26 missed**。`triage` (名指しのファイルの隣 → `vitest related` + 名前で読む検査) で 26 件とも別の検査が捕まえていた —— 台帳の名指しが同じ守りの別の層・別の枝を見ていなかった (T-215 のブラウザ側の層・T-216 の skills と web-shim の層・T-219 の Ollama の接続先 ほか)。台帳に `alsoRegressions` (層ごとの名指し) を足して測り直した。
+- 機械: `threatAblation.test.ts` (判定の標本・書き換えがちょうど 1 回当たる・high は全部書き換えを持つ・**2026-10-31 以降の脅威は書き換えを持たないと落ちる**・床 115・`--only` の空 / 当たらない名前は断る・毎日の workflow の配線)。`threatLedger.test.ts` は `alsoRegressions` も題名・印・宣言・CODEOWNERS で見る。毎日の dependency-audit が `--report` で走らせ、捕まえ損ねを常設 Issue の要対応に出す。
+- 罠: `it.each` で展開した題名は原文に無い —— 名指しは雛形 (`%s`) か `describe` の題名。台帳の題名は部分一致 (★ や (threat: …) を省いた行が在る)。道を打ち間違えて「0 件のうち 0 件」を exit 0 で返した —— 0 件の選択は断るようにした。
+
+## 直近の作業 (2026-10-30) — パス 564: 育てる輪の 2 周目 MG-002 —— controlChars を移し、16 進の数 (0.3)、sink の呼び方の穴を塞ぐ (threat: T-225)
+
+- brief どおり `src/shared/controlChars.ts` (24 行) を `controlChars.mamori` の生成物にした。判定は `c < 0x20 || c === 0x7f` のまま —— そのために 16 進の数 (`0x20` / `0X1F`) を字句へ足した (0.3 · 数字の無い `0x` は断る)。
+- **「破る」段が足す構文と関係の無い穴を出した (T-225)**: 印を受ける関数を値として持ち出す 8 形 (`openUrl.call(null, raw)` / `.apply` / `.bind`・別名・オブジェクト / 配列・三項・for) で素の値を渡せた (変換後の tsc は型で断る)。**より重いのは sink 関数の中**で、`shell.openExternal(raw)` (行き先以外の素の値)・`return shell;` / `return { s: shell };` を**コンパイラも tsc も通した**。0.3 は印を受ける関数を「直に呼ぶ」ことしか許さず (M4)、危ない口は sink 関数の中でも呼ぶ形でしか使えず、その第 1 引数は行き先の印を持つ値だけ (M2 · `checkCallee`)。
+- 既存の検査 1 件が「sink 関数の引数の既定値に `shell` を値として置ける」を許容として留めていたので反転した。
+- 機械: `mamoriV03.test.ts` (T-225 の回帰・16 進)。対照 6 方向すべて狙った検査で鳴る。
+- 変異検査: 1 度目は checker.ts 98.91% (生存 5 件・4 か所)。等価の形 2 つを消し (`destVetted` を役割で分けない・`bindingOf` で名前の引きを 1 つに)、本物の穴 2 つ (行き先の型が印でない sink 関数・直に呼ぶ未宣言の名前) に検査を足して、checker.ts 454 / controlChars.ts 12 とも **100.00%** (18 分 9 秒)。
+
+## 直近の作業 (2026-10-30) — パス 563: Mamori 0.2 を育て、育てる輪を半永久的に回す (threat: T-224)
+
+- **0.1 の穴を先に破って見つけた (T-224)**: `eval` / `Function` を禁じているのに、`String.constructor(code)()` (= `Function(code)()`) と `''.constructor.constructor` が通り、生成した TS を走らせると任意のコードが動いた (実測: 42 が返った)。`Object.setPrototypeOf` ほか原型を書き換える組み込みも素で呼べた。直し: `.` の後ろの `constructor` / `prototype` / `__proto__` を M0 で断る (`FORBIDDEN_MEMBERS`) ・組み込みの `Object` は許可した読み手 (`hasOwn` / `keys` / `values` / `entries` / `fromEntries` / `freeze` / `isFrozen`) だけで、値として持ち出すのも断る (M6)。
+- **0.2 の構文**: オブジェクトリテラル (`__proto__` の鍵・spread・計算した鍵は断る) / 三項演算子 (印は両方の枝が同じ印のときだけ残る) / `switch` (case の終わりは return / throw / break 必須 —— 落ち抜けを作らない) / `throw` / `for (const x of xs)` + break / continue (ループ変数は印を持たない) / `type` と `interface` / `field x.k` (unknown から欄を読む唯一の形)。
+- **移した壁**: `src/shared/proxyEndpoint.ts` (BYO プロキシの接続先の関門・両ビルドの出荷物) を `proxyEndpoint.mamori` の生成物に。判定は 1 つも変えていない (差は注記の位置と、テンプレート文字列を `+` へ替えた所だけ)。
+- **育てる輪**: `npm run mamori:grow -- brief|record|status` (`scripts/mamori-growth.cjs`) と台帳 `security/mamori-growth.json`。brief は守りの壁 (`lint:mutation-scope` の必ず測る壁) のうち TypeScript のままの物を数え、移せる壁 → 構文を足す → 破る、の順に 1 つ選ぶ。record は「言語を破るプログラム 3 つ以上・変異検査 100%・対照・PR」が無い周を断る。止まり (7 日 × 2) は毎日の dependency-audit が要対応として出す。週 1 の予約 `trig_01SFM9gWmvpjfYoqy1BDkF5q` (金曜 03:43 JST · 新しいセッション) が `docs/MAMORI_GROWTH_PROMPT.md` の指示文で回す —— 指示文を変えたら予約も更新する。
+- **変異検査が 1 つ教えた**: 0.1 の代入は「このモジュールの名前か」しか見ず、引数・`const`・回す変数・関数の名前への代入を通していた (引数への代入は tsc も通す)。0.2 は `let` だけに代入を許す (M6)。既存の検査 2 件がこの弱さを仕様として留めていたので反転した。
+- 機械: `mamoriV02.test.ts` (T-224 の回帰・変換の全形を 1 byte で・構文の誤り 25 形)・`mamoriGrowth.test.ts` 31 件。対照 12 方向すべて狙った検査で鳴る。
+
 ## 直近の作業 (2026-10-30) — パス 562: 進化役は毎日の脅威ウォッチを読む (threat: T-223)
 
 - 予約のセッションは網の方針で OSV / CISA KEV に届かない (実測: CONNECT 403)。だから毎日の dependency-audit (GitHub Actions) が常設 Issue「🔐 依存の勧告とセキュリティの床（自動更新）」の本文末尾に要約 `<!-- threat-watch-digest:v1 … -->` を埋め、狩りのセッションが GitHub の MCP でそれを読む (`scripts/lib/threat-watch-digest.cjs` が作る側と読む側の両方を持つ)。

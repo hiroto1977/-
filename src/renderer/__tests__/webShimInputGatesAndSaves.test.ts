@@ -32,6 +32,7 @@ vi.mock('../security/vault', () => ({
 }));
 vi.mock('../library/library', () => ({ getLibrary: () => ({ put: async () => {}, list: async () => [] }) }));
 vi.mock('../network/proxy', () => ({
+  PROXY_UNVERIFIED_MESSAGE: 'PROXY_UNVERIFIED',
   getProxyConfig: async () => null,
   // 読み出しの新しい入口 (「未設定」と「読めない」を分ける)。既定は「読めた・未設定」。
   inspectStoredProxyConfig: async () => ({ config: null, rejected: null, unreadable: null }),

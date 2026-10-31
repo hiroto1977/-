@@ -7,7 +7,7 @@
  *
  * 型の書き換え (`as`) を出すのは `mint` だけで、それは検査器が gate 関数の中にしか置かせない。
  */
-import type { Expr, Item, Module, Param, Stmt } from './ast';
+import type { Expr, Item, Member, Module, Param, Prop, Stmt } from './ast';
 
 const IND = '  ';
 
@@ -20,6 +20,9 @@ function prec(e: Expr): number {
   switch (e.kind) {
     case 'arrow':
       return 0;
+    // `c ? a : b` は ?? より弱く arrow より強い (TypeScript の条件演算子)。
+    case 'cond':
+      return 0.5;
     case 'mint':
       return 5; // `x as T` は TypeScript で関係演算子と同じ強さ
     case 'binary':
@@ -74,10 +77,23 @@ export function expr(e: Expr): string {
       return `${l} ${e.op} ${r}`;
     }
     case 'arrow':
-      return `(${e.params.map(param).join(', ')}) => ${wrap(e.body, 1)}`;
+      // 本体がオブジェクトの字面なら括る (括らないと TypeScript は `{` を関数の本体と読む)。
+      return `(${e.params.map(param).join(', ')}) => ${e.body.kind === 'object' ? `(${expr(e.body)})` : wrap(e.body, 1)}`;
     case 'mint':
       return `${wrap(e.value, 6)} as ${e.vetted}`;
+    case 'object':
+      return e.props.length === 0 ? '{}' : `{ ${e.props.map(prop).join(', ')} }`;
+    case 'cond':
+      return `${wrap(e.test, 1)} ? ${wrap(e.then, 0.5)} : ${wrap(e.otherwise, 0.5)}`;
+    case 'field':
+      // 型を**広げる**向きの書き換えだけ (読んだ値は必ず unknown)。印へは書き換えない。
+      return `(${wrap(e.object, 9)} as { ${e.prop}?: unknown }).${e.prop}`;
   }
+}
+
+function prop(p: Prop): string {
+  if (p.shorthand) return p.key;
+  return `${p.quoted ? quote(p.key) : p.key}: ${expr(p.value)}`;
 }
 
 function wrap(e: Expr, min: number): string {
@@ -110,6 +126,21 @@ function stmt(s: Stmt, depth: number): string[] {
       return [...head, `${ind}${expr(s.expr)};`];
     case 'comment':
       return head;
+    case 'throw':
+      return [...head, `${ind}throw ${expr(s.value)};`];
+    case 'jump':
+      return [...head, `${ind}${s.word};`];
+    case 'for':
+      return [...head, `${ind}for (const ${s.name} of ${expr(s.iterable)}) {`, ...block(s.body, depth + 1), `${ind}}`];
+    case 'switch': {
+      const inner = IND.repeat(depth + 1);
+      const cases = s.cases.flatMap((c) => [
+        ...comments(c.comments, inner),
+        ...c.tests.map((t) => (t === null ? `${inner}default:` : `${inner}case ${expr(t)}:`)),
+        ...block(c.body, depth + 2),
+      ]);
+      return [...head, `${ind}switch (${expr(s.test)}) {`, ...cases, `${ind}}`];
+    }
     case 'try':
       return [...head, `${ind}try {`, ...block(s.body, depth + 1), `${ind}} catch {`, ...block(s.handler, depth + 1), `${ind}}`];
     case 'if': {
@@ -177,6 +208,11 @@ function item(it: Item, vettedLabels: readonly string[], preludeDone: { value: b
       out.push(...docblock(it.doc), `${exp}type ${it.name} = Vetted<${quote(it.label)}>;`);
       return out;
     }
+    case 'type':
+      if (!it.multiline) return [...docblock(it.doc), `${exp}type ${it.name} = ${it.type.text};`];
+      return [...docblock(it.doc), `${exp}type ${it.name} =`, ...topLevelUnion(it.type.text).map((m, i, all) => `${IND}| ${m}${i === all.length - 1 ? ';' : ''}`)];
+    case 'interface':
+      return [...docblock(it.doc), `${exp}interface ${it.name} {`, ...it.members.flatMap(member), '}'];
     case 'const':
       return [...docblock(it.doc), `${exp}const ${it.name}${it.type === null ? '' : `: ${it.type.text}`} = ${expr(it.init)};`];
     case 'fn': {
@@ -184,6 +220,39 @@ function item(it: Item, vettedLabels: readonly string[], preludeDone: { value: b
       return [...docblock(it.doc), sig, ...block(it.body, 1), '}'];
     }
   }
+}
+
+function member(m: Member): string[] {
+  return [...docblock(m.doc, IND), `${IND}${m.readonly ? 'readonly ' : ''}${m.name}${m.optional ? '?' : ''}: ${m.type.text};`];
+}
+
+/** 和の型を、深さ 0 の ` | ` で分ける (括弧・文字列の中の `|` では分けない)。 */
+export function topLevelUnion(text: string): string[] {
+  const out: string[] = [];
+  let depth = 0;
+  let quote: string | null = null;
+  let start = 0;
+  // 添字で回すと「長さの 1 つ先まで回る」変異体が等価になる (先は undefined でどの字にも当たらない) ので、字の並びで回す。
+  let escaped = false;
+  for (const [i, c] of text.split('').entries()) {
+    if (escaped) {
+      escaped = false;
+    } else if (quote !== null) {
+      if (c === '\\') escaped = true;
+      else if (c === quote) quote = null;
+    } else if (c === "'" || c === '"') {
+      quote = c;
+    } else if (c === '<' || c === '(' || c === '[' || c === '{') {
+      depth++;
+    } else if (c === '>' || c === ')' || c === ']' || c === '}') {
+      depth--;
+    } else if (c === '|' && depth === 0) {
+      out.push(text.slice(start, i).trim());
+      start = i + 1;
+    }
+  }
+  out.push(text.slice(start).trim());
+  return out;
 }
 
 /** 1 つのモジュールを TypeScript へ。`source` は生成物の頭に書く元の道 (リポジトリからの相対)。 */

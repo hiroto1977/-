@@ -310,10 +310,20 @@ async function desktopSuite(browser) {
     updatedAt,
     data: { date: '2026-04-01', channel: 'amazon', amount, orders: 1, note: 'e2e-restore' },
   });
+  // 初回のマージは空の sales-entries への追加 —— 財務データの上書きではないので確認は出ない (T-227)。
   await restoreBackup('older.json', [restoreRow(1_700_000_000_000, 1000)], '2026-01-01T12:00:00Z');
   await page.waitForFunction(() => document.body.textContent.includes('追加 1・更新 0'), undefined, { timeout: 15000 });
-  await restoreBackup('newer.json', [restoreRow(1_760_000_000_000, 2000)], '2026-06-01T12:00:00Z');
+  // 2 回目以降は既にある財務データ (売上) へマージするので、黙って上書きせず確認を出す (threat: T-227)。
+  // 確認 (window.confirm) は画面の main thread を止めるので、置換の道と同じく先に dialog を受けてから操作を待つ。
+  const mergeDialog1 = page.waitForEvent('dialog', { timeout: 15000 });
+  const mergeTrigger1 = restoreBackup('newer.json', [restoreRow(1_760_000_000_000, 2000)], '2026-06-01T12:00:00Z');
+  const mergeD1 = await mergeDialog1;
+  const mergeD1Text = mergeD1.message();
+  await mergeD1.accept();
+  await mergeTrigger1;
+  ok(mergeD1Text.includes('既にある財務データ') && mergeD1Text.includes('売上 1 件'), `settings: ★ 財務データへのマージは黙って上書きせず確認を出す (T-227・実際 ${JSON.stringify(mergeD1Text)})`);
   await page.waitForFunction(() => document.body.textContent.includes('追加 0・更新 1'), undefined, { timeout: 15000 });
+  // older-again はこの端末の方が新しいので財務データへは 1 件も書かれない (toImport から外れる) —— 確認は出ない。
   await restoreBackup('older-again.json', [restoreRow(1_700_000_000_000, 1000)], '2026-01-01T12:00:00Z');
   await page.waitForFunction(() => document.body.textContent.includes('この端末の方が新しい 1 件はそのまま'), undefined, { timeout: 15000 });
   ok(await has('0 件のレコードを復元しました（マージ: 追加 0・更新 0・この端末の方が新しい 1 件はそのまま）'), 'settings: ★ マージは id ごとに新しい方を残す (古いバックアップは後から直した記録を上書きしない)');
@@ -373,7 +383,11 @@ async function desktopSuite(browser) {
   await page.waitForFunction(() => document.body.textContent.includes('上の「暗号化パスワード」欄に合言葉を入力してから'), undefined, { timeout: 15000 });
   ok(!(await has('レコードを復元しました')), 'settings: ★ 合言葉の欄が空なら暗号化バックアップは復元せず、マスクされた欄を使うよう言う (平文の問い合わせで訊かない)');
   await page.locator('[data-backup-passphrase]').fill('correct-horse-battery');
-  await page.locator('[data-backup-restore]').setInputFiles({ name: 'enc.json', mimeType: 'application/json', buffer: Buffer.from(encBackup) });
+  // 復号したあと既にある財務データ (売上) へ 1 件足すので、マージの確認が出る (threat: T-227)。先に dialog を受けてから操作を待つ。
+  const encDialog = page.waitForEvent('dialog', { timeout: 15000 });
+  const encTrigger = page.locator('[data-backup-restore]').setInputFiles({ name: 'enc.json', mimeType: 'application/json', buffer: Buffer.from(encBackup) });
+  await (await encDialog).accept();
+  await encTrigger;
   await page.waitForFunction(() => document.body.textContent.includes('レコードを復元しました'), undefined, { timeout: 30000 });
   ok(await has('追加 1・更新 0'), 'settings: 対照 — 欄に合言葉を入れれば暗号化バックアップを復元できる');
   await page.locator('[data-backup-passphrase]').fill('');
@@ -5627,7 +5641,8 @@ function installWaitMarginRecorder(browser) {
   const floorOf = (measured) => Math.max(1, Math.floor(measured * 0.85));
   const SUITE_TABLE = [
     // desktop: パス 493q で +2 (制度判定の年齢に読めない値を打つと判定を断る・直すと戻る)
-    ['desktop', desktopSuite, 62],
+    // パス 566-C で +1 (財務データへのマージ復元が T-227 の確認を出すことを見る)
+    ['desktop', desktopSuite, 63],
     ['manualData', manualDataSuite, 19],
     ['dataOrigin', dataOriginSuite, 9],
     ['credential', credentialSuite, 8],

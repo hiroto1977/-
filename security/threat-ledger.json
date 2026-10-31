@@ -1017,7 +1017,13 @@
       "regression": {
         "file": "src/shared/__tests__/workflowSecurityWitness.test.ts",
         "test": "★ job 単位の permissions は deploy の 2 つだけで、台帳と一致する (threat: T-039)"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/__tests__/workflowSecurityWitness.test.ts",
+          "test": "★ トップレベルは contents: read だけ (threat: T-039)"
+        }
+      ]
     },
     {
       "id": "T-040",
@@ -1092,7 +1098,13 @@
       "regression": {
         "file": "src/renderer/data/__tests__/importAllAtomic.test.ts",
         "test": "★ put が途中で投げても、置換復元は既存の記録を 1 件も消さず、良い行も入れない (threat: T-044)"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/renderer/data/__tests__/importAllAtomic.test.ts",
+          "test": "★ 深さ 20,000 の記録は門が落とし、importAll は 0 件・計画も dropped に数える (threat: T-044)"
+        }
+      ]
     },
     {
       "id": "T-045",
@@ -1182,7 +1194,17 @@
       "regression": {
         "file": "src/renderer/data/__tests__/orphanCollection.test.ts",
         "test": "★ 点検が `unknown` として見つけ、形式不正とは混ぜない (threat: T-050)"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/renderer/data/__tests__/orphanCollection.test.ts",
+          "test": "★ deleteRecords は unknown の id も消す (唯一の出口)"
+        },
+        {
+          "file": "src/renderer/data/__tests__/orphanCollection.test.ts",
+          "test": "★ 平文の書き出しの確認は、台帳に無い種類の記録を「持ち出すと困るかもしれない」側に数える"
+        }
+      ]
     },
     {
       "id": "T-051",
@@ -1377,7 +1399,17 @@
       "regression": {
         "file": "src/renderer/security/__tests__/vaultLockDuringUnlock.test.ts",
         "test": "★ 変更中に lock() が届けば鍵を据えない —— パスワードは変わっている (threat: T-063)"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/renderer/security/__tests__/vaultLockDuringUnlock.test.ts",
+          "test": "★ 旧世代路 (master-wrap なし) でも、変更中に lock() が届けば鍵を据えない (threat: T-063)"
+        },
+        {
+          "file": "src/renderer/security/__tests__/vaultLockDuringUnlock.test.ts",
+          "test": "★ 復旧中に lock() が届けば鍵を据えない —— 新しいパスワードで解錠できる (threat: T-063)"
+        }
+      ]
     },
     {
       "id": "T-064",
@@ -1482,7 +1514,13 @@
       "regression": {
         "file": "src/shared/__tests__/gateScriptsPinned.test.ts",
         "test": "★ electron-builder.json の隣に、先に読まれる綴りの設定が 1 つも無い (threat: T-070)"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/__tests__/gateScriptsPinned.test.ts",
+          "test": "★ scripts.build は固定の綴り (release が署名鍵で走らせる唯一の script) (threat: T-043)"
+        }
+      ]
     },
     {
       "id": "T-071",
@@ -1497,7 +1535,13 @@
       "regression": {
         "file": "src/shared/__tests__/publishedAssetsInert.test.ts",
         "test": "★ 公開する SVG は script も イベント属性も外部参照も持たない (threat: T-071)"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/__tests__/publishedAssetsInert.test.ts",
+          "test": "★ pages.yml が公開する assets はどれも鎖の保護対象 (threat: T-071)"
+        }
+      ]
     },
     {
       "id": "T-072",
@@ -1512,7 +1556,13 @@
       "regression": {
         "file": "src/shared/__tests__/gateScriptsPinned.test.ts",
         "test": "★ 直下に PostCSS の設定ファイルが 1 本も無く、package.json にも postcss キーが無い (threat: T-072)"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/__tests__/gateScriptsPinned.test.ts",
+          "test": "★ vite.config.ts は css.postcss をオブジェクトで固定する (探索を止める) (threat: T-072)"
+        }
+      ]
     },
     {
       "id": "T-073",
@@ -1587,7 +1637,13 @@
       "regression": {
         "file": "src/main/clients/__tests__/stocks.test.ts",
         "test": "★ 天井ちょうどまでは登録でき、超える新規は断る (threat: T-077)"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/renderer/data/__tests__/stocksWatchlistWeb.test.ts",
+          "test": "★ 天井ちょうどまでは登録でき、超える新規は断る (threat: T-077)"
+        }
+      ]
     },
     {
       "id": "T-078",
@@ -1632,7 +1688,13 @@
       "regression": {
         "file": "src/renderer/security/__tests__/autoLock.test.ts",
         "test": "★ 放置が上限を超えた後の最初の操作でロックする (タイマーは遅れている)"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/renderer/security/__tests__/autoLock.test.ts",
+          "test": "★ 隠れていた時間が上限を超えて戻ったら、タイマーを待たずにロックする"
+        }
+      ]
     },
     {
       "id": "T-081",
@@ -1707,7 +1769,13 @@
       "regression": {
         "file": "src/shared/__tests__/workflowSecurityWitness.test.ts",
         "test": "★ pull_request_target を %s で書いても断る (threat: T-085)"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/__tests__/workflowSecurityWitness.test.ts",
+          "test": "★ github-script の script: に ${{ }} を埋め込むと断る: %s (threat: T-085)"
+        }
+      ]
     },
     {
       "id": "T-086",
@@ -1857,7 +1925,13 @@
       "regression": {
         "file": "src/shared/__tests__/redactionCoverage.test.ts",
         "test": "★ %s の裸の反射を伏せる (threat: T-095)"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/__tests__/redactionCoverage.test.ts",
+          "test": "★ ya29 の `.c.` 形 (サービスアカウント・なりすまし) も伏せる (threat: T-095)"
+        }
+      ]
     },
     {
       "id": "T-096",
@@ -1917,7 +1991,13 @@
       "regression": {
         "file": "src/renderer/data/__tests__/counseling.test.ts",
         "test": "★ %s を危機と判定する (threat: T-099)"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/renderer/data/__tests__/counseling.test.ts",
+          "test": "★ %s を他害と判定する (threat: T-099)"
+        }
+      ]
     },
     {
       "id": "T-100",
@@ -2667,7 +2747,13 @@
       "regression": {
         "file": "src/renderer/data/__tests__/bestAnswers.test.ts",
         "test": "印の判定は変えない: 空行・字下げの後ろの箇条書き・番号・見出し・表を拾い、印の無い行は拾わない"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/renderer/data/__tests__/bestAnswers.test.ts",
+          "test": "★ 空行ばかりの 99,000 字 (%s) でも固まらない (旧い式は 6〜9 秒)"
+        }
+      ]
     },
     {
       "id": "T-150",
@@ -3252,7 +3338,13 @@
       "regression": {
         "file": "src/main/__tests__/mainIpc.test.ts",
         "test": "★ 型付き配列・Map・Date の payload は種類を問わず断る (for…in が全キーを先に列挙して主プロセスが固まる・threat: T-188)"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/main/__tests__/userPresence.test.ts",
+          "test": "★ 欄が 24 を超える payload は多すぎる (24 ちょうどは正当)・配列・null・継承した欄は数えない"
+        }
+      ]
     },
     {
       "id": "T-189",
@@ -3432,7 +3524,13 @@
       "regression": {
         "file": "src/shared/__tests__/mcpLauncherSource.test.ts",
         "test": "★ パッケージ名の前の --registry=… は落ちる (直す前は 0 件だった)"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/__tests__/mcpLauncherSource.test.ts",
+          "test": "★ 取得元・ローダ・TLS を変える env の鍵は落ちる"
+        }
+      ]
     },
     {
       "id": "T-201",
@@ -3597,7 +3695,13 @@
       "regression": {
         "file": "src/shared/__tests__/releaseJobSplit.test.ts",
         "test": "★ secrets を参照する行は、build の Build step の env: の行と両方向で一致する (threat: T-211)"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/__tests__/releaseJobSplit.test.ts",
+          "test": "★ 門は job 単位の env: に置いた secrets を落とす (release.yml を複製して植えた形 · threat: T-211)"
+        }
+      ]
     },
     {
       "id": "T-212",
@@ -3612,7 +3716,13 @@
       "regression": {
         "file": "src/shared/__tests__/redactOutputShapes.test.ts",
         "test": "★ renderer/data/*Knowledge.ts の文字列リテラルは伏字で 1 本も変わらない"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/__tests__/redactOutputShapes.test.ts",
+          "test": "redactSecrets — 精度: 名前の手がかりだけを持つ秘密と、伏せてはいけない散文 (出力全文 · threat: T-212)"
+        }
+      ]
     },
     {
       "id": "T-213",
@@ -3623,7 +3733,7 @@
       "severity": "medium",
       "title": "保存した API キー・PAT は無期限に信用され、端末から持ち出された保管ファイル・IndexedDB の写しは (マスターパスワード・OS のキーチェーンが破られれば) いつまでも使えた —— 第三者が発行する鍵の期限はアプリから変えられないが、アプリが写しを信用する時間は変えられる",
       "status": "fixed",
-      "fix": "shared/credentialTtl.ts に有効時間 (8 時間) の規則を 1 つ置き、両ビルドの保管層が同じ判定を読む。書く側は保存した時刻を平文の付随データとして残し (secrets.ts は `at:<ms>:` の包み・vault.ts は記録の storedAt)、読む時と一覧 (と解錠) で期限切れを**復号せずに消す**。日付の無い記録 (規則より前の物) には最初に見た時刻が付く (版上げで全員を締め出す代わりに 1 度だけ最大 8 時間の猶予)。未来の時刻・壊れた時刻は期限切れ。更新トークンを持つ OAuth の TokenSet はデスクトップ版では `oauth:` として認可サーバの期限に従う (ブラウザ版の保管庫は貼り付け式の accessToken だけなので一律に掛ける)。消した理由は読み口が返し (secrets: reason 'expired'・vault: takeExpiredNotice) 画面は「未設定」と混ぜない。パスワード変更は時刻を引き継ぐ。限界: 時刻は秘密ではないので書き換えられるが、未来へ書き換えると期限切れに倒れ、過去へ書き換えても早く消えるだけ (信用を延ばす向きには働かない)。",
+      "fix": "shared/credentialTtl.ts に有効時間 (8 時間) の規則を 1 つ置き、両ビルドの保管層が同じ判定を読む。書く側は保存した時刻を平文の付随データとして残し (secrets.ts は `at:<ms>:` の包み・vault.ts は記録の storedAt)、読む時と一覧 (と解錠) で期限切れを**復号せずに消す**。日付の無い記録 (規則より前の物) には最初に見た時刻が付く (版上げで全員を締め出す代わりに 1 度だけ最大 8 時間の猶予)。未来の時刻・壊れた時刻は期限切れ。更新トークンを持つ OAuth の TokenSet はデスクトップ版では `oauth:` として認可サーバの期限に従う (ブラウザ版の保管庫は貼り付け式の accessToken だけなので一律に掛ける)。消した理由は読み口が返し (secrets: reason 'expired'・vault: takeExpiredNotice) 画面は「未設定」と混ぜない。パスワード変更は時刻を引き継ぐ。限界: 時刻は平文で**認証されない** —— 期限切れの記録の時刻を「古いが今以下」へ前倒しして若返らせる穴が在った (ここを「過去へ書き換えても早く消えるだけ・信用を延ばす向きには働かない」と書いたのは**誤りだった** —— 未来ではなく「古いが今以下」へ戻せば若返る)。T-230 で両ビルドとも保存時刻を暗号に束ねて塞いだ。",
       "regression": {
         "file": "src/main/__tests__/secretsCredentialTtl.test.ts",
         "test": "★ 有効時間を過ぎた鍵は読まずに消し、理由を言う (使い捨て · threat: T-213)"
@@ -3657,7 +3767,13 @@
       "regression": {
         "file": "src/main/__tests__/mainIpc.test.ts",
         "test": "★ external-write (github/create-issue) の本文に資格情報の形が在れば、確認も実行も起きない"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/renderer/__tests__/webShimOutboundGate.test.ts",
+          "test": "★ external-write の本文に資格情報の形が在れば、保管庫も網も触らずに断る"
+        }
+      ]
     },
     {
       "id": "T-216",
@@ -3672,7 +3788,17 @@
       "regression": {
         "file": "src/main/clients/__tests__/emotions.test.ts",
         "test": "★ 指示の形が在れば、鍵が在っても fetch は 0 回で、理由は群の名前を言い本文を引用しない"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/main/clients/__tests__/skills.test.ts",
+          "test": "★ 役割の乗っ取りの形を持つ本文は送らない (fetch 0 回・本文は引用しない)"
+        },
+        {
+          "file": "src/renderer/__tests__/webShimOutboundGate.test.ts",
+          "test": "★ emotions/analyze-text の第三者の文に指示の形が在れば、鍵を読む前に断る"
+        }
+      ]
     },
     {
       "id": "T-217",
@@ -3702,7 +3828,13 @@
       "regression": {
         "file": "src/main/__tests__/selfAttestation.test.ts",
         "test": "★ 1 ファイルを 1 byte 変えると hash-mismatch で、その道を名指しする (threat: T-218)"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/main/__tests__/mainWindow.test.ts",
+          "test": "★ 梱包版は窓を作る前に同梱物を検算し、通れば窓を 1 つ作る (検算の根はアプリの根 = dist-electron の 1 つ上)"
+        }
+      ]
     },
     {
       "id": "T-219",
@@ -3717,7 +3849,13 @@
       "regression": {
         "file": "src/renderer/pages/__tests__/proxyStepUpOnScreen.test.ts",
         "test": "★ 「保存」を押しただけでは書かれず、確認の段が出る —— 文は送り先のホストを名乗り共有秘密を映さない (threat: T-219)"
-      }
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/renderer/security/__tests__/egressStepUp.test.ts",
+          "test": "★ https のトンネルと、このページと同じ別ホストへの http には要る (threat: T-219)"
+        }
+      ]
     },
     {
       "id": "T-220",
@@ -3778,6 +3916,398 @@
         "file": "src/shared/__tests__/threatWatchDigest.test.ts",
         "test": "★ 急増した種類 1 つずつに判断が要る: 足す / 既にいる赤が受け持つ / 該当しない理由"
       }
+    },
+    {
+      "id": "T-224",
+      "found": "2026-10-30",
+      "foundBy": "利用者の依頼「言語を育てて」。構文を足す前に、0.1 が `eval` を禁じながら同じことのできる道を持っていないかを実物のコンパイラで試した —— `String.constructor(code)()` と `''.constructor.constructor(code)()` はコンパイラも変換後の `tsc --strict` も通し、node で実行すると文字列がコードとして走った (`String.constructor('return 6*7')()` が 42)。宣言なしで使える組み込み `Object` も `Object.setPrototypeOf(Object.getPrototypeOf(''), null)` (文字列の組み込みメソッドをアプリ全体で消す) を書けた。",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "medium",
+      "title": "守りの層を書く言語 Mamori 0.1 が `eval` を禁じながら、メンバの連鎖 (`.constructor`) で文字列をコードとして走らせ、組み込みの `Object` で原型を書き換えられた —— M0 / M6 は名前を見て、連鎖と組み込みのメンバを見ていなかった",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/parser.ts の FORBIDDEN_MEMBERS: `.` の後ろの `constructor` / `prototype` / `__proto__` を字句の後の段で断る (M0 · 文はどの道を塞ぐかを名乗る。メンバの呼ぶ側の連鎖・new の呼ぶ側・field の欄のすべてが同じ 1 つを通る)。src/shared/mamori/checker.ts の OBJECT_MEMBERS: 組み込みの Object は読むだけ・凍らせるだけのメンバ (hasOwn / keys / values / entries / fromEntries / freeze / isFrozen) に絞り、値として持ち出す形 (`const o = Object;` —— 別名で表を迂回する) も断る (M6)。同じパスで足したオブジェクトの字面は `__proto__` の鍵 (文字列で書いても) を断る —— 字面の `__proto__: x` は欄ではなく原型の差し替えで、この台帳の直しを TypeScript で書いたとき表の 1 行が実際にそうなって素通りした (計算した鍵で書き直した)。限界: 計算した鍵・添字 (`x[k]`) は 0.2 に入れていない —— 入れるなら鍵を実行時に組める道がこの表を迂回するので、来歴と同じく先に塞ぎ方を決める。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV02.test.ts",
+        "test": "★ String.constructor(code)() は M0 で断る (threat: T-224)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV02.test.ts",
+          "test": "★ 組み込みの Object は許したメンバだけ (setPrototypeOf / getPrototypeOf / defineProperty / assign を断る)"
+        }
+      ]
+    },
+    {
+      "id": "T-225",
+      "found": "2026-10-30",
+      "foundBy": "言語を育てる輪の 2 周目 (MG-002) の「破る」段。足した構文 (16 進の数) と既存の構文で、印を受ける関数と危ない口の呼び方を総当たりした —— 0.2 のコンパイラは `openUrl.call(null, raw)` / `.apply` / `.bind`・`const f = openUrl; f(raw)`・`{ g: openUrl }.g(raw)`・`[openUrl].map(…)`・`(c ? openUrl : openUrl)(raw)`・`for (const f of [openUrl])` の 8 形を通し (変換後の `tsc --strict` は型で断る)、sink 関数の中の `shell.openExternal(raw)` (行き先以外の素の引数)・`return shell;`・`return { s: shell };` は**コンパイラも `tsc` も通した**。",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "medium",
+      "title": "守りの層を書く言語 Mamori 0.2 の M4 / M2 は名前を直に呼ぶ形しか見ておらず、印を受ける関数を値として持ち出す 8 形で素の値を渡せ、sink 関数の中では危ない口へ行き先以外の素の値を流す・危ない口そのものを返すことができた",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: ① 印を受ける関数 (引数のどれかが印の型) は、このモジュールの名前として値の位置に現れたら M4 (直に呼ぶことしかできない) ② 危ない口 (extern sink) は sink 関数の中でも呼ぶ形 (`shell(…)` / `shell.m(…)`) でしか使えず、値として現れたら M2 ③ その呼び出しの第 1 引数は sink 関数の行き先の印を持つ値だけ (`checkCallee` · Ctx.destVetted)。既存の検査 1 件が「sink 関数の引数の既定値に shell を値として置ける」を許容として留めていたので反転した。限界: 第 2 引数以降は検めない (`window.open(url, '_blank', 'noopener')` の窓の名前・`writeFile(path, body)` の中身は行き先ではない)。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV03.test.ts",
+        "test": "★ 印を受ける関数の .call で素の値を渡す形は断る (threat: T-225)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV03.test.ts",
+          "test": "T-225: sink 関数の中でも、危ない口は行き先だけを渡して呼ぶ (M2)"
+        }
+      ]
+    },
+    {
+      "id": "T-226",
+      "found": "2026-10-30",
+      "foundBy": "パス 565 の測定。台帳の 224 件はどれも回帰検査を名指しするが、台帳の検査 (threatLedger.test.ts) が見ていたのは「その題名の検査が在ること」までで、穴を実際に開け直して名指しの検査が鳴るかは 1 度も測っていなかった。high の 9 件の守りを 1 つずつ外して名指しの検査だけを走らせると、T-215 のブラウザ版の半分 (web-shim の出力インターセプター) を外しても名指しの検査 (mainIpc.test.ts) は通った —— 名指しが主プロセスの層しか見ていなかった (別の検査 webShimOutboundGate.test.ts は捕まえていたが、台帳はそれを名指ししていなかった)。",
+      "surface": "supply-chain",
+      "class": "ai-automated-attack",
+      "severity": "medium",
+      "title": "脅威台帳の回帰検査は「在ること」しか測られておらず、穴を開け直したとき本当に鳴るかは誰も確かめていなかった (T-215 のブラウザ側の層は名指しの検査が見ていなかった)",
+      "status": "fixed",
+      "fix": "scripts/threat-ablation.cjs と security/threat-ablations.json: 1 行 = 守りを直す前の形へ戻す書き換え。原文へ当て、台帳が名指す回帰検査 (regression と、層ごとの alsoRegressions) だけを走らせ、vitest の JSON 報告から caught / missed / unmatched / load-error を分ける (非 0 終了を捕まえたと読まない)。原文でも 1 度走らせ (baseline)、書き換えは finally で戻し内容で照合する。npm test の threatAblation.test.ts が、書き換えがどれも今のファイルにちょうど 1 回当たること・high の脅威と 2026-10-31 以降の脅威がすべて書き換えを持つことを見る。毎日の dependency-audit が開け直しを走らせ、捕まえ損ねを要対応として常設 Issue に出す。T-215 には webShimOutboundGate.test.ts を alsoRegressions として名指した。限界: 書き換えは人 (と狩りの班) が書くので、書いていない穴は測られない —— 床と日付の規則で増やす向きにだけ縛る。",
+      "regression": {
+        "file": "src/shared/__tests__/threatAblation.test.ts",
+        "test": "★ 名指しの検査が assertion で落ちれば caught・全部通れば missed"
+      }
+    },
+    {
+      "id": "T-227",
+      "found": "2026-10-30",
+      "foundBy": "パス 566 の赤対青の演習 (records の赤 a135c462 の R1)。マージ復元は確認を出さない操作で、数値パラメータ (T-186) が入るときだけ鳴っていた。形式の合う売上・KPI の記録は、既に数字の在る端末でも黙って足され、その合計が金融機関提出用の書面 §2 へ手入力の印なしで流れた (manualOverrideNote は手入力の上書きだけを印す —— 復元した記録は印さない)。第三者が配った「テンプレート」バックアップをマージ復元する筋で、3/3 再現。遠隔の破りではない (利用者が信用できない共有バックアップを復元する)。",
+      "surface": "renderer",
+      "class": "living-off-the-land",
+      "severity": "medium",
+      "title": "マージ復元が、既に数字の在る財務の collection (売上・KPI・貸借対照表・不動産・投資信託) へ記録を黙って足し、金融機関提出用の書面の数字を確認なしに水増しできた",
+      "status": "fixed",
+      "fix": "src/renderer/data/backup.ts: RestorePlan に financialWrites を足し、planRestore がマージのとき・既にその collection に記録が在るとき (FINANCIAL_COLLECTION_NAMES) に書かれる記録を collection ごとに数える。mergeRestoreConfirmMessage が financialMergeNotice を数値パラメータの注意と並べて鳴らし、collection と件数を名乗る (「追加 N 件」だけでは、どの数字が動くか読む側に分からない)。restoreResultMessage も加わった記録を名指しする。空の端末への初回の復元は水増しではないので鳴らさない・置換は既に声高に確認するので対象外 (R1 が指したのは黙ったマージ)。backup.test.ts が FINANCIAL_COLLECTION_NAMES を定義元の定数と両方向に結ぶ。限界: マージの確認はレンダラーの中に在り、乗っ取られたレンダラーには効かない —— 止めるのは利用者の目である。",
+      "regression": {
+        "file": "src/renderer/data/__tests__/backup.test.ts",
+        "test": "★ 既に売上の在る端末へ売上をマージ復元すると、確認が鳴り collection と件数を名乗る"
+      }
+    },
+    {
+      "id": "T-228",
+      "found": "2026-10-30",
+      "foundBy": "パス 566 の赤対青の演習 (main-process / supply の赤)。起動時の自己検算 (T-218) に 2 つの継ぎ目。M1: listShippedFiles は dist / dist-electron を再帰で歩くが build/ は明示の build/icon.png だけ足す —— 根の一覧は build を許すのに中は歩かないので、build/evil.js が検算に 1 度も見られなかった (遅延・LATENT・実行時に誰も読まないが、同梱物に manifest 外の物が在る)。S2: package.json の main が検められておらず (SHIPPED_FILES から除外・ALLOWED_ROOT が許す)、main を別の出荷物へすげ替える 2 ファイル改竄が docblock の『1 ファイルの改竄に気付く』を破った。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "起動時の自己検算が、同梱できる根 build/ の中を歩かず、入口 (package.json の main) を検めていなかった (2 ファイル改竄で入口をすげ替えられた)",
+      "status": "fixed",
+      "fix": "src/main/selfAttestation.ts: 実行時は listFilesUnderRoots が ALLOWED_ROOT_ENTRIES のディレクトリ (build/ を含む) を丸ごと歩き、manifest に無いファイルは file-unlisted で鳴る (buildManifest はビルド時の木に icon.svg が居るので電子ビルダーの glob を写した明示のまま —— 梱包物 asar の build/ は icon.png だけなので実行時に食い違わない)。verifyShippedFiles が package.json の main === ENTRY_POINT (dist-electron/main.js) を検め、別の出荷物へのすげ替えを bad-entry-point で断る。限界: main を新しいファイルへ向けてそれを実際の入口にする相手は、main.js (= この検算) を走らせないので止められない —— 入口を入口の中から検める構造上の穴 (docblock に明記)。正しい主張を『1 ファイルの改竄に気付く』から『入口の main.js が走る限り、出荷物への改竄・追加・入口のすげ替えに気付く』へ訂正。",
+      "regression": {
+        "file": "src/main/__tests__/selfAttestation.test.ts",
+        "test": "★ 入口 (package.json の main) を別の出荷物へすげ替えると bad-entry-point (threat: T-228 の S2)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/main/__tests__/selfAttestation.test.ts",
+          "test": "★ 許された根 build/ の中へ足した物は file-unlisted —— 根の名前 build を許すだけで中を見ていなかった穴 (threat: T-228 の M1)"
+        }
+      ]
+    },
+    {
+      "id": "T-229",
+      "found": "2026-10-30",
+      "foundBy": "パス 566 の赤対青の演習 (供給網の赤 S1)。CSP は artifactCspCensus が出荷物 8 本すべてを覆うのに、malware (lint-malware.cjs) には双子が無かった。lint:malware --artifact が CI で当たるのは pages.yml が publish するデモ 4 本と app 本体 (ci.yml:148 / pages.yml:118) だけで、利用者がダウンロードして開く maker 4 本 (経営書類スタジオ / 業務自動化ダッシュボード / 就業規則メーカー / 電子定款メーカー) は CI では組まないので 1 度も走査されていなかった。",
+      "surface": "supply-chain",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "配る maker HTML 4 本が lint:malware --artifact で 1 度も走査されず、CSP にはある census の双子が malware に無かった",
+      "status": "fixed",
+      "fix": "scripts/lib/maker-self-scan.cjs の assertInlineScriptsClean を 4 本の maker が main() で呼び、組んだ HTML のインライン script を lint-malware の規則で走査して重大な一致 (decoded-code-exec など) が在ればビルドを止める (CSP census が『ここが唯一の門』と呼んだのと同じ形 —— maker は CI では組まないので builder 自身が門)。makerMalwareCensus.test.ts が ① 4 本の buildHtml() の出力を同じ規則で実際に走査して CI でも覆い (behavioural)、② 自己走査を配線している build-*.cjs == download maker を両方向で留める。pages デモ・app 本体は既存の門 (ci.yml / pages.yml の --artifact) が覆うので二重に見ない。",
+      "regression": {
+        "file": "src/shared/__tests__/makerMalwareCensus.test.ts",
+        "test": "★ 母集団と台帳が両方向に一致する (自己走査を配線している build-*.cjs == download maker)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/__tests__/makerMalwareCensus.test.ts",
+          "test": "★ 各 maker が main() で自分の出力を走査する (ビルド時の唯一の門)"
+        }
+      ]
+    },
+    {
+      "id": "T-230",
+      "found": "2026-10-30",
+      "foundBy": "パス 566 の赤対青の演習 (守る物『保管した資格情報』の赤 C)。T-213 が足した有効時間 (8 時間) は保存時刻 (ブラウザ版 vault の記録の storedAt・デスクトップ版 secrets.json の `at:<ms>:` の平文) を読んで期限切れを消すが、その時刻は**認証されていなかった**。保管庫 (IndexedDB) / 保管ファイル (secrets.json) へ書ける攻撃者は、OS キーチェーン・マスターパスワードを破らなくても、期限切れの記録の時刻を『古いが今以下』へ前倒しして若返らせ、持ち出された写しを 8 時間の壁を越えて使えた。T-213 の fix が『過去へ書き換えても早く消えるだけ (信用を延ばす向きには働かない)』と書いたのは誤りだった —— 未来へ書くと期限切れに倒れるが、未来ではなく『古いが今以下』へ戻せば若返る。",
+      "surface": "renderer",
+      "class": "compromised-renderer",
+      "severity": "medium",
+      "title": "保存時刻 (storedAt / at:<ms>:) が平文で認証されず、期限切れの記録を前倒しして若返らせ 8 時間の有効時間を越えて使えた (T-213 の残り穴・両ビルド)",
+      "status": "fixed",
+      "fix": "保存時刻を暗号に束ねて認証する (両ビルド対称・版で切り分けるので後方互換)。ブラウザ版 vault.ts: 記録を v2 にし、AES-GCM の AAD へ serviceId に加えて storedAt を入れる (`tokenAadV2` · `service-hub-token-v2:<id>:<storedAt>`)。時刻を書き換えると復号自体が失敗する。平文の storedAt は有効時間の事前判定 (復号前に期限切れを消す安い検査) にそのまま残す。デスクトップ版 secrets.ts: safeStorage は AAD を持たないので、時刻を暗号文の中へ束ねる (`atv2:<ms>:<encode(ts1:<ms>:<token>)>`)。読む時に平文の `<ms>` と暗号文の中の `<ms>` が一致するか検め、不一致なら復号できない扱い (UNDECRYPTABLE_CORRUPT)。どちらも版で切り分ける —— v1 / `at:` の旧い記録は従来どおり読め、読めたらその場で v2 / atv2 へ束ね直す (遅延移行)。有効時間が 8 時間なので、この修正の後 8 時間で全記録が認証つきになる (版上げで全員を締め出す brick は無い)。パスワード変更は時刻を引き継ぎ、新しい鍵で同じ storedAt を AAD に束ね直す。限界 (残り穴): 保存時刻を束ねても、攻撃者が『まだ有効だった頃に捕らえた記録を丸ごと』(平文も暗号文も一貫した古い物) 書き戻すと、利用者が鍵を差し替えた後でも有効時間の窓 (8 時間) の中なら旧い鍵が蘇る (rollback)。これはサービスごとの単調カウンタを AAD に足せば塞げるが、記録の版管理が要るので別パスの候補として残す。severity は low 相当 (攻撃者は既に保管庫への書き込みと『古い有効な記録の控え』が要り、窓は 8 時間)。",
+      "regression": {
+        "file": "src/main/__tests__/secretsCredentialTtl.test.ts",
+        "test": "★ 期限切れの包みを前倒しして若返らせても、暗号文の中の時刻と食い違い復号を断る (若返り攻撃 · threat: T-230)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/renderer/security/__tests__/vaultCredentialTtl.test.ts",
+          "test": "★ storedAt を前へ (まだ now 以下) 書き換えても v2 記録は復号できない —— 若返り攻撃 (threat: T-230)"
+        }
+      ]
+    },
+    {
+      "id": "T-231",
+      "found": "2026-10-31",
+      "foundBy": "パス 566 の赤対青の演習 (守る物『保管した資格情報』の赤 B)。ブラウザ版の BYO プロキシ設定 (network/proxy.ts) は平文の別 DB (business-hub-preferences) に残る —— 解錠の前後を問わず読めるようにする設計。ところが平文ゆえに IndexedDB へ書ける相手 (別プロファイル・別の file:// の HTML・拡張) は、OS キーチェーン・マスターパスワードを破らなくても送り先 URL を自分の Worker へ差し替えられる。fetchViaProxy は呼び出し側の Authorization をそのまま封筒に載せる (資格情報のほぼ全部が通る 1 本の口) ので、差し替えればまるごと盗れる。T-219 の step-up は画面の書き手 (SettingsPage) にしか効かず、setProxyConfig を迂回する生の IDB 書き込みを素通りさせていた。",
+      "surface": "renderer",
+      "class": "ssrf-and-credential-egress",
+      "severity": "medium",
+      "title": "BYO プロキシ設定の送り先 URL が平文で認証されず、保管庫へ書ける相手が自分の Worker へ差し替えて資格情報 (Authorization) をまるごと奪えた —— T-219 の step-up は UI の書き手にしか効かなかった",
+      "status": "mitigated",
+      "fix": "保存時 MAC (566-B · T-230 と同じ形)。解錠中に master 鍵で認証タグ (vault.authTag — AES-GCM で平文を封じる汎用の認証タグ・domain で用途を分ける service-hub-authtag-v1:proxy-config) を付けて平文の隣に置き (保管庫のトークン名前空間は汚さない)、読み出し側 (reviewAndVerify: getProxyConfig / inspectStoredProxyConfig の funnel) が vault.verifyAuthTag で検証して未検証なら使わない。3 状態: 解錠中×一致=使う / 解錠中×未署名 (unstamped: レガシー or 剥がし) =断る / 解錠中×不一致 (tampered) =断る / ロック中=検証を保留して素の設定を返す (資格情報が乗る読みは必ず vault.getToken の後 = 解錠後なので、ロック中の読みに秘密は乗らない)。保存は SettingsPage でブラウザ版では解錠必須 (パス 455) なので常にタグが付く。web-shim の getProxyTransport / AI chat 2 経路と SettingsPage が未検証を言い分ける (文は PROXY_UNVERIFIED_MESSAGE が 1 か所)。限界 (残余): 同一オリジンで解錠中の攻撃者は vault.authTag を自分で呼んで正しいタグを作れる (在メモリの鍵を持つ相手は何でもできる)。この MAC が守るのは静止時の改竄 —— アプリが動いていない間・別プロセス・別拡張からの IDB 書き込み。T-230 (保存時刻の認証) と同じ形。レガシー (この修正より前に保存した設定) は解錠後の最初の読みで unstamped として断られ、設定画面で 1 度保存し直せば署名が付く (fail closed)。",
+      "regression": {
+        "file": "src/renderer/security/__tests__/proxyMac.test.ts",
+        "test": "解錠中・送り先 URL を差し替えた改竄 (古い mac を残す) は使わない (threat: T-231)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/renderer/security/__tests__/proxyMac.test.ts",
+          "test": "解錠中・署名の無い生書き込み (レガシー / 剥がし) は使わない (threat: T-231)"
+        }
+      ]
+    },
+    {
+      "id": "T-232",
+      "found": "2026-10-31",
+      "foundBy": "言語を育てる輪の 4 周目 (MG-004) の「破る」段。escape.ts を Mamori へ移す前に、書き直すモジュールが使う組み込み (RegExp / String / Error / URL) を総当たりで試した —— 宣言なしで使える組み込みは『副作用の判断を持たない』と名乗るが、**名前ではなくメンバ**が共有の状態を持つ物が 3 組あった。node で `/(sek)/.exec('a sek b'); RegExp.$1` は 'sek' を返す (同じ realm のどのモジュールが走らせた正規表現の一致と入力も読める)。0.3 のコンパイラは `RegExp.$1` / `RegExp.lastMatch` / `RegExp.input`・`Error.captureStackTrace` / `Error.stackTraceLimit`・`URL.createObjectURL` / `URL.revokeObjectURL` と、`const r = RegExp;` の持ち出しをすべて通した。",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "medium",
+      "title": "守りの層を書く言語 Mamori 0.3 の M6 は組み込みの名前だけを見て、共有の状態を持つメンバ (RegExp の旧式の静的な欄 = 他のモジュールの直近の正規表現の一致と入力・Error.captureStackTrace / stackTraceLimit・URL の blob) を断らず、use も extern も無いモジュールが他のモジュールが走らせた正規表現が見た秘密を読めた",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: 組み込みのうち共有の状態を持つ物の使えるメンバを表 (BUILTIN_MEMBERS) で絞る —— Object は従来の 7 メンバ・RegExp / Error / TypeError / RangeError はメンバ無し (構築する形 `new X(…)` と呼ぶ形 `X(…)` だけ)・URL は canParse / parse と構築する形。メンバを許さない形は M6 で断り、値として持ち出す形 (`const r = RegExp;` / 配列・オブジェクトに包む) も M6 (持ち出すと表を別名で迂回できる)。このモジュールが同名の値を宣言していれば組み込みでは無いので表は掛からない。言語の版を 0.4 へ。限界: String / Math / JSON / Number / Array / Map / Set / Promise の静的メンバは共有の状態を持たないので絞っていない (測った)。Object.freeze(use で宣言した値) は宣言した値への操作で、宣言していない外へ届く道ではない。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+        "test": "★ RegExp.$1 を読む形は断る (threat: T-232)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+          "test": "★ RegExp を値に取ってから読む形も断る (threat: T-232)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+          "test": "★ Error.captureStackTrace / stackTraceLimit は断る (threat: T-232)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+          "test": "★ URL.createObjectURL / revokeObjectURL は断り、許したメンバを案内する (threat: T-232)"
+        }
+      ]
+    },
+    {
+      "id": "T-233",
+      "found": "2026-10-31",
+      "foundBy": "T-232 の直後に開いた対戦 (他のハッキング方法を考えて対戦して) の赤の 2 本目: パーサの差分攻撃。Mamori の字句解析は行注記を `[^\\n]*` で終えるが、JavaScript は LF のほか CR・U+2028・U+2029 も行終端として扱う。注記の中に U+2028 (または単独の CR) を置き、その後ろへ検めに掛からない字を書くと、Mamori は『注記の続き』として読み飛ばし (M6 も M0 も検めない)、生成される TypeScript では行終端のあとのコードとして走った。",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "medium",
+      "title": "守りの層を書く言語 Mamori 0.4 の字句解析が行注記を LF だけで終え、JavaScript が行終端と扱う CR / U+2028 / U+2029 のあとの字を注記として読み飛ばしたため、検め (M0 の禁じた綴り・M6 の宣言していない外の名前) を通らないコードを生成物へ運べた",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/parser.ts: 行注記の本体を LF / CR / U+2028 / U+2029 のいずれかで終える (LINE_COMMENT_BODY)。行終端のあとの字は字句として読まれ、M0 / M6 が検める。`///` の説明も同じ本体を通る。正当な注記 (普通の字・CRLF の行末・空の注記) の生成物は 1 字も変わらない。限界: ブロック注記は Mamori に無い (行注記のみ)。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+        "test": "★ 注記の中の U+2028 は注記を終え、そのあとは字句として検められる (threat: T-233)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+          "test": "★ 注記の中の U+2029 も同じ (threat: T-233)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+          "test": "★ 注記の中の単独の CR のあとの字は、コードとして字句にされ M6 が検める (threat: T-233)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+          "test": "★ `///` の説明の中の行終端も同じ (説明のあとの字を注記に隠せない) (threat: T-233)"
+        }
+      ]
+    },
+    {
+      "id": "T-234",
+      "found": "2026-10-31",
+      "foundBy": "T-232 の直後に開いた対戦の赤の 3 本目: 型の綴りの攻撃。M4 は『引数・変数の型の綴りに印の名前 (VU) が在れば印を運ぶ』と見ていたので、`u: VU | string` や `readonly VU[]` や `type Maybe = VU | string` の `u` (素の文字列かもしれない・配列かもしれない) を、印を持つ値として危ない口 (sink fn) へ通せた。変換後の tsc は型で断るが、Mamori の検めが 1 層欠けていた。",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "low",
+      "title": "守りの層を書く言語 Mamori 0.4 の M4 が、型の綴りに印の名前を含む union・配列・別名 (VU | string など) の引数と変数を『印を持つ値』と見なし、印の無い値を印つきしか受けない危ない口へ通す検めを素通りさせた",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: 印を運ぶのは型が印そのもの、または印 + null / undefined のときだけにした (carriedMark)。引数・arrow の引数・局所の型注釈のすべてが同じ関数を通る。union の他の項・配列・別名の union は印を運ばない。限界: 変換後の tsc は元から型で断るので、出荷された物の安全は変わらない (Mamori の検めの欠けの補い)。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+        "test": "★ `VU | string` の引数は印を持つ値として扱わない (threat: T-234)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+          "test": "★ 印の配列・別名の union も印を運ばない (threat: T-234)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+          "test": "★ 変数の型注釈と arrow の引数でも同じ (threat: T-234)"
+        }
+      ]
+    },
+    {
+      "id": "T-235",
+      "found": "2026-10-31",
+      "foundBy": "攻撃の電池 (mamoriBattery.test.ts · 弾 約 300 × 文脈 約 40 × 環境 約 35 を掛け合わせ、受け入れた生成物を TypeScript の構文木で独立に判定する) が最初の実行で見つけた。注記と文字列の中に bidi の上書き (U+202E)・不可視の字・制御の字・行/段落区切りを裸で置いたプログラムを Mamori が受け入れ、生成した TypeScript へそのまま運んだ。",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "low",
+      "title": "守りの層を書く言語 Mamori 0.4 が、注記と文字列の中の方向を変える字 (bidi)・不可視の字・制御の字を検めず、生成した TypeScript へそのまま運んだため、読み手が見る物と走る物が食い違う源 (Trojan Source · CVE-2021-42574) を作れた",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/parser.ts: 注記 (`//` `///` `//!`) と文字列の字面に HIDDEN_CHARS (C0 のうちタブと LF を除く・DEL・C1・U+200B / U+200E / U+200F・U+2028 / U+2029・bidi の制御 U+202A〜U+202E / U+2066〜U+2069・U+2060〜U+2064・BOM) が在れば M0 で断り、`\\uXXXX` と綴らせる。ZWJ / ZWNJ (U+200C / U+200D) は絵文字の連結に要るので通す (lint:charset と同じ判断)。限界: リポジトリへ入った .mamori は lint:charset も同じ字を断る (二重の網) —— これは lint を通る前の、コンパイラ自身の守り。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+        "test": "★ 注記の中の bidi の上書きは断る (threat: T-235)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+          "test": "★ 文字列の中の bidi の上書きは断る (threat: T-235)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+          "test": "★ 説明 (`///`) と表題 (`//!`) の中も同じ (threat: T-235)"
+        }
+      ]
+    },
+    {
+      "id": "T-236",
+      "found": "2026-10-31",
+      "foundBy": "攻撃の電池が見つけた。vetted の印の名前に `\\'` を含む文字列を与えると、コンパイラが位置つきの断り (MamoriError) ではなく JSON.parse の SyntaxError で落ちた。",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "low",
+      "title": "守りの層を書く言語 Mamori 0.4 が、文字列の中の JSON に無い逃がし (`\\'` や `\\x41`) で、診断を返さずコンパイラごと例外で落ちた (JavaScript の文字列と JSON の綴りの差)",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/parser.ts: 文字列の値を読む JSON.parse を try / catch で包み、読めない綴りは M0 の位置つきの断りにする (`\\n` `\\t` `\\\"` `\\\\` `\\uXXXX` だけを使う)。落ちるのは可用性 (ビルド時) の話で、検めを通る事は無いので重大度は低い。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+        "test": "★ 文字列の中の読めない綴り (単引用符の逃がし) は例外ではなく位置つきで断る (threat: T-236)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+          "test": "★ 16 進の逃がしも同じ (threat: T-236)"
+        }
+      ]
+    },
+    {
+      "id": "T-237",
+      "found": "2026-10-31",
+      "foundBy": "攻撃の電池の文字レベルの揺さぶり (fuzz · 種 77) が見つけた。`[/U+202E の字//1, 2]` のように正規表現の字面の中へ bidi の上書き (U+202E) を置いたプログラムを受け入れた (T-235 の断りは注記と文字列だけで、正規表現の字面は外だった)。",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "low",
+      "title": "守りの層を書く言語 Mamori 0.4 が、正規表現の字面の中の方向を変える字・不可視の字・制御の字を検めず、生成した TypeScript へそのまま運んだ (T-235 の断りの外だった)",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/parser.ts: 正規表現の字面にも HIDDEN_CHARS の検めを掛ける (注記・文字列・正規表現が、裸の字を持ちうる字句の全部)。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+        "test": "★ 正規表現の中の bidi の上書きは断る (threat: T-237)"
+      },
+      "alsoRegressions": []
+    },
+    {
+      "id": "T-238",
+      "found": "2026-10-31",
+      "foundBy": "揺さぶりが見つけた。印を受ける引数を渡さない呼び出し `openUrl()` を M4 が素通りさせた (引数が無ければ検める物が無いと読んでいた)。以前の検査が『数は tsc が断る』と素通りを仕様として固定していた。",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "low",
+      "title": "守りの層を書く言語 Mamori 0.4 の M4 が、印を受ける引数を渡さない呼び出し (openUrl()) を検めず素通りさせ、検めが変換後の tsc 任せになっていた",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: 印つきの引数の位置に引数が無ければ M4 で断る (『印 X を持つ値が要ります (渡していません)』)。以前の『引数が足りない呼び出しは断らない』という検査は反転した (弱さを仕様にしていた形)。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+        "test": "★ 印つきの引数を 1 つも渡さない呼び出しは断る (threat: T-238)"
+      },
+      "alsoRegressions": []
+    },
+    {
+      "id": "T-239",
+      "found": "2026-10-31",
+      "foundBy": "揺さぶりが見つけ、手で最小の再現を組んだ: `export const C: number; fetch(\"x\"); const D: number = 1;` を Mamori が受け入れ、型の綴りの中に隠した宣言していない `fetch` (M6 を受けない) を生成物へ運んだ。型の綴りは深さ 0 の `;` を断らず、そのまま写される。変換後の tsc は `const` の初期化の欠落 (TS1155) で止めるが、Mamori の検めが 1 層欠けていた。",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "medium",
+      "title": "守りの層を書く言語 Mamori 0.4 が、型の綴りの中の深さ 0 の `;` を断らず、型の位置へ別の文 (宣言していない外の名前の呼び出しなど) を隠して生成物へ運べた (M6 を受けない文)",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/parser.ts: 型の綴りの読みで、深さ 0 の `;` (その場の終端でない物) を M0 で断る。オブジェクト型の欄の区切り (深さ 1 の `;`) と型の別名の終わりは通る。限界: 型の綴りはなお『そのまま写す』ので、深さ 1 以上の中身 (オブジェクト型・関数型) は型として正しいかを変換後の tsc に任せる —— 型は実行されず、不正な型は tsc が止める。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+        "test": "★ 最上位の const の型の綴りへ文を隠す形は断る (threat: T-239)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+          "test": "★ 戻り値の型・引数の型の綴りでも同じ (threat: T-239)"
+        }
+      ]
+    },
+    {
+      "id": "T-240",
+      "found": "2026-10-31",
+      "foundBy": "揺さぶりが見つけた。`x.__defineGetter__(…)` を Mamori が受け入れた (FORBIDDEN_MEMBERS は constructor / prototype / __proto__ の 3 つだけだった)。",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "low",
+      "title": "守りの層を書く言語 Mamori 0.4 が、古い getter / setter の定義・参照 (__defineGetter__ / __defineSetter__ / __lookupGetter__ / __lookupSetter__) を禁じず、どの物にも getter を差し込める口が残っていた",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/parser.ts: FORBIDDEN_MEMBERS へ 4 つを足す (`.name` の後ろに置けない名前)。`Object.defineProperty` を断るのと同じ理由。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+        "test": "★ .__defineGetter__ は断る (threat: T-240)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+          "test": "★ .__defineSetter__ は断る (threat: T-240)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+          "test": "★ .__lookupGetter__ は断る (threat: T-240)"
+        }
+      ]
+    },
+    {
+      "id": "T-241",
+      "found": "2026-10-31",
+      "foundBy": "複数ファイルの手探りが見つけた。`use { open alias o }` の別名 `o(raw)` と、別のモジュールの同名の非 export の関数 `fn open(u: string)` があると、本物の sink `open(u: VU)` への素の文字列が M4 を素通りした (外形を名前だけで引き、ファイルの並び順にも依った)。",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "low",
+      "title": "守りの層を書く言語 Mamori 0.4 が、use で引いた関数の外形を名前だけで引いていたので、別名や同名の別の関数で印を受ける引数の検め (M4) が外れた",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: 関数の外形の鍵を `道 + 名前` にし、use を道で解いて (resolveUse) 使う側の名前 (別名) から外形を引く。export していない名前の use と、同じ名前の二重宣言 (use・extern・定数・関数) を M6 で断る。変換後の tsc も型で止めるが Mamori の検めが 1 層欠けていた。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+        "test": "★ 別名で引いても印を受ける引数は検める (threat: T-241)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+          "test": "★ 別のモジュールの同名の非 export の関数は外形を上書きしない (並び順にも依らない) (threat: T-241)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+          "test": "★ export していない名前は use で引けない (threat: T-241)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+          "test": "★ use した名前と同じ名前の関数・定数・extern を宣言できない (threat: T-241)"
+        }
+      ]
     }
   ],
   "huntBacklog": [

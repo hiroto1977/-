@@ -42,6 +42,7 @@ vi.mock('../library/library', () => ({
   getLibrary: () => ({ put: async () => {}, list: async () => [] }),
 }));
 vi.mock('../network/proxy', () => ({
+  PROXY_UNVERIFIED_MESSAGE: 'PROXY_UNVERIFIED',
   getProxyConfig: async () => null,
   inspectStoredProxyConfig: async () => ({ config: null, rejected: null, unreadable: null }),
   fetchViaProxy: async () => new Response('{}', { status: 200 }),

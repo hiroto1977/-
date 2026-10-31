@@ -24,6 +24,7 @@
 
 import { isCalendarDate, isoDaysBetween } from './isoDate';
 import { countChars, moreThanChars } from './inputCeiling';
+import { displayField } from './apiResponse';
 import { isFiniteNumber } from './num';
 import type { Role } from './team';
 
@@ -459,7 +460,7 @@ export function teamSignals(sessions: readonly MentorSession[], members: readonl
 /** 信頼度の低い組を見つける。**同意の無い人の評価は読まない** (片方の同意だけでも組は出さない)。 */
 export function teamPairs(sessions: readonly MentorSession[], members: readonly MentorMember[]): readonly TeamPair[] {
   const byKey = new Map(sessions.map((s) => [s.member, s] as const));
-  const nameOf = (k: string): string => members.find((m) => m.key === k)?.name ?? k;
+  const nameOf = (k: string): string => members.find((m) => m.key === k)?.name ?? displayField(k);
   const seen = new Set<string>();
   const out: TeamPair[] = [];
   for (const s of sessions) {

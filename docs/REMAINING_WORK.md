@@ -1,5 +1,133 @@
 # Service Hub — 残りの作業手順書
 
+## パス 571 (MG-004) —— escape.ts の移植と Mamori 0.4 (2026-10-31)
+
+- **閉じた穴 (T-232)**: Mamori の M6 が組み込みの名前だけを見て、共有の状態を持つメンバ (RegExp の旧式の静的な欄・Error の captureStackTrace / stackTraceLimit・URL の blob) を通していた。`BUILTIN_MEMBERS` の表で構築する形と許したメンバだけにした。`mamoriV04.test.ts` 20 件 + 台帳の書き換え A-541 / A-542。詳細は SESSION_HANDOFF のパス 571。
+- **測って絞らなかった物**: `String` / `Math` / `JSON` / `Number` / `Array` / `Map` / `Set` / `Promise` の静的メンバは共有の状態を持たない (測った)。`Object.freeze(use で宣言した値)` は宣言した値への操作で、宣言していない外へ届く道ではない。`new RegExp(動的なパターン)` は availability (ReDoS) の話で来歴の規則ではない —— 書くなら `lint:regex` 相当を Mamori の出力にも掛けるかをまず測る。
+- **status / confirm / aria-label / title / 日付の走査 (パス 570 の続き)**: 保管値を素で出す補間は 0 件。`confirm`/`alert` の補間は固定ラベルのみ・`aria-label`/`title` の `selected.name` (MentorPage) と `m.name` (TeamRadar) は読み込み時に天井済み・`toISOString()` は現在時刻か解析済みの値だけ。今日の欠陥 0 件 (census の機械化は引き続き別パス)。
+- **MG-003 の添字 `index`**: 脅威 id は **T-242 以降**を使う (T-232〜T-241 は MG-004 とその対戦・攻撃の電池が取った)。
+
+## パス 570 —— ロット削除後の status 文の天井 (2026-10-31)
+
+- **閉じた穴**: パス 569 が残した `HydroponicsPage.removeBatch` の status 文 3 か所が保管値の batch id を素で補間していた。文に入れる名前を `batchIdText(batchId)` (40 字 + '…') にし、探す・消すのは全文の id のまま。`hydroponicsRemoveStatusCeiling.test.ts` 3 件 (成功 / 失敗 / 正当な id は不変)。
+- **測って残した物**: 3 つ目の文 (「控えが見つかりません」) は他のタブとの競合でしか届かず、jsdom では再現できなかったので**振る舞いでは留めていない** (同じ `shown` 変数を 3 文が読む)。
+- **一般形は未着手**: 「status / confirm / aria-label が保管値を素で補間しない」を機械で数える census (status setter の template に保管値の var が入るなら天井を通る)。走査 (パス 569) で素の補間は removeBatch だけだったので、今日の欠陥は 0 件になった。
+
+## パス 569 —— チームレーダーの下書きの保存値の天井 (2026-10-31)
+
+- **閉じた穴**: `sanitizeRadarDraft` / `sanitizeTeamMember` が長さを見ず、下書きの 6 欄が画面へ天井なしで出ていた (実測 2,201,386 → 1,503 字)。`clampToCeiling` で読むときに畳む (`id` は全文)。`teamRadarDraftCeiling.test.ts` 6 件 + 対照 4 方向。詳細は CLAUDE.md / SESSION_HANDOFF.md のパス 569。
+
+## パス 569 で測って残した物 (別パス)
+
+### HydroponicsPage の `removeBatch` の status 文が保管値の batch id を素で描く (パス 570 で閉じた)
+
+`src/renderer/pages/HydroponicsPage.tsx` の `removeBatch(batchId)` (320-336) は 3 つの status 文
+(326 「控えが見つかりません」/ 332 「削除できませんでした」/ 335 「削除しました」) に
+`batchId` を**素で** interpolation する。`batchId = b.id` で `b` は保管した batch
+(`batchesFromRecords` は empty / 非 string の id だけ落とし、over-length は落とさない)。
+
+- **表の描画は安全** —— `batchIdText(b.id)` = `displayField(id, MAX_BATCH_ID_CHARS=40)` で天井済み。
+- **届く道**: 復元・手編集 JSON・旧版 (`COLLECTION_SHAPES['hydroponics-batches']` の `id: str` は
+  長さを見ず、入口 `parseBatch` は `countChars(id) > 40` で断るが復元は入口を通らない)。
+- **膨張点**: 200,000 字の batch id を持つ batch の × を押すと、`setBatchOk`/`setBatchError` の
+  status 文が 200,000 字に膨れる (335 は成功時・332 は端末保存失敗時に到達。326 は `rec` が
+  見つかるので通常は非到達)。**view-time ではなく action-triggered** (パス 568 / 569 より軽い)。
+- **直し**: 3 文の interpolation を `batchIdText(batchId)` へ (lookup `batchCol.records.find(... === batchId)`
+  と `batchCol.remove(rec.id)` は full id のまま —— 表示だけ天井・パス 420 の規律)。
+  `record.id` を使う 301/311 は form guard で ≤40 なので bounded (直す必要なし)。
+
+### 一般形: status / confirm / error 文が保管値を interpolation する family
+
+パス 419 / 568 / 569 の天井 census は**表・一覧の描画**を見てきた。status 文・aria-label・
+confirm の interpolation は別の描画経路で、天井 census が覆っていない。走査 (パス 569) で
+保管値を素で interpolation する status 文は HydroponicsPage の removeBatch 1 か所だけだった
+(TeamPage:422 / WorkAssignmentsPanel:261 は `displayField`/`assignmentTitleText` で天井済み)。
+機械化するなら「status setter の template に保管値の var が入るなら天井を通る」の census。
+
+## パス 568 —— 専属カウンセラー MentorPage の保存値の天井 (メンバー鍵) (2026-10-31)
+
+- **閉じた穴**: パス 419 の census `storedFreeTextCeiling.test.ts` が後発の MentorPage を覆っておらず、**メンバー鍵**が画面へ天井なしで出ていた (3 経路: `nameOf` の `?? key` / `mentorRoster` の `|| r.data.email` / `teamPairs` の `?? k` の fallback)。表示の fallback だけ `displayField` で天井 (同一性の鍵は保持)。`mentorStoredCeiling.test.ts` 6 件 + 対照 3 方向。詳細は CLAUDE.md / SESSION_HANDOFF.md のパス 568。
+- **残作業なし** —— 3 経路すべて閉じた。家系の確認で測って何も無かった軸: 自由文 (答え・チェックイン / 関係のメモ) は `readText` が天井済み・`teamSignals.name` は roster 一致で常に roster 名・`data-mentor-signal` は属性。
+- **他画面の同じ家系 (将来の候補・今は穴ではない)**: MentorPage を census の母集団へ足したのは**専用の検査**でであって、`storedFreeTextCeiling.test.ts` 本体の母集団は 5 画面のまま。新しい画面が足されるたびに同じ「鍵の表示 fallback に天井が無いか」を測るのは、画面ごとの jsdom harness が要るので census 1 本に機械化しにくい —— 新画面を足す時の手順として SESSION_HANDOFF の規律に委ねる (保管値を画面へ出す新画面は天井を測る)。
+
+## パス 567 (MG-003) —— `index` (添字) を足すときの break-first の結論 (2026-10-31)
+
+MG-003 は `index` を足す前提で始めたが、**break-first の測定で「今は足さない」が結論になった** —— 以下はその測定と、将来足すときに先に閉じる穴。
+
+- **cadence が port を先に選んだ**: `mamori:grow -- brief` は「移せる壁を先に移す・構文は移せる壁が尽きてから足す」の順で、`tokenInput.ts` (template↻ 1 つだけで移せる) を deterministic に選んだ。だから MG-003 は port にした。`index` を足すのは、移せる壁 (`tokenInput` → 済 · 次は `escape.ts`) が尽きてから。
+- **`index` が解き放つ 4 壁** (実測): `safeFilename.ts` (`s.split('.')[0]!.trim()` —— **字面 `[0]` の結果にメンバ**)・`aiEndpoint.ts` (`octets[0]` —— 字面・比較)・`vaultToken.ts` (`fields[key]` —— **computed string・data-leaf**)・`dataCrypto.ts` (`out[i] = v` —— **computed numeric・代入の左辺**)。
+- **破った設計 (もし素朴に足したら)**: computed な鍵はどんなオブジェクトの `constructor` / `prototype` / `__proto__` にも届く (全オブジェクトが持つ)。`x['constructor']['constructor']('code')()` で `Function` に届き、`checkCallee` は**宣言済みの local binding を無条件に呼ばせる**ので `const f = x[k]; f('code')` で laundering が通る。字面の鍵だけ `FORBIDDEN_MEMBERS` に通しても computed は素通り。ledger の「字面でない鍵は数だけ」は `vaultToken` の `fields[key]` (computed string) を落とすので**狭すぎる** (壁が要る形を切る)。
+- **先に閉じる穴 (足すときの設計)**: ① 字面 (string / number) の鍵は `FORBIDDEN_MEMBERS` を通す (parser・`.member` と同じ保証) ② computed な鍵の**結果は inert** —— callee / `new` の callee / `.member` の base / `[…]` の base になれない ③ **taint 伝播** —— computed subscript から束縛した binding も inert (laundering `const f = x[k]; f(…)` を塞ぐ)。`Binding` に taint の印を足して `checkCallee` / `member` / `index` の base で見る ④ **代入の左辺** (`out[i] = v`) は prototype 汚染の口 (`out['__proto__'] = evil`) —— 字面鍵は `FORBIDDEN_MEMBERS`、computed 鍵は数だけ (代入先は配列の添字が正当な唯一の形)。これは security コンパイラ自身への大きめの変更なので、変異検査 100% + 対照 + T-241 以降の脅威台帳 + break-first の再測定を揃えて別パスで。tokenInput を移したことで `index` を書くと今も M0 で断る (probe 4 で実測)。
+- **id**: MG-003 で足していないので脅威 id は使っていない。足すときは次の空き id (ledger の最大を見る)。
+
+## パス 566-B の残り穴と follow-up (BYO プロキシ設定の保存時 MAC · T-231) (2026-10-31)
+
+- **解錠中の偽造 (残余・severity low)**: 保存時 MAC は**静止時の改竄** (アプリが動いていない間・別プロセス・別拡張からの IDB 書き込み) を検知するが、同一オリジンで**解錠中**に script を走らせられる相手は `vault.authTag('proxy-config', …)` を自分で呼んで正しいタグを作れる (在メモリの鍵を持つ相手は何でもできる)。これは T-230 と同じ形で、同一オリジンの in-page 攻撃者は本質的に止められない —— 守る線は「保管庫を解錠していない間に書かれた物」である。
+- **レガシーの 1 度の再保存**: この修正より前に保存した BYO プロキシ設定 (mac 無し) は解錠後の最初の読みで `unstamped` として断られ、設定画面で 1 度保存し直すまでプロキシが効かない (fail closed を選んだ —— 未署名を受け入れると剥がし→差し替えが通る)。ニッチな機能で、設定画面に警告を出すので許容。
+- **汎用 `vault.authTag` の他の使い道**: 保管庫の外に残す平文で「静止時の改竄を検知したい」物が他に出たら、同じ `authTag(domain, data)` / `verifyAuthTag` を別 `domain` で使える (トークン名前空間を汚さずに MAC を付けられる)。今の読み手は proxy だけ。
+- ★ **MG-003 (Mamori 添字) の脅威 id は T-242 以降へ (T-232〜T-241 はパス 571〜572 が取った)** —— 566-B が T-231 を取った (ledger の最大は T-231)。MG-003 を統合するときは次の空き id を使う。
+
+## パス 566-C の残り穴と follow-up (保存時刻の若返り攻撃 · T-230) (2026-10-30)
+
+- **単調カウンタの残り穴 (severity low · 別パス候補)**: T-230 の直しは保存時刻を暗号に束ねたので、時刻を**前倒し**して若返らせる攻撃は塞がった。だが「**まだ有効だった頃に捕らえた記録を丸ごと**」書き戻す rollback は、利用者が鍵を差し替えた後でも 8 時間の窓の中なら旧い鍵が蘇る (暗号文も時刻も本物なので AAD / ms 一致の検めを通る)。塞ぐには **サービスごとの単調カウンタ** (保管庫のメタに最後に書いた世代を持ち、AAD へ束ね、読む時に「保管庫の今の世代以上か」を検める) が要る —— 記録の版管理と、別のタブ / 窓での同時書き込みの扱いが要るので別パス。攻撃者は ① 保管庫 / 保管ファイルへの書き込み ② 古い有効な記録の控え ③ 8 時間の窓、の 3 つが揃う必要があり、severity は low。
+- **変異検査の全掃引 (非 OOM 環境の follow-up)**: `audit:mutate-changed` は secrets.ts / vault.ts で 96.13% を出したが、生存は v2 分岐・atv2 の読みに集まり、それらを覆う検査は `rereadModule` / 動的 import を使うため **Stryker の related-test-selection に映らない** (パス 490 / 495 の人工物)。ablation (A-538 / A-539 が caught) が守りの検査されていることを直接証明しているので、OOM で何度も回し直さずここに残す。非 OOM 環境で `--mutate src/main/secrets.ts,src/renderer/security/vault.ts` を全掃引し、生存を `audit:survivors` で「実は殺されている / 本物の穴 / 等価」に仕分けるのが正しい追い方 (手で 1 件ずつ当てる —— OOM するので並列は 2 まで)。
+- **やり方の罠 (このパスで実証)**: 重い変異検査 / `audit:survivors` の最中は対象ファイルを**読み書きしない** —— コンテナが OOM (exit 137) で落ちると、`audit:survivors` が `finally` に届かず対象が書き換わったまま残る (vault.ts の `tokenAad` の本体が空になり `git checkout` で戻した)。
+
+## パス 565 (台帳の穴を開け直して、名指しの回帰検査が本当に鳴るかを測る —— threat-ablation · T-226) (2026-10-30)
+
+- **欠けていた物**: 脅威台帳 (225 件) の各行は回帰検査を名指すが、台帳の検査が見るのは**題名の検査が在ること**まで。守りを外して本当に鳴るかは誰も測っていなかった (変異検査は `mutate` の 310 本だけ・台帳の穴そのものは測らない)。
+- **道具** `scripts/threat-ablation.cjs` (`check` / `run` / `triage`): 書き換えを git worktree の写し (作業ツリーの未 commit の変更を重ねる・`node_modules` は symlink) へ当て、台帳の `regression` と `alsoRegressions` を走らせ、vitest の JSON 報告で判定する。原文でも走らせて baseline を取り、`finally` で戻して内容で照合する。`--in-place` は作業ツリーで (作業ツリーが汚れるので commit しない)。
+- **実測**: 157 の書き換え (115 の脅威 · high 9 件は全部) → 131 caught / 26 missed。26 件の仕分け: **20 件は名指しのファイルの隣の it が・6 件は別のファイルの検査が捕まえていた** (守りそのものが無縛だった物は 0 件)。名指しが同じ守りの別の層・別の枝を見ていなかった —— `alsoRegressions` に 26 本 (it.each の 6 本は雛形か describe へ) を足して測り直した。初めの 1 回は題名の照合を全文一致にしていて 8 件を偽の「題名が無い」にした (台帳は部分一致 —— 部分一致へ直した)。
+- **機械**: `threatAblation.test.ts` 14 件 (判定・題名の照合・書き換えの台帳がちょうど 1 回当たる・high は全部・2026-10-31 以降の脅威は全部・床 115・`--only` の空 / 当たらない名前を断る・毎日の配線)。対照: 判定を常に caught (A-011 —— 道具自身の書き換え) ・`--only` の当たらない名前を通す ❌1。
+- **毎日の報告**: dependency-audit が `--report --json orchestration/threat-ablation.json` で走らせ (job 75 分 · 段 45 分)、捕まえ損ね・測れなかった・古びた書き換えを常設 Issue の要対応に出す。狩りの輪の「対策」段は直した穴の書き換えを足して caught を確かめる (予約の指示文も更新)。
+- **残した物**: ① 書き換えは人と班が書く —— 書いていない穴は測られない (2026-10-31 以降の脅威と high は書き換えが必須・それ以前の 110 件は床で減らさない向きだけ) ② 書き換えは「直す前の形」の 1 つで、別の壊し方 (変種) は測らない ③ 所要は実測で 112 本が約 5 分・42 本が約 4 分 (どちらも変異検査と並行 —— ログの作成と最終更新の時刻の差)。毎日の段の天井は 45 分で、今の数なら余裕がある (書き換えが数倍に増えたら塊に分ける)。
+
+## パス 564 (育てる輪の 2 周目 MG-002 —— controlChars を移し、16 進の数を足し (0.3)、sink の呼び方の穴 T-225 を塞ぐ) (2026-10-30)
+
+- **brief の選んだ物**: port `src/shared/controlChars.ts` (書き直しだけで移せる 3 本のうちいちばん短い 24 行)。ところが判定は `c < 0x20 || c === 0x7f` の
+  16 進で、Mamori に 16 進の数が無かった (detector に無い構文 —— heuristic が「移せる」と言っても、書いて build が通るかで決まる、の実例)。
+  10 進へ書き換えると制御文字の境目が読み手に確かめにくくなるので、16 進の数を字句へ足した (`0[xX][0-9a-fA-F]*` · 数字の無い `0x` は M0)。
+- **破った試し (実測 · 16 形)**: 印を受ける関数を値として持ち出す 8 形 —— `.call` / `.apply` / `.bind`・`const f = openUrl;`・`{ g: openUrl }.g(raw)`・
+  `[openUrl].map(…)`・`(c ? openUrl : openUrl)(raw)`・`for (const f of [openUrl])` —— を**0.2 のコンパイラは通した** (tsc は型で断る)。
+  sink 関数の中の 6 形 —— 行き先以外の素の引数 (`shell.openExternal(raw)`)・引数なし・arrow の中で素の引数・`return shell;`・`return { s: shell };`・
+  `return shell.openExternal;` —— は**コンパイラも tsc も通した**。`(field raw.f)(raw)` もコンパイラは通す (tsc は `unknown` を呼べないと断る · 印の無い値なので来歴の穴ではない)。断られたのは arrow の中で直に呼ぶ形 (M4)・`0x1.constructor` (M0)・`0x` (M0) の 3 形だけ。
+  T-225 として台帳へ。**足す構文 (16 進) と関係の無い既存の構文の組み合わせから出た** —— 破る段は足す構文だけを見ない。
+- **直し** (`checker.ts`): ① 印を受ける関数 (引数のどれかが印の型) は値の位置に現れたら M4 ② 危ない口は sink 関数の中でも呼ぶ形 (`shell(…)` / `shell.m(…)`) でしか使えず、
+  値の位置なら M2 ③ その呼び出しの第 1 引数は行き先の印を持つ値だけ (`checkCallee` · `Ctx.destVetted`)。断りの場所は危ない口の名前を指す
+  (最初の版は `.` の位置を指していて、既存の文の場所とずれた —— 検査が教えた)。
+- **機械**: `mamoriV03.test.ts` (値として持ち出す 8 形 + use で引いた関数・sink の中の 6 形・名前を直に呼ぶ危ない口・対照 6・16 進 4)。
+  既存の 1 件 (`mamoriCheckerCoverage.test.ts`「sink 関数の引数の既定値なら使える」) が `b: unknown = shell` (危ない口の持ち出し) を許容として留めていたので反転した。
+- **対照 6 方向すべて鳴る** (md5 で元へ戻したことを確かめた): A 印を受ける関数を値として許す ❌10 / B 危ない口を sink の中で値として許す ❌4 /
+  C 第 1 引数を検めない ❌5 / D 呼ぶ形を見分けない ❌45 / E 16 進を読まない ❌4 / F `0x` を断らない ❌1。
+- **変異検査**: 1 度目 99.71% (checker.ts 98.91% · 生存 5 件・4 か所)。等価の 2 か所は形を消し (法則 115)、本物の穴の 2 か所 (印でない行き先の sink 関数で M3 だけを出すか・直に呼ぶ未宣言の名前の M6) に検査を足して、2 度目は checker.ts 454 / controlChars.ts 12 とも **100.00%** (生存 0・未到達 0)。
+- **残した物**: ① 危ない口の第 2 引数以降は検めない (`window.open(url, '_blank', …)` の窓の名前・`writeFile(path, body)` の中身は行き先ではない)
+  ② `use` で引いた**TypeScript の**関数が印を受けるかは Mamori には見えない (tsc が見る) ③ 次の候補は brief の `index` (添字 —— 足すと 4 本が移せる。
+  鍵を実行時に組めるので T-224 の表を迂回する道になる —— 先に塞ぎ方を決める)。
+
+## パス 563 (Mamori 0.2 を育てる —— 先に言語を破り (T-224)、構文を足し、守りの壁を 1 本移し、育てる輪を予約で回す) (2026-10-30)
+
+- **見つけた物 (測った)**: 構文を足す前に 0.1 を破った。`eval` / `Function` / `new Function` は M6 で断っていたが、
+  `String.constructor('return 42')()` は**何の規則にも当たらず**、生成した TS を tsc で通して node で走らせると 42 が返った (= 文字列をコードとして走らせる口)。
+  `''.constructor.constructor` / `[].constructor` も同じ。さらに `Object.setPrototypeOf(...)` / `Object.defineProperty(...)` が「純粋な組み込み」として素通りし、
+  他のモジュールの関門の判定を書き換えられた。T-224 として台帳へ。
+- **直し**: ① `FORBIDDEN_MEMBERS` (`constructor` / `prototype` / `__proto__`) を `.` の後ろ・`new` の callee の鎖・`field` の欄名で M0 として断る
+  (`__proto__` は計算した鍵で持つ —— 素のリテラル鍵は原型を設定するだけで鍵にならず、最初の版はその穴で `.__proto__` を通した)
+  ② 組み込みの `Object` は `OBJECT_MEMBERS` の 7 つだけ、値として持ち出す・`new Object()` も M6。
+- **0.2 の構文** (足すたびに「その構文で来歴の規則を外す道」を先に塞いだ): オブジェクトリテラル (`__proto__` 鍵・spread・計算した鍵は断る・
+  値は来歴の検査を通る) / 三項 (印は両方の枝が同じ印のときだけ) / `switch` (落ち抜けを作らない・積んだ label の間に注記を置かない) / `throw` /
+  `for…of` + break / continue / `type` (先頭の `|` で複数行) / `interface` / `field x.k`。
+- **変異検査の 1 回目 (99.54% · 生存 11) を仕分けた**: 等価 2 (`Object` の判定の `kind` の比べ → 名前を返す関数 `identName` へ寄せて形ごと消した・`topLevelUnion` の添字ループ → 字の並びで回す) / 検査の不足 8 (ループの数の上下・積んだ `default`・`default` で終わる case・arrow の括弧) / **本物の穴 1** —— 回す変数の束縛を `{}` にしても誰も鳴らず、辿ると**代入の相手が `let` かを誰も見ていなかった** (引数・`const`・回す変数・関数の名前への代入が通った)。`Binding.mutable` を足して `let` だけに許す (M6)。既存の 2 件 (`mamoriCheckerCoverage.test.ts`) が「Mamori では断らない (tsc が断る)」を仕様として留めていたので反転した —— 引数への代入は tsc も通すので、その理由は半分偽だった。
+- **移した壁**: `src/shared/proxyEndpoint.ts`。生成物と元の差は `git diff` で読み、判定の差は 0。
+- **育てる輪**: `scripts/mamori-growth.cjs` + `security/mamori-growth.json` (構文 35 種を detector と判断 (feature / rewrite / added) と risk の台帳で両方向) +
+  `docs/MAMORI_GROWTH_PROMPT.md` (予約の指示文) + 毎日の dependency-audit の節。実測の brief: 移していない壁 37 本のうち
+  書き直しだけで移せる物 3 本 (`controlChars.ts` 24 行が先頭)・次に足す構文は `index` (足すと 4 本が移せ、23 本が使う)。
+- **機械**: `mamoriV02.test.ts` (T-224 ×7・位置・Object の許可 / 拒否・変換の全形を 1 byte で・`topLevelUnion`・構文の誤り 25 形・来歴) /
+  `mamoriGrowth.test.ts` 31 件 (detector ごとの標本・注記の中では数えない・実物の台帳・brief の決定性と選ぶ順・record の断り 13 形・status・報告の配線・指示文)。
+- **対照 12 方向すべて鳴る**: A `.constructor` を通す ❌8 / B Object の許可を外す ❌2 / C 素の Object ❌1 / D `__proto__` 鍵 ❌2 / E 三項の来歴 ❌1 /
+  F 落ち抜け ❌2 / G オブジェクトの値を検めない ❌3 / H arrow の括弧 ❌1 / I 試しの数 ❌2 / J 選ぶ順 ❌2 / K 報告の要対応 ❌1 / L 変異 100 ❌2。
+- **残した物**: ① detector は正規表現の heuristic —— 「移せる」は実際に `.mamori` を書いて build が通るかで決まる (指示文にそう書いた)
+  ② 添字 (`a[i]`) / `while` / 分割代入 / 正規表現リテラル はまだ無い (台帳の feature) ③ 予約のセッションが probe を形だけ書けば通る —— 記録と PR に残るので人が見る。
+
 ## パス 562 (進化役は毎日の脅威ウォッチを読む —— 常設 Issue の要約を週 1 の狩りの brief へ) (2026-10-30)
 
 - **見つけた物 (測った)**: パス 561 が残した ③ (脅威ウォッチの「表に無い弱点の種類」を進化役へ渡す配線が無い) を閉じに行き、
@@ -19444,7 +19572,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/zero-fold-census.cjs。npm run lint:zero-fold は check だけ) -->
-合計 **110 ファイル / 281 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **110 ファイル / 283 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
@@ -19478,6 +19606,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/shared/tradeTax.ts` | 4 |
 | `src/shared/waterCyclePlanner.ts` | 4 |
 | `src/main/clients/kpi.ts` | 3 |
+| `src/renderer/data/backup.ts` | 3 |
 | `src/renderer/data/charts.ts` | 3 |
 | `src/renderer/data/financialStatements.ts` | 3 |
 | `src/renderer/pages/StocksPage.tsx` | 3 |
@@ -19520,7 +19649,6 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/renderer/components/RealtimeTicker.tsx` | 1 |
 | `src/renderer/components/ShigyoConsole.tsx` | 1 |
 | `src/renderer/data/assistantContext.ts` | 1 |
-| `src/renderer/data/backup.ts` | 1 |
 | `src/renderer/data/balanceSheet.ts` | 1 |
 | `src/renderer/data/cashPlan.ts` | 1 |
 | `src/renderer/data/chartSelfCheck.ts` | 1 |
@@ -32137,7 +32265,7 @@ shared **171** モジュール / 両ビルドが import **90** / うち否定で
 | `assistantLimits` | 6 | 6 | 対称 (実測・パス 252) —— latestTurnTooLong の 4 つの消費者 (main の chat / chatAll、ブラウザ版の callAssistantChat / callAssistantChatAll) がすべて 1 つずつ断り、文面も inputTooLongMessage 1 つ。**ただし system の天井の単位が割れていた** —— main は `.slice(0, MAX_SYSTEM)` (コード単位)・ブラウザ版は `clampToCeiling` (文字)。絵文字 50,000 字の system で main 30,000 字 / ブラウザ版 50,000 字。パス 252 で直した |
 | `atlassianSite` | 1 | 1 | **非対称だった → パス 248 で直した** (述語は共有・欄の天井は main だけ) |
 | `buildDestinations` | 0 | 13 | 対称 —— というより **main はこのモジュールの問いを 1 度も発しない** (実測・2026-09-25 パス 455 / 457 で数え直した)。母集団に入ったのは `credentialSlotUnreadNote` (`string | null`) を足したためだが、**`src/main` / `src/preload` からの直の import は 0 件**で、走査に映ったのは*閉包*の 1 辺だけ —— `shared/paperAccount.ts:69` の `import type { BuildKind }` である。**型だけの辺**なのでビルドの時点で消え、`paperAccount` はこのモジュールの値を 1 つも読まない (export を 1 つずつ走査して 0 件)。しかも `paperAccount` を読む main 側の物は**検査 1 本だけ** (`main/clients/__tests__/paperAccountReality.test.ts`) で出荷コードではない。したがって「否定で答えたあとの動作」が両ビルドで割れる道は**原理的に無い** —— このモジュールは逆に、**実行形態ごとに別の答えを出すために在る** (読み手の数は左の列が数える。`null` は「ブラウザ版には言うことが無い」という答えである)。その答えの正しさは `pages/__tests__/{googleOAuthPasteBuildGate,credentialSlotBuildGate,proxySectionBuildGate}.test.ts` と `components/__tests__/{googleConnectCardBuildGate,exportActionsBuildGate}.test.ts` が両方の実行形態を実際に描いて留める (パス 457 で足した `googleLiveScopeNote` / `googleSignInUnsupportedNote` はブラウザ版が**実際に外へ送る**ことを述べる側なので、逆向きの証拠も `renderer/__tests__/browserSendClaimCensus.test.ts` が持つ。パス 458 の `exportCopyLabel` も同じ形 —— ブラウザ版の書き出しが返す `path` はファイル名だけなので、「保存場所」と名乗る札を実行形態ごとに分ける。パス 459 の `proxyRequiredNote` は**ブラウザ版でだけ言う**側で (main は各サービスへ直接つなぐので、そこで「Worker を建てろ」と言うと偽の前提になる)、実際に描くのは `components/ProxyRequiredNote.tsx` 1 つ・振る舞いは `pages/__tests__/proxyRequiredOnScreen.test.ts` が 3 つの実行形態で見る)。 **パス 460 でこのモジュールは 2 つ目の役目を持った** —— 実行形態の**身元**そのもの (`WEB_BUILD_SUFFIX` / `isWebBuildVersion`)。それまで身元は「橋が名乗った版と完全に一致するか」で決まり、綴りは `web-shim.ts` (作る側) と `runtimeMode.ts` (比べる側) に分かれていた —— 実測で、作る側だけを 1 つ上の版にすると **19,048 件すべて緑のままブラウザ版がデスクトップ版を名乗り、保管庫を解錠する唯一の入口 (ロック画面) が出なくなる**。判定はここに 1 つ置き、両側が読む。**main は今もこのモジュールを 1 行も import しない** (実測: `src/main` / `src/preload` から `buildDestinations` / `WEB_BUILD_SUFFIX` / `isWebBuildVersion` への参照は 0 件) ので、上の判定は変わらない。身元の安定は `renderer/__tests__/buildSentinelStability.test.ts` が振る舞いで、綴りが 1 つであることは `renderer/__tests__/versionNamingCensus.test.ts` が両方向で留める。 |
-| `constantTimeEquals` | 1 | 1 | 対称 (実測・2026-09-20 パス 331) —— OAuth の `state` を比べる定時間比較を shared の 1 つに畳み、両ビルドは同じ関数を別名 (`safeStateEquals`) で export する (`stateEqualsParity` が `===` で同一性を留める —— 写しが再び生えれば落ちる)。**畳む前は等価ですらなかった**: main は `Buffer.from(s,'utf8')` → `timingSafeEqual` で、UTF-8 への変換が**孤立サロゲートをすべて U+FFFD へ潰す**ため、実測 4,330,561 組のうち 4,192,256 組 (96.8%) で答えが割れた (base64url の字だけなら 0 組なので、今日の実害は 0)。**false の後の動作は両ビルドで違うが、どちらも流れを止める** —— main は `classifyCallback` が `{ kind: 'state-mismatch' }` を返してコールバックを捨て、ブラウザ版は `exchangeGoogleCode` が `state が一致しません — CSRF 攻撃の可能性があります` を throw してトークン端点へ**行かせない**。運び方 (戻り値 / 例外) はそれぞれの流儀で、**「交換しない」という結論は同じ**なので非対称ではない |
+| `constantTimeEquals` | 1 | 2 | 対称 (実測・2026-09-20 パス 331) —— OAuth の `state` を比べる定時間比較を shared の 1 つに畳み、両ビルドは同じ関数を別名 (`safeStateEquals`) で export する (`stateEqualsParity` が `===` で同一性を留める —— 写しが再び生えれば落ちる)。**畳む前は等価ですらなかった**: main は `Buffer.from(s,'utf8')` → `timingSafeEqual` で、UTF-8 への変換が**孤立サロゲートをすべて U+FFFD へ潰す**ため、実測 4,330,561 組のうち 4,192,256 組 (96.8%) で答えが割れた (base64url の字だけなら 0 組なので、今日の実害は 0)。**false の後の動作は両ビルドで違うが、どちらも流れを止める** —— main は `classifyCallback` が `{ kind: 'state-mismatch' }` を返してコールバックを捨て、ブラウザ版は `exchangeGoogleCode` が `state が一致しません — CSRF 攻撃の可能性があります` を throw してトークン端点へ**行かせない**。運び方 (戻り値 / 例外) はそれぞれの流儀で、**「交換しない」という結論は同じ**なので非対称ではない |
 | `controlChars` | 0 | 2 | 対称 (設計・パス 269 で実測) —— 輸出は `hasControlChar` **1 つだけ**で、`false` の意味はどのビルドでも「制御文字を含まない」の 1 つしか持たない。**`true` のあと何をするかは呼ぶ側の持ち物**なので、判定はここでは閉じている (`inputCeiling` と同じ形)。 呼び手は実測 6 件で、そのうち**越境するのは 2 件だけ**: `atlassianSite` (パス 248 で非対称を直した) と `aiEndpoint` (この pass で対称と実測)。残り 4 件は renderer 側にしか読み手が居ない —— `proxyEndpoint` (network/proxy.ts / SettingsPage.tsx)・`renderer/data/businessUnits.ts`・`renderer/data/bankSubmission.ts` は場所からして renderer、`hydroponicCrops` は `hydroponicsControl` 経由だが**それ自身が別の行として未読**なのでここでは断じない。 ★ **パス 280 の訂正**: ここには「`shared/tokenInput.ts` の `hasControlChars` (複数形) は別のモジュールで、名前が似ているだけである」と書いてあった —— **それは読み足りなかった**。名前が似ているだけでなく、**同じ判定の 2 つ目の実装**だった (片方は正規表現の文字クラス・もう片方は文字ごとの走査で、どちらも C0 と DEL を見る)。しかも読む側は資格情報の入口と保管層の床である。 ★ 範囲そのものをここに書かない —— `lint:forbidden` が「共有モジュールの外で制御文字の判定を書き直した」として落とす (パス 280 で実際に落ちた。**判定について書いた散文が、判定の写しと見分けられなくなる**)。 2 つは**ほんとうに一致していた** —— BMP のスカラー値すべて + astral + lone surrogate + 貼り付けで混ざる形、計 63,504 標本で食い違い 0 件 (実測)。だから欠陥ではなかったが、`controlChars.ts` 自身の docblock が「同じ判定が 2 つ目を作りかけたので独立させた・片方だけ緩んでも気付けない」と書いている当の形だったので、`hasControlChars` は `hasControlChar` へ委譲する**1 つの実装**にした。`__tests__/controlCharSingleRule.test.ts` が振る舞いの一致と「2 つ目が戻らないこと」を両方留める。JSON の包みの中を見られないという限界 (パス 245) はそのまま残る |
 | `credentialTtl` | 1 | 1 | 対称 (実測 · 2026-10-28 · T-213) —— 保存した資格情報の有効時間。`storedCredentialExpired` は両保管層 (`main/secrets.ts` / `renderer/security/vault.ts`) が同じ引数で呼び、否定 (期限切れ) のあとは両側とも**復号せずに消して「未設定」と混ぜない理由を返す** (secrets は reason 'expired'・vault は `takeExpiredNotice`)。違うのは OAuth の TokenSet の扱いだけで、それは意図した非対称 (デスクトップ版は更新トークンを持つので認可サーバの期限に従わせ、ブラウザ版の貼り付け式は accessToken だけなので一律に掛ける) —— `secretsCredentialTtl.test.ts` / `vaultCredentialTtl.test.ts` が両側を留める。 |
 | `depreciation` | 0 | 1 | 非対称は起きない (実測・パス 281 で理由を書き直した) —— 結論は変わらないが、**パス 272 が書いた理由は偽だった**。 ★ 旧い行はこう述べていた: 「到達の鎖は `taxCalc.ts` 1 本だけで、`taxCalc.ts` を import する main / preload のファイルは 0 件 (実測)。税の計算は画面 (renderer) だけが読む。main 側がこのモジュールの問いを1 度も発しない」。前半 (`src/main` / `src/preload` の中に直の import が 0 件) は**真**だが、後半は**偽** —— 実測した鎖は `main/clients/funding.ts` → `shared/funding.ts` → `taxCalc.ts` → ここ で、**`shared/funding.ts` を 1 枚はさんで main へ繋がっている**。**1 ホップで測って閉包について述べていた** —— この本は到達を閉包で見る(パス 268 でそう直した) ので、この行が母集団に在ること自体が反証である(到達していなければ行は存在しない)。 ★ 正しい理由は**辺の中身**である: 鎖の 2 つの辺はどちらも**定数だけ**を持ち出す —— `funding.ts` が `taxCalc` から取るのは `CONSUMPTION_TAX_STANDARD` 1 つ、`taxCalc` が ここ から取るのは `SME_*` の 5 定数で、`taxCalc` はこのモジュールの**関数を 1 つも呼ばない** (`isSchedulableLife` / `straightLineAnnual` の呼び手は `RealEstatePage.tsx` = renderer だけ)。だから main 側は否定で答える問いを発しない。`controlChars` (パス 280) と同じ形 —— **読まれてはいたが、足りなかった**。 到達の鎖と辺の名前は `shared/__tests__/judgementReachEdges.test.ts` が両方向に留める (経路が変わる・名前が増える・定数が関数に化ける、のどれでも鳴る) |
@@ -32151,7 +32279,7 @@ shared **171** モジュール / 両ビルドが import **90** / うち否定で
 | `hydroponicCrops` | 0 | 4 | 非対称は起きない (実測・パス 272) —— **到達の鎖を端まで辿った**: main → `clients/hydroponics.ts` → `hydroponicsControl` → `hydroponicCrops` → {`hydroponics`, `readNumeric`}。main が import するのは **`buildHydroponicsSnapshot` 1 つだけ**で (`clients/hydroponics.ts:1` — 残りは再輸出と型)、その関数の本体は `READING_FIELDS.map(...)` と `DEFAULT_CROP_LIST.map(...)` の **2 つの射影しか無い** (実測。否定で答える関数を 1 つも呼ばない)。つまり **main 側はこのモジュールの問いを 1 度も発しない** —— `hydroponicsControl` (パス 268) と同じ形。2026-09-23 (パス 420) に renderer 側の読み手が 3 → 4 になった (`data/hydroponicsLog.ts` が `CROP_ID_RE` を読み、ロットの `cropId` が**参照先と同じ形**であることを要求する) が、**main の側は 1 つも増えていない** —— 実測で `cropIdText` / `MAX_CROP_ID_CHARS` の `src/main/` からの参照は **0 件**である。 |
 | `hydroponics` | 0 | 3 | 非対称は起きない (実測・パス 272) —— `hydroponicCrops` と同じ鎖の先に在る (main → clients/hydroponics.ts → hydroponicsControl → hydroponicCrops → ここ)。main が import する `buildHydroponicsSnapshot` は 2 つの定数表を射影するだけで、この鎖の否定で答える関数を 1 つも呼ばない (実測) |
 | `hydroponicsControl` | 1 | 6 | 非対称は起きない (実測・パス 268) —— 否定で答える 7 つ (`readingFromStored` / `batchFromStored` / `batchSchedule` / `nextSolutionChange` / `lowPotassiumSwitchDate` / `latestReading` / `isBatchState`) の**消費者は renderer だけ** (hydroponicsLog.ts / HydroponicsPage.tsx —— **左の数は importer 全体を数えるので、この 2 本より多い**。2026-09-23 (パス 421) に 5 → 6 になったのは `OverviewPage.tsx` が `cropIdText` を読んだためで、それは `null` を返さないので 7 つには入らない)。main が import するのは `buildHydroponicsSnapshot` と型 2 つだけで、その関数は READING_FIELD_SPECS / DEFAULT_* / DEFAULT_CROP_LIST を**射影する純関数** (否定で答える関数を 1 つも呼ばない —— 実測)。測定記録とロットは業務レコード (IndexedDB) に在り main は触らないので、**main 側がこの問いを 1 度も発しない** |
-| `inputCeiling` | 14 | 53 | 対称 (実測・パス 281 で測り直した) —— 天井と床の判定そのもの (countChars / clampToCeiling / atLeastChars / moreThanChars)。否定 (false) はどのビルドでも「天井を超えていない」「床を満たさない」の 1 つの意味しか持たず、**動作を決めるのは呼ぶ側**である。 ★ **パス 281 の訂正**: ここには「呼ぶ側の対称性は ceilingUnitCensus.test.ts が母集団で見る (両方向の台帳)」と書いてあった —— **その検査は呼ぶ側の対称性を見ていない**。あちらが数えるのは「文字で数えると宣言した定数が `.length` の比較か`.slice(` の引数に現れる」箇所、つまり**単位**であって、ビルド間の非対称ではない(あちらの冒頭が自分で「数えていなかったのは単位である」と述べている)。`controlChars` (パス 280) と同じ「別の物へ預けた」形。 ★ 実測 (パス 281): 4 つの述語のうち**ビルドの境を越えるのは 2 つだけ** —— `countChars` と `clampToCeiling` は main (assistant / skills / emotions / ollama / templates) と web-shim の両側から呼ばれる。`atLeastChars` / `moreThanChars` は**main からも web-shim からも 1 度も呼ばれない** (2026-09-23 · パス 422 に再実測して 0 件)。 ★ **パス 422 の訂正**: ここには「呼び手は `renderer/security/vault.ts` **1 ファイルだけ**」と書いてあった —— **今日の実測は 9 ファイル**である (入口の天井が `.length` から `moreThanChars` へ移った分)。**判定は変わらない**が、散文が名前を並べていたので数が動いた日に偽になった (パス 419 / 421 と同じ家系)。**左の数は importer 全体を数える** —— 名前を並べるのをやめ、非対称かどうかを決める事実 (main 側の呼び出しが 0 件であること) だけを書く。デスクトップ版にマスターパスワードは無く、記録の入口は renderer 側にしか無いので、**この 2 つに main 側の双子が存在しない**。越える 2 つについては天井の定数が `shared/` に 1 つずつ在り、**同じ定数を両側が読む** (ollama の prompt/system は `shared/ollama.ts`・assistant は `shared/assistantLimits.ts`・emotions は `shared/emotionsLimits.ts`)。数の一致は `ceilingLiteralCensus` が、単位の一致は `ceilingUnitCensus` が見る |
+| `inputCeiling` | 14 | 54 | 対称 (実測・パス 281 で測り直した) —— 天井と床の判定そのもの (countChars / clampToCeiling / atLeastChars / moreThanChars)。否定 (false) はどのビルドでも「天井を超えていない」「床を満たさない」の 1 つの意味しか持たず、**動作を決めるのは呼ぶ側**である。 ★ **パス 281 の訂正**: ここには「呼ぶ側の対称性は ceilingUnitCensus.test.ts が母集団で見る (両方向の台帳)」と書いてあった —— **その検査は呼ぶ側の対称性を見ていない**。あちらが数えるのは「文字で数えると宣言した定数が `.length` の比較か`.slice(` の引数に現れる」箇所、つまり**単位**であって、ビルド間の非対称ではない(あちらの冒頭が自分で「数えていなかったのは単位である」と述べている)。`controlChars` (パス 280) と同じ「別の物へ預けた」形。 ★ 実測 (パス 281): 4 つの述語のうち**ビルドの境を越えるのは 2 つだけ** —— `countChars` と `clampToCeiling` は main (assistant / skills / emotions / ollama / templates) と web-shim の両側から呼ばれる。`atLeastChars` / `moreThanChars` は**main からも web-shim からも 1 度も呼ばれない** (2026-09-23 · パス 422 に再実測して 0 件)。 ★ **パス 422 の訂正**: ここには「呼び手は `renderer/security/vault.ts` **1 ファイルだけ**」と書いてあった —— **今日の実測は 9 ファイル**である (入口の天井が `.length` から `moreThanChars` へ移った分)。**判定は変わらない**が、散文が名前を並べていたので数が動いた日に偽になった (パス 419 / 421 と同じ家系)。**左の数は importer 全体を数える** —— 名前を並べるのをやめ、非対称かどうかを決める事実 (main 側の呼び出しが 0 件であること) だけを書く。デスクトップ版にマスターパスワードは無く、記録の入口は renderer 側にしか無いので、**この 2 つに main 側の双子が存在しない**。越える 2 つについては天井の定数が `shared/` に 1 つずつ在り、**同じ定数を両側が読む** (ollama の prompt/system は `shared/ollama.ts`・assistant は `shared/assistantLimits.ts`・emotions は `shared/emotionsLimits.ts`)。数の一致は `ceilingLiteralCensus` が、単位の一致は `ceilingUnitCensus` が見る |
 | `isoDate` | 8 | 33 | 対称 (実測・パス 256) —— 負で答える関数は 8 つだが、**両ビルドが呼んでいるのは 2 つだけ** (main/preload 側の消費者を機械的に数えた): (1) `isCalendarDate` + `calendarDateMessage` —— main/clients/emotions.ts:212 と renderer/data/emotionsWeb.ts:177 が**同一の行**で投げる (`throw new Error(calendarDateMessage('date'))`)。 (2) `isoDateFromTimestamp` —— main/clients/stocks.ts:776 と renderer/data/stocksWatchlistWeb.ts:194 がともに `?? ''` で空文字に倒す。いずれも**見本のローソク生成の中**で、入力は `Date.now()` ± 日数なので `null` の枠は実質到達しない。 残り 6 つ (`parseIsoDate` / `isCalendarMonth` / `isCalendarDateOrMonth` / `parseTimestamp` / `addIsoDays` / `isoDaysBetween`) は **main/preload 側の消費者が 0 件** なので、ビルド間の非対称は**原理的に起きない**。 ★ **2026-09-22 (パス 394) に 9 つ目 `isoMonthOf` が増えた** —— 消費者は `main/clients/freee.ts` **だけ** (renderer は 0 件) なので、こちらも非対称は起きない (**片方のビルドしか呼ばない**)。ブラウザ版の bundle からは tree-shaking で落ちることを 両方組んで実測した (+0 B)。上の「負で答える関数は 8 つ」はこの行が足された時点の数で、**今は 9 つ**である。 ★ 台帳の粒度について: この台帳は**モジュール**単位で「両ビルドがimport」を数えるが、非対称が宿るのは**両ビルドが呼ぶ関数**だけである。isoDate はその差が最も大きい例 (33 のimport元・負で答える 8 関数・境界を越えるのは 2 つ)。 ★ **2026-09-22 (パス 410) に 10 個目 `displayDateOf` が増え、main 側の import 元が 3 → 8 になった** (`drive` / `github` / `microsoft-365` / `notion` / `wordpress` の 5 client を日付の読みへ寄せた)。**これは非対称ではなく、設計した対である** —— 境界 (main の client) が `string | null` へ正規化し、画面 (renderer) が同じ module の `dateText` でその `null` に**理由を与える** (「日付が読めません」)。`displayDateOf` を呼ぶのは main 側と `shared/ollama.ts` だけ、`dateText` を呼ぶのは画面だけで、**同じ関数が両側で違う扱いを受ける形は 1 つも無い** (実測)。`dateText` は `string | null` を受けて必ず文字列を返すので、そもそも否定で答えない。 ★ **2026-09-27 (パス 493) に 11 個目 `isTimestampMs` が増え、renderer 側の import 元が 29 → 30 になった** —— 読み手は `shared/emotionsShape.ts` の `isAnalysisEntry` (main の `emotions.ts` とブラウザ版の `emotionsWeb.ts` が**同じ 1 つの述語**として呼ぶ) と、ブラウザ版だけが持つ記録の保管層 `renderer/data/store.ts`。否定の答え (時刻が範囲外) は両ビルドとも「その要素・その記録を落とす」に倒れるので非対称は無い (実測)。 |
 | `mentor` | 1 | 6 | 非対称は起きない (実測・パス 551) —— 否定で答えるのは `sanitizeMentorSession` (読めない保存値は null) と、`mediationPlan` の `steps: null` (同意が揃わない) の 2 つで、**読み手は renderer だけ** (MentorPage.tsx と、パス 555 で足した data/mentorRoster.ts · TeamPage.tsx · WorkloadShareTable.tsx)。main が import するのは `buildMentorSnapshot` と型 `MentorSnapshot` だけ (main/clients/mentor.ts) で、それは null を返さない。危機の判定は renderer の `counseling.ts` を 注入で受けるので、この module 自身は判定を持たない |
 | `mutualFundsMetrics` | 0 | 2 | 対称 (実測・パス 272) —— main の到達は `serviceAdvisor` 経由 (4 クライアント: real-estate / mutual-funds / uber-eats / demae-can)。`serviceAdvisor` がこのモジュールから取るのは**4 つ** (`serviceAdvisor.ts:37`): 定数 `RETURN_FLOOR_PCT` / `RETURN_ENTRY_CEILING_PCT` と述語 `isImpossibleReturnPct` / `isAboveEntryCeilingPct` (どちらも 1 行の比較。2026-09-27 · パス 493j に 2 → 4 —— 上端の外を「捨てずに言う」断りのため)。**2 つの述語は確かに越境する** —— `adviseService` の中で `isImpossibleReturnPct` は真の枝 (:586 警告を組む) と偽の枝 (:607 測れる集合から外す) の両方、`isAboveEntryCeilingPct` は真の枝 (:598 断りを組む) だけが使われる (偽の枝は何もしない —— 値は比較に残る)。だが**否定のあとの動作は両ビルドで同じ 1 つの実装の中に在る** —— `adviseService` が返す助言の*中身*を形づくるだけで `ok: false` を作らず、同じオブジェクトが両ビルドへ返る (`serviceAdvisor` の判定はパス 268 で対称と実測済み)。★ この行は **module 単位の到達と call 単位の到達が違う**ことの例である (`isoDate` の ★ と同じ話)。 |

@@ -1,3 +1,17 @@
+// 生成物 —— src/shared/escape.mamori から Mamori のコンパイラが組んだ。手で編集しない (`npm run mamori:build`)。
+// 言語の仕様は docs/MAMORI.md。生成物が元と食い違えば src/shared/mamori/__tests__/mamoriGenerated.test.ts が落ちる。
+/**
+ * マークアップ / Markdown / 画面の 1 行へ文字列を埋めるときのエスケープと色の関門。
+ *
+ * ## Mamori で書いてある (2026-10-31 · パス 571 · MG-004)
+ *
+ * 元は TypeScript で、Mamori 0.3 で書き直した。足りなかったのは template 文字列 1 つだけ
+ * (`escapeUnits` の `\\uXXXX` の組み立て) で、文字列の連結へ書き直した —— 組み上がる文字列は
+ * 1 字も変えていない。出力側の関門 (HTML / XML / Markdown に第三者の文を埋める所・色を属性へ埋める所) から、
+ * Mamori の M0 と M6 が効く —— `as` (型の書き換え)・`.constructor` (文字列をコードとして走らせる道)・
+ * テンプレート文字列 (補間でコードを運ぶ道)・宣言していない外の名前が**書けない**。判定は 1 つも変えていない。
+ */
+
 /**
  * マークアップに文字列を埋めるときのエスケープ — アプリ全体で 1 つだけ持つ。
  *
@@ -15,12 +29,7 @@
  * & を最初に置換するのは、後から置換した実体参照の & をもう一度置換しないため。
  */
 export function escapeXml(input: string): string {
-  return input
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+  return input.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
 /**
@@ -112,12 +121,7 @@ export function isHexColor(input: string): boolean {
  *   §2.5 で「文字として扱う」と決まっており、markup にはならない。
  */
 export function escapeMarkdownInline(input: string): string {
-  return input
-    .replace(/\\/g, '\\\\')
-    .replace(/\|/g, '\\|')
-    .replace(/\r\n|\r|\n/g, ' ')
-    .replace(/</g, '&lt;')
-    .replace(MD_LINK_OPENERS, mdLinkNeutralizer);
+  return input.replace(/\\/g, '\\\\').replace(/\|/g, '\\|').replace(/\r\n|\r|\n/g, ' ').replace(/</g, '&lt;').replace(MD_LINK_OPENERS, mdLinkNeutralizer);
 }
 
 /**
@@ -129,6 +133,7 @@ export function escapeMarkdownInline(input: string): string {
  * 普通の文 (`[` 単独・`(` 単独) は 1 字も変わらない。
  */
 const MD_LINK_OPENERS = /!\[|\]\(/g;
+
 function mdLinkNeutralizer(match: string): string {
   return match === '![' ? '!\\[' : ']\\(';
 }
@@ -159,29 +164,21 @@ export function escapeMarkdownText(input: string): string {
  * 画面の 1 行に素で置くと、うしろに在るアプリの文の見え方を入れ替えうる (U+202E は
  * Trojan Source と同じ仕組み)。`lint:charset` の `INVISIBLE_RANGES` が原文について
  * 鳴らす当の字で、ここは**実行時に第三者の文を画面へ出す側**の規則である。
+ *
+ * 逃がす群 (配列の項の順):
+ * 1. 制御・書式・行 / 段落区切り。
+ * 2. 「見える字なのに何も描かれない」字 (T-205): Hangul フィラー・点字空白・CGJ・Khmer の
+ * 固有母音。\p{Cf} ではないので上の群に入らず、`#general` と `#general\u3164` が
+ * 画面では同じに見えた。字の本体 (文字・記号・結合記号) なので個別に挙げる。
+ * 3. 異体字選択子は基底の漢字・仮名に付くのが正当な使い方 (葛飾の IVS など)。
+ * それ以外の位置に在る物 (先頭・ASCII の後・選択子の連なり) は何も変えない飾りなので逃がす。
+ * 4. 絵文字の表示切替 (U+FE0E / U+FE0F) は絵文字の基底の後なら正当 (❤️)。それ以外は逃がす。
  */
-export const INVISIBLE_UNITS = new RegExp(
-  [
-    '[\\p{Cc}\\p{Cf}\\p{Zl}\\p{Zp}]',
-    // 「見える字なのに何も描かれない」字 (T-205): Hangul フィラー・点字空白・CGJ・Khmer の
-    // 固有母音。\p{Cf} ではないので上の群に入らず、`#general` と `#general\u3164` が
-    // 画面では同じに見えた。字の本体 (文字・記号・結合記号) なので個別に挙げる。
-    '\\u034F|\\u115F|\\u1160|\\u17B4|\\u17B5|\\u2800|\\u3164|\\uFFA0',
-    // 異体字選択子は基底の漢字・仮名に付くのが正当な使い方 (葛飾の IVS など)。
-    // それ以外の位置に在る物 (先頭・ASCII の後・選択子の連なり) は何も変えない飾りなので逃がす。
-    '(?<![\\p{sc=Han}\\p{sc=Hiragana}\\p{sc=Katakana}])[\\uFE00-\\uFE0D\\u180B-\\u180D\\u180F\\u{E0100}-\\u{E01EF}]',
-    // 絵文字の表示切替 (U+FE0E / U+FE0F) は絵文字の基底の後なら正当 (❤️)。それ以外は逃がす。
-    '(?<!\\p{Emoji})[\\uFE0E\\uFE0F]',
-  ].join('|'),
-  'gu',
-);
+export const INVISIBLE_UNITS = new RegExp(['[\\p{Cc}\\p{Cf}\\p{Zl}\\p{Zp}]', '\\u034F|\\u115F|\\u1160|\\u17B4|\\u17B5|\\u2800|\\u3164|\\uFFA0', '(?<![\\p{sc=Han}\\p{sc=Hiragana}\\p{sc=Katakana}])[\\uFE00-\\uFE0D\\u180B-\\u180D\\u180F\\u{E0100}-\\u{E01EF}]', '(?<!\\p{Emoji})[\\uFE0E\\uFE0F]'].join('|'), 'gu');
 
 /** 1 字を UTF-16 の単位ごとに `\uXXXX` へ (JSON が C0 を逃がすのと同じ綴り)。 */
 export function escapeUnits(c: string): string {
-  return c
-    .split('')
-    .map((unit) => `\\u${unit.charCodeAt(0).toString(16).padStart(4, '0')}`)
-    .join('');
+  return c.split('').map((unit) => '\\u' + unit.charCodeAt(0).toString(16).padStart(4, '0')).join('');
 }
 
 /**

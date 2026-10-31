@@ -169,7 +169,8 @@ describe('M0: 書けない綴り (字句・構文の段で断る)', () => {
     expect(syntaxError('export fn f() -> void {\n  eval(\'1\');\n}\n')).toBe(FORBIDDEN_WORDS.eval);
   });
   it('★ prototype の鍵 (toString / constructor) は禁止語と読まない (表を自分の鍵だけで引く)', () => {
-    expect(() => parse('t.mamori', 'export fn f(x: URL) -> string {\n  return x.toString() + x.constructor.name;\n}\n')).not.toThrow();
+    // `.constructor` は 0.2 から**メンバとしては**断る (T-224) が、名前として禁止語なのではない —— 局所の名前には使える。
+    expect(() => parse('t.mamori', 'export fn f(x: URL) -> string {\n  const constructor = x.toString();\n  return constructor + x.hasOwnProperty.name;\n}\n')).not.toThrow();
   });
   it('テンプレート文字列と /* */ の注記は書けない', () => {
     expect(syntaxError('export fn f() -> string {\n  return `a`;\n}\n')).toMatch(/テンプレート文字列/);

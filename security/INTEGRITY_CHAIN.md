@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 393
+- ブロック数: 408
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `f6cfb1e38249707ce381a7b6daa6e106a6732f0d51ae201753529bc31edd5b55`
-- 保護対象: 153 ファイル
+- 末尾(tip)ハッシュ: `17547ec31806449419742f638bc0e8e0c98f240dabe6d2ef14ad66c0036a5853`
+- 保護対象: 156 ファイル
 
 ## ブロック
 
@@ -406,6 +406,21 @@
 | 390 | `95ac773211290ab6` | `481cab63766de6c2` | `0698643af3a72623` | update checker.ts |
 | 391 | `ad6850f327de7cb5` | `0698643af3a72623` | `03aa04535e364620` | update parser.ts |
 | 392 | `da81754a5147af1d` | `03aa04535e364620` | `f6cfb1e38249707c` | update emit.ts,parser.ts |
+| 393 | `679d2ea479835b9f` | `f6cfb1e38249707c` | `b90bf1ca0e5c2284` | update integrity-chain.cjs,ast.ts,checker.ts,emit.ts,parser.ts,proxyEndpoint.mamori |
+| 394 | `9180ad493c9cbbe8` | `b90bf1ca0e5c2284` | `ee967358076aa390` | update checker.ts,emit.ts,parser.ts |
+| 395 | `4843d8a8d9d6a96d` | `ee967358076aa390` | `c3ae67ba4c08746d` | update checker.ts |
+| 396 | `6c0373db2dbbb7d1` | `c3ae67ba4c08746d` | `cb9b5216e75d9167` | update integrity-chain.cjs,controlChars.mamori,controlChars.ts,checker.ts,parser.ts |
+| 397 | `ef62abf990b8192f` | `cb9b5216e75d9167` | `23585fa17a9e8aff` | update dependency-audit.yml,checker.ts |
+| 398 | `a2ae11977f1fdf4f` | `23585fa17a9e8aff` | `bd57abb5d38b8775` | update selfAttestation.ts |
+| 399 | `e97f81e7b2d229c8` | `bd57abb5d38b8775` | `8541d760dbebae1b` | update secrets.ts,vault.ts |
+| 400 | `c08a43af5e544ebb` | `8541d760dbebae1b` | `efd5f12832c6bfca` | update lint-malware.cjs,vault.ts |
+| 401 | `a5a217f8d4d18724` | `efd5f12832c6bfca` | `64a6201e17ac5c47` | update lint-malware.cjs |
+| 402 | `fb263eee5d23b6a6` | `64a6201e17ac5c47` | `1e79af33475cfb92` | update proxy.ts,vault.ts |
+| 403 | `7a88c53d3ff2a08c` | `1e79af33475cfb92` | `3bb97a6877a9c2ef` | update integrity-chain.cjs,tokenInput.mamori,tokenInput.ts |
+| 404 | `d5cdc43554d30f65` | `3bb97a6877a9c2ef` | `9beedd49011a0422` | update escape.ts,checker.ts |
+| 405 | `35bf4202074f1aa1` | `9beedd49011a0422` | `a6e261fb26e6f74b` | update checker.ts,parser.ts |
+| 406 | `71a0b563f354bb2a` | `a6e261fb26e6f74b` | `7a7701fdcaf13c27` | update parser.ts |
+| 407 | `5df0aef8d21e2ffb` | `7a7701fdcaf13c27` | `17547ec318064494` | update checker.ts |
 
 ## 保護対象ファイル
 
@@ -525,6 +540,7 @@
 - `src/shared/assistantLimits.ts`
 - `src/shared/atlassianSite.ts`
 - `src/shared/constantTimeEquals.ts`
+- `src/shared/controlChars.mamori`
 - `src/shared/controlChars.ts`
 - `src/shared/credentialTtl.ts`
 - `src/shared/cryptoParams.ts`
@@ -548,10 +564,12 @@
 - `src/shared/outboundContentGate.ts`
 - `src/shared/privateTarget.ts`
 - `src/shared/promptInjection.ts`
+- `src/shared/proxyEndpoint.mamori`
 - `src/shared/proxyEndpoint.ts`
 - `src/shared/redact.ts`
 - `src/shared/safeFilename.ts`
 - `src/shared/scanTarget.ts`
+- `src/shared/tokenInput.mamori`
 - `src/shared/tokenInput.ts`
 - `src/shared/tokenResponse.ts`
 - `src/shared/vaultToken.ts`

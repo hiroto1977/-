@@ -48,6 +48,7 @@ vi.mock('electron', () => ({
  */
 const proxySpy = vi.hoisted(() => ({ seen: [] as { url: string; signal?: AbortSignal }[] }));
 vi.mock('../network/proxy', () => ({
+  PROXY_UNVERIFIED_MESSAGE: 'PROXY_UNVERIFIED',
   inspectStoredProxyConfig: async () => ({
     config: { url: 'https://proxy.example/', sharedSecret: '' },
     rejected: null,

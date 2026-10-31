@@ -10,7 +10,7 @@
  * 失敗は `MamoriError` (行と桁つき) で投げる。1 つ目の誤りで止める —— 構文の誤りの後に続く誤りは
  * 当てにならないので、並べて見せても読み手を迷わせるだけである。
  */
-import type { Comments, Doc, Expr, Item, Module, Param, Pos, Stmt, TypeRef } from './ast';
+import type { Comments, Doc, Expr, Item, Member, Module, Param, Pos, Prop, Stmt, SwitchCase, TypeRef } from './ast';
 
 export class MamoriError extends Error {
   constructor(
@@ -38,6 +38,28 @@ export const FORBIDDEN_WORDS: Readonly<Record<string, string>> = {
   eval: '`eval` は Mamori に在りません (文字列をコードとして走らせる口は持ちません)',
 };
 
+/**
+ * `.` の後ろに置けない名前 (2026-10-30 · パス 563 · threat: T-224)。理由は利用者が読む文。
+ *
+ * **0.1 はここを持たず、`eval` を禁じながら同じことができた** —— `String.constructor(code)()` と
+ * `''.constructor.constructor(code)()` は関数の constructor (`Function`) に届き、Mamori のコンパイラも
+ * 変換後の `tsc` も通し、node で実行すると文字列がコードとして走った (実測: `'return 6*7'` が 42 を返す)。
+ * `Function` という名前は M6 が断るが、メンバの連鎖はどの名前も経由しない。`prototype` / `__proto__` は
+ * 組み込みの原型 (`String.prototype` ほか) に届く —— 書き換えると、他のモジュールの関門の判定まで変わる。
+ */
+export const FORBIDDEN_MEMBERS: Readonly<Record<string, string>> = {
+  constructor: '`.constructor` は Mamori に在りません —— 関数の constructor (`Function`) は文字列をコードとして走らせる口で、`eval` を禁じても `String.constructor(code)()` で同じことができてしまいます',
+  prototype: '`.prototype` は Mamori に在りません —— 組み込みの原型を書き換えると、他のモジュールの関門の判定まで変わります',
+  // ★ 計算した鍵で書く —— 字面の `__proto__: …` は欄ではなく**原型の差し替え**で、表に入らない
+  // (この表を初めて書いたとき、そうなって `.__proto__` が素通りした。Mamori の字面が `__proto__` の鍵を断る理由そのもの)。
+  // 古い getter / setter の定義・参照 (0.4 · T-240): どの物にも getter を差し込める・原型の物を引き出せる、`Object.defineProperty` と同じ口。
+  __defineGetter__: '`.__defineGetter__` は Mamori に在りません —— `Object.defineProperty` と同じ、どの物にも getter を差し込む口です',
+  __defineSetter__: '`.__defineSetter__` は Mamori に在りません —— `Object.defineProperty` と同じ、どの物にも setter を差し込む口です',
+  __lookupGetter__: '`.__lookupGetter__` は Mamori に在りません —— 原型をたどって getter を引き出す口です',
+  __lookupSetter__: '`.__lookupSetter__` は Mamori に在りません —— 原型をたどって setter を引き出す口です',
+  ['__proto__']: '`.__proto__` は Mamori に在りません —— 原型に届く道で、`.prototype` と同じ理由で断ります',
+};
+
 const PUNCT = [
   '===', '!==', '...', '->', '=>', '&&', '||', '??', '<=', '>=',
   '(', ')', '{', '}', '[', ']', '<', '>', ',', ';', ':', '.', '=', '!', '+', '-', '*', '/', '%', '?', '|', '&',
@@ -63,6 +85,19 @@ export function isPunctTok(t: Tok, ...texts: readonly string[]): boolean {
   // Stryker disable next-line ConditionalExpression: 上の注記のとおり等価 (記号の綴りを持つ字句は記号か、構文の段が断る注記だけ)
   return t.kind === 'punct' && texts.includes(t.text);
 }
+
+/** 行注記の本体 (JS の行終端 LF / CR / U+2028 / U+2029 の手前まで)。sticky なので `lastIndex` から読む (`*` なので必ず一致する)。 */
+const LINE_COMMENT_BODY = /[^\n\r\u2028\u2029]*/y;
+
+/**
+ * 注記と文字列の中に**裸で**置けない字 (0.4 · T-235 · 対戦 572)。C0 (タブと LF を除く) / DEL / C1 / 幅ゼロと方向の印
+ * (U+200B・U+200E・U+200F) / 行・段落区切り / bidi の制御 (U+202A〜U+202E・U+2066〜U+2069) / 不可視 (U+2060〜U+2064) / BOM。
+ * 見えない字は読み手の見ている物と走る物を食い違わせる (Trojan Source · CVE-2021-42574)。書きたいときは `\uXXXX` で綴る。
+ * ZWJ / ZWNJ (U+200C / U+200D) は絵文字の連結に要るので除く (`lint:charset` と同じ判断)。
+ */
+// eslint-disable-next-line no-control-regex -- 制御文字そのものを断る規則なので、制御文字の範囲を正規表現に書くのが目的
+const HIDDEN_CHARS = /[\u0000-\u0008\u000B-\u001F\u007F-\u009F\u200B\u200E\u200F\u2028\u2029\u202A-\u202E\u2060-\u2064\u2066-\u2069\uFEFF]/;
+const HIDDEN_CHARS_MESSAGE = '制御・不可視・方向を変える字は注記と文字列の中に裸で置けません —— `\\uXXXX` と綴ります (見える物と走る物が食い違う · Trojan Source)';
 
 export function lex(file: string, src: string): Tok[] {
   const out: Tok[] = [];
@@ -96,9 +131,13 @@ export function lex(file: string, src: string): Tok[] {
     }
     const pos = at();
     if (src.startsWith('//', i)) {
-      const end = src.indexOf('\n', i);
-      const stop = end === -1 ? src.length : end;
+      // 行注記は **JS が行を終える字すべて** (LF / CR / U+2028 / U+2029) で終わる (0.4 · T-233)。
+      // `\n` だけで終えると、注記の中の U+2028 / U+2029 / 単独の CR のあとの字は Mamori には注記の続き (検めない) だが、
+      // 生成した TypeScript では行が終わっていて**コードとして走る**。検めを受けないコードが生成物へ入る道だった。
+      LINE_COMMENT_BODY.lastIndex = i;
+      const stop = i + LINE_COMMENT_BODY.exec(src)![0].length;
       const raw = src.slice(i, stop);
+      if (HIDDEN_CHARS.test(raw)) throw new MamoriError(file, pos, HIDDEN_CHARS_MESSAGE);
       const kind: TokKind = raw.startsWith('//!') ? 'header' : raw.startsWith('///') ? 'doc' : 'comment';
       const rest = kind === 'comment' ? raw.slice(2) : raw.slice(3);
       out.push({ kind, text: rest.startsWith(' ') ? rest.slice(1) : rest, pos });
@@ -117,7 +156,9 @@ export function lex(file: string, src: string): Tok[] {
         j += src[j] === '\\' ? 2 : 1;
       }
       if (j >= src.length) throw new MamoriError(file, pos, '文字列が閉じていません');
-      out.push({ kind: 'string', text: src.slice(i, j + 1), pos });
+      const literal = src.slice(i, j + 1);
+      if (HIDDEN_CHARS.test(literal)) throw new MamoriError(file, pos, HIDDEN_CHARS_MESSAGE);
+      out.push({ kind: 'string', text: literal, pos });
       advance(j + 1 - i);
       continue;
     }
@@ -126,7 +167,9 @@ export function lex(file: string, src: string): Tok[] {
     }
     if (/[0-9]/.test(ch)) {
       // 先頭の 1 字は数字だと上で確かめたので、一致は必ず先頭から始まる (錨 `^` は要らない —— 書くと消す変異体が等価になる)
-      const m = /[0-9][0-9_]*(\.[0-9]+)?/.exec(src.slice(i))!;
+      // 16 進 (`0x20`) は 0.3 から (パス 564) —— 制御文字やビットの境目は 16 進で書くほうが読み手が確かめやすい。
+      const m = /0[xX][0-9a-fA-F]*|[0-9][0-9_]*(\.[0-9]+)?/.exec(src.slice(i))!;
+      if (m[0] === '0x' || m[0] === '0X') throw new MamoriError(file, pos, '`' + m[0] + '` の後に 16 進の数字 (0-9 / a-f) が要ります');
       out.push({ kind: 'number', text: m[0], pos });
       advance(m[0].length);
       continue;
@@ -162,7 +205,9 @@ export function lex(file: string, src: string): Tok[] {
       if (j >= src.length) throw new MamoriError(file, pos, '正規表現が閉じていません');
       j++;
       while (j < src.length && /[a-z]/.test(src[j]!)) j++;
-      out.push({ kind: 'regex', text: src.slice(i, j), pos });
+      const literal = src.slice(i, j);
+      if (HIDDEN_CHARS.test(literal)) throw new MamoriError(file, pos, HIDDEN_CHARS_MESSAGE);
+      out.push({ kind: 'regex', text: literal, pos });
       advance(j - i);
       continue;
     }
@@ -178,6 +223,9 @@ export function lex(file: string, src: string): Tok[] {
 }
 
 const STOP_WORDS = new Set(['true', 'false', 'null', 'undefined', 'unknown', 'string', 'number', 'boolean', 'void']);
+
+/** `case` の本体を終えてよい文 (次の case へ落ちる形を書かせない)。 */
+const CASE_ENDS: ReadonlySet<Stmt['kind']> = new Set(['return', 'throw', 'jump']);
 
 export function parse(file: string, src: string): Module {
   const toks = lex(file, src);
@@ -203,11 +251,26 @@ export function parse(file: string, src: string): Module {
   const expectP = (text: string): Tok => (isP(text) ? next() : fail(peek(), `\`${text}\` が要ります (在ったのは ${describe(peek())})`));
   const expectW = (text: string): Tok => (isW(text) ? next() : fail(peek(), `\`${text}\` が要ります (在ったのは ${describe(peek())})`));
   const ident = (): string => (peek().kind === 'ident' ? next().text : fail(peek(), `名前が要ります (在ったのは ${describe(peek())})`));
+  /** `.` の後ろの名前。原型・Function へ届く名前は断る (T-224)。表は自分の鍵だけで引く。 */
+  const memberName = (): string => {
+    const t = peek();
+    const name = ident();
+    if (Object.hasOwn(FORBIDDEN_MEMBERS, name)) fail(t, FORBIDDEN_MEMBERS[name]!);
+    return name;
+  };
+  /** for の深さ (continue が置ける) と、for か switch の深さ (break が置ける)。 */
+  let loops = 0;
+  let breakables = 0;
   const str = (): string => {
     const t = peek();
     if (t.kind !== 'string') fail(t, `文字列が要ります (在ったのは ${describe(t)})`);
     next();
-    return JSON.parse(t.text.startsWith("'") ? `"${t.text.slice(1, -1).replace(/"/g, '\\"')}"` : t.text) as string;
+    try {
+      return JSON.parse(t.text.startsWith("'") ? `"${t.text.slice(1, -1).replace(/"/g, '\\"')}"` : t.text) as string;
+    } catch {
+      // `\'` や `\x41` のように JSON に無い綴りは読めない (読めない綴りでコンパイラごと落ちず、位置つきで断る)。
+      return fail(t, '文字列の中の `\\` の綴りが読めません —— `\\n` `\\t` `\\"` `\\\\` `\\uXXXX` だけを使います');
+    }
   };
 
   const takeLeading = (kinds: readonly TokKind[]): string[] => {
@@ -231,6 +294,10 @@ export function parse(file: string, src: string): Module {
       if (t.kind === 'eof') fail(t, '型が閉じていません');
       if (t.kind === 'comment' || t.kind === 'doc' || t.kind === 'header') fail(t, '型の途中に注記は置けません');
       if (depth === 0 && isPunctTok(t, ...terminators)) break;
+      // 深さ 0 の `;` は文の切れ目で、型には要らない (オブジェクト型の欄の区切りは `{ … }` の中 = 深さ 1)。
+      // 通すと `const C: number; fetch("x"); const D: number = 1;` のように**型の綴りの中へ文を隠せる** —— 型の綴りは
+      // そのまま写されるので、Mamori の検め (M6) を受けない文が生成物へ入った (0.4 · T-239 · 電池の対戦が見つけた)。
+      if (depth === 0 && isPunctTok(t, ';')) fail(t, '型の中に `;` は置けません —— 文の切れ目になり、型の綴りに別の文を隠せてしまいます');
       if (isPunctTok(t, '<', '(', '[', '{')) depth++;
       if (isPunctTok(t, '>', ')', ']', '}')) depth--;
       if (depth < 0) fail(t, '型の括弧が合いません');
@@ -313,6 +380,71 @@ export function parse(file: string, src: string): Module {
       expectP(';');
       return { kind: 'return', value, comments: cs, pos: t.pos };
     }
+    if (isW('throw')) {
+      next();
+      const value = expr();
+      expectP(';');
+      return { kind: 'throw', value, comments: cs, pos: t.pos };
+    }
+    if (isW('break') || isW('continue')) {
+      const word = next().text as 'break' | 'continue';
+      if (word === 'continue' ? loops <= 0 : breakables <= 0) fail(t, `\`${word}\` は ${word === 'continue' ? 'for' : 'for か switch'} の中にだけ置けます`);
+      expectP(';');
+      return { kind: 'jump', word, comments: cs, pos: t.pos };
+    }
+    if (isW('for')) {
+      next();
+      expectP('(');
+      expectW('const');
+      const name = ident();
+      expectW('of');
+      const iterable = expr();
+      expectP(')');
+      loops++;
+      breakables++;
+      const body = block();
+      loops--;
+      breakables--;
+      return { kind: 'for', name, iterable, body, comments: cs, pos: t.pos };
+    }
+    if (isW('switch')) {
+      next();
+      expectP('(');
+      const test = expr();
+      expectP(')');
+      expectP('{');
+      breakables++;
+      const cases: SwitchCase[] = [];
+      let pending = comments();
+      while (!isP('}')) {
+        const start = peek();
+        const tests: (Expr | null)[] = [];
+        while (isW('case') || isW('default')) {
+          if (next().text === 'case') tests.push(expr());
+          else tests.push(null);
+          expectP(':');
+          // 注記の次がまた label なら、それは積んだ label の間の注記 (本体の先頭の注記なら次は文)。
+          let n = 0;
+          while (peek(n).kind === 'comment') n++;
+          if (n > 0 && (isW('case', n) || isW('default', n))) fail(peek(), '積んだ label の間に注記は置けません (注記は最初の label の前へ)');
+        }
+        if (tests.length === 0) fail(start, `\`case\` か \`default\` が要ります (在ったのは ${describe(start)})`);
+        const body: Stmt[] = [];
+        let cs2 = comments();
+        while (!(isW('case') || isW('default') || isP('}'))) {
+          body.push(stmt(cs2));
+          cs2 = comments();
+        }
+        const last = body[body.length - 1];
+        if (last === undefined || !CASE_ENDS.has(last.kind)) fail(start, 'case の本体は return / throw / break で終えます (次の case へ落ちる形は書けません)');
+        cases.push({ tests, body, comments: pending, pos: start.pos });
+        pending = cs2;
+      }
+      if (pending.length > 0) fail(peek(), 'switch の終わりの前に注記は置けません');
+      breakables--;
+      expectP('}');
+      return { kind: 'switch', test, cases, comments: cs, pos: t.pos };
+    }
     if (isW('if')) {
       next();
       expectP('(');
@@ -333,6 +465,7 @@ export function parse(file: string, src: string): Module {
       const handler = block();
       return { kind: 'try', body, handler, comments: cs, pos: t.pos };
     }
+    if (isP('{')) fail(t, '文の頭に `{` は置けません (オブジェクトの字面だけの文は何もしないので書かない)');
     if (peek().kind === 'ident' && isP('=', 1)) {
       const target = ident();
       next();
@@ -357,7 +490,13 @@ export function parse(file: string, src: string): Module {
 
   const expr = (): Expr => {
     if (isArrowAhead()) return arrow();
-    return binary(0);
+    const test = binary(0);
+    if (!isP('?')) return test;
+    const q = next();
+    const then = expr();
+    expectP(':');
+    const otherwise = expr();
+    return { kind: 'cond', test, then, otherwise, pos: q.pos };
   };
 
   const binary = (level: number): Expr => {
@@ -400,7 +539,7 @@ export function parse(file: string, src: string): Module {
     for (;;) {
       if (isP('.')) {
         const dot = next();
-        e = { kind: 'member', object: e, prop: ident(), pos: dot.pos };
+        e = { kind: 'member', object: e, prop: memberName(), pos: dot.pos };
       } else if (isP('(')) {
         const pos = peek().pos;
         e = { kind: 'call', callee: e, args: args(), pos };
@@ -422,6 +561,30 @@ export function parse(file: string, src: string): Module {
       expectP(')');
       return e;
     }
+    if (isP('{')) {
+      next();
+      const props: Prop[] = [];
+      while (!isP('}')) {
+        const kt = peek();
+        if (isP('...')) fail(kt, '`...` (展開) は在りません —— 欄を 1 つずつ書きます (何が入るかを字面で見えるようにする)');
+        if (isP('[')) fail(kt, '計算した鍵 (`[k]: v`) は在りません —— 鍵は名前か文字列で書きます');
+        const quoted = kt.kind === 'string';
+        const key = quoted ? str() : ident();
+        // `{ __proto__: x }` は欄ではなく**原型を差し替える** (文字列で書いても同じ)。
+        if (key === '__proto__') fail(kt, '鍵 `__proto__` は在りません —— オブジェクトの字面では欄ではなく原型を差し替えます');
+        if (isP(':')) {
+          next();
+          props.push({ key, quoted, value: expr(), shorthand: false, pos: kt.pos });
+        } else {
+          if (quoted) fail(peek(), `文字列の鍵 ${JSON.stringify(key)} には \`:\` と値が要ります`);
+          if (RESERVED.has(key) || STOP_WORDS.has(key)) fail(kt, `\`${key}\` は省略形の欄 (\`{ 名前 }\`) にできません`);
+          props.push({ key, quoted, value: { kind: 'ident', name: key, pos: kt.pos }, shorthand: true, pos: kt.pos });
+        }
+        if (!isP('}')) expectP(',');
+      }
+      expectP('}');
+      return { kind: 'object', props, pos: t.pos };
+    }
     if (isP('[')) {
       next();
       const items: Expr[] = [];
@@ -442,9 +605,15 @@ export function parse(file: string, src: string): Module {
         let callee: Expr = { kind: 'ident', name: ident(), pos: peek().pos };
         while (isP('.')) {
           const dot = next();
-          callee = { kind: 'member', object: callee, prop: ident(), pos: dot.pos };
+          callee = { kind: 'member', object: callee, prop: memberName(), pos: dot.pos };
         }
         return { kind: 'new', callee, args: args(), pos: t.pos };
+      }
+      if (t.text === 'field') {
+        next();
+        const object = primary();
+        expectP('.');
+        return { kind: 'field', object, prop: memberName(), pos: t.pos };
       }
       if (t.text === 'mint') {
         next();
@@ -545,6 +714,41 @@ export function parse(file: string, src: string): Module {
       expectP(';');
       return { kind: 'vetted', exported, name, label, doc, pos: t.pos };
     }
+    if (isW('type')) {
+      next();
+      const name = ident();
+      expectP('=');
+      const multiline = isP('|');
+      if (multiline) next();
+      const type = typeRef([';']);
+      expectP(';');
+      return { kind: 'type', exported, name, type, multiline, doc, pos: t.pos };
+    }
+    if (isW('interface')) {
+      next();
+      const name = ident();
+      expectP('{');
+      const members: Member[] = [];
+      for (;;) {
+        if (peek().kind === 'comment') fail(peek(), 'interface の中は `///` の説明だけ置けます (`//` は置けません)');
+        const mdoc = takeLeading(['doc']);
+        if (isP('}')) {
+          if (mdoc.length > 0) fail(peek(), '`///` の後に欄がありません');
+          break;
+        }
+        const mpos = peek().pos;
+        const ro = take('readonly');
+        const mname = ident();
+        const optional = isP('?');
+        if (optional) next();
+        expectP(':');
+        const mtype = typeRef([';']);
+        expectP(';');
+        members.push({ name: mname, readonly: ro, optional, type: mtype, doc: mdoc, pos: mpos });
+      }
+      expectP('}');
+      return { kind: 'interface', exported, name, members, doc, pos: t.pos };
+    }
     if (isW('const')) {
       next();
       const name = ident();
@@ -563,7 +767,7 @@ export function parse(file: string, src: string): Module {
     let role: 'gate' | 'sink' | 'plain' = 'plain';
     if (isW('gate') || isW('sink')) role = next().text as 'gate' | 'sink';
     const isAsync = take('async');
-    if (!isW('fn')) fail(peek(), `項目が要ります —— use / extern / vetted / const / fn (在ったのは ${describe(peek())})`);
+    if (!isW('fn')) fail(peek(), `項目が要ります —— use / extern / vetted / type / interface / const / fn (在ったのは ${describe(peek())})`);
     next();
     const name = ident();
     const ps = params();
@@ -589,7 +793,11 @@ export function parse(file: string, src: string): Module {
   return { header, items };
 }
 
-const RESERVED = new Set(['use', 'extern', 'vetted', 'export', 'const', 'let', 'fn', 'gate', 'sink', 'return', 'if', 'else', 'try', 'catch', 'mint', 'from', 'alias']);
+const RESERVED = new Set([
+  'use', 'extern', 'vetted', 'export', 'const', 'let', 'fn', 'gate', 'sink', 'return', 'if', 'else', 'try', 'catch', 'mint', 'from', 'alias',
+  // 0.2 (パス 563)
+  'throw', 'for', 'of', 'break', 'continue', 'switch', 'case', 'default', 'field', 'type', 'interface',
+]);
 
 function describe(t: Tok): string {
   if (t.kind === 'eof') return 'ファイルの終わり';

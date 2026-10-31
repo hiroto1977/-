@@ -34,6 +34,8 @@ interface Threat {
   fix?: string;
   reason?: string;
   regression?: { file: string; test: string };
+  /** 1 つの穴を両ビルド・複数の層で塞いだときの、残りの層の回帰検査 (パス 565 · T-226)。 */
+  alsoRegressions?: { file: string; test: string }[];
 }
 interface Ledger {
   surfaces: string[];
@@ -115,15 +117,21 @@ function declaresRealTest(body: string, title: string): boolean {
   });
 }
 
+/** 台帳の行が名指す回帰検査すべて (主 + 残りの層)。 */
+const regressionsOf = (t: { regression?: { file: string; test: string }; alsoRegressions?: { file: string; test: string }[] }) =>
+  t.regression === undefined ? [] : [t.regression, ...(t.alsoRegressions ?? [])];
+
 describe('直した穴は、攻撃を再現する検査で留まっている (双方向)', () => {
   it('★ 直した行の回帰検査が在り、題名と印 (threat: T-xxx) を持つ', () => {
     for (const t of ledger.threats.filter((x) => x.status !== 'accepted')) {
       expect(t.regression, `${t.id} に回帰検査が無い`).toBeDefined();
-      const file = t.regression!.file;
-      expect(existsSync(path.join(ROOT, file)), `${t.id}: ${file} が無い`).toBe(true);
-      const body = read(file);
-      expect(body.includes(t.regression!.test), `${t.id}: 題名「${t.regression!.test}」が ${file} に無い`).toBe(true);
-      expect(body.includes(`threat: ${t.id}`), `${t.id}: ${file} に印 threat: ${t.id} が無い`).toBe(true);
+      for (const r of regressionsOf(t)) {
+        const file = r.file;
+        expect(existsSync(path.join(ROOT, file)), `${t.id}: ${file} が無い`).toBe(true);
+        const body = read(file);
+        expect(body.includes(r.test), `${t.id}: 題名「${r.test}」が ${file} に無い`).toBe(true);
+        expect(body.includes(`threat: ${t.id}`), `${t.id}: ${file} に印 threat: ${t.id} が無い`).toBe(true);
+      }
     }
   });
 
@@ -146,9 +154,10 @@ describe('直した穴は、攻撃を再現する検査で留まっている (�
     const bad: string[] = [];
     for (const t of ledger.threats.filter((x) => x.status !== 'accepted')) {
       // 検査ファイル (*.test.ts) だけ。script の自己検査 (標本の表) は it() ではない。
-      if (!t.regression!.file.endsWith('.test.ts')) continue;
-      const body = read(t.regression!.file);
-      if (!declaresRealTest(body, t.regression!.test)) bad.push(`${t.id}: ${t.regression!.file}`);
+      for (const r of regressionsOf(t)) {
+        if (!r.file.endsWith('.test.ts')) continue;
+        if (!declaresRealTest(read(r.file), r.test)) bad.push(`${t.id}: ${r.file}`);
+      }
     }
     expect(bad).toEqual([]);
   });
@@ -242,9 +251,9 @@ describe('CODEOWNERS は整合性チェーンの保護対象をすべて覆う',
     .filter((l) => l !== '' && !l.startsWith('#'));
   const patterns = lines.map((l) => l.split(/\s+/)[0]!);
   /** 台帳の回帰検査 (守りの本体)。弱められると守りが消えるので所有者のレビューを要求する。 */
-  const regressionFiles = [...new Set(ledger.threats.flatMap((t) => (t.regression === undefined ? [] : [t.regression.file])))];
+  const regressionFiles = [...new Set(ledger.threats.flatMap((t) => regressionsOf(t).map((r) => r.file)))];
   /** 守られる側の設定 (データ)。ここが書き換わると、検査が緑のまま梱包・依存・lint の入力が変わる。 */
-  const OWNED_CONFIG = ['/CLAUDE.md', '/package.json', '/package-lock.json', '/tsconfig.json', '/tsconfig.app.json', '/tsconfig.node.json', '/stryker.config.json', '/.gitignore', '/.gitattributes', '/docs/SESSION_HANDOFF.md', '/docs/REMAINING_WORK.md', '/docs/THREAT_HUNT.md', '/docs/MODEL_EFFORT_POLICY.md', '/docs/HUNT_CYCLE_PROMPT.md'];
+  const OWNED_CONFIG = ['/CLAUDE.md', '/package.json', '/package-lock.json', '/tsconfig.json', '/tsconfig.app.json', '/tsconfig.node.json', '/stryker.config.json', '/.gitignore', '/.gitattributes', '/docs/SESSION_HANDOFF.md', '/docs/REMAINING_WORK.md', '/docs/THREAT_HUNT.md', '/docs/MODEL_EFFORT_POLICY.md', '/docs/HUNT_CYCLE_PROMPT.md', '/docs/MAMORI_GROWTH_PROMPT.md'];
   /**
    * `**\/NAME` は任意の深さの NAME (ルート直下も含む)。エージェント指示書のように**新しく生える**物を
    * 個別の行ではなく名前で覆うための形 (パス 540 · T-128)。他の glob は台帳が使わないので扱わない。

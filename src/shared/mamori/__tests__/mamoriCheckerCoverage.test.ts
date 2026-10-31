@@ -71,8 +71,10 @@ describe('M2 はどの位置でも効く (検査器が式と文を辿りきる)'
     expect(rules(`${EXTERN}export const W: unknown = [shell];\n`)).toEqual(['M2']);
   });
 
-  it('対照: sink 関数の引数の既定値なら使える (役割は関数の役割)', () => {
-    expect(rules(`${VETTED}${EXTERN}export sink fn s(u: VettedUrl, b: unknown = shell) -> void {\n  return;\n}\n`)).toEqual([]);
+  it('★ sink 関数の引数の既定値でも、危ない口を値として持ち出せない (0.3 · T-225) —— 役割は関数の役割なので「呼ぶ形でしか」の文になる', () => {
+    const ds = diags(`${VETTED}${EXTERN}export sink fn s(u: VettedUrl, b: unknown = shell) -> void {\n  return;\n}\n`);
+    expect(ds.map((d) => d.rule)).toEqual(['M2']);
+    expect(ds[0]!.message).toContain('sink 関数の中でも呼ぶ形');
   });
 
   it('対照: arrow の引数が同じ名前なら、それは外の口ではない (内側の名前が勝つ)', () => {
@@ -140,8 +142,8 @@ describe('M5 / M6 の代入', () => {
     expect(rules(VETTED + GATE + 'export fn f(x: unknown) -> void {\n  let y = \'a\';\n  y = urlOrNull(x);\n  return;\n}\n')).toEqual([]);
   });
 
-  it('★ 引数への代入は通る (引数はこの関数の名前)', () => {
-    expect(rules('export fn f(x: string) -> void {\n  x = \'a\';\n  return;\n}\n')).toEqual([]);
+  it('★ 引数への代入は断る (0.2 · パス 563 —— 0.1 は通して tsc にも任せていなかった。引数は let ではない)', () => {
+    expect(rules('export fn f(x: string) -> void {\n  x = \'a\';\n  return;\n}\n')).toEqual(['M6']);
   });
 
   it('★ use で引いた名前へは代入できない', () => {
@@ -230,17 +232,17 @@ describe('変異検査が教えた残りの形 (2 回目の測定)', () => {
     expect(rules(VETTED + 'export sink fn write(u: VettedUrl, body: unknown) -> void {\n  return;\n}\nexport fn go(u: VettedUrl) -> void {\n  return write(u, u);\n}\n')).toEqual([]);
   });
 
-  it('★ 引数が足りない呼び出しは Mamori では断らない (数は tsc が断る) —— 投げない', () => {
-    expect(rules(VETTED + SINK + 'export fn go() -> Promise<void> {\n  return openUrl();\n}\n')).toEqual([]);
+  it('★ 印を受ける引数を渡さない呼び出しは M4 で断る (0.4 · T-238 —— 以前は「数は tsc に任せる」と素通りさせていた)・投げない', () => {
+    expect(rules(VETTED + SINK + 'export fn go() -> Promise<void> {\n  return openUrl();\n}\n')).toEqual(['M4']);
   });
 
   it('★ 印の名前は値ではない (宣言していない名前として断る)', () => {
     expect(rules(VETTED + 'export fn f() -> unknown {\n  return VettedUrl;\n}\n')).toEqual(['M6']);
   });
 
-  it('★ このモジュールの定数・関数の名前への代入は Mamori では断らない (const の再代入は tsc が断る)', () => {
-    expect(rules('export const C: number = 1;\nexport fn f() -> void {\n  C = 2;\n  return;\n}\n')).toEqual([]);
-    expect(rules('export fn g() -> void {\n  return;\n}\nexport fn f() -> void {\n  g = 2;\n  return;\n}\n')).toEqual([]);
+  it('★ このモジュールの定数・関数の名前への代入は M6 (0.2 · パス 563 —— 0.1 は tsc に任せ、Mamori の規則には無かった)', () => {
+    expect(rules('export const C: number = 1;\nexport fn f() -> void {\n  C = 2;\n  return;\n}\n')).toEqual(['M6']);
+    expect(rules('export fn g() -> void {\n  return;\n}\nexport fn f() -> void {\n  g = 2;\n  return;\n}\n')).toEqual(['M6']);
   });
 
   it('★ 単項の - も印を運ばない', () => {

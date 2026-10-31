@@ -197,13 +197,17 @@ const VARIABLE_PATH_ALLOWED: Readonly<Record<string, { count: number; why: strin
     count: 1,
     why: '**バイナリ (`assets/og.png`) をバイトで読む** (パス 523 · T-071) —— `readOriginalSource` は文字列を返すので不正な UTF-8 が置換され、鎖が取るバイト列と一致しない。道は計装の sandbox を避ける `originalSourcePath` が解いてから読む (変数の道だが原文の道)',
   },
+  'src/shared/mamori/__tests__/mamoriBattery.test.ts': {
+    count: 2,
+    why: '**実物の `.mamori` 11 本を読む** (物差しの対照 · パス 572) —— 読むのは `src/shared` / `src/main` / `src/renderer` の `.mamori` の**一覧と中身**で、変異検査の対象 (`.ts`) ではなく Stryker が書き換えない。判定の物差しが実物の生成物に偽陽性を出さないことを見るためで、`readdirSync` の根は固定の 4 つの道 (変数だが定数の並び)',
+  },
   'src/shared/__tests__/originalSource.ts': {
     count: 4,
     why: '**原文の道具そのもの** —— sandbox の道を原文の道へ写してから読むのが仕事なので、生の読みはその写し先 (変数) を読む。この 4 件が在るから他のすべての検査が原文を読める。helper を母集団へ入れた日 (パス 490) に初めて数えられた',
   },
   'src/main/__tests__/fileReadSizeGateCensus.test.ts': {
-    count: 12,
-    why: 'この census の母集団は `readFile` の呼び出しそのものなので、台帳の needle と標本が**数える綴りを引用する**。実際の読みは `readOriginalSource` だけを通しており、引用は文字列リテラルで走らない —— 綴りを分割して走査を避けるより、理由つきで載せる方が読める (パス 326)。**件数は 2026-09-25 (パス 462) に 6 → 9 へ実測で直した** —— 自前の注記除去が glob の `**` から始まる偽の注記で 45 行を食っており、その中の引用 3 件が見えていなかった。**2026-10-29 (パス 553) に 9 → 12** —— `selfAttestation.ts` の読み 3 件 (表・同梱ファイル・stat) を台帳に載せたので、その needle の引用が 3 件増えた',
+    count: 13,
+    why: 'この census の母集団は `readFile` の呼び出しそのものなので、台帳の needle と標本が**数える綴りを引用する**。実際の読みは `readOriginalSource` だけを通しており、引用は文字列リテラルで走らない —— 綴りを分割して走査を避けるより、理由つきで載せる方が読める (パス 326)。**件数は 2026-09-25 (パス 462) に 6 → 9 へ実測で直した** —— 自前の注記除去が glob の `**` から始まる偽の注記で 45 行を食っており、その中の引用 3 件が見えていなかった。**2026-10-29 (パス 553) に 9 → 12** —— `selfAttestation.ts` の読み 3 件 (表・同梱ファイル・stat) を台帳に載せたので、その needle の引用が 3 件増えた。**2026-10-30 (パス 566-C) に 12 → 13** —— `package.json` を読む needle を 1 つ載せた分 (T-228。綴りはこの検査自身が生の読みと数えるので再現しない)',
   },
   'src/shared/__tests__/trackedPopulationWitness.test.ts': {
     count: 1,

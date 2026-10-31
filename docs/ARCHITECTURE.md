@@ -26,7 +26,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 77 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **19142** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **19321** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` (**2026-09-01 の報告** —— 今のコードを測った物ではない。`docs/REMAINING_WORK.md` の「パス 494」) |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` (同上) |
@@ -2404,13 +2404,13 @@ classDiagram
   }
 
   class SecretsStore~secrets.ts~ {
-    +setToken(id, token) : secrets.ts:420
-    +getToken(id) : secrets.ts:494
-    +clearToken(id) : secrets.ts:499
-    +listConfiguredServices() : secrets.ts:521
-    +setOAuthTokens(id, ts) : secrets.ts:648
-    +getOAuthTokens(id) : secrets.ts:678
-    +getValidToken(id) : secrets.ts:739 ~auto-refresh~
+    +setToken(id, token) : secrets.ts:469
+    +getToken(id) : secrets.ts:546
+    +clearToken(id) : secrets.ts:551
+    +listConfiguredServices() : secrets.ts:573
+    +setOAuthTokens(id, ts) : secrets.ts:685
+    +getOAuthTokens(id) : secrets.ts:716
+    +getValidToken(id) : secrets.ts:777 ~auto-refresh~
   }
 
   class OAuthHelper~oauth.ts~ {

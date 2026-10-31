@@ -36,7 +36,7 @@ beforeEach(async () => {
   await fsp.writeFile(path.join(root, 'dist', 'assets', 'deep', 'z.css'), 'a{}');
   await fsp.writeFile(path.join(root, 'dist', 'assets', 'index-abc.js'), 'console.log(1)');
   await fsp.writeFile(path.join(root, 'dist-electron', 'main.js'), 'main');
-  await fsp.writeFile(path.join(root, 'package.json'), '{"name":"x"}');
+  await fsp.writeFile(path.join(root, 'package.json'), '{"name":"x","main":"dist-electron/main.js"}');
   await fsp.writeFile(path.join(root, 'build', 'icon.png'), Buffer.from([0, 1, 2]));
   await fsp.writeFile(path.join(root, 'src', 'not-shipped.ts'), 'x');
 });

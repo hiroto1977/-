@@ -16,7 +16,7 @@ import { memberKeyOf, sanitizeMentorSession, type MentorMember, type MentorSessi
 export function mentorRoster(records: readonly StoredRecord<Member>[]): readonly MentorMember[] {
   return records
     .filter((r) => typeof r.data.email === 'string' && r.data.email.trim() !== '')
-    .map((r) => ({ key: memberKeyOf(r.data.email), name: displayField(r.data.name) || r.data.email, role: isRole(r.data.role) ? r.data.role : 'member' }));
+    .map((r) => ({ key: memberKeyOf(r.data.email), name: displayField(r.data.name) || displayField(r.data.email), role: isRole(r.data.role) ? r.data.role : 'member' }));
 }
 
 export interface StoredMentorSession {
