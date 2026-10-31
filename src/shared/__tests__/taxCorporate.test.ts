@@ -1,0 +1,1034 @@
+import { describe, expect, it } from 'vitest';
+import {
+  DEFAULT_CORPORATE_TAX_RATES,
+  STATUTORY_BUSINESS_RATE_TIER1,
+  STATUTORY_BUSINESS_RATE_TIER3,
+  selectStatutoryRates,
+  orderedBusinessTaxLimits,
+  resolveCorporatePerCapita,
+  applyLossCarryforward,
+  calcStatutoryEffectiveRate,
+  CORP_TAX_REDUCED_RATE,
+  CORP_TAX_STANDARD_RATE,
+  CORP_TAX_REDUCED_THRESHOLD,
+  LOCAL_CORP_TAX_RATE,
+  RESIDENT_CORP_TAX_RATE,
+  DEFAULT_PER_CAPITA_LEVY,
+  BUSINESS_TAX_RATE_TIER1,
+  BUSINESS_TAX_RATE_TIER2,
+  BUSINESS_TAX_RATE_TIER3,
+  BUSINESS_TAX_TIER1_LIMIT,
+  BUSINESS_TAX_TIER2_LIMIT,
+  SPECIAL_BUSINESS_TAX_RATE,
+  LARGE_CORP_CAPITAL_THRESHOLD,
+  LARGE_CORP_LOSS_DEDUCTION_RATIO,
+  PER_CAPITA_EMPLOYEE_THRESHOLD,
+  isSmallBusiness,
+  calcCorporateIncomeTax,
+  calcLocalCorporateTax,
+  calcResidentCorporateTax,
+  calcBusinessTaxIncomePortion,
+  calcSpecialBusinessTax,
+  resolvePerCapitaLevy,
+  calcCorporateTax,
+  STATUTORY_BUSINESS_RATE_TIER2,
+} from '../taxCorporate';
+
+/** 参照実装: 法定実効税率を率から直接組み立てる (テスト用の独立計算)。 */
+function expectedStatutory(corporateRate: number, businessRate: number): number {
+  const numerator =
+    corporateRate * (1 + LOCAL_CORP_TAX_RATE + RESIDENT_CORP_TAX_RATE) + businessRate;
+  return numerator / (1 + businessRate);
+}
+
+describe('isSmallBusiness', () => {
+  it('defaults to small (conservative) when nothing is given', () => {
+    expect(isSmallBusiness()).toBe(true);
+    expect(isSmallBusiness({})).toBe(true);
+  });
+
+  it('honors an explicit smallBusiness flag over capital', () => {
+    expect(isSmallBusiness({ smallBusiness: false })).toBe(false);
+    expect(isSmallBusiness({ smallBusiness: true })).toBe(true);
+    // explicit flag wins even when capital would say otherwise
+    expect(isSmallBusiness({ smallBusiness: true, capital: 200_000_000 })).toBe(true);
+    expect(isSmallBusiness({ smallBusiness: false, capital: 1_000_000 })).toBe(false);
+  });
+
+  it('classifies by capital at the 1億円 boundary (≤ is small)', () => {
+    expect(isSmallBusiness({ capital: 100_000_000 })).toBe(true); // exactly 1億 → small
+    expect(isSmallBusiness({ capital: 100_000_001 })).toBe(false); // just over → large
+    expect(isSmallBusiness({ capital: 50_000_000 })).toBe(true);
+  });
+});
+
+describe('calcCorporateIncomeTax', () => {
+  it('is 0 for zero or negative income', () => {
+    expect(calcCorporateIncomeTax(0, true)).toBe(0);
+    expect(calcCorporateIncomeTax(-1_000_000, true)).toBe(0);
+    expect(calcCorporateIncomeTax(0, false)).toBe(0);
+    expect(calcCorporateIncomeTax(-5, false)).toBe(0);
+  });
+
+  it('applies the reduced 15% up to 800万 for small business', () => {
+    expect(calcCorporateIncomeTax(8_000_000, true)).toBe(1_200_000); // 800万×15%
+    expect(calcCorporateIncomeTax(4_000_000, true)).toBe(600_000); // 400万×15%
+  });
+
+  it('applies 23.2% only to the part above 800万 for small business', () => {
+    // 10,000,000: 800万×15% + 200万×23.2% = 1,200,000 + 464,000
+    expect(calcCorporateIncomeTax(10_000_000, true)).toBe(1_664_000);
+  });
+
+  it('handles the 800万 boundary precisely (just under / at / just over)', () => {
+    // just under: fully at reduced rate
+    expect(calcCorporateIncomeTax(7_999_999, true)).toBe(Math.round(7_999_999 * 0.15));
+    // at: 800万×15%
+    expect(calcCorporateIncomeTax(8_000_000, true)).toBe(1_200_000);
+    // just over: 800万×15% + 1×23.2%
+    expect(calcCorporateIncomeTax(8_000_001, true)).toBe(Math.round(8_000_000 * 0.15 + 1 * 0.232));
+  });
+
+  it('applies a flat 23.2% for large corporations on all income', () => {
+    expect(calcCorporateIncomeTax(10_000_000, false)).toBe(2_320_000); // 1,000万×23.2%
+    expect(calcCorporateIncomeTax(8_000_000, false)).toBe(Math.round(8_000_000 * 0.232));
+    // large pays more than small at the same income (no reduced band)
+    expect(calcCorporateIncomeTax(10_000_000, false)).toBeGreaterThan(
+      calcCorporateIncomeTax(10_000_000, true),
+    );
+  });
+});
+
+describe('calcLocalCorporateTax', () => {
+  it('is 10.3% of the corporate income tax', () => {
+    expect(calcLocalCorporateTax(1_000_000)).toBe(103_000);
+    expect(calcLocalCorporateTax(1_664_000)).toBe(Math.round(1_664_000 * 0.103));
+  });
+
+  it('clamps negative input to 0', () => {
+    expect(calcLocalCorporateTax(-100)).toBe(0);
+    expect(calcLocalCorporateTax(0)).toBe(0);
+  });
+});
+
+describe('calcResidentCorporateTax', () => {
+  it('adds the 7% 法人税割 to the 均等割', () => {
+    // 法人税割 = 1,000,000×7% = 70,000; 均等割 = 70,000 → 140,000
+    expect(calcResidentCorporateTax(1_000_000)).toBe(140_000);
+  });
+
+  it('charges only the 均等割 when corporate tax is 0', () => {
+    expect(calcResidentCorporateTax(0)).toBe(DEFAULT_PER_CAPITA_LEVY);
+    expect(calcResidentCorporateTax(0)).toBe(70_000);
+  });
+
+  it('uses a custom 均等割 when provided', () => {
+    expect(calcResidentCorporateTax(0, 290_000)).toBe(290_000);
+    expect(calcResidentCorporateTax(1_000_000, 180_000)).toBe(70_000 + 180_000);
+  });
+
+  it('clamps negative corporate tax and negative levy to 0', () => {
+    expect(calcResidentCorporateTax(-1_000_000, 70_000)).toBe(70_000);
+    expect(calcResidentCorporateTax(1_000_000, -5)).toBe(70_000); // 法人税割のみ
+  });
+});
+
+describe('calcBusinessTaxIncomePortion', () => {
+  it('is 0 for zero or negative income', () => {
+    expect(calcBusinessTaxIncomePortion(0)).toBe(0);
+    expect(calcBusinessTaxIncomePortion(-3_000_000)).toBe(0);
+  });
+
+  it('applies 3.5% up to 400万', () => {
+    expect(calcBusinessTaxIncomePortion(4_000_000)).toBe(140_000); // 400万×3.5%
+    expect(calcBusinessTaxIncomePortion(2_000_000)).toBe(70_000);
+  });
+
+  it('applies 5.3% between 400万 and 800万', () => {
+    // 8,000,000: 400万×3.5% + 400万×5.3% = 140,000 + 212,000
+    expect(calcBusinessTaxIncomePortion(8_000_000)).toBe(352_000);
+    // 6,000,000: 400万×3.5% + 200万×5.3% = 140,000 + 106,000
+    expect(calcBusinessTaxIncomePortion(6_000_000)).toBe(246_000);
+  });
+
+  it('applies 7.0% above 800万', () => {
+    // 10,000,000: 140,000 + 212,000 + 200万×7% = 352,000 + 140,000
+    expect(calcBusinessTaxIncomePortion(10_000_000)).toBe(492_000);
+  });
+
+  it('handles the 400万 and 800万 tier boundaries precisely', () => {
+    // just under 400万 → all tier1
+    expect(calcBusinessTaxIncomePortion(3_999_999)).toBe(Math.round(3_999_999 * 0.035));
+    // just over 400万 → tier1 full + 1 at tier2
+    expect(calcBusinessTaxIncomePortion(4_000_001)).toBe(
+      Math.round(4_000_000 * 0.035 + 1 * 0.053),
+    );
+    // just under 800万 → tier1 full + (400万-1) at tier2
+    expect(calcBusinessTaxIncomePortion(7_999_999)).toBe(
+      Math.round(4_000_000 * 0.035 + 3_999_999 * 0.053),
+    );
+    // just over 800万 → tier1 + tier2 full + 1 at tier3
+    expect(calcBusinessTaxIncomePortion(8_000_001)).toBe(
+      Math.round(4_000_000 * 0.035 + 4_000_000 * 0.053 + 1 * 0.07),
+    );
+  });
+});
+
+describe('calcSpecialBusinessTax', () => {
+  it('is 37% of the base business tax income portion', () => {
+    expect(calcSpecialBusinessTax(352_000)).toBe(Math.round(352_000 * 0.37));
+    expect(calcSpecialBusinessTax(1_000_000)).toBe(370_000);
+  });
+
+  it('clamps negative input to 0', () => {
+    expect(calcSpecialBusinessTax(-100)).toBe(0);
+    expect(calcSpecialBusinessTax(0)).toBe(0);
+  });
+});
+
+describe('calcCorporateTax (aggregate)', () => {
+  it('aggregates all components for a small business at 10,000,000 income', () => {
+    const r = calcCorporateTax(10_000_000);
+    expect(r.smallBusiness).toBe(true);
+    expect(r.corporateIncomeTax).toBe(1_664_000); // 800万×15% + 200万×23.2%
+    expect(r.localCorporateTax).toBe(Math.round(1_664_000 * 0.103)); // 171,392
+    expect(r.businessTax).toBe(492_000);
+    expect(r.specialBusinessTax).toBe(Math.round(492_000 * 0.37)); // 182,040
+    expect(r.residentTax).toBe(Math.round(1_664_000 * 0.07) + 70_000); // 116,480 + 70,000
+    const expectedTotal =
+      r.corporateIncomeTax +
+      r.localCorporateTax +
+      r.residentTax +
+      r.businessTax +
+      r.specialBusinessTax;
+    expect(r.totalTax).toBe(expectedTotal);
+    expect(r.taxableIncome).toBe(10_000_000);
+  });
+
+  it('keeps effectiveRate consistent with totalTax / income', () => {
+    const r = calcCorporateTax(10_000_000);
+    expect(r.effectiveRate).toBeCloseTo(r.totalTax / 10_000_000, 12);
+    expect(r.effectiveRate).toBeGreaterThan(0);
+  });
+
+  it('keeps afterTaxProfit consistent with income − totalTax', () => {
+    const r = calcCorporateTax(10_000_000);
+    expect(r.afterTaxProfit).toBe(10_000_000 - r.totalTax);
+  });
+
+  it('treats a loss (income 0) as 均等割-only', () => {
+    const r = calcCorporateTax(0);
+    expect(r.corporateIncomeTax).toBe(0);
+    expect(r.localCorporateTax).toBe(0);
+    expect(r.businessTax).toBe(0);
+    expect(r.specialBusinessTax).toBe(0);
+    expect(r.residentTax).toBe(70_000); // 均等割のみ
+    expect(r.totalTax).toBe(70_000);
+    // **均等割 70,000 円 が課されているのに「実効税率 0.0%」は両立しない。**
+    // 割る相手 (控除後の課税所得) が 0 なので率は無い。
+    expect(r.effectiveRate).toBeNull();
+    expect(r.afterTaxProfit).toBe(-70_000); // 0 − 70,000
+  });
+
+  it('treats a negative income (deficit) as 均等割-only and subtracts from income', () => {
+    const r = calcCorporateTax(-5_000_000);
+    expect(r.corporateIncomeTax).toBe(0);
+    expect(r.businessTax).toBe(0);
+    expect(r.totalTax).toBe(70_000); // 均等割のみ
+    expect(r.effectiveRate).toBeNull();
+    expect(r.afterTaxProfit).toBe(-5_000_000 - 70_000);
+    expect(r.taxableIncome).toBe(-5_000_000);
+  });
+
+  it('uses a custom 均等割 in the aggregate', () => {
+    const r = calcCorporateTax(0, { perCapitaLevy: 290_000 });
+    expect(r.residentTax).toBe(290_000);
+    expect(r.totalTax).toBe(290_000);
+  });
+
+  it('respects the large-corporation branch (flat 23.2%, no reduced band)', () => {
+    const small = calcCorporateTax(10_000_000, { smallBusiness: true });
+    const large = calcCorporateTax(10_000_000, { smallBusiness: false });
+    expect(large.smallBusiness).toBe(false);
+    expect(large.corporateIncomeTax).toBe(2_320_000);
+    expect(large.corporateIncomeTax).toBeGreaterThan(small.corporateIncomeTax);
+    expect(large.totalTax).toBeGreaterThan(small.totalTax);
+  });
+
+  it('classifies large by capital over the 1億円 threshold', () => {
+    const r = calcCorporateTax(10_000_000, { capital: 200_000_000 });
+    expect(r.smallBusiness).toBe(false);
+    expect(r.corporateIncomeTax).toBe(2_320_000);
+  });
+
+  it('produces a plausible effective rate around 30-35% for mid income', () => {
+    const r = calcCorporateTax(10_000_000);
+    expect(r.effectiveRate).toBeGreaterThan(0.25);
+    expect(r.effectiveRate).toBeLessThan(0.4);
+  });
+});
+
+describe('resolveCorporatePerCapita (均等割 区分テーブル)', () => {
+  it('returns the minimum tier (7万 / 14万) for capital ≤ 1千万', () => {
+    expect(resolveCorporatePerCapita(0)).toBe(70_000);
+    expect(resolveCorporatePerCapita(5_000_000)).toBe(70_000);
+    expect(resolveCorporatePerCapita(10_000_000)).toBe(70_000); // exactly 1千万 → still min
+    expect(resolveCorporatePerCapita(10_000_000, 100)).toBe(140_000); // 50人超
+  });
+
+  it('handles the 1千万 capital boundary (≤ stays min, just over moves up)', () => {
+    expect(resolveCorporatePerCapita(10_000_000)).toBe(70_000);
+    expect(resolveCorporatePerCapita(10_000_001)).toBe(180_000); // just over → next tier
+    expect(resolveCorporatePerCapita(10_000_001, 60)).toBe(200_000);
+  });
+
+  it('handles the 1億 capital boundary', () => {
+    expect(resolveCorporatePerCapita(100_000_000)).toBe(180_000); // exactly 1億 → 2nd tier
+    expect(resolveCorporatePerCapita(100_000_001)).toBe(290_000); // just over → 3rd tier
+    expect(resolveCorporatePerCapita(100_000_001, 51)).toBe(530_000);
+  });
+
+  it('handles the 10億 capital boundary', () => {
+    expect(resolveCorporatePerCapita(1_000_000_000)).toBe(290_000); // exactly 10億 → 3rd tier
+    expect(resolveCorporatePerCapita(1_000_000_001)).toBe(410_000); // just over → 4th tier
+    expect(resolveCorporatePerCapita(1_000_000_001, 100)).toBe(2_290_000);
+  });
+
+  it('handles the 50億 capital boundary and the top tier', () => {
+    expect(resolveCorporatePerCapita(5_000_000_000)).toBe(410_000); // exactly 50億 → 4th tier
+    expect(resolveCorporatePerCapita(5_000_000_000, 100)).toBe(2_290_000);
+    expect(resolveCorporatePerCapita(5_000_000_001)).toBe(410_000); // just over → top tier, 50人以下
+    expect(resolveCorporatePerCapita(5_000_000_001, 100)).toBe(3_800_000); // top tier, 50人超
+    expect(resolveCorporatePerCapita(99_000_000_000, 9999)).toBe(3_800_000); // very large
+  });
+
+  it('treats the 従業者 50人 boundary as 以下/超 (50ちょうどは小区分)', () => {
+    expect(PER_CAPITA_EMPLOYEE_THRESHOLD).toBe(50);
+    expect(resolveCorporatePerCapita(50_000_000, 50)).toBe(180_000); // 50ちょうど → 50人以下
+    expect(resolveCorporatePerCapita(50_000_000, 51)).toBe(200_000); // 51 → 50人超
+    expect(resolveCorporatePerCapita(50_000_000, 49)).toBe(180_000);
+  });
+
+  it('defaults employees to 50人以下 when omitted', () => {
+    expect(resolveCorporatePerCapita(50_000_000)).toBe(180_000);
+    expect(resolveCorporatePerCapita(50_000_000, 0)).toBe(180_000);
+  });
+
+  it('clamps negative capital and negative employees to the min tier / 少区分', () => {
+    expect(resolveCorporatePerCapita(-100)).toBe(70_000);
+    expect(resolveCorporatePerCapita(50_000_000, -5)).toBe(180_000); // 負の従業者は50人以下
+  });
+
+  it('is monotonic non-decreasing in capital for each employee column', () => {
+    const caps = [0, 10_000_000, 100_000_000, 1_000_000_000, 5_000_000_000, 1e12];
+    for (const many of [0, 100]) {
+      for (let i = 1; i < caps.length; i++) {
+        expect(resolveCorporatePerCapita(caps[i]!, many)).toBeGreaterThanOrEqual(
+          resolveCorporatePerCapita(caps[i - 1]!, many),
+        );
+      }
+    }
+  });
+
+  it('the 50人超 column is always ≥ the 50人以下 column', () => {
+    for (const cap of [0, 50_000_000, 500_000_000, 3_000_000_000, 1e12]) {
+      expect(resolveCorporatePerCapita(cap, 100)).toBeGreaterThanOrEqual(
+        resolveCorporatePerCapita(cap, 0),
+      );
+    }
+  });
+});
+
+describe('resolvePerCapitaLevy (均等割の決定順)', () => {
+  it('prefers an explicit perCapitaLevy over the table', () => {
+    expect(resolvePerCapitaLevy({ perCapitaLevy: 290_000, capital: 1_000_000_000 })).toBe(290_000);
+    expect(resolvePerCapitaLevy({ perCapitaLevy: 0 })).toBe(0); // explicit 0 honored (not default)
+  });
+
+  it('resolves from capital (+employees) when no explicit levy', () => {
+    expect(resolvePerCapitaLevy({ capital: 100_000_001 })).toBe(290_000);
+    expect(resolvePerCapitaLevy({ capital: 100_000_001, employees: 60 })).toBe(530_000);
+  });
+
+  it('falls back to the minimum tier when neither levy nor capital is given', () => {
+    expect(resolvePerCapitaLevy()).toBe(DEFAULT_PER_CAPITA_LEVY);
+    expect(resolvePerCapitaLevy({})).toBe(70_000);
+    expect(resolvePerCapitaLevy({ employees: 100 })).toBe(70_000); // employees alone → default
+  });
+});
+
+describe('calcCorporateTax 均等割 integration (round 56)', () => {
+  it('is unchanged for the no-profile / explicit-levy callers (既定挙動不変)', () => {
+    // no profile → 最小区分 7万 (従来どおり)
+    expect(calcCorporateTax(0).residentTax).toBe(70_000);
+    // explicit perCapitaLevy still wins
+    expect(calcCorporateTax(0, { perCapitaLevy: 290_000 }).residentTax).toBe(290_000);
+    // explicit levy wins even with a large capital that would resolve higher/lower
+    expect(
+      calcCorporateTax(0, { perCapitaLevy: 70_000, capital: 5_000_000_001, employees: 100 })
+        .residentTax,
+    ).toBe(70_000);
+  });
+
+  it('resolves 均等割 from capital alone when no explicit levy', () => {
+    const r = calcCorporateTax(0, { capital: 1_000_000_001 });
+    expect(r.residentTax).toBe(410_000); // 10億超・50人以下
+  });
+
+  it('resolves 均等割 from capital + employees', () => {
+    const r = calcCorporateTax(0, { capital: 1_000_000_001, employees: 100 });
+    expect(r.residentTax).toBe(2_290_000); // 10億超・50人超
+  });
+
+  it('adds the 法人税割 on top of the resolved 均等割', () => {
+    const r = calcCorporateTax(10_000_000, { capital: 50_000_000 });
+    // 均等割 = 1千万超〜1億以下・50人以下 = 180,000; 法人税割 = 1,664,000×7%
+    expect(r.residentTax).toBe(Math.round(1_664_000 * 0.07) + 180_000);
+  });
+});
+
+describe('applyLossCarryforward (繰越欠損金の控除)', () => {
+  it('deducts nothing when loss is 0 / negative (既定挙動不変)', () => {
+    expect(applyLossCarryforward(10_000_000, 0, true)).toEqual({
+      taxableIncome: 10_000_000,
+      deductedLoss: 0,
+      remainingLoss: 0,
+    });
+    expect(applyLossCarryforward(10_000_000, -5_000_000, true)).toEqual({
+      taxableIncome: 10_000_000,
+      deductedLoss: 0,
+      remainingLoss: 0,
+    });
+    expect(applyLossCarryforward(10_000_000, -5_000_000, false)).toEqual({
+      taxableIncome: 10_000_000,
+      deductedLoss: 0,
+      remainingLoss: 0,
+    });
+  });
+
+  it('small business deducts the full loss up to income', () => {
+    // loss < income → deduct full loss
+    expect(applyLossCarryforward(10_000_000, 3_000_000, true)).toEqual({
+      taxableIncome: 7_000_000,
+      deductedLoss: 3_000_000,
+      remainingLoss: 0,
+    });
+  });
+
+  it('small business: loss exactly equal to income zeroes the income (境界)', () => {
+    expect(applyLossCarryforward(10_000_000, 10_000_000, true)).toEqual({
+      taxableIncome: 0,
+      deductedLoss: 10_000_000,
+      remainingLoss: 0,
+    });
+  });
+
+  it('small business: loss exceeding income deducts only up to income, rest carries over', () => {
+    expect(applyLossCarryforward(10_000_000, 15_000_000, true)).toEqual({
+      taxableIncome: 0,
+      deductedLoss: 10_000_000,
+      remainingLoss: 5_000_000,
+    });
+  });
+
+  it('large corp caps the deduction at 50% of pre-loss income (境界ちょうど)', () => {
+    // limit = 10,000,000 × 0.5 = 5,000,000; loss = 5,000,000 exactly → fully deducted, income halved
+    expect(applyLossCarryforward(10_000_000, 5_000_000, false)).toEqual({
+      taxableIncome: 5_000_000,
+      deductedLoss: 5_000_000,
+      remainingLoss: 0,
+    });
+  });
+
+  it('large corp: loss above the 50% cap deducts only the cap, rest carries over', () => {
+    // limit = 5,000,000; loss = 8,000,000 → deduct 5,000,000, carry 3,000,000
+    expect(applyLossCarryforward(10_000_000, 8_000_000, false)).toEqual({
+      taxableIncome: 5_000_000,
+      deductedLoss: 5_000_000,
+      remainingLoss: 3_000_000,
+    });
+  });
+
+  it('large corp: loss below the 50% cap is deducted in full', () => {
+    // limit = 5,000,000; loss = 2,000,000 → deduct 2,000,000
+    expect(applyLossCarryforward(10_000_000, 2_000_000, false)).toEqual({
+      taxableIncome: 8_000_000,
+      deductedLoss: 2_000_000,
+      remainingLoss: 0,
+    });
+  });
+
+  it('small deducts more than large at the same loss above the large cap', () => {
+    const small = applyLossCarryforward(10_000_000, 8_000_000, true);
+    const large = applyLossCarryforward(10_000_000, 8_000_000, false);
+    expect(small.deductedLoss).toBe(8_000_000);
+    expect(large.deductedLoss).toBe(5_000_000);
+    expect(small.deductedLoss).toBeGreaterThan(large.deductedLoss);
+    expect(small.taxableIncome).toBeLessThan(large.taxableIncome);
+  });
+
+  it('treats income 0 / negative as no deduction (limit 0), whole loss carries over', () => {
+    expect(applyLossCarryforward(0, 5_000_000, true)).toEqual({
+      taxableIncome: 0,
+      deductedLoss: 0,
+      remainingLoss: 5_000_000,
+    });
+    expect(applyLossCarryforward(-3_000_000, 5_000_000, true)).toEqual({
+      taxableIncome: 0,
+      deductedLoss: 0,
+      remainingLoss: 5_000_000,
+    });
+    // large corp at income 0: 50% of 0 is still 0 → no deduction
+    expect(applyLossCarryforward(0, 5_000_000, false)).toEqual({
+      taxableIncome: 0,
+      deductedLoss: 0,
+      remainingLoss: 5_000_000,
+    });
+  });
+
+  it('conserves the loss: deductedLoss + remainingLoss === available loss', () => {
+    for (const small of [true, false]) {
+      for (const income of [0, 4_000_000, 10_000_000, 50_000_000]) {
+        for (const loss of [0, 1_000_000, 6_000_000, 100_000_000]) {
+          const r = applyLossCarryforward(income, loss, small);
+          expect(r.deductedLoss + r.remainingLoss).toBe(loss);
+          // taxed income never goes negative and never exceeds pre-loss income
+          expect(r.taxableIncome).toBeGreaterThanOrEqual(0);
+          expect(r.taxableIncome).toBeLessThanOrEqual(Math.max(0, income));
+        }
+      }
+    }
+  });
+
+  it('large cap is exactly half of income for a deductible loss (uses the ratio constant)', () => {
+    const income = 12_345_678;
+    const big = applyLossCarryforward(income, income, false); // loss ≥ income → hit the cap
+    expect(big.deductedLoss).toBe(income * LARGE_CORP_LOSS_DEDUCTION_RATIO);
+    expect(big.taxableIncome).toBe(income - income * LARGE_CORP_LOSS_DEDUCTION_RATIO);
+  });
+});
+
+describe('calcCorporateTax 繰越欠損金 integration (round 57)', () => {
+  it('is unchanged when carryforwardLoss is omitted / 0 / negative (既定挙動不変)', () => {
+    const base = calcCorporateTax(10_000_000);
+    expect(calcCorporateTax(10_000_000, {})).toEqual(base);
+    expect(calcCorporateTax(10_000_000, { carryforwardLoss: 0 })).toEqual(base);
+    expect(calcCorporateTax(10_000_000, { carryforwardLoss: -5_000_000 })).toEqual(base);
+    // and the new breakdown fields reflect "no deduction"
+    expect(base.deductedLoss).toBe(0);
+    expect(base.incomeAfterLoss).toBe(10_000_000);
+    expect(base.remainingLoss).toBe(0);
+  });
+
+  it('small business deducts the full loss, then taxes the reduced income', () => {
+    // 10,000,000 income, 3,000,000 loss → taxed on 7,000,000 (small)
+    const r = calcCorporateTax(10_000_000, { carryforwardLoss: 3_000_000, smallBusiness: true });
+    const ref = calcCorporateTax(7_000_000, { smallBusiness: true });
+    expect(r.deductedLoss).toBe(3_000_000);
+    expect(r.incomeAfterLoss).toBe(7_000_000);
+    expect(r.remainingLoss).toBe(0);
+    expect(r.corporateIncomeTax).toBe(ref.corporateIncomeTax);
+    expect(r.businessTax).toBe(ref.businessTax);
+    expect(r.totalTax).toBe(ref.totalTax);
+    // taxableIncome keeps the original (pre-loss) income for reporting
+    expect(r.taxableIncome).toBe(10_000_000);
+    // afterTaxProfit is based on the original income minus tax
+    expect(r.afterTaxProfit).toBe(10_000_000 - r.totalTax);
+  });
+
+  it('large corp caps the deduction at 50% of income', () => {
+    // 10,000,000 income, 8,000,000 loss, large → cap 5,000,000, taxed on 5,000,000
+    const r = calcCorporateTax(10_000_000, { carryforwardLoss: 8_000_000, smallBusiness: false });
+    const ref = calcCorporateTax(5_000_000, { smallBusiness: false });
+    expect(r.deductedLoss).toBe(5_000_000);
+    expect(r.incomeAfterLoss).toBe(5_000_000);
+    expect(r.remainingLoss).toBe(3_000_000);
+    expect(r.corporateIncomeTax).toBe(ref.corporateIncomeTax);
+    expect(r.totalTax).toBe(ref.totalTax);
+  });
+
+  it('large/small classification by capital drives the deduction cap', () => {
+    // capital over 1億 → large → 50% cap even without smallBusiness flag
+    const large = calcCorporateTax(10_000_000, {
+      carryforwardLoss: 8_000_000,
+      capital: 200_000_000,
+    });
+    expect(large.smallBusiness).toBe(false);
+    expect(large.deductedLoss).toBe(5_000_000);
+    expect(large.incomeAfterLoss).toBe(5_000_000);
+    // capital at/under 1億 → small → full deduction
+    const small = calcCorporateTax(10_000_000, {
+      carryforwardLoss: 8_000_000,
+      capital: 100_000_000,
+    });
+    expect(small.smallBusiness).toBe(true);
+    expect(small.deductedLoss).toBe(8_000_000);
+    expect(small.incomeAfterLoss).toBe(2_000_000);
+  });
+
+  it('a loss fully offsetting income leaves only the 均等割 (controlled-after-loss = 0)', () => {
+    const r = calcCorporateTax(10_000_000, { carryforwardLoss: 10_000_000 });
+    expect(r.incomeAfterLoss).toBe(0);
+    expect(r.deductedLoss).toBe(10_000_000);
+    expect(r.corporateIncomeTax).toBe(0);
+    expect(r.localCorporateTax).toBe(0);
+    expect(r.businessTax).toBe(0);
+    expect(r.specialBusinessTax).toBe(0);
+    expect(r.residentTax).toBe(70_000); // 均等割のみ
+    expect(r.totalTax).toBe(70_000);
+    // **税引前利益は黒字 (1,000 万) だが控除後の課税所得は 0** —— 画面の関門は
+    // 税引前利益を見ていたので、直す前はここで 0.0% が出ていた (2026-09-08 実測)。
+    expect(r.effectiveRate).toBeNull();
+    expect(r.afterTaxProfit).toBe(10_000_000 - 70_000);
+  });
+
+  it('keeps effectiveRate based on the after-loss income', () => {
+    const r = calcCorporateTax(10_000_000, { carryforwardLoss: 3_000_000, smallBusiness: true });
+    expect(r.effectiveRate).toBeCloseTo(r.totalTax / r.incomeAfterLoss, 12);
+  });
+
+  it('a loss reduces total tax versus no loss (精度向上の効果)', () => {
+    const withLoss = calcCorporateTax(10_000_000, { carryforwardLoss: 4_000_000 });
+    const noLoss = calcCorporateTax(10_000_000);
+    expect(withLoss.totalTax).toBeLessThan(noLoss.totalTax);
+    expect(withLoss.afterTaxProfit).toBeGreaterThan(noLoss.afterTaxProfit);
+  });
+
+  it('carries the unused loss forward when income is a deficit', () => {
+    const r = calcCorporateTax(-5_000_000, { carryforwardLoss: 3_000_000 });
+    expect(r.incomeAfterLoss).toBe(0);
+    expect(r.deductedLoss).toBe(0); // nothing to offset (income ≤ 0)
+    expect(r.remainingLoss).toBe(3_000_000); // whole loss still carried
+    expect(r.totalTax).toBe(70_000); // 均等割のみ
+    expect(r.taxableIncome).toBe(-5_000_000);
+  });
+});
+
+describe('STATUTORY_BUSINESS_RATE_* (事業税系の限界率)', () => {
+  it('is the 事業税所得割率 grossed up by the 特別法人事業税 (×1.37)', () => {
+    expect(STATUTORY_BUSINESS_RATE_TIER1).toBeCloseTo(
+      BUSINESS_TAX_RATE_TIER1 * (1 + SPECIAL_BUSINESS_TAX_RATE),
+      12,
+    );
+    expect(STATUTORY_BUSINESS_RATE_TIER2).toBeCloseTo(
+      BUSINESS_TAX_RATE_TIER2 * (1 + SPECIAL_BUSINESS_TAX_RATE),
+      12,
+    );
+    expect(STATUTORY_BUSINESS_RATE_TIER3).toBeCloseTo(
+      BUSINESS_TAX_RATE_TIER3 * (1 + SPECIAL_BUSINESS_TAX_RATE),
+      12,
+    );
+  });
+
+  it('has the exact 令和6年度 values (3.5/5.3/7.0% × 1.37)', () => {
+    expect(STATUTORY_BUSINESS_RATE_TIER1).toBeCloseTo(0.035 * 1.37, 12); // 0.04795
+    expect(STATUTORY_BUSINESS_RATE_TIER2).toBeCloseTo(0.053 * 1.37, 12); // 0.07261
+    expect(STATUTORY_BUSINESS_RATE_TIER3).toBeCloseTo(0.07 * 1.37, 12); // 0.0959
+  });
+
+  it('is strictly increasing across the tiers', () => {
+    expect(STATUTORY_BUSINESS_RATE_TIER2).toBeGreaterThan(STATUTORY_BUSINESS_RATE_TIER1);
+    expect(STATUTORY_BUSINESS_RATE_TIER3).toBeGreaterThan(STATUTORY_BUSINESS_RATE_TIER2);
+  });
+});
+
+describe('selectStatutoryRates (法定実効税率の代表率の選択)', () => {
+  it('small business at ≤800万 uses the reduced 15% corporate rate', () => {
+    expect(selectStatutoryRates(8_000_000, true).corporateRate).toBe(CORP_TAX_REDUCED_RATE);
+    expect(selectStatutoryRates(4_000_000, true).corporateRate).toBe(CORP_TAX_REDUCED_RATE);
+    expect(selectStatutoryRates(0, true).corporateRate).toBe(CORP_TAX_REDUCED_RATE);
+  });
+
+  it('small business just over 800万 switches to the standard 23.2% corporate rate (境界)', () => {
+    // at the 800万 boundary → still reduced (≤)
+    expect(selectStatutoryRates(CORP_TAX_REDUCED_THRESHOLD, true).corporateRate).toBe(
+      CORP_TAX_REDUCED_RATE,
+    );
+    // just over → standard
+    expect(selectStatutoryRates(CORP_TAX_REDUCED_THRESHOLD + 1, true).corporateRate).toBe(
+      CORP_TAX_STANDARD_RATE,
+    );
+  });
+
+  it('large corporation always uses the standard 23.2% corporate rate (even ≤800万)', () => {
+    expect(selectStatutoryRates(4_000_000, false).corporateRate).toBe(CORP_TAX_STANDARD_RATE);
+    expect(selectStatutoryRates(8_000_000, false).corporateRate).toBe(CORP_TAX_STANDARD_RATE);
+    expect(selectStatutoryRates(20_000_000, false).corporateRate).toBe(CORP_TAX_STANDARD_RATE);
+  });
+
+  it('selects the business rate tier by the income band (400万 / 800万 境界)', () => {
+    // tier1: ≤400万
+    expect(selectStatutoryRates(4_000_000, true).businessRate).toBe(STATUTORY_BUSINESS_RATE_TIER1);
+    expect(selectStatutoryRates(0, true).businessRate).toBe(STATUTORY_BUSINESS_RATE_TIER1);
+    // tier2: 400万超〜800万
+    expect(selectStatutoryRates(4_000_001, true).businessRate).toBe(STATUTORY_BUSINESS_RATE_TIER2);
+    expect(selectStatutoryRates(8_000_000, true).businessRate).toBe(STATUTORY_BUSINESS_RATE_TIER2);
+    // tier3: 800万超
+    expect(selectStatutoryRates(8_000_001, true).businessRate).toBe(STATUTORY_BUSINESS_RATE_TIER3);
+    expect(selectStatutoryRates(50_000_000, false).businessRate).toBe(STATUTORY_BUSINESS_RATE_TIER3);
+  });
+
+  it('treats negative / zero income as the minimum band (tier1, reduced rate for small)', () => {
+    expect(selectStatutoryRates(-1_000_000, true)).toEqual({
+      corporateRate: CORP_TAX_REDUCED_RATE,
+      businessRate: STATUTORY_BUSINESS_RATE_TIER1,
+    });
+    expect(selectStatutoryRates(0, true)).toEqual({
+      corporateRate: CORP_TAX_REDUCED_RATE,
+      businessRate: STATUTORY_BUSINESS_RATE_TIER1,
+    });
+    // large at negative → standard corporate rate, tier1 business
+    expect(selectStatutoryRates(-5, false)).toEqual({
+      corporateRate: CORP_TAX_STANDARD_RATE,
+      businessRate: STATUTORY_BUSINESS_RATE_TIER1,
+    });
+  });
+});
+
+describe('calcStatutoryEffectiveRate (法定実効税率)', () => {
+  it('matches the documented formula for a small business above 800万 (tier3, 23.2%)', () => {
+    // corporateRate 23.2% (income>800万), businessRate tier3
+    const r = calcStatutoryEffectiveRate(10_000_000, { smallBusiness: true });
+    expect(r).toBeCloseTo(
+      expectedStatutory(CORP_TAX_STANDARD_RATE, STATUTORY_BUSINESS_RATE_TIER3),
+      12,
+    );
+    // sanity: numeric value ≈ 33.58%
+    expect(r).toBeCloseTo(0.3358, 3);
+  });
+
+  it('uses the reduced 15% rate + tier1 for a small business at low income', () => {
+    const r = calcStatutoryEffectiveRate(3_000_000, { smallBusiness: true });
+    expect(r).toBeCloseTo(
+      expectedStatutory(CORP_TAX_REDUCED_RATE, STATUTORY_BUSINESS_RATE_TIER1),
+      12,
+    );
+  });
+
+  it('uses the standard rate for a large corporation even at low income', () => {
+    const r = calcStatutoryEffectiveRate(3_000_000, { smallBusiness: false });
+    expect(r).toBeCloseTo(
+      expectedStatutory(CORP_TAX_STANDARD_RATE, STATUTORY_BUSINESS_RATE_TIER1),
+      12,
+    );
+    // differs from the small-business reduced-rate result at the same income
+    expect(r).not.toBeCloseTo(
+      calcStatutoryEffectiveRate(3_000_000, { smallBusiness: true }),
+      6,
+    );
+  });
+
+  it('classifies large by capital over the 1億円 threshold', () => {
+    const r = calcStatutoryEffectiveRate(3_000_000, { capital: 200_000_000 });
+    expect(r).toBeCloseTo(
+      expectedStatutory(CORP_TAX_STANDARD_RATE, STATUTORY_BUSINESS_RATE_TIER1),
+      12,
+    );
+  });
+
+  it('defaults to a small business (reduced band) when no profile is given', () => {
+    expect(calcStatutoryEffectiveRate(3_000_000)).toBeCloseTo(
+      expectedStatutory(CORP_TAX_REDUCED_RATE, STATUTORY_BUSINESS_RATE_TIER1),
+      12,
+    );
+    // default income is 0 → minimum band as well
+    expect(calcStatutoryEffectiveRate()).toBeCloseTo(
+      expectedStatutory(CORP_TAX_REDUCED_RATE, STATUTORY_BUSINESS_RATE_TIER1),
+      12,
+    );
+  });
+
+  it('is lower than the naive sum {法人税率(1+地方+住民)+事業税系率} (損金算入で割り戻す効果)', () => {
+    // The statutory rate divides by (1 + businessRate), so it must be strictly below
+    // the un-discounted numerator whenever businessRate > 0.
+    const corporateRate = CORP_TAX_STANDARD_RATE;
+    const businessRate = STATUTORY_BUSINESS_RATE_TIER3;
+    const naive = corporateRate * (1 + LOCAL_CORP_TAX_RATE + RESIDENT_CORP_TAX_RATE) + businessRate;
+    const statutory = calcStatutoryEffectiveRate(10_000_000, { smallBusiness: false });
+    expect(statutory).toBeLessThan(naive);
+  });
+
+  it('is a plausible 25-37% for typical income bands', () => {
+    for (const income of [3_000_000, 6_000_000, 10_000_000, 50_000_000]) {
+      for (const small of [true, false]) {
+        const r = calcStatutoryEffectiveRate(income, { smallBusiness: small });
+        expect(r).toBeGreaterThan(0.2);
+        expect(r).toBeLessThan(0.37);
+      }
+    }
+  });
+});
+
+describe('calcCorporateTax statutoryEffectiveRate (集計への純粋追加)', () => {
+  it('exposes statutoryEffectiveRate computed on the after-loss income', () => {
+    const r = calcCorporateTax(10_000_000, { smallBusiness: true });
+    expect(r.statutoryEffectiveRate).toBeCloseTo(
+      calcStatutoryEffectiveRate(10_000_000, { smallBusiness: true }),
+      12,
+    );
+  });
+
+  it('uses the income AFTER loss carryforward for the band selection', () => {
+    // 10,000,000 income − 7,000,000 loss → after-loss 3,000,000 → reduced band (tier1, 15%)
+    const r = calcCorporateTax(10_000_000, { carryforwardLoss: 7_000_000, smallBusiness: true });
+    expect(r.incomeAfterLoss).toBe(3_000_000);
+    expect(r.statutoryEffectiveRate).toBeCloseTo(
+      calcStatutoryEffectiveRate(3_000_000, { smallBusiness: true }),
+      12,
+    );
+    // and that differs from the pre-loss (10,000,000 → standard band) statutory rate
+    expect(r.statutoryEffectiveRate).not.toBeCloseTo(
+      calcStatutoryEffectiveRate(10_000_000, { smallBusiness: true }),
+      6,
+    );
+  });
+
+  // 2026-09-08 までこの見本の名前が `unlike effectiveRate (**0**)` と書いており、
+  // **非対称そのものを仕様として固定していた**。法定実効税率は限界帯の率なので
+  // 所得 0 でも定義されるが、単純合算の実効税率は**割れないので無い** ——
+  // 「0」と「無い」は別のことである。
+  it('法定実効税率は所得 0 でも定義される (単純合算の実効税率は null)', () => {
+    const r = calcCorporateTax(0);
+    expect(r.effectiveRate).toBeNull(); // 割る相手が 0 → 率は無い
+    expect(r.statutoryEffectiveRate).toBeGreaterThan(0); // marginal statutory rate still defined
+    expect(r.statutoryEffectiveRate).toBeCloseTo(
+      calcStatutoryEffectiveRate(0, {}),
+      12,
+    );
+  });
+
+  it('does NOT change any existing field (純粋追加の確認)', () => {
+    const r = calcCorporateTax(10_000_000);
+    // existing values from the round-54/56/57 tests remain identical
+    expect(r.corporateIncomeTax).toBe(1_664_000);
+    expect(r.businessTax).toBe(492_000);
+    expect(r.residentTax).toBe(Math.round(1_664_000 * 0.07) + 70_000);
+    expect(r.effectiveRate).toBeCloseTo(r.totalTax / 10_000_000, 12);
+    expect(r.afterTaxProfit).toBe(10_000_000 - r.totalTax);
+  });
+});
+
+describe('year constants (令和6年度)', () => {
+  it('exposes the documented rate table', () => {
+    expect(CORP_TAX_REDUCED_RATE).toBe(0.15);
+    expect(CORP_TAX_STANDARD_RATE).toBe(0.232);
+    expect(CORP_TAX_REDUCED_THRESHOLD).toBe(8_000_000);
+    expect(LOCAL_CORP_TAX_RATE).toBe(0.103);
+    expect(RESIDENT_CORP_TAX_RATE).toBe(0.07);
+    expect(DEFAULT_PER_CAPITA_LEVY).toBe(70_000);
+    expect(BUSINESS_TAX_RATE_TIER1).toBe(0.035);
+    expect(BUSINESS_TAX_RATE_TIER2).toBe(0.053);
+    expect(BUSINESS_TAX_RATE_TIER3).toBe(0.07);
+    expect(BUSINESS_TAX_TIER1_LIMIT).toBe(4_000_000);
+    expect(BUSINESS_TAX_TIER2_LIMIT).toBe(8_000_000);
+    expect(SPECIAL_BUSINESS_TAX_RATE).toBe(0.37);
+    expect(LARGE_CORP_CAPITAL_THRESHOLD).toBe(100_000_000);
+    expect(LARGE_CORP_LOSS_DEDUCTION_RATIO).toBe(0.5);
+    expect(PER_CAPITA_EMPLOYEE_THRESHOLD).toBe(50);
+  });
+});
+
+describe('台帳から渡す率と境目 (CorporateTaxRates)', () => {
+  it('既定の引数は定数そのもので、省略時と同じ結果', () => {
+    expect(DEFAULT_CORPORATE_TAX_RATES).toEqual({
+      reducedRate: CORP_TAX_REDUCED_RATE,
+      standardRate: CORP_TAX_STANDARD_RATE,
+      reducedThreshold: CORP_TAX_REDUCED_THRESHOLD,
+      localCorpTaxRate: LOCAL_CORP_TAX_RATE,
+      residentCorpTaxRate: RESIDENT_CORP_TAX_RATE,
+      defaultPerCapitaLevy: DEFAULT_PER_CAPITA_LEVY,
+      perCapitaEmployeeThreshold: PER_CAPITA_EMPLOYEE_THRESHOLD,
+      businessTaxRateTier1: BUSINESS_TAX_RATE_TIER1,
+      businessTaxRateTier2: BUSINESS_TAX_RATE_TIER2,
+      businessTaxRateTier3: BUSINESS_TAX_RATE_TIER3,
+      businessTaxTier1Limit: BUSINESS_TAX_TIER1_LIMIT,
+      businessTaxTier2Limit: BUSINESS_TAX_TIER2_LIMIT,
+      specialBusinessTaxRate: SPECIAL_BUSINESS_TAX_RATE,
+      largeCorpCapitalThreshold: LARGE_CORP_CAPITAL_THRESHOLD,
+      largeCorpLossDeductionRatio: LARGE_CORP_LOSS_DEDUCTION_RATIO,
+    });
+    const profile = { capital: 30_000_000, employees: 12, carryforwardLoss: 1_000_000 };
+    expect(calcCorporateTax(12_000_000, profile)).toEqual(calcCorporateTax(12_000_000, profile, DEFAULT_CORPORATE_TAX_RATES));
+    expect(calcCorporateTax(12_000_000)).toEqual(calcCorporateTax(12_000_000, {}, DEFAULT_CORPORATE_TAX_RATES));
+    // 事業税系の限界率は従来の定数 (所得割率 × (1 + 特別法人事業税率)) と同じ。
+    expect(selectStatutoryRates(3_000_000, true).businessRate).toBe(STATUTORY_BUSINESS_RATE_TIER1);
+    expect(selectStatutoryRates(9_000_000, true).businessRate).toBe(STATUTORY_BUSINESS_RATE_TIER3);
+  });
+
+  it('法人税率・境目・地方法人税・法人税割が各項目に効く (所得 1,200 万・中小)', () => {
+    const r = { ...DEFAULT_CORPORATE_TAX_RATES, reducedRate: 0.1, standardRate: 0.25, reducedThreshold: 10_000_000, localCorpTaxRate: 0.11, residentCorpTaxRate: 0.08 };
+    const b = calcCorporateTax(12_000_000, {}, r);
+    expect(b.corporateIncomeTax).toBe(10_000_000 * 0.1 + 2_000_000 * 0.25); // 1,500,000
+    expect(b.localCorporateTax).toBe(Math.round(1_500_000 * 0.11));
+    expect(b.residentTax).toBe(Math.round(1_500_000 * 0.08) + DEFAULT_PER_CAPITA_LEVY);
+    expect(b.totalTax).toBe(b.corporateIncomeTax + b.localCorporateTax + b.residentTax + b.businessTax + b.specialBusinessTax);
+  });
+
+  it('均等割の既定と従業者数の境目', () => {
+    const r = { ...DEFAULT_CORPORATE_TAX_RATES, defaultPerCapitaLevy: 80_000, perCapitaEmployeeThreshold: 100 };
+    expect(calcCorporateTax(0, {}, r).residentTax).toBe(80_000);
+    // 従業者 60 人: 既定の境目 50 人では大区分、境目を 100 人にすれば小区分。
+    expect(resolveCorporatePerCapita(10_000_000, 60, r)).toBe(resolveCorporatePerCapita(10_000_000, 10));
+    expect(resolveCorporatePerCapita(10_000_000, 60)).not.toBe(resolveCorporatePerCapita(10_000_000, 10));
+  });
+
+  it('事業税の段階の率と境目・特別法人事業税率', () => {
+    const r = { ...DEFAULT_CORPORATE_TAX_RATES, businessTaxRateTier1: 0.04, businessTaxRateTier2: 0.06, businessTaxRateTier3: 0.08, businessTaxTier1Limit: 5_000_000, businessTaxTier2Limit: 9_000_000, specialBusinessTaxRate: 0.4 };
+    const b = calcCorporateTax(12_000_000, {}, r);
+    expect(b.businessTax).toBe(5_000_000 * 0.04 + 4_000_000 * 0.06 + 3_000_000 * 0.08); // 680,000
+    expect(b.specialBusinessTax).toBe(Math.round(680_000 * 0.4));
+    expect(selectStatutoryRates(12_000_000, true, r).businessRate).toBeCloseTo(0.08 * 1.4, 12);
+  });
+
+  it('大法人の境目と繰越欠損金の控除限度', () => {
+    const r = { ...DEFAULT_CORPORATE_TAX_RATES, largeCorpCapitalThreshold: 300_000_000, largeCorpLossDeductionRatio: 0.6 };
+    expect(isSmallBusiness({ capital: 200_000_000 })).toBe(false);
+    expect(isSmallBusiness({ capital: 200_000_000 }, r)).toBe(true);
+    expect(applyLossCarryforward(10_000_000, 8_000_000, false).deductedLoss).toBe(5_000_000);
+    expect(applyLossCarryforward(10_000_000, 8_000_000, false, r).deductedLoss).toBe(6_000_000);
+    const large = calcCorporateTax(10_000_000, { capital: 500_000_000, carryforwardLoss: 8_000_000 }, r);
+    expect(large.smallBusiness).toBe(false);
+    expect(large.deductedLoss).toBe(6_000_000);
+    // 法定実効税率も同じ率で組む。
+    expect(calcStatutoryEffectiveRate(12_000_000, {}, { ...DEFAULT_CORPORATE_TAX_RATES, localCorpTaxRate: 0, residentCorpTaxRate: 0, specialBusinessTaxRate: 0 }))
+      .toBeCloseTo((CORP_TAX_STANDARD_RATE + BUSINESS_TAX_RATE_TIER3) / (1 + BUSINESS_TAX_RATE_TIER3), 12);
+  });
+});
+
+/**
+ * **「法人税等合計 70,000 円」と「実効税率 0.0%」は両立しない。**
+ *
+ * 実効税率は**控除後の課税所得**で割る。割る相手が 0 のとき 0 に倒すと、
+ * 均等割だけが課される期に矛盾した 2 行が並ぶ。実測 (2026-09-08・直す前):
+ *
+ * | 控え | 控除後所得 | 法人税等合計 | 刷っていた率 |
+ * | --- | ---: | ---: | ---: |
+ * | 欠損 (課税所得 0) | 0 | 70,000 円 | **0.0%** |
+ * | 所得 500 万・繰越欠損 5,000 万で全額控除 | 0 | 70,000 円 | **0.0%** |
+ *
+ * 2 行目が要点 —— 画面の関門は `ordinaryProfit <= 0` (**税引前利益**) を見ており、
+ * この率が割るのは**控除後の課税所得**なので、**繰越欠損で控除しきった期は
+ * 関門が開いたまま 0.0% が出た**。規準は姉妹モジュール `fxCurrency.ts` の
+ * 同名 `effectiveRate(): number | null` に在った。
+ */
+describe('実効税率 — 割る相手が 0 なら率は無い', () => {
+  it('★ 繰越欠損で控除しきった期: 税引前は黒字でも率は null (関門が別の量を見ていた形)', () => {
+    const r = calcCorporateTax(5_000_000, { capital: 10_000_000, carryforwardLoss: 50_000_000 });
+    expect(r.taxableIncome).toBe(5_000_000); // 税引前は黒字
+    expect(r.incomeAfterLoss).toBe(0); // 控除後は 0
+    expect(r.deductedLoss).toBe(5_000_000);
+    expect(r.totalTax).toBe(70_000); // 均等割のみ
+    // **税額が在るのに率が 0% という組み合わせを作らない**
+    expect(r.effectiveRate).toBeNull();
+  });
+
+  it('★ 不変条件: 率が null なのは控除後の課税所得が 0 以下のときに限る', () => {
+    const cases = [
+      calcCorporateTax(0),
+      calcCorporateTax(-5_000_000),
+      calcCorporateTax(5_000_000),
+      calcCorporateTax(5_000_000, { carryforwardLoss: 50_000_000 }),
+      calcCorporateTax(50_000_000, { carryforwardLoss: 10_000_000 }),
+      calcCorporateTax(1),
+    ];
+    for (const r of cases) {
+      expect(r.effectiveRate === null).toBe(r.incomeAfterLoss <= 0);
+    }
+    // 標本が両側を含むこと (片側だけなら不変条件は空の検査になる)
+    expect(cases.some((r) => r.effectiveRate === null)).toBe(true);
+    expect(cases.some((r) => r.effectiveRate !== null)).toBe(true);
+  });
+
+  it('★ 対照: 控除後に所得が残れば率は数で出て、税額と整合する', () => {
+    const r = calcCorporateTax(50_000_000, { carryforwardLoss: 10_000_000 });
+    expect(r.incomeAfterLoss).toBe(40_000_000);
+    expect(r.effectiveRate).not.toBeNull();
+    // 印刷する式どおり: 率 × 控除後所得 == 法人税等合計
+    expect(r.effectiveRate! * r.incomeAfterLoss).toBeCloseTo(r.totalTax, 6);
+  });
+});
+
+/**
+ * 段の境目が逆でも所得を二重に数えない (パス 221)。
+ *
+ * 台帳 (`parameters.ts`) の検査は 1 欄ずつなので、下 800 万 / 上 400 万という
+ * 組が保存できていた。畳む前は第 2 段の課税標準が **−400 万円**、第 3 段が
+ * 第 1 段と同じ所得を二重に数え、所得 500 万円の所得割が 175,000 円ではなく
+ * 33,000 円になっていた。画面は `parameterOrderIssues` で断るが、**古い版で
+ * 置いた上書き・復元したバックアップはその関門を通っていない**。
+ */
+describe('orderedBusinessTaxLimits — 逆順の境目を使う前に畳む (パス 221)', () => {
+  const reversed = {
+    ...DEFAULT_CORPORATE_TAX_RATES,
+    businessTaxTier1Limit: BUSINESS_TAX_TIER2_LIMIT,
+    businessTaxTier2Limit: BUSINESS_TAX_TIER1_LIMIT,
+  };
+
+  it('既定はそのまま (畳んでも動かない)', () => {
+    expect(orderedBusinessTaxLimits(DEFAULT_CORPORATE_TAX_RATES)).toEqual({
+      limit1: BUSINESS_TAX_TIER1_LIMIT,
+      limit2: BUSINESS_TAX_TIER2_LIMIT,
+    });
+  });
+
+  it('逆順なら上の境目を下に合わせる (第 2 段が空になる)', () => {
+    expect(orderedBusinessTaxLimits(reversed)).toEqual({
+      limit1: BUSINESS_TAX_TIER2_LIMIT,
+      limit2: BUSINESS_TAX_TIER2_LIMIT,
+    });
+  });
+
+  it('マイナスの境目は 0 に底打ちする', () => {
+    const neg = { ...DEFAULT_CORPORATE_TAX_RATES, businessTaxTier1Limit: -1, businessTaxTier2Limit: -2 };
+    expect(orderedBusinessTaxLimits(neg)).toEqual({ limit1: 0, limit2: 0 });
+  });
+
+  it('読めない境目 (NaN) は 0 に倒す', () => {
+    const nan = {
+      ...DEFAULT_CORPORATE_TAX_RATES,
+      businessTaxTier1Limit: Number.NaN,
+      businessTaxTier2Limit: Number.NaN,
+    };
+    expect(orderedBusinessTaxLimits(nan)).toEqual({ limit1: 0, limit2: 0 });
+  });
+
+  it('逆順でも所得割はマイナスの課税標準を作らない (畳む前は 33,000 円だった)', () => {
+    const got = calcBusinessTaxIncomePortion(5_000_000, reversed);
+    // 第 1 段の境目が 800 万に上がるので、所得 500 万は全額が第 1 段の率になる。
+    expect(got).toBe(Math.round(5_000_000 * BUSINESS_TAX_RATE_TIER1));
+    // 畳まなければ 5_000_000*r1 + (-4_000_000)*r2 + 1_000_000*r3 になっていた。
+    const unfolded =
+      5_000_000 * BUSINESS_TAX_RATE_TIER1 +
+      (BUSINESS_TAX_TIER1_LIMIT - BUSINESS_TAX_TIER2_LIMIT) * BUSINESS_TAX_RATE_TIER2 +
+      1_000_000 * BUSINESS_TAX_RATE_TIER3;
+    expect(Math.round(unfolded)).toBeLessThan(got);
+  });
+
+  it('どんな境目でも 各段の合計 == 所得 (二重計上も取りこぼしも無い)', () => {
+    for (const [l1, l2] of [
+      [BUSINESS_TAX_TIER1_LIMIT, BUSINESS_TAX_TIER2_LIMIT],
+      [BUSINESS_TAX_TIER2_LIMIT, BUSINESS_TAX_TIER1_LIMIT],
+      [0, 0],
+      [-5, -9],
+      [1_000_000_000, 1],
+    ]) {
+      const r = { ...DEFAULT_CORPORATE_TAX_RATES, businessTaxTier1Limit: l1!, businessTaxTier2Limit: l2! };
+      const { limit1, limit2 } = orderedBusinessTaxLimits(r);
+      for (const income of [0, 1, 3_999_999, 4_000_000, 8_000_000, 30_000_000]) {
+        const t1 = Math.min(income, limit1);
+        const t2 = Math.min(Math.max(0, income - limit1), limit2 - limit1);
+        const t3 = Math.max(0, income - limit2);
+        expect(t1 + t2 + t3, `${l1}/${l2} 所得 ${income}`).toBe(income);
+        expect(Math.min(t1, t2, t3)).toBeGreaterThanOrEqual(0);
+      }
+    }
+  });
+
+  it('限界率の選び方も畳んだ境目で決まる (届かない段を作らない)', () => {
+    // 逆順のまま比べると、所得 500 万が「第 3 段の率」になっていた。
+    expect(selectStatutoryRates(5_000_000, true, reversed).businessRate).toBeCloseTo(
+      STATUTORY_BUSINESS_RATE_TIER1,
+      10,
+    );
+  });
+});
