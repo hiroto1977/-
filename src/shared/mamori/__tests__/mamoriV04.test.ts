@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { compileProject, formatDiagnostic } from '../compile';
-import { BUILTIN_MEMBERS } from '../checker';
+import { BUILTIN_MEMBERS, resolveUse } from '../checker';
 
 /*
  * **Mamori 0.4 —— 共有の状態を持つ組み込みのメンバを絞る (T-232)** (2026-10-31 · パス 571 · MG-004 · threat: T-232)。
@@ -281,5 +281,90 @@ describe('T-240 (静的な題名)', () => {
   });
   it('★ .__lookupGetter__ は断る (threat: T-240)', () => {
     expect(diags('export fn go(x: string) -> unknown {\n  return x.__lookupGetter__("a");\n}\n').length).toBe(1);
+  });
+});
+
+/*
+ * ## 0.4 の穴その 10 (T-241 · 対戦 572 続き: 複数ファイルの手探りが見つけた)
+ *
+ * `use` で引いた関数の外形 (どの引数が印を受けるか) を、**名前だけ**で引いていた。 (1) `use { open alias o }` の別名 `o` は
+ * 外形を引けず M4 が外れた (2) 別のモジュールの**同名の非 export の関数**が、本物の sink の外形を上書きした
+ * (ファイルの並び順で変わる)。 (3) export していない名前の import と、同じ名前の二重宣言も通った。
+ * どれも変換後の tsc が止めるが、Mamori の検め (M4) が 1 層欠けていた。
+ */
+function project(files: [string, string][]): string[] {
+  const r = compileProject(files.map(([path, source]) => ({ path, source })));
+  return r.ok ? [] : r.diagnostics.map((d) => `${d.rule} ${d.message}`);
+}
+const T241_A = 'export vetted VU = "u";\nextern sink { shell } from "electron";\nexport sink fn open(u: VU) -> Promise<void> {\n  return shell.openExternal(u);\n}\n';
+const T241_USE = (names: string, call: string): string => `use { ${names} } from "./a";\nexport fn go(raw: string) -> Promise<void> {\n  return ${call};\n}\n`;
+
+describe('T-241: use の解決は道と名前で行う (M4 / M6)', () => {
+  it('★ 別名で引いても印を受ける引数は検める (threat: T-241)', () => {
+    expect(project([['src/x/a.mamori', T241_A], ['src/x/c.mamori', T241_USE('open alias o', 'o(raw)')]])).toEqual([expect.stringContaining('M4 open の引数 1 は印 VU')]);
+  });
+  it('★ 別のモジュールの同名の非 export の関数は外形を上書きしない (並び順にも依らない) (threat: T-241)', () => {
+    const plain = ['src/x/b.mamori', 'fn open(u: string) -> string {\n  return u;\n}\n'] as [string, string];
+    const a = ['src/x/a.mamori', T241_A] as [string, string];
+    const c = ['src/x/c.mamori', T241_USE('open', 'open(raw)')] as [string, string];
+    expect(project([a, plain, c])).toEqual([expect.stringContaining('M4 open の引数 1 は印 VU')]);
+    expect(project([plain, a, c])).toEqual([expect.stringContaining('M4 open の引数 1 は印 VU')]);
+  });
+  it('★ export していない名前は use で引けない (threat: T-241)', () => {
+    expect(project([['src/x/a.mamori', `${T241_A}fn hidden(u: string) -> string {\n  return u;\n}\n`], ['src/x/c.mamori', T241_USE('hidden', 'hidden(raw)')]])).toEqual([
+      expect.stringContaining('M6 src/x/a.mamori は hidden を export していません'),
+    ]);
+  });
+  it('★ use した名前と同じ名前の関数・定数・extern を宣言できない (threat: T-241)', () => {
+    const useOpen = 'use { open } from "./a";\n';
+    const a = ['src/x/a.mamori', T241_A] as [string, string];
+    expect(project([a, ['src/x/c.mamori', `${useOpen}fn open(u: string) -> string {\n  return u;\n}\n`]])).toEqual([expect.stringContaining('M6 名前 open を 2 度宣言しています')]);
+    expect(project([a, ['src/x/c.mamori', `${useOpen}const open: number = 1;\n`]])).toEqual([expect.stringContaining('M6 名前 open を 2 度宣言しています')]);
+    expect(project([a, ['src/x/c.mamori', `${useOpen}use { open } from "./a";\n`]])).toEqual([expect.stringContaining('M6 名前 open を 2 度宣言しています')]);
+  });
+  it('export した名前は種類を問わず引ける (関数・定数・型・interface・印)・export していなければどれも断る', () => {
+    const decls: [string, string, string][] = [
+      ['fn', 'fn thing(u: string) -> string {\n  return u;\n}\n', 'thing'],
+      ['const', 'const thing: number = 1;\n', 'thing'],
+      ['type', 'type Thing = string;\n', 'Thing'],
+      ['interface', 'interface Thing {\n  a: string;\n}\n', 'Thing'],
+      ['vetted', 'vetted Thing = "thing";\n', 'Thing'],
+    ];
+    for (const [kind, decl, name] of decls) {
+      const use = kind === 'fn' || kind === 'const' ? `use { ${name} } from "./a";\n` : `use type { ${name} } from "./a";\n`;
+      expect(project([['src/x/a.mamori', `export ${decl}`], ['src/x/c.mamori', use]]), `export ${kind}`).toEqual([]);
+      expect(project([['src/x/a.mamori', decl], ['src/x/c.mamori', use]]), `非 export ${kind}`).toEqual([expect.stringContaining(`${name} を export していません`)]);
+    }
+  });
+  it('対照: 印を持つ値を渡す・別名で渡す・外の module (electron) の名前は通る', () => {
+    const gate = 'export gate fn mk(s: string) -> VU | null {\n  if (s === "") {\n    return null;\n  }\n  return mint VU(s);\n}\n';
+    const a = ['src/x/a.mamori', T241_A + gate] as [string, string];
+    expect(project([a, ['src/x/c.mamori', 'use { open alias o, mk } from "./a";\nexport fn go(raw: string) -> Promise<void> {\n  const v = mk(raw);\n  return o(v);\n}\n']])).toEqual([]);
+  });
+});
+
+describe('T-241 (静的な題名)', () => {
+  it('★ 別名で引いても印を受ける引数は検める (threat: T-241)', () => {
+    expect(project([['src/x/a.mamori', T241_A], ['src/x/c.mamori', T241_USE('open alias o', 'o(raw)')]]).length).toBe(1);
+  });
+});
+
+describe('resolveUse (T-241): use の行き先を道で解く', () => {
+  it('相対の道は使うファイルの場所から解き、`.mamori` を付ける', () => {
+    expect(resolveUse('./a', 'src/x/c.mamori')).toBe('src/x/a.mamori');
+    expect(resolveUse('../shared/vetted', 'src/main/osSinks.mamori')).toBe('src/shared/vetted.mamori');
+    expect(resolveUse('../../b/./c', 'src/x/y/z.mamori')).toBe('src/b/c.mamori');
+  });
+  it('相対でない (外の module) は null', () => {
+    expect(resolveUse('electron', 'src/x/c.mamori')).toBe('外:electron');
+    expect(resolveUse('node:url', 'src/x/c.mamori')).toBe('外:node:url');
+    expect(resolveUse('.hidden', 'src/x/c.mamori')).toBe('外:.hidden');
+  });
+  it('★ `../` を使うモジュールの別名も上の道で引ける (threat: T-241)', () => {
+    const files: [string, string][] = [
+      ['src/shared/a.mamori', T241_A],
+      ['src/main/c.mamori', 'use { open alias o } from "../shared/a";\nexport fn go(raw: string) -> Promise<void> {\n  return o(raw);\n}\n'],
+    ];
+    expect(project(files)).toEqual([expect.stringContaining('M4 open の引数 1 は印 VU')]);
   });
 });

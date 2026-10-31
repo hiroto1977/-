@@ -4279,6 +4279,35 @@
           "test": "★ .__lookupGetter__ は断る (threat: T-240)"
         }
       ]
+    },
+    {
+      "id": "T-241",
+      "found": "2026-10-31",
+      "foundBy": "複数ファイルの手探りが見つけた。`use { open alias o }` の別名 `o(raw)` と、別のモジュールの同名の非 export の関数 `fn open(u: string)` があると、本物の sink `open(u: VU)` への素の文字列が M4 を素通りした (外形を名前だけで引き、ファイルの並び順にも依った)。",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "low",
+      "title": "守りの層を書く言語 Mamori 0.4 が、use で引いた関数の外形を名前だけで引いていたので、別名や同名の別の関数で印を受ける引数の検め (M4) が外れた",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: 関数の外形の鍵を `道 + 名前` にし、use を道で解いて (resolveUse) 使う側の名前 (別名) から外形を引く。export していない名前の use と、同じ名前の二重宣言 (use・extern・定数・関数) を M6 で断る。変換後の tsc も型で止めるが Mamori の検めが 1 層欠けていた。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+        "test": "★ 別名で引いても印を受ける引数は検める (threat: T-241)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+          "test": "★ 別のモジュールの同名の非 export の関数は外形を上書きしない (並び順にも依らない) (threat: T-241)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+          "test": "★ export していない名前は use で引けない (threat: T-241)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV04.test.ts",
+          "test": "★ use した名前と同じ名前の関数・定数・extern を宣言できない (threat: T-241)"
+        }
+      ]
     }
   ],
   "huntBacklog": [

@@ -489,6 +489,12 @@ export function runBattery(seed: number, rounds: number): Report {
     // 複数ファイル: 別の module が宣言した名前・印・sink を使う
     const other = `export vetted VU2 = "u2";\nextern sink { shell } from "electron";\nexport sink fn open2(u: VU2) -> Promise<void> {\n  return shell.openExternal(u);\n}\n`;
     examine(`${tag} env=multi`, [file(other, 'src/x/m1.mamori'), file(`use { open2 } from "./m1";\n` + base.replace(PRELUDE, ''), 'src/x/m2.mamori')]);
+    // 複数ファイル 2 (T-241): 別名で引く・同名の非 export の別の関数が並ぶ (並び順も入れ替える)
+    const shadow = `fn open2(u: string) -> string {\n  return u;\n}\n`;
+    const user = `use { open2 alias oa } from "./m1";\n` + base.replace(PRELUDE, '').replace(/\bopen2\b/g, 'oa');
+    examine(`${tag} env=multi-alias`, [file(other, 'src/x/m1.mamori'), file(user, 'src/x/m2.mamori')]);
+    examine(`${tag} env=multi-shadow`, [file(shadow, 'src/x/m0.mamori'), file(other, 'src/x/m1.mamori'), file(`use { open2 } from "./m1";\n` + base.replace(PRELUDE, ''), 'src/x/m2.mamori')]);
+    examine(`${tag} env=multi-shadow-late`, [file(other, 'src/x/m1.mamori'), file(shadow, 'src/x/m3.mamori'), file(`use { open2 } from "./m1";\n` + base.replace(PRELUDE, ''), 'src/x/m2.mamori')]);
     // 二重・多層: 環境を 2 つ + 整形
     const smug2 = pick(smugNames);
     examine(`${tag} env=${smug}+${smug2}+${fmt}`, [file(FORMAT_ENVS[fmt]!(SMUGGLE_ENVS[smug2]!(SMUGGLE_ENVS[smug]!(base, payload), payload)))]);

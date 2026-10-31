@@ -2149,6 +2149,54 @@
           "replace": "  ['__defineGetter__-off']: '"
         }
       ]
+    },
+    {
+      "id": "A-552",
+      "threat": "T-241",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "use の別名から外形を引かない —— 別名で M4 を外す口を開け直す",
+      "edits": [
+        {
+          "find": "importedFns.set(local, table.fns.get(fnKey(target, n.name)));",
+          "replace": "if (sig !== undefined && exported?.has(n.name) === true) importedFns.set(n.name, table.fns.get(fnKey(target, n.name)));"
+        }
+      ]
+    },
+    {
+      "id": "A-553",
+      "threat": "T-241",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "外形の鍵を名前だけに戻す —— 同名の非 export の関数が本物の sink の外形を上書きする",
+      "edits": [
+        {
+          "find": "  return `${file}\\u0000${name}`;",
+          "replace": "  return name;"
+        }
+      ]
+    },
+    {
+      "id": "A-554",
+      "threat": "T-241",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "export していない名前の use を断らない",
+      "edits": [
+        {
+          "find": "if (exported !== undefined && !exported.has(n.name)) report(",
+          "replace": "if (false) report("
+        }
+      ]
+    },
+    {
+      "id": "A-555",
+      "threat": "T-241",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "use・extern・定数・関数のあいだの名前の二重宣言を断らない —— あとの宣言が前の外形を隠す口を開け直す",
+      "edits": [
+        {
+          "find": "    if (moduleScope.has(name)) report('M6', pos,",
+          "replace": "    if (false) report('M6', pos,"
+        }
+      ]
     }
   ]
 }

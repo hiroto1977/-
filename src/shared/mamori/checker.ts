@@ -85,8 +85,31 @@ export interface FnSignature {
 export interface ProjectTable {
   /** 宣言した印の名前 → ラベル。 */
   readonly vetted: ReadonlyMap<string, string>;
-  /** export した関数の名前 → 外形。 */
+  /** 関数の外形。鍵は `道 + 名前` (名前だけで引くと、別のモジュールの同名の関数が外形を上書きする —— 0.4 · T-241)。 */
   readonly fns: ReadonlyMap<string, FnSignature>;
+  /** モジュールの道 → export した名前の集まり (関数に限らず、定数・型・印も)。`use` で引ける名前はここに在る物だけ。 */
+  readonly exports: ReadonlyMap<string, ReadonlySet<string>>;
+}
+
+/** `道 + 名前` の鍵 (`fns` を引く)。 */
+function fnKey(file: string, name: string): string {
+  return `${file}\u0000${name}`;
+}
+
+/**
+ * `use … from "./a"` の行き先を、使うファイルの道から解いた `.mamori` の道にする。
+ * 相対でない (外の module) は `外:` を前に付けた名前を返す —— 道の鍵のどれにも当たらないので、引くと「無い」になる
+ * (null を返して呼ぶ側が分岐すると、その分岐を外しても同じ答えになる等価変異が残る)。
+ */
+export function resolveUse(from: string, fromFile: string): string {
+  if (!from.startsWith('./') && !from.startsWith('../')) return `外:${from}`;
+  const parts = fromFile.split('/').slice(0, -1);
+  for (const seg of from.split('/')) {
+    if (seg === '.') continue;
+    if (seg === '..') parts.pop();
+    else parts.push(seg);
+  }
+  return `${parts.join('/')}.mamori`;
 }
 
 /** 型の綴りが名乗る印 (`VettedShellPath | null` → `VettedShellPath`)。2 つ以上なら最初の物。 */
@@ -111,12 +134,18 @@ function carriedMark(t: TypeRef | null, vetted: ReadonlyMap<string, string>): st
 export function collectTable(modules: readonly { readonly file: string; readonly module: Module }[]): { table: ProjectTable; diagnostics: MamoriDiagnostic[] } {
   const vetted = new Map<string, string>();
   const fns = new Map<string, FnSignature>();
+  const exports = new Map<string, Set<string>>();
+  const exportedFnNames = new Set<string>();
   const diagnostics: MamoriDiagnostic[] = [];
   for (const { module } of modules) {
     for (const it of module.items) if (it.kind === 'vetted') vetted.set(it.name, it.label);
   }
   for (const { file, module } of modules) {
+    const names = new Set<string>();
+    exports.set(file, names);
     for (const it of module.items) {
+      // export の旗を持つのは名前のある宣言 (fn・const・type・interface・vetted) だけ —— use / extern は旗を持たず、`undefined` は export でない。
+      if ((it as { readonly exported?: boolean }).exported === true) names.add((it as { readonly name: string }).name);
       if (it.kind !== 'fn') continue;
       const sig: FnSignature = {
         module: file,
@@ -125,13 +154,14 @@ export function collectTable(modules: readonly { readonly file: string; readonly
         paramVetted: it.params.map((p) => carriedMark(p.type, vetted)),
         returnVetted: vettedOf(it.returns, vetted),
       };
-      if (it.exported && fns.has(it.name)) {
+      if (it.exported && exportedFnNames.has(it.name)) {
         diagnostics.push({ file, line: it.pos.line, col: it.pos.col, rule: 'M6', message: `関数 ${it.name} が 2 つのモジュールで export されています (名前で引くので 1 つにする)` });
       }
-      fns.set(it.name, sig);
+      if (it.exported) exportedFnNames.add(it.name);
+      fns.set(fnKey(file, it.name), sig);
     }
   }
-  return { table: { vetted, fns }, diagnostics };
+  return { table: { vetted, fns, exports }, diagnostics };
 }
 
 interface Binding {
@@ -165,28 +195,44 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
 
   const moduleScope = new Map<string, Binding>();
   const localFns = new Map<string, FnSignature>();
+  /** `use` で引いた他の Mamori の関数の外形 (使う側の名前 = 別名 → 外形)。道で解くので、別名にも同名の別の関数にも惑わされない。 */
+  const importedFns = new Map<string, FnSignature | undefined>();
+  /** 名前を 1 つ宣言する。同じ名前を 2 度 (use・定数・関数・extern のあいだで) 宣言すると、あとの物が前の物の外形を隠す (0.4 · T-241)。 */
+  const declare = (name: string, b: Binding, pos: { line: number; col: number }): void => {
+    if (moduleScope.has(name)) report('M6', pos, `名前 ${name} を 2 度宣言しています (use・extern・定数・関数のあいだで名前は重ねられない)`);
+    moduleScope.set(name, b);
+  };
   for (const it of module.items) {
     if (it.kind === 'use') {
+      const target = resolveUse(it.from, file);
+      const exported = table.exports.get(target);
+      for (const n of it.names) {
+        const local = n.alias ?? n.name;
+        // 引く名前が export されていない —— 変換後の tsc も止めるが、Mamori の検めが 1 層欠けていた (0.4 · T-241)。
+        if (exported !== undefined && !exported.has(n.name)) report('M6', it.pos, `${target} は ${n.name} を export していません (use で引けるのは export した名前だけ)`);
+        // 引けなければ undefined (外の module・Mamori でない相対の module・export していない名前は M6 が別に断る)。
+        importedFns.set(local, table.fns.get(fnKey(target, n.name)));
+      }
       // ★ 'pure' は「sink でも、このモジュールの名前でもない」の意味だけを持ち、比べられるのは 'sink' と 'local' だけ
       // なので、その綴りを別の文字列に替えても答えは変わらない (等価)。既定の名前が無い (null) ときに null を鍵として
       // 置いても、名前は文字列で引くので誰にも当たらない (等価)。どちらも mamoriCheckerCoverage.test.ts の
       // 「use で引いた名前へは代入できない」「use default で引いた名前も同じ」が答えのほうを留める。
       // Stryker disable next-line ConditionalExpression,StringLiteral: 上の注記のとおり等価 (null の鍵は引かれない・'pure' は 'sink' / 'local' でないことだけを意味する)
-      if (it.defaultName !== null) moduleScope.set(it.defaultName, { vetted: null, authority: 'pure' });
+      if (it.defaultName !== null) declare(it.defaultName, { vetted: null, authority: 'pure' }, it.pos);
       // Stryker disable next-line StringLiteral: 上の注記のとおり等価 ('pure' は 'sink' / 'local' でないことだけを意味する)
-      for (const n of it.names) moduleScope.set(n.alias ?? n.name, { vetted: null, authority: 'pure' });
+      for (const n of it.names) declare(n.alias ?? n.name, { vetted: null, authority: 'pure' }, it.pos);
     } else if (it.kind === 'extern') {
-      for (const n of it.names) moduleScope.set(n, { vetted: null, authority: it.authority });
+      for (const n of it.names) declare(n, { vetted: null, authority: it.authority }, it.pos);
     } else if (it.kind === 'const') {
-      moduleScope.set(it.name, { vetted: null, authority: 'local' });
+      declare(it.name, { vetted: null, authority: 'local' }, it.pos);
     } else if (it.kind === 'fn') {
-      moduleScope.set(it.name, { vetted: null, authority: 'local' });
-      localFns.set(it.name, table.fns.get(it.name)!);
+      declare(it.name, { vetted: null, authority: 'local' }, it.pos);
+      localFns.set(it.name, table.fns.get(fnKey(file, it.name))!);
     }
   }
 
   /** 名前 → 関数の外形 (このモジュールの物か、use で引いた他の Mamori の物)。 */
-  const signatureOf = (name: string): FnSignature | undefined => localFns.get(name) ?? table.fns.get(name);
+  const signatureOf = (name: string): FnSignature | undefined => localFns.get(name) ?? importedFns.get(name);
 
   for (const it of module.items) {
     // 定数の初期値は役割を持たない。role は 'sink' / 'gate' との比べにしか使われないので、'plain' の綴りや

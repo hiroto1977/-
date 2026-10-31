@@ -121,6 +121,7 @@ TypeScript の構文解析器で独立に判定する**機械 (`mamoriBattery.te
 | T-238 | 印を受ける引数を**渡さない**呼び出し `openUrl()` が M4 を素通り (以前の検査が「数は tsc に任せる」と固定していた) | 欠落も M4 で断る |
 | **T-239** | **型の綴りは深さ 0 の `;` を断らず、`export const C: number; fetch("x"); const D: number = 1;` のように型の位置へ別の文を隠せた** (M6 を受けない `fetch` が生成物へ入る。変換後の tsc は `const` の初期化の欠落で止めるが、Mamori の検めが 1 層欠けていた) | 深さ 0 の `;` を M0 で断る (オブジェクト型の欄の区切りは深さ 1) |
 | T-240 | `.__defineGetter__` ほか古い getter/setter の口が表に無かった | FORBIDDEN_MEMBERS に 4 つ |
+| T-241 | 複数ファイルの手探りが見つけた: `use { open alias o }` の別名と、別のモジュールの同名の非 export の関数が、本物の sink の外形 (どの引数が印を受けるか) を隠し、M4 が外れた。export していない名前の use と名前の二重宣言も通った | 外形の鍵を `道 + 名前` にし use を道で解く (`resolveUse`)・export していない名前の use と二重宣言を M6 で断る |
 
 **電池の強さは対照で測った**: T-233〜T-240 の修正を 1 つずつ元へ戻すと、電池 (専用の回帰検査ではなく) が落ちる —— T-233 (専用の文脈 `bidiInComment`)・
 T-234 (`sinkTyped*` の文脈と印の型の判定)・T-232 (`RegExp.$1`)・`.constructor`・宣言していない名前・T-235 の文字列・T-239 (`typeSmuggle*`)。
