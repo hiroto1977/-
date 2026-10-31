@@ -86,6 +86,10 @@ describe('0.4: 構築する形と許したメンバは今までどおり通る (
     expect(diags(go('  return RegExp.input;', 'use { RegExp } from "./other";\n'))).toEqual([]);
     expect(diags(go('  return URL.revokeObjectURL;', 'use { URL } from "./other";\n'))).toEqual([]);
   });
+  it('★ 同名の危ない口 (extern sink) を宣言していれば、構築する形でも組み込みの扱いにしない (隠した名前は検めを受ける)', () => {
+    const src = 'extern sink { RegExp } from "x";\nexport fn go(raw: string) -> unknown {\n  return new RegExp(raw);\n}\n';
+    expect(diags(src)).toEqual(['src/x/m0.mamori:3:20: [M2] 危ない口 RegExp (extern sink) は sink 関数の中でだけ使えます']);
+  });
   it('表の中身: Object は従来どおり・ほかは構築する形 (+ URL は 2 メンバ) だけ', () => {
     expect([...BUILTIN_MEMBERS.keys()]).toEqual(['Object', 'RegExp', 'Error', 'TypeError', 'RangeError', 'URL']);
     expect([...(BUILTIN_MEMBERS.get('URL') ?? [])]).toEqual(['canParse', 'parse']);

@@ -1035,7 +1035,7 @@ const KNOWN_SUPPRESSIONS = [
   // **実物の関数と `isHexColor` に同じ標本を通して**留める。
   'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/inject-pwa.cjs :: 1',
   'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: src/shared/controlChars.ts :: 1',
-  'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: src/shared/escape.ts :: 10',
+  'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: src/shared/escape.ts :: 5',
   // `securityRange.ts` は**出口のエスケープではない**。`applyEvasion` は
   // レッドチーム用に「実体参照で符号化した攻撃文字列」を*作る*側で、
   // 検出器がそれを見破れるかを試すためのもの。同じファイルの
