@@ -4353,6 +4353,27 @@
           "test": "★ 台帳を渡さない呼び方は検めない (ライブラリとしての呼び方)・渡せば M7 で断る (threat: T-242)"
         }
       ]
+    },
+    {
+      "id": "T-243",
+      "found": "2026-11-01",
+      "foundBy": "言語を育てる輪の 6 周目 (MG-006) の「破る」段 (言語の穴探し)。攻撃の電池を 5 つの種で回して緑だったあと、電池の弾に無い領域 —— 宣言なしで使える組み込み (`PURE_GLOBALS`) と、`Object.freeze` が許されていること —— を手で組み合わせた。0.6 のコンパイラは `Object.freeze(Array)` / `Object.freeze(Math)` / `Object.freeze(JSON)` / `Object.freeze(Promise)` / `Object.freeze(String)` / `Object.freeze(Map)` と、別名 (`const a = Array; Object.freeze(a)`)・条件演算子・配列越しの形をすべて通した。node で `Object.freeze(Promise)` のあとに `Promise.x = 1` を書くと strict mode で `Cannot add property x, object is not extensible` と投げる。",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "low",
+      "title": "守りの層を書く言語 Mamori 0.6 は組み込みの構築子・名前空間 (Array / Math / JSON / Promise / String / Number / Boolean / Map / Set) を値として持ち出せたので、許してある Object.freeze に渡してアプリ全体の組み込みを凍らせられた (後続の差し替えや polyfill が strict mode で投げる)",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: 組み込みのうち Object / RegExp / Error / URL 以外 (PLAIN_BUILTINS) も、メンバを直に使う・呼ぶ・構築する形でだけ名前で使えるようにし、値として持ち出す形 (別名・引数・配列・条件演算子・typeof) を M6 で断る。電池の判定器にも同じ物差しを独立に書いた (mamoriBattery の PLAIN_BUILTIN_NAMES)。残り (正直に): 組み込みの**関数**(Object.freeze(Math.floor)) を凍らせる形は残る —— 構築子ではないので静的な欄を足される側ではなく、全体への効き目が無い。filter(Boolean) / map(String) は書けなくなった (x => Boolean(x) と書く)。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV07.test.ts",
+        "test": "★ 組み込み 9 つの名前を Object.freeze に渡す形は断る —— アプリ全体の組み込みを凍らせる相手を選べる (threat: T-243)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV07.test.ts",
+          "test": "★ 別名・条件演算子・配列・引数・typeof 越しの持ち出しも断る (threat: T-243)"
+        }
+      ]
     }
   ],
   "huntBacklog": [

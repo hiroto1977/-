@@ -3441,6 +3441,14 @@
       "leafCount": 158,
       "note": "update ast.ts,emit.ts,parser.ts",
       "hash": "4b0d40f320cfcb011d45bab1c2f843149f908392bd7e62cf93ed976be2ab4ef0"
+    },
+    {
+      "index": 410,
+      "prevHash": "4b0d40f320cfcb011d45bab1c2f843149f908392bd7e62cf93ed976be2ab4ef0",
+      "merkleRoot": "3f197333f05dccf16ed72c433418770c270dac7d5f6ca47c32ec523c83456d05",
+      "leafCount": 158,
+      "note": "update checker.ts",
+      "hash": "97935bbc7d0c80f154a460c963c3191195d7773b158dafc954ada2d91b7404f9"
     }
   ],
   "tipManifest": {
@@ -3578,7 +3586,7 @@
     "src/shared/localDate.ts": "9220ae751caf1637071d5804fb67d4629125bed1c4a9a7913fdd2968c5294da1",
     "src/shared/mamori/ast.ts": "397f51a9d7224ef64fb9c32ebf3cb7ba6e3ebc37761ee31b9c7fc45bac9f7546",
     "src/shared/mamori/capabilities.ts": "a62f4a2bee3099bb4ced100b86aad254126f18ba52de5fe5dc4e224fea904462",
-    "src/shared/mamori/checker.ts": "f02e8f1c03b7c24e5216683e006858a3764728f8573c93f682e0a7751e4690dc",
+    "src/shared/mamori/checker.ts": "ea02d6182c3ba60e7df5cb518d961af8c1945f8e3cfb4f3de789fac47d1cb5c2",
     "src/shared/mamori/compile.ts": "a21bed94095d71f5f3384d4813ed55de86eea7434117617bfba6dc135def875a",
     "src/shared/mamori/emit.ts": "4a9472327bcf6a49bc9d737e8eda680bedf9d4ac46351d4aed1e222a38ef9e3d",
     "src/shared/mamori/parser.ts": "3b11dcfc499b5fef8fb11938ded989295d22673a2ddf6daae6ffb0817ffbfec0",

@@ -71,6 +71,17 @@ export const BUILTIN_MEMBERS: ReadonlyMap<string, ReadonlySet<string>> = new Map
 /** `new X(…)` / `X(…)` の形でだけ名前で使える組み込み (`Object` は構築する形も無い)。 */
 const CONSTRUCTIBLE: ReadonlySet<string | null> = new Set(['RegExp', 'Error', 'TypeError', 'RangeError', 'URL']);
 
+/**
+ * 組み込みのうち、**呼ぶ・構築する・メンバを直に使う**形でだけ名前で使える物 (2026-11-01 · MG-006 · threat: T-243)。
+ *
+ * `Object.freeze(Array)` / `Object.freeze(Promise)` / `Object.freeze(Math)` は 0.6 まで通り、**アプリ全体の組み込みの構築子を凍らせた**
+ * (凍った `Promise` へ後から `Promise.x = …` を足すライブラリ・差し替えが、strict mode で投げる)。`Object.freeze` は自前の表を凍らせる
+ * ために許してあるが、組み込みの名前を**値として**渡せば、凍らせる相手を選べてしまう。値として持ち出す形 (`const a = Array;` /
+ * `f(Math)` / `c ? Array : JSON`) を断る —— `Object` / `RegExp` / `URL` などを 0.4 までに断ったのと同じ理由。
+ * `Object` は別の表 (`OBJECT_MEMBERS`) で扱うので、ここには入れない。
+ */
+const PLAIN_BUILTINS: ReadonlySet<string> = new Set([...PURE_GLOBALS].filter((n) => n !== 'Object' && !BUILTIN_MEMBERS.has(n)));
+
 /** 関数の外形 (他のモジュールから引くため)。 */
 export interface FnSignature {
   readonly module: string;
@@ -385,7 +396,8 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
 
   /** この名前は、このモジュールの名前に隠されていない組み込みで、構築する形 (`new X(…)` / `X(…)`) で使ってよい物か。 */
   function isConstructibleBuiltin(callee: Expr, scopes: readonly Map<string, Binding>[]): boolean {
-    return CONSTRUCTIBLE.has(identName(callee)) && bindingOf(callee, scopes) === undefined;
+    const n = identName(callee);
+    return (CONSTRUCTIBLE.has(n) || (n !== null && PLAIN_BUILTINS.has(n))) && bindingOf(callee, scopes) === undefined;
   }
 
   /**
@@ -424,6 +436,8 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
             report('M6', e.pos, `組み込みの ${e.name} は値として持ち出せません —— \`new ${e.name}(…)\` と構築する形か、許したメンバを直に呼ぶ形だけです (持ち出すと、使ってよいメンバの表を別名で迂回できる)`);
           } else if (!PURE_GLOBALS.has(e.name)) {
             report('M6', e.pos, `宣言していない名前 ${e.name} —— 外の値は \`use\` / \`extern\` で宣言します (網・記憶・OS へ届く名前は暗黙に使えません)`);
+          } else {
+            report('M6', e.pos, `組み込みの ${e.name} は値として持ち出せません —— \`${e.name}.m(…)\` と直にメンバを使う形か、呼ぶ・構築する形だけです (\`Object.freeze(${e.name})\` で、アプリ全体の組み込みを凍らせる相手を選べてしまう)`);
           }
           return;
         }
@@ -460,6 +474,8 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
             return;
           }
         }
+        // 組み込み (Math / JSON / Array ほか) のメンバを直に使う形は、名前そのものを値として持ち出すわけではない (MG-006)。
+        if (isConstructibleBuiltin(e.object, scopes)) return;
         checkExpr(e.object, scopes, ctx);
         return;
       case 'field':

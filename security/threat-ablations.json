@@ -2245,6 +2245,18 @@
           "replace": "if (false)"
         }
       ]
+    },
+    {
+      "id": "A-560",
+      "threat": "T-243",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "組み込みの名前を値として持ち出す形を断らない —— Object.freeze(Array) でアプリ全体の組み込みを凍らせる口を開け直す",
+      "edits": [
+        {
+          "find": "          } else {\n            report('M6', e.pos, `組み込みの ${e.name} は値として持ち出せません —— \\`${e.name}.m(…)\\`",
+          "replace": "          } else if (false) {\n            report('M6', e.pos, `組み込みの ${e.name} は値として持ち出せません —— \\`${e.name}.m(…)\\`"
+        }
+      ]
     }
   ]
 }

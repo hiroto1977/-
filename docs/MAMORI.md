@@ -79,6 +79,20 @@ Mamori では、その 2 つは**書けない**:
 - **既知の差 (正直に)**: `(a?.b).c` は丸括弧を構文木に残さないので生成物は `a?.b.c` になる (`a` が null のとき `.c` を読む前に止まる —— 例外が減る向きで、印の流れには触れない)。
 - **この周で移せた壁は 0 本** (`optional-chain` だけで足りる壁が無い —— 足りない構文は他にも要る)。言語の幅を広げた周で、次は `index` の塞ぎ方 (字面の鍵は FORBIDDEN_MEMBERS を通し、字面でない鍵は数だけ) を決めてから足す。
 
+## 0.7 —— 組み込みの名前を値として持ち出せない (T-243 · MG-006 · 2026-11-01)
+
+言語の穴探しの周 (攻撃の電池を 5 つの種で多めに回して緑 → 電池の弾に無い領域を手で組み合わせた) で見つけた:
+`Object.freeze` は自前の表を凍らせるために許してあるが、`Array` / `Math` / `JSON` / `Promise` / `String` / `Number` / `Boolean` / `Map` / `Set` の**名前を値として**
+渡せたので、`Object.freeze(Array)` で**アプリ全体の組み込みの構築子を凍らせられた** (`Promise.x = …` を後から足すコードが strict mode で投げる)。
+
+直し: この 9 つも、`Object` / `RegExp` / `Error` / `URL` (0.4 までに断り済み) と同じく、**メンバを直に使う (`Math.floor`)・呼ぶ (`String(x)`)・構築する (`new Map()`)** 形でだけ
+名前で使える。別名・引数・配列・条件演算子・`typeof` 越しの持ち出しは M6 で断る。電池の判定器にも同じ物差しを独立に書いた (`PLAIN_BUILTIN_NAMES`)。
+
+- **使えなくなった形**: `xs.filter(Boolean)` / `xs.map(String)` —— `xs.filter((x) => Boolean(x))` と書く (実物の `.mamori` 11 本には無かった)。
+- **残る形 (正直に)**: 組み込みの**関数**を凍らせる `Object.freeze(Math.floor)` は通る。関数は静的な欄を後から足される側ではなく、全体への効き目が無い。
+- **この周で手探りして穴ではなかった物**: `?.` の周りの 17 形 (代入・`++`・空白・改行・unicode escape・ZWSP・三項との取り違え・`??.`・`delete`・`in` ほか) は全部断られるか、
+  意図どおりに通った。`Symbol` / `Reflect` / `globalThis` は宣言していない名前 (M6)。`o.valueOf()` / `o.toString()` / `o.hasOwnProperty()` は読むだけ。
+
 ## 0.1 の穴 (T-224 · 2026-10-30 · パス 563)
 
 0.1 は `eval` を禁じていたのに、**メンバの連鎖で同じことができた**。`String.constructor(code)()` と
@@ -254,7 +268,7 @@ export sink fn openExternalVetted(url: VettedExternalUrl) -> Promise<void> {
   `shell` を直接呼んだりする道は、TypeScript の側の検査 (`vettedTypes.test.ts` の census・`lint:forbidden`) が塞ぐ。
 - 変換した TypeScript は `tsc` が検査するが、実行時の守りは今までどおり**関門の中身**そのものである。
   Mamori が止めるのは「関門を飛ばす書き方」で、関門の判定の誤りは関門の検査 (変異検査 100% の対象) が見る。
-- 言語は 0.6 で、守りの層を書くのに要る構文しか持たない (0.3 で 16 進の数を、0.2 でオブジェクトの字面・条件演算子・switch・throw・for…of・type / interface・field を足した。**クラス・添字 `x[k]`・計算した鍵・展開・後置の `!` は無い (0.6 で `a?.name` だけ足した)** —— 添字と計算した鍵は鍵を実行時に組めるので、T-224 の表 (`.constructor` を断る) を迂回する道になる。足すなら先に塞ぎ方を決める)。**JSX も無い**ので、`<img>` の口 (`VettedImg.tsx`) と `<a href>` の口 (`VettedLink.tsx`) は TypeScript で書き、守りは型の印と census (素の `<img` と動的な素の `<a href={…}>` はこの部品の外に無い) が持つ。
+- 言語は 0.7 で、守りの層を書くのに要る構文しか持たない (0.3 で 16 進の数を、0.2 でオブジェクトの字面・条件演算子・switch・throw・for…of・type / interface・field を足した。**クラス・添字 `x[k]`・計算した鍵・展開・後置の `!` は無い (0.6 で `a?.name` だけ足した)** —— 添字と計算した鍵は鍵を実行時に組めるので、T-224 の表 (`.constructor` を断る) を迂回する道になる。足すなら先に塞ぎ方を決める)。**JSX も無い**ので、`<img>` の口 (`VettedImg.tsx`) と `<a href>` の口 (`VettedLink.tsx`) は TypeScript で書き、守りは型の印と census (素の `<img` と動的な素の `<a href={…}>` はこの部品の外に無い) が持つ。
   足すときは、その構文が来歴の規則を外す道にならないかを先に考える (`as` を入れなかったのと同じ理由)。
 
 ## 育て方 (半永久的に育てる輪)

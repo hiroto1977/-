@@ -70,6 +70,7 @@ const STATIC_STATE = [
   'String.fromCharCode(1)', 'String.raw(x)', 'Math.random()', 'JSON.parse(x)', 'JSON.stringify(x)', 'Map.groupBy(x, y)',
   'Object.groupBy(x, y)', 'Symbol.for("a")', 'new Map()', 'new Set()', 'new WeakMap()', 'new URL(x)', 'new RegExp(x)',
   'new Error(x)', 'new Promise(x)', 'new Array(x)', 'new Object()',
+  'Object.freeze(Array)', 'Object.freeze(Math)', 'Object.freeze(JSON)', 'Object.freeze(Promise)', 'Object.freeze(String)', 'x.filter(Boolean)', 'x.map(String)',
 ];
 
 const SYNTAX_ESCAPES = [
@@ -246,6 +247,8 @@ const ALLOWED_BUILTINS = new Set([
   'Object', 'Array', 'String', 'Number', 'Boolean', 'Math', 'JSON', 'Promise', 'Map', 'Set', 'Error', 'TypeError', 'RangeError',
   'RegExp', 'URL', 'undefined', 'NaN', 'Infinity',
 ]);
+/** 値として渡せない組み込み (メンバを直に使う・呼ぶ・構築する形だけ)。Object / RegExp / Error / URL は別の表で見る。 */
+const PLAIN_BUILTIN_NAMES = new Set(['Array', 'String', 'Number', 'Boolean', 'Math', 'JSON', 'Promise', 'Map', 'Set']);
 const OBJECT_MEMBERS = new Set(['hasOwn', 'keys', 'values', 'entries', 'fromEntries', 'freeze', 'isFrozen']);
 /** どこに現れても成らないメンバ名。 */
 const BANNED_MEMBERS = new Set([
@@ -332,6 +335,11 @@ export function inspectEmitted(file: string, text: string, externGlobals: Readon
       const isBindingName = (ts.isVariableDeclaration(parent) || ts.isParameter(parent) || ts.isFunctionDeclaration(parent) || ts.isTypeAliasDeclaration(parent) ||
         ts.isInterfaceDeclaration(parent) || ts.isImportSpecifier(parent) || ts.isImportClause(parent) || ts.isNamespaceImport(parent) || ts.isTypeParameterDeclaration(parent)) &&
         (parent as { name?: ts.Node }).name === n;
+      // 組み込みの構築子・名前空間を**値として**渡す形 (Object.freeze(Array) でアプリ全体の組み込みを凍らせる · T-243)。
+      // 許すのは メンバを直に使う (Math.floor)・呼ぶ (String(x))・構築する (new Map()) 形だけ。
+      const isValueUse = PLAIN_BUILTIN_NAMES.has(n.text) && !declared.has(n.text) && !isMemberName && !isBindingName && !inType(n) &&
+        !(ts.isPropertyAccessExpression(parent) && parent.expression === n) && !((ts.isCallExpression(parent) || ts.isNewExpression(parent)) && parent.expression === n);
+      if (isValueUse) found.push({ kind: 'hole', reason: `組み込みの ${n.text} を値として持ち出している (T-243)` });
       if (!/^[A-Za-z_$][A-Za-z0-9_$]*$/.test(n.text)) found.push({ kind: 'hole', reason: `ASCII でない名前 ${JSON.stringify(n.text)}` });
       else if (!isMemberName && !isBindingName && !inType(n) && !declared.has(n.text) && !externGlobals.has(n.text) && !ALLOWED_BUILTINS.has(n.text)) {
         found.push({ kind: 'hole', reason: `宣言していない名前 ${n.text}` });
@@ -593,6 +601,8 @@ describe('物差しの対照: 判定は穴の開いた生成物を実際に落�
     構文の誤り: 'export function go( {\n  return 1;\n}\n',
     'Object.assign': 'export function go(x: object) {\n  return Object.assign(x, x);\n}\n',
     'new Function': 'export function go() {\n  return new Function("return 1");\n}\n',
+    '組み込みを値で凍らせる': 'export function go() {\n  return Object.freeze(Array);\n}\n',
+    '組み込みを callback で渡す': 'export function go(x: number[]) {\n  return x.filter(Boolean);\n}\n',
     bidiの字句: 'export function go() {\n  return 1 \u202E 2;\n}\n',
   };
   for (const [name, text] of Object.entries(holey)) {
