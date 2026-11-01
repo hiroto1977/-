@@ -117,6 +117,7 @@
 /src/shared/safeFilename.mamori @hiroto1977
 /src/shared/promptInjection.mamori @hiroto1977
 /src/shared/aiEndpoint.mamori @hiroto1977
+/src/shared/vaultToken.mamori @hiroto1977
 /src/renderer/components/VettedImg.tsx @hiroto1977
 /src/renderer/components/VettedLink.tsx @hiroto1977
 /src/shared/mamori/ @hiroto1977
