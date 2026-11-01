@@ -1,0 +1,49 @@
+---
+collection: academic
+id: infosoc-obligatory-passage-point-callon
+category: "information-sociology"
+category_ja: "情報社会学"
+title: "義務的通過点——ネットワークに不可欠な存在になること"
+as_of: "2026-06-27"
+source_count: 2
+authoritative: true
+tags:
+  - collection/academic
+  - academic/information-sociology
+  - knowledge/verified
+aliases:
+  - "義務的通過点——ネットワークに不可欠な存在になること"
+---
+
+# 義務的通過点——ネットワークに不可欠な存在になること
+
+> [!info] コレクション: [[学術概念]] ・ 区分: 情報社会学 ・ asOf: 2026-06-27 ・ 出典: 2件（うち権威ある出典 ✓）
+
+## 概要
+義務的通過点（obligatory passage point、OPP、必須通過点）は、社会学者ミシェル・カロンが1986年の論文「翻訳の社会学のいくつかの要素——サン・ブリュー湾のホタテ貝と漁師たちの飼いならし」で提示した、アクターネットワーク理論（ANT）・翻訳の社会学の鍵となる概念である。義務的通過点とは、他のアクターたちが、自分たちの利害や目標を実現するために、必ずそこを「通過しなければならない（受け入れ、経由し、足並みをそろえなければならない）」ような状況・アクター・概念・装置を指す。それは、ネットワークにとって不可欠なものとなる。カロンの有名なホタテ貝の研究では、研究者たちは、自分たちと自分たちの研究上の問いを、義務的通過点として位置づけた。すなわち、漁師たちが持続的にホタテ貝を収穫するためにも、科学者の同僚たちが知識を前進させるためにも、さらにはホタテ貝が生き延び繁殖するためにも、すべてが研究者たちのプログラム（彼らが提案するホタテ貝の養殖の方法）を「通過」しなければならない、というようにである。義務的通過点は、「翻訳（translation）」の過程の一つの契機である。カロンは翻訳の四つの契機を挙げた。すなわち、(1)問題化（problematization、あるアクターが問題と他者のアイデンティティを定義し、自らを義務的通過点として確立する——「Xを望むなら、私（これ）を通らねばならない」）、(2)関心づけ（interessement、他のアクターたちを、提案された役割に引き入れ、関心を抱かせる）、(3)登録（enrolment、役割を定義・調整し、アクターたちにそれを受け入れさせる）、(4)動員（mobilization、代弁者が多数の存在を適切に代表していることを確かなものにする）、である。義務的通過点の概念は（しばしば、アクターたちの目標がすべて一点に集約される図として描かれる）、権力とネットワーク構築の働き方を示す。すなわち、自らをうまく義務的通過点に仕立てたアクターは、ネットワークにおける統制と中心性を手に入れる。この概念は、STS（科学技術社会論）、組織研究、情報システム研究（ある技術や標準がいかにして義務的通過点になるか）、そして情報学において、アクターや人工物がいかにして不可欠なものとなり、ネットワークが組み立てられていくのかを分析するために広く用いられている。義務的通過点は、あるアクターがネットワークに不可欠な存在となることで権力と中心性を得る過程を捉えた、アクターネットワーク理論・情報社会論の重要な概念である。
+
+## 提唱者・初出
+ミシェル・カロン ／ ブルーノ・ラトゥール ／ ジョン・ロー ／ マデリン・アクリッシュ
+
+## 出典
+- [Callon, M. (1986) Some elements of a sociology of translation — in Power, Action and Belief (ed. Law)](https://doi.org/10.1111/j.1467-954X.1984.tb00113.x) `学術`
+- [Wikipedia: Actor–network theory — obligatory passage point, translation, Callon, enrolment](https://en.wikipedia.org/wiki/Actor%E2%80%93network_theory) `リファレンス`
+
+## 関連概念
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同じ思想家
+- [[infosoc-immutable-mobiles-latour|不変の可動物——形を変えずに運ばれる記録が知と権力を支える]] — 同じ思想家
+- [[infosoc-script-akrich|技術の「スクリプト」（アクリッシュ）——設計者が物に書き込む利用者像]] — 同じ思想家
+- [[infosoc-boundary-work-gieryn|境界画定作業——科学と非科学の境界を引く営み]] — 同じ思想家
+- [[infosoc-co-production-jasanoff|共産出——科学的知識と社会秩序はともに生み出される]] — 同じ思想家
+- [[infosoc-cyborg-haraway|サイボーグ宣言——機械と有機体の混淆が脱構築する近代の二項対立]] — 同じ思想家
+- [[infosoc-epistemic-cultures-knorr-cetina|認識文化——科学分野ごとに異なる知の作り方]] — 同じ思想家
+- [[infosoc-techno-moral-change-verbeek|技術道徳変容論——技術的媒介による道徳的知覚と行為の再構成]] — 同じ思想家
+- [[infosoc-activity-theory|活動理論（Activity Theory）：ヴィゴツキー＆レオンチェフの道具媒介活動システム論]] — 同分野の近傍
+
+## 関連
+- コレクション: [[学術概念]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

@@ -1,0 +1,106 @@
+{
+  "version": 1,
+  "purpose": "このリポジトリに今在る言語・起動子の言語・依存の生態系ごとに、見張る強制物を載せる。新しい物が入ると scripts/language-coverage.cjs が落ち、ifAdded の守りを名指しする (T-187)。『すべての言語の弱点を先回りで探す』ものではなく、見張りが無い言語を作らないための台帳。",
+  "languages": [
+    {
+      "id": "javascript-family",
+      "status": "present",
+      "what": "TypeScript / JavaScript (ts・tsx・js・cjs)。アプリ本体・検査・ゲートの全部。MCP の npx 起動子もここに入る",
+      "scanners": [
+        "eslint.config.js",
+        "tsconfig.json",
+        "scripts/lint-forbidden-patterns.cjs",
+        "scripts/lint-network-targets.cjs",
+        "scripts/lint-regex-complexity.cjs",
+        "scripts/lint-malware.cjs",
+        "scripts/lint-secrets.cjs"
+      ]
+    },
+    {
+      "id": "shell",
+      "status": "present",
+      "what": "シェルスクリプト (scripts/*.sh)。遠隔コード実行・破壊的操作・strict mode を門で見る",
+      "scanners": [
+        "scripts/lint-shell.cjs"
+      ]
+    },
+    {
+      "id": "github-actions-yaml",
+      "status": "present",
+      "what": "GitHub Actions の workflow (.github/workflows/*.yml)。権限・SHA 固定・構造を門で見る",
+      "scanners": [
+        "scripts/lint-workflow-security.cjs",
+        "scripts/audit-pinned-action-shas.cjs"
+      ]
+    },
+    {
+      "id": "windows-batch",
+      "status": "present",
+      "what": "Windows の起動ランチャー (launcher/*.bat)。ダブルクリックで走る実行物なので、走査の門ではなく整合性チェーン + CODEOWNERS で黙った編集を可視化し、将来のランチャーは検査が全件を要求する (T-019)",
+      "scanners": [
+        "scripts/integrity-chain.cjs",
+        "src/shared/__tests__/launcherExecutablesGuarded.test.ts"
+      ]
+    },
+    {
+      "id": "python",
+      "status": "present",
+      "what": "MCP の uvx 起動子 (.claude/settings.json) が Python のパッケージを『その時の最新』で取って走らせる。リポジトリ内に .py は無い",
+      "scanners": [
+        "scripts/lint-mcp-servers.cjs"
+      ],
+      "launcherOnly": true
+    }
+  ],
+  "ecosystems": [
+    {
+      "id": "npm",
+      "what": "package-lock.json の全依存。毎日 OSV と CISA KEV に突き合わせ、本番依存の閉包・取得元・integrity を門で見る",
+      "scanners": [
+        "scripts/threat-watch.cjs",
+        "scripts/lint-dependencies.cjs",
+        "scripts/audit-floors.cjs"
+      ]
+    }
+  ],
+  "ifAdded": {
+    "python": "ファイルが入るなら bandit 相当の静的検査を ci.yml へ・依存は PyPI を OSV に引く (threat-watch.cjs の ecosystem を 'PyPI' へ広げる)・uvx の版固定を lint:mcp-servers で要求する",
+    "pypi": "requirements.txt / uv.lock を threat-watch.cjs の lockfile の読みに足し、OSV の ecosystem を PyPI にする。取得元と integrity (ハッシュ固定) を lint-dependencies.cjs に足す",
+    "go": "govulncheck を ci.yml へ・go.sum を OSV (Go) に引く。cgo を使うなら c-cpp の守りも足す",
+    "crates-io": "cargo audit (RustSec) を ci.yml へ・Cargo.lock を OSV (crates.io) に引く。unsafe の使用を台帳にする",
+    "rust": "cargo clippy と cargo audit を ci.yml へ・unsafe の出現を台帳にして理由を書く",
+    "java": "SpotBugs / OWASP Dependency-Check を ci.yml へ・pom.xml / gradle.lockfile を OSV (Maven) に引く",
+    "maven": "pom.xml / gradle.lockfile を OSV (Maven) に引き、取得元 (repository) を門で見る",
+    "kotlin": "java と同じ (Maven の依存)。detekt を ci.yml へ",
+    "csharp": ".NET の依存は NuGet を OSV に引く。Roslyn analyzers を ci.yml へ",
+    "nuget": "packages.lock.json を OSV (NuGet) に引き、取得元を門で見る",
+    "ruby": "bundler-audit を ci.yml へ・Gemfile.lock を OSV (RubyGems) に引く。brakeman (Rails なら)",
+    "rubygems": "Gemfile.lock を OSV (RubyGems) に引く",
+    "php": "composer audit を ci.yml へ・composer.lock を OSV (Packagist) に引く",
+    "packagist": "composer.lock を OSV (Packagist) に引く",
+    "c-cpp": "メモリ安全の弱点が主。CodeQL (cpp) か clang-tidy / AddressSanitizer を ci.yml へ・コンパイラの警告を fail に",
+    "swift": "swiftlint と依存 (Package.resolved) を OSV (SwiftURL) に引く",
+    "powershell": "PSScriptAnalyzer を ci.yml へ・ExecutionPolicy をバイパスする呼び出しと遠隔コード実行を lint-shell.cjs と同じ形で門にする",
+    "windows-batch": "遠隔コード実行・破壊的操作を lint-shell.cjs と同じ形で門にする",
+    "sql": "文字列連結で組んだ SQL を禁止する門を lint-forbidden-patterns.cjs に足す",
+    "dockerfile": "hadolint を ci.yml へ・ベースイメージを digest で固定・USER を非 root に",
+    "make": "レシピ内の遠隔コード実行を lint-shell.cjs と同じ形で門にする",
+    "dart": "pub の依存 (pubspec.lock) を OSV (Pub) に引く。dart analyze を ci.yml へ",
+    "pub": "pubspec.lock を OSV (Pub) に引く",
+    "perl": "Perl::Critic を ci.yml へ・シェル呼び出し (system / バッククォート) を門にする",
+    "lua": "luacheck を ci.yml へ・load / loadstring / os.execute を門にする",
+    "r": "lintr を ci.yml へ・eval(parse()) と system() を門にする",
+    "scala": "java と同じ (Maven の依存)。scalafix を ci.yml へ",
+    "fsharp": "csharp と同じ (NuGet)",
+    "visual-basic": "csharp と同じ (NuGet)",
+    "objective-c": "c-cpp と同じ (メモリ安全)",
+    "elixir": "mix_audit と sobelow を ci.yml へ・mix.lock を OSV (Hex) に引く",
+    "hex": "mix.lock を OSV (Hex) に引く",
+    "erlang": "elixir と同じ (Hex)",
+    "haskell": "cabal / stack の依存を OSV (Hackage) に引く。unsafePerformIO の出現を台帳にする",
+    "clojure": "clj-kondo と antq を ci.yml へ・依存を OSV (Maven) に引く",
+    "groovy": "Jenkinsfile のパイプラインは任意コードを走らせる。script ブロックと外部ライブラリの固定を門にする",
+    "webassembly": "wasm の成果物は出どころ (ビルド元) を台帳にする。バイナリを追跡に入れない",
+    "solidity": "Slither と Mythril を ci.yml へ。再入可能性・整数の扱いを検査に"
+  }
+}

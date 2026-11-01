@@ -1,0 +1,309 @@
+import { describe, expect, it } from 'vitest';
+import { escapeXml, safeColor, isHexColor, escapeMarkdownInline, escapeMarkdownText, escapeInvisibleUnits, escapeUnits, INVISIBLE_UNITS } from '../escape';
+
+describe('escapeXml', () => {
+  it('マークアップで意味を持つ 5 文字を落とす', () => {
+    expect(escapeXml('<a href="x">&\'')).toBe('&lt;a href=&quot;x&quot;&gt;&amp;&#39;');
+  });
+
+  it('& を最初に置換する（実体参照の & を二重変換しない）', () => {
+    expect(escapeXml('&lt;')).toBe('&amp;lt;');
+  });
+
+  it('普通の文字列は変えない', () => {
+    expect(escapeXml('株式会社サンプル 123')).toBe('株式会社サンプル 123');
+    expect(escapeXml('')).toBe('');
+  });
+
+  // 個々の文字ではなく「素通りするマークアップ文字が 1 つも残らない」ことを見る。
+  // 置換が 1 つ落ちたときに、どの文字が落ちたかに依らず落ちる。
+  it('XSS を狙った入力から、素通りするマークアップ文字が 1 つも残らない', () => {
+    const out = escapeXml('<img src=x onerror="alert(1)">');
+    expect(out).not.toContain('<');
+    expect(out).not.toContain('>');
+    expect(out).not.toContain('"');
+    expect(out).toContain('&lt;');
+    expect(out).toContain('&gt;');
+    expect(out).toContain('&quot;');
+  });
+});
+
+describe('safeColor', () => {
+  const FB = '#5b8def';
+
+  it('16進の色を通す（3/6/8 桁）', () => {
+    for (const c of ['#fff', '#FFF', '#0f5fac', '#0F5FAC', '#0f5facff']) {
+      expect(safeColor(c, FB), c).toBe(c);
+    }
+  });
+
+  it('名前つきの色を通す', () => {
+    for (const c of ['red', 'rebeccapurple', 'transparent']) {
+      expect(safeColor(c, FB), c).toBe(c);
+    }
+  });
+
+  it('属性を抜ける文字を含むものは既定値に落とす', () => {
+    const attacks = [
+      '"/><script>alert(1)</script><rect fill="#000',
+      '" onload="alert(1)',
+      "' onload='alert(1)",
+      '#000" onmouseover="x',
+      'url(javascript:alert(1))',
+      'red;background:url(x)',
+      '#0f5fac ',
+      ' #0f5fac',
+      '#00ff',
+      '#0f5fa',
+      // アンカーが片方でも欠けると、これらが「色」として通ってしまう。
+      '#0f5facff" onload="x',
+      '#0f5facffff',
+      'x#0f5facff',
+      '#000" x',
+      'x#000',
+      '#0f5fac" x',
+      '#gggggg',
+      'rgb(1,2,3)',
+      '',
+      'a'.repeat(21),
+      'ab',
+    ];
+    for (const a of attacks) {
+      expect(safeColor(a, FB), JSON.stringify(a)).toBe(FB);
+    }
+  });
+
+  it('既定値をそのまま返す（呼び出し側が用意した安全な値）', () => {
+    expect(safeColor('!!', '#123456')).toBe('#123456');
+  });
+
+  it('通した値は引用符・山括弧・空白を含まない（属性から抜けられない）', () => {
+    for (const c of ['#fff', '#0f5facff', 'rebeccapurple']) {
+      const out = safeColor(c, FB);
+      expect(/["'<>\s]/.test(out), c).toBe(false);
+    }
+  });
+});
+
+describe('isHexColor', () => {
+  it('#RRGGBB を通す（大文字小文字どちらも）', () => {
+    expect(isHexColor('#abcdef')).toBe(true);
+    expect(isHexColor('#012345')).toBe(true);
+    expect(isHexColor('#ABCDEF')).toBe(true);
+    expect(isHexColor('#000000')).toBe(true);
+  });
+
+  it('桁数が 6 でないものは弾く', () => {
+    expect(isHexColor('#abc')).toBe(false);
+    expect(isHexColor('#abcde')).toBe(false);
+    expect(isHexColor('#abcdef0')).toBe(false);
+    expect(isHexColor('#abcdefab')).toBe(false);
+  });
+
+  it('16進でない文字は弾く', () => {
+    expect(isHexColor('#zzzzzz')).toBe(false);
+    expect(isHexColor('#abcdeg')).toBe(false);
+    expect(isHexColor('red')).toBe(false);
+  });
+
+  it('# が無い / 空 は弾く', () => {
+    expect(isHexColor('abcdef')).toBe(false);
+    expect(isHexColor('')).toBe(false);
+    expect(isHexColor('#')).toBe(false);
+  });
+
+  // アンカーが片方でも外れると、属性を抜ける文字列が通る。
+  it('前後に何か付いていれば弾く（属性から抜けられない）', () => {
+    expect(isHexColor(' #abcdef')).toBe(false);
+    expect(isHexColor('#abcdef ')).toBe(false);
+    expect(isHexColor('x#abcdef')).toBe(false);
+    expect(isHexColor('#abcdef" onload="alert(1)')).toBe(false);
+    expect(isHexColor('#abcdef\n<script>alert(1)</script>')).toBe(false);
+  });
+});
+
+/*
+ * Markdown のエスケープ。
+ *
+ * ここに埋まるのは利用者が打った文字だけではなく **AI アドバイザーの応答**
+ * (`rationale` / `riskFactors` / `actionItems`) で、検証は「空でない文字列」
+ * しか見ていない。したがって「壊れた入力」ではなく「敵対的な入力」を置く。
+ */
+describe('escapeMarkdownInline — 1 行に収まる場所', () => {
+  it('セルの区切りを落とす', () => {
+    expect(escapeMarkdownInline('A|B')).toBe('A\\|B');
+  });
+
+  it('エスケープ文字を先に逃がす (末尾の \\ が次の区切りを打ち消さない)', () => {
+    // 先に `|` を処理すると `A\|` の `\` がそのまま残り、
+    // 直後の区切りを打ち消して隣のセルと融合する。
+    expect(escapeMarkdownInline('A\\')).toBe('A\\\\');
+    expect(escapeMarkdownInline('A\\|B')).toBe('A\\\\\\|B');
+  });
+
+  it('改行を空白へ潰す (行から抜けさせない)', () => {
+    expect(escapeMarkdownInline('A\nB')).toBe('A B');
+    expect(escapeMarkdownInline('A\r\nB')).toBe('A B');
+    expect(escapeMarkdownInline('A\rB')).toBe('A B');
+    // CRLF を 1 つとして数える。2 回置換すると空白が 2 つになる。
+    expect(escapeMarkdownInline('A\r\nB')).not.toBe('A  B');
+  });
+
+  it('生 HTML の入口を塞ぐ', () => {
+    expect(escapeMarkdownInline('<img src=x onerror=alert(1)>')).toBe(
+      '&lt;img src=x onerror=alert(1)>',
+    );
+  });
+
+  it('表を作り直す入力を無力化する (改行 + 区切り行)', () => {
+    // 「壊れる」ではなく「差し替わる」形。行が終われば以降は新しい構造。
+    const evil = 'AAPL\n\n| 偽の見出し |\n|---|\n| 偽の値 |';
+    const got = escapeMarkdownInline(evil);
+    expect(got).not.toContain('\n');
+    expect(got).not.toContain('|---|');
+    expect(got).toBe('AAPL  \\| 偽の見出し \\| \\|---\\| \\| 偽の値 \\|');
+  });
+
+  it('見出し・箇条書き・引用から抜けさせない', () => {
+    expect(`### ${escapeMarkdownInline('銘柄\n## 乗っ取り')}`).toBe('### 銘柄 ## 乗っ取り');
+    expect(`- ${escapeMarkdownInline('risk\n- 偽')}`).toBe('- risk - 偽');
+    expect(`> ${escapeMarkdownInline('免責\n本文')}`).toBe('> 免責 本文');
+  });
+
+  it('普通の文字は変えない', () => {
+    expect(escapeMarkdownInline('AAPL アップル 100円 (+1.5%)')).toBe('AAPL アップル 100円 (+1.5%)');
+    expect(escapeMarkdownInline('')).toBe('');
+  });
+
+  it('置換はすべての出現に及ぶ (最初の 1 つで止まらない)', () => {
+    expect(escapeMarkdownInline('a|b|c')).toBe('a\\|b\\|c');
+    expect(escapeMarkdownInline('<a<b')).toBe('&lt;a&lt;b');
+    expect(escapeMarkdownInline('a\nb\nc')).toBe('a b c');
+  });
+});
+
+describe('escapeMarkdownText — 段落', () => {
+  it('生 HTML の入口を塞ぐ', () => {
+    expect(escapeMarkdownText('<script>alert(1)</script>')).toBe(
+      '&lt;script>alert(1)&lt;/script>',
+    );
+  });
+
+  it('改行は残す (段落や箇条書きは地の文に正当に現れる)', () => {
+    expect(escapeMarkdownText('一行目\n二行目')).toBe('一行目\n二行目');
+  });
+
+  it('`|` は落とさない (段落では区切りではない)', () => {
+    expect(escapeMarkdownText('A|B')).toBe('A|B');
+  });
+
+  it('& は落とさない — 実体参照は CommonMark §2.5 で「文字」であり markup にならない', () => {
+    // `&lt;script&gt;` と書かれても描画結果は文字列 `<script>` であって
+    // タグにはならない。落とすと素の viewer で `&amp;` が見えるだけ損。
+    expect(escapeMarkdownText('&lt;script&gt;')).toBe('&lt;script&gt;');
+    expect(escapeMarkdownText('A & B')).toBe('A & B');
+  });
+
+  it('普通の文字は変えない', () => {
+    expect(escapeMarkdownText('売上が伸びています。')).toBe('売上が伸びています。');
+    expect(escapeMarkdownText('')).toBe('');
+  });
+});
+
+describe('escapeInvisibleUnits — 見えない字を見える綴りへ (threat: T-034)', () => {
+  it('★ 双方向制御 (U+202E) は `\\u202e` になり、それ以後の字は字面どおり残る (threat: T-034)', () => {
+    const out = escapeInvisibleUnits('送金を中止\u202eを承認');
+    expect(out).toBe('送金を中止\\u202eを承認');
+    expect(out).not.toContain('\u202e');
+  });
+
+  it.each([
+    ['ZWSP', '\u200b', '\\u200b'],
+    ['BOM', '\ufeff', '\\ufeff'],
+    ['双方向の分離 (U+2066)', '\u2066', '\\u2066'],
+    ['C0 (BEL)', '\u0007', '\\u0007'],
+    ['DEL', '\u007F', '\\u007f'],
+    ['C1', '\u0085', '\\u0085'],
+    ['行区切り (U+2028)', '\u2028', '\\u2028'],
+    ['段落区切り (U+2029)', '\u2029', '\\u2029'],
+    ['改行', '\n', '\\u000a'],
+  ])('%s は逃がす', (_n, ch, expected) => {
+    expect(escapeInvisibleUnits(`a${ch}b`)).toBe(`a${expected}b`);
+  });
+
+  it('対照: 見える字 (日本語・絵文字・記号・空白) は 1 字も変えない', () => {
+    const plain = 'こんにちは 😀 #general a/b 「」 *x* `y` <z>';
+    expect(escapeInvisibleUnits(plain)).toBe(plain);
+  });
+
+  it('面を越える書式文字は UTF-16 の単位ごとに逃がす (U+E0001 → 2 単位)', () => {
+    expect(escapeInvisibleUnits('\u{E0001}')).toBe('\\udb40\\udc01');
+  });
+
+  it('INVISIBLE_UNITS は global なので `replace` で全部に当たる (1 字目だけではない)', () => {
+    expect(escapeInvisibleUnits('\u202e\u202e')).toBe('\\u202e\\u202e');
+    expect(escapeUnits('\u202e')).toBe('\\u202e');
+    expect(INVISIBLE_UNITS.global).toBe(true);
+  });
+});
+
+describe('見える字なのに何も描かれない字も逃がす (threat: T-205)', () => {
+  it.each([
+    ['Hangul フィラー (U+3164)', '\u3164', '\\u3164'],
+    ['Hangul 中声フィラー (U+1160)', '\u1160', '\\u1160'],
+    ['Hangul 初声フィラー (U+115F)', '\u115F', '\\u115f'],
+    ['半角 Hangul フィラー (U+FFA0)', '\uFFA0', '\\uffa0'],
+    ['点字空白 (U+2800)', '\u2800', '\\u2800'],
+    ['CGJ (U+034F)', '\u034F', '\\u034f'],
+    ['Khmer 固有母音 (U+17B4)', '\u17B4', '\\u17b4'],
+    ['モンゴル自由異体字選択子 (U+180B)', '\u180B', '\\u180b'],
+    ['ASCII の後の異体字選択子 (U+FE00)', '\uFE00', '\\ufe00'],
+    ['ASCII の後の絵文字選択子 (U+FE0F)', '\uFE0F', '\\ufe0f'],
+  ])('★ %s は ASCII の後で逃がされる (threat: T-205)', (_n, ch, expected) => {
+    expect(escapeInvisibleUnits(`a${ch}b`)).toBe(`a${expected}b`);
+  });
+
+  it('★ `#general` と `#general` + フィラーは、見せる綴りで区別できる (threat: T-205)', () => {
+    expect(escapeInvisibleUnits('#general')).toBe('#general');
+    expect(escapeInvisibleUnits('#general\u3164')).toBe('#general\\u3164');
+  });
+
+  it('★ 選択子の連なりは、基底の直後の 1 つ以外を逃がす (隠し通信路にしない)', () => {
+    expect(escapeInvisibleUnits('葛\u{E0101}\u{E0101}\u{E0101}')).toBe('葛\u{E0101}\\udb40\\udd01\\udb40\\udd01');
+  });
+
+  it.each([
+    ['IVS (葛 + U+E0101)', '葛\u{E0101}飾'],
+    ['SVS (一 + U+FE00)', '一\uFE00'],
+    ['仮名 + 選択子', 'か\uFE00'],
+    ['絵文字 + FE0F', '❤\uFE0F ありがとう'],
+    ['キーキャップ', '1\uFE0F\u20E3'],
+    ['濁点の結合記号 (U+3099)', 'か\u3099'],
+  ])('対照: 正当な用法 %s は 1 字も変えない', (_n, text) => {
+    expect(escapeInvisibleUnits(text)).toBe(text);
+  });
+});
+
+/**
+ * 画像とリンクの入口は、書き出した `.md` の中で生きない (2026-10-16 · パス 524 · threat: T-087)。
+ * `![t](https://remote/pixel)` は Obsidian / GitHub 系の描画で開いただけで外へ取りに行き、
+ * `[x](javascript:…)` は押せるリンクになる。直す前は `<` 以外を通していた (実測)。
+ */
+describe('Markdown の画像・リンクの入口 (threat: T-087)', () => {
+  const hostile = '![t](https://evil.example/b.png?u=1) [x](javascript:alert(1))';
+  it.each([
+    ['inline', escapeMarkdownInline],
+    ['text', escapeMarkdownText],
+  ])('★ %s: ![ と ]( を無効にする (threat: T-087)', (_name, fn) => {
+    const out = fn(hostile);
+    expect(out).not.toContain('![');
+    expect(out).not.toContain('](');
+    expect(out).toBe('!\\[t]\\(https://evil.example/b.png?u=1) [x]\\(javascript:alert(1))');
+  });
+
+  it('★ 対照: 普通の [注] や (補足) は 1 字も変えない', () => {
+    for (const fn of [escapeMarkdownInline, escapeMarkdownText]) {
+      expect(fn('売上 [注1] と (補足) と ! と ] ( の単独')).toBe('売上 [注1] と (補足) と ! と ] ( の単独');
+    }
+  });
+});

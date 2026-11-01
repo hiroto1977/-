@@ -1,0 +1,7 @@
+export function Sample() {
+  return (
+    <div>
+      保存先: ~/.local/business-hub/data/sample.html
+    </div>
+  );
+}

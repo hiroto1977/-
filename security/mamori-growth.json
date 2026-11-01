@@ -1,0 +1,1102 @@
+{
+  "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
+  "cadenceDays": 7,
+  "language": {
+    "version": "0.11"
+  },
+  "constructs": {
+    "class": {
+      "decision": "feature",
+      "why": "クラスは守りの層の数本 (vault ほか) が使う。",
+      "risk": "メソッドの中の this・private の欄・メソッドに gate / sink の役割を持たせるか。役割を持たせるなら、メソッドの呼び出しも M4 で印を検める (今の M4 は名前で呼んだ関数しか見ない)。"
+    },
+    "index": {
+      "decision": "added",
+      "why": "配列とテーブルの引きに要る。",
+      "risk": "鍵を実行時に組めるので `x[\"constructor\"]` が T-224 の表を迂回する。字面の鍵は FORBIDDEN_MEMBERS を通し、字面でない鍵は数 (number) だけに限るなど、先に塞ぎ方を決める。",
+      "since": "0.8"
+    },
+    "optional-chain": {
+      "decision": "added",
+      "why": "null かもしれない値を読む所で多い。",
+      "risk": "`?.constructor` も T-224 の表を通す (memberName を共有する)。印の値に ?. を付けた結果は印を運ばない。",
+      "since": "0.6"
+    },
+    "non-null": {
+      "decision": "rewrite",
+      "why": "後置の ! は null でないと型に言わせるだけで確かめない。=== null で確かめてから使う形へ書き直す。"
+    },
+    "spread": {
+      "decision": "feature",
+      "why": "引数の並べ替え・配列の結合に使う。",
+      "risk": "`f(...xs)` で印の型の引数に素の値を流し込める —— 印の型を受ける位置への展開は M4 で断る。オブジェクトの展開は原型を写さないが、欄を字面で見られなくなる。"
+    },
+    "while": {
+      "decision": "feature",
+      "why": "読み進める走査 (字句解析器ほか) に要る。",
+      "risk": "止まらない形はコンパイラでは見分けられない —— 来歴の規則には触れないが、上限のある for…of で書けるならそちらを先に選ぶ。"
+    },
+    "c-for": {
+      "decision": "rewrite",
+      "why": "添字で回す形は for…of と entries() で書き直せる (変異検査で等価になりやすい比べを消せる · 法則 115)。"
+    },
+    "for-in": {
+      "decision": "rewrite",
+      "why": "原型の鍵まで回る。Object.keys(…) を for…of で回す形へ書き直す。"
+    },
+    "as-cast": {
+      "decision": "rewrite",
+      "why": "型の書き換えは印の偽造の唯一の道なので言語に置かない (M0)。欄を読むなら field、型を絞るなら typeof / === で確かめる。"
+    },
+    "as-const": {
+      "decision": "rewrite",
+      "why": "as の綴りを言語に置かない。字面の型を readonly の型注釈で書く。"
+    },
+    "template": {
+      "decision": "rewrite",
+      "why": "補間の中に式を隠させない (M0)。`+` で繋ぐ。"
+    },
+    "arrow-block": {
+      "decision": "added",
+      "why": "arrow の中に文が要る所 (map の中の if ほか) で使う。",
+      "risk": "arrow の中の文は外の関数の役割 (gate / sink) を継ぐ —— mint・危ない口の参照は外の関数の役割で判定する。sink の中で作った arrow を外へ渡すと sink の外で危ない口を呼べるので、sink の中の arrow を外へ出す形を断る。",
+      "since": "0.9"
+    },
+    "generic-call": {
+      "decision": "feature",
+      "why": "Promise.all<T>(…) など型引数を書く呼び出し。",
+      "risk": "型引数に印の型を書けば tsc は印を名乗る値として扱う —— 型引数に印の型を置く形を M4 と同じく断る。"
+    },
+    "generic-decl": {
+      "decision": "feature",
+      "why": "型引数を持つ型・関数の宣言。",
+      "risk": "型引数の制約に印の型を置いて、素の値を印として通す道を作らない (generic-call と同じ判定)。"
+    },
+    "instanceof": {
+      "decision": "feature",
+      "why": "例外の種類を見分ける所で使う。",
+      "risk": "右辺の値は宣言した名前だけ (宣言していない Function などへ届かない —— M6 が見る)。"
+    },
+    "in-op": {
+      "decision": "feature",
+      "why": "鍵の在否を見る所で使う。",
+      "risk": "原型の鍵にも true を返す —— 自分の鍵を問うなら Object.hasOwn を先に選ぶ。"
+    },
+    "destructure": {
+      "decision": "feature",
+      "why": "戻り値の組を受ける所で多い。",
+      "risk": "`const { constructor } = x` は T-224 の表を迂回する —— 分割代入の鍵も FORBIDDEN_MEMBERS を通す。印の欄を分割しても印は運ばない。"
+    },
+    "compound-assign": {
+      "decision": "rewrite",
+      "why": "x = x + 1 と書く (印の洗浄を見る M5 の判定を 1 つの形に保つ)。"
+    },
+    "member-assign": {
+      "decision": "feature",
+      "why": "組み立てた物の欄を埋める所で使う。",
+      "risk": "共有の物 (import した物・組み込み) へ書くと他のモジュールの判定まで変わる —— 書けるのはこの関数の中で作った物の欄だけにする。"
+    },
+    "loose-eq": {
+      "decision": "rewrite",
+      "why": "== は型を変換して比べる。=== で書く。"
+    },
+    "catch-binding": {
+      "decision": "feature",
+      "why": "例外の文を伏字にして返す所で要る。",
+      "risk": "束ねた例外は unknown で印を運ばない。例外の文を画面へ流すなら伏字の関門 (redactForMessage) を通すのは呼ぶ側の TypeScript の census が見る。"
+    },
+    "finally": {
+      "decision": "feature",
+      "why": "後片付け (鍵を消す・錠を外す) で要る。",
+      "risk": "finally の中の return が try の return を上書きする —— finally の中の return を断る。"
+    },
+    "optional-param": {
+      "decision": "feature",
+      "why": "省ける引数を持つ公開の関数で使う。",
+      "risk": "省いた引数は undefined —— 印の型の引数は省けない形にする。"
+    },
+    "export-from": {
+      "decision": "feature",
+      "why": "まとめの入口 (index.ts) が使う。",
+      "risk": "extern sink の危ない口を再輸出すると TypeScript の側へ素の口が漏れる —— 危ない口の再輸出を断る。"
+    },
+    "export-default": {
+      "decision": "rewrite",
+      "why": "名前つきの export で書く (名前で引く M4 の外形表と揃える)。"
+    },
+    "namespace-import": {
+      "decision": "feature",
+      "why": "import * as path ほか。",
+      "risk": "`import * as electron` は `electron.shell` で extern sink の宣言を迂回する —— 名前空間の import は危ない口を持つモジュールに使えない形にする。"
+    },
+    "inline-type-import": {
+      "decision": "feature",
+      "why": "型と値を 1 行で import する形。",
+      "risk": "型だけの名前を値として使えないことは tsc が見る。来歴には触れない。"
+    },
+    "side-effect-import": {
+      "decision": "rewrite",
+      "why": "読み込むだけでコードが走る import は、何が走るかを言語の外に置く —— extern で名前を宣言して使う形へ書き直す。"
+    },
+    "interface-extends": {
+      "decision": "feature",
+      "why": "型を重ねる宣言 (共通の欄を持つ型を 2 つ書かない)。",
+      "risk": "印の型を extends しても印は運ばない (印は mint でだけ作る)。"
+    },
+    "declare": {
+      "decision": "rewrite",
+      "why": "ambient の宣言・enum・namespace は使わない (和の型と extern で書く)。"
+    },
+    "delete": {
+      "decision": "rewrite",
+      "why": "既にある物から欄を消すと他の読み手の判定が変わる。新しい物を組み直す。"
+    },
+    "generator": {
+      "decision": "feature",
+      "why": "遅延の列 (大きな走査) で使う。",
+      "risk": "yield した値は印を運ばない (for…of の回す変数と同じ)。"
+    },
+    "satisfies": {
+      "decision": "feature",
+      "why": "型を絞らずに検める宣言。",
+      "risk": "型の検査だけで実行時に何もしない —— 来歴には触れない。"
+    },
+    "nested-function": {
+      "decision": "rewrite",
+      "why": "関数の中の function は arrow かモジュールの fn で書く (役割 gate / sink は fn にしか付けない)。"
+    },
+    "bitwise": {
+      "decision": "added",
+      "why": "暗号・ハッシュの周り (IV ・CRC ほか) で要る。",
+      "risk": "来歴には触れない (数を作る演算)。",
+      "since": "0.10"
+    }
+  },
+  "cycles": [
+    {
+      "id": "MG-001",
+      "date": "2026-10-30",
+      "kind": "feature",
+      "target": "src/shared/mamori/parser.ts",
+      "pickedBy": "manual",
+      "deviation": "この輪 (brief) はこの周の中で作った —— brief が在る前に、利用者の依頼「言語を育てて」で 0.2 の構文と T-224 の直しを先に決めた",
+      "briefPick": "port:src/shared/controlChars.ts",
+      "version": "0.2",
+      "features": [
+        "オブジェクトリテラル (__proto__ 鍵・spread・計算した鍵は断る)",
+        "三項演算子 (印は両方の枝が同じ印のときだけ残る)",
+        "switch (落ち抜けを作らない・case の終わりは return / throw / break)",
+        "throw",
+        "for (const x of xs) + break / continue (ループ変数は印を持たない)",
+        "type 別名 (先頭の | で複数行) と interface",
+        "field x.k (unknown から欄を読む唯一の形)"
+      ],
+      "added": [],
+      "rewrite": [],
+      "ported": [
+        "src/shared/proxyEndpoint.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "String.constructor(code)() で eval の代わりに文字列をコードとして走らせる (0.1 では通り、生成した TS を node で走らせると 42 が返った)",
+          "result": "hole"
+        },
+        {
+          "tried": "''.constructor.constructor(code) / [].constructor で Function へ届く",
+          "result": "hole"
+        },
+        {
+          "tried": "Object.setPrototypeOf / Object.defineProperty で組み込みの原型を書き換える (0.1 では純粋な組み込みとして素通り)",
+          "result": "hole"
+        },
+        {
+          "tried": "オブジェクトリテラルの { __proto__: x } / { '__proto__': x } で原型を差し替える",
+          "result": "refused"
+        },
+        {
+          "tried": "三項の片方の枝だけ印つきの値にして印を偽造する",
+          "result": "refused"
+        },
+        {
+          "tried": "switch の落ち抜けで印を確かめる case を飛ばす",
+          "result": "refused"
+        },
+        {
+          "tried": "for…of のループ変数を印つきとして sink へ渡す",
+          "result": "refused"
+        },
+        {
+          "tried": "オブジェクトの値に危ない口を包んで sink の外へ持ち出す",
+          "result": "refused"
+        },
+        {
+          "tried": "引数・const・回す変数・このモジュールの関数の名前へ代入する (0.1 は「このモジュールの名前か」しか見ず tsc に任せていた —— 引数への代入は tsc も通す。変異検査の生存が教えた)",
+          "result": "refused"
+        }
+      ],
+      "threats": [
+        "T-224"
+      ],
+      "controls": 12,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/checker.ts",
+          "src/shared/mamori/emit.ts",
+          "src/shared/mamori/compile.ts",
+          "src/shared/proxyEndpoint.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 847,
+        "summary": "0.1 の穴 T-224 (constructor 経由の Function・Object の原型書き換え) を塞ぎ、0.2 の構文 7 種を足し、proxyEndpoint を Mamori へ移した"
+      }
+    },
+    {
+      "id": "MG-002",
+      "date": "2026-10-30",
+      "kind": "feature",
+      "target": "src/shared/mamori/parser.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/shared/controlChars.ts",
+      "deviation": "brief の選んだ port (controlChars.ts) は 16 進の数 (0x20 / 0x7f) が言語に無く書き直しだけでは移せなかった —— 16 進の数を足す feature に切り替え、同じ周で移した",
+      "version": "0.3",
+      "features": [
+        "16 進の数 (0x20 / 0X1F · 数字の無い 0x は M0)",
+        "印を受ける関数は直に呼ぶことしかできない (値として持ち出すと M4 · T-225)",
+        "危ない口は sink 関数の中でも呼ぶ形でしか使えず、第 1 引数は行き先の印を持つ値だけ (M2 · T-225)"
+      ],
+      "added": [],
+      "rewrite": [],
+      "ported": [
+        "src/shared/controlChars.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "openUrl.call(null, raw) / .apply / .bind で印を受ける関数へ素の値を渡す (0.2 は通した · tsc は型で断る)",
+          "result": "hole"
+        },
+        {
+          "tried": "const f = openUrl; f(raw) / { g: openUrl }.g(raw) / [openUrl].map(…) / (c ? openUrl : openUrl)(raw) / for (const f of [openUrl]) (0.2 は通した)",
+          "result": "hole"
+        },
+        {
+          "tried": "sink 関数の中で shell.openExternal(raw) —— 行き先以外の素の引数を危ない口へ流す (0.2 も tsc も通した)",
+          "result": "hole"
+        },
+        {
+          "tried": "sink 関数から return shell; / return { s: shell }; / return shell.openExternal; で危ない口を外へ持ち出す (0.2 も tsc も通した)",
+          "result": "hole"
+        },
+        {
+          "tried": "arrow の中で印を受ける関数を直に呼んで素の値を渡す",
+          "result": "refused"
+        },
+        {
+          "tried": "0x1.constructor で 16 進の数から原型へ届く",
+          "result": "refused"
+        },
+        {
+          "tried": "数字の無い 0x / 0X",
+          "result": "refused"
+        },
+        {
+          "tried": "(field raw.f)(raw) で unknown を呼ぶ (コンパイラは通す · tsc が unknown を呼べないと断る · 印の無い値なので来歴の穴ではない)",
+          "result": "refused"
+        }
+      ],
+      "threats": [
+        "T-225"
+      ],
+      "controls": 6,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/checker.ts",
+          "src/shared/controlChars.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 847,
+        "summary": "controlChars を Mamori へ移し (16 進の数を足して 0.3)、破る段で出た T-225 (印を受ける関数を値として持ち出す 8 形・sink の中で危ない口へ行き先以外を流す / 持ち出す 6 形) を塞いだ"
+      }
+    },
+    {
+      "id": "MG-003",
+      "date": "2026-10-31",
+      "kind": "port",
+      "target": "src/shared/tokenInput.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/shared/tokenInput.ts",
+      "version": "0.3",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "template"
+      ],
+      "ported": [
+        "src/shared/tokenInput.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "入口の関門に `.constructor` を書く (value.constructor) —— T-224 の Function への道",
+          "result": "refused"
+        },
+        {
+          "tried": "too-long の文面をテンプレート文字列 `v=${value}` にする (補間でコードを運ぶ道)",
+          "result": "refused"
+        },
+        {
+          "tried": "`(raw as string).trim()` で型を書き換える (as)",
+          "result": "refused"
+        },
+        {
+          "tried": "添字 `value[0]` を書く (0.3 に index は無い —— 足すなら REMAINING の break-first を先に閉じる)",
+          "result": "refused"
+        },
+        {
+          "tried": "宣言していない外の名前 `new Headers(value)` を呼ぶ",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 1,
+      "mutation": {
+        "files": [
+          "src/shared/tokenInput.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 847,
+        "reason": null,
+        "summary": "資格情報の入口 checkTokenInput を Mamori 0.3 で書き直した (port)。判定は 1 字も変えず (template→+ の連結だけ・生成物は byte 比較で検査)、入口のソースが .constructor/as/template/未宣言グローバルを書けない形に。brief が port を deterministic に選んだ (cadence は移せる壁を先に移す)。index の break-first の測定は REMAINING に記録して別パスへ (computed 鍵の laundering を inert+taint で閉じる必要)。"
+      }
+    },
+    {
+      "id": "MG-004",
+      "date": "2026-10-31",
+      "kind": "port",
+      "target": "src/shared/escape.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/shared/escape.ts",
+      "version": "0.4",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "template"
+      ],
+      "ported": [
+        "src/shared/escape.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "印を受ける関数を値で渡す `us.map(openUrl)` / `s.replace(/a/g, openUrl)` (組み込みのコールバックに持ち出す)",
+          "result": "refused"
+        },
+        {
+          "tried": "sink 関数の中で `t.replace(/a/g, shell.openExternal)` (危ない口をコールバックとして渡す) / `(() => shell)()`",
+          "result": "refused"
+        },
+        {
+          "tried": "正規表現の字面から `/a/.constructor(\"return 1\")()` / `RegExp.prototype` / `s.__proto__` / `new Function(c)`",
+          "result": "refused"
+        },
+        {
+          "tried": "正規表現の字面を代入で書き換える `R.lastIndex = 5;` (欄への代入) と、gate の外の `mint`",
+          "result": "refused"
+        },
+        {
+          "tried": "`RegExp.$1` / `RegExp.lastMatch` / `RegExp.input` を宣言なしで読む (node で `/(sek)/.exec('a sek b'); RegExp.$1` は 'sek' —— 他のモジュールの直近の一致と入力)",
+          "result": "hole"
+        },
+        {
+          "tried": "`Error.captureStackTrace(o)` / `Error.stackTraceLimit` / `TypeError.captureStackTrace` (共有の例外の積み方・渡した物への書き込み)",
+          "result": "hole"
+        },
+        {
+          "tried": "`URL.revokeObjectURL(u)` / `URL.createObjectURL(b)` (他のモジュールが作った blob の URL を失効させる)",
+          "result": "hole"
+        },
+        {
+          "tried": "`const r = RegExp; r.$1` (組み込みを値として持ち出して表を迂回する) —— 0.4 の修正後に再試行",
+          "result": "refused"
+        },
+        {
+          "tried": "対戦 (赤): 行注記の中に U+2028 / U+2029 / 単独の CR を置き、そのあとへ検めに掛けたくない字を書く (Mamori は LF だけで注記を終えるが JavaScript は他も行終端) ",
+          "result": "hole"
+        },
+        {
+          "tried": "対戦 (赤): `u: VU | string` / `readonly VU[]` / `type Maybe = VU | string` の値を印つきしか受けない sink fn へ渡す (型の綴りに印の名前が在れば運ぶと見ていた)",
+          "result": "hole"
+        },
+        {
+          "tried": "対戦 (赤): 持ち出し・`.constructor` の連鎖・テンプレート・`as`・宣言なしの外の名前・sink の呼び方・mint の置き場所の組み合わせ",
+          "result": "refused"
+        },
+        {
+          "tried": "攻撃の電池 (弾 約 300 × 文脈 約 40 × 環境 約 35 + 文字レベルの揺さぶり) を固定の種と 20 余りの新しい種で回し、受け入れた生成物を TypeScript の構文木で判定 (注記/文字列/正規表現の隠し字・文字列の逃がし・引数の欠落・型の綴りへ文を隠す・古い getter)",
+          "result": "hole"
+        }
+      ],
+      "threats": [
+        "T-232",
+        "T-233",
+        "T-234",
+        "T-235",
+        "T-236",
+        "T-237",
+        "T-238",
+        "T-239",
+        "T-240",
+        "T-241"
+      ],
+      "controls": 12,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/checker.ts",
+          "src/shared/mamori/parser.ts",
+          "src/shared/escape.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 847,
+        "reason": null,
+        "summary": "出力側の関門 escape.ts (escapeXml / safeColor / isHexColor / escapeMarkdown* / escapeInvisibleUnits ほか) を Mamori で書き直した (port)。判定は 1 字も変えず (template→+ の連結と呼び出しの連鎖の改行だけ・生成物は byte 比較で検査)。移す前に使う組み込みを総当たりで破ったところ、宣言なしで使える組み込みのうち RegExp の旧式の静的な欄 (他のモジュールの直近の一致と入力 = 秘密)・Error.captureStackTrace・URL の blob がメンバ経由で M6 を通る穴 (T-232) が出たので、M6 を組み込みのメンバの表へ広げて 0.4 にした (構築する形と許したメンバだけ・値としての持ち出しも断る)。対照 3 方向 + 台帳の書き換え 2 件が鳴り、checker.ts / escape.ts の変異検査は 100%。 続けて対戦 (赤 vs 青) で言語自身を攻め、行終端の差分 (T-233・パーサ)と印の型の綴り (T-234・M4) の穴を塞いだ。"
+      }
+    },
+    {
+      "id": "MG-005",
+      "date": "2026-10-31",
+      "kind": "feature",
+      "target": "optional-chain",
+      "pickedBy": "manual",
+      "deviation": "brief は index を選んだが、index は字面でない鍵が T-224 の表を迂回するので塞ぎ方が決まるまで出荷しない (MG-003 で先送りした理由のまま)。利用者と合意した方針 (穴を作りにくい ?. を先に) で optional-chain を育てた。",
+      "version": "0.6",
+      "features": [
+        "`a?.name` (名前の前だけの optional chaining。`?.(` と `?.[` は断る)"
+      ],
+      "added": [
+        "optional-chain"
+      ],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "`u?.constructor` / `u?.__proto__` / `u?.prototype` と連鎖の途中の `u?.trim()?.constructor` (T-224 の表を ?. で迂回する)",
+          "result": "refused"
+        },
+        {
+          "tried": "`u?.(1)` / `u?.[0]` (呼ぶ側・鍵を実行時に選ぶ形)",
+          "result": "refused"
+        },
+        {
+          "tried": "`Object?.setPrototypeOf` / `RegExp?.$1` / `URL?.createObjectURL` (組み込みのメンバの表を ?. で迂回する)",
+          "result": "refused"
+        },
+        {
+          "tried": "`shell?.openExternal(raw)` (sink 関数の中で素の値) と sink の外の `shell?.…` / 宣言していない `window?.location`",
+          "result": "refused"
+        },
+        {
+          "tried": "`?.` の結果を印つきの口 (`openUrl(o?.u)`) や印の型の変数 (`let v: VettedUrl = o?.u`) へ入れる (印の洗浄)",
+          "result": "refused"
+        },
+        {
+          "tried": "`openUrl?.call(null, raw)` (印を受ける関数を ?. で持ち出す)",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 4,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/emit.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": null,
+        "reason": "draft PR を push 後に出す (番号は PR 作成後に決まる)",
+        "summary": "Mamori 0.6: `a?.name` を足した (optional-chain)。先に破る試し 6 形はすべて . と同じ検めで断られた (穴 0 件)。`?.(` と `?.[` は断る。移せた壁は 0 本 (言語の幅を広げた周)。 変異検査は emit.ts 100.00% (516 killed)・parser.ts は 1241 killed + 57 timeout で生存 1 件 (`?.(` を断る条件を true に替える) を検査 1 件で殺した (手で当てて確認・測り直しは未実施)。対照 4 方向 (禁止の表を飛ばす・?. を落とす・?.( を通す・条件を true) が狙った検査で鳴る。"
+      }
+    },
+    {
+      "id": "MG-006",
+      "date": "2026-11-01",
+      "kind": "probe",
+      "target": "language",
+      "pickedBy": "manual",
+      "deviation": "brief は index を選んだが、利用者の指示 (1〜4 を段階的に・先に言語の穴探し) に沿って、index を足す前に言語の穴を探す周 (probe) を先に回した。",
+      "version": "0.7",
+      "features": [],
+      "added": [],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "攻撃の電池 5 種 (計約 8 万周) を新しい種で回す (弾約 300 × 文脈約 40 × 環境約 35 + 文字レベルの揺さぶり)",
+          "result": "refused"
+        },
+        {
+          "tried": "`?.` の周りの 17 形: 代入 `u?.length = 1`・`u?.length++`・空白 `u ?. length`・改行 `u?.\\nconstructor`・unicode escape・ZWSP・三項との取り違え `u?.5:1`・`u??.length`・`delete u?.x`・`\"a\" in u?.x`",
+          "result": "refused"
+        },
+        {
+          "tried": "宣言なしの組み込み周り 35 形: Symbol / Reflect / globalThis / Object.groupBy / `.__defineGetter__` / `.prototype` / Object(o) / new Object()",
+          "result": "refused"
+        },
+        {
+          "tried": "`Object.freeze(Array)` / `Math` / `JSON` / `Promise` / `String` / `Map` と、別名・条件演算子・配列越し (組み込みの構築子を値として freeze に渡し、アプリ全体の組み込みを凍らせる)",
+          "result": "hole"
+        },
+        {
+          "tried": "`xs.filter(Boolean)` / `typeof Array` (組み込みを値として持ち出す他の形)",
+          "result": "hole"
+        }
+      ],
+      "threats": [
+        "T-243"
+      ],
+      "controls": 3,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/checker.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 850,
+        "reason": null,
+        "summary": "言語の穴探し (probe)。電池 5 種は緑、手探り 50 本余りのうち `Object.freeze(Array)` などが通る穴 1 件 (T-243) を見つけ、組み込みの構築子・名前空間 9 つを値として持ち出せなくして 0.7 にした (メンバを直に使う・呼ぶ・構築する形は通る。`filter(Boolean)` は書けなくなった)。対照 3 方向 (直しを外すと電池 3 種が落ちる・穴開け直し A-560 が回帰検査 2 件で caught・直した後の正当な使い方が通る)。checker.ts の変異検査は 1 回目 99.83% (生存 1 = 冗長な `n !== null` 守り) → 形ごと消して測り直し 100.00% (Killed 570 + Timeout 2)。"
+      }
+    },
+    {
+      "id": "MG-007",
+      "date": "2026-11-01",
+      "kind": "feature",
+      "target": "index",
+      "pickedBy": "brief",
+      "briefPick": "feature:index",
+      "version": "0.8",
+      "features": [
+        "添字 `x[k]` (識別子として読める文字列の鍵は `.name` に畳み、数リテラル・識別子にならない文字列・静的に数と分かる式だけを通す。数と分かる鍵は生成物で `x[+(k)]` と数に寄せる。`?.[` と添字への代入は無い)"
+      ],
+      "added": [
+        "index"
+      ],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "`o[\"constructor\"]` / 単引用符 / 括弧つき / `\\u0063onstructor` の綴り違い / `__proto__` / `prototype` / `__defineGetter__` (禁じた名前を文字列の鍵で迂回する)",
+          "result": "refused"
+        },
+        {
+          "tried": "`o[\"con\" + \"structor\"]` / `o[u]` / `xs[u + \"x\"]` / `xs[typeof u]` / `xs[o.f()]` (文字列を実行時に組んだ鍵)",
+          "result": "refused"
+        },
+        {
+          "tried": "`Object[\"setPrototypeOf\"]` / `RegExp[\"$1\"]` / `Math[0]` / `shell[\"openExternal\"](u)` (組み込みの表と危ない口を添字で迂回する)",
+          "result": "refused"
+        },
+        {
+          "tried": "`const v: VettedUrl = xs[0]` / `openUrl(xs[0])` / `[openUrl][0](u)` (添字の結果で印を洗う・印を受ける口を値として持ち出す)",
+          "result": "refused"
+        },
+        {
+          "tried": "`xs[0] = u` / `xs?.[0]` (添字への代入・`?.[`)",
+          "result": "refused"
+        },
+        {
+          "tried": "攻撃の電池の揺さぶり (種 1): `[1].map((q=module) => q)` —— arrow の引数の既定値が検めを受けない (M6/M2/M4/M1 を素通り)。全 37 の式の位置に `fetch(\"x\")` を置く総当たりで、検めを受けなかったのはここだけ",
+          "result": "hole"
+        }
+      ],
+      "threats": [
+        "T-224",
+        "T-244"
+      ],
+      "controls": 6,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/emit.ts",
+          "src/shared/mamori/checker.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 850,
+        "reason": null,
+        "summary": "Mamori 0.8: 添字 x[k] を足した (index)。先に塞ぎ方を決めた —— 識別子の文字列鍵は .name に畳んで FORBIDDEN_MEMBERS と組み込みの表を共有し、動的な鍵は静的に数と分かる式だけを通して生成物で数に寄せる。手探り 44 形で穴 0 件。同じ周の電池の揺さぶりが arrow の引数の既定値が M2/M4/M6 を素通りする既存の穴 (T-244・0.2 から) を見つけ、塞いだ。移せた壁は 0 本 (添字だけが足りない壁もテンプレート等が要る)。変異検査は parser/emit 100%、checker は 1 回目 96.74% (isNumericKey の各枝の決め手が無かった) → 真理値表の検査と if の並びへの書き直しで 100.00%。対照 6 方向 (穴開け直し A-561..A-564 + 既存の T-224 2 件) が caught。"
+      }
+    },
+    {
+      "id": "MG-008",
+      "date": "2026-11-01",
+      "kind": "feature",
+      "target": "arrow-block",
+      "pickedBy": "manual",
+      "briefPick": "feature:arrow-block",
+      "version": "0.9",
+      "features": [
+        "ブロックの本体を持つ arrow `(x) => { … }` (`=> {` は常にブロック・オブジェクトを返すなら `=> ({…})`。本体・引数の既定値は外側が gate / sink 関数でも plain の役で検める。break / continue は arrow を跨げない)"
+      ],
+      "added": [
+        "arrow-block"
+      ],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "sink 関数が `() => { return shell.openExternal(u); }` / `() => shell.openExternal(u)` の閉包を値として返す (危ない口を閉じ込めの外へ持ち出す)",
+          "result": "hole"
+        },
+        {
+          "tried": "gate 関数の中の arrow で `mint VettedUrl(raw)` (ブロックと式)",
+          "result": "hole"
+        },
+        {
+          "tried": "arrow の本体の中の `break` / `continue` で外のループを抜ける",
+          "result": "refused"
+        },
+        {
+          "tried": "arrow の本体の中で引数へ代入する `(x) => { x = \"a\"; return x; }`",
+          "result": "refused"
+        },
+        {
+          "tried": "arrow の本体の中の宣言していない名前 `fetch(x)` / 引数の既定値の `fetch(\"x\")`",
+          "result": "refused"
+        },
+        {
+          "tried": "`=> { a: x }` (オブジェクトのつもりで書いたラベル付きの文) / 空の本体 `=> {}`",
+          "result": "refused"
+        }
+      ],
+      "threats": [
+        "T-245"
+      ],
+      "controls": 4,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/emit.ts",
+          "src/shared/mamori/checker.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 850,
+        "reason": null,
+        "summary": "Mamori 0.9: ブロックの本体を持つ arrow を足した (arrow-block)。足す前に破ると、arrow の本体が外側の関数の役 (gate / sink) を引き継いでおり、0.2 から在る式の arrow でも sink 関数が危ない口の閉包を値として返せ、gate の中の arrow で mint も通る穴 (T-245) だった。本体・既定値を plain の役で検めるよう直し、同じ検めをブロックの本体にも当てた。break / continue は arrow を跨げない。この周で移せた壁は 0 本 (言語の幅を広げた周)。変異検査は parser 100% / emit は初回 99.44% (join の区切りと括弧の強さの検査が無かった) → 生成物を 1 byte で留めて 100% / checker 100% (等価な plain の枠のみ理由つき pragma)。対照: A-565 (役の引き継ぎ) と A-561 (既定値) が caught。"
+      },
+      "deviation": "利用者の「1～4 を段階的に進めて」の依頼の 2 番目 (arrow-block) を順に進めた (brief の最初の推薦は壁の移植)"
+    },
+    {
+      "id": "MG-009",
+      "date": "2026-11-01",
+      "kind": "feature",
+      "target": "bitwise",
+      "pickedBy": "manual",
+      "deviation": "利用者の「1～4 を段階的に進めて」の依頼の 3 番目 (bitwise) を順に進めた (brief の最初の推薦は壁の移植)",
+      "briefPick": "feature:bitwise",
+      "version": "0.10",
+      "features": [
+        "ビット演算 `| ^ & << >> >>> ~` (結果は印を運ばず、静的に数と分かる式として添字の鍵に使える。優先順位は JavaScript と同じ。`>>` `>>>` は隣り合う `>` だけをシフトと読み、入れ子の型を壊さない。複合代入 `|=` ほかは無い)"
+      ],
+      "added": [
+        "bitwise"
+      ],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "ビット演算で印を洗う: `openUrl(a & 1)` / `const v: VettedUrl = raw | 0`",
+          "result": "refused"
+        },
+        {
+          "tried": "ビット演算で作った鍵や禁じた名前で表を引く: `xs[u | 0]` を `x[+(…)]` に寄せる・`o.constructor | 0`・`\"con\" ^ \"x\"`",
+          "result": "refused"
+        },
+        {
+          "tried": "`>>` を空白や改行で割る・`a >>= b`・`a <<< b`・次の行の桁がぴったり続く `>`",
+          "result": "refused"
+        },
+        {
+          "tried": "入れ子の型 `Array<Array<number>>` / 3 重がシフトと読まれて壊れる",
+          "result": "refused"
+        },
+        {
+          "tried": "単項の組み合わせ `- -a` を重ねて出力を観察する (`--a` になる)",
+          "result": "hole"
+        },
+        {
+          "tried": "攻撃の電池の DEEP の弾 (括弧 400 重・`!` 2000 個ほか) を新しい文脈 (ビット演算の両辺・単項・添字の鍵) へ置く",
+          "result": "hole"
+        }
+      ],
+      "threats": [
+        "T-246",
+        "T-247"
+      ],
+      "controls": 5,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/emit.ts",
+          "src/shared/mamori/checker.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 850,
+        "reason": null,
+        "summary": "Mamori 0.10: ビット演算 | ^ & << >> >>> ~ を足した (bitwise)。結果は印を運ばず、静的に数と分かる式として添字の鍵に使え、洗浄・禁じた名前の迂回は手探りで 0 件。同じ周で既存の穴を 2 つ見つけて塞いだ: T-246 (`- -a` が `--a` と出力され引数を書き換える・M6 の迂回) と T-247 (深い入れ子でコンパイラが RangeError のまま落ちる・演算子の段を足すと浅い入れ子で落ちる) を 200 段の上限で。この周で移せた壁は 0 本 (言語の幅を広げた周)。変異検査は初回 parser 99.78% / emit 99.82% (shift の段の綴りが読まれていない設計・行をまたぐ `>` の検査・等価な単項の種類の判定) → 段の読みを includes に直し検査を足して 100% / checker 100%。対照: A-566 (T-246)・A-567 (T-247) が caught。"
+      }
+    },
+    {
+      "id": "MG-010",
+      "date": "2026-11-01",
+      "kind": "port",
+      "target": "src/renderer/security/egressStepUp.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/renderer/security/egressStepUp.ts",
+      "version": "0.10",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "template"
+      ],
+      "ported": [
+        "src/renderer/security/egressStepUp.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "文字列キーの動的な添字 `W[k]` (移植前の `WHAT[setting]` の形・T-224 の表を迂回する道)",
+          "result": "refused"
+        },
+        {
+          "tried": "テンプレート文字列 `x ${h}` と `h as string` (補間でコードを運ぶ道・型の書き換え)",
+          "result": "refused"
+        },
+        {
+          "tried": "`h.constructor` (文字列をコードとして走らせる道)",
+          "result": "refused"
+        },
+        {
+          "tried": "送り先の確認の門が使えるはずの外の名前の直書き: `localStorage.setItem(…)` と `fetch(u)`",
+          "result": "refused"
+        },
+        {
+          "tried": "`catch (e)` (束ねた例外の文を運ぶ道・言語に置かないと決めた束縛)",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 2,
+      "mutation": {
+        "files": [
+          "src/renderer/security/egressStepUp.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 850,
+        "reason": null,
+        "summary": "送り先を変える操作に持ち主の確認が要るかの判定と文面 (egressStepUp.ts · T-219) を Mamori で書き直した (port)。足りなかったのは template 1 つ (連結へ) と文字列キーの添字 (条件演算子へ) だけで、組み上がる文字列は 1 字も変えていない —— 元の TypeScript と約 190 組の入力で同じ出力・既存の検査 5 ファイルは編集なしで緑。守りの層の .mamori は 12 本になり、`as`・`.constructor`・宣言していない外の名前が書けない言語へ移った。穴は 0 件 (手探り 5 形が全部 refused)。変異検査は初回 92.59% (連結の区切り 2 件) → 確認の文の全文を toBe で留めて 100%。保護対象・CODEOWNERS・能力台帳 (M7) に追加し chain #417。"
+      }
+    },
+    {
+      "id": "MG-011",
+      "date": "2026-11-01",
+      "kind": "port",
+      "target": "src/shared/safeFilename.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/shared/safeFilename.ts",
+      "version": "0.11",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "non-null",
+        "template"
+      ],
+      "ported": [
+        "src/shared/safeFilename.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "型述語 `-> s is string` の形で `-> s is VettedUrl` と書き、`return true` で関門を通らずに印の型を作る道",
+          "result": "hole"
+        },
+        {
+          "tried": "plain / sink 関数の `-> VettedUrl` / `-> Promise<VettedUrl>` (印を名乗る戻り値の型)",
+          "result": "hole"
+        },
+        {
+          "tried": "テンプレート文字列と `s as string` (補間でコードを運ぶ道・型の書き換え)",
+          "result": "refused"
+        },
+        {
+          "tried": "後置の非 null `!` で null を黙らせて正規表現の結果を読む道",
+          "result": "refused"
+        },
+        {
+          "tried": "`s.constructor` で文字列からコードを走らせる道",
+          "result": "refused"
+        }
+      ],
+      "threats": [
+        "T-248"
+      ],
+      "controls": 3,
+      "mutation": {
+        "files": [
+          "src/shared/safeFilename.ts",
+          "src/shared/mamori/checker.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 850,
+        "reason": null,
+        "summary": "ファイル名の関門 (safeFilename.ts) を Mamori で書き直した (port)。非 null と template を書き直しただけで組み上がる出力は変えていない —— 元の TypeScript と約 13 万組の入力で同じ答え・既存の検査は編集なしで緑。移す途中で型述語 `-> s is VettedUrl` が関門 (mint) を通らずに印の型を作れる穴 (T-248) を見つけ、gate 以外の戻り値の型が印を名乗るのを M1 で断るようにした (言語は 0.11)。変異検査は safeFilename.ts が初回 97.96% (等価変異 1 件を split('.')[0] で形ごと消した) → 100%・checker.ts は 100%。能力台帳・保護対象・CODEOWNERS に追加し chain #420。"
+      }
+    },
+    {
+      "id": "MG-012",
+      "date": "2026-11-01",
+      "kind": "port",
+      "target": "src/shared/promptInjection.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/shared/promptInjection.ts",
+      "version": "0.11",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "template"
+      ],
+      "ported": [
+        "src/shared/promptInjection.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "文字列の鍵で表を引く `LABELS[group]` (移植前の `INJECTION_GROUP_LABELS[rule.group]` の形・T-224 の表を迂回する道)",
+          "result": "refused"
+        },
+        {
+          "tried": "テンプレート文字列 `${w}に…` (補間でコードを運ぶ道)",
+          "result": "refused"
+        },
+        {
+          "tried": "`/a/.constructor` (正規表現の値から Function へ届く道)",
+          "result": "refused"
+        },
+        {
+          "tried": "`RegExp.$1` (同じ realm の他のモジュールが最後に走らせた正規表現の一致を読む共有の状態)",
+          "result": "refused"
+        },
+        {
+          "tried": "`r.lastIndex = 5` (正規表現の状態を書き換える代入)",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 2,
+      "mutation": {
+        "files": [
+          "src/shared/promptInjection.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 851,
+        "reason": null,
+        "summary": "第三者の文を AI へ渡す前に指示の形を検める関門 (promptInjection.ts · T-216) を Mamori で書き直した (port)。足りなかったのは template 1 つ (連結へ) だけ (文字列キーの添字は switch へ書き直した)で、組み上がる文字列は 1 字も変えていない —— 元の TypeScript と約 2 万の入力で正規化・検出・断りの文が同じ・規則 20 本の正規表現も source / flags が一致・既存の検査は編集なしで緑。穴は 0 件 (手探り 5 形が全部 refused)。変異検査は初回 87.88% (switch の 2 群のラベルが検査に無かった) → 4 群のラベルを台帳と照合して 100%。能力台帳・保護対象・CODEOWNERS に追加し chain #423。"
+      }
+    },
+    {
+      "id": "MG-013",
+      "date": "2026-11-01",
+      "kind": "port",
+      "target": "src/shared/aiEndpoint.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/shared/aiEndpoint.ts",
+      "version": "0.11",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "template"
+      ],
+      "ported": [
+        "src/shared/aiEndpoint.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "`xs.map(Number)` (組み込みの Number を値として持ち出す道)",
+          "result": "refused"
+        },
+        {
+          "tried": "テンプレート文字列 `${h}/v1` (補間でコードを運ぶ道)",
+          "result": "refused"
+        },
+        {
+          "tried": "`new URL(u).constructor` (URL の値から Function へ届く道)",
+          "result": "refused"
+        },
+        {
+          "tried": "`p.hostname as string` (型の書き換え)",
+          "result": "refused"
+        },
+        {
+          "tried": "`URL.createObjectURL(b)` (同じ realm の共有状態)",
+          "result": "refused"
+        },
+        {
+          "tried": "`p[k]` (実行時の文字列の鍵で URL のメンバを引く)",
+          "result": "refused"
+        },
+        {
+          "tried": "`s(p.host)` (URL から取った素の文字列を印を受ける口へ渡して洗う)",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 2,
+      "mutation": {
+        "files": [
+          "src/shared/aiEndpoint.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": null,
+        "reason": "PR はこの記録のあとに出す (番号は次の周で台帳へ)",
+        "summary": "AI のベース URL の関門 (aiEndpoint.ts · 平文 http を許すホストの判定と資格情報を載せる送り先の検証) を Mamori で書き直した (port)。足りなかったのは template 2 つ (連結へ) と Number を値として渡す形 (arrow で包んだ) だけで、組み上がる文字列は 1 字も変えていない —— 元の TypeScript と約 4 万の入力 (資格情報あり/なしの両モード) で結果・断りの文が同じ・既存の検査は編集なしで緑。穴は 0 件 (手探り 7 形が全部 refused)。変異検査は初回 98.75% (too-long の文の連結の前後のリテラル 2 件) → 文面を丸ごと toBe で留めて 100% (160 変異体)。能力台帳・保護対象・CODEOWNERS に追加し chain #425。"
+      }
+    },
+    {
+      "id": "MG-014",
+      "date": "2026-11-01",
+      "kind": "port",
+      "target": "src/shared/vaultToken.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/shared/vaultToken.ts",
+      "version": "0.11",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "template"
+      ],
+      "ported": [
+        "src/shared/vaultToken.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "`(p as { accessToken: string }).accessToken` (型の書き換えで欄を読む)",
+          "result": "refused"
+        },
+        {
+          "tried": "`const { accessToken } = p` (分割代入で欄を取り出す)",
+          "result": "refused"
+        },
+        {
+          "tried": "`catch (e) { return e; }` (例外の値を持ち出す)",
+          "result": "refused"
+        },
+        {
+          "tried": "`JSON.parse(raw).constructor` (解析した値から Function へ届く道)",
+          "result": "refused"
+        },
+        {
+          "tried": "`p[k]` (実行時の文字列の鍵で保存値の欄を引く)",
+          "result": "refused"
+        },
+        {
+          "tried": "`field p.__proto__` / `field p.constructor` (欄の読みで原型に届く道)",
+          "result": "refused"
+        },
+        {
+          "tried": "`-> p is VettedUrl` の型述語 (関門の外で印の型を名乗る · T-248)",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 2,
+      "mutation": {
+        "files": [
+          "src/shared/vaultToken.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": null,
+        "reason": "PR はこの記録のあとに出す (番号は次の周で台帳へ)",
+        "summary": "保存された資格情報から Bearer を取り出す関門と TokenSet の保存前検査 (vaultToken.ts) を Mamori で書き直した (port)。足りなかったのは `as` 4 か所と template 2 つだけ (`field` と連結へ)。型述語 `parsed is {…}` は印の型でなければ通る (T-248 が断るのは印の型を名乗る述語だけ) ので元の形のまま。元の TypeScript と約 30 の入力 (循環参照・BigInt・200 万字・絵文字・null プロトタイプを含む) で結果・断りの文が同じ・既存の検査は編集なしで緑。穴は 0 件 (手探り 7 形が全部 refused)。"
+      }
+    },
+    {
+      "id": "MG-015",
+      "date": "2026-11-01",
+      "kind": "port",
+      "target": "src/renderer/security/autoLock.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/renderer/security/autoLock.ts",
+      "version": "0.11",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "template"
+      ],
+      "ported": [
+        "src/renderer/security/autoLock.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "`extern pure global window;` を宣言して `window.open(生の文字列)` (sink を経ずに危ない口を呼ぶ)",
+          "result": "hole"
+        },
+        {
+          "tried": "`extern pure global document;` を宣言して `document.write(html)`",
+          "result": "hole"
+        },
+        {
+          "tried": "`extern pure global window;` を宣言して `return window;` (危ない口を値として持ち出す)",
+          "result": "hole"
+        },
+        {
+          "tried": "`window.location = u` (host の欄への代入)",
+          "result": "refused"
+        },
+        {
+          "tried": "`window.eval(c)` / `window.constructor` / `window[k]`",
+          "result": "refused"
+        },
+        {
+          "tried": "最上位の `let n = 0;` と `n += 1;` (共有の可変状態・複合代入)",
+          "result": "refused"
+        }
+      ],
+      "threats": [
+        "T-249"
+      ],
+      "controls": 3,
+      "mutation": {
+        "files": [
+          "src/renderer/security/autoLock.ts",
+          "src/shared/mamori/checker.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": null,
+        "reason": "PR はこの記録のあとに出す (番号は次の周で台帳へ)",
+        "summary": "自動ロック (autoLock.ts · 席を離れた / タブを隠した時に金庫を施錠) を Mamori で書き直した (port)。足りなかったのは入れ子の関数宣言・複合代入・最上位の let・インターフェースのメソッド記法・型の戻し (as) で、const の arrow・x = x + 1・集合・readonly の関数欄・小さな host 関数 (autoLockHost.ts) へ替えた。移す途中で `extern pure global window/document` と宣言すると sink を経ずに window.open(生の値)・document.write・return window が通る穴 (T-249) を見つけ、host の 29 名は pure で宣言できないようにした (M6)。元の TypeScript と 400 通りの操作列 (時計・タイマー・可視・活動) で同じ痕跡・既存の検査 55 件は編集なしで緑。変異検査は autoLock.ts が初回 83.87% (pragma を移す途中で落とした + 境目・後始末・購読の通知を誰も主張していなかった) → pragma を戻し検査 7 件を足して 100% (98 変異体)、checker.ts は 99.87% の生存 1 (`from === null` の門) を検査 1 件で留めて 100%。能力台帳・保護対象・CODEOWNERS に追加。"
+      }
+    }
+  ]
+}
