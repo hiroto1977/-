@@ -94,6 +94,12 @@
       "gates": [],
       "sinks": []
     },
+    "src/shared/promptInjection.mamori": {
+      "externals": [],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
     "src/shared/tokenInput.mamori": {
       "externals": [],
       "imports": [],

@@ -115,6 +115,7 @@
 /src/shared/tokenInput.mamori @hiroto1977
 /src/renderer/security/egressStepUp.mamori @hiroto1977
 /src/shared/safeFilename.mamori @hiroto1977
+/src/shared/promptInjection.mamori @hiroto1977
 /src/renderer/components/VettedImg.tsx @hiroto1977
 /src/renderer/components/VettedLink.tsx @hiroto1977
 /src/shared/mamori/ @hiroto1977
