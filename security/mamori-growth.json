@@ -758,6 +758,58 @@
         "reason": null,
         "summary": "Mamori 0.10: ビット演算 | ^ & << >> >>> ~ を足した (bitwise)。結果は印を運ばず、静的に数と分かる式として添字の鍵に使え、洗浄・禁じた名前の迂回は手探りで 0 件。同じ周で既存の穴を 2 つ見つけて塞いだ: T-246 (`- -a` が `--a` と出力され引数を書き換える・M6 の迂回) と T-247 (深い入れ子でコンパイラが RangeError のまま落ちる・演算子の段を足すと浅い入れ子で落ちる) を 200 段の上限で。この周で移せた壁は 0 本 (言語の幅を広げた周)。変異検査は初回 parser 99.78% / emit 99.82% (shift の段の綴りが読まれていない設計・行をまたぐ `>` の検査・等価な単項の種類の判定) → 段の読みを includes に直し検査を足して 100% / checker 100%。対照: A-566 (T-246)・A-567 (T-247) が caught。"
       }
+    },
+    {
+      "id": "MG-010",
+      "date": "2026-11-01",
+      "kind": "port",
+      "target": "src/renderer/security/egressStepUp.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/renderer/security/egressStepUp.ts",
+      "version": "0.10",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "template"
+      ],
+      "ported": [
+        "src/renderer/security/egressStepUp.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "文字列キーの動的な添字 `W[k]` (移植前の `WHAT[setting]` の形・T-224 の表を迂回する道)",
+          "result": "refused"
+        },
+        {
+          "tried": "テンプレート文字列 `x ${h}` と `h as string` (補間でコードを運ぶ道・型の書き換え)",
+          "result": "refused"
+        },
+        {
+          "tried": "`h.constructor` (文字列をコードとして走らせる道)",
+          "result": "refused"
+        },
+        {
+          "tried": "送り先の確認の門が使えるはずの外の名前の直書き: `localStorage.setItem(…)` と `fetch(u)`",
+          "result": "refused"
+        },
+        {
+          "tried": "`catch (e)` (束ねた例外の文を運ぶ道・言語に置かないと決めた束縛)",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 2,
+      "mutation": {
+        "files": [
+          "src/renderer/security/egressStepUp.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 850,
+        "reason": null,
+        "summary": "送り先を変える操作に持ち主の確認が要るかの判定と文面 (egressStepUp.ts · T-219) を Mamori で書き直した (port)。足りなかったのは template 1 つ (連結へ) と文字列キーの添字 (条件演算子へ) だけで、組み上がる文字列は 1 字も変えていない —— 元の TypeScript と約 190 組の入力で同じ出力・既存の検査 5 ファイルは編集なしで緑。守りの層の .mamori は 12 本になり、`as`・`.constructor`・宣言していない外の名前が書けない言語へ移った。穴は 0 件 (手探り 5 形が全部 refused)。変異検査は初回 92.59% (連結の区切り 2 件) → 確認の文の全文を toBe で留めて 100%。保護対象・CODEOWNERS・能力台帳 (M7) に追加し chain #417。"
+      }
     }
   ]
 }
