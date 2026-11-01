@@ -166,7 +166,7 @@ describe('誤りの文 (利用者が直す手掛かり) を 1 字ずつ留める
 
   it('M1: 宣言していない印・gate の外・名乗らない戻り値', () => {
     expect(msg(VETTED + 'export gate fn g(x: string) -> VettedUrl {\n  return mint Nope(x);\n}\n')).toEqual(['[M1] mint Nope: そんな印は宣言されていません']);
-    expect(msg(VETTED + 'export fn g(x: string) -> VettedUrl {\n  return mint VettedUrl(x);\n}\n')).toEqual([
+    expect(msg(VETTED + 'export fn g(x: string) -> string {\n  return mint VettedUrl(x);\n}\n')).toEqual([
       '[M1] 印 VettedUrl を作れるのは gate 関数の中だけです (関門を通らずに印を付けると、印の意味が無くなる)',
     ]);
     expect(msg('export vetted A = "a";\nexport vetted B = "b";\nexport gate fn g(x: string) -> A {\n  return mint B(x);\n}\n')).toEqual([
