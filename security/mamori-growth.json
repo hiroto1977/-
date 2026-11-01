@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.8"
+    "version": "0.9"
   },
   "constructs": {
     "class": {
@@ -57,9 +57,10 @@
       "why": "補間の中に式を隠させない (M0)。`+` で繋ぐ。"
     },
     "arrow-block": {
-      "decision": "feature",
+      "decision": "added",
       "why": "arrow の中に文が要る所 (map の中の if ほか) で使う。",
-      "risk": "arrow の中の文は外の関数の役割 (gate / sink) を継ぐ —— mint・危ない口の参照は外の関数の役割で判定する。sink の中で作った arrow を外へ渡すと sink の外で危ない口を呼べるので、sink の中の arrow を外へ出す形を断る。"
+      "risk": "arrow の中の文は外の関数の役割 (gate / sink) を継ぐ —— mint・危ない口の参照は外の関数の役割で判定する。sink の中で作った arrow を外へ渡すと sink の外で危ない口を呼べるので、sink の中の arrow を外へ出す形を断る。",
+      "since": "0.9"
     },
     "generic-call": {
       "decision": "feature",
@@ -633,6 +634,67 @@
         "reason": null,
         "summary": "Mamori 0.8: 添字 x[k] を足した (index)。先に塞ぎ方を決めた —— 識別子の文字列鍵は .name に畳んで FORBIDDEN_MEMBERS と組み込みの表を共有し、動的な鍵は静的に数と分かる式だけを通して生成物で数に寄せる。手探り 44 形で穴 0 件。同じ周の電池の揺さぶりが arrow の引数の既定値が M2/M4/M6 を素通りする既存の穴 (T-244・0.2 から) を見つけ、塞いだ。移せた壁は 0 本 (添字だけが足りない壁もテンプレート等が要る)。変異検査は parser/emit 100%、checker は 1 回目 96.74% (isNumericKey の各枝の決め手が無かった) → 真理値表の検査と if の並びへの書き直しで 100.00%。対照 6 方向 (穴開け直し A-561..A-564 + 既存の T-224 2 件) が caught。"
       }
+    },
+    {
+      "id": "MG-008",
+      "date": "2026-11-01",
+      "kind": "feature",
+      "target": "arrow-block",
+      "pickedBy": "manual",
+      "briefPick": "feature:arrow-block",
+      "version": "0.9",
+      "features": [
+        "ブロックの本体を持つ arrow `(x) => { … }` (`=> {` は常にブロック・オブジェクトを返すなら `=> ({…})`。本体・引数の既定値は外側が gate / sink 関数でも plain の役で検める。break / continue は arrow を跨げない)"
+      ],
+      "added": [
+        "arrow-block"
+      ],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "sink 関数が `() => { return shell.openExternal(u); }` / `() => shell.openExternal(u)` の閉包を値として返す (危ない口を閉じ込めの外へ持ち出す)",
+          "result": "hole"
+        },
+        {
+          "tried": "gate 関数の中の arrow で `mint VettedUrl(raw)` (ブロックと式)",
+          "result": "hole"
+        },
+        {
+          "tried": "arrow の本体の中の `break` / `continue` で外のループを抜ける",
+          "result": "refused"
+        },
+        {
+          "tried": "arrow の本体の中で引数へ代入する `(x) => { x = \"a\"; return x; }`",
+          "result": "refused"
+        },
+        {
+          "tried": "arrow の本体の中の宣言していない名前 `fetch(x)` / 引数の既定値の `fetch(\"x\")`",
+          "result": "refused"
+        },
+        {
+          "tried": "`=> { a: x }` (オブジェクトのつもりで書いたラベル付きの文) / 空の本体 `=> {}`",
+          "result": "refused"
+        }
+      ],
+      "threats": [
+        "T-245"
+      ],
+      "controls": 4,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/emit.ts",
+          "src/shared/mamori/checker.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 850,
+        "reason": null,
+        "summary": "Mamori 0.9: ブロックの本体を持つ arrow を足した (arrow-block)。足す前に破ると、arrow の本体が外側の関数の役 (gate / sink) を引き継いでおり、0.2 から在る式の arrow でも sink 関数が危ない口の閉包を値として返せ、gate の中の arrow で mint も通る穴 (T-245) だった。本体・既定値を plain の役で検めるよう直し、同じ検めをブロックの本体にも当てた。break / continue は arrow を跨げない。この周で移せた壁は 0 本 (言語の幅を広げた周)。変異検査は parser 100% / emit は初回 99.44% (join の区切りと括弧の強さの検査が無かった) → 生成物を 1 byte で留めて 100% / checker 100% (等価な plain の枠のみ理由つき pragma)。対照: A-565 (役の引き継ぎ) と A-561 (既定値) が caught。"
+      },
+      "deviation": "利用者の「1～4 を段階的に進めて」の依頼の 2 番目 (arrow-block) を順に進めた (brief の最初の推薦は壁の移植)"
     }
   ]
 }
