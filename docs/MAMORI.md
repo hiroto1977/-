@@ -79,6 +79,17 @@ Mamori では、その 2 つは**書けない**:
 - **既知の差 (正直に)**: `(a?.b).c` は丸括弧を構文木に残さないので生成物は `a?.b.c` になる (`a` が null のとき `.c` を読む前に止まる —— 例外が減る向きで、印の流れには触れない)。
 - **この周で移せた壁は 0 本** (`optional-chain` だけで足りる壁が無い —— 足りない構文は他にも要る)。言語の幅を広げた周で、次は `index` の塞ぎ方 (字面の鍵は FORBIDDEN_MEMBERS を通し、字面でない鍵は数だけ) を決めてから足す。
 
+## 0.12 —— `catch (e)` の束縛 (MG-016 · 2026-11-01)
+
+移植で最も多く止まった構文 (liveRead / pkceSession / assistant / exportPaths / selfAttestation の 5 壁・計 10 か所)。足す前に 12 形で破った。
+
+| 論点 | 決め方 |
+| --- | --- |
+| 束縛の型 | 生成物では `unknown`。印を運ばない局所の値で、回す変数と同じく handler の中だけで見える |
+| 書ける形 | `catch (e) { … }` の名前 1 つだけ。型注釈・2 つ以上・分割代入は M0 で断る |
+| 使い方 | `field e.message` で読む。印を受ける口へ渡す・印の型として返す・代入・`.constructor` などは既存の規則 (M1〜M6) が断る |
+| 束縛の無い `catch { }` | 今までどおり |
+
 ## 0.11 —— 戻り値の型に印を名乗れるのは gate 関数だけ (MG-011 · 2026-11-01 · T-248)
 
 `safeFilename.ts` を移すとき、型述語 `-> s is string` が通るかを確かめて見つけた穴。型述語・`asserts`・`this is` は `tsc` も検めない型の主張で (`as` と同じ)、`-> s is VettedUrl` と書いて `return true` するだけで、関門 (`mint`) を通らずに印の型を作れた。plain / sink 関数が `-> VettedUrl` や `-> Promise<VettedUrl>` と宣言する形も通していた。
@@ -261,7 +272,7 @@ const     := 'export'? 'const' 名前 (':' 型)? '=' 式 ';'
 fn        := 'export'? ('gate' | 'sink')? 'async'? 'fn' 名前 '(' 引数* ')' '->' 型 ブロック
 引数      := 名前 (':' 型)? ('=' 式)?
 文        := ('const' | 'let') 名前 (':' 型)? ('=' 式)? ';' | 'return' 式? ';'
-           | 'if' '(' 式 ')' ブロック ('else' (if 文 | ブロック))? | 'try' ブロック 'catch' ブロック
+           | 'if' '(' 式 ')' ブロック ('else' (if 文 | ブロック))? | 'try' ブロック 'catch' ('(' 名前 ')')? ブロック
            | 'throw' 式 ';' | 'for' '(' 'const' 名前 'of' 式 ')' ブロック | 'break' ';' | 'continue' ';'
            | 'switch' '(' 式 ')' '{' (('case' 式 | 'default') ':')+ 文+ … '}'
            | 名前 '=' 式 ';' | 式 ';'
@@ -336,7 +347,7 @@ export sink fn openExternalVetted(url: VettedExternalUrl) -> Promise<void> {
   `shell` を直接呼んだりする道は、TypeScript の側の検査 (`vettedTypes.test.ts` の census・`lint:forbidden`) が塞ぐ。
 - 変換した TypeScript は `tsc` が検査するが、実行時の守りは今までどおり**関門の中身**そのものである。
   Mamori が止めるのは「関門を飛ばす書き方」で、関門の判定の誤りは関門の検査 (変異検査 100% の対象) が見る。
-- 言語は 0.11 で、守りの層を書くのに要る構文しか持たない (0.3 で 16 進の数を、0.2 でオブジェクトの字面・条件演算子・switch・throw・for…of・type / interface・field を足した。**クラス・計算した鍵 `{ [k]: v }`・展開・後置の `!` は無い (0.6 で `a?.name`、0.8 で数と分かる鍵の添字 `x[k]` だけ、0.9 でブロックの本体を持つ arrow、0.10 でビット演算だけ足した)** —— 文字列の鍵を実行時に組む形は、T-224 の表 (`.constructor` を断る) を迂回する道になる)。**JSX も無い**ので、`<img>` の口 (`VettedImg.tsx`) と `<a href>` の口 (`VettedLink.tsx`) は TypeScript で書き、守りは型の印と census (素の `<img` と動的な素の `<a href={…}>` はこの部品の外に無い) が持つ。
+- 言語は 0.12 で、守りの層を書くのに要る構文しか持たない (0.3 で 16 進の数を、0.2 でオブジェクトの字面・条件演算子・switch・throw・for…of・type / interface・field を足した。**クラス・計算した鍵 `{ [k]: v }`・展開・後置の `!` は無い (0.6 で `a?.name`、0.8 で数と分かる鍵の添字 `x[k]` だけ、0.9 でブロックの本体を持つ arrow、0.10 でビット演算だけ足した)** —— 文字列の鍵を実行時に組む形は、T-224 の表 (`.constructor` を断る) を迂回する道になる)。**JSX も無い**ので、`<img>` の口 (`VettedImg.tsx`) と `<a href>` の口 (`VettedLink.tsx`) は TypeScript で書き、守りは型の印と census (素の `<img` と動的な素の `<a href={…}>` はこの部品の外に無い) が持つ。
   足すときは、その構文が来歴の規則を外す道にならないかを先に考える (`as` を入れなかったのと同じ理由)。
 
 ## 育て方 (半永久的に育てる輪)

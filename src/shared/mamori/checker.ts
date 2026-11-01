@@ -398,6 +398,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       case 'try':
         checkBlock(s.body, scopes, ctx);
         // 束ねた例外 (`catch (e)` · 0.12) は印を運ばない局所の値 (生成物では `unknown`)。回す変数と同じ扱いで、handler の中だけで見える。
+        // Stryker disable next-line ConditionalExpression: param が null のときの false 枝は null 鍵の束縛を足すだけで、名前の引きには当たらない (等価)
         checkBlock(s.handler, s.param === null ? scopes : [...scopes, new Map<string, Binding>([[s.param, { vetted: null, authority: 'local' }]])], ctx);
         return;
       case 'expr':
