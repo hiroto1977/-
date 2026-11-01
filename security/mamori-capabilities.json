@@ -41,6 +41,15 @@
       "gates": [],
       "sinks": []
     },
+    "src/renderer/security/autoLock.mamori": {
+      "externals": [
+        "pure ./autoLockHost: hostSetTimeout, hostClearTimeout, hostHasDocument, hostHasWindow, hostDocumentHidden, hostDocumentTarget, hostWindowTarget",
+        "pure global: Date"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
     "src/renderer/vettedSinks.mamori": {
       "externals": [
         "sink global: window"

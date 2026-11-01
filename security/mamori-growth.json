@@ -1038,6 +1038,65 @@
         "reason": "PR はこの記録のあとに出す (番号は次の周で台帳へ)",
         "summary": "保存された資格情報から Bearer を取り出す関門と TokenSet の保存前検査 (vaultToken.ts) を Mamori で書き直した (port)。足りなかったのは `as` 4 か所と template 2 つだけ (`field` と連結へ)。型述語 `parsed is {…}` は印の型でなければ通る (T-248 が断るのは印の型を名乗る述語だけ) ので元の形のまま。元の TypeScript と約 30 の入力 (循環参照・BigInt・200 万字・絵文字・null プロトタイプを含む) で結果・断りの文が同じ・既存の検査は編集なしで緑。穴は 0 件 (手探り 7 形が全部 refused)。"
       }
+    },
+    {
+      "id": "MG-015",
+      "date": "2026-11-01",
+      "kind": "port",
+      "target": "src/renderer/security/autoLock.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/renderer/security/autoLock.ts",
+      "version": "0.11",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "template"
+      ],
+      "ported": [
+        "src/renderer/security/autoLock.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "`extern pure global window;` を宣言して `window.open(生の文字列)` (sink を経ずに危ない口を呼ぶ)",
+          "result": "hole"
+        },
+        {
+          "tried": "`extern pure global document;` を宣言して `document.write(html)`",
+          "result": "hole"
+        },
+        {
+          "tried": "`extern pure global window;` を宣言して `return window;` (危ない口を値として持ち出す)",
+          "result": "hole"
+        },
+        {
+          "tried": "`window.location = u` (host の欄への代入)",
+          "result": "refused"
+        },
+        {
+          "tried": "`window.eval(c)` / `window.constructor` / `window[k]`",
+          "result": "refused"
+        },
+        {
+          "tried": "最上位の `let n = 0;` と `n += 1;` (共有の可変状態・複合代入)",
+          "result": "refused"
+        }
+      ],
+      "threats": [
+        "T-249"
+      ],
+      "controls": 3,
+      "mutation": {
+        "files": [
+          "src/renderer/security/autoLock.ts",
+          "src/shared/mamori/checker.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": null,
+        "reason": "PR はこの記録のあとに出す (番号は次の周で台帳へ)",
+        "summary": "自動ロック (autoLock.ts · 席を離れた / タブを隠した時に金庫を施錠) を Mamori で書き直した (port)。足りなかったのは入れ子の関数宣言・複合代入・最上位の let・インターフェースのメソッド記法・型の戻し (as) で、const の arrow・x = x + 1・集合・readonly の関数欄・小さな host 関数 (autoLockHost.ts) へ替えた。移す途中で `extern pure global window/document` と宣言すると sink を経ずに window.open(生の値)・document.write・return window が通る穴 (T-249) を見つけ、host の 29 名は pure で宣言できないようにした (M6)。元の TypeScript と 400 通りの操作列 (時計・タイマー・可視・活動) で同じ痕跡・既存の検査 55 件は編集なしで緑。変異検査は autoLock.ts が初回 83.87% (pragma を移す途中で落とした + 境目・後始末・購読の通知を誰も主張していなかった) → pragma を戻し検査 7 件を足して 100% (98 変異体)、checker.ts は 99.87% の生存 1 (`from === null` の門) を検査 1 件で留めて 100%。能力台帳・保護対象・CODEOWNERS に追加。"
+      }
     }
   ]
 }

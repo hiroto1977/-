@@ -336,6 +336,10 @@ const KNOWN_UNMEASURED = {
   // mutate へ移した (初回 75.51% / 77.18% —— 生存は規則を式の奥に置く検査・誤りの文・変換の全形の golden が無かったこと)。
   // 残るのは型だけのファイル。
   'src/shared/mamori/ast.ts': '構文木の型だけ (実行時に何も残らない)。',
+  // 2026-11-01 (T-249 · MG-015)。autoLock.mamori が読む host の口 (タイマー・DOM の有無と隠れているか・リスナーの相手)。
+  // 判断を持たず `setTimeout` / `document` / `window` をそのまま渡す薄い壁で、タイマーの取っ手の型の戻しだけが目的 (Mamori に `as` が無い)。
+  // 使う側の判断 (autoLock.ts) は mutate に載っていて 100%、この口は autoLock.test.ts が実物の jsdom で通している。
+  'src/renderer/security/autoLockHost.ts': '判断を持たない host の薄い壁 (タイマー・DOM の口を渡すだけ)。使う側の autoLock.ts は mutate で 100%。',
   // 2026-10-30 (T-220 · パス 559)。印の型だけのファイル —— 実行時に何も残らない (`declare const` と `type` だけ) ので
   // 変異体が 1 つも作れない。守りは**コンパイル時**に在り、それは osSinks.test.ts / vettedSinks.test.ts / vettedTypes.test.ts の
   // `@ts-expect-error` の陰性対照を `npm run typecheck` が検査して留める (印を素の string に戻すと「不要な @ts-expect-error」で落ちる)。

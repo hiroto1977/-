@@ -4470,6 +4470,22 @@
         "test": "★ 9 つの形がすべて M1 で断られる (印の型を関門の外で名乗れない) (threat: T-248)"
       },
       "alsoRegressions": []
+    },
+    {
+      "id": "T-249",
+      "found": "2026-11-01",
+      "foundBy": "MG-015 で autoLock.ts を Mamori へ移すとき、`document` / `window` をどう宣言するかを手探りして見つけた。`extern pure global window;` と宣言すると window は副作用の判断を持たない値として扱われ、`window.open(生の文字列)` / `document.write(html)` / `return window;` がコンパイルを通った —— 危ない口を `extern sink` で宣言して sink 関数に閉じ込める M2 を、宣言の綴りを pure にするだけで外せた。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "守りの層を書く言語 Mamori 0.1〜0.11 は `extern pure global` で網・記憶・移動・DOM・コードの口をメンバに持つ host (window / document / globalThis / fetch ほか) を宣言でき、sink を経ずに生の値でその口を呼べた (M2 を宣言の綴りだけで外せる)",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: `extern pure global` に SINK_BEARING_GLOBALS (window / document / globalThis / self / navigator / location / localStorage / indexedDB / process / require / fetch / XMLHttpRequest / WebSocket / eval / Function / Reflect / Proxy ほか) の名前を書いたら場所つきの M6 で断る。口として使うなら `extern sink global`、値を読むだけなら型の戻しだけの小さな関数を `extern pure { … } from \"./host\"` で読む (autoLock.mamori は autoLockHost.ts 経由)。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV11.test.ts",
+        "test": "★ 宣言を断ったので `window.open(生の値)` / `document.write(html)` も書けない (threat: T-249)"
+      },
+      "alsoRegressions": []
     }
   ],
   "huntBacklog": [

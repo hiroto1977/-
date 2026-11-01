@@ -41,6 +41,20 @@ export const PURE_GLOBALS: ReadonlySet<string> = new Set([
  * 読むだけ・凍らせるだけのメンバに絞り、`Object` を値として持ち出す形 (`const o = Object;`) も断る
  * (持ち出すと、この表を名前の別名で迂回できる)。
  */
+/**
+ * `extern pure global` にできない host の名前 (0.11 · T-249)。
+ *
+ * `extern pure global window;` と宣言すると `window` は副作用の判断を持たない値として**どこでも**使え、`window.open(生の文字列)` /
+ * DOM へ文字列を書く口や `return window;` が通った (危ない口を `extern sink` で宣言して sink 関数に閉じ込める M2 を、宣言の
+ * 綴りを `pure` にするだけで外せた)。ここに挙げた名前は網・記憶・移動・DOM・コードの口を**メンバとして持つ**ので、`pure` では宣言できない:
+ * 口として使うなら `extern sink global`、値を読むだけなら型の戻しだけを持つ小さな関数を `extern pure { … } from "./host"` で読む。
+ */
+export const SINK_BEARING_GLOBALS: ReadonlySet<string> = new Set([
+  'window', 'document', 'globalThis', 'self', 'top', 'parent', 'frames', 'navigator', 'location', 'history',
+  'localStorage', 'sessionStorage', 'indexedDB', 'caches', 'process', 'require', 'fetch', 'XMLHttpRequest', 'WebSocket',
+  'EventSource', 'Worker', 'SharedWorker', 'ServiceWorker', 'BroadcastChannel', 'Function', 'Reflect', 'Proxy', 'WebAssembly',
+]);
+
 export const OBJECT_MEMBERS: ReadonlySet<string> = new Set(['hasOwn', 'keys', 'values', 'entries', 'fromEntries', 'freeze', 'isFrozen']);
 
 /**
@@ -237,7 +251,12 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       // Stryker disable next-line StringLiteral: 上の注記のとおり等価 ('pure' は 'sink' / 'local' でないことだけを意味する)
       for (const n of it.names) declare(n.alias ?? n.name, { vetted: null, authority: 'pure' }, it.pos);
     } else if (it.kind === 'extern') {
-      for (const n of it.names) declare(n, { vetted: null, authority: it.authority }, it.pos);
+      for (const n of it.names) {
+        if (it.authority === 'pure' && it.from === null && SINK_BEARING_GLOBALS.has(n)) {
+          report('M6', it.pos, `\`extern pure global ${n}\` は宣言できません —— ${n} は網・記憶・移動・DOM・コードの口をメンバとして持つので、\`pure\` と宣言すると sink を経ずに \`${n}.…(生の値)\` が通ります (危ない口は \`extern sink global ${n}\`、値を読むだけなら型の戻しだけの小さな関数を \`extern pure { … } from "./host"\` で読む)`);
+        }
+        declare(n, { vetted: null, authority: it.authority }, it.pos);
+      }
     } else if (it.kind === 'const') {
       declare(it.name, { vetted: null, authority: 'local', numeric: it.type?.text === 'number' || isNumericKey(it.init, []) }, it.pos);
     } else if (it.kind === 'fn') {

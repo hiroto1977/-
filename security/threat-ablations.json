@@ -629,7 +629,7 @@
       "why": "onActivity の「放置が上限を超えていたらその場でロック」を外す (スリープ後の最初の操作で期限切れの金庫が再設定され延命する)",
       "edits": [
         {
-          "find": "    if (now() - lastActivity >= idleMs) {\n      lockAndDispose();\n      return;\n    }\n",
+          "find": "  if (now() - lastActivity >= idleMs) {\n    lockAndDispose();\n    return;\n  }\n",
           "replace": ""
         }
       ]
@@ -641,7 +641,7 @@
       "why": "タブが可視に戻ったとき、隠れていた時間が上限を超えていてもロックしない (背景のタイマー間引きで期限切れの金庫が戻る)",
       "edits": [
         {
-          "find": "      if (wasHiddenFor >= hiddenMs) {\n        lockAndDispose();\n        return;\n      }\n",
+          "find": "    if (wasHiddenFor >= hiddenMs) {\n      lockAndDispose();\n      return;\n    }\n",
           "replace": ""
         }
       ]
@@ -2350,6 +2350,18 @@
       "edits": [
         {
           "find": "if (it.role !== 'gate' && sig.returnVetted !== null) {",
+          "replace": "if (false) {"
+        }
+      ]
+    },
+    {
+      "id": "A-569",
+      "threat": "T-249",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "`extern pure global` の host 名の門を外す —— window / document を pure と宣言して sink を経ずに危ない口を呼べる口を開け直す",
+      "edits": [
+        {
+          "find": "if (it.authority === 'pure' && it.from === null && SINK_BEARING_GLOBALS.has(n)) {",
           "replace": "if (false) {"
         }
       ]
