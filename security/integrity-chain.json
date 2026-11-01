@@ -96,7 +96,9 @@
     "src/renderer/network/liveRead.ts",
     "src/renderer/network/proxy.ts",
     "src/renderer/oauth/pkce.ts",
+    "src/renderer/oauth/pkceSession.mamori",
     "src/renderer/oauth/pkceSession.ts",
+    "src/renderer/oauth/pkceSessionHost.ts",
     "src/renderer/security/LockScreen.tsx",
     "src/renderer/security/autoLock.mamori",
     "src/renderer/security/autoLock.ts",
@@ -3608,6 +3610,14 @@
       "leafCount": 165,
       "note": "update ast.ts,checker.ts,emit.ts,parser.ts",
       "hash": "7246acca4fc41ad2e1f5f4af65ecf3541e42548dd66b35bbabebddf3211be1e7"
+    },
+    {
+      "index": 430,
+      "prevHash": "7246acca4fc41ad2e1f5f4af65ecf3541e42548dd66b35bbabebddf3211be1e7",
+      "merkleRoot": "a18cfba4ed1b891436efb8585f765a986f247d838f98dc6457820cc97f282203",
+      "leafCount": 167,
+      "note": "update integrity-chain.cjs,mamori-capabilities.json,pkceSession.mamori,pkceSession.ts,pkceSessionHost.ts",
+      "hash": "329a63235925863c0236f8d879682334c8ea1aa02be0067a55c04118a18689bb"
     }
   ],
   "tipManifest": {
@@ -3643,7 +3653,7 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "d385ddfc52ec74abf184207bfbb1ac655e730db2b7c6d7e758e35e67e79a5737",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "2844810995f8c4adabc79e0b6b20084877431f64f0184f2b5458344848bff29e",
+    "scripts/integrity-chain.cjs": "a7c903d84fa320471ee7db49c600439366a39b1782cb5fb6963af1167831e715",
     "scripts/knowledge-autopilot.cjs": "ee8f7ae4a4ad29dda6c02f83c113c45fa1648522f807e711aa86b7746f372968",
     "scripts/lib/artifact-freshness.cjs": "add621dfe55e0eab31354f0d6979c9c67b513ed8b8348b9137ca7fa53dd569c1",
     "scripts/lib/json-for-script.cjs": "cb79bf1fb2f3c10c6854ec16d9c12bb0695dee5561751333db4531545702fd70",
@@ -3671,7 +3681,7 @@
     "scripts/verify-e2e-playwright-pin.cjs": "417854f96cbaa4af4dd30a378b722b58093d56e78aa7eaba9bd17df412f57d45",
     "scripts/verify-packaged-fuses.cjs": "4162ab0e5d390c5cccf4cd8ac533027bd1d8a5cbceb0a069059d4f3800643d9f",
     "scripts/verify-release-artifacts.cjs": "1bd668bc052b476a9b3f976dc80ddf8faa4f080aed5617d354a8c7647ee9f557",
-    "security/mamori-capabilities.json": "a206fdf5035bf548392b1977fd5b2c3ad406b7ff5296c43fd19b888dd86b5621",
+    "security/mamori-capabilities.json": "0e178430162d078d7bf7fc003696a42a43518a38226b1c65d46df977aca07896",
     "src/main/atomicWrite.ts": "63b6ff1fb7d8990b76409c62556d69f99a14475f73662e89507e8899a32a9c3f",
     "src/main/clients/assistant.ts": "3db27c2cdd42569a7bc92c7d2841591b1464550a1905ab66fa4a100803b69c4f",
     "src/main/clients/exportPaths.ts": "c0821f65eed08078681fbcc3eec662a8e58d47d053300f6ba0b66665a46fbbca",
@@ -3705,7 +3715,9 @@
     "src/renderer/network/liveRead.ts": "aae9f14472c4442ddc482d11ed4843557a47c67b75d1a832800abaf387b424e1",
     "src/renderer/network/proxy.ts": "a2826046600f3f79f04dc13d032e2c7f330ce1a7092f7e6b53e3022e92a2a785",
     "src/renderer/oauth/pkce.ts": "3402979779496b753369150623558c774e6c8f5d525cde4d557e550693d37e24",
-    "src/renderer/oauth/pkceSession.ts": "4d47589621512b9ec321e0a7db3553a9c87d32e9016d015ea51b9555bd5273a9",
+    "src/renderer/oauth/pkceSession.mamori": "48a1d1215388f0e41c0c0a215dc8904fce6c53a0039c86bf5babd8fd69ee74a0",
+    "src/renderer/oauth/pkceSession.ts": "9f05423f8dfbc4d7a5b7f891e1a20066ae02484ff43a299d96271e4a23fcdc15",
+    "src/renderer/oauth/pkceSessionHost.ts": "15c3d66000d1ca58eb4e008b094cc9e69f13116f6547312c0da0f2bc60cdec0d",
     "src/renderer/security/LockScreen.tsx": "4f3a02693303a44619b1c8a857ada3f634b316e77ac7b74791a62f9c5b84874d",
     "src/renderer/security/autoLock.mamori": "61f63d191273e1d5cdba900c5e8163e1bb06f0fdc7d134e8f6c2d76add8a8a8a",
     "src/renderer/security/autoLock.ts": "321856125794b5f66532a184b9db6055af0c047882dcfb1b31e8b05e48dec22a",

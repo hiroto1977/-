@@ -1153,6 +1153,60 @@
         "reason": "PR はこの記録のあとに出す (番号は次の周で台帳へ)",
         "summary": "Mamori 0.12: `catch (e)` の束縛を足した (catch-binding)。束ねた例外は印を運ばない局所の値で、印の口へ渡す・印の型として返す・外で使う・代入・禁じたメンバ・型注釈・複数の名前・分割代入・影にする手探り 12 形が全部断られ、穴は 0 件。この周で移せた壁は 0 本 (言語の幅を広げた周) だが、catch-binding を足りない構文に挙げる壁が 5 本あり、次の移植で効く。変異検査は parser / emit 100%・checker は生存 1 (束縛が無いときの false 枝は null 鍵を足すだけの等価) を理由つきで外して 100%。"
       }
+    },
+    {
+      "id": "MG-017",
+      "date": "2026-11-01",
+      "kind": "port",
+      "target": "src/renderer/oauth/pkceSession.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/renderer/oauth/pkceSession.ts",
+      "version": "0.12",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "as-cast",
+        "as-const",
+        "template"
+      ],
+      "ported": [
+        "src/renderer/oauth/pkceSession.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "`extern pure global sessionStorage;` を宣言して `sessionStorage.getItem(k)` (sink を経ずに記憶の口を呼ぶ)",
+          "result": "refused"
+        },
+        {
+          "tried": "鍵を実行時に組んで引く `o[\"pkce.\" + \"x\"]` (文字列の添字)",
+          "result": "refused"
+        },
+        {
+          "tried": "束ねた例外の `e.constructor` (catch の束縛で T-224 の表を迂回する)",
+          "result": "refused"
+        },
+        {
+          "tried": "`raw as string` (型の書き換え)",
+          "result": "refused"
+        },
+        {
+          "tried": "host 関数の鍵に `\"pkce.verifier\".constructor` を渡す",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 3,
+      "mutation": {
+        "files": [
+          "src/renderer/oauth/pkceSession.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 855,
+        "reason": null,
+        "summary": "PKCE の一時秘密の置き場 (pkceSession.ts · 保存・読み・消す) を Mamori で書き直した (port)。`sessionStorage` は pure で宣言できない (T-249) ので 3 つの小さな host 関数 (pkceSessionHost.ts) へ閉じ込め、`s[k]` の鍵引きは 4 欄の字面に、`as unknown as` は欄を読み切ってから組む形に、template は連結に替えた。MG-016 の `catch (err)` の束縛を初めて実物で使った。元の TypeScript と 270 通りの失敗の組み合わせ (保存・読み・消すのどれが何番目に断られるか × 残っていた鍵) で結果・断りの文・残る鍵が同じ・既存の検査 36 件は編集なしで緑。穴は 0 件 (手探り 5 形が全部 refused)。変異検査は初回 97.87% (断りの文の後半の案内を誰も全文では主張していなかった) → 全文の検査を足して 100%。"
+      }
     }
   ]
 }

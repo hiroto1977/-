@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 430
+- ブロック数: 431
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `7246acca4fc41ad2e1f5f4af65ecf3541e42548dd66b35bbabebddf3211be1e7`
-- 保護対象: 165 ファイル
+- 末尾(tip)ハッシュ: `329a63235925863c0236f8d879682334c8ea1aa02be0067a55c04118a18689bb`
+- 保護対象: 167 ファイル
 
 ## ブロック
 
@@ -443,6 +443,7 @@
 | 427 | `3b49ee658f909eb5` | `84b59c4a4f3311ac` | `d807451d38df2200` | update integrity-chain.cjs,mamori-capabilities.json,autoLock.mamori,autoLock.ts,autoLockHost.ts,checker.ts |
 | 428 | `43aa6b3b98c20377` | `d807451d38df2200` | `e8f633845079b6b1` | update checker.ts |
 | 429 | `d4633b3109f028df` | `e8f633845079b6b1` | `7246acca4fc41ad2` | update ast.ts,checker.ts,emit.ts,parser.ts |
+| 430 | `a18cfba4ed1b8914` | `7246acca4fc41ad2` | `329a63235925863c` | update integrity-chain.cjs,mamori-capabilities.json,pkceSession.mamori,pkceSession.ts,pkceSessionHost.ts |
 
 ## 保護対象ファイル
 
@@ -540,7 +541,9 @@
 - `src/renderer/network/liveRead.ts`
 - `src/renderer/network/proxy.ts`
 - `src/renderer/oauth/pkce.ts`
+- `src/renderer/oauth/pkceSession.mamori`
 - `src/renderer/oauth/pkceSession.ts`
+- `src/renderer/oauth/pkceSessionHost.ts`
 - `src/renderer/security/LockScreen.tsx`
 - `src/renderer/security/autoLock.mamori`
 - `src/renderer/security/autoLock.ts`
