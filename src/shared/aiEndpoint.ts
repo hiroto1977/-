@@ -1,3 +1,5 @@
+// 生成物 —— src/shared/aiEndpoint.mamori から Mamori のコンパイラが組んだ。手で編集しない (`npm run mamori:build`)。
+// 言語の仕様は docs/MAMORI.md。生成物が元と食い違えば src/shared/mamori/__tests__/mamoriGenerated.test.ts が落ちる。
 /**
  * AI プロバイダのベース URL の検証 — アプリ全体で 1 つだけ持つ。
  *
@@ -33,6 +35,12 @@
  * **鍵を送らない**ので平文でも漏れるものが無く、これは正当な使い方である。
  * 危ないのは平文そのものではなく**平文 + 資格情報**なので、
  * 鍵が乗るかどうかを呼び出し側から受け取って判断する。
+ *
+ * ## Mamori で書いてある (2026-11-01 · MG-013)
+ *
+ * 元は TypeScript で、Mamori 0.11 で書き直した。足りなかったのは template 文字列 2 つ (正規化した URL と断りの文) と
+ * `.map(Number)` の `Number` を値として渡す形 (arrow で包んだ) だけで、組み上がる文字列は 1 字も変えていない。
+ * 平文 http を許すホストの判定と、資格情報を載せる送り先の関門から、M0 と M6 が効く。
  */
 
 import { countChars } from './inputCeiling';
@@ -58,7 +66,7 @@ export interface AiEndpointOptions {
    * この送り先へ資格情報 (API キー) を載せるか。
    * true のときだけ、loopback 以外への平文 http を弾く。
    */
-   readonly credentialed: boolean;
+  readonly credentialed: boolean;
 }
 
 /**
@@ -67,35 +75,22 @@ export interface AiEndpointOptions {
  * 判定できない表記は false を返す（上のとおり fail-closed）。
  * `URL.hostname` は IPv6 を角括弧付きで返し、名前つきホストの末尾ドットは
  * 残す（`localhost.` がそのまま来る）ので、両方を落としてから比べる。
+ *
+ * **名前で許すのは `localhost` ちょうどだけ (2026-10-12 · パス 511 · threat: T-009)。**
+ * この判定は**許す側** (鍵を載せた平文 http を通す・プロキシへの平文 http を通す) に使われる。
+ * `localhost.` (末尾ドット) / `ip6-localhost` / `ip6-loopback` は **OS が loopback へ解決するとは限らない名前**
+ * (dns.lookup: localhost → 127.0.0.1 ; localhost. → ENOTFOUND ; ip6-* → ENOTFOUND) で、
+ * 鍵が**平文で、答えた誰か**へ渡りうる。塞ぐ側 (`privateTarget.ts` / `ollama.ts`) は広く取るのが正しく、そちらは変えない ——
+ * **許す側は狭く、塞ぐ側は広く**。
  */
 export function isLoopbackHostname(hostname: string): boolean {
-  /*
-   * **名前で許すのは `localhost` ちょうどだけ (2026-10-12 · パス 511 · threat: T-009)。**
-   *
-   * この判定は**許す側** (鍵を載せた平文 http を通す・プロキシへの平文 http を通す) に
-   * 使われる。2026-10-11 までは `localhost.` (末尾ドット) / `ip6-localhost` /
-   * `ip6-loopback` も loopback として通していたが、AI 監査 (パス 511) が実測した ——
-   * この 3 つは **OS が loopback へ解決するとは限らない名前**である:
-   *
-   *   dns.lookup: localhost → 127.0.0.1 ; localhost. → ENOTFOUND ;
-   *               ip6-localhost → ENOTFOUND ; ip6-loopback → ENOTFOUND
-   *
-   * `ip6-*` は Debian / Ubuntu の `/etc/hosts` にしか無く、macOS / Windows では網の DNS
-   * (Windows は LLMNR / NBT-NS —— 同じ LAN の誰でも答えられる) へ問い合わせる。glibc の
-   * files は末尾ドットの `localhost.` に当たらない。つまり鍵が**平文で、答えた誰か**へ渡る。
-   *
-   * 塞ぐ側 (`privateTarget.ts` / `ollama.ts`) は広く取るのが正しく、そちらは変えない ——
-   * **許す側は狭く、塞ぐ側は広く**。
-   */
   const host = hostname.toLowerCase();
   const bare = host.startsWith('[') && host.endsWith(']') ? host.slice(1, -1) : host;
-
   if (bare === 'localhost') return true;
   if (bare === '::1' || bare === '0:0:0:0:0:0:0:1') return true;
-
   const v4 = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(bare);
   if (v4 === null) return false;
-  const octets = v4.slice(1).map(Number);
+  const octets = v4.slice(1).map((s) => Number(s));
   if (octets.some((n) => n > 255)) return false;
   return octets[0] === 127;
 }
@@ -107,52 +102,29 @@ export function isLoopbackHostname(hostname: string): boolean {
  * 呼び出し側はここへ `/v1/messages` のようなパスを足すだけでよい。
  * クエリと断片は落とさず**弾く** — 後ろにパスを足す使い方なので、
  * 残っていても動く URL にならないため、黙って捨てるより伝える方がよい。
+ *
+ * 鍵を送らない構成 (Ollama や キー無しの互換サーバ) は**宛先を絞らない**: LAN かどうかを静的に判定できない
+ * (`http://ollama.lan` は正当な LAN 構成だが `http://evil.com` と字面で区別が付かない)。代わりに、この経路は API キーを
+ * 載せない・載る構成 (`credentialed: true`) は loopback 以外の平文を必ず弾く。送られるのはプロンプトなので、
+ * 公開ホストを平文で指定すれば内容は経路上で読める —— 設定するのは利用者自身で、`docs/SECURITY.md` に明記してある。
  */
 export function normalizeAiBaseUrl(raw: string, opts: AiEndpointOptions): AiEndpointResult {
   const text = raw.trim();
   if (text.length === 0) return { ok: false, reason: 'empty' };
   if (countChars(text) > MAX_AI_BASE_URL_CHARS) return { ok: false, reason: 'too-long' };
-  // 制御文字はヘッダ/URL の分断に使われうる。URL の解析前に落とす。
   if (hasControlChar(text)) return { ok: false, reason: 'control-char' };
-
   let parsed: URL;
   try {
     parsed = new URL(text);
   } catch {
     return { ok: false, reason: 'not-a-url' };
   }
-
   if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return { ok: false, reason: 'not-http' };
-  // `https://user:pass@evil.example` のように、本当の送り先を見せかけで隠す形。
   if (parsed.username !== '' || parsed.password !== '') return { ok: false, reason: 'has-userinfo' };
   if (parsed.search !== '' || parsed.hash !== '') return { ok: false, reason: 'has-query-or-fragment' };
-  // 平文で資格情報を送れるのはローカルの推論サーバだけ。
-  //
-  // 鍵を送らない構成 (Ollama や キー無しの互換サーバ) は**宛先を絞らない**。
-  // 2026-08-23 まで「LAN の http を許す」と書いていたが、実装は LAN に
-  // 限っていない —— 実測すると `credentialed: false` では
-  // `http://example.com` も `http://169.254.169.254` も通る。
-  //
-  // **絞らない理由**: LAN かどうかを静的に判定できない。`http://ollama.lan`
-  // のような名前は正当な LAN 構成だが、`http://evil.com` と字面で区別が
-  // 付かない (プロキシ側は DNS 解決後の IP を見て判定できるが、ここには
-  // その委譲先が無い)。IP リテラルだけ許すと実在の LAN 構成を壊す。
-  //
-  // **代わりに何が守られているか**: この経路は API キーを載せない。
-  // 載る構成 (`credentialed: true`) は loopback 以外の平文を必ず弾く。
-  // 送られるのはプロンプト (質問 + 注入された業務文脈) なので、
-  // **利用者が公開ホストを平文で指定すればその内容は経路上で読める**。
-  // 設定するのは利用者自身だが、それを承知で選べるよう `docs/SECURITY.md`
-  // に明記してある。
-  //
-  // 絞る (loopback + RFC1918 のみ許す) 案は検討したうえで採っていない ——
-  // 名前ベースの LAN 構成を壊すため。採るなら利用者の判断で。
-  if (opts.credentialed && parsed.protocol === 'http:' && !isLoopbackHostname(parsed.hostname)) {
-    return { ok: false, reason: 'insecure-remote' };
-  }
-
+  if (opts.credentialed && parsed.protocol === 'http:' && !isLoopbackHostname(parsed.hostname)) return { ok: false, reason: 'insecure-remote' };
   const path = parsed.pathname.replace(/\/+$/, '');
-  return { ok: true, base: `${parsed.protocol}//${parsed.host}${path}` };
+  return { ok: true, base: parsed.protocol + '//' + parsed.host + path };
 }
 
 /** 失敗理由を利用者向けの一文にする。設定画面とエラー文字列の両方で使う。 */
@@ -161,7 +133,7 @@ export function describeAiEndpointFailure(reason: AiEndpointFailure): string {
     case 'empty':
       return 'ベース URL が空です。';
     case 'too-long':
-      return `ベース URL が長すぎます (${MAX_AI_BASE_URL_CHARS} 文字まで)。`;
+      return 'ベース URL が長すぎます (' + MAX_AI_BASE_URL_CHARS + ' 文字まで)。';
     case 'control-char':
       return 'ベース URL に制御文字が含まれています。';
     case 'not-a-url':

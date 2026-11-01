@@ -31,6 +31,7 @@ const EXPECTED = [
   'src/renderer/security/egressStepUp.mamori',
   'src/shared/safeFilename.mamori',
   'src/shared/promptInjection.mamori',
+  'src/shared/aiEndpoint.mamori',
   'src/shared/vetted.mamori',
 ];
 
