@@ -866,6 +866,58 @@
         "reason": null,
         "summary": "ファイル名の関門 (safeFilename.ts) を Mamori で書き直した (port)。非 null と template を書き直しただけで組み上がる出力は変えていない —— 元の TypeScript と約 13 万組の入力で同じ答え・既存の検査は編集なしで緑。移す途中で型述語 `-> s is VettedUrl` が関門 (mint) を通らずに印の型を作れる穴 (T-248) を見つけ、gate 以外の戻り値の型が印を名乗るのを M1 で断るようにした (言語は 0.11)。変異検査は safeFilename.ts が初回 97.96% (等価変異 1 件を split('.')[0] で形ごと消した) → 100%・checker.ts は 100%。能力台帳・保護対象・CODEOWNERS に追加し chain #420。"
       }
+    },
+    {
+      "id": "MG-012",
+      "date": "2026-11-01",
+      "kind": "port",
+      "target": "src/shared/promptInjection.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/shared/promptInjection.ts",
+      "version": "0.11",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "template"
+      ],
+      "ported": [
+        "src/shared/promptInjection.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "文字列の鍵で表を引く `LABELS[group]` (移植前の `INJECTION_GROUP_LABELS[rule.group]` の形・T-224 の表を迂回する道)",
+          "result": "refused"
+        },
+        {
+          "tried": "テンプレート文字列 `${w}に…` (補間でコードを運ぶ道)",
+          "result": "refused"
+        },
+        {
+          "tried": "`/a/.constructor` (正規表現の値から Function へ届く道)",
+          "result": "refused"
+        },
+        {
+          "tried": "`RegExp.$1` (同じ realm の他のモジュールが最後に走らせた正規表現の一致を読む共有の状態)",
+          "result": "refused"
+        },
+        {
+          "tried": "`r.lastIndex = 5` (正規表現の状態を書き換える代入)",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 2,
+      "mutation": {
+        "files": [
+          "src/shared/promptInjection.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": null,
+        "reason": "PR はこの記録のあとに出す (番号は次の周で台帳へ)",
+        "summary": "第三者の文を AI へ渡す前に指示の形を検める関門 (promptInjection.ts · T-216) を Mamori で書き直した (port)。足りなかったのは template 1 つ (連結へ) だけ (文字列キーの添字は switch へ書き直した)で、組み上がる文字列は 1 字も変えていない —— 元の TypeScript と約 2 万の入力で正規化・検出・断りの文が同じ・規則 19 本の正規表現も source / flags が一致・既存の検査は編集なしで緑。穴は 0 件 (手探り 5 形が全部 refused)。変異検査は初回 87.88% (switch の 2 群のラベルが検査に無かった) → 4 群のラベルを台帳と照合して 100%。能力台帳・保護対象・CODEOWNERS に追加し chain #423。"
+      }
     }
   ]
 }
