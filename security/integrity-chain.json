@@ -3539,6 +3539,14 @@
       "leafCount": 160,
       "note": "update safeFilename.mamori,safeFilename.ts",
       "hash": "1bac2326b4cf7cc8d4e0a0738fa9e4a258c32d5aab04ad6bbe3a33809c64f32f"
+    },
+    {
+      "index": 422,
+      "prevHash": "1bac2326b4cf7cc8d4e0a0738fa9e4a258c32d5aab04ad6bbe3a33809c64f32f",
+      "merkleRoot": "a4a09272b757b099950733655cbca28583e6b5c1c2f30c5ca50619a6e3464e30",
+      "leafCount": 160,
+      "note": "update safeFilename.mamori,safeFilename.ts",
+      "hash": "9712a92a647b99ddb4324553c5bafd14992f08d7dc6a547d536b70efc4885d2b"
     }
   ],
   "tipManifest": {
@@ -3688,8 +3696,8 @@
     "src/shared/proxyEndpoint.mamori": "02bc50734eed699e61f048674f18d1f3979253c8258a0f9e50eda0cef07031dd",
     "src/shared/proxyEndpoint.ts": "955d1064bb3b2d82491434b41d50adbb6ae97be43ea53fcea540c65a14ad51ff",
     "src/shared/redact.ts": "a3f60f9dafc8915c79bf5bbc0b42c88a116a65e5d4efe1f53082afc1c81cdaec",
-    "src/shared/safeFilename.mamori": "6a1465de8698b80216a7578d499fcf322003557f51c0356663f09b9bbba5dc96",
-    "src/shared/safeFilename.ts": "c64ce600b93bf6f785b0d2f073a9f5db406397ed379a8a2fec32a2adaab49153",
+    "src/shared/safeFilename.mamori": "07a9c193ad2240fb52566458ed97e99def78d7f2338bb9f3c157ee7195be5dc3",
+    "src/shared/safeFilename.ts": "97a5f61d552e493d6d94cfe8c6c788025482e0fdf7178d944c95f2c77ff0d4bf",
     "src/shared/scanTarget.ts": "c6c887034c33e3f3d22a590e2dc86177fc21312ede7e3f4a0581ec6d5d1e6132",
     "src/shared/tokenInput.mamori": "ee94a04ca908afb7b2ce7ee2f8f6af83b4d44791b9b702ae7071503b7cd66a8c",
     "src/shared/tokenInput.ts": "62368485693664e9e30709b93e9be983f6ede3f5f2d8046aac66bf5ba5cff47c",
