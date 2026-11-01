@@ -287,4 +287,8 @@ describe('credentialed が宛先の絞りを切り替える', () => {
     expect(normalizeAiBaseUrl(lan, { credentialed: true }).ok).toBe(false);
     expect(normalizeAiBaseUrl(lan, { credentialed: false }).ok).toBe(true);
   });
+
+  it('★ 長すぎる理由の文は上限の数を入れて 1 字も違わない (Mamori の連結の前後のリテラル · MG-013)', () => {
+    expect(describeAiEndpointFailure('too-long')).toBe('ベース URL が長すぎます (2048 文字まで)。');
+  });
 });
