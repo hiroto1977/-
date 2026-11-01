@@ -47,6 +47,9 @@ export const FORBIDDEN_WORDS: Readonly<Record<string, string>> = {
  * `Function` という名前は M6 が断るが、メンバの連鎖はどの名前も経由しない。`prototype` / `__proto__` は
  * 組み込みの原型 (`String.prototype` ほか) に届く —— 書き換えると、他のモジュールの関門の判定まで変わる。
  */
+/** `.name` と書ける名前 (添字の字面の鍵を `member` に畳む判定)。 */
+const MEMBER_NAME = /^[A-Za-z_$][A-Za-z0-9_$]*$/;
+
 export const FORBIDDEN_MEMBERS: Readonly<Record<string, string>> = {
   constructor: '`.constructor` は Mamori に在りません —— 関数の constructor (`Function`) は文字列をコードとして走らせる口で、`eval` を禁じても `String.constructor(code)()` で同じことができてしまいます',
   prototype: '`.prototype` は Mamori に在りません —— 組み込みの原型を書き換えると、他のモジュールの関門の判定まで変わります',
@@ -261,16 +264,20 @@ export function parse(file: string, src: string): Module {
   /** for の深さ (continue が置ける) と、for か switch の深さ (break が置ける)。 */
   let loops = 0;
   let breakables = 0;
+  /** 文字列の字面の中身 (`\uXXXX` などを解いた値)。読めない綴りは位置つきで断る。 */
+  const decodeString = (text: string, pos: Tok): string => {
+    try {
+      return JSON.parse(text.startsWith("'") ? `"${text.slice(1, -1).replace(/"/g, '\\"')}"` : text) as string;
+    } catch {
+      // `\'` や `\x41` のように JSON に無い綴りは読めない (読めない綴りでコンパイラごと落ちず、位置つきで断る)。
+      return fail(pos, '文字列の中の `\\` の綴りが読めません —— `\\n` `\\t` `\\"` `\\\\` `\\uXXXX` だけを使います');
+    }
+  };
   const str = (): string => {
     const t = peek();
     if (t.kind !== 'string') fail(t, `文字列が要ります (在ったのは ${describe(t)})`);
     next();
-    try {
-      return JSON.parse(t.text.startsWith("'") ? `"${t.text.slice(1, -1).replace(/"/g, '\\"')}"` : t.text) as string;
-    } catch {
-      // `\'` や `\x41` のように JSON に無い綴りは読めない (読めない綴りでコンパイラごと落ちず、位置つきで断る)。
-      return fail(t, '文字列の中の `\\` の綴りが読めません —— `\\n` `\\t` `\\"` `\\\\` `\\uXXXX` だけを使います');
-    }
+    return decodeString(t.text, t);
   };
 
   const takeLeading = (kinds: readonly TokKind[]): string[] => {
@@ -534,6 +541,26 @@ export function parse(file: string, src: string): Module {
     return out;
   };
 
+  /**
+   * 添字 `object[key]` (0.8 · MG-007 · threat: T-224 の続き)。
+   *
+   * **鍵を実行時に組める添字は `.constructor` を断る表を迂回する道になる** (`x["constructor"]`)。だから:
+   * - 識別子として読める文字列の鍵 (`x["name"]`・`\u0063onstructor` の綴り違いも解いてから) は **`member` に畳む** —— `.name` と
+   *   同じ `FORBIDDEN_MEMBERS` ・組み込みのメンバの表・`?.` の検めをそのまま通るので、迂回は構造上ありえない。
+   * - 識別子にならない文字列 (`"content-type"`) と数リテラルは `index` のまま (禁じた名前にも組み込みのメンバにもなりえない)。
+   * - それ以外の鍵は、検査器が「静的に数と分かる式」だけを許し、生成物では数に寄せる (`x[+(k)]`)。
+   */
+  const indexOf = (object: Expr, key: Expr, keyTok: Tok, pos: Pos): Expr => {
+    if (key.kind === 'string') {
+      const name = decodeString(key.raw, keyTok);
+      if (MEMBER_NAME.test(name)) {
+        if (Object.hasOwn(FORBIDDEN_MEMBERS, name)) fail(keyTok, FORBIDDEN_MEMBERS[name]!);
+        return { kind: 'member', object, prop: name, optional: false, pos };
+      }
+    }
+    return { kind: 'index', object, key, pos };
+  };
+
   const postfix = (): Expr => {
     let e = primary();
     for (;;) {
@@ -541,6 +568,12 @@ export function parse(file: string, src: string): Module {
         const dot = next();
         if (dot.text === '?.' && (isP('(') || isP('['))) fail(peek(), '`?.(` と `?.[` は在りません —— `?.` の後ろは名前だけです (呼ぶ側を実行時に選べると、印を受ける関数を値として持ち出せる)');
         e = { kind: 'member', object: e, prop: memberName(), optional: dot.text === '?.', pos: dot.pos };
+      } else if (isP('[')) {
+        const open = next();
+        const keyTok = peek();
+        const key = expr();
+        expectP(']');
+        e = indexOf(e, key, keyTok, open.pos);
       } else if (isP('(')) {
         const pos = peek().pos;
         e = { kind: 'call', callee: e, args: args(), pos };

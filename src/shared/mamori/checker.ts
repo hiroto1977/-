@@ -184,6 +184,8 @@ interface Binding {
    * 変換後の `tsc` に任せていた —— Mamori の規則として断る (無い = 代入できない、で失敗は閉じる)。
    */
   readonly mutable?: boolean;
+  /** 数と分かっている名前か (型の宣言が `number`・初期値が数の式)。添字の鍵に使える (0.8)。型の宣言は実行時には守られないので、生成物は鍵を数に寄せる。 */
+  readonly numeric?: boolean;
 }
 
 /**
@@ -235,7 +237,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     } else if (it.kind === 'extern') {
       for (const n of it.names) declare(n, { vetted: null, authority: it.authority }, it.pos);
     } else if (it.kind === 'const') {
-      declare(it.name, { vetted: null, authority: 'local' }, it.pos);
+      declare(it.name, { vetted: null, authority: 'local', numeric: it.type?.text === 'number' || isNumericKey(it.init, []) }, it.pos);
     } else if (it.kind === 'fn') {
       declare(it.name, { vetted: null, authority: 'local' }, it.pos);
       localFns.set(it.name, table.fns.get(fnKey(file, it.name))!);
@@ -270,7 +272,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     const ctx: Ctx = { role: it.role, returnVetted: sig.returnVetted, destVetted: sig.paramVetted[0] ?? null };
     const scope = new Map<string, Binding>();
     for (const p of it.params) {
-      scope.set(p.name, { vetted: carriedMark(p.type, table.vetted), authority: 'local' });
+      scope.set(p.name, { vetted: carriedMark(p.type, table.vetted), authority: 'local', numeric: p.type?.text === 'number' });
       if (p.init !== null) checkExpr(p.init, [moduleScope], ctx);
     }
     checkBlock(it.body, [moduleScope, scope], ctx);
@@ -341,7 +343,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         if (declared !== null && s.init !== null && carried !== declared) {
           report('M4', s.pos, `${s.name} は印 ${declared} の型ですが、入れる値は印を持ちません`);
         }
-        own.set(s.name, { vetted: declared ?? carried, authority: 'local', mutable: s.mutable });
+        own.set(s.name, { vetted: declared ?? carried, authority: 'local', mutable: s.mutable, numeric: s.type?.text === 'number' || (s.type === null && s.init !== null && isNumericKey(s.init, scopes)) });
         return;
       }
       case 'assign': {
@@ -391,6 +393,32 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         }
         return;
       // 'comment' / 'jump' は何も検めない (注記の文は名前ではない) —— 枝を書かずに switch を抜ける。
+    }
+  }
+
+  /**
+   * 添字の鍵に使ってよい「静的に数と分かる式」か (0.8 · MG-007)。数リテラル・数と宣言した名前・`-` `*` `/` `%` (どちらの側も数に寄る)・
+   * `+` (両側が数のとき) ・`.length`・`Math.m(…)`・`Number(…)`・両方の枝が数の条件演算子。文字列の鍵で引く表は `Map` を使う。
+   * ここで通した式も、生成物では `+(…)` で数に寄せる (型の宣言は実行時には守られない)。
+   */
+  function isNumericKey(e: Expr, scopes: readonly Map<string, Binding>[]): boolean {
+    switch (e.kind) {
+      case 'number':
+        return true;
+      case 'ident':
+        return lookup(scopes, e.name)?.numeric === true;
+      case 'unary':
+        return e.op === '-';
+      case 'binary':
+        return e.op === '-' || e.op === '*' || e.op === '/' || e.op === '%' || (e.op === '+' && isNumericKey(e.left, scopes) && isNumericKey(e.right, scopes));
+      case 'member':
+        return e.prop === 'length';
+      case 'call':
+        return (e.callee.kind === 'member' ? identName(e.callee.object) === 'Math' && lookup(scopes, 'Math') === undefined : identName(e.callee) === 'Number' && lookup(scopes, 'Number') === undefined);
+      case 'cond':
+        return isNumericKey(e.then, scopes) && isNumericKey(e.otherwise, scopes);
+      default:
+        return false;
     }
   }
 
@@ -478,6 +506,13 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         if (isConstructibleBuiltin(e.object, scopes)) return;
         checkExpr(e.object, scopes, ctx);
         return;
+      case 'index':
+        checkExpr(e.object, scopes, ctx);
+        checkExpr(e.key, scopes, ctx);
+        if (e.key.kind !== 'string' && !isNumericKey(e.key, scopes)) {
+          report('M6', e.key.pos, '添字の鍵は、数リテラル・数と分かる式・識別子にならない文字列だけです —— 鍵を実行時に文字列で組める添字は `x["constructor"]` で T-224 の表を迂回する道になります (文字列で引く表は `Map` の `get` を使う)');
+        }
+        return;
       case 'field':
         checkExpr(e.object, scopes, ctx);
         return;
@@ -506,7 +541,10 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         // arrow の本体は式なので、その中で引数へ代入する文は書けない —— 'local' の綴りは代入の判定にしか効かず、
         // ここでは届かない (等価)。印 (vetted) のほうは「arrow の引数の印の型は、arrow の中で印を運ぶ」が留める。
         // Stryker disable next-line StringLiteral: 上の注記のとおり等価 (arrow の引数へは代入できない)
-        for (const p of e.params as readonly Param[]) inner.set(p.name, { vetted: carriedMark(p.type, table.vetted), authority: 'local' });
+        for (const p of e.params as readonly Param[]) inner.set(p.name, { vetted: carriedMark(p.type, table.vetted), authority: 'local', numeric: p.type?.text === 'number' });
+        // 既定値 (`(q = fetch("x")) => q`) も式 —— 0.7 まで検めていなかったので、plain 関数の中で宣言していない名前・
+        // 危ない口・印の無い値での印つきの口の呼び出しを、arrow の引数の既定値に隠せた (T-244)。
+        for (const p of e.params as readonly Param[]) if (p.init !== null) checkExpr(p.init, [...scopes, inner], ctx);
         checkExpr(e.body, [...scopes, inner], ctx);
         return;
       }

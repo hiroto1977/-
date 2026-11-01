@@ -64,6 +64,10 @@ export function expr(e: Expr): string {
       return `[${e.items.map(expr).join(', ')}]`;
     case 'member':
       return `${wrap(e.object, 9)}${e.optional ? '?.' : '.'}${e.prop}`;
+    case 'index':
+      // 数リテラルと識別子にならない文字列はそのまま。それ以外の鍵は数に寄せる (`+`) —— 型の宣言が嘘でも、文字列の鍵
+      // (`"constructor"`) は NaN になって表に届かない (検査器が静的に数と分かる式だけを通した上の、実行時の二重の守り)。
+      return `${wrap(e.object, 9)}[${e.key.kind === 'number' || e.key.kind === 'string' ? expr(e.key) : `+(${expr(e.key)})`}]`;
     case 'call':
       return `${wrap(e.callee, 9)}(${e.args.map(expr).join(', ')})`;
     case 'new':

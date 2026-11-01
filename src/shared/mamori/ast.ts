@@ -27,6 +27,11 @@ export type Expr =
   | { readonly kind: 'literal'; readonly value: 'true' | 'false' | 'null' | 'undefined'; readonly pos: Pos }
   | { readonly kind: 'array'; readonly items: readonly Expr[]; readonly pos: Pos }
   | { readonly kind: 'member'; readonly object: Expr; readonly prop: string; readonly optional: boolean; readonly pos: Pos }
+  /**
+   * 添字 `x[k]` (0.8)。鍵は数リテラル・識別子にならない文字列リテラル・静的に数と分かる式だけ。
+   * 識別子として読める文字列の鍵 (`x["name"]`) は `member` に畳む —— `.name` と同じ検めを必ず通る。
+   */
+  | { readonly kind: 'index'; readonly object: Expr; readonly key: Expr; readonly pos: Pos }
   | { readonly kind: 'call'; readonly callee: Expr; readonly args: readonly Expr[]; readonly pos: Pos }
   | { readonly kind: 'new'; readonly callee: Expr; readonly args: readonly Expr[]; readonly pos: Pos }
   | { readonly kind: 'unary'; readonly op: '!' | '-' | 'typeof' | 'await'; readonly operand: Expr; readonly pos: Pos }

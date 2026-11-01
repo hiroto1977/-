@@ -3935,6 +3935,22 @@
         {
           "file": "src/shared/mamori/__tests__/mamoriV02.test.ts",
           "test": "★ 組み込みの Object は許したメンバだけ (setPrototypeOf / getPrototypeOf / defineProperty / assign を断る)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV08.test.ts",
+          "test": "★ 識別子として読める文字列の鍵は `.name` に畳まれる (threat: T-224)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV08.test.ts",
+          "test": "★ 禁じた名前は、字面・単引用符・括弧・unicode escape のどの綴りでも `.name` と同じ文面で断る (threat: T-224)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV08.test.ts",
+          "test": "★ 静的に数と分かる鍵だけが通り、生成物では数に寄せる `+(…)` が付く (threat: T-224)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV08.test.ts",
+          "test": "★ 文字列になりうる鍵は断る: 変数・連結・typeof・呼び出し・文字列で宣言した let (threat: T-224)"
         }
       ]
     },
@@ -4374,6 +4390,22 @@
           "test": "★ 別名・条件演算子・配列・引数・typeof 越しの持ち出しも断る (threat: T-243)"
         }
       ]
+    },
+    {
+      "id": "T-244",
+      "found": "2026-11-01",
+      "foundBy": "言語を育てる輪の 7 周目 (MG-007) で添字 `x[k]` を足したあと、攻撃の電池の揺さぶり (文字レベルの変異) が `[1].map((q=module) => q)` を受け入れるのを見つけた。全ての式の位置 (const / let / 代入 / return / throw / if / for / switch / case / オブジェクト / 配列 / 呼び出し / new / 条件 / 2 項 / 単項 / await / field / メンバ / 添字 / arrow の本体 / 式文 / try / catch / 呼ぶ側 / 引数の既定値 / モジュールの const) に `fetch(\"x\")` を置く総当たり 37 位置で、検めを受けなかったのは arrow の引数の既定値だけだった。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "守りの層を書く言語 Mamori 0.2〜0.7 は arrow の引数の既定値 (`(q = fetch(\"x\")) => q`) を式として検めなかったので、plain 関数の中で宣言していない名前 (M6)・危ない口 (`shell.openExternal(raw)` · M2)・印の無い値での印つきの口の呼び出し (M4)・印の鋳造 (M1) を既定値に隠せた",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: arrow の case で、本体だけでなく各引数の既定値も checkExpr に掛ける (引数の作る名前の枠の中で · 前の引数を参照できる)。回帰検査は 6 形 (M6 ×2 / M2 / M4 / M1 / M0)。全ての式の位置への fetch の総当たりを電池の判定器でも持つ (弾の文脈に既定値を足した場合も受け入れた物を独立の構文木で判定する)。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV08.test.ts",
+        "test": "★ 宣言していない名前・危ない口・印の無い値での印つきの口・mint は、既定値に隠せない (threat: T-244)"
+      },
+      "alsoRegressions": []
     }
   ],
   "huntBacklog": [
