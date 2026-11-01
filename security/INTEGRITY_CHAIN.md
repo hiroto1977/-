@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 423
+- ブロック数: 425
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `9712a92a647b99ddb4324553c5bafd14992f08d7dc6a547d536b70efc4885d2b`
-- 保護対象: 160 ファイル
+- 末尾(tip)ハッシュ: `8a2b58fc58989f0fe00c99da9c5a5a5d9e60550d1fd7813666f9a283b312364e`
+- 保護対象: 161 ファイル
 
 ## ブロック
 
@@ -436,6 +436,8 @@
 | 420 | `9b177c4114307f8d` | `eb88e427cf7341a9` | `e22495141477e0be` | update safeFilename.mamori,safeFilename.ts |
 | 421 | `2796403ef83019f7` | `e22495141477e0be` | `1bac2326b4cf7cc8` | update safeFilename.mamori,safeFilename.ts |
 | 422 | `a4a09272b757b099` | `1bac2326b4cf7cc8` | `9712a92a647b99dd` | update safeFilename.mamori,safeFilename.ts |
+| 423 | `d6141b24f889a119` | `9712a92a647b99dd` | `c18fef7aaf8177d9` | update integrity-chain.cjs,mamori-capabilities.json,promptInjection.mamori,promptInjection.ts |
+| 424 | `89d688ede3e901be` | `c18fef7aaf8177d9` | `8a2b58fc58989f0f` | update promptInjection.mamori,promptInjection.ts |
 
 ## 保護対象ファイル
 
@@ -581,6 +583,7 @@
 - `src/shared/ollama.ts`
 - `src/shared/outboundContentGate.ts`
 - `src/shared/privateTarget.ts`
+- `src/shared/promptInjection.mamori`
 - `src/shared/promptInjection.ts`
 - `src/shared/proxyEndpoint.mamori`
 - `src/shared/proxyEndpoint.ts`

@@ -144,6 +144,7 @@
     "src/shared/ollama.ts",
     "src/shared/outboundContentGate.ts",
     "src/shared/privateTarget.ts",
+    "src/shared/promptInjection.mamori",
     "src/shared/promptInjection.ts",
     "src/shared/proxyEndpoint.mamori",
     "src/shared/proxyEndpoint.ts",
@@ -3547,6 +3548,22 @@
       "leafCount": 160,
       "note": "update safeFilename.mamori,safeFilename.ts",
       "hash": "9712a92a647b99ddb4324553c5bafd14992f08d7dc6a547d536b70efc4885d2b"
+    },
+    {
+      "index": 423,
+      "prevHash": "9712a92a647b99ddb4324553c5bafd14992f08d7dc6a547d536b70efc4885d2b",
+      "merkleRoot": "d6141b24f889a1199a82ce6169b11c340535642b078be750e957e1f5d4dc7926",
+      "leafCount": 161,
+      "note": "update integrity-chain.cjs,mamori-capabilities.json,promptInjection.mamori,promptInjection.ts",
+      "hash": "c18fef7aaf8177d92f4c55c11604fec3dfffacb2776f9c42a95283c9bf9a3ed8"
+    },
+    {
+      "index": 424,
+      "prevHash": "c18fef7aaf8177d92f4c55c11604fec3dfffacb2776f9c42a95283c9bf9a3ed8",
+      "merkleRoot": "89d688ede3e901be39834cd4aba4f6300722738c0c74060f5c9b2196cb004416",
+      "leafCount": 161,
+      "note": "update promptInjection.mamori,promptInjection.ts",
+      "hash": "8a2b58fc58989f0fe00c99da9c5a5a5d9e60550d1fd7813666f9a283b312364e"
     }
   ],
   "tipManifest": {
@@ -3582,7 +3599,7 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "d385ddfc52ec74abf184207bfbb1ac655e730db2b7c6d7e758e35e67e79a5737",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "2f7764a351b3696e9f5d8568e25db30314f5c174008139791b69a0be4f70533a",
+    "scripts/integrity-chain.cjs": "3dad1380f6ae9dc3467b8f38374116d49b7f7c6ced34cb77d030fdcc9ccfa37a",
     "scripts/knowledge-autopilot.cjs": "ee8f7ae4a4ad29dda6c02f83c113c45fa1648522f807e711aa86b7746f372968",
     "scripts/lib/artifact-freshness.cjs": "add621dfe55e0eab31354f0d6979c9c67b513ed8b8348b9137ca7fa53dd569c1",
     "scripts/lib/json-for-script.cjs": "cb79bf1fb2f3c10c6854ec16d9c12bb0695dee5561751333db4531545702fd70",
@@ -3610,7 +3627,7 @@
     "scripts/verify-e2e-playwright-pin.cjs": "417854f96cbaa4af4dd30a378b722b58093d56e78aa7eaba9bd17df412f57d45",
     "scripts/verify-packaged-fuses.cjs": "4162ab0e5d390c5cccf4cd8ac533027bd1d8a5cbceb0a069059d4f3800643d9f",
     "scripts/verify-release-artifacts.cjs": "1bd668bc052b476a9b3f976dc80ddf8faa4f080aed5617d354a8c7647ee9f557",
-    "security/mamori-capabilities.json": "efd39b15ed55b2a5bc42cb0c49ca9d7fc0b39e6f7a1d423c24ed2f1b2e024cad",
+    "security/mamori-capabilities.json": "fb19de7a5398f278d4bad17da6ff3e879a0376094499f1b2016301d5377bc24b",
     "src/main/atomicWrite.ts": "63b6ff1fb7d8990b76409c62556d69f99a14475f73662e89507e8899a32a9c3f",
     "src/main/clients/assistant.ts": "3db27c2cdd42569a7bc92c7d2841591b1464550a1905ab66fa4a100803b69c4f",
     "src/main/clients/exportPaths.ts": "c0821f65eed08078681fbcc3eec662a8e58d47d053300f6ba0b66665a46fbbca",
@@ -3692,7 +3709,8 @@
     "src/shared/ollama.ts": "672ff00261aa63ae7e0b7567dbfaa54ad88da67a5fa55788c79b16c1bd6193c8",
     "src/shared/outboundContentGate.ts": "56f7383c0e56285d5cc6e7793b6574bf4327d6edb9352fb3a9cd3e16ddc33326",
     "src/shared/privateTarget.ts": "8610e3372367a7960faddf306c9e4210e882a1719bbf4426840191c314ed8035",
-    "src/shared/promptInjection.ts": "e22df7ed00929fcf1770a76353a9b1adb44cdc50c5920ba5472144c065f24472",
+    "src/shared/promptInjection.mamori": "a94dfad471f6ffe2431bab6e796c2d59622a589c7175866fa45d28c0db8cb729",
+    "src/shared/promptInjection.ts": "a6fb22ddb4428b0d02a1e6c253cc0c30686d484e384a34ac19016c2641a96c5b",
     "src/shared/proxyEndpoint.mamori": "02bc50734eed699e61f048674f18d1f3979253c8258a0f9e50eda0cef07031dd",
     "src/shared/proxyEndpoint.ts": "955d1064bb3b2d82491434b41d50adbb6ae97be43ea53fcea540c65a14ad51ff",
     "src/shared/redact.ts": "a3f60f9dafc8915c79bf5bbc0b42c88a116a65e5d4efe1f53082afc1c81cdaec",
