@@ -340,6 +340,8 @@ const KNOWN_UNMEASURED = {
   // 判断を持たず `setTimeout` / `document` / `window` をそのまま渡す薄い壁で、タイマーの取っ手の型の戻しだけが目的 (Mamori に `as` が無い)。
   // 使う側の判断 (autoLock.ts) は mutate に載っていて 100%、この口は autoLock.test.ts が実物の jsdom で通している。
   'src/renderer/security/autoLockHost.ts': '判断を持たない host の薄い壁 (タイマー・DOM の口を渡すだけ)。使う側の autoLock.ts は mutate で 100%。',
+  // 2026-11-01 (MG-017)。pkceSession.mamori が読む sessionStorage の 3 つの口 (置く・読む・消す)。鍵の組み立てと失敗の扱いは pkceSession.ts が持ち mutate で 100%。
+  'src/renderer/oauth/pkceSessionHost.ts': '判断を持たない host の薄い壁 (sessionStorage の置く・読む・消すを渡すだけ)。使う側の pkceSession.ts は mutate で 100%。',
   // 2026-10-30 (T-220 · パス 559)。印の型だけのファイル —— 実行時に何も残らない (`declare const` と `type` だけ) ので
   // 変異体が 1 つも作れない。守りは**コンパイル時**に在り、それは osSinks.test.ts / vettedSinks.test.ts / vettedTypes.test.ts の
   // `@ts-expect-error` の陰性対照を `npm run typecheck` が検査して留める (印を素の string に戻すと「不要な @ts-expect-error」で落ちる)。

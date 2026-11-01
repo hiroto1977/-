@@ -685,6 +685,8 @@ const PROTECTED = [
   'src/shared/advisorQuestionLimits.ts',    // 有料 API へ送る質問の判定 (天井・CR/LF・母集団・断りの文)
   'src/renderer/oauth/pkce.ts',             // ブラウザ版 PKCE
   'src/renderer/oauth/pkceSession.ts',      // PKCE の一時秘密の置き場と消し方
+  'src/renderer/oauth/pkceSession.mamori',  // その Mamori の元 (2026-11-01 · MG-017)
+  'src/renderer/oauth/pkceSessionHost.ts',  // sessionStorage の口 (薄い壁)
   // 2026-09-06 に足した。**保護の閉包が教えてくれた。** `pkceSession.ts` が
   // 保存の失敗の種別を文面へ写すため `localWrite.ts` を読むようにしたところ、
   // `chain:verify` が「保護対象が保護されていない物を読んでいる」と鳴らした。
