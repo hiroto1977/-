@@ -4406,6 +4406,22 @@
         "test": "★ 宣言していない名前・危ない口・印の無い値での印つきの口・mint は、既定値に隠せない (threat: T-244)"
       },
       "alsoRegressions": []
+    },
+    {
+      "id": "T-245",
+      "found": "2026-11-01",
+      "foundBy": "言語を育てる輪の 8 周目 (MG-008) で、ブロックの本体を持つ arrow を足す前に破った。本体が文の並びになると外側の関数の役 (gate / sink) を引き継いだまま文が書けることに気付き、0.2 から在る式の arrow も同じだったと確かめた —— sink 関数が `() => shell.openExternal(u)` を返せ (行き先の印を持つ値だけが届くが、閉じ込めた口を値として外へ持ち出せる)、gate の中の arrow で `mint` も通った。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "守りの層を書く言語 Mamori 0.2〜0.8 は arrow の本体を外側の関数の役 (gate / sink) のまま検めたので、sink 関数が危ない口を包んだ閉包を値として返せ (M2 の「sink 関数の中だけ」が閉包の呼び出し時に外れる)、gate の中の arrow で印の鋳造 (M1) も通った",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: arrow と arrow-block の本体・引数の既定値を、外側の役に関わらず plain の役 ({ role: 'plain', returnVetted: null, destVetted: null }) で検める。0.9 でブロックの本体を持つ arrow を足したときに、同じ検めを式の arrow にも当てた。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV09.test.ts",
+        "test": "★ sink 関数が危ない口を包んだ閉包を返せない・gate の中の arrow で mint できない (threat: T-245)"
+      },
+      "alsoRegressions": []
     }
   ],
   "huntBacklog": [

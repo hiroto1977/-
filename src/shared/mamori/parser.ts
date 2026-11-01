@@ -684,6 +684,17 @@ export function parse(file: string, src: string): Module {
     const pos = peek().pos;
     const ps: Param[] = peek().kind === 'ident' ? [{ name: ident(), type: null, init: null, pos }] : params();
     expectP('=>');
+    if (isP('{')) {
+      // 本体のブロックは arrow の外の for / switch の内側ではない: `break` / `continue` は arrow を越えない。
+      const savedLoops = loops;
+      const savedBreakables = breakables;
+      loops = 0;
+      breakables = 0;
+      const body = block();
+      loops = savedLoops;
+      breakables = savedBreakables;
+      return { kind: 'arrow-block', params: ps, body, pos };
+    }
     return { kind: 'arrow', params: ps, body: expr(), pos };
   };
 

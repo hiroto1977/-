@@ -19,6 +19,7 @@ const PREC: Readonly<Record<string, number>> = {
 function prec(e: Expr): number {
   switch (e.kind) {
     case 'arrow':
+    case 'arrow-block':
       return 0;
     // `c ? a : b` は ?? より弱く arrow より強い (TypeScript の条件演算子)。
     case 'cond':
@@ -83,6 +84,9 @@ export function expr(e: Expr): string {
     case 'arrow':
       // 本体がオブジェクトの字面なら括る (括らないと TypeScript は `{` を関数の本体と読む)。
       return `(${e.params.map(param).join(', ')}) => ${e.body.kind === 'object' ? `(${expr(e.body)})` : wrap(e.body, 1)}`;
+    case 'arrow-block':
+      // 式の中なので深さは分からない: 本体は 1 段下げ、閉じ括弧は行頭 (体裁だけの差で、tsc は気にしない)。
+      return `(${e.params.map(param).join(', ')}) => {\n${block(e.body, 1).join('\n')}\n}`;
     case 'mint':
       return `${wrap(e.value, 6)} as ${e.vetted}`;
     case 'object':

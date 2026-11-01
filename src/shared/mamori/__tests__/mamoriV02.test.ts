@@ -141,7 +141,7 @@ const SRC = [
   "export fn obj(a: number, value: string) -> unknown {",
   "  const e = {};",
   "  const o = { a, 'x-y': value, n: a > 1 ? 'big' : 'small', nested: { deep: [1, 2] } };",
-  "  const f = (x: number) => { x };",
+  "  const f = (x: number) => ({ x });",
   "  const g = (x: number) => x > 0 ? x : -x;",
   "  const h = (a ?? 1) ? 'n' : 'z';",
   "  const i = (a > 0 ? 1 : 2) + 3;",

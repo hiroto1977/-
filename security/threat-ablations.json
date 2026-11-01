@@ -2265,8 +2265,8 @@
       "why": "arrow の引数の既定値を検めない —— 既定値に宣言していない名前・危ない口・印の無い値の呼び出しを隠す口を開け直す",
       "edits": [
         {
-          "find": "if (p.init !== null) checkExpr(p.init, [...scopes, inner], ctx);",
-          "replace": "if (false) checkExpr(p.init!, [...scopes, inner], ctx);"
+          "find": "if (p.init !== null) checkExpr(p.init, [...scopes, inner], plain);",
+          "replace": "if (false) checkExpr(p.init!, [...scopes, inner], plain);"
         }
       ]
     },
@@ -2303,6 +2303,18 @@
         {
           "find": ": `+(${expr(e.key)})`",
           "replace": ": `${expr(e.key)}`"
+        }
+      ]
+    },
+    {
+      "id": "A-565",
+      "threat": "T-245",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "arrow の本体を plain の役ではなく外側の役のまま検める —— sink 関数が危ない口の閉包を返せる・gate の中の arrow で mint できる口を開け直す",
+      "edits": [
+        {
+          "find": "const plain: Ctx = { role: 'plain', returnVetted: null, destVetted: null };",
+          "replace": "const plain: Ctx = ctx;"
         }
       ]
     }

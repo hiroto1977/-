@@ -531,16 +531,20 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         if (!isConstructibleBuiltin(e.callee, scopes)) checkExpr(e.callee, scopes, ctx);
         e.args.forEach((x) => checkExpr(x, scopes, ctx));
         return;
-      case 'arrow': {
+      case 'arrow':
+      case 'arrow-block': {
         const inner = new Map<string, Binding>();
-        // arrow の本体は式なので、その中で引数へ代入する文は書けない —— 'local' の綴りは代入の判定にしか効かず、
-        // ここでは届かない (等価)。印 (vetted) のほうは「arrow の引数の印の型は、arrow の中で印を運ぶ」が留める。
-        // Stryker disable next-line StringLiteral: 上の注記のとおり等価 (arrow の引数へは代入できない)
+        // arrow の本体は、外側が gate / sink 関数でも **plain の役**で検める (0.9 · T-245)。0.8 まで本体は外側の役を引き継いでおり、
+        // sink 関数が危ない口を包んだ閉包 (`() => shell.openExternal(u)`) を値として返せ、gate の中の arrow で mint も通った。
+        const plain: Ctx = { role: 'plain', returnVetted: null, destVetted: null };
+        // 引数への代入は arrow の本体 (式) では書けない。ブロックの本体では書けるが、'local' / mutable でない束縛へは代入を断る。
+        // Stryker disable next-line StringLiteral: 引数の権限は代入の判定にしか効かず、引数は let ではないので mutable の門が先に断る (等価)
         for (const p of e.params as readonly Param[]) inner.set(p.name, { vetted: carriedMark(p.type, table.vetted), authority: 'local', numeric: p.type?.text === 'number' });
         // 既定値 (`(q = fetch("x")) => q`) も式 —— 0.7 まで検めていなかったので、plain 関数の中で宣言していない名前・
         // 危ない口・印の無い値での印つきの口の呼び出しを、arrow の引数の既定値に隠せた (T-244)。
-        for (const p of e.params as readonly Param[]) if (p.init !== null) checkExpr(p.init, [...scopes, inner], ctx);
-        checkExpr(e.body, [...scopes, inner], ctx);
+        for (const p of e.params as readonly Param[]) if (p.init !== null) checkExpr(p.init, [...scopes, inner], plain);
+        if (e.kind === 'arrow') checkExpr(e.body, [...scopes, inner], plain);
+        else checkBlock(e.body, [...scopes, inner], plain);
         return;
       }
       case 'mint': {
