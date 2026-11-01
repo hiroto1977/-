@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 431
+- ブロック数: 432
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `329a63235925863c0236f8d879682334c8ea1aa02be0067a55c04118a18689bb`
+- 末尾(tip)ハッシュ: `20ce3eca436e8315a2f5fa064783e1285c8441789fcc58b7306db7c303054eb7`
 - 保護対象: 167 ファイル
 
 ## ブロック
@@ -444,6 +444,7 @@
 | 428 | `43aa6b3b98c20377` | `d807451d38df2200` | `e8f633845079b6b1` | update checker.ts |
 | 429 | `d4633b3109f028df` | `e8f633845079b6b1` | `7246acca4fc41ad2` | update ast.ts,checker.ts,emit.ts,parser.ts |
 | 430 | `a18cfba4ed1b8914` | `7246acca4fc41ad2` | `329a63235925863c` | update integrity-chain.cjs,mamori-capabilities.json,pkceSession.mamori,pkceSession.ts,pkceSessionHost.ts |
+| 431 | `df51e5f9bcdb5045` | `329a63235925863c` | `20ce3eca436e8315` | update pkceSession.mamori,pkceSession.ts,pkceSessionHost.ts |
 
 ## 保護対象ファイル
 

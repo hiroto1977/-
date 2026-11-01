@@ -1198,14 +1198,15 @@
       "controls": 3,
       "mutation": {
         "files": [
-          "src/renderer/oauth/pkceSession.ts"
+          "src/renderer/oauth/pkceSession.ts",
+          "src/renderer/oauth/pkceSessionHost.ts"
         ],
         "score": 100
       },
       "report": {
         "pr": 855,
         "reason": null,
-        "summary": "PKCE の一時秘密の置き場 (pkceSession.ts · 保存・読み・消す) を Mamori で書き直した (port)。`sessionStorage` は pure で宣言できない (T-249) ので 3 つの小さな host 関数 (pkceSessionHost.ts) へ閉じ込め、`s[k]` の鍵引きは 4 欄の字面に、`as unknown as` は欄を読み切ってから組む形に、template は連結に替えた。MG-016 の `catch (err)` の束縛を初めて実物で使った。元の TypeScript と 270 通りの失敗の組み合わせ (保存・読み・消すのどれが何番目に断られるか × 残っていた鍵) で結果・断りの文・残る鍵が同じ・既存の検査 36 件は編集なしで緑。穴は 0 件 (手探り 5 形が全部 refused)。変異検査は初回 97.87% (断りの文の後半の案内を誰も全文では主張していなかった) → 全文の検査を足して 100%。"
+        "summary": "PKCE の一時秘密の置き場 (pkceSession.ts · 保存・読み・消す) を Mamori で書き直した (port)。`sessionStorage` は pure で宣言できない (T-249) ので 3 つの小さな host 関数 (pkceSessionHost.ts) へ閉じ込め、置く=投げる・読む=触れなければ null・消す=投げず true/false という失敗の受け方も host に持たせた (読む・消すを素で触る場所は無いという既存の census を保つため)。`s[k]` の鍵引きは 4 欄の字面に、`as unknown as` は欄を読み切ってから組む形に、template は連結に替えた。MG-016 の `catch (err)` の束縛を初めて実物で使った。元の TypeScript と 270 通りの失敗の組み合わせ (保存・読み・消すのどれが何番目に断られるか × 残っていた鍵) で結果・断りの文・残る鍵が同じ・既存の検査は編集なしで緑 (台帳 3 本と census の対象ファイルは host へ付け替え)。穴は 0 件 (手探り 5 形が全部 refused)。変異検査は初回 97.87% (断りの文の後半を誰も全文では主張していない) → 全文の検査で解消、host へ分けた後は readKey の arrow がモジュール読み込み時に評価される静的変異体になり (関数宣言へ)、host の catch の戻り値が呼ぶ側の `!` で区別できない等価に見えた (戻り値を直接主張する検査 2 件) —— 両ファイル 100%。"
       }
     }
   ]
