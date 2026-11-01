@@ -89,6 +89,7 @@ Mamori では、その 2 つは**書けない**:
 | 書ける形 | `catch (e) { … }` の名前 1 つだけ。型注釈・2 つ以上・分割代入は M0 で断る |
 | 使い方 | `field e.message` で読む。印を受ける口へ渡す・印の型として返す・代入・`.constructor` などは既存の規則 (M1〜M6) が断る |
 | 束縛の無い `catch { }` | 今までどおり |
+| 最初の実物 | `pkceSession.ts` (MG-017) の置く段で `catch (err)` を使い、理由の文に `describeStorageError(err)` を入れる。同じ周で `sessionStorage` の口を `pkceSessionHost.ts` の 3 つの host 関数へ閉じ込めた (記憶の口は `extern pure global` にできない · T-249) |
 
 ## 0.11 —— 戻り値の型に印を名乗れるのは gate 関数だけ (MG-011 · 2026-11-01 · T-248)
 
