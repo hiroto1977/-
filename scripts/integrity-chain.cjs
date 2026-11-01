@@ -50,6 +50,8 @@ const PROTECTED = [
   // 除外の基準は「型だけに見えるか」ではなく「実行時に残るか」なので保護対象。
   'src/renderer/security/webCrypto.ts',
   'src/renderer/security/autoLock.ts',
+  'src/renderer/security/autoLock.mamori',
+  'src/renderer/security/autoLockHost.ts',
   'src/renderer/security/mnemonic.ts',
   'src/renderer/security/webauthn.ts',
   'src/renderer/security/LockScreen.tsx',

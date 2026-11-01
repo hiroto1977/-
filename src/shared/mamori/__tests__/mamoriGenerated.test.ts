@@ -33,6 +33,7 @@ const EXPECTED = [
   'src/shared/promptInjection.mamori',
   'src/shared/aiEndpoint.mamori',
   'src/shared/vaultToken.mamori',
+  'src/renderer/security/autoLock.mamori',
   'src/shared/vetted.mamori',
 ];
 
