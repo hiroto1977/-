@@ -402,24 +402,19 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
    * ここで通した式も、生成物では `+(…)` で数に寄せる (型の宣言は実行時には守られない)。
    */
   function isNumericKey(e: Expr, scopes: readonly Map<string, Binding>[]): boolean {
-    switch (e.kind) {
-      case 'number':
-        return true;
-      case 'ident':
-        return lookup(scopes, e.name)?.numeric === true;
-      case 'unary':
-        return e.op === '-';
-      case 'binary':
-        return e.op === '-' || e.op === '*' || e.op === '/' || e.op === '%' || (e.op === '+' && isNumericKey(e.left, scopes) && isNumericKey(e.right, scopes));
-      case 'member':
-        return e.prop === 'length';
-      case 'call':
-        return (e.callee.kind === 'member' ? identName(e.callee.object) === 'Math' && lookup(scopes, 'Math') === undefined : identName(e.callee) === 'Number' && lookup(scopes, 'Number') === undefined);
-      case 'cond':
-        return isNumericKey(e.then, scopes) && isNumericKey(e.otherwise, scopes);
-      default:
-        return false;
+    // switch を使わず if を並べる: `case` のラベルを消す変異体は隣の本体へ落ちて同じ答えになる (等価) ので測れない。
+    if (e.kind === 'number') return true;
+    if (e.kind === 'ident') return lookup(scopes, e.name)?.numeric === true;
+    if (e.kind === 'unary') return e.op === '-';
+    if (e.kind === 'binary') {
+      return e.op === '-' || e.op === '*' || e.op === '/' || e.op === '%' || (e.op === '+' && isNumericKey(e.left, scopes) && isNumericKey(e.right, scopes));
     }
+    if (e.kind === 'member') return e.prop === 'length';
+    if (e.kind === 'call') {
+      return e.callee.kind === 'member' ? identName(e.callee.object) === 'Math' && lookup(scopes, 'Math') === undefined : identName(e.callee) === 'Number' && lookup(scopes, 'Number') === undefined;
+    }
+    if (e.kind === 'cond') return isNumericKey(e.then, scopes) && isNumericKey(e.otherwise, scopes);
+    return false;
   }
 
   /** この名前は、このモジュールの名前に隠されていない組み込みで、構築する形 (`new X(…)` / `X(…)`) で使ってよい物か。 */
