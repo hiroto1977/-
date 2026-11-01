@@ -45,7 +45,9 @@ export const INJECTION_GROUP_LABELS: Readonly<Record<InjectionGroup, string>> = 
   'delimiter-forgery': LABEL_DELIMITER_FORGERY,
 };
 
-/// 群の名前から断りに出す語を引く (表の添字ではなく switch —— 文字列の鍵で表を引く道を言語に置かない)。
+/// 群の名前から断りに出す語を引く。表 `INJECTION_GROUP_LABELS` と同じ 4 つの定数から返す (語は 1 か所) —— 群を足すと型 `InjectionGroup` を
+/// 使う表と、全経路で値を返す必要のあるこの switch の両方が `tsc` で落ちるので、片方だけ古びない。
+/// (表の添字ではなく switch —— 文字列の鍵で表を引く道を言語に置かない)。
 fn labelOf(group: InjectionGroup) -> string {
   switch (group) {
     case 'role-hijack':
@@ -59,7 +61,8 @@ fn labelOf(group: InjectionGroup) -> string {
   }
 }
 
-/// 規則。群は 指示の上書き (英・日)・役割の乗っ取り・隠された指示・区切りの偽装 の順に並べる。
+/// 規則 (20 本)。これは 1 枚目の層で完全ではない —— 言い換えで逃げる指示は当たらない。独立した 2 枚目が出力側の関門
+/// (`outboundContentGate.ts`) と『AI の応答は手足を動かさない』検査 (`aiReplyInert.test.ts`)。群は 指示の上書き (英・日)・役割の乗っ取り・隠された指示・区切りの偽装 の順に並べる。
 /// 「今後は必ず…」は業務のメールに普通に出るので当てない —— 当てるのは AI を名指しして役割を書き換える形だけ。
 /// 「System: 保守のお知らせ」のような普通の行は当てない —— 当てるのは『system prompt:』『developer message:』の形と、
 /// 行頭の system: の直後に役割の書き換えが続く形だけ。

@@ -3556,6 +3556,14 @@
       "leafCount": 161,
       "note": "update integrity-chain.cjs,mamori-capabilities.json,promptInjection.mamori,promptInjection.ts",
       "hash": "c18fef7aaf8177d92f4c55c11604fec3dfffacb2776f9c42a95283c9bf9a3ed8"
+    },
+    {
+      "index": 424,
+      "prevHash": "c18fef7aaf8177d92f4c55c11604fec3dfffacb2776f9c42a95283c9bf9a3ed8",
+      "merkleRoot": "89d688ede3e901be39834cd4aba4f6300722738c0c74060f5c9b2196cb004416",
+      "leafCount": 161,
+      "note": "update promptInjection.mamori,promptInjection.ts",
+      "hash": "8a2b58fc58989f0fe00c99da9c5a5a5d9e60550d1fd7813666f9a283b312364e"
     }
   ],
   "tipManifest": {
@@ -3701,8 +3709,8 @@
     "src/shared/ollama.ts": "672ff00261aa63ae7e0b7567dbfaa54ad88da67a5fa55788c79b16c1bd6193c8",
     "src/shared/outboundContentGate.ts": "56f7383c0e56285d5cc6e7793b6574bf4327d6edb9352fb3a9cd3e16ddc33326",
     "src/shared/privateTarget.ts": "8610e3372367a7960faddf306c9e4210e882a1719bbf4426840191c314ed8035",
-    "src/shared/promptInjection.mamori": "68d7bd51fea9e5e64a7003a1ee70a9e76cfd8906ed277fc3a08db442771fc439",
-    "src/shared/promptInjection.ts": "1cc2957e8a43693020da795e9e2359f1db62305343c23842e045f4aa17b971bb",
+    "src/shared/promptInjection.mamori": "a94dfad471f6ffe2431bab6e796c2d59622a589c7175866fa45d28c0db8cb729",
+    "src/shared/promptInjection.ts": "a6fb22ddb4428b0d02a1e6c253cc0c30686d484e384a34ac19016c2641a96c5b",
     "src/shared/proxyEndpoint.mamori": "02bc50734eed699e61f048674f18d1f3979253c8258a0f9e50eda0cef07031dd",
     "src/shared/proxyEndpoint.ts": "955d1064bb3b2d82491434b41d50adbb6ae97be43ea53fcea540c65a14ad51ff",
     "src/shared/redact.ts": "a3f60f9dafc8915c79bf5bbc0b42c88a116a65e5d4efe1f53082afc1c81cdaec",
