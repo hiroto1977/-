@@ -245,10 +245,10 @@ const INDIRECT_SITES = [
     why: '`loadIds(key)` / `saveIds(key, …)` の助数関数越し。呼び出し元は RECENTS_KEY / FAVORITES_KEY の 2 つだけ。',
   },
   {
-    file: 'src/renderer/oauth/pkceSession.ts',
-    expr: 'storageKey(k)',
+    file: 'src/renderer/oauth/pkceSessionHost.ts',
+    expr: 'key',
     keys: ['pkce.verifier', 'pkce.state', 'pkce.clientId', 'pkce.redirectUri'],
-    why: '`KEY_PREFIX + k` を組み立てる。`KEYS` は 4 つに固定で、増やすならその配列だけ (同ファイルにそう書いてある)。',
+    why: '`sessionStorage` の口 (置く・読む・消す) は Mamori の外の小さな host 関数 (MG-017)。鍵は pkceSession.mamori が `KEY_PREFIX + k` で組み、`KEYS` は 4 つに固定で、増やすならその配列だけ (同ファイルにそう書いてある)。',
   },
   {
     file: 'src/renderer/data/localWrite.ts',
@@ -433,7 +433,8 @@ function readEraseSource() {
  * 1 つに決まっている媒体は、在庫がその関数を呼ぶ (字面に鍵を写さない)。規則はその関数の持ち主の
  * `INDIRECT_SITES` の登録 (流れる鍵の一覧) から解く —— 登録は規則 4〜6 が実在と台帳に縛っている。
  */
-const ERASE_DELEGATES = { pkceSessionKeys: 'src/renderer/oauth/pkceSession.ts' };
+// 鍵の登録 (INDIRECT_SITES) は sessionStorage に触る host の口 (pkceSessionHost.ts) に在る —— 関数 pkceSessionKeys は pkceSession.ts が輸出する (MG-017)。
+const ERASE_DELEGATES = { pkceSessionKeys: 'src/renderer/oauth/pkceSessionHost.ts' };
 
 /** `export const ERASE_X: readonly string[] = [ '…', … ]` (か扉の関数) の字面から名前を拾う (無い一覧は載せない)。 */
 function parseEraseLists(text, indirect = INDIRECT_SITES) {

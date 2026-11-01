@@ -197,6 +197,7 @@
     "src/renderer/oauth/callbackPaste.ts",
     "src/renderer/oauth/pkce.ts",
     "src/renderer/oauth/pkceSession.ts",
+    "src/renderer/oauth/pkceSessionHost.ts",
     "src/renderer/plan/internalLicense.ts",
     "src/renderer/recents.ts",
     "src/renderer/security/autoLock.ts",

@@ -77,20 +77,8 @@ export fn savePkceSession(s: PkceSession) -> void {
   }
 }
 
-/// 1 つの鍵を読む。保存領域そのものへ触れられないときは「切れた」と同じ扱い (`null`) にする。
-const readKey = (k: string) => {
-  let v: string | null = null;
-  try {
-    v = hostGetItem(storageKey(k));
-  } catch {
-    // 保存領域そのものへ触れられない。**「切れた」と同じ扱いにする** —— 4 つ揃わなければ交換はできないので、投げて画面を落とすより
-    // 「やり直してください」へ倒す。理由は `savePkceSession` の段で出ている (そちらが先に同じ理由で断るので、ここへは認可を開けた端末しか来ない)。
-    //
-    // ここに `return null` は**書かない**。`v` は `null` のままなので 1 行下の検査が同じ null を返す —— 書くと外から区別できない分岐が 1 つ増えるだけで、
-    // 変異検査には等価な生存として残る (2026-09-06 実測)。
-  }
-  return v;
-};
+/// 1 つの鍵を読む。保存領域そのものへ触れられないときは「切れた」と同じ扱い (`null`) —— その受け方は host の口 (`hostGetItem`) が持つ。
+const readKey = (k: string) => hostGetItem(storageKey(k));
 
 /// 交換に要る 4 つを読む。**1 つでも欠けたら `null`** —— 途中まで残った状態で交換を試させない。
 export fn readPkceSession() -> PkceSession | null {
@@ -118,9 +106,7 @@ export fn readPkceSession() -> PkceSession | null {
 export fn clearPkceSession() -> readonly string[] {
   const failed: string[] = [];
   for (const k of KEYS) {
-    try {
-      hostRemoveItem(storageKey(k));
-    } catch {
+    if (!hostRemoveItem(storageKey(k))) {
       failed.push(k);
     }
   }

@@ -90,7 +90,7 @@ const LEDGER: Record<string, LedgerEntry> = {
     keys: ['servicehub.internalLicense'],
     why: '招待コードの引き換え状態。コードは単回消費ではないので、保存できなくても入れ直せる (このセッションは有効として扱う)。',
   },
-  'src/renderer/oauth/pkceSession.ts': {
+  'src/renderer/oauth/pkceSessionHost.ts': {
     policy: 'surfaced',
     keys: ['pkce verifier / state / clientId / redirectUri (sessionStorage)'],
     why: 'トークン交換に要る 4 つ。捨てると後の交換が理由不明で失敗するので、投げて呼び出し側に伝える。',
