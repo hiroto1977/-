@@ -100,6 +100,12 @@
       "gates": [],
       "sinks": []
     },
+    "src/shared/aiEndpoint.mamori": {
+      "externals": [],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
     "src/shared/tokenInput.mamori": {
       "externals": [],
       "imports": [],

@@ -918,6 +918,66 @@
         "reason": null,
         "summary": "第三者の文を AI へ渡す前に指示の形を検める関門 (promptInjection.ts · T-216) を Mamori で書き直した (port)。足りなかったのは template 1 つ (連結へ) だけ (文字列キーの添字は switch へ書き直した)で、組み上がる文字列は 1 字も変えていない —— 元の TypeScript と約 2 万の入力で正規化・検出・断りの文が同じ・規則 20 本の正規表現も source / flags が一致・既存の検査は編集なしで緑。穴は 0 件 (手探り 5 形が全部 refused)。変異検査は初回 87.88% (switch の 2 群のラベルが検査に無かった) → 4 群のラベルを台帳と照合して 100%。能力台帳・保護対象・CODEOWNERS に追加し chain #423。"
       }
+    },
+    {
+      "id": "MG-013",
+      "date": "2026-11-01",
+      "kind": "port",
+      "target": "src/shared/aiEndpoint.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/shared/aiEndpoint.ts",
+      "version": "0.11",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "template"
+      ],
+      "ported": [
+        "src/shared/aiEndpoint.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "`xs.map(Number)` (組み込みの Number を値として持ち出す道)",
+          "result": "refused"
+        },
+        {
+          "tried": "テンプレート文字列 `${h}/v1` (補間でコードを運ぶ道)",
+          "result": "refused"
+        },
+        {
+          "tried": "`new URL(u).constructor` (URL の値から Function へ届く道)",
+          "result": "refused"
+        },
+        {
+          "tried": "`p.hostname as string` (型の書き換え)",
+          "result": "refused"
+        },
+        {
+          "tried": "`URL.createObjectURL(b)` (同じ realm の共有状態)",
+          "result": "refused"
+        },
+        {
+          "tried": "`p[k]` (実行時の文字列の鍵で URL のメンバを引く)",
+          "result": "refused"
+        },
+        {
+          "tried": "`s(p.host)` (URL から取った素の文字列を印を受ける口へ渡して洗う)",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 2,
+      "mutation": {
+        "files": [
+          "src/shared/aiEndpoint.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": null,
+        "reason": "PR はこの記録のあとに出す (番号は次の周で台帳へ)",
+        "summary": "AI のベース URL の関門 (aiEndpoint.ts · 平文 http を許すホストの判定と資格情報を載せる送り先の検証) を Mamori で書き直した (port)。足りなかったのは template 2 つ (連結へ) と Number を値として渡す形 (arrow で包んだ) だけで、組み上がる文字列は 1 字も変えていない —— 元の TypeScript と約 4 万の入力 (資格情報あり/なしの両モード) で結果・断りの文が同じ・既存の検査は編集なしで緑。穴は 0 件 (手探り 7 形が全部 refused)。変異検査は初回 98.75% (too-long の文の連結の前後のリテラル 2 件) → 文面を丸ごと toBe で留めて 100% (160 変異体)。能力台帳・保護対象・CODEOWNERS に追加し chain #425。"
+      }
     }
   ]
 }

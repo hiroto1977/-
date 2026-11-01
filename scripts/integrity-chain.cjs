@@ -171,6 +171,7 @@ const PROTECTED = [
   'src/renderer/security/egressStepUp.mamori',
   'src/shared/safeFilename.mamori',
   'src/shared/promptInjection.mamori',
+  'src/shared/aiEndpoint.mamori',
   'src/renderer/components/VettedImg.tsx',
   'src/renderer/components/VettedLink.tsx',
   'src/shared/mamori/ast.ts',
