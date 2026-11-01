@@ -18,6 +18,8 @@ const growth = req(join(ROOT, 'scripts', 'mamori-growth.cjs')) as {
   DETECTORS: readonly { id: string; name: string }[];
   DETECTOR_IDS: readonly string[];
   measureFile: (src: string) => Record<string, number>;
+  buildCompleteness: (i: { ledger: Ledger; brief: Brief; mamoriFiles: number }) => { version: string | null; mamoriFiles: number; tsWalls: number; migrationPct: number | null; constructs: { added: number; feature: number; rewrite: number }; proposals: { kind: string; target: string; why: string }[]; markdown: string };
+  countMamoriFiles: (root: string) => number;
   buildBrief: (i: { ledger: Ledger; files: readonly { path: string; lines: number; source: string }[]; now: string }) => Brief;
   cycleProblems: (c: unknown, l: Ledger, threats: ReadonlySet<string>, exists: (p: string) => boolean) => string[];
   applyCycle: (l: Ledger, c: Cycle) => Ledger;
@@ -253,6 +255,32 @@ describe('言語を育てる輪 —— 選び方・記録・止まり', () => {
     expect(growth.growthStatus(L(), '2026-10-30').stalled).toBe(true);
     expect(growth.renderGrowth(growth.growthStatus(L(), '2026-10-30'))).toContain('1 周も記録が無い');
   });
+
+  it('★ report: 完成度は実測から導き (版・移行率・構文の数)、次の提案は brief の順位と probe を含む (threat: 利用者の依頼 2026-11-01)', () => {
+    const files = [f('src/a.ts', 'const s = `x`;\n'), f('src/b.ts', 'class A {}\nconst v = x[0];\n'), f('src/c.ts', 'const q = x[1];\n')];
+    const ledger = L();
+    const brief = growth.buildBrief({ ledger, files, now: '2026-11-01' });
+    const c = growth.buildCompleteness({ ledger, brief, mamoriFiles: 3 });
+    expect(c.version).toBe('0.2');
+    expect(c.tsWalls).toBe(3);
+    expect(c.mamoriFiles).toBe(3);
+    expect(c.migrationPct).toBe(50);
+    expect(c.constructs.rewrite).toBe(1);
+    expect(c.constructs.added).toBe(0);
+    expect(c.constructs.feature).toBe(growth.DETECTOR_IDS.length - 1);
+    expect(c.proposals[c.proposals.length - 1]?.kind).toBe('probe');
+    expect(c.proposals.some((p) => p.kind === 'feature' && p.target === 'index')).toBe(true);
+    expect(c.markdown).toContain('守りの壁の移行: .mamori 3 本 / まだ TypeScript の壁 3 本 → 目安 50%');
+    expect(c.markdown).toContain('## 次の作業の提案');
+  });
+
+  it('report: 壁も .mamori も 0 本なら移行率は null (0 で割らない・0% と言わない)', () => {
+    const ledger = L();
+    const brief = growth.buildBrief({ ledger, files: [], now: '2026-11-01' });
+    const c = growth.buildCompleteness({ ledger, brief, mamoriFiles: 0 });
+    expect(c.migrationPct).toBeNull();
+    expect(c.markdown).not.toContain('目安');
+  });
 });
 
 describe('言語を育てる輪 —— 報告・指示文・口の配線', () => {
@@ -273,9 +301,18 @@ describe('言語を育てる輪 —— 報告・指示文・口の配線', () =>
     const doc = readOriginalSource(join(ROOT, 'docs', 'MAMORI_GROWTH_PROMPT.md'));
     const prompt = doc.slice(doc.indexOf('<!-- prompt:start -->'), doc.indexOf('<!-- prompt:end -->'));
     expect(prompt.length).toBeGreaterThan(500);
-    for (const needle of ['npm run mamori:grow -- brief', 'npm run mamori:grow -- record', '3 つ以上', '100.00%', 'draft PR', 'マージはしない', 'security/threat-ledger.json', 'deviation']) {
+    for (const needle of ['npm run mamori:grow -- brief', 'npm run mamori:grow -- record', '3 つ以上', '100.00%', 'draft PR', 'マージはしない', 'npm run mamori:grow -- report', 'security/threat-ledger.json', 'deviation']) {
       expect(prompt, needle).toContain(needle);
     }
     expect(prompt).toContain(String(growth.MIN_PROBES) + ' つ以上');
+  });
+  it('★ report: 実物の台帳・木で走り、.mamori の本数は木を数えた値と一致する', () => {
+    const r = spawnSync('node', [join(ROOT, 'scripts', 'mamori-growth.cjs'), 'report', '--json'], { encoding: 'utf8' });
+    expect(r.status).toBe(0);
+    const out = JSON.parse(r.stdout) as { mamoriFiles: number; tsWalls: number; version: string };
+    expect(out.mamoriFiles).toBe(growth.countMamoriFiles(ROOT));
+    expect(out.mamoriFiles).toBeGreaterThanOrEqual(11);
+    expect(out.tsWalls).toBe(growth.wallFiles(ROOT).length);
+    expect(out.version).toBe((JSON.parse(readOriginalSource(join(ROOT, 'security', 'mamori-growth.json'))) as Ledger).language.version);
   });
 });
