@@ -469,8 +469,15 @@ export function parse(file: string, src: string): Module {
       next();
       const body = block();
       expectW('catch');
+      // `catch (e)` の束縛 (0.12 · MG-016)。束ねた例外は unknown で、印を運ばない (checker が局所の値として宣言する)。
+      let param: string | null = null;
+      if (isP('(')) {
+        next();
+        param = ident();
+        expectP(')');
+      }
       const handler = block();
-      return { kind: 'try', body, handler, comments: cs, pos: t.pos };
+      return { kind: 'try', body, param, handler, comments: cs, pos: t.pos };
     }
     if (isP('{')) fail(t, '文の頭に `{` は置けません (オブジェクトの字面だけの文は何もしないので書かない)');
     if (peek().kind === 'ident' && isP('=', 1)) {

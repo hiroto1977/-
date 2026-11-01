@@ -78,7 +78,7 @@ export type Stmt =
   | { readonly kind: 'let'; readonly mutable: boolean; readonly name: string; readonly type: TypeRef | null; readonly init: Expr | null; readonly comments: Comments; readonly pos: Pos }
   | { readonly kind: 'return'; readonly value: Expr | null; readonly comments: Comments; readonly pos: Pos }
   | { readonly kind: 'if'; readonly test: Expr; readonly then: readonly Stmt[]; readonly otherwise: readonly Stmt[] | null; readonly comments: Comments; readonly pos: Pos }
-  | { readonly kind: 'try'; readonly body: readonly Stmt[]; readonly handler: readonly Stmt[]; readonly comments: Comments; readonly pos: Pos }
+  | { readonly kind: 'try'; readonly body: readonly Stmt[]; /** `catch (e)` の束縛名 (0.12)。無ければ null。 */ readonly param: string | null; readonly handler: readonly Stmt[]; readonly comments: Comments; readonly pos: Pos }
   | { readonly kind: 'assign'; readonly target: string; readonly value: Expr; readonly comments: Comments; readonly pos: Pos }
   | { readonly kind: 'expr'; readonly expr: Expr; readonly comments: Comments; readonly pos: Pos }
   /** `throw 式;` (0.2) */
