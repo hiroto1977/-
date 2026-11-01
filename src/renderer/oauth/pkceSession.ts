@@ -84,7 +84,9 @@ export function savePkceSession(s: PkceSession): void {
 }
 
 /** 1 つの鍵を読む。保存領域そのものへ触れられないときは「切れた」と同じ扱い (`null`) —— その受け方は host の口 (`hostGetItem`) が持つ。 */
-const readKey = (k: string) => hostGetItem(storageKey(k));
+function readKey(k: string): string | null {
+  return hostGetItem(storageKey(k));
+}
 
 /** 交換に要る 4 つを読む。**1 つでも欠けたら `null`** —— 途中まで残った状態で交換を試させない。 */
 export function readPkceSession(): PkceSession | null {
