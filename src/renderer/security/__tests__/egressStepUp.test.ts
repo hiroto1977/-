@@ -75,4 +75,13 @@ describe('文面', () => {
     expect(STEP_UP_PASSWORD_LABEL).toContain('保管庫のパスワード');
     expect(STEP_UP_APPLY_LABEL.length).toBeGreaterThan(0);
   });
+  it('★ 確認の文は全文を 1 字ずつ留める (連結の区切り「。送り先: 」「。」を含む · 移植 MG-010)', () => {
+    const tail = 'この端末の持ち主の確認のため、保管庫のパスワードを入力してください (変えるまで何も送りません)。';
+    expect(stepUpReason('proxy', 'https://w.example.com/p?k=v')).toBe(
+      'BYO プロキシの送り先 —— 以後、経由する要求は API トークン (Authorization ヘッダ) ごとこの Worker へ渡ります。送り先: w.example.com。' + tail,
+    );
+    expect(stepUpReason('ollama', 'https://abc.trycloudflare.com')).toBe(
+      'Ollama の接続先 —— 以後、会話の本文はこの端末の外のホストへ送られます。送り先: abc.trycloudflare.com。' + tail,
+    );
+  });
 });

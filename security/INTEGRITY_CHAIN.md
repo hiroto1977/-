@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 410
+- ブロック数: 423
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `4b0d40f320cfcb011d45bab1c2f843149f908392bd7e62cf93ed976be2ab4ef0`
-- 保護対象: 158 ファイル
+- 末尾(tip)ハッシュ: `9712a92a647b99ddb4324553c5bafd14992f08d7dc6a547d536b70efc4885d2b`
+- 保護対象: 160 ファイル
 
 ## ブロック
 
@@ -423,6 +423,19 @@
 | 407 | `5df0aef8d21e2ffb` | `7a7701fdcaf13c27` | `17547ec318064494` | update checker.ts |
 | 408 | `e3bd8b52bc7efb78` | `17547ec318064494` | `b7d686bc3bc673c4` | update integrity-chain.cjs,mamori.cjs,mamori-capabilities.json,capabilities.ts,checker.ts,compile.ts |
 | 409 | `6ac403e7f31ffa9c` | `b7d686bc3bc673c4` | `4b0d40f320cfcb01` | update ast.ts,emit.ts,parser.ts |
+| 410 | `3f197333f05dccf1` | `4b0d40f320cfcb01` | `97935bbc7d0c80f1` | update checker.ts |
+| 411 | `8d28897985dbd211` | `97935bbc7d0c80f1` | `315febb64f7d38d6` | update checker.ts |
+| 412 | `de9697b3a60eb65f` | `315febb64f7d38d6` | `6e388d57bba54f4f` | update ast.ts,checker.ts,emit.ts,parser.ts |
+| 413 | `7523df7f9a308fd0` | `6e388d57bba54f4f` | `d6682a5ff44bb473` | update checker.ts |
+| 414 | `9cfcc08498defff7` | `d6682a5ff44bb473` | `b1423dc833881718` | update ast.ts,checker.ts,emit.ts,parser.ts |
+| 415 | `b990e7888e85e677` | `b1423dc833881718` | `486ab4e5a8017af2` | update checker.ts |
+| 416 | `d141de7d27c58d9b` | `486ab4e5a8017af2` | `aa886997aef06baf` | update ast.ts,checker.ts,emit.ts,parser.ts |
+| 417 | `22d6faff04feb17d` | `aa886997aef06baf` | `d427071812815c87` | update integrity-chain.cjs,mamori-capabilities.json,egressStepUp.mamori,egressStepUp.ts |
+| 418 | `1ef59b8cb4857183` | `d427071812815c87` | `acfdfa669a999f68` | update integrity-chain.cjs,mamori-capabilities.json,safeFilename.mamori,safeFilename.ts |
+| 419 | `7a915db53849f1ee` | `acfdfa669a999f68` | `eb88e427cf7341a9` | update checker.ts |
+| 420 | `9b177c4114307f8d` | `eb88e427cf7341a9` | `e22495141477e0be` | update safeFilename.mamori,safeFilename.ts |
+| 421 | `2796403ef83019f7` | `e22495141477e0be` | `1bac2326b4cf7cc8` | update safeFilename.mamori,safeFilename.ts |
+| 422 | `a4a09272b757b099` | `1bac2326b4cf7cc8` | `9712a92a647b99dd` | update safeFilename.mamori,safeFilename.ts |
 
 ## 保護対象ファイル
 
@@ -525,6 +538,7 @@
 - `src/renderer/security/autoLock.ts`
 - `src/renderer/security/bip39-wordlist.ts`
 - `src/renderer/security/dataCrypto.ts`
+- `src/renderer/security/egressStepUp.mamori`
 - `src/renderer/security/egressStepUp.ts`
 - `src/renderer/security/frameGuard.ts`
 - `src/renderer/security/lockWorkspace.ts`
@@ -571,6 +585,7 @@
 - `src/shared/proxyEndpoint.mamori`
 - `src/shared/proxyEndpoint.ts`
 - `src/shared/redact.ts`
+- `src/shared/safeFilename.mamori`
 - `src/shared/safeFilename.ts`
 - `src/shared/scanTarget.ts`
 - `src/shared/tokenInput.mamori`

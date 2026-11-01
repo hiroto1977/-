@@ -52,7 +52,7 @@ describe('Mamori: 正しいプログラムは通り、TypeScript になる', () 
 
 describe('M1: 印を作れるのは gate 関数の中だけ', () => {
   it('★ plain 関数の mint は断る', () => {
-    expect(rulesOf(VETTED + 'export fn forge(x: string) -> VettedUrl {\n  return mint VettedUrl(x);\n}\n')).toEqual(['M1']);
+    expect(rulesOf(VETTED + 'export fn forge(x: string) -> string {\n  return mint VettedUrl(x);\n}\n')).toEqual(['M1']);
   });
   it('★ sink 関数の mint も断る (印を作る所と危ない口を呼ぶ所を同じにしない)', () => {
     expect(rulesOf(VETTED + 'extern sink { shell } from "electron";\nexport sink fn s(u: VettedUrl) -> Promise<void> {\n  return shell.openExternal(mint VettedUrl(\'x\'));\n}\n')).toContain('M1');

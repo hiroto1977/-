@@ -2245,6 +2245,114 @@
           "replace": "if (false)"
         }
       ]
+    },
+    {
+      "id": "A-560",
+      "threat": "T-243",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "組み込みの名前を値として持ち出す形を断らない —— Object.freeze(Array) でアプリ全体の組み込みを凍らせる口を開け直す",
+      "edits": [
+        {
+          "find": "          } else {\n            report('M6', e.pos, `組み込みの ${e.name} は値として持ち出せません —— \\`${e.name}.m(…)\\`",
+          "replace": "          } else if (false) {\n            report('M6', e.pos, `組み込みの ${e.name} は値として持ち出せません —— \\`${e.name}.m(…)\\`"
+        }
+      ]
+    },
+    {
+      "id": "A-561",
+      "threat": "T-244",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "arrow の引数の既定値を検めない —— 既定値に宣言していない名前・危ない口・印の無い値の呼び出しを隠す口を開け直す",
+      "edits": [
+        {
+          "find": "if (p.init !== null) checkExpr(p.init, [...scopes, inner], plain);",
+          "replace": "if (false) checkExpr(p.init!, [...scopes, inner], plain);"
+        }
+      ]
+    },
+    {
+      "id": "A-562",
+      "threat": "T-224",
+      "file": "src/shared/mamori/parser.ts",
+      "why": "識別子として読める文字列の鍵を member に畳まない —— `x[\"constructor\"]` が禁じた名前の表を迂回する口を開け直す",
+      "edits": [
+        {
+          "find": "      if (MEMBER_NAME.test(name)) {",
+          "replace": "      if (false) {"
+        }
+      ]
+    },
+    {
+      "id": "A-563",
+      "threat": "T-224",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "添字の鍵が静的に数でなくても通す —— 文字列で組んだ鍵が表を迂回する口を開け直す",
+      "edits": [
+        {
+          "find": "if (e.key.kind !== 'string' && !isNumericKey(e.key, scopes)) {",
+          "replace": "if (false) {"
+        }
+      ]
+    },
+    {
+      "id": "A-564",
+      "threat": "T-224",
+      "file": "src/shared/mamori/emit.ts",
+      "why": "数と分かる鍵でも生成物で数に寄せない —— 型の宣言が嘘のとき文字列の鍵が表に届く実行時の二重の守りを外す",
+      "edits": [
+        {
+          "find": ": `+(${expr(e.key)})`",
+          "replace": ": `${expr(e.key)}`"
+        }
+      ]
+    },
+    {
+      "id": "A-565",
+      "threat": "T-245",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "arrow の本体を plain の役ではなく外側の役のまま検める —— sink 関数が危ない口の閉包を返せる・gate の中の arrow で mint できる口を開け直す",
+      "edits": [
+        {
+          "find": "const plain: Ctx = { role: 'plain', returnVetted: null, destVetted: null };",
+          "replace": "const plain: Ctx = ctx;"
+        }
+      ]
+    },
+    {
+      "id": "A-566",
+      "threat": "T-246",
+      "file": "src/shared/mamori/emit.ts",
+      "why": "単項の `-` の入れ子を括らずに出す —— `- -a` が `--a` (減算代入) になる口を開け直す",
+      "edits": [
+        {
+          "find": "if (e.op === '-' && e.operand.kind === 'unary' && e.operand.op === '-') return `-(${expr(e.operand)})`;",
+          "replace": "if (false) return `-(${expr(e.operand)})`;"
+        }
+      ]
+    },
+    {
+      "id": "A-567",
+      "threat": "T-247",
+      "file": "src/shared/mamori/parser.ts",
+      "why": "式の入れ子の上限を外す —— 深い入れ子でコンパイラが RangeError のまま落ちる口を開け直す",
+      "edits": [
+        {
+          "find": "if (nesting >= MAX_NESTING) fail(",
+          "replace": "if (false) fail("
+        }
+      ]
+    },
+    {
+      "id": "A-568",
+      "threat": "T-248",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "gate 以外の戻り値の型の印を断る規則を外す —— 型述語などで関門を通らずに印の型を偽造できる口を開け直す",
+      "edits": [
+        {
+          "find": "if (it.role !== 'gate' && sig.returnVetted !== null) {",
+          "replace": "if (false) {"
+        }
+      ]
     }
   ]
 }

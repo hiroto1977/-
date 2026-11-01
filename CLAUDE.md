@@ -1911,6 +1911,10 @@ The browser target adds: `web-shim.ts` (a `window.serviceHub` polyfill imported 
   **構文を足すときは、先にその構文で言語を破る** —— 0.1 は `eval` を禁じながら `String.constructor(code)()` で同じことができた (T-224)。
   `.` の後ろの `constructor` / `prototype` / `__proto__` と、組み込みの `Object` の書き換えるメンバは断る。足す候補の構文と、その構文が
   来歴の規則を外す道 (risk) は `security/mamori-growth.json` が持ち、育てるのは週 1 の輪 (`npm run mamori:grow`) である。
+- **Mamori に関わる作業が終わる度に、言語の現在の完成度と次の作業の提案を利用者へ伝える** (2026-11-01 の依頼)。
+  `npm run mamori:grow -- report` を走らせ、その出力 (版・守りの壁の移行率・構文の数・次の提案の順位) を報告の最後に付ける。
+  数は出力をそのまま使い、散文へ書き写さない。提案には先に塞ぐ道 (台帳の risk) を添える。週 1 の予約の指示文
+  (`docs/MAMORI_GROWTH_PROMPT.md` の段 6) も同じ。
 - **対照を回すまで、検査は信用しない。** 守っている物を実際に壊し、狙った項目が
   落ちることを見る。**鳴らない対照は「合格」ではなく「その検査についての報せ」である。**
 

@@ -3935,6 +3935,22 @@
         {
           "file": "src/shared/mamori/__tests__/mamoriV02.test.ts",
           "test": "★ 組み込みの Object は許したメンバだけ (setPrototypeOf / getPrototypeOf / defineProperty / assign を断る)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV08.test.ts",
+          "test": "★ 識別子として読める文字列の鍵は `.name` に畳まれる (threat: T-224)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV08.test.ts",
+          "test": "★ 禁じた名前は、字面・単引用符・括弧・unicode escape のどの綴りでも `.name` と同じ文面で断る (threat: T-224)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV08.test.ts",
+          "test": "★ 静的に数と分かる鍵だけが通り、生成物では数に寄せる `+(…)` が付く (threat: T-224)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV08.test.ts",
+          "test": "★ 文字列になりうる鍵は断る: 変数・連結・typeof・呼び出し・文字列で宣言した let (threat: T-224)"
         }
       ]
     },
@@ -4353,6 +4369,107 @@
           "test": "★ 台帳を渡さない呼び方は検めない (ライブラリとしての呼び方)・渡せば M7 で断る (threat: T-242)"
         }
       ]
+    },
+    {
+      "id": "T-243",
+      "found": "2026-11-01",
+      "foundBy": "言語を育てる輪の 6 周目 (MG-006) の「破る」段 (言語の穴探し)。攻撃の電池を 5 つの種で回して緑だったあと、電池の弾に無い領域 —— 宣言なしで使える組み込み (`PURE_GLOBALS`) と、`Object.freeze` が許されていること —— を手で組み合わせた。0.6 のコンパイラは `Object.freeze(Array)` / `Object.freeze(Math)` / `Object.freeze(JSON)` / `Object.freeze(Promise)` / `Object.freeze(String)` / `Object.freeze(Map)` と、別名 (`const a = Array; Object.freeze(a)`)・条件演算子・配列越しの形をすべて通した。node で `Object.freeze(Promise)` のあとに `Promise.x = 1` を書くと strict mode で `Cannot add property x, object is not extensible` と投げる。",
+      "surface": "main-ipc",
+      "class": "compromised-renderer",
+      "severity": "low",
+      "title": "守りの層を書く言語 Mamori 0.6 は組み込みの構築子・名前空間 (Array / Math / JSON / Promise / String / Number / Boolean / Map / Set) を値として持ち出せたので、許してある Object.freeze に渡してアプリ全体の組み込みを凍らせられた (後続の差し替えや polyfill が strict mode で投げる)",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: 組み込みのうち Object / RegExp / Error / URL 以外 (PLAIN_BUILTINS) も、メンバを直に使う・呼ぶ・構築する形でだけ名前で使えるようにし、値として持ち出す形 (別名・引数・配列・条件演算子・typeof) を M6 で断る。電池の判定器にも同じ物差しを独立に書いた (mamoriBattery の PLAIN_BUILTIN_NAMES)。残り (正直に): 組み込みの**関数**(Object.freeze(Math.floor)) を凍らせる形は残る —— 構築子ではないので静的な欄を足される側ではなく、全体への効き目が無い。filter(Boolean) / map(String) は書けなくなった (x => Boolean(x) と書く)。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV07.test.ts",
+        "test": "★ 組み込み 9 つの名前を Object.freeze に渡す形は断る —— アプリ全体の組み込みを凍らせる相手を選べる (threat: T-243)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV07.test.ts",
+          "test": "★ 別名・条件演算子・配列・引数・typeof 越しの持ち出しも断る (threat: T-243)"
+        }
+      ]
+    },
+    {
+      "id": "T-244",
+      "found": "2026-11-01",
+      "foundBy": "言語を育てる輪の 7 周目 (MG-007) で添字 `x[k]` を足したあと、攻撃の電池の揺さぶり (文字レベルの変異) が `[1].map((q=module) => q)` を受け入れるのを見つけた。全ての式の位置 (const / let / 代入 / return / throw / if / for / switch / case / オブジェクト / 配列 / 呼び出し / new / 条件 / 2 項 / 単項 / await / field / メンバ / 添字 / arrow の本体 / 式文 / try / catch / 呼ぶ側 / 引数の既定値 / モジュールの const) に `fetch(\"x\")` を置く総当たり 37 位置で、検めを受けなかったのは arrow の引数の既定値だけだった。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "守りの層を書く言語 Mamori 0.2〜0.7 は arrow の引数の既定値 (`(q = fetch(\"x\")) => q`) を式として検めなかったので、plain 関数の中で宣言していない名前 (M6)・危ない口 (`shell.openExternal(raw)` · M2)・印の無い値での印つきの口の呼び出し (M4)・印の鋳造 (M1) を既定値に隠せた",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: arrow の case で、本体だけでなく各引数の既定値も checkExpr に掛ける (引数の作る名前の枠の中で · 前の引数を参照できる)。回帰検査は 6 形 (M6 ×2 / M2 / M4 / M1 / M0)。全ての式の位置への fetch の総当たりを電池の判定器でも持つ (弾の文脈に既定値を足した場合も受け入れた物を独立の構文木で判定する)。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV08.test.ts",
+        "test": "★ 宣言していない名前・危ない口・印の無い値での印つきの口・mint は、既定値に隠せない (threat: T-244)"
+      },
+      "alsoRegressions": []
+    },
+    {
+      "id": "T-245",
+      "found": "2026-11-01",
+      "foundBy": "言語を育てる輪の 8 周目 (MG-008) で、ブロックの本体を持つ arrow を足す前に破った。本体が文の並びになると外側の関数の役 (gate / sink) を引き継いだまま文が書けることに気付き、0.2 から在る式の arrow も同じだったと確かめた —— sink 関数が `() => shell.openExternal(u)` を返せ (行き先の印を持つ値だけが届くが、閉じ込めた口を値として外へ持ち出せる)、gate の中の arrow で `mint` も通った。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "守りの層を書く言語 Mamori 0.2〜0.8 は arrow の本体を外側の関数の役 (gate / sink) のまま検めたので、sink 関数が危ない口を包んだ閉包を値として返せ (M2 の「sink 関数の中だけ」が閉包の呼び出し時に外れる)、gate の中の arrow で印の鋳造 (M1) も通った",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: arrow と arrow-block の本体・引数の既定値を、外側の役に関わらず plain の役 ({ role: 'plain', returnVetted: null, destVetted: null }) で検める。0.9 でブロックの本体を持つ arrow を足したときに、同じ検めを式の arrow にも当てた。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV09.test.ts",
+        "test": "★ sink 関数が危ない口を包んだ閉包を返せない・gate の中の arrow で mint できない (threat: T-245)"
+      },
+      "alsoRegressions": []
+    },
+    {
+      "id": "T-246",
+      "found": "2026-11-01",
+      "foundBy": "言語を育てる輪の 9 周目 (MG-009) でビット演算を足す前に、単項の演算子の組み合わせを手探りした。`- -a` が `--a` (減算代入) と出力されるのを見つけた —— 符号の反転と書いたものが、引数や let を書き換える式になる。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "守りの層を書く言語 Mamori 0.1〜0.9 は単項の `-` の入れ子 `- -a` を `--a` と出力したので、符号の反転が引数・let の書き換え (減算代入) になり、引数への代入を断る M6 を単項の入れ子で迂回できた",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/emit.ts: 単項の `-` の直後が単項の `-` なら `-(-a)` と括って出す。回帰検査は 3 重の入れ子まで。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV10.test.ts",
+        "test": "★ `- -a` は `-(-a)` と出る (`--a` だと引数 a を書き換える・M6 の迂回) (threat: T-246)"
+      },
+      "alsoRegressions": []
+    },
+    {
+      "id": "T-247",
+      "found": "2026-11-01",
+      "foundBy": "MG-009 でビット演算を足して 2 項演算子の段が 7 から 11 に増えたとき、攻撃の電池の DEEP の弾 ((((…1…)))) 400 重) が新しい文脈で `RangeError: Maximum call stack size exceeded` のままコンパイラを落とした。段の数に比例して括弧 1 重あたりの再帰が増えるので、段を足すたびに落ちる入れ子の深さが浅くなる潜在の問題だった。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "守りの層を書く言語 Mamori 0.1〜0.9 は式の入れ子に上限が無く、深い入れ子 (括弧・単項・配列・オブジェクトの数百重) の入力でコンパイラが場所の無い RangeError のまま落ちた (ビルドを止められる・演算子の段を足すほど浅い入れ子で落ちる)",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/parser.ts: 単項の位置 (括弧・単項・配列・オブジェクトの入れ子がすべて通る所) で入れ子の深さを数え、200 段を超えたら場所を名乗る M0 で断る (finally で数え戻す)。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV10.test.ts",
+        "test": "★ 200 段までは通り、201 段目は場所を名乗る M0 で断る (コンパイラは落ちない) (threat: T-247)"
+      },
+      "alsoRegressions": []
+    },
+    {
+      "id": "T-248",
+      "found": "2026-11-01",
+      "foundBy": "MG-011 で safeFilename.ts を Mamori へ移すとき、型述語 `-> s is string` が通るかを確かめて見つけた。述語は tsc も検めない型の主張で、`s is VettedUrl` と書いて `return true` するだけで関門 (mint) を通らずに印の型を作れた。plain / sink 関数が `-> VettedUrl` と宣言する形も Mamori は通していた。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "守りの層を書く言語 Mamori 0.1〜0.10 は gate 関数以外が戻り値の型に印 (vetted) を名乗れた (型述語・asserts・this is・plain/sink の `-> VettedMark`)。関門を通らずに印の型を偽造でき、M1 (印を作れるのは mint だけ) の穴だった",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: gate 以外の関数の戻り値の型 (型述語・asserts・this is を含む) が印を名乗ったら場所つきの M1 で断る。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV11.test.ts",
+        "test": "★ 9 つの形がすべて M1 で断られる (印の型を関門の外で名乗れない) (threat: T-248)"
+      },
+      "alsoRegressions": []
     }
   ],
   "huntBacklog": [

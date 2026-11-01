@@ -18,6 +18,8 @@
  *   **どの周も、言語を破るプログラムを 3 つ以上試す** (`probes`) —— 足した構文が来歴の規則を外す道にならないかを、
  *   書いた本人が先に確かめる (T-224 は構文を足す前の試しで出た)。穴が出たら脅威台帳の id を書かせる。
  * - `status` —— 最後の周からの日数。cadence × 2 で「止まった」。毎日の報告が同じ判定を載せる。
+ * - `report` —— 言語の現在の完成度 (版・移行率・構文の数) と次の作業の提案を実測から出す。**作業が終わる度に利用者へ伝える**
+ *   (2026-11-01 の依頼)。移行率は .mamori の本数 / (.mamori + まだ TypeScript の壁) の目安。
  *
  * ## 構文の数え方は heuristic (正直に書く)
  *
@@ -374,6 +376,53 @@ function wallFiles(root) {
     });
 }
 
+/**
+ * 言語の現在の完成度と、次の作業の提案 (純関数)。作業が終わる度に利用者へ伝える (`npm run mamori:grow -- report`)。
+ * 数はすべて実測から導く (台帳の構文の判断・隣に .mamori が在る / 無い壁・brief の順位) —— 散文に書き写さない。
+ * 「移行率」は .mamori の本数 / (.mamori の本数 + まだ TypeScript の壁) で、.mamori には壁でない物 (型の置き場など) も入るので目安である。
+ * @param {{ledger: object, brief: {pick: object, measured: object[], features: object[]}, mamoriFiles: number}} input
+ */
+function buildCompleteness({ ledger, brief, mamoriFiles }) {
+  const decisions = Object.values(ledger.constructs ?? {}).map((c) => c?.decision);
+  const count = (d) => decisions.filter((x) => x === d).length;
+  const tsWalls = brief.measured.length;
+  const total = mamoriFiles + tsWalls;
+  const migrationPct = total === 0 ? null : Math.round((mamoriFiles / total) * 100);
+  const proposals = [];
+  if (brief.pick.kind === 'port') proposals.push({ kind: 'port', target: brief.pick.target, why: brief.pick.why });
+  for (const f of brief.features.slice(0, 3)) {
+    proposals.push({ kind: 'feature', target: f.id, why: `${f.name} —— 足すと移せる壁 ${f.unblocks.length} 本 / 使う壁 ${f.files} 本。先に塞ぐ道: ${f.risk ?? '(台帳に risk が無い)'}` });
+  }
+  proposals.push({ kind: 'probe', target: 'language', why: '言語の穴を探す (対戦・攻撃の電池 `npm run audit:mamori-battery`・新しい組み合わせの手探り) —— 構文を足す周でも毎回やるが、穴が出なくなるまで単独でも価値がある' });
+  const lines = [
+    '## Mamori の現在の完成度',
+    '',
+    `- 版 **${ledger.language?.version ?? '?'}** · 育てた周 ${(ledger.cycles ?? []).length} 回`,
+    `- 守りの壁の移行: .mamori ${mamoriFiles} 本 / まだ TypeScript の壁 ${tsWalls} 本${migrationPct === null ? '' : ` → 目安 ${migrationPct}%`}`,
+    `- 構文: 足した ${count('added')} 個 · 足す候補 ${count('feature')} 個 · 言語に置かないと決めた ${count('rewrite')} 個`,
+    `- 書き直しだけで移せる壁: ${brief.measured.filter((m) => m.portable).length} 本`,
+    '',
+    '## 次の作業の提案',
+    '',
+    ...proposals.map((p, i) => `${i + 1}. \`${p.kind}\` **${p.target}** —— ${p.why}`),
+  ];
+  return { version: ledger.language?.version ?? null, cycles: (ledger.cycles ?? []).length, mamoriFiles, tsWalls, migrationPct, constructs: { added: count('added'), feature: count('feature'), rewrite: count('rewrite') }, proposals, markdown: lines.join('\n') };
+}
+
+/** src/ の下の .mamori の本数。 */
+function countMamoriFiles(root) {
+  let n = 0;
+  const walk = (dir) => {
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      if (e.isDirectory()) {
+        if (e.name !== 'node_modules') walk(path.join(dir, e.name));
+      } else if (e.name.endsWith('.mamori')) n++;
+    }
+  };
+  walk(path.join(root, 'src'));
+  return n;
+}
+
 function selfTest() {
   let bad = 0;
   const check = (name, ok) => {
@@ -447,6 +496,13 @@ function main(argv) {
     console.log(json ? JSON.stringify({ ...b, markdown: undefined }, null, 2) : b.markdown);
     return b.problems.length > 0 ? 1 : 0;
   }
+  if (cmd === 'report') {
+    const ledger = readJson(LEDGER);
+    const brief = buildBrief({ ledger, files: wallFiles(REPO_ROOT), now });
+    const c = buildCompleteness({ ledger, brief, mamoriFiles: countMamoriFiles(REPO_ROOT) });
+    console.log(json ? JSON.stringify({ ...c, markdown: undefined }, null, 2) : c.markdown);
+    return brief.problems.length > 0 ? 1 : 0;
+  }
   if (cmd === 'status') {
     const s = growthStatus(readJson(LEDGER), now);
     console.log(json ? JSON.stringify(s, null, 2) : renderGrowth(s));
@@ -478,9 +534,9 @@ function main(argv) {
     console.log(`✅ ${cycle.id} を security/mamori-growth.json へ記録しました (${cycle.kind} ${cycle.target} · 版 ${next.language.version})`);
     return 0;
   }
-  console.error('使い方: mamori-growth.cjs brief|record <file>|status [--json] | --self-test');
+  console.error('使い方: mamori-growth.cjs brief|record <file>|status|report [--json] | --self-test');
   return 2;
 }
 
 if (require.main === module) process.exit(main(process.argv.slice(2)));
-module.exports = { DETECTORS, DETECTOR_IDS, measureFile, buildBrief, cycleProblems, applyCycle, growthStatus, renderGrowth, ledgerProblems, wallFiles, dayNumber, versionKey, MIN_PROBES, DEFAULT_CADENCE_DAYS, STALL_MULTIPLIER };
+module.exports = { DETECTORS, DETECTOR_IDS, measureFile, buildBrief, buildCompleteness, countMamoriFiles, cycleProblems, applyCycle, growthStatus, renderGrowth, ledgerProblems, wallFiles, dayNumber, versionKey, MIN_PROBES, DEFAULT_CADENCE_DAYS, STALL_MULTIPLIER };

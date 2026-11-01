@@ -38,6 +38,10 @@ security/mamori-growth.json がまだ無い木 (この輪が main に入る前) 
    `npm run mamori:grow -- record <そのファイル>` で 1 周を security/mamori-growth.json へ記録し (言語の版と構文の判断も進む)、
    その commit も PR に入れる。docs/SESSION_HANDOFF.md と docs/REMAINING_WORK.md に周の記録を 1 節ずつ足す。
 
+6. 伝える: 作業の終わりに `npm run mamori:grow -- report` を走らせ、**言語の現在の完成度** (版・守りの壁の移行率・構文の数) と
+   **次の作業の提案**を、PR の本文と利用者への報告の最後に書く。数は report の出力をそのまま使い、散文に書き写さない
+   (読んで書いた数は測った数ではない)。提案には、先に塞ぐ道 (台帳の risk) を添える。
+
 守る規則: 読んで書いた数は測った数ではない / 不在の主張には標本を添える / 鳴らない対照は合格ではなく報せ /
 commit と PR の末尾の帰属行はセッションの案内に従う。途中で止まったら、止まった段と理由を PR か Issue に書いて終える (黙って終えない)。
 <!-- prompt:end -->

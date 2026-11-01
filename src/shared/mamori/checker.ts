@@ -69,7 +69,20 @@ export const BUILTIN_MEMBERS: ReadonlyMap<string, ReadonlySet<string>> = new Map
 ]);
 
 /** `new X(…)` / `X(…)` の形でだけ名前で使える組み込み (`Object` は構築する形も無い)。 */
+/** ビット演算 (0.10 · MG-009)。結果は常に数 (または BigInt) で、文字列も印も運ばない —— 添字の鍵に使ってよい「数と分かる式」に入る。 */
+const BITWISE_OPS: ReadonlySet<string> = new Set(['|', '^', '&', '<<', '>>', '>>>']);
 const CONSTRUCTIBLE: ReadonlySet<string | null> = new Set(['RegExp', 'Error', 'TypeError', 'RangeError', 'URL']);
+
+/**
+ * 組み込みのうち、**呼ぶ・構築する・メンバを直に使う**形でだけ名前で使える物 (2026-11-01 · MG-006 · threat: T-243)。
+ *
+ * `Object.freeze(Array)` / `Object.freeze(Promise)` / `Object.freeze(Math)` は 0.6 まで通り、**アプリ全体の組み込みの構築子を凍らせた**
+ * (凍った `Promise` へ後から `Promise.x = …` を足すライブラリ・差し替えが、strict mode で投げる)。`Object.freeze` は自前の表を凍らせる
+ * ために許してあるが、組み込みの名前を**値として**渡せば、凍らせる相手を選べてしまう。値として持ち出す形 (`const a = Array;` /
+ * `f(Math)` / `c ? Array : JSON`) を断る —— `Object` / `RegExp` / `URL` などを 0.4 までに断ったのと同じ理由。
+ * `Object` は別の表 (`OBJECT_MEMBERS`) で扱うので、ここには入れない。
+ */
+const PLAIN_BUILTINS: ReadonlySet<string | null> = new Set([...PURE_GLOBALS].filter((n) => n !== 'Object' && !BUILTIN_MEMBERS.has(n)));
 
 /** 関数の外形 (他のモジュールから引くため)。 */
 export interface FnSignature {
@@ -173,6 +186,8 @@ interface Binding {
    * 変換後の `tsc` に任せていた —— Mamori の規則として断る (無い = 代入できない、で失敗は閉じる)。
    */
   readonly mutable?: boolean;
+  /** 数と分かっている名前か (型の宣言が `number`・初期値が数の式)。添字の鍵に使える (0.8)。型の宣言は実行時には守られないので、生成物は鍵を数に寄せる。 */
+  readonly numeric?: boolean;
 }
 
 /**
@@ -224,7 +239,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     } else if (it.kind === 'extern') {
       for (const n of it.names) declare(n, { vetted: null, authority: it.authority }, it.pos);
     } else if (it.kind === 'const') {
-      declare(it.name, { vetted: null, authority: 'local' }, it.pos);
+      declare(it.name, { vetted: null, authority: 'local', numeric: it.type?.text === 'number' || isNumericKey(it.init, []) }, it.pos);
     } else if (it.kind === 'fn') {
       declare(it.name, { vetted: null, authority: 'local' }, it.pos);
       localFns.set(it.name, table.fns.get(fnKey(file, it.name))!);
@@ -242,6 +257,12 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     if (it.kind === 'const') checkExpr(it.init, [moduleScope], { role: 'plain', returnVetted: null, destVetted: null });
     if (it.kind !== 'fn') continue;
     const sig = localFns.get(it.name)!;
+    // 戻り値の型に印を名乗れるのは gate 関数だけ (0.11 · T-248)。0.10 まで、plain / sink 関数が `-> VettedUrl` と宣言でき、
+    // 型述語 (`-> s is VettedUrl` / `asserts s is …` / `this is …`) は **`tsc` も検めない型の主張**なので、戻り値に `true` を
+    // 返すだけで、関門 (`mint`) を通らずに生成物の呼び出し側へ印の型を渡せた (印を作れるのは gate の `mint` だけ、の穴)。
+    if (it.role !== 'gate' && sig.returnVetted !== null) {
+      report('M1', it.returns.pos, `${it.name}: 戻り値の型に印 ${sig.returnVetted} を名乗れるのは gate 関数だけです (型述語 \`x is ${sig.returnVetted}\` も同じ —— \`tsc\` は述語を検めないので、関門を通らずに印の型を偽造できます)`);
+    }
     if (it.role === 'sink') {
       const dest = it.params[0];
       if (dest === undefined) {
@@ -259,7 +280,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     const ctx: Ctx = { role: it.role, returnVetted: sig.returnVetted, destVetted: sig.paramVetted[0] ?? null };
     const scope = new Map<string, Binding>();
     for (const p of it.params) {
-      scope.set(p.name, { vetted: carriedMark(p.type, table.vetted), authority: 'local' });
+      scope.set(p.name, { vetted: carriedMark(p.type, table.vetted), authority: 'local', numeric: p.type?.text === 'number' });
       if (p.init !== null) checkExpr(p.init, [moduleScope], ctx);
     }
     checkBlock(it.body, [moduleScope, scope], ctx);
@@ -330,7 +351,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         if (declared !== null && s.init !== null && carried !== declared) {
           report('M4', s.pos, `${s.name} は印 ${declared} の型ですが、入れる値は印を持ちません`);
         }
-        own.set(s.name, { vetted: declared ?? carried, authority: 'local', mutable: s.mutable });
+        own.set(s.name, { vetted: declared ?? carried, authority: 'local', mutable: s.mutable, numeric: s.type?.text === 'number' || (s.type === null && s.init !== null && isNumericKey(s.init, scopes)) });
         return;
       }
       case 'assign': {
@@ -383,9 +404,31 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     }
   }
 
+  /**
+   * 添字の鍵に使ってよい「静的に数と分かる式」か (0.8 · MG-007)。数リテラル・数と宣言した名前・`-` `*` `/` `%` (どちらの側も数に寄る)・
+   * `+` (両側が数のとき) ・`.length`・`Math.m(…)`・`Number(…)`・両方の枝が数の条件演算子。文字列の鍵で引く表は `Map` を使う。
+   * ここで通した式も、生成物では `+(…)` で数に寄せる (型の宣言は実行時には守られない)。
+   */
+  function isNumericKey(e: Expr, scopes: readonly Map<string, Binding>[]): boolean {
+    // switch を使わず if を並べる: `case` のラベルを消す変異体は隣の本体へ落ちて同じ答えになる (等価) ので測れない。
+    if (e.kind === 'number') return true;
+    if (e.kind === 'ident') return lookup(scopes, e.name)?.numeric === true;
+    if (e.kind === 'unary') return e.op === '-' || e.op === '~';
+    if (e.kind === 'binary') {
+      return e.op === '-' || e.op === '*' || e.op === '/' || e.op === '%' || BITWISE_OPS.has(e.op) || (e.op === '+' && isNumericKey(e.left, scopes) && isNumericKey(e.right, scopes));
+    }
+    if (e.kind === 'member') return e.prop === 'length';
+    if (e.kind === 'call') {
+      return e.callee.kind === 'member' ? identName(e.callee.object) === 'Math' && lookup(scopes, 'Math') === undefined : identName(e.callee) === 'Number' && lookup(scopes, 'Number') === undefined;
+    }
+    if (e.kind === 'cond') return isNumericKey(e.then, scopes) && isNumericKey(e.otherwise, scopes);
+    return false;
+  }
+
   /** この名前は、このモジュールの名前に隠されていない組み込みで、構築する形 (`new X(…)` / `X(…)`) で使ってよい物か。 */
   function isConstructibleBuiltin(callee: Expr, scopes: readonly Map<string, Binding>[]): boolean {
-    return CONSTRUCTIBLE.has(identName(callee)) && bindingOf(callee, scopes) === undefined;
+    const n = identName(callee);
+    return (CONSTRUCTIBLE.has(n) || PLAIN_BUILTINS.has(n)) && bindingOf(callee, scopes) === undefined;
   }
 
   /**
@@ -424,6 +467,8 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
             report('M6', e.pos, `組み込みの ${e.name} は値として持ち出せません —— \`new ${e.name}(…)\` と構築する形か、許したメンバを直に呼ぶ形だけです (持ち出すと、使ってよいメンバの表を別名で迂回できる)`);
           } else if (!PURE_GLOBALS.has(e.name)) {
             report('M6', e.pos, `宣言していない名前 ${e.name} —— 外の値は \`use\` / \`extern\` で宣言します (網・記憶・OS へ届く名前は暗黙に使えません)`);
+          } else {
+            report('M6', e.pos, `組み込みの ${e.name} は値として持ち出せません —— \`${e.name}.m(…)\` と直にメンバを使う形か、呼ぶ・構築する形だけです (\`Object.freeze(${e.name})\` で、アプリ全体の組み込みを凍らせる相手を選べてしまう)`);
           }
           return;
         }
@@ -460,7 +505,16 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
             return;
           }
         }
+        // 組み込み (Math / JSON / Array ほか) のメンバを直に使う形は、名前そのものを値として持ち出すわけではない (MG-006)。
+        if (isConstructibleBuiltin(e.object, scopes)) return;
         checkExpr(e.object, scopes, ctx);
+        return;
+      case 'index':
+        checkExpr(e.object, scopes, ctx);
+        checkExpr(e.key, scopes, ctx);
+        if (e.key.kind !== 'string' && !isNumericKey(e.key, scopes)) {
+          report('M6', e.key.pos, '添字の鍵は、数リテラル・数と分かる式・識別子にならない文字列だけです —— 鍵を実行時に文字列で組める添字は `x["constructor"]` で T-224 の表を迂回する道になります (文字列で引く表は `Map` の `get` を使う)');
+        }
         return;
       case 'field':
         checkExpr(e.object, scopes, ctx);
@@ -485,13 +539,21 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         if (!isConstructibleBuiltin(e.callee, scopes)) checkExpr(e.callee, scopes, ctx);
         e.args.forEach((x) => checkExpr(x, scopes, ctx));
         return;
-      case 'arrow': {
+      case 'arrow':
+      case 'arrow-block': {
         const inner = new Map<string, Binding>();
-        // arrow の本体は式なので、その中で引数へ代入する文は書けない —— 'local' の綴りは代入の判定にしか効かず、
-        // ここでは届かない (等価)。印 (vetted) のほうは「arrow の引数の印の型は、arrow の中で印を運ぶ」が留める。
-        // Stryker disable next-line StringLiteral: 上の注記のとおり等価 (arrow の引数へは代入できない)
-        for (const p of e.params as readonly Param[]) inner.set(p.name, { vetted: carriedMark(p.type, table.vetted), authority: 'local' });
-        checkExpr(e.body, [...scopes, inner], ctx);
+        // arrow の本体は、外側が gate / sink 関数でも **plain の役**で検める (0.9 · T-245)。0.8 まで本体は外側の役を引き継いでおり、
+        // sink 関数が危ない口を包んだ閉包を値として返せ、gate の中の arrow で mint も通った。
+        // Stryker disable next-line ObjectLiteral,StringLiteral: 役を比べるのは 'gate' / 'sink' だけで 'plain' と比べる所は無く、plain の他の 2 欄は gate / sink の枝の中でしか読まれない (等価)
+        const plain: Ctx = { role: 'plain', returnVetted: null, destVetted: null };
+        // 引数への代入は arrow の本体 (式) では書けない。ブロックの本体では書けるが、'local' / mutable でない束縛へは代入を断る。
+        // Stryker disable next-line StringLiteral: 引数の権限は代入の判定にしか効かず、引数は let ではないので mutable の門が先に断る (等価)
+        for (const p of e.params as readonly Param[]) inner.set(p.name, { vetted: carriedMark(p.type, table.vetted), authority: 'local', numeric: p.type?.text === 'number' });
+        // 既定値 (`(q = fetch("x")) => q`) も式 —— 0.7 まで検めていなかったので、plain 関数の中で宣言していない名前・
+        // 危ない口・印の無い値での印つきの口の呼び出しを、arrow の引数の既定値に隠せた (T-244)。
+        for (const p of e.params as readonly Param[]) if (p.init !== null) checkExpr(p.init, [...scopes, inner], plain);
+        if (e.kind === 'arrow') checkExpr(e.body, [...scopes, inner], plain);
+        else checkBlock(e.body, [...scopes, inner], plain);
         return;
       }
       case 'mint': {

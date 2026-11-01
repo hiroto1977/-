@@ -70,6 +70,8 @@ const STATIC_STATE = [
   'String.fromCharCode(1)', 'String.raw(x)', 'Math.random()', 'JSON.parse(x)', 'JSON.stringify(x)', 'Map.groupBy(x, y)',
   'Object.groupBy(x, y)', 'Symbol.for("a")', 'new Map()', 'new Set()', 'new WeakMap()', 'new URL(x)', 'new RegExp(x)',
   'new Error(x)', 'new Promise(x)', 'new Array(x)', 'new Object()',
+  'x["con" + "structor"]', 'x["\\u0063onstructor"]', 'x["__proto__"]', 'x["content-type"]', 'x[n - 1]', 'x[typeof y]', 'x[y]', 'x[0][1]', 'x[x.length - 1]',
+  'Object.freeze(Array)', 'Object.freeze(Math)', 'Object.freeze(JSON)', 'Object.freeze(Promise)', 'Object.freeze(String)', 'x.filter(Boolean)', 'x.map(String)',
 ];
 
 const SYNTAX_ESCAPES = [
@@ -151,6 +153,11 @@ const CONTEXTS: Readonly<Record<string, (e: string) => string>> = {
   letLocal: (e) => `export fn go() -> unknown {\n  let v = 0;\n  v = ${e};\n  return v;\n}\n`,
   arrow: (e) => `export fn go() -> unknown {\n  return [1].map((q) => ${e});\n}\n`,
   arrowBlock: (e) => `export fn go() -> unknown {\n  return [1].map((q) => {\n    return ${e};\n  });\n}\n`,
+  // ビット演算 (0.10 · MG-009): 弾が両辺・単項・添字の鍵のどこに座っても、独立の判定器と食い違わないこと
+  bitLeft: (e) => `export fn go() -> unknown {\n  return (${e}) | 0;\n}\n`,
+  bitRight: (e) => `export fn go() -> unknown {\n  return 1 << (${e});\n}\n`,
+  bitUnary: (e) => `export fn go() -> unknown {\n  return ~(${e});\n}\n`,
+  bitIndex: (e) => `export fn go(xs: string[]) -> unknown {\n  return xs[(${e}) >>> 1];\n}\n`,
   cond: (e) => `export fn go() -> unknown {\n  return true ? ${e} : 0;\n}\n`,
   condElse: (e) => `export fn go() -> unknown {\n  return false ? 0 : ${e};\n}\n`,
   obj: (e) => `export fn go() -> unknown {\n  return { a: ${e} };\n}\n`,
@@ -246,6 +253,8 @@ const ALLOWED_BUILTINS = new Set([
   'Object', 'Array', 'String', 'Number', 'Boolean', 'Math', 'JSON', 'Promise', 'Map', 'Set', 'Error', 'TypeError', 'RangeError',
   'RegExp', 'URL', 'undefined', 'NaN', 'Infinity',
 ]);
+/** 値として渡せない組み込み (メンバを直に使う・呼ぶ・構築する形だけ)。Object / RegExp / Error / URL は別の表で見る。 */
+const PLAIN_BUILTIN_NAMES = new Set(['Array', 'String', 'Number', 'Boolean', 'Math', 'JSON', 'Promise', 'Map', 'Set']);
 const OBJECT_MEMBERS = new Set(['hasOwn', 'keys', 'values', 'entries', 'fromEntries', 'freeze', 'isFrozen']);
 /** どこに現れても成らないメンバ名。 */
 const BANNED_MEMBERS = new Set([
@@ -293,7 +302,15 @@ export function inspectEmitted(file: string, text: string, externGlobals: Readon
   };
 
   const walk = (n: ts.Node): void => {
-    if (ts.isElementAccessExpression(n)) found.push({ kind: 'hole', reason: '添字 x[k] がある' });
+    if (ts.isElementAccessExpression(n)) {
+      // 0.8 の添字: 許すのは (1) 数リテラル (2) `.name` に書けない文字列 (3) `+(…)` で数に寄せた鍵 だけ。
+      // 識別子として読める文字列の鍵は `.name` に畳まれて出るはずなので、添字として残っていたら穴 (禁じた名前でなくても) 。
+      const a = n.argumentExpression;
+      const ok = ts.isNumericLiteral(a) ||
+        (ts.isStringLiteral(a) && !/^[A-Za-z_$][A-Za-z0-9_$]*$/.test(a.text)) ||
+        (ts.isPrefixUnaryExpression(a) && a.operator === ts.SyntaxKind.PlusToken);
+      if (!ok) found.push({ kind: 'hole', reason: `添字 x[k] の鍵が許した形でない: ${a.getText(sf)}` });
+    }
     if (ts.isTemplateExpression(n) || ts.isTaggedTemplateExpression(n)) found.push({ kind: 'hole', reason: 'テンプレート文字列がある' });
     if (ts.isAsExpression(n) && ts.isTypeReferenceNode(n.type) && ts.isIdentifier(n.type.typeName) && declared.has(n.type.typeName.text)) {
       // gate の `mint` が出す `as <印の型>` だけは許す (宣言した/取り込んだ名前への型付けで、印の型は gate の外では作れない)
@@ -332,6 +349,11 @@ export function inspectEmitted(file: string, text: string, externGlobals: Readon
       const isBindingName = (ts.isVariableDeclaration(parent) || ts.isParameter(parent) || ts.isFunctionDeclaration(parent) || ts.isTypeAliasDeclaration(parent) ||
         ts.isInterfaceDeclaration(parent) || ts.isImportSpecifier(parent) || ts.isImportClause(parent) || ts.isNamespaceImport(parent) || ts.isTypeParameterDeclaration(parent)) &&
         (parent as { name?: ts.Node }).name === n;
+      // 組み込みの構築子・名前空間を**値として**渡す形 (Object.freeze(Array) でアプリ全体の組み込みを凍らせる · T-243)。
+      // 許すのは メンバを直に使う (Math.floor)・呼ぶ (String(x))・構築する (new Map()) 形だけ。
+      const isValueUse = PLAIN_BUILTIN_NAMES.has(n.text) && !declared.has(n.text) && !isMemberName && !isBindingName && !inType(n) &&
+        !(ts.isPropertyAccessExpression(parent) && parent.expression === n) && !((ts.isCallExpression(parent) || ts.isNewExpression(parent)) && parent.expression === n);
+      if (isValueUse) found.push({ kind: 'hole', reason: `組み込みの ${n.text} を値として持ち出している (T-243)` });
       if (!/^[A-Za-z_$][A-Za-z0-9_$]*$/.test(n.text)) found.push({ kind: 'hole', reason: `ASCII でない名前 ${JSON.stringify(n.text)}` });
       else if (!isMemberName && !isBindingName && !inType(n) && !declared.has(n.text) && !externGlobals.has(n.text) && !ALLOWED_BUILTINS.has(n.text)) {
         found.push({ kind: 'hole', reason: `宣言していない名前 ${n.text}` });
@@ -593,6 +615,10 @@ describe('物差しの対照: 判定は穴の開いた生成物を実際に落�
     構文の誤り: 'export function go( {\n  return 1;\n}\n',
     'Object.assign': 'export function go(x: object) {\n  return Object.assign(x, x);\n}\n',
     'new Function': 'export function go() {\n  return new Function("return 1");\n}\n',
+    '添字: 文字列を組んだ鍵': 'export function go(x: object) {\n  return x["con" + "structor"];\n}\n',
+    '添字: 識別子の文字列の鍵': 'export function go(x: object) {\n  return x["name"];\n}\n',
+    '組み込みを値で凍らせる': 'export function go() {\n  return Object.freeze(Array);\n}\n',
+    '組み込みを callback で渡す': 'export function go(x: number[]) {\n  return x.filter(Boolean);\n}\n',
     bidiの字句: 'export function go() {\n  return 1 \u202E 2;\n}\n',
   };
   for (const [name, text] of Object.entries(holey)) {

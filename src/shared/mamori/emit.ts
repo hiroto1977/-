@@ -13,12 +13,14 @@ const IND = '  ';
 
 /** 2 項演算子の強さ (大きいほど強い)。 */
 const PREC: Readonly<Record<string, number>> = {
-  '??': 1, '||': 2, '&&': 3, '===': 4, '!==': 4, '<': 5, '>': 5, '<=': 5, '>=': 5, '+': 6, '-': 6, '*': 7, '/': 7, '%': 7,
+  '??': 1, '||': 2, '&&': 3, '|': 3.2, '^': 3.4, '&': 3.6, '===': 4, '!==': 4, '<': 5, '>': 5, '<=': 5, '>=': 5,
+  '<<': 5.5, '>>': 5.5, '>>>': 5.5, '+': 6, '-': 6, '*': 7, '/': 7, '%': 7,
 };
 
 function prec(e: Expr): number {
   switch (e.kind) {
     case 'arrow':
+    case 'arrow-block':
       return 0;
     // `c ? a : b` は ?? より弱く arrow より強い (TypeScript の条件演算子)。
     case 'cond':
@@ -64,12 +66,19 @@ export function expr(e: Expr): string {
       return `[${e.items.map(expr).join(', ')}]`;
     case 'member':
       return `${wrap(e.object, 9)}${e.optional ? '?.' : '.'}${e.prop}`;
+    case 'index':
+      // 数リテラルと識別子にならない文字列はそのまま。それ以外の鍵は数に寄せる (`+`) —— 型の宣言が嘘でも、文字列の鍵
+      // (`"constructor"`) は NaN になって表に届かない (検査器が静的に数と分かる式だけを通した上の、実行時の二重の守り)。
+      return `${wrap(e.object, 9)}[${e.key.kind === 'number' || e.key.kind === 'string' ? expr(e.key) : `+(${expr(e.key)})`}]`;
     case 'call':
       return `${wrap(e.callee, 9)}(${e.args.map(expr).join(', ')})`;
     case 'new':
       return `new ${expr(e.callee)}(${e.args.map(expr).join(', ')})`;
     case 'unary':
-      return e.op === '!' || e.op === '-' ? `${e.op}${wrap(e.operand, 8)}` : `${e.op} ${wrap(e.operand, 8)}`;
+      // `-(-a)` を `--a` と出すと、符号の反転ではなく減算代入 (引数・let の書き換え) になる (T-246)。`-` の直後の `-` は括る。
+      // Stryker disable next-line ConditionalExpression: 種類の判定を外すと `-(a - b)` (2 項の `-`) も括るが、2 項は強さが 6 < 8 で wrap が元から括る (等価)
+      if (e.op === '-' && e.operand.kind === 'unary' && e.operand.op === '-') return `-(${expr(e.operand)})`;
+      return e.op === '!' || e.op === '-' || e.op === '~' ? `${e.op}${wrap(e.operand, 8)}` : `${e.op} ${wrap(e.operand, 8)}`;
     case 'binary': {
       const p = PREC[e.op]!;
       const l = prec(e.left) < p || mixesNullish(e.op, e.left) ? `(${expr(e.left)})` : expr(e.left);
@@ -79,6 +88,9 @@ export function expr(e: Expr): string {
     case 'arrow':
       // 本体がオブジェクトの字面なら括る (括らないと TypeScript は `{` を関数の本体と読む)。
       return `(${e.params.map(param).join(', ')}) => ${e.body.kind === 'object' ? `(${expr(e.body)})` : wrap(e.body, 1)}`;
+    case 'arrow-block':
+      // 式の中なので深さは分からない: 本体は 1 段下げ、閉じ括弧は行頭 (体裁だけの差で、tsc は気にしない)。
+      return `(${e.params.map(param).join(', ')}) => {\n${block(e.body, 1).join('\n')}\n}`;
     case 'mint':
       return `${wrap(e.value, 6)} as ${e.vetted}`;
     case 'object':

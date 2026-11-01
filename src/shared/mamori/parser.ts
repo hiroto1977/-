@@ -47,6 +47,9 @@ export const FORBIDDEN_WORDS: Readonly<Record<string, string>> = {
  * `Function` という名前は M6 が断るが、メンバの連鎖はどの名前も経由しない。`prototype` / `__proto__` は
  * 組み込みの原型 (`String.prototype` ほか) に届く —— 書き換えると、他のモジュールの関門の判定まで変わる。
  */
+/** `.name` と書ける名前 (添字の字面の鍵を `member` に畳む判定)。 */
+const MEMBER_NAME = /^[A-Za-z_$][A-Za-z0-9_$]*$/;
+
 export const FORBIDDEN_MEMBERS: Readonly<Record<string, string>> = {
   constructor: '`.constructor` は Mamori に在りません —— 関数の constructor (`Function`) は文字列をコードとして走らせる口で、`eval` を禁じても `String.constructor(code)()` で同じことができてしまいます',
   prototype: '`.prototype` は Mamori に在りません —— 組み込みの原型を書き換えると、他のモジュールの関門の判定まで変わります',
@@ -61,8 +64,8 @@ export const FORBIDDEN_MEMBERS: Readonly<Record<string, string>> = {
 };
 
 const PUNCT = [
-  '===', '!==', '...', '->', '=>', '&&', '||', '??', '?.', '<=', '>=',
-  '(', ')', '{', '}', '[', ']', '<', '>', ',', ';', ':', '.', '=', '!', '+', '-', '*', '/', '%', '?', '|', '&',
+  '===', '!==', '...', '->', '=>', '&&', '||', '??', '?.', '<=', '>=', '<<',
+  '(', ')', '{', '}', '[', ']', '<', '>', ',', ';', ':', '.', '=', '!', '+', '-', '*', '/', '%', '?', '|', '&', '^', '~',
 ];
 
 /** この直後に来る `/` は割り算ではなく正規表現の始まり。 */
@@ -261,16 +264,20 @@ export function parse(file: string, src: string): Module {
   /** for の深さ (continue が置ける) と、for か switch の深さ (break が置ける)。 */
   let loops = 0;
   let breakables = 0;
+  /** 文字列の字面の中身 (`\uXXXX` などを解いた値)。読めない綴りは位置つきで断る。 */
+  const decodeString = (text: string, pos: Tok): string => {
+    try {
+      return JSON.parse(text.startsWith("'") ? `"${text.slice(1, -1).replace(/"/g, '\\"')}"` : text) as string;
+    } catch {
+      // `\'` や `\x41` のように JSON に無い綴りは読めない (読めない綴りでコンパイラごと落ちず、位置つきで断る)。
+      return fail(pos, '文字列の中の `\\` の綴りが読めません —— `\\n` `\\t` `\\"` `\\\\` `\\uXXXX` だけを使います');
+    }
+  };
   const str = (): string => {
     const t = peek();
     if (t.kind !== 'string') fail(t, `文字列が要ります (在ったのは ${describe(t)})`);
     next();
-    try {
-      return JSON.parse(t.text.startsWith("'") ? `"${t.text.slice(1, -1).replace(/"/g, '\\"')}"` : t.text) as string;
-    } catch {
-      // `\'` や `\x41` のように JSON に無い綴りは読めない (読めない綴りでコンパイラごと落ちず、位置つきで断る)。
-      return fail(t, '文字列の中の `\\` の綴りが読めません —— `\\n` `\\t` `\\"` `\\\\` `\\uXXXX` だけを使います');
-    }
+    return decodeString(t.text, t);
   };
 
   const takeLeading = (kinds: readonly TokKind[]): string[] => {
@@ -478,15 +485,37 @@ export function parse(file: string, src: string): Module {
     return { kind: 'expr', expr: e, comments: cs, pos: t.pos };
   };
 
+  /**
+   * 2 項演算子の段 (弱い順)。ビット演算 (0.10 · MG-009) は JavaScript と同じ強さで、`&&` と `===` の間 (`|` `^` `&`) と
+   * 関係演算子と足し算の間 (シフト) に入る。シフトの `>>` `>>>` は字句では `>` の並びのまま (入れ子の型 `Array<Array<x>>` を
+   * 壊さない) —— 式の位置で、隣り合う (同じ行で桁が続く) `>` だけをシフトと読む。`SHIFT` の段の印。
+   */
   const BINARY: readonly (readonly string[])[] = [
     ['??'],
     ['||'],
     ['&&'],
+    ['|'],
+    ['^'],
+    ['&'],
     ['===', '!=='],
     ['<', '>', '<=', '>='],
+    ['<<', '>>', '>>>'],
     ['+', '-'],
     ['*', '/', '%'],
   ];
+
+  /**
+   * いま先頭に在る、この段の演算子の綴りと字句数。隣り合う `>` の並び (`>>` `>>>`) は 1 つの演算子として読む —— その綴りが
+   * この段 (シフト) に在るときだけ。関係演算子の段が見る `>` は、シフトの段が先に読み終えているので並びを持たない。
+   */
+  const binaryOpAt = (level: number): { readonly text: string; readonly count: number } | null => {
+    const ops = BINARY[level]!;
+    const t = peek();
+    const adjacent = (n: number): boolean => isP('>', n) && peek(n).pos.line === t.pos.line && peek(n).pos.col === t.pos.col + n;
+    const shift = adjacent(0) && adjacent(1) ? (adjacent(2) ? { text: '>>>', count: 3 } : { text: '>>', count: 2 }) : null;
+    if (shift !== null && ops.includes(shift.text)) return shift;
+    return isPunctTok(t, ...ops) ? { text: t.text, count: 1 } : null;
+  };
 
   const expr = (): Expr => {
     if (isArrowAhead()) return arrow();
@@ -502,19 +531,37 @@ export function parse(file: string, src: string): Module {
   const binary = (level: number): Expr => {
     if (level >= BINARY.length) return unary();
     let left = binary(level + 1);
-    while (isPunctTok(peek(), ...BINARY[level]!)) {
-      const op = next();
+    for (let op = binaryOpAt(level); op !== null; op = binaryOpAt(level)) {
+      const first = peek();
+      for (let n = 0; n < op.count; n++) next();
       const right = binary(level + 1);
-      left = { kind: 'binary', op: op.text, left, right, pos: op.pos };
+      left = { kind: 'binary', op: op.text, left, right, pos: first.pos };
     }
     return left;
   };
 
+  /**
+   * 式の入れ子の上限 (0.10 · MG-009)。段が増えると 1 段の括弧あたりの再帰が増え、深い入れ子で `RangeError: Maximum call stack size
+   * exceeded` のままコンパイラが落ちた (電池の DEEP の弾)。落ちるのではなく、場所を名乗る断りにする。実在のプログラムは数段で足りる。
+   */
+  const MAX_NESTING = 200;
+  let nesting = 0;
+
   const unary = (): Expr => {
     const t = peek();
-    if (isP('!') || isP('-')) {
+    if (nesting >= MAX_NESTING) fail(t, `式の入れ子が深すぎます (${MAX_NESTING} 段まで) —— 括弧・単項演算子・配列・オブジェクトの重なりを減らします`);
+    nesting++;
+    try {
+      return unaryBody(t);
+    } finally {
+      nesting--;
+    }
+  };
+
+  const unaryBody = (t: Tok): Expr => {
+    if (isP('!') || isP('-') || isP('~')) {
       next();
-      return { kind: 'unary', op: t.text as '!' | '-', operand: unary(), pos: t.pos };
+      return { kind: 'unary', op: t.text as '!' | '-' | '~', operand: unary(), pos: t.pos };
     }
     if (isW('typeof') || isW('await')) {
       next();
@@ -534,6 +581,26 @@ export function parse(file: string, src: string): Module {
     return out;
   };
 
+  /**
+   * 添字 `object[key]` (0.8 · MG-007 · threat: T-224 の続き)。
+   *
+   * **鍵を実行時に組める添字は `.constructor` を断る表を迂回する道になる** (`x["constructor"]`)。だから:
+   * - 識別子として読める文字列の鍵 (`x["name"]`・`\u0063onstructor` の綴り違いも解いてから) は **`member` に畳む** —— `.name` と
+   *   同じ `FORBIDDEN_MEMBERS` ・組み込みのメンバの表・`?.` の検めをそのまま通るので、迂回は構造上ありえない。
+   * - 識別子にならない文字列 (`"content-type"`) と数リテラルは `index` のまま (禁じた名前にも組み込みのメンバにもなりえない)。
+   * - それ以外の鍵は、検査器が「静的に数と分かる式」だけを許し、生成物では数に寄せる (`x[+(k)]`)。
+   */
+  const indexOf = (object: Expr, key: Expr, keyTok: Tok, pos: Pos): Expr => {
+    if (key.kind === 'string') {
+      const name = decodeString(key.raw, keyTok);
+      if (MEMBER_NAME.test(name)) {
+        if (Object.hasOwn(FORBIDDEN_MEMBERS, name)) fail(keyTok, FORBIDDEN_MEMBERS[name]!);
+        return { kind: 'member', object, prop: name, optional: false, pos };
+      }
+    }
+    return { kind: 'index', object, key, pos };
+  };
+
   const postfix = (): Expr => {
     let e = primary();
     for (;;) {
@@ -541,6 +608,12 @@ export function parse(file: string, src: string): Module {
         const dot = next();
         if (dot.text === '?.' && (isP('(') || isP('['))) fail(peek(), '`?.(` と `?.[` は在りません —— `?.` の後ろは名前だけです (呼ぶ側を実行時に選べると、印を受ける関数を値として持ち出せる)');
         e = { kind: 'member', object: e, prop: memberName(), optional: dot.text === '?.', pos: dot.pos };
+      } else if (isP('[')) {
+        const open = next();
+        const keyTok = peek();
+        const key = expr();
+        expectP(']');
+        e = indexOf(e, key, keyTok, open.pos);
       } else if (isP('(')) {
         const pos = peek().pos;
         e = { kind: 'call', callee: e, args: args(), pos };
@@ -651,6 +724,17 @@ export function parse(file: string, src: string): Module {
     const pos = peek().pos;
     const ps: Param[] = peek().kind === 'ident' ? [{ name: ident(), type: null, init: null, pos }] : params();
     expectP('=>');
+    if (isP('{')) {
+      // 本体のブロックは arrow の外の for / switch の内側ではない: `break` / `continue` は arrow を越えない。
+      const savedLoops = loops;
+      const savedBreakables = breakables;
+      loops = 0;
+      breakables = 0;
+      const body = block();
+      loops = savedLoops;
+      breakables = savedBreakables;
+      return { kind: 'arrow-block', params: ps, body, pos };
+    }
     return { kind: 'arrow', params: ps, body: expr(), pos };
   };
 
