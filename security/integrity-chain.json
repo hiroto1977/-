@@ -3433,6 +3433,14 @@
       "leafCount": 158,
       "note": "update integrity-chain.cjs,mamori.cjs,mamori-capabilities.json,capabilities.ts,checker.ts,compile.ts",
       "hash": "b7d686bc3bc673c4bd9b83b15317404d46b0ceebc77b118c1459ccf216fecb24"
+    },
+    {
+      "index": 409,
+      "prevHash": "b7d686bc3bc673c4bd9b83b15317404d46b0ceebc77b118c1459ccf216fecb24",
+      "merkleRoot": "6ac403e7f31ffa9c8ffd515f0420333363038900130735f1fac7fd9a83132567",
+      "leafCount": 158,
+      "note": "update ast.ts,emit.ts,parser.ts",
+      "hash": "4b0d40f320cfcb011d45bab1c2f843149f908392bd7e62cf93ed976be2ab4ef0"
     }
   ],
   "tipManifest": {
@@ -3568,12 +3576,12 @@
     "src/shared/inputCeiling.ts": "bdfc78b888dfbb8efc8d3176eec25587b32d93a7d1c9562c03f0036ece77623c",
     "src/shared/isoDate.ts": "cfe317b22c6b482c42bca40a9d19a5cbd3204b5cbace6e7336befe77690f01cd",
     "src/shared/localDate.ts": "9220ae751caf1637071d5804fb67d4629125bed1c4a9a7913fdd2968c5294da1",
-    "src/shared/mamori/ast.ts": "53d9b01b1828d5d2ccbd1dfbc89a947cb62e8f5f143f0903754b7f4bbb47f40b",
+    "src/shared/mamori/ast.ts": "397f51a9d7224ef64fb9c32ebf3cb7ba6e3ebc37761ee31b9c7fc45bac9f7546",
     "src/shared/mamori/capabilities.ts": "a62f4a2bee3099bb4ced100b86aad254126f18ba52de5fe5dc4e224fea904462",
     "src/shared/mamori/checker.ts": "f02e8f1c03b7c24e5216683e006858a3764728f8573c93f682e0a7751e4690dc",
     "src/shared/mamori/compile.ts": "a21bed94095d71f5f3384d4813ed55de86eea7434117617bfba6dc135def875a",
-    "src/shared/mamori/emit.ts": "6a4eb34c57ed358e237e0330645e206d89b62639c13558621300be9658938293",
-    "src/shared/mamori/parser.ts": "df454ccb245b325e9b05c59a114505a2964e75cf51d4daa3f20473ba6daf49b2",
+    "src/shared/mamori/emit.ts": "4a9472327bcf6a49bc9d737e8eda680bedf9d4ac46351d4aed1e222a38ef9e3d",
+    "src/shared/mamori/parser.ts": "3b11dcfc499b5fef8fb11938ded989295d22673a2ddf6daae6ffb0817ffbfec0",
     "src/shared/ollama.ts": "672ff00261aa63ae7e0b7567dbfaa54ad88da67a5fa55788c79b16c1bd6193c8",
     "src/shared/outboundContentGate.ts": "56f7383c0e56285d5cc6e7793b6574bf4327d6edb9352fb3a9cd3e16ddc33326",
     "src/shared/privateTarget.ts": "8610e3372367a7960faddf306c9e4210e882a1719bbf4426840191c314ed8035",

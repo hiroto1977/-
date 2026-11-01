@@ -40,6 +40,14 @@ describe('0.6: `?.` は名前の前でだけ書ける', () => {
     expect(compile(go('  return u?.(1);')).diagnostics).toEqual([at(2, 13, 'M0', MSG)]);
     expect(compile(go('  return u?.[0];')).diagnostics).toEqual([at(2, 13, 'M0', MSG)]);
   });
+  it('普通の `.` の後ろの `(` / `[` は、`?.` の文ではなく名前の誤りで断る (`?.` の規則は `?.` だけに掛かる)', () => {
+    for (const body of ['  return u.(1);', '  return u.[0];']) {
+      const d = compile(go(body)).diagnostics;
+      expect(d).toHaveLength(1);
+      expect(d[0]).toContain('名前が要ります');
+      expect(d[0]).not.toContain('`?.(`');
+    }
+  });
   it('`?.` の後ろが名前でなければ断る', () => {
     expect(compile(go('  return u?.5;')).diagnostics).toHaveLength(1);
   });
