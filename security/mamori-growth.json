@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.11"
+    "version": "0.12"
   },
   "constructs": {
     "class": {
@@ -101,9 +101,10 @@
       "why": "== は型を変換して比べる。=== で書く。"
     },
     "catch-binding": {
-      "decision": "feature",
+      "decision": "added",
       "why": "例外の文を伏字にして返す所で要る。",
-      "risk": "束ねた例外は unknown で印を運ばない。例外の文を画面へ流すなら伏字の関門 (redactForMessage) を通すのは呼ぶ側の TypeScript の census が見る。"
+      "risk": "束ねた例外は unknown で印を運ばない。例外の文を画面へ流すなら伏字の関門 (redactForMessage) を通すのは呼ぶ側の TypeScript の census が見る。",
+      "since": "0.12"
     },
     "finally": {
       "decision": "feature",
@@ -1096,6 +1097,61 @@
         "pr": null,
         "reason": "PR はこの記録のあとに出す (番号は次の周で台帳へ)",
         "summary": "自動ロック (autoLock.ts · 席を離れた / タブを隠した時に金庫を施錠) を Mamori で書き直した (port)。足りなかったのは入れ子の関数宣言・複合代入・最上位の let・インターフェースのメソッド記法・型の戻し (as) で、const の arrow・x = x + 1・集合・readonly の関数欄・小さな host 関数 (autoLockHost.ts) へ替えた。移す途中で `extern pure global window/document` と宣言すると sink を経ずに window.open(生の値)・document.write・return window が通る穴 (T-249) を見つけ、host の 29 名は pure で宣言できないようにした (M6)。元の TypeScript と 400 通りの操作列 (時計・タイマー・可視・活動) で同じ痕跡・既存の検査 55 件は編集なしで緑。変異検査は autoLock.ts が初回 83.87% (pragma を移す途中で落とした + 境目・後始末・購読の通知を誰も主張していなかった) → pragma を戻し検査 7 件を足して 100% (98 変異体)、checker.ts は 99.87% の生存 1 (`from === null` の門) を検査 1 件で留めて 100%。能力台帳・保護対象・CODEOWNERS に追加。"
+      }
+    },
+    {
+      "id": "MG-016",
+      "date": "2026-11-01",
+      "kind": "feature",
+      "target": "catch-binding",
+      "pickedBy": "manual",
+      "deviation": "利用者の「進めて」(推奨の順: 機能 → 穴探し) に従い、brief の最初の推薦 (updateCheck の移植) より先に、移植で最も多く止まる構文 catch-binding (liveRead / pkceSession / assistant / exportPaths / selfAttestation の 5 壁で計 10 か所) を足した",
+      "briefPick": "port:src/shared/updateCheck.ts",
+      "version": "0.12",
+      "features": [
+        "`catch (e) { … }` の束縛 (名前 1 つだけ・型注釈なし。束ねた例外は unknown で印を運ばない局所の値として handler の中だけで見える。生成物はそのまま `catch (e)`)"
+      ],
+      "added": [
+        "catch-binding"
+      ],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "束ねた例外を印を受ける口へ渡す: `openIt(e)` / 印の型として返す `return e;` (-> VettedUrl)",
+          "result": "refused"
+        },
+        {
+          "tried": "handler の外で束縛の名前を使う・束縛へ代入する `e = 1;`",
+          "result": "refused"
+        },
+        {
+          "tried": "`e.constructor` / `e[\"constructor\"]` / `e.__proto__` (T-224 の表を例外の値で迂回する)",
+          "result": "refused"
+        },
+        {
+          "tried": "型注釈 `catch (e: unknown)`・2 つ以上の名前 `catch (a, b)`・分割代入 `catch ({ message })`",
+          "result": "refused"
+        },
+        {
+          "tried": "sink の名前や gate の名前で束縛して影にする `catch (openIt)`",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 3,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/emit.ts",
+          "src/shared/mamori/checker.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": null,
+        "reason": "PR はこの記録のあとに出す (番号は次の周で台帳へ)",
+        "summary": "Mamori 0.12: `catch (e)` の束縛を足した (catch-binding)。束ねた例外は印を運ばない局所の値で、印の口へ渡す・印の型として返す・外で使う・代入・禁じたメンバ・型注釈・複数の名前・分割代入・影にする手探り 12 形が全部断られ、穴は 0 件。この周で移せた壁は 0 本 (言語の幅を広げた周) だが、catch-binding を足りない構文に挙げる壁が 5 本あり、次の移植で効く。変異検査は parser / emit 100%・checker は生存 1 (束縛が無いときの false 枝は null 鍵を足すだけの等価) を理由つきで外して 100%。"
       }
     }
   ]
