@@ -4454,6 +4454,22 @@
         "test": "★ 200 段までは通り、201 段目は場所を名乗る M0 で断る (コンパイラは落ちない) (threat: T-247)"
       },
       "alsoRegressions": []
+    },
+    {
+      "id": "T-248",
+      "found": "2026-11-01",
+      "foundBy": "MG-011 で safeFilename.ts を Mamori へ移すとき、型述語 `-> s is string` が通るかを確かめて見つけた。述語は tsc も検めない型の主張で、`s is VettedUrl` と書いて `return true` するだけで関門 (mint) を通らずに印の型を作れた。plain / sink 関数が `-> VettedUrl` と宣言する形も Mamori は通していた。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "守りの層を書く言語 Mamori 0.1〜0.10 は gate 関数以外が戻り値の型に印 (vetted) を名乗れた (型述語・asserts・this is・plain/sink の `-> VettedMark`)。関門を通らずに印の型を偽造でき、M1 (印を作れるのは mint だけ) の穴だった",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: gate 以外の関数の戻り値の型 (型述語・asserts・this is を含む) が印を名乗ったら場所つきの M1 で断る。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV11.test.ts",
+        "test": "★ 9 つの形がすべて M1 で断られる (印の型を関門の外で名乗れない) (threat: T-248)"
+      },
+      "alsoRegressions": []
     }
   ],
   "huntBacklog": [

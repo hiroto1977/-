@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 418
+- ブロック数: 420
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `d427071812815c8742a5bc8e9bf14963d78cb802d3d2f35b176f3a743cca9b10`
-- 保護対象: 159 ファイル
+- 末尾(tip)ハッシュ: `eb88e427cf7341a9fdcaf910a6e5af2353678cb2d9ebe9a96aa393f974b4e386`
+- 保護対象: 160 ファイル
 
 ## ブロック
 
@@ -431,6 +431,8 @@
 | 415 | `b990e7888e85e677` | `b1423dc833881718` | `486ab4e5a8017af2` | update checker.ts |
 | 416 | `d141de7d27c58d9b` | `486ab4e5a8017af2` | `aa886997aef06baf` | update ast.ts,checker.ts,emit.ts,parser.ts |
 | 417 | `22d6faff04feb17d` | `aa886997aef06baf` | `d427071812815c87` | update integrity-chain.cjs,mamori-capabilities.json,egressStepUp.mamori,egressStepUp.ts |
+| 418 | `1ef59b8cb4857183` | `d427071812815c87` | `acfdfa669a999f68` | update integrity-chain.cjs,mamori-capabilities.json,safeFilename.mamori,safeFilename.ts |
+| 419 | `7a915db53849f1ee` | `acfdfa669a999f68` | `eb88e427cf7341a9` | update checker.ts |
 
 ## 保護対象ファイル
 
@@ -580,6 +582,7 @@
 - `src/shared/proxyEndpoint.mamori`
 - `src/shared/proxyEndpoint.ts`
 - `src/shared/redact.ts`
+- `src/shared/safeFilename.mamori`
 - `src/shared/safeFilename.ts`
 - `src/shared/scanTarget.ts`
 - `src/shared/tokenInput.mamori`

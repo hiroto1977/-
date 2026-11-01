@@ -1,3 +1,16 @@
+// 生成物 —— src/shared/safeFilename.mamori から Mamori のコンパイラが組んだ。手で編集しない (`npm run mamori:build`)。
+// 言語の仕様は docs/MAMORI.md。生成物が元と食い違えば src/shared/mamori/__tests__/mamoriGenerated.test.ts が落ちる。
+/**
+ * ファイル名として受け取ってよい文字列か —— アプリ全体で 1 つだけ持つ。
+ *
+ * ## Mamori で書いてある (2026-11-01 · MG-011)
+ *
+ * 元は TypeScript で、Mamori 0.10 で書き直した。足りなかったのは non-null (`s.split('.')[0]!`) と
+ * template (`filenameFromTitle` の組み立て) で、どちらも判定を変えずに書き直した ——
+ * 最初の `.` より前を `indexOf` + `slice` で取り、組み立ては文字列の連結 (`String(nowMs)`) にした。
+ * 書き出し先のファイル名の関門が、`as`・`.constructor`・宣言していない外の名前を**書けない**言語へ移った。
+ */
+
 /**
  * ファイル名として受け取ってよい文字列か —— アプリ全体で 1 つだけ持つ。
  *
@@ -59,6 +72,7 @@ export const MAX_FILENAME_LENGTH = 256;
  * 拡張子の**セグメント**で見る (`php入門.pdf` や `phpinfo.txt` は通す)。
  */
 const SERVER_SCRIPT_SEGMENT = /(^|\.)(php[0-9]?|phtml|pht|phps|phar)(\.|$)/i;
+
 const SERVER_CONFIG_NAME = /^(\.htaccess|\.user\.ini|web\.config)$/i;
 
 /**
@@ -79,7 +93,9 @@ export function isSafeFilename(s: unknown): s is string {
   if (/[\0\r\n/\\]/.test(s)) return false;
   if (s.includes(':') || /[. ]$/.test(s)) return false;
   // 予約名は**最初の `.` より前**で見る (`nul.svg` も `CON.tar.gz` も装置)。前後の空白は Windows が落とす。
-  if (WINDOWS_RESERVED_DEVICE.test(s.split('.')[0]!.trim())) return false;
+  const dot = s.indexOf('.');
+  const head = dot < 0 ? s : s.slice(0, dot);
+  if (WINDOWS_RESERVED_DEVICE.test(head.trim())) return false;
   return !SERVER_SCRIPT_SEGMENT.test(s) && !SERVER_CONFIG_NAME.test(s);
 }
 
@@ -97,5 +113,5 @@ export function isSafeFilename(s: unknown): s is string {
 export function filenameFromTitle(title: string, nowMs: number, ext: string): string {
   // `.` も落とす (2026-10-22 · T-163): 題名の `a.php.b` が名前に残ると `a.php.b-<時刻>.svg` の**途中**に
   // 実行される拡張子が現れる。ドットは最後の拡張子の 1 つだけにして、二重拡張子を作れなくする。
-  return `${title.replace(/[^\w-]+/g, '-').slice(0, 64)}-${nowMs}${ext}`;
+  return title.replace(/[^\w-]+/g, '-').slice(0, 64) + '-' + String(nowMs) + ext;
 }

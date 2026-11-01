@@ -257,6 +257,12 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     if (it.kind === 'const') checkExpr(it.init, [moduleScope], { role: 'plain', returnVetted: null, destVetted: null });
     if (it.kind !== 'fn') continue;
     const sig = localFns.get(it.name)!;
+    // 戻り値の型に印を名乗れるのは gate 関数だけ (0.11 · T-248)。0.10 まで、plain / sink 関数が `-> VettedUrl` と宣言でき、
+    // 型述語 (`-> s is VettedUrl` / `asserts s is …` / `this is …`) は **`tsc` も検めない型の主張**なので、戻り値に `true` を
+    // 返すだけで、関門 (`mint`) を通らずに生成物の呼び出し側へ印の型を渡せた (印を作れるのは gate の `mint` だけ、の穴)。
+    if (it.role !== 'gate' && sig.returnVetted !== null) {
+      report('M1', it.returns.pos, `${it.name}: 戻り値の型に印 ${sig.returnVetted} を名乗れるのは gate 関数だけです (型述語 \`x is ${sig.returnVetted}\` も同じ —— \`tsc\` は述語を検めないので、関門を通らずに印の型を偽造できます)`);
+    }
     if (it.role === 'sink') {
       const dest = it.params[0];
       if (dest === undefined) {

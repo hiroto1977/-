@@ -2341,6 +2341,18 @@
           "replace": "if (false) fail("
         }
       ]
+    },
+    {
+      "id": "A-568",
+      "threat": "T-248",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "gate 以外の戻り値の型の印を断る規則を外す —— 型述語などで関門を通らずに印の型を偽造できる口を開け直す",
+      "edits": [
+        {
+          "find": "if (it.role !== 'gate' && sig.returnVetted !== null) {",
+          "replace": "if (false) {"
+        }
+      ]
     }
   ]
 }

@@ -88,6 +88,12 @@
       "gates": [],
       "sinks": []
     },
+    "src/shared/safeFilename.mamori": {
+      "externals": [],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
     "src/shared/tokenInput.mamori": {
       "externals": [],
       "imports": [],

@@ -169,6 +169,7 @@ const PROTECTED = [
   // 資格情報の保存要求の検証 (main と renderer で同じ規則) —— Mamori 0.3 で書き直した (パス 567 · MG-003)。生成物 tokenInput.ts は既に保護対象。
   'src/shared/tokenInput.mamori',
   'src/renderer/security/egressStepUp.mamori',
+  'src/shared/safeFilename.mamori',
   'src/renderer/components/VettedImg.tsx',
   'src/renderer/components/VettedLink.tsx',
   'src/shared/mamori/ast.ts',
