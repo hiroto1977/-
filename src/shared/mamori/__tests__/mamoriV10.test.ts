@@ -94,7 +94,7 @@ describe('0.10: ビット演算', () => {
 
 describe('0.10: 式の入れ子の上限 (200 段)', () => {
   const nest = (n: number): string => '('.repeat(n) + '1' + ')'.repeat(n);
-  it('★ 200 段までは通り、201 段目は場所を名乗る M0 で断る (コンパイラは落ちない)', () => {
+  it('★ 200 段までは通り、201 段目は場所を名乗る M0 で断る (コンパイラは落ちない) (threat: T-247)', () => {
     expect(compile(go(nest(199))).diagnostics).toEqual([]);
     expect(compile(go(nest(200))).diagnostics.join('\n')).toContain('式の入れ子が深すぎます (200 段まで)');
     expect(() => compile(go(nest(5000)))).not.toThrow();

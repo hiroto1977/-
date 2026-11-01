@@ -4451,7 +4451,7 @@
       "fix": "src/shared/mamori/parser.ts: 単項の位置 (括弧・単項・配列・オブジェクトの入れ子がすべて通る所) で入れ子の深さを数え、200 段を超えたら場所を名乗る M0 で断る (finally で数え戻す)。",
       "regression": {
         "file": "src/shared/mamori/__tests__/mamoriV10.test.ts",
-        "test": "★ 200 段までは通り、201 段目は場所を名乗る M0 で断る (コンパイラは落ちない)"
+        "test": "★ 200 段までは通り、201 段目は場所を名乗る M0 で断る (コンパイラは落ちない) (threat: T-247)"
       },
       "alsoRegressions": []
     }
