@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.7"
+    "version": "0.8"
   },
   "constructs": {
     "class": {
@@ -11,9 +11,10 @@
       "risk": "メソッドの中の this・private の欄・メソッドに gate / sink の役割を持たせるか。役割を持たせるなら、メソッドの呼び出しも M4 で印を検める (今の M4 は名前で呼んだ関数しか見ない)。"
     },
     "index": {
-      "decision": "feature",
+      "decision": "added",
       "why": "配列とテーブルの引きに要る。",
-      "risk": "鍵を実行時に組めるので `x[\"constructor\"]` が T-224 の表を迂回する。字面の鍵は FORBIDDEN_MEMBERS を通し、字面でない鍵は数 (number) だけに限るなど、先に塞ぎ方を決める。"
+      "risk": "鍵を実行時に組めるので `x[\"constructor\"]` が T-224 の表を迂回する。字面の鍵は FORBIDDEN_MEMBERS を通し、字面でない鍵は数 (number) だけに限るなど、先に塞ぎ方を決める。",
+      "since": "0.8"
     },
     "optional-chain": {
       "decision": "added",
@@ -570,6 +571,67 @@
         "pr": 850,
         "reason": null,
         "summary": "言語の穴探し (probe)。電池 5 種は緑、手探り 50 本余りのうち `Object.freeze(Array)` などが通る穴 1 件 (T-243) を見つけ、組み込みの構築子・名前空間 9 つを値として持ち出せなくして 0.7 にした (メンバを直に使う・呼ぶ・構築する形は通る。`filter(Boolean)` は書けなくなった)。対照 3 方向 (直しを外すと電池 3 種が落ちる・穴開け直し A-560 が回帰検査 2 件で caught・直した後の正当な使い方が通る)。checker.ts の変異検査は 1 回目 99.83% (生存 1 = 冗長な `n !== null` 守り) → 形ごと消して測り直し 100.00% (Killed 570 + Timeout 2)。"
+      }
+    },
+    {
+      "id": "MG-007",
+      "date": "2026-11-01",
+      "kind": "feature",
+      "target": "index",
+      "pickedBy": "brief",
+      "briefPick": "feature:index",
+      "version": "0.8",
+      "features": [
+        "添字 `x[k]` (識別子として読める文字列の鍵は `.name` に畳み、数リテラル・識別子にならない文字列・静的に数と分かる式だけを通す。数と分かる鍵は生成物で `x[+(k)]` と数に寄せる。`?.[` と添字への代入は無い)"
+      ],
+      "added": [
+        "index"
+      ],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "`o[\"constructor\"]` / 単引用符 / 括弧つき / `\\u0063onstructor` の綴り違い / `__proto__` / `prototype` / `__defineGetter__` (禁じた名前を文字列の鍵で迂回する)",
+          "result": "refused"
+        },
+        {
+          "tried": "`o[\"con\" + \"structor\"]` / `o[u]` / `xs[u + \"x\"]` / `xs[typeof u]` / `xs[o.f()]` (文字列を実行時に組んだ鍵)",
+          "result": "refused"
+        },
+        {
+          "tried": "`Object[\"setPrototypeOf\"]` / `RegExp[\"$1\"]` / `Math[0]` / `shell[\"openExternal\"](u)` (組み込みの表と危ない口を添字で迂回する)",
+          "result": "refused"
+        },
+        {
+          "tried": "`const v: VettedUrl = xs[0]` / `openUrl(xs[0])` / `[openUrl][0](u)` (添字の結果で印を洗う・印を受ける口を値として持ち出す)",
+          "result": "refused"
+        },
+        {
+          "tried": "`xs[0] = u` / `xs?.[0]` (添字への代入・`?.[`)",
+          "result": "refused"
+        },
+        {
+          "tried": "攻撃の電池の揺さぶり (種 1): `[1].map((q=module) => q)` —— arrow の引数の既定値が検めを受けない (M6/M2/M4/M1 を素通り)。全 37 の式の位置に `fetch(\"x\")` を置く総当たりで、検めを受けなかったのはここだけ",
+          "result": "hole"
+        }
+      ],
+      "threats": [
+        "T-224",
+        "T-244"
+      ],
+      "controls": 6,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/emit.ts",
+          "src/shared/mamori/checker.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 850,
+        "reason": null,
+        "summary": "Mamori 0.8: 添字 x[k] を足した (index)。先に塞ぎ方を決めた —— 識別子の文字列鍵は .name に畳んで FORBIDDEN_MEMBERS と組み込みの表を共有し、動的な鍵は静的に数と分かる式だけを通して生成物で数に寄せる。手探り 44 形で穴 0 件。同じ周の電池の揺さぶりが arrow の引数の既定値が M2/M4/M6 を素通りする既存の穴 (T-244・0.2 から) を見つけ、塞いだ。移せた壁は 0 本 (添字だけが足りない壁もテンプレート等が要る)。変異検査は parser/emit 100%、checker は 1 回目 96.74% (isNumericKey の各枝の決め手が無かった) → 真理値表の検査と if の並びへの書き直しで 100.00%。対照 6 方向 (穴開け直し A-561..A-564 + 既存の T-224 2 件) が caught。"
       }
     }
   ]
