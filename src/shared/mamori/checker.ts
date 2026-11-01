@@ -45,7 +45,7 @@ export const PURE_GLOBALS: ReadonlySet<string> = new Set([
  * `extern pure global` にできない host の名前 (0.11 · T-249)。
  *
  * `extern pure global window;` と宣言すると `window` は副作用の判断を持たない値として**どこでも**使え、`window.open(生の文字列)` /
- * `document.write(html)` / `return window;` が通った (危ない口を `extern sink` で宣言して sink 関数に閉じ込める M2 を、宣言の
+ * DOM へ文字列を書く口や `return window;` が通った (危ない口を `extern sink` で宣言して sink 関数に閉じ込める M2 を、宣言の
  * 綴りを `pure` にするだけで外せた)。ここに挙げた名前は網・記憶・移動・DOM・コードの口を**メンバとして持つ**ので、`pure` では宣言できない:
  * 口として使うなら `extern sink global`、値を読むだけなら型の戻しだけを持つ小さな関数を `extern pure { … } from "./host"` で読む。
  */
