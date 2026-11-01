@@ -536,6 +536,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         const inner = new Map<string, Binding>();
         // arrow の本体は、外側が gate / sink 関数でも **plain の役**で検める (0.9 · T-245)。0.8 まで本体は外側の役を引き継いでおり、
         // sink 関数が危ない口を包んだ閉包 (`() => shell.openExternal(u)`) を値として返せ、gate の中の arrow で mint も通った。
+        // Stryker disable next-line ObjectLiteral,StringLiteral: 役を比べるのは 'gate' / 'sink' だけで 'plain' と比べる所は無く、plain の他の 2 欄は gate / sink の枝の中でしか読まれない (等価)
         const plain: Ctx = { role: 'plain', returnVetted: null, destVetted: null };
         // 引数への代入は arrow の本体 (式) では書けない。ブロックの本体では書けるが、'local' / mutable でない束縛へは代入を断る。
         // Stryker disable next-line StringLiteral: 引数の権限は代入の判定にしか効かず、引数は let ではないので mutable の門が先に断る (等価)

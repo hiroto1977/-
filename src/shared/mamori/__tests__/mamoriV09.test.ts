@@ -63,6 +63,19 @@ describe('0.9: ブロックの本体を持つ arrow', () => {
   });
 });
 
+describe('0.9: 生成物を 1 byte で留める', () => {
+  const body = (expr: string): string => compile(go(`  return ${expr};`)).output.split('export function go(xs: string[], n: number): unknown {\n')[1]!;
+  it('ブロックの本体は `=> {` の改行・本体 (1 段下げ)・行頭の `}` で出る', () => {
+    expect(body('xs.map((x) => { return x; })')).toBe('  return xs.map((x) => {\n  return x;\n});\n}\n');
+  });
+  it('★ 呼び出しの頭・2 項演算子の左・メンバの頭・条件演算子の枝では括弧で包む (式の arrow と同じ強さ)', () => {
+    expect(body('(() => { return 1; })()')).toBe('  return (() => {\n  return 1;\n})();\n}\n');
+    expect(body('(() => { return 1; }) || 3')).toBe('  return (() => {\n  return 1;\n}) || 3;\n}\n');
+    expect(body('(() => { return 1; }).length')).toBe('  return (() => {\n  return 1;\n}).length;\n}\n');
+    expect(body('n > 0 ? () => { return 1; } : 2')).toBe('  return n > 0 ? (() => {\n  return 1;\n}) : 2;\n}\n');
+  });
+});
+
 describe('T-245: arrow の本体は外側の役 (gate / sink) を引き継がない', () => {
   it('★ sink 関数が危ない口を包んだ閉包を返せない・gate の中の arrow で mint できない (threat: T-245)', () => {
     // ブロックの本体
