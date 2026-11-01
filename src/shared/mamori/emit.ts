@@ -63,7 +63,7 @@ export function expr(e: Expr): string {
     case 'array':
       return `[${e.items.map(expr).join(', ')}]`;
     case 'member':
-      return `${wrap(e.object, 9)}.${e.prop}`;
+      return `${wrap(e.object, 9)}${e.optional ? '?.' : '.'}${e.prop}`;
     case 'call':
       return `${wrap(e.callee, 9)}(${e.args.map(expr).join(', ')})`;
     case 'new':

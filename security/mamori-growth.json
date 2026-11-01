@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.4"
+    "version": "0.6"
   },
   "constructs": {
     "class": {
@@ -16,9 +16,10 @@
       "risk": "鍵を実行時に組めるので `x[\"constructor\"]` が T-224 の表を迂回する。字面の鍵は FORBIDDEN_MEMBERS を通し、字面でない鍵は数 (number) だけに限るなど、先に塞ぎ方を決める。"
     },
     "optional-chain": {
-      "decision": "feature",
+      "decision": "added",
       "why": "null かもしれない値を読む所で多い。",
-      "risk": "`?.constructor` も T-224 の表を通す (memberName を共有する)。印の値に ?. を付けた結果は印を運ばない。"
+      "risk": "`?.constructor` も T-224 の表を通す (memberName を共有する)。印の値に ?. を付けた結果は印を運ばない。",
+      "since": "0.6"
     },
     "non-null": {
       "decision": "rewrite",
@@ -462,6 +463,63 @@
         "pr": 847,
         "reason": null,
         "summary": "出力側の関門 escape.ts (escapeXml / safeColor / isHexColor / escapeMarkdown* / escapeInvisibleUnits ほか) を Mamori で書き直した (port)。判定は 1 字も変えず (template→+ の連結と呼び出しの連鎖の改行だけ・生成物は byte 比較で検査)。移す前に使う組み込みを総当たりで破ったところ、宣言なしで使える組み込みのうち RegExp の旧式の静的な欄 (他のモジュールの直近の一致と入力 = 秘密)・Error.captureStackTrace・URL の blob がメンバ経由で M6 を通る穴 (T-232) が出たので、M6 を組み込みのメンバの表へ広げて 0.4 にした (構築する形と許したメンバだけ・値としての持ち出しも断る)。対照 3 方向 + 台帳の書き換え 2 件が鳴り、checker.ts / escape.ts の変異検査は 100%。 続けて対戦 (赤 vs 青) で言語自身を攻め、行終端の差分 (T-233・パーサ)と印の型の綴り (T-234・M4) の穴を塞いだ。"
+      }
+    },
+    {
+      "id": "MG-005",
+      "date": "2026-10-31",
+      "kind": "feature",
+      "target": "optional-chain",
+      "pickedBy": "manual",
+      "deviation": "brief は index を選んだが、index は字面でない鍵が T-224 の表を迂回するので塞ぎ方が決まるまで出荷しない (MG-003 で先送りした理由のまま)。利用者と合意した方針 (穴を作りにくい ?. を先に) で optional-chain を育てた。",
+      "version": "0.6",
+      "features": [
+        "`a?.name` (名前の前だけの optional chaining。`?.(` と `?.[` は断る)"
+      ],
+      "added": [
+        "optional-chain"
+      ],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "`u?.constructor` / `u?.__proto__` / `u?.prototype` と連鎖の途中の `u?.trim()?.constructor` (T-224 の表を ?. で迂回する)",
+          "result": "refused"
+        },
+        {
+          "tried": "`u?.(1)` / `u?.[0]` (呼ぶ側・鍵を実行時に選ぶ形)",
+          "result": "refused"
+        },
+        {
+          "tried": "`Object?.setPrototypeOf` / `RegExp?.$1` / `URL?.createObjectURL` (組み込みのメンバの表を ?. で迂回する)",
+          "result": "refused"
+        },
+        {
+          "tried": "`shell?.openExternal(raw)` (sink 関数の中で素の値) と sink の外の `shell?.…` / 宣言していない `window?.location`",
+          "result": "refused"
+        },
+        {
+          "tried": "`?.` の結果を印つきの口 (`openUrl(o?.u)`) や印の型の変数 (`let v: VettedUrl = o?.u`) へ入れる (印の洗浄)",
+          "result": "refused"
+        },
+        {
+          "tried": "`openUrl?.call(null, raw)` (印を受ける関数を ?. で持ち出す)",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 4,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/emit.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": null,
+        "reason": "draft PR を push 後に出す (番号は PR 作成後に決まる)",
+        "summary": "Mamori 0.6: `a?.name` を足した (optional-chain)。先に破る試し 6 形はすべて . と同じ検めで断られた (穴 0 件)。`?.(` と `?.[` は断る。移せた壁は 0 本 (言語の幅を広げた周)。 変異検査は emit.ts 100.00% (516 killed)・parser.ts は 1241 killed + 57 timeout で生存 1 件 (`?.(` を断る条件を true に替える) を検査 1 件で殺した (手で当てて確認・測り直しは未実施)。対照 4 方向 (禁止の表を飛ばす・?. を落とす・?.( を通す・条件を true) が狙った検査で鳴る。"
       }
     }
   ]

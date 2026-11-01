@@ -61,7 +61,7 @@ export const FORBIDDEN_MEMBERS: Readonly<Record<string, string>> = {
 };
 
 const PUNCT = [
-  '===', '!==', '...', '->', '=>', '&&', '||', '??', '<=', '>=',
+  '===', '!==', '...', '->', '=>', '&&', '||', '??', '?.', '<=', '>=',
   '(', ')', '{', '}', '[', ']', '<', '>', ',', ';', ':', '.', '=', '!', '+', '-', '*', '/', '%', '?', '|', '&',
 ];
 
@@ -537,9 +537,10 @@ export function parse(file: string, src: string): Module {
   const postfix = (): Expr => {
     let e = primary();
     for (;;) {
-      if (isP('.')) {
+      if (isP('.') || isP('?.')) {
         const dot = next();
-        e = { kind: 'member', object: e, prop: memberName(), pos: dot.pos };
+        if (dot.text === '?.' && (isP('(') || isP('['))) fail(peek(), '`?.(` と `?.[` は在りません —— `?.` の後ろは名前だけです (呼ぶ側を実行時に選べると、印を受ける関数を値として持ち出せる)');
+        e = { kind: 'member', object: e, prop: memberName(), optional: dot.text === '?.', pos: dot.pos };
       } else if (isP('(')) {
         const pos = peek().pos;
         e = { kind: 'call', callee: e, args: args(), pos };
@@ -605,7 +606,7 @@ export function parse(file: string, src: string): Module {
         let callee: Expr = { kind: 'ident', name: ident(), pos: peek().pos };
         while (isP('.')) {
           const dot = next();
-          callee = { kind: 'member', object: callee, prop: memberName(), pos: dot.pos };
+          callee = { kind: 'member', object: callee, prop: memberName(), optional: false, pos: dot.pos };
         }
         return { kind: 'new', callee, args: args(), pos: t.pos };
       }
