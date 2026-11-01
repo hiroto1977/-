@@ -35,6 +35,12 @@
       ],
       "sinks": []
     },
+    "src/renderer/security/egressStepUp.mamori": {
+      "externals": [],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
     "src/renderer/vettedSinks.mamori": {
       "externals": [
         "sink global: window"

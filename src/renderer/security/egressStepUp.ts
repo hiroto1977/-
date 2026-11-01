@@ -1,3 +1,5 @@
+// 生成物 —— src/renderer/security/egressStepUp.mamori から Mamori のコンパイラが組んだ。手で編集しない (`npm run mamori:build`)。
+// 言語の仕様は docs/MAMORI.md。生成物が元と食い違えば src/shared/mamori/__tests__/mamoriGenerated.test.ts が落ちる。
 /**
  * **送り先を変える操作には、この端末の持ち主の確認が要る** (2026-10-29 · パス 554 · threat: T-219)。
  *
@@ -24,7 +26,15 @@
  * 直接呼べる) —— 効くのは**人の手**: 貼り付けを促す指示 (「この URL を入れてください」) に
  * 従う前に、自分のパスワードを打つ段で立ち止まれる。乗っ取られたレンダラーからの書き込みを
  * 止めるには保管層を main へ移す (ブラウザ版には無い) 道しか無く、それは別の判断である。
+ *
+ * ## Mamori で書いてある (2026-11-01 · MG-010)
+ *
+ * 元は TypeScript で、Mamori 0.10 で書き直した。足りなかったのは template 文字列 1 つだけ (`stepUpReason`) で、
+ * 文字列の連結へ書き直した。`WHAT[setting]` の文字列キーの添字 (Mamori が断る形) は条件演算子に替えた ——
+ * 組み上がる文字列は 1 字も変えていない。送り先の変更に持ち主の確認が要るかの判定が、`as` (型の書き換え)・
+ * `.constructor`・宣言していない外の名前 (`localStorage` / `fetch` ほか) を**書けない**言語に移った。
  */
+
 import { isLoopbackHostname, parseOllamaEndpoint } from '../../shared/ollama';
 
 export type EgressSetting = 'proxy' | 'ollama';
@@ -56,19 +66,22 @@ export function destinationHost(url: string): string {
   }
 }
 
-const WHAT: Readonly<Record<EgressSetting, string>> = {
-  proxy: 'BYO プロキシの送り先 —— 以後、経由する要求は API トークン (Authorization ヘッダ) ごとこの Worker へ渡ります',
-  ollama: 'Ollama の接続先 —— 以後、会話の本文はこの端末の外のホストへ送られます',
-};
+const WHAT_PROXY = 'BYO プロキシの送り先 —— 以後、経由する要求は API トークン (Authorization ヘッダ) ごとこの Worker へ渡ります';
+
+const WHAT_OLLAMA = 'Ollama の接続先 —— 以後、会話の本文はこの端末の外のホストへ送られます';
 
 /** 確認の文。何が・どこへ変わるかを名乗り、なぜ確認が要るかを 1 文で言う。 */
 export function stepUpReason(setting: EgressSetting, destinationUrl: string): string {
-  return `${WHAT[setting]}。送り先: ${destinationHost(destinationUrl)}。`
-    + 'この端末の持ち主の確認のため、保管庫のパスワードを入力してください (変えるまで何も送りません)。';
+  const what = setting === 'proxy' ? WHAT_PROXY : WHAT_OLLAMA;
+  return what + '。送り先: ' + destinationHost(destinationUrl) + '。' + 'この端末の持ち主の確認のため、保管庫のパスワードを入力してください (変えるまで何も送りません)。';
 }
 
 export const STEP_UP_WRONG_PASSWORD = 'パスワードが違います。送り先は変えていません。';
+
 export const STEP_UP_CANCELLED = '送り先の変更をやめました (何も変えていません)。';
+
 export const STEP_UP_PASSWORD_LABEL = '保管庫のパスワード（送り先の変更の確認）';
+
 export const STEP_UP_APPLY_LABEL = '確認して変更する';
+
 export const STEP_UP_CANCEL_LABEL = 'やめる';

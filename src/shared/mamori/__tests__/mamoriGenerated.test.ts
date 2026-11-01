@@ -28,6 +28,7 @@ const EXPECTED = [
   'src/shared/controlChars.mamori',
   'src/shared/escape.mamori',
   'src/shared/tokenInput.mamori',
+  'src/renderer/security/egressStepUp.mamori',
   'src/shared/vetted.mamori',
 ];
 

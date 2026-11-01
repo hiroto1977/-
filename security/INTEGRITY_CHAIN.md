@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 417
+- ブロック数: 418
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `aa886997aef06baf65b7dd9f2171864cfb86670c712932c42899fa9a52aec21e`
-- 保護対象: 158 ファイル
+- 末尾(tip)ハッシュ: `d427071812815c8742a5bc8e9bf14963d78cb802d3d2f35b176f3a743cca9b10`
+- 保護対象: 159 ファイル
 
 ## ブロック
 
@@ -430,6 +430,7 @@
 | 414 | `9cfcc08498defff7` | `d6682a5ff44bb473` | `b1423dc833881718` | update ast.ts,checker.ts,emit.ts,parser.ts |
 | 415 | `b990e7888e85e677` | `b1423dc833881718` | `486ab4e5a8017af2` | update checker.ts |
 | 416 | `d141de7d27c58d9b` | `486ab4e5a8017af2` | `aa886997aef06baf` | update ast.ts,checker.ts,emit.ts,parser.ts |
+| 417 | `22d6faff04feb17d` | `aa886997aef06baf` | `d427071812815c87` | update integrity-chain.cjs,mamori-capabilities.json,egressStepUp.mamori,egressStepUp.ts |
 
 ## 保護対象ファイル
 
@@ -532,6 +533,7 @@
 - `src/renderer/security/autoLock.ts`
 - `src/renderer/security/bip39-wordlist.ts`
 - `src/renderer/security/dataCrypto.ts`
+- `src/renderer/security/egressStepUp.mamori`
 - `src/renderer/security/egressStepUp.ts`
 - `src/renderer/security/frameGuard.ts`
 - `src/renderer/security/lockWorkspace.ts`
