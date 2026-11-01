@@ -470,6 +470,17 @@ describe('保存領域を断られる端末', () => {
     expect(() => savePkceSession(SESSION)).toThrow(/プライベートウィンドウ/);
   });
 
+  it('★ 保存の断りの文は全文が決まっている (理由の括弧の後ろの案内まで)', () => {
+    installRefusingStorage({ op: 'setItem', failOn: ['verifier'] });
+    let message = '';
+    try {
+      savePkceSession(SESSION);
+    } catch (e) {
+      message = (e as Error).message;
+    }
+    expect(message).toMatch(/^認可に使う一時情報をこのブラウザに保存できませんでした \(.+\)。プライベートウィンドウで開いている場合は通常のウィンドウで開き直してください。$/);
+  });
+
   it('★ 読みが断られたら null (生の例外を呼び出し側へ出さない)', () => {
     const map = installRefusingStorage({ op: 'getItem', failOn: ['clientId'] });
     for (const k of pkceSessionKeys()) map.set(k, 'x');
