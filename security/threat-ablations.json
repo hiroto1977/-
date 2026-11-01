@@ -2317,6 +2317,18 @@
           "replace": "const plain: Ctx = ctx;"
         }
       ]
+    },
+    {
+      "id": "A-566",
+      "threat": "T-246",
+      "file": "src/shared/mamori/emit.ts",
+      "why": "単項の `-` の入れ子を括らずに出す —— `- -a` が `--a` (減算代入) になる口を開け直す",
+      "edits": [
+        {
+          "find": "if (e.op === '-' && e.operand.kind === 'unary' && e.operand.op === '-') return `-(${expr(e.operand)})`;",
+          "replace": "if (false) return `-(${expr(e.operand)})`;"
+        }
+      ]
     }
   ]
 }

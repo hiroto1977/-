@@ -153,6 +153,11 @@ const CONTEXTS: Readonly<Record<string, (e: string) => string>> = {
   letLocal: (e) => `export fn go() -> unknown {\n  let v = 0;\n  v = ${e};\n  return v;\n}\n`,
   arrow: (e) => `export fn go() -> unknown {\n  return [1].map((q) => ${e});\n}\n`,
   arrowBlock: (e) => `export fn go() -> unknown {\n  return [1].map((q) => {\n    return ${e};\n  });\n}\n`,
+  // ビット演算 (0.10 · MG-009): 弾が両辺・単項・添字の鍵のどこに座っても、独立の判定器と食い違わないこと
+  bitLeft: (e) => `export fn go() -> unknown {\n  return (${e}) | 0;\n}\n`,
+  bitRight: (e) => `export fn go() -> unknown {\n  return 1 << (${e});\n}\n`,
+  bitUnary: (e) => `export fn go() -> unknown {\n  return ~(${e});\n}\n`,
+  bitIndex: (e) => `export fn go(xs: string[]) -> unknown {\n  return xs[(${e}) >>> 1];\n}\n`,
   cond: (e) => `export fn go() -> unknown {\n  return true ? ${e} : 0;\n}\n`,
   condElse: (e) => `export fn go() -> unknown {\n  return false ? 0 : ${e};\n}\n`,
   obj: (e) => `export fn go() -> unknown {\n  return { a: ${e} };\n}\n`,

@@ -34,7 +34,7 @@ export type Expr =
   | { readonly kind: 'index'; readonly object: Expr; readonly key: Expr; readonly pos: Pos }
   | { readonly kind: 'call'; readonly callee: Expr; readonly args: readonly Expr[]; readonly pos: Pos }
   | { readonly kind: 'new'; readonly callee: Expr; readonly args: readonly Expr[]; readonly pos: Pos }
-  | { readonly kind: 'unary'; readonly op: '!' | '-' | 'typeof' | 'await'; readonly operand: Expr; readonly pos: Pos }
+  | { readonly kind: 'unary'; readonly op: '!' | '-' | '~' | 'typeof' | 'await'; readonly operand: Expr; readonly pos: Pos }
   | { readonly kind: 'binary'; readonly op: string; readonly left: Expr; readonly right: Expr; readonly pos: Pos }
   | { readonly kind: 'arrow'; readonly params: readonly Param[]; readonly body: Expr; readonly pos: Pos }
   /**

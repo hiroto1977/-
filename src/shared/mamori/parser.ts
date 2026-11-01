@@ -64,8 +64,8 @@ export const FORBIDDEN_MEMBERS: Readonly<Record<string, string>> = {
 };
 
 const PUNCT = [
-  '===', '!==', '...', '->', '=>', '&&', '||', '??', '?.', '<=', '>=',
-  '(', ')', '{', '}', '[', ']', '<', '>', ',', ';', ':', '.', '=', '!', '+', '-', '*', '/', '%', '?', '|', '&',
+  '===', '!==', '...', '->', '=>', '&&', '||', '??', '?.', '<=', '>=', '<<',
+  '(', ')', '{', '}', '[', ']', '<', '>', ',', ';', ':', '.', '=', '!', '+', '-', '*', '/', '%', '?', '|', '&', '^', '~',
 ];
 
 /** この直後に来る `/` は割り算ではなく正規表現の始まり。 */
@@ -485,15 +485,37 @@ export function parse(file: string, src: string): Module {
     return { kind: 'expr', expr: e, comments: cs, pos: t.pos };
   };
 
+  /**
+   * 2 項演算子の段 (弱い順)。ビット演算 (0.10 · MG-009) は JavaScript と同じ強さで、`&&` と `===` の間 (`|` `^` `&`) と
+   * 関係演算子と足し算の間 (シフト) に入る。シフトの `>>` `>>>` は字句では `>` の並びのまま (入れ子の型 `Array<Array<x>>` を
+   * 壊さない) —— 式の位置で、隣り合う (同じ行で桁が続く) `>` だけをシフトと読む。`SHIFT` の段の印。
+   */
   const BINARY: readonly (readonly string[])[] = [
     ['??'],
     ['||'],
     ['&&'],
+    ['|'],
+    ['^'],
+    ['&'],
     ['===', '!=='],
     ['<', '>', '<=', '>='],
+    ['<<', '>>', '>>>'],
     ['+', '-'],
     ['*', '/', '%'],
   ];
+
+  /** いま先頭に在る演算子の綴りと字句数 (シフトの `>>` `>>>` は隣り合う `>` の並びを 1 つに読む)。 */
+  const binaryOpAt = (level: number): { readonly text: string; readonly count: number } | null => {
+    const ops = BINARY[level]!;
+    const t = peek();
+    if (ops.includes('>>')) {
+      if (isP('<<')) return { text: '<<', count: 1 };
+      const adjacent = (n: number): boolean => isP('>', n) && peek(n).pos.line === t.pos.line && peek(n).pos.col === t.pos.col + n;
+      if (adjacent(0) && adjacent(1)) return adjacent(2) ? { text: '>>>', count: 3 } : { text: '>>', count: 2 };
+      return null;
+    }
+    return isPunctTok(t, ...ops) ? { text: t.text, count: 1 } : null;
+  };
 
   const expr = (): Expr => {
     if (isArrowAhead()) return arrow();
@@ -509,19 +531,20 @@ export function parse(file: string, src: string): Module {
   const binary = (level: number): Expr => {
     if (level >= BINARY.length) return unary();
     let left = binary(level + 1);
-    while (isPunctTok(peek(), ...BINARY[level]!)) {
-      const op = next();
+    for (let op = binaryOpAt(level); op !== null; op = binaryOpAt(level)) {
+      const first = peek();
+      for (let n = 0; n < op.count; n++) next();
       const right = binary(level + 1);
-      left = { kind: 'binary', op: op.text, left, right, pos: op.pos };
+      left = { kind: 'binary', op: op.text, left, right, pos: first.pos };
     }
     return left;
   };
 
   const unary = (): Expr => {
     const t = peek();
-    if (isP('!') || isP('-')) {
+    if (isP('!') || isP('-') || isP('~')) {
       next();
-      return { kind: 'unary', op: t.text as '!' | '-', operand: unary(), pos: t.pos };
+      return { kind: 'unary', op: t.text as '!' | '-' | '~', operand: unary(), pos: t.pos };
     }
     if (isW('typeof') || isW('await')) {
       next();

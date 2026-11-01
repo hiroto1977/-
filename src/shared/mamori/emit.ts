@@ -13,7 +13,8 @@ const IND = '  ';
 
 /** 2 項演算子の強さ (大きいほど強い)。 */
 const PREC: Readonly<Record<string, number>> = {
-  '??': 1, '||': 2, '&&': 3, '===': 4, '!==': 4, '<': 5, '>': 5, '<=': 5, '>=': 5, '+': 6, '-': 6, '*': 7, '/': 7, '%': 7,
+  '??': 1, '||': 2, '&&': 3, '|': 3.2, '^': 3.4, '&': 3.6, '===': 4, '!==': 4, '<': 5, '>': 5, '<=': 5, '>=': 5,
+  '<<': 5.5, '>>': 5.5, '>>>': 5.5, '+': 6, '-': 6, '*': 7, '/': 7, '%': 7,
 };
 
 function prec(e: Expr): number {
@@ -74,7 +75,9 @@ export function expr(e: Expr): string {
     case 'new':
       return `new ${expr(e.callee)}(${e.args.map(expr).join(', ')})`;
     case 'unary':
-      return e.op === '!' || e.op === '-' ? `${e.op}${wrap(e.operand, 8)}` : `${e.op} ${wrap(e.operand, 8)}`;
+      // `-(-a)` を `--a` と出すと、符号の反転ではなく減算代入 (引数・let の書き換え) になる (T-246)。`-` の直後の `-` は括る。
+      if (e.op === '-' && e.operand.kind === 'unary' && e.operand.op === '-') return `-(${expr(e.operand)})`;
+      return e.op === '!' || e.op === '-' || e.op === '~' ? `${e.op}${wrap(e.operand, 8)}` : `${e.op} ${wrap(e.operand, 8)}`;
     case 'binary': {
       const p = PREC[e.op]!;
       const l = prec(e.left) < p || mixesNullish(e.op, e.left) ? `(${expr(e.left)})` : expr(e.left);

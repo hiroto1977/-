@@ -69,6 +69,8 @@ export const BUILTIN_MEMBERS: ReadonlyMap<string, ReadonlySet<string>> = new Map
 ]);
 
 /** `new X(…)` / `X(…)` の形でだけ名前で使える組み込み (`Object` は構築する形も無い)。 */
+/** ビット演算 (0.10 · MG-009)。結果は常に数 (または BigInt) で、文字列も印も運ばない —— 添字の鍵に使ってよい「数と分かる式」に入る。 */
+const BITWISE_OPS: ReadonlySet<string> = new Set(['|', '^', '&', '<<', '>>', '>>>']);
 const CONSTRUCTIBLE: ReadonlySet<string | null> = new Set(['RegExp', 'Error', 'TypeError', 'RangeError', 'URL']);
 
 /**
@@ -405,9 +407,9 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     // switch を使わず if を並べる: `case` のラベルを消す変異体は隣の本体へ落ちて同じ答えになる (等価) ので測れない。
     if (e.kind === 'number') return true;
     if (e.kind === 'ident') return lookup(scopes, e.name)?.numeric === true;
-    if (e.kind === 'unary') return e.op === '-';
+    if (e.kind === 'unary') return e.op === '-' || e.op === '~';
     if (e.kind === 'binary') {
-      return e.op === '-' || e.op === '*' || e.op === '/' || e.op === '%' || (e.op === '+' && isNumericKey(e.left, scopes) && isNumericKey(e.right, scopes));
+      return e.op === '-' || e.op === '*' || e.op === '/' || e.op === '%' || BITWISE_OPS.has(e.op) || (e.op === '+' && isNumericKey(e.left, scopes) && isNumericKey(e.right, scopes));
     }
     if (e.kind === 'member') return e.prop === 'length';
     if (e.kind === 'call') {

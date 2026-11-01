@@ -4422,6 +4422,22 @@
         "test": "★ sink 関数が危ない口を包んだ閉包を返せない・gate の中の arrow で mint できない (threat: T-245)"
       },
       "alsoRegressions": []
+    },
+    {
+      "id": "T-246",
+      "found": "2026-11-01",
+      "foundBy": "言語を育てる輪の 9 周目 (MG-009) でビット演算を足す前に、単項の演算子の組み合わせを手探りした。`- -a` が `--a` (減算代入) と出力されるのを見つけた —— 符号の反転と書いたものが、引数や let を書き換える式になる。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "守りの層を書く言語 Mamori 0.1〜0.9 は単項の `-` の入れ子 `- -a` を `--a` と出力したので、符号の反転が引数・let の書き換え (減算代入) になり、引数への代入を断る M6 を単項の入れ子で迂回できた",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/emit.ts: 単項の `-` の直後が単項の `-` なら `-(-a)` と括って出す。回帰検査は 3 重の入れ子まで。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV10.test.ts",
+        "test": "★ `- -a` は `-(-a)` と出る (`--a` だと引数 a を書き換える・M6 の迂回) (threat: T-246)"
+      },
+      "alsoRegressions": []
     }
   ],
   "huntBacklog": [
