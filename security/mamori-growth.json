@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.10"
+    "version": "0.11"
   },
   "constructs": {
     "class": {
@@ -809,6 +809,62 @@
         "pr": 850,
         "reason": null,
         "summary": "送り先を変える操作に持ち主の確認が要るかの判定と文面 (egressStepUp.ts · T-219) を Mamori で書き直した (port)。足りなかったのは template 1 つ (連結へ) と文字列キーの添字 (条件演算子へ) だけで、組み上がる文字列は 1 字も変えていない —— 元の TypeScript と約 190 組の入力で同じ出力・既存の検査 5 ファイルは編集なしで緑。守りの層の .mamori は 12 本になり、`as`・`.constructor`・宣言していない外の名前が書けない言語へ移った。穴は 0 件 (手探り 5 形が全部 refused)。変異検査は初回 92.59% (連結の区切り 2 件) → 確認の文の全文を toBe で留めて 100%。保護対象・CODEOWNERS・能力台帳 (M7) に追加し chain #417。"
+      }
+    },
+    {
+      "id": "MG-011",
+      "date": "2026-11-01",
+      "kind": "port",
+      "target": "src/shared/safeFilename.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/shared/safeFilename.ts",
+      "version": "0.11",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "non-null",
+        "template"
+      ],
+      "ported": [
+        "src/shared/safeFilename.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "型述語 `-> s is string` の形で `-> s is VettedUrl` と書き、`return true` で関門を通らずに印の型を作る道",
+          "result": "hole"
+        },
+        {
+          "tried": "plain / sink 関数の `-> VettedUrl` / `-> Promise<VettedUrl>` (印を名乗る戻り値の型)",
+          "result": "hole"
+        },
+        {
+          "tried": "テンプレート文字列と `s as string` (補間でコードを運ぶ道・型の書き換え)",
+          "result": "refused"
+        },
+        {
+          "tried": "後置の非 null `!` で null を黙らせて正規表現の結果を読む道",
+          "result": "refused"
+        },
+        {
+          "tried": "`s.constructor` で文字列からコードを走らせる道",
+          "result": "refused"
+        }
+      ],
+      "threats": [
+        "T-248"
+      ],
+      "controls": 3,
+      "mutation": {
+        "files": [
+          "src/shared/safeFilename.ts",
+          "src/shared/mamori/checker.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 850,
+        "reason": null,
+        "summary": "ファイル名の関門 (safeFilename.ts) を Mamori で書き直した (port)。非 null と template を書き直しただけで組み上がる出力は変えていない —— 元の TypeScript と約 13 万組の入力で同じ答え・既存の検査は編集なしで緑。移す途中で型述語 `-> s is VettedUrl` が関門 (mint) を通らずに印の型を作れる穴 (T-248) を見つけ、gate 以外の戻り値の型が印を名乗るのを M1 で断るようにした (言語は 0.11)。変異検査は safeFilename.ts が初回 97.96% (等価変異 1 件を split('.')[0] で形ごと消した) → 100%・checker.ts は 100%。能力台帳・保護対象・CODEOWNERS に追加し chain #420。"
       }
     }
   ]

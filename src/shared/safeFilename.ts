@@ -93,8 +93,8 @@ export function isSafeFilename(s: unknown): s is string {
   if (/[\0\r\n/\\]/.test(s)) return false;
   if (s.includes(':') || /[. ]$/.test(s)) return false;
   // 予約名は**最初の `.` より前**で見る (`nul.svg` も `CON.tar.gz` も装置)。前後の空白は Windows が落とす。
-  const parts = s.split('.');
-  if (WINDOWS_RESERVED_DEVICE.test(parts[0].trim())) return false;
+  const head = s.split('.', 1).join('');
+  if (WINDOWS_RESERVED_DEVICE.test(head.trim())) return false;
   return !SERVER_SCRIPT_SEGMENT.test(s) && !SERVER_CONFIG_NAME.test(s);
 }
 
