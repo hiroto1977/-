@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 427
+- ブロック数: 428
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `84b59c4a4f3311aca6bdd6d53563beecc3266b98db2a10dfa7a956658f100a5b`
-- 保護対象: 163 ファイル
+- 末尾(tip)ハッシュ: `d807451d38df2200df8442d7d1d08cbcc5f1d72635fbed6bc883736c1903092c`
+- 保護対象: 165 ファイル
 
 ## ブロック
 
@@ -440,6 +440,7 @@
 | 424 | `89d688ede3e901be` | `c18fef7aaf8177d9` | `8a2b58fc58989f0f` | update promptInjection.mamori,promptInjection.ts |
 | 425 | `6f02a053f6901793` | `8a2b58fc58989f0f` | `8d05e1d8802b9e51` | update integrity-chain.cjs,mamori-capabilities.json,aiEndpoint.mamori,aiEndpoint.ts |
 | 426 | `d605413173a35063` | `8d05e1d8802b9e51` | `84b59c4a4f3311ac` | update integrity-chain.cjs,mamori-capabilities.json,vaultToken.mamori,vaultToken.ts |
+| 427 | `3b49ee658f909eb5` | `84b59c4a4f3311ac` | `d807451d38df2200` | update integrity-chain.cjs,mamori-capabilities.json,autoLock.mamori,autoLock.ts,autoLockHost.ts,checker.ts |
 
 ## 保護対象ファイル
 
@@ -539,7 +540,9 @@
 - `src/renderer/oauth/pkce.ts`
 - `src/renderer/oauth/pkceSession.ts`
 - `src/renderer/security/LockScreen.tsx`
+- `src/renderer/security/autoLock.mamori`
 - `src/renderer/security/autoLock.ts`
+- `src/renderer/security/autoLockHost.ts`
 - `src/renderer/security/bip39-wordlist.ts`
 - `src/renderer/security/dataCrypto.ts`
 - `src/renderer/security/egressStepUp.mamori`
