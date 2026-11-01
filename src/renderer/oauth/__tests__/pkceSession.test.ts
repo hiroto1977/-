@@ -6,6 +6,7 @@ import {
   readPkceSession,
   savePkceSession,
 } from '../pkceSession';
+import * as host from '../pkceSessionHost';
 import { stripComments } from '../../../shared/__tests__/stripNonCode';
 import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
@@ -499,16 +500,14 @@ describe('保存領域を断られる端末', () => {
  * 呼ぶ側の振る舞いでは区別できない —— だから戻り値そのものを主張する。
  */
 describe('host の口の失敗の受け方', () => {
-  it('★ 読みは触れなければ null (undefined ではない)', async () => {
+  it('★ 読みは触れなければ null (undefined ではない)', () => {
     installRefusingStorage({ op: 'getItem', failOn: ['pkce.verifier'] });
-    const host = await import('../pkceSessionHost');
     expect(host.hostGetItem('pkce.verifier')).toBeNull();
   });
-  it('★ 消すのは投げず、消せたかを true / false で返す', async () => {
+  it('★ 消すのは投げず、消せたかを true / false で返す', () => {
     const map = installRefusingStorage({ op: 'removeItem', failOn: ['pkce.state'] });
     map.set('pkce.verifier', 'x');
     map.set('pkce.state', 'y');
-    const host = await import('../pkceSessionHost');
     expect(host.hostRemoveItem('pkce.verifier')).toBe(true);
     expect(host.hostRemoveItem('pkce.state')).toBe(false);
     expect([...map.keys()]).toEqual(['pkce.state']);
