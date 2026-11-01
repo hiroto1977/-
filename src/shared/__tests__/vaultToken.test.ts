@@ -165,6 +165,15 @@ describe('checkTokenSetForStorage', () => {
     }
   });
 
+  it('★ 制御文字の断りは文面を丸ごと言う (欄名の前後の言葉を欠かさない)', () => {
+    const r = checkTokenSetForStorage({ accessToken: 'ok', scope: 's' + LF + 'Z' });
+    expect(r).toEqual({
+      ok: false,
+      reason: 'control-char',
+      message: '認可サーバの応答の scope に改行・制御文字が含まれています',
+    });
+  });
+
   it('★ 使えるアクセストークンが無ければ断る (`as TokenResponse` が通してしまう形)', () => {
     for (const tokens of [
       { access_token: 'wrong-key' },   // スナークケースのまま

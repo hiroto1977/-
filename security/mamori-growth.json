@@ -978,6 +978,66 @@
         "reason": "PR はこの記録のあとに出す (番号は次の周で台帳へ)",
         "summary": "AI のベース URL の関門 (aiEndpoint.ts · 平文 http を許すホストの判定と資格情報を載せる送り先の検証) を Mamori で書き直した (port)。足りなかったのは template 2 つ (連結へ) と Number を値として渡す形 (arrow で包んだ) だけで、組み上がる文字列は 1 字も変えていない —— 元の TypeScript と約 4 万の入力 (資格情報あり/なしの両モード) で結果・断りの文が同じ・既存の検査は編集なしで緑。穴は 0 件 (手探り 7 形が全部 refused)。変異検査は初回 98.75% (too-long の文の連結の前後のリテラル 2 件) → 文面を丸ごと toBe で留めて 100% (160 変異体)。能力台帳・保護対象・CODEOWNERS に追加し chain #425。"
       }
+    },
+    {
+      "id": "MG-014",
+      "date": "2026-11-01",
+      "kind": "port",
+      "target": "src/shared/vaultToken.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/shared/vaultToken.ts",
+      "version": "0.11",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "template"
+      ],
+      "ported": [
+        "src/shared/vaultToken.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "`(p as { accessToken: string }).accessToken` (型の書き換えで欄を読む)",
+          "result": "refused"
+        },
+        {
+          "tried": "`const { accessToken } = p` (分割代入で欄を取り出す)",
+          "result": "refused"
+        },
+        {
+          "tried": "`catch (e) { return e; }` (例外の値を持ち出す)",
+          "result": "refused"
+        },
+        {
+          "tried": "`JSON.parse(raw).constructor` (解析した値から Function へ届く道)",
+          "result": "refused"
+        },
+        {
+          "tried": "`p[k]` (実行時の文字列の鍵で保存値の欄を引く)",
+          "result": "refused"
+        },
+        {
+          "tried": "`field p.__proto__` / `field p.constructor` (欄の読みで原型に届く道)",
+          "result": "refused"
+        },
+        {
+          "tried": "`-> p is VettedUrl` の型述語 (関門の外で印の型を名乗る · T-248)",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 2,
+      "mutation": {
+        "files": [
+          "src/shared/vaultToken.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": null,
+        "reason": "PR はこの記録のあとに出す (番号は次の周で台帳へ)",
+        "summary": "保存された資格情報から Bearer を取り出す関門と TokenSet の保存前検査 (vaultToken.ts) を Mamori で書き直した (port)。足りなかったのは `as` 4 か所と template 2 つだけ (`field` と連結へ)。型述語 `parsed is {…}` は印の型でなければ通る (T-248 が断るのは印の型を名乗る述語だけ) ので元の形のまま。元の TypeScript と約 30 の入力 (循環参照・BigInt・200 万字・絵文字・null プロトタイプを含む) で結果・断りの文が同じ・既存の検査は編集なしで緑。穴は 0 件 (手探り 7 形が全部 refused)。"
+      }
     }
   ]
 }
