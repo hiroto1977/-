@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.9"
+    "version": "0.10"
   },
   "constructs": {
     "class": {
@@ -166,9 +166,10 @@
       "why": "関数の中の function は arrow かモジュールの fn で書く (役割 gate / sink は fn にしか付けない)。"
     },
     "bitwise": {
-      "decision": "feature",
+      "decision": "added",
       "why": "暗号・ハッシュの周り (IV ・CRC ほか) で要る。",
-      "risk": "来歴には触れない (数を作る演算)。"
+      "risk": "来歴には触れない (数を作る演算)。",
+      "since": "0.10"
     }
   },
   "cycles": [
@@ -695,6 +696,68 @@
         "summary": "Mamori 0.9: ブロックの本体を持つ arrow を足した (arrow-block)。足す前に破ると、arrow の本体が外側の関数の役 (gate / sink) を引き継いでおり、0.2 から在る式の arrow でも sink 関数が危ない口の閉包を値として返せ、gate の中の arrow で mint も通る穴 (T-245) だった。本体・既定値を plain の役で検めるよう直し、同じ検めをブロックの本体にも当てた。break / continue は arrow を跨げない。この周で移せた壁は 0 本 (言語の幅を広げた周)。変異検査は parser 100% / emit は初回 99.44% (join の区切りと括弧の強さの検査が無かった) → 生成物を 1 byte で留めて 100% / checker 100% (等価な plain の枠のみ理由つき pragma)。対照: A-565 (役の引き継ぎ) と A-561 (既定値) が caught。"
       },
       "deviation": "利用者の「1～4 を段階的に進めて」の依頼の 2 番目 (arrow-block) を順に進めた (brief の最初の推薦は壁の移植)"
+    },
+    {
+      "id": "MG-009",
+      "date": "2026-11-01",
+      "kind": "feature",
+      "target": "bitwise",
+      "pickedBy": "manual",
+      "deviation": "利用者の「1～4 を段階的に進めて」の依頼の 3 番目 (bitwise) を順に進めた (brief の最初の推薦は壁の移植)",
+      "briefPick": "feature:bitwise",
+      "version": "0.10",
+      "features": [
+        "ビット演算 `| ^ & << >> >>> ~` (結果は印を運ばず、静的に数と分かる式として添字の鍵に使える。優先順位は JavaScript と同じ。`>>` `>>>` は隣り合う `>` だけをシフトと読み、入れ子の型を壊さない。複合代入 `|=` ほかは無い)"
+      ],
+      "added": [
+        "bitwise"
+      ],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "ビット演算で印を洗う: `openUrl(a & 1)` / `const v: VettedUrl = raw | 0`",
+          "result": "refused"
+        },
+        {
+          "tried": "ビット演算で作った鍵や禁じた名前で表を引く: `xs[u | 0]` を `x[+(…)]` に寄せる・`o.constructor | 0`・`\"con\" ^ \"x\"`",
+          "result": "refused"
+        },
+        {
+          "tried": "`>>` を空白や改行で割る・`a >>= b`・`a <<< b`・次の行の桁がぴったり続く `>`",
+          "result": "refused"
+        },
+        {
+          "tried": "入れ子の型 `Array<Array<number>>` / 3 重がシフトと読まれて壊れる",
+          "result": "refused"
+        },
+        {
+          "tried": "単項の組み合わせ `- -a` を重ねて出力を観察する (`--a` になる)",
+          "result": "hole"
+        },
+        {
+          "tried": "攻撃の電池の DEEP の弾 (括弧 400 重・`!` 2000 個ほか) を新しい文脈 (ビット演算の両辺・単項・添字の鍵) へ置く",
+          "result": "hole"
+        }
+      ],
+      "threats": [
+        "T-246",
+        "T-247"
+      ],
+      "controls": 5,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/emit.ts",
+          "src/shared/mamori/checker.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 850,
+        "reason": null,
+        "summary": "Mamori 0.10: ビット演算 | ^ & << >> >>> ~ を足した (bitwise)。結果は印を運ばず、静的に数と分かる式として添字の鍵に使え、洗浄・禁じた名前の迂回は手探りで 0 件。同じ周で既存の穴を 2 つ見つけて塞いだ: T-246 (`- -a` が `--a` と出力され引数を書き換える・M6 の迂回) と T-247 (深い入れ子でコンパイラが RangeError のまま落ちる・演算子の段を足すと浅い入れ子で落ちる) を 200 段の上限で。この周で移せた壁は 0 本 (言語の幅を広げた周)。変異検査は初回 parser 99.78% / emit 99.82% (shift の段の綴りが読まれていない設計・行をまたぐ `>` の検査・等価な単項の種類の判定) → 段の読みを includes に直し検査を足して 100% / checker 100%。対照: A-566 (T-246)・A-567 (T-247) が caught。"
+      }
     }
   ]
 }
