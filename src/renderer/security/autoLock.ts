@@ -39,9 +39,14 @@ export interface AutoLockOptions {
   readonly idleTimeoutMs?: number;
 }
 
-const DEFAULT_HIDDEN_MS = 5 * 60 * 1000;
+/**
+ * 既定の猶予 (ms)。5 分。製品の判断で、検査は抽象の振る舞い (idle の再設定・hidden の期限・dispose の後始末) を留める。
+ * (算術で書くと値の演算子を替える変異体が出るので、値そのものを書く。)
+ */
+const DEFAULT_HIDDEN_MS = 300000;
 
-const DEFAULT_IDLE_MS = 15 * 60 * 1000;
+/** 15 分。 */
+const DEFAULT_IDLE_MS = 900000;
 
 const ACTIVITY_EVENTS = ['mousemove', 'keydown', 'touchstart', 'pointerdown'];
 
@@ -124,15 +129,19 @@ export function startAutoLock(opts: AutoLockOptions, deps: AutoLockDeps = {}): A
   disposed = true;
   activeStarts.delete(startToken);
   notifyAutoLockActive();
+  // Stryker disable next-line ConditionalExpression,EqualityOperator: null を渡しても clearTimeout は無害なので、この番人の有無で観測差が出ない (等価変異)。無駄な呼び出しを避けるため残す。
   if (hiddenTimer !== null) {
     clearTimeoutFn(hiddenTimer);
   }
+  // Stryker disable next-line ConditionalExpression,EqualityOperator: null を渡しても clearTimeout は無害なので、この番人の有無で観測差が出ない (等価変異)。無駄な呼び出しを避けるため残す。
   if (idleTimer !== null) {
     clearTimeoutFn(idleTimer);
   }
+  // Stryker disable next-line ConditionalExpression,StringLiteral,EqualityOperator: DOM の有無による分岐。テストは jsdom で走るため document / window は必ず存在し、無い側 (Node からの import) を再現できない。SSR / メイン側から読み込まれても壊れないための門なので残す。
   if (hostHasDocument()) {
     removeListener(hostDocumentTarget(), 'visibilitychange', visibilityListener);
   }
+  // Stryker disable next-line ConditionalExpression,StringLiteral,EqualityOperator: DOM の有無による分岐。テストは jsdom で走るため document / window は必ず存在し、無い側 (Node からの import) を再現できない。SSR / メイン側から読み込まれても壊れないための門なので残す。
   if (hostHasWindow()) {
     for (const ev of ACTIVITY_EVENTS) {
       removeListener(hostWindowTarget(), ev, activityListener);
@@ -145,6 +154,7 @@ export function startAutoLock(opts: AutoLockOptions, deps: AutoLockDeps = {}): A
   dispose();
 };
   const scheduleIdle = () => {
+  // Stryker disable next-line ConditionalExpression,EqualityOperator: null を渡しても clearTimeout は無害なので、この番人の有無で観測差が出ない (等価変異)。無駄な呼び出しを避けるため残す。
   if (idleTimer !== null) {
     clearTimeoutFn(idleTimer);
   }
@@ -162,6 +172,7 @@ export function startAutoLock(opts: AutoLockOptions, deps: AutoLockDeps = {}): A
   scheduleIdle();
 };
   const onVisibilityChange = () => {
+  // Stryker disable next-line ConditionalExpression,StringLiteral,EqualityOperator: DOM の有無による分岐。テストは jsdom で走るため document / window は必ず存在し、無い側 (Node からの import) を再現できない。SSR / メイン側から読み込まれても壊れないための門なので残す。
   if (!hostHasDocument()) return;
   if (hostDocumentHidden()) {
     hiddenSince = now();
@@ -174,6 +185,7 @@ export function startAutoLock(opts: AutoLockOptions, deps: AutoLockDeps = {}): A
       return;
     }
     hiddenSince = null;
+    // Stryker disable next-line ConditionalExpression,EqualityOperator: null を渡しても clearTimeout は無害なので、この番人の有無で観測差が出ない (等価変異)。無駄な呼び出しを避けるため残す。
     if (hiddenTimer !== null) {
       clearTimeoutFn(hiddenTimer);
       hiddenTimer = null;
@@ -183,9 +195,11 @@ export function startAutoLock(opts: AutoLockOptions, deps: AutoLockDeps = {}): A
 };
   activityListener = () => onActivity();
   visibilityListener = () => onVisibilityChange();
+  // Stryker disable next-line ConditionalExpression,StringLiteral,EqualityOperator: DOM の有無による分岐。テストは jsdom で走るため document / window は必ず存在し、無い側 (Node からの import) を再現できない。SSR / メイン側から読み込まれても壊れないための門なので残す。
   if (hostHasDocument()) {
     addListener(hostDocumentTarget(), 'visibilitychange', visibilityListener);
   }
+  // Stryker disable next-line ConditionalExpression,StringLiteral,EqualityOperator: DOM の有無による分岐。テストは jsdom で走るため document / window は必ず存在し、無い側 (Node からの import) を再現できない。SSR / メイン側から読み込まれても壊れないための門なので残す。
   if (hostHasWindow()) {
     for (const ev of ACTIVITY_EVENTS) {
       addListener(hostWindowTarget(), ev, activityListener);

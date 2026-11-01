@@ -1,6 +1,6 @@
 /** @vitest-environment jsdom */
 import { describe, expect, it, vi } from 'vitest';
-import { _resetAutoLockActiveForTests, isAutoLockActive, startAutoLock } from '../autoLock';
+import { _resetAutoLockActiveForTests, isAutoLockActive, startAutoLock, subscribeAutoLockActive } from '../autoLock';
 import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
 interface ListenerEntry {
@@ -571,5 +571,91 @@ describe('時計の経過で判定する (threat: T-080)', () => {
     withHidden(false, () => h.fire(document, 'visibilitychange'));
     expect(h.onLock).not.toHaveBeenCalled();
     h.handle.dispose();
+  });
+});
+
+/*
+ * Mamori へ移した (2026-11-01 · MG-015) あとの変異検査が、元の pragma の外で見つけた「誰も主張していなかった」枝。
+ * 時計の境目・後始末・購読の通知を、観測できる形で留める。
+ */
+describe('境目と後始末 (MG-015)', () => {
+  it('★ 放置がちょうど上限のとき、最初の操作でロックする (>= であって > ではない)', () => {
+    _resetAutoLockActiveForTests();
+    const h = makeHarness();
+    h.setNow(1_000_000 + 900_000);
+    h.fire(window, 'mousemove');
+    expect(h.onLock).toHaveBeenCalledTimes(1);
+  });
+
+  it('★ 隠れていた時間がちょうど上限のとき、戻ったらロックする', () => {
+    _resetAutoLockActiveForTests();
+    const h = makeHarness();
+    withHidden(true, () => h.fire(document, 'visibilitychange'));
+    h.setNow(1_000_000 + 300_000);
+    withHidden(false, () => h.fire(document, 'visibilitychange'));
+    expect(h.onLock).toHaveBeenCalledTimes(1);
+  });
+
+  it('★ 隠れていなかったのに可視の通知が来ても、時計の絶対値でロックしない (hiddenSince が無ければ 0)', () => {
+    _resetAutoLockActiveForTests();
+    const h = makeHarness();
+    withHidden(false, () => h.fire(document, 'visibilitychange'));
+    expect(h.onLock).not.toHaveBeenCalled();
+    h.handle.dispose();
+  });
+
+  it('★ dispose は隠れている間のタイマーと idle のタイマーの両方を解除する', () => {
+    _resetAutoLockActiveForTests();
+    const h = makeHarness();
+    withHidden(true, () => h.fire(document, 'visibilitychange'));
+    expect(h.timers.size).toBe(2);
+    h.handle.dispose();
+    expect(h.timers.size).toBe(0);
+  });
+
+  it('★ 2 度目の dispose は何もしない (通知もリスナーの解除も 1 回きり)', () => {
+    _resetAutoLockActiveForTests();
+    const removed: string[] = [];
+    let notified = 0;
+    const unsubscribe = subscribeAutoLockActive(() => { notified += 1; });
+    const handle = startAutoLock(
+      { onLock: () => undefined },
+      { ...stubDeps(), removeListener: (_t, type) => { removed.push(type); } },
+    );
+    expect(notified).toBe(1); // 起動で 1 回
+    handle.dispose();
+    const afterFirst = { notified, removed: removed.length };
+    expect(afterFirst.notified).toBe(2);
+    handle.dispose();
+    expect({ notified, removed: removed.length }).toEqual(afterFirst);
+    unsubscribe();
+  });
+
+  it('★ 購読は起動・dispose・リセットのたびに知らされ、解除した後は知らされない', () => {
+    _resetAutoLockActiveForTests();
+    let n = 0;
+    const unsubscribe = subscribeAutoLockActive(() => { n += 1; });
+    const handle = startAutoLock({ onLock: () => undefined }, stubDeps());
+    expect(n).toBe(1);
+    expect(isAutoLockActive()).toBe(true);
+    handle.dispose();
+    expect(n).toBe(2);
+    expect(isAutoLockActive()).toBe(false);
+    _resetAutoLockActiveForTests();
+    expect(n).toBe(3);
+    unsubscribe();
+    _resetAutoLockActiveForTests();
+    expect(n).toBe(3);
+  });
+
+  it('★ リセットの後に古い dispose が来ても、新しく起動した自動ロックの計数を消さない', () => {
+    _resetAutoLockActiveForTests();
+    const old = startAutoLock({ onLock: () => undefined }, stubDeps());
+    _resetAutoLockActiveForTests();
+    const fresh = startAutoLock({ onLock: () => undefined }, stubDeps());
+    old.dispose();
+    expect(isAutoLockActive()).toBe(true);
+    fresh.dispose();
+    expect(isAutoLockActive()).toBe(false);
   });
 });

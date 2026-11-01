@@ -67,6 +67,8 @@ describe('T-249: `extern pure global` にできない host の名前', () => {
   it('対照: 副作用の判断を持たない `Date` と、`extern sink global` と、関数を読む `extern pure { … } from` は今までどおり通る', () => {
     expect(diag('extern pure global Date;\nexport fn f() -> number {\n  return Date.now();\n}\n')).toEqual([]);
     expect(diag('extern sink global window;\nexport vetted VettedUrl = "url";\nexport sink fn g(u: VettedUrl) -> void {\n  window.open(u);\n}\n')).toEqual([]);
+    // 名前が host と同じでも、モジュールから読む物は host そのものではない (global の宣言だけを断る)
+    expect(diag('extern pure { window } from "./host";\nexport fn f() -> unknown {\n  return window;\n}\n')).toEqual([]);
     expect(diag('extern pure { hostWindowTarget } from "./host";\nexport fn f() -> unknown {\n  return hostWindowTarget();\n}\n')).toEqual([]);
   });
 });
