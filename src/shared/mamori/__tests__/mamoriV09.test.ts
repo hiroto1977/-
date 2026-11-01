@@ -68,6 +68,9 @@ describe('0.9: 生成物を 1 byte で留める', () => {
   it('ブロックの本体は `=> {` の改行・本体 (1 段下げ)・行頭の `}` で出る', () => {
     expect(body('xs.map((x) => { return x; })')).toBe('  return xs.map((x) => {\n  return x;\n});\n}\n');
   });
+  it('★ 引数 2 つは `, ` で・文 2 つは改行で区切る', () => {
+    expect(body('(a: number, b: number) => { let c = a + b; return c; }')).toBe('  return (a: number, b: number) => {\n  let c = a + b;\n  return c;\n};\n}\n');
+  });
   it('★ 呼び出しの頭・2 項演算子の左・メンバの頭・条件演算子の枝では括弧で包む (式の arrow と同じ強さ)', () => {
     expect(body('(() => { return 1; })()')).toBe('  return (() => {\n  return 1;\n})();\n}\n');
     expect(body('(() => { return 1; }) || 3')).toBe('  return (() => {\n  return 1;\n}) || 3;\n}\n');
