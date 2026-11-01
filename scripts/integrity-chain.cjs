@@ -172,6 +172,7 @@ const PROTECTED = [
   'src/shared/safeFilename.mamori',
   'src/shared/promptInjection.mamori',
   'src/shared/aiEndpoint.mamori',
+  'src/shared/vaultToken.mamori',
   'src/renderer/components/VettedImg.tsx',
   'src/renderer/components/VettedLink.tsx',
   'src/shared/mamori/ast.ts',

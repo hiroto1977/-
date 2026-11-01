@@ -106,6 +106,12 @@
       "gates": [],
       "sinks": []
     },
+    "src/shared/vaultToken.mamori": {
+      "externals": [],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
     "src/shared/tokenInput.mamori": {
       "externals": [],
       "imports": [],

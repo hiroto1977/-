@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 426
+- ブロック数: 427
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `8d05e1d8802b9e51ef2b66e2094734d37d99ff33695791d53bf294f9f99f7660`
-- 保護対象: 162 ファイル
+- 末尾(tip)ハッシュ: `84b59c4a4f3311aca6bdd6d53563beecc3266b98db2a10dfa7a956658f100a5b`
+- 保護対象: 163 ファイル
 
 ## ブロック
 
@@ -439,6 +439,7 @@
 | 423 | `d6141b24f889a119` | `9712a92a647b99dd` | `c18fef7aaf8177d9` | update integrity-chain.cjs,mamori-capabilities.json,promptInjection.mamori,promptInjection.ts |
 | 424 | `89d688ede3e901be` | `c18fef7aaf8177d9` | `8a2b58fc58989f0f` | update promptInjection.mamori,promptInjection.ts |
 | 425 | `6f02a053f6901793` | `8a2b58fc58989f0f` | `8d05e1d8802b9e51` | update integrity-chain.cjs,mamori-capabilities.json,aiEndpoint.mamori,aiEndpoint.ts |
+| 426 | `d605413173a35063` | `8d05e1d8802b9e51` | `84b59c4a4f3311ac` | update integrity-chain.cjs,mamori-capabilities.json,vaultToken.mamori,vaultToken.ts |
 
 ## 保護対象ファイル
 
@@ -596,6 +597,7 @@
 - `src/shared/tokenInput.mamori`
 - `src/shared/tokenInput.ts`
 - `src/shared/tokenResponse.ts`
+- `src/shared/vaultToken.mamori`
 - `src/shared/vaultToken.ts`
 - `src/shared/versionOrder.ts`
 - `src/shared/vetted.mamori`
