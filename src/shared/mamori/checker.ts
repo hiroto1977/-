@@ -80,7 +80,7 @@ const CONSTRUCTIBLE: ReadonlySet<string | null> = new Set(['RegExp', 'Error', 'T
  * `f(Math)` / `c ? Array : JSON`) を断る —— `Object` / `RegExp` / `URL` などを 0.4 までに断ったのと同じ理由。
  * `Object` は別の表 (`OBJECT_MEMBERS`) で扱うので、ここには入れない。
  */
-const PLAIN_BUILTINS: ReadonlySet<string> = new Set([...PURE_GLOBALS].filter((n) => n !== 'Object' && !BUILTIN_MEMBERS.has(n)));
+const PLAIN_BUILTINS: ReadonlySet<string | null> = new Set([...PURE_GLOBALS].filter((n) => n !== 'Object' && !BUILTIN_MEMBERS.has(n)));
 
 /** 関数の外形 (他のモジュールから引くため)。 */
 export interface FnSignature {
@@ -397,7 +397,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
   /** この名前は、このモジュールの名前に隠されていない組み込みで、構築する形 (`new X(…)` / `X(…)`) で使ってよい物か。 */
   function isConstructibleBuiltin(callee: Expr, scopes: readonly Map<string, Binding>[]): boolean {
     const n = identName(callee);
-    return (CONSTRUCTIBLE.has(n) || (n !== null && PLAIN_BUILTINS.has(n))) && bindingOf(callee, scopes) === undefined;
+    return (CONSTRUCTIBLE.has(n) || PLAIN_BUILTINS.has(n)) && bindingOf(callee, scopes) === undefined;
   }
 
   /**
