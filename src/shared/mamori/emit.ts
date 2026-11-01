@@ -76,6 +76,7 @@ export function expr(e: Expr): string {
       return `new ${expr(e.callee)}(${e.args.map(expr).join(', ')})`;
     case 'unary':
       // `-(-a)` を `--a` と出すと、符号の反転ではなく減算代入 (引数・let の書き換え) になる (T-246)。`-` の直後の `-` は括る。
+      // Stryker disable next-line ConditionalExpression: 種類の判定を外すと `-(a - b)` (2 項の `-`) も括るが、2 項は強さが 6 < 8 で wrap が元から括る (等価)
       if (e.op === '-' && e.operand.kind === 'unary' && e.operand.op === '-') return `-(${expr(e.operand)})`;
       return e.op === '!' || e.op === '-' || e.op === '~' ? `${e.op}${wrap(e.operand, 8)}` : `${e.op} ${wrap(e.operand, 8)}`;
     case 'binary': {

@@ -504,16 +504,16 @@ export function parse(file: string, src: string): Module {
     ['*', '/', '%'],
   ];
 
-  /** いま先頭に在る演算子の綴りと字句数 (シフトの `>>` `>>>` は隣り合う `>` の並びを 1 つに読む)。 */
+  /**
+   * いま先頭に在る、この段の演算子の綴りと字句数。隣り合う `>` の並び (`>>` `>>>`) は 1 つの演算子として読む —— その綴りが
+   * この段 (シフト) に在るときだけ。関係演算子の段が見る `>` は、シフトの段が先に読み終えているので並びを持たない。
+   */
   const binaryOpAt = (level: number): { readonly text: string; readonly count: number } | null => {
     const ops = BINARY[level]!;
     const t = peek();
-    if (ops.includes('>>')) {
-      if (isP('<<')) return { text: '<<', count: 1 };
-      const adjacent = (n: number): boolean => isP('>', n) && peek(n).pos.line === t.pos.line && peek(n).pos.col === t.pos.col + n;
-      if (adjacent(0) && adjacent(1)) return adjacent(2) ? { text: '>>>', count: 3 } : { text: '>>', count: 2 };
-      return null;
-    }
+    const adjacent = (n: number): boolean => isP('>', n) && peek(n).pos.line === t.pos.line && peek(n).pos.col === t.pos.col + n;
+    const shift = adjacent(0) && adjacent(1) ? (adjacent(2) ? { text: '>>>', count: 3 } : { text: '>>', count: 2 }) : null;
+    if (shift !== null && ops.includes(shift.text)) return shift;
     return isPunctTok(t, ...ops) ? { text: t.text, count: 1 } : null;
   };
 
@@ -540,8 +540,25 @@ export function parse(file: string, src: string): Module {
     return left;
   };
 
+  /**
+   * 式の入れ子の上限 (0.10 · MG-009)。段が増えると 1 段の括弧あたりの再帰が増え、深い入れ子で `RangeError: Maximum call stack size
+   * exceeded` のままコンパイラが落ちた (電池の DEEP の弾)。落ちるのではなく、場所を名乗る断りにする。実在のプログラムは数段で足りる。
+   */
+  const MAX_NESTING = 200;
+  let nesting = 0;
+
   const unary = (): Expr => {
     const t = peek();
+    if (nesting >= MAX_NESTING) fail(t, `式の入れ子が深すぎます (${MAX_NESTING} 段まで) —— 括弧・単項演算子・配列・オブジェクトの重なりを減らします`);
+    nesting++;
+    try {
+      return unaryBody(t);
+    } finally {
+      nesting--;
+    }
+  };
+
+  const unaryBody = (t: Tok): Expr => {
     if (isP('!') || isP('-') || isP('~')) {
       next();
       return { kind: 'unary', op: t.text as '!' | '-' | '~', operand: unary(), pos: t.pos };

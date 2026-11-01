@@ -57,6 +57,8 @@ describe('0.10: ビット演算', () => {
     expect(ret('a >>> b >>> c')).toBe('  return a >>> b >>> c;');
     expect(compile(go('a > > b')).diagnostics.join('\n')).toContain('式が要ります');
     expect(compile(go('a >\n> b')).diagnostics.join('\n')).toContain('式が要ります');
+    // 次の行の桁がぴったり続く `>` (行が違えば隣り合いではない)
+    expect(compile(go(`a >\n${' '.repeat(12)}> b`)).diagnostics.join('\n')).toContain('式が要ります');
     expect(compile(go('a >>= b')).diagnostics.join('\n')).toContain('式が要ります');
     expect(compile(go('a <<< b')).diagnostics.join('\n')).toContain('式が要ります');
   });
@@ -87,6 +89,29 @@ describe('0.10: ビット演算', () => {
     expect(compile(go('xs[u]')).diagnostics.join('\n')).toContain('添字の鍵は');
     expect(compile(go('o.constructor | 0')).diagnostics.join('\n')).toContain('.constructor');
     expect(compile(go('xs[u + "x"]')).diagnostics.join('\n')).toContain('添字の鍵は');
+  });
+});
+
+describe('0.10: 式の入れ子の上限 (200 段)', () => {
+  const nest = (n: number): string => '('.repeat(n) + '1' + ')'.repeat(n);
+  it('★ 200 段までは通り、201 段目は場所を名乗る M0 で断る (コンパイラは落ちない)', () => {
+    expect(compile(go(nest(199))).diagnostics).toEqual([]);
+    expect(compile(go(nest(200))).diagnostics.join('\n')).toContain('式の入れ子が深すぎます (200 段まで)');
+    expect(() => compile(go(nest(5000)))).not.toThrow();
+    expect(compile(go(nest(5000))).diagnostics.join('\n')).toContain('[M0] 式の入れ子が深すぎます');
+  });
+  it('単項・配列・オブジェクトの重なりも数える', () => {
+    expect(compile(go('!'.repeat(199) + 'a')).diagnostics).toEqual([]);
+    expect(compile(go('!'.repeat(2000) + 'a')).diagnostics.join('\n')).toContain('式の入れ子が深すぎます');
+    expect(compile(go('['.repeat(300) + ']'.repeat(300))).diagnostics.join('\n')).toContain('式の入れ子が深すぎます');
+    expect(compile(go('{ a: '.repeat(300) + '1' + ' }'.repeat(300))).diagnostics.join('\n')).toContain('式の入れ子が深すぎます');
+  });
+  it('★ 数えるのは重なりであって個数ではない: 並べた式が何個でも通る (数え戻しを忘れない)', () => {
+    expect(compile(go(Array.from({ length: 400 }, () => '(1)').join(' + '))).diagnostics).toEqual([]);
+    expect(compile(go('[' + Array.from({ length: 400 }, () => '[1]').join(', ') + ']')).diagnostics).toEqual([]);
+    // 断った後の次のコンパイルも数がずれない
+    compile(go(nest(300)));
+    expect(compile(go(nest(10))).diagnostics).toEqual([]);
   });
 });
 

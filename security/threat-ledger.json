@@ -4438,6 +4438,22 @@
         "test": "★ `- -a` は `-(-a)` と出る (`--a` だと引数 a を書き換える・M6 の迂回) (threat: T-246)"
       },
       "alsoRegressions": []
+    },
+    {
+      "id": "T-247",
+      "found": "2026-11-01",
+      "foundBy": "MG-009 でビット演算を足して 2 項演算子の段が 7 から 11 に増えたとき、攻撃の電池の DEEP の弾 ((((…1…)))) 400 重) が新しい文脈で `RangeError: Maximum call stack size exceeded` のままコンパイラを落とした。段の数に比例して括弧 1 重あたりの再帰が増えるので、段を足すたびに落ちる入れ子の深さが浅くなる潜在の問題だった。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "守りの層を書く言語 Mamori 0.1〜0.9 は式の入れ子に上限が無く、深い入れ子 (括弧・単項・配列・オブジェクトの数百重) の入力でコンパイラが場所の無い RangeError のまま落ちた (ビルドを止められる・演算子の段を足すほど浅い入れ子で落ちる)",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/parser.ts: 単項の位置 (括弧・単項・配列・オブジェクトの入れ子がすべて通る所) で入れ子の深さを数え、200 段を超えたら場所を名乗る M0 で断る (finally で数え戻す)。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV10.test.ts",
+        "test": "★ 200 段までは通り、201 段目は場所を名乗る M0 で断る (コンパイラは落ちない)"
+      },
+      "alsoRegressions": []
     }
   ],
   "huntBacklog": [

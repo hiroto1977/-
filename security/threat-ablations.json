@@ -2329,6 +2329,18 @@
           "replace": "if (false) return `-(${expr(e.operand)})`;"
         }
       ]
+    },
+    {
+      "id": "A-567",
+      "threat": "T-247",
+      "file": "src/shared/mamori/parser.ts",
+      "why": "式の入れ子の上限を外す —— 深い入れ子でコンパイラが RangeError のまま落ちる口を開け直す",
+      "edits": [
+        {
+          "find": "if (nesting >= MAX_NESTING) fail(",
+          "replace": "if (false) fail("
+        }
+      ]
     }
   ]
 }
