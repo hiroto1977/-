@@ -55,7 +55,7 @@ async function repairDir(dir: string): Promise<number> {
       await fs.chmod(full, 384);
       fixed = fixed + 1;
     } catch (err) {
-      continue;
+      // 読めない・直せないファイルは数えずに次へ (競合で消えた・所有者が違う)。
     }
   }
   return fixed;
@@ -85,6 +85,7 @@ export async function assertExportTargetContained(filePath: string, home: string
 /** 閉じ込めを確かめてから 0600 で書き、既存ファイルの権限も直す。 */
 export async function writeExportFile(filePath: string, content: string, home: string = os.homedir()): Promise<void> {
   await assertExportTargetContained(filePath, home);
+  // Stryker disable next-line ObjectLiteral: `{ mode: 384 }` → `{}` は観測できる差を持たない。直後の `chmod` が同じ 0600 を当てるので、関数が返った時点の権限はどちらでも 600 になる。それでも `mode` を残すのは、作成から chmod までの短い間も他人に読ませないため (多層防御)。
   await fs.writeFile(filePath, content, { mode: 384 });
   await fs.chmod(filePath, 384);
 }
@@ -108,11 +109,19 @@ export function exportParentDirs(home: string = os.homedir()): readonly string[]
 /** 書き出してよい行き先か (純関数)。 */
 export function isSafeExportPath(filePath: string, home: string, ext: string): boolean {
   if (typeof filePath !== 'string') return false;
+  // Stryker disable next-line ConditionalExpression: 後段と重なる保険 (単独では観測不能)
   if (filePath.length === 0) return false;
   if (filePath.length > 1024) return false;
+  // Stryker disable next-line ConditionalExpression: 後段 (葉の名前の関門・親が固定の 2 つのどちらか) と重なる保険 (単独では観測不能)
   if (/[\0\r\n]/.test(filePath)) return false;
   if (!filePath.endsWith(ext)) return false;
+  // threat: T-177 —— 葉の名前が Windows で別物になる形 (予約された装置名・`:` の代替データストリーム・末尾のドット/空白)。
   if (!isSafeFilename(path.basename(filePath))) return false;
+  // threat: T-060 —— 正規化済みの絶対パスだけを受ける。書き出しが `mkdir -p` へ渡すのは生の `filePath` の親なので、`..` を挟んだ
+  // `data/templates/../../state.json/../data/y.html` は resolve すると通るが mkdir は `state.json` という名のディレクトリを作っていた。
+  // 調べた物と書く物を同じにする (`..` / 相対 / 末尾の区切り / 重なった区切りは resolve で形が変わるので断る)。
+  // Stryker disable next-line ConditionalExpression: 親が固定の 2 つの正規化済みの絶対パスと完全一致する検査 (下) が同じ物を落とす (単独では観測不能)
   if (path.resolve(filePath) !== filePath) return false;
+  // threat: T-042 —— 親は固定の 2 つだけ (任意の深さの子孫は通さない)。
   return exportParentDirs(home).includes(path.dirname(filePath));
 }
