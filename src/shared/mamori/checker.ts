@@ -619,6 +619,9 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       case 'field':
         checkExpr(e.object, scopes, ctx);
         return;
+      case 'spread':
+        checkExpr(e.operand, scopes, ctx);
+        return;
       case 'object':
         for (const p of e.props) checkExpr(p.value, scopes, ctx);
         return;

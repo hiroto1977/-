@@ -64,6 +64,8 @@ export function expr(e: Expr): string {
       return e.value;
     case 'array':
       return `[${e.items.map(expr).join(', ')}]`;
+    case 'spread':
+      return `...${expr(e.operand)}`;
     case 'member':
       return `${wrap(e.object, 9)}${e.optional ? '?.' : '.'}${e.prop}`;
     case 'index':
@@ -104,6 +106,7 @@ export function expr(e: Expr): string {
 }
 
 function prop(p: Prop): string {
+  if (p.spread) return `...${expr(p.value)}`;
   if (p.shorthand) return p.key;
   return `${p.quoted ? quote(p.key) : p.key}: ${expr(p.value)}`;
 }

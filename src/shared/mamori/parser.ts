@@ -690,7 +690,14 @@ export function parse(file: string, src: string): Module {
       const props: Prop[] = [];
       while (!isP('}')) {
         const kt = peek();
-        if (isP('...')) fail(kt, '`...` (展開) は在りません —— 欄を 1 つずつ書きます (何が入るかを字面で見えるようにする)');
+        if (isP('...')) {
+          // 展開は欄より前にだけ置く (後ろに置くと、字面で書いた欄を展開が上書きできる —— `{ ok: true, ...x }`)。
+          if (props.some((p) => !p.spread)) fail(kt, '`...` (展開) は欄より前にだけ置けます —— 後ろに置くと、先に書いた欄を展開が上書きできます');
+          next();
+          props.push({ key: '', quoted: false, value: expr(), shorthand: false, spread: true, pos: kt.pos });
+          if (!isP('}')) expectP(',');
+          continue;
+        }
         if (isP('[')) fail(kt, '計算した鍵 (`[k]: v`) は在りません —— 鍵は名前か文字列で書きます');
         const quoted = kt.kind === 'string';
         const key = quoted ? str() : ident();
@@ -698,11 +705,11 @@ export function parse(file: string, src: string): Module {
         if (key === '__proto__') fail(kt, '鍵 `__proto__` は在りません —— オブジェクトの字面では欄ではなく原型を差し替えます');
         if (isP(':')) {
           next();
-          props.push({ key, quoted, value: expr(), shorthand: false, pos: kt.pos });
+          props.push({ key, quoted, value: expr(), shorthand: false, spread: false, pos: kt.pos });
         } else {
           if (quoted) fail(peek(), `文字列の鍵 ${JSON.stringify(key)} には \`:\` と値が要ります`);
           if (RESERVED.has(key) || STOP_WORDS.has(key)) fail(kt, `\`${key}\` は省略形の欄 (\`{ 名前 }\`) にできません`);
-          props.push({ key, quoted, value: { kind: 'ident', name: key, pos: kt.pos }, shorthand: true, pos: kt.pos });
+          props.push({ key, quoted, value: { kind: 'ident', name: key, pos: kt.pos }, shorthand: true, spread: false, pos: kt.pos });
         }
         if (!isP('}')) expectP(',');
       }
@@ -713,7 +720,13 @@ export function parse(file: string, src: string): Module {
       next();
       const items: Expr[] = [];
       while (!isP(']')) {
-        items.push(expr());
+        const st = peek();
+        if (isP('...')) {
+          next();
+          items.push({ kind: 'spread', operand: expr(), pos: st.pos });
+        } else {
+          items.push(expr());
+        }
         if (!isP(']')) expectP(',');
       }
       expectP(']');

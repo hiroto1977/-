@@ -52,7 +52,12 @@ export type Expr =
    * `field x.k` (0.2) —— 型の分からない値 (`unknown`) から欄を 1 つ読む。読んだ値は必ず `unknown` で、印は運ばない。
    * TypeScript の `(x as { k?: unknown }).k` にあたる (`as` を言語に置かない代わり —— 型を**広げる**向きにしか書き換えない)。
    */
-  | { readonly kind: 'field'; readonly object: Expr; readonly prop: string; readonly pos: Pos };
+  | { readonly kind: 'field'; readonly object: Expr; readonly prop: string; readonly pos: Pos }
+  /**
+   * 配列の字面の中の展開 `[...xs, y]` (0.15 · MG-024)。置けるのは**配列の字面の項**だけ —— 呼び出しの引数の展開 (`f(...xs)`) は無い
+   * (印を受ける位置が数でずれ、M4 が引数を位置で検めるので)。展開した要素は印を運ばない素の値。
+   */
+  | { readonly kind: 'spread'; readonly operand: Expr; readonly pos: Pos };
 
 /** オブジェクトの字面の 1 項。`shorthand` は `{ value }` の形 (鍵と同じ名前の値)。 */
 export interface Prop {
@@ -61,6 +66,11 @@ export interface Prop {
   readonly quoted: boolean;
   readonly value: Expr;
   readonly shorthand: boolean;
+  /**
+   * オブジェクトの展開 `{ ...x, k: v }` (0.15 · MG-024)。true のとき `key` は空で、`value` が展開される式。
+   * **展開は欄より前にだけ置ける** —— 後ろに置くと、先に字面で書いた欄 (`ok: true` など) を展開が上書きできる。
+   */
+  readonly spread: boolean;
   readonly pos: Pos;
 }
 
