@@ -53,6 +53,7 @@ const SITES: Readonly<Record<string, number>> = {
   'src/renderer/network/ollamaWeb.ts': 1,
   'src/renderer/network/proxy.ts': 1,
   'src/renderer/oauth/pkce.ts': 1,
+  'src/renderer/oauth/pkceHost.ts': 1,
   'src/renderer/web-shim.ts': 2,
   'src/shared/ai/chat.ts': 1,
   'src/shared/api/http.ts': 1,

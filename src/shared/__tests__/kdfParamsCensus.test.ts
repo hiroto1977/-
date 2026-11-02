@@ -69,7 +69,7 @@ const DIGEST_SITES = sitesMatching(DIGEST);
 
 /** 素のハッシュはなぜ凍結値を読まなくてよいか (1 行ずつ)。 */
 const DIGEST_LEDGER: readonly { readonly file: string; readonly why: string }[] = [
-  { file: 'src/renderer/oauth/pkce.ts', why: 'PKCE の code_challenge。RFC 7636 が S256 を名指ししており、変えたら仕様違反になる (凍結値と連動させてはいけない)' },
+  { file: 'src/renderer/oauth/pkceHost.ts', why: 'PKCE の code_challenge (判断は pkce.mamori・SHA-256 の口はこの壁)。RFC 7636 が S256 を名指ししており、変えたら仕様違反になる (凍結値と連動させてはいけない)' },
   { file: 'src/renderer/data/backup.ts', why: 'バックアップの内容の指紋。鍵導出ではなく同一性の確認で、封筒のメタに残らない' },
   { file: 'src/renderer/security/mnemonic.ts', why: 'BIP-39 の検査和。規格が SHA-256 を定めているので凍結値とは別の決定' },
 ];

@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 441
+- ブロック数: 442
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `add0d13e178fbce34f378cf64ffbdbcd182e171340ed61b8c51adc0592d3eae2`
-- 保護対象: 178 ファイル
+- 末尾(tip)ハッシュ: `12a0268dcfff967d26d53dc455503997821aad436c3b2f167d99519de543edc3`
+- 保護対象: 180 ファイル
 
 ## ブロック
 
@@ -454,6 +454,7 @@
 | 438 | `bffe9ea26831d59f` | `9ea05e4ae9b0c797` | `9eff03075cd5ebfa` | update ast.ts,checker.ts,emit.ts,parser.ts |
 | 439 | `f8249da7f5f3217e` | `9eff03075cd5ebfa` | `f13333af5ce4a477` | update integrity-chain.cjs,mamori-capabilities.json,atlassianSite.mamori,atlassianSite.ts |
 | 440 | `42bdfe2e34f5434f` | `f13333af5ce4a477` | `add0d13e178fbce3` | update ast.ts,checker.ts,emit.ts,parser.ts,BUILD.json,mamori_verify.wasm |
+| 441 | `fc60bc9b7c9caf80` | `add0d13e178fbce3` | `12a0268dcfff967d` | update integrity-chain.cjs,mamori-capabilities.json,pkce.mamori,pkce.ts,pkceHost.ts |
 
 ## 保護対象ファイル
 
@@ -552,7 +553,9 @@
 - `src/renderer/keyIntent.ts`
 - `src/renderer/network/liveRead.ts`
 - `src/renderer/network/proxy.ts`
+- `src/renderer/oauth/pkce.mamori`
 - `src/renderer/oauth/pkce.ts`
+- `src/renderer/oauth/pkceHost.ts`
 - `src/renderer/oauth/pkceSession.mamori`
 - `src/renderer/oauth/pkceSession.ts`
 - `src/renderer/oauth/pkceSessionHost.ts`

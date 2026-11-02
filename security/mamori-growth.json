@@ -1623,6 +1623,75 @@
         "reason": null,
         "summary": "Mamori 0.15 に展開 (spread) を足した (feature)。配列の字面の項と、オブジェクトの字面の欄より前だけ。呼び出しの引数の展開 (M4 が印を受ける位置を引数の位置で検めるので位置がずれる) と残りの引数は文法に置かず、`{ ok: true, ...x }` のように字面の欄を上書きできる後ろの展開も断る。足す前に 8 形を破り全部 refused (穴は 0 件)。独立の検算役にも追随が要った: Rust の M0 は `...` を禁じた綴りにしていたので記号として読むよう直して Wasm を組み直し (BUILD.json 更新)、独立の TS 判定 mamoriInspect は配列の項と欄より前の展開だけ許す形に、電池の弾にも展開の攻撃を足した。変異検査は parser/checker/emit とも 100% (最初の parser 99.80% の生存 3 件は展開の項に使われない欄で、Prop を和の型にして形ごと消した)。対照 2 つ (欄より後ろの検めを外す・相手の検めを外す) は鳴った。"
       }
+    },
+    {
+      "id": "MG-025",
+      "date": "2026-11-02",
+      "kind": "port",
+      "target": "src/renderer/oauth/pkce.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/renderer/oauth/pkce.ts",
+      "version": "0.15",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "non-null",
+        "c-for",
+        "as-const",
+        "template",
+        "compound-assign"
+      ],
+      "ported": [
+        "src/renderer/oauth/pkce.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "`extern pure global fetch` (網の口を pure と宣言)",
+          "result": "refused"
+        },
+        {
+          "tried": "`extern pure global crypto` (WebCrypto を壁なしで宣言)",
+          "result": "refused"
+        },
+        {
+          "tried": "async の arrow を引数に渡して締切の中へ隠す",
+          "result": "refused"
+        },
+        {
+          "tried": "宣言なしの `new URLSearchParams` / `new AbortController` / `Date.now()`",
+          "result": "refused"
+        },
+        {
+          "tried": "`globalThis.fetch` を辿る",
+          "result": "refused"
+        },
+        {
+          "tried": "呼び出しの展開 `hostFetch(...a)` で引数をすり替える",
+          "result": "refused"
+        },
+        {
+          "tried": "テンプレート文字列で token 端点の URL を組む",
+          "result": "refused"
+        },
+        {
+          "tried": "`x as Response` で型を書き換える",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 2,
+      "mutation": {
+        "files": [
+          "src/renderer/oauth/pkce.ts",
+          "src/renderer/oauth/pkceHost.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 855,
+        "reason": null,
+        "summary": "ブラウザ版 PKCE (oauth/pkce.ts · state の定時間比較・token 端点への POST・転送への非追随・応答サイズの上限・失敗本文の伏字) を Mamori で書き直した (port)。ブラウザの口 (btoa・乱数・SHA-256・時刻・fetch・URLSearchParams・締切) は薄い壁 pkceHost.ts へ閉じ込め、判断は全部 pkce.mamori に残した。async の arrow は言語に無いので、締切の中で走らせる部分を名前のある postTokenForm に出した。fetch の既定値は呼ぶ時点の globalThis.fetch を読む壁の関数にして、差し替えた代役への追随を保った。as const は型注釈つきの定数へ、オブジェクトの展開は 0.15 の展開をそのまま使った。元の TypeScript と 15 シナリオで差分比較し (結果・要求の形・断りの文・遅延束縛の fetch)、一致。既存の検査は編集なしで緑。手探り 8 形は全部 refused。変異検査は pkce.ts / pkceHost.ts とも 100%。対照 2 つ (state の比較を外す・転送への非追随を外す) は関連の検査で鳴った。"
+      }
     }
   ]
 }
