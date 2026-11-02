@@ -110,10 +110,8 @@ const LEDGER: readonly Row[] = [
     why: '許してよい接続先かを判定するだけ' },
   { file: 'src/shared/ollama.ts', needle: 'u = new URL(withScheme)', kind: 'value-gate',
     why: '解析後の protocol / host から base を組み直して返す' },
-  { file: 'src/shared/privateTarget.ts', needle: 'isPrivateOrReservedTarget(new URL(`http://${embeddedV4}/`))', kind: 'internal',
-    why: 'IPv4 埋め込み IPv6 を分類するための再解析。通信にも画面にも出ない' },
-  { file: 'src/shared/privateTarget.ts', needle: 'isPrivateOrReservedTarget(new URL(`http://${nat64Or6to4}/`))', kind: 'internal',
-    why: 'NAT64 / 6to4 の埋め込みの再解析。同上' },
+  { file: 'src/shared/privateTarget.ts', needle: "isPrivateOrReservedTarget(new URL('http://' + v4 + '/'))", kind: 'internal',
+    why: 'IPv4 埋め込み IPv6 (mapped / NAT64 / 6to4) を分類するための再解析。通信にも画面にも出ない (Mamori へ移したとき 2 か所の同じ再解析を 1 つの関数へ畳んだ · MG-027)' },
   { file: 'src/shared/proxyEndpoint.ts', needle: 'parsed = new URL(text)', kind: 'value-gate',
     why: '返すのは parsed.href' },
   { file: 'src/shared/scanTarget.ts', needle: 'parsed = new URL(url)', kind: 'value-gate',
@@ -231,7 +229,7 @@ describe('value-gate は解析後の値を返す (振る舞いで確かめる)',
    * (このリポジトリが繰り返し直してきた形)。行が増減したらここが鳴り、
    * 書き換えるときに「どの種類が増えたのか」を読むことになる。
    */
-  it('★ 種類ごとの行数は実測どおり (台帳 36 行が 37 か所を覆う)', () => {
+  it('★ 種類ごとの行数は実測どおり (台帳 35 行が 36 か所を覆う)', () => {
     const byKind = (k: Row['kind']): number => LEDGER.filter((r) => r.kind === k).length;
     expect({
       'value-gate': byKind('value-gate'),
@@ -239,10 +237,10 @@ describe('value-gate は解析後の値を返す (振る舞いで確かめる)',
       pin: byKind('pin'),
       internal: byKind('internal'),
       display: byKind('display'),
-    }).toEqual({ 'value-gate': 11, predicate: 10, pin: 4, internal: 5, display: 6 });
-    expect(LEDGER).toHaveLength(36);
+    }).toEqual({ 'value-gate': 11, predicate: 10, pin: 4, internal: 4, display: 6 });
+    expect(LEDGER).toHaveLength(35);
     // web-shim の同じ綴りの 2 行が 1 行の台帳に対応するので、か所は台帳より 1 多い。
-    expect(SITES).toHaveLength(37);
+    expect(SITES).toHaveLength(36);
     expect(VALUE_GATE_BEHAVIOR.length).toBeGreaterThanOrEqual(5);
   });
 });

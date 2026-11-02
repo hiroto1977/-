@@ -41,6 +41,7 @@ const EXPECTED = [
   'src/shared/vetted.mamori',
   'src/shared/atlassianSite.mamori',
   'src/renderer/oauth/pkce.mamori',
+  'src/shared/privateTarget.mamori',
   'src/shared/scanTarget.mamori',
 ];
 

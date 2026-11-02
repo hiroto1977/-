@@ -90,9 +90,7 @@
       "sinks": []
     },
     "src/shared/imageUrlGate.mamori": {
-      "externals": [
-        "pure ./privateTarget: isPrivateOrReservedTarget"
-      ],
+      "externals": [],
       "imports": [],
       "gates": [
         "safeImageSrc -> VettedImageSrc | undefined",
@@ -126,10 +124,15 @@
       "gates": [],
       "sinks": []
     },
+    "src/shared/privateTarget.mamori": {
+      "externals": [],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
     "src/shared/scanTarget.mamori": {
       "externals": [
         "pure ./inputCeiling: countChars, moreThanChars",
-        "pure ./privateTarget: isPrivateOrReservedTarget",
         "pure ./scanTargetHost: hostSearchParams"
       ],
       "imports": [],

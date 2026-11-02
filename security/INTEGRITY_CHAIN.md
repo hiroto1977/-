@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 444
+- ブロック数: 445
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `146246dd6d122fcb6dbbfe39a94d4f89124e9991e8ac0112ea1af3505e810434`
-- 保護対象: 182 ファイル
+- 末尾(tip)ハッシュ: `b32cacb771ca327f1287c1d1f383d3a9abcbece81667ac35c1c2712ee0d000c4`
+- 保護対象: 183 ファイル
 
 ## ブロック
 
@@ -457,6 +457,7 @@
 | 441 | `fc60bc9b7c9caf80` | `add0d13e178fbce3` | `12a0268dcfff967d` | update integrity-chain.cjs,mamori-capabilities.json,pkce.mamori,pkce.ts,pkceHost.ts |
 | 442 | `21f508269e579c43` | `12a0268dcfff967d` | `ecb1caab0cc470fb` | update pkceHost.ts |
 | 443 | `283731e620687dc0` | `ecb1caab0cc470fb` | `146246dd6d122fcb` | update integrity-chain.cjs,mamori-capabilities.json,scanTarget.mamori,scanTarget.ts,scanTargetHost.ts |
+| 444 | `86ec476d5f9b2b31` | `146246dd6d122fcb` | `b32cacb771ca327f` | update integrity-chain.cjs,mamori-capabilities.json,imageUrlGate.mamori,privateTarget.mamori,privateTarget.ts,scanTarget.mamori |
 
 ## 保護対象ファイル
 
@@ -613,6 +614,7 @@
 - `src/shared/mamori/parser.ts`
 - `src/shared/ollama.ts`
 - `src/shared/outboundContentGate.ts`
+- `src/shared/privateTarget.mamori`
 - `src/shared/privateTarget.ts`
 - `src/shared/promptInjection.mamori`
 - `src/shared/promptInjection.ts`

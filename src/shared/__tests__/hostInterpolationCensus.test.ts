@@ -82,13 +82,8 @@ const LEDGER: readonly LedgerRow[] = [
   },
   {
     file: 'src/shared/privateTarget.ts',
-    needle: '`http://${embeddedV4}/`',
-    reason: '(c) IPv4 埋め込み IPv6 を分類するための内部の再解析。通信にも画面にも出ない',
-  },
-  {
-    file: 'src/shared/privateTarget.ts',
-    needle: '`http://${nat64Or6to4}/`',
-    reason: '(c) 同上 (NAT64 / 6to4 の埋め込み)',
+    needle: "'http://' + v4 + '/'",
+    reason: '(c) IPv4 埋め込み IPv6 (mapped / NAT64 / 6to4) を分類するための内部の再解析。v4 は 16 進から組んだ 0-255 の点記法で、通信にも画面にも出ない (Mamori へ移したとき 2 か所を 1 つに畳んだ · MG-027)',
   },
   {
     file: 'src/shared/scanTarget.ts',

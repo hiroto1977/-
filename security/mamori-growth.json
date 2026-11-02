@@ -1766,6 +1766,83 @@
         "reason": null,
         "summary": "VirusTotal / HIBP へ送る物の関門と警告 (scanTarget.ts · validateScanUrl / validateBreachEmail / looksInternalHostname / describeScanUrlRisk) を Mamori で書き直した (port)。足りなかったのは non-null・template 文字列・配列の分割代入だけで、正規表現の一致は「確かめてから切り出す」形へ、template は連結へ、for-of の分割代入は .keys() へ書き直した。URLSearchParams は組み込みに無いので薄い壁 scanTargetHost.ts に閉じ込めた。移すときに 3 つ見つけた: ① 手書きの v4 / v6 の枝は、4 つ目の数が 255 を超える等 URL として正しくない入力でだけ分類器の代わりに効く (変異検査 115 件の生存の正体は、その枝を踏む検査が無かったこと) ② 文書用の範囲の判定を接頭辞 + 数字 1〜3 桁へ分け (`^` の脱落が等価でなくなる)、`::1` / `::` の枝は分類器が必ず内部と見るので消した ③ `new URL('http://' + h + '/')` の末尾の `/` は省けない —— 末尾の空白を URL の解析が落とすので `10.0.0.1 ` が有効な宛先に化ける (40,000 件の fuzz で見つけ、表に留めた)。元の TypeScript と、手で選んだ入力 + fuzz 45,000 件で差分比較し一致。分岐を 1 つずつ留める表 scanTargetBranches.test.ts (326 件・期待値は移す前の実装に通して取った) を足し、変異検査は 357 → 350 変異体で生存 0。等価な変異体は 1 つだけ (v4FromMappedTail の `^` の脱落) で、理由つきの pragma を付けた。手探り 10 形は全部 refused。対照 3 つ (末尾の / を外す・172.16 の境目・文書用の範囲の判定) は表が落ちた。"
       }
+    },
+    {
+      "id": "MG-027",
+      "date": "2026-11-02",
+      "kind": "port",
+      "target": "src/shared/privateTarget.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/shared/privateTarget.ts",
+      "version": "0.15",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "non-null",
+        "template"
+      ],
+      "ported": [
+        "src/shared/privateTarget.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "`new Array<number>(8).fill(0)` (型引数つきの呼び出し)",
+          "result": "refused"
+        },
+        {
+          "tried": "正規表現の一致に後置の `!` (`v4![1]`)",
+          "result": "refused"
+        },
+        {
+          "tried": "テンプレート文字列で `http://${m}/` を組む",
+          "result": "refused"
+        },
+        {
+          "tried": "配列の分割代入 `const [a, b] = m.split(':')`",
+          "result": "refused"
+        },
+        {
+          "tried": "`as [string, string]` で型を書き換える",
+          "result": "refused"
+        },
+        {
+          "tried": "入れ子の矢印関数 `const parse = (part: string): number => …`",
+          "result": "refused"
+        },
+        {
+          "tried": "`parsed.hostname.constructor` で Function へ届く",
+          "result": "refused"
+        },
+        {
+          "tried": "`RegExp.$1` で直前の一致を読む",
+          "result": "refused"
+        },
+        {
+          "tried": "定数の配列に `LIST[\"constructor\"]` で届く",
+          "result": "refused"
+        },
+        {
+          "tried": "宣言なしの `import(\"node:fs\")`",
+          "result": "refused"
+        },
+        {
+          "tried": "モジュール直下の関数名を局所の定数で隠す (`const isPrivateEmbeddedV4 = 1`)",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 6,
+      "mutation": {
+        "files": [
+          "src/shared/privateTarget.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 855,
+        "reason": null,
+        "summary": "SSRF の最後の線 (プライベート帯 / 予約帯の送り先判定 · privateTarget.ts · isPrivateOrReservedTarget / expandV6Groups / isNonGloballyReachableV6) を Mamori で書き直した (port)。足りなかったのは non-null (15 か所) と template 文字列 (8 か所) だけで、正規表現のグループは「一致を確かめてから slice して 16 進の 2 組を読む」形へ、template は連結へ、`new Array(n).fill(0)` は零の列の slice へ、入れ子の parse は関数へ、Set は配列の includes へ書き直した。壁は要らない (外の名前は URL だけ)。移すときに 3 つ見つけた: ① mapped / NAT64 / 6to4 の 3 か所に同じ try/catch (解析できない綴りは遮断) が写されていたのを 1 つの関数 isPrivateEmbeddedV4 へ畳んだ —— 初回の変異検査 96.88% (生存 8 + 未到達 4) の未到達 4 は、その catch に届く検査が無かったことで、点記法のまま来る `::ffff:999.1.1.1` (URL として正しくない) の行で踏める ② expandV6Groups の `halves.length > 2` の門は、書き直しで同じ答えを出す冗長な門になった (右の片に `::` が残り parseV6Part が空の群で null を返す) ので消した (等価変異は形ごと消す) ③ `^64:ff9b:1:` の錨を外した変異体が生き残った —— `2606:4700:64:ff9b:1::1` のように途中に同じ並びを持つ公開の綴りの行が表に無かった。元の TypeScript と、ホスト名 30 万件 (うち遮断 13 万件) + 実 URL 9.4 万件の fuzz で差分比較し差 0。分岐を 1 つずつ留める表 privateTargetBranches.test.ts (2,130 件・期待値は移す前の実装に通して取った · URL を通さず hostname だけを持つ物に当てて、正規化前の綴りまで) を足した。scanTarget.mamori と imageUrlGate.mamori は privateTarget を extern pure でなく use で読むようになった (能力台帳の外の値が 2 つ減る)。変異検査は 509 変異体 (有効 366) で生存 0・100.00%、等価な変異体は理由つきの pragma。手探り 11 形は全部 refused。対照 6 つ (a >= 224 の境目を 2 通り・64:ff9b:1 の範囲・6to4 の順序・svc・fill の長さ) は表が落ちた。1 つは対照にならなかった: LOOPBACK_NAMES から localhost.localdomain を外しても落ちない —— 最終ラベル localdomain が INTERNAL_TLDS に載っているので等価 (元の実装でも同じ多重防御)。"
+      }
     }
   ]
 }

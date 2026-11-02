@@ -22,7 +22,7 @@
 
 use { hasControlChar } from "./controlChars";
 extern pure { countChars, moreThanChars } from "./inputCeiling";
-extern pure { isPrivateOrReservedTarget } from "./privateTarget";
+use { isPrivateOrReservedTarget } from "./privateTarget";
 extern pure { hostSearchParams } from "./scanTargetHost";
 
 export type ScanUrlFailure = 'empty' | 'too-long' | 'not-a-url' | 'not-web';
