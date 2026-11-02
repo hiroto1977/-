@@ -156,6 +156,25 @@ describe('Rust 検算役 · 出どころ (ソースと成果物が BUILD.json �
   });
 });
 
+describe('Rust 検算役 · 供給網と unsafe (言語の網羅 · threat: T-187)', () => {
+  const read = (p: string): string => readFileSync(join(ROOT, p), 'utf8');
+  it('依存 crate は 0 (Cargo.toml の [dependencies] は空・Cargo.lock の package は自分だけ)', () => {
+    const toml = read('tools/mamori-verify/Cargo.toml');
+    expect(/\[dependencies\]\s*(\n\s*)*\[/.test(toml + '\n[end]')).toBe(true);
+    expect(toml.split('[dependencies]')[1]!.split('[')[0]!.trim()).toBe('');
+    const lock = read('tools/mamori-verify/Cargo.lock');
+    expect((lock.match(/\[\[package\]\]/g) ?? []).length).toBe(1);
+    expect(lock).not.toMatch(/source\s*=/);
+  });
+  it('unsafe は 1 か所だけ (固定バッファの slice を作る 1 行)・std を使わない・panic は trap', () => {
+    const code = read('tools/mamori-verify/src/lib.rs').split('\n').filter((l) => !l.trim().startsWith('//')).join('\n');
+    expect((code.match(/\bunsafe\b/g) ?? []).length).toBe(1);
+    expect(code).toContain('#![no_std]');
+    expect(code).toContain('unreachable()');
+    expect(code).not.toMatch(/loop\s*\{\s*\}/);
+  });
+});
+
 describe('Rust 検算役 · TS コンパイラとの M0 の突き合わせ', () => {
   const realFiles = walk(join(ROOT, 'src'));
 
@@ -184,12 +203,15 @@ describe('Rust 検算役 · TS コンパイラとの M0 の突き合わせ', () 
     ['__proto__ string key', 'return { "__proto__": null };'],
     ['spread', 'return [...a];'],
     ['lone CR then as', '// c\rreturn a as number;'],
-    ['LS then as', '// c return a as number;'],
-    ['PS then as', '// c return a as number;'],
-    ['bidi in comment', '// ‮ hidden'],
-    ['ZWSP in string', 'return "a​b";'],
+    ['LS then as', '// c\u2028return a as number;'],
+    ['PS then as', '// c\u2029return a as number;'],
+    ['bidi in comment', '// \u202e hidden'],
+    ['ZWSP in string', 'return "a\u200bb";'],
     ['NUL in comment', '// a\u0000b'],
-    ['BOM in regex', 'return /a﻿b/;'],
+    ['BOM in regex', 'return /a\ufeffb/;'],
+    ['ALM in string', 'return "a\u061cb";'],
+    ['tag char in string', 'return "a\u{E0041}b";'],
+    ['Hangul filler in comment', '// a\u3164b'],
     ['NBSP code', 'return a;'],
     ['non-ASCII ident', 'return café;'],
     ['hash', 'return #a;'],
@@ -216,8 +238,8 @@ describe('Rust 検算役 · TS コンパイラとの M0 の突き合わせ', () 
   it('ファジング: TS が M0 で断り Rust が通す形は 0 件・Rust だけが断る形は台帳の範囲 (種 3 つ)', () => {
     const PAYLOADS = [
       'as', ' as ', 'any', 'eval(1)', '`t`', '/* c */', '.constructor', '?.prototype', '.__proto__', '...a', '["constructor"]',
-      "['__proto__']", '{ __proto__: 1 }', '\r', ' ', ' ', '‮', '​', '\u0000', '﻿', ' ', 'é', '#', '@', '\\',
-      '"', "'", '/', '//', '/[/', '}/', ')/', '"]', '["', '\u0085', '؜', '᠎', 'ａ',
+      "['__proto__']", '{ __proto__: 1 }', '\r', '\u2028', '\u2029', '\u202e', '\u200b', '\u0000', '\ufeff', ' ', 'é', '#', '@', '\\',
+      '"', "'", '/', '//', '/[/', '}/', ')/', '"]', '["', '\u0085', '\u061c', '\u180e', 'ａ', '\u00ad', '\u034f', '\u3164', '\u2800', '\u206a', '\u2065', '\u{E0041}', '\u{E0100}', '\u115f',
     ];
     const files = realFiles.map((f) => readFileSync(f, 'utf8'));
     const tsHoles: string[] = [];

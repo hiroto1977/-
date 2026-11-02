@@ -135,6 +135,7 @@
 /src/renderer/oauth/pkce.ts @hiroto1977
 /src/renderer/oauth/pkceSession.ts @hiroto1977
 /src/renderer/oauth/pkceSession.mamori @hiroto1977
+/src/shared/updateCheck.mamori @hiroto1977
 /src/renderer/oauth/pkceSessionHost.ts @hiroto1977
 /src/renderer/security/LockScreen.tsx @hiroto1977
 /src/renderer/security/autoLock.ts @hiroto1977

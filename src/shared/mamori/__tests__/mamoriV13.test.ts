@@ -20,7 +20,7 @@ function diag(source: string): string[] {
 }
 const fn = (body: string): string => `export fn f(a: unknown) -> unknown {\n${body}\n  return a;\n}\n`;
 
-describe('T-250: 型の綴りに文を隠せない', () => {
+describe('T-250 (threat: T-250): 型の綴りに文を隠せない', () => {
   it('★ `>=` で括弧の深さを偽装して型へ式を隠す形を断る', () => {
     const d = diag(fn('  let x: Array<Array<number>= []; fetch("https://e.example"), 1 > 2;'));
     expect(d.join('\n')).toMatch(/型の中に `>=` は置けません/);
@@ -42,7 +42,7 @@ describe('T-250: 型の綴りに文を隠せない', () => {
   });
 });
 
-describe('T-251: 局所の名前はモジュール直下の名前を隠せない', () => {
+describe('T-251 (threat: T-251): 局所の名前はモジュール直下の名前を隠せない', () => {
   const PRE = 'export vetted VU = "u";\nextern sink global shellx;\nexport gate fn okUrl(raw: string) -> VU | null {\n  if (raw.length > 0) { return mint VU(raw); }\n  return null;\n}\nexport sink fn openIt(u: VU) -> void {\n  shellx.open(u);\n}\n';
   it('★ 同名の const で gate を偽る形を断る', () => {
     const d = diag(`${PRE}export fn attack(raw: string) -> void {\n  const okUrl = (x: string) => JSON.parse(x);\n  const u = okUrl(raw);\n  openIt(u);\n}\n`);
@@ -63,7 +63,7 @@ describe('T-251: 局所の名前はモジュール直下の名前を隠せない
   });
 });
 
-describe('T-252: extern pure の許可表', () => {
+describe('T-252 (threat: T-252): extern pure の許可表', () => {
   it('★ 許可表に無い host は pure で宣言できない (open / setTimeout / postMessage / console / Buffer ほか)', () => {
     for (const name of ['open', 'setTimeout', 'setInterval', 'postMessage', 'alert', 'Image', 'Blob', 'structuredClone', 'Buffer', 'console', 'queueMicrotask']) {
       expect(diag(`extern pure global ${name};\n`).join('\n'), name).toMatch(/extern pure global .+ は宣言できません/);
@@ -82,7 +82,7 @@ describe('T-252: extern pure の許可表', () => {
   });
 });
 
-describe('T-253: 隠し字の表 (見えない文を運べない)', () => {
+describe('T-253 (threat: T-253): 隠し字の表 (見えない文を運べない)', () => {
   const chars: [string, string][] = [
     ['ALM U+061C', '؜'],
     ['SHY U+00AD', '­'],
@@ -96,18 +96,19 @@ describe('T-253: 隠し字の表 (見えない文を運べない)', () => {
     ['異体字選択子の補助 U+E0100', '\u{E0100}'],
     ['Mongolian VS U+180B', '᠋'],
   ];
-  for (const [name, ch] of chars) {
-    it(`★ ${name}: 注記・文字列のどちらでも断る`, () => {
+  it('★ ALM・SHY・タグ文字・Hangul filler・Braille・bidi 非推奨ほか 11 種の隠し字を、注記と文字列のどちらでも断る', () => {
+    for (const [name, ch] of chars) {
       expect(diag(`// a${ch}b\nexport fn f() -> string {\n  return "x";\n}\n`).join('\n'), `${name} 注記`).toMatch(/裸で置けません/);
       expect(diag(`export fn f() -> string {\n  return "a${ch}b";\n}\n`).join('\n'), `${name} 文字列`).toMatch(/裸で置けません/);
-    });
-  }
+    }
+    expect(chars.length).toBe(11);
+  });
   it('対照: ZWJ・ZWNJ・絵文字の異体字選択子 U+FE0F・全角空白・日本語は通る', () => {
     expect(diag('// 日本語の注記 　 ⚠️ 👨‍👩\n// a‌b\nexport fn f() -> string {\n  return "x";\n}\n')).toEqual([]);
   });
 });
 
-describe('T-254: 注記で型検査を黙らせられない', () => {
+describe('T-254 (threat: T-254): 注記で型検査を黙らせられない', () => {
   it('★ `@ts-ignore` / `@ts-expect-error` / `@ts-nocheck` を断る', () => {
     for (const d of ['@ts-ignore', '@ts-expect-error', '@ts-nocheck', '@ts-check']) {
       expect(diag(`export fn f(a: unknown) -> unknown {\n  // ${d}\n  return a;\n}\n`).join('\n'), d).toMatch(/注記に `@ts-…` の指示は書けません/);

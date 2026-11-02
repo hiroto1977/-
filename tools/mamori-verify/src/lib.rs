@@ -75,7 +75,9 @@ fn line_terminator(s: &[u8], i: usize) -> usize {
     }
 }
 
-/// 裸で置けない字 (制御・不可視・方向を変える字) か。TS の HIDDEN_CHARS と同じ集合。
+/// 裸で置けない字 (制御・不可視・方向を変える字) か。TS の HIDDEN_CHARS と同じ集合 (0.13 · T-253 で広げた)。
+///   U+0000〜0008 / 000B〜001F / 007F〜009F / 00AD / 034F / 061C / 115F / 1160 / 17B4 / 17B5 / 180B〜180F / 200B / 200E / 200F /
+///   2028 / 2029 / 202A〜202E / 2060〜206F / 2800 / 3164 / FEFF / FFA0 / FFF0〜FFFB / E0000〜E0FFF / 1D173〜1D17A
 fn hidden_at(s: &[u8], i: usize) -> bool {
     let c = s[i];
     if c <= 0x08 || (0x0B..=0x1F).contains(&c) || c == 0x7F {
@@ -83,22 +85,42 @@ fn hidden_at(s: &[u8], i: usize) -> bool {
     }
     let get = |k: usize| if i + k < s.len() { s[i + k] } else { 0 };
     match c {
-        // C1 (U+0080〜U+009F)
-        0xC2 => (0x80..=0x9F).contains(&get(1)),
+        // C1 (U+0080〜U+009F) と U+00AD
+        0xC2 => (0x80..=0x9F).contains(&get(1)) || get(1) == 0xAD,
+        // U+034F
+        0xCD => get(1) == 0x8F,
+        // U+061C
+        0xD8 => get(1) == 0x9C,
+        // U+115F / U+1160 / U+17B4 / U+17B5 / U+180B〜U+180F
+        0xE1 => {
+            let (b1, b2) = (get(1), get(2));
+            (b1 == 0x85 && (b2 == 0x9F || b2 == 0xA0)) || (b1 == 0x9E && (b2 == 0xB4 || b2 == 0xB5)) || (b1 == 0xA0 && (0x8B..=0x8F).contains(&b2))
+        }
         0xE2 => {
             let (b1, b2) = (get(1), get(2));
             if b1 == 0x80 {
                 // U+200B / U+200E / U+200F / U+2028 / U+2029 / U+202A〜U+202E
                 matches!(b2, 0x8B | 0x8E | 0x8F | 0xA8 | 0xA9) || (0xAA..=0xAE).contains(&b2)
             } else if b1 == 0x81 {
-                // U+2060〜U+2064 / U+2066〜U+2069
-                (0xA0..=0xA4).contains(&b2) || (0xA6..=0xA9).contains(&b2)
+                // U+2060〜U+206F
+                (0xA0..=0xAF).contains(&b2)
+            } else if b1 == 0xA0 {
+                // U+2800
+                b2 == 0x80
             } else {
                 false
             }
         }
-        // U+FEFF
-        0xEF => get(1) == 0xBB && get(2) == 0xBF,
+        // U+3164
+        0xE3 => get(1) == 0x85 && get(2) == 0xA4,
+        0xEF => {
+            let (b1, b2) = (get(1), get(2));
+            // U+FEFF / U+FFA0 / U+FFF0〜U+FFFB
+            (b1 == 0xBB && b2 == 0xBF) || (b1 == 0xBE && b2 == 0xA0) || (b1 == 0xBF && (0xB0..=0xBB).contains(&b2))
+        }
+        // U+E0000〜U+E0FFF (F3 A0 80..83 xx xx) と U+1D173〜U+1D17A (F0 9D 85 B3..BA)
+        0xF3 => get(1) == 0xA0 && (0x80..=0xBF).contains(&get(2)),
+        0xF0 => get(1) == 0x9D && get(2) == 0x85 && (0xB3..=0xBA).contains(&get(3)),
         _ => false,
     }
 }

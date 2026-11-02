@@ -130,6 +130,14 @@ const TYPE_SMUGGLE: readonly string[] = [
   'number; ({}).constructor.constructor("return 1")(); const D: number',
   'number; process.exit(); const D: number',
   'number;\nfetch("x");\nconst D: number',
+  // 0.13 · T-250: `>=` / `<=` / `=` は 1 つの字句で、括弧の深さを偽装して型の綴りに式を隠す
+  'Array<Array<number>= []; fetch("x"), 1 >',
+  'Array<number>= fetch("x"); const D: Array<number',
+  'Array<number> = []; fetch("x"); const D: Array<number',
+  'Array<number]; fetch("x"); const D: [number',
+  'unknown<= fetch("x"); const D: Array<number',
+  'number === fetch("x")',
+  '{ a: number } & { b: fetch("x") }; const D: number',
 ];
 
 const PAYLOADS: readonly string[] = [
