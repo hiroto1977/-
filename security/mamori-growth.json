@@ -85,7 +85,7 @@
     "destructure": {
       "decision": "added",
       "why": "戻り値の組を受ける所で多い。",
-      "risk": "`const { constructor } = x` は T-224 の表を迂回する —— 分割代入の鍵も FORBIDDEN_MEMBERS を通す。印の欄を分割しても印は運ばない。 0.14: 鍵は memberName (FORBIDDEN_MEMBERS)・元の式が組み込み/外の名前のメンバを直に指す形は M6・印を持つ値の分割は M4・浅い const だけ (入れ子/既定値/残り/計算した鍵/let は無い)。",
+      "risk": "`const { constructor } = x` は T-224 の表を迂回する —— 分割代入の鍵も FORBIDDEN_MEMBERS を通す。印の欄を分割しても印は運ばない。",
       "since": "0.14"
     },
     "compound-assign": {
@@ -1436,6 +1436,64 @@
         "pr": 855,
         "reason": null,
         "summary": "レコード暗号の関門 (dataCrypto.ts · KDF 反復回数の範囲・塩の長さ・封筒の形・封緘/開封) を Mamori で書き直した (port)。WebCrypto/btoa は extern pure global にできないので薄い壁 dataCryptoHost.ts に閉じ込め、IV は壁の中の hostEncrypt が毎回 getRandomValues で採る形にした (最初は IV を外で作って渡す設計にして、aesGcmNonce の census に落とされた——暗号化する関数は同じ関数の中で IV を作る規則を壁が守る)。元の TypeScript と差分比較し、結果・断りの文・封筒の形・新旧の相互復号が一致。既存の検査は編集なしで緑 (census 2 本は壁の移動に合わせて名指しを更新)。手探り 6 形は全部 refused。変異検査は dataCrypto.ts / dataCryptoHost.ts とも 100%。対照 2 つ (反復回数の上限を外す・定数 IV) は関連の検査で鳴った。"
+      }
+    },
+    {
+      "id": "MG-022",
+      "date": "2026-11-02",
+      "kind": "feature",
+      "target": "destructure",
+      "pickedBy": "brief",
+      "briefPick": "feature:destructure",
+      "version": "0.14",
+      "features": [
+        "分割代入 `const { a, b: c } = 式;` (浅い const だけ・鍵は memberName を通す・元の式が組み込み/外の名前のメンバを直に指す形は M6・印を持つ値の分割は M4)"
+      ],
+      "added": [
+        "destructure"
+      ],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "`const { constructor } = x` (T-224 の表の迂回)",
+          "result": "refused"
+        },
+        {
+          "tried": "`const { assign } = Object` / `const { PI } = Math` (組み込みの表の迂回)",
+          "result": "refused"
+        },
+        {
+          "tried": "`const { open } = shellx` (危ない口 M2 の迂回)",
+          "result": "refused"
+        },
+        {
+          "tried": "印を持つ値の分割 `const { length } = okUrl(raw)`",
+          "result": "refused"
+        },
+        {
+          "tried": "入れ子 `{ a: { b } }`・既定値 `{ a = 1 }`・残り `{ ...r }`・計算した鍵 `{ [k]: c }`・`let { a }`",
+          "result": "refused"
+        },
+        {
+          "tried": "取り出した名前でモジュール直下の gate を隠す (`const { okUrl } = x`)",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 3,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/checker.ts",
+          "src/shared/mamori/emit.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 855,
+        "reason": null,
+        "summary": "分割代入 (`const { a, b: c } = 式;`) を足した (0.14 · feature)。浅い const だけで、入れ子・既定値・残り・計算した鍵・let は文法に無い。足す前に 3 つの道 (鍵の constructor/prototype/__proto__ · 組み込みと危ない口のメンバを直に取り出す形 · 印を持つ値の分割) を破って塞いだ。取り出した名前は印を持たない局所で、M6 の局所の規則を受ける。手探り 6 形は全部 refused、穴は 0 件。変異検査は parser / checker / emit とも 100% (初回 98.62% の生存は、先読みを無くし根を名前だけにする単純化と検査 9 件で潰し、等価な 2 件は理由つき pragma)。対照 3 つ (鍵の検め・根の検め・印の検めを外す) はそれぞれ狙った検査が鳴った。書き直しで移せる壁は 0 本のまま (destructure は使う壁 13 本のうち 1 本を解放)。"
       }
     }
   ]
