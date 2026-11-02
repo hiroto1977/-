@@ -63,14 +63,15 @@ function keyProducingFunctions(src: string): { name: string; body: string }[] {
 }
 
 /** 鍵を扱うモジュール (この 2 つが `crypto.subtle` を持つ。`mnemonic.ts` は digest だけ)。 */
-const MODULES = ['vault.ts', 'dataCrypto.ts'] as const;
+// `dataCrypto.ts` は Mamori 生成物 (MG-021) で WebCrypto を直接触らない —— `crypto.subtle` の口は薄い壁 `dataCryptoHost.ts` に在る。
+const MODULES = ['vault.ts', 'dataCryptoHost.ts'] as const;
 
 describe('鍵を作る所はすべて WebCrypto の有無を見る (走査で数える · パス 171)', () => {
   it('★ 走査が実物に当たる (鍵を作る関数が見つかる)', () => {
     const found = MODULES.flatMap((m) => keyProducingFunctions(readOriginalSource(path.join(SECURITY, m))));
     expect(found.length, '鍵を作る関数が 1 つも見つからない (走査が死んでいる)').toBeGreaterThanOrEqual(3);
     // 実測 (2026-09-12): vault の deriveKey / deriveKeyFromMnemonic / generateMasterKey
-    // と dataCrypto の deriveKey。名前で 1 つ確かめて、走査が本物を見ていることを示す。
+    // と dataCryptoHost の hostDeriveKey。名前で 1 つ確かめて、走査が本物を見ていることを示す。
     expect(found.map((f) => f.name)).toContain('generateMasterKey');
   });
 

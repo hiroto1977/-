@@ -11,7 +11,7 @@
  * ここが持つのは、**保存側から読んだ値の床と封筒の形の検め**、断りの文、呼ぶ順序 (検めてから鍵を導出する) —— 判断のすべて。
  */
 
-import { PBKDF2_ITERATIONS as SHARED_ITERATIONS, MIN_SALT_BYTES, MIN_STORED_SALT_BYTES, AES_GCM_IV_BYTES } from '../../shared/cryptoParams';
+import { PBKDF2_ITERATIONS as SHARED_ITERATIONS, MIN_SALT_BYTES, MIN_STORED_SALT_BYTES } from '../../shared/cryptoParams';
 import { hostToBase64, hostFromBase64, hostRandomBytes, hostDeriveKey, hostEncrypt, hostDecrypt } from './dataCryptoHost';
 
 const KDF = 'PBKDF2-SHA256';
@@ -50,8 +50,6 @@ export function assertSaltBytes(salt: Uint8Array): void {
 /** 生成側は**動かしてよい定数**から採る (パス 240)。 */
 const SALT_BYTES = MIN_SALT_BYTES;
 
-const IV_BYTES = AES_GCM_IV_BYTES;
-
 export interface EncryptedBundle {
   readonly v: 1;
   readonly kdf: typeof KDF;
@@ -86,10 +84,9 @@ export async function encryptString(plaintext: string, password: string): Promis
     throw new Error('パスワードを入力してください');
   }
   const salt = hostRandomBytes(SALT_BYTES);
-  const iv = hostRandomBytes(IV_BYTES);
   const key = await hostDeriveKey(password, salt, ITERATIONS);
-  const ct = await hostEncrypt(key, iv, plaintext);
-  return { v: 1, kdf: KDF, iterations: ITERATIONS, salt: hostToBase64(salt), iv: hostToBase64(iv), ct: hostToBase64(ct) };
+  const parts = await hostEncrypt(key, plaintext);
+  return { v: 1, kdf: KDF, iterations: ITERATIONS, salt: hostToBase64(salt), iv: hostToBase64(parts.iv), ct: hostToBase64(parts.ct) };
 }
 
 export async function decryptString(bundle: EncryptedBundle, password: string): Promise<string> {
@@ -155,9 +152,8 @@ export async function deriveAesKey(password: string, saltB64: string, iterations
 }
 
 export async function sealWithKey(key: CryptoKey, plaintext: string): Promise<Sealed> {
-  const iv = hostRandomBytes(IV_BYTES);
-  const ct = await hostEncrypt(key, iv, plaintext);
-  return { iv: hostToBase64(iv), ct: hostToBase64(ct) };
+  const parts = await hostEncrypt(key, plaintext);
+  return { iv: hostToBase64(parts.iv), ct: hostToBase64(parts.ct) };
 }
 
 export async function openWithKey(key: CryptoKey, sealed: Sealed): Promise<string> {

@@ -12,7 +12,7 @@
  * - `hostDecrypt` … 認証失敗は例外のまま (呼び出し側が「復号に失敗しました」へ直す)
  */
 import { webCryptoUnavailableReason } from './webCrypto';
-import { PBKDF2_HASH } from '../../shared/cryptoParams';
+import { AES_GCM_IV_BYTES, PBKDF2_HASH } from '../../shared/cryptoParams';
 
 export function hostToBase64(bytes: Uint8Array): string {
   let bin = '';
@@ -56,10 +56,15 @@ export async function hostDeriveKey(password: string, salt: Uint8Array, iteratio
   );
 }
 
-/** AES-GCM で暗号化し、暗号文 (認証タグを含む) のバイト列を返す。 */
-export async function hostEncrypt(key: CryptoKey, iv: Uint8Array, plaintext: string): Promise<Uint8Array> {
+/**
+ * AES-GCM で暗号化する。**IV は同じ関数の中で `getRandomValues` から毎回採る** —— 外から IV を受けない。
+ * 同じ鍵に同じ IV を二度使うと暗号が壊れる (`aesGcmNonce.test.ts` が、暗号化する関数は同じ関数の中で IV を作ることを census で見る)。
+ * IV を作る場所と暗号化する場所を別の関数に分けると、その保証が呼び出し側の規律に移ってしまうので、壁の中に閉じ込める。
+ */
+export async function hostEncrypt(key: CryptoKey, plaintext: string): Promise<{ iv: Uint8Array; ct: Uint8Array }> {
+  const iv = crypto.getRandomValues(new Uint8Array(AES_GCM_IV_BYTES));
   const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv as BufferSource }, key, new TextEncoder().encode(plaintext));
-  return new Uint8Array(ct);
+  return { iv, ct: new Uint8Array(ct) };
 }
 
 /** AES-GCM で復号して文字列にする。認証に失敗すれば例外のまま投げる。 */
