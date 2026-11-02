@@ -79,6 +79,22 @@ Mamori では、その 2 つは**書けない**:
 - **既知の差 (正直に)**: `(a?.b).c` は丸括弧を構文木に残さないので生成物は `a?.b.c` になる (`a` が null のとき `.c` を読む前に止まる —— 例外が減る向きで、印の流れには触れない)。
 - **この周で移せた壁は 0 本** (`optional-chain` だけで足りる壁が無い —— 足りない構文は他にも要る)。言語の幅を広げた周で、次は `index` の塞ぎ方 (字面の鍵は FORBIDDEN_MEMBERS を通し、字面でない鍵は数だけ) を決めてから足す。
 
+## 0.13 —— 既存言語の脆弱性クラスを材料にした解析で見つけた 5 つの穴 (T-250〜T-254 · 2026-11-02)
+
+JavaScript / TypeScript の既知の脆弱性クラス (型の綴りの密輸・名前の影・グローバルの宣言・不可視文字・注記の指示) を、コンパイラ自身と Rust → Wasm の検算役に当てた。担当を 3 つに分けて並行し、報告を受けて塞いだ。どの穴も「受け入れた生成物に、検めを受けないコードや偽の印が残る」形。
+
+| 穴 | 何が通ったか | 塞ぎ方 |
+| --- | --- | --- |
+| T-250 | 型の綴りへ文を隠す (`>=` が 1 つの字句で、括弧の深さを偽装できた) | 型の中に置ける記号を許可表 (`TYPE_PUNCT`) にし、括弧は種類ごとの stack で突き合わせる。正規表現と `;`（`{}` の直下以外）も断る |
+| T-251 | 局所の名前が同名の gate / 関数を隠し、偽の関数の戻り値に gate の印が付いた | 局所の名前（引数・const/let・catch・for・arrow の引数）がモジュール直下の宣言と同名なら M6 |
+| T-252 | `extern pure global open / setTimeout / Buffer …`（禁止表の取りこぼし）と `use … from "electron"` が自動で pure | `pure` で宣言できる host を許可表 (`PURE_GLOBAL_ALLOWED`) にし、機能を持つ module (`CAPABILITY_MODULES`) は `extern sink` だけ |
+| T-253 | ALM・SHY・タグ文字 U+E0000 台・Hangul filler・Braille blank ほか、BMP の一部だけだった隠し字の表 | 表を広げた（ZWJ / ZWNJ / U+FE0F / U+3000 は絵文字・日本語に要るので外す） |
+| T-254 | 注記の `// @ts-ignore` が生成物の型検査を黙らせた | 注記に `@ts-…` の指示を書けない（M0） |
+
+Rust → Wasm の検算役 (`tools/mamori-verify/`) は v0.2 に作り直した: アロケータを持たない静的 8 MiB の入力窓 (`INPUT`) と固定の ABI（`input_ptr` / `input_cap` / `verify(len)`・0 = 禁じた綴り無し・1〜11 = 規則・`0xFFFFFFFF` = 長すぎ）。呼び手は 0 以外をすべて拒み、UTF-8 のバイト長を渡す。組んだ物は `BUILD.json` に sha256（lib.rs / Cargo.toml / Cargo.lock / wasm）を残し、`scripts/build-mamori-verify.cjs --check` と `rustVerifier.test.ts` が突き合わせる。TypeScript 側と Rust 側の食い違いは 2100 件の乱択（fuzz）で比べ、Rust だけが断る物は「型・構文の位置で生成物に穴が無い」と分類して許す。**検算役は TypeScript の M0 の代わりではなく二重の目**で、整合性チェーンと CODEOWNERS の保護対象に入った。
+
+回帰検査は `mamoriV13.test.ts`（各 describe に `threat: T-25x`）・台帳は `security/threat-ledger.json`・開け直しは `security/threat-ablations.json`（A-570〜A-575）。見つけた方法の再現には `npm run audit:mamori-battery`（隠し字の表を広げた弾も入っている）。
+
 ## 0.12 —— `catch (e)` の束縛 (MG-016 · 2026-11-01)
 
 移植で最も多く止まった構文 (liveRead / pkceSession / assistant / exportPaths / selfAttestation の 5 壁・計 10 か所)。足す前に 12 形で破った。

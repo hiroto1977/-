@@ -288,6 +288,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         else if (it.authority === 'pure' && it.from === null && !PURE_GLOBAL_ALLOWED.has(n)) {
           report('M6', it.pos, `\`extern pure global ${n}\` は宣言できません —— pure で宣言できる host は ${[...PURE_GLOBAL_ALLOWED].join(' / ')} だけです (副作用の判断を持たない値と関数のみ)。口として使うなら \`extern sink global\` で宣言し sink 関数の中に閉じ込めます`);
         }
+        // Stryker disable next-line ConditionalExpression: `it.from !== null` は型の絞り込みのため。null は CAPABILITY_MODULES に無いので外しても答えは同じ (等価)
         if (it.authority === 'pure' && it.from !== null && CAPABILITY_MODULES.has(it.from)) {
           report('M6', it.pos, `\`extern pure { … } from "${it.from}"\` は宣言できません —— ${it.from} はコード・OS・プロセス・網の口を持つので \`extern sink\` で宣言し、sink 関数の中に閉じ込めます`);
         }
@@ -434,9 +435,10 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       case 'try': {
         checkBlock(s.body, scopes, ctx);
         // 束ねた例外 (`catch (e)` · 0.12) は印を運ばない局所の値 (生成物では `unknown`)。回す変数と同じ扱いで、handler の中だけで見える。
-        // Stryker disable next-line ConditionalExpression: param が null のときの false 枝は null 鍵の束縛を足すだけで、名前の引きには当たらない (等価)
         const caught = new Map<string, Binding>();
+        // Stryker disable next-line ConditionalExpression: param が null のときの true 枝は null 鍵の束縛を足すだけで、名前の引きには当たらない (等価)
         if (s.param !== null) bindLocal(caught, s.param, { vetted: null, authority: 'local' }, s.pos);
+        // Stryker disable next-line ConditionalExpression: param が null のとき caught は空の Map なので、足しても足さなくても名前の引きは同じ (等価)
         checkBlock(s.handler, s.param === null ? scopes : [...scopes, caught], ctx);
         return;
       }

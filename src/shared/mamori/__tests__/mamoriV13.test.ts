@@ -118,3 +118,52 @@ describe('T-254 (threat: T-254): 注記で型検査を黙らせられない', ()
     expect(diag('export fn f(a: unknown) -> unknown {\n  // Stryker disable next-line ConditionalExpression: 等価\n  // ts の話をしても @ だけなら通る\n  return a;\n}\n')).toEqual([]);
   });
 });
+
+/*
+ * 変異検査 (parser.ts / checker.ts) の生存を殺す —— どれも「規則の番号」「案内の文の中身」「正規表現の拒否」を直接主張する。
+ */
+function rulesOf(source: string): { rule: string; message: string }[] {
+  const r = compileProject([{ path: 'src/x/m0.mamori', source }]);
+  return r.ok ? [] : r.diagnostics.map((d) => ({ rule: d.rule, message: d.message }));
+}
+
+describe('0.13 の断りは規則の番号と案内の中身を持つ (変異検査の生存)', () => {
+  it('★ use … from "electron" は M6 で、extern sink を案内する', () => {
+    const d = rulesOf('use { shell } from "electron";\n');
+    expect(d.some((x) => x.rule === 'M6' && x.message.includes('extern sink'))).toBe(true);
+  });
+  it('★ extern pure from の capability module も M6 で、extern sink を案内する', () => {
+    const d = rulesOf('extern pure { exec } from "node:child_process";\n');
+    expect(d.some((x) => x.rule === 'M6' && x.message.includes('extern sink'))).toBe(true);
+  });
+  it('★ 口をメンバに持つ host (fetch) は専用の文で断り、許可表の文にはならない', () => {
+    const d = rulesOf('extern pure global fetch;\n');
+    expect(d.length).toBe(1);
+    expect(d[0]!.rule).toBe('M6');
+    expect(d[0]!.message).toContain('網・記憶・移動・DOM・コードの口をメンバとして持つ');
+    expect(d[0]!.message).not.toContain('だけです');
+  });
+  it('★ 許可表に無い host (Foo) は許可表の一覧を文に載せて断る', () => {
+    const d = rulesOf('extern pure global Foo;\n');
+    expect(d.length).toBe(1);
+    expect(d[0]!.rule).toBe('M6');
+    expect(d[0]!.message).toContain('Date / isNaN / isFinite / parseInt');
+    expect(d[0]!.message).not.toContain('網・記憶・移動・DOM・コードの口をメンバとして持つ');
+  });
+  it('★ 同名の局所が M6 になるとき、印を受ける関数の持ち出しの M4 は重ねて出さない', () => {
+    const pre = 'export vetted VU = "u";\nextern sink global shellx;\nexport sink fn openIt(u: VU) -> void {\n  shellx.open(u);\n}\n';
+    const d = rulesOf(`${pre}export fn a1(openIt: string) -> unknown {\n  return openIt;\n}\n`);
+    expect(d.some((x) => x.rule === 'M6')).toBe(true);
+    expect(d.some((x) => x.rule === 'M4')).toBe(false);
+  });
+});
+
+describe('0.13 の型の綴りの読み (変異検査の生存)', () => {
+  it('★ 型の中の正規表現を断る', () => {
+    expect(rulesOf(fn('  let x: Array</a/> = [];')).map((x) => x.message).join('\n')).toMatch(/型の中に正規表現は置けません/);
+  });
+  it('★ 型の中の文字列リテラルは括弧の記号でも括弧として数えない', () => {
+    expect(diag(fn('  let x: { a: "(" } | null = null;'))).toEqual([]);
+    expect(diag(fn('  let x: { a: "<" | ">" | "]" } | null = null;'))).toEqual([]);
+  });
+});

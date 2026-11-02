@@ -319,7 +319,7 @@ export function parse(file: string, src: string): Module {
       }
       // `;` は `{ … }` の直下 (オブジェクト型の欄の区切り) だけ。深さ 0 の `;` は文の切れ目で、型には要らない。
       if (isPunctTok(t, ';') && stack[stack.length - 1] !== '}') fail(t, '型の中に `;` は置けません —— 文の切れ目になり、型の綴りに別の文を隠せてしまいます');
-      const closer = TYPE_OPEN[t.kind === 'punct' ? t.text : ''];
+      const closer = t.kind === 'punct' ? TYPE_OPEN[t.text] : undefined;
       if (closer !== undefined) stack.push(closer);
       else if (isPunctTok(t, '>', ')', ']', '}')) {
         if (stack.pop() !== t.text) fail(t, '型の括弧が合いません');
