@@ -319,6 +319,7 @@ export function parse(file: string, src: string): Module {
       }
       // `;` は `{ … }` の直下 (オブジェクト型の欄の区切り) だけ。深さ 0 の `;` は文の切れ目で、型には要らない。
       if (isPunctTok(t, ';') && stack[stack.length - 1] !== '}') fail(t, '型の中に `;` は置けません —— 文の切れ目になり、型の綴りに別の文を隠せてしまいます');
+      // Stryker disable next-line ConditionalExpression: 括弧の字は punct の字句としてしか現れず (文字列の字句の text は引用符を含む)、punct 以外で TYPE_OPEN を引いても当たらない (等価)
       const closer = t.kind === 'punct' ? TYPE_OPEN[t.text] : undefined;
       if (closer !== undefined) stack.push(closer);
       else if (isPunctTok(t, '>', ')', ']', '}')) {

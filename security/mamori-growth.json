@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.12"
+    "version": "0.13"
   },
   "constructs": {
     "class": {
@@ -1260,6 +1260,65 @@
         "pr": 855,
         "reason": null,
         "summary": "更新確認の判定 (updateCheck.ts · 版の比較・リリース URL の関門・判定の文) を Mamori で書き直した (port)。正規表現リテラル・try/catch・interface・union を初めて実物で使い、template は連結に、as は欄を読み切る形に替えた。既存の検査は編集なしで緑 (describeUpdate の全文だけ足した)。穴は 0 件 (手探り 5 形が全部 refused)。変異検査は 142 変異体で初回から 100% に近く、全文の検査を足して 100%。"
+      }
+    },
+    {
+      "id": "MG-019",
+      "date": "2026-11-02",
+      "kind": "probe",
+      "target": "language",
+      "pickedBy": "manual",
+      "deviation": "利用者の依頼 (既存言語の脆弱性を解析しながら対策も並列で行う) に応え、brief の選ぶ移植より先に、JavaScript / TypeScript の既知の脆弱性クラスを材料に言語とコンパイラ自身と Rust 検算役の穴を探して塞いだ",
+      "version": "0.13",
+      "features": [],
+      "added": [],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "型の綴りへ `Array<Array<number>= []; fetch(...)` で文を隠す (`>=` で深さを偽装)",
+          "result": "hole"
+        },
+        {
+          "tried": "局所の `const okUrl = (x) => JSON.parse(x)` で同名の gate を偽装して sink へ渡す",
+          "result": "hole"
+        },
+        {
+          "tried": "`extern pure global open / setTimeout / Buffer` と `use { shell } from \"electron\"`",
+          "result": "hole"
+        },
+        {
+          "tried": "注記や文字列に ALM・SHY・タグ文字 U+E0000 台・Hangul filler・Braille blank を置く",
+          "result": "hole"
+        },
+        {
+          "tried": "注記に `// @ts-ignore` を書いて生成物の型検査を黙らせる",
+          "result": "hole"
+        },
+        {
+          "tried": "型の中の正規表現 `Array</a/>` と、文字列リテラル `\"(\"` を括弧として数えさせる形",
+          "result": "refused"
+        }
+      ],
+      "threats": [
+        "T-250",
+        "T-251",
+        "T-252",
+        "T-253",
+        "T-254"
+      ],
+      "controls": 6,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/checker.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 855,
+        "reason": null,
+        "summary": "既存言語 (JS/TS) の脆弱性クラスを材料に、言語・コンパイラ・Rust 検算役の穴を 3 担当で並行して探し、5 つの穴 (T-250〜T-254) を塞いだ。型の綴りの許可表と括弧の突き合わせ・局所の名前が同名の宣言を隠せない・extern pure の許可表と機能 module の拒否・隠し字の表の拡張・注記の @ts- 指示の拒否。Rust 検算役は固定バッファ ABI の v0.2 に作り直し、BUILD.json と整合性チェーンで出どころを固定。変異検査は parser / checker とも 100% (等価 4 件は理由つき pragma)。"
       }
     }
   ]
