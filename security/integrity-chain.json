@@ -106,7 +106,9 @@
     "src/renderer/security/autoLock.ts",
     "src/renderer/security/autoLockHost.ts",
     "src/renderer/security/bip39-wordlist.ts",
+    "src/renderer/security/dataCrypto.mamori",
     "src/renderer/security/dataCrypto.ts",
+    "src/renderer/security/dataCryptoHost.ts",
     "src/renderer/security/egressStepUp.mamori",
     "src/renderer/security/egressStepUp.ts",
     "src/renderer/security/frameGuard.ts",
@@ -3674,6 +3676,14 @@
       "leafCount": 175,
       "note": "update exportPaths.mamori,exportPaths.ts",
       "hash": "70e7be716d83f05abf8a2bf76b761834e2444bd1f531b0660cc9b69c2e29bf97"
+    },
+    {
+      "index": 437,
+      "prevHash": "70e7be716d83f05abf8a2bf76b761834e2444bd1f531b0660cc9b69c2e29bf97",
+      "merkleRoot": "45e41505191fb88bcc213f10d39f1e93278acc5cc6254e0598fb8a49d33ef417",
+      "leafCount": 177,
+      "note": "update integrity-chain.cjs,mamori-capabilities.json,dataCrypto.mamori,dataCrypto.ts,dataCryptoHost.ts",
+      "hash": "9ea05e4ae9b0c797d70162b2d44184aa06f84b3a483ff0024be381a6abe95cf9"
     }
   ],
   "tipManifest": {
@@ -3710,7 +3720,7 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "d385ddfc52ec74abf184207bfbb1ac655e730db2b7c6d7e758e35e67e79a5737",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "69a67e61e301fbea2f53af22f6fdbf90b1b34a1753c4ceabfc7d9b02f4b6845c",
+    "scripts/integrity-chain.cjs": "6f7fcae005cb81192b620d341d44e2448abb8d42de3a8f8f36091afcbbd6e12e",
     "scripts/knowledge-autopilot.cjs": "ee8f7ae4a4ad29dda6c02f83c113c45fa1648522f807e711aa86b7746f372968",
     "scripts/lib/artifact-freshness.cjs": "add621dfe55e0eab31354f0d6979c9c67b513ed8b8348b9137ca7fa53dd569c1",
     "scripts/lib/json-for-script.cjs": "cb79bf1fb2f3c10c6854ec16d9c12bb0695dee5561751333db4531545702fd70",
@@ -3738,7 +3748,7 @@
     "scripts/verify-e2e-playwright-pin.cjs": "417854f96cbaa4af4dd30a378b722b58093d56e78aa7eaba9bd17df412f57d45",
     "scripts/verify-packaged-fuses.cjs": "4162ab0e5d390c5cccf4cd8ac533027bd1d8a5cbceb0a069059d4f3800643d9f",
     "scripts/verify-release-artifacts.cjs": "1bd668bc052b476a9b3f976dc80ddf8faa4f080aed5617d354a8c7647ee9f557",
-    "security/mamori-capabilities.json": "685257a7cb365214c5c05ff4fe478b6691ea4e61318023ab9ca5aa3dfa9fde29",
+    "security/mamori-capabilities.json": "50c6f4ac99fb98588ec11d745b708a3b1021128f65837b6cb784e93cf672630b",
     "src/main/atomicWrite.ts": "63b6ff1fb7d8990b76409c62556d69f99a14475f73662e89507e8899a32a9c3f",
     "src/main/clients/assistant.ts": "3db27c2cdd42569a7bc92c7d2841591b1464550a1905ab66fa4a100803b69c4f",
     "src/main/clients/exportPaths.mamori": "49b9340d5d2b01ff40a6d874adfe9c0423b3a95eb6144b68e2324fdd0c1a6dd1",
@@ -3781,7 +3791,9 @@
     "src/renderer/security/autoLock.ts": "321856125794b5f66532a184b9db6055af0c047882dcfb1b31e8b05e48dec22a",
     "src/renderer/security/autoLockHost.ts": "39842f7e296ddf2130596db174a11123ee8b9311840e404b69f5dce38d9af79c",
     "src/renderer/security/bip39-wordlist.ts": "158d4c3eed64474223aefe917c6497f4afd0200054efd089d9d0f323332d6761",
-    "src/renderer/security/dataCrypto.ts": "c47a7bbf2305b1687bf059cc9d40a43783fef755079b2fdf2a8e59afde9a4f14",
+    "src/renderer/security/dataCrypto.mamori": "84131d98f7601593e85a8a863e4a5319dc78adb4e1b2d13cf262e3391f9aa759",
+    "src/renderer/security/dataCrypto.ts": "f3f7efd251e0219368b8f36eb0e3c4e7f2034402f3e71aeaa48383198afc1252",
+    "src/renderer/security/dataCryptoHost.ts": "a7ed4d4615d7d7e60d4b04730dc6f201ceabc5e853cc264d89a923f3c0b2e9e8",
     "src/renderer/security/egressStepUp.mamori": "f754bdef18ac41bbc75adf6e5b2de767c1a05f73ae0df21a3343f25325d418bf",
     "src/renderer/security/egressStepUp.ts": "7b3e334b3fd493c0021140908f744ffc06f5eef976fcdacb2642e15bedc11afd",
     "src/renderer/security/frameGuard.ts": "66ad10cf7e5a48fcc4a406aa66b9de544609877944fd073c7bf3af8190991559",

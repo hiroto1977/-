@@ -1376,6 +1376,66 @@
         "reason": null,
         "summary": "書き出しの行き先の関門と権限直し (exportPaths.ts · 書き込みの閉じ込め・0600・根の 0700) を Mamori で書き直した (port)。fs / os / path を M7 の台帳に載せた。8 進が書けないので権限は 10 進 (448 / 384 / 63)、非同期の arrow が無いので再帰の repairDir に分けた。元の TypeScript と実ファイルで比べ、結果・断りの文・残るモードが一致。既存の検査は編集なしで緑。手探り 6 形は全部 refused (fs への生のパスの書き込みは M7 の台帳が見る設計で、言語の穴ではない)。変異検査は pragma を元へ戻して 100% (Killed 90)。対照 2 つ (兄弟ディレクトリの接頭辞・書き出し先の symlink) は関連の検査で鳴った。"
       }
+    },
+    {
+      "id": "MG-021",
+      "date": "2026-11-02",
+      "kind": "port",
+      "target": "src/renderer/security/dataCrypto.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/renderer/security/dataCrypto.ts",
+      "version": "0.13",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "c-for",
+        "as-cast",
+        "compound-assign",
+        "template"
+      ],
+      "ported": [
+        "src/renderer/security/dataCrypto.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "テンプレート文字列で鍵を組む",
+          "result": "refused"
+        },
+        {
+          "tried": "`extern pure global crypto` (WebCrypto を壁なしで宣言)",
+          "result": "refused"
+        },
+        {
+          "tried": "`Uint8Array.constructor` (T-224 の道)",
+          "result": "refused"
+        },
+        {
+          "tried": "`extern pure global btoa` (host 壁の迂回)",
+          "result": "refused"
+        },
+        {
+          "tried": "隠し字 U+200B を含む識別子",
+          "result": "refused"
+        },
+        {
+          "tried": "分割代入 `const { constructor } = x`",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 2,
+      "mutation": {
+        "files": [
+          "src/renderer/security/dataCrypto.ts",
+          "src/renderer/security/dataCryptoHost.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 855,
+        "reason": null,
+        "summary": "レコード暗号の関門 (dataCrypto.ts · KDF 反復回数の範囲・塩の長さ・封筒の形・封緘/開封) を Mamori で書き直した (port)。WebCrypto/btoa は extern pure global にできないので薄い壁 dataCryptoHost.ts に閉じ込め、IV は壁の中の hostEncrypt が毎回 getRandomValues で採る形にした (最初は IV を外で作って渡す設計にして、aesGcmNonce の census に落とされた——暗号化する関数は同じ関数の中で IV を作る規則を壁が守る)。元の TypeScript と差分比較し、結果・断りの文・封筒の形・新旧の相互復号が一致。既存の検査は編集なしで緑 (census 2 本は壁の移動に合わせて名指しを更新)。手探り 6 形は全部 refused。変異検査は dataCrypto.ts / dataCryptoHost.ts とも 100%。対照 2 つ (反復回数の上限を外す・定数 IV) は関連の検査で鳴った。"
+      }
     }
   ]
 }

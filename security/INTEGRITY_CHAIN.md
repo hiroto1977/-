@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 437
+- ブロック数: 438
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `70e7be716d83f05abf8a2bf76b761834e2444bd1f531b0660cc9b69c2e29bf97`
-- 保護対象: 175 ファイル
+- 末尾(tip)ハッシュ: `9ea05e4ae9b0c797d70162b2d44184aa06f84b3a483ff0024be381a6abe95cf9`
+- 保護対象: 177 ファイル
 
 ## ブロック
 
@@ -450,6 +450,7 @@
 | 434 | `cbecfc6fe855da5d` | `e50ddcddc3a5e60b` | `482a721911ed1996` | update checker.ts,parser.ts |
 | 435 | `efa601ed1b886bd9` | `482a721911ed1996` | `3f58432c3413561c` | update integrity-chain.cjs,mamori-capabilities.json,exportPaths.mamori,exportPaths.ts |
 | 436 | `4e07bfbe8c8480e4` | `3f58432c3413561c` | `70e7be716d83f05a` | update exportPaths.mamori,exportPaths.ts |
+| 437 | `45e41505191fb88b` | `70e7be716d83f05a` | `9ea05e4ae9b0c797` | update integrity-chain.cjs,mamori-capabilities.json,dataCrypto.mamori,dataCrypto.ts,dataCryptoHost.ts |
 
 ## 保護対象ファイル
 
@@ -557,7 +558,9 @@
 - `src/renderer/security/autoLock.ts`
 - `src/renderer/security/autoLockHost.ts`
 - `src/renderer/security/bip39-wordlist.ts`
+- `src/renderer/security/dataCrypto.mamori`
 - `src/renderer/security/dataCrypto.ts`
+- `src/renderer/security/dataCryptoHost.ts`
 - `src/renderer/security/egressStepUp.mamori`
 - `src/renderer/security/egressStepUp.ts`
 - `src/renderer/security/frameGuard.ts`
