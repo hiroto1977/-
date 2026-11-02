@@ -98,8 +98,11 @@ const LINE_COMMENT_BODY = /[^\n\r\u2028\u2029]*/y;
  * 見えない字は読み手の見ている物と走る物を食い違わせる (Trojan Source · CVE-2021-42574)。書きたいときは `\uXXXX` で綴る。
  * ZWJ / ZWNJ (U+200C / U+200D) は絵文字の連結に要るので除く (`lint:charset` と同じ判断)。
  */
-// eslint-disable-next-line no-control-regex -- 制御文字そのものを断る規則なので、制御文字の範囲を正規表現に書くのが目的
-const HIDDEN_CHARS = /[\u0000-\u0008\u000B-\u001F\u007F-\u009F\u200B\u200E\u200F\u2028\u2029\u202A-\u202E\u2060-\u2064\u2066-\u2069\uFEFF]/;
+// eslint-disable-next-line no-control-regex, no-misleading-character-class -- 制御文字・結合文字そのものを断る規則なので、範囲を正規表現に書くのが目的
+const HIDDEN_CHARS = /[\u0000-\u0008\u000B-\u001F\u007F-\u009F\u00AD\u034F\u061C\u115F\u1160\u17B4\u17B5\u180B-\u180F\u200B\u200E\u200F\u2028\u2029\u202A-\u202E\u2060-\u206F\u2800\u3164\uFEFF\uFFA0\uFFF0-\uFFFB\u{E0000}-\u{E0FFF}\u{1D173}-\u{1D17A}]/u;
+/** 注記の本文に置けない指示 (T-254): 生成物の次の行の型検査を黙らせる `@ts-ignore` / `@ts-expect-error` / `@ts-nocheck` ほか。 */
+const TS_DIRECTIVE = /@ts-[a-z]/;
+const TS_DIRECTIVE_MESSAGE = '注記に `@ts-…` の指示は書けません —— 生成物の型検査 (tsc) を黙らせて、Mamori が見ない型の穴を通せてしまいます';
 const HIDDEN_CHARS_MESSAGE = '制御・不可視・方向を変える字は注記と文字列の中に裸で置けません —— `\\uXXXX` と綴ります (見える物と走る物が食い違う · Trojan Source)';
 
 export function lex(file: string, src: string): Tok[] {
@@ -141,6 +144,7 @@ export function lex(file: string, src: string): Tok[] {
       const stop = i + LINE_COMMENT_BODY.exec(src)![0].length;
       const raw = src.slice(i, stop);
       if (HIDDEN_CHARS.test(raw)) throw new MamoriError(file, pos, HIDDEN_CHARS_MESSAGE);
+      if (TS_DIRECTIVE.test(raw)) throw new MamoriError(file, pos, TS_DIRECTIVE_MESSAGE);
       const kind: TokKind = raw.startsWith('//!') ? 'header' : raw.startsWith('///') ? 'doc' : 'comment';
       const rest = kind === 'comment' ? raw.slice(2) : raw.slice(3);
       out.push({ kind, text: rest.startsWith(' ') ? rest.slice(1) : rest, pos });
@@ -225,6 +229,10 @@ export function lex(file: string, src: string): Tok[] {
   return out;
 }
 
+/** 型の綴りの中に置いてよい記号 (許可表)。比較・代入・論理・算術・`->` などは型に要らず、字句の切れ目をずらす元になる。 */
+const TYPE_PUNCT: ReadonlySet<string> = new Set(['<', '>', '(', ')', '[', ']', '{', '}', ',', ':', ';', '.', '|', '&', '?', '=>', '-']);
+const TYPE_OPEN: Readonly<Record<string, string>> = Object.assign(Object.create(null) as Record<string, string>, { '<': '>', '(': ')', '[': ']', '{': '}' });
+
 const STOP_WORDS = new Set(['true', 'false', 'null', 'undefined', 'unknown', 'string', 'number', 'boolean', 'void']);
 
 /** `case` の本体を終えてよい文 (次の case へ落ちる形を書かせない)。 */
@@ -295,19 +303,28 @@ export function parse(file: string, src: string): Module {
   const typeRef = (terminators: readonly string[]): TypeRef => {
     const start = peek();
     const parts: Tok[] = [];
-    let depth = 0;
+    // 開き括弧の積み (種類つき)。閉じ括弧は積みの先頭と**同じ種類**でなければならない。
+    // 0.13 · T-250: 深さを数えるだけだった頃は、`>=` (1 つの字句) が `>` に数えられず、`Array<Array<number>= 式; … >` のように
+    // **字句の切れ目の差で深さを偽装**でき、型の綴りの中へ文を隠せた (T-239 は深さ 0 の `;` だけを断っていた)。
+    // 型の綴りは生成物へそのまま写されるので、型の中に置ける記号を許可表にして、括弧の種類を突き合わせる。
+    const stack: string[] = [];
     for (;;) {
       const t = peek();
       if (t.kind === 'eof') fail(t, '型が閉じていません');
       if (t.kind === 'comment' || t.kind === 'doc' || t.kind === 'header') fail(t, '型の途中に注記は置けません');
-      if (depth === 0 && isPunctTok(t, ...terminators)) break;
-      // 深さ 0 の `;` は文の切れ目で、型には要らない (オブジェクト型の欄の区切りは `{ … }` の中 = 深さ 1)。
-      // 通すと `const C: number; fetch("x"); const D: number = 1;` のように**型の綴りの中へ文を隠せる** —— 型の綴りは
-      // そのまま写されるので、Mamori の検め (M6) を受けない文が生成物へ入った (0.4 · T-239 · 電池の対戦が見つけた)。
-      if (depth === 0 && isPunctTok(t, ';')) fail(t, '型の中に `;` は置けません —— 文の切れ目になり、型の綴りに別の文を隠せてしまいます');
-      if (isPunctTok(t, '<', '(', '[', '{')) depth++;
-      if (isPunctTok(t, '>', ')', ']', '}')) depth--;
-      if (depth < 0) fail(t, '型の括弧が合いません');
+      if (t.kind === 'regex') fail(t, '型の中に正規表現は置けません');
+      if (stack.length === 0 && isPunctTok(t, ...terminators)) break;
+      if (t.kind === 'punct' && !TYPE_PUNCT.has(t.text)) {
+        fail(t, `型の中に \`${t.text}\` は置けません —— 型で使えるのは名前・括弧・\`,\` \`:\` \`.\` \`|\` \`&\` \`?\` \`=>\` だけです (字句の切れ目の差で型の綴りに式を隠せてしまうため)`);
+      }
+      // `;` は `{ … }` の直下 (オブジェクト型の欄の区切り) だけ。深さ 0 の `;` は文の切れ目で、型には要らない。
+      if (isPunctTok(t, ';') && stack[stack.length - 1] !== '}') fail(t, '型の中に `;` は置けません —— 文の切れ目になり、型の綴りに別の文を隠せてしまいます');
+      // Stryker disable next-line ConditionalExpression: 括弧の字は punct の字句としてしか現れず (文字列の字句の text は引用符を含む)、punct 以外で TYPE_OPEN を引いても当たらない (等価)
+      const closer = t.kind === 'punct' ? TYPE_OPEN[t.text] : undefined;
+      if (closer !== undefined) stack.push(closer);
+      else if (isPunctTok(t, '>', ')', ']', '}')) {
+        if (stack.pop() !== t.text) fail(t, '型の括弧が合いません');
+      }
       parts.push(next());
     }
     if (parts.length === 0) fail(start, '型が要ります');
@@ -469,8 +486,15 @@ export function parse(file: string, src: string): Module {
       next();
       const body = block();
       expectW('catch');
+      // `catch (e)` の束縛 (0.12 · MG-016)。束ねた例外は unknown で、印を運ばない (checker が局所の値として宣言する)。
+      let param: string | null = null;
+      if (isP('(')) {
+        next();
+        param = ident();
+        expectP(')');
+      }
       const handler = block();
-      return { kind: 'try', body, handler, comments: cs, pos: t.pos };
+      return { kind: 'try', body, param, handler, comments: cs, pos: t.pos };
     }
     if (isP('{')) fail(t, '文の頭に `{` は置けません (オブジェクトの字面だけの文は何もしないので書かない)');
     if (peek().kind === 'ident' && isP('=', 1)) {

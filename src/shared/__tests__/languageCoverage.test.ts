@@ -49,7 +49,7 @@ describe('言語の網羅 — 見張りが無い言語を作らない (threat: T
   });
 
   it('★ 新しい言語のファイルが入ると落ち、足す守りを名指しする (threat: T-187)', () => {
-    for (const [file, hint] of [['tools/x.py', 'bandit'], ['cmd/main.go', 'govulncheck'], ['src/lib.rs', 'cargo'], ['Dockerfile', 'hadolint']] as const) {
+    for (const [file, hint] of [['tools/x.py', 'bandit'], ['cmd/main.go', 'govulncheck'], ['src/Main.java', 'SpotBugs'], ['Dockerfile', 'hadolint']] as const) {
       // python は起動子で台帳に在る (launcherOnly) が、ソースが入れば足りなくなる ——  ここでも 1 件で落ちる。
       const r = run(registry, [file]);
       expect(r.problems.length, file).toBe(1);
@@ -58,7 +58,7 @@ describe('言語の網羅 — 見張りが無い言語を作らない (threat: T
   });
 
   it('★ 新しい依存の生態系の定義ファイルが入ると落ちる (threat: T-187)', () => {
-    for (const mf of ['requirements.txt', 'go.mod', 'Cargo.lock', 'pom.xml', 'Gemfile.lock', 'composer.lock']) {
+    for (const mf of ['requirements.txt', 'go.mod', 'pom.xml', 'Gemfile.lock', 'composer.lock']) {
       const r = run(registry, [`vendor/${mf}`]);
       expect(r.problems.some((p) => p.includes('台帳の ecosystems に載っていない')), mf).toBe(true);
     }

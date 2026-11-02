@@ -50,6 +50,24 @@
         "scripts/lint-mcp-servers.cjs"
       ],
       "launcherOnly": true
+    },
+    {
+      "id": "rust",
+      "status": "present",
+      "what": "Rust → Wasm の M0 検算役 (tools/mamori-verify)。Mamori の禁じた綴りを TypeScript のコンパイラとは独立に検める第 2 の実装。依存 crate は 0・no_std・unsafe は 1 か所",
+      "scanners": [
+        "src/shared/mamori/__tests__/rustVerifier.test.ts",
+        "scripts/build-mamori-verify.cjs"
+      ]
+    },
+    {
+      "id": "webassembly",
+      "status": "present",
+      "what": "検算役の成果物 (tools/mamori-verify/dist/mamori_verify.wasm)。ビルド元 (lib.rs・Cargo.toml・Cargo.lock) と成果物の sha256 を BUILD.json に縛り、imports 0・exports 4 つ・start セクション無しを検査が見る",
+      "scanners": [
+        "tools/mamori-verify/BUILD.json",
+        "src/shared/mamori/__tests__/rustVerifier.test.ts"
+      ]
     }
   ],
   "ecosystems": [
@@ -60,6 +78,13 @@
         "scripts/threat-watch.cjs",
         "scripts/lint-dependencies.cjs",
         "scripts/audit-floors.cjs"
+      ]
+    },
+    {
+      "id": "crates-io",
+      "what": "tools/mamori-verify の Cargo.toml / Cargo.lock。依存 crate は 0 で、検査が [dependencies] が空・lock の package が自分だけ・外の source が無いことを見る (依存が入ったら落ちるので、そのとき cargo audit を足す)",
+      "scanners": [
+        "src/shared/mamori/__tests__/rustVerifier.test.ts"
       ]
     }
   ],

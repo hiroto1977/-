@@ -111,6 +111,8 @@
 /src/shared/proxyEndpoint.mamori @hiroto1977
 /src/shared/controlChars.mamori @hiroto1977
 /security/mamori-capabilities.json @hiroto1977
+/tools/mamori-verify/ @hiroto1977
+/scripts/build-mamori-verify.cjs @hiroto1977
 /src/shared/mamori/capabilities.ts @hiroto1977
 /src/shared/tokenInput.mamori @hiroto1977
 /src/renderer/security/egressStepUp.mamori @hiroto1977
@@ -134,6 +136,9 @@
 /src/renderer/network/proxy.ts @hiroto1977
 /src/renderer/oauth/pkce.ts @hiroto1977
 /src/renderer/oauth/pkceSession.ts @hiroto1977
+/src/renderer/oauth/pkceSession.mamori @hiroto1977
+/src/shared/updateCheck.mamori @hiroto1977
+/src/renderer/oauth/pkceSessionHost.ts @hiroto1977
 /src/renderer/security/LockScreen.tsx @hiroto1977
 /src/renderer/security/autoLock.ts @hiroto1977
 /src/renderer/security/autoLock.mamori @hiroto1977

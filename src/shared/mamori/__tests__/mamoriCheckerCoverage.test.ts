@@ -77,8 +77,8 @@ describe('M2 はどの位置でも効く (検査器が式と文を辿りきる)'
     expect(ds[0]!.message).toContain('sink 関数の中でも呼ぶ形');
   });
 
-  it('対照: arrow の引数が同じ名前なら、それは外の口ではない (内側の名前が勝つ)', () => {
-    expect(rules(plainFn('  const z = (shell) => shell;'))).toEqual([]);
+  it('対照: arrow の引数が外の口と同じ名前なら断る (T-251 · 局所の名前は外の宣言を隠せない)', () => {
+    expect(rules(plainFn('  const z = (shell) => shell;'))).toEqual(['M6']);
   });
 
   it('対照: 注記の文は何も検めない', () => {

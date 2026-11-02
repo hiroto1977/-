@@ -120,6 +120,6 @@ describe('端末から読む / 消す側の作法', () => {
 
   it('標本: 走査は .tsx も sessionStorage も見ている', () => {
     expect(SITES.some((s) => s.file.endsWith('.tsx'))).toBe(true);
-    expect(SITES.some((s) => s.file === 'src/renderer/oauth/pkceSession.ts')).toBe(true);
+    expect(SITES.some((s) => s.file === 'src/renderer/oauth/pkceSessionHost.ts')).toBe(true);
   });
 });

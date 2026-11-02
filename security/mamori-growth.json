@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.11"
+    "version": "0.13"
   },
   "constructs": {
     "class": {
@@ -101,9 +101,10 @@
       "why": "== は型を変換して比べる。=== で書く。"
     },
     "catch-binding": {
-      "decision": "feature",
+      "decision": "added",
       "why": "例外の文を伏字にして返す所で要る。",
-      "risk": "束ねた例外は unknown で印を運ばない。例外の文を画面へ流すなら伏字の関門 (redactForMessage) を通すのは呼ぶ側の TypeScript の census が見る。"
+      "risk": "束ねた例外は unknown で印を運ばない。例外の文を画面へ流すなら伏字の関門 (redactForMessage) を通すのは呼ぶ側の TypeScript の census が見る。",
+      "since": "0.12"
     },
     "finally": {
       "decision": "feature",
@@ -1096,6 +1097,228 @@
         "pr": null,
         "reason": "PR はこの記録のあとに出す (番号は次の周で台帳へ)",
         "summary": "自動ロック (autoLock.ts · 席を離れた / タブを隠した時に金庫を施錠) を Mamori で書き直した (port)。足りなかったのは入れ子の関数宣言・複合代入・最上位の let・インターフェースのメソッド記法・型の戻し (as) で、const の arrow・x = x + 1・集合・readonly の関数欄・小さな host 関数 (autoLockHost.ts) へ替えた。移す途中で `extern pure global window/document` と宣言すると sink を経ずに window.open(生の値)・document.write・return window が通る穴 (T-249) を見つけ、host の 29 名は pure で宣言できないようにした (M6)。元の TypeScript と 400 通りの操作列 (時計・タイマー・可視・活動) で同じ痕跡・既存の検査 55 件は編集なしで緑。変異検査は autoLock.ts が初回 83.87% (pragma を移す途中で落とした + 境目・後始末・購読の通知を誰も主張していなかった) → pragma を戻し検査 7 件を足して 100% (98 変異体)、checker.ts は 99.87% の生存 1 (`from === null` の門) を検査 1 件で留めて 100%。能力台帳・保護対象・CODEOWNERS に追加。"
+      }
+    },
+    {
+      "id": "MG-016",
+      "date": "2026-11-01",
+      "kind": "feature",
+      "target": "catch-binding",
+      "pickedBy": "manual",
+      "deviation": "利用者の「進めて」(推奨の順: 機能 → 穴探し) に従い、brief の最初の推薦 (updateCheck の移植) より先に、移植で最も多く止まる構文 catch-binding (liveRead / pkceSession / assistant / exportPaths / selfAttestation の 5 壁で計 10 か所) を足した",
+      "briefPick": "port:src/shared/updateCheck.ts",
+      "version": "0.12",
+      "features": [
+        "`catch (e) { … }` の束縛 (名前 1 つだけ・型注釈なし。束ねた例外は unknown で印を運ばない局所の値として handler の中だけで見える。生成物はそのまま `catch (e)`)"
+      ],
+      "added": [
+        "catch-binding"
+      ],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "束ねた例外を印を受ける口へ渡す: `openIt(e)` / 印の型として返す `return e;` (-> VettedUrl)",
+          "result": "refused"
+        },
+        {
+          "tried": "handler の外で束縛の名前を使う・束縛へ代入する `e = 1;`",
+          "result": "refused"
+        },
+        {
+          "tried": "`e.constructor` / `e[\"constructor\"]` / `e.__proto__` (T-224 の表を例外の値で迂回する)",
+          "result": "refused"
+        },
+        {
+          "tried": "型注釈 `catch (e: unknown)`・2 つ以上の名前 `catch (a, b)`・分割代入 `catch ({ message })`",
+          "result": "refused"
+        },
+        {
+          "tried": "sink の名前や gate の名前で束縛して影にする `catch (openIt)`",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 3,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/emit.ts",
+          "src/shared/mamori/checker.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": null,
+        "reason": "PR はこの記録のあとに出す (番号は次の周で台帳へ)",
+        "summary": "Mamori 0.12: `catch (e)` の束縛を足した (catch-binding)。束ねた例外は印を運ばない局所の値で、印の口へ渡す・印の型として返す・外で使う・代入・禁じたメンバ・型注釈・複数の名前・分割代入・影にする手探り 12 形が全部断られ、穴は 0 件。この周で移せた壁は 0 本 (言語の幅を広げた周) だが、catch-binding を足りない構文に挙げる壁が 5 本あり、次の移植で効く。変異検査は parser / emit 100%・checker は生存 1 (束縛が無いときの false 枝は null 鍵を足すだけの等価) を理由つきで外して 100%。"
+      }
+    },
+    {
+      "id": "MG-017",
+      "date": "2026-11-01",
+      "kind": "port",
+      "target": "src/renderer/oauth/pkceSession.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/renderer/oauth/pkceSession.ts",
+      "version": "0.12",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "as-cast",
+        "as-const",
+        "template"
+      ],
+      "ported": [
+        "src/renderer/oauth/pkceSession.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "`extern pure global sessionStorage;` を宣言して `sessionStorage.getItem(k)` (sink を経ずに記憶の口を呼ぶ)",
+          "result": "refused"
+        },
+        {
+          "tried": "鍵を実行時に組んで引く `o[\"pkce.\" + \"x\"]` (文字列の添字)",
+          "result": "refused"
+        },
+        {
+          "tried": "束ねた例外の `e.constructor` (catch の束縛で T-224 の表を迂回する)",
+          "result": "refused"
+        },
+        {
+          "tried": "`raw as string` (型の書き換え)",
+          "result": "refused"
+        },
+        {
+          "tried": "host 関数の鍵に `\"pkce.verifier\".constructor` を渡す",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 3,
+      "mutation": {
+        "files": [
+          "src/renderer/oauth/pkceSession.ts",
+          "src/renderer/oauth/pkceSessionHost.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 855,
+        "reason": null,
+        "summary": "PKCE の一時秘密の置き場 (pkceSession.ts · 保存・読み・消す) を Mamori で書き直した (port)。`sessionStorage` は pure で宣言できない (T-249) ので 3 つの小さな host 関数 (pkceSessionHost.ts) へ閉じ込め、置く=投げる・読む=触れなければ null・消す=投げず true/false という失敗の受け方も host に持たせた (読む・消すを素で触る場所は無いという既存の census を保つため)。`s[k]` の鍵引きは 4 欄の字面に、`as unknown as` は欄を読み切ってから組む形に、template は連結に替えた。MG-016 の `catch (err)` の束縛を初めて実物で使った。元の TypeScript と 270 通りの失敗の組み合わせ (保存・読み・消すのどれが何番目に断られるか × 残っていた鍵) で結果・断りの文・残る鍵が同じ・既存の検査は編集なしで緑 (台帳 3 本と census の対象ファイルは host へ付け替え)。穴は 0 件 (手探り 5 形が全部 refused)。変異検査は初回 97.87% (断りの文の後半を誰も全文では主張していない) → 全文の検査で解消、host へ分けた後は readKey の arrow がモジュール読み込み時に評価される静的変異体になり (関数宣言へ)、host の catch の戻り値が呼ぶ側の `!` で区別できない等価に見えた (戻り値を直接主張する検査 2 件) —— 両ファイル 100%。"
+      }
+    },
+    {
+      "id": "MG-018",
+      "date": "2026-11-02",
+      "kind": "port",
+      "target": "src/shared/updateCheck.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/shared/updateCheck.ts",
+      "version": "0.12",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "as-cast",
+        "template"
+      ],
+      "ported": [
+        "src/shared/updateCheck.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "`a as string` (型の書き換え)",
+          "result": "refused"
+        },
+        {
+          "tried": "文面を template 文字列 `v${a}` で組む",
+          "result": "refused"
+        },
+        {
+          "tried": "`a.constructor` を返す (T-224 の道)",
+          "result": "refused"
+        },
+        {
+          "tried": "`URL.createObjectURL(a)` (組み込みの共有状態の口)",
+          "result": "refused"
+        },
+        {
+          "tried": "`RegExp.$1` (直前の一致の状態の読み取り)",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 2,
+      "mutation": {
+        "files": [
+          "src/shared/updateCheck.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 855,
+        "reason": null,
+        "summary": "更新確認の判定 (updateCheck.ts · 版の比較・リリース URL の関門・判定の文) を Mamori で書き直した (port)。正規表現リテラル・try/catch・interface・union を初めて実物で使い、template は連結に、as は欄を読み切る形に替えた。既存の検査は編集なしで緑 (describeUpdate の全文だけ足した)。穴は 0 件 (手探り 5 形が全部 refused)。変異検査は 142 変異体で初回から 100% に近く、全文の検査を足して 100%。"
+      }
+    },
+    {
+      "id": "MG-019",
+      "date": "2026-11-02",
+      "kind": "probe",
+      "target": "language",
+      "pickedBy": "manual",
+      "deviation": "利用者の依頼 (既存言語の脆弱性を解析しながら対策も並列で行う) に応え、brief の選ぶ移植より先に、JavaScript / TypeScript の既知の脆弱性クラスを材料に言語とコンパイラ自身と Rust 検算役の穴を探して塞いだ",
+      "version": "0.13",
+      "features": [],
+      "added": [],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "型の綴りへ `Array<Array<number>= []; fetch(...)` で文を隠す (`>=` で深さを偽装)",
+          "result": "hole"
+        },
+        {
+          "tried": "局所の `const okUrl = (x) => JSON.parse(x)` で同名の gate を偽装して sink へ渡す",
+          "result": "hole"
+        },
+        {
+          "tried": "`extern pure global open / setTimeout / Buffer` と `use { shell } from \"electron\"`",
+          "result": "hole"
+        },
+        {
+          "tried": "注記や文字列に ALM・SHY・タグ文字 U+E0000 台・Hangul filler・Braille blank を置く",
+          "result": "hole"
+        },
+        {
+          "tried": "注記に `// @ts-ignore` を書いて生成物の型検査を黙らせる",
+          "result": "hole"
+        },
+        {
+          "tried": "型の中の正規表現 `Array</a/>` と、文字列リテラル `\"(\"` を括弧として数えさせる形",
+          "result": "refused"
+        }
+      ],
+      "threats": [
+        "T-250",
+        "T-251",
+        "T-252",
+        "T-253",
+        "T-254"
+      ],
+      "controls": 6,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/checker.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 855,
+        "reason": null,
+        "summary": "既存言語 (JS/TS) の脆弱性クラスを材料に、言語・コンパイラ・Rust 検算役の穴を 3 担当で並行して探し、5 つの穴 (T-250〜T-254) を塞いだ。型の綴りの許可表と括弧の突き合わせ・局所の名前が同名の宣言を隠せない・extern pure の許可表と機能 module の拒否・隠し字の表の拡張・注記の @ts- 指示の拒否。Rust 検算役は固定バッファ ABI の v0.2 に作り直し、BUILD.json と整合性チェーンで出どころを固定。変異検査は parser / checker とも 100% (等価 4 件は理由つき pragma)。"
       }
     }
   ]

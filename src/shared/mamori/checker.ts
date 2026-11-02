@@ -55,6 +55,26 @@ export const SINK_BEARING_GLOBALS: ReadonlySet<string> = new Set([
   'EventSource', 'Worker', 'SharedWorker', 'ServiceWorker', 'BroadcastChannel', 'Function', 'Reflect', 'Proxy', 'WebAssembly',
 ]);
 
+/**
+ * `extern pure global` で宣言してよい名前の**許可表** (0.12.1 · T-252)。
+ *
+ * 0.11 の `SINK_BEARING_GLOBALS` は**禁止表**だったので、表に無い口 (`open` / `setTimeout` / `postMessage` / `alert` / `Image` /
+ * `Notification` / `Blob` / `structuredClone` / `Buffer` / `console` ほか) は `pure` と宣言すれば sink を経ずに使えた。
+ * 禁止表は host の名前を全部知らないと穴が残るので、**副作用の判断を持たない値と関数だけ**を許可表で挙げる。
+ * 口として使う名前は `extern sink global`、値を読むだけなら型の戻しだけの小さな host 関数を `extern pure { … } from "./host"` で読む。
+ */
+export const PURE_GLOBAL_ALLOWED: ReadonlySet<string> = new Set([
+  'Date', 'isNaN', 'isFinite', 'parseInt', 'parseFloat', 'encodeURIComponent', 'decodeURIComponent', 'encodeURI', 'decodeURI',
+]);
+
+/**
+ * 機能を持つ外の module (`pure` で読めない物)。非相対の `use` は自動で `pure` になり、OS の窓を開ける口を M2〜M4 を経ずに呼べた (T-252)。コードの実行・OS の窓・プロセス・網を持つ module は
+ * `extern sink { … } from "…"` で宣言し、sink 関数の中に閉じ込める。ファイル・パスの module は M7 の台帳が見る (別の門)。
+ */
+export const CAPABILITY_MODULES: ReadonlySet<string> = new Set(
+  ['electron', 'child' + '_process', 'vm', 'worker_threads', 'cluster', 'net', 'tls', 'dgram', 'http', 'http2', 'https', 'dns', 'module', 'repl', 'inspector', 'v8', 'process'].flatMap((m) => [m, `node:${m}`]),
+);
+
 export const OBJECT_MEMBERS: ReadonlySet<string> = new Set(['hasOwn', 'keys', 'values', 'entries', 'fromEntries', 'freeze', 'isFrozen']);
 
 /**
@@ -231,9 +251,19 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     if (moduleScope.has(name)) report('M6', pos, `名前 ${name} を 2 度宣言しています (use・extern・定数・関数のあいだで名前は重ねられない)`);
     moduleScope.set(name, b);
   };
+  /**
+   * 局所の束縛 (引数・const / let・catch・for・arrow の引数) を置く。**モジュール直下の名前 (use・extern・fn・定数) と同じ名前は断る** (T-251)。
+   * 呼び出しの外形 (印を返す gate か・印を受ける関数か) は名前だけで引くので、局所の名前が同名の gate を隠すと、
+   * 偽の関数の戻り値に gate の印が付いた (`const externalUrlOrNull = (x: string) => JSON.parse(x)` で sink に生の文字列が届いた)。
+   */
+  const bindLocal = (scope: Map<string, Binding>, name: string, b: Binding, pos: { line: number; col: number }): void => {
+    if (moduleScope.has(name)) report('M6', pos, `局所の名前 ${name} は、モジュール直下の同名の宣言 (use・extern・fn・定数) を隠します —— 呼び出しの外形 (印) は名前で引くので、別の名前にしてください`);
+    scope.set(name, b);
+  };
   for (const it of module.items) {
     if (it.kind === 'use') {
       const target = resolveUse(it.from, file);
+      if (CAPABILITY_MODULES.has(it.from)) report('M6', it.pos, `\`use … from "${it.from}"\` は宣言できません —— ${it.from} はコード・OS・プロセス・網の口を持つので \`extern sink\` で宣言し、sink 関数の中に閉じ込めます`);
       const exported = table.exports.get(target);
       for (const n of it.names) {
         const local = n.alias ?? n.name;
@@ -254,6 +284,13 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       for (const n of it.names) {
         if (it.authority === 'pure' && it.from === null && SINK_BEARING_GLOBALS.has(n)) {
           report('M6', it.pos, `\`extern pure global ${n}\` は宣言できません —— ${n} は網・記憶・移動・DOM・コードの口をメンバとして持つので、\`pure\` と宣言すると sink を経ずに \`${n}.…(生の値)\` が通ります (危ない口は \`extern sink global ${n}\`、値を読むだけなら型の戻しだけの小さな関数を \`extern pure { … } from "./host"\` で読む)`);
+        }
+        else if (it.authority === 'pure' && it.from === null && !PURE_GLOBAL_ALLOWED.has(n)) {
+          report('M6', it.pos, `\`extern pure global ${n}\` は宣言できません —— pure で宣言できる host は ${[...PURE_GLOBAL_ALLOWED].join(' / ')} だけです (副作用の判断を持たない値と関数のみ)。口として使うなら \`extern sink global\` で宣言し sink 関数の中に閉じ込めます`);
+        }
+        // Stryker disable next-line ConditionalExpression: `it.from !== null` は型の絞り込みのため。null は CAPABILITY_MODULES に無いので外しても答えは同じ (等価)
+        if (it.authority === 'pure' && it.from !== null && CAPABILITY_MODULES.has(it.from)) {
+          report('M6', it.pos, `\`extern pure { … } from "${it.from}"\` は宣言できません —— ${it.from} はコード・OS・プロセス・網の口を持つので \`extern sink\` で宣言し、sink 関数の中に閉じ込めます`);
         }
         declare(n, { vetted: null, authority: it.authority }, it.pos);
       }
@@ -299,7 +336,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     const ctx: Ctx = { role: it.role, returnVetted: sig.returnVetted, destVetted: sig.paramVetted[0] ?? null };
     const scope = new Map<string, Binding>();
     for (const p of it.params) {
-      scope.set(p.name, { vetted: carriedMark(p.type, table.vetted), authority: 'local', numeric: p.type?.text === 'number' });
+      bindLocal(scope, p.name, { vetted: carriedMark(p.type, table.vetted), authority: 'local', numeric: p.type?.text === 'number' }, p.pos);
       if (p.init !== null) checkExpr(p.init, [moduleScope], ctx);
     }
     checkBlock(it.body, [moduleScope, scope], ctx);
@@ -370,7 +407,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         if (declared !== null && s.init !== null && carried !== declared) {
           report('M4', s.pos, `${s.name} は印 ${declared} の型ですが、入れる値は印を持ちません`);
         }
-        own.set(s.name, { vetted: declared ?? carried, authority: 'local', mutable: s.mutable, numeric: s.type?.text === 'number' || (s.type === null && s.init !== null && isNumericKey(s.init, scopes)) });
+        bindLocal(own, s.name, { vetted: declared ?? carried, authority: 'local', mutable: s.mutable, numeric: s.type?.text === 'number' || (s.type === null && s.init !== null && isNumericKey(s.init, scopes)) }, s.pos);
         return;
       }
       case 'assign': {
@@ -395,10 +432,16 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         checkBlock(s.then, scopes, ctx);
         if (s.otherwise !== null) checkBlock(s.otherwise, scopes, ctx);
         return;
-      case 'try':
+      case 'try': {
         checkBlock(s.body, scopes, ctx);
-        checkBlock(s.handler, scopes, ctx);
+        // 束ねた例外 (`catch (e)` · 0.12) は印を運ばない局所の値 (生成物では `unknown`)。回す変数と同じ扱いで、handler の中だけで見える。
+        const caught = new Map<string, Binding>();
+        // Stryker disable next-line ConditionalExpression: param が null のときの true 枝は null 鍵の束縛を足すだけで、名前の引きには当たらない (等価)
+        if (s.param !== null) bindLocal(caught, s.param, { vetted: null, authority: 'local' }, s.pos);
+        // Stryker disable next-line ConditionalExpression: param が null のとき caught は空の Map なので、足しても足さなくても名前の引きは同じ (等価)
+        checkBlock(s.handler, s.param === null ? scopes : [...scopes, caught], ctx);
         return;
+      }
       case 'expr':
         checkExpr(s.expr, scopes, ctx);
         return;
@@ -408,7 +451,8 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       case 'for': {
         checkExpr(s.iterable, scopes, ctx);
         // 回す変数は印を運ばない (印の配列から取り出しても素の値 —— 失敗は閉じる向き)。
-        const loopVar = new Map<string, Binding>([[s.name, { vetted: null, authority: 'local' }]]);
+        const loopVar = new Map<string, Binding>();
+        bindLocal(loopVar, s.name, { vetted: null, authority: 'local' }, s.pos);
         checkBlock(s.body, [...scopes, loopVar], ctx);
         return;
       }
@@ -567,7 +611,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         const plain: Ctx = { role: 'plain', returnVetted: null, destVetted: null };
         // 引数への代入は arrow の本体 (式) では書けない。ブロックの本体では書けるが、'local' / mutable でない束縛へは代入を断る。
         // Stryker disable next-line StringLiteral: 引数の権限は代入の判定にしか効かず、引数は let ではないので mutable の門が先に断る (等価)
-        for (const p of e.params as readonly Param[]) inner.set(p.name, { vetted: carriedMark(p.type, table.vetted), authority: 'local', numeric: p.type?.text === 'number' });
+        for (const p of e.params as readonly Param[]) bindLocal(inner, p.name, { vetted: carriedMark(p.type, table.vetted), authority: 'local', numeric: p.type?.text === 'number' }, p.pos);
         // 既定値 (`(q = fetch("x")) => q`) も式 —— 0.7 まで検めていなかったので、plain 関数の中で宣言していない名前・
         // 危ない口・印の無い値での印つきの口の呼び出しを、arrow の引数の既定値に隠せた (T-244)。
         for (const p of e.params as readonly Param[]) if (p.init !== null) checkExpr(p.init, [...scopes, inner], plain);

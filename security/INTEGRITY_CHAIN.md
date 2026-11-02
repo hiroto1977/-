@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 429
+- ブロック数: 435
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `e8f633845079b6b1335f5faf3c63b456bd22b6f68f8397b7f9b5117d6313154f`
-- 保護対象: 165 ファイル
+- 末尾(tip)ハッシュ: `482a721911ed1996b9615604adc04bbc7c20c15fe91a37722906635b191625e2`
+- 保護対象: 174 ファイル
 
 ## ブロック
 
@@ -442,6 +442,12 @@
 | 426 | `d605413173a35063` | `8d05e1d8802b9e51` | `84b59c4a4f3311ac` | update integrity-chain.cjs,mamori-capabilities.json,vaultToken.mamori,vaultToken.ts |
 | 427 | `3b49ee658f909eb5` | `84b59c4a4f3311ac` | `d807451d38df2200` | update integrity-chain.cjs,mamori-capabilities.json,autoLock.mamori,autoLock.ts,autoLockHost.ts,checker.ts |
 | 428 | `43aa6b3b98c20377` | `d807451d38df2200` | `e8f633845079b6b1` | update checker.ts |
+| 429 | `d4633b3109f028df` | `e8f633845079b6b1` | `7246acca4fc41ad2` | update ast.ts,checker.ts,emit.ts,parser.ts |
+| 430 | `a18cfba4ed1b8914` | `7246acca4fc41ad2` | `329a63235925863c` | update integrity-chain.cjs,mamori-capabilities.json,pkceSession.mamori,pkceSession.ts,pkceSessionHost.ts |
+| 431 | `df51e5f9bcdb5045` | `329a63235925863c` | `20ce3eca436e8315` | update pkceSession.mamori,pkceSession.ts,pkceSessionHost.ts |
+| 432 | `0b0292aa7fade07f` | `20ce3eca436e8315` | `41efd0604defd5f3` | update integrity-chain.cjs,mamori-capabilities.json,updateCheck.mamori |
+| 433 | `7baac239b19822c4` | `41efd0604defd5f3` | `e50ddcddc3a5e60b` | update build-mamori-verify.cjs,integrity-chain.cjs,checker.ts,parser.ts,BUILD.json,Cargo.lock |
+| 434 | `cbecfc6fe855da5d` | `e50ddcddc3a5e60b` | `482a721911ed1996` | update checker.ts,parser.ts |
 
 ## 保護対象ファイル
 
@@ -474,6 +480,7 @@
 - `orchestration/knowledge-graph.cjs`
 - `scripts/build-integrity-manifest.cjs`
 - `scripts/build-landing.cjs`
+- `scripts/build-mamori-verify.cjs`
 - `scripts/checksum-release.cjs`
 - `scripts/inject-pwa.cjs`
 - `scripts/inline-html.cjs`
@@ -539,7 +546,9 @@
 - `src/renderer/network/liveRead.ts`
 - `src/renderer/network/proxy.ts`
 - `src/renderer/oauth/pkce.ts`
+- `src/renderer/oauth/pkceSession.mamori`
 - `src/renderer/oauth/pkceSession.ts`
+- `src/renderer/oauth/pkceSessionHost.ts`
 - `src/renderer/security/LockScreen.tsx`
 - `src/renderer/security/autoLock.mamori`
 - `src/renderer/security/autoLock.ts`
@@ -601,12 +610,18 @@
 - `src/shared/tokenInput.mamori`
 - `src/shared/tokenInput.ts`
 - `src/shared/tokenResponse.ts`
+- `src/shared/updateCheck.mamori`
 - `src/shared/vaultToken.mamori`
 - `src/shared/vaultToken.ts`
 - `src/shared/versionOrder.ts`
 - `src/shared/vetted.mamori`
 - `src/shared/vetted.ts`
 - `src/shared/writeFieldLimits.ts`
+- `tools/mamori-verify/BUILD.json`
+- `tools/mamori-verify/Cargo.lock`
+- `tools/mamori-verify/Cargo.toml`
+- `tools/mamori-verify/dist/mamori_verify.wasm`
+- `tools/mamori-verify/src/lib.rs`
 - `vite.config.ts`
 - `vitest.audit.config.ts`
 - `vitest.config.ts`

@@ -422,8 +422,8 @@ describe('0.2 の構文は来歴の規則を外す道にならない', () => {
   it('★ 回す変数は印を運ばない (印の配列から取り出しても、sink へは渡せない —— 失敗は閉じる向き)', () => {
     expect(rulesOf(VETTED + SINK + FN('  for (const u of us) {\n    openU(u);\n  }\n  return 1;', 'export fn f(us: readonly VettedU[]) -> unknown'))).toEqual(['M4']);
   });
-  it('★ 回す変数は外の同じ名前を隠す (for の中の shell は危ない口ではない)', () => {
-    expect(rulesOf('extern sink { shell } from "electron";\n' + FN('  for (const shell of [1]) {\n    code.trim();\n  }\n  return 1;'))).toEqual([]);
+  it('★ 回す変数が外の同じ名前なら断る (T-251 · 局所の名前は外の宣言を隠せない)', () => {
+    expect(rulesOf('extern sink { shell } from "electron";\n' + FN('  for (const shell of [1]) {\n    code.trim();\n  }\n  return 1;'))).toEqual(['M6']);
   });
   it('★ field で読んだ値は印を運ばない (印の欄を読んでも素の値)', () => {
     expect(rulesOf(VETTED + SINK + FN('  return openU(field x.url);'))).toEqual(['M4']);

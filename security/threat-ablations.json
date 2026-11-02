@@ -2133,8 +2133,8 @@
       "why": "型の綴りの深さ 0 の `;` の断りを殺す —— 型の位置へ別の文を隠して生成物へ運べる穴を開け直す",
       "edits": [
         {
-          "find": "      if (depth === 0 && isPunctTok(t, ';')) fail(",
-          "replace": "      if (false && isPunctTok(t, ';')) fail("
+          "find": "if (isPunctTok(t, ';') && stack[stack.length - 1] !== '}') fail(",
+          "replace": "if (false && isPunctTok(t, ';') && stack[stack.length - 1] !== '}') fail("
         }
       ]
     },
@@ -2193,8 +2193,8 @@
       "why": "use・extern・定数・関数のあいだの名前の二重宣言を断らない —— あとの宣言が前の外形を隠す口を開け直す",
       "edits": [
         {
-          "find": "    if (moduleScope.has(name)) report('M6', pos,",
-          "replace": "    if (false) report('M6', pos,"
+          "find": "    if (moduleScope.has(name)) report('M6', pos, `名前",
+          "replace": "    if (false) report('M6', pos, `名前"
         }
       ]
     },
@@ -2363,6 +2363,78 @@
         {
           "find": "if (it.authority === 'pure' && it.from === null && SINK_BEARING_GLOBALS.has(n)) {",
           "replace": "if (false) {"
+        }
+      ]
+    },
+    {
+      "id": "A-570",
+      "threat": "T-250",
+      "file": "src/shared/mamori/parser.ts",
+      "why": "型の綴りの記号の許可表の門を外す —— `>=` で括弧の深さを偽装して型へ式を隠せた形を開け直す",
+      "edits": [
+        {
+          "find": "if (t.kind === 'punct' && !TYPE_PUNCT.has(t.text)) {",
+          "replace": "if (false) {"
+        }
+      ]
+    },
+    {
+      "id": "A-571",
+      "threat": "T-251",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "局所の名前がモジュール直下の名前を隠す門を外す —— gate と同名の局所で印の出所を偽造できる口を開け直す",
+      "edits": [
+        {
+          "find": "    if (moduleScope.has(name)) report('M6', pos, `局所の名前",
+          "replace": "    if (false) report('M6', pos, `局所の名前"
+        }
+      ]
+    },
+    {
+      "id": "A-572",
+      "threat": "T-252",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "extern pure global の許可表の門を外す —— 表に無い host (open / setTimeout ほか) を pure と宣言できる口を開け直す",
+      "edits": [
+        {
+          "find": "else if (it.authority === 'pure' && it.from === null && !PURE_GLOBAL_ALLOWED.has(n)) {",
+          "replace": "else if (false) {"
+        }
+      ]
+    },
+    {
+      "id": "A-573",
+      "threat": "T-252",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "use … from の機能を持つ module の門を外す —— `use { shell } from \"electron\"` が自動で pure になる口を開け直す",
+      "edits": [
+        {
+          "find": "      if (CAPABILITY_MODULES.has(it.from)) report(",
+          "replace": "      if (false) report("
+        }
+      ]
+    },
+    {
+      "id": "A-574",
+      "threat": "T-253",
+      "file": "src/shared/mamori/parser.ts",
+      "why": "隠し字の表から bidi 非推奨制御の範囲を狭める —— U+206A〜206F が注記・文字列に素で通る口を開け直す",
+      "edits": [
+        {
+          "find": "\\u2060-\\u206F\\u2800",
+          "replace": "\\u2060-\\u2064\\u2800"
+        }
+      ]
+    },
+    {
+      "id": "A-575",
+      "threat": "T-254",
+      "file": "src/shared/mamori/parser.ts",
+      "why": "注記の @ts- の指示の門を外す —— 注記 1 行で生成物の tsc を黙らせる口を開け直す",
+      "edits": [
+        {
+          "find": "if (TS_DIRECTIVE.test(raw)) throw",
+          "replace": "if (false) throw"
         }
       ]
     }

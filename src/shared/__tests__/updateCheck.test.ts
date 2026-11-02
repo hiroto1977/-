@@ -479,3 +479,22 @@ describe('UpdateVerdict — 版が分かる 3 状態で latest を null にで�
     expect(evaluateUpdate('not-a-version', null).latest).toBeNull();
   });
 });
+
+/*
+ * **画面に出す一文は全文が決まっている** (MG-018)。Mamori で連結に書き直したので、断片ごとの `toContain` では
+ * 連結の途中の断片を空にする変異体が区別できない —— 全文を `toBe` で留める。
+ */
+describe('describeUpdate の全文', () => {
+  it('★ 更新あり / 最新 / 開発中 / 判定不能の一文が決まっている', () => {
+    expect(describeUpdate({ status: 'update-available', current: '1.0.0', latest: '1.2.0', url: null })).toBe(
+      '新しい版 1.2.0 があります (お使いの版: 1.0.0)。ダウンロードはリリースページから行ってください。',
+    );
+    expect(describeUpdate({ status: 'up-to-date', current: '1.0.0', latest: '1.0.0', url: null })).toBe('最新版です (1.0.0)。');
+    expect(describeUpdate({ status: 'ahead', current: '2.0.0', latest: '1.0.0', url: null })).toBe(
+      'お使いの版 2.0.0 は公開されている最新版 1.0.0 より新しいです (開発中のビルド)。',
+    );
+    expect(describeUpdate({ status: 'unknown', current: 'x', latest: null, url: null })).toBe(
+      '更新の有無を判定できませんでした。時間をおいて試してください。',
+    );
+  });
+});

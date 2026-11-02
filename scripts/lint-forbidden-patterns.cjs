@@ -931,6 +931,10 @@ const KNOWN_SUPPRESSIONS = [
   // (`scripts/audit-verify-keep-going.cjs`・パス 526)。子プロセスは `npm run <ゲート名>` だけで、
   // ゲート名は `package.json` の `verify:all` の本文から導く (外から任意の物は入らない)。シェルは経由しない。
   'child_process exec/spawn :: scripts/audit-verify-keep-going.cjs :: 1',
+  // Rust → Wasm の検算役を組む script (`scripts/build-mamori-verify.cjs`・2026-11-02)。子プロセスは `cargo build`
+  // (固定の引数・`--locked`) と `rustc --version` だけで、シェルを経由しない (`execFileSync` に配列で渡す)。
+  // 組んだ物の sha256 は BUILD.json に残り、rustVerifier.test.ts と `--check` が突き合わせる。
+  'child_process exec/spawn :: scripts/build-mamori-verify.cjs :: 1',
   // SHA 固定の 40 桁が実在の commit で注記の版と同じ物かを `git ls-remote` / `git fetch` で測る
   // 定期点検の道具 (`scripts/audit-pinned-action-shas.cjs`・パス 534)。子プロセスは `git` だけで、
   // リポジトリ名・タグ・SHA は厳しい正規表現を通した後に固定の形へ組む。シェルは経由しない。

@@ -4486,6 +4486,105 @@
         "test": "★ 宣言を断ったので `window.open(生の値)` / `document.write(html)` も書けない (threat: T-249)"
       },
       "alsoRegressions": []
+    },
+    {
+      "id": "T-250",
+      "found": "2026-11-02",
+      "foundBy": "言語の脆弱性解析 (JS/TS の既知の脆弱性クラス × コンパイラ自身) を並行して回し、コンパイラ担当の報告 (T-239 の直し方を `>=` で迂回する HOLE-1) と、型の位置に `.constructor` が通る観察から、自分で型の綴りの扱いを読んで確かめた。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "high",
+      "title": "守りの層を書く言語 Mamori 0.1〜0.12 は型の綴りの括弧の深さを字句の数で数えていたので、`>=` (1 つの字句) が `>` に数えられず、型の綴りの中へ式・文を隠せた。型の綴りは生成物へそのまま写されるので、M1〜M7 の検めを受けない任意の TypeScript (`fetch` や印の偽造) が生成物へ入った",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/parser.ts typeRef: 型の中に置ける記号を許可表 TYPE_PUNCT にし (比較・代入・論理・算術・`->` は置けない)、開き括弧を種類つきの積 (TYPE_OPEN) で数えて閉じ括弧の種類を突き合わせる。`;` は `{ … }` の直下だけ。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV13.test.ts",
+        "test": "★ `>=` で括弧の深さを偽装して型へ式を隠す形を断る"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV13.test.ts",
+          "test": "★ 閉じ括弧の種類が合わない型を断る"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV13.test.ts",
+          "test": "★ 比較・代入・論理・算術の記号は型の中に置けない"
+        }
+      ]
+    },
+    {
+      "id": "T-251",
+      "found": "2026-11-02",
+      "foundBy": "言語の脆弱性解析の JS/TS 担当が、名前の隠れ (シャドーイング) を手探りして見つけた。再現は gate と同名の arrow を const に置いて sink へ渡す最小の形。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "high",
+      "title": "Mamori 0.1〜0.12 は呼び出しの外形 (印を返す gate か・印を受ける関数か) を名前だけで引くので、局所の const・引数・for の変数・arrow の引数・catch の束縛が、モジュール直下の gate や use した関数と同名だと、偽の関数 (`JSON.parse` の any を返す) の戻り値に gate の印が付いた。検証していない文字列が sink に届き、変換後の tsc も any で通った (M4 の素通り)",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts bindLocal: 局所の束縛 (引数・const / let・catch・for・arrow の引数) の名前がモジュール直下の宣言 (use・extern・fn・定数) と同じなら M6 で断る。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV13.test.ts",
+        "test": "★ 同名の const で gate を偽る形を断る"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV13.test.ts",
+          "test": "★ 引数・for の変数・arrow の引数・catch の束縛でも同じ"
+        }
+      ]
+    },
+    {
+      "id": "T-252",
+      "found": "2026-11-02",
+      "foundBy": "言語の脆弱性解析の JS/TS 担当が、T-249 の禁止表に無い名前を総当たりして見つけた。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "Mamori 0.11 の `extern pure global` は禁止表 (SINK_BEARING_GLOBALS) だったので、表に無い口 (`open` / `setTimeout` / `postMessage` / `console` / `Buffer` ほか) を pure と宣言して sink を経ずに使えた。`use { shell } from \"electron\"` も非相対 import が自動で pure になり、`shell.openExternal(生の値)` が M2〜M4 なしで書けた (T-249 の取りこぼし)",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: `extern pure global` を許可表 PURE_GLOBAL_ALLOWED (Date / isNaN / isFinite / parseInt / parseFloat / encodeURI(Component) / decodeURI(Component)) だけにし、コード・OS・プロセス・網の口を持つ module (electron / child_process / vm / net / http ほか) を CAPABILITY_MODULES として use / extern pure から断る (extern sink で宣言する)。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV13.test.ts",
+        "test": "★ 許可表に無い host は pure で宣言できない (open / setTimeout / postMessage / console / Buffer ほか)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV13.test.ts",
+          "test": "★ 機能を持つ module は use / extern pure で読めない (electron / child_process / node:vm)"
+        }
+      ]
+    },
+    {
+      "id": "T-253",
+      "found": "2026-11-02",
+      "foundBy": "言語の脆弱性解析の JS/TS 担当が Unicode の隠し字を総当たりして見つけた (T-235 / T-237 の延長)。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "Mamori の隠し字の表 (HIDDEN_CHARS) は BMP の一部だけで `u` フラグも無く、U+061C (ALM)・U+00AD・U+034F・U+3164・U+2800・U+206A〜206F・タグ文字 U+E0000 台・異体字選択子の補助 U+E0100 台などが注記・文字列・正規表現にそのまま通った。見える物と走る物がずれるのではなく、読み手や AI 監査役に見えない文 (ASCII smuggling) を運べた",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/parser.ts HIDDEN_CHARS: Default_Ignorable と Bidi_Control の主要な範囲 (U+00AD・034F・061C・115F・1160・17B4・17B5・180B〜180F・2060〜206F・2800・3164・FFA0・FFF0〜FFFB・E0000〜E0FFF・1D173〜1D17A) を u フラグで断る。ZWJ / ZWNJ / 絵文字の U+FE0F は連結・絵文字に要るので通す。Rust 検算役 (tools/mamori-verify) の同じ表も揃えた。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV13.test.ts",
+        "test": "★ ALM・SHY・タグ文字・Hangul filler・Braille・bidi 非推奨ほか 11 種の隠し字を、注記と文字列のどちらでも断る"
+      },
+      "alsoRegressions": []
+    },
+    {
+      "id": "T-254",
+      "found": "2026-11-02",
+      "foundBy": "言語の脆弱性解析の JS/TS 担当が、注記が生成物へそのまま写ることを手探りして見つけた。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "Mamori は statement の注記に `// @ts-ignore` / `@ts-expect-error` を書けて、生成物の次の行の型検査 (tsc) を黙らせられた。Mamori が見ない null / Promise の流入を tsc だけが止めている所を、注記 1 行で外せた (T-251 と組み合わせると第 2 層も外れる)",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/parser.ts: 注記の本文に `@ts-` の指示が在れば M0 で断る (TS_DIRECTIVE)。実物の .mamori に @ts- は 0 件。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV13.test.ts",
+        "test": "★ `@ts-ignore` / `@ts-expect-error` / `@ts-nocheck` を断る"
+      },
+      "alsoRegressions": []
     }
   ],
   "huntBacklog": [

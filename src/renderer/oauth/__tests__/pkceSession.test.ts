@@ -6,6 +6,7 @@ import {
   readPkceSession,
   savePkceSession,
 } from '../pkceSession';
+import * as host from '../pkceSessionHost';
 import { stripComments } from '../../../shared/__tests__/stripNonCode';
 import { rereadModule } from '../../../shared/__tests__/rereadModule';
 
@@ -470,6 +471,17 @@ describe('保存領域を断られる端末', () => {
     expect(() => savePkceSession(SESSION)).toThrow(/プライベートウィンドウ/);
   });
 
+  it('★ 保存の断りの文は全文が決まっている (理由の括弧の後ろの案内まで)', () => {
+    installRefusingStorage({ op: 'setItem', failOn: ['verifier'] });
+    let message = '';
+    try {
+      savePkceSession(SESSION);
+    } catch (e) {
+      message = (e as Error).message;
+    }
+    expect(message).toMatch(/^認可に使う一時情報をこのブラウザに保存できませんでした \(.+\)。プライベートウィンドウで開いている場合は通常のウィンドウで開き直してください。$/);
+  });
+
   it('★ 読みが断られたら null (生の例外を呼び出し側へ出さない)', () => {
     const map = installRefusingStorage({ op: 'getItem', failOn: ['clientId'] });
     for (const k of pkceSessionKeys()) map.set(k, 'x');
@@ -479,5 +491,25 @@ describe('保存領域を断られる端末', () => {
   it('対照: 触れる端末では 4 つ揃って読める', () => {
     savePkceSession(SESSION);
     expect(readPkceSession()).toEqual(SESSION);
+  });
+});
+
+/*
+ * **host の口 (`pkceSessionHost.ts`) の失敗の受け方を直接留める** (MG-017)。
+ * 呼ぶ側 (`pkceSession`) は `!v` / `!ok` で受けるので、`null` を `undefined` に、`false` を `undefined` に替える変異体は
+ * 呼ぶ側の振る舞いでは区別できない —— だから戻り値そのものを主張する。
+ */
+describe('host の口の失敗の受け方', () => {
+  it('★ 読みは触れなければ null (undefined ではない)', () => {
+    installRefusingStorage({ op: 'getItem', failOn: ['pkce.verifier'] });
+    expect(host.hostGetItem('pkce.verifier')).toBeNull();
+  });
+  it('★ 消すのは投げず、消せたかを true / false で返す', () => {
+    const map = installRefusingStorage({ op: 'removeItem', failOn: ['pkce.state'] });
+    map.set('pkce.verifier', 'x');
+    map.set('pkce.state', 'y');
+    expect(host.hostRemoveItem('pkce.verifier')).toBe(true);
+    expect(host.hostRemoveItem('pkce.state')).toBe(false);
+    expect([...map.keys()]).toEqual(['pkce.state']);
   });
 });

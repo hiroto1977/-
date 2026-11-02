@@ -50,6 +50,15 @@
       "gates": [],
       "sinks": []
     },
+    "src/renderer/oauth/pkceSession.mamori": {
+      "externals": [
+        "pure ../data/localWrite: describeStorageError",
+        "pure ./pkceSessionHost: hostSetItem, hostGetItem, hostRemoveItem"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
     "src/renderer/vettedSinks.mamori": {
       "externals": [
         "sink global: window"
@@ -98,6 +107,12 @@
       "sinks": []
     },
     "src/shared/safeFilename.mamori": {
+      "externals": [],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/shared/updateCheck.mamori": {
       "externals": [],
       "imports": [],
       "gates": [],

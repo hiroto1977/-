@@ -275,6 +275,10 @@ const VARIABLE_PATH_ALLOWED: Readonly<Record<string, { count: number; why: strin
     count: 2,
     why: 'ファイル局所の定数 SCRIPTS (scripts/ ディレクトリ) を歩いて読む。scripts/ は台帳の外で書き換わらない',
   },
+  'src/shared/mamori/__tests__/rustVerifier.test.ts': {
+    count: 2,
+    why: '組んだ wasm (バイナリ) とその sha256 を読む。文字列の原文の道具では読めない物で、道は固定の WASM_PATH と BUILD.json の表だけ (台帳の外で書き換わらない)',
+  },
   'src/shared/__tests__/workflowShellAssumptions.test.ts': {
     count: 3,
     why: 'ファイル局所の定数 WORKFLOW_DIR (.github/workflows) を歩いて読む。台帳の外で書き換わらない',

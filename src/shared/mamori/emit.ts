@@ -154,7 +154,7 @@ function stmt(s: Stmt, depth: number): string[] {
       return [...head, `${ind}switch (${expr(s.test)}) {`, ...cases, `${ind}}`];
     }
     case 'try':
-      return [...head, `${ind}try {`, ...block(s.body, depth + 1), `${ind}} catch {`, ...block(s.handler, depth + 1), `${ind}}`];
+      return [...head, `${ind}try {`, ...block(s.body, depth + 1), `${ind}} catch${s.param === null ? '' : ` (${s.param})`} {`, ...block(s.handler, depth + 1), `${ind}}`];
     case 'if': {
       // 本体が return 1 つで注記が無ければ 1 行に畳む (手で書いた関門の形と揃える)。
       const only = s.then.length === 1 ? s.then[0]! : null;

@@ -34,6 +34,8 @@ const EXPECTED = [
   'src/shared/aiEndpoint.mamori',
   'src/shared/vaultToken.mamori',
   'src/renderer/security/autoLock.mamori',
+  'src/renderer/oauth/pkceSession.mamori',
+  'src/shared/updateCheck.mamori',
   'src/shared/vetted.mamori',
 ];
 
