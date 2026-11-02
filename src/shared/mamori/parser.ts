@@ -99,7 +99,10 @@ const LINE_COMMENT_BODY = /[^\n\r\u2028\u2029]*/y;
  * ZWJ / ZWNJ (U+200C / U+200D) は絵文字の連結に要るので除く (`lint:charset` と同じ判断)。
  */
 // eslint-disable-next-line no-control-regex -- 制御文字そのものを断る規則なので、制御文字の範囲を正規表現に書くのが目的
-const HIDDEN_CHARS = /[\u0000-\u0008\u000B-\u001F\u007F-\u009F\u200B\u200E\u200F\u2028\u2029\u202A-\u202E\u2060-\u2064\u2066-\u2069\uFEFF]/;
+const HIDDEN_CHARS = /[\u0000-\u0008\u000B-\u001F\u007F-\u009F\u00AD\u034F\u061C\u115F\u1160\u17B4\u17B5\u180B-\u180F\u200B\u200E\u200F\u2028\u2029\u202A-\u202E\u2060-\u206F\u2800\u3164\uFEFF\uFFA0\uFFF0-\uFFFB\u{E0000}-\u{E0FFF}\u{1D173}-\u{1D17A}]/u;
+/** 注記の本文に置けない指示 (T-254): 生成物の次の行の型検査を黙らせる `@ts-ignore` / `@ts-expect-error` / `@ts-nocheck` ほか。 */
+const TS_DIRECTIVE = /@ts-[a-z]/;
+const TS_DIRECTIVE_MESSAGE = '注記に `@ts-…` の指示は書けません —— 生成物の型検査 (tsc) を黙らせて、Mamori が見ない型の穴を通せてしまいます';
 const HIDDEN_CHARS_MESSAGE = '制御・不可視・方向を変える字は注記と文字列の中に裸で置けません —— `\\uXXXX` と綴ります (見える物と走る物が食い違う · Trojan Source)';
 
 export function lex(file: string, src: string): Tok[] {
@@ -141,6 +144,7 @@ export function lex(file: string, src: string): Tok[] {
       const stop = i + LINE_COMMENT_BODY.exec(src)![0].length;
       const raw = src.slice(i, stop);
       if (HIDDEN_CHARS.test(raw)) throw new MamoriError(file, pos, HIDDEN_CHARS_MESSAGE);
+      if (TS_DIRECTIVE.test(raw)) throw new MamoriError(file, pos, TS_DIRECTIVE_MESSAGE);
       const kind: TokKind = raw.startsWith('//!') ? 'header' : raw.startsWith('///') ? 'doc' : 'comment';
       const rest = kind === 'comment' ? raw.slice(2) : raw.slice(3);
       out.push({ kind, text: rest.startsWith(' ') ? rest.slice(1) : rest, pos });
