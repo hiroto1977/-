@@ -132,4 +132,15 @@ describe('0.14 分割代入 (threat: T-224 の続き)', () => {
     expect(ts('export fn f(raw: string) -> unknown {\n  const { a }: { a: string } = JSON.parse(raw);\n  return a;\n}\n')).toContain('const { a }: { a: string } = JSON.parse(raw);');
     expect(diag('export fn f(raw: string) -> unknown {\n  const { a }: { a: string; b: number } = JSON.parse(raw);\n  return a;\n}\n')).toEqual([]);
   });
+
+  it('★ 組み込みと同じ名前の局所 (引数) は局所なので通る / 組み込みそのものは断る', () => {
+    expect(diag('export fn g(Math: { a: string }) -> unknown {\n  const { a } = Math;\n  return a;\n}\n')).toEqual([]);
+    expect(diag(fn('  const { PI } = Math;')).join('\n')).toMatch(/分割代入で取り出せません/);
+  });
+
+  it('★ await 以外の単項は根にならない (typeof / ! の結果は値)', () => {
+    for (const init of ['typeof Math', '!Math', '-Math']) {
+      expect(diag(fn(`  const { length } = ${init};`)).join('\n'), init).not.toMatch(/分割代入で取り出せません/);
+    }
+  });
 });

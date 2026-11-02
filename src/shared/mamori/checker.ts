@@ -377,10 +377,12 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       case 'index':
         return destructureRoots(e.object);
       case 'unary':
+        // Stryker disable next-line ArrayDeclaration: 偽の要素 (文字列) は `.name` を持たないので lookup が何にも当たらない (等価)
         return e.op === 'await' ? destructureRoots(e.operand) : [];
       case 'cond':
         return [...destructureRoots(e.then), ...destructureRoots(e.otherwise)];
       default:
+        // Stryker disable next-line ArrayDeclaration: 同上 (等価)
         return [];
     }
   }
