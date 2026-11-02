@@ -461,8 +461,8 @@
       "why": "書き出しの関門から「resolve しても形が変わらない (正規化済みの絶対パス)」要求を外し、resolve 後の親で判定する形へ戻す (`..` を挟んだ綴りで状態ファイルの名のディレクトリを mkdir できる)",
       "edits": [
         {
-          "find": "  if (path.resolve(filePath) !== filePath) return false;\n  const resolved = filePath;",
-          "replace": "  const resolved = path.resolve(filePath);"
+          "find": "  if (path.resolve(filePath) !== filePath) return false;\n",
+          "replace": "  filePath = path.resolve(filePath);\n"
         }
       ]
     },

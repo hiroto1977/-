@@ -77,8 +77,9 @@ export function findUnclosedWrites(files: readonly Source[]): Offence[] {
       const target = m[2]!;
       // 同じ引数に対する chmod が、呼び出しより後ろの近い位置にあること。
       const after = src.slice(m.index, m.index + 600);
+      // 権限は `0o600` か、Mamori で書いた元 (8 進が書けない) の生成物が使う 10 進の `384` (同じ値)。
       const chmod = new RegExp(
-        String.raw`fs\.chmod(?:Sync)?\s*\(\s*` + target.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + String.raw`\s*,\s*0o600`,
+        String.raw`fs\.chmod(?:Sync)?\s*\(\s*` + target.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + String.raw`\s*,\s*(?:0o600|384)`,
       );
       if (!chmod.test(after)) out.push({ rel, call: m[1]!, target });
     }

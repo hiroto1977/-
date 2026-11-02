@@ -3666,6 +3666,14 @@
       "leafCount": 175,
       "note": "update integrity-chain.cjs,mamori-capabilities.json,exportPaths.mamori,exportPaths.ts",
       "hash": "3f58432c3413561cfa6e3ed40ffc5a4d665824766998798ca0ae216a74850b6e"
+    },
+    {
+      "index": 436,
+      "prevHash": "3f58432c3413561cfa6e3ed40ffc5a4d665824766998798ca0ae216a74850b6e",
+      "merkleRoot": "4e07bfbe8c8480e438229e6eb4c3060be92db3ec0dbd72141a63655dc074ebf0",
+      "leafCount": 175,
+      "note": "update exportPaths.mamori,exportPaths.ts",
+      "hash": "70e7be716d83f05abf8a2bf76b761834e2444bd1f531b0660cc9b69c2e29bf97"
     }
   ],
   "tipManifest": {
@@ -3733,8 +3741,8 @@
     "security/mamori-capabilities.json": "685257a7cb365214c5c05ff4fe478b6691ea4e61318023ab9ca5aa3dfa9fde29",
     "src/main/atomicWrite.ts": "63b6ff1fb7d8990b76409c62556d69f99a14475f73662e89507e8899a32a9c3f",
     "src/main/clients/assistant.ts": "3db27c2cdd42569a7bc92c7d2841591b1464550a1905ab66fa4a100803b69c4f",
-    "src/main/clients/exportPaths.mamori": "ccae5175acb04bfa1ba38b77ff7c952743c9814c7cb7314d2b66c5ff6d6a9675",
-    "src/main/clients/exportPaths.ts": "a958a09f396ff1def86b49cac0fb9b15aa5c53c2cffcb0b29ee5972f176e8b3e",
+    "src/main/clients/exportPaths.mamori": "49b9340d5d2b01ff40a6d874adfe9c0423b3a95eb6144b68e2324fdd0c1a6dd1",
+    "src/main/clients/exportPaths.ts": "64b47672f5cb0a3efa0b34aeeeab6126ed408ef78e8b865ed6941b795af152dc",
     "src/main/clients/exportSink.mamori": "fd5f41d4606ebdf32f470e863d8b3ddbc78cdad75fe7bdb14711d83cb36cf0b1",
     "src/main/clients/exportSink.ts": "5c4bd12d71e70d3dc2cdeae4f3b8e4bbe06976c164d098a848d7d1247e4e019e",
     "src/main/clients/types.ts": "0f7eeae150418def1fb8f242f9f010bcb6d947690b2ad085d18276c041b239fa",

@@ -28,7 +28,7 @@ export async function ensurePrivateExportRoot(root: string = exportRoot()): Prom
     if ((st.mode & 63) === 0) return 0;
     await fs.chmod(root, 448);
     return 1;
-  } catch (e) {
+  } catch (_e) {
     return 0;
   }
 }
@@ -54,7 +54,7 @@ async function repairDir(dir: string): Promise<number> {
       }
       await fs.chmod(full, 384);
       fixed = fixed + 1;
-    } catch (err) {
+    } catch (_err) {
       // 読めない・直せないファイルは数えずに次へ (競合で消えた・所有者が違う)。
     }
   }
