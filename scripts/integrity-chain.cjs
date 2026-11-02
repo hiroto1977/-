@@ -698,6 +698,8 @@ const PROTECTED = [
   'src/shared/atlassianSite.mamori',         // Atlassian の site URL の関門と保存された資格情報の読みの Mamori の元 (2026-11-02 · MG-023)
   'src/main/clients/exportPaths.mamori',    // 書き出し先の関門と権限直しの Mamori の元 (2026-11-02 · MG-020)
   'src/renderer/oauth/pkceSession.mamori',  // その Mamori の元 (2026-11-01 · MG-017)
+  'src/renderer/oauth/pkce.mamori',         // ブラウザ版 PKCE の Mamori の元 (2026-11-02 · MG-025)
+  'src/renderer/oauth/pkceHost.ts',         // その薄い壁 (btoa・乱数・SHA-256・時刻・fetch・URLSearchParams・締切の口)
   'src/renderer/oauth/pkceSessionHost.ts',  // sessionStorage の口 (薄い壁)
   'src/renderer/security/dataCrypto.mamori',     // レコード暗号の関門 (KDF 回数・塩・封筒の形) の Mamori の元 (2026-11-02 · MG-021)
   'src/renderer/security/dataCryptoHost.ts',     // WebCrypto / btoa の口 (薄い壁)

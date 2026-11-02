@@ -40,6 +40,7 @@ const EXPECTED = [
   'src/renderer/security/dataCrypto.mamori',
   'src/shared/vetted.mamori',
   'src/shared/atlassianSite.mamori',
+  'src/renderer/oauth/pkce.mamori',
 ];
 
 describe('Mamori の生成物 (threat: T-221)', () => {

@@ -112,6 +112,14 @@
       "gates": [],
       "sinks": []
     },
+    "src/renderer/oauth/pkce.mamori": {
+      "externals": [
+        "pure ./pkceHost: hostBtoa, hostRandomBytes, hostSha256, hostNow, hostFetch, hostSearchParams, hostWithTimeout"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
     "src/shared/atlassianSite.mamori": {
       "externals": [],
       "imports": [],

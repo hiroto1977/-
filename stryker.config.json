@@ -196,6 +196,7 @@
     "src/renderer/network/proxy.ts",
     "src/renderer/oauth/callbackPaste.ts",
     "src/renderer/oauth/pkce.ts",
+    "src/renderer/oauth/pkceHost.ts",
     "src/renderer/oauth/pkceSession.ts",
     "src/renderer/oauth/pkceSessionHost.ts",
     "src/renderer/plan/internalLicense.ts",
