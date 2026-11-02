@@ -10,7 +10,7 @@
  *
  * そして「**1 つであるべきもの (IV 長・反復回数・ハッシュ) だけ**をここへ集めた」と続く。
  * ところが実測すると、**ハッシュだけは 3 つの導出すべてが `'SHA-256'` のリテラルを書き写していた**
- * (`security/dataCrypto.ts` の 1 つと `security/vault.ts` の 2 つ = パスワード枝と合言葉の復元枝)。
+ * (`security/dataCryptoHost.ts` の 1 つ (`dataCrypto.ts` は Mamori 生成物で WebCrypto は壁へ移した · MG-021)と `security/vault.ts` の 2 つ = パスワード枝と合言葉の復元枝)。
  * 反復回数は引数で渡されて凍結値を通るのに、ハッシュだけが通っていなかった。
  *
  * 実際の壊れ方: `PBKDF2_HASH` を `'SHA-512'` にすると、封筒へ書く
@@ -85,7 +85,7 @@ describe('鍵導出のパラメータ (パス 327)', () => {
       expect(s.text, `${s.file}:${s.line}`).toContain('hash: PBKDF2_HASH');
     }
     const files = [...new Set(KDF_SITES.map((s) => s.file))].sort();
-    expect(files).toEqual(['src/renderer/security/dataCrypto.ts', 'src/renderer/security/vault.ts']);
+    expect(files).toEqual(['src/renderer/security/dataCryptoHost.ts', 'src/renderer/security/vault.ts']);
   });
 
   it("★ 導出のハッシュに 'SHA-256' のリテラルを書き写した行は 0 (凍結値の宣言だけが持つ)", () => {
