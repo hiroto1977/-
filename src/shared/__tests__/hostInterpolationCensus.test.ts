@@ -92,7 +92,7 @@ const LEDGER: readonly LedgerRow[] = [
   },
   {
     file: 'src/shared/scanTarget.ts',
-    needle: '`http://${h}/`',
+    needle: "'http://' + h + '/'",
     reason: '(c) VirusTotal へ送る前の「社内ホスト」警告が、SSRF 用の分類器 (privateTarget) の判定を借りるための内部の再解析 (T-076)。h は URL.hostname で、通信にも画面にも出ない',
   },
   {

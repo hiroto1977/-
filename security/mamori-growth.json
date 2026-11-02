@@ -1692,6 +1692,80 @@
         "reason": null,
         "summary": "ブラウザ版 PKCE (oauth/pkce.ts · state の定時間比較・token 端点への POST・転送への非追随・応答サイズの上限・失敗本文の伏字) を Mamori で書き直した (port)。ブラウザの口 (btoa・乱数・SHA-256・時刻・fetch・URLSearchParams・締切) は薄い壁 pkceHost.ts へ閉じ込め、判断は全部 pkce.mamori に残した。async の arrow は言語に無いので、締切の中で走らせる部分を名前のある postTokenForm に出した。fetch の既定値は呼ぶ時点の globalThis.fetch を読む壁の関数にして、差し替えた代役への追随を保った。as const は型注釈つきの定数へ、オブジェクトの展開は 0.15 の展開をそのまま使った。元の TypeScript と 15 シナリオで差分比較し (結果・要求の形・断りの文・遅延束縛の fetch)、一致。既存の検査は編集なしで緑。手探り 8 形は全部 refused。変異検査は pkce.ts / pkceHost.ts とも 100%。対照 2 つ (state の比較を外す・転送への非追随を外す) は関連の検査で鳴った。"
       }
+    },
+    {
+      "id": "MG-026",
+      "date": "2026-11-02",
+      "kind": "port",
+      "target": "src/shared/scanTarget.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/shared/scanTarget.ts",
+      "version": "0.15",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "non-null",
+        "template"
+      ],
+      "ported": [
+        "src/shared/scanTarget.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "`extern pure global URLSearchParams` (壁なしで宣言)",
+          "result": "refused"
+        },
+        {
+          "tried": "宣言なしの `new URLSearchParams(s)`",
+          "result": "refused"
+        },
+        {
+          "tried": "正規表現の一致に後置の `!` (`m![1]!`)",
+          "result": "refused"
+        },
+        {
+          "tried": "テンプレート文字列で `http://${h}/` を組む",
+          "result": "refused"
+        },
+        {
+          "tried": "配列の分割代入 `const [x, y] = a;`",
+          "result": "refused"
+        },
+        {
+          "tried": "`for (const [name] of params)` の分割代入",
+          "result": "refused"
+        },
+        {
+          "tried": "一致の結果に `m[\"constructor\"]` で届く",
+          "result": "refused"
+        },
+        {
+          "tried": "正規表現の字面に `.constructor`",
+          "result": "refused"
+        },
+        {
+          "tried": "壁の名前 `hostSearchParams` を引数で隠す",
+          "result": "refused"
+        },
+        {
+          "tried": "`RegExp.$1` で直前の一致を読む",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 3,
+      "mutation": {
+        "files": [
+          "src/shared/scanTarget.ts",
+          "src/shared/scanTargetHost.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 855,
+        "reason": null,
+        "summary": "VirusTotal / HIBP へ送る物の関門と警告 (scanTarget.ts · validateScanUrl / validateBreachEmail / looksInternalHostname / describeScanUrlRisk) を Mamori で書き直した (port)。足りなかったのは non-null・template 文字列・配列の分割代入だけで、正規表現の一致は「確かめてから切り出す」形へ、template は連結へ、for-of の分割代入は .keys() へ書き直した。URLSearchParams は組み込みに無いので薄い壁 scanTargetHost.ts に閉じ込めた。移すときに 3 つ見つけた: ① 手書きの v4 / v6 の枝は、4 つ目の数が 255 を超える等 URL として正しくない入力でだけ分類器の代わりに効く (変異検査 115 件の生存の正体は、その枝を踏む検査が無かったこと) ② 文書用の範囲の判定を接頭辞 + 数字 1〜3 桁へ分け (`^` の脱落が等価でなくなる)、`::1` / `::` の枝は分類器が必ず内部と見るので消した ③ `new URL('http://' + h + '/')` の末尾の `/` は省けない —— 末尾の空白を URL の解析が落とすので `10.0.0.1 ` が有効な宛先に化ける (40,000 件の fuzz で見つけ、表に留めた)。元の TypeScript と、手で選んだ入力 + fuzz 45,000 件で差分比較し一致。分岐を 1 つずつ留める表 scanTargetBranches.test.ts (326 件・期待値は移す前の実装に通して取った) を足し、変異検査は 357 → 350 変異体で生存 0。等価な変異体は 1 つだけ (v4FromMappedTail の `^` の脱落) で、理由つきの pragma を付けた。手探り 10 形は全部 refused。対照 3 つ (末尾の / を外す・172.16 の境目・文書用の範囲の判定) は表が落ちた。"
+      }
     }
   ]
 }

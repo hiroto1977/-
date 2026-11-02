@@ -1,3 +1,5 @@
+// 生成物 —— src/shared/scanTarget.mamori から Mamori のコンパイラが組んだ。手で編集しない (`npm run mamori:build`)。
+// 言語の仕様は docs/MAMORI.md。生成物が元と食い違えば src/shared/mamori/__tests__/mamoriGenerated.test.ts が落ちる。
 /**
  * VirusTotal へ送る URL の検証と、送る前に利用者へ伝えるべき危険の判定。
  *
@@ -13,17 +15,26 @@
  *
  * ここは 1 か所だけ持つ。判定を両側に書き写すと片方だけ直る、というのが
  * この監査で繰り返し出た形なので。
+ *
+ * ## Mamori で書いてある (2026-11-02 · MG-026)
+ *
+ * 元は TypeScript。足りなかったのは non-null (`!`)・template 文字列・配列の分割代入だけで、
+ * 正規表現のグループは「一致を確かめてから切り出す」形へ、template は連結へ、`for (const [name] of …)` は
+ * `.keys()` へ書き直した。判定は 1 字も変えていない (元の実装との差分比較で確かめた)。
+ * `URLSearchParams` は Mamori の組み込みに無いので壁 `scanTargetHost.ts` で包む。
  */
 
+import { hasControlChar } from './controlChars';
 import { countChars, moreThanChars } from './inputCeiling';
 import { isPrivateOrReservedTarget } from './privateTarget';
+import { hostSearchParams } from './scanTargetHost';
+
 export type ScanUrlFailure = 'empty' | 'too-long' | 'not-a-url' | 'not-web';
 
 export type ScanUrlResult =
   | { readonly ok: true; readonly url: string }
   | { readonly ok: false; readonly reason: ScanUrlFailure };
 
-/** VirusTotal の URL 長の実務上の上限に合わせた保守的な値。 */
 /**
  * **断りの文面も 1 つ。** (2026-09-15 · パス 282)
  *
@@ -37,13 +48,9 @@ export type ScanUrlResult =
  * ビルドによって違う言い方になってはいけない —— 利用者は同じ入力を
  * 別の端末で試し、同じ説明を期待する。
  */
-export const SCAN_URL_MESSAGES: Readonly<Record<ScanUrlFailure, string>> = {
-  empty: 'url は必須です',
-  'too-long': 'url が長すぎます',
-  'not-a-url': 'url を URL として解釈できません',
-  'not-web': 'url は http:// または https:// で始まる必要があります',
-};
+export const SCAN_URL_MESSAGES: Readonly<Record<ScanUrlFailure, string>> = { empty: 'url は必須です', 'too-long': 'url が長すぎます', 'not-a-url': 'url を URL として解釈できません', 'not-web': 'url は http:// または https:// で始まる必要があります' };
 
+/** VirusTotal の URL 長の実務上の上限に合わせた保守的な値。 */
 export const MAX_SCAN_URL_CHARS = 2048;
 
 /**
@@ -77,10 +84,7 @@ export type BreachEmailResult =
   | { readonly ok: false; readonly reason: BreachEmailFailure };
 
 /** 断りの文面 —— **両ビルドがここを読む** (文を写さない)。 */
-export const BREACH_EMAIL_MESSAGES: Readonly<Record<BreachEmailFailure, string>> = {
-  empty: 'email は必須です',
-  invalid: 'email の形が正しくありません（254 文字以内で、@ を含み、制御文字を含まないこと）',
-};
+export const BREACH_EMAIL_MESSAGES: Readonly<Record<BreachEmailFailure, string>> = { empty: 'email は必須です', invalid: 'email の形が正しくありません（254 文字以内で、@ を含み、制御文字を含まないこと）' };
 
 /** RFC 5321 のメールアドレスの上限 (オクテット)。 */
 export const MAX_BREACH_EMAIL_CHARS = 254;
@@ -91,13 +95,10 @@ export function validateBreachEmail(raw: unknown): BreachEmailResult {
   if (!email) return { ok: false, reason: 'empty' };
   // threat: T-096 —— 長さ・制御文字・`@` を見ない物が HIBP の道 (`/breachedaccount/<email>`) へ入っていた
   // (実測: 5,000,006 字が 5,000,048 字の要求になった・`..` と `.` は道を畳む)。
-  // eslint-disable-next-line no-control-regex -- 制御文字の拒否が目的
-  if (moreThanChars(email, MAX_BREACH_EMAIL_CHARS) || !email.includes('@') || /[\u0000-\u001f\u007f]/.test(email)) {
-    return { ok: false, reason: 'invalid' };
-  }
+  // 制御文字は `hasControlChar` (C0 と DEL) —— 元の `[\u0000-\u001f\u007f]` と同じ範囲。
+  if (moreThanChars(email, MAX_BREACH_EMAIL_CHARS) || !email.includes('@') || hasControlChar(email)) return { ok: false, reason: 'invalid' };
   return { ok: true, email };
 }
-
 
 /**
  * 投入してよい形か検証する。
@@ -117,9 +118,7 @@ export function validateScanUrl(raw: unknown): ScanUrlResult {
   } catch {
     return { ok: false, reason: 'not-a-url' };
   }
-  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-    return { ok: false, reason: 'not-web' };
-  }
+  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return { ok: false, reason: 'not-web' };
   // **返すのは解析後の href** (パス 325)。`url` (生の文字列) を返すと、調べた物
   // (`parsed`) と第三者へ送る物 (raw) が別になる —— 実測で 8 形のうち 5 形が食い違った
   // (`https:/\evil.example/p` / `HTTPS://Example.COM/X` / `https://example.com` /
@@ -135,27 +134,7 @@ export function validateScanUrl(raw: unknown): ScanUrlResult {
  * 警告は出す回数を絞るほど効くので、**名前が資格情報を示唆するものだけ**に
  * 限る。
  */
-export const SECRET_PARAM_NAMES = [
-  'token',
-  'access_token',
-  'id_token',
-  'refresh_token',
-  'key',
-  'api_key',
-  'apikey',
-  'secret',
-  'password',
-  'passwd',
-  'pwd',
-  'auth',
-  'authorization',
-  'session',
-  'sessionid',
-  'sig',
-  'signature',
-  'code',
-  'credential',
-];
+export const SECRET_PARAM_NAMES: string[] = ['token', 'access_token', 'id_token', 'refresh_token', 'key', 'api_key', 'apikey', 'secret', 'password', 'passwd', 'pwd', 'auth', 'authorization', 'session', 'sessionid', 'sig', 'signature', 'code', 'credential'];
 
 function looksSecretName(name: string): boolean {
   const lower = name.toLowerCase();
@@ -166,6 +145,61 @@ function looksSecretName(name: string): boolean {
   // 拾わない・`sig` `key` `code` は短く散文と衝突しやすいので完全一致のまま)。
   const folded = lower.replace(/[-_]/g, '');
   return /(token|secret|signature|credential|password|passwd|apikey|jwt|bearer)$/.test(folded);
+}
+
+/**
+ * `上位16bit:下位16bit` の形で始まる文字列 (後ろに続きがあってもよい) を、点記法の IPv4 にする。
+ * `Number.parseInt` は 16 進の桁が尽きたところ (`:`) で止まるので、2 組を切り分ける必要は無い。
+ */
+function v4FromHexPair(pair: string): string {
+  const hi = Number.parseInt(pair, 16);
+  const lo = Number.parseInt(pair.slice(pair.indexOf(':') + 1), 16);
+  return String(hi >> 8) + '.' + String(hi & 0xff) + '.' + String(lo >> 8) + '.' + String(lo & 0xff);
+}
+
+/**
+ * IPv6 に埋め込まれた IPv4 を点記法で返す (無ければ null)。
+ *
+ * `new URL()` は `::ffff:169.254.169.254` を `::ffff:a9fe:a9fe` へ正規化する (実測) ので、
+ * 点記法ではなく **16 進の 2 組**で来る。3 つの形を見る:
+ *   - IPv4-mapped (`::ffff:…`) と NAT64 の既知接頭辞 (`64:ff9b::…`) —— 末尾 32 bit が v4
+ *   - 6to4 (`2002:WWXX:YYZZ::/16`) —— 2002 の直後の 2 組が v4
+ * どれも v4 を取り出して `looksInternalHostname` の v4 判定へ渡す (2026-10-13 · パス 513)。
+ */
+function embeddedIpv4FromV6(v6: string): string | null {
+  for (const prefix of ['::ffff:', '64:ff9b::']) {
+    if (v6.startsWith(prefix)) return v4FromMappedTail(v6.slice(prefix.length));
+  }
+  // 6to4: 2002::/16 の全域が v4 を bits 16-48 に埋め込む。
+  if (/^2002:[0-9a-f]{1,4}:[0-9a-f]{1,4}(?::|$)/.test(v6)) return v4FromHexPair(v6.slice(5));
+  return null;
+}
+
+/**
+ * IPv4-mapped / NAT64 の接頭辞のあとの末尾 32 bit を、点記法の IPv4 にする (読めなければ null)。
+ * 点記法のまま来た物はそのまま返し、16 進の 2 組で来た物は点記法へ直す。
+ */
+function v4FromMappedTail(tail: string): string | null {
+  // 先頭の `^` を外した変異体だけは等価 —— 前に何か付いた末尾の 4 組を返しても、受け取る側
+  // (`looksInternalHostname`) が anchored な v4 の判定・分類器・TLD の判定で必ず false にする
+  // (末尾が数字のホストは URL として正しくなく、`localhost` のような単一ラベルや予約 TLD にも当たらない)。
+  // `$` の脱落や桁の変異は殺せる —— `scanTargetBranches.test.ts` の表が `[::ffff:1.2.3.4.local]` ほかで留める。
+  // Stryker disable next-line Regex: 先頭の `^` の脱落は等価 (上の説明)
+  if (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(tail)) return tail;
+  if (/^[0-9a-f]{1,4}:[0-9a-f]{1,4}$/.test(tail)) return v4FromHexPair(tail);
+  return null;
+}
+
+/**
+ * 説明用に貼られる文書用の範囲か (RFC 5737 の TEST-NET-1/2/3 と RFC 3849 の 2001:db8::/32)。
+ * 接頭辞のあとが **1〜3 桁の数字だけ**のときに限る (`192.0.2.0x5` は 16 進の別表記で、文書用とは見なさない)。
+ */
+function isDocumentationHost(h: string): boolean {
+  if (h.startsWith('[2001:db8:') || h.startsWith('[2001:0db8:')) return true;
+  for (const prefix of ['192.0.2.', '198.51.100.', '203.0.113.']) {
+    if (h.startsWith(prefix) && /^\d{1,3}$/.test(h.slice(prefix.length))) return true;
+  }
+  return false;
 }
 
 /**
@@ -196,36 +230,6 @@ function looksSecretName(name: string): boolean {
  * 許可の拡大ではない。だから統合してはいけない側ではなく、
  * 広く取ってよい側に居る。
  */
-/**
- * IPv6 に埋め込まれた IPv4 を点記法で返す (無ければ null)。
- *
- * `new URL()` は `::ffff:169.254.169.254` を `::ffff:a9fe:a9fe` へ正規化する (実測) ので、
- * 点記法ではなく **16 進の 2 組**で来る。3 つの形を見る:
- *   - IPv4-mapped (`::ffff:…`) と NAT64 の既知接頭辞 (`64:ff9b::…`) —— 末尾 32 bit が v4
- *   - 6to4 (`2002:WWXX:YYZZ::/16`) —— 2002 の直後の 2 組が v4
- * どれも v4 を取り出して `looksInternalHostname` の v4 判定へ渡す (2026-10-13 · パス 513)。
- */
-function embeddedIpv4FromV6(v6: string): string | null {
-  const toV4 = (hiHex: string, loHex: string): string => {
-    const hi = Number.parseInt(hiHex, 16);
-    const lo = Number.parseInt(loHex, 16);
-    return `${hi >> 8}.${hi & 0xff}.${lo >> 8}.${lo & 0xff}`;
-  };
-  const mapped = /^(?:::ffff:|64:ff9b::)(.+)$/.exec(v6);
-  if (mapped !== null) {
-    const tail = mapped[1]!;
-    const dotted = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(tail);
-    if (dotted !== null) return `${dotted[1]}.${dotted[2]}.${dotted[3]}.${dotted[4]}`;
-    const hex = /^([0-9a-f]{1,4}):([0-9a-f]{1,4})$/.exec(tail);
-    if (hex !== null) return toV4(hex[1]!, hex[2]!);
-    return null;
-  }
-  // 6to4: 2002::/16 の全域が v4 を bits 16-48 に埋め込む。
-  const sixToFour = /^2002:([0-9a-f]{1,4}):([0-9a-f]{1,4})(?::|$)/.exec(v6);
-  if (sixToFour !== null) return toV4(sixToFour[1]!, sixToFour[2]!);
-  return null;
-}
-
 export function looksInternalHostname(hostname: string): boolean {
   const h = hostname.toLowerCase().replace(/\.$/, '');
   if (h === '') return false;
@@ -236,17 +240,18 @@ export function looksInternalHostname(hostname: string): boolean {
   // 警告は広い方に倒してよい (止めない・余計な警告が出るだけ) ので OR で足す。
   // ただし文書用の範囲 (RFC 5737 の TEST-NET-1/2/3 と RFC 3849 の 2001:db8::/32) は警告しない ——
   // 説明用に貼られる偽の例で、利用者の社内情報ではない (既存の方針・検査が留めている)。
-  const documentation =
-    /^(?:192\.0\.2|198\.51\.100|203\.0\.113)\.\d{1,3}$/.test(h) || /^\[2001:0?db8:/.test(h);
+  // `new URL('http://' + h + '/')` の末尾の `/` は省けない —— URL の解析は末尾の空白・制御文字を落とすので、
+  // `10.0.0.1 ` (末尾に空白) が `/` 無しだと有効な宛先に化ける。`/` があれば空白がホスト名に残って URL として正しくなくなる。
+  const documentation = isDocumentationHost(h);
   try {
-    if (!documentation && isPrivateOrReservedTarget(new URL(`http://${h}/`))) return true;
+    if (!documentation && isPrivateOrReservedTarget(new URL('http://' + h + '/'))) return true;
   } catch {
     // 解析できない名前は URL としても送れない (validateScanUrl が先に断る)。下の判定へ。
   }
   // IPv6 は URL の hostname では角括弧付きで来る。
   if (h.startsWith('[') && h.endsWith(']')) {
     const v6 = h.slice(1, -1);
-    if (v6 === '::1' || v6 === '::') return true;
+    // `::1` と `::` は上の分類器が必ず内部と見る (URL として正しい形) ので、ここでは見ない。
     // IPv4-mapped / NAT64 / 6to4 に埋め込まれた内部の v4 (クラウドのメタデータを含む)。
     const inner = embeddedIpv4FromV6(v6);
     if (inner !== null && looksInternalHostname(inner)) return true;
@@ -255,12 +260,19 @@ export function looksInternalHostname(hostname: string): boolean {
   }
   const v4 = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(h);
   if (v4 !== null) {
-    const [a, b] = [Number(v4[1]), Number(v4[2])];
+    const a = Number(v4[1]);
+    const b = Number(v4[2]);
     if (a === 10 || a === 127 || a === 0) return true;
     if (a === 192 && b === 168) return true;
     if (a === 172 && b >= 16 && b <= 31) return true;
-    if (a === 169 && b === 254) return true; // リンクローカル (クラウドのメタデータを含む)
-    if (a === 100 && b >= 64 && b <= 127) return true; // CGNAT
+    if (a === 169 && b === 254) {
+      return true;
+      // リンクローカル (クラウドのメタデータを含む)
+    }
+    if (a === 100 && b >= 64 && b <= 127) {
+      return true;
+      // CGNAT
+    }
     return false;
   }
   // 単一ラベル (`buildserver` など) は公開名になりえない。
@@ -280,36 +292,35 @@ export function describeScanUrlRisk(raw: string): string | null {
   const checked = validateScanUrl(raw);
   if (!checked.ok) return null;
   const parsed = new URL(checked.url);
-  if (parsed.username !== '' || parsed.password !== '') {
-    return 'この URL には利用者名/パスワードが埋め込まれています。VirusTotal に送るとそのまま第三者に見える形で残ります。';
-  }
+  if (parsed.username !== '' || parsed.password !== '') return 'この URL には利用者名/パスワードが埋め込まれています。VirusTotal に送るとそのまま第三者に見える形で残ります。';
   const names: string[] = [];
-  for (const [name] of parsed.searchParams) {
-    if (looksSecretName(name)) names.push(name);
+  for (const name of parsed.searchParams.keys()) {
+    if (looksSecretName(name)) {
+      names.push(name);
+    }
   }
   // フラグメントは `#access_token=...` の形 (OAuth の暗黙フロー) を拾う。
-  // `URL.hash` は空文字か `#` 始まりのどちらかしか無いので、`slice(1)` だけで
-  // 足りる (`''.slice(1)` も `''`)。`startsWith('#')` の分岐と空判定を置くと、
-  // 到達しない枝と、空文字で回っても 0 周する空ループの判定が増えるだけで、
-  // どちらもテストで殺せない変異体になる。
-  for (const [name] of new URLSearchParams(parsed.hash.slice(1))) {
-    if (looksSecretName(name)) names.push(name);
+  // `URL.hash` は空文字か `#` 始まりのどちらかしか無いので、`slice(1)` だけで足りる。
+  for (const name of hostSearchParams(parsed.hash.slice(1)).keys()) {
+    if (looksSecretName(name)) {
+      names.push(name);
+    }
   }
   // SPA のハッシュ経路 (`#/reset?token=…`) は、`?` の後ろを問い合わせとして読む (T-096)。
   const hashQuery = parsed.hash.indexOf('?');
   if (hashQuery !== -1) {
-    for (const [name] of new URLSearchParams(parsed.hash.slice(hashQuery + 1))) {
-      if (looksSecretName(name)) names.push(name);
+    for (const name of hostSearchParams(parsed.hash.slice(hashQuery + 1)).keys()) {
+      if (looksSecretName(name)) {
+        names.push(name);
+      }
     }
   }
   if (names.length > 0) {
     const unique = [...new Set(names)].join(' / ');
-    return `この URL には資格情報らしき値 (${unique}) が含まれています。VirusTotal に送るとそのまま第三者に見える形で残ります。`;
+    return 'この URL には資格情報らしき値 (' + unique + ') が含まれています。VirusTotal に送るとそのまま第三者に見える形で残ります。';
   }
   // 冒頭が挙げている 4 つ目の危険。資格情報より後に見るのは、両方当たる URL で
   // 資格情報の警告のほうが差し迫っているため (既存の文言も変えない)。
-  if (looksInternalHostname(parsed.hostname)) {
-    return `この URL の宛先 (${parsed.hostname}) は社内・手元のホストです。VirusTotal に送ると、そのホスト名と経路が第三者に検索できる形で残ります。調べたい相手が外部のサイトか確認してください。`;
-  }
+  if (looksInternalHostname(parsed.hostname)) return 'この URL の宛先 (' + parsed.hostname + ') は社内・手元のホストです。VirusTotal に送ると、そのホスト名と経路が第三者に検索できる形で残ります。調べたい相手が外部のサイトか確認してください。';
   return null;
 }

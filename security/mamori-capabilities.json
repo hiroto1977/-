@@ -126,6 +126,16 @@
       "gates": [],
       "sinks": []
     },
+    "src/shared/scanTarget.mamori": {
+      "externals": [
+        "pure ./inputCeiling: countChars, moreThanChars",
+        "pure ./privateTarget: isPrivateOrReservedTarget",
+        "pure ./scanTargetHost: hostSearchParams"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
     "src/shared/updateCheck.mamori": {
       "externals": [],
       "imports": [],

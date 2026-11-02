@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 443
+- ブロック数: 444
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `ecb1caab0cc470fbdf437e4414606819be840239b8e486c21f1cd0cb892e4806`
-- 保護対象: 180 ファイル
+- 末尾(tip)ハッシュ: `146246dd6d122fcb6dbbfe39a94d4f89124e9991e8ac0112ea1af3505e810434`
+- 保護対象: 182 ファイル
 
 ## ブロック
 
@@ -456,6 +456,7 @@
 | 440 | `42bdfe2e34f5434f` | `f13333af5ce4a477` | `add0d13e178fbce3` | update ast.ts,checker.ts,emit.ts,parser.ts,BUILD.json,mamori_verify.wasm |
 | 441 | `fc60bc9b7c9caf80` | `add0d13e178fbce3` | `12a0268dcfff967d` | update integrity-chain.cjs,mamori-capabilities.json,pkce.mamori,pkce.ts,pkceHost.ts |
 | 442 | `21f508269e579c43` | `12a0268dcfff967d` | `ecb1caab0cc470fb` | update pkceHost.ts |
+| 443 | `283731e620687dc0` | `ecb1caab0cc470fb` | `146246dd6d122fcb` | update integrity-chain.cjs,mamori-capabilities.json,scanTarget.mamori,scanTarget.ts,scanTargetHost.ts |
 
 ## 保護対象ファイル
 
@@ -620,7 +621,9 @@
 - `src/shared/redact.ts`
 - `src/shared/safeFilename.mamori`
 - `src/shared/safeFilename.ts`
+- `src/shared/scanTarget.mamori`
 - `src/shared/scanTarget.ts`
+- `src/shared/scanTargetHost.ts`
 - `src/shared/tokenInput.mamori`
 - `src/shared/tokenInput.ts`
 - `src/shared/tokenResponse.ts`

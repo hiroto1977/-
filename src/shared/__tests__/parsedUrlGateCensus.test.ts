@@ -118,7 +118,7 @@ const LEDGER: readonly Row[] = [
     why: '返すのは parsed.href' },
   { file: 'src/shared/scanTarget.ts', needle: 'parsed = new URL(url)', kind: 'value-gate',
     why: 'パス 325 で生の文字列から parsed.href へ変えた —— VirusTotal へ送るのは調べた物' },
-  { file: 'src/shared/scanTarget.ts', needle: 'isPrivateOrReservedTarget(new URL(`http://${h}/`))', kind: 'internal',
+  { file: 'src/shared/scanTarget.ts', needle: "isPrivateOrReservedTarget(new URL('http://' + h + '/'))", kind: 'internal',
     why: '「社内ホスト」の警告が privateTarget の判定を借りるための再解析 (T-076)。通信にも画面にも出ない' },
   { file: 'src/shared/scanTarget.ts', needle: 'const parsed = new URL(checked.url)', kind: 'internal',
     why: '関門を通った URL の危険 (userinfo / 秘密の引数) を読むための再解析' },
