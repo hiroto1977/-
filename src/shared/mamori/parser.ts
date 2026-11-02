@@ -694,7 +694,7 @@ export function parse(file: string, src: string): Module {
           // 展開は欄より前にだけ置く (後ろに置くと、字面で書いた欄を展開が上書きできる —— `{ ok: true, ...x }`)。
           if (props.some((p) => !p.spread)) fail(kt, '`...` (展開) は欄より前にだけ置けます —— 後ろに置くと、先に書いた欄を展開が上書きできます');
           next();
-          props.push({ key: '', quoted: false, value: expr(), shorthand: false, spread: true, pos: kt.pos });
+          props.push({ spread: true, value: expr(), pos: kt.pos });
           if (!isP('}')) expectP(',');
           continue;
         }

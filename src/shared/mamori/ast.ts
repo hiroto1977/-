@@ -59,20 +59,22 @@ export type Expr =
    */
   | { readonly kind: 'spread'; readonly operand: Expr; readonly pos: Pos };
 
-/** オブジェクトの字面の 1 項。`shorthand` は `{ value }` の形 (鍵と同じ名前の値)。 */
-export interface Prop {
-  readonly key: string;
-  /** 鍵を文字列で書いた (`{ 'x-y': 1 }`)。 */
-  readonly quoted: boolean;
-  readonly value: Expr;
-  readonly shorthand: boolean;
-  /**
-   * オブジェクトの展開 `{ ...x, k: v }` (0.15 · MG-024)。true のとき `key` は空で、`value` が展開される式。
-   * **展開は欄より前にだけ置ける** —— 後ろに置くと、先に字面で書いた欄 (`ok: true` など) を展開が上書きできる。
-   */
-  readonly spread: boolean;
-  readonly pos: Pos;
-}
+/**
+ * オブジェクトの字面の 1 項 (0.15 で和の型になった)。
+ * 展開 `{ ...x, k: v }` は鍵を持たず、**欄より前**にだけ置ける —— 後ろに置くと、先に字面で書いた欄 (`ok: true` など)
+ * を展開が上書きできる。欄は `shorthand` が `{ value }` の形 (鍵と同じ名前の値)。
+ */
+export type Prop =
+  | { readonly spread: true; readonly value: Expr; readonly pos: Pos }
+  | {
+      readonly spread: false;
+      readonly key: string;
+      /** 鍵を文字列で書いた (`{ 'x-y': 1 }`)。 */
+      readonly quoted: boolean;
+      readonly value: Expr;
+      readonly shorthand: boolean;
+      readonly pos: Pos;
+    };
 
 export interface Param {
   readonly name: string;
