@@ -1320,6 +1320,62 @@
         "reason": null,
         "summary": "既存言語 (JS/TS) の脆弱性クラスを材料に、言語・コンパイラ・Rust 検算役の穴を 3 担当で並行して探し、5 つの穴 (T-250〜T-254) を塞いだ。型の綴りの許可表と括弧の突き合わせ・局所の名前が同名の宣言を隠せない・extern pure の許可表と機能 module の拒否・隠し字の表の拡張・注記の @ts- 指示の拒否。Rust 検算役は固定バッファ ABI の v0.2 に作り直し、BUILD.json と整合性チェーンで出どころを固定。変異検査は parser / checker とも 100% (等価 4 件は理由つき pragma)。"
       }
+    },
+    {
+      "id": "MG-020",
+      "date": "2026-11-02",
+      "kind": "port",
+      "target": "src/main/clients/exportPaths.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/main/clients/exportPaths.ts",
+      "version": "0.13",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "compound-assign"
+      ],
+      "ported": [
+        "src/main/clients/exportPaths.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "`n += 1` (複合代入)",
+          "result": "refused"
+        },
+        {
+          "tried": "`fs.constructor` (T-224 の道)",
+          "result": "refused"
+        },
+        {
+          "tried": "`path[\"constructor\"]` (文字列の添字で表を迂回)",
+          "result": "refused"
+        },
+        {
+          "tried": "8 進の数 `0o600`",
+          "result": "refused"
+        },
+        {
+          "tried": "型つき引数の async arrow `async (d: string) => d`",
+          "result": "refused"
+        },
+        {
+          "tried": "`use { exec } from \"node:child_process\"` (機能 module を pure で読む · T-252)",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 2,
+      "mutation": {
+        "files": [
+          "src/main/clients/exportPaths.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 855,
+        "reason": null,
+        "summary": "書き出しの行き先の関門と権限直し (exportPaths.ts · 書き込みの閉じ込め・0600・根の 0700) を Mamori で書き直した (port)。fs / os / path を M7 の台帳に載せた。8 進が書けないので権限は 10 進 (448 / 384 / 63)、非同期の arrow が無いので再帰の repairDir に分けた。元の TypeScript と実ファイルで比べ、結果・断りの文・残るモードが一致。既存の検査は編集なしで緑。手探り 6 形は全部 refused (fs への生のパスの書き込みは M7 の台帳が見る設計で、言語の穴ではない)。変異検査は pragma を元へ戻して 100% (Killed 90)。対照 2 つ (兄弟ディレクトリの接頭辞・書き出し先の symlink) は関連の検査で鳴った。"
+      }
     }
   ]
 }

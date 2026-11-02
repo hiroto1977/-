@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 435
+- ブロック数: 436
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `482a721911ed1996b9615604adc04bbc7c20c15fe91a37722906635b191625e2`
-- 保護対象: 174 ファイル
+- 末尾(tip)ハッシュ: `3f58432c3413561cfa6e3ed40ffc5a4d665824766998798ca0ae216a74850b6e`
+- 保護対象: 175 ファイル
 
 ## ブロック
 
@@ -448,6 +448,7 @@
 | 432 | `0b0292aa7fade07f` | `20ce3eca436e8315` | `41efd0604defd5f3` | update integrity-chain.cjs,mamori-capabilities.json,updateCheck.mamori |
 | 433 | `7baac239b19822c4` | `41efd0604defd5f3` | `e50ddcddc3a5e60b` | update build-mamori-verify.cjs,integrity-chain.cjs,checker.ts,parser.ts,BUILD.json,Cargo.lock |
 | 434 | `cbecfc6fe855da5d` | `e50ddcddc3a5e60b` | `482a721911ed1996` | update checker.ts,parser.ts |
+| 435 | `efa601ed1b886bd9` | `482a721911ed1996` | `3f58432c3413561c` | update integrity-chain.cjs,mamori-capabilities.json,exportPaths.mamori,exportPaths.ts |
 
 ## 保護対象ファイル
 
@@ -515,6 +516,7 @@
 - `security/mamori-capabilities.json`
 - `src/main/atomicWrite.ts`
 - `src/main/clients/assistant.ts`
+- `src/main/clients/exportPaths.mamori`
 - `src/main/clients/exportPaths.ts`
 - `src/main/clients/exportSink.mamori`
 - `src/main/clients/exportSink.ts`
