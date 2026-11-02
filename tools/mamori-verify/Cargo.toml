@@ -1,6 +1,6 @@
 [package]
 name = "mamori-verify"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 publish = false
 description = "Mamori の M0 (禁じた綴り) を TypeScript の実装とは独立に検める第 2 の実装。依存 crate は 0。"

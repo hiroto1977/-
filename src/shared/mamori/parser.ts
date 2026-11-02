@@ -225,6 +225,10 @@ export function lex(file: string, src: string): Tok[] {
   return out;
 }
 
+/** 型の綴りの中に置いてよい記号 (許可表)。比較・代入・論理・算術・`->` などは型に要らず、字句の切れ目をずらす元になる。 */
+const TYPE_PUNCT: ReadonlySet<string> = new Set(['<', '>', '(', ')', '[', ']', '{', '}', ',', ':', ';', '.', '|', '&', '?', '=>', '-']);
+const TYPE_OPEN: Readonly<Record<string, string>> = Object.assign(Object.create(null) as Record<string, string>, { '<': '>', '(': ')', '[': ']', '{': '}' });
+
 const STOP_WORDS = new Set(['true', 'false', 'null', 'undefined', 'unknown', 'string', 'number', 'boolean', 'void']);
 
 /** `case` の本体を終えてよい文 (次の case へ落ちる形を書かせない)。 */
@@ -295,19 +299,27 @@ export function parse(file: string, src: string): Module {
   const typeRef = (terminators: readonly string[]): TypeRef => {
     const start = peek();
     const parts: Tok[] = [];
-    let depth = 0;
+    // 開き括弧の積み (種類つき)。閉じ括弧は積みの先頭と**同じ種類**でなければならない。
+    // 0.13 · T-250: 深さを数えるだけだった頃は、`>=` (1 つの字句) が `>` に数えられず、`Array<Array<number>= 式; … >` のように
+    // **字句の切れ目の差で深さを偽装**でき、型の綴りの中へ文を隠せた (T-239 は深さ 0 の `;` だけを断っていた)。
+    // 型の綴りは生成物へそのまま写されるので、型の中に置ける記号を許可表にして、括弧の種類を突き合わせる。
+    const stack: string[] = [];
     for (;;) {
       const t = peek();
       if (t.kind === 'eof') fail(t, '型が閉じていません');
       if (t.kind === 'comment' || t.kind === 'doc' || t.kind === 'header') fail(t, '型の途中に注記は置けません');
-      if (depth === 0 && isPunctTok(t, ...terminators)) break;
-      // 深さ 0 の `;` は文の切れ目で、型には要らない (オブジェクト型の欄の区切りは `{ … }` の中 = 深さ 1)。
-      // 通すと `const C: number; fetch("x"); const D: number = 1;` のように**型の綴りの中へ文を隠せる** —— 型の綴りは
-      // そのまま写されるので、Mamori の検め (M6) を受けない文が生成物へ入った (0.4 · T-239 · 電池の対戦が見つけた)。
-      if (depth === 0 && isPunctTok(t, ';')) fail(t, '型の中に `;` は置けません —— 文の切れ目になり、型の綴りに別の文を隠せてしまいます');
-      if (isPunctTok(t, '<', '(', '[', '{')) depth++;
-      if (isPunctTok(t, '>', ')', ']', '}')) depth--;
-      if (depth < 0) fail(t, '型の括弧が合いません');
+      if (t.kind === 'regex') fail(t, '型の中に正規表現は置けません');
+      if (stack.length === 0 && isPunctTok(t, ...terminators)) break;
+      if (t.kind === 'punct' && !TYPE_PUNCT.has(t.text)) {
+        fail(t, `型の中に \`${t.text}\` は置けません —— 型で使えるのは名前・括弧・\`,\` \`:\` \`.\` \`|\` \`&\` \`?\` \`=>\` だけです (字句の切れ目の差で型の綴りに式を隠せてしまうため)`);
+      }
+      // `;` は `{ … }` の直下 (オブジェクト型の欄の区切り) だけ。深さ 0 の `;` は文の切れ目で、型には要らない。
+      if (isPunctTok(t, ';') && stack[stack.length - 1] !== '}') fail(t, '型の中に `;` は置けません —— 文の切れ目になり、型の綴りに別の文を隠せてしまいます');
+      const closer = TYPE_OPEN[t.kind === 'punct' ? t.text : ''];
+      if (closer !== undefined) stack.push(closer);
+      else if (isPunctTok(t, '>', ')', ']', '}')) {
+        if (stack.pop() !== t.text) fail(t, '型の括弧が合いません');
+      }
       parts.push(next());
     }
     if (parts.length === 0) fail(start, '型が要ります');
