@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.14"
+    "version": "0.15"
   },
   "constructs": {
     "class": {
@@ -27,9 +27,10 @@
       "why": "後置の ! は null でないと型に言わせるだけで確かめない。=== null で確かめてから使う形へ書き直す。"
     },
     "spread": {
-      "decision": "feature",
+      "decision": "added",
       "why": "引数の並べ替え・配列の結合に使う。",
-      "risk": "`f(...xs)` で印の型の引数に素の値を流し込める —— 印の型を受ける位置への展開は M4 で断る。オブジェクトの展開は原型を写さないが、欄を字面で見られなくなる。"
+      "risk": "`f(...xs)` で印の型の引数に素の値を流し込める —— 印の型を受ける位置への展開は M4 で断る。オブジェクトの展開は原型を写さないが、欄を字面で見られなくなる。",
+      "since": "0.15"
     },
     "while": {
       "decision": "feature",
@@ -1555,6 +1556,72 @@
         "pr": 855,
         "reason": null,
         "summary": "Atlassian の site URL の関門と保存された資格情報の読み (atlassianSite.ts · SSRF の関門) を Mamori で書き直した (port)。足りなかったのは `as` の 1 か所と template 1 つだけで、`as` は `field` に、template は連結に替えた。`null` の保存値は欄が無い物として fields へ落とす判定だけを残し、配列・数・文字列・真偽は field が undefined を返して同じ断りへ落ちる (等価)。元の TypeScript と差分比較し、site の正規化 13 形・資格情報 25 形・定数・断りの文が一致。既存の検査は編集なしで緑。手探り 7 形は全部 refused。変異検査は 100% (93 killed)。対照 2 つ (許可ホストの末尾判定を緩める・null の断りを外す) は関連の検査で鳴った。"
+      }
+    },
+    {
+      "id": "MG-024",
+      "date": "2026-11-02",
+      "kind": "feature",
+      "target": "spread",
+      "pickedBy": "brief",
+      "briefPick": "feature:spread",
+      "version": "0.15",
+      "features": [
+        "展開 `[...xs, y]` / `{ ...r, k: v }` (配列の字面の項と、オブジェクトの字面の欄より前だけ・呼び出しの引数の展開と残りの引数は無い・相手の式は M6/M2/M4 を通る・展開した結果は印を運ばない)"
+      ],
+      "added": [
+        "spread"
+      ],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "呼び出しの引数の展開 `xs.concat(...xs)` / `new Set(...xs)`",
+          "result": "refused"
+        },
+        {
+          "tried": "欄より後ろのオブジェクトの展開 `{ ok: true, ...x }`",
+          "result": "refused"
+        },
+        {
+          "tried": "展開の相手に宣言していない名前 `[...evil]` / `{ ...evil }`",
+          "result": "refused"
+        },
+        {
+          "tried": "展開の相手に危ない口 `[...shellx]`",
+          "result": "refused"
+        },
+        {
+          "tried": "展開の相手に印を受ける関数 `[...takes]`",
+          "result": "refused"
+        },
+        {
+          "tried": "展開の相手で `.constructor` / `.__proto__` を辿る",
+          "result": "refused"
+        },
+        {
+          "tried": "`{ ...r, __proto__: xs }` (展開の隣で原型を差し替える)",
+          "result": "refused"
+        },
+        {
+          "tried": "印の値を `[...u]` に入れ直して印つきの口 `go` へ渡す",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 2,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/checker.ts",
+          "src/shared/mamori/emit.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 855,
+        "reason": null,
+        "summary": "Mamori 0.15 に展開 (spread) を足した (feature)。配列の字面の項と、オブジェクトの字面の欄より前だけ。呼び出しの引数の展開 (M4 が印を受ける位置を引数の位置で検めるので位置がずれる) と残りの引数は文法に置かず、`{ ok: true, ...x }` のように字面の欄を上書きできる後ろの展開も断る。足す前に 8 形を破り全部 refused (穴は 0 件)。独立の検算役にも追随が要った: Rust の M0 は `...` を禁じた綴りにしていたので記号として読むよう直して Wasm を組み直し (BUILD.json 更新)、独立の TS 判定 mamoriInspect は配列の項と欄より前の展開だけ許す形に、電池の弾にも展開の攻撃を足した。変異検査は parser/checker/emit とも 100% (最初の parser 99.80% の生存 3 件は展開の項に使われない欄で、Prop を和の型にして形ごと消した)。対照 2 つ (欄より後ろの検めを外す・相手の検めを外す) は鳴った。"
       }
     }
   ]
