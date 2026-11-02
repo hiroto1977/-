@@ -1071,6 +1071,7 @@ npm run e2e:ollama       # Ollama 連携 E2E (スタブ Ollama + 実 chromium)�
                          #   単体検査に映らない —— 実ブラウザでしか見えない退行はここだけが捕まえる (パス 304)
 npm run ollama           # Ollama CLI (ブラウザ不要・CORS 無縁)。`-- chat <model> "..."` で対話
 npm run ollama:setup     # 導入→モデル取得→起動→1往復して確認。足りない段だけ埋める
+npm run local-llm:setup   # Linux: Ollama / VS Code / Continue / llama.cpp と安全なモデルを一括導入 (既定は計画の表示のみ・`-- --yes` で実行)。docs/LOCAL_LLM_SETUP.md
                          #   `-- --check` で現状確認のみ / `-- --origin <URL>` でブラウザ許可も案内
 npm run build:renderer   # tsc -b + vite build only (no packaging)
 npm run build            # full desktop build: tsc -b, vite build, electron-builder installers
