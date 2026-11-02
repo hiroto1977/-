@@ -119,7 +119,7 @@ describe('0.14 分割代入 (threat: T-224 の続き)', () => {
   it('★ 取り出した名前は局所の const (代入は let ではないと断り・外の名前とは言わない)', () => {
     const d = diag(fn('  const { a } = x;\n  a = "z";'));
     expect(d.join('\n')).toMatch(/let ではないので代入できません/);
-    expect(d.join('\n')).not.toMatch(/外の名前/);
+    expect(d.join('\n')).not.toContain('外の名前');
   });
 
   it('★ 生成物は欄の並びと付け替えをそのまま出す', () => {
@@ -140,7 +140,7 @@ describe('0.14 分割代入 (threat: T-224 の続き)', () => {
 
   it('★ await 以外の単項は根にならない (typeof / ! の結果は値)', () => {
     for (const init of ['typeof Math', '!Math', '-Math']) {
-      expect(diag(fn(`  const { length } = ${init};`)).join('\n'), init).not.toMatch(/分割代入で取り出せません/);
+      expect(diag(fn(`  const { length } = ${init};`)).join('\n'), init).not.toContain('分割代入で取り出せません');
     }
   });
 });
