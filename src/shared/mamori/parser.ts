@@ -548,7 +548,7 @@ export function parse(file: string, src: string): Module {
     ['^'],
     ['&'],
     ['===', '!=='],
-    ['<', '>', '<=', '>='],
+    ['<', '>', '<=', '>=', 'instanceof'],
     ['<<', '>>', '>>>'],
     ['+', '-'],
     ['*', '/', '%'],
@@ -564,6 +564,8 @@ export function parse(file: string, src: string): Module {
     const adjacent = (n: number): boolean => isP('>', n) && peek(n).pos.line === t.pos.line && peek(n).pos.col === t.pos.col + n;
     const shift = adjacent(0) && adjacent(1) ? (adjacent(2) ? { text: '>>>', count: 3 } : { text: '>>', count: 2 }) : null;
     if (shift !== null && ops.includes(shift.text)) return shift;
+    // 語の演算子 (`instanceof` · 0.16 · MG-028) は名前の字句として届く。名前と語の演算子を取り違えないよう、綴りが予約語であることを RESERVED が持つ。
+    if (t.kind === 'ident' && ops.includes(t.text)) return { text: t.text, count: 1 };
     return isPunctTok(t, ...ops) ? { text: t.text, count: 1 } : null;
   };
 
@@ -945,6 +947,8 @@ const RESERVED = new Set([
   'use', 'extern', 'vetted', 'export', 'const', 'let', 'fn', 'gate', 'sink', 'return', 'if', 'else', 'try', 'catch', 'mint', 'from', 'alias',
   // 0.2 (パス 563)
   'throw', 'for', 'of', 'break', 'continue', 'switch', 'case', 'default', 'field', 'type', 'interface',
+  // 0.16 (MG-028)
+  'instanceof',
 ]);
 
 function describe(t: Tok): string {

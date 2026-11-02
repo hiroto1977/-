@@ -37,13 +37,14 @@ export function inspectEmitted(file: string, text: string, externGlobals: Readon
 
   // 宣言した名前 (束縛・型・import) を全部集める
   const declared = new Set<string>();
+  const imported = new Set<string>();
   const collect = (n: ts.Node): void => {
     if ((ts.isFunctionDeclaration(n) || ts.isClassDeclaration(n) || ts.isTypeAliasDeclaration(n) || ts.isInterfaceDeclaration(n)) && n.name) declared.add(n.name.text);
     if (ts.isVariableDeclaration(n) && ts.isIdentifier(n.name)) declared.add(n.name.text);
     if (ts.isParameter(n) && ts.isIdentifier(n.name)) declared.add(n.name.text);
-    if (ts.isImportSpecifier(n)) declared.add(n.name.text);
-    if (ts.isImportClause(n) && n.name) declared.add(n.name.text);
-    if (ts.isNamespaceImport(n)) declared.add(n.name.text);
+    if (ts.isImportSpecifier(n)) { declared.add(n.name.text); imported.add(n.name.text); }
+    if (ts.isImportClause(n) && n.name) { declared.add(n.name.text); imported.add(n.name.text); }
+    if (ts.isNamespaceImport(n)) { declared.add(n.name.text); imported.add(n.name.text); }
     if (ts.isTypeParameterDeclaration(n)) declared.add(n.name.text);
     ts.forEachChild(n, collect);
   };
@@ -80,6 +81,14 @@ export function inspectEmitted(file: string, text: string, externGlobals: Readon
       const obj = n.parent;
       if (!ts.isObjectLiteralExpression(obj) || obj.properties.slice(0, obj.properties.indexOf(n)).some((p) => !ts.isSpreadAssignment(p))) {
         found.push({ kind: 'hole', reason: '欄より後ろのオブジェクトの展開' });
+      }
+    }
+    // 0.16 の instanceof: 右辺は名前だけで、その名前は組み込み・`extern pure global`・取り込んだ名前に限る (局所の名前・計算した式は穴)。
+    if (ts.isBinaryExpression(n) && n.operatorToken.kind === ts.SyntaxKind.InstanceOfKeyword) {
+      const r = n.right;
+      if (!ts.isIdentifier(r)) found.push({ kind: 'hole', reason: `instanceof の右辺が名前でない: ${r.getText(sf)}` });
+      else if (declared.has(r.text) ? !imported.has(r.text) : !(externGlobals.has(r.text) || ALLOWED_BUILTINS.has(r.text))) {
+        found.push({ kind: 'hole', reason: `instanceof の右辺が許した名前でない: ${r.text}` });
       }
     }
     if (ts.isCallExpression(n) && n.expression.kind === ts.SyntaxKind.ImportKeyword) found.push({ kind: 'hole', reason: '動的 import がある' });

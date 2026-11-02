@@ -1,5 +1,10 @@
 # Service Hub — 残りの作業手順書
 
+## MG-028 (instanceof · Mamori 0.16) で測って残した物 (2026-11-02)
+
+- **宣言の名前に JavaScript の予約語を書ける**: `const class = 1;` / `const typeof = 1;` / `const instanceof = 1;` は Mamori の検査を通り、生成された TypeScript を `tsc` が断る (実測)。閉じた側に落ちるので守りの穴ではなく、直すなら `ident()` の宣言の位置 (const / let / fn / 引数 / for / catch / 分割代入の名前) に予約語の表を掛ける。式の位置の `instanceof` は RESERVED で断る (`mamoriV16.test.ts`)。
+- **`instanceof` の右辺に `use` した名前を許した理由**: 取り込んだ名前 (`use { Klass } from "./other"`) は他のモジュールが宣言した物で、その module の検査が既に掛かっている。局所の名前は計算した値かもしれないので断る。
+
 ## パス 571 (MG-004) —— escape.ts の移植と Mamori 0.4 (2026-10-31)
 
 - **閉じた穴 (T-232)**: Mamori の M6 が組み込みの名前だけを見て、共有の状態を持つメンバ (RegExp の旧式の静的な欄・Error の captureStackTrace / stackTraceLimit・URL の blob) を通していた。`BUILTIN_MEMBERS` の表で構築する形と許したメンバだけにした。`mamoriV04.test.ts` 20 件 + 台帳の書き換え A-541 / A-542。詳細は SESSION_HANDOFF のパス 571。

@@ -556,6 +556,27 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     checkExpr(callee, scopes, ctx);
   }
 
+  /**
+   * `x instanceof Y` の右辺 (0.16 · MG-028)。**名前そのものだけ**で、その名前はこのモジュールの名前で隠れていない組み込みか、
+   * `use` / `extern pure` で宣言した名前に限る。`instanceof` は右辺の `Symbol.hasInstance` を辿るので、右辺を実行時に計算できる形
+   * (メンバ・呼び出し・条件・添字・局所の名前) は、宣言していない値へ届く道になる。名前を値として読む形ではないので、組み込みの
+   * 持ち出しの断りは掛けない (比べるだけで、値は式の外へ出ない)。
+   */
+  function checkInstanceofRight(r: Expr, scopes: readonly Map<string, Binding>[]): void {
+    if (r.kind !== 'ident') {
+      report('M6', r.pos, 'instanceof の右辺は名前だけです —— 組み込みか `use` / `extern pure` で宣言した名前を直に書きます (メンバ・呼び出し・条件・添字は、実行時に計算した値の `Symbol.hasInstance` を辿れてしまう)');
+      return;
+    }
+    const b = lookup(scopes, r.name);
+    if (b === undefined) {
+      if (!PURE_GLOBALS.has(r.name)) report('M6', r.pos, `宣言していない名前 ${r.name} —— 外の値は \`use\` / \`extern\` で宣言します (網・記憶・OS へ届く名前は暗黙に使えません)`);
+    } else if (b.authority === 'sink') {
+      report('M2', r.pos, `危ない口 ${r.name} (extern sink) は instanceof の右辺に置けません —— 危ない口は呼ぶ形でしか使えません`);
+    } else if (b.authority === 'local') {
+      report('M6', r.pos, `instanceof の右辺は組み込みか宣言した外の名前だけです —— ${r.name} はこのモジュールの局所の名前で、実行時に計算した値かもしれません (組み込みの名前を局所の名前で隠した形も同じ)`);
+    }
+  }
+
   function checkExpr(e: Expr, scopes: readonly Map<string, Binding>[], ctx: Ctx): void {
     switch (e.kind) {
       case 'ident': {
@@ -635,7 +656,8 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         return;
       case 'binary':
         checkExpr(e.left, scopes, ctx);
-        checkExpr(e.right, scopes, ctx);
+        if (e.op === 'instanceof') checkInstanceofRight(e.right, scopes);
+        else checkExpr(e.right, scopes, ctx);
         return;
       case 'new':
         // 構築する形で名前を使うのは許す (`new RegExp(…)`)。値として持ち出す形は 'ident' の枝が断る。
