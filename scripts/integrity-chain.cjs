@@ -695,6 +695,7 @@ const PROTECTED = [
   'src/renderer/oauth/pkce.ts',             // ブラウザ版 PKCE
   'src/renderer/oauth/pkceSession.ts',      // PKCE の一時秘密の置き場と消し方
   'src/shared/updateCheck.mamori',          // 更新の案内先 URL の関門と版の比較の Mamori の元 (2026-11-01 · MG-018)
+  'src/main/clients/exportPaths.mamori',    // 書き出し先の関門と権限直しの Mamori の元 (2026-11-02 · MG-020)
   'src/renderer/oauth/pkceSession.mamori',  // その Mamori の元 (2026-11-01 · MG-017)
   'src/renderer/oauth/pkceSessionHost.ts',  // sessionStorage の口 (薄い壁)
   // 2026-09-06 に足した。**保護の閉包が教えてくれた。** `pkceSession.ts` が

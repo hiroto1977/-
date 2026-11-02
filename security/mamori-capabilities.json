@@ -147,6 +147,16 @@
       "imports": [],
       "gates": [],
       "sinks": []
+    },
+    "src/main/clients/exportPaths.mamori": {
+      "externals": [],
+      "imports": [
+        "node:fs: promises",
+        "node:os: default os",
+        "node:path: default path"
+      ],
+      "gates": [],
+      "sinks": []
     }
   }
 }

@@ -348,6 +348,7 @@ export sink fn openExternalVetted(url: VettedExternalUrl) -> Promise<void> {
 | `src/shared/proxyEndpoint.mamori` | `src/shared/proxyEndpoint.ts` | BYO プロキシの送り先と共有秘密の検証 (**資格情報のほぼ全部が通る 1 本の口** · 0.2 の構文で書き直した最初の物 · パス 563) |
 | `src/shared/tokenInput.mamori` | `src/shared/tokenInput.ts` | 資格情報の保存要求の検証 (`checkTokenInput` · main と renderer で同じ規則 · 空 / 長すぎ / 制御文字 / 非 Latin1 を理由つきで断る · 0.3 で書き直した · パス 567 · MG-003) |
 | `src/shared/escape.mamori` | `src/shared/escape.ts` | 出力側の関門 (`escapeXml` / `safeColor` / `isHexColor` / `escapeMarkdownInline` / `escapeMarkdownText` / `escapeInvisibleUnits` ほか · HTML / XML / Markdown に第三者の文を埋める所と色を属性へ埋める所 · 0.3 で書き直した —— template を `+` の連結へ替えただけ · パス 571 · MG-004) |
+| `src/main/clients/exportPaths.mamori` | `src/main/clients/exportPaths.ts` | 書き出しの行き先の関門 (`isSafeExportPath`)・根の置き場 (`exportRoot` / `exportWriteRoot` / `exportParentDirs`)・書く直前の閉じ込め (`assertExportTargetContained`)・0600 の書き込み (`writeExportFile`)・根の 0700 化と既存ファイルの権限直し (MG-020 · M7 の台帳に `node:fs` / `node:os` / `node:path` を載せた。権限は 8 進が書けないので 10 進 (448 / 384 / 63)・非同期の arrow が無いので再帰の関数 `repairDir` に分けた。元の TypeScript と実ファイルで比べ、結果・断りの文・残るモードが一致) |
 
 残りの TypeScript は Mamori で書いた gate / sink を呼ぶ側で、呼ぶ側には TypeScript の型の印が掛かる
 (パス 559)。書き出しのファイル書き込みはパス 560 で gate と sink の組として移し、pending の天井を 4 → 3 へ下げた。
