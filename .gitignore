@@ -13,6 +13,8 @@ release/
 tmp-screenshots/
 .env
 .env.local
+.env.mcp.local
+data/local.db
 electron-builder.env
 *.log
 *.tsbuildinfo

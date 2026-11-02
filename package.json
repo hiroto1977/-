@@ -63,6 +63,7 @@
     "lint:test-coverage": "node scripts/lint-test-coverage.cjs && node scripts/lint-test-coverage.cjs --self-test",
     "verify:release-artifacts": "node scripts/verify-release-artifacts.cjs --self-test && node scripts/checksum-release.cjs --self-test",
     "mcp:check": "node scripts/mcp-check.cjs",
+    "setup:mcp-local": "bash scripts/setup-mcp-local.sh",
     "mutate": "stryker run",
     "mutate:next": "node scripts/suggest-next-kill.cjs",
     "mutate:triage": "node scripts/triage-mutations.cjs",

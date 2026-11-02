@@ -59,7 +59,43 @@ npm run mcp:check
 
 ---
 
-## セットアップ手順
+## ローカル一発セットアップ (GitHub 上の MCP 設定を使う)
+
+リポジトリには `.claude/settings.json` に **25 個の MCP サーバー**が GitHub で管理されています。
+clone した端末で次を実行すると、ローカル専用ファイルだけを足してそのまま使えます。
+
+```bash
+npm run setup:mcp-local
+# または
+bash scripts/setup-mcp-local.sh
+```
+
+スクリプトが行うこと:
+
+| 項目 | 内容 |
+| --- | --- |
+| `uv` / `uvx` | `git` / `sqlite` / `time` / `fetch` MCP 用 (未導入なら自動インストール) |
+| `.env.mcp.local` | API キー用 (`.gitignore` · `.env.mcp.example` から作成) |
+| `GITHUB_TOKEN` | `gh auth login` 済みなら `gh auth token` で自動設定 |
+| `.mcp.json` | Claude Code 用 (`.claude/settings.json` の写し · git 非追跡) |
+| `data/local.db` | sqlite MCP 用 |
+
+**Cursor / Claude Code のルール** (`.cursor/rules/*.mdc` · `CLAUDE.md`) は clone 済みなら追加作業不要です。
+
+**セッション間の記憶** (`memory` MCP) は API キー不要。ローカルに知識グラフを保持します。
+
+毎回のターミナルで API キーを使う場合:
+
+```bash
+source .env.mcp.local
+npm run mcp:check
+```
+
+Windows (PowerShell のみ) の場合は [WSL](https://learn.microsoft.com/windows/wsl/) または Git Bash から上記を実行してください。
+
+---
+
+## セットアップ手順 (手動)
 
 ### 1. 環境変数を設定する
 
