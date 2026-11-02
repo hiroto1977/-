@@ -208,6 +208,7 @@ function selfRolled(): string[] {
  * この一覧を守っているのは下の走査との両方向の一致で、この散文の数ではない。
  */
 const MIGRATED: readonly string[] = [
+  'src/shared/mamori/__tests__/rustVerifier.test.ts',
   'src/renderer/data/__tests__/aegisLangSafety.test.ts',
   'src/shared/__tests__/threatLedger.test.ts',
   'src/renderer/data/__tests__/backupRecordLimit.test.ts',

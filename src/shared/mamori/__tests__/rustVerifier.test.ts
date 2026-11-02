@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
+import { readOriginalDir, readOriginalSource } from '../../__tests__/originalSource';
+import { stripComments } from '../../__tests__/stripNonCode';
 import { createHash } from 'node:crypto';
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { compileProject } from '../compile';
 import { FORBIDDEN_MEMBERS, FORBIDDEN_WORDS } from '../parser';
@@ -61,7 +63,7 @@ function tsVerdict(src: string): { ok: boolean; spelling: boolean; emitted: read
 }
 
 function walk(d: string, out: string[] = []): string[] {
-  for (const n of readdirSync(d)) {
+  for (const n of readOriginalDir(d)) {
     if (n === 'node_modules' || n.startsWith('.')) continue;
     const f = join(d, n);
     if (statSync(f).isDirectory()) walk(f, out);
@@ -144,7 +146,7 @@ describe('Rust 検算役 · ABI と上限 (解析で見つかった D1/D2/D3)', 
 
 describe('Rust 検算役 · 出どころ (ソースと成果物が BUILD.json と一致する)', () => {
   const sha = (p: string): string => createHash('sha256').update(readFileSync(join(ROOT, p))).digest('hex');
-  const build = JSON.parse(readFileSync(join(ROOT, 'tools/mamori-verify/BUILD.json'), 'utf8')) as { files: Record<string, string> };
+  const build = JSON.parse(readOriginalSource(join(ROOT, 'tools/mamori-verify/BUILD.json'))) as { files: Record<string, string> };
   it('lib.rs / Cargo.toml / Cargo.lock / wasm の sha256 が台帳どおり (編集したら scripts/build-mamori-verify.cjs で組み直す)', () => {
     for (const [path, hash] of Object.entries(build.files)) expect(sha(path), path).toBe(hash);
     expect(Object.keys(build.files).sort()).toEqual([
@@ -157,7 +159,7 @@ describe('Rust 検算役 · 出どころ (ソースと成果物が BUILD.json �
 });
 
 describe('Rust 検算役 · 供給網と unsafe (言語の網羅 · threat: T-187)', () => {
-  const read = (p: string): string => readFileSync(join(ROOT, p), 'utf8');
+  const read = (p: string): string => readOriginalSource(join(ROOT, p));
   it('依存 crate は 0 (Cargo.toml の [dependencies] は空・Cargo.lock の package は自分だけ)', () => {
     const toml = read('tools/mamori-verify/Cargo.toml');
     expect(/\[dependencies\]\s*(\n\s*)*\[/.test(toml + '\n[end]')).toBe(true);
@@ -167,7 +169,7 @@ describe('Rust 検算役 · 供給網と unsafe (言語の網羅 · threat: T-18
     expect(lock).not.toMatch(/source\s*=/);
   });
   it('unsafe は 1 か所だけ (固定バッファの slice を作る 1 行)・std を使わない・panic は trap', () => {
-    const code = read('tools/mamori-verify/src/lib.rs').split('\n').filter((l) => !l.trim().startsWith('//')).join('\n');
+    const code = stripComments(read('tools/mamori-verify/src/lib.rs'));
     expect((code.match(/\bunsafe\b/g) ?? []).length).toBe(1);
     expect(code).toContain('#![no_std]');
     expect(code).toContain('unreachable()');
@@ -180,7 +182,7 @@ describe('Rust 検算役 · TS コンパイラとの M0 の突き合わせ', () 
 
   it('実物の .mamori は Rust も全部通す (誤検出 0)', () => {
     expect(realFiles.length).toBeGreaterThanOrEqual(19);
-    for (const f of realFiles) expect(rust(readFileSync(f, 'utf8')), f).toBe(0);
+    for (const f of realFiles) expect(rust(readOriginalSource(f)), f).toBe(0);
   });
 
   /** 手で選んだ禁じた綴り。TS が M0 で断るものは Rust も断る。 */
@@ -241,7 +243,7 @@ describe('Rust 検算役 · TS コンパイラとの M0 の突き合わせ', () 
       "['__proto__']", '{ __proto__: 1 }', '\r', '\u2028', '\u2029', '\u202e', '\u200b', '\u0000', '\ufeff', ' ', 'é', '#', '@', '\\',
       '"', "'", '/', '//', '/[/', '}/', ')/', '"]', '["', '\u0085', '\u061c', '\u180e', 'ａ', '\u00ad', '\u034f', '\u3164', '\u2800', '\u206a', '\u2065', '\u{E0041}', '\u{E0100}', '\u115f',
     ];
-    const files = realFiles.map((f) => readFileSync(f, 'utf8'));
+    const files = realFiles.map((f) => readOriginalSource(f));
     const tsHoles: string[] = [];
     let stricter = 0;
     const rustMissed: string[] = [];
