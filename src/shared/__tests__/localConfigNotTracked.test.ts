@@ -18,7 +18,7 @@ import { describe, expect, it } from 'vitest';
  * されても ① が止める。① が外れたときは ② が鳴る)。
  */
 const ROOT = path.resolve(__dirname, '../../..');
-const LOCAL_ONLY = ['.claude/settings.local.json', '.mcp.json'] as const;
+const LOCAL_ONLY = ['.claude/settings.local.json', '.mcp.json', '.env.mcp', 'data/mcp-memory.jsonl'] as const;
 
 describe('端末固有の Claude Code 設定は追跡しない (threat: T-036)', () => {
   it.each(LOCAL_ONLY)('★ %s は git が無視する (threat: T-036)', (file) => {

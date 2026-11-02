@@ -3,6 +3,40 @@
 このプロジェクトで使える MCP サーバーの完全導入手順。  
 Claude Code ローカル環境で `npm run mcp:check` を実行して設定状態を確認できる。
 
+## ローカル環境の初期セットアップ（GitHub に保存した記憶を使う）
+
+Cloud Agent や別マシンで MCP Memory に蓄えた内容を、手元の Claude Code / Cursor から使う手順です。
+
+```bash
+# 1. リポジトリを clone したあと、Linux/macOS/WSL では:
+bash scripts/setup-linux.sh
+
+# 2. MCP 用のローカルファイル (.mcp.json / data/mcp-memory.jsonl / .env.mcp) を生成
+npm run mcp:setup
+
+# 3. GitHub CLI で本人アカウントにログイン (初回のみ)
+gh auth login
+
+# 4. .env.mcp を編集 —— 控えの場所を指定 (どちらか一方)
+#    秘密 Gist:  MCP_MEMORY_GIST_ID=<gist-id>
+#    リポジトリ: MCP_MEMORY_GITHUB=hiroto1977/-:data/mcp-memory.jsonl
+
+# 5. 環境変数をシェルへ読み込み
+set -a && source .env.mcp && set +a   # bash/zsh
+# PowerShell: Get-Content .env.mcp | ForEach-Object { ... } または手動で $env:GITHUB_TOKEN を設定
+
+# 6. GitHub 上の memory.jsonl をローカルへ取り込む
+npm run mcp:memory:pull
+
+# 7. 確認してエージェントを再起動
+npm run mcp:check
+```
+
+ローカルで記憶を更新したあと GitHub へ書き戻す場合は `npm run mcp:memory:push` です。
+`.mcp.json` と `data/mcp-memory.jsonl` は gitignore 済みなので、clone しただけでは控えは届きません — **必ず pull** してください。
+
+Windows (Cursor + Claude Code) では `scripts/setup-linux.sh` の代わりに Node 20+ と `npm ci` を実行し、以降は同じ `npm run mcp:setup` から進められます。
+
 ## 設定状態の確認
 
 ```bash

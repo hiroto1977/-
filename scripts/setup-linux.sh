@@ -302,6 +302,7 @@ cat <<'EOS'
 
 ✅ セットアップ完了。次の一歩:
 
+  npm run mcp:setup    # MCP (.mcp.json) と GitHub 記憶のローカル控えを用意
   npm run dev          # Electron デスクトップ版を起動
   npm run build:web    # ブラウザ単体版 dist/standalone.html を生成
   npm run smoke        # xvfb で全ページのスクリーンショット確認

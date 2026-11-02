@@ -115,6 +115,23 @@ function main() {
     console.log('     → docs/MCP_SETUP.md の "Google Drive 認証" セクションを参照');
   }
 
+  // MCP Memory ファイル
+  const memoryPath = path.join(__dirname, '../data/mcp-memory.jsonl');
+  console.log('\n🧠 MCP Memory');
+  if (fs.existsSync(memoryPath)) {
+    const stat = fs.statSync(memoryPath);
+    console.log(`  ✅ data/mcp-memory.jsonl (${stat.size} B)`);
+    const memEnv = servers.memory?.env?.MEMORY_FILE_PATH;
+    if (memEnv) {
+      console.log(`  ✅ MEMORY_FILE_PATH=${memEnv}`);
+    } else {
+      console.log('  ⚠️  .claude/settings.json の memory に MEMORY_FILE_PATH がありません → npm run mcp:setup');
+    }
+  } else {
+    console.log('  ❌ data/mcp-memory.jsonl がありません → npm run mcp:setup');
+    console.log('     GitHub 控えから取り込む: npm run mcp:memory:pull (.env.mcp に GIST または GITHUB 参照)');
+  }
+
   // Obsidian vault チェック
   const vaultPath = path.join(__dirname, '../knowledge-vault');
   console.log('\n📚 Obsidian Vault');

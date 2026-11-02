@@ -57,7 +57,9 @@
     "memory": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-memory"],
-      "env": {}
+      "env": {
+        "MEMORY_FILE_PATH": "./data/mcp-memory.jsonl"
+      }
     },
 
     "sequential-thinking": {

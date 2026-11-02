@@ -3600,13 +3600,21 @@
       "leafCount": 165,
       "note": "update checker.ts",
       "hash": "e8f633845079b6b1335f5faf3c63b456bd22b6f68f8397b7f9b5117d6313154f"
+    },
+    {
+      "index": 429,
+      "prevHash": "e8f633845079b6b1335f5faf3c63b456bd22b6f68f8397b7f9b5117d6313154f",
+      "merkleRoot": "2d25f023ef07a1924e688660dfcfe0bca6bc21e535a013d3868dd019db21fdba",
+      "leafCount": 165,
+      "note": "update settings.json,setup-linux.sh",
+      "hash": "556fe673dc15b30061b6f5ab88d695842a2331c2cae8d8185ecb6276bbfc199a"
     }
   ],
   "tipManifest": {
     ".claude/agents/auditor.md": "e05fe724eaeacb9f382a4fdda00c5ec1bf5919bbdd6a331020052f7d2fdddc53",
     ".claude/agents/mechanic.md": "fedb7fe67017550081fc9fcae90805362f3557823d56fbed83b3d2922dac3960",
     ".claude/agents/scout.md": "78db2996e39470b38ec29df5a10791a49f65d04594fbe4d77b739770f9330bef",
-    ".claude/settings.json": "f3add3b9e10ff80d5c7e4877232164abcdb5dad3f2a4e7ba2d6a17cd54284a42",
+    ".claude/settings.json": "a21e0e91d04b79c60b8144d0b173fe5ed523e260d3e93d3eabf6711bc1708802",
     ".cursor/rules/00-project.mdc": "5945e78dfabb45faed69b7d9460ed5d48a021abbceb6f5e49f3c0d770909a66d",
     ".cursor/rules/10-boundaries.mdc": "14c2aad731d81125a16c07a78ded8098126642432fdd36aea50dce409e706972",
     ".cursor/rules/20-gates.mdc": "821205069a9f0fae121e92be6826342bce6e765a34bea95c7ebc36c57b234da4",
@@ -3655,7 +3663,7 @@
     "scripts/public-host-guard.cjs": "6275b14b2baed632212143d741f15cd9fa856782b0ff66f1b09315533cba355d",
     "scripts/safe-vault-write.cjs": "263ad4e8e52952769cda1be6e25b31025e0f023439e93f6eccdc996ec15215f3",
     "scripts/security-audit.sh": "c50257fabca4b4c6def121dfc676539bd5db97679da6db4ef4961a48c6993064",
-    "scripts/setup-linux.sh": "d759d679007975cf3cfbf9a26eb01a3240741ba769d6da9d886e9d57a17b5cba",
+    "scripts/setup-linux.sh": "f79f25c27470cedb95f53ae47ef511ddee155b01c2c33765001d3cf4cd95b222",
     "scripts/setup-obsidian-docker.sh": "1d35ecc6518e3aeb1a9a1a23f9d89ba8a0f7f5cf87f439e544b3638145b248d3",
     "scripts/smoke-app.cjs": "e0ec8dd631cbdbcd075663b99bdc33b380dc5d61ea049df7a626e300fb544095",
     "scripts/smoke-packaged.cjs": "34a28bbd72569dc3fd498d01f17997d989b760a7261f9716148f185c79bb6b96",
