@@ -698,6 +698,8 @@ const PROTECTED = [
   'src/main/clients/exportPaths.mamori',    // 書き出し先の関門と権限直しの Mamori の元 (2026-11-02 · MG-020)
   'src/renderer/oauth/pkceSession.mamori',  // その Mamori の元 (2026-11-01 · MG-017)
   'src/renderer/oauth/pkceSessionHost.ts',  // sessionStorage の口 (薄い壁)
+  'src/renderer/security/dataCrypto.mamori',     // レコード暗号の関門 (KDF 回数・塩・封筒の形) の Mamori の元 (2026-11-02 · MG-021)
+  'src/renderer/security/dataCryptoHost.ts',     // WebCrypto / btoa の口 (薄い壁)
   // 2026-09-06 に足した。**保護の閉包が教えてくれた。** `pkceSession.ts` が
   // 保存の失敗の種別を文面へ写すため `localWrite.ts` を読むようにしたところ、
   // `chain:verify` が「保護対象が保護されていない物を読んでいる」と鳴らした。

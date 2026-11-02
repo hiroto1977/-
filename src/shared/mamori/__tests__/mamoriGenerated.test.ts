@@ -37,6 +37,7 @@ const EXPECTED = [
   'src/renderer/oauth/pkceSession.mamori',
   'src/shared/updateCheck.mamori',
   'src/main/clients/exportPaths.mamori',
+  'src/renderer/security/dataCrypto.mamori',
   'src/shared/vetted.mamori',
 ];
 

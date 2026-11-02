@@ -1,0 +1,176 @@
+//! dataCrypto — パスフレーズで任意の文字列を認証つきで暗号化する (書き出したバックアップの機密性。完全性の SHA-256 は `data/backup.ts` が別に持つ)。
+//!
+//! 部品は保管庫 (`security/vault.ts`) と同じ: PBKDF2-SHA256 → AES-GCM-256。保管庫とは独立で、アプリを解錠しなくても
+//! 一回きりのパスフレーズでバックアップを暗号化できる。AES-GCM は認証つきなので、パスフレーズの違いや salt / iv / 暗号文の改竄は
+//! ゴミを返さず復号の失敗 (投げる) になる。
+//!
+//! WebCrypto・base64・乱数・文字コードの出し入れは `dataCryptoHost.ts` の薄い壁へ閉じ込めた (Mamori の pure には宣言できない)。
+//! ここが持つのは、**保存側から読んだ値の床と封筒の形の検め**、断りの文、呼ぶ順序 (検めてから鍵を導出する) —— 判断のすべて。
+
+use { PBKDF2_ITERATIONS alias SHARED_ITERATIONS, MIN_SALT_BYTES, MIN_STORED_SALT_BYTES, AES_GCM_IV_BYTES } from "../../shared/cryptoParams";
+extern pure { hostToBase64, hostFromBase64, hostRandomBytes, hostDeriveKey, hostEncrypt, hostDecrypt } from "./dataCryptoHost";
+
+const KDF = 'PBKDF2-SHA256';
+
+// OWASP 2023 の PBKDF2-SHA256 の床は 600,000 (210,000 は SHA-512 の行)。この module は SHA-256 で回すので、210k は意図した仕事量の約 1/3 で
+// 保管庫の 600k とも食い違っていた (2026-07 の監査で直した)。`iterations` は各封筒が持つので、古い値で書いた封筒は自分の回数で開く。
+const ITERATIONS = SHARED_ITERATIONS;
+
+/// 保存側から読んだ反復回数の許容範囲。封緘データも保管庫のメタも自分で反復回数を持つので、壊れた/悪意ある値が途方もない回数を要求できる
+/// (PBKDF2 はその回数だけ回す)。上限が無いと復号が事実上終わらず、保管庫のメタでそれが起きると利用者が自分の資格情報から永久に締め出される。
+/// 下限は防御ではなく健全性の確認。この 2 つは `security/vault.ts` からも使う。
+export const MIN_KDF_ITERATIONS = 100000;
+export const MAX_KDF_ITERATIONS = 4000000;
+
+/// 保存側から読んだ反復回数を検証する。範囲外なら投げる。型は `number` だが値は保存領域から来るので実行時には何でも来うる。
+/// `typeof` の判定は書かない —— `Number.isFinite` は型強制をしないので、文字列も null も `{}` も等しく false になり、typeof は結果を変えない。
+export fn assertKdfIterations(iterations: number) -> void {
+  if (!Number.isFinite(iterations) || iterations < MIN_KDF_ITERATIONS || iterations > MAX_KDF_ITERATIONS) {
+    throw new Error('暗号化データの反復回数が許容範囲外です');
+  }
+}
+
+/// 保存側から読んだソルトの長さを検証する。下限を割っていれば投げる。見るのは**凍結値** `MIN_STORED_SALT_BYTES` で、生成側の
+/// `MIN_SALT_BYTES` を見てはならない (あちらを上げた日に正当な過去のソルトが一斉に床を割る)。短いソルトは利用者をまたいだ事前計算を成り立たせる。
+export fn assertSaltBytes(salt: Uint8Array) -> void {
+  if (salt.length < MIN_STORED_SALT_BYTES) {
+    throw new Error('暗号化データのソルトが短すぎます');
+  }
+}
+
+/// 生成側は**動かしてよい定数**から採る (パス 240)。
+const SALT_BYTES = MIN_SALT_BYTES;
+const IV_BYTES = AES_GCM_IV_BYTES;
+
+export interface EncryptedBundle {
+  readonly v: 1;
+  readonly kdf: typeof KDF;
+  readonly iterations: number;
+  /// base64
+  readonly salt: string;
+  /// base64
+  readonly iv: string;
+  /// base64 ciphertext (incl. GCM tag)
+  readonly ct: string;
+}
+
+/// base64 として読めない値を領域のエラーに変える。`atob` は不正な文字でプラットフォームの生の例外を投げ、「パスワードが違う」のか
+/// 「ファイルが壊れている」のかで利用者の次の行動が変わるので、文言を分ける。
+fn decodeBase64Field(b64: string, name: string) -> Uint8Array {
+  try {
+    return hostFromBase64(b64);
+  } catch (_e) {
+    throw new Error('暗号化データが壊れています（' + name + ' が base64 として読めません）');
+  }
+}
+
+export fn isEncryptedBundle(v: unknown) -> v is EncryptedBundle {
+  if (typeof v !== 'object' || v === null) {
+    return false;
+  }
+  return field v.v === 1
+    && field v.kdf === KDF
+    && Number.isFinite(field v.iterations)
+    && typeof field v.salt === 'string'
+    && typeof field v.iv === 'string'
+    && typeof field v.ct === 'string';
+}
+
+export async fn encryptString(plaintext: string, password: string) -> Promise<EncryptedBundle> {
+  if (password.length === 0) {
+    throw new Error('パスワードを入力してください');
+  }
+  const salt = hostRandomBytes(SALT_BYTES);
+  const iv = hostRandomBytes(IV_BYTES);
+  const key = await hostDeriveKey(password, salt, ITERATIONS);
+  const ct = await hostEncrypt(key, iv, plaintext);
+  return {
+    v: 1,
+    kdf: KDF,
+    iterations: ITERATIONS,
+    salt: hostToBase64(salt),
+    iv: hostToBase64(iv),
+    ct: hostToBase64(ct),
+  };
+}
+
+export async fn decryptString(bundle: EncryptedBundle, password: string) -> Promise<string> {
+  if (!isEncryptedBundle(bundle)) {
+    throw new Error('暗号化データの形式が不正です');
+  }
+  const salt = decodeBase64Field(bundle.salt, 'salt');
+  const iv = decodeBase64Field(bundle.iv, 'iv');
+  assertSaltBytes(salt);
+  assertKdfIterations(bundle.iterations);
+  const key = await hostDeriveKey(password, salt, bundle.iterations);
+  try {
+    return await hostDecrypt(key, iv, hostFromBase64(bundle.ct));
+  } catch (_e) {
+    // GCM の認証失敗 = パスフレーズの違いか暗号文の改竄。
+    throw new Error('復号に失敗しました（パスワード不一致またはデータ破損）');
+  }
+}
+
+// --- レコードごとの暗号化のための低水準の鍵の使い回し -------------------------------------------------
+// `encryptString` / `decryptString` は呼ぶたびに PBKDF2 を回すので、レコードごとには遅すぎる。鍵を 1 度だけ導出して (PBKDF2 は 1 回)、
+// 安価な AES-GCM でレコードを封緘 / 開封する。
+
+/// 封緘した値: iv + 暗号文 (base64)。salt と反復回数は持たない (鍵はメモリにあり、salt は保管場所に 1 つ)。
+export interface Sealed {
+  /// base64
+  readonly iv: string;
+  /// base64
+  readonly ct: string;
+}
+
+export fn isSealed(v: unknown) -> v is Sealed {
+  if (typeof v !== 'object' || v === null) {
+    return false;
+  }
+  return typeof field v.iv === 'string' && typeof field v.ct === 'string';
+}
+
+/// ランダムな PBKDF2 の salt (base64)。同じ鍵を後で導出し直すために保存する。
+export fn randomSaltB64() -> string {
+  return hostToBase64(hostRandomBytes(SALT_BYTES));
+}
+
+/// 保存された salt が床を満たすか (base64 のまま問う)。`assertSaltBytes` と同じ規則だが、投げずに真偽を返す —— `data/recordEncryption.ts` の
+/// `loadMeta` は同期の読み手で、「在るのに読めない」を degraded として扱う (投げると控えを取り出す画面が消える)。同じ**凍結値**を見る (パス 240)。
+export fn saltBytesOk(saltB64: string) -> boolean {
+  try {
+    return hostFromBase64(saltB64).length >= MIN_STORED_SALT_BYTES;
+  } catch (_e) {
+    // base64 として読めない = 使えない salt
+    return false;
+  }
+}
+
+/// パスフレーズと (保存された) salt から、使い回せる AES-GCM の鍵を導出する。**床と反復回数の検査は `decryptString` と同じものを通す** (パス 237)。
+/// 2026-09-14 まで長さも回数も見ておらず、空 salt から鍵を導出できていた。`iterations` は呼ぶ側が渡せる (既定はこの module の定数)。
+export async fn deriveAesKey(password: string, saltB64: string, iterations: number = ITERATIONS) -> Promise<CryptoKey> {
+  if (password.length === 0) {
+    throw new Error('パスワードを入力してください');
+  }
+  const salt = decodeBase64Field(saltB64, 'salt');
+  assertSaltBytes(salt);
+  assertKdfIterations(iterations);
+  return hostDeriveKey(password, salt, iterations);
+}
+
+export async fn sealWithKey(key: CryptoKey, plaintext: string) -> Promise<Sealed> {
+  const iv = hostRandomBytes(IV_BYTES);
+  const ct = await hostEncrypt(key, iv, plaintext);
+  return { iv: hostToBase64(iv), ct: hostToBase64(ct) };
+}
+
+export async fn openWithKey(key: CryptoKey, sealed: Sealed) -> Promise<string> {
+  if (!isSealed(sealed)) {
+    throw new Error('封緘データの形式が不正です');
+  }
+  try {
+    return await hostDecrypt(key, hostFromBase64(sealed.iv), hostFromBase64(sealed.ct));
+  } catch (_e) {
+    throw new Error('復号に失敗しました（鍵不一致またはデータ破損）');
+  }
+}

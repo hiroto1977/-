@@ -157,6 +157,14 @@
       ],
       "gates": [],
       "sinks": []
+    },
+    "src/renderer/security/dataCrypto.mamori": {
+      "externals": [
+        "pure ./dataCryptoHost: hostToBase64, hostFromBase64, hostRandomBytes, hostDeriveKey, hostEncrypt, hostDecrypt"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
     }
   }
 }
