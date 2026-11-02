@@ -253,6 +253,14 @@ fi
 ok "npm 依存 導入完了"
 
 # ---------------------------------------------------------------------------
+# 3b. Cursor MCP (.cursor/mcp.json) — GitHub 台帳と同じ 25 サーバー
+# ---------------------------------------------------------------------------
+info "Cursor 用 MCP 設定を生成 (mcp:sync-cursor)..."
+node scripts/sync-cursor-mcp.cjs
+mkdir -p "$ROOT/data"
+ok "Cursor MCP: .cursor/mcp.json (SQLite 用 data/ も用意)"
+
+# ---------------------------------------------------------------------------
 # 4. 日本語入力 (Mozc) — GNOME デスクトップ検出時のみ (フェーズ3 の自動化)
 # ---------------------------------------------------------------------------
 if dpkg -s gnome-shell >/dev/null 2>&1; then
@@ -305,6 +313,9 @@ cat <<'EOS'
   npm run dev          # Electron デスクトップ版を起動
   npm run build:web    # ブラウザ単体版 dist/standalone.html を生成
   npm run smoke        # xvfb で全ページのスクリーンショット確認
+  npm run mcp:check    # MCP / GitHub トークン状態の確認
+
+  GitHub・Cursor の文脈: docs/LOCAL_GITHUB_SETUP.md
 
 ⚠ 旧マシンで保存したサービストークンは引き継がれません
   (safeStorage の暗号鍵がマシン固有のため)。設定ページから再登録してください。

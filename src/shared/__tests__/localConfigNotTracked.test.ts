@@ -6,7 +6,8 @@ import { describe, expect, it } from 'vitest';
  * **Claude Code がその場で読む端末固有の設定は、追跡しない** (threat: T-036 · パス 519)。
  *
  * `.claude/settings.local.json` は利用者ごとの権限の許可 (どのコマンドを訊かずに走らせるか)、
- * `.mcp.json` はプロジェクト単位の MCP サーバ (`npx -y` で**その時の最新**を取って走る)。
+ * `.mcp.json` は Claude Code 用プロジェクト MCP (`npx -y` で**その時の最新**を取って走る)。
+ * `.cursor/mcp.json` は Cursor IDE 用 (npm run mcp:sync-cursor で正本から生成 · 再生成可能)。
  * どちらも Claude Code が在れば自動で読む。追跡されると**書いた人の許可とサーバが
  * clone した全員のセッションで走る** —— しかも `lint:mcp-servers` が見るのは
  * `.claude/settings.json` だけなので、台帳の外で実行面が増える (法則
@@ -18,7 +19,7 @@ import { describe, expect, it } from 'vitest';
  * されても ① が止める。① が外れたときは ② が鳴る)。
  */
 const ROOT = path.resolve(__dirname, '../../..');
-const LOCAL_ONLY = ['.claude/settings.local.json', '.mcp.json'] as const;
+const LOCAL_ONLY = ['.claude/settings.local.json', '.mcp.json', '.cursor/mcp.json'] as const;
 
 describe('端末固有の Claude Code 設定は追跡しない (threat: T-036)', () => {
   it.each(LOCAL_ONLY)('★ %s は git が無視する (threat: T-036)', (file) => {

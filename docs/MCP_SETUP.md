@@ -3,6 +3,10 @@
 このプロジェクトで使える MCP サーバーの完全導入手順。  
 Claude Code ローカル環境で `npm run mcp:check` を実行して設定状態を確認できる。
 
+**Cursor IDE（ローカル PC）** では `npm run mcp:sync-cursor` で `.cursor/mcp.json` を生成し、
+GitHub 上の台帳（`.claude/settings.json`）と同じ MCP（`memory` / `github` 含む）を使える。
+手順の全体像は **[docs/LOCAL_GITHUB_SETUP.md](LOCAL_GITHUB_SETUP.md)** を参照。
+
 ## 設定状態の確認
 
 ```bash

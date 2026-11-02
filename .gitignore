@@ -33,3 +33,5 @@ orchestration/threat-ablation.json
 # clone した全員のセッションで走る (lint:mcp-servers は .claude/settings.json しか見ない)。パス 519。
 .claude/settings.local.json
 .mcp.json
+# Cursor IDE 用 MCP (npm run mcp:sync-cursor で .claude/settings.json から生成)
+.cursor/mcp.json
