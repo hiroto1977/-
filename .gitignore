@@ -33,3 +33,9 @@ orchestration/threat-ablation.json
 # clone した全員のセッションで走る (lint:mcp-servers は .claude/settings.json しか見ない)。パス 519。
 .claude/settings.local.json
 .mcp.json
+.env.mcp.local
+
+# MCP / SQLite — 端末ローカル (setup-local-dev.cjs が作る)
+data/mcp-memory.jsonl
+data/mcp-memory.jsonl.lock
+data/local.db

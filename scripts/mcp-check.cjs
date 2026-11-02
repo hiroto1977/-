@@ -9,6 +9,38 @@ const path = require('path');
 const { execSync } = require('child_process');
 
 const SETTINGS_PATH = path.join(__dirname, '../.claude/settings.json');
+const LOCAL_SETTINGS_PATH = path.join(__dirname, '../.claude/settings.local.json');
+
+function loadMcpSettings() {
+  let base = {};
+  try {
+    base = JSON.parse(fs.readFileSync(SETTINGS_PATH, 'utf8'));
+  } catch (e) {
+    console.error(`❌ .claude/settings.json の読み込みに失敗: ${e.message}`);
+    process.exit(1);
+  }
+  let local = {};
+  try {
+    if (fs.existsSync(LOCAL_SETTINGS_PATH)) {
+      local = JSON.parse(fs.readFileSync(LOCAL_SETTINGS_PATH, 'utf8'));
+    }
+  } catch (e) {
+    console.warn(`⚠️  .claude/settings.local.json の読み込みに失敗: ${e.message}`);
+  }
+  const merged = { ...base, mcpServers: { ...(base.mcpServers || {}), ...(local.mcpServers || {}) } };
+  for (const [name, def] of Object.entries(local.mcpServers || {})) {
+    const b = base.mcpServers?.[name];
+    if (b && def && typeof def === 'object' && typeof b === 'object') {
+      merged.mcpServers[name] = {
+        ...b,
+        ...def,
+        env: { ...(b.env || {}), ...(def.env || {}) },
+        args: Array.isArray(def.args) ? def.args : b.args,
+      };
+    }
+  }
+  return merged;
+}
 
 // 各サーバーに必要な環境変数の定義
 const REQUIRED_ENVS = {
@@ -39,15 +71,7 @@ function main() {
   console.log('║     MCP サーバー設定チェック              ║');
   console.log('╚══════════════════════════════════════════╝\n');
 
-  // settings.json を読む
-  let settings;
-  try {
-    settings = JSON.parse(fs.readFileSync(SETTINGS_PATH, 'utf8'));
-  } catch (e) {
-    console.error(`❌ .claude/settings.json の読み込みに失敗: ${e.message}`);
-    process.exit(1);
-  }
-
+  const settings = loadMcpSettings();
   const servers = settings.mcpServers || {};
   const serverNames = Object.keys(servers);
 
@@ -113,6 +137,24 @@ function main() {
   } else {
     console.log(`  ❌ ${gdriveFile} が見つかりません`);
     console.log('     → docs/MCP_SETUP.md の "Google Drive 認証" セクションを参照');
+  }
+
+  // MCP memory ファイル (settings.local.json の MEMORY_FILE_PATH)
+  const memoryEnv = servers.memory?.env?.MEMORY_FILE_PATH;
+  console.log('\n🧠 MCP Memory (セッション間の記憶)');
+  if (memoryEnv && typeof memoryEnv === 'string') {
+    const memPath = memoryEnv.startsWith('~/')
+      ? path.join(process.env.HOME || '', memoryEnv.slice(2))
+      : memoryEnv;
+    if (fs.existsSync(memPath)) {
+      const st = fs.statSync(memPath);
+      console.log(`  ✅ ${memPath} (${st.size} B)`);
+    } else {
+      console.log(`  ❌ ${memPath} が見つかりません`);
+      console.log('     → npm run setup:local を実行');
+    }
+  } else {
+    console.log('  ⚠  MEMORY_FILE_PATH 未設定 (npm run setup:local で data/mcp-memory.jsonl を紐付け)');
   }
 
   // Obsidian vault チェック

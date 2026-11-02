@@ -3,6 +3,27 @@
 このプロジェクトで使える MCP サーバーの完全導入手順。  
 Claude Code ローカル環境で `npm run mcp:check` を実行して設定状態を確認できる。
 
+## ローカル環境の初期セットアップ（GitHub の記憶ファイルを含む）
+
+リポジトリを clone したあと、**1 回**実行すると MCP の記憶ファイルと端末固有の設定が整います。
+
+```bash
+npm run setup:local
+```
+
+- `data/mcp-memory.jsonl` … MCP **memory** サーバが読み書きする知識グラフ（git 管理外）
+- `.claude/settings.local.json` … 上記ファイルへの絶対パス `MEMORY_FILE_PATH`（git 管理外）
+- `gh auth login` 済みなら `.env.mcp.local` に `GITHUB_TOKEN` の export 例を生成（git 管理外）
+
+GitHub 上に memory ファイルがある場合（プライベートリポジトリ可）:
+
+```bash
+export SERVICEHUB_MCP_MEMORY_GH='hiroto1977/あなたのリポ:path/to/mcp-memory.jsonl'
+npm run setup:local -- --pull-memory
+```
+
+Claude Code / Cursor を**再起動**すると memory MCP が永続ファイルを使います。
+
 ## 設定状態の確認
 
 ```bash
