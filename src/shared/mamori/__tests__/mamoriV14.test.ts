@@ -76,4 +76,60 @@ describe('0.14 分割代入 (threat: T-224 の続き)', () => {
     const out = ts('export fn f(raw: string) -> unknown {\n  const { a, b: c }: { a: string; b: number } = JSON.parse(raw);\n  return [a, c];\n}\n');
     expect(out).toContain('const { a, b: c }: { a: string; b: number } = JSON.parse(raw);');
   });
+
+  it('★ 元の式の根は `.` / field / 添字 / await / 三項を通って見つける', () => {
+    const pre = 'extern sink global shellx;\n';
+    for (const init of ['shellx.list', 'field shellx.k', 'shellx.list[0]', 'await shellx.p', 'true ? shellx.a : 1', 'true ? 1 : shellx.a', 'Math.max.y']) {
+      const d = diag(pre + `export async fn g() -> unknown {\n  const { v } = ${init};\n  return v;\n}\n`).join('\n');
+      expect(d, init).toMatch(/分割代入で取り出せません/);
+    }
+  });
+
+  it('★ 呼び出し・new・字面・await の無い演算の結果は値なので、根にならず通る', () => {
+    const ok = [
+      'const { a } = JSON.parse(raw);',
+      'const { href } = new URL(raw);',
+      'const { a } = { a: raw };',
+      'const { length } = [raw];',
+      'const { a } = typeof raw;',
+    ];
+    for (const line of ok) {
+      expect(diag(`export fn g(raw: string) -> unknown {\n  ${line}\n  return 1;\n}\n`), line).toEqual([]);
+    }
+  });
+
+  it('★ 宣言していない根は M6 が 1 件だけ (分割代入の文は重ねない) / 元の式の中も検める', () => {
+    const d = diag(fn('  const { q } = nope.k;'));
+    expect(d.length).toBe(1);
+    expect(d[0]).toMatch(/宣言していない名前 nope/);
+    const e = diag(fn('  const { q } = nope(x);'));
+    expect(e.join('\n')).toMatch(/宣言していない名前 nope/);
+  });
+
+  it('★ 診断の規則番号: 印の分割は M4・外の名前のメンバは M6', () => {
+    const pre = 'export vetted VU = "u";\nexport gate fn okUrl(raw: string) -> VU | null {\n  if (raw.length > 0) { return mint VU(raw); }\n  return null;\n}\n';
+    const rules = (src: string): string[] => {
+      const r = compileProject([{ path: 'src/x/m0.mamori', source: src }]);
+      return r.ok ? [] : r.diagnostics.map((x) => x.rule);
+    };
+    expect(rules(`${pre}export fn g(raw: string) -> unknown {\n  const u = okUrl(raw);\n  const { length } = u;\n  return length;\n}\n`)).toContain('M4');
+    expect(rules('extern sink global shellx;\n' + fn('  const { open } = shellx;'))).toContain('M6');
+  });
+
+  it('★ 取り出した名前は局所の const (代入は let ではないと断り・外の名前とは言わない)', () => {
+    const d = diag(fn('  const { a } = x;\n  a = "z";'));
+    expect(d.join('\n')).toMatch(/let ではないので代入できません/);
+    expect(d.join('\n')).not.toMatch(/外の名前/);
+  });
+
+  it('★ 生成物は欄の並びと付け替えをそのまま出す', () => {
+    expect(ts(fn('  const { a, b: c } = x;'))).toContain('  const { a, b: c } = x;');
+    expect(ts(fn('  const { a } = x;'))).toContain('  const { a } = x;');
+    expect(ts(fn('  const { b: c, a: d } = x;'))).toContain('  const { b: c, a: d } = x;');
+  });
+
+  it('★ 型の注記は `=` で終わる / 注記が無くても通る', () => {
+    expect(ts('export fn f(raw: string) -> unknown {\n  const { a }: { a: string } = JSON.parse(raw);\n  return a;\n}\n')).toContain('const { a }: { a: string } = JSON.parse(raw);');
+    expect(diag('export fn f(raw: string) -> unknown {\n  const { a }: { a: string; b: number } = JSON.parse(raw);\n  return a;\n}\n')).toEqual([]);
+  });
 });

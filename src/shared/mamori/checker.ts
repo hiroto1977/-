@@ -367,22 +367,21 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
   }
 
   /** 式が運ぶ印 (無ければ null)。 */
-  /** 分割代入の元の式の「名前空間として指している根」。呼び出し・`new` の結果は値なので根にならない。 */
-  function destructureRoots(e: Expr): readonly Expr[] {
+  /** 分割代入の元の式の「名前空間として指している根」(名前だけ)。呼び出し・`new`・字面の結果は値なので根にならない。 */
+  function destructureRoots(e: Expr): readonly (Expr & { readonly kind: 'ident' })[] {
     switch (e.kind) {
+      case 'ident':
+        return [e];
       case 'member':
       case 'field':
       case 'index':
         return destructureRoots(e.object);
-      case 'call':
-      case 'new':
-        return [];
       case 'unary':
         return e.op === 'await' ? destructureRoots(e.operand) : [];
       case 'cond':
         return [...destructureRoots(e.then), ...destructureRoots(e.otherwise)];
       default:
-        return [e];
+        return [];
     }
   }
 
@@ -437,11 +436,9 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         // 元の式が組み込み・外の名前のメンバを**直に**指す形 (`const { assign } = Object` など) は、表 (BUILTIN_MEMBERS・危ない口の呼び方) を迂回するので断る。
         // 呼び出し・`new` の結果は値であって名前空間ではないので通す (`const { a } = JSON.parse(x)`)。
         for (const root of destructureRoots(s.init)) {
-          if (root.kind !== 'ident') continue;
           const b = lookup(scopes, root.name);
-          // 解決できない名前のうち組み込み (Object / JSON / Math ほか) も同じ — 宣言していない名前は checkExpr が別に断る。
-          const builtin = b === undefined && (root.name === 'Object' || PURE_GLOBALS.has(root.name) || BUILTIN_MEMBERS.has(root.name));
-          if (builtin || (b !== undefined && b.authority !== 'local')) {
+          // 解決できない名前のうち組み込み (BUILTIN_MEMBERS の鍵はすべて PURE_GLOBALS の中) も同じ —— 宣言していない名前は checkExpr が別に断る。
+          if ((b === undefined && PURE_GLOBALS.has(root.name)) || (b !== undefined && b.authority !== 'local')) {
             report('M6', root.pos, `外の名前 ${root.name} のメンバは分割代入で取り出せません (組み込み・危ない口の表を迂回します —— \`${root.name}.メンバ\` と書いて呼びます)`);
           }
         }

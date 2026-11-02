@@ -380,37 +380,34 @@ export function parse(file: string, src: string): Module {
 
   const stmt = (cs: Comments): Stmt => {
     const t = peek();
-    if (isW('const') && toks[k + 1]?.kind === 'punct' && toks[k + 1]!.text === '{') {
-      next();
-      next();
-      const fields: { key: string; local: string }[] = [];
-      while (!isP('}')) {
-        const key = memberName();
-        let local = key;
-        if (isP(':')) {
-          next();
-          local = ident();
-        }
-        fields.push({ key, local });
-        if (!isP('}')) expectP(',');
-      }
-      if (fields.length === 0) fail(peek(), '分割する名前が 1 つも在りません (`const { a } = x;`)');
-      expectP('}');
-      let type: TypeRef | null = null;
-      if (isP(':')) {
-        next();
-        type = typeRef(['=', ';']);
-      }
-      expectP('=');
-      const init = expr();
-      expectP(';');
-      return { kind: 'destructure', fields, type, init, comments: cs, pos: t.pos };
-    }
-    if (isW('let') && toks[k + 1]?.kind === 'punct' && toks[k + 1]!.text === '{') {
-      fail(peek(), '分割代入は `const` だけです (`let { … }` は書けません)');
-    }
     if (isW('const') || isW('let')) {
       const mutable = next().text === 'let';
+      if (isP('{')) {
+        if (mutable) fail(peek(), '分割代入は `const` だけです (`let { … }` は書けません)');
+        next();
+        const fields: { key: string; local: string }[] = [];
+        while (!isP('}')) {
+          const key = memberName();
+          let local = key;
+          if (isP(':')) {
+            next();
+            local = ident();
+          }
+          fields.push({ key, local });
+          if (!isP('}')) expectP(',');
+        }
+        if (fields.length === 0) fail(peek(), '分割する名前が 1 つも在りません (`const { a } = x;`)');
+        expectP('}');
+        let annotated: TypeRef | null = null;
+        if (isP(':')) {
+          next();
+          annotated = typeRef(['=']);
+        }
+        expectP('=');
+        const source = expr();
+        expectP(';');
+        return { kind: 'destructure', fields, type: annotated, init: source, comments: cs, pos: t.pos };
+      }
       const name = ident();
       let type: TypeRef | null = null;
       if (isP(':')) {
