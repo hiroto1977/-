@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 442
+- ブロック数: 443
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `12a0268dcfff967d26d53dc455503997821aad436c3b2f167d99519de543edc3`
+- 末尾(tip)ハッシュ: `ecb1caab0cc470fbdf437e4414606819be840239b8e486c21f1cd0cb892e4806`
 - 保護対象: 180 ファイル
 
 ## ブロック
@@ -455,6 +455,7 @@
 | 439 | `f8249da7f5f3217e` | `9eff03075cd5ebfa` | `f13333af5ce4a477` | update integrity-chain.cjs,mamori-capabilities.json,atlassianSite.mamori,atlassianSite.ts |
 | 440 | `42bdfe2e34f5434f` | `f13333af5ce4a477` | `add0d13e178fbce3` | update ast.ts,checker.ts,emit.ts,parser.ts,BUILD.json,mamori_verify.wasm |
 | 441 | `fc60bc9b7c9caf80` | `add0d13e178fbce3` | `12a0268dcfff967d` | update integrity-chain.cjs,mamori-capabilities.json,pkce.mamori,pkce.ts,pkceHost.ts |
+| 442 | `21f508269e579c43` | `12a0268dcfff967d` | `ecb1caab0cc470fb` | update pkceHost.ts |
 
 ## 保護対象ファイル
 
