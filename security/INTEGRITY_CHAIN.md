@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 432
+- ブロック数: 433
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `20ce3eca436e8315a2f5fa064783e1285c8441789fcc58b7306db7c303054eb7`
-- 保護対象: 167 ファイル
+- 末尾(tip)ハッシュ: `41efd0604defd5f3c125bc1fa7f24b86f127545a3ccb8b30b33c26fe961b802a`
+- 保護対象: 168 ファイル
 
 ## ブロック
 
@@ -445,6 +445,7 @@
 | 429 | `d4633b3109f028df` | `e8f633845079b6b1` | `7246acca4fc41ad2` | update ast.ts,checker.ts,emit.ts,parser.ts |
 | 430 | `a18cfba4ed1b8914` | `7246acca4fc41ad2` | `329a63235925863c` | update integrity-chain.cjs,mamori-capabilities.json,pkceSession.mamori,pkceSession.ts,pkceSessionHost.ts |
 | 431 | `df51e5f9bcdb5045` | `329a63235925863c` | `20ce3eca436e8315` | update pkceSession.mamori,pkceSession.ts,pkceSessionHost.ts |
+| 432 | `0b0292aa7fade07f` | `20ce3eca436e8315` | `41efd0604defd5f3` | update integrity-chain.cjs,mamori-capabilities.json,updateCheck.mamori |
 
 ## 保護対象ファイル
 
@@ -606,6 +607,7 @@
 - `src/shared/tokenInput.mamori`
 - `src/shared/tokenInput.ts`
 - `src/shared/tokenResponse.ts`
+- `src/shared/updateCheck.mamori`
 - `src/shared/vaultToken.mamori`
 - `src/shared/vaultToken.ts`
 - `src/shared/versionOrder.ts`

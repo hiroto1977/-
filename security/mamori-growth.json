@@ -1208,6 +1208,59 @@
         "reason": null,
         "summary": "PKCE の一時秘密の置き場 (pkceSession.ts · 保存・読み・消す) を Mamori で書き直した (port)。`sessionStorage` は pure で宣言できない (T-249) ので 3 つの小さな host 関数 (pkceSessionHost.ts) へ閉じ込め、置く=投げる・読む=触れなければ null・消す=投げず true/false という失敗の受け方も host に持たせた (読む・消すを素で触る場所は無いという既存の census を保つため)。`s[k]` の鍵引きは 4 欄の字面に、`as unknown as` は欄を読み切ってから組む形に、template は連結に替えた。MG-016 の `catch (err)` の束縛を初めて実物で使った。元の TypeScript と 270 通りの失敗の組み合わせ (保存・読み・消すのどれが何番目に断られるか × 残っていた鍵) で結果・断りの文・残る鍵が同じ・既存の検査は編集なしで緑 (台帳 3 本と census の対象ファイルは host へ付け替え)。穴は 0 件 (手探り 5 形が全部 refused)。変異検査は初回 97.87% (断りの文の後半を誰も全文では主張していない) → 全文の検査で解消、host へ分けた後は readKey の arrow がモジュール読み込み時に評価される静的変異体になり (関数宣言へ)、host の catch の戻り値が呼ぶ側の `!` で区別できない等価に見えた (戻り値を直接主張する検査 2 件) —— 両ファイル 100%。"
       }
+    },
+    {
+      "id": "MG-018",
+      "date": "2026-11-02",
+      "kind": "port",
+      "target": "src/shared/updateCheck.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/shared/updateCheck.ts",
+      "version": "0.12",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "as-cast",
+        "template"
+      ],
+      "ported": [
+        "src/shared/updateCheck.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "`a as string` (型の書き換え)",
+          "result": "refused"
+        },
+        {
+          "tried": "文面を template 文字列 `v${a}` で組む",
+          "result": "refused"
+        },
+        {
+          "tried": "`a.constructor` を返す (T-224 の道)",
+          "result": "refused"
+        },
+        {
+          "tried": "`URL.createObjectURL(a)` (組み込みの共有状態の口)",
+          "result": "refused"
+        },
+        {
+          "tried": "`RegExp.$1` (直前の一致の状態の読み取り)",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 2,
+      "mutation": {
+        "files": [
+          "src/shared/updateCheck.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 855,
+        "reason": null,
+        "summary": "更新確認の判定 (updateCheck.ts · 版の比較・リリース URL の関門・判定の文) を Mamori で書き直した (port)。正規表現リテラル・try/catch・interface・union を初めて実物で使い、template は連結に、as は欄を読み切る形に替えた。既存の検査は編集なしで緑 (describeUpdate の全文だけ足した)。穴は 0 件 (手探り 5 形が全部 refused)。変異検査は 142 変異体で初回から 100% に近く、全文の検査を足して 100%。"
+      }
     }
   ]
 }

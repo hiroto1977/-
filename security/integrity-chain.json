@@ -160,6 +160,7 @@
     "src/shared/tokenInput.mamori",
     "src/shared/tokenInput.ts",
     "src/shared/tokenResponse.ts",
+    "src/shared/updateCheck.mamori",
     "src/shared/vaultToken.mamori",
     "src/shared/vaultToken.ts",
     "src/shared/versionOrder.ts",
@@ -3626,6 +3627,14 @@
       "leafCount": 167,
       "note": "update pkceSession.mamori,pkceSession.ts,pkceSessionHost.ts",
       "hash": "20ce3eca436e8315a2f5fa064783e1285c8441789fcc58b7306db7c303054eb7"
+    },
+    {
+      "index": 432,
+      "prevHash": "20ce3eca436e8315a2f5fa064783e1285c8441789fcc58b7306db7c303054eb7",
+      "merkleRoot": "0b0292aa7fade07f6f10b7bb17a0b3c901c86e1101b17ea5e86cd3f6927c02e5",
+      "leafCount": 168,
+      "note": "update integrity-chain.cjs,mamori-capabilities.json,updateCheck.mamori",
+      "hash": "41efd0604defd5f3c125bc1fa7f24b86f127545a3ccb8b30b33c26fe961b802a"
     }
   ],
   "tipManifest": {
@@ -3661,7 +3670,7 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "d385ddfc52ec74abf184207bfbb1ac655e730db2b7c6d7e758e35e67e79a5737",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "a7c903d84fa320471ee7db49c600439366a39b1782cb5fb6963af1167831e715",
+    "scripts/integrity-chain.cjs": "2c1a4afc62dcf1cab1f0ca8c481e7badcd28e8bd74a8a3e930b9ba7c6bb0fd1f",
     "scripts/knowledge-autopilot.cjs": "ee8f7ae4a4ad29dda6c02f83c113c45fa1648522f807e711aa86b7746f372968",
     "scripts/lib/artifact-freshness.cjs": "add621dfe55e0eab31354f0d6979c9c67b513ed8b8348b9137ca7fa53dd569c1",
     "scripts/lib/json-for-script.cjs": "cb79bf1fb2f3c10c6854ec16d9c12bb0695dee5561751333db4531545702fd70",
@@ -3689,7 +3698,7 @@
     "scripts/verify-e2e-playwright-pin.cjs": "417854f96cbaa4af4dd30a378b722b58093d56e78aa7eaba9bd17df412f57d45",
     "scripts/verify-packaged-fuses.cjs": "4162ab0e5d390c5cccf4cd8ac533027bd1d8a5cbceb0a069059d4f3800643d9f",
     "scripts/verify-release-artifacts.cjs": "1bd668bc052b476a9b3f976dc80ddf8faa4f080aed5617d354a8c7647ee9f557",
-    "security/mamori-capabilities.json": "0e178430162d078d7bf7fc003696a42a43518a38226b1c65d46df977aca07896",
+    "security/mamori-capabilities.json": "33a079d671dbb8802ab8ab7648a35546bf9f52a462c05bb6d93b0d7aac2d7ab6",
     "src/main/atomicWrite.ts": "63b6ff1fb7d8990b76409c62556d69f99a14475f73662e89507e8899a32a9c3f",
     "src/main/clients/assistant.ts": "3db27c2cdd42569a7bc92c7d2841591b1464550a1905ab66fa4a100803b69c4f",
     "src/main/clients/exportPaths.ts": "c0821f65eed08078681fbcc3eec662a8e58d47d053300f6ba0b66665a46fbbca",
@@ -3787,6 +3796,7 @@
     "src/shared/tokenInput.mamori": "ee94a04ca908afb7b2ce7ee2f8f6af83b4d44791b9b702ae7071503b7cd66a8c",
     "src/shared/tokenInput.ts": "62368485693664e9e30709b93e9be983f6ede3f5f2d8046aac66bf5ba5cff47c",
     "src/shared/tokenResponse.ts": "47725e779acda9f6f0af1105aaf90bb7a9cf3016cd63869cec3841fc58d32121",
+    "src/shared/updateCheck.mamori": "29efc48c256b62c50cc0380a5ebd56af1fca555c801807d212a0a8a4043b4042",
     "src/shared/vaultToken.mamori": "b064eba362f51030d7595852211550c028ed84a381a2f70784f115d5f849d79d",
     "src/shared/vaultToken.ts": "df8536a47e961c4ea5593588ed8477e6120299b4cdb80225566fa14619f53c46",
     "src/shared/versionOrder.ts": "2a70283bc54f74023e9e4a6f002d2678440d9cfcffeb5ac60fc047ee8b604d37",
