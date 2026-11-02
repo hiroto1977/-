@@ -307,6 +307,7 @@ const MIGRATED: readonly string[] = [
   'src/shared/__tests__/limitCoverageCensus.test.ts',
   'src/shared/__tests__/linkRedirectGuard.test.ts',
   'src/shared/__tests__/localFileOpenPolicy.test.ts',
+  'src/shared/__tests__/localLlmSetup.test.ts',
   'src/shared/__tests__/markupExportCensus.test.ts',
   'src/shared/__tests__/nonFiniteEntryPoints.test.ts',
   'src/shared/__tests__/ollamaInputLimits.test.ts',
