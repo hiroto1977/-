@@ -77,8 +77,8 @@ const LEDGER: readonly LedgerRow[] = [
   },
   {
     file: 'src/shared/atlassianSite.ts',
-    needle: '`https://${parsed.hostname}`',
-    reason: '(b) `.atlassian.net` を確かめた後の URL.hostname の再直列化 —— 関門の返り値',
+    needle: "'https://' + parsed.hostname",
+    reason: '(b) `.atlassian.net` を確かめた後の URL.hostname の再直列化 —— 関門の返り値 (Mamori へ移した後は連結で組む · MG-023)',
   },
   {
     file: 'src/shared/privateTarget.ts',

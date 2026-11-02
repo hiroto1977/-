@@ -127,6 +127,7 @@
     "src/shared/aiEndpoint.mamori",
     "src/shared/aiEndpoint.ts",
     "src/shared/assistantLimits.ts",
+    "src/shared/atlassianSite.mamori",
     "src/shared/atlassianSite.ts",
     "src/shared/constantTimeEquals.ts",
     "src/shared/controlChars.mamori",
@@ -3692,6 +3693,14 @@
       "leafCount": 177,
       "note": "update ast.ts,checker.ts,emit.ts,parser.ts",
       "hash": "9eff03075cd5ebfa1740a29fc7c4b213f095c67d42cc4580d15fb1c6f25a947e"
+    },
+    {
+      "index": 439,
+      "prevHash": "9eff03075cd5ebfa1740a29fc7c4b213f095c67d42cc4580d15fb1c6f25a947e",
+      "merkleRoot": "f8249da7f5f3217efa4394c0571e422b27d3b2d875e246b254d489bf01f102ff",
+      "leafCount": 178,
+      "note": "update integrity-chain.cjs,mamori-capabilities.json,atlassianSite.mamori,atlassianSite.ts",
+      "hash": "f13333af5ce4a47762f1c0984257dabc06de1f655d96180aafe1f202a5a8cb3a"
     }
   ],
   "tipManifest": {
@@ -3728,7 +3737,7 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "d385ddfc52ec74abf184207bfbb1ac655e730db2b7c6d7e758e35e67e79a5737",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "6f7fcae005cb81192b620d341d44e2448abb8d42de3a8f8f36091afcbbd6e12e",
+    "scripts/integrity-chain.cjs": "4a7eb76d62e3ab7264582d714e4fe2da60e214a1fdd9c9fff051ac9cb59b6733",
     "scripts/knowledge-autopilot.cjs": "ee8f7ae4a4ad29dda6c02f83c113c45fa1648522f807e711aa86b7746f372968",
     "scripts/lib/artifact-freshness.cjs": "add621dfe55e0eab31354f0d6979c9c67b513ed8b8348b9137ca7fa53dd569c1",
     "scripts/lib/json-for-script.cjs": "cb79bf1fb2f3c10c6854ec16d9c12bb0695dee5561751333db4531545702fd70",
@@ -3756,7 +3765,7 @@
     "scripts/verify-e2e-playwright-pin.cjs": "417854f96cbaa4af4dd30a378b722b58093d56e78aa7eaba9bd17df412f57d45",
     "scripts/verify-packaged-fuses.cjs": "4162ab0e5d390c5cccf4cd8ac533027bd1d8a5cbceb0a069059d4f3800643d9f",
     "scripts/verify-release-artifacts.cjs": "1bd668bc052b476a9b3f976dc80ddf8faa4f080aed5617d354a8c7647ee9f557",
-    "security/mamori-capabilities.json": "50c6f4ac99fb98588ec11d745b708a3b1021128f65837b6cb784e93cf672630b",
+    "security/mamori-capabilities.json": "e138397ce26025a62d26bf0dbb3e1fe14d8f5b5014444437d08da92027709c41",
     "src/main/atomicWrite.ts": "63b6ff1fb7d8990b76409c62556d69f99a14475f73662e89507e8899a32a9c3f",
     "src/main/clients/assistant.ts": "3db27c2cdd42569a7bc92c7d2841591b1464550a1905ab66fa4a100803b69c4f",
     "src/main/clients/exportPaths.mamori": "49b9340d5d2b01ff40a6d874adfe9c0423b3a95eb6144b68e2324fdd0c1a6dd1",
@@ -3820,7 +3829,8 @@
     "src/shared/aiEndpoint.mamori": "07cfce64cd764744615e2028e6b0cfabe06c082cd6c32fcf48333d09599be307",
     "src/shared/aiEndpoint.ts": "fe67ffe1b6f5a2482dfc244571f671b0ccea5eccc37ac51eadc12003ff3fcadb",
     "src/shared/assistantLimits.ts": "5f69ea2a0f94056c3e340059723a316bf2268ab64ef57b31103424b62230b367",
-    "src/shared/atlassianSite.ts": "e3898d643e76b22877cf0990090a61dc249bc3ccd2058ff3166e13bafea7b931",
+    "src/shared/atlassianSite.mamori": "b4c31058cd1750b6ef2592afdc5eb1046a9795a1e3e5c6501d2429e53c33d8ba",
+    "src/shared/atlassianSite.ts": "a49d6d8d02d2da16163fcbe13a3f37c7ca8dc93e4e1476fe9a626f073506670a",
     "src/shared/constantTimeEquals.ts": "6656031b29c27a7676840a135aec8d24b97f2358db08e534db47388af1e9e868",
     "src/shared/controlChars.mamori": "546412ba3a09d6c32e8694dda0f2d3937787ec072501f022185a5725ad951370",
     "src/shared/controlChars.ts": "dbdb37552d8f55e2852e3ebffb26f4719595392e365515ffd60fb24fd1442479",

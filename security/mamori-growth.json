@@ -1495,6 +1495,67 @@
         "reason": null,
         "summary": "分割代入 (`const { a, b: c } = 式;`) を足した (0.14 · feature)。浅い const だけで、入れ子・既定値・残り・計算した鍵・let は文法に無い。足す前に 3 つの道 (鍵の constructor/prototype/__proto__ · 組み込みと危ない口のメンバを直に取り出す形 · 印を持つ値の分割) を破って塞いだ。取り出した名前は印を持たない局所で、M6 の局所の規則を受ける。手探り 6 形は全部 refused、穴は 0 件。変異検査は parser / checker / emit とも 100% (初回 98.62% の生存は、先読みを無くし根を名前だけにする単純化と検査 9 件で潰し、等価な 2 件は理由つき pragma)。対照 3 つ (鍵の検め・根の検め・印の検めを外す) はそれぞれ狙った検査が鳴った。書き直しで移せる壁は 0 本のまま (destructure は使う壁 13 本のうち 1 本を解放)。"
       }
+    },
+    {
+      "id": "MG-023",
+      "date": "2026-11-02",
+      "kind": "port",
+      "target": "src/shared/atlassianSite.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/shared/atlassianSite.ts",
+      "version": "0.14",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "as-cast",
+        "template"
+      ],
+      "ported": [
+        "src/shared/atlassianSite.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "`as Record<string, unknown>` で保存値を型付け直す",
+          "result": "refused"
+        },
+        {
+          "tried": "テンプレート文字列で site を組む",
+          "result": "refused"
+        },
+        {
+          "tried": "`field p.constructor` (T-224 の道)",
+          "result": "refused"
+        },
+        {
+          "tried": "分割代入 `const { __proto__ } = p`",
+          "result": "refused"
+        },
+        {
+          "tried": "`URL.createObjectURL(raw)`",
+          "result": "refused"
+        },
+        {
+          "tried": "`JSON.parse.constructor(raw)`",
+          "result": "refused"
+        },
+        {
+          "tried": "局所の名前 hasControlChar で関門を偽装",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 2,
+      "mutation": {
+        "files": [
+          "src/shared/atlassianSite.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 855,
+        "reason": null,
+        "summary": "Atlassian の site URL の関門と保存された資格情報の読み (atlassianSite.ts · SSRF の関門) を Mamori で書き直した (port)。足りなかったのは `as` の 1 か所と template 1 つだけで、`as` は `field` に、template は連結に替えた。`null` の保存値は欄が無い物として fields へ落とす判定だけを残し、配列・数・文字列・真偽は field が undefined を返して同じ断りへ落ちる (等価)。元の TypeScript と差分比較し、site の正規化 13 形・資格情報 25 形・定数・断りの文が一致。既存の検査は編集なしで緑。手探り 7 形は全部 refused。変異検査は 100% (93 killed)。対照 2 つ (許可ホストの末尾判定を緩める・null の断りを外す) は関連の検査で鳴った。"
+      }
     }
   ]
 }

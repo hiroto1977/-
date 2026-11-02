@@ -112,6 +112,12 @@
       "gates": [],
       "sinks": []
     },
+    "src/shared/atlassianSite.mamori": {
+      "externals": [],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
     "src/shared/updateCheck.mamori": {
       "externals": [],
       "imports": [],

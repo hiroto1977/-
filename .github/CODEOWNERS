@@ -139,6 +139,7 @@
 /src/renderer/oauth/pkceSession.mamori @hiroto1977
 /src/shared/updateCheck.mamori @hiroto1977
 /src/main/clients/exportPaths.mamori @hiroto1977
+/src/shared/atlassianSite.mamori @hiroto1977
 /src/renderer/oauth/pkceSessionHost.ts @hiroto1977
 /src/renderer/security/dataCrypto.mamori @hiroto1977
 /src/renderer/security/dataCryptoHost.ts @hiroto1977

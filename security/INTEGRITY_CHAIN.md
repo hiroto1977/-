@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 439
+- ブロック数: 440
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `9eff03075cd5ebfa1740a29fc7c4b213f095c67d42cc4580d15fb1c6f25a947e`
-- 保護対象: 177 ファイル
+- 末尾(tip)ハッシュ: `f13333af5ce4a47762f1c0984257dabc06de1f655d96180aafe1f202a5a8cb3a`
+- 保護対象: 178 ファイル
 
 ## ブロック
 
@@ -452,6 +452,7 @@
 | 436 | `4e07bfbe8c8480e4` | `3f58432c3413561c` | `70e7be716d83f05a` | update exportPaths.mamori,exportPaths.ts |
 | 437 | `45e41505191fb88b` | `70e7be716d83f05a` | `9ea05e4ae9b0c797` | update integrity-chain.cjs,mamori-capabilities.json,dataCrypto.mamori,dataCrypto.ts,dataCryptoHost.ts |
 | 438 | `bffe9ea26831d59f` | `9ea05e4ae9b0c797` | `9eff03075cd5ebfa` | update ast.ts,checker.ts,emit.ts,parser.ts |
+| 439 | `f8249da7f5f3217e` | `9eff03075cd5ebfa` | `f13333af5ce4a477` | update integrity-chain.cjs,mamori-capabilities.json,atlassianSite.mamori,atlassianSite.ts |
 
 ## 保護対象ファイル
 
@@ -580,6 +581,7 @@
 - `src/shared/aiEndpoint.mamori`
 - `src/shared/aiEndpoint.ts`
 - `src/shared/assistantLimits.ts`
+- `src/shared/atlassianSite.mamori`
 - `src/shared/atlassianSite.ts`
 - `src/shared/constantTimeEquals.ts`
 - `src/shared/controlChars.mamori`
