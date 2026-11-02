@@ -84,17 +84,17 @@ describe('T-252 (threat: T-252): extern pure の許可表', () => {
 
 describe('T-253 (threat: T-253): 隠し字の表 (見えない文を運べない)', () => {
   const chars: [string, string][] = [
-    ['ALM U+061C', '؜'],
-    ['SHY U+00AD', '­'],
-    ['CGJ U+034F', '͏'],
-    ['Hangul filler U+3164', 'ㅤ'],
-    ['Hangul filler U+115F', 'ᅟ'],
-    ['Braille blank U+2800', '⠀'],
-    ['bidi 非推奨 U+206A', '⁪'],
-    ['U+2065 (未割当の不可視)', '⁥'],
+    ['ALM U+061C', '\u061C'],
+    ['SHY U+00AD', '\u00AD'],
+    ['CGJ U+034F', '\u034F'],
+    ['Hangul filler U+3164', '\u3164'],
+    ['Hangul filler U+115F', '\u115F'],
+    ['Braille blank U+2800', '\u2800'],
+    ['bidi 非推奨 U+206A', '\u206A'],
+    ['U+2065 (未割当の不可視)', '\u2065'],
     ['タグ文字 U+E0041', '\u{E0041}'],
     ['異体字選択子の補助 U+E0100', '\u{E0100}'],
-    ['Mongolian VS U+180B', '᠋'],
+    ['Mongolian VS U+180B', '\u180B'],
   ];
   it('★ ALM・SHY・タグ文字・Hangul filler・Braille・bidi 非推奨ほか 11 種の隠し字を、注記と文字列のどちらでも断る', () => {
     for (const [name, ch] of chars) {

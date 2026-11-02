@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 433
+- ブロック数: 434
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `41efd0604defd5f3c125bc1fa7f24b86f127545a3ccb8b30b33c26fe961b802a`
-- 保護対象: 168 ファイル
+- 末尾(tip)ハッシュ: `e50ddcddc3a5e60b6f95a90e4ef4efbcb285072c97362338636d3f3764049000`
+- 保護対象: 174 ファイル
 
 ## ブロック
 
@@ -446,6 +446,7 @@
 | 430 | `a18cfba4ed1b8914` | `7246acca4fc41ad2` | `329a63235925863c` | update integrity-chain.cjs,mamori-capabilities.json,pkceSession.mamori,pkceSession.ts,pkceSessionHost.ts |
 | 431 | `df51e5f9bcdb5045` | `329a63235925863c` | `20ce3eca436e8315` | update pkceSession.mamori,pkceSession.ts,pkceSessionHost.ts |
 | 432 | `0b0292aa7fade07f` | `20ce3eca436e8315` | `41efd0604defd5f3` | update integrity-chain.cjs,mamori-capabilities.json,updateCheck.mamori |
+| 433 | `7baac239b19822c4` | `41efd0604defd5f3` | `e50ddcddc3a5e60b` | update build-mamori-verify.cjs,integrity-chain.cjs,checker.ts,parser.ts,BUILD.json,Cargo.lock |
 
 ## 保護対象ファイル
 
@@ -478,6 +479,7 @@
 - `orchestration/knowledge-graph.cjs`
 - `scripts/build-integrity-manifest.cjs`
 - `scripts/build-landing.cjs`
+- `scripts/build-mamori-verify.cjs`
 - `scripts/checksum-release.cjs`
 - `scripts/inject-pwa.cjs`
 - `scripts/inline-html.cjs`
@@ -614,6 +616,11 @@
 - `src/shared/vetted.mamori`
 - `src/shared/vetted.ts`
 - `src/shared/writeFieldLimits.ts`
+- `tools/mamori-verify/BUILD.json`
+- `tools/mamori-verify/Cargo.lock`
+- `tools/mamori-verify/Cargo.toml`
+- `tools/mamori-verify/dist/mamori_verify.wasm`
+- `tools/mamori-verify/src/lib.rs`
 - `vite.config.ts`
 - `vitest.audit.config.ts`
 - `vitest.config.ts`

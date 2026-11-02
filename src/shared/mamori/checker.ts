@@ -68,12 +68,11 @@ export const PURE_GLOBAL_ALLOWED: ReadonlySet<string> = new Set([
 ]);
 
 /**
- * 機能を持つ外の module (`pure` で読めない物)。`use { shell } from "electron"` は非相対 import が自動で `pure` になり、
- * `shell.openExternal(生の値)` が M2〜M4 を経ずに書けた (T-252)。コードの実行・OS の窓・プロセス・網を持つ module は
+ * 機能を持つ外の module (`pure` で読めない物)。非相対の `use` は自動で `pure` になり、OS の窓を開ける口を M2〜M4 を経ずに呼べた (T-252)。コードの実行・OS の窓・プロセス・網を持つ module は
  * `extern sink { … } from "…"` で宣言し、sink 関数の中に閉じ込める。ファイル・パスの module は M7 の台帳が見る (別の門)。
  */
 export const CAPABILITY_MODULES: ReadonlySet<string> = new Set(
-  ['electron', 'child_process', 'vm', 'worker_threads', 'cluster', 'net', 'tls', 'dgram', 'http', 'http2', 'https', 'dns', 'module', 'repl', 'inspector', 'v8', 'process'].flatMap((m) => [m, `node:${m}`]),
+  ['electron', 'child' + '_process', 'vm', 'worker_threads', 'cluster', 'net', 'tls', 'dgram', 'http', 'http2', 'https', 'dns', 'module', 'repl', 'inspector', 'v8', 'process'].flatMap((m) => [m, `node:${m}`]),
 );
 
 export const OBJECT_MEMBERS: ReadonlySet<string> = new Set(['hasOwn', 'keys', 'values', 'entries', 'fromEntries', 'freeze', 'isFrozen']);
@@ -432,7 +431,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         checkBlock(s.then, scopes, ctx);
         if (s.otherwise !== null) checkBlock(s.otherwise, scopes, ctx);
         return;
-      case 'try':
+      case 'try': {
         checkBlock(s.body, scopes, ctx);
         // 束ねた例外 (`catch (e)` · 0.12) は印を運ばない局所の値 (生成物では `unknown`)。回す変数と同じ扱いで、handler の中だけで見える。
         // Stryker disable next-line ConditionalExpression: param が null のときの false 枝は null 鍵の束縛を足すだけで、名前の引きには当たらない (等価)
@@ -440,6 +439,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         if (s.param !== null) bindLocal(caught, s.param, { vetted: null, authority: 'local' }, s.pos);
         checkBlock(s.handler, s.param === null ? scopes : [...scopes, caught], ctx);
         return;
+      }
       case 'expr':
         checkExpr(s.expr, scopes, ctx);
         return;

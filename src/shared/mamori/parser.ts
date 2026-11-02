@@ -98,7 +98,7 @@ const LINE_COMMENT_BODY = /[^\n\r\u2028\u2029]*/y;
  * 見えない字は読み手の見ている物と走る物を食い違わせる (Trojan Source · CVE-2021-42574)。書きたいときは `\uXXXX` で綴る。
  * ZWJ / ZWNJ (U+200C / U+200D) は絵文字の連結に要るので除く (`lint:charset` と同じ判断)。
  */
-// eslint-disable-next-line no-control-regex -- 制御文字そのものを断る規則なので、制御文字の範囲を正規表現に書くのが目的
+// eslint-disable-next-line no-control-regex, no-misleading-character-class -- 制御文字・結合文字そのものを断る規則なので、範囲を正規表現に書くのが目的
 const HIDDEN_CHARS = /[\u0000-\u0008\u000B-\u001F\u007F-\u009F\u00AD\u034F\u061C\u115F\u1160\u17B4\u17B5\u180B-\u180F\u200B\u200E\u200F\u2028\u2029\u202A-\u202E\u2060-\u206F\u2800\u3164\uFEFF\uFFA0\uFFF0-\uFFFB\u{E0000}-\u{E0FFF}\u{1D173}-\u{1D17A}]/u;
 /** 注記の本文に置けない指示 (T-254): 生成物の次の行の型検査を黙らせる `@ts-ignore` / `@ts-expect-error` / `@ts-nocheck` ほか。 */
 const TS_DIRECTIVE = /@ts-[a-z]/;

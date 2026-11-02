@@ -185,6 +185,15 @@ const PROTECTED = [
   'src/shared/mamori/capabilities.ts',
   'security/mamori-capabilities.json',
   'scripts/mamori.cjs',
+  // 2026-11-02 (threat: T-253 · MG-018)。Rust → Wasm の検算役 (M0 を TypeScript とは独立に実装し、受け入れた原文を二重に検める)。
+  // 元 (lib.rs)・依存の固定 (Cargo.toml / Cargo.lock)・組んだ物 (wasm)・その出どころの記録 (BUILD.json)・組む script を保護する —— wasm は
+  // 手で差し替えれば検算役ごと黙らせられるので、元と物の両方を鎖に載せる (BUILD.json の sha256 と rustVerifier.test.ts が突き合わせる)。
+  'tools/mamori-verify/src/lib.rs',
+  'tools/mamori-verify/Cargo.toml',
+  'tools/mamori-verify/Cargo.lock',
+  'tools/mamori-verify/dist/mamori_verify.wasm',
+  'tools/mamori-verify/BUILD.json',
+  'scripts/build-mamori-verify.cjs',
   // 2026-08-22 に足した。`shellOpenGate.ts` の**双子**——あちらが「OS に
   // ファイルを開かせてよいか」なら、こちらは「OS に URL を開かせてよいか」。
   // `javascript:` / `file:` / OS 独自スキームを止める唯一の関門で、
