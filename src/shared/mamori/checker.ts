@@ -367,6 +367,25 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
   }
 
   /** 式が運ぶ印 (無ければ null)。 */
+  /** 分割代入の元の式の「名前空間として指している根」。呼び出し・`new` の結果は値なので根にならない。 */
+  function destructureRoots(e: Expr): readonly Expr[] {
+    switch (e.kind) {
+      case 'member':
+      case 'field':
+      case 'index':
+        return destructureRoots(e.object);
+      case 'call':
+      case 'new':
+        return [];
+      case 'unary':
+        return e.op === 'await' ? destructureRoots(e.operand) : [];
+      case 'cond':
+        return [...destructureRoots(e.then), ...destructureRoots(e.otherwise)];
+      default:
+        return [e];
+    }
+  }
+
   function provenance(e: Expr, scopes: readonly Map<string, Binding>[]): string | null {
     // 式の種類ごとに 1 つの枝 (if を並べると、種類の判定を true にする変異体が他の種類で等価になり測れない)。
     switch (e.kind) {
@@ -408,6 +427,25 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
           report('M4', s.pos, `${s.name} は印 ${declared} の型ですが、入れる値は印を持ちません`);
         }
         bindLocal(own, s.name, { vetted: declared ?? carried, authority: 'local', mutable: s.mutable, numeric: s.type?.text === 'number' || (s.type === null && s.init !== null && isNumericKey(s.init, scopes)) }, s.pos);
+        return;
+      }
+      case 'destructure': {
+        checkExpr(s.init, scopes, ctx);
+        if (provenance(s.init, scopes) !== null) {
+          report('M4', s.pos, '印を持つ値は分割代入できません (印は値そのものに付く —— 取り出した欄は印を運びません)');
+        }
+        // 元の式が組み込み・外の名前のメンバを**直に**指す形 (`const { assign } = Object` など) は、表 (BUILTIN_MEMBERS・危ない口の呼び方) を迂回するので断る。
+        // 呼び出し・`new` の結果は値であって名前空間ではないので通す (`const { a } = JSON.parse(x)`)。
+        for (const root of destructureRoots(s.init)) {
+          if (root.kind !== 'ident') continue;
+          const b = lookup(scopes, root.name);
+          // 解決できない名前のうち組み込み (Object / JSON / Math ほか) も同じ — 宣言していない名前は checkExpr が別に断る。
+          const builtin = b === undefined && (root.name === 'Object' || PURE_GLOBALS.has(root.name) || BUILTIN_MEMBERS.has(root.name));
+          if (builtin || (b !== undefined && b.authority !== 'local')) {
+            report('M6', root.pos, `外の名前 ${root.name} のメンバは分割代入で取り出せません (組み込み・危ない口の表を迂回します —— \`${root.name}.メンバ\` と書いて呼びます)`);
+          }
+        }
+        for (const f of s.fields) bindLocal(own, f.local, { vetted: null, authority: 'local' }, s.pos);
         return;
       }
       case 'assign': {

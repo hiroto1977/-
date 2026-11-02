@@ -76,6 +76,12 @@ export type Comments = readonly string[];
 
 export type Stmt =
   | { readonly kind: 'let'; readonly mutable: boolean; readonly name: string; readonly type: TypeRef | null; readonly init: Expr | null; readonly comments: Comments; readonly pos: Pos }
+  /**
+   * `const { a, b: c } = 式;` (0.14 · MG-022)。**浅い分割だけ** —— 入れ子・既定値・残り (`...rest`)・計算した鍵・`let` は無い。
+   * 鍵は `.` の後ろと同じ `FORBIDDEN_MEMBERS` を通る (`const { constructor } = x` は T-224 の表を迂回する道になるため)。
+   * 取り出した値は印を運ばない局所の値で、元の式が組み込み・外の名前 (pure / sink) の**メンバ**を直に指す形は断る (表の迂回)。
+   */
+  | { readonly kind: 'destructure'; readonly fields: readonly { readonly key: string; readonly local: string }[]; readonly type: TypeRef | null; readonly init: Expr; readonly comments: Comments; readonly pos: Pos }
   | { readonly kind: 'return'; readonly value: Expr | null; readonly comments: Comments; readonly pos: Pos }
   | { readonly kind: 'if'; readonly test: Expr; readonly then: readonly Stmt[]; readonly otherwise: readonly Stmt[] | null; readonly comments: Comments; readonly pos: Pos }
   | { readonly kind: 'try'; readonly body: readonly Stmt[]; /** `catch (e)` の束縛名 (0.12)。無ければ null。 */ readonly param: string | null; readonly handler: readonly Stmt[]; readonly comments: Comments; readonly pos: Pos }

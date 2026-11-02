@@ -130,6 +130,8 @@ function stmt(s: Stmt, depth: number): string[] {
   switch (s.kind) {
     case 'let':
       return [...head, `${ind}${s.mutable ? 'let' : 'const'} ${s.name}${s.type === null ? '' : `: ${s.type.text}`}${s.init === null ? '' : ` = ${expr(s.init)}`};`];
+    case 'destructure':
+      return [...head, `${ind}const { ${s.fields.map((f) => (f.key === f.local ? f.key : `${f.key}: ${f.local}`)).join(', ')} }${s.type === null ? '' : `: ${s.type.text}`} = ${expr(s.init)};`];
     case 'assign':
       return [...head, `${ind}${s.target} = ${expr(s.value)};`];
     case 'return':
