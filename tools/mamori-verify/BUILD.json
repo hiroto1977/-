@@ -5,7 +5,7 @@
   "files": {
     "tools/mamori-verify/Cargo.lock": "46612f649704d1d986c582de5f41dc20ba751aaa46013a55547b0e87deb3f1fb",
     "tools/mamori-verify/Cargo.toml": "38f61fca5551b2d3ec1d2d99f3da70dc7446d537d52d2497fae1c1d84e075c99",
-    "tools/mamori-verify/dist/mamori_verify.wasm": "c74056cc905d66235d752d3e59d3681008aa1c9fbc79bb4ceba3d7274f6051d1",
-    "tools/mamori-verify/src/lib.rs": "2ba74a041cb4a62589b6436d4ec2bf6ef57727403f6e0a651d8bb0aaf4698abf"
+    "tools/mamori-verify/dist/mamori_verify.wasm": "5db5320002e50b5e0d9a000af175c48ba71328ebea709718fd91d5f75aaac9a6",
+    "tools/mamori-verify/src/lib.rs": "d8f9d6a4d46881333d7ebe286d7bc5821983807e7833a68666d8e9513888e48f"
   }
 }

@@ -74,7 +74,14 @@ export function inspectEmitted(file: string, text: string, externGlobals: Readon
       // 0.2 の `field` (unknown の値の欄を読む) が出す `(raw as { x?: unknown }).x` だけは許す (欄は unknown のまま・書き換えない)
     } else if (ts.isAsExpression(n) || ts.isTypeAssertionExpression(n)) found.push({ kind: 'hole', reason: '型の書き換え (as / <T>) がある' });
     if (ts.isNonNullExpression(n)) found.push({ kind: 'hole', reason: '後置の ! がある' });
-    if (ts.isSpreadElement(n) || ts.isSpreadAssignment(n)) found.push({ kind: 'hole', reason: '展開がある' });
+    // 0.15 の展開: 許すのは (1) 配列の字面の項 (2) オブジェクトの字面の**欄より前**だけ。呼び出し・new の引数の展開と、欄より後ろの展開 (字面で書いた欄の上書き) は穴。
+    if (ts.isSpreadElement(n) && !ts.isArrayLiteralExpression(n.parent)) found.push({ kind: 'hole', reason: '配列の字面の外の展開 (呼び出しの引数など)' });
+    if (ts.isSpreadAssignment(n)) {
+      const obj = n.parent;
+      if (!ts.isObjectLiteralExpression(obj) || obj.properties.slice(0, obj.properties.indexOf(n)).some((p) => !ts.isSpreadAssignment(p))) {
+        found.push({ kind: 'hole', reason: '欄より後ろのオブジェクトの展開' });
+      }
+    }
     if (ts.isCallExpression(n) && n.expression.kind === ts.SyntaxKind.ImportKeyword) found.push({ kind: 'hole', reason: '動的 import がある' });
     if (ts.isMetaProperty(n)) found.push({ kind: 'hole', reason: 'メタプロパティがある' });
     if (ts.isClassDeclaration(n) || ts.isClassExpression(n)) found.push({ kind: 'hole', reason: 'クラスがある' });

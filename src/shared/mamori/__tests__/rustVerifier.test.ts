@@ -45,7 +45,6 @@ const SPELLING_REASONS: readonly RegExp[] = [
   /裸で置けません/,
   /知らない文字です/,
   /鍵 `__proto__`/,
-  /`\.\.\.` \(展開\)/,
   /閉じていません|行の内で閉じていません/,
 ];
 const SPELLING_TEXTS = new Set<string>([...Object.values(FORBIDDEN_WORDS), ...Object.values(FORBIDDEN_MEMBERS)]);

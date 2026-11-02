@@ -75,7 +75,7 @@ const STATIC_STATE = [
 ];
 
 const SYNTAX_ESCAPES = [
-  'x as any', '<any>x', 'x!', 'x?.y', 'x?.[0]', 'x?.()', '...x', '[...x]', '{ ...x }', 'x[0]', 'x["constructor"]', 'x[k]',
+  'x as any', '<any>x', 'x!', 'x?.y', 'x?.[0]', 'x?.()', '...x', '[...x]', '{ ...x }', 'f(...x)', 'new Set(...x)', '{ a: 1, ...x }', '{ ...x, a: 1 }', '[...x.constructor]', '[...evil]', '{ ...x, __proto__: y }', 'x[0]', 'x["constructor"]', 'x[k]',
   '`a${x}b`', '`a`', 'tag`a`', 'async () => 1', 'await x', 'yield x', 'class A {}', 'new class {}', 'import("fs")', 'import.meta',
   'new.target', 'delete x.y', 'void 0', 'typeof x', 'x in y', 'x instanceof y', '(1, 2)', 'x = 1', 'x += 1', 'x++', '++x',
   'x ??= 1', 'x ||= 1', 'x &&= 1', '{ get a() { return 1; } }', '{ set a(v) {} }', '{ __proto__: x }', '{ "__proto__": x }',
