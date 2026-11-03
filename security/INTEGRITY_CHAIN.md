@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 429
+- ブロック数: 430
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `e8f633845079b6b1335f5faf3c63b456bd22b6f68f8397b7f9b5117d6313154f`
+- 末尾(tip)ハッシュ: `3298fad235eb23648ce03becb40d2eca1cdf62528a1985b4ea1f7b6502abbe75`
 - 保護対象: 165 ファイル
 
 ## ブロック
@@ -442,6 +442,7 @@
 | 426 | `d605413173a35063` | `8d05e1d8802b9e51` | `84b59c4a4f3311ac` | update integrity-chain.cjs,mamori-capabilities.json,vaultToken.mamori,vaultToken.ts |
 | 427 | `3b49ee658f909eb5` | `84b59c4a4f3311ac` | `d807451d38df2200` | update integrity-chain.cjs,mamori-capabilities.json,autoLock.mamori,autoLock.ts,autoLockHost.ts,checker.ts |
 | 428 | `43aa6b3b98c20377` | `d807451d38df2200` | `e8f633845079b6b1` | update checker.ts |
+| 429 | `3531be3d4d2cde62` | `e8f633845079b6b1` | `3298fad235eb2364` | update ci.yml |
 
 ## 保護対象ファイル
 

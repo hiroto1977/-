@@ -45,11 +45,11 @@
     {
       "id": "python",
       "status": "present",
-      "what": "MCP の uvx 起動子 (.claude/settings.json) が Python のパッケージを『その時の最新』で取って走らせる。リポジトリ内に .py は無い",
+      "what": "local-ai/orchestrator の .py（LiteLLM の振り分けと多段デモ）と、MCP の uvx 起動子。ソースは lint:python が危険な呼び出しを見る。uvx は lint:mcp-servers。依存の定義ファイルはまだ無いので PyPI の OSV は生態系の行を足さない",
       "scanners": [
+        "scripts/lint-python.cjs",
         "scripts/lint-mcp-servers.cjs"
-      ],
-      "launcherOnly": true
+      ]
     }
   ],
   "ecosystems": [
