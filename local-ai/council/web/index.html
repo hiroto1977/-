@@ -1,82 +1,131 @@
-<!doctype html><html lang="ja"><meta charset="utf-8"><title>ローカルAI評議会の村</title>
-<style>body{margin:0;overflow:hidden;font-family:sans-serif}#hud{white-space:pre-wrap;position:fixed;left:10px;top:10px;background:#fffc;border-radius:10px;padding:8px 12px;max-width:420px;font-size:13px}
-#board{position:fixed;right:10px;top:10px;width:340px;max-height:80vh;overflow:auto;background:#7a5230;color:#fff8e7;border:6px solid #4a3018;border-radius:8px;padding:8px;font-size:12px;white-space:pre-wrap}
-.lab{position:fixed;transform:translate(-50%,-100%);font-size:12px;background:#fff;border-radius:8px;padding:2px 6px;pointer-events:none;white-space:nowrap;border:2px solid #555}
-.bub{position:fixed;transform:translate(-50%,-100%);max-width:260px;font-size:12px;background:#fff;border-radius:12px;padding:6px 8px;border:2px solid #333;pointer-events:none}
-.off{background:#ccc;color:#555}</style>
-<div id="hud">読み込み中…</div><div id="board"><b>📌 掲示板（議長の決定）</b><div id="decs"></div></div><div id="labels"></div>
-<div id="chat" style="position:fixed;left:10px;bottom:10px;width:420px;background:#fffe;border-radius:10px;padding:8px;font-size:13px">
-<div id="log" style="max-height:200px;overflow:auto;white-space:pre-wrap"></div>
-<select id="to"><option value="">評議会全体へ（最優先の議題）</option></select>
-<input id="msg" maxlength="500" style="width:62%" placeholder="キャラをクリックで個別に話せます"><button id="send">送信</button><span id="st"></span></div>
+<!doctype html><html lang="ja"><meta charset="utf-8"><title>ローカルAI組織の村</title>
+<style>body{margin:0;overflow:hidden;font-family:sans-serif}#hud{white-space:pre-wrap;position:fixed;left:10px;top:10px;background:#fffc;border-radius:10px;padding:8px 12px;max-width:440px;font-size:13px}
+#board{position:fixed;right:10px;top:10px;width:340px;max-height:60vh;overflow:auto;background:#7a5230;color:#fff8e7;border:6px solid #4a3018;border-radius:8px;padding:8px;font-size:12px;white-space:pre-wrap}
+.lab{position:fixed;transform:translate(-50%,-100%);font-size:11px;background:#fff;border-radius:8px;padding:1px 5px;pointer-events:none;white-space:nowrap;border:2px solid #555}
+.lab.big{font-size:13px;font-weight:bold;border-color:#b8860b}.bub{position:fixed;transform:translate(-50%,-100%);max-width:260px;font-size:12px;background:#fff;border-radius:12px;padding:6px 8px;border:2px solid #333;pointer-events:none}
+.off{background:#ccc;color:#555}#chat{position:fixed;left:10px;bottom:10px;width:440px;background:#fffe;border-radius:10px;padding:8px;font-size:13px}#log{max-height:200px;overflow:auto;white-space:pre-wrap}</style>
+<div id="hud">読み込み中…</div><div id="board"><b>📌 掲示板（役員の決定・COO総括）</b><div id="decs"></div></div><div id="labels"></div>
+<div id="chat"><div id="log"></div><select id="to"><option value="">組織全体へ（COOが最優先で会議）</option></select>
+<input id="msg" maxlength="500" style="width:58%" placeholder="クリックか「@CFO 質問」で1対1で話せます"><button id="send">送信</button><span id="st"></span></div>
 <script type="importmap">{"imports":{"three":"/vendor/three.module.min.js"}}</script>
 <script type="module">
 import * as THREE from 'three';
 import {OrbitControls} from '/vendor/OrbitControls.js';
-const R=new THREE.WebGLRenderer({antialias:true});R.setSize(innerWidth,innerHeight);R.shadowMap.enabled=true;document.body.appendChild(R.domElement);
-const S=new THREE.Scene(),C=new THREE.PerspectiveCamera(50,innerWidth/innerHeight,.1,500);C.position.set(0,22,30);
-const O=new OrbitControls(C,R.domElement);O.target.set(0,0,0);O.maxPolarAngle=1.45;
-const hemi=new THREE.HemisphereLight(0xffffff,0x88aa66,1);S.add(hemi);const sun=new THREE.DirectionalLight(0xffffff,1.2);sun.position.set(10,20,8);sun.castShadow=true;S.add(sun);
-const box=(w,h,d,c,x,y,z,p=S)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshLambertMaterial({color:c}));m.position.set(x,y,z);m.castShadow=m.receiveShadow=true;p.add(m);return m};
-box(60,1,60,0x7cc95a,0,-.5,0);box(5,.3,5,0xd9b77a,0,.1,0);
-box(3,.3,3,0xa0703c,0,1.1,0);box(.4,1,.4,0x6b4423,0,.5,0); // 中央テーブル
-for(let i=0;i<30;i++){const a=i*2.4,r=18+(i%5)*2,x=Math.cos(a)*r,z=Math.sin(a)*r;box(.6,2,.6,0x7a5230,x,1,z);box(2,2,2,0x3f9a3f,x,3,z)} // 木
-const bd=box(4,2.5,.3,0x7a5230,0,2.5,-6);box(.3,2,.3,0x4a3018,-1.8,.8,-6);box(.3,2,.3,0x4a3018,1.8,.8,-6); // 掲示板
-const COLORS=[0xff8a65,0x64b5f6,0x81c784,0xffd54f,0xba68c8,0x4dd0e1,0xf06292,0xa1887f,0x90a4ae,0xaed581];
-const agents={};const labels=document.getElementById('labels');
-function mkAgent(key,name,i,n,radius,isSvc){
-  const a=i/n*Math.PI*2+(isSvc?.3:0),hx=Math.cos(a)*radius,hz=Math.sin(a)*radius,col=COLORS[(i+(isSvc?4:0))%COLORS.length];
-  const h=new THREE.Group();h.position.set(hx,0,hz);h.lookAt(0,0,0);if(key!=='me')S.add(h);box(3,2.4,3,0xf5e6c8,0,1.2,-1.8,h);const roof=box(3.6,1,3.6,col,0,2.9,-1.8,h);box(.8,1.4,.1,0x6b4423,0,.7,-.25,h);
-  const g=new THREE.Group();const body=box(.9,1,.6,col,0,1,0,g),head=box(.9,.9,.9,0xffe0bd,0,1.95,0,g);box(.15,.15,.05,0x222222,-.2,2,.46,g);box(.15,.15,.05,0x222222,.2,2,.46,g);
-  box(.35,.6,.35,0x444466,-.22,.3,0,g);box(.35,.6,.35,0x444466,.22,.3,0,g);g.position.set(hx*.85,0,hz*.85);S.add(g);
-  const lab=document.createElement('div');lab.className='lab';lab.textContent=name;labels.appendChild(lab);
+const R=new THREE.WebGLRenderer({antialias:true});R.setPixelRatio(Math.min(devicePixelRatio,1.5));R.setSize(innerWidth,innerHeight);R.shadowMap.enabled=true;document.body.appendChild(R.domElement);
+const S=new THREE.Scene(),C=new THREE.PerspectiveCamera(50,innerWidth/innerHeight,.1,600);C.position.set(0,42,52);
+const O=new OrbitControls(C,R.domElement);O.maxPolarAngle=1.45;O.maxDistance=140;
+const hemi=new THREE.HemisphereLight(0xffffff,0x88aa66,1);S.add(hemi);const sun=new THREE.DirectionalLight(0xffffff,1.2);sun.position.set(20,40,15);sun.castShadow=true;
+Object.assign(sun.shadow.camera,{left:-50,right:50,top:50,bottom:-50});sun.shadow.mapSize.set(1024,1024);S.add(sun);
+const G=new THREE.BoxGeometry(1,1,1),MC={};const mat=c=>MC[c]||(MC[c]=new THREE.MeshLambertMaterial({color:c}));
+const box=(w,h,d,c,x,y,z,p=S,sh=true)=>{const m=new THREE.Mesh(G,typeof c==='number'?mat(c):c);m.scale.set(w,h,d);m.position.set(x,y,z);m.castShadow=sh;m.receiveShadow=true;p.add(m);return m};
+box(110,1,110,0x7cc95a,0,-.5,0,S,false);box(9,.3,9,0xd9b77a,0,.1,0,S,false);
+// 会議ホール（屋根なしの柱＋テーブル）
+box(4,.3,2.4,0xa0703c,0,1.1,0);box(.4,1,.4,0x6b4423,0,.5,0);for(const [x,z] of [[-4,-4],[4,-4],[-4,4],[4,4]])box(.5,4,.5,0xffffff,x,2,z);
+// 木（InstancedMesh で軽量化）
+const TN=60,trunk=new THREE.InstancedMesh(G,mat(0x7a5230),TN),leaf=new THREE.InstancedMesh(G,mat(0x3f9a3f),TN),M4=new THREE.Matrix4();
+for(let i=0;i<TN;i++){const a=i*2.4,r=44+(i%5)*2.5,x=Math.cos(a)*r,z=Math.sin(a)*r;M4.compose(new THREE.Vector3(x,1,z),new THREE.Quaternion(),new THREE.Vector3(.6,2,.6));trunk.setMatrixAt(i,M4);
+  M4.compose(new THREE.Vector3(x,3,z),new THREE.Quaternion(),new THREE.Vector3(2.2,2.2,2.2));leaf.setMatrixAt(i,M4)}S.add(trunk,leaf);
+box(4,2.5,.3,0x7a5230,7,2.5,-5);box(.3,2,.3,0x4a3018,5.2,.8,-5);box(.3,2,.3,0x4a3018,8.8,.8,-5); // 掲示板
+// 機械室（サービス）
+box(14,.3,10,0x9e9e9e,-38,.15,38,S,false);box(14,3,.3,0x777777,-38,1.5,33);
+const COLORS={COO:0xffd700,役員:0x8e24aa,秘書:0xf06292,管理職:0x1e88e5,一般職:0x43a047,svc:0x90a4ae};
+const EXC={cfo:0xff8a65,chro:0x64b5f6,cso:0x81c784,cio:0xffd54f,cqo:0xba68c8};
+const agents={},DOORS=[];const labels=document.getElementById('labels');
+function mkChar(key,name,x,z,col,opt={}){
+  if(opt.house){const h=new THREE.Group();h.position.set(x,0,z);h.lookAt(opt.face||new THREE.Vector3());S.add(h);const s=opt.house;
+    box(3*s,2.4*s,3*s,0xf5e6c8,0,1.2*s,-1.8*s,h);box(3.6*s,1*s,3.6*s,opt.roof||col,0,2.9*s,-1.8*s,h);box(.8,1.4,.1,0x6b4423,0,.7,-1.8*s+1.5*s+.05,h);DOORS.push(h.localToWorld(new THREE.Vector3(0,0,-.3*s+.6)))}
+  if(opt.desk){box(1.4,.8,.8,0xa0703c,x+(opt.desk[0]||0),.4,z+(opt.desk[1]||0))}
+  S.updateMatrixWorld();const g=new THREE.Group();const s=opt.scale||1;const body=box(.9,1,.6,col,0,1,0,g),head=box(.9,.9,.9,0xffe0bd,0,1.95,0,g);
+  box(.15,.15,.05,0x222222,-.2,2,.46,g,false);box(.15,.15,.05,0x222222,.2,2,.46,g,false);box(.35,.6,.35,0x444466,-.22,.3,0,g);box(.35,.6,.35,0x444466,.22,.3,0,g);
+  if(opt.tie)box(.15,.6,.05,opt.tie,0,1.1,.31,g,false);if(opt.crown)box(.7,.25,.7,0xffd700,0,2.55,0,g,false);
+  g.scale.setScalar(s);g.position.set(x,0,z);g.userData.key=key;S.add(g);
+  const lab=document.createElement('div');lab.className='lab'+(opt.big?' big':'');lab.textContent=name;labels.appendChild(lab);
   const bub=document.createElement('div');bub.className='bub';bub.style.display='none';labels.appendChild(bub);
-  agents[key]={g,body,head,home:new THREE.Vector3(hx*.85,0,hz*.85),target:new THREE.Vector3(hx*.85,0,hz*.85),lab,bub,col,up:true,speaking:false,t:Math.random()*9};
+  agents[key]={g,body,head,home:new THREE.Vector3(x,0,z),target:new THREE.Vector3(x,0,z),lab,bub,col,up:true,speaking:false,t:Math.random()*9,big:!!opt.big,desk:!!opt.desk,wander:!(opt.svc||key==='me'),state:'idle',inside:0,svc:!!opt.svc};
 }
-const toSel=document.getElementById('to');
-async function sendMsg(){const t=document.getElementById('msg').value.trim();if(!t)return;const to=toSel.value,stEl=document.getElementById('st');
+let ORG=null,built=false;const toSel=document.getElementById('to');
+function build(org,st){ORG=org;const ppl=org.people,by=id=>ppl.find(p=>p.id===id);
+  mkChar('coo','COO（全社統括）',0,-9,COLORS.COO,{house:1.3,roof:0xffd700,big:true,tie:0xc62828});
+  const ex=ppl.filter(p=>p.tier==='役員');
+  ex.forEach((e,i)=>{const a=-Math.PI/2+(i+.5)/ex.length*Math.PI*2,x=Math.cos(a)*17,z=Math.sin(a)*17;e._a=a;
+    mkChar(e.id,`${e.name}（${e.dept.split('・')[0]}）`,x,z,COLORS.役員,{house:1.2,roof:EXC[e.id],big:true,tie:EXC[e.id]});
+    const sec=ppl.find(p=>p.tier==='秘書'&&p.parent===e.id);const px=-Math.sin(a)*3,pz=Math.cos(a)*3;
+    if(sec)mkChar(sec.id,sec.name,x+px,z+pz,COLORS.秘書,{tie:EXC[e.id],scale:.9});
+    const mg=ppl.filter(p=>p.tier==='管理職'&&p.parent===e.id);
+    mg.forEach((m,j)=>{const b=a+(j-(mg.length-1)/2)*.42,mx=Math.cos(b)*30,mz=Math.sin(b)*30;
+      box(7,.2,6,0xd9c49a,mx,.1,mz,S,false);
+      mkChar(m.id,m.name,mx,mz,COLORS.管理職,{desk:[0,1],tie:EXC[e.id],wander:false});
+      ppl.filter(p=>p.tier==='一般職'&&p.parent===m.id).forEach((s,k)=>{const sx=mx+Math.cos(b+Math.PI/2)*(k?2.2:-2.2)+Math.cos(b)*2.5,sz=mz+Math.sin(b+Math.PI/2)*(k?2.2:-2.2)+Math.sin(b)*2.5;
+        mkChar(s.id,s.name,sx,sz,COLORS.一般職,{desk:[0,1],scale:.85,wander:false})})})});
+  for(const p of ppl){const o=document.createElement('option');o.value=p.id;o.textContent=`${p.name}（${p.tier}）に話す`;toSel.appendChild(o)}
+  mkChar('me',org.user+'（CEO・あなた）',0,2.6,0xffffff,{big:true,crown:true,wander:false});
+  Object.keys(st.services).forEach((s,i)=>mkChar('s:'+s,s,-43+(i%4)*3.3,36+Math.floor(i/4)*4,COLORS.svc,{scale:.7,svc:true,wander:false}));
+  O.target.set(0,0,0);built=true}
+async function poll(){try{
+  if(!ORG){const org=await (await fetch('/api/org')).json();const st0=await (await fetch('/api/state')).json();build(org,st0)}
+  const st=await (await fetch('/api/state')).json();
+  document.getElementById('hud').textContent=`ローカルAI組織：${st.status}\n議題: ${(st.topic||'').slice(0,120)}\n担当役員: ${(st.exec||'-').toUpperCase()} ・ 空きメモリ ${st.free_mb}MB ・ 更新 ${st.updated}`;
+  document.getElementById('decs').textContent='\n'+st.decisions.slice().reverse().join('\n\n――――\n\n');
+  const cl=document.getElementById('log');cl.replaceChildren(...st.chat.map(c=>{const d=document.createElement('div');d.textContent=`${c.who}: ${c.text}`;return d}));cl.scrollTop=1e9;
+  const inMeeting=st.status.startsWith('会議中'),ids=new Set(inMeeting?st.transcript.map(t=>t.id):[]);if(inMeeting&&st.speaking)ids.add(st.speaking);
+  for(const [k,A] of Object.entries(agents)){if(A.svc||k==='me')continue;A.speaking=ids.has(k);if(!(A.hold>Date.now()))A.bub.style.display='none'}
+  const last=st.transcript[st.transcript.length-1];if(last&&agents[last.id]){const A=agents[last.id];A.bub.textContent=last.text.replace(/\s+/g,' ').slice(0,110)+(last.text.length>110?'…':'');A.bub.style.display='block'}
+  if(st.speaking&&agents[st.speaking]&&inMeeting){const A=agents[st.speaking];if(!last||last.id!==st.speaking){A.bub.textContent='（考え中…）';A.bub.style.display='block'}}
+  const mine=st.chat.filter(c=>c.who===st.user).pop();if(mine&&agents.me){agents.me.bub.textContent=mine.text.slice(0,80);agents.me.bub.style.display='block'}
+  for(const [s,up] of Object.entries(st.services)){const A=agents['s:'+s];if(!A)continue;A.up=up;A.lab.classList.toggle('off',!up);A.lab.textContent=s+(up?'':' 💤');A.body.material=mat(up?A.col:0x999999)}
+ }catch(e){document.getElementById('hud').textContent='状態を取得できません: '+e}}
+poll();setInterval(poll,4000);
+function resolveAt(t){const m=t.match(/^[@＠](\S+)\s*/);if(!m||!ORG)return null;const q=m[1].toLowerCase();
+  const p=ORG.people.find(p=>p.id.toLowerCase()===q||p.name.toLowerCase()===q)||ORG.people.find(p=>p.name.toLowerCase().includes(q));return p?{id:p.id,rest:t.slice(m[0].length)||t}:null}
+async function sendMsg(){let t=document.getElementById('msg').value.trim();if(!t)return;const at=resolveAt(t);if(at){toSel.value=at.id;t=at.rest}const to=toSel.value;
+  if(to&&agents[to]){const A=agents[to];A.called=Date.now()+60000;A.bub.textContent='（はい、なんでしょう？）';A.bub.style.display='block';A.hold=Date.now()+60000}const stEl=document.getElementById('st');
   stEl.textContent=' 送信中…';document.getElementById('msg').value='';
-  try{const r=await fetch(to?'/api/chat':'/api/topic',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to,text:t})});
-    const j=await r.json();stEl.textContent=to?'':' 評議会に届けました';if(to&&agents['r:'+j.who]){const A=agents['r:'+j.who];A.bub.textContent=j.text.replace(/\s+/g,' ').slice(0,110);A.bub.style.display='block';A.hold=Date.now()+15000}poll()}catch(e){stEl.textContent=' 失敗: '+e}}
+  try{const r=await fetch(to?'/api/chat':'/api/topic',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to,text:t})});const j=await r.json();
+    stEl.textContent=to?'':' COOに届けました';if(to&&agents[j.id]){const A=agents[j.id];A.bub.textContent=j.text.replace(/\s+/g,' ').slice(0,110);A.bub.style.display='block';A.hold=Date.now()+20000;A.called=Date.now()+20000}poll()}catch(e){stEl.textContent=' 失敗: '+e}}
 document.getElementById('send').onclick=sendMsg;document.getElementById('msg').onkeydown=e=>{if(e.key==='Enter'&&!e.isComposing)sendMsg()};
 const ray=new THREE.Raycaster(),mp=new THREE.Vector2();
 R.domElement.addEventListener('click',e=>{mp.set(e.clientX/innerWidth*2-1,-e.clientY/innerHeight*2+1);ray.setFromCamera(mp,C);
-  for(const [k,A] of Object.entries(agents)){if(k.startsWith('r:')&&ray.intersectObject(A.g,true).length){toSel.value=k.slice(2);document.getElementById('msg').focus();break}}});
-let built=false,lastSpeaker=null;
-function build(st){
-  st.roles.forEach((r,i)=>mkAgent('r:'+r.role,`${r.role}（${r.model}）`,i,st.roles.length,9,false));
-  st.roles.forEach(r=>{const o=document.createElement('option');o.value=r.role;o.textContent=r.role+'に話す';toSel.appendChild(o)});
-  mkAgent('me',st.user+'（あなた）',0,1,3,false);agents.me.home.set(0,0,2.6);agents.me.target.set(0,0,2.6);agents.me.g.position.set(0,0,2.6);agents.me.body.material.color.set(0xffffff);
-  const sv=Object.keys(st.services);sv.forEach((s,i)=>mkAgent('s:'+s,s,i,sv.length,15,true));built=true;
-}
-async function poll(){
-  try{const st=await (await fetch('/api/state')).json();if(!built)build(st);
-    document.getElementById('hud').textContent=`ローカルAI評議会：${st.status}\n議題: ${(st.topic||'').slice(0,120)}\n空きメモリ ${st.free_mb}MB ・ 更新 ${st.updated}`;
-    const cl=document.getElementById('log');cl.replaceChildren(...st.chat.map(c=>{const d=document.createElement('div');d.textContent=`${c.who}: ${c.text}`;return d}));cl.scrollTop=1e9;
-    const mine=st.chat.filter(c=>c.who===st.user).pop();if(mine&&agents.me){agents.me.bub.textContent=mine.text.slice(0,80);agents.me.bub.style.display='block'}
-    document.getElementById('decs').textContent='\n'+st.decisions.slice().reverse().join('\n\n――――\n\n');
-    const last=st.transcript[st.transcript.length-1];const talking=st.status.startsWith('議論中')&&last;
-    for(const r of st.roles){const A=agents['r:'+r.role];A.speaking=false;if(!(A.hold>Date.now()))A.bub.style.display='none';}
-    if(last){const nextIdx=talking?null:null;const A=agents['r:'+last.role];if(A){A.speaking=!!talking||last.role==='議長';A.bub.textContent=last.text.replace(/\s+/g,' ').slice(0,110)+(last.text.length>110?'…':'');A.bub.style.display='block';}}
-    for(const [s,up] of Object.entries(st.services)){const A=agents['s:'+s];A.up=up;A.lab.classList.toggle('off',!up);A.lab.textContent=s+(up?'':' 💤停止中');
-      A.body.material.color.set(up?A.col:0x999999);}
-  }catch(e){document.getElementById('hud').textContent='状態を取得できません: '+e}
-}
-poll();setInterval(poll,4000);
+  const hit=ray.intersectObjects(Object.entries(agents).filter(([k,A])=>!A.svc&&k!=='me').map(([,A])=>A.g),true)[0];
+  if(hit){let o=hit.object;while(o&&!o.userData.key)o=o.parent;if(o){toSel.value=o.userData.key;const A=agents[o.userData.key];A.called=Date.now()+30000;A.bub.textContent='（呼ばれて振り向いた）';A.bub.style.display='block';A.hold=Date.now()+30000;document.getElementById('msg').focus()}}});
 function tint(){const h=+new Intl.DateTimeFormat('en',{hour:'numeric',hourCycle:'h23',timeZone:'Asia/Tokyo'}).format(new Date());
-  const day=h>=6&&h<18,dusk=h===17||h===18||h===5;S.background=new THREE.Color(day?0x9fd8ff:dusk?0xf4a261:0x1b2340);sun.intensity=day?1.2:dusk?.7:.25;hemi.intensity=day?1:.45}
+  const day=h>=6&&h<17,dusk=h===17||h===18||h===5;S.background=new THREE.Color(day?0x9fd8ff:dusk?0xf4a261:0x1b2340);sun.intensity=day?1.2:dusk?.7:.25;hemi.intensity=day?1:.5}
 tint();setInterval(tint,60000);
-const clock=new THREE.Clock(),v=new THREE.Vector3();
-function loop(){const dt=Math.min(clock.getDelta(),.1);
-  for(const A of Object.values(agents)){A.t+=dt;
-    if(!A.up){A.g.rotation.z=1.4;A.g.position.y=.3;}else{A.g.rotation.z=0;
-      if(A===agents.me){}else if(A.speaking)A.target.set(A.home.x*.18,0,A.home.z*.18);
-      else if(A.t>4){A.t=0;A.target.copy(A.home).add(new THREE.Vector3(Math.random()*3-1.5,0,Math.random()*3-1.5));}
-      const d=v.subVectors(A.target,A.g.position);d.y=0;const L=d.length();
-      if(L>.1){A.g.position.addScaledVector(d.normalize(),Math.min(L,dt*2.5));A.g.rotation.y=Math.atan2(d.x,d.z);A.g.position.y=Math.abs(Math.sin(clock.elapsedTime*10))*.15}else A.g.position.y=0;}
-    const p=A.g.position.clone();p.y+=2.9;p.project(C);const x=(p.x+1)/2*innerWidth,y=(1-p.y)/2*innerHeight,vis=p.z<1;
-    A.lab.style.left=x+'px';A.lab.style.top=y+'px';A.lab.style.display=vis?'block':'none';A.bub.style.left=x+'px';A.bub.style.top=(y-24)+'px';}
-  O.update();R.render(S,C);requestAnimationFrame(loop)}
-loop();
-addEventListener('resize',()=>{C.aspect=innerWidth/innerHeight;C.updateProjectionMatrix();R.setSize(innerWidth,innerHeight)});
+const clock=new THREE.Clock(),v=new THREE.Vector3(),SEATS=[];for(let i=0;i<8;i++){const a=i/8*Math.PI*2;SEATS.push(new THREE.Vector3(Math.cos(a)*2.6,0,Math.sin(a)*2.6*.8))}
+const PLAZA=[new THREE.Vector3(0,0,6),new THREE.Vector3(10,0,8),new THREE.Vector3(-10,0,8),new THREE.Vector3(7,0,-3),new THREE.Vector3(-12,0,-6),new THREE.Vector3(20,0,20),new THREE.Vector3(-22,0,18)];
+function pickGoal(A){const r=Math.random();A.door=null;
+  if(r<.3&&DOORS.length){const d=DOORS[Math.floor(Math.random()*DOORS.length)];A.door=d;A.target.copy(d)}
+  else if(r<.55)A.target.copy(A.home).add(new THREE.Vector3(Math.random()*4-2,0,Math.random()*4-2));
+  else if(r<.75)A.target.copy(PLAZA[Math.floor(Math.random()*PLAZA.length)]).add(new THREE.Vector3(Math.random()*3-1.5,0,Math.random()*3-1.5));
+  else {const B=Object.values(agents)[Math.floor(Math.random()*Object.keys(agents).length)];A.target.copy(B.home).add(new THREE.Vector3(2,0,2))}
+  A.state='walk'}
+window.__ST=location.search.includes("selftest");let __frames=0;function loop(){__frames++;const dt=Math.min(clock.getDelta(),.1),T=clock.elapsedTime;let seat=0;const list=Object.values(agents);
+  for(const [k,A] of Object.entries(agents)){A.t+=dt;
+    if(!A.up){A.g.rotation.z=1.4;A.g.position.y=.3}else{A.g.rotation.z=0;
+      if(A.called>Date.now()){A.g.visible=true;A.inside=0;A.g.lookAt(C.position.x,0,C.position.z);A.g.position.y=0;A.head.position.y=1.95+Math.sin(T*6)*.05}
+      else{
+      if(A.speaking){A.g.visible=true;A.inside=0;A.target.copy(SEATS[(seat++)%8]);A.state='walk';A.door=null}
+      else if(A.wander&&A.inside>0){A.inside-=dt;if(A.inside<=0){A.g.visible=true;A.g.position.copy(A.door||A.home);A.door=null;A.state='pause';A.t=0}}
+      else if(A.wander&&A.state==='idle'){pickGoal(A)}
+      else if(A.state==='pause'&&A.t>2+Math.random()*4){A.state=A.wander?'idle':'pause';A.t=0}
+      else if(!A.wander)A.target.copy(A.home);
+      if(A.g.visible){const d=v.subVectors(A.target,A.g.position);d.y=0;const L=d.length();
+        // 衝突回避: 近い住民から離れる
+        for(const B of list){if(B===A||!B.g.visible)continue;const dx=A.g.position.x-B.g.position.x,dz=A.g.position.z-B.g.position.z,q=dx*dx+dz*dz;if(q<1.2&&q>1e-4){A.g.position.x+=dx/q*dt*.6;A.g.position.z+=dz/q*dt*.6}}
+        if(L>.15&&A.state!=='pause'){A.g.position.addScaledVector(d.normalize(),Math.min(L,dt*(A.speaking?4:2.2)));A.g.rotation.y=Math.atan2(d.x,d.z);A.g.position.y=Math.abs(Math.sin(T*10))*.15;A.body.rotation.x=0;
+          A.g.children[5]&&(A.g.children[4].rotation.x=Math.sin(T*10)*.5,A.g.children[5].rotation.x=-Math.sin(T*10)*.5)}
+        else{A.g.position.y=0;
+          if(A.speaking)A.g.lookAt(0,0,0);
+          else if(A.state==='walk'){if(A.door&&Math.random()<.7){A.g.visible=false;A.inside=5+Math.random()*12}else{A.state='pause';A.t=0}}
+          else if(A.desk&&A.g.position.distanceTo(A.home)<1){A.head.position.y=1.95+Math.abs(Math.sin(T*12+A.t))*.06;A.body.rotation.x=.12}}}}}
+    const near=C.position.distanceTo(A.g.position)<38;const show=A.g.visible&&(A.big||A.speaking||A.bub.style.display==='block'||near);
+    const p=A.g.position.clone();p.y+=2.9*(A.g.scale.x);p.project(C);const x=(p.x+1)/2*innerWidth,y=(1-p.y)/2*innerHeight,vis=p.z<1;
+    A.lab.style.display=vis&&show?'block':'none';if(vis&&show){A.lab.style.left=x+'px';A.lab.style.top=y+'px'}
+    if(A.bub.style.display==='block'){A.bub.style.display=A.g.visible?'block':'none';A.bub.style.left=x+'px';A.bub.style.top=(y-24)+'px'}}
+  O.update();R.render(S,C);(window.__ST?setTimeout(loop,33):requestAnimationFrame(loop))}
+window.__agents=agents;
+if(location.search.includes('selftest')){setTimeout(()=>{window.__p0=Object.fromEntries(Object.entries(agents).map(([k,A])=>[k,A.g.position.clone()]))},3000);
+  setTimeout(()=>{let moved=0,hidden=0;for(const [k,A] of Object.entries(agents)){if(A.g.position.distanceTo(window.__p0[k])>.5)moved++;if(!A.g.visible)hidden++}
+    const d=document.createElement('pre');d.id='selftest';d.textContent=`SELFTEST moved=${moved}/${Object.keys(agents).length} inside=${hidden} frames=${__frames}`;document.body.appendChild(d);
+    document.getElementById('msg').value='@CFO 村の様子はどうですか？';sendMsg()},9000)}
+loop();addEventListener('resize',()=>{C.aspect=innerWidth/innerHeight;C.updateProjectionMatrix();R.setSize(innerWidth,innerHeight)});
 </script></html>
