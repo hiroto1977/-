@@ -1,5 +1,14 @@
 # Service Hub — 残りの作業手順書
 
+## パス 574 (MG-016 / MG-017) —— 計算した鍵の添字を inert にし、updateCheck を移した (2026-11-03)
+
+- **測り直し**: 添字 `x[k]` は 0.8 (MG-007) で入っている。パス 567 が先に閉じると書いた残りを 0.11 に対して測ると、数と分かる鍵の結果 (`xs[n]()`・`const f = xs[n]; f()`・`xs[n].length`・`xs[n][0]`・`new f()`) は通っていた。文字列になりうる鍵と `out["__proto__"]` は既に断れていた。
+- **閉じた穴 (T-250)**: 計算した鍵の結果を inert にした。呼び出し・`new`・メンバ・次の添字・代入の相手にできない。`let` / `const` / 代入で束縛へ写しても印が残る (条件の片方と `await` も運ぶ)。字面の鍵 (`xs[0]`・`o["content-type"]`) は inert ではない。
+- **閉じた穴 (T-251)**: 代入 `out[i] = v` を足した。字面の識別子の鍵は `.name` に畳む時点で `FORBIDDEN_MEMBERS` を通す。計算した鍵は数だけ。生成物は `out[+(i)]`。欄への代入 (`o.f = v`) は無い。
+- **移した壁**: `updateCheck.ts` (brief が選んだ、書き直しだけで移せるいちばん短い壁)。`as` 2 つは `field` と `raw is string`、template 3 つは連結。組み上がる文字列は変えていない。既存の検査は緑。
+- **移さなかった壁**: `dataCrypto.ts` は brief 上は書き直しだけで移せるが、`salt as BufferSource` のように tsc へ渡す型の書き換えが `field` では書けない。`out[i] = v` 自体は 0.12 で書ける。safeFilename / aiEndpoint / vaultToken は 0.11 までの周で移し済み。
+- **機械**: `mamoriV12.test.ts`。対照は A-570〜A-578 (守りを 1 つ外すと名指しの検査が落ちる)。
+
 ## パス 571 (MG-004) —— escape.ts の移植と Mamori 0.4 (2026-10-31)
 
 - **閉じた穴 (T-232)**: Mamori の M6 が組み込みの名前だけを見て、共有の状態を持つメンバ (RegExp の旧式の静的な欄・Error の captureStackTrace / stackTraceLimit・URL の blob) を通していた。`BUILTIN_MEMBERS` の表で構築する形と許したメンバだけにした。`mamoriV04.test.ts` 20 件 + 台帳の書き換え A-541 / A-542。詳細は SESSION_HANDOFF のパス 571。

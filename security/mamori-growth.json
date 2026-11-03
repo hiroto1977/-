@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.11"
+    "version": "0.12"
   },
   "constructs": {
     "class": {
@@ -13,7 +13,7 @@
     "index": {
       "decision": "added",
       "why": "配列とテーブルの引きに要る。",
-      "risk": "鍵を実行時に組めるので `x[\"constructor\"]` が T-224 の表を迂回する。字面の鍵は FORBIDDEN_MEMBERS を通し、字面でない鍵は数 (number) だけに限るなど、先に塞ぎ方を決める。",
+      "risk": "鍵を実行時に組めるので `x[\"constructor\"]` が T-224 の表を迂回する。字面の識別子は `.name` に畳んで FORBIDDEN_MEMBERS を通し、字面でない鍵は数だけ (生成物は `+(…)`)。計算した鍵の結果は inert で、束縛へ写しても呼び出し・new・メンバ・次の添字の相手にできない (0.12 · T-250)。代入 `out[i] = v` の計算した鍵も数だけ (T-251)。",
       "since": "0.8"
     },
     "optional-chain": {
@@ -1096,6 +1096,107 @@
         "pr": null,
         "reason": "PR はこの記録のあとに出す (番号は次の周で台帳へ)",
         "summary": "自動ロック (autoLock.ts · 席を離れた / タブを隠した時に金庫を施錠) を Mamori で書き直した (port)。足りなかったのは入れ子の関数宣言・複合代入・最上位の let・インターフェースのメソッド記法・型の戻し (as) で、const の arrow・x = x + 1・集合・readonly の関数欄・小さな host 関数 (autoLockHost.ts) へ替えた。移す途中で `extern pure global window/document` と宣言すると sink を経ずに window.open(生の値)・document.write・return window が通る穴 (T-249) を見つけ、host の 29 名は pure で宣言できないようにした (M6)。元の TypeScript と 400 通りの操作列 (時計・タイマー・可視・活動) で同じ痕跡・既存の検査 55 件は編集なしで緑。変異検査は autoLock.ts が初回 83.87% (pragma を移す途中で落とした + 境目・後始末・購読の通知を誰も主張していなかった) → pragma を戻し検査 7 件を足して 100% (98 変異体)、checker.ts は 99.87% の生存 1 (`from === null` の門) を検査 1 件で留めて 100%。能力台帳・保護対象・CODEOWNERS に追加。"
+      }
+    },
+    {
+      "id": "MG-016",
+      "date": "2026-11-03",
+      "kind": "feature",
+      "target": "index",
+      "pickedBy": "manual",
+      "deviation": "brief は port updateCheck を選んだ。利用者の依頼は、0.8 で足した添字にパス 567 が先送りした残り (計算した鍵の結果を inert にし、束縛へ伝え、代入 out[i]=v を数の鍵だけ許す) を先に閉じることだった。index は既に added なので added には書かない。",
+      "briefPick": "port:src/shared/updateCheck.ts",
+      "version": "0.12",
+      "features": [
+        "計算した鍵の添字の結果を inert にする (呼び出し・new・メンバ・次の添字の相手にできない)。束縛へ写した名前も inert。代入 out[i]=v は字面の鍵を FORBIDDEN_MEMBERS に通し、計算した鍵は数だけ (生成物は out[+(i)])"
+      ],
+      "added": [],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "0.11 で `return xs[n]()` / `xs[n].length` / `xs[n][0]` / `const f = xs[n]; return f()` / `const f = xs[n]; return new f()` (計算した鍵の結果を呼び出し・メンバ・次の添字・束縛越しに使う)",
+          "result": "hole"
+        },
+        {
+          "tried": "`out[\"__proto__\"] = 1` / `out[\"constructor\"] = 1` / `out[\"\\\\u0063onstructor\"] = 1` (字面の鍵で原型を差し替える)",
+          "result": "refused"
+        },
+        {
+          "tried": "`out[u] = 1` / `out[u + \"x\"] = 1` (計算した文字列の鍵への代入) と `o.f = u` (欄への代入)",
+          "result": "refused"
+        },
+        {
+          "tried": "`xs[n].constructor` / `out?.[0]` (禁じたメンバと、optional の添字)",
+          "result": "refused"
+        }
+      ],
+      "threats": [
+        "T-250",
+        "T-251"
+      ],
+      "controls": 9,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/checker.ts",
+          "src/shared/mamori/emit.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": null,
+        "reason": "PR はこの記録のあとに出す (番号は次の周で台帳へ)",
+        "summary": "Mamori 0.12: 計算した鍵の添字の結果を inert にし (T-250)、束縛・条件の片方・await へ印を伝え、添字への代入 out[i]=v を足した (T-251。字面の鍵は FORBIDDEN_MEMBERS、計算した鍵は数だけ、生成物は +(…))。0.11 で測ると xs[n]() と const f = xs[n]; f() は通っていた。対照は守りを 1 つずつ外す書き換え A-570〜A-578。移した壁は updateCheck (次の周)。"
+      }
+    },
+    {
+      "id": "MG-017",
+      "date": "2026-11-03",
+      "kind": "port",
+      "target": "src/shared/updateCheck.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/shared/updateCheck.ts",
+      "version": "0.12",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "as-cast",
+        "template"
+      ],
+      "ported": [
+        "src/shared/updateCheck.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "`json as Record<string, unknown>` と `tag as string` (型の書き換えで欄と版の文字列を読む)",
+          "result": "refused"
+        },
+        {
+          "tried": "テンプレート文字列 `` `新しい版 ${verdict.latest}` `` (補間でコードを運ぶ道)",
+          "result": "refused"
+        },
+        {
+          "tried": "`parsed.constructor` / `new URL(raw).constructor` (URL の値から Function へ届く道)",
+          "result": "refused"
+        },
+        {
+          "tried": "`o[\"tag_name\"]` を識別子の文字列鍵のまま残す (`.name` に畳まず禁じた名前の表を迂回する道)",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 2,
+      "mutation": {
+        "files": [
+          "src/shared/updateCheck.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": null,
+        "reason": "PR はこの記録のあとに出す (番号は次の周で台帳へ)",
+        "summary": "更新の有無の判定 (updateCheck.ts · GitHub の案内先を github.com の https に限る) を Mamori で書き直した (port)。足りなかったのは as 2 つ (field と raw is string) と template 3 つ (連結へ) だけで、組み上がる文字列は 1 字も変えていない。既存の検査は緑。dataCrypto は BufferSource への as が残るのでこの周では移していない。"
       }
     }
   ]
