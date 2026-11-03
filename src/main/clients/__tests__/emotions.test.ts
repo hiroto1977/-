@@ -557,7 +557,7 @@ describe('ACTIONS["analyze-text"] — 送り先と中身', () => {
       .mockResolvedValueOnce(new Response('over quota', { status: 429 }));
     await expect(
       ACTIONS['analyze-text']!({ token: 'sk-ant-x', fetch: fetchMock, payload: { text: 'あ' } }),
-    ).rejects.toMatchObject({ serviceId: 'emotions', status: 429 });
+    ).rejects.toThrow(/Claude \(Anthropic\) API 429/);
   });
 
   it('本文が空・空白だけ・文字列でなければ送らない', async () => {
@@ -612,7 +612,7 @@ describe('ACTIONS["analyze-text"] — 送り先と中身', () => {
       () => null,
       (e: Error) => e,
     );
-    expect((err as Error).message).toBe('Anthropic returned a non-JSON response: ');
+    expect((err as Error).message).toBe('Claude (Anthropic) がテキスト応答を返しませんでした');
   });
 
   it('text ブロックが 1 つも無い応答でも落ちない', async () => {
@@ -634,7 +634,7 @@ describe('ACTIONS["analyze-text"] — 送り先と中身', () => {
       () => null,
       (e: Error) => e,
     );
-    expect((err as Error).message).toBe('Anthropic returned a non-JSON response: ');
+    expect((err as Error).message).toBe('Claude (Anthropic) がテキスト応答を返しませんでした');
   });
 
   it('JSON でない応答は 80 文字までに切り、鍵らしき文字列は伏せる', async () => {

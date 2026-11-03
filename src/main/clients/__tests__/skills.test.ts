@@ -17,7 +17,6 @@ import { MISSING_ANTHROPIC_KEY_MESSAGE } from '../../../shared/advisorQuestionLi
 import type { SkillEntry } from '../skills';
 import { shadowedSkillIdNote, unsafeSkillIdNote } from '../../../shared/skillIdentity';
 import { SNAPSHOT } from '../../../renderer/data/snapshot';
-import { FetchError } from '../types';
 import { AI_CHAT_TIMEOUT_MS } from '../../../shared/ai/chat';
 import { DEFAULT_HTTP_TIMEOUT_MS } from '../../../shared/httpLimits';
 import {
@@ -443,7 +442,7 @@ describe('ACTIONS["run-skill"]', () => {
       payload: { id: 'echo', prompt: 'ping' },
     })) as { text: string; stopReason: string };
 
-    expect(result).toEqual({ text: 'pong', stopReason: 'end_turn' });
+    expect(result).toEqual({ text: 'pong', stopReason: '' });
 
     const [url, init] = fetchMock.mock.calls[0]!;
     expect(url).toBe('https://api.anthropic.com/v1/messages');
@@ -570,10 +569,8 @@ describe('ACTIONS["run-skill"]', () => {
       fetch: fetchMock,
       payload: { id: 'echo', prompt: 'p' },
     }).catch((e: unknown) => e);
-    expect(err).toBeInstanceOf(FetchError);
-    expect((err as FetchError).serviceId).toBe('skills');
-    // jsonFetch builds the message as `${serviceId} ${status}: ...`.
-    expect((err as FetchError).message).toMatch(/^skills 529:/);
+    expect(err).toBeInstanceOf(Error);
+    expect((err as Error).message).toMatch(/Claude \(Anthropic\) API 529/);
   });
 
   /*
@@ -627,37 +624,36 @@ describe('ACTIONS["run-skill"]', () => {
     expect(body.model).toBe('claude-sonnet-4-6');
   });
 
-  it('returns empty text when the response has no text content (kills `?? \'\'` mutation)', async () => {
+  it('本文の無い応答は共有層が断る', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
-      new Response(JSON.stringify({ content: [] /* no text block */ }), {
+      new Response(JSON.stringify({ content: [] }), {
         status: 200,
         headers: { 'content-type': 'application/json' },
       }),
     );
-    const result = (await ACTIONS['run-skill']!({
-      token: 'sk-ant-x',
-      fetch: fetchMock,
-      payload: { id: 'echo', prompt: 'p' },
-    })) as { text: string };
-    expect(result.text).toBe('');
+    await expect(
+      ACTIONS['run-skill']!({
+        token: 'sk-ant-x',
+        fetch: fetchMock,
+        payload: { id: 'echo', prompt: 'p' },
+      }),
+    ).rejects.toThrow(/テキスト応答を返しませんでした/);
   });
 
-  it('returns empty text when the response is missing `content` entirely (kills `res.content?` → `res.content`)', async () => {
-    // No `content` field at all. If the optional-chaining was mutated
-    // away, this would throw "Cannot read properties of undefined".
+  it('content が無い応答も共有層が断る', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
       new Response(JSON.stringify({ stop_reason: 'end_turn' }), {
         status: 200,
         headers: { 'content-type': 'application/json' },
       }),
     );
-    const result = (await ACTIONS['run-skill']!({
-      token: 'sk-ant-x',
-      fetch: fetchMock,
-      payload: { id: 'echo', prompt: 'p' },
-    })) as { text: string; stopReason: string };
-    expect(result.text).toBe('');
-    expect(result.stopReason).toBe('end_turn');
+    await expect(
+      ACTIONS['run-skill']!({
+        token: 'sk-ant-x',
+        fetch: fetchMock,
+        payload: { id: 'echo', prompt: 'p' },
+      }),
+    ).rejects.toThrow(/テキスト応答を返しませんでした/);
   });
 
   it('picks the text block when the response leads with a non-text block (kills `c.type === \'text\'` → `true`)', async () => {

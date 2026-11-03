@@ -849,46 +849,21 @@ async function callEmotionsAnalyze(payload: Record<string, unknown>): Promise<Ac
     return err('action_failed', e instanceof Error ? e.message : String(e));
   }
 
-  let res: Response;
+  let body: string;
   try {
-    res = await timedFetchAi('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true',
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: ANTHROPIC_FAST_MODEL,
-        max_tokens: 512,
+    const result = await runAiChat({
+      provider: 'anthropic',
+      cfg: { apiKey, model: ANTHROPIC_FAST_MODEL, browser: true },
+      request: {
         system: EMOTIONS_ANALYZE_SYSTEM,
         messages: [{ role: 'user', content: text }],
-      }),
+        maxTokens: 512,
+      },
     });
-  } catch (e) {
-    return err('action_failed', 'ネットワークエラー: ' + (e instanceof Error ? e.message : String(e)));
-  }
-  if (!res.ok) {
-    const body = await readFailureBody(res, 'Anthropic');
-    return err('action_failed', `Anthropic API ${res.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`);
-  }
-  // **大きさで断ったことを、JSON の失敗と混ぜない。** 読み出しを try の外へ
-  // 出す。中に入れると `catch` が「API 応答が JSON ではありません」と言い、
-  // 本当の理由 (大きすぎる) が消える。
-  let raw: string;
-  try {
-    raw = await readCappedText(res, 'Anthropic');
+    body = result.text;
   } catch (e) {
     return err('action_failed', e instanceof Error ? e.message : String(e));
   }
-  let parsed: { content?: { type: string; text?: string }[] };
-  try {
-    parsed = JSON.parse(raw) as { content?: { type: string; text?: string }[] };
-  } catch {
-    return err('action_failed', 'API 応答が JSON ではありません');
-  }
-  const body = parsed.content?.find((c) => c.type === 'text')?.text ?? '';
   let json: unknown;
   try {
     json = JSON.parse(emotionsExtractJson(body));

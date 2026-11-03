@@ -36,7 +36,6 @@ import path from 'node:path';
 import { atomicWriteFile } from '../atomicWrite';
 import { sealJsonDocument, unsealJsonDocument } from '../atRest';
 import {
-  jsonFetch,
   redactForMessage,
   MAX_MALFORMED_JSON_ECHO_CHARS,
   type ActionContext,
@@ -44,7 +43,10 @@ import {
   type FetchContext,
 } from './types';
 import { ANTHROPIC_FAST_MODEL } from '../../shared/ai/providers';
-import { AI_CHAT_TIMEOUT_MS } from '../../shared/ai/chat';
+import { runAiChat } from '../../shared/ai/chat';
+import { ANALYZE_SYSTEM } from '../../shared/ai/emotionPrompt';
+
+export { ANALYZE_SYSTEM };
 import { MISSING_ANTHROPIC_KEY_MESSAGE } from '../../shared/advisorQuestionLimits';
 import { calendarDateMessage, isCalendarDate } from '../../shared/isoDate';
 import { localIsoDate } from '../../shared/localDate';
@@ -245,26 +247,6 @@ interface AnalyzeTextPayload {
   source?: string;
 }
 
-interface AnthropicResponse {
-  content: Array<{ type: string; text?: string }>;
-}
-
-const ANALYZE_SYSTEM = `You analyze the emotional content of user-provided text.
-Return ONLY valid JSON in this exact shape, with no surrounding prose or markdown:
-{
-  "scores": {
-    "joy": 0.0,
-    "sadness": 0.0,
-    "anger": 0.0,
-    "fear": 0.0,
-    "surprise": 0.0,
-    "disgust": 0.0
-  },
-  "sentiment": "positive" | "neutral" | "negative",
-  "dominant": "joy" | "sadness" | "anger" | "fear" | "surprise" | "disgust" | "mixed"
-}
-Each score is between 0.0 and 1.0. They do not need to sum to 1.`;
-
 /** Strip ```json fences if the model added them. */
 export function extractJson(text: string): string {
   // `?.[1]` で受けると「一致したか」の判定が 1 つで済む。`fence &&` と
@@ -334,30 +316,18 @@ async function analyzeText(ctx: ActionContext): Promise<ActionData<'emotions/ana
   // 送っている間に壊れる分は、保存の直前でもう一度読んで断る (下)。
   await readStore({ forWrite: true });
 
-  const res = await jsonFetch<AnthropicResponse>(
-    'https://api.anthropic.com/v1/messages',
-    {
-      method: 'POST',
-      headers: {
-        'x-api-key': ctx.token,
-        'anthropic-version': '2023-06-01',
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: ANTHROPIC_FAST_MODEL, // fast + cheap; sufficient for short text
-        max_tokens: 512,
-        system: ANALYZE_SYSTEM,
-        messages: [{ role: 'user', content: text }],
-      }),
+  // 共有のチャット層を通す（締切は runAiChat の既定）。モデルは高速のまま。
+  const result = await runAiChat({
+    provider: 'anthropic',
+    cfg: { apiKey: ctx.token, model: ANTHROPIC_FAST_MODEL },
+    request: {
+      system: ANALYZE_SYSTEM,
+      messages: [{ role: 'user', content: text }],
+      maxTokens: 512,
     },
-    // **LLM の補完には LLM の予算を渡す** (2026-09-23 · パス 424)。
-    // `max_tokens` は 512 なので `skills` (2048) ほど際どくはないが、
-    // 予算を分ける理由 (補完は通常の HTTP より長くかかりうる) は同じで、
-    // 判断を口ごとに変える理由が無い。
-    { fetch: ctx.fetch, serviceId: 'emotions', timeoutMs: AI_CHAT_TIMEOUT_MS },
-  );
-
-  const body = res.content?.find((c) => c.type === 'text')?.text ?? '';
+    fetchFn: ctx.fetch,
+  });
+  const body = result.text;
   let parsed: unknown;
   try {
     parsed = JSON.parse(extractJson(body));
