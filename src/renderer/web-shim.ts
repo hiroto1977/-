@@ -851,14 +851,17 @@ async function callEmotionsAnalyze(payload: Record<string, unknown>): Promise<Ac
 
   let body: string;
   try {
-    const result = await runAiChat({
-      provider: 'anthropic',
-      cfg: { apiKey, model: ANTHROPIC_FAST_MODEL, browser: true },
+    const result = await runLocalThenAnthropic({
+      purpose: 'emotion',
       request: {
         system: EMOTIONS_ANALYZE_SYSTEM,
         messages: [{ role: 'user', content: text }],
         maxTokens: 512,
       },
+      anthropicKey: apiKey,
+      anthropicModel: ANTHROPIC_FAST_MODEL,
+      browser: true,
+      env: runtimeEnv(),
     });
     body = result.text;
   } catch (e) {

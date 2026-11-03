@@ -43,7 +43,7 @@ import {
   type FetchContext,
 } from './types';
 import { ANTHROPIC_FAST_MODEL } from '../../shared/ai/providers';
-import { runAiChat } from '../../shared/ai/chat';
+import { runLocalThenAnthropic, runtimeEnv } from '../../shared/ai/localGateway';
 import { ANALYZE_SYSTEM } from '../../shared/ai/emotionPrompt';
 
 export { ANALYZE_SYSTEM };
@@ -316,16 +316,18 @@ async function analyzeText(ctx: ActionContext): Promise<ActionData<'emotions/ana
   // 送っている間に壊れる分は、保存の直前でもう一度読んで断る (下)。
   await readStore({ forWrite: true });
 
-  // 共有のチャット層を通す（締切は runAiChat の既定）。モデルは高速のまま。
-  const result = await runAiChat({
-    provider: 'anthropic',
-    cfg: { apiKey: ctx.token, model: ANTHROPIC_FAST_MODEL },
+  // 先に LiteLLM の fast。届かなければ従来の高速 Claude。
+  const result = await runLocalThenAnthropic({
+    purpose: 'emotion',
     request: {
       system: ANALYZE_SYSTEM,
       messages: [{ role: 'user', content: text }],
       maxTokens: 512,
     },
+    anthropicKey: ctx.token,
+    anthropicModel: ANTHROPIC_FAST_MODEL,
     fetchFn: ctx.fetch,
+    env: runtimeEnv(),
   });
   const body = result.text;
   let parsed: unknown;

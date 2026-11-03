@@ -481,7 +481,8 @@ async function runSkill(ctx: ActionContext): Promise<ActionData<'skills/run-skil
     fetchFn: ctx.fetch,
   });
   // 応答の天井は runAiChat が掛ける。ここでも同じ関数を読む（写しの slice を置かない）。
-  return { text: capAssistantReply(result.text), stopReason: '' };
+  const text = result.text;
+  return { text: capAssistantReply(text), stopReason: '' };
 }
 
 export const ACTIONS: ActionMap = {
