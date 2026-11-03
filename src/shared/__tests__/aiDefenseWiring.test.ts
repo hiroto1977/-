@@ -62,7 +62,7 @@ describe('入力の無害化 (T-216) は第三者の文が入る口に在り、�
     const fn = src.slice(src.indexOf('async function runSkill('));
     const body = fn.indexOf('stripSmuggledChars(await readSkillBody(id))');
     const gate = fn.indexOf("promptInjectionRefusal(body, 'スキル本文 (SKILL.md)')");
-    const send = fn.indexOf('runAiChat(');
+    const send = fn.indexOf('runLocalThenAnthropic(');
     expect(body).toBeGreaterThan(0);
     expect(gate).toBeGreaterThan(body);
     expect(send).toBeGreaterThan(gate);

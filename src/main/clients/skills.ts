@@ -5,7 +5,7 @@ import { promptInjectionRefusal } from '../../shared/promptInjection';
 import os from 'node:os';
 import path from 'node:path';
 import { AI_PROVIDERS } from '../../shared/ai/providers';
-import { runAiChat } from '../../shared/ai/chat';
+import { runLocalThenAnthropic, runtimeEnv } from '../../shared/ai/localGateway';
 import {
   MAX_ASSISTANT_CONTENT_CHARS,
   MAX_ASSISTANT_SYSTEM_CHARS,
@@ -469,16 +469,18 @@ async function runSkill(ctx: ActionContext): Promise<ActionData<'skills/run-skil
   const injection = promptInjectionRefusal(body, 'スキル本文 (SKILL.md)');
   if (injection !== null) throw new Error(injection);
 
-  // 共有のチャット層を通す。締切は runAiChat の既定（LLM の予算）。
-  const result = await runAiChat({
-    provider: 'anthropic',
-    cfg: { apiKey: ctx.token, model: AI_PROVIDERS.anthropic.defaultModel },
+  // 単純なスキルは LiteLLM の fast。届かなければ従来の Claude。
+  const result = await runLocalThenAnthropic({
+    purpose: 'skills',
     request: {
       system: body,
       messages: [{ role: 'user', content: prompt }],
       maxTokens: SKILLS_MAX_TOKENS,
     },
+    anthropicKey: ctx.token,
+    anthropicModel: AI_PROVIDERS.anthropic.defaultModel,
     fetchFn: ctx.fetch,
+    env: runtimeEnv(),
   });
   // 応答の天井は runAiChat が掛ける。ここでも同じ関数を読む（写しの slice を置かない）。
   const text = result.text;
