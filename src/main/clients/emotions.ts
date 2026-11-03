@@ -43,7 +43,7 @@ import {
   type FetchContext,
 } from './types';
 import { ANTHROPIC_FAST_MODEL } from '../../shared/ai/providers';
-import { runLocalThenAnthropic, runtimeEnv } from '../../shared/ai/localGateway';
+import { purposeForEmotionSource, runLocalThenAnthropic, runtimeEnv } from '../../shared/ai/localGateway';
 import { ANALYZE_SYSTEM } from '../../shared/ai/emotionPrompt';
 
 export { ANALYZE_SYSTEM };
@@ -318,7 +318,7 @@ async function analyzeText(ctx: ActionContext): Promise<ActionData<'emotions/ana
 
   // 先に LiteLLM の fast。届かなければ従来の高速 Claude。
   const result = await runLocalThenAnthropic({
-    purpose: 'emotion',
+    purpose: purposeForEmotionSource(typeof source === 'string' ? source : undefined),
     request: {
       system: ANALYZE_SYSTEM,
       messages: [{ role: 'user', content: text }],

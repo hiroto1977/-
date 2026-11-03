@@ -546,6 +546,20 @@ describe('ACTIONS["analyze-text"] — 送り先と中身', () => {
     expect(body.messages[1]).toEqual({ role: 'user', content: '今日はいい日だった' });
   });
 
+  it('Gmail と Slack の出典も fast へ送る（振り分けと同じ別名）', async () => {
+    for (const source of ['Gmail Inbox', 'Slack channels']) {
+      const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(anthropicOk(okBody));
+      await ACTIONS['analyze-text']!({
+        token: 'sk-ant-secret',
+        fetch: fetchMock,
+        payload: { text: '振り分け', source },
+      });
+      const body = JSON.parse(String((fetchMock.mock.calls[0]![1] as RequestInit).body)) as { model: string };
+      expect(body.model, source).toBe('fast');
+      expect(String(fetchMock.mock.calls[0]![0])).toContain('127.0.0.1:4000');
+    }
+  });
+
   it('失敗したときどのサービスが落ちたか分かる', async () => {
     const fetchMock = vi
       .fn<typeof fetch>()

@@ -215,7 +215,7 @@ import {
   resolveProvider,
 } from '../shared/ai/credentials';
 import { runAiChat } from '../shared/ai/chat';
-import { isLlmPurpose, localGatewayIsLoopback, localGatewaySettings, runLocalThenAnthropic, runtimeEnv } from '../shared/ai/localGateway';
+import { isLlmPurpose, localGatewayIsLoopback, localGatewaySettings, purposeForEmotionSource, runLocalThenAnthropic, runtimeEnv } from '../shared/ai/localGateway';
 import { evaluateUpdate, parseLatestRelease, type UpdateVerdict } from '../shared/updateCheck';
 
 // ブラウザ版で record-entry をサポートする業務記録サービス (ステートレス:
@@ -852,7 +852,7 @@ async function callEmotionsAnalyze(payload: Record<string, unknown>): Promise<Ac
   let body: string;
   try {
     const result = await runLocalThenAnthropic({
-      purpose: 'emotion',
+      purpose: purposeForEmotionSource(source),
       request: {
         system: EMOTIONS_ANALYZE_SYSTEM,
         messages: [{ role: 'user', content: text }],
