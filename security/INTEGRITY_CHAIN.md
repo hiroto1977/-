@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 450
+- ブロック数: 451
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `f3141cdd597fdfa48ed9ce8a10d34e30fb2df3339b76017d985ddf7378a7d9cf`
+- 末尾(tip)ハッシュ: `15729f1e221504689b45d29c115be823faed2173f0bb525925261139076b0b10`
 - 保護対象: 186 ファイル
 
 ## ブロック
@@ -463,6 +463,7 @@
 | 447 | `09d291b9e1f2b1c1` | `08d348677f0c318f` | `44fcf8db7e9b1d1d` | update integrity-chain.cjs,lookup.ts |
 | 448 | `d2f86bef8c4bcbe9` | `44fcf8db7e9b1d1d` | `8cc798b3decf4eeb` | update integrity-chain.cjs,mamori-capabilities.json,assistant.mamori,assistant.ts |
 | 449 | `b84bcd8774ae7547` | `8cc798b3decf4eeb` | `f3141cdd597fdfa4` | update assistant.mamori,assistant.ts |
+| 450 | `55b8bb884a3eaefd` | `f3141cdd597fdfa4` | `15729f1e22150468` | update mamori-capabilities.json |
 
 ## 保護対象ファイル
 

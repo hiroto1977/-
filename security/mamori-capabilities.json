@@ -61,12 +61,12 @@
     },
     "src/main/clients/assistant.mamori": {
       "externals": [
-        "pure ../../shared/inputCeiling: clampToCeiling",
-        "pure ../../shared/assistantLimits: MAX_ASSISTANT_CONTENT_CHARS, MAX_ASSISTANT_MESSAGES, MAX_ASSISTANT_SYSTEM_CHARS, inputTooLongMessage, latestTurnTooLong, MAX_ENSEMBLE_ERROR_CHARS, stripSmuggledChars",
-        "pure ./types: redactForMessage",
-        "pure ../../shared/ai/providers: AI_PROVIDERS",
+        "pure ../../shared/ai/chat: runAiChat",
         "pure ../../shared/ai/credentials: configForProvider, configuredProviders, parseAiCredentials, providerStatuses, resolveProvider",
-        "pure ../../shared/ai/chat: runAiChat"
+        "pure ../../shared/ai/providers: AI_PROVIDERS",
+        "pure ../../shared/assistantLimits: MAX_ASSISTANT_CONTENT_CHARS, MAX_ASSISTANT_MESSAGES, MAX_ASSISTANT_SYSTEM_CHARS, inputTooLongMessage, latestTurnTooLong, MAX_ENSEMBLE_ERROR_CHARS, stripSmuggledChars",
+        "pure ../../shared/inputCeiling: clampToCeiling",
+        "pure ./types: redactForMessage"
       ],
       "imports": [],
       "gates": [],

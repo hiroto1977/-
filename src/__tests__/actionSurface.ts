@@ -91,11 +91,24 @@ export function actionKeysOf(file: string): string[] {
     const arr = text.slice(text.indexOf('export const CONNECTORS'));
     return [...stripComments(arr).matchAll(/\baction:\s*'([^']+)'/g)].map((m) => m[1]!);
   }
-  const body = stripComments(braceBlock(text, at));
+  // 括弧の深さ 0 のカンマで区切って、各項の鍵を取る。行頭を前提にしない —— Mamori の生成物は
+  // `{ chat, chatAll, providers }` と 1 行に畳まれる (2026-11-03 · MG-030)。
+  const block = stripComments(braceBlock(text, at));
+  const inner = block.slice(block.indexOf('{') + 1, block.lastIndexOf('}'));
+  const entries: string[] = [];
+  let depth = 0;
+  let cur = '';
+  for (const ch of inner) {
+    if ('({['.includes(ch)) depth++;
+    else if (')}]'.includes(ch)) depth--;
+    if (ch === ',' && depth === 0) { entries.push(cur); cur = ''; } else cur += ch;
+  }
+  entries.push(cur);
   const keys = new Set<string>();
-  for (const m of body.matchAll(/^\s*'([^']+)'\s*:/gm)) keys.add(m[1]!);
-  for (const m of body.matchAll(/^\s*([A-Za-z_$][\w$]*)\s*:/gm)) keys.add(m[1]!);
-  for (const m of body.matchAll(/^\s*([A-Za-z_$][\w$]*)\s*,\s*$/gm)) keys.add(m[1]!);
+  for (const e of entries) {
+    const m = /^\s*(?:'([^']+)'|([A-Za-z_$][\w$]*))\s*(?::|$)/.exec(e);
+    if (m) keys.add((m[1] ?? m[2])!);
+  }
   return [...keys];
 }
 

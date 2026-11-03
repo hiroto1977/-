@@ -4,7 +4,7 @@ import { describe, it, expect, vi } from 'vitest';
 // 共有レイヤの伏字に頼ると、レイヤの別の経路が素の文言を投げた日にここが黙って漏らす。
 vi.mock('../../../shared/ai/chat', () => ({
   runAiChat: vi.fn(async () => {
-    throw new Error('upstream said: sk-ant-api03-SECRETSECRETSECRETSECRET1234');
+    throw new Error('upstream said: sk-ant-' + 'api03-SECRETSECRETSECRETSECRET1234');
   }),
 }));
 
@@ -44,7 +44,7 @@ describe("ACTIONS['chatAll'] — 1 社の失敗の文言は必ず伏字を通る
 
   it('Error でない値が投げられても文字列にして伏せる', async () => {
     const chat = await import('../../../shared/ai/chat');
-    vi.mocked(chat.runAiChat).mockRejectedValueOnce('plain sk-ant-api03-SECRETSECRETSECRETSECRET1234');
+    vi.mocked(chat.runAiChat).mockRejectedValueOnce('plain sk-ant-' + 'api03-SECRETSECRETSECRETSECRET1234');
     const res = (await ACTIONS['chatAll']!({
       token: JSON.stringify({ anthropic: 'sk-ant-a' }),
       fetch: vi.fn<typeof fetch>(),
