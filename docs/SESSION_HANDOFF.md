@@ -7,6 +7,13 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-11-03) — パス 574 (MG-016 / MG-017): 添字の結果を inert にし、updateCheck を移した
+
+- **言語 0.12**: 計算した鍵の添字の結果は inert (T-250)。束縛・条件の片方・`await` も印を運ぶ。代入 `out[i] = v` は数の鍵だけ (T-251。字面は `FORBIDDEN_MEMBERS`、生成物は `out[+(i)]`)。字面の鍵の結果は今までどおり呼べる。
+- **移した壁**: `src/shared/updateCheck.mamori` (案内先を github.com の https に限る)。`as` は `field` と `raw is string`、template は連結。文字列は 1 字も変えていない。
+- **先送り**: `dataCrypto.ts` の `as BufferSource` は Mamori に書けない。safeFilename / aiEndpoint / vaultToken は移し済み。
+- **次**: `mamori:grow -- brief` の次の壁 (dataCrypto は上の理由で heuristic が「移せる」と言うが、書いて build が通るかで決まる)。
+
 ## 直近の作業 (2026-10-31) — パス 571 (MG-004): `escape.ts` を Mamori 0.3 へ移植し、言語の穴 T-232 を塞いで 0.4 に
 
 - **周の選び方**: `npm run mamori:grow -- brief` が port `src/shared/escape.ts` (移せる 1 本・足りない構文は template だけ) を選んだ。出力側の関門 (`escapeXml` / `safeColor` / `isHexColor` / `escapeMarkdownInline` / `escapeMarkdownText` / `escapeInvisibleUnits` ほか)。判定は 1 字も変えず、`escapeUnits` の template を `+` の連結へ・連鎖呼び出しの改行が生成物で 1 行になっただけ。

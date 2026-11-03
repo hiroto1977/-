@@ -132,6 +132,10 @@ function stmt(s: Stmt, depth: number): string[] {
       return [...head, `${ind}${s.mutable ? 'let' : 'const'} ${s.name}${s.type === null ? '' : `: ${s.type.text}`}${s.init === null ? '' : ` = ${expr(s.init)}`};`];
     case 'assign':
       return [...head, `${ind}${s.target} = ${expr(s.value)};`];
+    case 'index-assign': {
+      const key = s.key.kind === 'number' || s.key.kind === 'string' ? expr(s.key) : `+(${expr(s.key)})`;
+      return [...head, `${ind}${wrap(s.object, 9)}[${key}] = ${expr(s.value)};`];
+    }
     case 'return':
       return [...head, `${ind}return${s.value === null ? '' : ` ${expr(s.value)}`};`];
     case 'expr':

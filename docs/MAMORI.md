@@ -79,6 +79,21 @@ Mamori では、その 2 つは**書けない**:
 - **既知の差 (正直に)**: `(a?.b).c` は丸括弧を構文木に残さないので生成物は `a?.b.c` になる (`a` が null のとき `.c` を読む前に止まる —— 例外が減る向きで、印の流れには触れない)。
 - **この周で移せた壁は 0 本** (`optional-chain` だけで足りる壁が無い —— 足りない構文は他にも要る)。言語の幅を広げた周で、次は `index` の塞ぎ方 (字面の鍵は FORBIDDEN_MEMBERS を通し、字面でない鍵は数だけ) を決めてから足す。
 
+## 0.12 —— 計算した鍵の結果を inert にし、添字への代入を足した (MG-016 · 2026-11-03 · T-250 / T-251)
+
+0.8 は添字を足すとき、文字列になりうる鍵を断り、字面の識別子は `.name` に畳んだ。パス 567 が先に閉じると書いた残りを、0.11 に対して測り直した。
+
+| 書き方 | 扱い |
+| --- | --- |
+| `xs[0]` `o["content-type"]` (字面の鍵) の結果 | 今までどおり。呼び出し・メンバに使える。禁じた名前は字面の時点で断る |
+| `xs[n]` `xs[n - 1]` (計算した鍵) の結果 | **inert**。呼び出し・`new`・メンバ・次の添字・代入の相手にできない |
+| `const f = xs[n]; f(…)` `f = xs[n]` 条件の片方 `await xs[n]` | 束縛も inert (印は残る) |
+| `out[0] = v` `out[i] = v` (`i` が数) `out["content-type"] = v` | 通す。計算した鍵は生成物で `out[+(i)]` |
+| `out["__proto__"] = v` `out[u] = v` `o.f = v` | 断る (禁じた名前 / 数でない鍵 / 欄への代入) |
+
+**T-250**: 0.11 は `xs[n]()` と `const f = xs[n]; f()` を通していた。
+**T-251**: 代入を足すなら、字面の鍵は禁じた名前の表を通し、計算した鍵は数だけにする。
+
 ## 0.11 —— 戻り値の型に印を名乗れるのは gate 関数だけ (MG-011 · 2026-11-01 · T-248)
 
 `safeFilename.ts` を移すとき、型述語 `-> s is string` が通るかを確かめて見つけた穴。型述語・`asserts`・`this is` は `tsc` も検めない型の主張で (`as` と同じ)、`-> s is VettedUrl` と書いて `return true` するだけで、関門 (`mint`) を通らずに印の型を作れた。plain / sink 関数が `-> VettedUrl` や `-> Promise<VettedUrl>` と宣言する形も通していた。
@@ -133,7 +148,7 @@ MG-003 で先送りした理由は「鍵を実行時に組めるので `x["const
 | `x[0]` `x[0x1]` `x["content-type"]` (数リテラル・識別子にならない文字列) | 添字のまま通す (禁じた名前にも組み込みのメンバにもなりえない) |
 | `x[n]` `x[n - 1]` `x[xs.length - 1]` `x[Math.floor(n / 2)]` ほか**静的に数と分かる式** | 通す。**生成物は `x[+(…)]` で数に寄せる** —— 型の宣言は実行時には守られないので、`number` と宣言した引数へ `"constructor"` が渡されても NaN になり表に届かない |
 | `x[u]` `x[u + "x"]` `x[typeof u]` `x[o.f()]` (文字列になりうる鍵) | M6 で断る。文字列で引く表は `Map` の `get` を使う |
-| `x[k] = v` (添字への代入)・`x?.[k]` | 無い |
+| `x?.[k]` | 無い。添字への代入は 0.12 (数の鍵だけ · T-251) |
 
 - **数と分かる式**: 数リテラル・`number` と宣言した (または数の初期値の) 名前・`-` `*` `/` `%`・両側が数の `+`・`.length`・`Math.m(…)`・`Number(…)`・両方の枝が数の条件演算子。
 - **添字の結果は印を運ばない**ので洗浄にならない (`const v: VettedUrl = xs[0]` は M4)。印を受ける関数を配列に入れて `[openUrl][0](u)` と呼ぶ形も、`openUrl` を値として持ち出すので M4 で断る。
@@ -264,7 +279,7 @@ fn        := 'export'? ('gate' | 'sink')? 'async'? 'fn' 名前 '(' 引数* ')' '
            | 'if' '(' 式 ')' ブロック ('else' (if 文 | ブロック))? | 'try' ブロック 'catch' ブロック
            | 'throw' 式 ';' | 'for' '(' 'const' 名前 'of' 式 ')' ブロック | 'break' ';' | 'continue' ';'
            | 'switch' '(' 式 ')' '{' (('case' 式 | 'default') ':')+ 文+ … '}'
-           | 名前 '=' 式 ';' | 式 ';'
+           | 名前 '=' 式 ';' | 添字 '=' 式 ';' | 式 ';'
 式        := 2 項 (?? || && === !== < > <= >= + - * / %) | 単項 (! - typeof await)
            | 呼び出し・メンバ・new | 配列 | 文字列・数 (10 進 / 16 進 `0x1f` · 0.3)・正規表現・true/false/null/undefined
            | '(' 引数 ')' '=>' 式 | 'mint' 印 '(' 式 ')'
@@ -320,6 +335,7 @@ export sink fn openExternalVetted(url: VettedExternalUrl) -> Promise<void> {
 | `src/shared/proxyEndpoint.mamori` | `src/shared/proxyEndpoint.ts` | BYO プロキシの送り先と共有秘密の検証 (**資格情報のほぼ全部が通る 1 本の口** · 0.2 の構文で書き直した最初の物 · パス 563) |
 | `src/shared/tokenInput.mamori` | `src/shared/tokenInput.ts` | 資格情報の保存要求の検証 (`checkTokenInput` · main と renderer で同じ規則 · 空 / 長すぎ / 制御文字 / 非 Latin1 を理由つきで断る · 0.3 で書き直した · パス 567 · MG-003) |
 | `src/shared/escape.mamori` | `src/shared/escape.ts` | 出力側の関門 (`escapeXml` / `safeColor` / `isHexColor` / `escapeMarkdownInline` / `escapeMarkdownText` / `escapeInvisibleUnits` ほか · HTML / XML / Markdown に第三者の文を埋める所と色を属性へ埋める所 · 0.3 で書き直した —— template を `+` の連結へ替えただけ · パス 571 · MG-004) |
+| `src/shared/updateCheck.mamori` | `src/shared/updateCheck.ts` | 更新の有無 (GitHub の案内先を https の github.com に限る · `as` は `field` と `raw is string`、template は連結 · 0.12 · MG-017) |
 
 残りの TypeScript は Mamori で書いた gate / sink を呼ぶ側で、呼ぶ側には TypeScript の型の印が掛かる
 (パス 559)。書き出しのファイル書き込みはパス 560 で gate と sink の組として移し、pending の天井を 4 → 3 へ下げた。
@@ -336,7 +352,7 @@ export sink fn openExternalVetted(url: VettedExternalUrl) -> Promise<void> {
   `shell` を直接呼んだりする道は、TypeScript の側の検査 (`vettedTypes.test.ts` の census・`lint:forbidden`) が塞ぐ。
 - 変換した TypeScript は `tsc` が検査するが、実行時の守りは今までどおり**関門の中身**そのものである。
   Mamori が止めるのは「関門を飛ばす書き方」で、関門の判定の誤りは関門の検査 (変異検査 100% の対象) が見る。
-- 言語は 0.11 で、守りの層を書くのに要る構文しか持たない (0.3 で 16 進の数を、0.2 でオブジェクトの字面・条件演算子・switch・throw・for…of・type / interface・field を足した。**クラス・計算した鍵 `{ [k]: v }`・展開・後置の `!` は無い (0.6 で `a?.name`、0.8 で数と分かる鍵の添字 `x[k]` だけ、0.9 でブロックの本体を持つ arrow、0.10 でビット演算だけ足した)** —— 文字列の鍵を実行時に組む形は、T-224 の表 (`.constructor` を断る) を迂回する道になる)。**JSX も無い**ので、`<img>` の口 (`VettedImg.tsx`) と `<a href>` の口 (`VettedLink.tsx`) は TypeScript で書き、守りは型の印と census (素の `<img` と動的な素の `<a href={…}>` はこの部品の外に無い) が持つ。
+- 言語は 0.12 で、守りの層を書くのに要る構文しか持たない (0.3 で 16 進の数を、0.2 でオブジェクトの字面・条件演算子・switch・throw・for…of・type / interface・field を足した。**クラス・計算した鍵 `{ [k]: v }`・展開・後置の `!` は無い (0.6 で `a?.name`、0.8 で数と分かる鍵の添字 `x[k]`、0.9 でブロックの本体を持つ arrow、0.10 でビット演算、0.12 で計算した鍵の結果を inert にし添字への代入 `out[i] = v` を数の鍵だけ足した)** —— 文字列の鍵を実行時に組む形は、T-224 の表 (`.constructor` を断る) を迂回する道になる)。**JSX も無い**ので、`<img>` の口 (`VettedImg.tsx`) と `<a href>` の口 (`VettedLink.tsx`) は TypeScript で書き、守りは型の印と census (素の `<img` と動的な素の `<a href={…}>` はこの部品の外に無い) が持つ。
   足すときは、その構文が来歴の規則を外す道にならないかを先に考える (`as` を入れなかったのと同じ理由)。
 
 ## 育て方 (半永久的に育てる輪)

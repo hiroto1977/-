@@ -2365,6 +2365,114 @@
           "replace": "if (false) {"
         }
       ]
+    },
+    {
+      "id": "A-570",
+      "threat": "T-250",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "計算した鍵の結果を呼び出し側として検めない —— xs[n]() と const f = xs[n]; f() が通る口を開け直す",
+      "edits": [
+        {
+          "find": "if (carriesInert(callee, scopes)) {",
+          "replace": "if (false) {"
+        }
+      ]
+    },
+    {
+      "id": "A-571",
+      "threat": "T-250",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "計算した鍵の結果をメンバの相手として検めない —— xs[n].length が通る口を開け直す",
+      "edits": [
+        {
+          "find": "if (carriesInert(e.object, scopes)) {\n          report('M6', e.pos, '計算した鍵の添字の結果はメンバの相手にできません",
+          "replace": "if (false) {\n          report('M6', e.pos, '計算した鍵の添字の結果はメンバの相手にできません"
+        }
+      ]
+    },
+    {
+      "id": "A-572",
+      "threat": "T-250",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "計算した鍵の結果を次の添字の相手として検めない —— xs[n][0] が通る口を開け直す",
+      "edits": [
+        {
+          "find": "if (carriesInert(e.object, scopes)) {\n          report('M6', e.pos, '計算した鍵の添字の結果は次の添字の相手にできません",
+          "replace": "if (false) {\n          report('M6', e.pos, '計算した鍵の添字の結果は次の添字の相手にできません"
+        }
+      ]
+    },
+    {
+      "id": "A-573",
+      "threat": "T-250",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "計算した鍵の結果を new の相手として検めない —— const f = xs[n]; new f() が通る口を開け直す",
+      "edits": [
+        {
+          "find": "if (carriesInert(e.callee, scopes)) {",
+          "replace": "if (false) {"
+        }
+      ]
+    },
+    {
+      "id": "A-574",
+      "threat": "T-250",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "let / const へ計算した鍵の結果を束縛しても inert にしない —— const f = xs[n]; f() の洗浄を開け直す",
+      "edits": [
+        {
+          "find": "inert: s.init !== null && carriesInert(s.init, scopes)",
+          "replace": "inert: false"
+        }
+      ]
+    },
+    {
+      "id": "A-575",
+      "threat": "T-250",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "代入で inert を更新しない —— let f = xs[0]; f = xs[n]; f() の洗浄を開け直す",
+      "edits": [
+        {
+          "find": "else rebind(scopes, s.target, target.inert === true || carriesInert(s.value, scopes));",
+          "replace": "else rebind(scopes, s.target, false);"
+        }
+      ]
+    },
+    {
+      "id": "A-576",
+      "threat": "T-250",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "計算した鍵の結果を代入の相手として検めない —— xs[n][0] = v が通る口を開け直す",
+      "edits": [
+        {
+          "find": "if (carriesInert(s.object, scopes)) {",
+          "replace": "if (false) {"
+        }
+      ]
+    },
+    {
+      "id": "A-577",
+      "threat": "T-251",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "添字への代入の鍵が数でなくても通す —— out[u] = v で文字列の鍵が原型を差し替える口を開け直す",
+      "edits": [
+        {
+          "find": "if (s.key.kind !== 'string' && !isNumericKey(s.key, scopes)) {",
+          "replace": "if (false) {"
+        }
+      ]
+    },
+    {
+      "id": "A-578",
+      "threat": "T-251",
+      "file": "src/shared/mamori/parser.ts",
+      "why": "欄への代入を断らない —— o.f = v が通り、共有の物の欄を書き換えられる口を開け直す",
+      "edits": [
+        {
+          "find": "if (e.kind === 'member') fail(peek(), '欄への代入",
+          "replace": "if (false) fail(peek(), '欄への代入"
+        }
+      ]
     }
   ]
 }
