@@ -11,6 +11,11 @@ mkdir -p "$DIR"
 KEY_FILE="$DIR/master_key"
 [ -s "$KEY_FILE" ] || { (umask 077; python3 -c 'import secrets;print("sk-local-"+secrets.token_hex(16))' >"$KEY_FILE"); }
 LITELLM_MASTER_KEY="$(cat "$KEY_FILE")"; export LITELLM_MASTER_KEY
+# 多重起動防止: ポートが LISTEN 中、または同じポートの litellm プロセスが起動途中なら何もしない
+# （起動に20秒以上かかる／推論中にヘルスチェックが3秒でタイムアウトする、のが重複起動の原因だった）
+if ss -ltn "sport = :$PORT" 2>/dev/null | grep -q LISTEN || pgrep -f "litellm .*--port $PORT" >/dev/null; then
+  echo "LiteLLM は起動済み/起動中 (port $PORT)"; exit 0
+fi
 cd "$HERE"
 setsid nohup "$DIR/.venv/bin/litellm" --config "$HERE/litellm-config.yaml" --host 127.0.0.1 --port "$PORT" \
   >/tmp/litellm.log 2>&1 &
