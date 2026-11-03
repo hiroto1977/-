@@ -1,131 +1,294 @@
-<!doctype html><html lang="ja"><meta charset="utf-8"><title>ローカルAI組織の村</title>
-<style>body{margin:0;overflow:hidden;font-family:sans-serif}#hud{white-space:pre-wrap;position:fixed;left:10px;top:10px;background:#fffc;border-radius:10px;padding:8px 12px;max-width:440px;font-size:13px}
-#board{position:fixed;right:10px;top:10px;width:340px;max-height:60vh;overflow:auto;background:#7a5230;color:#fff8e7;border:6px solid #4a3018;border-radius:8px;padding:8px;font-size:12px;white-space:pre-wrap}
-.lab{position:fixed;transform:translate(-50%,-100%);font-size:11px;background:#fff;border-radius:8px;padding:1px 5px;pointer-events:none;white-space:nowrap;border:2px solid #555}
-.lab.big{font-size:13px;font-weight:bold;border-color:#b8860b}.bub{position:fixed;transform:translate(-50%,-100%);max-width:260px;font-size:12px;background:#fff;border-radius:12px;padding:6px 8px;border:2px solid #333;pointer-events:none}
-.off{background:#ccc;color:#555}#chat{position:fixed;left:10px;bottom:10px;width:440px;background:#fffe;border-radius:10px;padding:8px;font-size:13px}#log{max-height:200px;overflow:auto;white-space:pre-wrap}</style>
-<div id="hud">読み込み中…</div><div id="board"><b>📌 掲示板（役員の決定・COO総括）</b><div id="decs"></div></div><div id="labels"></div>
-<div id="chat"><div id="log"></div><select id="to"><option value="">組織全体へ（COOが最優先で会議）</option></select>
-<input id="msg" maxlength="500" style="width:58%" placeholder="クリックか「@CFO 質問」で1対1で話せます"><button id="send">送信</button><span id="st"></span></div>
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>ローカルAI組織の村</title>
+<style>
+:root{--pane:#fffaf0f2;--ink:#3b2f22;--wood:#7a5230;--wood2:#4a3018}
+*{box-sizing:border-box}body{margin:0;overflow:hidden;font-family:"Hiragino Maru Gothic ProN","Noto Sans JP",sans-serif;color:var(--ink);touch-action:none}
+button{font:inherit;cursor:pointer;border:2px solid var(--wood2);background:#fff3d6;border-radius:10px;padding:3px 9px;color:var(--ink)}button.on{background:#ffd27a}
+#hud{position:fixed;left:10px;top:10px;background:var(--pane);border:3px solid #c9a46a;border-radius:14px;padding:8px 12px;max-width:min(470px,calc(100vw - 20px));font-size:13px;box-shadow:0 3px 0 #0002}
+#hud .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.pill{border-radius:99px;padding:1px 9px;color:#fff;font-weight:bold;font-size:12px;background:#4caf50}.pill.meet{background:#e53935}.pill.err{background:#888}
+#topic{margin-top:4px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;white-space:pre-wrap}#meta{font-size:11px;opacity:.75;margin-top:3px}
+#cams{margin-top:6px;display:flex;gap:5px;flex-wrap:wrap}#cams button{font-size:12px;padding:2px 7px}
+#side{position:fixed;right:10px;top:10px;width:350px;max-height:calc(100vh - 200px);display:flex;flex-direction:column;background:var(--wood);border:6px solid var(--wood2);border-radius:12px;color:#fff8e7;box-shadow:0 4px 0 #0003}
+#tabs{display:flex;gap:4px;padding:6px}#tabs button{flex:1;font-size:12px;background:#a87a4c;color:#fff8e7;border-color:var(--wood2)}#tabs button.on{background:#fff3d6;color:var(--ink)}
+#pane{overflow:auto;padding:0 8px 8px;font-size:12px}.card{background:#fff8e7;color:var(--ink);border-radius:8px;padding:6px 8px;margin:6px 0;white-space:pre-wrap;word-break:break-word}
+.card h4{margin:0 0 3px;font-size:12px}.grp{margin:8px 0 2px;font-weight:bold}.who{display:flex;align-items:center;gap:6px;padding:3px 6px;border-radius:6px;cursor:pointer}.who:hover{background:#fff2}
+.dot{width:10px;height:10px;border-radius:3px;display:inline-block;flex:none}.sm{font-size:11px;opacity:.8}
+#chat{position:fixed;left:10px;bottom:10px;width:min(470px,calc(100vw - 20px));background:var(--pane);border:3px solid #c9a46a;border-radius:14px;padding:8px;font-size:13px}
+#log{max-height:150px;overflow:auto;white-space:pre-wrap;word-break:break-word;margin-bottom:6px}#log .me{color:#1565c0}#form{display:flex;gap:5px}#to{max-width:40%}#msg{flex:1;min-width:0}
+#mini{position:fixed;right:10px;bottom:10px;width:170px;height:170px;border-radius:50%;border:5px solid var(--wood2);background:#7cc95a;cursor:crosshair;box-shadow:0 3px 0 #0003}
+.lab{position:fixed;left:0;top:0;font-size:11px;background:#fff;border-radius:8px;padding:0 6px;pointer-events:none;white-space:nowrap;border:2px solid #888;will-change:transform}
+.lab.t-COO{border-color:#d4a106;font-weight:bold}.lab.t-役員{border-color:#8e24aa;font-weight:bold}.lab.t-秘書{border-color:#ec407a}.lab.t-管理職{border-color:#1e88e5}.lab.t-一般職{border-color:#43a047}.lab.me{border-color:#b8860b;font-weight:bold;background:#fff4c2}
+.lab.off{background:#ccc;color:#555}.lab.sel{background:#ffeb3b}
+.bub{position:fixed;left:0;top:0;max-width:220px;font-size:12px;line-height:1.35;background:#fff;border-radius:12px;padding:5px 8px;border:2px solid #333;pointer-events:none;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;will-change:transform;box-shadow:0 2px 0 #0002}
+.bub.think{color:#777;font-style:italic}
+#toggle{display:none}
+@media (max-width:760px){#side{left:10px;right:10px;width:auto;top:auto;bottom:150px;max-height:45vh;display:none}#side.open{display:flex}#toggle{display:inline-block}
+ #mini{display:none}#hud{font-size:12px;padding:6px 9px}#log{max-height:80px}.bub{max-width:160px;-webkit-line-clamp:3}}
+</style></head><body>
+<div id="hud"><div class="row"><span id="pill" class="pill">読み込み中</span><b>ローカルAI組織の村</b><span id="clock" class="sm"></span></div>
+<div id="topic"></div><div id="meta"></div>
+<div id="cams"><button data-cam="all" class="on">🗺 全体</button><button data-cam="hall">🏛 会議ホール</button><button data-cam="speaker">🎤 発言者を追う</button><button data-cam="free">✋ 自由</button><button id="toggle">📋 パネル</button></div></div>
+<div id="side"><div id="tabs"><button data-tab="board" class="on">📌 掲示板</button><button data-tab="people">👥 住民</button><button data-tab="prof">🪪 プロフィール</button></div><div id="pane"></div></div>
+<div id="labels"></div>
+<div id="chat"><div id="log"></div><div id="form"><select id="to"><option value="">組織全体へ（COOが会議）</option></select>
+<input id="msg" maxlength="500" placeholder="住民をクリック / 「@CFO 質問」"><button id="send">送信</button></div><div id="st" class="sm"></div></div>
+<canvas id="mini" width="170" height="170" title="ミニマップ（クリックで移動）"></canvas>
 <script type="importmap">{"imports":{"three":"/vendor/three.module.min.js"}}</script>
 <script type="module">
 import * as THREE from 'three';
 import {OrbitControls} from '/vendor/OrbitControls.js';
-const R=new THREE.WebGLRenderer({antialias:true});R.setPixelRatio(Math.min(devicePixelRatio,1.5));R.setSize(innerWidth,innerHeight);R.shadowMap.enabled=true;document.body.appendChild(R.domElement);
-const S=new THREE.Scene(),C=new THREE.PerspectiveCamera(50,innerWidth/innerHeight,.1,600);C.position.set(0,42,52);
-const O=new OrbitControls(C,R.domElement);O.maxPolarAngle=1.45;O.maxDistance=140;
-const hemi=new THREE.HemisphereLight(0xffffff,0x88aa66,1);S.add(hemi);const sun=new THREE.DirectionalLight(0xffffff,1.2);sun.position.set(20,40,15);sun.castShadow=true;
-Object.assign(sun.shadow.camera,{left:-50,right:50,top:50,bottom:-50});sun.shadow.mapSize.set(1024,1024);S.add(sun);
-const G=new THREE.BoxGeometry(1,1,1),MC={};const mat=c=>MC[c]||(MC[c]=new THREE.MeshLambertMaterial({color:c}));
-const box=(w,h,d,c,x,y,z,p=S,sh=true)=>{const m=new THREE.Mesh(G,typeof c==='number'?mat(c):c);m.scale.set(w,h,d);m.position.set(x,y,z);m.castShadow=sh;m.receiveShadow=true;p.add(m);return m};
-box(110,1,110,0x7cc95a,0,-.5,0,S,false);box(9,.3,9,0xd9b77a,0,.1,0,S,false);
-// 会議ホール（屋根なしの柱＋テーブル）
-box(4,.3,2.4,0xa0703c,0,1.1,0);box(.4,1,.4,0x6b4423,0,.5,0);for(const [x,z] of [[-4,-4],[4,-4],[-4,4],[4,4]])box(.5,4,.5,0xffffff,x,2,z);
-// 木（InstancedMesh で軽量化）
-const TN=60,trunk=new THREE.InstancedMesh(G,mat(0x7a5230),TN),leaf=new THREE.InstancedMesh(G,mat(0x3f9a3f),TN),M4=new THREE.Matrix4();
-for(let i=0;i<TN;i++){const a=i*2.4,r=44+(i%5)*2.5,x=Math.cos(a)*r,z=Math.sin(a)*r;M4.compose(new THREE.Vector3(x,1,z),new THREE.Quaternion(),new THREE.Vector3(.6,2,.6));trunk.setMatrixAt(i,M4);
-  M4.compose(new THREE.Vector3(x,3,z),new THREE.Quaternion(),new THREE.Vector3(2.2,2.2,2.2));leaf.setMatrixAt(i,M4)}S.add(trunk,leaf);
-box(4,2.5,.3,0x7a5230,7,2.5,-5);box(.3,2,.3,0x4a3018,5.2,.8,-5);box(.3,2,.3,0x4a3018,8.8,.8,-5); // 掲示板
-// 機械室（サービス）
-box(14,.3,10,0x9e9e9e,-38,.15,38,S,false);box(14,3,.3,0x777777,-38,1.5,33);
-const COLORS={COO:0xffd700,役員:0x8e24aa,秘書:0xf06292,管理職:0x1e88e5,一般職:0x43a047,svc:0x90a4ae};
-const EXC={cfo:0xff8a65,chro:0x64b5f6,cso:0x81c784,cio:0xffd54f,cqo:0xba68c8};
-const agents={},DOORS=[];const labels=document.getElementById('labels');
-function mkChar(key,name,x,z,col,opt={}){
-  if(opt.house){const h=new THREE.Group();h.position.set(x,0,z);h.lookAt(opt.face||new THREE.Vector3());S.add(h);const s=opt.house;
-    box(3*s,2.4*s,3*s,0xf5e6c8,0,1.2*s,-1.8*s,h);box(3.6*s,1*s,3.6*s,opt.roof||col,0,2.9*s,-1.8*s,h);box(.8,1.4,.1,0x6b4423,0,.7,-1.8*s+1.5*s+.05,h);DOORS.push(h.localToWorld(new THREE.Vector3(0,0,-.3*s+.6)))}
-  if(opt.desk){box(1.4,.8,.8,0xa0703c,x+(opt.desk[0]||0),.4,z+(opt.desk[1]||0))}
-  S.updateMatrixWorld();const g=new THREE.Group();const s=opt.scale||1;const body=box(.9,1,.6,col,0,1,0,g),head=box(.9,.9,.9,0xffe0bd,0,1.95,0,g);
-  box(.15,.15,.05,0x222222,-.2,2,.46,g,false);box(.15,.15,.05,0x222222,.2,2,.46,g,false);box(.35,.6,.35,0x444466,-.22,.3,0,g);box(.35,.6,.35,0x444466,.22,.3,0,g);
-  if(opt.tie)box(.15,.6,.05,opt.tie,0,1.1,.31,g,false);if(opt.crown)box(.7,.25,.7,0xffd700,0,2.55,0,g,false);
+const $=id=>document.getElementById(id),Q=new URLSearchParams(location.search);
+const R=new THREE.WebGLRenderer({antialias:devicePixelRatio<2});R.setPixelRatio(Math.min(devicePixelRatio,1.25));R.setSize(innerWidth,innerHeight);
+R.shadowMap.enabled=true;R.shadowMap.type=THREE.PCFShadowMap;document.body.prepend(R.domElement);
+const S=new THREE.Scene(),C=new THREE.PerspectiveCamera(50,innerWidth/innerHeight,.1,700);C.position.set(0,58,70);
+S.fog=new THREE.Fog(0x9fd8ff,90,190);
+const O=new OrbitControls(C,R.domElement);O.maxPolarAngle=1.42;O.minDistance=8;O.maxDistance=150;O.enableDamping=true;
+const hemi=new THREE.HemisphereLight(0xffffff,0x88aa66,1.1);S.add(hemi);const sun=new THREE.DirectionalLight(0xfff4e0,1.6);sun.position.set(30,60,20);sun.castShadow=true;
+Object.assign(sun.shadow.camera,{left:-60,right:60,top:60,bottom:-60,far:200});sun.shadow.mapSize.set(1024,1024);S.add(sun);
+const G=new THREE.BoxGeometry(1,1,1),MC={},mat=c=>MC[c]||(MC[c]=new THREE.MeshLambertMaterial({color:c}));
+const winMat=new THREE.MeshLambertMaterial({color:0x9ad0ec}),lampMat=new THREE.MeshLambertMaterial({color:0xfff3c4}),waterMat=new THREE.MeshLambertMaterial({color:0x4fc3f7,transparent:true,opacity:.85});
+// ---- 静的ジオメトリはまとめて InstancedMesh にする（CPUのみでもFPSを保つ） ----
+const BATCH=new Map(),_q=new THREE.Quaternion(),_e=new THREE.Euler();
+function sbox(w,h,d,c,x,y,z,pm=null,ry=0,sh=true){const m=new THREE.Matrix4().compose(new THREE.Vector3(x,y,z),_q.setFromEuler(_e.set(0,ry,0)),new THREE.Vector3(w,h,d));if(pm)m.premultiply(pm);
+  const M=typeof c==='number'?mat(c):c,k=M.uuid+(sh?'s':'');(BATCH.get(k)||BATCH.set(k,{M,sh,list:[]}).get(k)).list.push(m)}
+function flush(){for(const {M,sh,list} of BATCH.values()){const im=new THREE.InstancedMesh(G,M,list.length);list.forEach((m,i)=>im.setMatrixAt(i,m));im.castShadow=sh;im.receiveShadow=true;S.add(im)}BATCH.clear()}
+const box=(w,h,d,c,x,y,z,p,sh=true)=>{const m=new THREE.Mesh(G,typeof c==='number'?mat(c):c);m.scale.set(w,h,d);m.position.set(x,y,z);m.castShadow=sh;p.add(m);return m};
+let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+const V=(x,z)=>new THREE.Vector3(x,0,z);
+// ---- 地形 ----
+sbox(140,1,140,0x7cc95a,0,-.5,0,null,0,false);
+for(let i=0;i<220;i++){const x=rnd()*120-60,z=rnd()*120-60;sbox(2+rnd()*3,.04,2+rnd()*3,[0x74c052,0x86d062,0x6fb84c][i%3],x,.01,z,null,0,false)}
+sbox(10,.2,10,0xe2c48a,0,.1,0,null,0,false);
+// 道のネットワーク（リング3本＋放射路）→ 経路探索に使う
+const NODES=[V(0,0)],ADJ=[[]];const link=(a,b)=>{if(!ADJ[a].includes(b)){ADJ[a].push(b);ADJ[b].push(a)}};
+const RINGS=[[14,20],[25,32],[37,40]].map(([r,n])=>{const ids=[];for(let i=0;i<n;i++){const a=i/n*Math.PI*2;NODES.push(V(Math.cos(a)*r,Math.sin(a)*r));ADJ.push([]);ids.push(NODES.length-1)}
+  ids.forEach((id,i)=>link(id,ids[(i+1)%n]));return{r,ids}});
+const angOf=(id)=>Math.atan2(NODES[id].z,NODES[id].x),nearAng=(ring,a)=>ring.ids.reduce((b,id)=>{const d=Math.abs(Math.atan2(Math.sin(angOf(id)-a),Math.cos(angOf(id)-a)));return d<b[1]?[id,d]:b},[0,9])[0];
+const EXA=[0,1,2,3,4].map(i=>-Math.PI/2+(i+.5)/5*Math.PI*2),SPOKES=EXA.map(a=>a+Math.PI/5);
+for(const a of SPOKES){const r1=nearAng(RINGS[0],a),r2=nearAng(RINGS[1],a),r3=nearAng(RINGS[2],a);link(0,r1);link(r1,r2);link(r2,r3)}
+const ROAD=0xd9b77a;for(let a=0;a<NODES.length;a++)for(const b of ADJ[a])if(a<b){const A=NODES[a],B=NODES[b],dx=B.x-A.x,dz=B.z-A.z,L=Math.hypot(dx,dz);
+  if(a===0)continue;sbox(1.8,.06,L+.9,ROAD,(A.x+B.x)/2,.03,(A.z+B.z)/2,null,Math.atan2(dx,dz),false)}
+for(const a of SPOKES){sbox(1.8,.06,9,ROAD,Math.cos(a)*9.5,.03,Math.sin(a)*9.5,null,Math.atan2(Math.cos(a),Math.sin(a)),false)}
+function nearestNode(p){let b=0,bd=1e9;NODES.forEach((n,i)=>{const d=n.distanceToSquared(p);if(d<bd){bd=d;b=i}});return b}
+function dijkstra(s,t){const D=NODES.map(()=>1e9),P=[],done=new Set();D[s]=0;while(true){let u=-1,m=1e9;for(let i=0;i<D.length;i++)if(!done.has(i)&&D[i]<m){m=D[i];u=i}
+  if(u<0||u===t)break;done.add(u);for(const v of ADJ[u]){const nd=D[u]+NODES[u].distanceTo(NODES[v]);if(nd<D[v]){D[v]=nd;P[v]=u}}}
+  const path=[];for(let u=t;u!==undefined;u=P[u]){path.unshift(u);if(u===s)break}return path}
+function route(from,to){if(from.distanceTo(to)<7)return[to.clone()];return[...dijkstra(nearestNode(from),nearestNode(to)).map(i=>NODES[i].clone().add(V(rnd()*.8-.4,rnd()*.8-.4))),to.clone()]}
+// 池と橋
+const PZ=-31;for(let i=-3;i<=3;i++){const w=Math.sqrt(1-(i/3.6)**2)*4.6;sbox(w,.12,1,waterMat,0,.06,PZ+i,null,0,false);sbox(w+1,.08,1,0xc9b38a,0,.02,PZ+i,null,0,false)}
+sbox(2,.25,8,0x8d6e63,0,.25,PZ,null,0,true);sbox(.2,.5,8,0x5d4037,-1,.6,PZ);sbox(.2,.5,8,0x5d4037,1,.6,PZ);
+for(const [x,z] of [[-1.7,PZ-1.6],[1.6,PZ+1.4],[-1.4,PZ+2]])sbox(.7,.05,.7,0x2e7d32,x,.14,z,null,0,false);
+// 花・木・柵・街灯
+const FL=[0xff6f91,0xffd54f,0xffffff,0xba68c8,0xff8a65];
+const free=(x,z)=>{const r=Math.hypot(x,z);for(const g of [14,25,37])if(Math.abs(r-g)<1.6)return false;return !(Math.abs(x)<3&&z<-5&&z>-14)};
+for(let i=0;i<420;i++){const a=rnd()*Math.PI*2,r=i%3?39+rnd()*5:6+rnd()*6,x=Math.cos(a)*r,z=Math.sin(a)*r;if(!free(x,z))continue;
+  sbox(.12,.35,.12,0x388e3c,x,.17,z,null,0,false);sbox(.32,.22,.32,FL[i%5],x,.42,z,null,0,false)}
+for(let i=0;i<70;i++){const a=i*2.4+rnd()*.3,r=46+(i%6)*2.6,x=Math.cos(a)*r,z=Math.sin(a)*r;if(Math.hypot(x+38,z-38)<10)continue;const h=1.6+rnd()*1.4;
+  sbox(.6,h,.6,0x7a5230,x,h/2,z);sbox(2.4,1.6,2.4,i%4?0x3f9a3f:0x5cb85c,x,h+.6,z);sbox(1.4,1,1.4,i%4?0x4caf50:0x7bd17b,x,h+1.8,z)}
+for(let i=0;i<40;i++){const a=i/40*Math.PI*2;if(SPOKES.some(s=>Math.abs(Math.atan2(Math.sin(a-s),Math.cos(a-s)))<.12))continue;
+  const x=Math.cos(a)*5.6,z=Math.sin(a)*5.6;sbox(.18,.7,.18,0xf5f5f5,x,.35,z);sbox(.12,.12,.9,0xf5f5f5,x,.55,z,null,-a)}
+const LAMPS=[];for(const ring of RINGS.slice(0,2))ring.ids.forEach((id,i)=>{if(i%3)return;const n=NODES[id],o=n.clone().setLength(n.length()+1.4);sbox(.22,2.6,.22,0x37474f,o.x,1.3,o.z);sbox(.6,.6,.6,lampMat,o.x,2.8,o.z,null,0,false);LAMPS.push(o)});
+const NL=[];for(const [x,z] of [[6,6],[-6,6],[6,-6],[-6,-6]]){const l=new THREE.PointLight(0xffd59a,0,22,1.6);l.position.set(x,3,z);S.add(l);NL.push(l)}
+// 会議ホール（柱・梁・テーブル・ちょうちん）
+sbox(4.2,.3,2.6,0xa0703c,0,1.1,0);sbox(.5,1,.5,0x6b4423,0,.5,0);for(const [x,z] of [[-4.4,-4.4],[4.4,-4.4],[-4.4,4.4],[4.4,4.4]])sbox(.6,4.4,.6,0xfafafa,x,2.2,z);
+for(const s of [-4.4,4.4]){sbox(9.4,.4,.5,0xc62828,0,4.5,s);sbox(.5,.4,9.4,0xc62828,s,4.5,0)}for(const x of [-2,0,2])sbox(.5,.6,.5,lampMat,x,3.9,-4.4,null,0,false);
+sbox(4,2.5,.3,0x7a5230,7.5,2.5,-5.5);sbox(.3,2,.3,0x4a3018,5.7,.8,-5.5);sbox(.3,2,.3,0x4a3018,9.3,.8,-5.5);sbox(3.4,1.8,.1,0xfff8e7,7.5,2.6,-5.33,null,0,false);
+// 機械室
+sbox(15,.3,11,0x9e9e9e,-40,.15,40,null,0,false);sbox(15,3,.3,0x777777,-40,1.5,34.5);sbox(.3,3,11,0x777777,-47.5,1.5,40);for(let i=0;i<4;i++)sbox(1.2,2.2,.8,0x546e7a,-45+i*3.3,1.1,44.5);
+// 家（扉・窓・煙突つき）
+const DEPT={coo:0xffc107,cfo:0xff8a65,chro:0x64b5f6,cso:0x81c784,cio:0xffd54f,cqo:0xba68c8},DOOR={};
+function house(id,x,z,s,roof){const ry=Math.atan2(-x,-z),pm=new THREE.Matrix4().compose(V(x,z),new THREE.Quaternion().setFromEuler(new THREE.Euler(0,ry,0)),new THREE.Vector3(1,1,1));
+  sbox(3.4*s,2.5*s,3*s,0xf5e6c8,0,1.25*s,-1.8*s,pm);sbox(3.8*s,.5*s,3.6*s,roof,0,2.75*s,-1.8*s,pm);sbox(2.8*s,.5*s,2.8*s,roof,0,3.2*s,-1.8*s,pm);sbox(1.6*s,.45*s,2*s,roof,0,3.6*s,-1.8*s,pm);
+  sbox(.5,1.2,.5,0x8d6e63,1.1*s,3.6*s,-2.6*s,pm);sbox(.9,1.5,.12,0x6b4423,0,.75,-.3*s+.02,pm,0,false);sbox(.15,.15,.1,0xffd54f,.3,.8,-.3*s+.1,pm,0,false);
+  for(const wx of [-1.05,1.05])sbox(.7*s,.6*s,.1,winMat,wx*s,1.5*s,-.3*s+.02,pm,0,false);sbox(1.2,.06,1.2,0xbcaaa4,0,.03,-.3*s+.7,pm,0,false);
+  DOOR[id]=V(0,0).applyMatrix4(new THREE.Matrix4().compose(V(0,-.3*s+.9),_q.identity(),new THREE.Vector3(1,1,1)).premultiply(pm))}
+// ---- 住民 ----
+const TIERC={COO:0xffc107,役員:0x8e24aa,秘書:0xec407a,管理職:0x1e88e5,一般職:0x43a047,CEO:0xb8860b},HAIR=[0x3e2723,0x212121,0x6d4c41,0x8d6e63,0xbf8040,0x5d4037];
+const agents={},labels=$('labels');let ORG=null,selected=null,follow=null,camMode='all';
+function hash(s){let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))|0;return Math.abs(h)}
+function mkChar(key,p,x,z,o={}){const g=new THREE.Group(),s=o.scale||1,dc=o.dept??0x90a4ae,hc=HAIR[hash(key)%HAIR.length];
+  const shirt=o.shirt??dc,legs=[],arms=[];
+  for(const sx of [-.22,.22]){const lg=new THREE.Group();lg.position.set(sx,.6,0);box(.36,.6,.36,0x455a64,0,-.3,0,lg);g.add(lg);legs.push(lg)}
+  const body=box(.9,1,.6,shirt,0,1.1,0,g);
+  for(const sx of [-.58,.58]){const ag=new THREE.Group();ag.position.set(sx,1.55,0);box(.26,.85,.26,shirt,0,-.4,0,ag);box(.24,.2,.24,0xffe0bd,0,-.88,0,ag,false);g.add(ag);arms.push(ag)}
+  const head=new THREE.Group();head.position.set(0,1.6,0);g.add(head);box(.9,.9,.9,0xffe0bd,0,.45,0,head);box(.96,.3,.96,hc,0,.95,0,head);box(.96,.6,.2,hc,0,.65,-.42,head,false);
+  box(.14,.16,.05,0x222222,-.2,.5,.46,head,false);box(.14,.16,.05,0x222222,.2,.5,.46,head,false);box(.16,.08,.04,0xff8a80,-.32,.33,.46,head,false);box(.16,.08,.04,0xff8a80,.32,.33,.46,head,false);
+  const t=o.tier;
+  if(t==='COO'){box(.7,.6,.7,0x212121,0,1.35,0,head,false);box(.74,.12,.74,0xffc107,0,1.1,0,head,false);box(1.1,.08,1.1,0x212121,0,1.05,0,head,false);box(.15,.6,.05,0xc62828,0,1.15,.31,g,false)}
+  if(t==='役員'){box(1,.18,1,dc,0,1.15,0,head,false);box(.2,.2,.2,0xffd700,.3,1.28,.3,head,false);box(.15,.6,.05,dc,0,1.15,.31,g,false);body.material=mat(0x37474f)}
+  if(t==='秘書'){box(.3,.25,.12,dc,-.18,1.1,-.1,head,false);box(.3,.25,.12,dc,.18,1.1,-.1,head,false);box(.14,.14,.14,0xffffff,0,1.1,-.1,head,false)}
+  if(t==='管理職'){box(.98,.22,.98,0x1e88e5,0,1.12,0,head,false);box(.98,.06,.4,0x1565c0,0,1.02,.62,head,false);box(.15,.6,.05,dc,0,1.15,.31,g,false)}
+  if(t==='一般職'){box(.2,.2,.02,0xffffff,.25,1.3,.31,g,false)}
+  if(t==='CEO'){box(.7,.25,.7,0xffd700,0,1.2,0,head,false);for(const [cx,cz] of [[-.25,-.25],[.25,-.25],[-.25,.25],[.25,.25]])box(.14,.2,.14,0xffd700,cx,1.4,cz,head,false)}
   g.scale.setScalar(s);g.position.set(x,0,z);g.userData.key=key;S.add(g);
-  const lab=document.createElement('div');lab.className='lab'+(opt.big?' big':'');lab.textContent=name;labels.appendChild(lab);
+  const lab=document.createElement('div');lab.className='lab t-'+(t||'svc')+(key==='me'?' me':'');lab.textContent=o.label||p.name;labels.appendChild(lab);
   const bub=document.createElement('div');bub.className='bub';bub.style.display='none';labels.appendChild(bub);
-  agents[key]={g,body,head,home:new THREE.Vector3(x,0,z),target:new THREE.Vector3(x,0,z),lab,bub,col,up:true,speaking:false,t:Math.random()*9,big:!!opt.big,desk:!!opt.desk,wander:!(opt.svc||key==='me'),state:'idle',inside:0,svc:!!opt.svc};
-}
-let ORG=null,built=false;const toSel=document.getElementById('to');
-function build(org,st){ORG=org;const ppl=org.people,by=id=>ppl.find(p=>p.id===id);
-  mkChar('coo','COO（全社統括）',0,-9,COLORS.COO,{house:1.3,roof:0xffd700,big:true,tie:0xc62828});
+  return agents[key]={key,p,g,body,head,legs,arms,home:V(x,z),lab,bub,path:[],goal:null,state:'idle',timer:rnd()*3,inside:0,up:true,speaking:false,svc:!!o.svc,
+    tier:t,big:t==='COO'||t==='役員'||key==='me',desk:!!o.desk,dept:o.deptId,speed:2+rnd()*.6,bubUntil:0,bw:0,bh:0}}
+function say(A,text,ms,think=false){A.bub.textContent=text;A.bub.classList.toggle('think',think);A.bub.style.display='block';A.bw=A.bub.offsetWidth;A.bh=A.bub.offsetHeight;A.bubUntil=Date.now()+ms}
+const toSel=$('to');let SEATS=[];for(let i=0;i<10;i++){const a=i/10*Math.PI*2;SEATS.push(V(Math.cos(a)*3,Math.sin(a)*2.3))}
+function build(org,st){ORG=org;const ppl=org.people;
+  house('coo',0,-8,1.3,0xffc107);mkChar('coo',by('coo'),2.2,-8.5,{tier:'COO',dept:0xffc107,deptId:'coo',label:'COO（全社統括）'});
   const ex=ppl.filter(p=>p.tier==='役員');
-  ex.forEach((e,i)=>{const a=-Math.PI/2+(i+.5)/ex.length*Math.PI*2,x=Math.cos(a)*17,z=Math.sin(a)*17;e._a=a;
-    mkChar(e.id,`${e.name}（${e.dept.split('・')[0]}）`,x,z,COLORS.役員,{house:1.2,roof:EXC[e.id],big:true,tie:EXC[e.id]});
-    const sec=ppl.find(p=>p.tier==='秘書'&&p.parent===e.id);const px=-Math.sin(a)*3,pz=Math.cos(a)*3;
-    if(sec)mkChar(sec.id,sec.name,x+px,z+pz,COLORS.秘書,{tie:EXC[e.id],scale:.9});
+  ex.forEach((e,i)=>{const a=EXA[i],x=Math.cos(a)*17,z=Math.sin(a)*17,dc=DEPT[e.id]??0x90a4ae;house(e.id,x,z,1.2,dc);
+    mkChar(e.id,e,x-Math.sin(a)*2.4,z+Math.cos(a)*2.4,{tier:'役員',dept:dc,deptId:e.id,label:`${e.name}（${e.dept.split('・')[0]}）`});
+    const sec=ppl.find(p=>p.tier==='秘書'&&p.parent===e.id);if(sec)mkChar(sec.id,sec,x+Math.sin(a)*2.4,z-Math.cos(a)*2.4,{tier:'秘書',dept:dc,deptId:e.id,scale:.9});
     const mg=ppl.filter(p=>p.tier==='管理職'&&p.parent===e.id);
-    mg.forEach((m,j)=>{const b=a+(j-(mg.length-1)/2)*.42,mx=Math.cos(b)*30,mz=Math.sin(b)*30;
-      box(7,.2,6,0xd9c49a,mx,.1,mz,S,false);
-      mkChar(m.id,m.name,mx,mz,COLORS.管理職,{desk:[0,1],tie:EXC[e.id],wander:false});
-      ppl.filter(p=>p.tier==='一般職'&&p.parent===m.id).forEach((s,k)=>{const sx=mx+Math.cos(b+Math.PI/2)*(k?2.2:-2.2)+Math.cos(b)*2.5,sz=mz+Math.sin(b+Math.PI/2)*(k?2.2:-2.2)+Math.sin(b)*2.5;
-        mkChar(s.id,s.name,sx,sz,COLORS.一般職,{desk:[0,1],scale:.85,wander:false})})})});
-  for(const p of ppl){const o=document.createElement('option');o.value=p.id;o.textContent=`${p.name}（${p.tier}）に話す`;toSel.appendChild(o)}
-  mkChar('me',org.user+'（CEO・あなた）',0,2.6,0xffffff,{big:true,crown:true,wander:false});
-  Object.keys(st.services).forEach((s,i)=>mkChar('s:'+s,s,-43+(i%4)*3.3,36+Math.floor(i/4)*4,COLORS.svc,{scale:.7,svc:true,wander:false}));
-  O.target.set(0,0,0);built=true}
+    mg.forEach((m,j)=>{const b=a+(j-(mg.length-1)/2)*.42,mx=Math.cos(b)*30.5,mz=Math.sin(b)*30.5,ry=Math.atan2(-mx,-mz),pm=new THREE.Matrix4().compose(V(mx,mz),new THREE.Quaternion().setFromEuler(new THREE.Euler(0,ry,0)),new THREE.Vector3(1,1,1));
+      sbox(7,.16,6,0xd9c49a,0,.08,0,pm,0,false);sbox(7.4,.3,.3,0x8d6e63,0,2.6,-3,pm);for(const fx of [-3.5,3.5])sbox(.25,2.6,.25,0x8d6e63,fx,1.3,-3,pm);sbox(7.6,.25,3,dc,0,2.85,-1.8,pm);
+      for(const fx of [-3.6,-1.8,1.8,3.6])sbox(.18,.7,.18,0xffffff,fx,.35,3,pm);sbox(2.4,.12,.12,0xffffff,-2.7,.55,3,pm,0,false);sbox(2.4,.12,.12,0xffffff,2.7,.55,3,pm,0,false);
+      const desk=(lx,lz)=>{sbox(1.5,.12,.8,0xa0703c,lx,.8,lz,pm);sbox(.15,.75,.6,0x6b4423,lx-.6,.4,lz,pm);sbox(.15,.75,.6,0x6b4423,lx+.6,.4,lz,pm);sbox(.6,.4,.06,0x263238,lx,1.1,lz-.25,pm,0,false);
+        return V(lx,lz+.9).applyMatrix4(pm)};
+      const dp=desk(0,-1.6);const A=mkChar(m.id,m,dp.x,dp.z,{tier:'管理職',dept:dc,deptId:e.id,desk:true});A.face=ry+Math.PI;
+      ppl.filter(p=>p.tier==='一般職'&&p.parent===m.id).forEach((s,k)=>{const sp=desk(k?2.2:-2.2,.6);const B=mkChar(s.id,s,sp.x,sp.z,{tier:'一般職',dept:dc,deptId:e.id,desk:true,scale:.88});B.face=ry+Math.PI})})});
+  for(const p of ppl){const o=document.createElement('option');o.value=p.id;o.textContent=`${p.name}（${p.tier}）`;toSel.appendChild(o)}
+  mkChar('me',{name:org.user},0,2.8,{tier:'CEO',shirt:0xffffff,label:org.user+'（CEO・あなた）'});agents.me.g.rotation.y=Math.PI;
+  Object.keys(st.services).forEach((s,i)=>mkChar('s:'+s,{name:s},-45+(i%4)*3.3,38+Math.floor(i/4)*3.5,{svc:true,scale:.7,shirt:0x90a4ae}));
+  flush();renderPeople();function by(id){return ppl.find(p=>p.id===id)}}
+// ---- 1日のスケジュール（東京時間） ----
+const hourJST=()=>Q.has('hour')?+Q.get('hour'):+new Intl.DateTimeFormat('en',{hour:'numeric',hourCycle:'h23',timeZone:'Asia/Tokyo'}).format(new Date());
+const phase=h=>h>=22||h<6?'night':h>=9&&h<18?'work':'free',PH={night:'🌙 夜（家で休む時間）',work:'💼 勤務時間',free:'🌇 自由時間'};
+const PLAZA=[V(0,7),V(8,9),V(-9,8),V(10,-2),V(-10,-3),V(0,PZ+5),V(3,PZ-6),V(-3,PZ+6)];
+const pick=a=>a[Math.floor(rnd()*a.length)],jit=(v,r=1.5)=>v.clone().add(V(rnd()*2*r-r,rnd()*2*r-r));
+function go(A,to,goal){A.path=route(A.g.position,to);A.goal=goal;A.state='walk'}
+function decide(A){const ph=phase(hourJST()),door=DOOR[A.dept]||DOOR.coo,r=rnd(),owl=hash(A.key)%5===0;
+  if(ph==='night'&&!owl){if(A.g.visible)return go(A,door,'door');A.inside=30+rnd()*60;return}
+  if(ph==='work'&&A.desk&&r<.7)return go(A,A.home,'work');
+  if(ph==='work'&&!A.desk&&r<.35)return go(A,door,'door');
+  if(r<.2)return go(A,pick(Object.values(DOOR)),'door');
+  if(r<.55)return go(A,jit(pick(PLAZA),2),'stroll');
+  if(r<.75)return go(A,jit(NODES[1+Math.floor(rnd()*(NODES.length-1))],.4),'stroll');
+  return go(A,jit(A.home,1.5),'stroll')}
+function arrive(A){const ph=phase(hourJST());
+  if(A.goal==='door'){A.g.visible=false;A.inside=ph==='night'?40+rnd()*80:ph==='work'?15+rnd()*25:5+rnd()*12;A.state='inside';return}
+  if(A.goal==='work'){A.state='work';A.timer=25+rnd()*40;if(A.face!=null)A.g.rotation.y=A.face;return}
+  if(A.goal==='seat'){A.state='seat';return}
+  A.state='pause';A.timer=2+rnd()*5}
+// ---- 状態の取得 ----
+let LAST=null;
 async function poll(){try{
-  if(!ORG){const org=await (await fetch('/api/org')).json();const st0=await (await fetch('/api/state')).json();build(org,st0)}
-  const st=await (await fetch('/api/state')).json();
-  document.getElementById('hud').textContent=`ローカルAI組織：${st.status}\n議題: ${(st.topic||'').slice(0,120)}\n担当役員: ${(st.exec||'-').toUpperCase()} ・ 空きメモリ ${st.free_mb}MB ・ 更新 ${st.updated}`;
-  document.getElementById('decs').textContent='\n'+st.decisions.slice().reverse().join('\n\n――――\n\n');
-  const cl=document.getElementById('log');cl.replaceChildren(...st.chat.map(c=>{const d=document.createElement('div');d.textContent=`${c.who}: ${c.text}`;return d}));cl.scrollTop=1e9;
-  const inMeeting=st.status.startsWith('会議中'),ids=new Set(inMeeting?st.transcript.map(t=>t.id):[]);if(inMeeting&&st.speaking)ids.add(st.speaking);
-  for(const [k,A] of Object.entries(agents)){if(A.svc||k==='me')continue;A.speaking=ids.has(k);if(!(A.hold>Date.now()))A.bub.style.display='none'}
-  const last=st.transcript[st.transcript.length-1];if(last&&agents[last.id]){const A=agents[last.id];A.bub.textContent=last.text.replace(/\s+/g,' ').slice(0,110)+(last.text.length>110?'…':'');A.bub.style.display='block'}
-  if(st.speaking&&agents[st.speaking]&&inMeeting){const A=agents[st.speaking];if(!last||last.id!==st.speaking){A.bub.textContent='（考え中…）';A.bub.style.display='block'}}
-  const mine=st.chat.filter(c=>c.who===st.user).pop();if(mine&&agents.me){agents.me.bub.textContent=mine.text.slice(0,80);agents.me.bub.style.display='block'}
-  for(const [s,up] of Object.entries(st.services)){const A=agents['s:'+s];if(!A)continue;A.up=up;A.lab.classList.toggle('off',!up);A.lab.textContent=s+(up?'':' 💤');A.body.material=mat(up?A.col:0x999999)}
- }catch(e){document.getElementById('hud').textContent='状態を取得できません: '+e}}
-poll();setInterval(poll,4000);
+  if(!ORG){const org=await (await fetch('/api/org')).json(),st0=await (await fetch('/api/state')).json();build(org,st0)}
+  const st=await (await fetch('/api/state')).json();LAST=st;const meet=st.status.startsWith('会議中');
+  $('pill').textContent=meet?'🔴 会議中':st.status.startsWith('エラー')?'エラー':'🟢 待機中';$('pill').className='pill'+(meet?' meet':st.status.startsWith('エラー')?' err':'');
+  $('topic').textContent='議題: '+(st.topic||'（なし）').replace(/\s+/g,' ');
+  $('meta').textContent=`担当役員 ${(st.exec||'-').toUpperCase()} ・ 空きメモリ ${st.free_mb}MB ・ 更新 ${st.updated}`;
+  if(tab==='board')renderBoard();
+  $('log').replaceChildren(...st.chat.map(c=>{const d=document.createElement('div');d.textContent=`${c.who}: ${c.text}`;if(c.who===st.user)d.className='me';return d}));$('log').scrollTop=1e9;
+  const ids=new Set(meet?st.transcript.map(t=>t.id):[]);if(meet&&st.speaking)ids.add(st.speaking);
+  for(const [k,A] of Object.entries(agents)){if(A.svc||k==='me')continue;A.speaking=ids.has(k)}
+  const last=st.transcript[st.transcript.length-1];
+  if(meet&&last&&agents[last.id]&&agents[last.id].lastSaid!==last.text){agents[last.id].lastSaid=last.text;say(agents[last.id],last.text.replace(/\s+/g,' '),25000)}
+  if(meet&&st.speaking&&agents[st.speaking]&&(!last||last.id!==st.speaking)){const A=agents[st.speaking];if(!(A.bubUntil>Date.now())||!A.bub.classList.contains('think'))say(A,'（考え中…）',8000,true)}
+  const mine=st.chat.filter(c=>c.who===st.user).pop();if(mine&&agents.me&&agents.me.lastSaid!==mine.text){agents.me.lastSaid=mine.text;say(agents.me,mine.text,15000)}
+  for(const [s,up] of Object.entries(st.services)){const A=agents['s:'+s];if(!A)continue;A.up=up;A.lab.classList.toggle('off',!up);A.lab.textContent=s+(up?'':' 💤');A.body.material=mat(up?0x90a4ae:0x616161)}
+  if(tab==='prof'&&selected&&Date.now()-profAt>15000)renderProfile(selected);
+ }catch(e){$('pill').textContent='接続できません';$('pill').className='pill err';$('topic').textContent=String(e)}}
+// ---- パネル ----
+let tab='board',profAt=0;const pane=$('pane');
+const el=(t,cls,txt)=>{const d=document.createElement(t);if(cls)d.className=cls;if(txt!=null)d.textContent=txt;return d};
+function renderBoard(){if(!LAST)return;pane.replaceChildren(...LAST.decisions.slice().reverse().map(d=>{const c=el('div','card'),[h,...rest]=d.split('\n');c.append(el('h4',null,h),el('div',null,rest.join('\n').trim()));return c}))}
+function renderPeople(){const grp={};for(const p of (ORG?.people||[]))(grp[p.tier]??=[]).push(p);const out=[];
+  for(const t of ['COO','役員','秘書','管理職','一般職']){if(!grp[t])continue;out.push(el('div','grp',`${t}（${grp[t].length}人）`));
+    for(const p of grp[t]){const r=el('div','who'),d=el('span','dot');d.style.background='#'+(DEPT[agents[p.id]?.dept]??0x90a4ae).toString(16).padStart(6,'0');
+      r.append(d,el('span',null,p.name),el('span','sm',p.dept.split('・')[0]+(agents[p.id]?.speaking?' 🎤':'')));r.onclick=()=>selectAgent(p.id,true);out.push(r)}}
+  pane.replaceChildren(...out)}
+async function renderProfile(id){profAt=Date.now();const A=agents[id];if(!A)return;let j={recent:[]};try{j=await (await fetch('/api/person/'+encodeURIComponent(id))).json()}catch{}
+  if(tab!=='prof'||selected!==id)return;const c=el('div','card');
+  c.append(el('h4',null,`${j.name||A.p.name}（${j.tier||A.tier}）`),el('div',null,`${j.title||''}\n部門: ${j.dept||''}\nモデル: ${j.model||''}\nいま: ${A.speaking?'会議で発言中':({walk:'歩いている',work:'机で仕事中',inside:'建物の中',pause:'ひと休み',seat:'会議中'})[A.state]||'のんびり'}`));
+  const b=el('button',null,'💬 話しかける');b.onclick=()=>{toSel.value=id;$('msg').focus()};const f=el('button',null,'🎥 ついていく');f.onclick=()=>setCam('follow',id);c.append(el('div'),b,f);
+  const rs=(j.recent||[]).map(r=>{const d=el('div','card');d.append(el('h4',null,`${r.at} ・ ${r.kind}`),el('div',null,r.text));return d});
+  pane.replaceChildren(c,el('div','grp','最近の発言'),...(rs.length?rs:[el('div','sm','（まだ発言がありません）')]))}
+function setTab(t){tab=t;document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
+  if(t==='board')renderBoard();if(t==='people')renderPeople();if(t==='prof')selected?renderProfile(selected):pane.replaceChildren(el('div','card','住民をクリックするとプロフィールが表示されます'))}
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
+$('toggle').onclick=()=>$('side').classList.toggle('open');
+function selectAgent(id,fly){const prev=agents[selected];if(prev)prev.lab.classList.remove('sel');selected=id;const A=agents[id];if(!A)return;A.lab.classList.add('sel');
+  toSel.value=id;setTab('prof');if(fly)setCam('follow',id)}
+// ---- カメラ ----
+const camT=new THREE.Vector3(),camP=new THREE.Vector3();let camAnim=0;
+function setCam(m,id){camMode=m;follow=m==='follow'?id:null;document.querySelectorAll('#cams button[data-cam]').forEach(b=>b.classList.toggle('on',b.dataset.cam===m));
+  if(m==='all'){camT.set(0,0,0);camP.set(0,58,70);camAnim=1}if(m==='hall'){camT.set(0,1,0);camP.set(0,14,18);camAnim=1}}
+document.querySelectorAll('#cams button[data-cam]').forEach(b=>b.onclick=()=>setCam(b.dataset.cam));
+O.addEventListener('start',()=>{camAnim=0;if(camMode==='all'||camMode==='hall'){camMode='free';setCam('free')}});
+// ---- 会話 ----
 function resolveAt(t){const m=t.match(/^[@＠](\S+)\s*/);if(!m||!ORG)return null;const q=m[1].toLowerCase();
   const p=ORG.people.find(p=>p.id.toLowerCase()===q||p.name.toLowerCase()===q)||ORG.people.find(p=>p.name.toLowerCase().includes(q));return p?{id:p.id,rest:t.slice(m[0].length)||t}:null}
-async function sendMsg(){let t=document.getElementById('msg').value.trim();if(!t)return;const at=resolveAt(t);if(at){toSel.value=at.id;t=at.rest}const to=toSel.value;
-  if(to&&agents[to]){const A=agents[to];A.called=Date.now()+60000;A.bub.textContent='（はい、なんでしょう？）';A.bub.style.display='block';A.hold=Date.now()+60000}const stEl=document.getElementById('st');
-  stEl.textContent=' 送信中…';document.getElementById('msg').value='';
+async function sendMsg(){let t=$('msg').value.trim();if(!t)return;const at=resolveAt(t);if(at){toSel.value=at.id;t=at.rest}const to=toSel.value;
+  if(to&&agents[to]){const A=agents[to];A.called=Date.now()+90000;say(A,'（はい、なんでしょう？）',90000,true)}
+  $('st').textContent=to?`${agents[to]?.p.name||to} が考えています…`:'送信中…';$('msg').value='';
   try{const r=await fetch(to?'/api/chat':'/api/topic',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to,text:t})});const j=await r.json();
-    stEl.textContent=to?'':' COOに届けました';if(to&&agents[j.id]){const A=agents[j.id];A.bub.textContent=j.text.replace(/\s+/g,' ').slice(0,110);A.bub.style.display='block';A.hold=Date.now()+20000;A.called=Date.now()+20000}poll()}catch(e){stEl.textContent=' 失敗: '+e}}
-document.getElementById('send').onclick=sendMsg;document.getElementById('msg').onkeydown=e=>{if(e.key==='Enter'&&!e.isComposing)sendMsg()};
-const ray=new THREE.Raycaster(),mp=new THREE.Vector2();
-R.domElement.addEventListener('click',e=>{mp.set(e.clientX/innerWidth*2-1,-e.clientY/innerHeight*2+1);ray.setFromCamera(mp,C);
-  const hit=ray.intersectObjects(Object.entries(agents).filter(([k,A])=>!A.svc&&k!=='me').map(([,A])=>A.g),true)[0];
-  if(hit){let o=hit.object;while(o&&!o.userData.key)o=o.parent;if(o){toSel.value=o.userData.key;const A=agents[o.userData.key];A.called=Date.now()+30000;A.bub.textContent='（呼ばれて振り向いた）';A.bub.style.display='block';A.hold=Date.now()+30000;document.getElementById('msg').focus()}}});
-function tint(){const h=+new Intl.DateTimeFormat('en',{hour:'numeric',hourCycle:'h23',timeZone:'Asia/Tokyo'}).format(new Date());
-  const day=h>=6&&h<17,dusk=h===17||h===18||h===5;S.background=new THREE.Color(day?0x9fd8ff:dusk?0xf4a261:0x1b2340);sun.intensity=day?1.2:dusk?.7:.25;hemi.intensity=day?1:.5}
-tint();setInterval(tint,60000);
-const clock=new THREE.Clock(),v=new THREE.Vector3(),SEATS=[];for(let i=0;i<8;i++){const a=i/8*Math.PI*2;SEATS.push(new THREE.Vector3(Math.cos(a)*2.6,0,Math.sin(a)*2.6*.8))}
-const PLAZA=[new THREE.Vector3(0,0,6),new THREE.Vector3(10,0,8),new THREE.Vector3(-10,0,8),new THREE.Vector3(7,0,-3),new THREE.Vector3(-12,0,-6),new THREE.Vector3(20,0,20),new THREE.Vector3(-22,0,18)];
-function pickGoal(A){const r=Math.random();A.door=null;
-  if(r<.3&&DOORS.length){const d=DOORS[Math.floor(Math.random()*DOORS.length)];A.door=d;A.target.copy(d)}
-  else if(r<.55)A.target.copy(A.home).add(new THREE.Vector3(Math.random()*4-2,0,Math.random()*4-2));
-  else if(r<.75)A.target.copy(PLAZA[Math.floor(Math.random()*PLAZA.length)]).add(new THREE.Vector3(Math.random()*3-1.5,0,Math.random()*3-1.5));
-  else {const B=Object.values(agents)[Math.floor(Math.random()*Object.keys(agents).length)];A.target.copy(B.home).add(new THREE.Vector3(2,0,2))}
-  A.state='walk'}
-window.__ST=location.search.includes("selftest");let __frames=0;function loop(){__frames++;const dt=Math.min(clock.getDelta(),.1),T=clock.elapsedTime;let seat=0;const list=Object.values(agents);
-  for(const [k,A] of Object.entries(agents)){A.t+=dt;
-    if(!A.up){A.g.rotation.z=1.4;A.g.position.y=.3}else{A.g.rotation.z=0;
-      if(A.called>Date.now()){A.g.visible=true;A.inside=0;A.g.lookAt(C.position.x,0,C.position.z);A.g.position.y=0;A.head.position.y=1.95+Math.sin(T*6)*.05}
-      else{
-      if(A.speaking){A.g.visible=true;A.inside=0;A.target.copy(SEATS[(seat++)%8]);A.state='walk';A.door=null}
-      else if(A.wander&&A.inside>0){A.inside-=dt;if(A.inside<=0){A.g.visible=true;A.g.position.copy(A.door||A.home);A.door=null;A.state='pause';A.t=0}}
-      else if(A.wander&&A.state==='idle'){pickGoal(A)}
-      else if(A.state==='pause'&&A.t>2+Math.random()*4){A.state=A.wander?'idle':'pause';A.t=0}
-      else if(!A.wander)A.target.copy(A.home);
-      if(A.g.visible){const d=v.subVectors(A.target,A.g.position);d.y=0;const L=d.length();
-        // 衝突回避: 近い住民から離れる
-        for(const B of list){if(B===A||!B.g.visible)continue;const dx=A.g.position.x-B.g.position.x,dz=A.g.position.z-B.g.position.z,q=dx*dx+dz*dz;if(q<1.2&&q>1e-4){A.g.position.x+=dx/q*dt*.6;A.g.position.z+=dz/q*dt*.6}}
-        if(L>.15&&A.state!=='pause'){A.g.position.addScaledVector(d.normalize(),Math.min(L,dt*(A.speaking?4:2.2)));A.g.rotation.y=Math.atan2(d.x,d.z);A.g.position.y=Math.abs(Math.sin(T*10))*.15;A.body.rotation.x=0;
-          A.g.children[5]&&(A.g.children[4].rotation.x=Math.sin(T*10)*.5,A.g.children[5].rotation.x=-Math.sin(T*10)*.5)}
-        else{A.g.position.y=0;
-          if(A.speaking)A.g.lookAt(0,0,0);
-          else if(A.state==='walk'){if(A.door&&Math.random()<.7){A.g.visible=false;A.inside=5+Math.random()*12}else{A.state='pause';A.t=0}}
-          else if(A.desk&&A.g.position.distanceTo(A.home)<1){A.head.position.y=1.95+Math.abs(Math.sin(T*12+A.t))*.06;A.body.rotation.x=.12}}}}}
-    const near=C.position.distanceTo(A.g.position)<38;const show=A.g.visible&&(A.big||A.speaking||A.bub.style.display==='block'||near);
-    const p=A.g.position.clone();p.y+=2.9*(A.g.scale.x);p.project(C);const x=(p.x+1)/2*innerWidth,y=(1-p.y)/2*innerHeight,vis=p.z<1;
-    A.lab.style.display=vis&&show?'block':'none';if(vis&&show){A.lab.style.left=x+'px';A.lab.style.top=y+'px'}
-    if(A.bub.style.display==='block'){A.bub.style.display=A.g.visible?'block':'none';A.bub.style.left=x+'px';A.bub.style.top=(y-24)+'px'}}
-  O.update();R.render(S,C);(window.__ST?setTimeout(loop,33):requestAnimationFrame(loop))}
+    $('st').textContent=to?'':'COOに届けました（次の会議で取り上げます）';
+    if(to&&agents[j.id]){const A=agents[j.id];say(A,j.text.replace(/\s+/g,' '),25000);A.called=Date.now()+25000;if(selected===j.id&&tab==='prof')renderProfile(j.id)}poll()}catch(e){$('st').textContent='失敗: '+e}}
+$('send').onclick=sendMsg;$('msg').onkeydown=e=>{if(e.key==='Enter'&&!e.isComposing)sendMsg()};
+const ray=new THREE.Raycaster(),mp=new THREE.Vector2();let downAt=null;
+R.domElement.addEventListener('pointerdown',e=>downAt=[e.clientX,e.clientY]);
+R.domElement.addEventListener('pointerup',e=>{if(!downAt||Math.hypot(e.clientX-downAt[0],e.clientY-downAt[1])>6)return;mp.set(e.clientX/innerWidth*2-1,-e.clientY/innerHeight*2+1);ray.setFromCamera(mp,C);
+  const hit=ray.intersectObjects(Object.values(agents).filter(A=>!A.svc&&A.key!=='me'&&A.g.visible).map(A=>A.g),true)[0];
+  if(hit){let o=hit.object;while(o&&!o.userData.key)o=o.parent;if(o){const A=agents[o.userData.key];A.called=Date.now()+30000;say(A,'（呼ばれて振り向いた）',30000,true);selectAgent(A.key,false)}}});
+// ---- ミニマップ ----
+const mini=$('mini'),mc=mini.getContext('2d'),MS=170/124;
+const toMini=(x,z)=>[85+x*MS,85+z*MS];
+mini.onclick=e=>{const r=mini.getBoundingClientRect(),x=(e.clientX-r.left-85)/MS,z=(e.clientY-r.top-85)/MS;camMode='free';setCam('free');const d=camP.copy(C.position).sub(O.target);camT.set(x,0,z);camP.copy(camT).add(d);camAnim=1};
+function drawMini(){mc.clearRect(0,0,170,170);mc.strokeStyle='#e2c48a';mc.lineWidth=2;for(const r of RINGS){mc.beginPath();mc.arc(85,85,r.r*MS,0,7);mc.stroke()}
+  mc.fillStyle='#4fc3f7';mc.beginPath();mc.ellipse(...toMini(0,PZ),2.3*MS,3.5*MS,0,0,7);mc.fill();
+  for(const [id,d] of Object.entries(DOOR)){mc.fillStyle='#'+DEPT[id].toString(16).padStart(6,'0');const [x,y]=toMini(d.x,d.z);mc.fillRect(x-3,y-3,6,6)}
+  for(const A of Object.values(agents)){if(!A.g.visible||A.svc)continue;const [x,y]=toMini(A.g.position.x,A.g.position.z);mc.fillStyle=A.key==='me'?'#fff':'#'+(TIERC[A.tier]||0x777777).toString(16).padStart(6,'0');
+    mc.beginPath();mc.arc(x,y,A.key===selected||A.speaking?3.5:2.2,0,7);mc.fill()}
+  const t=O.target;const [cx,cy]=toMini(t.x,t.z);mc.strokeStyle='#fff';mc.lineWidth=1.5;mc.strokeRect(cx-8,cy-6,16,12)}
+// ---- 昼夜 ----
+function tint(){const h=hourJST(),day=h>=6&&h<17,dusk=h===17||h===18||h===5;const sky=day?0x9fd8ff:dusk?0xf4a261:0x1b2340;S.background=new THREE.Color(sky);S.fog.color.set(sky);
+  sun.intensity=day?1.6:dusk?.8:.18;hemi.intensity=day?1.1:dusk?.7:.35;const night=!day;
+  lampMat.emissive.set(night?0xffd27a:0x000000);winMat.emissive.set(night?0xffb74d:0x000000);winMat.color.set(night?0xffe082:0x9ad0ec);NL.forEach(l=>l.intensity=night?40:0);
+  $('clock').textContent=`${String(h).padStart(2,'0')}時（日本時間）・${PH[phase(h)]}`}
+// ---- メインループ ----
+const clock=new THREE.Clock(),v=new THREE.Vector3(),pv=new THREE.Vector3();let frames=0,fpsT=0,fpsN=0,lowFps=0;
+window.__ST=Q.has('selftest');
+function update(A,dt,T,list){
+  if(A.svc){A.g.rotation.z=A.up?0:1.4;A.g.position.y=A.up?0:.3;return}
+  if(A.key==='me')return;
+  if(A.called>Date.now()){A.g.visible=true;if(A.state==='inside'){A.g.position.copy(DOOR[A.dept]||A.home);A.state='pause'}A.g.lookAt(C.position.x,0,C.position.z);A.g.position.y=0;A.head.rotation.z=Math.sin(T*4)*.08;return}
+  A.head.rotation.z=0;
+  if(A.speaking&&A.goal!=='seat'){if(!A.g.visible){A.g.visible=true;A.g.position.copy(DOOR[A.dept]||A.home)}const i=Object.values(agents).filter(B=>B.speaking).indexOf(A);go(A,SEATS[(i<0?0:i)%SEATS.length],'seat')}
+  if(!A.speaking&&A.goal==='seat'){A.goal=null;A.state='pause';A.timer=1}
+  if(A.state==='inside'){A.inside-=dt;if(A.inside<=0){const ph=phase(hourJST());if(ph==='night'&&hash(A.key)%5){A.inside=40+rnd()*60;return}A.g.visible=true;A.g.position.copy(DOOR[A.dept]||A.home);A.state='idle'}return}
+  if(A.state==='idle')decide(A);
+  if((A.state==='pause'||A.state==='work')&&(A.timer-=dt)<=0)A.state='idle';
+  let moving=false;
+  if(A.state==='walk'&&A.path.length){const tgt=A.path[0];v.subVectors(tgt,A.g.position);v.y=0;const L=v.length();
+    if(L<.35){A.path.shift();if(!A.path.length)arrive(A)}else{moving=true;A.g.position.addScaledVector(v.normalize(),Math.min(L,dt*A.speed*(A.speaking?1.8:1)));
+      const ry=Math.atan2(v.x,v.z),d=Math.atan2(Math.sin(ry-A.g.rotation.y),Math.cos(ry-A.g.rotation.y));A.g.rotation.y+=d*Math.min(1,dt*10)}}
+  else if(A.state==='walk')arrive(A);
+  for(const B of list){if(B===A||!B.g.visible||B.svc)continue;const dx=A.g.position.x-B.g.position.x,dz=A.g.position.z-B.g.position.z,q=dx*dx+dz*dz;if(q<1.1&&q>1e-4){A.g.position.x+=dx/q*dt*.5;A.g.position.z+=dz/q*dt*.5}}
+  const sw=moving?Math.sin(T*9*A.speed/2.2):0;A.legs[0].rotation.x=sw*.6;A.legs[1].rotation.x=-sw*.6;A.arms[0].rotation.x=-sw*.5;A.arms[1].rotation.x=sw*.5;A.g.position.y=moving?Math.abs(sw)*.08:0;
+  if(A.state==='work'){A.arms[0].rotation.x=A.arms[1].rotation.x=-.9+Math.sin(T*14+A.timer)*.12;A.head.rotation.x=.15}else A.head.rotation.x=0;
+  if(A.state==='seat'){A.g.lookAt(0,0,0);A.arms[0].rotation.x=Math.sin(T*3)*.3*(A.key===LAST?.speaking?1:0)}}
+const placed=[];const ovl=(a,b)=>a[0]<b[2]&&a[2]>b[0]&&a[1]<b[3]&&a[3]>b[1];
+function overlay(){placed.length=0;const now=Date.now(),list=[];
+  for(const A of Object.values(agents)){if(A.bub.style.display==='block'&&now>A.bubUntil)A.bub.style.display='none';
+    pv.copy(A.g.position);pv.y+=(A.svc?2.2:3.2)*A.g.scale.x;pv.project(C);const on=pv.z<1&&Math.abs(pv.x)<1.1&&Math.abs(pv.y)<1.1&&A.g.visible;
+    const dist=C.position.distanceTo(A.g.position),pri=(A.key===selected?5:0)+(A.speaking?4:0)+(A.bubUntil>now?3:0)+(A.big?2:0)+(dist<30?1:0);
+    list.push({A,on,x:(pv.x+1)/2*innerWidth,y:(1-pv.y)/2*innerHeight,pri,dist})}
+  list.sort((a,b)=>b.pri-a.pri||a.dist-b.dist);
+  for(const it of list){const {A}=it;const w=A.lab.textContent.length*11+14,h=18;let r=[it.x-w/2,it.y-h,it.x+w/2,it.y];
+    const showLab=it.on&&(it.pri>=1)&&!placed.some(p=>ovl(p,r));A.lab.style.display=showLab?'block':'none';
+    if(showLab){placed.push(r);A.lab.style.transform=`translate(${(it.x-w/2)|0}px,${(it.y-h)|0}px)`}
+    if(A.bub.style.display==='block'||A.bubUntil>now){if(!it.on){A.bub.style.visibility='hidden';continue}A.bub.style.visibility='visible';
+      const bw=A.bw||200,bh=A.bh||40;let y=it.y-h-4-bh,b=[it.x-bw/2,y,it.x+bw/2,y+bh];for(let k=0;k<6&&placed.some(p=>ovl(p,b));k++){y-=bh*.6+4;b=[it.x-bw/2,y,it.x+bw/2,y+bh]}
+      placed.push(b);A.bub.style.transform=`translate(${(it.x-bw/2)|0}px,${y|0}px)`}}}
+function loop(){frames++;const dt=Math.min(clock.getDelta(),.1),T=clock.elapsedTime,list=Object.values(agents);
+  for(const A of list)update(A,dt,T,list);
+  const f=follow?agents[follow]:camMode==='speaker'?agents[LAST?.speaking]||list.find(A=>A.speaking):null;
+  if(f&&f.g.visible){const d=v.copy(C.position).sub(O.target);O.target.lerp(f.g.position,.08);if(d.length()>30)d.setLength(30);C.position.copy(O.target).add(d)}
+  if(camAnim){O.target.lerp(camT,.08);C.position.lerp(camP,.08);if(C.position.distanceTo(camP)<.2)camAnim=0}
+  waterMat.opacity=.8+Math.sin(T*1.5)*.05;
+  O.update();R.render(S,C);overlay();if(frames%10===0)drawMini();
+  fpsN++;if(T-fpsT>2){const fps=fpsN/(T-fpsT);fpsT=T;fpsN=0;window.__fps=fps;if(fps<22&&++lowFps>=2&&R.shadowMap.enabled){R.shadowMap.enabled=false;sun.castShadow=false;R.setPixelRatio(1)}}
+  (window.__ST?setTimeout(loop,33):requestAnimationFrame(loop))}
 window.__agents=agents;
-if(location.search.includes('selftest')){setTimeout(()=>{window.__p0=Object.fromEntries(Object.entries(agents).map(([k,A])=>[k,A.g.position.clone()]))},3000);
+poll();setInterval(poll,4000);tint();setInterval(tint,60000);
+if(window.__ST){setTimeout(()=>{window.__p0=Object.fromEntries(Object.entries(agents).map(([k,A])=>[k,A.g.position.clone()]))},3000);
   setTimeout(()=>{let moved=0,hidden=0;for(const [k,A] of Object.entries(agents)){if(A.g.position.distanceTo(window.__p0[k])>.5)moved++;if(!A.g.visible)hidden++}
-    const d=document.createElement('pre');d.id='selftest';d.textContent=`SELFTEST moved=${moved}/${Object.keys(agents).length} inside=${hidden} frames=${__frames}`;document.body.appendChild(d);
-    document.getElementById('msg').value='@CFO 村の様子はどうですか？';sendMsg()},9000)}
+    const d=document.createElement('pre');d.id='selftest';d.style.cssText='position:fixed;left:50%;top:4px;background:#fff;margin:0';d.textContent=`SELFTEST moved=${moved}/${Object.keys(agents).length} inside=${hidden} frames=${frames} fps=${(window.__fps||0).toFixed(1)}`;document.body.appendChild(d);
+    if(Q.get('selftest')!=='nochat'){$('msg').value='@CFO 村の様子はどうですか？';sendMsg()}},9000)}
 loop();addEventListener('resize',()=>{C.aspect=innerWidth/innerHeight;C.updateProjectionMatrix();R.setSize(innerWidth,innerHeight)});
-</script></html>
+</script></body></html>
