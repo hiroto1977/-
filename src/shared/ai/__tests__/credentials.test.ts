@@ -81,6 +81,8 @@ describe('configForProvider', () => {
       openaiModel: 'om',
       gemini: 'g',
       geminiModel: 'gm',
+      grok: 'xk',
+      grokModel: 'xm',
       ollamaUrl: 'http://x:11434',
       ollamaModel: 'lm',
       compatUrl: 'http://y:4000',
@@ -93,6 +95,7 @@ describe('configForProvider', () => {
     expect(configForProvider('anthropic', creds)).toEqual({ apiKey: 'a', model: 'am' });
     expect(configForProvider('openai', creds)).toEqual({ apiKey: 'o', model: 'om' });
     expect(configForProvider('gemini', creds)).toEqual({ apiKey: 'g', model: 'gm' });
+    expect(configForProvider('grok', creds)).toEqual({ apiKey: 'xk', model: 'xm' });
     expect(configForProvider('ollama', creds)).toEqual({ baseUrl: 'http://x:11434', model: 'lm' });
     expect(configForProvider('compat', creds)).toEqual({
       baseUrl: 'http://y:4000',
@@ -154,7 +157,7 @@ describe('providerStatuses', () => {
   it('lists all providers with configured / default flags', () => {
     const creds = parseAiCredentials(JSON.stringify({ default: 'ollama', ollamaUrl: 'http://x' }));
     const statuses = providerStatuses(creds);
-    expect(statuses.map((s) => s.id)).toEqual(['anthropic', 'openai', 'gemini', 'ollama', 'compat']);
+    expect(statuses.map((s) => s.id)).toEqual(['anthropic', 'openai', 'gemini', 'grok', 'ollama', 'compat']);
     const ollama = statuses.find((s) => s.id === 'ollama')!;
     expect(ollama.configured).toBe(true);
     expect(ollama.isDefault).toBe(true);
@@ -186,6 +189,7 @@ describe('空文字の資格情報は未設定として扱う', () => {
     ['anthropic', { anthropic: '' }],
     ['openai', { openai: '' }],
     ['gemini', { gemini: '' }],
+    ['grok', { grok: '' }],
     ['ollama', { ollamaUrl: '' }],
     ['compat', { compatUrl: '' }],
   ];
@@ -200,6 +204,13 @@ describe('空文字の資格情報は未設定として扱う', () => {
       expect(isProviderConfigured(id as AiProviderId, filled)).toBe(true);
     });
   }
+
+  it('grok は xAI のキーで設定済みになり、優先順は gemini の後・ollama の前', () => {
+    const creds = parseAiCredentials(JSON.stringify({ ollamaUrl: 'http://127.0.0.1:11434', grok: 'xai-k', gemini: 'g' }));
+    expect(configuredProviders(creds)).toEqual(['gemini', 'grok', 'ollama']);
+    expect(parseAiCredentials(JSON.stringify({ provider: 'grok', grok: 'xai-k' })).default).toBe('grok');
+    expect(resolveProvider(creds, 'grok')).toEqual({ id: 'grok', cfg: { apiKey: 'xai-k', model: undefined } });
+  });
 
   it('空文字だけの資格情報では設定済みプロバイダが 0 件', () => {
     expect(configuredProviders({ anthropic: '', openai: '', gemini: '', ollamaUrl: '', compatUrl: '' }))

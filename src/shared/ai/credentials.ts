@@ -32,6 +32,8 @@ export interface AiCredentials {
   openaiModel?: string;
   gemini?: string;
   geminiModel?: string;
+  grok?: string;
+  grokModel?: string;
   ollamaUrl?: string;
   ollamaModel?: string;
   compatUrl?: string;
@@ -56,6 +58,8 @@ export const AI_CREDENTIAL_STRING_KEYS = [
   'openaiModel',
   'gemini',
   'geminiModel',
+  'grok',
+  'grokModel',
   'ollamaUrl',
   'ollamaModel',
   'compatUrl',
@@ -110,6 +114,8 @@ export function configForProvider(id: AiProviderId, c: AiCredentials): AiProvide
       return { apiKey: c.openai, model: c.openaiModel };
     case 'gemini':
       return { apiKey: c.gemini, model: c.geminiModel };
+    case 'grok':
+      return { apiKey: c.grok, model: c.grokModel };
     case 'ollama':
       return { baseUrl: c.ollamaUrl, model: c.ollamaModel };
     case 'compat':
@@ -126,6 +132,8 @@ export function isProviderConfigured(id: AiProviderId, c: AiCredentials): boolea
       return typeof c.openai === 'string' && c.openai.length > 0;
     case 'gemini':
       return typeof c.gemini === 'string' && c.gemini.length > 0;
+    case 'grok':
+      return typeof c.grok === 'string' && c.grok.length > 0;
     case 'ollama':
       return typeof c.ollamaUrl === 'string' && c.ollamaUrl.length > 0;
     case 'compat':

@@ -2,7 +2,7 @@
  * AI プロバイダ非依存の統合レイヤ (中核レジストリ)。
  *
  * Service Hub の AI 機能が単一の契約で複数の AI エージェント —
- * Anthropic (Claude) / OpenAI (ChatGPT) / Google Gemini / Ollama (ローカル) /
+ * Anthropic (Claude) / OpenAI (ChatGPT) / Google Gemini / xAI (Grok) / Ollama (ローカル) /
  * OpenAI 互換エンドポイント (LiteLLM・Groq・DeepSeek・LM Studio 等) —
  * を呼び分けるための純粋関数群。
  *
@@ -21,7 +21,7 @@ import { normalizeAiBaseUrl, describeAiEndpointFailure } from '../aiEndpoint';
 // 対向 API 仕様の転記であり、golden テスト (providers.test.ts) が完全一致で
 // 固定する。変異は等価 or テストで撃墜済みのため計測ノイズを避ける。
 
-export type AiProviderId = 'anthropic' | 'openai' | 'gemini' | 'ollama' | 'compat';
+export type AiProviderId = 'anthropic' | 'openai' | 'gemini' | 'grok' | 'ollama' | 'compat';
 
 /**
  * 短文向けの高速・低コストモデル。**既定モデルとは役割が違う**ので別に持つ
@@ -268,6 +268,32 @@ const gemini: AiProviderSpec = {
   },
 };
 
+const grok: AiProviderSpec = {
+  id: 'grok',
+  label: 'Grok (xAI)',
+  defaultModel: 'grok-4',
+  defaultBaseUrl: 'https://api.x.ai',
+  needsApiKey: true,
+  browserDirect: false, // CORS を前提にしない → ブラウザは BYO プロキシ経由 (デスクトップ版は main が直接呼ぶ)
+  buildRequest(req, cfg) {
+    const base = resolveBase(this.label, cfg.baseUrl || this.defaultBaseUrl, true);
+    return {
+      // xAI の API は OpenAI の Chat Completions と同じ形 (Bearer・messages・choices)。
+      url: `${base}/v1/chat/completions`,
+      headers: {
+        'content-type': 'application/json',
+        authorization: `Bearer ${cfg.apiKey ?? ''}`,
+      },
+      body: JSON.stringify({
+        model: resolveModel(this, req, cfg),
+        max_completion_tokens: req.maxTokens,
+        messages: openAiStyleMessages(req),
+      }),
+    };
+  },
+  parseText: parseOpenAiStyleText,
+};
+
 const ollama: AiProviderSpec = {
   id: 'ollama',
   label: 'Ollama (ローカル)',
@@ -338,6 +364,7 @@ export const AI_PROVIDER_IDS: readonly AiProviderId[] = [
   'anthropic',
   'openai',
   'gemini',
+  'grok',
   'ollama',
   'compat',
 ];
@@ -347,6 +374,7 @@ export const AI_PROVIDERS: Record<AiProviderId, AiProviderSpec> = {
   anthropic,
   openai,
   gemini,
+  grok,
   ollama,
   compat,
 };

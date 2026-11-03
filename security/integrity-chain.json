@@ -3797,6 +3797,14 @@
       "leafCount": 186,
       "note": "update mamori-capabilities.json",
       "hash": "15729f1e221504689b45d29c115be823faed2173f0bb525925261139076b0b10"
+    },
+    {
+      "index": 451,
+      "prevHash": "15729f1e221504689b45d29c115be823faed2173f0bb525925261139076b0b10",
+      "merkleRoot": "4bc0ac0f28ab6c531fca7c61542e87204ed7475b2a772c388243fd64b23366b0",
+      "leafCount": 186,
+      "note": "update credentials.ts,providers.ts",
+      "hash": "c23c3f87411f0fb378ee9566bcd4f4d3f7162af07bae9bd960c987b4e6095ede"
     }
   ],
   "tipManifest": {
@@ -3924,8 +3932,8 @@
     "src/shared/actionTier.ts": "4f3115a5282622956e55f3b19cbcb8ce06951a877e842bd20b01345a31abf065",
     "src/shared/advisorQuestionLimits.ts": "b1ade2abbfc367eb188ef16ba8e0c5b6327fe696e95cab2944df9f36de84b755",
     "src/shared/ai/chat.ts": "45dffbd7d58af2256be92f58f9798df8872bfd7ef0ba7856765983b2bcc7778e",
-    "src/shared/ai/credentials.ts": "8217520fe2da3aaacaeae8184d1425682ce75e9c5baf5559ea4eb9cf0d737881",
-    "src/shared/ai/providers.ts": "31e4637844d479c5c6b8c43bdd24e9196c2924e0d3e9b467141cbfb73d335e5b",
+    "src/shared/ai/credentials.ts": "1ee0701e99942049b4d9570bacb2937be4b8ae7db9cc2b781c96596a726e6368",
+    "src/shared/ai/providers.ts": "5c26aa24ff1492a3632aa232be8f6762af499f5a4b1ae66ad4f68c882a5fdd43",
     "src/shared/aiEndpoint.mamori": "07cfce64cd764744615e2028e6b0cfabe06c082cd6c32fcf48333d09599be307",
     "src/shared/aiEndpoint.ts": "fe67ffe1b6f5a2482dfc244571f671b0ccea5eccc37ac51eadc12003ff3fcadb",
     "src/shared/assistantLimits.ts": "5f69ea2a0f94056c3e340059723a316bf2268ab64ef57b31103424b62230b367",

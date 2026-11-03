@@ -1,6 +1,6 @@
 # Service Hub — Architecture
 
-> 自己検証: `npm run verify:arch` で 698 個の `file:line` 参照 + 44 個のライブメトリクスが
+> 自己検証: `npm run verify:arch` で 699 個の `file:line` 参照 + 44 個のライブメトリクスが
 > 毎 push 検証されます (`.github/workflows/ci.yml`)。**この 2 つの数もライブメトリクス
 > なので、ゲートが大きくなれば一緒に動く** —— 2026-09-15 (パス 279) まで
 > 「170 個 + 5 個」と書いたままで、実測の 4 倍・7 倍の過小申告だった。
@@ -25,8 +25,8 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | IPC ハンドラ数 | 15 | `src/main/main.ts:254-592` |
 | client モジュール (fetcher + actions) | 77 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
-| 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **19541** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| 外部接続先ホスト | 31 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
+| ユニットテスト | **19550** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` (**2026-09-01 の報告** —— 今のコードを測った物ではない。`docs/REMAINING_WORK.md` の「パス 494」) |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` (同上) |
@@ -34,7 +34,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod / dev) | 0 vulnerabilities (2026-09-10 実測。CI が `--omit=dev --audit-level=high` で毎回確認 —— dev 依存と moderate 以下を落とさないのは意図的で、理由は `ci.yml` の注記。**その外側は `lint:deps` のセキュリティの床 6 件**が受け持つ: 自分で押さえた版は道を問わず台帳に載り、緩めば落ちる) | `package-lock.json` |
 | 陰性対照つきゲート | 36 / 39 (`lint:malware` を足した · パス 510。残る 3 件は外部ツール 2 (`typecheck` / eslint) と `chain:verify` (対照は `integrityChainWitness.test.ts` が持つ)。★ 2026-09-25 (パス 467) に `lint:knowledge-refs` と `verify:orchestration` へ `--self-test` を付けた —— 2 本は「2026-08-25 に実物へ違反を植えて鳴ることを確認済み」という理由で免除されていたが、それは**母集団が非空のとき**の対照で、**空にする側**は 1 度も試されておらず、実測すると壊れた台帳も `rounds: []` も `org.secretaries` 削除も**すべて ✅ exit 0** だった。`lint:doi-prefix` は同じ理由で今も免除だが、空にする側は測っていない) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
-| `file:line` 参照数 | 698 | 自己検証 |
+| `file:line` 参照数 | 699 | 自己検証 |
 | 図の中の `file:line` 参照数 | 29 | 自己検証 (mermaid のクラス図・パス 180) |
 
 ### 統合フロー図
@@ -1890,7 +1890,7 @@ union を参照する。
 | shopify | `sync-to-salesforce` | order + token + instanceUrl | **送り先が payload 由来**。https かつ salesforce.com / *.salesforce.com のみ (2026-08-23 まで https しか見ておらず、トークンと顧客情報が任意のホストへ届いた) | `shopify.ts:414-420` |
 | shopify | `sync-to-stripe` | order + token | 送り先は定数 (api.stripe.com) | `shopify.ts:414-420` |
 
-### 3.3 ネットワーク egress マトリクス (30 ホスト + ユーザー指定)
+### 3.3 ネットワーク egress マトリクス (31 ホスト + ユーザー指定)
 
 デスクトップ版の外部接続は **main プロセスからのみ** (renderer は CSP `connect-src 'self'`)。ブラウザ版は同じ宛先へ
 renderer が直接つなぐ (`src/renderer/data/saasWriteWeb.ts` / `src/shared/api/` の各クライアント / `src/renderer/network/ollamaWeb.ts` /
@@ -1927,11 +1927,12 @@ undici は CORS を実装しないので単体検査には映らず、CI の外�
 | security (VT) | `www.virustotal.com` | `POST /api/v3/urls`, `GET /api/v3/urls/{id}` (両ビルドが共有の関数を通る) | `x-apikey` | `src/shared/api/security.ts:104-124` + `security.ts:251-255` |
 | cloudflare | `api.cloudflare.com` | `GET /client/v4/user`, `/zones` (main) / `POST /zones/{id}/dns_records`, `/purge_cache` (両ビルドが共有の関数を通る) | Bearer | `cloudflare.ts:93-138` + `src/shared/api/cloudflare.ts:116-122,186-192` |
 | skills, emotions | `api.anthropic.com` | `POST /v1/messages` | `x-api-key` | `skills.ts:465`, `emotions.ts:204` |
-| assistant (AI ハブ・anthropic) | `api.anthropic.com` | `POST /v1/messages` | `x-api-key` | `src/shared/ai/providers.ts:150-186` |
-| assistant (AI ハブ・openai) | `api.openai.com` | `POST /v1/chat/completions` | Bearer | `src/shared/ai/providers.ts:149-172` |
-| assistant (AI ハブ・gemini) | `generativelanguage.googleapis.com` | `POST /v1beta/models/{model}:generateContent` | `x-goog-api-key` | `src/shared/ai/providers.ts:213-253` |
-| assistant (AI ハブ・ollama) | 既定 `127.0.0.1:11434` (資格情報で上書き可) | `POST /api/chat` | none | `src/shared/ai/providers.ts:216-243` |
-| assistant (AI ハブ・compat) | ユーザー指定 (LiteLLM / Groq / LM Studio 等) | `POST /v1/chat/completions` | Bearer (任意) | `src/shared/ai/providers.ts:245-283` |
+| assistant (AI ハブ・anthropic) | `api.anthropic.com` | `POST /v1/messages` | `x-api-key` | `src/shared/ai/providers.ts:166-203` |
+| assistant (AI ハブ・openai) | `api.openai.com` | `POST /v1/chat/completions` | Bearer | `src/shared/ai/providers.ts:204-228` |
+| assistant (AI ハブ・gemini) | `generativelanguage.googleapis.com` | `POST /v1beta/models/{model}:generateContent` | `x-goog-api-key` | `src/shared/ai/providers.ts:229-270` |
+| assistant (AI ハブ・grok) | `api.x.ai` | `POST /v1/chat/completions` | Bearer | `src/shared/ai/providers.ts:271-296` |
+| assistant (AI ハブ・ollama) | 既定 `127.0.0.1:11434` (資格情報で上書き可) | `POST /api/chat` | none | `src/shared/ai/providers.ts:297-330` |
+| assistant (AI ハブ・compat) | ユーザー指定 (LiteLLM / Groq / LM Studio 等) | `POST /v1/chat/completions` | Bearer (任意) | `src/shared/ai/providers.ts:331-361` |
 | OAuth (Google) | `accounts.google.com`, `oauth2.googleapis.com` | `GET /o/oauth2/v2/auth`, `POST /token` | — / form-urlencoded | `oauth.ts:58-85` |
 | ollama | **`127.0.0.1:11434`** (hardcoded) | `GET /api/version`, `/api/tags`, `POST /api/chat` (allowlist 限定) | none | `ollama.ts:28, 40-46` |
 | microsoft-365 | `graph.microsoft.com` | `GET /v1.0/me`, `POST /v1.0/me/sendMail`, `POST /v1.0/me/events` | Bearer | `microsoft-365.ts:21` |
