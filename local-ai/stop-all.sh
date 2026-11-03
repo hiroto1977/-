@@ -3,6 +3,7 @@
 set -euo pipefail
 stop() { pkill -f "$1" 2>/dev/null || true; }
 stop "start-all.sh --watch"
+stop "council/council.py"
 stop "open-webui serve"
 stop "litellm --config"
 stop "llama-swap/llama-swap"

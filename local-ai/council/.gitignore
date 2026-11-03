@@ -1,0 +1,5 @@
+logs/
+*.pid
+user_thread.md
+decisions.md
+__pycache__/
