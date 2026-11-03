@@ -43,6 +43,7 @@ const EXPECTED = [
   'src/renderer/oauth/pkce.mamori',
   'src/shared/privateTarget.mamori',
   'src/shared/scanTarget.mamori',
+  'src/renderer/network/liveRead.mamori',
 ];
 
 describe('Mamori の生成物 (threat: T-221)', () => {

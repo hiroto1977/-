@@ -142,6 +142,7 @@
 /src/shared/privateTarget.mamori @hiroto1977
 /src/shared/scanTarget.mamori @hiroto1977
 /src/shared/scanTargetHost.ts @hiroto1977
+/src/renderer/network/liveRead.mamori @hiroto1977
 /src/shared/updateCheck.mamori @hiroto1977
 /src/main/clients/exportPaths.mamori @hiroto1977
 /src/shared/atlassianSite.mamori @hiroto1977

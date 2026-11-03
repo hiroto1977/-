@@ -94,8 +94,12 @@ function shimBranches(src: string): string[] {
 function liveReaderIds(src: string): string[] {
   const from = src.indexOf('const LIVE_READERS');
   if (from < 0) return [];
-  const body = src.slice(from, src.indexOf('\n};', from));
-  return [...body.matchAll(/^\s{2}'?([a-z0-9-]+)'?:/gm)].map((m) => m[1]!);
+  // 表の書式に依らない (2026-11-03 · MG-029): liveRead が Mamori の生成物になって 1 行で出るようになり、
+  // 行頭の字下げ 2 つを数える旧い針は 0 件を返した (検査は「旗を持つサービスが無い」として緑のままだった)。
+  // 読み取りの 1 項は `鍵: { read:` の形 —— 書式が 1 行でも複数行でも当たる。
+  const end = src.indexOf('};', from);
+  const body = src.slice(from, end < 0 ? src.length : end);
+  return [...body.matchAll(/[{,]\s*'?([a-z0-9-]+)'?:\s*\{\s*read\b/g)].map((m) => m[1]!);
 }
 
 describe('UI を閉じる旗は、ブラウザ版でも開けること', () => {
@@ -121,6 +125,16 @@ describe('UI を閉じる旗は、ブラウザ版でも開けること', () => {
     // 固定長 4000 では届かなかったことを標本として残す (2026-09-12 実測)。
     expect(WEB_SHIM_SRC.slice(WEB_SHIM_SRC.indexOf('fetchSnapshot: async')).indexOf("serviceId === 'security'"))
       .toBeGreaterThan(4000);
+  });
+
+  /* 走査が死んで 0 件になったのを「違反なし」と読まない (実物の LIVE_READERS は cursor 1 件)。 */
+  it('★ LIVE_READERS の走査が生きている (書式が 1 行でも複数行でも鍵を拾う)', () => {
+    expect(liveReaderIds(LIVE_READ_SRC)).toEqual(['cursor']);
+    const oneLine = "export const LIVE_READERS: X = { cursor: { read: (a) => a }, 'foo-bar': { read: (b) => b } };\n";
+    const multiLine = "export const LIVE_READERS: X = {\n  cursor: {\n    read: (a) => a,\n  },\n  'foo-bar': {\n    read: (b) => b,\n  },\n};\n";
+    expect(liveReaderIds(oneLine)).toEqual(['cursor', 'foo-bar']);
+    expect(liveReaderIds(multiLine)).toEqual(['cursor', 'foo-bar']);
+    expect(liveReaderIds('const OTHER = 1;')).toEqual([]);
   });
 
   it('★ 旗を持つサービスは、ブラウザ版で更新できるか、どの画面も読んでいない', () => {

@@ -59,6 +59,15 @@
       "gates": [],
       "sinks": []
     },
+    "src/renderer/network/liveRead.mamori": {
+      "externals": [
+        "pure ../../shared/api/cursor: fetchCursorSnapshotWith, DEFAULT_USAGE_DAYS",
+        "pure ../../shared/lookup: lookup"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
     "src/renderer/vettedSinks.mamori": {
       "externals": [
         "sink global: window"
