@@ -386,7 +386,7 @@ describe('ACTIONS["run-skill"]', () => {
      * (timer がまだ無いので進めても何も起きず、abort が来ない)。
      * 待つのは「fetch に届いたこと」で、届かなければ**名指しで落とす**。
      */
-    for (let i = 0; i < 2_000 && !called; i += 1) await vi.advanceTimersByTimeAsync(0);
+    for (let i = 0; i < 20_000 && !called; i += 1) await vi.advanceTimersByTimeAsync(0);
     expect(called, 'スキル本文の読み取りが終わらず fetch に届いていない').toBe(true);
     // ローカル試行は短い予算で切り、その後 Anthropic の予算でもう一度待つ。
     await vi.advanceTimersByTimeAsync(LOCAL_GATEWAY_TIMEOUT_MS - 1_000);

@@ -254,18 +254,18 @@ describe('上限つきの読みと、その別名 (パス 334)', () => {
     expect(hits).toHaveLength(2);
   });
 
-  it('★ 失敗の枝の読みは `readFailureBody` だけ —— 実測 16 か所', () => {
-    expect(FAILURE_CALLS).toHaveLength(16);
+  it('★ 失敗の枝の読みは `readFailureBody` だけ —— 実測 15 か所', () => {
+    expect(FAILURE_CALLS).toHaveLength(15);
     // 別名の中身は 1 行なので、失敗の口は 1 つしかない。
     expect(ALIAS_LEDGER.filter((r) => r.name === 'readFailureBody')).toHaveLength(1);
   });
 
   it('数えた内訳を留める (別名を含めて数える)', () => {
     expect({ 呼び出し: CAPPED_CALLS.length, 失敗: FAILURE_CALLS.length, 別名: ALIASES.length }).toEqual({
-      // 45 = 44 + パス 449 が main の Ollama に足した `/api/tags` の読み
-      // (未取得モデルの助言に導入済みの名前を添えるための 1 か所)。
-      呼び出し: 45,
-      失敗: 16,
+      // 43 = 以前の 45 から、感情分析が共有のチャット層へ移って web-shim の
+      // 失敗本文の読みと上限つき本文の読みが 1 つずつ減った分。
+      呼び出し: 43,
+      失敗: 15,
       別名: 4,
     });
   });

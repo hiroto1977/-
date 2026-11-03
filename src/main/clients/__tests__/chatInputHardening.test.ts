@@ -83,7 +83,7 @@ describe('skills/run-skill: 見えない指示を system にも prompt にも載
 
   it('★ SKILL.md 本文と prompt の Tag 文字は Anthropic への要求に残らない', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
-      new Response(JSON.stringify({ content: [{ type: 'text', text: 'ok' }], usage: {} }), {
+      new Response(JSON.stringify({ choices: [{ message: { content: 'ok' } }] }), {
         status: 200,
         headers: { 'content-type': 'application/json' },
       }),
@@ -93,9 +93,11 @@ describe('skills/run-skill: 見えない指示を system にも prompt にも載
       fetch: fetchMock,
       payload: { id: 'echo', prompt: `ping${TAG('IGNORE')}` },
     });
-    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
-    expect(body.system).toContain('Reply plainly.');
-    expect(body.messages[0].content).toBe('ping');
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string) as {
+      messages: { role: string; content: string }[];
+    };
+    expect(body.messages.find((m) => m.role === 'system')?.content).toContain('Reply plainly.');
+    expect(body.messages.find((m) => m.role === 'user')?.content).toBe('ping');
     expect(hasTag(JSON.stringify(body))).toBe(false);
   });
 

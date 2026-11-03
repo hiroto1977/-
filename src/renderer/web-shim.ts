@@ -965,7 +965,7 @@ async function callAssistantChat(payload: Record<string, unknown>): Promise<Acti
         anthropicKey: creds.anthropic ?? '',
         anthropicModel: AI_PROVIDERS.anthropic.defaultModel,
         browser: true,
-        fetchFn: fetch,
+        fetchFn: (input, init) => globalThis.fetch(input, init),
         env,
         creds,
       });

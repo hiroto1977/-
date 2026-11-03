@@ -293,8 +293,6 @@ const ROLE: Readonly<Record<string, string>> = {
   'shopify.ts': 'fetchShopifySnapshot は STUB を返し網を読まない (書き込みの応答はパス 414 の createdResponseFields が見る)',
   'business.ts': '網の口は助言 1 本で、応答は capAssistantReply と advisorResponseLimits が切る (一覧は注入された局所の source)',
   'kpi.ts': 'source.fetch() は注入された局所の読み (網の口ではない)',
-  'emotions.ts': '保管した記録の読み (第三者ではない)。AI の返事は capAssistantReply が切る',
-  'skills.ts': 'ローカルの skill ファイルの読み。AI の返事は capAssistantReply が切る',
   'types.ts': 'client ではなく、網の口そのもの (jsonFetch / readBodyWithCap の実装)',
 };
 

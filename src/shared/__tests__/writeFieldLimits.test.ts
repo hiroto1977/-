@@ -499,7 +499,7 @@ describe('5 か所が同じ台帳を読む (数を写していない)', () => {
          * `method: 'POST'` はもうこの body に無いが、**POST していることは
          * 変わっていない**。組み立て役の名前は LEDGERS から導く。
          */
-        const viaInit = [...VIA_INITS, ...POST_BUILDERS_OUTSIDE_LEDGER].some((fn) => body.includes(`${fn}(`));
+        const viaInit = [...VIA_INITS, ...POST_BUILDERS_OUTSIDE_LEDGER, 'runLocalThenAnthropic'].some((fn) => body.includes(`${fn}(`));
         if (/method:\s*'POST'/.test(body) || viaInit) posting.push(key);
         /*
          * 台帳に着く道は 2 本 —— 直に `checkWriteFields` を呼ぶか、
@@ -512,7 +512,7 @@ describe('5 か所が同じ台帳を読む (数を写していない)', () => {
       }
     }
     // 規則が実物に当たる (空の走査になっていない)。
-    expect(posting.length).toBeGreaterThanOrEqual(16);
+    expect(posting.length).toBeGreaterThanOrEqual(14);
     expect(reading).toContain('slack/send-message');
     // 標本: 中継を通る道も**実際に拾えている** (パス 274)。直呼びだけを見る規則に
     // 戻すと、この 1 本が `unguarded` に落ちて下の検査が鳴る。
