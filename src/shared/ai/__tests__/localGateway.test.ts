@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { ANTHROPIC_FAST_MODEL } from '../providers';
 import {
   DEFAULT_LOCAL_LLM_BASE_URL,
   LOCAL_GATEWAY_TIMEOUT_MS,
@@ -9,6 +10,7 @@ import {
   localGatewaySettings,
   purposeForEmotionSource,
   runLocalThenAnthropic,
+  runtimeEnv,
 } from '../localGateway';
 
 function jsonResponse(body: unknown, status = 200): Response {
@@ -49,9 +51,13 @@ describe('用途と別名', () => {
 
   it('知らない用途は受けない', () => {
     expect(isLlmPurpose('assistant')).toBe(true);
+    expect(isLlmPurpose('mentor')).toBe(true);
     expect(isLlmPurpose('smart')).toBe(false);
     expect(isLlmPurpose('')).toBe(false);
     expect(isLlmPurpose(1)).toBe(false);
+    expect(isLlmPurpose(null)).toBe(false);
+    expect(isLlmPurpose(undefined)).toBe(false);
+    expect(isLlmPurpose(new String('assistant'))).toBe(false);
   });
 
   it('Gmail と Slack の出典だけ別名の用途になり、他は感情', () => {
@@ -105,6 +111,39 @@ describe('ゲートウェイの設定', () => {
       baseUrl: 'http://localhost:4000/v1',
       apiKey: 'k',
     });
+  });
+
+  it('空白だけの環境変数は資格情報へ戻る', () => {
+    expect(
+      localGatewaySettings(
+        { SERVICE_HUB_LLM_BASE_URL: '  ', SERVICE_HUB_LLM_API_KEY: '\t' },
+        { compatUrl: 'http://127.0.0.1:9/v1', compatKey: 'from-vault' },
+      ),
+    ).toEqual({ baseUrl: 'http://127.0.0.1:9/v1', apiKey: 'from-vault' });
+  });
+});
+
+describe('実行時の環境', () => {
+  it('process が無ければ空', () => {
+    const g = globalThis as { process?: { env?: Record<string, string | undefined> } };
+    const saved = g.process;
+    g.process = undefined;
+    try {
+      expect(runtimeEnv()).toEqual({});
+    } finally {
+      g.process = saved;
+    }
+  });
+
+  it('env が無ければ空のオブジェクト', () => {
+    const g = globalThis as { process?: { env?: Record<string, string | undefined> } };
+    const saved = g.process;
+    g.process = {};
+    try {
+      expect(runtimeEnv()).toEqual({});
+    } finally {
+      g.process = saved;
+    }
   });
 });
 
@@ -191,6 +230,36 @@ describe('ローカルが失敗したら Anthropic へ退避する', () => {
     expect(res).toMatchObject({ text: 'クラウドの答え', provider: 'anthropic' });
     const firstBody = JSON.parse(String((fetchFn.mock.calls[0]![1] as RequestInit).body)) as { model: string };
     expect(firstBody.model).toBe('balanced');
+  });
+
+  it('モデルを省略した退避は高速 Claude で、ブラウザ直アクセスのヘッダは付けない', async () => {
+    const fetchFn = vi.fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ error: 'down' }, 503))
+      .mockResolvedValueOnce(jsonResponse(anthropicBody));
+    const res = await runLocalThenAnthropic({
+      purpose: 'concierge',
+      request: REQ,
+      anthropicKey: 'sk-ant',
+      fetchFn,
+    });
+    expect(res).toMatchObject({ provider: 'anthropic', model: ANTHROPIC_FAST_MODEL });
+    const headers = (fetchFn.mock.calls[1]![1] as RequestInit).headers as Record<string, string>;
+    expect(headers['anthropic-dangerous-direct-browser-access']).toBeUndefined();
+  });
+
+  it('鍵が無ければ Authorization を付けずにローカルへ送る', async () => {
+    const fetchFn = vi.fn<typeof fetch>().mockResolvedValue(jsonResponse(openaiBody));
+    const res = await runLocalThenAnthropic({
+      purpose: 'assistant',
+      request: REQ,
+      anthropicKey: '',
+      fetchFn,
+      env: {},
+      creds: {},
+    });
+    expect(res.provider).toBe('compat');
+    const headers = (fetchFn.mock.calls[0]![1] as RequestInit).headers as Record<string, string>;
+    expect(headers.authorization).toBeUndefined();
   });
 
   it('Anthropic の鍵が無ければローカルの失敗を返す', async () => {

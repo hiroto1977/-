@@ -24,7 +24,10 @@ export const LOCAL_MODEL_BY_PURPOSE: Record<LlmPurpose, string> = {
 };
 
 export function isLlmPurpose(v: unknown): v is LlmPurpose {
-  return typeof v === 'string' && (LLM_PURPOSES as readonly string[]).includes(v);
+  for (const purpose of LLM_PURPOSES) {
+    if (purpose === v) return true;
+  }
+  return false;
 }
 
 /** Gmail / Slack の分析は感情と同じ口を通る。出典の文字列で用途を分ける。 */

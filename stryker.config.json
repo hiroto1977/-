@@ -216,6 +216,7 @@
     "src/shared/advisorQuestionLimits.ts",
     "src/shared/ai/chat.ts",
     "src/shared/ai/credentials.ts",
+    "src/shared/ai/localGateway.ts",
     "src/shared/ai/providers.ts",
     "src/shared/aiEndpoint.ts",
     "src/shared/api/atlassian.ts",
