@@ -1988,6 +1988,70 @@
         "reason": null,
         "summary": "ブラウザ版の読み取り経路 liveRead.ts を Mamori 0.16 へ移した (port)。表の素の添字 LIVE_READERS[serviceId] を shared の lookup (自分の属性で引く) へ替え、catch の e instanceof Error は 0.16 の instanceof で書いた (この移植が instanceof を要した壁)。元の実装との差分比較 594 組が一致。言語を破る 11 形は全部 refused。移植で見つけた既存の死に検査: browserSnapshotGates の liveReaderIds は正規表現が複数行の生成前の書式に依っており、1 行に畳まれた生成物では黙って [] を返していた (生きている検査が1つも無い状態になる) —— 正規表現を書き直し『cursor を拾う』『1行・複数行・空の標本』の生存の検査を足した。変異検査 100% (39 変異体)・対照 7 つが狙った検査で鳴った。"
       }
+    },
+    {
+      "id": "MG-030",
+      "date": "2026-11-03",
+      "kind": "port",
+      "target": "src/main/clients/assistant.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/main/clients/assistant.ts",
+      "version": "0.16",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "as-cast"
+      ],
+      "ported": [
+        "src/main/clients/assistant.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "`field item.constructor` / `__proto__` / `prototype` (field で禁じた欄)",
+          "result": "refused"
+        },
+        {
+          "tried": "`field` の結果から `.constructor(\"return 1\")()` で Function を作る",
+          "result": "refused"
+        },
+        {
+          "tried": "配列 `.at(-1).constructor` と `xs.at(-1)[\"constructor\"]`",
+          "result": "refused"
+        },
+        {
+          "tried": "async arrow `async (i) => await fetch(\"x\")` (宣言なしの fetch を隠す)",
+          "result": "refused"
+        },
+        {
+          "tried": "`ctx as unknown as string` (as で payload の型を書き換える)",
+          "result": "refused"
+        },
+        {
+          "tried": "template `k=${ctx.token}` で秘密を連結",
+          "result": "refused"
+        },
+        {
+          "tried": "分割代入 `const { constructor } = ctx`",
+          "result": "refused"
+        },
+        {
+          "tried": "`Promise.constructor` / `e.constructor.constructor(\"…\")()`",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 7,
+      "mutation": {
+        "files": [
+          "src/main/clients/assistant.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 855,
+        "reason": null,
+        "summary": "AI アシスタントの中継層 main/clients/assistant.ts (発話の検証・全 AI 合議・伏字の合流点) を Mamori 0.16 へ移した (port)。brief が「書き直しだけで移せる」唯一の壁として選んだ。足りなかったのは as の 4 か所だけで、発話の role/content は `field` で読み、ctx.payload は最初から Record<string, unknown> なので欄をそのまま読む。async arrow は言語に無いので、1 社ぶんの問い合わせを askProvider の async fn に出した (失敗を ok:false に畳む責務は同じ)。元の実装との差分比較は 15,000 組超 (chat / chatAll / providers × 資格情報 5 × 発話 26 形 × system 4 × provider 5 × 成功/失敗) で出力・fetch の呼び出しまで一致。言語を破る 8 形は全部 refused (穴は 0 件)。変異検査 100% (152 変異体)。対照 7 つは最初 2 つ (伏字の合流点・system を文字の境界で切る) が鳴らず、変異検査が 100% でも検査に穴があることが分かった: Stryker は識別子の置き換え (redactForMessage(msg) → msg) を変異体にしないので、伏字を外しても全部緑だった。共有レイヤ (runAiChat) をモックして伏字を通さない例外を投げる検査と、天井の位置が絵文字の system の検査 (孤立サロゲートを作らず文字数ちょうどで切る) を足して 7 つ全部が鳴るようにした。"
+      }
     }
   ]
 }

@@ -810,3 +810,27 @@ describe("ACTIONS['chat'] — model は読まない (threat: T-098 / T-170)", ()
     expect(body.length).toBeLessThan(2_000);
   });
 });
+
+describe('assistant — system を切るのは文字の境界で (パス 252 · MG-030 で対照が見つけた無縛)', () => {
+  const okFetch = () =>
+    vi.fn<typeof fetch>().mockResolvedValue(jsonResponse({ content: [{ type: 'text', text: 'ok' }] }));
+  // 天井の 1 つ手前まで ASCII、天井ちょうどの位置に絵文字 (2 コード単位) が来る system。
+  const edge = 'a'.repeat(MAX_ASSISTANT_SYSTEM_CHARS - 1) + '😀' + 'tail';
+  const CREDS = JSON.stringify({ anthropic: 'sk-ant-a' });
+
+  for (const [action, token] of [['chat', 'sk-ant-xxx'], ['chatAll', CREDS]] as const) {
+    it(`${action}: 孤立サロゲートを作らず、天井ちょうどの文字数で切る`, async () => {
+      const fetchMock = okFetch();
+      await ACTIONS[action]!({
+        token,
+        fetch: fetchMock,
+        payload: { system: edge, messages: [{ role: 'user', content: 'hi' }] },
+      });
+      const [, init] = fetchMock.mock.calls[0]!;
+      const sent = (JSON.parse(String((init as RequestInit).body)) as { system: string }).system;
+      expect(() => encodeURIComponent(sent)).not.toThrow(); // 孤立サロゲートがあれば URIError
+      expect(Array.from(sent)).toHaveLength(MAX_ASSISTANT_SYSTEM_CHARS);
+      expect(sent.endsWith('😀')).toBe(true);
+    });
+  }
+});

@@ -59,6 +59,19 @@
       "gates": [],
       "sinks": []
     },
+    "src/main/clients/assistant.mamori": {
+      "externals": [
+        "pure ../../shared/inputCeiling: clampToCeiling",
+        "pure ../../shared/assistantLimits: MAX_ASSISTANT_CONTENT_CHARS, MAX_ASSISTANT_MESSAGES, MAX_ASSISTANT_SYSTEM_CHARS, inputTooLongMessage, latestTurnTooLong, MAX_ENSEMBLE_ERROR_CHARS, stripSmuggledChars",
+        "pure ./types: redactForMessage",
+        "pure ../../shared/ai/providers: AI_PROVIDERS",
+        "pure ../../shared/ai/credentials: configForProvider, configuredProviders, parseAiCredentials, providerStatuses, resolveProvider",
+        "pure ../../shared/ai/chat: runAiChat"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
     "src/renderer/network/liveRead.mamori": {
       "externals": [
         "pure ../../shared/api/cursor: fetchCursorSnapshotWith, DEFAULT_USAGE_DAYS",
