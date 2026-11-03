@@ -36,29 +36,30 @@ describe('0.16 instanceof (threat: T-224 の続き・M6 の右辺の検め)', ()
   it('★ 右辺は名前だけ —— メンバ・呼び出し・条件・添字・括弧つきの計算は断る (計算した値の Symbol.hasInstance を辿らせない)', () => {
     expect(diag(fn('  return x instanceof Error.prototype;')).join('\n')).toMatch(/Mamori に在りません/);
     expect(diag(fn('  return x instanceof Error.constructor;')).join('\n')).toMatch(/Mamori に在りません/);
-    expect(diag(fn('  return x instanceof URL.parse;')).join('\n')).toMatch(/instanceof の右辺は名前だけ/);
-    expect(diag(fn('  return x instanceof Math.max(1);')).join('\n')).toMatch(/instanceof の右辺は名前だけ/);
-    expect(diag(fn('  return x instanceof (x ? Error : TypeError);')).join('\n')).toMatch(/instanceof の右辺は名前だけ/);
-    expect(diag(fn('  return x instanceof [Error][0];')).join('\n')).toMatch(/instanceof の右辺は名前だけ/);
-    expect(diag(fn('  return x instanceof new Error("a");')).join('\n')).toMatch(/instanceof の右辺は名前だけ/);
-    expect(diag(fn('  return x instanceof "str";')).join('\n')).toMatch(/instanceof の右辺は名前だけ/);
-    expect(diag(fn('  return x instanceof 1;')).join('\n')).toMatch(/instanceof の右辺は名前だけ/);
+    expect(diag(fn('  return x instanceof URL.parse;')).join('\n')).toMatch(/M6.*instanceof の右辺は名前だけです/);
+    expect(diag(fn('  return x instanceof Math.max(1);')).join('\n')).toMatch(/M6.*instanceof の右辺は名前だけです/);
+    expect(diag(fn('  return x instanceof (x ? Error : TypeError);')).join('\n')).toMatch(/M6.*instanceof の右辺は名前だけです/);
+    expect(diag(fn('  return x instanceof [Error][0];')).join('\n')).toMatch(/M6.*instanceof の右辺は名前だけです/);
+    expect(diag(fn('  return x instanceof new Error("a");')).join('\n')).toMatch(/M6.*instanceof の右辺は名前だけです/);
+    expect(diag(fn('  return x instanceof "str";')).join('\n')).toMatch(/M6.*instanceof の右辺は名前だけです/);
+    expect(diag(fn('  return x instanceof 1;')).join('\n')).toMatch(/M6.*instanceof の右辺は名前だけです/);
   });
 
   it('★ 右辺が局所の名前 (const / fn / 引数 / 組み込みを隠す名前 / catch の束縛) は断る', () => {
-    expect(diag('const K = Error;\n' + fn('  return x instanceof K;')).join('\n')).toMatch(/M6/);
-    expect(diag(fn('  const K = TypeError;\n  return x instanceof K;')).join('\n')).toMatch(/M6/);
-    expect(diag('fn mk() -> number { return 1; }\n' + fn('  return x instanceof mk;')).join('\n')).toMatch(/instanceof の右辺は/);
-    expect(diag('export fn g(x: unknown, C: unknown) -> boolean {\n  return x instanceof C;\n}\n').join('\n')).toMatch(/instanceof の右辺は/);
+    const LOCAL = /M6.*instanceof の右辺は組み込みか宣言した外の名前だけです/;
+    expect(diag('const K = x0();\nfn x0() -> number { return 1; }\n' + fn('  return x instanceof K;')).join('\n')).toMatch(LOCAL);
+    expect(diag(fn('  const K = x;\n  return x instanceof K;')).join('\n')).toMatch(LOCAL);
+    expect(diag('fn mk() -> number { return 1; }\n' + fn('  return x instanceof mk;')).join('\n')).toMatch(LOCAL);
+    expect(diag('export fn g(x: unknown, C: unknown) -> boolean {\n  return x instanceof C;\n}\n').join('\n')).toMatch(LOCAL);
     // 組み込みの名前を局所の名前で隠すと、もう組み込みではない (隠された名前を右辺にできない)
-    expect(diag(fn('  const Error = 1;\n  return x instanceof Error;')).join('\n')).toMatch(/instanceof の右辺は/);
-    expect(diag(fn('  try { return false; } catch (e) { return x instanceof e; }')).join('\n')).toMatch(/instanceof の右辺は/);
+    expect(diag(fn('  const Error = 1;\n  return x instanceof Error;')).join('\n')).toMatch(LOCAL);
+    expect(diag(fn('  try { return false; } catch (e) { return x instanceof e; }')).join('\n')).toMatch(LOCAL);
   });
 
   it('★ 右辺が危ない口なら M2 (sink 関数の外・中のどちらでも名前の持ち出しは断る)', () => {
-    expect(diag('extern sink global shellx;\n' + fn('  return x instanceof shellx;')).join('\n')).toMatch(/M2/);
+    expect(diag('extern sink global shellx;\n' + fn('  return x instanceof shellx;')).join('\n')).toMatch(/M2.*危ない口 shellx.*instanceof の右辺に置けません/);
     const pre = 'export vetted VU = "u";\nextern sink global sinkx;\nexport sink fn go(u: VU) -> boolean {\n  return u instanceof sinkx;\n}\n';
-    expect(diag(pre).join('\n')).toMatch(/M2/);
+    expect(diag(pre).join('\n')).toMatch(/M2.*危ない口 sinkx.*instanceof の右辺に置けません/);
   });
 
   it('★ 左辺も他の式と同じ検めを通る (宣言していない名前・危ない口)', () => {

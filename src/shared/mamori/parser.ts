@@ -564,9 +564,9 @@ export function parse(file: string, src: string): Module {
     const adjacent = (n: number): boolean => isP('>', n) && peek(n).pos.line === t.pos.line && peek(n).pos.col === t.pos.col + n;
     const shift = adjacent(0) && adjacent(1) ? (adjacent(2) ? { text: '>>>', count: 3 } : { text: '>>', count: 2 }) : null;
     if (shift !== null && ops.includes(shift.text)) return shift;
-    // 語の演算子 (`instanceof` · 0.16 · MG-028) は名前の字句として届く。名前と語の演算子を取り違えないよう、綴りが予約語であることを RESERVED が持つ。
-    if (t.kind === 'ident' && ops.includes(t.text)) return { text: t.text, count: 1 };
-    return isPunctTok(t, ...ops) ? { text: t.text, count: 1 } : null;
+    // 語の演算子 (`instanceof` · 0.16 · MG-028) は名前の字句として届き、記号は記号の字句として届く。どちらも字句の綴りが表の綴りと
+    // 一致するかだけで決まる (文字列・数・正規表現の字句の綴りは引用符や数字を含み、表の綴りと一致しない)。語の綴りが名前に使えないことは RESERVED が持つ。
+    return ops.includes(t.text) ? { text: t.text, count: 1 } : null;
   };
 
   const expr = (): Expr => {
