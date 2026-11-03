@@ -38,12 +38,17 @@ button{font:inherit;cursor:pointer;border:2px solid var(--wood2);background:#fff
 import * as THREE from 'three';
 import {OrbitControls} from '/vendor/OrbitControls.js';
 const $=id=>document.getElementById(id),Q=new URLSearchParams(location.search);
-const R=new THREE.WebGLRenderer({antialias:devicePixelRatio<2});R.setPixelRatio(Math.min(devicePixelRatio,1.25));R.setSize(innerWidth,innerHeight);
+const Q0=new URLSearchParams(location.search);const R=new THREE.WebGLRenderer({antialias:devicePixelRatio<2});R.setPixelRatio(Math.min(devicePixelRatio,1.25));R.setSize(innerWidth,innerHeight);
 R.shadowMap.enabled=true;R.shadowMap.type=THREE.PCFShadowMap;document.body.prepend(R.domElement);
+// CPUだけで描く環境（SwiftShader/llvmpipe）では影を切り、解像度を下げる
+const SOFT=(()=>{try{const gl=R.getContext(),x=gl.getExtension('WEBGL_debug_renderer_info');return /swiftshader|llvmpipe|software|softpipe/i.test(gl.getParameter(x?x.UNMASKED_RENDERER_WEBGL:gl.RENDERER))}catch{return false}})()||Q0.has('lowgpu');
+let baseRes=SOFT?.8:Math.min(devicePixelRatio,1.25),curRes=baseRes,interacting=0;
+function setRes(r){r=Math.round(r*20)/20;if(r!==curRes){curRes=r;R.setPixelRatio(r);R.setSize(innerWidth,innerHeight)}}
+if(SOFT){R.shadowMap.enabled=false}setRes(baseRes);
 const S=new THREE.Scene(),C=new THREE.PerspectiveCamera(50,innerWidth/innerHeight,.1,700);C.position.set(0,58,70);
 S.fog=new THREE.Fog(0x9fd8ff,90,190);
 const O=new OrbitControls(C,R.domElement);O.maxPolarAngle=1.42;O.minDistance=8;O.maxDistance=150;O.enableDamping=true;
-const hemi=new THREE.HemisphereLight(0xffffff,0x88aa66,1.1);S.add(hemi);const sun=new THREE.DirectionalLight(0xfff4e0,1.6);sun.position.set(30,60,20);sun.castShadow=true;
+const hemi=new THREE.HemisphereLight(0xffffff,0x88aa66,1.1);S.add(hemi);const sun=new THREE.DirectionalLight(0xfff4e0,1.6);sun.position.set(30,60,20);sun.castShadow=!SOFT;
 Object.assign(sun.shadow.camera,{left:-60,right:60,top:60,bottom:-60,far:200});sun.shadow.mapSize.set(1024,1024);S.add(sun);
 const G=new THREE.BoxGeometry(1,1,1),MC={},mat=c=>MC[c]||(MC[c]=new THREE.MeshLambertMaterial({color:c}));
 const winMat=new THREE.MeshLambertMaterial({color:0x9ad0ec}),lampMat=new THREE.MeshLambertMaterial({color:0xfff3c4}),waterMat=new THREE.MeshLambertMaterial({color:0x4fc3f7,transparent:true,opacity:.85});
@@ -172,8 +177,8 @@ async function poll(){try{
   $('pill').textContent=meet?'🔴 会議中':st.status.startsWith('エラー')?'エラー':'🟢 待機中';$('pill').className='pill'+(meet?' meet':st.status.startsWith('エラー')?' err':'');
   $('topic').textContent='議題: '+(st.topic||'（なし）').replace(/\s+/g,' ');
   $('meta').textContent=`担当役員 ${(st.exec||'-').toUpperCase()} ・ 空きメモリ ${st.free_mb}MB ・ 更新 ${st.updated}`;
-  if(tab==='board')renderBoard();
-  $('log').replaceChildren(...st.chat.map(c=>{const d=document.createElement('div');d.textContent=`${c.who}: ${c.text}`;if(c.who===st.user)d.className='me';return d}));$('log').scrollTop=1e9;
+  if(tab==='board'&&renderBoard._n!==st.decisions.length+(st.decisions.at(-1)||'').length){renderBoard._n=st.decisions.length+(st.decisions.at(-1)||'').length;renderBoard()}
+  const lk=st.chat.length+'|'+(st.chat.at(-1)?.text||'');if($('log')._k!==lk){$('log')._k=lk;$('log').replaceChildren(...st.chat.map(c=>{const d=document.createElement('div');d.textContent=`${c.who}: ${c.text}`;if(c.who===st.user)d.className='me';return d}));$('log').scrollTop=1e9}
   const ids=new Set(meet?st.transcript.map(t=>t.id):[]);if(meet&&st.speaking)ids.add(st.speaking);
   for(const [k,A] of Object.entries(agents)){if(A.svc||k==='me')continue;A.speaking=ids.has(k)}
   const last=st.transcript[st.transcript.length-1];
@@ -209,7 +214,9 @@ const camT=new THREE.Vector3(),camP=new THREE.Vector3();let camAnim=0;
 function setCam(m,id){camMode=m;follow=m==='follow'?id:null;document.querySelectorAll('#cams button[data-cam]').forEach(b=>b.classList.toggle('on',b.dataset.cam===m));
   if(m==='all'){camT.set(0,0,0);camP.set(0,58,70);camAnim=1}if(m==='hall'){camT.set(0,1,0);camP.set(0,14,18);camAnim=1}}
 document.querySelectorAll('#cams button[data-cam]').forEach(b=>b.onclick=()=>setCam(b.dataset.cam));
-O.addEventListener('start',()=>{camAnim=0;if(camMode==='all'||camMode==='hall'){camMode='free';setCam('free')}});
+O.addEventListener('start',()=>{interacting=1;setRes(Math.min(baseRes,SOFT?.5:.75));camAnim=0;if(camMode==='all'||camMode==='hall'){camMode='free';setCam('free')}});
+O.addEventListener('end',()=>{interacting=performance.now()+350});
+R.domElement.addEventListener('wheel',()=>{interacting=performance.now()+350;setRes(Math.min(baseRes,SOFT?.5:.75))},{passive:true});
 // ---- 会話 ----
 function resolveAt(t){const m=t.match(/^[@＠](\S+)\s*/);if(!m||!ORG)return null;const q=m[1].toLowerCase();
   const p=ORG.people.find(p=>p.id.toLowerCase()===q||p.name.toLowerCase()===q)||ORG.people.find(p=>p.name.toLowerCase().includes(q));return p?{id:p.id,rest:t.slice(m[0].length)||t}:null}
@@ -262,33 +269,41 @@ function update(A,dt,T,list){
   const sw=moving?Math.sin(T*9*A.speed/2.2):0;A.legs[0].rotation.x=sw*.6;A.legs[1].rotation.x=-sw*.6;A.arms[0].rotation.x=-sw*.5;A.arms[1].rotation.x=sw*.5;A.g.position.y=moving?Math.abs(sw)*.08:0;
   if(A.state==='work'){A.arms[0].rotation.x=A.arms[1].rotation.x=-.9+Math.sin(T*14+A.timer)*.12;A.head.rotation.x=.15}else A.head.rotation.x=0;
   if(A.state==='seat'){A.g.lookAt(0,0,0);A.arms[0].rotation.x=Math.sin(T*3)*.3*(A.key===LAST?.speaking?1:0)}}
-const placed=[];const ovl=(a,b)=>a[0]<b[2]&&a[2]>b[0]&&a[1]<b[3]&&a[3]>b[1];
+const placed=[];function sty(e,k,v){if(e['_'+k]!==v){e['_'+k]=v;if(k==='tf')e.style.transform=v;else e.style[k]=v}}
+const ovl=(a,b)=>a[0]<b[2]&&a[2]>b[0]&&a[1]<b[3]&&a[3]>b[1];
 function overlay(){placed.length=0;const now=Date.now(),list=[];
-  for(const A of Object.values(agents)){if(A.bub.style.display==='block'&&now>A.bubUntil)A.bub.style.display='none';
+  for(const A of Object.values(agents)){if(A.bub.style.display==='block'&&now>A.bubUntil){A.bub.style.display='none'}
     pv.copy(A.g.position);pv.y+=(A.svc?2.2:3.2)*A.g.scale.x;pv.project(C);const on=pv.z<1&&Math.abs(pv.x)<1.1&&Math.abs(pv.y)<1.1&&A.g.visible;
     const dist=C.position.distanceTo(A.g.position),pri=(A.key===selected?5:0)+(A.speaking?4:0)+(A.bubUntil>now?3:0)+(A.big?2:0)+(dist<30?1:0);
     list.push({A,on,x:(pv.x+1)/2*innerWidth,y:(1-pv.y)/2*innerHeight,pri,dist})}
   list.sort((a,b)=>b.pri-a.pri||a.dist-b.dist);
   for(const it of list){const {A}=it;const w=A.lab.textContent.length*11+14,h=18;let r=[it.x-w/2,it.y-h,it.x+w/2,it.y];
-    const showLab=it.on&&(it.pri>=1)&&!placed.some(p=>ovl(p,r));A.lab.style.display=showLab?'block':'none';
-    if(showLab){placed.push(r);A.lab.style.transform=`translate(${(it.x-w/2)|0}px,${(it.y-h)|0}px)`}
-    if(A.bub.style.display==='block'||A.bubUntil>now){if(!it.on){A.bub.style.visibility='hidden';continue}A.bub.style.visibility='visible';
+    const showLab=it.on&&(it.pri>=1)&&!placed.some(p=>ovl(p,r));sty(A.lab,'display',showLab?'block':'none');
+    if(showLab){placed.push(r);sty(A.lab,'tf',`translate(${(it.x-w/2)|0}px,${(it.y-h)|0}px)`)}
+    if(A.bub.style.display==='block'||A.bubUntil>now){if(!it.on){sty(A.bub,'visibility','hidden');continue}sty(A.bub,'visibility','visible');
       const bw=A.bw||200,bh=A.bh||40;let y=it.y-h-4-bh,b=[it.x-bw/2,y,it.x+bw/2,y+bh];for(let k=0;k<6&&placed.some(p=>ovl(p,b));k++){y-=bh*.6+4;b=[it.x-bw/2,y,it.x+bw/2,y+bh]}
-      placed.push(b);A.bub.style.transform=`translate(${(it.x-bw/2)|0}px,${y|0}px)`}}}
+      placed.push(b);sty(A.bub,'tf',`translate(${(it.x-bw/2)|0}px,${y|0}px)`)}}}
+let ftAvg=3;const _lp=new THREE.Vector3();
+// 遠くの住民は腕・脚・帽子を省略して描画数を減らす
+function lod(){for(const A of Object.values(agents)){if(A.svc)continue;const far=C.position.distanceTo(A.g.position)>(SOFT?40:60);if(A.far!==far){A.far=far;for(const c of A.g.children)if(c!==A.body&&c!==A.head)c.visible=!far}}}
 function loop(){frames++;const dt=Math.min(clock.getDelta(),.1),T=clock.elapsedTime,list=Object.values(agents);
   for(const A of list)update(A,dt,T,list);
   const f=follow?agents[follow]:camMode==='speaker'?agents[LAST?.speaking]||list.find(A=>A.speaking):null;
   if(f&&f.g.visible){const d=v.copy(C.position).sub(O.target);O.target.lerp(f.g.position,.08);if(d.length()>30)d.setLength(30);C.position.copy(O.target).add(d)}
   if(camAnim){O.target.lerp(camT,.08);C.position.lerp(camP,.08);if(C.position.distanceTo(camP)<.2)camAnim=0}
   waterMat.opacity=.8+Math.sin(T*1.5)*.05;
-  O.update();R.render(S,C);overlay();if(frames%10===0)drawMini();
-  fpsN++;if(T-fpsT>2){const fps=fpsN/(T-fpsT);fpsT=T;fpsN=0;window.__fps=fps;if(fps<22&&++lowFps>=2&&R.shadowMap.enabled){R.shadowMap.enabled=false;sun.castShadow=false;R.setPixelRatio(1)}}
+  O.update();if(frames%3===0)lod();R.render(S,C);if(!interacting||frames%2===0)overlay();if(frames%(interacting?30:10)===0)drawMini();
+  if(interacting>1&&performance.now()>interacting){interacting=0;setRes(baseRes)}
+  // フレーム時間が長いときは解像度を段階的に下げる（静止中のみ戻す）
+  ftAvg=ftAvg*.9+dt*100;if(!interacting&&frames%60===0){if(ftAvg>6&&baseRes>.75){baseRes=Math.round((baseRes-.1)*10)/10;setRes(baseRes)}}
+  fpsN++;if(T-fpsT>2){const fps=fpsN/(T-fpsT);fpsT=T;fpsN=0;window.__fps=fps;if(fps<22&&++lowFps>=2&&R.shadowMap.enabled){R.shadowMap.enabled=false;sun.castShadow=false}}
   (window.__ST?setTimeout(loop,33):requestAnimationFrame(loop))}
-window.__agents=agents;
+window.__agents=agents;window.__R=R;window.__C=C;window.O=O;window.__follow=()=>follow;
 poll();setInterval(poll,4000);tint();setInterval(tint,60000);
 if(window.__ST){setTimeout(()=>{window.__p0=Object.fromEntries(Object.entries(agents).map(([k,A])=>[k,A.g.position.clone()]))},3000);
   setTimeout(()=>{let moved=0,hidden=0;for(const [k,A] of Object.entries(agents)){if(A.g.position.distanceTo(window.__p0[k])>.5)moved++;if(!A.g.visible)hidden++}
     const d=document.createElement('pre');d.id='selftest';d.style.cssText='position:fixed;left:50%;top:4px;background:#fff;margin:0';d.textContent=`SELFTEST moved=${moved}/${Object.keys(agents).length} inside=${hidden} frames=${frames} fps=${(window.__fps||0).toFixed(1)}`;document.body.appendChild(d);
     if(Q.get('selftest')!=='nochat'){$('msg').value='@CFO 村の様子はどうですか？';sendMsg()}},9000)}
 loop();addEventListener('resize',()=>{C.aspect=innerWidth/innerHeight;C.updateProjectionMatrix();R.setSize(innerWidth,innerHeight)});
+window.__perf=()=>({res:curRes,base:baseRes,soft:SOFT,shadow:R.shadowMap.enabled,calls:R.info.render.calls});
 </script></body></html>
