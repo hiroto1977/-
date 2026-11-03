@@ -79,3 +79,37 @@ llama-cpp-python(8082) と KoboldCpp(8083) はRAM節約のため既定では起�
 | 生成速度 | 約40〜44 tok/s | 約20〜24 tok/s |
 
 3Bはメモリ使用量が約2倍、速度は約半分です。どちらも小さいモデルなので、事実に関する回答は必ず確認してください。
+
+## 7Bモデル（Qwen2.5-7B-Instruct Q4_K_M, 約4.7GB）
+
+```bash
+MODEL_SIZE=7b ./start-llamacpp.sh   # 8086 / エイリアス qwen2.5-7b-llamacpp（GGUFは bartowski/Qwen2.5-7B-Instruct-GGUF から自動DL）
+```
+
+比較（temperature 0）: 日本一長い川 ✗「川崎」（正解は信濃川）/ 富士山 ✓ 3,776m / 首都 ✓ 東京。
+速度は約9〜10 tok/s（1.5Bの約1/4）。llama-server のメモリ使用量は約8.5GB（RSS）で、全サービス起動時の空きは約5GBです。
+RAMが足りない場合は `ENABLE_3B=0` で3Bを止めてください。
+
+## 一括起動・停止と自動起動
+
+```bash
+./start-all.sh          # 全サービスを起動（冪等: 応答中のポートは再起動しない）
+./start-all.sh --watch  # 起動後60秒ごとに監視し、落ちたサービスを再起動
+./stop-all.sh           # 全サービス（監視ループ含む）を停止
+ENABLE_3B=0 ENABLE_7B=0 ./start-all.sh   # 起動するモデルを選ぶ（既定はどちらも1）
+```
+
+起動対象: Ollama(11434) / llama-server 1.5B(8081)・3B(8085)・7B(8086) / LocalAI(8084) / Open WebUI(8080)。ログは `/tmp/local-ai-autostart.log`。
+
+### 再起動後の自動起動について
+
+この box は PID 1 が `tini` で、systemd も cron もありません。そこで `autostart-hook.sh` を使います。
+
+```bash
+./autostart-hook.sh install     # ~/.bashrc と ~/.profile にフックを1行追加
+./autostart-hook.sh uninstall   # フックを削除
+```
+
+再起動後に最初のシェルが起動した時点で、`start-all.sh --watch` がバックグラウンドで立ち上がります。既に動いている場合は何もしません（flock で判定）。
+シェルが1つも起動しないと自動起動はされません。その場合は `./start-all.sh --watch` を手動で実行してください。
+systemd がある環境では、`ExecStart=/path/to/start-all.sh --watch` と `Restart=on-failure` を指定したユニットを使うのが確実です。
