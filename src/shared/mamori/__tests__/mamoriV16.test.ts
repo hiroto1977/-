@@ -97,7 +97,10 @@ describe('0.16 instanceof (threat: T-224 の続き・M6 の右辺の検め)', ()
     expect(diag(fn('  return x instanceof Object;'))).toEqual([]);
     expect(diag(fn('  try { return false; } catch (e) { return e instanceof Error; }'))).toEqual([]);
     expect(diag('extern pure global Date;\n' + fn('  return x instanceof Date;'))).toEqual([]);
-    expect(diag('use { Klass } from "./other";\n' + fn('  return x instanceof Klass;')).join('\n')).not.toMatch(/instanceof の右辺は/);
+    // 取り込んだ名前は右辺に置ける (取り込み先の module が無いという別の断りは出ても、右辺の断りは出ない)
+    const RHS_REFUSAL = /instanceof の右辺は/;
+    expect(RHS_REFUSAL.test('instanceof の右辺は名前だけです')).toBe(true); // 針は右辺の断りの文面に当たる
+    expect(diag('use { Klass } from "./other";\n' + fn('  return x instanceof Klass;')).join('\n')).not.toMatch(RHS_REFUSAL);
   });
 });
 
