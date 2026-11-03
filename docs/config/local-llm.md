@@ -15,6 +15,8 @@ Service Hub の AI 機能は、まずこの端末の LiteLLM（OpenAI 互換）�
 
 ループバックへの平文 http は、鍵を載せていても `src/shared/aiEndpoint.ts` が許す。
 
+別名 `fast` / `balanced` / `smart` / `auto` の振り先は `local-ai/orchestrator/litellm-config.yaml` が持つ。プロキシの待受は `http://127.0.0.1:4000`。
+
 ## 用途と別名
 
 | 用途 | 別名 |
