@@ -3649,6 +3649,14 @@
       "leafCount": 166,
       "note": "update checker.ts",
       "hash": "cc4c77bdc1659d619c4c3b168d0c955c55a79f9a306566b66996f1b70b1ee476"
+    },
+    {
+      "index": 435,
+      "prevHash": "cc4c77bdc1659d619c4c3b168d0c955c55a79f9a306566b66996f1b70b1ee476",
+      "merkleRoot": "dd4e3784b1285f33db4baf74da8a7992e6c9a0c5be5308879bedb4dffd2a4a82",
+      "leafCount": 166,
+      "note": "update eslint.config.js",
+      "hash": "2e8b238c01bfe9f796473311638c10926b523e2c865917de5789e51fd3f535c6"
     }
   ],
   "tipManifest": {
@@ -3675,7 +3683,7 @@
     "docs/PROXY_EXAMPLE.md": "c2f4987d6e53a3cbfae921dcc33582522abb4c587b519795296e3b3dc4edd06b",
     "docs/SECURITY_CHAIN.md": "e6f2886fbab792b4c4ec27ee8849a8642d1b28576c05e3ca627f2daea05cda29",
     "electron-builder.json": "087285ed5b1adf1d1a99c5c47b00bdab70338cacff2687988fb3316787af1917",
-    "eslint.config.js": "a2a56ffbe45108aeb9313c52c8c0e382febfc72c4cc78884b60cbb88a653fa7f",
+    "eslint.config.js": "b83eec380151ec62fd362c8b7c1025a32b42e1b8c4ee4a183df9df74f80f68a1",
     "launcher/ServiceHubを開く.bat": "83d4b252a777556d3830acc7e226cd009fea006bb3c47fb677ab57ecaeb9da82",
     "orchestration/knowledge-context.cjs": "2e31acac95ced213b569fe3e467e66f4aff3106c93188ee79d056d1481a022c3",
     "orchestration/knowledge-graph.cjs": "80ae371234e84801b392f27b10d8a5f84d86be41ad97b334892dfce746185242",
