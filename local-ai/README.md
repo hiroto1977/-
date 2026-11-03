@@ -1,42 +1,50 @@
-# local-ai: ローカルAIチャット環境
+# local-ai: ローカルAIチャット環境 (マルチランタイム)
 
-Ollama と llama.cpp の2つの実行環境を並行して動かし、Open WebUI からどちらのモデルでもチャットできます。
+5種類のローカルLLM実行環境を並行して動かし、Open WebUI からどれでもチャットできます。
+すべて CPU のみ・Docker 不要で、同じ GGUF モデルファイルを共有します。
 
-## 構成
-| コンポーネント | ポート | 役割 |
-|---|---|---|
-| Ollama | 127.0.0.1:11434 | ローカルLLM実行エンジン (モデル `qwen2.5:1.5b`) |
-| llama.cpp `llama-server` | 127.0.0.1:8081 | OpenAI互換API (`/v1`)、モデル名 `qwen2.5-1.5b-llamacpp` |
-| Open WebUI | 127.0.0.1:8080 | ブラウザ用チャット画面 (両方のバックエンドを登録済み) |
+## 構成 (すべて 127.0.0.1 のみで待ち受け)
+| ポート | ランタイム | API | Open WebUI 上のモデル名 | 起動スクリプト |
+|---|---|---|---|---|
+| 8080 | Open WebUI | ブラウザUI | — | `start.sh` / `docker-compose.yml` |
+| 11434 | Ollama | Ollama API | `qwen2.5:1.5b` | `setup.sh` |
+| 8081 | llama.cpp `llama-server` | OpenAI互換 `/v1` | `qwen2.5-1.5b-llamacpp` | `start-llamacpp.sh` |
+| 8082 | llama-cpp-python[server] | OpenAI互換 `/v1` | `qwen2.5-1.5b-llamacpp-python` | `start-llamacpp-python.sh` |
+| 8083 | KoboldCpp | OpenAI互換 `/v1` (+独自UI) | `koboldcpp/qwen2.5-1.5b-instruct-q4_k_m` | `start-koboldcpp.sh` |
+| 8084 | LocalAI | OpenAI互換 `/v1` | `qwen2.5-1.5b-localai` | `start-localai.sh` |
 
-- モデル: Qwen2.5-1.5B-Instruct (Q4_K_M, 約1.1GB)。日本語対応、CPUのみで動作。
-- llama.cpp は同じ GGUF ファイル (`~/models/qwen2.5-1.5b-instruct-q4_k_m.gguf`) を使い、コンテキスト長は 4096 です。
-- メモリ目安: 両方のモデルを読み込んだ状態で合計 約3〜3.5GB。
+- モデル: Qwen2.5-1.5B-Instruct (Q4_K_M, 約1.1GB) を `~/models/qwen2.5-1.5b-instruct-q4_k_m.gguf` に1つだけ置き、全ランタイムで共有 (mmap)。コンテキスト長は 4096。
+- Open WebUI には `OPENAI_API_BASE_URLS` (セミコロン区切り) と `OPENAI_API_KEYS` で 8081〜8084 を登録しています。
 
 ## 使い方
 ```bash
 cd local-ai
 chmod +x *.sh
-./setup.sh              # Ollama導入 → モデル取得 → llama-server起動 → UI起動
+./setup.sh      # 全ランタイム + Open WebUI を起動
 ```
-個別に起動する場合:
-- `./start-llamacpp.sh` … llama-server のみ (`PORT` `CTX` `GGUF` で変更可)
-- `./start.sh` … Open WebUI のみ (Docker なし、Ollama + OpenAI互換接続を有効化)
-- `docker compose up -d` … Docker 版 Open WebUI
+個別起動: `./start-llamacpp.sh` などを実行 (`PORT` `CTX` `GGUF` 環境変数で変更可)。
+不要なランタイムは `setup.sh` の該当行を消すか、`OPENAI_API_BASE_URLS` / `OPENAI_API_KEYS` から外してください (URLとキーの数は揃えること)。
 
-> Docker 版では、コンテナからホストへ接続するため、Ollama/llama-server を `0.0.0.0` で待ち受ける必要がある場合があります (`OLLAMA_HOST=0.0.0.0`、`HOST=0.0.0.0`)。その場合はファイアウォールで外部公開しないよう注意してください。
+## メモリについて
+- 全部起動すると合計 約8GB 前後 (モデルファイル部分は共有) を使います。空きメモリが少ない場合は使わないランタイムを停止してください。
+- Ollama と LocalAI はアイドル5分でモデルを自動アンロードします (LocalAI: `LOCALAI_WATCHDOG_IDLE=true`)。
+- 他の3つ (llama.cpp / llama-cpp-python / KoboldCpp) は起動中ずっとモデルを保持します。
 
 ## 動作確認
 ```bash
 ollama run qwen2.5:1.5b "こんにちは"
-curl http://127.0.0.1:8081/v1/chat/completions -H 'Content-Type: application/json' \
-  -d '{"model":"qwen2.5-1.5b-llamacpp","messages":[{"role":"user","content":"こんにちは"}]}'
+curl http://127.0.0.1:8082/v1/chat/completions -H 'Content-Type: application/json' \
+  -d '{"model":"qwen2.5-1.5b-llamacpp-python","messages":[{"role":"user","content":"こんにちは"}]}'
 ```
 
 ## 停止
-- `pkill -f "open-webui serve"; pkill -f llama-b; pkill -x ollama`
-- Docker: `docker compose down`
+```bash
+pkill -f "open-webui serve"; pkill -f llama-b; pkill -f llama_cpp.server
+pkill -f koboldcpp; pkill -f "local-ai"; pkill -x ollama
+```
 
-## 注意
-- `WEBUI_AUTH=False` はローカル専用の設定です。外部公開する場合は認証を有効にしてください。
-- 1.5B の小型モデルのため、事実関係の誤りがあります。重要な情報は必ず確認してください。
+## 補足
+- vLLM (CPU版) は導入サイズとメモリ消費が大きく、この規模の環境には不向きのため含めていません。
+- Docker 版では、コンテナからホストへ接続するため各サーバーを `0.0.0.0` で待ち受ける必要がある場合があります。外部公開しないよう注意してください。
+- `WEBUI_AUTH=False` はローカル専用の設定です。
+- 1.5B の小型モデルのため、事実関係の誤りが多いです。重要な情報は必ず確認してください。
