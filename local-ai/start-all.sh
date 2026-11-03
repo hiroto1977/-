@@ -24,7 +24,7 @@ start_all() {
   fi
   up 8084 /readyz || { log "start localai"; "$HERE/start-localai.sh" >>"$LOG" 2>&1; }
   if [ "$ENABLE_EXTRAS" = 1 ]; then up 8090 /v1/models || { log "start llama-swap"; "$HERE/orchestrator/start-llama-swap.sh" >>"$LOG" 2>&1; }; fi
-  if [ "$ENABLE_LITELLM" = 1 ]; then up 4000 /health/liveliness || { log "start litellm"; "$HERE/orchestrator/start-litellm.sh" >>"$LOG" 2>&1; sleep 20; }; fi
+  if [ "$ENABLE_LITELLM" = 1 ]; then { up 4000 /health/liveliness || ss -ltn "sport = :4000" | grep -q LISTEN || pgrep -f "litellm .*--port 4000" >/dev/null; } || { log "start litellm"; "$HERE/orchestrator/start-litellm.sh" >>"$LOG" 2>&1; sleep 20; }; fi
   if [ "${ENABLE_COUNCIL:-1}" = 1 ]; then up 8091 || { log "start council"; "$HERE/council/start-council.sh" >>"$LOG" 2>&1; }; fi
   if ! up 8080 /health; then
     urls="http://127.0.0.1:8081/v1"; keys="none"

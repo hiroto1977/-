@@ -3,3 +3,4 @@ logs/
 user_thread.md
 decisions.md
 __pycache__/
+recurring_state.json

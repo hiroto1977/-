@@ -88,16 +88,46 @@ def pick_exec(topic):
     if sc[best] == 0: best = list(KEYWORDS)[ROT[0] % 5]
     return best
 
+RSTATE = os.path.join(HERE, "recurring_state.json")   # 継続議題の進捗（実行時ファイル）
+REC_RE = re.compile(r"^- \[(?:〜|~|継続[:：])\s*(?:(\d{4}-\d{2}-\d{2})\s+)?(\d{1,2}:\d{2})\]\s*(.+)$")
+def _deadline(date_s, hm):
+    h, m = map(int, hm.split(":")); n = datetime.datetime.now()
+    if date_s: return datetime.datetime.strptime(f"{date_s} {h:02d}:{m:02d}", "%Y-%m-%d %H:%M")
+    d = n.replace(hour=h, minute=m, second=0, microsecond=0)
+    return d if d > n else d + datetime.timedelta(days=1)       # 「〜07:00」は次に来る07:00
+def sub_items(text):
+    m = re.search(r"(?:候補|項目)[:：]\s*([^。\n]+)", text)
+    return [x.strip() for x in re.split(r"[、,/／]", m.group(1)) if x.strip()] if m else []
+def _rstate():
+    try: return json.load(open(RSTATE, encoding="utf-8"))
+    except Exception: return {}
 def pick_topic():
     if PENDING: return "CEOの指示", PENDING.pop(0)
     inbox = os.path.join(HERE, "inbox.md")
     if os.path.exists(inbox):
-        lines = open(inbox, encoding="utf-8").read().splitlines()
+        lines = open(inbox, encoding="utf-8").read().splitlines(); changed = False; pick = None
         for i, l in enumerate(lines):
-            s = l.strip()
-            if s.startswith("- ") and not s.startswith("- [済]"):
-                lines[i] = l.replace("- ", "- [済] ", 1); open(inbox, "w", encoding="utf-8").write("\n".join(lines) + "\n")
-                return "受信箱", s[2:]
+            s = l.strip(); rm = REC_RE.match(s)
+            if rm:
+                dl = _deadline(rm.group(1), rm.group(2)); body = rm.group(3)
+                if datetime.datetime.now() >= dl:
+                    lines[i] = f"- [済] {body}（期限 {dl:%Y-%m-%d %H:%M} 到達）"; changed = True; continue
+                if not rm.group(1):                                  # 相対期限は絶対日時に書き換えて固定
+                    lines[i] = f"- [継続:{dl:%Y-%m-%d %H:%M}] {body}"; changed = True
+                if pick is None:
+                    items = sub_items(body); st = _rstate(); key = body[:80]; n = st.get(key, 0)
+                    if items:
+                        item = items[n % len(items)]
+                        topic = (f"{body}\n\n【今回の設計項目 {n % len(items) + 1}/{len(items)}（通算{n + 1}回目）: {item}】"
+                                 f"この回は「{item}」だけを具体的に設計してください（構文例・意味・安全チェック・テスト例）。")
+                    else: topic = body
+                    st[key] = n + 1; json.dump(st, open(RSTATE, "w", encoding="utf-8"), ensure_ascii=False)
+                    pick = ("継続議題", topic)
+                continue
+            if pick is None and s.startswith("- ") and not s.startswith("- [済]"):
+                lines[i] = l.replace("- ", "- [済] ", 1); changed = True; pick = ("受信箱", s[2:])
+        if changed: open(inbox, "w", encoding="utf-8").write("\n".join(lines) + "\n")
+        if pick: return pick
     down, h = health_summary(); down = [d for d in down if d != "llama7B"]
     if down: return "サービス健全性", f"ローカルAIサービスが停止中: {', '.join(down)}（{h}）。原因と復旧・予防策。"
     rw = "/workspace/repo-analysis/docs/REMAINING_WORK.md"
@@ -121,7 +151,7 @@ def session():
         m, out = ask("balanced" if p["tier"] in ("COO", "役員") else p["model"], persona(p) + instr,
                      f"議題: {topic}\n{'（CEO ' + USER + 'さんからの直接の指示です。CEOに向けて応えてください）' if src == 'CEOの指示' else ''}\n\nこれまでの発言:\n{ctx}\n\nあなた（{p['name']}）の発言:")
         hist.append(f"{p['name']}: {out}")
-        STATE["transcript"].append({"id": p["id"], "role": p["name"], "model": m, "text": out}); STATE["updated"] = now()
+        STATE["transcript"].append({"id": p["id"], "role": p["name"], "model": m, "text": out}); STATE["updated"] = now(); tick()
         with open(path, "a", encoding="utf-8") as f: f.write(f"**{p['name']}**（{p['tier']}・{m}）\n\n{out}\n\n")
         return out
     with open(path, "a", encoding="utf-8") as f:
@@ -138,7 +168,7 @@ def session():
         outs.append(speak(p, instr))
     dec, summ = outs[-2], outs[-1]
     with open(os.path.join(HERE, "decisions.md"), "a", encoding="utf-8") as f:
-        f.write(f"\n## {now()} [{src}] {topic[:120]}\n\n担当役員: {ex['name']}\n\n{dec}\n\nCOO総括: {summ}\n")
+        f.write(f"\n## {now()} [{src}] {topic[:120] if src != '継続議題' else topic.split(chr(10))[0][:60] + ' ' + topic.split(chr(10))[-1][:80]}\n\n担当役員: {ex['name']}\n\n{dec}\n\nCOO総括: {summ}\n")
     if src == "CEOの指示": thread_log("COO", summ)
     STATE.update(status=f"待機中（次回まで最大{INTERVAL}秒）", updated=now(), speaking=None)
 
@@ -192,16 +222,36 @@ class H(BaseHTTPRequestHandler):
             return self.js({"ok": True})
         self.send(b"not found", "text/plain", 404)
 
+LAST_TICK = [time.monotonic()]; GEN = [0]
+def tick(): LAST_TICK[0] = time.monotonic()
+def loop(gen):
+    """会議ループ。待機は壁時計とモノトニックの両方で判定（ボックス一時停止中はモノトニックが進まないため）。"""
+    while GEN[0] == gen:
+        tick()
+        try:
+            if free_mb() < MIN_FREE_MB:
+                STATE.update(status=f"空きメモリ不足でスキップ（{free_mb()}MB）", updated=now()); log_sys(STATE["status"])
+            else: session()
+        except BaseException as ex:  # noqa: スレッドを絶対に死なせない
+            log_sys(f"会議失敗: {ex!r}"); STATE.update(status="エラー（次回再試行）", speaking=None)
+        w0, m0 = time.time(), time.monotonic()
+        while GEN[0] == gen and not PENDING:
+            tick()
+            if time.time() - w0 >= INTERVAL or time.monotonic() - m0 >= INTERVAL: break
+            if time.time() - w0 < -60: break                       # 時計が巻き戻った
+            time.sleep(2)
+def start_loop(reason):
+    GEN[0] += 1; tick(); log_sys(f"会議ループ開始 gen={GEN[0]}（{reason}）")
+    threading.Thread(target=loop, args=(GEN[0],), daemon=True, name=f"council-loop-{GEN[0]}").start()
+
 if __name__ == "__main__":
     os.makedirs(os.path.join(HERE, "logs"), exist_ok=True)
     threading.Thread(target=ThreadingHTTPServer(("127.0.0.1", PORT), H).serve_forever, daemon=True).start()
     log_sys("AI組織デーモン起動")
-    while True:
-        if free_mb() < MIN_FREE_MB:
-            STATE.update(status=f"空きメモリ不足でスキップ（{free_mb()}MB）", updated=now()); log_sys(STATE["status"])
-        else:
-            try: session()
-            except Exception as ex: log_sys(f"会議失敗: {ex!r}"); STATE.update(status="エラー（次回再試行）", speaking=None)
-        for _ in range(INTERVAL):
-            if PENDING: break
-            time.sleep(1)
+    start_loop("起動")
+    STALL = int(os.environ.get("COUNCIL_STALL_SEC", str(max(2 * INTERVAL, 3 * TIMEOUT + 60))))
+    while True:   # ウォッチドッグ: STALL秒（モノトニック）tick が無い／スレッド死亡なら作り直す
+        time.sleep(15)
+        alive = any(t.name == f"council-loop-{GEN[0]}" and t.is_alive() for t in threading.enumerate())
+        if not alive: start_loop("ループスレッド停止を検知")
+        elif time.monotonic() - LAST_TICK[0] > STALL: start_loop(f"{STALL}秒以上tickなし")
