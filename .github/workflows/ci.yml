@@ -83,6 +83,8 @@ jobs:
       - run: npm run lint:test-coverage
       - run: npm run verify:release-artifacts
       - run: npm run lint:shell
+      # local-ai の .py。起動子 (uvx) の網はソースを見ないので、ここで危険な呼び出しを見る (T-187)。
+      - run: npm run lint:python
       - run: npm run lint:repo-size
       - run: npm run lint:deps
       - run: npm run lint:mcp-servers

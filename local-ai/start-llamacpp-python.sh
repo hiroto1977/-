@@ -5,7 +5,7 @@ DIR="${LCP_DIR:-$HOME/llamacpp-python}"
 GGUF="${GGUF:-$HOME/models/qwen2.5-1.5b-instruct-q4_k_m.gguf}"
 PORT="${PORT:-8082}"; CTX="${CTX:-4096}"
 mkdir -p "$DIR" && cd "$DIR"
-command -v uv >/dev/null || curl -LsSf https://astral.sh/uv/install.sh | sh
+command -v uv >/dev/null || { echo "uv が必要です（https://docs.astral.sh/uv/ を参照してインストール）" >&2; exit 1; }
 [ -d .venv ] || { uv venv -p 3.11 .venv && uv pip install -p .venv "llama-cpp-python[server]" \
   --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu; }
 nohup .venv/bin/python -m llama_cpp.server --model "$GGUF" --model_alias qwen2.5-1.5b-llamacpp-python \

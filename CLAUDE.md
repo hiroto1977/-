@@ -1190,8 +1190,9 @@ npm run audit:mamori-battery  # **Mamori への攻撃の電池を、時刻から
 npm run audit:language-coverage  # **見張りが無い言語・依存の生態系を作らない**(2026-10-25 · T-187)。『すべての言語の弱点を先回りで探す』
                          #   ことは誰にもできないので、**今在る**言語・起動子 (MCP の npx / uvx)・依存の生態系を追跡している実物から導き、
                          #   台帳 (security/language-coverage.json) の見張る強制物と突き合わせる。新しい言語・定義ファイルが入ると
-                         #   落ち、`ifAdded` の足す守りを名指しする (検知と対策の入口が同時に出る)。起動子だけで入っている言語
-                         #   (python = uvx) はソースが入った瞬間に落ちる。毎日の dependency-audit が同じ測定を載せる。
+                         #   落ち、`ifAdded` の足す守りを名指しする (検知と対策の入口が同時に出る)。起動子だけの言語は
+                         #   ソースが入った瞬間に落ちる。python は local-ai の .py を `lint:python`（ci.yml）が見る。
+                         #   毎日の dependency-audit が同じ測定を載せる。
                          #   判定は src/shared/__tests__/languageCoverage.test.ts が npm test で見る (CI で PR を止める)。
                          #   限界: 弱点そのものを見つけて直すのは狩りと回帰検査の仕事で、これは網の穴を作らないところまで。
 npm run audit:verify-keep-going  # **`verify:all` を止まらずに全ゲート回し、落ちた物を一度に挙げる**
@@ -1582,7 +1583,7 @@ npm run lint:shell         # **追跡されている `.sh` すべて** (git ls-f
                            #   (関数の中だけでは「このスクリプトは strict」と言えないので行頭アンカー)
                            #   ③ `bash -n` 構文 ④ **遠隔コードの実行 (`curl | sh`) は台帳のみ** ——
                            #   取得元が入れ替われば任意コードが利用者の権限で走るので、
-                           #   「何を・どれくらい固定して・なぜ」を書く (今 5 本: nvm と ollama の install.sh、local-ai の ollama と uv)
+                           #   「何を・どれくらい固定して・なぜ」を書く (今 2 本: nvm と ollama の install.sh)
                            #   ⑤ **後戻りできない書き込みと秘密の扱いは台帳のみ** (双方向 —— 危ない操作が
                            #   無くなったのに台帳に残っていても落ちる。古い登録は次に足された 1 本を隠す)
                            #   ⑥ **台帳に載った本の `--self-test` を実際に走らせる** (自己テストを書いても

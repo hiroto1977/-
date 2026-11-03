@@ -1,0 +1,51 @@
+# LiteLLM プロキシ設定（127.0.0.1:4000）
+model_list:
+  # fast: 1.5B を3バックエンドで負荷分散
+  - model_name: fast
+    litellm_params: {model: openai/qwen2.5-1.5b-llamacpp, api_base: http://127.0.0.1:8081/v1, api_key: none, timeout: 60}
+  - model_name: fast
+    litellm_params: {model: ollama_chat/qwen2.5:1.5b, api_base: http://127.0.0.1:11434, timeout: 60}
+  - model_name: fast
+    litellm_params: {model: openai/qwen2.5-1.5b-localai, api_base: http://127.0.0.1:8084/v1, api_key: none, timeout: 90}
+  - model_name: balanced
+    litellm_params: {model: openai/qwen2.5-3b-llamacpp, api_base: http://127.0.0.1:8085/v1, api_key: none, timeout: 120}
+  - model_name: smart
+    litellm_params: {model: openai/qwen2.5-7b-llamacpp, api_base: http://127.0.0.1:8086/v1, api_key: none, timeout: 180}
+  # auto: プロンプトに応じて router_hook.py が fast / smart に振り分け（ここは既定の振り先）
+  - model_name: auto
+    litellm_params: {model: openai/qwen2.5-1.5b-llamacpp, api_base: http://127.0.0.1:8081/v1, api_key: none, timeout: 60}
+  # 中国系の追加モデル（llama-swap 8090 でオンデマンド起動・5分でアンロード）
+  - model_name: deepseek-r1-1.5b
+    litellm_params: {model: openai/deepseek-r1-1.5b, api_base: http://127.0.0.1:8090/v1, api_key: none, timeout: 600}
+  - model_name: qwen3-1.7b
+    litellm_params: {model: openai/qwen3-1.7b, api_base: http://127.0.0.1:8090/v1, api_key: none, timeout: 600}
+  - model_name: qwen3-4b
+    litellm_params: {model: openai/qwen3-4b, api_base: http://127.0.0.1:8090/v1, api_key: none, timeout: 600}
+  - model_name: minicpm3-4b
+    litellm_params: {model: openai/minicpm3-4b, api_base: http://127.0.0.1:8090/v1, api_key: none, timeout: 600}
+  - model_name: internlm2.5-1.8b
+    litellm_params: {model: openai/internlm2.5-1.8b, api_base: http://127.0.0.1:8090/v1, api_key: none, timeout: 600}
+  - model_name: yi-1.5-6b
+    litellm_params: {model: openai/yi-1.5-6b, api_base: http://127.0.0.1:8090/v1, api_key: none, timeout: 600}
+  - model_name: glm-edge-1.5b
+    litellm_params: {model: openai/glm-edge-1.5b, api_base: http://127.0.0.1:8090/v1, api_key: none, timeout: 600}
+
+router_settings:
+  routing_strategy: simple-shuffle
+  num_retries: 2
+  timeout: 180
+  allowed_fails: 1
+  cooldown_time: 30
+  fallbacks:
+    - {smart: [balanced, fast]}
+    - {balanced: [fast]}
+    - {auto: [fast]}
+
+litellm_settings:
+  callbacks: router_hook.proxy_handler_instance
+  drop_params: true
+  request_timeout: 180
+
+general_settings:
+  background_health_checks: true
+  health_check_interval: 300
