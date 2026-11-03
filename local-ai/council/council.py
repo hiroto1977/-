@@ -2,7 +2,7 @@
 """ローカルAI組織（村）デーモン。リポジトリのAI組織(registry.json)を縮小移植し、
 COO→役員→部長→担当→秘書 の順でローカルLLMが議論する（標準ライブラリのみ）。
 行動はこのディレクトリ内へのファイル書き込みと読み取り専用チェックに限定。外部送信・git操作はしない。"""
-import json, os, re, socket, threading, time, datetime, urllib.request
+import json, os, re, socket, threading, time, datetime, urllib.request, difflib, collections
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -22,7 +22,8 @@ P = {p["id"]: p for p in ORG["people"]}
 def kids(pid, tier=None): return [p for p in ORG["people"] if p["parent"] == pid and (tier is None or p["tier"] == tier)]
 COMMON = (f"必ず自然な日本語（ひらがな・カタカナ・漢字）だけで、180字以内で答えてください。中国語・英語の文は書かないでください。"
           f"CEOは人間の{USER}さんです。あなたは{USER}さんの発言を代筆・創作してはいけません。自分の役職の立場だけで話してください。"
-          "この組織はローカル環境内でファイルに提案を書くことしかできません。外部送信やgit pushは提案しないでください。")
+          "この組織はローカル環境内でファイルに提案を書くことしかできません。外部送信やgit pushは提案しないでください。"
+          "他の人の発言をそのまま繰り返さず、自分の役割ならではの内容を書いてください。")
 STATE = {"status": "起動", "topic": "", "transcript": [], "updated": "", "speaking": None, "exec": None}
 SERVICES = {"Ollama": (11434, "/"), "llama1.5B": (8081, "/health"), "llama3B": (8085, "/health"), "llama7B": (8086, "/health"),
             "LocalAI": (8084, "/readyz"), "llama-swap": (8090, "/v1/models"), "LiteLLM": (4000, "/health/liveliness"), "OpenWebUI": (8080, "/health")}
@@ -70,9 +71,20 @@ def ask(model, system, user):
             log_sys(f"{m} 失敗: {e!r} → フェイルオーバー")
     return "none", "（応答なし）"
 
+TIER_ROLE = {
+    "COO": "全社を統括し、議題を適切な役員に割り振り、結論を短く報告にまとめます。細部より優先順位と責任の所在を示します。",
+    "役員": "担当部門の最終責任者として、選択肢を比べて一つに決め、理由を一言添えます。曖昧な表現は避けます。",
+    "秘書": "役員を補佐し、論点整理・ブリーフィング・リスクと抜けの洗い出しを担当します。箇条書きで簡潔に書きます。",
+    "管理職": "部長として、実行可能な具体策を担当者・手順・確認方法つきで提案します。",
+    "一般職": "現場の担当者として、実際の作業手順、かかる手間、つまずきやすい点を具体的に述べます。",
+}
+RECENT = collections.defaultdict(lambda: collections.deque(maxlen=6))   # 住民ごとの最近の発言（プロフィール表示用）
+def remember(pid, kind, text): RECENT[pid].append({"at": now(), "kind": kind, "text": text[:400]})
+def too_similar(out, hist):
+    return any(difflib.SequenceMatcher(None, out, h.split(": ", 1)[-1]).ratio() > 0.55 for h in hist)
+
 def persona(p):
-    s = f"あなたはAI組織の{p['title']}（{p['dept']}）です。"
-    if p["tier"] == "秘書": s += "役員を補佐し、論点整理・ブリーフィング・リスクの洗い出しを担当します。"
+    s = f"あなたはAI組織の{p['title']}（{p['dept']}）です。" + TIER_ROLE.get(p["tier"], "")
     if p.get("knowledge"): s += "参照知識: " + p["knowledge"]
     return s
 
@@ -150,7 +162,12 @@ def session():
         ctx = "\n".join(hist[-4:]) or "（なし）"
         m, out = ask("balanced" if p["tier"] in ("COO", "役員") else p["model"], persona(p) + instr,
                      f"議題: {topic}\n{'（CEO ' + USER + 'さんからの直接の指示です。CEOに向けて応えてください）' if src == 'CEOの指示' else ''}\n\nこれまでの発言:\n{ctx}\n\nあなた（{p['name']}）の発言:")
-        hist.append(f"{p['name']}: {out}")
+        if out != "（応答なし）" and too_similar(out, hist):      # 前の発言の繰り返しは1回だけ言い直させる
+            log_sys(f"{p['name']}: 前の発言と似ているため言い直し")
+            m2, out2 = ask("balanced" if p["tier"] in ("COO", "役員") else p["model"], persona(p) + instr + "これまでの発言を繰り返さず、必ず新しい観点や具体例を加えてください。",
+                           f"議題: {topic}\n\nこれまでの発言:\n{ctx}\n\nあなた（{p['name']}）の、これまでと違う新しい発言:")
+            if out2 != "（応答なし）" and not too_similar(out2, hist): m, out = m2, out2
+        hist.append(f"{p['name']}: {out}"); remember(p["id"], "会議", out)
         STATE["transcript"].append({"id": p["id"], "role": p["name"], "model": m, "text": out}); STATE["updated"] = now(); tick()
         with open(path, "a", encoding="utf-8") as f: f.write(f"**{p['name']}**（{p['tier']}・{m}）\n\n{out}\n\n")
         return out
@@ -192,6 +209,10 @@ class H(BaseHTTPRequestHandler):
         path = self.path.split("?")[0]
         if path == "/api/state": return self.js(api_state())
         if path == "/api/org": return self.js({"people": [{k: p[k] for k in ("id", "tier", "name", "title", "dept", "parent", "model")} for p in ORG["people"]], "user": USER})
+        if path.startswith("/api/person/"):
+            p = P.get(path.rsplit("/", 1)[-1])
+            if not p: return self.send(b"unknown", "text/plain", 404)
+            return self.js({k: p.get(k, "") for k in ("id", "tier", "name", "title", "dept", "parent", "model")} | {"recent": list(RECENT[p["id"]])[::-1]})
         if path == "/": path = "/index.html"
         f = os.path.realpath(os.path.join(WEB, path.lstrip("/")))
         if f.startswith(WEB + os.sep) and os.path.isfile(f):
@@ -215,7 +236,7 @@ class H(BaseHTTPRequestHandler):
             m, out = ask("balanced" if p["tier"] in ("COO", "役員") else p["model"],
                          persona(p) + f"今は村でCEOの{USER}さんと1対1で話しています。役職の立場を保ち、{USER}さんに敬語で答えてください。",
                          f"最近の会話:\n{hist}\n\n{USER}さんの発言: {text}\n\nあなた（{p['name']}）の返答:")
-            thread_log(f"{p['name']}（{m}）", out)
+            thread_log(f"{p['name']}（{m}）", out); remember(p["id"], "清継さんへの返答", out)
             return self.js({"id": p["id"], "who": p["name"], "model": m, "text": out})
         if self.path == "/api/topic":
             thread_log(USER, f"→組織全体（COO）: {text}"); PENDING.append(text)
