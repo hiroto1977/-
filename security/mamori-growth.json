@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.15"
+    "version": "0.16"
   },
   "constructs": {
     "class": {
@@ -74,9 +74,10 @@
       "risk": "型引数の制約に印の型を置いて、素の値を印として通す道を作らない (generic-call と同じ判定)。"
     },
     "instanceof": {
-      "decision": "feature",
+      "decision": "added",
       "why": "例外の種類を見分ける所で使う。",
-      "risk": "右辺の値は宣言した名前だけ (宣言していない Function などへ届かない —— M6 が見る)。"
+      "risk": "右辺の値は宣言した名前だけ (宣言していない Function などへ届かない —— M6 が見る)。",
+      "since": "0.16"
     },
     "in-op": {
       "decision": "feature",
@@ -1842,6 +1843,76 @@
         "pr": 855,
         "reason": null,
         "summary": "SSRF の最後の線 (プライベート帯 / 予約帯の送り先判定 · privateTarget.ts · isPrivateOrReservedTarget / expandV6Groups / isNonGloballyReachableV6) を Mamori で書き直した (port)。足りなかったのは non-null (15 か所) と template 文字列 (8 か所) だけで、正規表現のグループは「一致を確かめてから slice して 16 進の 2 組を読む」形へ、template は連結へ、`new Array(n).fill(0)` は零の列の slice へ、入れ子の parse は関数へ、Set は配列の includes へ書き直した。壁は要らない (外の名前は URL だけ)。移すときに 3 つ見つけた: ① mapped / NAT64 / 6to4 の 3 か所に同じ try/catch (解析できない綴りは遮断) が写されていたのを 1 つの関数 isPrivateEmbeddedV4 へ畳んだ —— 初回の変異検査 96.88% (生存 8 + 未到達 4) の未到達 4 は、その catch に届く検査が無かったことで、点記法のまま来る `::ffff:999.1.1.1` (URL として正しくない) の行で踏める ② expandV6Groups の `halves.length > 2` の門は、書き直しで同じ答えを出す冗長な門になった (右の片に `::` が残り parseV6Part が空の群で null を返す) ので消した (等価変異は形ごと消す) ③ `^64:ff9b:1:` の錨を外した変異体が生き残った —— `2606:4700:64:ff9b:1::1` のように途中に同じ並びを持つ公開の綴りの行が表に無かった。元の TypeScript と、ホスト名 30 万件 (うち遮断 13 万件) + 実 URL 9.4 万件の fuzz で差分比較し差 0。分岐を 1 つずつ留める表 privateTargetBranches.test.ts (2,130 件・期待値は移す前の実装に通して取った · URL を通さず hostname だけを持つ物に当てて、正規化前の綴りまで) を足した。scanTarget.mamori と imageUrlGate.mamori は privateTarget を extern pure でなく use で読むようになった (能力台帳の外の値が 2 つ減る)。変異検査は 509 変異体 (有効 366) で生存 0・100.00%、等価な変異体は理由つきの pragma。手探り 11 形は全部 refused。対照 6 つ (a >= 224 の境目を 2 通り・64:ff9b:1 の範囲・6to4 の順序・svc・fill の長さ) は表が落ちた。1 つは対照にならなかった: LOOPBACK_NAMES から localhost.localdomain を外しても落ちない —— 最終ラベル localdomain が INTERNAL_TLDS に載っているので等価 (元の実装でも同じ多重防御)。"
+      }
+    },
+    {
+      "id": "MG-028",
+      "date": "2026-11-03",
+      "kind": "feature",
+      "target": "instanceof",
+      "pickedBy": "brief",
+      "briefPick": "feature:instanceof",
+      "version": "0.16",
+      "features": [
+        "`x instanceof Y` (関係演算子の段・右辺は名前そのものだけ: このモジュールの名前で隠れていない組み込みか `use` / `extern pure` で宣言した名前・局所の名前と計算した式は M6・危ない口は M2・左辺は他の式と同じ検め・結果は印を運ばない・`instanceof` は予約語)"
+      ],
+      "added": [
+        "instanceof"
+      ],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "`x instanceof Function` (宣言していない名前)",
+          "result": "refused"
+        },
+        {
+          "tried": "`x instanceof window` / `x instanceof Foo`",
+          "result": "refused"
+        },
+        {
+          "tried": "右辺がメンバ `x instanceof Error.prototype` / `Error.constructor` / `URL.parse`",
+          "result": "refused"
+        },
+        {
+          "tried": "右辺が呼び出し・条件・添字・new・字面 (`f()` / `(c ? Error : TypeError)` / `[Error][0]` / `new Error(\"a\")` / `\"str\"` / `1`)",
+          "result": "refused"
+        },
+        {
+          "tried": "右辺が局所の const / fn / 引数 / catch の束縛 / 組み込みを隠す名前 (`const Error = 1`)",
+          "result": "refused"
+        },
+        {
+          "tried": "右辺が危ない口 (`extern sink global`) —— sink 関数の外・中のどちらも",
+          "result": "refused"
+        },
+        {
+          "tried": "左辺に危ない口・宣言していない名前・`.constructor`・`Object` の持ち出し",
+          "result": "refused"
+        },
+        {
+          "tried": "`u instanceof Error` の結果を印つきの口へ渡す (印の洗浄)",
+          "result": "refused"
+        },
+        {
+          "tried": "`instanceof` を名前・欄の省略形・配列の項に使う",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 8,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/checker.ts",
+          "src/shared/mamori/emit.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 855,
+        "reason": null,
+        "summary": "Mamori 0.16 に instanceof を足した (feature)。関係演算子の段に 1 語で、右辺は名前そのものだけ —— このモジュールの名前で隠れていない組み込み (Error / TypeError / URL ほか) か `use` / `extern pure` で宣言した名前に限る。足す前に右辺が通す道を 9 形破り全部 refused (穴は 0 件): 宣言していない Function ほか (値として読むのと同じ M6)・メンバ / 呼び出し / 条件 / 添字 / 字面 (実行時に計算した値の Symbol.hasInstance を辿らせない)・局所の名前 (計算した値かもしれない。組み込みを隠す名前も同じ)・危ない口 (M2)・左辺の検め・結果は印を運ばない・予約語。独立の読み直し (mamoriInspect.ts) にも同じ規則を足し、攻撃の電池の弾に 6 形を足した。Rust の M0 は追随が要らなかった (instanceof は名前の字句で、正規表現の読み分けは return / typeof / await のまま)。変異検査は 3 ファイルとも 100% (parser 1,472・checker 883・emit 578 変異体)。初回の生存 5 件の正体は、(1) パーサーの語の演算子の分岐が記号の分岐と同じ答えを返す冗長な形だった (字句の綴りが表の綴りと一致するかだけで決まる 1 行へ畳んだ —— 等価変異は形ごと消す) と (2) 診断の規則ラベルと文面を検査が見ていなかったこと (`const K = Error` の右辺が、持ち出しの断りで別の理由で通っていた)。もう 1 つ踏んだ: 最初の変異検査は vitest の設定に絶対パスの root を書いたため、サンドボックスでなく元のファイルを試し、変異体 580 個が全部生存と出た (0%) —— 設定を直して測り直した。対照 8 つ (局所 / 名前でない右辺 / 宣言していない右辺 / 危ない口 / 予約語 / 強さ 4 と 7 / 左辺の検め) は狙った検査が鳴った (強さ 7 は最初鳴らなかった —— 要らない括弧が付くだけで意味は同じ。`x + 1 instanceof Error` の golden を足して鳴るようにした)。ついでに測った既存の穴: 宣言の名前に JavaScript の予約語 (`const class = 1;`) を書くと Mamori は通し、生成された TypeScript を tsc が断る (閉じた側に落ちる · docs/REMAINING_WORK.md に残した)。"
       }
     }
   ]

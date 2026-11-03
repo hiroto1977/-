@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { compileProject, formatDiagnostic } from '../compile';
+import { inspectEmitted } from './mamoriInspect';
 
 /*
  * **Mamori 0.16 —— `x instanceof Y` (MG-028)。** 足す前に破った。
@@ -111,10 +112,30 @@ describe('0.16 instanceof の変換', () => {
     expect(ts(fn('  return typeof x === "object" && x instanceof URL;'))).toContain('typeof x === "object" && x instanceof URL');
     expect(ts(fn('  return (x instanceof Error) === true;'))).toContain('x instanceof Error === true');
     expect(ts(fn('  return (x === 1) instanceof Error;'))).toContain('(x === 1) instanceof Error');
+    // 加減乗除は instanceof より強い (括弧が要らない) —— 強さを関係演算子より強く書くと、要らない括弧が付く
+    expect(ts(fn('  return x + 1 instanceof Error;'))).toContain('x + 1 instanceof Error');
+    expect(ts(fn('  return (x < 1) instanceof Error;'))).toContain('x < 1 instanceof Error');
     expect(ts(fn('  return x instanceof Error ? true : false;'))).toContain('x instanceof Error ? true : false');
   });
 
   it('関係演算子と同じ段なので左結びに並ぶ', () => {
     expect(ts(fn('  return x instanceof Error instanceof Error;'))).toContain('x instanceof Error instanceof Error');
+  });
+});
+
+describe('0.16 独立の読み直し (oracle) も同じ規則を持つ', () => {
+  const holes = (body: string, externs: ReadonlySet<string> = new Set()): string[] =>
+    inspectEmitted('x.ts', `import { Klass } from './other';\nconst K = 1;\nexport function f(x: unknown, C: unknown): boolean {\n  ${body}\n}\n`, externs).filter((f) => f.kind === 'hole').map((f) => f.reason);
+  it('★ 受け入れた生成物の instanceof の右辺が、名前でない・局所の名前・宣言していない名前なら穴', () => {
+    expect(holes('return x instanceof Function;').join('\n')).toMatch(/instanceof の右辺が許した名前でない: Function/);
+    expect(holes('return x instanceof K;').join('\n')).toMatch(/instanceof の右辺が許した名前でない: K/);
+    expect(holes('return x instanceof C;').join('\n')).toMatch(/instanceof の右辺が許した名前でない: C/);
+    expect(holes('return x instanceof (x ? Error : TypeError);').join('\n')).toMatch(/instanceof の右辺が名前でない/);
+    expect(holes('return x instanceof Error.prototype;').join('\n')).toMatch(/instanceof の右辺が名前でない/);
+  });
+  it('組み込み・取り込んだ名前・extern pure global は穴にならない', () => {
+    expect(holes('return x instanceof Error;')).toEqual([]);
+    expect(holes('return x instanceof Klass;')).toEqual([]);
+    expect(holes('return x instanceof Date;', new Set(['Date']))).toEqual([]);
   });
 });
