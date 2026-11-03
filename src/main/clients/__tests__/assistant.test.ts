@@ -236,7 +236,7 @@ describe("ACTIONS['chat'] — multi-provider routing", () => {
 
   it('ローカルが失敗したら Anthropic へ退避する（明示した提供者ではない）', async () => {
     const fetchMock = vi.fn<typeof fetch>()
-      .mockResolvedValueOnce(jsonResponse({ error: 'down' }, 503))
+      .mockResolvedValueOnce(jsonResponse({ error: 'down' }, false, 503))
       .mockResolvedValueOnce(jsonResponse({ content: [{ type: 'text', text: 'claude' }] }));
     const res = await ACTIONS['chat']!({
       token: JSON.stringify({ default: 'openai', openai: 'sk-oai', anthropic: 'sk-ant' }),
