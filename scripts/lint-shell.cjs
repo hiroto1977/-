@@ -191,6 +191,21 @@ const REMOTE_EXEC_ALLOWLIST = {
     pinning: '**固定なし** —— その時点で配信されている物をそのまま実行する。',
     why: 'Ollama 公式の導入方法。利用者が「導入する」と答えた枝でのみ走る。',
   },
+  'local-ai/setup.sh': {
+    what: 'https://ollama.com/install.sh',
+    pinning: '**固定なし** —— その時点で配信されている物をそのまま実行する。',
+    why: 'Ollama 公式の導入方法。コマンドが無いときだけ走る。local-ai の初回セットアップ。',
+  },
+  'local-ai/start.sh': {
+    what: 'https://astral.sh/uv/install.sh',
+    pinning: '**固定なし** —— その時点で配信されている物をそのまま実行する。',
+    why: 'uv 公式の導入方法。コマンドが無いときだけ走る。Open WebUI の仮想環境を作るため。',
+  },
+  'local-ai/start-llamacpp-python.sh': {
+    what: 'https://astral.sh/uv/install.sh',
+    pinning: '**固定なし** —— その時点で配信されている物をそのまま実行する。',
+    why: 'uv 公式の導入方法。コマンドが無いときだけ走る。llama-cpp-python を入れるため。',
+  },
 };
 
 /**
