@@ -168,15 +168,18 @@ describe('OllamaPage のチャット欄', () => {
     invokeResult = { ok: false, code: 'ollama_too-long', message };
     await openChat();
     await send('長い質問');
-    expect(invoke).toHaveBeenCalledWith('ollama', 'chat', { model: MODEL, prompt: '長い質問', system: undefined });
+    expect(invoke).toHaveBeenCalledWith('assistant', 'chat', {
+      purpose: 'assistant',
+      messages: [{ role: 'user', content: '長い質問' }],
+    });
     await waitForText(() => container.textContent ?? '', message);
   });
 
   it('★ 対照: 成功なら共有の型の reply が応答として出る (手写しの欄を読んでいない)', async () => {
-    invokeResult = { ok: true, data: { reply: 'およそ 22 か月です。', durationMs: 12 } };
+    invokeResult = { ok: true, data: { text: 'およそ 22 か月です。', model: 'auto', provider: 'compat' } };
     await openChat();
     await send('ゾウの妊娠期間は');
     await waitForText(() => container.textContent ?? '', 'およそ 22 か月です。');
-    await waitForText(() => container.textContent ?? '', '応答 (12ms)');
+    await waitForText(() => container.textContent ?? '', '応答 (');
   });
 });

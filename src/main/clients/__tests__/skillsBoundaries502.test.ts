@@ -38,7 +38,7 @@ const FOUR_BYTE_CHAR = '😀';
 const TOO_LONG_TEXT = `スキル本文が長すぎます (${MAX_ASSISTANT_SYSTEM_CHARS} 字以内)`;
 
 function okResponse(): Response {
-  return new Response(JSON.stringify({ content: [{ type: 'text', text: 'OK' }], stop_reason: 'end_turn' }), {
+  return new Response(JSON.stringify({ choices: [{ message: { content: 'OK' } }] }), {
     status: 200,
     headers: { 'content-type': 'application/json' },
   });
@@ -218,10 +218,13 @@ describe('ACTIONS["run-skill"]: 天井の境目・空の発話・失敗の枝', 
 
   /** 実行して、送った要求の `system` を返す。 */
   async function runAndGetSystem(payload: Record<string, unknown>): Promise<string> {
-    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(okResponse());
+    const fetchMock = vi.fn<typeof fetch>().mockImplementation(() => Promise.resolve(okResponse()));
     await ACTIONS['run-skill']!({ token: 'sk-ant-x', fetch: fetchMock, payload });
     expect(fetchMock).toHaveBeenCalledTimes(1);
-    return (JSON.parse(String(fetchMock.mock.calls[0]![1]!.body)) as { system: string }).system;
+    const sent = JSON.parse(String(fetchMock.mock.calls[0]![1]!.body)) as {
+      messages: { role: string; content: string }[];
+    };
+    return sent.messages.find((m) => m.role === 'system')?.content ?? '';
   }
 
   it('★ 字が天井ちょうどのスキル本文は送る (天井は「超えたら」断る)', async () => {
@@ -249,10 +252,12 @@ describe('ACTIONS["run-skill"]: 天井の境目・空の発話・失敗の枝', 
   it('★ 発話が天井ちょうど (字) なら送る・1 字超えれば断る', async () => {
     await writeEcho('body');
     const atCeiling = 'a'.repeat(MAX_ASSISTANT_CONTENT_CHARS);
-    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(okResponse());
+    const fetchMock = vi.fn<typeof fetch>().mockImplementation(() => Promise.resolve(okResponse()));
     await ACTIONS['run-skill']!({ token: 'sk-ant-x', fetch: fetchMock, payload: { id: 'echo', prompt: atCeiling } });
-    const sent = JSON.parse(String(fetchMock.mock.calls[0]![1]!.body)) as { messages: { content: string }[] };
-    expect(sent.messages[0]!.content).toBe(atCeiling);
+    const sent = JSON.parse(String(fetchMock.mock.calls[0]![1]!.body)) as {
+      messages: { role: string; content: string }[];
+    };
+    expect(sent.messages.find((m) => m.role === 'user')?.content).toBe(atCeiling);
     // 1 字超えは断る (文面は「プロンプト」と発話の天井)。
     const over = vi.fn<typeof fetch>();
     await expect(

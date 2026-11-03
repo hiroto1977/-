@@ -90,6 +90,8 @@ const LEDGER: readonly Row[] = [
     why: '転送を断る文に載せる相手の名前 (ホストだけ)' },
   { file: 'src/shared/ai/providers.ts', needle: 'const u = new URL(base)', kind: 'predicate',
     why: '平文で資格情報を送ってよい相手かを判定するだけ' },
+  { file: 'src/shared/ai/localGateway.ts', needle: 'isLoopbackHostname(new URL(baseUrl).hostname)', kind: 'predicate',
+    why: 'ブラウザから直接叩いてよいかを真偽だけで返す。ホスト名以外は使わない' },
   { file: 'src/shared/aiEndpoint.ts', needle: 'parsed = new URL(text)', kind: 'value-gate',
     why: '解析後の protocol / host / pathname から base を組み直して返す' },
   { file: 'src/shared/atlassianSite.ts', needle: 'parsed = new URL(raw)', kind: 'value-gate',
@@ -231,7 +233,7 @@ describe('value-gate は解析後の値を返す (振る舞いで確かめる)',
    * (このリポジトリが繰り返し直してきた形)。行が増減したらここが鳴り、
    * 書き換えるときに「どの種類が増えたのか」を読むことになる。
    */
-  it('★ 種類ごとの行数は実測どおり (台帳 36 行が 37 か所を覆う)', () => {
+  it('★ 種類ごとの行数は実測どおり (台帳 37 行が 38 か所を覆う)', () => {
     const byKind = (k: Row['kind']): number => LEDGER.filter((r) => r.kind === k).length;
     expect({
       'value-gate': byKind('value-gate'),
@@ -239,10 +241,10 @@ describe('value-gate は解析後の値を返す (振る舞いで確かめる)',
       pin: byKind('pin'),
       internal: byKind('internal'),
       display: byKind('display'),
-    }).toEqual({ 'value-gate': 11, predicate: 10, pin: 4, internal: 5, display: 6 });
-    expect(LEDGER).toHaveLength(36);
+    }).toEqual({ 'value-gate': 11, predicate: 11, pin: 4, internal: 5, display: 6 });
+    expect(LEDGER).toHaveLength(37);
     // web-shim の同じ綴りの 2 行が 1 行の台帳に対応するので、か所は台帳より 1 多い。
-    expect(SITES).toHaveLength(37);
+    expect(SITES).toHaveLength(38);
     expect(VALUE_GATE_BEHAVIOR.length).toBeGreaterThanOrEqual(5);
   });
 });

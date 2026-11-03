@@ -29,6 +29,8 @@ import {
 } from '../../shared/ollama';
 import type { ActionData } from '../../shared/actionData';
 import { CeilingNotice } from '../components/CeilingNotice';
+import { AiEgressNotice } from '../components/AiEgressNotice';
+import { AI_EGRESS_RECIPIENT_ANTHROPIC } from '../../shared/aiEgressNotice';
 import { StepUpPassword } from '../components/StepUpPassword';
 import { useBuildKind } from '../hooks/useBuildKind';
 import { STEP_UP_CANCELLED, ollamaEndpointNeedsStepUp, stepUpReason } from '../security/egressStepUp';
@@ -86,14 +88,16 @@ export function OllamaPage() {
     setReply(null);
     // 戻り値の型は台帳 (`ollama/chat` = 共有の `OllamaChatResult`) を読む (パス 114 / 117 ——
     // チャットボットをパス 113 で直したのと同じ形。手で写した型は実物とずれても `tsc` が黙る)。
-    const res = await window.serviceHub.invoke<ActionData<'ollama/chat'>>(
-      'ollama',
-      'chat',
-      { model: model.trim(), prompt: prompt.trim(), system: systemPrompt.trim() || undefined },
-    );
+    const started = Date.now();
+    const system = systemPrompt.trim();
+    const res = await window.serviceHub.invoke<ActionData<'assistant/chat'>>('assistant', 'chat', {
+      purpose: 'assistant',
+      messages: [{ role: 'user', content: prompt.trim() }],
+      ...(system ? { system } : {}),
+    });
     setBusy(false);
     if (res.ok) {
-      setReply({ text: res.data.reply, durationMs: res.data.durationMs });
+      setReply({ text: res.data.text, durationMs: Date.now() - started });
     } else {
       setErrMsg(externalTextOnOneLine(res.message));
     }
@@ -208,6 +212,12 @@ export function OllamaPage() {
       >
         {showChat && running ? (
           <div className="card" style={{ gap: 10 }}>
+            <AiEgressNotice
+              subject={{
+                what: 'この画面のチャットに打ったプロンプトと任意のシステムプロンプト',
+                recipients: { remote: [AI_EGRESS_RECIPIENT_ANTHROPIC], local: ['LiteLLM (この端末)'] },
+              }}
+            />
             <select
               value={model}
               onChange={(e) => setModel(e.target.value)}

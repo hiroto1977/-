@@ -354,7 +354,7 @@ const FIELDS: readonly Field[] = [
         'Ollama のプロンプト欄',
       ),
     submit: () => primary('送信'),
-    sent: (p) => (p as { prompt?: string }).prompt,
+    sent: (p) => (p as { messages?: { content?: string }[] }).messages?.[0]?.content,
   },
   {
     what: '端末内モデルの System prompt',

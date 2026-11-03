@@ -91,8 +91,9 @@ describe('応答側の天井に、AI へ出る handler がすべて届く (母�
     const callers = pageFiles()
       .filter((f) => invokesAi(readOriginalSource(f), [['ollama', 'chat']]))
       .map((f) => path.relative(RENDERER, f));
-    expect(callers).toContain('components/ChatbotWidget.tsx');
-    expect(callers).toContain('pages/OllamaPage.tsx');
+    // 自由質問と Ollama 画面の会話は assistant/chat（LiteLLM）へ寄った。残る呼び手は共有の型を読む。
+    expect(callers).not.toContain('components/ChatbotWidget.tsx');
+    expect(callers).not.toContain('pages/OllamaPage.tsx');
     for (const rel of callers) {
       const src = code(`renderer/${rel}`);
       expect(src, `${rel} が台帳の型を読んでいない`).toContain("invoke<ActionData<'ollama/chat'>>");

@@ -303,11 +303,21 @@ describe('API キーの送り先とヘッダ', () => {
     const hub = await loadShim();
     await invoke(hub, service, action, payload);
 
-    expect(
-      fetchCalls.map((c) => c.url),
-      `${service}/${action} の送り先が変わっています (鍵が別ホストへ出ます)`,
-    ).toEqual(['https://api.anthropic.com/v1/messages']);
-    const h = fetchCalls[0]!.init.headers as Record<string, string>;
+    const urls = fetchCalls.map((c) => c.url);
+    if (action === 'analyze-text') {
+      expect(urls, '感情分析は先にローカル、届かなければ Anthropic').toEqual([
+        'http://127.0.0.1:4000/v1/chat/completions',
+        'https://api.anthropic.com/v1/messages',
+      ]);
+      const localHeaders = JSON.stringify(fetchCalls[0]!.init.headers);
+      expect(localHeaders).not.toContain(KEY);
+    } else {
+      expect(urls, `${service}/${action} の送り先が変わっています (鍵が別ホストへ出ます)`).toEqual([
+        'https://api.anthropic.com/v1/messages',
+      ]);
+    }
+    const anthropic = fetchCalls.find((c) => c.url.includes('api.anthropic.com'))!;
+    const h = anthropic.init.headers as Record<string, string>;
     expect(h['x-api-key']).toBe(KEY);
     // 鍵が他のヘッダにも本文にも混ざらない。
     const elsewhere = Object.entries(h).filter(([k, v]) => k !== 'x-api-key' && String(v).includes(KEY));
@@ -342,7 +352,7 @@ describe('API キーの送り先とヘッダ', () => {
    * **計装済みの形そのものを標本に当てて**、規則が実際に効くことを確かめる。
    * (前回はこの標本が無く、`>= 3` の下限だけが落ちて理由が分からなかった。)
    */
-  const CALL_SITES = 3; // business/advise・stocks/advise・emotions/analyze-text
+  const CALL_SITES = 2; // business/advise・stocks/advise（感情分析は共有層の runLocalThenAnthropic）
   /** 定義行を除いた呼び出しから、後続の最初の URL リテラルを拾う。 */
   const TARGET_RE = /(?<!function\s)\btimedFetchAi\([\s\S]{0,300}?'(https?:\/\/[^']+)'/g;
 
@@ -440,7 +450,7 @@ describe('ブラウザ直接続の可否を守っているか', () => {
     stored = JSON.stringify(creds);
     proxyConfig = null;
     const hub = await loadShim();
-    const r = await invoke(hub, 'assistant', 'chat', CHAT);
+    const r = await invoke(hub, 'assistant', 'chat', { ...CHAT, provider: creds.default });
     expect(r.ok).toBe(false);
     expect(r.code).toBe('not_configured');
     expect(fetchCalls, `直接叩いてしまった: ${JSON.stringify(fetchCalls)}`).toEqual([]);
@@ -451,7 +461,7 @@ describe('ブラウザ直接続の可否を守っているか', () => {
     stored = JSON.stringify({ compatUrl: 'https://arbitrary.example/v1', compatKey: 'k', compatModel: 'm', default: 'compat' });
     proxyConfig = { url: 'https://proxy.example/worker' };
     const hub = await loadShim();
-    await invoke(hub, 'assistant', 'chat', CHAT);
+    await invoke(hub, 'assistant', 'chat', { ...CHAT, provider: 'compat' });
     expect(fetchCalls, `中継を通さず直接叩いた: ${JSON.stringify(fetchCalls)}`).toEqual([]);
     expect(transportCalls.length).toBeGreaterThan(0);
     expect(transportCalls[0]!.url).toContain('arbitrary.example');
@@ -463,7 +473,9 @@ describe('ブラウザ直接続の可否を守っているか', () => {
     const hub = await loadShim();
     await invoke(hub, 'assistant', 'chat', CHAT);
     expect(fetchCalls.length).toBeGreaterThan(0);
-    expect(fetchCalls[0]).toContain('api.anthropic.com');
+    // 提供者を省略したときは先に端末の LiteLLM。読めなければ Claude へ直接退避する（プロキシは通さない）。
+    expect(fetchCalls[0]).toContain('127.0.0.1:4000');
+    expect(fetchCalls.some((u) => u.includes('api.anthropic.com'))).toBe(true);
     expect(transportCalls).toEqual([]);
   });
 });

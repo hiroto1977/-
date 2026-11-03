@@ -13,7 +13,7 @@ import { WorkloadShareTable } from '../components/WorkloadShareTable';
 import { detectCrisis, detectHarmToOthers } from '../data/counseling';
 import { externalTextOnOneLine } from '../data/assistantMarkdown';
 import { localIsoDate } from '../../shared/localDate';
-import { AI_EGRESS_RECIPIENT_ANTHROPIC, remoteOnly } from '../../shared/aiEgressNotice';
+import { AI_EGRESS_RECIPIENT_ANTHROPIC } from '../../shared/aiEgressNotice';
 import { ERROR_MESSAGE_MAX_CHARS, redactForMessage } from '../../shared/redact';
 import { displayField } from '../../shared/apiResponse';
 import { ROLE_LABEL } from '../../shared/team';
@@ -213,6 +213,7 @@ export function MentorPage(): React.JSX.Element {
     setAiError(null);
     try {
       const r = await window.serviceHub.invoke<ActionData<'assistant/chat'>>('assistant', 'chat', {
+        purpose: 'mentor',
         system: aiDeepDivePrompt(session, selected, q),
         messages: [{ role: 'user', content: q }],
       });
@@ -372,7 +373,7 @@ export function MentorPage(): React.JSX.Element {
             <AiEgressNotice
               subject={{
                 what: '選んだメンバー本人の聞き取りの答え・直近 3 回のチェックイン（気分・負荷・メモ）・ここに打った相談文（他のメンバーの記録は送りません）',
-                recipients: remoteOnly(AI_EGRESS_RECIPIENT_ANTHROPIC),
+                recipients: { remote: [AI_EGRESS_RECIPIENT_ANTHROPIC], local: ['LiteLLM (この端末)'] },
               }}
             />
             <textarea

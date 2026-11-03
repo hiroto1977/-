@@ -99,6 +99,11 @@ export const CHATBOT_OLLAMA_ESCAPE =
  * 理由」が食い違う (パス 401 の形)。伏字と天井は `redactForMessage` を通す
  * (第三者 = 利用者が設定した Ollama ホストの文が混ざりうる · パス 290)。
  */
+/** 自由質問を LiteLLM へ回して断られたときの 1 文。畳み方は Ollama の断りと同じ。 */
+export function localGatewayRefusalNote(message: unknown): string {
+  return ollamaRefusalNote(message).replaceAll('Ollama のモデル', 'ローカルのモデル');
+}
+
 export function ollamaRefusalNote(message: unknown): string {
   /*
    * **外から来た文はアプリの声の 1 行に畳む (2026-10-12 · パス 511 · threat: T-005)。**

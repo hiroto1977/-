@@ -43,6 +43,7 @@ import {
   resolveProvider,
 } from '../../shared/ai/credentials';
 import { runAiChat } from '../../shared/ai/chat';
+import { isLlmPurpose, runLocalThenAnthropic, runtimeEnv } from '../../shared/ai/localGateway';
 import type { ActionData, EnsembleAnswer } from '../../shared/actionData';
 
 
@@ -95,8 +96,10 @@ interface ChatPayload {
   system?: unknown;
   /** 読まない (T-170)。互換のため型にだけ残す。 */
   model?: unknown;
-  /** 呼び出す AI プロバイダ ('anthropic'|'openai'|'gemini'|'ollama'|'compat')。省略時は既定。 */
+  /** 呼び出す AI プロバイダ ('anthropic'|'openai'|'gemini'|'ollama'|'compat')。省略時はローカルの LiteLLM。 */
   provider?: unknown;
+  /** 省略時の用途。別名は共有の表が決める（自由なモデル名は受けない）。 */
+  purpose?: unknown;
 }
 interface AnthropicResponse {
   content: Array<{ type: string; text?: string }>;
@@ -161,7 +164,9 @@ async function chat(
   if (turns[turns.length - 1]?.role !== 'user') {
     throw new Error('最後の発話は user である必要があります');
   }
-  if (!ctx.token) {
+  const env = runtimeEnv();
+  const envKey = (env.SERVICE_HUB_LLM_API_KEY ?? '').trim();
+  if (!ctx.token && envKey.length === 0) {
     throw new Error(
       'AI プロバイダの API キーが必要です (assistant のトークンに API キーまたは JSON 資格情報を設定してください)',
     );
@@ -176,24 +181,40 @@ async function chat(
   // 天井の**値**は共有していたが**単位**が割れていた。
   const sys = typeof system === 'string' ? clampToCeiling(system, MAX_SYSTEM) : '';
 
-  // トークンを資格情報として解析 (生キーは Anthropic として後方互換)、
-  // payload.provider (省略時は既定プロバイダ) を解決して共有レイヤで実行する。
+  // トークンを資格情報として解析 (生キーは Anthropic として後方互換)。
+  // 提供者を明示したときはその 1 社だけ（全 AI 合議の各呼び出しもここ）。
+  // 省略時は端末の LiteLLM。届かなければ Anthropic。
   const creds = parseAiCredentials(ctx.token);
-  // `provider.length > 0` は書かない —— `resolveProvider` は先頭で
-  // `requested !== undefined && requested !== ''` を見ており、空文字は既に
-  // 「指定なし」として扱われる。ここに二つ目の空文字判定を置くと、
-  // **どちらを外しても振る舞いが変わらない**変異体が生まれる (実測で 2 件
-  // 生存した)。等価変異は pragma で黙らせる前に、まず重複を消す。
-  const resolved = resolveProvider(creds, typeof provider === 'string' ? provider : undefined);
-  const result = await runAiChat({
-    provider: resolved.id,
-    cfg: resolved.cfg,
+  const requested = typeof provider === 'string' ? provider : undefined;
+  // `requested !== ''` は resolveProvider と同じ境目。空文字は「指定なし」。
+  if (requested !== undefined && requested !== '') {
+    const resolved = resolveProvider(creds, requested);
+    const result = await runAiChat({
+      provider: resolved.id,
+      cfg: resolved.cfg,
+      request: {
+        system: sys || undefined,
+        messages: turns,
+        maxTokens: ASSISTANT_MAX_TOKENS,
+      },
+      fetchFn: ctx.fetch,
+    });
+    return { text: result.text, model: result.model, provider: result.provider };
+  }
+  const rawPurpose = (ctx.payload as ChatPayload).purpose;
+  const purpose = isLlmPurpose(rawPurpose) ? rawPurpose : 'assistant';
+  const result = await runLocalThenAnthropic({
+    purpose,
     request: {
       system: sys || undefined,
       messages: turns,
       maxTokens: ASSISTANT_MAX_TOKENS,
     },
+    anthropicKey: creds.anthropic ?? '',
+    anthropicModel: AI_PROVIDERS.anthropic.defaultModel,
     fetchFn: ctx.fetch,
+    env,
+    creds,
   });
   return { text: result.text, model: result.model, provider: result.provider };
 }

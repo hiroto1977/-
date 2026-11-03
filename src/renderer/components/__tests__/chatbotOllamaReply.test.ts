@@ -20,7 +20,7 @@ const LLM_ANSWER = 'およそ 22 か月です。';
 
 let invokeResult: { ok: true; data: unknown } | { ok: false; code: string; message: string } = {
   ok: true,
-  data: { reply: LLM_ANSWER, durationMs: 12 },
+  data: { text: LLM_ANSWER, model: 'balanced', provider: 'compat' },
 };
 const invoke = vi.fn(() => Promise.resolve(invokeResult));
 
@@ -108,10 +108,13 @@ afterEach(async () => {
 
 describe('チャットボットの自由質問 → Ollama', () => {
   it('★ handler が返した reply が 🧠 の吹き出しとして出る (2026-09-09 まで 1 度も出なかった)', async () => {
-    invokeResult = { ok: true, data: { reply: LLM_ANSWER, durationMs: 12 } };
+    invokeResult = { ok: true, data: { text: LLM_ANSWER, model: 'balanced', provider: 'compat' } };
     const dialog = await openWidget();
     await ask(dialog, FREE_QUESTION);
-    expect(invoke).toHaveBeenCalledWith('ollama', 'chat', expect.objectContaining({ prompt: FREE_QUESTION }));
+    expect(invoke).toHaveBeenCalledWith('assistant', 'chat', {
+      purpose: 'concierge',
+      messages: [{ role: 'user', content: FREE_QUESTION }],
+    });
     await waitForText(() => dialog.textContent ?? '', `🧠 ${LLM_ANSWER}`);
     expect(dialog.textContent).not.toContain('うまく解釈できませんでした');
   });
@@ -125,7 +128,7 @@ describe('チャットボットの自由質問 → Ollama', () => {
   });
 
   it('★ 対照: 空の reply は答えとして出さない', async () => {
-    invokeResult = { ok: true, data: { reply: '   ', durationMs: 1 } };
+    invokeResult = { ok: true, data: { text: '   ', model: 'balanced', provider: 'compat' } };
     const dialog = await openWidget();
     await ask(dialog, FREE_QUESTION);
     await waitForText(() => dialog.textContent ?? '', 'うまく解釈できませんでした');

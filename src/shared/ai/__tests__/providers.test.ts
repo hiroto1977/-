@@ -98,11 +98,11 @@ describe('提供元の表を字面で留める (鍵の送り先と直接続の�
       needsApiKey: false,
       browserDirect: true,
     }],
-    // 既定を空にしてあるのは意図 —— 送り先もモデルも資格情報で必ず指定させる。
+    // 既定は端末の LiteLLM。資格情報の compatUrl / compatModel があればそちらが優先される。
     ['compat', {
       label: 'OpenAI 互換 API',
-      defaultModel: '',
-      defaultBaseUrl: '',
+      defaultModel: 'auto',
+      defaultBaseUrl: 'http://127.0.0.1:4000/v1',
       needsApiKey: false,
       browserDirect: false,
     }],
@@ -129,7 +129,7 @@ describe('提供元の表を字面で留める (鍵の送り先と直接続の�
 
   /*
    * 鍵の送り先は https か loopback だけ。任意ホストを既定にしてはいけない
-   * (compat は既定を空にして、資格情報側の検証に委ねている)。
+   * (compat の既定は端末の LiteLLM。資格情報の URL があればそちらが優先される)。
    */
   it('既定の送り先は https か loopback のみ', async () => {
     const { AI_PROVIDERS, AI_PROVIDER_IDS } = await freshProviders();
@@ -155,8 +155,9 @@ describe('resolveModel', () => {
     expect(resolveModel(spec, REQ, {})).toBe(spec.defaultModel);
   });
 
-  it('throws for compat when no model is configured anywhere', () => {
-    expect(() => resolveModel(AI_PROVIDERS.compat, REQ, {})).toThrow(/モデル名が未設定/);
+  it('compat はモデル未指定なら LiteLLM の別名 auto を使う', () => {
+    expect(resolveModel(AI_PROVIDERS.compat, REQ, {})).toBe('auto');
+    expect(resolveModel(AI_PROVIDERS.compat, REQ, { model: 'fast' })).toBe('fast');
   });
 });
 
@@ -324,10 +325,13 @@ describe('ollama (local)', () => {
 });
 
 describe('compat (OpenAI-compatible)', () => {
-  it('requires a base URL', () => {
-    expect(() => AI_PROVIDERS.compat.buildRequest({ ...REQ, model: 'm' }, {})).toThrow(
-      /ベース URL が未設定/,
-    );
+  it('URL 未指定なら端末の LiteLLM (127.0.0.1:4000/v1) へ出す', () => {
+    const omitted = AI_PROVIDERS.compat.buildRequest({ ...REQ, model: 'auto' }, {});
+    expect(omitted.url).toBe('http://127.0.0.1:4000/v1/chat/completions');
+    expect(JSON.parse(omitted.body).model).toBe('auto');
+    // 空文字も未指定。`??` に変えると空のまま通り、正規化が落ちる。
+    const blank = AI_PROVIDERS.compat.buildRequest({ ...REQ, model: 'auto' }, { baseUrl: '' });
+    expect(blank.url).toBe('http://127.0.0.1:4000/v1/chat/completions');
   });
 
   it('appends /v1/chat/completions and uses max_tokens', () => {

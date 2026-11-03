@@ -215,6 +215,7 @@ import {
   resolveProvider,
 } from '../shared/ai/credentials';
 import { runAiChat } from '../shared/ai/chat';
+import { isLlmPurpose, localGatewayIsLoopback, localGatewaySettings, purposeForEmotionSource, runLocalThenAnthropic, runtimeEnv } from '../shared/ai/localGateway';
 import { evaluateUpdate, parseLatestRelease, type UpdateVerdict } from '../shared/updateCheck';
 
 // ブラウザ版で record-entry をサポートする業務記録サービス (ステートレス:
@@ -848,46 +849,24 @@ async function callEmotionsAnalyze(payload: Record<string, unknown>): Promise<Ac
     return err('action_failed', e instanceof Error ? e.message : String(e));
   }
 
-  let res: Response;
+  let body: string;
   try {
-    res = await timedFetchAi('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true',
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: ANTHROPIC_FAST_MODEL,
-        max_tokens: 512,
+    const result = await runLocalThenAnthropic({
+      purpose: purposeForEmotionSource(source),
+      request: {
         system: EMOTIONS_ANALYZE_SYSTEM,
         messages: [{ role: 'user', content: text }],
-      }),
+        maxTokens: 512,
+      },
+      anthropicKey: apiKey,
+      anthropicModel: ANTHROPIC_FAST_MODEL,
+      browser: true,
+      env: runtimeEnv(),
     });
-  } catch (e) {
-    return err('action_failed', 'ネットワークエラー: ' + (e instanceof Error ? e.message : String(e)));
-  }
-  if (!res.ok) {
-    const body = await readFailureBody(res, 'Anthropic');
-    return err('action_failed', `Anthropic API ${res.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`);
-  }
-  // **大きさで断ったことを、JSON の失敗と混ぜない。** 読み出しを try の外へ
-  // 出す。中に入れると `catch` が「API 応答が JSON ではありません」と言い、
-  // 本当の理由 (大きすぎる) が消える。
-  let raw: string;
-  try {
-    raw = await readCappedText(res, 'Anthropic');
+    body = result.text;
   } catch (e) {
     return err('action_failed', e instanceof Error ? e.message : String(e));
   }
-  let parsed: { content?: { type: string; text?: string }[] };
-  try {
-    parsed = JSON.parse(raw) as { content?: { type: string; text?: string }[] };
-  } catch {
-    return err('action_failed', 'API 応答が JSON ではありません');
-  }
-  const body = parsed.content?.find((c) => c.type === 'text')?.text ?? '';
   let json: unknown;
   try {
     json = JSON.parse(emotionsExtractJson(body));
@@ -962,7 +941,11 @@ async function callAssistantChat(payload: Record<string, unknown>): Promise<Acti
 
   const credsRead = await readAssistantCredsRaw();
   if (!credsRead.ok) return credsRead.res;
-  if (!credsRead.raw) {
+  const env = runtimeEnv();
+  const envKey = (env.SERVICE_HUB_LLM_API_KEY ?? '').trim();
+  const requested = typeof payload['provider'] === 'string' ? (payload['provider'] as string) : undefined;
+  const explicit = requested !== undefined && requested !== '';
+  if (!credsRead.raw && (explicit || envKey.length === 0)) {
     return err(
       'not_configured',
       'AI プロバイダが未設定です。アシスタントの「エージェント設定」または「設定」ページから API キーを保存してください',
@@ -970,7 +953,27 @@ async function callAssistantChat(payload: Record<string, unknown>): Promise<Acti
   }
 
   const creds = parseAiCredentials(credsRead.raw);
-  const requested = typeof payload['provider'] === 'string' ? (payload['provider'] as string) : undefined;
+  // ブラウザから直接叩くのはループバックだけ。遠隔の互換 URL は下のプロキシ経路へ残す。
+  const gateway = localGatewaySettings(env, creds);
+  if (!explicit && localGatewayIsLoopback(gateway.baseUrl)) {
+    const rawPurpose = payload['purpose'];
+    const purpose = isLlmPurpose(rawPurpose) ? rawPurpose : 'assistant';
+    try {
+      const result = await runLocalThenAnthropic({
+        purpose,
+        request: { system: system || undefined, messages: turns, maxTokens: 2048 },
+        anthropicKey: creds.anthropic ?? '',
+        anthropicModel: AI_PROVIDERS.anthropic.defaultModel,
+        browser: true,
+        fetchFn: (input, init) => globalThis.fetch(input, init),
+        env,
+        creds,
+      });
+      return ok(result);
+    } catch (e) {
+      return err('action_failed', e instanceof Error ? e.message : String(e));
+    }
+  }
   let resolved;
   try {
     resolved = resolveProvider(creds, requested && requested.length > 0 ? requested : undefined);

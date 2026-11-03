@@ -304,7 +304,9 @@ describe('AI へ送る画面すべてに断りが在る (走査)', () => {
       .filter((f) => invokesAi(readOriginalSource(f), pairs))
       .map((f) => path.relative(RENDERER, f));
     for (const f of senders) {
-      expect(f.startsWith(`pages${path.sep}`), `${f} が AI へ送っている (断りの配線を確かめること)`).toBe(true);
+      if (f.startsWith(`pages${path.sep}`)) continue;
+      const src = code(readOriginalSource(path.join(RENDERER, f)));
+      expect(DRAWS_NOTICE.test(src), `${f} が断り無しで AI へ送っている`).toBe(true);
     }
   });
 
@@ -363,6 +365,7 @@ describe('画面ごとに「何を送るか」を自分の言葉で埋めてい�
     'AssistantPage.tsx',
     'VillagePage.tsx',
     'MentorPage.tsx',
+    'OllamaPage.tsx',
   ];
 
   it('★ 走査規則が実物に当たる (入れ子のテンプレートで切れない)', () => {

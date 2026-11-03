@@ -229,14 +229,15 @@ describe('ACTIONS["analyze-text"]', () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
       new Response(
         JSON.stringify({
-          content: [
+          choices: [
             {
-              type: 'text',
-              text: JSON.stringify({
-                scores: { joy: 0.8 },
-                sentiment: 'positive',
-                dominant: 'joy',
-              }),
+              message: {
+                content: JSON.stringify({
+                  scores: { joy: 0.8 },
+                  sentiment: 'positive',
+                  dominant: 'joy',
+                }),
+              },
             },
           ],
         }),
@@ -252,7 +253,7 @@ describe('ACTIONS["analyze-text"]', () => {
     expect(result.sentiment).toBe('positive');
     expect(result.dominant).toBe('joy');
     expect(result.excerpt).toContain('[journal]');
-    expect(fetchMock.mock.calls[0]![0]).toBe('https://api.anthropic.com/v1/messages');
+    expect(fetchMock.mock.calls[0]![0]).toBe('http://127.0.0.1:4000/v1/chat/completions');
   });
 
   it('rejects when text is missing', async () => {
@@ -500,8 +501,9 @@ describe('ACTIONS["log-mood"] — 日付と点数', () => {
 // この動作だけが外部へ本文を送る。何を・どこへ・どの鍵で送るかが
 // 変わったら落ちるようにしておく。
 
+/** LiteLLM（OpenAI 互換）が返す形。感情分析の成功経路はここが先に当たる。 */
 function anthropicOk(json: unknown) {
-  return new Response(JSON.stringify({ content: [{ type: 'text', text: JSON.stringify(json) }] }), {
+  return new Response(JSON.stringify({ choices: [{ message: { content: JSON.stringify(json) } }] }), {
     status: 200,
     headers: { 'content-type': 'application/json' },
   });
@@ -517,7 +519,7 @@ describe('ACTIONS["analyze-text"] — 送り先と中身', () => {
 
   const okBody = { scores: { joy: 0.9 }, sentiment: 'positive', dominant: 'joy' };
 
-  it('Anthropic の messages へ POST し、鍵は x-api-key だけに載せる', async () => {
+  it('LiteLLM の fast へ送り、指示文を system に載せる', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(anthropicOk(okBody));
     await ACTIONS['analyze-text']!({
       token: 'sk-ant-secret',
@@ -526,38 +528,45 @@ describe('ACTIONS["analyze-text"] — 送り先と中身', () => {
     });
 
     const [url, init] = fetchMock.mock.calls[0]! as [string, RequestInit];
-    expect(url).toBe('https://api.anthropic.com/v1/messages');
+    expect(url).toBe('http://127.0.0.1:4000/v1/chat/completions');
     expect(url).not.toContain('sk-ant-secret');
     expect(init.method).toBe('POST');
-
     const headers = init.headers as Record<string, string>;
-    expect(headers['x-api-key']).toBe('sk-ant-secret');
-    // 版を名乗らないと Anthropic は 400 を返す。
-    expect(headers['anthropic-version']).toBe('2023-06-01');
+    expect(headers.authorization).toBeUndefined();
     expect(headers['content-type']).toBe('application/json');
 
     const body = JSON.parse(init.body as string);
-    expect(body.model).toBe('claude-haiku-4-5-20251001');
+    expect(body.model).toBe('fast');
     expect(body.max_tokens).toBe(512);
-    expect(typeof body.system).toBe('string');
-    expect(body.system.length).toBeGreaterThan(0);
-    // **中身も見る。** `length > 0` は空文字だけしか捕まえない —— 実測
-    // 2026-08-31 でこの指示文を丸ごと空にする変異が生き残った (静的な
-    // テンプレート文字列なので、下の「読み直して問う」も併せて要る)。
-    // 指示文が消えると、モデルは JSON を返さなくなり `extractJson` が失敗する。
-    expect(body.system).toContain('valid JSON');
-    expect(body.system).toContain('"sentiment"');
-    expect(body.system).toContain('"dominant"');
-    expect(body.messages).toEqual([{ role: 'user', content: '今日はいい日だった' }]);
+    expect(body.messages[0].role).toBe('system');
+    expect(body.messages[0].content.length).toBeGreaterThan(0);
+    expect(body.messages[0].content).toContain('valid JSON');
+    expect(body.messages[0].content).toContain('"sentiment"');
+    expect(body.messages[0].content).toContain('"dominant"');
+    expect(body.messages[1]).toEqual({ role: 'user', content: '今日はいい日だった' });
+  });
+
+  it('Gmail と Slack の出典も fast へ送る（振り分けと同じ別名）', async () => {
+    for (const source of ['Gmail Inbox', 'Slack channels']) {
+      const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(anthropicOk(okBody));
+      await ACTIONS['analyze-text']!({
+        token: 'sk-ant-secret',
+        fetch: fetchMock,
+        payload: { text: '振り分け', source },
+      });
+      const body = JSON.parse(String((fetchMock.mock.calls[0]![1] as RequestInit).body)) as { model: string };
+      expect(body.model, source).toBe('fast');
+      expect(String(fetchMock.mock.calls[0]![0])).toContain('127.0.0.1:4000');
+    }
   });
 
   it('失敗したときどのサービスが落ちたか分かる', async () => {
     const fetchMock = vi
       .fn<typeof fetch>()
-      .mockResolvedValueOnce(new Response('over quota', { status: 429 }));
+      .mockImplementation(() => Promise.resolve(new Response('over quota', { status: 429 })));
     await expect(
       ACTIONS['analyze-text']!({ token: 'sk-ant-x', fetch: fetchMock, payload: { text: 'あ' } }),
-    ).rejects.toMatchObject({ serviceId: 'emotions', status: 429 });
+    ).rejects.toThrow(/Claude \(Anthropic\) API 429/);
   });
 
   it('本文が空・空白だけ・文字列でなければ送らない', async () => {
@@ -581,12 +590,7 @@ describe('ACTIONS["analyze-text"] — 送り先と中身', () => {
   it('text 以外のブロックが混ざっていても text を選ぶ', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
       new Response(
-        JSON.stringify({
-          content: [
-            { type: 'thinking', text: 'これは JSON ではない' },
-            { type: 'text', text: JSON.stringify(okBody) },
-          ],
-        }),
+        JSON.stringify({ choices: [{ message: { content: JSON.stringify(okBody) } }] }),
         { status: 200, headers: { 'content-type': 'application/json' } },
       ),
     );
@@ -599,8 +603,8 @@ describe('ACTIONS["analyze-text"] — 送り先と中身', () => {
   });
 
   it('content ごと無い応答でも落ちずに「JSON ではない」と言う', async () => {
-    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
-      new Response(JSON.stringify({}), { status: 200, headers: { 'content-type': 'application/json' } }),
+    const fetchMock = vi.fn<typeof fetch>().mockImplementation(() =>
+      Promise.resolve(new Response(JSON.stringify({}), { status: 200, headers: { 'content-type': 'application/json' } })),
     );
     // toThrow は部分一致なので、末尾に何か付いていても通る。
     // 本文が空だったことまで見るには全文で比べる。
@@ -612,17 +616,17 @@ describe('ACTIONS["analyze-text"] — 送り先と中身', () => {
       () => null,
       (e: Error) => e,
     );
-    expect((err as Error).message).toBe('Anthropic returned a non-JSON response: ');
+    expect((err as Error).message).toBe('Claude (Anthropic) がテキスト応答を返しませんでした');
   });
 
   it('text ブロックが 1 つも無い応答でも落ちない', async () => {
     // content はあるが text 型が無い。ここで空文字へ落とせないと
     // `undefined.text` を読んで別の例外になり、原因が分からなくなる。
-    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
-      new Response(JSON.stringify({ content: [{ type: 'thinking', text: 'x' }, { type: 'image' }] }), {
+    const fetchMock = vi.fn<typeof fetch>().mockImplementation(() =>
+      Promise.resolve(new Response(JSON.stringify({ content: [{ type: 'thinking', text: 'x' }, { type: 'image' }] }), {
         status: 200,
         headers: { 'content-type': 'application/json' },
-      }),
+      })),
     );
     // toThrow は部分一致なので、末尾に何か付いていても通る。
     // 本文が空だったことまで見るには全文で比べる。
@@ -634,7 +638,7 @@ describe('ACTIONS["analyze-text"] — 送り先と中身', () => {
       () => null,
       (e: Error) => e,
     );
-    expect((err as Error).message).toBe('Anthropic returned a non-JSON response: ');
+    expect((err as Error).message).toBe('Claude (Anthropic) がテキスト応答を返しませんでした');
   });
 
   it('JSON でない応答は 80 文字までに切り、鍵らしき文字列は伏せる', async () => {
@@ -643,7 +647,7 @@ describe('ACTIONS["analyze-text"] — 送り先と中身', () => {
     const leak = 'sorry, your key sk-ant-abcdefghijklmnop is invalid. ';
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
       new Response(
-        JSON.stringify({ content: [{ type: 'text', text: leak + 'x'.repeat(200) }] }),
+        JSON.stringify({ choices: [{ message: { content: leak + 'x'.repeat(200) } }] }),
         { status: 200, headers: { 'content-type': 'application/json' } },
       ),
     );
@@ -918,7 +922,7 @@ describe('normalizeAnalysis — dominant の決め方', () => {
 describe('emotions の入力上限 (両ビルドで同じ値)', () => {
   it('analyze-text: 上限ちょうどは通す (境界)', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
-      new Response(JSON.stringify({ content: [{ type: 'text', text: '{"scores":{"joy":1}}' }] }), {
+      new Response(JSON.stringify({ choices: [{ message: { content: '{"scores":{"joy":1}}' } }] }), {
         status: 200,
         headers: { 'content-type': 'application/json' },
       }),
@@ -981,7 +985,7 @@ describe('解析の指示文 —— 読み直して問う', () => {
     const m = await rereadModule<typeof import('../emotions')>(import.meta.url, '../emotions');
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
       new Response(
-        JSON.stringify({ content: [{ type: 'text', text: '{"scores":{},"sentiment":"neutral","dominant":"joy"}' }] }),
+        JSON.stringify({ choices: [{ message: { content: '{"scores":{},"sentiment":"neutral","dominant":"joy"}' } }] }),
         { status: 200 },
       ),
     );
@@ -991,10 +995,10 @@ describe('解析の指示文 —— 読み直して問う', () => {
       payload: { text: 'hello' },
     });
     const [, init] = fetchMock.mock.calls[0]! as [string, RequestInit];
-    const body = JSON.parse(init.body as string) as { system: string };
-    expect(body.system).toContain('valid JSON');
-    expect(body.system).toContain('"sentiment"');
-    expect(body.system.length).toBeGreaterThan(100);
+    const body = JSON.parse(init.body as string) as { messages: { content: string }[] };
+    expect(body.messages[0]!.content).toContain('valid JSON');
+    expect(body.messages[0]!.content).toContain('"sentiment"');
+    expect(body.messages[0]!.content.length).toBeGreaterThan(100);
   });
 });
 
@@ -1015,7 +1019,7 @@ describe('保存要素の形 (ブラウザ版と同じ規則)', () => {
   });
   const anthropicOk = () =>
     new Response(
-      JSON.stringify({ content: [{ type: 'text', text: JSON.stringify({ scores: { joy: 0.8 }, sentiment: 'positive', dominant: 'joy' }) }] }),
+      JSON.stringify({ choices: [{ message: { content: JSON.stringify({ scores: { joy: 0.8 }, sentiment: 'positive', dominant: 'joy' }) } }] }),
       { status: 200, headers: { 'content-type': 'application/json' } },
     );
   const analyze = (fetchMock: ReturnType<typeof vi.fn<typeof fetch>>) =>
@@ -1245,7 +1249,7 @@ describe('analyze-text の出所 (source) は型と長さを見る (threat: T-03
   const okBody = { scores: { joy: 0.9 }, sentiment: 'positive', dominant: 'joy' };
   const reply = () =>
     vi.fn<typeof fetch>().mockResolvedValueOnce(
-      new Response(JSON.stringify({ content: [{ type: 'text', text: JSON.stringify(okBody) }] }), {
+      new Response(JSON.stringify({ choices: [{ message: { content: JSON.stringify(okBody) } }] }), {
         status: 200,
         headers: { 'content-type': 'application/json' },
       }),
@@ -1291,14 +1295,15 @@ describe('ACTIONS["analyze-text"] — タグ文字を送らない (threat: T-171
   it('★ 件名に符号化した指示を足しても、要求本文にはタグ文字が 1 つも載らない', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
       new Response(
-        JSON.stringify({ content: [{ type: 'text', text: JSON.stringify({ scores: { joy: 0.5 }, sentiment: 'positive', dominant: 'joy' }) }] }),
+        JSON.stringify({ choices: [{ message: { content: JSON.stringify({ scores: { joy: 0.5 }, sentiment: 'positive', dominant: 'joy' }) } }] }),
         { status: 200, headers: { 'content-type': 'application/json' } },
       ),
     );
     await ACTIONS['analyze-text']!({ token: 'sk-ant-x', fetch: fetchMock, payload: { text: `会議の件${hidden}です`, source: 'gmail' } });
     const body = String((fetchMock.mock.calls[0]![1] as RequestInit).body);
     expect(/[\u{E0000}-\u{E007F}]/u.test(body)).toBe(false);
-    expect(JSON.parse(body).messages[0].content).toBe('会議の件です');
+    const messages = JSON.parse(body).messages as { role: string; content: string }[];
+    expect(messages.find((m) => m.role === 'user')!.content).toBe('会議の件です');
   });
 
   it('対照: 針が当たる —— 標本はタグ文字を実際に含む', () => {
@@ -1333,7 +1338,7 @@ describe('ACTIONS["analyze-text"] — 第三者の文の指示の形は送らな
 
   it('対照: 業務の文 (「今後は必ず月曜に報告」) は止めずに送る', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
-      new Response(JSON.stringify({ content: [{ type: 'text', text: JSON.stringify({ scores: { joy: 0.5 }, sentiment: 'positive', dominant: 'joy' }) }] }), {
+      new Response(JSON.stringify({ choices: [{ message: { content: JSON.stringify({ scores: { joy: 0.5 }, sentiment: 'positive', dominant: 'joy' }) } }] }), {
         status: 200,
         headers: { 'content-type': 'application/json' },
       }),

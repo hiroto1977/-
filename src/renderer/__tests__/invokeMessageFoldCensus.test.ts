@@ -39,8 +39,8 @@ const LEDGER: ReadonlyArray<{ file: string; needle: string; why: string }> = [
   },
   {
     file: 'components/ChatbotWidget.tsx',
-    needle: 'ollamaRefusalNote(res.message)',
-    why: 'ollamaRefusalNote が中で externalTextOnOneLine(redactForMessage(…)) を掛ける (T-005)。畳みは向こうが持つ。',
+    needle: 'localGatewayRefusalNote(res.message)',
+    why: 'localGatewayRefusalNote が ollamaRefusalNote 経由で externalTextOnOneLine(redactForMessage(…)) を掛ける (T-005)。畳みは向こうが持つ。',
   },
 ];
 

@@ -26,7 +26,7 @@ export const RENDERER = path.resolve(__dirname, '../..');
 export const CLIENTS = path.resolve(__dirname, '../../../main/clients');
 
 /** AI へ本文が出る印 (実際に外部モデルを叩いている場所)。 */
-export const AI_MARKS: readonly RegExp[] = [/api\.anthropic\.com/, /\brunAiChat\s*\(/];
+export const AI_MARKS: readonly RegExp[] = [/api\.anthropic\.com/, /\brunAiChat\s*\(/, /\brunLocalThenAnthropic\s*\(/];
 
 /**
  * **端末内**のモデルへ本文が出る印 (Ollama の `/api/chat`)。外へは出ないので断り (パス 106 / 107)
