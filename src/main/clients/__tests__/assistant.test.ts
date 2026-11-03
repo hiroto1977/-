@@ -99,16 +99,25 @@ describe("ACTIONS['chat']", () => {
         messages: [{ role: 'user', content: '表をください' }],
       },
     });
-    expect(res).toMatchObject({ model: ASSISTANT_MODEL });
+    expect(res).toMatchObject({ model: ASSISTANT_MODEL, provider: 'anthropic' });
     expect((res as { text: string }).text).toContain('| A | B |');
 
-    // Verify the request body carries the system prompt + user turn.
-    const [, init] = fetchMock.mock.calls[0]!;
+    // 1 回目は端末の LiteLLM。Anthropic 形の応答は読めないので、2 回目で退避する。
+    const localBody = JSON.parse(String((fetchMock.mock.calls[0]![1] as RequestInit).body)) as {
+      model: string;
+      messages: { role: string; content: string }[];
+    };
+    expect(String(fetchMock.mock.calls[0]![0])).toBe('http://127.0.0.1:4000/v1/chat/completions');
+    expect(localBody.model).toBe('auto');
+    expect(localBody.messages[0]).toEqual({ role: 'system', content: 'あなたは有能なアシスタントです' });
+    expect(localBody.messages[1]).toEqual({ role: 'user', content: '表をください' });
+    const [, init] = fetchMock.mock.calls[1]!;
     const body = JSON.parse(String((init as RequestInit).body)) as {
       system?: string;
       messages: { role: string; content: string }[];
       model: string;
     };
+    expect(String(fetchMock.mock.calls[1]![0])).toBe('https://api.anthropic.com/v1/messages');
     expect(body.system).toContain('有能なアシスタント');
     expect(body.messages).toEqual([{ role: 'user', content: '表をください' }]);
     expect(body.model).toBe(ASSISTANT_MODEL);
@@ -211,16 +220,32 @@ describe("ACTIONS['chat'] — multi-provider routing", () => {
     expect(fetchMock.mock.calls[0]![0]).toBe('http://localhost:4000/v1/chat/completions');
   });
 
-  it('honors the JSON default provider when payload.provider is omitted', async () => {
+  it('提供者を省略すると LiteLLM の auto を先に使う', async () => {
     const fetchMock = vi
       .fn<typeof fetch>()
-      .mockResolvedValue(jsonResponse({ choices: [{ message: { content: 'via default' } }] }));
+      .mockResolvedValue(jsonResponse({ choices: [{ message: { content: 'via local' } }] }));
     const res = await ACTIONS['chat']!({
-      token: JSON.stringify({ default: 'openai', openai: 'sk-oai', anthropic: 'sk-ant' }),
+      token: JSON.stringify({ default: 'openai', openai: 'sk-oai', anthropic: 'sk-ant', compatUrl: 'http://127.0.0.1:4000/v1' }),
       fetch: fetchMock,
       payload: { messages: [{ role: 'user', content: 'hi' }] },
     });
-    expect(res).toMatchObject({ provider: 'openai' });
+    expect(res).toMatchObject({ provider: 'compat', model: 'auto', text: 'via local' });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(String(fetchMock.mock.calls[0]![0])).toBe('http://127.0.0.1:4000/v1/chat/completions');
+  });
+
+  it('ローカルが失敗したら Anthropic へ退避する（明示した提供者ではない）', async () => {
+    const fetchMock = vi.fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ error: 'down' }, 503))
+      .mockResolvedValueOnce(jsonResponse({ content: [{ type: 'text', text: 'claude' }] }));
+    const res = await ACTIONS['chat']!({
+      token: JSON.stringify({ default: 'openai', openai: 'sk-oai', anthropic: 'sk-ant' }),
+      fetch: fetchMock,
+      payload: { purpose: 'mentor', messages: [{ role: 'user', content: 'hi' }] },
+    });
+    expect(res).toMatchObject({ provider: 'anthropic', text: 'claude' });
+    const localBody = JSON.parse(String((fetchMock.mock.calls[0]![1] as RequestInit).body)) as { model: string };
+    expect(localBody.model).toBe('balanced');
   });
 
   it('a bare (non-JSON) token keeps full Anthropic backward compatibility', async () => {
@@ -233,9 +258,9 @@ describe("ACTIONS['chat'] — multi-provider routing", () => {
       payload: { messages: [{ role: 'user', content: 'hi' }] },
     });
     expect(res).toMatchObject({ provider: 'anthropic', model: ASSISTANT_MODEL });
-    const [url, init] = fetchMock.mock.calls[0]!;
-    expect(url).toBe('https://api.anthropic.com/v1/messages');
-    expect((init as { headers: Record<string, string> }).headers['x-api-key']).toBe(
+    const anthropicCall = fetchMock.mock.calls.find((c) => String(c[0]).includes('api.anthropic.com'));
+    expect(anthropicCall, 'Anthropic へ退避していない').toBeDefined();
+    expect((anthropicCall![1] as { headers: Record<string, string> }).headers['x-api-key']).toBe(
       'sk-ant-raw-key',
     );
   });
@@ -375,9 +400,13 @@ describe("ACTIONS['providers']", () => {
  * **「その定数を実際に当てているか」** のほうである。
  */
 describe('assistant — 送る量の上限 (課金される外部 API へ渡る前)', () => {
-  /** 送信本文を取り出す (最初の fetch 呼び出しの body)。 */
+  /**
+   * 送信本文を取り出す。提供者を省略した chat は先に LiteLLM を叩くので、
+   * Anthropic へ退避した呼び出しがあればその body（system がトップレベル）を読む。
+   */
   function sentBody(fetchMock: ReturnType<typeof vi.fn<typeof fetch>>) {
-    const [, init] = fetchMock.mock.calls[0]!;
+    const call = fetchMock.mock.calls.find((c) => String(c[0]).includes('api.anthropic.com')) ?? fetchMock.mock.calls[0]!;
+    const [, init] = call;
     return JSON.parse(String((init as RequestInit).body)) as {
       system?: string;
       model: string;
@@ -493,7 +522,8 @@ describe('assistant — payload の model / provider の扱い', () => {
       fetch: fetchMock,
       payload: { model: 'claude-opus-4-1', messages: [{ role: 'user', content: 'hi' }] },
     });
-    expect(sentModel(fetchMock)).toBe(ASSISTANT_MODEL);
+    expect(sentModel(fetchMock)).toBe('auto');
+    expect(JSON.stringify(fetchMock.mock.calls)).not.toContain('claude-opus-4-1');
   });
 
   it('空文字の model は「指定なし」として既定へ倒す', async () => {
@@ -503,7 +533,7 @@ describe('assistant — payload の model / provider の扱い', () => {
       fetch: fetchMock,
       payload: { model: '', messages: [{ role: 'user', content: 'hi' }] },
     });
-    expect(sentModel(fetchMock)).toBe(ASSISTANT_MODEL);
+    expect(sentModel(fetchMock)).toBe('auto');
   });
 
   it('文字列でない model は既定へ倒す', async () => {
@@ -513,7 +543,7 @@ describe('assistant — payload の model / provider の扱い', () => {
       fetch: fetchMock,
       payload: { model: 42, messages: [{ role: 'user', content: 'hi' }] },
     });
-    expect(sentModel(fetchMock)).toBe(ASSISTANT_MODEL);
+    expect(sentModel(fetchMock)).toBe('auto');
   });
 
   it('空文字の provider は「指定なし」として既定プロバイダへ倒す', async () => {
@@ -525,7 +555,7 @@ describe('assistant — payload の model / provider の扱い', () => {
       fetch: fetchMock,
       payload: { provider: '', messages: [{ role: 'user', content: 'hi' }] },
     });
-    expect(res).toMatchObject({ provider: 'openai' });
+    expect(res).toMatchObject({ provider: 'compat', model: 'auto', text: 'ChatGPT!' });
   });
 
   it('文字列でない provider も既定へ倒す', async () => {
@@ -537,7 +567,7 @@ describe('assistant — payload の model / provider の扱い', () => {
       fetch: fetchMock,
       payload: { provider: 7, messages: [{ role: 'user', content: 'hi' }] },
     });
-    expect(res).toMatchObject({ provider: 'openai' });
+    expect(res).toMatchObject({ provider: 'compat', model: 'auto', text: 'ChatGPT!' });
   });
 });
 
@@ -806,7 +836,8 @@ describe("ACTIONS['chat'] — model は読まない (threat: T-098 / T-170)", ()
     const { p, fetchMock } = call(model);
     await p;
     const body = sent(fetchMock);
-    expect(JSON.parse(body).model).toBe(ASSISTANT_MODEL);
+    expect(JSON.parse(body).model).toBe('auto');
+    if (typeof model === 'string') expect(body).not.toContain(model);
     expect(body.length).toBeLessThan(2_000);
   });
 });

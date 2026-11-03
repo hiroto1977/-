@@ -440,7 +440,7 @@ describe('ブラウザ直接続の可否を守っているか', () => {
     stored = JSON.stringify(creds);
     proxyConfig = null;
     const hub = await loadShim();
-    const r = await invoke(hub, 'assistant', 'chat', CHAT);
+    const r = await invoke(hub, 'assistant', 'chat', { ...CHAT, provider: creds.default });
     expect(r.ok).toBe(false);
     expect(r.code).toBe('not_configured');
     expect(fetchCalls, `直接叩いてしまった: ${JSON.stringify(fetchCalls)}`).toEqual([]);
@@ -451,7 +451,7 @@ describe('ブラウザ直接続の可否を守っているか', () => {
     stored = JSON.stringify({ compatUrl: 'https://arbitrary.example/v1', compatKey: 'k', compatModel: 'm', default: 'compat' });
     proxyConfig = { url: 'https://proxy.example/worker' };
     const hub = await loadShim();
-    await invoke(hub, 'assistant', 'chat', CHAT);
+    await invoke(hub, 'assistant', 'chat', { ...CHAT, provider: 'compat' });
     expect(fetchCalls, `中継を通さず直接叩いた: ${JSON.stringify(fetchCalls)}`).toEqual([]);
     expect(transportCalls.length).toBeGreaterThan(0);
     expect(transportCalls[0]!.url).toContain('arbitrary.example');
@@ -463,7 +463,9 @@ describe('ブラウザ直接続の可否を守っているか', () => {
     const hub = await loadShim();
     await invoke(hub, 'assistant', 'chat', CHAT);
     expect(fetchCalls.length).toBeGreaterThan(0);
-    expect(fetchCalls[0]).toContain('api.anthropic.com');
+    // 提供者を省略したときは先に端末の LiteLLM。読めなければ Claude へ直接退避する（プロキシは通さない）。
+    expect(fetchCalls[0]).toContain('127.0.0.1:4000');
+    expect(fetchCalls.some((u) => u.includes('api.anthropic.com'))).toBe(true);
     expect(transportCalls).toEqual([]);
   });
 });

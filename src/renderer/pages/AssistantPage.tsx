@@ -847,7 +847,7 @@ export function AssistantPage() {
             onChange={(e) => setProvider(e.target.value)}
             style={{ fontSize: 12, borderRadius: 10, padding: '4px 8px', maxWidth: 'min(320px, 100%)', minWidth: 0 }}
           >
-            <option value="">エージェント自動 (既定)</option>
+            <option value="">ローカル (LiteLLM) → 届かなければ Claude</option>
             <option value={ALL_AGENTS}>
               🤝 全AI合議 (設定済み {providers.filter((p) => p.configured).length} 社へ同時質問)
             </option>

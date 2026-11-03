@@ -215,6 +215,7 @@ import {
   resolveProvider,
 } from '../shared/ai/credentials';
 import { runAiChat } from '../shared/ai/chat';
+import { isLlmPurpose, localGatewayIsLoopback, localGatewaySettings, runLocalThenAnthropic, runtimeEnv } from '../shared/ai/localGateway';
 import { evaluateUpdate, parseLatestRelease, type UpdateVerdict } from '../shared/updateCheck';
 
 // ブラウザ版で record-entry をサポートする業務記録サービス (ステートレス:
@@ -962,7 +963,11 @@ async function callAssistantChat(payload: Record<string, unknown>): Promise<Acti
 
   const credsRead = await readAssistantCredsRaw();
   if (!credsRead.ok) return credsRead.res;
-  if (!credsRead.raw) {
+  const env = runtimeEnv();
+  const envKey = (env.SERVICE_HUB_LLM_API_KEY ?? '').trim();
+  const requested = typeof payload['provider'] === 'string' ? (payload['provider'] as string) : undefined;
+  const explicit = requested !== undefined && requested !== '';
+  if (!credsRead.raw && (explicit || envKey.length === 0)) {
     return err(
       'not_configured',
       'AI プロバイダが未設定です。アシスタントの「エージェント設定」または「設定」ページから API キーを保存してください',
@@ -970,7 +975,27 @@ async function callAssistantChat(payload: Record<string, unknown>): Promise<Acti
   }
 
   const creds = parseAiCredentials(credsRead.raw);
-  const requested = typeof payload['provider'] === 'string' ? (payload['provider'] as string) : undefined;
+  // ブラウザから直接叩くのはループバックだけ。遠隔の互換 URL は下のプロキシ経路へ残す。
+  const gateway = localGatewaySettings(env, creds);
+  if (!explicit && localGatewayIsLoopback(gateway.baseUrl)) {
+    const rawPurpose = payload['purpose'];
+    const purpose = isLlmPurpose(rawPurpose) ? rawPurpose : 'assistant';
+    try {
+      const result = await runLocalThenAnthropic({
+        purpose,
+        request: { system: system || undefined, messages: turns, maxTokens: 2048 },
+        anthropicKey: creds.anthropic ?? '',
+        anthropicModel: AI_PROVIDERS.anthropic.defaultModel,
+        browser: true,
+        fetchFn: fetch,
+        env,
+        creds,
+      });
+      return ok(result);
+    } catch (e) {
+      return err('action_failed', e instanceof Error ? e.message : String(e));
+    }
+  }
   let resolved;
   try {
     resolved = resolveProvider(creds, requested && requested.length > 0 ? requested : undefined);
