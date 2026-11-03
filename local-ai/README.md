@@ -178,3 +178,6 @@ python3 orchestrator/demo_pipeline.py "質問" --draft qwen3-1.7b --review balan
 ### 変更点
 
 `curl … | sh` 形式のインストールは廃止しました。`uv` や `ollama` が無い場合は、案内を表示して終了します。すべてのスクリプトの先頭に `set -euo pipefail` を入れています。
+
+## ローカルAI評議会
+複数モデルが常時議論する `council/` を同梱しています。3Dの村: http://127.0.0.1:8091 （詳細は council/README.md）

@@ -18,6 +18,8 @@ export default tseslint.config(
       'coverage/**',
       'tmp-screenshots/**',
       'business-hub.html',
+      // Three.js r160 の minify 済み同梱。1 行の生成物なので規則を当てない。
+      'local-ai/council/web/vendor/three.module.min.js',
     ],
   },
   js.configs.recommended,
@@ -95,6 +97,19 @@ export default tseslint.config(
     },
     rules: {
       'no-undef': 'off',
+    },
+  },
+  {
+    // three.js r160 examples の OrbitControls。ブラウザの大域と upstream の this 別名はそのまま。
+    files: ['local-ai/council/web/vendor/OrbitControls.js'],
+    languageOptions: {
+      globals: {
+        window: 'readonly',
+        console: 'readonly',
+      },
+    },
+    rules: {
+      '@typescript-eslint/no-this-alias': 'off',
     },
   },
   {

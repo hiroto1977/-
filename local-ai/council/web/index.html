@@ -1,0 +1,82 @@
+<!doctype html><html lang="ja"><meta charset="utf-8"><title>ローカルAI評議会の村</title>
+<style>body{margin:0;overflow:hidden;font-family:sans-serif}#hud{white-space:pre-wrap;position:fixed;left:10px;top:10px;background:#fffc;border-radius:10px;padding:8px 12px;max-width:420px;font-size:13px}
+#board{position:fixed;right:10px;top:10px;width:340px;max-height:80vh;overflow:auto;background:#7a5230;color:#fff8e7;border:6px solid #4a3018;border-radius:8px;padding:8px;font-size:12px;white-space:pre-wrap}
+.lab{position:fixed;transform:translate(-50%,-100%);font-size:12px;background:#fff;border-radius:8px;padding:2px 6px;pointer-events:none;white-space:nowrap;border:2px solid #555}
+.bub{position:fixed;transform:translate(-50%,-100%);max-width:260px;font-size:12px;background:#fff;border-radius:12px;padding:6px 8px;border:2px solid #333;pointer-events:none}
+.off{background:#ccc;color:#555}</style>
+<div id="hud">読み込み中…</div><div id="board"><b>📌 掲示板（議長の決定）</b><div id="decs"></div></div><div id="labels"></div>
+<div id="chat" style="position:fixed;left:10px;bottom:10px;width:420px;background:#fffe;border-radius:10px;padding:8px;font-size:13px">
+<div id="log" style="max-height:200px;overflow:auto;white-space:pre-wrap"></div>
+<select id="to"><option value="">評議会全体へ（最優先の議題）</option></select>
+<input id="msg" maxlength="500" style="width:62%" placeholder="キャラをクリックで個別に話せます"><button id="send">送信</button><span id="st"></span></div>
+<script type="importmap">{"imports":{"three":"/vendor/three.module.min.js"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from '/vendor/OrbitControls.js';
+const R=new THREE.WebGLRenderer({antialias:true});R.setSize(innerWidth,innerHeight);R.shadowMap.enabled=true;document.body.appendChild(R.domElement);
+const S=new THREE.Scene(),C=new THREE.PerspectiveCamera(50,innerWidth/innerHeight,.1,500);C.position.set(0,22,30);
+const O=new OrbitControls(C,R.domElement);O.target.set(0,0,0);O.maxPolarAngle=1.45;
+const hemi=new THREE.HemisphereLight(0xffffff,0x88aa66,1);S.add(hemi);const sun=new THREE.DirectionalLight(0xffffff,1.2);sun.position.set(10,20,8);sun.castShadow=true;S.add(sun);
+const box=(w,h,d,c,x,y,z,p=S)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshLambertMaterial({color:c}));m.position.set(x,y,z);m.castShadow=m.receiveShadow=true;p.add(m);return m};
+box(60,1,60,0x7cc95a,0,-.5,0);box(5,.3,5,0xd9b77a,0,.1,0);
+box(3,.3,3,0xa0703c,0,1.1,0);box(.4,1,.4,0x6b4423,0,.5,0); // 中央テーブル
+for(let i=0;i<30;i++){const a=i*2.4,r=18+(i%5)*2,x=Math.cos(a)*r,z=Math.sin(a)*r;box(.6,2,.6,0x7a5230,x,1,z);box(2,2,2,0x3f9a3f,x,3,z)} // 木
+const bd=box(4,2.5,.3,0x7a5230,0,2.5,-6);box(.3,2,.3,0x4a3018,-1.8,.8,-6);box(.3,2,.3,0x4a3018,1.8,.8,-6); // 掲示板
+const COLORS=[0xff8a65,0x64b5f6,0x81c784,0xffd54f,0xba68c8,0x4dd0e1,0xf06292,0xa1887f,0x90a4ae,0xaed581];
+const agents={};const labels=document.getElementById('labels');
+function mkAgent(key,name,i,n,radius,isSvc){
+  const a=i/n*Math.PI*2+(isSvc?.3:0),hx=Math.cos(a)*radius,hz=Math.sin(a)*radius,col=COLORS[(i+(isSvc?4:0))%COLORS.length];
+  const h=new THREE.Group();h.position.set(hx,0,hz);h.lookAt(0,0,0);if(key!=='me')S.add(h);box(3,2.4,3,0xf5e6c8,0,1.2,-1.8,h);const roof=box(3.6,1,3.6,col,0,2.9,-1.8,h);box(.8,1.4,.1,0x6b4423,0,.7,-.25,h);
+  const g=new THREE.Group();const body=box(.9,1,.6,col,0,1,0,g),head=box(.9,.9,.9,0xffe0bd,0,1.95,0,g);box(.15,.15,.05,0x222222,-.2,2,.46,g);box(.15,.15,.05,0x222222,.2,2,.46,g);
+  box(.35,.6,.35,0x444466,-.22,.3,0,g);box(.35,.6,.35,0x444466,.22,.3,0,g);g.position.set(hx*.85,0,hz*.85);S.add(g);
+  const lab=document.createElement('div');lab.className='lab';lab.textContent=name;labels.appendChild(lab);
+  const bub=document.createElement('div');bub.className='bub';bub.style.display='none';labels.appendChild(bub);
+  agents[key]={g,body,head,home:new THREE.Vector3(hx*.85,0,hz*.85),target:new THREE.Vector3(hx*.85,0,hz*.85),lab,bub,col,up:true,speaking:false,t:Math.random()*9};
+}
+const toSel=document.getElementById('to');
+async function sendMsg(){const t=document.getElementById('msg').value.trim();if(!t)return;const to=toSel.value,stEl=document.getElementById('st');
+  stEl.textContent=' 送信中…';document.getElementById('msg').value='';
+  try{const r=await fetch(to?'/api/chat':'/api/topic',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to,text:t})});
+    const j=await r.json();stEl.textContent=to?'':' 評議会に届けました';if(to&&agents['r:'+j.who]){const A=agents['r:'+j.who];A.bub.textContent=j.text.replace(/\s+/g,' ').slice(0,110);A.bub.style.display='block';A.hold=Date.now()+15000}poll()}catch(e){stEl.textContent=' 失敗: '+e}}
+document.getElementById('send').onclick=sendMsg;document.getElementById('msg').onkeydown=e=>{if(e.key==='Enter'&&!e.isComposing)sendMsg()};
+const ray=new THREE.Raycaster(),mp=new THREE.Vector2();
+R.domElement.addEventListener('click',e=>{mp.set(e.clientX/innerWidth*2-1,-e.clientY/innerHeight*2+1);ray.setFromCamera(mp,C);
+  for(const [k,A] of Object.entries(agents)){if(k.startsWith('r:')&&ray.intersectObject(A.g,true).length){toSel.value=k.slice(2);document.getElementById('msg').focus();break}}});
+let built=false,lastSpeaker=null;
+function build(st){
+  st.roles.forEach((r,i)=>mkAgent('r:'+r.role,`${r.role}（${r.model}）`,i,st.roles.length,9,false));
+  st.roles.forEach(r=>{const o=document.createElement('option');o.value=r.role;o.textContent=r.role+'に話す';toSel.appendChild(o)});
+  mkAgent('me',st.user+'（あなた）',0,1,3,false);agents.me.home.set(0,0,2.6);agents.me.target.set(0,0,2.6);agents.me.g.position.set(0,0,2.6);agents.me.body.material.color.set(0xffffff);
+  const sv=Object.keys(st.services);sv.forEach((s,i)=>mkAgent('s:'+s,s,i,sv.length,15,true));built=true;
+}
+async function poll(){
+  try{const st=await (await fetch('/api/state')).json();if(!built)build(st);
+    document.getElementById('hud').textContent=`ローカルAI評議会：${st.status}\n議題: ${(st.topic||'').slice(0,120)}\n空きメモリ ${st.free_mb}MB ・ 更新 ${st.updated}`;
+    const cl=document.getElementById('log');cl.replaceChildren(...st.chat.map(c=>{const d=document.createElement('div');d.textContent=`${c.who}: ${c.text}`;return d}));cl.scrollTop=1e9;
+    const mine=st.chat.filter(c=>c.who===st.user).pop();if(mine&&agents.me){agents.me.bub.textContent=mine.text.slice(0,80);agents.me.bub.style.display='block'}
+    document.getElementById('decs').textContent='\n'+st.decisions.slice().reverse().join('\n\n――――\n\n');
+    const last=st.transcript[st.transcript.length-1];const talking=st.status.startsWith('議論中')&&last;
+    for(const r of st.roles){const A=agents['r:'+r.role];A.speaking=false;if(!(A.hold>Date.now()))A.bub.style.display='none';}
+    if(last){const nextIdx=talking?null:null;const A=agents['r:'+last.role];if(A){A.speaking=!!talking||last.role==='議長';A.bub.textContent=last.text.replace(/\s+/g,' ').slice(0,110)+(last.text.length>110?'…':'');A.bub.style.display='block';}}
+    for(const [s,up] of Object.entries(st.services)){const A=agents['s:'+s];A.up=up;A.lab.classList.toggle('off',!up);A.lab.textContent=s+(up?'':' 💤停止中');
+      A.body.material.color.set(up?A.col:0x999999);}
+  }catch(e){document.getElementById('hud').textContent='状態を取得できません: '+e}
+}
+poll();setInterval(poll,4000);
+function tint(){const h=+new Intl.DateTimeFormat('en',{hour:'numeric',hourCycle:'h23',timeZone:'Asia/Tokyo'}).format(new Date());
+  const day=h>=6&&h<18,dusk=h===17||h===18||h===5;S.background=new THREE.Color(day?0x9fd8ff:dusk?0xf4a261:0x1b2340);sun.intensity=day?1.2:dusk?.7:.25;hemi.intensity=day?1:.45}
+tint();setInterval(tint,60000);
+const clock=new THREE.Clock(),v=new THREE.Vector3();
+function loop(){const dt=Math.min(clock.getDelta(),.1);
+  for(const A of Object.values(agents)){A.t+=dt;
+    if(!A.up){A.g.rotation.z=1.4;A.g.position.y=.3;}else{A.g.rotation.z=0;
+      if(A===agents.me){}else if(A.speaking)A.target.set(A.home.x*.18,0,A.home.z*.18);
+      else if(A.t>4){A.t=0;A.target.copy(A.home).add(new THREE.Vector3(Math.random()*3-1.5,0,Math.random()*3-1.5));}
+      const d=v.subVectors(A.target,A.g.position);d.y=0;const L=d.length();
+      if(L>.1){A.g.position.addScaledVector(d.normalize(),Math.min(L,dt*2.5));A.g.rotation.y=Math.atan2(d.x,d.z);A.g.position.y=Math.abs(Math.sin(clock.elapsedTime*10))*.15}else A.g.position.y=0;}
+    const p=A.g.position.clone();p.y+=2.9;p.project(C);const x=(p.x+1)/2*innerWidth,y=(1-p.y)/2*innerHeight,vis=p.z<1;
+    A.lab.style.left=x+'px';A.lab.style.top=y+'px';A.lab.style.display=vis?'block':'none';A.bub.style.left=x+'px';A.bub.style.top=(y-24)+'px';}
+  O.update();R.render(S,C);requestAnimationFrame(loop)}
+loop();
+addEventListener('resize',()=>{C.aspect=innerWidth/innerHeight;C.updateProjectionMatrix();R.setSize(innerWidth,innerHeight)});
+</script></html>
