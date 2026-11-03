@@ -48,3 +48,34 @@ pkill -f koboldcpp; pkill -f "local-ai"; pkill -x ollama
 - Docker 版では、コンテナからホストへ接続するため各サーバーを `0.0.0.0` で待ち受ける必要がある場合があります。外部公開しないよう注意してください。
 - `WEBUI_AUTH=False` はローカル専用の設定です。
 - 1.5B の小型モデルのため、事実関係の誤りが多いです。重要な情報は必ず確認してください。
+
+## 3Bモデル（Qwen2.5-3B-Instruct Q4_K_M）
+
+`start-llamacpp.sh` は環境変数 `MODEL_SIZE` でモデルを切り替えられます（既定は `1.5b`）。
+
+| MODEL_SIZE | GGUF | 既定ポート | エイリアス |
+|---|---|---|---|
+| `1.5b` | qwen2.5-1.5b-instruct-q4_k_m.gguf (約1.1GB) | 8081 | qwen2.5-1.5b-llamacpp |
+| `3b` | qwen2.5-3b-instruct-q4_k_m.gguf (約2.1GB) | 8085 | qwen2.5-3b-llamacpp |
+
+```bash
+MODEL_SIZE=3b ./start-llamacpp.sh          # 8085で3Bを起動（GGUFが無ければ自動DL）
+MODEL_SIZE=3b PORT=8081 ./start-llamacpp.sh  # 1.5Bの代わりに8081で3Bを使う場合
+```
+
+`PORT` / `ALIAS` / `GGUF` を個別に上書きできます。ログは `/tmp/llama-server-<PORT>.log`。
+
+Open WebUI の既定の接続先は 8081(1.5B) / 8085(3B) / 8084(LocalAI) です。
+llama-cpp-python(8082) と KoboldCpp(8083) はRAM節約のため既定では起動しません（スクリプトは残しています）。
+使う場合は `OPENAI_API_BASE_URLS` と `OPENAI_API_KEYS` に追加してから `./start.sh` を実行してください。
+
+### 比較結果（CPUのみ、temperature 0）
+
+| 質問 | 1.5B | 3B |
+|---|---|---|
+| 日本一長い川 | ✗ 長良川 | ✗ 肥後川（正解は信濃川） |
+| 富士山の高さ | ✓ 3,776m | ✓ 3,776m |
+| 日本の首都 | ✓ 東京 | ✓ 東京 |
+| 生成速度 | 約40〜44 tok/s | 約20〜24 tok/s |
+
+3Bはメモリ使用量が約2倍、速度は約半分です。どちらも小さいモデルなので、事実に関する回答は必ず確認してください。

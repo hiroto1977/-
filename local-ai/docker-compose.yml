@@ -1,4 +1,4 @@
-# Open WebUI (Docker)。Ollama(11434) と OpenAI互換サーバー(8081〜8084) はホスト側で起動しておく
+# Open WebUI (Docker)。Ollama(11434) と OpenAI互換サーバー(8081/8084/8085) はホスト側で起動しておく
 services:
   open-webui:
     image: ghcr.io/open-webui/open-webui:main
@@ -9,8 +9,8 @@ services:
       - ENABLE_OLLAMA_API=True
       - OLLAMA_BASE_URL=http://host.docker.internal:11434
       - ENABLE_OPENAI_API=True
-      - OPENAI_API_BASE_URLS=http://host.docker.internal:8081/v1;http://host.docker.internal:8082/v1;http://host.docker.internal:8083/v1;http://host.docker.internal:8084/v1
-      - OPENAI_API_KEYS=none;none;none;none
+      - OPENAI_API_BASE_URLS=http://host.docker.internal:8081/v1;http://host.docker.internal:8085/v1;http://host.docker.internal:8084/v1
+      - OPENAI_API_KEYS=none;none;none
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
