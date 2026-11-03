@@ -1914,6 +1914,80 @@
         "reason": null,
         "summary": "Mamori 0.16 に instanceof を足した (feature)。関係演算子の段に 1 語で、右辺は名前そのものだけ —— このモジュールの名前で隠れていない組み込み (Error / TypeError / URL ほか) か `use` / `extern pure` で宣言した名前に限る。足す前に右辺が通す道を 9 形破り全部 refused (穴は 0 件): 宣言していない Function ほか (値として読むのと同じ M6)・メンバ / 呼び出し / 条件 / 添字 / 字面 (実行時に計算した値の Symbol.hasInstance を辿らせない)・局所の名前 (計算した値かもしれない。組み込みを隠す名前も同じ)・危ない口 (M2)・左辺の検め・結果は印を運ばない・予約語。独立の読み直し (mamoriInspect.ts) にも同じ規則を足し、攻撃の電池の弾に 6 形を足した。Rust の M0 は追随が要らなかった (instanceof は名前の字句で、正規表現の読み分けは return / typeof / await のまま)。変異検査は 3 ファイルとも 100% (parser 1,472・checker 883・emit 578 変異体)。初回の生存 5 件の正体は、(1) パーサーの語の演算子の分岐が記号の分岐と同じ答えを返す冗長な形だった (字句の綴りが表の綴りと一致するかだけで決まる 1 行へ畳んだ —— 等価変異は形ごと消す) と (2) 診断の規則ラベルと文面を検査が見ていなかったこと (`const K = Error` の右辺が、持ち出しの断りで別の理由で通っていた)。もう 1 つ踏んだ: 最初の変異検査は vitest の設定に絶対パスの root を書いたため、サンドボックスでなく元のファイルを試し、変異体 580 個が全部生存と出た (0%) —— 設定を直して測り直した。対照 8 つ (局所 / 名前でない右辺 / 宣言していない右辺 / 危ない口 / 予約語 / 強さ 4 と 7 / 左辺の検め) は狙った検査が鳴った (強さ 7 は最初鳴らなかった —— 要らない括弧が付くだけで意味は同じ。`x + 1 instanceof Error` の golden を足して鳴るようにした)。ついでに測った既存の穴: 宣言の名前に JavaScript の予約語 (`const class = 1;`) を書くと Mamori は通し、生成された TypeScript を tsc が断る (閉じた側に落ちる · docs/REMAINING_WORK.md に残した)。"
       }
+    },
+    {
+      "id": "MG-029",
+      "date": "2026-11-03",
+      "kind": "port",
+      "target": "src/renderer/network/liveRead.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/renderer/network/liveRead.ts",
+      "version": "0.16",
+      "features": [],
+      "added": [],
+      "rewrite": [],
+      "ported": [
+        "src/renderer/network/liveRead.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "表を素の添字で引く `T[k]`",
+          "result": "refused"
+        },
+        {
+          "tried": "右辺が Function: `e instanceof Function`",
+          "result": "refused"
+        },
+        {
+          "tried": "catch の中で `e.constructor`",
+          "result": "refused"
+        },
+        {
+          "tried": "宣言なしの `fetch(u)` でプロキシを迂回",
+          "result": "refused"
+        },
+        {
+          "tried": "宣言なしの `window.localStorage`",
+          "result": "refused"
+        },
+        {
+          "tried": "`as` でトークン型を書き換える",
+          "result": "refused"
+        },
+        {
+          "tried": "template で `Bearer ${t}` を組む",
+          "result": "refused"
+        },
+        {
+          "tried": "動的 `import(\"node:fs\")`",
+          "result": "refused"
+        },
+        {
+          "tried": "`Object.assign(T, {b: 2})` で表を書き換える",
+          "result": "refused"
+        },
+        {
+          "tried": "計算した鍵 `{ [k]: 1 }`",
+          "result": "refused"
+        },
+        {
+          "tried": "`x instanceof C.e` (右辺を局所の表から引く)",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 7,
+      "mutation": {
+        "files": [
+          "src/renderer/network/liveRead.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 855,
+        "reason": null,
+        "summary": "ブラウザ版の読み取り経路 liveRead.ts を Mamori 0.16 へ移した (port)。表の素の添字 LIVE_READERS[serviceId] を shared の lookup (自分の属性で引く) へ替え、catch の e instanceof Error は 0.16 の instanceof で書いた (この移植が instanceof を要した壁)。元の実装との差分比較 594 組が一致。言語を破る 11 形は全部 refused。移植で見つけた既存の死に検査: browserSnapshotGates の liveReaderIds は正規表現が複数行の生成前の書式に依っており、1 行に畳まれた生成物では黙って [] を返していた (生きている検査が1つも無い状態になる) —— 正規表現を書き直し『cursor を拾う』『1行・複数行・空の標本』の生存の検査を足した。変異検査 100% (39 変異体)・対照 7 つが狙った検査で鳴った。"
+      }
     }
   ]
 }

@@ -702,6 +702,7 @@ const PROTECTED = [
   'src/shared/privateTarget.mamori',        // プライベート帯 / 予約帯の送り先判定 (SSRF の最後の線) の Mamori の元 (2026-11-02 · MG-027)
   'src/shared/scanTarget.mamori',           // VirusTotal / HIBP へ送る物の関門と警告の Mamori の元 (2026-11-02 · MG-026)
   'src/shared/scanTargetHost.ts',           // その薄い壁 (URLSearchParams)
+  'src/shared/lookup.ts',                   // 自分の属性で引く口 (liveRead.mamori が表を引くのに読む · prototype の鍵を経由しない)
   'src/renderer/network/liveRead.mamori',   // ブラウザ版の読み取り経路 (資格情報をプロキシへ渡す) の Mamori の元 (2026-11-03 · MG-029)
   'src/renderer/oauth/pkceHost.ts',         // その薄い壁 (btoa・乱数・SHA-256・時刻・fetch・URLSearchParams・締切の口)
   'src/renderer/oauth/pkceSessionHost.ts',  // sessionStorage の口 (薄い壁)

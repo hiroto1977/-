@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 446
+- ブロック数: 448
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `041f37b6408eb52059cbc6ca17dbd6c19fd854bcda8cdee934d064410ea5458c`
-- 保護対象: 183 ファイル
+- 末尾(tip)ハッシュ: `44fcf8db7e9b1d1d8353131a123742e4f932f1136556f29dd7ee45c1b8002975`
+- 保護対象: 185 ファイル
 
 ## ブロック
 
@@ -459,6 +459,8 @@
 | 443 | `283731e620687dc0` | `ecb1caab0cc470fb` | `146246dd6d122fcb` | update integrity-chain.cjs,mamori-capabilities.json,scanTarget.mamori,scanTarget.ts,scanTargetHost.ts |
 | 444 | `86ec476d5f9b2b31` | `146246dd6d122fcb` | `b32cacb771ca327f` | update integrity-chain.cjs,mamori-capabilities.json,imageUrlGate.mamori,privateTarget.mamori,privateTarget.ts,scanTarget.mamori |
 | 445 | `72eb242868caf534` | `b32cacb771ca327f` | `041f37b6408eb520` | update checker.ts,emit.ts,parser.ts |
+| 446 | `0c541e8043e59d93` | `041f37b6408eb520` | `08d348677f0c318f` | update integrity-chain.cjs,mamori-capabilities.json,liveRead.mamori,liveRead.ts |
+| 447 | `09d291b9e1f2b1c1` | `08d348677f0c318f` | `44fcf8db7e9b1d1d` | update integrity-chain.cjs,lookup.ts |
 
 ## 保護対象ファイル
 
@@ -555,6 +557,7 @@
 - `src/renderer/data/recordCipher.ts`
 - `src/renderer/fs/fsa.ts`
 - `src/renderer/keyIntent.ts`
+- `src/renderer/network/liveRead.mamori`
 - `src/renderer/network/liveRead.ts`
 - `src/renderer/network/proxy.ts`
 - `src/renderer/oauth/pkce.mamori`
@@ -607,6 +610,7 @@
 - `src/shared/inputCeiling.ts`
 - `src/shared/isoDate.ts`
 - `src/shared/localDate.ts`
+- `src/shared/lookup.ts`
 - `src/shared/mamori/ast.ts`
 - `src/shared/mamori/capabilities.ts`
 - `src/shared/mamori/checker.ts`
