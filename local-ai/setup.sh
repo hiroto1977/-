@@ -3,7 +3,7 @@
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
 MODEL="${MODEL:-qwen2.5:1.5b}"
-command -v ollama >/dev/null || curl -fsSL https://ollama.com/install.sh | sh
+command -v ollama >/dev/null || { echo "ollama が必要です（https://ollama.com/download を参照してインストール）" >&2; exit 1; }
 if ! pgrep -x ollama >/dev/null; then nohup ollama serve >/tmp/ollama.log 2>&1 & sleep 3; fi
 ollama pull "$MODEL"
 "$HERE/start-llamacpp.sh"

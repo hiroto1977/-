@@ -113,3 +113,68 @@ ENABLE_3B=0 ENABLE_7B=0 ./start-all.sh   # 起動するモデルを選ぶ（既�
 再起動後に最初のシェルが起動した時点で、`start-all.sh --watch` がバックグラウンドで立ち上がります。既に動いている場合は何もしません（flock で判定）。
 シェルが1つも起動しないと自動起動はされません。その場合は `./start-all.sh --watch` を手動で実行してください。
 systemd がある環境では、`ExecStart=/path/to/start-all.sh --watch` と `Restart=on-failure` を指定したユニットを使うのが確実です。
+
+## ローカルオーケストレーション（LiteLLM + llama-swap）
+
+`orchestrator/` に入っています。`start-all.sh` から自動で起動・監視されます（`ENABLE_LITELLM=0` / `ENABLE_EXTRAS=0` で無効化）。
+
+| エンドポイント | 役割 |
+|---|---|
+| `http://127.0.0.1:4000/v1` | LiteLLM プロキシ（OpenAI互換）。キーは初回に生成して `~/litellm/master_key` (0600) に保存。リポジトリには含めない |
+| `http://127.0.0.1:8090/v1` | llama-swap。追加モデルをリクエスト時に起動し、同時に常駐させるのは1つだけ。5分アイドルでアンロード |
+
+### モデルグループ（`orchestrator/litellm-config.yaml`）
+
+| 名前 | 中身 |
+|---|---|
+| `fast` | Qwen2.5-1.5B を llama.cpp(8081) / Ollama(11434) / LocalAI(8084) でランダム負荷分散 |
+| `balanced` | Qwen2.5-3B（8085） |
+| `smart` | Qwen2.5-7B（8086） |
+| `auto` | `router_hook.py` がプロンプトで振り分け。400文字以上、またはコード・推論系のキーワード（コード, 実装, なぜ, 比較, 分析, python, ``` など）を含めば `smart`、それ以外は `fast` |
+
+- フォールバック: `smart → balanced → fast`、`balanced → fast`、`auto → fast`
+- リトライ: 2回。1回失敗したデプロイは30秒クールダウン
+- タイムアウト: 60〜180秒（追加モデルは初回ロードがあるので600秒）
+- バックグラウンドのヘルスチェック: 300秒ごと
+
+```bash
+K=$(cat ~/litellm/master_key)
+curl -s 127.0.0.1:4000/v1/chat/completions -H "Authorization: Bearer $K" -H 'content-type: application/json' \
+  -d '{"model":"auto","messages":[{"role":"user","content":"日本の首都は？"}]}' -D - | grep x-litellm-model-api-base
+```
+
+レスポンスヘッダ `x-litellm-model-api-base` で、実際に応答したバックエンドを確認できます。
+
+### 中国系の追加モデル（llama-swap 経由、`orchestrator/extra-models.txt`）
+
+| LiteLLM 名 | モデル | 日本語テスト（日本の首都） | 速度 |
+|---|---|---|---|
+| `deepseek-r1-1.5b` | DeepSeek-R1-Distill-Qwen-1.5B | △「东京や大阪」（思考は長く、日本語は弱い） | 約43 tok/s |
+| `qwen3-1.7b` | Qwen3-1.7B | ✓ 東京（思考モードあり） | 約35 tok/s |
+| `qwen3-4b` | Qwen3-4B | ✓ 東京（思考モードあり） | 約17 tok/s |
+| `minicpm3-4b` | MiniCPM3-4B | ✓ 東京（4096トークンではメモリ不足で落ちるため `-c 2048`） | 約17 tok/s |
+| `internlm2.5-1.8b` | InternLM2.5-1.8B-chat | ✓ 東京（冗長） | 約37 tok/s |
+| `yi-1.5-6b` | Yi-1.5-6B-Chat | ✓ 東京 | 約13 tok/s |
+| `glm-edge-1.5b` | GLM-Edge-1.5B-chat | ✓ 東京 | 約45 tok/s |
+
+- 除外したもの:
+  - DeepSeek-R1-Distill-Qwen-7B と GLM-4-9B: 7B を常駐させた状態では RAM が足りないため
+  - MiniCPM4-8B: 同じくサイズの都合
+- `EXTRA_MODELS="qwen3-1.7b glm-edge-1.5b"` で、使うモデルを絞れます。
+- ⚠ 7B と全バックエンドが常駐していると空きは約1〜5GBです（Ollama と LocalAI は5分アイドルで解放）。3B以上の追加モデル（Yi / MiniCPM / Qwen3-4B）は、空きが少ないと OOM で起動に失敗します。その場合は数分待つか、`ENABLE_7B=0` で起動してください。
+- 7B は空き RAM が `MIN_FREE_MB_7B`（既定 6000MB）未満だと起動しません。その場合 `smart` は 3B / 1.5B にフォールバックします。
+
+### 多段デモ（下書き → 添削）
+
+```bash
+python3 orchestrator/demo_pipeline.py "日本で一番長い川と長さは？"   # fast で下書き → smart で改善
+python3 orchestrator/demo_pipeline.py "質問" --draft qwen3-1.7b --review balanced
+```
+
+### Open WebUI
+
+`start-all.sh` は LiteLLM（4000）も Open WebUI の接続先に加えます。`auto / fast / balanced / smart` と追加モデルがモデル一覧に表示されます。
+
+### 変更点
+
+`curl … | sh` 形式のインストールは廃止しました。`uv` や `ollama` が無い場合は、案内を表示して終了します。すべてのスクリプトの先頭に `set -euo pipefail` を入れています。

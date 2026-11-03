@@ -3,7 +3,7 @@
 set -euo pipefail
 DIR="${WEBUI_DIR:-$HOME/open-webui}"
 mkdir -p "$DIR" && cd "$DIR"
-command -v uv >/dev/null || curl -LsSf https://astral.sh/uv/install.sh | sh
+command -v uv >/dev/null || { echo "uv が必要です（https://docs.astral.sh/uv/ を参照してインストール）" >&2; exit 1; }
 [ -d .venv ] || { uv venv -p 3.11 .venv && uv pip install -p .venv open-webui; }
 if ! pgrep -x ollama >/dev/null; then nohup ollama serve >/tmp/ollama.log 2>&1 & sleep 3; fi
 pkill -f "open-webui serve" 2>/dev/null && sleep 2 || true
