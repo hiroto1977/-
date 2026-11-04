@@ -4527,6 +4527,31 @@
         "test": "★ 計算した文字列の鍵・欄への代入・禁じた名前は断る (threat: T-251)"
       },
       "alsoRegressions": []
+    },
+    {
+      "id": "T-252",
+      "found": "2026-11-03",
+      "foundBy": "MG-018 で分割代入を足す前に、台帳の risk（`const { constructor } = x` が T-224 の表を迂回する）を 0.12 の次の形として書いた。鍵を検めずに出すと、引用と `\\u0063onstructor` の綴り違いでも Function の入口を欄として読める。右辺の印を束ねた名前へ写すと、関門の戻り値を分割するだけで印の口へ渡せる。計算した鍵の結果を右辺にすると、欄の読みがメンバの読みと同じになり T-250 の inert を外せる。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "守りの層を書く言語 Mamori に分割代入を足すと、鍵 `constructor` / `prototype` / `__proto__` が T-224 の表を迂回し、束ねた名前が印を運ぶと関門を通らずに印の口へ渡せる",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/parser.ts: 分割代入の鍵（名前と、引用を解いた文字列）を FORBIDDEN_MEMBERS に通す。入れ子・残り・既定値・計算した鍵・空は M0。src/shared/mamori/checker.ts: 束ねた名前の vetted は null（印を運ばない）。計算した鍵の添字の結果を右辺にすると M6。同じ塊でもう一度束ねても、先の束縛（inert を含む）は上書きしない。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV13.test.ts",
+        "test": "★ 分割の鍵が constructor / prototype / __proto__ なら、引用でも綴り違いでも断る (threat: T-252)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV13.test.ts",
+          "test": "★ 印は分割した名前へ運ばれない (threat: T-252)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV13.test.ts",
+          "test": "★ 計算した鍵の結果は分割代入の相手にできない (threat: T-252)"
+        }
+      ]
     }
   ],
   "huntBacklog": [

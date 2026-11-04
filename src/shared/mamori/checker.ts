@@ -378,6 +378,19 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         own.set(s.name, { vetted: declared ?? carried, authority: 'local', mutable: s.mutable, numeric: s.type?.text === 'number' || (s.type === null && s.init !== null && isNumericKey(s.init, scopes)), inert: s.init !== null && carriesInert(s.init, scopes) });
         return;
       }
+      case 'destructure': {
+        checkExpr(s.init, scopes, ctx);
+        if (carriesInert(s.init, scopes)) {
+          report('M6', s.init.pos, '計算した鍵の添字の結果は分割代入の相手にできません —— 欄を読むのは、メンバや次の添字を読むのと同じです');
+        }
+        // 束ねた名前は印を運ばない (0.13 · T-252)。右辺が印でも、欄を取り出した値は関門を通っていない。
+        const names = s.pattern.kind === 'object' ? s.pattern.fields : s.pattern.names;
+        for (const n of names) {
+          if (own.has(n.name)) report('M6', n.pos, `名前 ${n.name} をこの塊で 2 度束ねています`);
+          else own.set(n.name, { vetted: null, authority: 'local', mutable: s.mutable, numeric: false, inert: false });
+        }
+        return;
+      }
       case 'assign': {
         checkExpr(s.value, scopes, ctx);
         const target = lookup(scopes, s.target);

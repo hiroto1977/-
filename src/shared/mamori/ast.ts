@@ -65,6 +65,28 @@ export interface Prop {
   readonly pos: Pos;
 }
 
+/** 分割代入の 1 つの欄 (0.13)。鍵は名前か文字列。束ねる名前は `name`。 */
+export interface DestructField {
+  readonly key: string;
+  readonly quoted: boolean;
+  readonly name: string;
+  readonly pos: Pos;
+}
+
+/** 配列の分割代入で束ねる 1 つの名前 (0.13)。 */
+export interface DestructName {
+  readonly name: string;
+  readonly pos: Pos;
+}
+
+/**
+ * 分割代入の左辺 (0.13)。入れ子・残り (`...`)・既定値・計算した鍵は無い。
+ * オブジェクトの鍵は `FORBIDDEN_MEMBERS` を通す (T-252)。
+ */
+export type BindingPattern =
+  | { readonly kind: 'object'; readonly fields: readonly DestructField[]; readonly pos: Pos }
+  | { readonly kind: 'array'; readonly names: readonly DestructName[]; readonly pos: Pos };
+
 export interface Param {
   readonly name: string;
   readonly type: TypeRef | null;
@@ -77,6 +99,12 @@ export type Comments = readonly string[];
 
 export type Stmt =
   | { readonly kind: 'let'; readonly mutable: boolean; readonly name: string; readonly type: TypeRef | null; readonly init: Expr | null; readonly comments: Comments; readonly pos: Pos }
+  /**
+   * 分割代入 `const { a, b } = x` / `const [a, b] = xs` (0.13 · T-252)。
+   * 束ねた名前は印を運ばない。計算した鍵の添字の結果は右辺にできない (欄を読むのはメンバを読むのと同じ)。
+   * 最上位の `const` と、代入の形 (`({ a } = x)`) は無い。
+   */
+  | { readonly kind: 'destructure'; readonly mutable: boolean; readonly pattern: BindingPattern; readonly init: Expr; readonly comments: Comments; readonly pos: Pos }
   | { readonly kind: 'return'; readonly value: Expr | null; readonly comments: Comments; readonly pos: Pos }
   | { readonly kind: 'if'; readonly test: Expr; readonly then: readonly Stmt[]; readonly otherwise: readonly Stmt[] | null; readonly comments: Comments; readonly pos: Pos }
   | { readonly kind: 'try'; readonly body: readonly Stmt[]; readonly handler: readonly Stmt[]; readonly comments: Comments; readonly pos: Pos }

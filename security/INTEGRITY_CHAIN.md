@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 436
+- ブロック数: 437
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `2e8b238c01bfe9f796473311638c10926b523e2c865917de5789e51fd3f535c6`
+- 末尾(tip)ハッシュ: `45cf4d880bce5a9573791db15929e89eabdb649330f81a22e0e1458a86f4b9cc`
 - 保護対象: 166 ファイル
 
 ## ブロック
@@ -449,6 +449,7 @@
 | 433 | `73c3ad69e98ab1da` | `a425f37091a27700` | `495da68627b110df` | update checker.ts |
 | 434 | `a399f97d016997d0` | `495da68627b110df` | `cc4c77bdc1659d61` | update checker.ts |
 | 435 | `dd4e3784b1285f33` | `cc4c77bdc1659d61` | `2e8b238c01bfe9f7` | update eslint.config.js |
+| 436 | `31979c4a04fbc239` | `2e8b238c01bfe9f7` | `45cf4d880bce5a95` | update ast.ts,checker.ts,emit.ts,parser.ts |
 
 ## 保護対象ファイル
 

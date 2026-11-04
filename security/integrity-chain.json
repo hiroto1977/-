@@ -3657,6 +3657,14 @@
       "leafCount": 166,
       "note": "update eslint.config.js",
       "hash": "2e8b238c01bfe9f796473311638c10926b523e2c865917de5789e51fd3f535c6"
+    },
+    {
+      "index": 436,
+      "prevHash": "2e8b238c01bfe9f796473311638c10926b523e2c865917de5789e51fd3f535c6",
+      "merkleRoot": "31979c4a04fbc239801c210d70886c43dba671b0f4f371c7b6868e72d9b4d29e",
+      "leafCount": 166,
+      "note": "update ast.ts,checker.ts,emit.ts,parser.ts",
+      "hash": "45cf4d880bce5a9573791db15929e89eabdb649330f81a22e0e1458a86f4b9cc"
     }
   ],
   "tipManifest": {
@@ -3797,12 +3805,12 @@
     "src/shared/inputCeiling.ts": "bdfc78b888dfbb8efc8d3176eec25587b32d93a7d1c9562c03f0036ece77623c",
     "src/shared/isoDate.ts": "cfe317b22c6b482c42bca40a9d19a5cbd3204b5cbace6e7336befe77690f01cd",
     "src/shared/localDate.ts": "9220ae751caf1637071d5804fb67d4629125bed1c4a9a7913fdd2968c5294da1",
-    "src/shared/mamori/ast.ts": "619c86916e940f5eb8511c9aa647bbc70337a9bb6eaa716dbd77140ea498f45f",
+    "src/shared/mamori/ast.ts": "1de209fe26352dbcf6c743eba43959311f94bebc64700be4c8265cba37850711",
     "src/shared/mamori/capabilities.ts": "a62f4a2bee3099bb4ced100b86aad254126f18ba52de5fe5dc4e224fea904462",
-    "src/shared/mamori/checker.ts": "33464e908cbc2629779eb6e01c4a713652cd39e1e62750b94e955229acf2167d",
+    "src/shared/mamori/checker.ts": "c223fdd13f14a4803d2841c7dac81d409832642c4c6bb1c00e795a5d40ea3000",
     "src/shared/mamori/compile.ts": "a21bed94095d71f5f3384d4813ed55de86eea7434117617bfba6dc135def875a",
-    "src/shared/mamori/emit.ts": "d38a4bf473d28471bb108dcddd5aa5f21c89006bb0582437ae565ffdcc9fca68",
-    "src/shared/mamori/parser.ts": "82cb2574869494925b97078443e11d3ad1708fba2a4b4a3a6c2597c761fb95dd",
+    "src/shared/mamori/emit.ts": "4d4a9c069deeb2591d16aadd37a8c4ddafc4cabb3550273b99e5168464bb04c9",
+    "src/shared/mamori/parser.ts": "b443fbd235a8c93470255f82797b827a88578afdbe6ed399fe1cc20cbc4eb8fc",
     "src/shared/ollama.ts": "672ff00261aa63ae7e0b7567dbfaa54ad88da67a5fa55788c79b16c1bd6193c8",
     "src/shared/outboundContentGate.ts": "56f7383c0e56285d5cc6e7793b6574bf4327d6edb9352fb3a9cd3e16ddc33326",
     "src/shared/privateTarget.ts": "8610e3372367a7960faddf306c9e4210e882a1719bbf4426840191c314ed8035",
