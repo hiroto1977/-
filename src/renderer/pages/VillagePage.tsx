@@ -736,17 +736,17 @@ function Character({ v, x, y, flip, active, enlarged, showLabel, ring, bubble }:
         style={{
           // 顔のブロック: 四角い枠に絵文字を入れる (マイクラの頭ブロック風)
           boxSizing: 'content-box',
-          width: size,
-          height: size,
+          width: Math.round(size * 0.8),
+          height: Math.round(size * 0.8),
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: Math.round(size * 0.78),
+          fontSize: Math.round(size * 0.62),
           lineHeight: 1,
           background: '#f4ead2',
-          border: `3px solid ${ring ?? '#4a3a24'}`,
+          border: `2px solid ${ring ?? '#4a3a24'}`,
           borderRadius: 2,
-          boxShadow: active ? '0 0 0 3px #ffe066, 0 3px 0 rgba(0,0,0,0.3)' : '0 3px 0 rgba(0,0,0,0.3)',
+          boxShadow: active ? '0 0 0 3px #ffe066, 0 2px 0 rgba(0,0,0,0.3)' : '0 2px 0 rgba(0,0,0,0.3)',
         }}
       >
         <span style={{ display: 'block', transform: flip ? 'scaleX(-1)' : undefined }}>{v.emoji}</span>
