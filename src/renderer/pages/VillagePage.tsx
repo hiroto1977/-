@@ -37,6 +37,7 @@ import {
   WORK_PLAZA,
   type Rect,
 } from '../data/villageLayout';
+import { projectPoint, groundTransform, GROUND_SHIFT_PCT } from '../data/villageProject';
 import { buildOrgIndex, routeTopicScored, type RawOrg, type RawTeam, type OrgIndex } from '../data/chatOrg';
 import { replyTo, type ChatContext } from '../data/chatbot';
 import { detectCrisis, detectHarmToOthers } from '../data/counseling';
@@ -127,6 +128,18 @@ export function VillagePage() {
   );
 
   const [tick, setTick] = useState(0);
+  // 地面の遠近 (CSS の perspective は px) を景色の高さに比例させるため、高さだけ測る。
+  const sceneRef = useRef<HTMLDivElement | null>(null);
+  const [sceneH, setSceneH] = useState(460);
+  useEffect(() => {
+    const el = sceneRef.current;
+    if (el === null || typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver(() => {
+      if (el.clientHeight > 0) setSceneH(el.clientHeight);
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
   const [step, setStep] = useState(0);
   const [phase, setPhase] = useState(0);
   const [bubbles, setBubbles] = useState<Record<string, Bubble>>({});
@@ -448,10 +461,33 @@ export function VillagePage() {
         }}
       />
 
-      <div style={sceneStyle}>
-        <Scenery />
+      <div ref={sceneRef} style={sceneStyle}>
+        <Sky />
+        {/* 傾けた地面: 小道・池・街区の台座・作業広場は地面の上に平らに描く */}
+        <Ground heightPx={sceneH}>
+          <Terrain />
+          {focusedExec && focusedRegion ? (
+            <Pad rect={FOCUS_RECT} tint={EXEC_TINT[focusedExec] ?? '#cbd5e1'} />
+          ) : null}
+          {!focusedExec &&
+            regions.map((rg) => {
+              const rect = rects.get(rg.id);
+              if (!rect) return null;
+              const tint = rg.execId ? EXEC_TINT[rg.execId] ?? '#cbd5e1' : rg.kind === 'ceo' ? '#ffd27f' : '#c7d2fe';
+              return <Pad key={`pad-${rg.id}`} rect={rect} tint={tint} />;
+            })}
+          {!focusedExec ? (
+            <div style={plazaStyle}>
+              <div style={{ textAlign: 'center', marginTop: -16, fontSize: 11, color: '#1f2b17', fontWeight: 800 }}>
+                作業広場
+              </div>
+            </div>
+          ) : null}
+        </Ground>
+        {/* 立ち絵 (木・花・家): 地面の座標を投影した点に、傾けずに立てる */}
+        <Decor />
 
-        {/* 建物カード（全体表示のみ）。クリックで拡大。 */}
+        {/* 街区の看板（全体表示のみ・立ち絵）。クリックで拡大。 */}
         {!focusedExec &&
           regions.map((rg) => {
             const rect = rects.get(rg.id);
@@ -460,9 +496,16 @@ export function VillagePage() {
             const tint = rg.execId ? EXEC_TINT[rg.execId] ?? '#cbd5e1' : rg.kind === 'ceo' ? '#ffd27f' : '#c7d2fe';
             const count = rg.execId ? teamCountByExec.get(rg.execId) ?? 0 : 0;
             return (
-              <BuildingCard
+              <SignBoard
                 key={`bld-${rg.id}`}
-                rect={rect}
+                // 街区は奥の縁の中央。CEO と COO の台座は近くて看板が重なるので、左右の脇へ分ける。
+                at={
+                  rg.kind === 'ceo'
+                    ? { x: rect.x - 12, y: rect.y + rect.h }
+                    : rg.kind === 'coo'
+                      ? { x: rect.x + rect.w + 12, y: rect.y + rect.h }
+                      : { x: rect.x + rect.w / 2, y: rect.y }
+                }
                 tint={tint}
                 emoji={rg.kind === 'ceo' ? '🏛️' : rg.kind === 'coo' ? '🧭' : '🏢'}
                 label={rg.label}
@@ -477,15 +520,6 @@ export function VillagePage() {
           <div style={focusHeaderStyle}>
             🏢 {focusedRegion.label} の街区 — {teamCountByExec.get(focusedExec) ?? 0} チーム
             <span style={{ fontSize: 11, opacity: 0.7, marginLeft: 8 }}>（建物クリックで戻れます）</span>
-          </div>
-        ) : null}
-
-        {/* 作業広場（全体表示のみ） */}
-        {!focusedExec ? (
-          <div style={plazaStyle}>
-            <div style={{ textAlign: 'center', marginTop: -16, fontSize: 11, color: '#1f2b17', fontWeight: 800 }}>
-              作業広場
-            </div>
           </div>
         ) : null}
 
@@ -589,33 +623,85 @@ function Sprite({ rows, px }: { rows: readonly string[]; px: number }) {
   );
 }
 
-const DECOR: { rows: readonly string[]; px: number; x: number; y: number }[] = [
-  { rows: TREE, px: 4, x: 4, y: 40 }, { rows: TREE, px: 4, x: 96, y: 38 }, { rows: TREE, px: 5, x: 7, y: 96 },
-  { rows: TREE, px: 5, x: 94, y: 97 }, { rows: FLOWER, px: 3, x: 24, y: 46 }, { rows: FLOWER, px: 3, x: 74, y: 46 },
-  { rows: FLOWER, px: 3, x: 50, y: 34 }, { rows: MUSHROOM, px: 3, x: 16, y: 68 }, { rows: BUSH, px: 4, x: 86, y: 70 },
-  { rows: BUSH, px: 4, x: 30, y: 92 },
+const HOUSE = [
+  '.....RR.....',
+  '...RRRRRR...',
+  '.RRRRRRRRRR.',
+  'RRRRRRRRRRRR',
+  '.CCCCCCCCCC.',
+  '.CWWCCCCWWC.',
+  '.CWWCCCCWWC.',
+  '.CCCCTTCCCC.',
+  '.CCCCTTCCCC.',
+  '.CCCCTTCCCC.',
 ];
 
-function Scenery() {
+/** 立ち絵 (地面の座標 x,y は景色の百分率。景色の外にも置ける)。 */
+const DECOR: { rows: readonly string[]; px: number; x: number; y: number }[] = [
+  // 手前の飾り
+  { rows: TREE, px: 5, x: 7, y: 99 }, { rows: TREE, px: 5, x: 94, y: 100 }, { rows: FLOWER, px: 3, x: 24, y: 46 },
+  { rows: FLOWER, px: 3, x: 74, y: 46 }, { rows: FLOWER, px: 3, x: 50, y: 34 }, { rows: MUSHROOM, px: 3, x: 16, y: 68 },
+  { rows: BUSH, px: 4, x: 86, y: 70 }, { rows: BUSH, px: 4, x: 30, y: 92 },
+  // 奥の森 (地面は景色より広い: 左右と奥へ木を並べて、村を囲む)
+  { rows: TREE, px: 4, x: -6, y: 30 }, { rows: TREE, px: 4, x: 12, y: 22 }, { rows: TREE, px: 4, x: 26, y: 16 },
+  { rows: TREE, px: 4, x: 74, y: 16 }, { rows: TREE, px: 4, x: 88, y: 22 }, { rows: TREE, px: 4, x: 106, y: 30 },
+  { rows: TREE, px: 4, x: -10, y: 60 }, { rows: TREE, px: 4, x: 110, y: 60 }, { rows: TREE, px: 4, x: -8, y: 88 },
+  { rows: TREE, px: 4, x: 108, y: 88 }, { rows: TREE, px: 4, x: 2, y: 36 }, { rows: TREE, px: 4, x: 98, y: 36 },
+  // 家
+  { rows: HOUSE, px: 4, x: -2, y: 50 }, { rows: HOUSE, px: 4, x: 102, y: 50 }, { rows: HOUSE, px: 4, x: 14, y: 12 },
+  { rows: HOUSE, px: 4, x: 86, y: 12 },
+];
+
+/** 立ち絵を地面の上の点 (x,y) に立てる: 投影した位置に置き、手前ほど大きく・手前ほど前へ重ねる。 */
+function stand(x: number, y: number, extraZ = 0): React.CSSProperties {
+  const p = projectPoint(x, y);
+  return {
+    position: 'absolute',
+    left: `${p.x}%`,
+    top: `${p.y}%`,
+    transform: `translate(-50%,-100%) scale(${p.scale})`,
+    transformOrigin: '50% 100%',
+    zIndex: Math.round(p.y * 10) + extraZ,
+  };
+}
+
+function Sky() {
+  return (
+    <div style={skyStyle} aria-hidden>
+      {/* 四角い太陽と雲 */}
+      <div style={{ position: 'absolute', right: '6%', top: '8%', width: 28, height: 28, background: '#fff2a8', boxShadow: '0 0 0 4px #ffe066' }} />
+      <div style={{ position: 'absolute', left: '14%', top: '10%', width: 64, height: 16, background: '#fff', boxShadow: '16px -12px 0 #fff, 32px 0 0 #fff', opacity: 0.9 }} />
+      <div style={{ position: 'absolute', left: '58%', top: '4%', width: 48, height: 12, background: '#fff', boxShadow: '12px -10px 0 #fff, 24px 0 0 #fff', opacity: 0.8 }} />
+    </div>
+  );
+}
+
+/** 傾けた地面 (景色より広い)。中身の `field` が景色と同じ範囲で、百分率はその中で数える。 */
+function Ground({ heightPx, children }: { heightPx: number; children: React.ReactNode }) {
+  return (
+    <div style={{ ...groundStyle, transform: groundTransform(heightPx) }} aria-hidden>
+      <div style={fieldStyle}>{children}</div>
+    </div>
+  );
+}
+
+function Terrain() {
   return (
     <>
-      <div style={skyStyle} aria-hidden>
-        {/* 四角い太陽と雲 */}
-        <div style={{ position: 'absolute', right: '6%', top: '18%', width: 28, height: 28, background: '#fff2a8', boxShadow: '0 0 0 4px #ffe066' }} />
-        <div style={{ position: 'absolute', left: '14%', top: '20%', width: 64, height: 16, background: '#fff', boxShadow: '16px -12px 0 #fff, 32px 0 0 #fff', opacity: 0.9 }} />
-        <div style={{ position: 'absolute', left: '58%', top: '10%', width: 48, height: 12, background: '#fff', boxShadow: '12px -10px 0 #fff, 24px 0 0 #fff', opacity: 0.8 }} />
-      </div>
-      <div style={groundStyle} aria-hidden />
       {/* 池 (水のブロック) */}
-      <div style={pondStyle} aria-hidden />
+      <div style={pondStyle} />
       {/* 中央広場から各街区へ伸びる土の小道 */}
-      <div style={{ ...pathStyle, left: 'calc(50% - 8px)', top: '24%', width: 16, height: '14%' }} aria-hidden />
-      <div style={{ ...pathStyle, left: '14%', top: 'calc(38% - 8px)', width: '72%', height: 16 }} aria-hidden />
+      <div style={{ ...pathStyle, left: 'calc(50% - 8px)', top: '24%', width: 16, height: '14%' }} />
+      <div style={{ ...pathStyle, left: '14%', top: 'calc(38% - 8px)', width: '72%', height: 16 }} />
+    </>
+  );
+}
+
+function Decor() {
+  return (
+    <>
       {DECOR.map((d, i) => (
-        <div
-          key={i}
-          style={{ position: 'absolute', left: `${d.x}%`, top: `${d.y}%`, transform: 'translate(-50%,-100%)', pointerEvents: 'none' }}
-        >
+        <div key={i} style={{ ...stand(d.x, d.y), pointerEvents: 'none' }}>
           <Sprite rows={d.rows} px={d.px} />
         </div>
       ))}
@@ -623,18 +709,37 @@ function Scenery() {
   );
 }
 
+/** 街区の台座 (地面に平らに敷く色つきの区画)。 */
+function Pad({ rect, tint }: { rect: Rect; tint: string }) {
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        left: `${rect.x}%`,
+        top: `${rect.y}%`,
+        width: `${rect.w}%`,
+        height: `${rect.h}%`,
+        borderRadius: 2,
+        background: 'rgba(255,255,255,0.34)',
+        border: `3px solid ${tint}`,
+        boxShadow: `inset 0 0 0 2px rgba(255,255,255,0.35), 0 0 0 1px rgba(0,0,0,0.12)`,
+      }}
+    />
+  );
+}
+
 // ---------------------------------------------------------------------------
-// 建物カード
+// 街区の看板 (立ち絵)
 // ---------------------------------------------------------------------------
-function BuildingCard({
-  rect,
+function SignBoard({
+  at,
   tint,
   emoji,
   label,
   sub,
   onClick,
 }: {
-  rect: Rect;
+  at: { x: number; y: number };
   tint: string;
   emoji: string;
   label: string;
@@ -662,38 +767,27 @@ function BuildingCard({
       onKeyDown={onKey}
       title={onClick ? `${label} の街区を拡大` : label}
       style={{
-        position: 'absolute',
-        left: `${rect.x}%`,
-        top: `${rect.y}%`,
-        width: `${rect.w}%`,
-        height: `${rect.h}%`,
+        // 台座の奥の縁の中央に立てる (縁から上へ伸びる)。常に人より前へ。
+        ...stand(at.x, at.y, 3000),
+        background: tint,
+        color: '#26331f',
+        fontSize: 11,
+        fontWeight: 800,
+        padding: '3px 9px',
+        border: '2px solid #4a3a24',
         borderRadius: 2,
-        background: 'rgba(255,255,255,0.34)',
-        border: `3px solid ${tint}`,
-        // ブロックの段差 (角の丸みの代わりに硬い影)
-        boxShadow: '0 4px 0 rgba(0,0,0,0.28), inset 0 0 0 2px rgba(255,255,255,0.35)',
+        boxShadow: '0 3px 0 rgba(0,0,0,0.3)',
+        display: 'flex',
+        gap: 8,
+        alignItems: 'center',
+        whiteSpace: 'nowrap',
         cursor: onClick ? 'pointer' : 'default',
-        overflow: 'hidden',
       }}
     >
-      <div
-        style={{
-          background: tint,
-          color: '#26331f',
-          fontSize: 11,
-          fontWeight: 800,
-          padding: '2px 8px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          whiteSpace: 'nowrap',
-        }}
-      >
-        <span style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>
-          {emoji} {label}
-        </span>
-        <span style={{ fontWeight: 700, flexShrink: 0, marginLeft: 6 }}>{sub}</span>
-      </div>
+      <span>
+        {emoji} {label}
+      </span>
+      <span style={{ fontWeight: 700 }}>{sub}</span>
     </div>
   );
 }
@@ -734,18 +828,21 @@ const KIND_SIZE: Record<string, number> = {
 function Character({ v, x, y, flip, dur, seq, active, enlarged, showLabel, ring, bubble }: CharacterProps) {
   const base = KIND_SIZE[v.kind] ?? 20;
   const size = enlarged && v.kind === 'team' ? 26 : base;
+  const pp = projectPoint(x, y);
   return (
     <div
       style={{
         position: 'absolute',
-        left: `${x}%`,
-        top: `${y}%`,
-        transform: 'translate(-50%, -100%)',
-        transition: `left ${dur}s linear, top ${dur}s linear`,
+        left: `${pp.x}%`,
+        top: `${pp.y}%`,
+        // 傾けず、足元を地面の投影点に置く。手前ほど大きく・前へ。吹き出しの有る人と話し手は前へ出す。
+        transform: `translate(-50%, -100%) scale(${pp.scale})`,
+        transformOrigin: '50% 100%',
+        transition: `left ${dur}s linear, top ${dur}s linear, transform ${dur}s linear`,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        zIndex: active ? 40 : v.kind === 'team' ? 12 : 22,
+        zIndex: Math.round(pp.y * 10) + (active ? 4000 : bubble ? 3500 : 0),
         pointerEvents: 'none',
       }}
     >
@@ -886,7 +983,7 @@ const sceneStyle: React.CSSProperties = {
   position: 'relative',
   flex: 1,
   // 注意書きが長いと景色が 300px 台まで縮み、CEO の頭が上端で切れて建物も重なる。最低の高さを持たせ、足りなければ外側が縦に伸びる。
-  minHeight: 420,
+  minHeight: 460,
   borderRadius: 4,
   overflow: 'hidden',
   background: '#7cbf6a',
@@ -899,23 +996,29 @@ const sceneStyle: React.CSSProperties = {
 };
 const skyStyle: React.CSSProperties = {
   position: 'absolute',
-  left: 0,
-  right: 0,
-  top: 0,
-  height: '30%',
-  background: '#9bd8ff',
+  inset: 0,
+  background: 'linear-gradient(#7cc4f5, #bfe6ff 38%)',
   pointerEvents: 'none',
 };
-// 市松の草地 (32px の 2 色の格子 · マイクラの草ブロック風)
+// 傾けた市松の草地。景色より広く (左右 35%・奥 25%・手前 25% はみ出す)、中心を景色の中心に合わせる —
+// 投影 (`villageProject.ts`) は中心からの距離で決まるので、中心がずれると立ち絵と地面がずれる。
 const groundStyle: React.CSSProperties = {
   position: 'absolute',
-  left: 0,
-  right: 0,
-  top: '30%',
-  bottom: 0,
-  background: 'conic-gradient(#7cbf6a 25%, #72b562 0 50%, #7cbf6a 0 75%, #72b562 0) 0 0 / 32px 32px',
-  borderTop: '6px solid #4f9a3f',
+  left: '-35%',
+  top: `${-25 + GROUND_SHIFT_PCT}%`,
+  width: '170%',
+  height: '150%',
+  transformOrigin: '50% 50%',
+  background: 'conic-gradient(#7cbf6a 25%, #72b562 0 50%, #7cbf6a 0 75%, #72b562 0) 0 0 / 48px 48px',
   pointerEvents: 'none',
+};
+// 景色と同じ範囲 (地面の中の 100/170 × 100/150)。街区・小道・池の百分率はここで数える。
+const fieldStyle: React.CSSProperties = {
+  position: 'absolute',
+  left: `${(35 / 170) * 100}%`,
+  top: `${(25 / 150) * 100}%`,
+  width: `${(100 / 170) * 100}%`,
+  height: `${(100 / 150) * 100}%`,
 };
 const pondStyle: React.CSSProperties = {
   position: 'absolute',

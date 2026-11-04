@@ -10,6 +10,7 @@
 - **入れた物**: 既定の殻を村だけにした (`VillageShell`・旧画面は `?ui=legacy` の内部の入口)。役場 = 設定の画面を窓で開く (ロック・書き出し・削除・API キー・プロキシ・見た目の逃げ口)。見た目はブロック調のピクセル (市松の草地・ピクセルの木と花・四角いアバター枠・依存なし)。会話の「〇〇を開いて」(`servicehub:navigate`) は殻が聞き、そのサービスの画面を役場と同じ窓に開く (聞き手が旧画面の App だけだったので、殻では無反応だった)。
 - **実機 (2026-11-04)**: `e2e` FULL・`e2e:lite` とも **777 件 ❌ 0** (新しい `village` suite 15 件を含む・SUITE_TABLE の実測合計と一致)・`perf` OK (LITE DCL 364 ms / heap 10.2 MB・FULL DCL 1,036 ms / heap 36.9 MB)。他の suite は `?ui=legacy` の旧画面を開くので、**既定の姿を見るのは `village` suite だけ**。`smoke:app` は回していない (主プロセスを触っていない)。
 - **旧 UI の廃止は決めていない (利用者の判断)**: 旧画面 (78 の画面) は会話の裏の「開く」窓で今も届く。廃止するなら ① 会話が呼べない機能 (窓の外から押す物) を先に数える ② e2e の 38 suite が旧画面を前提にしているので、廃止は suite の作り直しと同時になる ③ `?ui=legacy` の入口を消すと開発側の実機検査が開けなくなる。
+- **3D 化 (2026-11-04)**: 依存を足さず (Three.js は LITE 3.56 MB に約 0.4 MB 足して 4 MB の上限を超える見込みなので採らなかった)、地面を CSS の `perspective(P) rotateX(52deg)` で傾け、住人・木・家・看板は同じ式 (`renderer/data/villageProject.ts` の `projectPoint`) で投影した点に**傾けずに**立てる (奥ほど小さく・手前ほど大きく・手前が前)。P は景色の高さに比例させるので投影は百分率だけで閉じる (測るのは地面の CSS に渡す px だけ)。本物の 3D (視点を回す・立体の建物) ではない —— 視点の回転や立体の家が要るなら Three.js を採るか、LITE の天井を上げる判断が先に要る。
 - **残し物**: マイクの注意書きが上に長く並び景色が小さく見える (必須の断りなので削れない・折りたたみ案。景色は最低 420px・足りなければ外側が縦スクロールする。CEO の頭の切れは 2026-11-04 に直した: 足元を矩形の下寄り 0.85 へ・景色に minHeight)。LITE は 3,560,730 B で CI の警告線 3.4 MB を超えている (警告のみ・上限 4 MB 未満)。
 
 ## main との合流 (2026-11-04) —— Mamori の並行した進化を合わせた
@@ -19600,7 +19601,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/zero-fold-census.cjs。npm run lint:zero-fold は check だけ) -->
-合計 **110 ファイル / 283 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **110 ファイル / 284 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
@@ -19617,6 +19618,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/main/clients/linux.ts` | 5 |
 | `src/renderer/data/cashflowDebtService.ts` | 5 |
 | `src/renderer/library/library.ts` | 5 |
+| `src/renderer/pages/VillagePage.tsx` | 5 |
 | `src/shared/buildingIso.ts` | 5 |
 | `src/shared/savingsPlanning.ts` | 5 |
 | `src/main/clients/funding.ts` | 4 |
@@ -19626,7 +19628,6 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/renderer/data/goalCoach.ts` | 4 |
 | `src/renderer/data/members.ts` | 4 |
 | `src/renderer/data/overview.ts` | 4 |
-| `src/renderer/pages/VillagePage.tsx` | 4 |
 | `src/shared/depreciation.ts` | 4 |
 | `src/shared/hydroponics.ts` | 4 |
 | `src/shared/ollama.ts` | 4 |
