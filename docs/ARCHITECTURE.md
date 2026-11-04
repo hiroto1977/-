@@ -21,12 +21,12 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 
 | 軸 | 値 | 出典 |
 |---|---:|---|
-| サービス数 | 77 | `src/shared/serviceId.ts:9-43` |
+| サービス数 | 78 | `src/shared/serviceId.ts:9-43` |
 | IPC ハンドラ数 | 15 | `src/main/main.ts:254-592` |
-| client モジュール (fetcher + actions) | 77 | `src/main/clients/index.ts:44-83` |
+| client モジュール (fetcher + actions) | 78 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 31 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **19550** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **19576** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` (**2026-09-01 の報告** —— 今のコードを測った物ではない。`docs/REMAINING_WORK.md` の「パス 494」) |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` (同上) |
@@ -1768,6 +1768,7 @@ union を参照する。
 | `kpi` | KPI / BEP (local mock) | none | ✅ | | (read-only — Phase 6 で API 接続) |
 | `hydroponics` | 水耕栽培 — 運転管理 (測定の判定 / 今日やること / 栽培ロットの日程) | none | ✅ | | (read-only — fetcher は「何を測るか」の台帳だけを返す。測定・ロット・設定は端末内の record store。組み立ては `src/shared/hydroponicsControl.ts` に 1 つ) |
 | `mentor` | 専属カウンセラー — メンバー 1 人に 1 人の相談役 (聞き取り / 週 1 のチェックイン / 関係の仲介 / 助言) | none | ✅ | | (read-only — fetcher は聞き取りの問いの台帳だけを返す。記録は端末内の record store `mentor-sessions`。判断は `src/shared/mentor.ts` に 1 つ。AI へ送るのは本人の記録と相談文だけで、画面が送る前に断る) |
+| `grok` | Grok (xAI) — 接続状態の確認と直接の質問 (AI 提供者 Grok の窓) | none | ✅ | | (read-only — fetcher は提供者の台帳から導いた見本だけを返す。鍵と既定の提供者は `assistant` スロット (エージェント設定)・質問は `assistant/chat` の `provider: 'grok'`。画面は送る前に送り先を名乗る) |
 | `stocks` | Stocks (local mock) | Bearer (Anthropic, advisor のみ) | ✅ | | `register-ticker`, `unregister-ticker`, `backtest`, `compare-strategies`, `advise`, `export-dashboard`, `export-dashboard-md` (永続化済み、Phase 7 で broker 接続) |
 | `business` | 事業ダッシュボード (10 categories) | none | ✅ | | `advise`, `export-dashboard`, `export-dashboard-md` (EC / dropship / OEM/ODM / blog / blog-affiliate / PPC-affiliate / video-production / video-upload / video-distribution / sns-ops, Phase 6 で 実 API 接続) |
 | `funding` | 資金調達レーダー — 補助金/助成金/融資/公庫/給付金/CF を会計・株式連携で可視化 (レーダー/折れ線/円/棒) | none (local mock) | ✅ | | (read-only — 集計は src/shared/funding.ts の純粋関数。Phase 6 で会計/公庫 API 接続) |
