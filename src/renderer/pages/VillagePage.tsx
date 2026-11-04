@@ -520,37 +520,80 @@ function buildVillageSystemPrompt(target?: Villager): string {
 }
 
 // ---------------------------------------------------------------------------
-// 情景（地面・道・池・木・花）— 絵文字＋インライン SVG のみ
+// 情景（ブロック調のピクセル）— 絵文字は使わず、文字の格子から <rect> を組む。依存なし。
+// マイクラ風の市松の草地・四角い雲と太陽・ブロックの池とあつ森風の小さな木と花。
+// この景色は配色に追随しない (昼の空と草地) ので、色は直書きでよい (字は載せない飾りだけ)。
 // ---------------------------------------------------------------------------
-const DECOR: { e: string; x: number; y: number; s: number }[] = [
-  { e: '🌳', x: 4, y: 30, s: 30 }, { e: '🌲', x: 96, y: 28, s: 28 }, { e: '🌳', x: 8, y: 95, s: 30 },
-  { e: '🌲', x: 93, y: 96, s: 28 }, { e: '🌷', x: 24, y: 34, s: 15 }, { e: '🌼', x: 74, y: 34, s: 15 },
-  { e: '🌻', x: 50, y: 12, s: 16 }, { e: '🍄', x: 16, y: 60, s: 13 }, { e: '🌸', x: 86, y: 62, s: 13 },
+const SPRITE_PALETTE: Record<string, string> = {
+  G: '#3f8f3a', g: '#2f7a2e', T: '#6b4a2b', R: '#e86a8a', Y: '#ffd84a', S: '#3f8f3a', W: '#ffffff', O: '#f2994a', M: '#c9503f', C: '#f3e7c9',
+};
+const TREE = [
+  '....GGG....',
+  '..GGGGGGG..',
+  '.GGgGGGgGG.',
+  'GGGGGGGGGGG',
+  'GgGGGGGGgGG',
+  '.GGGGgGGGG.',
+  '..GGGGGGG..',
+  '.....T.....',
+  '.....T.....',
+  '.....T.....',
+];
+const FLOWER = ['.R.R.', '..Y..', '.R.R.', '..S..', '..S..'];
+const MUSHROOM = ['.MMM.', 'MWMMM', 'MMMWM', '.CCC.', '.CCC.'];
+const BUSH = ['..GGG..', '.GgGGG.', 'GGGGgGG', 'GgGGGGG'];
+
+function Sprite({ rows, px }: { rows: readonly string[]; px: number }) {
+  const w = rows.reduce((m, r) => Math.max(m, r.length), 1);
+  const cells: React.ReactNode[] = [];
+  rows.forEach((row, y) => {
+    [...row].forEach((c, x) => {
+      const fill = SPRITE_PALETTE[c];
+      if (fill !== undefined) cells.push(<rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} fill={fill} />);
+    });
+  });
+  return (
+    <svg
+      viewBox={`0 0 ${w} ${rows.length}`}
+      width={w * px}
+      height={rows.length * px}
+      shapeRendering="crispEdges"
+      aria-hidden
+      style={{ display: 'block' }}
+    >
+      {cells}
+    </svg>
+  );
+}
+
+const DECOR: { rows: readonly string[]; px: number; x: number; y: number }[] = [
+  { rows: TREE, px: 4, x: 4, y: 40 }, { rows: TREE, px: 4, x: 96, y: 38 }, { rows: TREE, px: 5, x: 7, y: 96 },
+  { rows: TREE, px: 5, x: 94, y: 97 }, { rows: FLOWER, px: 3, x: 24, y: 46 }, { rows: FLOWER, px: 3, x: 74, y: 46 },
+  { rows: FLOWER, px: 3, x: 50, y: 34 }, { rows: MUSHROOM, px: 3, x: 16, y: 68 }, { rows: BUSH, px: 4, x: 86, y: 70 },
+  { rows: BUSH, px: 4, x: 30, y: 92 },
 ];
 
 function Scenery() {
   return (
     <>
-      <svg viewBox="0 0 100 100" preserveAspectRatio="none" style={sceneryStyle} aria-hidden>
-        {/* 太陽 */}
-        <circle cx="90" cy="9" r="5" fill="#fff2b0" opacity="0.9" />
-        {/* 雲 */}
-        <ellipse cx="22" cy="8" rx="7" ry="2.4" fill="#ffffff" opacity="0.7" />
-        <ellipse cx="60" cy="6" rx="6" ry="2.1" fill="#ffffff" opacity="0.6" />
-        {/* 池 */}
-        <ellipse cx="50" cy="90" rx="15" ry="4.6" fill="#7ec8e3" opacity="0.75" />
-        <ellipse cx="50" cy="89.4" rx="9" ry="2.6" fill="#a5dced" opacity="0.8" />
-        {/* 中央広場から各街区へ伸びる小道 */}
-        <path d="M50 24 L50 38" stroke="#e6d8ad" strokeWidth="3.4" opacity="0.65" strokeLinecap="round" />
-        <path d="M50 34 Q26 40 14 40" stroke="#e6d8ad" strokeWidth="2.6" opacity="0.5" fill="none" strokeLinecap="round" />
-        <path d="M50 34 Q74 40 86 40" stroke="#e6d8ad" strokeWidth="2.6" opacity="0.5" fill="none" strokeLinecap="round" />
-      </svg>
+      <div style={skyStyle} aria-hidden>
+        {/* 四角い太陽と雲 */}
+        <div style={{ position: 'absolute', right: '6%', top: '18%', width: 28, height: 28, background: '#fff2a8', boxShadow: '0 0 0 4px #ffe066' }} />
+        <div style={{ position: 'absolute', left: '14%', top: '20%', width: 64, height: 16, background: '#fff', boxShadow: '16px -12px 0 #fff, 32px 0 0 #fff', opacity: 0.9 }} />
+        <div style={{ position: 'absolute', left: '58%', top: '10%', width: 48, height: 12, background: '#fff', boxShadow: '12px -10px 0 #fff, 24px 0 0 #fff', opacity: 0.8 }} />
+      </div>
+      <div style={groundStyle} aria-hidden />
+      {/* 池 (水のブロック) */}
+      <div style={pondStyle} aria-hidden />
+      {/* 中央広場から各街区へ伸びる土の小道 */}
+      <div style={{ ...pathStyle, left: 'calc(50% - 8px)', top: '24%', width: 16, height: '14%' }} aria-hidden />
+      <div style={{ ...pathStyle, left: '14%', top: 'calc(38% - 8px)', width: '72%', height: 16 }} aria-hidden />
       {DECOR.map((d, i) => (
         <div
           key={i}
-          style={{ position: 'absolute', left: `${d.x}%`, top: `${d.y}%`, transform: 'translate(-50%,-50%)', fontSize: d.s, pointerEvents: 'none', filter: 'drop-shadow(0 2px 2px rgba(0,0,0,0.18))' }}
+          style={{ position: 'absolute', left: `${d.x}%`, top: `${d.y}%`, transform: 'translate(-50%,-100%)', pointerEvents: 'none' }}
         >
-          {d.e}
+          <Sprite rows={d.rows} px={d.px} />
         </div>
       ))}
     </>
@@ -601,10 +644,11 @@ function BuildingCard({
         top: `${rect.y}%`,
         width: `${rect.w}%`,
         height: `${rect.h}%`,
-        borderRadius: 12,
-        background: 'rgba(255,255,255,0.30)',
-        border: `1.5px solid ${tint}`,
-        boxShadow: '0 2px 8px rgba(0,0,0,0.12), inset 0 0 0 100px rgba(255,255,255,0.04)',
+        borderRadius: 2,
+        background: 'rgba(255,255,255,0.34)',
+        border: `3px solid ${tint}`,
+        // ブロックの段差 (角の丸みの代わりに硬い影)
+        boxShadow: '0 4px 0 rgba(0,0,0,0.28), inset 0 0 0 2px rgba(255,255,255,0.35)',
         cursor: onClick ? 'pointer' : 'default',
         overflow: 'hidden',
       }}
@@ -690,15 +734,22 @@ function Character({ v, x, y, flip, active, enlarged, showLabel, ring, bubble }:
       ) : null}
       <div
         style={{
-          fontSize: size,
+          // 顔のブロック: 四角い枠に絵文字を入れる (マイクラの頭ブロック風)
+          boxSizing: 'content-box',
+          width: size,
+          height: size,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: Math.round(size * 0.78),
           lineHeight: 1,
-          transform: flip ? 'scaleX(-1)' : undefined,
-          filter: active
-            ? 'drop-shadow(0 0 7px rgba(255,231,120,0.98))'
-            : 'drop-shadow(0 2px 1px rgba(0,0,0,0.28))',
+          background: '#f4ead2',
+          border: `3px solid ${ring ?? '#4a3a24'}`,
+          borderRadius: 2,
+          boxShadow: active ? '0 0 0 3px #ffe066, 0 3px 0 rgba(0,0,0,0.3)' : '0 3px 0 rgba(0,0,0,0.3)',
         }}
       >
-        {v.emoji}
+        <span style={{ display: 'block', transform: flip ? 'scaleX(-1)' : undefined }}>{v.emoji}</span>
       </div>
       {/* 足元の影 */}
       <div
@@ -706,9 +757,8 @@ function Character({ v, x, y, flip, active, enlarged, showLabel, ring, bubble }:
           width: size * 0.62,
           height: size * 0.2,
           marginTop: -2,
-          borderRadius: '50%',
-          background: 'rgba(0,0,0,0.20)',
-          filter: 'blur(1px)',
+          borderRadius: 0,
+          background: 'rgba(0,0,0,0.22)',
         }}
       />
       {showLabel ? (
@@ -795,20 +845,49 @@ const headerStyle: React.CSSProperties = {
 const sceneStyle: React.CSSProperties = {
   position: 'relative',
   flex: 1,
-  borderRadius: 16,
+  borderRadius: 4,
   overflow: 'hidden',
-  background: 'linear-gradient(180deg, #aee0ff 0%, #cdeecb 24%, #9ad07f 33%, #7cbf6a 70%, #6bb35f 100%)',
-  boxShadow: 'inset 0 0 70px rgba(0,0,0,0.14)',
-  border: '1px solid rgba(0,0,0,0.14)',
+  background: '#7cbf6a',
+  boxShadow: 'inset 0 0 0 4px rgba(0,0,0,0.16)',
+  border: '4px solid #4a3a24',
+  imageRendering: 'pixelated',
   // この景色は配色に追随しない (昼の空と草地・ダークでも同じ) ので、焦点の輪も配色の色 (--accent-strong) ではなく、
   // **この地の上で 3:1 以上**の濃い緑黒にする。配色の輪は草地の上で 2.3:1 だった (パス 504 の実測・街区の ring)。
   ['--focus-outline' as string]: '#1b2f14',
 };
-const sceneryStyle: React.CSSProperties = {
+const skyStyle: React.CSSProperties = {
   position: 'absolute',
-  inset: 0,
-  width: '100%',
-  height: '100%',
+  left: 0,
+  right: 0,
+  top: 0,
+  height: '30%',
+  background: '#9bd8ff',
+  pointerEvents: 'none',
+};
+// 市松の草地 (32px の 2 色の格子 · マイクラの草ブロック風)
+const groundStyle: React.CSSProperties = {
+  position: 'absolute',
+  left: 0,
+  right: 0,
+  top: '30%',
+  bottom: 0,
+  background: 'conic-gradient(#7cbf6a 25%, #72b562 0 50%, #7cbf6a 0 75%, #72b562 0) 0 0 / 32px 32px',
+  borderTop: '6px solid #4f9a3f',
+  pointerEvents: 'none',
+};
+const pondStyle: React.CSSProperties = {
+  position: 'absolute',
+  left: '36%',
+  top: '86%',
+  width: '28%',
+  height: '9%',
+  background: 'conic-gradient(#5db4e0 25%, #7ec8e3 0 50%, #5db4e0 0 75%, #7ec8e3 0) 0 0 / 16px 16px',
+  border: '4px solid #3a7ca5',
+  pointerEvents: 'none',
+};
+const pathStyle: React.CSSProperties = {
+  position: 'absolute',
+  background: 'conic-gradient(#d9c28a 25%, #cbb277 0 50%, #d9c28a 0 75%, #cbb277 0) 0 0 / 16px 16px',
   pointerEvents: 'none',
 };
 const taskBannerStyle: React.CSSProperties = {
@@ -843,9 +922,9 @@ const plazaStyle: React.CSSProperties = {
   transform: 'translate(-50%, -50%)',
   width: 150,
   height: 96,
-  borderRadius: '50%',
-  background: 'radial-gradient(circle, rgba(255,247,214,0.6), rgba(255,247,214,0.05))',
-  border: '2px dashed rgba(255,255,255,0.55)',
+  borderRadius: 0,
+  background: 'rgba(255,247,214,0.5)',
+  border: '4px dashed rgba(255,255,255,0.7)',
   pointerEvents: 'none',
 };
 const toggleStyle: React.CSSProperties = {

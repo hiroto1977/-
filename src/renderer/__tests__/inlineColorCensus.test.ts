@@ -74,7 +74,7 @@ const LEDGER: Readonly<Record<string, number>> = {
   'src/renderer/pages/TaxPage.tsx': 8, // パス 503: 13 → 8
   'src/renderer/pages/TeamRadarPage.tsx': 2, // パス 493g: 8 色の写しを shared/teamRadarSvg の colorFor へ寄せた / パス 503: 6 → 2
   'src/renderer/pages/TemplatesPage.tsx': 10,
-  'src/renderer/pages/VillagePage.tsx': 33, // パス 504: 32 → 33 (配色に追随しない景色の上の焦点の輪 `--focus-outline: #1b2f14` —— 配色の輪は草地の上で 2.3:1)
+  'src/renderer/pages/VillagePage.tsx': 58, // 村リビルド P2: 33 → 58 (ブロック調ピクセルの景色 —— 配色に追随しない固定の昼の景色なので字を載せない飾りの色は直書き。ピクセル絵の palette・市松の草地・池・小道)。パス 504: 32 → 33 (配色に追随しない景色の上の焦点の輪 `--focus-outline: #1b2f14` —— 配色の輪は草地の上で 2.3:1)
 };
 
 const SOURCES = uiSources();
