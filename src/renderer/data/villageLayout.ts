@@ -211,3 +211,49 @@ export function walkPoint(
     y: Math.min(bounds.y + bounds.h, Math.max(bounds.y, y)),
   };
 }
+
+/** 全体表示で 1 人の部長につき見せるチーム数の上限。 */
+export const MAX_VISIBLE_TEAMS_PER_MANAGER = 3;
+/** 全体表示で 1 つの街区につき見せる秘書の数の上限。 */
+export const MAX_VISIBLE_SECRETARIES_PER_REGION = 1;
+
+const STATUS_RANK: Record<string, number> = { 'in-progress': 0, blocked: 1, designed: 2 };
+
+/**
+ * 全体表示に出す村人 (代表だけ)。143 体を全部並べると重なって読めないので、CEO・COO・役員・管理職は全員、
+ * 秘書は街区ごとに少数、チームは部長ごとに少数に絞る。チームは**今動いている物 (作業中 → 止まっている →
+ * 設計済み → 完了) を先に**、同じ段なら id 順 (毎回同じ顔ぶれ・乱数なし)。`pinned` (いま作業広場へ出ている
+ * チーム・話しかけられた人) は上限の外で必ず出す。**街区を拡大すれば全員が出る** (これは全体表示だけの規則)。
+ */
+export function pickVisibleVillagers(
+  villagers: readonly Villager[],
+  statusOf: (id: string) => string | undefined,
+  pinned: ReadonlySet<string> = new Set(),
+): Villager[] {
+  const rank = (v: Villager): number => STATUS_RANK[statusOf(v.id) ?? ''] ?? 3;
+  const keep = new Set<string>(pinned);
+  const teamsByManager = new Map<string, Villager[]>();
+  const secsByRegion = new Map<string, Villager[]>();
+  for (const v of villagers) {
+    if (v.kind === 'team') {
+      const key = v.managerId ?? v.regionId;
+      const arr = teamsByManager.get(key) ?? [];
+      arr.push(v);
+      teamsByManager.set(key, arr);
+    } else if (v.kind === 'secretary') {
+      const arr = secsByRegion.get(v.regionId) ?? [];
+      arr.push(v);
+      secsByRegion.set(v.regionId, arr);
+    } else {
+      keep.add(v.id);
+    }
+  }
+  const byRank = (a: Villager, b: Villager): number => rank(a) - rank(b) || byIdAsc(a, b);
+  for (const arr of teamsByManager.values()) {
+    arr.sort(byRank).slice(0, MAX_VISIBLE_TEAMS_PER_MANAGER).forEach((v) => keep.add(v.id));
+  }
+  for (const arr of secsByRegion.values()) {
+    arr.sort(byIdAsc).slice(0, MAX_VISIBLE_SECRETARIES_PER_REGION).forEach((v) => keep.add(v.id));
+  }
+  return villagers.filter((v) => keep.has(v.id));
+}

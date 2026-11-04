@@ -11,6 +11,9 @@ import {
   layoutDistrict,
   computeHomePositions,
   walkPoint,
+  pickVisibleVillagers,
+  MAX_VISIBLE_TEAMS_PER_MANAGER,
+  MAX_VISIBLE_SECRETARIES_PER_REGION,
   computeDistrictFocus,
   wanderOffset,
   FOCUS_RECT,
@@ -775,5 +778,43 @@ describe('walkPoint — 持ち場の周りを歩く (あつ森風)', () => {
     const a = walkPoint(1, 4, home, 4, 6, bounds);
     const b = walkPoint(2, 4, home, 4, 6, bounds);
     expect(a).not.toEqual(b);
+  });
+});
+
+describe('pickVisibleVillagers — 全体表示は代表だけ', () => {
+  const mk = (id: string, kind: string, regionId: string, managerId?: string): Villager =>
+    ({ id, name: id, kind, emoji: '🙂', regionId, managerId }) as unknown as Villager;
+  const all: Villager[] = [
+    mk('ceo', 'ceo', 'ceo'),
+    mk('exec1', 'executive', 'exec-a'),
+    mk('mgr1', 'manager', 'exec-a'),
+    ...['s1', 's2', 's3'].map((id) => mk(id, 'secretary', 'exec-a')),
+    ...['t1', 't2', 't3', 't4', 't5', 't6'].map((id) => mk(id, 'team', 'exec-a', 'mgr1')),
+  ];
+  const ids = (l: Villager[]) => l.map((v) => v.id);
+
+  it('CEO・役員・管理職は全員、秘書とチームは上限まで', () => {
+    const out = pickVisibleVillagers(all, () => undefined);
+    expect(ids(out)).toEqual(expect.arrayContaining(['ceo', 'exec1', 'mgr1']));
+    expect(out.filter((v) => v.kind === 'secretary')).toHaveLength(MAX_VISIBLE_SECRETARIES_PER_REGION);
+    expect(out.filter((v) => v.kind === 'team')).toHaveLength(MAX_VISIBLE_TEAMS_PER_MANAGER);
+  });
+
+  it('チームは作業中が先 (止まっている → 設計済み → 完了の順)・同じ段は id 順', () => {
+    const status = (id: string) => ({ t6: 'in-progress', t5: 'blocked', t4: 'designed' })[id];
+    const teams = pickVisibleVillagers(all, status).filter((v) => v.kind === 'team');
+    expect(ids(teams).sort()).toEqual(['t4', 't5', 't6']);
+    const none = pickVisibleVillagers(all, () => undefined).filter((v) => v.kind === 'team');
+    expect(ids(none)).toEqual(['t1', 't2', 't3']);
+  });
+
+  it('pinned は上限の外でも必ず出る・元の並びは保たれる', () => {
+    const out = pickVisibleVillagers(all, () => undefined, new Set(['t6']));
+    expect(ids(out)).toContain('t6');
+    expect(ids(out)).toEqual(ids(all).filter((i) => ids(out).includes(i)));
+  });
+
+  it('同じ入力は同じ顔ぶれ (乱数なし)', () => {
+    expect(ids(pickVisibleVillagers(all, () => undefined))).toEqual(ids(pickVisibleVillagers(all, () => undefined)));
   });
 });

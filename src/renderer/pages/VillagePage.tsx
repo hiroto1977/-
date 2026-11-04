@@ -33,6 +33,7 @@ import {
   regionRects,
   wanderOffset,
   walkPoint,
+  pickVisibleVillagers,
   WALK_STEP_TICKS,
   WORK_PLAZA,
   type Rect,
@@ -103,8 +104,13 @@ export function VillagePage() {
   const regions = useMemo(() => buildRegions(REG), []);
   const dispatchPlan = useMemo(() => buildDispatchPlan(REG), []);
   const rects = useMemo(() => regionRects(regions), [regions]);
-  const homeOverview = useMemo(() => computeHomePositions(villagers, regions), [villagers, regions]);
   const backlogStatus = useMemo(() => backlogByTeam(REG), []);
+  // 全体表示は代表だけ (143 体を全部並べると重なって読めない)。街区を拡大すると全員が出る。
+  const visibleVillagers = useMemo(
+    () => pickVisibleVillagers(villagers, (id) => backlogStatus.get(id)),
+    [villagers, backlogStatus],
+  );
+  const homeOverview = useMemo(() => computeHomePositions(visibleVillagers, regions), [visibleVillagers, regions]);
   const summary = useMemo(() => villageSummary(REG), []);
   const indexOfVillager = useMemo(() => {
     const m = new Map<string, number>();
@@ -205,7 +211,14 @@ export function VillagePage() {
   );
   const homeFocus = useMemo(() => computeDistrictFocus(focusVillagers), [focusVillagers]);
 
-  const renderList = focusedExec ? focusVillagers : villagers;
+  // 作業広場へ出ているチーム・話しかけられた人は、代表に入っていなくても出す (作業の様子が見えなくなるため)。
+  const renderList = useMemo(() => {
+    if (focusedExec) return focusVillagers;
+    const pinned = villagers.filter(
+      (v) => (v.id === activeTeamId || v.id === voiceTargetId) && !visibleVillagers.includes(v),
+    );
+    return pinned.length === 0 ? visibleVillagers : [...visibleVillagers, ...pinned];
+  }, [focusedExec, focusVillagers, villagers, visibleVillagers, activeTeamId, voiceTargetId]);
   const home = focusedExec ? homeFocus : homeOverview;
 
   useEffect(() => {
@@ -402,7 +415,10 @@ export function VillagePage() {
       <div style={headerStyle}>
         <div>
           <strong style={{ fontSize: 18 }}>🏡 AIの村</strong>
-          <div style={{ fontSize: 12, opacity: 0.75 }}>{summary}</div>
+          <div style={{ fontSize: 12, opacity: 0.75 }}>
+            {summary}
+            {!focusedExec ? ` ・ 村には代表 ${visibleVillagers.length} 体 (街区の看板を押すと全員)` : ''}
+          </div>
         </div>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
           {focusedExec ? (
