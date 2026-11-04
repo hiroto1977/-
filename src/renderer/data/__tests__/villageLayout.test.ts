@@ -398,8 +398,8 @@ describe('villageLayout — 座標の golden', () => {
         [V('c1', 'ceo', 'ceo'), V('o1', 'coo', 'coo')],
         REGIONS,
       );
-      near(home.get('c1')!, 50, 8); // 40 + 20×0.5, 3 + 10×0.5
-      near(home.get('o1')!, 50, 18); // 38 + 24×0.5, 14 + 8×0.5
+      near(home.get('c1')!, 50, 11.5); // 40 + 20×0.5, 3 + 10×0.85 (足元は下寄り: 頭が景色の上端で切れない)
+      near(home.get('o1')!, 50, 20.8); // 38 + 24×0.5, 14 + 8×0.85
     });
 
     it('CEO が 2 人なら横に等間隔 (n+1 で割る)', () => {
@@ -407,8 +407,8 @@ describe('villageLayout — 座標の golden', () => {
         [V('c1', 'ceo', 'ceo'), V('c2', 'ceo', 'ceo')],
         REGIONS,
       );
-      near(home.get('c1')!, 40 + 20 / 3, 8);
-      near(home.get('c2')!, 40 + 40 / 3, 8);
+      near(home.get('c1')!, 40 + 20 / 3, 11.5);
+      near(home.get('c2')!, 40 + 40 / 3, 11.5);
     });
 
     it('役員街区は layoutDistrict の結果を街区の矩形で返す', () => {
@@ -425,7 +425,7 @@ describe('villageLayout — 座標の golden', () => {
         [{ id: 'ghost', kind: 'ceo' }] as unknown as VillageRegion[],
       );
       // フォールバック {45,45,10,10} の中央高さ、1 人なので x は中央。
-      near(home.get('z1')!, 50, 50);
+      near(home.get('z1')!, 50, 53.5);
     });
 
     it('region に属さない村人は置かれない', () => {

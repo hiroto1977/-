@@ -845,6 +845,8 @@ const headerStyle: React.CSSProperties = {
 const sceneStyle: React.CSSProperties = {
   position: 'relative',
   flex: 1,
+  // 注意書きが長いと景色が 300px 台まで縮み、CEO の頭が上端で切れて建物も重なる。最低の高さを持たせ、足りなければ外側が縦に伸びる。
+  minHeight: 420,
   borderRadius: 4,
   overflow: 'hidden',
   background: '#7cbf6a',

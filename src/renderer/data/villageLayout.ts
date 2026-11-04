@@ -152,7 +152,9 @@ export function computeHomePositions(
       list.forEach((v, i) =>
         home.set(v.id, {
           x: rect.x + rect.w * ((i + 1) / (list.length + 1)),
-          y: rect.y + rect.h * 0.5,
+          // 足元を矩形の下寄りに置く: キャラは足元を基準に上へ伸びるので、中央だと
+          // 景色の上端で頭が切れる (CEO は y=3% の矩形)。
+          y: rect.y + rect.h * 0.85,
         }),
       );
     } else {
