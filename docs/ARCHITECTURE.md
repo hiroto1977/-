@@ -1,6 +1,6 @@
 # Service Hub — Architecture
 
-> 自己検証: `npm run verify:arch` で 699 個の `file:line` 参照 + 44 個のライブメトリクスが
+> 自己検証: `npm run verify:arch` で 695 個の `file:line` 参照 + 44 個のライブメトリクスが
 > 毎 push 検証されます (`.github/workflows/ci.yml`)。**この 2 つの数もライブメトリクス
 > なので、ゲートが大きくなれば一緒に動く** —— 2026-09-15 (パス 279) まで
 > 「170 個 + 5 個」と書いたままで、実測の 4 倍・7 倍の過小申告だった。
@@ -26,7 +26,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 78 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 31 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **19635** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **19561** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` (**2026-09-01 の報告** —— 今のコードを測った物ではない。`docs/REMAINING_WORK.md` の「パス 494」) |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` (同上) |
@@ -34,7 +34,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod / dev) | 0 vulnerabilities (2026-09-10 実測。CI が `--omit=dev --audit-level=high` で毎回確認 —— dev 依存と moderate 以下を落とさないのは意図的で、理由は `ci.yml` の注記。**その外側は `lint:deps` のセキュリティの床 6 件**が受け持つ: 自分で押さえた版は道を問わず台帳に載り、緩めば落ちる) | `package-lock.json` |
 | 陰性対照つきゲート | 36 / 39 (`lint:malware` を足した · パス 510。残る 3 件は外部ツール 2 (`typecheck` / eslint) と `chain:verify` (対照は `integrityChainWitness.test.ts` が持つ)。★ 2026-09-25 (パス 467) に `lint:knowledge-refs` と `verify:orchestration` へ `--self-test` を付けた —— 2 本は「2026-08-25 に実物へ違反を植えて鳴ることを確認済み」という理由で免除されていたが、それは**母集団が非空のとき**の対照で、**空にする側**は 1 度も試されておらず、実測すると壊れた台帳も `rounds: []` も `org.secretaries` 削除も**すべて ✅ exit 0** だった。`lint:doi-prefix` は同じ理由で今も免除だが、空にする側は測っていない) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
-| `file:line` 参照数 | 699 | 自己検証 |
+| `file:line` 参照数 | 695 | 自己検証 |
 | 図の中の `file:line` 参照数 | 29 | 自己検証 (mermaid のクラス図・パス 180) |
 
 ### 統合フロー図
@@ -2256,7 +2256,7 @@ $ npm run mutate:next -- --top=5
 per-file の kill / survived / no-cov / ignored / invalid は `docs/QUALITY.md` が
 Stryker の JSON レポート (reports/mutation 配下の生成物) から機械生成して持つ
 (`npm run quality:report`)。
-Stryker の対象 (`stryker.config.json` の `mutate`) は **337 ファイル**。
+Stryker の対象 (`stryker.config.json` の `mutate`) は **335 ファイル**。
 2026-10-26 に `renderer/data` の `aegisLang` と `aegisLangSafety` の 2 モジュール (外へ何も出さない小さな言語の実行系と、実行前の安全の走査・規則ベースの修復の提案 —— Python の原型 AegisLang の考え方だけを移した純ロジック) を足した —— 1 度目の測定は **88.65% (生存 154)** で、生存の大半は利用者に見せる日本語の断りの文を値で主張していない物 (文面を空にしても検査が落ちない) と、走査の上限の添字の等価変異だった。文面を全件そのまま留める検査と、境界・状態の検査を足し、等価な添字は走査の形ごと消して (sticky 正規表現・`indexOf`・`split` と `map`)、**100.00% (Killed 1,286 / 生存 0 / 未到達 0)**。残した 2 つの `Stryker disable` は理由つき (収束しない入力への保険の周回上限・空の編集を適用しても変わらない最適化)。
 2026-10-07 (パス 506) に `src/renderer/components/useDialogFocus.ts` (dialog の焦点の道 —— 開いたら印の操作子へ・Esc で閉じる / 取り消す・
 消えたら押した物へ戻す) を足した —— push した直後の CI で `mutateScopeCensus` が「同名の検査が在り 100 行以上なのに `mutate` の外」と
@@ -2705,12 +2705,12 @@ effect と他 instance からの通知は戻り値を受け取らないので、
 ライトは同じ名前の集合・各デザインのダークはライトの色を漏れなく上書き・4 枚とも `color-scheme`・表の順序)。
 広い画面 (`CHAT_DOCK_MIN_WIDTH` = 1200px 以上) の「すっきり」では、AI コンシェルジュが**サイドバーと画面の間の列**
 (`<aside class="chat-column">`) になり、上部バーの「💬 チャット」で畳める (畳んだ状態は保存しない —— 保存先を
-1 つ増やさない)。判定は `src/renderer/chatDock.ts` の `shouldDockChat` **1 か所**で、App.tsx はその答えで
+1 つ増やさない)。判定は chatDock の `shouldDockChat` **1 か所**で (2026-11-04 に旧画面のサイドバーとともに廃止。会話の列は村の殻が常に持つ)、App.tsx はその答えで
 `.chat-docked` を付け、CSS は組の有無だけを読む (同じ幅を CSS にも書くと、ずれた幅で列だけが 2 列目に残る)。
 それ以外 (かわいい・狭い画面) は右下の 🤖 から開く浮いた窓で、スマホの「すっきり」では下から出るシートになる。
 **入口は常に 1 つ** —— 列のときは 🤖 を出さない。列の送信ボタンの読み上げ名は「コンシェルジュへ送る」で、
 画面の「送信」と名前で区別できる (e2e は `getByRole('button', { name: '送信' })` で画面の送信を押す)。
-jsdom の `src/renderer/__tests__/chatDock.test.ts` (matchMedia の代役で幅を動かす) と実機の `design` suite (座標で 3 列を測る・
+jsdom の chatDock の検査 (廃止済み・matchMedia の代役で幅を動かす) と実機の `design` suite (座標で 3 列を測る・
 窓の幅への追随・4 枚の表の特異性と順序を出荷した stylesheet の規則から読んだ期待値で見る・スマホのシート) が見る。
 
 **文字色の対比** (2026-10-02 · パス 503) —— 文字色と地の色は **WCAG 2.x AA** (通常の字 4.5:1・大きい字 =
@@ -2776,7 +2776,7 @@ Shift+Tab で画面の外の 74 項目へ入る)、開いている間は暗幕�
 依存配列を持たない効果 —— 最初の commit は「読み込み中…」で ref が無い)、開いたら ✕ へ・閉じたら ☰ へ焦点を運ぶ。CSS はスマホの
 `.main` の地を残し、チップを `min-height: 24px` にする。測定器 `scripts/lib/controls.cjs` の `present()` は `inert` の下を「無い」と
 数える。**3 層で留める**: ① jsdom で実物を描いて押す (`src/renderer/components/__tests__/conciergeDialogFocus.test.ts` 7 件・
-`src/renderer/__tests__/drawerKeyboard.test.ts` 4 件・`src/renderer/components/__tests__/useDialogFocus.test.ts` 9 件) ② 構文木と CSS の規則
+drawerKeyboard の検査 (旧画面のドロワーとともに廃止) 4 件・`src/renderer/components/__tests__/useDialogFocus.test.ts` 9 件) ② 構文木と CSS の規則
 (`src/renderer/__tests__/dialogSitesCensus.test.ts` —— `role` が dialog / alertdialog の JSX は名前・`ref`・`onKeyDown` を持ち、
 そのファイルは hook を呼ぶ・両方向の台帳 4 行 / `src/renderer/__tests__/openedStateCss.test.ts` —— スマホの `.main` は `background` を上書きせず、チップは
 24px 以上) ③ 実機の `opened` suite (e2e の 39 番目・131 件 —— 4 配色 × 開いた全画面の字と操作子・浮いた窓のキーボードの道
@@ -2807,7 +2807,7 @@ App 1 つ**で、ホームは `src/renderer/shellContext.ts` の文脈 (`useShel
 `localStorage` をもう 1 度読むと読み手が 2 つになり (`lint:storage` の規則 3 / 12 の行が増える)、♥ を押した
 直後のホームが古いまま残る。`services.ts` が `HomePage` を import するので `HomePage` から `SERVICES` は
 読めない (循環) —— だから文脈が運ぶのは id と表示に要る最小の欄だけ。配線は
-`src/renderer/__tests__/appShell.test.ts` (jsdom で App を丸ごと描き、押した物が状態を変え、3 つの場所が
+appShell の検査 (廃止済み・jsdom で App を丸ごと描き、押した物が状態を変え、3 つの場所が
 同じに描くことを見る。`scrollTo` は要素に模した物を持たせて向きまで見る) と実機の `shell` suite
 (`position: fixed` の可視性とスクロール量は実ブラウザでしか測れない) が見る。
 

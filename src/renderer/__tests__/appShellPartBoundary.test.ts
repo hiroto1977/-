@@ -1,9 +1,9 @@
 /** @vitest-environment jsdom */
 /**
- * 画面の**外**の部品が描画で投げても、アプリ全体は白くならない (2026-09-26 · パス 489)。
+ * 画面の**外**の部品が描画で投げても、アプリ全体は白くならない (2026-09-26 · パス 489 · 村の殻へ 2026-11-04)。
  *
- * App は画面の中身を `PageErrorBoundary` で囲むが、上部バー (ベスト3 の進み具合・音声コマンド)・
- * 画面の上の帯 (端末の保存の知らせ)・プランの案内・浮いた部品 (AI コンシェルジュ) は**その外**に居た。
+ * 村の殻は画面の中身を `PageErrorBoundary` で囲むが、上部バー (ベスト3 の進み具合)・
+ * 画面の上の帯 (端末の保存の知らせ)・会話の列 (AI コンシェルジュ) は**その外**に居る。
  * そこで投げると React はツリーごと外す。実測 (直す前): 保存した会話履歴の 1 件の欄が物
  * (`routedThrough: {a:1}`) だと、コンシェルジュを開いた瞬間にサイドバーのボタンが 21 → 0・
  * 本文が 0 字になった —— 再読込するまで何も押せず、再読込しても開けば同じことが起きる。
@@ -11,7 +11,7 @@
  * - 振る舞い: 実物の部品 + 壊れた保存値で開いても白くならない / 部品を必ず投げる物に差し替えると、
  *   その部品の所にだけ知らせが出てサイドバーは生きている / コンシェルジュの知らせの「会話履歴を消去して
  *   やり直す」が保存値を消し、部品が戻る
- * - 母集団: App.tsx が描く部品を**走査で導き**、画面の外の部品はどれも `ShellPartBoundary` の中に在る
+ * - 母集団: App.tsx / VillageShell.tsx が描く部品を**走査で導き**、画面の外の部品はどれも `ShellPartBoundary` の中に在る
  *   (台帳と両方向 —— 新しい部品を境界の外に足せば名指しで落ちる)
  */
 import 'fake-indexeddb/auto';
@@ -29,20 +29,9 @@ vi.mock('../components/ChatbotWidget', async (importOriginal) => {
   const { createElement: h } = await import('react');
   return {
     ...mod,
-    ChatbotWidget: () => {
+    ChatbotWidget: (props: Record<string, unknown>) => {
       if (boom.parts.has('ChatbotWidget')) throw new Error(BOOM_MESSAGE);
-      return h(mod.ChatbotWidget);
-    },
-  };
-});
-vi.mock('../components/VoiceCommandBar', async (importOriginal) => {
-  const mod = await importOriginal<typeof import('../components/VoiceCommandBar')>();
-  const { createElement: h } = await import('react');
-  return {
-    ...mod,
-    VoiceCommandBar: () => {
-      if (boom.parts.has('VoiceCommandBar')) throw new Error(BOOM_MESSAGE);
-      return h(mod.VoiceCommandBar);
+      return h(mod.ChatbotWidget, props);
     },
   };
 });
@@ -126,7 +115,11 @@ afterEach(async () => {
   container.remove();
 });
 
-const sidebarCount = (): number => container.querySelectorAll('button.sidebar-item').length;
+/** 村の殻が生きている目印: 殻と、その中の押せる物の数 (部品が落ちても減らない)。 */
+const sidebarCount = (): number =>
+  container.querySelector('[data-village-shell]')
+    ? (container.querySelector('.village-shell-scene')?.querySelectorAll('button, [role="button"]').length ?? 0)
+    : 0;
 const partError = (label: string): HTMLElement | null =>
   container.querySelector<HTMLElement>(`[data-shell-part-error="${label}"]`);
 
@@ -135,42 +128,34 @@ async function mountApp(): Promise<number> {
   await act(async () => {
     root!.render(createElement(App));
   });
-  await settleUntil(() => sidebarCount() > 0, 'サイドバーが描かれる');
+  await settleUntil(() => sidebarCount() > 0, '村の殻が描かれる');
   return sidebarCount();
 }
 
 describe('実物の部品: 保存した会話履歴の欄が壊れていても、コンシェルジュを開いてアプリが白くならない', () => {
-  it('★ routedThrough が物の 1 件を持って開く —— サイドバーも本文も残り、その会話も読める', async () => {
+  it('★ routedThrough が物の 1 件を持って開く —— 村も会話の列も残り、その会話も読める', async () => {
     localStorage.setItem('chatbot-history', JSON.stringify([{ role: 'bot', text: '保存した返答 QZX', routedThrough: { a: 1 } }]));
     const before = await mountApp();
-    const fab = await waitForElement(
-      () => container.querySelector<HTMLButtonElement>('button[aria-label="AI コンシェルジュを開く"]'),
-      'コンシェルジュを開くボタン',
-    );
-    await act(async () => {
-      fab.click();
-    });
     await waitForText(() => container.textContent ?? '', '保存した返答 QZX');
     expect(sidebarCount()).toBe(before);
     expect(partError('AI コンシェルジュ'), '境界まで届いた (読みで止まっていない)').toBeNull();
   });
 });
 
-describe('画面の外の部品が投げても、その部品の所にだけ知らせが出る (サイドバーは生きている)', () => {
+describe('画面の外の部品が投げても、その部品の所にだけ知らせが出る (村は生きている)', () => {
   const PARTS: readonly [string, string][] = [
-    ['VoiceCommandBar', '音声コマンド'],
     ['BestAnswersIndicator', 'ベスト3 の進み具合'],
     ['DeviceStoreFailureBanner', '端末の保存の知らせ'],
     ['ChatbotWidget', 'AI コンシェルジュ'],
   ];
   for (const [part, label] of PARTS) {
-    it(`★ ${part} が投げる → 「${label}」の知らせだけ・サイドバーと画面は残る`, async () => {
+    it(`★ ${part} が投げる → 「${label}」の知らせだけ・村と画面は残る`, async () => {
       boom.parts.add(part);
       const count = await mountApp();
       const alert = await waitForElement(() => partError(label), `「${label}」の知らせ`);
       expect(alert.textContent).toContain(BOOM_MESSAGE);
-      expect(count).toBeGreaterThan(10);
-      expect(container.querySelector('h1'), '画面の見出しが消えた').not.toBeNull();
+      expect(count).toBeGreaterThan(3);
+      expect(container.querySelector('h1'), '殻の見出しが消えた').not.toBeNull();
       // もう一度表示: 直っていれば部品が戻る
       boom.parts.delete(part);
       const retry = [...alert.querySelectorAll('button')].find((b) => b.textContent === 'もう一度表示')!;
@@ -193,24 +178,11 @@ describe('画面の外の部品が投げても、その部品の所にだけ知�
     await act(async () => {
       recover!.click();
     });
-    await waitForElement(
-      () => container.querySelector<HTMLButtonElement>('button[aria-label="AI コンシェルジュを開く"]'),
-      'コンシェルジュが戻る',
-    );
+    await settleUntil(() => partError('AI コンシェルジュ') === null, 'コンシェルジュが戻る');
     // 戻った部品は空の履歴を書き戻すことがある —— どちらでも中身は残らない
     const left = localStorage.getItem('chatbot-history');
     expect(left === null || left === '[]', `残った保存値: ${left}`).toBe(true);
     expect(partError('AI コンシェルジュ')).toBeNull();
-  });
-
-  it('対照: 画面の外の知らせは、浮いた部品だけが画面の右下に固定される (上部バーの並びは崩さない)', async () => {
-    boom.parts.add('ChatbotWidget');
-    boom.parts.add('VoiceCommandBar');
-    await mountApp();
-    const floating = await waitForElement(() => partError('AI コンシェルジュ'), 'コンシェルジュの知らせ');
-    const inline = await waitForElement(() => partError('音声コマンド'), '音声コマンドの知らせ');
-    expect(floating.style.position).toBe('fixed');
-    expect(inline.style.position).toBe('');
   });
 });
 
@@ -219,27 +191,26 @@ describe('画面の外の部品が投げても、その部品の所にだけ知�
 // ---------------------------------------------------------------------------
 
 const APP = join(__dirname, '..', 'App.tsx');
+const SHELL = join(__dirname, '..', 'components', 'VillageShell.tsx');
 
-type Where = 'boundary' | 'provider' | 'page-boundary' | 'shell-boundary' | 'own-boundaries';
+type Where = 'boundary' | 'page-boundary' | 'shell-boundary' | 'own-boundaries';
 
 /**
- * App.tsx が描く部品と、それが居るべき所。**新しい部品を足したら、ここに書くまで落ちる**。
+ * 殻 (App.tsx と VillageShell.tsx) が描く部品と、それが居るべき所。**新しい部品を足したら、ここに書くまで落ちる**。
  * `shell-boundary` の行は `ShellPartBoundary` の中、`page-boundary` の行は `PageErrorBoundary` の中に
  * 在ることを走査で確かめる (いちばん内側の境界で判定する)。
  */
 const LEDGER: Record<string, { readonly where: Where; readonly why: string }> = {
   PageErrorBoundary: { where: 'boundary', why: '画面の中身を囲む境界そのもの' },
   ShellPartBoundary: { where: 'boundary', why: '画面の外の部品を 1 つずつ囲む境界そのもの' },
-  'ShellContext.Provider': { where: 'provider', why: '値を配るだけで自分では何も描かない (投げる描画を持たない)' },
   LockScreen: { where: 'page-boundary', why: '「ロック画面」の境界に入る (パス 136 以前から)' },
-  PageComponent: { where: 'page-boundary', why: '選んだ画面そのもの' },
-  ManualDataSection: { where: 'page-boundary', why: '画面ごとの手入力欄 (画面と同じ枠で落ちる)' },
+  VillageShell: { where: 'own-boundaries', why: '村の殻 (唯一の画面) —— 村・会話・役場・端末の保存の知らせを**殻の中で**それぞれ別の境界に入れる (`villageShell.test.ts` が部品ごとに留める)。殻そのものは投げる描画を持たない' },
+  VillagePage: { where: 'page-boundary', why: '村の画面そのもの' },
+  OpenPage: { where: 'page-boundary', why: '役場の窓に開いた画面そのもの' },
+  ManualDataSection: { where: 'page-boundary', why: '窓の中の手入力欄 (画面と同じ枠で落ちる)' },
   BestAnswersIndicator: { where: 'shell-boundary', why: '上部バー —— ベスト3 の進み具合の印' },
-  VoiceCommandBar: { where: 'shell-boundary', why: '上部バー —— 音声コマンドの結果を描く' },
   DeviceStoreFailureBanner: { where: 'shell-boundary', why: '画面の上の帯 —— 画面が落ちても残すため画面の境界の外に置く (だから自分の境界が要る)' },
-  UpgradeNotice: { where: 'shell-boundary', why: 'プランの案内 —— 画面の代わりに出るが画面の境界の外に在る' },
-  VillageShell: { where: 'own-boundaries', why: '村の殻 (既定の画面) —— 村・会話・役場・端末の保存の知らせを**殻の中で**それぞれ別の境界に入れる (`villageShell.test.ts` が部品ごとに留める)。殻そのものは投げる描画を持たない' },
-  ChatbotWidget: { where: 'shell-boundary', why: '浮いた部品 —— 保存した会話履歴を描く (実測で白くなった当の部品)' },
+  ChatbotWidget: { where: 'shell-boundary', why: '会話の列 —— 保存した会話履歴を描く (実測で白くなった当の部品)' },
 };
 
 const BOUNDARY_NAMES = ['PageErrorBoundary', 'ShellPartBoundary'] as const;
@@ -273,11 +244,10 @@ function scan(code: string): Found[] {
 }
 
 describe('App.tsx が描く部品は、どれも境界の中に在る (走査・両方向)', () => {
-  const code = stripComments(readOriginalSource(APP));
-  const found = scan(code);
+  const found = [APP, SHELL].flatMap((file) => scan(stripComments(readOriginalSource(file))));
 
-  it('★ 走査は空でない (実測 12 種 —— 増えたら台帳を読み直す)', () => {
-    expect(new Set(found.map((f) => f.name)).size).toBe(12);
+  it('★ 走査は空でない (実測 10 種 —— 増えたら台帳を読み直す)', () => {
+    expect(new Set(found.map((f) => f.name)).size).toBe(10);
   });
 
   it('★ 描く部品と台帳は両方向に一致する (新しい部品は理由と居場所を書くまで落ちる)', () => {

@@ -3846,6 +3846,14 @@
       "leafCount": 187,
       "note": "update ci.yml,eslint.config.js,integrity-chain.cjs,mamori-capabilities.json,assistant.mamori,assistant.ts",
       "hash": "058cc155f65e08f2f1c427688551a5c6f8f543f3d29227b2dc3c7552a9901e26"
+    },
+    {
+      "index": 457,
+      "prevHash": "058cc155f65e08f2f1c427688551a5c6f8f543f3d29227b2dc3c7552a9901e26",
+      "merkleRoot": "fe6cd77f4cafe06966084e1e1df297467adb473bf6288df6373074f72dfdeb5b",
+      "leafCount": 187,
+      "note": "update vitest.config.ts",
+      "hash": "10cd65de0b3e3556d83eaf7edc0491e30552758144f44ebcf5ffc31ba746f603"
     }
   ],
   "tipManifest": {
@@ -4035,6 +4043,6 @@
     "tools/mamori-verify/src/lib.rs": "d8f9d6a4d46881333d7ebe286d7bc5821983807e7833a68666d8e9513888e48f",
     "vite.config.ts": "be7089bad650fda5406b2b3a33e70db81f45e17c0b3414c92c4b8b7d4a38cc22",
     "vitest.audit.config.ts": "2461afaaddfa15b7a4520cca93807db66b7ebb3db25e46db4dac38b0002a7978",
-    "vitest.config.ts": "23cd5743731700131adf50b026e008bf0609a818388fe42270f96a1a4cf1f90f"
+    "vitest.config.ts": "082d5d607a48177918bdd841ca4592b861b2b1d0842005da0b8a6f0a4b42f900"
   }
 }

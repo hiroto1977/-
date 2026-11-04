@@ -79,9 +79,9 @@ const echo: SendChat = (req) => {
 };
 
 const text = () => container.textContent ?? '';
-const chip = () => container.querySelector<HTMLButtonElement>('.topbar-right [data-best3-indicator]');
+const chip = () => container.querySelector<HTMLButtonElement>('.village-shell-bar [data-best3-indicator]');
 
-describe('App: ベスト3 は画面を離れても走り、上部バーから戻れる', () => {
+describe('App: ベスト3 は画面を離れても走り、村の上部バーから戻れる', () => {
   it('★ ホームに居る間に終わった仕事を、上部バーの印から AI アシスタントで 1 度だけ受け取る', async () => {
     container = document.createElement('div');
     document.body.appendChild(container);
@@ -89,8 +89,8 @@ describe('App: ベスト3 は画面を離れても走り、上部バーから戻
     await act(async () => {
       root!.render(createElement(App));
     });
-    // AI アシスタントではない画面に居ることを先に確かめる (結果を受け取る画面が付いていない)。
-    await waitForElement(() => container.querySelector('.topbar-right'), '上部バー');
+    // AI アシスタントの窓が開いていないことを先に確かめる (結果を受け取る画面が付いていない)。
+    await waitForElement(() => container.querySelector('.village-shell-bar'), '村の上部バー');
     expect(container.querySelector('[data-best3-progress]')).toBeNull();
 
     const req = {

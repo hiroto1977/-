@@ -1,10 +1,9 @@
 /** @vitest-environment jsdom */
 /**
- * 村の殻 (村リビルド P1): 既定は**村と会話だけ**。サイドバーも各サービスの画面も出ない。
- * 残すのは役場 (設定) だけ —— ロック・データの書き出しと削除・API キーの逃げ口。
- *
- * 旧画面は `?ui=legacy` の内部の入口でだけ出る (実機の検査と開発のため)。
- * 器は `appShell.test.ts` と同じ (App を丸ごと描く)。
+ * 村の殻: 解錠の後に出るのは**村と会話だけ** (旧画面のサイドバーは 2026-11-04 に廃止)。
+ * 各サービスの画面は会話の「開いて」か URL ハッシュで役場と同じ窓に開く。
+ * 残すのは役場 (設定) —— ロック・データの書き出しと削除・API キーの逃げ口。
+ * 器は App を丸ごと描く。
  */
 import 'fake-indexeddb/auto';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -15,7 +14,7 @@ import { App } from '../App';
 import { _resetCollectionSubscribersForTests } from '../data/useCollection';
 import { _resetNavigationIntentForTests, navigateTo } from '../navigate';
 import { resetRecordStore } from './recordStoreHarness';
-import { waitForElement } from './jsdomWait';
+import { settleUntil, waitForElement, waitForText } from './jsdomWait';
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -59,12 +58,10 @@ afterEach(async () => {
   if (root) await act(async () => { root!.unmount(); });
   container?.remove();
   root = null;
-  // setup が付ける内部の入口へ戻す (他の検査が旧画面前提のため)。
-  window.history.replaceState(null, '', '/?ui=legacy');
 });
 
-async function mount(search: string): Promise<void> {
-  window.history.replaceState(null, '', `/${search}#village`);
+async function mount(search: string, hash = '#village'): Promise<void> {
+  window.history.replaceState(null, '', `/${search}${hash}`);
   container = document.createElement('div');
   document.body.appendChild(container);
   await act(async () => {
@@ -81,12 +78,6 @@ describe('村の殻 (既定)', () => {
     expect(container.querySelectorAll('[data-service-id]').length).toBe(0);
     expect(container.querySelector('[data-village-chat]')).not.toBeNull();
     expect(container.querySelector('[data-village-hall-open]')).not.toBeNull();
-  });
-
-  it('★ 対照: ?ui=legacy の内部の入口では旧画面 (サイドバー) が出て、村の殻は出ない', async () => {
-    await mount('?ui=legacy');
-    await waitForElement(() => container.querySelector('.sidebar'), '旧画面のサイドバー');
-    expect(container.querySelector('[data-village-shell]')).toBeNull();
   });
 
   it('★ 役場: 開くと設定の画面が窓で出て、Esc で閉じ、焦点は役場のボタンへ戻る', async () => {
@@ -151,5 +142,63 @@ describe('村の殻 (既定)', () => {
     expect(container.querySelector('[data-village-hall]')).toBeNull();
     await act(async () => { navigateTo('uber-eats'); });
     expect(container.querySelector('[data-village-hall]')).toBeNull();
+  });
+
+  // --- 旧画面の廃止後: 直リンク (URL ハッシュ) と窓の中の手入力欄 ---------------------------------
+  it('★ URL ハッシュ #tax-accountant で開くと、そのサービスの窓が最初から開いている (直リンク・共有)', async () => {
+    await mount('', '#tax-accountant');
+    const win = await waitForElement(() => container.querySelector<HTMLElement>('[data-village-hall]'), 'サービスの窓');
+    expect(win.getAttribute('data-village-window')).toBe('tax-accountant');
+  });
+
+  it('★ 窓を開く・閉じるとハッシュが追随し、ハッシュを替えると窓が追随する (戻る/進む)', async () => {
+    await mount('');
+    await waitForElement(() => container.querySelector('[data-village-shell]'), '村の殻');
+    await act(async () => { navigateTo('stocks'); });
+    await waitForElement(() => container.querySelector('[data-village-window="stocks"]'), '窓が開く');
+    expect(window.location.hash).toBe('#stocks');
+    await act(async () => {
+      window.location.hash = '#business';
+      window.dispatchEvent(new HashChangeEvent('hashchange'));
+    });
+    await waitForElement(() => container.querySelector('[data-village-window="business"]'), 'ハッシュで窓が替わる');
+    await act(async () => { navigateTo('village'); });
+    expect(container.querySelector('[data-village-hall]')).toBeNull();
+    expect(window.location.hash).toBe('#village');
+  });
+
+  it('★ 窓の中に手入力欄が在る (旧画面の「画面ごとの手入力欄」を失っていない)', async () => {
+    await mount('', '#kpi');
+    const win = await waitForElement(() => container.querySelector<HTMLElement>('[data-village-hall]'), 'KPI の窓');
+    await waitForElement(() => win.querySelector('[data-manual-data]'), '窓の中の手入力欄');
+  });
+
+  it('★ 会話の列で話せる (打って送ると、列の中に自分の発言と返事が並ぶ)', async () => {
+    await mount('');
+    const column = await waitForElement(() => container.querySelector<HTMLElement>('[data-village-chat]'), '会話の列');
+    const input = await waitForElement(
+      () => column.querySelector<HTMLInputElement>('input[aria-label="チャット入力"]'),
+      'チャット入力',
+    );
+    const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')!.set!;
+    await act(async () => {
+      setter.call(input, '何ができる？');
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    const send = column.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    await settleUntil(() => !send.disabled, '送信ボタンが押せる');
+    await act(async () => { send.click(); });
+    await waitForText(() => column.querySelector('[data-concierge-role="user"]')?.textContent ?? '', '何ができる？');
+    await waitForElement(() => column.querySelector('[data-concierge-role="bot"]'), '返事');
+  });
+
+  it('★ 列の送信ボタンの読み上げ名は「送信」を含まない (画面の「送信」と名前で区別できる)', async () => {
+    await mount('');
+    const column = await waitForElement(() => container.querySelector<HTMLElement>('[data-village-chat]'), '会話の列');
+    const send = await waitForElement(() => column.querySelector<HTMLButtonElement>('button[type="submit"]'), '送信ボタン');
+    const name = send.getAttribute('aria-label') ?? send.textContent ?? '';
+    expect(name).toBe('コンシェルジュへ送る');
+    expect(name.includes('送信')).toBe(false);
+    expect(send.textContent).toBe('送信');
   });
 });

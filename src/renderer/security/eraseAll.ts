@@ -63,8 +63,6 @@ const IDB_ERASERS: Readonly<Record<string, () => Promise<WipeOutcome>>> = {
 };
 
 export const ERASE_LOCAL_STORAGE_KEYS: readonly string[] = [
-  'servicehub.recents',
-  'servicehub.favorites',
   'servicehub.plan',
   'servicehub.internalLicense',
   'servicehub.recordEncryption',
