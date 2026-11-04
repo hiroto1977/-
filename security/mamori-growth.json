@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.12"
+    "version": "0.13"
   },
   "constructs": {
     "class": {
@@ -83,9 +83,10 @@
       "risk": "原型の鍵にも true を返す —— 自分の鍵を問うなら Object.hasOwn を先に選ぶ。"
     },
     "destructure": {
-      "decision": "feature",
+      "decision": "added",
       "why": "戻り値の組を受ける所で多い。",
-      "risk": "`const { constructor } = x` は T-224 の表を迂回する —— 分割代入の鍵も FORBIDDEN_MEMBERS を通す。印の欄を分割しても印は運ばない。"
+      "risk": "`const { constructor } = x` は T-224 の表を迂回する —— 分割代入の鍵も FORBIDDEN_MEMBERS を通す。印の欄を分割しても印は運ばない。",
+      "since": "0.13"
     },
     "compound-assign": {
       "decision": "rewrite",
@@ -1197,6 +1198,59 @@
         "pr": null,
         "reason": "PR はこの記録のあとに出す (番号は次の周で台帳へ)",
         "summary": "更新の有無の判定 (updateCheck.ts · GitHub の案内先を github.com の https に限る) を Mamori で書き直した (port)。足りなかったのは as 2 つ (field と raw is string) と template 3 つ (連結へ) だけで、組み上がる文字列は 1 字も変えていない。既存の検査は緑。dataCrypto は BufferSource への as が残るのでこの周では移していない。"
+      }
+    },
+    {
+      "id": "MG-018",
+      "date": "2026-11-04",
+      "kind": "feature",
+      "target": "destructure",
+      "pickedBy": "brief",
+      "briefPick": "port:src/renderer/security/dataCrypto.ts",
+      "deviation": "brief は dataCrypto.ts を書き直しだけで移せると出したが、as BufferSource が 6 つ残り field では BufferSource に渡せない。as は言語に置かない。足す候補の筆頭で安全に塞げるのは分割代入だった。",
+      "version": "0.13",
+      "features": [
+        "文の const / let に分割代入 const { a, b: c } = x と const [a, b] = xs を足した。鍵は FORBIDDEN_MEMBERS を通し、束ねた名前は印を運ばない。計算した鍵の結果は右辺にできない。入れ子・残り・既定値・計算した鍵・型注釈・空は無い"
+      ],
+      "added": [
+        "destructure"
+      ],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "const { constructor } = x / const { \"\\\\u0063onstructor\": c } = x / const { __proto__ } = x（T-224 の表を分割の鍵で迂回する）",
+          "result": "refused"
+        },
+        {
+          "tried": "const { url } = gateUrl(x); openUrl(url)（右辺の印を束ねた名前へ写して関門を飛ばす）",
+          "result": "refused"
+        },
+        {
+          "tried": "const row = xs[n]; const { a } = row と const [a] = xs[n]（計算した鍵の結果の欄を読む）",
+          "result": "refused"
+        },
+        {
+          "tried": "const { a, ...b } = o / const { a: { b } } = o / const { [k]: v } = o / const { a = 1 } = o（残り・入れ子・計算した鍵・既定値）",
+          "result": "refused"
+        }
+      ],
+      "threats": [
+        "T-252"
+      ],
+      "controls": 3,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/checker.ts",
+          "src/shared/mamori/emit.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": null,
+        "reason": "PR はこの記録のあとに出す（番号は次の周で台帳へ）",
+        "summary": "Mamori 0.13: 分割代入を足した（T-252。鍵は FORBIDDEN_MEMBERS、印は運ばない、計算した鍵の結果は右辺にできない）。dataCrypto の as BufferSource・while・正規表現ガードは見送った。"
       }
     }
   ]

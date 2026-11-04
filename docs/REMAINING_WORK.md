@@ -1,5 +1,14 @@
 # Service Hub — 残りの作業手順書
 
+## パス 575 (MG-018) —— 分割代入を足して Mamori 0.13 にした (2026-11-03)
+
+- **brief**: `port src/renderer/security/dataCrypto.ts`（書き直しだけで移せる、と heuristic は言った）。実際に書くと `salt as BufferSource` ほか `as BufferSource` が 6 つ、`as Record<string, unknown>` が 2 つ残る。`field` は unknown へ広げるだけで、`subtle.deriveKey` / `encrypt` / `decrypt` の `BufferSource` には渡せない。`as` は rewrite（M0）なので言語には足さない。暗号 340 行を、型の逃げ道を足さずに写すのはこの周では安全でない。
+- **足した構文 (0.13 · T-252)**: 文の `const` / `let` の分割代入。オブジェクトと配列の 1 段。鍵は `FORBIDDEN_MEMBERS`。束ねた名前の `vetted` は常に null、`numeric` も false。計算した鍵の添字の結果を右辺にすると M6。同じ塊での二重の束ねは先の inert を消さない。入れ子・`...`・既定値・計算した鍵・型注釈・空は M0。
+- **while は足していない**: brief の順位で、while だけが足りない壁は 0 本（`frameGuard.ts` は `member-assign` も要る）。台帳の risk は「止まらない形は見分けられず、上限のある `for…of` で書けるならそちら」。
+- **正規表現ガードは足していない**: 正規表現の字面は 0.1 から在る。`src/shared/escape.mamori` の `INVISIBLE_UNITS` は `new RegExp([字面].join('|'), 'gu')` で、パターンは利用者入力ではない。動的な `new RegExp` を断るとこの移した壁が壊れる。ReDoS は `lint:regex` が生成した TypeScript を見ている（パス 571 が「まず測る」と残した通り、今日の測定でも来歴の穴にはなっていない）。
+- **機械**: `mamoriV13.test.ts`。対照は A-579（鍵の表を外す）・A-580（束ねた名前へ印を写す）・A-581（inert の右辺を許す）。
+- **次**: brief の足す候補の先頭は `catch-binding`（解き放つ壁 2 本 / 使う壁 11 本）。`dataCrypto` を移すなら、`BufferSource` へ渡す小さな TypeScript の関数を関門の外に置く形が要るか、を別パスで測る。
+
 ## パス 574 (MG-016 / MG-017) —— 計算した鍵の添字を inert にし、updateCheck を移した (2026-11-03)
 
 - **測り直し**: 添字 `x[k]` は 0.8 (MG-007) で入っている。パス 567 が先に閉じると書いた残りを 0.11 に対して測ると、数と分かる鍵の結果 (`xs[n]()`・`const f = xs[n]; f()`・`xs[n].length`・`xs[n][0]`・`new f()`) は通っていた。文字列になりうる鍵と `out["__proto__"]` は既に断れていた。

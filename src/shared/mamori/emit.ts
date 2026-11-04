@@ -7,7 +7,7 @@
  *
  * 型の書き換え (`as`) を出すのは `mint` だけで、それは検査器が gate 関数の中にしか置かせない。
  */
-import type { Expr, Item, Member, Module, Param, Prop, Stmt } from './ast';
+import type { BindingPattern, Expr, Item, Member, Module, Param, Prop, Stmt } from './ast';
 
 const IND = '  ';
 
@@ -108,6 +108,13 @@ function prop(p: Prop): string {
   return `${p.quoted ? quote(p.key) : p.key}: ${expr(p.value)}`;
 }
 
+/** 分割代入の左辺 (0.13)。鍵と束ねる名前が同じで引用でなければ `{ email }` に畳む。 */
+function bindingPattern(p: BindingPattern): string {
+  if (p.kind === 'array') return `[${p.names.map((n) => n.name).join(', ')}]`;
+  const fields = p.fields.map((f) => (!f.quoted && f.key === f.name ? f.name : `${f.quoted ? quote(f.key) : f.key}: ${f.name}`));
+  return `{ ${fields.join(', ')} }`;
+}
+
 function wrap(e: Expr, min: number): string {
   return prec(e) < min ? `(${expr(e)})` : expr(e);
 }
@@ -130,6 +137,8 @@ function stmt(s: Stmt, depth: number): string[] {
   switch (s.kind) {
     case 'let':
       return [...head, `${ind}${s.mutable ? 'let' : 'const'} ${s.name}${s.type === null ? '' : `: ${s.type.text}`}${s.init === null ? '' : ` = ${expr(s.init)}`};`];
+    case 'destructure':
+      return [...head, `${ind}${s.mutable ? 'let' : 'const'} ${bindingPattern(s.pattern)} = ${expr(s.init)};`];
     case 'assign':
       return [...head, `${ind}${s.target} = ${expr(s.value)};`];
     case 'index-assign': {

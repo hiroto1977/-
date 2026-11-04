@@ -10,7 +10,7 @@
  * 失敗は `MamoriError` (行と桁つき) で投げる。1 つ目の誤りで止める —— 構文の誤りの後に続く誤りは
  * 当てにならないので、並べて見せても読み手を迷わせるだけである。
  */
-import type { Comments, Doc, Expr, Item, Member, Module, Param, Pos, Prop, Stmt, SwitchCase, TypeRef } from './ast';
+import type { BindingPattern, Comments, DestructField, DestructName, Doc, Expr, Item, Member, Module, Param, Pos, Prop, Stmt, SwitchCase, TypeRef } from './ast';
 
 export class MamoriError extends Error {
   constructor(
@@ -361,10 +361,77 @@ export function parse(file: string, src: string): Module {
     return out;
   };
 
+  /**
+   * 分割代入の左辺 (0.13 · T-252)。`const { a, b: c } = x` と `const [a, b] = xs`。
+   * 鍵は名前か文字列だけで、禁じた名前 (`constructor` ほか) は `.name` と同じ表で断る。
+   * 入れ子・残り・既定値・計算した鍵は、印や原型へ届く形を足す前に塞ぐため無い。
+   */
+  const bindingPattern = (): BindingPattern => {
+    const t = peek();
+    if (isP('{')) {
+      next();
+      const fields: DestructField[] = [];
+      const seen = new Set<string>();
+      while (!isP('}')) {
+        const kt = peek();
+        if (isP('...')) fail(kt, '`...` (残り) は分割代入に在りません —— 名前を 1 つずつ書きます');
+        if (isP('[')) fail(kt, '計算した鍵 (`[k]: 名前`) は分割代入に在りません —— 鍵は名前か文字列で書きます');
+        const quoted = kt.kind === 'string';
+        const key = quoted ? str() : ident();
+        if (Object.hasOwn(FORBIDDEN_MEMBERS, key)) fail(kt, FORBIDDEN_MEMBERS[key]!);
+        let bound = key;
+        if (isP(':')) {
+          next();
+          if (isP('{') || isP('[')) fail(peek(), '分割代入の入れ子は在りません —— 1 段だけ束ねます');
+          bound = ident();
+        } else if (quoted) {
+          fail(peek(), `文字列の鍵 ${JSON.stringify(key)} には \`:\` と束ねる名前が要ります`);
+        }
+        if (isP('=')) fail(peek(), '分割代入の既定値は在りません');
+        if (RESERVED.has(bound) || STOP_WORDS.has(bound)) fail(kt, `\`${bound}\` は束ねる名前にできません`);
+        if (seen.has(bound)) fail(kt, `名前 ${bound} を 2 度束ねています`);
+        seen.add(bound);
+        fields.push({ key, quoted, name: bound, pos: kt.pos });
+        if (!isP('}')) expectP(',');
+      }
+      if (fields.length === 0) fail(t, '分割代入には名前が 1 つ要ります');
+      expectP('}');
+      return { kind: 'object', fields, pos: t.pos };
+    }
+    // 呼び出し側が `{` か `[` のときだけ呼ぶ。`{` は上で返しているので、ここは `[`。
+    next();
+    const names: DestructName[] = [];
+    const seen = new Set<string>();
+    while (!isP(']')) {
+      const nt = peek();
+      if (isP('...')) fail(nt, '`...` (残り) は分割代入に在りません —— 名前を 1 つずつ書きます');
+      if (isP(',')) fail(nt, '空の位置は分割代入に在りません');
+      if (isP('{') || isP('[')) fail(nt, '分割代入の入れ子は在りません —— 1 段だけ束ねます');
+      const bound = ident();
+      if (isP('=')) fail(peek(), '分割代入の既定値は在りません');
+      if (RESERVED.has(bound) || STOP_WORDS.has(bound)) fail(nt, `\`${bound}\` は束ねる名前にできません`);
+      if (seen.has(bound)) fail(nt, `名前 ${bound} を 2 度束ねています`);
+      seen.add(bound);
+      names.push({ name: bound, pos: nt.pos });
+      if (!isP(']')) expectP(',');
+    }
+    if (names.length === 0) fail(t, '分割代入には名前が 1 つ要ります');
+    expectP(']');
+    return { kind: 'array', names, pos: t.pos };
+  };
+
   const stmt = (cs: Comments): Stmt => {
     const t = peek();
     if (isW('const') || isW('let')) {
       const mutable = next().text === 'let';
+      if (isP('{') || isP('[')) {
+        const pattern = bindingPattern();
+        if (isP(':')) fail(peek(), '分割代入に型注釈は付けられません —— 束ねた名前の使い方を tsc が見ます');
+        expectP('=');
+        const init = expr();
+        expectP(';');
+        return { kind: 'destructure', mutable, pattern, init, comments: cs, pos: t.pos };
+      }
       const name = ident();
       let type: TypeRef | null = null;
       if (isP(':')) {
