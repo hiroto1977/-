@@ -76,8 +76,8 @@ describe('AIの村 × Grok', () => {
     });
     // 送り先の断りが Grok を名乗る (読みが終わるまで待つ)
     await waitForText(() => el.textContent ?? '', 'Grok (xAI)');
-    const input = await waitForElement<HTMLInputElement>(
-      () => el.querySelector('input[aria-label="村への入力"]'),
+    const input = await waitForElement(
+      () => el.querySelector<HTMLInputElement>('input[aria-label="村への入力"]'),
       '村への入力欄',
     );
     const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!;

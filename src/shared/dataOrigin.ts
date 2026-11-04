@@ -97,6 +97,7 @@ export const SERVICE_DATA_ORIGIN: Record<ServiceId, DataOrigin> = {
   sales: 'sample',
   team: 'sample',
   mentor: 'sample',
+  grok: 'sample',
   youtube: 'remote',
   overview: 'sample',
   coconala: 'sample',

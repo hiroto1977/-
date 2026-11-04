@@ -75,6 +75,7 @@ import { fetchCursorSnapshot, ACTIONS as CURSOR_ACTIONS } from './cursor';
 import { fetchTalentSnapshot, ACTIONS as TALENT_ACTIONS } from './talent';
 import { fetchHydroponicsSnapshot } from './hydroponics';
 import { fetchMentorSnapshot } from './mentor';
+import { fetchGrokSnapshot } from './grok';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import { SERVICE_IDS, type ServiceId } from '../../shared/serviceId';
@@ -159,6 +160,7 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   talent: fetchTalentSnapshot,
   hydroponics: fetchHydroponicsSnapshot,
   mentor: fetchMentorSnapshot,
+  grok: fetchGrokSnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
@@ -257,6 +259,8 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'talent',
   // 専属カウンセラー: 判断は shared/mentor.ts の純関数、記録は renderer の record store。認証・通信なし。
   'mentor',
+  // Grok (xAI) の画面: 鍵は assistant スロット・呼び出しは assistant/chat。自分の通信も認証もない。
+  'grok',
   'templates',
   'library',
   'settings',
