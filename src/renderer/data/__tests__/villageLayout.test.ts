@@ -761,7 +761,7 @@ describe('walkPoint — 持ち場の周りを歩く (あつ森風)', () => {
     }
   });
 
-  it('歩く区間と立ち止まる区間の両方がある (3 割ほど止まる)', () => {
+  it('歩く区間と立ち止まる区間の両方がある (1 割 5 分ほど止まる)', () => {
     let moved = 0;
     let stayed = 0;
     for (let step = 1; step <= 200; step++) {
@@ -770,8 +770,8 @@ describe('walkPoint — 持ち場の周りを歩く (あつ森風)', () => {
       if (a.x === b.x && a.y === b.y) stayed++;
       else moved++;
     }
-    expect(moved).toBeGreaterThan(60);
-    expect(stayed).toBeGreaterThan(20);
+    expect(moved).toBeGreaterThan(120);
+    expect(stayed).toBeGreaterThan(10);
   });
 
   it('人によって歩く場所がずれる', () => {

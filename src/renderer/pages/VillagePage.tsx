@@ -223,7 +223,7 @@ export function VillagePage() {
 
   useEffect(() => {
     if (paused) return;
-    const h = setInterval(() => setTick((t) => (t + 1) % 100000), 2200);
+    const h = setInterval(() => setTick((t) => (t + 1) % 100000), 1400);
     return () => clearInterval(h);
   }, [paused]);
 
@@ -278,17 +278,18 @@ export function VillagePage() {
           w: rect.w * 0.94,
           h: rect.h * (focusedExec ? 0.86 : 0.78),
         };
-        const rx = focusedExec ? 7 : 4.5;
-        const ry = focusedExec ? 9 : 6;
+        // 街区いっぱいを歩く (範囲は街区の中に clamp される)。
+        const rx = focusedExec ? 16 : 10;
+        const ry = focusedExec ? 20 : 14;
         const cur = walkPoint(idx, step, base, rx, ry, bounds);
         const prev = walkPoint(idx, step - 1, base, rx, ry, bounds);
         const dist = Math.hypot(cur.x - prev.x, cur.y - prev.y);
-        // 速さは一定 (1% あたり 0.3 秒)。止まる区間は dist = 0 で歩く動きを付けない。
+        // 速さは一定 (1% あたり 0.2 秒)。止まる区間は dist = 0 で歩く動きを付けない。
         map.set(v.id, {
           x: cur.x,
           y: cur.y,
           flip: cur.x < prev.x,
-          dur: Math.min(5.5, Math.max(0.8, dist * 0.3)),
+          dur: Math.min(3, Math.max(0.6, dist * 0.2)),
           seq: dist > 0.3 ? step : -1,
         });
       } else {
