@@ -3813,6 +3813,14 @@
       "leafCount": 186,
       "note": "update 00-project.mdc",
       "hash": "7236c8cfe6cfce3ffef824ee35889f046bc9ddb23bdb6c0cd11fb74a8642caf0"
+    },
+    {
+      "index": 453,
+      "prevHash": "7236c8cfe6cfce3ffef824ee35889f046bc9ddb23bdb6c0cd11fb74a8642caf0",
+      "merkleRoot": "7bb939510ec1b674feaca66c94fca9bd88be78f55508183f407478695bae0ac2",
+      "leafCount": 186,
+      "note": "update manifest.webmanifest",
+      "hash": "f314f111a2560c8aed156ca6dc65bd2b19a3a47a69c4be351b593f11866f2ae9"
     }
   ],
   "tipManifest": {
@@ -3833,7 +3841,7 @@
     ".github/workflows/pages.yml": "72dd545faa7edc54d3332d19f87b24212df2cd3be3178812d5561e2722603cec",
     ".github/workflows/release.yml": "f348cadc5d4d7e456b230bdd57bd73ebe25f30acc4a11162a97a2d4c808205ea",
     "assets/icon.svg": "213373cc2e82c0255c103b47cfb880cad685935cd1d4c383746a6202315d540f",
-    "assets/manifest.webmanifest": "3906cd174c46400b36821d7358deb6d93da7197b6815d0d851b2517e8f370b9e",
+    "assets/manifest.webmanifest": "f4cdad74b0e89f61d1cc5b943e8aad5a06abf875ab5c63cb3202de580a972d27",
     "assets/og.png": "1fcc1b3974eec00de79ab6d37272f39529905a3448017dc24ee0f03e979b7282",
     "assets/sw.js": "0320f925b8da1242c0aa3783e332a8abb87323331767aeebcab7dab309f6189d",
     "docs/PROXY_EXAMPLE.md": "c2f4987d6e53a3cbfae921dcc33582522abb4c587b519795296e3b3dc4edd06b",

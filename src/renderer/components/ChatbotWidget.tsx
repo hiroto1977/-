@@ -45,14 +45,15 @@ import {
 } from '../data/chatbotOllama';
 import {
   CONCIERGE_SYSTEM_PROMPT,
-  GROK_EGRESS_NOTICE,
   GROK_LABEL,
   conciergeUsesGrok,
+  grokEgressRecipients,
   grokRefusalNote,
 } from '../data/chatbotGrok';
 import { externalTextOnOneLine } from '../data/assistantMarkdown';
 import { useBuildKind } from '../hooks/useBuildKind';
 import { loadEndpointSetting } from '../network/ollamaWeb';
+import { AiEgressNotice } from './AiEgressNotice';
 import { CeilingNotice } from './CeilingNotice';
 import { useDialogFocus } from './useDialogFocus';
 import { charsOverCeiling } from '../../shared/inputCeiling';
@@ -346,7 +347,9 @@ async function grokIsDefault(hub: Window['serviceHub'] | undefined): Promise<boo
   if (!hub) return false;
   try {
     const res = await hub.invoke<ActionData<'assistant/providers'>>('assistant', 'providers', {});
-    return res.ok && conciergeUsesGrok(res.data.providers);
+    // 読めなければ「Grok が既定」とは言わない (fail closed —— 端末内の Ollama へ倒れる)。
+    if (!res.ok) return false;
+    return conciergeUsesGrok(res.data.providers);
   } catch {
     return false;
   }
@@ -744,9 +747,14 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
 
       <CeilingNotice label="入力" value={input} max={MAX_OLLAMA_PROMPT_CHARS} />
       {viaGrok && (
-        <p className="concierge-egress" role="note" data-grok-egress>
-          {GROK_EGRESS_NOTICE}
-        </p>
+        <div className="concierge-egress" role="note" data-grok-egress>
+          <AiEgressNotice
+            subject={{
+              what: '解釈できなかった質問',
+              recipients: grokEgressRecipients(buildKind === null ? null : buildKind === 'browser'),
+            }}
+          />
+        </div>
       )}
       {!viaGrok && ollamaEgressNote !== null && (
         <p className="concierge-egress" role="note" data-ollama-egress>

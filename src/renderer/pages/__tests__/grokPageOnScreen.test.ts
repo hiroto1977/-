@@ -8,6 +8,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
+import { MAX_ASSISTANT_CONTENT_CHARS } from '../../../shared/assistantLimits';
 import { waitForElement, waitForText } from '../../__tests__/jsdomWait';
 
 interface Call {
@@ -143,5 +144,20 @@ describe('Grok の画面', () => {
     const err = await waitForElement(() => el.querySelector('[data-grok-error]'), '断りの表示');
     expect(err.textContent).toContain('xAI API 401: bad key');
     expect(err.textContent).not.toContain('\n');
+  });
+
+  it('★ 天井ちょうどは送り、+1 字は送らずに断る (MAX_ASSISTANT_CONTENT_CHARS)', async () => {
+    const calls = installBridge({ configured: true });
+    const el = await mount();
+    await waitForText(() => el.textContent ?? '', '接続済み');
+    await type(el, 'あ'.repeat(MAX_ASSISTANT_CONTENT_CHARS + 1));
+    await press(el);
+    const err = await waitForElement(() => el.querySelector('[data-grok-error]'), '超過の断り');
+    expect(err.textContent ?? '').toContain(String(MAX_ASSISTANT_CONTENT_CHARS));
+    expect(calls.some((c) => c.action === 'chat')).toBe(false);
+    await type(el, 'あ'.repeat(MAX_ASSISTANT_CONTENT_CHARS));
+    await press(el);
+    await waitForText(() => el.textContent ?? '', 'Grok からの答えです');
+    expect(calls.filter((c) => c.action === 'chat')).toHaveLength(1);
   });
 });

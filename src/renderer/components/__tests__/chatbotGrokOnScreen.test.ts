@@ -8,7 +8,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { ChatbotWidget } from '../ChatbotWidget';
-import { CONCIERGE_SYSTEM_PROMPT, GROK_EGRESS_NOTICE, GROK_LABEL } from '../../data/chatbotGrok';
+import { CONCIERGE_SYSTEM_PROMPT, GROK_LABEL } from '../../data/chatbotGrok';
 import { waitForElement, waitForText } from '../../__tests__/jsdomWait';
 
 if (!('scrollTo' in Element.prototype)) {
@@ -97,7 +97,8 @@ describe('AI コンシェルジュ × Grok', () => {
     const calls = installBridge({ grokDefault: true, chat: 'reply' });
     const el = await open();
     await waitForElement(() => el.querySelector('[data-grok-egress]'), 'Grok の送り先の断り');
-    expect(el.querySelector('[data-grok-egress]')!.textContent).toBe(GROK_EGRESS_NOTICE);
+    // 断りは共有の `AiEgressNotice` (送り先を名乗る)。自前の文面ではない。
+    expect(el.querySelector('[data-grok-egress] [data-ai-egress]')!.textContent).toContain(GROK_LABEL);
     await ask(el);
     await waitForText(() => el.textContent ?? '', 'これは Grok の答えです');
     const chat = calls.filter((c) => c.service === 'assistant' && c.action === 'chat');

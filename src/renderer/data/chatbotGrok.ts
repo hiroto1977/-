@@ -20,6 +20,7 @@
  * 文は data 層が持つ: `.tsx` は変異検査の母集団の外で、どちらの文が出るかを誰も測れない。
  */
 import { ERROR_MESSAGE_MAX_CHARS, redactForMessage } from '../../shared/redact';
+import type { AiEgressRecipients } from '../../shared/aiEgressNotice';
 import { externalTextOnOneLine } from './assistantMarkdown';
 
 /** 答えの吹き出しの札 (`routedThrough`)。 */
@@ -51,9 +52,14 @@ export function conciergeUsesGrok(statuses: unknown): boolean {
   });
 }
 
-/** 送る前に出す 1 文。 */
-export const GROK_EGRESS_NOTICE =
-  '解釈できない質問は、xAI の Grok (api.x.ai) へ送ります —— この端末の外です。';
+/**
+ * 送る前の断り (`AiEgressNotice`) に渡す送り先。文面は共有の 1 か所 (`shared/aiEgressNotice.ts`) が持つ。
+ * Grok は CORS を許さないので、ブラウザ版では利用者のプロキシ (Cloudflare Worker) を通る —— そのとき
+ * 運用者にも会話と API キーが見えることを断りが述べる (T-119)。実行形態が分からないあいだは名乗らない。
+ */
+export function grokEgressRecipients(browser: boolean | null): AiEgressRecipients {
+  return browser === true ? { remote: [GROK_LABEL], viaProxy: [GROK_LABEL] } : { remote: [GROK_LABEL] };
+}
 
 /** Grok が答えなかったことを述べる 1 文。 */
 export function grokRefusalNote(message: unknown): string {

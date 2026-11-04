@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   CONCIERGE_SYSTEM_PROMPT,
-  GROK_EGRESS_NOTICE,
+  grokEgressRecipients,
   GROK_LABEL,
   conciergeUsesGrok,
   grokRefusalNote,
@@ -30,9 +30,11 @@ describe('conciergeUsesGrok — 自由質問を Grok へ回す条件', () => {
 });
 
 describe('Grok の文', () => {
-  it('送り先と「端末の外」を名乗る', () => {
-    expect(GROK_EGRESS_NOTICE).toBe('解釈できない質問は、xAI の Grok (api.x.ai) へ送ります —— この端末の外です。');
+  it('送り先を名乗り、ブラウザ版だけプロキシ経由を述べる (分からないあいだは述べない)', () => {
     expect(GROK_LABEL).toBe('Grok (xAI)');
+    expect(grokEgressRecipients(false)).toEqual({ remote: ['Grok (xAI)'] });
+    expect(grokEgressRecipients(null)).toEqual({ remote: ['Grok (xAI)'] });
+    expect(grokEgressRecipients(true)).toEqual({ remote: ['Grok (xAI)'], viaProxy: ['Grok (xAI)'] });
   });
   it('役割の指示は個別の助言をしないと述べる', () => {
     expect(CONCIERGE_SYSTEM_PROMPT).toContain('Service Hub');
