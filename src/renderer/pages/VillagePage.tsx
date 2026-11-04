@@ -598,24 +598,30 @@ function buildVillageSystemPrompt(target?: Villager): string {
 // この景色は配色に追随しない (昼の空と草地) ので、色は直書きでよい (字は載せない飾りだけ)。
 // ---------------------------------------------------------------------------
 const SPRITE_PALETTE: Record<string, string> = {
+  // 花・きのこ
   G: '#3f8f3a', g: '#2f7a2e', T: '#6b4a2b', R: '#e86a8a', Y: '#ffd84a', S: '#3f8f3a', W: '#ffffff', O: '#f2994a', M: '#c9503f', C: '#f3e7c9',
+  // マイクラ風の木と家: 葉 (明・中・暗) / 丸太 (樹皮・明) / 板 (明・暗) / 丸石 (明・暗) / ガラス / ドア / 屋根 (明・暗)
+  a: '#2f7d32', b: '#44a044', c: '#256a29', k: '#6b4a2b', l: '#85603a', p: '#b88a4e', q: '#9c733c', s: '#8d8d8d', t: '#6f6f6f',
+  w: '#9bd8ff', d: '#4a2f1a', r: '#7a3b2e', e: '#5e2d22',
 };
+// 葉のブロックを積んだ樫の木 (9×12): 葉は 3 色の市松に近いまだら・幹は丸太 3 マス幅
 const TREE = [
-  '....GGG....',
-  '..GGGGGGG..',
-  '.GGgGGGgGG.',
-  'GGGGGGGGGGG',
-  'GgGGGGGGgGG',
-  '.GGGGgGGGG.',
-  '..GGGGGGG..',
-  '.....T.....',
-  '.....T.....',
-  '.....T.....',
+  '..bacab..',
+  '.bcabcabc',
+  'abcabacba',
+  'cabcbabca',
+  'abacbcaba',
+  '.bcabacb.',
+  '..cabca..',
+  '...klk...',
+  '...kkl...',
+  '...lkk...',
+  '...klk...',
+  '...kkl...',
 ];
 const FLOWER = ['.R.R.', '..Y..', '.R.R.', '..S..', '..S..'];
 const MUSHROOM = ['.MMM.', 'MWMMM', 'MMMWM', '.CCC.', '.CCC.'];
-const BUSH = ['..GGG..', '.GgGGG.', 'GGGGgGG', 'GgGGGGG'];
-
+const BUSH = ['.bacb.', 'abcabc', 'cabcba', 'bcabca'];
 function Sprite({ rows, px }: { rows: readonly string[]; px: number }) {
   const w = rows.reduce((m, r) => Math.max(m, r.length), 1);
   const cells: React.ReactNode[] = [];
@@ -639,18 +645,113 @@ function Sprite({ rows, px }: { rows: readonly string[]; px: number }) {
   );
 }
 
+// 木の板の壁・丸石の土台・ガラスの窓・屋根の家 (14×9)
 const HOUSE = [
-  '.....RR.....',
-  '...RRRRRR...',
-  '.RRRRRRRRRR.',
-  'RRRRRRRRRRRR',
-  '.CCCCCCCCCC.',
-  '.CWWCCCCWWC.',
-  '.CWWCCCCWWC.',
-  '.CCCCTTCCCC.',
-  '.CCCCTTCCCC.',
-  '.CCCCTTCCCC.',
+  '....reerer....',
+  '..rerereerer..',
+  'rerereerererer',
+  '.pqpqpqpqpqpq.',
+  '.pwwpqpqpwwpq.',
+  '.pwwqpqpqwwqp.',
+  '.qpqpddpqpqpq.',
+  '.pqpqddqpqpqp.',
+  '.stststststst.',
 ];
+
+/** 決まった乱数 (同じ入力は同じ値・0 以上 1 未満)。ドット絵のまだら模様と村人の見た目の割り振りに使う。 */
+function frac(a: number, b: number, seed: number): number {
+  const v = Math.sin(a * 12.9898 + b * 78.233 + seed * 37.719) * 43758.5453;
+  return v - Math.floor(v);
+}
+
+/** マイクラ風のドットのまだら模様 (草・土・水)。インライン SVG の pattern で敷く (画像ファイルは使わない)。 */
+function PixelFill({ id, tile, cell, colors }: { id: string; tile: number; cell: number; colors: readonly [string, string, string, string] }) {
+  const n = Math.round(tile / cell);
+  const rects: React.ReactNode[] = [];
+  for (let j = 0; j < n; j++) {
+    for (let i = 0; i < n; i++) {
+      const f = frac(i, j, tile);
+      const c = f < 0.5 ? colors[0] : f < 0.78 ? colors[1] : f < 0.92 ? colors[2] : colors[3];
+      rects.push(<rect key={`${i}-${j}`} x={i * cell} y={j * cell} width={cell} height={cell} fill={c} />);
+    }
+  }
+  return (
+    <svg width="100%" height="100%" shapeRendering="crispEdges" aria-hidden style={{ position: 'absolute', inset: 0, display: 'block' }}>
+      <defs>
+        <pattern id={id} width={tile} height={tile} patternUnits="userSpaceOnUse">
+          {rects}
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill={`url(#${id})`} />
+    </svg>
+  );
+}
+
+const SKINS = ['#f0c7a0', '#d9a577', '#a9743f', '#7a4a28'] as const;
+const HAIRS = ['#4a2f1a', '#2b1d0f', '#c9a24a', '#8a3b1d', '#1f1f1f'] as const;
+
+function shade(hex: string, k: number): string {
+  const m = /^#([0-9a-f]{6})$/i.exec(hex);
+  if (m === null) return hex;
+  const n = parseInt(m[1] ?? '000000', 16);
+  const ch = (x: number) => Math.max(0, Math.min(255, Math.round(x * k)));
+  return `#${[(n >> 16) & 255, (n >> 8) & 255, n & 255].map((x) => ch(x).toString(16).padStart(2, '0')).join('')}`;
+}
+
+// マイクラ風の人形 (8×16): 頭 8 段 (髪 2・顔)・腕と胴 4 段・脚 4 段。H 髪 / S 肌 / W 白目 / B 瞳 / D 口 / T 服 / t 服の影 / P ズボン / p ズボンの影 / K 靴
+const BLOCKY = [
+  'HHHHHHHH',
+  'HHHHHHHH',
+  'HSSSSSSH',
+  'SSSSSSSS',
+  'SWBSSBWS',
+  'SSSSSSSS',
+  'SSDDDDSS',
+  'SSSSSSSS',
+  'ttTTTTtt',
+  'ttTTTTtt',
+  'ttTTTTtt',
+  'SSTTTTSS',
+  '..PPpp..',
+  '..PPpp..',
+  '..PPpp..',
+  '..KKkk..',
+];
+
+function Blocky({ shirt, pants, skin, hair, w, h, flip }: { shirt: string; pants: string; skin: string; hair: string; w: number; h: number; flip: boolean }) {
+  const colors: Record<string, string> = {
+    H: hair, S: skin, W: '#ffffff', B: '#3b3b8f', D: shade(skin, 0.7), T: shirt, t: shade(shirt, 0.78), P: pants, p: shade(pants, 0.75), K: '#6f6f6f', k: '#555555',
+  };
+  const cells: React.ReactNode[] = [];
+  BLOCKY.forEach((row, y) => {
+    [...row].forEach((c, x) => {
+      const fill = colors[c];
+      if (fill !== undefined) cells.push(<rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} fill={fill} />);
+    });
+  });
+  return (
+    <svg
+      viewBox="0 0 8 16"
+      width={w}
+      height={h}
+      shapeRendering="crispEdges"
+      aria-hidden
+      style={{ display: 'block', transform: flip ? 'scaleX(-1)' : undefined }}
+    >
+      {cells}
+    </svg>
+  );
+}
+
+/** 種類ごとの服の色。チームは作業の状態の色 (ring) を服にして、状態が一目で分かるようにする。 */
+function outfitOf(v: Villager, ring: string | undefined): { shirt: string; pants: string } {
+  if (v.kind === 'team') return { shirt: ring ?? '#2f9e6b', pants: '#3b4a9a' };
+  if (v.kind === 'ceo') return { shirt: '#f2c744', pants: '#3a2a6a' };
+  if (v.kind === 'coo') return { shirt: '#4f7cff', pants: '#26324f' };
+  if (v.kind === 'executive') return { shirt: EXEC_TINT[v.execId ?? ''] ?? '#cbd5e1', pants: '#2b2b2b' };
+  if (v.kind === 'manager') return { shirt: '#8e6bbf', pants: '#2b2b2b' };
+  return { shirt: '#e86a8a', pants: '#4a3a5a' };
+}
 
 /** 立ち絵 (地面の座標 x,y は景色の百分率。景色の外にも置ける)。 */
 const DECOR: { rows: readonly string[]; px: number; x: number; y: number }[] = [
@@ -696,6 +797,8 @@ function Sky() {
 function Ground({ heightPx, children }: { heightPx: number; children: React.ReactNode }) {
   return (
     <div style={{ ...groundStyle, transform: groundTransform(heightPx) }} aria-hidden>
+      {/* 草ブロックの地面 (8px のドットのまだら) */}
+      <PixelFill id="mc-grass" tile={64} cell={8} colors={['#6fb04f', '#64a346', '#7ac05a', '#5a9a3e']} />
       <div style={fieldStyle}>{children}</div>
     </div>
   );
@@ -704,11 +807,17 @@ function Ground({ heightPx, children }: { heightPx: number; children: React.Reac
 function Terrain() {
   return (
     <>
-      {/* 池 (水のブロック) */}
-      <div style={pondStyle} />
-      {/* 中央広場から各街区へ伸びる土の小道 */}
-      <div style={{ ...pathStyle, left: 'calc(50% - 8px)', top: '24%', width: 16, height: '14%' }} />
-      <div style={{ ...pathStyle, left: '14%', top: 'calc(38% - 8px)', width: '72%', height: 16 }} />
+      {/* 池 (水ブロック) */}
+      <div style={pondStyle}>
+        <PixelFill id="mc-water" tile={48} cell={8} colors={['#3f76e4', '#3a6cd4', '#4f86f0', '#2f5fc0']} />
+      </div>
+      {/* 中央広場から各街区へ伸びる土の小道 (土ブロック) */}
+      <div style={{ ...pathStyle, left: 'calc(50% - 8px)', top: '24%', width: 16, height: '14%' }}>
+        <PixelFill id="mc-dirt-v" tile={48} cell={6} colors={['#8a6a43', '#7c5e3a', '#9a7a50', '#6a4e30']} />
+      </div>
+      <div style={{ ...pathStyle, left: '14%', top: 'calc(38% - 8px)', width: '72%', height: 16 }}>
+        <PixelFill id="mc-dirt-h" tile={48} cell={6} colors={['#8a6a43', '#7c5e3a', '#9a7a50', '#6a4e30']} />
+      </div>
     </>
   );
 }
@@ -735,10 +844,10 @@ function Pad({ rect, tint }: { rect: Rect; tint: string }) {
         top: `${rect.y}%`,
         width: `${rect.w}%`,
         height: `${rect.h}%`,
-        borderRadius: 2,
-        background: 'rgba(255,255,255,0.34)',
-        border: `3px solid ${tint}`,
-        boxShadow: `inset 0 0 0 2px rgba(255,255,255,0.35), 0 0 0 1px rgba(0,0,0,0.12)`,
+        borderRadius: 0,
+        background: 'rgba(255,255,255,0.26)',
+        border: `4px solid ${tint}`,
+        boxShadow: `inset 3px 3px 0 rgba(255,255,255,0.35), inset -3px -3px 0 rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.25)`,
       }}
     />
   );
@@ -790,9 +899,10 @@ function SignBoard({
         fontSize: 11,
         fontWeight: 800,
         padding: '3px 9px',
-        border: '2px solid #4a3a24',
-        borderRadius: 2,
-        boxShadow: '0 3px 0 rgba(0,0,0,0.3)',
+        border: '3px solid #3a2a14',
+        borderRadius: 0,
+        // マイクラの GUI の面取り (明るい上・左と暗い下・右)
+        boxShadow: 'inset 3px 3px 0 rgba(255,255,255,0.4), inset -3px -3px 0 rgba(0,0,0,0.28), 0 3px 0 rgba(0,0,0,0.35)',
         display: 'flex',
         gap: 8,
         alignItems: 'center',
@@ -845,6 +955,9 @@ function Character({ v, x, y, flip, dur, seq, active, enlarged, showLabel, ring,
   const base = KIND_SIZE[v.kind] ?? 20;
   const size = enlarged && v.kind === 'team' ? 26 : base;
   const pp = projectPoint(x, y);
+  const outfit = outfitOf(v, ring);
+  // 見た目 (肌・髪) は id から決まる (乱数なし・毎回同じ顔)。
+  const seed = [...v.id].reduce((n, c) => (n * 31 + c.charCodeAt(0)) % 9973, 7);
   return (
     <div
       style={{
@@ -887,22 +1000,19 @@ function Character({ v, x, y, flip, dur, seq, active, enlarged, showLabel, ring,
         key={seq}
         style={{
           animation: seq >= 0 ? `village-step 0.34s ease-in-out ${Math.max(1, Math.round(dur / 0.34))}` : undefined,
-          // 顔のブロック: 四角い枠に絵文字を入れる (マイクラの頭ブロック風)
-          boxSizing: 'content-box',
-          width: Math.round(size * 0.8),
-          height: Math.round(size * 0.8),
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: Math.round(size * 0.62),
-          lineHeight: 1,
-          background: '#f4ead2',
-          border: `2px solid ${ring ?? '#4a3a24'}`,
-          borderRadius: 2,
-          boxShadow: active ? '0 0 0 3px #ffe066, 0 2px 0 rgba(0,0,0,0.3)' : '0 2px 0 rgba(0,0,0,0.3)',
+          // 光る縁 (話している人・作業広場の人)
+          filter: active ? 'drop-shadow(0 0 3px #ffe066) drop-shadow(0 0 3px #ffe066)' : undefined,
         }}
       >
-        <span style={{ display: 'block', transform: flip ? 'scaleX(-1)' : undefined }}>{v.emoji}</span>
+        <Blocky
+          shirt={outfit.shirt}
+          pants={outfit.pants}
+          skin={SKINS[Math.floor(frac(seed, 1, 5) * SKINS.length)] ?? SKINS[0]}
+          hair={v.kind === 'ceo' ? '#ffd84a' : HAIRS[Math.floor(frac(seed, 2, 9) * HAIRS.length)] ?? HAIRS[0]}
+          w={Math.round(size * 0.68)}
+          h={Math.round(size * 1.36)}
+          flip={flip}
+        />
       </div>
       {/* 足元の影 */}
       <div
@@ -1025,7 +1135,7 @@ const groundStyle: React.CSSProperties = {
   width: '170%',
   height: '150%',
   transformOrigin: '50% 50%',
-  background: 'conic-gradient(#7cbf6a 25%, #72b562 0 50%, #7cbf6a 0 75%, #72b562 0) 0 0 / 48px 48px',
+  background: '#6fb04f',
   pointerEvents: 'none',
 };
 // 景色と同じ範囲 (地面の中の 100/170 × 100/150)。街区・小道・池の百分率はここで数える。
@@ -1042,13 +1152,12 @@ const pondStyle: React.CSSProperties = {
   top: '86%',
   width: '28%',
   height: '9%',
-  background: 'conic-gradient(#5db4e0 25%, #7ec8e3 0 50%, #5db4e0 0 75%, #7ec8e3 0) 0 0 / 16px 16px',
-  border: '4px solid #3a7ca5',
+  border: '4px solid #2a4a99',
   pointerEvents: 'none',
 };
 const pathStyle: React.CSSProperties = {
   position: 'absolute',
-  background: 'conic-gradient(#d9c28a 25%, #cbb277 0 50%, #d9c28a 0 75%, #cbb277 0) 0 0 / 16px 16px',
+  overflow: 'hidden',
   pointerEvents: 'none',
 };
 const taskBannerStyle: React.CSSProperties = {

@@ -74,7 +74,7 @@ const LEDGER: Readonly<Record<string, number>> = {
   'src/renderer/pages/TaxPage.tsx': 8, // パス 503: 13 → 8
   'src/renderer/pages/TeamRadarPage.tsx': 2, // パス 493g: 8 色の写しを shared/teamRadarSvg の colorFor へ寄せた / パス 503: 6 → 2
   'src/renderer/pages/TemplatesPage.tsx': 10,
-  'src/renderer/pages/VillagePage.tsx': 63, // 村リビルド P2: 33 → 58 → 63 (3D 化: 空のグラデーション・看板・台座の枠・家の絵の色) (ブロック調ピクセルの景色 —— 配色に追随しない固定の昼の景色なので字を載せない飾りの色は直書き。ピクセル絵の palette・市松の草地・池・小道)。パス 504: 32 → 33 (配色に追随しない景色の上の焦点の輪 `--focus-outline: #1b2f14` —— 配色の輪は草地の上で 2.3:1)
+  'src/renderer/pages/VillagePage.tsx': 106, // 村リビルド P2: 33 → 58 → 63 → 106 (マイクラ風: ドット絵の palette / 人形の肌・髪・靴 / 草・土・水のまだら。3D 化: 空のグラデーション・看板・台座の枠・家の絵の色) (ブロック調ピクセルの景色 —— 配色に追随しない固定の昼の景色なので字を載せない飾りの色は直書き。ピクセル絵の palette・市松の草地・池・小道)。パス 504: 32 → 33 (配色に追随しない景色の上の焦点の輪 `--focus-outline: #1b2f14` —— 配色の輪は草地の上で 2.3:1)
 };
 
 const SOURCES = uiSources();
