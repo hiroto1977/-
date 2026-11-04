@@ -13,7 +13,7 @@ import { createRoot, type Root } from 'react-dom/client';
 
 import { App } from '../App';
 import { _resetCollectionSubscribersForTests } from '../data/useCollection';
-import { _resetNavigationIntentForTests } from '../navigate';
+import { _resetNavigationIntentForTests, navigateTo } from '../navigate';
 import { resetRecordStore } from './recordStoreHarness';
 import { waitForElement } from './jsdomWait';
 
@@ -114,6 +114,42 @@ describe('村の殻 (既定)', () => {
       '閉じるボタン',
     );
     await act(async () => { close.click(); });
+    expect(container.querySelector('[data-village-hall]')).toBeNull();
+  });
+
+  // --- P3: 会話の「〇〇を開いて」(servicehub:navigate) を殻が聞く ---------------------------------
+  it('★ 会話の「開いて」: navigate で該当サービスの画面が窓に開く (聞き手が無いと無反応になる)', async () => {
+    await mount('');
+    await waitForElement(() => container.querySelector('[data-village-shell]'), '村の殻');
+    expect(container.querySelector('[data-village-hall]')).toBeNull();
+    await act(async () => { navigateTo('tax-accountant'); });
+    const win = await waitForElement(() => container.querySelector<HTMLElement>('[role="dialog"][data-village-hall]'), 'サービスの窓');
+    expect(win.getAttribute('data-village-window')).toBe('tax-accountant');
+    expect(win.getAttribute('aria-label')).toBe('税理士');
+    // 窓は設定ではなく、そのサービスの画面。
+    expect(win.getAttribute('data-village-window')).not.toBe('settings');
+    // 「閉じる」の逃げ道は同じ。
+    const close = win.querySelector<HTMLButtonElement>('[data-dialog-initial]')!;
+    await act(async () => { close.click(); });
+    expect(container.querySelector('[data-village-hall]')).toBeNull();
+  });
+
+  it('★ settings への navigate は役場 (見出しは「役場」)・village への navigate は窓を閉じる', async () => {
+    await mount('');
+    await waitForElement(() => container.querySelector('[data-village-shell]'), '村の殻');
+    await act(async () => { navigateTo('settings'); });
+    const win = await waitForElement(() => container.querySelector<HTMLElement>('[data-village-hall]'), '役場の窓');
+    expect(win.getAttribute('aria-label')).toBe('役場');
+    await act(async () => { navigateTo('village'); });
+    expect(container.querySelector('[data-village-hall]')).toBeNull();
+  });
+
+  it('★ 知らない行き先・サイドバーに居ないサービスは無視する (窓は開かない)', async () => {
+    await mount('');
+    await waitForElement(() => container.querySelector('[data-village-shell]'), '村の殻');
+    await act(async () => { window.dispatchEvent(new CustomEvent('servicehub:navigate', { detail: 'no-such-page' })); });
+    expect(container.querySelector('[data-village-hall]')).toBeNull();
+    await act(async () => { navigateTo('uber-eats'); });
     expect(container.querySelector('[data-village-hall]')).toBeNull();
   });
 });
