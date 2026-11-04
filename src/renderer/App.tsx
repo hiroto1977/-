@@ -19,6 +19,8 @@ import { PageErrorBoundary } from './components/PageErrorBoundary';
 import { ShellPartBoundary } from './components/ShellPartBoundary';
 import { DeviceStoreFailureBanner } from './components/DeviceStoreFailureBanner';
 import { BestAnswersIndicator } from './components/BestAnswersIndicator';
+import { VillageShell } from './components/VillageShell';
+import { currentShellMode } from './shellMode';
 import { useChatDocked, useMediaQuery } from './chatDock';
 import {
   PLAN_ORDER,
@@ -397,6 +399,10 @@ export function App() {
       </PageErrorBoundary>
     );
   }
+
+  // 既定は村だけの殻 (利用者に旧画面は見せない)。旧画面は `?ui=legacy` の内部の入口だけ —— 殻の判定は
+  // 解錠の後ろ: 村もロック画面を飛ばさない。
+  if (currentShellMode() === 'village') return <VillageShell />;
 
   const active = SERVICES.find((s) => s.id === activeId)!;
   const PageComponent = active.page;

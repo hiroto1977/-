@@ -3829,6 +3829,14 @@
       "leafCount": 186,
       "note": "update settings.json",
       "hash": "df38428f200f3534857e0e55ea16936d1d10b7f9904fc11d1c282d3d64d73537"
+    },
+    {
+      "index": 455,
+      "prevHash": "df38428f200f3534857e0e55ea16936d1d10b7f9904fc11d1c282d3d64d73537",
+      "merkleRoot": "be734a38adc10ff58b287dc1b096229aa63d40ae9cd12062cb24253a12764d34",
+      "leafCount": 186,
+      "note": "update vitest.config.ts",
+      "hash": "89fe56c9db356855383f70054ac9ba8fda995027e0700cf23822762abb1ae8c7"
     }
   ],
   "tipManifest": {
@@ -4017,6 +4025,6 @@
     "tools/mamori-verify/src/lib.rs": "d8f9d6a4d46881333d7ebe286d7bc5821983807e7833a68666d8e9513888e48f",
     "vite.config.ts": "be7089bad650fda5406b2b3a33e70db81f45e17c0b3414c92c4b8b7d4a38cc22",
     "vitest.audit.config.ts": "2461afaaddfa15b7a4520cca93807db66b7ebb3db25e46db4dac38b0002a7978",
-    "vitest.config.ts": "082d5d607a48177918bdd841ca4592b861b2b1d0842005da0b8a6f0a4b42f900"
+    "vitest.config.ts": "23cd5743731700131adf50b026e008bf0609a818388fe42270f96a1a4cf1f90f"
   }
 }

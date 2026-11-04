@@ -56,7 +56,8 @@ require('../lib/artifact-freshness.cjs').assertFreshArtifacts([targetAbs], {
   allowEnv: 'SERVICE_HUB_E2E_ALLOW_STALE',
 });
 
-const FILE = 'file://' + targetAbs;
+// 利用者へは村だけを見せる既定になった (村リビルド P1)。実機の検査は旧画面 (サイドバー) を内部の入口で開く。
+const FILE = 'file://' + targetAbs + '?ui=legacy';
 const EXEC = fs.existsSync('/opt/pw-browsers/chromium') ? '/opt/pw-browsers/chromium' : undefined;
 const PASS = 'e2e-pass-12345';
 

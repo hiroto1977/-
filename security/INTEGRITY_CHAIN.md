@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 455
+- ブロック数: 456
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `df38428f200f3534857e0e55ea16936d1d10b7f9904fc11d1c282d3d64d73537`
+- 末尾(tip)ハッシュ: `89fe56c9db356855383f70054ac9ba8fda995027e0700cf23822762abb1ae8c7`
 - 保護対象: 186 ファイル
 
 ## ブロック
@@ -468,6 +468,7 @@
 | 452 | `0929f500aed8ac75` | `c23c3f87411f0fb3` | `7236c8cfe6cfce3f` | update 00-project.mdc |
 | 453 | `7bb939510ec1b674` | `7236c8cfe6cfce3f` | `f314f111a2560c8a` | update manifest.webmanifest |
 | 454 | `7a0358ad68b6ca21` | `f314f111a2560c8a` | `df38428f200f3534` | update settings.json |
+| 455 | `be734a38adc10ff5` | `df38428f200f3534` | `89fe56c9db356855` | update vitest.config.ts |
 
 ## 保護対象ファイル
 
