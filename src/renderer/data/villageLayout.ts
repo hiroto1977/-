@@ -179,3 +179,35 @@ export function wanderOffset(index: number, tick: number, amp = 0.5): Point {
     y: Math.cos(tick * 0.6 + index * 1.3) * amp * 0.8,
   };
 }
+
+/** 歩く 1 区間の長さ (tick 数)。区間ごとに 1 度だけ歩き出し、残りは立ち止まる。 */
+export const WALK_STEP_TICKS = 3;
+
+function unit(index: number, step: number, salt: number): number {
+  const v = Math.sin(index * 12.9898 + step * 78.233 + salt * 37.719) * 43758.5453;
+  return v - Math.floor(v);
+}
+
+/**
+ * 村人が `step` 番目の区間で居る場所。持ち場 (home) の周り ±rx / ±ry (百分率) を歩き回り、
+ * 3 割ほどの区間は前の場所に立ち止まる (あつ森のように、歩く・止まる・また歩く)。
+ * 乱数なし・同じ入力は同じ座標 (検査できる)。`bounds` の外へは出ない。
+ */
+export function walkPoint(
+  index: number,
+  step: number,
+  home: Point,
+  rx: number,
+  ry: number,
+  bounds: Rect,
+): Point {
+  let s = step;
+  // 立ち止まる区間は前の区間の場所を引き継ぐ (連続して止まりすぎないよう 4 区間まで遡る)。
+  for (let n = 0; n < 4 && unit(index, s, 7) < 0.3; n++) s -= 1;
+  const x = home.x + (unit(index, s, 1) * 2 - 1) * rx;
+  const y = home.y + (unit(index, s, 2) * 2 - 1) * ry;
+  return {
+    x: Math.min(bounds.x + bounds.w, Math.max(bounds.x, x)),
+    y: Math.min(bounds.y + bounds.h, Math.max(bounds.y, y)),
+  };
+}

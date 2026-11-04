@@ -29,8 +29,11 @@ import {
 import {
   computeHomePositions,
   computeDistrictFocus,
+  FOCUS_RECT,
   regionRects,
   wanderOffset,
+  walkPoint,
+  WALK_STEP_TICKS,
   WORK_PLAZA,
   type Rect,
 } from '../data/villageLayout';
@@ -229,28 +232,46 @@ export function VillagePage() {
   }, []);
 
   const positions = useMemo(() => {
-    const map = new Map<string, { x: number; y: number; flip: boolean }>();
+    const map = new Map<string, Placement>();
+    const step = Math.floor(tick / WALK_STEP_TICKS);
     for (const v of renderList) {
       const base = home.get(v.id) ?? { x: 50, y: 50 };
       const idx = indexOfVillager.get(v.id) ?? 0;
-      let x = base.x;
-      let y = base.y;
       if (v.id === voiceTargetId) {
-        x = focusedExec ? base.x : WORK_PLAZA.x;
-        y = focusedExec ? base.y - 5 : WORK_PLAZA.y + 6;
+        const x = focusedExec ? base.x : WORK_PLAZA.x;
+        const y = focusedExec ? base.y - 5 : WORK_PLAZA.y + 6;
+        map.set(v.id, { x, y, flip: false, dur: 1.9, seq: -1 });
       } else if (v.id === activeTeamId) {
-        x = WORK_PLAZA.x;
-        y = WORK_PLAZA.y;
+        map.set(v.id, { x: WORK_PLAZA.x, y: WORK_PLAZA.y, flip: false, dur: 1.9, seq: -1 });
+      } else if (WALKING_KINDS.has(v.kind)) {
+        // 持ち場の周りを歩く: 街区の矩形 (拡大中は景色いっぱい) の外へは出ない。
+        const rect = focusedExec ? FOCUS_RECT : rects.get(v.regionId) ?? FOCUS_RECT;
+        const bounds = {
+          x: rect.x + rect.w * 0.03,
+          y: rect.y + rect.h * (focusedExec ? 0.12 : 0.2),
+          w: rect.w * 0.94,
+          h: rect.h * (focusedExec ? 0.86 : 0.78),
+        };
+        const rx = focusedExec ? 7 : 4.5;
+        const ry = focusedExec ? 9 : 6;
+        const cur = walkPoint(idx, step, base, rx, ry, bounds);
+        const prev = walkPoint(idx, step - 1, base, rx, ry, bounds);
+        const dist = Math.hypot(cur.x - prev.x, cur.y - prev.y);
+        // 速さは一定 (1% あたり 0.3 秒)。止まる区間は dist = 0 で歩く動きを付けない。
+        map.set(v.id, {
+          x: cur.x,
+          y: cur.y,
+          flip: cur.x < prev.x,
+          dur: Math.min(5.5, Math.max(0.8, dist * 0.3)),
+          seq: dist > 0.3 ? step : -1,
+        });
       } else {
-        const w = wanderOffset(idx, tick, focusedExec ? 0.7 : 0.5);
-        x = base.x + w.x;
-        y = base.y + w.y;
+        const w = wanderOffset(idx, tick, 0.5);
+        map.set(v.id, { x: base.x + w.x, y: base.y + w.y, flip: false, dur: 1.9, seq: -1 });
       }
-      const prev = map.get(v.id);
-      map.set(v.id, { x, y, flip: prev ? x < prev.x : false });
     }
     return map;
-  }, [renderList, home, indexOfVillager, tick, activeTeamId, voiceTargetId, focusedExec]);
+  }, [renderList, home, rects, indexOfVillager, tick, activeTeamId, voiceTargetId, focusedExec]);
 
   const setVoiceBubble = (id: string, text: string) => {
     setVoiceTargetId(id);
@@ -470,7 +491,7 @@ export function VillagePage() {
 
         {/* 村人 */}
         {renderList.map((v) => {
-          const p = positions.get(v.id) ?? { x: 50, y: 50, flip: false };
+          const p = positions.get(v.id) ?? { x: 50, y: 50, flip: false, dur: 1.9, seq: -1 };
           const isActive = v.id === activeTeamId || v.id === voiceTargetId;
           const showLabel =
             !!focusedExec || v.kind === 'ceo' || v.kind === 'coo' || v.kind === 'executive' || v.kind === 'manager' || isActive;
@@ -481,6 +502,8 @@ export function VillagePage() {
               x={p.x}
               y={p.y}
               flip={p.flip}
+              dur={p.dur}
+              seq={p.seq}
               active={isActive}
               enlarged={!!focusedExec}
               showLabel={showLabel}
@@ -678,11 +701,25 @@ function BuildingCard({
 // ---------------------------------------------------------------------------
 // キャラクター
 // ---------------------------------------------------------------------------
+interface Placement {
+  readonly x: number;
+  readonly y: number;
+  readonly flip: boolean;
+  readonly dur: number;
+  /** 歩いている区間の番号。止まっているときは -1 (足取りの動きを付けない)。 */
+  readonly seq: number;
+}
+
+/** 持ち場の周りを歩く村人の種類 (役員・CEO・COO は建物の前に立つ)。 */
+const WALKING_KINDS: ReadonlySet<string> = new Set(['manager', 'secretary', 'team']);
+
 interface CharacterProps {
   readonly v: Villager;
   readonly x: number;
   readonly y: number;
   readonly flip: boolean;
+  readonly dur: number;
+  readonly seq: number;
   readonly active: boolean;
   readonly enlarged: boolean;
   readonly showLabel: boolean;
@@ -694,7 +731,7 @@ const KIND_SIZE: Record<string, number> = {
   ceo: 36, coo: 32, executive: 30, manager: 24, secretary: 19, team: 20,
 };
 
-function Character({ v, x, y, flip, active, enlarged, showLabel, ring, bubble }: CharacterProps) {
+function Character({ v, x, y, flip, dur, seq, active, enlarged, showLabel, ring, bubble }: CharacterProps) {
   const base = KIND_SIZE[v.kind] ?? 20;
   const size = enlarged && v.kind === 'team' ? 26 : base;
   return (
@@ -704,7 +741,7 @@ function Character({ v, x, y, flip, active, enlarged, showLabel, ring, bubble }:
         left: `${x}%`,
         top: `${y}%`,
         transform: 'translate(-50%, -100%)',
-        transition: 'left 1.9s ease-in-out, top 1.9s ease-in-out',
+        transition: `left ${dur}s linear, top ${dur}s linear`,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -733,7 +770,10 @@ function Character({ v, x, y, flip, active, enlarged, showLabel, ring, bubble }:
         </div>
       ) : null}
       <div
+        // 歩く区間ごとに作り直して、足取り (ぴょこぴょこ) を歩く間だけ繰り返す。止まれば動かない。
+        key={seq}
         style={{
+          animation: seq >= 0 ? `village-step 0.34s ease-in-out ${Math.max(1, Math.round(dur / 0.34))}` : undefined,
           // 顔のブロック: 四角い枠に絵文字を入れる (マイクラの頭ブロック風)
           boxSizing: 'content-box',
           width: Math.round(size * 0.8),

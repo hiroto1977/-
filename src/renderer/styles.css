@@ -1954,6 +1954,14 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   min-height: 0;
 }
 .village-shell-scene { min-width: 0; min-height: 0; overflow: auto; }
+/* 村人が歩く間のぴょこぴょこ (足取り)。動きを減らす設定の人には付けない。 */
+@keyframes village-step {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-village-shell] * { animation: none !important; }
+}
 .village-shell-chat {
   min-width: 0;
   min-height: 0;

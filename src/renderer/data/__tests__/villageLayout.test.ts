@@ -10,6 +10,7 @@ import {
   regionRects,
   layoutDistrict,
   computeHomePositions,
+  walkPoint,
   computeDistrictFocus,
   wanderOffset,
   FOCUS_RECT,
@@ -732,5 +733,47 @@ describe('computeHomePositions — 村人の居ない region', () => {
       { id: 'e1', kind: 'exec' },
     ] as unknown as VillageRegion[]);
     expect(home.size).toBe(0);
+  });
+});
+
+describe('walkPoint — 持ち場の周りを歩く (あつ森風)', () => {
+  const home = { x: 50, y: 60 };
+  const bounds = { x: 40, y: 50, w: 20, h: 20 };
+
+  it('同じ入力は同じ座標 (乱数なし)', () => {
+    expect(walkPoint(3, 5, home, 4, 6, bounds)).toEqual(walkPoint(3, 5, home, 4, 6, bounds));
+  });
+
+  it('持ち場から ±rx / ±ry の中・かつ bounds の外へは出ない', () => {
+    for (let i = 0; i < 40; i++) {
+      for (let step = 0; step < 40; step++) {
+        const p = walkPoint(i, step, home, 4, 6, bounds);
+        expect(Math.abs(p.x - home.x)).toBeLessThanOrEqual(4 + 1e-9);
+        expect(Math.abs(p.y - home.y)).toBeLessThanOrEqual(6 + 1e-9);
+        expect(p.x).toBeGreaterThanOrEqual(bounds.x);
+        expect(p.x).toBeLessThanOrEqual(bounds.x + bounds.w);
+        expect(p.y).toBeGreaterThanOrEqual(bounds.y);
+        expect(p.y).toBeLessThanOrEqual(bounds.y + bounds.h);
+      }
+    }
+  });
+
+  it('歩く区間と立ち止まる区間の両方がある (3 割ほど止まる)', () => {
+    let moved = 0;
+    let stayed = 0;
+    for (let step = 1; step <= 200; step++) {
+      const a = walkPoint(7, step - 1, home, 4, 6, bounds);
+      const b = walkPoint(7, step, home, 4, 6, bounds);
+      if (a.x === b.x && a.y === b.y) stayed++;
+      else moved++;
+    }
+    expect(moved).toBeGreaterThan(60);
+    expect(stayed).toBeGreaterThan(20);
+  });
+
+  it('人によって歩く場所がずれる', () => {
+    const a = walkPoint(1, 4, home, 4, 6, bounds);
+    const b = walkPoint(2, 4, home, 4, 6, bounds);
+    expect(a).not.toEqual(b);
   });
 });
