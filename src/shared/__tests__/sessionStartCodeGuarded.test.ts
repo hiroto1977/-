@@ -8,7 +8,7 @@
  *
  * ```
  *   hooks.SessionStart[].hooks[].command   Claude Code が起動のたびに実行する
- *   mcpServers                             npx -y / uvx で「その時の最新」を取って走らせる (25 件)
+ *   mcpServers                             npx -y / uvx で「その時の最新」を取って走らせる (26 件)
  * ```
  *
  * `lint:mcp-servers` は 2026-08-25 からこのファイルを開いていたが、読んでいたのは

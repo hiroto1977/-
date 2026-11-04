@@ -98,6 +98,14 @@
       }
     },
 
+    "grok": {
+      "command": "npx",
+      "args": ["-y", "@joemccann/xai-mcp-server@1.0.7"],
+      "env": {
+        "XAI_API_KEY": "${XAI_API_KEY}"
+      }
+    },
+
     "google-maps": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-google-maps"],

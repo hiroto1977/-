@@ -3821,13 +3821,21 @@
       "leafCount": 186,
       "note": "update manifest.webmanifest",
       "hash": "f314f111a2560c8aed156ca6dc65bd2b19a3a47a69c4be351b593f11866f2ae9"
+    },
+    {
+      "index": 454,
+      "prevHash": "f314f111a2560c8aed156ca6dc65bd2b19a3a47a69c4be351b593f11866f2ae9",
+      "merkleRoot": "7a0358ad68b6ca21312c46ae52c3761cb24d9f49b1bf6b7c219d24574bb14c68",
+      "leafCount": 186,
+      "note": "update settings.json",
+      "hash": "df38428f200f3534857e0e55ea16936d1d10b7f9904fc11d1c282d3d64d73537"
     }
   ],
   "tipManifest": {
     ".claude/agents/auditor.md": "e05fe724eaeacb9f382a4fdda00c5ec1bf5919bbdd6a331020052f7d2fdddc53",
     ".claude/agents/mechanic.md": "fedb7fe67017550081fc9fcae90805362f3557823d56fbed83b3d2922dac3960",
     ".claude/agents/scout.md": "78db2996e39470b38ec29df5a10791a49f65d04594fbe4d77b739770f9330bef",
-    ".claude/settings.json": "f3add3b9e10ff80d5c7e4877232164abcdb5dad3f2a4e7ba2d6a17cd54284a42",
+    ".claude/settings.json": "73164f3beb6b4aaf6982002d8a9f9e3fc2fcc20a2211a83056a99f3e90e1fa3e",
     ".cursor/rules/00-project.mdc": "aff4dd24f201ebec8a5beb3215bf1ec9a431e9eb4a0aba7fa08fd91361f79c55",
     ".cursor/rules/10-boundaries.mdc": "14c2aad731d81125a16c07a78ded8098126642432fdd36aea50dce409e706972",
     ".cursor/rules/20-gates.mdc": "821205069a9f0fae121e92be6826342bce6e765a34bea95c7ebc36c57b234da4",
