@@ -103,6 +103,11 @@ const DIALOG_SITES: readonly { readonly file: string; readonly label: string; re
     why: '書き込みの確認の alertdialog。焦点は「やめる」へ・Esc = やめる・消えたら入力欄へ戻す (今日届く道は無い —— conciergeDialogFocus.test.ts の docblock)',
   },
   {
+    file: 'src/renderer/components/VillageShell.tsx',
+    label: '役場',
+    why: '村の殻の窓 (設定の画面そのもの)。焦点は「閉じる」へ・Esc で閉じる・閉じたら 🏛️ 役場のボタンへ戻す (villageShell.test.ts)',
+  },
+  {
     file: 'src/renderer/components/VoiceCommandBar.tsx',
     label: '実行確認',
     why: '音声の確認の alertdialog。焦点は「取消」へ・Esc = 取消・消えたら 🎤 へ戻す',

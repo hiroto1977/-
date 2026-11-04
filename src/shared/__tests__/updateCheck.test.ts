@@ -411,6 +411,21 @@ describe('describeUpdate', () => {
       '時間をおいて',
     );
   });
+
+  it('案内の文は連結の前後までこの字面', () => {
+    expect(describeUpdate({ status: 'update-available', current: '0.1.0', latest: '0.2.0', url: null })).toBe(
+      '新しい版 0.2.0 があります (お使いの版: 0.1.0)。ダウンロードはリリースページから行ってください。',
+    );
+    expect(describeUpdate({ status: 'up-to-date', current: '0.1.0', latest: '0.1.0', url: null })).toBe(
+      '最新版です (0.1.0)。',
+    );
+    expect(describeUpdate({ status: 'ahead', current: '0.3.0', latest: '0.2.0', url: null })).toBe(
+      'お使いの版 0.3.0 は公開されている最新版 0.2.0 より新しいです (開発中のビルド)。',
+    );
+    expect(describeUpdate({ status: 'unknown', current: '0.1.0', latest: null, url: null })).toBe(
+      '更新の有無を判定できませんでした。時間をおいて試してください。',
+    );
+  });
 });
 
 /**

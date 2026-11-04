@@ -51,6 +51,7 @@ import {
 /** 「LLM の予算を持っている」と認める印。 */
 const LLM_DEADLINE_MARKS: readonly RegExp[] = [
   /\brunAiChat\s*\(/,
+  /\brunLocalThenAnthropic\s*\(/,
   /\bAI_CHAT_TIMEOUT_MS\b/,
   /\bOLLAMA_CHAT_TIMEOUT_MS\b/,
 ];

@@ -1191,8 +1191,9 @@ npm run audit:mamori-battery  # **Mamori への攻撃の電池を、時刻から
 npm run audit:language-coverage  # **見張りが無い言語・依存の生態系を作らない**(2026-10-25 · T-187)。『すべての言語の弱点を先回りで探す』
                          #   ことは誰にもできないので、**今在る**言語・起動子 (MCP の npx / uvx)・依存の生態系を追跡している実物から導き、
                          #   台帳 (security/language-coverage.json) の見張る強制物と突き合わせる。新しい言語・定義ファイルが入ると
-                         #   落ち、`ifAdded` の足す守りを名指しする (検知と対策の入口が同時に出る)。起動子だけで入っている言語
-                         #   (python = uvx) はソースが入った瞬間に落ちる。毎日の dependency-audit が同じ測定を載せる。
+                         #   落ち、`ifAdded` の足す守りを名指しする (検知と対策の入口が同時に出る)。起動子だけの言語は
+                         #   ソースが入った瞬間に落ちる。python は local-ai の .py を `lint:python`（ci.yml）が見る。
+                         #   毎日の dependency-audit が同じ測定を載せる。
                          #   判定は src/shared/__tests__/languageCoverage.test.ts が npm test で見る (CI で PR を止める)。
                          #   限界: 弱点そのものを見つけて直すのは狩りと回帰検査の仕事で、これは網の穴を作らないところまで。
 npm run audit:verify-keep-going  # **`verify:all` を止まらずに全ゲート回し、落ちた物を一度に挙げる**
@@ -1642,8 +1643,8 @@ npm run lint:zero-fold     # 「割れない値を 0 に倒す」箇所の**母�
                            #   母集団が 26 ファイル (実測 106) と 4 倍ずれていた
 npm run lint:shared-judgement # 「述語は共有したが、no と言われたあとの動作が両ビルドで
                            #   違う」の**母集団**を数え、`docs/REMAINING_WORK.md` の
-                           #   生成ブロックと突き合わせる (shared 174 / 両ビルドが
-                           #   import 92 / うち否定で答えられる 47。**この 3 つは
+                           #   生成ブロックと突き合わせる (shared 176 / 両ビルドが
+                           #   import 94 / うち否定で答えられる 48。**この 3 つは
                            #   live metric なので散文だけが古びることはもう無い** ——
                            #   2026-09-15 まで 138 / 44 / 21 と書いたままだった。
                            #   44 / 21 はパス 247 が初めて数えた値で、

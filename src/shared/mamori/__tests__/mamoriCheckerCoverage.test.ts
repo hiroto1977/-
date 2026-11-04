@@ -52,6 +52,7 @@ describe('M2 はどの位置でも効く (検査器が式と文を辿りきる)'
     ['arrow の本体', '  const z = (a) => shell;'],
     ['呼び出しの引数', '  const z = String(shell);'],
     ['呼び出しの呼ぶ側', '  const z = shell();'],
+    ['分割代入の右辺', '  const { z } = String(shell);'],
   ];
   for (const [where, body] of POSITIONS) {
     it(`★ ${where}`, () => {

@@ -89,10 +89,11 @@ beforeEach(() => {
     fetchCalls.push(typeof input === 'string' ? input : input instanceof URL ? input.href : input.url);
     return new Response(
       JSON.stringify({
-        content: [
+        choices: [
           {
-            type: 'text',
-            text: JSON.stringify({ scores: { joy: 0.8 }, sentiment: 'positive', dominant: 'joy' }),
+            message: {
+              content: JSON.stringify({ scores: { joy: 0.8 }, sentiment: 'positive', dominant: 'joy' }),
+            },
           },
         ],
       }),
@@ -110,7 +111,7 @@ describe('ブラウザ版 emotions/analyze-text — 外へ送る前の天井 (�
     const r = await hub.invoke('emotions', 'analyze-text', { text: 'あ'.repeat(MAX_ANALYZE_TEXT_CHARS) });
     expect(r.ok, r.message).toBe(true);
     expect(fetchCalls).toHaveLength(1);
-    expect(fetchCalls[0]).toBe('https://api.anthropic.com/v1/messages');
+    expect(fetchCalls[0]).toBe('http://127.0.0.1:4000/v1/chat/completions');
   });
 
   it('★ 1 字超えると断り、送らず、鍵も読まない', async () => {

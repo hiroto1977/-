@@ -21,7 +21,6 @@ import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { ChatbotWidget } from '../ChatbotWidget';
 import { CHATBOT_OLLAMA_ESCAPE } from '../../data/chatbotOllama';
-import { DEFAULT_SETUP_MODEL, describeOllamaError } from '../../../shared/ollama';
 import { waitForElement, waitForText } from '../../__tests__/jsdomWait';
 
 // jsdom は `Element.prototype.scrollTo` を実装していない (この widget は
@@ -33,31 +32,18 @@ if (!('scrollTo' in Element.prototype)) {
 /** 解釈できない = 自由質問へ回る入力 (サービス名も定型句も含まない)。 */
 const FREE_QUESTION = '量子力学について教えて';
 
-interface Sent {
-  readonly model: string;
-}
-
-function installBridge(installed: readonly string[], answer: 'reply' | 'refuse'): Sent[] {
-  const sent: Sent[] = [];
+function installBridge(answer: 'reply' | 'refuse'): string[] {
+  const sent: string[] = [];
   (window as unknown as Record<string, unknown>).serviceHub = {
-    fetchSnapshot: async () => ({ ok: true, data: { models: installed.map((name) => ({ name })) } }),
+    fetchSnapshot: async () => ({ ok: true, data: { models: [] } }),
     invoke: async (service: string, action: string, payload: unknown) => {
-      // 窓が開くと既定の提供者を読む (Grok が既定でなければ Ollama のまま) —— Ollama への送信には数えない。
+      // 窓が開くと既定の提供者を読む (Grok が既定でなければ LiteLLM のまま) —— 自由質問の送信には数えない。
       if (service === 'assistant' && action === 'providers') return { ok: true, data: { providers: [] } };
-      const model = (payload as { model: string }).model;
-      sent.push({ model });
-      if (answer === 'reply' && installed.includes(model)) {
-        return { ok: true, data: { reply: 'これは端末内のモデルの答えです', durationMs: 12 } };
+      sent.push(`${service}/${action}:${(payload as { purpose?: string }).purpose ?? ''}`);
+      if (answer === 'reply') {
+        return { ok: true, data: { text: 'これは端末内のモデルの答えです', model: 'balanced', provider: 'compat' } };
       }
-      const advice = describeOllamaError(404, `model "${model}" not found, try pulling it first`, {
-        model,
-        installed: [...installed],
-      });
-      return {
-        ok: false,
-        code: 'ollama_model-not-found',
-        message: `${advice.message} (${advice.hints[0] ?? ''})`,
-      };
+      return { ok: false, code: 'action_failed', message: 'ゲートウェイに届きません' };
     },
   };
   return sent;
@@ -107,24 +93,21 @@ async function ask(): Promise<HTMLElement> {
 }
 
 describe('AI コンシェルジュの自由質問 — 行き先と断り', () => {
-  it('★ setup で入れたモデルへ行き、答えが画面に出る', async () => {
-    const sent = installBridge([DEFAULT_SETUP_MODEL], 'reply');
+  it('★ 自由質問は concierge としてアシスタントへ行き、答えが画面に出る', async () => {
+    const sent = installBridge('reply');
     const el = await ask();
     await waitForText(() => el.textContent ?? '', '端末内のモデルの答え');
-    expect(sent.map((s) => s.model)).toEqual([DEFAULT_SETUP_MODEL]);
-    // 答えが出たなら断りは出ない
+    expect(sent).toEqual(['assistant/chat:concierge']);
     expect(el.textContent ?? '').not.toContain(CHATBOT_OLLAMA_ESCAPE);
   });
 
-  it('★ 断られたら、アプリが組んだ原因と逃げ口が画面に出る', async () => {
-    // 上書きが在って導入済みに無い形 (断られる側を作る唯一の道)
-    localStorage.setItem('chatbot-ollama-model', 'mistral:7b');
-    const sent = installBridge(['qwen2.5:0.5b', 'gemma2:2b'], 'refuse');
+  it('★ 断られたら、ローカルの失敗と逃げ口が画面に出る', async () => {
+    const sent = installBridge('refuse');
     const el = await ask();
-    await waitForText(() => el.textContent ?? '', '答えませんでした');
+    await waitForText(() => el.textContent ?? '', 'ローカルのモデル');
     const t = el.textContent ?? '';
-    expect(sent.map((x) => x.model)).toEqual(['mistral:7b']);
-    expect(t).toContain('モデル「mistral:7b」がまだ取得されていません');
+    expect(sent).toEqual(['assistant/chat:concierge']);
+    expect(t).toContain('ゲートウェイに届きません');
     expect(t).toContain(CHATBOT_OLLAMA_ESCAPE);
   });
 

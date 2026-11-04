@@ -295,7 +295,7 @@ describe('AI へ送る画面すべてに断りが在る (走査)', () => {
     // 規則ベース (`phase: 'rules'`、shared/serviceAdvisor.ts。AI へは送らない) なので導出した AI の組に入らない。
     // `VoiceCommandBar` は `VOICE_ACTIONS` の範囲でしか invoke しない。
     // `ChatbotWidget` はそれに加えて自由質問を `ollama/chat` へ送る (これは AI の組に入らない)。
-    // 既定の提供者が Grok のときは `assistant/chat` へも送る (下の COMPONENT_SENDERS)。2026-10-11 まで
+    // 既定の提供者が Grok のときも `assistant/chat` へ送り、Grok を名乗る断りを描く (`chatbotGrokOnScreen.test.ts`)。2026-10-11 まで
     // この注記は「`VOICE_ACTIONS` の範囲でしか invoke しない」と書いており偽だった
     // (AI 監査・パス 511)。ブラウザ版で送り先がこの端末の外のときの断りは
     // `remoteOllamaNotice` が持ち、`chatbotOllamaModel.test.ts` (threat: T-010) が留める。
@@ -303,15 +303,10 @@ describe('AI へ送る画面すべてに断りが在る (走査)', () => {
     const senders = pageFiles()
       .filter((f) => invokesAi(readOriginalSource(f), pairs))
       .map((f) => path.relative(RENDERER, f));
-    // 部品で AI へ送る物は名指しの 1 つだけ: `ChatbotWidget` は既定の提供者が Grok のとき自由質問を
-    // `assistant/chat` へ送る (2026-11-04)。断りは共有の `AiEgressNotice` を描き (次の `it` が全部の
-    // 送り手に要求する)、振る舞いは `chatbotGrokOnScreen.test.ts` が留める。
-    const COMPONENT_SENDERS = new Set([`components${path.sep}ChatbotWidget.tsx`]);
     for (const f of senders) {
-      expect(
-        f.startsWith(`pages${path.sep}`) || COMPONENT_SENDERS.has(f),
-        `${f} が AI へ送っている (断りの配線を確かめること)`,
-      ).toBe(true);
+      if (f.startsWith(`pages${path.sep}`)) continue;
+      const src = code(readOriginalSource(path.join(RENDERER, f)));
+      expect(DRAWS_NOTICE.test(src), `${f} が断り無しで AI へ送っている`).toBe(true);
     }
   });
 
@@ -370,6 +365,7 @@ describe('画面ごとに「何を送るか」を自分の言葉で埋めてい�
     'AssistantPage.tsx',
     'VillagePage.tsx',
     'MentorPage.tsx',
+    'OllamaPage.tsx',
   ];
 
   it('★ 走査規則が実物に当たる (入れ子のテンプレートで切れない)', () => {

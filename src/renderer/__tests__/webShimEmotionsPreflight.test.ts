@@ -45,7 +45,7 @@ const fetchCalls: string[] = [];
 const originalFetch = globalThis.fetch;
 const anthropicOk = () =>
   new Response(
-    JSON.stringify({ content: [{ type: 'text', text: JSON.stringify({ scores: { joy: 0.8 }, sentiment: 'positive', dominant: 'joy' }) }] }),
+    JSON.stringify({ choices: [{ message: { content: JSON.stringify({ scores: { joy: 0.8 }, sentiment: 'positive', dominant: 'joy' }) } }] }),
     { status: 200, headers: { 'content-type': 'application/json' } },
   );
 
@@ -94,7 +94,7 @@ describe('ブラウザ版 emotions/analyze-text — 保存できない保管値�
     const hub = await loadHub();
     const r = await hub.invoke('emotions', 'analyze-text', PAYLOAD);
     expect(r.ok, `${r.code ?? ''} ${r.message ?? ''}`).toBe(true);
-    expect(fetchCalls).toEqual(['https://api.anthropic.com/v1/messages']);
+    expect(fetchCalls).toEqual(['http://127.0.0.1:4000/v1/chat/completions']);
     expect(stored().moods).toEqual([GOOD]);
     expect(stored().analyses.map((a) => a.dominant)).toEqual(['joy']);
   });

@@ -99,9 +99,8 @@ describe('既定モデルの綴りを写さない', () => {
     expect(stripNonCode(`/* ${AI_PROVIDERS.anthropic.defaultModel} */`).trim()).toBe('');
   });
 
-  it('★ 互換 API だけは導けない —— その理由が今も真', () => {
-    // 既定が空なので placeholder を導けず、例を書いている。
-    expect(AI_PROVIDERS.compat.defaultModel).toBe('');
+  it('★ 互換 API の既定は LiteLLM の別名 auto。欄の例は空ではない', () => {
+    expect(AI_PROVIDERS.compat.defaultModel).toBe('auto');
     const field = AI_CREDENTIAL_FIELDS.find((f) => f.key === 'compatModel');
     expect(field!.placeholder).not.toBe('');
   });

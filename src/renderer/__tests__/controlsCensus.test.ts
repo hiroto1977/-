@@ -188,6 +188,12 @@ const DISMISS_SURFACES: readonly { readonly file: string; readonly className: st
     escapeFile: 'src/renderer/App.tsx',
     why: 'スマホのドロワーの暗幕。閉じる操作は ✕ ボタンと Esc (App の keydown) でキーボードからも行える。暗幕自身は読み上げにも出さない (aria-hidden)',
   },
+  {
+    file: 'src/renderer/components/VillageShell.tsx',
+    className: 'village-hall-backdrop',
+    escapeFile: 'src/renderer/components/useDialogFocus.ts',
+    why: '役場の窓の暗幕。閉じる操作は「閉じる ✕」ボタンと Esc (useDialogFocus) でキーボードからも行える。暗幕自身は読み上げにも出さない (aria-hidden)',
+  },
 ];
 
 interface KeyboardScan {

@@ -70,9 +70,9 @@ export interface AiProviderSpec {
   id: AiProviderId;
   /** UI 表示名。 */
   label: string;
-  /** 既定モデル (compat は資格情報側での指定が必須のため空)。 */
+  /** 既定モデル (compat は LiteLLM の別名 `auto`。資格情報があればそちらが優先)。 */
   defaultModel: string;
-  /** 既定ベース URL (compat はユーザー指定が必須のため空)。 */
+  /** 既定ベース URL (compat は端末の LiteLLM。資格情報の URL があればそちらが優先)。 */
   defaultBaseUrl: string;
   /** API キーが必要か (ollama はローカルのため不要)。 */
   needsApiKey: boolean;
@@ -331,15 +331,21 @@ const ollama: AiProviderSpec = {
 const compat: AiProviderSpec = {
   id: 'compat',
   label: 'OpenAI 互換 API',
-  defaultModel: '', // 資格情報 (compatModel) での指定が必須
-  defaultBaseUrl: '', // 資格情報 (compatUrl) での指定が必須
+  /**
+   * LiteLLM のモデル別名。資格情報の `compatModel` が優先される。
+   * 未指定のときだけこの既定 (`auto`) を使う。
+   */
+  defaultModel: 'auto',
+  /**
+   * この端末の LiteLLM (OpenAI 互換)。資格情報の `compatUrl` が優先される。
+   * ループバックの平文 http は `aiEndpoint.ts` が鍵付きでも許す。
+   */
+  defaultBaseUrl: 'http://127.0.0.1:4000/v1',
   needsApiKey: false, // LM Studio 等キー不要のサーバーもある (キーがあれば Bearer 送信)
   browserDirect: false, // 任意ホストのため CORS 前提にしない → ブラウザはプロキシ経由
   buildRequest(req, cfg) {
-    const rawBase = cfg.baseUrl ?? '';
-    if (!rawBase) {
-      throw new Error(`${this.label} のベース URL が未設定です (資格情報 compatUrl を設定してください)`);
-    }
+    // 空文字も「未指定」とみなす (`||`)。資格情報が無ければ上の既定 URL へ出す。
+    const rawBase = cfg.baseUrl || this.defaultBaseUrl;
     const base = resolveBase(this.label, rawBase, Boolean(cfg.apiKey));
     // ユーザー入力は「…/v1」まで含む場合と含まない場合の両方を許容する。
     const url = base.endsWith('/v1') ? `${base}/chat/completions` : `${base}/v1/chat/completions`;

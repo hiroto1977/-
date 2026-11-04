@@ -90,14 +90,14 @@ describe('emotions/analyze-text — 応答の壊れ方', () => {
     };
     const r = await analyze();
     expect(r.ok).toBe(false);
-    expect(r.message).toContain('ネットワークエラー');
+    expect(r.message).toContain('boom');
   });
 
   it('★ HTTP エラーは status を出し、反射したキーは伏せる', async () => {
     fetchImpl = async () =>
       new Response('{"error":"bad key sk-ant-test-key-DO-NOT-LEAK"}', { status: 429 });
     const r = await analyze();
-    expect(r.message).toContain('Anthropic API 429');
+    expect(r.message).toContain('Claude (Anthropic) API 429');
     expect(r.message).not.toContain('sk-ant-test-key-DO-NOT-LEAK');
   });
 
@@ -112,7 +112,7 @@ describe('emotions/analyze-text — 応答の壊れ方', () => {
   it('★ 本文が JSON でない', async () => {
     fetchImpl = async () => new Response('<html>gateway</html>', { status: 200 });
     const r = await analyze();
-    expect(r.message).toBe('API 応答が JSON ではありません');
+    expect(r.message).toBe('Claude (Anthropic) の応答が JSON ではありません');
   });
 
   it('★ text ブロックの中身が JSON でないときは、本文の頭を伏字つきで見せる', async () => {
@@ -128,7 +128,7 @@ describe('emotions/analyze-text — 応答の壊れ方', () => {
     fetchImpl = async () => new Response(JSON.stringify({ id: 'msg_1' }), { status: 200 });
     const r = await analyze();
     expect(r.ok).toBe(false);
-    expect(r.message).toContain('JSON 以外を返しました');
+    expect(r.message).toContain('テキスト応答を返しませんでした');
   });
 
   it('対照: 正しい応答は通り、履歴に残る', async () => {

@@ -531,6 +531,16 @@ export function parse(file: string, src: string): Module {
       return { kind: 'assign', target, value, comments: cs, pos: t.pos };
     }
     const e = expr();
+    if (isP('=')) {
+      if (e.kind === 'index') {
+        next();
+        const value = expr();
+        expectP(';');
+        return { kind: 'index-assign', object: e.object, key: e.key, value, comments: cs, pos: t.pos };
+      }
+      if (e.kind === 'member') fail(peek(), '欄への代入 (`x.k = v`) は在りません —— 添字への代入は配列の添字 (`out[i] = v`) だけです');
+      fail(peek(), '代入の左辺は名前か配列の添字 (`out[i] = v`) だけです');
+    }
     expectP(';');
     return { kind: 'expr', expr: e, comments: cs, pos: t.pos };
   };
@@ -641,6 +651,7 @@ export function parse(file: string, src: string): Module {
    *   同じ `FORBIDDEN_MEMBERS` ・組み込みのメンバの表・`?.` の検めをそのまま通るので、迂回は構造上ありえない。
    * - 識別子にならない文字列 (`"content-type"`) と数リテラルは `index` のまま (禁じた名前にも組み込みのメンバにもなりえない)。
    * - それ以外の鍵は、検査器が「静的に数と分かる式」だけを許し、生成物では数に寄せる (`x[+(k)]`)。
+   * - 計算した鍵の結果は inert (0.12)。代入 `out[i] = v` の左辺も、この関数を通ってから文になる。
    */
   const indexOf = (object: Expr, key: Expr, keyTok: Tok, pos: Pos): Expr => {
     if (key.kind === 'string') {

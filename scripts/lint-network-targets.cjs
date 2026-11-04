@@ -796,6 +796,18 @@ function outsideSendFindings(rel, lines) {
  */
 const OUTSIDE_POPULATION_FLOOR = 60;
 
+/**
+ * minify 済みの同梱物で、母集団から外すもの。
+ *
+ * `three.module.min.js` は 1 行が約 67 万字で、Three.js r160 の FileLoader が
+ * `fetch(s)` を呼ぶ。その呼び出しは行頭から 20 万字以上先にある。台帳の照合は
+ * 呼び出しの先頭 140 字しか見ないので、針を `fetch(s)` に置くと「台帳の項目が
+ * 実在しない」になり、行頭の定数へ針を置くと別の物を見張ったことになる。
+ * Service Hub の CI・梱包・公開サイトはこのファイルを実行しない。
+ * 同じディレクトリの `OrbitControls.js` は外さない（呼び出しは行の中で読める）。
+ */
+const OUTSIDE_SKIP = new Set(['local-ai/council/web/vendor/three.module.min.js']);
+
 function outsidePopulation() {
   const out = execFileSync(
     'git',
@@ -807,6 +819,7 @@ function outsidePopulation() {
     .filter((f) => !f.startsWith('src/'))
     .filter((f) => !f.includes('__tests__/'))
     .filter((f) => !f.startsWith('node_modules/'))
+    .filter((f) => !OUTSIDE_SKIP.has(f))
     .sort();
   if (files.length < OUTSIDE_POPULATION_FLOOR) {
     throw new Error(
@@ -1005,6 +1018,7 @@ module.exports = {
   REVIEWED,
   REVIEWED_VARIABLE_DESTINATIONS,
   REVIEWED_OUTSIDE_SENDS,
+  OUTSIDE_SKIP,
   NETWORK_CALL_NAMES,
   OUTSIDE_SEND_NAMES,
   OUTSIDE_POPULATION_FLOOR,

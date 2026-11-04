@@ -12,7 +12,7 @@ import { compileProject, formatDiagnostic } from '../compile';
  * 2. 識別子にならない文字列 (`"content-type"`) と数リテラルは `index` のまま (禁じた名前にも組み込みのメンバにもなりえない)。
  * 3. それ以外の鍵は「静的に数と分かる式」だけ (M6)。**生成物では数に寄せる** (`x[+(k)]`) —— 型の宣言は実行時には守られないので、
  *    `number` と宣言した引数へ `"constructor"` が渡されても NaN になって表に届かない (検査器の静的な検めの上の、実行時の二重の守り)。
- * 4. 文字列で引く表は `Map` の `get` を使う。`x[k] = v` (添字への代入) と `?.[` は無い。
+ * 4. 文字列で引く表は `Map` の `get` を使う。`?.[` は無い。添字への代入は 0.12 (数の鍵だけ)。
  *
  * **T-244**: 電池の揺さぶりが `(q = module) => q` を受け入れるのを見つけた —— arrow の引数の既定値は式なのに検めを受けず、
  * plain 関数の中で宣言していない名前 (`fetch`)・危ない口 (`shell.openExternal(raw)`)・印の無い値での印つきの口の呼び出しを隠せた
@@ -92,8 +92,9 @@ describe('0.8: 添字 x[k]', () => {
     expect(compile(go('  return [openUrl][0](u);')).diagnostics[0]).toContain('[M4]');
     expect(compile(go('  return shell["openExternal"](u);')).diagnostics[0]).toContain('[M2]');
   });
-  it('添字への代入と `?.[` は無い', () => {
-    expect(compile(go('  xs[0] = u;\n  return 1;')).diagnostics).toHaveLength(1);
+  it('`?.[` は無く、閉じていない添字は断る。数リテラルへの代入は 0.12 で通る', () => {
+    expect(compile(go('  xs[0] = u;\n  return 1;')).diagnostics).toEqual([]);
+    expect(compile(go('  xs[0] = u;\n  return 1;')).output).toContain('xs[0] = u;');
     expect(compile(ret('xs?.[0]')).diagnostics[0]).toContain('`?.(` と `?.[` は在りません');
     expect(compile(ret('xs[0')).diagnostics).toHaveLength(1);
   });

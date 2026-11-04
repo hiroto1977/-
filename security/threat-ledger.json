@@ -4585,6 +4585,47 @@
         "test": "★ `@ts-ignore` / `@ts-expect-error` / `@ts-nocheck` を断る"
       },
       "alsoRegressions": []
+    },
+    {
+      "id": "T-255",
+      "found": "2026-11-03",
+      "foundBy": "MG-031 でパス 567 が先送りした添字の残りを、0.11 のコンパイラに対して測り直した。0.8 は文字列になりうる鍵を断り、字面の識別子は `.name` に畳んだが、数と分かる鍵の結果 (`xs[n]`・`xs[n - 1]`) は呼び出し・`new`・メンバ・次の添字の相手にできた。`const f = xs[n]; f(…)` も通った (束縛が印を洗う)。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "守りの層を書く言語 Mamori 0.8〜0.11 は、計算した鍵の添字の結果を呼び出し・new・メンバ・次の添字の相手にでき、その値を束縛へ写しても印が残らなかった (`const f = xs[n]; f(…)`)",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: 計算した鍵 (数リテラルでも文字列リテラルでもない鍵) の結果を inert とみる。呼び出し・new・メンバ・次の添字・添字への代入の相手にできない。let / const / 代入で束縛へ写した名前も inert (条件の片方と await も運ぶ。一度付いた印は残す)。字面の鍵 (`xs[0]`・`o[\"content-type\"]`) は inert ではない。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV12Inert.test.ts",
+        "test": "★ 計算した鍵の結果は、呼び出し・new・メンバ・次の添字の相手にできない (threat: T-255)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV12Inert.test.ts",
+          "test": "★ 束縛へ写しても印は残る。条件の片方と await と、もう一段の名前も (threat: T-255)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV12Inert.test.ts",
+          "test": "★ 計算した鍵の結果を、代入の相手にできない (threat: T-255)"
+        }
+      ]
+    },
+    {
+      "id": "T-256",
+      "found": "2026-11-03",
+      "foundBy": "MG-031 で添字への代入 `out[i] = v` を足す前に、原型を差し替える形を試した。`out[\"__proto__\"] = v` は 0.8 の字面の鍵が禁じた名前の表を通るので既に断れていた。計算した文字列の鍵 `out[u] = v` と欄への代入 `o.f = v` は、代入を足した瞬間に通る穴になる。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "守りの層を書く言語 Mamori に添字への代入を足すと、計算した文字列の鍵 (`out[k] = v`) と欄への代入 (`o.f = v`) が原型や共有の物を書き換える口になる",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/parser.ts と checker.ts: 代入の左辺は名前か添字だけ。字面の識別子の鍵は `.name` に畳む時点で FORBIDDEN_MEMBERS を通す (`out[\"__proto__\"]` は M0)。計算した鍵は数と分かる式だけ (M6)。生成物は `out[+(i)]` と数に寄せ、型の宣言が嘘でも文字列の鍵は NaN になって表に届かない。欄への代入 (`x.k = v`) は無い。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV12Inert.test.ts",
+        "test": "★ 計算した文字列の鍵・欄への代入・禁じた名前は断る (threat: T-256)"
+      },
+      "alsoRegressions": []
     }
   ],
   "huntBacklog": [

@@ -220,7 +220,7 @@ describe('画面の外の部品が投げても、その部品の所にだけ知�
 
 const APP = join(__dirname, '..', 'App.tsx');
 
-type Where = 'boundary' | 'provider' | 'page-boundary' | 'shell-boundary';
+type Where = 'boundary' | 'provider' | 'page-boundary' | 'shell-boundary' | 'own-boundaries';
 
 /**
  * App.tsx が描く部品と、それが居るべき所。**新しい部品を足したら、ここに書くまで落ちる**。
@@ -238,6 +238,7 @@ const LEDGER: Record<string, { readonly where: Where; readonly why: string }> = 
   VoiceCommandBar: { where: 'shell-boundary', why: '上部バー —— 音声コマンドの結果を描く' },
   DeviceStoreFailureBanner: { where: 'shell-boundary', why: '画面の上の帯 —— 画面が落ちても残すため画面の境界の外に置く (だから自分の境界が要る)' },
   UpgradeNotice: { where: 'shell-boundary', why: 'プランの案内 —— 画面の代わりに出るが画面の境界の外に在る' },
+  VillageShell: { where: 'own-boundaries', why: '村の殻 (既定の画面) —— 村・会話・役場・端末の保存の知らせを**殻の中で**それぞれ別の境界に入れる (`villageShell.test.ts` が部品ごとに留める)。殻そのものは投げる描画を持たない' },
   ChatbotWidget: { where: 'shell-boundary', why: '浮いた部品 —— 保存した会話履歴を描く (実測で白くなった当の部品)' },
 };
 
@@ -275,8 +276,8 @@ describe('App.tsx が描く部品は、どれも境界の中に在る (走査・
   const code = stripComments(readOriginalSource(APP));
   const found = scan(code);
 
-  it('★ 走査は空でない (実測 11 種 —— 増えたら台帳を読み直す)', () => {
-    expect(new Set(found.map((f) => f.name)).size).toBe(11);
+  it('★ 走査は空でない (実測 12 種 —— 増えたら台帳を読み直す)', () => {
+    expect(new Set(found.map((f) => f.name)).size).toBe(12);
   });
 
   it('★ 描く部品と台帳は両方向に一致する (新しい部品は理由と居場所を書くまで落ちる)', () => {

@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 456
+- ブロック数: 457
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `89fe56c9db356855383f70054ac9ba8fda995027e0700cf23822762abb1ae8c7`
-- 保護対象: 186 ファイル
+- 末尾(tip)ハッシュ: `058cc155f65e08f2f1c427688551a5c6f8f543f3d29227b2dc3c7552a9901e26`
+- 保護対象: 187 ファイル
 
 ## ブロック
 
@@ -469,6 +469,7 @@
 | 453 | `7bb939510ec1b674` | `7236c8cfe6cfce3f` | `f314f111a2560c8a` | update manifest.webmanifest |
 | 454 | `7a0358ad68b6ca21` | `f314f111a2560c8a` | `df38428f200f3534` | update settings.json |
 | 455 | `be734a38adc10ff5` | `df38428f200f3534` | `89fe56c9db356855` | update vitest.config.ts |
+| 456 | `5f1c1b05db23263b` | `89fe56c9db356855` | `058cc155f65e08f2` | update ci.yml,eslint.config.js,integrity-chain.cjs,mamori-capabilities.json,assistant.mamori,assistant.ts |
 
 ## 保護対象ファイル
 
@@ -597,6 +598,7 @@
 - `src/shared/advisorQuestionLimits.ts`
 - `src/shared/ai/chat.ts`
 - `src/shared/ai/credentials.ts`
+- `src/shared/ai/localGateway.ts`
 - `src/shared/ai/providers.ts`
 - `src/shared/aiEndpoint.mamori`
 - `src/shared/aiEndpoint.ts`

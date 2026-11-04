@@ -152,7 +152,21 @@ const VERDICTS = {
     + '画面側 (`assistantEgressRecipients`) の 1 か所が決め、両ビルドで割れない。'
     + 'null は「この端末として扱う」と読む向きなので、判定不能 (読めない URL) を端末内と読む側に倒すが、'
     + '読めない URL では接続先を組み立てられず送れないので、外へ出る道にはならない',
-    'api/cloudflare':
+  'ai/localGateway':
+    '対称ではない送り方がある (実測) —— 否定で答えるのは 2 つ。'
+    + '(1) `isLlmPurpose` の false。読むのは main の `assistant.ts` とブラウザ版 `web-shim.ts` の '
+    + '`callAssistantChat` だけで、どちらも知らない用途を `assistant` に倒してから '
+    + '`runLocalThenAnthropic` する。感情とスキルはこの述語に問わない。'
+    + '(2) `localGatewayIsLoopback` の false。問いを発するのはブラウザ版の `callAssistantChat` だけ '
+    + '(importer は main 3 / renderer 1)。false のあと、提供者を省略しているときは直接叩かず、'
+    + '`resolveProvider` とプロキシ経路へ残す。main はこの述語を呼ばず、提供者の省略時は URL が遠隔でも '
+    + '`runLocalThenAnthropic` で直接送る (main は任意の URL へ届く。ブラウザは鍵を載せて遠隔を直に叩かない)。'
+    + '同じ「提供者なし・遠隔の互換 URL」でも送り方が割れる。これは意図した分岐で、'
+    + 'false のあとにブラウザが黙って直に fetch する道は無い。'
+    + 'ローカルが失敗して Anthropic の鍵が空のとき `runLocalThenAnthropic` は同じ例外を投げる。'
+    + 'main は IPC の catch、ブラウザ版は `err(\'action_failed\', message)` で、'
+    + '伏字と長さの天井は `aiEndpoint` の判定と同じ運び方である',
+  'api/cloudflare':
     '対称 (実測・2026-09-19 パス 321) —— 欄の判定 (`checkDnsRecord` / `checkPurge`)・本文・URL・'
     + '封筒 (`readCloudflareEnvelope`: `success !== true` を断る) を両ビルドが同じ関数で通る。'
     + 'それまで封筒の条件は main が falsy・ブラウザ版が `!== true` と違い、文も '

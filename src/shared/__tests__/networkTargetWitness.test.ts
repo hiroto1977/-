@@ -26,6 +26,7 @@ const gate = req('../../../scripts/lint-network-targets.cjs') as {
   REVIEWED: unknown[];
   REVIEWED_VARIABLE_DESTINATIONS: unknown[];
   REVIEWED_OUTSIDE_SENDS: { file: string; needle: string; guard: string }[];
+  OUTSIDE_SKIP: Set<string>;
   NETWORK_CALL_NAMES: string[];
   OUTSIDE_SEND_NAMES: string[];
   OUTSIDE_POPULATION_FLOOR: number;
@@ -174,6 +175,14 @@ describe('lint:network-targets — 外側の証人', () => {
       // 実在する根が消えていないこと (向きを持った標本)。
       expect(pop).toContain('scripts/ollama-cli.cjs');
       expect(pop).toContain('assets/sw.js');
+    });
+
+    it('★ minify 済みの three.js だけを母集団から外す (呼び出しが 140 字の窓に届かない)', () => {
+      expect([...gate.OUTSIDE_SKIP]).toEqual(['local-ai/council/web/vendor/three.module.min.js']);
+      const pop = gate.outsidePopulation();
+      expect(pop).not.toContain('local-ai/council/web/vendor/three.module.min.js');
+      // 同じ vendor の読めるソースは残す。ディレクトリごと外す形をここで落とす。
+      expect(pop).toContain('local-ai/council/web/vendor/OrbitControls.js');
     });
 
     it('★ 台帳の 7 件は、守りを実際に書いている (空欄を理由として通さない)', () => {

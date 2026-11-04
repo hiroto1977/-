@@ -129,6 +129,10 @@ const PROTECTED = [
   'src/shared/ai/credentials.ts',
   'src/shared/ai/providers.ts',
   'src/shared/ai/chat.ts',
+  // 用途ごとの LiteLLM 別名と、届かなかったときの Anthropic への退避。
+  // assistant.ts がここを読む。送り先と鍵の載せ方を決めるので、下を書き換えれば
+  // 保護した assistant の宛先が変わる。
+  'src/shared/ai/localGateway.ts',
   // 書き出し側 (exportPaths.ts) の対になる、**開く側**の唯一の関門。
   // `shell.openPath` は OS の「開く」動詞をそのまま使うので、Windows では
   // 拡張子の関連付け次第でそのまま実行される。ここがゆるむと、乗っ取られた

@@ -5,6 +5,7 @@ import { promptInjectionRefusal } from '../../shared/promptInjection';
 import os from 'node:os';
 import path from 'node:path';
 import { AI_PROVIDERS } from '../../shared/ai/providers';
+import { runLocalThenAnthropic, runtimeEnv } from '../../shared/ai/localGateway';
 import {
   MAX_ASSISTANT_CONTENT_CHARS,
   MAX_ASSISTANT_SYSTEM_CHARS,
@@ -14,12 +15,10 @@ import {
 import { MISSING_ANTHROPIC_KEY_MESSAGE } from '../../shared/advisorQuestionLimits';
 import { shadowedSkillIdNote, unsafeSkillIdNote } from '../../shared/skillIdentity';
 import {
-  jsonFetch,
   type ActionContext,
   type ActionMap,
   type FetchContext,
 } from './types';
-import { AI_CHAT_TIMEOUT_MS } from '../../shared/ai/chat';
 import type { ActionData } from '../../shared/actionData';
 
 export interface SkillEntry {
@@ -372,11 +371,6 @@ export function skillTooLongNote(): string {
 
 export const SKILLS_MAX_TOKENS = 2048;
 
-interface AnthropicMessagesResponse {
-  content: Array<{ type: string; text?: string }>;
-  stop_reason?: string;
-}
-
 async function readSkillBody(id: string): Promise<string> {
   if (!isSafeSkillName(id)) {
     // 断りに載せる id も文字の境界で切る (パス 196)。
@@ -475,35 +469,22 @@ async function runSkill(ctx: ActionContext): Promise<ActionData<'skills/run-skil
   const injection = promptInjectionRefusal(body, 'スキル本文 (SKILL.md)');
   if (injection !== null) throw new Error(injection);
 
-  const res = await jsonFetch<AnthropicMessagesResponse>(
-    'https://api.anthropic.com/v1/messages',
-    {
-      method: 'POST',
-      headers: {
-        'x-api-key': ctx.token,
-        'anthropic-version': '2023-06-01',
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: AI_PROVIDERS.anthropic.defaultModel,
-        max_tokens: SKILLS_MAX_TOKENS,
-        system: body,
-        messages: [{ role: 'user', content: prompt }],
-      }),
+  // 単純なスキルは LiteLLM の fast。届かなければ従来の Claude。
+  const result = await runLocalThenAnthropic({
+    purpose: 'skills',
+    request: {
+      system: body,
+      messages: [{ role: 'user', content: prompt }],
+      maxTokens: SKILLS_MAX_TOKENS,
     },
-    // **LLM の補完には LLM の予算を渡す** (2026-09-23 · パス 424)。ここは
-    // `timeoutMs` を渡しておらず、`limitedFetch` の既定 (`DEFAULT_HTTP_TIMEOUT_MS`
-    // = 通常の HTTP の 30 秒) で切れていた —— 実測で 31 秒に
-    // 「skills が時間内に応答しませんでした」。`max_tokens` は 2048 で、
-    // system にはスキール本文がまるごと載るので、30 秒はしばしば足りない。
-    // 兄弟 (`stocks` / `business`) は最初から同じ定数を渡している。
-    { fetch: ctx.fetch, serviceId: 'skills', timeoutMs: AI_CHAT_TIMEOUT_MS },
-  );
-
-  const text = res.content?.find((c) => c.type === 'text')?.text ?? '';
-  // 応答の天井 (パス 113)。`runAiChat` を通らないので、同じ判断をここで読む ——
-  // それまで 10 MiB (byte の天井) までの本文がそのまま画面の <pre> へ出ていた。
-  return { text: capAssistantReply(text), stopReason: res.stop_reason ?? '' };
+    anthropicKey: ctx.token,
+    anthropicModel: AI_PROVIDERS.anthropic.defaultModel,
+    fetchFn: ctx.fetch,
+    env: runtimeEnv(),
+  });
+  // 応答の天井は runAiChat が掛ける。ここでも同じ関数を読む（写しの slice を置かない）。
+  const text = result.text;
+  return { text: capAssistantReply(text), stopReason: '' };
 }
 
 export const ACTIONS: ActionMap = {

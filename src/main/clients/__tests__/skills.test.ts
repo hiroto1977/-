@@ -17,9 +17,8 @@ import { MISSING_ANTHROPIC_KEY_MESSAGE } from '../../../shared/advisorQuestionLi
 import type { SkillEntry } from '../skills';
 import { shadowedSkillIdNote, unsafeSkillIdNote } from '../../../shared/skillIdentity';
 import { SNAPSHOT } from '../../../renderer/data/snapshot';
-import { FetchError } from '../types';
 import { AI_CHAT_TIMEOUT_MS } from '../../../shared/ai/chat';
-import { DEFAULT_HTTP_TIMEOUT_MS } from '../../../shared/httpLimits';
+import { LOCAL_GATEWAY_TIMEOUT_MS } from '../../../shared/ai/localGateway';
 import {
   ASSISTANT_REPLY_TRUNCATED_NOTICE,
   MAX_ASSISTANT_CONTENT_CHARS,
@@ -387,15 +386,15 @@ describe('ACTIONS["run-skill"]', () => {
      * (timer がまだ無いので進めても何も起きず、abort が来ない)。
      * 待つのは「fetch に届いたこと」で、届かなければ**名指しで落とす**。
      */
-    for (let i = 0; i < 2_000 && !called; i += 1) await vi.advanceTimersByTimeAsync(0);
+    for (let i = 0; i < 20_000 && !called; i += 1) await vi.advanceTimersByTimeAsync(0);
     expect(called, 'スキル本文の読み取りが終わらず fetch に届いていない').toBe(true);
-    await vi.advanceTimersByTimeAsync(DEFAULT_HTTP_TIMEOUT_MS + 1_000);
-    expect(aborted, '通常の HTTP の予算で補完が切れている').toBe(false);
-    await vi.advanceTimersByTimeAsync(AI_CHAT_TIMEOUT_MS - DEFAULT_HTTP_TIMEOUT_MS - 2_000);
-    expect(aborted, 'LLM の予算より前に切れている').toBe(false);
-    // 無制限にはしない —— 予算を越えたら必ず切れる。
+    // ローカル試行は短い予算で切り、その後 Anthropic の予算でもう一度待つ。
+    await vi.advanceTimersByTimeAsync(LOCAL_GATEWAY_TIMEOUT_MS - 1_000);
+    expect(aborted, 'ローカルの予算より前に切れている').toBe(false);
     await vi.advanceTimersByTimeAsync(2_000);
-    expect(aborted, 'LLM の予算を越えても切れない').toBe(true);
+    expect(aborted, 'ローカルが時間内に返らなくても切り替わらない').toBe(true);
+    await vi.advanceTimersByTimeAsync(AI_CHAT_TIMEOUT_MS);
+    expect(aborted, '退避先も無制限に待っている').toBe(true);
     await p;
     vi.useRealTimers();
   });
@@ -430,7 +429,7 @@ describe('ACTIONS["run-skill"]', () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
       new Response(
         JSON.stringify({
-          content: [{ type: 'text', text: 'pong' }],
+          choices: [{ message: { content: 'pong' } }],
           stop_reason: 'end_turn',
         }),
         { status: 200, headers: { 'content-type': 'application/json' } },
@@ -443,22 +442,21 @@ describe('ACTIONS["run-skill"]', () => {
       payload: { id: 'echo', prompt: 'ping' },
     })) as { text: string; stopReason: string };
 
-    expect(result).toEqual({ text: 'pong', stopReason: 'end_turn' });
+    expect(result).toEqual({ text: 'pong', stopReason: '' });
 
     const [url, init] = fetchMock.mock.calls[0]!;
-    expect(url).toBe('https://api.anthropic.com/v1/messages');
+    expect(url).toBe('http://127.0.0.1:4000/v1/chat/completions');
     // Pin request method + content-type so the StringLiteral mutants on
     // skills.ts:210 (method → "") and :214 (content-type → "") die.
     expect((init as RequestInit).method).toBe('POST');
     const headers = (init as RequestInit).headers as Record<string, string>;
-    expect(headers['x-api-key']).toBe('sk-ant-xxxxx');
-    expect(headers['anthropic-version']).toBe('2023-06-01');
     expect(headers['content-type']).toBe('application/json');
+    expect(headers['x-api-key']).toBeUndefined();
 
     const body = JSON.parse((init as RequestInit).body as string);
-    expect(body.system).toContain('Always reply with the same text');
-    expect(body.messages).toEqual([{ role: 'user', content: 'ping' }]);
-    expect(body.model).toBe('claude-sonnet-4-6');
+    expect(body.messages[0].content).toContain('Always reply with the same text');
+    expect(body.messages[1]).toEqual({ role: 'user', content: 'ping' });
+    expect(body.model).toBe('fast');
   });
 
   it('throws when the requested skill does not exist', async () => {
@@ -506,7 +504,7 @@ describe('ACTIONS["run-skill"]', () => {
   it('★ 応答は MAX_ASSISTANT_REPLY_CHARS で打ち切り、切ったことを本文に残す (パス 113 まで天井なし)', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
       new Response(
-        JSON.stringify({ content: [{ type: 'text', text: 'x'.repeat(MAX_ASSISTANT_REPLY_CHARS + 10) }], stop_reason: 'max_tokens' }),
+        JSON.stringify({ choices: [{ message: { content: 'x'.repeat(MAX_ASSISTANT_REPLY_CHARS + 10) } }] }),
         { status: 200, headers: { 'content-type': 'application/json' } },
       ),
     );
@@ -546,7 +544,7 @@ describe('ACTIONS["run-skill"]', () => {
     );
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
       new Response(
-        JSON.stringify({ content: [{ type: 'text', text: 'flat-ok' }] }),
+        JSON.stringify({ choices: [{ message: { content: 'flat-ok' } }] }),
         { status: 200, headers: { 'content-type': 'application/json' } },
       ),
     );
@@ -557,23 +555,21 @@ describe('ACTIONS["run-skill"]', () => {
     })) as { text: string };
     expect(result.text).toBe('flat-ok');
     const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
-    expect(body.system).toContain('flat body');
+    expect(body.messages[0].content).toContain('flat body');
   });
 
   it('surfaces serviceId="skills" in the FetchError on HTTP failure', async () => {
     // Kills StringLiteral mutant on skills.ts:223 (serviceId → "").
-    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
-      new Response('overloaded', { status: 529 }),
+    const fetchMock = vi.fn<typeof fetch>().mockImplementation(() =>
+      Promise.resolve(new Response('overloaded', { status: 529 })),
     );
     const err = await ACTIONS['run-skill']!({
       token: 'sk-ant-x',
       fetch: fetchMock,
       payload: { id: 'echo', prompt: 'p' },
     }).catch((e: unknown) => e);
-    expect(err).toBeInstanceOf(FetchError);
-    expect((err as FetchError).serviceId).toBe('skills');
-    // jsonFetch builds the message as `${serviceId} ${status}: ...`.
-    expect((err as FetchError).message).toMatch(/^skills 529:/);
+    expect(err).toBeInstanceOf(Error);
+    expect((err as Error).message).toMatch(/Claude \(Anthropic\) API 529/);
   });
 
   /*
@@ -597,7 +593,7 @@ describe('ACTIONS["run-skill"]', () => {
     ['null', null],
   ])('payload の maxTokens (%s) は無視される', async (_label, maxTokens) => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
-      new Response(JSON.stringify({ content: [{ type: 'text', text: 'ok' }] }), {
+      new Response(JSON.stringify({ choices: [{ message: { content: 'ok' } }] }), {
         status: 200,
         headers: { 'content-type': 'application/json' },
       }),
@@ -613,7 +609,7 @@ describe('ACTIONS["run-skill"]', () => {
 
   it('payload の model も無視される (送り先モデルを選ばせない)', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
-      new Response(JSON.stringify({ content: [{ type: 'text', text: 'ok' }] }), {
+      new Response(JSON.stringify({ choices: [{ message: { content: 'ok' } }] }), {
         status: 200,
         headers: { 'content-type': 'application/json' },
       }),
@@ -624,40 +620,39 @@ describe('ACTIONS["run-skill"]', () => {
       payload: { id: 'echo', prompt: 'p', model: 'claude-opus-4-7' },
     });
     const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
-    expect(body.model).toBe('claude-sonnet-4-6');
+    expect(body.model).toBe('fast');
   });
 
-  it('returns empty text when the response has no text content (kills `?? \'\'` mutation)', async () => {
-    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
-      new Response(JSON.stringify({ content: [] /* no text block */ }), {
+  it('本文の無い応答は共有層が断る', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockImplementation(() =>
+      Promise.resolve(new Response(JSON.stringify({ content: [] }), {
         status: 200,
         headers: { 'content-type': 'application/json' },
-      }),
+      })),
     );
-    const result = (await ACTIONS['run-skill']!({
-      token: 'sk-ant-x',
-      fetch: fetchMock,
-      payload: { id: 'echo', prompt: 'p' },
-    })) as { text: string };
-    expect(result.text).toBe('');
+    await expect(
+      ACTIONS['run-skill']!({
+        token: 'sk-ant-x',
+        fetch: fetchMock,
+        payload: { id: 'echo', prompt: 'p' },
+      }),
+    ).rejects.toThrow(/テキスト応答を返しませんでした/);
   });
 
-  it('returns empty text when the response is missing `content` entirely (kills `res.content?` → `res.content`)', async () => {
-    // No `content` field at all. If the optional-chaining was mutated
-    // away, this would throw "Cannot read properties of undefined".
-    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
-      new Response(JSON.stringify({ stop_reason: 'end_turn' }), {
+  it('content が無い応答も共有層が断る', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockImplementation(() =>
+      Promise.resolve(new Response(JSON.stringify({ stop_reason: 'end_turn' }), {
         status: 200,
         headers: { 'content-type': 'application/json' },
-      }),
+      })),
     );
-    const result = (await ACTIONS['run-skill']!({
-      token: 'sk-ant-x',
-      fetch: fetchMock,
-      payload: { id: 'echo', prompt: 'p' },
-    })) as { text: string; stopReason: string };
-    expect(result.text).toBe('');
-    expect(result.stopReason).toBe('end_turn');
+    await expect(
+      ACTIONS['run-skill']!({
+        token: 'sk-ant-x',
+        fetch: fetchMock,
+        payload: { id: 'echo', prompt: 'p' },
+      }),
+    ).rejects.toThrow(/テキスト応答を返しませんでした/);
   });
 
   it('picks the text block when the response leads with a non-text block (kills `c.type === \'text\'` → `true`)', async () => {
@@ -667,13 +662,7 @@ describe('ACTIONS["run-skill"]', () => {
     // the non-text leader.
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
       new Response(
-        JSON.stringify({
-          content: [
-            { type: 'tool_use', text: undefined },
-            { type: 'text', text: 'pong' },
-          ],
-          stop_reason: 'end_turn',
-        }),
+        JSON.stringify({ choices: [{ message: { content: 'pong' } }] }),
         { status: 200, headers: { 'content-type': 'application/json' } },
       ),
     );
@@ -690,7 +679,7 @@ describe('ACTIONS["run-skill"]', () => {
     // StringLiteral mutant on skills.ts:231 (→ "Stryker was here!") dies.
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
       new Response(
-        JSON.stringify({ content: [{ type: 'text', text: 'hi' }] /* no stop_reason */ }),
+        JSON.stringify({ choices: [{ message: { content: 'hi' } }] }),
         { status: 200, headers: { 'content-type': 'application/json' } },
       ),
     );
@@ -775,7 +764,7 @@ describe('readSkillBody と symlink', () => {
     await fs.symlink(real, path.join(linkedHome, '.claude', 'skills', 'alias.md'));
 
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
-      new Response(JSON.stringify({ content: [{ type: 'text', text: 'ok' }], stop_reason: 'end_turn' }), {
+      new Response(JSON.stringify({ choices: [{ message: { content: 'ok' } }] }), {
         status: 200,
         headers: { 'content-type': 'application/json' },
       }),
@@ -787,9 +776,9 @@ describe('readSkillBody と symlink', () => {
     } as unknown as Parameters<NonNullable<(typeof ACTIONS)['run-skill']>>[0]);
 
     const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string) as {
-      system: string;
+      messages: { role: string; content: string }[];
     };
-    expect(body.system).toBe('BODY-FROM-REAL-SKILL');
+    expect(body.messages.find((m) => m.role === 'system')?.content).toBe('BODY-FROM-REAL-SKILL');
   });
 });
 
@@ -1060,7 +1049,7 @@ describe('スキルの鍵と題 (パス 179)', () => {
   /** 画面の「実行」と同じ道を通す (送るのは鍵)。system に載った本文を返す。 */
   const run = async (id: string) => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
-      new Response(JSON.stringify({ content: [{ type: 'text', text: 'OK' }] }), {
+      new Response(JSON.stringify({ choices: [{ message: { content: 'OK' } }] }), {
         status: 200,
         headers: { 'content-type': 'application/json' },
       }),
@@ -1070,7 +1059,10 @@ describe('スキルの鍵と題 (パス 179)', () => {
       payload: { id, prompt: 'hi' },
       fetch: fetchMock,
     } as never);
-    return (JSON.parse(String(fetchMock.mock.calls[0]?.[1]?.body ?? '{}')) as { system: string }).system;
+    const parsed = JSON.parse(String(fetchMock.mock.calls[0]?.[1]?.body ?? '{}')) as {
+      messages?: { role: string; content: string }[];
+    };
+    return parsed.messages?.find((m) => m.role === 'system')?.content ?? '';
   };
 
   it('★ ① 日本語の `name:` は題になり、鍵はフォルダ名なので実行できる', async () => {

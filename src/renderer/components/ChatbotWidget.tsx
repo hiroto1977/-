@@ -9,7 +9,7 @@
  *   - 画面遷移   → `servicehub:navigate` CustomEvent (App.tsx が listen)
  *   - 操作の実行 → `window.serviceHub.invoke` (破壊的操作は確認ボタンを経由)
  *   - 要望の記録 → localStorage (`chatbot-requests`) + Markdown エクスポート
- *   - 自由質問   → Ollama 接続時のみ `invoke('ollama','chat')` へフォールバック
+ *   - 自由質問   → `assistant/chat`（用途 concierge = LiteLLM の balanced。届かなければ Claude）
  *
  * 知識はすべて単一の真実源から導出する (SERVICES / orchestration registry /
  * 音声コマンドの能力テーブル) ため、将来のサービス・組織の拡張に自動連動する。
@@ -35,12 +35,10 @@ import {
   voiceWriteRefusal,
   voiceWriteRefusalMessage,
 } from '../../shared/voiceWriteRequirements';
-import { MAX_OLLAMA_PROMPT_CHARS, type OllamaSnapshot } from '../../shared/ollama';
+import { MAX_OLLAMA_PROMPT_CHARS } from '../../shared/ollama';
 import {
-  CHATBOT_MODEL_KEY,
-  chatbotOllamaModel,
   chatbotOllamaRecipient,
-  ollamaRefusalNote,
+  localGatewayRefusalNote,
   remoteOllamaNotice,
 } from '../data/chatbotOllama';
 import {
@@ -54,6 +52,7 @@ import { externalTextOnOneLine } from '../data/assistantMarkdown';
 import { useBuildKind } from '../hooks/useBuildKind';
 import { loadEndpointSetting } from '../network/ollamaWeb';
 import { AiEgressNotice } from './AiEgressNotice';
+import { AI_EGRESS_RECIPIENT_ANTHROPIC } from '../../shared/aiEgressNotice';
 import { CeilingNotice } from './CeilingNotice';
 import { useDialogFocus } from './useDialogFocus';
 import { charsOverCeiling } from '../../shared/inputCeiling';
@@ -299,46 +298,20 @@ function downloadRequests(): FeatureRequest[] {
  */
 type OllamaTry = { readonly reply: string } | { readonly refusal: string } | null;
 
-/** 上書きの読み。読めない端末 (プライベートモード等) は上書き無しとして扱う。 */
-function storedChatbotModel(): string | null {
-  try {
-    return localStorage.getItem(CHATBOT_MODEL_KEY);
-  } catch {
-    return null;
-  }
-}
-
-/**
- * 導入済みのモデル名。**取れなければ空** —— 名前を推測する材料が無いだけで、
- * 失敗ではない ({@link chatbotOllamaModel} が種をそのまま返し、断りが説明する)。
- */
-async function installedOllamaModels(hub: Window['serviceHub']): Promise<string[]> {
-  try {
-    const snap = await hub.fetchSnapshot<OllamaSnapshot>('ollama');
-    return snap.ok ? snap.data.models.map((m) => m.name) : [];
-  } catch {
-    return [];
-  }
-}
-
-/** Ollama 接続時の自由質問フォールバック。 */
-async function tryOllama(prompt: string): Promise<OllamaTry> {
+/** 自由質問は共有のアシスタント経由で LiteLLM（balanced）へ。 */
+async function tryLocalConcierge(prompt: string): Promise<OllamaTry> {
   const hub = window.serviceHub;
   if (!hub) return null;
-  // **名前は推測しない** —— アプリの 2 つの導入手順が別のモデルを入れるので、
-  // 直書きの既定はどちらか一方にしか当たらない (`data/chatbotOllama.ts` の表)。
-  const model = chatbotOllamaModel(storedChatbotModel(), await installedOllamaModels(hub));
   try {
-    // 戻り値の型は台帳 (`ollama/chat` = 共有の `OllamaChatResult`) を読む (パス 113 / 117)。それまで
-    // `{ response?, message? }` と手で写しており、実物の `reply` を 1 度も読めていなかった —— Ollama の
-    // 答えは常に空として捨てられ、定型の「解釈できません」だけが出ていた。
-    const res = await hub.invoke<ActionData<'ollama/chat'>>('ollama', 'chat', { model, prompt });
-    // **断りを捨てない** —— アプリは既に原因と直す手を組んでいる (パス 449)。
-    if (!res.ok) return { refusal: ollamaRefusalNote(res.message) };
-    const text = res.data.reply.trim();
-    return text.length > 0 ? { reply: text } : { refusal: ollamaRefusalNote('') };
+    const res = await hub.invoke<ActionData<'assistant/chat'>>('assistant', 'chat', {
+      purpose: 'concierge',
+      messages: [{ role: 'user', content: prompt }],
+    });
+    if (!res.ok) return { refusal: localGatewayRefusalNote(res.message) };
+    const text = res.data.text.trim();
+    return text.length > 0 ? { reply: text } : { refusal: localGatewayRefusalNote('') };
   } catch {
-    return { refusal: ollamaRefusalNote('') };
+    return { refusal: localGatewayRefusalNote('') };
   }
 }
 
@@ -347,7 +320,7 @@ async function grokIsDefault(hub: Window['serviceHub'] | undefined): Promise<boo
   if (!hub) return false;
   try {
     const res = await hub.invoke<ActionData<'assistant/providers'>>('assistant', 'providers', {});
-    // 読めなければ「Grok が既定」とは言わない (fail closed —— 端末内の Ollama へ倒れる)。
+    // 読めなければ「Grok が既定」とは言わない (fail closed —— 端末の LiteLLM 側へ倒れる)。
     if (!res.ok) return false;
     return conciergeUsesGrok(res.data.providers);
   } catch {
@@ -546,7 +519,7 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
       setBusy(true);
       // 送る直前にもう一度読む (設定が変わった後でも、画面の断りと行き先が食い違わない)。
       const toGrok = await grokIsDefault(window.serviceHub);
-      const llm = toGrok ? await tryGrok(text) : await tryOllama(text);
+      const llm = toGrok ? await tryGrok(text) : await tryLocalConcierge(text);
       setBusy(false);
       if (llm !== null && 'reply' in llm) {
         append({ role: 'bot', text: `🧠 ${llm.reply}`, routedThrough: toGrok ? GROK_LABEL : ollamaRecipient.label });
@@ -745,8 +718,7 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
         ))}
       </div>
 
-      <CeilingNotice label="入力" value={input} max={MAX_OLLAMA_PROMPT_CHARS} />
-      {viaGrok && (
+      {viaGrok ? (
         <div className="concierge-egress" role="note" data-grok-egress>
           <AiEgressNotice
             subject={{
@@ -755,7 +727,15 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
             }}
           />
         </div>
+      ) : (
+        <AiEgressNotice
+          subject={{
+            what: '規則で解釈できなかった自由質問の本文',
+            recipients: { remote: [AI_EGRESS_RECIPIENT_ANTHROPIC], local: ['LiteLLM (この端末)'] },
+          }}
+        />
       )}
+      <CeilingNotice label="入力" value={input} max={MAX_OLLAMA_PROMPT_CHARS} />
       {!viaGrok && ollamaEgressNote !== null && (
         <p className="concierge-egress" role="note" data-ollama-egress>
           {ollamaEgressNote}

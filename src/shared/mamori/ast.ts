@@ -30,6 +30,7 @@ export type Expr =
   /**
    * 添字 `x[k]` (0.8)。鍵は数リテラル・識別子にならない文字列リテラル・静的に数と分かる式だけ。
    * 識別子として読める文字列の鍵 (`x["name"]`) は `member` に畳む —— `.name` と同じ検めを必ず通る。
+   * 計算した鍵の結果は inert (0.12)。呼び出し・`new`・メンバ・次の添字の相手にできない。
    */
   | { readonly kind: 'index'; readonly object: Expr; readonly key: Expr; readonly pos: Pos }
   | { readonly kind: 'call'; readonly callee: Expr; readonly args: readonly Expr[]; readonly pos: Pos }
@@ -98,6 +99,11 @@ export type Stmt =
   | { readonly kind: 'if'; readonly test: Expr; readonly then: readonly Stmt[]; readonly otherwise: readonly Stmt[] | null; readonly comments: Comments; readonly pos: Pos }
   | { readonly kind: 'try'; readonly body: readonly Stmt[]; /** `catch (e)` の束縛名 (0.12)。無ければ null。 */ readonly param: string | null; readonly handler: readonly Stmt[]; readonly comments: Comments; readonly pos: Pos }
   | { readonly kind: 'assign'; readonly target: string; readonly value: Expr; readonly comments: Comments; readonly pos: Pos }
+  /**
+   * 添字への代入 `out[i] = v` (0.12)。欄への代入 (`out.name = v`) は無い。
+   * 字面の文字列鍵は `index` を読むときと同じく禁じた名前を通し、計算した鍵は数だけ。
+   */
+  | { readonly kind: 'index-assign'; readonly object: Expr; readonly key: Expr; readonly value: Expr; readonly comments: Comments; readonly pos: Pos }
   | { readonly kind: 'expr'; readonly expr: Expr; readonly comments: Comments; readonly pos: Pos }
   /** `throw 式;` (0.2) */
   | { readonly kind: 'throw'; readonly value: Expr; readonly comments: Comments; readonly pos: Pos }

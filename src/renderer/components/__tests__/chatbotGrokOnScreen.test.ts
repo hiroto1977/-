@@ -15,6 +15,9 @@ if (!('scrollTo' in Element.prototype)) {
   (Element.prototype as unknown as Record<string, unknown>).scrollTo = () => {};
 }
 
+const toGrok = (c: Call): boolean =>
+  c.service === 'assistant' && c.action === 'chat' && (c.payload as { provider?: string }).provider === 'grok';
+
 const FREE_QUESTION = '量子力学について教えて';
 
 interface Call {
@@ -41,11 +44,14 @@ function installBridge(opts: { grokDefault: boolean; chat: 'reply' | 'refuse' })
         };
       }
       if (service === 'assistant' && action === 'chat') {
+        // 提供者を指名しない自由質問は、端末の LiteLLM (purpose: concierge) へ行く。
+        if ((payload as { provider?: string }).provider !== 'grok') {
+          return { ok: true, data: { text: 'これは Ollama の答えです', model: 'balanced', provider: 'compat' } };
+        }
         return opts.chat === 'reply'
           ? { ok: true, data: { text: 'これは Grok の答えです', model: 'grok-4', provider: 'grok' } }
           : { ok: false, code: 'x', message: 'xAI API 401: bad key' };
       }
-      if (service === 'ollama') return { ok: true, data: { reply: 'これは Ollama の答えです', durationMs: 1 } };
       return { ok: false, code: 'x', message: 'x' };
     },
   };
@@ -102,37 +108,35 @@ describe('AI コンシェルジュ × Grok', () => {
     await ask(el);
     await waitForText(() => el.textContent ?? '', 'これは Grok の答えです');
     const chat = calls.filter((c) => c.service === 'assistant' && c.action === 'chat');
-    expect(chat).toHaveLength(1);
+    expect(chat).toHaveLength(1); // Grok へ 1 回だけ。端末の LiteLLM へは回さない
     expect(chat[0]!.payload).toEqual({
       provider: 'grok',
       system: CONCIERGE_SYSTEM_PROMPT,
       messages: [{ role: 'user', content: FREE_QUESTION }],
     });
-    expect(calls.some((c) => c.service === 'ollama')).toBe(false);
     expect(el.textContent ?? '').toContain(GROK_LABEL);
   });
 
-  it('★ 既定が別の提供者: 断りは出ず、質問は今までどおり Ollama へ行き、xAI へは送らない', async () => {
+  it('★ 既定が別の提供者: 断りは出ず、質問は端末の LiteLLM へ行き、xAI へは送らない', async () => {
     const calls = installBridge({ grokDefault: false, chat: 'reply' });
     const el = await open();
     await ask(el);
     await waitForText(() => el.textContent ?? '', 'これは Ollama の答えです');
     expect(el.querySelector('[data-grok-egress]')).toBeNull();
-    expect(calls.some((c) => c.service === 'assistant' && c.action === 'chat')).toBe(false);
+    expect(calls.some(toGrok)).toBe(false);
   });
 
   it('★ Grok に断られたら、原因と逃げ口が画面に出る (Ollama へ黙って回さない)', async () => {
-    const calls = installBridge({ grokDefault: true, chat: 'refuse' });
+    installBridge({ grokDefault: true, chat: 'refuse' });
     const el = await open();
     await ask(el);
     await waitForText(() => el.textContent ?? '', 'Grok が答えませんでした');
     const t = el.textContent ?? '';
     expect(t).toContain('xAI API 401: bad key');
     expect(t).toContain('エージェント設定');
-    expect(calls.some((c) => c.service === 'ollama')).toBe(false);
   });
 
-  it('★ 提供者の一覧を読めないときは Ollama のまま (分からないのに外へ送らない)', async () => {
+  it('★ 提供者の一覧を読めないときは端末の LiteLLM のまま (分からないのに外へ送らない)', async () => {
     const calls = installBridge({ grokDefault: true, chat: 'reply' });
     const hub = (window as unknown as { serviceHub: { invoke: (...a: unknown[]) => Promise<unknown> } }).serviceHub;
     const orig = hub.invoke;
@@ -141,6 +145,6 @@ describe('AI コンシェルジュ × Grok', () => {
     const el = await open();
     await ask(el);
     await waitForText(() => el.textContent ?? '', 'これは Ollama の答えです');
-    expect(calls.some((c) => c.service === 'assistant' && c.action === 'chat')).toBe(false);
+    expect(calls.some(toGrok)).toBe(false);
   });
 });

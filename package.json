@@ -59,6 +59,7 @@
     "lint:imports": "node scripts/check-import-boundaries.cjs && node scripts/check-import-boundaries.cjs --self-test",
     "lint:storage": "node scripts/lint-storage-ledger.cjs && node scripts/lint-storage-ledger.cjs --self-test",
     "lint:shell": "node scripts/lint-shell.cjs && node scripts/lint-shell.cjs --self-test",
+    "lint:python": "node scripts/lint-python.cjs && node scripts/lint-python.cjs --self-test",
     "lint:sample-data": "node scripts/lint-sample-data.cjs && node scripts/lint-sample-data.cjs --self-test",
     "lint:test-coverage": "node scripts/lint-test-coverage.cjs && node scripts/lint-test-coverage.cjs --self-test",
     "verify:release-artifacts": "node scripts/verify-release-artifacts.cjs --self-test && node scripts/checksum-release.cjs --self-test",
