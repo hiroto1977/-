@@ -43,6 +43,13 @@ import {
   ollamaRefusalNote,
   remoteOllamaNotice,
 } from '../data/chatbotOllama';
+import {
+  CONCIERGE_SYSTEM_PROMPT,
+  GROK_EGRESS_NOTICE,
+  GROK_LABEL,
+  conciergeUsesGrok,
+  grokRefusalNote,
+} from '../data/chatbotGrok';
 import { externalTextOnOneLine } from '../data/assistantMarkdown';
 import { useBuildKind } from '../hooks/useBuildKind';
 import { loadEndpointSetting } from '../network/ollamaWeb';
@@ -334,6 +341,35 @@ async function tryOllama(prompt: string): Promise<OllamaTry> {
   }
 }
 
+/** 既定の提供者が Grok か (エージェント設定の鍵つき)。**読めなければ false** —— 分からないのに外へ送らない。 */
+async function grokIsDefault(hub: Window['serviceHub'] | undefined): Promise<boolean> {
+  if (!hub) return false;
+  try {
+    const res = await hub.invoke<ActionData<'assistant/providers'>>('assistant', 'providers', {});
+    return res.ok && conciergeUsesGrok(res.data.providers);
+  } catch {
+    return false;
+  }
+}
+
+/** Grok への自由質問 (既定の提供者が Grok のとき)。送る本文の検査は `assistant/chat` の漏斗が掛ける。 */
+async function tryGrok(prompt: string): Promise<OllamaTry> {
+  const hub = window.serviceHub;
+  if (!hub) return null;
+  try {
+    const res = await hub.invoke<ActionData<'assistant/chat'>>('assistant', 'chat', {
+      provider: 'grok',
+      system: CONCIERGE_SYSTEM_PROMPT,
+      messages: [{ role: 'user', content: prompt }],
+    });
+    if (!res.ok) return { refusal: grokRefusalNote(res.message) };
+    const text = res.data.text.trim();
+    return text.length > 0 ? { reply: text } : { refusal: grokRefusalNote('') };
+  } catch {
+    return { refusal: grokRefusalNote('') };
+  }
+}
+
 /*
  * 見た目は `styles.css` の `.concierge*` (2026-09-26 に inline の指定から移した)。inline の頃は
  * `var(--border, #333)` のような**暗い配色の代わりの色**を 13 か所に持っており、トークンが読めない
@@ -368,6 +404,17 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
     [buildKind],
   );
   const ollamaEgressNote = remoteOllamaNotice(ollamaRecipient);
+  /* 既定の提供者が Grok なら、自由質問は Grok へ回る —— 送る前にそう言う (法則 egress-notice-before-send)。 */
+  const [viaGrok, setViaGrok] = useState(false);
+  useEffect(() => {
+    let alive = true;
+    void grokIsDefault(window.serviceHub).then((v) => {
+      if (alive) setViaGrok(v);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
   const [busy, setBusy] = useState(false);
   /* ゴールコーチ (聞き取り → 逆算 → 毎日のタスク)。状態は端末に残し、利用者に見えるのは会話だけ。 */
   const [coach, setCoach] = useState<CoachState | null>(coachLoad.state);
@@ -494,10 +541,12 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
     let ollamaNote = '';
     if (reply.kind === 'fallback') {
       setBusy(true);
-      const llm = await tryOllama(text);
+      // 送る直前にもう一度読む (設定が変わった後でも、画面の断りと行き先が食い違わない)。
+      const toGrok = await grokIsDefault(window.serviceHub);
+      const llm = toGrok ? await tryGrok(text) : await tryOllama(text);
       setBusy(false);
       if (llm !== null && 'reply' in llm) {
-        append({ role: 'bot', text: `🧠 ${llm.reply}`, routedThrough: ollamaRecipient.label });
+        append({ role: 'bot', text: `🧠 ${llm.reply}`, routedThrough: toGrok ? GROK_LABEL : ollamaRecipient.label });
         return;
       }
       // 試して断られたなら、そう言う。橋が無い (`null`) ときは定型文が正しい
@@ -694,7 +743,12 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
       </div>
 
       <CeilingNotice label="入力" value={input} max={MAX_OLLAMA_PROMPT_CHARS} />
-      {ollamaEgressNote !== null && (
+      {viaGrok && (
+        <p className="concierge-egress" role="note" data-grok-egress>
+          {GROK_EGRESS_NOTICE}
+        </p>
+      )}
+      {!viaGrok && ollamaEgressNote !== null && (
         <p className="concierge-egress" role="note" data-ollama-egress>
           {ollamaEgressNote}
         </p>

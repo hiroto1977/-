@@ -52,6 +52,7 @@ import {
 } from '../data/assistantProviders';
 import { speak, cancelSpeech } from '../voice/ttsAdapter';
 import { MAX_ASSISTANT_CONTENT_CHARS } from '../../shared/assistantLimits';
+import { displayField } from '../../shared/apiResponse';
 import { CeilingNotice } from '../components/CeilingNotice';
 import { charsOverCeiling, refusedCeilingNote } from '../../shared/inputCeiling';
 import type { ActionData } from '../../shared/actionData';
@@ -314,7 +315,7 @@ export function VillagePage() {
       void (async () => {
         try {
           const res = await hub.invoke<ActionData<'assistant/chat'>>('assistant', 'chat', {
-            system: buildVillageSystemPrompt(),
+            system: buildVillageSystemPrompt(target),
             messages: [{ role: 'user', content: text }],
           });
           if (res.ok && res.data.text) {
@@ -495,9 +496,24 @@ export function VillagePage() {
   );
 }
 
-function buildVillageSystemPrompt(): string {
+/**
+ * 村の system。**話しかけた担当 (役員・部長・チーム) の役割を載せる** (2026-11-04) ——
+ * 経路 (`routeTopicScored`) が決めた担当が誰でも同じ人格で答えると、役員ロールを分けた意味が
+ * 返答に出ない。役割は組織の台帳 (`villageData`) の値だが、`displayField` の天井は通す。
+ */
+function buildVillageSystemPrompt(target?: Villager): string {
+  const role =
+    target === undefined
+      ? []
+      : [
+        `今あなたが演じる担当: ${displayField(target.name)}` +
+          (target.domain ? `（領域: ${displayField(target.domain)}）` : '') +
+          (target.focus ? `／重点: ${displayField(target.focus)}` : '') +
+          (target.chain ? `／指揮系統: ${displayField(target.chain)}` : ''),
+      ];
   return [
     'あなたは「AIの村」の住人（AI 組織の担当者）です。日本語で、短く親しみやすく答えてください。',
+    ...role,
     '経営・税務・労務・法務などの実務質問には要点を 1〜3 文で簡潔に。断定を避け、必要なら専門家確認を促す。',
     '村のキャラクターらしいフレンドリーな一言を添えてよいが、長くしすぎないこと。',
   ].join('\n');

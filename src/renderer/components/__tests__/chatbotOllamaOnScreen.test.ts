@@ -41,7 +41,9 @@ function installBridge(installed: readonly string[], answer: 'reply' | 'refuse')
   const sent: Sent[] = [];
   (window as unknown as Record<string, unknown>).serviceHub = {
     fetchSnapshot: async () => ({ ok: true, data: { models: installed.map((name) => ({ name })) } }),
-    invoke: async (_s: string, _a: string, payload: unknown) => {
+    invoke: async (service: string, action: string, payload: unknown) => {
+      // 窓が開くと既定の提供者を読む (Grok が既定でなければ Ollama のまま) —— Ollama への送信には数えない。
+      if (service === 'assistant' && action === 'providers') return { ok: true, data: { providers: [] } };
       const model = (payload as { model: string }).model;
       sent.push({ model });
       if (answer === 'reply' && installed.includes(model)) {
