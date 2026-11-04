@@ -794,6 +794,70 @@ async function tabletSuite(browser) {
 }
 
 /**
+ * 村の殻 (2026-11-04 · 村リビルド P4): 既定の入口 (`?ui=legacy` を付けない) で、利用者に見えるのは
+ * **村と会話と役場だけ**。他の suite は旧画面を内部の入口で開くので、既定の姿はここだけが見る。
+ *
+ * 見るのは ① サイドバーも各サービスの項目も無い ② 会話の欄・役場のボタンが在る ③ 役場は設定の画面を窓で開き
+ * Esc で閉じて焦点がボタンへ戻る ④ 会話の「〇〇を開いて」(`servicehub:navigate`) が窓に開く ⑤ スマホ幅でも
+ * 村・会話・役場が出て横にはみ出さない ⑥ 開いても閉じてもコンソールエラーが出ない。
+ */
+async function villageSuite(browser) {
+  console.log('--- 村の殻 (既定の入口) ---');
+  const VILLAGE_FILE = 'file://' + targetAbs;
+  async function enter(page) {
+    await page.waitForSelector('text=はじめてのご利用', { timeout: 30000 });
+    const inputs = page.locator('input[type="password"]');
+    await inputs.nth(0).fill(PASS);
+    await inputs.nth(1).fill(PASS);
+    await page.getByRole('button', { name: 'パスワードを設定して開始' }).click();
+    await page.waitForSelector('input[type="checkbox"]', { timeout: 30000 });
+    await page.locator('input[type="checkbox"]').check();
+    await page.getByRole('button', { name: /記録完了/ }).click();
+    await page.waitForSelector('[data-village-shell]', { timeout: 30000 });
+  }
+  const errors = [];
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+  const page = await ctx.newPage();
+  collectErrors(page, errors);
+  await page.goto(VILLAGE_FILE + '#village', { waitUntil: 'domcontentloaded' });
+  await enter(page);
+  ok((await page.locator('.sidebar').count()) === 0, 'village: サイドバーが無い (旧画面は既定では出ない)');
+  ok((await page.locator('[data-service-id]').count()) === 0, 'village: 各サービスの項目が無い');
+  ok((await page.locator('[data-village-chat]').count()) === 1, 'village: 会話の欄が在る');
+  ok((await page.locator('[data-village-hall-open]').count()) === 1, 'village: 役場のボタンが在る');
+  await page.waitForSelector('[data-village-shell] main[aria-label="村"] svg', { timeout: 30000 });
+  ok(true, 'village: 村の景色 (ピクセルの木と花) が描かれる');
+  // 役場: 設定の窓
+  const hallBtn = page.locator('[data-village-hall-open]');
+  await hallBtn.focus();
+  await hallBtn.click();
+  await page.waitForSelector('[role="dialog"][data-village-hall]', { timeout: 15000 });
+  ok((await page.locator('[data-village-hall]').getAttribute('aria-label')) === '役場', 'village: 役場の窓が開く');
+  ok((await page.locator('[data-village-hall] button, [data-village-hall] input').count()) > 3, 'village: 役場の中に設定の操作子が在る');
+  await page.keyboard.press('Escape');
+  await page.waitForSelector('[data-village-hall]', { state: 'detached', timeout: 10000 });
+  ok(await hallBtn.evaluate((el) => el === document.activeElement), 'village: Esc で閉じ、焦点は役場のボタンへ戻る');
+  // 会話の「開いて」
+  await page.evaluate(() => window.dispatchEvent(new CustomEvent('servicehub:navigate', { detail: 'tax-accountant' })));
+  await page.waitForSelector('[data-village-window="tax-accountant"]', { timeout: 15000 });
+  ok((await page.locator('[data-village-window="tax-accountant"]').getAttribute('aria-label')) === '税理士', 'village: 会話の「開いて」でサービスの画面が窓に開く');
+  await page.locator('[data-village-hall] [data-dialog-initial]').click();
+  await page.waitForSelector('[data-village-hall]', { state: 'detached', timeout: 10000 });
+  ok(true, 'village: 窓の「閉じる」で村へ戻る');
+  await page.evaluate(() => window.dispatchEvent(new CustomEvent('servicehub:navigate', { detail: 'no-such-page' })));
+  await page.waitForTimeout(300);
+  ok((await page.locator('[data-village-hall]').count()) === 0, 'village: 知らない行き先では窓を開かない');
+  ok(await noHScroll(page), 'village: 横スクロールなし (デスクトップ)');
+  // スマホ幅
+  await page.setViewportSize({ width: 412, height: 915 });
+  await page.waitForTimeout(400);
+  ok((await page.locator('[data-village-chat]').isVisible()) && (await page.locator('[data-village-hall-open]').isVisible()), 'village: スマホ幅でも会話と役場のボタンが見える');
+  ok(await noHScroll(page), 'village: 横スクロールなし (スマホ幅)');
+  ok(errors.length === 0, `village: コンソールエラーが出ない${errors.length ? ' — ' + errors.slice(0, 2).join(' / ') : ''}`);
+  await ctx.close();
+}
+
+/**
  * シェルの操作性 (パス 322): サイドバー (検索の ✕ と件数・分類の開閉) / トップバーの ♡ /
  * ホームの「お気に入り・最近使った」のジャンプ列 / 「先頭へ戻る」 / スマホのドロワーの閉じ方。
  *
@@ -5688,6 +5752,8 @@ function installWaitMarginRecorder(browser) {
     ['opened', openedSuite, 155],
     ['tablet', tabletSuite, 2],
     ['shell', shellSuite, 27],
+    // 村リビルド P4: 既定の入口 (村の殻) を実機で。他の suite は ?ui=legacy の旧画面を開く
+    ['village', villageSuite, 15],
   ];
   const SUITES = SUITE_TABLE.map(([name]) => name);
   /**

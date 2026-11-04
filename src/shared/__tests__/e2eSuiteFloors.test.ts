@@ -109,9 +109,9 @@ describe('e2e の suite ごとの床 (パス 303 · 346)', () => {
     expect(code).not.toMatch(staleFails);
   });
 
-  it('★ 39 suite が全部載っている (名前は一意)', () => {
-    expect(rows.length).toBe(39);
-    expect(new Set(rows.map((r) => r.name)).size).toBe(39);
+  it('★ 40 suite が全部載っている (名前は一意)', () => {
+    expect(rows.length).toBe(40);
+    expect(new Set(rows.map((r) => r.name)).size).toBe(40);
     for (const r of rows) expect(r.fn, r.name).toMatch(/Suite$/);
   });
 
@@ -184,7 +184,9 @@ describe('e2e の suite ごとの床 (パス 303 · 346)', () => {
     //   + vaultOpacity +1 (保管庫の行は iv / ciphertext / v に `storedAt` (預けた時刻 · T-213 の 8 時間 TTL) が加わり、それが数値であること) = 761
     // + 2026-10-30 (パス 566-C) の desktop +1 (財務データへのマージ復元は黙って上書きせず確認を出す —— T-227。
     //   パス 566-A は実機を回しておらず、旧い backup 節は確認を受けないまま 15 秒で止まった) = 762
-    expect(sumMeasured).toBe(762);
+    // + 2026-11-04 (村リビルド P4) の village +15 (新しい suite。既定の入口 = 村の殻をサイドバー無しで開き、役場の窓・会話からの「開いて」・
+    //   スマホ幅・コンソールエラー 0 を見る。他の suite は ?ui=legacy の旧画面を開くので、既定の姿を見るのはここだけ) = 777
+    expect(sumMeasured).toBe(777);
   });
 });
 
