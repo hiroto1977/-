@@ -57,7 +57,7 @@ describe('0.9: ブロックの本体を持つ arrow', () => {
     expect(compile(go('  return xs.map((x) => { return fetch(x); });')).diagnostics.join('\n')).toContain('宣言していない名前 fetch');
   });
   it('数と宣言した arrow の引数は添字の鍵に使える', () => {
-    const r = compile(go('  return (i: number) => { return xs[i]; };'));
+    const r = compile(go('  return (i: number) => { const r = xs[i]; return 1; };'));
     expect(r.diagnostics).toEqual([]);
     expect(r.output).toContain('xs[+(i)]');
   });

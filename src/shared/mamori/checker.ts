@@ -75,6 +75,13 @@ export const CAPABILITY_MODULES: ReadonlySet<string> = new Set(
   ['electron', 'child' + '_process', 'vm', 'worker_threads', 'cluster', 'net', 'tls', 'dgram', 'http', 'http2', 'https', 'dns', 'module', 'repl', 'inspector', 'v8', 'process'].flatMap((m) => [m, `node:${m}`]),
 );
 
+/** 片方の値をそのまま返す論理演算子 (`a ?? b` `a || b` `a && b`)。inert の値を運ぶ (0.17 · T-257)。 */
+const LOGICAL_OPS: ReadonlySet<string> = new Set(['??', '||', '&&']);
+/** 引数を受けても結果が数・文字列・真偽の値だけになる組み込みの関数 (inert の値を引数に渡してよい —— 結果は呼べる値にならない)。 */
+const SCALAR_GLOBAL_FNS: ReadonlySet<string> = new Set(['Number', 'String', 'Boolean', 'parseInt', 'parseFloat', 'isNaN', 'isFinite']);
+/** 結果が数・文字列・真偽の値だけになる組み込みのメンバの呼び出し (`Math.max(xs[i], 0)` `Object.hasOwn(o, xs[k])`)。 */
+const SCALAR_BUILTIN_OBJECTS: ReadonlySet<string> = new Set(['Math', 'Number']);
+const SCALAR_BUILTIN_MEMBER_CALLS: ReadonlySet<string> = new Set(['Object.hasOwn', 'Array.isArray', 'JSON.stringify']);
 export const OBJECT_MEMBERS: ReadonlySet<string> = new Set(['hasOwn', 'keys', 'values', 'entries', 'fromEntries', 'freeze', 'isFrozen']);
 
 /**
@@ -222,6 +229,12 @@ interface Binding {
   readonly mutable?: boolean;
   /** 数と分かっている名前か (型の宣言が `number`・初期値が数の式)。添字の鍵に使える (0.8)。型の宣言は実行時には守られないので、生成物は鍵を数に寄せる。 */
   readonly numeric?: boolean;
+  /**
+   * この関数の中で `const o = { … }` と作った物か (0.17)。欄への代入 (`o.k = v`) の相手にできるのはこれだけ ——
+   * 引数・import した物・組み込み・`let` (別の物を入れ直せる) は、他のモジュールと共有しているかもしれず、書き換えると
+   * 他のモジュールの関門の判定まで変わる。
+   */
+  readonly owned?: boolean;
   /**
    * 計算した鍵の添字から来た値か (0.12 · T-255)。呼び出し・`new`・メンバ・次の添字の相手にできない。
    * `const f = x[k]; f(…)` の洗浄を塞ぐ。一度付いた印は、別の値を入れても残す (失敗は閉じる)。
@@ -432,7 +445,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         if (declared !== null && s.init !== null && carried !== declared) {
           report('M4', s.pos, `${s.name} は印 ${declared} の型ですが、入れる値は印を持ちません`);
         }
-        bindLocal(own, s.name, { vetted: declared ?? carried, authority: 'local', mutable: s.mutable, numeric: s.type?.text === 'number' || (s.type === null && s.init !== null && isNumericKey(s.init, scopes)), inert: s.init !== null && carriesInert(s.init, scopes) }, s.pos);
+        bindLocal(own, s.name, { vetted: declared ?? carried, authority: 'local', mutable: s.mutable, numeric: s.type?.text === 'number' || (s.type === null && s.init !== null && isNumericKey(s.init, scopes)), owned: !s.mutable && s.init?.kind === 'object', inert: s.init !== null && carriesInert(s.init, scopes) }, s.pos);
         return;
       }
       case 'destructure': {
@@ -476,14 +489,30 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         }
         checkExpr(s.object, scopes, ctx);
         checkExpr(s.key, scopes, ctx);
+        refuseInert(s.value, scopes, '配列の添字への代入');
         checkExpr(s.value, scopes, ctx);
         if (s.key.kind !== 'string' && !isNumericKey(s.key, scopes)) {
           report('M6', s.key.pos, '添字への代入の鍵は、数リテラル・数と分かる式・識別子にならない文字列だけです —— 計算した文字列の鍵 (`out[k] = v`) は `out["__proto__"]` で原型を差し替えられる');
         }
         return;
       }
+      case 'member-assign': {
+        const target = lookup(scopes, s.object);
+        if (target === undefined) {
+          report('M6', s.pos, `宣言していない名前 ${s.object} の欄へ代入しています`);
+        } else if (target.authority !== 'local' || target.owned !== true) {
+          report('M6', s.pos, `${s.object} の欄へは代入できません —— 書けるのは、この関数の中で \`const ${s.object} = { … }\` と作った物の欄だけです (引数・外の名前・let・組み込みを書き換えると、他のモジュールの判定まで変わる)`);
+        }
+        // owned な物は印を持たない (`const u: 印の型 = { … }` は入れる値が印を持たないので M4 が先に断る) —— 印の物の欄を別に検める枝は要らない。
+        refuseInert(s.value, scopes, '欄への代入');
+        checkExpr(s.value, scopes, ctx);
+        return;
+      }
       case 'return':
-        if (s.value !== null) checkExpr(s.value, scopes, ctx);
+        if (s.value !== null) {
+          refuseInert(s.value, scopes, '戻り値');
+          checkExpr(s.value, scopes, ctx);
+        }
         return;
       case 'if':
         checkExpr(s.test, scopes, ctx);
@@ -507,6 +536,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         checkExpr(s.value, scopes, ctx);
         return;
       case 'for': {
+        refuseInert(s.iterable, scopes, 'for の回す相手');
         checkExpr(s.iterable, scopes, ctx);
         // 回す変数は印を運ばない (印の配列から取り出しても素の値 —— 失敗は閉じる向き)。
         const loopVar = new Map<string, Binding>();
@@ -540,11 +570,34 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     if (e.kind === 'index') return !literalKey(e.key);
     if (e.kind === 'ident') return lookup(scopes, e.name)?.inert === true;
     if (e.kind === 'cond') return carriesInert(e.then, scopes) || carriesInert(e.otherwise, scopes);
+    // 論理演算子は片方の値をそのまま返す (`xs[n] ?? d` は xs[n] かもしれない) —— 条件の片方と同じ運び方 (0.17 · T-257)。
+    if (e.kind === 'binary') return LOGICAL_OPS.has(e.op) && (carriesInert(e.left, scopes) || carriesInert(e.right, scopes));
     // Stryker disable next-line ConditionalExpression: 単項でない式は op を持たず await に当たらない。種類の判定を外しても、続く比較は false のまま (等価)
     if (e.kind === 'unary') {
       return e.op === 'await' && carriesInert(e.operand, scopes);
     }
     return false;
+  }
+
+  /**
+   * 計算した鍵の添字の結果を、入れ物・戻り値・引数へ入れる形を断る (0.17 · T-257)。0.12 は呼び出し・`new`・メンバ・次の添字・代入の相手を
+   * 断ったが、`{ g: xs[k] }` `[xs[k]]` `return xs[k]` `id(xs[k])` `() => xs[k]` で値を入れ物・戻り値・引数に包んで運ぶと、
+   * 取り出した側では inert の印が消え、`o.g(…)` と呼べた (実測: 5 形すべて通った)。inert の値が居てよいのは、局所の束縛と、
+   * 比較・算術・条件の中だけにする。
+   */
+  function refuseInert(e: Expr, scopes: readonly Map<string, Binding>[], where: string): void {
+    if (carriesInert(e, scopes)) {
+      report('M6', e.pos, `計算した鍵の添字の結果は${where}に入れられません —— 入れ物・戻り値・引数に包むと取り出した側で印が消え、\`x[k]\` の結果を呼べてしまう (局所の束縛・比較・算術・条件の中でだけ使えます)`);
+    }
+  }
+
+  /** 結果が数・文字列・真偽の値だけの組み込みの呼び出しか (名前をこのモジュールで隠していないとき)。inert の値を引数に渡してよい。 */
+  function scalarResultCall(callee: Expr, scopes: readonly Map<string, Binding>[]): boolean {
+    if (callee.kind === 'ident') return lookup(scopes, callee.name) === undefined && SCALAR_GLOBAL_FNS.has(callee.name);
+    if (callee.kind !== 'member') return false;
+    const root = identName(callee.object);
+    if (root === null || lookup(scopes, root) !== undefined) return false;
+    return SCALAR_BUILTIN_OBJECTS.has(root) || SCALAR_BUILTIN_MEMBER_CALLS.has(`${root}.${callee.prop}`);
   }
 
   /** いちばん内側の束縛を書き換える (内側の `let f` が外側の `f` を隠している)。 */
@@ -666,7 +719,10 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       // 'string' / 'number' / 'regex' / 'literal' は名前を持たないので何も検めない —— 枝を書かずに switch を抜ける
       // (空の枝を書くと、その枝の label を消す変異体が等価になり、測っても何も分からない)。
       case 'array':
-        e.items.forEach((x) => checkExpr(x, scopes, ctx));
+        e.items.forEach((x) => {
+          refuseInert(x, scopes, '配列');
+          checkExpr(x, scopes, ctx);
+        });
         return;
       case 'member':
         if (carriesInert(e.object, scopes)) {
@@ -708,10 +764,14 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         checkExpr(e.object, scopes, ctx);
         return;
       case 'spread':
+        refuseInert(e.operand, scopes, '展開');
         checkExpr(e.operand, scopes, ctx);
         return;
       case 'object':
-        for (const p of e.props) checkExpr(p.value, scopes, ctx);
+        for (const p of e.props) {
+          refuseInert(p.value, scopes, 'オブジェクト');
+          checkExpr(p.value, scopes, ctx);
+        }
         return;
       case 'cond':
         checkExpr(e.test, scopes, ctx);
@@ -733,6 +793,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
           e.args.forEach((x) => checkExpr(x, scopes, ctx));
           return;
         }
+        e.args.forEach((x) => refuseInert(x, scopes, '`new` の引数'));
         // 構築する形で名前を使うのは許す (`new RegExp(…)`)。値として持ち出す形は 'ident' の枝が断る。
         if (!isConstructibleBuiltin(e.callee, scopes)) checkExpr(e.callee, scopes, ctx);
         e.args.forEach((x) => checkExpr(x, scopes, ctx));
@@ -750,7 +811,10 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         // 既定値 (`(q = fetch("x")) => q`) も式 —— 0.7 まで検めていなかったので、plain 関数の中で宣言していない名前・
         // 危ない口・印の無い値での印つきの口の呼び出しを、arrow の引数の既定値に隠せた (T-244)。
         for (const p of e.params as readonly Param[]) if (p.init !== null) checkExpr(p.init, [...scopes, inner], plain);
-        if (e.kind === 'arrow') checkExpr(e.body, [...scopes, inner], plain);
+        if (e.kind === 'arrow') {
+          refuseInert(e.body, [...scopes, inner], 'arrow の戻り値');
+          checkExpr(e.body, [...scopes, inner], plain);
+        }
         else checkBlock(e.body, [...scopes, inner], plain);
         return;
       }
@@ -767,6 +831,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       }
       case 'call': {
         checkCallee(e.callee, e.args, scopes, ctx);
+        if (!scalarResultCall(e.callee, scopes)) e.args.forEach((x) => refuseInert(x, scopes, '呼び出しの引数'));
         e.args.forEach((x) => checkExpr(x, scopes, ctx));
         // メンバの呼び出しは外形を持たない。この門を外しても、名前の無い呼ぶ側を引いて undefined が返り、
         // 下の門で同じく抜ける (等価)。

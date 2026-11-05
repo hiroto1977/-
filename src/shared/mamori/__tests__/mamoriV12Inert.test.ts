@@ -103,7 +103,7 @@ describe('0.12: 添字への代入 (threat: T-256)', () => {
     expect(dynamic[0]).toContain('添字への代入の鍵は');
     expect(diag('  out[u + "x"] = 1;\n  return out;')[0]).toContain('添字への代入の鍵は');
     const member = diag('  o.f = u;\n  return o;');
-    expect(member[0]).toContain('欄への代入');
+    expect(member[0]).toContain('欄へは代入できません');
     for (const k of ['"__proto__"', '"constructor"', '"prototype"', '"\\u0063onstructor"']) {
       const d = diag(`  out[${k}] = 1;\n  return out;`);
       expect(d, k).toHaveLength(1);

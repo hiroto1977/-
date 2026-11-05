@@ -25,8 +25,9 @@ function compile(source: string): { diagnostics: string[]; output: string } {
   return r.ok ? { diagnostics: [], output: [...r.outputs.values()][0]! } : { diagnostics: r.diagnostics.map(formatDiagnostic), output: '' };
 }
 const go = (body: string, params = 'u: string, o: unknown, xs: string[], n: number'): string => `${PRE}export fn go(${params}) -> unknown {\n${body}\n}\n`;
-const ret = (expr: string): string => go(`  return ${expr};`);
-const emitted = (expr: string): string => compile(ret(expr)).output;
+// 0.17 (T-257): 計算した鍵の添字の結果は戻り値にできないので、式は局所の束縛へ入れて検める (生成物は `return` に読み替えて比べる)。
+const ret = (expr: string): string => go(`  const r = ${expr};\n  return 1;`);
+const emitted = (expr: string): string => compile(ret(expr)).output.replace('const r = ', 'return ');
 
 describe('0.8: 添字 x[k]', () => {
   it('数リテラル・16 進・桁区切りの鍵は、そのまま通る', () => {
@@ -74,17 +75,17 @@ describe('0.8: 添字 x[k]', () => {
       expect(d[0], k).toContain('[M6]');
       expect(d[0], k).toContain('添字の鍵は');
     }
-    expect(compile(go('  let i = "a"; return xs[i];')).diagnostics[0]).toContain('添字の鍵は');
+    expect(compile(go('  let i = "a"; const r = xs[i]; return 1;')).diagnostics[0]).toContain('添字の鍵は');
   });
   it('数と宣言した let / const / 引数 / 数の初期値は鍵に使える。このモジュールの名前で隠した Math は組み込みではない', () => {
-    expect(compile(go('  let i = 0; return xs[i];')).output).toContain('xs[+(i)]');
-    expect(compile(go('  const k: number = n; return xs[k];')).output).toContain('xs[+(k)]');
-    expect(compile(`const FIRST = 0;\nexport fn go(xs: string[]) -> unknown {\n  return xs[FIRST];\n}\n`).output).toContain('xs[+(FIRST)]');
-    expect(compile(`const FIRST: number = 0;\nexport fn go(xs: string[]) -> unknown {\n  return xs[FIRST];\n}\n`).output).toContain('xs[+(FIRST)]');
-    expect(compile(go('  const Math = [1]; return xs[Math.length];')).diagnostics).toEqual([]);
-    expect(compile(go('  const Math = [1]; return xs[Math.floor(1)];')).diagnostics[0]).toContain('添字の鍵は');
-    expect(compile(go('  const Number = [1]; return xs[Number(1)];')).diagnostics[0]).toContain('添字の鍵は');
-    expect(compile('export fn go(xs: string[]) -> unknown {\n  return xs.map((i: number) => xs[i]);\n}\n').output).toContain('xs[+(i)]');
+    expect(compile(go('  let i = 0; const r = xs[i]; return 1;')).output).toContain('xs[+(i)]');
+    expect(compile(go('  const k: number = n; const r = xs[k]; return 1;')).output).toContain('xs[+(k)]');
+    expect(compile(`const FIRST = 0;\nexport fn go(xs: string[]) -> unknown {\n  const r = xs[FIRST]; return 1;\n}\n`).output).toContain('xs[+(FIRST)]');
+    expect(compile(`const FIRST: number = 0;\nexport fn go(xs: string[]) -> unknown {\n  const r = xs[FIRST]; return 1;\n}\n`).output).toContain('xs[+(FIRST)]');
+    expect(compile(go('  const Math = [1]; const r = xs[Math.length]; return 1;')).diagnostics).toEqual([]);
+    expect(compile(go('  const Math = [1]; const r = xs[Math.floor(1)]; return 1;')).diagnostics[0]).toContain('添字の鍵は');
+    expect(compile(go('  const Number = [1]; const r = xs[Number(1)]; return 1;')).diagnostics[0]).toContain('添字の鍵は');
+    expect(compile('export fn go(xs: string[]) -> unknown {\n  return xs.map((i: number) => { const r = xs[i]; return 1; });\n}\n').output).toContain('xs[+(i)]');
   });
   it('添字の結果は印を運ばない (印の洗浄にならない) し、添字は印を受ける口を値として運び出す道にならない (threat: M4)', () => {
     expect(compile(go('  const v: VettedUrl = xs[0]; return v;')).diagnostics[0]).toContain('[M4]');
@@ -129,7 +130,7 @@ describe('T-244: arrow の引数の既定値も式として検める', () => {
 });
 
 describe('0.8: 添字の鍵「静的に数と分かる式」の真理値表 (変異検査が教えた —— 各枝が決め手になる入力)', () => {
-  const ok = (key: string, params?: string): boolean => compile(go(`  return xs[${key}];`, params)).diagnostics.length === 0;
+  const ok = (key: string, params?: string): boolean => compile(go(`  const r = xs[${key}]; return 1;`, params)).diagnostics.length === 0;
   const P = 'u: string, o: unknown, xs: string[], n: number';
   it('★ `-` `*` `/` `%` は、どちらの側が文字列でも数になるので通る (threat: T-224)', () => {
     for (const k of ['u - u', 'u * 2', '2 * u', 'u / 2', 'u % 2', '-u']) expect(ok(k), k).toBe(true);
@@ -142,7 +143,7 @@ describe('0.8: 添字の鍵「静的に数と分かる式」の真理値表 (変
   });
   it('★ 数を作らない演算・単項は断る: 比べ・論理・?? ・! ・typeof ・await (threat: T-224)', () => {
     for (const k of ['n === 1', 'n < 1', 'n && n', 'n || n', 'n ?? n', '!n', 'typeof n']) expect(ok(k), k).toBe(false);
-    expect(compile('export async fn go(xs: string[], n: number) -> unknown {\n  return xs[await n];\n}\n').diagnostics.length).toBeGreaterThan(0);
+    expect(compile('export async fn go(xs: string[], n: number) -> unknown {\n  const r = xs[await n]; return 1;\n}\n').diagnostics.length).toBeGreaterThan(0);
   });
   it('★ メンバは `.length` だけ・呼び出しは `Math.m(…)` と `Number(…)` だけ (threat: T-224)', () => {
     expect(ok('o.length')).toBe(true);
@@ -166,21 +167,21 @@ describe('0.8: 添字の鍵「静的に数と分かる式」の真理値表 (変
     expect(ok('i', 'xs: string[], i: number')).toBe(true);
     expect(ok('i', 'xs: string[], i: string')).toBe(false);
     expect(ok('i', 'xs: string[], i')).toBe(false);
-    expect(compile(go('  let i = 0; return xs[i];')).diagnostics).toEqual([]);
-    expect(compile(go('  let i: number = n; return xs[i];')).diagnostics).toEqual([]);
-    expect(compile(go('  let i: string = "a"; return xs[i];')).diagnostics.length).toBe(1);
-    expect(compile(go('  let i: string = n; return xs[i];')).diagnostics.length).toBe(1);
-    expect(compile(go('  let i; return xs[i];')).diagnostics.length).toBe(1);
-    expect(compile(go('  const i = o; return xs[i];')).diagnostics.length).toBe(1);
-    const mod = (decl: string): string[] => compile(`${decl}\nexport fn go(xs: string[]) -> unknown {\n  return xs[K];\n}\n`).diagnostics;
+    expect(compile(go('  let i = 0; const r = xs[i]; return 1;')).diagnostics).toEqual([]);
+    expect(compile(go('  let i: number = n; const r = xs[i]; return 1;')).diagnostics).toEqual([]);
+    expect(compile(go('  let i: string = "a"; const r = xs[i]; return 1;')).diagnostics.length).toBe(1);
+    expect(compile(go('  let i: string = n; const r = xs[i]; return 1;')).diagnostics.length).toBe(1);
+    expect(compile(go('  let i; const r = xs[i]; return 1;')).diagnostics.length).toBe(1);
+    expect(compile(go('  const i = o; const r = xs[i]; return 1;')).diagnostics.length).toBe(1);
+    const mod = (decl: string): string[] => compile(`${decl}\nexport fn go(xs: string[]) -> unknown {\n  const r = xs[K]; return 1;\n}\n`).diagnostics;
     expect(mod('const K = 2;')).toEqual([]);
     expect(mod('const K: number = JSON.parse("1");')).toEqual([]);
     expect(mod('const K = JSON.parse("1");').length).toBe(1);
     expect(mod('const K = "a";').length).toBe(1);
     expect(mod('const K: string = "a";').length).toBe(1);
-    expect(compile(ret('xs.map((i: number) => xs[i])')).diagnostics).toEqual([]);
-    expect(compile(ret('xs.map((i) => xs[i])')).diagnostics.length).toBe(1);
-    expect(compile(ret('xs.map((i: string) => xs[i])')).diagnostics.length).toBe(1);
+    expect(compile(ret('xs.map((i: number) => { const r = xs[i]; return 1; })')).diagnostics).toEqual([]);
+    expect(compile(ret('xs.map((i) => { const r = xs[i]; return 1; })')).diagnostics.length).toBe(1);
+    expect(compile(ret('xs.map((i: string) => { const r = xs[i]; return 1; })')).diagnostics.length).toBe(1);
     expect(ok('n', P)).toBe(true);
   });
 });
