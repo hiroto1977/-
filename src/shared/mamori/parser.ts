@@ -538,8 +538,14 @@ export function parse(file: string, src: string): Module {
         expectP(';');
         return { kind: 'index-assign', object: e.object, key: e.key, value, comments: cs, pos: t.pos };
       }
-      if (e.kind === 'member') fail(peek(), '欄への代入 (`x.k = v`) は在りません —— 添字への代入は配列の添字 (`out[i] = v`) だけです');
-      fail(peek(), '代入の左辺は名前か配列の添字 (`out[i] = v`) だけです');
+      if (e.kind === 'member' && !e.optional && e.object.kind === 'ident') {
+        next();
+        const value = expr();
+        expectP(';');
+        return { kind: 'member-assign', object: e.object.name, prop: e.prop, value, comments: cs, pos: t.pos };
+      }
+      if (e.kind === 'member') fail(peek(), '欄への代入は `名前.欄 = 値;` だけです —— `a.b.c = v` や `f().k = v` や `o?.k = v` は書けません');
+      fail(peek(), '代入の左辺は名前・配列の添字 (`out[i] = v`)・作った物の欄 (`o.k = v`) だけです');
     }
     expectP(';');
     return { kind: 'expr', expr: e, comments: cs, pos: t.pos };

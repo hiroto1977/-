@@ -18,8 +18,8 @@ function compile(source: string): { diagnostics: string[]; output: string } {
   return r.ok ? { diagnostics: [], output: [...r.outputs.values()][0]! } : { diagnostics: r.diagnostics.map(formatDiagnostic), output: '' };
 }
 const PRE = 'extern sink { shell } from "electron";\nexport vetted VettedUrl = "url";\nexport sink fn openUrl(u: VettedUrl) -> Promise<void> {\n  return shell.openExternal(u);\n}\n';
-const go = (e: string, extra = ''): string => `${PRE}${extra}export fn go(a: number, b: number, c: number, u: string, xs: string[], o: unknown) -> unknown {\n  return ${e};\n}\n`;
-const ret = (e: string, extra = ''): string => compile(go(e, extra)).output.split('\n').find((l) => l.startsWith('  return ') && !l.includes('openExternal'))!;
+const go = (e: string, extra = ''): string => `${PRE}${extra}export fn go(a: number, b: number, c: number, u: string, xs: string[], o: unknown) -> unknown {\n  const r = ${e};\n  return 1;\n}\n`; // 0.17 (T-257): 計算した鍵の添字の結果は戻り値にできないので局所の束縛へ入れる
+const ret = (e: string, extra = ''): string => compile(go(e, extra)).output.split('\n').find((l) => l.startsWith('  const r = '))!.replace('const r = ', 'return ');
 
 describe('0.10: ビット演算', () => {
   it('6 つの 2 項演算子と単項の `~` が通り、そのまま出る', () => {
@@ -58,7 +58,7 @@ describe('0.10: ビット演算', () => {
     expect(compile(go('a > > b')).diagnostics.join('\n')).toContain('式が要ります');
     expect(compile(go('a >\n> b')).diagnostics.join('\n')).toContain('式が要ります');
     // 次の行の桁がぴったり続く `>` (行が違えば隣り合いではない)
-    expect(compile(go(`a >\n${' '.repeat(12)}> b`)).diagnostics.join('\n')).toContain('式が要ります');
+    expect(compile(go(`a >\n${' '.repeat(15)}> b`)).diagnostics.join('\n')).toContain('式が要ります');
     expect(compile(go('a >>= b')).diagnostics.join('\n')).toContain('式が要ります');
     expect(compile(go('a <<< b')).diagnostics.join('\n')).toContain('式が要ります');
   });
@@ -81,7 +81,7 @@ describe('0.10: ビット演算', () => {
     expect(ret('xs[a >>> 1]')).toBe('  return xs[+(a >>> 1)];');
     expect(ret('xs[(a << 1) ^ b]')).toBe('  return xs[+(a << 1 ^ b)];');
     // 数と宣言した名前を、ビット演算で初期化した let / const も数
-    const r = compile(`export fn go(xs: string[], a: number) -> unknown {\n  const i = a & 3;\n  return xs[i];\n}\n`);
+    const r = compile(`export fn go(xs: string[], a: number) -> unknown {\n  const i = a & 3;\n  const r = xs[i]; return 1;\n}\n`);
     expect(r.diagnostics).toEqual([]);
     expect(r.output).toContain('xs[+(i)]');
   });

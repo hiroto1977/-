@@ -2537,12 +2537,96 @@
     {
       "id": "A-584",
       "threat": "T-256",
-      "file": "src/shared/mamori/parser.ts",
-      "why": "欄への代入を断らない —— o.f = v が通り、共有の物の欄を書き換えられる口を開け直す",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "欄への代入の相手を作った const のオブジェクトに限らない —— 引数・外の名前・組み込みの欄を書き換えられる口を開け直す",
       "edits": [
         {
-          "find": "if (e.kind === 'member') fail(peek(), '欄への代入",
-          "replace": "if (false) fail(peek(), '欄への代入"
+          "find": "} else if (target.owned !== true) {",
+          "replace": "} else if (false) {"
+        }
+      ]
+    },
+    {
+      "id": "A-585",
+      "threat": "T-257",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "オブジェクトの欄へ入れる inert を断らない —— `{ g: xs[k] }` で包んで呼べる",
+      "edits": [
+        {
+          "find": "refuseInert(p.value, scopes, 'オブジェクト');",
+          "replace": ""
+        }
+      ]
+    },
+    {
+      "id": "A-586",
+      "threat": "T-257",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "戻り値へ返す inert を断らない —— 関数が選んだ関数を返し、呼び手が呼べる",
+      "edits": [
+        {
+          "find": "refuseInert(s.value, scopes, '戻り値');",
+          "replace": ""
+        }
+      ]
+    },
+    {
+      "id": "A-587",
+      "threat": "T-257",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "呼び出しの引数へ渡す inert を断らない —— 恒等関数で印が消える",
+      "edits": [
+        {
+          "find": "if (!scalarResultCall(e.callee, scopes)) e.args.forEach((x) => refuseInert(x, scopes, '呼び出しの引数'));",
+          "replace": ""
+        }
+      ]
+    },
+    {
+      "id": "A-588",
+      "threat": "T-257",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "論理演算子が inert を運ばない —— `xs[k] ?? d` の結果を呼べる",
+      "edits": [
+        {
+          "find": "return LOGICAL_OPS.has(e.op) && (carriesInert(e.left, scopes) || carriesInert(e.right, scopes));",
+          "replace": "return false;"
+        }
+      ]
+    },
+    {
+      "id": "A-589",
+      "threat": "T-258",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "添字への代入の受け手を検めない —— 許可リスト `HOSTS[0] = x` が通る",
+      "edits": [
+        {
+          "find": "        refuseSharedReceiver(s.object, scopes, '添字への代入');\n",
+          "replace": ""
+        }
+      ]
+    },
+    {
+      "id": "A-590",
+      "threat": "T-258",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "配列を書き換えるメソッドの受け手を検めない —— `HOSTS.push(x)` が通る",
+      "edits": [
+        {
+          "find": "if (callee.kind === 'member' && MUTATING_METHODS.has(callee.prop)) refuseSharedReceiver(callee.object, scopes, `\\`.${callee.prop}(…)\\``);",
+          "replace": ""
+        }
+      ]
+    },
+    {
+      "id": "A-591",
+      "threat": "T-258",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "配列の局所の const を owned に数えない —— 作った配列にも書けなくなる (過剰)",
+      "edits": [
+        {
+          "find": "(s.init?.kind === 'object' || s.init?.kind === 'array')",
+          "replace": "s.init?.kind === 'object'"
         }
       ]
     }

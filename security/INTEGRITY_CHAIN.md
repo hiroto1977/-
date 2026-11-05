@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 459
+- ブロック数: 460
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `9dbcb7734134e063efdd06e1306af913f57363a9b1e25e0d606cc4a760a2c3f6`
-- 保護対象: 188 ファイル
+- 末尾(tip)ハッシュ: `65d68b9a92bd1a2273ed878d14fa65a650f66c4c777aa3276e24ff762087a9fe`
+- 保護対象: 191 ファイル
 
 ## ブロック
 
@@ -472,6 +472,7 @@
 | 456 | `5f1c1b05db23263b` | `89fe56c9db356855` | `058cc155f65e08f2` | update ci.yml,eslint.config.js,integrity-chain.cjs,mamori-capabilities.json,assistant.mamori,assistant.ts |
 | 457 | `fe6cd77f4cafe069` | `058cc155f65e08f2` | `10cd65de0b3e3556` | update vitest.config.ts |
 | 458 | `7fafccfcae7697e9` | `10cd65de0b3e3556` | `9dbcb7734134e063` | update grok.json,settings.json,integrity-chain.cjs |
+| 459 | `f4f1d648e5a82536` | `9dbcb7734134e063` | `65d68b9a92bd1a22` | update integrity-chain.cjs,mamori-capabilities.json,ast.ts,checker.ts,emit.ts,parser.ts |
 
 ## 保護対象ファイル
 
@@ -632,6 +633,9 @@
 - `src/shared/mamori/emit.ts`
 - `src/shared/mamori/parser.ts`
 - `src/shared/ollama.ts`
+- `src/shared/ollamaCore.mamori`
+- `src/shared/ollamaCore.ts`
+- `src/shared/ollamaHost.ts`
 - `src/shared/outboundContentGate.ts`
 - `src/shared/privateTarget.mamori`
 - `src/shared/privateTarget.ts`

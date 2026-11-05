@@ -141,6 +141,8 @@ function stmt(s: Stmt, depth: number): string[] {
       const key = s.key.kind === 'number' || s.key.kind === 'string' ? expr(s.key) : `+(${expr(s.key)})`;
       return [...head, `${ind}${wrap(s.object, 9)}[${key}] = ${expr(s.value)};`];
     }
+    case 'member-assign':
+      return [...head, `${ind}${s.object}.${s.prop} = ${expr(s.value)};`];
     case 'return':
       return [...head, `${ind}return${s.value === null ? '' : ` ${expr(s.value)}`};`];
     case 'expr':

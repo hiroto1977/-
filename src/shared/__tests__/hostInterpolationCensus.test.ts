@@ -71,9 +71,9 @@ interface LedgerRow {
  */
 const LEDGER: readonly LedgerRow[] = [
   {
-    file: 'src/shared/ollama.ts',
-    needle: '`http://${raw}`',
-    reason: '(a) 利用者が打った接続先に scheme を補って new URL の入力にする。ホストは解析後の hostname を関門が見る',
+    file: 'src/shared/ollamaCore.ts',
+    needle: "'http://' + raw",
+    reason: '(a) 利用者が打った接続先に scheme を補って new URL の入力にする。ホストは解析後の hostname を関門が見る (Mamori 移植で補間が連結になった)',
   },
   {
     file: 'src/shared/atlassianSite.ts',

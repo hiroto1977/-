@@ -104,6 +104,11 @@ export type Stmt =
    * 字面の文字列鍵は `index` を読むときと同じく禁じた名前を通し、計算した鍵は数だけ。
    */
   | { readonly kind: 'index-assign'; readonly object: Expr; readonly key: Expr; readonly value: Expr; readonly comments: Comments; readonly pos: Pos }
+  /**
+   * 欄への代入 `o.name = v;` (0.17)。書けるのは、この関数の中で `const o = { … }` と作った物の欄だけ (checker が見る)。
+   * 欄の名前は `.` の後ろと同じく禁じた名前の表を通る (parser の memberName)。
+   */
+  | { readonly kind: 'member-assign'; readonly object: string; readonly prop: string; readonly value: Expr; readonly comments: Comments; readonly pos: Pos }
   | { readonly kind: 'expr'; readonly expr: Expr; readonly comments: Comments; readonly pos: Pos }
   /** `throw 式;` (0.2) */
   | { readonly kind: 'throw'; readonly value: Expr; readonly comments: Comments; readonly pos: Pos }

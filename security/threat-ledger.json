@@ -4620,12 +4620,71 @@
       "severity": "medium",
       "title": "守りの層を書く言語 Mamori に添字への代入を足すと、計算した文字列の鍵 (`out[k] = v`) と欄への代入 (`o.f = v`) が原型や共有の物を書き換える口になる",
       "status": "mitigated",
-      "fix": "src/shared/mamori/parser.ts と checker.ts: 代入の左辺は名前か添字だけ。字面の識別子の鍵は `.name` に畳む時点で FORBIDDEN_MEMBERS を通す (`out[\"__proto__\"]` は M0)。計算した鍵は数と分かる式だけ (M6)。生成物は `out[+(i)]` と数に寄せ、型の宣言が嘘でも文字列の鍵は NaN になって表に届かない。欄への代入 (`x.k = v`) は無い。",
+      "fix": "src/shared/mamori/parser.ts と checker.ts: 代入の左辺は名前か添字だけ。字面の識別子の鍵は `.name` に畳む時点で FORBIDDEN_MEMBERS を通す (`out[\"__proto__\"]` は M0)。計算した鍵は数と分かる式だけ (M6)。生成物は `out[+(i)]` と数に寄せ、型の宣言が嘘でも文字列の鍵は NaN になって表に届かない。欄への代入 (`o.k = v`) は 0.17 (MG-033) で足した: 書けるのは、その関数の中で `const o = { … }` と作った物の欄だけ (引数・外の名前・組み込み・let・別名・分割代入・回す変数・モジュール直下の const は M6)。欄の名前は FORBIDDEN_MEMBERS を通る。",
       "regression": {
         "file": "src/shared/mamori/__tests__/mamoriV12Inert.test.ts",
         "test": "★ 計算した文字列の鍵・欄への代入・禁じた名前は断る (threat: T-256)"
       },
-      "alsoRegressions": []
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV17.test.ts",
+          "test": "★ 引数の欄・外の名前の欄・組み込みの欄へは書けない (共有の物を書き換えない)"
+        }
+      ]
+    },
+    {
+      "id": "T-257",
+      "found": "2026-11-05",
+      "foundBy": "MG-033 で欄への代入を足す前の probe。0.12 の inert (計算した鍵の添字の結果 `xs[k]`) を、オブジェクト・配列・戻り値・呼び出しの引数・添字への代入・for の相手・arrow の戻り値・`??` / `||` / `&&` の片方に包むと、取り出した側では印が消え `o.g(1)` と呼べた (9 形が通った)。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "守りの層を書く言語 Mamori の inert (計算した鍵の添字の結果は呼べない) が、入れ物・戻り値・引数・論理演算子に包むと消え、`x[k]` が選んだ関数を関門の外から呼べる",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: 計算した鍵の添字の結果は、オブジェクト・配列・展開・戻り値・arrow の戻り値・呼び出しと new の引数 (数・文字列・真偽だけになる組み込みを除く)・添字や欄への代入の値・for の相手に入れられない (M6 refuseInert)。`??` `||` `&&` は片方の値をそのまま返すので inert を運ぶ。局所の束縛・比較・算術・条件の中だけで使える。実物の Mamori 27 本は 1 本も影響を受けなかった。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV17.test.ts",
+        "test": "★ オブジェクト・配列・添字への代入・for の相手・arrow の戻り値に入れられない"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV17.test.ts",
+          "test": "★ 戻り値・呼び出しの引数・new の引数に入れられない"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV17.test.ts",
+          "test": "★ ?? / || / && の片方になっても inert は消えない (呼べない)"
+        }
+      ]
+    },
+    {
+      "id": "T-258",
+      "found": "2026-11-05",
+      "foundBy": "MG-034 の手探り。電池 (種を新しくして 6000 周) は緑だったが、0.17 の欄への代入を調べる途中で、配列には同じ規則が無いことに気付いた。モジュール直下の許可リスト `const HOSTS: string[] = [...]` が `HOSTS[0] = \"evil\"` / `HOSTS.push(\"evil\")` で書き換えられ、引数で渡した配列を別の関数が `xs[0] = …` で書き換えても通った (5 形のうち 3 形が通った)。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "守りの層を書く言語 Mamori が、共有の配列 (モジュール直下の許可リスト・引数・import) への添字の代入と push などの書き換えメソッドを通し、別の関数が読む許可リストの関門の判定を書き換えられる",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: 添字への代入 (`a[0] = v`) と配列を書き換えるメソッド (push / pop / shift / unshift / splice / sort / reverse / fill / copyWithin) の受け手は、この関数の中で `const a = [ … ]` (または `{ … }`) と作った名前だけ (M6 refuseSharedReceiver)。引数・モジュール直下の const・import・let・欄の中の配列・別名は断る。実物の Mamori 27 本は 1 本も影響を受けなかった (どれも `const out: T[] = []` の局所の配列)。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV18.test.ts",
+        "test": "★ モジュール直下の許可リストへの添字の代入・メソッドを断る (threat: T-258)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV18.test.ts",
+          "test": "★ 引数で渡された配列・let・入れ子の欄の配列も書き換えられない (threat: T-258)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV18.test.ts",
+          "test": "★ 別の関数へ渡して書き換えさせる道も、書き換える側で断つ (threat: T-258)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV18.test.ts",
+          "test": "この関数の中で作った配列は、添字の代入もメソッドも通る"
+        }
+      ]
     }
   ],
   "huntBacklog": [

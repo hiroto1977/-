@@ -19,8 +19,8 @@ function compile(source: string): { diagnostics: string[]; output: string } {
   const r = compileProject([{ path: 'src/x/m0.mamori', source }]);
   return r.ok ? { diagnostics: [], output: [...r.outputs.values()][0]! } : { diagnostics: r.diagnostics.map(formatDiagnostic), output: '' };
 }
-const go = (body: string, params = 'u: string, o: Record<string, string>, xs: string[], n: number, out: number[]'): string =>
-  `${PRE}export fn go(${params}) -> unknown {\n${body}\n}\n`;
+const go = (body: string, params = 'u: string, o: Record<string, string>, xs: string[], n: number'): string =>
+  `${PRE}export fn go(${params}) -> unknown {\n  const out: number[] = [0];\n${body}\n}\n`;
 const diag = (body: string, params?: string): string[] => compile(go(body, params)).diagnostics;
 
 describe('0.12: 計算した鍵の結果は inert (threat: T-255)', () => {
@@ -90,7 +90,7 @@ describe('0.12: 計算した鍵の結果は inert (threat: T-255)', () => {
 describe('0.12: 添字への代入 (threat: T-256)', () => {
   it('数リテラルと数と分かる鍵は通り、生成物は数に寄せる', () => {
     expect(compile(go('  out[0] = 1;\n  return out;')).output).toContain('out[0] = 1;');
-    expect(compile(go('  out[i] = 1;\n  return out;', 'out: number[], i: number')).output).toContain('out[+(i)] = 1;');
+    expect(compile(go('  out[i] = 1;\n  return out;', 'i: number')).output).toContain('out[+(i)] = 1;');
     expect(compile(go('  out[n - 1] = n;\n  return out;')).output).toContain('out[+(n - 1)] = n;');
     expect(compile(go('  out["content-type"] = 1;\n  return out;')).output).toContain('out["content-type"] = 1;');
     expect(diag('  out[0] = 1;\n  return out;')).toEqual([]);
@@ -103,7 +103,7 @@ describe('0.12: 添字への代入 (threat: T-256)', () => {
     expect(dynamic[0]).toContain('添字への代入の鍵は');
     expect(diag('  out[u + "x"] = 1;\n  return out;')[0]).toContain('添字への代入の鍵は');
     const member = diag('  o.f = u;\n  return o;');
-    expect(member[0]).toContain('欄への代入');
+    expect(member[0]).toContain('欄へは代入できません');
     for (const k of ['"__proto__"', '"constructor"', '"prototype"', '"\\u0063onstructor"']) {
       const d = diag(`  out[${k}] = 1;\n  return out;`);
       expect(d, k).toHaveLength(1);
@@ -116,7 +116,8 @@ describe('0.12: 添字への代入 (threat: T-256)', () => {
     expect(nested[0]).toContain('[M6]');
     expect(nested[0]).toContain('代入できません');
     expect(diag('  const row = xs[n];\n  row[0] = u;\n  return row;')[0]).toContain('代入できません');
-    expect(diag('  const row = xs[0];\n  row[0] = u;\n  return row;')).toEqual([]);
+    // 字面の鍵の結果は inert ではないが、引数の中身なので作った配列でもない (T-258)。
+    expect(diag('  const row = xs[0];\n  row[0] = u;\n  return row;')[0]).toContain('作った配列だけ');
   });
 
   it('代入の相手・鍵・値に隠した宣言していない名前を落とさない', () => {

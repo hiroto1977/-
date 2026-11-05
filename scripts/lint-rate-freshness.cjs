@@ -91,8 +91,8 @@ const DATED_MEASURES = [
      * 「いつ照合したか」を持ち、その日から半年で見直す。2026-05-12 の「未パッチ」の
      * 固定文は日付が無かったので、修正 (0.17.1) が出た後も 4 か月間そのまま刷られた。
      */
-    label: 'Ollama 既知脆弱性の台帳の再照合 (src/shared/ollama.ts OLLAMA_ADVISORIES)',
-    source: 'src/shared/ollama.ts',
+    label: 'Ollama 既知脆弱性の台帳の再照合 (src/shared/ollamaCore.ts OLLAMA_ADVISORIES)',
+    source: 'src/shared/ollamaCore.ts',
     constName: 'OLLAMA_ADVISORIES_REVIEW_BY',
     warnWithinDays: 60,
     how:

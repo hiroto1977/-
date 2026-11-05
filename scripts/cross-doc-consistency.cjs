@@ -149,7 +149,7 @@ function canonicalCitationLedgerCount() {
  * 手で 4 か所写されていて (0.1.46)、コードが動いても文書は動かなかった。
  */
 function canonicalOllamaConst(name) {
-  const src = read(path.join(REPO_ROOT, 'src/shared/ollama.ts'));
+  const src = read(path.join(REPO_ROOT, 'src/shared/ollamaCore.ts'));
   if (src === null) return null;
   const m = new RegExp(`export const ${name}\\s*=\\s*'([^']+)'`).exec(src);
   return m === null ? null : m[1];

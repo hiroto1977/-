@@ -179,6 +179,7 @@ const PROTECTED = [
   'src/shared/promptInjection.mamori',
   'src/shared/aiEndpoint.mamori',
   'src/shared/vaultToken.mamori',
+  'src/shared/ollamaCore.mamori',
   'src/renderer/components/VettedImg.tsx',
   'src/renderer/components/VettedLink.tsx',
   'src/shared/mamori/ast.ts',
@@ -729,7 +730,9 @@ const PROTECTED = [
   'src/renderer/fs/fsa.ts',                 // File System Access の書き出し口
   'src/renderer/network/liveRead.ts',       // ライブ取得の経路選択
   'src/renderer/data/assistantMarkdown.ts', // モデル応答を解析して画面へ出す唯一の場所
-  'src/shared/ollama.ts',                   // Ollama の接続先判定
+  'src/shared/ollama.ts',                   // Ollama の入口 (中身は ollamaCore)
+  'src/shared/ollamaCore.ts',               // Ollama の接続先判定 (Mamori 生成物)
+  'src/shared/ollamaHost.ts',               // その薄い壁 (Date / JSON の欄)
   'src/shared/versionOrder.ts',             // 版の順序 (プレリリース) — ollama.ts の CVE 判定が読む
   // 2026-09-22 (パス 408) に足した。**ここも保護の閉包が教えてくれた** (パス 402 と同じ形)。
   //
