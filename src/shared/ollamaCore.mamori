@@ -179,9 +179,8 @@ fn isWellFormedBase(u: URL) -> boolean {
 /// 接続先として許可するか。モジュール冒頭の 3 通りだけを通す。
 ///
 /// pageHostname: アプリを配信しているホスト名 (ブラウザなら location.hostname)。
-///               空文字なら「同じホスト」条件は無効化される (Electron 版など)。
-// Stryker disable next-line StringLiteral: pageHostname 省略時の '' は「同じホスト」条件の無効化で、番人の値を入れても後段はホスト名が一致せず同じ結論になる (既定値そのものは観測できない)。
-export fn isAllowedOllamaBase(base: string, pageHostname: string = '') -> boolean {
+///               空文字なら「同じホスト」条件は無効化される (Electron 版など)。省略時の '' は入口 `ollama.ts` が補う。
+export fn isAllowedOllamaBase(base: string, pageHostname: string) -> boolean {
   // 文字列以外は弾く。`{ toString: () => 'http://127.0.0.1:11434' }` のようなオブジェクトは
   // `new URL()` を通ってしまうため、ここで止める必要がある。空文字は `new URL('')` が throw するので下の catch に任せる。
   if (typeof base !== 'string') {
@@ -225,8 +224,7 @@ export fn isAllowedOllamaPlaintextHost(hostname: string, pageHostname: string = 
 }
 
 /// base + 許可パス を結合する。base が未許可 / パスが未許可なら null。
-// Stryker disable next-line StringLiteral: pageHostname 省略時の '' は「同じホスト」条件の無効化で、番人の値を入れても後段はホスト名が一致せず同じ結論になる (既定値そのものは観測できない)。
-export fn buildOllamaUrl(base: string, path: OllamaReadPath, pageHostname: string = '') -> string | null {
+export fn buildOllamaUrl(base: string, path: OllamaReadPath, pageHostname: string) -> string | null {
   if (!isAllowedOllamaBase(base, pageHostname)) {
     return null;
   }
@@ -241,8 +239,7 @@ export fn buildOllamaUrl(base: string, path: OllamaReadPath, pageHostname: strin
 /// 利用者が入力した接続先文字列を正規化する。
 /// 受け付ける形: `11434` (ポートのみ = ループバック) / `http://host:port` / `https://host`
 /// ホスト名のみ・スキーム省略も http:// を補って解釈する。
-// Stryker disable next-line StringLiteral: pageHostname 省略時の '' は「同じホスト」条件の無効化で、番人の値を入れても後段はホスト名が一致せず同じ結論になる (既定値そのものは観測できない)。
-export fn parseOllamaEndpoint(input: string, pageHostname: string = '') -> string | null {
+export fn parseOllamaEndpoint(input: string, pageHostname: string) -> string | null {
   const raw = (input ?? '').trim();
   if (raw === '') {
     return buildLoopbackBase(DEFAULT_OLLAMA_PORT);
@@ -515,7 +512,7 @@ export fn normalizeModels(raw: unknown) -> OllamaModelInfo[] {
     // `Number.isFinite` は値を変換しないので、文字列も Infinity も 0 になる。**負も 0 へ** (パス 408) ——
     // ファイルの大きさに負は無いので壊れた応答であり、実測で `size: -1e300` は `-9.5367431640625e+293 MB` を画面に刷っていた。
     const size = hostField(item, 'size');
-    const sizeBytes = typeof size === 'number' && Number.isFinite(size) ? Math.max(0, size) : 0;
+    const sizeBytes = nonNegativeBytes(size);
     const details = hostField(item, 'details');
     out.push({
       name,
@@ -538,6 +535,17 @@ export fn normalizeModels(raw: unknown) -> OllamaModelInfo[] {
 // **エラー本文は `redactForMessage` を通す** (2026-09-15 · パス 290)。ここは `clampToCeiling` で天井だけを掛けており、
 // 伏字を 1 度も呼んでいなかった。今日の実害は 0 (Ollama への要求に資格情報は乗らない) だが、本文の出どころは利用者が設定したホストで、
 // 鍵つきの逆プロキシを前に置く構成は作れる。順序は `redactForMessage` が正しく持っている (**伏せてから切る**)。
+
+/// ファイルの大きさ (バイト)。数でない・有限でない・負は 0。
+fn nonNegativeBytes(size: unknown) -> number {
+  if (typeof size !== 'number') {
+    return 0;
+  }
+  if (!Number.isFinite(size)) {
+    return 0;
+  }
+  return Math.max(0, size);
+}
 
 /// エラー封筒 `{"error": "…"}` から本文を取り出す。取れなければ空文字。
 // Stryker disable next-line StringLiteral: text 省略時の '' は「空を返す」で、番人の値を入れても呼び出し側は同じ「詳細なし」として扱う。
@@ -734,10 +742,11 @@ export fn adviseFromBody(status: number, body: string, ctx: { model?: string; in
   let parsed: unknown = null;
   try {
     parsed = JSON.parse(body);
-  // Stryker disable next-line BlockStatement: parsed は null で初期化済みなので、catch の中の代入を消しても答えは同じ (等価)。
+  // Stryker disable BlockStatement: parsed は null で初期化済みなので、catch の中の代入を消しても答えは同じ (等価)。
   } catch {
     parsed = null;
   }
+  // Stryker restore BlockStatement
   return describeOllamaError(status, extractOllamaError(parsed, body), ctx);
 }
 

@@ -127,9 +127,9 @@ function isWellFormedBase(u: URL): boolean {
  * 接続先として許可するか。モジュール冒頭の 3 通りだけを通す。
  *
  * pageHostname: アプリを配信しているホスト名 (ブラウザなら location.hostname)。
- *               空文字なら「同じホスト」条件は無効化される (Electron 版など)。
+ *               空文字なら「同じホスト」条件は無効化される (Electron 版など)。省略時の '' は入口 `ollama.ts` が補う。
  */
-export function isAllowedOllamaBase(base: string, pageHostname: string = ''): boolean {
+export function isAllowedOllamaBase(base: string, pageHostname: string): boolean {
   // 文字列以外は弾く。`{ toString: () => 'http://127.0.0.1:11434' }` のようなオブジェクトは
   // `new URL()` を通ってしまうため、ここで止める必要がある。空文字は `new URL('')` が throw するので下の catch に任せる。
   if (typeof base !== 'string') return false;
@@ -165,7 +165,7 @@ export function isAllowedOllamaPlaintextHost(hostname: string, pageHostname: str
 }
 
 /** base + 許可パス を結合する。base が未許可 / パスが未許可なら null。 */
-export function buildOllamaUrl(base: string, path: OllamaReadPath, pageHostname: string = ''): string | null {
+export function buildOllamaUrl(base: string, path: OllamaReadPath, pageHostname: string): string | null {
   if (!isAllowedOllamaBase(base, pageHostname)) return null;
   if (!OLLAMA_READ_PATHS.includes(path)) return null;
   // 末尾スラッシュは高々 1 本。`isAllowedOllamaBase` が pathname === '/' しか通さないので、
@@ -178,7 +178,7 @@ export function buildOllamaUrl(base: string, path: OllamaReadPath, pageHostname:
  * 受け付ける形: `11434` (ポートのみ = ループバック) / `http://host:port` / `https://host`
  * ホスト名のみ・スキーム省略も http:// を補って解釈する。
  */
-export function parseOllamaEndpoint(input: string, pageHostname: string = ''): string | null {
+export function parseOllamaEndpoint(input: string, pageHostname: string): string | null {
   const raw = (input ?? '').trim();
   if (raw === '') return buildLoopbackBase(DEFAULT_OLLAMA_PORT);
   // 数字のみ → ループバックのポート指定
@@ -416,11 +416,18 @@ export function normalizeModels(raw: unknown): OllamaModelInfo[] {
     // `Number.isFinite` は値を変換しないので、文字列も Infinity も 0 になる。**負も 0 へ** (パス 408) ——
     // ファイルの大きさに負は無いので壊れた応答であり、実測で `size: -1e300` は `-9.5367431640625e+293 MB` を画面に刷っていた。
     const size = hostField(item, 'size');
-    const sizeBytes = typeof size === 'number' && Number.isFinite(size) ? Math.max(0, size) : 0;
+    const sizeBytes = nonNegativeBytes(size);
     const details = hostField(item, 'details');
     out.push({ name, family: modelDetail(hostField(details, 'family')), parameterSize: modelDetail(hostField(details, 'parameter_size')), quantization: modelDetail(hostField(details, 'quantization_level')), sizeMb: Math.round(sizeBytes / (1024 * 1024)), modifiedAt: displayDateOf(hostField(item, 'modified_at')) });
   }
   return out;
+}
+
+/** ファイルの大きさ (バイト)。数でない・有限でない・負は 0。 */
+function nonNegativeBytes(size: unknown): number {
+  if (typeof size !== 'number') return 0;
+  if (!Number.isFinite(size)) return 0;
+  return Math.max(0, size);
 }
 
 /** エラー封筒 `{"error": "…"}` から本文を取り出す。取れなければ空文字。 */
@@ -585,10 +592,11 @@ export function adviseFromBody(status: number, body: string, ctx: { model ?: str
   let parsed: unknown = null;
   try {
     parsed = JSON.parse(body);
-    // Stryker disable next-line BlockStatement: parsed は null で初期化済みなので、catch の中の代入を消しても答えは同じ (等価)。
+    // Stryker disable BlockStatement: parsed は null で初期化済みなので、catch の中の代入を消しても答えは同じ (等価)。
   } catch {
     parsed = null;
   }
+  // Stryker restore BlockStatement
   return describeOllamaError(status, extractOllamaError(parsed, body), ctx);
 }
 
