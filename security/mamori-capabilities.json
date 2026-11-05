@@ -175,6 +175,16 @@
       "gates": [],
       "sinks": []
     },
+    "src/shared/outboundContentGate.mamori": {
+      "externals": [
+        "pure ./actionTier: OUTBOUND_TIERS, tierOfAction",
+        "pure ./inputCeiling: moreThanChars",
+        "pure ./redact: redactSecrets"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
     "src/shared/privateTarget.mamori": {
       "externals": [],
       "imports": [],
