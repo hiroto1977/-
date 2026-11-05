@@ -269,6 +269,19 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
    */
   let loopDepth = 0;
 
+  /**
+   * 型引数 `f<T>(…)` (0.21)。**型引数に印の型を置く形は断る** —— `fromJson<VettedUrl>(raw)` のように、型を引数に取る関数
+   * (`<T>(s: string) => T`) へ印の型を渡すと、tsc は戻り値を印を名乗る値として扱い、`mint` を通らずに印が出来る (M4 と同じ穴)。
+   * `typeof u` / `import("…")` も同じ: 印を持つ値の**型**を名指しできてしまう。
+   */
+  const checkTypeArgs = (targs: readonly TypeRef[]): void => {
+    for (const ta of targs) {
+      const mark = ta.names.find((n) => table.vetted.has(n));
+      if (mark !== undefined) report('M4', ta.pos, `型引数に印 ${mark} は置けません —— 型を引数に取る関数が、関門 (mint) を通らずに印を名乗る値を返せてしまう`);
+      const escape = ta.names.find((n) => n === 'typeof' || n === 'import');
+      if (escape !== undefined) report('M4', ta.pos, `型引数に \`${escape}\` は置けません —— 印を持つ値の型・別の module の型を名指しして、印を名乗る値を作れてしまう`);
+    }
+  };
   const report = (rule: MamoriDiagnostic['rule'], pos: { line: number; col: number }, message: string): void => {
     out.push({ file, line: pos.line, col: pos.col, rule, message });
   };
@@ -841,6 +854,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         else checkExpr(e.right, scopes, ctx);
         return;
       case 'new':
+        checkTypeArgs(e.typeArgs);
         if (carriesInert(e.callee, scopes)) {
           report('M6', e.pos, '計算した鍵の添字の結果は new の相手にできません —— `new x[k]()` で選んだ構築子を呼べてしまう');
           // new の呼ぶ側は名前だけなので、inert と分かったあとに呼ぶ側を検め直しても診断は増えない。引数は別。
@@ -884,6 +898,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         return;
       }
       case 'call': {
+        checkTypeArgs(e.typeArgs);
         checkCallee(e.callee, e.args, scopes, ctx);
         if (!scalarResultCall(e.callee, scopes)) e.args.forEach((x) => refuseInert(x, scopes, '呼び出しの引数'));
         e.args.forEach((x) => checkExpr(x, scopes, ctx));

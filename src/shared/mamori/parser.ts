@@ -342,6 +342,34 @@ export function parse(file: string, src: string): Module {
     return { text, names, pos: start.pos };
   };
 
+  /** 型引数 `<A, B>` を読む (`<` から `>` まで・0.21)。型の綴りは `typeRef` を通るので、型の中へ式は隠せない。 */
+  const typeArgs = (): TypeRef[] => {
+    expectP('<');
+    const list = [typeRef([',', '>'])];
+    while (isP(',')) {
+      next();
+      list.push(typeRef([',', '>']));
+    }
+    expectP('>');
+    return list;
+  };
+  /**
+   * `<` が型引数の始まりか (`f<T>(x)`) —— 型引数として読めて、**直後に `(` が来る**ときだけ。比較 `a < b` と見分けるため
+   * 読み進めて戻る (TypeScript の曖昧さの解き方と同じ: 型引数の `>` の直後が `(` なら呼び出し)。
+   */
+  const peekTypeArgs = (): boolean => {
+    const save = k;
+    try {
+      typeArgs();
+      return isP('(');
+    } catch (err) {
+      if (err instanceof MamoriError) return false;
+      throw err;
+    } finally {
+      k = save;
+    }
+  };
+
   const params = (): Param[] => {
     expectP('(');
     const out: Param[] = [];
@@ -719,9 +747,13 @@ export function parse(file: string, src: string): Module {
         const key = expr();
         expectP(']');
         e = indexOf(e, key, keyTok, open.pos);
+      } else if (isP('<') && (e.kind === 'ident' || e.kind === 'member') && peekTypeArgs()) {
+        const targs = typeArgs();
+        const pos = peek().pos;
+        e = { kind: 'call', callee: e, typeArgs: targs, args: args(), pos };
       } else if (isP('(')) {
         const pos = peek().pos;
-        e = { kind: 'call', callee: e, args: args(), pos };
+        e = { kind: 'call', callee: e, typeArgs: [], args: args(), pos };
       } else {
         return e;
       }
@@ -799,7 +831,8 @@ export function parse(file: string, src: string): Module {
           const dot = next();
           callee = { kind: 'member', object: callee, prop: memberName(), optional: false, pos: dot.pos };
         }
-        return { kind: 'new', callee, args: args(), pos: t.pos };
+        const targs = isP('<') ? typeArgs() : [];
+        return { kind: 'new', callee, typeArgs: targs, args: args(), pos: t.pos };
       }
       if (t.text === 'field') {
         next();

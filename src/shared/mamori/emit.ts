@@ -73,9 +73,9 @@ export function expr(e: Expr): string {
       // (`"constructor"`) は NaN になって表に届かない (検査器が静的に数と分かる式だけを通した上の、実行時の二重の守り)。
       return `${wrap(e.object, 9)}[${e.key.kind === 'number' || e.key.kind === 'string' ? expr(e.key) : `+(${expr(e.key)})`}]`;
     case 'call':
-      return `${wrap(e.callee, 9)}(${e.args.map(expr).join(', ')})`;
+      return `${wrap(e.callee, 9)}${typeArgs(e.typeArgs)}(${e.args.map(expr).join(', ')})`;
     case 'new':
-      return `new ${expr(e.callee)}(${e.args.map(expr).join(', ')})`;
+      return `new ${expr(e.callee)}${typeArgs(e.typeArgs)}(${e.args.map(expr).join(', ')})`;
     case 'unary':
       // `-(-a)` を `--a` と出すと、符号の反転ではなく減算代入 (引数・let の書き換え) になる (T-246)。`-` の直後の `-` は括る。
       // Stryker disable next-line ConditionalExpression: 種類の判定を外すと `-(a - b)` (2 項の `-`) も括るが、2 項は強さが 6 < 8 で wrap が元から括る (等価)
@@ -109,6 +109,11 @@ function prop(p: Prop): string {
   if (p.spread) return `...${expr(p.value)}`;
   if (p.shorthand) return p.key;
   return `${p.quoted ? quote(p.key) : p.key}: ${expr(p.value)}`;
+}
+
+/** 型引数 `<A, B>` (無ければ空)。型の綴りは構文の段が `typeRef` で写した物。 */
+function typeArgs(targs: readonly { readonly text: string }[]): string {
+  return targs.length === 0 ? '' : `<${targs.map((t) => t.text).join(', ')}>`;
 }
 
 function wrap(e: Expr, min: number): string {

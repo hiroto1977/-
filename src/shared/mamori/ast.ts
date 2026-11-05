@@ -33,8 +33,9 @@ export type Expr =
    * 計算した鍵の結果は inert (0.12)。呼び出し・`new`・メンバ・次の添字の相手にできない。
    */
   | { readonly kind: 'index'; readonly object: Expr; readonly key: Expr; readonly pos: Pos }
-  | { readonly kind: 'call'; readonly callee: Expr; readonly args: readonly Expr[]; readonly pos: Pos }
-  | { readonly kind: 'new'; readonly callee: Expr; readonly args: readonly Expr[]; readonly pos: Pos }
+  /** `typeArgs` は型引数 `f<T>(…)` (0.21)。無ければ空。 */
+  | { readonly kind: 'call'; readonly callee: Expr; readonly typeArgs: readonly TypeRef[]; readonly args: readonly Expr[]; readonly pos: Pos }
+  | { readonly kind: 'new'; readonly callee: Expr; readonly typeArgs: readonly TypeRef[]; readonly args: readonly Expr[]; readonly pos: Pos }
   | { readonly kind: 'unary'; readonly op: '!' | '-' | '~' | 'typeof' | 'await'; readonly operand: Expr; readonly pos: Pos }
   | { readonly kind: 'binary'; readonly op: string; readonly left: Expr; readonly right: Expr; readonly pos: Pos }
   | { readonly kind: 'arrow'; readonly params: readonly Param[]; readonly body: Expr; readonly pos: Pos }
