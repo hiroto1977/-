@@ -1007,7 +1007,10 @@ const KNOWN_SUPPRESSIONS = [
   // (`servicehub.record.<id>`) を**もう 1 枚のタブで持つ**ためにその行の id を読む
   // (open / transaction / objectStore の 3 行)。アプリの層は行の id を画面に出さないので、
   // 外から読むしかない。**読むだけで書かない** —— 錠が 2 枚のタブで同じ物かを実物で確かめる側である。
-  '保管領域 (IndexedDB) の内部を直接触っている :: scripts/e2e/core.cjs :: 16',
+  // 2026-11-05 (旧UI廃止 S3): 16 → 18。村の殻は解錠だけでは業務レコードの DB を開かないので、vaultOpacity の陽性対照
+  // (平文を植えて探し方が当たることを確かめる 2 本) は、固定の名前を開かず「既に在る DB のうち store を持つ最初の物」を探して植える
+  // (存在しない名前を開くと空の DB を作ってしまう)。`indexedDB.databases()` と `open` の 2 行ぶん増えた。
+  '保管領域 (IndexedDB) の内部を直接触っている :: scripts/e2e/core.cjs :: 18',
   // 2026-09-09 (パス 136): 各保管層が自分の DB を消す (deleteRecordDatabase / deleteLibraryDatabase /
   // deletePreferencesDatabase — ハードリセットの在庫 security/eraseAll.ts が呼ぶ)。27→28 / 7→8 / 11→12。
   // 2026-09-28 (パス 500): 28→32。最新の 1 件を比べてから書く 2 つの口 (`insertIfLatest` /
