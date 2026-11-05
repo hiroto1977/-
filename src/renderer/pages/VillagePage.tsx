@@ -900,7 +900,8 @@ function SignBoard({
         fontSize: 11,
         fontWeight: 800,
         padding: '3px 9px',
-        minHeight: 24,
+        // 村は傾けて投影するので、画面上の高さは素の高さより少し縮む (実測 24 → 23.72)。24px の目標 (WCAG 2.5.8) を割らないよう余裕を持たせる。
+        minHeight: 28,
         border: '3px solid #3a2a14',
         borderRadius: 0,
         // マイクラの GUI の面取り (明るい上・左と暗い下・右)
