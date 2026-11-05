@@ -239,6 +239,7 @@ export function compareOllamaVersions(a: string, b: string): number {
   const pa = versionNumbers(sa.core);
   const pb = versionNumbers(sb.core);
   // 添字は数えて回す (再帰にしない: 第三者が名乗る版は何万個でも「.」を並べられ、再帰は呼び出しの深さで落ちる)。
+  // Stryker disable next-line EqualityOperator: 長さが等しいときは pa と pb のどちらを選んでも添字の範囲は同じ (等価)。
   const longer = pa.length >= pb.length ? pa : pb;
   for (const i of longer.map((_v, k) => k)) {
     const ai = partAt(pa, i);
@@ -407,9 +408,6 @@ export function normalizeModels(raw: unknown): OllamaModelInfo[] {
   if (!Array.isArray(list)) return [];
   const out: OllamaModelInfo[] = [];
   for (const item of list) {
-    if (item === null || typeof item !== 'object') {
-      continue;
-    }
     const name = hostField(item, 'name');
     // isSafeModelName が非文字列を弾くので typeof の前置きは要らない。
     if (!isSafeModelName(name)) {
@@ -436,6 +434,7 @@ export function extractOllamaError(json: unknown, text: string = ''): string {
   // JSON として読めたのに error が無いなら、本文を出しても情報がない。
   if (json !== null && json !== undefined) return '';
   // JSON ですらない本文 (Ollama が素の "Forbidden" を返す経路など) は短く返す。
+  // Stryker disable next-line StringLiteral: 型は string だが JS の呼び手は undefined を渡しうる。その場合の '' は番人の値でも伏字の後は空に等しい詳細なし (観測できない)。
   return redactForMessage((text ?? '').trim(), MAX_LOCAL_MODEL_ERROR_CHARS);
 }
 
@@ -454,6 +453,7 @@ export type OllamaErrorKind =
 
 /** ステータスとエラー本文から種類を判定する。 */
 export function classifyOllamaError(status: number, detail: string): OllamaErrorKind {
+  // Stryker disable next-line StringLiteral: detail 省略時の '' はどの正規表現にも当たらない。番人の値を入れても同じく当たらないので観測できない。
   const d = (detail ?? '').toLowerCase();
   if (/not found, try pulling it first|model .* not found|no such model/.test(d)) return 'model-not-found';
   if (/more system memory|out of memory|insufficient memory|not enough memory/.test(d)) return 'out-of-memory';
@@ -465,15 +465,18 @@ export function classifyOllamaError(status: number, detail: string): OllamaError
 
 /** `model "llama3" not found, try pulling it first` からモデル名を取り出す。 */
 export function extractMissingModel(detail: string): string {
+  // Stryker disable next-line StringLiteral: detail 省略時の '' はこの正規表現に当たらない。番人の値でも当たらないので既定値そのものは観測できない。
   const m = /model\s+["'“”`]?([A-Za-z0-9._:/-]+)["'“”`]?\s+not found/i.exec(detail ?? '');
   if (m === null) return '';
   const name = m[1];
   return isSafeModelName(name) ? name : '';
 }
 
-/** `n` の `:` より前 (タグを除いた名前)。`split(':')[0]` と同じ答え (改行を含む名前でも途中で切れないよう `[\s\S]`)。 */
+/** `n` の `:` より前 (タグを除いた名前)。`split(':')[0]` と同じ答え (改行を含む名前でも途中で切れない)。 */
 function baseOf(n: string): string {
-  return n.toLowerCase().replace(/:[\s\S]*$/, '');
+  const lower = n.toLowerCase();
+  const colon = lower.indexOf(':');
+  return colon === -1 ? lower : lower.slice(0, colon);
 }
 
 /**
@@ -482,9 +485,11 @@ function baseOf(n: string): string {
  * タグ補完 → 前方一致 の順に見る。無ければ空文字。
  */
 export function suggestInstalledModel(requested: string, installed: string[]): string {
+  // Stryker disable next-line StringLiteral: requested 省略時の '' は直後の `want === ''` で早期に抜け、番人の値でも一覧に一致せず '' を返す。
   const want = (requested ?? '').trim().toLowerCase();
   if (want === '') return '';
   // 空文字は後段のどの比較にも一致しないので、除外の判定は結果を変えない。
+  // Stryker disable next-line ArrayDeclaration: installed 省略時の [] は「候補なし」。番人の要素が入っても要求名に一致しないので、どちらも '' を返す。
   const list = (installed ?? []).filter((n) => typeof n === 'string');
   if (list.some((n) => n.toLowerCase() === want)) {
     return '';
@@ -580,6 +585,7 @@ export function adviseFromBody(status: number, body: string, ctx: { model ?: str
   let parsed: unknown = null;
   try {
     parsed = JSON.parse(body);
+    // Stryker disable next-line BlockStatement: parsed は null で初期化済みなので、catch の中の代入を消しても答えは同じ (等価)。
   } catch {
     parsed = null;
   }
