@@ -272,6 +272,8 @@ export function parse(file: string, src: string): Module {
   /** for の深さ (continue が置ける) と、for か switch の深さ (break が置ける)。 */
   let loops = 0;
   let breakables = 0;
+  /** `finally` の本体の中の深さ (`return` を断る · 0.20)。arrow の本体の中では 0 に戻す (arrow の `return` は arrow を抜けるだけ)。 */
+  let inFinally = 0;
   /** 文字列の字面の中身 (`\uXXXX` などを解いた値)。読めない綴りは位置つきで断る。 */
   const decodeString = (text: string, pos: Tok): string => {
     try {
@@ -425,6 +427,7 @@ export function parse(file: string, src: string): Module {
       return { kind: 'let', mutable, name, type, init, comments: cs, pos: t.pos };
     }
     if (isW('return')) {
+      if (inFinally > 0) fail(t, '`finally` の中に `return` は置けません —— try の `return` を上書きし、投げた例外を飲みます (値は `finally` の外で返します)');
       next();
       const value = isP(';') ? null : expr();
       expectP(';');
@@ -523,16 +526,37 @@ export function parse(file: string, src: string): Module {
     if (isW('try')) {
       next();
       const body = block();
-      expectW('catch');
+      // `catch` と `finally` は少なくとも片方が要る (0.20 · MG-039)。どちらも無い `try` は何も囲まない。
+      if (!isW('catch') && !isW('finally')) fail(peek(), '`catch` か `finally` が要ります (在ったのは ' + describe(peek()) + ')');
       // `catch (e)` の束縛 (0.12 · MG-016)。束ねた例外は unknown で、印を運ばない (checker が局所の値として宣言する)。
       let param: string | null = null;
-      if (isP('(')) {
+      let handler: Stmt[] | null = null;
+      if (isW('catch')) {
         next();
-        param = ident();
-        expectP(')');
+        if (isP('(')) {
+          next();
+          param = ident();
+          expectP(')');
+        }
+        handler = block();
       }
-      const handler = block();
-      return { kind: 'try', body, param, handler, comments: cs, pos: t.pos };
+      let finalizer: Stmt[] | null = null;
+      if (isW('finally')) {
+        next();
+        // `finally` は try の `return` / 例外を**上書き**できる (本体の戻り値を捨てる・投げた例外を飲む)。
+        // 関門が拒むために投げた例外を `finally` の `return` / `break` / `continue` が飲むと、拒みが消えるので、
+        // 中に `return` は置けず、外のループへの `break` / `continue` も置けない (中で作ったループの中なら置ける)。
+        const savedLoops = loops;
+        const savedBreakables = breakables;
+        loops = 0;
+        breakables = 0;
+        inFinally++;
+        finalizer = block();
+        inFinally--;
+        loops = savedLoops;
+        breakables = savedBreakables;
+      }
+      return { kind: 'try', body, param, handler, finalizer, comments: cs, pos: t.pos };
     }
     if (isP('{')) fail(t, '文の頭に `{` は置けません (オブジェクトの字面だけの文は何もしないので書かない)');
     if (peek().kind === 'ident' && isP('=', 1)) {
@@ -822,11 +846,14 @@ export function parse(file: string, src: string): Module {
       // 本体のブロックは arrow の外の for / switch の内側ではない: `break` / `continue` は arrow を越えない。
       const savedLoops = loops;
       const savedBreakables = breakables;
+      const savedFinally = inFinally;
       loops = 0;
       breakables = 0;
+      inFinally = 0;
       const body = block();
       loops = savedLoops;
       breakables = savedBreakables;
+      inFinally = savedFinally;
       return { kind: 'arrow-block', params: ps, body, pos };
     }
     return { kind: 'arrow', params: ps, body: expr(), pos };
@@ -973,7 +1000,7 @@ export function parse(file: string, src: string): Module {
 }
 
 const RESERVED = new Set([
-  'use', 'extern', 'vetted', 'export', 'const', 'let', 'fn', 'gate', 'sink', 'return', 'if', 'else', 'try', 'catch', 'mint', 'from', 'alias',
+  'use', 'extern', 'vetted', 'export', 'const', 'let', 'fn', 'gate', 'sink', 'return', 'if', 'else', 'try', 'catch', 'finally', 'mint', 'from', 'alias',
   // 0.2 (パス 563)
   'throw', 'for', 'of', 'break', 'continue', 'switch', 'case', 'default', 'field', 'type', 'interface',
   // 0.16 (MG-028)

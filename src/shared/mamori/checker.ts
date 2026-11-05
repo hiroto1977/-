@@ -549,12 +549,17 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         return;
       case 'try': {
         checkBlock(s.body, scopes, ctx);
-        // 束ねた例外 (`catch (e)` · 0.12) は印を運ばない局所の値 (生成物では `unknown`)。回す変数と同じ扱いで、handler の中だけで見える。
-        const caught = new Map<string, Binding>();
-        // Stryker disable next-line ConditionalExpression: param が null のときの true 枝は null 鍵の束縛を足すだけで、名前の引きには当たらない (等価)
-        if (s.param !== null) bindLocal(caught, s.param, { vetted: null, authority: 'local' }, s.pos);
-        // Stryker disable next-line ConditionalExpression: param が null のとき caught は空の Map なので、足しても足さなくても名前の引きは同じ (等価)
-        checkBlock(s.handler, s.param === null ? scopes : [...scopes, caught], ctx);
+        if (s.handler !== null) {
+          // 束ねた例外 (`catch (e)` · 0.12) は印を運ばない局所の値 (生成物では `unknown`)。回す変数と同じ扱いで、handler の中だけで見える。
+          const caught = new Map<string, Binding>();
+          // Stryker disable next-line ConditionalExpression: param が null のときの true 枝は null 鍵の束縛を足すだけで、名前の引きには当たらない (等価)
+          if (s.param !== null) bindLocal(caught, s.param, { vetted: null, authority: 'local' }, s.pos);
+          // Stryker disable next-line ConditionalExpression: param が null のとき caught は空の Map なので、足しても足さなくても名前の引きは同じ (等価)
+          checkBlock(s.handler, s.param === null ? scopes : [...scopes, caught], ctx);
+        }
+        // `finally` (0.20): try / catch のどこで抜けても走る。inert は一度立てたら下ろさない (rebind は粘る) ので、
+        // try の途中で例外が飛んで代入に届かなかった姿も、届いた姿も、どちらも `finally` の使い方の検めに入る。
+        if (s.finalizer !== null) checkBlock(s.finalizer, scopes, ctx);
         return;
       }
       case 'expr':

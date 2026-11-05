@@ -166,8 +166,13 @@ function stmt(s: Stmt, depth: number): string[] {
       ]);
       return [...head, `${ind}switch (${expr(s.test)}) {`, ...cases, `${ind}}`];
     }
-    case 'try':
-      return [...head, `${ind}try {`, ...block(s.body, depth + 1), `${ind}} catch${s.param === null ? '' : ` (${s.param})`} {`, ...block(s.handler, depth + 1), `${ind}}`];
+    case 'try': {
+      const out = [...head, `${ind}try {`, ...block(s.body, depth + 1)];
+      if (s.handler !== null) out.push(`${ind}} catch${s.param === null ? '' : ` (${s.param})`} {`, ...block(s.handler, depth + 1));
+      if (s.finalizer !== null) out.push(`${ind}} finally {`, ...block(s.finalizer, depth + 1));
+      out.push(`${ind}}`);
+      return out;
+    }
     case 'if': {
       // 本体が return 1 つで注記が無ければ 1 行に畳む (手で書いた関門の形と揃える)。
       const only = s.then.length === 1 ? s.then[0]! : null;

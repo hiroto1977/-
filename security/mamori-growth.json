@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.19"
+    "version": "0.20"
   },
   "constructs": {
     "class": {
@@ -112,9 +112,10 @@
       "since": "0.12"
     },
     "finally": {
-      "decision": "feature",
+      "decision": "added",
       "why": "後片付け (鍵を消す・錠を外す) で要る。",
-      "risk": "finally の中の return が try の return を上書きする —— finally の中の return を断る。"
+      "risk": "finally の中の return が try の return と投げた例外を上書きする —— finally の中の return と、外のループ・switch へ抜ける break / continue を断る (throw は置ける)。inert は粘るので、try の途中で例外が飛んで代入に届かない姿も finally の検めに入る。",
+      "since": "0.20"
     },
     "optional-param": {
       "decision": "feature",
