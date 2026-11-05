@@ -761,7 +761,10 @@ async function phoneSuite(browser) {
   ok(true, 'phone: タップ操作で物件追加');
   // 窓 (旧画面のドロワーは廃止): 会話の「開いて」と同じ経路で別のサービスの画面を窓に開く
   await openService(page, 'docstudio');
-  ok(true, 'phone: サービスの画面が役場の窓に開く');
+  ok(
+    (await page.locator('[data-village-window="docstudio"]').count()) === 1,
+    'phone: サービスの画面が役場の窓に開く',
+  );
   const realErrs = errs.filter((e) => !/favicon|Autofocus/.test(e));
   // 手入力欄はスマホでも使う。入力が横に並ぶので、開いた状態で
   // 横スクロールが出ないこと・タップで事業を足せることまで見る。
@@ -5507,9 +5510,9 @@ function installWaitMarginRecorder(browser) {
     ['contrast', contrastSuite, 17],
     // パス 504: 操作子の輪郭・焦点の輪・押せる大きさ・キーボード・名前を実機で 4 配色 × 全画面 + スマホ。実測値は初回の実行で確かめる
     // 2026-10-07 (パス 506 の直後): スマホ 2 配色に「開いたドロワーも測った」の床を足して 61 → 63
-    ['controls', controlsSuite, 63],
+    ['controls', controlsSuite, 61],
     // パス 506: 開いた窓 (details / 手入力 / 浮いた窓 / ドロワー) とスマホ幅の字を実機で 4 配色。実測値は初回の実行で確かめる
-    ['opened', openedSuite, 155],
+    ['opened', openedSuite, 135],
     ['tablet', tabletSuite, 2],
     // 村の殻 (唯一の入口) を実機で。旧画面のサイドバーの suite (shell) は 2026-11-04 に廃止
     ['village', villageSuite, 15],

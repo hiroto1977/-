@@ -109,9 +109,9 @@ describe('e2e の suite ごとの床 (パス 303 · 346)', () => {
     expect(code).not.toMatch(staleFails);
   });
 
-  it('★ 40 suite が全部載っている (名前は一意)', () => {
-    expect(rows.length).toBe(40);
-    expect(new Set(rows.map((r) => r.name)).size).toBe(40);
+  it('★ 39 suite が全部載っている (名前は一意)', () => {
+    expect(rows.length).toBe(39);
+    expect(new Set(rows.map((r) => r.name)).size).toBe(39);
     for (const r of rows) expect(r.fn, r.name).toMatch(/Suite$/);
   });
 
@@ -186,7 +186,9 @@ describe('e2e の suite ごとの床 (パス 303 · 346)', () => {
     //   パス 566-A は実機を回しておらず、旧い backup 節は確認を受けないまま 15 秒で止まった) = 762
     // + 2026-11-04 (村リビルド P4) の village +15 (新しい suite。既定の入口 = 村の殻をサイドバー無しで開き、役場の窓・会話からの「開いて」・
     //   スマホ幅・コンソールエラー 0 を見る。他の suite は ?ui=legacy の旧画面を開くので、既定の姿を見るのはここだけ) = 777
-    expect(sumMeasured).toBe(777);
+    // - 2026-11-05 (旧UI廃止 S3): shell suite −27 (サイドバー・ドロワー・検索・お気に入りの画面を廃止)・design 32 → 20 (3 列・FAB・シートの判定を廃止)・
+    //   controls 63 → 61 (ドロワーを開いた段を廃止)・opened 155 → 135 (ドロワーと浮いた窓の検査を、会話と役場の窓のキーボードの道に置き換えた) = 716
+    expect(sumMeasured).toBe(716);
   });
 });
 
