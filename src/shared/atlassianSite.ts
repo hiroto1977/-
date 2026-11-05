@@ -1,3 +1,5 @@
+// 生成物 —— src/shared/atlassianSite.mamori から Mamori のコンパイラが組んだ。手で編集しない (`npm run mamori:build`)。
+// 言語の仕様は docs/MAMORI.md。生成物が元と食い違えば src/shared/mamori/__tests__/mamoriGenerated.test.ts が落ちる。
 /**
  * 利用者が入れた Atlassian の site URL を検証して正規化する — 1 か所だけ持つ。
  *
@@ -21,6 +23,12 @@
  * 例外を投げずに結果で返すのは、呼び出し側 2 つが**別のエラー型**
  * (`FetchError` と `ApiError`) と別の文言を持っているため。ここで投げると
  * どちらかに型を寄せることになり、寄せた側の呼び出し規約が変わる。
+ *
+ * ## Mamori で書いてある (2026-11-02 · MG-023)
+ *
+ * 元は TypeScript。足りなかったのは `as` の 1 か所と template 文字列 1 つだけで、`as` は `field` に、
+ * template は連結に替えた。組み上がる文字列は 1 字も変えていない。`null` の保存値は欄が無い物として
+ * `fields` へ落とす (配列・数・文字列・真偽は欄を持たないので `field` が `undefined` を返し、同じ `fields` へ落ちる)。
  */
 
 import { hasControlChar } from './controlChars';
@@ -32,7 +40,7 @@ import { hasControlChar } from './controlChars';
  * (`MAX_EMAIL` 254 / `MAX_TOKEN` 1024 / `MAX_SITE` 256)。**理由もそこに書かれていた**
  * —— 「Length caps prevent multi-MB strings from OOMing the basicAuth Buffer
  * allocation」。ブラウザ版 (`data/saasWriteWeb.ts`) は email だけ 254 を**手で写し**、
- * token と site には天井が無く、同じ `btoa(\`${'${email}'}:${'${token}'}\`)` を通していた。
+ * token と site には天井が無く、同じ Basic 認証の組み立てを通していた。
  *
  * つまり `normalizeAtlassianSiteResult` (下) を共有した時点で**述語は 1 つになったが、
  * その周りの欄の検査は片方だけ**だった —— パス 246 / 247 が数えている形そのもの。
@@ -41,7 +49,9 @@ import { hasControlChar } from './controlChars';
  * これは**安全上限**なので `parameters.ts` の台帳には載せない (CLAUDE.md の規約)。
  */
 export const MAX_ATLASSIAN_EMAIL = 254;
+
 export const MAX_ATLASSIAN_TOKEN = 1024;
+
 export const MAX_ATLASSIAN_SITE = 256;
 
 export type AtlassianSiteFailure = 'control-char' | 'not-a-url' | 'not-https' | 'not-atlassian';
@@ -66,7 +76,7 @@ export function normalizeAtlassianSiteResult(raw: string): AtlassianSiteResult {
   if (!parsed.hostname.endsWith('.atlassian.net')) return { ok: false, reason: 'not-atlassian' };
   // **hostname だけを使って組み直す。** 元の文字列を使い回すと、パス・クエリ・
   // フラグメント・ポート・userinfo が後段の URL 連結に混ざる。
-  return { ok: true, site: `https://${parsed.hostname}` };
+  return { ok: true, site: 'https://' + parsed.hostname };
 }
 
 /**
@@ -104,11 +114,7 @@ export type AtlassianCredsResult =
   | { readonly ok: false; readonly reason: AtlassianCredsFailure };
 
 /** 断りの文面 —— **両ビルドがここを読む** (文を写さない)。 */
-export const ATLASSIAN_CREDS_MESSAGES: Readonly<Record<AtlassianCredsFailure, string>> = {
-  'not-json': 'Atlassian トークンは { "email", "token", "site" } 形式の JSON で保存してください',
-  fields: 'Atlassian トークンの email / token / site が欠けているか不正です',
-  'control-char': 'Atlassian の email / token に制御文字を含めることはできません',
-};
+export const ATLASSIAN_CREDS_MESSAGES: Readonly<Record<AtlassianCredsFailure, string>> = { 'not-json': 'Atlassian トークンは { "email", "token", "site" } 形式の JSON で保存してください', fields: 'Atlassian トークンの email / token / site が欠けているか不正です', 'control-char': 'Atlassian の email / token に制御文字を含めることはできません' };
 
 export function readAtlassianCredentials(raw: string): AtlassianCredsResult {
   let parsed: unknown;
@@ -117,29 +123,16 @@ export function readAtlassianCredentials(raw: string): AtlassianCredsResult {
   } catch {
     return { ok: false, reason: 'not-json' };
   }
-  /*
-   * **記録でなければ欄が無い物として扱う** (上の docblock の `null` の件)。
-   * 落とすのは `null` と配列でよい: 数・文字列・真偽は `email` / `token` / `site` を持たないので、
-   * 下の分割代入が 3 欄とも `undefined` を返して `fields` へ落ちる。`typeof parsed === 'object'` を
-   * 先に置いても答えは同じだった (変異検査で生き残る等価の判定 · パス 502)。
-   */
-  const obj: Record<string, unknown> =
-    parsed !== null && !Array.isArray(parsed) ? (parsed as Record<string, unknown>) : {};
-  const { email, token, site } = obj;
-  if (
-    typeof email !== 'string' || email.length === 0 || email.length > MAX_ATLASSIAN_EMAIL ||
-    typeof token !== 'string' || token.length === 0 || token.length > MAX_ATLASSIAN_TOKEN ||
-    typeof site !== 'string' || site.length === 0 || site.length > MAX_ATLASSIAN_SITE
-  ) {
-    return { ok: false, reason: 'fields' };
-  }
-  /*
-   * email / token は `btoa(`${email}:${token}`)` に入る (Basic 認証)。base64 の
-   * 中では CR/LF は無害だが、この 2 つは失敗時の文面やログ行に現れうるので
-   * そこで行を割られない形にしておく (main 側の元の注記と同じ判断)。
-   */
-  if (hasControlChar(email) || hasControlChar(token)) {
-    return { ok: false, reason: 'control-char' };
-  }
+  // **`null` は欄が無い物として扱う** (上の説明の `null` の件)。配列・数・文字列・真偽は
+  // `email` / `token` / `site` を持たないので、下の `field` が 3 欄とも `undefined` を返して `fields` へ落ちる。
+  if (parsed === null) return { ok: false, reason: 'fields' };
+  const email = (parsed as { email?: unknown }).email;
+  const token = (parsed as { token?: unknown }).token;
+  const site = (parsed as { site?: unknown }).site;
+  if (typeof email !== 'string' || email.length === 0 || email.length > MAX_ATLASSIAN_EMAIL || typeof token !== 'string' || token.length === 0 || token.length > MAX_ATLASSIAN_TOKEN || typeof site !== 'string' || site.length === 0 || site.length > MAX_ATLASSIAN_SITE) return { ok: false, reason: 'fields' };
+  // email / token は Basic 認証の base64 に入る。base64 の中では CR/LF は無害だが、
+  // この 2 つは失敗時の文面やログ行に現れうるので、そこで行を割られない形にしておく
+  // (main 側の元の注記と同じ判断)。
+  if (hasControlChar(email) || hasControlChar(token)) return { ok: false, reason: 'control-char' };
   return { ok: true, email, token, site };
 }

@@ -84,6 +84,7 @@ export const SERVICE_IDS = [
   'talent',
   'hydroponics',
   'mentor',
+  'grok',
   // SCAFFOLD:ADD_SERVICE_ID_ABOVE
 ] as const;
 

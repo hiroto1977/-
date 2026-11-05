@@ -294,8 +294,8 @@ describe('AI へ送る画面すべてに断りが在る (走査)', () => {
     // 載っているのは real-estate / mutual-funds で、どちらの advise も
     // 規則ベース (`phase: 'rules'`、shared/serviceAdvisor.ts。AI へは送らない) なので導出した AI の組に入らない。
     // `VoiceCommandBar` は `VOICE_ACTIONS` の範囲でしか invoke しない。
-    // `ChatbotWidget` はそれに加えて自由質問を `ollama/chat` へ送る —— この検査の
-    // AI の組 (クラウドの提供者) には入らないので、ここでは数えない。2026-10-11 まで
+    // `ChatbotWidget` はそれに加えて自由質問を `ollama/chat` へ送る (これは AI の組に入らない)。
+    // 既定の提供者が Grok のときも `assistant/chat` へ送り、Grok を名乗る断りを描く (`chatbotGrokOnScreen.test.ts`)。2026-10-11 まで
     // この注記は「`VOICE_ACTIONS` の範囲でしか invoke しない」と書いており偽だった
     // (AI 監査・パス 511)。ブラウザ版で送り先がこの端末の外のときの断りは
     // `remoteOllamaNotice` が持ち、`chatbotOllamaModel.test.ts` (threat: T-010) が留める。

@@ -40,7 +40,7 @@ Mamori では、その 2 つは**書けない**:
 
 | 番号 | 規則 | 破ると |
 | --- | --- | --- |
-| M0 | 書けない綴り: `as` / `any` / `eval` / テンプレート文字列 / `/* */`・**`.` の後ろの `constructor` / `prototype` / `__proto__`** (0.2)・オブジェクトの字面の `__proto__` の鍵・展開 `...`・計算した鍵 | 字句・構文の段で止まる |
+| M0 | 書けない綴り: `as` / `any` / `eval` / テンプレート文字列 / `/* */`・**`.` の後ろの `constructor` / `prototype` / `__proto__`** (0.2)・オブジェクトの字面の `__proto__` の鍵・呼び出しの引数の展開 `f(...xs)`・欄より後ろのオブジェクトの展開・計算した鍵 | 字句・構文の段で止まる |
 | M1 | 印は `gate` 関数の中の `mint 型名(値)` でだけ作れ、その関数の戻り値の型が同じ印を名乗る | `sink` / 普通の関数の `mint`・戻り値が名乗らない印 |
 | M2 | `extern sink` で宣言した値は `sink` 関数の中でだけ参照できる。**sink 関数の中でも呼ぶ形 (`shell(…)` / `shell.m(…)`) でしか使えず、その第 1 引数は行き先 (第 1 引数の印) を持つ値だけ** (0.3 · T-225) | 普通の関数・`gate` 関数・定数の初期値から危ない口を呼ぶ・sink 関数の中で `shell.openExternal(raw)` (行き先以外の素の値)・`return shell;` / `return { s: shell };` (危ない口を外へ持ち出す) |
 | M3 | `sink` 関数の**最初の引数 (行き先)** の型は、宣言した印の型 1 つ (`T \| null` も不可)。2 つ目からは本文で型を問わない。引数の無い sink も断る | 素の `string` を行き先に受ける危ない口を作る |
@@ -79,21 +79,85 @@ Mamori では、その 2 つは**書けない**:
 - **既知の差 (正直に)**: `(a?.b).c` は丸括弧を構文木に残さないので生成物は `a?.b.c` になる (`a` が null のとき `.c` を読む前に止まる —— 例外が減る向きで、印の流れには触れない)。
 - **この周で移せた壁は 0 本** (`optional-chain` だけで足りる壁が無い —— 足りない構文は他にも要る)。言語の幅を広げた周で、次は `index` の塞ぎ方 (字面の鍵は FORBIDDEN_MEMBERS を通し、字面でない鍵は数だけ) を決めてから足す。
 
-## 0.13 —— 分割代入を足した (MG-018 · 2026-11-03 · T-252)
+## 0.16 —— `x instanceof Y` を足した (MG-028 · 2026-11-02)
 
-`const { a, b: c } = x` と `const [a, b] = xs`（`let` も同じ）。戻り値の組を受けるための形で、**文の中だけ**（最上位の `const` と、代入の形 `{ a } = x` は無い）。
+**関係演算子の段に `instanceof` を 1 語。右辺は名前そのものだけ**で、その名前は (1) このモジュールの名前で隠れていない組み込み (`Error` / `TypeError` / `URL` / `Array` ほか) か、(2) `use` / `extern pure` で宣言した名前に限る。
+例外の種類を見分ける所 (`catch (e)` の中の `e instanceof Error`) で多い構文。足す前に、右辺が通す道を破って 5 つ塞いだ (`mamoriV16.test.ts` 12 件):
 
-| 書き方 | 扱い |
+| 道 | 塞ぎ方 |
 | --- | --- |
-| `const { email, token } = o` `const { email: addr } = o` `const { "content-type": ct } = o` `const [a, b] = xs` | 通す。鍵と束ねる名前が同じで引用でなければ `{ email }` に畳む |
-| `const { constructor } = x` `const { "\\u0063onstructor": c } = x` `const { __proto__ } = x` | M0。鍵は `.name` と同じ `FORBIDDEN_MEMBERS` を通す（T-252。`const [constructor] = xs` は欄を読まないので通る） |
-| `const { url } = gate(x)` を印の口へ渡す | M4。束ねた名前は印を運ばない |
-| `const row = xs[n]; const { a } = row` `const [a] = xs[n]` | M6。計算した鍵の結果を相手にすると、欄の読みがメンバの読みと同じになる |
-| `...` ・入れ子・既定値・`[k]: 名前`・型注釈・空の `{}` / `[]` | 無い |
+| `x instanceof Function` (宣言していない名前) | 値として読むのと同じ M6 (`宣言していない名前 Function`) で断る |
+| `x instanceof (c ? Error : TypeError)` / `Error.prototype` / `f()` / `[Error][0]` / `"str"` | 右辺は**名前そのもの**だけ。メンバ・呼び出し・条件・添字・字面は M6 で断る (実行時に計算した値の `Symbol.hasInstance` を辿らせない) |
+| `const K = Error; x instanceof K` / 引数・`catch` の束縛・組み込みを隠す名前 | 右辺が**局所の名前** (モジュール直下の const / fn・引数・束縛) なら M6 で断る。計算した値かもしれない |
+| `x instanceof shellx` (危ない口) | M2 で断る (危ない口は呼ぶ形でしか使えない) |
+| `u instanceof Error` を印つきの口へ渡す | 結果は印を運ばない (provenance に `instanceof` の枝は無い) |
 
-**この周で移した壁は 0 本。** brief は `dataCrypto.ts` を「書き直しだけで移せる」と出したが、`as BufferSource` は `field`（型を unknown へ広げるだけ）では書けず、`as` は言語に置かない。`while` は足すと移せる壁が 0 本で、台帳の risk は「上限のある `for…of` で書けるならそちら」。正規表現の字面は 0.1 から在り、`escape.mamori` の `new RegExp(字面の join)` を動的な構築として断ると移した壁が壊れる。`lint:regex` は生成した TypeScript を既に見ている。
+左辺は他の式と同じ検め (M6 / M2 / M4) を通る。`instanceof` は予約語で、名前には使えない (式の中では `ここに置けません`)。
+強さは関係演算子と同じ (`<` と同じ段・加減乗除より弱く、`===` より強い) で、生成物は TypeScript の `instanceof` そのまま。
+独立の読み直し (`mamoriInspect.ts`) にも同じ規則を足した —— 受け入れた生成物の `instanceof` の右辺が組み込み・`extern pure global`・取り込んだ名前以外なら穴。
+組み込みの名前を右辺に置くのは「値として持ち出す」形ではない (比べるだけで、値は式の外へ出ない) ので、持ち出しの断りは掛けない。
+**穴は 0 件** (5 つとも設計の段階で塞いだ)。ついでに測った既存の穴: 宣言の名前に JavaScript の予約語 (`const class = 1;`) を書くと Mamori は通し、生成された TypeScript を `tsc` が断る
+(閉じた側に落ちる・守りの穴ではない —— `docs/REMAINING_WORK.md` に残した)。
 
-## 0.12 —— 計算した鍵の結果を inert にし、添字への代入を足した (MG-016 · 2026-11-03 · T-250 / T-251)
+## 0.15 —— 展開 `[...xs, y]` / `{ ...r, k: v }` を足した (MG-024 · 2026-11-02)
+
+**配列の字面の中の展開と、オブジェクトの字面の先頭の展開だけ。** 呼び出しの引数の展開 (`f(...xs)`) と残りの引数 (`...rest`) は文法に無い。
+足す前に、展開が通す道を破って 4 つ塞いだ (`mamoriV15.test.ts` 10 件):
+
+| 道 | 塞ぎ方 |
+| --- | --- |
+| `f(...xs)` で印を受ける位置がずれる | M4 は印を受ける位置を**引数の位置**で検めるので、呼び出しの展開は文法に置かない (`式が要ります` で断る) |
+| `{ ok: true, ...x }` で字面の欄を上書きされる | オブジェクトの展開は**欄より前**にだけ置ける (後ろは M0 の構文の断り)。`{ ...r, ok: true }` なら字面の欄が必ず勝つ |
+| 展開の相手に宣言していない名前・危ない口・印を受ける関数を隠す | 相手の式も他の式と同じ検め (M6 / M2 / M4) を必ず通る (`checkExpr` が `spread` の枝を持つ) |
+| 印の値を配列やオブジェクトへ入れ直して印つきの口へ渡す | 展開した結果は印を運ばない (provenance に `spread` の枝は無い —— 失敗は閉じる向き) |
+
+`__proto__` の鍵は展開の隣でも断る (展開は `CreateDataProperty` で原型を差し替えないが、字面の鍵の規則はそのまま)。
+型の正しさは変換後の TypeScript を `tsc` が検査する (配列でない物を `[...x]` に入れれば TypeScript が断る)。生成物は TypeScript の展開そのまま。
+**穴は 0 件** (4 つとも設計の段階で塞いだ)。
+
+## 0.14 —— 分割代入 `const { a, b: c } = 式;` を足した (MG-022 · 2026-11-02)
+
+**浅い分割だけ**: 入れ子・既定値・残り (`...rest`)・計算した鍵 (`[k]`)・`let` は文法に無い。戻り値の組を受ける所で多い構文。
+足す前に、分割が通す 3 つの道を破って塞いだ (`mamoriV14.test.ts` 9 件):
+
+| 道 | 塞ぎ方 |
+| --- | --- |
+| `const { constructor } = x` (T-224 の表の迂回) | 鍵は `.` の後ろと同じ `memberName` (`FORBIDDEN_MEMBERS`) を通る。`{ constructor: c }` の付け替えも同じ |
+| `const { assign } = Object` / `const { open } = shellx` (組み込みの表・危ない口 M2 の迂回) | 元の式が組み込み・外の名前 (pure / sink) の**メンバを直に指す**形は M6 で断る。呼び出し・`new` の結果は値なので通す (`const { a } = JSON.parse(raw)`) |
+| 印を持つ値の分割 | M4 で断る (印は値そのものに付く —— 取り出した欄は印を運ばない) |
+
+取り出した名前は印を持たない局所で、M6 の「モジュール直下の名前を隠せない」規則を受ける。生成物は TypeScript の分割代入そのまま。
+**穴は 0 件** (3 つとも設計の段階で塞いだ)。対照 3 つ (鍵の検めを外す・根の検めを外す・印の検めを外す) はそれぞれ狙った検査が鳴った。
+
+## 0.13 —— 既存言語の脆弱性クラスを材料にした解析で見つけた 5 つの穴 (T-250〜T-254 · 2026-11-02)
+
+JavaScript / TypeScript の既知の脆弱性クラス (型の綴りの密輸・名前の影・グローバルの宣言・不可視文字・注記の指示) を、コンパイラ自身と Rust → Wasm の検算役に当てた。担当を 3 つに分けて並行し、報告を受けて塞いだ。どの穴も「受け入れた生成物に、検めを受けないコードや偽の印が残る」形。
+
+| 穴 | 何が通ったか | 塞ぎ方 |
+| --- | --- | --- |
+| T-250 | 型の綴りへ文を隠す (`>=` が 1 つの字句で、括弧の深さを偽装できた) | 型の中に置ける記号を許可表 (`TYPE_PUNCT`) にし、括弧は種類ごとの stack で突き合わせる。正規表現と `;`（`{}` の直下以外）も断る |
+| T-251 | 局所の名前が同名の gate / 関数を隠し、偽の関数の戻り値に gate の印が付いた | 局所の名前（引数・const/let・catch・for・arrow の引数）がモジュール直下の宣言と同名なら M6 |
+| T-252 | `extern pure global open / setTimeout / Buffer …`（禁止表の取りこぼし）と `use … from "electron"` が自動で pure | `pure` で宣言できる host を許可表 (`PURE_GLOBAL_ALLOWED`) にし、機能を持つ module (`CAPABILITY_MODULES`) は `extern sink` だけ |
+| T-253 | ALM・SHY・タグ文字 U+E0000 台・Hangul filler・Braille blank ほか、BMP の一部だけだった隠し字の表 | 表を広げた（ZWJ / ZWNJ / U+FE0F / U+3000 は絵文字・日本語に要るので外す） |
+| T-254 | 注記の `// @ts-ignore` が生成物の型検査を黙らせた | 注記に `@ts-…` の指示を書けない（M0） |
+
+Rust → Wasm の検算役 (`tools/mamori-verify/`) は v0.2 に作り直した: アロケータを持たない静的 8 MiB の入力窓 (`INPUT`) と固定の ABI（`input_ptr` / `input_cap` / `verify(len)`・0 = 禁じた綴り無し・1〜11 = 規則・`0xFFFFFFFF` = 長すぎ）。呼び手は 0 以外をすべて拒み、UTF-8 のバイト長を渡す。組んだ物は `BUILD.json` に sha256（lib.rs / Cargo.toml / Cargo.lock / wasm）を残し、`scripts/build-mamori-verify.cjs --check` と `rustVerifier.test.ts` が突き合わせる。TypeScript 側と Rust 側の食い違いは 2100 件の乱択（fuzz）で比べ、Rust だけが断る物は「型・構文の位置で生成物に穴が無い」と分類して許す。**検算役は TypeScript の M0 の代わりではなく二重の目**で、整合性チェーンと CODEOWNERS の保護対象に入った。
+
+回帰検査は `mamoriV13.test.ts`（各 describe に `threat: T-25x`）・台帳は `security/threat-ledger.json`・開け直しは `security/threat-ablations.json`（A-570〜A-575）。見つけた方法の再現には `npm run audit:mamori-battery`（隠し字の表を広げた弾も入っている）。
+
+## 0.12 —— `catch (e)` の束縛 (MG-016 · 2026-11-01)
+
+移植で最も多く止まった構文 (liveRead / pkceSession / assistant / exportPaths / selfAttestation の 5 壁・計 10 か所)。足す前に 12 形で破った。
+
+| 論点 | 決め方 |
+| --- | --- |
+| 束縛の型 | 生成物では `unknown`。印を運ばない局所の値で、回す変数と同じく handler の中だけで見える |
+| 書ける形 | `catch (e) { … }` の名前 1 つだけ。型注釈・2 つ以上・分割代入は M0 で断る |
+| 使い方 | `field e.message` で読む。印を受ける口へ渡す・印の型として返す・代入・`.constructor` などは既存の規則 (M1〜M6) が断る |
+| 束縛の無い `catch { }` | 今までどおり |
+| 最初の実物 | `pkceSession.ts` (MG-017) の置く段で `catch (err)` を使い、理由の文に `describeStorageError(err)` を入れる。同じ周で `sessionStorage` の口を `pkceSessionHost.ts` の 3 つの host 関数へ閉じ込めた (記憶の口は `extern pure global` にできない · T-249) |
+
+## 0.12 —— 計算した鍵の結果を inert にし、添字への代入を足した (MG-031 · 2026-11-03 · T-255 / T-256)
 
 0.8 は添字を足すとき、文字列になりうる鍵を断り、字面の識別子は `.name` に畳んだ。パス 567 が先に閉じると書いた残りを、0.11 に対して測り直した。
 
@@ -105,8 +169,8 @@ Mamori では、その 2 つは**書けない**:
 | `out[0] = v` `out[i] = v` (`i` が数) `out["content-type"] = v` | 通す。計算した鍵は生成物で `out[+(i)]` |
 | `out["__proto__"] = v` `out[u] = v` `o.f = v` | 断る (禁じた名前 / 数でない鍵 / 欄への代入) |
 
-**T-250**: 0.11 は `xs[n]()` と `const f = xs[n]; f()` を通していた。
-**T-251**: 代入を足すなら、字面の鍵は禁じた名前の表を通し、計算した鍵は数だけにする。
+**T-255**: 0.11 は `xs[n]()` と `const f = xs[n]; f()` を通していた。
+**T-256**: 代入を足すなら、字面の鍵は禁じた名前の表を通し、計算した鍵は数だけにする。
 
 ## 0.11 —— 戻り値の型に印を名乗れるのは gate 関数だけ (MG-011 · 2026-11-01 · T-248)
 
@@ -289,18 +353,16 @@ interface := 'export'? 'interface' 名前 '{' (doc* 'readonly'? 名前 '?'? ':' 
 const     := 'export'? 'const' 名前 (':' 型)? '=' 式 ';'
 fn        := 'export'? ('gate' | 'sink')? 'async'? 'fn' 名前 '(' 引数* ')' '->' 型 ブロック
 引数      := 名前 (':' 型)? ('=' 式)?
-文        := ('const' | 'let') 名前 (':' 型)? ('=' 式)? ';' | ('const' | 'let') 分割 '=' 式 ';'
-           | 'return' 式? ';'
-           | 'if' '(' 式 ')' ブロック ('else' (if 文 | ブロック))? | 'try' ブロック 'catch' ブロック
+文        := ('const' | 'let') 名前 (':' 型)? ('=' 式)? ';' | 'return' 式? ';'
+           | 'if' '(' 式 ')' ブロック ('else' (if 文 | ブロック))? | 'try' ブロック 'catch' ('(' 名前 ')')? ブロック
            | 'throw' 式 ';' | 'for' '(' 'const' 名前 'of' 式 ')' ブロック | 'break' ';' | 'continue' ';'
            | 'switch' '(' 式 ')' '{' (('case' 式 | 'default') ':')+ 文+ … '}'
-           | 名前 '=' 式 ';' | 添字 '=' 式 ';' | 式 ';'
-式        := 2 項 (?? || && === !== < > <= >= + - * / %) | 単項 (! - typeof await)
+           | 名前 '=' 式 ';' | 式 ';'
+式        := 2 項 (?? || && === !== < > <= >= instanceof + - * / %) | 単項 (! - typeof await)
            | 呼び出し・メンバ・new | 配列 | 文字列・数 (10 進 / 16 進 `0x1f` · 0.3)・正規表現・true/false/null/undefined
            | '(' 引数 ')' '=>' 式 | 'mint' 印 '(' 式 ')'
            | 式 '?' 式 ':' 式 | '{' (鍵 ':' 式 | 名前) (',' …)* '}' | 'field' 式 '.' 名前      (0.2)
-鍵        := 名前 | 文字列            (`__proto__` は書けない・展開 `...` と計算した鍵 `[k]` は無い)
-分割      := '{' (鍵 (':' 名前)? ',')* '}' | '[' (名前 ',')* ']'   (0.13。空は無い。鍵は FORBIDDEN_MEMBERS を通す)
+鍵        := 名前 | 文字列            (`__proto__` は書けない・計算した鍵 `[k]` は無い。展開 `...x` は配列の項と、オブジェクトの欄より前にだけ置ける · 0.15)
 ```
 
 - `if` の本体は必ず `{ }` で囲む (囲まない 1 行の `if` は書けない)。
@@ -352,7 +414,8 @@ export sink fn openExternalVetted(url: VettedExternalUrl) -> Promise<void> {
 | `src/shared/proxyEndpoint.mamori` | `src/shared/proxyEndpoint.ts` | BYO プロキシの送り先と共有秘密の検証 (**資格情報のほぼ全部が通る 1 本の口** · 0.2 の構文で書き直した最初の物 · パス 563) |
 | `src/shared/tokenInput.mamori` | `src/shared/tokenInput.ts` | 資格情報の保存要求の検証 (`checkTokenInput` · main と renderer で同じ規則 · 空 / 長すぎ / 制御文字 / 非 Latin1 を理由つきで断る · 0.3 で書き直した · パス 567 · MG-003) |
 | `src/shared/escape.mamori` | `src/shared/escape.ts` | 出力側の関門 (`escapeXml` / `safeColor` / `isHexColor` / `escapeMarkdownInline` / `escapeMarkdownText` / `escapeInvisibleUnits` ほか · HTML / XML / Markdown に第三者の文を埋める所と色を属性へ埋める所 · 0.3 で書き直した —— template を `+` の連結へ替えただけ · パス 571 · MG-004) |
-| `src/shared/updateCheck.mamori` | `src/shared/updateCheck.ts` | 更新の有無 (GitHub の案内先を https の github.com に限る · `as` は `field` と `raw is string`、template は連結 · 0.12 · MG-017) |
+| `src/main/clients/exportPaths.mamori` | `src/main/clients/exportPaths.ts` | 書き出しの行き先の関門 (`isSafeExportPath`)・根の置き場 (`exportRoot` / `exportWriteRoot` / `exportParentDirs`)・書く直前の閉じ込め (`assertExportTargetContained`)・0600 の書き込み (`writeExportFile`)・根の 0700 化と既存ファイルの権限直し (MG-020 · M7 の台帳に `node:fs` / `node:os` / `node:path` を載せた。権限は 8 進が書けないので 10 進 (448 / 384 / 63)・非同期の arrow が無いので再帰の関数 `repairDir` に分けた。元の TypeScript と実ファイルで比べ、結果・断りの文・残るモードが一致) |
+| `src/renderer/security/dataCrypto.mamori` | `src/renderer/security/dataCrypto.ts` | レコード暗号の関門 (KDF の反復回数の範囲 `assertKdfIterations`・塩の長さ `assertSaltBytes`/`saltBytesOk`・封筒の形 `isEncryptedBundle`/`isSealed`・パスワード封緘/開封 `encryptString`/`decryptString`・鍵の導出と封緘 `deriveAesKey`/`sealWithKey`/`openWithKey`) (MG-021 · WebCrypto と `btoa`/`atob`・`Uint8Array` は `extern pure global` で宣言できないので、薄い壁 `dataCryptoHost.ts` を `extern pure { … } from` で読む (`pkceSessionHost.ts` と同じ形)。反復回数の既定は 10 進 (100000 / 4000000)・`isEncryptedBundle` は `field v.x` で unknown から読む。元の TypeScript と差分比較し、結果・断りの文・封筒の形が一致、相互に復号できる) |
 
 残りの TypeScript は Mamori で書いた gate / sink を呼ぶ側で、呼ぶ側には TypeScript の型の印が掛かる
 (パス 559)。書き出しのファイル書き込みはパス 560 で gate と sink の組として移し、pending の天井を 4 → 3 へ下げた。
@@ -369,7 +432,7 @@ export sink fn openExternalVetted(url: VettedExternalUrl) -> Promise<void> {
   `shell` を直接呼んだりする道は、TypeScript の側の検査 (`vettedTypes.test.ts` の census・`lint:forbidden`) が塞ぐ。
 - 変換した TypeScript は `tsc` が検査するが、実行時の守りは今までどおり**関門の中身**そのものである。
   Mamori が止めるのは「関門を飛ばす書き方」で、関門の判定の誤りは関門の検査 (変異検査 100% の対象) が見る。
-- 言語は 0.13 で、守りの層を書くのに要る構文しか持たない (0.3 で 16 進の数を、0.2 でオブジェクトの字面・条件演算子・switch・throw・for…of・type / interface・field を足した。**クラス・計算した鍵 `{ [k]: v }`・展開・後置の `!`・`while` は無い (0.6 で `a?.name`、0.8 で数と分かる鍵の添字 `x[k]`、0.9 でブロックの本体を持つ arrow、0.10 でビット演算、0.12 で計算した鍵の結果を inert にし添字への代入 `out[i] = v` を数の鍵だけ足し、0.13 で分割代入 `const { a } = x` / `const [a] = xs` を足した)** —— 文字列の鍵を実行時に組む形は、T-224 の表 (`.constructor` を断る) を迂回する道になる)。**JSX も無い**ので、`<img>` の口 (`VettedImg.tsx`) と `<a href>` の口 (`VettedLink.tsx`) は TypeScript で書き、守りは型の印と census (素の `<img` と動的な素の `<a href={…}>` はこの部品の外に無い) が持つ。
+- 言語は 0.12 で、守りの層を書くのに要る構文しか持たない (0.3 で 16 進の数を、0.2 でオブジェクトの字面・条件演算子・switch・throw・for…of・type / interface・field を足した。**クラス・計算した鍵 `{ [k]: v }`・展開・後置の `!` は無い (0.6 で `a?.name`、0.8 で数と分かる鍵の添字 `x[k]` だけ、0.9 でブロックの本体を持つ arrow、0.10 でビット演算だけ足した)** —— 文字列の鍵を実行時に組む形は、T-224 の表 (`.constructor` を断る) を迂回する道になる)。**JSX も無い**ので、`<img>` の口 (`VettedImg.tsx`) と `<a href>` の口 (`VettedLink.tsx`) は TypeScript で書き、守りは型の印と census (素の `<img` と動的な素の `<a href={…}>` はこの部品の外に無い) が持つ。
   足すときは、その構文が来歴の規則を外す道にならないかを先に考える (`as` を入れなかったのと同じ理由)。
 
 ## 育て方 (半永久的に育てる輪)

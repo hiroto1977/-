@@ -1,3 +1,5 @@
+// 生成物 —— src/renderer/oauth/pkce.mamori から Mamori のコンパイラが組んだ。手で編集しない (`npm run mamori:build`)。
+// 言語の仕様は docs/MAMORI.md。生成物が元と食い違えば src/shared/mamori/__tests__/mamoriGenerated.test.ts が落ちる。
 /**
  * PKCE OAuth helpers — Google (Drive / Calendar / Gmail) 向け。
  *
@@ -20,22 +22,21 @@
  * Hosted 版 (HTTPS) では popup + postMessage で完全自動化可能だが、
  * 本フェーズでは file:// と hosted の両方で動く共通フローとして
  * out-of-band を採用する (BROWSER_REDESIGN.md §8.1)。
+ *
+ * ## Mamori で書いてある (2026-11-02 · MG-025)
+ *
+ * 元は TypeScript。ブラウザの口 (`btoa` / 乱数 / SHA-256 / 時刻 / `fetch` / `URLSearchParams` / 打ち切り) は `pkceHost.ts` の薄い壁へ閉じ込め、
+ * 判断は全部ここに残した。書き直したのは `!` (非 null)・添字の `for`・`+=`・template 文字列・`as const`・async の arrow (締切の中で走らせる部分を
+ * 名前のある関数 `postTokenForm` に出した) で、組み上がる文字列は 1 字も変えていない。
  */
+
 import { constantTimeEquals } from '../../shared/constantTimeEquals';
 import { OAUTH_STATE_BYTES, PKCE_VERIFIER_BYTES } from '../../shared/cryptoParams';
 import { countChars } from '../../shared/inputCeiling';
 import { redactForMessage, MAX_RESPONSE_BODY_IN_MESSAGE } from '../../shared/redact';
 import { parseTokenResponse } from '../../shared/tokenResponse';
-import {
-  DEFAULT_HTTP_TIMEOUT_MS,
-  egressInit,
-  isRedirectResponse,
-  MAX_HTTP_RESPONSE_BYTES,
-  readBodyWithCap,
-  readFailureBody,
-  redirectRefusal,
-  withTimeout,
-} from '../../shared/httpLimits';
+import { egressInit, isRedirectResponse, MAX_HTTP_RESPONSE_BYTES, readBodyWithCap, readFailureBody, redirectRefusal } from '../../shared/httpLimits';
+import { hostBtoa, hostRandomBytes, hostSha256, hostNow, hostFetch, hostSearchParams, hostWithTimeout } from './pkceHost';
 
 /**
  * 認可コード 1 本の文字数の天井 (2026-09-12 · パス 167 で名前を付けた)。
@@ -58,10 +59,6 @@ export interface PkceSecrets {
   readonly state: string;
 }
 
-// All security-critical paths are pinned by the 12 integration tests
-// (challenge len / state random / URL params / token exchange happy +
-// error). Decorative error messages, default fallbacks, and Date.now()
-// arithmetic are not differentiable.
 /**
  * base64url (RFC 4648 §5) — `+`→`-`、`/`→`_`、末尾のパディングは落とす。
  *
@@ -73,17 +70,19 @@ export interface PkceSecrets {
  */
 export function base64UrlEncode(bytes: Uint8Array): string {
   let bin = '';
-  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]!);
+  for (const b of bytes) {
+    bin = bin + String.fromCharCode(b);
+  }
   // Stryker disable next-line Regex: base64 のパディングは末尾にしか現れないので、
   // 末尾アンカーを外しても取り除く対象は変わらない (等価変異)。
-  return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  return hostBtoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
 export async function generatePkce(): Promise<PkceSecrets> {
-  const verifier = base64UrlEncode(crypto.getRandomValues(new Uint8Array(PKCE_VERIFIER_BYTES)));
-  const state = base64UrlEncode(crypto.getRandomValues(new Uint8Array(OAUTH_STATE_BYTES)));
-  const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier));
-  const challenge = base64UrlEncode(new Uint8Array(hash));
+  const verifier = base64UrlEncode(hostRandomBytes(PKCE_VERIFIER_BYTES));
+  const state = base64UrlEncode(hostRandomBytes(OAUTH_STATE_BYTES));
+  const hash = await hostSha256(verifier);
+  const challenge = base64UrlEncode(hash);
   return { verifier, challenge, state };
 }
 
@@ -98,11 +97,16 @@ export async function generatePkce(): Promise<PkceSecrets> {
  */
 export const safeStateEquals = constantTimeEquals;
 
-/** Parse a Google OAuth callback URL (or its raw query string) and extract
- *  `code` + `state`. UI should pass whatever the user pastes (full URL,
- *  query-string-only, or "code=...&state=..." fragment) and feed the result
- *  into `exchangeGoogleCode`. */
-export function parseGoogleCallback(input: string): { code: string; state: string } | null {
+/** callback から取り出した `code` と `state`。 */
+export type GoogleCallbackParams = { code: string; state: string };
+
+/**
+ * Parse a Google OAuth callback URL (or its raw query string) and extract
+ * `code` + `state`. UI should pass whatever the user pastes (full URL,
+ * query-string-only, or "code=...&state=..." fragment) and feed the result
+ * into `exchangeGoogleCode`.
+ */
+export function parseGoogleCallback(input: string): GoogleCallbackParams | null {
   const params = callbackParams(input);
   if (params === null) return null;
   const code = params.get('code');
@@ -130,25 +134,16 @@ export function callbackParams(input: string): URLSearchParams | null {
   // クエリでないもの) も**ここでは通る** —— 欠けている側を数えるのは
   // 呼び出し側 (`parseGoogleCallback` は null に落とし、
   // `describeCallbackPasteFailure` はどちらが欠けたかを述べる)。
+  //
+  // **`=` を含むかの判定は置かない。** `=` を含まない文字列がその枝へ入っても
+  // `URLSearchParams` は空になり、結局呼び出し側の `!code || !state` で null に落ちる。
+  // 先頭の `?` は URLSearchParams 自身が落とすので、こちらで剥がさない。
   let params: URLSearchParams;
   try {
-    // **`=` を含むかの判定は置かない。** 以前は
-    // `} else if (trimmed.includes('='))` と書いていたが、`=` を含まない
-    // 文字列がその枝へ入っても `URLSearchParams` は空になり、結局呼び出し側の
-    // `!code || !state` で null に落ちる — 条件の有無で結果が変わらない。
-    //
-    // 2026-08 の時点では「範囲指定で黙らせると 163 → 97 変異体に縮むので
-    // 割に合わない」として**等価変異 2 つを生存のまま残していた**。だが
-    // 第三の道があった: 分岐そのものを消せば、黙らせずに 2 つとも消える。
-    // 分母を縮めずに 100% になるので、こちらが正しい (この repo の
-    // 「等価変異は黙らせる前にコードを単純化できないか先に疑う」の実例)。
-    //
-    // 先頭の `?` は URLSearchParams 自身が落とすので、こちらで剥がさない
-    // (剥がす分岐は一度も結果を変えていなかった — 2026-08 変異検査)。
     if (/^https?:\/\//i.test(trimmed)) {
       params = new URL(trimmed).searchParams;
     } else {
-      params = new URLSearchParams(trimmed);
+      params = hostSearchParams(trimmed);
     }
   } catch {
     return null;
@@ -169,24 +164,15 @@ export interface GoogleAuthOptions {
 }
 
 export function buildGoogleAuthUrl(opts: GoogleAuthOptions, secrets: PkceSecrets): string {
-  const params = new URLSearchParams({
-    response_type: 'code',
-    client_id: opts.clientId,
-    redirect_uri: opts.redirectUri,
-    scope: opts.scopes.join(' '),
-    code_challenge: secrets.challenge,
-    code_challenge_method: 'S256',
-    state: secrets.state,
-    access_type: 'offline',
-    prompt: 'consent',
-  });
-  return `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+  const params = hostSearchParams({ response_type: 'code', client_id: opts.clientId, redirect_uri: opts.redirectUri, scope: opts.scopes.join(' '), code_challenge: secrets.challenge, code_challenge_method: 'S256', state: secrets.state, access_type: 'offline', prompt: 'consent' });
+  return 'https://accounts.google.com/o/oauth2/v2/auth?' + params.toString();
 }
 
 export interface TokenResult {
   readonly accessToken: string;
   readonly refreshToken?: string;
-  readonly expiresAt: number; // epoch ms
+  /** epoch ms */
+  readonly expiresAt: number;
   readonly scope: string;
 }
 
@@ -203,18 +189,44 @@ export interface ExchangeGoogleCodeArgs {
   readonly redirectUri: string;
 }
 
-/** Exchange a Google authorization code for an access/refresh token pair.
+/**
+ * token 端点へ form を POST して本文を返す (締切の中で走る部分 —— `exchangeGoogleCode` が `hostWithTimeout` に渡す)。
  *
- *  CSRF defense: MUST be passed both the state we issued (`expectedState`)
- *  and the state echoed back by Google (`receivedState`). Mismatch → throw
- *  BEFORE the token endpoint POST. This API shape exists because an earlier
- *  signature that didn't take `state` at all let callers forget the check —
- *  see Security Audit R2 finding #3. */
-export async function exchangeGoogleCode(
-  args: ExchangeGoogleCodeArgs,
-  /** Test seam */
-  fetchImpl: typeof fetch = fetch,
-): Promise<TokenResult> {
+ * **本文を読み終えるまでを締切の中に入れる。** `fetch` はヘッダで解決するので、
+ * Response を外へ出すと打ち切りが本文に掛からない (2026-08-28)。
+ */
+async function postTokenForm(fetchImpl: typeof fetch, form: string, signal: AbortSignal): Promise<string> {
+  const res = await fetchImpl('https://oauth2.googleapis.com/token', egressInit({ method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' }, body: form, signal }));
+  // 転送には追随しない (規則は httpLimits.ts)。token 端点が動いたなら、code と verifier を別の場所へ再送しない。
+  if (isRedirectResponse(res)) {
+    throw new Error(redirectRefusal(res, 'https://oauth2.googleapis.com/token', 'token exchange'));
+  }
+  if (!res.ok) {
+    // Stryker disable next-line StringLiteral: ここのラベルは**直後の `.catch` が
+    // 捨てる**ので、空にしても観測できる差が出ない (等価変異・2026-08-31 に
+    // 対照で確認)。成功側 (下の `return`) は catch していないため文言が
+    // 利用者に届き、そちらは検査で留めてある。
+    const failure = await readFailureBody(res, 'token exchange');
+    // 連携先が応答に資格情報を反射しても、エラー経由で漏らさない
+    // (jsonFetch / proxy.ts と同じ規律)。この文字列は画面にそのまま出て、
+    // 不具合報告に貼られる。
+    throw new Error('token exchange ' + res.status + ': ' + redactForMessage(failure, MAX_RESPONSE_BODY_IN_MESSAGE));
+  }
+  return readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'token exchange');
+}
+
+/**
+ * Exchange a Google authorization code for an access/refresh token pair.
+ *
+ * CSRF defense: MUST be passed both the state we issued (`expectedState`)
+ * and the state echoed back by Google (`receivedState`). Mismatch → throw
+ * BEFORE the token endpoint POST. This API shape exists because an earlier
+ * signature that didn't take `state` at all let callers forget the check —
+ * see Security Audit R2 finding #3.
+ *
+ * 第 2 引数は検査の差し込み口 (Test seam)。
+ */
+export async function exchangeGoogleCode(args: ExchangeGoogleCodeArgs, fetchImpl: typeof fetch = hostFetch): Promise<TokenResult> {
   const { code, verifier, expectedState, receivedState, clientId, redirectUri } = args;
   if (typeof code !== 'string' || code.length === 0 || countChars(code) > MAX_AUTH_CODE_CHARS) {
     throw new Error('code が不正です');
@@ -231,67 +243,30 @@ export async function exchangeGoogleCode(
   if (!safeStateEquals(expectedState, receivedState)) {
     throw new Error('state が一致しません — CSRF 攻撃の可能性があります');
   }
-  const params = new URLSearchParams({
-    grant_type: 'authorization_code',
-    code: code.trim(),
-    client_id: clientId,
-    code_verifier: verifier,
-    redirect_uri: redirectUri,
-  });
+  const params = hostSearchParams({ grant_type: 'authorization_code', code: code.trim(), client_id: clientId, code_verifier: verifier, redirect_uri: redirectUri });
   // 打ち切りと応答サイズの上限を掛ける —— 兄弟の `network/proxy.ts` は
   // 掛けていて、ここだけ素の fetch だった (2026-08-23)。相手は既知ホストだが、
   // 守るのは攻撃より**事故**である: 応答しない端点で「交換中…」のまま
   // 固まるか、巨大な応答をそのまま読む。
-  // **本文を読み終えるまでを締切の中に入れる。** `fetch` はヘッダで解決するので、
-  // Response を外へ出すと打ち切りが本文に掛からない (2026-08-28)。
-  const raw = await withTimeout(DEFAULT_HTTP_TIMEOUT_MS, null, async (signal) => {
-    const res = await fetchImpl('https://oauth2.googleapis.com/token', egressInit({
-      method: 'POST',
-      headers: { 'content-type': 'application/x-www-form-urlencoded' },
-      body: params.toString(),
-      signal,
-    }));
-    // 転送には追随しない (規則は httpLimits.ts)。token 端点が動いたなら、code と verifier を別の場所へ再送しない。
-    if (isRedirectResponse(res)) {
-      throw new Error(redirectRefusal(res, 'https://oauth2.googleapis.com/token', 'token exchange'));
-    }
-    if (!res.ok) {
-      // Stryker disable next-line StringLiteral: ここのラベルは**直後の `.catch` が
-      // 捨てる**ので、空にしても観測できる差が出ない (等価変異・2026-08-31 に
-      // 対照で確認)。成功側 (下の `return`) は catch していないため文言が
-      // 利用者に届き、そちらは検査で留めてある。
-      const body = await readFailureBody(res, 'token exchange');
-      // 連携先が応答に資格情報を反射しても、エラー経由で漏らさない
-      // (jsonFetch / proxy.ts と同じ規律)。この文字列は画面にそのまま出て、
-      // 不具合報告に貼られる。
-      throw new Error(`token exchange ${res.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`);
-    }
-    return readBodyWithCap(res, MAX_HTTP_RESPONSE_BYTES, 'token exchange');
-  });
+  const raw = await hostWithTimeout((signal) => postTokenForm(fetchImpl, params.toString(), signal));
   // **規則は `shared/tokenResponse.ts` に 1 つ** (パス 260)。ここに在った
   // 手書きの検証がその規則の原型で、主プロセス側 (`main/oauth.ts`) には
   // 同じ物が無く `JSON.parse(…) as TokenResponse` だけだった。片方だけ緩い、
   // という形を消すために規則を共有へ移し、両ビルドが同じ関数を読む。
   const parsed = parseTokenResponse(raw);
-  if (!parsed.ok) throw new Error(parsed.message);
+  if (!parsed.ok) {
+    throw new Error(parsed.message);
+  }
   const data = parsed.value;
   // 既定の 3600 は**この build の選択**で、規則ではない —— 応答が期限を
   // 述べなかったときに何を書くかの話である。`TokenResult.expiresAt` は必須欄
   // だがブラウザ版で**誰も読んでいない** (2026-09-14 実測) ので、倒し先を
   // 変えても観測できる差が出ない。だから触らない。
   const expiresIn = data.expires_in ?? 3600;
-  const result: TokenResult = {
-    accessToken: data.access_token,
-    expiresAt: Date.now() + expiresIn * 1000,
-    scope: data.scope ?? '',
-  };
+  const result: TokenResult = { accessToken: data.access_token, expiresAt: hostNow() + expiresIn * 1000, scope: data.scope ?? '' };
   // refresh_token is optional; only include if Google returned one.
   return data.refresh_token === undefined ? result : { ...result, refreshToken: data.refresh_token };
 }
 
 /** Google 標準スコープのプリセット (BROWSER_REDESIGN.md §8.1)。 */
-export const GOOGLE_SCOPES = {
-  drive: ['https://www.googleapis.com/auth/drive.readonly'],
-  calendar: ['https://www.googleapis.com/auth/calendar.readonly'],
-  gmail: ['https://www.googleapis.com/auth/gmail.readonly'],
-} as const;
+export const GOOGLE_SCOPES: { readonly drive: readonly string[]; readonly calendar: readonly string[]; readonly gmail: readonly string[] } = { drive: ['https://www.googleapis.com/auth/drive.readonly'], calendar: ['https://www.googleapis.com/auth/calendar.readonly'], gmail: ['https://www.googleapis.com/auth/gmail.readonly'] };

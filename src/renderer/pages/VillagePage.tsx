@@ -29,11 +29,16 @@ import {
 import {
   computeHomePositions,
   computeDistrictFocus,
+  FOCUS_RECT,
   regionRects,
   wanderOffset,
+  walkPoint,
+  pickVisibleVillagers,
+  WALK_STEP_TICKS,
   WORK_PLAZA,
   type Rect,
 } from '../data/villageLayout';
+import { projectPoint, groundTransform, GROUND_SHIFT_PCT } from '../data/villageProject';
 import { buildOrgIndex, routeTopicScored, type RawOrg, type RawTeam, type OrgIndex } from '../data/chatOrg';
 import { replyTo, type ChatContext } from '../data/chatbot';
 import { detectCrisis, detectHarmToOthers } from '../data/counseling';
@@ -52,6 +57,7 @@ import {
 } from '../data/assistantProviders';
 import { speak, cancelSpeech } from '../voice/ttsAdapter';
 import { MAX_ASSISTANT_CONTENT_CHARS } from '../../shared/assistantLimits';
+import { displayField } from '../../shared/apiResponse';
 import { CeilingNotice } from '../components/CeilingNotice';
 import { charsOverCeiling, refusedCeilingNote } from '../../shared/inputCeiling';
 import type { ActionData } from '../../shared/actionData';
@@ -98,8 +104,13 @@ export function VillagePage() {
   const regions = useMemo(() => buildRegions(REG), []);
   const dispatchPlan = useMemo(() => buildDispatchPlan(REG), []);
   const rects = useMemo(() => regionRects(regions), [regions]);
-  const homeOverview = useMemo(() => computeHomePositions(villagers, regions), [villagers, regions]);
   const backlogStatus = useMemo(() => backlogByTeam(REG), []);
+  // 全体表示は代表だけ (143 体を全部並べると重なって読めない)。街区を拡大すると全員が出る。
+  const visibleVillagers = useMemo(
+    () => pickVisibleVillagers(villagers, (id) => backlogStatus.get(id)),
+    [villagers, backlogStatus],
+  );
+  const homeOverview = useMemo(() => computeHomePositions(visibleVillagers, regions), [visibleVillagers, regions]);
   const summary = useMemo(() => villageSummary(REG), []);
   const indexOfVillager = useMemo(() => {
     const m = new Map<string, number>();
@@ -123,6 +134,18 @@ export function VillagePage() {
   );
 
   const [tick, setTick] = useState(0);
+  // 地面の遠近 (CSS の perspective は px) を景色の高さに比例させるため、高さだけ測る。
+  const sceneRef = useRef<HTMLDivElement | null>(null);
+  const [sceneH, setSceneH] = useState(460);
+  useEffect(() => {
+    const el = sceneRef.current;
+    if (el === null || typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver(() => {
+      if (el.clientHeight > 0) setSceneH(el.clientHeight);
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
   const [step, setStep] = useState(0);
   const [phase, setPhase] = useState(0);
   const [bubbles, setBubbles] = useState<Record<string, Bubble>>({});
@@ -188,12 +211,19 @@ export function VillagePage() {
   );
   const homeFocus = useMemo(() => computeDistrictFocus(focusVillagers), [focusVillagers]);
 
-  const renderList = focusedExec ? focusVillagers : villagers;
+  // 作業広場へ出ているチーム・話しかけられた人は、代表に入っていなくても出す (作業の様子が見えなくなるため)。
+  const renderList = useMemo(() => {
+    if (focusedExec) return focusVillagers;
+    const pinned = villagers.filter(
+      (v) => (v.id === activeTeamId || v.id === voiceTargetId) && !visibleVillagers.includes(v),
+    );
+    return pinned.length === 0 ? visibleVillagers : [...visibleVillagers, ...pinned];
+  }, [focusedExec, focusVillagers, villagers, visibleVillagers, activeTeamId, voiceTargetId]);
   const home = focusedExec ? homeFocus : homeOverview;
 
   useEffect(() => {
     if (paused) return;
-    const h = setInterval(() => setTick((t) => (t + 1) % 100000), 2200);
+    const h = setInterval(() => setTick((t) => (t + 1) % 100000), 1400);
     return () => clearInterval(h);
   }, [paused]);
 
@@ -228,28 +258,47 @@ export function VillagePage() {
   }, []);
 
   const positions = useMemo(() => {
-    const map = new Map<string, { x: number; y: number; flip: boolean }>();
+    const map = new Map<string, Placement>();
+    const step = Math.floor(tick / WALK_STEP_TICKS);
     for (const v of renderList) {
       const base = home.get(v.id) ?? { x: 50, y: 50 };
       const idx = indexOfVillager.get(v.id) ?? 0;
-      let x = base.x;
-      let y = base.y;
       if (v.id === voiceTargetId) {
-        x = focusedExec ? base.x : WORK_PLAZA.x;
-        y = focusedExec ? base.y - 5 : WORK_PLAZA.y + 6;
+        const x = focusedExec ? base.x : WORK_PLAZA.x;
+        const y = focusedExec ? base.y - 5 : WORK_PLAZA.y + 6;
+        map.set(v.id, { x, y, flip: false, dur: 1.9, seq: -1 });
       } else if (v.id === activeTeamId) {
-        x = WORK_PLAZA.x;
-        y = WORK_PLAZA.y;
+        map.set(v.id, { x: WORK_PLAZA.x, y: WORK_PLAZA.y, flip: false, dur: 1.9, seq: -1 });
+      } else if (WALKING_KINDS.has(v.kind)) {
+        // 持ち場の周りを歩く: 街区の矩形 (拡大中は景色いっぱい) の外へは出ない。
+        const rect = focusedExec ? FOCUS_RECT : rects.get(v.regionId) ?? FOCUS_RECT;
+        const bounds = {
+          x: rect.x + rect.w * 0.03,
+          y: rect.y + rect.h * (focusedExec ? 0.12 : 0.2),
+          w: rect.w * 0.94,
+          h: rect.h * (focusedExec ? 0.86 : 0.78),
+        };
+        // 街区いっぱいを歩く (範囲は街区の中に clamp される)。
+        const rx = focusedExec ? 16 : 10;
+        const ry = focusedExec ? 20 : 14;
+        const cur = walkPoint(idx, step, base, rx, ry, bounds);
+        const prev = walkPoint(idx, step - 1, base, rx, ry, bounds);
+        const dist = Math.hypot(cur.x - prev.x, cur.y - prev.y);
+        // 速さは一定 (1% あたり 0.2 秒)。止まる区間は dist = 0 で歩く動きを付けない。
+        map.set(v.id, {
+          x: cur.x,
+          y: cur.y,
+          flip: cur.x < prev.x,
+          dur: Math.min(3, Math.max(0.6, dist * 0.2)),
+          seq: dist > 0.3 ? step : -1,
+        });
       } else {
-        const w = wanderOffset(idx, tick, focusedExec ? 0.7 : 0.5);
-        x = base.x + w.x;
-        y = base.y + w.y;
+        const w = wanderOffset(idx, tick, 0.5);
+        map.set(v.id, { x: base.x + w.x, y: base.y + w.y, flip: false, dur: 1.9, seq: -1 });
       }
-      const prev = map.get(v.id);
-      map.set(v.id, { x, y, flip: prev ? x < prev.x : false });
     }
     return map;
-  }, [renderList, home, indexOfVillager, tick, activeTeamId, voiceTargetId, focusedExec]);
+  }, [renderList, home, rects, indexOfVillager, tick, activeTeamId, voiceTargetId, focusedExec]);
 
   const setVoiceBubble = (id: string, text: string) => {
     setVoiceTargetId(id);
@@ -314,7 +363,7 @@ export function VillagePage() {
       void (async () => {
         try {
           const res = await hub.invoke<ActionData<'assistant/chat'>>('assistant', 'chat', {
-            system: buildVillageSystemPrompt(),
+            system: buildVillageSystemPrompt(target),
             messages: [{ role: 'user', content: text }],
           });
           if (res.ok && res.data.text) {
@@ -367,7 +416,10 @@ export function VillagePage() {
       <div style={headerStyle}>
         <div>
           <strong style={{ fontSize: 18 }}>🏡 AIの村</strong>
-          <div style={{ fontSize: 12, opacity: 0.75 }}>{summary}</div>
+          <div style={{ fontSize: 12, opacity: 0.75 }}>
+            {summary}
+            {!focusedExec ? ` ・ 村には代表 ${visibleVillagers.length} 体 (街区の看板を押すと全員)` : ''}
+          </div>
         </div>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
           {focusedExec ? (
@@ -379,7 +431,7 @@ export function VillagePage() {
               🛠 <b>{activeStep.teamName}</b> が作業中 — {PDCA[phase]}
             </span>
           ) : (
-            <span style={{ ...taskBannerStyle, opacity: 0.7 }}>☕ 次の仕事を待っています</span>
+            <span style={taskBannerStyle}>☕ 次の仕事を待っています</span>
           )}
           <label style={toggleStyle} title="AI プロバイダ設定時は返答を高精度化">
             <input type="checkbox" checked={aiOn} onChange={(e) => setAiOn(e.target.checked)} /> AI
@@ -426,10 +478,33 @@ export function VillagePage() {
         }}
       />
 
-      <div style={sceneStyle}>
-        <Scenery />
+      <div ref={sceneRef} style={sceneStyle}>
+        <Sky />
+        {/* 傾けた地面: 小道・池・街区の台座・作業広場は地面の上に平らに描く */}
+        <Ground heightPx={sceneH}>
+          <Terrain />
+          {focusedExec && focusedRegion ? (
+            <Pad rect={FOCUS_RECT} tint={EXEC_TINT[focusedExec] ?? '#cbd5e1'} />
+          ) : null}
+          {!focusedExec &&
+            regions.map((rg) => {
+              const rect = rects.get(rg.id);
+              if (!rect) return null;
+              const tint = rg.execId ? EXEC_TINT[rg.execId] ?? '#cbd5e1' : rg.kind === 'ceo' ? '#ffd27f' : '#c7d2fe';
+              return <Pad key={`pad-${rg.id}`} rect={rect} tint={tint} />;
+            })}
+          {!focusedExec ? (
+            <div style={plazaStyle}>
+              <div style={{ textAlign: 'center', marginTop: -16, fontSize: 11, color: '#1f2b17', fontWeight: 800 }}>
+                作業広場
+              </div>
+            </div>
+          ) : null}
+        </Ground>
+        {/* 立ち絵 (木・花・家): 地面の座標を投影した点に、傾けずに立てる */}
+        <Decor />
 
-        {/* 建物カード（全体表示のみ）。クリックで拡大。 */}
+        {/* 街区の看板（全体表示のみ・立ち絵）。クリックで拡大。 */}
         {!focusedExec &&
           regions.map((rg) => {
             const rect = rects.get(rg.id);
@@ -438,9 +513,16 @@ export function VillagePage() {
             const tint = rg.execId ? EXEC_TINT[rg.execId] ?? '#cbd5e1' : rg.kind === 'ceo' ? '#ffd27f' : '#c7d2fe';
             const count = rg.execId ? teamCountByExec.get(rg.execId) ?? 0 : 0;
             return (
-              <BuildingCard
+              <SignBoard
                 key={`bld-${rg.id}`}
-                rect={rect}
+                // 街区は奥の縁の中央。CEO と COO の台座は近くて看板が重なるので、左右の脇へ分ける。
+                at={
+                  rg.kind === 'ceo'
+                    ? { x: rect.x - 12, y: rect.y + rect.h }
+                    : rg.kind === 'coo'
+                      ? { x: rect.x + rect.w + 12, y: rect.y + rect.h }
+                      : { x: rect.x + rect.w / 2, y: rect.y }
+                }
                 tint={tint}
                 emoji={rg.kind === 'ceo' ? '🏛️' : rg.kind === 'coo' ? '🧭' : '🏢'}
                 label={rg.label}
@@ -458,18 +540,9 @@ export function VillagePage() {
           </div>
         ) : null}
 
-        {/* 作業広場（全体表示のみ） */}
-        {!focusedExec ? (
-          <div style={plazaStyle}>
-            <div style={{ textAlign: 'center', marginTop: -16, fontSize: 11, color: '#1f2b17', fontWeight: 800 }}>
-              作業広場
-            </div>
-          </div>
-        ) : null}
-
         {/* 村人 */}
         {renderList.map((v) => {
-          const p = positions.get(v.id) ?? { x: 50, y: 50, flip: false };
+          const p = positions.get(v.id) ?? { x: 50, y: 50, flip: false, dur: 1.9, seq: -1 };
           const isActive = v.id === activeTeamId || v.id === voiceTargetId;
           const showLabel =
             !!focusedExec || v.kind === 'ceo' || v.kind === 'coo' || v.kind === 'executive' || v.kind === 'manager' || isActive;
@@ -480,6 +553,8 @@ export function VillagePage() {
               x={p.x}
               y={p.y}
               flip={p.flip}
+              dur={p.dur}
+              seq={p.seq}
               active={isActive}
               enlarged={!!focusedExec}
               showLabel={showLabel}
@@ -495,64 +570,302 @@ export function VillagePage() {
   );
 }
 
-function buildVillageSystemPrompt(): string {
+/**
+ * 村の system。**話しかけた担当 (役員・部長・チーム) の役割を載せる** (2026-11-04) ——
+ * 経路 (`routeTopicScored`) が決めた担当が誰でも同じ人格で答えると、役員ロールを分けた意味が
+ * 返答に出ない。役割は組織の台帳 (`villageData`) の値だが、`displayField` の天井は通す。
+ */
+function buildVillageSystemPrompt(target?: Villager): string {
+  const role =
+    target === undefined
+      ? []
+      : [
+        `今あなたが演じる担当: ${displayField(target.name)}` +
+          (target.domain ? `（領域: ${displayField(target.domain)}）` : '') +
+          (target.focus ? `／重点: ${displayField(target.focus)}` : '') +
+          (target.chain ? `／指揮系統: ${displayField(target.chain)}` : ''),
+      ];
   return [
     'あなたは「AIの村」の住人（AI 組織の担当者）です。日本語で、短く親しみやすく答えてください。',
+    ...role,
     '経営・税務・労務・法務などの実務質問には要点を 1〜3 文で簡潔に。断定を避け、必要なら専門家確認を促す。',
     '村のキャラクターらしいフレンドリーな一言を添えてよいが、長くしすぎないこと。',
   ].join('\n');
 }
 
 // ---------------------------------------------------------------------------
-// 情景（地面・道・池・木・花）— 絵文字＋インライン SVG のみ
+// 情景（ブロック調のピクセル）— 絵文字は使わず、文字の格子から <rect> を組む。依存なし。
+// マイクラ風の市松の草地・四角い雲と太陽・ブロックの池とあつ森風の小さな木と花。
+// この景色は配色に追随しない (昼の空と草地) ので、色は直書きでよい (字は載せない飾りだけ)。
 // ---------------------------------------------------------------------------
-const DECOR: { e: string; x: number; y: number; s: number }[] = [
-  { e: '🌳', x: 4, y: 30, s: 30 }, { e: '🌲', x: 96, y: 28, s: 28 }, { e: '🌳', x: 8, y: 95, s: 30 },
-  { e: '🌲', x: 93, y: 96, s: 28 }, { e: '🌷', x: 24, y: 34, s: 15 }, { e: '🌼', x: 74, y: 34, s: 15 },
-  { e: '🌻', x: 50, y: 12, s: 16 }, { e: '🍄', x: 16, y: 60, s: 13 }, { e: '🌸', x: 86, y: 62, s: 13 },
+const SPRITE_PALETTE: Record<string, string> = {
+  // 花・きのこ
+  G: '#3f8f3a', g: '#2f7a2e', T: '#6b4a2b', R: '#e86a8a', Y: '#ffd84a', S: '#3f8f3a', W: '#ffffff', O: '#f2994a', M: '#c9503f', C: '#f3e7c9',
+  // マイクラ風の木と家: 葉 (明・中・暗) / 丸太 (樹皮・明) / 板 (明・暗) / 丸石 (明・暗) / ガラス / ドア / 屋根 (明・暗)
+  a: '#2f7d32', b: '#44a044', c: '#256a29', k: '#6b4a2b', l: '#85603a', p: '#b88a4e', q: '#9c733c', s: '#8d8d8d', t: '#6f6f6f',
+  w: '#9bd8ff', d: '#4a2f1a', r: '#7a3b2e', e: '#5e2d22',
+};
+// 葉のブロックを積んだ樫の木 (9×12): 葉は 3 色の市松に近いまだら・幹は丸太 3 マス幅
+const TREE = [
+  '..bacab..',
+  '.bcabcabc',
+  'abcabacba',
+  'cabcbabca',
+  'abacbcaba',
+  '.bcabacb.',
+  '..cabca..',
+  '...klk...',
+  '...kkl...',
+  '...lkk...',
+  '...klk...',
+  '...kkl...',
+];
+const FLOWER = ['.R.R.', '..Y..', '.R.R.', '..S..', '..S..'];
+const MUSHROOM = ['.MMM.', 'MWMMM', 'MMMWM', '.CCC.', '.CCC.'];
+const BUSH = ['.bacb.', 'abcabc', 'cabcba', 'bcabca'];
+function Sprite({ rows, px }: { rows: readonly string[]; px: number }) {
+  const w = rows.reduce((m, r) => Math.max(m, r.length), 1);
+  const cells: React.ReactNode[] = [];
+  rows.forEach((row, y) => {
+    [...row].forEach((c, x) => {
+      const fill = SPRITE_PALETTE[c];
+      if (fill !== undefined) cells.push(<rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} fill={fill} />);
+    });
+  });
+  return (
+    <svg
+      viewBox={`0 0 ${w} ${rows.length}`}
+      width={w * px}
+      height={rows.length * px}
+      shapeRendering="crispEdges"
+      aria-hidden
+      style={{ display: 'block' }}
+    >
+      {cells}
+    </svg>
+  );
+}
+
+// 木の板の壁・丸石の土台・ガラスの窓・屋根の家 (14×9)
+const HOUSE = [
+  '....reerer....',
+  '..rerereerer..',
+  'rerereerererer',
+  '.pqpqpqpqpqpq.',
+  '.pwwpqpqpwwpq.',
+  '.pwwqpqpqwwqp.',
+  '.qpqpddpqpqpq.',
+  '.pqpqddqpqpqp.',
+  '.stststststst.',
 ];
 
-function Scenery() {
+/** 決まった乱数 (同じ入力は同じ値・0 以上 1 未満)。ドット絵のまだら模様と村人の見た目の割り振りに使う。 */
+function frac(a: number, b: number, seed: number): number {
+  const v = Math.sin(a * 12.9898 + b * 78.233 + seed * 37.719) * 43758.5453;
+  return v - Math.floor(v);
+}
+
+/** マイクラ風のドットのまだら模様 (草・土・水)。インライン SVG の pattern で敷く (画像ファイルは使わない)。 */
+function PixelFill({ id, tile, cell, colors }: { id: string; tile: number; cell: number; colors: readonly [string, string, string, string] }) {
+  const n = Math.round(tile / cell);
+  const rects: React.ReactNode[] = [];
+  for (let j = 0; j < n; j++) {
+    for (let i = 0; i < n; i++) {
+      const f = frac(i, j, tile);
+      const c = f < 0.5 ? colors[0] : f < 0.78 ? colors[1] : f < 0.92 ? colors[2] : colors[3];
+      rects.push(<rect key={`${i}-${j}`} x={i * cell} y={j * cell} width={cell} height={cell} fill={c} />);
+    }
+  }
+  return (
+    <svg width="100%" height="100%" shapeRendering="crispEdges" aria-hidden style={{ position: 'absolute', inset: 0, display: 'block' }}>
+      <defs>
+        <pattern id={id} width={tile} height={tile} patternUnits="userSpaceOnUse">
+          {rects}
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill={`url(#${id})`} />
+    </svg>
+  );
+}
+
+const SKINS = ['#f0c7a0', '#d9a577', '#a9743f', '#7a4a28'] as const;
+const HAIRS = ['#4a2f1a', '#2b1d0f', '#c9a24a', '#8a3b1d', '#1f1f1f'] as const;
+
+function shade(hex: string, k: number): string {
+  const m = /^#([0-9a-f]{6})$/i.exec(hex);
+  if (m === null) return hex;
+  const n = parseInt(m[1] ?? '000000', 16);
+  const ch = (x: number) => Math.max(0, Math.min(255, Math.round(x * k)));
+  return `#${[(n >> 16) & 255, (n >> 8) & 255, n & 255].map((x) => ch(x).toString(16).padStart(2, '0')).join('')}`;
+}
+
+// マイクラ風の人形 (8×16): 頭 8 段 (髪 2・顔)・腕と胴 4 段・脚 4 段。H 髪 / S 肌 / W 白目 / B 瞳 / D 口 / T 服 / t 服の影 / P ズボン / p ズボンの影 / K 靴
+const BLOCKY = [
+  'HHHHHHHH',
+  'HHHHHHHH',
+  'HSSSSSSH',
+  'SSSSSSSS',
+  'SWBSSBWS',
+  'SSSSSSSS',
+  'SSDDDDSS',
+  'SSSSSSSS',
+  'ttTTTTtt',
+  'ttTTTTtt',
+  'ttTTTTtt',
+  'SSTTTTSS',
+  '..PPpp..',
+  '..PPpp..',
+  '..PPpp..',
+  '..KKkk..',
+];
+
+function Blocky({ shirt, pants, skin, hair, w, h, flip }: { shirt: string; pants: string; skin: string; hair: string; w: number; h: number; flip: boolean }) {
+  const colors: Record<string, string> = {
+    H: hair, S: skin, W: '#ffffff', B: '#3b3b8f', D: shade(skin, 0.7), T: shirt, t: shade(shirt, 0.78), P: pants, p: shade(pants, 0.75), K: '#6f6f6f', k: '#555555',
+  };
+  const cells: React.ReactNode[] = [];
+  BLOCKY.forEach((row, y) => {
+    [...row].forEach((c, x) => {
+      const fill = colors[c];
+      if (fill !== undefined) cells.push(<rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} fill={fill} />);
+    });
+  });
+  return (
+    <svg
+      viewBox="0 0 8 16"
+      width={w}
+      height={h}
+      shapeRendering="crispEdges"
+      aria-hidden
+      style={{ display: 'block', transform: flip ? 'scaleX(-1)' : undefined }}
+    >
+      {cells}
+    </svg>
+  );
+}
+
+/** 種類ごとの服の色。チームは作業の状態の色 (ring) を服にして、状態が一目で分かるようにする。 */
+function outfitOf(v: Villager, ring: string | undefined): { shirt: string; pants: string } {
+  if (v.kind === 'team') return { shirt: ring ?? '#2f9e6b', pants: '#3b4a9a' };
+  if (v.kind === 'ceo') return { shirt: '#f2c744', pants: '#3a2a6a' };
+  if (v.kind === 'coo') return { shirt: '#4f7cff', pants: '#26324f' };
+  if (v.kind === 'executive') return { shirt: EXEC_TINT[v.execId ?? ''] ?? '#cbd5e1', pants: '#2b2b2b' };
+  if (v.kind === 'manager') return { shirt: '#8e6bbf', pants: '#2b2b2b' };
+  return { shirt: '#e86a8a', pants: '#4a3a5a' };
+}
+
+/** 立ち絵 (地面の座標 x,y は景色の百分率。景色の外にも置ける)。 */
+const DECOR: { rows: readonly string[]; px: number; x: number; y: number }[] = [
+  // 手前の飾り
+  { rows: TREE, px: 5, x: 7, y: 99 }, { rows: TREE, px: 5, x: 94, y: 100 }, { rows: FLOWER, px: 3, x: 24, y: 46 },
+  { rows: FLOWER, px: 3, x: 74, y: 46 }, { rows: FLOWER, px: 3, x: 50, y: 34 }, { rows: MUSHROOM, px: 3, x: 16, y: 68 },
+  { rows: BUSH, px: 4, x: 86, y: 70 }, { rows: BUSH, px: 4, x: 30, y: 92 },
+  // 奥の森 (地面は景色より広い: 左右と奥へ木を並べて、村を囲む)
+  { rows: TREE, px: 4, x: -6, y: 30 }, { rows: TREE, px: 4, x: 12, y: 22 }, { rows: TREE, px: 4, x: 26, y: 16 },
+  { rows: TREE, px: 4, x: 74, y: 16 }, { rows: TREE, px: 4, x: 88, y: 22 }, { rows: TREE, px: 4, x: 106, y: 30 },
+  { rows: TREE, px: 4, x: -10, y: 60 }, { rows: TREE, px: 4, x: 110, y: 60 }, { rows: TREE, px: 4, x: -8, y: 88 },
+  { rows: TREE, px: 4, x: 108, y: 88 }, { rows: TREE, px: 4, x: 2, y: 36 }, { rows: TREE, px: 4, x: 98, y: 36 },
+  // 家
+  { rows: HOUSE, px: 4, x: -2, y: 50 }, { rows: HOUSE, px: 4, x: 102, y: 50 }, { rows: HOUSE, px: 4, x: 14, y: 12 },
+  { rows: HOUSE, px: 4, x: 86, y: 12 },
+];
+
+/** 立ち絵を地面の上の点 (x,y) に立てる: 投影した位置に置き、手前ほど大きく・手前ほど前へ重ねる。 */
+function stand(x: number, y: number, extraZ = 0): React.CSSProperties {
+  const p = projectPoint(x, y);
+  return {
+    position: 'absolute',
+    left: `${p.x}%`,
+    top: `${p.y}%`,
+    transform: `translate(-50%,-100%) scale(${p.scale})`,
+    transformOrigin: '50% 100%',
+    zIndex: Math.round(p.y * 10) + extraZ,
+  };
+}
+
+function Sky() {
+  return (
+    <div style={skyStyle} aria-hidden>
+      {/* 四角い太陽と雲 */}
+      <div style={{ position: 'absolute', right: '6%', top: '8%', width: 28, height: 28, background: '#fff2a8', boxShadow: '0 0 0 4px #ffe066' }} />
+      <div style={{ position: 'absolute', left: '14%', top: '10%', width: 64, height: 16, background: '#fff', boxShadow: '16px -12px 0 #fff, 32px 0 0 #fff', opacity: 0.9 }} />
+      <div style={{ position: 'absolute', left: '58%', top: '4%', width: 48, height: 12, background: '#fff', boxShadow: '12px -10px 0 #fff, 24px 0 0 #fff', opacity: 0.8 }} />
+    </div>
+  );
+}
+
+/** 傾けた地面 (景色より広い)。中身の `field` が景色と同じ範囲で、百分率はその中で数える。 */
+function Ground({ heightPx, children }: { heightPx: number; children: React.ReactNode }) {
+  return (
+    <div style={{ ...groundStyle, transform: groundTransform(heightPx) }} aria-hidden>
+      {/* 草ブロックの地面 (8px のドットのまだら) */}
+      <PixelFill id="mc-grass" tile={64} cell={8} colors={['#6fb04f', '#64a346', '#7ac05a', '#5a9a3e']} />
+      <div style={fieldStyle}>{children}</div>
+    </div>
+  );
+}
+
+function Terrain() {
   return (
     <>
-      <svg viewBox="0 0 100 100" preserveAspectRatio="none" style={sceneryStyle} aria-hidden>
-        {/* 太陽 */}
-        <circle cx="90" cy="9" r="5" fill="#fff2b0" opacity="0.9" />
-        {/* 雲 */}
-        <ellipse cx="22" cy="8" rx="7" ry="2.4" fill="#ffffff" opacity="0.7" />
-        <ellipse cx="60" cy="6" rx="6" ry="2.1" fill="#ffffff" opacity="0.6" />
-        {/* 池 */}
-        <ellipse cx="50" cy="90" rx="15" ry="4.6" fill="#7ec8e3" opacity="0.75" />
-        <ellipse cx="50" cy="89.4" rx="9" ry="2.6" fill="#a5dced" opacity="0.8" />
-        {/* 中央広場から各街区へ伸びる小道 */}
-        <path d="M50 24 L50 38" stroke="#e6d8ad" strokeWidth="3.4" opacity="0.65" strokeLinecap="round" />
-        <path d="M50 34 Q26 40 14 40" stroke="#e6d8ad" strokeWidth="2.6" opacity="0.5" fill="none" strokeLinecap="round" />
-        <path d="M50 34 Q74 40 86 40" stroke="#e6d8ad" strokeWidth="2.6" opacity="0.5" fill="none" strokeLinecap="round" />
-      </svg>
+      {/* 池 (水ブロック) */}
+      <div style={pondStyle}>
+        <PixelFill id="mc-water" tile={48} cell={8} colors={['#3f76e4', '#3a6cd4', '#4f86f0', '#2f5fc0']} />
+      </div>
+      {/* 中央広場から各街区へ伸びる土の小道 (土ブロック) */}
+      <div style={{ ...pathStyle, left: 'calc(50% - 8px)', top: '24%', width: 16, height: '14%' }}>
+        <PixelFill id="mc-dirt-v" tile={48} cell={6} colors={['#8a6a43', '#7c5e3a', '#9a7a50', '#6a4e30']} />
+      </div>
+      <div style={{ ...pathStyle, left: '14%', top: 'calc(38% - 8px)', width: '72%', height: 16 }}>
+        <PixelFill id="mc-dirt-h" tile={48} cell={6} colors={['#8a6a43', '#7c5e3a', '#9a7a50', '#6a4e30']} />
+      </div>
+    </>
+  );
+}
+
+function Decor() {
+  return (
+    <>
       {DECOR.map((d, i) => (
-        <div
-          key={i}
-          style={{ position: 'absolute', left: `${d.x}%`, top: `${d.y}%`, transform: 'translate(-50%,-50%)', fontSize: d.s, pointerEvents: 'none', filter: 'drop-shadow(0 2px 2px rgba(0,0,0,0.18))' }}
-        >
-          {d.e}
+        <div key={i} style={{ ...stand(d.x, d.y), pointerEvents: 'none' }}>
+          <Sprite rows={d.rows} px={d.px} />
         </div>
       ))}
     </>
   );
 }
 
+/** 街区の台座 (地面に平らに敷く色つきの区画)。 */
+function Pad({ rect, tint }: { rect: Rect; tint: string }) {
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        left: `${rect.x}%`,
+        top: `${rect.y}%`,
+        width: `${rect.w}%`,
+        height: `${rect.h}%`,
+        borderRadius: 0,
+        background: 'rgba(255,255,255,0.26)',
+        border: `4px solid ${tint}`,
+        boxShadow: `inset 3px 3px 0 rgba(255,255,255,0.35), inset -3px -3px 0 rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.25)`,
+      }}
+    />
+  );
+}
+
 // ---------------------------------------------------------------------------
-// 建物カード
+// 街区の看板 (立ち絵)
 // ---------------------------------------------------------------------------
-function BuildingCard({
-  rect,
+function SignBoard({
+  at,
   tint,
   emoji,
   label,
   sub,
   onClick,
 }: {
-  rect: Rect;
+  at: { x: number; y: number };
   tint: string;
   emoji: string;
   label: string;
@@ -580,37 +893,30 @@ function BuildingCard({
       onKeyDown={onKey}
       title={onClick ? `${label} の街区を拡大` : label}
       style={{
-        position: 'absolute',
-        left: `${rect.x}%`,
-        top: `${rect.y}%`,
-        width: `${rect.w}%`,
-        height: `${rect.h}%`,
-        borderRadius: 12,
-        background: 'rgba(255,255,255,0.30)',
-        border: `1.5px solid ${tint}`,
-        boxShadow: '0 2px 8px rgba(0,0,0,0.12), inset 0 0 0 100px rgba(255,255,255,0.04)',
+        // 台座の奥の縁の中央に立てる (縁から上へ伸びる)。常に人より前へ。
+        ...stand(at.x, at.y, 3000),
+        background: tint,
+        color: '#26331f',
+        fontSize: 11,
+        fontWeight: 800,
+        padding: '3px 9px',
+        // 村は傾けて投影するので、画面上の高さは素の高さより少し縮む (実測 24 → 23.72)。24px の目標 (WCAG 2.5.8) を割らないよう余裕を持たせる。
+        minHeight: 28,
+        border: '3px solid #3a2a14',
+        borderRadius: 0,
+        // マイクラの GUI の面取り (明るい上・左と暗い下・右)
+        boxShadow: 'inset 3px 3px 0 rgba(255,255,255,0.4), inset -3px -3px 0 rgba(0,0,0,0.28), 0 3px 0 rgba(0,0,0,0.35)',
+        display: 'flex',
+        gap: 8,
+        alignItems: 'center',
+        whiteSpace: 'nowrap',
         cursor: onClick ? 'pointer' : 'default',
-        overflow: 'hidden',
       }}
     >
-      <div
-        style={{
-          background: tint,
-          color: '#26331f',
-          fontSize: 11,
-          fontWeight: 800,
-          padding: '2px 8px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          whiteSpace: 'nowrap',
-        }}
-      >
-        <span style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>
-          {emoji} {label}
-        </span>
-        <span style={{ fontWeight: 700, flexShrink: 0, marginLeft: 6 }}>{sub}</span>
-      </div>
+      <span>
+        {emoji} {label}
+      </span>
+      <span style={{ fontWeight: 700 }}>{sub}</span>
     </div>
   );
 }
@@ -618,11 +924,25 @@ function BuildingCard({
 // ---------------------------------------------------------------------------
 // キャラクター
 // ---------------------------------------------------------------------------
+interface Placement {
+  readonly x: number;
+  readonly y: number;
+  readonly flip: boolean;
+  readonly dur: number;
+  /** 歩いている区間の番号。止まっているときは -1 (足取りの動きを付けない)。 */
+  readonly seq: number;
+}
+
+/** 持ち場の周りを歩く村人の種類 (役員・CEO・COO は建物の前に立つ)。 */
+const WALKING_KINDS: ReadonlySet<string> = new Set(['manager', 'secretary', 'team']);
+
 interface CharacterProps {
   readonly v: Villager;
   readonly x: number;
   readonly y: number;
   readonly flip: boolean;
+  readonly dur: number;
+  readonly seq: number;
   readonly active: boolean;
   readonly enlarged: boolean;
   readonly showLabel: boolean;
@@ -634,21 +954,27 @@ const KIND_SIZE: Record<string, number> = {
   ceo: 36, coo: 32, executive: 30, manager: 24, secretary: 19, team: 20,
 };
 
-function Character({ v, x, y, flip, active, enlarged, showLabel, ring, bubble }: CharacterProps) {
+function Character({ v, x, y, flip, dur, seq, active, enlarged, showLabel, ring, bubble }: CharacterProps) {
   const base = KIND_SIZE[v.kind] ?? 20;
   const size = enlarged && v.kind === 'team' ? 26 : base;
+  const pp = projectPoint(x, y);
+  const outfit = outfitOf(v, ring);
+  // 見た目 (肌・髪) は id から決まる (乱数なし・毎回同じ顔)。
+  const seed = [...v.id].reduce((n, c) => (n * 31 + c.charCodeAt(0)) % 9973, 7);
   return (
     <div
       style={{
         position: 'absolute',
-        left: `${x}%`,
-        top: `${y}%`,
-        transform: 'translate(-50%, -100%)',
-        transition: 'left 1.9s ease-in-out, top 1.9s ease-in-out',
+        left: `${pp.x}%`,
+        top: `${pp.y}%`,
+        // 傾けず、足元を地面の投影点に置く。手前ほど大きく・前へ。吹き出しの有る人と話し手は前へ出す。
+        transform: `translate(-50%, -100%) scale(${pp.scale})`,
+        transformOrigin: '50% 100%',
+        transition: `left ${dur}s linear, top ${dur}s linear, transform ${dur}s linear`,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        zIndex: active ? 40 : v.kind === 'team' ? 12 : 22,
+        zIndex: Math.round(pp.y * 10) + (active ? 4000 : bubble ? 3500 : 0),
         pointerEvents: 'none',
       }}
     >
@@ -673,16 +999,23 @@ function Character({ v, x, y, flip, active, enlarged, showLabel, ring, bubble }:
         </div>
       ) : null}
       <div
+        // 歩く区間ごとに作り直して、足取り (ぴょこぴょこ) を歩く間だけ繰り返す。止まれば動かない。
+        key={seq}
         style={{
-          fontSize: size,
-          lineHeight: 1,
-          transform: flip ? 'scaleX(-1)' : undefined,
-          filter: active
-            ? 'drop-shadow(0 0 7px rgba(255,231,120,0.98))'
-            : 'drop-shadow(0 2px 1px rgba(0,0,0,0.28))',
+          animation: seq >= 0 ? `village-step 0.34s ease-in-out ${Math.max(1, Math.round(dur / 0.34))}` : undefined,
+          // 光る縁 (話している人・作業広場の人)
+          filter: active ? 'drop-shadow(0 0 3px #ffe066) drop-shadow(0 0 3px #ffe066)' : undefined,
         }}
       >
-        {v.emoji}
+        <Blocky
+          shirt={outfit.shirt}
+          pants={outfit.pants}
+          skin={SKINS[Math.floor(frac(seed, 1, 5) * SKINS.length)] ?? SKINS[0]}
+          hair={v.kind === 'ceo' ? '#ffd84a' : HAIRS[Math.floor(frac(seed, 2, 9) * HAIRS.length)] ?? HAIRS[0]}
+          w={Math.round(size * 0.68)}
+          h={Math.round(size * 1.36)}
+          flip={flip}
+        />
       </div>
       {/* 足元の影 */}
       <div
@@ -690,9 +1023,8 @@ function Character({ v, x, y, flip, active, enlarged, showLabel, ring, bubble }:
           width: size * 0.62,
           height: size * 0.2,
           marginTop: -2,
-          borderRadius: '50%',
-          background: 'rgba(0,0,0,0.20)',
-          filter: 'blur(1px)',
+          borderRadius: 0,
+          background: 'rgba(0,0,0,0.22)',
         }}
       />
       {showLabel ? (
@@ -779,20 +1111,56 @@ const headerStyle: React.CSSProperties = {
 const sceneStyle: React.CSSProperties = {
   position: 'relative',
   flex: 1,
-  borderRadius: 16,
+  // 注意書きが長いと景色が 300px 台まで縮み、CEO の頭が上端で切れて建物も重なる。最低の高さを持たせ、足りなければ外側が縦に伸びる。
+  minHeight: 460,
+  borderRadius: 4,
   overflow: 'hidden',
-  background: 'linear-gradient(180deg, #aee0ff 0%, #cdeecb 24%, #9ad07f 33%, #7cbf6a 70%, #6bb35f 100%)',
-  boxShadow: 'inset 0 0 70px rgba(0,0,0,0.14)',
-  border: '1px solid rgba(0,0,0,0.14)',
+  background: '#7cbf6a',
+  boxShadow: 'inset 0 0 0 4px rgba(0,0,0,0.16)',
+  border: '4px solid #4a3a24',
+  imageRendering: 'pixelated',
   // この景色は配色に追随しない (昼の空と草地・ダークでも同じ) ので、焦点の輪も配色の色 (--accent-strong) ではなく、
   // **この地の上で 3:1 以上**の濃い緑黒にする。配色の輪は草地の上で 2.3:1 だった (パス 504 の実測・街区の ring)。
   ['--focus-outline' as string]: '#1b2f14',
 };
-const sceneryStyle: React.CSSProperties = {
+const skyStyle: React.CSSProperties = {
   position: 'absolute',
   inset: 0,
-  width: '100%',
-  height: '100%',
+  background: 'linear-gradient(#7cc4f5, #bfe6ff 38%)',
+  pointerEvents: 'none',
+};
+// 傾けた市松の草地。景色より広く (左右 35%・奥 25%・手前 25% はみ出す)、中心を景色の中心に合わせる —
+// 投影 (`villageProject.ts`) は中心からの距離で決まるので、中心がずれると立ち絵と地面がずれる。
+const groundStyle: React.CSSProperties = {
+  position: 'absolute',
+  left: '-35%',
+  top: `${-25 + GROUND_SHIFT_PCT}%`,
+  width: '170%',
+  height: '150%',
+  transformOrigin: '50% 50%',
+  background: '#6fb04f',
+  pointerEvents: 'none',
+};
+// 景色と同じ範囲 (地面の中の 100/170 × 100/150)。街区・小道・池の百分率はここで数える。
+const fieldStyle: React.CSSProperties = {
+  position: 'absolute',
+  left: `${(35 / 170) * 100}%`,
+  top: `${(25 / 150) * 100}%`,
+  width: `${(100 / 170) * 100}%`,
+  height: `${(100 / 150) * 100}%`,
+};
+const pondStyle: React.CSSProperties = {
+  position: 'absolute',
+  left: '36%',
+  top: '86%',
+  width: '28%',
+  height: '9%',
+  border: '4px solid #2a4a99',
+  pointerEvents: 'none',
+};
+const pathStyle: React.CSSProperties = {
+  position: 'absolute',
+  overflow: 'hidden',
   pointerEvents: 'none',
 };
 const taskBannerStyle: React.CSSProperties = {
@@ -827,13 +1195,14 @@ const plazaStyle: React.CSSProperties = {
   transform: 'translate(-50%, -50%)',
   width: 150,
   height: 96,
-  borderRadius: '50%',
-  background: 'radial-gradient(circle, rgba(255,247,214,0.6), rgba(255,247,214,0.05))',
-  border: '2px dashed rgba(255,255,255,0.55)',
+  borderRadius: 0,
+  background: 'rgba(255,247,214,0.5)',
+  border: '4px dashed rgba(255,255,255,0.7)',
   pointerEvents: 'none',
 };
 const toggleStyle: React.CSSProperties = {
   fontSize: 12,
+  minHeight: 24,
   display: 'flex',
   alignItems: 'center',
   gap: 4,

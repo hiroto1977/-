@@ -1865,6 +1865,16 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   body.ds-printing .app { display: block; height: auto; overflow: visible; }
   body.ds-printing .main { overflow: visible; }
   body.ds-printing .content { overflow: visible; padding: 0; }
+  /* 村の殻 (2026-11-04): 紙は役場の窓の中に開く。窓は固定配置・本文は内側でスクロールするので、
+     そのまま刷ると 1 ページ目しか出ない。村・会話・窓の枠を消し、窓を通常の流れに戻す。 */
+  body.ds-printing .village-shell { display: block; height: auto; overflow: visible; }
+  body.ds-printing .village-shell-bar,
+  body.ds-printing .village-shell-body,
+  body.ds-printing .village-hall-backdrop,
+  body.ds-printing .village-hall-head { display: none !important; }
+  body.ds-printing .village-hall { position: static; inset: auto; display: block; overflow: visible;
+                                   border: 0; border-radius: 0; background: transparent; }
+  body.ds-printing .village-hall-body { overflow: visible; padding: 0; }
   body.ds-printing .ds-paper { box-shadow: none; border-radius: 0; max-width: none;
                                padding: 0; font-size: 11.5pt; }
   body.ds-printing .ds-fill.ds-empty { color: #444; }
@@ -1922,4 +1932,77 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   body.ds-printing .bank-sheet { box-shadow: none; border-radius: 0; max-width: none; padding: 0; }
   body.ds-printing .bank-section, body.ds-printing .bank-attest { break-inside: avoid; page-break-inside: avoid; }
   body.ds-printing .bank-table thead { display: table-header-group; }
+}
+
+/* --- 村の殻 (VillageShell · 村リビルド P1) ------------------------------------------------------
+ * 利用者に見えるのは村と会話だけ。旧画面 (サイドバー) は描かない。色は台帳のトークンだけを読む。
+ * 役場 (設定) は村の上に開く窓。閉じれば村へ戻る。 */
+.village-shell {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+}
+.village-shell-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: var(--topbar-h);
+  padding: 0 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel);
+}
+.village-shell-title { font-size: 16px; margin: 0; }
+.village-hall-btn { display: inline-flex; align-items: center; gap: 8px; min-height: 32px; }
+.village-hall-sub { font-size: 11px; color: var(--text-muted); }
+.village-shell-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--chat-w);
+  min-height: 0;
+}
+.village-shell-scene { min-width: 0; min-height: 0; overflow: auto; }
+/* 村人が歩く間のぴょこぴょこ (足取り)。動きを減らす設定の人には付けない。 */
+@keyframes village-step {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-village-shell] * { animation: none !important; }
+}
+.village-shell-chat {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid var(--border);
+  background: var(--bg);
+}
+.village-hall-backdrop { position: fixed; inset: 0; background: var(--shadow-drawer); z-index: 40; }
+.village-hall {
+  position: fixed;
+  inset: 4vh 6vw;
+  z-index: 41;
+  display: flex;
+  flex-direction: column;
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.village-hall-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.village-hall-body { flex: 1; min-height: 0; overflow: auto; padding: 8px 16px 24px; }
+@media (max-width: 900px) {
+  .village-shell-body { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) minmax(0, 45vh); }
+  .village-shell-chat { border-left: none; border-top: 1px solid var(--border); }
+  .village-hall { inset: 0; border-radius: 0; }
 }

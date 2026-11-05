@@ -53,39 +53,29 @@ export type Expr =
    * `field x.k` (0.2) —— 型の分からない値 (`unknown`) から欄を 1 つ読む。読んだ値は必ず `unknown` で、印は運ばない。
    * TypeScript の `(x as { k?: unknown }).k` にあたる (`as` を言語に置かない代わり —— 型を**広げる**向きにしか書き換えない)。
    */
-  | { readonly kind: 'field'; readonly object: Expr; readonly prop: string; readonly pos: Pos };
-
-/** オブジェクトの字面の 1 項。`shorthand` は `{ value }` の形 (鍵と同じ名前の値)。 */
-export interface Prop {
-  readonly key: string;
-  /** 鍵を文字列で書いた (`{ 'x-y': 1 }`)。 */
-  readonly quoted: boolean;
-  readonly value: Expr;
-  readonly shorthand: boolean;
-  readonly pos: Pos;
-}
-
-/** 分割代入の 1 つの欄 (0.13)。鍵は名前か文字列。束ねる名前は `name`。 */
-export interface DestructField {
-  readonly key: string;
-  readonly quoted: boolean;
-  readonly name: string;
-  readonly pos: Pos;
-}
-
-/** 配列の分割代入で束ねる 1 つの名前 (0.13)。 */
-export interface DestructName {
-  readonly name: string;
-  readonly pos: Pos;
-}
+  | { readonly kind: 'field'; readonly object: Expr; readonly prop: string; readonly pos: Pos }
+  /**
+   * 配列の字面の中の展開 `[...xs, y]` (0.15 · MG-024)。置けるのは**配列の字面の項**だけ —— 呼び出しの引数の展開 (`f(...xs)`) は無い
+   * (印を受ける位置が数でずれ、M4 が引数を位置で検めるので)。展開した要素は印を運ばない素の値。
+   */
+  | { readonly kind: 'spread'; readonly operand: Expr; readonly pos: Pos };
 
 /**
- * 分割代入の左辺 (0.13)。入れ子・残り (`...`)・既定値・計算した鍵は無い。
- * オブジェクトの鍵は `FORBIDDEN_MEMBERS` を通す (T-252)。
+ * オブジェクトの字面の 1 項 (0.15 で和の型になった)。
+ * 展開 `{ ...x, k: v }` は鍵を持たず、**欄より前**にだけ置ける —— 後ろに置くと、先に字面で書いた欄 (`ok: true` など)
+ * を展開が上書きできる。欄は `shorthand` が `{ value }` の形 (鍵と同じ名前の値)。
  */
-export type BindingPattern =
-  | { readonly kind: 'object'; readonly fields: readonly DestructField[]; readonly pos: Pos }
-  | { readonly kind: 'array'; readonly names: readonly DestructName[]; readonly pos: Pos };
+export type Prop =
+  | { readonly spread: true; readonly value: Expr; readonly pos: Pos }
+  | {
+      readonly spread: false;
+      readonly key: string;
+      /** 鍵を文字列で書いた (`{ 'x-y': 1 }`)。 */
+      readonly quoted: boolean;
+      readonly value: Expr;
+      readonly shorthand: boolean;
+      readonly pos: Pos;
+    };
 
 export interface Param {
   readonly name: string;
@@ -100,14 +90,14 @@ export type Comments = readonly string[];
 export type Stmt =
   | { readonly kind: 'let'; readonly mutable: boolean; readonly name: string; readonly type: TypeRef | null; readonly init: Expr | null; readonly comments: Comments; readonly pos: Pos }
   /**
-   * 分割代入 `const { a, b } = x` / `const [a, b] = xs` (0.13 · T-252)。
-   * 束ねた名前は印を運ばない。計算した鍵の添字の結果は右辺にできない (欄を読むのはメンバを読むのと同じ)。
-   * 最上位の `const` と、代入の形 (`({ a } = x)`) は無い。
+   * `const { a, b: c } = 式;` (0.14 · MG-022)。**浅い分割だけ** —— 入れ子・既定値・残り (`...rest`)・計算した鍵・`let` は無い。
+   * 鍵は `.` の後ろと同じ `FORBIDDEN_MEMBERS` を通る (`const { constructor } = x` は T-224 の表を迂回する道になるため)。
+   * 取り出した値は印を運ばない局所の値で、元の式が組み込み・外の名前 (pure / sink) の**メンバ**を直に指す形は断る (表の迂回)。
    */
-  | { readonly kind: 'destructure'; readonly mutable: boolean; readonly pattern: BindingPattern; readonly init: Expr; readonly comments: Comments; readonly pos: Pos }
+  | { readonly kind: 'destructure'; readonly fields: readonly { readonly key: string; readonly local: string }[]; readonly type: TypeRef | null; readonly init: Expr; readonly comments: Comments; readonly pos: Pos }
   | { readonly kind: 'return'; readonly value: Expr | null; readonly comments: Comments; readonly pos: Pos }
   | { readonly kind: 'if'; readonly test: Expr; readonly then: readonly Stmt[]; readonly otherwise: readonly Stmt[] | null; readonly comments: Comments; readonly pos: Pos }
-  | { readonly kind: 'try'; readonly body: readonly Stmt[]; readonly handler: readonly Stmt[]; readonly comments: Comments; readonly pos: Pos }
+  | { readonly kind: 'try'; readonly body: readonly Stmt[]; /** `catch (e)` の束縛名 (0.12)。無ければ null。 */ readonly param: string | null; readonly handler: readonly Stmt[]; readonly comments: Comments; readonly pos: Pos }
   | { readonly kind: 'assign'; readonly target: string; readonly value: Expr; readonly comments: Comments; readonly pos: Pos }
   /**
    * 添字への代入 `out[i] = v` (0.12)。欄への代入 (`out.name = v`) は無い。

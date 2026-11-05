@@ -110,6 +110,20 @@ export const AI_CREDENTIAL_FIELDS: readonly AiCredentialField[] = [
     secret: false,
   },
   {
+    key: 'grok',
+    label: 'xAI API キー (Grok)',
+    aria: 'xAI API キー',
+    placeholder: 'xai-…',
+    secret: true,
+  },
+  {
+    key: 'grokModel',
+    label: 'Grok モデル (任意)',
+    aria: 'Grok モデル',
+    placeholder: defaultModelOf('grok'),
+    secret: false,
+  },
+  {
     key: 'ollamaUrl',
     label: 'Ollama URL (ローカル。https の別ホストは端末の外へ送られます)',
     aria: 'Ollama URL',

@@ -50,6 +50,38 @@
       "gates": [],
       "sinks": []
     },
+    "src/renderer/oauth/pkceSession.mamori": {
+      "externals": [
+        "pure ../data/localWrite: describeStorageError",
+        "pure ./pkceSessionHost: hostSetItem, hostGetItem, hostRemoveItem"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/main/clients/assistant.mamori": {
+      "externals": [
+        "pure ../../shared/ai/chat: runAiChat",
+        "pure ../../shared/ai/credentials: configForProvider, configuredProviders, parseAiCredentials, providerStatuses, resolveProvider",
+        "pure ../../shared/ai/localGateway: isLlmPurpose, runLocalThenAnthropic, runtimeEnv",
+        "pure ../../shared/ai/providers: AI_PROVIDERS",
+        "pure ../../shared/assistantLimits: MAX_ASSISTANT_CONTENT_CHARS, MAX_ASSISTANT_MESSAGES, MAX_ASSISTANT_SYSTEM_CHARS, inputTooLongMessage, latestTurnTooLong, MAX_ENSEMBLE_ERROR_CHARS, stripSmuggledChars",
+        "pure ../../shared/inputCeiling: clampToCeiling",
+        "pure ./types: redactForMessage"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/renderer/network/liveRead.mamori": {
+      "externals": [
+        "pure ../../shared/api/cursor: fetchCursorSnapshotWith, DEFAULT_USAGE_DAYS",
+        "pure ../../shared/lookup: lookup"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
     "src/renderer/vettedSinks.mamori": {
       "externals": [
         "sink global: window"
@@ -81,9 +113,7 @@
       "sinks": []
     },
     "src/shared/imageUrlGate.mamori": {
-      "externals": [
-        "pure ./privateTarget: isPrivateOrReservedTarget"
-      ],
+      "externals": [],
       "imports": [],
       "gates": [
         "safeImageSrc -> VettedImageSrc | undefined",
@@ -98,6 +128,41 @@
       "sinks": []
     },
     "src/shared/safeFilename.mamori": {
+      "externals": [],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/renderer/oauth/pkce.mamori": {
+      "externals": [
+        "pure ./pkceHost: hostBtoa, hostRandomBytes, hostSha256, hostNow, hostFetch, hostSearchParams, hostWithTimeout"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/shared/atlassianSite.mamori": {
+      "externals": [],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/shared/privateTarget.mamori": {
+      "externals": [],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/shared/scanTarget.mamori": {
+      "externals": [
+        "pure ./inputCeiling: countChars, moreThanChars",
+        "pure ./scanTargetHost: hostSearchParams"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/shared/updateCheck.mamori": {
       "externals": [],
       "imports": [],
       "gates": [],
@@ -135,6 +200,24 @@
     },
     "src/shared/vetted.mamori": {
       "externals": [],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/main/clients/exportPaths.mamori": {
+      "externals": [],
+      "imports": [
+        "node:fs: promises",
+        "node:os: default os",
+        "node:path: default path"
+      ],
+      "gates": [],
+      "sinks": []
+    },
+    "src/renderer/security/dataCrypto.mamori": {
+      "externals": [
+        "pure ./dataCryptoHost: hostToBase64, hostFromBase64, hostRandomBytes, hostDeriveKey, hostEncrypt, hostDecrypt"
+      ],
       "imports": [],
       "gates": [],
       "sinks": []

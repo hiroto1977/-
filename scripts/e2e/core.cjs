@@ -56,6 +56,8 @@ require('../lib/artifact-freshness.cjs').assertFreshArtifacts([targetAbs], {
   allowEnv: 'SERVICE_HUB_E2E_ALLOW_STALE',
 });
 
+// 解錠の後に出るのは村の殻だけ (旧画面のサイドバーは 2026-11-04 に廃止)。各サービスの画面は役場と同じ窓に開く
+// —— 開き方は会話の「開いて」と同じ `servicehub:navigate` か、URL ハッシュの直リンク (`FILE + '#stocks'`)。
 const FILE = 'file://' + targetAbs;
 const EXEC = fs.existsSync('/opt/pw-browsers/chromium') ? '/opt/pw-browsers/chromium' : undefined;
 const PASS = 'e2e-pass-12345';
@@ -78,7 +80,21 @@ async function setupVault(page) {
   await page.waitForSelector('input[type="checkbox"]', { timeout: 30000 });
   await page.locator('input[type="checkbox"]').check();
   await page.getByRole('button', { name: /記録完了/ }).click();
-  await page.waitForSelector('.sidebar', { timeout: 30000 });
+  await page.waitForSelector('[data-village-shell]', { timeout: 30000 });
+}
+
+/**
+ * 窓に開けるサービスの id。**母集団はソースから導く** (旧画面のサイドバーを辿っていた頃の代わり)。
+ * 'village' は窓ではなく村そのもの (開く = 窓を閉じる) なので掃引からは外し、村は別に測る。
+ */
+const SERVICE_IDS = [...fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'renderer', 'services.ts'), 'utf8').matchAll(/^ {4}id: '([a-z0-9-]+)',$/gm)]
+  .map((m) => m[1])
+  .filter((id) => id !== 'village');
+
+/** 会話の「開いて」と同じ経路で、サービスの画面を役場の窓に開く (窓が出るまで待つ)。 */
+async function openService(page, id) {
+  await page.evaluate((target) => window.dispatchEvent(new CustomEvent('servicehub:navigate', { detail: target })), id);
+  await page.waitForSelector(`[data-village-window="${id}"]`, { timeout: 15000 });
 }
 
 /** 同一コンテキストで別サービスへ: hash 遷移はリロード必須 (SPA は hashchange を拾わない)。 */
@@ -743,12 +759,12 @@ async function phoneSuite(browser) {
   await page.getByRole('button', { name: '＋ 物件を追加' }).tap();
   await page.waitForSelector('text=スマホ物件', { timeout: 15000 });
   ok(true, 'phone: タップ操作で物件追加');
-  // ドロワー
-  await page.locator('.menu-btn').tap();
-  await page.waitForSelector('.app.nav-open', { timeout: 10000 });
-  await page.locator('.sidebar-item[data-service-id="docstudio"]').first().tap();
-  await page.waitForFunction(() => !document.querySelector('.app.nav-open'), undefined, { timeout: 10000 });
-  ok(true, 'phone: ドロワー遷移 + 自動クローズ');
+  // 窓 (旧画面のドロワーは廃止): 会話の「開いて」と同じ経路で別のサービスの画面を窓に開く
+  await openService(page, 'docstudio');
+  ok(
+    (await page.locator('[data-village-window="docstudio"]').count()) === 1,
+    'phone: サービスの画面が役場の窓に開く',
+  );
   const realErrs = errs.filter((e) => !/favicon|Autofocus/.test(e));
   // 手入力欄はスマホでも使う。入力が横に並ぶので、開いた状態で
   // 横スクロールが出ないこと・タップで事業を足せることまで見る。
@@ -793,115 +809,67 @@ async function tabletSuite(browser) {
 }
 
 /**
- * シェルの操作性 (パス 322): サイドバー (検索の ✕ と件数・分類の開閉) / トップバーの ♡ /
- * ホームの「お気に入り・最近使った」のジャンプ列 / 「先頭へ戻る」 / スマホのドロワーの閉じ方。
+ * 村の殻 (2026-11-04 · 村リビルド P4): 解錠の後に利用者に見えるのは
+ * **村と会話と役場だけ**。旧画面 (サイドバー) は 2026-11-04 に廃止した (他の suite も `servicehub:navigate` で窓を開く)。
  *
- * 見るのは**1 つの状態を 3 つの場所が映すこと** —— トップバーの ♡・サイドバーの節・ホームの列は
- * どれも App の 1 つの並び (`shellContext.ts`) から描かれる。jsdom (`appShell.test.ts`) は同じ配線を
- * 見るが、スクロールの量と `position: fixed` の可視性は実ブラウザでしか測れない。
+ * 見るのは ① サイドバーも各サービスの項目も無い ② 会話の欄・役場のボタンが在る ③ 役場は設定の画面を窓で開き
+ * Esc で閉じて焦点がボタンへ戻る ④ 会話の「〇〇を開いて」(`servicehub:navigate`) が窓に開く ⑤ スマホ幅でも
+ * 村・会話・役場が出て横にはみ出さない ⑥ 開いても閉じてもコンソールエラーが出ない。
  */
-async function shellSuite(browser) {
-  console.log('--- shell: サイドバー / トップバー / ホームのジャンプ列 / 先頭へ戻る (パス 322) ---');
-  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+async function villageSuite(browser) {
+  console.log('--- 村の殻 (既定の入口) ---');
+  const VILLAGE_FILE = 'file://' + targetAbs;
+  async function enter(page) {
+    await page.waitForSelector('text=はじめてのご利用', { timeout: 30000 });
+    const inputs = page.locator('input[type="password"]');
+    await inputs.nth(0).fill(PASS);
+    await inputs.nth(1).fill(PASS);
+    await page.getByRole('button', { name: 'パスワードを設定して開始' }).click();
+    await page.waitForSelector('input[type="checkbox"]', { timeout: 30000 });
+    await page.locator('input[type="checkbox"]').check();
+    await page.getByRole('button', { name: /記録完了/ }).click();
+    await page.waitForSelector('[data-village-shell]', { timeout: 30000 });
+  }
+  const errors = [];
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } });
   const page = await ctx.newPage();
-  const errs = [];
-  collectErrors(page, errs);
-  await page.addInitScript(() => localStorage.setItem('servicehub.plan', 'enterprise'));
-  await page.goto(FILE + '#home', { waitUntil: 'domcontentloaded' });
-  await setupVault(page);
-  await page.waitForSelector('[data-home-favorites]', { timeout: 30000 });
-
-  // 1. お気に入りが無いホームは案内文 (何も押していない利用者が最初に見る物)
-  ok((await page.locator('[data-home-favorites]').innerText()).includes('ここに並びます'), 'shell: ★ お気に入りが無いホームは案内文を出す');
-
-  // 2. トップバーの ♡ → サイドバーの節と項目の ♥ が同じ状態を映す
-  await page.locator('.sidebar-item[data-service-id="docstudio"]').first().click();
-  await page.waitForSelector('.sidebar-item.active[data-service-id="docstudio"]', { timeout: 10000 });
-  await page.locator('.topbar-fav').click();
-  await page.waitForSelector('.topbar-fav.on', { timeout: 5000 });
-  ok((await page.locator('.topbar-fav').getAttribute('aria-pressed')) === 'true', 'shell: ★ トップバーの ♡ を押すと押された状態 (aria-pressed) になる');
-  await page.waitForSelector('[data-section="favorites"] .sidebar-item[data-service-id="docstudio"]', { timeout: 5000 });
-  ok(true, 'shell: ★ サイドバーの「お気に入り」の節に同じサービスが現れる');
-  ok((await page.locator('.sidebar-item[data-service-id="docstudio"] .fav-toggle.on').count()) >= 1, 'shell: 項目の ♥ も点く (押し場所は 2 つ・状態は 1 つ)');
-  const favStored = JSON.parse((await page.evaluate(() => localStorage.getItem('servicehub.favorites'))) || '[]');
-  ok(Array.isArray(favStored) && favStored.includes('docstudio'), 'shell: お気に入りは servicehub.favorites に残る');
-
-  // 3. ホームのジャンプ列: お気に入り / 最近使った (自分は出さない) → 押すとそこへ移る
-  await page.locator('.sidebar-item[data-service-id="home"]').first().click();
-  await page.waitForSelector('[data-home-favorites] button.chip[data-jump-to="docstudio"]', { timeout: 10000 });
-  ok(true, 'shell: ★ ホームのお気に入り列にサイドバーと同じサービスが並ぶ');
-  ok((await page.locator('[data-home-recents] button.chip[data-jump-to="docstudio"]').count()) === 1, 'shell: 最近使った列に直前に開いた画面が並ぶ');
-  ok((await page.locator('[data-home-recents] button.chip[data-jump-to="home"]').count()) === 0, 'shell: 最近使った列にホーム自身は出ない (今ここに居る)');
-  await page.locator('[data-home-favorites] button.chip[data-jump-to="docstudio"]').click();
-  await page.waitForSelector('.sidebar-item.active[data-service-id="docstudio"]', { timeout: 10000 });
-  ok((await page.evaluate(() => location.hash)) === '#docstudio', 'shell: ★ ジャンプ列を押すとその画面へ移る (hash も同期)');
-
-  // 4. 検索: 件数 / ✕ で消す / ショートカットの札 / フォーカスは残る
-  await page.locator('.sidebar-search-input').fill('株');
-  await page.waitForSelector('.sidebar-search-clear', { timeout: 5000 });
-  const label = (await page.locator('.sidebar-nav [role="status"]').innerText()).trim();
-  const counted = /検索結果 (\d+) 件/.exec(label);
-  ok(counted !== null, `shell: ★ 検索結果の件数を出す (${label})`);
-  ok(counted !== null && (await page.locator('.sidebar-nav .sidebar-item').count()) === Number(counted[1]), 'shell: 件数と並ぶ項目の数が一致する');
-  await page.locator('.sidebar-search-clear').click();
-  await page.waitForFunction(() => document.querySelector('.sidebar-search-input').value === '', undefined, { timeout: 5000 });
-  ok(true, 'shell: ★ ✕ で検索が消える');
-  ok(await page.locator('.sidebar-search-kbd').isVisible(), 'shell: 空の検索欄にはショートカットの札が見える');
-  ok(await page.locator('.sidebar-search-input').evaluate((el) => document.activeElement === el), 'shell: ✕ の後もフォーカスは検索欄に残る (続けて打てる)');
-
-  // 5. 分類の開閉 (aria-expanded が実物と一致する)
-  const head = page.locator('.sidebar-group[data-category="tools"] .sidebar-group-head');
-  ok((await head.getAttribute('aria-expanded')) === 'false', 'shell: 「分析・ツール」は既定で畳まれている');
-  await head.click();
-  await page.waitForSelector('.sidebar-group[data-category="tools"] .sidebar-item', { timeout: 5000 });
-  ok((await head.getAttribute('aria-expanded')) === 'true', 'shell: ★ 見出しを押すと開く (aria-expanded=true・項目が出る)');
-  await head.click();
-  await page.waitForFunction(() => document.querySelectorAll('.sidebar-group[data-category="tools"] .sidebar-item').length === 0, undefined, { timeout: 5000 });
-  ok(true, 'shell: もう 1 度押すと畳まれる');
-
-  // 6. 先頭へ戻る + 画面を切り替えたらスクロール位置を引き継がない
-  await page.locator('.sidebar-item[data-service-id="business"]').first().click();
-  await page.waitForSelector('.sidebar-item.active[data-service-id="business"]', { timeout: 10000 });
-  const scrollTop = () => page.evaluate(() => document.querySelector('.content').scrollTop);
-  await page.evaluate(() => document.querySelector('.content').scrollTo({ top: 900, behavior: 'auto' }));
-  await page.waitForSelector('.scroll-top.show', { timeout: 5000 });
-  ok(true, 'shell: ★ 本文を下へ送ると「先頭へ戻る」が現れる');
-  ok((await scrollTop()) > 320, `shell: スクロール量 ${await scrollTop()}px > 320px (現れる閾値)`);
-  await page.locator('.scroll-top').click();
-  await page.waitForFunction(() => document.querySelector('.content').scrollTop === 0, undefined, { timeout: 5000 });
-  ok(true, 'shell: ★ 押すと先頭へ戻る');
-  await page.waitForFunction(() => !document.querySelector('.scroll-top.show'), undefined, { timeout: 5000 });
-  ok(true, 'shell: 戻ったらボタンは隠れる');
-  await page.evaluate(() => document.querySelector('.content').scrollTo({ top: 900, behavior: 'auto' }));
-  await page.waitForSelector('.scroll-top.show', { timeout: 5000 });
-  await page.locator('.sidebar-item[data-service-id="docstudio"]').first().click();
-  await page.waitForSelector('.sidebar-item.active[data-service-id="docstudio"]', { timeout: 10000 });
-  await page.waitForFunction(() => document.querySelector('.content').scrollTop === 0 && !document.querySelector('.scroll-top.show'), undefined, { timeout: 5000 });
-  ok(true, 'shell: ★ 画面を切り替えると先頭から始まる (前の画面のスクロール位置を引き継がない)');
+  collectErrors(page, errors);
+  await page.goto(VILLAGE_FILE + '#village', { waitUntil: 'domcontentloaded' });
+  await enter(page);
+  ok((await page.locator('.sidebar').count()) === 0, 'village: サイドバーが無い (旧画面は既定では出ない)');
+  ok((await page.locator('[data-service-id]').count()) === 0, 'village: 各サービスの項目が無い');
+  ok((await page.locator('[data-village-chat]').count()) === 1, 'village: 会話の欄が在る');
+  ok((await page.locator('[data-village-hall-open]').count()) === 1, 'village: 役場のボタンが在る');
+  await page.waitForSelector('[data-village-shell] main[aria-label="村"] svg', { timeout: 30000 });
+  ok(true, 'village: 村の景色 (ピクセルの木と花) が描かれる');
+  // 役場: 設定の窓
+  const hallBtn = page.locator('[data-village-hall-open]');
+  await hallBtn.focus();
+  await hallBtn.click();
+  await page.waitForSelector('[role="dialog"][data-village-hall]', { timeout: 15000 });
+  ok((await page.locator('[data-village-hall]').getAttribute('aria-label')) === '役場', 'village: 役場の窓が開く');
+  ok((await page.locator('[data-village-hall] button, [data-village-hall] input').count()) > 3, 'village: 役場の中に設定の操作子が在る');
+  await page.keyboard.press('Escape');
+  await page.waitForSelector('[data-village-hall]', { state: 'detached', timeout: 10000 });
+  ok(await hallBtn.evaluate((el) => el === document.activeElement), 'village: Esc で閉じ、焦点は役場のボタンへ戻る');
+  // 会話の「開いて」
+  await page.evaluate(() => window.dispatchEvent(new CustomEvent('servicehub:navigate', { detail: 'tax-accountant' })));
+  await page.waitForSelector('[data-village-window="tax-accountant"]', { timeout: 15000 });
+  ok((await page.locator('[data-village-window="tax-accountant"]').getAttribute('aria-label')) === '税理士', 'village: 会話の「開いて」でサービスの画面が窓に開く');
+  await page.locator('[data-village-hall] [data-dialog-initial]').click();
+  await page.waitForSelector('[data-village-hall]', { state: 'detached', timeout: 10000 });
+  ok(true, 'village: 窓の「閉じる」で村へ戻る');
+  await page.evaluate(() => window.dispatchEvent(new CustomEvent('servicehub:navigate', { detail: 'no-such-page' })));
+  await page.waitForTimeout(300);
+  ok((await page.locator('[data-village-hall]').count()) === 0, 'village: 知らない行き先では窓を開かない');
+  ok(await noHScroll(page), 'village: 横スクロールなし (デスクトップ)');
+  // スマホ幅
+  await page.setViewportSize({ width: 412, height: 915 });
+  await page.waitForTimeout(400);
+  ok((await page.locator('[data-village-chat]').isVisible()) && (await page.locator('[data-village-hall-open]').isVisible()), 'village: スマホ幅でも会話と役場のボタンが見える');
+  ok(await noHScroll(page), 'village: 横スクロールなし (スマホ幅)');
+  ok(errors.length === 0, `village: コンソールエラーが出ない${errors.length ? ' — ' + errors.slice(0, 2).join(' / ') : ''}`);
   await ctx.close();
-
-  // 7. スマホ: ドロワーは ✕ でも Esc でも閉じる
-  const pctx = await browser.newContext({ viewport: { width: 412, height: 915 }, hasTouch: true });
-  const ppage = await pctx.newPage();
-  collectErrors(ppage, errs);
-  await ppage.addInitScript(() => localStorage.setItem('servicehub.plan', 'enterprise'));
-  await ppage.goto(FILE + '#home', { waitUntil: 'domcontentloaded' });
-  await setupVault(ppage);
-  await ppage.locator('.menu-btn').tap();
-  await ppage.waitForSelector('.app.nav-open', { timeout: 10000 });
-  ok(await ppage.locator('.drawer-close').isVisible(), 'shell: ★ スマホのドロワーに閉じるボタンが見える');
-  await ppage.locator('.drawer-close').tap();
-  await ppage.waitForFunction(() => !document.querySelector('.app.nav-open'), undefined, { timeout: 10000 });
-  ok(true, 'shell: ★ ✕ でドロワーが閉じる');
-  await ppage.locator('.menu-btn').tap();
-  await ppage.waitForSelector('.app.nav-open', { timeout: 10000 });
-  await ppage.keyboard.press('Escape');
-  await ppage.waitForFunction(() => !document.querySelector('.app.nav-open'), undefined, { timeout: 10000 });
-  ok(true, 'shell: Esc でもドロワーが閉じる');
-  ok(await noHScroll(ppage), 'shell: スマホのホームに横スクロールなし');
-  const realErrs = errs.filter((e) => !/favicon|Autofocus/.test(e));
-  ok(realErrs.length === 0, `shell: console エラーゼロ (${realErrs.length})`);
-  await pctx.close();
 }
 
 /**
@@ -1409,7 +1377,7 @@ async function frameGuardSuite(browser) {
       const text = await frame.locator('body').innerText().catch(() => '');
       ok(text.length > 0, 'frame: 枠の中は真っ白ではない');
       ok(text.includes('枠の中では開けません'), 'frame: 拒否の見出しが出る');
-      ok((await frame.locator('.sidebar').count().catch(() => 0)) === 0, 'frame: アプリ本体 (サイドバー) が無い');
+      ok((await frame.locator('[data-village-shell]').count().catch(() => 0)) === 0, 'frame: アプリ本体 (村の殻) が無い');
       ok(
         !/はじめてのご利用|ロック解除/.test(text),
         'frame: 保管庫の画面も出さない (操作させる面を一切与えない)',
@@ -1539,7 +1507,7 @@ async function vaultPasswordSuite(browser) {
 
   await page.locator('input[type="checkbox"]').check();
   await page.getByRole('button', { name: /記録完了/ }).click();
-  await page.waitForSelector('.sidebar', { timeout: 30000 });
+  await page.waitForSelector('[data-village-shell]', { timeout: 30000 });
 
   // ── パスワードを変更する ──
   await page.goto(FILE + '#settings', { waitUntil: 'domcontentloaded' });
@@ -1572,7 +1540,7 @@ async function vaultPasswordSuite(browser) {
   ok(true, 'vault: 旧パスワードでは開かない');
   await page.locator('input[type="password"]').first().fill(PW2);
   await page.getByRole('button', { name: 'ロック解除' }).click();
-  await page.waitForSelector('.sidebar', { timeout: 30000 });
+  await page.waitForSelector('[data-village-shell]', { timeout: 30000 });
   ok(true, 'vault: 新パスワードで開く');
 
   // ── ★ 控えた 24 語で復旧できる (変更前に控えたもの) ──
@@ -1585,14 +1553,14 @@ async function vaultPasswordSuite(browser) {
   await recPw.nth(0).fill(PW3);
   await recPw.nth(1).fill(PW3);
   await page.getByRole('button', { name: '復元してロック解除' }).click();
-  // **成否のどちらかが出るまで待つ。** `.sidebar` だけを待つと、復旧が壊れた
+  // **成否のどちらかが出るまで待つ。** `[data-village-shell]` だけを待つと、復旧が壊れた
   // ときに 30 秒のタイムアウトになり「何が起きたか」が読めない失敗になる
   // (対照実験で実際にそうなった)。画面が出す拒否の文言も見て、
   // どちらが起きたかを名指しする。
   const recovered = await page
     .waitForFunction(
       () => {
-        if (document.querySelector('.sidebar')) return 'ok';
+        if (document.querySelector('[data-village-shell]')) return 'ok';
         const t = document.body.textContent ?? '';
         if (t.includes('リカバリーキーが違います')) return 'rejected';
         return false;
@@ -1651,7 +1619,7 @@ async function crossTabLockSuite(browser) {
   await a.waitForSelector('input[type="checkbox"]', { timeout: 30000 });
   await a.locator('input[type="checkbox"]').check();
   await a.getByRole('button', { name: /記録完了/ }).click();
-  await a.waitForSelector('.sidebar', { timeout: 30000 });
+  await a.waitForSelector('[data-village-shell]', { timeout: 30000 });
 
   // ── タブ B: 同じ保管庫を、同じパスワードで別に解錠する ──
   const b = await ctx.newPage();
@@ -1660,7 +1628,7 @@ async function crossTabLockSuite(browser) {
   await b.waitForSelector('text=ロック解除', { timeout: 30000 });
   await b.locator('input[type="password"]').first().fill(PASS);
   await b.getByRole('button', { name: 'ロック解除' }).click();
-  await b.waitForSelector('.sidebar', { timeout: 30000 });
+  await b.waitForSelector('[data-village-shell]', { timeout: 30000 });
 
   const locked = async (page) => {
     const t = await page.locator('body').innerText();
@@ -1726,7 +1694,7 @@ async function crossTabDataSuite(browser) {
   await b.waitForSelector('text=ロック解除', { timeout: 30000 });
   await b.locator('input[type="password"]').first().fill(PASS);
   await b.getByRole('button', { name: 'ロック解除' }).click();
-  await b.waitForSelector('.sidebar', { timeout: 30000 });
+  await b.waitForSelector('[data-village-shell]', { timeout: 30000 });
 
   /** 画面の文にそれが現れるまで待つ (現れなければ false —— 落とすのは ok() の役目)。 */
   const appears = (page, text, ms = 15000) =>
@@ -2554,7 +2522,7 @@ async function vaultOpacitySuite(browser) {
   await page.locator('input[type="password"]').first().fill(PASS);
   await page.getByRole('button', { name: 'ロック解除' }).click();
   const opened = await page
-    .waitForSelector('.sidebar', { timeout: 20000 })
+    .waitForSelector('[data-village-shell]', { timeout: 20000 })
     .then(() => true)
     .catch(() => false);
   ok(opened, 'vaultOpacity: 正しいパスワードで開く');
@@ -2565,12 +2533,25 @@ async function vaultOpacitySuite(browser) {
   await page.evaluate((s) => localStorage.setItem('__e2e_probe__', s), SECRET);
   ok((await dumpLs()).includes(SECRET), '★ vaultOpacity 対照: localStorage へ植えたら見つかる');
   await page.evaluate(async (s) => {
-    const db = await new Promise((res) => {
-      const r = indexedDB.open('business-hub-data');
-      r.onsuccess = () => res(r.result);
-    });
-    const st = Array.from(db.objectStoreNames)[0];
-    if (st !== undefined) {
+    // 既に在る DB のうち、最初に object store を持つ物へ植える (存在しない名前を開くと空の DB を作ってしまう。
+    // 村の殻は旧画面と違い、業務レコードの DB を解錠だけでは開かない)。
+    let db = null;
+    let st;
+    for (const d of await indexedDB.databases()) {
+      if (!d.name) continue;
+      const cand = await new Promise((res) => {
+        const r = indexedDB.open(d.name);
+        r.onsuccess = () => res(r.result);
+      });
+      const first = Array.from(cand.objectStoreNames)[0];
+      if (first !== undefined) {
+        db = cand;
+        st = first;
+        break;
+      }
+      cand.close();
+    }
+    if (db !== null && st !== undefined) {
       await new Promise((res) => {
         const tx = db.transaction(st, 'readwrite');
         const store = tx.objectStore(st);
@@ -2580,7 +2561,7 @@ async function vaultOpacitySuite(browser) {
         q.onerror = () => res();
       });
     }
-    db.close();
+    if (db !== null) db.close();
   }, SECRET);
   ok((await dumpIdb()).includes(SECRET), '★ vaultOpacity 対照: IndexedDB へ文字列で植えたら見つかる');
 
@@ -2590,12 +2571,25 @@ async function vaultOpacitySuite(browser) {
    * 保管庫が平文をバイトで書けば、こちらの形になる。
    */
   await page.evaluate(async (s) => {
-    const db = await new Promise((res) => {
-      const r = indexedDB.open('business-hub-data');
-      r.onsuccess = () => res(r.result);
-    });
-    const st = Array.from(db.objectStoreNames)[0];
-    if (st !== undefined) {
+    // 既に在る DB のうち、最初に object store を持つ物へ植える (存在しない名前を開くと空の DB を作ってしまう。
+    // 村の殻は旧画面と違い、業務レコードの DB を解錠だけでは開かない)。
+    let db = null;
+    let st;
+    for (const d of await indexedDB.databases()) {
+      if (!d.name) continue;
+      const cand = await new Promise((res) => {
+        const r = indexedDB.open(d.name);
+        r.onsuccess = () => res(r.result);
+      });
+      const first = Array.from(cand.objectStoreNames)[0];
+      if (first !== undefined) {
+        db = cand;
+        st = first;
+        break;
+      }
+      cand.close();
+    }
+    if (db !== null && st !== undefined) {
       await new Promise((res) => {
         const tx = db.transaction(st, 'readwrite');
         const store = tx.objectStore(st);
@@ -2606,7 +2600,7 @@ async function vaultOpacitySuite(browser) {
         q.onerror = () => res();
       });
     }
-    db.close();
+    if (db !== null) db.close();
   }, SECRET);
   ok(
     (await dumpIdb()).includes(SECRET),
@@ -3373,7 +3367,7 @@ async function teamRadarSuite(browser) {
   ok(omitted.includes('E2E描けない人') && omitted.includes('プレゼン力'),
     `teamRadar: ★ 誰のどの軸が欠けているかを言う — 実際 ${omitted.slice(0, 80)}`);
   // 図には描ける人の多角形が 1 つだけ (中心に落ちた頂点が無い)
-  const polygons = await page.locator('svg').first().locator('polygon').evaluateAll(
+  const polygons = await page.locator('[data-village-hall] svg').first().locator('polygon').evaluateAll(
     (els) => els.filter((e) => e.getAttribute('fill') !== 'none').map((e) => e.getAttribute('points') ?? ''),
   );
   ok(polygons.length === 1, `teamRadar: ★ 未評価が在る人の多角形は描かない — 実際 ${polygons.length} 個`);
@@ -4149,14 +4143,8 @@ async function themeSuite(browser) {
 }
 
 /**
- * デザインの選択 (すっきり / かわいい · 2026-09-26) と 3 列の構成。
- *
- * 広い画面 (1200px 以上) の「すっきり」ではコンシェルジュがサイドバーと画面の間の**列**になり、
- * それ以外 (かわいい・狭い画面) は右下の 🤖 から開く浮いた窓になる。判定は JS の 1 か所
- * (`chatDock.ts`) で、CSS は `.chat-docked` の有無だけを見る。jsdom (`chatDock.test.ts`) は
- * matchMedia の代役と描いた木までしか見られないので、ここでは実ブラウザでしか測れない物を見る:
- *   - 列が**実際に横へ並ぶか** (座標)・畳むと画面の列が広がるか
- *   - 窓の幅を変えたら**追随するか** (`useSyncExternalStore` の購読が生きているか)
+ * デザインの選択 (すっきり / かわいい · 2026-09-26)。会話の列は村の殻が常に持つ
+ * (旧画面の 3 列の判定 `chatDock.ts` は 2026-11-04 に廃止)。ここでは実ブラウザでしか測れない物を見る:
  *   - 4 枚のトークン表の**特異性と重なり順** —— 地の色 (`--bg`) は (0,3,0) の「かわいい × ダーク」が
  *     持つので順序に依らない。**順序が効くのは、すっきりのダークが持ち、かわいいのダークが持たない名前**
  *     (実測 2 つ: `--user-bubble-bg` / `--composer-bg` —— かわいいのライトでは別名 `var(…)` なので
@@ -4164,19 +4152,18 @@ async function themeSuite(browser) {
  *     「かわいいのライト」がぶつかり、**後ろに在る方が勝つ**。期待値は**出荷した stylesheet の規則
  *     そのもの**から読む (色を検査へ書き写さない —— theme suite が `#fff7fa` を写していて、既定を
  *     替えた日に古びた当の形)
- *   - スマホでは下から出るシートになり、開いている間は 🤖 が入力欄と重ならないこと
+ *   - スマホで会話と役場のボタンが見え、横スクロールが出ないこと
  */
 async function designSuite(browser) {
-  console.log('--- デザイン (すっきり / かわいい) と 3 列の構成 ---');
+  console.log('--- デザイン (すっきり / かわいい) ---');
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
   const page = await ctx.newPage();
   const errs = [];
   collectErrors(page, errs);
   await page.addInitScript(() => localStorage.setItem('servicehub.plan', 'enterprise'));
-  await page.goto(FILE + '#home', { waitUntil: 'domcontentloaded' });
+  await page.goto(FILE, { waitUntil: 'domcontentloaded' });
   await setupVault(page);
   const design = () => page.evaluate(() => document.documentElement.getAttribute('data-design'));
-  const box = (sel) => page.locator(sel).first().boundingBox();
   const bodyBg = () => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
   const cssVar = (name) => page.evaluate((n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim(), name);
   /** 出荷した stylesheet の中で、その selector の表が宣言する値 (期待値を検査へ書き写さない)。 */
@@ -4197,52 +4184,20 @@ async function designSuite(browser) {
       [selector, name],
     );
 
-  // 1. 既定は「すっきり」、1280px では サイドバー | チャット | 画面 の 3 列
+  // 1. 既定は「すっきり」。会話の列は村の殻が常に持つ (旧画面の 3 列の判定 chatDock は廃止)
   ok((await design()) === 'clean', `design: ★ 何も選んでいなければ「すっきり」 (実際 ${await design()})`);
-  await page.waitForSelector('.chat-column [data-concierge]', { timeout: 10000 });
-  ok((await page.locator('.concierge-fab').count()) === 0, 'design: ★ 3 列のときは右下の 🤖 を出さない (チャットの入口は 1 つ)');
-  const sb = await box('.sidebar');
-  const col = await box('.chat-column');
-  const main = await box('.main');
-  ok(
-    sb !== null && col !== null && main !== null && sb.x + sb.width <= col.x + 1 && col.x + col.width <= main.x + 1,
-    `design: ★ 実際に サイドバー | チャット | 画面 の順に横へ並ぶ (${JSON.stringify([sb, col, main].map((b) => b && [Math.round(b.x), Math.round(b.width)]))})`,
-  );
-  ok(main !== null && main.width >= 560, `design: 画面の列は ${Math.round(main?.width ?? 0)}px (≥ 560px —— チャット欄に押し潰されない)`);
-  ok(await noHScroll(page), 'design: 3 列でも横スクロールなし');
+  await page.waitForSelector('[data-village-chat] [data-concierge]', { timeout: 10000 });
+  ok((await page.locator('.concierge-fab').count()) === 0, 'design: ★ 会話は列に常に出ていて、右下の 🤖 は無い (チャットの入口は 1 つ)');
+  ok(await noHScroll(page), 'design: 横スクロールなし');
 
   // 2. 列の欄から送ると、列の中で会話が進む
-  await page.locator('.chat-column input[aria-label="チャット入力"]').fill('何ができる？');
-  await page.locator('.chat-column').getByRole('button', { name: 'コンシェルジュへ送る' }).click();
-  await page.waitForSelector('.chat-column [data-concierge-role="bot"]', { timeout: 10000 });
+  await page.locator('[data-village-chat] input[aria-label="チャット入力"]').fill('何ができる？');
+  await page.locator('[data-village-chat]').getByRole('button', { name: 'コンシェルジュへ送る' }).click();
+  await page.waitForSelector('[data-village-chat] [data-concierge-role="bot"]', { timeout: 10000 });
   ok(
-    (await page.locator('.chat-column [data-concierge-role="user"]').first().innerText()).includes('何ができる'),
+    (await page.locator('[data-village-chat] [data-concierge-role="user"]').first().innerText()).includes('何ができる'),
     'design: ★ 列の欄から送ると、列の中に利用者の発言と応答が並ぶ',
   );
-
-  // 3. トップバーの「💬 チャット」で畳む / 戻す
-  const toggle = page.locator('.chat-toggle');
-  ok((await toggle.getAttribute('aria-expanded')) === 'true', 'design: トップバーの「💬 チャット」は開いた状態を名乗る (aria-expanded)');
-  await toggle.click();
-  await page.waitForFunction(() => !document.querySelector('.chat-column'), undefined, { timeout: 5000 });
-  const wide = await box('.main');
-  ok(
-    wide !== null && main !== null && wide.width > main.width + 300,
-    `design: ★ 畳むと画面の列が広がる (${Math.round(main?.width ?? 0)} → ${Math.round(wide?.width ?? 0)}px)`,
-  );
-  ok((await page.locator('.concierge-fab').count()) === 0, 'design: 畳んでも右下の 🤖 は出さない (戻す口はトップバーの 1 つ)');
-  await toggle.click();
-  await page.waitForSelector('.chat-column [data-concierge-role="user"]', { timeout: 5000 });
-  ok(true, 'design: ★ もう 1 度押すと列が戻り、さっきの会話も残っている');
-
-  // 4. 窓の幅に追随する: 1024px では浮いた窓 (🤖)、1280px へ戻すと列
-  await page.setViewportSize({ width: 1024, height: 900 });
-  await page.waitForSelector('.concierge-fab', { timeout: 5000 });
-  ok((await page.locator('.chat-column').count()) === 0, 'design: ★ 1024px に狭めると列は消え、右下の 🤖 に戻る (窓の幅に追随)');
-  ok((await page.locator('.chat-toggle').count()) === 0, 'design: 狭い画面ではトップバーの「💬 チャット」も出さない');
-  await page.setViewportSize({ width: 1280, height: 900 });
-  await page.waitForSelector('.chat-column', { timeout: 5000 });
-  ok((await page.locator('.concierge-fab').count()) === 0, 'design: 1280px へ戻すと列に戻る');
 
   // 5. 設定で「かわいい」へ
   await gotoService(page, '#settings', '[data-design-section]');
@@ -4268,8 +4223,7 @@ async function designSuite(browser) {
     cleanRadius === '8px' && (await cssVar('--radius-button')) === (await tableValue(':root[data-design="cute"]', '--radius-button')),
     `design: 形のトークンも入れ替わる (ボタンの角 ${cleanRadius} → ${await cssVar('--radius-button')})`,
   );
-  await page.waitForSelector('.concierge-fab', { timeout: 5000 });
-  ok((await page.locator('.chat-column').count()) === 0, 'design: ★ 「かわいい」では 1280px でも列にせず右下の 🤖 から開く');
+  ok((await page.locator('[data-village-chat] [data-concierge]').count()) === 1, 'design: 「かわいい」でも会話の列は村に残る (デザインで入口を変えない)');
   ok((await page.evaluate(() => localStorage.getItem('servicehub.design'))) === 'cute', 'design: 選択は servicehub.design に残る');
 
   // 6. 再読込: 解錠の前 (ロック画面) から効いている —— main.tsx が描画より先に適用する
@@ -4336,33 +4290,20 @@ async function designSuite(browser) {
   await page.locator('[data-design-choice="clean"]').click();
   await page.waitForFunction(() => document.documentElement.getAttribute('data-design') === 'clean', undefined, { timeout: 5000 });
   ok((await cssVar('--bg')) === cleanDarkBg, `design: すっきり × ダークの地はすっきりのダーク (実際 ${await cssVar('--bg')})`);
-  await page.waitForSelector('.chat-column', { timeout: 5000 });
-  ok((await page.locator('.concierge-fab').count()) === 0, 'design: ★ すっきりへ戻すと、再読込なしで 3 列に戻る');
   const realErrs = errs.filter((e) => !/favicon|Autofocus/.test(e));
   ok(realErrs.length === 0, `design: console エラーゼロ (${JSON.stringify(realErrs).slice(0, 200)})`);
   await ctx.close();
 
-  // 9. スマホ: 下から出るシート (幅いっぱい・下端に接する)・開いている間は 🤖 を隠す
+  // 9. スマホ: 会話の列と役場のボタンが見える・横スクロールなし (旧画面の「下から出るシート」は廃止)
   const pctx = await browser.newContext({ viewport: { width: 412, height: 915 }, hasTouch: true });
   const ppage = await pctx.newPage();
   const perrs = [];
   collectErrors(ppage, perrs);
   await ppage.addInitScript(() => localStorage.setItem('servicehub.plan', 'enterprise'));
-  await ppage.goto(FILE + '#home', { waitUntil: 'domcontentloaded' });
+  await ppage.goto(FILE + '#village', { waitUntil: 'domcontentloaded' });
   await setupVault(ppage);
-  ok((await ppage.locator('.chat-column').count()) === 0, 'design: スマホでは列にしない');
-  await ppage.locator('.concierge-fab').tap();
-  await ppage.waitForSelector('.concierge.floating', { timeout: 5000 });
-  const sheet = await ppage.locator('.concierge.floating').boundingBox();
-  ok(
-    sheet !== null && Math.abs(sheet.x) <= 1 && Math.abs(sheet.width - 412) <= 1 && Math.abs(sheet.y + sheet.height - 915) <= 1,
-    `design: ★ スマホでは下から出るシート (幅いっぱい・下端に接する: ${JSON.stringify(sheet && [Math.round(sheet.x), Math.round(sheet.width), Math.round(sheet.y + sheet.height)])})`,
-  );
-  ok(!(await ppage.locator('.concierge-fab').isVisible()), 'design: シートを開いている間は 🤖 が隠れて送信ボタンと重ならない');
-  // 見出しの ✕ を押す (右下の 🤖 はシートを開いている間は隠れている)。名前は 🤖 の「チャットを閉じる」と分けてある。
-  await ppage.getByRole('button', { name: 'コンシェルジュを閉じる', exact: true }).tap();
-  await ppage.waitForFunction(() => !document.querySelector('.concierge.floating'), undefined, { timeout: 5000 });
-  ok(await ppage.locator('.concierge-fab').isVisible(), 'design: ✕ で閉じると 🤖 が戻る');
+  ok((await ppage.locator('.concierge-fab').count()) === 0, 'design: スマホでも右下の 🤖 は無い (会話は村の列)');
+  ok((await ppage.locator('[data-village-chat]').isVisible()) && (await ppage.locator('[data-village-hall-open]').isVisible()), 'design: スマホで会話と役場のボタンが見える');
   ok(await noHScroll(ppage), 'design: スマホで横スクロールなし');
   const prealErrs = perrs.filter((e) => !/favicon|Autofocus/.test(e));
   ok(prealErrs.length === 0, `design: スマホで console エラーゼロ (${JSON.stringify(prealErrs).slice(0, 200)})`);
@@ -4435,7 +4376,7 @@ async function contrastSuite(browser) {
     );
     // 動きは測定の邪魔 (アニメーションの途中の色を測らない)
     const still = () => page.addStyleTag({ content: '*{animation:none!important;transition:none!important;caret-color:transparent!important}' });
-    await page.goto(FILE + '#home', { waitUntil: 'domcontentloaded' });
+    await page.goto(FILE, { waitUntil: 'domcontentloaded' });
     await page.waitForSelector('text=はじめてのご利用', { timeout: 30000 });
     await still();
     const rows = tag(await page.evaluate(expr), '(初回の設定画面)');
@@ -4535,15 +4476,10 @@ async function contrastSuite(browser) {
       );
     }
 
-    // サイドバーの全画面。既定で畳まれている分類 (士業連携・分析・外部連携) も、実際の見出しを押して全部開く
-    // (開いていない分類の画面は DOM に無く、一覧が 20 件で止まる —— 初回の実行で実際にそうなった)。重複は落とす。
-    for (let guard = 0; guard < 10 && (await page.locator('.sidebar-group-head[aria-expanded="false"]').count()) > 0; guard++) {
-      await page.locator('.sidebar-group-head[aria-expanded="false"]').first().click();
-    }
-    const ids = await page.evaluate(() => [...new Set([...document.querySelectorAll('.sidebar-item[data-service-id]')].map((b) => b.getAttribute('data-service-id')))]);
+    // 全サービスの画面。村の殻では、会話の「開いて」(`servicehub:navigate`) と同じ道で役場の窓へ開く。
+    const ids = SERVICE_IDS;
     for (const id of ids) {
-      await page.locator(`.sidebar-item[data-service-id="${id}"]`).first().click();
-      await page.waitForSelector(`.sidebar-item[data-service-id="${id}"][aria-current="page"]`, { timeout: 15000 });
+      await openService(page, id);
       await settled(page);
       rows.push(...tag(await page.evaluate(expr), id));
     }
@@ -4655,20 +4591,6 @@ async function controlsSuite(browser) {
   };
   const emptyAcc = () => ({ fields: [], focus: [], targets: [], mouseOnly: [], sliders: [], ax: { total: 0, rows: [] } });
 
-  /** 画面の一覧 (サイドバーの項目)。畳まれた分類は実際の見出しを押して全部開く。スマホではドロワーを開いて読み、Esc で閉じる。 */
-  const screenIds = async (page, phone) => {
-    if (phone) {
-      const t = page.locator('button.menu-btn').first();
-      if ((await t.count()) > 0) await t.click();
-    }
-    for (let guard = 0; guard < 10 && (await page.locator('.sidebar-group-head[aria-expanded="false"]').count()) > 0; guard++) {
-      await page.locator('.sidebar-group-head[aria-expanded="false"]').first().click();
-    }
-    const ids = await page.evaluate(() => [...new Set([...document.querySelectorAll('.sidebar-item[data-service-id]')].map((b) => b.getAttribute('data-service-id')))]);
-    if (phone) await page.keyboard.press('Escape');
-    return ids;
-  };
-
   /** 全画面を測る。 */
   const sweep = async (cfg, viewport, phone) => {
     const ctx = await browser.newContext(phone ? { viewport, hasTouch: true } : { viewport });
@@ -4681,7 +4603,7 @@ async function controlsSuite(browser) {
       },
       [cfg.theme, cfg.design],
     );
-    await page.goto(FILE + '#home', { waitUntil: 'domcontentloaded' });
+    await page.goto(FILE, { waitUntil: 'domcontentloaded' });
     await page.waitForSelector('text=はじめてのご利用', { timeout: 30000 });
     await page.addStyleTag({ content: STILL });
     const acc = emptyAcc();
@@ -4698,46 +4620,26 @@ async function controlsSuite(browser) {
     // 載せた瞬間に既定より**弱く**なった (手で気付いた) —— 状態の規則は静止画を測っても出てこない。
     let hovered = null;
     if (!phone) {
-      const search = page.locator('.sidebar-search-input').first();
+      const search = page.locator('[data-village-chat] .concierge-input').first();
       if ((await search.count()) > 0) {
         await search.hover();
         const r = await page.evaluate(expr);
-        hovered = r.fields.find((f) => f.sig.includes('sidebar-search-input')) ?? null;
+        hovered = r.fields.find((f) => f.sig.includes('concierge-input')) ?? null;
         await page.mouse.move(0, 0);
       }
     }
-    const ids = await screenIds(page, phone);
+    const ids = SERVICE_IDS;
     for (const id of ids) {
-      await page.evaluate((i) => {
-        location.hash = i;
-      }, id);
-      await page.waitForSelector(`.sidebar-item[data-service-id="${id}"][aria-current="page"]`, { timeout: 15000 });
+      await openService(page, id);
       await settled(page);
       merge(acc, await measure(page, id, cfg.ax === true));
-    }
-    let drawer = null;
-    if (phone) {
-      // **開いたドロワーも 1 度測る** (2026-10-07 · パス 506 の直後に測って足した)。パス 506 で閉じたドロワーは `inert` になり、
-      // 測定器の `present()` も inert の下を「無い」と数えるので、上の画面ごとの測定にはドロワーの 74 項目が入らない ——
-      // 閉じている間は焦点を取れないのが正しい (`opened` suite が留める)。だが開けば描かれる物なので、開いた状態で測る
-      // (法則 119 `opened-state-measured-where-drawn`)。項目は画面を跨いで同じなので 1 回でよい。
-      // 実測 (2026-10-07・この段が無い形): スマホの焦点の母集団は 681・AX の名前の母集団は 2,940 で、desktop と同じ床
-      // (800 / 10,000) が**正しく鳴った** —— 床を下げるのではなく、測る物を戻してから床を分けた (下の assertSweep の opts)。
-      const menu = page.locator('button.menu-btn').first();
-      await menu.click();
-      await page.waitForSelector('.app.nav-open', { timeout: 10000 });
-      await settled(page);
-      drawer = await measure(page, '(開いたドロワー)', cfg.ax === true);
-      merge(acc, drawer);
-      await page.keyboard.press('Escape');
-      await page.waitForFunction(() => !document.querySelector('.app.nav-open'), undefined, { timeout: 10000 });
     }
     await page.reload({ waitUntil: 'domcontentloaded' });
     await page.waitForSelector('text=ロック解除', { timeout: 30000 });
     await page.addStyleTag({ content: STILL });
     merge(acc, await measure(page, '(ロック画面)', cfg.ax === true));
     await ctx.close();
-    return { acc, ids, applied, hovered, drawer };
+    return { acc, ids, applied, hovered };
   };
 
   /** 「何が・どの値で」を畳んだ要約 (落ちたとき、同じ原因の行を 1 つにして先頭 6 件を読めるように)。 */
@@ -4747,7 +4649,7 @@ async function controlsSuite(browser) {
       .map((g) => `${show(g.sample)} ${g.sample.sig}×${g.n}行/${g.pages.size}画面`)
       .join(' / ');
 
-  const assertSweep = (label, { acc, ids, hovered, drawer }, opts) => {
+  const assertSweep = (label, { acc, ids, hovered }, opts) => {
     const fieldV = L.fieldViolations(acc.fields, C);
     const sliderV = L.sliderViolations(acc.sliders, C);
     const focusV = L.focusViolations(acc.focus);
@@ -4757,14 +4659,6 @@ async function controlsSuite(browser) {
       ids.length >= 60 && acc.fields.length >= opts.minFields && focused.length >= opts.minFocus,
       `controls[${label}]: 全 ${ids.length} 画面 + 初回 + ロック画面で測れた (入力欄 ${acc.fields.length}・焦点を取った操作子 ${focused.length}/${acc.focus.length}・押せる大きさの対象 ${acc.targets.length}・スライダー ${acc.sliders.length})`,
     );
-    if (opts.drawer) {
-      // 開いたドロワーの項目が母集団に入っていること (閉じたドロワーは inert なので、この段が消えると 74 項目が黙って測定から外れる)。
-      const dFocus = drawer === null ? 0 : drawer.focus.filter((r) => r.focused).length;
-      ok(
-        drawer !== null && dFocus >= opts.minDrawerFocus,
-        `controls[${label}]: ★ 開いたドロワー (inert が外れた 74 項目) も測った (焦点を取った操作子 ${dFocus} (sig 単位)・24px 未満の目標 ${drawer === null ? 0 : drawer.targets.length}・入力欄 ${drawer === null ? 0 : drawer.fields.length})`,
-      );
-    }
     ok(
       fieldV.length === 0,
       `controls[${label}]: ★ 描画済みの入力欄の輪郭は 3:1 以上 (WCAG 1.4.11) (測った ${acc.fields.length} 欄${fieldV.length ? ` · 割った ${fieldV.length} 欄: ${summarize(fieldV, (r) => `${r.sig}|${r.best}`, (r) => `${r.best}:1`)}` : ''})`,
@@ -4772,7 +4666,7 @@ async function controlsSuite(browser) {
     if (opts.hover) {
       ok(
         hovered !== null && L.fieldViolations([hovered], C).length === 0,
-        `controls[${label}]: ★ ポインタを載せた入力欄 (サイドバーの検索) の枠も 3:1 以上 —— 載せて既定より薄くならない (載せた枠 ${hovered ? `${hovered.border}:1` : '欄が見つからない'})`,
+        `controls[${label}]: ★ ポインタを載せた入力欄 (会話の入力欄) の枠も 3:1 以上 —— 載せて既定より薄くならない (載せた枠 ${hovered ? `${hovered.border}:1` : '欄が見つからない'})`,
       );
     }
     ok(
@@ -4807,7 +4701,7 @@ async function controlsSuite(browser) {
       r.applied.design === cfg.design && r.applied.theme === cfg.theme,
       `controls[${cfg.name}]: 配色が実際にその配色になっている (${JSON.stringify(r.applied)})`,
     );
-    assertSweep(cfg.name, r, { minFields: 450, minFocus: 800, ax: cfg.ax === true, minNamed: 10000, hover: true });
+    assertSweep(cfg.name, r, { minFields: 450, minFocus: 800, ax: cfg.ax === true, minNamed: 3000, hover: true });
   }
   ok(new Set(bgs).size === 4, `controls: 4 配色の地の色 (--bg) はすべて別 (${JSON.stringify(bgs)}) —— 同じ配色を何度も測っていない`);
 
@@ -4818,7 +4712,7 @@ async function controlsSuite(browser) {
     // 実測 (2026-10-07 · 開いたドロワーを測る段を足した後): すっきり × ライト = 入力欄 515・焦点 689 (sig 単位)・24px 未満の目標 896・
     // AX の名前 3,106・開いたドロワー = 焦点 8 (74 項目は同じ sig なので 1 つに畳まれる) / 入力欄 2 / 24px 未満 0 —— かわいい × ダーク = 515・689・878・
     // ドロワー 8 / 2 / 0。段が無い形は焦点 681・名前 2,940 で、desktop の床 (800 / 10,000) を割った。床は実測の 63〜80%。
-    assertSweep(`スマホ · ${cfg.name}`, r, { minFields: 450, minFocus: 500, ax: cfg === CONFIGS[0], minNamed: 2500, drawer: true, minDrawerFocus: 5 });
+    assertSweep(`スマホ · ${cfg.name}`, r, { minFields: 450, minFocus: 500, ax: cfg === CONFIGS[0], minNamed: 2500 });
   }
 
   // ---- 測定器そのものの対照 (about:blank の探り) ----
@@ -4968,7 +4862,7 @@ async function controlsSuite(browser) {
  *
  * 測定器: 字は `contrast.cjs`・操作子は `controls.cjs` (パス 503 / 504 と同じ 1 つ)。`controls.cjs` の `present()` は `inert` の下を
  * 「無い」と数える (閉じたドロワーの 74 項目を焦点の母集団に入れない) —— その対照は末尾の about:blank の探り。
- * 待ちは状態で取る (描き終わり・`.app.nav-open`・窓の有無)。固定の待ちは持たない。
+ * 待ちは状態で取る (描き終わり・窓の有無)。固定の待ちは持たない。
  */
 async function openedSuite(browser) {
   console.log('--- 開いた窓とスマホ幅 (details / 手入力 / 浮いた窓 / ドロワー / 412px · 4 配色 · WCAG 2.x AA + APG dialog) ---');
@@ -5019,18 +4913,6 @@ async function openedSuite(browser) {
     await page.keyboard.press('Tab');
     await page.keyboard.press('Shift+Tab');
   };
-  const screenIds = async (page, phone) => {
-    if (phone) {
-      const t = page.locator('button.menu-btn').first();
-      if ((await t.count()) > 0) await t.click();
-    }
-    for (let guard = 0; guard < 10 && (await page.locator('.sidebar-group-head[aria-expanded="false"]').count()) > 0; guard++) {
-      await page.locator('.sidebar-group-head[aria-expanded="false"]').first().click();
-    }
-    const ids = await page.evaluate(() => [...new Set([...document.querySelectorAll('.sidebar-item[data-service-id]')].map((b) => b.getAttribute('data-service-id')))]);
-    if (phone) await page.keyboard.press('Escape');
-    return ids;
-  };
   const tag = (rows, label) => rows.map((r) => ({ ...r, page: label }));
   const textSummary = (rows) => {
     const g = new Map();
@@ -5065,15 +4947,9 @@ async function openedSuite(browser) {
         text: (a.textContent || '').trim().slice(0, 20),
         inDialog: !!a.closest('[role="dialog"]'),
         inAlert: !!a.closest('[role="alertdialog"]'),
-        inSidebar: !!a.closest('.sidebar'),
-        inMain: !!a.closest('.main'),
+        inHall: !!a.closest('[data-village-hall]'),
       };
     });
-  const inertOf = (page) =>
-    page.evaluate(() => ({
-      sidebar: document.querySelector('.sidebar')?.hasAttribute('inert') ?? null,
-      main: document.querySelector('.main')?.hasAttribute('inert') ?? null,
-    }));
   /** その画面の「開く前の物」を全部開く: `<details>` と手入力パネル (aria-expanded=false のボタン)。 */
   const openAll = (page) =>
     page.evaluate(() => {
@@ -5130,55 +5006,35 @@ async function openedSuite(browser) {
   };
 
   /**
-   * 浮いた窓 (スマホではシート) のキーボードの道と、開いた画面の字・操作子。9 つの主張。
-   * 入口 (🤖) → 開く → 焦点は入力欄 → 窓は 🤖 の後ろ → Shift+Tab は窓の中 → 1 往復の吹き出し → 字と操作子 →
-   * 「📥 要望」→ alertdialog の焦点は「残す」→ Esc で戻る (窓は残る) → Esc で窓が閉じて焦点は 🤖。
+   * 村の会話 (右の列・スマホでは下) と役場の窓のキーボードの道、会話した画面の字・操作子。
+   * 会話の入力欄 → 1 往復の吹き出し → 字と操作子 → 「📥 要望」→ alertdialog の焦点は「残す」→ Esc で戻る →
+   * 書き込みの確認 → Esc で入力欄へ → 「🏛️ 役場」→ 窓の焦点は「閉じる」→ Esc で閉じて焦点は「役場」ボタン。
    */
-  const floatingChecks = async (page, label) => {
-    const fab = page.locator('.concierge-fab').first();
-    ok((await fab.count()) === 1 && (await fab.isVisible()), `opened[${label}]: 🤖 (浮いた窓の入口) が見える`);
-    await fab.focus();
-    await page.keyboard.press('Enter');
-    await page.waitForSelector('[data-concierge="floating"]', { timeout: 10000 });
-    await settled(page);
-    const a1 = await active(page);
-    ok(a1.cls.includes('concierge-input'), `opened[${label}]: ★ 開いたら焦点は入力欄へ (APG dialog) (${JSON.stringify(a1)})`);
-    const info = await page.evaluate(() => {
-      const d = document.querySelector('[role="dialog"]');
-      const f = document.querySelector('.concierge-fab');
-      return {
-        role: d ? d.getAttribute('role') : null,
-        label: d ? d.getAttribute('aria-label') : null,
-        fabBefore: !!(d && f && f.compareDocumentPosition(d) & Node.DOCUMENT_POSITION_FOLLOWING),
-      };
-    });
-    ok(
-      info.role === 'dialog' && !!info.label && info.fabBefore,
-      `opened[${label}]: ★ 窓は role=dialog で名前を持ち、🤖 の後ろに描かれる (Tab の順が窓の中へ入る) (${JSON.stringify(info)})`,
-    );
-    await page.keyboard.press('Shift+Tab');
-    const a2 = await active(page);
-    ok(a2.inDialog === true, `opened[${label}]: ★ 入力欄から Shift+Tab しても窓の中 (${JSON.stringify(a2)})`);
+  const chatChecks = async (page, label) => {
+    const input = page.locator('[data-village-chat] .concierge-input').first();
+    ok((await input.count()) === 1, `opened[${label}]: 村の会話の入力欄がある (入口は 1 つ・🤖 は無い)`);
+    ok((await page.locator('.concierge-fab').count()) === 0, `opened[${label}]: 右下の 🤖 は無い (会話は村の列に常設)`);
+    await input.focus();
     // 提案チップは開いた直後 (挨拶の提案) に測る —— 返事の後はその返事の提案に入れ替わる (無いこともある)
     const chips = await page.evaluate(() => [...document.querySelectorAll('.concierge-chips button')].map((b) => Math.round(b.getBoundingClientRect().height)));
     ok(chips.length >= 2 && chips.every((h) => h >= 24), `opened[${label}]: ★ 提案チップは高さ 24px 以上 (WCAG 2.5.8) (実測 ${JSON.stringify(chips)})`);
-    // 1 往復 (利用者の吹き出しと bot の吹き出しも字の母集団に入れる)
-    await page.locator('.concierge-input').first().fill('売上集計を開いて');
+    // 1 往復 (利用者の吹き出しと bot の吹き出しも字の母集団に入れる)。画面を開く発話は窓を開いてしまうので、開かない発話を使う
+    await input.fill('こんにちは');
     await page.keyboard.press('Enter');
     await page.waitForSelector('[data-concierge-role="bot"]', { timeout: 10000 });
     await settled(page);
     const acc = emptyAcc();
     acc.screens = 1;
-    await measureInto(acc, page, `${label} · 窓`);
+    await measureInto(acc, page, `${label} · 会話`);
     const textV = violationsOf(acc.text);
     const fieldV = L.fieldViolations(acc.fields, C);
     const focusV = L.focusViolations(acc.focus);
     const targetV = L.targetViolations(acc.targets);
     ok(
       textV.length === 0 && fieldV.length === 0 && focusV.length === 0 && targetV.length === 0,
-      `opened[${label}]: ★ 窓を開いて 1 往復した画面の字・欄・焦点・目標が基準を割らない (字 ${acc.text.length} 行・欄 ${acc.fields.length}・目標 ${acc.targets.length}${textV.length ? ` · 字 ${textSummary(textV)}` : ''}${fieldV.length ? ` · 欄 ${ctlSummary(fieldV, (r) => `${r.sig}|${r.best}`, (r) => `${r.best}:1`)}` : ''}${focusV.length ? ` · 焦点 ${ctlSummary(focusV, (r) => `${r.sig}|${r.best}`, (r) => `${r.best}:1`)}` : ''}${targetV.length ? ` · 目標 ${ctlSummary(targetV, (r) => `${r.sig}|${r.w}x${r.h}`, (r) => `${r.w}×${r.h}`)}` : ''})`,
+      `opened[${label}]: ★ 会話した画面の字・欄・焦点・目標が基準を割らない (字 ${acc.text.length} 行・欄 ${acc.fields.length}・目標 ${acc.targets.length}${textV.length ? ` · 字 ${textSummary(textV)}` : ''}${fieldV.length ? ` · 欄 ${ctlSummary(fieldV, (r) => `${r.sig}|${r.best}`, (r) => `${r.best}:1`)}` : ''}${focusV.length ? ` · 焦点 ${ctlSummary(focusV, (r) => `${r.sig}|${r.best}`, (r) => `${r.best}:1`)}` : ''}${targetV.length ? ` · 目標 ${ctlSummary(targetV, (r) => `${r.sig}|${r.w}x${r.h}`, (r) => `${r.w}×${r.h}`)}` : ''})`,
     );
-    // 確認 (alertdialog): 📥 要望 → 焦点は取り消す側「残す」→ Esc = 残す → 焦点は 📥 へ・窓は残る
+    // 確認 (alertdialog): 📥 要望 → 焦点は取り消す側「残す」→ Esc = 残す → 焦点は 📥 へ
     const exportBtn = page.getByRole('button', { name: '要望リストをエクスポート' });
     await exportBtn.focus();
     await page.keyboard.press('Enter');
@@ -5188,14 +5044,10 @@ async function openedSuite(browser) {
     await page.keyboard.press('Escape');
     await page.waitForFunction(() => !document.querySelector('[role="alertdialog"]'), undefined, { timeout: 5000 });
     const a4 = await active(page);
-    const stillOpen = (await page.locator('[data-concierge="floating"]').count()) === 1;
-    ok(
-      stillOpen && a4.label === '要望リストをエクスポート',
-      `opened[${label}]: ★ 確認の Esc は取り消しで、焦点は押した「📥 要望」へ戻り、窓は閉じない (${JSON.stringify(a4)} 窓 ${stillOpen})`,
-    );
+    ok(a4.label === '要望リストをエクスポート', `opened[${label}]: ★ 確認の Esc は取り消しで、焦点は押した「📥 要望」へ戻る (${JSON.stringify(a4)})`);
     // 書き込みの確認 (パス 507): 引用と #channel を持つ発話は実物の経路で実行確認 (alertdialog) に届き、
     // 送る欄と値を操作子より前に並べる。Esc は取り消しで、焦点は入力欄へ戻る (押していないので外へは何も出ない)
-    await page.locator('.concierge-input').first().fill('Slack の #general に「テスト」を送って');
+    await input.fill('Slack の #general に「テスト」を送って');
     await page.keyboard.press('Enter');
     await page.waitForSelector('[role="alertdialog"][aria-label="実行確認"]', { timeout: 10000 });
     const a6 = await active(page);
@@ -5218,11 +5070,26 @@ async function openedSuite(browser) {
     await page.waitForFunction(() => !document.querySelector('[role="alertdialog"]'), undefined, { timeout: 5000 });
     const a7 = await active(page);
     ok(a7.cls.includes('concierge-input'), `opened[${label}]: ★ 書き込みの確認の Esc は取り消しで、焦点は入力欄へ戻る (${JSON.stringify(a7)})`);
-    await page.locator('.concierge-input').first().focus();
+  };
+
+  /** 役場の窓のキーボードの道。開く → 焦点は「閉じる」→ role=dialog で名前を持つ → Esc で閉じて焦点は「役場」ボタンへ。 */
+  const hallChecks = async (page, label) => {
+    const hallBtn = page.locator('[data-village-hall-open]').first();
+    await hallBtn.focus();
+    await page.keyboard.press('Enter');
+    await page.waitForSelector('[data-village-hall]', { timeout: 10000 });
+    await settled(page);
+    const a1 = await active(page);
+    ok(a1.inHall === true && a1.text.includes('閉じる'), `opened[${label}]: ★ 役場の窓が開いたら焦点は窓の中の「閉じる」へ (APG dialog) (${JSON.stringify(a1)})`);
+    const info = await page.evaluate(() => {
+      const d = document.querySelector('[data-village-hall]');
+      return { role: d ? d.getAttribute('role') : null, label: d ? d.getAttribute('aria-label') : null };
+    });
+    ok(info.role === 'dialog' && !!info.label, `opened[${label}]: ★ 役場の窓は role=dialog で名前を持つ (${JSON.stringify(info)})`);
     await page.keyboard.press('Escape');
-    await page.waitForFunction(() => !document.querySelector('[data-concierge="floating"]'), undefined, { timeout: 5000 });
-    const a5 = await active(page);
-    ok(a5.cls.includes('concierge-fab'), `opened[${label}]: ★ Esc で窓が閉じ、焦点は 🤖 へ戻る (${JSON.stringify(a5)})`);
+    await page.waitForFunction(() => !document.querySelector('[data-village-hall]'), undefined, { timeout: 5000 });
+    const a2 = await active(page);
+    ok(a2.cls.includes('village-hall-btn'), `opened[${label}]: ★ Esc で窓が閉じ、焦点は「役場」ボタンへ戻る (${JSON.stringify(a2)})`);
   };
 
   // ---- 1. デスクトップ 1280: details / 手入力パネルを開いた全画面 + 浮いた窓 (4 配色) ----
@@ -5232,7 +5099,7 @@ async function openedSuite(browser) {
     const page = await ctx.newPage();
     page.on('download', (d) => d.cancel().catch(() => {}));
     await init(page, cfg);
-    await page.goto(FILE + '#home', { waitUntil: 'domcontentloaded' });
+    await page.goto(FILE, { waitUntil: 'domcontentloaded' });
     await setupVault(page);
     await page.addStyleTag({ content: STILL });
     const applied = await page.evaluate(() => ({
@@ -5243,12 +5110,9 @@ async function openedSuite(browser) {
     bgs.push(applied.bg);
     ok(applied.design === cfg.design && applied.theme === cfg.theme, `opened[${cfg.name}]: 配色が実際にその配色になっている (${JSON.stringify(applied)})`);
     const acc = emptyAcc();
-    const ids = await screenIds(page, false);
+    const ids = SERVICE_IDS;
     for (const id of ids) {
-      await page.evaluate((i) => {
-        location.hash = i;
-      }, id);
-      await page.waitForSelector(`.sidebar-item[data-service-id="${id}"][aria-current="page"]`, { timeout: 15000 });
+      await openService(page, id);
       await settled(page);
       const o = await openAll(page);
       if (o.details + o.manual === 0) continue;
@@ -5259,14 +5123,12 @@ async function openedSuite(browser) {
       await measureInto(acc, page, id);
     }
     assertAcc(`${cfg.name} · 開いた画面`, acc, 40, 10000);
-    // 浮いた窓 (すっきりは 1280 で列になるので 1100 にして浮かせる)
-    await page.evaluate(() => {
-      location.hash = 'home';
-    });
-    await page.waitForSelector('.sidebar-item[data-service-id="home"][aria-current="page"]', { timeout: 15000 });
-    if (cfg.design === 'clean') await page.setViewportSize({ width: 1100, height: 900 });
+    // 村へ戻る (窓を閉じる) → 会話と役場の窓のキーボードの道
+    await page.evaluate(() => window.dispatchEvent(new CustomEvent('servicehub:navigate', { detail: 'village' })));
+    await page.waitForFunction(() => !document.querySelector('[data-village-hall]'), undefined, { timeout: 10000 });
     await settled(page);
-    await floatingChecks(page, cfg.name);
+    await chatChecks(page, cfg.name);
+    await hallChecks(page, cfg.name);
     await ctx.close();
   }
   ok(new Set(bgs).size === 4, `opened: 4 配色の地の色 (--bg) はすべて別 (${JSON.stringify(bgs)}) —— 同じ配色を何度も測っていない`);
@@ -5278,51 +5140,17 @@ async function openedSuite(browser) {
     const page = await ctx.newPage();
     page.on('download', (d) => d.cancel().catch(() => {}));
     await init(page, cfg);
-    await page.goto(FILE + '#home', { waitUntil: 'domcontentloaded' });
+    await page.goto(FILE, { waitUntil: 'domcontentloaded' });
     await setupVault(page);
     await page.addStyleTag({ content: STILL });
     await settled(page);
-    const closed = await inertOf(page);
-    ok(closed.sidebar === true && closed.main === false, `opened[${label}]: ★ 閉じたドロワーは inert (画面の外へ滑らせた 74 項目が焦点を取らない) (${JSON.stringify(closed)})`);
-    const menu = page.locator('button.menu-btn').first();
-    await menu.focus();
-    await page.keyboard.press('Shift+Tab');
-    const back = await active(page);
-    ok(back.inSidebar !== true, `opened[${label}]: ★ ☰ から Shift+Tab しても閉じたドロワーへ入らない (${JSON.stringify(back)})`);
-    await menu.focus();
-    await page.keyboard.press('Enter');
-    await page.waitForSelector('.app.nav-open', { timeout: 10000 });
-    await settled(page);
-    const a1 = await active(page);
-    const opened = await inertOf(page);
-    ok(
-      a1.cls.includes('drawer-close') && opened.main === true && opened.sidebar === false,
-      `opened[${label}]: ★ 開いたら焦点は ✕ へ・暗幕の後ろの本文は inert (${JSON.stringify(a1)} ${JSON.stringify(opened)})`,
-    );
-    let behind = null;
-    for (let i = 0; i < 90 && behind === null; i++) {
-      await page.keyboard.press('Tab');
-      const a = await active(page);
-      if (a.inMain === true) behind = { step: i + 1, a };
-    }
-    ok(behind === null, `opened[${label}]: ★ 開いている間、Tab は暗幕の後ろの本文へ出ない (90 回)${behind ? ` · ${behind.step} 回目で ${JSON.stringify(behind.a)}` : ''}`);
-    await page.keyboard.press('Escape');
-    await page.waitForFunction(() => !document.querySelector('.app.nav-open'), undefined, { timeout: 10000 });
-    const a2 = await active(page);
-    const after = await inertOf(page);
-    ok(
-      a2.cls.includes('menu-btn') && after.sidebar === true && after.main === false,
-      `opened[${label}]: ★ Esc で閉じると焦点は ☰ へ戻り、本文の inert は外れてドロワーが inert に戻る (${JSON.stringify(a2)} ${JSON.stringify(after)})`,
-    );
-    await floatingChecks(page, label);
-    // 全画面の字 (スマホ幅の地は `.main` の `--panel` —— `transparent` だと光輪の上に字が載る)
+    await chatChecks(page, label);
+    await hallChecks(page, label);
+    // 全画面の字 (役場の窓の地は不透明のパネル)
     const acc = { screens: 0, text: [] };
-    const ids = await screenIds(page, true);
+    const ids = SERVICE_IDS;
     for (const id of ids) {
-      await page.evaluate((i) => {
-        location.hash = i;
-      }, id);
-      await page.waitForSelector(`.sidebar-item[data-service-id="${id}"][aria-current="page"]`, { timeout: 15000 });
+      await openService(page, id);
       await settled(page);
       acc.screens += 1;
       acc.text.push(...tag(await page.evaluate(textExpr), id));
@@ -5677,16 +5505,17 @@ function installWaitMarginRecorder(browser) {
     ['aiCeiling', aiCeilingSuite, 10],
     ['best3', best3Suite, 9],
     ['theme', themeSuite, 14],
-    ['design', designSuite, 32],
+    ['design', designSuite, 20],
     // パス 503: 文字色の対比 (WCAG 2.x AA) を実機で 4 配色 × 全画面。実測値は初回の実行で確かめる
     ['contrast', contrastSuite, 17],
     // パス 504: 操作子の輪郭・焦点の輪・押せる大きさ・キーボード・名前を実機で 4 配色 × 全画面 + スマホ。実測値は初回の実行で確かめる
     // 2026-10-07 (パス 506 の直後): スマホ 2 配色に「開いたドロワーも測った」の床を足して 61 → 63
-    ['controls', controlsSuite, 63],
+    ['controls', controlsSuite, 61],
     // パス 506: 開いた窓 (details / 手入力 / 浮いた窓 / ドロワー) とスマホ幅の字を実機で 4 配色。実測値は初回の実行で確かめる
-    ['opened', openedSuite, 155],
+    ['opened', openedSuite, 135],
     ['tablet', tabletSuite, 2],
-    ['shell', shellSuite, 27],
+    // 村の殻 (唯一の入口) を実機で。旧画面のサイドバーの suite (shell) は 2026-11-04 に廃止
+    ['village', villageSuite, 15],
   ];
   const SUITES = SUITE_TABLE.map(([name]) => name);
   /**

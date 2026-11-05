@@ -119,6 +119,7 @@ const CONSUMERS: Readonly<Record<string, readonly string[]>> = {
   'pages/BusinessPage.tsx': ['advisorResult', 'r'],
   'pages/EmotionsPage.tsx': ['res'],
   'pages/GmailPage.tsx': ['res'],
+  'pages/GrokPage.tsx': ['r'],
   'pages/MentorPage.tsx': ['r'],
   'pages/OllamaPage.tsx': ['res'],
   'pages/SecurityPage.tsx': ['breachResult', 'res'],

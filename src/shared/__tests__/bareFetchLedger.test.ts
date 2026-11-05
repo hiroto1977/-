@@ -62,10 +62,8 @@ const LEDGER: Record<string, { why: string; guard: RegExp }> = {
     why: 'ブラウザ版の Ollama。withBodyDeadline + readBodyWithCap。',
     guard: /withBodyDeadline\(/,
   },
-  'src/renderer/oauth/pkce.ts': {
-    why: 'ブラウザ版のトークン交換。withTimeout の中で本文まで読む。',
-    guard: /withTimeout\(/,
-  },
+  // `src/renderer/oauth/pkce.ts` は 2026-11-02 (MG-025) に**この台帳から外れた**。Mamori へ移した際、省略可の既定 `fetchImpl = fetch` を
+  // 素の束縛ではなく壁 `pkceHost.ts` の `hostFetch` (呼ぶ時点の globalThis.fetch を呼ぶ関数) にしたので、素の `fetch` を値として束ねる綴りが無い。
   // `src/renderer/data/saasWriteWeb.ts` は 2026-08-31 に**この台帳から外れた**。
   // 書き込み口 13 本のうち `createGithubIssue` だけが `fetchFn: FetchFn = fetch`
   // という省略可の既定を持っており、実際に呼び出し側が渡し忘れていた。

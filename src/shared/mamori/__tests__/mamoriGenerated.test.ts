@@ -35,7 +35,17 @@ const EXPECTED = [
   'src/shared/aiEndpoint.mamori',
   'src/shared/vaultToken.mamori',
   'src/renderer/security/autoLock.mamori',
+  'src/renderer/oauth/pkceSession.mamori',
+  'src/shared/updateCheck.mamori',
+  'src/main/clients/exportPaths.mamori',
+  'src/renderer/security/dataCrypto.mamori',
   'src/shared/vetted.mamori',
+  'src/shared/atlassianSite.mamori',
+  'src/renderer/oauth/pkce.mamori',
+  'src/shared/privateTarget.mamori',
+  'src/shared/scanTarget.mamori',
+  'src/renderer/network/liveRead.mamori',
+  'src/main/clients/assistant.mamori',
 ];
 
 describe('Mamori の生成物 (threat: T-221)', () => {

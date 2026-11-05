@@ -91,6 +91,13 @@ describe('提供元の表を字面で留める (鍵の送り先と直接続の�
       needsApiKey: true,
       browserDirect: true,
     }],
+    ['grok', {
+      label: 'Grok (xAI)',
+      defaultModel: 'grok-4',
+      defaultBaseUrl: 'https://api.x.ai',
+      needsApiKey: true,
+      browserDirect: false,
+    }],
     ['ollama', {
       label: 'Ollama (ローカル)',
       defaultModel: 'llama3.2',
@@ -122,7 +129,7 @@ describe('提供元の表を字面で留める (鍵の送り先と直接続の�
     expect(spec.browserDirect).toBe(want.browserDirect);
   });
 
-  it('留めた提供元がちょうど 5 つ (増減に気付く)', async () => {
+  it('留めた提供元がちょうど 6 つ (増減に気付く)', async () => {
     const { AI_PROVIDER_IDS } = await freshProviders();
     expect([...AI_PROVIDER_IDS].sort()).toEqual(EXPECTED.map(([id]) => id).sort());
   });
@@ -243,6 +250,45 @@ describe('openai (ChatGPT)', () => {
     expect(AI_PROVIDERS.openai.parseText({ choices: [{ message: { content: null } }] })).toBe('');
     expect(AI_PROVIDERS.openai.parseText({ choices: [] })).toBe('');
     expect(AI_PROVIDERS.openai.parseText({})).toBe('');
+  });
+});
+
+describe('grok (xAI)', () => {
+  it('builds the exact Chat Completions request (OpenAI 形式・Bearer・api.x.ai)', () => {
+    const r = AI_PROVIDERS.grok.buildRequest(REQ, { apiKey: 'xai-test' });
+    expect(r.url).toBe('https://api.x.ai/v1/chat/completions');
+    expect(r.headers).toEqual({
+      'content-type': 'application/json',
+      authorization: 'Bearer xai-test',
+    });
+    expect(JSON.parse(r.body)).toEqual({
+      model: 'grok-4',
+      max_completion_tokens: 1234,
+      messages: [
+        { role: 'system', content: 'あなたは有能なアシスタントです' },
+        { role: 'user', content: 'こんにちは' },
+        { role: 'assistant', content: 'はい' },
+        { role: 'user', content: '表をください' },
+      ],
+    });
+  });
+
+  it('omits the system message when absent', () => {
+    const r = AI_PROVIDERS.grok.buildRequest({ messages: REQ.messages, maxTokens: 5 }, { apiKey: 'k' });
+    const body = JSON.parse(r.body) as { messages: Array<{ role: string }> };
+    expect(body.messages[0]!.role).toBe('user');
+  });
+
+  it('モデルは資格情報の指定が既定に勝つ', () => {
+    const r = AI_PROVIDERS.grok.buildRequest(REQ, { apiKey: 'k', model: 'grok-3-mini' });
+    expect((JSON.parse(r.body) as { model: string }).model).toBe('grok-3-mini');
+  });
+
+  it('鍵を載せる提供者なので、平文 http の別ホストは断る (resolveBase に credentialed: true)', () => {
+    expect(() => AI_PROVIDERS.grok.buildRequest(REQ, { apiKey: 'k', baseUrl: 'http://evil.example.com' })).toThrow(/ベース URL が不正/);
+    expect(AI_PROVIDERS.grok.buildRequest(REQ, { apiKey: 'k', baseUrl: 'https://proxy.example.com/' }).url).toBe(
+      'https://proxy.example.com/v1/chat/completions',
+    );
   });
 });
 
@@ -565,8 +611,8 @@ describe('parseText — 壊れた応答でも落ちない (全プロバイダ)',
   }
 });
 
-describe('parseText — OpenAI 形式 (openai / compat)', () => {
-  for (const id of ['openai', 'compat'] as const) {
+describe('parseText — OpenAI 形式 (openai / grok / compat)', () => {
+  for (const id of ['openai', 'grok', 'compat'] as const) {
     it(`${id}: choices[0].message.content を取り出す`, () => {
       expect(AI_PROVIDERS[id].parseText({ choices: [{ message: { content: ' hi ' } }] })).toBe('hi');
     });
@@ -695,7 +741,7 @@ describe('プロバイダ登録の整合', () => {
   });
 
   it('ID リストの順序が既定の優先順である', () => {
-    expect([...AI_PROVIDER_IDS]).toEqual(['anthropic', 'openai', 'gemini', 'ollama', 'compat']);
+    expect([...AI_PROVIDER_IDS]).toEqual(['anthropic', 'openai', 'gemini', 'grok', 'ollama', 'compat']);
   });
 
   it('全プロバイダに buildRequest / parseText がある', () => {
@@ -725,6 +771,10 @@ describe('API キーが無いときのヘッダー', () => {
 
   it('openai: Bearer の後ろが空になる', () => {
     expect(AI_PROVIDERS.openai.buildRequest(REQ_MIN, {})['headers']['authorization']).toBe('Bearer ');
+  });
+
+  it('grok: Bearer の後ろが空になる', () => {
+    expect(AI_PROVIDERS.grok.buildRequest(REQ_MIN, {})['headers']['authorization']).toBe('Bearer ');
   });
 
   it('gemini: x-goog-api-key は空文字', () => {

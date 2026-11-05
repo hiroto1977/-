@@ -1,9 +1,9 @@
 /** @vitest-environment jsdom */
 /**
- * App の配線: 画面の描画エラーはその画面の枠に閉じ、サイドバーは生きたまま別の画面へ移れる (2026-09-05)。
+ * App の配線: 画面の描画エラーはその画面の枠に閉じ、村 (殻) は生きたまま別の画面へ移れる (2026-09-05 · 村の殻へ 2026-11-04)。
  * 境界が無いと React はツリー全体を外す —— 保存値や API 応答の形違いで 1 回投げれば真っ白になっていた。
- * サイドバーに最初から見えている「テンプレート」の画面を「必ず投げる画面」に差し替えて App を丸ごと動かす
- * (integrations のような畳まれた分類の画面はクリックできない)。
+ * 「テンプレート」の画面を「必ず投げる画面」に差し替えて、会話が出す「開いて」(`servicehub:navigate`) で
+ * 役場の窓に開き、App を丸ごと動かす。
  */
 import 'fake-indexeddb/auto';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -19,14 +19,14 @@ vi.mock('../services', async (importOriginal) => {
 });
 
 import { App } from '../App';
+import type { ServiceId } from '../../shared/serviceId';
 import { SERVICES } from '../services';
 import { _resetCollectionSubscribersForTests } from '../data/useCollection';
-import { _resetNavigationIntentForTests } from '../navigate';
+import { _resetNavigationIntentForTests, navigateTo } from '../navigate';
 import { resetRecordStore } from './recordStoreHarness';
 import { waitForElement } from './jsdomWait';
 
 const BROKEN = SERVICES.find((s) => s.id === 'templates')!;
-const HOME = SERVICES.find((s) => s.id === 'home')!;
 const OTHER = SERVICES.find((s) => s.id === 'business')!;
 
 beforeAll(() => {
@@ -65,15 +65,14 @@ async function settle(): Promise<void> {
 let container: HTMLDivElement;
 let root: Root | null = null;
 
-async function click(el: Element | null | undefined): Promise<void> {
-  expect(el, 'button missing').toBeTruthy();
+async function open(id: ServiceId): Promise<void> {
   await act(async () => {
-    (el as HTMLElement).click();
+    navigateTo(id);
   });
   await settle();
 }
 
-const sidebarItem = (id: string) => container.querySelector<HTMLButtonElement>(`button.sidebar-item[data-service-id="${id}"]`);
+const hall = () => container.querySelector('[data-village-hall]');
 
 beforeEach(async () => {
   await resetRecordStore();
@@ -101,25 +100,26 @@ afterEach(async () => {
 });
 
 describe('App — 画面の描画エラーは枠に閉じる', () => {
-  it('★ 落ちる画面を開くと、その枠だけが文面になり、サイドバーは残り、別の画面へ移れる', async () => {
-    expect(sidebarItem(HOME.id), 'サイドバーが出ていない').toBeTruthy();
-    await click(sidebarItem(BROKEN.id));
+  it('★ 落ちる画面を開くと、その窓の枠だけが文面になり、村は残り、別の画面へ移れる', async () => {
+    expect(container.querySelector('[data-village-shell]'), '村の殻が出ていない').toBeTruthy();
+    await open(BROKEN.id);
     const alert = await waitForElement(
       () => container.querySelector('[role="alert"][data-page-error]'),
       '画面の境界が出す報せ',
     );
     expect(alert?.getAttribute('data-page-error')).toBe(BROKEN.label);
     expect(alert?.textContent).toContain('この画面は必ず落ちる');
-    expect(sidebarItem(HOME.id), '落ちた後もサイドバーは残る').toBeTruthy();
-    // 「ホームへ戻る」で境界が張り直され、alert は消える
-    await click(Array.from(alert!.querySelectorAll('button')).find((b) => b.textContent === 'ホームへ戻る'));
+    expect(hall()?.contains(alert!), '報せは役場の窓の中に閉じる').toBe(true);
+    expect(container.querySelector('[data-village-shell]'), '落ちた後も村は残る').toBeTruthy();
+    // 別の画面へ移れば境界が張り直され、alert は消える
+    await open(OTHER.id);
     expect(container.querySelector('[role="alert"][data-page-error]')).toBeNull();
-    expect(sidebarItem(HOME.id)?.className).toContain('active');
+    expect(hall()?.getAttribute('data-village-window')).toBe(OTHER.id);
   });
 
   it('対照: 普通の画面には alert が無い (この検査が本当に画面を見ている)', async () => {
-    await click(sidebarItem(OTHER.id));
+    await open(OTHER.id);
     expect(container.querySelector('[role="alert"][data-page-error]')).toBeNull();
-    expect(sidebarItem(OTHER.id)?.className).toContain('active');
+    expect(hall()?.getAttribute('data-village-window')).toBe(OTHER.id);
   });
 });

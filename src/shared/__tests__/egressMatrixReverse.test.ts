@@ -110,6 +110,7 @@ describe('egress マトリクスの逆向き (パス 340)', () => {
       'api.anthropic.com',
       'api.openai.com',
       'generativelanguage.googleapis.com',
+      'api.x.ai',
     ]) {
       expect(found.has(host), `${host} が走査に映っていない`).toBe(true);
       expect(

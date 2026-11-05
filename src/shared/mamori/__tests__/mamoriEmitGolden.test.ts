@@ -19,7 +19,7 @@ const CORPUS = [
   "/// 既定の名前",
   "use default fs from \"node:fs\";",
   "extern sink { shell, ipcRenderer } from \"electron\";",
-  "extern pure global console;",
+  "extern pure global Date;",
   "export vetted VettedX = \"x\";",
   "/// 1 行の docblock",
   "export vetted VettedY = \"y'z\\\\w\";",
@@ -132,7 +132,7 @@ const CORPUS = [
   "}",
 ].join('\n') + '\n';
 const CORPUS2 = [
-  "extern pure global console;",
+  "extern pure global Date;",
   "export vetted VettedQ = \"q\";",
   "export const N: number = -1;",
 ].join('\n') + '\n';

@@ -1,3 +1,5 @@
+// 生成物 —— src/renderer/network/liveRead.mamori から Mamori のコンパイラが組んだ。手で編集しない (`npm run mamori:build`)。
+// 言語の仕様は docs/MAMORI.md。生成物が元と食い違えば src/shared/mamori/__tests__/mamoriGenerated.test.ts が落ちる。
 /**
  * ブラウザ版の**読み取り**をライブにする経路。
  *
@@ -23,9 +25,17 @@
  *
  * `LIVE_READERS` に 1 行足すだけでよい。読み取りの本体は shared 側にあるので、
  * ここには「どのサービスがブラウザからも読めるか」しか書かない。
+ *
+ * ## Mamori で書いてある (2026-11-03 · MG-029)
+ *
+ * 元は TypeScript。足りなかったのは、表を `LIVE_READERS[serviceId]` と素の添字で引く所だけで、
+ * 自分の属性で引く `lookup` (`shared/lookup.ts` · prototype の鍵を経由しない) へ替えた。
+ * `catch (e)` の中の `e instanceof Error` は 0.16 の `instanceof` で書ける (この移植が `instanceof` を要した壁)。
+ * 判定は 1 字も変えていない (元の実装との差分比較で確かめた)。
  */
 
 import { fetchCursorSnapshotWith, DEFAULT_USAGE_DAYS } from '../../shared/api/cursor';
+import { lookup } from '../../shared/lookup';
 
 /** 通信手段。`fetchSnapshot` と同じく JSON として読めた本体を返す。 */
 export type JsonFetch = (url: string, init: RequestInit) => Promise<unknown>;
@@ -57,15 +67,10 @@ interface LiveReader {
  *
  * ここに無いサービスは同梱サンプルのままになる。**一覧に無いこと自体が
  * 「まだ実データにできない」という表明**なので、増やしたら
- * `docs/BROWSER_REDESIGN.md` にも書くこと。
+ * `docs/BROWSER_REDESIGN.md` にも書くこと。api.cursor.com はブラウザ発の
+ * 呼び出しに CORS を許可しないのでプロキシ経由。
  */
-export const LIVE_READERS: Readonly<Record<string, LiveReader>> = {
-  // api.cursor.com はブラウザ発の呼び出しに CORS を許可しないのでプロキシ経由。
-  cursor: {
-    read: (jsonFetch, token, nowMs) =>
-      fetchCursorSnapshotWith(jsonFetch, token, nowMs, DEFAULT_USAGE_DAYS),
-  },
-};
+export const LIVE_READERS: Readonly<Record<string, LiveReader>> = { cursor: { read: (jsonFetch, token, nowMs) => fetchCursorSnapshotWith(jsonFetch, token, nowMs, DEFAULT_USAGE_DAYS) } };
 
 /** 読み取りの結果。失敗しても「なぜ実データでないか」を必ず言葉で返す。 */
 export type LiveReadResult =
@@ -85,29 +90,13 @@ export function canLiveRead(serviceId: string): boolean {
  *   - `proxy_required`        — プロキシ未設定 (登録すれば実データになる)
  *
  * 取得そのものの失敗 (`live_read_failed`) は相手側の応答を添えて返す。
+ * 表は `lookup` で引く: 素の添字だと `'constructor'` 等が prototype 側の値を返して「対応済み」に見えてしまう。
  */
 export async function liveRead(serviceId: string, deps: LiveReadDeps): Promise<LiveReadResult> {
-  // `canLiveRead` と同じ判定を通す。素の添字だと `'constructor'` 等が
-  // プロトタイプ側の値を返して「対応済み」に見えてしまう —— 2 行上に
-  // 正しい判定があるのに、こちらだけ素で引いていた。
-  const reader = canLiveRead(serviceId) ? LIVE_READERS[serviceId] : undefined;
-  if (reader === undefined) {
-    return {
-      ok: false,
-      code: 'live_read_unsupported',
-      message: 'このサービスはブラウザ版からの読み取りに未対応です。同梱のサンプルを表示します。',
-    };
-  }
-
+  const reader = lookup(LIVE_READERS, serviceId);
+  if (reader === undefined) return { ok: false, code: 'live_read_unsupported', message: 'このサービスはブラウザ版からの読み取りに未対応です。同梱のサンプルを表示します。' };
   const token = await deps.readCredential(serviceId).catch(() => null);
-  if (token === null || token === '') {
-    return {
-      ok: false,
-      code: 'not_configured',
-      message: '資格情報が未登録です。登録すると実データに切り替わります。',
-    };
-  }
-
+  if (token === null || token === '') return { ok: false, code: 'not_configured', message: '資格情報が未登録です。登録すると実データに切り替わります。' };
   // **必ずプロキシを通す。** CORS を許す相手なら直接 fetch でもよいが、その
   // 分岐は今どのサービスも通らない = 検査で確かめられない。資格情報を第三者の
   // ホストへ送る経路を、動かないまま置いておくほうが危ない。CORS を許す
@@ -116,20 +105,11 @@ export async function liveRead(serviceId: string, deps: LiveReadDeps): Promise<L
   try {
     jsonFetch = await deps.getProxyJsonFetch();
   } catch (e) {
-    return {
-      ok: false,
-      code: 'proxy_required',
-      message: e instanceof Error ? e.message : 'プロキシの用意に失敗しました。',
-    };
+    return { ok: false, code: 'proxy_required', message: e instanceof Error ? e.message : 'プロキシの用意に失敗しました。' };
   }
-
   try {
     return { ok: true, data: await reader.read(jsonFetch, token, deps.now()) };
   } catch (e) {
-    return {
-      ok: false,
-      code: 'live_read_failed',
-      message: e instanceof Error ? e.message : '取得に失敗しました。',
-    };
+    return { ok: false, code: 'live_read_failed', message: e instanceof Error ? e.message : '取得に失敗しました。' };
   }
 }

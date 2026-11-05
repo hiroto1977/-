@@ -208,6 +208,7 @@ function selfRolled(): string[] {
  * この一覧を守っているのは下の走査との両方向の一致で、この散文の数ではない。
  */
 const MIGRATED: readonly string[] = [
+  'src/shared/mamori/__tests__/rustVerifier.test.ts',
   'src/renderer/data/__tests__/aegisLangSafety.test.ts',
   'src/shared/__tests__/threatLedger.test.ts',
   'src/renderer/data/__tests__/backupRecordLimit.test.ts',
@@ -240,7 +241,6 @@ const MIGRATED: readonly string[] = [
   'src/renderer/__tests__/desktopPathClaims.test.ts',
   'src/renderer/__tests__/deviceStoreWritePolicy.test.ts',
   'src/renderer/__tests__/disclaimerRendered.test.ts',
-  'src/renderer/__tests__/drawerKeyboard.test.ts',
   'src/renderer/__tests__/errorMessageSurfaceCensus.test.ts',
   'src/renderer/__tests__/fixedTickAssertionCensus.test.ts',
   'src/renderer/__tests__/inlineColorCensus.test.ts',
@@ -306,6 +306,7 @@ const MIGRATED: readonly string[] = [
   'src/shared/__tests__/limitCoverageCensus.test.ts',
   'src/shared/__tests__/linkRedirectGuard.test.ts',
   'src/shared/__tests__/localFileOpenPolicy.test.ts',
+  'src/shared/__tests__/localLlmSetup.test.ts',
   'src/shared/__tests__/markupExportCensus.test.ts',
   'src/shared/__tests__/nonFiniteEntryPoints.test.ts',
   'src/shared/__tests__/ollamaInputLimits.test.ts',

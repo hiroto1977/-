@@ -91,6 +91,7 @@ export function CompliancePage() {
                       style={{
                         fontSize: 11,
                         padding: '3px 9px',
+                        minHeight: 24,
                         borderRadius: 999,
                         border: '1px solid var(--border)',
                         background: 'transparent',

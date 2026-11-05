@@ -37,6 +37,8 @@ function installBridge(answer: 'reply' | 'refuse'): string[] {
   (window as unknown as Record<string, unknown>).serviceHub = {
     fetchSnapshot: async () => ({ ok: true, data: { models: [] } }),
     invoke: async (service: string, action: string, payload: unknown) => {
+      // 窓が開くと既定の提供者を読む (Grok が既定でなければ LiteLLM のまま) —— 自由質問の送信には数えない。
+      if (service === 'assistant' && action === 'providers') return { ok: true, data: { providers: [] } };
       sent.push(`${service}/${action}:${(payload as { purpose?: string }).purpose ?? ''}`);
       if (answer === 'reply') {
         return { ok: true, data: { text: 'これは端末内のモデルの答えです', model: 'balanced', provider: 'compat' } };

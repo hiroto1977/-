@@ -103,15 +103,10 @@ const LEDGER: Record<string, LedgerEntry> = {
     keys: ['servicehub.recordEncryption'],
     why: '読めなければ degraded に数え、assertMetaWritable が上書きを断って salt を失わせない (投げると控えを取り出す画面ごと消えるので投げない)。',
   },
-  'src/renderer/oauth/pkceSession.ts': {
+  'src/renderer/oauth/pkceSessionHost.ts': {
     policy: 'abort',
     keys: ['pkce verifier / state / clientId / redirectUri (sessionStorage)'],
     why: '4 つ揃わなければ null を返し、交換は「やり直してください」へ倒す。途中まで残った状態で交換を試させない。',
-  },
-  'src/renderer/App.tsx': {
-    policy: 'fold',
-    keys: ['servicehub.recents', 'servicehub.favorites'],
-    why: '最近開いた / お気に入りの並び。読めなければ空から積み直す —— 失うのは並びだけ (書きの台帳でも deliberate-swallow)。',
   },
   'src/renderer/components/ChatbotWidget.tsx': {
     policy: 'fold',

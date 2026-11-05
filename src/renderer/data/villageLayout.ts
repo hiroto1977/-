@@ -152,7 +152,9 @@ export function computeHomePositions(
       list.forEach((v, i) =>
         home.set(v.id, {
           x: rect.x + rect.w * ((i + 1) / (list.length + 1)),
-          y: rect.y + rect.h * 0.5,
+          // 足元を矩形の下寄りに置く: キャラは足元を基準に上へ伸びるので、中央だと
+          // 景色の上端で頭が切れる (CEO は y=3% の矩形)。
+          y: rect.y + rect.h * 0.85,
         }),
       );
     } else {
@@ -176,4 +178,82 @@ export function wanderOffset(index: number, tick: number, amp = 0.5): Point {
     x: Math.sin(tick * 0.8 + index * 1.7) * amp,
     y: Math.cos(tick * 0.6 + index * 1.3) * amp * 0.8,
   };
+}
+
+/** 歩く 1 区間の長さ (tick 数)。区間ごとに 1 度だけ歩き出し、残りは立ち止まる。 */
+export const WALK_STEP_TICKS = 2;
+
+function unit(index: number, step: number, salt: number): number {
+  const v = Math.sin(index * 12.9898 + step * 78.233 + salt * 37.719) * 43758.5453;
+  return v - Math.floor(v);
+}
+
+/**
+ * 村人が `step` 番目の区間で居る場所。持ち場 (home) の周り ±rx / ±ry (百分率) を歩き回り、
+ * 1 割 5 分ほどの区間だけ前の場所に立ち止まる (あつ森のように、歩く・止まる・また歩く)。
+ * 乱数なし・同じ入力は同じ座標 (検査できる)。`bounds` の外へは出ない。
+ */
+export function walkPoint(
+  index: number,
+  step: number,
+  home: Point,
+  rx: number,
+  ry: number,
+  bounds: Rect,
+): Point {
+  let s = step;
+  // 立ち止まる区間は前の区間の場所を引き継ぐ (連続して止まりすぎないよう 4 区間まで遡る)。
+  for (let n = 0; n < 4 && unit(index, s, 7) < 0.15; n++) s -= 1;
+  const x = home.x + (unit(index, s, 1) * 2 - 1) * rx;
+  const y = home.y + (unit(index, s, 2) * 2 - 1) * ry;
+  return {
+    x: Math.min(bounds.x + bounds.w, Math.max(bounds.x, x)),
+    y: Math.min(bounds.y + bounds.h, Math.max(bounds.y, y)),
+  };
+}
+
+/** 全体表示で 1 人の部長につき見せるチーム数の上限。 */
+export const MAX_VISIBLE_TEAMS_PER_MANAGER = 3;
+/** 全体表示で 1 つの街区につき見せる秘書の数の上限。 */
+export const MAX_VISIBLE_SECRETARIES_PER_REGION = 1;
+
+const STATUS_RANK: Record<string, number> = { 'in-progress': 0, blocked: 1, designed: 2 };
+
+/**
+ * 全体表示に出す村人 (代表だけ)。143 体を全部並べると重なって読めないので、CEO・COO・役員・管理職は全員、
+ * 秘書は街区ごとに少数、チームは部長ごとに少数に絞る。チームは**今動いている物 (作業中 → 止まっている →
+ * 設計済み → 完了) を先に**、同じ段なら id 順 (毎回同じ顔ぶれ・乱数なし)。`pinned` (いま作業広場へ出ている
+ * チーム・話しかけられた人) は上限の外で必ず出す。**街区を拡大すれば全員が出る** (これは全体表示だけの規則)。
+ */
+export function pickVisibleVillagers(
+  villagers: readonly Villager[],
+  statusOf: (id: string) => string | undefined,
+  pinned: ReadonlySet<string> = new Set(),
+): Villager[] {
+  const rank = (v: Villager): number => STATUS_RANK[statusOf(v.id) ?? ''] ?? 3;
+  const keep = new Set<string>(pinned);
+  const teamsByManager = new Map<string, Villager[]>();
+  const secsByRegion = new Map<string, Villager[]>();
+  for (const v of villagers) {
+    if (v.kind === 'team') {
+      const key = v.managerId ?? v.regionId;
+      const arr = teamsByManager.get(key) ?? [];
+      arr.push(v);
+      teamsByManager.set(key, arr);
+    } else if (v.kind === 'secretary') {
+      const arr = secsByRegion.get(v.regionId) ?? [];
+      arr.push(v);
+      secsByRegion.set(v.regionId, arr);
+    } else {
+      keep.add(v.id);
+    }
+  }
+  const byRank = (a: Villager, b: Villager): number => rank(a) - rank(b) || byIdAsc(a, b);
+  for (const arr of teamsByManager.values()) {
+    arr.sort(byRank).slice(0, MAX_VISIBLE_TEAMS_PER_MANAGER).forEach((v) => keep.add(v.id));
+  }
+  for (const arr of secsByRegion.values()) {
+    arr.sort(byIdAsc).slice(0, MAX_VISIBLE_SECRETARIES_PER_REGION).forEach((v) => keep.add(v.id));
+  }
+  return villagers.filter((v) => keep.has(v.id));
 }

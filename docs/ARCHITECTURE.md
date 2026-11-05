@@ -1,6 +1,6 @@
 # Service Hub — Architecture
 
-> 自己検証: `npm run verify:arch` で 698 個の `file:line` 参照 + 44 個のライブメトリクスが
+> 自己検証: `npm run verify:arch` で 695 個の `file:line` 参照 + 44 個のライブメトリクスが
 > 毎 push 検証されます (`.github/workflows/ci.yml`)。**この 2 つの数もライブメトリクス
 > なので、ゲートが大きくなれば一緒に動く** —— 2026-09-15 (パス 279) まで
 > 「170 個 + 5 個」と書いたままで、実測の 4 倍・7 倍の過小申告だった。
@@ -21,12 +21,12 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 
 | 軸 | 値 | 出典 |
 |---|---:|---|
-| サービス数 | 77 | `src/shared/serviceId.ts:9-43` |
+| サービス数 | 78 | `src/shared/serviceId.ts:9-43` |
 | IPC ハンドラ数 | 15 | `src/main/main.ts:254-592` |
-| client モジュール (fetcher + actions) | 77 | `src/main/clients/index.ts:44-83` |
+| client モジュール (fetcher + actions) | 78 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
-| 外部接続先ホスト | 30 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **19474** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| 外部接続先ホスト | 31 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
+| ユニットテスト | **19561** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` (**2026-09-01 の報告** —— 今のコードを測った物ではない。`docs/REMAINING_WORK.md` の「パス 494」) |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` (同上) |
@@ -34,7 +34,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod / dev) | 0 vulnerabilities (2026-09-10 実測。CI が `--omit=dev --audit-level=high` で毎回確認 —— dev 依存と moderate 以下を落とさないのは意図的で、理由は `ci.yml` の注記。**その外側は `lint:deps` のセキュリティの床 6 件**が受け持つ: 自分で押さえた版は道を問わず台帳に載り、緩めば落ちる) | `package-lock.json` |
 | 陰性対照つきゲート | 36 / 39 (`lint:malware` を足した · パス 510。残る 3 件は外部ツール 2 (`typecheck` / eslint) と `chain:verify` (対照は `integrityChainWitness.test.ts` が持つ)。★ 2026-09-25 (パス 467) に `lint:knowledge-refs` と `verify:orchestration` へ `--self-test` を付けた —— 2 本は「2026-08-25 に実物へ違反を植えて鳴ることを確認済み」という理由で免除されていたが、それは**母集団が非空のとき**の対照で、**空にする側**は 1 度も試されておらず、実測すると壊れた台帳も `rounds: []` も `org.secretaries` 削除も**すべて ✅ exit 0** だった。`lint:doi-prefix` は同じ理由で今も免除だが、空にする側は測っていない) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
-| `file:line` 参照数 | 698 | 自己検証 |
+| `file:line` 参照数 | 695 | 自己検証 |
 | 図の中の `file:line` 参照数 | 29 | 自己検証 (mermaid のクラス図・パス 180) |
 
 ### 統合フロー図
@@ -1768,6 +1768,7 @@ union を参照する。
 | `kpi` | KPI / BEP (local mock) | none | ✅ | | (read-only — Phase 6 で API 接続) |
 | `hydroponics` | 水耕栽培 — 運転管理 (測定の判定 / 今日やること / 栽培ロットの日程) | none | ✅ | | (read-only — fetcher は「何を測るか」の台帳だけを返す。測定・ロット・設定は端末内の record store。組み立ては `src/shared/hydroponicsControl.ts` に 1 つ) |
 | `mentor` | 専属カウンセラー — メンバー 1 人に 1 人の相談役 (聞き取り / 週 1 のチェックイン / 関係の仲介 / 助言) | none | ✅ | | (read-only — fetcher は聞き取りの問いの台帳だけを返す。記録は端末内の record store `mentor-sessions`。判断は `src/shared/mentor.ts` に 1 つ。AI へ送るのは本人の記録と相談文だけで、画面が送る前に断る) |
+| `grok` | Grok (xAI) — 接続状態の確認と直接の質問 (AI 提供者 Grok の窓) | none | ✅ | | (read-only — fetcher は提供者の台帳から導いた見本だけを返す。鍵と既定の提供者は `assistant` スロット (エージェント設定)・質問は `assistant/chat` の `provider: 'grok'`。画面は送る前に送り先を名乗る) |
 | `stocks` | Stocks (local mock) | Bearer (Anthropic, advisor のみ) | ✅ | | `register-ticker`, `unregister-ticker`, `backtest`, `compare-strategies`, `advise`, `export-dashboard`, `export-dashboard-md` (永続化済み、Phase 7 で broker 接続) |
 | `business` | 事業ダッシュボード (10 categories) | none | ✅ | | `advise`, `export-dashboard`, `export-dashboard-md` (EC / dropship / OEM/ODM / blog / blog-affiliate / PPC-affiliate / video-production / video-upload / video-distribution / sns-ops, Phase 6 で 実 API 接続) |
 | `funding` | 資金調達レーダー — 補助金/助成金/融資/公庫/給付金/CF を会計・株式連携で可視化 (レーダー/折れ線/円/棒) | none (local mock) | ✅ | | (read-only — 集計は src/shared/funding.ts の純粋関数。Phase 6 で会計/公庫 API 接続) |
@@ -1854,9 +1855,9 @@ union を参照する。
 | ollama | `chat` | `{ model, prompt, system? }` | **`isSafeModelName(model)`** + `\0` reject + prompt 32,768 / system 8,192 字の天井 (**超えは切らずに断る** —— パス 114 まで黙って切っていた。文面は `inputTooLongMessage`)。**応答は `capAssistantReply` で 10 万字に打ち切り** (パス 113 まで 10 MiB まで素通し)。戻り値の形は台帳 `ActionData<'ollama/chat'>` (中身は shared/ollama.ts の OllamaChatResult。両ビルドと OllamaPage・チャットボットが同じ型を読む —— 台帳は登録済み action の全域: パス 117) | `ollama.ts:297-488` |
 | microsoft-365 | `send-mail` | `{ to, subject, body? }` | **共有台帳 `MS365_MAIL_FIELDS`** を共有の `checkMail` が読む (型・長さ) + Graph message envelope も共有 (`graphMailInit`)。宣言は `SendMailPayload`、欄の名前のずれは検査が留める | `microsoft-365.ts:17-269` |
 | microsoft-365 | `create-event` | `{ subject, start, end, location? }` | **共有台帳 `MS365_EVENT_FIELDS`** を共有の `checkEvent` が読む (型・長さ) + Graph event envelope も共有 (`graphEventInit`・時間帯は `GRAPH_EVENT_TIME_ZONE`)。宣言は `CreateEventPayload` | `microsoft-365.ts:17-300` |
-| assistant | `chat` | `{ messages, system, model, provider, purpose }` | **最新の発話が 1 発話の天井を超えていれば切らずに断る (`latestTurnTooLong` · パス 112。履歴は窓)**。sanitizeMessages が role を user/assistant に限定し最後は user 必須。system は MAX_SYSTEM で切る。**maxTokens は payload から受けない** (ASSISTANT_MAX_TOKENS)。**model は読まない** (T-170)。provider を省略したときは `purpose` の別名でローカルの LiteLLM へ送り、届かなければ Anthropic。明示した provider は設定済み資格情報にしか解決せず、model が URL に入る Gemini 経路だけ encodeURIComponent で包む (shared/ai/providers.ts) | `assistant.ts:134-256` |
-| assistant | `chatAll` | `{ messages, system, model, provider, purpose }` | 受け取る型は chat と同じ (`purpose` を含む)。合議は `purpose` を読まず、設定済みプロバイダ全部へ `runAiChat` で同時に投げ、失敗も per-provider に畳んで返す | `assistant.ts:134-256` |
-| assistant | `providers` | (payload なし) | ctx.payload を読まない。資格情報の設定状況だけ返す | `assistant.ts:223-226` |
+| assistant | `chat` | `{ messages, system, model, provider, purpose }` | **最新の発話が 1 発話の天井を超えていれば切らずに断る (`latestTurnTooLong` · パス 112。履歴は窓)**。sanitizeMessages が role を user/assistant に限定し最後は user 必須。system は MAX_SYSTEM で切る。**maxTokens は payload から受けない** (ASSISTANT_MAX_TOKENS)。**model は読まない** (T-170)。provider を省略したときは `purpose` の別名でローカルの LiteLLM へ送り、届かなければ Anthropic。明示した provider は設定済み資格情報にしか解決せず、model が URL に入る Gemini 経路だけ encodeURIComponent で包む (shared/ai/providers.ts) | `assistant.ts:142-243` |
+| assistant | `chatAll` | `{ messages, system, model, provider, purpose }` | 受け取る型は chat と同じ (`purpose` を含む)。合議は `purpose` を読まず、設定済みプロバイダ全部へ `runAiChat` で同時に投げ、失敗も per-provider に畳んで返す | `assistant.ts:142-243` |
+| assistant | `providers` | (payload なし) | ctx.payload を読まない。資格情報の設定状況だけ返す | `assistant.ts:186-190` |
 | business | `advise` | `{ question, categories }` | **model / maxTokens は payload から受けない** (定数)。有料 API 呼び出しには 2 分の締切と本文上限 | `business.ts:1124-1128` |
 | business | `export-dashboard` | `{ path, advisorResult }` | path は書き出し関門 (clients/exportPaths.ts) を通る | `business.ts:1124-1128` |
 | business | `export-dashboard-md` | `{ path, advisorResult }` | 同上 (Markdown 版) | `business.ts:1124-1128` |
@@ -1890,7 +1891,7 @@ union を参照する。
 | shopify | `sync-to-salesforce` | order + token + instanceUrl | **送り先が payload 由来**。https かつ salesforce.com / *.salesforce.com のみ (2026-08-23 まで https しか見ておらず、トークンと顧客情報が任意のホストへ届いた) | `shopify.ts:414-420` |
 | shopify | `sync-to-stripe` | order + token | 送り先は定数 (api.stripe.com) | `shopify.ts:414-420` |
 
-### 3.3 ネットワーク egress マトリクス (30 ホスト + ユーザー指定)
+### 3.3 ネットワーク egress マトリクス (31 ホスト + ユーザー指定)
 
 デスクトップ版の外部接続は **main プロセスからのみ** (renderer は CSP `connect-src 'self'`)。ブラウザ版は同じ宛先へ
 renderer が直接つなぐ (`src/renderer/data/saasWriteWeb.ts` / `src/shared/api/` の各クライアント / `src/renderer/network/ollamaWeb.ts` /
@@ -1927,11 +1928,12 @@ undici は CORS を実装しないので単体検査には映らず、CI の外�
 | security (VT) | `www.virustotal.com` | `POST /api/v3/urls`, `GET /api/v3/urls/{id}` (両ビルドが共有の関数を通る) | `x-apikey` | `src/shared/api/security.ts:104-124` + `security.ts:251-255` |
 | cloudflare | `api.cloudflare.com` | `GET /client/v4/user`, `/zones` (main) / `POST /zones/{id}/dns_records`, `/purge_cache` (両ビルドが共有の関数を通る) | Bearer | `cloudflare.ts:93-138` + `src/shared/api/cloudflare.ts:116-122,186-192` |
 | skills, emotions | `api.anthropic.com` | `POST /v1/messages` | `x-api-key` | `skills.ts:465`, `emotions.ts:204` |
-| assistant (AI ハブ・anthropic) | `api.anthropic.com` | `POST /v1/messages` | `x-api-key` | `src/shared/ai/providers.ts:150-186` |
-| assistant (AI ハブ・openai) | `api.openai.com` | `POST /v1/chat/completions` | Bearer | `src/shared/ai/providers.ts:149-172` |
-| assistant (AI ハブ・gemini) | `generativelanguage.googleapis.com` | `POST /v1beta/models/{model}:generateContent` | `x-goog-api-key` | `src/shared/ai/providers.ts:213-253` |
-| assistant (AI ハブ・ollama) | 既定 `127.0.0.1:11434` (資格情報で上書き可) | `POST /api/chat` | none | `src/shared/ai/providers.ts:216-243` |
-| assistant (AI ハブ・compat) | ユーザー指定 (LiteLLM / Groq / LM Studio 等) | `POST /v1/chat/completions` | Bearer (任意) | `src/shared/ai/providers.ts:245-283` |
+| assistant (AI ハブ・anthropic) | `api.anthropic.com` | `POST /v1/messages` | `x-api-key` | `src/shared/ai/providers.ts:166-203` |
+| assistant (AI ハブ・openai) | `api.openai.com` | `POST /v1/chat/completions` | Bearer | `src/shared/ai/providers.ts:204-228` |
+| assistant (AI ハブ・gemini) | `generativelanguage.googleapis.com` | `POST /v1beta/models/{model}:generateContent` | `x-goog-api-key` | `src/shared/ai/providers.ts:229-270` |
+| assistant (AI ハブ・grok) | `api.x.ai` | `POST /v1/chat/completions` | Bearer | `src/shared/ai/providers.ts:271-296` |
+| assistant (AI ハブ・ollama) | 既定 `127.0.0.1:11434` (資格情報で上書き可) | `POST /api/chat` | none | `src/shared/ai/providers.ts:297-330` |
+| assistant (AI ハブ・compat) | ユーザー指定 (LiteLLM / Groq / LM Studio 等) | `POST /v1/chat/completions` | Bearer (任意) | `src/shared/ai/providers.ts:331-361` |
 | OAuth (Google) | `accounts.google.com`, `oauth2.googleapis.com` | `GET /o/oauth2/v2/auth`, `POST /token` | — / form-urlencoded | `oauth.ts:58-85` |
 | ollama | **`127.0.0.1:11434`** (hardcoded) | `GET /api/version`, `/api/tags`, `POST /api/chat` (allowlist 限定) | none | `ollama.ts:28, 40-46` |
 | microsoft-365 | `graph.microsoft.com` | `GET /v1.0/me`, `POST /v1.0/me/sendMail`, `POST /v1.0/me/events` | Bearer | `microsoft-365.ts:21` |
@@ -2254,7 +2256,7 @@ $ npm run mutate:next -- --top=5
 per-file の kill / survived / no-cov / ignored / invalid は `docs/QUALITY.md` が
 Stryker の JSON レポート (reports/mutation 配下の生成物) から機械生成して持つ
 (`npm run quality:report`)。
-Stryker の対象 (`stryker.config.json` の `mutate`) は **332 ファイル**。
+Stryker の対象 (`stryker.config.json` の `mutate`) は **335 ファイル**。
 2026-10-26 に `renderer/data` の `aegisLang` と `aegisLangSafety` の 2 モジュール (外へ何も出さない小さな言語の実行系と、実行前の安全の走査・規則ベースの修復の提案 —— Python の原型 AegisLang の考え方だけを移した純ロジック) を足した —— 1 度目の測定は **88.65% (生存 154)** で、生存の大半は利用者に見せる日本語の断りの文を値で主張していない物 (文面を空にしても検査が落ちない) と、走査の上限の添字の等価変異だった。文面を全件そのまま留める検査と、境界・状態の検査を足し、等価な添字は走査の形ごと消して (sticky 正規表現・`indexOf`・`split` と `map`)、**100.00% (Killed 1,286 / 生存 0 / 未到達 0)**。残した 2 つの `Stryker disable` は理由つき (収束しない入力への保険の周回上限・空の編集を適用しても変わらない最適化)。
 2026-10-07 (パス 506) に `src/renderer/components/useDialogFocus.ts` (dialog の焦点の道 —— 開いたら印の操作子へ・Esc で閉じる / 取り消す・
 消えたら押した物へ戻す) を足した —— push した直後の CI で `mutateScopeCensus` が「同名の検査が在り 100 行以上なのに `mutate` の外」と
@@ -2703,12 +2705,12 @@ effect と他 instance からの通知は戻り値を受け取らないので、
 ライトは同じ名前の集合・各デザインのダークはライトの色を漏れなく上書き・4 枚とも `color-scheme`・表の順序)。
 広い画面 (`CHAT_DOCK_MIN_WIDTH` = 1200px 以上) の「すっきり」では、AI コンシェルジュが**サイドバーと画面の間の列**
 (`<aside class="chat-column">`) になり、上部バーの「💬 チャット」で畳める (畳んだ状態は保存しない —— 保存先を
-1 つ増やさない)。判定は `src/renderer/chatDock.ts` の `shouldDockChat` **1 か所**で、App.tsx はその答えで
+1 つ増やさない)。判定は chatDock の `shouldDockChat` **1 か所**で (2026-11-04 に旧画面のサイドバーとともに廃止。会話の列は村の殻が常に持つ)、App.tsx はその答えで
 `.chat-docked` を付け、CSS は組の有無だけを読む (同じ幅を CSS にも書くと、ずれた幅で列だけが 2 列目に残る)。
 それ以外 (かわいい・狭い画面) は右下の 🤖 から開く浮いた窓で、スマホの「すっきり」では下から出るシートになる。
 **入口は常に 1 つ** —— 列のときは 🤖 を出さない。列の送信ボタンの読み上げ名は「コンシェルジュへ送る」で、
 画面の「送信」と名前で区別できる (e2e は `getByRole('button', { name: '送信' })` で画面の送信を押す)。
-jsdom の `src/renderer/__tests__/chatDock.test.ts` (matchMedia の代役で幅を動かす) と実機の `design` suite (座標で 3 列を測る・
+jsdom の chatDock の検査 (廃止済み・matchMedia の代役で幅を動かす) と実機の `design` suite (座標で 3 列を測る・
 窓の幅への追随・4 枚の表の特異性と順序を出荷した stylesheet の規則から読んだ期待値で見る・スマホのシート) が見る。
 
 **文字色の対比** (2026-10-02 · パス 503) —— 文字色と地の色は **WCAG 2.x AA** (通常の字 4.5:1・大きい字 =
@@ -2774,7 +2776,7 @@ Shift+Tab で画面の外の 74 項目へ入る)、開いている間は暗幕�
 依存配列を持たない効果 —— 最初の commit は「読み込み中…」で ref が無い)、開いたら ✕ へ・閉じたら ☰ へ焦点を運ぶ。CSS はスマホの
 `.main` の地を残し、チップを `min-height: 24px` にする。測定器 `scripts/lib/controls.cjs` の `present()` は `inert` の下を「無い」と
 数える。**3 層で留める**: ① jsdom で実物を描いて押す (`src/renderer/components/__tests__/conciergeDialogFocus.test.ts` 7 件・
-`src/renderer/__tests__/drawerKeyboard.test.ts` 4 件・`src/renderer/components/__tests__/useDialogFocus.test.ts` 9 件) ② 構文木と CSS の規則
+drawerKeyboard の検査 (旧画面のドロワーとともに廃止) 4 件・`src/renderer/components/__tests__/useDialogFocus.test.ts` 9 件) ② 構文木と CSS の規則
 (`src/renderer/__tests__/dialogSitesCensus.test.ts` —— `role` が dialog / alertdialog の JSX は名前・`ref`・`onKeyDown` を持ち、
 そのファイルは hook を呼ぶ・両方向の台帳 4 行 / `src/renderer/__tests__/openedStateCss.test.ts` —— スマホの `.main` は `background` を上書きせず、チップは
 24px 以上) ③ 実機の `opened` suite (e2e の 39 番目・131 件 —— 4 配色 × 開いた全画面の字と操作子・浮いた窓のキーボードの道
@@ -2805,7 +2807,7 @@ App 1 つ**で、ホームは `src/renderer/shellContext.ts` の文脈 (`useShel
 `localStorage` をもう 1 度読むと読み手が 2 つになり (`lint:storage` の規則 3 / 12 の行が増える)、♥ を押した
 直後のホームが古いまま残る。`services.ts` が `HomePage` を import するので `HomePage` から `SERVICES` は
 読めない (循環) —— だから文脈が運ぶのは id と表示に要る最小の欄だけ。配線は
-`src/renderer/__tests__/appShell.test.ts` (jsdom で App を丸ごと描き、押した物が状態を変え、3 つの場所が
+appShell の検査 (廃止済み・jsdom で App を丸ごと描き、押した物が状態を変え、3 つの場所が
 同じに描くことを見る。`scrollTo` は要素に模した物を持たせて向きまで見る) と実機の `shell` suite
 (`position: fixed` の可視性とスクロール量は実ブラウザでしか測れない) が見る。
 

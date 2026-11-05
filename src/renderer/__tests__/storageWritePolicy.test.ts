@@ -48,11 +48,6 @@ const LEDGER: Record<string, LedgerEntry> = {
     keys: ['(呼び出し側が渡す鍵)'],
     why: '成否を返す唯一の入口。ここだけが setItem を直接呼んでよい理由は、失敗の種別を文面に写して返すため。',
   },
-  'src/renderer/App.tsx': {
-    policy: 'deliberate-swallow',
-    keys: ['servicehub.recents', 'servicehub.favorites'],
-    why: '最近開いた / お気に入りの並び。失っても次に開いた物から積み直せるので、警告を出す方が邪魔になる。',
-  },
   'src/renderer/components/ChatbotWidget.tsx': {
     policy: 'deliberate-swallow',
     keys: ['chatbot-history'],
@@ -90,7 +85,7 @@ const LEDGER: Record<string, LedgerEntry> = {
     keys: ['servicehub.internalLicense'],
     why: '招待コードの引き換え状態。コードは単回消費ではないので、保存できなくても入れ直せる (このセッションは有効として扱う)。',
   },
-  'src/renderer/oauth/pkceSession.ts': {
+  'src/renderer/oauth/pkceSessionHost.ts': {
     policy: 'surfaced',
     keys: ['pkce verifier / state / clientId / redirectUri (sessionStorage)'],
     why: 'トークン交換に要る 4 つ。捨てると後の交換が理由不明で失敗するので、投げて呼び出し側に伝える。',

@@ -350,7 +350,7 @@ describe('0.2 の構文: 変換の全形を 1 byte で留める', () => {
 describe('0.2 の構文の誤りは文と場所を名乗る', () => {
   const at = (line: number, col: number, reason: string): string => `src/x/m0.mamori:${line}:${col}: [M0] ${reason}`;
   const CASES: readonly [string, string, string][] = [
-    ['展開', FN('  return { ...x };'), at(2, 12, '`...` (展開) は在りません —— 欄を 1 つずつ書きます (何が入るかを字面で見えるようにする)')],
+    ['欄より後ろの展開 (0.15 から展開は欄より前にだけ置ける)', FN('  return { a: 1, ...x };'), at(2, 18, '`...` (展開) は欄より前にだけ置けます —— 後ろに置くと、先に書いた欄を展開が上書きできます')],
     ['計算した鍵', FN('  return { [code]: 1 };'), at(2, 12, '計算した鍵 (`[k]: v`) は在りません —— 鍵は名前か文字列で書きます')],
     ['__proto__ の鍵', FN('  return { __proto__: x };'), at(2, 12, '鍵 `__proto__` は在りません —— オブジェクトの字面では欄ではなく原型を差し替えます')],
     ['文字列で書いた __proto__ の鍵', FN("  return { '__proto__': x };"), at(2, 12, '鍵 `__proto__` は在りません —— オブジェクトの字面では欄ではなく原型を差し替えます')],
@@ -422,8 +422,8 @@ describe('0.2 の構文は来歴の規則を外す道にならない', () => {
   it('★ 回す変数は印を運ばない (印の配列から取り出しても、sink へは渡せない —— 失敗は閉じる向き)', () => {
     expect(rulesOf(VETTED + SINK + FN('  for (const u of us) {\n    openU(u);\n  }\n  return 1;', 'export fn f(us: readonly VettedU[]) -> unknown'))).toEqual(['M4']);
   });
-  it('★ 回す変数は外の同じ名前を隠す (for の中の shell は危ない口ではない)', () => {
-    expect(rulesOf('extern sink { shell } from "electron";\n' + FN('  for (const shell of [1]) {\n    code.trim();\n  }\n  return 1;'))).toEqual([]);
+  it('★ 回す変数が外の同じ名前なら断る (T-251 · 局所の名前は外の宣言を隠せない)', () => {
+    expect(rulesOf('extern sink { shell } from "electron";\n' + FN('  for (const shell of [1]) {\n    code.trim();\n  }\n  return 1;'))).toEqual(['M6']);
   });
   it('★ field で読んだ値は印を運ばない (印の欄を読んでも素の値)', () => {
     expect(rulesOf(VETTED + SINK + FN('  return openU(field x.url);'))).toEqual(['M4']);

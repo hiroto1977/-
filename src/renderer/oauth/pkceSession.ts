@@ -1,3 +1,5 @@
+// 生成物 —— src/renderer/oauth/pkceSession.mamori から Mamori のコンパイラが組んだ。手で編集しない (`npm run mamori:build`)。
+// 言語の仕様は docs/MAMORI.md。生成物が元と食い違えば src/shared/mamori/__tests__/mamoriGenerated.test.ts が落ちる。
 /**
  * ブラウザ版 PKCE の**一時秘密**を置く場所を 1 つにする。
  *
@@ -39,14 +41,21 @@
  *                        しかも呼び出しは `finally` に在るので、本当の失敗
  *                        (state 不一致 = CSRF の疑い) を投げ替え、後続の
  *                        `setBusy(false)` も飛ばして画面が固まる。
+ *
+ * ## Mamori で書いてある (2026-11-01 · MG-017)
+ *
+ * 元は TypeScript。`sessionStorage` は触れることが投げる記憶の口なので、`extern pure global` にできない (T-249) —— 3 つの小さな host 関数
+ * (`pkceSessionHost.ts`) へ閉じ込めた。鍵を文字列で引く `s[k]` は Mamori に無いので 4 つの欄を字面で並べ、`as unknown as` で作っていた戻り値は
+ * 欄を読み切ってから組む。`catch (e)` の束縛 (0.12) は `savePkceSession` の理由の文に使う。
  */
 
 import { describeStorageError } from '../data/localWrite';
+import { hostSetItem, hostGetItem, hostRemoveItem } from './pkceSessionHost';
 
-const KEY_PREFIX = 'pkce.';
+const KEY_PREFIX = "pkce.";
 
-/** 保管する 4 つ。**増やすならここだけ。** */
-const KEYS = ['verifier', 'state', 'clientId', 'redirectUri'] as const;
+/** 保管する 4 つ。**増やすならここと `savePkceSession` / `readPkceSession` の字面。** */
+const KEYS = ["verifier", "state", "clientId", "redirectUri"];
 
 export interface PkceSession {
   readonly verifier: string;
@@ -55,78 +64,51 @@ export interface PkceSession {
   readonly redirectUri: string;
 }
 
-const storageKey = (k: (typeof KEYS)[number]): string => `${KEY_PREFIX}${k}`;
+const storageKey = (k: string) => KEY_PREFIX + k;
 
 /**
- * 認可ページを開く直前に置く。**1 つでも置けなければ、置けた分を消してから投げる。**
- *
- * 半分残しても `readPkceSession()` は `null` を返す (4 つ揃わないと読まない) ので
- * 交換は始まらない。ただし**前回の試行が残っていた端末**では新しい verifier と
- * 古い state が混ざりうる —— state 不一致として閉じる側に倒れるので危険ではないが、
- * 利用者からは理由の分からない行き止まりになる。だから消してから投げる。
- *
- * ここが**保存領域を断られたことに気付く唯一の場所**である —— 認可ページを開く前、
- * まだ秘密がどこにも無い時点。以降の読み・消しが同じ理由で失敗しても、
- * 利用者はここで既に理由を見ている。
+ * **1 つでも置けなければ、置けた分を消してから投げる。** 半分残しても `readPkceSession()` は `null` を返す (4 つ揃わないと読まない) が、
+ * 前回の試行が残っていた端末では新しい verifier と古い state が混ざりうる。ここが保存領域を断られたことに気付く唯一の場所 ——
+ * 認可ページを開く前、まだ秘密がどこにも無い時点。
  */
 export function savePkceSession(s: PkceSession): void {
   try {
-    for (const k of KEYS) sessionStorage.setItem(storageKey(k), s[k]);
+    hostSetItem(storageKey("verifier"), s.verifier);
+    hostSetItem(storageKey("state"), s.state);
+    hostSetItem(storageKey("clientId"), s.clientId);
+    hostSetItem(storageKey("redirectUri"), s.redirectUri);
   } catch (err) {
     clearPkceSession();
-    throw new Error(
-      `認可に使う一時情報をこのブラウザに保存できませんでした (${describeStorageError(err)})。`
-        + 'プライベートウィンドウで開いている場合は通常のウィンドウで開き直してください。',
-    );
+    throw new Error("認可に使う一時情報をこのブラウザに保存できませんでした (" + describeStorageError(err) + ")。" + "プライベートウィンドウで開いている場合は通常のウィンドウで開き直してください。");
   }
 }
 
-/**
- * 交換に要る 4 つを読む。**1 つでも欠けたら `null`** ——
- * 途中まで残った状態で交換を試させない。
- */
+/** 1 つの鍵を読む。保存領域そのものへ触れられないときは「切れた」と同じ扱い (`null`) —— その受け方は host の口 (`hostGetItem`) が持つ。 */
+function readKey(k: string): string | null {
+  return hostGetItem(storageKey(k));
+}
+
+/** 交換に要る 4 つを読む。**1 つでも欠けたら `null`** —— 途中まで残った状態で交換を試させない。 */
 export function readPkceSession(): PkceSession | null {
-  const out: Record<string, string> = {};
-  for (const k of KEYS) {
-    let v: string | null = null;
-    try {
-      v = sessionStorage.getItem(storageKey(k));
-    } catch {
-      // 保存領域そのものへ触れられない。**「切れた」と同じ扱いにする** ——
-      // 4 つ揃わなければ交換はできないので、投げて画面を落とすより
-      // 「やり直してください」へ倒す。理由は `savePkceSession` の段で出ている
-      // (そちらが先に同じ理由で断るので、ここへは認可を開けた端末しか来ない)。
-      //
-      // ここに `return null` は**書かない**。`v` は `null` のままなので 1 行下の
-      // 検査が同じ null を返す —— 書くと外から区別できない分岐が 1 つ増えるだけで、
-      // 変異検査には等価な生存として残る (2026-09-06 実測)。
-    }
-    if (!v) return null;
-    out[k] = v;
-  }
-  return out as unknown as PkceSession;
+  const verifier = readKey("verifier");
+  if (!verifier) return null;
+  const state = readKey("state");
+  if (!state) return null;
+  const clientId = readKey("clientId");
+  if (!clientId) return null;
+  const redirectUri = readKey("redirectUri");
+  if (!redirectUri) return null;
+  return { verifier: verifier, state: state, clientId: clientId, redirectUri: redirectUri };
 }
 
 /**
- * **一時秘密を消す。必ず `finally` から呼ぶ。投げない。**
- *
- * 成功でも失敗でも中断でも呼んでよい (無い鍵の `removeItem` は無害)。
- * 「成功したときだけ消す」形にすると、**いちばん消したい失敗のときに残る**。
- *
- * **鍵ごとに受ける。** 4 連を素で並べていた頃は 2 つ目で投げると残り 2 つが残り、
- * このファイルの不変条件が「作れなくする」と書いている形になっていた。
- * 投げないのも同じ理由 —— 呼び出しは `finally` に在るので、投げると本当の失敗を
- * 投げ替え、後続の後片付けも飛ばす。
- *
- * 消せなかった鍵の名前を返す。**呼び出し側はそれを画面に出す** ——
- * `sessionStorage` はタブ単位なので、残ったときの打ち手は「このタブを閉じる」。
+ * **一時秘密を消す。必ず `finally` から呼ぶ。投げない。** 鍵ごとに受ける (2 つ目で投げると残り 2 つが残る形を作らない)。
+ * 消せなかった鍵の名前を返す。呼び出し側はそれを画面に出す —— `sessionStorage` はタブ単位なので、残ったときの打ち手は「このタブを閉じる」。
  */
 export function clearPkceSession(): readonly string[] {
   const failed: string[] = [];
   for (const k of KEYS) {
-    try {
-      sessionStorage.removeItem(storageKey(k));
-    } catch {
+    if (!hostRemoveItem(storageKey(k))) {
       failed.push(k);
     }
   }

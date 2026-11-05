@@ -183,10 +183,10 @@ const KEY_HANDLERS = ['onKeyDown', 'onKeyUp', 'onKeyPress'];
  */
 const DISMISS_SURFACES: readonly { readonly file: string; readonly className: string; readonly escapeFile: string; readonly why: string }[] = [
   {
-    file: 'src/renderer/App.tsx',
-    className: 'sidebar-backdrop',
-    escapeFile: 'src/renderer/App.tsx',
-    why: 'スマホのドロワーの暗幕。閉じる操作は ✕ ボタンと Esc (App の keydown) でキーボードからも行える。暗幕自身は読み上げにも出さない (aria-hidden)',
+    file: 'src/renderer/components/VillageShell.tsx',
+    className: 'village-hall-backdrop',
+    escapeFile: 'src/renderer/components/useDialogFocus.ts',
+    why: '役場の窓の暗幕。閉じる操作は「閉じる ✕」ボタンと Esc (useDialogFocus) でキーボードからも行える。暗幕自身は読み上げにも出さない (aria-hidden)',
   },
 ];
 
@@ -366,8 +366,8 @@ describe('入力欄の枠 (パス 504・規則 1)', () => {
 });
 
 describe('押せる要素 (パス 504・規則 2)', () => {
-  it('走査が生きている (床: ポインタ操作を持つネイティブでない要素 3 以上)', () => {
-    expect(KEY_SCANS.reduce((n, s) => n + s.pointerOnly, 0)).toBeGreaterThanOrEqual(3);
+  it('走査が生きている (床: ポインタ操作を持つネイティブでない要素 2 以上 —— 旧画面のサイドバーの ♡ が無くなって 3 → 2)', () => {
+    expect(KEY_SCANS.reduce((n, s) => n + s.pointerOnly, 0)).toBeGreaterThanOrEqual(2);
   });
 
   it('★ ポインタで押せるネイティブでない要素は、role・tabIndex・キー操作を持つ (暗幕を除く)', () => {
@@ -385,9 +385,9 @@ describe('押せる要素 (パス 504・規則 2)', () => {
       expect(d.why.length).toBeGreaterThanOrEqual(30);
     }
     // 暗幕の要素は、台帳が無ければ鳴る (台帳が効いている)
-    const bare = `const a = <div className="sidebar-backdrop" aria-hidden="true" onClick={close} />;`;
+    const bare = `const a = <div className="village-hall-backdrop" aria-hidden="true" onClick={close} />;`;
     expect(scanKeyboard('other.tsx', bare).violations.map((v) => v.rule)).toEqual(['keyboard']);
-    expect(scanKeyboard('src/renderer/App.tsx', bare).violations).toEqual([]);
+    expect(scanKeyboard('src/renderer/components/VillageShell.tsx', bare).violations).toEqual([]);
   });
 
   it('標本: 直す前の形は鳴る・直した後の形は鳴らない', () => {

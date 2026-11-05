@@ -49,6 +49,8 @@ beforeAll(() => {
     listConfigured: () => Promise.resolve([]),
     fetchSnapshot: () => Promise.resolve({ ok: false, code: 'x', message: 'x' }),
     invoke: (serviceId: string, action: string, params: unknown) => {
+      // 窓が開くと既定の提供者を読む (`assistant/providers` · 読み取りで何も書かない) —— 書き込みの記録には数えない。
+      if (serviceId === 'assistant' && action === 'providers') return Promise.resolve({ ok: true, data: { providers: [] } });
       invoked.push({ serviceId, action, params });
       return Promise.resolve({ ok: true, data: { persisted: true } });
     },

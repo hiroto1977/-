@@ -72,6 +72,7 @@ import { CursorPage } from './pages/CursorPage';
 import { ChartsPage } from './pages/ChartsPage';
 import { TalentPage } from './pages/TalentPage';
 import { MentorPage } from './pages/MentorPage';
+import { GrokPage } from './pages/GrokPage';
 import { HydroponicsPage } from './pages/HydroponicsPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
@@ -714,6 +715,14 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'HP',
     description: '毎日の測定 (EC / pH / 温度 / 湿度 / CO₂ / 溶存酸素 / 液位) → 判定 → 今日やること。播種・定植・収穫・養液交換の日程も自動で出す',
     page: HydroponicsPage,
+    category: 'tools',
+  },
+  {
+    id: 'grok',
+    label: 'Grok',
+    icon: 'GK',
+    description: 'xAI の Grok — 接続状態の確認と直接の質問 (鍵と既定の提供者は AI アシスタントのエージェント設定)',
+    page: GrokPage,
     category: 'tools',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE

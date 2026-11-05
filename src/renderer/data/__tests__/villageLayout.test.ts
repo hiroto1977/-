@@ -10,6 +10,10 @@ import {
   regionRects,
   layoutDistrict,
   computeHomePositions,
+  walkPoint,
+  pickVisibleVillagers,
+  MAX_VISIBLE_TEAMS_PER_MANAGER,
+  MAX_VISIBLE_SECRETARIES_PER_REGION,
   computeDistrictFocus,
   wanderOffset,
   FOCUS_RECT,
@@ -398,8 +402,8 @@ describe('villageLayout — 座標の golden', () => {
         [V('c1', 'ceo', 'ceo'), V('o1', 'coo', 'coo')],
         REGIONS,
       );
-      near(home.get('c1')!, 50, 8); // 40 + 20×0.5, 3 + 10×0.5
-      near(home.get('o1')!, 50, 18); // 38 + 24×0.5, 14 + 8×0.5
+      near(home.get('c1')!, 50, 11.5); // 40 + 20×0.5, 3 + 10×0.85 (足元は下寄り: 頭が景色の上端で切れない)
+      near(home.get('o1')!, 50, 20.8); // 38 + 24×0.5, 14 + 8×0.85
     });
 
     it('CEO が 2 人なら横に等間隔 (n+1 で割る)', () => {
@@ -407,8 +411,8 @@ describe('villageLayout — 座標の golden', () => {
         [V('c1', 'ceo', 'ceo'), V('c2', 'ceo', 'ceo')],
         REGIONS,
       );
-      near(home.get('c1')!, 40 + 20 / 3, 8);
-      near(home.get('c2')!, 40 + 40 / 3, 8);
+      near(home.get('c1')!, 40 + 20 / 3, 11.5);
+      near(home.get('c2')!, 40 + 40 / 3, 11.5);
     });
 
     it('役員街区は layoutDistrict の結果を街区の矩形で返す', () => {
@@ -425,7 +429,7 @@ describe('villageLayout — 座標の golden', () => {
         [{ id: 'ghost', kind: 'ceo' }] as unknown as VillageRegion[],
       );
       // フォールバック {45,45,10,10} の中央高さ、1 人なので x は中央。
-      near(home.get('z1')!, 50, 50);
+      near(home.get('z1')!, 50, 53.5);
     });
 
     it('region に属さない村人は置かれない', () => {
@@ -732,5 +736,85 @@ describe('computeHomePositions — 村人の居ない region', () => {
       { id: 'e1', kind: 'exec' },
     ] as unknown as VillageRegion[]);
     expect(home.size).toBe(0);
+  });
+});
+
+describe('walkPoint — 持ち場の周りを歩く (あつ森風)', () => {
+  const home = { x: 50, y: 60 };
+  const bounds = { x: 40, y: 50, w: 20, h: 20 };
+
+  it('同じ入力は同じ座標 (乱数なし)', () => {
+    expect(walkPoint(3, 5, home, 4, 6, bounds)).toEqual(walkPoint(3, 5, home, 4, 6, bounds));
+  });
+
+  it('持ち場から ±rx / ±ry の中・かつ bounds の外へは出ない', () => {
+    for (let i = 0; i < 40; i++) {
+      for (let step = 0; step < 40; step++) {
+        const p = walkPoint(i, step, home, 4, 6, bounds);
+        expect(Math.abs(p.x - home.x)).toBeLessThanOrEqual(4 + 1e-9);
+        expect(Math.abs(p.y - home.y)).toBeLessThanOrEqual(6 + 1e-9);
+        expect(p.x).toBeGreaterThanOrEqual(bounds.x);
+        expect(p.x).toBeLessThanOrEqual(bounds.x + bounds.w);
+        expect(p.y).toBeGreaterThanOrEqual(bounds.y);
+        expect(p.y).toBeLessThanOrEqual(bounds.y + bounds.h);
+      }
+    }
+  });
+
+  it('歩く区間と立ち止まる区間の両方がある (1 割 5 分ほど止まる)', () => {
+    let moved = 0;
+    let stayed = 0;
+    for (let step = 1; step <= 200; step++) {
+      const a = walkPoint(7, step - 1, home, 4, 6, bounds);
+      const b = walkPoint(7, step, home, 4, 6, bounds);
+      if (a.x === b.x && a.y === b.y) stayed++;
+      else moved++;
+    }
+    expect(moved).toBeGreaterThan(120);
+    expect(stayed).toBeGreaterThan(10);
+  });
+
+  it('人によって歩く場所がずれる', () => {
+    const a = walkPoint(1, 4, home, 4, 6, bounds);
+    const b = walkPoint(2, 4, home, 4, 6, bounds);
+    expect(a).not.toEqual(b);
+  });
+});
+
+describe('pickVisibleVillagers — 全体表示は代表だけ', () => {
+  const mk = (id: string, kind: string, regionId: string, managerId?: string): Villager =>
+    ({ id, name: id, kind, emoji: '🙂', regionId, managerId }) as unknown as Villager;
+  const all: Villager[] = [
+    mk('ceo', 'ceo', 'ceo'),
+    mk('exec1', 'executive', 'exec-a'),
+    mk('mgr1', 'manager', 'exec-a'),
+    ...['s1', 's2', 's3'].map((id) => mk(id, 'secretary', 'exec-a')),
+    ...['t1', 't2', 't3', 't4', 't5', 't6'].map((id) => mk(id, 'team', 'exec-a', 'mgr1')),
+  ];
+  const ids = (l: Villager[]) => l.map((v) => v.id);
+
+  it('CEO・役員・管理職は全員、秘書とチームは上限まで', () => {
+    const out = pickVisibleVillagers(all, () => undefined);
+    expect(ids(out)).toEqual(expect.arrayContaining(['ceo', 'exec1', 'mgr1']));
+    expect(out.filter((v) => v.kind === 'secretary')).toHaveLength(MAX_VISIBLE_SECRETARIES_PER_REGION);
+    expect(out.filter((v) => v.kind === 'team')).toHaveLength(MAX_VISIBLE_TEAMS_PER_MANAGER);
+  });
+
+  it('チームは作業中が先 (止まっている → 設計済み → 完了の順)・同じ段は id 順', () => {
+    const status = (id: string) => ({ t6: 'in-progress', t5: 'blocked', t4: 'designed' })[id];
+    const teams = pickVisibleVillagers(all, status).filter((v) => v.kind === 'team');
+    expect(ids(teams).sort()).toEqual(['t4', 't5', 't6']);
+    const none = pickVisibleVillagers(all, () => undefined).filter((v) => v.kind === 'team');
+    expect(ids(none)).toEqual(['t1', 't2', 't3']);
+  });
+
+  it('pinned は上限の外でも必ず出る・元の並びは保たれる', () => {
+    const out = pickVisibleVillagers(all, () => undefined, new Set(['t6']));
+    expect(ids(out)).toContain('t6');
+    expect(ids(out)).toEqual(ids(all).filter((i) => ids(out).includes(i)));
+  });
+
+  it('同じ入力は同じ顔ぶれ (乱数なし)', () => {
+    expect(ids(pickVisibleVillagers(all, () => undefined))).toEqual(ids(pickVisibleVillagers(all, () => undefined)));
   });
 });

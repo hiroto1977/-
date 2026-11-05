@@ -42,6 +42,11 @@ const LEDGER: ReadonlyArray<{ file: string; needle: string; why: string }> = [
     needle: 'localGatewayRefusalNote(res.message)',
     why: 'localGatewayRefusalNote が ollamaRefusalNote 経由で externalTextOnOneLine(redactForMessage(…)) を掛ける (T-005)。畳みは向こうが持つ。',
   },
+  {
+    file: 'components/ChatbotWidget.tsx',
+    needle: 'grokRefusalNote(res.message)',
+    why: 'grokRefusalNote が中で externalTextOnOneLine(redactForMessage(…)) を掛ける (chatbotGrok.ts)。畳みは向こうが持つ。',
+  },
 ];
 
 const NEEDLE = /\b(?:r|res|classified)\.message\b/g;

@@ -17,6 +17,7 @@ import { NO_DEAL_INTAKE } from '../../shared/freeeIntake';
 import type { CursorSnapshot } from '../../shared/api/cursor';
 import { buildHydroponicsSnapshot } from '../../shared/hydroponicsControl';
 import { buildMentorSnapshot } from '../../shared/mentor';
+import { buildGrokSnapshot } from '../../shared/grokSnapshot';
 
 /**
  * 見本の画像は **インライン (`data:`) にする**。
@@ -1237,6 +1238,9 @@ export const SNAPSHOT = {
    * 画面が直接読む。ここに人の記録は 1 字も入らない。
    */
   mentor: buildMentorSnapshot(),
+
+  /** Grok (xAI) の画面 (2026-11-04)。提供者の台帳から導いた見本だけ —— 状態は `assistant/providers` が答える。 */
+  grok: buildGrokSnapshot(),
 
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)
 

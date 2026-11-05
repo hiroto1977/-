@@ -113,6 +113,7 @@ const LEDGER = {
   docker: { registry: 'npm', pkg: 'mcp-server-docker', why: 'Docker 操作。**素の名前・個人 maintainer**' },
   obsidian: { registry: 'npm', pkg: 'mcp-obsidian', why: 'knowledge-vault を読む。**素の名前・個人 maintainer**' },
   'brave-search': { registry: 'npm', pkg: '@modelcontextprotocol/server-brave-search', why: 'Web 検索。公式 (Anthropic の名前空間)。鍵は環境変数で渡す' },
+  grok: { registry: 'npm', pkg: '@joemccann/xai-mcp-server@1.0.7', why: 'xAI Grok の chat / 検索 / 画像 / 動画 / vision を Claude Code から呼ぶ。**公式ではない** (xAI は MCP サーバを出していない・2026-11-04 実測)。個人 maintainer (joemccann) の名前空間つき・MIT。1.0.7 の tarball を読んだ: 依存は @modelcontextprotocol/sdk と zod だけ、通信は api.x.ai/v1 のみ (XAI_API_KEY をヘッダに載せる)、ファイル操作・子プロセス・動的評価は 0 件。**版を固定した** (未固定の最新に生きた鍵を渡さない)。上げるときは tarball を読み直す' },
   'google-maps': { registry: 'npm', pkg: '@modelcontextprotocol/server-google-maps', why: '地図・経路。公式 (Anthropic の名前空間)' },
   github: { registry: 'npm', pkg: '@modelcontextprotocol/server-github', why: 'GitHub 操作。公式 (Anthropic の名前空間)' },
   atlassian: { registry: 'npm', pkg: 'mcp-atlassian', why: 'Jira/Confluence。**素の名前・個人 maintainer**' },

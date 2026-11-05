@@ -7,13 +7,13 @@
  *
  * 型の書き換え (`as`) を出すのは `mint` だけで、それは検査器が gate 関数の中にしか置かせない。
  */
-import type { BindingPattern, Expr, Item, Member, Module, Param, Prop, Stmt } from './ast';
+import type { Expr, Item, Member, Module, Param, Prop, Stmt } from './ast';
 
 const IND = '  ';
 
 /** 2 項演算子の強さ (大きいほど強い)。 */
 const PREC: Readonly<Record<string, number>> = {
-  '??': 1, '||': 2, '&&': 3, '|': 3.2, '^': 3.4, '&': 3.6, '===': 4, '!==': 4, '<': 5, '>': 5, '<=': 5, '>=': 5,
+  '??': 1, '||': 2, '&&': 3, '|': 3.2, '^': 3.4, '&': 3.6, '===': 4, '!==': 4, '<': 5, '>': 5, '<=': 5, '>=': 5, instanceof: 5,
   '<<': 5.5, '>>': 5.5, '>>>': 5.5, '+': 6, '-': 6, '*': 7, '/': 7, '%': 7,
 };
 
@@ -64,6 +64,8 @@ export function expr(e: Expr): string {
       return e.value;
     case 'array':
       return `[${e.items.map(expr).join(', ')}]`;
+    case 'spread':
+      return `...${expr(e.operand)}`;
     case 'member':
       return `${wrap(e.object, 9)}${e.optional ? '?.' : '.'}${e.prop}`;
     case 'index':
@@ -104,15 +106,9 @@ export function expr(e: Expr): string {
 }
 
 function prop(p: Prop): string {
+  if (p.spread) return `...${expr(p.value)}`;
   if (p.shorthand) return p.key;
   return `${p.quoted ? quote(p.key) : p.key}: ${expr(p.value)}`;
-}
-
-/** 分割代入の左辺 (0.13)。鍵と束ねる名前が同じで引用でなければ `{ email }` に畳む。 */
-function bindingPattern(p: BindingPattern): string {
-  if (p.kind === 'array') return `[${p.names.map((n) => n.name).join(', ')}]`;
-  const fields = p.fields.map((f) => (!f.quoted && f.key === f.name ? f.name : `${f.quoted ? quote(f.key) : f.key}: ${f.name}`));
-  return `{ ${fields.join(', ')} }`;
 }
 
 function wrap(e: Expr, min: number): string {
@@ -138,7 +134,7 @@ function stmt(s: Stmt, depth: number): string[] {
     case 'let':
       return [...head, `${ind}${s.mutable ? 'let' : 'const'} ${s.name}${s.type === null ? '' : `: ${s.type.text}`}${s.init === null ? '' : ` = ${expr(s.init)}`};`];
     case 'destructure':
-      return [...head, `${ind}${s.mutable ? 'let' : 'const'} ${bindingPattern(s.pattern)} = ${expr(s.init)};`];
+      return [...head, `${ind}const { ${s.fields.map((f) => (f.key === f.local ? f.key : `${f.key}: ${f.local}`)).join(', ')} }${s.type === null ? '' : `: ${s.type.text}`} = ${expr(s.init)};`];
     case 'assign':
       return [...head, `${ind}${s.target} = ${expr(s.value)};`];
     case 'index-assign': {
@@ -167,7 +163,7 @@ function stmt(s: Stmt, depth: number): string[] {
       return [...head, `${ind}switch (${expr(s.test)}) {`, ...cases, `${ind}}`];
     }
     case 'try':
-      return [...head, `${ind}try {`, ...block(s.body, depth + 1), `${ind}} catch {`, ...block(s.handler, depth + 1), `${ind}}`];
+      return [...head, `${ind}try {`, ...block(s.body, depth + 1), `${ind}} catch${s.param === null ? '' : ` (${s.param})`} {`, ...block(s.handler, depth + 1), `${ind}}`];
     case 'if': {
       // 本体が return 1 つで注記が無ければ 1 行に畳む (手で書いた関門の形と揃える)。
       const only = s.then.length === 1 ? s.then[0]! : null;

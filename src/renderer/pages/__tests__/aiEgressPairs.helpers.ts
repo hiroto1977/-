@@ -151,9 +151,25 @@ export function actionEntries(src: string): ActionEntry[] | null {
     // 字面の `{ … }`。空 (`ACTIONS = {}` —— cursor.ts は書き込みを持たないと明示している) は
     // 「読めない」ではなく「無い」。
     const block = balanced(src, src.indexOf('{', at), '{', '}');
-    for (const e of block.matchAll(
-      /(?:^|\n)\s*(?:'([^']+)'|"([^"]+)"|([A-Za-z0-9_]+))\s*(?::\s*([A-Za-z0-9_]+))?\s*,/g,
-    )) {
+    // 括弧の深さ 0 のカンマで項に割る (行頭と末尾のカンマを前提にしない —— Mamori の生成物は
+    // `{ chat, chatAll, providers }` と 1 行に畳まれる · 2026-11-03 · MG-030)。
+    const inner = block.slice(block.indexOf('{') + 1, block.lastIndexOf('}'));
+    const items: string[] = [];
+    let depth = 0;
+    let cur = '';
+    for (const ch of inner) {
+      if ('({['.includes(ch)) depth += 1;
+      else if (')}]'.includes(ch)) depth -= 1;
+      if (ch === ',' && depth === 0) {
+        items.push(cur);
+        cur = '';
+      } else cur += ch;
+    }
+    items.push(cur);
+    for (const item of items) {
+      const e = /^\s*(?:'([^']+)'|"([^"]+)"|([A-Za-z0-9_]+))\s*(?::\s*([A-Za-z0-9_]+)\s*)?$/.exec(item);
+      // 読めない項を黙って飛ばさない (読めない形は null = 走査が鳴る)。
+      if (e === null) return item.trim() === '' ? out : null;
       const action = e[1] ?? e[2] ?? e[3]!;
       out.push({ action, handler: e[4] ?? action });
     }

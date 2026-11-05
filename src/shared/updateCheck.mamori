@@ -26,10 +26,10 @@
 //! 2026-09-22 (パス 402) まで `shared/ollama.ts` が同じ問いに**別の答え**を
 //! 出しており、そちらは既知の脆弱性の台帳と突き合わせる側だった。
 //!
-//! ## Mamori で書いてある (2026-11-03 · MG-016)
+//! ## Mamori で書いてある (2026-11-01 · MG-018)
 //!
-//! 元は TypeScript で、Mamori 0.12 で書き直した。足りなかったのは `as` 2 つ (欄の読みは `field`、
-//! 版の文字列は `raw is string` の型述語) と template 3 つ (連結へ) だけで、組み上がる文字列は 1 字も変えていない。
+//! 元は TypeScript。足りなかったのは `as` (`json as Record`・`tag as string`) と template だけで、`field` で欄を読み、`String(tag)` で検めた文字列を取り直し、
+//! 補間を連結に替えた。組み上がる文字列は 1 字も変えない。判別可能合併は、欄をそのまま写した 2 つの名前つき interface の合併にした。
 
 use { prereleaseKey } from "./versionOrder";
 
@@ -42,14 +42,14 @@ export interface ParsedVersion {
   readonly prerelease: string | null;
 }
 
-/// 版を数値に分解する。読めない表記は null（推測しない）。
+/// 版を数値に分解する。読めない表記は null (推測しない)。
+///
+/// **正規表現をモジュール定数へ括り出さない。** 括り出すと本体がモジュール読み込み時に評価され、変異検査では「静的変異体」になる ——
+/// テストが読み込みより後に走るぶん、書き換えても誰も気付けない (実測 2026-08-23: 7 通りの変異がすべて「生存」と報告された)。
 export fn parseVersion(raw: unknown) -> ParsedVersion | null {
-  if (typeof raw !== 'string') {
+  if (typeof raw !== "string") {
     return null;
   }
-  // **正規表現をモジュール定数へ括り出さない。** 括り出すと本体がモジュール
-  // 読み込み時に評価され、変異検査では「静的変異体」になる —— テストが
-  // 読み込みより後に走るぶん、**書き換えても誰も気付けない**。
   const m = /^v?(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z.-]+))?$/.exec(raw.trim());
   if (m === null) {
     return null;
@@ -62,11 +62,8 @@ export fn parseVersion(raw: unknown) -> ParsedVersion | null {
   };
 }
 
-/// 3 通りの結果を返す比較。**「等しくないと分かってから大小を見る」形にしない**。
-///
-/// `if (a !== b) return a > b ? 1 : -1` と書くと、その `>` は等値が除かれた
-/// 後なので `>=` に変えても結果が変わらない = テストで守れない分岐になる。
-/// 大小と等値を 1 か所で見れば、3 つの枝すべてが観測できる。
+/// 3 通りの結果を返す比較。**「等しくないと分かってから大小を見る」形にしない** —— `if (a !== b) return a > b ? 1 : -1` と書くと、
+/// その `>` は等値が除かれた後なので `>=` に変えても結果が変わらない = テストで守れない分岐になる。
 fn cmp3(a: number | string, b: number | string) -> number {
   if (a < b) {
     return -1;
@@ -79,16 +76,9 @@ fn cmp3(a: number | string, b: number | string) -> number {
 
 /// 版の大小。`a` が新しければ 1、古ければ -1、同じなら 0。
 ///
-/// プレリリース同士は識別子の辞書順で比べる — 正確な semver の規則
-/// (数値識別子は数値比較) までは踏み込まない。ここで要るのは
-/// 「利用者に新しい版があると伝えるか」の判断だけである。
+/// プレリリース同士は識別子の辞書順で比べる — 正確な semver の規則 (数値識別子は数値比較) までは踏み込まない。
 export fn compareVersions(a: ParsedVersion, b: ParsedVersion) -> number {
-  return (
-    cmp3(a.major, b.major) ||
-    cmp3(a.minor, b.minor) ||
-    cmp3(a.patch, b.patch) ||
-    cmp3(prereleaseKey(a.prerelease), prereleaseKey(b.prerelease))
-  );
+  return cmp3(a.major, b.major) || cmp3(a.minor, b.minor) || cmp3(a.patch, b.patch) || cmp3(prereleaseKey(a.prerelease), prereleaseKey(b.prerelease));
 }
 
 export interface LatestRelease {
@@ -96,42 +86,28 @@ export interface LatestRelease {
   readonly url: string;
 }
 
-/// `parseVersion` が読めた文字列だけを string と名乗る。実行時の判定は parseVersion そのもの
-/// (非文字列も読めない版も null)。`as string` を言語に置かない代わり。
-fn isVersionString(raw: unknown) -> raw is string {
-  return parseVersion(raw) !== null;
-}
-
-/// GitHub の releases API の応答から必要な 2 つだけ取り出す。
-///
-/// 形が違えば null。**送られてきた URL をそのまま信用しない** —
-/// `html_url` が https の GitHub 上のページであることを確かめる。
-/// ここを緩めると、応答を差し替えられたときに任意の URL を
-/// 「更新はこちら」として見せられてしまう。
+/// GitHub の releases API の応答から必要な 2 つだけ取り出す。形が違えば null。**送られてきた URL をそのまま信用しない** —— `html_url` が
+/// https の GitHub 上のページであることを確かめる。**調べた物をそのまま返す** (2026-09-22 · パス 406) —— 判定は `new URL()` の解析結果に
+/// 対して下すので、生の文字列を返すと「検めた物」と「使う物」が割れる。
 export fn parseLatestRelease(json: unknown) -> LatestRelease | null {
-  if (typeof json !== 'object' || json === null) {
+  if (typeof json !== "object" || json === null) {
     return null;
   }
   const tag = field json.tag_name;
   const url = field json.html_url;
-  // 型の確認は parseVersion / isGithubReleaseUrl が unknown を受けて行う。
-  // **調べた物をそのまま返す** (2026-09-22 · パス 406) —— 判定は `new URL()` の
-  // 解析結果に対して下すので、生の文字列を返すと「検めた物」と「使う物」が割れる。
+  // 型の確認は parseVersion / githubReleaseUrlOrNull が unknown を受けて行う。ここで typeof を重ねると、下で必ず落ちる値をもう一度見るだけの分岐になる。
   const checked = githubReleaseUrlOrNull(url);
-  if (!isVersionString(tag) || checked === null) {
+  if (parseVersion(tag) === null || checked === null) {
     return null;
   }
-  return { version: tag, url: checked };
+  return { version: String(tag), url: checked };
 }
 
-/// https で github.com 上の URL か。更新の案内先をそこに限る。
-///
-/// `unknown` を受けて**文字列以外をここで落とす**。`new URL(x)` は引数を
-/// 文字列化するので、`{ toString: () => 'https://github.com/…' }` のような値を
-/// そのまま渡すと通ってしまう。JSON からはそんな値は来ないが、
-/// 「unknown を安全に受ける」のがこの関数の役目なので入口で断つ。
+/// https で github.com 上の URL か。更新の案内先をそこに限る。`unknown` を受けて**文字列以外をここで落とす** (`new URL(x)` は引数を文字列化するので、
+/// `{ toString: () => 'https://github.com/…' }` のような値を通してしまう)。**返すのは解析結果** —— 認めた物と呼び手が持つ文字列を割らせない。
+/// 全角 `ｇithub.com` は IDNA で `github.com` へ正規化される。
 export fn githubReleaseUrlOrNull(raw: unknown) -> string | null {
-  if (typeof raw !== 'string') {
+  if (typeof raw !== "string") {
     return null;
   }
   let parsed: URL;
@@ -140,22 +116,17 @@ export fn githubReleaseUrlOrNull(raw: unknown) -> string | null {
   } catch {
     return null;
   }
-  if (parsed.protocol !== 'https:') {
+  if (parsed.protocol !== "https:") {
     return null;
   }
-  // 認証情報付き (`https://github.com@evil.example/`) は落とす。ホスト固定と
-  // 二重になるが、ここは**案内先として画面に出す**値なので、字面の信用と
-  // 実際の送り先を割らせない (同じ判断を `externalUrlGate.ts` も下している)。
-  if (parsed.username !== '' || parsed.password !== '') {
+  // 認証情報付き (`https://github.com@evil.example/`) は落とす。ホスト固定と二重になるが、ここは案内先として画面に出す値なので、字面の信用と実際の送り先を割らせない。
+  if (parsed.username !== "" || parsed.password !== "") {
     return null;
   }
   const host = parsed.hostname.toLowerCase();
-  if (host !== 'github.com' && host !== 'www.github.com') {
+  if (host !== "github.com" && host !== "www.github.com") {
     return null;
   }
-  // **返すのは解析結果** —— `externalUrlOrNull` が `parsed.toString()` を返すのと
-  // 同じ理由。生を返すと、この関数が「github.com だ」と認めた物と
-  // 呼び手が持つ文字列が別になる。
   return parsed.toString();
 }
 
@@ -164,60 +135,58 @@ export fn isGithubReleaseUrl(raw: unknown) -> boolean {
   return githubReleaseUrlOrNull(raw) !== null;
 }
 
+/// 更新の判定。`ahead` = 手元が公開版より新しい (開発中のビルド)・`unknown` = どちらかの版が読めない。
 export type UpdateStatus =
-  | 'update-available'
-  | 'up-to-date'
-  | 'ahead'
-  | 'unknown';
+  | "update-available"
+  | "up-to-date"
+  | "ahead"
+  | "unknown";
 
-/// 判定に共通の欄。`latest` だけが status によって有無が変わる。
-interface UpdateVerdictCommon {
-  /// 手元の版。読めなくても文字列は在る (利用者が見るのはこの字面)。
+/// 版の比較ができた判定。**この 3 状態では `latest` は必ず在る。**
+interface UpdateVerdictKnown {
   readonly current: string;
-  /// リリースページ。読めなければ null。
   readonly url: string | null;
+  readonly status: "update-available" | "up-to-date" | "ahead";
+  readonly latest: string;
 }
 
-/// 手元の版と公開版の比較結果。
-///
-/// **判別可能合併にしてある。** 平らな interface で `latest: string | null` を
-/// 全 status に持っていた頃は、`describeUpdate` が版を裸で補間すると
-/// 「新しい版 null があります」を読められた。合併にすると枝ごとに版の有無が決まる。
-export type UpdateVerdict =
-  | (UpdateVerdictCommon & {
-      readonly status: 'update-available' | 'up-to-date' | 'ahead';
-      readonly latest: string;
-    })
-  | (UpdateVerdictCommon & {
-      readonly status: 'unknown';
-      readonly latest: string | null;
-    });
+/// どちらかの版が読めなかった判定。**このときだけ `latest` が null になりうる。**
+interface UpdateVerdictUnknown {
+  readonly current: string;
+  readonly url: string | null;
+  readonly status: "unknown";
+  readonly latest: string | null;
+}
+
+/// 手元の版と公開版の比較結果。**判別可能合併にしてある。** 平らな interface で `latest: string | null` を全 status に持っていた頃は、
+/// `case 'update-available'` の中でも `latest` が `string | null` のままで、文面は裸で補間するので「新しい版 null があります」を作れた。
+export type UpdateVerdict = UpdateVerdictKnown | UpdateVerdictUnknown;
 
 /// 手元の版と公開されている最新版を比べる。
 export fn evaluateUpdate(current: string, latest: LatestRelease | null) -> UpdateVerdict {
   const mine = parseVersion(current);
   if (mine === null || latest === null) {
-    return { status: 'unknown', current, latest: latest?.version ?? null, url: latest?.url ?? null };
+    return { status: "unknown", current: current, latest: latest?.version ?? null, url: latest?.url ?? null };
   }
   const theirs = parseVersion(latest.version);
   if (theirs === null) {
-    return { status: 'unknown', current, latest: latest.version, url: latest.url };
+    return { status: "unknown", current: current, latest: latest.version, url: latest.url };
   }
   const cmp = compareVersions(theirs, mine);
-  const status: UpdateStatus = cmp > 0 ? 'update-available' : cmp === 0 ? 'up-to-date' : 'ahead';
-  return { status, current, latest: latest.version, url: latest.url };
+  const status: UpdateStatus = cmp > 0 ? "update-available" : cmp === 0 ? "up-to-date" : "ahead";
+  return { status: status, current: current, latest: latest.version, url: latest.url };
 }
 
 /// 画面に出す一文。
 export fn describeUpdate(verdict: UpdateVerdict) -> string {
   switch (verdict.status) {
-    case 'update-available':
-      return '新しい版 ' + verdict.latest + ' があります (お使いの版: ' + verdict.current + ')。ダウンロードはリリースページから行ってください。';
-    case 'up-to-date':
-      return '最新版です (' + verdict.current + ')。';
-    case 'ahead':
-      return 'お使いの版 ' + verdict.current + ' は公開されている最新版 ' + verdict.latest + ' より新しいです (開発中のビルド)。';
-    case 'unknown':
-      return '更新の有無を判定できませんでした。時間をおいて試してください。';
+    case "update-available":
+      return "新しい版 " + verdict.latest + " があります (お使いの版: " + verdict.current + ")。ダウンロードはリリースページから行ってください。";
+    case "up-to-date":
+      return "最新版です (" + verdict.current + ")。";
+    case "ahead":
+      return "お使いの版 " + verdict.current + " は公開されている最新版 " + verdict.latest + " より新しいです (開発中のビルド)。";
+    case "unknown":
+      return "更新の有無を判定できませんでした。時間をおいて試してください。";
   }
 }

@@ -1,169 +1,169 @@
 import { describe, expect, it } from 'vitest';
 import { compileProject, formatDiagnostic } from '../compile';
-import { FORBIDDEN_MEMBERS } from '../parser';
 
 /*
- * **Mamori 0.13 —— 分割代入** (2026-11-03 · MG-018 · threat: T-252)。
+ * **Mamori 0.13 —— 既存言語 (JavaScript / TypeScript) の脆弱性クラスを材料にした解析で見つけた 5 つの穴** (2026-11-02)。
  *
- * 台帳の risk: `const { constructor } = x` は T-224 の表 (`.constructor` を断る) を迂回する。
- * 鍵は名前か文字列だけで、禁じた名前は `.name` と同じ表を通す。束ねた名前は印を運ばない。
- * 計算した鍵の添字の結果を右辺にすると、欄を読むのがメンバを読むのと同じになるので断る。
- * 入れ子・残り (`...`)・既定値・計算した鍵・型注釈・代入の形は無い。
+ * 言語の脆弱性解析 (JS/TS の既知のクラス × コンパイラ自身 × Rust/Wasm の検算役) を 3 つの別の担当で並行して回し、
+ * 報告を受けて塞いだ。どの穴も「Mamori が受け入れた生成物 (TypeScript) に、検めを受けないコードや偽の印が残る」形。
+ *
+ *   T-250 型の綴りの中へ文を隠せた (`>=` が 1 つの字句で、括弧の深さを偽装できた)
+ *   T-251 局所の名前が同名の gate / 関数を隠すと、偽の関数の戻り値に gate の印が付いた
+ *   T-252 `extern pure global` の禁止表の取りこぼし (`open` / `setTimeout` ほか) と、`use … from "electron"` が自動で pure
+ *   T-253 隠し字の表が BMP の一部だけ (ALM・SHY・タグ文字 U+E0000 台ほか)
+ *   T-254 注記に `// @ts-ignore` を書けて、生成物の型検査を黙らせられた
  */
 
-const PRE = 'extern sink { shell } from "electron";\nexport vetted VettedUrl = "url";\nexport sink fn openUrl(u: VettedUrl) -> Promise<void> {\n  return shell.openExternal(u);\n}\n';
-function compile(source: string): { diagnostics: string[]; output: string } {
+function diag(source: string): string[] {
   const r = compileProject([{ path: 'src/x/m0.mamori', source }]);
-  return r.ok ? { diagnostics: [], output: [...r.outputs.values()][0]! } : { diagnostics: r.diagnostics.map(formatDiagnostic), output: '' };
+  return r.ok ? [] : r.diagnostics.map(formatDiagnostic);
 }
-const go = (body: string, params = 'o: Record<string, string>, xs: string[], n: number'): string =>
-  `${PRE}export fn go(${params}) -> unknown {\n${body}\n}\n`;
-const diag = (body: string, params?: string): string[] => compile(go(body, params)).diagnostics;
-const forbidden = (k: string): string => {
-  const r = Object.hasOwn(FORBIDDEN_MEMBERS, k) ? FORBIDDEN_MEMBERS[k] : undefined;
-  if (r === undefined) throw new Error(`FORBIDDEN_MEMBERS に ${k} が無い`);
-  return r;
-};
+const fn = (body: string): string => `export fn f(a: unknown) -> unknown {\n${body}\n  return a;\n}\n`;
 
-describe('0.13: 分割代入の変換', () => {
-  it('オブジェクト・引用の鍵・配列・let を 1 byte で写す', () => {
-    const source = [
-      'export fn go(o: Record<string, string>, xs: string[]) -> string {',
-      '  // 束ねる',
-      '  const { email, token } = o;',
-      '  const { email: addr } = o;',
-      '  const { "content-type": ct } = o;',
-      '  const [a, b] = xs;',
-      '  let { email: e } = o;',
-      '  e = email;',
-      '  return email + token + addr + ct + a + b + e;',
-      '}',
-      '',
-    ].join('\n');
-    expect(compile(source).diagnostics).toEqual([]);
-    expect(compile(source).output).toBe(
-      [
-        '// 生成物 —— src/x/m0.mamori から Mamori のコンパイラが組んだ。手で編集しない (`npm run mamori:build`)。',
-        '// 言語の仕様は docs/MAMORI.md。生成物が元と食い違えば src/shared/mamori/__tests__/mamoriGenerated.test.ts が落ちる。',
-        '',
-        'export function go(o: Record<string, string>, xs: string[]): string {',
-        '  // 束ねる',
-        '  const { email, token } = o;',
-        '  const { email: addr } = o;',
-        "  const { 'content-type': ct } = o;",
-        '  const [a, b] = xs;',
-        '  let { email: e } = o;',
-        '  e = email;',
-        '  return email + token + addr + ct + a + b + e;',
-        '}',
-        '',
-      ].join('\n'),
-    );
+describe('T-250 (threat: T-250): 型の綴りに文を隠せない', () => {
+  it('★ `>=` で括弧の深さを偽装して型へ式を隠す形を断る', () => {
+    const d = diag(fn('  let x: Array<Array<number>= []; fetch("https://e.example"), 1 > 2;'));
+    expect(d.join('\n')).toMatch(/型の中に `>=` は置けません/);
   });
-
-  it('末尾の読点と、鍵と同じ名前への付け替えは省略形になる', () => {
-    expect(compile(go('  const { a, } = o;\n  return a;')).output).toContain('const { a } = o;');
-    expect(compile(go('  const { a: a } = o;\n  return a;')).output).toContain('const { a } = o;');
-  });
-
-  it('const の束ねは代入できず、let の束ねは代入できる。数の印は付かない', () => {
-    expect(diag('  const { a } = o;\n  a = "x";\n  return a;')[0]).toContain('let ではないので代入できません');
-    expect(diag('  let { a } = o;\n  a = "x";\n  return a;')).toEqual([]);
-    expect(diag('  const { n } = o;\n  return xs[n];')[0]).toContain('添字の鍵は');
-    expect(diag('  const { a } = o;\n  return a.length;')).toEqual([]);
-    expect(diag('  const [a, b] = xs;\n  return a + b;')).toEqual([]);
-  });
-});
-
-describe('0.13: 分割の鍵は禁じた名前を通す (threat: T-252)', () => {
-  it('★ 分割の鍵が constructor / prototype / __proto__ なら、引用でも綴り違いでも断る (threat: T-252)', () => {
-    const bodies = [
-      '  const { constructor } = o;',
-      '  const { prototype } = o;',
-      '  const { __proto__ } = o;',
-      '  const { __defineGetter__ } = o;',
-      '  const { "constructor": c } = o;',
-      '  const { "__proto__": p } = o;',
-      '  const { "\\u0063onstructor": c } = o;',
-    ];
-    for (const body of bodies) {
-      const d = diag(`${body}\n  return o;`);
-      expect(d, body).toHaveLength(1);
-      expect(d[0], body).toContain('[M0]');
-      const key = body.includes('prototype') ? 'prototype' : body.includes('__proto__') ? '__proto__' : body.includes('defineGetter') ? '__defineGetter__' : 'constructor';
-      expect(d[0], body).toContain(forbidden(key));
+  it('★ 比較・代入・論理・算術の記号は型の中に置けない', () => {
+    for (const sym of ['<=', '===', '&&', '||', '??', '+', '*', '=', '!', '->']) {
+      expect(diag(fn(`  let x: Array<number ${sym} number> = [];`)).join('\n'), sym).toMatch(/型の中に `.+` は置けません|型が閉じていません|型の括弧が合いません/);
     }
   });
-
-  it('配列の位置の名前 constructor は欄の読みではないので通る', () => {
-    expect(diag('  const [constructor] = xs;\n  return constructor;')).toEqual([]);
+  it('★ 閉じ括弧の種類が合わない型を断る', () => {
+    expect(diag(fn('  let x: Array<number] = [];')).join('\n')).toMatch(/型の括弧が合いません/);
+    expect(diag(fn('  let x: { a: string > = [];')).join('\n')).toMatch(/型の括弧が合いません|型が閉じていません/);
+  });
+  it('★ `;` は `{ … }` の直下だけ (オブジェクト型の欄の区切り)。`Array<…;…>` は断る', () => {
+    expect(diag(fn('  let x: Array<string; number> = [];')).join('\n')).toMatch(/型の中に `;` は置けません/);
+  });
+  it('対照: 普通の型は通る', () => {
+    expect(diag(fn('  const a1: Array<string> = [];\n  const a2: { a: string; b: number } | null = null;\n  const a3: (x: number) => string | null = null;\n  const a4: Array<Array<number>> = [];'))).toEqual([]);
   });
 });
 
-describe('0.13: 印は運ばず、計算した鍵の結果は相手にできない (threat: T-252)', () => {
-  it('★ 印は分割した名前へ運ばれない (threat: T-252)', () => {
-    const washed = compile(`${PRE}export gate fn gateUrl(x: string) -> VettedUrl {\n  return mint VettedUrl(x);\n}\nexport fn go(x: string) -> Promise<void> {\n  const { url } = gateUrl(x);\n  return openUrl(url);\n}\n`);
-    expect(washed.diagnostics).toHaveLength(1);
-    expect(washed.diagnostics[0]).toContain('[M4]');
-    expect(washed.diagnostics[0]).toContain('印の無い値');
-    const kept = compile(`${PRE}export gate fn gateUrl(x: string) -> VettedUrl {\n  return mint VettedUrl(x);\n}\nexport fn go(x: string) -> Promise<void> {\n  const url = gateUrl(x);\n  return openUrl(url);\n}\n`);
-    expect(kept.diagnostics).toEqual([]);
+describe('T-251 (threat: T-251): 局所の名前はモジュール直下の名前を隠せない', () => {
+  const PRE = 'export vetted VU = "u";\nextern sink global shellx;\nexport gate fn okUrl(raw: string) -> VU | null {\n  if (raw.length > 0) { return mint VU(raw); }\n  return null;\n}\nexport sink fn openIt(u: VU) -> void {\n  shellx.open(u);\n}\n';
+  it('★ 同名の const で gate を偽る形を断る', () => {
+    const d = diag(`${PRE}export fn attack(raw: string) -> void {\n  const okUrl = (x: string) => JSON.parse(x);\n  const u = okUrl(raw);\n  openIt(u);\n}\n`);
+    expect(d.join('\n')).toMatch(/局所の名前 okUrl は、モジュール直下の同名の宣言/);
   });
-
-  it('★ 計算した鍵の結果は分割代入の相手にできない (threat: T-252)', () => {
-    const object = diag('  const row = xs[n];\n  const { a } = row;\n  return a;');
-    expect(object).toHaveLength(1);
-    expect(object[0]).toContain('[M6]');
-    expect(object[0]).toContain('分割代入の相手にできません');
-    const array = diag('  const [a] = xs[n];\n  return a;');
-    expect(array[0]).toContain('分割代入の相手にできません');
-    expect(diag('  const { a } = xs[0];\n  return a;')).toEqual([]);
+  it('★ 引数・for の変数・arrow の引数・catch の束縛でも同じ', () => {
+    for (const form of [
+      'export fn a1(okUrl: string) -> void {\n  return;\n}\n',
+      'export fn a2(xs: string[]) -> void {\n  for (const okUrl of xs) { return; }\n}\n',
+      'export fn a3(raw: string) -> unknown {\n  return [raw].map((okUrl) => okUrl);\n}\n',
+      'export fn a4(raw: string) -> unknown {\n  try { return JSON.parse(raw); } catch (okUrl) { return null; }\n}\n',
+    ]) {
+      expect(diag(PRE + form).join('\n'), form).toMatch(/局所の名前 okUrl は、モジュール直下の同名の宣言/);
+    }
   });
-
-  it('同じ塊でもう一度束ねても、先の inert は残る', () => {
-    const d = diag('  let f = xs[n];\n  const { f } = o;\n  return f();');
-    const dup = d.find((line) => line.includes('2 度束ねています'));
-    expect(dup).toContain('[M6]');
-    expect(d.join('\n')).toContain('呼び出せません');
-  });
-
-  it('右辺の宣言していない名前は、分割だからといって見逃さない', () => {
-    expect(diag('  const { a } = missing;\n  return a;')[0]).toContain('宣言していない名前 missing');
+  it('対照: 別の名前の局所は通る', () => {
+    expect(diag(`${PRE}export fn ok(raw: string) -> void {\n  const u = okUrl(raw);\n  if (u !== null) { openIt(u); }\n}\n`)).toEqual([]);
   });
 });
 
-describe('0.13: 入れ子・残り・既定値・空は無い', () => {
-  const cases: readonly (readonly [string, string])[] = [
-    ['  const { a, ...b } = o;', '`...` (残り) は分割代入に在りません'],
-    ['  const [a, ...b] = xs;', '`...` (残り) は分割代入に在りません'],
-    ['  const { [k]: v } = o;', '計算した鍵 (`[k]: 名前`) は分割代入に在りません'],
-    ['  const { a: { b } } = o;', '分割代入の入れ子は在りません'],
-    ['  const { a: [b] } = o;', '分割代入の入れ子は在りません'],
-    ['  const [{ a }] = xs;', '分割代入の入れ子は在りません'],
-    ['  const [[a]] = xs;', '分割代入の入れ子は在りません'],
-    ['  const { a = "x" } = o;', '分割代入の既定値は在りません'],
-    ['  const [a = "x"] = xs;', '分割代入の既定値は在りません'],
-    ['  const { "content-type" } = o;', 'には `:` と束ねる名前が要ります'],
-    ['  const { return } = o;', '`return` は束ねる名前にできません'],
-    ['  const [return] = xs;', '`return` は束ねる名前にできません'],
-    ['  const { a, b: a } = o;', '名前 a を 2 度束ねています'],
-    ['  const [a, a] = xs;', '名前 a を 2 度束ねています'],
-    ['  const {} = o;', '分割代入には名前が 1 つ要ります'],
-    ['  const [] = xs;', '分割代入には名前が 1 つ要ります'],
-    ['  const [, a] = xs;', '空の位置は分割代入に在りません'],
-    ['  const { a }: Record<string, string> = o;', '分割代入に型注釈は付けられません'],
+describe('T-252 (threat: T-252): extern pure の許可表', () => {
+  it('★ 許可表に無い host は pure で宣言できない (open / setTimeout / postMessage / console / Buffer ほか)', () => {
+    for (const name of ['open', 'setTimeout', 'setInterval', 'postMessage', 'alert', 'Image', 'Blob', 'structuredClone', 'Buffer', 'console', 'queueMicrotask']) {
+      expect(diag(`extern pure global ${name};\n`).join('\n'), name).toMatch(/extern pure global .+ は宣言できません/);
+    }
+  });
+  it('対照: 許可表の名前 (Date など) は宣言できる', () => {
+    expect(diag('extern pure global Date;\nexport fn now() -> number {\n  return Date.now();\n}\n')).toEqual([]);
+  });
+  it('★ 機能を持つ module は use / extern pure で読めない (electron / child_process / node:vm)', () => {
+    expect(diag('use { shell } from "electron";\n').join('\n')).toMatch(/electron はコード・OS・プロセス・網の口を持つ/);
+    expect(diag('extern pure { exec } from "node:child_process";\n').join('\n')).toMatch(/node:child_process はコード・OS・プロセス・網の口を持つ/);
+    expect(diag('use { runInNewContext } from "vm";\n').join('\n')).toMatch(/vm はコード・OS・プロセス・網の口を持つ/);
+  });
+  it('対照: 同じ module を extern sink で宣言するのは通る', () => {
+    expect(diag('extern sink { shell } from "electron";\nexport vetted VU = "u";\nexport sink fn openIt(u: VU) -> Promise<void> {\n  return shell.openExternal(u);\n}\n')).toEqual([]);
+  });
+});
+
+describe('T-253 (threat: T-253): 隠し字の表 (見えない文を運べない)', () => {
+  const chars: [string, string][] = [
+    ['ALM U+061C', '\u061C'],
+    ['SHY U+00AD', '\u00AD'],
+    ['CGJ U+034F', '\u034F'],
+    ['Hangul filler U+3164', '\u3164'],
+    ['Hangul filler U+115F', '\u115F'],
+    ['Braille blank U+2800', '\u2800'],
+    ['bidi 非推奨 U+206A', '\u206A'],
+    ['U+2065 (未割当の不可視)', '\u2065'],
+    ['タグ文字 U+E0041', '\u{E0041}'],
+    ['異体字選択子の補助 U+E0100', '\u{E0100}'],
+    ['Mongolian VS U+180B', '\u180B'],
   ];
-  for (const [body, text] of cases) {
-    it(body.trim(), () => {
-      const d = diag(`${body}\n  return o;`);
-      expect(d, body).toHaveLength(1);
-      expect(d[0], body).toContain('[M0]');
-      expect(d[0], body).toContain(text);
-    });
-  }
+  it('★ ALM・SHY・タグ文字・Hangul filler・Braille・bidi 非推奨ほか 11 種の隠し字を、注記と文字列のどちらでも断る', () => {
+    for (const [name, ch] of chars) {
+      expect(diag(`// a${ch}b\nexport fn f() -> string {\n  return "x";\n}\n`).join('\n'), `${name} 注記`).toMatch(/裸で置けません/);
+      expect(diag(`export fn f() -> string {\n  return "a${ch}b";\n}\n`).join('\n'), `${name} 文字列`).toMatch(/裸で置けません/);
+    }
+    expect(chars.length).toBe(11);
+  });
+  it('対照: ZWJ・ZWNJ・絵文字の異体字選択子 U+FE0F・全角空白・日本語は通る', () => {
+    expect(diag('// 日本語の注記 　 ⚠️ 👨‍👩\n// a‌b\nexport fn f() -> string {\n  return "x";\n}\n')).toEqual([]);
+  });
+});
 
-  it('代入の形 { a } = x は文の頭の波括弧で断る', () => {
-    expect(diag('  { a } = o;\n  return a;')[0]).toContain('文の頭に `{` は置けません');
-    expect(diag('  ({ a } = o);\n  return a;')[0]).toContain('`)` が要ります');
+describe('T-254 (threat: T-254): 注記で型検査を黙らせられない', () => {
+  it('★ `@ts-ignore` / `@ts-expect-error` / `@ts-nocheck` を断る', () => {
+    for (const d of ['@ts-ignore', '@ts-expect-error', '@ts-nocheck', '@ts-check']) {
+      expect(diag(`export fn f(a: unknown) -> unknown {\n  // ${d}\n  return a;\n}\n`).join('\n'), d).toMatch(/注記に `@ts-…` の指示は書けません/);
+    }
+  });
+  it('対照: 普通の注記・Stryker の指示は通る', () => {
+    expect(diag('export fn f(a: unknown) -> unknown {\n  // Stryker disable next-line ConditionalExpression: 等価\n  // ts の話をしても @ だけなら通る\n  return a;\n}\n')).toEqual([]);
+  });
+});
+
+/*
+ * 変異検査 (parser.ts / checker.ts) の生存を殺す —— どれも「規則の番号」「案内の文の中身」「正規表現の拒否」を直接主張する。
+ */
+function rulesOf(source: string): { rule: string; message: string }[] {
+  const r = compileProject([{ path: 'src/x/m0.mamori', source }]);
+  return r.ok ? [] : r.diagnostics.map((d) => ({ rule: d.rule, message: d.message }));
+}
+
+describe('0.13 の断りは規則の番号と案内の中身を持つ (変異検査の生存)', () => {
+  it('★ use … from "electron" は M6 で、extern sink を案内する', () => {
+    const d = rulesOf('use { shell } from "electron";\n');
+    expect(d.some((x) => x.rule === 'M6' && x.message.includes('extern sink'))).toBe(true);
+  });
+  it('★ extern pure from の capability module も M6 で、extern sink を案内する', () => {
+    const d = rulesOf('extern pure { exec } from "node:child_process";\n');
+    expect(d.some((x) => x.rule === 'M6' && x.message.includes('extern sink'))).toBe(true);
+  });
+  it('★ 口をメンバに持つ host (fetch) は専用の文で断り、許可表の文にはならない', () => {
+    const d = rulesOf('extern pure global fetch;\n');
+    expect(d.length).toBe(1);
+    expect(d[0]!.rule).toBe('M6');
+    expect(d[0]!.message).toContain('網・記憶・移動・DOM・コードの口をメンバとして持つ');
+    expect(d[0]!.message).not.toContain('だけです');
+  });
+  it('★ 許可表に無い host (Foo) は許可表の一覧を文に載せて断る', () => {
+    const d = rulesOf('extern pure global Foo;\n');
+    expect(d.length).toBe(1);
+    expect(d[0]!.rule).toBe('M6');
+    expect(d[0]!.message).toContain('Date / isNaN / isFinite / parseInt');
+    expect(d[0]!.message).not.toContain('網・記憶・移動・DOM・コードの口をメンバとして持つ');
+  });
+  it('★ 同名の局所が M6 になるとき、印を受ける関数の持ち出しの M4 は重ねて出さない', () => {
+    const pre = 'export vetted VU = "u";\nextern sink global shellx;\nexport sink fn openIt(u: VU) -> void {\n  shellx.open(u);\n}\n';
+    const d = rulesOf(`${pre}export fn a1(openIt: string) -> unknown {\n  return openIt;\n}\n`);
+    expect(d.some((x) => x.rule === 'M6')).toBe(true);
+    expect(d.some((x) => x.rule === 'M4')).toBe(false);
+  });
+});
+
+describe('0.13 の型の綴りの読み (変異検査の生存)', () => {
+  it('★ 型の中の正規表現を断る', () => {
+    expect(rulesOf(fn('  let x: Array</a/> = [];')).map((x) => x.message).join('\n')).toMatch(/型の中に正規表現は置けません/);
+  });
+  it('★ 型の中の文字列リテラルは括弧の記号でも括弧として数えない', () => {
+    expect(diag(fn('  let x: { a: "(" } | null = null;'))).toEqual([]);
+    expect(diag(fn('  let x: { a: "<" | ">" | "]" } | null = null;'))).toEqual([]);
   });
 });

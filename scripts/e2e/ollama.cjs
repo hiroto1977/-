@@ -115,10 +115,10 @@ async function unlockAndOpenOllama(page){
   const done=page.getByRole('button',{name:/記録完了|開始|続ける/}).first();
   if(await done.count()) await done.click();
   await page.waitForTimeout(1200);
-  // 「分析・ツール」カテゴリは既定で折りたたまれているため、検索で絞って開く。
-  await page.locator('.sidebar-search-input').fill('ollama');
-  await page.waitForTimeout(600);
-  await page.locator('.sidebar-item[data-service-id="ollama"]').first().click();
+  // 村の殻では、会話の「開いて」(servicehub:navigate) と同じ道で役場の窓へ開く。
+  await page.waitForSelector('[data-village-shell]',{timeout:60000});
+  await page.evaluate(()=>window.dispatchEvent(new CustomEvent('servicehub:navigate',{detail:'ollama'})));
+  await page.waitForSelector('[data-village-window="ollama"]',{timeout:15000});
   await page.waitForTimeout(3500);
 }
 

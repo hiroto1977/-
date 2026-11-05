@@ -59,8 +59,8 @@ describe('T-225: 印を受ける関数は値として持ち出せない (M4)', (
   it('対照: 印を受けない関数は値として持ち出せる (規則は印を受ける関数にだけ掛かる)', () => {
     expect(diags('fn twice(n: number) -> number {\n  return n * 2;\n}\nexport fn go(xs: readonly number[]) -> unknown {\n  return xs.map(twice);\n}\n')).toEqual([]);
   });
-  it('対照: 同じ名前の引数はその関数ではない (内側の名前が勝つ)', () => {
-    expect(diags(GO('  return openUrl;', 'export fn go(openUrl: string) -> unknown'))).toEqual([]);
+  it('対照: 同じ名前の引数は断る (T-251 · 局所の名前は外の宣言を隠せない)', () => {
+    expect(diags(GO('  return openUrl;', 'export fn go(openUrl: string) -> unknown')).join('\n')).toMatch(/\[M6\] 局所の名前 openUrl は/);
   });
   it('★ 別のモジュールから use で引いた印を受ける関数も同じ', () => {
     const a = `${VETTED}${EXTERN}${SINK}`;

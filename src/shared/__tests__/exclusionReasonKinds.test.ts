@@ -143,9 +143,12 @@ describe('除外の理由は今日も本当か', () => {
     // 3 つの enforcement 点 (main の throw と ブラウザ版の err 2 つ) が同じ述語を読む。
     const main = readOriginalSource(join(REPO_ROOT, 'src/main/clients/assistant.ts'));
     const web = readOriginalSource(join(REPO_ROOT, 'src/renderer/web-shim.ts'));
-    expect(main).toContain('if (latestTurnTooLong(messages)) throw new Error(inputTooLongMessage(');
+    // main は Mamori の生成物 (2026-11-03 · MG-030) —— `if` の本体は必ず { } で囲まれる。
+    const GATE = /if \(latestTurnTooLong\(messages\)\) \{\s*throw new Error\(inputTooLongMessage\(/;
+    expect(main).toMatch(GATE);
     expect(web.split('if (latestTurnTooLong(').length - 1).toBeGreaterThanOrEqual(2);
     // 針が的に当たること: 呼び出しを消した形はこの綴りを満たさない。
-    expect('if (false) throw new Error(inputTooLongMessage(').not.toContain('if (latestTurnTooLong(messages)) throw');
+    expect('if (false) {\n  throw new Error(inputTooLongMessage(').not.toMatch(GATE);
+    expect('if (latestTurnTooLong(messages)) {\n  throw new Error(inputTooLongMessage(').toMatch(GATE);
   });
 });

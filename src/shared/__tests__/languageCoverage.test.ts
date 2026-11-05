@@ -49,7 +49,7 @@ describe('言語の網羅 — 見張りが無い言語を作らない (threat: T
   });
 
   it('★ 新しい言語のファイルが入ると落ち、足す守りを名指しする (threat: T-187)', () => {
-    for (const [file, hint] of [['cmd/main.go', 'govulncheck'], ['src/lib.rs', 'cargo'], ['Dockerfile', 'hadolint']] as const) {
+    for (const [file, hint] of [['cmd/main.go', 'govulncheck'], ['src/Main.java', 'SpotBugs'], ['Dockerfile', 'hadolint']] as const) {
       const r = run(registry, [file]);
       expect(r.problems.length, file).toBe(1);
       expect(r.problems[0], file).toContain(hint);
@@ -59,7 +59,7 @@ describe('言語の網羅 — 見張りが無い言語を作らない (threat: T
   });
 
   it('★ 新しい依存の生態系の定義ファイルが入ると落ちる (threat: T-187)', () => {
-    for (const mf of ['requirements.txt', 'go.mod', 'Cargo.lock', 'pom.xml', 'Gemfile.lock', 'composer.lock']) {
+    for (const mf of ['requirements.txt', 'go.mod', 'pom.xml', 'Gemfile.lock', 'composer.lock']) {
       const r = run(registry, [`vendor/${mf}`]);
       expect(r.problems.some((p) => p.includes('台帳の ecosystems に載っていない')), mf).toBe(true);
     }

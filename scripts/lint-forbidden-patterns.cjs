@@ -931,6 +931,10 @@ const KNOWN_SUPPRESSIONS = [
   // (`scripts/audit-verify-keep-going.cjs`・パス 526)。子プロセスは `npm run <ゲート名>` だけで、
   // ゲート名は `package.json` の `verify:all` の本文から導く (外から任意の物は入らない)。シェルは経由しない。
   'child_process exec/spawn :: scripts/audit-verify-keep-going.cjs :: 1',
+  // Rust → Wasm の検算役を組む script (`scripts/build-mamori-verify.cjs`・2026-11-02)。子プロセスは `cargo build`
+  // (固定の引数・`--locked`) と `rustc --version` だけで、シェルを経由しない (`execFileSync` に配列で渡す)。
+  // 組んだ物の sha256 は BUILD.json に残り、rustVerifier.test.ts と `--check` が突き合わせる。
+  'child_process exec/spawn :: scripts/build-mamori-verify.cjs :: 1',
   // SHA 固定の 40 桁が実在の commit で注記の版と同じ物かを `git ls-remote` / `git fetch` で測る
   // 定期点検の道具 (`scripts/audit-pinned-action-shas.cjs`・パス 534)。子プロセスは `git` だけで、
   // リポジトリ名・タグ・SHA は厳しい正規表現を通した後に固定の形へ組む。シェルは経由しない。
@@ -1003,7 +1007,10 @@ const KNOWN_SUPPRESSIONS = [
   // (`servicehub.record.<id>`) を**もう 1 枚のタブで持つ**ためにその行の id を読む
   // (open / transaction / objectStore の 3 行)。アプリの層は行の id を画面に出さないので、
   // 外から読むしかない。**読むだけで書かない** —— 錠が 2 枚のタブで同じ物かを実物で確かめる側である。
-  '保管領域 (IndexedDB) の内部を直接触っている :: scripts/e2e/core.cjs :: 16',
+  // 2026-11-05 (旧UI廃止 S3): 16 → 18。村の殻は解錠だけでは業務レコードの DB を開かないので、vaultOpacity の陽性対照
+  // (平文を植えて探し方が当たることを確かめる 2 本) は、固定の名前を開かず「既に在る DB のうち store を持つ最初の物」を探して植える
+  // (存在しない名前を開くと空の DB を作ってしまう)。`indexedDB.databases()` と `open` の 2 行ぶん増えた。
+  '保管領域 (IndexedDB) の内部を直接触っている :: scripts/e2e/core.cjs :: 18',
   // 2026-09-09 (パス 136): 各保管層が自分の DB を消す (deleteRecordDatabase / deleteLibraryDatabase /
   // deletePreferencesDatabase — ハードリセットの在庫 security/eraseAll.ts が呼ぶ)。27→28 / 7→8 / 11→12。
   // 2026-09-28 (パス 500): 28→32。最新の 1 件を比べてから書く 2 つの口 (`insertIfLatest` /

@@ -10,7 +10,7 @@
  * 失敗は `MamoriError` (行と桁つき) で投げる。1 つ目の誤りで止める —— 構文の誤りの後に続く誤りは
  * 当てにならないので、並べて見せても読み手を迷わせるだけである。
  */
-import type { BindingPattern, Comments, DestructField, DestructName, Doc, Expr, Item, Member, Module, Param, Pos, Prop, Stmt, SwitchCase, TypeRef } from './ast';
+import type { Comments, Doc, Expr, Item, Member, Module, Param, Pos, Prop, Stmt, SwitchCase, TypeRef } from './ast';
 
 export class MamoriError extends Error {
   constructor(
@@ -98,8 +98,11 @@ const LINE_COMMENT_BODY = /[^\n\r\u2028\u2029]*/y;
  * 見えない字は読み手の見ている物と走る物を食い違わせる (Trojan Source · CVE-2021-42574)。書きたいときは `\uXXXX` で綴る。
  * ZWJ / ZWNJ (U+200C / U+200D) は絵文字の連結に要るので除く (`lint:charset` と同じ判断)。
  */
-// eslint-disable-next-line no-control-regex -- 制御文字そのものを断る規則なので、制御文字の範囲を正規表現に書くのが目的
-const HIDDEN_CHARS = /[\u0000-\u0008\u000B-\u001F\u007F-\u009F\u200B\u200E\u200F\u2028\u2029\u202A-\u202E\u2060-\u2064\u2066-\u2069\uFEFF]/;
+// eslint-disable-next-line no-control-regex, no-misleading-character-class -- 制御文字・結合文字そのものを断る規則なので、範囲を正規表現に書くのが目的
+const HIDDEN_CHARS = /[\u0000-\u0008\u000B-\u001F\u007F-\u009F\u00AD\u034F\u061C\u115F\u1160\u17B4\u17B5\u180B-\u180F\u200B\u200E\u200F\u2028\u2029\u202A-\u202E\u2060-\u206F\u2800\u3164\uFEFF\uFFA0\uFFF0-\uFFFB\u{E0000}-\u{E0FFF}\u{1D173}-\u{1D17A}]/u;
+/** 注記の本文に置けない指示 (T-254): 生成物の次の行の型検査を黙らせる `@ts-ignore` / `@ts-expect-error` / `@ts-nocheck` ほか。 */
+const TS_DIRECTIVE = /@ts-[a-z]/;
+const TS_DIRECTIVE_MESSAGE = '注記に `@ts-…` の指示は書けません —— 生成物の型検査 (tsc) を黙らせて、Mamori が見ない型の穴を通せてしまいます';
 const HIDDEN_CHARS_MESSAGE = '制御・不可視・方向を変える字は注記と文字列の中に裸で置けません —— `\\uXXXX` と綴ります (見える物と走る物が食い違う · Trojan Source)';
 
 export function lex(file: string, src: string): Tok[] {
@@ -141,6 +144,7 @@ export function lex(file: string, src: string): Tok[] {
       const stop = i + LINE_COMMENT_BODY.exec(src)![0].length;
       const raw = src.slice(i, stop);
       if (HIDDEN_CHARS.test(raw)) throw new MamoriError(file, pos, HIDDEN_CHARS_MESSAGE);
+      if (TS_DIRECTIVE.test(raw)) throw new MamoriError(file, pos, TS_DIRECTIVE_MESSAGE);
       const kind: TokKind = raw.startsWith('//!') ? 'header' : raw.startsWith('///') ? 'doc' : 'comment';
       const rest = kind === 'comment' ? raw.slice(2) : raw.slice(3);
       out.push({ kind, text: rest.startsWith(' ') ? rest.slice(1) : rest, pos });
@@ -225,6 +229,10 @@ export function lex(file: string, src: string): Tok[] {
   return out;
 }
 
+/** 型の綴りの中に置いてよい記号 (許可表)。比較・代入・論理・算術・`->` などは型に要らず、字句の切れ目をずらす元になる。 */
+const TYPE_PUNCT: ReadonlySet<string> = new Set(['<', '>', '(', ')', '[', ']', '{', '}', ',', ':', ';', '.', '|', '&', '?', '=>', '-']);
+const TYPE_OPEN: Readonly<Record<string, string>> = Object.assign(Object.create(null) as Record<string, string>, { '<': '>', '(': ')', '[': ']', '{': '}' });
+
 const STOP_WORDS = new Set(['true', 'false', 'null', 'undefined', 'unknown', 'string', 'number', 'boolean', 'void']);
 
 /** `case` の本体を終えてよい文 (次の case へ落ちる形を書かせない)。 */
@@ -295,19 +303,28 @@ export function parse(file: string, src: string): Module {
   const typeRef = (terminators: readonly string[]): TypeRef => {
     const start = peek();
     const parts: Tok[] = [];
-    let depth = 0;
+    // 開き括弧の積み (種類つき)。閉じ括弧は積みの先頭と**同じ種類**でなければならない。
+    // 0.13 · T-250: 深さを数えるだけだった頃は、`>=` (1 つの字句) が `>` に数えられず、`Array<Array<number>= 式; … >` のように
+    // **字句の切れ目の差で深さを偽装**でき、型の綴りの中へ文を隠せた (T-239 は深さ 0 の `;` だけを断っていた)。
+    // 型の綴りは生成物へそのまま写されるので、型の中に置ける記号を許可表にして、括弧の種類を突き合わせる。
+    const stack: string[] = [];
     for (;;) {
       const t = peek();
       if (t.kind === 'eof') fail(t, '型が閉じていません');
       if (t.kind === 'comment' || t.kind === 'doc' || t.kind === 'header') fail(t, '型の途中に注記は置けません');
-      if (depth === 0 && isPunctTok(t, ...terminators)) break;
-      // 深さ 0 の `;` は文の切れ目で、型には要らない (オブジェクト型の欄の区切りは `{ … }` の中 = 深さ 1)。
-      // 通すと `const C: number; fetch("x"); const D: number = 1;` のように**型の綴りの中へ文を隠せる** —— 型の綴りは
-      // そのまま写されるので、Mamori の検め (M6) を受けない文が生成物へ入った (0.4 · T-239 · 電池の対戦が見つけた)。
-      if (depth === 0 && isPunctTok(t, ';')) fail(t, '型の中に `;` は置けません —— 文の切れ目になり、型の綴りに別の文を隠せてしまいます');
-      if (isPunctTok(t, '<', '(', '[', '{')) depth++;
-      if (isPunctTok(t, '>', ')', ']', '}')) depth--;
-      if (depth < 0) fail(t, '型の括弧が合いません');
+      if (t.kind === 'regex') fail(t, '型の中に正規表現は置けません');
+      if (stack.length === 0 && isPunctTok(t, ...terminators)) break;
+      if (t.kind === 'punct' && !TYPE_PUNCT.has(t.text)) {
+        fail(t, `型の中に \`${t.text}\` は置けません —— 型で使えるのは名前・括弧・\`,\` \`:\` \`.\` \`|\` \`&\` \`?\` \`=>\` だけです (字句の切れ目の差で型の綴りに式を隠せてしまうため)`);
+      }
+      // `;` は `{ … }` の直下 (オブジェクト型の欄の区切り) だけ。深さ 0 の `;` は文の切れ目で、型には要らない。
+      if (isPunctTok(t, ';') && stack[stack.length - 1] !== '}') fail(t, '型の中に `;` は置けません —— 文の切れ目になり、型の綴りに別の文を隠せてしまいます');
+      // Stryker disable next-line ConditionalExpression: 括弧の字は punct の字句としてしか現れず (文字列の字句の text は引用符を含む)、punct 以外で TYPE_OPEN を引いても当たらない (等価)
+      const closer = t.kind === 'punct' ? TYPE_OPEN[t.text] : undefined;
+      if (closer !== undefined) stack.push(closer);
+      else if (isPunctTok(t, '>', ')', ']', '}')) {
+        if (stack.pop() !== t.text) fail(t, '型の括弧が合いません');
+      }
       parts.push(next());
     }
     if (parts.length === 0) fail(start, '型が要ります');
@@ -361,76 +378,35 @@ export function parse(file: string, src: string): Module {
     return out;
   };
 
-  /**
-   * 分割代入の左辺 (0.13 · T-252)。`const { a, b: c } = x` と `const [a, b] = xs`。
-   * 鍵は名前か文字列だけで、禁じた名前 (`constructor` ほか) は `.name` と同じ表で断る。
-   * 入れ子・残り・既定値・計算した鍵は、印や原型へ届く形を足す前に塞ぐため無い。
-   */
-  const bindingPattern = (): BindingPattern => {
-    const t = peek();
-    if (isP('{')) {
-      next();
-      const fields: DestructField[] = [];
-      const seen = new Set<string>();
-      while (!isP('}')) {
-        const kt = peek();
-        if (isP('...')) fail(kt, '`...` (残り) は分割代入に在りません —— 名前を 1 つずつ書きます');
-        if (isP('[')) fail(kt, '計算した鍵 (`[k]: 名前`) は分割代入に在りません —— 鍵は名前か文字列で書きます');
-        const quoted = kt.kind === 'string';
-        const key = quoted ? str() : ident();
-        if (Object.hasOwn(FORBIDDEN_MEMBERS, key)) fail(kt, FORBIDDEN_MEMBERS[key]!);
-        let bound = key;
-        if (isP(':')) {
-          next();
-          if (isP('{') || isP('[')) fail(peek(), '分割代入の入れ子は在りません —— 1 段だけ束ねます');
-          bound = ident();
-        } else if (quoted) {
-          fail(peek(), `文字列の鍵 ${JSON.stringify(key)} には \`:\` と束ねる名前が要ります`);
-        }
-        if (isP('=')) fail(peek(), '分割代入の既定値は在りません');
-        if (RESERVED.has(bound) || STOP_WORDS.has(bound)) fail(kt, `\`${bound}\` は束ねる名前にできません`);
-        if (seen.has(bound)) fail(kt, `名前 ${bound} を 2 度束ねています`);
-        seen.add(bound);
-        fields.push({ key, quoted, name: bound, pos: kt.pos });
-        if (!isP('}')) expectP(',');
-      }
-      if (fields.length === 0) fail(t, '分割代入には名前が 1 つ要ります');
-      expectP('}');
-      return { kind: 'object', fields, pos: t.pos };
-    }
-    // 呼び出し側が `{` か `[` のときだけ呼ぶ。`{` は上で返しているので、ここは `[`。
-    next();
-    const names: DestructName[] = [];
-    const seen = new Set<string>();
-    while (!isP(']')) {
-      const nt = peek();
-      if (isP('...')) fail(nt, '`...` (残り) は分割代入に在りません —— 名前を 1 つずつ書きます');
-      if (isP(',')) fail(nt, '空の位置は分割代入に在りません');
-      if (isP('{') || isP('[')) fail(nt, '分割代入の入れ子は在りません —— 1 段だけ束ねます');
-      const bound = ident();
-      if (isP('=')) fail(peek(), '分割代入の既定値は在りません');
-      if (RESERVED.has(bound) || STOP_WORDS.has(bound)) fail(nt, `\`${bound}\` は束ねる名前にできません`);
-      if (seen.has(bound)) fail(nt, `名前 ${bound} を 2 度束ねています`);
-      seen.add(bound);
-      names.push({ name: bound, pos: nt.pos });
-      if (!isP(']')) expectP(',');
-    }
-    if (names.length === 0) fail(t, '分割代入には名前が 1 つ要ります');
-    expectP(']');
-    return { kind: 'array', names, pos: t.pos };
-  };
-
   const stmt = (cs: Comments): Stmt => {
     const t = peek();
     if (isW('const') || isW('let')) {
       const mutable = next().text === 'let';
-      if (isP('{') || isP('[')) {
-        const pattern = bindingPattern();
-        if (isP(':')) fail(peek(), '分割代入に型注釈は付けられません —— 束ねた名前の使い方を tsc が見ます');
+      if (isP('{')) {
+        if (mutable) fail(peek(), '分割代入は `const` だけです (`let { … }` は書けません)');
+        next();
+        const fields: { key: string; local: string }[] = [];
+        while (!isP('}')) {
+          const key = memberName();
+          let local = key;
+          if (isP(':')) {
+            next();
+            local = ident();
+          }
+          fields.push({ key, local });
+          if (!isP('}')) expectP(',');
+        }
+        if (fields.length === 0) fail(peek(), '分割する名前が 1 つも在りません (`const { a } = x;`)');
+        expectP('}');
+        let annotated: TypeRef | null = null;
+        if (isP(':')) {
+          next();
+          annotated = typeRef(['=']);
+        }
         expectP('=');
-        const init = expr();
+        const source = expr();
         expectP(';');
-        return { kind: 'destructure', mutable, pattern, init, comments: cs, pos: t.pos };
+        return { kind: 'destructure', fields, type: annotated, init: source, comments: cs, pos: t.pos };
       }
       const name = ident();
       let type: TypeRef | null = null;
@@ -536,8 +512,15 @@ export function parse(file: string, src: string): Module {
       next();
       const body = block();
       expectW('catch');
+      // `catch (e)` の束縛 (0.12 · MG-016)。束ねた例外は unknown で、印を運ばない (checker が局所の値として宣言する)。
+      let param: string | null = null;
+      if (isP('(')) {
+        next();
+        param = ident();
+        expectP(')');
+      }
       const handler = block();
-      return { kind: 'try', body, handler, comments: cs, pos: t.pos };
+      return { kind: 'try', body, param, handler, comments: cs, pos: t.pos };
     }
     if (isP('{')) fail(t, '文の頭に `{` は置けません (オブジェクトの字面だけの文は何もしないので書かない)');
     if (peek().kind === 'ident' && isP('=', 1)) {
@@ -575,7 +558,7 @@ export function parse(file: string, src: string): Module {
     ['^'],
     ['&'],
     ['===', '!=='],
-    ['<', '>', '<=', '>='],
+    ['<', '>', '<=', '>=', 'instanceof'],
     ['<<', '>>', '>>>'],
     ['+', '-'],
     ['*', '/', '%'],
@@ -591,7 +574,9 @@ export function parse(file: string, src: string): Module {
     const adjacent = (n: number): boolean => isP('>', n) && peek(n).pos.line === t.pos.line && peek(n).pos.col === t.pos.col + n;
     const shift = adjacent(0) && adjacent(1) ? (adjacent(2) ? { text: '>>>', count: 3 } : { text: '>>', count: 2 }) : null;
     if (shift !== null && ops.includes(shift.text)) return shift;
-    return isPunctTok(t, ...ops) ? { text: t.text, count: 1 } : null;
+    // 語の演算子 (`instanceof` · 0.16 · MG-028) は名前の字句として届き、記号は記号の字句として届く。どちらも字句の綴りが表の綴りと
+    // 一致するかだけで決まる (文字列・数・正規表現の字句の綴りは引用符や数字を含み、表の綴りと一致しない)。語の綴りが名前に使えないことは RESERVED が持つ。
+    return ops.includes(t.text) ? { text: t.text, count: 1 } : null;
   };
 
   const expr = (): Expr => {
@@ -718,7 +703,14 @@ export function parse(file: string, src: string): Module {
       const props: Prop[] = [];
       while (!isP('}')) {
         const kt = peek();
-        if (isP('...')) fail(kt, '`...` (展開) は在りません —— 欄を 1 つずつ書きます (何が入るかを字面で見えるようにする)');
+        if (isP('...')) {
+          // 展開は欄より前にだけ置く (後ろに置くと、字面で書いた欄を展開が上書きできる —— `{ ok: true, ...x }`)。
+          if (props.some((p) => !p.spread)) fail(kt, '`...` (展開) は欄より前にだけ置けます —— 後ろに置くと、先に書いた欄を展開が上書きできます');
+          next();
+          props.push({ spread: true, value: expr(), pos: kt.pos });
+          if (!isP('}')) expectP(',');
+          continue;
+        }
         if (isP('[')) fail(kt, '計算した鍵 (`[k]: v`) は在りません —— 鍵は名前か文字列で書きます');
         const quoted = kt.kind === 'string';
         const key = quoted ? str() : ident();
@@ -726,11 +718,11 @@ export function parse(file: string, src: string): Module {
         if (key === '__proto__') fail(kt, '鍵 `__proto__` は在りません —— オブジェクトの字面では欄ではなく原型を差し替えます');
         if (isP(':')) {
           next();
-          props.push({ key, quoted, value: expr(), shorthand: false, pos: kt.pos });
+          props.push({ key, quoted, value: expr(), shorthand: false, spread: false, pos: kt.pos });
         } else {
           if (quoted) fail(peek(), `文字列の鍵 ${JSON.stringify(key)} には \`:\` と値が要ります`);
           if (RESERVED.has(key) || STOP_WORDS.has(key)) fail(kt, `\`${key}\` は省略形の欄 (\`{ 名前 }\`) にできません`);
-          props.push({ key, quoted, value: { kind: 'ident', name: key, pos: kt.pos }, shorthand: true, pos: kt.pos });
+          props.push({ key, quoted, value: { kind: 'ident', name: key, pos: kt.pos }, shorthand: true, spread: false, pos: kt.pos });
         }
         if (!isP('}')) expectP(',');
       }
@@ -741,7 +733,13 @@ export function parse(file: string, src: string): Module {
       next();
       const items: Expr[] = [];
       while (!isP(']')) {
-        items.push(expr());
+        const st = peek();
+        if (isP('...')) {
+          next();
+          items.push({ kind: 'spread', operand: expr(), pos: st.pos });
+        } else {
+          items.push(expr());
+        }
         if (!isP(']')) expectP(',');
       }
       expectP(']');
@@ -960,6 +958,8 @@ const RESERVED = new Set([
   'use', 'extern', 'vetted', 'export', 'const', 'let', 'fn', 'gate', 'sink', 'return', 'if', 'else', 'try', 'catch', 'mint', 'from', 'alias',
   // 0.2 (パス 563)
   'throw', 'for', 'of', 'break', 'continue', 'switch', 'case', 'default', 'field', 'type', 'interface',
+  // 0.16 (MG-028)
+  'instanceof',
 ]);
 
 function describe(t: Tok): string {

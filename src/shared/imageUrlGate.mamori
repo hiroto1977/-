@@ -14,7 +14,7 @@
 //!
 //! (同じ形は `exportPaths.ts` と `frameGuard.ts` で既に踏んでいる ——
 //!  どちらも「壁なのに測られていなかった」。名簿はそのために在る。)
-extern pure { isPrivateOrReservedTarget } from "./privateTarget";
+use { isPrivateOrReservedTarget } from "./privateTarget";
 use type { VettedImageSrc } from "./vetted";
 
 /// 第三者 API 由来の画像 URL を `https:` / `http:` / `data:image/*` に限定する。

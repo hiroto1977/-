@@ -365,6 +365,7 @@ describe("ACTIONS['providers']", () => {
       'anthropic',
       'openai',
       'gemini',
+      'grok',
       'ollama',
       'compat',
     ]);
@@ -839,5 +840,67 @@ describe("ACTIONS['chat'] — model は読まない (threat: T-098 / T-170)", ()
     expect(JSON.parse(body).model).toBe('auto');
     if (typeof model === 'string') expect(body).not.toContain(model);
     expect(body.length).toBeLessThan(2_000);
+  });
+});
+
+describe('assistant — system を切るのは文字の境界で (パス 252 · MG-030 で対照が見つけた無縛)', () => {
+  const okFetch = () =>
+    vi.fn<typeof fetch>().mockResolvedValue(jsonResponse({ content: [{ type: 'text', text: 'ok' }] }));
+  // 天井の 1 つ手前まで ASCII、天井ちょうどの位置に絵文字 (2 コード単位) が来る system。
+  const edge = 'a'.repeat(MAX_ASSISTANT_SYSTEM_CHARS - 1) + '😀' + 'tail';
+  const CREDS = JSON.stringify({ anthropic: 'sk-ant-a' });
+
+  for (const [action, token] of [['chat', 'sk-ant-xxx'], ['chatAll', CREDS]] as const) {
+    it(`${action}: 孤立サロゲートを作らず、天井ちょうどの文字数で切る`, async () => {
+      const fetchMock = okFetch();
+      await ACTIONS[action]!({
+        token,
+        fetch: fetchMock,
+        // 提供者を明示する (省略時は端末の LiteLLM が先で、本文の形が Anthropic と違う)。
+        payload: { system: edge, provider: 'anthropic', messages: [{ role: 'user', content: 'hi' }] },
+      });
+      const [, init] = fetchMock.mock.calls[0]!;
+      const sent = (JSON.parse(String((init as RequestInit).body)) as { system: string }).system;
+      expect(() => encodeURIComponent(sent)).not.toThrow(); // 孤立サロゲートがあれば URIError
+      expect(Array.from(sent)).toHaveLength(MAX_ASSISTANT_SYSTEM_CHARS);
+      expect(sent.endsWith('😀')).toBe(true);
+    });
+  }
+});
+
+describe('assistant — Grok (xAI) をデスクトップ版の AI として使う', () => {
+  const grokFetch = () =>
+    vi.fn<typeof fetch>().mockResolvedValue(jsonResponse({ choices: [{ message: { content: 'こんにちは、Grok です' } }], model: 'grok-4' }));
+
+  it('chat: provider に grok を指名すると api.x.ai の Chat Completions へ Bearer で送り、本文を返す', async () => {
+    const fetchMock = grokFetch();
+    const res = (await ACTIONS['chat']!({
+      token: JSON.stringify({ grok: 'xai-test-key-0123456789' }),
+      fetch: fetchMock,
+      payload: { provider: 'grok', messages: [{ role: 'user', content: 'hi' }] },
+    })) as { text: string; provider: string };
+    expect(res).toMatchObject({ text: 'こんにちは、Grok です', provider: 'grok' });
+    const [url, init] = fetchMock.mock.calls[0]!;
+    expect(String(url)).toBe('https://api.x.ai/v1/chat/completions');
+    expect((init as RequestInit).headers).toMatchObject({ authorization: 'Bearer xai-test-key-0123456789' });
+  });
+
+  it('chatAll: Grok だけを設定していれば 1 社の合議として動く', async () => {
+    const res = (await ACTIONS['chatAll']!({
+      token: JSON.stringify({ grok: 'xai-test-key-0123456789' }),
+      fetch: grokFetch(),
+      payload: { messages: [{ role: 'user', content: 'hi' }] },
+    })) as { answers: Array<{ provider: string; ok: boolean; text: string }> };
+    expect(res.answers).toEqual([expect.objectContaining({ provider: 'grok', ok: true, text: 'こんにちは、Grok です' })]);
+  });
+
+  it('providers: Grok が一覧に出て、鍵を保存すると設定済みになる', async () => {
+    const res = (await ACTIONS['providers']!({
+      token: JSON.stringify({ grok: 'xai-test-key-0123456789' }),
+      fetch: vi.fn<typeof fetch>(),
+      payload: {},
+    })) as { providers: Array<{ id: string; label: string; configured: boolean; isDefault: boolean }> };
+    const g = res.providers.find((p) => p.id === 'grok')!;
+    expect(g).toMatchObject({ label: 'Grok (xAI)', configured: true, isDefault: true });
   });
 });

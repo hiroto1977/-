@@ -77,22 +77,17 @@ const LEDGER: readonly LedgerRow[] = [
   },
   {
     file: 'src/shared/atlassianSite.ts',
-    needle: '`https://${parsed.hostname}`',
-    reason: '(b) `.atlassian.net` を確かめた後の URL.hostname の再直列化 —— 関門の返り値',
+    needle: "'https://' + parsed.hostname",
+    reason: '(b) `.atlassian.net` を確かめた後の URL.hostname の再直列化 —— 関門の返り値 (Mamori へ移した後は連結で組む · MG-023)',
   },
   {
     file: 'src/shared/privateTarget.ts',
-    needle: '`http://${embeddedV4}/`',
-    reason: '(c) IPv4 埋め込み IPv6 を分類するための内部の再解析。通信にも画面にも出ない',
-  },
-  {
-    file: 'src/shared/privateTarget.ts',
-    needle: '`http://${nat64Or6to4}/`',
-    reason: '(c) 同上 (NAT64 / 6to4 の埋め込み)',
+    needle: "'http://' + v4 + '/'",
+    reason: '(c) IPv4 埋め込み IPv6 (mapped / NAT64 / 6to4) を分類するための内部の再解析。v4 は 16 進から組んだ 0-255 の点記法で、通信にも画面にも出ない (Mamori へ移したとき 2 か所を 1 つに畳んだ · MG-027)',
   },
   {
     file: 'src/shared/scanTarget.ts',
-    needle: '`http://${h}/`',
+    needle: "'http://' + h + '/'",
     reason: '(c) VirusTotal へ送る前の「社内ホスト」警告が、SSRF 用の分類器 (privateTarget) の判定を借りるための内部の再解析 (T-076)。h は URL.hostname で、通信にも画面にも出ない',
   },
   {

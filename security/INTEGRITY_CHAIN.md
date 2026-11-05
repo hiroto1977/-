@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 437
+- ブロック数: 458
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `45cf4d880bce5a9573791db15929e89eabdb649330f81a22e0e1458a86f4b9cc`
-- 保護対象: 166 ファイル
+- 末尾(tip)ハッシュ: `10cd65de0b3e3556d83eaf7edc0491e30552758144f44ebcf5ffc31ba746f603`
+- 保護対象: 187 ファイル
 
 ## ブロック
 
@@ -442,14 +442,35 @@
 | 426 | `d605413173a35063` | `8d05e1d8802b9e51` | `84b59c4a4f3311ac` | update integrity-chain.cjs,mamori-capabilities.json,vaultToken.mamori,vaultToken.ts |
 | 427 | `3b49ee658f909eb5` | `84b59c4a4f3311ac` | `d807451d38df2200` | update integrity-chain.cjs,mamori-capabilities.json,autoLock.mamori,autoLock.ts,autoLockHost.ts,checker.ts |
 | 428 | `43aa6b3b98c20377` | `d807451d38df2200` | `e8f633845079b6b1` | update checker.ts |
-| 429 | `3531be3d4d2cde62` | `e8f633845079b6b1` | `3298fad235eb2364` | update ci.yml |
-| 430 | `3bb06e1895231193` | `3298fad235eb2364` | `128f11b58619ed73` | update integrity-chain.cjs,assistant.ts,localGateway.ts,providers.ts |
-| 431 | `3a8d31e55a44cc4c` | `128f11b58619ed73` | `8eb45a1a1258233d` | update localGateway.ts |
-| 432 | `f7da785de43c1ab2` | `8eb45a1a1258233d` | `a425f37091a27700` | update mamori-capabilities.json,ast.ts,checker.ts,emit.ts,parser.ts |
-| 433 | `73c3ad69e98ab1da` | `a425f37091a27700` | `495da68627b110df` | update checker.ts |
-| 434 | `a399f97d016997d0` | `495da68627b110df` | `cc4c77bdc1659d61` | update checker.ts |
-| 435 | `dd4e3784b1285f33` | `cc4c77bdc1659d61` | `2e8b238c01bfe9f7` | update eslint.config.js |
-| 436 | `31979c4a04fbc239` | `2e8b238c01bfe9f7` | `45cf4d880bce5a95` | update ast.ts,checker.ts,emit.ts,parser.ts |
+| 429 | `d4633b3109f028df` | `e8f633845079b6b1` | `7246acca4fc41ad2` | update ast.ts,checker.ts,emit.ts,parser.ts |
+| 430 | `a18cfba4ed1b8914` | `7246acca4fc41ad2` | `329a63235925863c` | update integrity-chain.cjs,mamori-capabilities.json,pkceSession.mamori,pkceSession.ts,pkceSessionHost.ts |
+| 431 | `df51e5f9bcdb5045` | `329a63235925863c` | `20ce3eca436e8315` | update pkceSession.mamori,pkceSession.ts,pkceSessionHost.ts |
+| 432 | `0b0292aa7fade07f` | `20ce3eca436e8315` | `41efd0604defd5f3` | update integrity-chain.cjs,mamori-capabilities.json,updateCheck.mamori |
+| 433 | `7baac239b19822c4` | `41efd0604defd5f3` | `e50ddcddc3a5e60b` | update build-mamori-verify.cjs,integrity-chain.cjs,checker.ts,parser.ts,BUILD.json,Cargo.lock |
+| 434 | `cbecfc6fe855da5d` | `e50ddcddc3a5e60b` | `482a721911ed1996` | update checker.ts,parser.ts |
+| 435 | `efa601ed1b886bd9` | `482a721911ed1996` | `3f58432c3413561c` | update integrity-chain.cjs,mamori-capabilities.json,exportPaths.mamori,exportPaths.ts |
+| 436 | `4e07bfbe8c8480e4` | `3f58432c3413561c` | `70e7be716d83f05a` | update exportPaths.mamori,exportPaths.ts |
+| 437 | `45e41505191fb88b` | `70e7be716d83f05a` | `9ea05e4ae9b0c797` | update integrity-chain.cjs,mamori-capabilities.json,dataCrypto.mamori,dataCrypto.ts,dataCryptoHost.ts |
+| 438 | `bffe9ea26831d59f` | `9ea05e4ae9b0c797` | `9eff03075cd5ebfa` | update ast.ts,checker.ts,emit.ts,parser.ts |
+| 439 | `f8249da7f5f3217e` | `9eff03075cd5ebfa` | `f13333af5ce4a477` | update integrity-chain.cjs,mamori-capabilities.json,atlassianSite.mamori,atlassianSite.ts |
+| 440 | `42bdfe2e34f5434f` | `f13333af5ce4a477` | `add0d13e178fbce3` | update ast.ts,checker.ts,emit.ts,parser.ts,BUILD.json,mamori_verify.wasm |
+| 441 | `fc60bc9b7c9caf80` | `add0d13e178fbce3` | `12a0268dcfff967d` | update integrity-chain.cjs,mamori-capabilities.json,pkce.mamori,pkce.ts,pkceHost.ts |
+| 442 | `21f508269e579c43` | `12a0268dcfff967d` | `ecb1caab0cc470fb` | update pkceHost.ts |
+| 443 | `283731e620687dc0` | `ecb1caab0cc470fb` | `146246dd6d122fcb` | update integrity-chain.cjs,mamori-capabilities.json,scanTarget.mamori,scanTarget.ts,scanTargetHost.ts |
+| 444 | `86ec476d5f9b2b31` | `146246dd6d122fcb` | `b32cacb771ca327f` | update integrity-chain.cjs,mamori-capabilities.json,imageUrlGate.mamori,privateTarget.mamori,privateTarget.ts,scanTarget.mamori |
+| 445 | `72eb242868caf534` | `b32cacb771ca327f` | `041f37b6408eb520` | update checker.ts,emit.ts,parser.ts |
+| 446 | `0c541e8043e59d93` | `041f37b6408eb520` | `08d348677f0c318f` | update integrity-chain.cjs,mamori-capabilities.json,liveRead.mamori,liveRead.ts |
+| 447 | `09d291b9e1f2b1c1` | `08d348677f0c318f` | `44fcf8db7e9b1d1d` | update integrity-chain.cjs,lookup.ts |
+| 448 | `d2f86bef8c4bcbe9` | `44fcf8db7e9b1d1d` | `8cc798b3decf4eeb` | update integrity-chain.cjs,mamori-capabilities.json,assistant.mamori,assistant.ts |
+| 449 | `b84bcd8774ae7547` | `8cc798b3decf4eeb` | `f3141cdd597fdfa4` | update assistant.mamori,assistant.ts |
+| 450 | `55b8bb884a3eaefd` | `f3141cdd597fdfa4` | `15729f1e22150468` | update mamori-capabilities.json |
+| 451 | `4bc0ac0f28ab6c53` | `15729f1e22150468` | `c23c3f87411f0fb3` | update credentials.ts,providers.ts |
+| 452 | `0929f500aed8ac75` | `c23c3f87411f0fb3` | `7236c8cfe6cfce3f` | update 00-project.mdc |
+| 453 | `7bb939510ec1b674` | `7236c8cfe6cfce3f` | `f314f111a2560c8a` | update manifest.webmanifest |
+| 454 | `7a0358ad68b6ca21` | `f314f111a2560c8a` | `df38428f200f3534` | update settings.json |
+| 455 | `be734a38adc10ff5` | `df38428f200f3534` | `89fe56c9db356855` | update vitest.config.ts |
+| 456 | `5f1c1b05db23263b` | `89fe56c9db356855` | `058cc155f65e08f2` | update ci.yml,eslint.config.js,integrity-chain.cjs,mamori-capabilities.json,assistant.mamori,assistant.ts |
+| 457 | `fe6cd77f4cafe069` | `058cc155f65e08f2` | `10cd65de0b3e3556` | update vitest.config.ts |
 
 ## 保護対象ファイル
 
@@ -482,6 +503,7 @@
 - `orchestration/knowledge-graph.cjs`
 - `scripts/build-integrity-manifest.cjs`
 - `scripts/build-landing.cjs`
+- `scripts/build-mamori-verify.cjs`
 - `scripts/checksum-release.cjs`
 - `scripts/inject-pwa.cjs`
 - `scripts/inline-html.cjs`
@@ -515,7 +537,9 @@
 - `scripts/verify-release-artifacts.cjs`
 - `security/mamori-capabilities.json`
 - `src/main/atomicWrite.ts`
+- `src/main/clients/assistant.mamori`
 - `src/main/clients/assistant.ts`
+- `src/main/clients/exportPaths.mamori`
 - `src/main/clients/exportPaths.ts`
 - `src/main/clients/exportSink.mamori`
 - `src/main/clients/exportSink.ts`
@@ -544,16 +568,23 @@
 - `src/renderer/data/recordCipher.ts`
 - `src/renderer/fs/fsa.ts`
 - `src/renderer/keyIntent.ts`
+- `src/renderer/network/liveRead.mamori`
 - `src/renderer/network/liveRead.ts`
 - `src/renderer/network/proxy.ts`
+- `src/renderer/oauth/pkce.mamori`
 - `src/renderer/oauth/pkce.ts`
+- `src/renderer/oauth/pkceHost.ts`
+- `src/renderer/oauth/pkceSession.mamori`
 - `src/renderer/oauth/pkceSession.ts`
+- `src/renderer/oauth/pkceSessionHost.ts`
 - `src/renderer/security/LockScreen.tsx`
 - `src/renderer/security/autoLock.mamori`
 - `src/renderer/security/autoLock.ts`
 - `src/renderer/security/autoLockHost.ts`
 - `src/renderer/security/bip39-wordlist.ts`
+- `src/renderer/security/dataCrypto.mamori`
 - `src/renderer/security/dataCrypto.ts`
+- `src/renderer/security/dataCryptoHost.ts`
 - `src/renderer/security/egressStepUp.mamori`
 - `src/renderer/security/egressStepUp.ts`
 - `src/renderer/security/frameGuard.ts`
@@ -573,6 +604,7 @@
 - `src/shared/aiEndpoint.mamori`
 - `src/shared/aiEndpoint.ts`
 - `src/shared/assistantLimits.ts`
+- `src/shared/atlassianSite.mamori`
 - `src/shared/atlassianSite.ts`
 - `src/shared/constantTimeEquals.ts`
 - `src/shared/controlChars.mamori`
@@ -590,6 +622,7 @@
 - `src/shared/inputCeiling.ts`
 - `src/shared/isoDate.ts`
 - `src/shared/localDate.ts`
+- `src/shared/lookup.ts`
 - `src/shared/mamori/ast.ts`
 - `src/shared/mamori/capabilities.ts`
 - `src/shared/mamori/checker.ts`
@@ -598,6 +631,7 @@
 - `src/shared/mamori/parser.ts`
 - `src/shared/ollama.ts`
 - `src/shared/outboundContentGate.ts`
+- `src/shared/privateTarget.mamori`
 - `src/shared/privateTarget.ts`
 - `src/shared/promptInjection.mamori`
 - `src/shared/promptInjection.ts`
@@ -606,16 +640,24 @@
 - `src/shared/redact.ts`
 - `src/shared/safeFilename.mamori`
 - `src/shared/safeFilename.ts`
+- `src/shared/scanTarget.mamori`
 - `src/shared/scanTarget.ts`
+- `src/shared/scanTargetHost.ts`
 - `src/shared/tokenInput.mamori`
 - `src/shared/tokenInput.ts`
 - `src/shared/tokenResponse.ts`
+- `src/shared/updateCheck.mamori`
 - `src/shared/vaultToken.mamori`
 - `src/shared/vaultToken.ts`
 - `src/shared/versionOrder.ts`
 - `src/shared/vetted.mamori`
 - `src/shared/vetted.ts`
 - `src/shared/writeFieldLimits.ts`
+- `tools/mamori-verify/BUILD.json`
+- `tools/mamori-verify/Cargo.lock`
+- `tools/mamori-verify/Cargo.toml`
+- `tools/mamori-verify/dist/mamori_verify.wasm`
+- `tools/mamori-verify/src/lib.rs`
 - `vite.config.ts`
 - `vitest.audit.config.ts`
 - `vitest.config.ts`

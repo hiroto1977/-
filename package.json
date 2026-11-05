@@ -70,6 +70,7 @@
     "mutate:merge": "node scripts/merge-mutation-reports.cjs --self-test && node scripts/merge-mutation-reports.cjs",
     "ollama": "node scripts/ollama-cli.cjs",
     "ollama:setup": "bash scripts/ollama-setup.sh",
+    "local-llm:setup": "bash scripts/local-llm-setup.sh",
     "orchestrate": "node scripts/orchestrate.cjs",
     "orchestrate:context": "node scripts/orchestrate-context.cjs",
     "orchestrate:dispatch": "node scripts/orchestrate.cjs dispatch",

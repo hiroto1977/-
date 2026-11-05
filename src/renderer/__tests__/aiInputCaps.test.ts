@@ -241,6 +241,17 @@ const PAGE_CAPS: Readonly<Record<string, PageCap>> = {
       },
     },
   },
+  'pages/GrokPage.tsx': {
+    submitFn: 'onAsk',
+    constants: {
+      MAX_ASSISTANT_CONTENT_CHARS: {
+        reads: 1,
+        bypass: [],
+        why: 'Grok (xAI) へ質問を直接送る複数行の欄 —— 人は資料を貼って尋ねる。Enter 送信もマイクも持たないので砦は欄の断り 1 か所',
+        provenBy: 'pages/__tests__/grokPageOnScreen.test.ts',
+      },
+    },
+  },
   'pages/EmotionsPage.tsx': {
     submitFn: 'analyze',
     constants: {

@@ -11,7 +11,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Service Hub — a Japanese-facing business dashboard exposing **77 services** through a unified,
+Service Hub — a Japanese-facing business dashboard exposing **78 services** through a unified,
 category-grouped sidebar (おすすめ / 士業連携 / 分析・ツール / 外部サービス連携). **Not every service has a sidebar
 entry of its own**: `uber-eats` and `demae-can` are consumed inside the Business Dashboard instead
 (`BusinessPage.tsx` reads their snapshots directly). That split is a reasoned, bidirectional ledger in
@@ -1040,7 +1040,7 @@ npm run dev              # Vite + Electron, hot reload (desktop dev)
 npm run build:web        # → dist/standalone.html (browser build; runs inline-html.cjs)
 npm run build:web:lite   # → dist/standalone-lite.html (~2MB モバイル版・学術コーパス非搭載)
 npm run e2e              # Playwright 実機 E2E (desktop/phone/tablet)。e2e:lite で LITE 版を検証
-                         #   **39 suite / 実測 761 件** (FULL・LITE とも・2026-10-29 パス 555 の実測 —— `proxyEnvelope` に持ち主の確認 (T-219) の 2 件・`vaultOpacity` に `storedAt` の 1 件を足した後。パス 507 後は 758)。床は「黙って縮んだら落とす」ための物で、
+                         #   **39 suite / 実測 716 件** (FULL・LITE とも・2026-11-05 の実測 —— 旧 UI (サイドバー・ドロワー・浮いた窓) の廃止で shell suite −27・design 32→20・controls 63→61・opened 155→135。777 は 2026-10-29 まで)。床は「黙って縮んだら落とす」ための物で、
                          #   **表に書くのは実測値ただ 1 つ、床は `floorOf()` が導く** (実測の 85%・切り捨て・最低 1。
                          #   合計の床は実測合計の 85% = **646**)。2026-09-20 (パス 346) まで表は
                          #   **床と `// 実測 N` の 2 つを手書き**で持っており、実測すると 3 つの文がずれていた ——
@@ -1071,6 +1071,7 @@ npm run e2e:ollama       # Ollama 連携 E2E (スタブ Ollama + 実 chromium)�
                          #   単体検査に映らない —— 実ブラウザでしか見えない退行はここだけが捕まえる (パス 304)
 npm run ollama           # Ollama CLI (ブラウザ不要・CORS 無縁)。`-- chat <model> "..."` で対話
 npm run ollama:setup     # 導入→モデル取得→起動→1往復して確認。足りない段だけ埋める
+npm run local-llm:setup   # Linux: Ollama / VS Code / Continue / llama.cpp と安全なモデルを一括導入 (既定は計画の表示のみ・`-- --yes` で実行)。docs/LOCAL_LLM_SETUP.md
                          #   `-- --check` で現状確認のみ / `-- --origin <URL>` でブラウザ許可も案内
 npm run build:renderer   # tsc -b + vite build only (no packaging)
 npm run build            # full desktop build: tsc -b, vite build, electron-builder installers
@@ -1500,7 +1501,7 @@ npm run lint:test-coverage # サービスごとに `<id>.test.ts` が在り、**
                            #   直書きした action は検査を素通りする)、`ACTIONS` を export する
                            #   クライアントは全部 `LIVE_ACTIONS` に載る (逆向き)。
                            #   **action を持たないサービスは許される** —— 2026-09-15 実測で
-                           #   **77 のうち 49 が action を 1 つも登録していない** (ゲートの
+                           #   **78 のうち 50 が action を 1 つも登録していない** (ゲートの
                            #   self-test にも「テストはあるが action 0 件 → 0 件鳴る」が在る)。
                            #   2026-09-15 まで、この行は「every service must have a test +
                            #   an action registered」と書かれていた —— **後半は偽**で、
@@ -1556,7 +1557,7 @@ npm run lint:deps          # 依存の供給網 (本番依存の閉包 3 件 —
                            #   **`package.json` は鎖には入れない** —— 全履歴 12 コミットで
                            #   「安定資産」の基準 (パス 347) を満たさないので、門で形を見る
 npm run lint:storage       # ブラウザに残す物の台帳 (IndexedDB 4 / Cache Storage 1 /
-                           #   localStorage 24 / sessionStorage 4。cookie と OPFS は 0 件だが走査はする)。
+                           #   localStorage 22 / sessionStorage 4。cookie と OPFS は 0 件だが走査はする)。
                            #   新しい保存先が黙って増えないこと・バックアップが覆うのは 1 つだけ・
                            #   **媒体そのものが `docs/DATA_PROTECTION.md` の在庫に載っていること**・
                            #   **ハードリセット (すべてのデータを削除) が台帳の全行を覆うこと** (規則 11、パス 136)
@@ -1642,8 +1643,8 @@ npm run lint:zero-fold     # 「割れない値を 0 に倒す」箇所の**母�
                            #   母集団が 26 ファイル (実測 106) と 4 倍ずれていた
 npm run lint:shared-judgement # 「述語は共有したが、no と言われたあとの動作が両ビルドで
                            #   違う」の**母集団**を数え、`docs/REMAINING_WORK.md` の
-                           #   生成ブロックと突き合わせる (shared 174 / 両ビルドが
-                           #   import 92 / うち否定で答えられる 48。**この 3 つは
+                           #   生成ブロックと突き合わせる (shared 176 / 両ビルドが
+                           #   import 94 / うち否定で答えられる 48。**この 3 つは
                            #   live metric なので散文だけが古びることはもう無い** ——
                            #   2026-09-15 まで 138 / 44 / 21 と書いたままだった。
                            #   44 / 21 はパス 247 が初めて数えた値で、
