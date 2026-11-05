@@ -4161,7 +4161,6 @@ async function designSuite(browser) {
   await page.goto(FILE, { waitUntil: 'domcontentloaded' });
   await setupVault(page);
   const design = () => page.evaluate(() => document.documentElement.getAttribute('data-design'));
-  const box = (sel) => page.locator(sel).first().boundingBox();
   const bodyBg = () => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
   const cssVar = (name) => page.evaluate((n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim(), name);
   /** 出荷した stylesheet の中で、その selector の表が宣言する値 (期待値を検査へ書き写さない)。 */
