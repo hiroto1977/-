@@ -688,6 +688,10 @@ const ENFORCEMENT = {
     by: ['not-thinnable'],
     why: '母集団が名指しの保護対象の一覧なので readdirSync の間引きでは 1 件も落とせない。「落とせなかった」を「床が在る」と読まない',
   },
+  'lint:mcp-servers': {
+    by: ['not-thinnable'],
+    why: 'readdirSync は必要時サーバの置き場だけを読む。json は 1 件で群の 1 件目は必ず残るので、この道具では 1 件も落とせない',
+  },
 };
 
 /*
@@ -839,6 +843,10 @@ const THINNING = {
       + '読まない —— 道具が not-dropped として区別する。★★ パス 473 まではもう 1 つ理由が在った: 前置きを**差し込んで**いたので'
       + ' `integrity-chain.cjs` 自身のハッシュが合わず、間引きを 1 件も掛けなくても exit 1 —— **原理的に測れなかった**。'
       + 'パス 474 で外から注入する形へ移し**透明になった**ので、残る理由はこの 1 つだけである',
+  },
+  'lint:mcp-servers': {
+    expect: 'not-dropped',
+    why: '必要時サーバの置き場 (.claude/mcp-on-demand/) の json は 1 件で、群の 1 件目は必ず残る。99% の間引きでは 1 件も落ちない',
   },
 };
 

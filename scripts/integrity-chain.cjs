@@ -497,6 +497,11 @@ const PROTECTED = [
   //
   // 安定資産の基準も満たす: 全履歴で **1 コミット** (パス 347 と同じ測り方)。
   '.claude/settings.json',
+  // 2026-11-05 に足した。**必要なときだけ繋ぐ MCP サーバの設定** (公式ではない
+  // `grok` → `@joemccann/xai-mcp-server`)。`claude --mcp-config` で明示したときだけ
+  // 読まれ、生きた鍵 (XAI_API_KEY) を受け取る —— settings.json と同じく
+  // 「どのコードが手元で走るか」を決めるので、同じ鎖に入れる。
+  '.claude/mcp-on-demand/grok.json',
   // 2026-09-21 (パス 372) に足した。**エージェントへ常時注入される指示書。**
   // `alwaysApply: true` の 2 本 (`00-project` / `20-gates`) は Cursor を使う人の
   // **すべてのセッションに注入**され、残り 2 本も `globs` に合う編集で注入される。
