@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.20"
+    "version": "0.21"
   },
   "constructs": {
     "class": {
@@ -65,9 +65,10 @@
       "since": "0.9"
     },
     "generic-call": {
-      "decision": "feature",
+      "decision": "added",
       "why": "Promise.all<T>(…) など型引数を書く呼び出し。",
-      "risk": "型引数に印の型を書けば tsc は印を名乗る値として扱う —— 型引数に印の型を置く形を M4 と同じく断る。"
+      "risk": "型引数に印の型を書けば tsc は印を名乗る値として扱う —— 型引数に印の型を置く形を M4 と同じく断る。",
+      "since": "0.21"
     },
     "generic-decl": {
       "decision": "feature",
@@ -2522,6 +2523,56 @@
         "pr": null,
         "reason": "draft PR を作る",
         "summary": "lockWorkspace.ts (217 行) を Mamori で書き直した (port)。0.20 の finally で、鍵を落としてから知らせる順序と、自分を施錠してから他のタブへ配る順序を書く。brief は「書き直しだけで移せる」と言ったが、モジュール直下の let が無いので、購読の入れ物と共有の道 (BroadcastChannel) の状態は host 壁 lockWorkspaceHost.ts に置いた (足りない構文は module-let として台帳に候補で足した)。既存の検査 2,917 件は無編集で緑、lockPathCensus は生成物の getVault().lock() を見たまま。変異検査 100%。"
+      }
+    },
+    {
+      "id": "MG-041",
+      "date": "2026-11-05",
+      "kind": "feature",
+      "target": "generic-call",
+      "pickedBy": "brief",
+      "briefPick": "feature:generic-call",
+      "version": "0.21",
+      "features": [
+        "generic-call"
+      ],
+      "added": [
+        "generic-call"
+      ],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "型を引数に取る host 関数へ印の型を渡す `fromJson<VettedUrl>(raw)` (`| null` / `Array<…>` / 複数引数 / `new Set<VettedUrl>(xs)`) で、mint を通らずに印を名乗る値を作る",
+          "result": "refused"
+        },
+        {
+          "tried": "`fromJson<typeof u>(raw)` (印を持つ値の型を名指し) と `fromJson<import(\"./h\").T>(raw)` (別 module の型を名指し)",
+          "result": "refused"
+        },
+        {
+          "tried": "型引数の綴りへ式・文を隠す `fromJson<Array<number>= 1; 2 >(raw)` / `<string; raw>`",
+          "result": "refused"
+        },
+        {
+          "tried": "比較 `n < m && m > n` と `n < m >= n` を型引数と読み違えさせる",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 2,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/checker.ts",
+          "src/shared/mamori/emit.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": null,
+        "reason": "draft PR を作る",
+        "summary": "型引数つきの呼び出し f<T>(…) / new C<T>(…) を 0.21 で足した。先に破り、型引数に印の型・typeof・import を置く形を M4 で断り、型の綴りは宣言の型と同じ許可表を通す。比較 a < b は『型引数として閉じ直後に ( が来る』ときだけ呼び出しと読む (TypeScript と同じ)。これで actionTier.ts の壁が書き直しだけで移せるようになる (移すのは別の周)。"
       }
     }
   ]
