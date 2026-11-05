@@ -46,7 +46,7 @@ describe('0.9: ブロックの本体を持つ arrow', () => {
   });
   it('break / continue は arrow を跨げない', () => {
     const r = compile(go('  for (const x of xs) { const f = () => { break; }; }\n  return 1;'));
-    expect(r.diagnostics.join('\n')).toContain('`break` は for か switch の中にだけ置けます');
+    expect(r.diagnostics.join('\n')).toContain('`break` は for か while か switch の中にだけ置けます');
     const c = compile(go('  for (const x of xs) { const f = () => { continue; }; }\n  return 1;'));
     expect(c.diagnostics.join('\n')).toContain('continue');
   });

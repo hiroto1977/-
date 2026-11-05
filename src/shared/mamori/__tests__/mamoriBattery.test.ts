@@ -176,6 +176,8 @@ const CONTEXTS: Readonly<Record<string, (e: string) => string>> = {
   topTyped: (e) => `export const C: unknown = ${e};\n`,
   ifs: (e) => `export fn go() -> unknown {\n  if (true) {\n    return ${e};\n  }\n  return 0;\n}\n`,
   forOf: (e) => `export fn go() -> unknown {\n  for (const k of [1]) {\n    const w = ${e};\n  }\n  return 0;\n}\n`,
+  whileTest: (e) => `export fn go() -> unknown {\n  while (${e}) {\n    return 1;\n  }\n  return 0;\n}\n`,
+  whileBody: (e) => `export fn go() -> unknown {\n  let i = 0;\n  while (i < 1) {\n    i = i + 1;\n    const w = ${e};\n  }\n  return 0;\n}\n`,
   sw: (e) => `export fn go() -> unknown {\n  switch (1) {\n    case 1: return ${e};\n    default: return 0;\n  }\n}\n`,
   callee: (e) => `export fn go() -> unknown {\n  return (${e})(1);\n}\n`,
   member: (e) => `export fn go() -> unknown {\n  return (${e}).x;\n}\n`,

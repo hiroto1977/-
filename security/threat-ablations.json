@@ -2629,6 +2629,42 @@
           "replace": "s.init?.kind === 'object'"
         }
       ]
+    },
+    {
+      "id": "A-592",
+      "threat": "T-259",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "ループの外の let へ inert を入れる形を検めない —— 次の周の先頭の f() が通る",
+      "edits": [
+        {
+          "find": "declaredOutsideLoop(scopes, s.target) && carriesInert",
+          "replace": "false && carriesInert"
+        }
+      ]
+    },
+    {
+      "id": "A-593",
+      "threat": "T-259",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "入れ子のループで最も内側でなく最初のループを基準にする —— 内側のループが運ぶ名前を見逃す",
+      "edits": [
+        {
+          "find": "const base = loopBases[loopBases.length - 1];",
+          "replace": "const base = loopBases[0];"
+        }
+      ]
+    },
+    {
+      "id": "A-594",
+      "threat": "T-259",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "while の本体を検めない —— while の中のどんな形も通る",
+      "edits": [
+        {
+          "find": "        checkExpr(s.test, scopes, ctx);\n        checkLoopBody(s.body, scopes, scopes.length, ctx);",
+          "replace": "        checkLoopBody([], scopes, scopes.length, ctx);"
+        }
+      ]
     }
   ]
 }

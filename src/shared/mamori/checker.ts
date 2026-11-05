@@ -261,6 +261,12 @@ function identName(e: Expr): string | null {
 
 export function checkModule(file: string, module: Module, table: ProjectTable): MamoriDiagnostic[] {
   const out: MamoriDiagnostic[] = [];
+  /**
+   * いま検めているループ(`for` / `while`)の本体が始まる直前の scopes の長さ (内側のループが末尾)。ループの外で宣言した名前は、
+   * 次の周へ値を持ち越す。本体は 1 度しか検めないので、末尾で入れた inert な値は、**先頭の使い方を検めた後**に届く (0.19 · T-259)。
+   */
+  const loopBases: number[] = [];
+
   const report = (rule: MamoriDiagnostic['rule'], pos: { line: number; col: number }, message: string): void => {
     out.push({ file, line: pos.line, col: pos.col, rule, message });
   };
@@ -441,6 +447,22 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     for (const s of stmts) checkStmt(s, chain, own, ctx);
   }
 
+  function checkLoopBody(body: readonly Stmt[], bodyScopes: Map<string, Binding>[], baseLength: number, ctx: Ctx): void {
+    loopBases.push(baseLength);
+    checkBlock(body, bodyScopes, ctx);
+    loopBases.pop();
+  }
+
+  /** 名前を持つ束縛が、いちばん内側のループの外で宣言された物か (そのループが周をまたいで運ぶ物)。 */
+  function declaredOutsideLoop(scopes: Map<string, Binding>[], name: string): boolean {
+    const base = loopBases[loopBases.length - 1];
+    if (base === undefined) return false;
+    for (let i = scopes.length - 1; i >= 0; i--) {
+      if (scopes[i]!.has(name)) return i < base;
+    }
+    return false;
+  }
+
   function checkStmt(s: Stmt, scopes: Map<string, Binding>[], own: Map<string, Binding>, ctx: Ctx): void {
     switch (s.kind) {
       case 'let': {
@@ -482,7 +504,9 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
           report('M6', s.pos, `宣言していない名前 ${s.target} へ代入しています`);
           return;
         }
-        if (target.authority !== 'local') report('M6', s.pos, `外の名前 ${s.target} へは代入できません`);
+        if (target.authority === 'local' && target.mutable === true && target.inert !== true && declaredOutsideLoop(scopes, s.target) && carriesInert(s.value, scopes)) {
+          report('M6', s.pos, `ループの外で宣言した ${s.target} へ、計算した鍵の添字の結果を代入できません —— 本体は先頭から 1 度しか検めないので、次の周の先頭の使い方 (呼び出し・メンバ・戻り値) が、この値を受けても検めた後になります (ループの中で宣言した名前に入れます)`);
+        } else if (target.authority !== 'local') report('M6', s.pos, `外の名前 ${s.target} へは代入できません`);
         else if (target.mutable !== true) report('M6', s.pos, `${s.target} は let ではないので代入できません (const・引数・回す変数・関数の名前は書き換えない)`);
         else rebind(scopes, s.target, target.inert === true || carriesInert(s.value, scopes));
         if (target.vetted !== null && provenance(s.value, scopes) !== target.vetted) {
@@ -549,9 +573,13 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         // 回す変数は印を運ばない (印の配列から取り出しても素の値 —— 失敗は閉じる向き)。
         const loopVar = new Map<string, Binding>();
         bindLocal(loopVar, s.name, { vetted: null, authority: 'local' }, s.pos);
-        checkBlock(s.body, [...scopes, loopVar], ctx);
+        checkLoopBody(s.body, [...scopes, loopVar], scopes.length, ctx);
         return;
       }
+      case 'while':
+        checkExpr(s.test, scopes, ctx);
+        checkLoopBody(s.body, scopes, scopes.length, ctx);
+        return;
       case 'switch':
         checkExpr(s.test, scopes, ctx);
         for (const c of s.cases) {
