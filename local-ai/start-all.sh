@@ -3,13 +3,23 @@
 #   ./start-all.sh          … 1回だけ起動
 #   ./start-all.sh --watch  … 起動後も60秒ごとに監視し、落ちたサービスを再起動（restart-on-failure 相当）
 # 起動対象は ENABLE_3B / ENABLE_7B / ENABLE_LITELLM / ENABLE_EXTRAS (1/0) で切替。
-# RAM対策: 7B は MemAvailable が MIN_FREE_MB_7B (既定 6000MB) 未満なら起動しない。
+# RAM対策: 7B は既定OFF。ENABLE_7B=1 でも MemAvailable が MIN_FREE_MB_7B (既定 6000MB) 未満なら起動しない。council/locked_decisions.md の llama7B-stop が locked なら強制OFF。
 # 追加モデル (llama-swap) はオンデマンド起動・5分でアンロードなので常駐メモリはほぼ0。
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
 export PATH="/home/box/ollama/bin:$HOME/.local/bin:$PATH"
-ENABLE_3B="${ENABLE_3B:-1}"; ENABLE_7B="${ENABLE_7B:-1}"
+ENABLE_3B="${ENABLE_3B:-1}"; ENABLE_7B="${ENABLE_7B:-0}"
 ENABLE_LITELLM="${ENABLE_LITELLM:-1}"; ENABLE_EXTRAS="${ENABLE_EXTRAS:-1}"; MIN_FREE_MB_7B="${MIN_FREE_MB_7B:-6000}"
+# CEO固定決定 llama7B-stop: locked_decisions.md が locked なら強制OFF（解除はファイルの status 変更のみ）
+LOCK_MD="$HERE/council/locked_decisions.md"
+if [ -f "$LOCK_MD" ] && awk '
+  /^##[[:space:]]+llama7B-stop([[:space:]]|$)/ {inblock=1; next}
+  /^##[[:space:]]+/ {if(inblock) exit}
+  inblock && /-[[:space:]]*status:[[:space:]]*locked/ {found=1; exit}
+  END {exit !found}
+' "$LOCK_MD"; then
+  ENABLE_7B=0
+fi
 mem_avail_mb() { awk '/MemAvailable/ {print int($2/1024)}' /proc/meminfo; }
 LOG=/tmp/local-ai-autostart.log
 up() { curl -s -m 3 -o /dev/null "http://127.0.0.1:$1${2:-/}" ; }

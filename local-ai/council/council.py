@@ -40,8 +40,10 @@ SERVICES = {"Ollama": (11434, "/"), "llama1.5B": (8081, "/health"), "llama3B": (
 PENDING, CHAT = [], []
 ADVICE = os.path.join(HERE, "advice_inbox.md")      # パートB: クラウドの助言（現在はGrokのみ）（追記された行を最優先の議題にする）
 import advice_guard
+import decision_lock
 GUARD_ON = os.environ.get("COUNCIL_ADVICE_GUARD", "1") != "0"          # 0で助言ガードを無効化
 GUARD_LLM = os.environ.get("COUNCIL_ADVICE_GUARD_LLM", "0") == "1"     # 1で検証モデル(fast)にも矛盾確認させる（メモリ節約のため既定は無効）
+LOCK_ON = os.environ.get("COUNCIL_DECISION_LOCK", "1") != "0"          # 0で固定決定ロックを無効化（通常は使わない）
 REJECTED = os.path.join(HERE, "rejected_decisions.md"); REJ = collections.deque(maxlen=10)
 _CL = {"checked": 0.0, "status": "確認前", "calls": collections.deque()}
 def claude_status():
@@ -138,11 +140,18 @@ def too_similar(out, hist):
 def persona(p):
     s = f"あなたはAI組織の{p['title']}（{p['dept']}）です。" + TIER_ROLE.get(p["tier"], "")
     if p.get("knowledge"): s += "参照知識: " + p["knowledge"]
+    if LOCK_ON and decision_lock.locks():
+        s += "【CEO固定決定・覆禁止】" + decision_lock.digest().replace("\n", " / ")
     return s
 
 def health_summary():
-    down = [n for n, (p, _) in SERVICES.items() if not port_up(p)]
-    return down, f"空きメモリ {free_mb()}MB / 停止中: {', '.join(down) or 'なし'}"
+    locked = decision_lock.forced_down_services() if LOCK_ON else set()
+    down = [n for n, (p, _) in SERVICES.items() if not port_up(p) and n not in locked]
+    fixed = [n for n in locked if not port_up(SERVICES[n][0])]
+    parts = [f"空きメモリ {free_mb()}MB"]
+    if fixed: parts.append("固定停止: " + ", ".join(fixed))
+    parts.append("停止中: " + (", ".join(down) if down else "なし"))
+    return down, " / ".join(parts)
 
 KEYWORDS = {"cfo": "財務 税 資金 融資 キャッシュ 会計", "chro": "人事 給与 労務 採用 社会保険 人件費", "cso": "戦略 経営 分析 予測 予算 KPI 成長 レポート",
             "cio": "投資 資産 為替 不動産 投信 株 貯蓄", "cqo": "品質 テスト セキュリティ 監査 CI バグ 検証 メモリ サービス 停止 Mamori lint 言語"}
@@ -165,7 +174,20 @@ def sub_items(text):
 def _rstate():
     try: return json.load(open(RSTATE, encoding="utf-8"))
     except Exception: return {}
+def refuse_topic(src, topic):
+    """固定決定に反する議題なら理由リスト。CEOの明示的なロック解除指示は通す。"""
+    if not LOCK_ON: return []
+    if src == "CEOの指示" and re.search(r"ロック解除|固定決定を解除|status:\s*unlocked", topic or ""):
+        return []
+    return [f"{n}: {why}（該当: {frag}）" for n, why, frag in decision_lock.check_topic(topic)]
+
 def pick_topic():
+    def accept(src, topic):
+        hits = refuse_topic(src, topic)
+        if not hits: return src, topic
+        log_sys(f"固定決定により議題却下 [{src}]: {' / '.join(hits)[:200]}")
+        reject_log(topic, f"（議題自体を却下・会議せず）{topic[:300]}", hits, False)
+        return None
     if os.path.exists(ADVICE):                       # クラウドの助言（Grok）を最優先
         lines = advice_lines()
         for i, l in enumerate(lines):
@@ -173,8 +195,13 @@ def pick_topic():
             if s.startswith("- ") and not s.startswith("- [済]") and s[2:].strip():
                 lines[i] = l.replace("- ", "- [済] ", 1)
                 open(ADVICE, "w", encoding="utf-8").write("\n".join(lines) + "\n")
-                return "クラウドの助言（Grok）", s[2:].strip()[:1000]
-    if PENDING: return "CEOの指示", PENDING.pop(0)
+                got = accept("クラウドの助言（Grok）", s[2:].strip()[:1000])
+                if got: return got
+    while PENDING:
+        text = PENDING.pop(0)
+        got = accept("CEOの指示", text)
+        if got: return got
+        thread_log("COO", "固定決定に反するため議題を受け付けませんでした: " + text[:120] + "（解除は locked_decisions.md の status を unlocked に）")
     inbox = os.path.join(HERE, "inbox.md")
     if os.path.exists(inbox):
         lines = open(inbox, encoding="utf-8").read().splitlines(); changed = False; pick = None
@@ -193,20 +220,31 @@ def pick_topic():
                         topic = (f"{body}\n\n【今回の設計項目 {n % len(items) + 1}/{len(items)}（通算{n + 1}回目）: {item}】"
                                  f"この回は「{item}」だけを具体的に設計してください（構文例・意味・安全チェック・テスト例）。")
                     else: topic = body
+                    if refuse_topic("継続議題", topic):
+                        log_sys(f"固定決定により継続議題の当該項目をスキップ: {topic[:120]}")
+                        st[key] = n + 1; json.dump(st, open(RSTATE, "w", encoding="utf-8"), ensure_ascii=False)
+                        changed = True; continue
                     st[key] = n + 1; json.dump(st, open(RSTATE, "w", encoding="utf-8"), ensure_ascii=False)
                     pick = ("継続議題", topic)
                 continue
             if pick is None and s.startswith("- ") and not s.startswith("- [済]"):
+                if refuse_topic("受信箱", s[2:]):
+                    lines[i] = l.replace("- ", "- [済] ", 1) + "（固定決定により却下）"
+                    changed = True
+                    reject_log(s[2:], f"（議題自体を却下・会議せず）{s[2:][:300]}",
+                               [f"{n}: {why}（該当: {frag}）" for n, why, frag in decision_lock.check_topic(s[2:])], False)
+                    continue
                 lines[i] = l.replace("- ", "- [済] ", 1); changed = True; pick = ("受信箱", s[2:])
         if changed: open(inbox, "w", encoding="utf-8").write("\n".join(lines) + "\n")
         if pick: return pick
-    down, h = health_summary(); down = [d for d in down if d != "llama7B"]
-    if down: return "サービス健全性", f"ローカルAIサービスが停止中: {', '.join(down)}（{h}）。原因と復旧・予防策。"
+    down, h = health_summary()
+    if down: return "サービス健全性", f"ローカルAIサービスが停止中: {', '.join(down)}（{h}）。原因と復旧・予防策。固定停止のサービスは起動しないこと。"
     rw = "/workspace/repo-analysis/docs/REMAINING_WORK.md"
     if os.path.exists(rw):
         items = [l.strip() for l in open(rw, encoding="utf-8").read().split("\n## ")[0].splitlines() if l.strip().startswith(("-", "*"))]
         if items: return "リポジトリ残作業", "Service Hubの残作業: " + items[ROT[0] % len(items)][:300]
-    return "サービス健全性", f"ローカルAI環境の改善（{h}）"
+    return "サービス健全性", f"ローカルAI環境の改善（{h}）。固定停止のサービスは起動・再構築しないこと。"
+
 
 def session():
     src, topic = pick_topic(); ROT[0] += 1
@@ -248,13 +286,13 @@ def session():
     if hits:                                                   # 助言と矛盾 → 却下を記録し、役員にやり直させる（1回）
         reject_log(topic, dec, hits, False)
         STATE["transcript"].append({"id": "claude" if "claude" in P else "coo", "role": "助言ガード", "model": "guard",
-                                    "text": "この決定は助言と食い違うため記録しません。やり直してください: " + " / ".join(hits)})
-        dec = speak(ex, "役員として、前の決定は相談役の助言と食い違うため却下されました。理由: " + " / ".join(hits) +
-                    "。助言に従い『決定:』1〜2文と『次のアクション:』箇条書き3つ以内を書き直してください。dataCryptoには触らず、asやwhileをMamoriに足さないこと。")
+                                    "text": "この決定は助言またはCEO固定決定と食い違うため記録しません。やり直してください: " + " / ".join(hits)})
+        dec = speak(ex, "役員として、前の決定は相談役の助言またはCEO固定決定と食い違うため却下されました。理由: " + " / ".join(hits) +
+                    "。固定決定と助言に従い『決定:』1〜2文と『次のアクション:』箇条書き3つ以内を書き直してください。llama7Bは起動せず、dataCrypto/IV更新には触らず、asやwhileをMamoriに足さないこと。")
         hits2 = guard_check(dec)
         if hits2:
             reject_log(topic, dec, hits2, True)
-            STATE.update(status=f"待機中（決定は助言と矛盾のため不記録・次回まで最大{INTERVAL}秒）", updated=now(), speaking=None)
+            STATE.update(status=f"待機中（決定は助言/固定決定と矛盾のため不記録・次回まで最大{INTERVAL}秒）", updated=now(), speaking=None)
             return
         summ = speak(P["coo"], f"COOとして、助言に沿って修正した決定を2〜3文でまとめ、CEOの{USER}さんへの報告文にしてください。")
     review = chair_review(topic, hist, dec)
@@ -264,13 +302,16 @@ def session():
     STATE.update(status=f"待機中（次回まで最大{INTERVAL}秒）", updated=now(), speaking=None)
 
 def guard_check(dec):
-    """助言と食い違う決定なら違反リストを返す（空なら記録してよい）。"""
-    if not GUARD_ON: return []
-    hits = [f"{n}: {why}（該当: {frag}）" for n, why, frag in advice_guard.check(dec)]
-    if not hits and GUARD_LLM and free_mb() >= MIN_FREE_MB:
-        _, v = ask("fast", "あなたは検証係です。助言と決定が矛盾するかだけを判定し、矛盾なら『矛盾: 理由』、なければ『問題なし』とだけ答えてください。",
-                   f"助言:\n{advice_guard.advice_digest(advice_lines())}\n\n決定:\n{dec}\n\n判定:")
-        if v.strip().startswith("矛盾"): hits.append("検証モデル: " + v.strip()[:200])
+    """助言・固定決定と食い違う決定なら違反リストを返す（空なら記録してよい）。"""
+    hits = []
+    if LOCK_ON:
+        hits.extend(f"{n}: {why}（該当: {frag}）" for n, why, frag in decision_lock.check(dec))
+    if GUARD_ON:
+        hits.extend(f"{n}: {why}（該当: {frag}）" for n, why, frag in advice_guard.check(dec))
+        if not hits and GUARD_LLM and free_mb() >= MIN_FREE_MB:
+            _, v = ask("fast", "あなたは検証係です。助言と決定が矛盾するかだけを判定し、矛盾なら『矛盾: 理由』、なければ『問題なし』とだけ答えてください。",
+                       f"助言:\n{advice_guard.advice_digest(advice_lines())}\n\n決定:\n{dec}\n\n判定:")
+            if v.strip().startswith("矛盾"): hits.append("検証モデル: " + v.strip()[:200])
     return hits
 
 def reject_log(topic, dec, hits, retry):
@@ -309,7 +350,8 @@ def api_state():
             "claude": {"status": claude_status(), "calls_last_hour": sum(1 for t in _CL["calls"] if time.time() - t < 3600), "max_per_hour": CLAUDE_MAX_HOUR},
             "advice": [l.strip()[2:][:600] for l in advice_lines() if l.strip().startswith("- ")][-5:],
             "company": {k: COMPANY.st.get(k) for k in ("linked", "name", "scale", "last_fetch", "error")},
-            "guard": {"on": GUARD_ON, "llm": GUARD_LLM, "rejected": list(REJ)[-5:]}}
+            "guard": {"on": GUARD_ON, "llm": GUARD_LLM, "rejected": list(REJ)[-5:]},
+            "locks": {"on": LOCK_ON, "items": decision_lock.public()}}
 
 class H(BaseHTTPRequestHandler):
     def log_message(self, *a): pass

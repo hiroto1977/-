@@ -10,7 +10,7 @@ button{font:inherit;cursor:pointer;border:2px solid var(--wood2);background:#fff
 #cams{margin-top:6px;display:flex;gap:5px;flex-wrap:wrap}#cams button{font-size:12px;padding:2px 7px}
 #side{position:fixed;right:10px;top:10px;width:350px;max-height:calc(100vh - 200px);display:flex;flex-direction:column;background:var(--wood);border:6px solid var(--wood2);border-radius:12px;color:#fff8e7;box-shadow:0 4px 0 #0003}
 #tabs{display:flex;gap:4px;padding:6px}#tabs button{flex:1;font-size:12px;background:#a87a4c;color:#fff8e7;border-color:var(--wood2)}#tabs button.on{background:#fff3d6;color:var(--ink)}
-.card.reject{background:#fbe3e3;border:2px solid #c0392b}.card.advice{background:#fde7dc;border:2px solid #d97757}.lab.t-相談役{background:#d97757;color:#fff}
+.card.reject{background:#fbe3e3;border:2px solid #c0392b}.card.lock{background:#e8eaf6;border:2px solid #3f51b5}.card.advice{background:#fde7dc;border:2px solid #d97757}.lab.t-相談役{background:#d97757;color:#fff}
 #pane{overflow:auto;padding:0 8px 8px;font-size:12px}.card{background:#fff8e7;color:var(--ink);border-radius:8px;padding:6px 8px;margin:6px 0;white-space:pre-wrap;word-break:break-word}
 .card h4{margin:0 0 3px;font-size:12px}.grp{margin:8px 0 2px;font-weight:bold}.who{display:flex;align-items:center;gap:6px;padding:3px 6px;border-radius:6px;cursor:pointer}.who:hover{background:#fff2}
 .dot{width:10px;height:10px;border-radius:3px;display:inline-block;flex:none}.sm{font-size:11px;opacity:.8}
@@ -180,7 +180,7 @@ async function poll(){try{
   $('pill').textContent=meet?'🔴 会議中':st.status.startsWith('エラー')?'エラー':'🟢 待機中';$('pill').className='pill'+(meet?' meet':st.status.startsWith('エラー')?' err':'');
   $('topic').textContent='議題: '+(st.topic||'（なし）').replace(/\s+/g,' ');
   $('meta').textContent=`担当役員 ${(st.exec||'-').toUpperCase()} ・ 空きメモリ ${st.free_mb}MB ・ 更新 ${st.updated}`;
-  if(tab==='board'&&renderBoard._n!==st.decisions.length+(st.decisions.at(-1)||'').length+'|'+(st.advice||[]).join('|').length+'|'+(st.guard?.rejected||[]).length){renderBoard._n=st.decisions.length+(st.decisions.at(-1)||'').length+'|'+(st.advice||[]).join('|').length+'|'+(st.guard?.rejected||[]).length;renderBoard()}
+  if(tab==='board'&&renderBoard._n!==st.decisions.length+(st.decisions.at(-1)||'').length+'|'+(st.advice||[]).join('|').length+'|'+(st.guard?.rejected||[]).length+'|'+(st.locks?.items||[]).map(x=>x.id).join('|')){renderBoard._n=st.decisions.length+(st.decisions.at(-1)||'').length+'|'+(st.advice||[]).join('|').length+'|'+(st.guard?.rejected||[]).length+'|'+(st.locks?.items||[]).map(x=>x.id).join('|');renderBoard()}
   const lk=st.chat.length+'|'+(st.chat.at(-1)?.text||'');if($('log')._k!==lk){$('log')._k=lk;$('log').replaceChildren(...st.chat.map(c=>{const d=document.createElement('div');d.textContent=`${c.who}: ${c.text}`;if(c.who===st.user)d.className='me';return d}));$('log').scrollTop=1e9}
   const ids=new Set(meet?st.transcript.map(t=>t.id):[]);if(meet&&st.speaking)ids.add(st.speaking);
   for(const [k,A] of Object.entries(agents)){if(A.svc||k==='me')continue;A.speaking=ids.has(k)}
@@ -196,8 +196,9 @@ async function poll(){try{
 let tab='board',profAt=0;const pane=$('pane');
 const el=(t,cls,txt)=>{const d=document.createElement(t);if(cls)d.className=cls;if(txt!=null)d.textContent=txt;return d};
 function renderBoard(){if(!LAST)return;const adv=(LAST.advice||[]).slice().reverse().map(a=>{const c=el('div','card advice');c.append(el('h4',null,'☁️ クラウドの助言（Grok）'+(a.startsWith('[済]')?'（会議で検討済み）':'（次の会議で最優先）')),el('div',null,a.replace(/^\[済\]\s*/,'')));return c});
+  const locks=(LAST.locks?.items||[]).map(L=>{const c=el('div','card lock');c.append(el('h4',null,'🔒 固定決定（CEOロック）: '+L.id+' — '+L.title),el('div',null,(L.reason||'')+(L.service?'\nサービス: '+L.service+' は起動禁止':'')+(L.cancels?'\n取消対象: '+L.cancels:'')+'\n解除: locked_decisions.md の status を unlocked に（'+(L.locked_by||'CEO')+'のみ）'));return c});
   const rej=(LAST.guard?.rejected||[]).slice().reverse().map(r=>{const c=el('div','card reject');c.append(el('h4',null,'🛑 助言と食い違うため記録しなかった決定（'+r.at+(r.retry?'・やり直し後も不可':'・やり直し指示')+'）'),el('div',null,r.reasons.join('\n')+'\n\n'+r.decision));return c});
-  pane.replaceChildren(...rej,...adv,...LAST.decisions.slice().reverse().map(d=>{const c=el('div','card'),[h,...rest]=d.split('\n');c.append(el('h4',null,h),el('div',null,rest.join('\n').trim()));return c}))}
+  pane.replaceChildren(...locks,...rej,...adv,...LAST.decisions.slice().reverse().map(d=>{const c=el('div','card'),[h,...rest]=d.split('\n');c.append(el('h4',null,h),el('div',null,rest.join('\n').trim()));return c}))}
 function renderPeople(){const grp={};for(const p of (ORG?.people||[]))(grp[p.tier]??=[]).push(p);const out=[];
   for(const t of ['相談役','COO','役員','秘書','管理職','一般職']){if(!grp[t])continue;out.push(el('div','grp',`${t}（${grp[t].length}人）`));
     for(const p of grp[t]){const r=el('div','who'),d=el('span','dot');d.style.background='#'+(DEPT[agents[p.id]?.dept]??0x90a4ae).toString(16).padStart(6,'0');
