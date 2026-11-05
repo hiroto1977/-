@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 467
+- ブロック数: 468
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `cd29d1ad73eb29633bf68952981900d080901ac8669f88a8fc680400350be6c7`
-- 保護対象: 196 ファイル
+- 末尾(tip)ハッシュ: `34cf0ae4d454d945d77ea4fdaea830e4495feb9df59a4f90bb5541dc9a286805`
+- 保護対象: 197 ファイル
 
 ## ブロック
 
@@ -480,6 +480,7 @@
 | 464 | `5ce195303895586c` | `7601f3c81040a4a7` | `7a0b7dc6c303fb9d` | update ast.ts,checker.ts,emit.ts,parser.ts |
 | 465 | `66d6afd7df7656d2` | `7a0b7dc6c303fb9d` | `ca4d698e0ac1bcb3` | update integrity-chain.cjs,mamori-capabilities.json,lockWorkspace.mamori,lockWorkspace.ts,lockWorkspaceHost.ts |
 | 466 | `eeb4c80ae67f88af` | `ca4d698e0ac1bcb3` | `cd29d1ad73eb2963` | update ast.ts,checker.ts,emit.ts,parser.ts |
+| 467 | `cff0376c04496820` | `cd29d1ad73eb2963` | `34cf0ae4d454d945` | update integrity-chain.cjs,mamori-capabilities.json,actionTier.mamori,actionTier.ts |
 
 ## 保護対象ファイル
 
@@ -609,6 +610,7 @@
 - `src/renderer/security/webauthn.ts`
 - `src/renderer/vettedSinks.mamori`
 - `src/renderer/vettedSinks.ts`
+- `src/shared/actionTier.mamori`
 - `src/shared/actionTier.ts`
 - `src/shared/advisorQuestionLimits.ts`
 - `src/shared/ai/chat.ts`

@@ -135,6 +135,12 @@
         "openWindowVetted(VettedExternalUrl)"
       ]
     },
+    "src/shared/actionTier.mamori": {
+      "externals": [],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
     "src/shared/aiEndpoint.mamori": {
       "externals": [],
       "imports": [],

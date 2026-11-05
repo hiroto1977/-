@@ -2574,6 +2574,51 @@
         "reason": "draft PR を作る",
         "summary": "型引数つきの呼び出し f<T>(…) / new C<T>(…) を 0.21 で足した。先に破り、型引数に印の型・typeof・import を置く形を M4 で断り、型の綴りは宣言の型と同じ許可表を通す。比較 a < b は『型引数として閉じ直後に ( が来る』ときだけ呼び出しと読む (TypeScript と同じ)。これで actionTier.ts の壁が書き直しだけで移せるようになる (移すのは別の周)。"
       }
+    },
+    {
+      "id": "MG-042",
+      "date": "2026-11-05",
+      "kind": "port",
+      "target": "src/shared/actionTier.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/shared/actionTier.ts",
+      "version": "0.21",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "non-null",
+        "template"
+      ],
+      "ported": [
+        "src/shared/actionTier.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "`ACTION_TIER[key]` (文字列の鍵の添字) で表を引く元の形を Mamori の中で書く",
+          "result": "refused"
+        },
+        {
+          "tried": "`new Set<Tier>(…)` を型引数なしで書き `ReadonlySet<Tier>` の型注釈だけに頼る / 型引数に印の型を置く",
+          "result": "refused"
+        },
+        {
+          "tried": "表の途中に `// 注記` を挟む (VirusTotal の理由を行内に残す)",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 2,
+      "mutation": {
+        "files": [
+          "src/shared/actionTier.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": null,
+        "reason": "draft PR を作る",
+        "summary": "actionTier.ts (84 行) を Mamori 0.21 で書き直した (port)。型引数つき new Set<Tier>(…) は 0.21 で通る。非 null 断定と template は書き直し、文字列の鍵の添字 ACTION_TIER[key] は Mamori に無い (x[\"constructor\"] で表を迂回する道) ので Object.entries を歩いて鍵を比べる形にした。元の実装と生成物を表の全鍵と prototype の鍵で突き合わせて同じ答えを確認。変異検査 100%・対照 2 方向で鳴る。"
+      }
     }
   ]
 }
