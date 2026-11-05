@@ -21,6 +21,11 @@
 - main の `updateCheck` の Mamori 移植 (MG-017) とこの枝の移植 (MG-018) は同じ壁を別々に移していた。この枝の版を残し、main の `updateCheck.test.ts` の 1 件 (案内の文の字面) は通ることを確かめた。
 - main の局所の LiteLLM 経路 (`runLocalThenAnthropic`) は `assistant.mamori` に**移植し直した** (`assistant.ts` は生成物)。能力台帳に `localGateway` の 3 名を足した。
 
+## MG-033 —— Mamori 0.17 欄への代入と T-257 (2026-11-05)
+
+- 欄への代入は作った const のオブジェクトの欄だけ。inert が入れ物・戻り値・引数・論理演算子に包まれて消える穴 (T-257) を、足す前の probe で見つけて塞いだ。docs/MAMORI.md の 0.17 に表。
+- **残し**: ① `ollama.ts` の移植 (テンプレート・`as` の書き直し) ② generic-call `f<T>(…)` ③ `for` の相手になる inert の `Array.from(xs[k])` のような組み込み経由の運び方は、今は引数で断る (SCALAR 表の外) —— 緩める要望が出たら表を広げる。
+
 ## パス 574 (MG-031 / MG-032) —— 計算した鍵の添字を inert にし、updateCheck を移した (2026-11-03)
 
 - **測り直し**: 添字 `x[k]` は 0.8 (MG-007) で入っている。パス 567 が先に閉じると書いた残りを 0.11 に対して測ると、数と分かる鍵の結果 (`xs[n]()`・`const f = xs[n]; f()`・`xs[n].length`・`xs[n][0]`・`new f()`) は通っていた。文字列になりうる鍵と `out["__proto__"]` は既に断れていた。
