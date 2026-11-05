@@ -5,6 +5,7 @@
     ".claude/agents/auditor.md",
     ".claude/agents/mechanic.md",
     ".claude/agents/scout.md",
+    ".claude/mcp-on-demand/grok.json",
     ".claude/settings.json",
     ".cursor/rules/00-project.mdc",
     ".cursor/rules/10-boundaries.mdc",
@@ -3861,33 +3862,26 @@
     {
       "index": 458,
       "prevHash": "10cd65de0b3e3556d83eaf7edc0491e30552758144f44ebcf5ffc31ba746f603",
-      "merkleRoot": "e277c293d9364cc6354880bd3191d12547faa45b311843cd5078290e91f86bc7",
-      "leafCount": 187,
-      "note": "update ast.ts,checker.ts,emit.ts,parser.ts",
-      "hash": "6141e775bb5e4dadb82cb5da29444e40c386e0293f4e305c05fd471110d3d41b"
+      "merkleRoot": "7fafccfcae7697e9a43027d507599c7e6cb62c3c16f193a320e6a4bf10501c46",
+      "leafCount": 188,
+      "note": "update grok.json,settings.json,integrity-chain.cjs",
+      "hash": "9dbcb7734134e063efdd06e1306af913f57363a9b1e25e0d606cc4a760a2c3f6"
     },
     {
       "index": 459,
-      "prevHash": "6141e775bb5e4dadb82cb5da29444e40c386e0293f4e305c05fd471110d3d41b",
-      "merkleRoot": "f82e2659c2a8bf7fccacfc34c2d30d4a6d66e568eb00e50985e2eceec91842c3",
-      "leafCount": 187,
-      "note": "update checker.ts",
-      "hash": "e36082ebbb7b50a16f1d06d6325e75a88314047f5ce206efd418ac10baee6489"
-    },
-    {
-      "index": 460,
-      "prevHash": "e36082ebbb7b50a16f1d06d6325e75a88314047f5ce206efd418ac10baee6489",
-      "merkleRoot": "7c84e2cabd4b1b5b1a250b8d1b2509428a3fbda89fcafbc8421afc2e4b584835",
-      "leafCount": 190,
-      "note": "update integrity-chain.cjs,mamori-capabilities.json,ollama.ts,ollamaCore.mamori,ollamaCore.ts,ollamaHost.ts",
-      "hash": "5bfcea67570fa3c4f95396f9169ca5137402878c12465ba33e40126581459c7d"
+      "prevHash": "9dbcb7734134e063efdd06e1306af913f57363a9b1e25e0d606cc4a760a2c3f6",
+      "merkleRoot": "f4f1d648e5a82536bb1fc46a8f01201b5a89a86063b779b982a52397367ec8c6",
+      "leafCount": 191,
+      "note": "update integrity-chain.cjs,mamori-capabilities.json,ast.ts,checker.ts,emit.ts,parser.ts",
+      "hash": "65d68b9a92bd1a2273ed878d14fa65a650f66c4c777aa3276e24ff762087a9fe"
     }
   ],
   "tipManifest": {
     ".claude/agents/auditor.md": "e05fe724eaeacb9f382a4fdda00c5ec1bf5919bbdd6a331020052f7d2fdddc53",
     ".claude/agents/mechanic.md": "fedb7fe67017550081fc9fcae90805362f3557823d56fbed83b3d2922dac3960",
     ".claude/agents/scout.md": "78db2996e39470b38ec29df5a10791a49f65d04594fbe4d77b739770f9330bef",
-    ".claude/settings.json": "73164f3beb6b4aaf6982002d8a9f9e3fc2fcc20a2211a83056a99f3e90e1fa3e",
+    ".claude/mcp-on-demand/grok.json": "8fbec1f49d1b9d7b0e92e7f69cb69ad70dd868633da71161e0765ba1c64fa5c2",
+    ".claude/settings.json": "f3add3b9e10ff80d5c7e4877232164abcdb5dad3f2a4e7ba2d6a17cd54284a42",
     ".cursor/rules/00-project.mdc": "aff4dd24f201ebec8a5beb3215bf1ec9a431e9eb4a0aba7fa08fd91361f79c55",
     ".cursor/rules/10-boundaries.mdc": "14c2aad731d81125a16c07a78ded8098126642432fdd36aea50dce409e706972",
     ".cursor/rules/20-gates.mdc": "821205069a9f0fae121e92be6826342bce6e765a34bea95c7ebc36c57b234da4",
@@ -3917,7 +3911,7 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "d385ddfc52ec74abf184207bfbb1ac655e730db2b7c6d7e758e35e67e79a5737",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "ba855edd99348b2aa8083c64fd7d7e5b7b92372e3dec01c6f3d3671a54bc62e0",
+    "scripts/integrity-chain.cjs": "2a58e02188acccd3abb5d54010310bf542e0b1aabdf84115d8430897cf6cbc98",
     "scripts/knowledge-autopilot.cjs": "ee8f7ae4a4ad29dda6c02f83c113c45fa1648522f807e711aa86b7746f372968",
     "scripts/lib/artifact-freshness.cjs": "add621dfe55e0eab31354f0d6979c9c67b513ed8b8348b9137ca7fa53dd569c1",
     "scripts/lib/json-for-script.cjs": "cb79bf1fb2f3c10c6854ec16d9c12bb0695dee5561751333db4531545702fd70",

@@ -43,6 +43,7 @@
 /scripts/integrity-chain.cjs @hiroto1977
 /src/main/keychainBackend.ts @hiroto1977
 /.claude/settings.json @hiroto1977
+/.claude/mcp-on-demand/ @hiroto1977
 /.claude/agents/auditor.md @hiroto1977
 /.claude/agents/mechanic.md @hiroto1977
 /.claude/agents/scout.md @hiroto1977

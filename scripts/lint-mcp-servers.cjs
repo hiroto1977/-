@@ -89,6 +89,24 @@ const path = require('node:path');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const SETTINGS = path.join(REPO_ROOT, '.claude/settings.json');
+/**
+ * **必要なときだけ繋ぐ** MCP サーバの置き場 (2026-11-05)。
+ *
+ * `.claude/settings.json` の `mcpServers` は**セッション開始のたびに全部起動**され、
+ * `env` の資格情報もそのたびに渡る。公式ではないサーバ (例: `grok` →
+ * `@joemccann/xai-mcp-server`) へ生きた鍵 (`XAI_API_KEY`) を毎回渡す理由は無い。
+ * そこでこの置き場の 1 ファイル = 1 サーバにし、使うときだけ明示して読ませる:
+ *
+ *     claude --mcp-config .claude/mcp-on-demand/grok.json
+ *
+ * そのセッションが終われば Claude Code がサーバを止める (常駐しない)。
+ * 鍵は `${XAI_API_KEY}` の参照なので、その起動時の環境に在るときだけ渡る。
+ *
+ * 門が約束すること: ここのサーバは **settings.json に戻せない** (戻すと自動起動に
+ * なる)・台帳 ON_DEMAND_LEDGER と双方向・ファイル名とサーバ名が一致・
+ * 1 ファイル 1 サーバ・最上位の鍵は `mcpServers` だけ・起動子/旗/env の規則は常駐側と同じ。
+ */
+const ON_DEMAND_DIR = path.join(REPO_ROOT, '.claude/mcp-on-demand');
 
 /** 起動子として認めるもの。これ以外 (bash / sh / curl …) は理由なく置けない。 */
 const ALLOWED_LAUNCHERS = new Set(['npx', 'uvx']);
@@ -113,7 +131,6 @@ const LEDGER = {
   docker: { registry: 'npm', pkg: 'mcp-server-docker', why: 'Docker 操作。**素の名前・個人 maintainer**' },
   obsidian: { registry: 'npm', pkg: 'mcp-obsidian', why: 'knowledge-vault を読む。**素の名前・個人 maintainer**' },
   'brave-search': { registry: 'npm', pkg: '@modelcontextprotocol/server-brave-search', why: 'Web 検索。公式 (Anthropic の名前空間)。鍵は環境変数で渡す' },
-  grok: { registry: 'npm', pkg: '@joemccann/xai-mcp-server@1.0.7', why: 'xAI Grok の chat / 検索 / 画像 / 動画 / vision を Claude Code から呼ぶ。**公式ではない** (xAI は MCP サーバを出していない・2026-11-04 実測)。個人 maintainer (joemccann) の名前空間つき・MIT。1.0.7 の tarball を読んだ: 依存は @modelcontextprotocol/sdk と zod だけ、通信は api.x.ai/v1 のみ (XAI_API_KEY をヘッダに載せる)、ファイル操作・子プロセス・動的評価は 0 件。**版を固定した** (未固定の最新に生きた鍵を渡さない)。上げるときは tarball を読み直す' },
   'google-maps': { registry: 'npm', pkg: '@modelcontextprotocol/server-google-maps', why: '地図・経路。公式 (Anthropic の名前空間)' },
   github: { registry: 'npm', pkg: '@modelcontextprotocol/server-github', why: 'GitHub 操作。公式 (Anthropic の名前空間)' },
   atlassian: { registry: 'npm', pkg: 'mcp-atlassian', why: 'Jira/Confluence。**素の名前・個人 maintainer**' },
@@ -128,6 +145,72 @@ const LEDGER = {
   discord: { registry: 'npm', pkg: 'mcp-discord', why: 'Discord。**素の名前・個人 maintainer**' },
   youtube: { registry: 'npm', pkg: 'youtube-mcp-server', why: 'YouTube。**素の名前・個人 maintainer**' },
 };
+
+/**
+ * **必要なときだけ繋ぐ**サーバの台帳 (`.claude/mcp-on-demand/<名前>.json`)。
+ * ここに載るものは settings.json に置いてはならない (自動起動になる)。
+ */
+const ON_DEMAND_LEDGER = {
+  grok: { registry: 'npm', pkg: '@joemccann/xai-mcp-server@1.0.7', why: 'xAI Grok の chat / 検索 / 画像 / 動画 / vision を Claude Code から呼ぶ。**公式ではない** (xAI は MCP サーバを出していない・2026-11-04 実測)。個人 maintainer (joemccann) の名前空間つき・MIT。1.0.7 の tarball を読んだ: 依存は @modelcontextprotocol/sdk と zod だけ、通信は api.x.ai/v1 のみ (XAI_API_KEY をヘッダに載せる)、ファイル操作・子プロセス・動的評価は 0 件。**版を固定した** (未固定の最新に生きた鍵を渡さない)。上げるときは tarball を読み直す 2026-11-05 に常駐 (settings.json) から外し、必要なときだけ `claude --mcp-config .claude/mcp-on-demand/grok.json` で繋ぐ形にした (鍵を毎セッション渡さない)' },
+};
+
+/** 必要時サーバで認める素の名前の数。常駐側より厳しく 0 (名前空間つきだけ)。 */
+const ON_DEMAND_UNSCOPED_BUDGET = 0;
+
+/** 置き場のファイルを `{file, json}` で読む。置き場が無ければ空。 */
+function readOnDemandFiles(dir = ON_DEMAND_DIR) {
+  if (!fs.existsSync(dir)) return [];
+  return fs
+    .readdirSync(dir)
+    .sort()
+    .map((f) => {
+      const full = path.join(dir, f);
+      let json = null;
+      if (f.endsWith('.json')) {
+        try {
+          json = JSON.parse(fs.readFileSync(full, 'utf8'));
+        } catch {
+          json = null;
+        }
+      }
+      return { file: f, json };
+    });
+}
+
+/**
+ * 必要時サーバの検査。`settingsServers` は settings.json から読んだもの。
+ * 返すのは問題の文の配列 (空なら通る)。
+ */
+function checkOnDemand(files, settingsServers, ledger = ON_DEMAND_LEDGER, budget = ON_DEMAND_UNSCOPED_BUDGET) {
+  const problems = [];
+  const servers = [];
+  for (const { file, json } of files) {
+    if (!file.endsWith('.json') || json === null || typeof json !== 'object') {
+      problems.push(`mcp-on-demand/${file}: JSON の設定ではありません —— 置き場には <名前>.json だけを置いてください`);
+      continue;
+    }
+    const keys = Object.keys(json);
+    if (keys.length !== 1 || keys[0] !== 'mcpServers') {
+      problems.push(`mcp-on-demand/${file}: 最上位の鍵は mcpServers だけです (実物: ${keys.join(', ') || 'なし'})`);
+    }
+    const found = readServers(json);
+    if (found.length !== 1) {
+      problems.push(`mcp-on-demand/${file}: 1 ファイル 1 サーバです (実物 ${found.length} 件)`);
+    }
+    const base = file.slice(0, -'.json'.length);
+    for (const s of found) {
+      if (s.name !== base) problems.push(`mcp-on-demand/${file}: サーバ名 "${s.name}" がファイル名と違います`);
+      servers.push(s);
+    }
+  }
+  for (const s of settingsServers) {
+    if (Object.hasOwn(ledger, s.name)) {
+      problems.push(`${s.name}: 必要なときだけ繋ぐサーバが .claude/settings.json に在ります —— 毎セッション自動で起動し、鍵も毎回渡ります。.claude/mcp-on-demand/ へ戻してください`);
+    }
+  }
+  for (const p of check(servers, ledger, budget, [])) problems.push(`[必要時] ${p}`);
+  return problems;
+}
 
 /**
  * **素の名前 (名前空間なし) の数**。ここが増えるということは、取り違えや
@@ -477,6 +560,35 @@ function selfTest() {
     console.log(`  ${gotOne ? '✓' : '✗'} 実物から ${realHooks.length} 件の hook を取り出せる (コマンドつき)`);
   }
 
+  // ---- 必要なときだけ繋ぐサーバ (2026-11-05) ------------------------------
+  {
+    const L = { g: { registry: 'npm', pkg: '@x/g@1.0.0', why: 'これは理由です' } };
+    const F = (name, pkg = '@x/g@1.0.0', extra = {}) => ({
+      mcpServers: { [name]: { command: 'npx', args: ['-y', pkg], env: { G_KEY: '${G_KEY}' } } },
+      ...extra,
+    });
+    const odCases = [
+      ['台帳どおりの必要時サーバは通る', [{ file: 'g.json', json: F('g') }], [], 0],
+      ['★ 必要時サーバを settings.json に戻すと鳴る (自動起動になる)', [{ file: 'g.json', json: F('g') }], [{ name: 'g', launcher: 'npx', pkg: '@x/g@1.0.0' }], 1],
+      ['★ 置き場から消えたら台帳の消し忘れで鳴る', [], [], 1],
+      ['★ ファイル名とサーバ名が違えば鳴る', [{ file: 'h.json', json: F('g') }], [], 1],
+      ['★ 台帳に無い必要時サーバは鳴る', [{ file: 'g.json', json: F('g') }, { file: 'z.json', json: F('z', '@x/z') }], [], 1],
+      ['★ パッケージのすり替えは鳴る', [{ file: 'g.json', json: F('g', '@x/evil') }], [], 1],
+      ['★ 最上位に知らない鍵があれば鳴る', [{ file: 'g.json', json: F('g', '@x/g@1.0.0', { hooks: {} }) }], [], 1],
+      ['★ JSON でないファイルは鳴る', [{ file: 'g.json', json: F('g') }, { file: 'run.sh', json: null }], [], 1],
+    ];
+    for (const [label, files, settings, want] of odCases) {
+      const got = checkOnDemand(files, settings, L, 0).length;
+      const ok = got === want;
+      if (!ok) bad++;
+      console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} 件 (期待 ${want})`);
+    }
+    const realOd = checkOnDemand(readOnDemandFiles(), readServers(JSON.parse(fs.readFileSync(SETTINGS, 'utf8'))));
+    const realOk = realOd.length === 0 && readOnDemandFiles().length === Object.keys(ON_DEMAND_LEDGER).length;
+    if (!realOk) bad++;
+    console.log(`  ${realOk ? '✓' : '✗'} 実物の必要時サーバ ${Object.keys(ON_DEMAND_LEDGER).length} 件は台帳どおりで、settings.json には無い`);
+  }
+
   // 取り出しが実物に当たること。設定の書き方が変わって 0 件になれば、
   // 「問題 0 件」で静かに通ってしまう。
   const real = readServers(JSON.parse(fs.readFileSync(SETTINGS, 'utf8')));
@@ -510,7 +622,8 @@ function main(argv) {
   const json = JSON.parse(fs.readFileSync(SETTINGS, 'utf8'));
   const servers = readServers(json);
   const hooks = readHooks(json);
-  const problems = [...checkTopLevel(json), ...check(servers), ...checkHooks(hooks)];
+  const onDemandFiles = readOnDemandFiles();
+  const problems = [...checkTopLevel(json), ...check(servers), ...checkHooks(hooks), ...checkOnDemand(onDemandFiles, servers)];
   const unscoped = servers.filter((s) => typeof s.pkg === 'string' && !s.pkg.startsWith('@')).length;
   const risky = servers.filter(
     (s) => typeof s.pkg === 'string' && !s.pkg.startsWith('@') && (s.env ?? []).some((k) => SECRET_ENV.test(k)),
@@ -524,6 +637,10 @@ function main(argv) {
     `セッション開始時・指示時の hook ${hooks.length} 件を台帳と照合 ` +
       `(最上位の鍵 ${Object.keys(json).length} / 既知 ${KNOWN_TOP_LEVEL.size})`,
   );
+  console.log(
+    `必要なときだけ繋ぐ MCP サーバ ${onDemandFiles.length} 件を台帳と照合 ` +
+      `(.claude/mcp-on-demand/ · 自動起動しない · 台帳 ${Object.keys(ON_DEMAND_LEDGER).length})`,
+  );
   if (problems.length === 0) {
     console.log('✅ 起動時に走る遠隔コードはすべて台帳どおりです');
     return 0;
@@ -535,7 +652,7 @@ function main(argv) {
 
 module.exports = {
   readServers, check, ALLOWED_LAUNCHER_FLAGS, SOURCE_ENV_KEY, LEDGER, UNSCOPED_BUDGET, CREDENTIALED_UNSCOPED, SECRET_ENV, ALLOWED_LAUNCHERS,
-  readHooks, checkHooks, checkTopLevel, HOOK_LEDGER, HOOK_COMMAND_RE, KNOWN_TOP_LEVEL,
+  readHooks, checkHooks, readOnDemandFiles, checkOnDemand, ON_DEMAND_LEDGER, ON_DEMAND_DIR, checkTopLevel, HOOK_LEDGER, HOOK_COMMAND_RE, KNOWN_TOP_LEVEL,
 };
 
 if (require.main === module) process.exit(main(process.argv.slice(2)));

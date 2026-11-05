@@ -19,6 +19,8 @@ USER = os.environ.get("COUNCIL_USER", "清継")
 WEB = os.path.join(HERE, "web"); THREAD = os.path.join(HERE, "user_thread.md")
 ORG = json.load(open(os.path.join(HERE, "org.json"), encoding="utf-8"))
 P = {p["id"]: p for p in ORG["people"]}
+import company_link
+COMPANY = company_link.CompanyLink(log=lambda m: log_sys(m))
 def kids(pid, tier=None): return [p for p in ORG["people"] if p["parent"] == pid and (tier is None or p["tier"] == tier)]
 COMMON = (f"必ず自然な日本語（ひらがな・カタカナ・漢字）だけで、180字以内で答えてください。中国語・英語の文は書かないでください。"
           f"CEOは人間の{USER}さんです。あなたは{USER}さんの発言を代筆・創作してはいけません。自分の役職の立場だけで話してください。"
@@ -29,6 +31,10 @@ SERVICES = {"Ollama": (11434, "/"), "llama1.5B": (8081, "/health"), "llama3B": (
             "LocalAI": (8084, "/readyz"), "llama-swap": (8090, "/v1/models"), "LiteLLM": (4000, "/health/liveliness"), "OpenWebUI": (8080, "/health")}
 PENDING, CHAT = [], []
 ROT = [0]
+import advice_guard
+GUARD_ON = os.environ.get("COUNCIL_ADVICE_GUARD", "1") != "0"          # 0で助言ガードを無効化
+GUARD_LLM = os.environ.get("COUNCIL_ADVICE_GUARD_LLM", "0") == "1"     # 1で検証モデル(fast)にも矛盾確認させる（メモリ節約のため既定は無効）
+REJECTED = os.path.join(HERE, "rejected_decisions.md"); REJ = collections.deque(maxlen=10)
 
 def now(): return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 def free_mb():
@@ -184,10 +190,43 @@ def session():
         if free_mb() < MIN_FREE_MB and p not in (ex, P["coo"]): log_sys(f"空きメモリ不足のため {p['name']} を省略"); continue
         outs.append(speak(p, instr))
     dec, summ = outs[-2], outs[-1]
+    hits = guard_check(dec)
+    if hits:                                                   # 助言と矛盾 → 却下を記録し、役員にやり直させる（1回）
+        reject_log(topic, dec, hits, False)
+        STATE["transcript"].append({"id": "claude" if "claude" in P else "coo", "role": "助言ガード", "model": "guard",
+                                    "text": "この決定は助言と食い違うため記録しません。やり直してください: " + " / ".join(hits)})
+        dec = speak(ex, "役員として、前の決定は相談役の助言と食い違うため却下されました。理由: " + " / ".join(hits) +
+                    "。助言に従い『決定:』1〜2文と『次のアクション:』箇条書き3つ以内を書き直してください。dataCryptoには触らず、asやwhileをMamoriに足さないこと。")
+        hits2 = guard_check(dec)
+        if hits2:
+            reject_log(topic, dec, hits2, True)
+            STATE.update(status=f"待機中（決定は助言と矛盾のため不記録・次回まで最大{INTERVAL}秒）", updated=now(), speaking=None)
+            return
+        summ = speak(P["coo"], f"COOとして、助言に沿って修正した決定を2〜3文でまとめ、CEOの{USER}さんへの報告文にしてください。")
     with open(os.path.join(HERE, "decisions.md"), "a", encoding="utf-8") as f:
         f.write(f"\n## {now()} [{src}] {topic[:120] if src != '継続議題' else topic.split(chr(10))[0][:60] + ' ' + topic.split(chr(10))[-1][:80]}\n\n担当役員: {ex['name']}\n\n{dec}\n\nCOO総括: {summ}\n")
     if src == "CEOの指示": thread_log("COO", summ)
     STATE.update(status=f"待機中（次回まで最大{INTERVAL}秒）", updated=now(), speaking=None)
+
+def advice_lines():
+    p = os.path.join(HERE, "advice_inbox.md")
+    return open(p, encoding="utf-8").read()[-20000:].splitlines() if os.path.exists(p) else []
+
+def guard_check(dec):
+    """助言と食い違う決定なら違反リストを返す（空なら記録してよい）。"""
+    if not GUARD_ON: return []
+    hits = [f"{n}: {why}（該当: {frag}）" for n, why, frag in advice_guard.check(dec)]
+    if not hits and GUARD_LLM and free_mb() >= MIN_FREE_MB:
+        _, v = ask("fast", "あなたは検証係です。助言と決定が矛盾するかだけを判定し、矛盾なら『矛盾: 理由』、なければ『問題なし』とだけ答えてください。",
+                   f"助言:\n{advice_guard.advice_digest(advice_lines())}\n\n決定:\n{dec}\n\n判定:")
+        if v.strip().startswith("矛盾"): hits.append("検証モデル: " + v.strip()[:200])
+    return hits
+
+def reject_log(topic, dec, hits, retry):
+    rec = {"at": now(), "topic": topic.split(chr(10))[0][:80], "decision": dec[:400], "reasons": hits, "retry": retry}
+    REJ.append(rec); log_sys(f"助言ガード: 決定を不記録（{'; '.join(hits)[:200]}）")
+    with open(REJECTED, "a", encoding="utf-8") as f:
+        f.write(f"\n## {rec['at']} {rec['topic']}（{'やり直し後も矛盾・不記録' if retry else 'やり直しを指示'}）\n\n理由:\n" + "".join(f"- {h}\n" for h in hits) + f"\n却下した決定:\n\n{dec}\n")
 
 def thread_log(who, text):
     CHAT.append({"who": who, "text": text, "at": now()}); del CHAT[:-30]
@@ -197,7 +236,9 @@ def api_state():
     dp = os.path.join(HERE, "decisions.md")
     decs = [d.strip() for d in open(dp, encoding="utf-8").read().split("\n## ") if d.strip()][-5:] if os.path.exists(dp) else []
     return {k: STATE[k] for k in ("status", "topic", "updated", "speaking", "exec")} | {"free_mb": free_mb(), "transcript": STATE["transcript"][-8:],
-            "services": {n: port_up(p) for n, (p, _) in SERVICES.items()}, "decisions": decs, "chat": CHAT[-12:], "user": USER}
+            "services": {n: port_up(p) for n, (p, _) in SERVICES.items()}, "decisions": decs, "chat": CHAT[-12:], "user": USER,
+            "company": {k: COMPANY.st.get(k) for k in ("linked", "name", "scale", "last_fetch", "error")},
+            "guard": {"on": GUARD_ON, "llm": GUARD_LLM, "rejected": list(REJ)[-5:]}}
 
 class H(BaseHTTPRequestHandler):
     def log_message(self, *a): pass
@@ -208,6 +249,7 @@ class H(BaseHTTPRequestHandler):
     def do_GET(self):
         path = self.path.split("?")[0]
         if path == "/api/state": return self.js(api_state())
+        if path == "/api/company": return self.js(COMPANY.public())
         if path == "/api/org": return self.js({"people": [{k: p[k] for k in ("id", "tier", "name", "title", "dept", "parent", "model")} for p in ORG["people"]], "user": USER})
         if path.startswith("/api/person/"):
             p = P.get(path.rsplit("/", 1)[-1])
@@ -225,6 +267,16 @@ class H(BaseHTTPRequestHandler):
             return self.send(b"forbidden", "text/plain", 403)
         n = int(self.headers.get("Content-Length", "0") or 0)
         if n > 4096: return self.send(b"too large", "text/plain", 413)
+        if self.path == "/api/company/refresh":
+            try: d = json.loads(self.rfile.read(n) or b"{}")
+            except Exception: return self.send(b"bad", "text/plain", 400)
+            if "demo" in d and not COMPANY.set_demo(d.get("demo")): return self.send(b"unknown demo", "text/plain", 400)
+            st = COMPANY.refresh()
+            if d.get("instant"):   # テスト用: 目標まで一気に
+                with COMPANY.lock:
+                    if COMPANY.st["target"]: COMPANY.st["scale"] = dict(COMPANY.st["target"], converged=True)
+                st = COMPANY.public()
+            return self.js(st)
         try: d = json.loads(self.rfile.read(n)); text = str(d.get("text", "")).strip()[:500]
         except Exception: return self.send(b"bad", "text/plain", 400)
         if not text: return self.send(b"empty", "text/plain", 400)
@@ -268,6 +320,7 @@ def start_loop(reason):
 if __name__ == "__main__":
     os.makedirs(os.path.join(HERE, "logs"), exist_ok=True)
     threading.Thread(target=ThreadingHTTPServer(("127.0.0.1", PORT), H).serve_forever, daemon=True).start()
+    threading.Thread(target=COMPANY.run, args=(int(os.environ.get("COMPANY_STEP_SEC", "20")),), daemon=True, name="company-link").start()
     log_sys("AI組織デーモン起動")
     start_loop("起動")
     STALL = int(os.environ.get("COUNCIL_STALL_SEC", str(max(2 * INTERVAL, 3 * TIMEOUT + 60))))

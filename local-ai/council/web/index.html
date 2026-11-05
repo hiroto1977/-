@@ -11,6 +11,7 @@ button{font:inherit;cursor:pointer;border:2px solid var(--wood2);background:#fff
 #side{position:fixed;right:10px;top:10px;width:350px;max-height:calc(100vh - 200px);display:flex;flex-direction:column;background:var(--wood);border:6px solid var(--wood2);border-radius:12px;color:#fff8e7;box-shadow:0 4px 0 #0003}
 #tabs{display:flex;gap:4px;padding:6px}#tabs button{flex:1;font-size:12px;background:#a87a4c;color:#fff8e7;border-color:var(--wood2)}#tabs button.on{background:#fff3d6;color:var(--ink)}
 #pane{overflow:auto;padding:0 8px 8px;font-size:12px}.card{background:#fff8e7;color:var(--ink);border-radius:8px;padding:6px 8px;margin:6px 0;white-space:pre-wrap;word-break:break-word}
+.card.reject{background:#fbe3e3;border:2px solid #c0392b}
 .card h4{margin:0 0 3px;font-size:12px}.grp{margin:8px 0 2px;font-weight:bold}.who{display:flex;align-items:center;gap:6px;padding:3px 6px;border-radius:6px;cursor:pointer}.who:hover{background:#fff2}
 .dot{width:10px;height:10px;border-radius:3px;display:inline-block;flex:none}.sm{font-size:11px;opacity:.8}
 #chat{position:fixed;left:10px;bottom:10px;width:min(470px,calc(100vw - 20px));background:var(--pane);border:3px solid #c9a46a;border-radius:14px;padding:8px;font-size:13px}
@@ -27,7 +28,7 @@ button{font:inherit;cursor:pointer;border:2px solid var(--wood2);background:#fff
 </style></head><body>
 <div id="hud"><div class="row"><span id="pill" class="pill">読み込み中</span><b>ローカルAI組織の村</b><span id="clock" class="sm"></span></div>
 <div id="topic"></div><div id="meta"></div>
-<div id="cams"><button data-cam="all" class="on">🗺 全体</button><button data-cam="hall">🏛 会議ホール</button><button data-cam="speaker">🎤 発言者を追う</button><button data-cam="free">✋ 自由</button><button id="toggle">📋 パネル</button></div></div>
+<div id="cams"><button data-cam="all">🗺 全体</button><button data-cam="hall">🏛 会議ホール</button><button data-cam="speaker">🎤 発言者を追う</button><button data-cam="free" class="on">✋ 自由</button><button id="toggle">📋 パネル</button></div></div>
 <div id="side"><div id="tabs"><button data-tab="board" class="on">📌 掲示板</button><button data-tab="people">👥 住民</button><button data-tab="prof">🪪 プロフィール</button></div><div id="pane"></div></div>
 <div id="labels"></div>
 <div id="chat"><div id="log"></div><div id="form"><select id="to"><option value="">組織全体へ（COOが会議）</option></select>
@@ -109,7 +110,7 @@ function house(id,x,z,s,roof){const ry=Math.atan2(-x,-z),pm=new THREE.Matrix4().
   DOOR[id]=V(0,0).applyMatrix4(new THREE.Matrix4().compose(V(0,-.3*s+.9),_q.identity(),new THREE.Vector3(1,1,1)).premultiply(pm))}
 // ---- 住民 ----
 const TIERC={COO:0xffc107,役員:0x8e24aa,秘書:0xec407a,管理職:0x1e88e5,一般職:0x43a047,CEO:0xb8860b},HAIR=[0x3e2723,0x212121,0x6d4c41,0x8d6e63,0xbf8040,0x5d4037];
-const agents={},labels=$('labels');let ORG=null,selected=null,follow=null,camMode='all';
+const agents={},labels=$('labels');let ORG=null,selected=null,follow=null,camMode='free';
 function hash(s){let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))|0;return Math.abs(h)}
 function mkChar(key,p,x,z,o={}){const g=new THREE.Group(),s=o.scale||1,dc=o.dept??0x90a4ae,hc=HAIR[hash(key)%HAIR.length];
   const shirt=o.shirt??dc,legs=[],arms=[];
@@ -177,7 +178,7 @@ async function poll(){try{
   $('pill').textContent=meet?'🔴 会議中':st.status.startsWith('エラー')?'エラー':'🟢 待機中';$('pill').className='pill'+(meet?' meet':st.status.startsWith('エラー')?' err':'');
   $('topic').textContent='議題: '+(st.topic||'（なし）').replace(/\s+/g,' ');
   $('meta').textContent=`担当役員 ${(st.exec||'-').toUpperCase()} ・ 空きメモリ ${st.free_mb}MB ・ 更新 ${st.updated}`;
-  if(tab==='board'&&renderBoard._n!==st.decisions.length+(st.decisions.at(-1)||'').length){renderBoard._n=st.decisions.length+(st.decisions.at(-1)||'').length;renderBoard()}
+  if(tab==='board'&&renderBoard._n!==st.decisions.length+(st.decisions.at(-1)||'').length+'|'+(st.guard?.rejected||[]).length){renderBoard._n=st.decisions.length+(st.decisions.at(-1)||'').length+'|'+(st.guard?.rejected||[]).length;renderBoard()}
   const lk=st.chat.length+'|'+(st.chat.at(-1)?.text||'');if($('log')._k!==lk){$('log')._k=lk;$('log').replaceChildren(...st.chat.map(c=>{const d=document.createElement('div');d.textContent=`${c.who}: ${c.text}`;if(c.who===st.user)d.className='me';return d}));$('log').scrollTop=1e9}
   const ids=new Set(meet?st.transcript.map(t=>t.id):[]);if(meet&&st.speaking)ids.add(st.speaking);
   for(const [k,A] of Object.entries(agents)){if(A.svc||k==='me')continue;A.speaking=ids.has(k)}
@@ -191,7 +192,8 @@ async function poll(){try{
 // ---- パネル ----
 let tab='board',profAt=0;const pane=$('pane');
 const el=(t,cls,txt)=>{const d=document.createElement(t);if(cls)d.className=cls;if(txt!=null)d.textContent=txt;return d};
-function renderBoard(){if(!LAST)return;pane.replaceChildren(...LAST.decisions.slice().reverse().map(d=>{const c=el('div','card'),[h,...rest]=d.split('\n');c.append(el('h4',null,h),el('div',null,rest.join('\n').trim()));return c}))}
+function renderBoard(){if(!LAST)return;const rej=(LAST.guard?.rejected||[]).slice().reverse().map(r=>{const c=el('div','card reject');c.append(el('h4',null,'🛑 助言と食い違うため記録しなかった決定（'+r.at+(r.retry?'・やり直し後も不可':'・やり直し指示')+'）'),el('div',null,r.reasons.join('\n')+'\n\n'+r.decision));return c});
+  pane.replaceChildren(...rej,...LAST.decisions.slice().reverse().map(d=>{const c=el('div','card'),[h,...rest]=d.split('\n');c.append(el('h4',null,h),el('div',null,rest.join('\n').trim()));return c}))}
 function renderPeople(){const grp={};for(const p of (ORG?.people||[]))(grp[p.tier]??=[]).push(p);const out=[];
   for(const t of ['COO','役員','秘書','管理職','一般職']){if(!grp[t])continue;out.push(el('div','grp',`${t}（${grp[t].length}人）`));
     for(const p of grp[t]){const r=el('div','who'),d=el('span','dot');d.style.background='#'+(DEPT[agents[p.id]?.dept]??0x90a4ae).toString(16).padStart(6,'0');
@@ -211,8 +213,26 @@ function selectAgent(id,fly){const prev=agents[selected];if(prev)prev.lab.classL
   toSel.value=id;setTab('prof');if(fly)setCam('follow',id)}
 // ---- カメラ ----
 const camT=new THREE.Vector3(),camP=new THREE.Vector3();let camAnim=0;
+const villageLimit=()=>Math.max(46,window.__companyExtent||0);
+function clampCam(){const lim=villageLimit(),t=O.target,d=Math.hypot(t.x,t.z);if(d>lim){const s=lim/d,nx=t.x*s,nz=t.z*s;C.position.x+=nx-t.x;C.position.z+=nz-t.z;t.x=nx;t.z=nz}}
+function panBy(sx,sz){if(camMode==='follow'||camMode==='speaker'||camMode==='all'||camMode==='hall'){camMode='free';follow=null;document.querySelectorAll('#cams button[data-cam]').forEach(b=>b.classList.toggle('on',b.dataset.cam==='free'))}
+  camAnim=0;const fwd=new THREE.Vector3().subVectors(O.target,C.position);fwd.y=0;if(fwd.lengthSq()<1e-8)fwd.set(0,0,-1);fwd.normalize();
+  const right=fwd.clone().cross(new THREE.Vector3(0,1,0));const dx=right.x*sx+fwd.x*sz,dz=right.z*sx+fwd.z*sz;
+  O.target.x+=dx;O.target.z+=dz;C.position.x+=dx;C.position.z+=dz;clampCam()}
+const UI_IDS=['hud','company','side','chat','mini'];let mx=-1,my=-1;const held=new Set();
+function overUI(x,y){return UI_IDS.some(id=>{const el=document.getElementById(id);if(!el||el.style.display==='none')return false;const r=el.getBoundingClientRect();return x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom})}
+addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});addEventListener('mouseleave',()=>{mx=my=-1});
+addEventListener('blur',()=>held.clear());
+addEventListener('keydown',e=>{held.add(e.key.toLowerCase());if(document.activeElement?.id==='msg')return;if(['arrowup','arrowdown','arrowleft','arrowright'].includes(e.key.toLowerCase())||['w','a','s','d'].includes(e.key.toLowerCase()))e.preventDefault()});
+addEventListener('keyup',e=>held.delete(e.key.toLowerCase()));
+function roam(dt){const typing=document.activeElement?.id==='msg',sp=36*dt;let sx=0,sz=0;
+  if(!typing){if(held.has('w')||held.has('arrowup'))sz+=1;if(held.has('s')||held.has('arrowdown'))sz-=1;if(held.has('a')||held.has('arrowleft'))sx-=1;if(held.has('d')||held.has('arrowright'))sx+=1}
+  if(!interacting&&mx>=0&&!overUI(mx,my)){const M=24;if(mx<M)sx-=1;if(mx>innerWidth-M)sx+=1;if(my<M)sz+=1;if(my>innerHeight-M)sz-=1}
+  if(sx||sz){const n=Math.hypot(sx,sz)||1;panBy(sx/n*sp,sz/n*sp)}}
+window.__panBy=panBy;window.__villageLimit=villageLimit;window.__overUI=overUI;window.__clampCam=clampCam;
+
 function setCam(m,id){camMode=m;follow=m==='follow'?id:null;document.querySelectorAll('#cams button[data-cam]').forEach(b=>b.classList.toggle('on',b.dataset.cam===m));
-  if(m==='all'){camT.set(0,0,0);camP.set(0,58,70);camAnim=1}if(m==='hall'){camT.set(0,1,0);camP.set(0,14,18);camAnim=1}}
+  if(m==='all'){const ext=window.__companyExtent||0;if(ext>50){const f=ext/92;camT.set(0,0,20*f);camP.set(0,130*f,140*f)}else{camT.set(0,0,0);camP.set(0,58,70)}camAnim=1}if(m==='hall'){camT.set(0,1,0);camP.set(0,14,18);camAnim=1}}
 document.querySelectorAll('#cams button[data-cam]').forEach(b=>b.onclick=()=>setCam(b.dataset.cam));
 O.addEventListener('start',()=>{interacting=1;setRes(Math.min(baseRes,SOFT?.5:.75));camAnim=0;if(camMode==='all'||camMode==='hall'){camMode='free';setCam('free')}});
 O.addEventListener('end',()=>{interacting=performance.now()+350});
@@ -233,15 +253,17 @@ R.domElement.addEventListener('pointerup',e=>{if(!downAt||Math.hypot(e.clientX-d
   const hit=ray.intersectObjects(Object.values(agents).filter(A=>!A.svc&&A.key!=='me'&&A.g.visible).map(A=>A.g),true)[0];
   if(hit){let o=hit.object;while(o&&!o.userData.key)o=o.parent;if(o){const A=agents[o.userData.key];A.called=Date.now()+30000;say(A,'（呼ばれて振り向いた）',30000,true);selectAgent(A.key,false)}}});
 // ---- ミニマップ ----
-const mini=$('mini'),mc=mini.getContext('2d'),MS=170/124;
+const mini=$('mini'),mc=mini.getContext('2d');let MS=170/124;
 const toMini=(x,z)=>[85+x*MS,85+z*MS];
-mini.onclick=e=>{const r=mini.getBoundingClientRect(),x=(e.clientX-r.left-85)/MS,z=(e.clientY-r.top-85)/MS;camMode='free';setCam('free');const d=camP.copy(C.position).sub(O.target);camT.set(x,0,z);camP.copy(camT).add(d);camAnim=1};
-function drawMini(){mc.clearRect(0,0,170,170);mc.strokeStyle='#e2c48a';mc.lineWidth=2;for(const r of RINGS){mc.beginPath();mc.arc(85,85,r.r*MS,0,7);mc.stroke()}
+mini.onclick=e=>{const r=mini.getBoundingClientRect();let x=(e.clientX-r.left-85)/MS,z=(e.clientY-r.top-85)/MS;const lim=villageLimit(),dd=Math.hypot(x,z);if(dd>lim){x*=lim/dd;z*=lim/dd}camMode='free';setCam('free');const d=C.position.clone().sub(O.target);camT.set(x,0,z);camP.copy(camT).add(d);camAnim=1};
+function drawMini(){MS=170/Math.max(124,2*(window.__companyExtent||0)+8);mc.clearRect(0,0,170,170);window.__companyMini?.(mc,toMini,MS);mc.strokeStyle='#e2c48a';mc.lineWidth=2;for(const r of RINGS){mc.beginPath();mc.arc(85,85,r.r*MS,0,7);mc.stroke()}
   mc.fillStyle='#4fc3f7';mc.beginPath();mc.ellipse(...toMini(0,PZ),2.3*MS,3.5*MS,0,0,7);mc.fill();
   for(const [id,d] of Object.entries(DOOR)){mc.fillStyle='#'+DEPT[id].toString(16).padStart(6,'0');const [x,y]=toMini(d.x,d.z);mc.fillRect(x-3,y-3,6,6)}
   for(const A of Object.values(agents)){if(!A.g.visible||A.svc)continue;const [x,y]=toMini(A.g.position.x,A.g.position.z);mc.fillStyle=A.key==='me'?'#fff':'#'+(TIERC[A.tier]||0x777777).toString(16).padStart(6,'0');
     mc.beginPath();mc.arc(x,y,A.key===selected||A.speaking?3.5:2.2,0,7);mc.fill()}
-  const t=O.target;const [cx,cy]=toMini(t.x,t.z);mc.strokeStyle='#fff';mc.lineWidth=1.5;mc.strokeRect(cx-8,cy-6,16,12)}
+  const t=O.target;const [cx,cy]=toMini(t.x,t.z);mc.fillStyle='#fff';mc.beginPath();mc.arc(cx,cy,2.5,0,7);mc.fill();
+  const fq=[];for(const [nx,ny] of [[-1,1],[1,1],[1,-1],[-1,-1]]){const v=new THREE.Vector3(nx,ny,.5).unproject(C),dir=v.sub(C.position),tt=-C.position.y/dir.y;if(!(tt>0)||!isFinite(tt)){fq.length=0;break}fq.push(C.position.clone().addScaledVector(dir,Math.min(tt,400)))}
+  if(fq.length===4){mc.beginPath();fq.forEach((p,i)=>{const [x,y]=toMini(p.x,p.z);i?mc.lineTo(x,y):mc.moveTo(x,y)});mc.closePath();mc.strokeStyle='#fff';mc.lineWidth=1.5;mc.stroke();mc.fillStyle='#ffffff33';mc.fill()}}
 // ---- 昼夜 ----
 function tint(){const h=hourJST(),day=h>=6&&h<17,dusk=h===17||h===18||h===5;const sky=day?0x9fd8ff:dusk?0xf4a261:0x1b2340;S.background=new THREE.Color(sky);S.fog.color.set(sky);
   sun.intensity=day?1.6:dusk?.8:.18;hemi.intensity=day?1.1:dusk?.7:.35;const night=!day;
@@ -291,14 +313,15 @@ function loop(){frames++;const dt=Math.min(clock.getDelta(),.1),T=clock.elapsedT
   const f=follow?agents[follow]:camMode==='speaker'?agents[LAST?.speaking]||list.find(A=>A.speaking):null;
   if(f&&f.g.visible){const d=v.copy(C.position).sub(O.target);O.target.lerp(f.g.position,.08);if(d.length()>30)d.setLength(30);C.position.copy(O.target).add(d)}
   if(camAnim){O.target.lerp(camT,.08);C.position.lerp(camP,.08);if(C.position.distanceTo(camP)<.2)camAnim=0}
-  waterMat.opacity=.8+Math.sin(T*1.5)*.05;
-  O.update();if(frames%3===0)lod();R.render(S,C);if(!interacting||frames%2===0)overlay();if(frames%(interacting?30:10)===0)drawMini();
+  roam(dt);
+  waterMat.opacity=.8+Math.sin(T*1.5)*.05;window.__companyTick?.(dt);
+  O.update();clampCam();if(frames%3===0)lod();R.render(S,C);if(!interacting||frames%2===0)overlay();if(frames%(interacting?30:10)===0)drawMini();
   if(interacting>1&&performance.now()>interacting){interacting=0;setRes(baseRes)}
   // フレーム時間が長いときは解像度を段階的に下げる（静止中のみ戻す）
   ftAvg=ftAvg*.9+dt*100;if(!interacting&&frames%60===0){if(ftAvg>6&&baseRes>.75){baseRes=Math.round((baseRes-.1)*10)/10;setRes(baseRes)}}
   fpsN++;if(T-fpsT>2){const fps=fpsN/(T-fpsT);fpsT=T;fpsN=0;window.__fps=fps;if(fps<22&&++lowFps>=2&&R.shadowMap.enabled){R.shadowMap.enabled=false;sun.castShadow=false}}
   (window.__ST?setTimeout(loop,33):requestAnimationFrame(loop))}
-window.__agents=agents;window.__R=R;window.__C=C;window.O=O;window.__follow=()=>follow;
+window.__agents=agents;window.__S=S;window.__R=R;window.__C=C;window.O=O;window.__follow=()=>follow;
 poll();setInterval(poll,4000);tint();setInterval(tint,60000);
 if(window.__ST){setTimeout(()=>{window.__p0=Object.fromEntries(Object.entries(agents).map(([k,A])=>[k,A.g.position.clone()]))},3000);
   setTimeout(()=>{let moved=0,hidden=0;for(const [k,A] of Object.entries(agents)){if(A.g.position.distanceTo(window.__p0[k])>.5)moved++;if(!A.g.visible)hidden++}
@@ -306,4 +329,5 @@ if(window.__ST){setTimeout(()=>{window.__p0=Object.fromEntries(Object.entries(ag
     if(Q.get('selftest')!=='nochat'){$('msg').value='@CFO 村の様子はどうですか？';sendMsg()}},9000)}
 loop();addEventListener('resize',()=>{C.aspect=innerWidth/innerHeight;C.updateProjectionMatrix();R.setSize(innerWidth,innerHeight)});
 window.__perf=()=>({res:curRes,base:baseRes,soft:SOFT,shadow:R.shadowMap.enabled,calls:R.info.render.calls});
-</script></body></html>
+</script>
+<script type="module" src="/company.js"></script></body></html>

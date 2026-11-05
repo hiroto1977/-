@@ -29,6 +29,12 @@
 - 期限付きの継続議題: `- [〜07:00] 議題` または `- [継続:2026-11-05 07:00] 議題`（JST）。期限まで毎回の会議で取り上げ、期限を過ぎると `- [済] …（期限 … 到達）` になります。`〜07:00` は最初に読んだ時点で次に来る07:00の絶対日時に書き換えます
   - 本文に `候補: A、B、C`（または `項目:`、区切りは `、` `,` `/`）があると、1回の会議で1項目ずつ順番に（一巡したら最初から）具体的に設計させ、`decisions.md` に「設計項目 n/N」付きで記録します。進み具合は `recurring_state.json` に保存
 
+
+## 助言ガード
+役員の決定が助言（`advice_inbox.md` の行や、禁止パターン）と食い違うときは `decisions.md` に書かず、`rejected_decisions.md` に理由を残して役員に1回だけやり直させます。掲示板には 🛑 カードが出ます。
+禁止パターンは `advice_guard.py`（dataCrypto の実装着手、`as BufferSource`、Mamori への `as` / `while` 追加、JSON.stringify を暗号化と扱う、IV の定期再生成、正規表現アンカーの除去、C++/Python 混在）。否定文（〜しない / 禁止 など）は違反にしません。
+`COUNCIL_ADVICE_GUARD=0` で無効化できます。`COUNCIL_ADVICE_GUARD_LLM=1` で検証モデルにも確認させます（既定は OFF）。テスト: `python3 test_advice_guard.py`。
+
 ## 3Dの村（http://127.0.0.1:8091）
 Three.js（`web/vendor` に同梱、ビルド不要）のボクセル風の村です。中央に会議ホールと清継さん（CEO）、周りにCOOと役員の家（秘書は隣）、外側に管理職と一般職の区画、角にローカルサービスの「マシンルーム」があります。空の色は東京時間で昼夜が変わり、ドラッグで視点を回せます。
 
@@ -39,6 +45,7 @@ Three.js（`web/vendor` に同梱、ビルド不要）のボクセル風の村�
 - 会話は `user_thread.md` に、議論は `logs/YYYY-MM-DD.md` に保存されます
 - 状態は `/api/state`、組織図は `/api/org`（JSON）
 - 動作確認用に `?selftest=1` を付けると、住民の移動数を数えて `@CFO` に話しかけます
+- 既定のカメラは「✋ 自由」です。村が大きくなっても自動では引きません。画面端にマウスを寄せるか WASD／矢印でスクロールして見て回ります（チャット入力中のキーは無効）。ミニマップをクリックしても移動できます。「🗺 全体」を押したときだけ引きます。
 
 ## 安全のための制限
 - できることは、このディレクトリへのファイル書き込みと読み取り専用の確認だけです。git push や外部への送信はしません
@@ -46,3 +53,8 @@ Three.js（`web/vendor` に同梱、ビルド不要）のボクセル風の村�
 - 画面上の文字はすべて textContent で表示し、HTMLとしては解釈しません
 - 空きメモリが `COUNCIL_MIN_FREE_MB`（既定1500MB）未満なら回を飛ばし、1回の呼び出しは `COUNCIL_TIMEOUT` 秒（既定240）で打ち切ります
 - 小さいモデルなので、内容は参考程度です（事実の誤りや中国語の混入があります）
+
+## 企業データ連携（任意・既定OFF）
+`company_link.py`。`company_link.example.json` を `company_link.json` にコピーし `enabled: true`。source は json / csv / sqlite / sql（SQLAlchemy URL は環境変数 `COMPANY_DB_URL`）。
+読み取り専用（SELECT/WITH 1文のみ・SQLiteは mode=ro + query_only）。`GET /api/company`、`POST /api/company/refresh`（`{"demo":"large|small|deficit|example|off"}` でデモ切替、メモリ上のみ）。
+サンプル（すべて架空）: `example_company.json`, `examples/*.json`。テスト: `python3 test_company_link.py`。

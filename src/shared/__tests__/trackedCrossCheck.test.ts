@@ -268,16 +268,20 @@ describe('照合を呼ぶゲートの母集団 (双方向)', () => {
 
   /*
    * ★ **機構を名乗る語彙は閉じている** —— 11 語目を黙って足せない。
-   * `not-thinnable` は機構ではなく報せなので、それを名乗るゲートは 1 本だけ
-   * (`chain:verify`) であることも見る (増えたら「測っていない」が機構として通る)。
+   * `not-thinnable` は機構ではなく報せなので、それを名乗るゲートは測って
+   * `not-dropped` だった物だけである (`chain:verify` と `lint:mcp-servers`)。
+   * 後者は必要時サーバの json が 1 件で、群の 1 件目は必ず残る (2026-11-05 実測:
+   * keep 99% で落とした 0・exit 0)。2 件目が置かれた日は間引きが届くので、
+   * 台帳の expect を測り直す。
    */
-  it('★ ENFORCEMENT の機構は閉じた語彙で、not-thinnable は 1 本だけ', () => {
+  it('★ ENFORCEMENT の機構は閉じた語彙で、not-thinnable は測った 2 本だけ', () => {
     const used = new Set(Object.values(tool.ENFORCEMENT).flatMap((e) => e.by));
     for (const b of used) expect(tool.MECHANISMS, `未知の機構 ${b}`).toContain(b);
     const notThin = Object.entries(tool.ENFORCEMENT)
       .filter(([, e]) => e.by.includes('not-thinnable'))
-      .map(([g]) => g);
-    expect(notThin).toEqual(['chain:verify']);
+      .map(([g]) => g)
+      .sort();
+    expect(notThin).toEqual(['chain:verify', 'lint:mcp-servers']);
   });
 
   /*
