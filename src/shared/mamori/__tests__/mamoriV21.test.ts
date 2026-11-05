@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { compileProject, formatDiagnostic } from '../compile';
+import { parse } from '../parser';
 
 /*
  * **Mamori 0.21 —— 型引数つきの呼び出し `f<T>(…)` と `new C<T>(…)` を足す** (2026-11-05 · MG-041)。
@@ -74,7 +75,7 @@ describe('0.21: 型引数つきの呼び出し', () => {
   });
 
   it('型引数の `typeof` / `import` は断る (印を持つ値の型・別 module の型を名指しできる)', () => {
-    expect(diag('  const u = raw;\n  return fromJson<typeof u>(raw);').join('\n')).toContain('型引数に `typeof` は置けません');
+    expect(diag('  const u = raw;\n  return fromJson<typeof u>(raw);').join('\n')).toMatch(/M4.*型引数に `typeof` は置けません/);
     expect(diag('  return fromJson<import("./h").T>(raw);').join('\n')).toContain('型引数に `import` は置けません');
     expect(diag('  return new Set<typeof raw>(xs);').join('\n')).toContain('`typeof`');
   });
@@ -83,6 +84,27 @@ describe('0.21: 型引数つきの呼び出し', () => {
     // `;` は文の切れ目 / `=` や `{ … }` の外の式の記号は型に要らない
     expect(diag('  return fromJson<Array<number>= 1; 2 >(raw);')).not.toEqual([]);
     expect(diag('  return fromJson<string; raw>(raw);')).not.toEqual([]);
+  });
+
+  it('型引数は `,` で区切って 1 つずつ読む (構文木の typeArgs)', () => {
+    const m = parse('src/x/m0.mamori', go('  return fromJson<Map<string, number[]>, boolean>(raw);'));
+    const fn = m.items.find((it) => it.kind === 'fn' && it.name === 'go');
+    const ret = JSON.stringify(fn);
+    expect(ret).toContain('"text":"Map<string, number[]>"');
+    expect(ret).toContain('"text":"boolean"');
+    expect(ret).not.toContain('"text":"Map<string, number[]>, boolean"');
+    // 3 つ目以降も `,` で区切る
+    const three = JSON.stringify(parse('src/x/m0.mamori', go('  return fromJson<string, number, boolean>(raw);')).items.find((it) => it.kind === 'fn' && it.name === 'go'));
+    expect(three).toContain('"text":"number"');
+    expect(three).toContain('"text":"boolean"');
+    expect(three).not.toContain('"text":"number, boolean"');
+    const n = parse('src/x/m0.mamori', go('  return new Map<string, number>();'));
+    expect(JSON.stringify(n.items.find((it) => it.kind === 'fn' && it.name === 'go'))).toContain('"typeArgs":[{"text":"string"');
+  });
+
+  it('呼ぶ側が名前でもメンバでもなければ `<` は比較のまま (添字・呼び出しの結果に型引数は付けない)', () => {
+    expect(out('  return xs[0] < n > (m);')).toContain('xs[0] < n > m');
+    expect(out('  return fromJson(raw) < n > (m);')).toContain('fromJson(raw) < n > m');
   });
 
   it('型引数の直後が `(` でなければ呼び出しではない (比較の途中を型引数と読み違えない)', () => {

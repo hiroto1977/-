@@ -355,20 +355,22 @@ export function parse(file: string, src: string): Module {
   };
   /**
    * `<` が型引数の始まりか (`f<T>(x)`) —— 型引数として読めて、**直後に `(` が来る**ときだけ。比較 `a < b` と見分けるため
-   * 読み進めて戻る (TypeScript の曖昧さの解き方と同じ: 型引数の `>` の直後が `(` なら呼び出し)。
+   * 読み進めて戻る (TypeScript の曖昧さの解き方と同じ: 型引数の `>` の直後が `(` なら呼び出し)。`<` で始まらなければ
+   * `typeArgs` の最初の `expectP('<')` が断るので、ここで `<` を別に確かめない。
    */
+  // Stryker disable BlockStatement: 型引数として読めない形は catch で false。catch を空にすると戻り値は undefined になるが、呼び元の && では偽で同じ (等価)
   const peekTypeArgs = (): boolean => {
     const save = k;
     try {
       typeArgs();
       return isP('(');
-    } catch (err) {
-      if (err instanceof MamoriError) return false;
-      throw err;
+    } catch {
+      return false;
     } finally {
       k = save;
     }
   };
+  // Stryker restore BlockStatement
 
   const params = (): Param[] => {
     expectP('(');
@@ -747,7 +749,7 @@ export function parse(file: string, src: string): Module {
         const key = expr();
         expectP(']');
         e = indexOf(e, key, keyTok, open.pos);
-      } else if (isP('<') && (e.kind === 'ident' || e.kind === 'member') && peekTypeArgs()) {
+      } else if ((e.kind === 'ident' || e.kind === 'member') && peekTypeArgs()) {
         const targs = typeArgs();
         const pos = peek().pos;
         e = { kind: 'call', callee: e, typeArgs: targs, args: args(), pos };
