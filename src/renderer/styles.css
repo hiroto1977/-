@@ -1865,6 +1865,16 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   body.ds-printing .app { display: block; height: auto; overflow: visible; }
   body.ds-printing .main { overflow: visible; }
   body.ds-printing .content { overflow: visible; padding: 0; }
+  /* 村の殻 (2026-11-04): 紙は役場の窓の中に開く。窓は固定配置・本文は内側でスクロールするので、
+     そのまま刷ると 1 ページ目しか出ない。村・会話・窓の枠を消し、窓を通常の流れに戻す。 */
+  body.ds-printing .village-shell { display: block; height: auto; overflow: visible; }
+  body.ds-printing .village-shell-bar,
+  body.ds-printing .village-shell-body,
+  body.ds-printing .village-hall-backdrop,
+  body.ds-printing .village-hall-head { display: none !important; }
+  body.ds-printing .village-hall { position: static; inset: auto; display: block; overflow: visible;
+                                   border: 0; border-radius: 0; background: transparent; }
+  body.ds-printing .village-hall-body { overflow: visible; padding: 0; }
   body.ds-printing .ds-paper { box-shadow: none; border-radius: 0; max-width: none;
                                padding: 0; font-size: 11.5pt; }
   body.ds-printing .ds-fill.ds-empty { color: #444; }

@@ -431,7 +431,7 @@ export function VillagePage() {
               🛠 <b>{activeStep.teamName}</b> が作業中 — {PDCA[phase]}
             </span>
           ) : (
-            <span style={{ ...taskBannerStyle, opacity: 0.7 }}>☕ 次の仕事を待っています</span>
+            <span style={taskBannerStyle}>☕ 次の仕事を待っています</span>
           )}
           <label style={toggleStyle} title="AI プロバイダ設定時は返答を高精度化">
             <input type="checkbox" checked={aiOn} onChange={(e) => setAiOn(e.target.checked)} /> AI
@@ -900,6 +900,7 @@ function SignBoard({
         fontSize: 11,
         fontWeight: 800,
         padding: '3px 9px',
+        minHeight: 24,
         border: '3px solid #3a2a14',
         borderRadius: 0,
         // マイクラの GUI の面取り (明るい上・左と暗い下・右)
@@ -1200,6 +1201,7 @@ const plazaStyle: React.CSSProperties = {
 };
 const toggleStyle: React.CSSProperties = {
   fontSize: 12,
+  minHeight: 24,
   display: 'flex',
   alignItems: 'center',
   gap: 4,

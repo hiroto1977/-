@@ -115,10 +115,10 @@ async function unlockAndOpenOllama(page){
   const done=page.getByRole('button',{name:/記録完了|開始|続ける/}).first();
   if(await done.count()) await done.click();
   await page.waitForTimeout(1200);
-  // 「分析・ツール」カテゴリは既定で折りたたまれているため、検索で絞って開く。
-  await page.locator('.sidebar-search-input').fill('ollama');
-  await page.waitForTimeout(600);
-  await page.locator('.sidebar-item[data-service-id="ollama"]').first().click();
+  // 村の殻では、会話の「開いて」(servicehub:navigate) と同じ道で役場の窓へ開く。
+  await page.waitForSelector('[data-village-shell]',{timeout:60000});
+  await page.evaluate(()=>window.dispatchEvent(new CustomEvent('servicehub:navigate',{detail:'ollama'})));
+  await page.waitForSelector('[data-village-window="ollama"]',{timeout:15000});
   await page.waitForTimeout(3500);
 }
 
@@ -133,7 +133,7 @@ async function unlockAndOpenOllama(page){
   // --- ケース1: Ollama 未起動 ---
   {
     const ctx=await browser.newContext(); const page=await ctx.newPage();
-    await page.goto(`http://127.0.0.1:${appPort}/?ui=legacy`,{waitUntil:'load',timeout:120000});
+    await page.goto(`http://127.0.0.1:${appPort}/`,{waitUntil:'load',timeout:120000});
     await unlockAndOpenOllama(page);
     const body=await page.evaluate(()=>document.body.innerText);
     // 未起動なら「導入からの通し手順」を出す。ここで許可設定だけ見せると、
@@ -150,7 +150,7 @@ async function unlockAndOpenOllama(page){
   await new Promise(r=>noCors.listen(OLLAMA_PORT,'127.0.0.1',r));
   {
     const ctx=await browser.newContext(); const page=await ctx.newPage();
-    await page.goto(`http://127.0.0.1:${appPort}/?ui=legacy`,{waitUntil:'load',timeout:120000});
+    await page.goto(`http://127.0.0.1:${appPort}/`,{waitUntil:'load',timeout:120000});
     await unlockAndOpenOllama(page);
     const body=await page.evaluate(()=>document.body.innerText);
     // 起動が検出できている段階では、導入・モデル取得の手順は出さない
@@ -168,7 +168,7 @@ async function unlockAndOpenOllama(page){
   await new Promise(r=>withCors.listen(OLLAMA_PORT,'127.0.0.1',r));
   {
     const ctx=await browser.newContext(); const page=await ctx.newPage();
-    await page.goto(`http://127.0.0.1:${appPort}/?ui=legacy`,{waitUntil:'load',timeout:120000});
+    await page.goto(`http://127.0.0.1:${appPort}/`,{waitUntil:'load',timeout:120000});
     await unlockAndOpenOllama(page);
     const body=await page.evaluate(()=>document.body.innerText);
     const hasModels=/llama3\.2:latest/.test(body) && /qwen2\.5-coder:7b/.test(body);
@@ -213,7 +213,7 @@ async function unlockAndOpenOllama(page){
     // localhost は loopback 判定に入るため、同一ホスト経路の検証には使えない。
     // hosts に依存せず必ず解決する名前として ip6-localhost 等は環境差があるので、
     // ここでは localhost を使い「保存した接続先が使われること」を検証する。
-    await page.goto(`http://localhost:${appPort}/?ui=legacy`,{waitUntil:'load',timeout:120000});
+    await page.goto(`http://localhost:${appPort}/`,{waitUntil:'load',timeout:120000});
     await page.evaluate(()=>localStorage.setItem('servicehub.ollama.endpoint','http://localhost:11434'));
     await page.reload({waitUntil:'load',timeout:120000});
     await unlockAndOpenOllama(page);
@@ -228,7 +228,7 @@ async function unlockAndOpenOllama(page){
   // --- ケース5: 許可外の接続先は接続を試みずに拒否 ---
   {
     const ctx=await browser.newContext(); const page=await ctx.newPage();
-    await page.goto(`http://127.0.0.1:${appPort}/?ui=legacy`,{waitUntil:'load',timeout:120000});
+    await page.goto(`http://127.0.0.1:${appPort}/`,{waitUntil:'load',timeout:120000});
     await page.evaluate(()=>localStorage.setItem('servicehub.ollama.endpoint','http://192.168.99.99:11434'));
     await page.reload({waitUntil:'load',timeout:120000});
     await unlockAndOpenOllama(page);
@@ -248,7 +248,7 @@ async function unlockAndOpenOllama(page){
   RESTRICT_CSP=true;
   {
     const ctx=await browser.newContext(); const page=await ctx.newPage();
-    await page.goto(`http://127.0.0.1:${appPort}/?ui=legacy`,{waitUntil:'load',timeout:120000});
+    await page.goto(`http://127.0.0.1:${appPort}/`,{waitUntil:'load',timeout:120000});
     await unlockAndOpenOllama(page);
     const body=await page.evaluate(()=>document.body.innerText);
     const named=/この配布形態では接続できません/.test(body);
