@@ -104,7 +104,7 @@ Mamori では、その 2 つは**書けない**:
 | --- | --- |
 | オブジェクト・配列・展開・戻り値・arrow の戻り値・for の相手 | M6 (`refuseInert`) |
 | 添字・欄への代入の値 | M6 |
-| 呼び出しと `new` の引数 | M6。ただし結果が数・文字列・真偽だけになる組み込み (`Number` `String` `Boolean` `parseInt` `Math.*` `Object.hasOwn` ほか) への引数は通す |
+| 呼び出しと `new` の引数 | M6。ただし結果が数・文字列・真偽だけになる組み込み (`Number` `String` `Boolean` `Math.*` `Number.*` `Object.hasOwn` `Array.isArray` `JSON.stringify`) への引数は通す |
 | `??` `||` `&&` の片方 | inert を運ぶ (呼べない) |
 | 局所の束縛・比較・算術・条件の中 | 今までどおり通る |
 

@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.16"
+    "version": "0.17"
   },
   "constructs": {
     "class": {
@@ -95,9 +95,10 @@
       "why": "x = x + 1 と書く (印の洗浄を見る M5 の判定を 1 つの形に保つ)。"
     },
     "member-assign": {
-      "decision": "feature",
+      "decision": "added",
       "why": "組み立てた物の欄を埋める所で使う。",
-      "risk": "共有の物 (import した物・組み込み) へ書くと他のモジュールの判定まで変わる —— 書けるのはこの関数の中で作った物の欄だけにする。"
+      "risk": "共有の物 (import した物・組み込み) へ書くと他のモジュールの判定まで変わる —— 書けるのはこの関数の中で作った物の欄だけにする。",
+      "since": "0.17"
     },
     "loose-eq": {
       "decision": "rewrite",
@@ -2152,6 +2153,58 @@
         "pr": null,
         "reason": "PR はこの記録のあとに出す (番号は次の周で台帳へ)",
         "summary": "更新の有無の判定 (updateCheck.ts · GitHub の案内先を github.com の https に限る) を Mamori で書き直した (port)。足りなかったのは as 2 つ (field と raw is string) と template 3 つ (連結へ) だけで、組み上がる文字列は 1 字も変えていない。既存の検査は緑。dataCrypto は BufferSource への as が残るのでこの周では移していない。"
+      }
+    },
+    {
+      "id": "MG-033",
+      "date": "2026-11-05",
+      "kind": "feature",
+      "target": "member-assign",
+      "pickedBy": "brief",
+      "briefPick": "feature:member-assign",
+      "version": "0.17",
+      "features": [
+        "欄への代入 `o.k = v;` —— 書けるのは、その関数の中で `const o = { … }` と作った物の欄だけ (owned)。欄の名前は禁じた名前の表を通る"
+      ],
+      "added": [
+        "member-assign"
+      ],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "引数の欄 `p.k = 2`・組み込み `Math.max = f` / `JSON.parse = f`・宣言していない名前 `zzz.k = 2` への代入 (共有の物を書き換える道)",
+          "result": "refused"
+        },
+        {
+          "tried": "`let o = {…}; o.a = 2` / `const q = o; q.a = 2` / 分割代入・回す変数・モジュール直下の const の欄への代入 (作った物でない物へ届く道)",
+          "result": "refused"
+        },
+        {
+          "tried": "`o.constructor = f` / `o.prototype = f` / `o.__proto__ = x` と `a.b.c = v` / `o?.k = v` / `f().k = v` (禁じた名前と入れ子の左辺)",
+          "result": "refused"
+        },
+        {
+          "tried": "`const o = { g: xs[n] }; o.g(1)` ほか 9 形 (計算した鍵の添字の結果を入れ物・戻り値・引数・`??` に包んで inert の印を消す道)",
+          "result": "hole"
+        }
+      ],
+      "threats": [
+        "T-257"
+      ],
+      "controls": 6,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/checker.ts",
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/emit.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 871,
+        "reason": "draft PR #871",
+        "summary": "欄への代入を 0.17 として足した。先に破って T-257 (inert が入れ物・戻り値・引数・論理演算子に包まれると消える 9 形) を見つけ、refuseInert で塞いだ。ollama.ts の移植は別の周。"
       }
     }
   ]

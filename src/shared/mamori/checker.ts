@@ -78,7 +78,7 @@ export const CAPABILITY_MODULES: ReadonlySet<string> = new Set(
 /** 片方の値をそのまま返す論理演算子 (`a ?? b` `a || b` `a && b`)。inert の値を運ぶ (0.17 · T-257)。 */
 const LOGICAL_OPS: ReadonlySet<string> = new Set(['??', '||', '&&']);
 /** 引数を受けても結果が数・文字列・真偽の値だけになる組み込みの関数 (inert の値を引数に渡してよい —— 結果は呼べる値にならない)。 */
-const SCALAR_GLOBAL_FNS: ReadonlySet<string> = new Set(['Number', 'String', 'Boolean', 'parseInt', 'parseFloat', 'isNaN', 'isFinite']);
+const SCALAR_GLOBAL_FNS: ReadonlySet<string> = new Set(['Number', 'String', 'Boolean']);
 /** 結果が数・文字列・真偽の値だけになる組み込みのメンバの呼び出し (`Math.max(xs[i], 0)` `Object.hasOwn(o, xs[k])`)。 */
 const SCALAR_BUILTIN_OBJECTS: ReadonlySet<string> = new Set(['Math', 'Number']);
 const SCALAR_BUILTIN_MEMBER_CALLS: ReadonlySet<string> = new Set(['Object.hasOwn', 'Array.isArray', 'JSON.stringify']);
@@ -445,7 +445,9 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         if (declared !== null && s.init !== null && carried !== declared) {
           report('M4', s.pos, `${s.name} は印 ${declared} の型ですが、入れる値は印を持ちません`);
         }
-        bindLocal(own, s.name, { vetted: declared ?? carried, authority: 'local', mutable: s.mutable, numeric: s.type?.text === 'number' || (s.type === null && s.init !== null && isNumericKey(s.init, scopes)), owned: !s.mutable && s.init?.kind === 'object', inert: s.init !== null && carriesInert(s.init, scopes) }, s.pos);
+        // Stryker disable next-line OptionalChaining: const (= !mutable) は必ず初期値を持つので、init が null になるのは let だけで、そのとき !mutable が先に偽になり `?.` は評価されない (等価)
+        const owned = !s.mutable && s.init?.kind === 'object';
+        bindLocal(own, s.name, { vetted: declared ?? carried, authority: 'local', mutable: s.mutable, numeric: s.type?.text === 'number' || (s.type === null && s.init !== null && isNumericKey(s.init, scopes)), owned, inert: s.init !== null && carriesInert(s.init, scopes) }, s.pos);
         return;
       }
       case 'destructure': {
@@ -500,7 +502,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         const target = lookup(scopes, s.object);
         if (target === undefined) {
           report('M6', s.pos, `宣言していない名前 ${s.object} の欄へ代入しています`);
-        } else if (target.authority !== 'local' || target.owned !== true) {
+        } else if (target.owned !== true) {
           report('M6', s.pos, `${s.object} の欄へは代入できません —— 書けるのは、この関数の中で \`const ${s.object} = { … }\` と作った物の欄だけです (引数・外の名前・let・組み込みを書き換えると、他のモジュールの判定まで変わる)`);
         }
         // owned な物は印を持たない (`const u: 印の型 = { … }` は入れる値が印を持たないので M4 が先に断る) —— 印の物の欄を別に検める枝は要らない。
@@ -593,11 +595,12 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
 
   /** 結果が数・文字列・真偽の値だけの組み込みの呼び出しか (名前をこのモジュールで隠していないとき)。inert の値を引数に渡してよい。 */
   function scalarResultCall(callee: Expr, scopes: readonly Map<string, Binding>[]): boolean {
-    if (callee.kind === 'ident') return lookup(scopes, callee.name) === undefined && SCALAR_GLOBAL_FNS.has(callee.name);
-    if (callee.kind !== 'member') return false;
-    const root = identName(callee.object);
-    if (root === null || lookup(scopes, root) !== undefined) return false;
-    return SCALAR_BUILTIN_OBJECTS.has(root) || SCALAR_BUILTIN_MEMBER_CALLS.has(`${root}.${callee.prop}`);
+    if (callee.kind !== 'ident' && callee.kind !== 'member') return false;
+    const root = identName(callee.kind === 'member' ? callee.object : callee);
+    // Stryker disable next-line ConditionalExpression,LogicalOperator,BooleanLiteral: 呼ぶ側の根が名前でない呼び出し (`a.b.c(…)` `f().m(…)`) は、この門を外しても次の行の引きが undefined で false のまま下の分岐も false を返す (等価)
+    if (root === null) return false;
+    if (lookup(scopes, root) !== undefined) return false;
+    return callee.kind === 'ident' ? SCALAR_GLOBAL_FNS.has(root) : SCALAR_BUILTIN_OBJECTS.has(root) || SCALAR_BUILTIN_MEMBER_CALLS.has(`${root}.${callee.prop}`);
   }
 
   /** いちばん内側の束縛を書き換える (内側の `let f` が外側の `f` を隠している)。 */

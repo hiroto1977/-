@@ -90,7 +90,7 @@ describe('0.17 T-257 計算した鍵の添字の結果を入れ物・戻り値�
     expect(diag(wrap('  const out = [d];\n  out[0] = xs[n];\n  return out[0](1);')).join('\n')).toMatch(/M6.*配列の添字への代入に入れられません/);
     expect(diag(wrap('  for (const g of xs[n]) {\n    return g(1);\n  }\n  return 0;')).join('\n')).toMatch(/M6.*for の回す相手に入れられません/);
     expect(diag(wrap('  const h = () => xs[n];\n  return 1;')).join('\n')).toMatch(/M6.*arrow の戻り値に入れられません/);
-    expect(diag(wrap('  const a = [...xs[n]];\n  return 1;')).join('\n')).toMatch(/M6/);
+    expect(diag(wrap('  const a = [...xs[n]];\n  return 1;')).join('\n')).toMatch(/M6.*展開に入れられません/);
   });
 
   it('★ 戻り値・呼び出しの引数・new の引数に入れられない', () => {
@@ -110,5 +110,26 @@ describe('0.17 T-257 計算した鍵の添字の結果を入れ物・戻り値�
     expect(diag('export fn f(xs: Array<number>, n: number) -> number {\n  const v = xs[n];\n  if (v > 2) {\n    return v + 1;\n  }\n  return 0;\n}\n')).toEqual([]);
     // 束縛をそのまま返すのは断る (戻り値に包むのと同じ)
     expect(diag('export fn f(xs: Array<number>, n: number) -> number {\n  const v = xs[n];\n  return v;\n}\n').join('\n')).toMatch(/M6.*戻り値に入れられません/);
+  });
+
+  it('★ 外の名前から入った束縛・分割代入・初期値の無い let・arrow が持つ束縛も inert を運ぶ', () => {
+    expect(diag(wrap('  const { call } = xs[n];\n  return call(1);')).join('\n')).toMatch(/M6.*分割代入の相手にできません/);
+    expect(diag(wrap('  const v = xs[n];\n  const h = () => v;\n  return 1;')).join('\n')).toMatch(/M6.*arrow の戻り値に入れられません/);
+    // 初期値の無い let (owned を決める init が null) でも落ちず、通る
+    expect(diag('export fn f(n: number) -> number {\n  let x: number;\n  x = n;\n  return x;\n}\n')).toEqual([]);
+  });
+
+  it('★ 数・文字列・真偽だけになる組み込みへの引数は通り、名前を隠した物・呼ぶ側が名前でない物・根が局所の物は断る', () => {
+    const ok = (call: string): string[] => diag(`export fn f(xs: Array<number>, o: { a: number }, n: number) -> number {\n  const r = ${call};\n  return 1;\n}\n`);
+    for (const call of ['Number(xs[n])', 'String(xs[n])', 'Boolean(xs[n])', 'Math.max(xs[n], 1)', 'Number.isInteger(xs[n])', 'Object.hasOwn(o, xs[n])', 'Array.isArray(xs[n])', 'JSON.stringify(xs[n])']) {
+      expect(ok(call), call).toEqual([]);
+    }
+    // 組み込みの名前をこのモジュールで隠した関数 (結果が呼べる値かもしれない) は断る
+    expect(diag('export fn f(xs: Array<(a: number) => number>, n: number) -> number {\n  const String = (g: (a: number) => number) => g;\n  const h = String(xs[n]);\n  return h(1);\n}\n').join('\n')).toMatch(/M6.*呼び出しの引数に入れられません/);
+    expect(diag('export fn f(xs: Array<(a: number) => number>, n: number) -> number {\n  const Math = { max: (g: (a: number) => number) => g };\n  const h = Math.max(xs[n]);\n  return h(1);\n}\n').join('\n')).toMatch(/M6.*呼び出しの引数に入れられません/);
+    // 局所の物のメンバ・組み込みでないメンバ・呼ぶ側が名前でない呼び出しは、引数に入れられない
+    expect(diag('export fn f(xs: Array<(a: number) => number>, o: { m: (g: (a: number) => number) => number }, n: number) -> number {\n  return o.m(xs[n]);\n}\n').join('\n')).toMatch(/M6.*呼び出しの引数に入れられません/);
+    expect(diag('export fn f(xs: Array<(a: number) => number>, n: number) -> number {\n  return xs[0](xs[n]);\n}\n').join('\n')).toMatch(/M6.*呼び出しの引数に入れられません/);
+    expect(diag('export fn f(xs: Array<(a: number) => number>, n: number) -> number {\n  return Math.hypot.call(xs[n]);\n}\n').join('\n')).toMatch(/M6/);
   });
 });

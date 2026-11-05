@@ -2541,7 +2541,7 @@
       "why": "欄への代入の相手を作った const のオブジェクトに限らない —— 引数・外の名前・組み込みの欄を書き換えられる口を開け直す",
       "edits": [
         {
-          "find": "} else if (target.authority !== 'local' || target.owned !== true) {",
+          "find": "} else if (target.owned !== true) {",
           "replace": "} else if (false) {"
         }
       ]

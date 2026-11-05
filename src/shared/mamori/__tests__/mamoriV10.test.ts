@@ -58,7 +58,7 @@ describe('0.10: ビット演算', () => {
     expect(compile(go('a > > b')).diagnostics.join('\n')).toContain('式が要ります');
     expect(compile(go('a >\n> b')).diagnostics.join('\n')).toContain('式が要ります');
     // 次の行の桁がぴったり続く `>` (行が違えば隣り合いではない)
-    expect(compile(go(`a >\n${' '.repeat(12)}> b`)).diagnostics.join('\n')).toContain('式が要ります');
+    expect(compile(go(`a >\n${' '.repeat(15)}> b`)).diagnostics.join('\n')).toContain('式が要ります');
     expect(compile(go('a >>= b')).diagnostics.join('\n')).toContain('式が要ります');
     expect(compile(go('a <<< b')).diagnostics.join('\n')).toContain('式が要ります');
   });

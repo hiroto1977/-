@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 458
+- ブロック数: 459
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `10cd65de0b3e3556d83eaf7edc0491e30552758144f44ebcf5ffc31ba746f603`
+- 末尾(tip)ハッシュ: `6141e775bb5e4dadb82cb5da29444e40c386e0293f4e305c05fd471110d3d41b`
 - 保護対象: 187 ファイル
 
 ## ブロック
@@ -471,6 +471,7 @@
 | 455 | `be734a38adc10ff5` | `df38428f200f3534` | `89fe56c9db356855` | update vitest.config.ts |
 | 456 | `5f1c1b05db23263b` | `89fe56c9db356855` | `058cc155f65e08f2` | update ci.yml,eslint.config.js,integrity-chain.cjs,mamori-capabilities.json,assistant.mamori,assistant.ts |
 | 457 | `fe6cd77f4cafe069` | `058cc155f65e08f2` | `10cd65de0b3e3556` | update vitest.config.ts |
+| 458 | `e277c293d9364cc6` | `10cd65de0b3e3556` | `6141e775bb5e4dad` | update ast.ts,checker.ts,emit.ts,parser.ts |
 
 ## 保護対象ファイル
 
