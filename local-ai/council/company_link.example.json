@@ -1,0 +1,5 @@
+{"_note": "company_link.json にコピーして使う。enabled=false が既定（未連携）。秘密は db_url ではなく環境変数 COMPANY_DB_URL 推奨。",
+ "enabled": false, "source": "json", "path": "example_company.json", "refresh_sec": 600,
+ "mapping": {"table": "financials", "order_by": "fiscal_year DESC",
+   "columns": {"revenue": "sales", "operating_income": "op_income", "net_income": "net_income", "total_assets": "total_assets",
+               "net_assets": "equity", "liabilities": "liabilities", "cash": "cash", "employees": "headcount", "partners": "vendor_count"}}}

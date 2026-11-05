@@ -427,6 +427,14 @@ const REVIEWED_OUTSIDE_SENDS = [
       + ' 第三者の応答からは来ない。`port` は `buildLoopbackBase` が検めた 10 進ポート。繋がったらすぐ'
       + ' `destroy` し、**1 バイトも送らず**資格情報も載せない (Ollama が外へ公開されていないかの自己点検・T-129)。',
   },
+  {
+    file: 'local-ai/council/web/company.js',
+    needle: "fetch('/api/company')",
+    guard:
+      '評議会の画面が自分のローカルサーバへ企業指標を問い合わせる。送り先は文字列リテラルの相対パス'
+      + ' `/api/company` だけで、ホストはページと同じオリジン（既定は 127.0.0.1 の評議会）から動かない。'
+      + '資格情報も環境変数も載せず、読むのは村の規模の JSON だけ（5 秒間隔）。',
+  },
 ];
 
 /**

@@ -19,6 +19,8 @@ USER = os.environ.get("COUNCIL_USER", "清継")
 WEB = os.path.join(HERE, "web"); THREAD = os.path.join(HERE, "user_thread.md")
 ORG = json.load(open(os.path.join(HERE, "org.json"), encoding="utf-8"))
 P = {p["id"]: p for p in ORG["people"]}
+import company_link
+COMPANY = company_link.CompanyLink(log=lambda m: log_sys(m))
 def kids(pid, tier=None): return [p for p in ORG["people"] if p["parent"] == pid and (tier is None or p["tier"] == tier)]
 COMMON = (f"必ず自然な日本語（ひらがな・カタカナ・漢字）だけで、180字以内で答えてください。中国語・英語の文は書かないでください。"
           f"CEOは人間の{USER}さんです。あなたは{USER}さんの発言を代筆・創作してはいけません。自分の役職の立場だけで話してください。"
@@ -235,6 +237,7 @@ def api_state():
     decs = [d.strip() for d in open(dp, encoding="utf-8").read().split("\n## ") if d.strip()][-5:] if os.path.exists(dp) else []
     return {k: STATE[k] for k in ("status", "topic", "updated", "speaking", "exec")} | {"free_mb": free_mb(), "transcript": STATE["transcript"][-8:],
             "services": {n: port_up(p) for n, (p, _) in SERVICES.items()}, "decisions": decs, "chat": CHAT[-12:], "user": USER,
+            "company": {k: COMPANY.st.get(k) for k in ("linked", "name", "scale", "last_fetch", "error")},
             "guard": {"on": GUARD_ON, "llm": GUARD_LLM, "rejected": list(REJ)[-5:]}}
 
 class H(BaseHTTPRequestHandler):
@@ -246,6 +249,7 @@ class H(BaseHTTPRequestHandler):
     def do_GET(self):
         path = self.path.split("?")[0]
         if path == "/api/state": return self.js(api_state())
+        if path == "/api/company": return self.js(COMPANY.public())
         if path == "/api/org": return self.js({"people": [{k: p[k] for k in ("id", "tier", "name", "title", "dept", "parent", "model")} for p in ORG["people"]], "user": USER})
         if path.startswith("/api/person/"):
             p = P.get(path.rsplit("/", 1)[-1])
@@ -263,6 +267,16 @@ class H(BaseHTTPRequestHandler):
             return self.send(b"forbidden", "text/plain", 403)
         n = int(self.headers.get("Content-Length", "0") or 0)
         if n > 4096: return self.send(b"too large", "text/plain", 413)
+        if self.path == "/api/company/refresh":
+            try: d = json.loads(self.rfile.read(n) or b"{}")
+            except Exception: return self.send(b"bad", "text/plain", 400)
+            if "demo" in d and not COMPANY.set_demo(d.get("demo")): return self.send(b"unknown demo", "text/plain", 400)
+            st = COMPANY.refresh()
+            if d.get("instant"):   # テスト用: 目標まで一気に
+                with COMPANY.lock:
+                    if COMPANY.st["target"]: COMPANY.st["scale"] = dict(COMPANY.st["target"], converged=True)
+                st = COMPANY.public()
+            return self.js(st)
         try: d = json.loads(self.rfile.read(n)); text = str(d.get("text", "")).strip()[:500]
         except Exception: return self.send(b"bad", "text/plain", 400)
         if not text: return self.send(b"empty", "text/plain", 400)
@@ -306,6 +320,7 @@ def start_loop(reason):
 if __name__ == "__main__":
     os.makedirs(os.path.join(HERE, "logs"), exist_ok=True)
     threading.Thread(target=ThreadingHTTPServer(("127.0.0.1", PORT), H).serve_forever, daemon=True).start()
+    threading.Thread(target=COMPANY.run, args=(int(os.environ.get("COMPANY_STEP_SEC", "20")),), daemon=True, name="company-link").start()
     log_sys("AI組織デーモン起動")
     start_loop("起動")
     STALL = int(os.environ.get("COUNCIL_STALL_SEC", str(max(2 * INTERVAL, 3 * TIMEOUT + 60))))
