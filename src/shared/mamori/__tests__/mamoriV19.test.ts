@@ -110,3 +110,48 @@ describe('0.19: ループが運ぶ inert (threat: T-259)', () => {
     expect(diag('  let f = xs[0];\n  f = xs[n];\n  return f();')[0]).toContain('呼び出せません');
   });
 });
+
+describe('0.19: 周をまたぐ規則の境目と、0.18 から残っていた生存の穴を留める', () => {
+  it('外の名前・const・引数への代入は、ループの中でも今までの断り (持ち越しの断りに置き換わらない)', () => {
+    expect(diag('  while (c) {\n    shell = xs[n];\n  }\n  return 1;')[0]).toContain('外の名前 shell へは代入できません');
+    expect(diag('  const k = xs[0];\n  while (c) {\n    k = xs[n];\n  }\n  return 1;')[0]).toContain('k は let ではないので代入できません');
+    expect(diag('  while (c) {\n    u = xs[n];\n  }\n  return 1;')[0]).toContain('u は let ではないので代入できません');
+  });
+
+  it('ループを抜けた後の代入は持ち越さない (深さは出口で戻る)・入れ子を抜けても戻る', () => {
+    expect(diag('  let f = xs[0];\n  for (const y of ys) {\n    n;\n  }\n  f = xs[n];\n  return 1;')).toEqual([]);
+    expect(diag('  let f = xs[0];\n  while (c) {\n    for (const y of ys) {\n      n;\n    }\n    f = xs[n];\n  }\n  return 1;')[0]).toContain(CARRY);
+    expect(diag('  let f = xs[0];\n  while (c) {\n    n;\n  }\n  while (c) {\n    n;\n  }\n  f = xs[n];\n  return 1;')).toEqual([]);
+  });
+
+  it('同じ深さの代入は通る (本体の中で宣言して本体の中で入れる)・深い入れ子の中で宣言して同じ深さで入れる', () => {
+    expect(diag('  while (c) {\n    while (c) {\n      let f = xs[0];\n      f = xs[n];\n    }\n  }\n  return 1;')).toEqual([]);
+  });
+
+  it('while の生成物は本体を 1 段字下げし、閉じ括弧を同じ段で閉じる', () => {
+    const r = compile(go('  let i = 0;\n  while (i < n) {\n    while (c) {\n      i = i + 1;\n    }\n  }\n  return i;'));
+    expect(r.diagnostics).toEqual([]);
+    expect(r.output).toContain('  while (i < n) {\n    while (c) {\n      i = i + 1;\n    }\n  }\n  return i;');
+  });
+
+  it('★ 添字への代入・配列を書き換えるメソッドの断りは、どの形を断ったか名乗る (0.18 の断りの文)', () => {
+    expect(diag('  xs[0] = "evil";\n  return xs;')[0]).toContain('添字への代入の相手にできるのは');
+    expect(diag('  xs.push("evil");\n  return xs;')[0]).toContain('`.push(…)`の相手にできるのは');
+    // 受け手が名前でない形 (欄の中の配列・呼び出しの結果) も断る
+    expect(diag('  const o = { list: ["a"] };\n  o.list.push("b");\n  return o;')[0]).toContain('`.push(…)`の相手にできるのは');
+    expect(diag('  const a = [1];\n  a.slice(0).push(2);\n  return a;')[0]).toContain('`.push(…)`の相手にできるのは');
+  });
+
+  it('★ 計算した鍵の結果は、結果が数・文字列・真偽だけの組み込みにだけ渡せる (それ以外の組み込みのメンバへは渡せない)', () => {
+    // 数を返す組み込み (Math.max)・名前を呼ぶ形 (Number) は通る
+    expect(diag('  const r = Math.max(xs[n], 1);\n  return 1;')).toEqual([]);
+    expect(diag('  const r = Number(xs[n]);\n  return 1;')).toEqual([]);
+    // 値をそのまま返す・組み立てる組み込み (Object.freeze / JSON.parse / Array.from) は inert を包んで返せるので渡せない
+    for (const call of ['Object.freeze(xs[n])', 'JSON.parse(xs[n])', 'Array.from(xs[n])']) {
+      const d = diag(`  const r = ${call};\n  return 1;`);
+      expect(d, call).toHaveLength(1);
+      expect(d[0], call).toContain('[M6]');
+    }
+  });
+});
+
