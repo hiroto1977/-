@@ -1,4 +1,6 @@
 // 企業連携による村の拡張/縮小（/api/company の scale を描画）。未連携なら何も描かない。
+/* global window, document, fetch, addEventListener, setInterval, innerHeight */
+
 import * as THREE from 'three';
 const R0=46;                      // 既存の村（最外周 r≈40）の外側に企業区画の帯を作る
 const KINDS={houses:{c:0xe0b080,roof:0xc0504d},vacant:{c:0x9e9e9e,roof:0x616161},workshops:{c:0x8d6e63,roof:0x37474f},
@@ -51,7 +53,7 @@ function panel(j){place();if(!j.enabled&&!j.linked){P.style.display='block';P.in
    `<div class="sm">村: 住民${s.residents??0} 家${s.houses??0} 空き家${s.vacant??0} 工房${s.workshops??0} 屋台${s.stalls??0} 倉庫${s.warehouses??0} 荒れ地${s.wasteland??0} 区画${s.plots??0}</div>`+
    `<div class="sm">最終取得: ${j.last_fetch||'—'}</div>`}
 let lastKey='';async function poll(){try{const j=await (await fetch('/api/company')).json();window.__company=j;panel(j);
-  const s=j.linked?j.scale:null,key=JSON.stringify(s);if(key!==lastKey){lastKey=key;apply(s)}}catch(e){}}
+  const s=j.linked?j.scale:null,key=JSON.stringify(s);if(key!==lastKey){lastKey=key;apply(s)}}catch{return}}
 poll();setInterval(poll,5000);window.__companyCount=()=>Object.fromEntries(Object.entries(items).map(([k,L])=>[k,L.filter(g=>g.userData.t).length]));
 // 帯の外周（全体カメラ・ミニマップ・霧・ズーム上限を規模に合わせる）
 setInterval(()=>{const ext=curR>0.5?R0+curR:0;window.__companyExtent=ext;const k=Math.max(1,Math.max(ext,1)/50);
