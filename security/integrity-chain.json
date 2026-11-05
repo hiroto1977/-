@@ -3892,6 +3892,14 @@
       "leafCount": 193,
       "note": "update integrity-chain.cjs,mamori-capabilities.json,frameGuard.mamori,frameGuard.ts,frameGuardHost.ts",
       "hash": "e9f3195201444c6fad4d302586d013ba38e555469f6f9e36de2bea718c1bd548"
+    },
+    {
+      "index": 462,
+      "prevHash": "e9f3195201444c6fad4d302586d013ba38e555469f6f9e36de2bea718c1bd548",
+      "merkleRoot": "eb8939bfa5f17b8d2bebe6fee28661a84802297e7c83226d0964d47148620fd0",
+      "leafCount": 193,
+      "note": "update frameGuard.mamori,frameGuard.ts",
+      "hash": "ef0f4a4edf8c4983d45744224d2beb104d0f9353916f2405cd09e31995a010e1"
     }
   ],
   "tipManifest": {
@@ -4009,8 +4017,8 @@
     "src/renderer/security/dataCryptoHost.ts": "a7ed4d4615d7d7e60d4b04730dc6f201ceabc5e853cc264d89a923f3c0b2e9e8",
     "src/renderer/security/egressStepUp.mamori": "f754bdef18ac41bbc75adf6e5b2de767c1a05f73ae0df21a3343f25325d418bf",
     "src/renderer/security/egressStepUp.ts": "7b3e334b3fd493c0021140908f744ffc06f5eef976fcdacb2642e15bedc11afd",
-    "src/renderer/security/frameGuard.mamori": "5af1eeace337c96fc22a40bf4964dbfc73cbbcfca61b2a3ca2bcc8e937d92ff6",
-    "src/renderer/security/frameGuard.ts": "9b3e02caacdba12784903715d286947aa590b00dbd7700334b572cee056a6669",
+    "src/renderer/security/frameGuard.mamori": "13ce9de6cd9b24300a3052bf70214e174535934597a5c9ca4b016f9da5fc3e78",
+    "src/renderer/security/frameGuard.ts": "6b003589b08a3a8fddd01cf6e5f280892df19e251d5bf13b0a714d48bee57416",
     "src/renderer/security/frameGuardHost.ts": "6046815143cea18c2f49a37a82ef8ecd872a63d694fa9953dfd051634a6dad32",
     "src/renderer/security/lockWorkspace.ts": "b1e7210a61ed100c2bae43359482eaa696ad367f63a25ec463ab0ed44477aca7",
     "src/renderer/security/mnemonic.ts": "115603b18fe19a6bd651e9d7b55d6afcffa8f9695eaa1ef522b67a1b1fe71c2a",

@@ -45,7 +45,7 @@ export function isFramed(w: Window = hostWindow()): boolean {
   try {
     // 別オリジンの親でも `top` 自体は読める (中身が読めないだけ) が、環境によっては例外になる。読めない = 誰かに囲まれている、と見なす。
     return w.top !== w.self;
-  } catch (e) {
+  } catch (_e) {
     return true;
   }
 }
