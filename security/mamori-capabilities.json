@@ -108,6 +108,14 @@
       "gates": [],
       "sinks": []
     },
+    "src/renderer/security/frameGuard.mamori": {
+      "externals": [
+        "pure ./frameGuardHost: hostWindow, hostStyle"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
     "src/renderer/vettedSinks.mamori": {
       "externals": [
         "sink global: window"

@@ -160,6 +160,8 @@
 /src/renderer/security/bip39-wordlist.ts @hiroto1977
 /src/renderer/security/dataCrypto.ts @hiroto1977
 /src/renderer/security/frameGuard.ts @hiroto1977
+/src/renderer/security/frameGuard.mamori @hiroto1977
+/src/renderer/security/frameGuardHost.ts @hiroto1977
 /src/renderer/security/lockWorkspace.ts @hiroto1977
 /src/renderer/security/mnemonic.ts @hiroto1977
 /src/renderer/security/vault.ts @hiroto1977
