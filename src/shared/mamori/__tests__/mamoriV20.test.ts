@@ -38,6 +38,12 @@ describe('0.20: finally を足す', () => {
     expect(c.output).not.toContain('finally');
   });
 
+  it('finally の本体は try / catch の本体と同じ深さで字下げされ、閉じ括弧は try と揃う', () => {
+    const r = compile(go('  try {\n    xs.length;\n  } catch (_e) {\n    ys.length;\n  } finally {\n    n;\n  }\n  return 1;'));
+    expect(r.diagnostics).toEqual([]);
+    expect(r.output).toContain('  try {\n    xs.length;\n  } catch (_e) {\n    ys.length;\n  } finally {\n    n;\n  }\n  return 1;');
+  });
+
   it('catch も finally も無い try は断る (何も囲まない)', () => {
     const d = diag('  try {\n    xs.length;\n  }\n  return 1;');
     expect(d).toHaveLength(1);
