@@ -97,7 +97,7 @@ export type Stmt =
   | { readonly kind: 'destructure'; readonly fields: readonly { readonly key: string; readonly local: string }[]; readonly type: TypeRef | null; readonly init: Expr; readonly comments: Comments; readonly pos: Pos }
   | { readonly kind: 'return'; readonly value: Expr | null; readonly comments: Comments; readonly pos: Pos }
   | { readonly kind: 'if'; readonly test: Expr; readonly then: readonly Stmt[]; readonly otherwise: readonly Stmt[] | null; readonly comments: Comments; readonly pos: Pos }
-  | { readonly kind: 'try'; readonly body: readonly Stmt[]; /** `catch (e)` の束縛名 (0.12)。無ければ null。 */ readonly param: string | null; readonly handler: readonly Stmt[]; readonly comments: Comments; readonly pos: Pos }
+  | { readonly kind: 'try'; readonly body: readonly Stmt[]; /** `catch (e)` の束縛名 (0.12)。無ければ null。 */ readonly param: string | null; /** `catch` の本体 (0.20 から `finally` だけの try では null)。 */ readonly handler: readonly Stmt[] | null; /** `finally` の本体 (0.20 · MG-039)。無ければ null。 */ readonly finalizer: readonly Stmt[] | null; readonly comments: Comments; readonly pos: Pos }
   | { readonly kind: 'assign'; readonly target: string; readonly value: Expr; readonly comments: Comments; readonly pos: Pos }
   /**
    * 添字への代入 `out[i] = v` (0.12)。欄への代入 (`out.name = v`) は無い。

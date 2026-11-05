@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.19"
+    "version": "0.20"
   },
   "constructs": {
     "class": {
@@ -112,9 +112,10 @@
       "since": "0.12"
     },
     "finally": {
-      "decision": "feature",
+      "decision": "added",
       "why": "後片付け (鍵を消す・錠を外す) で要る。",
-      "risk": "finally の中の return が try の return を上書きする —— finally の中の return を断る。"
+      "risk": "finally の中の return が try の return を上書きする —— finally の中の return を断る。",
+      "since": "0.20"
     },
     "optional-param": {
       "decision": "feature",
@@ -2427,6 +2428,52 @@
         "pr": null,
         "reason": "draft PR を作る",
         "summary": "出力インターセプター (outboundContentGate.ts · 283 行) を Mamori で書き直した (port)。端末の外へ出る本文に資格情報・マイナンバー・カード番号の形が在れば送らない関門。正規表現の exec を回す所は 0.19 の while。再帰する walk は先に空の関数で宣言して後で据え、Luhn の桁の表は算術に、種類の名前は switch に替えた。非 null の断定・C 風 for・テンプレート・複合代入も書き直しただけで、組み上がる文字列は 1 字も変えず、既存の検査は編集なしで緑。変異検査 100%。"
+      }
+    },
+    {
+      "id": "MG-039",
+      "date": "2026-11-05",
+      "kind": "feature",
+      "target": "finally",
+      "pickedBy": "brief",
+      "briefPick": "feature:finally",
+      "version": "0.20",
+      "features": [
+        "`try { … } finally { … }` と `try { … } catch (e) { … } finally { … }` —— catch か finally の少なくとも片方が要る。finally の中の return と、外のループ・switch へ抜ける break / continue は断つ (throw と、finally の中で作ったループ・switch の中の break / continue と、arrow の return は置ける)"
+      ],
+      "added": [
+        "finally"
+      ],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "`try { throw … } finally { return v; }` (関門が拒むために投げた例外を finally の return が飲む・try の return を上書きする) と、ループの中の `finally { break; }` / `continue;` (外のループへ抜けて例外を捨てる)",
+          "result": "refused"
+        },
+        {
+          "tried": "`let f = xs[n]; try { f = u; … } finally { f(); }` (try の途中で例外が飛んで代入に届かないまま finally が走る・inert が粘るか) と、finally の中で inert を代入した let を後ろで呼ぶ形",
+          "result": "refused"
+        },
+        {
+          "tried": "finally の本体で宣言していない名前・禁じたメンバ・inert の呼び出し・印の無い値を危ない口へ・ループの外の let へ inert を入れる (T-259 が finally に及ぶか)・try で宣言した名前や catch の束縛を finally から読む",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 4,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/checker.ts",
+          "src/shared/mamori/emit.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": null,
+        "reason": "draft PR を作る",
+        "summary": "finally を 0.20 として足した。足す前に破り、finally の return / break / continue が try の戻り値と例外を上書きして関門の拒みを飲む道を見つけ、足すと同時に断った (既存の穴ではなく新構文の穴なので T-id は付けない)。inert は粘るので try の途中の例外で代入に届かない姿も finally の検めに入る (既存の catch と同じ)。変異検査 100% (初回の生存 1 件は finally の本体の字下げを検査していなかった本物の穴で、字面の完全一致を足して潰した)。lockWorkspace.ts の移植は別の周。"
       }
     }
   ]
