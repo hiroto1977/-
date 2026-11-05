@@ -58,3 +58,9 @@ Three.js（`web/vendor` に同梱、ビルド不要）のボクセル風の村�
 `company_link.py`。`company_link.example.json` を `company_link.json` にコピーし `enabled: true`。source は json / csv / sqlite / sql（SQLAlchemy URL は環境変数 `COMPANY_DB_URL`）。
 読み取り専用（SELECT/WITH 1文のみ・SQLiteは mode=ro + query_only）。`GET /api/company`、`POST /api/company/refresh`（`{"demo":"large|small|deficit|example|off"}` でデモ切替、メモリ上のみ）。
 サンプル（すべて架空）: `example_company.json`, `examples/*.json`。テスト: `python3 test_company_link.py`。
+
+## Claude（相談役・議長）
+Claude Code CLI にログイン済みのときだけ、会議の最後に Claude が議長講評を書き、チャットで相談役 Claude と1対1で話せます。CLI が無い／未ログインのときは `balanced` モデルが「代理議長」「代理」として答え、会議は止まりません（村の Claude ラベルに「・未ログイン」などと出ます）。
+呼び出しはツール全無効・MCP なし・空の作業ディレクトリ・入力6000字/出力1200字・1時間あたり回数制限つきです。
+環境変数: `COUNCIL_CLAUDE=0`（無効化）、`COUNCIL_CLAUDE_BIN`、`COUNCIL_CLAUDE_MAX_PER_HOUR`（既定6）、`COUNCIL_CLAUDE_TIMEOUT`（既定120秒）。
+`advice_inbox.md` の外部助言は現在 Grok のみです（掲示板では「☁️ クラウドの助言（Grok）」）。テスト: `python3 test_claude_chair.py`。
