@@ -114,6 +114,7 @@ export type Stmt =
   | { readonly kind: 'throw'; readonly value: Expr; readonly comments: Comments; readonly pos: Pos }
   /** `for (const x of xs) { … }` (0.2)。回す変数は印を運ばない (印の配列でも、取り出した 1 つは素の値として扱う —— 失敗は閉じる向き)。 */
   | { readonly kind: 'for'; readonly name: string; readonly iterable: Expr; readonly body: readonly Stmt[]; readonly comments: Comments; readonly pos: Pos }
+  | { readonly kind: 'while'; readonly test: Expr; readonly body: readonly Stmt[]; readonly comments: Comments; readonly pos: Pos }
   /** `break;` / `continue;` (0.2)。置けるのは for の中 (break は switch の中でも)。 */
   | { readonly kind: 'jump'; readonly word: 'break' | 'continue'; readonly comments: Comments; readonly pos: Pos }
   /** `switch (式) { case …: … }` (0.2)。どの case の本体も return / throw / break で終わる (次の case へ落ちる形を書けない)。 */

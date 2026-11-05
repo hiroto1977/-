@@ -155,6 +155,8 @@ function stmt(s: Stmt, depth: number): string[] {
       return [...head, `${ind}${s.word};`];
     case 'for':
       return [...head, `${ind}for (const ${s.name} of ${expr(s.iterable)}) {`, ...block(s.body, depth + 1), `${ind}}`];
+    case 'while':
+      return [...head, `${ind}while (${expr(s.test)}) {`, ...block(s.body, depth + 1), `${ind}}`];
     case 'switch': {
       const inner = IND.repeat(depth + 1);
       const cases = s.cases.flatMap((c) => [

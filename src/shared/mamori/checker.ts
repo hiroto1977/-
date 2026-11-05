@@ -240,6 +240,8 @@ interface Binding {
    * 他のモジュールの関門の判定まで変わる。
    */
   readonly owned?: boolean;
+  /** `let` を宣言した場所のループの深さ (0.19 · T-259)。いまのループの深さより浅ければ、その名前はループの外で宣言された物で、周をまたいで値を運ぶ。 */
+  readonly depth?: number;
   /**
    * 計算した鍵の添字から来た値か (0.12 · T-255)。呼び出し・`new`・メンバ・次の添字の相手にできない。
    * `const f = x[k]; f(…)` の洗浄を塞ぐ。一度付いた印は、別の値を入れても残す (失敗は閉じる)。
@@ -261,6 +263,12 @@ function identName(e: Expr): string | null {
 
 export function checkModule(file: string, module: Module, table: ProjectTable): MamoriDiagnostic[] {
   const out: MamoriDiagnostic[] = [];
+  /**
+   * いま検めているループ(`for` / `while`)の入れ子の深さ。`let` はこの深さを覚え、ループの外で宣言した名前へ、本体の末尾で
+   * inert な値を入れる形を断つ。本体は先頭から 1 度しか検めないので、次の周の先頭の使い方は、その値を受ける前の姿で検め終わっている (0.19 · T-259)。
+   */
+  let loopDepth = 0;
+
   const report = (rule: MamoriDiagnostic['rule'], pos: { line: number; col: number }, message: string): void => {
     out.push({ file, line: pos.line, col: pos.col, rule, message });
   };
@@ -441,6 +449,12 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     for (const s of stmts) checkStmt(s, chain, own, ctx);
   }
 
+  function checkLoopBody(body: readonly Stmt[], bodyScopes: Map<string, Binding>[], ctx: Ctx): void {
+    loopDepth++;
+    checkBlock(body, bodyScopes, ctx);
+    loopDepth--;
+  }
+
   function checkStmt(s: Stmt, scopes: Map<string, Binding>[], own: Map<string, Binding>, ctx: Ctx): void {
     switch (s.kind) {
       case 'let': {
@@ -452,7 +466,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         }
         // Stryker disable next-line OptionalChaining: const (= !mutable) は必ず初期値を持つので、init が null になるのは let だけで、そのとき !mutable が先に偽になり `?.` は評価されない (等価)
         const owned = !s.mutable && (s.init?.kind === 'object' || s.init?.kind === 'array');
-        bindLocal(own, s.name, { vetted: declared ?? carried, authority: 'local', mutable: s.mutable, numeric: s.type?.text === 'number' || (s.type === null && s.init !== null && isNumericKey(s.init, scopes)), owned, inert: s.init !== null && carriesInert(s.init, scopes) }, s.pos);
+        bindLocal(own, s.name, { vetted: declared ?? carried, authority: 'local', mutable: s.mutable, numeric: s.type?.text === 'number' || (s.type === null && s.init !== null && isNumericKey(s.init, scopes)), owned, inert: s.init !== null && carriesInert(s.init, scopes), depth: loopDepth }, s.pos);
         return;
       }
       case 'destructure': {
@@ -484,7 +498,13 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         }
         if (target.authority !== 'local') report('M6', s.pos, `外の名前 ${s.target} へは代入できません`);
         else if (target.mutable !== true) report('M6', s.pos, `${s.target} は let ではないので代入できません (const・引数・回す変数・関数の名前は書き換えない)`);
-        else rebind(scopes, s.target, target.inert === true || carriesInert(s.value, scopes));
+        else {
+          // 宣言した場所がいまのループより浅い = ループの外の名前 (let は必ず depth を持つ)。
+          if (target.inert !== true && target.depth! < loopDepth && carriesInert(s.value, scopes)) {
+            report('M6', s.pos, `ループの外で宣言した ${s.target} へ、計算した鍵の添字の結果を代入できません —— 本体は先頭から 1 度しか検めないので、次の周の先頭の使い方 (呼び出し・メンバ・戻り値) が、この値を受けても検めた後になります (ループの中で宣言した名前に入れます)`);
+          }
+          rebind(scopes, s.target, target.inert === true || carriesInert(s.value, scopes));
+        }
         if (target.vetted !== null && provenance(s.value, scopes) !== target.vetted) {
           report('M5', s.pos, `印 ${target.vetted} を持つ ${s.target} を、印の無い値で上書きしています (印の洗浄)`);
         }
@@ -549,9 +569,13 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         // 回す変数は印を運ばない (印の配列から取り出しても素の値 —— 失敗は閉じる向き)。
         const loopVar = new Map<string, Binding>();
         bindLocal(loopVar, s.name, { vetted: null, authority: 'local' }, s.pos);
-        checkBlock(s.body, [...scopes, loopVar], ctx);
+        checkLoopBody(s.body, [...scopes, loopVar], ctx);
         return;
       }
+      case 'while':
+        checkExpr(s.test, scopes, ctx);
+        checkLoopBody(s.body, scopes, ctx);
+        return;
       case 'switch':
         checkExpr(s.test, scopes, ctx);
         for (const c of s.cases) {
@@ -601,6 +625,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
 
   /** 結果が数・文字列・真偽の値だけの組み込みの呼び出しか (名前をこのモジュールで隠していないとき)。inert の値を引数に渡してよい。 */
   function scalarResultCall(callee: Expr, scopes: readonly Map<string, Binding>[]): boolean {
+    // Stryker disable next-line ConditionalExpression: 型の絞り込みのためだけに在る —— ident / member 以外の呼び出しは identName が null を返し、次の門が同じ false を返す (等価)
     if (callee.kind !== 'ident' && callee.kind !== 'member') return false;
     const root = identName(callee.kind === 'member' ? callee.object : callee);
     // Stryker disable next-line ConditionalExpression,LogicalOperator,BooleanLiteral: 呼ぶ側の根が名前でない呼び出し (`a.b.c(…)` `f().m(…)`) は、この門を外しても次の行の引きが undefined で false のまま下の分岐も false を返す (等価)
@@ -657,7 +682,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
    * ほかの関数 (と、その配列を読む関門) の判定が変わる。宣言していない名前は checkExpr が別に断る。
    */
   function refuseSharedReceiver(target: Expr, scopes: readonly Map<string, Binding>[], what: string): void {
-    const b = target.kind === 'ident' ? lookup(scopes, target.name) : undefined;
+    const b = bindingOf(target, scopes);
     if (target.kind === 'ident' && b === undefined) return;
     if (b?.owned === true) return;
     report('M6', target.pos, `${what}の相手にできるのは、この関数の中で \`const a = [ … ]\` と作った配列だけです —— 引数・モジュール直下の const・import した物を書き換えると、その配列を読む別の関数 (許可リストの関門) の判定が変わります`);
@@ -681,7 +706,9 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       }
       return;
     }
-    if (callee.kind === 'member' && MUTATING_METHODS.has(callee.prop)) refuseSharedReceiver(callee.object, scopes, `\`.${callee.prop}(…)\``);
+    // Stryker disable next-line ConditionalExpression: 型の絞り込みのためだけに在る —— member でない呼び出しは prop を持たず、次の行の MUTATING_METHODS.has(undefined) が false を返す (等価)
+    const viaMember = callee.kind === 'member' ? callee : null;
+    if (viaMember !== null && MUTATING_METHODS.has(viaMember.prop)) refuseSharedReceiver(viaMember.object, scopes, `\`.${viaMember.prop}(…)\``);
     if (callee.kind === 'ident') {
       // 名前を直に呼ぶ形: 宣言していない名前の検め (M6) だけを通す (印を受ける関数を呼ぶのは正しい使い方)。
       if (b === undefined && !isConstructibleBuiltin(callee, scopes)) checkExpr(callee, scopes, ctx);

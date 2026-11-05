@@ -2505,8 +2505,8 @@
       "why": "代入で inert を更新しない —— let f = xs[0]; f = xs[n]; f() の洗浄を開け直す",
       "edits": [
         {
-          "find": "else rebind(scopes, s.target, target.inert === true || carriesInert(s.value, scopes));",
-          "replace": "else rebind(scopes, s.target, false);"
+          "find": "rebind(scopes, s.target, target.inert === true || carriesInert(s.value, scopes));",
+          "replace": "rebind(scopes, s.target, false);"
         }
       ]
     },
@@ -2613,7 +2613,7 @@
       "why": "配列を書き換えるメソッドの受け手を検めない —— `HOSTS.push(x)` が通る",
       "edits": [
         {
-          "find": "if (callee.kind === 'member' && MUTATING_METHODS.has(callee.prop)) refuseSharedReceiver(callee.object, scopes, `\\`.${callee.prop}(…)\\``);",
+          "find": "if (viaMember !== null && MUTATING_METHODS.has(viaMember.prop)) refuseSharedReceiver(viaMember.object, scopes, `\\`.${viaMember.prop}(…)\\``);",
           "replace": ""
         }
       ]
@@ -2627,6 +2627,42 @@
         {
           "find": "(s.init?.kind === 'object' || s.init?.kind === 'array')",
           "replace": "s.init?.kind === 'object'"
+        }
+      ]
+    },
+    {
+      "id": "A-592",
+      "threat": "T-259",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "ループの外の let へ inert を入れる形を検めない —— 次の周の先頭の f() が通る",
+      "edits": [
+        {
+          "find": "target.depth! < loopDepth && carriesInert",
+          "replace": "false && carriesInert"
+        }
+      ]
+    },
+    {
+      "id": "A-593",
+      "threat": "T-259",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "ループの本体を検める間、深さを数え上げない —— 外の let への持ち越しを見逃す",
+      "edits": [
+        {
+          "find": "    loopDepth++;\n",
+          "replace": ""
+        }
+      ]
+    },
+    {
+      "id": "A-594",
+      "threat": "T-259",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "while の本体を検めない —— while の中のどんな形も通る",
+      "edits": [
+        {
+          "find": "        checkExpr(s.test, scopes, ctx);\n        checkLoopBody(s.body, scopes, ctx);",
+          "replace": "        checkLoopBody([], scopes, ctx);"
         }
       ]
     }

@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 460
+- ブロック数: 461
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `65d68b9a92bd1a2273ed878d14fa65a650f66c4c777aa3276e24ff762087a9fe`
+- 末尾(tip)ハッシュ: `9b1216e296aea62c8d3bf93191ad69f5b6a00648169cf45d4c0e6a0a8c92c983`
 - 保護対象: 191 ファイル
 
 ## ブロック
@@ -473,6 +473,7 @@
 | 457 | `fe6cd77f4cafe069` | `058cc155f65e08f2` | `10cd65de0b3e3556` | update vitest.config.ts |
 | 458 | `7fafccfcae7697e9` | `10cd65de0b3e3556` | `9dbcb7734134e063` | update grok.json,settings.json,integrity-chain.cjs |
 | 459 | `f4f1d648e5a82536` | `9dbcb7734134e063` | `65d68b9a92bd1a22` | update integrity-chain.cjs,mamori-capabilities.json,ast.ts,checker.ts,emit.ts,parser.ts |
+| 460 | `8c65471675c69679` | `65d68b9a92bd1a22` | `9b1216e296aea62c` | update ast.ts,checker.ts,emit.ts,parser.ts |
 
 ## 保護対象ファイル
 

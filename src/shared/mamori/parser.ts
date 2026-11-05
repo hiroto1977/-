@@ -438,9 +438,21 @@ export function parse(file: string, src: string): Module {
     }
     if (isW('break') || isW('continue')) {
       const word = next().text as 'break' | 'continue';
-      if (word === 'continue' ? loops <= 0 : breakables <= 0) fail(t, `\`${word}\` は ${word === 'continue' ? 'for' : 'for か switch'} の中にだけ置けます`);
+      if (word === 'continue' ? loops <= 0 : breakables <= 0) fail(t, `\`${word}\` は ${word === 'continue' ? 'for か while' : 'for か while か switch'} の中にだけ置けます`);
       expectP(';');
       return { kind: 'jump', word, comments: cs, pos: t.pos };
+    }
+    if (isW('while')) {
+      next();
+      expectP('(');
+      const test = expr();
+      expectP(')');
+      loops++;
+      breakables++;
+      const body = block();
+      loops--;
+      breakables--;
+      return { kind: 'while', test, body, comments: cs, pos: t.pos };
     }
     if (isW('for')) {
       next();
@@ -966,6 +978,8 @@ const RESERVED = new Set([
   'throw', 'for', 'of', 'break', 'continue', 'switch', 'case', 'default', 'field', 'type', 'interface',
   // 0.16 (MG-028)
   'instanceof',
+  // 0.19 (MG-036)
+  'while',
 ]);
 
 function describe(t: Tok): string {

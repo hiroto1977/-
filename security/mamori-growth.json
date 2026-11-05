@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.18"
+    "version": "0.19"
   },
   "constructs": {
     "class": {
@@ -33,9 +33,10 @@
       "since": "0.15"
     },
     "while": {
-      "decision": "feature",
+      "decision": "added",
       "why": "読み進める走査 (字句解析器ほか) に要る。",
-      "risk": "止まらない形はコンパイラでは見分けられない —— 来歴の規則には触れないが、上限のある for…of で書けるならそちらを先に選ぶ。"
+      "risk": "止まらない形はコンパイラでは見分けられない —— 来歴の規則には触れないが、上限のある for…of で書けるならそちらを先に選ぶ。",
+      "since": "0.19"
     },
     "c-for": {
       "decision": "rewrite",
@@ -2294,6 +2295,54 @@
         "pr": 871,
         "reason": null,
         "summary": "Ollama の接続先判定・版の比較・モデル一覧とエラーの読み (ollama.ts · 898 行) を Mamori で書き直した (port)。Date と JSON の欄読みは host 壁 ollamaHost.ts に 3 関数だけ置き、ollama.ts は名前を戻して再 export するだけの入口にした。as・テンプレート・添字を書き直しただけで、組み上がる文字列は 1 字も変えず、既存の ollama 系の検査は編集なしで緑。版の比較は再帰をやめて数えて回す形にした (第三者が名乗る版に「.」を何万個も並べても落ちない)。"
+      }
+    },
+    {
+      "id": "MG-036",
+      "date": "2026-11-05",
+      "kind": "feature",
+      "target": "while",
+      "pickedBy": "brief",
+      "briefPick": "feature:while",
+      "version": "0.19",
+      "features": [
+        "`while (条件) { … }` —— 本体の break / continue は for と同じ。do … while は足さない (書き直せる)。ループの外で宣言した let へ、新しく inert になる値 (計算した鍵の添字の結果) を代入する形は、for と while の両方で断つ"
+      ],
+      "added": [
+        "while"
+      ],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "`let f = xs[0]; for (…) { f(); f = xs[n]; }` と f.length / return f / { a: f } (本体の末尾で入れた計算した鍵の結果を、次の周の先頭で呼ぶ・読む・包む道 —— 足す前の for で 3 形とも通った)",
+          "result": "hole"
+        },
+        {
+          "tried": "while の本体で印の洗浄 (`v = u`)・const への代入・印の無い値を危ない口へ・条件に禁じたメンバ / 宣言していない名前 / inert の呼び出し (for と同じ規則が効くか)",
+          "result": "refused"
+        },
+        {
+          "tried": "break / continue をループの外・arrow をまたいで置く・`do { } while (c)`・変数名 `while` (構文の抜け道)",
+          "result": "refused"
+        }
+      ],
+      "threats": [
+        "T-259"
+      ],
+      "controls": 4,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/checker.ts",
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/emit.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": null,
+        "reason": "draft PR を作る",
+        "summary": "while を 0.19 として足した。足す前に破り、while ではなく for に既にあった穴 (ループの外の let へ本体の末尾で入れた inert を次の周の先頭で使う · T-259) を見つけて塞いだ。止まらない形は検めない (来歴の規則の外・docs に記載)。frameGuard.ts / outboundContentGate.ts の移植は別の周。"
       }
     }
   ]

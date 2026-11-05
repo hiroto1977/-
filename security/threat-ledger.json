@@ -4685,6 +4685,39 @@
           "test": "この関数の中で作った配列は、添字の代入もメソッドも通る"
         }
       ]
+    },
+    {
+      "id": "T-259",
+      "found": "2026-11-05",
+      "foundBy": "MG-036 (while を足す前に破る)。`while` を足す前に、本体を先頭から 1 度しか検めない作りがループの周回をまたぐ値を見落とさないかを試し、**既存の `for` に既に穴が在った**: ループの外で宣言した `let f = xs[0];` に、本体の末尾で `f = xs[n];` (計算した鍵の添字の結果 = inert) を入れると、次の周の先頭の `f()` / `f.length` / `return f` は、入れる前の姿で検め終わっていて 3 形とも通った。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "守りの層を書く言語 Mamori が、ループの外で宣言した let へ本体の末尾で入れた inert (計算した鍵の添字の結果) を、次の周の先頭の呼び出し・メンバ・戻り値で使う形を通し、実行時に `x[\"constructor\"]` が選んだ関数を関門の外から呼べる",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: ループ (for / 0.19 で足した while) の本体を検める間、本体が始まる直前の scopes の長さを積み (loopBases)、ループの外で宣言した let へ、新しく inert になる値 (計算した鍵の添字の結果・それを運ぶ式) を代入する形を断つ (M6)。ループの中で宣言した名前は周ごとに宣言し直すので通す・既に inert の名前と inert でない値の代入は今までどおり。入れ子のループは最も内側を基準にし、ループの中で作った arrow の本体からの代入も同じ。実物の Mamori 28 本は 1 本も影響を受けなかった。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV19.test.ts",
+        "test": "★ ループの外の let へ、本体の末尾で計算した鍵の結果を入れて、次の周の先頭で使う形を断つ (for) (threat: T-259)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV19.test.ts",
+          "test": "★ while も同じ (threat: T-259)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV19.test.ts",
+          "test": "★ 別の名前を経由しても (f = g の連鎖) 同じ名前で断つ・条件の片方でも (threat: T-259)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV19.test.ts",
+          "test": "★ 入れ子のループ・arrow の中からの代入も、外の名前なら断つ (threat: T-259)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV19.test.ts",
+          "test": "ループの中で宣言した名前へは入れられる (周ごとに宣言し直すので持ち越さない)・字面の鍵は inert ではない"
+        }
+      ]
     }
   ],
   "huntBacklog": [
