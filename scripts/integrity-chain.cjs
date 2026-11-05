@@ -660,6 +660,7 @@ const PROTECTED = [
   // emotions / skills と web-shim が読む (どちらも保護対象ではない) が、中身は**第三者の文が
   // AI へ届く前の唯一の関門**で、規則を 1 本消しても 0 件のまま緑に見える側なので入れる。
   'src/shared/actionTier.ts',          // action の段階の台帳 (無い action は external-write へ倒す fail closed)
+  'src/shared/actionTier.mamori',      // 同じ物の元 (Mamori · 2026-11-05 · MG-042)
   'src/shared/outboundContentGate.ts', // 出力インターセプター (資格情報 / マイナンバー / カード番号の形を外へ出さない)
   'src/shared/outboundContentGate.mamori', // 同じ物の元 (Mamori · 2026-11-05 · MG-038)
   'src/shared/promptInjection.ts',     // 入力の無害化 (第三者の文に混ざった AI への指示の形)
