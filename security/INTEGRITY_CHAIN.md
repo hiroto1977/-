@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 463
+- ブロック数: 464
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `ef0f4a4edf8c4983d45744224d2beb104d0f9353916f2405cd09e31995a010e1`
-- 保護対象: 193 ファイル
+- 末尾(tip)ハッシュ: `7601f3c81040a4a761a09e20e15577a56cb853317726d3959524007f80573a84`
+- 保護対象: 194 ファイル
 
 ## ブロック
 
@@ -476,6 +476,7 @@
 | 460 | `8c65471675c69679` | `65d68b9a92bd1a22` | `9b1216e296aea62c` | update ast.ts,checker.ts,emit.ts,parser.ts |
 | 461 | `d13edd3153335f50` | `9b1216e296aea62c` | `e9f3195201444c6f` | update integrity-chain.cjs,mamori-capabilities.json,frameGuard.mamori,frameGuard.ts,frameGuardHost.ts |
 | 462 | `eb8939bfa5f17b8d` | `e9f3195201444c6f` | `ef0f4a4edf8c4983` | update frameGuard.mamori,frameGuard.ts |
+| 463 | `87d50668f528501d` | `ef0f4a4edf8c4983` | `7601f3c81040a4a7` | update integrity-chain.cjs,mamori-capabilities.json,outboundContentGate.mamori,outboundContentGate.ts |
 
 ## 保護対象ファイル
 
@@ -641,6 +642,7 @@
 - `src/shared/ollamaCore.mamori`
 - `src/shared/ollamaCore.ts`
 - `src/shared/ollamaHost.ts`
+- `src/shared/outboundContentGate.mamori`
 - `src/shared/outboundContentGate.ts`
 - `src/shared/privateTarget.mamori`
 - `src/shared/privateTarget.ts`

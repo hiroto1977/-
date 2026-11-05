@@ -2386,6 +2386,48 @@
         "reason": "draft PR を作る",
         "summary": "枠の中では描画しない関門 (frameGuard.ts · 95 行) を Mamori で書き直した (port)。子を消す繰り返しは 0.19 の while。window と style.cssText の口だけ host 壁 frameGuardHost.ts に置いた。textContent と href の代入は createTextNode と setAttribute に替え (どちらも markup にならない)、既存の検査は編集なしで緑。変異検査 100%。"
       }
+    },
+    {
+      "id": "MG-038",
+      "date": "2026-11-05",
+      "kind": "port",
+      "target": "src/shared/outboundContentGate.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/shared/outboundContentGate.ts",
+      "version": "0.19",
+      "features": [],
+      "added": [],
+      "rewrite": [],
+      "ported": [
+        "src/shared/outboundContentGate.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "検査の表を添字で引く形 —— DOUBLED[d] / FINDING_LABELS[kind] / TABLE[key]! (計算した鍵の結果が inert として残るか)",
+          "result": "refused"
+        },
+        {
+          "tried": "再帰する walk が外の let (count / tooDeep / findings) を書き換える形 —— ループの外で宣言した名前へ inert を入れる T-259 の道",
+          "result": "refused"
+        },
+        {
+          "tried": "正規表現の exec を回す while の中で、外の配列へ push・外の名前へ代入する形 (共有の配列を書き換えさせない 0.18 の規則)",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 6,
+      "mutation": {
+        "files": [
+          "src/shared/outboundContentGate.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": null,
+        "reason": "draft PR を作る",
+        "summary": "出力インターセプター (outboundContentGate.ts · 283 行) を Mamori で書き直した (port)。端末の外へ出る本文に資格情報・マイナンバー・カード番号の形が在れば送らない関門。正規表現の exec を回す所は 0.19 の while。再帰する walk は先に空の関数で宣言して後で据え、Luhn の桁の表は算術に、種類の名前は switch に替えた。非 null の断定・C 風 for・テンプレート・複合代入も書き直しただけで、組み上がる文字列は 1 字も変えず、既存の検査は編集なしで緑。変異検査 100%。"
+      }
     }
   ]
 }

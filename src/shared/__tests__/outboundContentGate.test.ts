@@ -19,6 +19,7 @@ import {
   findMyNumber,
   findSecret,
   isValidMyNumber,
+  labelOf,
   outboundContentRefusal,
   passesLuhn,
   scanPayload,
@@ -265,3 +266,34 @@ describe('正当に資格情報を運ぶ欄の台帳 (両方向)', () => {
     expect(sync.filter((k) => !(k in CREDENTIAL_PAYLOAD_FIELDS))).toEqual([]);
   });
 });
+
+describe('Mamori への移植 (MG-038) で書き直した所', () => {
+  it('種類から名前を引く (組織固有の形は台帳が空なので直に呼ぶ)', () => {
+    expect(labelOf('secret')).toBe(FINDING_LABELS.secret);
+    expect(labelOf('my-number')).toBe(FINDING_LABELS['my-number']);
+    expect(labelOf('card-number')).toBe(FINDING_LABELS['card-number']);
+    expect(labelOf('custom')).toBe(FINDING_LABELS.custom);
+  });
+
+  it('Luhn は 12〜19 桁の数字だけを受ける (前後の字・短すぎ・長すぎは弾く)', () => {
+    expect(passesLuhn('4111111111111111')).toBe(true);
+    expect(passesLuhn(' 4111111111111111')).toBe(false); // 先頭の空白は 0 として数えない
+    expect(passesLuhn('4111111111111111 ')).toBe(false);
+    expect(passesLuhn('0')).toBe(false);
+    expect(passesLuhn('0'.repeat(11))).toBe(false);
+    expect(passesLuhn('0'.repeat(20))).toBe(false);
+    expect(passesLuhn('0'.repeat(12))).toBe(true);
+    expect(passesLuhn('0'.repeat(19))).toBe(true);
+  });
+
+  it('断りの文は 2 文を順に繋いだもの (値は 1 字も引用しない)', () => {
+    const v = scanPayload({ a: 'sk-ant-api03-' + 'abcdefghijklmnopqrstuvwxyz0123456789' }, []);
+    expect(v.kind).toBe('refused');
+    if (v.kind !== 'refused') return;
+    expect(v.message).toBe(
+      `送る内容に ${FINDING_LABELS.secret} (欄: a) が含まれているため、端末の外へは送りません。`
+        + '該当する部分を取り除いてからもう一度押してください (この判定はアプリの規則で行い、AI の判断には依りません)。',
+    );
+  });
+});
+
