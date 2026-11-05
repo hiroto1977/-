@@ -120,6 +120,7 @@
 /src/shared/promptInjection.mamori @hiroto1977
 /src/shared/aiEndpoint.mamori @hiroto1977
 /src/shared/vaultToken.mamori @hiroto1977
+/src/shared/ollamaCore.mamori @hiroto1977
 /src/renderer/components/VettedImg.tsx @hiroto1977
 /src/renderer/components/VettedLink.tsx @hiroto1977
 /src/shared/mamori/ @hiroto1977
@@ -195,6 +196,8 @@
 /src/shared/isoDate.ts @hiroto1977
 /src/shared/localDate.ts @hiroto1977
 /src/shared/ollama.ts @hiroto1977
+/src/shared/ollamaCore.ts @hiroto1977
+/src/shared/ollamaHost.ts @hiroto1977
 /src/shared/privateTarget.ts @hiroto1977
 /src/shared/proxyEndpoint.ts @hiroto1977
 /src/shared/redact.ts @hiroto1977

@@ -19607,7 +19607,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/zero-fold-census.cjs。npm run lint:zero-fold は check だけ) -->
-合計 **109 ファイル / 282 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **109 ファイル / 281 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
@@ -19636,7 +19636,6 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/renderer/data/overview.ts` | 4 |
 | `src/shared/depreciation.ts` | 4 |
 | `src/shared/hydroponics.ts` | 4 |
-| `src/shared/ollama.ts` | 4 |
 | `src/shared/taxSocialInsurance.ts` | 4 |
 | `src/shared/tradeTax.ts` | 4 |
 | `src/shared/waterCyclePlanner.ts` | 4 |
@@ -19647,6 +19646,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/renderer/pages/StocksPage.tsx` | 3 |
 | `src/renderer/pages/TaxPage.tsx` | 3 |
 | `src/shared/invoiceTax.ts` | 3 |
+| `src/shared/ollamaCore.ts` | 3 |
 | `src/shared/payroll.ts` | 3 |
 | `src/shared/securityRange.ts` | 3 |
 | `src/shared/taxConsumptionBusiness.ts` | 3 |
@@ -32285,7 +32285,7 @@ src/shared/ のモジュール                                        138
 「読んだ結果」か `未読 (…)` のどちらかで、読んでいない物に「対称だろう」とは書かない。
 
 <!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/shared-judgement-census.cjs。npm run lint:shared-judgement は check だけ) -->
-shared **176** モジュール / 両ビルドが import **94** / うち否定で答えられる **48**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
+shared **178** モジュール / 両ビルドが import **96** / うち否定で答えられる **48**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
 
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |
@@ -32318,7 +32318,7 @@ shared **176** モジュール / 両ビルドが import **94** / うち否定で
 | `isoDate` | 8 | 33 | 対称 (実測・パス 256) —— 負で答える関数は 8 つだが、**両ビルドが呼んでいるのは 2 つだけ** (main/preload 側の消費者を機械的に数えた): (1) `isCalendarDate` + `calendarDateMessage` —— main/clients/emotions.ts:212 と renderer/data/emotionsWeb.ts:177 が**同一の行**で投げる (`throw new Error(calendarDateMessage('date'))`)。 (2) `isoDateFromTimestamp` —— main/clients/stocks.ts:776 と renderer/data/stocksWatchlistWeb.ts:194 がともに `?? ''` で空文字に倒す。いずれも**見本のローソク生成の中**で、入力は `Date.now()` ± 日数なので `null` の枠は実質到達しない。 残り 6 つ (`parseIsoDate` / `isCalendarMonth` / `isCalendarDateOrMonth` / `parseTimestamp` / `addIsoDays` / `isoDaysBetween`) は **main/preload 側の消費者が 0 件** なので、ビルド間の非対称は**原理的に起きない**。 ★ **2026-09-22 (パス 394) に 9 つ目 `isoMonthOf` が増えた** —— 消費者は `main/clients/freee.ts` **だけ** (renderer は 0 件) なので、こちらも非対称は起きない (**片方のビルドしか呼ばない**)。ブラウザ版の bundle からは tree-shaking で落ちることを 両方組んで実測した (+0 B)。上の「負で答える関数は 8 つ」はこの行が足された時点の数で、**今は 9 つ**である。 ★ 台帳の粒度について: この台帳は**モジュール**単位で「両ビルドがimport」を数えるが、非対称が宿るのは**両ビルドが呼ぶ関数**だけである。isoDate はその差が最も大きい例 (33 のimport元・負で答える 8 関数・境界を越えるのは 2 つ)。 ★ **2026-09-22 (パス 410) に 10 個目 `displayDateOf` が増え、main 側の import 元が 3 → 8 になった** (`drive` / `github` / `microsoft-365` / `notion` / `wordpress` の 5 client を日付の読みへ寄せた)。**これは非対称ではなく、設計した対である** —— 境界 (main の client) が `string | null` へ正規化し、画面 (renderer) が同じ module の `dateText` でその `null` に**理由を与える** (「日付が読めません」)。`displayDateOf` を呼ぶのは main 側と `shared/ollama.ts` だけ、`dateText` を呼ぶのは画面だけで、**同じ関数が両側で違う扱いを受ける形は 1 つも無い** (実測)。`dateText` は `string | null` を受けて必ず文字列を返すので、そもそも否定で答えない。 ★ **2026-09-27 (パス 493) に 11 個目 `isTimestampMs` が増え、renderer 側の import 元が 29 → 30 になった** —— 読み手は `shared/emotionsShape.ts` の `isAnalysisEntry` (main の `emotions.ts` とブラウザ版の `emotionsWeb.ts` が**同じ 1 つの述語**として呼ぶ) と、ブラウザ版だけが持つ記録の保管層 `renderer/data/store.ts`。否定の答え (時刻が範囲外) は両ビルドとも「その要素・その記録を落とす」に倒れるので非対称は無い (実測)。 |
 | `mentor` | 1 | 6 | 非対称は起きない (実測・パス 551) —— 否定で答えるのは `sanitizeMentorSession` (読めない保存値は null) と、`mediationPlan` の `steps: null` (同意が揃わない) の 2 つで、**読み手は renderer だけ** (MentorPage.tsx と、パス 555 で足した data/mentorRoster.ts · TeamPage.tsx · WorkloadShareTable.tsx)。main が import するのは `buildMentorSnapshot` と型 `MentorSnapshot` だけ (main/clients/mentor.ts) で、それは null を返さない。危機の判定は renderer の `counseling.ts` を 注入で受けるので、この module 自身は判定を持たない |
 | `mutualFundsMetrics` | 0 | 2 | 対称 (実測・パス 272) —— main の到達は `serviceAdvisor` 経由 (4 クライアント: real-estate / mutual-funds / uber-eats / demae-can)。`serviceAdvisor` がこのモジュールから取るのは**4 つ** (`serviceAdvisor.ts:37`): 定数 `RETURN_FLOOR_PCT` / `RETURN_ENTRY_CEILING_PCT` と述語 `isImpossibleReturnPct` / `isAboveEntryCeilingPct` (どちらも 1 行の比較。2026-09-27 · パス 493j に 2 → 4 —— 上端の外を「捨てずに言う」断りのため)。**2 つの述語は確かに越境する** —— `adviseService` の中で `isImpossibleReturnPct` は真の枝 (:586 警告を組む) と偽の枝 (:607 測れる集合から外す) の両方、`isAboveEntryCeilingPct` は真の枝 (:598 断りを組む) だけが使われる (偽の枝は何もしない —— 値は比較に残る)。だが**否定のあとの動作は両ビルドで同じ 1 つの実装の中に在る** —— `adviseService` が返す助言の*中身*を形づくるだけで `ok: false` を作らず、同じオブジェクトが両ビルドへ返る (`serviceAdvisor` の判定はパス 268 で対称と実測済み)。★ この行は **module 単位の到達と call 単位の到達が違う**ことの例である (`isoDate` の ★ と同じ話)。 |
-| `ollama` | 1 | 6 | **非対称だった → パス 248 で直した** (許可経路の台帳を読むのは renderer だけ) |
+| `ollamaCore` | 0 | 0 | **非対称だった → パス 248 で直した** (許可経路の台帳を読むのは renderer だけ) |
 | `outboundContentGate` | 1 | 1 | 対称 (実測・パス 552 · T-215) —— 否定で答えるのは `outboundContentRefusal` (断りの文か null) と `scanPayload` (`refused` / `unreadable`) で、**両ビルドが同じ 1 つを同じ場所で呼ぶ**: main の `action:invoke` (`payloadTooWide` の直後・`requirePresence` の前) とブラウザ版の `shim.invoke` (`unguarded.invoke` の前)。否定のあとの動作はどちらも `{ ok: false, code: 'action_failed', message }` で送らない (`aiDefenseWiring.test.ts` が順序を、`mainIpc` / `webShimOutboundGate` が振る舞いを両側で留める)。段階の台帳 `actionTier.ts` も同じ 1 つ (main の `userPresence` は re-export) |
 | `privateTarget` | 0 | 1 | 対称 (実測・パス 524 で読んだ) —— 母集団に入ったのはパス 524 (T-076) で `scanTarget.ts` が `looksInternalHostname` の中で `isPrivateOrReservedTarget` を呼ぶようになったため。 main が `privateTarget` を直に import する所は **0 件**で、main の閉包に入るのは `scanTarget` → `privateTarget` の 1 辺だけ。しかも `looksInternalHostname` の呼び手は `describeScanUrlRisk` の中だけで、その読み手は `SecurityPage.tsx` (renderer) だけなので、 **否定のあとの動作は越境しない** (main の `validateScanUrl` はこの関数を通らない)。 他の読み手 (`renderer/network/proxy.ts` は断る・`imageUrlGate.ts` は描かない) は どちらも renderer の中で完結する。警告であって関門ではない点は `scanTarget` の判定と同じ |
 | `promptInjection` | 2 | 1 | 対称 (実測・パス 552 · T-216) —— 否定で答えるのは `detectPromptInjection` (当たった規則か null) と `promptInjectionRefusal` (断りの文か null)。読み手は 3 か所: main の `emotions.ts` (鍵の門の前で throw)・main の `skills.ts` (SKILL.md を読んだ直後で throw)・ブラウザ版 `web-shim.ts` の `callEmotionsAnalyze` (`vault.getToken` の前で `err`)。throw と `err` は IPC の床 (`withFloor` / main の catch) で同じ `action_failed` + 文 になるので、**利用者が読む答えは両ビルドで同じ** (`webShimOutboundGate` と `emotions.test.ts` が同じ標本で確かめる)。skills はデスクトップ版にしか無いので 3 か所目は片側だけ |

@@ -178,7 +178,7 @@ async function unlockAndOpenOllama(page){
     console.log(`${ok?'✅':'❌'} 接続成功: 実モデル2件とバージョン0.33.3を表示 (models=${hasModels} version=${hasVersion} 案内非表示=${noSetupHint})`);
     if(!ok){fail++;console.log('   body抜粋:',body.replace(/\s+/g,' ').slice(0,400));}
     // ★ 脆弱性の台帳の注意は「いつの事実か」を刷る (2026-09-09 · パス 139)。日付はコードから読む (写さない)。
-    const verifiedOn=/OLLAMA_ADVISORIES_VERIFIED_ON = '(\d{4}-\d{2}-\d{2})'/.exec(fs.readFileSync(path.join(__dirname,'..','..','src','shared','ollama.ts'),'utf8'))[1];
+    const verifiedOn=/OLLAMA_ADVISORIES_VERIFIED_ON = '(\d{4}-\d{2}-\d{2})'/.exec(fs.readFileSync(path.join(__dirname,'..','..','src','shared','ollamaCore.ts'),'utf8'))[1];
     const dated=body.includes(`${verifiedOn} 時点`) && !/未パッチ/.test(body);
     console.log(`${dated?'✅':'❌'} ★ 脆弱性の台帳の日付 (${verifiedOn} 時点) が画面に出て、「未パッチ」の固定文は出ない`);
     if(!dated){fail++;console.log('   body抜粋:',body.replace(/\s+/g,' ').slice(0,400));}

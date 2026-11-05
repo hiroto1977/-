@@ -178,7 +178,6 @@ const PRAGMA_BARE = {
   'src/renderer/security/vault.ts':              2,
   'src/shared/funding.ts':                       2,
   'src/shared/httpLimits.ts':                    1,
-  'src/shared/ollama.ts':                        3,
   // 2026-09-17 (パス 300): `renderer/network/proxy.ts` に在った 3 つ (v6 の ULA / link-local /
   // 2001:db8 の正規表現) が遮断表ごと shared へ移った。理由の書き方は移した先の注記のとおり。
   'src/shared/privateTarget.ts':                 1,
@@ -229,7 +228,7 @@ const MUST_MEASURE = {
   // `proxy.ts` は re-export だけになったので、ここを外すと SSRF の遮断表そのものが
   // 測られない。読む側は BYO プロキシと `imageUrlGate.safeRemoteImageSrc` の 2 つ。
   'src/shared/privateTarget.ts':     'プライベート帯 / 予約帯の送り先判定 (BYO プロキシと第三者由来の <img src> が同じ 1 つを読む)',
-  'src/shared/ollama.ts':            'Ollama の接続先判定 (任意ホストへの http を許すと内部探索の踏み台になる)',
+  'src/shared/ollamaCore.ts':        'Ollama の接続先判定 (任意ホストへの http を許すと内部探索の踏み台になる · MG-035 で ollama.ts の中身が移った)',
   // 2026-10-29 (パス 552) 追加。AI の判断に依らない 3 層の守り。どれも「規則を 1 本消しても
   // 0 件のまま緑に見える」側 (断る門) なので、測らないと穴が増えたことに気付けない。
   'src/shared/actionTier.ts':        'action の段階の台帳 (出力インターセプターと本人確認の両方が読む・無い action は fail closed)',
@@ -332,6 +331,9 @@ const MUST_MEASURE = {
  * 次に読む人が「まだ測っていない」と誤解する)。
  */
 const KNOWN_UNMEASURED = {
+  // 2026-11-05 (MG-035)。Ollama の入口。中身は ollamaCore.ts (Mamori 生成物・mutate に載せる) に移り、ここは名前を戻して
+  // 再 export するだけで判断を持たない。別名の戻し (isLoopbackHostname / compareVersions) は ollama.test.ts ほか既存の検査が通している。
+  'src/shared/ollama.ts': '判断を持たない再 export の入口 (中身は ollamaCore.ts で mutate に載る)。名前の戻しは既存の ollama 系の検査が通している。',
   // 2026-10-30 (T-221 · パス 560)。Mamori のコンパイラの parser / checker / emit / compile は変異検査を測り 100% にして
   // mutate へ移した (初回 75.51% / 77.18% —— 生存は規則を式の奥に置く検査・誤りの文・変換の全形の golden が無かったこと)。
   // 残るのは型だけのファイル。

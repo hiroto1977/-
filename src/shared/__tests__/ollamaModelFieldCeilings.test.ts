@@ -40,7 +40,7 @@ import { readOriginalSource } from './originalSource';
 import { stripComments } from './stripNonCode';
 
 const REPO_ROOT = path.resolve(__dirname, '../../..');
-const SRC = readOriginalSource(path.join(REPO_ROOT, 'src/shared/ollama.ts'));
+const SRC = readOriginalSource(path.join(REPO_ROOT, 'src/shared/ollamaCore.ts'));
 
 /** 1 件だけの応答を組む (欄は呼び手が差し替える)。 */
 function one(details: Record<string, unknown>, extra: Record<string, unknown> = {}) {
@@ -197,11 +197,11 @@ describe('母集団 (宣言から導く・両方向)', () => {
     const body = /export function normalizeModels\(raw: unknown\)[\s\S]*?\n\}/.exec(SRC)![0];
     // 出力の各欄がどの関門を通るか。`name` は isSafeModelName (行ごと落とす) が受け持つ。
     const GATE: Record<string, RegExp> = {
-      name: /name: m\.name,/,
+      name: /out\.push\(\{ name, /,
       family: /family: modelDetail\(/,
       parameterSize: /parameterSize: modelDetail\(/,
       quantization: /quantization: modelDetail\(/,
-      sizeMb: /sizeMb: Math\.round\(size \/ /,
+      sizeMb: /sizeMb: Math\.round\(sizeBytes \/ /,
       // パス 410 で私有の `modelModifiedAt` を消し、共有の `displayDateOf`
       // (`typeof` → `parseTimestamp` → `localIsoDate`) へ寄せた。判定は同じ 1 つ。
       modifiedAt: /modifiedAt: displayDateOf\(/,

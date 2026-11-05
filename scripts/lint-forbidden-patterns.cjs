@@ -714,6 +714,7 @@ const FORBIDDEN_PATTERNS = [
     allowFile: (rel) =>
       rel === 'src/main/clients/ollama.ts' ||
       rel === 'src/shared/ollama.ts' ||
+      rel === 'src/shared/ollamaCore.ts' ||
       // CLI も「呼ばない API」を明記して利用者に伝える必要がある (--help に出る)。
       rel === 'scripts/ollama-cli.cjs' ||
       rel.startsWith('src/renderer/'),
@@ -985,7 +986,7 @@ const KNOWN_SUPPRESSIONS = [
   // 2026-09-09 (パス 139): 3 → 8。脆弱性の台帳 OLLAMA_ADVISORIES の要約 5 行が「呼ばない口」の名前を
   // 事実として書く (Probllama = /api/pull、CVE-2024-39719/39721 と CVE-2026-7482 = /api/create、
   // CVE-2024-39722 = /api/push)。呼び出しではなく台帳の文言。
-  'Ollama write-side endpoints in network code :: src/shared/ollama.ts :: 8 (code 6)',
+  'Ollama write-side endpoints in network code :: src/shared/ollamaCore.ts :: 4 (code 2)',
   // CSS の url() を組み立ててよい唯一の場所。`safeCssUrl` の本体で、
   // スキーム検証 (`safeImageSrc`) を通した値だけを引用して包む。
   // ここを例外にしないと関門自身が自分の規則に引っかかる。

@@ -290,7 +290,7 @@ describe('Ollama 画面の数字が、実物の定数から出ている', () => 
   });
 
   it('表示する正規表現が実物と一致している (長さ上限と大小無視を落としていない)', () => {
-    const shared = readOriginalSource(path.join(REPO_ROOT, 'src/shared/ollama.ts'));
+    const shared = readOriginalSource(path.join(REPO_ROOT, 'src/shared/ollamaCore.ts'));
     // **束ね方ではなく模様そのものを見る。** 以前は
     // `const MODEL_NAME_RE = …;` という**行の形**に一致させていたが、
     // モジュール定数を関数の中へ移した (静的変異体になって変異検査から
