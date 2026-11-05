@@ -177,6 +177,11 @@
       "why": "暗号・ハッシュの周り (IV ・CRC ほか) で要る。",
       "risk": "来歴には触れない (数を作る演算)。",
       "since": "0.10"
+    },
+    "module-let": {
+      "decision": "feature",
+      "why": "モジュール直下の変数 (購読の入れ物・共有の道・キャッシュ) を持つ壁 (lockWorkspace ほか) で要る。今は host 壁が状態を持つ。",
+      "risk": "モジュールの状態は呼ばれた順で変わる —— 共有の入れ物へ inert や印の無い値を入れて別の関数が読む道 (T-259 のモジュール版)。足すなら、書けるのは自分のモジュールの let だけで、export せず、代入できるのは関数の中からだけ・inert を入れる形は断つ。"
     }
   },
   "cycles": [
@@ -2474,6 +2479,49 @@
         "pr": null,
         "reason": "draft PR を作る",
         "summary": "finally を 0.20 として足した。足す前に破り、finally の return / break / continue が try の戻り値と例外を上書きして関門の拒みを飲む道を見つけ、足すと同時に断った (既存の穴ではなく新構文の穴なので T-id は付けない)。inert は粘るので try の途中の例外で代入に届かない姿も finally の検めに入る (既存の catch と同じ)。変異検査 100% (初回の生存 1 件は finally の本体の字下げを検査していなかった本物の穴で、字面の完全一致を足して潰した)。lockWorkspace.ts の移植は別の周。"
+      }
+    },
+    {
+      "id": "MG-040",
+      "date": "2026-11-05",
+      "kind": "port",
+      "target": "src/renderer/security/lockWorkspace.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/renderer/security/lockWorkspace.ts",
+      "version": "0.20",
+      "features": [],
+      "added": [],
+      "rewrite": [],
+      "ported": [
+        "src/renderer/security/lockWorkspace.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "購読の入れ物を `let listeners: Array<…> = []` と モジュール直下の `let` で書く (状態を持つ形)",
+          "result": "refused"
+        },
+        {
+          "tried": "`channel.onmessage = …` (引数の欄への代入) と `new BroadcastChannel(…)` (宣言していない `new`) を Mamori の中で書く",
+          "result": "refused"
+        },
+        {
+          "tried": "`try { getVault().lock(); } finally { notifyLocked(); }` と `try { lockWorkspace(); } finally { announceLockToOtherTabs(); }` (0.20 の finally で、鍵を落とす順序・自分を施錠してから配る順序を保つ)",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 4,
+      "mutation": {
+        "files": [
+          "src/renderer/security/lockWorkspace.ts",
+          "src/renderer/security/lockWorkspaceHost.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": null,
+        "reason": "draft PR を作る",
+        "summary": "lockWorkspace.ts (217 行) を Mamori で書き直した (port)。0.20 の finally で、鍵を落としてから知らせる順序と、自分を施錠してから他のタブへ配る順序を書く。brief は「書き直しだけで移せる」と言ったが、モジュール直下の let が無いので、購読の入れ物と共有の道 (BroadcastChannel) の状態は host 壁 lockWorkspaceHost.ts に置いた (足りない構文は module-let として台帳に候補で足した)。既存の検査 2,917 件は無編集で緑、lockPathCensus は生成物の getVault().lock() を見たまま。変異検査 100%。"
       }
     }
   ]
