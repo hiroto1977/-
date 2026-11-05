@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 465
+- ブロック数: 466
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `7a0b7dc6c303fb9dc61a5dc870000af3d8e999094a0a1872f175f97f222fc8be`
-- 保護対象: 194 ファイル
+- 末尾(tip)ハッシュ: `ca4d698e0ac1bcb35fa91413e22d5167245beb79298d2fa64d55fc2de731c87c`
+- 保護対象: 196 ファイル
 
 ## ブロック
 
@@ -478,6 +478,7 @@
 | 462 | `eb8939bfa5f17b8d` | `e9f3195201444c6f` | `ef0f4a4edf8c4983` | update frameGuard.mamori,frameGuard.ts |
 | 463 | `87d50668f528501d` | `ef0f4a4edf8c4983` | `7601f3c81040a4a7` | update integrity-chain.cjs,mamori-capabilities.json,outboundContentGate.mamori,outboundContentGate.ts |
 | 464 | `5ce195303895586c` | `7601f3c81040a4a7` | `7a0b7dc6c303fb9d` | update ast.ts,checker.ts,emit.ts,parser.ts |
+| 465 | `66d6afd7df7656d2` | `7a0b7dc6c303fb9d` | `ca4d698e0ac1bcb3` | update integrity-chain.cjs,mamori-capabilities.json,lockWorkspace.mamori,lockWorkspace.ts,lockWorkspaceHost.ts |
 
 ## 保護対象ファイル
 
@@ -598,7 +599,9 @@
 - `src/renderer/security/frameGuard.mamori`
 - `src/renderer/security/frameGuard.ts`
 - `src/renderer/security/frameGuardHost.ts`
+- `src/renderer/security/lockWorkspace.mamori`
 - `src/renderer/security/lockWorkspace.ts`
+- `src/renderer/security/lockWorkspaceHost.ts`
 - `src/renderer/security/mnemonic.ts`
 - `src/renderer/security/vault.ts`
 - `src/renderer/security/webCrypto.ts`

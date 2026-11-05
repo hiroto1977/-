@@ -87,6 +87,7 @@ const DETECTORS = [
   { id: 'generator', name: 'function* / yield', on: 'code', re: /\bfunction\s*\*|\byield\b/g },
   { id: 'satisfies', name: 'satisfies', on: 'code', re: /\bsatisfies\b/g },
   { id: 'nested-function', name: '関数の中の function', on: 'code', re: /^[ \t]+(async\s+)?function\b/gm },
+  { id: 'module-let', name: 'モジュール直下の let (状態を持つ変数)', on: 'code', re: /^(export\s+)?let\s+[\w$]+/gm },
   { id: 'bitwise', name: 'ビット演算 << >> >>> ~ ^', on: 'code', re: /<<|>>>|[^>=]>>(?![>=])|~|\^(?!=)/g },
 ];
 const DETECTOR_IDS = DETECTORS.map((d) => d.id);

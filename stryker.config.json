@@ -207,6 +207,7 @@
     "src/renderer/security/eraseAll.ts",
     "src/renderer/security/frameGuard.ts",
     "src/renderer/security/lockWorkspace.ts",
+    "src/renderer/security/lockWorkspaceHost.ts",
     "src/renderer/security/mnemonic.ts",
     "src/renderer/security/vault.ts",
     "src/renderer/security/webCrypto.ts",

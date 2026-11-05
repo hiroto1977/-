@@ -116,6 +116,15 @@
       "gates": [],
       "sinks": []
     },
+    "src/renderer/security/lockWorkspace.mamori": {
+      "externals": [
+        "pure ./lockWorkspaceHost: hostSubscribe, hostUnsubscribe, hostListeners, hostResetListeners, hostSharedChannel, hostResetChannel, hostOnMessage",
+        "pure ./vault: getVault"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
     "src/renderer/vettedSinks.mamori": {
       "externals": [
         "sink global: window"

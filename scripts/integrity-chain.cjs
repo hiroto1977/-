@@ -623,6 +623,8 @@ const PROTECTED = [
   'src/renderer/security/frameGuard.mamori', // 同じ物の元 (Mamori · 2026-11-05 · MG-037)
   'src/renderer/security/frameGuardHost.ts', // frameGuard.mamori が読む host の口 (window と style.cssText)
   'src/renderer/security/lockWorkspace.ts', // 施錠で鍵をメモリから落とす本体
+  'src/renderer/security/lockWorkspace.mamori', // 同じ物の元 (Mamori · 2026-11-05 · MG-040)
+  'src/renderer/security/lockWorkspaceHost.ts', // lockWorkspace.mamori が読む host の口 (購読の入れ物・共有の 1 本の道・onmessage の据え付け)
   'src/shared/imageUrlGate.ts',             // 第三者画像 URL のスキーム関門
   'src/shared/safeFilename.ts',             // ファイル名の唯一の関門
   'src/shared/atlassianSite.ts',            // テナント名の検証 (送り先が変わる)

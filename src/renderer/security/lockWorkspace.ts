@@ -1,3 +1,5 @@
+// 生成物 —— src/renderer/security/lockWorkspace.mamori から Mamori のコンパイラが組んだ。手で編集しない (`npm run mamori:build`)。
+// 言語の仕様は docs/MAMORI.md。生成物が元と食い違えば src/shared/mamori/__tests__/mamoriGenerated.test.ts が落ちる。
 /**
  * 施錠の中身を **1 つの名前**にする。
  *
@@ -75,60 +77,54 @@
  * `file://` の 2 文書間でも届き、送った文書自身には返らない (輪にならない)。
  * `postMessage` の直後に `close()` しても相手には届く。無い環境では黙って
  * 諦める —— そのタブは自分の自動施錠で落ちる。
+ *
+ * ## Mamori で書いてある (2026-11-05 · MG-040)
+ *
+ * 元は TypeScript。`try / finally` は 0.20 の `finally` で書く (鍵を落としてから知らせる順序・他のタブへ配る順序は `finally` が保つ)。
+ * **Mamori にはモジュール直下の `let` が無い** (状態を持つ構文は足していない) ので、購読の入れ物と共有の 1 本の道 (`BroadcastChannel`) の
+ * **状態**は、判断を持たない `lockWorkspaceHost.ts` が持つ。Mamori に残るのは「何をどの順序でするか」(鍵を落とす → 知らせる・自分を施錠する → 配る・
+ * 受けたら自分だけ施錠する) —— 守りの値打ちはそこにある。鍵を落とす `getVault().lock()` は生成物の中に残る
+ * (`lockPathCensus` が名簿で見ているのは、この生成物である)。
  */
 
 import { getVault } from './vault';
+import { hostSubscribe, hostUnsubscribe, hostListeners, hostResetListeners, hostSharedChannel, hostResetChannel, hostOnMessage } from './lockWorkspaceHost';
 
 /**
  * 施錠を配る道の名前。受け手 (`startLockRelay`) と送り手で共有する。
- *
- * 検査が**線の上を直接見る**ために公開している (何が流れたか / 流れなかったかを
- * 見る以外に、自動施錠が配らないことを確かめる手が無い)。送り手と受け手が
- * 食い違う心配は無い —— 両方この 1 つの定数を読む。
+ * 検査が**線の上を直接見る**ために公開している。送り手と受け手が食い違う心配は無い —— 両方この 1 つの定数を読む。
  */
-export const LOCK_CHANNEL = 'servicehub.lock';
+export const LOCK_CHANNEL = "servicehub.lock";
 
 /** 配る合図。値を見て分岐するので、他の用途と混ざらない。 */
-export const LOCK_MESSAGE = 'lock';
-
-/** 施錠を知りたい人たち (実際には `App.tsx` の 1 件)。 */
-const listeners = new Set<() => void>();
+export const LOCK_MESSAGE = "lock";
 
 /**
  * 施錠されたことの通知を購読する。戻り値を呼ぶと解除。
- *
- * **画面を施錠表示にするのはここだけの仕事**。施錠を起こす側に
- * コールバックを渡させると、局所状態を立てるだけの物を渡せてしまう
- * (2026-09-06 に実際そうなっていた)。
+ * **画面を施錠表示にするのはここだけの仕事**。施錠を起こす側にコールバックを渡させると、局所状態を立てるだけの物を渡せてしまう。
  */
 export function subscribeWorkspaceLocked(cb: () => void): () => void {
-  listeners.add(cb);
+  hostSubscribe(cb);
   return () => {
-    listeners.delete(cb);
-  };
+  hostUnsubscribe(cb);
+};
 }
 
-/** テスト用: 購読を空にし、共有の道も閉じる (次の検査が別の `BroadcastChannel` を
- *  差し替えても掴んだままにならないように)。 */
+/** テスト用: 購読を空にし、共有の道も閉じる。閉じてから捨てる (閉じずに捨てると `onmessage` を付けたままの受け口が残る)。 */
 export function _resetLockSubscribersForTests(): void {
-  listeners.clear();
-  // **閉じてから捨てる。** 閉じずに捨てると、`onmessage` を付けたままの
-  // 受け口が残り、次の検査の合図で前の検査の保管庫を施錠しに来る。
-  // (try/catch と `?.` を使わないのは、どちらも観測できない等価変異を
-  //  作るだけだったから —— 実測 2026-09-07。)
-  if (shared !== null) shared.close();
-  shared = null;
+  hostResetListeners();
+  hostResetChannel();
 }
 
 function notifyLocked(): void {
-  for (const cb of [...listeners]) cb();
+  for (const cb of hostListeners()) {
+    cb();
+  }
 }
 
 /**
  * この JS 文脈の鍵を落として、画面へ知らせる。
- *
- * **鍵を落としてから**知らせる。順序に意味があり、購読側が投げても鍵は既に
- * 落ちている —— 見た目の更新の失敗で鍵が残る方が危ない。
+ * **鍵を落としてから**知らせる。順序に意味があり、購読側が投げても鍵は既に落ちている。
  */
 export function lockWorkspace(): void {
   try {
@@ -139,54 +135,20 @@ export function lockWorkspace(): void {
 }
 
 /**
- * 送受で**共有する 1 本の道**。
- *
- * `BroadcastChannel` は**自分が送った物を自分では受け取らない**。一方、
- * **同じ文脈の別の channel オブジェクトには届く**。実 Chromium (`file://`) で
- * 両方測った —— 送った channel 自身は `[]`、同じ文書の別の channel は
- * `["lock"]`。jsdom だけの癖ではない。だから送信ごとに
- * 新しい channel を作ると、**このタブの中継が自分の合図を拾って自分を施錠する**
- * —— ハードリセットでそれが起きて、設定ページが unmount し、消せなかった理由を
- * 報せられなくなった (2026-09-07 実測)。
- *
- * 送るのも受けるのも同じ 1 本にすれば、除外は仕様が保証してくれる。
- */
-let shared: BroadcastChannel | null = null;
-
-function sharedChannel(): BroadcastChannel | null {
-  if (shared !== null) return shared;
-  try {
-    shared = new BroadcastChannel(LOCK_CHANNEL);
-  } catch {
-    // BroadcastChannel が無い / 使えない環境。他のタブは自分の自動施錠で落ちる。
-    // (`shared` は成功時にしか代入しないので、ここで null へ戻す必要は無い。)
-  }
-  return shared;
-}
-
-/**
  * 他のタブへ「施錠して」と伝える。**この文脈は施錠しない。**
- *
- * ハードリセットのために公開している (2026-09-07)。あの場面で
- * `lockEverywhere()` を使うと、購読している `App` がこのタブを即座に
- * ロック画面へ差し替えるので、**設定ページが unmount して結果を報せられない**
- * —— 消せなかった時の文言が、まさにそれが要る場面で誰にも届かなくなる
- * (実測で踏みかけた。VaultControls だけを描く検査では見えなかった)。
- *
- * 消す側のタブの鍵は `wipeAndReset` が (成功した時に) 落とすので、ここで
- * 落とす必要も無い。他のタブに書き込みを止めさせるのが目的。
- *
- * 届かない環境では黙って諦める。
+ * ハードリセットのために公開している: あの場面で `lockEverywhere()` を使うと、購読している `App` がこのタブを即座にロック画面へ差し替え、
+ * 設定ページが unmount して結果を報せられない。届かない環境では黙って諦める。
  */
 export function announceLockToOtherTabs(): void {
-  sharedChannel()?.postMessage(LOCK_MESSAGE);
+  const channel = hostSharedChannel(LOCK_CHANNEL);
+  if (channel !== null) {
+    channel.postMessage(LOCK_MESSAGE);
+  }
 }
 
 /**
  * 利用者が押した施錠 —— 同じ保管庫を開いている**他のタブも**施錠する。
- *
- * 自分の文脈を先に施錠する (押した人が見ている画面が最優先)。`finally` に
- * したのは、自分の施錠が投げても他のタブへは伝えたいから。
+ * 自分の文脈を先に施錠する。`finally` にしたのは、自分の施錠が投げても他のタブへは伝えたいから。
  */
 export function lockEverywhere(): void {
   try {
@@ -198,19 +160,20 @@ export function lockEverywhere(): void {
 
 /**
  * 他のタブからの施錠要求を受ける。戻り値を呼ぶと解除。
- *
- * 受けたら `lockWorkspace()`(この文脈だけ) を呼ぶ —— `lockEverywhere()` を
- * 呼ぶと配り合いになる。実測では送信元へ返らないので輪は起きないが、
- * ここで配らなければ**そもそも起こり得ない**。
+ * 受けたら `lockWorkspace()` (この文脈だけ) を呼ぶ —— `lockEverywhere()` を呼ぶと配り合いになる。
  */
 export function startLockRelay(): () => void {
-  const channel = sharedChannel();
-  if (channel === null) return () => {};
-  channel.onmessage = (event: MessageEvent) => {
-    if (event.data === LOCK_MESSAGE) lockWorkspace();
-  };
+  const channel = hostSharedChannel(LOCK_CHANNEL);
+  if (channel === null) return () => {
+
+};
+  hostOnMessage(channel, (data: unknown) => {
+  if (data === LOCK_MESSAGE) {
+    lockWorkspace();
+  }
+});
   // **閉じない** —— 送信も同じ 1 本を使うので、閉じると以後配れなくなる。
   return () => {
-    channel.onmessage = null;
-  };
+  hostOnMessage(channel, null);
+};
 }

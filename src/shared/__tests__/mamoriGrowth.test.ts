@@ -104,6 +104,7 @@ const POSITIVE: Readonly<Record<string, string>> = {
   satisfies: 'const c = {} satisfies Shape;',
   'nested-function': 'export function f() {\n  function g() {}\n}',
   bitwise: 'const v = a << 2;',
+  'module-let': 'let shared = null;',
 };
 
 describe('言語を育てる輪 —— 構文の検出器 (heuristic)', () => {
@@ -129,7 +130,7 @@ describe('言語を育てる輪 —— 構文の検出器 (heuristic)', () => {
   });
 
   it('対照: Mamori が既に持つ形は数えない (オブジェクトの字面・条件演算子・switch・for…of・throw・型の配列)', () => {
-    expect(growth.measureFile("const o = { a: 1 };\nconst t = a > 1 ? 'x' : 'y';\nswitch (a) {}\nfor (const x of xs) {}\nthrow new Error('e');\nlet arr: string[];\n")).toEqual({});
+    expect(growth.measureFile("const o = { a: 1 };\nconst t = a > 1 ? 'x' : 'y';\nswitch (a) {}\nfor (const x of xs) {}\nthrow new Error('e');\n  let arr: string[];\n")).toEqual({});
   });
 });
 
