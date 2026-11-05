@@ -333,7 +333,7 @@ const MUST_MEASURE = {
 const KNOWN_UNMEASURED = {
   // 2026-11-05 (MG-035)。Ollama の入口。中身は ollamaCore.ts (Mamori 生成物・mutate に載せる) に移り、ここは名前を戻して
   // 再 export し、pageHostname の既定を補うだけで判断を持たない。別名の戻し (isLoopbackHostname / compareVersions) は ollama.test.ts ほか既存の検査が通している。
-  'src/shared/ollama.ts': '判断を持たない入口 (再 export・名前の戻し・pageHostname の既定 '' を補う 3 つの薄い包みだけ。中身は ollamaCore.ts で mutate に載る)。既存の ollama 系の検査が通している。',
+  'src/shared/ollama.ts': '判断を持たない入口 (再 export・名前の戻し・pageHostname の既定の空文字を補う 3 つの薄い包みだけ。中身は ollamaCore.ts で mutate に載る)。既存の ollama 系の検査が通している。',
   // 2026-10-30 (T-221 · パス 560)。Mamori のコンパイラの parser / checker / emit / compile は変異検査を測り 100% にして
   // mutate へ移した (初回 75.51% / 77.18% —— 生存は規則を式の奥に置く検査・誤りの文・変換の全形の golden が無かったこと)。
   // 残るのは型だけのファイル。

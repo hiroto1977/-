@@ -425,6 +425,7 @@ export function normalizeModels(raw: unknown): OllamaModelInfo[] {
 
 /** ファイルの大きさ (バイト)。数でない・有限でない・負は 0。 */
 function nonNegativeBytes(size: unknown): number {
+  // Stryker disable next-line ConditionalExpression: `Number.isFinite` は文字列などを変換せず false を返すので、この前置きを外しても答えは同じ 0 (型の絞り込みのためだけに在る · 等価)。
   if (typeof size !== 'number') return 0;
   if (!Number.isFinite(size)) return 0;
   return Math.max(0, size);
@@ -592,11 +593,9 @@ export function adviseFromBody(status: number, body: string, ctx: { model ?: str
   let parsed: unknown = null;
   try {
     parsed = JSON.parse(body);
-    // Stryker disable BlockStatement: parsed は null で初期化済みなので、catch の中の代入を消しても答えは同じ (等価)。
   } catch {
-    parsed = null;
+    // 読めない本文は parsed が null のまま (初期化済み) —— ここですることは無い。
   }
-  // Stryker restore BlockStatement
   return describeOllamaError(status, extractOllamaError(parsed, body), ctx);
 }
 
