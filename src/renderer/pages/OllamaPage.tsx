@@ -725,7 +725,7 @@ export function ConnectionSetup({
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span style={{ fontSize: 12, fontWeight: 600 }}>{s.os}</span>
                 <button
-                  style={{ fontSize: 11, padding: '2px 8px' }}
+                  style={{ fontSize: 11, padding: '2px 8px', minHeight: 24 }}
                   onClick={() => copy(s.command, s.os)}
                 >
                   {copied === s.os ? 'コピーしました' : 'コピー'}
