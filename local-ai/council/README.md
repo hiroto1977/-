@@ -45,6 +45,7 @@ Three.js（`web/vendor` に同梱、ビルド不要）のボクセル風の村�
 - 会話は `user_thread.md` に、議論は `logs/YYYY-MM-DD.md` に保存されます
 - 状態は `/api/state`、組織図は `/api/org`（JSON）
 - 動作確認用に `?selftest=1` を付けると、住民の移動数を数えて `@CFO` に話しかけます
+- 既定のカメラは「✋ 自由」です。村が大きくなっても自動では引きません。画面端にマウスを寄せるか WASD／矢印でスクロールして見て回ります（チャット入力中のキーは無効）。ミニマップをクリックしても移動できます。「🗺 全体」を押したときだけ引きます。
 
 ## 安全のための制限
 - できることは、このディレクトリへのファイル書き込みと読み取り専用の確認だけです。git push や外部への送信はしません
@@ -52,3 +53,8 @@ Three.js（`web/vendor` に同梱、ビルド不要）のボクセル風の村�
 - 画面上の文字はすべて textContent で表示し、HTMLとしては解釈しません
 - 空きメモリが `COUNCIL_MIN_FREE_MB`（既定1500MB）未満なら回を飛ばし、1回の呼び出しは `COUNCIL_TIMEOUT` 秒（既定240）で打ち切ります
 - 小さいモデルなので、内容は参考程度です（事実の誤りや中国語の混入があります）
+
+## 企業データ連携（任意・既定OFF）
+`company_link.py`。`company_link.example.json` を `company_link.json` にコピーし `enabled: true`。source は json / csv / sqlite / sql（SQLAlchemy URL は環境変数 `COMPANY_DB_URL`）。
+読み取り専用（SELECT/WITH 1文のみ・SQLiteは mode=ro + query_only）。`GET /api/company`、`POST /api/company/refresh`（`{"demo":"large|small|deficit|example|off"}` でデモ切替、メモリ上のみ）。
+サンプル（すべて架空）: `example_company.json`, `examples/*.json`。テスト: `python3 test_company_link.py`。
