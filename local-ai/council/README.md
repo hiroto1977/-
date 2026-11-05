@@ -30,6 +30,18 @@
   - 本文に `候補: A、B、C`（または `項目:`、区切りは `、` `,` `/`）があると、1回の会議で1項目ずつ順番に（一巡したら最初から）具体的に設計させ、`decisions.md` に「設計項目 n/N」付きで記録します。進み具合は `recurring_state.json` に保存
 
 
+
+
+## 固定決定（CEOロック）
+`locked_decisions.md` の `status: locked` 項目は、CEO（清継）が `status: unlocked` に書き換えるまで覆せません。
+- 議題: 固定決定を復活・再開しようとする受信箱／助言／CEO指示は会議にかけず却下（`rejected_decisions.md` に理由）
+- 決定: 役員決定がロックを覆す文なら助言ガードと同様に差し戻し・不記録
+- 起動: `start-all.sh` は `llama7B-stop` が locked のとき `ENABLE_7B` を強制 0（7B の既定も 0）
+- 健全性表示: ロック中サービスは「固定停止」と出し、停止中リストから外す（再起動議題化を防ぐ）
+- プロンプト: 各役の system に固定決定ダイジェストを付与
+- `/api/state` に `locks`（`on` / `items`）。掲示板に 🔒 カード
+初期ロック: `llama7B-stop`（停止維持）、`datacrypto-0927-cancel`（2026-11-05 09:27 の実装開始とIV更新の取消確定・Nonce再利用防止）。テスト: `python3 test_decision_lock.py`。`COUNCIL_DECISION_LOCK=0` で無効化（通常は使わない）。
+
 ## 助言ガード
 役員の決定が助言（`advice_inbox.md` の行や、禁止パターン）と食い違うときは `decisions.md` に書かず、`rejected_decisions.md` に理由を残して役員に1回だけやり直させます。掲示板には 🛑 カードが出ます。
 禁止パターンは `advice_guard.py`（dataCrypto の実装着手、`as BufferSource`、Mamori への `as` / `while` 追加、JSON.stringify を暗号化と扱う、IV の定期再生成、正規表現アンカーの除去、C++/Python 混在）。否定文（〜しない / 禁止 など）は違反にしません。
