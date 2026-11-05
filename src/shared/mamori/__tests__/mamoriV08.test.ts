@@ -94,8 +94,8 @@ describe('0.8: 添字 x[k]', () => {
     expect(compile(go('  return shell["openExternal"](u);')).diagnostics[0]).toContain('[M2]');
   });
   it('`?.[` は無く、閉じていない添字は断る。数リテラルへの代入は 0.12 で通る', () => {
-    expect(compile(go('  xs[0] = u;\n  return 1;')).diagnostics).toEqual([]);
-    expect(compile(go('  xs[0] = u;\n  return 1;')).output).toContain('xs[0] = u;');
+    expect(compile(go('  const ys: string[] = ["a"];\n  ys[0] = u;\n  return 1;')).diagnostics).toEqual([]);
+    expect(compile(go('  const ys: string[] = ["a"];\n  ys[0] = u;\n  return 1;')).output).toContain('ys[0] = u;');
     expect(compile(ret('xs?.[0]')).diagnostics[0]).toContain('`?.(` と `?.[` は在りません');
     expect(compile(ret('xs[0')).diagnostics).toHaveLength(1);
   });

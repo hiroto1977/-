@@ -4656,6 +4656,35 @@
           "test": "★ ?? / || / && の片方になっても inert は消えない (呼べない)"
         }
       ]
+    },
+    {
+      "id": "T-258",
+      "found": "2026-11-05",
+      "foundBy": "MG-034 の手探り。電池 (種を新しくして 6000 周) は緑だったが、0.17 の欄への代入を調べる途中で、配列には同じ規則が無いことに気付いた。モジュール直下の許可リスト `const HOSTS: string[] = [...]` が `HOSTS[0] = \"evil\"` / `HOSTS.push(\"evil\")` で書き換えられ、引数で渡した配列を別の関数が `xs[0] = …` で書き換えても通った (5 形のうち 3 形が通った)。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "守りの層を書く言語 Mamori が、共有の配列 (モジュール直下の許可リスト・引数・import) への添字の代入と push などの書き換えメソッドを通し、別の関数が読む許可リストの関門の判定を書き換えられる",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: 添字への代入 (`a[0] = v`) と配列を書き換えるメソッド (push / pop / shift / unshift / splice / sort / reverse / fill / copyWithin) の受け手は、この関数の中で `const a = [ … ]` (または `{ … }`) と作った名前だけ (M6 refuseSharedReceiver)。引数・モジュール直下の const・import・let・欄の中の配列・別名は断る。実物の Mamori 27 本は 1 本も影響を受けなかった (どれも `const out: T[] = []` の局所の配列)。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV18.test.ts",
+        "test": "★ モジュール直下の許可リストへの添字の代入・メソッドを断る (threat: T-258)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV18.test.ts",
+          "test": "★ 引数で渡された配列・let・入れ子の欄の配列も書き換えられない (threat: T-258)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV18.test.ts",
+          "test": "★ 別の関数へ渡して書き換えさせる道も、書き換える側で断つ (threat: T-258)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV18.test.ts",
+          "test": "この関数の中で作った配列は、添字の代入もメソッドも通る"
+        }
+      ]
     }
   ],
   "huntBacklog": [

@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.17"
+    "version": "0.18"
   },
   "constructs": {
     "class": {
@@ -2205,6 +2205,49 @@
         "pr": 871,
         "reason": "draft PR #871",
         "summary": "欄への代入を 0.17 として足した。先に破って T-257 (inert が入れ物・戻り値・引数・論理演算子に包まれると消える 9 形) を見つけ、refuseInert で塞いだ。ollama.ts の移植は別の周。"
+      }
+    },
+    {
+      "id": "MG-034",
+      "date": "2026-11-05",
+      "kind": "probe",
+      "target": "language",
+      "pickedBy": "manual",
+      "deviation": "brief は port src/shared/ollama.ts (898 行・URL.port への代入・typeof 型・as const が絡む) を選んだが、大きな移植の前に、直前に足した 0.17 の欄への代入と並べて言語の穴を探す周 (probe) を先に回した。移植は次の周に残す。",
+      "briefPick": "port:src/shared/ollama.ts",
+      "version": "0.18",
+      "features": [],
+      "added": [],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "電池 (audit:mamori-battery・時刻から引いた新しい種・6000 周) を回した",
+          "result": "refused"
+        },
+        {
+          "tried": "0.17 の欄への代入の相手を変える 26 形 (フィールドの降格・昇格・別名・arrow の中・分割代入・catch 変数・for 変数・複合代入・入れ子の左辺・コンストラクタ名・計算した鍵の結果を包む 9 形)",
+          "result": "refused"
+        },
+        {
+          "tried": "モジュール直下の許可リスト `const HOSTS: string[]` へ `HOSTS[0] = \"evil\"` / `HOSTS.push(\"evil\")` / 引数の配列を書き換える関数へ HOSTS を渡す",
+          "result": "hole"
+        }
+      ],
+      "threats": [
+        "T-258"
+      ],
+      "controls": 3,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/checker.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 871,
+        "reason": null,
+        "summary": "言語の穴探し (probe)。電池と 0.17 まわりの手探り 26 形は緑、配列には欄と同じ「作った物だけ」の規則が無く、モジュール直下の許可リストを添字の代入・push などで別の関数が書き換えられる穴 1 件 (T-258) を見つけ、添字の代入と書き換えメソッドの受け手を局所の配列だけにして 0.18 にした。穴開け直し A-589〜A-591 が回帰検査で caught。"
       }
     }
   ]

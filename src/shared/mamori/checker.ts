@@ -78,6 +78,11 @@ export const CAPABILITY_MODULES: ReadonlySet<string> = new Set(
 /** 片方の値をそのまま返す論理演算子 (`a ?? b` `a || b` `a && b`)。inert の値を運ぶ (0.17 · T-257)。 */
 const LOGICAL_OPS: ReadonlySet<string> = new Set(['??', '||', '&&']);
 /** 引数を受けても結果が数・文字列・真偽の値だけになる組み込みの関数 (inert の値を引数に渡してよい —— 結果は呼べる値にならない)。 */
+/**
+ * 呼ぶと**受け手の配列そのものを書き換える**メソッド (0.18 · T-258)。受け手が「この関数の中で作った入れ物」でなければ、
+ * モジュール直下の許可リストや他のモジュールから渡された配列を、別の関数から書き換えられる。
+ */
+const MUTATING_METHODS: ReadonlySet<string> = new Set(['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse', 'fill', 'copyWithin']);
 const SCALAR_GLOBAL_FNS: ReadonlySet<string> = new Set(['Number', 'String', 'Boolean']);
 /** 結果が数・文字列・真偽の値だけになる組み込みのメンバの呼び出し (`Math.max(xs[i], 0)` `Object.hasOwn(o, xs[k])`)。 */
 const SCALAR_BUILTIN_OBJECTS: ReadonlySet<string> = new Set(['Math', 'Number']);
@@ -230,7 +235,7 @@ interface Binding {
   /** 数と分かっている名前か (型の宣言が `number`・初期値が数の式)。添字の鍵に使える (0.8)。型の宣言は実行時には守られないので、生成物は鍵を数に寄せる。 */
   readonly numeric?: boolean;
   /**
-   * この関数の中で `const o = { … }` と作った物か (0.17)。欄への代入 (`o.k = v`) の相手にできるのはこれだけ ——
+   * この関数の中で `const o = { … }` / `const a = [ … ]` と作った物か (0.17 / 0.18)。欄への代入 (`o.k = v`)・添字への代入 (`a[0] = v`)・配列を書き換えるメソッド (`a.push(v)`) の相手にできるのはこれだけ ——
    * 引数・import した物・組み込み・`let` (別の物を入れ直せる) は、他のモジュールと共有しているかもしれず、書き換えると
    * 他のモジュールの関門の判定まで変わる。
    */
@@ -446,7 +451,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
           report('M4', s.pos, `${s.name} は印 ${declared} の型ですが、入れる値は印を持ちません`);
         }
         // Stryker disable next-line OptionalChaining: const (= !mutable) は必ず初期値を持つので、init が null になるのは let だけで、そのとき !mutable が先に偽になり `?.` は評価されない (等価)
-        const owned = !s.mutable && s.init?.kind === 'object';
+        const owned = !s.mutable && (s.init?.kind === 'object' || s.init?.kind === 'array');
         bindLocal(own, s.name, { vetted: declared ?? carried, authority: 'local', mutable: s.mutable, numeric: s.type?.text === 'number' || (s.type === null && s.init !== null && isNumericKey(s.init, scopes)), owned, inert: s.init !== null && carriesInert(s.init, scopes) }, s.pos);
         return;
       }
@@ -489,6 +494,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         if (carriesInert(s.object, scopes)) {
           report('M6', s.object.pos, '計算した鍵の添字の結果へは代入できません —— 代入の相手は、この場で書いた配列の添字だけです');
         }
+        refuseSharedReceiver(s.object, scopes, '添字への代入');
         checkExpr(s.object, scopes, ctx);
         checkExpr(s.key, scopes, ctx);
         refuseInert(s.value, scopes, '配列の添字への代入');
@@ -645,6 +651,18 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
    * 呼ぶ側の式を検める。名前を直に呼ぶ形 (`f(…)`) と、危ない口のメンバを呼ぶ形 (`shell.m(…)`) だけは値の検めを通さない
    * —— 印を受ける関数と危ない口は「呼ぶこと」しか許さないので、ここで呼ぶ形を見分ける (0.3 · パス 564 · T-225)。
    */
+  /**
+   * 書き換える相手が「この関数の中で作った入れ物」か (0.18 · T-258)。添字への代入 (`a[0] = v`) と、配列を書き換えるメソッド
+   * (`a.push(v)`) の受け手に掛ける。引数・モジュール直下の const (許可リスト)・import した物・`let` を書き換えると、
+   * ほかの関数 (と、その配列を読む関門) の判定が変わる。宣言していない名前は checkExpr が別に断る。
+   */
+  function refuseSharedReceiver(target: Expr, scopes: readonly Map<string, Binding>[], what: string): void {
+    const b = target.kind === 'ident' ? lookup(scopes, target.name) : undefined;
+    if (target.kind === 'ident' && b === undefined) return;
+    if (b?.owned === true) return;
+    report('M6', target.pos, `${what}の相手にできるのは、この関数の中で \`const a = [ … ]\` と作った配列だけです —— 引数・モジュール直下の const・import した物を書き換えると、その配列を読む別の関数 (許可リストの関門) の判定が変わります`);
+  }
+
   function checkCallee(callee: Expr, args: readonly Expr[], scopes: readonly Map<string, Binding>[], ctx: Ctx): void {
     if (carriesInert(callee, scopes)) {
       report('M6', callee.pos, '計算した鍵の添字の結果は呼び出せません —— `const f = x[k]; f(…)` で、鍵が選んだ関数を関門の外から呼べてしまう');
@@ -663,6 +681,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       }
       return;
     }
+    if (callee.kind === 'member' && MUTATING_METHODS.has(callee.prop)) refuseSharedReceiver(callee.object, scopes, `\`.${callee.prop}(…)\``);
     if (callee.kind === 'ident') {
       // 名前を直に呼ぶ形: 宣言していない名前の検め (M6) だけを通す (印を受ける関数を呼ぶのは正しい使い方)。
       if (b === undefined && !isConstructibleBuiltin(callee, scopes)) checkExpr(callee, scopes, ctx);
