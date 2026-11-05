@@ -3944,6 +3944,14 @@
       "leafCount": 197,
       "note": "update integrity-chain.cjs,mamori-capabilities.json,actionTier.mamori,actionTier.ts",
       "hash": "34cf0ae4d454d945d77ea4fdaea830e4495feb9df59a4f90bb5541dc9a286805"
+    },
+    {
+      "index": 468,
+      "prevHash": "34cf0ae4d454d945d77ea4fdaea830e4495feb9df59a4f90bb5541dc9a286805",
+      "merkleRoot": "fc9d9a7d87c736140a09392c96bbab0ea99b7b7f108c55bde953210c87e8b8ea",
+      "leafCount": 197,
+      "note": "update ast.ts,checker.ts,emit.ts,parser.ts",
+      "hash": "9fce46f5898318bd32cfe25ae7cbb44dca605a55d3dbf7dfcc8492881301da6c"
     }
   ],
   "tipManifest": {
@@ -4102,12 +4110,12 @@
     "src/shared/isoDate.ts": "cfe317b22c6b482c42bca40a9d19a5cbd3204b5cbace6e7336befe77690f01cd",
     "src/shared/localDate.ts": "9220ae751caf1637071d5804fb67d4629125bed1c4a9a7913fdd2968c5294da1",
     "src/shared/lookup.ts": "59d9cc9880667ad419dae2c5039b53e078a4ad8f2c2ed704f8dde67e771d3534",
-    "src/shared/mamori/ast.ts": "60461a2142c46471aa865136cb3d109f27168055a701a3608ac79d800a3fb998",
+    "src/shared/mamori/ast.ts": "43a238c4a92a09d1f21601d1c992e0d8ac01d43cb704b5b72931e10d5cfbd9dd",
     "src/shared/mamori/capabilities.ts": "a62f4a2bee3099bb4ced100b86aad254126f18ba52de5fe5dc4e224fea904462",
-    "src/shared/mamori/checker.ts": "6f867fea177054c314e7be8b327fa52c7d8f987356fc6b33994c878f6295beac",
+    "src/shared/mamori/checker.ts": "735d0ccf4db551607d129992f2d7985305037485c2017279cc85f42c2a2dc3b8",
     "src/shared/mamori/compile.ts": "a21bed94095d71f5f3384d4813ed55de86eea7434117617bfba6dc135def875a",
-    "src/shared/mamori/emit.ts": "042d03932763b176bbb0616781e5eb1421b30ee932418d2d915a1710bd512d00",
-    "src/shared/mamori/parser.ts": "b236de230dcf43e6176947e7a8719ec24f078963077ed63abe3763f025e16afa",
+    "src/shared/mamori/emit.ts": "ade93601963bf9334be94e8ae32897d133aa06b1bec126bff82b3919c73ad4e2",
+    "src/shared/mamori/parser.ts": "996ea7d0a1db165e20fba570ac7ac3bb9f383948775d6bcf7f767482dff804a0",
     "src/shared/ollama.ts": "42e9c23d0cbb605c9c4cca9ecde7450dabc364333ef952f88f7f1e5ad2effaac",
     "src/shared/ollamaCore.mamori": "c4cafd00ebc155e2b50cf7f776201e5eb412712dd5b084630cf74bd223f01910",
     "src/shared/ollamaCore.ts": "43ff2fff2cc863d85cfe122ff6a1b6f20eb94323a22325f7bce11038a24041c0",

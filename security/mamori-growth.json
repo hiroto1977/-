@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.21"
+    "version": "0.22"
   },
   "constructs": {
     "class": {
@@ -119,9 +119,10 @@
       "since": "0.20"
     },
     "optional-param": {
-      "decision": "feature",
+      "decision": "added",
       "why": "省ける引数を持つ公開の関数で使う。",
-      "risk": "省いた引数は undefined —— 印の型の引数は省けない形にする。"
+      "risk": "省いた引数は undefined —— 印の型の引数は省けない形にする。",
+      "since": "0.22"
     },
     "export-from": {
       "decision": "feature",
@@ -2618,6 +2619,56 @@
         "pr": null,
         "reason": "draft PR を作る",
         "summary": "actionTier.ts (84 行) を Mamori 0.21 で書き直した (port)。型引数つき new Set<Tier>(…) は 0.21 で通る。非 null 断定と template は書き直し、文字列の鍵の添字 ACTION_TIER[key] は Mamori に無い (x[\"constructor\"] で表を迂回する道) ので Object.entries を歩いて鍵を比べる形にした。元の実装と生成物を表の全鍵と prototype の鍵で突き合わせて同じ答えを確認。変異検査 100%・対照 2 方向で鳴る。"
+      }
+    },
+    {
+      "id": "MG-043",
+      "date": "2026-11-05",
+      "kind": "feature",
+      "target": "optional-param",
+      "pickedBy": "brief",
+      "briefPick": "feature:optional-param",
+      "version": "0.22",
+      "features": [
+        "optional-param"
+      ],
+      "added": [
+        "optional-param"
+      ],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "印の型の引数を省ける形 `fn f(u?: VettedUrl)` / `VettedUrl | null` / `VettedUrl[]` / `Array<VettedUrl>` と、省いた undefined を印を受ける口 openUrl(u) へ渡す",
+          "result": "refused"
+        },
+        {
+          "tried": "arrow `(u?: VettedUrl) => openUrl(u)` と sink 関数の行き先 `sink fn openUrl(u?: VettedUrl)` を省ける引数にする",
+          "result": "refused"
+        },
+        {
+          "tried": "省ける `n?: number` を添字の鍵 `xs[n]` に使い、静的に数と言い張る",
+          "result": "refused"
+        },
+        {
+          "tried": "型の無い `x?`・`x?: T = v`・省ける引数の後ろの省けない引数・三項演算子 `c ? n : m` を省ける引数と読み違えさせる",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 2,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/checker.ts",
+          "src/shared/mamori/emit.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": null,
+        "reason": "draft PR を作る",
+        "summary": "省ける引数 x?: T を 0.22 で足した。先に破り、印の型の引数 (null/配列/入れ子を含む)・arrow・sink の行き先は省けない (M4)、省ける number は添字の鍵にできない (M6)、型なし・既定値つき・省けない引数が後ろに来る形は構文の段で断る。省ける引数が無い関数の生成物は 0.21 までと変わらない。"
       }
     }
   ]

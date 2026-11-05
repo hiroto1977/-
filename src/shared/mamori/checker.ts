@@ -274,6 +274,18 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
    * (`<T>(s: string) => T`) へ印の型を渡すと、tsc は戻り値を印を名乗る値として扱い、`mint` を通らずに印が出来る (M4 と同じ穴)。
    * `typeof u` / `import("…")` も同じ: 印を持つ値の**型**を名指しできてしまう。
    */
+  /**
+   * 省ける引数 `x?: T` (0.22)。**印の型を名乗る引数は省けない** —— 省いた呼び出しは値が `undefined` になり、印を受ける口 (sink 関数の行き先・
+   * gate を通った値を要る関数) に「印の無い値」を渡せてしまう (T-238 は、印を受ける引数を渡さない呼び出しを断るための検めで、省ける引数はその反対側に口を開ける)。
+   * `x?: VettedUrl | null` のように印を含む綴りも同じ。省ける引数は `number` を名乗っても静的に数とは言えない (undefined かもしれない) ので `numeric` から外す。
+   */
+  const checkOptionalParams = (ps: readonly Param[]): void => {
+    for (const p of ps) {
+      if (!p.optional) continue;
+      const mark = vettedOf(p.type, table.vetted);
+      if (mark !== null) report('M4', p.pos, `省ける引数 ${p.name}?: は印 ${mark} を名乗れません —— 省いた呼び出しは値が undefined になり、印を受ける口へ印の無い値を渡せてしまう (印の型の引数は省けません)`);
+    }
+  };
   const checkTypeArgs = (targs: readonly TypeRef[]): void => {
     for (const ta of targs) {
       const mark = ta.names.find((n) => table.vetted.has(n));
@@ -379,8 +391,9 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     // 読むのは sink 関数の中 (checkCallee の role === 'sink' の枝) だけなので、役で分けずに置く。
     const ctx: Ctx = { role: it.role, returnVetted: sig.returnVetted, destVetted: sig.paramVetted[0] ?? null };
     const scope = new Map<string, Binding>();
+    checkOptionalParams(it.params);
     for (const p of it.params) {
-      bindLocal(scope, p.name, { vetted: carriedMark(p.type, table.vetted), authority: 'local', numeric: p.type?.text === 'number' }, p.pos);
+      bindLocal(scope, p.name, { vetted: carriedMark(p.type, table.vetted), authority: 'local', numeric: !p.optional && p.type?.text === 'number' }, p.pos);
       if (p.init !== null) checkExpr(p.init, [moduleScope], ctx);
     }
     checkBlock(it.body, [moduleScope, scope], ctx);
@@ -875,7 +888,8 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         const plain: Ctx = { role: 'plain', returnVetted: null, destVetted: null };
         // 引数への代入は arrow の本体 (式) では書けない。ブロックの本体では書けるが、'local' / mutable でない束縛へは代入を断る。
         // Stryker disable next-line StringLiteral: 引数の権限は代入の判定にしか効かず、引数は let ではないので mutable の門が先に断る (等価)
-        for (const p of e.params as readonly Param[]) bindLocal(inner, p.name, { vetted: carriedMark(p.type, table.vetted), authority: 'local', numeric: p.type?.text === 'number' }, p.pos);
+        checkOptionalParams(e.params as readonly Param[]);
+        for (const p of e.params as readonly Param[]) bindLocal(inner, p.name, { vetted: carriedMark(p.type, table.vetted), authority: 'local', numeric: !p.optional && p.type?.text === 'number' }, p.pos);
         // 既定値 (`(q = fetch("x")) => q`) も式 —— 0.7 まで検めていなかったので、plain 関数の中で宣言していない名前・
         // 危ない口・印の無い値での印つきの口の呼び出しを、arrow の引数の既定値に隠せた (T-244)。
         for (const p of e.params as readonly Param[]) if (p.init !== null) checkExpr(p.init, [...scopes, inner], plain);

@@ -378,6 +378,13 @@ export function parse(file: string, src: string): Module {
     while (!isP(')')) {
       const pos = peek().pos;
       const name = ident();
+      const qmark = peek();
+      const optional = isP('?');
+      if (optional) {
+        next();
+        // 型の無い `x?` は暗黙の any になる (tsc も断る)。印の型を名乗れない省ける引数を作るためにも型は要る。
+        if (!isP(':')) fail(peek(), '省ける引数 `x?` には型が要ります (`x?: T`)');
+      }
       let type: TypeRef | null = null;
       if (isP(':')) {
         next();
@@ -385,10 +392,13 @@ export function parse(file: string, src: string): Module {
       }
       let init: Expr | null = null;
       if (isP('=')) {
+        if (optional) fail(peek(), '省ける引数 `x?: T` に既定値 (`= v`) は置けません —— どちらか一方です (TypeScript も断ります)');
         next();
         init = expr();
       }
-      out.push({ name, type, init, pos });
+      // 省ける引数の後ろに、省けない引数 (既定値も無い) は置けない (tsc も断る形を、先に自分の言葉で断る)。
+      if (!optional && init === null && out.some((p) => p.optional)) fail(qmark, '省ける引数 `x?: T` の後ろに、省けない引数は置けません');
+      out.push({ name, optional, type, init, pos });
       if (!isP(')')) expectP(',');
     }
     expectP(')');
@@ -875,7 +885,7 @@ export function parse(file: string, src: string): Module {
 
   const arrow = (): Expr => {
     const pos = peek().pos;
-    const ps: Param[] = peek().kind === 'ident' ? [{ name: ident(), type: null, init: null, pos }] : params();
+    const ps: Param[] = peek().kind === 'ident' ? [{ name: ident(), optional: false, type: null, init: null, pos }] : params();
     expectP('=>');
     if (isP('{')) {
       // 本体のブロックは arrow の外の for / switch の内側ではない: `break` / `continue` は arrow を越えない。
