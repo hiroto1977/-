@@ -620,6 +620,8 @@ const PROTECTED = [
   // 1〜6 回・51〜528 行の安定資産だった。**採掘の手間は「頻繁に変わるもの」を
   // 避けるためのもので、安定した壁を外す理由にはならない。**
   'src/renderer/security/frameGuard.ts',    // 枠の中では描画しない (CSP で代替できない)
+  'src/renderer/security/frameGuard.mamori', // 同じ物の元 (Mamori · 2026-11-05 · MG-037)
+  'src/renderer/security/frameGuardHost.ts', // frameGuard.mamori が読む host の口 (window と style.cssText)
   'src/renderer/security/lockWorkspace.ts', // 施錠で鍵をメモリから落とす本体
   'src/shared/imageUrlGate.ts',             // 第三者画像 URL のスキーム関門
   'src/shared/safeFilename.ts',             // ファイル名の唯一の関門

@@ -9,6 +9,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { FRAMED_MESSAGE, isFramed, renderFrameRefusal } from '../frameGuard';
+import { hostStyle, hostWindow } from '../frameGuardHost';
 
 /** `window` の代わりに渡せる最小の形。 */
 const win = (top: unknown, self: unknown): Window => ({ top, self }) as unknown as Window;
@@ -106,3 +107,56 @@ describe('renderFrameRefusal — 断りの描画', () => {
     expect(document.body.textContent).toContain(FRAMED_MESSAGE);
   });
 });
+
+// Mamori への移植 (MG-037) で書き直した所を、振る舞いで留める。
+describe('frameGuard.mamori の移植 (MG-037)', () => {
+  const fresh = (): Document => {
+    document.body.replaceChildren();
+    const root = document.createElement('div');
+    root.id = 'root';
+    document.body.appendChild(root);
+    return document;
+  };
+
+  it('引数を省くと実物の window で判じる (jsdom は枠の外)', () => {
+    expect(isFramed()).toBe(false);
+    expect(hostWindow()).toBe(window);
+  });
+
+  it('子が何個あっても全部消す (押す対象を 1 つも残さない)', () => {
+    const doc = fresh();
+    const root = doc.getElementById('root')!;
+    for (let i = 0; i < 5; i++) {
+      const b = doc.createElement('button');
+      b.textContent = `押す ${i}`;
+      root.appendChild(b);
+    }
+    renderFrameRefusal(doc, 'https://example.com/');
+    expect(doc.querySelectorAll('button').length).toBe(0);
+    expect(root.children.length).toBe(1);
+  });
+
+  it('断りの組み立て: 見出し・本文・リンクの順で、文は textContent に入る', () => {
+    const doc = fresh();
+    const box = renderFrameRefusal(doc, 'https://example.com/');
+    expect(Array.from(box.children).map((c) => c.tagName)).toEqual(['H1', 'P', 'A']);
+    expect(box.children[0]?.textContent).toBe('枠の中では開けません');
+    expect(box.children[1]?.textContent).toBe(FRAMED_MESSAGE);
+    expect(box.children[2]?.textContent).toBe('Service Hub を単独で開く');
+  });
+
+  it('文面は 3 文を順に繋いだもの', () => {
+    expect(FRAMED_MESSAGE).toBe(
+      'Service Hub は他のサイトの枠 (iframe) の中では動きません。' +
+        'なりすましたページに操作を押させる手口を防ぐためです。' +
+        '下のリンクからこのページを単独で開いてください。',
+    );
+  });
+
+  it('host の style の口は cssText を据える', () => {
+    const el = document.createElement('div');
+    hostStyle(el, 'margin:0');
+    expect(el.style.cssText).toContain('margin');
+  });
+});
+
