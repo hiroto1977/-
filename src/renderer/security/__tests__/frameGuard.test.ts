@@ -145,6 +145,14 @@ describe('frameGuard.mamori の移植 (MG-037)', () => {
     expect(box.children[2]?.textContent).toBe('Service Hub を単独で開く');
   });
 
+  it('箱・見出し・本文のそれぞれに見た目が据わる (中身の CSS までは縛らない)', () => {
+    const doc = fresh();
+    const box = renderFrameRefusal(doc, 'https://example.com/');
+    expect((box as HTMLElement).style.cssText).not.toBe('');
+    expect((box.children[0] as HTMLElement).style.cssText).not.toBe('');
+    expect((box.children[1] as HTMLElement).style.cssText).not.toBe('');
+  });
+
   it('文面は 3 文を順に繋いだもの', () => {
     expect(FRAMED_MESSAGE).toBe(
       'Service Hub は他のサイトの枠 (iframe) の中では動きません。' +

@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 461
+- ブロック数: 462
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `9b1216e296aea62c8d3bf93191ad69f5b6a00648169cf45d4c0e6a0a8c92c983`
-- 保護対象: 191 ファイル
+- 末尾(tip)ハッシュ: `e9f3195201444c6fad4d302586d013ba38e555469f6f9e36de2bea718c1bd548`
+- 保護対象: 193 ファイル
 
 ## ブロック
 
@@ -474,6 +474,7 @@
 | 458 | `7fafccfcae7697e9` | `10cd65de0b3e3556` | `9dbcb7734134e063` | update grok.json,settings.json,integrity-chain.cjs |
 | 459 | `f4f1d648e5a82536` | `9dbcb7734134e063` | `65d68b9a92bd1a22` | update integrity-chain.cjs,mamori-capabilities.json,ast.ts,checker.ts,emit.ts,parser.ts |
 | 460 | `8c65471675c69679` | `65d68b9a92bd1a22` | `9b1216e296aea62c` | update ast.ts,checker.ts,emit.ts,parser.ts |
+| 461 | `d13edd3153335f50` | `9b1216e296aea62c` | `e9f3195201444c6f` | update integrity-chain.cjs,mamori-capabilities.json,frameGuard.mamori,frameGuard.ts,frameGuardHost.ts |
 
 ## 保護対象ファイル
 
@@ -591,7 +592,9 @@
 - `src/renderer/security/dataCryptoHost.ts`
 - `src/renderer/security/egressStepUp.mamori`
 - `src/renderer/security/egressStepUp.ts`
+- `src/renderer/security/frameGuard.mamori`
 - `src/renderer/security/frameGuard.ts`
+- `src/renderer/security/frameGuardHost.ts`
 - `src/renderer/security/lockWorkspace.ts`
 - `src/renderer/security/mnemonic.ts`
 - `src/renderer/security/vault.ts`

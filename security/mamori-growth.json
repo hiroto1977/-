@@ -2344,6 +2344,48 @@
         "reason": "draft PR を作る",
         "summary": "while を 0.19 として足した。足す前に破り、while ではなく for に既にあった穴 (ループの外の let へ本体の末尾で入れた inert を次の周の先頭で使う · T-259) を見つけて塞いだ。止まらない形は検めない (来歴の規則の外・docs に記載)。frameGuard.ts / outboundContentGate.ts の移植は別の周。"
       }
+    },
+    {
+      "id": "MG-037",
+      "date": "2026-11-05",
+      "kind": "port",
+      "target": "src/renderer/security/frameGuard.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/renderer/security/frameGuard.ts",
+      "version": "0.19",
+      "features": [],
+      "added": [],
+      "rewrite": [],
+      "ported": [
+        "src/renderer/security/frameGuard.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "枠の中の判定を壊す形 —— top の読みが投げる / 別オリジン / 既定の窓を渡さない (fail-closed が保たれるか)",
+          "result": "refused"
+        },
+        {
+          "tried": "断りの組み立てで markup が生える形 —— href に \"><img onerror> を入れる・文面を innerHTML 相当で入れる (createTextNode / setAttribute だけで組むか)",
+          "result": "refused"
+        },
+        {
+          "tried": "DOM の口を Mamori に持ち込む —— 作っていない物の欄への代入 (link.href = v / el.style.cssText = v)・入れ子の欄への代入",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 5,
+      "mutation": {
+        "files": [
+          "src/renderer/security/frameGuard.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": null,
+        "reason": "draft PR を作る",
+        "summary": "枠の中では描画しない関門 (frameGuard.ts · 95 行) を Mamori で書き直した (port)。子を消す繰り返しは 0.19 の while。window と style.cssText の口だけ host 壁 frameGuardHost.ts に置いた。textContent と href の代入は createTextNode と setAttribute に替え (どちらも markup にならない)、既存の検査は編集なしで緑。変異検査 100%。"
+      }
     }
   ]
 }
