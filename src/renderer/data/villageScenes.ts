@@ -189,7 +189,7 @@ export function buildRequestFlow(
   villagers: readonly Villager[],
   route: FlowRoute,
   topic: string,
-  work?: { readonly text: string; readonly doneText?: string; readonly failedText?: string },
+  work?: { readonly text?: string; readonly doneText?: string; readonly failedText?: string },
 ): RequestFlow | null {
   const byId = new Map(villagers.map((v) => [v.id, v] as const));
   const coo = villagers.find((v) => v.kind === 'coo');

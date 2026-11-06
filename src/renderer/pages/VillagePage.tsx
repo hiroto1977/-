@@ -209,6 +209,7 @@ export function VillagePage() {
   const [sceneOn, setSceneOn] = useState(true);
   const [flowState, setFlowState] = useState<FlowState | null>(null);
   const [sceneLog, setSceneLog] = useState<readonly SceneLogEntry[]>([]);
+  const [logOpen, setLogOpen] = useState(false);
   const tickRef = useRef(0);
   const lastLogKeyRef = useRef<string | null>(null);
   const logListRef = useRef<HTMLUListElement | null>(null);
@@ -494,6 +495,8 @@ export function VillagePage() {
       villagers,
       { executiveId: r.executive?.id, managerId: r.manager?.id, teamId: r.team?.id },
       text,
+      // 解釈できずに案内だけ返した発話を「回答を出しました」と偽らない。
+      { doneText: reply.kind === 'fallback' ? '内容を解釈できず、案内だけ返しました。' : '返答しました。' },
     );
     if (flow !== null) {
       lastLogKeyRef.current = null;
@@ -741,10 +744,20 @@ export function VillagePage() {
             />
           );
         })}
-      </div>
-
       {sceneLog.length > 0 || flowState !== null ? (
         <div data-village-scenes style={sceneLogStyle}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 6 }}>
+            <strong style={{ fontSize: 12 }}>💬 村の会話</strong>
+            <button
+              type="button"
+              aria-expanded={logOpen}
+              aria-label={logOpen ? '会話の記録をたたむ' : '会話の記録を広げる'}
+              onClick={() => setLogOpen((o) => !o)}
+              style={{ minHeight: 24, minWidth: 24, fontSize: 11, padding: '0 8px' }}
+            >
+              {logOpen ? '▾ たたむ' : '▴ 広げる'}
+            </button>
+          </div>
           {flowState !== null && flowCur !== null ? (
             <div data-village-flow style={{ display: 'flex', gap: 4, flexWrap: 'wrap', alignItems: 'center' }}>
               <strong style={{ fontSize: 12 }}>頼んだ作業の流れ</strong>
@@ -765,7 +778,12 @@ export function VillagePage() {
               ) : null}
             </div>
           ) : null}
-          <ul ref={logListRef} role="log" aria-label="村人の会話の記録" style={sceneLogListStyle}>
+          <ul
+            ref={logListRef}
+            role="log"
+            aria-label="村人の会話の記録"
+            style={{ ...sceneLogListStyle, maxHeight: logOpen ? 132 : 20, overflowY: logOpen ? 'auto' : 'hidden' }}
+          >
             {sceneLog.map((e) => (
               <li key={e.key} style={{ margin: 0 }}>
                 <b>{e.who}</b>
@@ -776,6 +794,7 @@ export function VillagePage() {
           </ul>
         </div>
       ) : null}
+      </div>
 
       <VoiceFooter transcript={transcript} onSubmit={handleUtterance} />
     </div>
@@ -1413,6 +1432,13 @@ const plazaStyle: React.CSSProperties = {
   pointerEvents: 'none',
 };
 const sceneLogStyle: React.CSSProperties = {
+  // 景色の下端に重ねる (景色の下に置くと、注意書きの長い画面では折り返しの外へ押し出されて見えない)。
+  position: 'absolute',
+  left: 8,
+  bottom: 8,
+  right: 8,
+  maxWidth: 560,
+  zIndex: 9000,
   display: 'flex',
   flexDirection: 'column',
   gap: 4,
