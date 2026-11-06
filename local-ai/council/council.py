@@ -425,7 +425,7 @@ def api_state():
             "services": service_snapshot(), "decisions": decs, "chat": CHAT[-12:], "user": USER,
             "claude": {"status": claude_status(), "calls_last_hour": sum(1 for t in _CL["calls"] if time.time() - t < 3600), "max_per_hour": CLAUDE_MAX_HOUR},
             "advice": [l.strip()[2:][:600] for l in advice_lines() if l.strip().startswith("- ")][-5:],
-            "company": {k: COMPANY.st.get(k) for k in ("linked", "name", "scale", "last_fetch", "error")},
+            "company": {k: COMPANY.st.get(k) for k in ("linked", "name", "scale", "last_fetch", "error", "demo", "fictional", "label")},
             "guard": {"on": GUARD_ON, "llm": GUARD_LLM, "rejected": list(REJ)[-5:]},
             "locks": {"on": LOCK_ON, "items": decision_lock.public()},
             "loop": decision_loop.public(HERE)}
