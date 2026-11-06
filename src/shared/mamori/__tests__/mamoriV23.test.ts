@@ -69,15 +69,15 @@ describe('0.23: 型引数を持つ関数宣言 fn f<T>(…)', () => {
   });
 
   it('型引数の名前に typeof / import は使えない (M4)', () => {
-    expect(refused('fn f<typeof>(x: number) -> number {\n  return x;\n}\n')).toContain('型引数の名前に `typeof` は置けません');
-    expect(refused('fn f<import>(x: number) -> number {\n  return x;\n}\n')).toContain('型引数の名前に `import` は置けません');
+    expect(refused('fn f<typeof>(x: number) -> number {\n  return x;\n}\n')).toContain('[M4] 型引数の名前に `typeof` は置けません');
+    expect(refused('fn f<import>(x: number) -> number {\n  return x;\n}\n')).toContain('[M4] 型引数の名前に `import` は置けません');
   });
 
   it('gate 関数と sink 関数は型引数を持てない (M4)', () => {
     const g = refused(PRE + 'gate fn g<T>(x: T) -> VettedUrl {\n  return mint VettedUrl("a");\n}\n');
-    expect(g).toContain('gate 関数 g は型引数を持てません');
+    expect(g).toContain('[M4] gate 関数 g は型引数を持てません');
     const s = refused('extern sink { shell } from "electron";\nexport vetted VettedUrl = "url";\nsink fn s<T>(u: VettedUrl, x: T) -> Promise<void> {\n  return shell.openExternal(u);\n}\n');
-    expect(s).toContain('sink 関数 s は型引数を持てません');
+    expect(s).toContain('[M4] sink 関数 s は型引数を持てません');
   });
 
   it('型引数で包み直しても印は作れない —— 戻り値は印を持たない値のまま (M4)', () => {
