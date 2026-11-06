@@ -26,6 +26,8 @@ import {
   type KpiFundamentals,
 } from './kpiActuals';
 
+export type Verdict = 'hit' | 'partial' | 'miss' | 'unreadable';
+
 export type LeverId = 'cogs' | 'advertising' | 'sga' | 'revenue';
 
 /** 連続してこの回数外したら人へ戻す。 */
@@ -40,6 +42,14 @@ export const LEVER_STEPS: Readonly<Record<LeverId, { readonly label: string; rea
   advertising: { label: '広告宣伝費を絞る', stepPct: 10 },
   sga: { label: '販管費 (固定費) を削る', stepPct: 5 },
   revenue: { label: '売上を伸ばす (変動費は比例)', stepPct: 5 },
+};
+
+/** 判定の呼び名 (画面に出す)。 */
+export const VERDICT_LABEL: Readonly<Record<Verdict, string>> = {
+  hit: '当たり',
+  partial: '一部当たり',
+  miss: '外れ',
+  unreadable: '測れず',
 };
 
 export const LEVER_ASSUMPTION_NOTE =
@@ -135,7 +145,6 @@ export function candidateLevers(base: KpiFundamentals, exclude: ReadonlySet<Leve
   return out.sort((a, b) => b.expectedProfitGain - a.expectedProfitGain);
 }
 
-export type Verdict = 'hit' | 'partial' | 'miss' | 'unreadable';
 
 /**
  * 翌月の実績で、打ち手が見込みどおり効いたかを決める。
@@ -225,4 +234,11 @@ export function nextStep(
     return { kind: 'stop-for-human', reason: '試せる打ち手の候補が尽きました。人が新しい打ち手を考えてください。' };
   }
   return { kind: 'propose', gapPt: targetMarginPct - latest.marginPct, levers };
+}
+
+/** `YYYY-MM` の翌月 (12 月は翌年 1 月)。読める月だけを渡すこと。 */
+export function nextPeriod(period: string): string {
+  const year = Number(period.slice(0, 4));
+  const month = Number(period.slice(5, 7));
+  return month === 12 ? `${year + 1}-01` : `${year}-${String(month + 1).padStart(2, '0')}`;
 }

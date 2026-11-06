@@ -7,7 +7,9 @@ import {
   MAX_CONSECUTIVE_MISSES,
   PARTIAL_RATIO,
   candidateLevers,
+  VERDICT_LABEL,
   judgeCycle,
+  nextPeriod,
   judgeCycles,
   monthSnapshots,
   nextStep,
@@ -258,5 +260,18 @@ describe('judgeCycles と nextStep: 輪を回す', () => {
     ]);
     expect(r.kind).toBe('propose');
     if (r.kind === 'propose') expect(r.levers.map((l) => l.id)).toEqual(['revenue']);
+  });
+});
+
+describe('nextPeriod と判定の呼び名', () => {
+  it('翌月 (12 月は翌年 1 月・月は 2 桁)', () => {
+    expect(nextPeriod('2026-01')).toBe('2026-02');
+    expect(nextPeriod('2026-09')).toBe('2026-10');
+    expect(nextPeriod('2026-11')).toBe('2026-12');
+    expect(nextPeriod('2026-12')).toBe('2027-01');
+  });
+
+  it('判定の呼び名は 4 つ全部に在る', () => {
+    expect(VERDICT_LABEL).toEqual({ hit: '当たり', partial: '一部当たり', miss: '外れ', unreadable: '測れず' });
   });
 });

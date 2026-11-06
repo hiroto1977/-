@@ -27,6 +27,7 @@ import { ROLE_ORDER } from '../../shared/team';
 import { isCalendarDate, isCalendarDateOrMonth } from '../../shared/isoDate';
 import { relationsHold } from './recordRelations';
 import { BATCH_STATE_LABELS } from '../../shared/hydroponicsControl';
+import { IMPROVEMENT_KINDS, LEVER_IDS } from './kpiImprovementStore';
 
 type Rec = Record<string, unknown>;
 type Check = (v: unknown) => boolean;
@@ -98,6 +99,15 @@ const FIELD_SHAPES: Readonly<Record<string, CollectionShape>> = {
   'sales-entries': shape({ date: calendarDate, channel: oneOf(() => SALES_CHANNELS), amount: num, orders: num, note: opt(str) }),
   'kpi-actuals': KPI_SHAPE,
   'kpi-budgets': KPI_SHAPE,
+  // 月次KPI改善の輪: 目標 (kind: goal) と選んだ打ち手の記録 (kind: cycle) を 1 つの collection に置く。読む側 (`improvementState`) が行ごとに読めるものだけ採る。
+  'kpi-improvement-cycles': shape({
+    kind: oneOf(() => IMPROVEMENT_KINDS),
+    targetMarginPct: opt(num),
+    leverId: opt(oneOf(() => LEVER_IDS)),
+    expectedGainPt: opt(num),
+    beforePeriod: opt(str),
+    afterPeriod: opt(str),
+  }),
   'balance-sheet': shape({
     asOf: blankOrCalendar,
     currentAssets: num,
