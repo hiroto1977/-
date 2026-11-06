@@ -1,5 +1,12 @@
 # Service Hub — 残りの作業手順書
 
+## 村の会話の場面で測って残した物 (2026-11-06)
+
+- LITE が CI の警告線 (3,400,000 B) を超えて 3,570,032 B (天井まで 429,968 B)。村の場面の分は小さいが、次に renderer / shared へ積む前に LITE への影響を測る。
+- ルータが team を決められない話題は 割り当てを飛ばす (COO が受ける)。話題の言い換えか、ルータ側の拡張が要る。
+- `VoiceCommandBar` は描かれない死んだ部品で、`invoke` の知らせ (`publishConversationWork`) を出さない。使うなら配線、使わないなら撤去。
+- 古い open PR (dependabot の major #856–860・古い draft・cursor 系 #892/#898–#900) は未整理。
+
 ## MG-028 (instanceof · Mamori 0.16) で測って残した物 (2026-11-02)
 
 - **宣言の名前に JavaScript の予約語を書ける**: `const class = 1;` / `const typeof = 1;` / `const instanceof = 1;` は Mamori の検査を通り、生成された TypeScript を `tsc` が断る (実測)。閉じた側に落ちるので守りの穴ではなく、直すなら `ident()` の宣言の位置 (const / let / fn / 引数 / for / catch / 分割代入の名前) に予約語の表を掛ける。式の位置の `instanceof` は RESERVED で断る (`mamoriV16.test.ts`)。
