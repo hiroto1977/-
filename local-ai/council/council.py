@@ -2,7 +2,7 @@
 """ローカルAI組織（村）デーモン。リポジトリのAI組織(registry.json)を縮小移植し、
 COO→役員→部長→担当→秘書 の順でローカルLLMが議論する（標準ライブラリのみ）。
 行動はこのディレクトリ内へのファイル書き込みと読み取り専用チェックに限定。外部送信・git操作はしない。"""
-import json, os, re, socket, shutil, subprocess, tempfile, threading, time, datetime, urllib.request, difflib, collections
+import json, os, re, shutil, subprocess, tempfile, threading, time, datetime, urllib.request, difflib, collections
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -35,8 +35,12 @@ COMMON = (f"必ず自然な日本語（ひらがな・カタカナ・漢字）�
           "この組織はローカル環境内でファイルに提案を書くことしかできません。外部送信やgit pushは提案しないでください。"
           "他の人の発言をそのまま繰り返さず、自分の役割ならではの内容を書いてください。")
 STATE = {"status": "起動", "topic": "", "transcript": [], "updated": "", "speaking": None, "exec": None}
+# 健全性は待受ポートではなく、そのサービスが仕事を返す経路の HTTP 状態。
+# LiteLLM の /health/liveliness はプロセスが生きていれば 200 で、/v1/models が 500 でも村は稼働と出ていた。
+# 表示は /v1/models（llama-swap と同じ機能経路）が 2xx のときだけ稼働。鍵は LiteLLM にだけ付ける。
 SERVICES = {"Ollama": (11434, "/"), "llama1.5B": (8081, "/health"), "llama3B": (8085, "/health"), "llama7B": (8086, "/health"),
-            "LocalAI": (8084, "/readyz"), "llama-swap": (8090, "/v1/models"), "LiteLLM": (4000, "/health/liveliness"), "OpenWebUI": (8080, "/health")}
+            "LocalAI": (8084, "/readyz"), "llama-swap": (8090, "/v1/models"), "LiteLLM": (4000, "/v1/models"), "OpenWebUI": (8080, "/health")}
+PROBE_TIMEOUT = float(os.environ.get("COUNCIL_PROBE_TIMEOUT", "3"))
 PENDING, CHAT = [], []
 ADVICE = os.path.join(HERE, "advice_inbox.md")      # パートB: クラウドの助言（現在はGrokのみ）（追記された行を最優先の議題にする）
 import advice_guard
@@ -89,10 +93,55 @@ def free_mb():
     for l in open("/proc/meminfo"):
         if l.startswith("MemAvailable"): return int(l.split()[1]) // 1024
     return 0
-def port_up(p):
+class _KeepStatus(urllib.request.HTTPErrorProcessor):
+    """3xx/4xx/5xx を例外や別URLへの追跡にせず、その応答の状態だけを返す。"""
+    def http_response(self, request, response):
+        return response
+    https_response = http_response
+_OPENER = urllib.request.build_opener(_KeepStatus)
+
+def probe_headers(name):
+    """認証が要る機能経路にだけ鍵を付ける。他のローカルサービスへは出さない。"""
+    if name == "LiteLLM" and KEY:
+        return {"Authorization": "Bearer " + KEY}
+    return {}
+
+def probe_ok(port, path, headers=None, timeout=None):
+    """127.0.0.1 の機能経路が 2xx のときだけ稼働。待受だけでは稼働にしない。"""
+    timeout = PROBE_TIMEOUT if timeout is None else timeout
+    if isinstance(port, bool) or not isinstance(port, int) or not 1 <= port <= 65535:
+        return False
+    if not isinstance(path, str) or not path.startswith("/") or "://" in path or re.search(r"[\x00-\x20]", path):
+        return False
+    req = urllib.request.Request(
+        f"http://127.0.0.1:{port}{path}",
+        headers={"Connection": "close", **(headers or {})},
+        method="GET")
     try:
-        with socket.create_connection(("127.0.0.1", p), 2): return True
-    except OSError: return False
+        with _OPENER.open(req, timeout=timeout) as r:
+            return 200 <= int(getattr(r, "status", 0)) < 300
+    except Exception:
+        return False
+
+def service_snapshot(timeout=None):
+    """名前 → 機能経路が 2xx か。並列。時間内に答えが無ければ停止。"""
+    timeout = PROBE_TIMEOUT if timeout is None else timeout
+    items = list(SERVICES.items())
+    result = {}
+    lock = threading.Lock()
+    def one(name, port, path):
+        ok = probe_ok(port, path, probe_headers(name), timeout)
+        with lock:
+            result[name] = True if ok is True else False
+    threads = []
+    for name, (port, path) in items:
+        t = threading.Thread(target=one, args=(name, port, path), daemon=True)
+        t.start(); threads.append(t)
+    end = time.monotonic() + timeout + 1.0
+    for t in threads:
+        t.join(max(0.0, end - time.monotonic()))
+    return {name: True if result.get(name) is True else False for name, _ in items}
+
 def log_sys(msg):
     with open(os.path.join(HERE, "logs", "system.log"), "a") as f: f.write(f"{now()} {msg}\n")
 
@@ -145,9 +194,10 @@ def persona(p):
     return s
 
 def health_summary():
+    up = service_snapshot()
     locked = decision_lock.forced_down_services() if LOCK_ON else set()
-    down = [n for n, (p, _) in SERVICES.items() if not port_up(p) and n not in locked]
-    fixed = [n for n in locked if not port_up(SERVICES[n][0])]
+    down = [n for n, ok in up.items() if not ok and n not in locked]
+    fixed = [n for n in locked if n in up and not up[n]]
     parts = [f"空きメモリ {free_mb()}MB"]
     if fixed: parts.append("固定停止: " + ", ".join(fixed))
     parts.append("停止中: " + (", ".join(down) if down else "なし"))
@@ -355,7 +405,7 @@ def api_state():
     dp = os.path.join(HERE, "decisions.md")
     decs = [d.strip() for d in open(dp, encoding="utf-8").read().split("\n## ") if d.strip()][-5:] if os.path.exists(dp) else []
     return {k: STATE[k] for k in ("status", "topic", "updated", "speaking", "exec")} | {"free_mb": free_mb(), "transcript": STATE["transcript"][-8:],
-            "services": {n: port_up(p) for n, (p, _) in SERVICES.items()}, "decisions": decs, "chat": CHAT[-12:], "user": USER,
+            "services": service_snapshot(), "decisions": decs, "chat": CHAT[-12:], "user": USER,
             "claude": {"status": claude_status(), "calls_last_hour": sum(1 for t in _CL["calls"] if time.time() - t < 3600), "max_per_hour": CLAUDE_MAX_HOUR},
             "advice": [l.strip()[2:][:600] for l in advice_lines() if l.strip().startswith("- ")][-5:],
             "company": {k: COMPANY.st.get(k) for k in ("linked", "name", "scale", "last_fetch", "error")},
