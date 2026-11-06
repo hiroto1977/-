@@ -3,8 +3,10 @@
 村の規模（住民・家・屋台・工房・倉庫・区画・荒れ地）に変換する。標準ライブラリのみ（SQLAlchemyは任意）。
 
 設定: company_link.json（無ければ環境変数）。
-  COMPANY_LINK=1 で有効化 / COMPANY_SOURCE=json|csv|sqlite|sql / COMPANY_PATH / COMPANY_DB_URL / COMPANY_REFRESH_SEC
-秘密（DB URLのパスワード等）はログ・APIに出さない（mask_url）。"""
+  COMPANY_LINK=1 で有効化 / COMPANY_DEMO=example|small|large|deficit|off（同梱の架空JSON。DB不要）
+  COMPANY_SOURCE=json|csv|sqlite|sql / COMPANY_PATH / COMPANY_DB_URL / COMPANY_REFRESH_SEC
+秘密（DB URLのパスワード等）はログ・APIに出さない（mask_url）。
+デモ中の札は「架空（デモ）」。未設定・demo=off のときは「未連携」（linked は false）。"""
 import csv, json, math, os, re, sqlite3, threading, time, datetime
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -126,6 +128,7 @@ def load_conf():
     for k, ek in (("source", "COMPANY_SOURCE"), ("path", "COMPANY_PATH"), ("db_url", "COMPANY_DB_URL")):
         if e.get(ek): c[k] = e[ek]
     if e.get("COMPANY_REFRESH_SEC"): c["refresh_sec"] = int(e["COMPANY_REFRESH_SEC"])
+    if "COMPANY_DEMO" in e: c["demo"] = e["COMPANY_DEMO"]   # 空や off も上書き（ファイルの demo より優先）
     c.setdefault("enabled", False); c.setdefault("source", "json"); c.setdefault("refresh_sec", 600)
     return c
 
@@ -199,11 +202,25 @@ def step_toward(prev, target, max_step=0.25, min_step=1):
     return out
 
 # ---------------- 定期取り込み ----------------
+_DEMO_OFF = {"", "off", "0", "false", "none"}
+
+def normalize_demo(v):
+    """設定の demo。off / 空 / false は無し。名前はそのまま（未知かは呼び出し側）。"""
+    if v is None or v is False: return None
+    s = str(v).strip()
+    if s.lower() in _DEMO_OFF: return None
+    return s
+
+def link_label(demo, linked):
+    """画面と /api/state が同じ札を使う。デモ中は実在企業と取り違えない語にする。"""
+    if demo: return "架空（デモ）" if linked else "架空（デモ）・未取得"
+    return "連携中" if linked else "未連携"
+
 class CompanyLink:
     def __init__(self, log=print):
         self.log, self.lock = log, threading.Lock()
         self.st = {"enabled": False, "linked": False, "name": "", "source": "", "metrics": None, "target": None, "scale": None,
-                   "last_fetch": None, "error": None, "refresh_sec": 600}
+                   "last_fetch": None, "error": None, "refresh_sec": 600, "demo": None, "fictional": False, "label": "未連携"}
         self._wake = threading.Event(); self.demo = None
 
     DEMOS = {"example": "example_company.json", "large": "examples/large.json", "small": "examples/small.json", "deficit": "examples/deficit.json"}
@@ -213,29 +230,51 @@ class CompanyLink:
         if name not in self.DEMOS: return False
         self.demo = name; return True
 
+    def active_demo(self, c):
+        """メモリ上のデモが優先。無ければ設定・COMPANY_DEMO（off は無し）。"""
+        if self.demo: return self.demo
+        return normalize_demo(c.get("demo"))
+
     def public(self):
         with self.lock:
             d = dict(self.st); d["labels"] = LABELS; return d
 
+    def _use_demo_seed(self, c, demo):
+        """同梱の架空JSONだけを読む。DB URLもSQLの列対応も使わない。"""
+        c.update(enabled=True, source="json", path=self.DEMOS[demo], mapping={})
+        c.pop("db_url", None); c.pop("_conf_error", None)
+
     def refresh(self):
         c = load_conf()
-        if self.demo: c.update(enabled=True, source="json", path=self.DEMOS[self.demo], mapping={}); c.pop("_conf_error", None)
-        with self.lock: self.st.update(demo=self.demo, enabled=bool(c["enabled"]), refresh_sec=int(c["refresh_sec"]), source=c.get("source", ""))
+        demo = self.active_demo(c)
+        if demo and demo not in self.DEMOS:
+            with self.lock:
+                self.st.update(demo=demo, fictional=True, enabled=True, linked=False, metrics=None, target=None, scale=None,
+                               name="", source="demo", error=f"未知のデモ: {demo}", label=link_label(demo, False),
+                               refresh_sec=int(c.get("refresh_sec") or 600))
+            return self.public()
+        if demo: self._use_demo_seed(c, demo)
+        with self.lock:
+            self.st.update(demo=demo, fictional=bool(demo), enabled=bool(c["enabled"]), refresh_sec=int(c["refresh_sec"]),
+                           source=("demo" if demo else c.get("source", "")))
         if c.get("_conf_error"):
-            with self.lock: self.st.update(error=c["_conf_error"])
+            with self.lock: self.st.update(error=c["_conf_error"], label=link_label(demo, bool(self.st.get("linked"))))
             return self.public()
         if not c["enabled"]:
-            with self.lock: self.st.update(linked=False, metrics=None, target=None, scale=None, error=None, name="")
+            with self.lock:
+                self.st.update(linked=False, metrics=None, target=None, scale=None, error=None, name="",
+                               demo=None, fictional=False, label=link_label(None, False))
             return self.public()
         try:
             name, m = make_connector(c).fetch()
             tgt = metrics_to_scale(m)
             with self.lock:
                 self.st.update(name=name or c.get("name", ""), metrics=m, target=tgt, linked=True, error=None,
+                               demo=demo, fictional=bool(demo), label=link_label(demo, True),
                                scale=step_toward(self.st["scale"], tgt), last_fetch=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         except Exception as ex:
             msg = mask_url(f"{type(ex).__name__}: {ex}")[:300]
-            with self.lock: self.st.update(error=msg)
+            with self.lock: self.st.update(error=msg, label=link_label(demo, bool(self.st.get("linked"))))
             self.log(f"企業連携エラー: {msg}")
         return self.public()
 

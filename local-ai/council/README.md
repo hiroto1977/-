@@ -47,6 +47,26 @@
 禁止パターンは `advice_guard.py`（dataCrypto の実装着手、`as BufferSource`、Mamori への `as` / `while` 追加、JSON.stringify を暗号化と扱う、IV の定期再生成、正規表現アンカーの除去、C++/Python 混在）。否定文（〜しない / 禁止 など）は違反にしません。
 `COUNCIL_ADVICE_GUARD=0` で無効化できます。`COUNCIL_ADVICE_GUARD_LLM=1` で検証モデルにも確認させます（既定は OFF）。テスト: `python3 test_advice_guard.py`。
 
+## 閉ループ（決定→実行記録→検証）
+会議の本文は `decision_lock.commit_decision` が保存前検査を通したときだけ `decisions.md` に書きます。通ったあと、閉ループがマーカー `<!-- loop:決定ID -->` を足してディスクから読み戻し、次のアクションを実行して検証します。検査が却下した決定は `rejected_decisions.md` だけに残り、実行ファイルは作りません（同じ決定IDのマーカーが両方に残ることは排他違反です）。`accept_and_verify` を直接呼ぶ経路は、検査と記録と実行をその関数がまとめて行います。
+
+`次のアクション:` の直下で、行頭が `- ` の行だけを実行します。書けるのはこのディレクトリの中だけです。
+
+- `- 記録: 相対パス :: 本文`（`に「本文」を書く` / `相対パス に「本文」を記録する` も同じ）
+- `- 追記: 相対パス :: 本文`（同じ行が既にあれば足さない）
+- `- 確認: 相対パス :: 本文`（ファイルを作らず、本文があるか読む）
+- 末尾の `>> 期待: 文字列` は、書き込んだ結果にその文字列が含まれるかの検証です
+
+検証は書き込みに使ったメモリではなく、実行後のファイルを読み直します。失敗したら最大3回やり直します。直前の試行と同じエラー文字列なら、残りがあっても止めます（`same_error`）。4試行目も別のエラーなら `max_retries` で止めます。拒否（ルートの外、`..`、`%`、`locked_decisions.md` への書き込み、空の書き込み）は再試行しません。
+
+実行のたびに `execution_log.jsonl`（コマンド、前後のバイト数、sha256、検証）と `loop_state.json` を残します。`GET /api/loop` と `/api/state` の `loop` はこのファイルを読み直したものです。
+
+意図ルール（`decision_loop.INTENT_RULES`）: quote-not-command / first-section-only / indent-not-command / skip-not-failure / negation-not-violation / unlock-only-via-file / same-error-is-previous / max-three-retries / verify-rereads-disk / idempotent-rewrite / path-jail / fullwidth-dot-not-traversal / accept-reject-exclusive / parser-gap-out-of-scope。
+
+CEOロックの解除は、人が `locked_decisions.md` の該当欄を `status: unlocked` に書き換えたときだけ閉ループが追認します。閉ループ自身はそのファイルを書きません。`decision_lock` は欄が `locked` でない節を拘束しないため、欄の欠落・誤字・全角コロンでも拘束が外れます。これは本ループでは直していません（`closed_loop_notes.md`）。
+
+テスト: `python3 test_decision_loop.py`。
+
 ## 3Dの村（http://127.0.0.1:8091）
 Three.js（`web/vendor` に同梱、ビルド不要）のボクセル風の村です。中央に会議ホールと清継さん（CEO）、周りにCOOと役員の家（秘書は隣）、外側に管理職と一般職の区画、角にローカルサービスの「マシンルーム」があります。空の色は東京時間で昼夜が変わり、ドラッグで視点を回せます。
 
@@ -68,9 +88,16 @@ Three.js（`web/vendor` に同梱、ビルド不要）のボクセル風の村�
 - 小さいモデルなので、内容は参考程度です（事実の誤りや中国語の混入があります）
 
 ## 企業データ連携（任意・既定OFF）
-`company_link.py`。`company_link.example.json` を `company_link.json` にコピーし `enabled: true`。source は json / csv / sqlite / sql（SQLAlchemy URL は環境変数 `COMPANY_DB_URL`）。
-読み取り専用（SELECT/WITH 1文のみ・SQLiteは mode=ro + query_only）。`GET /api/company`、`POST /api/company/refresh`（`{"demo":"large|small|deficit|example|off"}` でデモ切替、メモリ上のみ）。
-サンプル（すべて架空）: `example_company.json`, `examples/*.json`。テスト: `python3 test_company_link.py`。
+`company_link.py`。設定も `COMPANY_DEMO` も無いときは画面も `/api/state` の `company.linked` も false で、札は **企業データ：未連携** のままです。
+
+架空データだけで動かす（DBの資格情報は不要）:
+- `company_link.example.json` を `company_link.json` にコピーし、`demo` を `example` / `small` / `large` / `deficit` にする（`off` が既定）
+- または環境変数 `COMPANY_DEMO` に同じ値（`off` はファイルより優先してデモを切る）
+- 同梱の `example_company.json` と `examples/*.json` を読み、`linked: true`・`fictional: true`・札 **企業データ：架空（デモ）** になる。売上・利益・資産・従業員数・取引先数が村の住民・家・屋台・工房・倉庫・区画・荒れ地に変換される
+
+実データを読むときだけ `enabled: true` と `source`（json / csv / sqlite / sql）。SQL の URL は環境変数 `COMPANY_DB_URL`。読み取り専用（SELECT/WITH 1文のみ・SQLiteは mode=ro + query_only）。この経路の札は「連携中」で、架空デモとは別です。
+
+`GET /api/company`、`POST /api/company/refresh`（`{"demo":"large|small|deficit|example|off"}` はメモリ上だけ。`off` は設定に戻す）。テスト: `python3 test_company_link.py`。
 
 ## Claude（相談役・議長）
 Claude Code CLI にログイン済みのときだけ、会議の最後に Claude が議長講評を書き、チャットで相談役 Claude と1対1で話せます。CLI が無い／未ログインのときは `balanced` モデルが「代理議長」「代理」として答え、会議は止まりません（村の Claude ラベルに「・未ログイン」などと出ます）。
