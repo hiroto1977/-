@@ -41,6 +41,7 @@ PENDING, CHAT = [], []
 ADVICE = os.path.join(HERE, "advice_inbox.md")      # パートB: クラウドの助言（現在はGrokのみ）（追記された行を最優先の議題にする）
 import advice_guard
 import decision_lock
+import decision_loop
 GUARD_ON = os.environ.get("COUNCIL_ADVICE_GUARD", "1") != "0"          # 0で助言ガードを無効化
 GUARD_LLM = os.environ.get("COUNCIL_ADVICE_GUARD_LLM", "0") == "1"     # 1で検証モデル(fast)にも矛盾確認させる（メモリ節約のため既定は無効）
 LOCK_ON = os.environ.get("COUNCIL_DECISION_LOCK", "1") != "0"          # 0で固定決定ロックを無効化（通常は使わない）
@@ -296,8 +297,14 @@ def session():
             return
         summ = speak(P["coo"], f"COOとして、助言に沿って修正した決定を2〜3文でまとめ、CEOの{USER}さんへの報告文にしてください。")
     review = chair_review(topic, hist, dec)
-    with open(os.path.join(HERE, "decisions.md"), "a", encoding="utf-8") as f:
-        f.write(f"\n## {now()} [{src}] {topic[:120] if src != '継続議題' else topic.split(chr(10))[0][:60] + ' ' + topic.split(chr(10))[-1][:80]}\n\n担当役員: {ex['name']}\n\n{dec}\n\nCOO総括: {summ}\n" + (f"\n{review[0]}: {review[1]}\n" if review else ""))
+    block = (f"\n## {now()} [{src}] {topic[:120] if src != '継続議題' else topic.split(chr(10))[0][:60] + ' ' + topic.split(chr(10))[-1][:80]}\n\n"
+             f"担当役員: {ex['name']}\n\n{dec}\n\nCOO総括: {summ}\n" + (f"\n{review[0]}: {review[1]}\n" if review else ""))
+    try:
+        loop_rec = decision_loop.accept_and_verify(root=HERE, topic=topic, decision=dec, block=block)
+        if loop_rec.get("status") != "verified":
+            log_sys(f"閉ループ未完了: {loop_rec.get('status')} {str(loop_rec.get('detail',''))[:180]}")
+    except Exception as ex:  # noqa: 会議スレッドは閉じない。記録の成否は execution_log が持つ
+        log_sys(f"閉ループ失敗: {ex!r}")
     if src == "CEOの指示": thread_log("COO", summ)
     STATE.update(status=f"待機中（次回まで最大{INTERVAL}秒）", updated=now(), speaking=None)
 
@@ -319,6 +326,10 @@ def reject_log(topic, dec, hits, retry):
     REJ.append(rec); log_sys(f"助言ガード: 決定を不記録（{'; '.join(hits)[:200]}）")
     with open(REJECTED, "a", encoding="utf-8") as f:
         f.write(f"\n## {rec['at']} {rec['topic']}（{'やり直し後も矛盾・不記録' if retry else 'やり直しを指示'}）\n\n理由:\n" + "".join(f"- {h}\n" for h in hits) + f"\n却下した決定:\n\n{dec}\n")
+    try:
+        decision_loop.record_rejection(HERE, topic, dec, hits)
+    except Exception as ex:  # noqa: 却下の本記録は上のファイル。閉ループ側の失敗で会議を止めない
+        log_sys(f"閉ループ却下記録の失敗: {ex!r}")
 
 def chair_review(topic, hist, dec):
     """役員決定のあとに議長が講評。Claudeが使えればClaude（1会議1回）、無理ならbalancedが代理議長。"""
@@ -351,7 +362,8 @@ def api_state():
             "advice": [l.strip()[2:][:600] for l in advice_lines() if l.strip().startswith("- ")][-5:],
             "company": {k: COMPANY.st.get(k) for k in ("linked", "name", "scale", "last_fetch", "error")},
             "guard": {"on": GUARD_ON, "llm": GUARD_LLM, "rejected": list(REJ)[-5:]},
-            "locks": {"on": LOCK_ON, "items": decision_lock.public()}}
+            "locks": {"on": LOCK_ON, "items": decision_lock.public()},
+            "loop": decision_loop.public(HERE)}
 
 class H(BaseHTTPRequestHandler):
     def log_message(self, *a): pass
@@ -362,6 +374,7 @@ class H(BaseHTTPRequestHandler):
     def do_GET(self):
         path = self.path.split("?")[0]
         if path == "/api/state": return self.js(api_state())
+        if path == "/api/loop": return self.js(decision_loop.public(HERE))
         if path == "/api/company": return self.js(COMPANY.public())
         if path == "/api/org": return self.js({"people": [{k: p[k] for k in ("id", "tier", "name", "title", "dept", "parent", "model")} for p in ORG["people"]], "user": USER})
         if path.startswith("/api/person/"):
