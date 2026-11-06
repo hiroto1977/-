@@ -7,6 +7,13 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-11-06) — 事業KPIの月次改善の輪 (kpiImprovementLoop / kpiImprovementStore / KpiImprovementPanel)
+
+利用者の依頼「事業KPIの月次改善の輪で進めて」。**人が目標と打ち手を決めて実行し、機械は差を測り・候補を決定論の what-if で並べ・翌月の実績で当たり外れを判定し、外れが 3 回続いたら止めて人へ返す**。外へ何も送らず、打ち手の実行もしない。
+- 核 `renderer/data/kpiImprovementLoop.ts` (純関数・手計算の単体検査・変異検査 100%) と、保管 `kpiImprovementStore.ts` (collection `kpi-improvement-cycles`・目標と 1 周の 2 種・読めない行は落とさず id を返す・同じ打ち手 × 同じ月は先の 1 件に畳む・変異検査 100% / 115 件)・画面 `components/KpiImprovementPanel.tsx` (KPI 画面の「月次改善の輪」節・jsdom 9 件)。
+- 登録した台帳: collectionShapes / importFile の上限 / collectionSamples / referenceFieldCensus / plaintextExposure / roundTrip / writerNumberReading (`parseGoal` = numbers・`parseCycle` = no-numbers) / errorMessageSurfaceCensus / snapshotJudgementCensus (apply-shown 2 行) / stryker mutate (340)。
+- 残り: draft PR 作成。**マージは利用者の新しい明示の許可が出るまでしない。**
+
 ## 直近の作業 (2026-11-05) — MG-033: Mamori 0.17 欄への代入 `o.k = v` と T-257
 
 - **旧 UI 廃止 (PR #855) は main に入った** (merge 41fec90d・main の CI 緑)。その後の周。

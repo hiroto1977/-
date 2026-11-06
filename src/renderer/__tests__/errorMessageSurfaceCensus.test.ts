@@ -107,6 +107,7 @@ const LEDGER: Readonly<Record<string, { readonly sites: number; readonly source:
   'src/renderer/components/BackupPanel.tsx': { sites: 2, source: 'ownThrow', note: 'IndexedDB の DOMException も混じる' },
   'src/renderer/components/ExportActions.tsx': { sites: 1, source: 'invoke', note: 'openPath / revealInFolder は OsOpResult で表す' },
   'src/renderer/components/PageErrorBoundary.tsx': { sites: 1, source: 'deferred', note: '`describeRenderError` の中 (パス 307)' },
+  'src/renderer/components/KpiImprovementPanel.tsx': { sites: 2, source: 'ownThrow', note: '`parseGoal` / `parseCycle` (data/kpiImprovementStore.ts) の定数の断りだけを捕まえる (try は書き手 1 つを包む)' },
   'src/renderer/components/RecordShapeAuditPanel.tsx': { sites: 2, source: 'ownThrow', note: 'IndexedDB の DOMException も混じる' },
   'src/renderer/components/ServiceActionPanel.tsx': { sites: 2, source: 'invoke' },
   'src/renderer/components/ShigyoConsole.tsx': { sites: 2, source: 'ownThrow' },

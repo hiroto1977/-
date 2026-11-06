@@ -151,6 +151,18 @@ export function snapshotReadsInHandlers(src: string, file = 'x.tsx'): HandlerHit
  */
 const LEDGER: readonly { file: string; handler: string; kind: 'export' | 'apply-shown' | 'show' | 'judgement'; why: string }[] = [
   {
+    file: 'src/renderer/components/KpiImprovementPanel.tsx',
+    handler: '<onClick>→submit.run',
+    kind: 'apply-shown',
+    why: '利用者が一覧で見て選んだ打ち手 1 つを、見えていた最新月の前後で 1 周として記録する。重複 (同じ打ち手・同じ月) は読む側が 1 件に畳む (改善の輪の保管の読み手)。写しを「無い」の証拠に使う判定ではない。',
+  },
+  {
+    file: 'src/renderer/components/KpiImprovementPanel.tsx',
+    handler: '<onClick>→fireReported',
+    kind: 'apply-shown',
+    why: '利用者が「読めない記録がある」と読んだ画面の、読めない行の id を消す。消す対象は画面が見せた一覧そのもので、足りない行を数える判定ではない。',
+  },
+  {
     file: 'src/renderer/pages/KpiPage.tsx',
     handler: 'onExportCsv',
     kind: 'export',
