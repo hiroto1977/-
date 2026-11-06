@@ -10,7 +10,7 @@ button{font:inherit;cursor:pointer;border:2px solid var(--wood2);background:#fff
 #cams{margin-top:6px;display:flex;gap:5px;flex-wrap:wrap}#cams button{font-size:12px;padding:2px 7px}
 #side{position:fixed;right:10px;top:10px;width:350px;max-height:calc(100vh - 200px);display:flex;flex-direction:column;background:var(--wood);border:6px solid var(--wood2);border-radius:12px;color:#fff8e7;box-shadow:0 4px 0 #0003}
 #tabs{display:flex;gap:4px;padding:6px}#tabs button{flex:1;font-size:12px;background:#a87a4c;color:#fff8e7;border-color:var(--wood2)}#tabs button.on{background:#fff3d6;color:var(--ink)}
-.card.reject{background:#fbe3e3;border:2px solid #c0392b}.card.lock{background:#e8eaf6;border:2px solid #3f51b5}.card.advice{background:#fde7dc;border:2px solid #d97757}.lab.t-相談役{background:#d97757;color:#fff}
+.card.reject{background:#fbe3e3;border:2px solid #c0392b}.card.lock{background:#e8eaf6;border:2px solid #3f51b5}.card.advice{background:#fde7dc;border:2px solid #d97757}.lab.t-議長{background:#1a237e;color:#fff;font-weight:bold}.lab.t-相談役{background:#d97757;color:#fff}
 #pane{overflow:auto;padding:0 8px 8px;font-size:12px}.card{background:#fff8e7;color:var(--ink);border-radius:8px;padding:6px 8px;margin:6px 0;white-space:pre-wrap;word-break:break-word}
 .card h4{margin:0 0 3px;font-size:12px}.grp{margin:8px 0 2px;font-weight:bold}.who{display:flex;align-items:center;gap:6px;padding:3px 6px;border-radius:6px;cursor:pointer}.who:hover{background:#fff2}
 .dot{width:10px;height:10px;border-radius:3px;display:inline-block;flex:none}.sm{font-size:11px;opacity:.8}
@@ -110,7 +110,7 @@ function house(id,x,z,s,roof){const ry=Math.atan2(-x,-z),pm=new THREE.Matrix4().
   for(const wx of [-1.05,1.05])sbox(.7*s,.6*s,.1,winMat,wx*s,1.5*s,-.3*s+.02,pm,0,false);sbox(1.2,.06,1.2,0xbcaaa4,0,.03,-.3*s+.7,pm,0,false);
   DOOR[id]=V(0,0).applyMatrix4(new THREE.Matrix4().compose(V(0,-.3*s+.9),_q.identity(),new THREE.Vector3(1,1,1)).premultiply(pm))}
 // ---- 住民 ----
-const TIERC={COO:0xffc107,役員:0x8e24aa,秘書:0xec407a,管理職:0x1e88e5,一般職:0x43a047,CEO:0xb8860b,相談役:0xd97757},HAIR=[0x3e2723,0x212121,0x6d4c41,0x8d6e63,0xbf8040,0x5d4037];
+const TIERC={COO:0xffc107,役員:0x8e24aa,秘書:0xec407a,管理職:0x1e88e5,一般職:0x43a047,CEO:0xb8860b,議長:0x1a237e,相談役:0xd97757},HAIR=[0x3e2723,0x212121,0x6d4c41,0x8d6e63,0xbf8040,0x5d4037];
 const agents={},labels=$('labels');let ORG=null,selected=null,follow=null,camMode='free';
 function hash(s){let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))|0;return Math.abs(h)}
 function mkChar(key,p,x,z,o={}){const g=new THREE.Group(),s=o.scale||1,dc=o.dept??0x90a4ae,hc=HAIR[hash(key)%HAIR.length];
@@ -126,6 +126,7 @@ function mkChar(key,p,x,z,o={}){const g=new THREE.Group(),s=o.scale||1,dc=o.dept
   if(t==='秘書'){box(.3,.25,.12,dc,-.18,1.1,-.1,head,false);box(.3,.25,.12,dc,.18,1.1,-.1,head,false);box(.14,.14,.14,0xffffff,0,1.1,-.1,head,false)}
   if(t==='管理職'){box(.98,.22,.98,0x1e88e5,0,1.12,0,head,false);box(.98,.06,.4,0x1565c0,0,1.02,.62,head,false);box(.15,.6,.05,dc,0,1.15,.31,g,false)}
   if(t==='一般職'){box(.2,.2,.02,0xffffff,.25,1.3,.31,g,false)}
+  if(t==='議長'){body.material=mat(0x1a237e);box(1.05,.28,.72,0x1a237e,0,1.42,0,g,false);box(.12,.5,.12,0x5d4037,.42,1.05,.16,g,false);box(.42,.1,.16,0x8d6e63,.22,1.32,.18,g,false)}
   if(t==='相談役'){body.material=mat(0xd97757);box(1.05,.5,.7,0xd97757,0,.75,0,g,false);for(const [sx,sy] of [[0,1.45],[0,1.15],[-.15,1.3],[.15,1.3]])box(.12,.12,.12,0xfff3e0,sx,sy,0,head,false);box(.5,.08,.5,0xffcc80,0,1.62,0,head,false);box(.6,.5,.05,0xfff3e0,0,1.15,.31,g,false)}
   if(t==='CEO'){box(.7,.25,.7,0xffd700,0,1.2,0,head,false);for(const [cx,cz] of [[-.25,-.25],[.25,-.25],[-.25,.25],[.25,.25]])box(.14,.2,.14,0xffd700,cx,1.4,cz,head,false)}
   g.scale.setScalar(s);g.position.set(x,0,z);g.userData.key=key;S.add(g);
@@ -150,7 +151,8 @@ function build(org,st){ORG=org;const ppl=org.people;
       const dp=desk(0,-1.6);const A=mkChar(m.id,m,dp.x,dp.z,{tier:'管理職',dept:dc,deptId:e.id,desk:true});A.face=ry+Math.PI;
       ppl.filter(p=>p.tier==='一般職'&&p.parent===m.id).forEach((s,k)=>{const sp=desk(k?2.2:-2.2,.6);const B=mkChar(s.id,s,sp.x,sp.z,{tier:'一般職',dept:dc,deptId:e.id,desk:true,scale:.88});B.face=ry+Math.PI})})});
   for(const p of ppl){const o=document.createElement('option');o.value=p.id;o.textContent=`${p.name}（${p.tier}）`;toSel.appendChild(o)}
-  const cl=ppl.find(p=>p.id==='claude');if(cl){const A=mkChar('claude',cl,-4.5,4.5,{tier:'相談役',deptId:'coo',label:'Claude（相談役）',scale:1.05});A.big=true}
+  const cl=ppl.find(p=>p.id==='claude');if(cl){const A=mkChar('claude',cl,-4.5,4.5,{tier:'議長',deptId:'coo',label:'Claude（議長）',scale:1.05});A.big=true}
+  const gk=ppl.find(p=>p.id==='grok');if(gk){const A=mkChar('grok',gk,4.5,4.5,{tier:'相談役',deptId:'coo',label:'Grok（相談役）',scale:1.05});A.big=true}
   mkChar('me',{name:org.user},0,2.8,{tier:'CEO',shirt:0xffffff,label:org.user+'（CEO・あなた）'});agents.me.g.rotation.y=Math.PI;
   Object.keys(st.services).forEach((s,i)=>mkChar('s:'+s,{name:s},-45+(i%4)*3.3,38+Math.floor(i/4)*3.5,{svc:true,scale:.7,shirt:0x90a4ae}));
   applyServiceHealth(agents,st.services,mat);
@@ -191,7 +193,8 @@ async function poll(){try{
   if(meet&&st.speaking&&agents[st.speaking]&&(!last||last.id!==st.speaking)){const A=agents[st.speaking];if(!(A.bubUntil>Date.now())||!A.bub.classList.contains('think'))say(A,'（考え中…）',8000,true)}
   const mine=st.chat.filter(c=>c.who===st.user).pop();if(mine&&agents.me&&agents.me.lastSaid!==mine.text){agents.me.lastSaid=mine.text;say(agents.me,mine.text,15000)}
   applyServiceHealth(agents,st.services,mat);
-  if(st.claude&&agents.claude){const cs=st.claude.status,t='Claude（相談役）'+(cs==='利用可'?'':'・'+cs);if(agents.claude.lab.textContent!==t)agents.claude.lab.textContent=t;agents.claude.lab.classList.toggle('off',cs!=='利用可')}
+  if(st.claude&&agents.claude){const cs=st.claude.status,t='Claude（議長）'+(cs==='利用可'?'':'・'+cs);if(agents.claude.lab.textContent!==t)agents.claude.lab.textContent=t;agents.claude.lab.classList.toggle('off',cs!=='利用可')}
+  if(agents.grok&&agents.grok.lab.textContent!=='Grok（相談役）')agents.grok.lab.textContent='Grok（相談役）'
   if(tab==='prof'&&selected&&Date.now()-profAt>15000)renderProfile(selected);
  }catch(e){$('pill').textContent='接続できません';$('pill').className='pill err';$('topic').textContent=String(e)}}
 // ---- パネル ----
@@ -202,7 +205,7 @@ function renderBoard(){if(!LAST)return;const adv=(LAST.advice||[]).slice().rever
   const rej=(LAST.guard?.rejected||[]).slice().reverse().map(r=>{const c=el('div','card reject');c.append(el('h4',null,'🛑 助言と食い違うため記録しなかった決定（'+r.at+(r.retry?'・やり直し後も不可':'・やり直し指示')+'）'),el('div',null,r.reasons.join('\n')+'\n\n'+r.decision));return c});
   pane.replaceChildren(...locks,...rej,...adv,...LAST.decisions.slice().reverse().map(d=>{const c=el('div','card'),[h,...rest]=d.split('\n');c.append(el('h4',null,h),el('div',null,rest.join('\n').trim()));return c}))}
 function renderPeople(){const grp={};for(const p of (ORG?.people||[]))(grp[p.tier]??=[]).push(p);const out=[];
-  for(const t of ['相談役','COO','役員','秘書','管理職','一般職']){if(!grp[t])continue;out.push(el('div','grp',`${t}（${grp[t].length}人）`));
+  for(const t of ['議長','相談役','COO','役員','秘書','管理職','一般職']){if(!grp[t])continue;out.push(el('div','grp',`${t}（${grp[t].length}人）`));
     for(const p of grp[t]){const r=el('div','who'),d=el('span','dot');d.style.background='#'+(DEPT[agents[p.id]?.dept]??0x90a4ae).toString(16).padStart(6,'0');
       r.append(d,el('span',null,p.name),el('span','sm',p.dept.split('・')[0]+(agents[p.id]?.speaking?' 🎤':'')));r.onclick=()=>selectAgent(p.id,true);out.push(r)}}
   pane.replaceChildren(...out)}
