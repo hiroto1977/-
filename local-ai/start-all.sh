@@ -25,10 +25,30 @@ LOG=/tmp/local-ai-autostart.log
 up() { curl -s -m 3 -o /dev/null "http://127.0.0.1:$1${2:-/}" ; }
 log() { echo "$(date '+%F %T') $*" | tee -a "$LOG"; }
 start_all() {
+  # 毎周期ロックを再読込（--watch 長期プロセスが起動時の ENABLE_7B を抱え続けないように）
+  local enable_7b="$ENABLE_7B"
+  if [ -f "$LOCK_MD" ] && awk '
+    /^##[[:space:]]+llama7B-stop([[:space:]]|$)/ {inblock=1; next}
+    /^##[[:space:]]+/ {if(inblock) exit}
+    inblock && /-[[:space:]]*status:[[:space:]]*locked/ {found=1; exit}
+    END {exit !found}
+  ' "$LOCK_MD"; then
+    if [ "$enable_7b" = 1 ]; then log "llama7B-stop locked: ENABLE_7B を強制OFF"; fi
+    enable_7b=0
+  fi
+  # ロック中は既に動いている 8086 も止める
+  if [ "$enable_7b" = 0 ]; then
+    if up 8086 /health || ss -ltn "sport = :8086" 2>/dev/null | grep -q LISTEN || pgrep -f 'llama-server.*8086|Qwen2.5-7B-Instruct' >/dev/null 2>&1; then
+      log "llama7B-stop locked: 8086 を停止"
+      pkill -f 'llama-server.*--port 8086' 2>/dev/null || true
+      pkill -f 'Qwen2.5-7B-Instruct' 2>/dev/null || true
+      sleep 1
+    fi
+  fi
   up 11434 || { log "start ollama"; nohup ollama serve >/tmp/ollama.log 2>&1 & sleep 3; }
   up 8081 /health || { log "start llama 1.5b"; MODEL_SIZE=1.5b "$HERE/start-llamacpp.sh" >>"$LOG" 2>&1; }
   if [ "$ENABLE_3B" = 1 ]; then up 8085 /health || { log "start llama 3b"; MODEL_SIZE=3b "$HERE/start-llamacpp.sh" >>"$LOG" 2>&1; }; fi
-  if [ "$ENABLE_7B" = 1 ] && ! up 8086 /health; then
+  if [ "$enable_7b" = 1 ] && ! up 8086 /health; then
     if [ "$(mem_avail_mb)" -ge "$MIN_FREE_MB_7B" ]; then log "start llama 7b"; MODEL_SIZE=7b "$HERE/start-llamacpp.sh" >>"$LOG" 2>&1
     else log "skip llama 7b: MemAvailable $(mem_avail_mb)MB < ${MIN_FREE_MB_7B}MB（smart は balanced/fast にフォールバック）"; fi
   fi
@@ -39,7 +59,7 @@ start_all() {
   if ! up 8080 /health; then
     urls="http://127.0.0.1:8081/v1"; keys="none"
     [ "$ENABLE_3B" = 1 ] && { urls+=";http://127.0.0.1:8085/v1"; keys+=";none"; }
-    [ "$ENABLE_7B" = 1 ] && { urls+=";http://127.0.0.1:8086/v1"; keys+=";none"; }
+    [ "$enable_7b" = 1 ] && { urls+=";http://127.0.0.1:8086/v1"; keys+=";none"; }
     urls+=";http://127.0.0.1:8084/v1"; keys+=";none"
     if [ "$ENABLE_LITELLM" = 1 ] && [ -s "$HOME/litellm/master_key" ]; then
       urls+=";http://127.0.0.1:4000/v1"; keys+=";$(cat "$HOME/litellm/master_key")"
