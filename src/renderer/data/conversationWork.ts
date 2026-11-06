@@ -10,6 +10,7 @@
  *   保存されたかどうかの区別は会話の部品が従来どおり文で述べる。
  */
 import type { ServiceId } from '../../shared/serviceId';
+import { clampToCeiling } from '../../shared/inputCeiling';
 
 export type ConversationWorkStage = 'running' | 'done' | 'failed';
 
@@ -30,7 +31,7 @@ export function publishConversationWork(event: ConversationWorkEvent): void {
   const safe: ConversationWorkEvent = {
     stage: event.stage,
     serviceId: event.serviceId,
-    action: event.action.slice(0, MAX_ACTION_CHARS),
+    action: clampToCeiling(event.action, MAX_ACTION_CHARS),
   };
   for (const h of [...handlers]) {
     try {

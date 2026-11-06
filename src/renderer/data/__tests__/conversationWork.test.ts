@@ -25,6 +25,14 @@ describe('conversationWork (会話の作業を景色へ知らせる口)', () => 
     expect(got[0]!.action).toBe('a'.repeat(40));
   });
 
+  it('操作名の天井は文字で数える (絵文字 1 つを 2 つに割って切らない)', () => {
+    const got: Array<{ action: string }> = [];
+    const off = subscribeConversationWork((e) => got.push(e));
+    publishConversationWork({ stage: 'done', serviceId: 'github', action: '😀'.repeat(41) });
+    off();
+    expect(got[0]!.action).toBe('😀'.repeat(40));
+  });
+
   it('購読を止めると届かない', () => {
     const h = vi.fn();
     const off = subscribeConversationWork(h);
