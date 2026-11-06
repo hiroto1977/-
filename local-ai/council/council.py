@@ -175,11 +175,11 @@ def _rstate():
     try: return json.load(open(RSTATE, encoding="utf-8"))
     except Exception: return {}
 def refuse_topic(src, topic):
-    """固定決定に反する議題なら理由リスト。CEOの明示的なロック解除指示は通す。"""
-    if not LOCK_ON: return []
-    if src == "CEOの指示" and re.search(r"ロック解除|固定決定を解除|status:\s*unlocked", topic or ""):
-        return []
-    return [f"{n}: {why}（該当: {frag}）" for n, why, frag in decision_lock.check_topic(topic)]
+    """固定決定または助言ガードに反する議題なら理由リスト。
+    status が locked の間は、CEOの丁寧な言い換えでも文言では解除できない。"""
+    if not LOCK_ON and not GUARD_ON: return []
+    raw = advice_guard.screen(topic, locks=LOCK_ON, guard=GUARD_ON)
+    return [f"{n}: {why}（該当: {frag}）" for n, why, frag in raw]
 
 def pick_topic():
     def accept(src, topic):
@@ -296,8 +296,18 @@ def session():
             return
         summ = speak(P["coo"], f"COOとして、助言に沿って修正した決定を2〜3文でまとめ、CEOの{USER}さんへの報告文にしてください。")
     review = chair_review(topic, hist, dec)
-    with open(os.path.join(HERE, "decisions.md"), "a", encoding="utf-8") as f:
-        f.write(f"\n## {now()} [{src}] {topic[:120] if src != '継続議題' else topic.split(chr(10))[0][:60] + ' ' + topic.split(chr(10))[-1][:80]}\n\n担当役員: {ex['name']}\n\n{dec}\n\nCOO総括: {summ}\n" + (f"\n{review[0]}: {review[1]}\n" if review else ""))
+    review_text = review[1] if review else ""
+    topic_line = topic[:120] if src != "継続議題" else topic.split(chr(10))[0][:60] + " " + topic.split(chr(10))[-1][:80]
+    outcome, hits3 = decision_lock.commit_decision(
+        dec, decisions_path=os.path.join(HERE, "decisions.md"), rejected_path=REJECTED,
+        topic=topic_line, summary=summ, review=review_text, src=src, officer=ex["name"])
+    if outcome == "reject":
+        rec = {"at": now(), "topic": topic.split(chr(10))[0][:80], "decision": dec[:400],
+               "reasons": [f"{n}: {why}（該当: {frag}）" for n, why, frag in hits3], "retry": True}
+        REJ.append(rec)
+        log_sys("保存前検査: 決定を不記録（" + "; ".join(rec["reasons"])[:200] + "）")
+        STATE.update(status=f"待機中（決定は助言/固定決定と矛盾のため不記録・次回まで最大{INTERVAL}秒）", updated=now(), speaking=None)
+        return
     if src == "CEOの指示": thread_log("COO", summ)
     STATE.update(status=f"待機中（次回まで最大{INTERVAL}秒）", updated=now(), speaking=None)
 
@@ -317,8 +327,7 @@ def guard_check(dec):
 def reject_log(topic, dec, hits, retry):
     rec = {"at": now(), "topic": topic.split(chr(10))[0][:80], "decision": dec[:400], "reasons": hits, "retry": retry}
     REJ.append(rec); log_sys(f"助言ガード: 決定を不記録（{'; '.join(hits)[:200]}）")
-    with open(REJECTED, "a", encoding="utf-8") as f:
-        f.write(f"\n## {rec['at']} {rec['topic']}（{'やり直し後も矛盾・不記録' if retry else 'やり直しを指示'}）\n\n理由:\n" + "".join(f"- {h}\n" for h in hits) + f"\n却下した決定:\n\n{dec}\n")
+    decision_lock.append_rejection(REJECTED, rec["topic"], dec, hits, retry=retry)
 
 def chair_review(topic, hist, dec):
     """役員決定のあとに議長が講評。Claudeが使えればClaude（1会議1回）、無理ならbalancedが代理議長。"""
