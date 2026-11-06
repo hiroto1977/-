@@ -18,14 +18,17 @@ PORT = int(os.environ.get("COUNCIL_PORT", "8091"))
 USER = os.environ.get("COUNCIL_USER", "清継")
 WEB = os.path.join(HERE, "web"); THREAD = os.path.join(HERE, "user_thread.md")
 ORG = json.load(open(os.path.join(HERE, "org.json"), encoding="utf-8"))
-# ---- 任意参加: Claude（相談役・議長）。Claude Code CLI（サブスクでログイン済み）がある時だけ実際に呼ぶ ----
+# ---- 議長は Claude だけ。相談役は Grok だけ（Claude を相談役にもクラウド助言にもしない） ----
 CLAUDE_ON = os.environ.get("COUNCIL_CLAUDE", "1") != "0"
 CLAUDE_MAX_HOUR = int(os.environ.get("COUNCIL_CLAUDE_MAX_PER_HOUR", "6"))
 CLAUDE_TIMEOUT = int(os.environ.get("COUNCIL_CLAUDE_TIMEOUT", "120"))
 CLAUDE_BIN = os.environ.get("COUNCIL_CLAUDE_BIN") or shutil.which("claude") or os.path.expanduser("~/.local/bin/claude")
 if CLAUDE_ON:
-    ORG["people"].append({"id": "claude", "tier": "相談役", "name": "Claude", "title": "Claude（相談役・議長）", "dept": "議長・相談役",
+    ORG["people"].append({"id": "claude", "tier": "議長", "name": "Claude", "title": "Claude（議長）", "dept": "議長",
                           "parent": "coo", "model": "claude"})
+if not any(p.get("id") == "grok" for p in ORG["people"]):
+    ORG["people"].append({"id": "grok", "tier": "相談役", "name": "Grok", "title": "Grok（相談役）", "dept": "相談役",
+                          "parent": "coo", "model": "grok"})
 P = {p["id"]: p for p in ORG["people"]}
 import company_link
 COMPANY = company_link.CompanyLink(log=lambda m: log_sys(m))
@@ -176,6 +179,8 @@ def ask(model, system, user):
     return "none", "（応答なし）"
 
 TIER_ROLE = {
+    "議長": "会議の議長として決定を検証します。相談役にはなりません。相談役の助言はGrokのものです。",
+    "相談役": "相談役はGrokです。クラウド助言として届いた内容だけを扱います。議長の講評はしません。",
     "COO": "全社を統括し、議題を適切な役員に割り振り、結論を短く報告にまとめます。細部より優先順位と責任の所在を示します。",
     "役員": "担当部門の最終責任者として、選択肢を比べて一つに決め、理由を一言添えます。曖昧な表現は避けます。",
     "秘書": "役員を補佐し、論点整理・ブリーフィング・リスクと抜けの洗い出しを担当します。箇条書きで簡潔に書きます。",
@@ -322,6 +327,7 @@ def session():
         return out
     with open(path, "a", encoding="utf-8") as f:
         f.write(f"\n## {now()} [{src}] {topic}\n\n担当: {ex['name']} → {mgr['name']} / {st['name']} / {sec['name']}（空きメモリ {free_mb()}MB）\n\n")
+    note_advisor(src, topic, hist)
     plan = [(P["coo"], f"COOとして議題を{ex['name']}（{ex['dept']}）に割り振る理由と論点を2〜3行で示してください。"),
             (mgr, "部長として具体的な対応案を1〜3個提案してください。"),
             (st, "担当者として、現場の観点から案の実現性と作業手順（読み取り専用の確認を含む）を述べてください。"),
@@ -396,23 +402,93 @@ def reject_log(topic, dec, hits, retry):
     except Exception as ex:  # noqa: 却下の本体は append_rejection。ログ失敗で会議を止めない
         log_sys(f"閉ループ却下記録の失敗: {ex!r}")
 
+def advice_bodies():
+    """advice_inbox の助言本文。相談役 Grok の発言源。Claude はここへ書かない。"""
+    out = []
+    for l in advice_lines():
+        s = l.strip()
+        if not s.startswith("- "):
+            continue
+        body = s[2:].strip()
+        if body.startswith("[済]"):
+            body = body[len("[済]"):].strip()
+        if body:
+            out.append(body[:600])
+    return out
+
+def note_advisor(src, topic, hist):
+    """相談役が会議に出るときは Grok のクラウド助言だけ。ローカルモデルも Claude も話さない。"""
+    if src != "クラウドの助言（Grok）" or "grok" not in P:
+        return None
+    text = (topic or "").strip()[:1000]
+    if not text:
+        return None
+    who = "Grok（相談役）"
+    STATE["speaking"] = "grok"
+    STATE["transcript"].append({"id": "grok", "role": who, "model": "grok", "text": text})
+    STATE["updated"] = now(); tick()
+    hist.append(f"Grok: {text}")
+    remember("grok", "相談役の助言", text)
+    path = os.path.join(HERE, "logs", f"{datetime.date.today().isoformat()}.md")
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "a", encoding="utf-8") as f:
+        f.write(f"**{who}**（相談役・grok）\n\n{text}\n\n")
+    return text
+
 def chair_review(topic, hist, dec):
-    """役員決定のあとに議長が講評。Claudeが使えればClaude（1会議1回）、無理ならbalancedが代理議長。"""
-    instr = ("あなたはこの会議の議長・相談役です。役員の決定を検証し、誤り（事実誤認、Mamori言語の構文ミス、実行できない手順、安全上の問題）を具体的に指摘し、"
+    """役員決定のあとに議長が講評。Claudeが使えればClaude（1会議1回）。相談役にはしない。無理ならbalancedが代理議長。"""
+    instr = ("あなたはこの会議の議長です。相談役ではありません。相談役の助言はGrokのものです。"
+             "役員の決定を検証し、誤り（事実誤認、Mamori言語の構文ミス、実行できない手順、安全上の問題）を具体的に指摘し、"
              "最後に『改善案:』として簡潔な推奨を1〜3行で示してください。日本語で300字以内。ツールやファイル操作は使わず文章だけで答えてください。")
     ctx = "\n".join(hist[-6:])[:3500]
     STATE["speaking"] = "claude" if "claude" in P else "coo"
     out, m = claude_ask(instr, f"議題: {topic[:1200]}\n\n会議の発言:\n{ctx}\n\n役員の決定:\n{dec}\n\n議長としての講評:"), "claude"
     if out is None:
-        m, out = ask("balanced", "あなたはAI組織の会議の代理議長です。" + instr, f"議題: {topic[:1200]}\n\n会議の発言:\n{ctx}\n\n役員の決定:\n{dec}\n\n議長としての講評:")
+        m, out = ask("balanced", "あなたはAI組織の会議の代理議長です。相談役のふりはしないでください。" + instr, f"議題: {topic[:1200]}\n\n会議の発言:\n{ctx}\n\n役員の決定:\n{dec}\n\n議長としての講評:")
         m = f"{m}（代理議長）"
         if out == "（応答なし）": return None
     out = re.sub(r"^\**議長(としての)?講評\**[:：]\s*", "", out.strip())
-    pid = "claude" if "claude" in P else "coo"; who = "Claude（相談役）" if m == "claude" else "代理議長"
+    pid = "claude" if "claude" in P else "coo"
+    who = "Claude（議長）" if m == "claude" else "代理議長"
     STATE["transcript"].append({"id": pid, "role": who, "model": m, "text": out}); STATE["updated"] = now(); tick()
     remember(pid, "議長講評", out)
-    with open(os.path.join(HERE, "logs", f"{datetime.date.today().isoformat()}.md"), "a", encoding="utf-8") as f: f.write(f"**{who}**（{m}）\n\n{out}\n\n")
+    path = os.path.join(HERE, "logs", f"{datetime.date.today().isoformat()}.md")
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "a", encoding="utf-8") as f:
+        f.write(f"**{who}**（{'議長' if m == 'claude' else '代理議長'}・{m}）\n\n{out}\n\n")
     return f"議長講評（{who}・{m}）", out
+
+def chat_reply(p, text):
+    """1対1の返事。議長は Claude、相談役は Grok の助言文だけ。役を取り違えない。"""
+    hist = "\n".join(f"{c['who']}: {c['text']}" for c in CHAT[-6:])
+    if p["id"] == "grok":
+        advice = advice_bodies()
+        out = ("相談役Grokのクラウド助言です。" + advice[-1]) if advice else (
+            "相談役はGrokのみです。いまクラウド助言はありません。議長のClaudeは相談役の返事をしません。")
+        thread_log("Grok（相談役・grok）", out)
+        remember(p["id"], "清継さんへの返答", out)
+        return {"id": p["id"], "who": "Grok（相談役）", "model": "grok", "role": "相談役", "text": out}
+    if p["id"] == "claude":
+        system = (f"あなたはローカルAI組織の議長Claudeです。相談役ではありません。相談役はGrokだけです。"
+                  f"CEOの{USER}さんと1対1で話しています。日本語で300字以内、敬語で簡潔に答えてください。ツールは使えません。")
+        out = claude_ask(system, f"最近の会話:\n{hist[:2500]}\n\n{USER}さんの発言: {text}\n\nあなたの返答:")
+        if out is None:
+            m, out = ask("balanced", f"あなたはAI組織の代理議長です。相談役のふりはせず、{USER}さんに敬語で短く答えてください。",
+                         f"{USER}さんの発言: {text}\n\n返答:")
+            out = f"（Claudeは{claude_status()}のため代理議長で回答）" + out
+            m = f"{m}（代理議長）"
+            who, role = "代理議長", "代理議長"
+        else:
+            m, who, role = "claude", "Claude（議長）", "議長"
+        thread_log(f"{who}・{m}", out)
+        remember(p["id"], "清継さんへの返答", out)
+        return {"id": p["id"], "who": who, "model": m, "role": role, "text": out}
+    m, out = ask("balanced" if p["tier"] in ("COO", "役員") else p["model"],
+                 persona(p) + f"今は村でCEOの{USER}さんと1対1で話しています。役職の立場を保ち、{USER}さんに敬語で答えてください。",
+                 f"最近の会話:\n{hist}\n\n{USER}さんの発言: {text}\n\nあなた（{p['name']}）の返答:")
+    thread_log(f"{p['name']}（{m}）", out)
+    remember(p["id"], "清継さんへの返答", out)
+    return {"id": p["id"], "who": p["name"], "model": m, "text": out}
 
 def thread_log(who, text):
     CHAT.append({"who": who, "text": text, "at": now()}); del CHAT[:-30]
@@ -475,21 +551,7 @@ class H(BaseHTTPRequestHandler):
             p = P.get(str(d.get("to", "")))
             if not p: return self.send(b"unknown", "text/plain", 404)
             thread_log(USER, f"→{p['name']}: {text}")
-            hist = "\n".join(f"{c['who']}: {c['text']}" for c in CHAT[-6:])
-            if p["id"] == "claude":
-                out = claude_ask(f"あなたはローカルAI組織の相談役Claudeです。CEOの{USER}さんと1対1で話しています。日本語で300字以内、敬語で簡潔に答えてください。ツールは使えません。",
-                                 f"最近の会話:\n{hist[:2500]}\n\n{USER}さんの発言: {text}\n\nあなたの返答:")
-                if out is None:
-                    m, out = ask("balanced", f"あなたはAI組織の相談役（Claudeの代理）です。{USER}さんに敬語で短く答えてください。", f"{USER}さんの発言: {text}\n\n返答:")
-                    out = f"（Claudeは{claude_status()}のため代理で回答）" + out; m = f"{m}（代理）"
-                else: m = "claude"
-                thread_log(f"{p['name']}（{m}）", out); remember(p["id"], "清継さんへの返答", out)
-                return self.js({"id": p["id"], "who": p["name"], "model": m, "text": out})
-            m, out = ask("balanced" if p["tier"] in ("COO", "役員") else p["model"],
-                         persona(p) + f"今は村でCEOの{USER}さんと1対1で話しています。役職の立場を保ち、{USER}さんに敬語で答えてください。",
-                         f"最近の会話:\n{hist}\n\n{USER}さんの発言: {text}\n\nあなた（{p['name']}）の返答:")
-            thread_log(f"{p['name']}（{m}）", out); remember(p["id"], "清継さんへの返答", out)
-            return self.js({"id": p["id"], "who": p["name"], "model": m, "text": out})
+            return self.js(chat_reply(p, text))
         if self.path == "/api/topic":
             thread_log(USER, f"→組織全体（COO）: {text}"); PENDING.append(text)
             return self.js({"ok": True, "pending": len(PENDING)})

@@ -100,8 +100,10 @@ Three.js（`web/vendor` に同梱、ビルド不要）のボクセル風の村�
 
 `GET /api/company`、`POST /api/company/refresh`（`{"demo":"large|small|deficit|example|off"}` はメモリ上だけ。`off` は設定に戻す）。テスト: `python3 test_company_link.py`。
 
-## Claude（相談役・議長）
-Claude Code CLI にログイン済みのときだけ、会議の最後に Claude が議長講評を書き、チャットで相談役 Claude と1対1で話せます。CLI が無い／未ログインのときは `balanced` モデルが「代理議長」「代理」として答え、会議は止まりません（村の Claude ラベルに「・未ログイン」などと出ます）。
+## 役割: 議長は Claude、相談役は Grok
+- **議長**は Claude だけです。Claude Code CLI にログイン済みのとき、会議の最後の議長講評と、チャットでの1対1は Claude が話します。議事録の役名は `Claude（議長）`、モデルは `claude` です。
+- **相談役**は Grok だけです。`advice_inbox.md` のクラウド助言が相談役の発言で、掲示板は「☁️ クラウドの助言（Grok）」、会議録は `Grok（相談役）`（モデル `grok`）です。Claude を相談役にせず、Claude をクラウド助言にも足しません。Grok の返事は助言ファイルの本文だけで、ローカルモデルには代えません。
+- CLI が無い／未ログインのときは、議長講評だけ `balanced` が「代理議長」として答えます。相談役の代理にはしません。会議は止まりません（村の Claude ラベルに「・未ログイン」などと出ます）。
 呼び出しはツール全無効・MCP なし・空の作業ディレクトリ・入力6000字/出力1200字・1時間あたり回数制限つきです。
-環境変数: `COUNCIL_CLAUDE=0`（無効化）、`COUNCIL_CLAUDE_BIN`、`COUNCIL_CLAUDE_MAX_PER_HOUR`（既定6）、`COUNCIL_CLAUDE_TIMEOUT`（既定120秒）。
-`advice_inbox.md` の外部助言は現在 Grok のみです（掲示板では「☁️ クラウドの助言（Grok）」）。テスト: `python3 test_claude_chair.py`。
+環境変数: `COUNCIL_CLAUDE=0`（議長の Claude を無効化。相談役 Grok はそのまま）、`COUNCIL_CLAUDE_BIN`、`COUNCIL_CLAUDE_MAX_PER_HOUR`（既定6）、`COUNCIL_CLAUDE_TIMEOUT`（既定120秒）。
+テスト: `python3 test_claude_chair.py`。CI では Claude のログインも Grok の API キーも要りません。議長は CLI のスタブ、相談役は `advice_inbox.md` の行で検証します。実クラウドの新規生成はこのリポジトリの外（助言ファイルへの追記）です。
