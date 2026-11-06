@@ -863,11 +863,32 @@ async function villageSuite(browser) {
   await page.waitForTimeout(300);
   ok((await page.locator('[data-village-hall]').count()) === 0, 'village: 知らない行き先では窓を開かない');
   ok(await noHScroll(page), 'village: 横スクロールなし (デスクトップ)');
+  // 会話の場面 (2026-11-06): 何もしなくても掛け合いが記録に出る・話しかけると札が進む・「💬 場面」を切ると止まる
+  const logLis = page.locator('[data-village-scenes] [role="log"] li');
+  await page.waitForSelector('[data-village-scenes] [role="log"] li', { timeout: 15000 });
+  ok((await logLis.count()) >= 1, 'village: 何もしなくても村人どうしの掛け合いが記録に出る');
+  const firstLines = await logLis.count();
+  await page.waitForFunction((n) => document.querySelectorAll('[data-village-scenes] [role="log"] li').length > n, firstLines, { timeout: 20000 });
+  ok(true, 'village: 時間が進むと掛け合いの記録が増える');
+  const chatInput = page.locator('input[aria-label="村への入力"]');
+  await chatInput.fill('消費税の申告について教えて');
+  await chatInput.press('Enter');
+  await page.waitForSelector('[data-village-flow] [data-flow-chip]', { timeout: 15000 });
+  const chipLabels = await page.locator('[data-village-flow] [data-flow-chip]').evaluateAll((els) => els.map((e) => e.getAttribute('data-flow-chip')));
+  ok(chipLabels[0] === '受付' && chipLabels.includes('作業中'), `village: 話しかけると受付から始まる流れの札が出る (${chipLabels.join('→')})`);
+  const sceneToggle = page.locator('label', { hasText: '場面' }).locator('input');
+  await sceneToggle.uncheck();
+  await page.waitForTimeout(1600);
+  const frozen = await logLis.count();
+  await page.waitForTimeout(4200);
+  ok((await logLis.count()) === frozen, 'village: 「💬 場面」を切ると掛け合いは新しく増えない');
+  await sceneToggle.check();
   // スマホ幅
   await page.setViewportSize({ width: 412, height: 915 });
   await page.waitForTimeout(400);
   ok((await page.locator('[data-village-chat]').isVisible()) && (await page.locator('[data-village-hall-open]').isVisible()), 'village: スマホ幅でも会話と役場のボタンが見える');
   ok(await noHScroll(page), 'village: 横スクロールなし (スマホ幅)');
+  ok((await page.locator('[data-village-scenes]').count()) === 1, 'village: スマホ幅でも会話の記録の枠が在る');
   ok(errors.length === 0, `village: コンソールエラーが出ない${errors.length ? ' — ' + errors.slice(0, 2).join(' / ') : ''}`);
   await ctx.close();
 }
@@ -5515,7 +5536,8 @@ function installWaitMarginRecorder(browser) {
     ['opened', openedSuite, 135],
     ['tablet', tabletSuite, 2],
     // 村の殻 (唯一の入口) を実機で。旧画面のサイドバーの suite (shell) は 2026-11-04 に廃止
-    ['village', villageSuite, 15],
+    // 2026-11-06: 会話の場面 (掛け合い・受付→作業中の札・「💬 場面」) の 5 件 + スマホ幅の枠 1 件 = +6
+    ['village', villageSuite, 21],
   ];
   const SUITES = SUITE_TABLE.map(([name]) => name);
   /**
