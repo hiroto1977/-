@@ -72,6 +72,9 @@ const PROTECTED = [
   // 鎖が鳴らない** —— `privateTarget.ts` を足したときと同じ形である。
   'src/shared/constantTimeEquals.ts',
   'src/preload/preload.ts',
+  'src/preload/preload.mamori', // 同じ物の元 (Mamori · 2026-11-06 · MG-046)
+  'src/preload/preloadHost.ts', // preload.mamori が読む host の口 (ipcRenderer.invoke と contextBridge の薄い包み)
+  'src/preload/bridgeTypes.ts', // 橋の型 (実行時の中身なし · 型引数つきの type が Mamori に無いので別置き)
   // 2026-08-22 に足した。**関門だけ守って、関門を呼ぶ側が守られていなかった。**
   // `shellOpenGate.ts` と `exportPaths.ts` は保護対象なのに、それらを呼び、
   // かつ `contextIsolation` / `nodeIntegration` / `sandbox` を決め、
@@ -1834,8 +1837,10 @@ function cmdSelfTest() {
     );
     check(
       '★ 読み手を数えるのは閉包と同じ辺 (綴りで「読んでいそう」を判定しない)',
-      protectedReadersOf('src/shared/updateCheck.ts', PROTECTED).length === 1
-        && protectedReadersOf('src/shared/updateCheck.ts', PROTECTED)[0] === 'src/main/main.ts'
+      // 読み手は main.ts (値の import) と、橋 preload.ts (型の import · MG-046 で `import('…').T` の型から `import type` へ替えて辺に数えられた)。
+      // 件数を固定すると読み手が 1 つ増えるたびに鳴る —— 確かめるのは「閉じ込めの読み手 main.ts を数える・保護対象の外は数えない・空の一覧なら 0」。
+      protectedReadersOf('src/shared/updateCheck.ts', PROTECTED).includes('src/main/main.ts')
+        && protectedReadersOf('src/shared/updateCheck.ts', PROTECTED).every((r) => PROTECTED.includes(r))
         && protectedReadersOf('src/shared/updateCheck.ts', []).length === 0,
     );
     check(

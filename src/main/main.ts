@@ -16,7 +16,7 @@ import { ensurePrivateExportRoot, repairExportPermissions } from './clients/expo
 import { isServiceId } from '../shared/serviceId';
 import { outboundContentRefusal } from '../shared/outboundContentGate';
 import { checkTokenInput } from '../shared/tokenInput';
-import type { OsOpResult, TokenSaveResult } from '../preload/preload';
+import type { OsOpResult, TokenSaveResult } from '../preload/bridgeTypes';
 import { safeErrorMessage } from './clients/types';
 import { externalUrlOrNull } from '../shared/externalUrlGate';
 import { shellTargetOrNull } from './shellOpenGate';

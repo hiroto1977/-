@@ -1,4 +1,4 @@
-import type { ActionResult } from '../../preload/preload';
+import type { ActionResult } from '../../preload/bridgeTypes';
 
 /**
  * `serviceHub.invoke()` の戻り値を「利用者に何と伝えるべきか」へ分類する。

@@ -8,7 +8,7 @@ import {
   _resetDeviceStoreFailureForTests,
   currentDeviceStoreFailure,
 } from '../../data/deviceStoreFailure';
-import type { FetchResult, ServiceId } from '../../../preload/preload';
+import type { FetchResult, ServiceId } from '../../../preload/bridgeTypes';
 
 // React 18 の act() 警告を抑止。
 (globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;

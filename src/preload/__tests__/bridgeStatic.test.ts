@@ -131,6 +131,42 @@ describe('橋の 15 本 — 読み直して static 変異体を届かせる', ()
   });
 
   /*
+   * **15 本すべてで、引数の数と順序が main の期待どおりに渡る** (2026-11-06 · MG-046)。
+   *
+   * 上の「引数は main へそのまま渡る」は 2 本 (openExternal / setToken) しか見ない。ところが引数を 1 つ落とす
+   * 書き換え (たとえば `setColorScheme` が背景色を渡さない) は、**他の 13 本では全検査が緑のまま**だった
+   * (対照で実測 · Stryker は呼び出しの引数を落とす変異体を作らないので変異検査の 100% にも映らない)。
+   * main 側は欠けた引数を `undefined` として受けるので、例外は出ず「未設定」と同じ扱いになる。
+   * 期待する引数の数を 15 本それぞれに書く —— 橋と main のハンドラが噛み合う面の、引数の側。
+   */
+  const ARITY: readonly [string, number][] = [
+    ['getVersion', 0],
+    ['checkUpdate', 0],
+    ['openExternal', 1],
+    ['revealInFolder', 1],
+    ['openPath', 1],
+    ['setColorScheme', 2],
+    ['setToken', 2],
+    ['clearToken', 1],
+    ['listConfigured', 0],
+    ['storageProtection', 0],
+    ['eraseAll', 0],
+    ['fetchSnapshot', 1],
+    ['invoke', 3],
+    ['oauthSupported', 1],
+    ['authorize', 2],
+  ];
+  it.each(ARITY)('★ %s は先頭の %i 個の引数を順序どおり渡す', async (method, n) => {
+    const api = await freshBridge();
+    api[method]!('a1', 'a2', 'a3');
+    expect(invocations[0]!.args).toEqual(['a1', 'a2', 'a3'].slice(0, n));
+  });
+
+  it('★ 引数の表は 15 本すべてを覆う (橋の口と過不足がない)', () => {
+    expect(ARITY.map(([m]) => m).sort()).toEqual(CHANNELS.map(([m]) => m).sort());
+  });
+
+  /*
    * **チャンネル名を呼び出し側に選ばせない。** 任意のチャンネルを叩ける橋は
    * contextIsolation を掛けている意味を消す。第 1 引数に別のチャンネル名を
    * 渡しても、呼ばれる先が変わらないことを見る。
@@ -139,6 +175,13 @@ describe('橋の 15 本 — 読み直して static 変異体を届かせる', ()
     const api = await freshBridge();
     api['getVersion']!('secrets:list');
     expect(invocations[0]!.channel).toBe('app:getVersion');
+  });
+
+  it('★ 露出したことは bridgeExposed (true) に残る —— 読み込みの時点で 1 度だけ露出する', async () => {
+    exposedName = '';
+    const mod = await rereadModule<typeof import('../preload')>(import.meta.url, '../preload');
+    expect(mod.bridgeExposed).toBe(true);
+    expect(exposedName).toBe('serviceHub');
   });
 
   it('★ 露出する名前は serviceHub ただ 1 つ', async () => {

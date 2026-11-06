@@ -26,7 +26,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 78 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 31 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **19675** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **19684** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` (**2026-09-01 の報告** —— 今のコードを測った物ではない。`docs/REMAINING_WORK.md` の「パス 494」) |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` (同上) |
@@ -173,7 +173,7 @@ mutation score を限りなく 100% に近づけるための **二段構え**:
 | プロセス | 権限 | 主責任 | 設定箇所 |
 |---|---|---|---|
 | **Renderer** | `nodeIntegration: false` + `sandbox: true` + `contextIsolation: true` + CSP | 表示・ユーザ入力 (Node API 不可) | `src/main/main.ts:42-48` |
-| **Preload** | contextIsolated bridge | `window.serviceHub` の expose のみ | `src/main/main.ts:43` + `src/preload/preload.ts:1-46` |
+| **Preload** | contextIsolated bridge | `window.serviceHub` の expose のみ | `src/main/main.ts:43` + `src/preload/preload.ts:1-41` |
 | **Main** | フル Node | IPC dispatch + secrets + OAuth + REST + `shell.openExternal` | `src/main/main.ts:99-224` |
 
 **並列実行モデル**: Electron は main を単一スレッドで動かす。`ipcMain.handle` は async だが
@@ -2256,7 +2256,7 @@ $ npm run mutate:next -- --top=5
 per-file の kill / survived / no-cov / ignored / invalid は `docs/QUALITY.md` が
 Stryker の JSON レポート (reports/mutation 配下の生成物) から機械生成して持つ
 (`npm run quality:report`)。
-Stryker の対象 (`stryker.config.json` の `mutate`) は **337 ファイル**。
+Stryker の対象 (`stryker.config.json` の `mutate`) は **338 ファイル**。
 2026-10-26 に `renderer/data` の `aegisLang` と `aegisLangSafety` の 2 モジュール (外へ何も出さない小さな言語の実行系と、実行前の安全の走査・規則ベースの修復の提案 —— Python の原型 AegisLang の考え方だけを移した純ロジック) を足した —— 1 度目の測定は **88.65% (生存 154)** で、生存の大半は利用者に見せる日本語の断りの文を値で主張していない物 (文面を空にしても検査が落ちない) と、走査の上限の添字の等価変異だった。文面を全件そのまま留める検査と、境界・状態の検査を足し、等価な添字は走査の形ごと消して (sticky 正規表現・`indexOf`・`split` と `map`)、**100.00% (Killed 1,286 / 生存 0 / 未到達 0)**。残した 2 つの `Stryker disable` は理由つき (収束しない入力への保険の周回上限・空の編集を適用しても変わらない最適化)。
 2026-10-07 (パス 506) に `src/renderer/components/useDialogFocus.ts` (dialog の焦点の道 —— 開いたら印の操作子へ・Esc で閉じる / 取り消す・
 消えたら押した物へ戻す) を足した —— push した直後の CI で `mutateScopeCensus` が「同名の検査が在り 100 行以上なのに `mutate` の外」と
@@ -2489,7 +2489,7 @@ classDiagram
 | # | 不変条件 | 回帰テスト / 検証箇所 |
 |---|---|---|
 | 1 | Renderer は Node API を直接呼ばない (必ず `window.serviceHub` 経由) | BrowserWindow 設定 (`src/main/main.ts:42-48`) |
-| 2 | Renderer に raw token は届かない (`secrets:list` は ID のみ) | `listConfigured` `src/preload/preload.ts:59` |
+| 2 | Renderer に raw token は届かない (`secrets:list` は ID のみ) | `listConfigured` `src/preload/preload.ts:35` |
 | 3 | IPC で受けた serviceId は indexing 前に `isServiceId()` 検証 | **`lint:ipc-handlers`** (2026-08-22 追加。それまでの回帰テスト欄は `isServiceId` **自体**の検査 4 件で、各ハンドラが呼んでいるかは誰も見ていなかった) + `src/shared/__tests__/serviceId.test.ts` 4 件 |
 | 4 | Error message は `safeErrorMessage()` / `redactSecrets()` 経由 | property fuzz 600 試行 (`src/main/__tests__/property.test.ts`) |
 | 5 | 外部 URL を OS へ渡す扉は 2 つ (`app:openExternal` と新窓ハンドラ)、**どちらも同じ関門**を通る — http(s) 限定。**加えてプラットフォームが自分で辿る出口** (アンカーの属性) も同じ関門を通る (パス 298。それまで 2 本が台帳の生の値を属性に置いており、React のクリック handler で打ち消しても中クリックや右クリックの「新しいタブで開く」は関門の外だった) | `EXTERNAL_URL_SCHEMES` `src/shared/externalUrlGate.ts:100` + `src/shared/__tests__/externalUrlGate.test.ts` 37 件 (扉の数を数える検査を含む) + `src/shared/__tests__/followableUrlCensus.test.ts` 6 件 (動的な属性の母集団・両方向) |

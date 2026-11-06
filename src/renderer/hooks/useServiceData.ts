@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { FetchResult, ServiceId } from '../../preload/preload';
+import type { FetchResult, ServiceId } from '../../preload/bridgeTypes';
 import { isRefreshable, originOf, type DataOrigin } from '../../shared/dataOrigin';
 import { reportDeviceStoreFailure } from '../data/deviceStoreFailure';
 

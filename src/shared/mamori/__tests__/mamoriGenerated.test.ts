@@ -40,6 +40,7 @@ const EXPECTED = [
   'src/shared/outboundContentGate.mamori',
   'src/shared/actionTier.mamori',
   'src/shared/redact.mamori',
+  'src/preload/preload.mamori',
   'src/renderer/oauth/pkceSession.mamori',
   'src/shared/updateCheck.mamori',
   'src/main/clients/exportPaths.mamori',

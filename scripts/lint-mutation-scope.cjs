@@ -313,6 +313,7 @@ const MUST_MEASURE = {
   // main.ts と違って測れるのは、チャンネル名が**アロー関数の中**にあるため
   // (main.ts は `ipcMain.handle('名前', fn)` と**モジュール直下で呼ぶ**ので static)。
   'src/preload/preload.ts':          'レンダラーが main へ触れる唯一の面 (13 個の口だけを通す)',
+  'src/preload/preloadHost.ts':      '判断を持たない host の薄い壁 (ipcRenderer.invoke と contextBridge の包み · preload.mamori が読む)',
   // 2026-08-22 追加。IPC ハンドラ 13 個・窓の隔離設定・遷移の番人がここに集まる。
   // 「モジュール直下の副作用ばかりで測れない」と一度は書いたが誤りで、
   // 毎テスト読み直せば普通に 100% まで測れた (pragma 0 個)。
@@ -342,6 +343,8 @@ const KNOWN_UNMEASURED = {
   // 判断を持たず `setTimeout` / `document` / `window` をそのまま渡す薄い壁で、タイマーの取っ手の型の戻しだけが目的 (Mamori に `as` が無い)。
   // 使う側の判断 (autoLock.ts) は mutate に載っていて 100%、この口は autoLock.test.ts が実物の jsdom で通している。
   'src/renderer/security/autoLockHost.ts': '判断を持たない host の薄い壁 (タイマー・DOM の口を渡すだけ)。使う側の autoLock.ts は mutate で 100%。',
+  // 2026-11-06 (MG-046)。preload.mamori が読む型だけのファイル (`export type` だけ・実行時に何も残らない) なので変異体が作れない。
+  'src/preload/bridgeTypes.ts': '型だけ (実行時に何も残らない)。橋の戻り値の形は bridgeStatic / bridgeContract と typecheck が留める。',
   // 2026-11-05 (MG-037)。frameGuard.mamori が読む host の口 (window と style.cssText を渡すだけ)。使う側の frameGuard.ts は mutate で測る。
   'src/renderer/security/frameGuardHost.ts': '判断を持たない host の薄い壁 (window と style.cssText の口を渡すだけ)。使う側の frameGuard.ts は mutate で測る。',
   // 2026-10-30 (T-220 · パス 559)。印の型だけのファイル —— 実行時に何も残らない (`declare const` と `type` だけ) ので

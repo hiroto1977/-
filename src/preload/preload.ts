@@ -1,92 +1,40 @@
-import { contextBridge, ipcRenderer } from 'electron';
-import type { ServiceId } from '../shared/serviceId';
-
-export type { ServiceId };
-
-export type FetchResult<T = unknown> =
-  | { ok: true; data: T }
-  | { ok: false; code: 'not_implemented' | 'not_configured' | 'fetch_failed'; message: string };
-
-export type ActionResult<T = unknown> =
-  | { ok: true; data: T }
-  | { ok: false; code: 'action_not_found' | 'not_configured' | 'action_failed'; message: string };
-
+// 生成物 —— src/preload/preload.mamori から Mamori のコンパイラが組んだ。手で編集しない (`npm run mamori:build`)。
+// 言語の仕様は docs/MAMORI.md。生成物が元と食い違えば src/shared/mamori/__tests__/mamoriGenerated.test.ts が落ちる。
 /**
- * OS へ渡す操作 (ファイルを開く / フォルダで表示 / 資格情報の削除) の結果。
+ * preload — **レンダラーが main へ触れる唯一の面** (window.serviceHub) (2026-11-06 · MG-046 · Mamori 0.23)。
  *
- * 2026-08 監査で見つけた形: これらは `Promise<void>` で、
- * - パスが封じ込めゲートに弾かれた場合は `return;` で黙る
- * - `shell.openPath` は **失敗時にエラー文字列を返す** 契約なのに、その戻り値を
- *   捨てていた (ハンドラのコメントには契約が書いてあった)
- * ため、呼び出し側は `catch {}` で握り潰すしかなく、**書き出した決算書類を
- * 「開く」で開けなくても、画面には何も出なかった**。
+ * 橋は「レンダラーが main に対してできること」の定義そのものである。口は 15 本で、どれもチャンネル名を
+ * **字面で固定**し、呼び出し側にチャンネルを選ばせない。露出するのは関数だけ (状態や生の `ipcRenderer` は渡さない)。
+ *
+ * Mamori で書くので: `ipcRenderer` / `contextBridge` を直接は触れない (`electron` は能力モジュール)。
+ * 触れるのは host の薄い 2 つの口 (`invokeIpc` / `exposeBridge` · preloadHost.ts) だけで、能力の台帳に載る。
+ * 型は bridgeTypes.ts に置く (型引数つきの `type` が Mamori に無い)。
  */
-export type OsOpResult = { ok: true } | { ok: false; message: string };
 
-/** 資格情報の保存結果。`void` だと「弾いた」と「保存した」が区別できず、
- *  renderer が保存できたように振る舞ってしまう (2026-08 監査)。 */
-export type TokenSaveResult =
-  | { ok: true }
-  | { ok: false; code: 'invalid_service' | 'invalid_token' | 'write_failed'; message: string };
+import type { ServiceId, FetchResult, ActionResult, OsOpResult, TokenSaveResult, OAuthResult, StorageProtection } from './bridgeTypes';
+import type { UpdateVerdict } from '../shared/updateCheck';
+import type { EraseAllReport } from '../shared/eraseReport';
+import { invokeIpc, exposeBridge } from './preloadHost';
 
-export type OAuthResult =
-  | { ok: true; data: { scope?: string; expiresAt?: number } }
-  | { ok: false; code: 'not_supported' | 'authorize_failed'; message: string };
-
-/** `secrets:protection` の戻り値。src/main/secrets.ts の StorageProtection と同形
- *  (preload は main を import できないため構造だけを再宣言する)。 */
-export interface StorageProtection {
-  readonly encrypted: boolean;
-  readonly plainCount: number;
-  readonly file: string;
-  /** 何が鍵を握っているか。画面はこれで文言を選ぶ (main/secrets.ts 参照)。 */
-  readonly mechanism: 'os-keychain' | 'webcrypto-vault' | 'obfuscated';
-  /** 消えないか。ブラウザ版の best-effort は立ち退きうる (main/secrets.ts 参照)。 */
-  readonly durability: 'file' | 'persistent' | 'best-effort';
+/** 取得 (`fetch:snapshot`)。結果の型は呼び出し側が選ぶ (既定は unknown)。 */
+function fetchSnapshot<T>(serviceId: ServiceId): Promise<FetchResult<T>> {
+  return invokeIpc<FetchResult<T>>('fetch:snapshot', serviceId);
 }
 
-const api = {
-  getVersion: (): Promise<string> => ipcRenderer.invoke('app:getVersion'),
-  /** 更新の有無を調べる。取得もインストールもしない（知らせるだけ）。 */
-  checkUpdate: (): Promise<import('../shared/updateCheck').UpdateVerdict> =>
-    ipcRenderer.invoke('app:checkUpdate'),
-  openExternal: (url: string): Promise<void> => ipcRenderer.invoke('app:openExternal', url),
-  revealInFolder: (filePath: string): Promise<OsOpResult> =>
-    ipcRenderer.invoke('app:revealInFolder', filePath),
-  openPath: (filePath: string): Promise<OsOpResult> =>
-    ipcRenderer.invoke('app:openPath', filePath),
-  /** 配色の追随 (パス 318): 解いた scheme と stylesheet の `--bg` の実値を main へ (窓の下地と次回起動の色)。 */
-  setColorScheme: (scheme: 'light' | 'dark', background: string): Promise<OsOpResult> =>
-    ipcRenderer.invoke('app:setColorScheme', scheme, background),
+/** 書き込み (`action:invoke`)。 */
+function invoke<T>(serviceId: ServiceId, action: string, payload: Record<string, unknown>): Promise<ActionResult<T>> {
+  return invokeIpc<ActionResult<T>>('action:invoke', serviceId, action, payload);
+}
 
-  setToken: (serviceId: ServiceId, token: string): Promise<TokenSaveResult> =>
-    ipcRenderer.invoke('secrets:set', serviceId, token),
-  clearToken: (serviceId: ServiceId): Promise<OsOpResult> =>
-    ipcRenderer.invoke('secrets:clear', serviceId),
-  listConfigured: (): Promise<ServiceId[]> => ipcRenderer.invoke('secrets:list'),
-  /** 保存時の保護状態 (OS キーチェーンが使えるか / 平文のまま残っている件数)。
-   *  秘密そのものは返さない。 */
-  storageProtection: (): Promise<StorageProtection> =>
-    ipcRenderer.invoke('secrets:protection'),
-  /** 「すべてのデータを削除」— デスクトップ版は main がファイルと renderer の保存領域を消して再起動する (パス 137)。 */
-  eraseAll: (): Promise<import('../shared/eraseReport').EraseAllReport> => ipcRenderer.invoke('app:eraseAll'),
+/**
+ * 橋の本体。口は 15 本で、チャンネル名は字面で固定する (呼び出し側に選ばせない)。
+ * 更新確認は取得もインストールもしない (知らせるだけ)。配色の追随 (パス 318) は解いた scheme と `--bg` の実値を main へ渡す。
+ * 保護状態の確認は秘密そのものを返さない。eraseAll は main がファイルと renderer の保存領域を消して再起動する (パス 137)。
+ * authorize の clientId はアプリ内かんたん接続用の任意指定 (環境変数未設定でも OAuth を実行できる)。
+ */
+const api = { getVersion: () => invokeIpc<string>('app:getVersion'), checkUpdate: () => invokeIpc<UpdateVerdict>('app:checkUpdate'), openExternal: (url: string) => invokeIpc<void>('app:openExternal', url), revealInFolder: (filePath: string) => invokeIpc<OsOpResult>('app:revealInFolder', filePath), openPath: (filePath: string) => invokeIpc<OsOpResult>('app:openPath', filePath), setColorScheme: (scheme: 'light' | 'dark', background: string) => invokeIpc<OsOpResult>('app:setColorScheme', scheme, background), setToken: (serviceId: ServiceId, token: string) => invokeIpc<TokenSaveResult>('secrets:set', serviceId, token), clearToken: (serviceId: ServiceId) => invokeIpc<OsOpResult>('secrets:clear', serviceId), listConfigured: () => invokeIpc<ServiceId[]>('secrets:list'), storageProtection: () => invokeIpc<StorageProtection>('secrets:protection'), eraseAll: () => invokeIpc<EraseAllReport>('app:eraseAll'), fetchSnapshot, invoke, oauthSupported: (serviceId: ServiceId) => invokeIpc<boolean>('oauth:isSupported', serviceId), authorize: (serviceId: ServiceId, clientId?: string) => invokeIpc<OAuthResult>('oauth:authorize', serviceId, clientId) };
 
-  fetchSnapshot: <T = unknown>(serviceId: ServiceId): Promise<FetchResult<T>> =>
-    ipcRenderer.invoke('fetch:snapshot', serviceId),
-
-  invoke: <T = unknown>(
-    serviceId: ServiceId,
-    action: string,
-    payload: Record<string, unknown>,
-  ): Promise<ActionResult<T>> => ipcRenderer.invoke('action:invoke', serviceId, action, payload),
-
-  oauthSupported: (serviceId: ServiceId): Promise<boolean> =>
-    ipcRenderer.invoke('oauth:isSupported', serviceId),
-  // clientId はアプリ内かんたん接続用の任意指定 (環境変数未設定でも OAuth を実行できる)。
-  authorize: (serviceId: ServiceId, clientId?: string): Promise<OAuthResult> =>
-    ipcRenderer.invoke('oauth:authorize', serviceId, clientId),
-};
-
-contextBridge.exposeInMainWorld('serviceHub', api);
+/** 橋を `serviceHub` という名前で露出する。読み込んだ瞬間に 1 度だけ呼ばれる。 */
+export const bridgeExposed = exposeBridge('serviceHub', api);
 
 export type ServiceHubBridge = typeof api;

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { classifyActionResult } from '../actionOutcome';
-import type { ActionResult } from '../../../preload/preload';
+import type { ActionResult } from '../../../preload/bridgeTypes';
 
 /**
  * `action:invoke` は失敗しても reject せず `{ ok: false }` を返す。この事実を

@@ -173,7 +173,7 @@ import {
   type AdvisorResponse,
 } from './data/stocksAnalysisWeb';
 import { checkTokenInput } from '../shared/tokenInput';
-import type { OsOpResult, TokenSaveResult } from '../preload/preload';
+import type { OsOpResult, TokenSaveResult } from '../preload/bridgeTypes';
 import {
   logMood as emotionsLogMood,
   clearHistory as emotionsClearHistory,
