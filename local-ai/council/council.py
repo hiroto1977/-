@@ -2,7 +2,7 @@
 """ローカルAI組織（村）デーモン。リポジトリのAI組織(registry.json)を縮小移植し、
 COO→役員→部長→担当→秘書 の順でローカルLLMが議論する（標準ライブラリのみ）。
 行動はこのディレクトリ内へのファイル書き込みと読み取り専用チェックに限定。外部送信・git操作はしない。"""
-import json, os, re, socket, shutil, subprocess, tempfile, threading, time, datetime, urllib.request, difflib, collections
+import json, os, re, shutil, subprocess, tempfile, threading, time, datetime, urllib.request, difflib, collections
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -35,8 +35,12 @@ COMMON = (f"必ず自然な日本語（ひらがな・カタカナ・漢字）�
           "この組織はローカル環境内でファイルに提案を書くことしかできません。外部送信やgit pushは提案しないでください。"
           "他の人の発言をそのまま繰り返さず、自分の役割ならではの内容を書いてください。")
 STATE = {"status": "起動", "topic": "", "transcript": [], "updated": "", "speaking": None, "exec": None}
+# 健全性は待受ポートではなく、そのサービスが仕事を返す経路の HTTP 状態。
+# LiteLLM の /health/liveliness はプロセスが生きていれば 200 で、/v1/models が 500 でも村は稼働と出ていた。
+# 表示は /v1/models（llama-swap と同じ機能経路）が 2xx のときだけ稼働。鍵は LiteLLM にだけ付ける。
 SERVICES = {"Ollama": (11434, "/"), "llama1.5B": (8081, "/health"), "llama3B": (8085, "/health"), "llama7B": (8086, "/health"),
-            "LocalAI": (8084, "/readyz"), "llama-swap": (8090, "/v1/models"), "LiteLLM": (4000, "/health/liveliness"), "OpenWebUI": (8080, "/health")}
+            "LocalAI": (8084, "/readyz"), "llama-swap": (8090, "/v1/models"), "LiteLLM": (4000, "/v1/models"), "OpenWebUI": (8080, "/health")}
+PROBE_TIMEOUT = float(os.environ.get("COUNCIL_PROBE_TIMEOUT", "3"))
 PENDING, CHAT = [], []
 ADVICE = os.path.join(HERE, "advice_inbox.md")      # パートB: クラウドの助言（現在はGrokのみ）（追記された行を最優先の議題にする）
 import advice_guard
@@ -90,10 +94,55 @@ def free_mb():
     for l in open("/proc/meminfo"):
         if l.startswith("MemAvailable"): return int(l.split()[1]) // 1024
     return 0
-def port_up(p):
+class _KeepStatus(urllib.request.HTTPErrorProcessor):
+    """3xx/4xx/5xx を例外や別URLへの追跡にせず、その応答の状態だけを返す。"""
+    def http_response(self, request, response):
+        return response
+    https_response = http_response
+_OPENER = urllib.request.build_opener(_KeepStatus)
+
+def probe_headers(name):
+    """認証が要る機能経路にだけ鍵を付ける。他のローカルサービスへは出さない。"""
+    if name == "LiteLLM" and KEY:
+        return {"Authorization": "Bearer " + KEY}
+    return {}
+
+def probe_ok(port, path, headers=None, timeout=None):
+    """127.0.0.1 の機能経路が 2xx のときだけ稼働。待受だけでは稼働にしない。"""
+    timeout = PROBE_TIMEOUT if timeout is None else timeout
+    if isinstance(port, bool) or not isinstance(port, int) or not 1 <= port <= 65535:
+        return False
+    if not isinstance(path, str) or not path.startswith("/") or "://" in path or re.search(r"[\x00-\x20]", path):
+        return False
+    req = urllib.request.Request(
+        f"http://127.0.0.1:{port}{path}",
+        headers={"Connection": "close", **(headers or {})},
+        method="GET")
     try:
-        with socket.create_connection(("127.0.0.1", p), 2): return True
-    except OSError: return False
+        with _OPENER.open(req, timeout=timeout) as r:
+            return 200 <= int(getattr(r, "status", 0)) < 300
+    except Exception:
+        return False
+
+def service_snapshot(timeout=None):
+    """名前 → 機能経路が 2xx か。並列。時間内に答えが無ければ停止。"""
+    timeout = PROBE_TIMEOUT if timeout is None else timeout
+    items = list(SERVICES.items())
+    result = {}
+    lock = threading.Lock()
+    def one(name, port, path):
+        ok = probe_ok(port, path, probe_headers(name), timeout)
+        with lock:
+            result[name] = True if ok is True else False
+    threads = []
+    for name, (port, path) in items:
+        t = threading.Thread(target=one, args=(name, port, path), daemon=True)
+        t.start(); threads.append(t)
+    end = time.monotonic() + timeout + 1.0
+    for t in threads:
+        t.join(max(0.0, end - time.monotonic()))
+    return {name: True if result.get(name) is True else False for name, _ in items}
+
 def log_sys(msg):
     with open(os.path.join(HERE, "logs", "system.log"), "a") as f: f.write(f"{now()} {msg}\n")
 
@@ -146,9 +195,10 @@ def persona(p):
     return s
 
 def health_summary():
+    up = service_snapshot()
     locked = decision_lock.forced_down_services() if LOCK_ON else set()
-    down = [n for n, (p, _) in SERVICES.items() if not port_up(p) and n not in locked]
-    fixed = [n for n in locked if not port_up(SERVICES[n][0])]
+    down = [n for n, ok in up.items() if not ok and n not in locked]
+    fixed = [n for n in locked if n in up and not up[n]]
     parts = [f"空きメモリ {free_mb()}MB"]
     if fixed: parts.append("固定停止: " + ", ".join(fixed))
     parts.append("停止中: " + (", ".join(down) if down else "なし"))
@@ -176,11 +226,11 @@ def _rstate():
     try: return json.load(open(RSTATE, encoding="utf-8"))
     except Exception: return {}
 def refuse_topic(src, topic):
-    """固定決定に反する議題なら理由リスト。CEOの明示的なロック解除指示は通す。"""
-    if not LOCK_ON: return []
-    if src == "CEOの指示" and re.search(r"ロック解除|固定決定を解除|status:\s*unlocked", topic or ""):
-        return []
-    return [f"{n}: {why}（該当: {frag}）" for n, why, frag in decision_lock.check_topic(topic)]
+    """固定決定または助言ガードに反する議題なら理由リスト。
+    status が locked の間は、CEOの丁寧な言い換えでも文言では解除できない。"""
+    if not LOCK_ON and not GUARD_ON: return []
+    raw = advice_guard.screen(topic, locks=LOCK_ON, guard=GUARD_ON)
+    return [f"{n}: {why}（該当: {frag}）" for n, why, frag in raw]
 
 def pick_topic():
     def accept(src, topic):
@@ -297,9 +347,25 @@ def session():
             return
         summ = speak(P["coo"], f"COOとして、助言に沿って修正した決定を2〜3文でまとめ、CEOの{USER}さんへの報告文にしてください。")
     review = chair_review(topic, hist, dec)
-    block = (f"\n## {now()} [{src}] {topic[:120] if src != '継続議題' else topic.split(chr(10))[0][:60] + ' ' + topic.split(chr(10))[-1][:80]}\n\n"
-             f"担当役員: {ex['name']}\n\n{dec}\n\nCOO総括: {summ}\n" + (f"\n{review[0]}: {review[1]}\n" if review else ""))
+    review_text = review[1] if review else ""
+    topic_line = topic[:120] if src != "継続議題" else topic.split(chr(10))[0][:60] + " " + topic.split(chr(10))[-1][:80]
+    outcome, hits3 = decision_lock.commit_decision(
+        dec, decisions_path=os.path.join(HERE, "decisions.md"), rejected_path=REJECTED,
+        topic=topic_line, summary=summ, review=review_text, src=src, officer=ex["name"])
+    if outcome == "reject":
+        reasons = [f"{n}: {why}（該当: {frag}）" for n, why, frag in hits3]
+        rec = {"at": now(), "topic": topic.split(chr(10))[0][:80], "decision": dec[:400], "reasons": reasons, "retry": True}
+        REJ.append(rec)
+        log_sys("保存前検査: 決定を不記録（" + "; ".join(reasons)[:200] + "）")
+        try:
+            decision_loop.record_rejection(HERE, topic, dec, reasons)
+        except Exception as ex:  # noqa: 却下の本体は commit_decision が書いた。ログ失敗で会議を止めない
+            log_sys(f"閉ループ却下記録の失敗: {ex!r}")
+        STATE.update(status=f"待機中（決定は助言/固定決定と矛盾のため不記録・次回まで最大{INTERVAL}秒）", updated=now(), speaking=None)
+        return
+    # 本文は保存前検査が decisions.md に書いた。閉ループはマーカーを読み戻し、次のアクションを実行・検証する。
     try:
+        block = "\n" + decision_loop.marker_for(decision_loop.decision_id(topic, dec)) + "\n"
         loop_rec = decision_loop.accept_and_verify(root=HERE, topic=topic, decision=dec, block=block)
         if loop_rec.get("status") != "verified":
             log_sys(f"閉ループ未完了: {loop_rec.get('status')} {str(loop_rec.get('detail',''))[:180]}")
@@ -324,11 +390,10 @@ def guard_check(dec):
 def reject_log(topic, dec, hits, retry):
     rec = {"at": now(), "topic": topic.split(chr(10))[0][:80], "decision": dec[:400], "reasons": hits, "retry": retry}
     REJ.append(rec); log_sys(f"助言ガード: 決定を不記録（{'; '.join(hits)[:200]}）")
-    with open(REJECTED, "a", encoding="utf-8") as f:
-        f.write(f"\n## {rec['at']} {rec['topic']}（{'やり直し後も矛盾・不記録' if retry else 'やり直しを指示'}）\n\n理由:\n" + "".join(f"- {h}\n" for h in hits) + f"\n却下した決定:\n\n{dec}\n")
+    decision_lock.append_rejection(REJECTED, rec["topic"], dec, hits, retry=retry)
     try:
         decision_loop.record_rejection(HERE, topic, dec, hits)
-    except Exception as ex:  # noqa: 却下の本記録は上のファイル。閉ループ側の失敗で会議を止めない
+    except Exception as ex:  # noqa: 却下の本体は append_rejection。ログ失敗で会議を止めない
         log_sys(f"閉ループ却下記録の失敗: {ex!r}")
 
 def chair_review(topic, hist, dec):
@@ -357,7 +422,7 @@ def api_state():
     dp = os.path.join(HERE, "decisions.md")
     decs = [d.strip() for d in open(dp, encoding="utf-8").read().split("\n## ") if d.strip()][-5:] if os.path.exists(dp) else []
     return {k: STATE[k] for k in ("status", "topic", "updated", "speaking", "exec")} | {"free_mb": free_mb(), "transcript": STATE["transcript"][-8:],
-            "services": {n: port_up(p) for n, (p, _) in SERVICES.items()}, "decisions": decs, "chat": CHAT[-12:], "user": USER,
+            "services": service_snapshot(), "decisions": decs, "chat": CHAT[-12:], "user": USER,
             "claude": {"status": claude_status(), "calls_last_hour": sum(1 for t in _CL["calls"] if time.time() - t < 3600), "max_per_hour": CLAUDE_MAX_HOUR},
             "advice": [l.strip()[2:][:600] for l in advice_lines() if l.strip().startswith("- ")][-5:],
             "company": {k: COMPANY.st.get(k) for k in ("linked", "name", "scale", "last_fetch", "error")},

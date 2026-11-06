@@ -1,6 +1,7 @@
 """助言ガード: advice_inbox.md の助言(Grok)と食い違う決定を decisions.md に記録しない。
-小さいローカルモデル向けに、まず確実な禁止パターン（正規表現）で判定し、任意で検証モデルにも確認させる。"""
-import re
+小さいローカルモデル向けに、まず確実な禁止パターン（正規表現）で判定し、任意で検証モデルにも確認させる。
+ロックを守る訂正（解除の破棄・memoriesetしない・停止のまま）は矛盾にしない。"""
+import os, re
 NEG = r"(しない|しません|禁止|避け|触らない|触れない|行わない|やめ|使わない|足さない|追加しない|不採用|議題外|外す|ではない|でない|ではありません|にならない|撤回|取り消|取消|誤り|NG|ダメ|不可)"
 # (名前, 理由, 正規表現) — 助言で禁止された内容
 RULES = [
@@ -38,3 +39,45 @@ def check(decision):
 def advice_digest(lines, n=12):
     adv = [l.strip().lstrip("- ").replace("[済] ", "") for l in lines if "助言" in l and l.strip().startswith("- ")]
     return "\n".join(a[:220] for a in adv[-n:])
+
+def screen(text, locks=True, guard=True):
+    """議題・助言の取り込み判定。ロックを守る引用は通す。解除・再起動の命令は落とす。"""
+    hits = []
+    if locks:
+        import decision_lock
+        hits.extend(decision_lock.check_topic(text))
+    if guard:
+        hits.extend(check(text))
+    return hits
+
+def _rewrite_advice(path, text, reject):
+    body = (text or "").strip()
+    raw = open(path, encoding="utf-8").read() if os.path.exists(path) else ""
+    lines, found = [], False
+    for ln in raw.splitlines():
+        if body and body in ln:
+            found = True
+            if reject:
+                lines.append(f"- [済] {body}（固定決定により却下）")
+            else:
+                lines.append(f"- {body}")
+        else:
+            lines.append(ln)
+    if not found:
+        lines.append(f"- [済] {body}（固定決定により却下）" if reject else f"- {body}")
+    open(path, "w", encoding="utf-8").write("\n".join(lines).rstrip() + "\n")
+
+def intake(text, advice_path=None, rejected_path=None):
+    """助言の取り込み口。ロック維持の助言は却下にしない。解除を命ずる助言は却下ログへ入れる。"""
+    import os
+    hits = screen(text, locks=True, guard=True)
+    if hits:
+        if rejected_path:
+            import decision_lock
+            decision_lock.append_rejection(rejected_path, "助言", text, hits, retry=False)
+        if advice_path:
+            _rewrite_advice(advice_path, text, reject=True)
+        return "reject", hits
+    if advice_path:
+        _rewrite_advice(advice_path, text, reject=False)
+    return "accept", []

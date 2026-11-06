@@ -334,9 +334,9 @@ class LoopTest(unittest.TestCase):
             "local-ai/council/web/index.html",
             "local-ai/start-all.sh",
         ):
-            committed = subprocess.check_output(["git", "show", f"main:{rel}"], cwd=REPO)
+            committed = subprocess.check_output(["git", "show", f"origin/main:{rel}"], cwd=REPO)
             self.assertEqual(open(os.path.join(REPO, rel), "rb").read(), committed, rel)
-        diff = subprocess.check_output(["git", "diff", "main", "--", "local-ai/council/council.py"], cwd=REPO).decode("utf-8")
+        diff = subprocess.check_output(["git", "diff", "origin/main", "--", "local-ai/council/council.py"], cwd=REPO).decode("utf-8")
         for line in diff.splitlines():
             if line.startswith("+") and not line.startswith("+++"):
                 self.assertNotIn("def health_summary", line)
