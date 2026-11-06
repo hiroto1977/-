@@ -95,6 +95,11 @@ const LEDGER: readonly Row[] = [
       + '次に読む人は「連絡先と同じ」が**どの性質について同じ**なのかを自分で確かめ直すことになる。',
   },
   {
+    collection: 'kpi-improvement-cycles', field: 'leverId', kind: 'entrance-checked',
+    refersTo: '打ち手の一覧 (`LEVER_STEPS` の鍵)',
+    why: 'パス 571 —— `parseCycle` が一覧の鍵だけを受け、形の表も同じ一覧 (`LEVER_IDS`) の列挙。読み手 (`improvementState`) は一覧に無い値の行を落とす。画面は固定の名前 (`LEVER_STEPS[id].label`) だけを刷り、保管した文字列は刷らない。',
+  },
+  {
     collection: 'connector-output', field: 'connectorId', kind: 'write-only',
     refersTo: 'コネクタの id',
     why: '実測 —— この collection を**読み戻す画面が 1 つも無い** '

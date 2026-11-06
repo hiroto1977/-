@@ -35,6 +35,7 @@ import { salesMonths, revenueForMonth } from '../data/salesKpiBridge';
 import { kpiActualsToCsv, kpiActualsFromCsv } from '../data/kpiActualsCsv';
 import { CSV_BOM } from '../data/csv';
 import { useRowWindow } from '../data/useRowWindow';
+import { KpiImprovementPanel } from '../components/KpiImprovementPanel';
 import { RowWindowMore } from '../components/RowWindowMore';
 import { budgetComparedRangeLabel, budgetUnmatchedNote, KPI_BUDGETS_COLLECTION, computeBudgetVariance } from '../data/budgetVariance';
 import {
@@ -1052,6 +1053,10 @@ export function KpiPage() {
 
       <Section title="予算入力 — 予算実績差異 (BVA)">
         <BudgetPanel />
+      </Section>
+
+      <Section title="月次改善の輪 — 目標・打ち手・翌月の検証">
+        <KpiImprovementPanel />
       </Section>
 
       <Section title="財政状態入力 — 貸借対照表 (ROA/ROE/自己資本比率/流動比率)">

@@ -62,6 +62,7 @@ import { parseBusinessUnit } from '../businessUnits';
 import { fundValuation, parseHoldingEntry, parsePropertyEntry } from '../investments';
 import { parseCropNumber } from '../../../shared/hydroponicCrops';
 import { parseAssignment } from '../../../shared/workAssignment';
+import { parseGoal } from '../kpiImprovementStore';
 import { parseAmountInput } from '../../components/serviceActionUtils';
 import { parseNumericInput } from '../eligibility';
 import { readOriginalDirEntries, readOriginalSource } from '../../../shared/__tests__/originalSource';
@@ -269,6 +270,14 @@ probes.push({
   pick: get('hoursPerWeek'),
   blank: { refuse: true },
 });
+// 月次改善の輪: 目標の営業利益率。空欄は断る (0% を目標にしない)。範囲は 0% より大きく 100% 未満。
+probes.push({
+  writer: 'parseGoal',
+  field: 'targetMarginPct',
+  write: (s) => attempt(() => parseGoal({ targetMarginPct: s })),
+  pick: (v) => (v as { targetMarginPct: unknown }).targetMarginPct,
+  blank: { refuse: true },
+});
 /** 空欄を「未入力」(null) として持つ調製の欄。残りは空欄を既定へ倒す (入力欄の初期値と同じ)。 */
 const CONTROL_OPTIONAL = new Set(['tankLiters', 'stockEcRisePerMlPerL', 'alkalinityMgCaCO3PerL', 'acidNormality']);
 for (const key of Object.keys(HYDROPONICS_CONTROL_DEFAULTS)) {
@@ -455,6 +464,11 @@ const WRITER_LEDGER: Readonly<Record<string, LedgerRow>> = {
   parseCropNumber: { kind: 'numbers', why: '品目の下書きの数値の欄' },
   parseMember: { kind: 'no-numbers', why: 'チームの氏名・メール・役割だけを読む' },
   parseAssignment: { kind: 'numbers', why: '業務の割当の週の時間 (パス 556)' },
+  parseGoal: { kind: 'numbers', why: '月次改善の輪の目標の営業利益率 (0% より大きく 100% 未満)' },
+  parseCycle: {
+    kind: 'no-numbers',
+    why: '月次改善の輪の 1 周 (打ち手・見込みの増分・月)。見込みの増分は画面の入力欄ではなく、機械が候補から計算した数をそのまま受ける',
+  },
   parseShigyoContact: { kind: 'no-numbers', why: '士業の連絡先 (氏名・事務所・電話・メール) —— 電話番号は文字列のまま持つ' },
   parseShigyoConsultation: { kind: 'no-numbers', why: '相談の日付・テーマ・状態だけを読む' },
   parseSubmissionProfile: { kind: 'no-numbers', why: '書面の代表者名・所在地などの文字列だけを読む' },

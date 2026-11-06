@@ -44,6 +44,12 @@ export const SAMPLES: Readonly<Record<string, Sample>> = {
   },
   'kpi-actuals': KPI,
   'kpi-budgets': KPI,
+  'kpi-improvement-cycles': {
+    good: { kind: 'cycle', targetMarginPct: 20, leverId: 'sga', expectedGainPt: 1.5, beforePeriod: '2026-04', afterPeriod: '2026-05' },
+    required: ['kind'],
+    optional: ['targetMarginPct', 'leverId', 'expectedGainPt', 'beforePeriod', 'afterPeriod'],
+    enumOut: [['kind', 'nope'], ['leverId', 'nope']],
+  },
   'balance-sheet': {
     good: {
       asOf: '2026-03-31', currentAssets: 8, cash: 3, inventory: 1, accountsReceivable: 2, fixedAssets: 4,

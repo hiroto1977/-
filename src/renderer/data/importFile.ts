@@ -107,6 +107,8 @@ export const BACKUP_COLLECTION_RECORD_LIMITS: Readonly<Record<string, number>> =
   'hydroponics-batches': 5_000,
   'kpi-budgets': 5_000,
   'kpi-actuals': 5_000,
+  // 月次KPI改善の輪: 目標 1 行 + 1 月 1 周ぶん。画面は全行を読むので、数十年分より十分広い天井で止める。
+  'kpi-improvement-cycles': 2_000,
   // 2026-10-25 (T-201): 下の 2 つも全行を描く表で、窓も天井も無かった。実 Chromium で connector-output 5,000 行が
   // 画面を開くまで 5.7 秒・1 行消すたびに 12.5 秒、20,000 行 (3 MB) で 146 秒 (消すこともできない)・balance-sheet 20,000 行で
   // 211 秒と測った。正当な利用は「▶ 実行」を押した回数 / 決算期ごとに数件なので、少ない数で止める。

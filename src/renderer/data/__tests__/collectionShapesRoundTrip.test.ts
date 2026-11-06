@@ -24,6 +24,7 @@ import { describe, expect, it } from 'vitest';
 import { COLLECTION_SHAPES, hasCollectionShape } from '../collectionShapes';
 import { parseSalesEntry } from '../sales';
 import { parseKpiActual } from '../kpiActuals';
+import { parseCycle, parseGoal } from '../kpiImprovementStore';
 import { parseBalanceSheet } from '../balanceSheet';
 import { parseMember } from '../members';
 import { parseBusinessUnit } from '../businessUnits';
@@ -74,6 +75,15 @@ describe('書く側の出力 → collectionShapes (往復)', () => {
       roundTrips(c, withLabor, c);
       roundTrips(c, without, c);
     }
+  });
+
+  it('kpi-improvement-cycles: parseGoal / parseCycle (目標 / 打ち手の記録)', () => {
+    roundTrips('kpi-improvement-cycles', parseGoal({ targetMarginPct: '20' }), 'goal');
+    roundTrips(
+      'kpi-improvement-cycles',
+      parseCycle({ leverId: 'sga', expectedGainPt: 1.5, beforePeriod: '2026-04', afterPeriod: '2026-05' }),
+      'cycle',
+    );
   });
 
   it('balance-sheet: parseBalanceSheet (任意欄あり / 無し)', () => {

@@ -62,6 +62,7 @@ const NOT_SENSITIVE: Readonly<Record<string, string>> = {
   'sales-entries': '自社の売上の記録。`note` は注文名 (重複の判定に使う) で、第三者の氏名・連絡先を入れる欄ではない。',
   'kpi-actuals': '自社の月次の数値 (売上・原価・販管費ほか)。人について語らない。',
   'kpi-budgets': '自社の月次の数値 (予算の側)。実績と同じ欄の並びで、人について語らない。',
+  'kpi-improvement-cycles': '自社の営業利益率の目標と、選んだ打ち手 (固定の一覧)・月の記録。数と固定の語だけで、人について語らない。',
   'balance-sheet': '自社の貸借対照表の数値。人について語らない。',
   'business-units': '自社の事業の名前・区分・数値。法人の事業であって個人ではない。',
   'realestate-properties': '自分が保有する物件の名前と金額。第三者の情報ではない。'
