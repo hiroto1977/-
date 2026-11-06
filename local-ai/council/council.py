@@ -2,7 +2,7 @@
 """ローカルAI組織（村）デーモン。リポジトリのAI組織(registry.json)を縮小移植し、
 COO→役員→部長→担当→秘書 の順でローカルLLMが議論する（標準ライブラリのみ）。
 行動はこのディレクトリ内へのファイル書き込みと読み取り専用チェックに限定。外部送信・git操作はしない。"""
-import json, os, re, socket, shutil, subprocess, tempfile, threading, time, datetime, urllib.request, difflib, collections
+import json, os, re, socket, shutil, subprocess, tempfile, threading, time, datetime, urllib.request, urllib.error, difflib, collections, concurrent.futures
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -35,8 +35,17 @@ COMMON = (f"必ず自然な日本語（ひらがな・カタカナ・漢字）�
           "この組織はローカル環境内でファイルに提案を書くことしかできません。外部送信やgit pushは提案しないでください。"
           "他の人の発言をそのまま繰り返さず、自分の役割ならではの内容を書いてください。")
 STATE = {"status": "起動", "topic": "", "transcript": [], "updated": "", "speaking": None, "exec": None}
-SERVICES = {"Ollama": (11434, "/"), "llama1.5B": (8081, "/health"), "llama3B": (8085, "/health"), "llama7B": (8086, "/health"),
-            "LocalAI": (8084, "/readyz"), "llama-swap": (8090, "/v1/models"), "LiteLLM": (4000, "/health/liveliness"), "OpenWebUI": (8080, "/health")}
+# (port, path, kind)。kind=models は GET /v1/models の本文まで一致したときだけ健全。
+# LiteLLM の /health/liveliness はプロセス生存だけで、/v1/models が 500 でも 200 になり得る。
+SERVICES = {"Ollama": (11434, "/", "http"), "llama1.5B": (8081, "/health", "http"), "llama3B": (8085, "/health", "http"),
+            "llama7B": (8086, "/health", "http"), "LocalAI": (8084, "/readyz", "http"),
+            "llama-swap": (8090, "/v1/models", "models"), "LiteLLM": (4000, "/v1/models", "models"),
+            "OpenWebUI": (8080, "/health", "http")}
+MODEL_AUTH = {"LiteLLM"}   # master key が無いと /v1/models は 401。ポート開通では健全にしない
+PROBE_TIMEOUT = float(os.environ.get("COUNCIL_PROBE_TIMEOUT", "1.0"))
+PROBE_CACHE_SEC = float(os.environ.get("COUNCIL_PROBE_CACHE_SEC", "0"))  # 既定は持ち越さない
+PROBE_SUSTAINED = int(os.environ.get("COUNCIL_PROBE_SUSTAINED", "3"))
+PROBE_BODY_MAX = 65536
 PENDING, CHAT = [], []
 ADVICE = os.path.join(HERE, "advice_inbox.md")      # パートB: クラウドの助言（現在はGrokのみ）（追記された行を最優先の議題にする）
 import advice_guard
@@ -144,14 +153,141 @@ def persona(p):
         s += "【CEO固定決定・覆禁止】" + decision_lock.digest().replace("\n", " / ")
     return s
 
+def _svc_parts(spec):
+    port, path = spec[0], spec[1]
+    kind = spec[2] if len(spec) > 2 else ("models" if path == "/v1/models" else "http")
+    return port, path, kind
+
+class _NoRedirect(urllib.request.HTTPRedirectHandler):
+    """302 の先が 200 でも、プローブ対象そのものが 200 でなければ健全にしない。"""
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        raise urllib.error.HTTPError(req.full_url, code, msg, headers, fp)
+
+def _probe_opener():
+    return urllib.request.build_opener(urllib.request.ProxyHandler({}), _NoRedirect)
+
+def _probe_record(state, reason, http_status, port_open, path):
+    healthy = state == "healthy"
+    return {"healthy": healthy, "unhealthy": (not healthy), "state": state, "reason": reason,
+            "http_status": http_status, "port_open": bool(port_open), "path": path}
+
+def _media_type(ctype):
+    return (ctype or "").split(";")[0].strip().lower()
+
+def _parse_json(body):
+    try: text = body.decode("utf-8-sig")
+    except UnicodeDecodeError: return False, None
+    try: return True, json.loads(text)
+    except json.JSONDecodeError: return False, None
+
+def _judge(kind, status, ctype, body):
+    """健全は kind ごとの実応答だけ。5xx も、200 でも本文がモデル一覧でなければ非健全。"""
+    if kind != "models":
+        if 200 <= status < 300: return "healthy", "ok"
+        return "degraded", f"http_{status}"
+    if status != 200: return "degraded", f"http_{status}"
+    if _media_type(ctype) != "application/json": return "degraded", "content_type"
+    ok, parsed = _parse_json(body)
+    if not ok: return "degraded", "partial_json"
+    rows = parsed.get("data") if isinstance(parsed, dict) else None
+    if not isinstance(rows, list): return "degraded", "shape"
+    for row in rows:
+        if not isinstance(row, dict): return "degraded", "shape"
+        mid = row.get("id")
+        if not isinstance(mid, str) or not mid.strip(): return "degraded", "shape"
+    return "healthy", "ok"
+
+def _net_reason(reason):
+    if isinstance(reason, (TimeoutError, socket.timeout)): return "timeout", True
+    if isinstance(reason, ConnectionRefusedError): return "connection_refused", False
+    if getattr(reason, "errno", None) in (111, 61): return "connection_refused", False
+    text = str(reason).lower()
+    if "timed out" in text or "timeout" in text: return "timeout", True
+    if "refused" in text: return "connection_refused", False
+    return "connection_error", False
+
+def probe_service(name, port, path, kind, timeout=None):
+    """127.0.0.1 の設定パスだけを GET する。ポートが開いているだけでは healthy にしない。"""
+    timeout = PROBE_TIMEOUT if timeout is None else timeout
+    headers = {"Connection": "close", "Accept": "application/json"}
+    if name in MODEL_AUTH and KEY: headers["Authorization"] = "Bearer " + KEY
+    req = urllib.request.Request(f"http://127.0.0.1:{int(port)}{path}", headers=headers, method="GET")
+    try:
+        with _probe_opener().open(req, timeout=timeout) as resp:
+            status = int(getattr(resp, "status", None) or resp.getcode())
+            ctype = resp.headers.get("Content-Type", "")
+            body = resp.read(PROBE_BODY_MAX)
+        state, reason = _judge(kind, status, ctype, body)
+        return _probe_record(state, reason, status, True, path)
+    except urllib.error.HTTPError as e:
+        raw = b""
+        try: raw = e.read(PROBE_BODY_MAX)
+        except Exception: raw = b""
+        ctype = ""
+        try: ctype = e.headers.get("Content-Type", "") if e.headers else ""
+        except Exception: ctype = ""
+        state, reason = _judge(kind, int(e.code), ctype, raw)
+        if state == "healthy": state, reason = "degraded", f"http_{int(e.code)}"
+        return _probe_record(state, reason, int(e.code), True, path)
+    except urllib.error.URLError as e:
+        reason, port_open = _net_reason(e.reason)
+        return _probe_record("degraded" if reason == "timeout" else "down", reason, None, port_open, path)
+    except (TimeoutError, socket.timeout):
+        return _probe_record("degraded", "timeout", None, True, path)
+    except OSError as e:
+        reason, port_open = _net_reason(e)
+        return _probe_record("degraded" if reason == "timeout" else "down", reason, None, port_open, path)
+
+# 表示は直近プローブだけ。1回の失敗でも healthy は False（成功を持ち越すと、/v1/models が 500 のまま true になる）。
+# consecutive_failures が PROBE_SUSTAINED 未満は brief、以上は sustained。どちらも表示は非健全。
+# 次の成功で healthy に戻り、カウンタは 0。brief は短い失敗の記録であり、健全表示を遅らせる条件ではない。
+_PROBE_LOCK = threading.Lock()
+_PROBE = {"at": 0.0, "snap": None}
+_FAILS = {}
+
+def reset_service_probes():
+    with _PROBE_LOCK:
+        _PROBE["at"] = 0.0; _PROBE["snap"] = None; _FAILS.clear()
+
+def service_probes(force=False):
+    with _PROBE_LOCK:
+        if (not force and _PROBE["snap"] is not None and (time.monotonic() - _PROBE["at"]) < PROBE_CACHE_SEC):
+            return _PROBE["snap"]
+        specs = {n: _svc_parts(s) for n, s in SERVICES.items()}
+    results = {}
+    if specs:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=min(8, len(specs))) as pool:
+            futs = {pool.submit(probe_service, n, port, path, kind): n for n, (port, path, kind) in specs.items()}
+            for fut in concurrent.futures.as_completed(futs):
+                n = futs[fut]
+                try: results[n] = fut.result()
+                except Exception: results[n] = _probe_record("down", "probe_error", None, False, specs[n][1])
+    with _PROBE_LOCK:
+        ordered = {}
+        for n, (port, path, kind) in specs.items():
+            rec = results.get(n) or _probe_record("down", "probe_error", None, False, path)
+            if rec["healthy"]:
+                _FAILS[n] = 0; rec["failure_class"] = "none"
+            else:
+                _FAILS[n] = _FAILS.get(n, 0) + 1
+                rec["failure_class"] = "sustained" if _FAILS[n] >= PROBE_SUSTAINED else "brief"
+            rec["consecutive_failures"] = _FAILS[n]
+            ordered[n] = rec
+        _PROBE["at"] = time.monotonic(); _PROBE["snap"] = ordered
+        return ordered
+
 def health_summary():
     locked = decision_lock.forced_down_services() if LOCK_ON else set()
-    down = [n for n, (p, _) in SERVICES.items() if not port_up(p) and n not in locked]
-    fixed = [n for n in locked if not port_up(SERVICES[n][0])]
+    probes = service_probes()
+    broken = [n for n, pr in probes.items() if not pr["healthy"] and n not in locked]
+    fixed = [n for n in locked if n in probes and not probes[n]["healthy"]]
+    stopped = [n for n in broken if probes[n]["state"] == "down"]
+    degraded = [n for n in broken if probes[n]["state"] != "down"]
     parts = [f"空きメモリ {free_mb()}MB"]
     if fixed: parts.append("固定停止: " + ", ".join(fixed))
-    parts.append("停止中: " + (", ".join(down) if down else "なし"))
-    return down, " / ".join(parts)
+    parts.append("停止中: " + (", ".join(stopped) if stopped else "なし"))
+    if degraded: parts.append("応答異常: " + ", ".join(degraded))
+    return broken, " / ".join(parts)
 
 KEYWORDS = {"cfo": "財務 税 資金 融資 キャッシュ 会計", "chro": "人事 給与 労務 採用 社会保険 人件費", "cso": "戦略 経営 分析 予測 予算 KPI 成長 レポート",
             "cio": "投資 資産 為替 不動産 投信 株 貯蓄", "cqo": "品質 テスト セキュリティ 監査 CI バグ 検証 メモリ サービス 停止 Mamori lint 言語"}
@@ -238,7 +374,7 @@ def pick_topic():
         if changed: open(inbox, "w", encoding="utf-8").write("\n".join(lines) + "\n")
         if pick: return pick
     down, h = health_summary()
-    if down: return "サービス健全性", f"ローカルAIサービスが停止中: {', '.join(down)}（{h}）。原因と復旧・予防策。固定停止のサービスは起動しないこと。"
+    if down: return "サービス健全性", f"ローカルAIサービスが健全でない: {', '.join(down)}（{h}）。原因と復旧・予防策。固定停止のサービスは起動しないこと。"
     rw = "/workspace/repo-analysis/docs/REMAINING_WORK.md"
     if os.path.exists(rw):
         items = [l.strip() for l in open(rw, encoding="utf-8").read().split("\n## ")[0].splitlines() if l.strip().startswith(("-", "*"))]
@@ -345,8 +481,10 @@ def thread_log(who, text):
 def api_state():
     dp = os.path.join(HERE, "decisions.md")
     decs = [d.strip() for d in open(dp, encoding="utf-8").read().split("\n## ") if d.strip()][-5:] if os.path.exists(dp) else []
+    probes = service_probes()
     return {k: STATE[k] for k in ("status", "topic", "updated", "speaking", "exec")} | {"free_mb": free_mb(), "transcript": STATE["transcript"][-8:],
-            "services": {n: port_up(p) for n, (p, _) in SERVICES.items()}, "decisions": decs, "chat": CHAT[-12:], "user": USER,
+            "services": {n: bool(pr["healthy"]) for n, pr in probes.items()}, "service_probes": probes,
+            "decisions": decs, "chat": CHAT[-12:], "user": USER,
             "claude": {"status": claude_status(), "calls_last_hour": sum(1 for t in _CL["calls"] if time.time() - t < 3600), "max_per_hour": CLAUDE_MAX_HOUR},
             "advice": [l.strip()[2:][:600] for l in advice_lines() if l.strip().startswith("- ")][-5:],
             "company": {k: COMPANY.st.get(k) for k in ("linked", "name", "scale", "last_fetch", "error")},

@@ -42,6 +42,16 @@
 - `/api/state` に `locks`（`on` / `items`）。掲示板に 🔒 カード
 初期ロック: `llama7B-stop`（停止維持）、`datacrypto-0927-cancel`（2026-11-05 09:27 の実装開始とIV更新の取消確定・Nonce再利用防止）。テスト: `python3 test_decision_lock.py`。`COUNCIL_DECISION_LOCK=0` で無効化（通常は使わない）。
 
+## サービスの健全性（`/api/state`）
+`services` はポートが開いているだけでは `true` にしない。各サービスへ HTTP で聞き、失敗なら `false`。村の機械室は健全なら通常色、プロセスはいるが応答が壊れていれば `⚠`（橙）、接続できなければ `💤`。
+
+- LiteLLM と llama-swap は `GET /v1/models` が **200** かつ `Content-Type` が `application/json` かつ `data` が `id` 文字列を持つオブジェクトの配列のときだけ健全。`/health/liveliness` が 200 でも `/v1/models` が 500・途中までの JSON・別の Content-Type なら非健全。LiteLLM には `~/litellm/master_key` を Bearer で付ける。空の `data` はプロトコル上の成功（モデル 0 件）で、本文が壊れている場合とは分ける。
+- その他（Ollama、llama.cpp、LocalAI、Open WebUI）は設定パスが 2xx のとき健全。500・タイムアウト・接続拒否は非健全。LocalAI の `/readyz` が 200 で `/v1/models` だけが壊れている場合は、この判定の対象外。
+- `service_probes[name].healthy` と `unhealthy` は同時に真にならない。`services[name]` は `healthy` と一致する。`state` は `healthy` / `degraded`（応答は届いたが壊れている）/ `down`（接続できない）。
+- 瞬断と持続: 表示は直近のプローブだけを見る。1回でも失敗すればその回は非健全で、直前の成功を持ち越さない（持ち越しが、ポートは開いたまま `/v1/models` が 500 なのに健全と出る偽陽性だった）。`consecutive_failures` が `COUNCIL_PROBE_SUSTAINED`（既定 3）未満なら `failure_class` は `brief`、以上なら `sustained`。どちらも表示は非健全。次の成功で `healthy` に戻り、カウンタは 0。`brief` は短い失敗を隠さないための記録であり、健全表示を遅らせる条件ではない。
+- 環境変数: `COUNCIL_PROBE_TIMEOUT`（既定 1 秒）、`COUNCIL_PROBE_CACHE_SEC`（既定 0。正の値にするとその秒数だけ直前の結果を再利用する）、`COUNCIL_PROBE_SUSTAINED`。
+- テスト: `python3 test_service_health.py`。
+
 ## 助言ガード
 役員の決定が助言（`advice_inbox.md` の行や、禁止パターン）と食い違うときは `decisions.md` に書かず、`rejected_decisions.md` に理由を残して役員に1回だけやり直させます。掲示板には 🛑 カードが出ます。
 禁止パターンは `advice_guard.py`（dataCrypto の実装着手、`as BufferSource`、Mamori への `as` / `while` 追加、JSON.stringify を暗号化と扱う、IV の定期再生成、正規表現アンカーの除去、C++/Python 混在）。否定文（〜しない / 禁止 など）は違反にしません。
@@ -55,7 +65,7 @@ Three.js（`web/vendor` に同梱、ビルド不要）のボクセル風の村�
 - 清継さん以外の住民は自由に歩き回ります（建物の入口で中に入って消え、しばらくして出てくる・立ち止まる・ぶつからないようにすれ違う）。会議の発言者は会議ホールのテーブルへ歩き、それ以外は手が空くと机でタイピングします
 - 住民をクリックするか、チャットで `@CFO 質問` のように名前を書くと、その人が立ち止まってこちらを向き、吹き出しで返事します（`/api/chat`）
 - 会話は `user_thread.md` に、議論は `logs/YYYY-MM-DD.md` に保存されます
-- 状態は `/api/state`、組織図は `/api/org`（JSON）
+- 状態は `/api/state`（`services` は HTTP プローブの結果。機械室の `⚠` は応答異常、`💤` は停止）、組織図は `/api/org`（JSON）
 - 動作確認用に `?selftest=1` を付けると、住民の移動数を数えて `@CFO` に話しかけます
 - 既定のカメラは「✋ 自由」です。村が大きくなっても自動では引きません。画面端にマウスを寄せるか WASD／矢印でスクロールして見て回ります（チャット入力中のキーは無効）。ミニマップをクリックしても移動できます。「🗺 全体」を押したときだけ引きます。
 
