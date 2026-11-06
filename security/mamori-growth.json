@@ -2773,6 +2773,49 @@
         "reason": "draft PR を作る",
         "summary": "型引数を持つ関数宣言 fn f<T, U>(…) を 0.23 で足した。範囲は関数宣言だけ (type / interface / arrow は断る)。先に破り、印の名前・制約・既定の型・typeof/import の名前・gate/sink・包み直しを断る。型引数の無い関数の生成物は 0.22 までと変わらない。"
       }
+    },
+    {
+      "id": "MG-046",
+      "date": "2026-11-06",
+      "kind": "port",
+      "target": "src/preload/preload.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/preload/preload.ts",
+      "version": "0.23",
+      "features": [],
+      "added": [],
+      "rewrite": [],
+      "ported": [
+        "src/preload/preload.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "橋から `use { ipcRenderer } from \"electron\"` と素の import で能力モジュールを直接読む",
+          "result": "refused"
+        },
+        {
+          "tried": "`extern pure { ipcRenderer } from \"electron\"` と pure と偽って能力モジュールを読む",
+          "result": "refused"
+        },
+        {
+          "tried": "橋の arrow の中から宣言していない fetch / window へ届く (網・窓を橋の中から使う)",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 4,
+      "mutation": {
+        "files": [
+          "src/preload/preload.ts",
+          "src/preload/preloadHost.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": null,
+        "reason": "draft PR を作る",
+        "summary": "preload.ts を 0.23 へ移植。electron は能力モジュールで use できず extern sink は印の行き先を要るので、薄い host 壁 preloadHost.ts (invokeIpc / exposeBridge) を extern pure で読む。型引数つきの type が無いので型は bridgeTypes.ts へ。型引数つき arrow は fn f<T> に。既存の検査の穴 (引数を落としても緑) を 15 本の引数の表で塞いだ。呼び出し側が選んだ文字列をチャンネルにする橋は規則では通る限界を検査で固定した。"
+      }
     }
   ]
 }

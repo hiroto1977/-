@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 472
+- ブロック数: 474
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `8de1ab4c9539d6c3ca5db007eff3505e3a56372a80617a49854955bc148dcaa7`
-- 保護対象: 198 ファイル
+- 末尾(tip)ハッシュ: `72b60ad147d4852547607aeaaf8e6ffef6c90bbbd18b45192c48342c106d2007`
+- 保護対象: 201 ファイル
 
 ## ブロック
 
@@ -485,6 +485,8 @@
 | 469 | `f98aed1aaccee036` | `9fce46f5898318bd` | `e657dfe35a48df89` | update integrity-chain.cjs,mamori-capabilities.json,redact.mamori,redact.ts |
 | 470 | `3a88f3692d85e0f4` | `e657dfe35a48df89` | `a13cfc129d3f399e` | update ast.ts,checker.ts,emit.ts,parser.ts |
 | 471 | `7ebc20a59cf12854` | `a13cfc129d3f399e` | `8de1ab4c9539d6c3` | update checker.ts |
+| 472 | `51577e24158cf3fa` | `8de1ab4c9539d6c3` | `e8dae06e3bfe9d5d` | update integrity-chain.cjs,mamori-capabilities.json,main.ts,bridgeTypes.ts,preload.mamori,preload.ts |
+| 473 | `a6f25146bf73bf82` | `e8dae06e3bfe9d5d` | `72b60ad147d48525` | update integrity-chain.cjs |
 
 ## 保護対象ファイル
 
@@ -575,7 +577,10 @@
 - `src/main/userPresence.ts`
 - `src/main/windowOpen.ts`
 - `src/main/windowPrefs.ts`
+- `src/preload/bridgeTypes.ts`
+- `src/preload/preload.mamori`
 - `src/preload/preload.ts`
+- `src/preload/preloadHost.ts`
 - `src/renderer/components/VettedImg.tsx`
 - `src/renderer/components/VettedLink.tsx`
 - `src/renderer/data/assistantMarkdown.ts`
