@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.22"
+    "version": "0.23"
   },
   "constructs": {
     "class": {
@@ -71,9 +71,10 @@
       "since": "0.21"
     },
     "generic-decl": {
-      "decision": "feature",
+      "decision": "added",
       "why": "型引数を持つ型・関数の宣言。",
-      "risk": "型引数の制約に印の型を置いて、素の値を印として通す道を作らない (generic-call と同じ判定)。"
+      "risk": "型引数の制約に印の型を置いて、素の値を印として通す道を作らない (generic-call と同じ判定)。",
+      "since": "0.23"
     },
     "instanceof": {
       "decision": "added",
@@ -2717,6 +2718,60 @@
         "pr": null,
         "reason": "draft PR を作る",
         "summary": "秘密の伏字 redact.ts を Mamori 0.22 へ移植 (書き直しだけ・構文は足さず)。300 件以上の標本で元の出力と一致・変異検査 100% (200 変異体)・言語を破る試し 4 つはすべて断られた。"
+      }
+    },
+    {
+      "id": "MG-045",
+      "date": "2026-11-06",
+      "kind": "feature",
+      "target": "generic-decl",
+      "pickedBy": "brief",
+      "briefPick": "feature:generic-decl",
+      "version": "0.23",
+      "features": [
+        "generic-decl"
+      ],
+      "added": [
+        "generic-decl"
+      ],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "型引数の名前に印の名前を使う `fn f<VettedUrl>(u: VettedUrl)` で、印を持たない値を openUrl(u) へ渡す",
+          "result": "refused"
+        },
+        {
+          "tried": "制約 `T extends VettedUrl` / `T extends string` と既定の型 `T = string`・名前の重なり `<T, T>`・`<>`・`<T,>`",
+          "result": "refused"
+        },
+        {
+          "tried": "型引数の名前に `typeof` / `import` を使い、型の綴りの typeof / import と取り違えさせる (先に破って見つけた穴: 0.23 の最初の実装は通していた)",
+          "result": "refused"
+        },
+        {
+          "tried": "gate fn / sink fn に型引数を置き、呼ぶ側の型で印を作る・危ない口を呼ぶ関数を変えさせる",
+          "result": "refused"
+        },
+        {
+          "tried": "id<T>(x: T) -> T で包み直して openUrl(id(raw)) / const w: VettedUrl = id(raw) / -> VettedUrl { return x; } と印を偽造する",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 2,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/checker.ts",
+          "src/shared/mamori/emit.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": null,
+        "reason": "draft PR を作る",
+        "summary": "型引数を持つ関数宣言 fn f<T, U>(…) を 0.23 で足した。範囲は関数宣言だけ (type / interface / arrow は断る)。先に破り、印の名前・制約・既定の型・typeof/import の名前・gate/sink・包み直しを断る。型引数の無い関数の生成物は 0.22 までと変わらない。"
       }
     }
   ]
