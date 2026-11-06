@@ -19,7 +19,7 @@ button{font:inherit;cursor:pointer;border:2px solid var(--wood2);background:#fff
 #mini{position:fixed;right:10px;bottom:10px;width:170px;height:170px;border-radius:50%;border:5px solid var(--wood2);background:#7cc95a;cursor:crosshair;box-shadow:0 3px 0 #0003}
 .lab{position:fixed;left:0;top:0;font-size:11px;background:#fff;border-radius:8px;padding:0 6px;pointer-events:none;white-space:nowrap;border:2px solid #888;will-change:transform}
 .lab.t-COO{border-color:#d4a106;font-weight:bold}.lab.t-役員{border-color:#8e24aa;font-weight:bold}.lab.t-秘書{border-color:#ec407a}.lab.t-管理職{border-color:#1e88e5}.lab.t-一般職{border-color:#43a047}.lab.me{border-color:#b8860b;font-weight:bold;background:#fff4c2}
-.lab.off{background:#ccc;color:#555}.lab.sel{background:#ffeb3b}
+.lab.off{background:#ccc;color:#555}.lab.degraded{background:#ffe0b2;color:#bf360c;border-color:#ef6c00}.lab.sel{background:#ffeb3b}
 .bub{position:fixed;left:0;top:0;max-width:220px;font-size:12px;line-height:1.35;background:#fff;border-radius:12px;padding:5px 8px;border:2px solid #333;pointer-events:none;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;will-change:transform;box-shadow:0 2px 0 #0002}
 .bub.think{color:#777;font-style:italic}
 #toggle{display:none}
@@ -152,7 +152,7 @@ function build(org,st){ORG=org;const ppl=org.people;
   const cl=ppl.find(p=>p.id==='claude');if(cl){const A=mkChar('claude',cl,-4.5,4.5,{tier:'相談役',deptId:'coo',label:'Claude（相談役）',scale:1.05});A.big=true}
   mkChar('me',{name:org.user},0,2.8,{tier:'CEO',shirt:0xffffff,label:org.user+'（CEO・あなた）'});agents.me.g.rotation.y=Math.PI;
   Object.keys(st.services).forEach((s,i)=>mkChar('s:'+s,{name:s},-45+(i%4)*3.3,38+Math.floor(i/4)*3.5,{svc:true,scale:.7,shirt:0x90a4ae}));
-  flush();renderPeople();function by(id){return ppl.find(p=>p.id===id)}}
+  flush();renderPeople();paintSvc(st);function by(id){return ppl.find(p=>p.id===id)}}
 // ---- 1日のスケジュール（東京時間） ----
 const hourJST=()=>Q.has('hour')?+Q.get('hour'):+new Intl.DateTimeFormat('en',{hour:'numeric',hourCycle:'h23',timeZone:'Asia/Tokyo'}).format(new Date());
 const phase=h=>h>=22||h<6?'night':h>=9&&h<18?'work':'free',PH={night:'🌙 夜（家で休む時間）',work:'💼 勤務時間',free:'🌇 自由時間'};
@@ -174,6 +174,7 @@ function arrive(A){const ph=phase(hourJST());
   A.state='pause';A.timer=2+rnd()*5}
 // ---- 状態の取得 ----
 let LAST=null;
+function paintSvc(st){for(const [s,up] of Object.entries(st.services||{})){const A=agents['s:'+s];if(!A)continue;const pr=st.service_probes&&st.service_probes[s];const degraded=!!(pr&&pr.state==='degraded'&&up!==true);A.up=up===true;A.lab.classList.toggle('off',!A.up&&!degraded);A.lab.classList.toggle('degraded',degraded);A.lab.textContent=s+(A.up?'':degraded?' ⚠':' 💤');A.lab.title=A.up?'':(pr&&pr.reason)||'';A.body.material=mat(A.up?0x90a4ae:degraded?0xef6c00:0x616161)}}
 async function poll(){try{
   if(!ORG){const org=await (await fetch('/api/org')).json(),st0=await (await fetch('/api/state')).json();build(org,st0)}
   const st=await (await fetch('/api/state')).json();LAST=st;const meet=st.status.startsWith('会議中');
@@ -188,7 +189,7 @@ async function poll(){try{
   if(meet&&last&&agents[last.id]&&agents[last.id].lastSaid!==last.text){agents[last.id].lastSaid=last.text;say(agents[last.id],last.text.replace(/\s+/g,' '),25000)}
   if(meet&&st.speaking&&agents[st.speaking]&&(!last||last.id!==st.speaking)){const A=agents[st.speaking];if(!(A.bubUntil>Date.now())||!A.bub.classList.contains('think'))say(A,'（考え中…）',8000,true)}
   const mine=st.chat.filter(c=>c.who===st.user).pop();if(mine&&agents.me&&agents.me.lastSaid!==mine.text){agents.me.lastSaid=mine.text;say(agents.me,mine.text,15000)}
-  for(const [s,up] of Object.entries(st.services)){const A=agents['s:'+s];if(!A)continue;A.up=up;A.lab.classList.toggle('off',!up);A.lab.textContent=s+(up?'':' 💤');A.body.material=mat(up?0x90a4ae:0x616161)}
+  paintSvc(st);
   if(st.claude&&agents.claude){const cs=st.claude.status,t='Claude（相談役）'+(cs==='利用可'?'':'・'+cs);if(agents.claude.lab.textContent!==t)agents.claude.lab.textContent=t;agents.claude.lab.classList.toggle('off',cs!=='利用可')}
   if(tab==='prof'&&selected&&Date.now()-profAt>15000)renderProfile(selected);
  }catch(e){$('pill').textContent='接続できません';$('pill').className='pill err';$('topic').textContent=String(e)}}
