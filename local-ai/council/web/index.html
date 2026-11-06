@@ -39,6 +39,7 @@ button{font:inherit;cursor:pointer;border:2px solid var(--wood2);background:#fff
 import * as THREE from 'three';
 import {OrbitControls} from '/vendor/OrbitControls.js';
 import {applyServiceHealth} from '/serviceHealth.mjs';
+import {phaseOf,goTo,tickResident} from '/villageMotion.mjs';
 const $=id=>document.getElementById(id),Q=new URLSearchParams(location.search);
 const Q0=new URLSearchParams(location.search);const R=new THREE.WebGLRenderer({antialias:devicePixelRatio<2});R.setPixelRatio(Math.min(devicePixelRatio,1.25));R.setSize(innerWidth,innerHeight);
 R.shadowMap.enabled=true;R.shadowMap.type=THREE.PCFShadowMap;document.body.prepend(R.domElement);
@@ -80,7 +81,6 @@ function nearestNode(p){let b=0,bd=1e9;NODES.forEach((n,i)=>{const d=n.distanceT
 function dijkstra(s,t){const D=NODES.map(()=>1e9),P=[],done=new Set();D[s]=0;while(true){let u=-1,m=1e9;for(let i=0;i<D.length;i++)if(!done.has(i)&&D[i]<m){m=D[i];u=i}
   if(u<0||u===t)break;done.add(u);for(const v of ADJ[u]){const nd=D[u]+NODES[u].distanceTo(NODES[v]);if(nd<D[v]){D[v]=nd;P[v]=u}}}
   const path=[];for(let u=t;u!==undefined;u=P[u]){path.unshift(u);if(u===s)break}return path}
-function route(from,to){if(from.distanceTo(to)<7)return[to.clone()];return[...dijkstra(nearestNode(from),nearestNode(to)).map(i=>NODES[i].clone().add(V(rnd()*.8-.4,rnd()*.8-.4))),to.clone()]}
 // 池と橋
 const PZ=-31;for(let i=-3;i<=3;i++){const w=Math.sqrt(1-(i/3.6)**2)*4.6;sbox(w,.12,1,waterMat,0,.06,PZ+i,null,0,false);sbox(w+1,.08,1,0xc9b38a,0,.02,PZ+i,null,0,false)}
 sbox(2,.25,8,0x8d6e63,0,.25,PZ,null,0,true);sbox(.2,.5,8,0x5d4037,-1,.6,PZ);sbox(.2,.5,8,0x5d4037,1,.6,PZ);
@@ -157,23 +157,13 @@ function build(org,st){ORG=org;const ppl=org.people;
   flush();renderPeople();function by(id){return ppl.find(p=>p.id===id)}}
 // ---- 1日のスケジュール（東京時間） ----
 const hourJST=()=>Q.has('hour')?+Q.get('hour'):+new Intl.DateTimeFormat('en',{hour:'numeric',hourCycle:'h23',timeZone:'Asia/Tokyo'}).format(new Date());
-const phase=h=>h>=22||h<6?'night':h>=9&&h<18?'work':'free',PH={night:'🌙 夜（家で休む時間）',work:'💼 勤務時間',free:'🌇 自由時間'};
+const phase=phaseOf,PH={night:'🌙 夜（家に入って、また出る）',work:'💼 勤務時間（歩き・来客・短い机仕事）',free:'🌇 自由時間'};
 const PLAZA=[V(0,7),V(8,9),V(-9,8),V(10,-2),V(-10,-3),V(0,PZ+5),V(3,PZ-6),V(-3,PZ+6)];
-const pick=a=>a[Math.floor(rnd()*a.length)],jit=(v,r=1.5)=>v.clone().add(V(rnd()*2*r-r,rnd()*2*r-r));
-function go(A,to,goal){A.path=route(A.g.position,to);A.goal=goal;A.state='walk'}
-function decide(A){const ph=phase(hourJST()),door=DOOR[A.dept]||DOOR.coo,r=rnd(),owl=hash(A.key)%5===0;
-  if(ph==='night'&&!owl){if(A.g.visible)return go(A,door,'door');A.inside=30+rnd()*60;return}
-  if(ph==='work'&&A.desk&&r<.7)return go(A,A.home,'work');
-  if(ph==='work'&&!A.desk&&r<.35)return go(A,door,'door');
-  if(r<.2)return go(A,pick(Object.values(DOOR)),'door');
-  if(r<.55)return go(A,jit(pick(PLAZA),2),'stroll');
-  if(r<.75)return go(A,jit(NODES[1+Math.floor(rnd()*(NODES.length-1))],.4),'stroll');
-  return go(A,jit(A.home,1.5),'stroll')}
-function arrive(A){const ph=phase(hourJST());
-  if(A.goal==='door'){A.g.visible=false;A.inside=ph==='night'?40+rnd()*80:ph==='work'?15+rnd()*25:5+rnd()*12;A.state='inside';return}
-  if(A.goal==='work'){A.state='work';A.timer=25+rnd()*40;if(A.face!=null)A.g.rotation.y=A.face;return}
-  if(A.goal==='seat'){A.state='seat';return}
-  A.state='pause';A.timer=2+rnd()*5}
+function routePlain(from,to){const a=new THREE.Vector3(from.x,0,from.z),b=new THREE.Vector3(to.x,0,to.z);
+  if(a.distanceTo(b)<7)return[{x:to.x,z:to.z}];
+  return [...dijkstra(nearestNode(a),nearestNode(b)).map(i=>{const n=NODES[i];return {x:n.x+rnd()*.8-.4,z:n.z+rnd()*.8-.4}}),{x:to.x,z:to.z}]}
+function go(A,to,goal){goTo(A,{x:A.g.position.x,z:A.g.position.z,rot:A.g.rotation.y,visible:A.g.visible},{x:to.x,z:to.z},goal,routePlain)}
+function motionCtx(){return {phase:phase(hourJST()),doors:Object.fromEntries(Object.entries(DOOR).map(([k,p])=>[k,{x:p.x,z:p.z}])),plazas:PLAZA.map(p=>({x:p.x,z:p.z})),nodes:NODES.slice(1).map(p=>({x:p.x,z:p.z})),route:routePlain,rng:rnd}}
 // ---- 状態の取得 ----
 let LAST=null;
 async function poll(){try{
@@ -286,15 +276,10 @@ function update(A,dt,T,list){
   A.head.rotation.z=0;
   if(A.speaking&&A.goal!=='seat'){if(!A.g.visible){A.g.visible=true;A.g.position.copy(DOOR[A.dept]||A.home)}const i=Object.values(agents).filter(B=>B.speaking).indexOf(A);go(A,SEATS[(i<0?0:i)%SEATS.length],'seat')}
   if(!A.speaking&&A.goal==='seat'){A.goal=null;A.state='pause';A.timer=1}
-  if(A.state==='inside'){A.inside-=dt;if(A.inside<=0){const ph=phase(hourJST());if(ph==='night'&&hash(A.key)%5){A.inside=40+rnd()*60;return}A.g.visible=true;A.g.position.copy(DOOR[A.dept]||A.home);A.state='idle'}return}
-  if(A.state==='idle')decide(A);
-  if((A.state==='pause'||A.state==='work')&&(A.timer-=dt)<=0)A.state='idle';
-  let moving=false;
-  if(A.state==='walk'&&A.path.length){const tgt=A.path[0];v.subVectors(tgt,A.g.position);v.y=0;const L=v.length();
-    if(L<.35){A.path.shift();if(!A.path.length)arrive(A)}else{moving=true;A.g.position.addScaledVector(v.normalize(),Math.min(L,dt*A.speed*(A.speaking?1.8:1)));
-      const ry=Math.atan2(v.x,v.z),d=Math.atan2(Math.sin(ry-A.g.rotation.y),Math.cos(ry-A.g.rotation.y));A.g.rotation.y+=d*Math.min(1,dt*10)}}
-  else if(A.state==='walk')arrive(A);
-  for(const B of list){if(B===A||!B.g.visible||B.svc)continue;const dx=A.g.position.x-B.g.position.x,dz=A.g.position.z-B.g.position.z,q=dx*dx+dz*dz;if(q<1.1&&q>1e-4){A.g.position.x+=dx/q*dt*.5;A.g.position.z+=dz/q*dt*.5}}
+  const pose={x:A.g.position.x,z:A.g.position.z,rot:A.g.rotation.y,visible:A.g.visible};
+  const moving=tickResident(A,pose,dt,motionCtx(),list);
+  A.g.position.x=pose.x;A.g.position.z=pose.z;A.g.rotation.y=pose.rot;A.g.visible=pose.visible;
+  if(A.state==='inside'){A.g.position.y=0;return}
   const sw=moving?Math.sin(T*9*A.speed/2.2):0;A.legs[0].rotation.x=sw*.6;A.legs[1].rotation.x=-sw*.6;A.arms[0].rotation.x=-sw*.5;A.arms[1].rotation.x=sw*.5;A.g.position.y=moving?Math.abs(sw)*.08:0;
   if(A.state==='work'){A.arms[0].rotation.x=A.arms[1].rotation.x=-.9+Math.sin(T*14+A.timer)*.12;A.head.rotation.x=.15}else A.head.rotation.x=0;
   if(A.state==='seat'){A.g.lookAt(0,0,0);A.arms[0].rotation.x=Math.sin(T*3)*.3*(A.key===LAST?.speaking?1:0)}}
