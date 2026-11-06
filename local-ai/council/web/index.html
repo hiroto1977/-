@@ -15,7 +15,9 @@ button{font:inherit;cursor:pointer;border:2px solid var(--wood2);background:#fff
 .card h4{margin:0 0 3px;font-size:12px}.grp{margin:8px 0 2px;font-weight:bold}.who{display:flex;align-items:center;gap:6px;padding:3px 6px;border-radius:6px;cursor:pointer}.who:hover{background:#fff2}
 .dot{width:10px;height:10px;border-radius:3px;display:inline-block;flex:none}.sm{font-size:11px;opacity:.8}
 #chat{position:fixed;left:10px;bottom:10px;width:min(470px,calc(100vw - 20px));background:var(--pane);border:3px solid #c9a46a;border-radius:14px;padding:8px;font-size:13px}
-#log{max-height:150px;overflow:auto;white-space:pre-wrap;word-break:break-word;margin-bottom:6px}#log .me{color:#1565c0}#form{display:flex;gap:5px}#to{max-width:40%}#msg{flex:1;min-width:0}
+#log{max-height:120px;overflow:auto;white-space:pre-wrap;word-break:break-word;margin-bottom:6px}#log .me{color:#1565c0}
+#meet{max-height:168px;overflow:auto;white-space:pre-wrap;word-break:break-word;margin:0 0 6px;padding-top:4px;border-top:1px dashed #c9a46a}#meet .h{font-weight:bold}#meet .fail{color:#8a3b12}#meet .sm{opacity:.75}
+#form{display:flex;gap:5px}#to{max-width:40%}#msg{flex:1;min-width:0}
 #mini{position:fixed;right:10px;bottom:10px;width:170px;height:170px;border-radius:50%;border:5px solid var(--wood2);background:#7cc95a;cursor:crosshair;box-shadow:0 3px 0 #0003}
 .lab{position:fixed;left:0;top:0;font-size:11px;background:#fff;border-radius:8px;padding:0 6px;pointer-events:none;white-space:nowrap;border:2px solid #888;will-change:transform}
 .lab.t-COO{border-color:#d4a106;font-weight:bold}.lab.t-役員{border-color:#8e24aa;font-weight:bold}.lab.t-秘書{border-color:#ec407a}.lab.t-管理職{border-color:#1e88e5}.lab.t-一般職{border-color:#43a047}.lab.me{border-color:#b8860b;font-weight:bold;background:#fff4c2}
@@ -24,14 +26,14 @@ button{font:inherit;cursor:pointer;border:2px solid var(--wood2);background:#fff
 .bub.think{color:#777;font-style:italic}
 #toggle{display:none}
 @media (max-width:760px){#side{left:10px;right:10px;width:auto;top:auto;bottom:150px;max-height:45vh;display:none}#side.open{display:flex}#toggle{display:inline-block}
- #mini{display:none}#hud{font-size:12px;padding:6px 9px}#log{max-height:80px}.bub{max-width:160px;-webkit-line-clamp:3}}
+ #mini{display:none}#hud{font-size:12px;padding:6px 9px}#log{max-height:72px}#meet{max-height:110px}.bub{max-width:160px;-webkit-line-clamp:3}}
 </style></head><body>
 <div id="hud"><div class="row"><span id="pill" class="pill">読み込み中</span><b>ローカルAI組織の村</b><span id="clock" class="sm"></span></div>
 <div id="topic"></div><div id="meta"></div>
 <div id="cams"><button data-cam="all">🗺 全体</button><button data-cam="hall">🏛 会議ホール</button><button data-cam="speaker">🎤 発言者を追う</button><button data-cam="free" class="on">✋ 自由</button><button id="toggle">📋 パネル</button></div></div>
 <div id="side"><div id="tabs"><button data-tab="board" class="on">📌 掲示板</button><button data-tab="people">👥 住民</button><button data-tab="prof">🪪 プロフィール</button></div><div id="pane"></div></div>
 <div id="labels"></div>
-<div id="chat"><div id="log"></div><div id="form"><select id="to"><option value="">組織全体へ（COOが会議）</option></select>
+<div id="chat"><div id="log"></div><div id="meet" hidden></div><div id="form"><select id="to"><option value="">組織全体へ（COOが会議）</option></select>
 <input id="msg" maxlength="500" placeholder="住民をクリック / 「@CFO 質問」"><button id="send">送信</button></div><div id="st" class="sm"></div></div>
 <canvas id="mini" width="170" height="170" title="ミニマップ（クリックで移動）"></canvas>
 <script type="importmap">{"imports":{"three":"/vendor/three.module.min.js"}}</script>
@@ -39,6 +41,7 @@ button{font:inherit;cursor:pointer;border:2px solid var(--wood2);background:#fff
 import * as THREE from 'three';
 import {OrbitControls} from '/vendor/OrbitControls.js';
 import {applyServiceHealth} from '/serviceHealth.mjs';
+import {talkRequest,oneOutcome,groupAck,pendingNote,replyFailed} from '/villageTalk.mjs';
 const $=id=>document.getElementById(id),Q=new URLSearchParams(location.search);
 const Q0=new URLSearchParams(location.search);const R=new THREE.WebGLRenderer({antialias:devicePixelRatio<2});R.setPixelRatio(Math.min(devicePixelRatio,1.25));R.setSize(innerWidth,innerHeight);
 R.shadowMap.enabled=true;R.shadowMap.type=THREE.PCFShadowMap;document.body.prepend(R.domElement);
@@ -181,14 +184,17 @@ async function poll(){try{
   const st=await (await fetch('/api/state')).json();LAST=st;const meet=st.status.startsWith('会議中');
   $('pill').textContent=meet?'🔴 会議中':st.status.startsWith('エラー')?'エラー':'🟢 待機中';$('pill').className='pill'+(meet?' meet':st.status.startsWith('エラー')?' err':'');
   $('topic').textContent='議題: '+(st.topic||'（なし）').replace(/\s+/g,' ');
-  $('meta').textContent=`担当役員 ${(st.exec||'-').toUpperCase()} ・ 空きメモリ ${st.free_mb}MB ・ 更新 ${st.updated}`;
+  const wait=pendingNote(st.pending,meet);
+  $('meta').textContent=`担当役員 ${(st.exec||'-').toUpperCase()} ・ 空きメモリ ${st.free_mb}MB ・ 更新 ${st.updated}`+(wait?` ・ ${wait}`:'');
   if(tab==='board'&&renderBoard._n!==st.decisions.length+(st.decisions.at(-1)||'').length+'|'+(st.advice||[]).join('|').length+'|'+(st.guard?.rejected||[]).length+'|'+(st.locks?.items||[]).map(x=>x.id).join('|')){renderBoard._n=st.decisions.length+(st.decisions.at(-1)||'').length+'|'+(st.advice||[]).join('|').length+'|'+(st.guard?.rejected||[]).length+'|'+(st.locks?.items||[]).map(x=>x.id).join('|');renderBoard()}
   const lk=st.chat.length+'|'+(st.chat.at(-1)?.text||'');if($('log')._k!==lk){$('log')._k=lk;$('log').replaceChildren(...st.chat.map(c=>{const d=document.createElement('div');d.textContent=`${c.who}: ${c.text}`;if(c.who===st.user)d.className='me';return d}));$('log').scrollTop=1e9}
-  const ids=new Set(meet?st.transcript.map(t=>t.id):[]);if(meet&&st.speaking)ids.add(st.speaking);
+  const rows=Array.isArray(st.transcript)?st.transcript:[];
+  const ids=new Set(meet?rows.map(t=>t.id):[]);if(meet&&st.speaking)ids.add(st.speaking);
   for(const [k,A] of Object.entries(agents)){if(A.svc||k==='me')continue;A.speaking=ids.has(k)}
-  const last=st.transcript[st.transcript.length-1];
-  if(meet&&last&&agents[last.id]&&agents[last.id].lastSaid!==last.text){agents[last.id].lastSaid=last.text;say(agents[last.id],last.text.replace(/\s+/g,' '),25000)}
-  if(meet&&st.speaking&&agents[st.speaking]&&(!last||last.id!==st.speaking)){const A=agents[st.speaking];if(!(A.bubUntil>Date.now())||!A.bub.classList.contains('think'))say(A,'（考え中…）',8000,true)}
+  for(const line of rows){const A=agents[line.id];if(!A||A.svc||A.called>Date.now()||A.lastSaid===line.text)continue;A.lastSaid=line.text;say(A,String(line.text||'').replace(/\s+/g,' '),25000,replyFailed(line.model,line.text))}
+  const last=rows[rows.length-1];
+  if(meet&&st.speaking&&agents[st.speaking]&&(!last||last.id!==st.speaking)){const A=agents[st.speaking];if(!(A.called>Date.now())&&(!(A.bubUntil>Date.now())||!A.bub.classList.contains('think')))say(A,'（考え中…）',8000,true)}
+  renderMeeting(st);
   const mine=st.chat.filter(c=>c.who===st.user).pop();if(mine&&agents.me&&agents.me.lastSaid!==mine.text){agents.me.lastSaid=mine.text;say(agents.me,mine.text,15000)}
   applyServiceHealth(agents,st.services,mat);
   if(st.claude&&agents.claude){const cs=st.claude.status,t='Claude（相談役）'+(cs==='利用可'?'':'・'+cs);if(agents.claude.lab.textContent!==t)agents.claude.lab.textContent=t;agents.claude.lab.classList.toggle('off',cs!=='利用可')}
@@ -204,7 +210,7 @@ function renderBoard(){if(!LAST)return;const adv=(LAST.advice||[]).slice().rever
 function renderPeople(){const grp={};for(const p of (ORG?.people||[]))(grp[p.tier]??=[]).push(p);const out=[];
   for(const t of ['相談役','COO','役員','秘書','管理職','一般職']){if(!grp[t])continue;out.push(el('div','grp',`${t}（${grp[t].length}人）`));
     for(const p of grp[t]){const r=el('div','who'),d=el('span','dot');d.style.background='#'+(DEPT[agents[p.id]?.dept]??0x90a4ae).toString(16).padStart(6,'0');
-      r.append(d,el('span',null,p.name),el('span','sm',p.dept.split('・')[0]+(agents[p.id]?.speaking?' 🎤':'')));r.onclick=()=>selectAgent(p.id,true);out.push(r)}}
+      r.append(d,el('span',null,p.name),el('span','sm',p.dept.split('・')[0]+(agents[p.id]?.speaking?' 🎤':'')));r.onclick=()=>{selectAgent(p.id,true);$('msg').focus()};out.push(r)}}
   pane.replaceChildren(...out)}
 async function renderProfile(id){profAt=Date.now();const A=agents[id];if(!A)return;let j={recent:[]};try{j=await (await fetch('/api/person/'+encodeURIComponent(id))).json()}catch{}
   if(tab!=='prof'||selected!==id)return;const c=el('div','card');
@@ -245,20 +251,31 @@ O.addEventListener('start',()=>{interacting=1;setRes(Math.min(baseRes,SOFT?.5:.7
 O.addEventListener('end',()=>{interacting=performance.now()+350});
 R.domElement.addEventListener('wheel',()=>{interacting=performance.now()+350;setRes(Math.min(baseRes,SOFT?.5:.75))},{passive:true});
 // ---- 会話 ----
+function renderMeeting(st){const box=$('meet');if(!box)return;const rows=Array.isArray(st.transcript)?st.transcript:[];
+  const key=rows.map(r=>(r.id||'')+'|'+(r.role||'')+'|'+(r.text||'')).join('\n')+'|'+(st.topic||'');if(box._k===key)return;box._k=key;
+  if(!rows.length){box.hidden=true;box.replaceChildren();return}box.hidden=false;
+  const h=document.createElement('div');h.className='h';h.textContent='直近の会議';
+  const topic=document.createElement('div');topic.className='sm';topic.textContent=String(st.topic||'').replace(/\s+/g,' ').slice(0,180);
+  const lines=rows.map(r=>{const d=document.createElement('div');d.dataset.meetLine=r.id||'';if(replyFailed(r.model,r.text))d.className='fail';d.textContent=`${r.role||r.id||'発言'}: ${r.text||''}`;return d});
+  box.replaceChildren(h,topic,...lines);box.scrollTop=box.scrollHeight}
 function resolveAt(t){const m=t.match(/^[@＠](\S+)\s*/);if(!m||!ORG)return null;const q=m[1].toLowerCase();
   const p=ORG.people.find(p=>p.id.toLowerCase()===q||p.name.toLowerCase()===q)||ORG.people.find(p=>p.name.toLowerCase().includes(q));return p?{id:p.id,rest:t.slice(m[0].length)||t}:null}
 async function sendMsg(){let t=$('msg').value.trim();if(!t)return;const at=resolveAt(t);if(at){toSel.value=at.id;t=at.rest}const to=toSel.value;
-  if(to&&agents[to]){const A=agents[to];A.called=Date.now()+90000;say(A,'（はい、なんでしょう？）',90000,true)}
-  $('st').textContent=to?`${agents[to]?.p.name||to} が考えています…`:'送信中…';$('msg').value='';
-  try{const r=await fetch(to?'/api/chat':'/api/topic',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to,text:t})});const j=await r.json();
-    $('st').textContent=to?'':'COOに届けました（次の会議で取り上げます）';
-    if(to&&agents[j.id]){const A=agents[j.id];say(A,j.text.replace(/\s+/g,' '),25000);A.called=Date.now()+25000;if(selected===j.id&&tab==='prof')renderProfile(j.id)}poll()}catch(e){$('st').textContent='失敗: '+e}}
+  const req=talkRequest(to,t);if(!req)return;
+  if(req.mode==='one'&&agents[to]){const A=agents[to];A.called=Date.now()+90000;say(A,'（はい、なんでしょう？）',90000,true)}
+  $('st').textContent=req.mode==='one'?`${agents[to]?.p.name||to} が考えています…`:'組織全体へ送っています…';$('msg').value='';
+  try{const r=await fetch(req.path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(req.body)});
+    let j=null;try{j=await r.json()}catch{j=null}
+    if(req.mode==='one'){const o=oneOutcome(r.ok,j);$('st').textContent=o.status;const A=agents[o.id]||agents[to];
+      if(A){say(A,o.bubble,25000,o.failed);A.called=Date.now()+25000;if(selected===A.key&&tab==='prof')renderProfile(A.key)}}
+    else $('st').textContent=r.ok&&j&&j.ok?groupAck():'議題を届けられませんでした。村のサーバが断ったか、応答が空でした。';
+    poll()}catch{$('st').textContent='送れませんでした。村のサーバに届いていません。';if(req.mode==='one'&&agents[to])say(agents[to],'（送れませんでした）',20000,true)}}
 $('send').onclick=sendMsg;$('msg').onkeydown=e=>{if(e.key==='Enter'&&!e.isComposing)sendMsg()};
 const ray=new THREE.Raycaster(),mp=new THREE.Vector2();let downAt=null;
 R.domElement.addEventListener('pointerdown',e=>downAt=[e.clientX,e.clientY]);
 R.domElement.addEventListener('pointerup',e=>{if(!downAt||Math.hypot(e.clientX-downAt[0],e.clientY-downAt[1])>6)return;mp.set(e.clientX/innerWidth*2-1,-e.clientY/innerHeight*2+1);ray.setFromCamera(mp,C);
   const hit=ray.intersectObjects(Object.values(agents).filter(A=>!A.svc&&A.key!=='me'&&A.g.visible).map(A=>A.g),true)[0];
-  if(hit){let o=hit.object;while(o&&!o.userData.key)o=o.parent;if(o){const A=agents[o.userData.key];A.called=Date.now()+30000;say(A,'（呼ばれて振り向いた）',30000,true);selectAgent(A.key,false)}}});
+  if(hit){let o=hit.object;while(o&&!o.userData.key)o=o.parent;if(o){const A=agents[o.userData.key];A.called=Date.now()+30000;say(A,'（呼ばれて振り向いた）',30000,true);selectAgent(A.key,true);$('msg').focus()}}});
 // ---- ミニマップ ----
 const mini=$('mini'),mc=mini.getContext('2d');let MS=170/124;
 const toMini=(x,z)=>[85+x*MS,85+z*MS];

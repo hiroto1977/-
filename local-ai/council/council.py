@@ -405,7 +405,7 @@ def api_state():
     dp = os.path.join(HERE, "decisions.md")
     decs = [d.strip() for d in open(dp, encoding="utf-8").read().split("\n## ") if d.strip()][-5:] if os.path.exists(dp) else []
     return {k: STATE[k] for k in ("status", "topic", "updated", "speaking", "exec")} | {"free_mb": free_mb(), "transcript": STATE["transcript"][-8:],
-            "services": service_snapshot(), "decisions": decs, "chat": CHAT[-12:], "user": USER,
+            "services": service_snapshot(), "decisions": decs, "chat": CHAT[-12:], "pending": len(PENDING), "user": USER,
             "claude": {"status": claude_status(), "calls_last_hour": sum(1 for t in _CL["calls"] if time.time() - t < 3600), "max_per_hour": CLAUDE_MAX_HOUR},
             "advice": [l.strip()[2:][:600] for l in advice_lines() if l.strip().startswith("- ")][-5:],
             "company": {k: COMPANY.st.get(k) for k in ("linked", "name", "scale", "last_fetch", "error")},
@@ -473,7 +473,7 @@ class H(BaseHTTPRequestHandler):
             return self.js({"id": p["id"], "who": p["name"], "model": m, "text": out})
         if self.path == "/api/topic":
             thread_log(USER, f"→組織全体（COO）: {text}"); PENDING.append(text)
-            return self.js({"ok": True})
+            return self.js({"ok": True, "pending": len(PENDING)})
         self.send(b"not found", "text/plain", 404)
 
 LAST_TICK = [time.monotonic()]; GEN = [0]
