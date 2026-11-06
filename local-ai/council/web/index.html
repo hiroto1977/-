@@ -38,6 +38,7 @@ button{font:inherit;cursor:pointer;border:2px solid var(--wood2);background:#fff
 <script type="module">
 import * as THREE from 'three';
 import {OrbitControls} from '/vendor/OrbitControls.js';
+import {applyServiceHealth} from '/serviceHealth.mjs';
 const $=id=>document.getElementById(id),Q=new URLSearchParams(location.search);
 const Q0=new URLSearchParams(location.search);const R=new THREE.WebGLRenderer({antialias:devicePixelRatio<2});R.setPixelRatio(Math.min(devicePixelRatio,1.25));R.setSize(innerWidth,innerHeight);
 R.shadowMap.enabled=true;R.shadowMap.type=THREE.PCFShadowMap;document.body.prepend(R.domElement);
@@ -152,6 +153,7 @@ function build(org,st){ORG=org;const ppl=org.people;
   const cl=ppl.find(p=>p.id==='claude');if(cl){const A=mkChar('claude',cl,-4.5,4.5,{tier:'相談役',deptId:'coo',label:'Claude（相談役）',scale:1.05});A.big=true}
   mkChar('me',{name:org.user},0,2.8,{tier:'CEO',shirt:0xffffff,label:org.user+'（CEO・あなた）'});agents.me.g.rotation.y=Math.PI;
   Object.keys(st.services).forEach((s,i)=>mkChar('s:'+s,{name:s},-45+(i%4)*3.3,38+Math.floor(i/4)*3.5,{svc:true,scale:.7,shirt:0x90a4ae}));
+  applyServiceHealth(agents,st.services,mat);
   flush();renderPeople();function by(id){return ppl.find(p=>p.id===id)}}
 // ---- 1日のスケジュール（東京時間） ----
 const hourJST=()=>Q.has('hour')?+Q.get('hour'):+new Intl.DateTimeFormat('en',{hour:'numeric',hourCycle:'h23',timeZone:'Asia/Tokyo'}).format(new Date());
@@ -188,7 +190,7 @@ async function poll(){try{
   if(meet&&last&&agents[last.id]&&agents[last.id].lastSaid!==last.text){agents[last.id].lastSaid=last.text;say(agents[last.id],last.text.replace(/\s+/g,' '),25000)}
   if(meet&&st.speaking&&agents[st.speaking]&&(!last||last.id!==st.speaking)){const A=agents[st.speaking];if(!(A.bubUntil>Date.now())||!A.bub.classList.contains('think'))say(A,'（考え中…）',8000,true)}
   const mine=st.chat.filter(c=>c.who===st.user).pop();if(mine&&agents.me&&agents.me.lastSaid!==mine.text){agents.me.lastSaid=mine.text;say(agents.me,mine.text,15000)}
-  for(const [s,up] of Object.entries(st.services)){const A=agents['s:'+s];if(!A)continue;A.up=up;A.lab.classList.toggle('off',!up);A.lab.textContent=s+(up?'':' 💤');A.body.material=mat(up?0x90a4ae:0x616161)}
+  applyServiceHealth(agents,st.services,mat);
   if(st.claude&&agents.claude){const cs=st.claude.status,t='Claude（相談役）'+(cs==='利用可'?'':'・'+cs);if(agents.claude.lab.textContent!==t)agents.claude.lab.textContent=t;agents.claude.lab.classList.toggle('off',cs!=='利用可')}
   if(tab==='prof'&&selected&&Date.now()-profAt>15000)renderProfile(selected);
  }catch(e){$('pill').textContent='接続できません';$('pill').className='pill err';$('topic').textContent=String(e)}}
