@@ -2670,6 +2670,54 @@
         "reason": "draft PR を作る",
         "summary": "省ける引数 x?: T を 0.22 で足した。先に破り、印の型の引数 (null/配列/入れ子を含む)・arrow・sink の行き先は省けない (M4)、省ける number は添字の鍵にできない (M6)、型なし・既定値つき・省けない引数が後ろに来る形は構文の段で断る。省ける引数が無い関数の生成物は 0.21 までと変わらない。"
       }
+    },
+    {
+      "id": "MG-044",
+      "date": "2026-11-06",
+      "kind": "port",
+      "target": "src/shared/redact.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/shared/redact.ts",
+      "version": "0.22",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "template"
+      ],
+      "ported": [
+        "src/shared/redact.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "式の途中 (return s と .replace の間) に // 注記を挟む",
+          "result": "refused"
+        },
+        {
+          "tried": "replace の置換関数に印の型を名乗る省ける引数 (m, u?: VettedUrl) を置く",
+          "result": "refused"
+        },
+        {
+          "tried": "置換関数に template 文字列 `${m}!` と m.constructor を置く",
+          "result": "refused"
+        },
+        {
+          "tried": "正規表現の直近の一致 RegExp.$1 を読む",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 2,
+      "mutation": {
+        "files": [
+          "src/shared/redact.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": null,
+        "reason": "draft PR を作る",
+        "summary": "秘密の伏字 redact.ts を Mamori 0.22 へ移植 (書き直しだけ・構文は足さず)。300 件以上の標本で元の出力と一致・変異検査 100% (200 変異体)・言語を破る試し 4 つはすべて断られた。"
+      }
     }
   ]
 }

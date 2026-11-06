@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 469
+- ブロック数: 470
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `9fce46f5898318bd32cfe25ae7cbb44dca605a55d3dbf7dfcc8492881301da6c`
-- 保護対象: 197 ファイル
+- 末尾(tip)ハッシュ: `e657dfe35a48df89afb703f34de96c38db0ac10eb5610bb0445ac506c893b070`
+- 保護対象: 198 ファイル
 
 ## ブロック
 
@@ -482,6 +482,7 @@
 | 466 | `eeb4c80ae67f88af` | `ca4d698e0ac1bcb3` | `cd29d1ad73eb2963` | update ast.ts,checker.ts,emit.ts,parser.ts |
 | 467 | `cff0376c04496820` | `cd29d1ad73eb2963` | `34cf0ae4d454d945` | update integrity-chain.cjs,mamori-capabilities.json,actionTier.mamori,actionTier.ts |
 | 468 | `fc9d9a7d87c73614` | `34cf0ae4d454d945` | `9fce46f5898318bd` | update ast.ts,checker.ts,emit.ts,parser.ts |
+| 469 | `f98aed1aaccee036` | `9fce46f5898318bd` | `e657dfe35a48df89` | update integrity-chain.cjs,mamori-capabilities.json,redact.mamori,redact.ts |
 
 ## 保護対象ファイル
 
@@ -658,6 +659,7 @@
 - `src/shared/promptInjection.ts`
 - `src/shared/proxyEndpoint.mamori`
 - `src/shared/proxyEndpoint.ts`
+- `src/shared/redact.mamori`
 - `src/shared/redact.ts`
 - `src/shared/safeFilename.mamori`
 - `src/shared/safeFilename.ts`
