@@ -43,6 +43,8 @@ function isTarget(n: unknown): n is number {
 export function parseGoal(input: { targetMarginPct?: unknown }): ImprovementRecord {
   const read = readEntryNumber(input.targetMarginPct);
   if (read.kind === 'blank') throw new Error('目標の営業利益率が未入力です');
+  // 読めない値には `value` が無く、`isTarget(undefined)` は偽なので、種類を先に問わなくても同じ答えになる (等価)。
+  // Stryker disable next-line ConditionalExpression,StringLiteral: 上の理由。`unreadable` の枝は `value` を持たない
   if (read.kind === 'unreadable' || !isTarget(read.value)) {
     throw new Error(`目標の営業利益率は ${TARGET_MARGIN_MIN_EXCLUSIVE}% より大きく ${TARGET_MARGIN_MAX_EXCLUSIVE}% 未満の数で入力してください`);
   }
@@ -56,11 +58,12 @@ export function parseCycle(input: {
   afterPeriod?: unknown;
 }): ImprovementRecord {
   const { leverId, beforePeriod, afterPeriod } = input;
-  if (typeof leverId !== 'string' || !(LEVER_IDS as readonly string[]).includes(leverId)) {
+  if (!(LEVER_IDS as readonly unknown[]).includes(leverId)) {
     throw new Error('打ち手が選ばれていません');
   }
-  const gain = input.expectedGainPt;
-  if (typeof gain !== 'number' || !Number.isFinite(gain) || !(gain > 0)) {
+  // `Number.isFinite` は数でない値 (文字列を含む) に偽を返すので、型を先に問わない。
+  const gain = input.expectedGainPt as number;
+  if (!Number.isFinite(gain) || !(gain > 0)) {
     throw new Error('見込みの利益率の増分は 0 より大きい数にしてください');
   }
   if (!isValidPeriod(beforePeriod) || !isValidPeriod(afterPeriod)) {
@@ -112,7 +115,7 @@ export function improvementState(records: readonly StoredRecord<ImprovementRecor
       unreadableIds.push(r.id);
     }
   }
-  cycles.sort((a, b) => (a.cycle.beforePeriod < b.cycle.beforePeriod ? -1 : a.cycle.beforePeriod > b.cycle.beforePeriod ? 1 : a.at - b.at));
+  cycles.sort((a, b) => a.cycle.beforePeriod.localeCompare(b.cycle.beforePeriod) || a.at - b.at);
   // 同じ打ち手を同じ月に 2 度選んだ行は 1 件に畳む (最初の 1 件を残す)。2 度数えると外れが重なって人へ戻す止まりが誤って働く。
   const unique = cycles.filter((c) => {
     const key = `${c.cycle.leverId}|${c.cycle.beforePeriod}`;

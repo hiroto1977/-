@@ -146,6 +146,16 @@ describe('improvementState: 保管した行から読む', () => {
     expect(s.unreadableIds).toEqual(['r2', 'r3', 'r4', 'r5', 'r6']);
   });
 
+  it('種類で振り分ける: 周の行が目標の欄を持っていても目標にならず、知らない種類の行は周として読まない', () => {
+    const s = improvementState([
+      rec(cycleData({ targetMarginPct: 20 }), 1),
+      rec({ ...cycleData({ beforePeriod: '2026-07', afterPeriod: '2026-08' }), kind: 'other' } as never, 2),
+    ]);
+    expect(s.targetMarginPct).toBeNull();
+    expect(s.cycles).toHaveLength(1);
+    expect(s.unreadableIds).toEqual(['r2']);
+  });
+
   it('壊れた行があっても投げず、目標は別に読む', () => {
     const s = improvementState([rec({ kind: 'goal', targetMarginPct: 25 }, 1), rec(cycleData({ leverId: 7 as never }), 2)]);
     expect(s.targetMarginPct).toBe(25);
