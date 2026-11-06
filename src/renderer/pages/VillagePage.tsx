@@ -61,6 +61,15 @@ import { displayField } from '../../shared/apiResponse';
 import { CeilingNotice } from '../components/CeilingNotice';
 import { charsOverCeiling, refusedCeilingNote } from '../../shared/inputCeiling';
 import type { ActionData } from '../../shared/actionData';
+import {
+  buildChatterScenes,
+  buildRequestFlow,
+  flowCursor,
+  sceneCursor,
+  type FlowOutcome,
+  type RequestFlow,
+} from '../data/villageScenes';
+import { subscribeConversationWork } from '../data/conversationWork';
 
 const REG: VillageRegistry = {
   org: regOrg as VillageRegistry['org'],
@@ -95,14 +104,39 @@ function statusColor(status: DispatchStep['status'] | undefined): string {
 
 interface Bubble {
   readonly text: string;
-  readonly tone: 'work' | 'voice';
+  /** `scene` = 村人どうしの掛け合い・頼んだ作業の流れ (台本。AI の返答ではない)。 */
+  readonly tone: 'work' | 'voice' | 'scene';
 }
+
+/** 経過 tick (村の tick は 100000 で一周するので、一周をまたいでも差が正しく出る)。 */
+const TICK_WRAP = 100000;
+function elapsedOf(start: number, now: number): number {
+  return (now - start + TICK_WRAP) % TICK_WRAP;
+}
+
+/** 進行中の「頼んだ作業の流れ」。結果 (`outcome`) が来るまでは作業中で待つ。 */
+interface FlowState {
+  readonly flow: RequestFlow;
+  readonly start: number;
+  readonly outcome: FlowOutcome | null;
+}
+
+/** 会話の場面の記録 1 行。 */
+interface SceneLogEntry {
+  readonly key: string;
+  readonly who: string;
+  readonly text: string;
+  readonly tag?: string;
+}
+const SCENE_LOG_MAX = 40;
 
 export function VillagePage() {
   const buildKind = useBuildKind();
   const villagers = useMemo(() => buildVillagers(REG), []);
   const regions = useMemo(() => buildRegions(REG), []);
   const dispatchPlan = useMemo(() => buildDispatchPlan(REG), []);
+  const chatterScenes = useMemo(() => buildChatterScenes(villagers), [villagers]);
+  const villagerById = useMemo(() => new Map(villagers.map((x) => [x.id, x] as const)), [villagers]);
   const rects = useMemo(() => regionRects(regions), [regions]);
   const backlogStatus = useMemo(() => backlogByTeam(REG), []);
   // 全体表示は代表だけ (143 体を全部並べると重なって読めない)。街区を拡大すると全員が出る。
@@ -171,6 +205,14 @@ export function VillagePage() {
   const [providersUnknown, setProvidersUnknown] = useState(false);
   const [paused, setPaused] = useState(false);
   const [focusedExec, setFocusedExec] = useState<string | null>(null);
+  // 会話の場面 (村人どうしの掛け合い) を見せるか。頼んだ作業の流れは、頼んだときに必ず見せる。
+  const [sceneOn, setSceneOn] = useState(true);
+  const [flowState, setFlowState] = useState<FlowState | null>(null);
+  const [sceneLog, setSceneLog] = useState<readonly SceneLogEntry[]>([]);
+  const tickRef = useRef(0);
+  const lastLogKeyRef = useRef<string | null>(null);
+  const logListRef = useRef<HTMLUListElement | null>(null);
+  const logSeqRef = useRef(0);
   const recRef = useRef<{ stop: () => void; abort: () => void } | null>(null);
   const voiceClearRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -211,15 +253,117 @@ export function VillagePage() {
   );
   const homeFocus = useMemo(() => computeDistrictFocus(focusVillagers), [focusVillagers]);
 
-  // 作業広場へ出ているチーム・話しかけられた人は、代表に入っていなくても出す (作業の様子が見えなくなるため)。
+  // 頼んだ作業の流れ: いまどの段か。結果が来ないまま上限を過ぎたら畳む (終わったと偽らない)。
+  const flowCur = useMemo(
+    () => (flowState === null ? null : flowCursor(flowState.flow, elapsedOf(flowState.start, tick), flowState.outcome)),
+    [flowState, tick],
+  );
+  const flowSpeakerId = flowCur?.stage.speakerId ?? null;
+  const flowListenerId = flowCur?.stage.listenerId ?? null;
+
+  // 作業広場へ出ているチーム・話しかけられた人・流れの話し手と聞き手は、代表に入っていなくても出す
+  // (作業の様子が見えなくなるため)。
   const renderList = useMemo(() => {
     if (focusedExec) return focusVillagers;
     const pinned = villagers.filter(
-      (v) => (v.id === activeTeamId || v.id === voiceTargetId) && !visibleVillagers.includes(v),
+      (v) =>
+        (v.id === activeTeamId || v.id === voiceTargetId || v.id === flowSpeakerId || v.id === flowListenerId) &&
+        !visibleVillagers.includes(v),
     );
     return pinned.length === 0 ? visibleVillagers : [...visibleVillagers, ...pinned];
-  }, [focusedExec, focusVillagers, villagers, visibleVillagers, activeTeamId, voiceTargetId]);
+  }, [focusedExec, focusVillagers, villagers, visibleVillagers, activeTeamId, voiceTargetId, flowSpeakerId, flowListenerId]);
   const home = focusedExec ? homeFocus : homeOverview;
+
+  // 村人どうしの掛け合い: 景色に居る 2 人が揃う場面だけを数える。作業中・話しかけられた人は加えない。
+  const chatter = useMemo(() => {
+    if (!sceneOn || flowCur !== null) return null;
+    const eligible = new Set<string>();
+    for (const v of renderList) if (v.id !== activeTeamId && v.id !== voiceTargetId) eligible.add(v.id);
+    return sceneCursor(chatterScenes, eligible, tick);
+  }, [sceneOn, flowCur, renderList, activeTeamId, voiceTargetId, chatterScenes, tick]);
+
+  // いま見せる 1 行 (流れの段か、掛け合いの 1 行)。吹き出し・立ち位置・記録の 3 つが同じ物を読む。
+  const sceneNow = useMemo(() => {
+    if (flowCur !== null) {
+      return {
+        key: flowCur.key,
+        speakerId: flowCur.stage.speakerId,
+        listenerId: flowCur.stage.listenerId ?? null,
+        text: flowCur.stage.text,
+        tag: flowCur.stage.label as string | undefined,
+        atPlaza: flowCur.phase !== 'relay',
+      };
+    }
+    if (chatter !== null && chatter.lineIndex !== null) {
+      const line = chatter.scene.lines[chatter.lineIndex]!;
+      return {
+        key: chatter.key,
+        speakerId: line.who === 'a' ? chatter.scene.a : chatter.scene.b,
+        listenerId: line.who === 'a' ? chatter.scene.b : chatter.scene.a,
+        text: line.text,
+        tag: undefined as string | undefined,
+        atPlaza: false,
+      };
+    }
+    return null;
+  }, [flowCur, chatter]);
+  // 間 (台詞なし) でも、2 人は向き合ったまま立っている。
+  const scenePair = flowCur !== null ? null : chatter !== null ? ([chatter.scene.a, chatter.scene.b] as const) : null;
+
+  useEffect(() => {
+    tickRef.current = tick;
+  }, [tick]);
+
+  // 結果を見せ終えた流れ・結果が来ないまま上限を過ぎた流れは畳む (終わったと偽らない)。
+  useEffect(() => {
+    if (flowCur?.finished) setFlowState(null);
+  }, [flowCur]);
+
+  // 会話のコンシェルジュが**実際に**実行した操作の知らせ (サービスと操作名と段階だけ。文・引数・結果は来ない)。
+  useEffect(() => {
+    return subscribeConversationWork((ev) => {
+      if (ev.stage === 'running') {
+        const label = serviceCatalog.find((c) => c.id === ev.serviceId)?.label ?? ev.serviceId;
+        const topic = `${label}の${ev.action}`;
+        const r = routeTopicScored(ORG_INDEX, label).route;
+        const flow = buildRequestFlow(
+          villagers,
+          { executiveId: r.executive?.id, managerId: r.manager?.id, teamId: r.team?.id },
+          topic,
+          { text: `「${displayField(topic, 24)}」を実行しています…`, doneText: '実行して結果を受け取りました。', failedText: '実行できませんでした。' },
+        );
+        if (flow === null) return;
+        lastLogKeyRef.current = null;
+        setFlowState({ flow, start: tickRef.current, outcome: null });
+        return;
+      }
+      const kind: 'done' | 'failed' = ev.stage === 'failed' ? 'failed' : 'done';
+      setFlowState((prev) =>
+        prev === null || prev.outcome !== null
+          ? prev
+          : { ...prev, outcome: { kind, atElapsed: elapsedOf(prev.start, tickRef.current) } },
+      );
+    });
+  }, [villagers, serviceCatalog]);
+
+  // 見せた 1 行を記録へ足す (同じ行の間は 1 度だけ)。
+  useEffect(() => {
+    if (sceneNow === null || lastLogKeyRef.current === sceneNow.key) return;
+    lastLogKeyRef.current = sceneNow.key;
+    logSeqRef.current += 1;
+    const entry: SceneLogEntry = {
+      key: String(logSeqRef.current),
+      who: displayField(villagerById.get(sceneNow.speakerId)?.name ?? sceneNow.speakerId, 24),
+      text: sceneNow.text,
+      tag: sceneNow.tag,
+    };
+    setSceneLog((prev) => [...prev, entry].slice(-SCENE_LOG_MAX));
+  }, [sceneNow, villagerById]);
+
+  useEffect(() => {
+    const el = logListRef.current;
+    if (el !== null) el.scrollTop = el.scrollHeight;
+  }, [sceneLog]);
 
   useEffect(() => {
     if (paused) return;
@@ -260,10 +404,26 @@ export function VillagePage() {
   const positions = useMemo(() => {
     const map = new Map<string, Placement>();
     const step = Math.floor(tick / WALK_STEP_TICKS);
+    // 場面の 2 人は向き合って立つ。流れの受け渡しは話し手の持ち場、作業に入ったら作業広場。
+    const stageIds: readonly string[] =
+      flowCur !== null
+        ? [flowSpeakerId, flowListenerId].filter((id): id is string => id !== null)
+        : scenePair !== null
+          ? scenePair
+          : [];
+    const meet =
+      focusedExec === null && flowCur !== null && flowCur.phase !== 'relay'
+        ? { x: WORK_PLAZA.x, y: WORK_PLAZA.y }
+        : stageIds.length > 0
+          ? home.get(stageIds[0]!) ?? { x: 50, y: 50 }
+          : { x: 50, y: 50 };
     for (const v of renderList) {
       const base = home.get(v.id) ?? { x: 50, y: 50 };
       const idx = indexOfVillager.get(v.id) ?? 0;
-      if (v.id === voiceTargetId) {
+      const si = stageIds.indexOf(v.id);
+      if (si >= 0) {
+        map.set(v.id, { x: meet.x + (si === 0 ? 0 : 6), y: meet.y, flip: si !== 0, dur: 1.9, seq: -1 });
+      } else if (v.id === voiceTargetId) {
         const x = focusedExec ? base.x : WORK_PLAZA.x;
         const y = focusedExec ? base.y - 5 : WORK_PLAZA.y + 6;
         map.set(v.id, { x, y, flip: false, dur: 1.9, seq: -1 });
@@ -298,7 +458,7 @@ export function VillagePage() {
       }
     }
     return map;
-  }, [renderList, home, rects, indexOfVillager, tick, activeTeamId, voiceTargetId, focusedExec]);
+  }, [renderList, home, rects, indexOfVillager, tick, activeTeamId, voiceTargetId, focusedExec, flowCur, flowSpeakerId, flowListenerId, scenePair]);
 
   const setVoiceBubble = (id: string, text: string) => {
     setVoiceTargetId(id);
@@ -328,6 +488,17 @@ export function VillagePage() {
     const reply = replyTo(text, chatContext);
     setVoiceBubble(targetId, reply.text);
     speak(reply.text);
+
+    // 話しかけた内容が担当へ渡る流れを景色に出す (台本。AI の返答ではなく、文は台帳の事実だけから組む)。
+    const flow = buildRequestFlow(
+      villagers,
+      { executiveId: r.executive?.id, managerId: r.manager?.id, teamId: r.team?.id },
+      text,
+    );
+    if (flow !== null) {
+      lastLogKeyRef.current = null;
+      setFlowState({ flow, start: tickRef.current, outcome: { kind: 'done', atElapsed: 0 } });
+    }
 
     const hub = window.serviceHub;
     /*
@@ -436,6 +607,9 @@ export function VillagePage() {
           <label style={toggleStyle} title="AI プロバイダ設定時は返答を高精度化">
             <input type="checkbox" checked={aiOn} onChange={(e) => setAiOn(e.target.checked)} /> AI
           </label>
+          <label style={toggleStyle} title="村人どうしの掛け合いを景色と記録に出す">
+            <input type="checkbox" checked={sceneOn} onChange={(e) => setSceneOn(e.target.checked)} /> 💬 場面
+          </label>
           <button type="button" onClick={() => setPaused((p) => !p)}>
             {paused ? '▶' : '⏸'}
           </button>
@@ -543,9 +717,13 @@ export function VillagePage() {
         {/* 村人 */}
         {renderList.map((v) => {
           const p = positions.get(v.id) ?? { x: 50, y: 50, flip: false, dur: 1.9, seq: -1 };
-          const isActive = v.id === activeTeamId || v.id === voiceTargetId;
+          const isSpeaker = sceneNow !== null && sceneNow.speakerId === v.id;
+          const isActive = v.id === activeTeamId || v.id === voiceTargetId || isSpeaker;
           const showLabel =
             !!focusedExec || v.kind === 'ceo' || v.kind === 'coo' || v.kind === 'executive' || v.kind === 'manager' || isActive;
+          const sceneBubble: Bubble | undefined = isSpeaker
+            ? { text: sceneNow.tag === undefined ? sceneNow.text : `【${sceneNow.tag}】${sceneNow.text}`, tone: 'scene' }
+            : undefined;
           return (
             <Character
               key={v.id}
@@ -559,11 +737,45 @@ export function VillagePage() {
               enlarged={!!focusedExec}
               showLabel={showLabel}
               ring={v.kind === 'team' ? statusColor(backlogStatus.get(v.id)) : undefined}
-              bubble={bubbles[v.id]}
+              bubble={bubbles[v.id] ?? sceneBubble}
             />
           );
         })}
       </div>
+
+      {sceneLog.length > 0 || flowState !== null ? (
+        <div data-village-scenes style={sceneLogStyle}>
+          {flowState !== null && flowCur !== null ? (
+            <div data-village-flow style={{ display: 'flex', gap: 4, flexWrap: 'wrap', alignItems: 'center' }}>
+              <strong style={{ fontSize: 12 }}>頼んだ作業の流れ</strong>
+              {flowState.flow.stages.map((st, i) => (
+                <span
+                  key={i}
+                  data-flow-chip={st.label}
+                  data-current={i === flowCur.index && flowCur.phase !== 'end' ? 'true' : undefined}
+                  style={flowChipStyle(i === flowCur.index && flowCur.phase !== 'end' ? 'current' : i < flowCur.index ? 'past' : 'future')}
+                >
+                  {st.label}
+                </span>
+              ))}
+              {flowCur.phase === 'end' ? (
+                <span data-flow-chip={flowCur.stage.label} data-current="true" style={flowChipStyle(flowCur.stage.label === '失敗' ? 'failed' : 'done')}>
+                  {flowCur.stage.label}
+                </span>
+              ) : null}
+            </div>
+          ) : null}
+          <ul ref={logListRef} role="log" aria-label="村人の会話の記録" style={sceneLogListStyle}>
+            {sceneLog.map((e) => (
+              <li key={e.key} style={{ margin: 0 }}>
+                <b>{e.who}</b>
+                {e.tag !== undefined ? <span style={{ color: 'var(--text-muted)' }}> 【{e.tag}】</span> : null}
+                {' '}{e.text}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
 
       <VoiceFooter transcript={transcript} onSubmit={handleUtterance} />
     </div>
@@ -1200,6 +1412,33 @@ const plazaStyle: React.CSSProperties = {
   border: '4px dashed rgba(255,255,255,0.7)',
   pointerEvents: 'none',
 };
+const sceneLogStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 4,
+  padding: '6px 10px',
+  fontSize: 12,
+  background: 'var(--panel)',
+  color: 'var(--text)',
+  border: '1px solid var(--border)',
+  borderRadius: 8,
+};
+const sceneLogListStyle: React.CSSProperties = {
+  listStyle: 'none',
+  margin: 0,
+  padding: 0,
+  maxHeight: 96,
+  overflowY: 'auto',
+  lineHeight: 1.6,
+};
+function flowChipStyle(kind: 'current' | 'past' | 'future' | 'done' | 'failed'): React.CSSProperties {
+  const base: React.CSSProperties = { fontSize: 11, padding: '1px 8px', borderRadius: 999, border: '1px solid var(--border)' };
+  if (kind === 'current') return { ...base, background: 'var(--accent)', color: 'var(--on-accent)', border: '1px solid var(--accent)' };
+  if (kind === 'done') return { ...base, background: 'var(--success)', color: 'var(--on-status)', border: '1px solid var(--success)' };
+  if (kind === 'failed') return { ...base, background: 'var(--danger)', color: 'var(--on-status)', border: '1px solid var(--danger)' };
+  return { ...base, background: 'var(--panel)', color: kind === 'past' ? 'var(--text)' : 'var(--text-muted)' };
+}
+
 const toggleStyle: React.CSSProperties = {
   fontSize: 12,
   minHeight: 24,
