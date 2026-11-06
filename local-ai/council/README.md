@@ -68,9 +68,16 @@ Three.js（`web/vendor` に同梱、ビルド不要）のボクセル風の村�
 - 小さいモデルなので、内容は参考程度です（事実の誤りや中国語の混入があります）
 
 ## 企業データ連携（任意・既定OFF）
-`company_link.py`。`company_link.example.json` を `company_link.json` にコピーし `enabled: true`。source は json / csv / sqlite / sql（SQLAlchemy URL は環境変数 `COMPANY_DB_URL`）。
-読み取り専用（SELECT/WITH 1文のみ・SQLiteは mode=ro + query_only）。`GET /api/company`、`POST /api/company/refresh`（`{"demo":"large|small|deficit|example|off"}` でデモ切替、メモリ上のみ）。
-サンプル（すべて架空）: `example_company.json`, `examples/*.json`。テスト: `python3 test_company_link.py`。
+`company_link.py`。設定も `COMPANY_DEMO` も無いときは画面も `/api/state` の `company.linked` も false で、札は **企業データ：未連携** のままです。
+
+架空データだけで動かす（DBの資格情報は不要）:
+- `company_link.example.json` を `company_link.json` にコピーし、`demo` を `example` / `small` / `large` / `deficit` にする（`off` が既定）
+- または環境変数 `COMPANY_DEMO` に同じ値（`off` はファイルより優先してデモを切る）
+- 同梱の `example_company.json` と `examples/*.json` を読み、`linked: true`・`fictional: true`・札 **企業データ：架空（デモ）** になる。売上・利益・資産・従業員数・取引先数が村の住民・家・屋台・工房・倉庫・区画・荒れ地に変換される
+
+実データを読むときだけ `enabled: true` と `source`（json / csv / sqlite / sql）。SQL の URL は環境変数 `COMPANY_DB_URL`。読み取り専用（SELECT/WITH 1文のみ・SQLiteは mode=ro + query_only）。この経路の札は「連携中」で、架空デモとは別です。
+
+`GET /api/company`、`POST /api/company/refresh`（`{"demo":"large|small|deficit|example|off"}` はメモリ上だけ。`off` は設定に戻す）。テスト: `python3 test_company_link.py`。
 
 ## Claude（相談役・議長）
 Claude Code CLI にログイン済みのときだけ、会議の最後に Claude が議長講評を書き、チャットで相談役 Claude と1対1で話せます。CLI が無い／未ログインのときは `balanced` モデルが「代理議長」「代理」として答え、会議は止まりません（村の Claude ラベルに「・未ログイン」などと出ます）。

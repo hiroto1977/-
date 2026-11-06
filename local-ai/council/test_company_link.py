@@ -1,7 +1,20 @@
 import json, os, sqlite3, tempfile, unittest
 import company_link as cl
 
+_ENV = ("COMPANY_LINK", "COMPANY_DEMO", "COMPANY_SOURCE", "COMPANY_PATH", "COMPANY_DB_URL", "COMPANY_LINK_CONF", "COMPANY_REFRESH_SEC")
+
 class T(unittest.TestCase):
+    def setUp(self):
+        self._env = {k: os.environ.get(k) for k in _ENV}
+        for k in _ENV: os.environ.pop(k, None)
+        self._conf = cl.CONF_PATH
+        cl.CONF_PATH = "/nonexistent-company-link.json"
+    def tearDown(self):
+        cl.CONF_PATH = self._conf
+        for k, v in self._env.items():
+            if v is None: os.environ.pop(k, None)
+            else: os.environ[k] = v
+
     def test_scale_grows_with_size(self):
         small = cl.metrics_to_scale(json.load(open("examples/small.json"))["metrics"])
         large = cl.metrics_to_scale(json.load(open("examples/large.json"))["metrics"])
@@ -52,6 +65,75 @@ class T(unittest.TestCase):
         os.environ["COMPANY_LINK_CONF"] = "/nonexistent.json"; cl.CONF_PATH = "/nonexistent.json"
         L = cl.CompanyLink(log=lambda m: None); st = L.refresh(); self.assertFalse(st["linked"]); self.assertIsNone(st["scale"])
         self.assertTrue(L.set_demo("large")); st = L.refresh(); self.assertTrue(st["linked"]); self.assertGreater(st["target"]["residents"], 40)
-        self.assertFalse(L.set_demo("bogus")); L.set_demo("off"); self.assertFalse(L.refresh()["linked"])
+        self.assertEqual(st["label"], "架空（デモ）"); self.assertTrue(st["fictional"])
+        self.assertFalse(L.set_demo("bogus")); L.set_demo("off"); off = L.refresh()
+        self.assertFalse(off["linked"]); self.assertEqual(off["label"], "未連携"); self.assertIsNone(off["scale"])
+    def test_link_label_words(self):
+        self.assertEqual(cl.link_label(None, False), "未連携")
+        self.assertEqual(cl.link_label(None, True), "連携中")
+        self.assertEqual(cl.link_label("small", True), "架空（デモ）")
+        self.assertEqual(cl.link_label("small", False), "架空（デモ）・未取得")
+    def test_demo_off_stays_unlinked(self):
+        st = cl.CompanyLink(log=lambda m: None).refresh()
+        self.assertFalse(st["linked"]); self.assertFalse(st["fictional"]); self.assertIsNone(st["demo"])
+        self.assertEqual(st["label"], "未連携"); self.assertIsNone(st["scale"]); self.assertIsNone(st["metrics"])
+        os.environ["COMPANY_DEMO"] = "off"
+        d = tempfile.mkdtemp(); p = os.path.join(d, "c.json")
+        json.dump({"demo": "large", "enabled": False, "source": "sql", "db_url": "postgresql://u:SECRETPW@h/db"}, open(p, "w"))
+        cl.CONF_PATH = p
+        st = cl.CompanyLink(log=lambda m: None).refresh()
+        self.assertFalse(st["linked"]); self.assertFalse(st["fictional"]); self.assertIsNone(st["scale"]); self.assertIsNone(st["error"])
+        self.assertEqual(st["label"], "未連携"); self.assertNotIn("SECRETPW", json.dumps(st))
+    def test_demo_env_without_credentials(self):
+        os.environ["COMPANY_DEMO"] = "example"; os.environ["COMPANY_LINK"] = "0"
+        os.environ["COMPANY_SOURCE"] = "sql"; os.environ["COMPANY_DB_URL"] = "postgresql://u:SECRETPW@h/db"
+        st = cl.CompanyLink(log=lambda m: None).refresh()
+        self.assertTrue(st["linked"]); self.assertTrue(st["fictional"]); self.assertEqual(st["demo"], "example")
+        self.assertEqual(st["label"], "架空（デモ）"); self.assertEqual(st["source"], "demo")
+        self.assertEqual(st["metrics"]["employees"], 85.0); self.assertGreater(st["scale"]["residents"], 0)
+        self.assertIsNone(st["error"]); self.assertNotIn("SECRETPW", json.dumps(st))
+    def test_demo_config_file_without_credentials(self):
+        d = tempfile.mkdtemp(); p = os.path.join(d, "c.json")
+        json.dump({"enabled": False, "source": "sql", "db_url": "postgresql://u:SECRETPW@h/db", "demo": "small"}, open(p, "w"))
+        cl.CONF_PATH = p
+        st = cl.CompanyLink(log=lambda m: None).refresh()
+        self.assertTrue(st["linked"]); self.assertEqual(st["label"], "架空（デモ）"); self.assertEqual(st["metrics"]["employees"], 4.0)
+        self.assertGreater(st["target"]["houses"], 0); self.assertNotIn("SECRETPW", json.dumps(st))
+    def test_small_vs_large_changes_village(self):
+        def run(name):
+            L = cl.CompanyLink(log=lambda m: None); self.assertTrue(L.set_demo(name)); return L.refresh()
+        small, large = run("small"), run("large")
+        self.assertEqual(small["label"], "架空（デモ）"); self.assertEqual(large["label"], "架空（デモ）")
+        self.assertLess(small["metrics"]["employees"], large["metrics"]["employees"])
+        for k in ("residents", "houses", "stalls", "roads", "workshops", "plots", "warehouses", "radius"):
+            self.assertGreater(large["target"][k], small["target"][k], k)
+            self.assertGreater(large["scale"][k], small["scale"][k], k)
+        drawn = ("residents", "houses", "stalls", "workshops", "warehouses")
+        self.assertGreater(sum(large["scale"][k] for k in drawn), sum(small["scale"][k] for k in drawn))
+    def test_deficit_demo_adds_wasteland(self):
+        L = cl.CompanyLink(log=lambda m: None); L.set_demo("deficit"); st = L.refresh()
+        self.assertEqual(st["label"], "架空（デモ）"); self.assertEqual(st["target"]["health"], "crisis")
+        self.assertGreater(st["target"]["wasteland"], 0); self.assertGreater(st["target"]["vacant"], 0)
+        self.assertGreater(st["scale"]["wasteland"], 0); self.assertGreater(st["scale"]["vacant"], 0)
+        healthy = cl.metrics_to_scale(dict(st["metrics"], operating_income=1e8, net_income=5e7, net_assets=3e8))
+        self.assertLess(st["target"]["residents"], healthy["residents"])
+    def test_unknown_demo_is_not_plain_unlinked(self):
+        os.environ["COMPANY_DEMO"] = "no-such"
+        st = cl.CompanyLink(log=lambda m: None).refresh()
+        self.assertFalse(st["linked"]); self.assertTrue(st["fictional"])
+        self.assertEqual(st["label"], "架空（デモ）・未取得"); self.assertIn("未知のデモ", st["error"])
+    def test_memory_off_returns_to_config_demo(self):
+        d = tempfile.mkdtemp(); p = os.path.join(d, "c.json"); json.dump({"demo": "small"}, open(p, "w")); cl.CONF_PATH = p
+        L = cl.CompanyLink(log=lambda m: None); L.set_demo("large")
+        self.assertEqual(L.refresh()["metrics"]["employees"], 30000.0)
+        L.set_demo("off"); st = L.refresh()
+        self.assertEqual(st["demo"], "small"); self.assertEqual(st["metrics"]["employees"], 4.0); self.assertEqual(st["label"], "架空（デモ）")
+    def test_enabled_json_is_not_labeled_demo(self):
+        d = tempfile.mkdtemp(); p = os.path.join(d, "c.json")
+        json.dump({"enabled": True, "source": "json", "path": "example_company.json", "demo": "off"}, open(p, "w"))
+        cl.CONF_PATH = p
+        st = cl.CompanyLink(log=lambda m: None).refresh()
+        self.assertTrue(st["linked"]); self.assertFalse(st["fictional"]); self.assertIsNone(st["demo"])
+        self.assertEqual(st["label"], "連携中"); self.assertEqual(st["metrics"]["employees"], 85.0)
 
 if __name__ == "__main__": unittest.main()
