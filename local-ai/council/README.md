@@ -47,6 +47,15 @@
 禁止パターンは `advice_guard.py`（dataCrypto の実装着手、`as BufferSource`、Mamori への `as` / `while` 追加、JSON.stringify を暗号化と扱う、IV の定期再生成、正規表現アンカーの除去、C++/Python 混在）。否定文（〜しない / 禁止 など）は違反にしません。
 `COUNCIL_ADVICE_GUARD=0` で無効化できます。`COUNCIL_ADVICE_GUARD_LLM=1` で検証モデルにも確認させます（既定は OFF）。テスト: `python3 test_advice_guard.py`。
 
+## 通る2形を消さない
+
+パーサ（`src/shared/mamori/parser.ts`）が既に受理する次の2形を、消す・削除する・廃止する・取り消す決定は `decisions.md` に書きません。却下は `rejected_decisions.md` に識別子 `mamori-two-forms` で残します。
+
+1. 浅いオブジェクト分割 `const { email, token } = o;` / `const { a, b: c } = x;`（`const [` と `let {` は対象外）
+2. `for (const ch of s)` / `for (const n of xs)`（`of` だけ。`in` は対象外）
+
+「2形は残す」「削除しない」「構文教育は不要」、経費や無関係な API の削除、例としての引用は記録できます。「2形残す」を「消す」に読み替える決定は記録しません。CEOロック（`locked_decisions.md`）ではなく、`commit_decision` が `syntax_forms_guard.py` を見ます。テスト: `python3 test_syntax_forms_guard.py`。
+
 ## 3Dの村（http://127.0.0.1:8091）
 Three.js（`web/vendor` に同梱、ビルド不要）のボクセル風の村です。中央に会議ホールと清継さん（CEO）、周りにCOOと役員の家（秘書は隣）、外側に管理職と一般職の区画、角にローカルサービスの「マシンルーム」があります。空の色は東京時間で昼夜が変わり、ドラッグで視点を回せます。
 
