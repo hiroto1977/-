@@ -296,11 +296,16 @@ def append_decision(path, dec, topic, summary, review, src, officer):
         f.write(block)
 
 def commit_decision(dec, *, decisions_path, rejected_path, topic="", summary="", review="", src="会議", officer="CQO"):
-    """保存直前の唯一の書き込み口。命令が残れば却下ログだけ、無ければ decisions.md だけ。"""
+    """保存直前の唯一の書き込み口。命令が残れば却下ログだけ、無ければ decisions.md だけ。
+    CEOロックと助言ガードに加え、既に通る Mamori の2形を消す命令は syntax_forms_guard が落とす。
+    これは locked_decisions.md の項目ではない。文言では解除できない。"""
     import advice_guard
+    import syntax_forms_guard
     blob = "\n".join(p for p in (dec or "", summary or "", review or "") if p)
     hits = list(check(blob))
     for h in advice_guard.check(blob):
+        hits.append(h)
+    for h in syntax_forms_guard.check(blob):
         hits.append(h)
     if hits:
         append_rejection(rejected_path, topic or (dec or "")[:80], blob, hits, retry=False)

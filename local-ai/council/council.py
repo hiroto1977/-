@@ -45,6 +45,7 @@ PENDING, CHAT = [], []
 ADVICE = os.path.join(HERE, "advice_inbox.md")      # パートB: クラウドの助言（現在はGrokのみ）（追記された行を最優先の議題にする）
 import advice_guard
 import decision_lock
+import syntax_forms_guard
 GUARD_ON = os.environ.get("COUNCIL_ADVICE_GUARD", "1") != "0"          # 0で助言ガードを無効化
 GUARD_LLM = os.environ.get("COUNCIL_ADVICE_GUARD_LLM", "0") == "1"     # 1で検証モデル(fast)にも矛盾確認させる（メモリ節約のため既定は無効）
 LOCK_ON = os.environ.get("COUNCIL_DECISION_LOCK", "1") != "0"          # 0で固定決定ロックを無効化（通常は使わない）
@@ -338,7 +339,7 @@ def session():
         STATE["transcript"].append({"id": "claude" if "claude" in P else "coo", "role": "助言ガード", "model": "guard",
                                     "text": "この決定は助言またはCEO固定決定と食い違うため記録しません。やり直してください: " + " / ".join(hits)})
         dec = speak(ex, "役員として、前の決定は相談役の助言またはCEO固定決定と食い違うため却下されました。理由: " + " / ".join(hits) +
-                    "。固定決定と助言に従い『決定:』1〜2文と『次のアクション:』箇条書き3つ以内を書き直してください。llama7Bは起動せず、dataCrypto/IV更新には触らず、asやwhileをMamoriに足さないこと。")
+                    "。固定決定と助言に従い『決定:』1〜2文と『次のアクション:』箇条書き3つ以内を書き直してください。llama7Bは起動せず、dataCrypto/IV更新には触らず、asやwhileをMamoriに足さないこと。パーサが通している浅い const { … } = と for (const … of …) は消さないこと。")
         hits2 = guard_check(dec)
         if hits2:
             reject_log(topic, dec, hits2, True)
@@ -362,16 +363,17 @@ def session():
     STATE.update(status=f"待機中（次回まで最大{INTERVAL}秒）", updated=now(), speaking=None)
 
 def guard_check(dec):
-    """助言・固定決定と食い違う決定なら違反リストを返す（空なら記録してよい）。"""
+    """助言・固定決定・通る2形の消去と食い違う決定なら違反リストを返す（空なら記録してよい）。"""
     hits = []
     if LOCK_ON:
         hits.extend(f"{n}: {why}（該当: {frag}）" for n, why, frag in decision_lock.check(dec))
     if GUARD_ON:
         hits.extend(f"{n}: {why}（該当: {frag}）" for n, why, frag in advice_guard.check(dec))
-        if not hits and GUARD_LLM and free_mb() >= MIN_FREE_MB:
-            _, v = ask("fast", "あなたは検証係です。助言と決定が矛盾するかだけを判定し、矛盾なら『矛盾: 理由』、なければ『問題なし』とだけ答えてください。",
-                       f"助言:\n{advice_guard.advice_digest(advice_lines())}\n\n決定:\n{dec}\n\n判定:")
-            if v.strip().startswith("矛盾"): hits.append("検証モデル: " + v.strip()[:200])
+    hits.extend(f"{n}: {why}（該当: {frag}）" for n, why, frag in syntax_forms_guard.check(dec))
+    if GUARD_ON and not hits and GUARD_LLM and free_mb() >= MIN_FREE_MB:
+        _, v = ask("fast", "あなたは検証係です。助言と決定が矛盾するかだけを判定し、矛盾なら『矛盾: 理由』、なければ『問題なし』とだけ答えてください。",
+                   f"助言:\n{advice_guard.advice_digest(advice_lines())}\n\n決定:\n{dec}\n\n判定:")
+        if v.strip().startswith("矛盾"): hits.append("検証モデル: " + v.strip()[:200])
     return hits
 
 def reject_log(topic, dec, hits, retry):
