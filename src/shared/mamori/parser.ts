@@ -10,7 +10,7 @@
  * 失敗は `MamoriError` (行と桁つき) で投げる。1 つ目の誤りで止める —— 構文の誤りの後に続く誤りは
  * 当てにならないので、並べて見せても読み手を迷わせるだけである。
  */
-import type { Comments, Doc, Expr, Item, Member, Module, Param, Pos, Prop, Stmt, SwitchCase, TypeRef } from './ast';
+import type { Comments, Doc, Expr, Item, Member, Module, Param, Pos, Prop, Stmt, SwitchCase, TypeParam, TypeRef } from './ast';
 
 export class MamoriError extends Error {
   constructor(
@@ -350,6 +350,25 @@ export function parse(file: string, src: string): Module {
       next();
       list.push(typeRef([',', '>']));
     }
+    expectP('>');
+    return list;
+  };
+  /**
+   * 関数の型引数 `<T, U>` を読む (`fn f<T>(…)` の `<` から `>` まで・0.23)。**名前だけ**を並べる。
+   * 制約 (`T extends X`) と既定の型 (`T = X`) は置けない —— 制約に印の型を置くと、型を引数に取る関数が
+   * 印を名乗る値の型を持てる口になり、既定の型は呼ぶ側が書かなかった型を勝手に決める。名前の重なりも断る。
+   */
+  const typeParamList = (): TypeParam[] => {
+    expectP('<');
+    const list: TypeParam[] = [];
+    do {
+      const at = peek();
+      const name = ident();
+      if (isW('extends')) fail(peek(), '型引数に制約 (`T extends X`) は置けません —— 制約に印の型を置くと、型を引数に取る関数が印を名乗る値の型を持てます');
+      if (isP('=')) fail(peek(), '型引数に既定の型 (`T = X`) は置けません —— 呼ぶ側が書かなかった型を関数の側が決めてしまいます');
+      if (list.some((p) => p.name === name)) fail(at, `型引数 ${name} が二重です`);
+      list.push({ name, pos: at.pos });
+    } while (isP(',') && next());
     expectP('>');
     return list;
   };
@@ -1021,11 +1040,12 @@ export function parse(file: string, src: string): Module {
     if (!isW('fn')) fail(peek(), `項目が要ります —— use / extern / vetted / type / interface / const / fn (在ったのは ${describe(peek())})`);
     next();
     const name = ident();
+    const typeParams = isP('<') ? typeParamList() : [];
     const ps = params();
     expectP('->');
     const returns = typeRef(['{']);
     const body = block();
-    return { kind: 'fn', exported, role, async: isAsync, name, params: ps, returns, body, doc, pos: t.pos };
+    return { kind: 'fn', exported, role, async: isAsync, name, typeParams, params: ps, returns, body, doc, pos: t.pos };
   };
 
   const header = takeLeading(['header']);

@@ -369,6 +369,15 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     if (it.kind === 'const') checkExpr(it.init, [moduleScope], { role: 'plain', returnVetted: null, destVetted: null });
     if (it.kind !== 'fn') continue;
     const sig = localFns.get(it.name)!;
+    // 型引数 (0.23) —— 印の名前を型引数に使うと、`u: VettedUrl` が型引数の方を指して、印を持たない値が印を名乗る引数に見える。
+    // gate / sink は印を作る・危ない口を呼ぶ関数なので、型を引数に取らせない (型を替えて呼べる口は増やさない)。
+    for (const tp of it.typeParams) {
+      if (tp.name === 'typeof' || tp.name === 'import') report('M4', tp.pos, `型引数の名前に \`${tp.name}\` は置けません —— 型の綴りの \`${tp.name}\` は印を持つ値の型・別の module の型を名指しする口で、型引数の名前と取り違えられます`);
+      if (table.vetted.has(tp.name)) report('M4', tp.pos, `型引数 ${tp.name} は印の名前です —— 型引数の名前で印を名乗れてしまい、印を持たない値を印を受ける口へ渡せます`);
+    }
+    if (it.role !== 'plain' && it.typeParams.length > 0) {
+      report('M4', it.typeParams[0]!.pos, `${it.role} 関数 ${it.name} は型引数を持てません —— 印を作る・危ない口を呼ぶ関数を、呼ぶ側の型で変えられる形にしない`);
+    }
     // 戻り値の型に印を名乗れるのは gate 関数だけ (0.11 · T-248)。0.10 まで、plain / sink 関数が `-> VettedUrl` と宣言でき、
     // 型述語 (`-> s is VettedUrl` / `asserts s is …` / `this is …`) は **`tsc` も検めない型の主張**なので、戻り値に `true` を
     // 返すだけで、関門 (`mint`) を通らずに生成物の呼び出し側へ印の型を渡せた (印を作れるのは gate の `mint` だけ、の穴)。

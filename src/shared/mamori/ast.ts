@@ -170,12 +170,20 @@ export type Item =
       readonly role: 'gate' | 'sink' | 'plain';
       readonly async: boolean;
       readonly name: string;
+      /** 型引数 `fn f<T, U>(…)` (0.23)。制約 (`extends`) と既定の型 (`= X`) は置けない。 */
+      readonly typeParams: readonly TypeParam[];
       readonly params: readonly Param[];
       readonly returns: TypeRef;
       readonly body: readonly Stmt[];
       readonly doc: Doc;
       readonly pos: Pos;
     };
+
+/** 関数の型引数 1 つ (0.23)。名前だけで、制約も既定の型も持たない。 */
+export interface TypeParam {
+  readonly name: string;
+  readonly pos: Pos;
+}
 
 /** interface の 1 つの欄。 */
 export interface Member {
