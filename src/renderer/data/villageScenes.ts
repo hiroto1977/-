@@ -48,11 +48,12 @@ const nameOf = (v: Villager): string => displayField(v.name, NAME_CHARS);
  * 役員の街区をまたいで順に並べる (最初の数本が 1 つの街区に偏らない)。
  */
 export function buildChatterScenes(villagers: readonly Villager[]): ChatterScene[] {
-  const byId = new Map(villagers.map((v) => [v.id, v] as const));
+  // 鍵に undefined も許す: 持ち場の無い村人の引きは「見つからない」になり、守りの分岐を別に持たない。
+  const byId = new Map<string | undefined, Villager>(villagers.map((v) => [v.id, v] as const));
   const coo = villagers.find((v) => v.kind === 'coo');
-  const teamsOf = new Map<string, number>();
+  const teamsOf = new Map<string | undefined, number>();
   for (const v of villagers) {
-    if (v.kind === 'team' && v.managerId !== undefined) teamsOf.set(v.managerId, (teamsOf.get(v.managerId) ?? 0) + 1);
+    if (v.kind === 'team') teamsOf.set(v.managerId, (teamsOf.get(v.managerId) ?? 0) + 1);
   }
 
   const perExec = new Map<string, ChatterScene[]>();
@@ -63,23 +64,23 @@ export function buildChatterScenes(villagers: readonly Villager[]): ChatterScene
   };
 
   for (const v of villagers) {
-    const execId = v.execId;
-    if (execId === undefined) continue;
-    const exec = byId.get(execId);
+    const exec = byId.get(v.execId);
     if (exec === undefined) continue;
+    const execId = exec.id;
 
-    if (v.kind === 'team' && v.managerId !== undefined) {
+    if (v.kind === 'team') {
       const manager = byId.get(v.managerId);
       if (manager === undefined) continue;
-      const focus = v.focus === undefined || v.focus === '' ? null : displayField(v.focus, FOCUS_CHARS);
-      const domain = v.domain === undefined || v.domain === '' ? null : displayField(v.domain, FOCUS_CHARS);
+      // 非文字列は displayField が '' にする: 無い・空・非文字列は同じ「台帳に無い」。
+      const focus = displayField(v.focus, FOCUS_CHARS);
+      const domain = displayField(v.domain, FOCUS_CHARS);
       push(execId, {
         id: `${manager.id}:${v.id}`,
         a: manager.id,
         b: v.id,
         lines: [
-          { who: 'a', text: focus === null ? `${nameOf(v)}の様子はどうだい？` : `${nameOf(v)}の重点は「${focus}」だったね。` },
-          { who: 'b', text: domain === null ? 'はい、持ち場で進めています。' : `はい、${domain}の担当として進めています。` },
+          { who: 'a', text: focus === '' ? `${nameOf(v)}の様子はどうだい？` : `${nameOf(v)}の重点は「${focus}」だったね。` },
+          { who: 'b', text: domain === '' ? 'はい、持ち場で進めています。' : `はい、${domain}の担当として進めています。` },
           { who: 'a', text: `何かあれば${nameOf(exec)}にも相談しよう。` },
         ],
       });
@@ -111,14 +112,8 @@ export function buildChatterScenes(villagers: readonly Villager[]): ChatterScene
 
   // 街区をまたいで 1 本ずつ取る (ラウンドロビン)。街区の並びは村人の登場順。
   const queues = [...perExec.values()];
-  const out: ChatterScene[] = [];
-  for (let round = 0; queues.some((q) => round < q.length); round++) {
-    for (const q of queues) {
-      const s = q[round];
-      if (s !== undefined) out.push(s);
-    }
-  }
-  return out;
+  const longest = Math.max(0, ...queues.map((q) => q.length));
+  return Array.from({ length: longest }, (_, round) => queues.flatMap((q) => q.slice(round, round + 1))).flat();
 }
 
 export interface SceneCursor {
@@ -173,9 +168,7 @@ export interface FlowRoute {
   readonly teamId?: string;
 }
 
-/** 1 つの段を見せる刻み。 */
-export const FLOW_STAGE_TICKS = 1;
-/** 完了 / 失敗の段を見せる刻み。 */
+/** 受付 〜 作業中の各段は 1 tick ずつ見せる (経過 tick がそのまま段の番号)。完了 / 失敗の段を見せる刻み。 */
 export const FLOW_END_HOLD_TICKS = 3;
 /** 結果が来ないとき、作業中のまま待つ上限 (これを過ぎたら場面を畳む)。 */
 export const FLOW_WAIT_CAP_TICKS = 60;
@@ -191,12 +184,12 @@ export function buildRequestFlow(
   topic: string,
   work?: { readonly text?: string; readonly doneText?: string; readonly failedText?: string },
 ): RequestFlow | null {
-  const byId = new Map(villagers.map((v) => [v.id, v] as const));
+  const byId = new Map<string | undefined, Villager>(villagers.map((v) => [v.id, v] as const));
   const coo = villagers.find((v) => v.kind === 'coo');
   if (coo === undefined) return null;
   const chain: Villager[] = [coo];
   for (const id of [route.executiveId, route.managerId, route.teamId]) {
-    const v = id === undefined ? undefined : byId.get(id);
+    const v = byId.get(id);
     if (v !== undefined && v.id !== chain[chain.length - 1]!.id) chain.push(v);
   }
   const t = displayField(externalTextOnOneLine(topic), TOPIC_CHARS);
@@ -245,7 +238,7 @@ export interface FlowCursor {
 export function flowCursor(flow: RequestFlow, elapsed: number, outcome: FlowOutcome | null): FlowCursor {
   const n = flow.stages.length;
   const workIndex = n - 1;
-  const lastStageEnds = n * FLOW_STAGE_TICKS;
+  const lastStageEnds = n;
   const mk = (stage: FlowStage, index: number, phase: FlowCursor['phase'], waiting: boolean, finished: boolean): FlowCursor => ({
     stage,
     index,
@@ -257,14 +250,14 @@ export function flowCursor(flow: RequestFlow, elapsed: number, outcome: FlowOutc
 
   if (outcome === null) {
     if (elapsed >= lastStageEnds + FLOW_WAIT_CAP_TICKS) return mk(flow.stages[workIndex]!, workIndex, 'work', true, true);
-    const idx = Math.floor(elapsed / FLOW_STAGE_TICKS);
+    const idx = elapsed;
     if (idx < workIndex) return mk(flow.stages[idx]!, idx, 'relay', false, false);
     return mk(flow.stages[workIndex]!, workIndex, 'work', true, false);
   }
 
   const endStart = Math.max(lastStageEnds, outcome.atElapsed);
   if (elapsed < endStart) {
-    const idx = Math.min(workIndex, Math.floor(elapsed / FLOW_STAGE_TICKS));
+    const idx = Math.min(workIndex, elapsed);
     return mk(flow.stages[idx]!, idx, idx < workIndex ? 'relay' : 'work', false, false);
   }
   const end = outcome.kind === 'done' ? flow.done : flow.failed;

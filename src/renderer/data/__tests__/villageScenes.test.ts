@@ -5,7 +5,6 @@ import {
   flowCursor,
   sceneCursor,
   FLOW_END_HOLD_TICKS,
-  FLOW_STAGE_TICKS,
   FLOW_WAIT_CAP_TICKS,
   SCENE_LINE_TICKS,
   SCENE_LINES,
@@ -90,6 +89,37 @@ describe('buildChatterScenes — 台帳の関係から台本を組む', () => {
     const long = v({ id: 'tl', name: 'あ'.repeat(40), kind: 'team', execId: 'cfo', managerId: 'm1', focus: 'い'.repeat(60) });
     const scene = buildChatterScenes([COO, CFO, M1, long]).find((s) => s.id === 'm1:tl')!;
     expect(scene.lines[0]!.text).toBe(`${'あ'.repeat(24)}…の重点は「${'い'.repeat(32)}…」だったね。`);
+  });
+
+  it('重点・領域が空文字や非文字列のときも「台帳に無い」として一般の言い回しにする', () => {
+    const blank = v({ id: 'tb', name: '空チーム', kind: 'team', execId: 'cfo', managerId: 'm1', focus: '', domain: '' });
+    const odd = v({ id: 'to', name: '変チーム', kind: 'team', execId: 'cfo', managerId: 'm1', focus: 42 as unknown as string });
+    const scenes = buildChatterScenes([COO, CFO, M1, blank, odd]);
+    for (const id of ['m1:tb', 'm1:to']) {
+      const texts = scenes.find((s) => s.id === id)!.lines.map((l) => l.text);
+      expect(texts[0]).toMatch(/の様子はどうだい？$/);
+      expect(texts[1]).toBe('はい、持ち場で進めています。');
+    }
+  });
+
+  it('秘書・チーム以外の種類は、持ち場があっても台本を作らない', () => {
+    const sec = v({ id: 'sec', name: '秘書', kind: 'secretary', execId: 'cfo' });
+    const ids = buildChatterScenes([COO, CFO, sec]).map((s) => s.id);
+    expect(ids).toEqual(['coo:cfo']);
+  });
+
+  it('総括は村人の並びの先頭に居なくても見つかる', () => {
+    const ids = buildChatterScenes([CFO, M1, T1, COO]).map((s) => s.id);
+    expect(ids).toContain('coo:cfo');
+  });
+
+  it('総括 ↔ 役員の台詞は 3 行とも決まった言い回し', () => {
+    const lines = buildChatterScenes(ALL).find((s) => s.id === 'coo:cfo')!.lines.map((l) => l.text);
+    expect(lines).toEqual([
+      'CFO、街区で共有したいことはありますか？',
+      'はい、チームの重点を揃えて進めています。',
+      '了解です。必要なら声をかけてください。',
+    ]);
   });
 
   it('同じ入力は同じ台本 (乱数なし)', () => {
@@ -208,7 +238,6 @@ describe('flowCursor — 流れの位置', () => {
   const N = flow.stages.length; // 5
 
   it('結果が無いあいだ: 受付から作業中まで順に進み、作業中で待つ', () => {
-    expect(FLOW_STAGE_TICKS).toBe(1);
     const c0 = flowCursor(flow, 0, null);
     expect([c0.index, c0.phase, c0.waiting, c0.finished, c0.key]).toEqual([0, 'relay', false, false, 'flow#0']);
     const c3 = flowCursor(flow, 3, null);
@@ -225,6 +254,8 @@ describe('flowCursor — 流れの位置', () => {
     const over = flowCursor(flow, N + FLOW_WAIT_CAP_TICKS, null);
     expect(over.finished).toBe(true);
     expect(over.waiting).toBe(true);
+    expect(over.phase).toBe('work');
+    expect(over.index).toBe(N - 1);
     expect(over.stage).toBe(flow.stages[N - 1]);
   });
 
