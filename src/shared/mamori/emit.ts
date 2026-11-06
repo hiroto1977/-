@@ -121,7 +121,7 @@ function wrap(e: Expr, min: number): string {
 }
 
 function param(p: Param): string {
-  return `${p.name}${p.type === null ? '' : `: ${p.type.text}`}${p.init === null ? '' : ` = ${expr(p.init)}`}`;
+  return `${p.name}${p.optional ? '?' : ''}${p.type === null ? '' : `: ${p.type.text}`}${p.init === null ? '' : ` = ${expr(p.init)}`}`;
 }
 
 function comments(lines: readonly string[], ind: string): string[] {

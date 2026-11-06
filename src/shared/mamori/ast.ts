@@ -80,6 +80,8 @@ export type Prop =
 
 export interface Param {
   readonly name: string;
+  /** `x?: T` (0.22) —— 呼ぶ側が省ける引数。省けば値は undefined。型が要る。既定値 (`= v`) とは一緒に置けない。 */
+  readonly optional: boolean;
   readonly type: TypeRef | null;
   readonly init: Expr | null;
   readonly pos: Pos;
