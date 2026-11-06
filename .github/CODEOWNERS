@@ -179,6 +179,7 @@
 # AI の判断に依らない 3 層の守り (2026-10-29 · パス 552 · threat: T-215 / T-216 / T-217)。
 /src/shared/actionTier.ts @hiroto1977
 /src/shared/actionTier.mamori @hiroto1977
+/src/shared/redact.mamori @hiroto1977
 /src/shared/outboundContentGate.ts @hiroto1977
 /src/shared/outboundContentGate.mamori @hiroto1977
 /src/shared/promptInjection.ts @hiroto1977

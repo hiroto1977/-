@@ -235,7 +235,7 @@ type OAuthResult =
   | { ok: false; code: 'not_supported' | 'authorize_failed'; message: string };
 ```
 
-`ok:false` の `message` は **必ず** `safeErrorMessage()` (`src/shared/redact.ts:618-620`。
+`ok:false` の `message` は **必ず** `safeErrorMessage()` (`src/shared/redact.ts:569-571`。
 2026-08-22 に main.ts の中から共有へ移した — ブラウザ版の `web-shim.ts` は main の
 役目を引き受けているのに同じ関門が無く、片側にしか無い状態だった) →
 `redactSecrets()` (`src/shared/redact.ts`、`src/main/clients/types.ts` が再輸出) を

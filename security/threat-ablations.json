@@ -1709,7 +1709,7 @@
       "why": "cookie / set-cookie の線上の形を行の残りまで伏せる規則を外す —— cookie の値が失敗の文へそのまま流れる穴 (15 形素通りの一つ) を開け直す",
       "edits": [
         {
-          "find": ".replace(/\\b(set-cookie|cookie)(\\s*:\\s*)[^\\r\\n\"'`]+/gi, (_m, name: string, sep: string) => `${name}${sep}[REDACTED]`)",
+          "find": "out = out.replace(/\\b(set-cookie|cookie)(\\s*:\\s*)[^\\r\\n\"'`]+/gi, (_m, name: string, sep: string) => name + sep + '[REDACTED]');",
           "replace": ""
         }
       ]

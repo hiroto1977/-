@@ -1,3 +1,5 @@
+// 生成物 —— src/shared/redact.mamori から Mamori のコンパイラが組んだ。手で編集しない (`npm run mamori:build`)。
+// 言語の仕様は docs/MAMORI.md。生成物が元と食い違えば src/shared/mamori/__tests__/mamoriGenerated.test.ts が落ちる。
 /**
  * Secret redaction — shared between the Electron main process (API error
  * bodies) and the renderer (BYO-proxy error bodies). Strips anything that
@@ -92,6 +94,8 @@
  *     client_secret / sharedSecret / password / …)
  */
 
+import { clampToCeiling } from './inputCeiling';
+
 /**
  * 方式が付いていれば残し、無ければ値だけを伏せる。
  *
@@ -101,358 +105,307 @@
  * 同じ理由で、下の正規表現もモジュール定数に括り出さず本体へ置いている。
  */
 function hideValue(name: string, sep: string, scheme?: string): string {
-  return scheme === undefined ? `${name}${sep}[REDACTED]` : `${name}${sep}${scheme} [REDACTED]`;
+  return scheme === undefined ? name + sep + '[REDACTED]' : name + sep + scheme + ' [REDACTED]';
 }
 
-import { clampToCeiling } from './inputCeiling';
-
 export function redactSecrets(input: string): string {
-  return (
-    input
-      // 資格情報ヘッダ (JSON / 引用符付きの形)。
-      //   1: 引用符 — 後方参照で閉じ側も同じ字に揃える (JSON の `"` でも、
-      //      Python 風の repr が返す `'` でも通る)。
-      //   2: ヘッダ名 — **長い名前を先**に並べる (`x-goog-api-key` が
-      //      `api-key` に食われないようにする)。
-      //   3: 名前と値のあいだ — **そのまま書き戻す**ので形が崩れない。
-      //   4: 認証方式 — あれば残す。「Bearer だったのか Basic だったのか」は
-      //      秘密ではなく、原因究明にはむしろ要る。
-      // 値は「エスケープ列か、閉じ引用符以外」。`\"` を跨げるので、入れ子の
-      // JSON に鍵を隠して閉じ引用符を先出しする細工が効かない。
-      // 方式のあとの空白は `\s` (1 個) で足りる — 2 個目以降は値側が飲み込む。
-      // `\s+` と書くと「1 個か 2 個以上か」で結果が変わらない = 確かめようの
-      // ない指定になる。
-      // 入れ子の JSON に入って引用符が `\"` になった形 (パス 526 · T-101)。下の規則は引用符が 1 字であることを
-      // 要求するので、失敗応答の本文に「転送した要求」を文字列で入れて返す Worker では
-      // `{"received":"{\"headers\":{\"hibp-api-key\":\"…\"}}"}` の値が素通りした。
-      // 逃がしの深さは 1〜8 (二重の入れ子まで) に限る —— 上限が無いと逆風の入力で二乗になる。
-      .replace(
-        /(\\{1,8}["'])((?:[a-z0-9]+-)*(?:authorization|api-?key|proxy-auth))\1(\s*[:,]\s*)\1(?:(Bearer|Basic|Token|Bot|OAuth|Digest|Negotiate)\s)?[\s\S]*?\1/gi,
-        (_m, q: string, name: string, sep: string, scheme?: string) =>
-          hideValue(`${q}${name}${q}`, `${sep}${q}`, scheme) + q,
-      )
-      .replace(
-        /(["'])((?:[a-z0-9]+-)*(?:authorization|api-?key|proxy-auth))\1(\s*[:,]\s*)\1(?:(Bearer|Basic|Token|Bot|OAuth|Digest|Negotiate)\s)?(?:\\.|(?!\1)[^\\])*\1/gi,
-        (_m, q: string, name: string, sep: string, scheme?: string) =>
-          hideValue(`${q}${name}${q}`, `${sep}${q}`, scheme) + q,
-      )
-      // 同じヘッダの、HTTP の線上の書き方 (`名前: 値`)。値は `\S+` —
-      // 空白まで**丸ごと**伏せる。引用符やカンマで区切ると、それを含む
-      // トークンの尻尾が残る。引用符付きの形は上の規則が先に処理して
-      // `"…":"[REDACTED]"` にしてあり、そこでは名前の直後がコロンではない
-      // ので、この規則が二度当たって閉じ引用符まで飲み込むことはない。
-      // **こちらには接頭辞のまとめ書きを置かない。** 引用符つきの規則 (上) は
-      // 名前が引用符と引用符に挟まれるので `hibp-` のような仕入れ先接頭辞まで
-      // 一致させる必要があるが、線上の形は `\b` があるので `hibp-api-key:` の
-      // `api-key` から一致でき、**手前の `hibp-` はそのまま残る**ので
-      // 仕上がりの文字列は同じになる。実測 (2026-08-23・10 例): 接頭辞あり/なしで
-      // 出力が違うものは 0、漏れの有無も一致。**書いても効かない指定は、
-      // 効いているように読める分だけ害がある** (変異検査でも生存し続ける)。
-      .replace(
-        /\b(authorization|api-?key|proxy-auth|shared-?secret|auth-token|subscription-key|client[_-]?secret|signing[_-]?secret|private[_-]?key|secret[_-]?key|(?:access|refresh|session|api|bearer)[_-]?token)(\s*:\s*)(?:(Bearer|Basic|Token|Bot|OAuth|Digest|Negotiate)\s+)?\S+/gi,
-        (_m, name: string, sep: string, scheme?: string) => hideValue(name, sep, scheme),
-      )
-      // ヘッダ名が付いていない裸の `Bearer …` / `Basic …`。16 字以上に限る。
-      // 実在するトークンは十分長く、逆に "Basic authentication" (14 字) の
-      // ような**英文を伏せてしまうと、読めば分かるはずの 401 の説明が消える**。
-      // 区切り文字を値から除いてあるので、伏せたあとの `[REDACTED]` (10 字)
-      // に再び当たることもない (`[` も除外文字に入っている)。
-      // 本体は ASCII の token 字 (base64 / base64url / JWT / 英数の鍵) に限る (2026-10-28 · threat: T-212) ——
-      // 以前の `[^\s"'…]{16,}` は日本語も飲み、学術コーパスの「（Basic Books、1977年）…」を伏せていた
-      // (実測: 出荷コードの文字列リテラル 95,637 本のうち散文 2 本)。実在の資格情報は全部 ASCII なので
-      // 狭めても漏れは増えない。
-      .replace(/\b(Bearer|Basic)\s+[A-Za-z0-9+/=._~-]{16,}/g, '$1 [REDACTED]')
-      /*
-       * **cookie / set-cookie は行の残りを丸ごと伏せる** (2026-10-28 · threat: T-212)。値は `a=1; b=2` と
-       * 空白を含むので `\S+` では 2 つ目以降が残る。利用者が配る Worker は上流の応答ヘッダを封筒に
-       * そのまま写す (`docs/PROXY_EXAMPLE.md` の `outHeaders`) ので、`set-cookie` が失敗の文へ
-       * 流れる道は Worker の側に在る。
-       */
-      .replace(/\b(set-cookie|cookie)(\s*:\s*)[^\r\n"'`]+/gi, (_m, name: string, sep: string) => `${name}${sep}[REDACTED]`)
-      // URL の userinfo (`https://user:pass@host`)。利用者が打つ基底 URL や BYO proxy の URL が失敗の文へ
-      // 入るとき、パスワードの側だけ伏せる (利用者名は原因究明に要るので残す)。
-      .replace(/(:\/\/[^\s/:@"'`]+:)[^\s/@"'`]+(@)/g, '$1[REDACTED]$2')
-      /*
-       * **プラットフォーム自身のエラー文面 —— ヘッダ名を持たない引用。**
-       *
-       * 上の 3 規則はどれも「ヘッダ名が在る」か「方式が在る」ことに掛かって
-       * いる。このファイルの冒頭は、接頭辞を持たない 3 形 (Cloudflare の 40 字 /
-       * LINE / Discord) を裸では伏せない理由として
-       * **「ヘッダ名・JSON 項目名の規則が受け持つ」**と宣言している ——
-       * つまり安全の根拠は「その値は必ず名前と一緒に現れる」という前提である。
-       *
-       * その前提が崩れる経路が 1 本在った。値に HTTP ヘッダとして不正なバイト
-       * (LF / NUL) が混ざると `new Headers()` が投げ、undici の文面は
-       *
-       *   Headers.append: "<値>" is an invalid header value.
-       *
-       * ——**値だけを引用符で抱え、ヘッダ名を含まない**。`limitedFetch` は
-       * `fetch` の例外をそのまま再送出し、`main.ts` の `safeErrorMessage` を
-       * 通って画面の赤いバッジに出る。2026-09-14 の実測 (10 経路):
-       *
-       *   hibp-api-key / x-apikey  64 桁 16 進が**丸ごと**素通り (規則が 0 件当たる)
-       *   Authorization ×8         `Bearer [REDACTED]\n<後半>` —— 改行で分断された
-       *                            後半 20〜86 字が裸で残る (`{16,}` に届かないため)
-       *
-       * 名前が無いので名前には掛けられない。**引用の中身をまとめて伏せる** ——
-       * ただし方式 (Bearer / Basic) は秘密ではなく原因究明に要るので残す
-       * (上の規則と同じ判断)。
-       *
-       * 末尾の `value` を要求するので、**ヘッダ名が不正な場合の双子**
-       * (`"…" is an invalid header name.`) は伏せない —— あちらの引用は
-       * 名前であって秘密ではなく、伏せると原因が読めなくなる。
-       *
-       * 文面の頭ではなく**末尾の句**に掛けるのは、同じ句を使う別の入口
-       * (`Request constructor: …`) にも同じだけ効かせるためである。
-       */
-      .replace(
-        /"((?:Bearer|Basic)\s)?[^"]{16,}"(?=\s+is an invalid header value)/g,
-        (_m, scheme?: string) => `"${scheme ?? ''}[REDACTED]"`,
-      )
-      /*
-       * 発行元が分かる接頭辞。`AIza…` は Google の API キー — このアプリは
-       * YouTube で `?key=…` の形の URL に載せて送るので、URL ごとどこかへ
-       * 書き出されたときに備えてここでも拾う。
-       *
-       * **2026-08-29: 数えたら 5 形が抜けていた。**
-       *
-       * ここには `sk-ant-` が在って **OpenAI の `sk-` / `sk-proj-` が無かった**。
-       * 2026-08-23 に「`sk-ant-…` を含む例外がそのまま renderer へ届いていた」
-       * のを直したときに、**その事故の接頭辞だけを足して一般化しなかった**
-       * 跡である。同じ事故が OpenAI の鍵で起きれば、今日でもそのまま漏れる。
-       * Cloudflare の接頭辞つきトークン `cfut_` (ユーザー) / `cfat_` (アカウント) /
-       * `cfk_` (Global API Key) を足した (パス 524 · T-075)。以前の注記は
-       * 「接頭辞が無い」と書いていたが、新しい発行物は 40 字 + チェックサムの接頭辞つき。
-       *
-       * 実測して素通りを確認した形: `sk-proj-` / `sk-` / `sk_live_` /
-       * `rk_live_` / `shpat_`。このアプリはどれも預かる
-       * (OpenAI は 5 社の 1 つ、Stripe と Shopify はサービス一覧に在る)。
-       *
-       * 経路は塞がっていない —— `shared/ai/chat.ts` は失敗応答の本文を
-       * `redactForMessage(body, 200)` に通して画面へ出す。`compat`
-       * (LiteLLM / LM Studio / 自前サーバ) が本文に鍵を書き返せば、
-       * 伏字を通り抜けて表示される。
-       */
-      .replace(
-        /\b(sk-ant-|sk-proj-|ghp_|ghs_|ghu_|gho_|ghr_|github_pat_|xoxp-|xoxb-|xoxa-|secret_|ntn_|lin_api_|lin_oauth_|AIza|shpat_|shpss_|shpca_|sk_live_|sk_test_|rk_live_|rk_test_|whsec_|cfut_|cfat_|cfk_)[A-Za-z0-9_-]{8,}/g,
-        '$1[REDACTED]',
-      )
-      /*
-       * **Cursor の Admin API キー (`key_` + 16 進)。** (2026-10-13 · パス 516 · threat: T-021)
-       *
-       * `cursor` は `credentialUse.ts` で `fetch` (資格情報を預かる) で、
-       * `api/cursor.ts` が `Authorization: Bearer <token>` で送る。鍵の形は
-       * `types.test.ts` が `key_9f2c1a8e4b7d6c5f0a3e` を Cursor 風の TOKEN として
-       * 使っている (16 進) —— 発行元が分かる**接頭辞を持つ**形である。
-       *
-       * ところが `redactionCoverage.test.ts` の census は cursor を
-       * `header-only` に置き、標本を**実形でない** `'H'.repeat(40)` (接頭辞なし)
-       * にしていたので、「裸では伏せられなくて正しい」と主張して**穴を隠して
-       * いた**。実測 (直す前・実物の `redactSecrets`): `Bearer key_…` と
-       * `{"authorization":"Bearer key_…"}` は伏せるのに、JSON のエラー本文に
-       * **裸で**反射された `{"error":"Invalid API key: key_…"}` は素通りした。
-       * 乗っ取られた / 設定を誤った BYO proxy (`redact.ts` 冒頭が名指しする脅威)
-       * がこの形で反射すると、伏字を通り抜けて画面とバグ報告に出る
-       * (T-008 / パス 231 / 289 と同じ害 —— 発行元が分かる接頭辞を持つのに
-       * 裸で伏せていなかった)。
-       *
-       * **本体を 16 進に絞る** —— `key_` は `sk-ant-` / `ghp_` と違い散文に
-       * 現れる接頭辞 (`key_press_handler` / `primary_key_constraint`) なので、
-       * 上の `[A-Za-z0-9_-]` の一括規則に混ぜると散文を巻き込む。実物の鍵は
-       * 16 進なので `[0-9a-f]{16,}` に限れば、英単語の続く `key_` は当たらない
-       * (実測で `key_press_handler` ほか 9 形の散文が素通りすることを確認した)。
-       */
-      .replace(/\bkey_[0-9a-f]{16,}/g, 'key_[REDACTED]')
-      /*
-       * **預かる資格情報のうち、接頭辞を持つのに伏せていなかった形** (2026-10-16 · パス 525 · threat: T-095)。
-       * 実測 (裸で反射された値): OpenAI 互換の提供元の鍵 (`gsk_` Groq / `xai-` / `pplx-` / `hf_` /
-       * `nvapi-` / `fw_`・AI アシスタントの `compat` が預かる)・Slack の `xoxe-` `xoxc-` `xoxd-` `xoxs-` `xoxr-` と
-       * `xapp-`・Google の `GOCSPX-` (OAuth クライアントの秘密)・`npm_` が素通りした。
-       * **本体は 20 字以上に限る** —— `hf_` `fw_` `npm_` は識別子や散文に現れる (`hf_hub_download` は
-       * 本体 12 字)。実物の鍵は 24 字以上なので、短い散文は当たらない。
-       */
-      .replace(
-        /\b(gsk_|xai-|pplx-|hf_|nvapi-|fw_|GOCSPX-|xoxe-|xoxc-|xoxd-|xoxs-|xoxr-|xapp-|npm_)[A-Za-z0-9_%=+.-]{20,}/g,
-        '$1[REDACTED]',
-      )
-      /*
-       * **2026-09-14 (パス 231): 25 形のうち 14 形が裸で素通りしていた。**
-       *
-       * 2026-08-29 は「5 形が抜けていた」を直したが、抜けを**数える道**は
-       * 作らなかった (ヘッダ名の側には `scan-credential-headers.cjs` +
-       * `redactionCoverage.test.ts` の census が在るのに、接頭辞の側は
-       * 手書きの列挙のまま)。このアプリが預かる資格情報の形を 25 並べて
-       * 実物の `redactSecrets` に**裸で**通したところ:
-       *
-       *   伏せた 11 / 素通り 14
-       *
-       * **今日預かっている 23 サービス** (`SERVICE_CREDENTIAL_USE` が
-       * `fetch` / `action`) に効くのは、そのうち 4 家系である:
-       *
-       *   - `github_pat_…` —— **GitHub の細粒度 PAT**。今の GitHub が既定で
-       *     発行する形で、このファイルが例に使い画面の placeholder が
-       *     `ghp_…` と書いている当のサービスの、**今日もっとも普通に
-       *     使われる鍵**が伏字の外に在った。
-       *   - `ntn_…` —— Notion の新しい内部連携トークン (旧 `secret_` は在った)。
-       *   - `1//…`  —— Google の更新トークン (drive / calendar / gmail /
-       *     youtube。`ya29.` のアクセストークンは在った)。
-       *   - `eyJ….….…` —— JWT (microsoft-365 のアクセストークン)。
-       *
-       * 残り (Linear / Sentry / Dropbox / Asana / Stripe の whsec / Salesforce)
-       * は 2026-08 の監査で `none` に倒して**入力欄を閉じた**サービスだが、
-       * それ以前に保存された分は今も残りうる (`credentialUse.ts` が掃除の
-       * 導線を持っているのはそのためである) ので、同じ規則で伏せる。
-       *
-       * 上の一括規則に混ぜられるのは本体が `[A-Za-z0-9_-]` の形だけなので、
-       * 区切り記号を含む 6 形は下に分けて書く。
-       *
-       * 接頭辞を持たない 3 形 (Cloudflare の 40 字・LINE のチャネルトークン・
-       * Discord の bot トークン) は**模様で見分けられない** ——
-       * 伏せようとすれば同じ長さの英数字を何でも伏せることになる。
-       * あちらはヘッダ名・JSON 項目名の規則が受け持ち、
-       * `redactionCoverage.test.ts` がその「受け持てている」ことを測る。
-       */
-      // Sentry の `sntrys_…` は base64 なので `=` `+` `/` を含みうる。
-      // 本体を狭く書くと尻尾が残る (伏せたつもりで漏れる) ので広く取る。
-      .replace(/\bsntrys_[A-Za-z0-9_=+/.-]{16,}/g, 'sntrys_[REDACTED]')
-      // Dropbox の短命トークン。実物は 130 字を超えるので 20 字以上に限れば
-      // 散文の「…sl.」には当たらない (直後に空白の無い長い英数字が要る)。
-      .replace(/\bsl\.[A-Za-z0-9_-]{20,}/g, 'sl.[REDACTED]')
-      /*
-       * JWT (`eyJ…` = base64url の `{"`)。Microsoft 365 / Salesforce の
-       * アクセストークンはこの形で、**ドット 2 つ**を要求するので
-       * 難読化した JSON の塊 (ドットを持たない) は巻き込まない。
-       */
-      .replace(/\beyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}/g, 'eyJ[REDACTED]')
-      // Google の更新トークン (`1//0g…`)。`\b` の手前は非単語字なので
-      // `…/v1//foo` のような道 (`v` が単語字) には当たらない。
-      .replace(/\b1\/\/[A-Za-z0-9_-]{20,}/g, '1//[REDACTED]')
-      // Asana の PAT (`1/<gid>:<32 桁の 16 進>`)。構造が細かいので誤爆しない。
-      .replace(/\b1\/\d{10,}:[0-9a-f]{32}\b/g, '1/[REDACTED]')
-      // Salesforce のセッション ID (`00D…!AQ…`)。組織 ID と `!` が目印。
-      .replace(/\b00D[A-Za-z0-9]{12,15}![A-Za-z0-9._=-]{20,}/g, '00D[REDACTED]')
-      /*
-       * 接頭辞の付かない旧 OpenAI 鍵 (`sk-` + 英数)。**上の規則より後に置く** ——
-       * `sk-ant-` / `sk-proj-` は既に伏せてあり、残りの `ant-[REDACTED]` は
-       * `[` で止まって 20 字に届かないので二重には当たらない。
-       *
-       * 20 字を要求するのは英文を巻き込まないため。`\b` は日本語の直後でも
-       * 立つ (CJK は `\w` ではない) ので、短くすると散文を伏せかねない。
-       * 実在の OpenAI 鍵は 40 字を超える。
-       */
-      .replace(/\bsk-[A-Za-z0-9_-]{20,}/g, 'sk-[REDACTED]')
-      .replace(/\bya29\.(?:[a-z]\.)?[A-Za-z0-9_-]{10,}/g, 'ya29.[REDACTED]')
-      // Atlassian API token (Jira/Confluence PAT) — always begins `ATATT`.
-      .replace(/\bATATT[A-Za-z0-9_=.-]{16,}/g, 'ATATT[REDACTED]')
-      /*
-       * Discord の incoming webhook (2026-10-15 · パス 522 · threat: T-047) —— 秘密は
-       * **path** に在る (`https://discord.com/api/webhooks/<id>/<token>`)。ヘッダ名・JSON の
-       * 項目名・クエリ引数・接頭辞のどの規則にも当たらない運び手で、`shopify/sync-to-discord`
-       * が受け取る `webhookUrl` そのもの。相手が本文に URL を反射すれば画面へ届く
-       * (`postExpectOk` は本文を `redactForMessage` に通してから文へ載せる)。
-       * id は数字、token は 60 字超の英数 `_-` なので 16 字以上で当てる。
-       */
-      .replace(/\bdiscord(?:app)?\.com\/api\/webhooks\/\d+\/[A-Za-z0-9_-]{16,}/g, 'discord.com/api/webhooks/[REDACTED]')
-      // The value sub-pattern `(?:[^"\\]|\\.)*` correctly skips over
-      // JSON-escaped characters (`\"`, `\\`, etc.) so a token rendered
-      // inside a nested JSON-in-JSON error response can't smuggle a
-      // closing-quote past the redactor. Without it, an upstream reply
-      // like `{"error_description":"Token \"ATATT3xFfGF0…\" rejected"}`
-      // would only redact `Token \` and leave the secret in the rest.
-      .replace(
-        /"((?:[a-z0-9]+[_-]?)?(?:token|secret|password|passwd|passphrase|cookie)|api_key|apikey|private[_-]?key|secret[_-]?key|set-cookie)"\s*:\s*"(?:[^"\\]|\\.)*"/gi,
-        '"$1":"[REDACTED]"',
-      )
-      /*
-       * **3 本目の運び手 —— URL のクエリ引数。** (2026-09-15 · パス 271)
-       *
-       * ここまでの規則が見ているのは 2 本だけである: **ヘッダ名**
-       * (`authorization:` / `api-key:` …) と **JSON の項目名**
-       * (`"access_token":` …)。このファイルの冒頭も、接頭辞を持たない鍵を
-       * 裸では伏せない理由として「ヘッダ名と JSON 項目名の規則が受け持つ」と
-       * 宣言している。**`?key=…` はそのどちらでもない。**
-       *
-       * 実測 (2026-09-15・`redactSecrets` を直接呼んだ):
-       *
-       *   ?api_key=Z…  ?apikey=Z…  ?access_token=Z…
-       *   ?token=Z…    ?auth=Z…    ?key=Z…          —— **6 形すべて素通り**
-       *
-       * このアプリがクエリに資格情報を載せる所は 1 つ在る ——
-       * `main/clients/youtube.ts` の `&key=${apiKey}` (Google API キー)。
-       * それが今日漏れないのは、**Google が鍵に `AIza` を付けているから**である
-       * (接頭辞の規則が拾う。実測で確認した)。つまり**運び手を知っていたからでは
-       * なく、発行元の親切に依っていた**。鍵の形が変わるか、接頭辞を持たない
-       * サービスが `?api_key=` を使い始めた日に、そこは黙って裸になる。
-       *
-       * **今日の実害は測って 0 だった** —— `src/` の例外文面で URL を
-       * 差し込んでいる所は 1 つも無く (`FetchError` は `ctx.serviceId` だけを
-       * 名乗る)、`new URL()` の失敗も `{ok:false, reason}` に畳まれる。
-       * これは**深さの守り**で、塞いだのは運び手である。
-       *
-       * 名前は残して値だけ伏せる (どの引数だったかは原因究明に要る)。
-       * 値の下限を 8 字にしてあるのは `?key=1` のような id を巻き添えに
-       * しないため。上限は置かない —— 区切り (`&` / 空白 / `#` / 引用符) で
-       * 止まるので、長い鍵でも尻尾が残らない。
-       *
-       * **`?sig=` / `?signature=` は入れていない。** 事前署名 URL の署名は
-       * 同じ class だが、このアプリは 1 つも作らない (実測 0 件) ので、
-       * 使っていない綴りを規則へ足すと「効いているように読める」だけになる
-       * (このファイルが 2026-08-23 に学んだこと)。
-       */
-      /*
-       * **運び手は「URL のクエリ」ではなく `name=value` の対である。**
-       * (2026-09-15 · パス 289 —— パス 271 の書き直し)
-       *
-       * パス 271 はこの規則を `([?&])` で始めた。`?` か `&` が**直前に在る**
-       * ことを要求するので、対が **1 つ目**のときは当たらない。
-       * `name=value` の対は 2 つの所に現れる:
-       *
-       *   ① URL のクエリ文字列        —— 1 つ目の前に `?` が在る ✅
-       *   ② `application/x-www-form-urlencoded` の本文 —— 1 つ目の前に何も無い ❌
-       *
-       * ② は **RFC 6749 §4.1.3 がトークン端点に指定している形**で、
-       * このファイルの隣 (`main/oauth.ts` の `serializeTokenBody` /
-       * `renderer/oauth/pkce.ts`) が実際に組み立てている。実測 (2026-09-15):
-       *
-       *   ?client_secret=…              伏せた
-       *   client_secret=…&grant_type=…  **素通り** (同じ名前・同じ運び手・位置だけ違う)
-       *   refresh_token=…&client_id=…   **素通り**
-       *   code_verifier=…               **素通り**
-       *   "body:\nclient_secret=…"       **素通り**
-       *
-       * つまり伏字の有効範囲が、**秘密の運び手ではない 1 文字**に依っていた。
-       *
-       * **パス 271 の対照がこの穴を「意図」として留めていた。**
-       * `['`?` も `&` も無い形は伏せない', 'token=abcdefghijklmnop in prose']`
-       * —— 過剰の対照の側に、理由「散文」で置かれていた。区切りが無いという
-       * 条件が指す母集団は 2 つ在り (散文と form 本文の 1 つ目)、
-       * **標本が散文しか見ていなかった**。パス 285 で名付けた
-       * 「同じ条件に 2 つの母集団が在り、標本が片方しか見ていない」の再来で、
-       * 今度は**自分が 1 パス前に書いた検査**である。
-       *
-       * 直し: 先頭を `(^|[?&\n])` にする —— 対が始まりうる境目は
-       * 「文字列の先頭」「`?`」「`&`」「改行」の 4 つ。`\s` まで広げると
-       * 散文 (`{"note":"see key=abcdefghij"}`) を巻き込むので広げない
-       * (実測して 1 件外れたので narrow に戻した)。`m` 旗ではなく `\n` を
-       * 文字クラスに入れてあるのは、`?`/`&` と同じく**区切りをそのまま
-       * 書き戻す**ためである。
-       *
-       * `code[_-]?verifier` を足した —— **両ビルドが実際に送っている**
-       * (`pkce.ts:241` / `main/oauth.ts:361`) し、`pkceSession.ts` の冒頭が
-       * RFC 7636 を引いて「秘密である」と述べている。逆に `assertion`
-       * (JWT bearer grant) は**このアプリが 1 度も出さない** (実測 0 件) ので
-       * 足さない —— このファイルが `?sig=` について書いた理由と同じで、
-       * 使っていない綴りは「効いているように読める」だけになる。
-       *
-       * 実害は今日も測って 0 である (資格情報を form 本文に載せる所は 0 件 ——
-       * slack / shopify→stripe / VirusTotal はどれも `Authorization` ヘッダ)。
-       * **これは深さの守りで、塞いだのは運び手の残り半分である。**
-       */
-      .replace(
-        /(^|[?&\n])((?:[a-z0-9]+[_-]){0,3}(?:api[_-]?key|access[_-]?token|refresh[_-]?token|client[_-]?secret|code[_-]?verifier|token|secret|password|auth|key))(=)([^&\s"'`#<>]{8,})/gi,
-        (_m, lead: string, name: string, eq: string) => `${lead}${name}${eq}[REDACTED]`,
-      )
-  );
+  let out = input;
+  // 資格情報ヘッダ (JSON / 引用符付きの形)。
+  //   1: 引用符 — 後方参照で閉じ側も同じ字に揃える (JSON の `"` でも、
+  //      Python 風の repr が返す `'` でも通る)。
+  //   2: ヘッダ名 — **長い名前を先**に並べる (`x-goog-api-key` が
+  //      `api-key` に食われないようにする)。
+  //   3: 名前と値のあいだ — **そのまま書き戻す**ので形が崩れない。
+  //   4: 認証方式 — あれば残す。「Bearer だったのか Basic だったのか」は
+  //      秘密ではなく、原因究明にはむしろ要る。
+  // 値は「エスケープ列か、閉じ引用符以外」。`\"` を跨げるので、入れ子の
+  // JSON に鍵を隠して閉じ引用符を先出しする細工が効かない。
+  // 方式のあとの空白は `\s` (1 個) で足りる — 2 個目以降は値側が飲み込む。
+  // `\s+` と書くと「1 個か 2 個以上か」で結果が変わらない = 確かめようの
+  // ない指定になる。
+  // 入れ子の JSON に入って引用符が `\"` になった形 (パス 526 · T-101)。下の規則は引用符が 1 字であることを
+  // 要求するので、失敗応答の本文に「転送した要求」を文字列で入れて返す Worker では
+  // `{"received":"{\"headers\":{\"hibp-api-key\":\"…\"}}"}` の値が素通りした。
+  // 逃がしの深さは 1〜8 (二重の入れ子まで) に限る —— 上限が無いと逆風の入力で二乗になる。
+  out = out.replace(/(\\{1,8}["'])((?:[a-z0-9]+-)*(?:authorization|api-?key|proxy-auth))\1(\s*[:,]\s*)\1(?:(Bearer|Basic|Token|Bot|OAuth|Digest|Negotiate)\s)?[\s\S]*?\1/gi, (_m, q: string, name: string, sep: string, scheme?: string) => hideValue(q + name + q, sep + q, scheme) + q);
+  out = out.replace(/(["'])((?:[a-z0-9]+-)*(?:authorization|api-?key|proxy-auth))\1(\s*[:,]\s*)\1(?:(Bearer|Basic|Token|Bot|OAuth|Digest|Negotiate)\s)?(?:\\.|(?!\1)[^\\])*\1/gi, (_m, q: string, name: string, sep: string, scheme?: string) => hideValue(q + name + q, sep + q, scheme) + q);
+  // 同じヘッダの、HTTP の線上の書き方 (`名前: 値`)。値は `\S+` —
+  // 空白まで**丸ごと**伏せる。引用符やカンマで区切ると、それを含む
+  // トークンの尻尾が残る。引用符付きの形は上の規則が先に処理して
+  // `"…":"[REDACTED]"` にしてあり、そこでは名前の直後がコロンではない
+  // ので、この規則が二度当たって閉じ引用符まで飲み込むことはない。
+  // **こちらには接頭辞のまとめ書きを置かない。** 引用符つきの規則 (上) は
+  // 名前が引用符と引用符に挟まれるので `hibp-` のような仕入れ先接頭辞まで
+  // 一致させる必要があるが、線上の形は `\b` があるので `hibp-api-key:` の
+  // `api-key` から一致でき、**手前の `hibp-` はそのまま残る**ので
+  // 仕上がりの文字列は同じになる。実測 (2026-08-23・10 例): 接頭辞あり/なしで
+  // 出力が違うものは 0、漏れの有無も一致。**書いても効かない指定は、
+  // 効いているように読める分だけ害がある** (変異検査でも生存し続ける)。
+  out = out.replace(/\b(authorization|api-?key|proxy-auth|shared-?secret|auth-token|subscription-key|client[_-]?secret|signing[_-]?secret|private[_-]?key|secret[_-]?key|(?:access|refresh|session|api|bearer)[_-]?token)(\s*:\s*)(?:(Bearer|Basic|Token|Bot|OAuth|Digest|Negotiate)\s+)?\S+/gi, (_m, name: string, sep: string, scheme?: string) => hideValue(name, sep, scheme));
+  // ヘッダ名が付いていない裸の `Bearer …` / `Basic …`。16 字以上に限る。
+  // 実在するトークンは十分長く、逆に "Basic authentication" (14 字) の
+  // ような**英文を伏せてしまうと、読めば分かるはずの 401 の説明が消える**。
+  // 区切り文字を値から除いてあるので、伏せたあとの `[REDACTED]` (10 字)
+  // に再び当たることもない (`[` も除外文字に入っている)。
+  // 本体は ASCII の token 字 (base64 / base64url / JWT / 英数の鍵) に限る (2026-10-28 · threat: T-212) ——
+  // 以前の `[^\s"'…]{16,}` は日本語も飲み、学術コーパスの「（Basic Books、1977年）…」を伏せていた
+  // (実測: 出荷コードの文字列リテラル 95,637 本のうち散文 2 本)。実在の資格情報は全部 ASCII なので
+  // 狭めても漏れは増えない。
+  out = out.replace(/\b(Bearer|Basic)\s+[A-Za-z0-9+/=._~-]{16,}/g, '$1 [REDACTED]');
+  // **cookie / set-cookie は行の残りを丸ごと伏せる** (2026-10-28 · threat: T-212)。値は `a=1; b=2` と
+  // 空白を含むので `\S+` では 2 つ目以降が残る。利用者が配る Worker は上流の応答ヘッダを封筒に
+  // そのまま写す (`docs/PROXY_EXAMPLE.md` の `outHeaders`) ので、`set-cookie` が失敗の文へ
+  // 流れる道は Worker の側に在る。
+  out = out.replace(/\b(set-cookie|cookie)(\s*:\s*)[^\r\n"'`]+/gi, (_m, name: string, sep: string) => name + sep + '[REDACTED]');
+  // URL の userinfo (`https://user:pass@host`)。利用者が打つ基底 URL や BYO proxy の URL が失敗の文へ
+  // 入るとき、パスワードの側だけ伏せる (利用者名は原因究明に要るので残す)。
+  out = out.replace(/(:\/\/[^\s/:@"'`]+:)[^\s/@"'`]+(@)/g, '$1[REDACTED]$2');
+  // **プラットフォーム自身のエラー文面 —— ヘッダ名を持たない引用。**
+  //
+  // 上の 3 規則はどれも「ヘッダ名が在る」か「方式が在る」ことに掛かって
+  // いる。このファイルの冒頭は、接頭辞を持たない 3 形 (Cloudflare の 40 字 /
+  // LINE / Discord) を裸では伏せない理由として
+  // **「ヘッダ名・JSON 項目名の規則が受け持つ」**と宣言している ——
+  // つまり安全の根拠は「その値は必ず名前と一緒に現れる」という前提である。
+  //
+  // その前提が崩れる経路が 1 本在った。値に HTTP ヘッダとして不正なバイト
+  // (LF / NUL) が混ざると `new Headers()` が投げ、undici の文面は
+  //
+  //   Headers.append: "<値>" is an invalid header value.
+  //
+  // ——**値だけを引用符で抱え、ヘッダ名を含まない**。`limitedFetch` は
+  // `fetch` の例外をそのまま再送出し、`main.ts` の `safeErrorMessage` を
+  // 通って画面の赤いバッジに出る。2026-09-14 の実測 (10 経路):
+  //
+  //   hibp-api-key / x-apikey  64 桁 16 進が**丸ごと**素通り (規則が 0 件当たる)
+  //   Authorization ×8         `Bearer [REDACTED]\n<後半>` —— 改行で分断された
+  //                            後半 20〜86 字が裸で残る (`{16,}` に届かないため)
+  //
+  // 名前が無いので名前には掛けられない。**引用の中身をまとめて伏せる** ——
+  // ただし方式 (Bearer / Basic) は秘密ではなく原因究明に要るので残す
+  // (上の規則と同じ判断)。
+  //
+  // 末尾の `value` を要求するので、**ヘッダ名が不正な場合の双子**
+  // (`"…" is an invalid header name.`) は伏せない —— あちらの引用は
+  // 名前であって秘密ではなく、伏せると原因が読めなくなる。
+  //
+  // 文面の頭ではなく**末尾の句**に掛けるのは、同じ句を使う別の入口
+  // (`Request constructor: …`) にも同じだけ効かせるためである。
+  out = out.replace(/"((?:Bearer|Basic)\s)?[^"]{16,}"(?=\s+is an invalid header value)/g, (_m, scheme?: string) => '"' + (scheme ?? '') + '[REDACTED]"');
+  // 発行元が分かる接頭辞。`AIza…` は Google の API キー — このアプリは
+  // YouTube で `?key=…` の形の URL に載せて送るので、URL ごとどこかへ
+  // 書き出されたときに備えてここでも拾う。
+  //
+  // **2026-08-29: 数えたら 5 形が抜けていた。**
+  //
+  // ここには `sk-ant-` が在って **OpenAI の `sk-` / `sk-proj-` が無かった**。
+  // 2026-08-23 に「`sk-ant-…` を含む例外がそのまま renderer へ届いていた」
+  // のを直したときに、**その事故の接頭辞だけを足して一般化しなかった**
+  // 跡である。同じ事故が OpenAI の鍵で起きれば、今日でもそのまま漏れる。
+  // Cloudflare の接頭辞つきトークン `cfut_` (ユーザー) / `cfat_` (アカウント) /
+  // `cfk_` (Global API Key) を足した (パス 524 · T-075)。以前の注記は
+  // 「接頭辞が無い」と書いていたが、新しい発行物は 40 字 + チェックサムの接頭辞つき。
+  //
+  // 実測して素通りを確認した形: `sk-proj-` / `sk-` / `sk_live_` /
+  // `rk_live_` / `shpat_`。このアプリはどれも預かる
+  // (OpenAI は 5 社の 1 つ、Stripe と Shopify はサービス一覧に在る)。
+  //
+  // 経路は塞がっていない —— `shared/ai/chat.ts` は失敗応答の本文を
+  // `redactForMessage(body, 200)` に通して画面へ出す。`compat`
+  // (LiteLLM / LM Studio / 自前サーバ) が本文に鍵を書き返せば、
+  // 伏字を通り抜けて表示される。
+  out = out.replace(/\b(sk-ant-|sk-proj-|ghp_|ghs_|ghu_|gho_|ghr_|github_pat_|xoxp-|xoxb-|xoxa-|secret_|ntn_|lin_api_|lin_oauth_|AIza|shpat_|shpss_|shpca_|sk_live_|sk_test_|rk_live_|rk_test_|whsec_|cfut_|cfat_|cfk_)[A-Za-z0-9_-]{8,}/g, '$1[REDACTED]');
+  // **Cursor の Admin API キー (`key_` + 16 進)。** (2026-10-13 · パス 516 · threat: T-021)
+  //
+  // `cursor` は `credentialUse.ts` で `fetch` (資格情報を預かる) で、
+  // `api/cursor.ts` が `Authorization: Bearer <token>` で送る。鍵の形は
+  // `types.test.ts` が `key_9f2c1a8e4b7d6c5f0a3e` を Cursor 風の TOKEN として
+  // 使っている (16 進) —— 発行元が分かる**接頭辞を持つ**形である。
+  //
+  // ところが `redactionCoverage.test.ts` の census は cursor を
+  // `header-only` に置き、標本を**実形でない** `'H'.repeat(40)` (接頭辞なし)
+  // にしていたので、「裸では伏せられなくて正しい」と主張して**穴を隠して
+  // いた**。実測 (直す前・実物の `redactSecrets`): `Bearer key_…` と
+  // `{"authorization":"Bearer key_…"}` は伏せるのに、JSON のエラー本文に
+  // **裸で**反射された `{"error":"Invalid API key: key_…"}` は素通りした。
+  // 乗っ取られた / 設定を誤った BYO proxy (`redact.ts` 冒頭が名指しする脅威)
+  // がこの形で反射すると、伏字を通り抜けて画面とバグ報告に出る
+  // (T-008 / パス 231 / 289 と同じ害 —— 発行元が分かる接頭辞を持つのに
+  // 裸で伏せていなかった)。
+  //
+  // **本体を 16 進に絞る** —— `key_` は `sk-ant-` / `ghp_` と違い散文に
+  // 現れる接頭辞 (`key_press_handler` / `primary_key_constraint`) なので、
+  // 上の `[A-Za-z0-9_-]` の一括規則に混ぜると散文を巻き込む。実物の鍵は
+  // 16 進なので `[0-9a-f]{16,}` に限れば、英単語の続く `key_` は当たらない
+  // (実測で `key_press_handler` ほか 9 形の散文が素通りすることを確認した)。
+  out = out.replace(/\bkey_[0-9a-f]{16,}/g, 'key_[REDACTED]');
+  // **預かる資格情報のうち、接頭辞を持つのに伏せていなかった形** (2026-10-16 · パス 525 · threat: T-095)。
+  // 実測 (裸で反射された値): OpenAI 互換の提供元の鍵 (`gsk_` Groq / `xai-` / `pplx-` / `hf_` /
+  // `nvapi-` / `fw_`・AI アシスタントの `compat` が預かる)・Slack の `xoxe-` `xoxc-` `xoxd-` `xoxs-` `xoxr-` と
+  // `xapp-`・Google の `GOCSPX-` (OAuth クライアントの秘密)・`npm_` が素通りした。
+  // **本体は 20 字以上に限る** —— `hf_` `fw_` `npm_` は識別子や散文に現れる (`hf_hub_download` は
+  // 本体 12 字)。実物の鍵は 24 字以上なので、短い散文は当たらない。
+  out = out.replace(/\b(gsk_|xai-|pplx-|hf_|nvapi-|fw_|GOCSPX-|xoxe-|xoxc-|xoxd-|xoxs-|xoxr-|xapp-|npm_)[A-Za-z0-9_%=+.-]{20,}/g, '$1[REDACTED]');
+  // **2026-09-14 (パス 231): 25 形のうち 14 形が裸で素通りしていた。**
+  //
+  // 2026-08-29 は「5 形が抜けていた」を直したが、抜けを**数える道**は
+  // 作らなかった (ヘッダ名の側には `scan-credential-headers.cjs` +
+  // `redactionCoverage.test.ts` の census が在るのに、接頭辞の側は
+  // 手書きの列挙のまま)。このアプリが預かる資格情報の形を 25 並べて
+  // 実物の `redactSecrets` に**裸で**通したところ:
+  //
+  //   伏せた 11 / 素通り 14
+  //
+  // **今日預かっている 23 サービス** (`SERVICE_CREDENTIAL_USE` が
+  // `fetch` / `action`) に効くのは、そのうち 4 家系である:
+  //
+  //   - `github_pat_…` —— **GitHub の細粒度 PAT**。今の GitHub が既定で
+  //     発行する形で、このファイルが例に使い画面の placeholder が
+  //     `ghp_…` と書いている当のサービスの、**今日もっとも普通に
+  //     使われる鍵**が伏字の外に在った。
+  //   - `ntn_…` —— Notion の新しい内部連携トークン (旧 `secret_` は在った)。
+  //   - `1//…`  —— Google の更新トークン (drive / calendar / gmail /
+  //     youtube。`ya29.` のアクセストークンは在った)。
+  //   - `eyJ….….…` —— JWT (microsoft-365 のアクセストークン)。
+  //
+  // 残り (Linear / Sentry / Dropbox / Asana / Stripe の whsec / Salesforce)
+  // は 2026-08 の監査で `none` に倒して**入力欄を閉じた**サービスだが、
+  // それ以前に保存された分は今も残りうる (`credentialUse.ts` が掃除の
+  // 導線を持っているのはそのためである) ので、同じ規則で伏せる。
+  //
+  // 上の一括規則に混ぜられるのは本体が `[A-Za-z0-9_-]` の形だけなので、
+  // 区切り記号を含む 6 形は下に分けて書く。
+  //
+  // 接頭辞を持たない 3 形 (Cloudflare の 40 字・LINE のチャネルトークン・
+  // Discord の bot トークン) は**模様で見分けられない** ——
+  // 伏せようとすれば同じ長さの英数字を何でも伏せることになる。
+  // あちらはヘッダ名・JSON 項目名の規則が受け持ち、
+  // `redactionCoverage.test.ts` がその「受け持てている」ことを測る。
+  // Sentry の `sntrys_…` は base64 なので `=` `+` `/` を含みうる。
+  // 本体を狭く書くと尻尾が残る (伏せたつもりで漏れる) ので広く取る。
+  out = out.replace(/\bsntrys_[A-Za-z0-9_=+/.-]{16,}/g, 'sntrys_[REDACTED]');
+  // Dropbox の短命トークン。実物は 130 字を超えるので 20 字以上に限れば
+  // 散文の「…sl.」には当たらない (直後に空白の無い長い英数字が要る)。
+  out = out.replace(/\bsl\.[A-Za-z0-9_-]{20,}/g, 'sl.[REDACTED]');
+  // JWT (`eyJ…` = base64url の `{"`)。Microsoft 365 / Salesforce の
+  // アクセストークンはこの形で、**ドット 2 つ**を要求するので
+  // 難読化した JSON の塊 (ドットを持たない) は巻き込まない。
+  out = out.replace(/\beyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}/g, 'eyJ[REDACTED]');
+  // Google の更新トークン (`1//0g…`)。`\b` の手前は非単語字なので
+  // `…/v1//foo` のような道 (`v` が単語字) には当たらない。
+  out = out.replace(/\b1\/\/[A-Za-z0-9_-]{20,}/g, '1//[REDACTED]');
+  // Asana の PAT (`1/<gid>:<32 桁の 16 進>`)。構造が細かいので誤爆しない。
+  out = out.replace(/\b1\/\d{10,}:[0-9a-f]{32}\b/g, '1/[REDACTED]');
+  // Salesforce のセッション ID (`00D…!AQ…`)。組織 ID と `!` が目印。
+  out = out.replace(/\b00D[A-Za-z0-9]{12,15}![A-Za-z0-9._=-]{20,}/g, '00D[REDACTED]');
+  // 接頭辞の付かない旧 OpenAI 鍵 (`sk-` + 英数)。**上の規則より後に置く** ——
+  // `sk-ant-` / `sk-proj-` は既に伏せてあり、残りの `ant-[REDACTED]` は
+  // `[` で止まって 20 字に届かないので二重には当たらない。
+  //
+  // 20 字を要求するのは英文を巻き込まないため。`\b` は日本語の直後でも
+  // 立つ (CJK は `\w` ではない) ので、短くすると散文を伏せかねない。
+  // 実在の OpenAI 鍵は 40 字を超える。
+  out = out.replace(/\bsk-[A-Za-z0-9_-]{20,}/g, 'sk-[REDACTED]');
+  out = out.replace(/\bya29\.(?:[a-z]\.)?[A-Za-z0-9_-]{10,}/g, 'ya29.[REDACTED]');
+  // Atlassian API token (Jira/Confluence PAT) — always begins `ATATT`.
+  out = out.replace(/\bATATT[A-Za-z0-9_=.-]{16,}/g, 'ATATT[REDACTED]');
+  // Discord の incoming webhook (2026-10-15 · パス 522 · threat: T-047) —— 秘密は
+  // **path** に在る (`https://discord.com/api/webhooks/<id>/<token>`)。ヘッダ名・JSON の
+  // 項目名・クエリ引数・接頭辞のどの規則にも当たらない運び手で、`shopify/sync-to-discord`
+  // が受け取る `webhookUrl` そのもの。相手が本文に URL を反射すれば画面へ届く
+  // (`postExpectOk` は本文を `redactForMessage` に通してから文へ載せる)。
+  // id は数字、token は 60 字超の英数 `_-` なので 16 字以上で当てる。
+  out = out.replace(/\bdiscord(?:app)?\.com\/api\/webhooks\/\d+\/[A-Za-z0-9_-]{16,}/g, 'discord.com/api/webhooks/[REDACTED]');
+  // The value sub-pattern `(?:[^"\\]|\\.)*` correctly skips over
+  // JSON-escaped characters (`\"`, `\\`, etc.) so a token rendered
+  // inside a nested JSON-in-JSON error response can't smuggle a
+  // closing-quote past the redactor. Without it, an upstream reply
+  // like `{"error_description":"Token \"ATATT3xFfGF0…\" rejected"}`
+  // would only redact `Token \` and leave the secret in the rest.
+  out = out.replace(/"((?:[a-z0-9]+[_-]?)?(?:token|secret|password|passwd|passphrase|cookie)|api_key|apikey|private[_-]?key|secret[_-]?key|set-cookie)"\s*:\s*"(?:[^"\\]|\\.)*"/gi, '"$1":"[REDACTED]"');
+  // **3 本目の運び手 —— URL のクエリ引数。** (2026-09-15 · パス 271)
+  //
+  // ここまでの規則が見ているのは 2 本だけである: **ヘッダ名**
+  // (`authorization:` / `api-key:` …) と **JSON の項目名**
+  // (`"access_token":` …)。このファイルの冒頭も、接頭辞を持たない鍵を
+  // 裸では伏せない理由として「ヘッダ名と JSON 項目名の規則が受け持つ」と
+  // 宣言している。**`?key=…` はそのどちらでもない。**
+  //
+  // 実測 (2026-09-15・`redactSecrets` を直接呼んだ):
+  //
+  //   ?api_key=Z…  ?apikey=Z…  ?access_token=Z…
+  //   ?token=Z…    ?auth=Z…    ?key=Z…          —— **6 形すべて素通り**
+  //
+  // このアプリがクエリに資格情報を載せる所は 1 つ在る ——
+  // `main/clients/youtube.ts` の `&key=${apiKey}` (Google API キー)。
+  // それが今日漏れないのは、**Google が鍵に `AIza` を付けているから**である
+  // (接頭辞の規則が拾う。実測で確認した)。つまり**運び手を知っていたからでは
+  // なく、発行元の親切に依っていた**。鍵の形が変わるか、接頭辞を持たない
+  // サービスが `?api_key=` を使い始めた日に、そこは黙って裸になる。
+  //
+  // **今日の実害は測って 0 だった** —— `src/` の例外文面で URL を
+  // 差し込んでいる所は 1 つも無く (`FetchError` は `ctx.serviceId` だけを
+  // 名乗る)、`new URL()` の失敗も `{ok:false, reason}` に畳まれる。
+  // これは**深さの守り**で、塞いだのは運び手である。
+  //
+  // 名前は残して値だけ伏せる (どの引数だったかは原因究明に要る)。
+  // 値の下限を 8 字にしてあるのは `?key=1` のような id を巻き添えに
+  // しないため。上限は置かない —— 区切り (`&` / 空白 / `#` / 引用符) で
+  // 止まるので、長い鍵でも尻尾が残らない。
+  //
+  // **`?sig=` / `?signature=` は入れていない。** 事前署名 URL の署名は
+  // 同じ class だが、このアプリは 1 つも作らない (実測 0 件) ので、
+  // 使っていない綴りを規則へ足すと「効いているように読める」だけになる
+  // (このファイルが 2026-08-23 に学んだこと)。
+  // **運び手は「URL のクエリ」ではなく `name=value` の対である。**
+  // (2026-09-15 · パス 289 —— パス 271 の書き直し)
+  //
+  // パス 271 はこの規則を `([?&])` で始めた。`?` か `&` が**直前に在る**
+  // ことを要求するので、対が **1 つ目**のときは当たらない。
+  // `name=value` の対は 2 つの所に現れる:
+  //
+  //   ① URL のクエリ文字列        —— 1 つ目の前に `?` が在る ✅
+  //   ② `application/x-www-form-urlencoded` の本文 —— 1 つ目の前に何も無い ❌
+  //
+  // ② は **RFC 6749 §4.1.3 がトークン端点に指定している形**で、
+  // このファイルの隣 (`main/oauth.ts` の `serializeTokenBody` /
+  // `renderer/oauth/pkce.ts`) が実際に組み立てている。実測 (2026-09-15):
+  //
+  //   ?client_secret=…              伏せた
+  //   client_secret=…&grant_type=…  **素通り** (同じ名前・同じ運び手・位置だけ違う)
+  //   refresh_token=…&client_id=…   **素通り**
+  //   code_verifier=…               **素通り**
+  //   "body:\nclient_secret=…"       **素通り**
+  //
+  // つまり伏字の有効範囲が、**秘密の運び手ではない 1 文字**に依っていた。
+  //
+  // **パス 271 の対照がこの穴を「意図」として留めていた。**
+  // `['`?` も `&` も無い形は伏せない', 'token=abcdefghijklmnop in prose']`
+  // —— 過剰の対照の側に、理由「散文」で置かれていた。区切りが無いという
+  // 条件が指す母集団は 2 つ在り (散文と form 本文の 1 つ目)、
+  // **標本が散文しか見ていなかった**。パス 285 で名付けた
+  // 「同じ条件に 2 つの母集団が在り、標本が片方しか見ていない」の再来で、
+  // 今度は**自分が 1 パス前に書いた検査**である。
+  //
+  // 直し: 先頭を `(^|[?&\n])` にする —— 対が始まりうる境目は
+  // 「文字列の先頭」「`?`」「`&`」「改行」の 4 つ。`\s` まで広げると
+  // 散文 (`{"note":"see key=abcdefghij"}`) を巻き込むので広げない
+  // (実測して 1 件外れたので narrow に戻した)。`m` 旗ではなく `\n` を
+  // 文字クラスに入れてあるのは、`?`/`&` と同じく**区切りをそのまま
+  // 書き戻す**ためである。
+  //
+  // `code[_-]?verifier` を足した —— **両ビルドが実際に送っている**
+  // (`pkce.ts:241` / `main/oauth.ts:361`) し、`pkceSession.ts` の冒頭が
+  // RFC 7636 を引いて「秘密である」と述べている。逆に `assertion`
+  // (JWT bearer grant) は**このアプリが 1 度も出さない** (実測 0 件) ので
+  // 足さない —— このファイルが `?sig=` について書いた理由と同じで、
+  // 使っていない綴りは「効いているように読める」だけになる。
+  //
+  // 実害は今日も測って 0 である (資格情報を form 本文に載せる所は 0 件 ——
+  // slack / shopify→stripe / VirusTotal はどれも `Authorization` ヘッダ)。
+  // **これは深さの守りで、塞いだのは運び手の残り半分である。**
+  out = out.replace(/(^|[?&\n])((?:[a-z0-9]+[_-]){0,3}(?:api[_-]?key|access[_-]?token|refresh[_-]?token|client[_-]?secret|code[_-]?verifier|token|secret|password|auth|key))(=)([^&\s"'`#<>]{8,})/gi, (_m, lead: string, name: string, eq: string) => lead + name + eq + '[REDACTED]');
+  return out;
 }
 
 /**
@@ -504,16 +457,14 @@ export const REDACT_SCAN_LIMIT = 8192;
  * `REDACT_SCAN_LIMIT` の説明にある。`lint:forbidden` が再発を落とす。
  */
 export function redactForMessage(input: string, maxChars: number): string {
-  /*
-   * **どちらの切り方も文字の境界で行う** (2026-09-13 · パス 196)。
-   * ここは `.slice()` を 2 回使っていた —— UTF-16 のコード単位で切るので、
-   * 境界がサロゲート対の真ん中に落ちると**孤立サロゲートが残る**。
-   * この関数は両ビルドの**すべてのエラー 1 行が通る唯一の漏斗**なので、
-   * 残った孤立サロゲートは画面 (DOM) と IPC と `JSON.stringify` へそのまま行き、
-   * UTF-8 を往復した所で `\uFFFD` に化ける。エラー文には利用者が貼った値
-   * (ファイル名・URL・作物名) が載りうるので、絵文字も JIS 2004 の漢字も来る。
-   * 上限そのものは変えていない (2000 字 / 走査 8192 字) —— 切り方だけを直した。
-   */
+  // **どちらの切り方も文字の境界で行う** (2026-09-13 · パス 196)。
+  // ここは `.slice()` を 2 回使っていた —— UTF-16 のコード単位で切るので、
+  // 境界がサロゲート対の真ん中に落ちると**孤立サロゲートが残る**。
+  // この関数は両ビルドの**すべてのエラー 1 行が通る唯一の漏斗**なので、
+  // 残った孤立サロゲートは画面 (DOM) と IPC と `JSON.stringify` へそのまま行き、
+  // UTF-8 を往復した所で `\uFFFD` に化ける。エラー文には利用者が貼った値
+  // (ファイル名・URL・作物名) が載りうるので、絵文字も JIS 2004 の漢字も来る。
+  // 上限そのものは変えていない (2000 字 / 走査 8192 字) —— 切り方だけを直した。
   return clampToCeiling(redactSecrets(clampToCeiling(input, REDACT_SCAN_LIMIT)), maxChars);
 }
 
