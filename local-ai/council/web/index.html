@@ -244,6 +244,22 @@ document.querySelectorAll('#cams button[data-cam]').forEach(b=>b.onclick=()=>set
 O.addEventListener('start',()=>{interacting=1;setRes(Math.min(baseRes,SOFT?.5:.75));camAnim=0;if(camMode==='all'||camMode==='hall'){camMode='free';setCam('free')}});
 O.addEventListener('end',()=>{interacting=performance.now()+350});
 R.domElement.addEventListener('wheel',()=>{interacting=performance.now()+350;setRes(Math.min(baseRes,SOFT?.5:.75))},{passive:true});
+// タッチ（指）: 1本指の上下スワイプで注視点との距離を変える。上で近づき、下で離れる。
+// 横が優勢なスワイプは従来の回転。2本指ピンチは OrbitControls（広げると近づく）。マウスは通さない。
+const fingers=new Map();let swipeMode=null,holdRotate=null;const SWIPE_K=0.0045,SLOP=8;
+function touchZoom(dy){if(!dy||O.enableZoom===false)return;const off=C.position.clone().sub(O.target),d=off.length();if(d<1e-4)return;
+  const n=Math.min(O.maxDistance,Math.max(O.minDistance,d*Math.exp(dy*SWIPE_K)));off.multiplyScalar(n/d);C.position.copy(O.target).add(off);camAnim=0}
+function armZoom(){holdRotate=O.enableRotate;O.enableRotate=false}
+// OrbitControls は pointerdown で pointermove を後から足す。戻すリスナをその後ろに付け直す。
+function restoreRotate(){if(holdRotate===null)return;O.enableRotate=holdRotate;holdRotate=null}
+R.domElement.addEventListener('pointerdown',e=>{if(e.pointerType!=='touch')return;fingers.set(e.pointerId,{x:e.clientX,y:e.clientY,x0:e.clientX,y0:e.clientY});if(fingers.size===1)swipeMode=null},true);
+R.domElement.addEventListener('pointerdown',e=>{if(e.pointerType!=='touch')return;R.domElement.removeEventListener('pointermove',restoreRotate);R.domElement.addEventListener('pointermove',restoreRotate)});
+R.domElement.addEventListener('pointermove',e=>{if(e.pointerType!=='touch')return;const p=fingers.get(e.pointerId);if(!p)return;
+  const x=e.clientX,y=e.clientY,dy=y-p.y;p.x=x;p.y=y;if(fingers.size!==1){swipeMode=null;return}
+  if(!swipeMode){const ax=x-p.x0,ay=y-p.y0;if(Math.hypot(ax,ay)<SLOP){armZoom();return}swipeMode=Math.abs(ay)>=Math.abs(ax)?'zoom':'rotate';if(swipeMode==='zoom'){armZoom();touchZoom(ay);return}}
+  if(swipeMode!=='zoom')return;armZoom();touchZoom(dy)},true);
+const dropFinger=e=>{if(e.pointerType!=='touch')return;fingers.delete(e.pointerId);if(!fingers.size)swipeMode=null};
+R.domElement.addEventListener('pointerup',dropFinger,true);R.domElement.addEventListener('pointercancel',dropFinger,true);
 // ---- 会話 ----
 function resolveAt(t){const m=t.match(/^[@＠](\S+)\s*/);if(!m||!ORG)return null;const q=m[1].toLowerCase();
   const p=ORG.people.find(p=>p.id.toLowerCase()===q||p.name.toLowerCase()===q)||ORG.people.find(p=>p.name.toLowerCase().includes(q));return p?{id:p.id,rest:t.slice(m[0].length)||t}:null}
