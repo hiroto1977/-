@@ -39,6 +39,7 @@ const EXPECTED = [
   'src/renderer/security/lockWorkspace.mamori',
   'src/shared/outboundContentGate.mamori',
   'src/shared/actionTier.mamori',
+  'src/shared/redact.mamori',
   'src/renderer/oauth/pkceSession.mamori',
   'src/shared/updateCheck.mamori',
   'src/main/clients/exportPaths.mamori',

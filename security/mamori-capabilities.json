@@ -218,6 +218,14 @@
       "gates": [],
       "sinks": []
     },
+    "src/shared/redact.mamori": {
+      "externals": [
+        "pure ./inputCeiling: clampToCeiling"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
     "src/shared/safeFilename.mamori": {
       "externals": [],
       "imports": [],
