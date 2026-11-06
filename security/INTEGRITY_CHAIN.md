@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 470
+- ブロック数: 472
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `e657dfe35a48df89afb703f34de96c38db0ac10eb5610bb0445ac506c893b070`
+- 末尾(tip)ハッシュ: `8de1ab4c9539d6c3ca5db007eff3505e3a56372a80617a49854955bc148dcaa7`
 - 保護対象: 198 ファイル
 
 ## ブロック
@@ -483,6 +483,8 @@
 | 467 | `cff0376c04496820` | `cd29d1ad73eb2963` | `34cf0ae4d454d945` | update integrity-chain.cjs,mamori-capabilities.json,actionTier.mamori,actionTier.ts |
 | 468 | `fc9d9a7d87c73614` | `34cf0ae4d454d945` | `9fce46f5898318bd` | update ast.ts,checker.ts,emit.ts,parser.ts |
 | 469 | `f98aed1aaccee036` | `9fce46f5898318bd` | `e657dfe35a48df89` | update integrity-chain.cjs,mamori-capabilities.json,redact.mamori,redact.ts |
+| 470 | `3a88f3692d85e0f4` | `e657dfe35a48df89` | `a13cfc129d3f399e` | update ast.ts,checker.ts,emit.ts,parser.ts |
+| 471 | `7ebc20a59cf12854` | `a13cfc129d3f399e` | `8de1ab4c9539d6c3` | update checker.ts |
 
 ## 保護対象ファイル
 

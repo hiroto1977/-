@@ -251,7 +251,7 @@ function item(it: Item, vettedLabels: readonly string[], preludeDone: { value: b
     case 'const':
       return [...docblock(it.doc), `${exp}const ${it.name}${it.type === null ? '' : `: ${it.type.text}`} = ${expr(it.init)};`];
     case 'fn': {
-      const sig = `${exp}${it.async ? 'async ' : ''}function ${it.name}(${it.params.map(param).join(', ')}): ${it.returns.text} {`;
+      const sig = `${exp}${it.async ? 'async ' : ''}function ${it.name}${it.typeParams.length === 0 ? '' : `<${it.typeParams.map((p) => p.name).join(', ')}>`}(${it.params.map(param).join(', ')}): ${it.returns.text} {`;
       return [...docblock(it.doc), sig, ...block(it.body, 1), '}'];
     }
   }
