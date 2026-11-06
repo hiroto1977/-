@@ -4,8 +4,12 @@
 意図規則（保存前・議題取り込みの共通）:
 文は「。」と改行で区切り、文の中は読点で節に分ける。
 節の中の禁止行為は、その節の残りで否定・破棄・無効・抵触・取消されていないときだけ命令とする。
-より後ろの節にある破棄・無効・抵触・取りやめ・中止、または同じ行為の否定は、それより前の命令を取り消す。
+より後ろの節にある抵触・取りやめ・中止、または同じ行為の否定は、それより前の命令を取り消す。
+破棄・無効は、その節が同じ行為・同じロック対象・「その／それ」を名指しするときだけ前の命令を取り消す。
+別件（椅子の購入、予算の解除など）の破棄は、前の解除命令を取り消さない。
 後ろに新しい命令があれば、それが勝つ。かぎ括弧の引用も、取り消されなければ命令として扱う。
+解除を遅らせる・保留する・延期する・先送りする・後回しにするは、解除の否定ではない。時期をずらした解除も命令である。
+「〜する口になる」は、その節では危険の説明であり命令ではない。
 """
 import datetime, os, re, unicodedata
 
@@ -22,13 +26,20 @@ _LLAMA_EXTRA = re.compile(
     r"|メモリセット[^。\n]{0,12}?(?:を実施|実施する|実施して|を実行|実行する|をロード|ロードする)"
     r"|(?<![0-9A-Za-z])7Bを(?:起動|再起動|立ち上げ|ロード|再開)"
     r"|(?<![0-9A-Za-z])7Bの固定停止を解除"
-    r"|(?<![0-9A-Za-z])7Bモデル[^。\n]{0,12}?(?:を)?(?:起動|再起動|立ち上げ|ロード)",
+    r"|(?<![0-9A-Za-z])7Bモデル[^。\n]{0,12}?(?:を)?(?:起動|再起動|立ち上げ|ロード)"
+    r"|停止解除(?:は|を)?[^、。\n]{0,20}?(?:まで(?:遅らせ|保留|延期|先送り|後回し|待って|待つ)|遅らせ|保留|延期|先送り|後回し)"
+    r"|[^、。\n]{0,24}?まで(?:の)?停止解除を(?:保留|延期|遅らせ|先送り|後回し|待って|待つ)"
+    r"|解除を[^、。\n]{0,24}?まで[^、。\n]{0,12}?(?:遅らせ|保留|延期|先送り|後回し|待って|待つ)"
+    r"|停止解除(?:する|を実施|を行う|を実行|して)",
     re.I)
 _CRYPTO_EXTRA = re.compile(
     r"(?:dataCrypto|データ暗号|IV|nonce|Nonce|ノンス)[^。\n]{0,32}?ロックを?解除"
     r"|(?:nonce|Nonce|ノンス)[^。\n]{0,18}?(?:を導入|導入する|導入します|導入して|導入を進|を再実装|再実装する(?!口)|を作り直|作り直す(?!な)|作り直して)"
     r"|IVを開き直|IV更新を再開|IVのロックを?解除|IVロック解除|IVを再開"
-    r"|ノンスを作り直|ノンスを導入",
+    r"|ノンスを作り直|ノンスを導入"
+    r"|(?:nonce|Nonce|ノンス)[^、。\n]{0,12}?(?:教育|周知|研修)[^、。\n]{0,10}?(?:を)?推進"
+    r"|(?:新たな|新しい|新規(?:の)?)[^、。\n]{0,10}?(?:nonce|Nonce|ノンス)[^、。\n]{0,10}?導入"
+    r"|getRandomValues[^、。\n]{0,24}?再実装",
     re.I)
 _EXTRAS = {"llama7B-stop": _LLAMA_EXTRA, "datacrypto-0927-cancel": _CRYPTO_EXTRA}
 _FAM = {"llama7B-stop": "llama", "datacrypto-0927-cancel": "crypto"}
@@ -37,8 +48,9 @@ def _negated(text, end):
     return re.match(r"[^。\n]{0,16}" + NEG, text[end:]) is not None or re.match(r"(さない|さず|せず)", text[end:]) is not None
 
 def normalize(text):
-    """全角英数・llama 7B の空白・日本語の間の空白を畳む。意味の違う 17B は残す。"""
+    """全角英数・llama 7B の空白・日本語の間の空白・見えない文字を畳む。意味の違う 17B は残す。"""
     t = unicodedata.normalize("NFKC", text or "")
+    t = re.sub(r"[\u200b\u200c\u200d\ufeff\u2060]", "", t)
     t = t.replace("\u3000", "")
     t = re.sub(r"[ \t]+", " ", t)
     t = re.sub(r"(?i)llama\s*7\s*b", "llama7B", t)
@@ -135,6 +147,10 @@ def _repudiated(sentence, start, end):
         return False
     if re.match(r"な(?!い|る|っ)", after):
         return True
+    if re.match(r"ない|ぬ(?!る)", after):
+        return True
+    if "口になる" in after or after.startswith("口です"):
+        return True
     if _negated(sentence, end):
         return True
     if re.search(r"してはならな|てはならな|てはいけな|できません", after[:24]):
@@ -164,22 +180,54 @@ def _hit(lock, frag, topic):
         return (f"固定議題:{lock['id']}", f"固定決定『{lock['title']}』に反する議題のため却下", frag)
     return (f"固定:{lock['id']}", f"CEOロック『{lock['title']}』を覆せません。解除は清継さんが locked_decisions.md の status を unlocked に変更したときだけ。理由: {lock['reason'][:100]}", frag)
 
+_ACT_TOKENS = ("memorieset", "メモリセット", "再起動", "立ち上げ", "ロード", "開き直", "導入", "解除", "起動", "推進", "再実装", "遅らせ", "保留", "延期", "先送り", "後回し")
+_FOREIGN_UNLOCK = r"予算|契約|警報|規制|制裁|凍結|入場|出資|担保|保険|免許|パスワード|アカウント|会員"
+_FOREIGN_SUBJECT = r"人事|予算|営業|採用|椅子|会議室|契約|警報"
+
+def _foreign_delayed(sent, start, frag):
+    """解除を…まで遅らせる、が予算・契約など別の解除ならロックの命令ではない。"""
+    if not frag.startswith("解除を"):
+        return False
+    if re.search(r"停止|ロック|固定|llama|7B|dataCrypto|データ暗号|IV|nonce|ノンス|暗号", frag, re.I):
+        return False
+    prefix = sent[max(0, start - 12):start]
+    return re.search(rf"(?:{_FOREIGN_UNLOCK})(の)?$", prefix) is not None
+
+def _bare_unlock_lock(sent, start, frag, default_id):
+    """『IVの解除を明日まで延期』は datacrypto 側の遅延解除。"""
+    if not frag.startswith("解除を"):
+        return default_id
+    prefix = sent[max(0, start - 18):start]
+    if re.search(r"停止|固定|llama|7B", prefix, re.I):
+        return default_id
+    if re.search(r"dataCrypto|データ暗号|IV|nonce|Nonce|ノンス|09:27|getRandomValues", prefix, re.I):
+        return "datacrypto-0927-cancel"
+    return default_id
+
 def _sentence_orders(sent, topic):
     orders = []
     seen = set()
-    for L in locks():
+    by_id = {L["id"]: L for L in locks()}
+    for L in by_id.values():
         for rx in _patterns(L, topic):
             for m in rx.finditer(sent):
+                frag = m.group(0)
+                if _foreign_delayed(sent, m.start(), frag):
+                    continue
                 if _repudiated(sent, m.start(), m.end()):
                     continue
-                key = (L["id"], m.start(), m.end())
+                lid = _bare_unlock_lock(sent, m.start(), frag, L["id"])
+                target = by_id.get(lid)
+                if target is None:
+                    continue
+                key = (target["id"], m.start(), m.end())
                 if key in seen:
                     continue
                 seen.add(key)
                 orders.append({
-                    "lid": L["id"], "fam": _FAM.get(L["id"], "other"),
-                    "start": m.start(), "end": m.end(), "frag": m.group(0),
-                    "hit": _hit(L, m.group(0), topic), "placed": False,
+                    "lid": target["id"], "fam": _FAM.get(target["id"], "other"),
+                    "start": m.start(), "end": m.end(), "frag": frag,
+                    "hit": _hit(target, frag, topic), "placed": False,
                 })
         if L["id"] == "llama7B-stop" and "即再起動" in sent and re.search(r"llama7B|固定停止|memorieset|メモリセット|(?<![0-9A-Za-z])7B", sent, re.I):
             for m in re.finditer("即再起動", sent):
@@ -195,43 +243,83 @@ def _sentence_orders(sent, topic):
             want.append("llama7B-stop")
         if re.search(r"dataCrypto|データ暗号|IV|nonce|Nonce|ノンス|09:27", sent, re.I):
             want.append("datacrypto-0927-cancel")
-        by_id = {L["id"]: L for L in locks()}
         for m in re.finditer(r"ロック[をは]?解除", sent):
             if _repudiated(sent, m.start(), m.end()):
                 continue
             for lid in want:
-                L = by_id.get(lid)
-                if not L:
+                target = by_id.get(lid)
+                if not target:
                     continue
                 orders.append({
                     "lid": lid, "fam": _FAM.get(lid, "other"), "start": m.start(), "end": m.end(),
-                    "frag": m.group(0), "hit": _hit(L, m.group(0), topic), "placed": False,
+                    "frag": m.group(0), "hit": _hit(target, m.group(0), topic), "placed": False,
                 })
     return orders
+
+def _act_token_hit(clause, frag):
+    for token in _ACT_TOKENS:
+        if token not in frag or token not in clause:
+            continue
+        if token == "解除" and re.search(rf"(?:{_FOREIGN_UNLOCK})(の)?解除", clause) and not re.search(r"停止|ロック|固定|llama|7B", clause, re.I):
+            continue
+        if token in ("推進", "導入", "再実装", "起動") and re.search(rf"(?:{_FOREIGN_SUBJECT})(の|を)?{token}", clause) and not re.search(r"nonce|ノンス|IV|dataCrypto|データ暗号|getRandomValues|llama|7B|停止", clause, re.I):
+            continue
+        return True
+    return False
+
+def _names_this_order(clause, order):
+    fam = order["fam"]
+    if fam == "llama" and re.search(r"llama|固定停止|停止解除|memorieset|メモリセット|7Bモデル|7Bを|7Bの固定|7Bの停止", clause, re.I):
+        return True
+    if fam == "crypto" and re.search(r"dataCrypto|データ暗号|IV|nonce|Nonce|ノンス|getRandomValues|09:27|暗号化", clause, re.I):
+        return True
+    if _act_token_hit(clause, order["frag"]):
+        return True
+    if re.search(r"(それ|その|上記|当該|先の|いずれも|すべて|全て)(は|を|も|の)*(破棄|無効|もの|命令|決定|解除|実施)", clause):
+        return True
+    return False
+
+def _discarding(clause):
+    if not re.search(r"破棄|無効", clause):
+        return False
+    if re.search(r"(破棄|無効)(ではない|でない|じゃない|しない)|(破棄|無効)(は|を|も)しない", clause):
+        return False
+    return True
+
+def _discard_targets(clause, order):
+    """この破棄・無効が、この命令を指しているか。別件の名指しは指していない。"""
+    if _names_this_order(clause, order):
+        return True
+    if re.search(r"[一-龥ぁ-んァ-ヶA-Za-z0-9]{1,16}(は|を|も)(破棄|無効)", clause):
+        return False
+    return True
 
 def _specific_cancel(clause, order):
     if not re.search(r"(しない|禁止|破棄|無効|中止|取りやめ|ならない|行わない)", clause):
         return False
     if re.search(r"(しない|禁止|破棄|無効)(ではない|でない)", clause):
         return False
-    frag = order["frag"]
-    for token in ("memorieset", "メモリセット", "再起動", "立ち上げ", "ロード", "開き直", "導入", "解除", "起動"):
-        if token in frag and token in clause:
-            return True
-    return False
+    return _act_token_hit(clause, order["frag"])
 
 def _cancels(clause, order):
     if re.search(r"(破棄|無効|取りやめ|中止|不採用)(しない|ではな|じゃない)", clause):
         return False
-    if re.search(r"無効", clause) and not re.search(r"無効(ではない|でない|じゃない)", clause):
+    if re.search(r"(破棄|無効)(は|を|も)しない", clause):
+        return False
+    if re.search(r"(取りやめ|中止|不採用|記録しない|に抵触|は抵触|抵触する|覆せな|覆せませ|してはならな|てはならな|てはいけな)", clause):
         return True
-    if re.search(r"(を破棄|は破棄|も破棄|取りやめ|中止|不採用|記録しない|に抵触|は抵触|抵触する|覆せな|覆せませ|してはならな|てはならな|てはいけな)", clause):
+    if _discarding(clause) and _discard_targets(clause, order):
         return True
     fam = order["fam"]
     if fam == "llama" and re.search(r"(停止のまま|起動しない|再開しない|ロックを維持|ロック維持|対象外)", clause):
         return True
-    if fam == "crypto" and re.search(r"(再着手しない|触らない|取消を維持|取り消したまま|実装しない|導入しない|開き直さない|更新しない)", clause):
+    if fam == "crypto" and re.search(r"(再着手しない|触らない|取消を維持|取り消したまま|実装しない|開き直さない|更新しない)", clause):
         return True
+    if fam == "crypto" and "導入しない" in clause:
+        foreign = re.search(rf"(?:{_FOREIGN_SUBJECT})(の|を)?導入しない", clause) and not re.search(
+            r"nonce|ノンス|IV|dataCrypto|データ暗号|getRandomValues|09:27", clause, re.I)
+        if not foreign:
+            return True
     return _specific_cancel(clause, order)
 
 def _collect(text, topic):
