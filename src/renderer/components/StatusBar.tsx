@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { professionalsForService } from '../data/businessTriage';
 import { describeOrigin, isRefreshable, originOf, staleDataNote } from '../../shared/dataOrigin';
 import { collectsCredential, credentialUseOf } from '../../shared/credentialUse';
-import type { ServiceId } from '../../preload/preload';
+import type { ServiceId } from '../../preload/bridgeTypes';
 import type { ErrorKind, Source, Status } from '../hooks/useServiceData';
 // 画像 URL のスキーム検証は 1 箇所だけに置く（2026-07 監査・多層防御）。
 // 3 つ目の呼び出し元が出たら components/ の共有ユーティリティへ切り出す。

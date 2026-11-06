@@ -61,6 +61,7 @@
     "src/main/stateFile.ts",
     "src/main/windowPrefs.ts",
     "src/preload/preload.ts",
+    "src/preload/preloadHost.ts",
     "src/renderer/components/serviceActionMachine.ts",
     "src/renderer/components/serviceActionUtils.ts",
     "src/renderer/components/useDialogFocus.ts",

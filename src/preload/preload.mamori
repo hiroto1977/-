@@ -1,0 +1,50 @@
+//! preload — **レンダラーが main へ触れる唯一の面** (window.serviceHub) (2026-11-06 · MG-046 · Mamori 0.23)。
+//!
+//! 橋は「レンダラーが main に対してできること」の定義そのものである。口は 15 本で、どれもチャンネル名を
+//! **字面で固定**し、呼び出し側にチャンネルを選ばせない。露出するのは関数だけ (状態や生の `ipcRenderer` は渡さない)。
+//!
+//! Mamori で書くので: `ipcRenderer` / `contextBridge` を直接は触れない (`electron` は能力モジュール)。
+//! 触れるのは host の薄い 2 つの口 (`invokeIpc` / `exposeBridge` · preloadHost.ts) だけで、能力の台帳に載る。
+//! 型は bridgeTypes.ts に置く (型引数つきの `type` が Mamori に無い)。
+
+use type { ServiceId, FetchResult, ActionResult, OsOpResult, TokenSaveResult, OAuthResult, StorageProtection } from "./bridgeTypes";
+use type { UpdateVerdict } from "../shared/updateCheck";
+use type { EraseAllReport } from "../shared/eraseReport";
+extern pure { invokeIpc, exposeBridge } from "./preloadHost";
+
+/// 取得 (`fetch:snapshot`)。結果の型は呼び出し側が選ぶ (既定は unknown)。
+fn fetchSnapshot<T>(serviceId: ServiceId) -> Promise<FetchResult<T>> {
+  return invokeIpc<FetchResult<T>>('fetch:snapshot', serviceId);
+}
+
+/// 書き込み (`action:invoke`)。
+fn invoke<T>(serviceId: ServiceId, action: string, payload: Record<string, unknown>) -> Promise<ActionResult<T>> {
+  return invokeIpc<ActionResult<T>>('action:invoke', serviceId, action, payload);
+}
+
+/// 橋の本体。口は 15 本で、チャンネル名は字面で固定する (呼び出し側に選ばせない)。
+/// 更新確認は取得もインストールもしない (知らせるだけ)。配色の追随 (パス 318) は解いた scheme と `--bg` の実値を main へ渡す。
+/// 保護状態の確認は秘密そのものを返さない。eraseAll は main がファイルと renderer の保存領域を消して再起動する (パス 137)。
+/// authorize の clientId はアプリ内かんたん接続用の任意指定 (環境変数未設定でも OAuth を実行できる)。
+const api = {
+  getVersion: () => invokeIpc<string>('app:getVersion'),
+  checkUpdate: () => invokeIpc<UpdateVerdict>('app:checkUpdate'),
+  openExternal: (url: string) => invokeIpc<void>('app:openExternal', url),
+  revealInFolder: (filePath: string) => invokeIpc<OsOpResult>('app:revealInFolder', filePath),
+  openPath: (filePath: string) => invokeIpc<OsOpResult>('app:openPath', filePath),
+  setColorScheme: (scheme: 'light' | 'dark', background: string) => invokeIpc<OsOpResult>('app:setColorScheme', scheme, background),
+  setToken: (serviceId: ServiceId, token: string) => invokeIpc<TokenSaveResult>('secrets:set', serviceId, token),
+  clearToken: (serviceId: ServiceId) => invokeIpc<OsOpResult>('secrets:clear', serviceId),
+  listConfigured: () => invokeIpc<ServiceId[]>('secrets:list'),
+  storageProtection: () => invokeIpc<StorageProtection>('secrets:protection'),
+  eraseAll: () => invokeIpc<EraseAllReport>('app:eraseAll'),
+  fetchSnapshot,
+  invoke,
+  oauthSupported: (serviceId: ServiceId) => invokeIpc<boolean>('oauth:isSupported', serviceId),
+  authorize: (serviceId: ServiceId, clientId?: string) => invokeIpc<OAuthResult>('oauth:authorize', serviceId, clientId),
+};
+
+/// 橋を `serviceHub` という名前で露出する。読み込んだ瞬間に 1 度だけ呼ばれる。
+export const bridgeExposed = exposeBridge('serviceHub', api);
+
+export type ServiceHubBridge = typeof api;

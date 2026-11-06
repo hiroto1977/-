@@ -59,6 +59,14 @@
       ],
       "sinks": []
     },
+    "src/preload/preload.mamori": {
+      "externals": [
+        "pure ./preloadHost: invokeIpc, exposeBridge"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
     "src/renderer/network/liveRead.mamori": {
       "externals": [
         "pure ../../shared/api/cursor: fetchCursorSnapshotWith, DEFAULT_USAGE_DAYS",

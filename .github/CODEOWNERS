@@ -129,6 +129,9 @@
 /src/main/userPresence.ts @hiroto1977
 /src/main/windowPrefs.ts @hiroto1977
 /src/preload/preload.ts @hiroto1977
+/src/preload/preload.mamori @hiroto1977
+/src/preload/preloadHost.ts @hiroto1977
+/src/preload/bridgeTypes.ts @hiroto1977
 /src/renderer/data/assistantMarkdown.ts @hiroto1977
 /src/renderer/data/localWrite.ts @hiroto1977
 /src/renderer/data/recordCipher.ts @hiroto1977
