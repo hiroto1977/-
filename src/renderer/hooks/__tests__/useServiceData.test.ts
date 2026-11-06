@@ -251,6 +251,42 @@ describe('useServiceData — refresh', () => {
     h.unmount();
   });
 
+  it('★ 失敗のあとに取り直すと、前の失敗の文面と種別は取得中から消える (成功しても残らない)', async () => {
+    let call = 0;
+    let release!: (r: FetchResult<unknown>) => void;
+    const second = new Promise<FetchResult<unknown>>((r) => { release = r; });
+    setHub({
+      listConfigured: async () => [],
+      fetchSnapshot: () => {
+        call += 1;
+        return call === 1
+          ? Promise.resolve({ ok: false, code: 'fetch_failed', message: 'boom 500' } as FetchResult<unknown>)
+          : second;
+      },
+    });
+    const h = setup('github', { v: 1 });
+    await h.mount();
+    await h.refresh();
+    expect(h.ref.current.errorMessage).toBe('boom 500');
+    expect(h.ref.current.errorKind).toBe('unknown');
+    // 取り直しを起動して解決させない: 取得中の画面に前の失敗の文面が残らないこと。
+    await act(async () => {
+      h.ref.current.refresh();
+      await Promise.resolve();
+    });
+    expect(h.ref.current.status).toBe('loading');
+    expect(h.ref.current.errorMessage).toBeUndefined();
+    expect(h.ref.current.errorKind).toBeUndefined();
+    await act(async () => {
+      release({ ok: true, data: { v: 9 } });
+      await flush(2);
+    });
+    expect(h.ref.current.status).toBe('idle');
+    expect(h.ref.current.errorMessage).toBeUndefined();
+    expect(h.ref.current.errorKind).toBeUndefined();
+    h.unmount();
+  });
+
   it('treats not_configured as an auth error and marks isConfigured=false', async () => {
     setHub(errHub('not_configured', 'no token'));
     const h = setup('github', { v: 1 });

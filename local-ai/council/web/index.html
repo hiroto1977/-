@@ -10,12 +10,14 @@ button{font:inherit;cursor:pointer;border:2px solid var(--wood2);background:#fff
 #cams{margin-top:6px;display:flex;gap:5px;flex-wrap:wrap}#cams button{font-size:12px;padding:2px 7px}
 #side{position:fixed;right:10px;top:10px;width:350px;max-height:calc(100vh - 200px);display:flex;flex-direction:column;background:var(--wood);border:6px solid var(--wood2);border-radius:12px;color:#fff8e7;box-shadow:0 4px 0 #0003}
 #tabs{display:flex;gap:4px;padding:6px}#tabs button{flex:1;font-size:12px;background:#a87a4c;color:#fff8e7;border-color:var(--wood2)}#tabs button.on{background:#fff3d6;color:var(--ink)}
-.card.reject{background:#fbe3e3;border:2px solid #c0392b}.card.lock{background:#e8eaf6;border:2px solid #3f51b5}.card.advice{background:#fde7dc;border:2px solid #d97757}.lab.t-相談役{background:#d97757;color:#fff}
+.card.reject{background:#fbe3e3;border:2px solid #c0392b}.card.lock{background:#e8eaf6;border:2px solid #3f51b5}.card.advice{background:#fde7dc;border:2px solid #d97757}.lab.t-議長{background:#1a237e;color:#fff;font-weight:bold}.lab.t-相談役{background:#d97757;color:#fff}
 #pane{overflow:auto;padding:0 8px 8px;font-size:12px}.card{background:#fff8e7;color:var(--ink);border-radius:8px;padding:6px 8px;margin:6px 0;white-space:pre-wrap;word-break:break-word}
 .card h4{margin:0 0 3px;font-size:12px}.grp{margin:8px 0 2px;font-weight:bold}.who{display:flex;align-items:center;gap:6px;padding:3px 6px;border-radius:6px;cursor:pointer}.who:hover{background:#fff2}
 .dot{width:10px;height:10px;border-radius:3px;display:inline-block;flex:none}.sm{font-size:11px;opacity:.8}
 #chat{position:fixed;left:10px;bottom:10px;width:min(470px,calc(100vw - 20px));background:var(--pane);border:3px solid #c9a46a;border-radius:14px;padding:8px;font-size:13px}
-#log{max-height:150px;overflow:auto;white-space:pre-wrap;word-break:break-word;margin-bottom:6px}#log .me{color:#1565c0}#form{display:flex;gap:5px}#to{max-width:40%}#msg{flex:1;min-width:0}
+#log{max-height:120px;overflow:auto;white-space:pre-wrap;word-break:break-word;margin-bottom:6px}#log .me{color:#1565c0}
+#meet{max-height:168px;overflow:auto;white-space:pre-wrap;word-break:break-word;margin:0 0 6px;padding-top:4px;border-top:1px dashed #c9a46a}#meet .h{font-weight:bold}#meet .fail{color:#8a3b12}#meet .sm{opacity:.75}
+#form{display:flex;gap:5px}#to{max-width:40%}#msg{flex:1;min-width:0}
 #mini{position:fixed;right:10px;bottom:10px;width:170px;height:170px;border-radius:50%;border:5px solid var(--wood2);background:#7cc95a;cursor:crosshair;box-shadow:0 3px 0 #0003}
 .lab{position:fixed;left:0;top:0;font-size:11px;background:#fff;border-radius:8px;padding:0 6px;pointer-events:none;white-space:nowrap;border:2px solid #888;will-change:transform}
 .lab.t-COO{border-color:#d4a106;font-weight:bold}.lab.t-役員{border-color:#8e24aa;font-weight:bold}.lab.t-秘書{border-color:#ec407a}.lab.t-管理職{border-color:#1e88e5}.lab.t-一般職{border-color:#43a047}.lab.me{border-color:#b8860b;font-weight:bold;background:#fff4c2}
@@ -24,20 +26,22 @@ button{font:inherit;cursor:pointer;border:2px solid var(--wood2);background:#fff
 .bub.think{color:#777;font-style:italic}
 #toggle{display:none}
 @media (max-width:760px){#side{left:10px;right:10px;width:auto;top:auto;bottom:150px;max-height:45vh;display:none}#side.open{display:flex}#toggle{display:inline-block}
- #mini{display:none}#hud{font-size:12px;padding:6px 9px}#log{max-height:80px}.bub{max-width:160px;-webkit-line-clamp:3}}
+ #mini{display:none}#hud{font-size:12px;padding:6px 9px}#log{max-height:72px}#meet{max-height:110px}.bub{max-width:160px;-webkit-line-clamp:3}}
 </style></head><body>
 <div id="hud"><div class="row"><span id="pill" class="pill">読み込み中</span><b>ローカルAI組織の村</b><span id="clock" class="sm"></span></div>
 <div id="topic"></div><div id="meta"></div>
 <div id="cams"><button data-cam="all">🗺 全体</button><button data-cam="hall">🏛 会議ホール</button><button data-cam="speaker">🎤 発言者を追う</button><button data-cam="free" class="on">✋ 自由</button><button id="toggle">📋 パネル</button></div></div>
 <div id="side"><div id="tabs"><button data-tab="board" class="on">📌 掲示板</button><button data-tab="people">👥 住民</button><button data-tab="prof">🪪 プロフィール</button></div><div id="pane"></div></div>
 <div id="labels"></div>
-<div id="chat"><div id="log"></div><div id="form"><select id="to"><option value="">組織全体へ（COOが会議）</option></select>
+<div id="chat"><div id="log"></div><div id="meet" hidden></div><div id="form"><select id="to"><option value="">組織全体へ（COOが会議）</option></select>
 <input id="msg" maxlength="500" placeholder="住民をクリック / 「@CFO 質問」"><button id="send">送信</button></div><div id="st" class="sm"></div></div>
 <canvas id="mini" width="170" height="170" title="ミニマップ（クリックで移動）"></canvas>
 <script type="importmap">{"imports":{"three":"/vendor/three.module.min.js"}}</script>
 <script type="module">
 import * as THREE from 'three';
 import {OrbitControls} from '/vendor/OrbitControls.js';
+import {applyServiceHealth} from '/serviceHealth.mjs';
+import {talkRequest,oneOutcome,groupAck,pendingNote,replyFailed} from '/villageTalk.mjs';
 const $=id=>document.getElementById(id),Q=new URLSearchParams(location.search);
 const Q0=new URLSearchParams(location.search);const R=new THREE.WebGLRenderer({antialias:devicePixelRatio<2});R.setPixelRatio(Math.min(devicePixelRatio,1.25));R.setSize(innerWidth,innerHeight);
 R.shadowMap.enabled=true;R.shadowMap.type=THREE.PCFShadowMap;document.body.prepend(R.domElement);
@@ -109,7 +113,7 @@ function house(id,x,z,s,roof){const ry=Math.atan2(-x,-z),pm=new THREE.Matrix4().
   for(const wx of [-1.05,1.05])sbox(.7*s,.6*s,.1,winMat,wx*s,1.5*s,-.3*s+.02,pm,0,false);sbox(1.2,.06,1.2,0xbcaaa4,0,.03,-.3*s+.7,pm,0,false);
   DOOR[id]=V(0,0).applyMatrix4(new THREE.Matrix4().compose(V(0,-.3*s+.9),_q.identity(),new THREE.Vector3(1,1,1)).premultiply(pm))}
 // ---- 住民 ----
-const TIERC={COO:0xffc107,役員:0x8e24aa,秘書:0xec407a,管理職:0x1e88e5,一般職:0x43a047,CEO:0xb8860b,相談役:0xd97757},HAIR=[0x3e2723,0x212121,0x6d4c41,0x8d6e63,0xbf8040,0x5d4037];
+const TIERC={COO:0xffc107,役員:0x8e24aa,秘書:0xec407a,管理職:0x1e88e5,一般職:0x43a047,CEO:0xb8860b,議長:0x1a237e,相談役:0xd97757},HAIR=[0x3e2723,0x212121,0x6d4c41,0x8d6e63,0xbf8040,0x5d4037];
 const agents={},labels=$('labels');let ORG=null,selected=null,follow=null,camMode='free';
 function hash(s){let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))|0;return Math.abs(h)}
 function mkChar(key,p,x,z,o={}){const g=new THREE.Group(),s=o.scale||1,dc=o.dept??0x90a4ae,hc=HAIR[hash(key)%HAIR.length];
@@ -125,6 +129,7 @@ function mkChar(key,p,x,z,o={}){const g=new THREE.Group(),s=o.scale||1,dc=o.dept
   if(t==='秘書'){box(.3,.25,.12,dc,-.18,1.1,-.1,head,false);box(.3,.25,.12,dc,.18,1.1,-.1,head,false);box(.14,.14,.14,0xffffff,0,1.1,-.1,head,false)}
   if(t==='管理職'){box(.98,.22,.98,0x1e88e5,0,1.12,0,head,false);box(.98,.06,.4,0x1565c0,0,1.02,.62,head,false);box(.15,.6,.05,dc,0,1.15,.31,g,false)}
   if(t==='一般職'){box(.2,.2,.02,0xffffff,.25,1.3,.31,g,false)}
+  if(t==='議長'){body.material=mat(0x1a237e);box(1.05,.28,.72,0x1a237e,0,1.42,0,g,false);box(.12,.5,.12,0x5d4037,.42,1.05,.16,g,false);box(.42,.1,.16,0x8d6e63,.22,1.32,.18,g,false)}
   if(t==='相談役'){body.material=mat(0xd97757);box(1.05,.5,.7,0xd97757,0,.75,0,g,false);for(const [sx,sy] of [[0,1.45],[0,1.15],[-.15,1.3],[.15,1.3]])box(.12,.12,.12,0xfff3e0,sx,sy,0,head,false);box(.5,.08,.5,0xffcc80,0,1.62,0,head,false);box(.6,.5,.05,0xfff3e0,0,1.15,.31,g,false)}
   if(t==='CEO'){box(.7,.25,.7,0xffd700,0,1.2,0,head,false);for(const [cx,cz] of [[-.25,-.25],[.25,-.25],[-.25,.25],[.25,.25]])box(.14,.2,.14,0xffd700,cx,1.4,cz,head,false)}
   g.scale.setScalar(s);g.position.set(x,0,z);g.userData.key=key;S.add(g);
@@ -149,9 +154,11 @@ function build(org,st){ORG=org;const ppl=org.people;
       const dp=desk(0,-1.6);const A=mkChar(m.id,m,dp.x,dp.z,{tier:'管理職',dept:dc,deptId:e.id,desk:true});A.face=ry+Math.PI;
       ppl.filter(p=>p.tier==='一般職'&&p.parent===m.id).forEach((s,k)=>{const sp=desk(k?2.2:-2.2,.6);const B=mkChar(s.id,s,sp.x,sp.z,{tier:'一般職',dept:dc,deptId:e.id,desk:true,scale:.88});B.face=ry+Math.PI})})});
   for(const p of ppl){const o=document.createElement('option');o.value=p.id;o.textContent=`${p.name}（${p.tier}）`;toSel.appendChild(o)}
-  const cl=ppl.find(p=>p.id==='claude');if(cl){const A=mkChar('claude',cl,-4.5,4.5,{tier:'相談役',deptId:'coo',label:'Claude（相談役）',scale:1.05});A.big=true}
+  const cl=ppl.find(p=>p.id==='claude');if(cl){const A=mkChar('claude',cl,-4.5,4.5,{tier:'議長',deptId:'coo',label:'Claude（議長）',scale:1.05});A.big=true}
+  const gk=ppl.find(p=>p.id==='grok');if(gk){const A=mkChar('grok',gk,4.5,4.5,{tier:'相談役',deptId:'coo',label:'Grok（相談役）',scale:1.05});A.big=true}
   mkChar('me',{name:org.user},0,2.8,{tier:'CEO',shirt:0xffffff,label:org.user+'（CEO・あなた）'});agents.me.g.rotation.y=Math.PI;
   Object.keys(st.services).forEach((s,i)=>mkChar('s:'+s,{name:s},-45+(i%4)*3.3,38+Math.floor(i/4)*3.5,{svc:true,scale:.7,shirt:0x90a4ae}));
+  applyServiceHealth(agents,st.services,mat);
   flush();renderPeople();function by(id){return ppl.find(p=>p.id===id)}}
 // ---- 1日のスケジュール（東京時間） ----
 const hourJST=()=>Q.has('hour')?+Q.get('hour'):+new Intl.DateTimeFormat('en',{hour:'numeric',hourCycle:'h23',timeZone:'Asia/Tokyo'}).format(new Date());
@@ -179,17 +186,21 @@ async function poll(){try{
   const st=await (await fetch('/api/state')).json();LAST=st;const meet=st.status.startsWith('会議中');
   $('pill').textContent=meet?'🔴 会議中':st.status.startsWith('エラー')?'エラー':'🟢 待機中';$('pill').className='pill'+(meet?' meet':st.status.startsWith('エラー')?' err':'');
   $('topic').textContent='議題: '+(st.topic||'（なし）').replace(/\s+/g,' ');
-  $('meta').textContent=`担当役員 ${(st.exec||'-').toUpperCase()} ・ 空きメモリ ${st.free_mb}MB ・ 更新 ${st.updated}`;
+  const wait=pendingNote(st.pending,meet);
+  $('meta').textContent=`担当役員 ${(st.exec||'-').toUpperCase()} ・ 空きメモリ ${st.free_mb}MB ・ 更新 ${st.updated}`+(wait?` ・ ${wait}`:'');
   if(tab==='board'&&renderBoard._n!==st.decisions.length+(st.decisions.at(-1)||'').length+'|'+(st.advice||[]).join('|').length+'|'+(st.guard?.rejected||[]).length+'|'+(st.locks?.items||[]).map(x=>x.id).join('|')){renderBoard._n=st.decisions.length+(st.decisions.at(-1)||'').length+'|'+(st.advice||[]).join('|').length+'|'+(st.guard?.rejected||[]).length+'|'+(st.locks?.items||[]).map(x=>x.id).join('|');renderBoard()}
   const lk=st.chat.length+'|'+(st.chat.at(-1)?.text||'');if($('log')._k!==lk){$('log')._k=lk;$('log').replaceChildren(...st.chat.map(c=>{const d=document.createElement('div');d.textContent=`${c.who}: ${c.text}`;if(c.who===st.user)d.className='me';return d}));$('log').scrollTop=1e9}
-  const ids=new Set(meet?st.transcript.map(t=>t.id):[]);if(meet&&st.speaking)ids.add(st.speaking);
+  const rows=Array.isArray(st.transcript)?st.transcript:[];
+  const ids=new Set(meet?rows.map(t=>t.id):[]);if(meet&&st.speaking)ids.add(st.speaking);
   for(const [k,A] of Object.entries(agents)){if(A.svc||k==='me')continue;A.speaking=ids.has(k)}
-  const last=st.transcript[st.transcript.length-1];
-  if(meet&&last&&agents[last.id]&&agents[last.id].lastSaid!==last.text){agents[last.id].lastSaid=last.text;say(agents[last.id],last.text.replace(/\s+/g,' '),25000)}
-  if(meet&&st.speaking&&agents[st.speaking]&&(!last||last.id!==st.speaking)){const A=agents[st.speaking];if(!(A.bubUntil>Date.now())||!A.bub.classList.contains('think'))say(A,'（考え中…）',8000,true)}
+  for(const line of rows){const A=agents[line.id];if(!A||A.svc||A.called>Date.now()||A.lastSaid===line.text)continue;A.lastSaid=line.text;say(A,String(line.text||'').replace(/\s+/g,' '),25000,replyFailed(line.model,line.text))}
+  const last=rows[rows.length-1];
+  if(meet&&st.speaking&&agents[st.speaking]&&(!last||last.id!==st.speaking)){const A=agents[st.speaking];if(!(A.called>Date.now())&&(!(A.bubUntil>Date.now())||!A.bub.classList.contains('think')))say(A,'（考え中…）',8000,true)}
+  renderMeeting(st);
   const mine=st.chat.filter(c=>c.who===st.user).pop();if(mine&&agents.me&&agents.me.lastSaid!==mine.text){agents.me.lastSaid=mine.text;say(agents.me,mine.text,15000)}
-  for(const [s,up] of Object.entries(st.services)){const A=agents['s:'+s];if(!A)continue;A.up=up;A.lab.classList.toggle('off',!up);A.lab.textContent=s+(up?'':' 💤');A.body.material=mat(up?0x90a4ae:0x616161)}
-  if(st.claude&&agents.claude){const cs=st.claude.status,t='Claude（相談役）'+(cs==='利用可'?'':'・'+cs);if(agents.claude.lab.textContent!==t)agents.claude.lab.textContent=t;agents.claude.lab.classList.toggle('off',cs!=='利用可')}
+  applyServiceHealth(agents,st.services,mat);
+  if(st.claude&&agents.claude){const cs=st.claude.status,t='Claude（議長）'+(cs==='利用可'?'':'・'+cs);if(agents.claude.lab.textContent!==t)agents.claude.lab.textContent=t;agents.claude.lab.classList.toggle('off',cs!=='利用可')}
+  if(agents.grok&&agents.grok.lab.textContent!=='Grok（相談役）')agents.grok.lab.textContent='Grok（相談役）'
   if(tab==='prof'&&selected&&Date.now()-profAt>15000)renderProfile(selected);
  }catch(e){$('pill').textContent='接続できません';$('pill').className='pill err';$('topic').textContent=String(e)}}
 // ---- パネル ----
@@ -200,9 +211,9 @@ function renderBoard(){if(!LAST)return;const adv=(LAST.advice||[]).slice().rever
   const rej=(LAST.guard?.rejected||[]).slice().reverse().map(r=>{const c=el('div','card reject');c.append(el('h4',null,'🛑 助言と食い違うため記録しなかった決定（'+r.at+(r.retry?'・やり直し後も不可':'・やり直し指示')+'）'),el('div',null,r.reasons.join('\n')+'\n\n'+r.decision));return c});
   pane.replaceChildren(...locks,...rej,...adv,...LAST.decisions.slice().reverse().map(d=>{const c=el('div','card'),[h,...rest]=d.split('\n');c.append(el('h4',null,h),el('div',null,rest.join('\n').trim()));return c}))}
 function renderPeople(){const grp={};for(const p of (ORG?.people||[]))(grp[p.tier]??=[]).push(p);const out=[];
-  for(const t of ['相談役','COO','役員','秘書','管理職','一般職']){if(!grp[t])continue;out.push(el('div','grp',`${t}（${grp[t].length}人）`));
+  for(const t of ['議長','相談役','COO','役員','秘書','管理職','一般職']){if(!grp[t])continue;out.push(el('div','grp',`${t}（${grp[t].length}人）`));
     for(const p of grp[t]){const r=el('div','who'),d=el('span','dot');d.style.background='#'+(DEPT[agents[p.id]?.dept]??0x90a4ae).toString(16).padStart(6,'0');
-      r.append(d,el('span',null,p.name),el('span','sm',p.dept.split('・')[0]+(agents[p.id]?.speaking?' 🎤':'')));r.onclick=()=>selectAgent(p.id,true);out.push(r)}}
+      r.append(d,el('span',null,p.name),el('span','sm',p.dept.split('・')[0]+(agents[p.id]?.speaking?' 🎤':'')));r.onclick=()=>{selectAgent(p.id,true);$('msg').focus()};out.push(r)}}
   pane.replaceChildren(...out)}
 async function renderProfile(id){profAt=Date.now();const A=agents[id];if(!A)return;let j={recent:[]};try{j=await (await fetch('/api/person/'+encodeURIComponent(id))).json()}catch{}
   if(tab!=='prof'||selected!==id)return;const c=el('div','card');
@@ -242,21 +253,48 @@ document.querySelectorAll('#cams button[data-cam]').forEach(b=>b.onclick=()=>set
 O.addEventListener('start',()=>{interacting=1;setRes(Math.min(baseRes,SOFT?.5:.75));camAnim=0;if(camMode==='all'||camMode==='hall'){camMode='free';setCam('free')}});
 O.addEventListener('end',()=>{interacting=performance.now()+350});
 R.domElement.addEventListener('wheel',()=>{interacting=performance.now()+350;setRes(Math.min(baseRes,SOFT?.5:.75))},{passive:true});
+// タッチ（指）: 1本指の上下スワイプで注視点との距離を変える。上で近づき、下で離れる。
+// 横が優勢なスワイプは従来の回転。2本指ピンチは OrbitControls（広げると近づく）。マウスは通さない。
+const fingers=new Map();let swipeMode=null,holdRotate=null;const SWIPE_K=0.0045,SLOP=8;
+function touchZoom(dy){if(!dy||O.enableZoom===false)return;const off=C.position.clone().sub(O.target),d=off.length();if(d<1e-4)return;
+  const n=Math.min(O.maxDistance,Math.max(O.minDistance,d*Math.exp(dy*SWIPE_K)));off.multiplyScalar(n/d);C.position.copy(O.target).add(off);camAnim=0}
+function armZoom(){holdRotate=O.enableRotate;O.enableRotate=false}
+// OrbitControls は pointerdown で pointermove を後から足す。戻すリスナをその後ろに付け直す。
+function restoreRotate(){if(holdRotate===null)return;O.enableRotate=holdRotate;holdRotate=null}
+R.domElement.addEventListener('pointerdown',e=>{if(e.pointerType!=='touch')return;fingers.set(e.pointerId,{x:e.clientX,y:e.clientY,x0:e.clientX,y0:e.clientY});if(fingers.size===1)swipeMode=null},true);
+R.domElement.addEventListener('pointerdown',e=>{if(e.pointerType!=='touch')return;R.domElement.removeEventListener('pointermove',restoreRotate);R.domElement.addEventListener('pointermove',restoreRotate)});
+R.domElement.addEventListener('pointermove',e=>{if(e.pointerType!=='touch')return;const p=fingers.get(e.pointerId);if(!p)return;
+  const x=e.clientX,y=e.clientY,dy=y-p.y;p.x=x;p.y=y;if(fingers.size!==1){swipeMode=null;return}
+  if(!swipeMode){const ax=x-p.x0,ay=y-p.y0;if(Math.hypot(ax,ay)<SLOP){armZoom();return}swipeMode=Math.abs(ay)>=Math.abs(ax)?'zoom':'rotate';if(swipeMode==='zoom'){armZoom();touchZoom(ay);return}}
+  if(swipeMode!=='zoom')return;armZoom();touchZoom(dy)},true);
+const dropFinger=e=>{if(e.pointerType!=='touch')return;fingers.delete(e.pointerId);if(!fingers.size)swipeMode=null};
+R.domElement.addEventListener('pointerup',dropFinger,true);R.domElement.addEventListener('pointercancel',dropFinger,true);
 // ---- 会話 ----
+function renderMeeting(st){const box=$('meet');if(!box)return;const rows=Array.isArray(st.transcript)?st.transcript:[];
+  const key=rows.map(r=>(r.id||'')+'|'+(r.role||'')+'|'+(r.text||'')).join('\n')+'|'+(st.topic||'');if(box._k===key)return;box._k=key;
+  if(!rows.length){box.hidden=true;box.replaceChildren();return}box.hidden=false;
+  const h=document.createElement('div');h.className='h';h.textContent='直近の会議';
+  const topic=document.createElement('div');topic.className='sm';topic.textContent=String(st.topic||'').replace(/\s+/g,' ').slice(0,180);
+  const lines=rows.map(r=>{const d=document.createElement('div');d.dataset.meetLine=r.id||'';if(replyFailed(r.model,r.text))d.className='fail';d.textContent=`${r.role||r.id||'発言'}: ${r.text||''}`;return d});
+  box.replaceChildren(h,topic,...lines);box.scrollTop=box.scrollHeight}
 function resolveAt(t){const m=t.match(/^[@＠](\S+)\s*/);if(!m||!ORG)return null;const q=m[1].toLowerCase();
   const p=ORG.people.find(p=>p.id.toLowerCase()===q||p.name.toLowerCase()===q)||ORG.people.find(p=>p.name.toLowerCase().includes(q));return p?{id:p.id,rest:t.slice(m[0].length)||t}:null}
 async function sendMsg(){let t=$('msg').value.trim();if(!t)return;const at=resolveAt(t);if(at){toSel.value=at.id;t=at.rest}const to=toSel.value;
-  if(to&&agents[to]){const A=agents[to];A.called=Date.now()+90000;say(A,'（はい、なんでしょう？）',90000,true)}
-  $('st').textContent=to?`${agents[to]?.p.name||to} が考えています…`:'送信中…';$('msg').value='';
-  try{const r=await fetch(to?'/api/chat':'/api/topic',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to,text:t})});const j=await r.json();
-    $('st').textContent=to?'':'COOに届けました（次の会議で取り上げます）';
-    if(to&&agents[j.id]){const A=agents[j.id];say(A,j.text.replace(/\s+/g,' '),25000);A.called=Date.now()+25000;if(selected===j.id&&tab==='prof')renderProfile(j.id)}poll()}catch(e){$('st').textContent='失敗: '+e}}
+  const req=talkRequest(to,t);if(!req)return;
+  if(req.mode==='one'&&agents[to]){const A=agents[to];A.called=Date.now()+90000;say(A,'（はい、なんでしょう？）',90000,true)}
+  $('st').textContent=req.mode==='one'?`${agents[to]?.p.name||to} が考えています…`:'組織全体へ送っています…';$('msg').value='';
+  try{const r=await fetch(req.path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(req.body)});
+    let j=null;try{j=await r.json()}catch{j=null}
+    if(req.mode==='one'){const o=oneOutcome(r.ok,j);$('st').textContent=o.status;const A=agents[o.id]||agents[to];
+      if(A){say(A,o.bubble,25000,o.failed);A.called=Date.now()+25000;if(selected===A.key&&tab==='prof')renderProfile(A.key)}}
+    else $('st').textContent=r.ok&&j&&j.ok?groupAck():'議題を届けられませんでした。村のサーバが断ったか、応答が空でした。';
+    poll()}catch{$('st').textContent='送れませんでした。村のサーバに届いていません。';if(req.mode==='one'&&agents[to])say(agents[to],'（送れませんでした）',20000,true)}}
 $('send').onclick=sendMsg;$('msg').onkeydown=e=>{if(e.key==='Enter'&&!e.isComposing)sendMsg()};
 const ray=new THREE.Raycaster(),mp=new THREE.Vector2();let downAt=null;
 R.domElement.addEventListener('pointerdown',e=>downAt=[e.clientX,e.clientY]);
 R.domElement.addEventListener('pointerup',e=>{if(!downAt||Math.hypot(e.clientX-downAt[0],e.clientY-downAt[1])>6)return;mp.set(e.clientX/innerWidth*2-1,-e.clientY/innerHeight*2+1);ray.setFromCamera(mp,C);
   const hit=ray.intersectObjects(Object.values(agents).filter(A=>!A.svc&&A.key!=='me'&&A.g.visible).map(A=>A.g),true)[0];
-  if(hit){let o=hit.object;while(o&&!o.userData.key)o=o.parent;if(o){const A=agents[o.userData.key];A.called=Date.now()+30000;say(A,'（呼ばれて振り向いた）',30000,true);selectAgent(A.key,false)}}});
+  if(hit){let o=hit.object;while(o&&!o.userData.key)o=o.parent;if(o){const A=agents[o.userData.key];A.called=Date.now()+30000;say(A,'（呼ばれて振り向いた）',30000,true);selectAgent(A.key,true);$('msg').focus()}}});
 // ---- ミニマップ ----
 const mini=$('mini'),mc=mini.getContext('2d');let MS=170/124;
 const toMini=(x,z)=>[85+x*MS,85+z*MS];

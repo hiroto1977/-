@@ -2,7 +2,7 @@
 """ローカルAI組織（村）デーモン。リポジトリのAI組織(registry.json)を縮小移植し、
 COO→役員→部長→担当→秘書 の順でローカルLLMが議論する（標準ライブラリのみ）。
 行動はこのディレクトリ内へのファイル書き込みと読み取り専用チェックに限定。外部送信・git操作はしない。"""
-import json, os, re, socket, shutil, subprocess, tempfile, threading, time, datetime, urllib.request, difflib, collections
+import json, os, re, shutil, subprocess, tempfile, threading, time, datetime, urllib.request, difflib, collections
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -18,14 +18,17 @@ PORT = int(os.environ.get("COUNCIL_PORT", "8091"))
 USER = os.environ.get("COUNCIL_USER", "清継")
 WEB = os.path.join(HERE, "web"); THREAD = os.path.join(HERE, "user_thread.md")
 ORG = json.load(open(os.path.join(HERE, "org.json"), encoding="utf-8"))
-# ---- 任意参加: Claude（相談役・議長）。Claude Code CLI（サブスクでログイン済み）がある時だけ実際に呼ぶ ----
+# ---- 議長は Claude だけ。相談役は Grok だけ（Claude を相談役にもクラウド助言にもしない） ----
 CLAUDE_ON = os.environ.get("COUNCIL_CLAUDE", "1") != "0"
 CLAUDE_MAX_HOUR = int(os.environ.get("COUNCIL_CLAUDE_MAX_PER_HOUR", "6"))
 CLAUDE_TIMEOUT = int(os.environ.get("COUNCIL_CLAUDE_TIMEOUT", "120"))
 CLAUDE_BIN = os.environ.get("COUNCIL_CLAUDE_BIN") or shutil.which("claude") or os.path.expanduser("~/.local/bin/claude")
 if CLAUDE_ON:
-    ORG["people"].append({"id": "claude", "tier": "相談役", "name": "Claude", "title": "Claude（相談役・議長）", "dept": "議長・相談役",
+    ORG["people"].append({"id": "claude", "tier": "議長", "name": "Claude", "title": "Claude（議長）", "dept": "議長",
                           "parent": "coo", "model": "claude"})
+if not any(p.get("id") == "grok" for p in ORG["people"]):
+    ORG["people"].append({"id": "grok", "tier": "相談役", "name": "Grok", "title": "Grok（相談役）", "dept": "相談役",
+                          "parent": "coo", "model": "grok"})
 P = {p["id"]: p for p in ORG["people"]}
 import company_link
 COMPANY = company_link.CompanyLink(log=lambda m: log_sys(m))
@@ -35,12 +38,17 @@ COMMON = (f"必ず自然な日本語（ひらがな・カタカナ・漢字）�
           "この組織はローカル環境内でファイルに提案を書くことしかできません。外部送信やgit pushは提案しないでください。"
           "他の人の発言をそのまま繰り返さず、自分の役割ならではの内容を書いてください。")
 STATE = {"status": "起動", "topic": "", "transcript": [], "updated": "", "speaking": None, "exec": None}
+# 健全性は待受ポートではなく、そのサービスが仕事を返す経路の HTTP 状態。
+# LiteLLM の /health/liveliness はプロセスが生きていれば 200 で、/v1/models が 500 でも村は稼働と出ていた。
+# 表示は /v1/models（llama-swap と同じ機能経路）が 2xx のときだけ稼働。鍵は LiteLLM にだけ付ける。
 SERVICES = {"Ollama": (11434, "/"), "llama1.5B": (8081, "/health"), "llama3B": (8085, "/health"), "llama7B": (8086, "/health"),
-            "LocalAI": (8084, "/readyz"), "llama-swap": (8090, "/v1/models"), "LiteLLM": (4000, "/health/liveliness"), "OpenWebUI": (8080, "/health")}
+            "LocalAI": (8084, "/readyz"), "llama-swap": (8090, "/v1/models"), "LiteLLM": (4000, "/v1/models"), "OpenWebUI": (8080, "/health")}
+PROBE_TIMEOUT = float(os.environ.get("COUNCIL_PROBE_TIMEOUT", "3"))
 PENDING, CHAT = [], []
 ADVICE = os.path.join(HERE, "advice_inbox.md")      # パートB: クラウドの助言（現在はGrokのみ）（追記された行を最優先の議題にする）
 import advice_guard
 import decision_lock
+import decision_loop
 GUARD_ON = os.environ.get("COUNCIL_ADVICE_GUARD", "1") != "0"          # 0で助言ガードを無効化
 GUARD_LLM = os.environ.get("COUNCIL_ADVICE_GUARD_LLM", "0") == "1"     # 1で検証モデル(fast)にも矛盾確認させる（メモリ節約のため既定は無効）
 LOCK_ON = os.environ.get("COUNCIL_DECISION_LOCK", "1") != "0"          # 0で固定決定ロックを無効化（通常は使わない）
@@ -89,10 +97,55 @@ def free_mb():
     for l in open("/proc/meminfo"):
         if l.startswith("MemAvailable"): return int(l.split()[1]) // 1024
     return 0
-def port_up(p):
+class _KeepStatus(urllib.request.HTTPErrorProcessor):
+    """3xx/4xx/5xx を例外や別URLへの追跡にせず、その応答の状態だけを返す。"""
+    def http_response(self, request, response):
+        return response
+    https_response = http_response
+_OPENER = urllib.request.build_opener(_KeepStatus)
+
+def probe_headers(name):
+    """認証が要る機能経路にだけ鍵を付ける。他のローカルサービスへは出さない。"""
+    if name == "LiteLLM" and KEY:
+        return {"Authorization": "Bearer " + KEY}
+    return {}
+
+def probe_ok(port, path, headers=None, timeout=None):
+    """127.0.0.1 の機能経路が 2xx のときだけ稼働。待受だけでは稼働にしない。"""
+    timeout = PROBE_TIMEOUT if timeout is None else timeout
+    if isinstance(port, bool) or not isinstance(port, int) or not 1 <= port <= 65535:
+        return False
+    if not isinstance(path, str) or not path.startswith("/") or "://" in path or re.search(r"[\x00-\x20]", path):
+        return False
+    req = urllib.request.Request(
+        f"http://127.0.0.1:{port}{path}",
+        headers={"Connection": "close", **(headers or {})},
+        method="GET")
     try:
-        with socket.create_connection(("127.0.0.1", p), 2): return True
-    except OSError: return False
+        with _OPENER.open(req, timeout=timeout) as r:
+            return 200 <= int(getattr(r, "status", 0)) < 300
+    except Exception:
+        return False
+
+def service_snapshot(timeout=None):
+    """名前 → 機能経路が 2xx か。並列。時間内に答えが無ければ停止。"""
+    timeout = PROBE_TIMEOUT if timeout is None else timeout
+    items = list(SERVICES.items())
+    result = {}
+    lock = threading.Lock()
+    def one(name, port, path):
+        ok = probe_ok(port, path, probe_headers(name), timeout)
+        with lock:
+            result[name] = True if ok is True else False
+    threads = []
+    for name, (port, path) in items:
+        t = threading.Thread(target=one, args=(name, port, path), daemon=True)
+        t.start(); threads.append(t)
+    end = time.monotonic() + timeout + 1.0
+    for t in threads:
+        t.join(max(0.0, end - time.monotonic()))
+    return {name: True if result.get(name) is True else False for name, _ in items}
+
 def log_sys(msg):
     with open(os.path.join(HERE, "logs", "system.log"), "a") as f: f.write(f"{now()} {msg}\n")
 
@@ -126,6 +179,8 @@ def ask(model, system, user):
     return "none", "（応答なし）"
 
 TIER_ROLE = {
+    "議長": "会議の議長として決定を検証します。相談役にはなりません。相談役の助言はGrokのものです。",
+    "相談役": "相談役はGrokです。クラウド助言として届いた内容だけを扱います。議長の講評はしません。",
     "COO": "全社を統括し、議題を適切な役員に割り振り、結論を短く報告にまとめます。細部より優先順位と責任の所在を示します。",
     "役員": "担当部門の最終責任者として、選択肢を比べて一つに決め、理由を一言添えます。曖昧な表現は避けます。",
     "秘書": "役員を補佐し、論点整理・ブリーフィング・リスクと抜けの洗い出しを担当します。箇条書きで簡潔に書きます。",
@@ -145,9 +200,10 @@ def persona(p):
     return s
 
 def health_summary():
+    up = service_snapshot()
     locked = decision_lock.forced_down_services() if LOCK_ON else set()
-    down = [n for n, (p, _) in SERVICES.items() if not port_up(p) and n not in locked]
-    fixed = [n for n in locked if not port_up(SERVICES[n][0])]
+    down = [n for n, ok in up.items() if not ok and n not in locked]
+    fixed = [n for n in locked if n in up and not up[n]]
     parts = [f"空きメモリ {free_mb()}MB"]
     if fixed: parts.append("固定停止: " + ", ".join(fixed))
     parts.append("停止中: " + (", ".join(down) if down else "なし"))
@@ -175,11 +231,11 @@ def _rstate():
     try: return json.load(open(RSTATE, encoding="utf-8"))
     except Exception: return {}
 def refuse_topic(src, topic):
-    """固定決定に反する議題なら理由リスト。CEOの明示的なロック解除指示は通す。"""
-    if not LOCK_ON: return []
-    if src == "CEOの指示" and re.search(r"ロック解除|固定決定を解除|status:\s*unlocked", topic or ""):
-        return []
-    return [f"{n}: {why}（該当: {frag}）" for n, why, frag in decision_lock.check_topic(topic)]
+    """固定決定または助言ガードに反する議題なら理由リスト。
+    status が locked の間は、CEOの丁寧な言い換えでも文言では解除できない。"""
+    if not LOCK_ON and not GUARD_ON: return []
+    raw = advice_guard.screen(topic, locks=LOCK_ON, guard=GUARD_ON)
+    return [f"{n}: {why}（該当: {frag}）" for n, why, frag in raw]
 
 def pick_topic():
     def accept(src, topic):
@@ -271,6 +327,7 @@ def session():
         return out
     with open(path, "a", encoding="utf-8") as f:
         f.write(f"\n## {now()} [{src}] {topic}\n\n担当: {ex['name']} → {mgr['name']} / {st['name']} / {sec['name']}（空きメモリ {free_mb()}MB）\n\n")
+    note_advisor(src, topic, hist)
     plan = [(P["coo"], f"COOとして議題を{ex['name']}（{ex['dept']}）に割り振る理由と論点を2〜3行で示してください。"),
             (mgr, "部長として具体的な対応案を1〜3個提案してください。"),
             (st, "担当者として、現場の観点から案の実現性と作業手順（読み取り専用の確認を含む）を述べてください。"),
@@ -296,8 +353,30 @@ def session():
             return
         summ = speak(P["coo"], f"COOとして、助言に沿って修正した決定を2〜3文でまとめ、CEOの{USER}さんへの報告文にしてください。")
     review = chair_review(topic, hist, dec)
-    with open(os.path.join(HERE, "decisions.md"), "a", encoding="utf-8") as f:
-        f.write(f"\n## {now()} [{src}] {topic[:120] if src != '継続議題' else topic.split(chr(10))[0][:60] + ' ' + topic.split(chr(10))[-1][:80]}\n\n担当役員: {ex['name']}\n\n{dec}\n\nCOO総括: {summ}\n" + (f"\n{review[0]}: {review[1]}\n" if review else ""))
+    review_text = review[1] if review else ""
+    topic_line = topic[:120] if src != "継続議題" else topic.split(chr(10))[0][:60] + " " + topic.split(chr(10))[-1][:80]
+    outcome, hits3 = decision_lock.commit_decision(
+        dec, decisions_path=os.path.join(HERE, "decisions.md"), rejected_path=REJECTED,
+        topic=topic_line, summary=summ, review=review_text, src=src, officer=ex["name"])
+    if outcome == "reject":
+        reasons = [f"{n}: {why}（該当: {frag}）" for n, why, frag in hits3]
+        rec = {"at": now(), "topic": topic.split(chr(10))[0][:80], "decision": dec[:400], "reasons": reasons, "retry": True}
+        REJ.append(rec)
+        log_sys("保存前検査: 決定を不記録（" + "; ".join(reasons)[:200] + "）")
+        try:
+            decision_loop.record_rejection(HERE, topic, dec, reasons)
+        except Exception as ex:  # noqa: 却下の本体は commit_decision が書いた。ログ失敗で会議を止めない
+            log_sys(f"閉ループ却下記録の失敗: {ex!r}")
+        STATE.update(status=f"待機中（決定は助言/固定決定と矛盾のため不記録・次回まで最大{INTERVAL}秒）", updated=now(), speaking=None)
+        return
+    # 本文は保存前検査が decisions.md に書いた。閉ループはマーカーを読み戻し、次のアクションを実行・検証する。
+    try:
+        block = "\n" + decision_loop.marker_for(decision_loop.decision_id(topic, dec)) + "\n"
+        loop_rec = decision_loop.accept_and_verify(root=HERE, topic=topic, decision=dec, block=block)
+        if loop_rec.get("status") != "verified":
+            log_sys(f"閉ループ未完了: {loop_rec.get('status')} {str(loop_rec.get('detail',''))[:180]}")
+    except Exception as ex:  # noqa: 会議スレッドは閉じない。記録の成否は execution_log が持つ
+        log_sys(f"閉ループ失敗: {ex!r}")
     if src == "CEOの指示": thread_log("COO", summ)
     STATE.update(status=f"待機中（次回まで最大{INTERVAL}秒）", updated=now(), speaking=None)
 
@@ -317,26 +396,99 @@ def guard_check(dec):
 def reject_log(topic, dec, hits, retry):
     rec = {"at": now(), "topic": topic.split(chr(10))[0][:80], "decision": dec[:400], "reasons": hits, "retry": retry}
     REJ.append(rec); log_sys(f"助言ガード: 決定を不記録（{'; '.join(hits)[:200]}）")
-    with open(REJECTED, "a", encoding="utf-8") as f:
-        f.write(f"\n## {rec['at']} {rec['topic']}（{'やり直し後も矛盾・不記録' if retry else 'やり直しを指示'}）\n\n理由:\n" + "".join(f"- {h}\n" for h in hits) + f"\n却下した決定:\n\n{dec}\n")
+    decision_lock.append_rejection(REJECTED, rec["topic"], dec, hits, retry=retry)
+    try:
+        decision_loop.record_rejection(HERE, topic, dec, hits)
+    except Exception as ex:  # noqa: 却下の本体は append_rejection。ログ失敗で会議を止めない
+        log_sys(f"閉ループ却下記録の失敗: {ex!r}")
+
+def advice_bodies():
+    """advice_inbox の助言本文。相談役 Grok の発言源。Claude はここへ書かない。"""
+    out = []
+    for l in advice_lines():
+        s = l.strip()
+        if not s.startswith("- "):
+            continue
+        body = s[2:].strip()
+        if body.startswith("[済]"):
+            body = body[len("[済]"):].strip()
+        if body:
+            out.append(body[:600])
+    return out
+
+def note_advisor(src, topic, hist):
+    """相談役が会議に出るときは Grok のクラウド助言だけ。ローカルモデルも Claude も話さない。"""
+    if src != "クラウドの助言（Grok）" or "grok" not in P:
+        return None
+    text = (topic or "").strip()[:1000]
+    if not text:
+        return None
+    who = "Grok（相談役）"
+    STATE["speaking"] = "grok"
+    STATE["transcript"].append({"id": "grok", "role": who, "model": "grok", "text": text})
+    STATE["updated"] = now(); tick()
+    hist.append(f"Grok: {text}")
+    remember("grok", "相談役の助言", text)
+    path = os.path.join(HERE, "logs", f"{datetime.date.today().isoformat()}.md")
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "a", encoding="utf-8") as f:
+        f.write(f"**{who}**（相談役・grok）\n\n{text}\n\n")
+    return text
 
 def chair_review(topic, hist, dec):
-    """役員決定のあとに議長が講評。Claudeが使えればClaude（1会議1回）、無理ならbalancedが代理議長。"""
-    instr = ("あなたはこの会議の議長・相談役です。役員の決定を検証し、誤り（事実誤認、Mamori言語の構文ミス、実行できない手順、安全上の問題）を具体的に指摘し、"
+    """役員決定のあとに議長が講評。Claudeが使えればClaude（1会議1回）。相談役にはしない。無理ならbalancedが代理議長。"""
+    instr = ("あなたはこの会議の議長です。相談役ではありません。相談役の助言はGrokのものです。"
+             "役員の決定を検証し、誤り（事実誤認、Mamori言語の構文ミス、実行できない手順、安全上の問題）を具体的に指摘し、"
              "最後に『改善案:』として簡潔な推奨を1〜3行で示してください。日本語で300字以内。ツールやファイル操作は使わず文章だけで答えてください。")
     ctx = "\n".join(hist[-6:])[:3500]
     STATE["speaking"] = "claude" if "claude" in P else "coo"
     out, m = claude_ask(instr, f"議題: {topic[:1200]}\n\n会議の発言:\n{ctx}\n\n役員の決定:\n{dec}\n\n議長としての講評:"), "claude"
     if out is None:
-        m, out = ask("balanced", "あなたはAI組織の会議の代理議長です。" + instr, f"議題: {topic[:1200]}\n\n会議の発言:\n{ctx}\n\n役員の決定:\n{dec}\n\n議長としての講評:")
+        m, out = ask("balanced", "あなたはAI組織の会議の代理議長です。相談役のふりはしないでください。" + instr, f"議題: {topic[:1200]}\n\n会議の発言:\n{ctx}\n\n役員の決定:\n{dec}\n\n議長としての講評:")
         m = f"{m}（代理議長）"
         if out == "（応答なし）": return None
     out = re.sub(r"^\**議長(としての)?講評\**[:：]\s*", "", out.strip())
-    pid = "claude" if "claude" in P else "coo"; who = "Claude（相談役）" if m == "claude" else "代理議長"
+    pid = "claude" if "claude" in P else "coo"
+    who = "Claude（議長）" if m == "claude" else "代理議長"
     STATE["transcript"].append({"id": pid, "role": who, "model": m, "text": out}); STATE["updated"] = now(); tick()
     remember(pid, "議長講評", out)
-    with open(os.path.join(HERE, "logs", f"{datetime.date.today().isoformat()}.md"), "a", encoding="utf-8") as f: f.write(f"**{who}**（{m}）\n\n{out}\n\n")
+    path = os.path.join(HERE, "logs", f"{datetime.date.today().isoformat()}.md")
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "a", encoding="utf-8") as f:
+        f.write(f"**{who}**（{'議長' if m == 'claude' else '代理議長'}・{m}）\n\n{out}\n\n")
     return f"議長講評（{who}・{m}）", out
+
+def chat_reply(p, text):
+    """1対1の返事。議長は Claude、相談役は Grok の助言文だけ。役を取り違えない。"""
+    hist = "\n".join(f"{c['who']}: {c['text']}" for c in CHAT[-6:])
+    if p["id"] == "grok":
+        advice = advice_bodies()
+        out = ("相談役Grokのクラウド助言です。" + advice[-1]) if advice else (
+            "相談役はGrokのみです。いまクラウド助言はありません。議長のClaudeは相談役の返事をしません。")
+        thread_log("Grok（相談役・grok）", out)
+        remember(p["id"], "清継さんへの返答", out)
+        return {"id": p["id"], "who": "Grok（相談役）", "model": "grok", "role": "相談役", "text": out}
+    if p["id"] == "claude":
+        system = (f"あなたはローカルAI組織の議長Claudeです。相談役ではありません。相談役はGrokだけです。"
+                  f"CEOの{USER}さんと1対1で話しています。日本語で300字以内、敬語で簡潔に答えてください。ツールは使えません。")
+        out = claude_ask(system, f"最近の会話:\n{hist[:2500]}\n\n{USER}さんの発言: {text}\n\nあなたの返答:")
+        if out is None:
+            m, out = ask("balanced", f"あなたはAI組織の代理議長です。相談役のふりはせず、{USER}さんに敬語で短く答えてください。",
+                         f"{USER}さんの発言: {text}\n\n返答:")
+            out = f"（Claudeは{claude_status()}のため代理議長で回答）" + out
+            m = f"{m}（代理議長）"
+            who, role = "代理議長", "代理議長"
+        else:
+            m, who, role = "claude", "Claude（議長）", "議長"
+        thread_log(f"{who}・{m}", out)
+        remember(p["id"], "清継さんへの返答", out)
+        return {"id": p["id"], "who": who, "model": m, "role": role, "text": out}
+    m, out = ask("balanced" if p["tier"] in ("COO", "役員") else p["model"],
+                 persona(p) + f"今は村でCEOの{USER}さんと1対1で話しています。役職の立場を保ち、{USER}さんに敬語で答えてください。",
+                 f"最近の会話:\n{hist}\n\n{USER}さんの発言: {text}\n\nあなた（{p['name']}）の返答:")
+    thread_log(f"{p['name']}（{m}）", out)
+    remember(p["id"], "清継さんへの返答", out)
+    return {"id": p["id"], "who": p["name"], "model": m, "text": out}
 
 def thread_log(who, text):
     CHAT.append({"who": who, "text": text, "at": now()}); del CHAT[:-30]
@@ -346,12 +498,13 @@ def api_state():
     dp = os.path.join(HERE, "decisions.md")
     decs = [d.strip() for d in open(dp, encoding="utf-8").read().split("\n## ") if d.strip()][-5:] if os.path.exists(dp) else []
     return {k: STATE[k] for k in ("status", "topic", "updated", "speaking", "exec")} | {"free_mb": free_mb(), "transcript": STATE["transcript"][-8:],
-            "services": {n: port_up(p) for n, (p, _) in SERVICES.items()}, "decisions": decs, "chat": CHAT[-12:], "user": USER,
+            "services": service_snapshot(), "decisions": decs, "chat": CHAT[-12:], "pending": len(PENDING), "user": USER,
             "claude": {"status": claude_status(), "calls_last_hour": sum(1 for t in _CL["calls"] if time.time() - t < 3600), "max_per_hour": CLAUDE_MAX_HOUR},
             "advice": [l.strip()[2:][:600] for l in advice_lines() if l.strip().startswith("- ")][-5:],
-            "company": {k: COMPANY.st.get(k) for k in ("linked", "name", "scale", "last_fetch", "error")},
+            "company": {k: COMPANY.st.get(k) for k in ("linked", "name", "scale", "last_fetch", "error", "demo", "fictional", "label")},
             "guard": {"on": GUARD_ON, "llm": GUARD_LLM, "rejected": list(REJ)[-5:]},
-            "locks": {"on": LOCK_ON, "items": decision_lock.public()}}
+            "locks": {"on": LOCK_ON, "items": decision_lock.public()},
+            "loop": decision_loop.public(HERE)}
 
 class H(BaseHTTPRequestHandler):
     def log_message(self, *a): pass
@@ -362,6 +515,7 @@ class H(BaseHTTPRequestHandler):
     def do_GET(self):
         path = self.path.split("?")[0]
         if path == "/api/state": return self.js(api_state())
+        if path == "/api/loop": return self.js(decision_loop.public(HERE))
         if path == "/api/company": return self.js(COMPANY.public())
         if path == "/api/org": return self.js({"people": [{k: p[k] for k in ("id", "tier", "name", "title", "dept", "parent", "model")} for p in ORG["people"]], "user": USER})
         if path.startswith("/api/person/"):
@@ -397,24 +551,10 @@ class H(BaseHTTPRequestHandler):
             p = P.get(str(d.get("to", "")))
             if not p: return self.send(b"unknown", "text/plain", 404)
             thread_log(USER, f"→{p['name']}: {text}")
-            hist = "\n".join(f"{c['who']}: {c['text']}" for c in CHAT[-6:])
-            if p["id"] == "claude":
-                out = claude_ask(f"あなたはローカルAI組織の相談役Claudeです。CEOの{USER}さんと1対1で話しています。日本語で300字以内、敬語で簡潔に答えてください。ツールは使えません。",
-                                 f"最近の会話:\n{hist[:2500]}\n\n{USER}さんの発言: {text}\n\nあなたの返答:")
-                if out is None:
-                    m, out = ask("balanced", f"あなたはAI組織の相談役（Claudeの代理）です。{USER}さんに敬語で短く答えてください。", f"{USER}さんの発言: {text}\n\n返答:")
-                    out = f"（Claudeは{claude_status()}のため代理で回答）" + out; m = f"{m}（代理）"
-                else: m = "claude"
-                thread_log(f"{p['name']}（{m}）", out); remember(p["id"], "清継さんへの返答", out)
-                return self.js({"id": p["id"], "who": p["name"], "model": m, "text": out})
-            m, out = ask("balanced" if p["tier"] in ("COO", "役員") else p["model"],
-                         persona(p) + f"今は村でCEOの{USER}さんと1対1で話しています。役職の立場を保ち、{USER}さんに敬語で答えてください。",
-                         f"最近の会話:\n{hist}\n\n{USER}さんの発言: {text}\n\nあなた（{p['name']}）の返答:")
-            thread_log(f"{p['name']}（{m}）", out); remember(p["id"], "清継さんへの返答", out)
-            return self.js({"id": p["id"], "who": p["name"], "model": m, "text": out})
+            return self.js(chat_reply(p, text))
         if self.path == "/api/topic":
             thread_log(USER, f"→組織全体（COO）: {text}"); PENDING.append(text)
-            return self.js({"ok": True})
+            return self.js({"ok": True, "pending": len(PENDING)})
         self.send(b"not found", "text/plain", 404)
 
 LAST_TICK = [time.monotonic()]; GEN = [0]
