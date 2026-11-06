@@ -870,12 +870,7 @@ async function villageSuite(browser) {
   const firstLines = await logLis.count();
   await page.waitForFunction((n) => document.querySelectorAll('[data-village-scenes] [role="log"] li').length > n, firstLines, { timeout: 20000 });
   ok(true, 'village: 時間が進むと掛け合いの記録が増える');
-  const chatInput = page.locator('input[aria-label="村への入力"]');
-  await chatInput.fill('消費税の申告について教えて');
-  await chatInput.press('Enter');
-  await page.waitForSelector('[data-village-flow] [data-flow-chip]', { timeout: 15000 });
-  const chipLabels = await page.locator('[data-village-flow] [data-flow-chip]').evaluateAll((els) => els.map((e) => e.getAttribute('data-flow-chip')));
-  ok(chipLabels[0] === '受付' && chipLabels.includes('作業中'), `village: 話しかけると受付から始まる流れの札が出る (${chipLabels.join('→')})`);
+  // 「💬 場面」を切る検査は、話しかける**前**に置く (頼んだ作業の流れは切っても必ず見せるので、後だと記録が増える)。
   const sceneToggle = page.locator('label', { hasText: '場面' }).locator('input');
   await sceneToggle.uncheck();
   await page.waitForTimeout(1600);
@@ -883,6 +878,12 @@ async function villageSuite(browser) {
   await page.waitForTimeout(4200);
   ok((await logLis.count()) === frozen, 'village: 「💬 場面」を切ると掛け合いは新しく増えない');
   await sceneToggle.check();
+  const chatInput = page.locator('input[aria-label="村への入力"]');
+  await chatInput.fill('消費税の申告について教えて');
+  await chatInput.press('Enter');
+  await page.waitForSelector('[data-village-flow] [data-flow-chip]', { timeout: 15000 });
+  const chipLabels = await page.locator('[data-village-flow] [data-flow-chip]').evaluateAll((els) => els.map((e) => e.getAttribute('data-flow-chip')));
+  ok(chipLabels[0] === '受付' && chipLabels.includes('作業中'), `village: 話しかけると受付から始まる流れの札が出る (${chipLabels.join('→')})`);
   // スマホ幅
   await page.setViewportSize({ width: 412, height: 915 });
   await page.waitForTimeout(400);
@@ -5536,8 +5537,8 @@ function installWaitMarginRecorder(browser) {
     ['opened', openedSuite, 135],
     ['tablet', tabletSuite, 2],
     // 村の殻 (唯一の入口) を実機で。旧画面のサイドバーの suite (shell) は 2026-11-04 に廃止
-    // 2026-11-06: 会話の場面 (掛け合い・受付→作業中の札・「💬 場面」) の 5 件 + スマホ幅の枠 1 件 = +6
-    ['village', villageSuite, 21],
+    // 2026-11-06: 会話の場面 (掛け合い 2・「💬 場面」・受付→作業中の札・スマホ幅の枠) = +5
+    ['village', villageSuite, 20],
   ];
   const SUITES = SUITE_TABLE.map(([name]) => name);
   /**

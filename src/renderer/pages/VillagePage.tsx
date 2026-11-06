@@ -1448,6 +1448,9 @@ const sceneLogStyle: React.CSSProperties = {
   color: 'var(--text)',
   border: '1px solid var(--border)',
   borderRadius: 8,
+  // 景色は草地に合わせて焦点の輪を濃い緑に固定している (sceneStyle)。この枠は配色の地 (--panel) の上なので、
+  // 輪も配色の標準へ戻す (ダークでは暗い地の上で濃い緑の輪が 1:1 になる)。
+  ['--focus-outline' as string]: 'var(--accent-strong)',
 };
 const sceneLogListStyle: React.CSSProperties = {
   listStyle: 'none',
