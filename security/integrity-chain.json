@@ -3996,6 +3996,14 @@
       "leafCount": 201,
       "note": "update integrity-chain.cjs",
       "hash": "72b60ad147d4852547607aeaaf8e6ffef6c90bbbd18b45192c48342c106d2007"
+    },
+    {
+      "index": 474,
+      "prevHash": "72b60ad147d4852547607aeaaf8e6ffef6c90bbbd18b45192c48342c106d2007",
+      "merkleRoot": "e1a99ed60d8f266ed6f6f7d9063a3b0804e758545bbdf39f6b3e8a3ccc333b1c",
+      "leafCount": 201,
+      "note": "update preloadHost.ts",
+      "hash": "ef5d7c3124b69095cb64cb76ac9673f3e977888bb3515308759ff256b6525394"
     }
   ],
   "tipManifest": {
@@ -4089,7 +4097,7 @@
     "src/preload/bridgeTypes.ts": "c45b51269fc6297e30b82c70d9eac2f92b25c6cd0d4b4b9a5993d3a1676d4b66",
     "src/preload/preload.mamori": "cd6c67aaa10f9ba68f56cd9dbbc393f6de1b9c5f983b15ba1a9cabbb4dff1651",
     "src/preload/preload.ts": "d8ad0ea1561ed8db531994e42f3a76b93ce0cf97e6c9bb0cd10b461deec5eed7",
-    "src/preload/preloadHost.ts": "89b2bf38d97a5bbcb89253b3f1b9382ff0bf050590c551deb6e82a7f41ad9571",
+    "src/preload/preloadHost.ts": "c2622f6493c10176ce3a3464bbbfa32cb8c593f395677c7bc09f2fe335696cfa",
     "src/renderer/components/VettedImg.tsx": "d55ffb54b76cafa0a314c2a6ac1704e9a7f35d4770bd159e0c489e6f272cda27",
     "src/renderer/components/VettedLink.tsx": "5907fa72ba0c5f5ba1d9035aa8be67f3e72d872c69b83a57d8a9862f0f73b7a1",
     "src/renderer/data/assistantMarkdown.ts": "681b935d47b7d0781581a542eb9bf225314484cb5665a1cccabb7e78a77759d0",
