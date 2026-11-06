@@ -141,6 +141,13 @@ describe('橋の 15 本 — 読み直して static 変異体を届かせる', ()
     expect(invocations[0]!.channel).toBe('app:getVersion');
   });
 
+  it('★ 露出したことは bridgeExposed (true) に残る —— 読み込みの時点で 1 度だけ露出する', async () => {
+    exposedName = '';
+    const mod = await rereadModule<typeof import('../preload')>(import.meta.url, '../preload');
+    expect(mod.bridgeExposed).toBe(true);
+    expect(exposedName).toBe('serviceHub');
+  });
+
   it('★ 露出する名前は serviceHub ただ 1 つ', async () => {
     await freshBridge();
     expect(exposedName).toBe('serviceHub');
