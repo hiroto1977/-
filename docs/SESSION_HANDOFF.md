@@ -7,6 +7,10 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-11-07) — ローカル LLM への引継ぎパック (`npm run local-llm:handoff`)
+
+利用者の依頼「今まで学習した全てを踏まえローカルLLMに引き継ぐ為のCodeを書いて」。**全部は渡せない** (実測: CLAUDE.md 約 1.1 MB・SESSION_HANDOFF 約 3.1 MB・REMAINING_WORK 約 3.1 MB・小さなモデルの文脈は 4K〜32K トークン) ので、手で選んだ核 (規律 8・約束 4・手順 8・罠 8) と実物から引く事実 (サービス数・ゲート数・法則 126 本・脅威台帳) を tier ごとの文字数予算へ優先順に詰める。節は丸ごと入るか丸ごと外れる。出力は `reports/local-llm-handoff/` (gitignore 済み) の SYSTEM.md / Modelfile / PLAYBOOK.md / laws-index.md / manifest.json。道具は `scripts/lib/local-llm-handoff.cjs` + `scripts/local-llm-handoff.cjs`、検査は `src/shared/__tests__/localLlmHandoff.test.ts` (18 件)、使い方は `docs/LOCAL_LLM_SETUP.md`。ネットワーク・子プロセス・`ollama create` の自動実行は無し。対照 5 方向 (サービス数の抽出を壊す / 予算を無視 / 不明を 0 へ / 出力先ガードを外す / 存在しないパスを道案内へ) はそれぞれ狙った検査だけが落ちた。限界: 核の本文は手で選んだ物なので、新しい規律を学んだら `CORE_RULES` に足す (数は書かない)。モデルの出来は利用者の機械でしか測れず、**ローカルモデルが実際にこの核を守るかは未測定**。
+
 ## 直近の作業 (2026-11-06) — 村の会話の場面と作業の様子 (villageScenes / conversationWork)
 
 利用者の依頼「会話シーン等も見れる様にして」(選択: 村人どうしの会話の場面・会話の中の作業の様子)。AI なし・外へ出さない・台帳の事実から組む決定論。
