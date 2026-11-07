@@ -1,36 +1,20 @@
-import { useEffect, useMemo, useState } from 'react';
-import { SERVICES, CATEGORY_LABEL, type ServiceCategory, type ServiceId } from './services';
-import { isServiceId } from '../shared/serviceId';
+import { useEffect, useState } from 'react';
 import { LockScreen } from './security/LockScreen';
+import { isBrowserBuild } from './runtimeMode';
 import { getVault } from './security/vault';
 import { startAutoLock } from './security/autoLock';
+import { lockWorkspace, startLockRelay, subscribeWorkspaceLocked } from './security/lockWorkspace';
+import { PageErrorBoundary } from './components/PageErrorBoundary';
+import { VillageShell } from './components/VillageShell';
 
 // True when the renderer is loaded in a plain browser (no Electron preload).
-// The Electron preload sets serviceHub via contextBridge — if `getVersion`
-// returns the web shim's '0.1.0-web', we're in the browser.
-async function detectBrowserMode(): Promise<boolean> {
-  try {
-    const v = await window.serviceHub.getVersion();
-    return v === '0.1.0-web';
-  } catch {
-    return false;
-  }
-}
-
-const COLLAPSED_BY_DEFAULT: ReadonlySet<ServiceCategory> = new Set<ServiceCategory>([
-  'tools',
-  'integrations',
-]);
+// The Electron preload sets serviceHub via contextBridge — the web shim adds the
+// `-web` suffix to the version it reports, and that suffix is what we look at
+// (2026-09-25 · パス 460: 版の数まで見ると、版を上げた日に実行形態が動く).
+/** 設定画面と同じ判定 (`runtimeMode.ts` · パス 137) —— 片方だけ写すとデスクトップ版に保管庫の操作が出る。 */
+const detectBrowserMode = isBrowserBuild;
 
 export function App() {
-  const [activeId, setActiveId] = useState<ServiceId>(SERVICES[0]!.id);
-  const [version, setVersion] = useState<string>('');
-  const [collapsed, setCollapsed] = useState<Record<ServiceCategory, boolean>>({
-    featured: false,
-    tools: COLLAPSED_BY_DEFAULT.has('tools'),
-    integrations: COLLAPSED_BY_DEFAULT.has('integrations'),
-  });
-
   // Browser-mode lock state. Initially `null` (unknown) — once we detect
   // browser mode and Vault status, switch to a concrete boolean.
   const [vaultUnlocked, setVaultUnlocked] = useState<boolean | null>(null);
@@ -38,142 +22,86 @@ export function App() {
 
   useEffect(() => {
     let cancelled = false;
-    detectBrowserMode().then(async (web) => {
-      if (cancelled) return;
-      setBrowserMode(web);
-      if (web) {
-        const s = await getVault().status();
-        if (!cancelled) setVaultUnlocked(s === 'unlocked');
-      } else {
-        setVaultUnlocked(true); // Electron: skip lock screen
-      }
-    });
+    detectBrowserMode()
+      .then(async (web) => {
+        if (cancelled) return;
+        setBrowserMode(web);
+        if (web) {
+          // status() が IndexedDB / WebCrypto エラーで reject しても、
+          // vaultUnlocked を null のままにすると「読み込み中…」で固まり
+          // ログイン画面が出なくなる。失敗時は locked 扱いで必ずロック画面を表示。
+          let unlocked = false;
+          try {
+            unlocked = (await getVault().status()) === 'unlocked';
+          } catch {
+            unlocked = false;
+          }
+          if (!cancelled) setVaultUnlocked(unlocked);
+        } else {
+          setVaultUnlocked(true); // Electron: skip lock screen
+        }
+      })
+      .catch(() => {
+        // detectBrowserMode 自体の想定外失敗でもハングさせない:
+        // ブラウザ扱い + locked でロック画面を表示する。
+        if (!cancelled) {
+          setBrowserMode(true);
+          setVaultUnlocked(false);
+        }
+      });
     return () => {
       cancelled = true;
     };
   }, []);
 
+  /*
+   * 施錠されたら**必ず**ロック画面へ戻す。
+   *
+   * `vaultUnlocked` はマウント時に 1 度だけ読むので、購読が無いと
+   * 「鍵は落ちたのに画面は解錠のまま」が残る —— 2026-09-06 実測で、
+   * 設定ページの「Vault を今すぐロック」がまさにそれだった (ページ局所の
+   * 状態を立てるだけで、ロック画面は出ず、他のページへ移れば見た目は解錠)。
+   *
+   * 解錠状態に**依らず**登録する (`vaultUnlocked` を依存に入れない) ——
+   * 施錠済みのタブが他のタブからの要求を受け取っても害はなく、
+   * 逆に「登録される前に施錠が来る」窓を作らない。
+   * Electron ではロック画面を使わないので購読も中継もしない。
+   */
+  useEffect(() => {
+    if (!browserMode) return undefined;
+    const unsubscribe = subscribeWorkspaceLocked(() => setVaultUnlocked(false));
+    const stopRelay = startLockRelay();
+    return () => {
+      unsubscribe();
+      stopRelay();
+    };
+  }, [browserMode]);
+
   // Start auto-lock when entering unlocked state (browser mode only).
   useEffect(() => {
     if (!browserMode || !vaultUnlocked) return undefined;
-    const handle = startAutoLock({
-      onLock: () => {
-        getVault().lock();
-        setVaultUnlocked(false);
-      },
-    });
+    // 鍵を落とすのと画面を施錠表示にするのは `lockWorkspace` の中で 1 つ。
+    // 並べて書くと鍵を落とす側だけ消えても全検査が緑のまま通る (実測)。
+    // 自動施錠は**この文脈だけ**を施錠する —— hidden は「同じアプリの別の
+    // タブへ移った」時でもあるので、配ると使用中のタブを施錠してしまう。
+    const handle = startAutoLock({ onLock: lockWorkspace });
     return () => handle.dispose();
   }, [browserMode, vaultUnlocked]);
-
-  useEffect(() => {
-    window.serviceHub?.getVersion().then(setVersion).catch(() => undefined);
-  }, []);
-
-  // Loosely-coupled navigation: any page can dispatch a CustomEvent to
-  // jump to another service without prop-drilling a callback. The Home
-  // page uses this for "細かく編集する" links.
-  useEffect(() => {
-    function onNavigate(e: Event) {
-      const target = (e as CustomEvent<unknown>).detail;
-      if (isServiceId(target)) {
-        setActiveId(target);
-        // Auto-expand the group containing the destination so it's visible.
-        const def = SERVICES.find((s) => s.id === target);
-        if (def) {
-          setCollapsed((prev) => ({ ...prev, [def.category]: false }));
-        }
-      }
-    }
-    window.addEventListener('servicehub:navigate', onNavigate);
-    return () => window.removeEventListener('servicehub:navigate', onNavigate);
-  }, []);
-
-  const grouped = useMemo(() => {
-    const out: Record<ServiceCategory, typeof SERVICES> = {
-      featured: [],
-      tools: [],
-      integrations: [],
-    };
-    for (const s of SERVICES) out[s.category].push(s);
-    return out;
-  }, []);
-
-  function toggle(cat: ServiceCategory) {
-    setCollapsed((prev) => ({ ...prev, [cat]: !prev[cat] }));
-  }
 
   // Browser-mode + locked → show only the lock screen.
   if (browserMode === null || vaultUnlocked === null) {
     return <div style={{ padding: 24, color: 'var(--text-mute)' }}>読み込み中…</div>;
   }
   if (browserMode && !vaultUnlocked) {
-    return <LockScreen onUnlocked={() => setVaultUnlocked(true)} />;
+    // ロック画面はアプリへの唯一の入口 —— ここが描画で投げると真っ白のまま何もできない。
+    // 画面の境界と同じ物で包む (「ホームへ戻る」は無い: 解錠前に戻る先が無い)。
+    return (
+      <PageErrorBoundary label="ロック画面">
+        <LockScreen onUnlocked={() => setVaultUnlocked(true)} />
+      </PageErrorBoundary>
+    );
   }
 
-  const active = SERVICES.find((s) => s.id === activeId)!;
-  const PageComponent = active.page;
-
-  return (
-    <div className="app">
-      <aside className="sidebar">
-        <div className="sidebar-header">Service Hub</div>
-        <nav className="sidebar-nav">
-          {(['featured', 'tools', 'integrations'] as const).map((cat) => {
-            const items = grouped[cat];
-            if (items.length === 0) return null;
-            const isCollapsed = collapsed[cat];
-            return (
-              <div key={cat} style={{ marginBottom: 6 }}>
-                <button
-                  type="button"
-                  onClick={() => toggle(cat)}
-                  style={{
-                    width: '100%',
-                    textAlign: 'left',
-                    padding: '4px 12px',
-                    background: 'transparent',
-                    border: 'none',
-                    color: 'var(--text-mute)',
-                    cursor: 'pointer',
-                    fontSize: 10,
-                    fontWeight: 700,
-                    textTransform: 'uppercase',
-                    letterSpacing: 1,
-                    marginTop: 4,
-                  }}
-                  aria-expanded={!isCollapsed}
-                >
-                  {isCollapsed ? '▶' : '▼'} {CATEGORY_LABEL[cat]} ({items.length})
-                </button>
-                {!isCollapsed &&
-                  items.map((service) => (
-                    <button
-                      key={service.id}
-                      className={`sidebar-item ${service.id === activeId ? 'active' : ''}`}
-                      data-service-id={service.id}
-                      onClick={() => setActiveId(service.id)}
-                    >
-                      <span className="icon">{service.icon}</span>
-                      <span>{service.label}</span>
-                    </button>
-                  ))}
-              </div>
-            );
-          })}
-        </nav>
-        <div className="sidebar-footer">
-          {version ? `v${version}` : 'v0.1.0'} · skeleton
-        </div>
-      </aside>
-      <main className="main">
-        <header className="topbar">
-          <h1>{active.label}</h1>
-          <span className="description">{active.description}</span>
-        </header>
-        <section className="content">
-          <PageComponent />
-        </section>
-      </main>
-    </div>
-  );
+  // 解錠の後は村の殻だけ (2026-11-04: 旧画面のサイドバーは廃止。各サービスの画面は村の役場の窓へ開く)。
+  return <VillageShell />;
 }

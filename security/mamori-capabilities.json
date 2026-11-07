@@ -1,0 +1,277 @@
+{
+  "modules": {
+    "src/main/clients/assistant.mamori": {
+      "externals": [
+        "pure ../../shared/ai/chat: runAiChat",
+        "pure ../../shared/ai/credentials: configForProvider, configuredProviders, parseAiCredentials, providerStatuses, resolveProvider",
+        "pure ../../shared/ai/localGateway: isLlmPurpose, runLocalThenAnthropic, runtimeEnv",
+        "pure ../../shared/ai/providers: AI_PROVIDERS",
+        "pure ../../shared/assistantLimits: MAX_ASSISTANT_CONTENT_CHARS, MAX_ASSISTANT_MESSAGES, MAX_ASSISTANT_SYSTEM_CHARS, inputTooLongMessage, latestTurnTooLong, MAX_ENSEMBLE_ERROR_CHARS, stripSmuggledChars",
+        "pure ../../shared/inputCeiling: clampToCeiling",
+        "pure ./types: redactForMessage"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/main/clients/exportPaths.mamori": {
+      "externals": [],
+      "imports": [
+        "node:fs: promises",
+        "node:os: default os",
+        "node:path: default path"
+      ],
+      "gates": [],
+      "sinks": []
+    },
+    "src/main/clients/exportSink.mamori": {
+      "externals": [
+        "sink ./exportPaths: writeExportFile"
+      ],
+      "imports": [],
+      "gates": [
+        "exportTargetOrNull -> VettedExportPath | null"
+      ],
+      "sinks": [
+        "writeExportFileVetted(VettedExportPath)"
+      ]
+    },
+    "src/main/osSinks.mamori": {
+      "externals": [
+        "sink electron: shell"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": [
+        "openExternalVetted(VettedExternalUrl)",
+        "openPathVetted(VettedShellPath)",
+        "showItemInFolderVetted(VettedShellPath)"
+      ]
+    },
+    "src/main/shellOpenGate.mamori": {
+      "externals": [],
+      "imports": [
+        "node:fs: promises",
+        "node:path: default path"
+      ],
+      "gates": [
+        "shellTargetOrNull -> Promise<VettedShellPath | null>"
+      ],
+      "sinks": []
+    },
+    "src/preload/preload.mamori": {
+      "externals": [
+        "pure ./preloadHost: invokeIpc, exposeBridge"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/renderer/network/liveRead.mamori": {
+      "externals": [
+        "pure ../../shared/api/cursor: fetchCursorSnapshotWith, DEFAULT_USAGE_DAYS",
+        "pure ../../shared/lookup: lookup"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/renderer/oauth/pkce.mamori": {
+      "externals": [
+        "pure ./pkceHost: hostBtoa, hostRandomBytes, hostSha256, hostNow, hostFetch, hostSearchParams, hostWithTimeout"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/renderer/oauth/pkceSession.mamori": {
+      "externals": [
+        "pure ../data/localWrite: describeStorageError",
+        "pure ./pkceSessionHost: hostSetItem, hostGetItem, hostRemoveItem"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/renderer/security/autoLock.mamori": {
+      "externals": [
+        "pure ./autoLockHost: hostSetTimeout, hostClearTimeout, hostHasDocument, hostHasWindow, hostDocumentHidden, hostDocumentTarget, hostWindowTarget",
+        "pure global: Date"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/renderer/security/dataCrypto.mamori": {
+      "externals": [
+        "pure ./dataCryptoHost: hostToBase64, hostFromBase64, hostRandomBytes, hostDeriveKey, hostEncrypt, hostDecrypt"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/renderer/security/egressStepUp.mamori": {
+      "externals": [],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/renderer/security/frameGuard.mamori": {
+      "externals": [
+        "pure ./frameGuardHost: hostWindow, hostStyle"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/renderer/security/lockWorkspace.mamori": {
+      "externals": [
+        "pure ./lockWorkspaceHost: hostSubscribe, hostUnsubscribe, hostListeners, hostResetListeners, hostSharedChannel, hostResetChannel, hostOnMessage",
+        "pure ./vault: getVault"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/renderer/vettedSinks.mamori": {
+      "externals": [
+        "sink global: window"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": [
+        "openWindowVetted(VettedExternalUrl)"
+      ]
+    },
+    "src/shared/actionTier.mamori": {
+      "externals": [],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/shared/aiEndpoint.mamori": {
+      "externals": [],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/shared/atlassianSite.mamori": {
+      "externals": [],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/shared/controlChars.mamori": {
+      "externals": [],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/shared/escape.mamori": {
+      "externals": [],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/shared/externalUrlGate.mamori": {
+      "externals": [],
+      "imports": [],
+      "gates": [
+        "externalUrlOrNull -> VettedExternalUrl | null"
+      ],
+      "sinks": []
+    },
+    "src/shared/imageUrlGate.mamori": {
+      "externals": [],
+      "imports": [],
+      "gates": [
+        "safeImageSrc -> VettedImageSrc | undefined",
+        "safeRemoteImageSrc -> VettedImageSrc | undefined"
+      ],
+      "sinks": []
+    },
+    "src/shared/ollamaCore.mamori": {
+      "externals": [
+        "pure ./ollamaHost: hostNewDate, hostParseUtc, hostField"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/shared/outboundContentGate.mamori": {
+      "externals": [
+        "pure ./actionTier: OUTBOUND_TIERS, tierOfAction",
+        "pure ./inputCeiling: moreThanChars",
+        "pure ./redact: redactSecrets"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/shared/privateTarget.mamori": {
+      "externals": [],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/shared/promptInjection.mamori": {
+      "externals": [],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/shared/proxyEndpoint.mamori": {
+      "externals": [],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/shared/redact.mamori": {
+      "externals": [
+        "pure ./inputCeiling: clampToCeiling"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/shared/safeFilename.mamori": {
+      "externals": [],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/shared/scanTarget.mamori": {
+      "externals": [
+        "pure ./inputCeiling: countChars, moreThanChars",
+        "pure ./scanTargetHost: hostSearchParams"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/shared/tokenInput.mamori": {
+      "externals": [],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/shared/updateCheck.mamori": {
+      "externals": [],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/shared/vaultToken.mamori": {
+      "externals": [],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/shared/vetted.mamori": {
+      "externals": [],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    }
+  }
+}

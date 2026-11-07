@@ -18,6 +18,8 @@ export default tseslint.config(
       'coverage/**',
       'tmp-screenshots/**',
       'business-hub.html',
+      // Three.js r160 の minify 済み同梱。1 行の生成物なので規則を当てない。
+      'local-ai/council/web/vendor/three.module.min.js',
     ],
   },
   js.configs.recommended,
@@ -62,8 +64,8 @@ export default tseslint.config(
     },
   },
   {
-    // Scripts (CommonJS) — relax rules.
-    files: ['scripts/**/*.cjs', '*.config.{js,cjs,mjs}'],
+    // Scripts / オーケストレーション (CommonJS) — relax rules.
+    files: ['scripts/**/*.cjs', 'orchestration/**/*.cjs', '*.config.{js,cjs,mjs}'],
     languageOptions: {
       globals: {
         require: 'readonly',
@@ -79,6 +81,35 @@ export default tseslint.config(
       '@typescript-eslint/no-require-imports': 'off',
       '@typescript-eslint/no-var-requires': 'off',
       'no-undef': 'off',
+    },
+  },
+  {
+    // Service Worker (PWA) — static asset served as-is. ServiceWorkerGlobalScope の
+    // グローバル (self / caches / fetch / clients) を許可する。
+    files: ['assets/sw.js'],
+    languageOptions: {
+      globals: {
+        self: 'readonly',
+        caches: 'readonly',
+        fetch: 'readonly',
+        clients: 'readonly',
+      },
+    },
+    rules: {
+      'no-undef': 'off',
+    },
+  },
+  {
+    // three.js r160 examples の OrbitControls。ブラウザの大域と upstream の this 別名はそのまま。
+    files: ['local-ai/council/web/vendor/OrbitControls.js'],
+    languageOptions: {
+      globals: {
+        window: 'readonly',
+        console: 'readonly',
+      },
+    },
+    rules: {
+      '@typescript-eslint/no-this-alias': 'off',
     },
   },
   {

@@ -1,0 +1,25 @@
+---
+title: "Amos Tversky"
+type: thinker
+person_key: "tversky|a"
+concept_count: 3
+tags:
+  - person
+  - index
+---
+
+# Amos Tversky
+
+> [!info] 人物索引 ・ 関連する検証済み概念 **3 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+
+## 学術概念（3件）
+- [[econ-endowment-effect-loss-aversion|保有効果と損失回避]] — 保有効果は、Thalerが1980年の論文で命名した現象で、ある財を実際に所有しただけでその財に対する主観的価値が上昇…
+- [[mgmt-behavioral-strategy-theory|行動戦略理論]] — 行動戦略理論（BehavioralStrategy）は、認知心理学・社会心理学の知見を戦略経営研究に統合する研究領域で…
+- [[mgmt-strategic-reference-point-theory|戦略的参照点理論]] — Fiegenbaum,Hart,andSchendel（1996）は、企業が自社のパフォーマンスを評価する際に用いる内…
+
+## 関連
+- 索引: [[人物索引]]
+- ヴォルト入口: [[Home]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

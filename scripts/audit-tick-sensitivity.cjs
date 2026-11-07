@@ -1,0 +1,275 @@
+#!/usr/bin/env node
+/*
+ * **「固定回数の待ち」に寄りかかっている検査の定期点検** (`npm run audit:tick-sensitivity`)。
+ *
+ * ## なぜ静的な走査では足りないか (2026-09-21 · パス 369 の実測)
+ *
+ * パス 368 で `fixedTickAssertionCensus.test.ts` を足したとき、私は
+ * 「固定回数で待ったあとに**文が出ている**と主張する検査」を綴りで数えた:
+ *
+ * ```js
+ * /expect\([^)]*textContent[^)]*\)\s*\.toContain\(/
+ * ```
+ *
+ * この針は**両方向に外れる**。実測で確かめた:
+ *
+ * - **見落とす側** —— `[^)]*` は入れ子の括弧を跨げないので
+ *   `expect(q.sheet()!.textContent).toContain(…)` が映らない。matcher も
+ *   `.toContain` しか見ないので `expect(el?.textContent).toBe('確認できません')` が映らない。
+ *   さらに文を読むのが helper (`q.header()` / `q.cell(…)`) なら、`expect(…)` の
+ *   行に `textContent` の綴りが 1 字も無い —— パス 334 が名指しした
+ *   「**その関数を使っている場所ではなく、同じことをしている場所を数えろ**」の形。
+ * - **数えすぎる側** —— 条件で待った**あと**の `expect(…).toContain(…)` は
+ *   もう当て物ではない。針はその区別ができないので、寄せ終えたファイルの
+ *   残りの主張を危険として数え続ける。実測: 針を広げると 30 ファイル / 116 か所
+ *   挙がるが、下の実測ではそのうち大半が **0 周でも通る**。
+ *
+ * ## だから振る舞いで測る
+ *
+ * 知りたいのは綴りではなく「**この主張は settle の回数に依っているか**」で、
+ * それは**回数を 0 にして走らせれば直接答えが出る**。この道具は
+ * 固定回数の `settle` を持つ検査すべての周回数を 0 に書き換え、走らせ、
+ * 必ず元へ戻し (`finally` + 内容の照合)、落ちたファイルを台帳と突き合わせる。
+ *
+ * パス 356 の `audit:survivors` と同じ家系である —— あちらは変異検査の
+ * 「生存」報告が偽だったことを、報告ではなく**当て直して**確かめた。
+ *
+ * ## なぜ CI で走らせないか
+ *
+ * ① 判定のためにソースを書き換えるので、他の作業と同時に走らせられない。
+ * ② 落ちること自体は欠陥ではない —— IndexedDB の往復を待つ `expect(await stored())`
+ *    や要素の在否 `not.toBeNull()` は**回数に依って当然**で、条件で待つ形に
+ *    置き換える価値があるとは限らない。判断は台帳の `why` が持つ。
+ * `audit:floors` / `audit:survivors` / `audit:regex-poly` と同じ**定期点検の道具**。
+ * 台帳の形は `src/renderer/__tests__/tickSensitivityLedger.test.ts` が毎回の
+ * `npm test` で見る。
+ */
+
+const fs = require('node:fs');
+const os = require('node:os');
+const path = require('node:path');
+const cp = require('node:child_process');
+
+const REPO = path.join(__dirname, '..');
+
+/** 固定回数の待ち (`for (let i = 0; i < N; i += 1) { … setTimeout … }`)。 */
+const TICK_LOOP = /for \(let (\w+) = 0; \1 < (\d+); \1 \+= 1\)/g;
+/** その回数が「待ち」であることの印 —— 近くに `setTimeout` が在る。 */
+const IS_SETTLE = /for \(let \w+ = 0; \w+ < \d+; \w+ \+= 1\)[\s\S]{0,200}?setTimeout/;
+
+/** 追跡されている jsdom 検査のうち、固定回数の待ちを持つ物。 */
+function collect() {
+  // 引数は配列で渡す (**シェルを経由しない**)。母集団は git に聞く —— 無視の規則を
+  // 書き写すと生成物を拾い、未追跡を落とすと「手元では緑・CI では赤」になる (パス 342)。
+  const out = cp.execFileSync('git', ['ls-files', 'src/**/__tests__/*.test.ts'], {
+    cwd: REPO, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024,
+  });
+  return out.split('\n').filter(Boolean).filter((f) => {
+    const src = fs.readFileSync(path.join(REPO, f), 'utf8');
+    return IS_SETTLE.test(src);
+  });
+}
+
+/** 周回数を 0 にした写し。変わらなければ `null`。 */
+function zeroTicks(src) {
+  const out = src.replace(TICK_LOOP, (m, v) => `for (let ${v} = 0; ${v} < 0; ${v} += 1)`);
+  return out === src ? null : out;
+}
+
+/**
+ * **0 周でも通らなかったファイルと、その理由** (2026-09-21 · パス 369 実測)。
+ *
+ * 落ちること自体は欠陥ではない —— `kind` が「回数に依っていることをどう読むか」を言う:
+ *
+ *   - `store-roundtrip` —— **2026-09-21 (パス 380) に 3 本とも寄せ終えて空になった。**
+ *     この `why` は 2026-09-21 まで「共有の待ちは同期の述語しか取らない」と
+ *     **道具の限界**を理由にしていた —— 限界は直せるので直し (`settleUntilAsync`)、
+ *     同時に**そもそも非同期の述語が要らない場面のほうが多い**ことも実測で分かった
+ *     (保管層への書き込みは画面に出るので、DOM の印で待てる)。
+ *     ★ ただし**増えない向きの主張には使えない** —— 「2 度押しても 1 件」を
+ *     「1 件になるまで待って 1 件」と書くと、関門が壊れていれば 2 件目が後から来るので
+ *     **偽陽性**になる。そこは「1 件目が画面に出た」を待ってから記録を聞く 2 段にする。
+ *   - `setup-flush` —— 落ちるのは主張ではなく**操作**の側で、helper が
+ *     「まだ画面に出ていない物」を探して死ぬ。
+ *     ★ **この `why` は 2026-09-21 (パス 383) まで「条件で待っても、遷移が
+ *     起きていなければ待てない」と書いていた —— 測ると偽だった。** 同じ分類の
+ *     4 本 (`mutualFundsCostUnentered` / `mutualFundsYtdUnentered` /
+ *     `mutualFundsImpossibleReturn` / `teamLastOwner`) は、mount と押す helper に
+ *     条件待ちを取らせるだけで**全部寄せられた** (0 周でも落ちない)。
+ *     **2026-09-21 (パス 385) に残る 2 本 (`overviewHydroponics` /
+ *     `parameterWiring`) も寄せ終えて空になった。** `why` は「遷移が起きて
+ *     いなければ待てない」と書いていたが、**遷移は起きていて、ただ待って
+ *     いなかっただけ**である (4 度目の偽)。ただし**押す操作が絡む 2 件だけは
+ *     「押した後に待つ」では直らなかった** —— 「改善提案」は押した瞬間の
+ *     有効値で payload を組む**一度きりの計算**なので、既定値で走り切った
+ *     あとに待っても文言は変わらない。**待つ場所は押す前**である。
+ *     **分類は「見た形」であって「測った原因」ではない** —— パス 380・382・383 に
+ *     続いて 4 度目に台帳の `why` が実物と食い違っていた。
+ *   - `text-captured` —— 文を `const t = text();` へ取ってから主張する形。
+ *     **2026-09-21 (パス 385) に最後の 1 本 (`investmentDemoMixOnScreen`) を
+ *     寄せて空になった。** `why` は「読み直さないので待ちに渡せない」と
+ *     書いていたが**偽**で、0 周の失敗 5 件はすべて**置いた記録が届いて
+ *     いない**ことだった —— **取る前に待てばよく、取ったあとの主張
+ *     (否定を含む) はそのままでよい。**
+ *   - `text-with-message` —— **2026-09-21 (パス 382) に空になった。**
+ *     `expect(text(), '説明').toContain(…)` の第 2 引数は、寄せると落ちる ——
+ *     ので**待ちの label へ移す**。説明が要る主張はたいてい
+ *     「押しても画面が変わらない」で、それは*待ち切れなかったこと*として
+ *     現れるから、label に書けばいちばん要る場面で出る。
+ *     ★ ただし**この分類名は落ちる理由ではなかった**: `libraryCorruptContent` の
+ *     0 周の失敗は 5 件すべて `mountLibrary()` の側 (IndexedDB の一覧が
+ *     届く前に当てていた) で、第 2 引数とは無関係だった —— **台帳の `kind` は
+ *     見た形であって、測った原因ではない** (パス 380 の教訓の 2 度目)。
+ *   - `attribute` / `hook-state` / `mock-call` —— **2026-09-21 (パス 381) に
+ *     4 本とも寄せ終えて空になった。** 錠は画面の文でなくてよい ——
+ *     属性を持つ行の数 (`tr[data-bs-row]`)・hook の戻り (`loading` / 上書きの件数)・
+ *     **呼ばれたこと自体** (`confirm.mock.calls.length >= 1`) が錠になる。
+ *     ★ 呼び出し回数を錠にするのは「**呼ばれる**」側だけ —— 「呼ばれない」の主張は
+ *     下流の肯定の文を先に待ってから見る (`plaintextBackupNotice` の対照)。
+ *   - `text-helper` —— **2026-09-21 (パス 379) に 3 本とも寄せ終えて空になった。**
+ *     直し方は「helper をそのまま述語として `settleUntil` へ渡す」で、
+ *     読むのが helper なら `expect(…)` の行に `textContent` の綴りが 1 字も無い
+ *     (それがこの家系の特徴で、綴りの針が最後まで見落とした形である)。
+ *   - `element-presence` —— **2026-09-21 (パス 378) に 5 本とも寄せ終えて空になった。**
+ *     語を残すのは、次に同じ形が出たときに分類として使うため (`waitForElement` か、
+ *     行数のように**数える**条件なら `settleUntil`)。
+ */
+/**
+ * **今日は 0 本である** (2026-09-21 · パス 385)。
+ *
+ * つまり `IS_SETTLE` に当たる固定回数の待ちを持つ検査 (実測 78 本) は、
+ * **周回数を 0 にしても 1 件も落ちない** —— どれも条件で待っているか、
+ * その回数に依っていない。
+ *
+ * **0 本は「この道具が要らない」ではない。** 次に固定回数の待ちへ寄りかかった
+ * 検査が入ったら、`npm run audit:tick-sensitivity` がそれを 1 本として挙げ、
+ * この台帳に無いので落ちる。**逆向きにも鳴る** —— 寄せ終わった行を消し忘れれば
+ * 「台帳に在るのに落ちない」で落ちる。
+ *
+ * 語 (`kind`) は残す —— 次に同じ形が出たときの分類として使う。ただし
+ * **分類は「見た形」であって「測った原因」ではない**: パス 380 / 382 / 383 / 385 の
+ * 4 度とも、`why` に書いてあった原因は 0 周で測った原因と食い違っていた。
+ * **新しい行を足すときは、先に 0 周で測ってから `why` を書く。**
+ */
+const LEDGER = [];
+
+function patchAll(files) {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'tick-sensitivity-'));
+  const saved = [];
+  files.forEach((f, i) => {
+    const abs = path.join(REPO, f);
+    const src = fs.readFileSync(abs, 'utf8');
+    const zero = zeroTicks(src);
+    if (zero === null) return;
+    const bak = path.join(dir, `${i}.bak`);
+    fs.writeFileSync(bak, src);
+    saved.push({ file: f, abs, bak, src });
+    fs.writeFileSync(abs, zero);
+  });
+  fs.writeFileSync(path.join(dir, 'manifest.json'), JSON.stringify(saved.map((s) => [s.bak, s.file]), null, 2));
+  return { dir, saved };
+}
+
+/** 必ず戻す。**戻したことを内容で確かめる** —— 戻し損ねたまま緑を返さない。 */
+function restoreAll(saved) {
+  const bad = [];
+  for (const s of saved) {
+    try {
+      fs.writeFileSync(s.abs, s.src);
+      if (fs.readFileSync(s.abs, 'utf8') !== s.src) bad.push(s.file);
+    } catch {
+      bad.push(s.file);
+    }
+  }
+  return bad;
+}
+
+function failingFiles(stdout) {
+  const out = new Set();
+  for (const m of stdout.matchAll(/(?:FAIL|❯)\s+(src\/[^\s:]+\.test\.ts)/g)) out.add(m[1]);
+  return [...out].sort();
+}
+
+function run(outPath) {
+  const files = collect();
+  console.log(`固定回数の待ちを持つ検査: ${files.length} 本 —— 周回数を 0 にして走らせる`);
+  const { dir, saved } = patchAll(files);
+  console.log(`  控え: ${dir} (落ちたらここから戻す)`);
+  let stdout;
+  let bad;
+  try {
+    const r = cp.spawnSync('npx', ['vitest', 'run', ...saved.map((s) => s.file)], {
+      cwd: REPO, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024,
+    });
+    stdout = `${r.stdout ?? ''}\n${r.stderr ?? ''}`;
+    if (outPath) fs.writeFileSync(outPath, stdout);
+  } finally {
+    // **戻すのは finally で、答えを返すのはその外。** finally から return すると
+    // 途中で投げた例外を握り潰す (eslint `no-unsafe-finally`) —— 書き換えた
+    // ソースを戻すことと、戻せなかったことを報せることは別の仕事である。
+    bad = restoreAll(saved);
+  }
+  if (bad.length > 0) {
+    console.error(`\n❌ 戻せなかったファイルが ${bad.length} 本 —— ${dir} から手で戻すこと`);
+    for (const b of bad) console.error(`   ${b}`);
+    return 2;
+  }
+  fs.rmSync(dir, { recursive: true, force: true });
+  console.log('  ✅ 全件を元へ戻した (内容で照合)');
+  const failing = failingFiles(stdout);
+  console.log(`\n0 周で落ちたファイル: ${failing.length} 本 / ${saved.length} 本`);
+  for (const f of failing) {
+    const row = LEDGER.find((r) => r.file === f);
+    console.log(`  ${row ? `[${row.kind}]` : '[台帳に無い]'} ${f}`);
+  }
+  const unlisted = failing.filter((f) => !LEDGER.some((r) => r.file === f));
+  const gone = LEDGER.filter((r) => !failing.includes(r.file));
+  if (unlisted.length > 0) {
+    console.error(`\n❌ 台帳に無いファイルが ${unlisted.length} 本 —— 条件で待つ形へ寄せるか、依る理由を台帳へ`);
+  }
+  if (gone.length > 0) {
+    console.error(`\n❌ 台帳に在るのに落ちなかったファイルが ${gone.length} 本 —— 直ったなら台帳からも消す`);
+    for (const g of gone) console.error(`   ${g.file}`);
+  }
+  if (unlisted.length === 0 && gone.length === 0) {
+    console.log('\n✅ 落ちたファイルは台帳どおり (双方向)');
+    return 0;
+  }
+  return 1;
+}
+
+function selfTest() {
+  const fails = [];
+  const ok = (label, cond) => {
+    console.log(`  ${cond ? '✓' : '✗'} ${label}`);
+    if (!cond) fails.push(label);
+  };
+  const sample = 'async function settle() {\n  for (let i = 0; i < 8; i += 1) {\n'
+    + '    await act(async () => { await new Promise((r) => setTimeout(r, 0)); });\n  }\n}\n';
+  ok('★ 針が実物の形に当たる (標本)', IS_SETTLE.test(sample));
+  ok('★ 書き換えが実際に 0 周にする (標本)', (zeroTicks(sample) ?? '').includes('i < 0'));
+  ok('待ちでない for は書き換えても印が立たない', !IS_SETTLE.test('for (let i = 0; i < 3; i += 1) sum += i;\n'));
+  ok('同じ文字列を 2 度書き換えても増えない (冪等)', zeroTicks(zeroTicks(sample)) === null);
+  ok('走査が実物に届いている (30 本以上)', collect().length >= 30);
+  ok('落ちたファイルの読み取りが FAIL 行に当たる (標本)',
+    failingFiles(' FAIL  src/renderer/__tests__/x.test.ts > a > b\n').length === 1);
+  ok('台帳の行はすべて理由を持つ', LEDGER.every((r) => typeof r.why === 'string' && r.why.trim().length > 10));
+  ok('台帳の行はすべて実在するファイルを指す',
+    LEDGER.every((r) => fs.existsSync(path.join(REPO, r.file))));
+  if (fails.length > 0) {
+    console.error(`\n❌ self-test ${fails.length} 件失敗`);
+    return 1;
+  }
+  console.log('\n✅ self-test 全件一致');
+  return 0;
+}
+
+function main(argv) {
+  if (argv.includes('--self-test')) return selfTest();
+  const out = argv.find((a) => a.startsWith('--out='));
+  return run(out ? out.slice('--out='.length) : null);
+}
+
+module.exports = { LEDGER, collect, zeroTicks, failingFiles, IS_SETTLE };
+
+if (require.main === module) process.exit(main(process.argv.slice(2)));

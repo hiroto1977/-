@@ -1,49 +1,40 @@
-import { contextBridge, ipcRenderer } from 'electron';
-import type { ServiceId } from '../shared/serviceId';
+// 生成物 —— src/preload/preload.mamori から Mamori のコンパイラが組んだ。手で編集しない (`npm run mamori:build`)。
+// 言語の仕様は docs/MAMORI.md。生成物が元と食い違えば src/shared/mamori/__tests__/mamoriGenerated.test.ts が落ちる。
+/**
+ * preload — **レンダラーが main へ触れる唯一の面** (window.serviceHub) (2026-11-06 · MG-046 · Mamori 0.23)。
+ *
+ * 橋は「レンダラーが main に対してできること」の定義そのものである。口は 15 本で、どれもチャンネル名を
+ * **字面で固定**し、呼び出し側にチャンネルを選ばせない。露出するのは関数だけ (状態や生の `ipcRenderer` は渡さない)。
+ *
+ * Mamori で書くので: `ipcRenderer` / `contextBridge` を直接は触れない (`electron` は能力モジュール)。
+ * 触れるのは host の薄い 2 つの口 (`invokeIpc` / `exposeBridge` · preloadHost.ts) だけで、能力の台帳に載る。
+ * 型は bridgeTypes.ts に置く (型引数つきの `type` が Mamori に無い)。
+ */
 
-export type { ServiceId };
+import type { ServiceId, FetchResult, ActionResult, OsOpResult, TokenSaveResult, OAuthResult, StorageProtection } from './bridgeTypes';
+import type { UpdateVerdict } from '../shared/updateCheck';
+import type { EraseAllReport } from '../shared/eraseReport';
+import { invokeIpc, exposeBridge } from './preloadHost';
 
-export type FetchResult<T = unknown> =
-  | { ok: true; data: T }
-  | { ok: false; code: 'not_implemented' | 'not_configured' | 'fetch_failed'; message: string };
+/** 取得 (`fetch:snapshot`)。結果の型は呼び出し側が選ぶ (既定は unknown)。 */
+function fetchSnapshot<T>(serviceId: ServiceId): Promise<FetchResult<T>> {
+  return invokeIpc<FetchResult<T>>('fetch:snapshot', serviceId);
+}
 
-export type ActionResult<T = unknown> =
-  | { ok: true; data: T }
-  | { ok: false; code: 'action_not_found' | 'not_configured' | 'action_failed'; message: string };
+/** 書き込み (`action:invoke`)。 */
+function invoke<T>(serviceId: ServiceId, action: string, payload: Record<string, unknown>): Promise<ActionResult<T>> {
+  return invokeIpc<ActionResult<T>>('action:invoke', serviceId, action, payload);
+}
 
-export type OAuthResult =
-  | { ok: true; data: { scope?: string; expiresAt?: number } }
-  | { ok: false; code: 'not_supported' | 'authorize_failed'; message: string };
+/**
+ * 橋の本体。口は 15 本で、チャンネル名は字面で固定する (呼び出し側に選ばせない)。
+ * 更新確認は取得もインストールもしない (知らせるだけ)。配色の追随 (パス 318) は解いた scheme と `--bg` の実値を main へ渡す。
+ * 保護状態の確認は秘密そのものを返さない。eraseAll は main がファイルと renderer の保存領域を消して再起動する (パス 137)。
+ * authorize の clientId はアプリ内かんたん接続用の任意指定 (環境変数未設定でも OAuth を実行できる)。
+ */
+const api = { getVersion: () => invokeIpc<string>('app:getVersion'), checkUpdate: () => invokeIpc<UpdateVerdict>('app:checkUpdate'), openExternal: (url: string) => invokeIpc<void>('app:openExternal', url), revealInFolder: (filePath: string) => invokeIpc<OsOpResult>('app:revealInFolder', filePath), openPath: (filePath: string) => invokeIpc<OsOpResult>('app:openPath', filePath), setColorScheme: (scheme: 'light' | 'dark', background: string) => invokeIpc<OsOpResult>('app:setColorScheme', scheme, background), setToken: (serviceId: ServiceId, token: string) => invokeIpc<TokenSaveResult>('secrets:set', serviceId, token), clearToken: (serviceId: ServiceId) => invokeIpc<OsOpResult>('secrets:clear', serviceId), listConfigured: () => invokeIpc<ServiceId[]>('secrets:list'), storageProtection: () => invokeIpc<StorageProtection>('secrets:protection'), eraseAll: () => invokeIpc<EraseAllReport>('app:eraseAll'), fetchSnapshot, invoke, oauthSupported: (serviceId: ServiceId) => invokeIpc<boolean>('oauth:isSupported', serviceId), authorize: (serviceId: ServiceId, clientId?: string) => invokeIpc<OAuthResult>('oauth:authorize', serviceId, clientId) };
 
-const api = {
-  getVersion: (): Promise<string> => ipcRenderer.invoke('app:getVersion'),
-  openExternal: (url: string): Promise<void> => ipcRenderer.invoke('app:openExternal', url),
-  revealInFolder: (filePath: string): Promise<void> =>
-    ipcRenderer.invoke('app:revealInFolder', filePath),
-  openPath: (filePath: string): Promise<void> =>
-    ipcRenderer.invoke('app:openPath', filePath),
-
-  setToken: (serviceId: ServiceId, token: string): Promise<void> =>
-    ipcRenderer.invoke('secrets:set', serviceId, token),
-  clearToken: (serviceId: ServiceId): Promise<void> =>
-    ipcRenderer.invoke('secrets:clear', serviceId),
-  listConfigured: (): Promise<ServiceId[]> => ipcRenderer.invoke('secrets:list'),
-
-  fetchSnapshot: <T = unknown>(serviceId: ServiceId): Promise<FetchResult<T>> =>
-    ipcRenderer.invoke('fetch:snapshot', serviceId),
-
-  invoke: <T = unknown>(
-    serviceId: ServiceId,
-    action: string,
-    payload: Record<string, unknown>,
-  ): Promise<ActionResult<T>> => ipcRenderer.invoke('action:invoke', serviceId, action, payload),
-
-  oauthSupported: (serviceId: ServiceId): Promise<boolean> =>
-    ipcRenderer.invoke('oauth:isSupported', serviceId),
-  authorize: (serviceId: ServiceId): Promise<OAuthResult> =>
-    ipcRenderer.invoke('oauth:authorize', serviceId),
-};
-
-contextBridge.exposeInMainWorld('serviceHub', api);
+/** 橋を `serviceHub` という名前で露出する。読み込んだ瞬間に 1 度だけ呼ばれる。 */
+export const bridgeExposed = exposeBridge('serviceHub', api);
 
 export type ServiceHubBridge = typeof api;

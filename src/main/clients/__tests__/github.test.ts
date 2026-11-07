@@ -388,7 +388,9 @@ describe('ACTIONS["create-issue"]', () => {
 
   it('url-encodes owner/repo to prevent path injection', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
-      new Response(JSON.stringify({ number: 1, html_url: '', title: 'x', state: 'open' }), {
+      // html_url は非空を要求する (shared/api/github.ts の parseCreatedIssue —— ブラウザ版が
+      // 前から持っていた封筒の検査を main も通るようになった · 2026-09-18)。
+      new Response(JSON.stringify({ number: 1, html_url: 'https://github.com/o/r/issues/1', title: 'x', state: 'open' }), {
         status: 201,
         headers: { 'content-type': 'application/json' },
       }),
@@ -399,5 +401,25 @@ describe('ACTIONS["create-issue"]', () => {
       payload: { owner: 'o/x', repo: 'r y', title: 't' },
     });
     expect(fetchMock.mock.calls[0]![0]).toBe('https://api.github.com/repos/o%2Fx/r%20y/issues');
+  });
+});
+
+
+describe('fetchGithubSnapshot — 相手が per_page=10 を超えて返しても詳細の要求は 10 本まで (threat: T-113)', () => {
+  it('検索が 300 件返しても、PR の詳細要求は 10 本', async () => {
+    const items = Array.from({ length: 300 }, (_, i) => ({
+      ...searchItem,
+      number: i,
+      pull_request: { url: `https://api.github.com/repos/o/r/pulls/${i}` },
+    }));
+    const calls: string[] = [];
+    const fetchMock = vi.fn<typeof fetch>().mockImplementation((input) => {
+      const url = String(input);
+      calls.push(url);
+      const body = url.includes('/search/issues') ? { items } : url.endsWith('/user') ? userResponse : {};
+      return Promise.resolve(new Response(JSON.stringify(body), { status: 200, headers: { 'content-type': 'application/json' } }));
+    });
+    await fetchGithubSnapshot({ token: 'tok', fetch: fetchMock });
+    expect(calls.filter((u) => u.includes('/pulls/'))).toHaveLength(10);
   });
 });

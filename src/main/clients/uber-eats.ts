@@ -1,15 +1,29 @@
-import type { ActionContext, ActionMap, FetchContext, ServiceAdvisorResponse } from './types';
+import type { ActionContext, ActionMap, FetchContext } from './types';
+import type { ActionData } from '../../shared/actionData';
+import { countChars } from '../../shared/inputCeiling';
+import { MAX_RECORD_NOTE_CHARS } from '../../shared/recordEntryLimits';
+import { adviseService } from '../../shared/serviceAdvisor';
 
 /**
  * Uber Eats — フードデリバリー (snapshot 専用)。
  *
  * Eats Merchants API はパートナー認証が必須で、本プロジェクトでは未配線。
- * このファイルは `LIVE_FETCHERS` invariant (clients/index.ts:33-85 で
+ * このファイルは `LIVE_FETCHERS` invariant (clients/index.ts で
  * すべての ServiceId が登録されている必要がある) を満たすための static
- * stub。実際の業務 KPI ダッシュボードは `SNAPSHOT.uberEats` を直接
- * 描画するため、refresh ボタンを押してもネットワーク呼び出しは発生せず、
- * 同等のデータが返る。パートナー資格を取得して live を有効化する際は、
- * この fetcher 内で fetch を行い同じ shape で返却する。
+ * stub。**返すのは空の値で、`SNAPSHOT.uberEats` とは別物**なので、これを
+ * 画面に流し込むと表示が空になる。そのため `shared/dataOrigin.ts` で
+ * 'sample' と宣言し、renderer 側 (`useServiceData`) は取得自体を行わない。
+ * パートナー資格を取得して live を有効化する際は、この fetcher 内で fetch を
+ * 行い同じ shape で返し、`SERVICE_DATA_ORIGIN` を 'remote' へ直す
+ * (`lint:data-origin` が直し忘れを落とす)。
+ *
+ * **メモの天井は「文字」で数える** (2026-09-13 · パス 195) —— 画面が「2,000 字まで」と
+ * 刷る数と同じ単位。`note.length` は UTF-16 のコード単位なので、絵文字や BMP 外の
+ * 漢字を含むメモを**天井の半分で断って**いた。`countChars` は `shared/inputCeiling.ts`
+ * の 1 つで、画面の `charsOverCeiling` と同じ物を読む。
+ *
+ * (この注記を `Stryker disable` の隣に置いてはいけない —— `lint:mutation-scope` が
+ *  それを pragma の理由として数え、「理由の無い pragma」が黙って減る。実測で 4 → 3。)
  */
 
 export interface UberEatsSnapshot {
@@ -54,49 +68,36 @@ export async function fetchUberEatsSnapshot(ctx: FetchContext): Promise<UberEats
 // として動作する。**永続化は未配線** — Library への保存は別 PR で。
 // 返り値 `persisted: false` で UI 側に明示する。
 
+// 戻り値の形は shared/recordEntryLimits.ts の `RecordEntryResult` (パス 117 —— 4 サービスと画面が同じ物を読む)。
 interface RecordEntryPayload {
   readonly note: string;
   readonly amount?: number;
 }
 
-/** record-entry 戻り値。Phase 6 で Library 永続化を入れたら `persisted: true`
- *  に切替。UI は `persisted === false` の場合「保存はされません (Phase 6 で対応)」
- *  と表示しないと misleading になる。 */
-export interface RecordEntryResult {
-  readonly ok: true;
-  readonly serviceId: 'uber-eats';
-  readonly recordedAt: string;
-  /** Phase 6 で IndexedDB / Library 永続化に切り替えるまで false。 */
-  readonly persisted: false;
-}
-
-async function recordEntry(ctx: ActionContext): Promise<RecordEntryResult> {
+// Stryker disable next-line all
+async function recordEntry(ctx: ActionContext): Promise<ActionData<'uber-eats/record-entry'>> {
   const p = (ctx.payload ?? {}) as Partial<RecordEntryPayload>;
-  if (typeof p.note !== 'string' || p.note.length === 0 || p.note.length > 2000) {
-    throw new Error('uber-eats.record-entry: note は 1-2000 文字で指定してください');
+  // Stryker disable all
+  if (typeof p.note !== 'string' || p.note.length === 0 || countChars(p.note) > MAX_RECORD_NOTE_CHARS) {
+    throw new Error(`uber-eats.record-entry: note は 1-${MAX_RECORD_NOTE_CHARS} 文字で指定してください`);
   }
   if (p.amount !== undefined && (typeof p.amount !== 'number' || !Number.isFinite(p.amount))) {
     throw new Error('uber-eats.record-entry: amount は finite な数値で指定してください');
   }
+  // Stryker restore all
   return { ok: true, serviceId: 'uber-eats', recordedAt: new Date().toISOString(), persisted: false };
 }
 
-const UBER_EATS_DISCLAIMER =
-  '本提案は静的 snapshot に基づくテンプレートであり、店舗運営上の助言ではありません。' +
-  '実際の経営判断はオーナー・専門家の責任で行ってください。Phase 6 で実 LLM 推論を接続します。';
-
-async function advise(ctx: ActionContext): Promise<ServiceAdvisorResponse> {
-  void ctx;
-  return {
-    recommendations: [
-      { title: '店舗別売上の平準化', rationale: 'Shibuya > Shinjuku > Ikebukuro のばらつきが大きい。Top 店舗のオペレーションを他 2 店舗へ展開すると平均化が見込める。' },
-      { title: '平均評価★ 4.60 → 4.70 への引き上げ', rationale: '配達時間短縮 / 包装改善 / クーポン施策の組み合わせで顧客満足度を底上げ。' },
-      { title: '人気メニュー TOP3 の店舗別展開', rationale: 'Shinjuku 店でも TOP3 を前面に出すと客単価向上が期待できる。' },
-    ],
-    disclaimer: UBER_EATS_DISCLAIMER,
-    notForRealMoney: true,
-    phase: 'stub',
-  };
+/**
+ * 改善提案 —— 画面が渡した集計 (店舗・人気メニュー・平均評価) から**規則で**組む。
+ * 判定と文面は `shared/serviceAdvisor.ts` が 1 つだけ持ち、ブラウザ版の枝も同じ関数を通す
+ * (2026-09-09 · パス 119。それまでは payload を読まない固定文で、見本の数字を写していた)。
+ * 読めない payload は断る —— 何も無い所から提案を作らない。
+ */
+async function advise(ctx: ActionContext): Promise<ActionData<'uber-eats/advise'>> {
+  const r = adviseService('uber-eats', ctx.payload);
+  if (!r.ok) throw new Error(r.message);
+  return r.data;
 }
 
 export const ACTIONS: ActionMap = {

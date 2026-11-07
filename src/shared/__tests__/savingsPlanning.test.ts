@@ -1,0 +1,301 @@
+import { describe, expect, it } from 'vitest';
+import { measured } from './measured';
+import {
+  MAX_PLAN_RATE_PCT,
+  requiredMonthlyContribution,
+  yearsToDouble,
+  emergencyFund,
+  futureValueWithFrequency,
+  inflationAdjustedValue,
+  realRateOfReturn,
+  emergencyFundCoverage,
+  goalProjection,
+} from '../savingsPlanning';
+import { calcCompoundingFutureValue } from '../mutualFundsMetrics';
+
+describe('requiredMonthlyContribution', () => {
+  it('returns 0 for a non-positive target or zero years', () => {
+    expect(requiredMonthlyContribution(0, 5, 10)).toBe(0);
+    expect(requiredMonthlyContribution(1_000_000, 5, 0)).toBe(0);
+    // 負の目標額は計算経路だと負値を返すため、早期 return (target<=0) で 0 にする。
+    expect(requiredMonthlyContribution(-1_000_000, 5, 10)).toBe(0);
+  });
+
+  it('splits the target evenly when the rate is zero', () => {
+    // 1,200,000 over 10 years (120 months) at 0% → 10,000 / month
+    expect(requiredMonthlyContribution(1_200_000, 0, 10)).toBe(10_000);
+  });
+
+  it('is the inverse of the compounding future-value calc', () => {
+    // Find PMT to reach 10,000,000 in 10y at 3%, then feed it back in.
+    const pmt = measured(requiredMonthlyContribution(10_000_000, 3, 10));
+    const fv = measured(calcCompoundingFutureValue(pmt, 3, 10).futureValue);
+    // Round-trip should land within a small rounding tolerance of the target.
+    expect(Math.abs(fv - 10_000_000)).toBeLessThan(1000);
+  });
+
+  it('requires a smaller monthly amount at a higher return', () => {
+    const low = measured(requiredMonthlyContribution(10_000_000, 1, 10));
+    const high = measured(requiredMonthlyContribution(10_000_000, 8, 10));
+    expect(high).toBeLessThan(low);
+  });
+});
+
+describe('yearsToDouble (rule of 72)', () => {
+  it('returns 72 / rate', () => {
+    expect(yearsToDouble(6)).toBe(12);
+    expect(yearsToDouble(8)).toBe(9);
+  });
+
+  it('rounds to one decimal place', () => {
+    expect(yearsToDouble(7)).toBe(10.3); // 72/7 = 10.285…
+  });
+
+  it('returns null for a non-positive rate', () => {
+    expect(yearsToDouble(0)).toBeNull();
+    expect(yearsToDouble(-3)).toBeNull();
+  });
+});
+
+describe('emergencyFund', () => {
+  it('multiplies monthly expense by the number of months (default 6)', () => {
+    expect(emergencyFund(300_000)).toBe(1_800_000);
+    expect(emergencyFund(300_000, 12)).toBe(3_600_000);
+  });
+
+  it('treats negative inputs as zero', () => {
+    expect(emergencyFund(-1, 6)).toBe(0);
+    expect(emergencyFund(300_000, -1)).toBe(0);
+  });
+});
+
+describe('futureValueWithFrequency', () => {
+  it('defaults to monthly compounding and matches the annuity FV', () => {
+    // 30,000/月 を 10年 3% 月複利。calcCompoundingFutureValue と一致するはず。
+    const fv = futureValueWithFrequency(30_000, 3, 10);
+    const ref = calcCompoundingFutureValue(30_000, 3, 10).futureValue;
+    expect(fv).toBe(ref);
+  });
+
+  it('monthly compounding beats annual for the same nominal rate', () => {
+    const monthly = measured(futureValueWithFrequency(30_000, 5, 20, 'monthly'));
+    const annual = measured(futureValueWithFrequency(30_000, 5, 20, 'annual'));
+    expect(monthly).toBeGreaterThan(annual);
+  });
+
+  it('computes annual compounding via a year-by-year accrual', () => {
+    // 当年積立は無利息で年末に加算、既存残高にのみ利息付与。
+    // 1年目: 0 * 1.05 + 120,000 = 120,000
+    // 2年目: 120,000 * 1.05 + 120,000 = 246,000
+    expect(futureValueWithFrequency(10_000, 5, 1, 'annual')).toBe(120_000);
+    expect(futureValueWithFrequency(10_000, 5, 2, 'annual')).toBe(246_000);
+  });
+
+  it('annual compounding at 0% returns the sum of contributions', () => {
+    // 12,000/年 × 3年 = 36,000、利息なし。
+    expect(futureValueWithFrequency(1_000, 0, 3, 'annual')).toBe(36_000);
+  });
+
+  it('monthly compounding at 0% returns the principal sum', () => {
+    // 10,000 × 120ヶ月 = 1,200,000、利息なし。
+    expect(futureValueWithFrequency(10_000, 0, 10, 'monthly')).toBe(1_200_000);
+  });
+
+  it('returns 0 for non-positive contribution or years', () => {
+    expect(futureValueWithFrequency(0, 5, 10)).toBe(0);
+    expect(futureValueWithFrequency(-5_000, 5, 10)).toBe(0);
+    expect(futureValueWithFrequency(30_000, 5, 0)).toBe(0);
+    expect(futureValueWithFrequency(30_000, 5, -2)).toBe(0);
+    expect(futureValueWithFrequency(30_000, 5, 0, 'annual')).toBe(0);
+  });
+
+  it('returns 0 for non-finite inputs', () => {
+    expect(futureValueWithFrequency(Number.NaN, 5, 10)).toBe(0);
+    expect(futureValueWithFrequency(30_000, Number.POSITIVE_INFINITY, 10)).toBe(0);
+    expect(futureValueWithFrequency(30_000, 5, Number.NaN)).toBe(0);
+  });
+});
+
+describe('inflationAdjustedValue', () => {
+  it('discounts a nominal amount to real purchasing power', () => {
+    // 1,000,000 を 2% インフレで 10年割引 → 1,000,000 / 1.02^10 ≈ 820,348
+    expect(inflationAdjustedValue(1_000_000, 2, 10)).toBe(820_348);
+  });
+
+  it('returns the nominal amount (rounded) when years is zero or negative', () => {
+    expect(inflationAdjustedValue(1_000_000, 2, 0)).toBe(1_000_000);
+    expect(inflationAdjustedValue(1_000_000.6, 2, -1)).toBe(1_000_001);
+  });
+
+  it('returns the nominal amount unchanged at 0% inflation', () => {
+    expect(inflationAdjustedValue(500_000, 0, 10)).toBe(500_000);
+  });
+
+  it('returns a larger real value under deflation (negative inflation)', () => {
+    // −1% は割引係数 < 1 → 実質値が名目より大きい。
+    expect(inflationAdjustedValue(1_000_000, -1, 5)).toBeGreaterThan(1_000_000);
+  });
+
+  it('returns 0 when inflation is -100% or below (undefined discount)', () => {
+    expect(inflationAdjustedValue(1_000_000, -100, 5)).toBe(0);
+    expect(inflationAdjustedValue(1_000_000, -150, 5)).toBe(0);
+  });
+
+  /**
+   * 2026-09-13 (パス 198) に**この検査の期待値を 1 行だけ変えた**。
+   *
+   * 守っていた物は「非有限な入力から非有限な出力を作らない」で、それは今も守る。
+   * 変えたのは**年数が非有限のときの答え**で、`0` (= 実質価値はゼロ) から
+   * `null` (= 算定していない) にした —— `0` は「測った結果」として読める値で、
+   * このリポジトリが 3 度直してきた 0 倒し (パス 52 / 85 / 91) と同じ形だった。
+   * 金額・率が非有限のときの `0` はそのまま (年数だけが天井を持つ量である)。
+   */
+  it('金額が非有限なら 0、年数・インフレ率が範囲外なら null (算定不能)', () => {
+    expect(inflationAdjustedValue(Number.NaN, 2, 10)).toBe(0);
+    expect(inflationAdjustedValue(1_000_000, 2, Number.POSITIVE_INFINITY)).toBeNull();
+    expect(inflationAdjustedValue(1_000_000, 2, Number.NaN)).toBeNull();
+    // **インフレ率の側も `null`** (2026-09-13 · パス 207)。以前は `0` を返しており、
+    // 「実質価値はゼロ」という**別の断定**になっていた (`isPlannableRate` が
+    // 非有限と上限超過の両方を落とす)。
+    expect(inflationAdjustedValue(1_000_000, Number.NaN, 10)).toBeNull();
+    expect(inflationAdjustedValue(1_000_000, 999_999_999, 10)).toBeNull();
+    // 対照: 範囲内の年数・率なら値が出る (この検査が何でも通る形でないこと)
+    expect(inflationAdjustedValue(1_000_000, 2, 10)).toBe(820_348);
+    expect(inflationAdjustedValue(1_000_000, MAX_PLAN_RATE_PCT, 1)).toBe(500_000);
+  });
+});
+
+describe('realRateOfReturn (Fisher equation)', () => {
+  it('computes (1+nominal)/(1+inflation) - 1 as a percent', () => {
+    // (1.05 / 1.02) - 1 = 0.0294117… → 2.94%
+    expect(realRateOfReturn(5, 2)).toBe(2.94);
+  });
+
+  it('equals the nominal rate when inflation is 0', () => {
+    expect(realRateOfReturn(5, 0)).toBe(5);
+  });
+
+  it('can be negative when inflation exceeds the nominal rate', () => {
+    const real = realRateOfReturn(2, 5);
+    expect(real).not.toBeNull();
+    expect(real as number).toBeLessThan(0);
+  });
+
+  it('returns null when inflation is -100% or below', () => {
+    expect(realRateOfReturn(5, -100)).toBeNull();
+    expect(realRateOfReturn(5, -120)).toBeNull();
+  });
+
+  it('returns null for non-finite inputs', () => {
+    expect(realRateOfReturn(Number.NaN, 2)).toBeNull();
+    expect(realRateOfReturn(5, Number.POSITIVE_INFINITY)).toBeNull();
+  });
+});
+
+describe('emergencyFundCoverage', () => {
+  it('reports target, coverage, shortfall and months covered', () => {
+    // 月支出 300,000 × 6 = 1,800,000 目標。現預金 900,000。
+    const c = emergencyFundCoverage(900_000, 300_000, 6);
+    expect(c.target).toBe(1_800_000);
+    expect(c.coveragePct).toBe(50);
+    expect(c.shortfall).toBe(900_000);
+    expect(c.monthsCovered).toBe(3);
+  });
+
+  it('caps nothing — coverage can exceed 100% with no shortfall', () => {
+    const c = emergencyFundCoverage(3_600_000, 300_000, 6);
+    expect(c.coveragePct).toBe(200);
+    expect(c.shortfall).toBe(0);
+    expect(c.monthsCovered).toBe(12);
+  });
+
+  it('defaults to 6 months', () => {
+    expect(emergencyFundCoverage(0, 100_000).target).toBe(600_000);
+  });
+
+  /**
+   * **この検査は 2026-09-08 まで欠陥を仕様として固定していた。**
+   * 名前が `handles a zero target: 100% if cash exists, else 0%` で、
+   * `toBe(100)` を要求していた。だが目標 0 は「予備資金は要らない」ではなく、
+   * たいていは**月支出を入力していない**という意味である ——
+   * `MutualFundsPage` は `readNumberOr0` で読むので**空欄が 0 になる**。
+   *
+   * **規準はすぐ下の検査に在った**: `monthsCovered` は**同じ入力**
+   * (`expense = 0`) で `null` を要求している。同じ戻り値の 2 つの欄に対して、
+   * 隣り合う 2 本の検査が**逆の判定**を固定していた。
+   *
+   * 画面でも 2 つの `<Stat>` が同じ grid に並び、
+   * 「予備資金 充足率 **100%**」と「現預金でまかなえる月数 **—**」を同時に出していた。
+   */
+  it('★ 目標が定まらなければ充足率は出さない (100% と断定しない)', () => {
+    // 月支出が未入力 → 目標 0 → 充足率は算定不能
+    expect(emergencyFundCoverage(50_000, 0, 6).coveragePct).toBeNull();
+    expect(emergencyFundCoverage(0, 0, 6).coveragePct).toBeNull();
+    // 目標月数 0 も同じ (目標が立たない)
+    expect(emergencyFundCoverage(50_000, 100_000, 0).coveragePct).toBeNull();
+  });
+
+  it('★ 対照: 月支出が在れば充足率は数で出る (床が全部を飲み込んでいない)', () => {
+    expect(emergencyFundCoverage(900_000, 300_000, 6).coveragePct).toBe(50);
+    expect(emergencyFundCoverage(50_000, 100_000, 6).coveragePct).toBeCloseTo(8.3, 1);
+  });
+
+  it('★ 姉妹欄と同じ条件で同じ答え方をする (片方だけが断定しない)', () => {
+    const c = emergencyFundCoverage(500_000, 0, 6);
+    expect(c.monthsCovered).toBeNull();
+    expect(c.coveragePct).toBeNull(); // ← 直す前はここが 100 だった
+  });
+
+  it('clamps negative and non-finite inputs to zero', () => {
+    const c = emergencyFundCoverage(-100, -200, -3);
+    expect(c.target).toBe(0);
+    expect(c.shortfall).toBe(0);
+    const nf = emergencyFundCoverage(Number.NaN, Number.POSITIVE_INFINITY, Number.NaN);
+    expect(nf.target).toBe(0);
+    // 読めない入力から目標は立たない → 充足率も出さない (旧: 0)
+    expect(nf.coveragePct).toBeNull();
+    expect(nf.monthsCovered).toBeNull();
+  });
+});
+
+describe('goalProjection', () => {
+  it('flags an on-track plan with no shortfall or extra contribution', () => {
+    // 必要積立額は切り捨て丸めのため、+1 円だけ上乗せすれば確実に届く。
+    const required = measured(requiredMonthlyContribution(10_000_000, 3, 10));
+    const p = goalProjection(required + 1, 10_000_000, 3, 10);
+    expect(p.onTrack).toBe(true);
+    expect(p.shortfall).toBe(0);
+    expect(p.additionalMonthly).toBe(0);
+    expect(p.requiredMonthly).toBe(required);
+  });
+
+  it('reports a shortfall and required extra when under-saving', () => {
+    const p = goalProjection(10_000, 10_000_000, 3, 10);
+    expect(p.onTrack).toBe(false);
+    expect(p.shortfall).toBeGreaterThan(0);
+    expect(p.additionalMonthly).toBeGreaterThan(0);
+  });
+
+  it('treats an exact match as on track', () => {
+    // 0% で 10,000 × 120ヶ月 = 1,200,000 ちょうど。
+    const p = goalProjection(10_000, 1_200_000, 0, 10);
+    expect(p.projected).toBe(1_200_000);
+    expect(p.onTrack).toBe(true);
+    expect(p.shortfall).toBe(0);
+  });
+
+  it('clamps a negative current contribution to zero', () => {
+    const p = goalProjection(-5_000, 1_200_000, 0, 10);
+    expect(p.projected).toBe(0);
+    expect(p.onTrack).toBe(false);
+    expect(p.additionalMonthly).toBe(p.requiredMonthly);
+  });
+
+  it('returns zeros for a non-positive target', () => {
+    const p = goalProjection(10_000, 0, 3, 10);
+    expect(p.onTrack).toBe(true);
+    expect(p.shortfall).toBe(0);
+    expect(p.requiredMonthly).toBe(0);
+    expect(p.additionalMonthly).toBe(0);
+  });
+});

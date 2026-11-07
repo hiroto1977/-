@@ -1,0 +1,258 @@
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { rereadModule } from '../../shared/__tests__/rereadModule';
+import { join } from 'node:path';
+import { readOriginalSource } from '../../shared/__tests__/originalSource';
+
+const REPO = join(__dirname, '..', '..', '..');
+
+/**
+ * **橋の 13 本を、毎回モジュールを読み直して確かめる。**
+ *
+ * ## なぜ既存の検査だけでは足りなかったか (2026-08-30 実測)
+ *
+ * `bridgeContract.test.ts` は既に橋の全メソッドを呼び、`ipcRenderer.invoke`
+ * が 1 回だけ走ることを確かめている —— **論理としては十分**である。
+ * それでも変異検査では `preload.ts` が **50.00% (28 件中 14 件が生存)** で、
+ * 生存の中身は**橋のメソッド 13 本すべて**と `exposeInMainWorld('serviceHub')`
+ * の名前だった。
+ *
+ * 理由は `api` が**モジュール直下のオブジェクトリテラル**で、
+ * `contextBridge.exposeInMainWorld` も読み込み時に走ること。つまり
+ * **覆われた static 変異体**である。あちらは `beforeAll` で 1 度だけ
+ * import するので、変異が有効になる前に評価が済んでいる。
+ *
+ * 同じ罠と同じ直し方が `stryker.config.json` に既に書いてある ——
+ * 「beforeAll で 1 回だけ読んでいたのを beforeEach へ移しただけで
+ * 78.96% → 85.55%」。それは `main/main.ts` に対して行われ (`mainWindow.test.ts`
+ * が読み直し (今は `rereadModule`) を使い、342 件すべてを殺している)、
+ * **同じ `beforeAll` に同居していた `preload.ts` には行われなかった**。
+ *
+ * ここは既存の契約検査を作り替えず、**読み直す形の検査を隣に足す**。
+ * あちらは preload と main の**突き合わせ**という別の目的を持っており、
+ * 壊すと失う物のほうが大きい。
+ *
+ * ## 何を守っているか
+ *
+ * 橋は「レンダラーが main に対してできること」の定義そのものである。
+ * メソッドの中身が黙って空になっても、画面は「押しても何も起きない」に
+ * なるだけで例外は出ない。チャンネル名を取り違えても同じである。
+ */
+
+interface Invocation {
+  channel: string;
+  args: unknown[];
+}
+
+const invocations: Invocation[] = [];
+let exposedName = '';
+let exposedApi: Record<string, (...a: unknown[]) => unknown> = {};
+
+vi.mock('electron', () => ({
+  contextBridge: {
+    exposeInMainWorld: (name: string, api: Record<string, (...a: unknown[]) => unknown>) => {
+      exposedName = name;
+      exposedApi = api;
+    },
+  },
+  ipcRenderer: {
+    invoke: (channel: string, ...args: unknown[]) => {
+      invocations.push({ channel, args });
+      return Promise.resolve(undefined);
+    },
+  },
+}));
+
+/** preload を**読み直して**、露出された橋を取り出す。 */
+async function freshBridge(): Promise<Record<string, (...a: unknown[]) => unknown>> {
+  exposedName = '';
+  exposedApi = {};
+  await rereadModule<typeof import('../preload')>(import.meta.url, '../preload');
+  return exposedApi;
+}
+
+// 依存先は `beforeAll` で 1 度だけ読んでおく —— 検査ごとに読み直すのは `preload.ts` の 1 本だけ
+// (`rereadModule`)。`vi.resetModules()` で丸ごと読み直すと、依存先の直下の値まで
+// 「その検査が覆った」と変異検査に数えられる (パス 495)。先頭の静的 import にしないのは、
+// `preload.ts` が読み込んだ瞬間に `exposeInMainWorld` を呼び、この検査の `exposedName` が
+// まだ初期化されていない (静的 import は本体より先に評価される) ため。
+beforeAll(async () => {
+  await import('../preload');
+});
+
+beforeEach(() => {
+  invocations.length = 0;
+});
+
+/**
+ * 橋のメソッド名 → 呼ぶべきチャンネル。**両方を書く**のが要点で、
+ * どちらかが黙って変われば鳴る。main 側に同じ名前が登録されていることは
+ * `bridgeContract.test.ts` が突き合わせている。
+ */
+const CHANNELS: readonly [string, string][] = [
+  ['getVersion', 'app:getVersion'],
+  ['checkUpdate', 'app:checkUpdate'],
+  ['openExternal', 'app:openExternal'],
+  ['revealInFolder', 'app:revealInFolder'],
+  ['openPath', 'app:openPath'],
+  ['setColorScheme', 'app:setColorScheme'],
+  ['setToken', 'secrets:set'],
+  ['clearToken', 'secrets:clear'],
+  ['listConfigured', 'secrets:list'],
+  ['storageProtection', 'secrets:protection'],
+  ['eraseAll', 'app:eraseAll'],
+  ['fetchSnapshot', 'fetch:snapshot'],
+  ['invoke', 'action:invoke'],
+  ['oauthSupported', 'oauth:isSupported'],
+  ['authorize', 'oauth:authorize'],
+];
+
+describe('橋の 15 本 — 読み直して static 変異体を届かせる', () => {
+  it.each(CHANNELS)('★ %s は %s を 1 回だけ呼ぶ', async (method, channel) => {
+    const api = await freshBridge();
+    const fn = api[method];
+    expect(fn, `${method} が橋に無い`).toBeTypeOf('function');
+    fn!('a1', 'a2', 'a3');
+    expect(invocations).toHaveLength(1);
+    expect(invocations[0]!.channel).toBe(channel);
+  });
+
+  /*
+   * **引数はそのまま渡す。** 橋が引数を落とすと、main 側は `undefined` を
+   * 受けて「未設定」と同じ扱いになる —— 例外は出ないので気付けない。
+   */
+  it('★ 引数は main へそのまま渡る', async () => {
+    const api = await freshBridge();
+    api['openExternal']!('https://example.com');
+    expect(invocations[0]!.args).toEqual(['https://example.com']);
+
+    invocations.length = 0;
+    api['setToken']!('github', 'tok');
+    expect(invocations[0]!.args).toEqual(['github', 'tok']);
+  });
+
+  /*
+   * **15 本すべてで、引数の数と順序が main の期待どおりに渡る** (2026-11-06 · MG-046)。
+   *
+   * 上の「引数は main へそのまま渡る」は 2 本 (openExternal / setToken) しか見ない。ところが引数を 1 つ落とす
+   * 書き換え (たとえば `setColorScheme` が背景色を渡さない) は、**他の 13 本では全検査が緑のまま**だった
+   * (対照で実測 · Stryker は呼び出しの引数を落とす変異体を作らないので変異検査の 100% にも映らない)。
+   * main 側は欠けた引数を `undefined` として受けるので、例外は出ず「未設定」と同じ扱いになる。
+   * 期待する引数の数を 15 本それぞれに書く —— 橋と main のハンドラが噛み合う面の、引数の側。
+   */
+  const ARITY: readonly [string, number][] = [
+    ['getVersion', 0],
+    ['checkUpdate', 0],
+    ['openExternal', 1],
+    ['revealInFolder', 1],
+    ['openPath', 1],
+    ['setColorScheme', 2],
+    ['setToken', 2],
+    ['clearToken', 1],
+    ['listConfigured', 0],
+    ['storageProtection', 0],
+    ['eraseAll', 0],
+    ['fetchSnapshot', 1],
+    ['invoke', 3],
+    ['oauthSupported', 1],
+    ['authorize', 2],
+  ];
+  it.each(ARITY)('★ %s は先頭の %i 個の引数を順序どおり渡す', async (method, n) => {
+    const api = await freshBridge();
+    api[method]!('a1', 'a2', 'a3');
+    expect(invocations[0]!.args).toEqual(['a1', 'a2', 'a3'].slice(0, n));
+  });
+
+  it('★ 引数の表は 15 本すべてを覆う (橋の口と過不足がない)', () => {
+    expect(ARITY.map(([m]) => m).sort()).toEqual(CHANNELS.map(([m]) => m).sort());
+  });
+
+  /*
+   * **チャンネル名を呼び出し側に選ばせない。** 任意のチャンネルを叩ける橋は
+   * contextIsolation を掛けている意味を消す。第 1 引数に別のチャンネル名を
+   * 渡しても、呼ばれる先が変わらないことを見る。
+   */
+  it('★ 呼び出し側はチャンネルを選べない', async () => {
+    const api = await freshBridge();
+    api['getVersion']!('secrets:list');
+    expect(invocations[0]!.channel).toBe('app:getVersion');
+  });
+
+  it('★ 露出したことは bridgeExposed (true) に残る —— 読み込みの時点で 1 度だけ露出する', async () => {
+    exposedName = '';
+    const mod = await rereadModule<typeof import('../preload')>(import.meta.url, '../preload');
+    expect(mod.bridgeExposed).toBe(true);
+    expect(exposedName).toBe('serviceHub');
+  });
+
+  it('★ 露出する名前は serviceHub ただ 1 つ', async () => {
+    await freshBridge();
+    expect(exposedName).toBe('serviceHub');
+  });
+
+  /*
+   * **散文の列挙と実物を突き合わせる** (2026-09-20 · パス 338)。
+   *
+   * `CLAUDE.md` は renderer → main の面をこう書いていた:
+   *
+   * > The renderer never sees raw tokens — it **only** calls
+   * > `serviceHub.setToken / clearToken / listConfigured / fetchSnapshot / invoke / openExternal`.
+   *
+   * 「only」は閉じた列挙である。**実物は 15 件で、9 件が落ちていた** ——
+   * その中には `eraseAll` (すべてのデータを削除して再起動)・`revealInFolder` /
+   * `openPath` (OS のファイル面)・`authorize` (ブラウザを開いて loopback サーバを
+   * 立てる) が在る。「compromised な renderer に何ができるか」をこの文から読む人は、
+   * **実際より小さい面**を見ることになる。
+   *
+   * 上の `CHANNELS` は 2026-08 から両方向に留めてあったのに、**散文だけが
+   * それと繋がっていなかった** —— このリポジトリが繰り返し直している
+   * 「散文で述べた規則は落ちない」の、面の側の形である。
+   */
+  it('★ CLAUDE.md の列挙は橋の実物と両方向に一致する', () => {
+    const claude = readOriginalSource(join(REPO, 'CLAUDE.md'));
+    /*
+     * **列挙は「最初の一致」では取れない** (2026-09-25 · パス 464)。
+     *
+     * 針は長らく `exec` の**最初の一致**を列挙として使っていた。ところが
+     * CLAUDE.md の散文が橋の口を 1 つ引用すれば (パス 464 は
+     * 「外部 URL は…経由に統一する」の説明でそれをやった)、**その言及が
+     * 列挙より前に来て針が横取りされる** —— 実測で
+     * `expected [ 'openExternal' ] to deeply equal [ …15 件 ]` と落ちた。
+     * 落ちたのは良いことだが、**言及と列挙が構造で見分けられていなかった**
+     * (法則 `mention-vs-declaration`)。
+     *
+     * 列挙であることは**散文の言い回しではなく形**で決める —— `/` で区切られた
+     * 名前が多数並ぶ一致はただ 1 つで、それが列挙である。
+     */
+    const names = (t: string): string[] =>
+      t
+        .split('/')
+        .map((x) => x.trim())
+        .filter((x) => x.length > 0);
+    const all = [...claude.matchAll(/`serviceHub\.([A-Za-z/ \n]+)`/g)].map((x) => names(x[1]!));
+    const enumerations = all.filter((xs) => xs.length >= 10);
+    expect(enumerations, 'CLAUDE.md に serviceHub の列挙が無い (または 2 つ在る)').toHaveLength(1);
+    // 針が生きている床 —— 散文の言及も拾えていること (拾えなければ見分けが自明に真)。
+    expect(all.length, '言及を 1 つも拾えていない = 針が死んでいる').toBeGreaterThan(1);
+    const listed = enumerations[0]!;
+    const real = CHANNELS.map(([method]) => method);
+    expect([...listed].sort(), '列挙と実物がずれている').toEqual([...real].sort());
+    // 標本 —— 落ちていた 9 件のうち、面として重い 3 つが実際に載っていること。
+    for (const name of ['eraseAll', 'openPath', 'authorize']) {
+      expect(listed, `${name} が散文の列挙に無い`).toContain(name);
+    }
+    // 対照 —— 針が「何でも通る」形でないこと (存在しない名前は拾わない)。
+    expect(listed).not.toContain('sendRawToken');
+    // 対照 —— 散文の言及 1 件は列挙として選ばれない (パス 464 に実際に起きた形)。
+    const prose = '規約 (外部 URL は `serviceHub.openExternal` 経由に統一する) が…';
+    expect([...prose.matchAll(/`serviceHub\.([A-Za-z/ \n]+)`/g)].map((x) => names(x[1]!)).filter((xs) => xs.length >= 10))
+      .toHaveLength(0);
+  });
+
+  it('★ 露出するのは関数だけ (状態や生の ipcRenderer を渡さない)', async () => {
+    const api = await freshBridge();
+    for (const [name, v] of Object.entries(api)) {
+      expect(typeof v, `${name} は関数`).toBe('function');
+    }
+    expect(Object.keys(api).sort()).toEqual([...CHANNELS].map(([m]) => m).sort());
+  });
+});

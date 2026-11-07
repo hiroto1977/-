@@ -10,8 +10,15 @@
  * the smallest reproducer.
  */
 
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import fc from 'fast-check';
+
+// `../oauth` は `shell` を electron から読む。ここで実物の electron を読むと、Electron 本体
+// (バイナリ) が node_modules に落ちていないランナーでは `Electron failed to install correctly`
+// で**このファイルだけ**が落ちる (2026-09-05 の CI run 33948541144 で実測 — main の他のテストは
+// 全部 mock 済みで、実物を読む唯一のテストだった)。単体テストにバイナリは要らないので、
+// ci.yml は取得そのものを止めた (`ELECTRON_SKIP_BINARY_DOWNLOAD`)。ここを外すと CI が決定的に落ちる。
+vi.mock('electron', () => ({ shell: { openExternal: vi.fn() } }));
 
 import { parseFrontmatter } from '../clients/skills';
 import { parseSecurityKeys } from '../clients/security';
@@ -26,6 +33,7 @@ import {
 } from '../oauth';
 import { buildRfc2822 } from '../clients/gmail';
 import { buildChannelPermalink } from '../clients/slack';
+import { slackWorkspaceDomainOrNull } from '../../shared/api/slack';
 import { redactSecrets } from '../clients/types';
 import { isAllowedEndpoint, isSafeModelName } from '../clients/ollama';
 import { isSafeSkillName } from '../clients/skills';
@@ -307,27 +315,46 @@ describe('buildRfc2822 (property)', () => {
   });
 });
 
-// --- 6. buildChannelPermalink: always produces a syntactically valid URL
+// --- 6. buildChannelPermalink: ホストは必ず slack.com の内側に留まる
 
+/*
+ * **この property は直す前の弱さを仕様として書き留めていた** (パス 324)。
+ *
+ * 生成子は `/^[a-z0-9-]+$/` を通る文字列なら何でも作る —— `-` や `acme-` や `---` は
+ * **RFC 1123 の 1 ラベルとして不正**だが、旧い property はそれが `${domain}.slack.com` の
+ * authority にそのまま入ることを「不変条件」として**要求していた**。`domain` は `team.info` の
+ * 応答 = 第三者の値なので、要求していたのは欠陥そのものである (区切り 1 字で host が
+ * `.slack.com` の外へ出る形の、一歩手前)。パス 291 の `oauth.test.ts` の拒否表が
+ * 「URL 解析ではなく前置き一致なので弾く側」と弱さに名前を与えていたのと同じ家系で、
+ * **今回は不変条件の側**に書かれていた。
+ *
+ * 新しい契約で書き直す: **どんな文字列を渡してもホストは `slack.com` か `<1 ラベル>.slack.com`**。
+ * 生成子は敵対的な文字列 (区切り・userinfo の `@`・空白・空) まで含む素の `string` にし、
+ * 関門が通した時だけ副ドメインになることを両方向で確かめる。
+ */
 describe('buildChannelPermalink (property)', () => {
-  it('always returns a valid https URL containing the channel id', () => {
+  it('★ どんな domain でもホストは slack.com の内側に留まり、channel id が符号化されて入る', () => {
     fc.assert(
       fc.property(
         fc.string({ minLength: 1, maxLength: 20 }).filter((s) => /^[A-Z0-9]+$/.test(s)),
-        fc.option(
-          fc.string({ minLength: 1, maxLength: 20 }).filter((s) => /^[a-z0-9-]+$/.test(s)),
-          { nil: undefined },
-        ),
+        fc.option(fc.string({ maxLength: 30 }), { nil: undefined }),
         (channelId, domain) => {
           const url = buildChannelPermalink(channelId, domain);
           expect(url.startsWith('https://')).toBe(true);
-          expect(url).toContain(channelId);
-          if (domain !== undefined) {
-            expect(url).toContain(`${domain}.slack.com`);
-          }
+          const parsed = new URL(url);
+          // 守りたい不変条件: 行き先は Slack から出ない。
+          expect(parsed.hostname === 'slack.com' || parsed.hostname.endsWith('.slack.com')).toBe(
+            true,
+          );
+          expect(url).toContain(encodeURIComponent(channelId));
+          // 関門が通した時だけ副ドメインになる (両方向)。
+          const label = slackWorkspaceDomainOrNull(domain);
+          expect(parsed.hostname).toBe(
+            label === null ? 'slack.com' : `${label.toLowerCase()}.slack.com`,
+          );
         },
       ),
-      { numRuns: 100 },
+      { numRuns: 200 },
     );
   });
 });

@@ -1,0 +1,51 @@
+---
+collection: academic
+id: econ-krugman-target-zone-exchange
+category: "economics"
+category_ja: "経済学"
+title: "クルーグマンのターゲット・ゾーン・モデル——為替レート帯域と安定化の蜂蜜月効果"
+as_of: "2026-06-26"
+source_count: 3
+authoritative: true
+tags:
+  - collection/academic
+  - academic/economics
+  - knowledge/verified
+aliases:
+  - "クルーグマンのターゲット・ゾーン・モデル——為替レート帯域と安定化の蜂蜜月効果"
+---
+
+# クルーグマンのターゲット・ゾーン・モデル——為替レート帯域と安定化の蜂蜜月効果
+
+> [!info] コレクション: [[学術概念]] ・ 区分: 経済学 ・ asOf: 2026-06-26 ・ 出典: 3件（うち権威ある出典 ✓）
+
+## 概要
+クルーグマンのターゲット・ゾーン・モデル（Krugman target zone model）は、ポール・クルーグマンが1991年に発表した為替レート決定モデルであり、通貨当局が為替レートの変動幅（バンド）を設定する管理フロート制度の下での為替レートの動態を分析する。モデルの核心は、信頼できるバンド内では為替レートがS字型の曲線に沿って動き、バンドの中心付近ではファンダメンタルズに対して鈍感に反応する「蜂蜜月効果」（honeymoon effect）が生じることを示した点にある。バンドの端に接近すると介入期待が為替レートを自動的に安定化させる「滑らかな接着条件」（smooth pasting condition）が成立する。しかし、実証的にはバンド内の為替レート分布はモデルの予測するU字型ではなく逆U字型（中心付近に集中）となることが多く、スヴェンソンは信頼性の不完全性と金利差の変動を考慮した拡張モデルを提示した。
+
+## 提唱者・初出
+ポール・クルーグマン ／ ラルス・スヴェンソン ／ ウィレム・バイテル ／ マーカス・ミラー
+
+## 出典
+- [Krugman, P. R. (1991) Target Zones and Exchange Rate Dynamics — Quarterly Journal of Economics](https://doi.org/10.2307/2937838) `学術`
+- [Svensson, L. E. O. (1992) An Interpretation of Recent Research on Exchange Rate Target Zones — Journal of Economic Perspectives](https://doi.org/10.1257/jep.6.4.119) `学術`
+- [Wikipedia: Target zone model — exchange rate band and stabilization overview](https://en.wikipedia.org/wiki/Target_zone_model) `リファレンス`
+
+## 関連概念
+- [[econ-agglomeration-economies|集積の経済]] — 同じ思想家
+- [[econ-target-zone|ターゲット・ゾーン（為替レート目標帯モデル）]] — 同じ思想家
+- [[econ-debt-overhang|デット・オーバーハング]] — 同じ思想家
+- [[econ-liquidity-trap|流動性のわな]] — 同じ思想家
+- [[econ-modigliani-miller|モディリアーニ＝ミラーの定理（MM理論）]] — 同じ思想家
+- [[econ-new-economic-geography-krugman|新経済地理学（クルーグマン）]] — 同じ思想家
+- [[econ-absolute-advantage-smith|絶対優位論（アダム・スミス）と国際分業の原理]] — 同じ思想家
+- [[econ-backwash-spread-myrdal|逆流効果と波及効果——ミュルダールの循環的累積的因果関係論]] — 同じ思想家
+- [[econ-balance-sheet-recession-koo|バランスシート不況——債務最小化行動とケインズ的罠]] — 同じ思想家
+- [[econ-clientele-effect-dividend|配当の顧客効果——配当政策が選好の合う投資家層を引きつける]] — 同じ思想家
+
+## 関連
+- コレクション: [[学術概念]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

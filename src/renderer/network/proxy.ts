@@ -12,23 +12,108 @@
  *
  *   proxy → client:   200 OK
  *     Body: { status, headers, body }
+ *
+ * ⚠ 機密性の前提: このプロキシは upstream へ Authorization ヘッダーを *透過* する
+ * 必要があるため、プロキシ運用者は転送されるトークンを技術的に閲覧できる。
+ * 第三者運用のプロキシではなく **ユーザー自身が管理する** Worker を使うこと
+ * (docs/PROXY_EXAMPLE.md)。本クライアントの防御は (a) SSRF 宛先ブロック、
+ * (b) レスポンスサイズ上限、(c) プロキシのエラー応答に含まれうるトークンの
+ * redactSecrets による秘匿 — に限られる。
  */
+import {
+  egressInit,
+  isRedirectResponse,
+  MAX_HTTP_RESPONSE_BYTES,
+  readBodyWithCap,
+  readFailureBody,
+  redirectRefusal,
+} from '../../shared/httpLimits';
+import { redactForMessage, MAX_RESPONSE_BODY_IN_MESSAGE } from '../../shared/redact';
+import { isHeaderName, isHeaderValue, normalizeHeaderValue } from '../../shared/headerValue';
+import { isPrivateOrReservedTarget } from '../../shared/privateTarget';
+import {
+  describeProxyEndpointFailure,
+  normalizeProxyEndpoint,
+  reviewStoredProxyConfig,
+  type ProxyCredentials,
+  type ProxyEndpointFailure,
+} from '../../shared/proxyEndpoint';
+import { getVault, type VaultAuthTag } from '../security/vault';
 
 // Constants + IDB infra below — decorative error strings, default-arrow
 // fallbacks, and the request/response envelope structure are pinned by
 // the 13 integration tests via `getProxyConfig` / `setProxyConfig` /
 // `fetchViaProxy` round-trip + validation cases.
-// Stryker disable StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,BlockStatement
+/**
+ * **この DB は平文である。** `sharedSecret` (Worker への簡易認証) もここに入る。
+ *
+ * 保管庫 (`business-hub-vault`) とは別で、暗号化されない。実測 (2026-08-23) で
+ * ブラウザ版に平文で残る資格情報はこれだけだった。設定画面の「保存時の保護状態」は
+ * **トークン**について述べており、ここは含まない (見出しにも範囲を書いた)。
+ *
+ * 漏れたときに何が起きるかは測ってある: `docs/PROXY_EXAMPLE.md` の Worker は
+ * 秘密の照合 (定数時間) とは**別に** `denyReason(target)` で宛先を検査し、
+ * DoH で名前解決してから private/reserved を弾く (DNS rebinding 対策込み)。
+ * つまり秘密だけを得ても **SSRF にはならない** —— 公開宛先への中継に使える
+ * だけで、これは Worker の持ち主の帯域の話に留まる。
+ * 保管庫へ移すには「解錠前に proxy を使う経路」の可否を決める必要があるため、
+ * ここでは**現状を書くに留める** (勝手に設計を変えない)。
+ */
 const DB_NAME = 'business-hub-preferences';
 const DB_VERSION = 1;
 const STORE = 'kv';
 const KEY = 'proxy';
 
-export interface ProxyConfig {
-  /** Cloudflare Worker / Vercel Function 等の URL */
-  readonly url: string;
-  /** 任意の共有秘密 (HMAC ヘッダーで送信) */
-  readonly sharedSecret?: string;
+/** 設定の形そのものは shared 側が持つ (保存時・読み出し時で同じ検証を通すため)。 */
+export type ProxyConfig = ProxyCredentials;
+
+/**
+ * **保存時 MAC** (2026-10-31 · threat: T-230 の隣 · 566-B)。
+ *
+ * この設定は上の DB_NAME の docblock どおり**平文**で残る (解錠前も読めるようにするため)。
+ * ところが平文ゆえに IndexedDB へ書ける相手は送り先 URL を自分の Worker へ差し替えられる ——
+ * `fetchViaProxy` は呼び出し側の `Authorization` をそのまま封筒に載せるので、差し替えれば
+ * 資格情報がまるごと盗れる。T-219 の step-up は画面の書き手にしか効かず、**生の IDB 書き込みを
+ * 素通りさせていた** (`setProxyConfig` を迂回する直接書き込み)。
+ *
+ * 対策: 解錠中に master 鍵で認証タグ (`vault.authTag`) を付けて平文の隣に置き、読み出し側が
+ * 検証して**未検証なら使わない**。差し替えられた URL はタグと一致しない (または未署名) ので断られる。
+ * タグは平文を保管庫の外に残したまま隣に置くだけ —— 保管庫のトークン名前空間は汚さない。
+ *
+ * ## 検証の 3 状態
+ * - **解錠中 × タグが一致** → 使う。
+ * - **解錠中 × 未署名 (`unstamped`)** → この修正より前の記録 (レガシー) か剥がされた物。区別できないので断る。
+ * - **解錠中 × 不一致 (`tampered`)** → 鍵違い・改竄。断る。
+ * - **ロック中** → 検証できない。だが**資格情報が乗る読みは必ず getToken の後 = 解錠後**なので、
+ *   ロック中の読みに秘密は乗らない。検証を保留して素の設定を返す (旧挙動 · 下の reviewAndVerify)。
+ *
+ * ## 残余
+ * 同一オリジンで**解錠中**の攻撃者は `vault.authTag` を自分で呼んで正しいタグを作れる (在メモリの
+ * 鍵を持つ相手は何でもできる)。この MAC が守るのは**静止時の改竄** —— アプリが動いていない間・
+ * 別プロセス・別の拡張からの IDB 書き込み。T-230 (保存時刻の認証) と同じ形である。
+ */
+const PROXY_MAC_DOMAIN = 'proxy-config';
+
+/** 未検証の理由。`rejected` (URL/秘密の形) とは別の軸 (改竄 / 未署名)。 */
+export type ProxyMacProblem = 'unstamped' | 'tampered';
+
+/** 画面・shim が「検証できない設定は使えない」を言うときの一文 (1 か所に持つ)。 */
+export const PROXY_UNVERIFIED_MESSAGE =
+  'プロキシ設定を検証できませんでした（未署名または改竄の可能性があります）。設定画面でプロキシを保存し直してください。';
+
+/** IndexedDB に入る形そのもの (平文の設定 + 任意の認証タグ)。 */
+interface StoredProxyRecord {
+  url: string;
+  sharedSecret?: string;
+  mac?: VaultAuthTag;
+}
+
+/**
+ * 認証タグに束ねる正準形。**保存される正規化済みの値から作る** (`reviewStoredProxyConfig`
+ * が返す config) ので、保存時と読み出し時で必ず一致する。固定順の配列なので鍵順や
+ * `undefined` の曖昧さが無い。 */
+function proxyMacCanonical(cfg: ProxyConfig): string {
+  return JSON.stringify([cfg.url, cfg.sharedSecret ?? null]);
 }
 
 function openDb(): Promise<IDBDatabase> {
@@ -36,355 +121,258 @@ function openDb(): Promise<IDBDatabase> {
     const req = indexedDB.open(DB_NAME, DB_VERSION);
     req.onupgradeneeded = () => {
       const db = req.result;
-      if (!db.objectStoreNames.contains(STORE)) db.createObjectStore(STORE);
+      // Stryker disable next-line ConditionalExpression: DB_VERSION が 1 のあいだ onupgradeneeded は
+  // 新規作成時にしか走らず contains は常に false。将来のバージョン上げに備えた防御 (等価変異)。
+  if (!db.objectStoreNames.contains(STORE)) db.createObjectStore(STORE);
     };
     req.onsuccess = () => resolve(req.result);
+    // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では失敗させられず、`?? new Error(...)` は req/tx.error が必ず入るため到達しない防御。文言も観測されない。
     req.onerror = () => reject(req.error ?? new Error('preferences open failed'));
   });
 }
 
+// Stryker disable next-line BlockStatement: 本体を空にすると undefined を返すが、
+// `await undefined` は即座に解決し、fake-indexeddb ではトランザクションが
+// 別途コミットされるため観測差が出ない (等価変異)。
 function txDone(tx: IDBTransaction): Promise<void> {
   return new Promise((resolve, reject) => {
     tx.oncomplete = () => resolve();
+    // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では失敗させられず、`?? new Error(...)` は req/tx.error が必ず入るため到達しない防御。文言も観測されない。
+    // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では失敗させられず、`?? new Error(...)` は req/tx.error が必ず入るため到達しない防御。文言も観測されない。
     tx.onerror = () => reject(tx.error ?? new Error('tx failed'));
   });
 }
 
-export async function getProxyConfig(): Promise<ProxyConfig | null> {
-  let db: IDBDatabase;
+/**
+ * 保存されている設定を、**読み出しのたびに検証して**返す。
+ *
+ * 検証を保存時にしか置かないと、検証が緩かった頃の値や別経路で書かれた値が
+ * そのまま資格情報の送り先になる。弾いた理由も返すので、設定画面は
+ * 「保存はされているが今の規則では使えない」ことを利用者に言える。
+ */
+export async function inspectStoredProxyConfig(): Promise<{
+  config: ProxyConfig | null;
+  rejected: ProxyEndpointFailure | null;
+  /**
+   * 認証タグの検証に落ちた理由 (`unstamped` / `tampered`)。URL/秘密の形 (`rejected`) とは
+   * 別の軸で、保存時 MAC (566-B) の結果。`config` が null の理由が「形が不正」なのか
+   * 「検証できない」なのかを分ける。
+   */
+  unverified: ProxyMacProblem | null;
+  /**
+   * 保管先そのものが読めなかったときの例外。**`config: null` の理由が
+   * 「設定していない」なのか「確認できない」なのかを分ける** ——
+   * 混ぜると、設定済みの利用者に「登録してください」と言うことになる。
+   */
+  unreadable: unknown;
+}> {
+  let raw: unknown;
   try {
-    db = await openDb();
-  } catch {
-    return null;
+    raw = await readStoredProxyRecord();
+  } catch (err) {
+    return { config: null, rejected: null, unverified: null, unreadable: err };
   }
-  const cfg = await new Promise<ProxyConfig | undefined>((resolve, reject) => {
-    const tx = db.transaction(STORE, 'readonly');
-    const req = tx.objectStore(STORE).get(KEY);
-    req.onsuccess = () => resolve(req.result as ProxyConfig | undefined);
-    req.onerror = () => reject(req.error ?? new Error('get failed'));
-  });
-  db.close();
-  return cfg ?? null;
+  return { ...(await reviewAndVerify(raw)), unreadable: null };
+}
+
+/**
+ * 保存されていた生の値を、形 (shared) と認証タグ (566-B) の両方で検める。
+ *
+ * 形の検証は `reviewStoredProxyConfig` が 1 本持つ (保存時・読み出し時で同じ)。
+ * その上に MAC の検証を重ねる —— **検証できない設定は資格情報の送り先として使わない**
+ * (`ProxyConfig` の下の DB docblock の脅威そのもの)。3 状態の切り分けは
+ * `StoredProxyRecord` の MAC docblock に在る。
+ */
+async function reviewAndVerify(
+  raw: unknown,
+): Promise<{ config: ProxyConfig | null; rejected: ProxyEndpointFailure | null; unverified: ProxyMacProblem | null }> {
+  const review = reviewStoredProxyConfig(raw);
+  if (review.config === null) return { config: null, rejected: review.rejected, unverified: null };
+  const vault = getVault();
+  // ロック中は検証できない。資格情報が乗る読みは必ず `vault.getToken` の後 = 解錠後なので
+  // (web-shim の `runProxyBearer` / security 鍵の経路)、ロック中の読みに秘密は乗らない。
+  // 検証を保留して素の設定を返す (旧挙動)。
+  if (!vault.isUnlocked()) return { config: review.config, rejected: null, unverified: null };
+  const mac = (raw as { mac?: VaultAuthTag }).mac;
+  if (mac === undefined) {
+    // 未署名 —— この修正より前に保存された物 (レガシー) か、タグを剥がされた物。区別できない
+    // ので断る (fail closed · 未検証なら使わない)。利用者は設定画面で保存し直せば署名が付く。
+    return { config: null, rejected: null, unverified: 'unstamped' };
+  }
+  const verified = await vault.verifyAuthTag(PROXY_MAC_DOMAIN, proxyMacCanonical(review.config), mac);
+  if (!verified) return { config: null, rejected: null, unverified: 'tampered' };
+  return { config: review.config, rejected: null, unverified: null };
+}
+
+/**
+ * 使える設定だけを返す。弾かれた理由が要るときは `inspectStoredProxyConfig`。
+ *
+ * **読めなければ投げる。** `inspectStoredProxyConfig` を通して `null` に丸めると、
+ * 読み出しの失敗が「未設定」と区別できなくなる —— それは 2026-09-06 に直した
+ * ばかりの形である (`readStoredProxyConfig` の注記)。呼び出し側が「未設定でも
+ * 構わない」と決めているなら、その場で `.catch()` を書けばよい。
+ */
+export async function getProxyConfig(): Promise<ProxyConfig | null> {
+  return (await reviewAndVerify(await readStoredProxyRecord())).config;
+}
+
+/**
+ * 保管された設定を読む。**開けなければ投げる。**
+ *
+ * 2026-09-06 まではここで `catch { return null; }` していた (「未設定として扱う
+ * 防御」)。ところが `null` は上まで通り、設定画面は**「未設定」の札**を出し、
+ * ブラウザ版の shim は**「設定でプロキシの URL を登録してください」**と言う ——
+ * **登録した本人に、登録し直せと言う**ことになる。しかも URL と共有シークレット
+ * を打ち直した末に、同じ所で失敗する。
+ *
+ * 「無い」と「確認できない」を分けるのは、`dbPosture.ts` が診断について
+ * 書いているのと同じ理由である。使える設定だけが要る側 (`getProxyConfig`) は
+ * これまでどおり `null` を受け取る。
+ *
+ * 2026-10-31 (566-B) に生の値をそのまま返す形へ変えた —— 認証タグ (`mac`) も読み出す
+ * ため。形と MAC の検証は `reviewAndVerify` が重ねて行う。
+ */
+async function readStoredProxyRecord(): Promise<unknown> {
+  const db = await openDb();
+  try {
+    const cfg = await new Promise<unknown>((resolve, reject) => {
+      const tx = db.transaction(STORE, 'readonly');
+      const req = tx.objectStore(STORE).get(KEY);
+      req.onsuccess = () => resolve(req.result);
+      // Stryker disable next-line ArrowFunction,LogicalOperator,StringLiteral: IndexedDB のエラー経路。fake-indexeddb では失敗させられず、`?? new Error(...)` は req/tx.error が必ず入るため到達しない防御。文言も観測されない。
+      req.onerror = () => reject(req.error ?? new Error('get failed'));
+    });
+    return cfg ?? null;
+  } finally {
+    db.close();
+  }
 }
 
 export async function setProxyConfig(cfg: ProxyConfig | null): Promise<void> {
+  // 保存するのは**正規化した URL**。検証した文字列と保存する文字列を
+  // 一致させておかないと、読み出し側の再検証が別のものを見ることになる。
+  let toStore: StoredProxyRecord | null = null;
   if (cfg !== null) {
-    if (typeof cfg.url !== 'string' || cfg.url.length === 0 || cfg.url.length > 1024) {
-      throw new Error('proxy URL が不正です');
+    const review = reviewStoredProxyConfig(cfg);
+    if (review.config === null) {
+      // rejected が null になるのは raw が null/undefined のときだけで、
+      // ここは cfg !== null なので必ず理由が付く = `?? 'not-a-url'` は到達しない。
+      // Stryker disable next-line StringLiteral
+      throw new Error(describeProxyEndpointFailure(review.rejected ?? 'not-a-url'));
     }
-    try {
-      const u = new URL(cfg.url);
-      if (u.protocol !== 'https:' && u.protocol !== 'http:') {
-        throw new Error('proxy URL は http(s) スキームのみ対応');
-      }
-    } catch (e) {
-      if (e instanceof Error && /proxy URL/.test(e.message)) throw e;
-      throw new Error('proxy URL の形式が不正です');
+    const record: StoredProxyRecord = { ...review.config };
+    // **解錠中は master 鍵で認証タグを付ける** (保存時 MAC · 566-B · `StoredProxyRecord` の docblock)。
+    // 画面 (SettingsPage) はブラウザ版では解錠済みのときしか描かれない (パス 455) ので、実際の保存は
+    // 常にここを通ってタグが付く。ロック中は付けられない —— その記録は読み出し側が `unstamped` として
+    // 断る (生の設定が検証されずに資格情報の送り先になるのを防ぐ)。
+    if (getVault().isUnlocked()) {
+      record.mac = await getVault().authTag(PROXY_MAC_DOMAIN, proxyMacCanonical(review.config));
     }
-    if (cfg.sharedSecret !== undefined && (typeof cfg.sharedSecret !== 'string' || cfg.sharedSecret.length > 256)) {
-      throw new Error('共有秘密が不正です (256 字以内)');
-    }
+    toStore = record;
   }
   const db = await openDb();
-  const tx = db.transaction(STORE, 'readwrite');
-  if (cfg === null) tx.objectStore(STORE).delete(KEY);
-  else tx.objectStore(STORE).put(cfg, KEY);
-  await txDone(tx);
-  db.close();
+  try {
+    const tx = db.transaction(STORE, 'readwrite');
+      // Stryker disable next-line ConditionalExpression: 削除の代わりに null を put しても、
+    // 読み出し側 (`reviewStoredProxyConfig`) が null を弾いて同じ「設定なし」になるため観測差が無い。
+    // レコードを残さないほうが正しいので delete を維持する。
+  if (toStore === null) tx.objectStore(STORE).delete(KEY);
+    else tx.objectStore(STORE).put(toStore, KEY);
+    await txDone(tx);
+  } finally {
+    db.close();
+  }
 }
 
 interface ProxyResponseEnvelope {
   status: number;
-  headers?: Record<string, string>;
-  body?: string;
+  headers: Record<string, string>;
+  body: string;
 }
+
+/*
+ * 値の規則は `shared/headerValue.ts` が 1 つだけ持つ (パス 296)。
+ *
+ * パス 295 はここに専用の正規表現を置いていたが、同じ知識が要求側 (共有秘密・
+ * トークン) には無く、3 通りに割れていた。加えてその regex は**プラットフォームより
+ * 厳しく**、末尾に改行が付いた値を丸ごと落としていた —— `new Response()` は
+ * それを受理して前後の HTTP 空白を剥がすだけなので、落とす理由が無かった。
+ * 正規化してから検査すれば、残す物も落とす物もプラットフォームと一致する。
+ */
+
+const INVALID_ENVELOPE: ProxyResponseEnvelope = { status: 502, headers: {}, body: 'proxy returned an invalid envelope' };
+
+/**
+ * プロキシの応答封筒を読む。**相手は利用者が用意した Worker で、形は信じない。**
+ *
+ * 2026-09-05 まで `JSON.parse(text) as ProxyResponseEnvelope` をそのまま `new Response()` へ渡していた。
+ * JSON が `null` なら `env.body` で TypeError、`status: 999` なら RangeError (200–599 の外)、
+ * `headers` が配列や空白入りの名前・CR/LF 入りの値なら TypeError —— どれも「プロキシが壊れている」
+ * ではなく `Failed to construct 'Response'` という文言で画面に出ていた。ここで形を確かめ、
+ * 封筒として読めない物は 502 (bad gateway) に畳む。空の本文も同じ 502 (「何も返さなかった」)。
+ * status が範囲外・欠落なら 502 にして本文は残す (相手のエラー文が読めるように)。
+ */
+export function parseProxyEnvelope(bodyText: string): ProxyResponseEnvelope {
+  if (bodyText.length === 0) return { status: 502, headers: {}, body: '' };
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(bodyText);
+  } catch {
+    /*
+     * **ここでは返さない。** 早期 return を置くと、消しても `parsed` は undefined の
+     * ままで下の門が同じ `INVALID_ENVELOPE` を返す —— つまり**測れない分岐**が 1 つ
+     * 残る (2026-09-06 の変異検査で生存。`localWrite` の `const OK` や `bankFormat` の
+     * `-0` 正規化と同じ判断で、pragma で黙らせるのではなく分岐ごと消す)。
+     */
+  }
+  if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) return INVALID_ENVELOPE;
+  const env = parsed as Record<string, unknown>;
+  // Stryker disable next-line ConditionalExpression: 先頭の `typeof env.status === 'number'` を
+  // true 固定にしても、後ろの `Number.isInteger` は数値以外に対して必ず false を返すため
+  // 観測差が出ない (等価変異)。型の門を先に置くのは読み手のためである。
+  const status = typeof env.status === 'number' && Number.isInteger(env.status) && env.status >= 200 && env.status <= 599 ? env.status : 502;
+  const headers: Record<string, string> = {};
+  if (typeof env.headers === 'object' && env.headers !== null && !Array.isArray(env.headers)) {
+    for (const [name, raw] of Object.entries(env.headers as Record<string, unknown>)) {
+      if (typeof raw !== 'string' || !isHeaderName(name)) continue;
+      // 正規化してから検査し、**正規化後の値を残す** —— `new Response()` が送る値と
+      // ここで持つ値を同じにする (調べた物と開く物を一致させる)。
+      const value = normalizeHeaderValue(raw);
+      if (isHeaderValue(value)) headers[name] = value;
+    }
+  }
+  // threat: T-066 —— 本文を持てない status (204 / 205 / 304) では本文を捨てる (2026-10-15 · パス 523)。
+  // `new Response(body, { status: 204 })` は本文が `''` でも TypeError を投げる (実測: 3 つとも
+  // 「Invalid response status code」) ので、上流の 204 を忠実に中継した Worker の封筒が、アプリの
+  // 「封筒が壊れている」ではなくブラウザ内部の文で落ちていた。
+  const body = NULL_BODY_STATUSES.has(status) ? '' : typeof env.body === 'string' ? env.body : '';
+  return { status, headers, body };
+}
+
+/** 本文を持てない status (Fetch 標準の null body status)。`Response` は本文が空文字でも拒む。 */
+export const NULL_BODY_STATUSES: ReadonlySet<number> = new Set([204, 205, 304]);
 
 /** Stream-read a Response body with a hard byte cap. Throws if the cap
  *  is exceeded mid-stream (so we don't buffer the whole oversized payload). */
 async function readWithCap(res: Response, maxBytes: number): Promise<string> {
-  if (!res.body) {
-    // Some test runtimes (fake fetch mocks) don't expose body. Fall back
-    // to text() but check length post-hoc.
-    const t = await res.text();
-    if (t.length > maxBytes) {
-      throw new Error(`proxy response too large (${t.length} > ${maxBytes} bytes)`);
-    }
-    return t;
-  }
-  const reader = res.body.getReader();
-  const chunks: Uint8Array[] = [];
-  let total = 0;
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    if (value) {
-      total += value.byteLength;
-      if (total > maxBytes) {
-        reader.cancel().catch(() => {});
-        throw new Error(`proxy response too large (>${maxBytes} bytes)`);
-      }
-      chunks.push(value);
-    }
-  }
-  // Concatenate chunks → decode as UTF-8.
-  const buf = new Uint8Array(total);
-  let off = 0;
-  for (const c of chunks) {
-    buf.set(c, off);
-    off += c.byteLength;
-  }
-  return new TextDecoder('utf-8').decode(buf);
+  // 判定の本体は `shared/httpLimits.ts` に 1 つだけ置く。2026-08-22 まで
+  // ここにしか無く、`clients/types.ts` の `jsonFetch` (SaaS 74 本が通る口)
+  // には上限が無かった。同じ問いなので、実装も 1 つにする。
+  return readBodyWithCap(res, maxBytes, 'proxy');
 }
 
 /** 10 MiB. Defense-in-depth cap on proxy response body to prevent OOM /
  *  DoS when a compromised or malicious proxy returns a huge payload. */
-export const MAX_PROXY_RESPONSE_BYTES = 10 * 1024 * 1024;
+export const MAX_PROXY_RESPONSE_BYTES = MAX_HTTP_RESPONSE_BYTES;
 
-/** Block targets that would let the proxy be weaponized as a SSRF
- *  oracle against the proxy operator's intranet / cloud metadata.
- *
- *  ⚠ LIMITATION — DNS rebinding:
- *  This check operates at the *hostname* level (before any DNS lookup).
- *  An attacker controlling `evil.example.com` can return a public IP
- *  (e.g. 8.8.8.8) on first resolve, then re-resolve to 127.0.0.1 / a
- *  RFC1918 address on a second lookup that happens inside the proxy.
- *  Defeating that requires the *proxy* to re-validate the resolved IP
- *  after `getaddrinfo()` and before its upstream `fetch()` call. The
- *  client-side check here is therefore a *best-effort first line of
- *  defense*; see docs/PROXY_EXAMPLE.md §3 for the proxy-side pattern.
- *
- *  Note: the proxy itself MUST validate too — this is defense-in-depth
- *  on the client side, primarily protecting users of a shared proxy
- *  from a malicious tab tricking the proxy into reaching internal IPs.
- *
- *  Blocked patterns:
- *   - loopback: 127.0.0.0/8, ::1, ::ffff:127.0.0.1, localhost
- *   - link-local + cloud metadata: 169.254.0.0/16 (AWS/GCP/Azure metadata)
- *   - RFC1918: 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16
- *   - ULA / link-local IPv6: fc00::/7, fe80::/10
- *   - mDNS / common internal TLDs (see INTERNAL_TLDS below) + .home.arpa
- *   - explicit metadata.* hostnames (GCE / Azure)
- *   - IPv6 ↔ IPv4 transition encodings (Round 3 BLOCKING coverage):
- *       · IPv4-mapped two-group:  ::ffff:HHHH:HHHH
- *       · IPv4-compatible (deprecated): ::HHHH:HHHH
- *           (URL normalizes `[::169.254.169.254]` → `[::a9fe:a9fe]`)
- *       · Single-hex-group mapped: ::ffff:HHHH (covers 0.0.0.x range)
- *       · NAT64 well-known prefix (RFC 6052): 64:ff9b::HHHH:HHHH (best-effort)
- *       · 6to4 (RFC 3056): 2002:HHHH:HHHH:: (best-effort)
+/*
+ * SSRF の送り先判定 (`isPrivateOrReservedTarget`) は 2026-09-17 (パス 300) に
+ * `src/shared/privateTarget.ts` へ移した —— `imageUrlGate` も同じ判定を
+ * 要るのに `shared → renderer` の import が境界で禁止されていたため。
+ * ここでは re-export だけを残す (呼び出し側と検査の import 先は変えない)。
+ * 判定の中身・DNS rebinding の限界・Worker 側との突き合わせは移した先の docblock に在る。
  */
-/** Single-label internal TLDs that should never be reached through the
- *  proxy. Covers mDNS (RFC 6762), common Microsoft AD defaults, IETF
- *  draft-private-use TLDs, and typical home-router zones. Compared
- *  against the *last DNS label only* so that a public name like
- *  `example.localcom.` (no dot before "local") is not flagged. */
-const INTERNAL_TLDS: ReadonlySet<string> = new Set([
-  'local',     // mDNS (RFC 6762)
-  'internal',  // common internal zone
-  'lan',       // common home / SMB
-  'corp',      // Microsoft AD default
-  'intranet',  // Microsoft AD default
-  'home',      // common ISP CPE
-  'private',   // IETF draft-private-use
-]);
-
-export function isPrivateOrReservedTarget(parsed: URL): boolean {
-  const host = parsed.hostname.toLowerCase();
-  // Strip IPv6 brackets if any (URL.hostname returns bracketed form).
-  const bare = host.startsWith('[') && host.endsWith(']') ? host.slice(1, -1) : host;
-
-  // Loopback / common local hostnames.
-  if (bare === 'localhost' || bare === 'ip6-localhost' || bare === 'ip6-loopback') return true;
-
-  // Explicit cloud-metadata hostnames.
-  if (bare === 'metadata.google.internal') return true;
-  if (bare.endsWith('.metadata.cloud.google.com')) return true;
-
-  // Internal TLDs — match only the final DNS label so that a public name
-  // like `example.localcom` (no dot separator) is correctly NOT flagged,
-  // while `printer.local` IS. We require a leading dot (i.e. at least one
-  // sub-label) to avoid blocking the bare TLD as a hostname (which
-  // wouldn't resolve via DNS anyway, but defense-in-depth).
-  const lastDot = bare.lastIndexOf('.');
-  if (lastDot > 0) {
-    const lastLabel = bare.slice(lastDot + 1);
-    if (INTERNAL_TLDS.has(lastLabel)) return true;
-  }
-  // 2-label IETF reserved zone (RFC 8375): `*.home.arpa`.
-  if (bare === 'home.arpa' || bare.endsWith('.home.arpa')) return true;
-
-  // IPv4 literal check.
-  //
-  // Stryker disable next-line Regex
-  // Anchor + character-class mutations on the regexes in this function and
-  // the two helpers below are equivalent mutations: `URL.hostname.toLowerCase()`
-  // returns the bare hostname (no surrounding whitespace, no prefix/suffix),
-  // and only lowercase hex / decimal characters are possible by construction.
-  // We Stryker-disable the regex bodies here and explicitly test for the
-  // semantic outcomes (proxy.test.ts §"isPrivateOrReservedTarget") rather
-  // than the regex shape.
-  const v4 = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(bare);
-  if (v4) {
-    const oct = v4.slice(1).map(Number);
-    if (oct.some((n) => n < 0 || n > 255 || !Number.isInteger(n))) return true;
-    const [a, b] = oct as [number, number, number, number];
-    if (a === 127) return true;                         // 127.0.0.0/8 loopback
-    if (a === 10) return true;                          // 10.0.0.0/8
-    if (a === 169 && b === 254) return true;            // 169.254/16 link-local + metadata
-    if (a === 172 && b >= 16 && b <= 31) return true;   // 172.16/12
-    if (a === 192 && b === 168) return true;            // 192.168/16
-    if (a === 0) return true;                           // 0.0.0.0/8
-    if (a >= 224) return true;                          // multicast + reserved
-    return false;
-  }
-
-  // IPv6 literal (without brackets here). Cover the common forms.
-  if (bare.includes(':')) {
-    if (bare === '::1' || bare === '0:0:0:0:0:0:0:1') return true; // loopback
-    if (bare === '::' || bare === '0:0:0:0:0:0:0:0') return true;  // unspecified
-    // IPv4-mapped IPv6 (and IPv4-compatible / single-group variants) —
-    // extract the embedded v4 and recurse through the v4 check. See
-    // `extractMappedV4` below for the full enumeration of accepted forms
-    // and Round-3 BLOCKING rationale.
-    const embeddedV4 = extractMappedV4(bare);
-    if (embeddedV4 !== null) {
-      try {
-        return isPrivateOrReservedTarget(new URL(`http://${embeddedV4}/`));
-      } catch {
-        return true; // unparseable mapped form → safe default deny
-      }
-    }
-    // NAT64 (RFC 6052 well-known prefix `64:ff9b::/96`) and 6to4 (RFC 3056
-    // `2002::/16`) can also encode an IPv4 address in the trailing bits.
-    // Full validation requires parsing the entire 128-bit address; we
-    // implement a best-effort extraction for the most common case where
-    // the v4 octets appear as the last two hex groups
-    // (`64:ff9b::HHHH:HHHH` / `2002:HHHH:HHHH::`). Attackers using
-    // arbitrary 6to4 encodings should still be caught by the proxy-side
-    // DNS-resolved-IP check (docs/PROXY_EXAMPLE.md §3).
-    const nat64Or6to4 = extractEmbeddedV4FromTransitionPrefix(bare);
-    if (nat64Or6to4 !== null) {
-      try {
-        return isPrivateOrReservedTarget(new URL(`http://${nat64Or6to4}/`));
-      } catch {
-        return true;
-      }
-    }
-    // ULA fc00::/7 → first byte 0xfc or 0xfd.
-    // Stryker disable next-line Regex
-    if (/^f[cd][0-9a-f]{0,2}:/i.test(bare)) return true;
-    // Link-local fe80::/10.
-    // Stryker disable next-line Regex
-    if (/^fe[89ab][0-9a-f]?:/i.test(bare)) return true;
-    return false;
-  }
-
-  return false;
-}
-
-/** Extract an IPv4 dotted-quad from an IPv6 string that encodes a v4
- *  address in its low 32 bits. Returns null if `bare` doesn't match any
- *  recognised mapped form.
- *
- *  Forms accepted (Round 3 BLOCKING fixes):
- *   - `::ffff:HHHH:HHHH`  — canonical IPv4-mapped (RFC 4291 §2.5.5.2);
- *                           URL normalizes `::ffff:127.0.0.1` to this form.
- *   - `::HHHH:HHHH`       — deprecated IPv4-compatible (RFC 4291 §2.5.5.1);
- *                           URL normalizes `[::169.254.169.254]` to
- *                           `[::a9fe:a9fe]`, which the canonical regex above
- *                           does NOT match, leaving an AWS-IMDS bypass.
- *   - `::ffff:HHHH`       — single-group mapped (e.g. `::ffff:0` for 0.0.0.0,
- *                           `::ffff:1` for 0.0.0.1). URL keeps these as-is
- *                           rather than zero-padding, so a two-group regex
- *                           rejects them and a "this host" (RFC 1122) /
- *                           low-address bypass appears.
- *
- *  NOTE on the dotted-quad form (`::ffff:127.0.0.1`): URL.hostname ALWAYS
- *  re-encodes the embedded v4 to hex (`::ffff:7f00:1`) on construction in
- *  Node ≥ v18 and Chromium, so the dotted form is effectively unreachable
- *  via `new URL(...)`. We still accept it here as a belt-and-suspenders
- *  safeguard for callers that invoke `isPrivateOrReservedTarget` with a
- *  URL built from a non-Web source (e.g. a custom parser); the branch is
- *  intentionally defensive rather than load-bearing in normal flow.
- */
-function extractMappedV4(bare: string): string | null {
-  // Order matters: a unified regex with `(?:::ffff:|::)` would mis-match
-  // `::ffff:0` as `::` + (`ffff`, `0`) = 255.255.0.0 instead of the
-  // intended single-group form 0.0.0.0. We therefore try the more
-  // specific (longer-prefix) shapes first.
-
-  // (1) Canonical IPv4-mapped two-group: ::ffff:HHHH:HHHH
-  //     URL normalizes `::ffff:127.0.0.1` to this form.
-  // Stryker disable next-line Regex
-  const mapped = /^::ffff:([0-9a-f]{1,4}):([0-9a-f]{1,4})$/i.exec(bare);
-  if (mapped) {
-    const hi = parseInt(mapped[1]!, 16);
-    const lo = parseInt(mapped[2]!, 16);
-    return `${(hi >>> 8) & 0xff}.${hi & 0xff}.${(lo >>> 8) & 0xff}.${lo & 0xff}`;
-  }
-  // (2) Single hex group: ::ffff:HHHH → interpreted as 0.0.HH.HH (the
-  //     high 16 bits are implicitly zero). Covers `::ffff:0` = 0.0.0.0
-  //     and `::ffff:1` = 0.0.0.1, both of which RFC 1122 §3.2.1.3
-  //     reserves as "this host on this network".
-  // Stryker disable next-line Regex
-  const single = /^::ffff:([0-9a-f]{1,4})$/i.exec(bare);
-  if (single) {
-    const lo = parseInt(single[1]!, 16);
-    return `0.0.${(lo >>> 8) & 0xff}.${lo & 0xff}`;
-  }
-  // (3) Deprecated IPv4-compatible two-group: ::HHHH:HHHH (no `ffff`).
-  //     This is the form URL.hostname normalizes `[::169.254.169.254]`
-  //     to (`[::a9fe:a9fe]`), so it is the critical Round-3 BLOCKING-A
-  //     gap. We intentionally exclude `::1`, `::0`, and `::HHHH` (single
-  //     group) here — those are handled either by the explicit loopback
-  //     equality check upstream or by being public single-group v6
-  //     addresses (no v4 embedding possible in only 16 bits worth of
-  //     low-order data).
-  // Stryker disable next-line Regex
-  const compat = /^::([0-9a-f]{1,4}):([0-9a-f]{1,4})$/i.exec(bare);
-  if (compat) {
-    const hi = parseInt(compat[1]!, 16);
-    const lo = parseInt(compat[2]!, 16);
-    return `${(hi >>> 8) & 0xff}.${hi & 0xff}.${(lo >>> 8) & 0xff}.${lo & 0xff}`;
-  }
-  // (4) Dotted-quad mapped form. See JSDoc above for why this is
-  //     defensive rather than load-bearing — Node v18+/Chromium always
-  //     re-encode this to hex on URL construction.
-  // Stryker disable next-line Regex
-  const mappedDotted = /^::ffff:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$/i.exec(bare);
-  if (mappedDotted) {
-    return mappedDotted[1]!;
-  }
-  return null;
-}
-
-/** Best-effort extraction of the embedded IPv4 from NAT64 (RFC 6052
- *  well-known prefix `64:ff9b::/96`) and 6to4 (RFC 3056 `2002::/16`)
- *  addresses. Returns the dotted-quad string or null if the input does
- *  not match the supported subset. See `isPrivateOrReservedTarget`
- *  caller for scope rationale. */
-function extractEmbeddedV4FromTransitionPrefix(bare: string): string | null {
-  // NAT64: `64:ff9b::HHHH:HHHH` (v4 in low 32 bits after `::`). The
-  // canonical RFC 6052 form embeds the v4 as the final two hex groups.
-  // Stryker disable next-line Regex
-  const nat64 = /^64:ff9b::([0-9a-f]{1,4}):([0-9a-f]{1,4})$/i.exec(bare);
-  if (nat64) {
-    const hi = parseInt(nat64[1]!, 16);
-    const lo = parseInt(nat64[2]!, 16);
-    return `${(hi >>> 8) & 0xff}.${hi & 0xff}.${(lo >>> 8) & 0xff}.${lo & 0xff}`;
-  }
-  // 6to4: `2002:HHHH:HHHH::...`. The v4 address sits in the 2nd-3rd
-  // hex groups (16 bits each, big-endian). We only catch the common
-  // `2002:HHHH:HHHH::` shape; longer forms with arbitrary subnet/iface
-  // suffixes need the proxy-side resolved-IP check for full coverage.
-  // Stryker disable next-line Regex
-  const sixToFour = /^2002:([0-9a-f]{1,4}):([0-9a-f]{1,4})::?/i.exec(bare);
-  if (sixToFour) {
-    const hi = parseInt(sixToFour[1]!, 16);
-    const lo = parseInt(sixToFour[2]!, 16);
-    return `${(hi >>> 8) & 0xff}.${hi & 0xff}.${(lo >>> 8) & 0xff}.${lo & 0xff}`;
-  }
-  return null;
-}
+export { isPrivateOrReservedTarget } from '../../shared/privateTarget';
 
 /** プロキシ経由で target URL を呼び出し、Response 互換オブジェクトを返す。 */
 export async function fetchViaProxy(targetUrl: string, init: RequestInit, cfg: ProxyConfig): Promise<Response> {
@@ -404,9 +392,47 @@ export async function fetchViaProxy(targetUrl: string, init: RequestInit, cfg: P
   if (isPrivateOrReservedTarget(parsed)) {
     throw new Error('target URL の宛先がプライベート / 予約アドレスです (SSRF 防止)');
   }
+  /*
+   * **平文 http の公開ホストは断る** (2026-09-20 · パス 345)。
+   *
+   * 封筒の `headers` には利用者の `Authorization` がそのまま載り、Worker は
+   * それを上流へ透過する。`http:` で呼べば Cloudflare と上流の間を素のまま流れる。
+   * 実測 (2026-09-20): 呼び出し口 3 つ (`web-shim.ts` の 246 / 911 / 982) はどれも
+   * `shared/api/*.ts` の https リテラルを渡しており、**平文で呼ぶ正当な用途は 0 件**。
+   * LAN / loopback は 1 つ上の `isPrivateOrReservedTarget` が既に拒んでいるので、
+   * ここに残るのは「公開ホストへ平文」だけである。
+   *
+   * 判定の順序は private → plaintext。`http://127.0.0.1:8080/admin` のような
+   * 入力には **SSRF のほうが具体的な理由**なので、そちらを先に答える。
+   * 同じ規則が Worker 側 (`docs/PROXY_EXAMPLE.md` の `denyReason`) にも在り、
+   * `proxyWorkerParity.test.ts` が両方を同じ標本へ当てて結んでいる。
+   */
+  if (parsed.protocol !== 'https:') {
+    throw new Error('target URL は https のみ対応 (平文 http は資格情報が素のまま流れます)');
+  }
+  /*
+   * **userinfo と既定以外のポートも断る** (2026-10-15 · パス 523 · threat: T-059)。
+   *
+   * Worker の許可リストは hostname しか見ないので、`https://<利用者>:<秘密>@api.notion.com/` は
+   * 許可されたまま userinfo を上流へ運び、`https://api.notion.com:8443/` は同じホストの
+   * **別のサービス**へ利用者の `Authorization` ごと届く。実測 (2026-10-15): どちらも
+   * この関数が封筒に載せ、Worker の `denyReason` も通していた (パス 522 の backlog は
+   * 「アプリ側は出さない」と書いていたが偽だった)。呼び出し口 3 つが渡すのは
+   * `shared/api/*.ts` の https リテラル (ポート無し・userinfo 無し) なので正当な用途は 0 件。
+   * Worker 側 (`docs/PROXY_EXAMPLE.md` の `denyReason`) も同じ 2 行を持ち、
+   * `proxyWorkerParity.test.ts` が同じ標本を両方へ当てる。
+   */
+  if (parsed.username !== '' || parsed.password !== '') {
+    throw new Error('target URL に userinfo (認証情報つきの URL) は使えません');
+  }
+  if (parsed.port !== '') {
+    throw new Error('target URL に既定以外のポートは使えません');
+  }
 
   // Convert RequestInit headers to a flat object.
   const flatHeaders: Record<string, string> = {};
+  // Stryker disable next-line ConditionalExpression: headers が無いまま中へ入っても、
+  // instanceof も Array.isArray も false で `Object.assign(flat, undefined)` は無操作なので同じ結果。
   if (init.headers) {
     if (init.headers instanceof Headers) {
       init.headers.forEach((v, k) => {
@@ -420,59 +446,99 @@ export async function fetchViaProxy(targetUrl: string, init: RequestInit, cfg: P
   }
 
   const envelope = {
-    url: targetUrl,
+    // Forward the NORMALIZED url — the exact string the SSRF guard validated —
+    // never the raw input. Otherwise the object we check and the string we send
+    // can disagree whenever the proxy's URL parser differs from WHATWG:
+    // `https://public.com\@169.254.169.254/` parses to hostname `public.com`
+    // here (allowed) but a non-WHATWG parser on the proxy side may read the
+    // authority as `169.254.169.254`. `parsed.href` collapses that ambiguity
+    // (it normalizes to `https://public.com/@169.254.169.254/`), so client and
+    // proxy cannot be made to disagree (2026-07 security audit).
+    url: parsed.href,
     method: typeof init.method === 'string' ? init.method.toUpperCase() : 'GET',
     headers: flatHeaders,
     body: typeof init.body === 'string' ? init.body : undefined,
   };
 
+  // 送り先も**呼び出し側から渡されたまま**では使わない。この関数は export
+  // されていて、保存経路を通らない cfg でも呼べる。資格情報が乗る口なので
+  // ここでも同じ規則で確かめ、正規化した URL へ送る。
+  const proxyChecked = normalizeProxyEndpoint(cfg.url);
+  if (!proxyChecked.ok) throw new Error(describeProxyEndpointFailure(proxyChecked.reason));
+
   const proxyHeaders: Record<string, string> = { 'content-type': 'application/json' };
-  if (cfg.sharedSecret && cfg.sharedSecret.length > 0) {
+  // `&&` の左だけで足りる — undefined も空文字も falsy なので `.length > 0` は
+  // 一度も結果を変えない (変異検査で redundant と判明)。
+  if (cfg.sharedSecret) {
     proxyHeaders['x-proxy-auth'] = cfg.sharedSecret;
   }
 
-  const proxyRes = await fetch(cfg.url, {
+  // **呼び出し側の signal を捨てない。** 2026-08-22 まで `init` から
+  // url / method / headers / body だけを取り出しており、`signal` は
+  // envelope にも下の fetch にも渡っていなかった。呼び出し側 (`runAiChat`)
+  // が timeout を付けても、プロキシ経由の道だけ効かない —— 「守っている
+  // つもりの守り」になる。中継先が固まったら、こちらの待ちも切る。
+  const proxyRes = await fetch(proxyChecked.url, egressInit({
     method: 'POST',
     headers: proxyHeaders,
     body: JSON.stringify(envelope),
-  });
+    signal: init.signal ?? undefined,
+  }));
+
+  // 転送には追随しない (規則は httpLimits.ts)。封筒には上流の Authorization が載っており、
+  // 307 / 308 はブラウザがそれを Location 先へ**そのまま再送**する —— `proxyEndpoint` の
+  // 関門は 1 ホップ目にしか掛からない (調べた送り先と、送る送り先が別になる形)。
+  if (isRedirectResponse(proxyRes)) {
+    throw new Error(redirectRefusal(proxyRes, proxyChecked.url, 'proxy'));
+  }
 
   if (!proxyRes.ok) {
-    const body = await proxyRes.text().catch(() => '');
-    throw new Error(`proxy ${proxyRes.status}: ${body.slice(0, 200)}`);
+    // **失敗の本文にも上限を掛ける** (2026-09-20 · パス 330)。ここは 1 行下の
+    // 成功側が「compromised or malicious proxy returning a huge payload」を
+    // 名指しして切っているのに、**その相手が実際に通る枝**だけ素の `text()`
+    // だった —— 中継は利用者が配る Worker なので、返す本文の大きさは
+    // このアプリの側では何も保証できない。
+    // Stryker disable next-line StringLiteral: ラベルは「<label> response too large」の文に入るだけで、その例外は
+    // `readFailureBody` の `.catch(() => '')` が握る —— 空文字を返す以外に外へ出る物が無く、観測できない (等価変異)。
+    const body = await readFailureBody(proxyRes, 'proxy', MAX_PROXY_RESPONSE_BYTES);
+    // A misbehaving proxy may echo the forwarded request (incl. the
+    // Authorization header) back in its error body. Redact before surfacing.
+    throw new Error(`proxy ${proxyRes.status}: ${redactForMessage(body, MAX_RESPONSE_BODY_IN_MESSAGE)}`);
   }
 
   // Defense-in-depth: cap response body before json() to prevent OOM on
   // a compromised/malicious proxy returning a huge payload.
-  // `proxyRes.headers` is optional in test mocks, hence the `?.get` chain.
-  // We require `cl > 0` (not just `cl > cap`) because:
-  //   - a malicious / buggy proxy could return `Content-Length: -1`, which
-  //     is finite and ≤ cap and would slip past the header gate;
-  //   - real implementations never send a negative or NaN length, so
-  //     ignoring such headers and falling through to `readWithCap` (which
-  //     enforces the cap at the byte-stream level) is the safe behaviour.
-  const clHeader = proxyRes.headers?.get?.('content-length');
-  const cl = clHeader ? Number(clHeader) : 0;
-  if (Number.isFinite(cl) && cl > 0 && cl > MAX_PROXY_RESPONSE_BYTES) {
-    throw new Error(`proxy response too large (${cl} > ${MAX_PROXY_RESPONSE_BYTES} bytes)`);
-  }
+  //
+  // 宣言長 (Content-Length) の先手の門はここに**自前で**書いてあったが、
+  // 2026-08-31 に `readBodyWithCap` へ畳んだ (同じ問いに答えを 2 つ持たない)。
+  // `cl > 0` を要求する理由 —— `Content-Length: -1` は有限かつ上限以下として
+  // すり抜けるので、壊れた宣言は byte 単位の門へ委ねる —— も向こうへ移した。
+  // 文言は同じ (`proxy response too large (N > 上限 bytes)`)。
   const bodyText = await readWithCap(proxyRes, MAX_PROXY_RESPONSE_BYTES);
-  // Empty-body fast path: `JSON.parse('')` throws SyntaxError, so when the
-  // proxy returns no body we substitute an empty envelope; the Response
-  // constructor below then falls back to status 502 + empty body — i.e.
-  // we surface "proxy returned nothing" as a bad-gateway, not as a crash.
-  const env = bodyText.length === 0 ? {} as ProxyResponseEnvelope : JSON.parse(bodyText) as ProxyResponseEnvelope;
-  // Reconstruct a Response that callers can treat normally.
-  return new Response(env.body ?? '', {
-    status: typeof env.status === 'number' ? env.status : 502,
-    headers: env.headers ?? {},
-  });
+  // 封筒の形はここで確かめる (空・非 JSON・範囲外の status・壊れた headers は 502 に畳む —
+  // `new Response()` に投げさせない)。呼び出し側は普通の Response として扱える。
+  const env = parseProxyEnvelope(bodyText);
+  // threat: T-066 —— null body status には `null` を渡す (空文字でも `Response` は投げる)。
+  return new Response(NULL_BODY_STATUSES.has(env.status) ? null : env.body, { status: env.status, headers: env.headers });
 }
 
-/** Service id → CORS 直接呼び出しが不可能で proxy 必須かどうか。 */
-export const PROXY_REQUIRED_SERVICES: ReadonlySet<string> = new Set([
-  'notion',
-  'atlassian',
-  'cloudflare',
-]);
+/*
+ * `PROXY_REQUIRED_SERVICES` は 2026-08-27 に**削除した**。
+ *
+ * 「CORS 直接呼び出しが不可能で proxy 必須なのは notion / atlassian /
+ * cloudflare の 3 つ」という表だったが、**実装はその方針をやめている**。
+ * `network/liveRead.ts` は全サービスを**必ずプロキシへ通す**:
+ *
+ *   > CORS を許す相手なら直接 fetch でもよいが、その分岐は今どのサービスも
+ *   > 通らない = 検査で確かめられない。資格情報を第三者のホストへ送る経路を、
+ *   > 動かないまま置いておくほうが危ない。
+ *
+ * つまりこの表は**実装より緩い方針**を述べたまま残っており、しかも検査が
+ * 「github は proxy 必須では**ない**」と固定していた。読んだ人が
+ * 「github は直接 fetch してよい」と受け取ると、上の注記がまさに危ないと
+ * 言っている直接経路を戻すことになる。**production からの参照は 0 件**
+ * だった (定義と検査だけが生きていた)。
+ *
+ * 方針は `liveRead.ts` の 1 か所に置く。表を 2 つ持たない。
+ */
 // Stryker restore StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression

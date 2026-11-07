@@ -1,0 +1,69 @@
+/**
+ * Shopify → 売上集計 取り込み。Shopify の注文を、このアプリの売上集計
+ * (`sales.ts` の SalesEntry) に変換して record store に流し込むための純粋
+ * ロジック。これにより Shopify の実注文が KPI / 売上ダッシュボードへ反映され、
+ * システム全体のデータ精度が上がる。
+ *
+ * main プロセスの ShopifyOrderSummary を直接 import すると process 境界
+ * (lint:imports) に触れるため、renderer 側で必要最小限の入力型を再定義する。
+ */
+import { parseSalesEntry, shopifyOrderNote, type SalesEntry } from './sales';
+import { localIsoDate } from '../../shared/localDate';
+import { readEntryNumber } from '../../shared/readNumeric';
+
+/** Shopify 注文の最小入力。`total` は "¥12,000" のような表示文字列でも、
+ *  数値でも受け付ける。 */
+export interface ShopifyOrderInput {
+  readonly name?: string;
+  readonly total: string | number;
+  readonly orders?: number;
+}
+
+/**
+ * 表示用の金額文字列から数値を取り出す。"¥12,000" → 12000 / "1,234円" → 1234。
+ * 数値ならそのまま。**読めない・負・非有限は 0** (呼び手の `orderToSalesEntry` が
+ * 0 以下を「記録しない」として断る)。
+ *
+ * ★ **読みは画面と同じ 1 つ** (`readEntryNumber` —— 2026-09-27 · パス 496)。それまでは
+ * 数字と `.` 以外を**どこからでも**落としてつないでいたので、この欄 (利用者が打つ
+ * 「金額 (¥12,000)」) に打った文字列が**別の金額**として売上集計に入った (実測):
+ *
+ * ```
+ *   '1億'           1 円        '12万'     12 円
+ *   '-500'          500 円      '1e3'      13 円
+ *   '2024年12月31日'  20,241,231 円
+ *   '１２，０００'    記録しない (全角は読めていなかった)
+ * ```
+ *
+ * 2026-09-06 に `readNumeric` の `NUMBER_SHAPE` が閉じた「飾りを位置を見ずに落とすと
+ * 別の数になる」と同じ形が、この 1 か所に残っていた。
+ */
+export function parseAmount(total: string | number): number {
+  const read = readEntryNumber(total);
+  // Math.max(0, x) は `x > 0 ? x : 0` と同値で、x===0 で値が一致する `>`↔`>=` の
+  // equivalent mutant を構造的に排除する (負・0 は 0 に丸める)。
+  return read.kind === 'number' ? Math.max(0, read.value) : 0;
+}
+
+/**
+ * Shopify 注文を売上エントリ (channel='shopify') に変換。`date` は呼び出し側
+ * が指定 (既定は今日)。金額が取れない注文は取り込まない方針なので、その場合は
+ * null を返す。検証は既存の `parseSalesEntry` に委譲して精度を担保する。
+ */
+export function orderToSalesEntry(
+  order: ShopifyOrderInput,
+  opts: { date?: string } = {},
+): SalesEntry | null {
+  const amount = parseAmount(order.total);
+  if (amount <= 0) return null;
+  // 売上日は利用者の時計で。UTC だと月初未明の注文が前月に付く。
+  const date = opts.date ?? localIsoDate();
+  return parseSalesEntry({
+    date,
+    channel: 'shopify',
+    amount,
+    orders: order.orders ?? 1,
+    // メモの形は `sales.ts` が 1 か所で持つ (読む側 `salesOrderRef` と同じ形 —— パス 126)。
+    note: shopifyOrderNote(order.name),
+  });
+}

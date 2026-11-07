@@ -1,4 +1,7 @@
 import { jsonFetch, FetchError, type ActionContext, type ActionMap, type FetchContext } from './types';
+import { displayField, objectRows, optionalString } from '../../shared/apiResponse';
+import { CANVA_API, CANVA_FOLDERS_PATH, canvaFolderInit, checkFolder, parseCreatedFolder } from '../../shared/api/canva';
+import type { ActionData } from '../../shared/actionData';
 
 interface CanvaDesign {
   id: string;
@@ -19,7 +22,8 @@ interface CanvaBrandKit {
 }
 
 interface CanvaBrandKitsResponse {
-  items: CanvaBrandKit[];
+  // 欠けうる (scope の無い下の 403 / 404 では最初から無い)。読む側は `objectRows` が欠落を空にする。
+  items?: CanvaBrandKit[];
 }
 
 export interface CanvaSnapshot {
@@ -34,7 +38,6 @@ export interface CanvaSnapshot {
   }[];
 }
 
-// Stryker disable StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,BlockStatement,Regex,ArrayDeclaration,OptionalChaining,UnaryOperator,ArithmeticOperator
 export async function fetchCanvaSnapshot(ctx: FetchContext): Promise<CanvaSnapshot> {
   const fetchCtx = { fetch: ctx.fetch, serviceId: 'canva' };
   const headers = { Authorization: `Bearer ${ctx.token}` };
@@ -56,20 +59,36 @@ export async function fetchCanvaSnapshot(ctx: FetchContext): Promise<CanvaSnapsh
       fetchCtx,
     ).catch((err: unknown): CanvaBrandKitsResponse => {
       if (err instanceof FetchError && (err.status === 403 || err.status === 404)) {
-        return { items: [] };
+        // 欄は無いまま返す。下の `objectRows(brandKitsRes.items)` が欠落を空にするので、
+        // 空配列を入れても入れなくても結果は変わらない (2026-09-30 まではここで `{ items: [] }` を作っており、
+        // その空配列は観測できない等価変異として pragma で外していた —— 作らなければ外す物も無い)。
+        return {};
       }
       throw err;
     }),
   ]);
 
   return {
-    brandKits: (brandKitsRes.items ?? []).map((b) => ({ id: b.id })),
-    designs: (designsRes.items ?? []).slice(0, 12).map((d) => ({
-      id: d.id,
-      title: d.title ?? '(無題のデザイン)',
+    brandKits: objectRows<CanvaBrandKit>(brandKitsRes.items).map((b) => ({ id: displayField(b.id) })),
+    designs: objectRows<CanvaDesign>(designsRes.items).slice(0, 12).map((d) => ({
+      id: displayField(d.id),
+      // **画面の欄へ入る第三者の文字列は天井を通る** (2026-09-22 · パス 415)。
+      // 実測 (直す前): デザイン名に 200,000 字を入れると `CanvaPage` の
+      // 総文字数が **200,181 字**になった (パス 410 はこの欄の**型**を直したが、
+      // **長さ**は据え置かれていた)。
+      title: displayField(d.title) || '(無題のデザイン)',
       updatedAt: d.updated_at ?? 0,
       pageCount: d.page_count ?? 1,
-      thumbnailUrl: d.thumbnail?.url ?? '',
+      /*
+       * `?? ''` は **null / undefined しか受けない** ので、`thumbnail: {url: 42}`
+       * がそのまま `thumbnailUrl` に入り、`safeImageSrc` が `url.replace is not a
+       * function` で投げて**画面が丸ごと落ちていた** (2026-09-22 · 実測 · パス 410)。
+       * 関門の側にも床を置いたが、**境界で型を確かめるのが先**である。
+       */
+      thumbnailUrl:
+        d.thumbnail !== null && typeof d.thumbnail === 'object'
+          ? optionalString(d.thumbnail as unknown as Record<string, unknown>, 'url') ?? ''
+          : '',
       viewUrl: d.urls?.view_url ?? `https://www.canva.com/design/${d.id}`,
     })),
   };
@@ -77,42 +96,26 @@ export async function fetchCanvaSnapshot(ctx: FetchContext): Promise<CanvaSnapsh
 
 // --- write-side actions --------------------------------------------------
 
-interface CreateFolderPayload {
+/**
+ * `create-folder` の payload の宣言 (§3.2 の表がこの名前で照合する)。欄の判定は
+ * shared の `checkFolder` (`CanvaFolderFields` = 欄が unknown の受け口) が行う。
+ */
+export interface CreateFolderPayload {
   name: string;
   parentFolderId?: string; // omitted → "root"
 }
 
-interface CanvaCreateFolderResponse {
-  folder: {
-    id: string;
-    name: string;
-  };
-}
-
-async function createFolder(ctx: ActionContext): Promise<{ id: string; name: string }> {
-  const { name, parentFolderId } = ctx.payload as unknown as CreateFolderPayload;
-  if (!name) throw new Error('name is required');
-
-  const res = await jsonFetch<CanvaCreateFolderResponse>(
-    'https://api.canva.com/rest/v1/folders',
-    {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${ctx.token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name,
-        parent_folder_id: parentFolderId ?? 'root',
-      }),
-    },
+async function createFolder(ctx: ActionContext): Promise<ActionData<'canva/create-folder'>> {
+  // 欄の判定・URL・要求・応答の読みは shared/api/canva.ts の 1 つ (ブラウザ版も同じ関数 · 2026-09-18)。
+  const folder = checkFolder(ctx.payload);
+  const res = await jsonFetch<Record<string, unknown>>(
+    `${CANVA_API}${CANVA_FOLDERS_PATH}`,
+    canvaFolderInit(folder, ctx.token),
     { fetch: ctx.fetch, serviceId: 'canva' },
   );
-
-  return { id: res.folder.id, name: res.folder.name };
+  return parseCreatedFolder(res);
 }
 
 export const ACTIONS: ActionMap = {
   'create-folder': createFolder,
 };
-// Stryker restore StringLiteral,ArrowFunction,LogicalOperator,ConditionalExpression,BooleanLiteral,ObjectLiteral,EqualityOperator,MethodExpression,BlockStatement,Regex,ArrayDeclaration,OptionalChaining,UnaryOperator,ArithmeticOperator

@@ -1,0 +1,33 @@
+---
+title: "カール・ルウェリン"
+type: thinker
+person_key: "ルウェリン|カ"
+concept_count: 11
+tags:
+  - person
+  - index
+---
+
+# カール・ルウェリン
+
+> [!info] 人物索引 ・ 関連する検証済み概念 **11 件**（確証ゲート: 出典 2 件以上・権威 1 件以上）
+
+## 学術概念（11件）
+- [[bizlaw-bill-of-exchange|為替手形——流通可能な信用証券としての無条件の支払指図]] — 為替手形（billofexchange）は、英米法において、ある者（振出人／drawer）が、第二の者（支払人／dra…
+- [[bizlaw-caveat-emptor|買主注意の原則——売買における危険の買主負担とその現代的後退]] — 買主注意の原則（caveatemptor、「買主をして注意せしめよ」を意味するラテン語）は、英米法の伝統的準則で、売買…
+- [[bizlaw-caveat-emptor-laidlaw|買主注意の原則——取引における情報開示義務と自己責任の法理]] — 買主注意の原則（CaveatEmptor）とは、「買主をして注意せしめよ」というラテン語の法格言に基づく商法の基本原則…
+- [[bizlaw-contract-law-unconscionability|不当条項無効法理（コモン・ロー）：手続的・実質的不当性の二段テストによる一方的契約条項の裁判的制限]] — カール・ルウェリン起草の統一商法典UCC§2-302とRestatement（Second）ofContracts§2…
+- [[bizlaw-good-faith|信義誠実の原則——契約の履行と行使における誠実・公正な行動義務]] — 信義誠実（goodfaith、信義則）の原則は、契約の当事者が互いに対して、誠実に、公正に、相手方の正当な期待や契約の…
+- [[bizlaw-implied-warranty-merchantability|黙示の商品性保証（Implied Warranty of Merchantability）]] — 統一商事法典（UCC）第2-314条は、商人たる売主による物品売買契約に商品性の黙示保証が自動的に付随すると規定する。
+- [[bizlaw-letter-of-credit|信用状——銀行の支払確約による国際貿易の決済の保障]] — 信用状（letterofcredit、L/C、荷為替信用状）は、国際貿易において広く用いられる金融手段で、買主の依頼を…
+- [[bizlaw-mailbox-rule-adams|発信主義（メールボックス・ルール）——契約承諾の効力発生時期に関する法理]] — 発信主義（MailboxRule）とは、契約法において承諾の意思表示が発信された時点で契約が成立するとする法原則であり…
+- [[bizlaw-perfect-tender-rule|完全履行提供の原則（perfect tender rule）——UCC第2-601条による物品売買の厳格一致基準]] — 完全履行提供の原則（perfecttenderrule）とは、物品売買契約においてアメリカ統一商事法典（UCC）第2-…
+- [[bizlaw-promissory-note|約束手形——一定金額の支払を約する二当事者間の流通証券]] — 約束手形（promissorynote）は、英米法における流通証券（negotiableinstrument）の一種で…
+- [[bizlaw-warranty-of-merchantability|商品性の黙示的保証——商人が売る物品の通常の用途への適合性]] — 商品性の黙示的保証（impliedwarrantyofmerchantability）は、英米の物品売買法、とりわけア…
+
+## 関連
+- 索引: [[人物索引]]
+- ヴォルト入口: [[Home]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*
