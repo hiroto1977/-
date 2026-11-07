@@ -9,6 +9,7 @@ import {
   SCENE_LINE_TICKS,
   SCENE_LINES,
   SCENE_TICKS,
+  TICK_WRAP,
   type RequestFlow,
 } from '../villageScenes';
 import type { Villager } from '../villageData';
@@ -166,6 +167,30 @@ describe('sceneCursor — いまの tick で見せる行', () => {
     for (let t = 0; t < SCENE_TICKS * scenes.length; t += SCENE_TICKS) ids.add(sceneCursor(scenes, without, t)!.scene.id);
     expect(ids.has('m1:t1')).toBe(false);
     expect(ids.size).toBe(scenes.length - 1);
+  });
+
+  it('★ 揃う場面の数が変わっても、いま見せている場面は動かない (途中で別の掛け合いへ飛ばない)', () => {
+    for (let slot = 0; slot < scenes.length; slot += 1) {
+      const t = slot * SCENE_TICKS + 4; // 場面の途中
+      const before = sceneCursor(scenes, everyone, t)!;
+      for (const v of ALL) {
+        if (v.id === before.scene.a || v.id === before.scene.b) continue;
+        const fewer = new Set(everyone);
+        fewer.delete(v.id);
+        const after = sceneCursor(scenes, fewer, t)!;
+        expect(after.key, `${v.id} が居なくなっただけで場面 ${before.scene.id} が飛んだ`).toBe(before.key);
+      }
+    }
+  });
+
+  it('★ tick が一周する境目は場面の切れ目に当たる (一周のたびに場面が途中で切れない)', () => {
+    expect(TICK_WRAP % SCENE_TICKS).toBe(0);
+    expect(TICK_WRAP).toBeLessThanOrEqual(100000);
+    expect(TICK_WRAP).toBeGreaterThan(100000 - SCENE_TICKS);
+    const last = sceneCursor(scenes, everyone, TICK_WRAP - 1)!;
+    const first = sceneCursor(scenes, everyone, 0)!;
+    expect(last.lineIndex, '一周の直前が場面の最後の間ではない').toBeNull();
+    expect(first.lineIndex).toBe(0);
   });
 
   it('見せられる場面が 1 本も無ければ null', () => {

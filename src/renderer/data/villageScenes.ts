@@ -35,6 +35,12 @@ export const SCENE_LINES = 3;
 /** 場面 1 本の長さ = 3 行 + 次へ移る前の間。 */
 export const SCENE_TICKS = SCENE_LINES * SCENE_LINE_TICKS + 2;
 
+/**
+ * 村の tick が一周する値。**場面 1 本の長さの倍数**にして、一周の境目が場面の途中に当たらないようにする
+ * (100000 は 14 で割り切れず、一周するたびに場面が途中で切れた)。
+ */
+export const TICK_WRAP = SCENE_TICKS * Math.floor(100000 / SCENE_TICKS);
+
 /** 名前・領域・重点を画面に出すときの天井。 */
 const NAME_CHARS = 24;
 const FOCUS_CHARS = 32;
@@ -125,18 +131,24 @@ export interface SceneCursor {
 }
 
 /**
- * いまの tick で見せる場面。`eligible` に 2 人とも居る場面だけを数え、場面番号の順に回す。
- * 該当が 1 本も無ければ null。
+ * いまの tick で見せる場面。場面番号は**全場面の並び**で決め、そこが `eligible` に居ない (2 人が揃わない) ときだけ
+ * 次の場面へ送る。該当が 1 本も無ければ null。
+ *
+ * 以前は「揃う場面だけを数え直した並び」で選んでいたので、街区の拡大などで揃う場面の数が変わると、
+ * 場面の途中で別の掛け合いへ飛んだ。いまは揃う場面の数が変わっても、いま見せている場面が揃っているかぎり動かない。
  */
 export function sceneCursor(
   scenes: readonly ChatterScene[],
   eligible: ReadonlySet<string>,
   tick: number,
 ): SceneCursor | null {
-  const live = scenes.filter((s) => eligible.has(s.a) && eligible.has(s.b));
-  if (live.length === 0) return null;
+  const n = scenes.length;
   const slot = Math.floor(tick / SCENE_TICKS);
-  const scene = live[slot % live.length]!;
+  // 並びを slot から 1 周だけ見て、最初に揃う場面を採る (場面が 0 件なら見る物が無く null)。
+  const scene =
+    Array.from({ length: n }, (_, k) => scenes[(slot + k) % n]!).find((s) => eligible.has(s.a) && eligible.has(s.b)) ??
+    null;
+  if (scene === null) return null;
   const within = tick - slot * SCENE_TICKS;
   const idx = Math.floor(within / SCENE_LINE_TICKS);
   const lineIndex = idx < SCENE_LINES ? idx : null;
