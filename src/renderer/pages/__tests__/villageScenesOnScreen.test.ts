@@ -35,10 +35,16 @@ afterEach(async () => {
   vi.useRealTimers();
 });
 
-async function mount(): Promise<HTMLDivElement> {
+/** AI の呼び出しの代役。既定は失敗。`pending` は返らない (返答待ちのまま)。 */
+type InvokeStub = () => Promise<unknown>;
+const FAILING: InvokeStub = async () => ({ ok: false, message: 'x' });
+const SUCCEEDING: InvokeStub = async () => ({ ok: true, data: { text: 'モデルの返答' } });
+const PENDING: InvokeStub = () => new Promise(() => undefined);
+
+async function mount(invoke: InvokeStub = FAILING): Promise<HTMLDivElement> {
   installPageRenderGlobals(() => undefined);
   const hub = (window as unknown as { serviceHub: Record<string, unknown> }).serviceHub;
-  hub['invoke'] = async () => ({ ok: false, message: 'x' });
+  hub['invoke'] = invoke;
   hub['fetchSnapshot'] = async () => ({ ok: true, data: { providers: [] } });
   container = document.createElement('div');
   document.body.appendChild(container);
@@ -105,8 +111,8 @@ describe('村の景色が会話の場面と作業の様子を見せる', () => {
     expect(logLines(c).length, '切ったのに掛け合いが記録へ増えた').toBe(before);
   });
 
-  it('★ 話しかけると受付から割り当てへ札が進み、完了で畳まれる', async () => {
-    const c = await mount();
+  it('★ 話しかけると受付から割り当てへ札が進み、AI の返答が来たら完了で畳まれる', async () => {
+    const c = await mount(SUCCEEDING);
     await speak(c, '消費税の申告について教えて');
     await waitForElement(() => c.querySelector('[data-village-flow]'), '流れの札');
     const labels = chips(c).map((x) => x.getAttribute('data-flow-chip'));
@@ -116,10 +122,29 @@ describe('村の景色が会話の場面と作業の様子を見せる', () => {
     await ticks(1);
     expect(chips(c).find((x) => x.getAttribute('data-current') === 'true')?.getAttribute('data-flow-chip')).not.toBe('受付');
     expect(logLines(c).some((l) => l.includes('【受付】'))).toBe(true);
-    // 結果は最初から「返答済み」なので、段を見せ終えたら完了を見せて、そのあと畳む。
+    // 返答 (SUCCEEDING) は話しかけた直後に届くので、段を見せ終えたら完了を見せて、そのあと畳む。
     await ticks(20);
     expect(c.querySelector('[data-village-flow]'), '見せ終えた流れが畳まれていない').toBeNull();
     expect(logLines(c).some((l) => l.includes('【完了】'))).toBe(true);
+  });
+
+  it('★ AI の返答が来ない間は作業中で待ち、完了と言わない', async () => {
+    const c = await mount(PENDING);
+    await speak(c, '消費税の申告について教えて');
+    await waitForElement(() => c.querySelector('[data-village-flow]'), '流れの札');
+    await ticks(10);
+    const cur = chips(c).find((x) => x.getAttribute('data-current') === 'true');
+    expect(cur?.getAttribute('data-flow-chip'), '返答が来ないのに作業中以外へ進んだ').toBe('作業中');
+    expect(logLines(c).some((l) => l.includes('【完了】')), '返答が来ないのに完了と言った').toBe(false);
+  });
+
+  it('★ AI の呼び出しが失敗したら失敗として出る (完了と偽らない)', async () => {
+    const c = await mount(FAILING);
+    await speak(c, '消費税の申告について教えて');
+    await waitForElement(() => c.querySelector('[data-village-flow]'), '流れの札');
+    await ticks(20);
+    expect(logLines(c).some((l) => l.includes('【失敗】')), '失敗が札に出ない').toBe(true);
+    expect(logLines(c).some((l) => l.includes('【完了】')), '失敗したのに完了と言った').toBe(false);
   });
 
   it('★ コンシェルジュの作業の知らせ: 実行中は作業中で待ち、完了の知らせで完了になる', async () => {
@@ -194,7 +219,7 @@ describe('村の景色が会話の場面と作業の様子を見せる', () => {
   });
 
   it('★ 話しかけた流れに、実行の結果は付かない', async () => {
-    const c = await mount();
+    const c = await mount(PENDING);
     await speak(c, '消費税の申告について教えて');
     await waitForElement(() => c.querySelector('[data-village-flow]'), '流れの札');
     await act(async () => {
@@ -202,6 +227,32 @@ describe('村の景色が会話の場面と作業の様子を見せる', () => {
     });
     await ticks(20);
     expect(logLines(c).some((l) => l.includes('【失敗】')), '実行の結果が話しかけた流れに付いた').toBe(false);
+  });
+
+  it('★ 記録は下端に居るときだけ新しい行を追い、過去の行を読んでいる間は引き戻さない', async () => {
+    const c = await mount();
+    const list = await waitForElement(() => c.querySelector<HTMLElement>('[role="log"]'), '会話の記録');
+    // jsdom にはレイアウトが無いので、高さを持たせて「スクロールできる箱」にする。
+    Object.defineProperty(list, 'scrollHeight', { configurable: true, get: () => 1000 });
+    Object.defineProperty(list, 'clientHeight', { configurable: true, get: () => 100 });
+    // 上へ戻って過去の行を読んでいる
+    list.scrollTop = 0;
+    await act(async () => {
+      list.dispatchEvent(new Event('scroll'));
+    });
+    const before = logLines(c).length;
+    await ticks(6);
+    expect(logLines(c).length, '新しい行が増えていない (検査の前提)').toBeGreaterThan(before);
+    expect(list.scrollTop, '過去の行を読んでいる最中に下端へ引き戻された').toBe(0);
+    // 下端のそばへ戻れば、また追う
+    list.scrollTop = 900;
+    await act(async () => {
+      list.dispatchEvent(new Event('scroll'));
+    });
+    const mid = logLines(c).length;
+    await ticks(6);
+    expect(logLines(c).length).toBeGreaterThan(mid);
+    expect(list.scrollTop, '下端に居るのに新しい行を追わない').toBe(1000);
   });
 
   it('★ 危機・心の不調の文は、景色の吹き出しと記録へ複製しない', async () => {

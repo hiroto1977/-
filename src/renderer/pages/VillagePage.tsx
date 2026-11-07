@@ -9,7 +9,7 @@
  *   - 地面・道・池・木などの情景（絵文字＋インライン SVG のみ・画像ファイル不可＝CSP）。
  */
 import { useBuildKind } from '../hooks/useBuildKind';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   org as regOrg,
   teams as regTeams,
@@ -64,12 +64,13 @@ import type { ActionData } from '../../shared/actionData';
 import {
   buildChatterScenes,
   buildRequestFlow,
+  TICK_WRAP,
   flowCursor,
   sceneCursor,
   type FlowOutcome,
   type RequestFlow,
 } from '../data/villageScenes';
-import { subscribeConversationWork } from '../data/conversationWork';
+import { newConversationWorkRunId, subscribeConversationWork } from '../data/conversationWork';
 
 const REG: VillageRegistry = {
   org: regOrg as VillageRegistry['org'],
@@ -108,8 +109,10 @@ interface Bubble {
   readonly tone: 'work' | 'voice' | 'scene';
 }
 
-/** 経過 tick (村の tick は 100000 で一周するので、一周をまたいでも差が正しく出る)。 */
-const TICK_WRAP = 100000;
+/** 記録を「下端に居る」と見なす余白 (px)。 */
+const LOG_STICK_PX = 24;
+
+/** 経過 tick (村の tick は `TICK_WRAP` で一周するので、一周をまたいでも差が正しく出る)。 */
 function elapsedOf(start: number, now: number): number {
   return (now - start + TICK_WRAP) % TICK_WRAP;
 }
@@ -294,7 +297,6 @@ export function VillagePage() {
         listenerId: flowCur.stage.listenerId ?? null,
         text: flowCur.stage.text,
         tag: flowCur.stage.label as string | undefined,
-        atPlaza: flowCur.phase !== 'relay',
       };
     }
     if (chatter !== null && chatter.lineIndex !== null) {
@@ -305,7 +307,6 @@ export function VillagePage() {
         listenerId: line.who === 'a' ? chatter.scene.b : chatter.scene.a,
         text: line.text,
         tag: undefined as string | undefined,
-        atPlaza: false,
       };
     }
     return null;
@@ -321,6 +322,15 @@ export function VillagePage() {
   useEffect(() => {
     if (flowCur?.finished) setFlowState(null);
   }, [flowCur]);
+
+  // 話しかけた流れ (AI の返答を待つもの) を、返答が来た / 来なかったで閉じる。印が合うときだけ。
+  const settleFlow = useCallback((runId: string, kind: 'done' | 'failed') => {
+    setFlowState((prev) =>
+      prev === null || prev.outcome !== null || prev.runId !== runId
+        ? prev
+        : { ...prev, outcome: { kind, atElapsed: elapsedOf(prev.start, tickRef.current) } },
+    );
+  }, []);
 
   // 会話のコンシェルジュが**実際に**実行した操作の知らせ (サービスと操作名と段階だけ。文・引数・結果は来ない)。
   useEffect(() => {
@@ -364,14 +374,21 @@ export function VillagePage() {
     setSceneLog((prev) => [...prev, entry].slice(-SCENE_LOG_MAX));
   }, [sceneNow, villagerById]);
 
+  // 新しい行が増えたら下端へ送る。ただし、過去の行を読もうと上へ戻している間は引き戻さない
+  // (下端のそばに居たときだけ追う。スクロールのたびに `stickToLogEndRef` を更新する)。
+  const stickToLogEndRef = useRef(true);
+  const onLogScroll = () => {
+    const el = logListRef.current;
+    if (el !== null) stickToLogEndRef.current = el.scrollHeight - el.scrollTop - el.clientHeight <= LOG_STICK_PX;
+  };
   useEffect(() => {
     const el = logListRef.current;
-    if (el !== null) el.scrollTop = el.scrollHeight;
+    if (el !== null && stickToLogEndRef.current) el.scrollTop = el.scrollHeight;
   }, [sceneLog]);
 
   useEffect(() => {
     if (paused) return;
-    const h = setInterval(() => setTick((t) => (t + 1) % 100000), 1400);
+    const h = setInterval(() => setTick((t) => (t + 1) % TICK_WRAP), 1400);
     return () => clearInterval(h);
   }, [paused]);
 
@@ -497,6 +514,9 @@ export function VillagePage() {
     // 危機・他害・心の不調の文は、景色の吹き出しと常設の記録 (同じ画面を見る人にも読める) へ複製しない。
     // 窓口の案内は上の吹き出し (replyTo) が別に出す。ここは話題を伏せて「ご相談」とだけ言う。
     const sensitive = reply.kind === 'counsel' || detectCrisis(text) || detectHarmToOthers(text);
+    // AI の返答を待つ発話は、返答が来る (または来ない) まで「作業中」で待つ。待たずに完了にしない。
+    const crisisOrHarm = detectCrisis(text) || detectHarmToOthers(text);
+    const hub = window.serviceHub;
     const flow = buildRequestFlow(
       villagers,
       { executiveId: r.executive?.id, managerId: r.manager?.id, teamId: r.team?.id },
@@ -506,17 +526,20 @@ export function VillagePage() {
     );
     if (flow !== null) {
       lastLogKeyRef.current = null;
-      setFlowState({ flow, start: tickRef.current, outcome: { kind: 'done', atElapsed: 0 }, runId: null });
+      setFlowState({
+        flow,
+        start: tickRef.current,
+        outcome: { kind: 'done', atElapsed: 0 },
+        runId: null,
+      });
     }
 
-    const hub = window.serviceHub;
     /*
      * **危機の文は AI へ送らない** (threat: T-029 · パス 518)。`replyTo` は危機を最優先で
      * 判定し、確認済みの相談窓口 (いのちの電話 / 119・110) を吹き出しに出す。ここで AI を
      * 呼ぶと、その窓口の吹き出しを**モデルの返答で上書き**し、心の不調の文が端末の外へ出る。
      * 旗艦の AI 画面 (AssistantPage) は pass 514 で同じ判定を入れている —— 村も同じ網で塞ぐ。
      */
-    const crisisOrHarm = detectCrisis(text) || detectHarmToOthers(text);
     /*
      * threat: T-069 —— **相談の返答 (`kind: 'counsel'`) はモデルで上書きしない** (2026-10-15 · パス 523)。
      * `replyTo` は危機でない心の不調 (「つらい、眠れない」) と破壊衝動 (「物を壊したい」) にも
@@ -527,6 +550,12 @@ export function VillagePage() {
      * 直すのは順序と上書きだけ。
      */
     if (aiOn && hub && reply.kind !== 'action' && reply.kind !== 'counsel' && !crisisOrHarm) {
+      // AI の返答を待つ発話だけ、上で「完了」にした流れを「作業中」へ置き直す (同じ tick・同じ描画にまとまる)。
+      // 返答が来る (または来ない) まで完了と言わず、settleFlow が成否で締める。
+      const flowRunId = flow === null ? null : newConversationWorkRunId();
+      if (flow !== null) {
+        setFlowState({ flow, start: tickRef.current, outcome: null, runId: flowRunId });
+      }
       /*
        * **マイクは欄を通らない** (パス 175)。footer の欄は超過を述べて押せなくできるが、
        * `startSpeechRecognition` の `onTranscript` はここへ直に来るので、`disabled` が効かない。
@@ -538,6 +567,7 @@ export function VillagePage() {
         const note = refusedCeilingNote('話しかけた文', text, MAX_ASSISTANT_CONTENT_CHARS);
         setVoiceBubble(targetId, note);
         speak(note);
+        if (flowRunId !== null) settleFlow(flowRunId, 'done');
         return;
       }
       void (async () => {
@@ -549,8 +579,10 @@ export function VillagePage() {
           if (res.ok && res.data.text) {
             setVoiceBubble(targetId, res.data.text);
             speak(res.data.text);
+            if (flowRunId !== null) settleFlow(flowRunId, 'done');
             return;
           }
+          if (flowRunId !== null) settleFlow(flowRunId, 'failed');
           // 失敗 (と、本文が空の成功) を言う。文面はアシスタント本体と同じ形
           // 「AI 応答を利用できないため簡易モードで回答します: …」の村版。
           // `res.message` は第三者 (互換 API の攻撃者ホスト) の本文で、web-shim の
@@ -560,6 +592,7 @@ export function VillagePage() {
           // 畳んで双方向制御 (Trojan Source) を `\uXXXX` へ逃がす (threat: T-025)。
           setAiError(externalTextOnOneLine(res.ok ? '応答が空でした' : res.message));
         } catch (e) {
+          if (flowRunId !== null) settleFlow(flowRunId, 'failed');
           setAiError(externalTextOnOneLine(e instanceof Error ? e.message : String(e)));
         }
       })();
@@ -786,6 +819,7 @@ export function VillagePage() {
           ) : null}
           <ul
             ref={logListRef}
+            onScroll={onLogScroll}
             role="log"
             aria-label="村人の会話の記録"
             style={{ ...sceneLogListStyle, maxHeight: logOpen ? 132 : 20, overflowY: logOpen ? 'auto' : 'hidden' }}
