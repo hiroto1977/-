@@ -1042,6 +1042,10 @@ const KNOWN_SUPPRESSIONS = [
   // ずれていないことは `src/shared/__tests__/hostChromeColorCensus.test.ts` が
   // **実物の関数と `isHexColor` に同じ標本を通して**留める。
   'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/inject-pwa.cjs :: 1',
+  // `local-llm-handoff.cjs` の `sanitizeForModelfile` は Modelfile の SYSTEM 文へ入れる前に C0 制御文字と DEL を落とす。
+  // 守るのは「URL を弾く判定」ではなく Modelfile の構文 (`"""` と制御文字で SYSTEM が壊れない) で、
+  // タブ・改行は残す別の判断。`.cjs` は `.ts` の共有実装を読めない。振る舞いは localLlmHandoff.test.ts が留める。
+  'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/lib/local-llm-handoff.cjs :: 1',
   'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: src/shared/controlChars.ts :: 1',
   'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: src/shared/escape.ts :: 5',
   // `securityRange.ts` は**出口のエスケープではない**。`applyEvasion` は

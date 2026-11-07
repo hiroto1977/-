@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, rmSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
@@ -8,6 +8,7 @@ import { LAWS } from '../ontology/laws';
 import { redactSecrets } from '../redact';
 import { SERVICE_IDS } from '../serviceId';
 import { readOriginalSource } from './originalSource';
+import { stripComments } from './stripNonCode';
 
 /*
  * **ローカル LLM への引継ぎパック (`scripts/lib/local-llm-handoff.cjs`)。**
@@ -91,13 +92,13 @@ describe('引継ぎパック —— 事実が実物と一致する', () => {
 
   it('★ サービス数は SERVICE_IDS・ゲート数は verify:all・法則は LAWS (id / family / 名前の並びまで)', () => {
     expect(facts.serviceCount).toBe(SERVICE_IDS.length);
-    const pkg = JSON.parse(readFileSync(path.join(ROOT, 'package.json'), 'utf8')) as { scripts: Record<string, string> };
+    const pkg = JSON.parse(readOriginalSource(path.join(ROOT, 'package.json'))) as { scripts: Record<string, string> };
     expect(facts.gateCount).toBe(pkg.scripts['verify:all']!.split('&&').length);
     expect(facts.laws).toEqual(LAWS.map((l) => ({ id: l.id, family: l.family, name: l.name })));
   });
 
   it('脅威台帳の件数と狩り残しは実物の数', () => {
-    const ledger = JSON.parse(readFileSync(path.join(ROOT, 'security/threat-ledger.json'), 'utf8')) as {
+    const ledger = JSON.parse(readOriginalSource(path.join(ROOT, 'security/threat-ledger.json'))) as {
       threats: { id: string }[];
       huntBacklog: unknown[];
     };
@@ -197,7 +198,7 @@ describe('引継ぎパック —— 道具の振る舞い', () => {
       expect(() => lib.writeHandoff(dir, { '../escape.txt': 'x' })).toThrow('出力先の外へは書けません');
       mkdirSync(path.join(dir, 'ok'), { recursive: true });
       lib.writeHandoff(path.join(dir, 'ok'), { 'a.txt': 'x' });
-      expect(readFileSync(path.join(dir, 'ok', 'a.txt'), 'utf8')).toBe('x');
+      expect(readOriginalSource(path.join(dir, 'ok', 'a.txt'))).toBe('x');
       expect(existsSync(path.join(dir, 'escape.txt'))).toBe(false);
     } finally {
       rmSync(dir, { recursive: true, force: true });
@@ -206,7 +207,7 @@ describe('引継ぎパック —— 道具の振る舞い', () => {
 
   it('この道具は子プロセスもネットワークも使わない (注記を除いた原文)', () => {
     for (const rel of ['scripts/lib/local-llm-handoff.cjs', 'scripts/local-llm-handoff.cjs']) {
-      const src = readOriginalSource(rel).replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+      const src = stripComments(readOriginalSource(rel));
       const NEEDLE = /child_process|\bspawn|\bexecSync|\bexecFile|\bfetch\(|node:https?|node:net/;
       expect(src, rel).not.toMatch(NEEDLE);
       // 針が生きている: 実際にその綴りへ当たる (RegExp#exec は子プロセスではないので当たらない)
