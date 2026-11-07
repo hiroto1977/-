@@ -4,7 +4,7 @@
 
 - LITE が CI の警告線 (3,400,000 B) を超えて 3,570,032 B (天井まで 429,968 B)。村の場面の分は小さいが、次に renderer / shared へ積む前に LITE への影響を測る。
 - ルータが team を決められない話題は 割り当てを飛ばす (COO が受ける)。話題の言い換えか、ルータ側の拡張が要る。
-- `VoiceCommandBar` は描かれない死んだ部品で、`invoke` の知らせ (`publishConversationWork`) を出さない。使うなら配線、使わないなら撤去。
+- `VoiceCommandBar` は描かれない部品で、`invoke` の知らせ (`publishConversationWork`) を出さない。**「撤去すれば済む死んだ部品」ではない** (2026-11-07 実測): ① 能力の表 `CAPABILITIES` を生きた 3 画面 (ChatbotWidget / VillagePage / AssistantPage) が import していた → `renderer/data/voiceCapabilities.ts` へ分けた (部品は表を import する側になった) ② `writeConfirmReachable` / `voiceErrorFold` の 2 検査が実物を描いて書き込みの確認と失敗の文の畳みを留めている ③ `laws.ts`・`security/threat-ledger.json` の回帰検査名・census 5 本・`lint-forbidden-patterns.cjs`・`orchestration/registry.json` が名指しする。撤去するなら 1 パス (②の検査の作り直し・③の台帳の更新・変異検査と対照・全件の門)。配線するなら描かれない部品に知らせを足しても何も起きないので、まず描く場所を決める。
 - レビュー代行の指摘 4〜6 は未対応 (指摘 1〜3 は PR #903 で直した)。
 - 古い open PR (dependabot の major #856–860・古い draft・cursor 系 #892/#898–#900) は未整理。
 

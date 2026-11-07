@@ -12,6 +12,7 @@
  * graceful に「非対応」表示にフォールバックする。
  */
 import { navigateTo } from '../navigate';
+import { CAPABILITIES } from '../data/voiceCapabilities';
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { useDialogFocus } from './useDialogFocus';
 import {
@@ -20,8 +21,7 @@ import {
   type VoiceSessionEvent,
   type VoiceSessionState,
 } from '../data/voiceSession';
-import { isExecutableIntent, type AvailableCapabilities, VoiceIntent } from '../data/voiceCommand';
-import { SERVICE_IDS } from '../../shared/serviceId';
+import { isExecutableIntent, VoiceIntent } from '../data/voiceCommand';
 import { classifyActionResult } from '../data/actionOutcome';
 import {
   isSpeechRecognitionSupported,
@@ -37,24 +37,6 @@ import {
 } from '../../shared/voiceWriteRequirements';
 import { SERVICES } from '../services';
 import { externalTextOnOneLine } from '../data/assistantMarkdown';
-
-// 音声からルーティング可能な write action を serviceId 別に宣言。
-// (main の LIVE_ACTIONS は import 境界外なので renderer 側に最小の対応表を持つ。)
-const VOICE_ACTIONS: AvailableCapabilities['actions'] = {
-  github: ['create-issue'],
-  slack: ['send-message'],
-  calendar: ['create-event'],
-  'uber-eats': ['record-entry'],
-  'demae-can': ['record-entry'],
-  'real-estate': ['record-entry'],
-  'mutual-funds': ['record-entry'],
-};
-
-/** 音声/チャット共通の能力テーブル (ChatbotWidget も同じ表を参照する)。 */
-export const CAPABILITIES: AvailableCapabilities = {
-  serviceIds: SERVICE_IDS,
-  actions: VOICE_ACTIONS,
-};
 
 /** intent の人間可読サマリ (UI 表示用)。 */
 function describeIntent(intent: VoiceIntent): string {

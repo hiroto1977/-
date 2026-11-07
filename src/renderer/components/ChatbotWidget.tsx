@@ -26,7 +26,7 @@ import { coachTurn, isSafeForCoach, personaOf, type CoachState } from '../data/g
 import { clearCoachState, loadCoachState, saveCoachState } from '../data/coachStore';
 import { localIsoDate } from '../../shared/localDate';
 import { buildOrgIndex, type RawOrg, type RawTeam } from '../data/chatOrg';
-import { CAPABILITIES } from './VoiceCommandBar';
+import { CAPABILITIES } from '../data/voiceCapabilities';
 import { isExecutableIntent, type VoiceIntent } from '../data/voiceCommand';
 import { org as registryOrg, teams as registryTeams } from '../../../orchestration/registry.json';
 import { writeLocalJson, type LocalWriteResult } from '../data/localWrite';

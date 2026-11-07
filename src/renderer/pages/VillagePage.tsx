@@ -43,7 +43,7 @@ import { buildOrgIndex, routeTopicScored, type RawOrg, type RawTeam, type OrgInd
 import { replyTo, type ChatContext } from '../data/chatbot';
 import { detectCrisis, detectHarmToOthers } from '../data/counseling';
 import { externalTextOnOneLine } from '../data/assistantMarkdown';
-import { CAPABILITIES } from '../components/VoiceCommandBar';
+import { CAPABILITIES } from '../data/voiceCapabilities';
 import { SERVICES } from '../services';
 import { isSubmitEnter } from '../keyIntent';
 import type { ServiceId } from '../../shared/serviceId';

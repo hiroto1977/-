@@ -49,7 +49,7 @@ const read = (rel: string): string => readOriginalSource(path.join(SRC, rel));
 
 /** `VOICE_ACTIONS` の宣言 (画面側にある許可表) を字面から取り出す。 */
 function voiceActionPairs(): Array<readonly [string, string]> {
-  const src = read('renderer/components/VoiceCommandBar.tsx');
+  const src = read('renderer/data/voiceCapabilities.ts');
   const at = src.indexOf('const VOICE_ACTIONS');
   expect(at, 'VOICE_ACTIONS が見つからない').toBeGreaterThan(-1);
   const block = src.slice(at, src.indexOf('};', at));
