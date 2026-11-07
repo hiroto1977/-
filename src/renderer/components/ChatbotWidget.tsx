@@ -453,12 +453,10 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
     // 村の景色に「いま実行中」を知らせる (サービスと操作名と段階と実行の印だけ。話した文も引数も載せない)。
     const runId = newConversationWorkRunId();
     publishConversationWork({ stage: 'running', serviceId: intent.serviceId, action: intent.action, runId });
-    let res: Awaited<ReturnType<NonNullable<typeof window.serviceHub>['invoke']>>;
-    try {
-      res = await window.serviceHub.invoke(intent.serviceId, intent.action, intent.params ?? {});
-    } catch {
-      // 橋が reject した (通信断など)。結果が来ないまま景色を「作業中」で止めず、失敗として閉じる。
-      // 例外の文は運ばない (第三者の本文を含みうる)。会話の部品も busy を戻して利用者に述べる。
+    // 橋が reject した (通信断など) ときは null。結果が来ないまま景色を「作業中」で止めず、失敗として閉じる。
+    // 例外の文は運ばない (第三者の本文を含みうる)。
+    const res = await window.serviceHub.invoke(intent.serviceId, intent.action, intent.params ?? {}).catch(() => null);
+    if (res === null) {
       setBusy(false);
       publishConversationWork({ stage: 'failed', serviceId: intent.serviceId, action: intent.action, runId });
       append({ role: 'bot', text: '⚠ 実行に失敗しました: 実行の結果を受け取れませんでした。' });
