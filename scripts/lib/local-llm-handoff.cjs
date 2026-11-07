@@ -146,9 +146,14 @@ function clip(text, max) {
 
 /** Modelfile の `"""` を壊す並びと、制御文字を落とす。 */
 function sanitizeForModelfile(text) {
-  return text
-    .replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g, '')
-    .replace(/"""/g, "'''");
+  const kept = Array.from(text)
+    .filter((ch) => {
+      const c = ch.codePointAt(0);
+      // 改行 (0x0a) と復帰 (0x0d) と tab (0x09) 以外の C0 制御文字と DEL を落とす
+      return !((c < 0x20 && c !== 0x09 && c !== 0x0a && c !== 0x0d) || c === 0x7f);
+    })
+    .join('');
+  return kept.replace(/"""/g, "'''");
 }
 
 /**
