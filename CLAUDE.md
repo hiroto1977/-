@@ -1072,6 +1072,7 @@ npm run e2e:ollama       # Ollama 連携 E2E (スタブ Ollama + 実 chromium)�
 npm run ollama           # Ollama CLI (ブラウザ不要・CORS 無縁)。`-- chat <model> "..."` で対話
 npm run ollama:setup     # 導入→モデル取得→起動→1往復して確認。足りない段だけ埋める
 npm run local-llm:setup   # Linux: Ollama / VS Code / Continue / llama.cpp と安全なモデルを一括導入 (既定は計画の表示のみ・`-- --yes` で実行)。docs/LOCAL_LLM_SETUP.md
+npm run local-llm:handoff # このリポジトリで学んだ規律を、ローカル LLM の小さな文脈へ畳んで出す (SYSTEM.md / Modelfile / PLAYBOOK.md / 法則の索引・既定は計画の表示のみ・`-- --write` で reports/ へ)。docs/LOCAL_LLM_SETUP.md
                          #   `-- --check` で現状確認のみ / `-- --origin <URL>` でブラウザ許可も案内
 npm run build:renderer   # tsc -b + vite build only (no packaging)
 npm run build            # full desktop build: tsc -b, vite build, electron-builder installers
