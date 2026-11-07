@@ -5,6 +5,7 @@
 - LITE が CI の警告線 (3,400,000 B) を超えて 3,570,032 B (天井まで 429,968 B)。村の場面の分は小さいが、次に renderer / shared へ積む前に LITE への影響を測る。
 - ルータが team を決められない話題は 割り当てを飛ばす (COO が受ける)。話題の言い換えか、ルータ側の拡張が要る。
 - `VoiceCommandBar` は描かれない死んだ部品で、`invoke` の知らせ (`publishConversationWork`) を出さない。使うなら配線、使わないなら撤去。
+- レビュー代行の指摘 4〜6 は未対応 (指摘 1〜3 は PR #903 で直した)。
 - 古い open PR (dependabot の major #856–860・古い draft・cursor 系 #892/#898–#900) は未整理。
 
 ## MG-028 (instanceof · Mamori 0.16) で測って残した物 (2026-11-02)

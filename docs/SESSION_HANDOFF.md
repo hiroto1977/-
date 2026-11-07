@@ -15,7 +15,9 @@
 - 実機 (e2e の village suite +5 = 20 件): 掛け合いが出る・増える / 場面を切ると増えない (話しかける**前**に測る) / 受付→作業中の札 / スマホ幅で枠が在る。**実機が捕まえた欠陥**: 村の景色は焦点の輪を草地用の濃い緑に固定しており (`sceneStyle` の `--focus-outline`)、その上に重ねた記録欄がダークで 1:1 になった (controls / opened が 9 件) → 記録欄の中だけ `--accent-strong` へ戻した。
 - 計測: FULL 12,157,408 B / LITE 3,570,032 B (LITE は CI の警告線 3.4 MB を超えている —— 天井 4 MB まで 429,968 B。main の合流分を含む。次に renderer/shared へ積む前に LITE への影響を測ること)。`perf` OK (LITE DCL 224 ms / FULL 581 ms)・`e2e` 721 件 ❌0・`e2e:lite` 721 件 ❌0・`audit:verify-keep-going` 0/39 落ち・`npm test` は e2e 合計の写し (716→721) 以外全件緑 (直した)。
 - 既知の限界: ルータが team を決められない話題 (「消費税の申告」「Slack」) は 割り当てを飛ばして COO が受ける (既存のルータの振る舞い)。VoiceCommandBar は死んだ部品で invoke の知らせが無い。
-- 残り: draft PR (**マージは利用者の新しい明示の許可が出るまでしない**)。
+- **レビュー代行の指摘 1〜3 を直した** (PR #903 に含む): ① 実行の結果に `runId` を付け、印が合う結果だけを今の流れに付ける (別の実行・話しかけた流れに前の結果が付かない) ② `invoke` が reject しても `failed` で閉じて busy を戻す (例外の文は運ばない —— `.invoke(...).catch(() => null)` + `if (res === null)` の形。`invokeFailureSurfaced` の census は囲いの中の失敗の枝を読むので try/catch の別ブロックにしない) ③ 危機・他害・心の不調の発話は話題を「ご相談」に伏せ、景色の吹き出しと記録へ複製しない。指摘 4〜6 は未対応。
+- **入力欄の固定と重なり順の教訓**: 注意書きが長いと「伝える」が 1280×800 の下へ出たので、村のページは高さを固定せず `minHeight` にして入力欄 (`VoiceFooter`) を `position: sticky; bottom: 0` で列の下端に残した (e2e village +1 = 21 件・全 722 件)。固定した入力欄 (z 10000) と記録の枠 (z 9000) が役場の窓 (z 40/41) の上に出て、窓の中の「保存」を横取りした (実機 `manualData` が TimeoutError)。jsdom の検査では見えない。`.village-shell-scene` を `isolation: isolate` にして景色の中の z を列の中に閉じ込めた。**景色の中に z の大きい物を足すときは、窓の操作子を実機で押す。**
+- 結果: `perf` OK・`e2e` / `e2e:lite` とも 722 件 ❌0・CI #4457 成功。PR #903 は squash でマージ済み (`48f0342b`)。
 
 ## 直近の作業 (2026-11-06) — 事業KPIの月次改善の輪 (kpiImprovementLoop / kpiImprovementStore / KpiImprovementPanel)
 
