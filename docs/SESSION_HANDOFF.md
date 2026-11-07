@@ -7,6 +7,16 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-11-06) — 村の会話の場面と作業の様子 (villageScenes / conversationWork)
+
+利用者の依頼「会話シーン等も見れる様にして」(選択: 村人どうしの会話の場面・会話の中の作業の様子)。AI なし・外へ出さない・台帳の事実から組む決定論。
+- 核 `renderer/data/villageScenes.ts` (掛け合い `buildChatterScenes`/`sceneCursor`・依頼の流れ `buildRequestFlow`/`flowCursor` = 受付→割り当て→作業中→完了/失敗・1 段 1 tick) と、アプリ内の知らせ `conversationWork.ts` (段階・サービス id・操作名だけ運ぶ。操作名は `clampToCeiling` で 40 字)。両方とも変異検査 100% (`mutate` 342 本)。
+- 配線: `ChatbotWidget.runIntent` が実行前 `running`・後 `done`/`failed` を知らせる。`VillagePage` は景色に重ねた記録欄 (`data-village-scenes`・`role="log"`)・流れの札 (`data-village-flow` / `data-flow-chip`)・ヘッダの「💬 場面」切替・話し手の吹き出しを出す。切っても**頼んだ作業の流れは必ず見せる**。結果が来ない流れは上限で畳み、完了と偽らない。
+- 実機 (e2e の village suite +5 = 20 件): 掛け合いが出る・増える / 場面を切ると増えない (話しかける**前**に測る) / 受付→作業中の札 / スマホ幅で枠が在る。**実機が捕まえた欠陥**: 村の景色は焦点の輪を草地用の濃い緑に固定しており (`sceneStyle` の `--focus-outline`)、その上に重ねた記録欄がダークで 1:1 になった (controls / opened が 9 件) → 記録欄の中だけ `--accent-strong` へ戻した。
+- 計測: FULL 12,157,408 B / LITE 3,570,032 B (LITE は CI の警告線 3.4 MB を超えている —— 天井 4 MB まで 429,968 B。main の合流分を含む。次に renderer/shared へ積む前に LITE への影響を測ること)。`perf` OK (LITE DCL 224 ms / FULL 581 ms)・`e2e` 721 件 ❌0・`e2e:lite` 721 件 ❌0・`audit:verify-keep-going` 0/39 落ち・`npm test` は e2e 合計の写し (716→721) 以外全件緑 (直した)。
+- 既知の限界: ルータが team を決められない話題 (「消費税の申告」「Slack」) は 割り当てを飛ばして COO が受ける (既存のルータの振る舞い)。VoiceCommandBar は死んだ部品で invoke の知らせが無い。
+- 残り: draft PR (**マージは利用者の新しい明示の許可が出るまでしない**)。
+
 ## 直近の作業 (2026-11-06) — 事業KPIの月次改善の輪 (kpiImprovementLoop / kpiImprovementStore / KpiImprovementPanel)
 
 利用者の依頼「事業KPIの月次改善の輪で進めて」。**人が目標と打ち手を決めて実行し、機械は差を測り・候補を決定論の what-if で並べ・翌月の実績で当たり外れを判定し、外れが 3 回続いたら止めて人へ返す**。外へ何も送らず、打ち手の実行もしない。

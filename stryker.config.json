@@ -141,6 +141,8 @@
     "src/renderer/data/kpiActuals.ts",
     "src/renderer/data/kpiActualsCsv.ts",
     "src/renderer/data/kpiImprovementLoop.ts",
+    "src/renderer/data/villageScenes.ts",
+    "src/renderer/data/conversationWork.ts",
     "src/renderer/data/kpiImprovementStore.ts",
     "src/renderer/data/latestRecord.ts",
     "src/renderer/data/localWrite.ts",
