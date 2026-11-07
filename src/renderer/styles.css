@@ -1963,7 +1963,9 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   grid-template-columns: minmax(0, 1fr) var(--chat-w);
   min-height: 0;
 }
-.village-shell-scene { min-width: 0; min-height: 0; overflow: auto; }
+/* 景色の中の重なり (記録の枠 9000・固定した入力欄 10000) をこの列の中に閉じ込める。閉じ込めないと、
+ * それらが役場の窓 (40 / 41) の上に出て、窓の中の操作子のクリックを横取りする。 */
+.village-shell-scene { min-width: 0; min-height: 0; overflow: auto; isolation: isolate; }
 /* 村人が歩く間のぴょこぴょこ (足取り)。動きを減らす設定の人には付けない。 */
 @keyframes village-step {
   0%, 100% { transform: translateY(0); }
