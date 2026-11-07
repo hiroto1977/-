@@ -143,16 +143,11 @@ export function sceneCursor(
   tick: number,
 ): SceneCursor | null {
   const n = scenes.length;
-  if (n === 0) return null;
   const slot = Math.floor(tick / SCENE_TICKS);
-  let scene: ChatterScene | null = null;
-  for (let k = 0; k < n; k += 1) {
-    const s = scenes[(slot + k) % n]!;
-    if (eligible.has(s.a) && eligible.has(s.b)) {
-      scene = s;
-      break;
-    }
-  }
+  // 並びを slot から 1 周だけ見て、最初に揃う場面を採る (場面が 0 件なら見る物が無く null)。
+  const scene =
+    Array.from({ length: n }, (_, k) => scenes[(slot + k) % n]!).find((s) => eligible.has(s.a) && eligible.has(s.b)) ??
+    null;
   if (scene === null) return null;
   const within = tick - slot * SCENE_TICKS;
   const idx = Math.floor(within / SCENE_LINE_TICKS);
