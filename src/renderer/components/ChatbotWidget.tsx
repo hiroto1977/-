@@ -16,7 +16,7 @@
  */
 import { escapeMarkdownInline } from '../../shared/escape';
 import { navigateTo } from '../navigate';
-import { publishConversationWork } from '../data/conversationWork';
+import { newConversationWorkRunId, publishConversationWork } from '../data/conversationWork';
 import { arrayOf, chatMessages, isRecord, storedLabel, type ChatFieldReaders } from '../data/persistedShape';
 import { classifyActionResult } from '../data/actionOutcome';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -450,9 +450,20 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
   const runIntent = async (intent: VoiceIntent) => {
     if (!window.serviceHub || !isExecutableIntent(intent)) return;
     setBusy(true);
-    // 村の景色に「いま実行中」を知らせる (サービスと操作名と段階だけ。話した文も引数も載せない)。
-    publishConversationWork({ stage: 'running', serviceId: intent.serviceId, action: intent.action });
-    const res = await window.serviceHub.invoke(intent.serviceId, intent.action, intent.params ?? {});
+    // 村の景色に「いま実行中」を知らせる (サービスと操作名と段階と実行の印だけ。話した文も引数も載せない)。
+    const runId = newConversationWorkRunId();
+    publishConversationWork({ stage: 'running', serviceId: intent.serviceId, action: intent.action, runId });
+    let res: Awaited<ReturnType<NonNullable<typeof window.serviceHub>['invoke']>>;
+    try {
+      res = await window.serviceHub.invoke(intent.serviceId, intent.action, intent.params ?? {});
+    } catch {
+      // 橋が reject した (通信断など)。結果が来ないまま景色を「作業中」で止めず、失敗として閉じる。
+      // 例外の文は運ばない (第三者の本文を含みうる)。会話の部品も busy を戻して利用者に述べる。
+      setBusy(false);
+      publishConversationWork({ stage: 'failed', serviceId: intent.serviceId, action: intent.action, runId });
+      append({ role: 'bot', text: '⚠ 実行に失敗しました: 実行の結果を受け取れませんでした。' });
+      return;
+    }
     setBusy(false);
     // 分類は `data/actionOutcome.ts` に集約する。ここは文言だけを持つ。
     // `persisted: false` を見ずに「実行しました」と言うと、保存されないメモを
@@ -462,6 +473,7 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
       stage: classified.verdict === 'failed' ? 'failed' : 'done',
       serviceId: intent.serviceId,
       action: intent.action,
+      runId,
     });
     if (classified.verdict === 'failed') {
       // 失敗の文は第三者 (SaaS の応答・乗っ取られた proxy) の本文を運びうる。

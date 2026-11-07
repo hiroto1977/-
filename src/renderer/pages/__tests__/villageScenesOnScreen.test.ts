@@ -126,7 +126,7 @@ describe('村の景色が会話の場面と作業の様子を見せる', () => {
     const c = await mount();
     await waitForElement(() => c.querySelector('[data-village-scenes]'), '会話の記録の枠');
     await act(async () => {
-      publishConversationWork({ stage: 'running', serviceId: 'github', action: 'create-issue' });
+      publishConversationWork({ stage: 'running', serviceId: 'github', action: 'create-issue', runId: 'r1' });
     });
     await waitForElement(() => c.querySelector('[data-village-flow]'), '流れの札');
     await ticks(8);
@@ -134,7 +134,7 @@ describe('村の景色が会話の場面と作業の様子を見せる', () => {
     expect(cur?.getAttribute('data-flow-chip'), '結果が来ないのに作業中以外へ進んだ').toBe('作業中');
     expect(logLines(c).some((l) => l.includes('実行しています'))).toBe(true);
     await act(async () => {
-      publishConversationWork({ stage: 'done', serviceId: 'github', action: 'create-issue' });
+      publishConversationWork({ stage: 'done', serviceId: 'github', action: 'create-issue', runId: 'r1' });
     });
     await ticks(1);
     expect(chips(c).some((x) => x.getAttribute('data-flow-chip') === '完了'), '完了の知らせで札が完了にならない').toBe(true);
@@ -145,11 +145,11 @@ describe('村の景色が会話の場面と作業の様子を見せる', () => {
     const c = await mount();
     await waitForElement(() => c.querySelector('[data-village-scenes]'), '会話の記録の枠');
     await act(async () => {
-      publishConversationWork({ stage: 'running', serviceId: 'slack', action: 'post-message' });
+      publishConversationWork({ stage: 'running', serviceId: 'slack', action: 'post-message', runId: 'r1' });
     });
     await ticks(6);
     await act(async () => {
-      publishConversationWork({ stage: 'failed', serviceId: 'slack', action: 'post-message' });
+      publishConversationWork({ stage: 'failed', serviceId: 'slack', action: 'post-message', runId: 'r1' });
     });
     await ticks(1);
     const log = logLines(c);
@@ -161,10 +161,57 @@ describe('村の景色が会話の場面と作業の様子を見せる', () => {
     const c = await mount();
     await waitForElement(() => c.querySelector('[data-village-scenes]'), '会話の記録の枠');
     await act(async () => {
-      publishConversationWork({ stage: 'running', serviceId: 'github', action: 'create-issue' });
+      publishConversationWork({ stage: 'running', serviceId: 'github', action: 'create-issue', runId: 'r1' });
     });
     await ticks(75);
     expect(c.querySelector('[data-village-flow]')).toBeNull();
     expect(logLines(c).some((l) => l.includes('【完了】'))).toBe(false);
+  });
+
+  it('★ 別の実行の結果は今の流れに付かない (印が合う結果だけ)', async () => {
+    const c = await mount();
+    await waitForElement(() => c.querySelector('[data-village-scenes]'), '会話の記録の枠');
+    await act(async () => {
+      publishConversationWork({ stage: 'running', serviceId: 'github', action: 'create-issue', runId: 'A' });
+    });
+    await ticks(2);
+    await act(async () => {
+      publishConversationWork({ stage: 'running', serviceId: 'slack', action: 'post-message', runId: 'B' });
+    });
+    await ticks(8);
+    // 先に始めた A の結果が、あとから始めた B の流れを完了にしてはいけない。
+    await act(async () => {
+      publishConversationWork({ stage: 'done', serviceId: 'github', action: 'create-issue', runId: 'A' });
+    });
+    await ticks(1);
+    expect(chips(c).some((x) => x.getAttribute('data-flow-chip') === '完了'), 'A の結果が B の流れを完了にした').toBe(false);
+    expect(logLines(c).some((l) => l.includes('【完了】'))).toBe(false);
+    await act(async () => {
+      publishConversationWork({ stage: 'done', serviceId: 'slack', action: 'post-message', runId: 'B' });
+    });
+    await ticks(1);
+    expect(chips(c).some((x) => x.getAttribute('data-flow-chip') === '完了'), 'B 自身の結果で完了にならない').toBe(true);
+  });
+
+  it('★ 話しかけた流れに、実行の結果は付かない', async () => {
+    const c = await mount();
+    await speak(c, '消費税の申告について教えて');
+    await waitForElement(() => c.querySelector('[data-village-flow]'), '流れの札');
+    await act(async () => {
+      publishConversationWork({ stage: 'failed', serviceId: 'github', action: 'create-issue', runId: 'stray' });
+    });
+    await ticks(20);
+    expect(logLines(c).some((l) => l.includes('【失敗】')), '実行の結果が話しかけた流れに付いた').toBe(false);
+  });
+
+  it('★ 危機・心の不調の文は、景色の吹き出しと記録へ複製しない', async () => {
+    const c = await mount();
+    await speak(c, '死にたい気持ちがあります');
+    await waitForElement(() => c.querySelector('[data-village-flow]'), '流れの札');
+    await ticks(12);
+    const log = logLines(c).join('\n');
+    expect(log, '危機の文が記録に残った').not.toContain('死にたい');
+    expect(log).toContain('ご相談');
+    expect(c.querySelector('[data-village-flow]')?.textContent ?? '', '危機の文が札に出た').not.toContain('死にたい');
   });
 });

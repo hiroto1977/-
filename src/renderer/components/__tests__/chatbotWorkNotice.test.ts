@@ -116,10 +116,13 @@ describe('コンシェルジュの作業の知らせ (村の景色へ)', () => {
       '完了の知らせ',
     );
     expect(events.map((e) => e.stage)).toEqual(['running', 'done']);
-    expect(events[0]).toEqual({ stage: 'running', serviceId: 'slack', action: 'send-message' });
-    // 話した文・本文・宛先は載せない (3 つの欄だけ)。
+    expect(events[0]).toEqual({ stage: 'running', serviceId: 'slack', action: 'send-message', runId: events[0]!.runId });
+    // 実行の印: running とその結果は同じ印を持つ (景色は印が合う結果だけを付ける)。
+    expect(events[0]!.runId.length).toBeGreaterThan(0);
+    expect(events[1]!.runId).toBe(events[0]!.runId);
+    // 話した文・本文・宛先は載せない (4 つの欄だけ)。
     for (const e of events) {
-      expect(Object.keys(e).sort()).toEqual(['action', 'serviceId', 'stage']);
+      expect(Object.keys(e).sort()).toEqual(['action', 'runId', 'serviceId', 'stage']);
       expect(JSON.stringify(e)).not.toContain('秘密の本文');
       expect(JSON.stringify(e)).not.toContain('general');
     }
@@ -136,6 +139,28 @@ describe('コンシェルジュの作業の知らせ (村の景色へ)', () => {
     await waitForElement(() => (events.some((e) => e.stage === 'failed') ? document.body : null), '失敗の知らせ');
     expect(events.map((e) => e.stage)).toEqual(['running', 'failed']);
     expect(JSON.stringify(events)).not.toContain('秘密');
+  });
+
+  it('★ 橋が reject しても failed で閉じる (作業中のまま止めない)・会話は busy から戻る', async () => {
+    const hub = (globalThis as unknown as { serviceHub: { invoke: unknown } }).serviceHub;
+    const orig = hub.invoke;
+    hub.invoke = () => Promise.reject(new Error('IPC 断 例外の中身ZZ'));
+    try {
+      const dialog = await openWidget();
+      await ask(dialog, SLACK_QUOTED);
+      const confirm = await waitForElement(() => confirmOf(dialog), '実行確認');
+      await act(async () => {
+        buttonNamed(confirm, '実行').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      });
+      await waitForElement(() => (events.some((e) => e.stage === 'failed') ? document.body : null), '失敗の知らせ');
+      expect(events.map((e) => e.stage)).toEqual(['running', 'failed']);
+      expect(events[1]!.runId).toBe(events[0]!.runId);
+      expect(JSON.stringify(events)).not.toContain('ZZ');
+      expect(dialog.textContent).toContain('実行の結果を受け取れませんでした');
+      expect(dialog.textContent, '例外の文を画面へ流している').not.toContain('例外の中身ZZ');
+    } finally {
+      hub.invoke = orig;
+    }
   });
 
   it('★ 確認でやめた操作は知らせない (作業中を偽らない)', async () => {

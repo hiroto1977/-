@@ -119,6 +119,8 @@ interface FlowState {
   readonly flow: RequestFlow;
   readonly start: number;
   readonly outcome: FlowOutcome | null;
+  /** コンシェルジュの実行から始まった流れの印。話しかけた流れは null (実行の結果は付かない)。 */
+  readonly runId: string | null;
 }
 
 /** 会話の場面の記録 1 行。 */
@@ -335,12 +337,13 @@ export function VillagePage() {
         );
         if (flow === null) return;
         lastLogKeyRef.current = null;
-        setFlowState({ flow, start: tickRef.current, outcome: null });
+        setFlowState({ flow, start: tickRef.current, outcome: null, runId: ev.runId });
         return;
       }
       const kind: 'done' | 'failed' = ev.stage === 'failed' ? 'failed' : 'done';
       setFlowState((prev) =>
-        prev === null || prev.outcome !== null
+        // 印が合う結果だけを付ける (別の実行や話しかけた流れに、前の実行の結果を付けない)。
+        prev === null || prev.outcome !== null || prev.runId !== ev.runId
           ? prev
           : { ...prev, outcome: { kind, atElapsed: elapsedOf(prev.start, tickRef.current) } },
       );
@@ -491,16 +494,19 @@ export function VillagePage() {
     speak(reply.text);
 
     // 話しかけた内容が担当へ渡る流れを景色に出す (台本。AI の返答ではなく、文は台帳の事実だけから組む)。
+    // 危機・他害・心の不調の文は、景色の吹き出しと常設の記録 (同じ画面を見る人にも読める) へ複製しない。
+    // 窓口の案内は上の吹き出し (replyTo) が別に出す。ここは話題を伏せて「ご相談」とだけ言う。
+    const sensitive = reply.kind === 'counsel' || detectCrisis(text) || detectHarmToOthers(text);
     const flow = buildRequestFlow(
       villagers,
       { executiveId: r.executive?.id, managerId: r.manager?.id, teamId: r.team?.id },
-      text,
+      sensitive ? 'ご相談' : text,
       // 解釈できずに案内だけ返した発話を「回答を出しました」と偽らない。
       { doneText: reply.kind === 'fallback' ? '内容を解釈できず、案内だけ返しました。' : '返答しました。' },
     );
     if (flow !== null) {
       lastLogKeyRef.current = null;
-      setFlowState({ flow, start: tickRef.current, outcome: { kind: 'done', atElapsed: 0 } });
+      setFlowState({ flow, start: tickRef.current, outcome: { kind: 'done', atElapsed: 0 }, runId: null });
     }
 
     const hub = window.serviceHub;
