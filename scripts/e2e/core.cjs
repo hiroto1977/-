@@ -840,6 +840,18 @@ async function villageSuite(browser) {
   ok((await page.locator('[data-service-id]').count()) === 0, 'village: 各サービスの項目が無い');
   ok((await page.locator('[data-village-chat]').count()) === 1, 'village: 会話の欄が在る');
   ok((await page.locator('[data-village-hall-open]').count()) === 1, 'village: 役場のボタンが在る');
+  // 注意書きが縦に長くて景色の列があふれても、入力欄と「伝える」は画面の中に残る (列の下端に固定)。
+  {
+    const box = await page.evaluate(() => {
+      const i = document.querySelector('input[aria-label="村への入力"]');
+      const b = i ? i.closest('form').querySelector('button') : null;
+      if (!i || !b) return null;
+      const a = i.getBoundingClientRect();
+      const c = b.getBoundingClientRect();
+      return { bottom: Math.max(a.bottom, c.bottom), right: c.right, vh: window.innerHeight, vw: window.innerWidth };
+    });
+    ok(box !== null && box.bottom <= box.vh && box.right <= box.vw, `village: 入力欄と「伝える」が 1280×800 の画面の中に在る (${JSON.stringify(box)})`);
+  }
   await page.waitForSelector('[data-village-shell] main[aria-label="村"] svg', { timeout: 30000 });
   ok(true, 'village: 村の景色 (ピクセルの木と花) が描かれる');
   // 役場: 設定の窓
@@ -5538,7 +5550,7 @@ function installWaitMarginRecorder(browser) {
     ['tablet', tabletSuite, 2],
     // 村の殻 (唯一の入口) を実機で。旧画面のサイドバーの suite (shell) は 2026-11-04 に廃止
     // 2026-11-06: 会話の場面 (掛け合い 2・「💬 場面」・受付→作業中の札・スマホ幅の枠) = +5
-    ['village', villageSuite, 20],
+    ['village', villageSuite, 21],
   ];
   const SUITES = SUITE_TABLE.map(([name]) => name);
   /**

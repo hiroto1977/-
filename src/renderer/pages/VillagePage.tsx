@@ -1334,8 +1334,9 @@ function VoiceFooter({ transcript, onSubmit }: { transcript: string; onSubmit: (
 const pageStyle: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
-  height: 'calc(100vh - 90px)',
-  minHeight: 540,
+  // 高さは固定せず「最低この高さ」にする。注意書きが長くて景色の最低の高さ (460px) と合わせて収まらないときは
+  // ページが伸び、入力欄は下の footerStyle の sticky で列の下端に残る (固定の高さだと入力欄が溢れた先に隠れる)。
+  minHeight: 'max(540px, calc(100vh - 90px))',
   gap: 8,
 };
 const headerStyle: React.CSSProperties = {
@@ -1487,4 +1488,12 @@ const footerStyle: React.CSSProperties = {
   alignItems: 'center',
   gap: 10,
   flexWrap: 'wrap',
+  // 景色の列がスクロールしても、入力欄は列の下端に残す (注意書きが縦に長くても「伝える」を押せる)。
+  position: 'sticky',
+  bottom: 0,
+  // 景色の上の重ね物 (記録の枠 9000・住人の吹き出し) より前に出す。入力欄が重ね物の下に隠れない。
+  zIndex: 10000,
+  padding: '8px 0',
+  background: 'var(--bg)',
+  boxShadow: '0 -1px 0 var(--border)',
 };
