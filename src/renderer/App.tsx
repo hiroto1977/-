@@ -294,6 +294,9 @@ export function App() {
 
   // activeId → URL ハッシュ同期 + 「最近使った」へ記録。
   useEffect(() => {
+    // 村の殻 (?ui=village) は自分で URL ハッシュを持つ。ここで旧画面の先頭 (#home) を書くと、村が
+    // 「ホーム」の窓を開いたまま始まる。
+    if (currentShellMode() === 'village') return;
     try {
       const h = hashForService(activeId);
       if (location.hash !== h) location.hash = h;
@@ -313,6 +316,7 @@ export function App() {
   // URL ハッシュ → activeId (ブラウザ戻る/進む・直リンク・共有)。
   useEffect(() => {
     function onHash() {
+      if (currentShellMode() === 'village') return; // 村の殻が自分で聞く
       const id = serviceIdFromHash(location.hash);
       if (id) setActiveId(id);
     }
