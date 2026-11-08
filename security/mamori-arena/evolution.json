@@ -2254,6 +2254,20 @@
             "k": "call",
             "fn": "issue",
             "args": [
+              "\"rec-a-579a4d42e0\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "ping",
+            "args": []
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "issue",
+            "args": [
               "\"__proto__\""
             ]
           },
@@ -2318,20 +2332,6 @@
             "fn": "ping",
             "args": []
           }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "issue",
-            "args": [
-              "\"admin\""
-            ]
-          },
-          {
-            "k": "call",
-            "fn": "ping",
-            "args": []
-          }
         ]
       ],
       "tokens": [
@@ -2342,9 +2342,10 @@
         "rec-a-285172d7a4",
         "rec-a-579a4d42e0",
         "rec-a-29be9abfd1",
-        "rec-a-9426f9231f"
+        "rec-a-9426f9231f",
+        "rec-a-629797b8e9"
       ],
-      "generations": 24,
+      "generations": 26,
       "bestFit": 2.15
     },
     "two-marks": {
@@ -2540,9 +2541,12 @@
         "rec-a-29be9abfd1",
         "rec-b-c8653cf1fb",
         "rec-c-809c2d9d43",
-        "rec-a-9426f9231f"
+        "rec-a-9426f9231f",
+        "rec-b-73c79d1ff4",
+        "rec-c-78685008d0",
+        "rec-a-629797b8e9"
       ],
-      "generations": 24,
+      "generations": 26,
       "bestFit": 2.15
     }
   },
@@ -2623,6 +2627,17 @@
       "caught": 55,
       "uncaught": 5,
       "newElites": 9
+    },
+    {
+      "seed": 31,
+      "gens": 2,
+      "pop": 8,
+      "boxes": 2,
+      "plays": 71,
+      "red": 0,
+      "caught": 6,
+      "uncaught": 0,
+      "newElites": 0
     }
   ],
   "lessons": [

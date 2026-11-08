@@ -46,9 +46,11 @@ function parseExports(source) {
   return { fns, consts };
 }
 
-function literal(kind, rng) {
+function literal(kind, rng, api) {
   if (kind === 'number') return NUMBER_POOL[Math.floor(rng() * NUMBER_POOL.length)];
   if (kind === 'boolean') return rng() < 0.5 ? 'true' : 'false';
+  // 前の戦いで箱が返した語 (api.learned) を引数に使う: 箱が自分で見せた識別子・記録の綴りを、別の関数への鍵として試す (戦いを踏まえた学習)
+  if (api && api.learned && api.learned.length > 0 && rng() < 0.3) return JSON.stringify(api.learned[Math.floor(rng() * api.learned.length)]);
   return JSON.stringify(STRING_POOL[Math.floor(rng() * STRING_POOL.length)]);
 }
 
@@ -64,10 +66,10 @@ function randomMove(api, rng) {
     if (strFns.length >= 2) {
       const outer = strFns[Math.floor(rng() * strFns.length)];
       const inner = strFns.filter((x) => x.returns === 'string')[0];
-      if (inner) return { k: 'chain', outer: outer.name, inner: inner.name, args: [literal('string', rng)] };
+      if (inner) return { k: 'chain', outer: outer.name, inner: inner.name, args: [literal('string', rng, api)] };
     }
   }
-  return { k: 'call', fn: f.name, args: f.params.map((p) => literal(p, rng)) };
+  return { k: 'call', fn: f.name, args: f.params.map((p) => literal(p, rng, api)) };
 }
 
 function moveExpr(m) {
@@ -108,8 +110,8 @@ function mutate(genome, api, rng) {
     const m = g[i];
     if (m.k === 'call') {
       const f = api.fns.find((x) => x.name === m.fn);
-      if (f) m.args = f.params.map((p, j) => (rng() < 0.5 && m.args[j] !== undefined ? m.args[j] : literal(p, rng)));
-    } else if (m.k === 'chain') m.args = [literal('string', rng)];
+      if (f) m.args = f.params.map((p, j) => (rng() < 0.5 && m.args[j] !== undefined ? m.args[j] : literal(p, rng, api)));
+    } else if (m.k === 'chain') m.args = [literal('string', rng, api)];
     else { const nm = randomMove(api, rng); if (nm) g[i] = nm; }
   }
   return g.length > 0 ? g : [randomMove(api, rng)].filter(Boolean);
@@ -137,12 +139,13 @@ function fitnessOf(res, seen) {
  */
 function evolveRed({ compiler, box, gens, pop, seed, elites = [], seen = new Set(), level = 'strong' }) {
   const api = parseExports(box.source);
+  api.learned = [...seen].filter((t) => t.length >= 4 && t.length <= 40 && !/^(returned|length|stack|name|message|function|native|code)$/.test(t)).slice(0, 80);
   const rng = mulberry32(seed);
   if (api.fns.length + api.consts.length === 0) return { box: box.name, skipped: 'API が無い', elites: [], wins: [], plays: 0, seen };
   let population = elites.slice(0, 4);
   while (population.length < pop) { const m = randomMove(api, rng); if (m) population.push([m]); else break; }
   // 全関数を 1 回ずつ呼ぶ探り役 (prober) は毎回入れる。新しく export された名前を取りこぼさない。
-  const prober = api.fns.map((f) => ({ k: 'call', fn: f.name, args: f.params.map((p) => literal(p, rng)) })).concat(api.consts.map((c) => ({ k: 'read', c }))).slice(0, 16);
+  const prober = api.fns.map((f) => ({ k: 'call', fn: f.name, args: f.params.map((p) => literal(p, rng, api)) })).concat(api.consts.map((c) => ({ k: 'read', c }))).slice(0, 16);
   if (prober.length > 0) population.unshift(prober);
   const wins = [];
   const scored = new Map();

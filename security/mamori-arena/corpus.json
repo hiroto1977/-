@@ -5051,7 +5051,7 @@
     },
     {
       "name": "evo-token-1",
-      "source": "// target: token\n// goal: steal / destroy (自律進化 elite)\nuse { issue, ping } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(issue(\"__proto__\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: token\n// goal: steal / destroy (自律進化 elite)\nuse { issue, ping } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(issue(\"rec-a-579a4d42e0\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "token"
       ],
@@ -5281,7 +5281,7 @@
     },
     {
       "name": "evo-token-2",
-      "source": "// target: token\n// goal: steal / destroy (自律進化 elite)\nuse { issue, ping } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(issue(\"[object Object]\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: token\n// goal: steal / destroy (自律進化 elite)\nuse { issue, ping } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(issue(\"__proto__\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "token"
       ],
@@ -5351,7 +5351,7 @@
     },
     {
       "name": "evo-token-3",
-      "source": "// target: token\n// goal: steal / destroy (自律進化 elite)\nuse { issue, ping } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(issue(\"-1\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: token\n// goal: steal / destroy (自律進化 elite)\nuse { issue, ping } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(issue(\"[object Object]\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "token"
       ],
