@@ -1,11 +1,39 @@
-import { useEffect, useState } from 'react';
+import { onNavigate } from './navigate';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { SERVICES, CATEGORY_LABEL, type ServiceCategory, type ServiceDefinition, type ServiceId } from './services';
+import { ShellContext, type ShellService, type ShellState } from './shellContext';
+import { isServiceId } from '../shared/serviceId';
+import { filterServices } from './sidebarFilter';
+import { serviceIdFromHash, hashForService } from './hashRoute';
+import { ManualDataSection } from './components/ManualDataSection';
+import { pushRecent, toggleFavorite, keepKnown, RECENTS_MAX } from './recents';
 import { LockScreen } from './security/LockScreen';
 import { isBrowserBuild } from './runtimeMode';
 import { getVault } from './security/vault';
 import { startAutoLock } from './security/autoLock';
 import { lockWorkspace, startLockRelay, subscribeWorkspaceLocked } from './security/lockWorkspace';
+import { usePlan } from './plan/usePlan';
+import { VoiceCommandBar } from './components/VoiceCommandBar';
+import { ChatbotWidget, clearChatbotHistory } from './components/ChatbotWidget';
 import { PageErrorBoundary } from './components/PageErrorBoundary';
+import { ShellPartBoundary } from './components/ShellPartBoundary';
+import { DeviceStoreFailureBanner } from './components/DeviceStoreFailureBanner';
+import { BestAnswersIndicator } from './components/BestAnswersIndicator';
 import { VillageShell } from './components/VillageShell';
+import { currentShellMode } from './shellMode';
+import { useChatDocked, useMediaQuery } from './chatDock';
+import {
+  PLAN_ORDER,
+  PLANS,
+  getPlan,
+  isServiceUnlocked,
+  requiredPlanForServiceIndex,
+  type PlanTier,
+} from '../shared/plan';
+import { isCancelEscape, isSubmitEnter } from './keyIntent';
+
+/** サイドバーをドロワーにする幅 (`styles.css` の `@media (max-width: 768px)` と同じ数 —— 2 か所の一致は `drawerKeyboard.test.ts` が見る)。 */
+export const DRAWER_QUERY = '(max-width: 768px)';
 
 // True when the renderer is loaded in a plain browser (no Electron preload).
 // The Electron preload sets serviceHub via contextBridge — the web shim adds the
@@ -14,7 +42,130 @@ import { VillageShell } from './components/VillageShell';
 /** 設定画面と同じ判定 (`runtimeMode.ts` · パス 137) —— 片方だけ写すとデスクトップ版に保管庫の操作が出る。 */
 const detectBrowserMode = isBrowserBuild;
 
+const COLLAPSED_BY_DEFAULT: ReadonlySet<ServiceCategory> = new Set<ServiceCategory>([
+  'tools',
+  'integrations',
+]);
+
+/** 分類の見出しに添える絵文字 (パス 322)。文字は `CATEGORY_LABEL` が持つ —— ここは飾りだけ。 */
+const CATEGORY_EMOJI: Readonly<Record<ServiceCategory, string>> = {
+  featured: '⭐',
+  professionals: '⚖️',
+  tools: '🧰',
+  integrations: '🔗',
+};
+
+/** 分類の並び (サイドバーの上から下へ)。 */
+const CATEGORY_ORDER = ['featured', 'professionals', 'tools', 'integrations'] as const;
+
+/** 「先頭へ戻る」ボタンを出す縦スクロール量 (px)。 */
+const SCROLL_TOP_THRESHOLD = 320;
+
+/**
+ * 検索欄に添えるショートカットの表記。Apple の端末では ⌘K、それ以外は Ctrl K
+ * (押す鍵は `onKey` が両方とも受ける —— 表記だけを端末に合わせる)。
+ */
+const SHORTCUT_LABEL: string = (() => {
+  try {
+    const ua = typeof navigator === 'undefined' ? '' : navigator.userAgent;
+    return /Mac|iPhone|iPad|iPod/.test(ua) ? '⌘K' : 'Ctrl K';
+  } catch {
+    return 'Ctrl K';
+  }
+})();
+
+/** 動きを減らす設定 (OS)。読めない環境は「減らさない」に倒す (装飾だけの判定)。 */
+function prefersReducedMotion(): boolean {
+  try {
+    return typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  } catch {
+    return false;
+  }
+}
+
+/** 要素の先頭へ。`scrollTo` を持たない環境 (jsdom) では `scrollTop` へ倒す。 */
+function scrollElementToTop(el: HTMLElement, behavior: ScrollBehavior): void {
+  if (typeof el.scrollTo === 'function') el.scrollTo({ top: 0, behavior });
+  else el.scrollTop = 0;
+}
+
+/** 画面へ渡す最小の欄 (`shellContext.ts` の理由: `HomePage` は `SERVICES` を読めない)。 */
+function toShellService(s: ServiceDefinition): ShellService {
+  return { id: s.id, label: s.label, icon: s.icon, description: s.description };
+}
+
+// Sidebar-order index per service id. The plan cap (`maxServices`) gates
+// services by this position, so the rule has a single, stable ordering.
+const SERVICE_ORDER: ReadonlyMap<ServiceId, number> = new Map(
+  SERVICES.map((s, i) => [s.id, i]),
+);
+
+const RECENTS_KEY = 'servicehub.recents';
+const FAVORITES_KEY = 'servicehub.favorites';
+const KNOWN_IDS: ReadonlySet<ServiceId> = new Set(SERVICES.map((s) => s.id));
+
+/** localStorage から ServiceId 配列を安全に読む (壊れた値・private mode は []). */
+function loadIds(key: string): ServiceId[] {
+  try {
+    const raw = localStorage.getItem(key);
+    const arr = raw ? JSON.parse(raw) : [];
+    return Array.isArray(arr) ? arr.filter(isServiceId) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveIds(key: string, ids: readonly ServiceId[]): void {
+  try {
+    localStorage.setItem(key, JSON.stringify(ids));
+  } catch {
+    /* private mode / quota — 永続化は best-effort */
+  }
+}
+
+/** 初期表示サービス: URL ハッシュ優先、無ければ先頭。 */
+function initialActiveId(): ServiceId {
+  try {
+    const fromHash = serviceIdFromHash(typeof location !== 'undefined' ? location.hash : '');
+    if (fromHash) return fromHash;
+  } catch {
+    /* location 不在環境 */
+  }
+  return SERVICES[0]!.id;
+}
+
 export function App() {
+  const [activeId, setActiveId] = useState<ServiceId>(initialActiveId);
+  const [version, setVersion] = useState<string>('');
+  const [query, setQuery] = useState('');
+  const searchRef = useRef<HTMLInputElement>(null);
+  const [recents, setRecents] = useState<ServiceId[]>(() => loadIds(RECENTS_KEY));
+  const [favorites, setFavorites] = useState<ServiceId[]>(() => loadIds(FAVORITES_KEY));
+  // モバイル/タブレット (≤768px) のドロワー開閉。デスクトップでは
+  // .menu-btn / .sidebar-backdrop が CSS で不可視のため常に無害。
+  const [navOpen, setNavOpen] = useState(false);
+  // 本文の縦スクロールが閾値を越えたか (「先頭へ戻る」ボタンの表示)。
+  const [scrolled, setScrolled] = useState(false);
+  // AI チャットを列にするか (「すっきり」× 広い画面 —— `chatDock.ts`)。列を畳んだかは利用者の操作で、
+  // 保存はしない (再読込で開いた状態に戻る —— 保存すると端末に鍵が 1 つ増え、台帳と消去の在庫にも要る)。
+  const chatDocked = useChatDocked();
+  const [chatCollapsed, setChatCollapsed] = useState(false);
+  const showChatColumn = chatDocked && !chatCollapsed;
+  const contentRef = useRef<HTMLElement>(null);
+  const sidebarRef = useRef<HTMLElement>(null);
+  const mainRef = useRef<HTMLElement>(null);
+  const menuBtnRef = useRef<HTMLButtonElement>(null);
+  const drawerCloseRef = useRef<HTMLButtonElement>(null);
+  /** サイドバーがドロワーになる幅 (`DRAWER_QUERY` —— CSS の media 規則と同じ数であることは `drawerKeyboard.test.ts` が見る)。 */
+  const drawerLayout = useMediaQuery(DRAWER_QUERY);
+  const { plan, setPlan, internalUnlocked } = usePlan();
+  const [collapsed, setCollapsed] = useState<Record<ServiceCategory, boolean>>({
+    featured: false,
+    professionals: COLLAPSED_BY_DEFAULT.has('professionals'),
+    tools: COLLAPSED_BY_DEFAULT.has('tools'),
+    integrations: COLLAPSED_BY_DEFAULT.has('integrations'),
+  });
+
   // Browser-mode lock state. Initially `null` (unknown) — once we detect
   // browser mode and Vault status, switch to a concrete boolean.
   const [vaultUnlocked, setVaultUnlocked] = useState<boolean | null>(null);
@@ -88,6 +239,153 @@ export function App() {
     return () => handle.dispose();
   }, [browserMode, vaultUnlocked]);
 
+  useEffect(() => {
+    window.serviceHub?.getVersion().then(setVersion).catch(() => undefined);
+  }, []);
+
+  // Loosely-coupled navigation: any page can dispatch a CustomEvent to
+  // jump to another service without prop-drilling a callback. The Home
+  // page uses this for "細かく編集する" links.
+  useEffect(() => onNavigate((target) => {
+    if (!isServiceId(target)) return;
+    setActiveId(target);
+    // Auto-expand the group containing the destination so it's visible.
+    const def = SERVICES.find((s) => s.id === target);
+    if (def) {
+      setCollapsed((prev) => ({ ...prev, [def.category]: false }));
+    }
+    setNavOpen(false); // ページ内リンク遷移でもモバイルのドロワーを閉じる
+  }), []);
+
+  // Cmd/Ctrl-K でサイドバー検索にフォーカス (どの画面からでも)。Escape はドロワーを閉じる。
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        searchRef.current?.focus();
+        searchRef.current?.select();
+      } else if (isCancelEscape(e)) {
+        setNavOpen(false);
+      }
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  /*
+   * ドロワーのキーボードの道 (パス 506 · 実機で測った): 閉じている間、画面の外へ滑らせただけのサイドバーは**まだ焦点を取れた**
+   * (Shift+Tab で見えない 74 項目へ入る)。開いている間は暗幕の後ろの本文へ Tab で逃げられた。どちらも `inert` で閉じる
+   * (押せず・焦点を取れず・読み上げにも出ない)。React 18 は `inert` を属性として知らないので ref で付ける。
+   * 開いたら ✕ へ焦点を運び、閉じたら ☰ へ戻す (WCAG 2.4.3)。デスクトップ (ドロワーでない幅) では何もしない。
+   */
+  // 依存配列を持たない —— 最初の commit は「読み込み中…」の仮の画面で ref が無く、殻が描かれた
+  // commit では幅も開閉も動かないので、依存で縛ると殻の `inert` が 1 度も付かない (jsdom で実測)。
+  // `toggleAttribute` は冪等で安い。焦点を運ぶのは開閉の**遷移**だけ (前の組を ref で覚える)。
+  const drawerPrev = useRef<{ layout: boolean; open: boolean } | null>(null);
+  useEffect(() => {
+    sidebarRef.current?.toggleAttribute('inert', drawerLayout && !navOpen);
+    mainRef.current?.toggleAttribute('inert', drawerLayout && navOpen);
+    const prev = drawerPrev.current;
+    drawerPrev.current = { layout: drawerLayout, open: navOpen };
+    if (!drawerLayout || prev === null || (prev.layout === drawerLayout && prev.open === navOpen)) return;
+    if (navOpen) drawerCloseRef.current?.focus();
+    else if (prev.open) menuBtnRef.current?.focus();
+  });
+
+  // activeId → URL ハッシュ同期 + 「最近使った」へ記録。
+  useEffect(() => {
+    try {
+      const h = hashForService(activeId);
+      if (location.hash !== h) location.hash = h;
+    } catch {
+      /* location 不在環境 */
+    }
+    setRecents((prev) => pushRecent(prev, activeId));
+  }, [activeId]);
+
+  // 画面を切り替えたら本文を先頭へ戻す (前の画面のスクロール位置を引き継がない)。
+  useEffect(() => {
+    const el = contentRef.current;
+    if (el) scrollElementToTop(el, 'auto');
+    setScrolled(false);
+  }, [activeId]);
+
+  // URL ハッシュ → activeId (ブラウザ戻る/進む・直リンク・共有)。
+  useEffect(() => {
+    function onHash() {
+      const id = serviceIdFromHash(location.hash);
+      if (id) setActiveId(id);
+    }
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, []);
+
+  // recents / favorites を localStorage へ永続化。
+  useEffect(() => saveIds(RECENTS_KEY, recents), [recents]);
+  useEffect(() => saveIds(FAVORITES_KEY, favorites), [favorites]);
+
+  const grouped = useMemo(() => {
+    const out: Record<ServiceCategory, typeof SERVICES> = {
+      featured: [],
+      professionals: [],
+      tools: [],
+      integrations: [],
+    };
+    for (const s of SERVICES) out[s.category].push(s);
+    return out;
+  }, []);
+
+  // 検索クエリでの絞り込み結果。null = 非検索 (カテゴリ別表示)。
+  const filtered = useMemo(() => filterServices(SERVICES, query), [query]);
+
+  function toggle(cat: ServiceCategory) {
+    setCollapsed((prev) => ({ ...prev, [cat]: !prev[cat] }));
+  }
+
+  /** サービスを選択し、属するカテゴリを展開する。モバイルではドロワーも閉じる。 */
+  function selectService(id: ServiceId) {
+    setActiveId(id);
+    const def = SERVICES.find((s) => s.id === id);
+    if (def) setCollapsed((prev) => ({ ...prev, [def.category]: false }));
+    setNavOpen(false);
+  }
+
+  /** 検索ボックスのキー操作: Enter=先頭ヒット選択、Escape=クリア。 */
+  function onSearchKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (isSubmitEnter(e) && filtered && filtered.length > 0) {
+      selectService(filtered[0]!.id);
+    } else if (isCancelEscape(e)) {
+      setQuery('');
+    }
+  }
+
+  /** お気に入りのトグル。 */
+  function toggleFav(id: ServiceId) {
+    setFavorites((prev) => toggleFavorite(prev, id));
+  }
+
+  // 保存済み id を現存サービスに解決 (stale id を除外し定義を引く)。
+  const byId = (id: ServiceId) => SERVICES.find((s) => s.id === id)!;
+  const favoriteServices = keepKnown(favorites, KNOWN_IDS).map(byId);
+  const recentServices = keepKnown(recents, KNOWN_IDS).slice(0, RECENTS_MAX).map(byId);
+  const favoriteSet = new Set(favorites);
+  // ホームの「お気に入り / 最近使った」の列はサイドバーと同じ並びを映す (`shellContext.ts`)。
+  const shell: ShellState = {
+    favorites: favoriteServices.map(toShellService),
+    recents: recentServices.map(toShellService),
+    toggleFavorite: toggleFav,
+  };
+
+  function onContentScroll(e: React.UIEvent<HTMLElement>) {
+    const next = e.currentTarget.scrollTop > SCROLL_TOP_THRESHOLD;
+    setScrolled((prev) => (prev === next ? prev : next));
+  }
+
+  function scrollToTop() {
+    const el = contentRef.current;
+    if (el) scrollElementToTop(el, prefersReducedMotion() ? 'auto' : 'smooth');
+  }
+
   // Browser-mode + locked → show only the lock screen.
   if (browserMode === null || vaultUnlocked === null) {
     return <div style={{ padding: 24, color: 'var(--text-mute)' }}>読み込み中…</div>;
@@ -102,6 +400,370 @@ export function App() {
     );
   }
 
-  // 解錠の後は村の殻だけ (2026-11-04: 旧画面のサイドバーは廃止。各サービスの画面は村の役場の窓へ開く)。
-  return <VillageShell />;
+  // 既定は村だけの殻 (利用者に旧画面は見せない)。旧画面は `?ui=legacy` の内部の入口だけ —— 殻の判定は
+  // 解錠の後ろ: 村もロック画面を飛ばさない。
+  if (currentShellMode() === 'village') return <VillageShell />;
+
+  const active = SERVICES.find((s) => s.id === activeId)!;
+  const PageComponent = active.page;
+  const activeOrder = SERVICE_ORDER.get(active.id) ?? 0;
+  // 設定・ホームは常に開放: 設定は招待コードでの全機能無償化やマスターパスワード等の
+  // 基盤機能を含むため、プランでロックしない (ロックすると無償化に辿り着けない)。
+  const ALWAYS_UNLOCKED = new Set<ServiceId>(['settings', 'home', 'village']);
+  const activeUnlocked = ALWAYS_UNLOCKED.has(active.id) || isServiceUnlocked(plan, activeOrder);
+  const requiredPlan = requiredPlanForServiceIndex(activeOrder);
+
+  // サイドバー項目の共通描画 (カテゴリ別表示と検索結果の両方で使う)。
+  // プランによるロック表示 (🔒) も保持する。
+  const renderItem = (service: (typeof SERVICES)[number]) => {
+    const order = SERVICE_ORDER.get(service.id) ?? 0;
+    const unlocked = ALWAYS_UNLOCKED.has(service.id) || isServiceUnlocked(plan, order);
+    const fav = favoriteSet.has(service.id);
+    return (
+      <button
+        key={service.id}
+        className={`sidebar-item ${service.id === activeId ? 'active' : ''}`}
+        data-service-id={service.id}
+        data-locked={unlocked ? undefined : 'true'}
+        aria-current={service.id === activeId ? 'page' : undefined}
+        onClick={() => selectService(service.id)}
+        title={unlocked ? service.description : 'プランのアップグレードで利用可能'}
+        style={unlocked ? undefined : { opacity: 0.5 }}
+      >
+        <span className="icon" aria-hidden="true">{service.icon}</span>
+        <span>{service.label}</span>
+        <span className="sidebar-item-controls">
+          {!unlocked && (
+            <span style={{ fontSize: 11 }} aria-label="locked">
+              🔒
+            </span>
+          )}
+          <span
+            role="button"
+            tabIndex={0}
+            className={`fav-toggle ${fav ? 'on' : ''}`}
+            aria-label={fav ? 'お気に入りから外す' : 'お気に入りに追加'}
+            aria-pressed={fav}
+            title={fav ? 'お気に入りから外す' : 'お気に入りに追加'}
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleFav(service.id);
+            }}
+            onKeyDown={(e) => {
+              if (isSubmitEnter(e) || e.key === ' ') {
+                e.stopPropagation();
+                e.preventDefault();
+                toggleFav(service.id);
+              }
+            }}
+          >
+            {fav ? '♥' : '♡'}
+          </span>
+        </span>
+      </button>
+    );
+  };
+
+  const activeFav = favoriteSet.has(active.id);
+
+  const appClass = ['app', navOpen ? 'nav-open' : '', showChatColumn ? 'chat-docked' : ''].filter(Boolean).join(' ');
+  // コンシェルジュは画面の外の部品なので、どちらの形でも自分の境界に入れる (パス 489)。
+  const concierge = (docked: boolean) => (
+    <ShellPartBoundary
+      label="AI コンシェルジュ"
+      floating={!docked}
+      recover={{ label: '会話履歴を消去してやり直す', run: clearChatbotHistory }}
+    >
+      <ChatbotWidget docked={docked} onCollapse={docked ? () => setChatCollapsed(true) : undefined} />
+    </ShellPartBoundary>
+  );
+
+  return (
+    <ShellContext.Provider value={shell}>
+    <div className={appClass}>
+      <aside className="sidebar" ref={sidebarRef}>
+        <div className="sidebar-top">
+          <div className="sidebar-header">サービスハブ</div>
+          <button
+            type="button"
+            className="drawer-close"
+            ref={drawerCloseRef}
+            aria-label="メニューを閉じる"
+            onClick={() => setNavOpen(false)}
+          >
+            ✕
+          </button>
+        </div>
+        <div className="sidebar-search">
+          <input
+            ref={searchRef}
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={onSearchKeyDown}
+            placeholder="サービスを検索"
+            aria-label="サービスを検索"
+            title={`サービスを検索 (${SHORTCUT_LABEL} · Enter で先頭の候補を開く · Esc で消す)`}
+            className="sidebar-search-input"
+          />
+          {query ? (
+            <button
+              type="button"
+              className="sidebar-search-clear"
+              aria-label="検索を消す"
+              title="検索を消す (Esc)"
+              onClick={() => {
+                setQuery('');
+                searchRef.current?.focus();
+              }}
+            >
+              ✕
+            </button>
+          ) : (
+            <kbd className="kbd sidebar-search-kbd" aria-hidden="true">
+              {SHORTCUT_LABEL}
+            </kbd>
+          )}
+        </div>
+        <nav className="sidebar-nav" aria-label="サービス一覧">
+          {filtered !== null ? (
+            filtered.length === 0 ? (
+              <div className="sidebar-empty" role="status">
+                「{query.trim()}」に一致するサービスはありません
+              </div>
+            ) : (
+              <>
+                <div className="sidebar-section-label" role="status" title="Enter で先頭の候補を開く">
+                  🔍 検索結果 {filtered.length} 件
+                </div>
+                {filtered.map(renderItem)}
+              </>
+            )
+          ) : (
+            <>
+              {favoriteServices.length > 0 && (
+                <div className="sidebar-group" data-section="favorites">
+                  <div className="sidebar-section-label">♥ お気に入り</div>
+                  {favoriteServices.map(renderItem)}
+                </div>
+              )}
+              {recentServices.length > 0 && (
+                <div className="sidebar-group" data-section="recents">
+                  <div className="sidebar-section-label">🕒 最近使った</div>
+                  {recentServices.map(renderItem)}
+                </div>
+              )}
+              {CATEGORY_ORDER.map((cat) => {
+                const items = grouped[cat];
+                if (items.length === 0) return null;
+                const isCollapsed = collapsed[cat];
+                return (
+                  <div key={cat} className="sidebar-group" data-category={cat}>
+                    <button
+                      type="button"
+                      className="sidebar-group-head"
+                      onClick={() => toggle(cat)}
+                      aria-expanded={!isCollapsed}
+                      title={isCollapsed ? `${CATEGORY_LABEL[cat]} を開く` : `${CATEGORY_LABEL[cat]} を畳む`}
+                    >
+                      <span className="group-emoji" aria-hidden="true">
+                        {CATEGORY_EMOJI[cat]}
+                      </span>
+                      <span>{CATEGORY_LABEL[cat]}</span>
+                      <span className="group-count" aria-label={`${items.length} 件`}>
+                        {items.length}
+                      </span>
+                      <span className="chev" aria-hidden="true">
+                        ⌄
+                      </span>
+                    </button>
+                    {!isCollapsed && items.map(renderItem)}
+                  </div>
+                );
+              })}
+            </>
+          )}
+        </nav>
+        <div className="sidebar-footer">
+          <label className="plan-label">
+            <span style={{ display: 'block', marginBottom: 4 }}>プラン</span>
+            <select
+              value={plan}
+              onChange={(e) => setPlan(e.target.value as PlanTier)}
+              aria-label="プラン選択"
+              className="plan-select"
+            >
+              {PLAN_ORDER.map((tier) => (
+                <option key={tier} value={tier}>
+                  {PLANS[tier].label} · {PLANS[tier].audience}
+                </option>
+              ))}
+            </select>
+          </label>
+          {internalUnlocked && (
+            <div className="license-pill" title="社内ライセンス: 全サービス・全機能が無償で利用できます">
+              ✅ 全機能 開放中（無償）
+            </div>
+          )}
+          {/*
+            * 版が分かっていないときに数を名乗らない (2026-09-25 · パス 460)。
+            * 直す前は `'v0.1.0'` を直書きしており、**橋の `getVersion` が落ちると
+            * その文字列が残り続ける** (実測: reject する橋で描くとサイドバーは
+            * 永久に `v0.1.0` と言う)。版を上げた日には、動いているどの版に対しても偽になる。
+            * 「価格不明」「在庫不明」(パス 410) と同じで、**空欄ではなく理由を名乗る。**
+            */}
+          <div className="sidebar-version">
+            {version ? `v${version}` : '版不明'} · build: ALL-ACCESS
+          </div>
+        </div>
+      </aside>
+      {navOpen && (
+        <div
+          className="sidebar-backdrop"
+          aria-hidden="true"
+          onClick={() => setNavOpen(false)}
+        />
+      )}
+      {/*
+        3 列 (すっきり × 広い画面) のとき、コンシェルジュはサイドバーと画面の間の列になる。
+        DOM の順もその見た目の順 (サイドバー → チャット → 画面) にする —— Tab で辿る順が見た目と揃う。
+      */}
+      {showChatColumn ? (
+        <aside className="chat-column" aria-label="AI コンシェルジュ" data-chat-column>
+          {concierge(true)}
+        </aside>
+      ) : null}
+      <main className="main" ref={mainRef}>
+        <header className="topbar">
+          <button
+            type="button"
+            className="menu-btn"
+            ref={menuBtnRef}
+            aria-label={navOpen ? 'メニューを閉じる' : 'メニューを開く'}
+            aria-expanded={navOpen}
+            onClick={() => setNavOpen((o) => !o)}
+          >
+            ☰
+          </button>
+          {chatDocked ? (
+            <button
+              type="button"
+              className="chat-toggle ghost"
+              aria-expanded={!chatCollapsed}
+              aria-label={chatCollapsed ? 'AI コンシェルジュを表示' : 'AI コンシェルジュを隠す'}
+              title={chatCollapsed ? 'AI コンシェルジュの欄を開く' : 'AI コンシェルジュの欄を畳む'}
+              onClick={() => setChatCollapsed((c) => !c)}
+            >
+              💬 <span className="chat-toggle-label">チャット</span>
+            </button>
+          ) : null}
+          <span className="topbar-icon" aria-hidden="true">
+            {active.icon}
+          </span>
+          <h1>{active.label}</h1>
+          <span className="chip crumb">
+            <span aria-hidden="true">{CATEGORY_EMOJI[active.category]}</span>
+            {CATEGORY_LABEL[active.category]}
+          </span>
+          <span className="description">{active.description}</span>
+          <div className="topbar-right">
+            <ShellPartBoundary label="ベスト3 の進み具合">
+              <BestAnswersIndicator />
+            </ShellPartBoundary>
+            <button
+              type="button"
+              className={`topbar-fav ${activeFav ? 'on' : ''}`}
+              aria-label={activeFav ? 'お気に入りから外す' : 'お気に入りに追加'}
+              aria-pressed={activeFav}
+              title={activeFav ? 'お気に入りから外す' : 'お気に入りに追加'}
+              onClick={() => toggleFav(active.id)}
+            >
+              {activeFav ? '♥' : '♡'}
+            </button>
+            <ShellPartBoundary label="音声コマンド">
+              <VoiceCommandBar />
+            </ShellPartBoundary>
+          </div>
+        </header>
+        <section className="content" ref={contentRef} onScroll={onContentScroll}>
+          {/*
+            端末が業務レコードの読み書きを断ったことは、**どの画面でも同じ打ち手**に
+            なるので 1 か所で出す。画面の境界の外に置く —— 中だと画面が落ちたときに
+            報せも消える。
+          */}
+          <ShellPartBoundary label="端末の保存の知らせ">
+            <DeviceStoreFailureBanner />
+          </ShellPartBoundary>
+          {/* key で画面ごとに張り直す —— 切り替えのたびに `.page-enter` がふわっと現れる。 */}
+          <div key={active.id} className="page-enter">
+            {activeUnlocked ? (
+              // 画面の描画エラーはこの枠に閉じる (境界が無いと React はツリー全体を外し、サイドバーごと白くなる)。
+              // 別の画面へ移れば新しい境界 (外側の key が張り直す)。
+              <PageErrorBoundary label={active.label} onGoHome={() => selectService('home')}>
+                <PageComponent />
+                {/*
+                  手入力欄は**ここ 1 か所**に置く。画面ごとに貼って回ると必ず
+                  どれか 1 つが漏れるし、新しいサービスを足すたびに忘れる。
+                  置き換えの一覧を持たない画面では「足す」側だけが出る。
+                */}
+                <ManualDataSection scope={active.id} />
+              </PageErrorBoundary>
+            ) : (
+              <ShellPartBoundary label="プランの案内">
+                <UpgradeNotice
+                  requiredPlan={requiredPlan}
+                  onUpgrade={(tier) => setPlan(tier)}
+                />
+              </ShellPartBoundary>
+            )}
+          </div>
+        </section>
+        <button
+          type="button"
+          className={`scroll-top ${scrolled ? 'show' : ''}`}
+          aria-label="ページの先頭へ戻る"
+          aria-hidden={!scrolled}
+          tabIndex={scrolled ? 0 : -1}
+          onClick={scrollToTop}
+        >
+          ↑
+        </button>
+      </main>
+      {/*
+        画面の外の部品は、どれも自分の境界に入れる (パス 489)。ここで投げると React はツリーごと外し、
+        サイドバーも画面も消える —— 保存した会話履歴の 1 件で、コンシェルジュを開いた瞬間に実際にそうなった。
+        復旧の操作は「会話履歴を消してやり直す」(この部品が描く保存値はそれだけ)。
+        列にしない (かわいい・狭い画面) ときは右下の浮いた窓。列を畳んだときは上部バーの「💬 チャット」で戻す
+        —— 浮いた窓を代わりに出すと、同じ会話の入口が 2 つになる。
+      */}
+      {chatDocked ? null : concierge(false)}
+    </div>
+    </ShellContext.Provider>
+  );
+}
+
+function UpgradeNotice({
+  requiredPlan,
+  onUpgrade,
+}: {
+  requiredPlan: PlanTier | null;
+  onUpgrade: (tier: PlanTier) => void;
+}) {
+  // `requiredPlan` is null only when Free already covers the service, in
+  // which case this notice wouldn't render — default to enterprise defensively.
+  const target = requiredPlan ?? 'enterprise';
+  const def = getPlan(target);
+  return (
+    <div className="upgrade-card">
+      <div className="lock" aria-hidden="true">🔒</div>
+      <h2>このサービスは {def.label} プラン以上で利用できます</h2>
+      <p>
+        対象: {def.audience} ／ 月額 {def.priceMonthlyJpy.toLocaleString('ja-JP')} 円
+        ／ 同時利用サービス数 {def.maxServices === Infinity ? '無制限' : `${def.maxServices} 個まで`}
+      </p>
+      <button type="button" className="primary" onClick={() => onUpgrade(target)}>
+        {def.label} にアップグレード
+      </button>
+    </div>
+  );
 }

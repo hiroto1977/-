@@ -108,6 +108,11 @@ const LEDGER: Record<string, LedgerEntry> = {
     keys: ['pkce verifier / state / clientId / redirectUri (sessionStorage)'],
     why: '4 つ揃わなければ null を返し、交換は「やり直してください」へ倒す。途中まで残った状態で交換を試させない。',
   },
+  'src/renderer/App.tsx': {
+    policy: 'fold',
+    keys: ['servicehub.recents', 'servicehub.favorites'],
+    why: '最近開いた / お気に入りの並び。読めなければ空から積み直す —— 失うのは並びだけ (書きの台帳でも deliberate-swallow)。',
+  },
   'src/renderer/components/ChatbotWidget.tsx': {
     policy: 'fold',
     keys: ['chatbot-history', 'chatbot-requests', 'chatbot-ollama-model'],

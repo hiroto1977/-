@@ -18,9 +18,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { onNavigate } from '../navigate';
 import { SERVICES } from '../services';
-import { hashForService, serviceIdFromHash } from '../hashRoute';
-import { ManualDataSection } from './ManualDataSection';
-import { BestAnswersIndicator } from './BestAnswersIndicator';
 import { isServiceId, type ServiceId } from '../../shared/serviceId';
 import { ChatbotWidget, clearChatbotHistory } from './ChatbotWidget';
 import { DeviceStoreFailureBanner } from './DeviceStoreFailureBanner';
@@ -31,26 +28,10 @@ import { useDialogFocus } from './useDialogFocus';
 const VillagePage = SERVICES.find((s) => s.id === 'village')!.page;
 const SettingsPage = SERVICES.find((s) => s.id === 'settings')!.page;
 
-/** URL ハッシュ (`#stocks`) → 開く窓。村そのもの (`#village`)・空・知らない値は窓なし。 */
-function openIdFromHash(hash: string): ServiceId | null {
-  const id = serviceIdFromHash(hash);
-  return id !== null && id !== 'village' && SERVICES.some((s) => s.id === id) ? id : null;
-}
-
-function currentHash(): string {
-  try {
-    return typeof location !== 'undefined' ? location.hash : '';
-  } catch {
-    return '';
-  }
-}
-
 export function VillageShell() {
   // 開いている窓。'settings' は役場 (設定そのもの)。会話の「〇〇を開いて」(`servicehub:navigate`) で
-  // 各サービスの画面も同じ窓に開く —— 殻は聞き手が 1 つも無いと「開いて」が無反応になる (P3)。
-  // 初期値は URL ハッシュ (直リンク・共有): 旧画面のサイドバーを廃止したので、78 の画面への入口は
-  // 会話とこのハッシュの 2 つ。
-  const [openId, setOpenId] = useState<ServiceId | null>(() => openIdFromHash(currentHash()));
+  // 旧画面の各サービスの画面も同じ窓に開く —— 殻は聞き手が 1 つも無いと「開いて」が無反応になる (P3)。
+  const [openId, setOpenId] = useState<ServiceId | null>(null);
   const hallOpen = openId !== null;
   const hallRef = useRef<HTMLDivElement | null>(null);
   const hallBtnRef = useRef<HTMLButtonElement | null>(null);
@@ -76,25 +57,6 @@ export function VillageShell() {
     [],
   );
 
-  // 窓 → URL ハッシュ (開いた画面を共有・戻る/進むで辿れる)。窓なしは村のハッシュ。
-  useEffect(() => {
-    try {
-      const h = hashForService(openId ?? 'village');
-      if (location.hash !== h) location.hash = h;
-    } catch {
-      /* location 不在環境 */
-    }
-  }, [openId]);
-
-  // URL ハッシュ → 窓 (ブラウザ戻る/進む・直リンク)。
-  useEffect(() => {
-    function onHash() {
-      setOpenId(openIdFromHash(currentHash()));
-    }
-    window.addEventListener('hashchange', onHash);
-    return () => window.removeEventListener('hashchange', onHash);
-  }, []);
-
   const def = openId === null ? undefined : SERVICES.find((s) => s.id === openId);
   const OpenPage = def?.page ?? SettingsPage;
   const title = openId === null || openId === 'settings' ? '役場' : (def?.label ?? '役場');
@@ -105,11 +67,6 @@ export function VillageShell() {
         <h1 className="village-shell-title">
           <span aria-hidden="true">⛏️🌳</span> ブロックの村
         </h1>
-        <span className="village-shell-bar-right">
-          <ShellPartBoundary label="ベスト3 の進み具合">
-            <BestAnswersIndicator />
-          </ShellPartBoundary>
-        </span>
         <button
           type="button"
           ref={hallBtnRef}
@@ -168,8 +125,6 @@ export function VillageShell() {
           <div className="village-hall-body">
             <PageErrorBoundary label={title} key={openId}>
               <OpenPage />
-              {/* 手入力欄は窓の中の 1 か所 (画面ごとに貼ると漏れる)。置き換えの一覧を持たない画面は「足す」側だけ。 */}
-              <ManualDataSection scope={openId ?? 'settings'} />
             </PageErrorBoundary>
           </div>
         </div>
