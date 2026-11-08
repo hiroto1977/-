@@ -89,7 +89,8 @@ function moveNames(m) {
 
 function programOf(boxName, genome, tag) {
   const names = [...new Set(genome.flatMap(moveNames))];
-  const body = genome.map((m) => `  r.push(${moveExpr(m)});`).join('\n');
+  // 1 つの動きが例外を投げても後ろの動きが走るよう、動きごとに try で包む (投げた例外そのものも戦利品として返す: 秘密を文面に載せる箱を見逃さない)
+  const body = genome.map((m) => `  try { r.push(${moveExpr(m)}); } catch (e) { r.push(e); }`).join('\n');
   return `// target: ${boxName}\n// goal: steal / destroy (自律進化 ${tag})\n` + (names.length > 0 ? `use { ${names.join(', ')} } from "./defender";\n` : '')
     + `export fn attack() -> unknown {\n  const r: unknown[] = [];\n${body}\n  return r;\n}\n`;
 }

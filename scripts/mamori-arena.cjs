@@ -109,7 +109,8 @@ if (cmd === 'match') {
       const blue = evo.evolveBlue({ compiler, box, seed: runSeed, level });
       for (const b of blue) {
         tally.plays += b.plays;
-        if (b.caught) { tally.caught++; state.lessons.push({ box: b.box, op: b.op, verdict: b.verdict, program: b.program, seed: runSeed }); } else { tally.uncaught++; state.gaps.push({ box: b.box, op: b.op, seed: runSeed }); }
+        state.gaps = state.gaps.filter((x) => !(x.box === b.box && x.op === b.op));
+        if (b.caught) { tally.caught++; state.lessons.push({ box: b.box, op: b.op, verdict: b.verdict, program: b.program, seed: runSeed }); } else { tally.uncaught++; state.lessons = state.lessons.filter((x) => !(x.box === b.box && x.op === b.op)); state.gaps.push({ box: b.box, op: b.op, seed: runSeed }); }
       }
       line += ` | blue 弱体化 ${blue.map((b) => `${b.op}:${b.caught ? '捕' : '逃'}`).join(' ') || '-'}`;
     }
