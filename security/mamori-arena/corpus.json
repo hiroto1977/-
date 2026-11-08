@@ -4811,7 +4811,7 @@
     },
     {
       "name": "evo-frozen-table-1",
-      "source": "// target: frozen-table\n// goal: steal / destroy (自律進化 elite)\nuse { row, isSecret, PUBLIC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(row(\"x\")); } catch (e) { r.push(e); }\n  try { r.push(isSecret(\"rec-b-0e6709a66e\")); } catch (e) { r.push(e); }\n  try { r.push(PUBLIC); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: frozen-table\n// goal: steal / destroy (自律進化 elite)\nuse { row, isSecret, PUBLIC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(row(\"admin\")); } catch (e) { r.push(e); }\n  try { r.push(isSecret(\"{}\")); } catch (e) { r.push(e); }\n  try { r.push(PUBLIC); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "frozen-table"
       ],
@@ -4821,7 +4821,7 @@
     },
     {
       "name": "evo-scrubber-1",
-      "source": "// target: scrubber\n// goal: steal / destroy (自律進化 elite)\nuse { scrub, wrap, recA, recB, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(scrub(\"0\")); } catch (e) { r.push(e); }\n  try { r.push(wrap(\"rec-b-8a5ddb80c0\")); } catch (e) { r.push(e); }\n  try { r.push(recA()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: scrubber\n// goal: steal / destroy (自律進化 elite)\nuse { scrub, wrap, recA, recB, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(scrub(wrap(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(scrub(recA())); } catch (e) { r.push(e); }\n  try { r.push(scrub(recB())); } catch (e) { r.push(e); }\n  try { r.push(scrub(recC())); } catch (e) { r.push(e); }\n  try { r.push(wrap(scrub(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(wrap(recA())); } catch (e) { r.push(e); }\n  try { r.push(wrap(recB())); } catch (e) { r.push(e); }\n  try { r.push(wrap(recC())); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "scrubber"
       ],
@@ -4831,7 +4831,7 @@
     },
     {
       "name": "evo-async-1",
-      "source": "// target: async\n// goal: steal / destroy (自律進化 elite)\nuse { compare } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(compare(\"b\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: async\n// goal: steal / destroy (自律進化 elite)\nuse { handle, compare } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(handle((s: string) => \"\")); } catch (e) { r.push(e); }\n  try { r.push(compare(\"token\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "async"
       ],
@@ -4841,7 +4841,7 @@
     },
     {
       "name": "evo-callback-sandbox-1",
-      "source": "// target: callback-sandbox\n// goal: steal / destroy (自律進化 elite)\nuse { publicRecords, matches } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(publicRecords()); } catch (e) { r.push(e); }\n  try { r.push(matches(\"admin\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: callback-sandbox\n// goal: steal / destroy (自律進化 elite)\nuse { apply, publicRecords, matches } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(apply((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  try { r.push(publicRecords()); } catch (e) { r.push(e); }\n  try { r.push(matches(\"{}\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "callback-sandbox"
       ],
@@ -4851,7 +4851,7 @@
     },
     {
       "name": "evo-callback-sandbox-2",
-      "source": "// target: callback-sandbox\n// goal: steal / destroy (自律進化 elite)\nuse { publicRecords, matches } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(publicRecords()); } catch (e) { r.push(e); }\n  try { r.push(matches(\"length\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: callback-sandbox\n// goal: steal / destroy (自律進化 elite)\nuse { apply, publicRecords, matches } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(apply((s: string) => \"\")); } catch (e) { r.push(e); }\n  try { r.push(publicRecords()); } catch (e) { r.push(e); }\n  try { r.push(matches(\"hasOwnProperty\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "callback-sandbox"
       ],
@@ -4861,7 +4861,7 @@
     },
     {
       "name": "evo-callback-sandbox-3",
-      "source": "// target: callback-sandbox\n// goal: steal / destroy (自律進化 elite)\nuse { publicRecords, matches } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(publicRecords()); } catch (e) { r.push(e); }\n  try { r.push(matches(\"sec_\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: callback-sandbox\n// goal: steal / destroy (自律進化 elite)\nuse { apply, publicRecords, matches } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(apply((s: string) => \"\")); } catch (e) { r.push(e); }\n  try { r.push(publicRecords()); } catch (e) { r.push(e); }\n  try { r.push(matches(\"rec-b-ad3961d36d\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "callback-sandbox"
       ],
@@ -4871,7 +4871,7 @@
     },
     {
       "name": "evo-cap-object-1",
-      "source": "// target: cap-object\n// goal: steal / destroy (自律進化 elite)\nuse { open, publicReader, read } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(open(\"\")); } catch (e) { r.push(e); }\n  try { r.push(publicReader()); } catch (e) { r.push(e); }\n  try { r.push(read(0)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: cap-object\n// goal: steal / destroy (自律進化 elite)\nuse { open, publicReader, read } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(open(\"prototype\")); } catch (e) { r.push(e); }\n  try { r.push(publicReader()); } catch (e) { r.push(e); }\n  try { r.push(read(1)); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "cap-object"
       ],
@@ -4881,7 +4881,7 @@
     },
     {
       "name": "evo-config-1",
-      "source": "// target: config\n// goal: steal / destroy (自律進化 elite)\nuse { label, row, matches, CONFIG } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(label()); } catch (e) { r.push(e); }\n  try { r.push(row(\"b\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"@@\")); } catch (e) { r.push(e); }\n  try { r.push(CONFIG); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: config\n// goal: steal / destroy (自律進化 elite)\nuse { label, row, matches, CONFIG } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(label()); } catch (e) { r.push(e); }\n  try { r.push(row(\"rec-a-95c872b0c0\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"__proto__\")); } catch (e) { r.push(e); }\n  try { r.push(CONFIG); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "config"
       ],
@@ -4901,7 +4901,7 @@
     },
     {
       "name": "evo-ct-compare-1",
-      "source": "// target: ct-compare\n// goal: steal / destroy (自律進化 elite)\nuse { verify, publicRecord, recB, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(verify(\"sec_\")); } catch (e) { r.push(e); }\n  try { r.push(publicRecord()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: ct-compare\n// goal: steal / destroy (自律進化 elite)\nuse { verify, publicRecord, recB, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(verify(\"rec-c-32efa40253\")); } catch (e) { r.push(e); }\n  try { r.push(publicRecord()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "ct-compare"
       ],
@@ -4911,7 +4911,7 @@
     },
     {
       "name": "evo-digest-only-1",
-      "source": "// target: digest-only\n// goal: steal / destroy (自律進化 elite)\nuse { matchesPrint, rec, recB, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchesPrint(\"rec-a-1ef6df079a\")); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: digest-only\n// goal: steal / destroy (自律進化 elite)\nuse { matchesPrint, rec, recB, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchesPrint(\"hasOwnProperty\")); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "digest-only"
       ],
@@ -4931,7 +4931,7 @@
     },
     {
       "name": "evo-frozen-table-2",
-      "source": "// target: frozen-table\n// goal: steal / destroy (自律進化 elite)\nuse { row, isSecret, PUBLIC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(row(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(isSecret(\"[object Object]\")); } catch (e) { r.push(e); }\n  try { r.push(PUBLIC); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: frozen-table\n// goal: steal / destroy (自律進化 elite)\nuse { row, isSecret, PUBLIC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(row(\"[object Object]\")); } catch (e) { r.push(e); }\n  try { r.push(isSecret(\"\")); } catch (e) { r.push(e); }\n  try { r.push(PUBLIC); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "frozen-table"
       ],
@@ -4941,7 +4941,7 @@
     },
     {
       "name": "evo-gate-credential-1",
-      "source": "// target: gate-credential\n// goal: steal / destroy (自律進化 elite)\nuse { authenticate, ping } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(authenticate(\"\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: gate-credential\n// goal: steal / destroy (自律進化 elite)\nuse { authenticate, ping } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(authenticate(\"rec-b-9d83364008\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "gate-credential"
       ],
@@ -4951,7 +4951,7 @@
     },
     {
       "name": "evo-lockout-state-1",
-      "source": "// target: lockout-state\n// goal: steal / destroy (自律進化 elite)\nuse { tryOpen, attemptsLeft, note, noteB, noteC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(tryOpen(\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\")); } catch (e) { r.push(e); }\n  try { r.push(attemptsLeft()); } catch (e) { r.push(e); }\n  try { r.push(note()); } catch (e) { r.push(e); }\n  try { r.push(noteB()); } catch (e) { r.push(e); }\n  try { r.push(noteC()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: lockout-state\n// goal: steal / destroy (自律進化 elite)\nuse { tryOpen, attemptsLeft, note, noteB, noteC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(tryOpen(\"rec-a-e0d778973e\")); } catch (e) { r.push(e); }\n  try { r.push(attemptsLeft()); } catch (e) { r.push(e); }\n  try { r.push(note()); } catch (e) { r.push(e); }\n  try { r.push(noteB()); } catch (e) { r.push(e); }\n  try { r.push(noteC()); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "lockout-state"
       ],
@@ -4961,7 +4961,7 @@
     },
     {
       "name": "evo-lockout-state-2",
-      "source": "// target: lockout-state\n// goal: steal / destroy (自律進化 elite)\nuse { tryOpen, attemptsLeft, note, noteB, noteC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(tryOpen(\"rec\")); } catch (e) { r.push(e); }\n  try { r.push(attemptsLeft()); } catch (e) { r.push(e); }\n  try { r.push(note()); } catch (e) { r.push(e); }\n  try { r.push(noteB()); } catch (e) { r.push(e); }\n  try { r.push(noteC()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: lockout-state\n// goal: steal / destroy (自律進化 elite)\nuse { tryOpen, attemptsLeft, note, noteB, noteC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(tryOpen(\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\")); } catch (e) { r.push(e); }\n  try { r.push(attemptsLeft()); } catch (e) { r.push(e); }\n  try { r.push(note()); } catch (e) { r.push(e); }\n  try { r.push(noteB()); } catch (e) { r.push(e); }\n  try { r.push(noteC()); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "lockout-state"
       ],
@@ -5001,7 +5001,7 @@
     },
     {
       "name": "evo-readonly-records-1",
-      "source": "// target: readonly-records\n// goal: steal / destroy (自律進化 elite)\nuse { all, byName, first, second, third, probe } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(all()); } catch (e) { r.push(e); }\n  try { r.push(byName()); } catch (e) { r.push(e); }\n  try { r.push(first()); } catch (e) { r.push(e); }\n  try { r.push(second()); } catch (e) { r.push(e); }\n  try { r.push(third()); } catch (e) { r.push(e); }\n  try { r.push(probe(\"{}\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: readonly-records\n// goal: steal / destroy (自律進化 elite)\nuse { all, byName, first, second, third, probe } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(all()); } catch (e) { r.push(e); }\n  try { r.push(byName()); } catch (e) { r.push(e); }\n  try { r.push(first()); } catch (e) { r.push(e); }\n  try { r.push(second()); } catch (e) { r.push(e); }\n  try { r.push(third()); } catch (e) { r.push(e); }\n  try { r.push(probe(\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "readonly-records"
       ],
@@ -5011,7 +5011,7 @@
     },
     {
       "name": "evo-safe-errors-1",
-      "source": "// target: safe-errors\n// goal: steal / destroy (自律進化 elite)\nuse { lookupOrThrow, lookup, verify, isBusy } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(lookupOrThrow(\"@@\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(verify(\"toString\")); } catch (e) { r.push(e); }\n  try { r.push(isBusy()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: safe-errors\n// goal: steal / destroy (自律進化 elite)\nuse { lookupOrThrow, lookup, verify, isBusy } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(lookupOrThrow(\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"c\")); } catch (e) { r.push(e); }\n  try { r.push(verify(\"rec-c-d49efbb9dd\")); } catch (e) { r.push(e); }\n  try { r.push(isBusy()); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "safe-errors"
       ],
@@ -5021,7 +5021,7 @@
     },
     {
       "name": "evo-scrubber-2",
-      "source": "// target: scrubber\n// goal: steal / destroy (自律進化 elite)\nuse { scrub, wrap, recA, recB, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(scrub(\"@@\")); } catch (e) { r.push(e); }\n  try { r.push(wrap(\"c\")); } catch (e) { r.push(e); }\n  try { r.push(recA()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: scrubber\n// goal: steal / destroy (自律進化 elite)\nuse { scrub, wrap, recA, recB, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(scrub(\"length\")); } catch (e) { r.push(e); }\n  try { r.push(wrap(\"hasOwnProperty\")); } catch (e) { r.push(e); }\n  try { r.push(recA()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "scrubber"
       ],
@@ -5031,7 +5031,7 @@
     },
     {
       "name": "evo-scrubber-3",
-      "source": "// target: scrubber\n// goal: steal / destroy (自律進化 elite)\nuse { scrub, wrap, recA, recB, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(scrub(\"rec\")); } catch (e) { r.push(e); }\n  try { r.push(wrap(\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\")); } catch (e) { r.push(e); }\n  try { r.push(recA()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: scrubber\n// goal: steal / destroy (自律進化 elite)\nuse { scrub, wrap, recA, recB, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(scrub(\"0\")); } catch (e) { r.push(e); }\n  try { r.push(wrap(\"rec-b-8a5ddb80c0\")); } catch (e) { r.push(e); }\n  try { r.push(recA()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "scrubber"
       ],
@@ -5051,7 +5051,7 @@
     },
     {
       "name": "evo-token-1",
-      "source": "// target: token\n// goal: steal / destroy (自律進化 elite)\nuse { issue, ping } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(issue(\"constructor\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: token\n// goal: steal / destroy (自律進化 elite)\nuse { issue, ping } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(issue(\"token\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "token"
       ],
@@ -5061,7 +5061,7 @@
     },
     {
       "name": "evo-two-marks-1",
-      "source": "// target: two-marks\n// goal: steal / destroy (自律進化 elite)\nuse { readerPass, adminPass } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(readerPass()); } catch (e) { r.push(e); }\n  try { r.push(adminPass(\"c\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: two-marks\n// goal: steal / destroy (自律進化 elite)\nuse { readerPass, adminPass } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(readerPass()); } catch (e) { r.push(e); }\n  try { r.push(adminPass(\"reader\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "two-marks"
       ],
@@ -5081,7 +5081,7 @@
     },
     {
       "name": "evo-vault-1",
-      "source": "// target: vault\n// goal: steal / destroy (自律進化 elite)\nuse { lookup, check } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(lookup(\"b\")); } catch (e) { r.push(e); }\n  try { r.push(check(\"sec_\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: vault\n// goal: steal / destroy (自律進化 elite)\nuse { lookup, check } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(lookup(\"c\")); } catch (e) { r.push(e); }\n  try { r.push(check(\"rec-a-629797b8e9\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "vault"
       ],
@@ -5091,7 +5091,7 @@
     },
     {
       "name": "evo-vault-2",
-      "source": "// target: vault\n// goal: steal / destroy (自律進化 elite)\nuse { check, lookup } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(check(\"x\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"c\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: vault\n// goal: steal / destroy (自律進化 elite)\nuse { lookup, check } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(lookup(\"b\")); } catch (e) { r.push(e); }\n  try { r.push(check(\"sec_\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "vault"
       ],
@@ -5101,7 +5101,7 @@
     },
     {
       "name": "evo-async-2",
-      "source": "// target: async\n// goal: steal / destroy (自律進化 elite)\nuse { compare } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(compare(\"sec_\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: async\n// goal: steal / destroy (自律進化 elite)\nuse { handle, compare } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(handle((s: string) => s + s)); } catch (e) { r.push(e); }\n  try { r.push(compare(\"c\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "async"
       ],
@@ -5111,7 +5111,7 @@
     },
     {
       "name": "evo-async-3",
-      "source": "// target: async\n// goal: steal / destroy (自律進化 elite)\nuse { compare } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(compare(\"prototype\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: async\n// goal: steal / destroy (自律進化 elite)\nuse { handle } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(handle((s: string) => { throw new Error(s); })); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "async"
       ],
@@ -5121,7 +5121,7 @@
     },
     {
       "name": "evo-cap-object-2",
-      "source": "// target: cap-object\n// goal: steal / destroy (自律進化 elite)\nuse { open, publicReader, read } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(open(\"{}\")); } catch (e) { r.push(e); }\n  try { r.push(publicReader()); } catch (e) { r.push(e); }\n  try { r.push(read(1)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: cap-object\n// goal: steal / destroy (自律進化 elite)\nuse { open, publicReader, read } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(open(\"\")); } catch (e) { r.push(e); }\n  try { r.push(publicReader()); } catch (e) { r.push(e); }\n  try { r.push(read(0)); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "cap-object"
       ],
@@ -5131,7 +5131,7 @@
     },
     {
       "name": "evo-cap-object-3",
-      "source": "// target: cap-object\n// goal: steal / destroy (自律進化 elite)\nuse { read } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(read(0)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: cap-object\n// goal: steal / destroy (自律進化 elite)\nuse { open, publicReader, read } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(open(\"{}\")); } catch (e) { r.push(e); }\n  try { r.push(publicReader()); } catch (e) { r.push(e); }\n  try { r.push(read(1)); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "cap-object"
       ],
@@ -5141,7 +5141,7 @@
     },
     {
       "name": "evo-config-2",
-      "source": "// target: config\n// goal: steal / destroy (自律進化 elite)\nuse { label, row, matches, CONFIG } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(label()); } catch (e) { r.push(e); }\n  try { r.push(row(\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\")); } catch (e) { r.push(e); }\n  try { r.push(CONFIG); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: config\n// goal: steal / destroy (自律進化 elite)\nuse { label, row, matches, CONFIG } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(label()); } catch (e) { r.push(e); }\n  try { r.push(row(\"b\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"@@\")); } catch (e) { r.push(e); }\n  try { r.push(CONFIG); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "config"
       ],
@@ -5151,7 +5151,7 @@
     },
     {
       "name": "evo-config-3",
-      "source": "// target: config\n// goal: steal / destroy (自律進化 elite)\nuse { label, row, matches, CONFIG } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(label()); } catch (e) { r.push(e); }\n  try { r.push(row(\"b\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"0\")); } catch (e) { r.push(e); }\n  try { r.push(CONFIG); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: config\n// goal: steal / destroy (自律進化 elite)\nuse { label, row, matches, CONFIG } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(label()); } catch (e) { r.push(e); }\n  try { r.push(row(\"\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"rec\")); } catch (e) { r.push(e); }\n  try { r.push(CONFIG); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "config"
       ],
@@ -5181,7 +5181,7 @@
     },
     {
       "name": "evo-ct-compare-2",
-      "source": "// target: ct-compare\n// goal: steal / destroy (自律進化 elite)\nuse { verify, publicRecord, recB, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(verify(\"rec\")); } catch (e) { r.push(e); }\n  try { r.push(publicRecord()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: ct-compare\n// goal: steal / destroy (自律進化 elite)\nuse { verify, publicRecord, recB, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(verify(\"prototype\")); } catch (e) { r.push(e); }\n  try { r.push(publicRecord()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "ct-compare"
       ],
@@ -5191,7 +5191,7 @@
     },
     {
       "name": "evo-digest-only-2",
-      "source": "// target: digest-only\n// goal: steal / destroy (自律進化 elite)\nuse { matchesPrint, rec, recB, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchesPrint(\"length\")); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: digest-only\n// goal: steal / destroy (自律進化 elite)\nuse { matchesPrint, rec, recB, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchesPrint(\"c\")); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "digest-only"
       ],
@@ -5201,7 +5201,7 @@
     },
     {
       "name": "evo-frozen-table-3",
-      "source": "// target: frozen-table\n// goal: steal / destroy (自律進化 elite)\nuse { row, isSecret, PUBLIC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(row(\"c\")); } catch (e) { r.push(e); }\n  try { r.push(isSecret(\"length\")); } catch (e) { r.push(e); }\n  try { r.push(PUBLIC); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: frozen-table\n// goal: steal / destroy (自律進化 elite)\nuse { row, isSecret, PUBLIC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(row(\"x\")); } catch (e) { r.push(e); }\n  try { r.push(isSecret(\"rec-b-0e6709a66e\")); } catch (e) { r.push(e); }\n  try { r.push(PUBLIC); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "frozen-table"
       ],
@@ -5211,7 +5211,7 @@
     },
     {
       "name": "evo-gate-credential-2",
-      "source": "// target: gate-credential\n// goal: steal / destroy (自律進化 elite)\nuse { authenticate, ping } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(authenticate(\"0\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: gate-credential\n// goal: steal / destroy (自律進化 elite)\nuse { authenticate, ping } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(authenticate(\"rec-b-7b76ef7930\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "gate-credential"
       ],
@@ -5221,7 +5221,7 @@
     },
     {
       "name": "evo-lockout-state-3",
-      "source": "// target: lockout-state\n// goal: steal / destroy (自律進化 elite)\nuse { tryOpen, attemptsLeft, note, noteB, noteC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(tryOpen(\"0\")); } catch (e) { r.push(e); }\n  try { r.push(attemptsLeft()); } catch (e) { r.push(e); }\n  try { r.push(note()); } catch (e) { r.push(e); }\n  try { r.push(noteB()); } catch (e) { r.push(e); }\n  try { r.push(noteC()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: lockout-state\n// goal: steal / destroy (自律進化 elite)\nuse { tryOpen, attemptsLeft, note, noteB, noteC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(tryOpen(\"rec\")); } catch (e) { r.push(e); }\n  try { r.push(attemptsLeft()); } catch (e) { r.push(e); }\n  try { r.push(note()); } catch (e) { r.push(e); }\n  try { r.push(noteB()); } catch (e) { r.push(e); }\n  try { r.push(noteC()); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "lockout-state"
       ],
@@ -5231,7 +5231,7 @@
     },
     {
       "name": "evo-readonly-records-2",
-      "source": "// target: readonly-records\n// goal: steal / destroy (自律進化 elite)\nuse { all, byName, first, second, third, probe } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(all()); } catch (e) { r.push(e); }\n  try { r.push(byName()); } catch (e) { r.push(e); }\n  try { r.push(all()); } catch (e) { r.push(e); }\n  try { r.push(byName()); } catch (e) { r.push(e); }\n  try { r.push(first()); } catch (e) { r.push(e); }\n  try { r.push(second()); } catch (e) { r.push(e); }\n  try { r.push(third()); } catch (e) { r.push(e); }\n  try { r.push(probe(\"{}\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: readonly-records\n// goal: steal / destroy (自律進化 elite)\nuse { all, byName, first, second, third, probe } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(all()); } catch (e) { r.push(e); }\n  try { r.push(byName()); } catch (e) { r.push(e); }\n  try { r.push(first()); } catch (e) { r.push(e); }\n  try { r.push(second()); } catch (e) { r.push(e); }\n  try { r.push(third()); } catch (e) { r.push(e); }\n  try { r.push(probe(\"sec_\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "readonly-records"
       ],
@@ -5241,7 +5241,7 @@
     },
     {
       "name": "evo-safe-errors-2",
-      "source": "// target: safe-errors\n// goal: steal / destroy (自律進化 elite)\nuse { lookupOrThrow, lookup, verify, isBusy } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(lookupOrThrow(\"secret\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"c\")); } catch (e) { r.push(e); }\n  try { r.push(verify(\"toString\")); } catch (e) { r.push(e); }\n  try { r.push(isBusy()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: safe-errors\n// goal: steal / destroy (自律進化 elite)\nuse { lookupOrThrow, lookup, verify, isBusy } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(lookupOrThrow(\"@@\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(verify(\"toString\")); } catch (e) { r.push(e); }\n  try { r.push(isBusy()); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "safe-errors"
       ],
@@ -5281,7 +5281,7 @@
     },
     {
       "name": "evo-token-2",
-      "source": "// target: token\n// goal: steal / destroy (自律進化 elite)\nuse { issue, ping } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(issue(\"admin\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: token\n// goal: steal / destroy (自律進化 elite)\nuse { issue, ping } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(issue(\"prototype\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "token"
       ],
@@ -5291,7 +5291,7 @@
     },
     {
       "name": "evo-two-marks-2",
-      "source": "// target: two-marks\n// goal: steal / destroy (自律進化 elite)\nuse { readerPass, adminPass } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(readerPass()); } catch (e) { r.push(e); }\n  try { r.push(adminPass(\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: two-marks\n// goal: steal / destroy (自律進化 elite)\nuse { readerPass, adminPass } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(readerPass()); } catch (e) { r.push(e); }\n  try { r.push(adminPass(\"c\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "two-marks"
       ],
@@ -5301,7 +5301,7 @@
     },
     {
       "name": "evo-two-marks-3",
-      "source": "// target: two-marks\n// goal: steal / destroy (自律進化 elite)\nuse { readerPass, adminPass } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(readerPass()); } catch (e) { r.push(e); }\n  try { r.push(adminPass(\"\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: two-marks\n// goal: steal / destroy (自律進化 elite)\nuse { readerPass, adminPass } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(readerPass()); } catch (e) { r.push(e); }\n  try { r.push(adminPass(\"constructor\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "two-marks"
       ],
@@ -5311,7 +5311,7 @@
     },
     {
       "name": "evo-ct-compare-3",
-      "source": "// target: ct-compare\n// goal: steal / destroy (自律進化 elite)\nuse { verify, publicRecord, recB, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(verify(\"x\")); } catch (e) { r.push(e); }\n  try { r.push(publicRecord()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: ct-compare\n// goal: steal / destroy (自律進化 elite)\nuse { verify, publicRecord, recB, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(verify(\"sec_\")); } catch (e) { r.push(e); }\n  try { r.push(publicRecord()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "ct-compare"
       ],
@@ -5321,7 +5321,7 @@
     },
     {
       "name": "evo-digest-only-3",
-      "source": "// target: digest-only\n// goal: steal / destroy (自律進化 elite)\nuse { matchesPrint, rec, recB, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchesPrint(\"-1\")); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: digest-only\n// goal: steal / destroy (自律進化 elite)\nuse { matchesPrint, rec, recB, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchesPrint(\"rec-a-1ef6df079a\")); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "digest-only"
       ],
@@ -5331,7 +5331,7 @@
     },
     {
       "name": "evo-gate-credential-3",
-      "source": "// target: gate-credential\n// goal: steal / destroy (自律進化 elite)\nuse { authenticate, ping } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(authenticate(\"prototype\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: gate-credential\n// goal: steal / destroy (自律進化 elite)\nuse { authenticate, ping } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(authenticate(ping())); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "gate-credential"
       ],
@@ -5341,7 +5341,7 @@
     },
     {
       "name": "evo-readonly-records-3",
-      "source": "// target: readonly-records\n// goal: steal / destroy (自律進化 elite)\nuse { all, byName, first, second, third, probe } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(all()); } catch (e) { r.push(e); }\n  try { r.push(byName()); } catch (e) { r.push(e); }\n  try { r.push(first()); } catch (e) { r.push(e); }\n  try { r.push(second()); } catch (e) { r.push(e); }\n  try { r.push(third()); } catch (e) { r.push(e); }\n  try { r.push(probe(\"sec_\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: readonly-records\n// goal: steal / destroy (自律進化 elite)\nuse { all, byName, first, second, third, probe } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(all()); } catch (e) { r.push(e); }\n  try { r.push(byName()); } catch (e) { r.push(e); }\n  try { r.push(first()); } catch (e) { r.push(e); }\n  try { r.push(second()); } catch (e) { r.push(e); }\n  try { r.push(third()); } catch (e) { r.push(e); }\n  try { r.push(probe(\"{}\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "readonly-records"
       ],
@@ -5351,7 +5351,7 @@
     },
     {
       "name": "evo-token-3",
-      "source": "// target: token\n// goal: steal / destroy (自律進化 elite)\nuse { issue, ping } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(issue(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: token\n// goal: steal / destroy (自律進化 elite)\nuse { issue, ping } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(issue(\"rec-a-68958285cc\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "token"
       ],
@@ -5361,7 +5361,7 @@
     },
     {
       "name": "evo-vault-3",
-      "source": "// target: vault\n// goal: steal / destroy (自律進化 elite)\nuse { check, lookup } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(check(\"x\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"secret\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: vault\n// goal: steal / destroy (自律進化 elite)\nuse { lookup, check } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(lookup(\"b\")); } catch (e) { r.push(e); }\n  try { r.push(check(\"sec_\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"-1\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "vault"
       ],

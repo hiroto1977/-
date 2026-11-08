@@ -164,6 +164,14 @@ function evolveRed({ compiler, box, gens, pop, seed, elites = [], seen = new Set
   const prober2 = [];
   for (const o of strOuters) for (const i of strInners) if (o.name !== i.name && prober2.length < 16) prober2.push({ k: 'chain', outer: o.name, inner: i.name, args: i.params.map((p) => (p === 'number' ? '0' : '"a"')) });
   if (prober2.length > 0) population.unshift(prober2);
+  // 探り役の 3 本目: 関数を引数に取る口に、コールバックの全種類を 1 回ずつ (乱数の目で「秘密を握りつぶす関数」だけを引いて見逃さない)
+  const prober3 = [];
+  for (const f of api.fns) {
+    const ci = f.params.findIndex((p) => p.startsWith('cb:'));
+    if (ci < 0) continue;
+    for (const body of CALLBACKS[f.params[ci].slice(3)] || CALLBACKS.string) if (prober3.length < 12) prober3.push({ k: 'call', fn: f.name, args: f.params.map((p, j) => (j === ci ? body : literal(p, rng, api))) });
+  }
+  if (prober3.length > 0) population.unshift(prober3);
   if (prober.length > 0) population.unshift(prober);
   const wins = [];
   const scored = new Map();

@@ -8,6 +8,46 @@
             "k": "call",
             "fn": "row",
             "args": [
+              "\"admin\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "isSecret",
+            "args": [
+              "\"{}\""
+            ]
+          },
+          {
+            "k": "read",
+            "c": "PUBLIC"
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "row",
+            "args": [
+              "\"[object Object]\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "isSecret",
+            "args": [
+              "\"\""
+            ]
+          },
+          {
+            "k": "read",
+            "c": "PUBLIC"
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "row",
+            "args": [
               "\"x\""
             ]
           },
@@ -82,46 +122,6 @@
             "k": "read",
             "c": "PUBLIC"
           }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "row",
-            "args": [
-              "\"[object Object]\""
-            ]
-          },
-          {
-            "k": "call",
-            "fn": "isSecret",
-            "args": [
-              "\"constructor\""
-            ]
-          },
-          {
-            "k": "read",
-            "c": "PUBLIC"
-          }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "row",
-            "args": [
-              "\"hasOwnProperty\""
-            ]
-          },
-          {
-            "k": "call",
-            "fn": "isSecret",
-            "args": [
-              "\"toString\""
-            ]
-          },
-          {
-            "k": "read",
-            "c": "PUBLIC"
-          }
         ]
       ],
       "tokens": [
@@ -154,13 +154,104 @@
         "rec-c-15a7c9fb5b",
         "rec-a-b165e5fd9f",
         "rec-b-4a09dd32e9",
-        "rec-c-ae5b08e14f"
+        "rec-c-ae5b08e14f",
+        "rec-a-5ca99c80a0",
+        "rec-b-7716dbf04c",
+        "rec-c-90d94e987b",
+        "rec-a-a4a8214b2f",
+        "rec-b-955200835f",
+        "rec-c-6bb474f616"
       ],
-      "generations": 31,
+      "generations": 41,
       "bestFit": 2.45
     },
     "scrubber": {
       "elites": [
+        [
+          {
+            "k": "chain",
+            "outer": "scrub",
+            "inner": "wrap",
+            "args": [
+              "\"a\""
+            ]
+          },
+          {
+            "k": "chain",
+            "outer": "scrub",
+            "inner": "recA",
+            "args": []
+          },
+          {
+            "k": "chain",
+            "outer": "scrub",
+            "inner": "recB",
+            "args": []
+          },
+          {
+            "k": "chain",
+            "outer": "scrub",
+            "inner": "recC",
+            "args": []
+          },
+          {
+            "k": "chain",
+            "outer": "wrap",
+            "inner": "scrub",
+            "args": [
+              "\"a\""
+            ]
+          },
+          {
+            "k": "chain",
+            "outer": "wrap",
+            "inner": "recA",
+            "args": []
+          },
+          {
+            "k": "chain",
+            "outer": "wrap",
+            "inner": "recB",
+            "args": []
+          },
+          {
+            "k": "chain",
+            "outer": "wrap",
+            "inner": "recC",
+            "args": []
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "scrub",
+            "args": [
+              "\"length\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "wrap",
+            "args": [
+              "\"hasOwnProperty\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "recA",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recB",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recC",
+            "args": []
+          }
+        ],
         [
           {
             "k": "call",
@@ -284,68 +375,6 @@
             "fn": "recC",
             "args": []
           }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "scrub",
-            "args": [
-              "\"-1\""
-            ]
-          },
-          {
-            "k": "call",
-            "fn": "wrap",
-            "args": [
-              "\"{}\""
-            ]
-          },
-          {
-            "k": "call",
-            "fn": "recA",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "recB",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "recC",
-            "args": []
-          }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "scrub",
-            "args": [
-              "\"c\""
-            ]
-          },
-          {
-            "k": "call",
-            "fn": "wrap",
-            "args": [
-              "\"prototype\""
-            ]
-          },
-          {
-            "k": "call",
-            "fn": "recA",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "recB",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "recC",
-            "args": []
-          }
         ]
       ],
       "tokens": [
@@ -393,13 +422,61 @@
         "rec-a-82cc46a3cf",
         "rec-b-b8b4540408",
         "rec-c-eb973a5363",
-        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "rec-a-1bb7fccdb7",
+        "rec-b-a667ce2327",
+        "rec-c-aacc9ddafe",
+        "rec-a-c9ec308a17",
+        "rec-b-42fd964674",
+        "rec-c-e80ed2a998",
+        "sec_"
       ],
-      "generations": 31,
+      "generations": 41,
       "bestFit": 2.3
     },
     "async": {
       "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "handle",
+            "args": [
+              "(s: string) => \"\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "compare",
+            "args": [
+              "\"token\""
+            ]
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "handle",
+            "args": [
+              "(s: string) => s + s"
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "compare",
+            "args": [
+              "\"c\""
+            ]
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "handle",
+            "args": [
+              "(s: string) => { throw new Error(s); }"
+            ]
+          }
+        ],
         [
           {
             "k": "call",
@@ -426,44 +503,88 @@
               "\"prototype\""
             ]
           }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "compare",
-            "args": [
-              "\"a\""
-            ]
-          }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "compare",
-            "args": [
-              "\"token\""
-            ]
-          }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "compare",
-            "args": [
-              "\"c\""
-            ]
-          }
         ]
       ],
       "tokens": [
         "returned",
-        "length"
+        "length",
+        "stack",
+        "function",
+        "native",
+        "code",
+        "name",
+        "message",
+        "public",
+        "publicpublic"
       ],
-      "generations": 29,
-      "bestFit": 2.1
+      "generations": 42,
+      "bestFit": 2.35
     },
     "callback-sandbox": {
       "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "apply",
+            "args": [
+              "(s: string) => { r.push(s); return s; }"
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "publicRecords",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "matches",
+            "args": [
+              "\"{}\""
+            ]
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "apply",
+            "args": [
+              "(s: string) => \"\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "publicRecords",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "matches",
+            "args": [
+              "\"hasOwnProperty\""
+            ]
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "apply",
+            "args": [
+              "(s: string) => \"\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "publicRecords",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "matches",
+            "args": [
+              "\"rec-b-ad3961d36d\""
+            ]
+          }
+        ],
         [
           {
             "k": "call",
@@ -505,48 +626,6 @@
               "\"sec_\""
             ]
           }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "publicRecords",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "matches",
-            "args": [
-              "\"token\""
-            ]
-          }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "publicRecords",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "matches",
-            "args": [
-              "\"b\""
-            ]
-          }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "publicRecords",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "matches",
-            "args": [
-              "\"-1\""
-            ]
-          }
         ]
       ],
       "tokens": [
@@ -572,13 +651,48 @@
         "rec-c-06f96759f7",
         "rec-a-ad2434300f",
         "rec-b-059f1a4e80",
-        "rec-c-7c3d40e45a"
+        "rec-c-7c3d40e45a",
+        "rec-a-ade4cd3599",
+        "rec-b-ee5bf7a5c7",
+        "rec-c-fdfe45c585",
+        "callback",
+        "failed",
+        "rec-a-ade4cd3599rec-a-ade4cd3599",
+        "rec-a-deb06e5d6c",
+        "rec-b-70ff6a3634",
+        "rec-c-f478224ac7",
+        "rec-a-deb06e5d6crec-a-deb06e5d6c",
+        "rec-a-137cb7b1bb",
+        "rec-b-592deb74da",
+        "rec-c-dd71e74af4",
+        "rec-a-137cb7b1bbrec-a-137cb7b1bb"
       ],
-      "generations": 29,
+      "generations": 42,
       "bestFit": 2.25
     },
     "cap-object": {
       "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "open",
+            "args": [
+              "\"prototype\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "publicReader",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "read",
+            "args": [
+              "1"
+            ]
+          }
+        ],
         [
           {
             "k": "call",
@@ -680,13 +794,44 @@
         "rec-a-0b356d8255",
         "rec-b-24db9de29b",
         "rec-a-d9b07091d8",
-        "rec-b-0a2daf7a54"
+        "rec-b-0a2daf7a54",
+        "rec-a-94f5e9f55e",
+        "rec-b-f190242c07",
+        "rec-a-5af30c24f6",
+        "rec-b-57cd9e7004",
+        "rec-b-b0f536bdc5",
+        "rec-a-cd33882d89"
       ],
-      "generations": 29,
+      "generations": 42,
       "bestFit": 2.3
     },
     "config": {
       "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "label",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "row",
+            "args": [
+              "\"rec-a-95c872b0c0\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "matches",
+            "args": [
+              "\"__proto__\""
+            ]
+          },
+          {
+            "k": "read",
+            "c": "CONFIG"
+          }
+        ],
         [
           {
             "k": "call",
@@ -705,6 +850,31 @@
             "fn": "matches",
             "args": [
               "\"@@\""
+            ]
+          },
+          {
+            "k": "read",
+            "c": "CONFIG"
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "label",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "row",
+            "args": [
+              "\"\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "matches",
+            "args": [
+              "\"rec\""
             ]
           },
           {
@@ -786,56 +956,6 @@
             "k": "read",
             "c": "CONFIG"
           }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "label",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "row",
-            "args": [
-              "\"rec\""
-            ]
-          },
-          {
-            "k": "call",
-            "fn": "matches",
-            "args": [
-              "\"\""
-            ]
-          },
-          {
-            "k": "read",
-            "c": "CONFIG"
-          }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "label",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "row",
-            "args": [
-              "\"a\""
-            ]
-          },
-          {
-            "k": "call",
-            "fn": "matches",
-            "args": [
-              "\"token\""
-            ]
-          },
-          {
-            "k": "read",
-            "c": "CONFIG"
-          }
         ]
       ],
       "tokens": [
@@ -856,9 +976,15 @@
         "rec-a-cadcc3ebc7",
         "rec-b-1edcfa71ad",
         "rec-a-8fa01191e3",
-        "rec-b-4ede15aa06"
+        "rec-b-4ede15aa06",
+        "rec-a-e0fe29feb1",
+        "rec-b-50ad94936a",
+        "rec-c-6219b0ea5c",
+        "rec-a-15f57853ac",
+        "rec-b-9f630a4600",
+        "rec-c-5ae2791a12"
       ],
-      "generations": 29,
+      "generations": 39,
       "bestFit": 2.35
     },
     "const-closure": {
@@ -953,13 +1079,67 @@
         "rec-a-76790e5f24",
         "rec-b-c7a3d158ac",
         "rec-a-f6ad40f031",
-        "rec-b-317762bdbe"
+        "rec-b-317762bdbe",
+        "rec-a-f955672740",
+        "rec-b-a61b692b99",
+        "rec-a-90162306db",
+        "rec-b-2023cc75ed",
+        "rec-a-a2cf1632e9",
+        "rec-b-2d3e752a07"
       ],
-      "generations": 29,
+      "generations": 42,
       "bestFit": 2.25
     },
     "ct-compare": {
       "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "verify",
+            "args": [
+              "\"rec-c-32efa40253\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "publicRecord",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recB",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recC",
+            "args": []
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "verify",
+            "args": [
+              "\"prototype\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "publicRecord",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recB",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recC",
+            "args": []
+          }
+        ],
         [
           {
             "k": "call",
@@ -1055,54 +1235,6 @@
             "fn": "recC",
             "args": []
           }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "verify",
-            "args": [
-              "\"b\""
-            ]
-          },
-          {
-            "k": "call",
-            "fn": "publicRecord",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "recB",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "recC",
-            "args": []
-          }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "verify",
-            "args": [
-              "\"toString\""
-            ]
-          },
-          {
-            "k": "call",
-            "fn": "publicRecord",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "recB",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "recC",
-            "args": []
-          }
         ]
       ],
       "tokens": [
@@ -1128,13 +1260,67 @@
         "rec-c-6c13521270",
         "rec-a-d9b07091d8",
         "rec-b-0a2daf7a54",
-        "rec-c-b9222a01b4"
+        "rec-c-b9222a01b4",
+        "rec-a-94f5e9f55e",
+        "rec-b-f190242c07",
+        "rec-c-e7a31f2d73",
+        "rec-a-cd33882d89",
+        "rec-b-b0f536bdc5",
+        "rec-c-46e551b137"
       ],
-      "generations": 29,
+      "generations": 39,
       "bestFit": 2.25
     },
     "digest-only": {
       "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "matchesPrint",
+            "args": [
+              "\"hasOwnProperty\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "rec",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recB",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recC",
+            "args": []
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "matchesPrint",
+            "args": [
+              "\"c\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "rec",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recB",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recC",
+            "args": []
+          }
+        ],
         [
           {
             "k": "call",
@@ -1230,54 +1416,6 @@
             "fn": "recC",
             "args": []
           }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "matchesPrint",
-            "args": [
-              "\"rec\""
-            ]
-          },
-          {
-            "k": "call",
-            "fn": "rec",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "recB",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "recC",
-            "args": []
-          }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "matchesPrint",
-            "args": [
-              "\"secret\""
-            ]
-          },
-          {
-            "k": "call",
-            "fn": "rec",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "recB",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "recC",
-            "args": []
-          }
         ]
       ],
       "tokens": [
@@ -1303,9 +1441,15 @@
         "rec-c-826eb63cf4",
         "rec-a-1e262a0002",
         "rec-b-4145f01abf",
-        "rec-c-6cb59c7151"
+        "rec-c-6cb59c7151",
+        "rec-a-92c285356e",
+        "rec-b-bb12b6602a",
+        "rec-c-8a934c9154",
+        "rec-a-3bb6a2b706",
+        "rec-b-c91e84d3a2",
+        "rec-c-a8f402d3da"
       ],
-      "generations": 29,
+      "generations": 39,
       "bestFit": 2.25
     },
     "distrust-args": {
@@ -1351,13 +1495,69 @@
         "rec-c-906eed1b0d",
         "rec-a-f6ad40f031",
         "rec-b-317762bdbe",
-        "rec-c-17cc00cc3a"
+        "rec-c-17cc00cc3a",
+        "rec-a-f955672740",
+        "rec-b-a61b692b99",
+        "rec-c-2a3442ab5c",
+        "rec-a-a2cf1632e9",
+        "rec-b-2d3e752a07",
+        "rec-c-e4d2688ace"
       ],
-      "generations": 29,
+      "generations": 39,
       "bestFit": 2.25
     },
     "gate-credential": {
       "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "authenticate",
+            "args": [
+              "\"rec-b-9d83364008\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "ping",
+            "args": []
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "authenticate",
+            "args": [
+              "\"rec-b-7b76ef7930\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "ping",
+            "args": []
+          }
+        ],
+        [
+          {
+            "k": "chain",
+            "outer": "authenticate",
+            "inner": "ping",
+            "args": []
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "authenticate",
+            "args": [
+              "\"x\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "ping",
+            "args": []
+          }
+        ],
         [
           {
             "k": "call",
@@ -1385,62 +1585,6 @@
             "fn": "ping",
             "args": []
           }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "authenticate",
-            "args": [
-              "\"prototype\""
-            ]
-          },
-          {
-            "k": "call",
-            "fn": "ping",
-            "args": []
-          }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "authenticate",
-            "args": [
-              "\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\""
-            ]
-          },
-          {
-            "k": "call",
-            "fn": "ping",
-            "args": []
-          }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "authenticate",
-            "args": [
-              "\"hasOwnProperty\""
-            ]
-          },
-          {
-            "k": "call",
-            "fn": "ping",
-            "args": []
-          }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "authenticate",
-            "args": [
-              "\"constructor\""
-            ]
-          },
-          {
-            "k": "call",
-            "fn": "ping",
-            "args": []
-          }
         ]
       ],
       "tokens": [
@@ -1452,13 +1596,45 @@
         "rec-b-8e061e4d82",
         "rec-b-7b76ef7930",
         "rec-b-c762913765",
-        "rec-b-c039ea72b9"
+        "rec-b-c039ea72b9",
+        "rec-b-d2302d32c4",
+        "rec-b-bdf2af63b2",
+        "rec-b-80c69eb3e1"
       ],
-      "generations": 29,
+      "generations": 42,
       "bestFit": 2.15
     },
     "lockout-state": {
       "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "tryOpen",
+            "args": [
+              "\"rec-a-e0d778973e\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "attemptsLeft",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "note",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "noteB",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "noteC",
+            "args": []
+          }
+        ],
         [
           {
             "k": "call",
@@ -1603,35 +1779,6 @@
             "fn": "noteC",
             "args": []
           }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "tryOpen",
-            "args": [
-              "\"[object Object]\""
-            ]
-          },
-          {
-            "k": "call",
-            "fn": "attemptsLeft",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "note",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "noteB",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "noteC",
-            "args": []
-          }
         ]
       ],
       "tokens": [
@@ -1657,9 +1804,15 @@
         "rec-c-906eed1b0d",
         "rec-a-f6ad40f031",
         "rec-b-317762bdbe",
-        "rec-c-17cc00cc3a"
+        "rec-c-17cc00cc3a",
+        "rec-a-f955672740",
+        "rec-b-a61b692b99",
+        "rec-c-2a3442ab5c",
+        "rec-a-a2cf1632e9",
+        "rec-b-2d3e752a07",
+        "rec-c-e4d2688ace"
       ],
-      "generations": 29,
+      "generations": 39,
       "bestFit": 2.25
     },
     "map-lookup": {
@@ -1801,9 +1954,15 @@
         "rec-b-24db9de29b",
         "rec-a-d9b07091d8",
         "rec-c-b9222a01b4",
-        "rec-b-0a2daf7a54"
+        "rec-b-0a2daf7a54",
+        "rec-a-94f5e9f55e",
+        "rec-c-e7a31f2d73",
+        "rec-b-f190242c07",
+        "rec-a-cd33882d89",
+        "rec-c-46e551b137",
+        "rec-b-b0f536bdc5"
       ],
-      "generations": 29,
+      "generations": 39,
       "bestFit": 2.1
     },
     "readonly-records": {
@@ -1838,51 +1997,7 @@
             "k": "call",
             "fn": "probe",
             "args": [
-              "\"{}\""
-            ]
-          }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "all",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "byName",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "all",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "byName",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "first",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "second",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "third",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "probe",
-            "args": [
-              "\"{}\""
+              "\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\""
             ]
           }
         ],
@@ -1917,6 +2032,84 @@
             "fn": "probe",
             "args": [
               "\"sec_\""
+            ]
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "all",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "byName",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "first",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "second",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "third",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "probe",
+            "args": [
+              "\"{}\""
+            ]
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "all",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "byName",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "all",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "byName",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "first",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "second",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "third",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "probe",
+            "args": [
+              "\"{}\""
             ]
           }
         ],
@@ -1987,40 +2180,6 @@
               "\"constructor\""
             ]
           }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "all",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "byName",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "first",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "second",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "third",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "probe",
-            "args": [
-              "\"x\""
-            ]
-          }
         ]
       ],
       "tokens": [
@@ -2052,9 +2211,20 @@
         "rec-c-7c3d40e45a",
         "rec-c-7c3d",
         "rec-b-059f",
-        "rec-b-05"
+        "rec-b-05",
+        "rec-a-ade4cd3599",
+        "rec-b-ee5bf7a5c7",
+        "rec-c-fdfe45c585",
+        "rec-c-fdfe",
+        "rec-a-ade4",
+        "rec-a-137cb7b1bb",
+        "rec-b-592deb74da",
+        "rec-c-dd71e74af4",
+        "rec-c-dd71",
+        "rec-b-592d",
+        "rec-c-dd"
       ],
-      "generations": 29,
+      "generations": 39,
       "bestFit": 2.25
     },
     "safe-errors": {
@@ -2064,21 +2234,21 @@
             "k": "call",
             "fn": "lookupOrThrow",
             "args": [
-              "\"@@\""
+              "\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\""
             ]
           },
           {
             "k": "call",
             "fn": "lookup",
             "args": [
-              "\"a\""
+              "\"c\""
             ]
           },
           {
             "k": "call",
             "fn": "verify",
             "args": [
-              "\"toString\""
+              "\"rec-c-d49efbb9dd\""
             ]
           },
           {
@@ -2092,14 +2262,14 @@
             "k": "call",
             "fn": "lookupOrThrow",
             "args": [
-              "\"secret\""
+              "\"@@\""
             ]
           },
           {
             "k": "call",
             "fn": "lookup",
             "args": [
-              "\"c\""
+              "\"a\""
             ]
           },
           {
@@ -2135,6 +2305,34 @@
             "fn": "verify",
             "args": [
               "\"rec\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "isBusy",
+            "args": []
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "lookupOrThrow",
+            "args": [
+              "\"secret\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "lookup",
+            "args": [
+              "\"c\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "verify",
+            "args": [
+              "\"toString\""
             ]
           },
           {
@@ -2209,9 +2407,21 @@
         "rec-b-cfc0ee542a",
         "rec-a-1e262a0002",
         "rec-c-6cb59c7151",
-        "rec-b-4145f01abf"
+        "rec-b-4145f01abf",
+        "rec-a-92c285356e",
+        "rec-c-8a934c9154",
+        "rec-b-bb12b6602a",
+        "rec-c-2826c5f759",
+        "rec-a-edc2069edc",
+        "rec-b-fd1ce99fcb",
+        "rec-c-a8f402d3da",
+        "rec-a-3bb6a2b706",
+        "rec-b-c91e84d3a2",
+        "rec-c-183d002c20",
+        "rec-a-7888f4bfd7",
+        "rec-b-0aa07ddf88"
       ],
-      "generations": 29,
+      "generations": 44,
       "bestFit": 2.5
     },
     "switch-dispatch": {
@@ -2324,9 +2534,15 @@
         "rec-c-e821bef89f",
         "rec-b-c039ea72b9",
         "rec-c-93fb8e0e53",
-        "rec-a-536e0ae7bb"
+        "rec-a-536e0ae7bb",
+        "rec-b-d2302d32c4",
+        "rec-c-1513b17cd2",
+        "rec-a-20748abec2",
+        "rec-b-80c69eb3e1",
+        "rec-c-d0be87d84d",
+        "rec-a-47852f1271"
       ],
-      "generations": 29,
+      "generations": 39,
       "bestFit": 2.1
     },
     "token": {
@@ -2336,7 +2552,7 @@
             "k": "call",
             "fn": "issue",
             "args": [
-              "\"constructor\""
+              "\"token\""
             ]
           },
           {
@@ -2350,7 +2566,7 @@
             "k": "call",
             "fn": "issue",
             "args": [
-              "\"admin\""
+              "\"prototype\""
             ]
           },
           {
@@ -2364,7 +2580,7 @@
             "k": "call",
             "fn": "issue",
             "args": [
-              "\"a\""
+              "\"rec-a-68958285cc\""
             ]
           },
           {
@@ -2378,35 +2594,42 @@
             "k": "call",
             "fn": "issue",
             "args": [
-              "\"rec-a-285172d7a4\""
+              "\"rec-a-68958285cc\""
             ]
           },
-          {
-            "k": "call",
-            "fn": "ping",
-            "args": []
-          }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "issue",
-            "args": [
-              "\"rec-a-579a4d42e0\""
-            ]
-          },
-          {
-            "k": "call",
-            "fn": "ping",
-            "args": []
-          }
-        ],
-        [
           {
             "k": "call",
             "fn": "issue",
             "args": [
               "\"__proto__\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "ping",
+            "args": []
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "issue",
+            "args": [
+              "\"{}\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "ping",
+            "args": []
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "issue",
+            "args": [
+              "\"hasOwnProperty\""
             ]
           },
           {
@@ -2429,9 +2652,15 @@
         "rec-a-68b7a62211",
         "rec-a-ea25aae37a",
         "rec-a-e212289835",
-        "rec-a-a1b1e40109"
+        "rec-a-a1b1e40109",
+        "rec-a-ed6329477d",
+        "rec-a-68958285cc",
+        "rec-a-f421335a72",
+        "rec-a-7387336eef",
+        "rec-a-f69903fb95",
+        "rec-a-c787287562"
       ],
-      "generations": 37,
+      "generations": 55,
       "bestFit": 2.15
     },
     "two-marks": {
@@ -2446,7 +2675,49 @@
             "k": "call",
             "fn": "adminPass",
             "args": [
+              "\"reader\""
+            ]
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "readerPass",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "adminPass",
+            "args": [
               "\"c\""
+            ]
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "readerPass",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "adminPass",
+            "args": [
+              "\"constructor\""
+            ]
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "readerPass",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "adminPass",
+            "args": [
+              "\"toString\""
             ]
           }
         ],
@@ -2477,48 +2748,6 @@
               "\"\""
             ]
           }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "readerPass",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "adminPass",
-            "args": [
-              "\"__proto__\""
-            ]
-          }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "readerPass",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "adminPass",
-            "args": [
-              "\"@@\""
-            ]
-          }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "readerPass",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "adminPass",
-            "args": [
-              "\"b\""
-            ]
-          }
         ]
       ],
       "tokens": [
@@ -2526,7 +2755,7 @@
         "reader",
         "length"
       ],
-      "generations": 29,
+      "generations": 44,
       "bestFit": 2.15
     },
     "unknown-fields": {
@@ -2572,13 +2801,35 @@
         "rec-c-2dc6296a8a",
         "rec-a-91efca1790",
         "rec-b-568d7e15e0",
-        "rec-c-63ee5983d1"
+        "rec-c-63ee5983d1",
+        "rec-a-e24e754c03",
+        "rec-b-7b577e6cb7",
+        "rec-c-a9defe87d9",
+        "rec-a-6e92a78667",
+        "rec-b-014119a77d",
+        "rec-c-54d4e605e3"
       ],
-      "generations": 29,
+      "generations": 39,
       "bestFit": 2.25
     },
     "vault": {
       "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "lookup",
+            "args": [
+              "\"c\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "check",
+            "args": [
+              "\"rec-a-629797b8e9\""
+            ]
+          }
+        ],
         [
           {
             "k": "call",
@@ -2592,6 +2843,38 @@
             "fn": "check",
             "args": [
               "\"sec_\""
+            ]
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "lookup",
+            "args": [
+              "\"b\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "check",
+            "args": [
+              "\"sec_\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "lookup",
+            "args": [
+              "\"-1\""
+            ]
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "lookup",
+            "args": [
+              "\"c\""
             ]
           }
         ],
@@ -2624,15 +2907,6 @@
             "fn": "lookup",
             "args": [
               "\"secret\""
-            ]
-          }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "lookup",
-            "args": [
-              "\"a\""
             ]
           }
         ]
@@ -2668,9 +2942,26 @@
         "rec-a-e212289835",
         "rec-b-5177f5ef37",
         "rec-c-1430fef40d",
-        "rec-a-a1b1e40109"
+        "rec-a-a1b1e40109",
+        "rec-c-eadfd830e0",
+        "rec-b-f50b2a8999",
+        "rec-a-ed6329477d",
+        "rec-c-56ab1f6555",
+        "rec-b-17d80d1834",
+        "rec-c-0147332cdb",
+        "rec-b-73c9684d17",
+        "rec-c-a554a46499",
+        "rec-b-400624c55f",
+        "rec-c-c6e3ede009",
+        "rec-b-4d4d82545c",
+        "rec-c-35cc4e28ec",
+        "rec-b-1dbe14a646",
+        "rec-a-c787287562",
+        "rec-c-4479544e12",
+        "rec-b-59451634ad",
+        "rec-a-d3e883b655"
       ],
-      "generations": 37,
+      "generations": 57,
       "bestFit": 2.15
     }
   },
@@ -2806,6 +3097,94 @@
       "caught": 6,
       "uncaught": 0,
       "newElites": 1
+    },
+    {
+      "seed": 51,
+      "gens": 2,
+      "pop": 8,
+      "boxes": 2,
+      "plays": 117,
+      "red": 0,
+      "caught": 8,
+      "uncaught": 2,
+      "newElites": 1
+    },
+    {
+      "seed": 52,
+      "gens": 2,
+      "pop": 8,
+      "boxes": 2,
+      "plays": 116,
+      "red": 0,
+      "caught": 8,
+      "uncaught": 2,
+      "newElites": 1
+    },
+    {
+      "seed": 53,
+      "gens": 2,
+      "pop": 8,
+      "boxes": 2,
+      "plays": 103,
+      "red": 0,
+      "caught": 8,
+      "uncaught": 2,
+      "newElites": 0
+    },
+    {
+      "seed": 54,
+      "gens": 2,
+      "pop": 8,
+      "boxes": 2,
+      "plays": 124,
+      "red": 0,
+      "caught": 10,
+      "uncaught": 0,
+      "newElites": 0
+    },
+    {
+      "seed": 17,
+      "gens": 5,
+      "pop": 14,
+      "boxes": 21,
+      "plays": 1560,
+      "red": 0,
+      "caught": 88,
+      "uncaught": 12,
+      "newElites": 0
+    },
+    {
+      "seed": 18,
+      "gens": 3,
+      "pop": 10,
+      "boxes": 7,
+      "plays": 457,
+      "red": 0,
+      "caught": 30,
+      "uncaught": 5,
+      "newElites": 1
+    },
+    {
+      "seed": 19,
+      "gens": 5,
+      "pop": 14,
+      "boxes": 21,
+      "plays": 1540,
+      "red": 0,
+      "caught": 87,
+      "uncaught": 6,
+      "newElites": 1
+    },
+    {
+      "seed": 61,
+      "gens": 2,
+      "pop": 8,
+      "boxes": 3,
+      "plays": 157,
+      "red": 0,
+      "caught": 12,
+      "uncaught": 0,
+      "newElites": 0
     }
   ],
   "lessons": [
@@ -3207,33 +3586,338 @@
       "verdict": "stolen",
       "program": "// target: vault+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { lookup, check, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(lookup(\"token\")); } catch (e) { r.push(e); }\n  try { r.push(check(\"__proto__\")); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "seed": 43
+    },
+    {
+      "box": "token",
+      "op": "leak-key",
+      "verdict": "stolen",
+      "program": "// target: token+leak-key\n// goal: steal / destroy (自律進化 g0)\nuse { issue, ping, unlockNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(issue(ping())); } catch (e) { r.push(e); }\n  try { r.push(issue(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(ping())); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 54
+    },
+    {
+      "box": "vault",
+      "op": "leak-key",
+      "verdict": "stolen",
+      "program": "// target: vault+leak-key\n// goal: steal / destroy (自律進化 g0)\nuse { lookup, unlockNow, check } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(lookup(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(check(lookup(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(check(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(lookup(\"a\"))); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 54
+    },
+    {
+      "box": "async",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: async+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { handle, compare, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(handle((s: string) => s + s)); } catch (e) { r.push(e); }\n  try { r.push(compare(\"-1\")); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { throw new Error(s); })); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 17
+    },
+    {
+      "box": "callback-sandbox",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: callback-sandbox+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { apply, publicRecords, matches, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(apply((s: string) => { throw new Error(s); })); } catch (e) { r.push(e); }\n  try { r.push(publicRecords()); } catch (e) { r.push(e); }\n  try { r.push(matches(\"@@\")); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => s + s)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 17
+    },
+    {
+      "box": "cap-object",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: cap-object+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { open, publicReader, read, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(open(\"@@\")); } catch (e) { r.push(e); }\n  try { r.push(publicReader()); } catch (e) { r.push(e); }\n  try { r.push(read(255)); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => s + s)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 17
+    },
+    {
+      "box": "config",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: config+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { label, row, matches, withSecret, CONFIG } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(label()); } catch (e) { r.push(e); }\n  try { r.push(row(\"rec-b-c7cc89ca64\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"@@\")); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => s + s)); } catch (e) { r.push(e); }\n  try { r.push(CONFIG); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 17
+    },
+    {
+      "box": "config",
+      "op": "leak-key",
+      "verdict": "stolen",
+      "program": "// target: config+leak-key\n// goal: steal / destroy (自律進化 g0)\nuse { row, label, unlockNow, matches } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(row(label())); } catch (e) { r.push(e); }\n  try { r.push(row(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(matches(label())); } catch (e) { r.push(e); }\n  try { r.push(matches(row(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(matches(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(label())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(row(\"a\"))); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 17
+    },
+    {
+      "box": "const-closure",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: const-closure+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { record, makeMatcher, makeReader, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(record(1000000007)); } catch (e) { r.push(e); }\n  try { r.push(makeMatcher()); } catch (e) { r.push(e); }\n  try { r.push(makeReader()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { throw new Error(s); })); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 17
+    },
+    {
+      "box": "ct-compare",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: ct-compare+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { verify, publicRecord, recB, recC, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(verify(\"rec-c-e00fb4ee8c\")); } catch (e) { r.push(e); }\n  try { r.push(publicRecord()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => s + s)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 17
+    },
+    {
+      "box": "ct-compare",
+      "op": "leak-key",
+      "verdict": "stolen",
+      "program": "// target: ct-compare+leak-key\n// goal: steal / destroy (自律進化 g0)\nuse { verify, publicRecord, recB, recC, unlockNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(verify(publicRecord())); } catch (e) { r.push(e); }\n  try { r.push(verify(recB())); } catch (e) { r.push(e); }\n  try { r.push(verify(recC())); } catch (e) { r.push(e); }\n  try { r.push(verify(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(publicRecord())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recB())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recC())); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 17
+    },
+    {
+      "box": "digest-only",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: digest-only+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { matchesPrint, rec, recB, recC, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchesPrint(\"rec-c-d49efbb9dd\")); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => s + s)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 17
+    },
+    {
+      "box": "digest-only",
+      "op": "leak-key",
+      "verdict": "stolen",
+      "program": "// target: digest-only+leak-key\n// goal: steal / destroy (自律進化 g0)\nuse { matchesPrint, rec, recB, recC, unlockNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchesPrint(rec())); } catch (e) { r.push(e); }\n  try { r.push(matchesPrint(recB())); } catch (e) { r.push(e); }\n  try { r.push(matchesPrint(recC())); } catch (e) { r.push(e); }\n  try { r.push(matchesPrint(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(rec())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recB())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recC())); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 17
+    },
+    {
+      "box": "distrust-args",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: distrust-args+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { publicRec, recB, recC, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(publicRec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => s + s)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 17
+    },
+    {
+      "box": "distrust-args",
+      "op": "leak-key",
+      "verdict": "stolen",
+      "program": "// target: distrust-args+leak-key\n// goal: steal / destroy (自律進化 g0)\nuse { unlockNow, publicRec, recB, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(unlockNow(publicRec())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recB())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recC())); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 17
+    },
+    {
+      "box": "frozen-table",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: frozen-table+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { row, isSecret, withSecret, PUBLIC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(row(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(isSecret(\"rec-c-ae5b08e14f\")); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { throw new Error(s); })); } catch (e) { r.push(e); }\n  try { r.push(PUBLIC); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 17
+    },
+    {
+      "box": "frozen-table",
+      "op": "leak-key",
+      "verdict": "stolen",
+      "program": "// target: frozen-table+leak-key\n// goal: steal / destroy (自律進化 g0)\nuse { row, unlockNow, isSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(row(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(isSecret(row(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(isSecret(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(row(\"a\"))); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 17
+    },
+    {
+      "box": "gate-credential",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: gate-credential+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { authenticate, ping, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(authenticate(\"-1\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { throw new Error(s); })); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 17
+    },
+    {
+      "box": "lockout-state",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: lockout-state+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { tryOpen, attemptsLeft, note, noteB, noteC, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(tryOpen(\"[object Object]\")); } catch (e) { r.push(e); }\n  try { r.push(attemptsLeft()); } catch (e) { r.push(e); }\n  try { r.push(note()); } catch (e) { r.push(e); }\n  try { r.push(noteB()); } catch (e) { r.push(e); }\n  try { r.push(noteC()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { throw new Error(s); })); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 17
+    },
+    {
+      "box": "lockout-state",
+      "op": "leak-key",
+      "verdict": "stolen",
+      "program": "// target: lockout-state+leak-key\n// goal: steal / destroy (自律進化 g0)\nuse { tryOpen, note, noteB, noteC, unlockNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(tryOpen(note())); } catch (e) { r.push(e); }\n  try { r.push(tryOpen(noteB())); } catch (e) { r.push(e); }\n  try { r.push(tryOpen(noteC())); } catch (e) { r.push(e); }\n  try { r.push(tryOpen(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(note())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(noteB())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(noteC())); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 17
+    },
+    {
+      "box": "map-lookup",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: map-lookup+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { get, has, matches, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(get(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(has(\"rec-c-e7a31f2d73\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"hasOwnProperty\")); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => s + s)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 17
+    },
+    {
+      "box": "map-lookup",
+      "op": "leak-key",
+      "verdict": "stolen",
+      "program": "// target: map-lookup+leak-key\n// goal: steal / destroy (自律進化 g0)\nuse { get, unlockNow, has, matches } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(get(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(has(get(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(has(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(matches(get(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(matches(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(get(\"a\"))); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 17
+    },
+    {
+      "box": "readonly-records",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: readonly-records+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { all, byName, first, second, third, probe, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(all()); } catch (e) { r.push(e); }\n  try { r.push(byName()); } catch (e) { r.push(e); }\n  try { r.push(first()); } catch (e) { r.push(e); }\n  try { r.push(second()); } catch (e) { r.push(e); }\n  try { r.push(third()); } catch (e) { r.push(e); }\n  try { r.push(probe(\"[object Object]\")); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { throw new Error(s); })); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 17
+    },
+    {
+      "box": "readonly-records",
+      "op": "leak-key",
+      "verdict": "stolen",
+      "program": "// target: readonly-records+leak-key\n// goal: steal / destroy (自律進化 g0)\nuse { probe, first, second, third, unlockNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(probe(first())); } catch (e) { r.push(e); }\n  try { r.push(probe(second())); } catch (e) { r.push(e); }\n  try { r.push(probe(third())); } catch (e) { r.push(e); }\n  try { r.push(probe(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(first())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(second())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(third())); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 17
+    },
+    {
+      "box": "safe-errors",
+      "op": "leak-key",
+      "verdict": "stolen",
+      "program": "// target: safe-errors+leak-key\n// goal: steal / destroy (自律進化 g0)\nuse { lookupOrThrow, lookup, unlockNow, verify } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(lookupOrThrow(lookup(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(lookupOrThrow(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(lookup(lookupOrThrow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(lookup(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(verify(lookupOrThrow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(verify(lookup(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(verify(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(lookupOrThrow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(lookup(\"a\"))); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 17
+    },
+    {
+      "box": "scrubber",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: scrubber+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { scrub, wrap, recA, recB, recC, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(scrub(\"object\")); } catch (e) { r.push(e); }\n  try { r.push(wrap(\"@@\")); } catch (e) { r.push(e); }\n  try { r.push(recA()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => s + s)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 17
+    },
+    {
+      "box": "scrubber",
+      "op": "leak-key",
+      "verdict": "stolen",
+      "program": "// target: scrubber+leak-key\n// goal: steal / destroy (自律進化 g0)\nuse { scrub, wrap, recA, recB, recC, unlockNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(scrub(wrap(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(scrub(recA())); } catch (e) { r.push(e); }\n  try { r.push(scrub(recB())); } catch (e) { r.push(e); }\n  try { r.push(scrub(recC())); } catch (e) { r.push(e); }\n  try { r.push(scrub(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(wrap(scrub(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(wrap(recA())); } catch (e) { r.push(e); }\n  try { r.push(wrap(recB())); } catch (e) { r.push(e); }\n  try { r.push(wrap(recC())); } catch (e) { r.push(e); }\n  try { r.push(wrap(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(scrub(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(wrap(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recA())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recB())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recC())); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 17
+    },
+    {
+      "box": "switch-dispatch",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: switch-dispatch+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { byKind, kinds, auth, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(byKind(\"@@\")); } catch (e) { r.push(e); }\n  try { r.push(kinds()); } catch (e) { r.push(e); }\n  try { r.push(auth(\"sec_\")); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => s + s)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 17
+    },
+    {
+      "box": "switch-dispatch",
+      "op": "leak-key",
+      "verdict": "stolen",
+      "program": "// target: switch-dispatch+leak-key\n// goal: steal / destroy (自律進化 g0)\nuse { byKind, unlockNow, auth } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(byKind(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(auth(byKind(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(auth(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(byKind(\"a\"))); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 17
+    },
+    {
+      "box": "unknown-fields",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: unknown-fields+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { rec, recB, recC, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => s + s)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 17
+    },
+    {
+      "box": "unknown-fields",
+      "op": "leak-key",
+      "verdict": "stolen",
+      "program": "// target: unknown-fields+leak-key\n// goal: steal / destroy (自律進化 g0)\nuse { unlockNow, rec, recB, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(unlockNow(rec())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recB())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recC())); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 17
+    },
+    {
+      "box": "cap-object",
+      "op": "leak-key",
+      "verdict": "stolen",
+      "program": "// target: cap-object+leak-key\n// goal: steal / destroy (自律進化 g0)\nuse { open, read, unlockNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(open(read(0))); } catch (e) { r.push(e); }\n  try { r.push(open(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(read(0))); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 18
+    },
+    {
+      "box": "const-closure",
+      "op": "leak-key",
+      "verdict": "stolen",
+      "program": "// target: const-closure+leak-key\n// goal: steal / destroy (自律進化 g0)\nuse { unlockNow, record } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(unlockNow(record(0))); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 18
+    },
+    {
+      "box": "safe-errors",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: safe-errors+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { lookupOrThrow, lookup, verify, isBusy, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(lookupOrThrow(\"rec-b-cfc0ee542a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"rec-c-ce968072c9\")); } catch (e) { r.push(e); }\n  try { r.push(verify(\"constructor\")); } catch (e) { r.push(e); }\n  try { r.push(isBusy()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { throw new Error(s); })); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 18
+    },
+    {
+      "box": "cap-object",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: cap-object+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { open, publicReader, read, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(open(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(publicReader()); } catch (e) { r.push(e); }\n  try { r.push(read(0)); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 19
+    },
+    {
+      "box": "config",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: config+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { label, row, matches, hintNow, CONFIG } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(label()); } catch (e) { r.push(e); }\n  try { r.push(row(\"x\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"label\")); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  try { r.push(CONFIG); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 19
+    },
+    {
+      "box": "frozen-table",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: frozen-table+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { row, isSecret, hintNow, PUBLIC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(row(\"length\")); } catch (e) { r.push(e); }\n  try { r.push(isSecret(\"frozen\")); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  try { r.push(PUBLIC); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 19
+    },
+    {
+      "box": "gate-credential",
+      "op": "leak-key",
+      "verdict": "stolen",
+      "program": "// target: gate-credential+leak-key\n// goal: steal / destroy (自律進化 g0)\nuse { authenticate, ping, unlockNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(authenticate(ping())); } catch (e) { r.push(e); }\n  try { r.push(authenticate(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(ping())); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 19
+    },
+    {
+      "box": "readonly-records",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: readonly-records+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { all, byName, first, second, third, probe, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(all()); } catch (e) { r.push(e); }\n  try { r.push(byName()); } catch (e) { r.push(e); }\n  try { r.push(first()); } catch (e) { r.push(e); }\n  try { r.push(second()); } catch (e) { r.push(e); }\n  try { r.push(third()); } catch (e) { r.push(e); }\n  try { r.push(probe(\"rec-c-06\")); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 19
+    },
+    {
+      "box": "switch-dispatch",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: switch-dispatch+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { byKind, kinds, auth, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(kinds()); } catch (e) { r.push(e); }\n  try { r.push(auth(\"rec-c-93fb8e0e53\")); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 19
+    },
+    {
+      "box": "two-marks",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: two-marks+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { throw new Error(s); })); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => s + s)); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => \"\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 61
     }
   ],
   "gaps": [
     {
+      "box": "token",
+      "op": "leak-after-n",
+      "seed": 51
+    },
+    {
+      "box": "vault",
+      "op": "leak-after-n",
+      "seed": 51
+    },
+    {
+      "box": "async",
+      "op": "leak-key",
+      "seed": 18
+    },
+    {
+      "box": "callback-sandbox",
+      "op": "leak-key",
+      "seed": 18
+    },
+    {
+      "box": "two-marks",
+      "op": "leak-key",
+      "seed": 18
+    },
+    {
       "box": "cap-object",
       "op": "unfreeze",
-      "seed": 9
+      "seed": 19
     },
     {
       "box": "config",
       "op": "unfreeze",
-      "seed": 9
+      "seed": 19
     },
     {
       "box": "frozen-table",
       "op": "unfreeze",
-      "seed": 9
+      "seed": 19
     },
     {
       "box": "readonly-records",
       "op": "unfreeze",
-      "seed": 9
+      "seed": 19
     },
     {
       "box": "switch-dispatch",
       "op": "unfreeze",
-      "seed": 9
+      "seed": 19
     }
   ],
   "wins": []
