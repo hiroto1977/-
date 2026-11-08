@@ -1,4 +1,3 @@
-// @vitest-environment jsdom
 import { describe, expect, it } from 'vitest';
 import { currentShellMode, shellModeFromSearch } from '../shellMode';
 
@@ -20,7 +19,7 @@ describe('殻の種類 (既定は旧画面・村は ?ui=village)', () => {
     expect(shellModeFromSearch('%')).toBe('legacy');
   });
 
-  it('★ jsdom の検査は既定で旧画面 (setup が ?ui=legacy を付ける)', () => {
+  it('★ location を持たない環境 (node) でも投げず旧画面になる', () => {
     expect(currentShellMode()).toBe('legacy');
   });
 });

@@ -10,7 +10,7 @@ export default defineConfig({
   },
   test: {
     environment: 'node',
-    // jsdom の検査は旧画面 (サイドバー) が前提 —— 殻の既定が村になったので `?ui=legacy` を付ける。
+    // jsdom の検査は旧画面 (サイドバー) が前提 —— 既定は旧画面 (2026-11-07 に戻した) だが、明示の `?ui=legacy` を付けておく。
     setupFiles: ['src/__tests__/legacyShellSetup.ts'],
     include: ['src/**/__tests__/**/*.test.ts'],
     // Isolate each test file in its own forked process. Renderer
