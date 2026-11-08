@@ -181,6 +181,14 @@
       ],
       "sinks": []
     },
+    "src/shared/httpLimits.mamori": {
+      "externals": [
+        "pure ./httpLimitsHost: hostIsNoCors, hostHeader, hostIsResponse, hostBodyReader, hostReadChunk, hostCancelReader, hostDecodeChunks, hostChunkLength, hostDeadline, hostClearTimer"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
     "src/shared/imageUrlGate.mamori": {
       "externals": [],
       "imports": [],

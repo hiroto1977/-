@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 476
+- ブロック数: 477
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `d8e7d175d97bee8674c21cff23d1ccb5f252c3d740e8e4f40d2ba730f5aca150`
-- 保護対象: 201 ファイル
+- 末尾(tip)ハッシュ: `713f5760304969038d4e69782ea772309611caf24cd3b5807c5e451b03210608`
+- 保護対象: 203 ファイル
 
 ## ブロック
 
@@ -489,6 +489,7 @@
 | 473 | `a6f25146bf73bf82` | `e8dae06e3bfe9d5d` | `72b60ad147d48525` | update integrity-chain.cjs |
 | 474 | `e1a99ed60d8f266e` | `72b60ad147d48525` | `ef5d7c3124b69095` | update preloadHost.ts |
 | 475 | `e5db918598c1a184` | `ef5d7c3124b69095` | `d8e7d175d97bee86` | update vitest.config.ts |
+| 476 | `f69e02edf62aef49` | `d8e7d175d97bee86` | `713f576030496903` | update integrity-chain.cjs,mamori-capabilities.json,httpLimits.mamori,httpLimits.ts,httpLimitsHost.ts |
 
 ## 保護対象ファイル
 
@@ -643,7 +644,9 @@
 - `src/shared/externalUrlGate.mamori`
 - `src/shared/externalUrlGate.ts`
 - `src/shared/headerValue.ts`
+- `src/shared/httpLimits.mamori`
 - `src/shared/httpLimits.ts`
+- `src/shared/httpLimitsHost.ts`
 - `src/shared/imageUrlGate.mamori`
 - `src/shared/imageUrlGate.ts`
 - `src/shared/inputCeiling.ts`

@@ -2819,6 +2819,53 @@
         "reason": "draft PR を作る",
         "summary": "preload.ts を 0.23 へ移植。electron は能力モジュールで use できず extern sink は印の行き先を要るので、薄い host 壁 preloadHost.ts (invokeIpc / exposeBridge) を extern pure で読む。型引数つきの type が無いので型は bridgeTypes.ts へ。型引数つき arrow は fn f<T> に。既存の検査の穴 (引数を落としても緑) を 15 本の引数の表で塞いだ。呼び出し側が選んだ文字列をチャンネルにする橋は規則では通る限界を検査で固定した。"
       }
+    },
+    {
+      "id": "MG-047",
+      "date": "2026-11-08",
+      "kind": "port",
+      "target": "src/shared/httpLimits.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/shared/httpLimits.ts",
+      "version": "0.23",
+      "features": [],
+      "added": [],
+      "rewrite": [],
+      "ported": [
+        "src/shared/httpLimits.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "`extern pure global setTimeout;` で時計を pure と偽って宣言する (host の timer を直に読む)",
+          "result": "refused"
+        },
+        {
+          "tried": "`new Response(…)` / `new AbortController()` を宣言なしで本体から使う (網・中断の部品を暗黙に使う)",
+          "result": "refused"
+        },
+        {
+          "tried": "`use { setTimeout } from \"node:timers\"` で能力モジュールを台帳に載せずに読む",
+          "result": "refused"
+        },
+        {
+          "tried": "`r.constructor` で関数の constructor へ届く (本文の読み手 r から Function を取る)",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 6,
+      "mutation": {
+        "files": [
+          "src/shared/httpLimits.ts",
+          "src/shared/httpLimitsHost.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": null,
+        "reason": "draft PR を作る",
+        "summary": "httpLimits.ts を 0.23 へ移植。Response / 本文の読み取り / Uint8Array / TextDecoder / 時計と中断は Mamori に無い (setTimeout は pure で宣言できない) ので、判断も上限の数も持たない薄い host 壁 httpLimitsHost.ts を extern pure で読む。T extends RequestInit は制約が置けず egressInit<T> にして no-cors の判定を host に。変異検査の生存 7 件 (断りの文面・unref・AbortSignal.any が無い環境・no-cors の入力の幅) を値で留める検査を足し、両ファイル 100%。"
+      }
     }
   ]
 }
