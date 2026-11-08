@@ -77,7 +77,8 @@ export function hostClearTimer(timer: unknown): void {
 
 /** `mode: 'no-cors'` の初期化か。 */
 export function hostIsNoCors(init: unknown): boolean {
-  return init !== null && typeof init === 'object' && (init as { mode?: unknown }).mode === 'no-cors';
+  // null / undefined / 数・文字列は欄を持たない —— 任意連鎖で読めば条件分岐を置かずに全部 false になる。
+  return (init as { mode?: unknown } | null | undefined)?.mode === 'no-cors';
 }
 
 /**
