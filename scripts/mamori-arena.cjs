@@ -106,7 +106,7 @@ if (cmd === 'match') {
     });
     let line = `red   ${box.name}: 精鋭 ${merged.length} / 最良 ${(r.bestFit || 0).toFixed(2)} / 戦 ${r.plays}`;
     if (!opt('no-blue') && !argv.includes('--no-blue')) {
-      const blue = evo.evolveBlue({ compiler, box, seed: runSeed, level });
+      const blue = evo.evolveBlue({ compiler, box, seed: runSeed, level, seen: r.seen });
       for (const b of blue) {
         tally.plays += b.plays;
         state.gaps = state.gaps.filter((x) => !(x.box === b.box && x.op === b.op));
