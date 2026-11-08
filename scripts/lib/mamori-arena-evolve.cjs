@@ -74,7 +74,7 @@ function randomMove(api, rng) {
   if (pick > 0.8) {
     // 別の口の出力を鍵として次の口へ渡す (戦いの中で箱が見せた語をその場で使う): outer(inner(args))
     const strFns = api.fns.filter((x) => x.params.length === 1 && x.params[0] === 'string');
-    const inners = api.fns.filter((x) => x.returns === 'string' && x.params.every((p) => p === 'string') && x.params.length <= 1);
+    const inners = api.fns.filter((x) => x.returns === 'string' && x.params.every((p) => p === 'string' || p === 'number') && x.params.length <= 1);
     if (strFns.length >= 1 && inners.length >= 1) {
       const outer = strFns[Math.floor(rng() * strFns.length)];
       const inner = inners[Math.floor(rng() * inners.length)];
@@ -160,9 +160,9 @@ function evolveRed({ compiler, box, gens, pop, seed, elites = [], seen = new Set
   const prober = api.fns.map((f) => ({ k: 'call', fn: f.name, args: f.params.map((p) => literal(p, rng, api)) })).concat(api.consts.map((c) => ({ k: 'read', c }))).slice(0, 16);
   // 探り役の 2 本目: 出力を鍵として次の口へ渡す全ての組 (outer(inner("a"))) を 1 回ずつ。鍵つきの漏えい口は、別の口の出力を渡して初めて開く
   const strOuters = api.fns.filter((x) => x.params.length === 1 && x.params[0] === 'string');
-  const strInners = api.fns.filter((x) => x.returns === 'string' && x.params.every((p) => p === 'string') && x.params.length <= 1);
+  const strInners = api.fns.filter((x) => x.returns === 'string' && x.params.every((p) => p === 'string' || p === 'number') && x.params.length <= 1);
   const prober2 = [];
-  for (const o of strOuters) for (const i of strInners) if (o.name !== i.name && prober2.length < 16) prober2.push({ k: 'chain', outer: o.name, inner: i.name, args: i.params.map(() => '"a"') });
+  for (const o of strOuters) for (const i of strInners) if (o.name !== i.name && prober2.length < 16) prober2.push({ k: 'chain', outer: o.name, inner: i.name, args: i.params.map((p) => (p === 'number' ? '0' : '"a"')) });
   if (prober2.length > 0) population.unshift(prober2);
   if (prober.length > 0) population.unshift(prober);
   const wins = [];
@@ -208,14 +208,16 @@ function weaken(source) {
     out.push({ op: 'leak-hook', source: source + '\nexport fn withSecret(f: (s: string) => string) -> string { return f(SECRET); }\n' });
     // 鍵つきの漏えい: 公開の記録の綴りを鍵にすると秘密を返す。赤が前の戦いで箱の出力から覚えた語を引数に使わないと見えない (学習の対照)。
     // ★ 状態を持つ漏えい (同じ口を 3 回呼ぶと返す) は作れない: Mamori は module 直下の物の欄への代入を M6 で断る —— 言語の性質として記録する
-    if (/@@REC_A@@/.test(source)) out.push({ op: 'leak-key', source: source + '\nexport fn unlockNow(k: string) -> string { if (k === "@@REC_A@@") { return SECRET; } return ""; }\n' });
+    // 鍵は「公開の口が直に返す綴り」だけ (印や認証の奥の綴りは赤に見えないので、鍵にすると対照として成り立たない)
+    const recKey = /export\s+fn\s+\w+\s*\((?:\s*\w+\s*:\s*(?:string|number))?\s*\)\s*->\s*string\s*\{\s*return\s+"(@@REC_[ABC]@@)"\s*;/.exec(source);
+    if (recKey) out.push({ op: 'leak-key', source: source + `\nexport fn unlockNow(k: string) -> string { if (k === "${recKey[1]}") { return SECRET; } return ""; }\n` });
     out.push({ op: 'leak-prefix', source: source + '\nexport fn hintNow() -> string { return SECRET.slice(0, 16); }\n' });
   }
   return out;
 }
 
 /** 青の進化: 箱ごとに弱体化変異体を作り、小さな赤の進化 (探り役つき) で破れるかを測る。 */
-function evolveBlue({ compiler, box, seed, level = 'strong', maxMutants = 5, seen = new Set() }) {
+function evolveBlue({ compiler, box, seed, level = 'strong', maxMutants = 6, seen = new Set() }) {
   const results = [];
   for (const w of weaken(box.source).slice(0, maxMutants)) {
     const weak = { name: box.name + '+' + w.op, source: w.source, spec: box.spec };
