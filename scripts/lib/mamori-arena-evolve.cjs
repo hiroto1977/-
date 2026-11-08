@@ -29,15 +29,18 @@ const NUMBER_POOL = ['0', '1', '(0 - 1)', '255', '65536', '1000000007', '0.5'];
 function parseExports(source) {
   const fns = [];
   const consts = [];
-  const re = /^export\s+(?:gate\s+)?fn\s+(\w+)\s*\(([^)]*)\)\s*->\s*([^{]+?)\s*\{/gm;
+  const re = /^export\s+(?:gate\s+)?fn\s+(\w+)\s*\((.*)\)\s*->\s*([^{]+?)\s*\{/gm;
   let m;
   while ((m = re.exec(source)) !== null) {
     const params = [];
     let ok = true;
     for (const p of m[2].split(',').map((x) => x.trim()).filter(Boolean)) {
       const pm = /^(\w+)\??\s*:\s*(string|number|boolean)$/.exec(p);
-      if (!pm) { ok = false; break; }
-      params.push(pm[2]);
+      // 関数を引数に取る口 (コールバック): (s: string) => string / boolean / number。箱が秘密や内部の値を呼び出し側の関数へ渡すかを試す
+      const cb = /^(\w+)\??\s*:\s*\(\w+:\s*string\)\s*=>\s*(string|boolean|number)$/.exec(p);
+      if (pm) params.push(pm[2]);
+      else if (cb) params.push('cb:' + cb[2]);
+      else { ok = false; break; }
     }
     if (ok) fns.push({ name: m[1], params, returns: m[3].trim() });
   }
@@ -46,7 +49,14 @@ function parseExports(source) {
   return { fns, consts };
 }
 
+const CALLBACKS = {
+  string: ['(s: string) => { r.push(s); return s; }', '(s: string) => { throw new Error(s); }', '(s: string) => s + s', '(s: string) => ""'],
+  boolean: ['(s: string) => { r.push(s); return true; }', '(s: string) => false'],
+  number: ['(s: string) => { r.push(s); return 0; }', '(s: string) => 1'],
+};
+
 function literal(kind, rng, api) {
+  if (kind.startsWith('cb:')) { const pool = CALLBACKS[kind.slice(3)] || CALLBACKS.string; return pool[Math.floor(rng() * pool.length)]; }
   if (kind === 'number') return NUMBER_POOL[Math.floor(rng() * NUMBER_POOL.length)];
   if (kind === 'boolean') return rng() < 0.5 ? 'true' : 'false';
   // 前の戦いで箱が返した語 (api.learned) を引数に使う: 箱が自分で見せた識別子・記録の綴りを、別の関数への鍵として試す (戦いを踏まえた学習)
@@ -186,13 +196,15 @@ function weaken(source) {
   if (hasSecret) {
     out.push({ op: 'export-secret', source: source.replace(/^const SECRET\b/m, 'export const SECRET') });
     out.push({ op: 'leak-fn', source: source + '\nexport fn leakNow() -> string { return SECRET; }\n' });
+    // 呼び出し側の関数に秘密を渡す口 (コールバック越しの漏えい)。関数を引数に取る口は赤の動きに無いと見逃す —— 赤の語彙が足りているかの対照
+    out.push({ op: 'leak-hook', source: source + '\nexport fn withSecret(f: (s: string) => string) -> string { return f(SECRET); }\n' });
     out.push({ op: 'leak-prefix', source: source + '\nexport fn hintNow() -> string { return SECRET.slice(0, 16); }\n' });
   }
   return out;
 }
 
 /** 青の進化: 箱ごとに弱体化変異体を作り、小さな赤の進化 (探り役つき) で破れるかを測る。 */
-function evolveBlue({ compiler, box, seed, level = 'strong', maxMutants = 3 }) {
+function evolveBlue({ compiler, box, seed, level = 'strong', maxMutants = 5 }) {
   const results = [];
   for (const w of weaken(box.source).slice(0, maxMutants)) {
     const weak = { name: box.name + '+' + w.op, source: w.source, spec: box.spec };

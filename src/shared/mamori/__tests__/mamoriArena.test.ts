@@ -157,11 +157,12 @@ describe(`自律学習・自律進化 (${LEVEL})`, () => {
     mulberry32: (a: number) => () => number;
   };
 
-  it('箱の API (関数と定数・型が string / number / boolean の引数だけ) を読み取る', () => {
+  it('箱の API (関数と定数・引数が string / number / boolean か string を取るコールバック) を読み取る', () => {
     const api = evo.parseExports('export const T = 1;\nexport fn a(x: string, n: number) -> string { return x; }\nexport fn cb(f: (s: string) => string) -> string { return ""; }\nfn hidden() -> string { return ""; }\n');
     expect(api.consts).toEqual(['T']);
-    expect(api.fns.map((f) => f.name)).toEqual(['a']);
+    expect(api.fns.map((f) => f.name)).toEqual(['a', 'cb']);
     expect(api.fns[0]?.params).toEqual(['string', 'number']);
+    expect(api.fns[1]?.params).toEqual(['cb:string']);
   });
 
   it('★ 点の順序: 型で止まる < 実行まで通る < 新しい出力 < 赤の勝ち・同じ出力に新しさの褒美は出ない (対照)', () => {
@@ -198,7 +199,7 @@ describe(`自律学習・自律進化 (${LEVEL})`, () => {
 
   it('★ 青の弱体化 (対照): 秘密を返す関数を足した箱・秘密を export した箱を、赤が必ず捕まえる (物差しと赤の目が生きている)', () => {
     const ops = evo.weaken(VAULT.source).map((w) => w.op);
-    expect(ops).toEqual(expect.arrayContaining(['export-secret', 'leak-fn', 'leak-prefix']));
+    expect(ops).toEqual(expect.arrayContaining(['export-secret', 'leak-fn', 'leak-prefix', 'leak-hook']));
     const blue = evo.evolveBlue({ compiler, box: VAULT, seed: 3, level: LEVEL });
     expect(blue.length).toBeGreaterThan(0);
     for (const b of blue) expect(b.caught, `${b.op} を赤が捕まえられなかった`).toBe(true);
@@ -216,6 +217,14 @@ describe(`自律学習・自律進化 (${LEVEL})`, () => {
     const throwing = { name: 'throwing', source: 'const SECRET = "@@SECRET@@";\nexport fn boom() -> string { throw new Error("denied"); }\nexport fn ok() -> string { return "@@REC_A@@"; }\n', spec: { contract: [{ fn: 'ok', args: [], expect: '@@REC_A@@' }] } };
     const blue = evo.evolveBlue({ compiler, box: throwing, seed: 2, level: LEVEL });
     for (const b of blue) expect(b.caught, `${b.op} を赤が捕まえられなかった`).toBe(true);
+  });
+
+  it('★ 関数を引数に取る口 (コールバック) も動きに入る: 秘密を呼び出し側の関数へ渡す口を赤が捕まえる (2 周目の進化: 青の新手 leak-hook に赤が追いついた)', () => {
+    const api = evo.parseExports('export fn withSecret(f: (s: string) => string) -> string { return f("x"); }\n');
+    expect(api.fns[0]?.params).toEqual(['cb:string']);
+    const hook = { name: 'hook', source: 'const SECRET = "@@SECRET@@";\nexport fn ok() -> string { return "@@REC_A@@"; }\nexport fn withSecret(f: (s: string) => string) -> string { return f(SECRET); }\n', spec: { contract: [{ fn: 'ok', args: [], expect: '@@REC_A@@' }] } };
+    const r = evo.evolveRed({ compiler, box: hook, gens: 1, pop: 6, seed: 4, level: LEVEL });
+    expect(r.wins.length).toBeGreaterThan(0);
   });
 
   it('API の無い箱は進化させない (空の進化が緑にならない)', () => {

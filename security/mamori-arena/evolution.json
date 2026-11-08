@@ -8,6 +8,26 @@
             "k": "call",
             "fn": "row",
             "args": [
+              "\"x\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "isSecret",
+            "args": [
+              "\"rec-b-0e6709a66e\""
+            ]
+          },
+          {
+            "k": "read",
+            "c": "PUBLIC"
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "row",
+            "args": [
               "\"a\""
             ]
           },
@@ -102,26 +122,6 @@
             "k": "read",
             "c": "PUBLIC"
           }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "row",
-            "args": [
-              "\"{}\""
-            ]
-          },
-          {
-            "k": "call",
-            "fn": "isSecret",
-            "args": [
-              "\"length\""
-            ]
-          },
-          {
-            "k": "read",
-            "c": "PUBLIC"
-          }
         ]
       ],
       "tokens": [
@@ -151,13 +151,47 @@
         "rec-b-0e6709a66e",
         "rec-a-0b319da758",
         "rec-b-8a8e468e72",
-        "rec-c-15a7c9fb5b"
+        "rec-c-15a7c9fb5b",
+        "rec-a-b165e5fd9f",
+        "rec-b-4a09dd32e9",
+        "rec-c-ae5b08e14f"
       ],
-      "generations": 26,
+      "generations": 31,
       "bestFit": 2.45
     },
     "scrubber": {
       "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "scrub",
+            "args": [
+              "\"0\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "wrap",
+            "args": [
+              "\"rec-b-8a5ddb80c0\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "recA",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recB",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recC",
+            "args": []
+          }
+        ],
         [
           {
             "k": "call",
@@ -312,15 +346,6 @@
             "fn": "recC",
             "args": []
           }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "wrap",
-            "args": [
-              "\"toString\""
-            ]
-          }
         ]
       ],
       "tokens": [
@@ -364,9 +389,13 @@
         "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
         "rec-a-c5b306e3ac",
         "rec-b-d8d761928c",
-        "rec-c-e7475705aa"
+        "rec-c-e7475705aa",
+        "rec-a-82cc46a3cf",
+        "rec-b-b8b4540408",
+        "rec-c-eb973a5363",
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
       ],
-      "generations": 26,
+      "generations": 31,
       "bestFit": 2.3
     },
     "async": {
@@ -376,7 +405,7 @@
             "k": "call",
             "fn": "compare",
             "args": [
-              "\"sec_\""
+              "\"b\""
             ]
           }
         ],
@@ -385,7 +414,7 @@
             "k": "call",
             "fn": "compare",
             "args": [
-              "\"b\""
+              "\"sec_\""
             ]
           }
         ],
@@ -430,11 +459,25 @@
         "returned",
         "length"
       ],
-      "generations": 24,
+      "generations": 29,
       "bestFit": 2.1
     },
     "callback-sandbox": {
       "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "publicRecords",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "matches",
+            "args": [
+              "\"admin\""
+            ]
+          }
+        ],
         [
           {
             "k": "call",
@@ -504,20 +547,6 @@
               "\"-1\""
             ]
           }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "publicRecords",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "matches",
-            "args": [
-              "\"\""
-            ]
-          }
         ]
       ],
       "tokens": [
@@ -540,9 +569,12 @@
         "rec-c-1e2d733f2e",
         "rec-a-c750833697",
         "rec-b-d0222d7a72",
-        "rec-c-06f96759f7"
+        "rec-c-06f96759f7",
+        "rec-a-ad2434300f",
+        "rec-b-059f1a4e80",
+        "rec-c-7c3d40e45a"
       ],
-      "generations": 24,
+      "generations": 29,
       "bestFit": 2.25
     },
     "cap-object": {
@@ -646,13 +678,40 @@
         "rec-b-d7262bf529",
         "rec-a-3e87e9aa47",
         "rec-a-0b356d8255",
-        "rec-b-24db9de29b"
+        "rec-b-24db9de29b",
+        "rec-a-d9b07091d8",
+        "rec-b-0a2daf7a54"
       ],
-      "generations": 24,
+      "generations": 29,
       "bestFit": 2.3
     },
     "config": {
       "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "label",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "row",
+            "args": [
+              "\"b\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "matches",
+            "args": [
+              "\"@@\""
+            ]
+          },
+          {
+            "k": "read",
+            "c": "CONFIG"
+          }
+        ],
         [
           {
             "k": "call",
@@ -777,31 +836,6 @@
             "k": "read",
             "c": "CONFIG"
           }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "label",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "row",
-            "args": [
-              "\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\""
-            ]
-          },
-          {
-            "k": "call",
-            "fn": "matches",
-            "args": [
-              "\"\""
-            ]
-          },
-          {
-            "k": "read",
-            "c": "CONFIG"
-          }
         ]
       ],
       "tokens": [
@@ -820,9 +854,11 @@
         "rec-a-1560457a5c",
         "rec-b-c31805a897",
         "rec-a-cadcc3ebc7",
-        "rec-b-1edcfa71ad"
+        "rec-b-1edcfa71ad",
+        "rec-a-8fa01191e3",
+        "rec-b-4ede15aa06"
       ],
-      "generations": 24,
+      "generations": 29,
       "bestFit": 2.35
     },
     "const-closure": {
@@ -915,13 +951,39 @@
         "rec-a-cb6269de31",
         "rec-b-323c8d5e9a",
         "rec-a-76790e5f24",
-        "rec-b-c7a3d158ac"
+        "rec-b-c7a3d158ac",
+        "rec-a-f6ad40f031",
+        "rec-b-317762bdbe"
       ],
-      "generations": 24,
+      "generations": 29,
       "bestFit": 2.25
     },
     "ct-compare": {
       "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "verify",
+            "args": [
+              "\"sec_\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "publicRecord",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recB",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recC",
+            "args": []
+          }
+        ],
         [
           {
             "k": "call",
@@ -976,30 +1038,6 @@
             "fn": "verify",
             "args": [
               "\"admin\""
-            ]
-          },
-          {
-            "k": "call",
-            "fn": "publicRecord",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "recB",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "recC",
-            "args": []
-          }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "verify",
-            "args": [
-              "\"sec_\""
             ]
           },
           {
@@ -1087,13 +1125,40 @@
         "rec-c-255de58509",
         "rec-a-0b356d8255",
         "rec-b-24db9de29b",
-        "rec-c-6c13521270"
+        "rec-c-6c13521270",
+        "rec-a-d9b07091d8",
+        "rec-b-0a2daf7a54",
+        "rec-c-b9222a01b4"
       ],
-      "generations": 24,
+      "generations": 29,
       "bestFit": 2.25
     },
     "digest-only": {
       "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "matchesPrint",
+            "args": [
+              "\"rec-a-1ef6df079a\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "rec",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recB",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recC",
+            "args": []
+          }
+        ],
         [
           {
             "k": "call",
@@ -1213,30 +1278,6 @@
             "fn": "recC",
             "args": []
           }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "matchesPrint",
-            "args": [
-              "\"0\""
-            ]
-          },
-          {
-            "k": "call",
-            "fn": "rec",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "recB",
-            "args": []
-          },
-          {
-            "k": "call",
-            "fn": "recC",
-            "args": []
-          }
         ]
       ],
       "tokens": [
@@ -1259,9 +1300,12 @@
         "rec-c-675abaea44",
         "rec-a-0cde624442",
         "rec-b-cfc0ee542a",
-        "rec-c-826eb63cf4"
+        "rec-c-826eb63cf4",
+        "rec-a-1e262a0002",
+        "rec-b-4145f01abf",
+        "rec-c-6cb59c7151"
       ],
-      "generations": 24,
+      "generations": 29,
       "bestFit": 2.25
     },
     "distrust-args": {
@@ -1304,13 +1348,30 @@
         "rec-c-a8dfec7d15",
         "rec-a-76790e5f24",
         "rec-b-c7a3d158ac",
-        "rec-c-906eed1b0d"
+        "rec-c-906eed1b0d",
+        "rec-a-f6ad40f031",
+        "rec-b-317762bdbe",
+        "rec-c-17cc00cc3a"
       ],
-      "generations": 24,
+      "generations": 29,
       "bestFit": 2.25
     },
     "gate-credential": {
       "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "authenticate",
+            "args": [
+              "\"\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "ping",
+            "args": []
+          }
+        ],
         [
           {
             "k": "call",
@@ -1380,20 +1441,6 @@
             "fn": "ping",
             "args": []
           }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "authenticate",
-            "args": [
-              "\"token\""
-            ]
-          },
-          {
-            "k": "call",
-            "fn": "ping",
-            "args": []
-          }
         ]
       ],
       "tokens": [
@@ -1404,9 +1451,10 @@
         "rec-b-056893b27f",
         "rec-b-8e061e4d82",
         "rec-b-7b76ef7930",
-        "rec-b-c762913765"
+        "rec-b-c762913765",
+        "rec-b-c039ea72b9"
       ],
-      "generations": 24,
+      "generations": 29,
       "bestFit": 2.15
     },
     "lockout-state": {
@@ -1606,9 +1654,12 @@
         "rec-c-a8dfec7d15",
         "rec-a-76790e5f24",
         "rec-b-c7a3d158ac",
-        "rec-c-906eed1b0d"
+        "rec-c-906eed1b0d",
+        "rec-a-f6ad40f031",
+        "rec-b-317762bdbe",
+        "rec-c-17cc00cc3a"
       ],
-      "generations": 24,
+      "generations": 29,
       "bestFit": 2.25
     },
     "map-lookup": {
@@ -1747,9 +1798,12 @@
         "rec-c-255de58509",
         "rec-a-0b356d8255",
         "rec-c-6c13521270",
-        "rec-b-24db9de29b"
+        "rec-b-24db9de29b",
+        "rec-a-d9b07091d8",
+        "rec-c-b9222a01b4",
+        "rec-b-0a2daf7a54"
       ],
-      "generations": 24,
+      "generations": 29,
       "bestFit": 2.1
     },
     "readonly-records": {
@@ -1992,9 +2046,15 @@
         "rec-c-06f96759f7",
         "rec-c-06f9",
         "rec-c-06",
-        "rec-b-d022"
+        "rec-b-d022",
+        "rec-a-ad2434300f",
+        "rec-b-059f1a4e80",
+        "rec-c-7c3d40e45a",
+        "rec-c-7c3d",
+        "rec-b-059f",
+        "rec-b-05"
       ],
-      "generations": 24,
+      "generations": 29,
       "bestFit": 2.25
     },
     "safe-errors": {
@@ -2146,9 +2206,12 @@
         "rec-b-535bf51cfc",
         "rec-a-0cde624442",
         "rec-c-826eb63cf4",
-        "rec-b-cfc0ee542a"
+        "rec-b-cfc0ee542a",
+        "rec-a-1e262a0002",
+        "rec-c-6cb59c7151",
+        "rec-b-4145f01abf"
       ],
-      "generations": 24,
+      "generations": 29,
       "bestFit": 2.5
     },
     "switch-dispatch": {
@@ -2180,6 +2243,22 @@
             "fn": "byKind",
             "args": [
               "\"c\""
+            ]
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "byKind",
+            "args": [
+              "\"c\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "byKind",
+            "args": [
+              "\"a\""
             ]
           }
         ],
@@ -2242,13 +2321,72 @@
         "rec-b-8e061e4d82",
         "rec-b-7b76ef7930",
         "rec-b-c762913765",
-        "rec-c-e821bef89f"
+        "rec-c-e821bef89f",
+        "rec-b-c039ea72b9",
+        "rec-c-93fb8e0e53",
+        "rec-a-536e0ae7bb"
       ],
-      "generations": 24,
+      "generations": 29,
       "bestFit": 2.1
     },
     "token": {
       "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "issue",
+            "args": [
+              "\"constructor\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "ping",
+            "args": []
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "issue",
+            "args": [
+              "\"admin\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "ping",
+            "args": []
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "issue",
+            "args": [
+              "\"a\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "ping",
+            "args": []
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "issue",
+            "args": [
+              "\"rec-a-285172d7a4\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "ping",
+            "args": []
+          }
+        ],
         [
           {
             "k": "call",
@@ -2276,62 +2414,6 @@
             "fn": "ping",
             "args": []
           }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "issue",
-            "args": [
-              "\"[object Object]\""
-            ]
-          },
-          {
-            "k": "call",
-            "fn": "ping",
-            "args": []
-          }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "issue",
-            "args": [
-              "\"-1\""
-            ]
-          },
-          {
-            "k": "call",
-            "fn": "ping",
-            "args": []
-          }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "issue",
-            "args": [
-              "\"b\""
-            ]
-          },
-          {
-            "k": "call",
-            "fn": "ping",
-            "args": []
-          }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "issue",
-            "args": [
-              "\"constructor\""
-            ]
-          },
-          {
-            "k": "call",
-            "fn": "ping",
-            "args": []
-          }
         ]
       ],
       "tokens": [
@@ -2343,13 +2425,31 @@
         "rec-a-579a4d42e0",
         "rec-a-29be9abfd1",
         "rec-a-9426f9231f",
-        "rec-a-629797b8e9"
+        "rec-a-629797b8e9",
+        "rec-a-68b7a62211",
+        "rec-a-ea25aae37a",
+        "rec-a-e212289835",
+        "rec-a-a1b1e40109"
       ],
-      "generations": 26,
+      "generations": 37,
       "bestFit": 2.15
     },
     "two-marks": {
       "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "readerPass",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "adminPass",
+            "args": [
+              "\"c\""
+            ]
+          }
+        ],
         [
           {
             "k": "call",
@@ -2419,13 +2519,6 @@
               "\"b\""
             ]
           }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "readerPass",
-            "args": []
-          }
         ]
       ],
       "tokens": [
@@ -2433,7 +2526,7 @@
         "reader",
         "length"
       ],
-      "generations": 24,
+      "generations": 29,
       "bestFit": 2.15
     },
     "unknown-fields": {
@@ -2476,9 +2569,12 @@
         "rec-c-0ab9a0651d",
         "rec-a-21839db7d1",
         "rec-b-3800f419cc",
-        "rec-c-2dc6296a8a"
+        "rec-c-2dc6296a8a",
+        "rec-a-91efca1790",
+        "rec-b-568d7e15e0",
+        "rec-c-63ee5983d1"
       ],
-      "generations": 24,
+      "generations": 29,
       "bestFit": 2.25
     },
     "vault": {
@@ -2518,6 +2614,22 @@
         [
           {
             "k": "call",
+            "fn": "check",
+            "args": [
+              "\"x\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "lookup",
+            "args": [
+              "\"secret\""
+            ]
+          }
+        ],
+        [
+          {
+            "k": "call",
             "fn": "lookup",
             "args": [
               "\"a\""
@@ -2544,9 +2656,21 @@
         "rec-a-9426f9231f",
         "rec-b-73c79d1ff4",
         "rec-c-78685008d0",
-        "rec-a-629797b8e9"
+        "rec-a-629797b8e9",
+        "rec-b-36ee9de981",
+        "rec-c-86bd60d944",
+        "rec-a-68b7a62211",
+        "rec-b-a414a10ffb",
+        "rec-c-423c83f858",
+        "rec-a-ea25aae37a",
+        "rec-b-a3af2d3604",
+        "rec-c-1596403ec0",
+        "rec-a-e212289835",
+        "rec-b-5177f5ef37",
+        "rec-c-1430fef40d",
+        "rec-a-a1b1e40109"
       ],
-      "generations": 26,
+      "generations": 37,
       "bestFit": 2.15
     }
   },
@@ -2638,6 +2762,50 @@
       "caught": 6,
       "uncaught": 0,
       "newElites": 0
+    },
+    {
+      "seed": 9,
+      "gens": 5,
+      "pop": 14,
+      "boxes": 21,
+      "plays": 1135,
+      "red": 0,
+      "caught": 55,
+      "uncaught": 5,
+      "newElites": 1
+    },
+    {
+      "seed": 41,
+      "gens": 2,
+      "pop": 8,
+      "boxes": 2,
+      "plays": 78,
+      "red": 0,
+      "caught": 4,
+      "uncaught": 2,
+      "newElites": 0
+    },
+    {
+      "seed": 42,
+      "gens": 2,
+      "pop": 8,
+      "boxes": 2,
+      "plays": 81,
+      "red": 0,
+      "caught": 4,
+      "uncaught": 2,
+      "newElites": 0
+    },
+    {
+      "seed": 43,
+      "gens": 2,
+      "pop": 8,
+      "boxes": 2,
+      "plays": 82,
+      "red": 0,
+      "caught": 6,
+      "uncaught": 0,
+      "newElites": 1
     }
   ],
   "lessons": [
@@ -3025,33 +3193,47 @@
       "verdict": "stolen",
       "program": "// target: readonly-records+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { all, byName, first, second, third, probe, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(all()); } catch (e) { r.push(e); }\n  try { r.push(byName()); } catch (e) { r.push(e); }\n  try { r.push(first()); } catch (e) { r.push(e); }\n  try { r.push(second()); } catch (e) { r.push(e); }\n  try { r.push(third()); } catch (e) { r.push(e); }\n  try { r.push(probe(\"\")); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "seed": 6
+    },
+    {
+      "box": "token",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: token+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { issue, ping, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(issue(\"{}\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => s + s)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 43
+    },
+    {
+      "box": "vault",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: vault+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { lookup, check, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(lookup(\"token\")); } catch (e) { r.push(e); }\n  try { r.push(check(\"__proto__\")); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 43
     }
   ],
   "gaps": [
     {
       "box": "cap-object",
       "op": "unfreeze",
-      "seed": 7
+      "seed": 9
     },
     {
       "box": "config",
       "op": "unfreeze",
-      "seed": 7
+      "seed": 9
     },
     {
       "box": "frozen-table",
       "op": "unfreeze",
-      "seed": 7
+      "seed": 9
     },
     {
       "box": "readonly-records",
       "op": "unfreeze",
-      "seed": 7
+      "seed": 9
     },
     {
       "box": "switch-dispatch",
       "op": "unfreeze",
-      "seed": 7
+      "seed": 9
     }
   ],
   "wins": []
