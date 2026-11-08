@@ -144,6 +144,81 @@ interface CorpusFile {
   attacks: { name: string; source: string; firstVerdict: string }[];
 }
 
+describe(`自律学習・自律進化 (${LEVEL})`, () => {
+  const evo = require_('../../../../scripts/lib/mamori-arena-evolve.cjs') as {
+    parseExports: (src: string) => { fns: { name: string; params: string[]; returns: string }[]; consts: string[] };
+    programOf: (box: string, genome: unknown[], tag: string) => string;
+    weaken: (src: string) => { op: string; source: string }[];
+    evolveRed: (o: Record<string, unknown>) => { elites: unknown[]; wins: { verdict: string }[]; plays: number; skipped?: string };
+    evolveBlue: (o: Record<string, unknown>) => { op: string; caught: boolean }[];
+    fitnessOf: (res: Record<string, unknown>, seen: Set<string>) => number;
+    mutate: (g: unknown[], api: unknown, rng: () => number) => unknown[];
+    mulberry32: (a: number) => () => number;
+  };
+
+  it('箱の API (関数と定数・型が string / number / boolean の引数だけ) を読み取る', () => {
+    const api = evo.parseExports('export const T = 1;\nexport fn a(x: string, n: number) -> string { return x; }\nexport fn cb(f: (s: string) => string) -> string { return ""; }\nfn hidden() -> string { return ""; }\n');
+    expect(api.consts).toEqual(['T']);
+    expect(api.fns.map((f) => f.name)).toEqual(['a']);
+    expect(api.fns[0]?.params).toEqual(['string', 'number']);
+  });
+
+  it('★ 点の順序: 型で止まる < 実行まで通る < 新しい出力 < 赤の勝ち・同じ出力に新しさの褒美は出ない (対照)', () => {
+    const seen = new Set<string>();
+    const refused = evo.fitnessOf({ side: 'blue', verdict: 'refused', rules: ['M6'], detail: '' }, seen);
+    const tscStop = evo.fitnessOf({ side: 'blue', verdict: 'refused', rules: ['tsc'], detail: '' }, seen);
+    const first = evo.fitnessOf({ side: 'blue', verdict: 'held', detail: 'returned | alpha-token beta-token' }, seen);
+    const again = evo.fitnessOf({ side: 'blue', verdict: 'held', detail: 'returned | alpha-token beta-token' }, seen);
+    const win = evo.fitnessOf({ side: 'red', verdict: 'stolen', detail: '' }, seen);
+    expect(refused).toBeLessThan(tscStop);
+    expect(tscStop).toBeLessThan(again);
+    expect(again).toBe(2);
+    expect(first).toBeGreaterThan(again);
+    expect(win).toBeGreaterThan(first);
+    expect(evo.fitnessOf({ side: 'void', verdict: 'n/a', detail: '' }, seen)).toBe(-1);
+  });
+
+  it('同じ種なら同じ進化になる (再現できる)・突然変異は元の遺伝子を壊さない', () => {
+    const api = evo.parseExports(VAULT.source);
+    const g0 = [{ k: 'call', fn: 'lookup', args: ['"a"'] }];
+    const a = evo.mutate(g0, api, evo.mulberry32(5));
+    const b = evo.mutate(g0, api, evo.mulberry32(5));
+    expect(JSON.stringify(a)).toBe(JSON.stringify(b));
+    expect(g0).toEqual([{ k: 'call', fn: 'lookup', args: ['"a"'] }]);
+  });
+
+  it('★ 赤の進化: 約束を守る箱からは奪えず、箱の奥まで届く精鋭が育つ', () => {
+    const r = evo.evolveRed({ compiler, box: VAULT, gens: 2, pop: 6, seed: 3, level: LEVEL });
+    expect(r.wins).toEqual([]);
+    expect(r.plays).toBeGreaterThan(5);
+    expect(r.elites.length).toBeGreaterThan(0);
+    for (const g of r.elites) expect(evo.programOf('vault', g as unknown[], 't')).toContain('export fn attack()');
+  });
+
+  it('★ 青の弱体化 (対照): 秘密を返す関数を足した箱・秘密を export した箱を、赤が必ず捕まえる (物差しと赤の目が生きている)', () => {
+    const ops = evo.weaken(VAULT.source).map((w) => w.op);
+    expect(ops).toEqual(expect.arrayContaining(['export-secret', 'leak-fn', 'leak-prefix']));
+    const blue = evo.evolveBlue({ compiler, box: VAULT, seed: 3, level: LEVEL });
+    expect(blue.length).toBeGreaterThan(0);
+    for (const b of blue) expect(b.caught, `${b.op} を赤が捕まえられなかった`).toBe(true);
+  });
+
+  it('API の無い箱は進化させない (空の進化が緑にならない)', () => {
+    const r = evo.evolveRed({ compiler, box: { name: 'empty', source: 'const X = 1;\n', spec: { contract: [] } }, gens: 1, pop: 4, seed: 1, level: LEVEL });
+    expect(r.skipped).toBeTruthy();
+  });
+
+  it('進化の記録 (evolution.json) がある・赤の勝ちは 0・青の弱体化の教訓が残っている', () => {
+    const p = `${arena.REPO_ROOT}/security/mamori-arena/evolution.json`;
+    expect(existsSync(p)).toBe(true);
+    const e = JSON.parse(readFileSync(p, 'utf8')) as { wins: unknown[]; lessons: { box: string; op: string }[]; history: unknown[]; boxes: Record<string, { elites: unknown[] }> };
+    expect(e.wins).toEqual([]);
+    expect(e.history.length).toBeGreaterThan(0);
+    expect(e.lessons.length).toBeGreaterThan(0);
+    expect(Object.keys(e.boxes).length).toBeGreaterThanOrEqual(10);
+  });
+});
+
 describe(`戦いの記録の再生 (${LEVEL})`, () => {
   const path = `${arena.REPO_ROOT}/security/mamori-arena/corpus.json`;
   const corpus: CorpusFile | null = existsSync(path) ? (JSON.parse(readFileSync(path, 'utf8')) as CorpusFile) : null;

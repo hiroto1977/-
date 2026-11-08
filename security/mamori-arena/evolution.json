@@ -1,0 +1,1728 @@
+{
+  "version": 1,
+  "boxes": {
+    "frozen-table": {
+      "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "row",
+            "args": [
+              "\"hasOwnProperty\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "isSecret",
+            "args": [
+              "\"toString\""
+            ]
+          },
+          {
+            "k": "read",
+            "c": "PUBLIC"
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "row",
+            "args": [
+              "\"{}\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "isSecret",
+            "args": [
+              "\"length\""
+            ]
+          },
+          {
+            "k": "read",
+            "c": "PUBLIC"
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "row",
+            "args": [
+              "\"a\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "isSecret",
+            "args": [
+              "\"prototype\""
+            ]
+          },
+          {
+            "k": "read",
+            "c": "PUBLIC"
+          }
+        ]
+      ],
+      "tokens": [
+        "returned",
+        "rec-a-543191fc74",
+        "title",
+        "frozen",
+        "rows",
+        "rec-b-aa5e51b3a4",
+        "rec-c-8f5d2a040a",
+        "tags",
+        "length",
+        "rec-a-ff41984cf6",
+        "rec-b-93b7633c5e",
+        "rec-c-96eb027130",
+        "rec-a-4f8e750a22",
+        "rec-b-76924dd559",
+        "rec-c-5376883820"
+      ],
+      "generations": 10,
+      "bestFit": 2.45
+    },
+    "scrubber": {
+      "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "scrub",
+            "args": [
+              "\"-1\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "wrap",
+            "args": [
+              "\"{}\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "recA",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recB",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recC",
+            "args": []
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "scrub",
+            "args": [
+              "\"c\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "wrap",
+            "args": [
+              "\"prototype\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "recA",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recB",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recC",
+            "args": []
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "wrap",
+            "args": [
+              "\"toString\""
+            ]
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "scrub",
+            "args": [
+              "\"@@\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "wrap",
+            "args": [
+              "\"secret\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "recA",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recB",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recC",
+            "args": []
+          }
+        ]
+      ],
+      "tokens": [
+        "returned",
+        "secret",
+        "rec-a-1c19dd6c05",
+        "rec-b-f772f8570f",
+        "rec-c-448fa2b6f0",
+        "length",
+        "rec",
+        "prototype",
+        "rec-a-51a51d6162",
+        "rec-b-53e3cd54f2",
+        "rec-c-a1c49d49bb",
+        "toString",
+        "__proto__",
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "hasOwnProperty",
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "constructor",
+        "admin",
+        "rec-a-9b80a28bc0",
+        "rec-b-19431b4e06",
+        "rec-c-5fe76d9b8a",
+        "token",
+        "object",
+        "Object"
+      ],
+      "generations": 10,
+      "bestFit": 2.3
+    },
+    "async": {
+      "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "compare",
+            "args": [
+              "\"token\""
+            ]
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "compare",
+            "args": [
+              "\"prototype\""
+            ]
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "compare",
+            "args": [
+              "\"c\""
+            ]
+          }
+        ]
+      ],
+      "tokens": [
+        "returned",
+        "length"
+      ],
+      "generations": 8,
+      "bestFit": 2.1
+    },
+    "callback-sandbox": {
+      "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "publicRecords",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "matches",
+            "args": [
+              "\"-1\""
+            ]
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "publicRecords",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "matches",
+            "args": [
+              "\"\""
+            ]
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "matches",
+            "args": [
+              "\"a\""
+            ]
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "publicRecords",
+            "args": []
+          }
+        ]
+      ],
+      "tokens": [
+        "returned",
+        "rec-a-0820671096",
+        "rec-b-f73c1ac79b",
+        "rec-c-0f147bf0ef",
+        "length",
+        "rec-a-2827ccf0a8",
+        "rec-b-f734d83a33",
+        "rec-c-e100138c52"
+      ],
+      "generations": 8,
+      "bestFit": 2.25
+    },
+    "cap-object": {
+      "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "read",
+            "args": [
+              "0"
+            ]
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "read",
+            "args": [
+              "1"
+            ]
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "open",
+            "args": [
+              "\"x\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "publicReader",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "read",
+            "args": [
+              "1000000007"
+            ]
+          }
+        ]
+      ],
+      "tokens": [
+        "returned",
+        "read",
+        "return",
+        "length",
+        "name",
+        "size",
+        "rec-a-d127680bf3",
+        "rec-a-1d7889db18",
+        "rec-b-5e3e6e8e5e"
+      ],
+      "generations": 8,
+      "bestFit": 2.3
+    },
+    "config": {
+      "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "label",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "row",
+            "args": [
+              "\"a\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "matches",
+            "args": [
+              "\"token\""
+            ]
+          },
+          {
+            "k": "read",
+            "c": "CONFIG"
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "label",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "row",
+            "args": [
+              "\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "matches",
+            "args": [
+              "\"\""
+            ]
+          },
+          {
+            "k": "read",
+            "c": "CONFIG"
+          }
+        ],
+        [
+          {
+            "k": "read",
+            "c": "CONFIG"
+          }
+        ]
+      ],
+      "tokens": [
+        "returned",
+        "rec-a-95c872b0c0",
+        "mode",
+        "strict",
+        "label",
+        "tags",
+        "length",
+        "rec-c-d6dd99d463",
+        "rec-a-2ad33cbd77"
+      ],
+      "generations": 8,
+      "bestFit": 2.35
+    },
+    "const-closure": {
+      "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "record",
+            "args": [
+              "0"
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "makeMatcher",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "makeReader",
+            "args": []
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "record",
+            "args": [
+              "1"
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "makeMatcher",
+            "args": []
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "record",
+            "args": [
+              "(0 - 1)"
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "makeMatcher",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "makeReader",
+            "args": []
+          }
+        ]
+      ],
+      "tokens": [
+        "returned",
+        "SECRET",
+        "length",
+        "name",
+        "record",
+        "rec-a-319c58db0c",
+        "rec-a-b1bf960b8c",
+        "rec-b-2a68050219"
+      ],
+      "generations": 8,
+      "bestFit": 2.25
+    },
+    "ct-compare": {
+      "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "verify",
+            "args": [
+              "\"b\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "publicRecord",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recB",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recC",
+            "args": []
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "verify",
+            "args": [
+              "\"toString\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "publicRecord",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recB",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recC",
+            "args": []
+          }
+        ]
+      ],
+      "tokens": [
+        "returned",
+        "rec-a-d127680bf3",
+        "rec-b-b1cafd9ac4",
+        "rec-c-fad7866297",
+        "length",
+        "rec-a-1d7889db18",
+        "rec-b-5e3e6e8e5e",
+        "rec-c-32efa40253"
+      ],
+      "generations": 8,
+      "bestFit": 2.25
+    },
+    "digest-only": {
+      "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "matchesPrint",
+            "args": [
+              "\"secret\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "rec",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recB",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recC",
+            "args": []
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "matchesPrint",
+            "args": [
+              "\"0\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "rec",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recB",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recC",
+            "args": []
+          }
+        ]
+      ],
+      "tokens": [
+        "returned",
+        "rec-a-59e89caedd",
+        "rec-b-30cd37d920",
+        "rec-c-3ded9c48cf",
+        "length",
+        "rec-a-6b1ebf6073",
+        "rec-b-e26125b9f7",
+        "rec-c-309bd321c0"
+      ],
+      "generations": 8,
+      "bestFit": 2.25
+    },
+    "distrust-args": {
+      "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "publicRec",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recB",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recC",
+            "args": []
+          }
+        ]
+      ],
+      "tokens": [
+        "returned",
+        "rec-a-319c58db0c",
+        "rec-b-412fec0d52",
+        "rec-c-eb86591ed9",
+        "length",
+        "rec-a-b1bf960b8c",
+        "rec-b-2a68050219",
+        "rec-c-e868729098"
+      ],
+      "generations": 8,
+      "bestFit": 2.25
+    },
+    "gate-credential": {
+      "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "authenticate",
+            "args": [
+              "\"constructor\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "ping",
+            "args": []
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "authenticate",
+            "args": [
+              "\"token\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "ping",
+            "args": []
+          }
+        ]
+      ],
+      "tokens": [
+        "returned",
+        "rec-b-1f050f37b5",
+        "length",
+        "rec-b-9d83364008"
+      ],
+      "generations": 8,
+      "bestFit": 2.15
+    },
+    "lockout-state": {
+      "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "tryOpen",
+            "args": [
+              "\"b\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "attemptsLeft",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "note",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "noteB",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "noteC",
+            "args": []
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "tryOpen",
+            "args": [
+              "\"[object Object]\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "attemptsLeft",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "note",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "noteB",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "noteC",
+            "args": []
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "noteC",
+            "args": []
+          }
+        ]
+      ],
+      "tokens": [
+        "returned",
+        "rec-a-319c58db0c",
+        "rec-b-412fec0d52",
+        "rec-c-eb86591ed9",
+        "length",
+        "rec-a-b1bf960b8c",
+        "rec-b-2a68050219",
+        "rec-c-e868729098"
+      ],
+      "generations": 8,
+      "bestFit": 2.25
+    },
+    "map-lookup": {
+      "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "get",
+            "args": [
+              "\"sec_\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "has",
+            "args": [
+              "\"secret\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "matches",
+            "args": [
+              "\"{}\""
+            ]
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "get",
+            "args": [
+              "\"rec\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "has",
+            "args": [
+              "\"sec_\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "matches",
+            "args": [
+              "\"@@\""
+            ]
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "has",
+            "args": [
+              "\"x\""
+            ]
+          }
+        ],
+        [
+          {
+            "k": "chain",
+            "outer": "has",
+            "inner": "get",
+            "args": [
+              "\"x\""
+            ]
+          }
+        ]
+      ],
+      "tokens": [
+        "returned",
+        "length"
+      ],
+      "generations": 8,
+      "bestFit": 2.1
+    },
+    "readonly-records": {
+      "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "all",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "byName",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "first",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "second",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "third",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "probe",
+            "args": [
+              "\"x\""
+            ]
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "all",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "byName",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "first",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "second",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "third",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "probe",
+            "args": [
+              "\"c\""
+            ]
+          }
+        ]
+      ],
+      "tokens": [
+        "returned",
+        "rec-a-0820671096",
+        "rec-b-f73c1ac79b",
+        "rec-c-0f147bf0ef",
+        "length",
+        "rec-a-2827ccf0a8",
+        "rec-b-f734d83a33",
+        "rec-c-e100138c52"
+      ],
+      "generations": 8,
+      "bestFit": 2.25
+    },
+    "safe-errors": {
+      "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "lookupOrThrow",
+            "args": [
+              "\"secret\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "lookup",
+            "args": [
+              "\"c\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "verify",
+            "args": [
+              "\"toString\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "isBusy",
+            "args": []
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "lookupOrThrow",
+            "args": [
+              "\"[object Object]\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "lookup",
+            "args": [
+              "\"rec\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "verify",
+            "args": [
+              "\"x\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "isBusy",
+            "args": []
+          }
+        ],
+        [
+          {
+            "k": "chain",
+            "outer": "lookup",
+            "inner": "lookupOrThrow",
+            "args": [
+              "\"0\""
+            ]
+          }
+        ]
+      ],
+      "tokens": [
+        "threw",
+        "lookup",
+        "failed",
+        "stack",
+        "function",
+        "native",
+        "code",
+        "length",
+        "name",
+        "message",
+        "returned",
+        "rec-c-3ded9c48cf",
+        "denied"
+      ],
+      "generations": 8,
+      "bestFit": 2.5
+    },
+    "switch-dispatch": {
+      "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "byKind",
+            "args": [
+              "\"\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "kinds",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "auth",
+            "args": [
+              "\"@@\""
+            ]
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "byKind",
+            "args": [
+              "\"admin\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "kinds",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "auth",
+            "args": [
+              "\"x\""
+            ]
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "kinds",
+            "args": []
+          }
+        ]
+      ],
+      "tokens": [
+        "returned",
+        "length",
+        "rec-a-134250bed4",
+        "rec-c-e0f032019b"
+      ],
+      "generations": 8,
+      "bestFit": 2.1
+    },
+    "token": {
+      "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "issue",
+            "args": [
+              "\"constructor\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "ping",
+            "args": []
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "issue",
+            "args": [
+              "\"admin\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "ping",
+            "args": []
+          }
+        ]
+      ],
+      "tokens": [
+        "returned",
+        "rec-a-1d823fc668",
+        "length",
+        "rec-a-ac57e5346f"
+      ],
+      "generations": 8,
+      "bestFit": 2.15
+    },
+    "two-marks": {
+      "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "readerPass",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "adminPass",
+            "args": [
+              "\"\""
+            ]
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "readerPass",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "adminPass",
+            "args": [
+              "\"b\""
+            ]
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "readerPass",
+            "args": []
+          }
+        ]
+      ],
+      "tokens": [
+        "returned",
+        "reader",
+        "length"
+      ],
+      "generations": 8,
+      "bestFit": 2.15
+    },
+    "unknown-fields": {
+      "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "rec",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recB",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recC",
+            "args": []
+          }
+        ]
+      ],
+      "tokens": [
+        "returned",
+        "rec-a-65388e910d",
+        "rec-b-9224c052dd",
+        "rec-c-752ba7e746",
+        "length",
+        "rec-a-7e4dbd62ec",
+        "rec-b-fe0faa85a4",
+        "rec-c-35b0aecc4d"
+      ],
+      "generations": 8,
+      "bestFit": 2.25
+    },
+    "vault": {
+      "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "lookup",
+            "args": [
+              "\"b\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "check",
+            "args": [
+              "\"sec_\""
+            ]
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "check",
+            "args": [
+              "\"x\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "lookup",
+            "args": [
+              "\"c\""
+            ]
+          }
+        ]
+      ],
+      "tokens": [
+        "returned",
+        "rec-b-c751629846",
+        "length",
+        "rec-c-91f725a360",
+        "rec-b-a153a9dcac",
+        "rec-c-10508d7148"
+      ],
+      "generations": 8,
+      "bestFit": 2.15
+    }
+  },
+  "history": [
+    {
+      "seed": 1,
+      "gens": 2,
+      "pop": 6,
+      "boxes": 2,
+      "plays": 83,
+      "red": 0,
+      "caught": 5,
+      "uncaught": 1,
+      "newElites": 2
+    },
+    {
+      "seed": 2,
+      "gens": 4,
+      "pop": 12,
+      "boxes": 21,
+      "plays": 906,
+      "red": 0,
+      "caught": 53,
+      "uncaught": 7,
+      "newElites": 27
+    },
+    {
+      "seed": 3,
+      "gens": 4,
+      "pop": 12,
+      "boxes": 21,
+      "plays": 983,
+      "red": 0,
+      "caught": 51,
+      "uncaught": 9,
+      "newElites": 24
+    }
+  ],
+  "lessons": [
+    {
+      "box": "frozen-table",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: frozen-table+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { row, isSecret, SECRET, PUBLIC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(row(\"[object Object]\"));\n  r.push(isSecret(\"constructor\"));\n  r.push(SECRET);\n  r.push(PUBLIC);\n  return r;\n}\n",
+      "seed": 1
+    },
+    {
+      "box": "frozen-table",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: frozen-table+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { row, isSecret, leakNow, PUBLIC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(row(\"[object Object]\"));\n  r.push(isSecret(\"constructor\"));\n  r.push(leakNow());\n  r.push(PUBLIC);\n  return r;\n}\n",
+      "seed": 1
+    },
+    {
+      "box": "scrubber",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: scrubber+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { scrub, wrap, recA, recB, recC, SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(scrub(\"[object Object]\"));\n  r.push(wrap(\"constructor\"));\n  r.push(recA());\n  r.push(recB());\n  r.push(recC());\n  r.push(SECRET);\n  return r;\n}\n",
+      "seed": 1
+    },
+    {
+      "box": "scrubber",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: scrubber+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { scrub, wrap, recA, recB, recC, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(scrub(\"[object Object]\"));\n  r.push(wrap(\"constructor\"));\n  r.push(recA());\n  r.push(recB());\n  r.push(recC());\n  r.push(leakNow());\n  return r;\n}\n",
+      "seed": 1
+    },
+    {
+      "box": "scrubber",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: scrubber+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { scrub, wrap, recA, recB, recC, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(scrub(\"[object Object]\"));\n  r.push(wrap(\"constructor\"));\n  r.push(recA());\n  r.push(recB());\n  r.push(recC());\n  r.push(hintNow());\n  return r;\n}\n",
+      "seed": 1
+    },
+    {
+      "box": "async",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: async+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { compare, SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(compare(\"admin\"));\n  r.push(SECRET);\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "async",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: async+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { compare, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(compare(\"toString\"));\n  r.push(leakNow());\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "async",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: async+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { compare, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(compare(\"toString\"));\n  r.push(hintNow());\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "callback-sandbox",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: callback-sandbox+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { publicRecords, matches, SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(publicRecords());\n  r.push(matches(\"c\"));\n  r.push(SECRET);\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "callback-sandbox",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: callback-sandbox+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { publicRecords, matches, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(publicRecords());\n  r.push(matches(\"-1\"));\n  r.push(leakNow());\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "callback-sandbox",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: callback-sandbox+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { publicRecords, matches, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(publicRecords());\n  r.push(matches(\"-1\"));\n  r.push(hintNow());\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "cap-object",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: cap-object+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { open, publicReader, read, SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(open(\"toString\"));\n  r.push(publicReader());\n  r.push(read(0.5));\n  r.push(SECRET);\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "cap-object",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: cap-object+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { open, publicReader, read, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(open(\"rec\"));\n  r.push(publicReader());\n  r.push(read(65536));\n  r.push(leakNow());\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "config",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: config+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { label, row, matches, SECRET, CONFIG } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(label());\n  r.push(row(\"c\"));\n  r.push(matches(\"@@\"));\n  r.push(SECRET);\n  r.push(CONFIG);\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "config",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: config+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { label, row, matches, leakNow, CONFIG } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(label());\n  r.push(row(\"-1\"));\n  r.push(matches(\"c\"));\n  r.push(leakNow());\n  r.push(CONFIG);\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "const-closure",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: const-closure+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { record, makeMatcher, makeReader, SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(record(65536));\n  r.push(makeMatcher());\n  r.push(makeReader());\n  r.push(SECRET);\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "const-closure",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: const-closure+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { record, makeMatcher, makeReader, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(record(1000000007));\n  r.push(makeMatcher());\n  r.push(makeReader());\n  r.push(leakNow());\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "const-closure",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: const-closure+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { record, makeMatcher, makeReader, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(record(1000000007));\n  r.push(makeMatcher());\n  r.push(makeReader());\n  r.push(hintNow());\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "ct-compare",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: ct-compare+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { verify, publicRecord, recB, recC, SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(verify(\"-1\"));\n  r.push(publicRecord());\n  r.push(recB());\n  r.push(recC());\n  r.push(SECRET);\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "ct-compare",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: ct-compare+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { verify, publicRecord, recB, recC, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(verify(\"rec\"));\n  r.push(publicRecord());\n  r.push(recB());\n  r.push(recC());\n  r.push(leakNow());\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "ct-compare",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: ct-compare+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { verify, publicRecord, recB, recC, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(verify(\"rec\"));\n  r.push(publicRecord());\n  r.push(recB());\n  r.push(recC());\n  r.push(hintNow());\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "digest-only",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: digest-only+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { matchesPrint, rec, recB, recC, SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(matchesPrint(\"-1\"));\n  r.push(rec());\n  r.push(recB());\n  r.push(recC());\n  r.push(SECRET);\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "digest-only",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: digest-only+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { matchesPrint, rec, recB, recC, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(matchesPrint(\"rec\"));\n  r.push(rec());\n  r.push(recB());\n  r.push(recC());\n  r.push(leakNow());\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "digest-only",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: digest-only+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { matchesPrint, rec, recB, recC, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(matchesPrint(\"rec\"));\n  r.push(rec());\n  r.push(recB());\n  r.push(recC());\n  r.push(hintNow());\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "distrust-args",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: distrust-args+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { publicRec, recB, recC, SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(publicRec());\n  r.push(recB());\n  r.push(recC());\n  r.push(SECRET);\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "distrust-args",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: distrust-args+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { publicRec, recB, recC, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(publicRec());\n  r.push(recB());\n  r.push(recC());\n  r.push(leakNow());\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "distrust-args",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: distrust-args+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { publicRec, recB, recC, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(publicRec());\n  r.push(recB());\n  r.push(recC());\n  r.push(hintNow());\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "gate-credential",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: gate-credential+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { authenticate, ping, SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(authenticate(\"toString\"));\n  r.push(ping());\n  r.push(SECRET);\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "gate-credential",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: gate-credential+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { authenticate, ping, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(authenticate(\"rec\"));\n  r.push(ping());\n  r.push(leakNow());\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "gate-credential",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: gate-credential+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { authenticate, ping, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(authenticate(\"rec\"));\n  r.push(ping());\n  r.push(hintNow());\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "lockout-state",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: lockout-state+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { tryOpen, attemptsLeft, note, noteB, noteC, SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(tryOpen(\"-1\"));\n  r.push(attemptsLeft());\n  r.push(note());\n  r.push(noteB());\n  r.push(noteC());\n  r.push(SECRET);\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "lockout-state",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: lockout-state+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { tryOpen, attemptsLeft, note, noteB, noteC, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(tryOpen(\"rec\"));\n  r.push(attemptsLeft());\n  r.push(note());\n  r.push(noteB());\n  r.push(noteC());\n  r.push(leakNow());\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "lockout-state",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: lockout-state+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { tryOpen, attemptsLeft, note, noteB, noteC, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(tryOpen(\"rec\"));\n  r.push(attemptsLeft());\n  r.push(note());\n  r.push(noteB());\n  r.push(noteC());\n  r.push(hintNow());\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "map-lookup",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: map-lookup+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { get, has, matches, SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(get(\"admin\"));\n  r.push(has(\"\"));\n  r.push(matches(\"token\"));\n  r.push(SECRET);\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "map-lookup",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: map-lookup+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { get, has, matches, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(get(\"toString\"));\n  r.push(has(\"admin\"));\n  r.push(matches(\"\"));\n  r.push(leakNow());\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "map-lookup",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: map-lookup+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { get, has, matches, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(get(\"toString\"));\n  r.push(has(\"admin\"));\n  r.push(matches(\"\"));\n  r.push(hintNow());\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "readonly-records",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: readonly-records+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(Object.values(SECRET));\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "safe-errors",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: safe-errors+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(leakNow());\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "safe-errors",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: safe-errors+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(hintNow());\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "switch-dispatch",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: switch-dispatch+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { byKind, kinds, auth, SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(byKind(\"toString\"));\n  r.push(kinds());\n  r.push(auth(\"admin\"));\n  r.push(SECRET);\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "switch-dispatch",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: switch-dispatch+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { byKind, kinds, auth, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(byKind(\"rec\"));\n  r.push(kinds());\n  r.push(auth(\"-1\"));\n  r.push(leakNow());\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "token",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: token+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { issue, ping, SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(issue(\"toString\"));\n  r.push(ping());\n  r.push(SECRET);\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "token",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: token+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { issue, ping, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(issue(\"rec\"));\n  r.push(ping());\n  r.push(leakNow());\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "token",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: token+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { issue, ping, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(issue(\"rec\"));\n  r.push(ping());\n  r.push(hintNow());\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "two-marks",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: two-marks+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { readerPass, adminPass, SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(readerPass());\n  r.push(adminPass(\"c\"));\n  r.push(SECRET);\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "two-marks",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: two-marks+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { readerPass, adminPass, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(readerPass());\n  r.push(adminPass(\"-1\"));\n  r.push(leakNow());\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "two-marks",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: two-marks+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { readerPass, adminPass, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(readerPass());\n  r.push(adminPass(\"-1\"));\n  r.push(hintNow());\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "unknown-fields",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: unknown-fields+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { rec, recB, recC, SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(rec());\n  r.push(recB());\n  r.push(recC());\n  r.push(SECRET);\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "unknown-fields",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: unknown-fields+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { rec, recB, recC, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(rec());\n  r.push(recB());\n  r.push(recC());\n  r.push(leakNow());\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "unknown-fields",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: unknown-fields+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { rec, recB, recC, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(rec());\n  r.push(recB());\n  r.push(recC());\n  r.push(hintNow());\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "vault",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: vault+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { lookup, check, SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(lookup(\"admin\"));\n  r.push(check(\"\"));\n  r.push(SECRET);\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "vault",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: vault+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { lookup, check, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(lookup(\"toString\"));\n  r.push(check(\"admin\"));\n  r.push(leakNow());\n  return r;\n}\n",
+      "seed": 2
+    },
+    {
+      "box": "vault",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: vault+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { lookup, check, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(lookup(\"toString\"));\n  r.push(check(\"admin\"));\n  r.push(hintNow());\n  return r;\n}\n",
+      "seed": 2
+    }
+  ],
+  "gaps": [
+    {
+      "box": "frozen-table",
+      "op": "unfreeze",
+      "seed": 1
+    },
+    {
+      "box": "cap-object",
+      "op": "unfreeze",
+      "seed": 2
+    },
+    {
+      "box": "config",
+      "op": "unfreeze",
+      "seed": 2
+    },
+    {
+      "box": "readonly-records",
+      "op": "unfreeze",
+      "seed": 2
+    },
+    {
+      "box": "readonly-records",
+      "op": "leak-fn",
+      "seed": 2
+    },
+    {
+      "box": "safe-errors",
+      "op": "export-secret",
+      "seed": 2
+    },
+    {
+      "box": "switch-dispatch",
+      "op": "unfreeze",
+      "seed": 2
+    },
+    {
+      "box": "safe-errors",
+      "op": "leak-fn",
+      "seed": 3
+    },
+    {
+      "box": "safe-errors",
+      "op": "leak-prefix",
+      "seed": 3
+    }
+  ],
+  "wins": []
+}

@@ -4808,6 +4808,506 @@
         "M0"
       ],
       "detail": "arena/attack.mamori:10:12: [M0] `as` (型の書き換え) は Mamori に在りません \u2014\u2014 印は gate 関数の中で `mint 型名(値)` と書いて作ります"
+    },
+    {
+      "name": "evo-frozen-table-1",
+      "source": "// target: frozen-table\n// goal: steal / destroy (自律進化 elite)\nuse { row, isSecret, PUBLIC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(row(\"hasOwnProperty\"));\n  r.push(isSecret(\"toString\"));\n  r.push(PUBLIC);\n  return r;\n}\n",
+      "targets": [
+        "frozen-table"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-scrubber-1",
+      "source": "// target: scrubber\n// goal: steal / destroy (自律進化 elite)\nuse { scrub, wrap, recA, recB, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(scrub(\"-1\"));\n  r.push(wrap(\"{}\"));\n  r.push(recA());\n  r.push(recB());\n  r.push(recC());\n  return r;\n}\n",
+      "targets": [
+        "scrubber"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-async-1",
+      "source": "// target: async\n// goal: steal / destroy (自律進化 elite)\nuse { compare } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(compare(\"token\"));\n  return r;\n}\n",
+      "targets": [
+        "async"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-callback-sandbox-1",
+      "source": "// target: callback-sandbox\n// goal: steal / destroy (自律進化 elite)\nuse { publicRecords, matches } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(publicRecords());\n  r.push(matches(\"-1\"));\n  return r;\n}\n",
+      "targets": [
+        "callback-sandbox"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-callback-sandbox-2",
+      "source": "// target: callback-sandbox\n// goal: steal / destroy (自律進化 elite)\nuse { publicRecords, matches } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(publicRecords());\n  r.push(matches(\"\"));\n  return r;\n}\n",
+      "targets": [
+        "callback-sandbox"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-callback-sandbox-3",
+      "source": "// target: callback-sandbox\n// goal: steal / destroy (自律進化 elite)\nuse { matches } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(matches(\"a\"));\n  return r;\n}\n",
+      "targets": [
+        "callback-sandbox"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-cap-object-1",
+      "source": "// target: cap-object\n// goal: steal / destroy (自律進化 elite)\nuse { read } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(read(0));\n  return r;\n}\n",
+      "targets": [
+        "cap-object"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-config-1",
+      "source": "// target: config\n// goal: steal / destroy (自律進化 elite)\nuse { label, row, matches, CONFIG } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(label());\n  r.push(row(\"a\"));\n  r.push(matches(\"token\"));\n  r.push(CONFIG);\n  return r;\n}\n",
+      "targets": [
+        "config"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-const-closure-1",
+      "source": "// target: const-closure\n// goal: steal / destroy (自律進化 elite)\nuse { record, makeMatcher, makeReader } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(record(0));\n  r.push(makeMatcher());\n  r.push(makeReader());\n  return r;\n}\n",
+      "targets": [
+        "const-closure"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-ct-compare-1",
+      "source": "// target: ct-compare\n// goal: steal / destroy (自律進化 elite)\nuse { verify, publicRecord, recB, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(verify(\"b\"));\n  r.push(publicRecord());\n  r.push(recB());\n  r.push(recC());\n  return r;\n}\n",
+      "targets": [
+        "ct-compare"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-digest-only-1",
+      "source": "// target: digest-only\n// goal: steal / destroy (自律進化 elite)\nuse { matchesPrint, rec, recB, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(matchesPrint(\"secret\"));\n  r.push(rec());\n  r.push(recB());\n  r.push(recC());\n  return r;\n}\n",
+      "targets": [
+        "digest-only"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-distrust-args-1",
+      "source": "// target: distrust-args\n// goal: steal / destroy (自律進化 elite)\nuse { publicRec, recB, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(publicRec());\n  r.push(recB());\n  r.push(recC());\n  return r;\n}\n",
+      "targets": [
+        "distrust-args"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-frozen-table-2",
+      "source": "// target: frozen-table\n// goal: steal / destroy (自律進化 elite)\nuse { row, isSecret, PUBLIC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(row(\"{}\"));\n  r.push(isSecret(\"length\"));\n  r.push(PUBLIC);\n  return r;\n}\n",
+      "targets": [
+        "frozen-table"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-gate-credential-1",
+      "source": "// target: gate-credential\n// goal: steal / destroy (自律進化 elite)\nuse { authenticate, ping } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(authenticate(\"constructor\"));\n  r.push(ping());\n  return r;\n}\n",
+      "targets": [
+        "gate-credential"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-lockout-state-1",
+      "source": "// target: lockout-state\n// goal: steal / destroy (自律進化 elite)\nuse { tryOpen, attemptsLeft, note, noteB, noteC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(tryOpen(\"b\"));\n  r.push(attemptsLeft());\n  r.push(note());\n  r.push(noteB());\n  r.push(noteC());\n  return r;\n}\n",
+      "targets": [
+        "lockout-state"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-lockout-state-2",
+      "source": "// target: lockout-state\n// goal: steal / destroy (自律進化 elite)\nuse { tryOpen, attemptsLeft, note, noteB, noteC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(tryOpen(\"[object Object]\"));\n  r.push(attemptsLeft());\n  r.push(note());\n  r.push(noteB());\n  r.push(noteC());\n  return r;\n}\n",
+      "targets": [
+        "lockout-state"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-map-lookup-1",
+      "source": "// target: map-lookup\n// goal: steal / destroy (自律進化 elite)\nuse { get, has, matches } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(get(\"sec_\"));\n  r.push(has(\"secret\"));\n  r.push(matches(\"{}\"));\n  return r;\n}\n",
+      "targets": [
+        "map-lookup"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-map-lookup-2",
+      "source": "// target: map-lookup\n// goal: steal / destroy (自律進化 elite)\nuse { get, has, matches } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(get(\"rec\"));\n  r.push(has(\"sec_\"));\n  r.push(matches(\"@@\"));\n  return r;\n}\n",
+      "targets": [
+        "map-lookup"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-map-lookup-3",
+      "source": "// target: map-lookup\n// goal: steal / destroy (自律進化 elite)\nuse { has } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(has(\"x\"));\n  return r;\n}\n",
+      "targets": [
+        "map-lookup"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-readonly-records-1",
+      "source": "// target: readonly-records\n// goal: steal / destroy (自律進化 elite)\nuse { all, byName, first, second, third, probe } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(all());\n  r.push(byName());\n  r.push(first());\n  r.push(second());\n  r.push(third());\n  r.push(probe(\"x\"));\n  return r;\n}\n",
+      "targets": [
+        "readonly-records"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-safe-errors-1",
+      "source": "// target: safe-errors\n// goal: steal / destroy (自律進化 elite)\nuse { lookupOrThrow, lookup, verify, isBusy } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(lookupOrThrow(\"secret\"));\n  r.push(lookup(\"c\"));\n  r.push(verify(\"toString\"));\n  r.push(isBusy());\n  return r;\n}\n",
+      "targets": [
+        "safe-errors"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-scrubber-2",
+      "source": "// target: scrubber\n// goal: steal / destroy (自律進化 elite)\nuse { scrub, wrap, recA, recB, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(scrub(\"c\"));\n  r.push(wrap(\"prototype\"));\n  r.push(recA());\n  r.push(recB());\n  r.push(recC());\n  return r;\n}\n",
+      "targets": [
+        "scrubber"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-scrubber-3",
+      "source": "// target: scrubber\n// goal: steal / destroy (自律進化 elite)\nuse { wrap } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(wrap(\"toString\"));\n  return r;\n}\n",
+      "targets": [
+        "scrubber"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-switch-dispatch-1",
+      "source": "// target: switch-dispatch\n// goal: steal / destroy (自律進化 elite)\nuse { byKind, kinds, auth } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(byKind(\"\"));\n  r.push(kinds());\n  r.push(auth(\"@@\"));\n  return r;\n}\n",
+      "targets": [
+        "switch-dispatch"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-token-1",
+      "source": "// target: token\n// goal: steal / destroy (自律進化 elite)\nuse { issue, ping } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(issue(\"constructor\"));\n  r.push(ping());\n  return r;\n}\n",
+      "targets": [
+        "token"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-two-marks-1",
+      "source": "// target: two-marks\n// goal: steal / destroy (自律進化 elite)\nuse { readerPass, adminPass } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(readerPass());\n  r.push(adminPass(\"\"));\n  return r;\n}\n",
+      "targets": [
+        "two-marks"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-unknown-fields-1",
+      "source": "// target: unknown-fields\n// goal: steal / destroy (自律進化 elite)\nuse { rec, recB, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(rec());\n  r.push(recB());\n  r.push(recC());\n  return r;\n}\n",
+      "targets": [
+        "unknown-fields"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-vault-1",
+      "source": "// target: vault\n// goal: steal / destroy (自律進化 elite)\nuse { lookup, check } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(lookup(\"b\"));\n  r.push(check(\"sec_\"));\n  return r;\n}\n",
+      "targets": [
+        "vault"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-vault-2",
+      "source": "// target: vault\n// goal: steal / destroy (自律進化 elite)\nuse { check, lookup } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(check(\"x\"));\n  r.push(lookup(\"c\"));\n  return r;\n}\n",
+      "targets": [
+        "vault"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-async-2",
+      "source": "// target: async\n// goal: steal / destroy (自律進化 elite)\nuse { compare } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(compare(\"prototype\"));\n  return r;\n}\n",
+      "targets": [
+        "async"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-async-3",
+      "source": "// target: async\n// goal: steal / destroy (自律進化 elite)\nuse { compare } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(compare(\"c\"));\n  return r;\n}\n",
+      "targets": [
+        "async"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-cap-object-2",
+      "source": "// target: cap-object\n// goal: steal / destroy (自律進化 elite)\nuse { read } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(read(1));\n  return r;\n}\n",
+      "targets": [
+        "cap-object"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-cap-object-3",
+      "source": "// target: cap-object\n// goal: steal / destroy (自律進化 elite)\nuse { open, publicReader, read } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(open(\"x\"));\n  r.push(publicReader());\n  r.push(read(1000000007));\n  return r;\n}\n",
+      "targets": [
+        "cap-object"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-config-2",
+      "source": "// target: config\n// goal: steal / destroy (自律進化 elite)\nuse { label, row, matches, CONFIG } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(label());\n  r.push(row(\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"));\n  r.push(matches(\"\"));\n  r.push(CONFIG);\n  return r;\n}\n",
+      "targets": [
+        "config"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-config-3",
+      "source": "// target: config\n// goal: steal / destroy (自律進化 elite)\nuse { CONFIG } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(CONFIG);\n  return r;\n}\n",
+      "targets": [
+        "config"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-const-closure-2",
+      "source": "// target: const-closure\n// goal: steal / destroy (自律進化 elite)\nuse { record, makeMatcher } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(record(1));\n  r.push(makeMatcher());\n  return r;\n}\n",
+      "targets": [
+        "const-closure"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-const-closure-3",
+      "source": "// target: const-closure\n// goal: steal / destroy (自律進化 elite)\nuse { record, makeMatcher, makeReader } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(record((0 - 1)));\n  r.push(makeMatcher());\n  r.push(makeReader());\n  return r;\n}\n",
+      "targets": [
+        "const-closure"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-ct-compare-2",
+      "source": "// target: ct-compare\n// goal: steal / destroy (自律進化 elite)\nuse { verify, publicRecord, recB, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(verify(\"toString\"));\n  r.push(publicRecord());\n  r.push(recB());\n  r.push(recC());\n  return r;\n}\n",
+      "targets": [
+        "ct-compare"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-digest-only-2",
+      "source": "// target: digest-only\n// goal: steal / destroy (自律進化 elite)\nuse { matchesPrint, rec, recB, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(matchesPrint(\"0\"));\n  r.push(rec());\n  r.push(recB());\n  r.push(recC());\n  return r;\n}\n",
+      "targets": [
+        "digest-only"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-frozen-table-3",
+      "source": "// target: frozen-table\n// goal: steal / destroy (自律進化 elite)\nuse { row, isSecret, PUBLIC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(row(\"a\"));\n  r.push(isSecret(\"prototype\"));\n  r.push(PUBLIC);\n  return r;\n}\n",
+      "targets": [
+        "frozen-table"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-gate-credential-2",
+      "source": "// target: gate-credential\n// goal: steal / destroy (自律進化 elite)\nuse { authenticate, ping } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(authenticate(\"token\"));\n  r.push(ping());\n  return r;\n}\n",
+      "targets": [
+        "gate-credential"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-lockout-state-3",
+      "source": "// target: lockout-state\n// goal: steal / destroy (自律進化 elite)\nuse { noteC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(noteC());\n  return r;\n}\n",
+      "targets": [
+        "lockout-state"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-readonly-records-2",
+      "source": "// target: readonly-records\n// goal: steal / destroy (自律進化 elite)\nuse { all, byName, first, second, third, probe } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(all());\n  r.push(byName());\n  r.push(first());\n  r.push(second());\n  r.push(third());\n  r.push(probe(\"c\"));\n  return r;\n}\n",
+      "targets": [
+        "readonly-records"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-safe-errors-2",
+      "source": "// target: safe-errors\n// goal: steal / destroy (自律進化 elite)\nuse { lookupOrThrow, lookup, verify, isBusy } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(lookupOrThrow(\"[object Object]\"));\n  r.push(lookup(\"rec\"));\n  r.push(verify(\"x\"));\n  r.push(isBusy());\n  return r;\n}\n",
+      "targets": [
+        "safe-errors"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-safe-errors-3",
+      "source": "// target: safe-errors\n// goal: steal / destroy (自律進化 elite)\nuse { lookup, lookupOrThrow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(lookup(lookupOrThrow(\"0\")));\n  return r;\n}\n",
+      "targets": [
+        "safe-errors"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-switch-dispatch-2",
+      "source": "// target: switch-dispatch\n// goal: steal / destroy (自律進化 elite)\nuse { byKind, kinds, auth } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(byKind(\"admin\"));\n  r.push(kinds());\n  r.push(auth(\"x\"));\n  return r;\n}\n",
+      "targets": [
+        "switch-dispatch"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-switch-dispatch-3",
+      "source": "// target: switch-dispatch\n// goal: steal / destroy (自律進化 elite)\nuse { kinds } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(kinds());\n  return r;\n}\n",
+      "targets": [
+        "switch-dispatch"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-token-2",
+      "source": "// target: token\n// goal: steal / destroy (自律進化 elite)\nuse { issue, ping } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(issue(\"admin\"));\n  r.push(ping());\n  return r;\n}\n",
+      "targets": [
+        "token"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-two-marks-2",
+      "source": "// target: two-marks\n// goal: steal / destroy (自律進化 elite)\nuse { readerPass, adminPass } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(readerPass());\n  r.push(adminPass(\"b\"));\n  return r;\n}\n",
+      "targets": [
+        "two-marks"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
+    },
+    {
+      "name": "evo-two-marks-3",
+      "source": "// target: two-marks\n// goal: steal / destroy (自律進化 elite)\nuse { readerPass } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(readerPass());\n  return r;\n}\n",
+      "targets": [
+        "two-marks"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "自律進化の精鋭 (出力の新しさで選ばれた動きの列)"
     }
   ],
   "history": [
