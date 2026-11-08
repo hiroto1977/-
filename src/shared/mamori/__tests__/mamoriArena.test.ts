@@ -102,6 +102,16 @@ describe(`箱の閉じ方 (${LEVEL})`, () => {
     expect(r.verdict).toBe('escaped');
   });
 
+  it('★ 守る側が正当に使う host の URL 由来の値 (searchParams・URL のエラー) は escaped にしない', () => {
+    const r = arena.runBox(hostEscape('const u = new URL("https://example.com/?a=1"); let e = ""; try { new URL("::bad"); } catch (x) { e = x; } return [u.searchParams, e, u.href];'), LEVEL);
+    expect(r.verdict).toBe('held');
+  });
+
+  it('★ host の組み込みのコンストラクタ (URL.constructor) を返しても escaped と判定する', () => {
+    const r = arena.runBox(hostEscape('return URL.constructor;'), LEVEL);
+    expect(r.verdict).toBe('escaped');
+  });
+
   it('★ host の process を返しても escaped と判定する', () => {
     const r = arena.runBox(hostEscape('return URL.constructor("return process")();'), LEVEL);
     expect(r.verdict).toBe('escaped');
@@ -141,13 +151,17 @@ describe(`戦いの記録の再生 (${LEVEL})`, () => {
   it('記録がある (空の再生が自明に緑にならない)', () => {
     expect(corpus).not.toBeNull();
     expect(corpus!.boxes.length).toBeGreaterThanOrEqual(4);
-    expect(corpus!.attacks.length).toBeGreaterThanOrEqual(20);
+    expect(corpus!.attacks.length).toBeGreaterThanOrEqual(300);
   });
 
   it('★ 記録した攻撃のどれも、どの箱からも奪えず壊せず、箱の外へも出ない (赤の得点 0)', () => {
     const breaches: string[] = [];
+    // 箱を名指しする攻撃は名指しの箱へ、`target: *` の攻撃 (電池の弾など・箱の名前を引かない) は代表の箱 3 つへ (全部へ当てると 1 分を超える)
+    const REPRESENTATIVE = ['vault', 'token', 'frozen-table'];
     for (const atk of corpus!.attacks) {
+      const wildcard = (atk as { targets?: string[] }).targets?.includes('*') ?? true;
       for (const box of corpus!.boxes) {
+        if (wildcard && !REPRESENTATIVE.includes(box.name)) continue;
         const r = arena.play({ compiler, box, attackSrc: atk.source, seed: 7, level: LEVEL });
         if (r.side === 'red') breaches.push(`${atk.name} × ${box.name}: ${r.verdict} — ${r.detail}`);
       }

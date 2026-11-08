@@ -22,7 +22,7 @@ const { spawnSync } = require('node:child_process');
 const { createRequire } = require('node:module');
 
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
-const BOX_JS = path.join(__dirname, 'mamori-arena-box.js');
+const BOX_JS = path.join(__dirname, 'mamori-arena-box.cjs');
 
 function mulberry32(a) {
   return function next() {
@@ -102,6 +102,42 @@ function runBox(payload, level) {
   }
 }
 
+const libCache = new Map();
+/**
+ * 本物の出荷の道と同じに、変換後の TypeScript を型検査する (strict・noUncheckedIndexedAccess)。
+ * Mamori が見るのは来歴だけで、null の絞り込みや型の正しさは `tsc` の仕事 (docs/MAMORI.md) —— ここを飛ばすと
+ * 「本物の道なら tsc が止める」攻撃を赤の得点に数えてしまう (実測: Token | null を印の引数へ渡す形)。
+ */
+function typecheck(ts, outputs) {
+  const virtual = new Map();
+  for (const [p, text] of outputs) virtual.set('/arena/' + path.basename(p), text);
+  const options = { target: ts.ScriptTarget.ES2022, lib: ['lib.es2022.d.ts', 'lib.dom.d.ts'], module: ts.ModuleKind.ESNext, moduleResolution: ts.ModuleResolutionKind.Bundler, strict: true, noUncheckedIndexedAccess: true, skipLibCheck: true, noEmit: true, types: [] };
+  const libDir = path.dirname(ts.getDefaultLibFilePath(options));
+  const host = {
+    getSourceFile: (f, lang) => {
+      if (virtual.has(f)) return ts.createSourceFile(f, virtual.get(f), lang, true);
+      const real = f.startsWith('/arena/') ? null : f;
+      if (real === null) return undefined;
+      if (!libCache.has(real)) libCache.set(real, fs.existsSync(real) ? ts.createSourceFile(real, fs.readFileSync(real, 'utf8'), lang, true) : undefined);
+      return libCache.get(real);
+    },
+    getDefaultLibFileName: (o) => ts.getDefaultLibFilePath(o),
+    getDefaultLibLocation: () => libDir,
+    writeFile: () => {},
+    getCurrentDirectory: () => '/arena',
+    getCanonicalFileName: (f) => f,
+    useCaseSensitiveFileNames: () => true,
+    getNewLine: () => '\n',
+    fileExists: (f) => virtual.has(f) || (!f.startsWith('/arena/') && fs.existsSync(f)),
+    readFile: (f) => (virtual.has(f) ? virtual.get(f) : fs.existsSync(f) ? fs.readFileSync(f, 'utf8') : undefined),
+    directoryExists: (d) => d === '/arena' || fs.existsSync(d),
+    getDirectories: () => [],
+  };
+  const program = ts.createProgram([...virtual.keys()], options, host);
+  const diags = ts.getPreEmitDiagnostics(program).filter((d) => d.file && virtual.has(d.file.fileName));
+  return diags.map((d) => ({ file: path.basename(d.file.fileName), message: ts.flattenDiagnosticMessageText(d.messageText, ' ').slice(0, 160) }));
+}
+
 function toJs(ts, tsSource, name) {
   return ts.transpileModule(tsSource, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 }, fileName: name + '.ts' }).outputText;
 }
@@ -128,6 +164,11 @@ function play({ compiler, box, attackSrc, seed = 1, level = 'strong' }) {
     if (shown.every((d) => /export していません/.test(d.message))) return { verdict: 'n/a', side: 'void', detail: 'この箱には無い名前を引く攻撃 (採点外): ' + formatDiagnostic(shown[0]).slice(0, 120) };
     return { verdict: 'refused', side: 'blue', rules: [...new Set(shown.map((d) => d.rule))], detail: formatDiagnostic(shown[0]) };
   }
+  const tsc = typecheck(ts, both.outputs);
+  // 守る側の箱自身が型を通らないなら箱の欠陥 (採点しない)。攻撃の側が型を通らないなら、本物の道では tsc が止める (青の得点)
+  const boxErr = tsc.find((d) => d.file === 'defender.ts');
+  if (boxErr) return { verdict: 'bad-box', side: 'void', detail: 'tsc (box): ' + boxErr.message };
+  if (tsc.length > 0) return { verdict: 'refused', side: 'blue', rules: ['tsc'], detail: 'tsc: ' + tsc[0].message };
   const contract = JSON.parse(substitute(JSON.stringify(box.spec.contract), data));
   const payload = {
     modules: [
@@ -188,4 +229,4 @@ function tournament({ compiler, boxes, attacks, seed = 1, level = 'strong', onRo
   return { rounds, red: count('red'), blue: count('blue'), void: count('void'), byVerdict };
 }
 
-module.exports = { targetsOf, REPO_ROOT, virtualData, substitute, loadCompiler, play, tournament, loadBoxes, loadAttacks, strongAvailable, runBox };
+module.exports = { typecheck, targetsOf, REPO_ROOT, virtualData, substitute, loadCompiler, play, tournament, loadBoxes, loadAttacks, strongAvailable, runBox };

@@ -66,7 +66,9 @@ if (cmd === 'match') {
   }
   corpus.history.push({ seed, level, boxes: boxes.length, attacks: attacks.length, red: result.red, blue: result.blue, void: result.void, byVerdict: result.byVerdict });
   fs.mkdirSync(path.dirname(corpusPath), { recursive: true });
-  fs.writeFileSync(corpusPath, JSON.stringify(corpus, null, 2) + '\n');
+  // 攻撃の字面には他文字種・双方向制御・不可視文字が入る (それが弾) —— lint:charset と目が混乱しないよう、日本語以外の非 ASCII は \uXXXX で書く
+  const safe = JSON.stringify(corpus, null, 2).replace(/[^\x20-\x7e\n\u3000-\u30ff\u4e00-\u9fff\uff00-\uffef]/g, (c) => '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0'));
+  fs.writeFileSync(corpusPath, safe + '\n');
   console.log(`学習: 箱 ${corpus.boxes.length} / 攻撃 ${corpus.attacks.length} (今回 赤 ${result.red} / 青 ${result.blue} / 採点外 ${result.void})`);
   process.exit(0);
 } else if (cmd === 'replay') {

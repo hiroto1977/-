@@ -29,9 +29,10 @@ function emit(r) {
 }
 
 const FnToString = Function.prototype.toString;
-const HOST_PROTOS = [Object.prototype, Function.prototype, Array.prototype, Error.prototype, Promise.prototype, String.prototype, Number.prototype];
+const HOST_CTORS = [Object, Function, Array, Error, TypeError, Promise, String, Number, Symbol, Proxy, Reflect];
+const HOST_PROTOS = [Object.prototype, Function.prototype, Array.prototype, String.prototype, Number.prototype]; // Error / Promise の原型は host の URL が投げる TypeError などで正当に現れるので入れない
 
-function walk(v, acc, seen, depth) {
+function walk(v, acc, seen, depth, viaAccessor) {
   if (acc.budget-- <= 0) return;
   const t = typeof v;
   if (t === 'string') { const x = v.length > 20000 ? v.slice(0, 20000) : v; acc.strings.push(x); acc.vals.push(x); return; }
@@ -44,25 +45,19 @@ function walk(v, acc, seen, depth) {
   if (v === process || v === globalThis || v === require) { acc.escaped.push('host object reached'); return; }
   let proto = null;
   try { proto = Object.getPrototypeOf(v); } catch { /* ignore */ }
-  if (proto !== null && HOST_PROTOS.includes(proto)) acc.escaped.push('host-realm prototype on a value');
-  // 原型の鎖をたどって外側の箱の Object.prototype に着く値は host の物 (TypeError など直の原型が一覧に無い物も拾う)。守る側に渡した URL の実体だけは正当
-  if (proto !== null && proto !== URL.prototype) {
-    let p = proto;
-    for (let i = 0; p !== null && i < 64; i++) {
-      if (p === Object.prototype) { acc.escaped.push('host-realm object in the prototype chain'); break; }
-      try { p = Object.getPrototypeOf(p); } catch { break; }
-    }
-  }
+  if (!viaAccessor && proto !== null && HOST_PROTOS.includes(proto)) acc.escaped.push('host-realm prototype on a value (' + Object.prototype.toString.call(v) + ' keys=' + Reflect.ownKeys(v).map(String).join(',').slice(0, 80) + ')');
+  // host の組み込みのコンストラクタそのもの (`URL.constructor` などで届く Function / Object ...) は、そこから任意のコードを走らせる口
+  if (!viaAccessor && HOST_CTORS.includes(v)) acc.escaped.push('host-realm constructor reached');
   if (t === 'function') { try { const f = FnToString.call(v); acc.strings.push(f); acc.vals.push(f); } catch { /* ignore */ } }
   if (depth > 8) return;
-  let keys = [];
+  let keys;
   try { keys = Reflect.ownKeys(v); } catch { return; }
   for (const k of keys) {
     acc.strings.push(typeof k === 'symbol' ? k.description || '' : k);
     let d;
     try { d = Reflect.getOwnPropertyDescriptor(v, k); } catch { continue; }
     if (d && 'value' in d) walk(d.value, acc, seen, depth + 1);
-    else if (d) { acc.getters++; if (d.get) walk(d.get, acc, seen, depth + 1); }
+    else if (d) { acc.getters++; if (d.get) walk(d.get, acc, seen, depth + 1, true); } // 組み込みの accessor (Error の stack など) の getter は host の関数なので、host の物に届いた印にはしない (本文だけ読む)
   }
   const tag = Object.prototype.toString.call(v);
   try {
