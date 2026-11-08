@@ -8,6 +8,26 @@
             "k": "call",
             "fn": "row",
             "args": [
+              "\"constructor\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "isSecret",
+            "args": [
+              "\"c\""
+            ]
+          },
+          {
+            "k": "read",
+            "c": "PUBLIC"
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "row",
+            "args": [
               "\"[object Object]\""
             ]
           },
@@ -102,13 +122,47 @@
         "rec-c-5376883820",
         "rec-a-0f512c5b55",
         "rec-b-ed3e9465eb",
-        "rec-c-f27a3db4d0"
+        "rec-c-f27a3db4d0",
+        "rec-a-742a2dd898",
+        "rec-b-45966775e5",
+        "rec-c-d72ea37480"
       ],
-      "generations": 14,
+      "generations": 18,
       "bestFit": 2.45
     },
     "scrubber": {
       "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "scrub",
+            "args": [
+              "\"@@\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "wrap",
+            "args": [
+              "\"c\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "recA",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recB",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recC",
+            "args": []
+          }
+        ],
         [
           {
             "k": "call",
@@ -272,13 +326,26 @@
         "Object",
         "rec-a-79ffbf25e9",
         "rec-b-a3c8af07a1",
-        "rec-c-ae02ff823d"
+        "rec-c-ae02ff823d",
+        "rec-a-9bc63d75e5",
+        "rec-b-8a5ddb80c0",
+        "rec-c-8e8a3175c6",
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
       ],
-      "generations": 14,
+      "generations": 18,
       "bestFit": 2.3
     },
     "async": {
       "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "compare",
+            "args": [
+              "\"prototype\""
+            ]
+          }
+        ],
         [
           {
             "k": "call",
@@ -302,15 +369,6 @@
             "k": "call",
             "fn": "compare",
             "args": [
-              "\"prototype\""
-            ]
-          }
-        ],
-        [
-          {
-            "k": "call",
-            "fn": "compare",
-            "args": [
               "\"c\""
             ]
           }
@@ -320,11 +378,25 @@
         "returned",
         "length"
       ],
-      "generations": 12,
+      "generations": 16,
       "bestFit": 2.1
     },
     "callback-sandbox": {
       "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "publicRecords",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "matches",
+            "args": [
+              "\"token\""
+            ]
+          }
+        ],
         [
           {
             "k": "call",
@@ -395,9 +467,12 @@
         "rec-c-e100138c52",
         "rec-a-28a3f0bfbc",
         "rec-b-ad3961d36d",
-        "rec-c-749ab59364"
+        "rec-c-749ab59364",
+        "rec-a-5a014e78c3",
+        "rec-b-4006193d5a",
+        "rec-c-74de0a5357"
       ],
-      "generations": 12,
+      "generations": 16,
       "bestFit": 2.25
     },
     "cap-object": {
@@ -453,13 +528,40 @@
         "rec-a-1d7889db18",
         "rec-b-5e3e6e8e5e",
         "rec-a-88dab10543",
-        "rec-b-0aaa940749"
+        "rec-b-0aaa940749",
+        "rec-a-711013638e",
+        "rec-b-f36a5d5399"
       ],
-      "generations": 12,
+      "generations": 16,
       "bestFit": 2.3
     },
     "config": {
       "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "label",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "row",
+            "args": [
+              "\"b\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "matches",
+            "args": [
+              "\"0\""
+            ]
+          },
+          {
+            "k": "read",
+            "c": "CONFIG"
+          }
+        ],
         [
           {
             "k": "call",
@@ -552,9 +654,11 @@
         "length",
         "rec-c-d6dd99d463",
         "rec-a-2ad33cbd77",
-        "rec-a-d8d00d813d"
+        "rec-a-d8d00d813d",
+        "rec-a-c18a6b757f",
+        "rec-b-c7cc89ca64"
       ],
-      "generations": 12,
+      "generations": 16,
       "bestFit": 2.35
     },
     "const-closure": {
@@ -641,13 +745,39 @@
         "rec-a-b1bf960b8c",
         "rec-b-2a68050219",
         "rec-b-72c6503b17",
-        "rec-a-e9ddafd1e7"
+        "rec-a-e9ddafd1e7",
+        "rec-b-9dbd2c63b7",
+        "rec-a-e0d778973e"
       ],
-      "generations": 12,
+      "generations": 16,
       "bestFit": 2.25
     },
     "ct-compare": {
       "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "verify",
+            "args": [
+              "\"admin\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "publicRecord",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recB",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recC",
+            "args": []
+          }
+        ],
         [
           {
             "k": "call",
@@ -732,13 +862,40 @@
         "rec-c-32efa40253",
         "rec-a-88dab10543",
         "rec-b-0aaa940749",
-        "rec-c-e9b3c480e0"
+        "rec-c-e9b3c480e0",
+        "rec-a-711013638e",
+        "rec-b-f36a5d5399",
+        "rec-c-e00fb4ee8c"
       ],
-      "generations": 12,
+      "generations": 16,
       "bestFit": 2.25
     },
     "digest-only": {
       "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "matchesPrint",
+            "args": [
+              "\"x\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "rec",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recB",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "recC",
+            "args": []
+          }
+        ],
         [
           {
             "k": "call",
@@ -823,9 +980,12 @@
         "rec-c-309bd321c0",
         "rec-a-1ef6df079a",
         "rec-b-e8ec9a67d2",
-        "rec-c-ce968072c9"
+        "rec-c-ce968072c9",
+        "rec-a-a1625dfb3c",
+        "rec-b-0faf0aea3a",
+        "rec-c-d49efbb9dd"
       ],
-      "generations": 12,
+      "generations": 16,
       "bestFit": 2.25
     },
     "distrust-args": {
@@ -859,13 +1019,30 @@
         "rec-c-e868729098",
         "rec-a-e9ddafd1e7",
         "rec-b-72c6503b17",
-        "rec-c-75188edb68"
+        "rec-c-75188edb68",
+        "rec-a-e0d778973e",
+        "rec-b-9dbd2c63b7",
+        "rec-c-4978514d7b"
       ],
-      "generations": 12,
+      "generations": 16,
       "bestFit": 2.25
     },
     "gate-credential": {
       "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "authenticate",
+            "args": [
+              "\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "ping",
+            "args": []
+          }
+        ],
         [
           {
             "k": "call",
@@ -914,13 +1091,43 @@
         "rec-b-1f050f37b5",
         "length",
         "rec-b-9d83364008",
-        "rec-b-056893b27f"
+        "rec-b-056893b27f",
+        "rec-b-8e061e4d82"
       ],
-      "generations": 12,
+      "generations": 16,
       "bestFit": 2.15
     },
     "lockout-state": {
       "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "tryOpen",
+            "args": [
+              "\"0\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "attemptsLeft",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "note",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "noteB",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "noteC",
+            "args": []
+          }
+        ],
         [
           {
             "k": "call",
@@ -1027,13 +1234,48 @@
         "rec-c-e868729098",
         "rec-a-e9ddafd1e7",
         "rec-b-72c6503b17",
-        "rec-c-75188edb68"
+        "rec-c-75188edb68",
+        "rec-a-e0d778973e",
+        "rec-b-9dbd2c63b7",
+        "rec-c-4978514d7b"
       ],
-      "generations": 12,
+      "generations": 16,
       "bestFit": 2.25
     },
     "map-lookup": {
       "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "get",
+            "args": [
+              "\"a\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "has",
+            "args": [
+              "\"x\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "matches",
+            "args": [
+              "\"hasOwnProperty\""
+            ]
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "get",
+            "args": [
+              "\"c\""
+            ]
+          }
+        ],
         [
           {
             "k": "call",
@@ -1111,27 +1353,53 @@
               "\"x\""
             ]
           }
-        ],
-        [
-          {
-            "k": "chain",
-            "outer": "has",
-            "inner": "get",
-            "args": [
-              "\"x\""
-            ]
-          }
         ]
       ],
       "tokens": [
         "returned",
-        "length"
+        "length",
+        "rec-a-711013638e",
+        "rec-c-e00fb4ee8c"
       ],
-      "generations": 12,
+      "generations": 16,
       "bestFit": 2.1
     },
     "readonly-records": {
       "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "all",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "byName",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "first",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "second",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "third",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "probe",
+            "args": [
+              "\"__proto__\""
+            ]
+          }
+        ],
         [
           {
             "k": "call",
@@ -1246,9 +1514,12 @@
         "rec-c-e100138c52",
         "rec-a-28a3f0bfbc",
         "rec-b-ad3961d36d",
-        "rec-c-749ab59364"
+        "rec-c-749ab59364",
+        "rec-a-5a014e78c3",
+        "rec-b-4006193d5a",
+        "rec-c-74de0a5357"
       ],
-      "generations": 12,
+      "generations": 16,
       "bestFit": 2.25
     },
     "safe-errors": {
@@ -1258,21 +1529,21 @@
             "k": "call",
             "fn": "lookupOrThrow",
             "args": [
-              "\"admin\""
+              "\"@@\""
             ]
           },
           {
             "k": "call",
             "fn": "lookup",
             "args": [
-              "\"toString\""
+              "\"a\""
             ]
           },
           {
             "k": "call",
             "fn": "verify",
             "args": [
-              "\"rec\""
+              "\"toString\""
             ]
           },
           {
@@ -1301,6 +1572,34 @@
             "fn": "verify",
             "args": [
               "\"toString\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "isBusy",
+            "args": []
+          }
+        ],
+        [
+          {
+            "k": "call",
+            "fn": "lookupOrThrow",
+            "args": [
+              "\"b\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "lookup",
+            "args": [
+              "\"toString\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "verify",
+            "args": [
+              "\"rec\""
             ]
           },
           {
@@ -1361,9 +1660,14 @@
         "message",
         "returned",
         "rec-c-3ded9c48cf",
-        "denied"
+        "denied",
+        "rec-c-ce968072c9",
+        "rec-b-e8ec9a67d2",
+        "rec-a-a1625dfb3c",
+        "rec-c-d49efbb9dd",
+        "rec-b-0faf0aea3a"
       ],
-      "generations": 12,
+      "generations": 16,
       "bestFit": 2.5
     },
     "switch-dispatch": {
@@ -1444,13 +1748,28 @@
         "length",
         "rec-a-134250bed4",
         "rec-c-e0f032019b",
-        "rec-b-056893b27f"
+        "rec-b-056893b27f",
+        "rec-b-8e061e4d82"
       ],
-      "generations": 12,
+      "generations": 16,
       "bestFit": 2.1
     },
     "token": {
       "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "issue",
+            "args": [
+              "\"-1\""
+            ]
+          },
+          {
+            "k": "call",
+            "fn": "ping",
+            "args": []
+          }
+        ],
         [
           {
             "k": "call",
@@ -1499,13 +1818,28 @@
         "rec-a-1d823fc668",
         "length",
         "rec-a-ac57e5346f",
-        "rec-a-285172d7a4"
+        "rec-a-285172d7a4",
+        "rec-a-579a4d42e0"
       ],
-      "generations": 12,
+      "generations": 16,
       "bestFit": 2.15
     },
     "two-marks": {
       "elites": [
+        [
+          {
+            "k": "call",
+            "fn": "readerPass",
+            "args": []
+          },
+          {
+            "k": "call",
+            "fn": "adminPass",
+            "args": [
+              "\"__proto__\""
+            ]
+          }
+        ],
         [
           {
             "k": "call",
@@ -1561,7 +1895,7 @@
         "reader",
         "length"
       ],
-      "generations": 12,
+      "generations": 16,
       "bestFit": 2.15
     },
     "unknown-fields": {
@@ -1595,9 +1929,12 @@
         "rec-c-35b0aecc4d",
         "rec-a-57cd9daddf",
         "rec-b-4d924d5fcf",
-        "rec-c-03229d6253"
+        "rec-c-03229d6253",
+        "rec-a-ffca804cde",
+        "rec-b-d81e216016",
+        "rec-c-19554befa7"
       ],
-      "generations": 12,
+      "generations": 16,
       "bestFit": 2.25
     },
     "vault": {
@@ -1643,9 +1980,11 @@
         "rec-b-a153a9dcac",
         "rec-c-10508d7148",
         "rec-b-6569386d5a",
-        "rec-c-f3876df44b"
+        "rec-c-f3876df44b",
+        "rec-b-29f9a84df7",
+        "rec-c-062f97aa5f"
       ],
-      "generations": 12,
+      "generations": 16,
       "bestFit": 2.15
     }
   },
@@ -1688,11 +2027,22 @@
       "gens": 4,
       "pop": 12,
       "boxes": 21,
-      "plays": 973,
+      "plays": 972,
       "red": 0,
-      "caught": 53,
-      "uncaught": 7,
+      "caught": 55,
+      "uncaught": 5,
       "newElites": 16
+    },
+    {
+      "seed": 5,
+      "gens": 4,
+      "pop": 12,
+      "boxes": 21,
+      "plays": 950,
+      "red": 0,
+      "caught": 54,
+      "uncaught": 6,
+      "newElites": 13
     }
   ],
   "lessons": [
@@ -2068,65 +2418,43 @@
       "seed": 2
     },
     {
-      "box": "readonly-records",
-      "op": "leak-fn",
-      "verdict": "stolen",
-      "program": "// target: readonly-records+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(leakNow());\n  return r;\n}\n",
-      "seed": 4
-    },
-    {
       "box": "safe-errors",
       "op": "export-secret",
       "verdict": "stolen",
-      "program": "// target: safe-errors+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(Object.values(SECRET));\n  return r;\n}\n",
+      "program": "// target: safe-errors+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { lookupOrThrow, lookup, verify, isBusy, SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(lookupOrThrow(\"admin\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"length\")); } catch (e) { r.push(e); }\n  try { r.push(verify(\"prototype\")); } catch (e) { r.push(e); }\n  try { r.push(isBusy()); } catch (e) { r.push(e); }\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "seed": 4
     }
   ],
   "gaps": [
     {
-      "box": "frozen-table",
-      "op": "unfreeze",
-      "seed": 1
-    },
-    {
       "box": "cap-object",
       "op": "unfreeze",
-      "seed": 2
+      "seed": 5
     },
     {
       "box": "config",
       "op": "unfreeze",
-      "seed": 2
+      "seed": 5
+    },
+    {
+      "box": "frozen-table",
+      "op": "unfreeze",
+      "seed": 5
     },
     {
       "box": "readonly-records",
       "op": "unfreeze",
-      "seed": 2
+      "seed": 5
     },
     {
       "box": "readonly-records",
       "op": "leak-fn",
-      "seed": 2
-    },
-    {
-      "box": "safe-errors",
-      "op": "export-secret",
-      "seed": 2
+      "seed": 5
     },
     {
       "box": "switch-dispatch",
       "op": "unfreeze",
-      "seed": 2
-    },
-    {
-      "box": "safe-errors",
-      "op": "leak-fn",
-      "seed": 3
-    },
-    {
-      "box": "safe-errors",
-      "op": "leak-prefix",
-      "seed": 3
+      "seed": 5
     }
   ],
   "wins": []

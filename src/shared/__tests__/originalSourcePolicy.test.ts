@@ -209,6 +209,10 @@ const VARIABLE_PATH_ALLOWED: Readonly<Record<string, { count: number; why: strin
     count: 13,
     why: 'この census の母集団は `readFile` の呼び出しそのものなので、台帳の needle と標本が**数える綴りを引用する**。実際の読みは `readOriginalSource` だけを通しており、引用は文字列リテラルで走らない —— 綴りを分割して走査を避けるより、理由つきで載せる方が読める (パス 326)。**件数は 2026-09-25 (パス 462) に 6 → 9 へ実測で直した** —— 自前の注記除去が glob の `**` から始まる偽の注記で 45 行を食っており、その中の引用 3 件が見えていなかった。**2026-10-29 (パス 553) に 9 → 12** —— `selfAttestation.ts` の読み 3 件 (表・同梱ファイル・stat) を台帳に載せたので、その needle の引用が 3 件増えた。**2026-10-30 (パス 566-C) に 12 → 13** —— `package.json` を読む needle を 1 つ載せた分 (T-228。綴りはこの検査自身が生の読みと数えるので再現しない)',
   },
+  'src/shared/mamori/__tests__/mamoriArena.test.ts': {
+    count: 1,
+    why: '**この検査自身は 1 度も生で読まない** —— 当たっているのは、箱の中から host の fs へ届こうとする攻撃のコード文字列 (`F("return require(\\"fs\\")…")`) の中の綴りで、外側の箱が閉じていることを見る対照の一部。記録 (corpus / evolution) の読みは `readOriginalSource` を通している (パス 572 · 対戦場)',
+  },
   'src/shared/__tests__/trackedPopulationWitness.test.ts': {
     count: 1,
     why: '**この検査自身は 1 度も読まない** —— 当たっているのは子プロセスへ渡すコード文字列の中の `readdirSync` で、'

@@ -100,7 +100,7 @@ function mutate(genome, api, rng) {
   const r = rng();
   if (r < 0.35 || g.length === 0) {
     const m = randomMove(api, rng);
-    if (m && g.length < 6) g.splice(Math.floor(rng() * (g.length + 1)), 0, m);
+    if (m && g.length < 16) g.splice(Math.floor(rng() * (g.length + 1)), 0, m);
   } else if (r < 0.55 && g.length > 1) {
     g.splice(Math.floor(rng() * g.length), 1);
   } else {
@@ -117,7 +117,7 @@ function mutate(genome, api, rng) {
 
 function crossover(a, b, rng) {
   const cut = Math.floor(rng() * (a.length + 1));
-  return [...a.slice(0, cut), ...b.slice(Math.floor(rng() * (b.length + 1)))].slice(0, 6);
+  return [...a.slice(0, cut), ...b.slice(Math.floor(rng() * (b.length + 1)))].slice(0, 16);
 }
 
 /** 1 戦の点: 型で止まる 0〜1 < 実行まで通る 2 + 新しい語 < 赤の勝ち 100。 */
@@ -142,7 +142,7 @@ function evolveRed({ compiler, box, gens, pop, seed, elites = [], seen = new Set
   let population = elites.slice(0, 4);
   while (population.length < pop) { const m = randomMove(api, rng); if (m) population.push([m]); else break; }
   // 全関数を 1 回ずつ呼ぶ探り役 (prober) は毎回入れる。新しく export された名前を取りこぼさない。
-  const prober = api.fns.map((f) => ({ k: 'call', fn: f.name, args: f.params.map((p) => literal(p, rng)) })).concat(api.consts.map((c) => ({ k: 'read', c }))).slice(0, 6);
+  const prober = api.fns.map((f) => ({ k: 'call', fn: f.name, args: f.params.map((p) => literal(p, rng)) })).concat(api.consts.map((c) => ({ k: 'read', c }))).slice(0, 16);
   if (prober.length > 0) population.unshift(prober);
   const wins = [];
   const scored = new Map();

@@ -1,8 +1,9 @@
 import { createRequire } from 'node:module';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import ts from 'typescript';
 import { compileProject, formatDiagnostic } from '../compile';
+import { readOriginalSource } from '../../__tests__/originalSource';
 
 /*
  * **Mamori の対戦場の審判と、戦いの記録の再生** (2026-11-08 · 対戦)。
@@ -203,6 +204,20 @@ describe(`自律学習・自律進化 (${LEVEL})`, () => {
     for (const b of blue) expect(b.caught, `${b.op} を赤が捕まえられなかった`).toBe(true);
   });
 
+  it('★ 関数が多い箱でも、足された最後の漏えい口を探り役が見逃さない (盲点の回帰: 探り役の長さを 6 で切っていた)', () => {
+    const fns = Array.from({ length: 9 }, (_, i) => `export fn f${i}() -> string { return "@@REC_A@@"; }`).join('\n');
+    const wide = { name: 'wide', source: `const SECRET = "@@SECRET@@";\n${fns}\n`, spec: { contract: [{ fn: 'f0', args: [], expect: '@@REC_A@@' }] } };
+    const blue = evo.evolveBlue({ compiler, box: wide, seed: 2, level: LEVEL });
+    expect(blue.length).toBeGreaterThan(0);
+    for (const b of blue) expect(b.caught, `${b.op} を赤が捕まえられなかった`).toBe(true);
+  });
+
+  it('★ 1 つの呼び出しが例外を投げても、後ろの動きは走る (盲点の回帰: 投げる関数が先にある箱の漏えい口を見逃した)', () => {
+    const throwing = { name: 'throwing', source: 'const SECRET = "@@SECRET@@";\nexport fn boom() -> string { throw new Error("denied"); }\nexport fn ok() -> string { return "@@REC_A@@"; }\n', spec: { contract: [{ fn: 'ok', args: [], expect: '@@REC_A@@' }] } };
+    const blue = evo.evolveBlue({ compiler, box: throwing, seed: 2, level: LEVEL });
+    for (const b of blue) expect(b.caught, `${b.op} を赤が捕まえられなかった`).toBe(true);
+  });
+
   it('API の無い箱は進化させない (空の進化が緑にならない)', () => {
     const r = evo.evolveRed({ compiler, box: { name: 'empty', source: 'const X = 1;\n', spec: { contract: [] } }, gens: 1, pop: 4, seed: 1, level: LEVEL });
     expect(r.skipped).toBeTruthy();
@@ -211,7 +226,7 @@ describe(`自律学習・自律進化 (${LEVEL})`, () => {
   it('進化の記録 (evolution.json) がある・赤の勝ちは 0・青の弱体化の教訓が残っている', () => {
     const p = `${arena.REPO_ROOT}/security/mamori-arena/evolution.json`;
     expect(existsSync(p)).toBe(true);
-    const e = JSON.parse(readFileSync(p, 'utf8')) as { wins: unknown[]; lessons: { box: string; op: string }[]; history: unknown[]; boxes: Record<string, { elites: unknown[] }> };
+    const e = JSON.parse(readOriginalSource(p)) as { wins: unknown[]; lessons: { box: string; op: string }[]; history: unknown[]; boxes: Record<string, { elites: unknown[] }> };
     expect(e.wins).toEqual([]);
     expect(e.history.length).toBeGreaterThan(0);
     expect(e.lessons.length).toBeGreaterThan(0);
@@ -221,7 +236,7 @@ describe(`自律学習・自律進化 (${LEVEL})`, () => {
 
 describe(`戦いの記録の再生 (${LEVEL})`, () => {
   const path = `${arena.REPO_ROOT}/security/mamori-arena/corpus.json`;
-  const corpus: CorpusFile | null = existsSync(path) ? (JSON.parse(readFileSync(path, 'utf8')) as CorpusFile) : null;
+  const corpus: CorpusFile | null = existsSync(path) ? (JSON.parse(readOriginalSource(path)) as CorpusFile) : null;
 
   it('記録がある (空の再生が自明に緑にならない)', () => {
     expect(corpus).not.toBeNull();
