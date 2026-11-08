@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 /**
- * Mamori の対戦場の CLI (2026-11-08 · 対戦)。仕組みは `scripts/lib/mamori-arena.cjs`、規則は `docs/MAMORI_ARENA.md`。
+ * Mamori の対戦場の CLI (2026-11-08 · 対戦)。仕組みは `scripts/lib/mamori-arena-judge.cjs`、規則は `docs/MAMORI_ARENA.md`。
  *
  *   node scripts/mamori-arena.cjs match --box <name.box.mamori> --attack <name.attack.mamori> [--seed N] [--level strong|permission]
  *   node scripts/mamori-arena.cjs tournament --boxes <dir> --attacks <dir> [--out result.json] [--seed N]
@@ -14,7 +14,7 @@
  */
 const fs = require('node:fs');
 const path = require('node:path');
-const arena = require('./lib/mamori-arena.cjs');
+const arena = require('./lib/mamori-arena-judge.cjs');
 
 const argv = process.argv.slice(2);
 const cmd = argv[0];

@@ -865,7 +865,7 @@ const KNOWN_SUPPRESSIONS = [
   // (`unshare -rn node --permission` の子プロセス) の中で戦わせる審判。**箱を別プロセスに作らずには成り立たない**
   // (vm は安全境界ではないので外側の箱が要る)。引数は固定の配列でシェルを経由せず、渡す物は仮想データの JSON だけ
   // (標準入力)、環境変数は空。箱の中の物は本物の秘密を 1 つも持たない。1 件は呼び出し。
-  'child_process exec/spawn :: scripts/lib/mamori-arena.cjs :: 1',
+  'child_process exec/spawn :: scripts/lib/mamori-arena-judge.cjs :: 1',
   // 実物のデスクトップアプリを起動する道具。`electron .` を子プロセスで
   // 立ち上げ、8 秒生きているかと致命的な出力の有無を見る。起動そのものを
   // 確かめるのが目的なので、プロセスを作らずには成り立たない。

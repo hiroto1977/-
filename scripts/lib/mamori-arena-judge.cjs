@@ -197,7 +197,7 @@ function loadBoxes(dir) {
 
 /** 攻撃の先頭の `// target: a,b` (箱の名前・`*` は全部) —— 無ければ全部の箱が相手。 */
 function targetsOf(source) {
-  const m = /^\s*\/\/\s*target:\s*([^\n]+)/m.exec(source.split('\n').slice(0, 6).join('\n'));
+  const m = /\/\/\s*target:\s*([^\n]+)/m.exec(source.split('\n').slice(0, 6).join('\n'));
   return m ? m[1].split(',').map((x) => x.trim()).filter(Boolean) : ['*'];
 }
 

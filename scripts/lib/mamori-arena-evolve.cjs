@@ -11,7 +11,7 @@
  *
  * 判定は `mamori-arena.cjs` の審判をそのまま使う (新しい物差しを作らない)。種を決めれば同じ結果になる。
  */
-const arena = require('./mamori-arena.cjs');
+const arena = require('./mamori-arena-judge.cjs');
 
 function mulberry32(a) {
   return function next() {

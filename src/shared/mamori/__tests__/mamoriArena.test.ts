@@ -8,7 +8,7 @@ import { readOriginalSource } from '../../__tests__/originalSource';
 /*
  * **Mamori の対戦場の審判と、戦いの記録の再生** (2026-11-08 · 対戦)。
  *
- * 対戦場 (`scripts/lib/mamori-arena.cjs`) は、守る側 (仮想データを持つ Mamori の箱) と攻める側 (Mamori の攻撃) を
+ * 対戦場 (`scripts/lib/mamori-arena-judge.cjs`) は、守る側 (仮想データを持つ Mamori の箱) と攻める側 (Mamori の攻撃) を
  * 外側の箱 (`unshare -rn node --permission` の子プロセス) の中の vm で戦わせる。この検査は 3 つを見る:
  *
  * 1. **審判の物差し** —— わざと秘密を返す箱は `stolen`、正直な呼び出しは `held`、`.constructor` は `refused` (M0)、
@@ -24,7 +24,7 @@ import { readOriginalSource } from '../../__tests__/originalSource';
  */
 
 const require_ = createRequire(import.meta.url);
-const arena = require_('../../../../scripts/lib/mamori-arena.cjs') as {
+const arena = require_('../../../../scripts/lib/mamori-arena-judge.cjs') as {
   play: (o: { compiler: unknown; box: unknown; attackSrc: string; seed?: number; level?: string }) => { verdict: string; side: string; detail: string; rules?: string[] };
   runBox: (payload: unknown, level: string) => { verdict: string; detail: string };
   strongAvailable: () => boolean;

@@ -119,6 +119,8 @@ const TS_LOADER_SCRIPTS: Readonly<Record<string, readonly string[]>> = {
   'build-ontology-md.cjs': ['render', 'loadRenderer', 'selfTest'],
   // 2026-10-30 (パス 560): Mamori の CLI。.ts の読み手を登録するのは loadCompiler だけ (sources は走査だけ)。
   'mamori.cjs': ['loadCompiler'],
+  // 2026-11-08 (対戦場): Mamori の対戦場の審判。同じく .ts の読み手を登録するのは loadCompiler だけ。
+  'mamori-arena-judge.cjs': ['loadCompiler'],
 };
 
 /** 規則 5 の例外 —— 検査の中でその口を呼んでよい所。鍵は `ファイル → 関数`。**両方向**。 */
@@ -574,7 +576,8 @@ describe('検査の中でモジュールを初めて評価しない (母集団�
       'Module._extensions[...] へ読み手を登録する script が増えた/減った: TS_LOADER_SCRIPTS を直すこと',
     ).toEqual(Object.keys(TS_LOADER_SCRIPTS).sort());
     for (const [script, names] of Object.entries(TS_LOADER_SCRIPTS)) {
-      const code = stripComments(readOriginalSource(path.join(REPO, 'scripts', script)));
+      const home = ['scripts', 'scripts/lib'].find((d) => readOriginalDirEntries(path.join(REPO, d)).some((e) => e.name === script)) ?? 'scripts';
+      const code = stripComments(readOriginalSource(path.join(REPO, home, script)));
       const exported = /module\.exports\s*=\s*\{([^}]*)\}/.exec(code)?.[1] ?? '';
       for (const name of names) {
         expect(new RegExp(`\\b${name}\\b`).test(exported), `${script} の module.exports に ${name} が在る`).toBe(true);
