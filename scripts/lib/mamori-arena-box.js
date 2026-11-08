@@ -45,6 +45,14 @@ function walk(v, acc, seen, depth) {
   let proto = null;
   try { proto = Object.getPrototypeOf(v); } catch { /* ignore */ }
   if (proto !== null && HOST_PROTOS.includes(proto)) acc.escaped.push('host-realm prototype on a value');
+  // 原型の鎖をたどって外側の箱の Object.prototype に着く値は host の物 (TypeError など直の原型が一覧に無い物も拾う)。守る側に渡した URL の実体だけは正当
+  if (proto !== null && proto !== URL.prototype) {
+    let p = proto;
+    for (let i = 0; p !== null && i < 64; i++) {
+      if (p === Object.prototype) { acc.escaped.push('host-realm object in the prototype chain'); break; }
+      try { p = Object.getPrototypeOf(p); } catch { break; }
+    }
+  }
   if (t === 'function') { try { const f = FnToString.call(v); acc.strings.push(f); acc.vals.push(f); } catch { /* ignore */ } }
   if (depth > 8) return;
   let keys = [];
