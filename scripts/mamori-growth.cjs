@@ -228,7 +228,7 @@ function buildBrief({ ledger, files, now }) {
   lines.push('', '## 壁ごとの足りない構文 (heuristic —— 移せるかは書いて mamori:build が通るかで決まる)', '', '| 壁 | 行 | 移せるか | 足りない構文 (足す候補 / 書き直す) |', '|---|---:|---|---|');
   for (const m of measured) {
     const counted = m.missing.map((id) => `${id}${decisionOf(ledger, id) === 'rewrite' ? '↻' : ''}×${m.counts[id]}`).join(' ') || '—';
-    const label = m.blocked === null ? counted : `${counted} ⛔ 移せない: ${m.blocked.replace(/\|/g, '\\|').replace(/\s+/g, ' ')}`;
+    const label = m.blocked === null ? counted : `${counted} ⛔ 移せない: ${m.blocked.split('|').join('/').replace(/\s+/g, ' ')}`;
     lines.push(`| \`${m.path}\` | ${m.lines} | ${m.portable ? '✅' : '—'} | ${label} |`);
   }
   lines.push('', '_↻ は言語に置かないと決めた構文 (書き直して避ける)。_', '', '## 足す候補の構文 (順位)', '');
