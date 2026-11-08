@@ -1,0 +1,157 @@
+import { createRequire } from 'node:module';
+import { existsSync, readFileSync } from 'node:fs';
+import { describe, expect, it } from 'vitest';
+import ts from 'typescript';
+import { compileProject, formatDiagnostic } from '../compile';
+
+/*
+ * **Mamori の対戦場の審判と、戦いの記録の再生** (2026-11-08 · 対戦)。
+ *
+ * 対戦場 (`scripts/lib/mamori-arena.cjs`) は、守る側 (仮想データを持つ Mamori の箱) と攻める側 (Mamori の攻撃) を
+ * 外側の箱 (`unshare -rn node --permission` の子プロセス) の中の vm で戦わせる。この検査は 3 つを見る:
+ *
+ * 1. **審判の物差し** —— わざと秘密を返す箱は `stolen`、正直な呼び出しは `held`、`.constructor` は `refused` (M0)、
+ *    箱が自分の約束を破っていれば `bad-box`。物差しが鳴らなければ、戦いの結果を信用できない (対照)。
+ * 2. **箱の閉じ方** —— Mamori を通さない生の JS で内側の箱から host の Function へ届いても (最悪の攻め)、
+ *    ファイルの読み書き・子プロセス・ワーカーは閉じていて、host の canary / process に触れれば `escaped` と判定される。
+ * 3. **戦いの記録の再生** —— `security/mamori-arena/corpus.json` に残した攻撃 (過去に破れた物は直した後の姿) を、
+ *    すべての箱に当てて、攻める側の得点が 0 のままであること。**新しい穴が塞がれたあとの回帰の網**で、戦いのデータが
+ *    言語の学習 (規則の追加の根拠) になる出口である。
+ *
+ * ネットワークまで閉じる箱 (`strong`) はこの環境に `unshare` が無いと使えない。CI で使えないときは `permission` の箱で
+ * 同じ検査を行い、どちらの強さで走ったかを題名に出す (弱い箱で黙って強い箱の結果を名乗らない)。
+ */
+
+const require_ = createRequire(import.meta.url);
+const arena = require_('../../../../scripts/lib/mamori-arena.cjs') as {
+  play: (o: { compiler: unknown; box: unknown; attackSrc: string; seed?: number; level?: string }) => { verdict: string; side: string; detail: string; rules?: string[] };
+  runBox: (payload: unknown, level: string) => { verdict: string; detail: string };
+  strongAvailable: () => boolean;
+  REPO_ROOT: string;
+};
+
+const compiler = { compileProject, formatDiagnostic, ts };
+const LEVEL = arena.strongAvailable() ? 'strong' : 'permission';
+
+const VAULT = {
+  name: 'vault',
+  source: 'const SECRET = "@@SECRET@@";\nconst REC = "@@REC_A@@";\nexport fn lookup(id: string) -> string {\n  if (id === "a") { return REC; }\n  return "";\n}\nexport fn check(g: string) -> boolean { return g === SECRET; }\n',
+  spec: { contract: [{ fn: 'lookup', args: ['a'], expect: '@@REC_A@@' }, { fn: 'check', args: ['x'], expect: false }] },
+};
+const LEAKY = {
+  name: 'leaky',
+  source: 'const SECRET = "@@SECRET@@";\nexport const shared = { a: "@@REC_A@@" };\nexport fn lookup(id: string) -> string { return shared.a; }\nexport fn dump() -> string { return SECRET; }\n',
+  spec: { contract: [{ fn: 'lookup', args: ['a'], expect: '@@REC_A@@' }] },
+};
+
+const play = (box: unknown, attackSrc: string, seed = 11) => arena.play({ compiler, box, attackSrc, seed, level: LEVEL });
+
+describe(`対戦場の審判 (${LEVEL} の箱)`, () => {
+  it('★ 正直な呼び出しは held (青の得点)', () => {
+    const r = play(VAULT, 'use { lookup } from "./defender";\nexport fn attack() -> unknown { return lookup("a"); }\n');
+    expect(r.verdict).toBe('held');
+    expect(r.side).toBe('blue');
+  });
+
+  it('★ 秘密を返す箱は stolen (赤の得点) —— 物差しが鳴る対照', () => {
+    const r = play(LEAKY, 'use { dump } from "./defender";\nexport fn attack() -> unknown { return dump(); }\n');
+    expect(r.verdict).toBe('stolen');
+    expect(r.side).toBe('red');
+    expect(r.detail).not.toContain('sec_'); // 判定の文に秘密そのものを刷らない
+  });
+
+  it('★ 秘密を 1 字ずつ・逆順・文字コードで返しても stolen (断片・変形も数える)', () => {
+    const dump = 'use { dump } from "./defender";\n';
+    const rev = play(LEAKY, dump + 'export fn attack() -> unknown {\n  const s = dump();\n  const out: string[] = [];\n  for (const c of s) { out.push(c); }\n  return out.reverse();\n}\n');
+    expect(rev.verdict).toBe('stolen');
+    const codes = play(LEAKY, dump + 'export fn attack() -> unknown {\n  const s = dump();\n  const out: number[] = [];\n  for (const c of s) { out.push(c.charCodeAt(0)); }\n  return out;\n}\n');
+    expect(codes.verdict).toBe('stolen');
+  });
+
+  it('★ .constructor はコンパイラが断る (M0) —— 青の得点', () => {
+    const r = play(VAULT, 'use { lookup } from "./defender";\nexport fn attack() -> unknown { return lookup.constructor("return 1"); }\n');
+    expect(r.verdict).toBe('refused');
+    expect(r.rules).toContain('M0');
+  });
+
+  it('この箱に無い名前を引く攻撃は採点しない (n/a)', () => {
+    const r = play(VAULT, 'use { dump } from "./defender";\nexport fn attack() -> unknown { return dump(); }\n');
+    expect(r.verdict).toBe('n/a');
+    expect(r.side).toBe('void');
+  });
+
+  it('箱が自分の約束を破っていれば bad-box (採点しない)', () => {
+    const broken = { ...VAULT, spec: { contract: [{ fn: 'lookup', args: ['a'], expect: 'this-is-not-the-record' }] } };
+    const r = play(broken, 'use { lookup } from "./defender";\nexport fn attack() -> unknown { return 1; }\n');
+    expect(r.verdict).toBe('bad-box');
+    expect(r.side).toBe('void');
+  });
+});
+
+describe(`箱の閉じ方 (${LEVEL})`, () => {
+  const hostEscape = (body: string) => ({
+    contract: [],
+    secrets: [['SECRET', 'sec_zzzzzzzzzzzzzzzzzzzzzzzz']],
+    hostCanary: 'HOSTCANARY-test0000',
+    timeoutMs: 3000,
+    modules: [{ name: 'defender', js: 'exports.f = function () { return 1; };' }, { name: 'attack', js: 'exports.attack = function () {' + body + '};' }],
+  });
+
+  it('★ 内側の箱から host の Function に届いても、host の canary を読めば escaped と判定する', () => {
+    const r = arena.runBox(hostEscape('return URL.constructor("return globalThis.__ARENA_HOST_CANARY__")();'), LEVEL);
+    expect(r.verdict).toBe('escaped');
+  });
+
+  it('★ host の process を返しても escaped と判定する', () => {
+    const r = arena.runBox(hostEscape('return URL.constructor("return process")();'), LEVEL);
+    expect(r.verdict).toBe('escaped');
+  });
+
+  it('★ host の Function に届いても、ファイルの読み書き・子プロセス・ワーカーは閉じている (外側の箱)', () => {
+    const probe =
+      'const F = URL.constructor; const out = {};\n' +
+      'const t = (k, f) => { try { f(); out[k] = "REACHED"; } catch (e) { out[k] = "DENIED:" + (e && e.code); } };\n' +
+      't("fsRead", () => F("return require(\\"fs\\").readFileSync(\\"/etc/hostname\\", \\"utf8\\")")());\n' +
+      't("fsWrite", () => F("require(\\"fs\\").writeFileSync(\\"/tmp/mamori-arena-escape-proof\\", \\"x\\")")());\n' +
+      't("child", () => F("return require(\\"child_process\\").execSync(\\"id\\")")());\n' +
+      't("worker", () => F("new (require(\\"worker_threads\\").Worker)(\\"1\\", { eval: true })")());\n' +
+      'return JSON.stringify(out);';
+    const r = arena.runBox(hostEscape(probe), LEVEL);
+    expect(r.verdict).toBe('held'); // 秘密も canary も返していない
+    for (const k of ['fsRead', 'fsWrite', 'child', 'worker']) expect(r.detail).toContain('"' + k + '":"DENIED:ERR_ACCESS_DENIED"');
+    expect(r.detail).not.toContain('REACHED');
+    expect(existsSync('/tmp/mamori-arena-escape-proof')).toBe(false);
+  });
+
+  it('無限ループは外側で打ち切る (hang・採点しない)', () => {
+    const r = arena.runBox(hostEscape('for (;;) {}'), LEVEL);
+    expect(r.verdict).toBe('hang');
+  });
+});
+
+interface CorpusFile {
+  boxes: { name: string; source: string; spec: { contract: unknown[] } }[];
+  attacks: { name: string; source: string; firstVerdict: string }[];
+}
+
+describe(`戦いの記録の再生 (${LEVEL})`, () => {
+  const path = `${arena.REPO_ROOT}/security/mamori-arena/corpus.json`;
+  const corpus: CorpusFile | null = existsSync(path) ? (JSON.parse(readFileSync(path, 'utf8')) as CorpusFile) : null;
+
+  it('記録がある (空の再生が自明に緑にならない)', () => {
+    expect(corpus).not.toBeNull();
+    expect(corpus!.boxes.length).toBeGreaterThanOrEqual(4);
+    expect(corpus!.attacks.length).toBeGreaterThanOrEqual(20);
+  });
+
+  it('★ 記録した攻撃のどれも、どの箱からも奪えず壊せず、箱の外へも出ない (赤の得点 0)', () => {
+    const breaches: string[] = [];
+    for (const atk of corpus!.attacks) {
+      for (const box of corpus!.boxes) {
+        const r = arena.play({ compiler, box, attackSrc: atk.source, seed: 7, level: LEVEL });
+        if (r.side === 'red') breaches.push(`${atk.name} × ${box.name}: ${r.verdict} — ${r.detail}`);
+      }
+    }
+    expect(breaches).toEqual([]);
+  }, 600_000);
+});
