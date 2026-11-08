@@ -1,3 +1,5 @@
+// 生成物 —— src/shared/httpLimits.mamori から Mamori のコンパイラが組んだ。手で編集しない (`npm run mamori:build`)。
+// 言語の仕様は docs/MAMORI.md。生成物が元と食い違えば src/shared/mamori/__tests__/mamoriGenerated.test.ts が落ちる。
 /**
  * 外部からの応答に**上限と待ち時間**を置く —— アプリ全体で 1 つだけ持つ。
  *
@@ -56,6 +58,8 @@
  * `> maxBytes` で落とす (`>=` ではない)。上限は「ここまでは受け取る」値
  * なので、ちょうどのものを落とすと境界の意味が 1 バイトずれる。
  */
+
+import { hostIsNoCors, hostHeader, hostIsResponse, hostBodyReader, hostReadChunk, hostCancelReader, hostDecodeChunks, hostChunkLength, hostDeadline, hostClearTimer } from './httpLimitsHost';
 
 /**
  * 応答本文の上限。10MiB。
@@ -129,7 +133,7 @@ export const MAX_AI_CHAT_RESPONSE_BYTES = 2 * 1024 * 1024;
  * 定数から出すには先にここへ置く必要が在った。応答の上限
  * ({@link MAX_OLLAMA_RESPONSE_BYTES}) がパス 336 で同じ理由でここへ来ている。
  */
-export const DEFAULT_HTTP_TIMEOUT_MS = 30_000;
+export const DEFAULT_HTTP_TIMEOUT_MS = 30000;
 
 /**
  * **端末内の Ollama に 1 回の生成を許す時間。2 分。両ビルドで 1 つ。**
@@ -182,7 +186,7 @@ export const DEFAULT_HTTP_TIMEOUT_MS = 30_000;
  * 値が揃っているかは要求しない。だから**揃っていない所は人が見つけるしか
  * 無く、実際に 1 件在った**のがこのパスである。
  */
-export const OLLAMA_CHAT_TIMEOUT_MS = 120_000;
+export const OLLAMA_CHAT_TIMEOUT_MS = 120000;
 
 /**
  * ## 転送 (3xx) には追随しない (2026-09-17 · パス 301)
@@ -221,6 +225,11 @@ export const OLLAMA_CHAT_TIMEOUT_MS = 120_000;
  */
 export const REDIRECT_STATUSES: ReadonlySet<number> = new Set([301, 302, 303, 307, 308]);
 
+/** 転送への追随の設定 (`egressInit` が重ねる欄)。 */
+export interface EgressRedirect {
+  readonly redirect: 'manual' | 'follow';
+}
+
 /**
  * 外へ出る fetch の初期化に「転送へ追随しない」を重ねる。他の欄は変えない。
  *
@@ -245,8 +254,8 @@ export const REDIRECT_STATUSES: ReadonlySet<number> = new Set([301, 302, 303, 30
  * 在るからで、呼ぶ側は何も知らなくてよい (`egressRedirectCensus.test.ts` は
  * 'follow' を書く場所がこの枝 1 つであることも留める)。
  */
-export function egressInit<T extends RequestInit>(init: T): T & { redirect: 'manual' | 'follow' } {
-  if (init.mode === 'no-cors') return { ...init, redirect: 'follow' };
+export function egressInit<T>(init: T): T & EgressRedirect {
+  if (hostIsNoCors(init)) return { ...init, redirect: 'follow' };
   return { ...init, redirect: 'manual' };
 }
 
@@ -275,9 +284,7 @@ export function redirectRefusal(res: Response, requestUrl: string, label: string
       // 観測できない等価変異 (ブロックを空にする変異体) として残る (パス 501)。
     }
   }
-  return host === ''
-    ? `${label} が別の場所へ転送しようとしました —— 追随しません (送り先の関門は最初の 1 ホップにしか掛からないため)`
-    : `${label} が別の場所 (${host}) へ転送しようとしました —— 追随しません (送り先の関門は最初の 1 ホップにしか掛からないため)`;
+  return host === '' ? label + ' が別の場所へ転送しようとしました —— 追随しません (送り先の関門は最初の 1 ホップにしか掛からないため)' : label + ' が別の場所 (' + host + ') へ転送しようとしました —— 追随しません (送り先の関門は最初の 1 ホップにしか掛からないため)';
 }
 
 /**
@@ -302,49 +309,42 @@ export function redirectRefusal(res: Response, requestUrl: string, label: string
  * ほうである) が、**注記でしか結ばれていない対は必ずほどける**。
  * ここへ畳めば、今在る呼び出しも今後増える呼び出しも両方の門を通る。
  */
-export async function readBodyWithCap(
-  res: Response,
-  maxBytes: number,
-  label: string,
-): Promise<string> {
+export async function readBodyWithCap(res: Response, maxBytes: number, label: string): Promise<string> {
   // 先手の門: 相手が正直に大きさを宣言しているなら、開ける前に落とす。
   const declared = declaredLengthExceeds(res, maxBytes);
   if (declared !== null) {
-    throw new Error(`${label} response too large (${declared} > ${maxBytes} bytes)`);
+    throw new Error(label + ' response too large (' + declared + ' > ' + maxBytes + ' bytes)');
   }
-  if (!res.body) {
+  const reader = hostBodyReader(res);
+  if (reader === null) {
     const t = await res.text();
     if (t.length > maxBytes) {
-      throw new Error(`${label} response too large (${t.length} > ${maxBytes} bytes)`);
+      throw new Error(label + ' response too large (' + t.length + ' > ' + maxBytes + ' bytes)');
     }
     return t;
   }
-  const reader = res.body.getReader();
   const chunks: Uint8Array[] = [];
   let total = 0;
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
+  while (true) {
+    const step = await hostReadChunk(reader);
+    if (step.done) {
+      break;
+    }
+    const value = step.value;
     // Stryker disable next-line ConditionalExpression: value が無い読み出しでは byteLength も
     // push も無意味で、次のループへ進むだけ。分岐の有無で結果が変わらない (等価変異)。
     if (value) {
-      total += value.byteLength;
+      total = total + hostChunkLength(value);
       // Stryker disable next-line EqualityOperator: total は 1 バイト単位で増えるが、上限ちょうどで
       // 止めるか超えてから止めるかは、上限 10MiB に対して観測できる差にならない。
       if (total > maxBytes) {
-        reader.cancel().catch(() => {});
-        throw new Error(`${label} response too large (>${maxBytes} bytes)`);
+        hostCancelReader(reader);
+        throw new Error(label + ' response too large (>' + maxBytes + ' bytes)');
       }
       chunks.push(value);
     }
   }
-  const buf = new Uint8Array(total);
-  let off = 0;
-  for (const c of chunks) {
-    buf.set(c, off);
-    off += c.byteLength;
-  }
-  return new TextDecoder().decode(buf);
+  return hostDecodeChunks(chunks, total);
 }
 
 /**
@@ -392,11 +392,7 @@ export async function readBodyWithCap(
  * ので、読めなかった / 大きすぎたは同じ「詳細なし」に畳んでよい。
  * 畳んでよくないのは**読む量**のほうである。
  */
-export async function readFailureBody(
-  res: Response,
-  label: string,
-  maxBytes: number = MAX_HTTP_RESPONSE_BYTES,
-): Promise<string> {
+export async function readFailureBody(res: Response, label: string, maxBytes: number = MAX_HTTP_RESPONSE_BYTES): Promise<string> {
   return readBodyWithCap(res, maxBytes, label).catch(() => '');
 }
 
@@ -426,7 +422,7 @@ export function isOverCap(e: unknown): boolean {
  * 何もせず、byte 単位の門に委ねる。
  */
 export function declaredLengthExceeds(res: Response, maxBytes: number): number | null {
-  const raw = res.headers?.get?.('content-length');
+  const raw = hostHeader(res, 'content-length');
   const cl = raw ? Number(raw) : 0;
   // Stryker disable next-line ConditionalExpression,EqualityOperator,LogicalOperator: `cl > 0` は
   // **結果を変えない** —— 負値も 0 も `> maxBytes` が false になるため、落としても
@@ -442,8 +438,6 @@ export function declaredLengthExceeds(res: Response, maxBytes: number): number |
  * 呼び出し側が既に signal を持っているときは合成する —— 自前の timeout を
  * 足したせいで、上位の打ち切りが効かなくなるのを避ける。
  * (`AbortSignal.any` は Node 20+ / Electron 43 のどちらにも在る。)
- */
-/**
  * **`Response` を返さねばならない経路のための締切。**
  *
  * `withTimeout` は `fn` が解決した時点で timer を落とす。これは「本文を
@@ -462,77 +456,36 @@ export function declaredLengthExceeds(res: Response, maxBytes: number): number |
  * `timeoutMs` のあいだ timer が 1 つ残ること。Node では `unref()` して
  * プロセスを起こし続けないようにする (ブラウザの timer は数値なので何もしない)。
  */
-export function withBodyDeadline(
-  timeoutMs: number,
-  caller: AbortSignal | null | undefined,
-  doFetch: (signal: AbortSignal) => Promise<Response>,
-): Promise<Response> {
-  const controller = new AbortController();
-  const timer: unknown = setTimeout(() => controller.abort(), timeoutMs);
-  (timer as { unref?: () => void }).unref?.();
-  /* Stryker disable ConditionalExpression */
-  const signal =
-    caller && typeof AbortSignal.any === 'function'
-      ? AbortSignal.any([caller, controller.signal])
-      : controller.signal;
-  /* Stryker restore ConditionalExpression */
-  return doFetch(signal);
+export function withBodyDeadline(timeoutMs: number, caller: AbortSignal | null | undefined, doFetch: (signal: AbortSignal) => Promise<Response>): Promise<Response> {
+  const deadline = hostDeadline(timeoutMs, caller, true);
+  return doFetch(deadline.signal);
 }
 
-export async function withTimeout<T>(
-  timeoutMs: number,
-  caller: AbortSignal | null | undefined,
-  fn: (signal: AbortSignal) => Promise<T>,
-): Promise<T> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-  // `typeof AbortSignal.any === 'function'` は、このアプリが載る実行環境
-  // (Node 20+ / Electron 43 / 近年のブラウザ) では常に真なので `true` へ潰しても
-  // 観測差が出ない (等価変異)。古い環境で合成できないときに**自前の打ち切りだけは
-  // 効かせる**ための退避なので、判定自体は残す。
-  //
-  // `disable next-line` ではなくブロックで囲むのは、次の行が `const signal =` で
-  // あって条件式そのものではないため —— next-line は**間に何か入ると無言で外れる**
-  // (このリポジトリで 2 度踏んでいる)。
-  /* Stryker disable ConditionalExpression */
-  const signal =
-    caller && typeof AbortSignal.any === 'function'
-      ? AbortSignal.any([caller, controller.signal])
-      : controller.signal;
-  /* Stryker restore ConditionalExpression */
+export async function withTimeout<T>(timeoutMs: number, caller: AbortSignal | null | undefined, run: (signal: AbortSignal) => Promise<T>): Promise<T> {
+  const deadline = hostDeadline(timeoutMs, caller, false);
   try {
-    const out = await fn(signal);
-    /*
-     * **`Response` を返させない。**
-     *
-     * `fetch` はヘッダを受け取った時点で解決する。だから `fn` が `Response`
-     * を返してきたということは、**本文はまだ読まれていない**ということで、
-     * 下の `finally` が唯一の abort 源を落とした後で本文が読まれる ——
-     * つまり打ち切りが本文に掛からない。
-     *
-     * 2026-08-28 に実測した: ヘッダを flush して本文を途中で止めるサーバに
-     * `timeoutMs: 1000` で当てると、4000ms を超えても返らなかった。
-     * このリポジトリは「`init.signal` が渡っているか」を打ち切りの検査に
-     * していたが、**その等価はここで成り立っていない** —— signal は本文を
-     * 読む前に武装解除されるので、渡っていても打ち切れない。
-     *
-     * 直し方は「本文を使い終えるところまで `fn` の中に入れる」であり、
-     * それを忘れられないように**型ではなく実行時で大声で落とす**。
-     * 静かに直すより、`fn` の書き方を強制するほうが再発しない。
-     */
-    // `typeof Response !== 'undefined' &&` は付けない。**等価変異になる** ——
-    // このアプリが載る実行環境 (Node 20+ / Electron 43 / 近年のブラウザ) には
-    // 必ず `Response` が在るので、付けても外しても観測できる差が無く、
-    // 変異検査で 2 件が生き残るだけだった (2026-08-29)。
-    // 黙らせる pragma を足すより、**効いていない防御を消す**ほうが正しい。
-    if (out instanceof Response) {
-      throw new Error(
-        'withTimeout が Response を返しています —— 本文の読み取りが締切の外へ出ます。'
-        + '本文を使い終えるところまで fn の中に入れてください (src/shared/httpLimits.ts の注記を参照)。',
-      );
+    const out = await run(deadline.signal);
+    // **`Response` を返させない。**
+    //
+    // `fetch` はヘッダを受け取った時点で解決する。だから `fn` が `Response`
+    // を返してきたということは、**本文はまだ読まれていない**ということで、
+    // 下の `finally` が唯一の abort 源を落とした後で本文が読まれる ——
+    // つまり打ち切りが本文に掛からない。
+    //
+    // 2026-08-28 に実測した: ヘッダを flush して本文を途中で止めるサーバに
+    // `timeoutMs: 1000` で当てると、4000ms を超えても返らなかった。
+    // このリポジトリは「`init.signal` が渡っているか」を打ち切りの検査に
+    // していたが、**その等価はここで成り立っていない** —— signal は本文を
+    // 読む前に武装解除されるので、渡っていても打ち切れない。
+    //
+    // 直し方は「本文を使い終えるところまで `fn` の中に入れる」であり、
+    // それを忘れられないように**型ではなく実行時で大声で落とす**。
+    // 静かに直すより、`fn` の書き方を強制するほうが再発しない。
+    if (hostIsResponse(out)) {
+      throw new Error('withTimeout が Response を返しています —— 本文の読み取りが締切の外へ出ます。' + '本文を使い終えるところまで fn の中に入れてください (src/shared/httpLimits.ts の注記を参照)。');
     }
     return out;
   } finally {
-    clearTimeout(timer);
+    hostClearTimer(deadline.timer);
   }
 }

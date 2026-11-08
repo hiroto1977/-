@@ -183,6 +183,8 @@
 /src/shared/actionTier.ts @hiroto1977
 /src/shared/actionTier.mamori @hiroto1977
 /src/shared/redact.mamori @hiroto1977
+/src/shared/httpLimits.mamori @hiroto1977
+/src/shared/httpLimitsHost.ts @hiroto1977
 /src/shared/outboundContentGate.ts @hiroto1977
 /src/shared/outboundContentGate.mamori @hiroto1977
 /src/shared/promptInjection.ts @hiroto1977

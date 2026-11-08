@@ -665,6 +665,8 @@ const PROTECTED = [
   'src/shared/actionTier.ts',          // action の段階の台帳 (無い action は external-write へ倒す fail closed)
   'src/shared/actionTier.mamori',      // 同じ物の元 (Mamori · 2026-11-05 · MG-042)
   'src/shared/redact.mamori',          // 同じ物の元 (Mamori · 2026-11-06 · MG-044)
+  'src/shared/httpLimits.mamori',      // httpLimits.ts の元 (Mamori · 2026-11-08 · MG-047)
+  'src/shared/httpLimitsHost.ts',      // その薄い壁 (Response / 本文の部品 / 時計と中断)
   'src/shared/outboundContentGate.ts', // 出力インターセプター (資格情報 / マイナンバー / カード番号の形を外へ出さない)
   'src/shared/outboundContentGate.mamori', // 同じ物の元 (Mamori · 2026-11-05 · MG-038)
   'src/shared/promptInjection.ts',     // 入力の無害化 (第三者の文に混ざった AI への指示の形)

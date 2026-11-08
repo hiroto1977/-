@@ -282,6 +282,7 @@
     "src/shared/mutualFundsMetrics.ts",
     "src/shared/num.ts",
     "src/shared/ollamaCore.ts",
+    "src/shared/httpLimitsHost.ts",
     "src/shared/ollamaHost.ts",
     "src/shared/outboundContentGate.ts",
     "src/shared/parameters.ts",
