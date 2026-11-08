@@ -56,9 +56,11 @@ require('../lib/artifact-freshness.cjs').assertFreshArtifacts([targetAbs], {
   allowEnv: 'SERVICE_HUB_E2E_ALLOW_STALE',
 });
 
-// 解錠の後に出るのは村の殻だけ (旧画面のサイドバーは 2026-11-04 に廃止)。各サービスの画面は役場と同じ窓に開く
+// 既定の殻は旧画面 (サイドバー・2026-11-07 に戻した) だが、この runner の suite は 2026-11-05 に**村の殻**
+// 前提へ書き直してあるので、`?ui=village` を付けて村の殻を相手にする。村では各サービスの画面が役場と同じ窓に開く
 // —— 開き方は会話の「開いて」と同じ `servicehub:navigate` か、URL ハッシュの直リンク (`FILE + '#stocks'`)。
-const FILE = 'file://' + targetAbs;
+// サイドバーの旧画面は jsdom の検査 (appShell / sidebarFilter / drawerKeyboard ほか) が受け持つ。
+const FILE = 'file://' + targetAbs + '?ui=village';
 const EXEC = fs.existsSync('/opt/pw-browsers/chromium') ? '/opt/pw-browsers/chromium' : undefined;
 const PASS = 'e2e-pass-12345';
 
@@ -818,7 +820,7 @@ async function tabletSuite(browser) {
  */
 async function villageSuite(browser) {
   console.log('--- 村の殻 (既定の入口) ---');
-  const VILLAGE_FILE = 'file://' + targetAbs;
+  const VILLAGE_FILE = FILE;
   async function enter(page) {
     await page.waitForSelector('text=はじめてのご利用', { timeout: 30000 });
     const inputs = page.locator('input[type="password"]');
