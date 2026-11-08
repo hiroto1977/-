@@ -153,7 +153,9 @@
     "src/shared/externalUrlGate.mamori",
     "src/shared/externalUrlGate.ts",
     "src/shared/headerValue.ts",
+    "src/shared/httpLimits.mamori",
     "src/shared/httpLimits.ts",
+    "src/shared/httpLimitsHost.ts",
     "src/shared/imageUrlGate.mamori",
     "src/shared/imageUrlGate.ts",
     "src/shared/inputCeiling.ts",
@@ -4012,6 +4014,14 @@
       "leafCount": 201,
       "note": "update vitest.config.ts",
       "hash": "d8e7d175d97bee8674c21cff23d1ccb5f252c3d740e8e4f40d2ba730f5aca150"
+    },
+    {
+      "index": 476,
+      "prevHash": "d8e7d175d97bee8674c21cff23d1ccb5f252c3d740e8e4f40d2ba730f5aca150",
+      "merkleRoot": "f69e02edf62aef4950de4902d72174dee2316c2c9facb3b45908935ee709abfd",
+      "leafCount": 203,
+      "note": "update integrity-chain.cjs,mamori-capabilities.json,httpLimits.mamori,httpLimits.ts,httpLimitsHost.ts",
+      "hash": "713f5760304969038d4e69782ea772309611caf24cd3b5807c5e451b03210608"
     }
   ],
   "tipManifest": {
@@ -4049,7 +4059,7 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "d385ddfc52ec74abf184207bfbb1ac655e730db2b7c6d7e758e35e67e79a5737",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "5de66c6bf3b7c3b9370a695d59738c831a1d2e10dd76d3265902ea0a7a18407c",
+    "scripts/integrity-chain.cjs": "c3e4ebf0e756b4633f697b6402a335b9b16d6090c41cab2e63505967d5209a0d",
     "scripts/knowledge-autopilot.cjs": "ee8f7ae4a4ad29dda6c02f83c113c45fa1648522f807e711aa86b7746f372968",
     "scripts/lib/artifact-freshness.cjs": "add621dfe55e0eab31354f0d6979c9c67b513ed8b8348b9137ca7fa53dd569c1",
     "scripts/lib/json-for-script.cjs": "cb79bf1fb2f3c10c6854ec16d9c12bb0695dee5561751333db4531545702fd70",
@@ -4077,7 +4087,7 @@
     "scripts/verify-e2e-playwright-pin.cjs": "417854f96cbaa4af4dd30a378b722b58093d56e78aa7eaba9bd17df412f57d45",
     "scripts/verify-packaged-fuses.cjs": "4162ab0e5d390c5cccf4cd8ac533027bd1d8a5cbceb0a069059d4f3800643d9f",
     "scripts/verify-release-artifacts.cjs": "1bd668bc052b476a9b3f976dc80ddf8faa4f080aed5617d354a8c7647ee9f557",
-    "security/mamori-capabilities.json": "4ad5b7f47c50764181443fe3dfa74de5423f2c7e1c0e357f1c4c9a7b3a055490",
+    "security/mamori-capabilities.json": "3e3b19de8574dc0666bbde7cd39c6dc923d07366841fe2d00aae4313268e14d2",
     "src/main/atomicWrite.ts": "63b6ff1fb7d8990b76409c62556d69f99a14475f73662e89507e8899a32a9c3f",
     "src/main/clients/assistant.mamori": "2a929c90e2ce3c27eadb128f35ea8f09f065e8b657a6a06679c99128e7d93cbd",
     "src/main/clients/assistant.ts": "f4c1987f2333770647cf133b7815cbb57da0477d7ac2ffb9ce7cb757f035fe8a",
@@ -4166,7 +4176,9 @@
     "src/shared/externalUrlGate.mamori": "62c8d39a8f00f54ddb88bf7541d7e43d5c918b6291c78b9f17e9b59fc0068ae5",
     "src/shared/externalUrlGate.ts": "2e670e502326eb6778c91ef79f90b918d69fa367d2fd391d459ef139c77bf475",
     "src/shared/headerValue.ts": "e1b3156dde741ff415b769a6a40a7630e7da580f29737005cf2583bda4512b82",
-    "src/shared/httpLimits.ts": "358f19ecbc1b65d23a090e6d4e671f6986ec33648a2b4609a04345933d09768b",
+    "src/shared/httpLimits.mamori": "4bc7f51a44cc19b18d9905fc571b22a92225858ed96b0374894f7354250487ce",
+    "src/shared/httpLimits.ts": "27ff04b046f9461800c02eb4b677bbc391c8cd44c28a16ef493d65fba641666b",
+    "src/shared/httpLimitsHost.ts": "6b8db5d725899a0c1f19989190c1e6ced907aeb5096dbb4edc07f13208ed5bab",
     "src/shared/imageUrlGate.mamori": "ad5ab3c88580c4256137fce27c639908f2b3c47629aa0798d8afc0a3b53e9997",
     "src/shared/imageUrlGate.ts": "8c9b192e5aa33f2945a4bd2cef68e0b1b0b4a49e50170c38d9b6494394bc5a7b",
     "src/shared/inputCeiling.ts": "bdfc78b888dfbb8efc8d3176eec25587b32d93a7d1c9562c03f0036ece77623c",
