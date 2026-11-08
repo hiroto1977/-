@@ -21,6 +21,7 @@ security/mamori-growth.json がまだ無い木 (この輪が main に入る前) 
    断られなかった物は穴である —— 脅威台帳 security/threat-ledger.json に T-xxx として載せ、直し (コンパイラの規則) と回帰検査
    (題名に `threat: T-xxx`) を入れる。2026-10-30 の T-224 (`String.constructor(code)()` が `eval` の代わりになった) はこの段で出た。
 3. 育てる:
+   - port: (brief が「移せる」と数えても host の壁 — capability モジュールを直に呼ぶ・rest 引数・sink の型引数 — は書き直しでは移せない。移せないと実測で分かった壁は台帳 `unportable` に証拠つきで足す —— brief はそれを port に選ばない。)
    - port: 隣に `X.mamori` を書き、`npm run mamori:build` で `X.ts` を生成物にする。判定は 1 つも変えない
      (生成物と元の差は注記の場所・空行・テンプレート文字列を `+` へ替えた所だけにする —— `git diff` で読む)。
      `src/shared/mamori/__tests__/mamoriGenerated.test.ts` の EXPECTED に足し、docs/MAMORI.md の「Mamori で書いてある物」に 1 行。
