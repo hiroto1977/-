@@ -187,6 +187,9 @@
       "risk": "モジュールの状態は呼ばれた順で変わる —— 共有の入れ物へ inert や印の無い値を入れて別の関数が読む道 (T-259 のモジュール版)。足すなら、書けるのは自分のモジュールの let だけで、export せず、代入できるのは関数の中からだけ・inert を入れる形は断つ。"
     }
   },
+  "unportable": {
+    "src/preload/preloadHost.ts": "実測 (MG-047 · Issue #910): rest 引数 `...args` が M0 で断られ、sink の型引数が M4、行き先が素の string だと M3 で断られる。invokeIpc / exposeBridge は electron の能力モジュールに触れる host の薄い壁で、書き直しでは移せない (言語に host 側の機構を足す判断が先)。"
+  },
   "cycles": [
     {
       "id": "MG-001",

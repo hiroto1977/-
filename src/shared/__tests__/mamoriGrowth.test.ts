@@ -34,6 +34,7 @@ interface Ledger {
   cadenceDays: number;
   language: { version: string };
   constructs: Record<string, { decision: string; why: string; risk?: string; since?: string }>;
+  unportable?: Record<string, string>;
   cycles: Cycle[];
 }
 interface Cycle {
@@ -58,7 +59,7 @@ interface Cycle {
 interface Brief {
   id: string;
   pick: { kind: string; target: string; why: string };
-  measured: { path: string; portable: boolean; missing: string[]; needs: string[] }[];
+  measured: { path: string; portable: boolean; blocked: string | null; missing: string[]; needs: string[] }[];
   features: { id: string; unblocks: string[]; files: number }[];
   problems: string[];
   markdown: string;
@@ -203,6 +204,37 @@ describe('言語を育てる輪 —— 選び方・記録・止まり', () => {
     ledger.constructs.class = { decision: 'added', why: '足した構文の理由です', since: '0.3' };
     const b = growth.buildBrief({ ledger, files: [f('src/a.ts', 'class A {}\n')], now: '2026-10-30' });
     expect(b.pick).toMatchObject({ kind: 'port', target: 'src/a.ts' });
+  });
+
+  it('★ 移せないと台帳 (unportable) が言う壁は、足りる構文が無くても port に選ばない (host の壁を移せると数えない)', () => {
+    const ledger = L();
+    ledger.unportable = { 'src/short.ts': '実測: rest 引数と sink の型引数が要る (M0 / M4) · Issue #910' };
+    const files = [f('src/short.ts', 'const s = `y`;\n'), f('src/long.ts', 'const s = `x`;\n\n\n')];
+    const b = growth.buildBrief({ ledger, files, now: '2026-10-30' });
+    expect(b.measured.find((m) => m.path === 'src/short.ts')).toMatchObject({ portable: false, blocked: ledger.unportable['src/short.ts'] });
+    expect(b.pick).toMatchObject({ kind: 'port', target: 'src/long.ts' });
+    expect(b.markdown).toContain('⛔ 移せない');
+    // 対照: 台帳に書かなければ短い方が選ばれる (この検査が空でないこと)
+    expect(growth.buildBrief({ ledger: L(), files, now: '2026-10-30' }).pick.target).toBe('src/short.ts');
+  });
+
+  it('★ unportable は証拠つき —— 理由が短い・物でない台帳は問題として挙げる', () => {
+    const short = L();
+    short.unportable = { 'src/a.ts': 'x' };
+    expect(growth.ledgerProblems(short).some((p) => p.includes('unportable'))).toBe(true);
+    const bad = L() as unknown as Record<string, unknown>;
+    bad.unportable = [];
+    expect(growth.ledgerProblems(bad).some((p) => p.includes('unportable'))).toBe(true);
+  });
+
+  it('★ 実物の台帳: preloadHost.ts は移せない壁として除かれ、brief が port に選ばない', () => {
+    const ledger = realLedger();
+    expect(ledger.unportable?.['src/preload/preloadHost.ts']?.length ?? 0).toBeGreaterThan(20);
+    const files = growth.wallFiles(ROOT).filter((w) => w.path === 'src/preload/preloadHost.ts');
+    expect(files).toHaveLength(1);
+    const b = growth.buildBrief({ ledger, files, now: '2026-11-08' });
+    expect(b.measured[0]!.portable).toBe(false);
+    expect(b.pick.kind).not.toBe('port');
   });
 
   it('★ どちらも無ければ probe (言語の穴を探す)', () => {

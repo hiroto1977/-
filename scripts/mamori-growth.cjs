@@ -142,6 +142,17 @@ function ledgerProblems(ledger) {
       if (c?.decision === 'feature' && !isNonEmptyString(c?.risk)) out.push(`構文 ${id} は足す候補なのに risk (来歴の規則を外す道になるか) が無い`);
     }
   }
+  // 移せないと実測で分かった壁 (任意)。検出器は構文の綴りしか数えないので、host の壁 (capability モジュールを
+  // 直に呼ぶ・rest 引数・sink の型引数) は「足りない構文が無い」=「移せる」と誤って数える。証拠つきで除く。
+  if (ledger.unportable !== undefined) {
+    const u = ledger.unportable;
+    if (u === null || typeof u !== 'object' || Array.isArray(u)) out.push('unportable が物でない');
+    else {
+      for (const [p, why] of Object.entries(u)) {
+        if (!isNonEmptyString(why) || why.length < MIN_REASON_CHARS) out.push(`unportable ${p} の理由 (証拠) が無いか ${MIN_REASON_CHARS} 字に満たない`);
+      }
+    }
+  }
   if (!Array.isArray(ledger.cycles)) out.push('cycles が配列でない');
   else {
     const seen = new Set();
@@ -157,6 +168,12 @@ function ledgerProblems(ledger) {
 /** 構文の判断 (台帳)。台帳に無ければ 'feature' (知らない構文は足す候補として数える —— 黙って移せるとは言わない)。 */
 const decisionOf = (ledger, id) => ledger.constructs?.[id]?.decision ?? 'feature';
 
+/** 移せないと実測で分かった壁の理由 (台帳 unportable)。無ければ null。 */
+const unportableReason = (ledger, p) => {
+  const u = ledger.unportable;
+  return u !== null && typeof u === 'object' && !Array.isArray(u) && Object.hasOwn(u, p) && isNonEmptyString(u[p]) ? u[p] : null;
+};
+
 /**
  * 次に育てる物を決める (純関数)。
  * @param {{ledger: object, files: {path: string, lines: number, source: string}[], now: string}} input
@@ -168,7 +185,8 @@ function buildBrief({ ledger, files, now }) {
       const counts = measureFile(f.source);
       const missing = Object.keys(counts).filter((id) => decisionOf(ledger, id) !== 'added');
       const needs = missing.filter((id) => decisionOf(ledger, id) === 'feature');
-      return { path: f.path, lines: f.lines, counts, missing, needs, portable: needs.length === 0 };
+      const blocked = unportableReason(ledger, f.path);
+      return { path: f.path, lines: f.lines, counts, missing, needs, blocked, portable: needs.length === 0 && blocked === null };
     })
     .sort((a, b) => a.lines - b.lines || (a.path < b.path ? -1 : 1));
   const portable = measured.filter((m) => m.portable);
@@ -209,7 +227,8 @@ function buildBrief({ ledger, files, now }) {
   }
   lines.push('', '## 壁ごとの足りない構文 (heuristic —— 移せるかは書いて mamori:build が通るかで決まる)', '', '| 壁 | 行 | 移せるか | 足りない構文 (足す候補 / 書き直す) |', '|---|---:|---|---|');
   for (const m of measured) {
-    const label = m.missing.map((id) => `${id}${decisionOf(ledger, id) === 'rewrite' ? '↻' : ''}×${m.counts[id]}`).join(' ') || '—';
+    const counted = m.missing.map((id) => `${id}${decisionOf(ledger, id) === 'rewrite' ? '↻' : ''}×${m.counts[id]}`).join(' ') || '—';
+    const label = m.blocked === null ? counted : `${counted} ⛔ 移せない: ${m.blocked.replace(/\|/g, '\\|').replace(/\s+/g, ' ')}`;
     lines.push(`| \`${m.path}\` | ${m.lines} | ${m.portable ? '✅' : '—'} | ${label} |`);
   }
   lines.push('', '_↻ は言語に置かないと決めた構文 (書き直して避ける)。_', '', '## 足す候補の構文 (順位)', '');
@@ -454,6 +473,10 @@ function selfTest() {
   check('移せる壁 (書き直しだけ) が在れば port を選ぶ', b1.pick.kind === 'port' && b1.pick.target === 'src/a.ts');
   const b2 = buildBrief({ ledger: L(), files: files.slice(1), now: '2026-10-30' });
   check('移せる壁が無ければ、足すと解き放つ壁が最多の構文を選ぶ', b2.pick.kind === 'feature' && b2.pick.target === 'class');
+  const bu = buildBrief({ ledger: L({ unportable: { 'src/a.ts': '実測: rest 引数と sink の型引数が要る (M0 / M4)' } }), files, now: '2026-10-30' });
+  check('移せないと台帳が言う壁は port に選ばない', bu.measured.find((m) => m.path === 'src/a.ts').portable === false && bu.pick.kind === 'feature' && bu.markdown.includes('⛔ 移せない'));
+  check('unportable の理由が短ければ台帳の問題', ledgerProblems(L({ unportable: { 'src/a.ts': 'x' } })).some((p) => p.includes('unportable')));
+  check('unportable が物でなければ台帳の問題', ledgerProblems(L({ unportable: [] })).some((p) => p.includes('unportable')));
   const b3 = buildBrief({ ledger: L(), files: [], now: '2026-10-30' });
   check('どちらも無ければ probe', b3.pick.kind === 'probe');
   check('次の id は MG-001', b1.id === 'MG-001');
