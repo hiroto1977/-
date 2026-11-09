@@ -277,7 +277,11 @@ function waveGenomes({ box, seed, intensity = 6, learned = [], weights = null })
   const base = items.filter((x) => x.lens !== 'breakout' && !x.genome.some((m) => m.ghost));
   const layers = [];
   for (let i = 0; i < intensity * 3 && base.length >= 2; i++) {
-    const picks = sample(base, 2 + Math.floor(rng() * 2), rng);
+    // 別々の観点から 1 本ずつ (同じ観点を 2 本重ねても多層にならない)
+    const want = 2 + Math.floor(rng() * 2);
+    const picks = [];
+    for (const cand of sample(base, base.length, rng)) { if (!picks.some((x) => x.lens === cand.lens)) picks.push(cand); if (picks.length >= want) break; }
+    if (picks.length < 2) continue;
     layers.push({ lens: 'layered:' + unique(picks.map((p) => p.lens)).sort().join('+'), genome: picks.flatMap((p) => p.genome).slice(0, 96) });
   }
   return [...items, ...layers];
