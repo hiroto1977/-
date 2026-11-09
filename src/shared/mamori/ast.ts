@@ -141,7 +141,8 @@ export type Item =
       readonly kind: 'use';
       /** `use type { … }` なら true (型だけの import)。 */
       readonly typeOnly: boolean;
-      readonly names: readonly { readonly name: string; readonly alias: string | null }[];
+      /** `typeOnly` (名前ごと) は `use { f, type X }` の `type X` (0.24)。`use type { … }` (項目全体) とは同時に使えない。 */
+      readonly names: readonly { readonly name: string; readonly alias: string | null; readonly typeOnly: boolean }[];
       readonly defaultName: string | null;
       readonly from: string;
       readonly doc: Doc;

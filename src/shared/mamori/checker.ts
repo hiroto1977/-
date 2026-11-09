@@ -329,6 +329,9 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         // 引く名前が export されていない —— 変換後の tsc も止めるが、Mamori の検めが 1 層欠けていた (0.4 · T-241)。
         if (exported !== undefined && !exported.has(n.name)) report('M6', it.pos, `${target} は ${n.name} を export していません (use で引けるのは export した名前だけ)`);
         // 引けなければ undefined (外の module・Mamori でない相対の module・export していない名前は M6 が別に断る)。
+        // 型だけの import (`type X`) で引いた名前が関数なら断る (0.24)。型として消える名前を Mamori が関数として検め続けると、
+        // 検めと生成物 (tsc) の見る物が食い違う —— 関門 (gate) や印を受ける関数を型の顔で引けてしまう。
+        if (n.typeOnly && table.fns.get(fnKey(target, n.name)) !== undefined) report('M6', it.pos, `\`type ${n.name}\` は関数です —— 型だけの import で関数は引けません (関数は \`use { ${n.name} }\` で引きます)`);
         importedFns.set(local, table.fns.get(fnKey(target, n.name)));
       }
       // ★ 'pure' は「sink でも、このモジュールの名前でもない」の意味だけを持ち、比べられるのは 'sink' と 'local' だけ

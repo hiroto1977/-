@@ -79,6 +79,21 @@ Mamori では、その 2 つは**書けない**:
 - **既知の差 (正直に)**: `(a?.b).c` は丸括弧を構文木に残さないので生成物は `a?.b.c` になる (`a` が null のとき `.c` を読む前に止まる —— 例外が減る向きで、印の流れには触れない)。
 - **この周で移せた壁は 0 本** (`optional-chain` だけで足りる壁が無い —— 足りない構文は他にも要る)。言語の幅を広げた周で、次は `index` の塞ぎ方 (字面の鍵は FORBIDDEN_MEMBERS を通し、字面でない鍵は数だけ) を決めてから足す。
 
+## 0.24 —— 名前ごとの型だけの import `use { f, type X } from "…";` を足した (MG-049 · 2026-11-09)
+
+`use { mk, type VU, type Name alias N } from "./a";` のように、**値と型を 1 行で引ける**。0.23 までは `use type { X }` (項目全体が型だけ) しか無く、値と型を同じ module から引く壁 (`oauth.ts` ほか) は 2 行に分けて書く必要があった。生成物は TypeScript の inline type import (`import { mk, type VU, type Name as N } from './a';`) になる。`use type { … }` と普通の `use` の生成物は 0.23 までと 1 字も変わらない。
+
+**足す前に破った。** `type` を付けた名前は生成物 (tsc) では型として消える。Mamori が検める物と tsc が見る物が食い違えば、検めをすり抜ける口になる。
+
+| 破った形 | 0.24 |
+| --- | --- |
+| `use { type mk }` / `use { type open }` (関数を型の顔で引く) | 断る (M6 · 関数は `use { f }` で引く —— 検めと生成物の見る物を揃える) |
+| `use type { type X }` (項目全体がすでに型だけ) | 断る (パーサ · 重ねられない) |
+| `use { type }` / `use { type alias t }` (`type` を名前にする) | 断る (`type` は予約語) |
+| `use { type Hidden }` (export していない名前) | 断る (M6 · 種類を問わず export した名前だけ引ける) |
+| `use { type LIMIT }` を値の位置で使う | Mamori は通す (来歴には触れない)。生成物は `import { type LIMIT }` のままなので **tsc が断る** |
+| `use { open, type VU }` で `open(raw)` / `-> VU { return raw; }` | 断る (M4 / M1 が効いたまま —— 型で引いても印は gate の `mint` でしか作れない) |
+
 ## 0.23 —— 型引数を持つ関数宣言 `fn f<T, U>(…)` を足した (MG-045 · 2026-11-06)
 
 `fn id<T>(x: T) -> T` のように、関数宣言に型引数を並べられる (`export` / `async` もよい)。**名前だけ**を並べる。生成物は `function id<T>(x: T): T` のまま出る。
@@ -509,7 +524,7 @@ module    := header* item*
 header    := '//!' 行                         生成物の先頭の docblock になる
 item      := doc* ( use | extern | vetted | type | interface | const | fn )
 doc       := '///' 行                         項目の docblock になる
-use       := 'use' 'type'? '{' name ('alias' name)? (',' …)* '}' 'from' 文字列 ';'
+use       := 'use' 'type'? '{' ('type'? name ('alias' name)?) (',' …)* '}' 'from' 文字列 ';'   (名前ごとの `type` は 'use type' でないときだけ · 0.24)
            | 'use' 'default' name 'from' 文字列 ';'
 extern    := 'extern' ('sink' | 'pure') '{' name (',' name)* '}' 'from' 文字列 ';'
            | 'extern' ('sink' | 'pure') 'global' name ';'

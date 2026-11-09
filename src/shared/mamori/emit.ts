@@ -220,7 +220,7 @@ function item(it: Item, vettedLabels: readonly string[], preludeDone: { value: b
     case 'use': {
       const kw = it.typeOnly ? 'import type' : 'import';
       if (it.defaultName !== null) return [...docblock(it.doc), `${kw} ${it.defaultName} from ${quote(it.from)};`];
-      const names = it.names.map((n) => (n.alias === null ? n.name : `${n.name} as ${n.alias}`)).join(', ');
+      const names = it.names.map((n) => (n.typeOnly ? 'type ' : '') + (n.alias === null ? n.name : `${n.name} as ${n.alias}`)).join(', ');
       return [...docblock(it.doc), `${kw} { ${names} } from ${quote(it.from)};`];
     }
     case 'extern':

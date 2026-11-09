@@ -929,20 +929,25 @@ export function parse(file: string, src: string): Module {
       next();
       const typeOnly = take('type');
       let defaultName: string | null = null;
-      const names: { name: string; alias: string | null }[] = [];
+      const names: { name: string; alias: string | null; typeOnly: boolean }[] = [];
       if (isW('default')) {
         next();
         defaultName = ident();
       } else {
         expectP('{');
         while (!isP('}')) {
+          // `type X` (0.24): 名前ごとの型だけの import。`type` は予約語なので、引く名前そのものが `type` である曖昧さは無い。
+          // `use type { type X }` は冗長で、どちらが効くか読み手に判じさせるので断る。
+          const inlineType = isW('type');
+          if (inlineType && typeOnly) fail(peek(), '`use type { … }` の中で `type X` は重ねられません (項目全体がすでに型だけの import です)');
+          if (inlineType) next();
           const name = ident();
           let alias: string | null = null;
           if (isW('alias')) {
             next();
             alias = ident();
           }
-          names.push({ name, alias });
+          names.push({ name, alias, typeOnly: inlineType });
           if (!isP('}')) expectP(',');
         }
         expectP('}');
