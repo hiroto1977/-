@@ -576,7 +576,8 @@ describe(`再戦と連打 (${LEVEL})`, () => {
     const state = JSON.parse(readOriginalSource(path)) as { rematch?: { ops: Record<string, { plays: number }>; runs: unknown[]; wobbles: unknown[] } };
     expect(state.rematch).toBeDefined();
     expect(state.rematch!.runs.length).toBeGreaterThanOrEqual(1);
-    for (const op of Object.keys(state.rematch!.ops)) expect(rm.OPS).toContain(op);
+    const crossOps = (require_('../../../../scripts/lib/mamori-arena-cross.cjs') as { CROSS_OPS: string[] }).CROSS_OPS;
+    for (const op of Object.keys(state.rematch!.ops)) expect([...rm.OPS, ...crossOps]).toContain(op);
   });
 });
 
