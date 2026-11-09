@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.25"
+    "version": "0.26"
   },
   "constructs": {
     "class": {
@@ -124,6 +124,12 @@
       "why": "省ける引数を持つ公開の関数で使う。",
       "risk": "省いた引数は undefined —— 印の型の引数は省けない形にする。",
       "since": "0.22"
+    },
+    "async-arrow": {
+      "decision": "added",
+      "why": "非同期の閉包 (締切や直列化の中で走らせる) で使う。",
+      "risk": "await の結果は印を運ばない・閉包は plain の役で検める (外側の gate / sink を引き継がない)。",
+      "since": "0.26"
     },
     "export-from": {
       "decision": "added",

@@ -681,7 +681,12 @@ export function parse(file: string, src: string): Module {
   };
 
   const expr = (): Expr => {
-    if (isArrowAhead()) return arrow();
+    // `async (x) => …` / `async x => …` (0.26 · MG-053)。`async` だけが後ろに `=>` を取る名前 (`async => 1`) は引数の名前として下の arrow が読む。
+    if (isW('async') && isArrowAhead(1)) {
+      next();
+      return arrow(true);
+    }
+    if (isArrowAhead()) return arrow(false);
     const test = binary(0);
     if (!isP('?')) return test;
     const q = next();
@@ -887,11 +892,11 @@ export function parse(file: string, src: string): Module {
   };
 
   /** `(a, b) => …` / `() => …` / `x => …` が始まるか。 */
-  const isArrowAhead = (): boolean => {
-    if (peek().kind === 'ident' && isP('=>', 1)) return true;
-    if (!isP('(')) return false;
+  const isArrowAhead = (from = 0): boolean => {
+    if (peek(from).kind === 'ident' && isP('=>', from + 1)) return true;
+    if (!isP('(', from)) return false;
     let depth = 0;
-    for (let n = 0; ; n++) {
+    for (let n = from; ; n++) {
       const t = peek(n);
       if (t.kind === 'eof') return false;
       if (isPunctTok(t, '(')) depth++;
@@ -902,7 +907,7 @@ export function parse(file: string, src: string): Module {
     }
   };
 
-  const arrow = (): Expr => {
+  const arrow = (isAsync: boolean): Expr => {
     const pos = peek().pos;
     const ps: Param[] = peek().kind === 'ident' ? [{ name: ident(), optional: false, type: null, init: null, pos }] : params();
     expectP('=>');
@@ -918,9 +923,9 @@ export function parse(file: string, src: string): Module {
       loops = savedLoops;
       breakables = savedBreakables;
       inFinally = savedFinally;
-      return { kind: 'arrow-block', params: ps, body, pos };
+      return { kind: 'arrow-block', async: isAsync, params: ps, body, pos };
     }
-    return { kind: 'arrow', params: ps, body: expr(), pos };
+    return { kind: 'arrow', async: isAsync, params: ps, body: expr(), pos };
   };
 
   const item = (doc: Doc): Item => {

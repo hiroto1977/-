@@ -38,13 +38,14 @@ export type Expr =
   | { readonly kind: 'new'; readonly callee: Expr; readonly typeArgs: readonly TypeRef[]; readonly args: readonly Expr[]; readonly pos: Pos }
   | { readonly kind: 'unary'; readonly op: '!' | '-' | '~' | 'typeof' | 'await'; readonly operand: Expr; readonly pos: Pos }
   | { readonly kind: 'binary'; readonly op: string; readonly left: Expr; readonly right: Expr; readonly pos: Pos }
-  | { readonly kind: 'arrow'; readonly params: readonly Param[]; readonly body: Expr; readonly pos: Pos }
+  /** `async (x) => …` (0.26 · MG-053)。`async` が付いても本体は plain の役で検め、`await` の扱いは async 関数と同じ (印は await を通っても運ばれる)。 */
+  | { readonly kind: 'arrow'; readonly async: boolean; readonly params: readonly Param[]; readonly body: Expr; readonly pos: Pos }
   /**
    * 本体がブロックの arrow (0.9)。`=> {` は必ずブロックを開く (オブジェクトの字面を返すなら `=> ({ … })` と括る)。
    * 本体の中の文は、外の関数の gate / sink の役割を継がない (`mint` と危ない口は使えない) —— 外へ渡された arrow が
    * 関門や危ない口の検めを飛ばして呼べる道にならないように。
    */
-  | { readonly kind: 'arrow-block'; readonly params: readonly Param[]; readonly body: readonly Stmt[]; readonly pos: Pos }
+  | { readonly kind: 'arrow-block'; readonly async: boolean; readonly params: readonly Param[]; readonly body: readonly Stmt[]; readonly pos: Pos }
   | { readonly kind: 'mint'; readonly vetted: string; readonly value: Expr; readonly pos: Pos }
   /** オブジェクトの字面 (0.2)。鍵は名前か文字列だけ —— 展開 (`...`)・計算した鍵 (`[k]`)・`__proto__` は書けない。 */
   | { readonly kind: 'object'; readonly props: readonly Prop[]; readonly pos: Pos }

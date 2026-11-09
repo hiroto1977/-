@@ -93,6 +93,7 @@ const POSITIVE: Readonly<Record<string, string>> = {
   'catch-binding': 'try { f(); } catch (e) { g(); }',
   finally: 'try { f(); } finally { g(); }',
   'optional-param': 'export function f(a?: string): void {}',
+  'async-arrow': 'const f = async (x: number) => x;',
   'export-from': "export { a } from './a';",
   'export-default': 'export default 1;',
   'namespace-import': "import * as path from 'node:path';",
