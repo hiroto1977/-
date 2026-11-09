@@ -4216,7 +4216,53 @@
         "task_queu",
         "inte",
         "admin",
-        "trusted"
+        "trusted",
+        "rec-a-da41dece39",
+        "rec-b-87ba4c089e",
+        "rec-c-d611e527b0",
+        "rec-a-0d5d9c3894",
+        "rec-b-4d9abfb2a3",
+        "rec-c-28e0b00fe9",
+        "rec-a-6c26f3411f",
+        "rec-b-9318fb60b3",
+        "rec-c-bea51b0c68",
+        "rec-a-df38b742f7",
+        "rec-b-3e4878c158",
+        "rec-a-6e9a9c3254",
+        "rec-b-27cbe19322",
+        "rec-c-6117da9cc6",
+        "rec-c",
+        "rec-c-c0881efa9c",
+        "rec-b-9f9f457bc6",
+        "rec-a-d2b8bd5cc7",
+        "rec-b-58f4cd716a",
+        "rec-a-310b47991e",
+        "rec-c-6566d37e5c",
+        "rec-b-6fecc793ae",
+        "rec-c-97fe3a0d87",
+        "rec-a-2de14489d3",
+        "rec-a-2",
+        "rec-c-ff0449a042",
+        "rec-a-776f2c631e",
+        "rec-b-79b7202e7b",
+        "rec-a-f712d0dbd0",
+        "rec-a-a5e2d42276",
+        "rec-b-f5027f2958",
+        "rec-c-a25cb2d1db",
+        "rec-a-9d00c2b267",
+        "rec-c-4a290bbb94",
+        "rec-b-5c5759ae63",
+        "rec-a-b0a837081c",
+        "rec-b-1c947b82a9",
+        "rec-a-b",
+        "rec-a-4d0f0494a5",
+        "rec-b-647d1b2654",
+        "rec-c-5666b7cf73",
+        "rec-b-58e931f99b",
+        "rec-a-3debde2267",
+        "rec-c-93a6d981b5",
+        "rec-a-161ff0bc23",
+        "rec-b-49fc263bdf"
       ],
       "generations": 39,
       "bestFit": 2.25
@@ -8805,7 +8851,21 @@
         "rec-a-9e9faee761",
         "rec-b-a9614c7817",
         "rec-a-ca89e1984c",
-        "rec-b-1d4989b854"
+        "rec-b-1d4989b854",
+        "rec-a-f1b2dfc393",
+        "rec-b-b0bdf4672b",
+        "rec-c-1643563e7c",
+        "rec-c-f2fc9fa821",
+        "rec-b-806950528d",
+        "rec-c-a592877576",
+        "rec-b-d2c573fed1",
+        "rec-b-56f08a11cf",
+        "rec-b-5",
+        "rec-c-0dc574c48b",
+        "rec-b-a7fc586fd7",
+        "rec-a-2b36508165",
+        "rec-a-2b365",
+        "rec-a-208a0e2051"
       ],
       "generations": 57,
       "bestFit": 2.15
@@ -13037,6 +13097,86 @@
         "bounced": 0,
         "exhausted": 0,
         "fresh": 95
+      },
+      "cross-splice": {
+        "plays": 6,
+        "refused": 0,
+        "held": 6,
+        "red": 0,
+        "void": 0,
+        "bounced": 0,
+        "exhausted": 0,
+        "fresh": 14
+      },
+      "cross-weave": {
+        "plays": 6,
+        "refused": 0,
+        "held": 6,
+        "red": 0,
+        "void": 0,
+        "bounced": 0,
+        "exhausted": 0,
+        "fresh": 15
+      },
+      "cross-sandwich": {
+        "plays": 6,
+        "refused": 0,
+        "held": 6,
+        "red": 0,
+        "void": 0,
+        "bounced": 0,
+        "exhausted": 0,
+        "fresh": 16
+      },
+      "cross-pingpong": {
+        "plays": 5,
+        "refused": 0,
+        "held": 5,
+        "red": 0,
+        "void": 0,
+        "bounced": 0,
+        "exhausted": 0,
+        "fresh": 10
+      },
+      "cross-triple": {
+        "plays": 6,
+        "refused": 0,
+        "held": 6,
+        "red": 0,
+        "void": 0,
+        "bounced": 0,
+        "exhausted": 0,
+        "fresh": 21
+      },
+      "cross-stack": {
+        "plays": 6,
+        "refused": 0,
+        "held": 6,
+        "red": 0,
+        "void": 0,
+        "bounced": 0,
+        "exhausted": 0,
+        "fresh": 6
+      },
+      "cross-literal": {
+        "plays": 4,
+        "refused": 0,
+        "held": 4,
+        "red": 0,
+        "void": 0,
+        "bounced": 0,
+        "exhausted": 0,
+        "fresh": 6
+      },
+      "cross-mouth": {
+        "plays": 1,
+        "refused": 0,
+        "held": 1,
+        "red": 0,
+        "void": 0,
+        "bounced": 0,
+        "exhausted": 0,
+        "fresh": 2
       }
     },
     "runs": [
@@ -13570,6 +13710,67 @@
           "number-swap": {
             "plays": 78,
             "held": 78,
+            "refused": 0,
+            "red": 0
+          }
+        }
+      },
+      {
+        "seed": 801,
+        "boxes": 2,
+        "plays": 40,
+        "red": 0,
+        "near": 15,
+        "wobbles": 0,
+        "hammered": 0,
+        "caught": 0,
+        "uncaught": 0,
+        "byOp": {
+          "cross-splice": {
+            "plays": 6,
+            "held": 6,
+            "refused": 0,
+            "red": 0
+          },
+          "cross-weave": {
+            "plays": 6,
+            "held": 6,
+            "refused": 0,
+            "red": 0
+          },
+          "cross-sandwich": {
+            "plays": 6,
+            "held": 6,
+            "refused": 0,
+            "red": 0
+          },
+          "cross-pingpong": {
+            "plays": 5,
+            "held": 5,
+            "refused": 0,
+            "red": 0
+          },
+          "cross-triple": {
+            "plays": 6,
+            "held": 6,
+            "refused": 0,
+            "red": 0
+          },
+          "cross-stack": {
+            "plays": 6,
+            "held": 6,
+            "refused": 0,
+            "red": 0
+          },
+          "cross-literal": {
+            "plays": 4,
+            "held": 4,
+            "refused": 0,
+            "red": 0
+          },
+          "cross-mouth": {
+            "plays": 1,
+            "held": 1,
             "refused": 0,
             "red": 0
           }

@@ -243,6 +243,57 @@ if (cmd === 'match') {
     fs.writeFileSync(corpusPath, ascii(corpus));
     process.exit(summary.tally.red > 0 ? 1 : 0);
   })();
+} else if (cmd === 'cross') {
+  // 掛け合わせ: 違う攻撃どうしを親にして新しい攻め方を編み出す (周回 8)。親は全コーパス・箱が export する名前に収まる物
+  const rm = require('./lib/mamori-arena-rematch.cjs');
+  const cx = require('./lib/mamori-arena-cross.cjs');
+  const os = require('node:os');
+  const dir = path.join(arena.REPO_ROOT, 'security', 'mamori-arena');
+  const corpusPath = path.join(dir, 'corpus.json');
+  const evoPath = path.join(dir, 'evolution.json');
+  const corpus = JSON.parse(fs.readFileSync(corpusPath, 'utf8'));
+  const state = fs.existsSync(evoPath) ? JSON.parse(fs.readFileSync(evoPath, 'utf8')) : { version: 1, boxes: {}, history: [], lessons: [], gaps: [], wins: [] };
+  const pairs = Number(opt('pairs', '90'));
+  const runSeed = Number(opt('seed', String(((state.rematch || {}).runs || []).length + (state.waves || []).length + 1)));
+  const only = opt('only') ? opt('only').split(',') : null;
+  const names = corpus.boxes.map((b) => b.name).filter((n) => (only ? only.includes(n) : true));
+  const compute = (list) => list.map((name) => {
+    const box = corpus.boxes.find((b) => b.name === name);
+    const seen = new Set(((state.boxes[name] || {}).tokens) || []);
+    const rematch = cx.crossBox({ compiler, box, corpus, seed: runSeed * 7919 + name.length, pairs, level, seen });
+    return { box: name, rematch, hammer: [], blue: [] };
+  });
+  (async () => {
+    const wave = require('./lib/mamori-arena-wave.cjs');
+    let results;
+    if (argv.includes('--chunk')) {
+      results = compute(names);
+      fs.writeFileSync(opt('out'), JSON.stringify(results));
+      process.exit(0);
+    }
+    const jobs = Math.max(1, Math.min(Number(opt('jobs', '4')), names.length));
+    if (jobs <= 1) results = compute(names);
+    else {
+      const groups = Array.from({ length: jobs }, () => []);
+      names.forEach((n, i) => groups[i % jobs].push(n));
+      const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'mamori-cross-'));
+      const argvList = groups.map((g, i) => ['cross', '--chunk', '--only', g.join(','), '--seed', String(runSeed), '--pairs', String(pairs), '--level', level, '--out', path.join(tmp, i + '.json')]);
+      const done = await wave.runParallel(__filename, argvList);
+      done.forEach((d, i) => { if (d.code !== 0) { console.error(`cross: 子プロセス ${i} が失敗 (exit ${d.code}): ${d.stderr.slice(0, 400)}`); process.exit(2); } });
+      results = groups.flatMap((_, i) => JSON.parse(fs.readFileSync(path.join(tmp, i + '.json'), 'utf8')));
+      fs.rmSync(tmp, { recursive: true, force: true });
+    }
+    const summary = rm.applyRematchResults({ state, corpus, results, seed: runSeed });
+    const crossRows = summary.table.filter((r) => r.op.startsWith('cross-'));
+    console.log('掛け合わせ          戦    止められた  奥まで届いた  赤  打ち切り  新しい語');
+    for (const r of crossRows) console.log(`${r.op.padEnd(18)}${String(r.plays).padStart(6)}${String(r.refused).padStart(10)}${String(r.held).padStart(12)}${String(r.red).padStart(6)}${String(r.exhausted).padStart(8)}${String(r.fresh).padStart(9)}`);
+    for (const r of results) for (const win of r.rematch.wins) console.log(`RED   ${r.box} [${win.op} ← ${win.from}]: ${win.verdict} — ${win.detail.slice(0, 120)}`);
+    console.log(`\n== 掛け合わせ (種 ${runSeed}・${pairs} 本/箱): 戦 ${summary.tally.plays} / 赤の勝ち ${summary.tally.red} / 近い攻めの捕獲 ${summary.tally.near} ==`);
+    const ascii = (o) => JSON.stringify(o, null, 2).replace(/[^\x20-\x7e\n　-ヿ一-鿿＀-￯]/g, (c) => '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + '\n';
+    fs.writeFileSync(evoPath, ascii(state));
+    fs.writeFileSync(corpusPath, ascii(corpus));
+    process.exit(summary.tally.red > 0 ? 1 : 0);
+  })();
 } else if (cmd === 'replay') {
   const corpusPath = path.join(arena.REPO_ROOT, 'security', 'mamori-arena', 'corpus.json');
   const corpus = JSON.parse(fs.readFileSync(corpusPath, 'utf8'));
@@ -256,6 +307,6 @@ if (cmd === 'match') {
   console.log(bad === 0 ? `✅ ${corpus.attacks.length} 攻撃 × ${corpus.boxes.length} 箱: 攻撃側の得点は 0` : `❌ ${bad} 件で再び破られた`);
   process.exit(bad === 0 ? 0 : 1);
 } else {
-  console.error('usage: match | tournament | learn | evolve | wave | rematch | replay');
+  console.error('usage: match | tournament | learn | evolve | wave | rematch | cross | replay');
   process.exit(2);
 }
