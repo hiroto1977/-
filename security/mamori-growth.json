@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.24"
+    "version": "0.25"
   },
   "constructs": {
     "class": {
@@ -126,9 +126,10 @@
       "since": "0.22"
     },
     "export-from": {
-      "decision": "feature",
+      "decision": "added",
       "why": "まとめの入口 (index.ts) が使う。",
-      "risk": "extern sink の危ない口を再輸出すると TypeScript の側へ素の口が漏れる —— 危ない口の再輸出を断る。"
+      "risk": "extern sink の危ない口を再輸出すると TypeScript の側へ素の口が漏れる —— 危ない口の再輸出を断る。",
+      "since": "0.25"
     },
     "export-default": {
       "decision": "rewrite",
@@ -3020,6 +3021,65 @@
         "summary": "oauth.ts を 0.24 へ移植。待受の「要求ごとに何を返し、閉じるか」は decideCallbackReply (Mamori) が決め、Node の口 (env・乱数・SHA-256・Buffer・時計・URLSearchParams・http の待受・fetch・打ち切り) は判断を持たない薄い host 壁 oauthHost.ts が書くだけ。変異検査は両ファイル 100% (oauth.ts 413 変異体・oauthHost.ts 45)。生存はモジュール直下の定数 (CALLBACK_HTML・env 名) で、読み直したモジュールで留めた。"
       },
       "deviation": "利用者の「1～5を導入」で、brief の自動選択ではなく手で選んだ"
+    },
+    {
+      "id": "MG-051",
+      "date": "2026-11-09",
+      "kind": "feature",
+      "target": "export-from",
+      "pickedBy": "manual",
+      "briefPick": "feature:export-from",
+      "version": "0.25",
+      "features": [
+        "export-from"
+      ],
+      "added": [
+        "export-from"
+      ],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "extern sink の口を `export { shell };` で出して TypeScript の呼び手へ素の口を漏らす",
+          "result": "refused"
+        },
+        {
+          "tried": "外の module (electron / node:fs / left-pad / 絶対パス) からの `export { shell } from \"…\"`",
+          "result": "refused"
+        },
+        {
+          "tried": "Mamori でない TypeScript の module からの再輸出 `export { anything } from \"./plain\"`",
+          "result": "refused"
+        },
+        {
+          "tried": "`export * from \"./a\"` で何が出るか読めない形",
+          "result": "refused"
+        },
+        {
+          "tried": "関数を `export { type mk }` で型として再輸出 (検めと生成物の食い違い)",
+          "result": "refused"
+        },
+        {
+          "tried": "`use default fs from \"node:fs\"; export { fs };` で外の module の既定の値を再輸出",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 3,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/checker.ts",
+          "src/shared/mamori/emit.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 914,
+        "reason": "draft PR #914 に載せる",
+        "summary": "再輸出 `export { a, type T } from \"./m\";` / `export { x };` を足した。再輸出は TypeScript の呼び手のためで Mamori の use では引けない。足す前に 8 通りで破り、組み直しの実測で 9 つ目 (use default の再輸出で外の口が漏れる) を見つけて M6 で塞いだ。検査は分岐の無い形へ組み直して等価変異を無くし、parser / checker / emit は変異検査 100%。"
+      },
+      "deviation": "利用者の「1～5を導入」で、brief の自動選択ではなく手で選んだ。0.25 の最初の実装は use default の再輸出を通していたので、変異検査の組み直しの途中で塞いだ"
     }
   ]
 }
