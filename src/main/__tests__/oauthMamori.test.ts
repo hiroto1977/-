@@ -99,8 +99,12 @@ describe('OAUTH_CONFIGS の env 名', () => {
 
 describe('decideCallbackReply: 応答の字面', () => {
   const H = '127.0.0.1:5000';
-  it('★ 成功の応答は 200・text/html・本文は 1 字も違わない・終端で code / state を運ぶ', () => {
-    const r = decideCallbackReply(H, '/oauth/callback?code=C1&state=S1', 'S1');
+  it('★ 成功の応答は 200・text/html・本文は 1 字も違わない・終端で code / state を運ぶ', async () => {
+    // CALLBACK_HTML はモジュール直下の定数 —— 読み直したモジュールで評価し直す (static 変異体は読み込み時にしか効かない)。
+    const fresh = (await rereadModule<typeof import('../oauth')>(import.meta.url, '../oauth')) as unknown as {
+      decideCallbackReply: typeof decideCallbackReply;
+    };
+    const r = fresh.decideCallbackReply(H, '/oauth/callback?code=C1&state=S1', 'S1');
     expect(r).toEqual({
       status: 200,
       headers: { 'Content-Type': 'text/html; charset=utf-8' },
