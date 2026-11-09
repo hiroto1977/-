@@ -21,12 +21,12 @@ function argsOf(f, val = 'a', cbIndex = 0) {
     if (p === 'string') return lit(val);
     if (p === 'number') return '0';
     if (p === 'boolean') return 'true';
-    const pool = evo.CALLBACKS[p.slice(3)] || evo.CALLBACKS.string;
+    const pool = p.startsWith('acb:') ? evo.CALLBACKS_ASYNC[p.slice(4)] || evo.CALLBACKS_ASYNC.string : evo.CALLBACKS[p.slice(3)] || evo.CALLBACKS.string;
     return pool[cbIndex % pool.length];
   });
 }
-const callOf = (f, val, cbIndex) => ({ k: 'call', fn: f.name, args: argsOf(f, val, cbIndex) });
-const callText = (f, val, cbIndex) => `${f.name}(${argsOf(f, val, cbIndex).join(', ')})`;
+const callOf = (f, val, cbIndex) => evo.callMove(f, argsOf(f, val, cbIndex));
+const callText = (f, val, cbIndex) => (f.async ? '(await ' : '') + `${f.name}(${argsOf(f, val, cbIndex).join(', ')})` + (f.async ? ')' : '');
 const hasString = (f) => f.params.includes('string');
 
 function sample(list, k, rng) {
@@ -69,9 +69,9 @@ const LENSES = [
       const targets = api.fns.filter((f) => f.params.length === 1 && f.params[0] === 'string');
       for (const part of chunk(sample(keys, 8 * n, rng), 8)) out.push(targets.flatMap((f) => part.map((v) => callOf(f, v))).slice(0, 48));
       // 契約の期待値は仮想データの置き場の綴り (@@REC_A@@) で、戦いごとの実値は箱の出力にしか現れない: 出力を鍵として次の口へ逆に差し込む
-      const sources = api.fns.filter((f) => f.returns === 'string' && f.params.every((p) => p === 'string' || p === 'number') && f.params.length <= 1);
+      const sources = api.fns.filter((f) => (f.returns === 'string' || f.returns === 'Promise<string>') && f.params.every((p) => p === 'string' || p === 'number') && f.params.length <= 1);
       const pairs = [];
-      for (const o of targets) for (const i of sources) if (o.name !== i.name) pairs.push({ k: 'chain', outer: o.name, inner: i.name, args: i.params.map((p) => (p === 'number' ? '0' : '"a"')) });
+      for (const o of targets) for (const i of sources) if (o.name !== i.name) pairs.push({ k: 'chain', outer: o.name, inner: i.name, awO: !!o.async, awI: !!i.async, args: i.params.map((p) => (p === 'number' ? '0' : '"a"')) });
       for (const part of chunk(pairs, 16)) out.push(part);
       return out.filter((g) => g.length > 0);
     },
@@ -182,10 +182,19 @@ const LENSES = [
       for (const name of sample(privates, 3 * n, rng)) out.push([{ ...expr(name, [name]), ghost: true }]);
       // 2) コールバックで中へ入り、中から別の口へ再突入して出る (入った瞬間の公開値を鍵に持ち帰る)
       const sf = api.fns.filter((f) => f.params.length === 1 && f.params[0] === 'string');
-      for (const f of api.fns.filter((x) => x.params.some((p) => p === 'cb:string'))) {
-        const withCb = (cb) => `${f.name}(${f.params.map((p) => (p === 'cb:string' ? cb : p === 'string' ? '"a"' : p === 'number' ? '0' : 'true')).join(', ')})`;
+      for (const f of api.fns.filter((x) => x.params.some((p) => p === 'cb:string' || p === 'acb:string'))) {
+        const aw = f.async ? 'await ' : '';
+        const isA = f.params.includes('acb:string');
+        const withCb = (cb) => `${aw}${f.name}(${f.params.map((p) => (p === 'cb:string' || p === 'acb:string' ? cb : p === 'string' ? '"a"' : p === 'number' ? '0' : 'true')).join(', ')})`;
+        if (isA) {
+          // async のコールバックは名前つきの宣言で渡す。入った先 (await の途中) から同じ口へ再突入する宣言も足す
+          out.push([{ k: 'block', names: [f.name], code: `r.push(${withCb('acbEcho')});` }]);
+          out.push([{ k: 'block', names: [f.name], helpers: [{ id: 'reenter_' + f.name, src: `async fn reenter_${f.name}(s: string) -> Promise<string> { return ${aw}${f.name}(acbEcho); }` }], code: `r.push(${withCb('reenter_' + f.name)});` }]);
+          for (const g of sample(sf, n, rng)) out.push([{ k: 'block', names: [f.name, g.name], helpers: [{ id: 'via_' + f.name + '_' + g.name, src: `async fn via_${f.name}_${g.name}(s: string) -> Promise<string> { return ${g.async ? 'await ' : ''}${g.name}(s); }` }], code: `r.push(${withCb('via_' + f.name + '_' + g.name)});` }]);
+          continue;
+        }
         out.push([{ k: 'block', names: [f.name], code: `r.push(${withCb('(s: string) => { r.push(s); return s; }')});` }]);
-        out.push([{ k: 'block', names: [f.name], code: `r.push(${withCb(`(s: string) => { r.push(${f.name}((t: string) => t)); return s; }`)});` }]);
+        out.push([{ k: 'block', names: [f.name], code: `r.push(${withCb(`(s: string) => { r.push(${aw}${f.name}((t: string) => t)); return s; }`)});` }]);
         for (const g of sample(sf, n, rng)) out.push([{ k: 'block', names: [f.name, g.name], code: `r.push(${withCb(`(s: string) => { r.push(s); r.push(${g.name}(s)); return ${g.name}(s); }`)});` }]);
       }
       // 3) 形の違う物を持ち込む: 配列は局所に作って渡し、戻ってから中身を読む (足跡を残して戻る)
@@ -212,6 +221,31 @@ const LENSES = [
       const peek = api.consts.flatMap((c) => [{ k: 'values', c }, { k: 'entries', c }]);
       if (calls.length > 0) out.push([...calls, ...peek, ...calls]);
       return out.filter((g) => g.length > 0);
+    },
+  },
+  {
+    id: 'nightmare', ja: '悪夢', note: '守る側が「これは防ぎようが無い」と思う攻め: 同居者の資源枯渇 (無限ループ・大量呼び出し)・巨大入力の増幅・時計の無い世界でイベントループの回数を時計にする計時の盗み聞き (await の回数の差で秘密を 1 文字ずつ復元)',
+    gen({ api, n, rng }) {
+      const out = [];
+      // 1) 計時の盗み聞き: 時計 (Date / performance) は言語が出さない (M6)。代わりに「完了までに microtask が何回回ったか」を数える。
+      //    口の中の await の回数が秘密と一致した文字数で変わるなら、1 文字ずつ復元できる (alphabet を総当たり・基準 (どれにも合わない文字) より多く待った文字を採る)
+      for (const f of api.fns.filter((x) => x.async && x.params.length === 1 && x.params[0] === 'string' && /^Promise<(boolean|string|number)>$/.test(x.returns))) {
+        const T = f.returns.slice(8, -1);
+        const ticks = `ticks_${f.name}`; const rec = `recover_${f.name}`;
+        out.push([{ k: 'block', names: [f.name], aw: true, helpers: [
+          { id: ticks, src: `async fn ${ticks}(g: string) -> Promise<number> {\n  let fin = false;\n  const p = ${f.name}(g);\n  p.then((v: ${T}) => { fin = true; });\n  let n = 0;\n  while (!fin && n < 400) { await Promise.resolve(0); n = n + 1; }\n  return n;\n}` },
+          { id: rec, src: `async fn ${rec}() -> Promise<string> {\n  const alphabet = "sec_0123456789abcdef";\n  let known = "";\n  let pos = 0;\n  let go = true;\n  while (go && pos < 40) {\n    const base = await ${ticks}(known + "~");\n    let best = "";\n    let bestTicks = base;\n    let k = 0;\n    while (k < alphabet.length) {\n      const ch = alphabet.slice(k, k + 1);\n      const t = await ${ticks}(known + ch);\n      if (t > bestTicks) { bestTicks = t; best = ch; }\n      k = k + 1;\n    }\n    if (best === "") { go = false; } else { known = known + best; }\n    pos = pos + 1;\n  }\n  return known;\n}` },
+        ], code: `r.push(await ${rec}());` }]);
+      }
+      // 2) 資源枯渇: 同居者が CPU・メモリを食い尽くす。co-located な攻め手には原理的に止められない (止めるのは箱の外の期限と heap の上限)
+      const sf = api.fns.filter((f) => f.params.length === 1 && f.params[0] === 'string' && !f.async);
+      for (const f of sample(sf, Math.max(1, n), rng)) {
+        out.push([{ k: 'block', names: [f.name], code: `let i = 0; while (i < 20000) { r.push(${f.name}("a")); r.pop(); i = i + 1; }` }]);
+        out.push([{ k: 'block', names: [f.name], code: `let s = "ab"; let i = 0; while (i < 22) { s = s + s; i = i + 1; } r.push(${f.name}(s).length);` }]);
+      }
+      out.push([{ k: 'block', code: 'let i = 0; while (true) { i = i + 1; }' }]);
+      out.push([{ k: 'block', code: 'let s = "ab"; let i = 0; while (i < 60) { s = s + s; i = i + 1; } r.push(s.length);' }]);
+      return out;
     },
   },
   {

@@ -147,7 +147,7 @@ interface CorpusFile {
 
 describe(`自律学習・自律進化 (${LEVEL})`, () => {
   const evo = require_('../../../../scripts/lib/mamori-arena-evolve.cjs') as {
-    parseExports: (src: string) => { fns: { name: string; params: string[]; returns: string }[]; consts: string[] };
+    parseExports: (src: string) => { fns: { name: string; params: string[]; returns: string; async?: boolean }[]; consts: string[] };
     programOf: (box: string, genome: unknown[], tag: string) => string;
     weaken: (src: string) => { op: string; source: string }[];
     evolveRed: (o: Record<string, unknown>) => { elites: unknown[]; wins: { verdict: string }[]; plays: number; skipped?: string };
@@ -199,7 +199,7 @@ describe(`自律学習・自律進化 (${LEVEL})`, () => {
 
   it('★ 青の弱体化 (対照): 秘密を返す関数を足した箱・秘密を export した箱を、赤が必ず捕まえる (物差しと赤の目が生きている)', () => {
     const ops = evo.weaken(VAULT.source).map((w) => w.op);
-    expect(ops).toEqual(expect.arrayContaining(['export-secret', 'leak-fn', 'leak-prefix', 'leak-hook']));
+    expect(ops).toEqual(expect.arrayContaining(['export-secret', 'leak-fn', 'leak-prefix', 'leak-hook', 'leak-ticks']));
     const blue = evo.evolveBlue({ compiler, box: VAULT, seed: 3, level: LEVEL });
     expect(blue.length).toBeGreaterThan(0);
     for (const b of blue) expect(b.caught, `${b.op} を赤が捕まえられなかった`).toBe(true);
@@ -263,8 +263,8 @@ describe(`観点 (レンズ) × 多層の津波 (${LEVEL})`, () => {
   };
   const evo = require_('../../../../scripts/lib/mamori-arena-evolve.cjs') as { programOf: (box: string, g: unknown[], tag: string) => string };
 
-  it('観点は 11 ・それぞれ日本語の名と狙いを持つ (思考の視点が欠けない)', () => {
-    expect(lenses.LENSES.map((l) => l.ja)).toEqual(['逆算', '俯瞰', '批判', '合理', '客観', '抽象', '妄想', '心理的不安', '時間', '瞬間移動', '越境']);
+  it('観点は 12 ・それぞれ日本語の名と狙いを持つ (思考の視点が欠けない)', () => {
+    expect(lenses.LENSES.map((l) => l.ja)).toEqual(['逆算', '俯瞰', '批判', '合理', '客観', '抽象', '妄想', '心理的不安', '時間', '瞬間移動', '悪夢', '越境']);
     for (const l of lenses.LENSES) { expect(l.id).toMatch(/^[a-z]+$/); expect(l.note.length).toBeGreaterThan(10); }
   });
 
@@ -317,6 +317,37 @@ describe(`観点 (レンズ) × 多層の津波 (${LEVEL})`, () => {
     const names = lenses.waveGenomes({ box: VAULT, seed: 3, intensity: 8 }).filter((x) => x.lens === 'teleport').flatMap((x) => x.genome.map((m) => (m as { e?: string }).e));
     expect(names).toContain('SECRET');
   });
+
+  it('★ 悪夢 (防ぎようが無いと守る側が思う攻め): await の回数を時計にした計時の盗み聞きが、先頭一致で await が増える口から秘密を 1 文字ずつ復元する', () => {
+    const naive = { name: 'naive-async', source: 'const SECRET = "@@SECRET@@";\nexport fn rec() -> string { return "@@REC_A@@"; }\nexport async fn probeSlow(g: string) -> Promise<boolean> {\n  let i = 0;\n  while (i < 40) {\n    if (g.length > i && g.slice(i, i + 1) === SECRET.slice(i, i + 1)) { await Promise.resolve(0); } else { return false; }\n    i = i + 1;\n  }\n  return true;\n}\n', spec: { contract: [{ fn: 'rec', args: [], expect: '@@REC_A@@' }] } };
+    const r = wave.runBoxWave({ compiler, box: naive, seed: 3, waves: 1, intensity: 1, level: LEVEL });
+    const win = r.wins.find((w) => w.lens === 'nightmare');
+    expect(win, '計時の盗み聞きが秘密を復元できない (攻めが壊れている)').toBeTruthy();
+    expect(win?.verdict).toBe('stolen');
+  }, 120_000);
+
+  it('★ 悪夢への対策: await の回数を入力に依らず一定にした箱 (async-compare) は、同じ攻めで秘密を復元されない', () => {
+    const p = `${arena.REPO_ROOT}/security/mamori-arena/corpus.json`;
+    const box = (JSON.parse(readOriginalSource(p)) as { boxes: { name: string; source: string; spec: unknown }[] }).boxes.find((b) => b.name === 'async-compare');
+    expect(box, 'async-compare の箱が記録に無い').toBeTruthy();
+    const r = wave.runBoxWave({ compiler, box, seed: 3, waves: 1, intensity: 1, level: LEVEL });
+    expect(r.wins).toEqual([]);
+    expect((r.stats.nightmare as { held?: number } | undefined)?.held ?? 0, '計時の攻めが箱の奥まで届かない (対照が空になる)').toBeGreaterThan(0);
+  }, 120_000);
+
+  it('async の口 (export async fn と Promise を返すコールバック) も API に入る (盲点の回帰: async-vault は今まで一度も撃たれていなかった)', () => {
+    const api = evo.parseExports('export async fn a(k: string) -> Promise<string> { return k; }\nexport async fn m(cb: (s: string) => Promise<string>) -> Promise<string> { return ""; }\n');
+    expect(api.fns.map((f) => f.name)).toEqual(['a', 'm']);
+    expect(api.fns[0]?.async).toBe(true);
+    expect(api.fns[1]?.params).toEqual(['acb:string']);
+  });
+
+  it('資源枯渇 (打ち切られた攻め) は exhausted に数える・赤の勝ちには数えない (同居者の資源枯渇を止めるのは箱の外の期限)', () => {
+    const src = evo.programOf('vault', [{ k: 'block', code: 'let i = 0; while (true) { i = i + 1; }' }], 'burn');
+    const r = play(VAULT, src, 31);
+    expect(r.verdict).toBe('hang');
+    expect(r.side).toBe('void');
+  }, 60_000);
 
   it('★ 青の較正: 守りを外した箱 (秘密を返す口を足した) を、観点のどれかが捕まえる (レンズ全体の目が利いている)', () => {
     const blue = wave.blueCalibrate({ compiler, box: VAULT, seed: 4, level: LEVEL });

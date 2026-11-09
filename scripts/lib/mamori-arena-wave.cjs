@@ -15,7 +15,7 @@ const lenses = require('./mamori-arena-lenses.cjs');
 const unique = (list) => [...new Set(list)];
 const lensKey = (l) => (String(l).startsWith('layered') ? 'layered' : String(l));
 const learnedOf = (seen) => [...seen].filter((t) => t.length >= 4 && t.length <= 40 && !/^(returned|length|stack|name|message|function|native|code)$/.test(t)).slice(0, 80);
-const newStat = () => ({ plays: 0, refused: 0, held: 0, red: 0, void: 0, bounced: 0, fresh: 0, rules: {} });
+const newStat = () => ({ plays: 0, refused: 0, held: 0, red: 0, void: 0, bounced: 0, exhausted: 0, fresh: 0, rules: {} });
 
 /** 箱 1 つへの波。観点ごとの結果 (stats)・破れた攻め (wins)・観点ごとの「箱の奥まで届いて新しい語を引いた」最良 (near)・見えた語を返す。 */
 function runBoxWave({ compiler, box, seed, waves = 2, intensity = 6, level = 'strong', seen = new Set(), weights = null }) {
@@ -38,6 +38,8 @@ function runBoxWave({ compiler, box, seed, waves = 2, intensity = 6, level = 'st
       if (res.side === 'red') { s.red++; wins.push({ lens: it.lens, verdict: res.verdict, detail: String(res.detail).slice(0, 200), program: src }); continue; }
       // 門前で返された (相手のエリアに無い名前へ飛んだ) = bounced。採点外だが、瞬間移動の攻めが跳ね返されたことの記録になる
       if (res.verdict === 'n/a') { s.bounced++; continue; }
+      // 打ち切られた (無限ループ・資源枯渇) = exhausted。co-located な攻め手の資源枯渇は言語では止められず、箱の外の期限が止める —— 採点外だが数える
+      if (res.verdict === 'hang') { s.exhausted++; continue; }
       if (res.side === 'void') { s.void++; continue; }
       if (res.verdict === 'refused') {
         s.refused++;
@@ -71,7 +73,7 @@ function analyzeStats(stats) {
   return Object.keys(stats).sort().map((id) => {
     const s = stats[id];
     const rules = Object.entries(s.rules).sort((a, b) => b[1] - a[1]);
-    return { lens: id, plays: s.plays, refused: s.refused, held: s.held, red: s.red, void: s.void, bounced: s.bounced || 0, fresh: s.fresh, reach: s.plays > 0 ? s.held / s.plays : 0, topRule: rules[0] ? rules[0][0] : null, rules: Object.fromEntries(rules.slice(0, 6)) };
+    return { lens: id, plays: s.plays, refused: s.refused, held: s.held, red: s.red, void: s.void, bounced: s.bounced || 0, exhausted: s.exhausted || 0, fresh: s.fresh, reach: s.plays > 0 ? s.held / s.plays : 0, topRule: rules[0] ? rules[0][0] : null, rules: Object.fromEntries(rules.slice(0, 6)) };
   });
 }
 
@@ -88,7 +90,7 @@ function countermeasureOf(win) {
 
 function mergeStat(prev, add) {
   const out = { ...newStat(), ...(prev || {}), rules: { ...((prev && prev.rules) || {}) } };
-  for (const k of ['plays', 'refused', 'held', 'red', 'void', 'bounced', 'fresh']) out[k] = (out[k] || 0) + (add[k] || 0);
+  for (const k of ['plays', 'refused', 'held', 'red', 'void', 'bounced', 'exhausted', 'fresh']) out[k] = (out[k] || 0) + (add[k] || 0);
   for (const [r, n] of Object.entries(add.rules || {})) out.rules[r] = (out.rules[r] || 0) + n;
   return out;
 }
