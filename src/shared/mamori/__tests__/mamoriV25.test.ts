@@ -9,7 +9,7 @@ import { compileProject } from '../compile';
  * 足す前に破った: ① 口 (`extern sink { shell }`) を `export { shell }` で出す (生成物の呼び手へ素の口が漏れる)
  * ② `extern pure` の host の口を出す ③ 外の module (electron / node:fs / npm) からの再輸出 ④ Mamori でない TypeScript の module からの再輸出
  * ⑤ `export *` (何が出ていくか読めない) ⑥ export していない名前 ⑦ 自分で宣言した名前の `export { f }` (宣言に export を付ける 1 つの書き方に絞る)
- * ⑧ 関数を `type` で出す (検めと生成物の食い違い)。0.25 はこの全部を Mamori の規則で断る。
+ * ⑧ 関数を `type` で出す (検めと生成物の食い違い) ⑨ 既定の import (`use default fs from "node:fs"; export { fs };`) を出す (外の口が素で漏れる)。0.25 はこの全部を Mamori の規則で断る。
  * 再輸出は TypeScript の呼び手のための物で、Mamori の `use` では引けない (`table.exports` に載らない)。
  */
 
@@ -102,8 +102,22 @@ describe('0.25: 再輸出 export { … } from / export { x }', () => {
   });
 
   it('同じ名前を 2 度・自分自身から・空の { } は断る', () => {
-    expect(withA('export { mk, mk } from "./a";\n').rules.join('\n')).toMatch(/2 度再輸出/);
-    expect(project([['src/x/a.mamori', 'export const A: number = 1;\nexport { A } from "./a";\n']]).rules.join('\n')).toMatch(/自分自身からの再輸出/);
+    expect(withA('export { mk, mk } from "./a";\n').rules).toEqual([expect.stringMatching(/^M6 .*mk を 2 度再輸出しています/)]);
+    expect(project([['src/x/a.mamori', 'export const A: number = 1;\nexport { A } from "./a";\n']]).rules).toEqual([expect.stringMatching(/^M6 自分自身からの再輸出/)]);
     expect(withA('export { } from "./a";\n').rules.join('\n')).toMatch(/名前がありません/);
+  });
+
+  it('★ 破る⑨: 既定の import (use default) の再輸出は書けない (外の module の口 fs / path が素で漏れる)', () => {
+    for (const form of ['export { fs };', 'export { type fs };']) {
+      const r = project([['src/x/c.mamori', `use default fs from "node:fs";\n${form}\n`]]);
+      expect(r.rules, form).toEqual([expect.stringMatching(/^M6 fs は外の module の既定の import です/)]);
+    }
+  });
+
+  it('上の階層の module (../a) からも再輸出できる・解決先の無い module は断る', () => {
+    const r = project([['src/x/a.mamori', A], ['src/x/sub/c.mamori', 'export { mk } from "../a";\n']]);
+    expect(r.rules).toEqual([]);
+    const r2 = project([['src/x/a.mamori', A], ['src/x/sub/c.mamori', 'export { mk } from "../zzz";\n']]);
+    expect(r2.rules).toEqual([expect.stringMatching(/^M6 .*zzz\.mamori は Mamori で書いた module ではありません/)]);
   });
 });

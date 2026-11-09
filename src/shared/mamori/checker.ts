@@ -16,7 +16,7 @@
  *
  * 誤りは全部集めて返す (構文と違い、来歴の誤りは互いに独立なので並べて見せる価値がある)。
  */
-import type { Expr, Module, Param, Stmt, TypeRef } from './ast';
+import type { Expr, Module, Param, Pos, Stmt, TypeRef } from './ast';
 
 export interface MamoriDiagnostic {
   readonly file: string;
@@ -373,47 +373,59 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
    */
   const externNames = new Set<string>();
   const usedLocals = new Map<string, { readonly target: string; readonly name: string }>();
-  const declaredNames = new Set<string>();
+  // `use default X from …` の X (外の module の既定の値)。再輸出は断る (口が素で漏れる)。名前の在否だけを持つ。
+  // 既定の import が無いときの null も入れる (名前は文字列なので null に当たらない —— 分岐を持たない形)。
+  const defaultLocals = new Set<string | null>();
+  // 再輸出の項には `name` が無い (undefined が入る) —— 名前は文字列なので undefined に当たらない。分岐を持たない形。
+  const declaredNames = new Set<string | undefined>();
   for (const it of module.items) {
     if (it.kind === 'extern') for (const n of it.names) externNames.add(n);
     else if (it.kind === 'use') {
-      if (it.defaultName !== null) usedLocals.set(it.defaultName, { target: resolveUse(it.from, file), name: 'default' });
+      defaultLocals.add(it.defaultName);
       for (const n of it.names) usedLocals.set(n.alias ?? n.name, { target: resolveUse(it.from, file), name: n.name });
-    } else if (it.kind !== 'reexport') declaredNames.add((it as { readonly name: string }).name);
+    } else declaredNames.add((it as { readonly name?: string }).name);
   }
   const reexported = new Set<string>();
+  const noteDuplicate = (pos: Pos, name: string): void => {
+    if (reexported.has(name)) report('M6', pos, `${name} を 2 度再輸出しています`);
+    reexported.add(name);
+  };
   for (const it of module.items) {
     if (it.kind !== 'reexport') continue;
-    const target = it.from === null ? null : resolveUse(it.from, file);
-    if (it.from !== null && !it.from.startsWith('./') && !it.from.startsWith('../')) {
+    if (it.from === null) {
+      // `export { x };` —— use で引いた名前の再輸出だけ。口 (extern) は出せず、自分で宣言した名前は宣言に `export` を付ける。
+      for (const n of it.names) {
+        noteDuplicate(it.pos, n.name);
+        if (externNames.has(n.name)) {
+          report('M6', it.pos, `${n.name} は extern の口です —— 口を \`export { … }\` で出すと、TypeScript の呼び手へ素の口が漏れます (sink 関数の中に閉じ込めたまま使います)`);
+        } else if (declaredNames.has(n.name)) {
+          report('M6', it.pos, `${n.name} はこの module で宣言した名前です —— 宣言に \`export\` を付けます (\`export { … }\` は use で引いた名前の再輸出だけ)`);
+        } else if (defaultLocals.has(n.name)) {
+          report('M6', it.pos, `${n.name} は外の module の既定の import です —— \`export { … }\` で出すと、外の module の口 (fs・path ほか) が TypeScript の呼び手へ素で漏れます (中で使うだけにします)`);
+        } else if (!usedLocals.has(n.name)) {
+          report('M6', it.pos, `${n.name} は宣言されていません (\`export { … }\` は use で引いた名前の再輸出)`);
+        } else {
+          const used = usedLocals.get(n.name);
+          if (n.typeOnly && used !== undefined && table.fns.get(fnKey(used.target, used.name)) !== undefined) report('M6', it.pos, `\`type ${n.name}\` は関数です —— 型だけの再輸出で関数は出せません`);
+        }
+      }
+      continue;
+    }
+    if (!it.from.startsWith('./') && !it.from.startsWith('../')) {
       report('M6', it.pos, `\`export { … } from <外の module>\` (${it.from}) は書けません —— 再輸出できるのは相対の Mamori module の名前だけです (外の module の口を、検めずに TypeScript の側へ通してしまう)`);
       continue;
     }
+    const target = resolveUse(it.from, file);
     if (target === file) report('M6', it.pos, '自分自身からの再輸出は書けません (宣言に `export` を付けます)');
-    const exported = target === null ? undefined : table.exports.get(target);
-    if (target !== null && exported === undefined) {
+    const exported = table.exports.get(target);
+    if (exported === undefined) {
       report('M6', it.pos, `${target} は Mamori で書いた module ではありません —— 再輸出できるのは Mamori の module が export した名前だけです (TypeScript の module の名前は、印を受ける口かどうか Mamori から見えません)`);
       continue;
     }
     for (const n of it.names) {
-      if (reexported.has(n.name)) report('M6', it.pos, `${n.name} を 2 度再輸出しています`);
-      reexported.add(n.name);
-      if (target !== null) {
-        if (exported !== undefined && !exported.has(n.name)) report('M6', it.pos, `${target} は ${n.name} を export していません (再輸出できるのは export した名前だけ)`);
-        if (n.typeOnly && table.fns.get(fnKey(target, n.name)) !== undefined) report('M6', it.pos, `\`type ${n.name}\` は関数です —— 型だけの再輸出で関数は出せません (関数は \`export { ${n.name} }\` で再輸出します)`);
-        continue;
-      }
-      // `export { x };` —— use で引いた名前の再輸出だけ。口 (extern) は出せず、自分で宣言した名前は宣言に `export` を付ける。
-      if (externNames.has(n.name)) {
-        report('M6', it.pos, `${n.name} は extern の口です —— 口を \`export { … }\` で出すと、TypeScript の呼び手へ素の口が漏れます (sink 関数の中に閉じ込めたまま使います)`);
-      } else if (declaredNames.has(n.name)) {
-        report('M6', it.pos, `${n.name} はこの module で宣言した名前です —— 宣言に \`export\` を付けます (\`export { … }\` は use で引いた名前の再輸出だけ)`);
-      } else if (!usedLocals.has(n.name)) {
-        report('M6', it.pos, `${n.name} は宣言されていません (\`export { … }\` は use で引いた名前の再輸出)`);
-      } else {
-        const used = usedLocals.get(n.name)!;
-        if (n.typeOnly && table.fns.get(fnKey(used.target, used.name)) !== undefined) report('M6', it.pos, `\`type ${n.name}\` は関数です —— 型だけの再輸出で関数は出せません`);
-      }
+      noteDuplicate(it.pos, n.name);
+      if (!exported.has(n.name)) report('M6', it.pos, `${target} は ${n.name} を export していません (再輸出できるのは export した名前だけ)`);
+      if (n.typeOnly && table.fns.get(fnKey(target, n.name)) !== undefined) report('M6', it.pos, `\`type ${n.name}\` は関数です —— 型だけの再輸出で関数は出せません (関数は \`export { ${n.name} }\` で再輸出します)`);
     }
   }
 
