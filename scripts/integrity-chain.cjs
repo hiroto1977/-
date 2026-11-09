@@ -728,6 +728,8 @@ const PROTECTED = [
   'src/renderer/network/liveRead.mamori',   // ブラウザ版の読み取り経路 (資格情報をプロキシへ渡す) の Mamori の元 (2026-11-03 · MG-029)
   'src/main/clients/assistant.mamori',       // AI アシスタントの中継層 (発話の検証・全 AI 合議・伏字の合流点) の Mamori の元 (2026-11-03 · MG-030)
   'src/renderer/oauth/pkceHost.ts',         // その薄い壁 (btoa・乱数・SHA-256・時刻・fetch・URLSearchParams・締切の口)
+  'src/main/oauth.mamori',                  // OAuth の認可・更新の本体 (待受の応答を決める decideCallbackReply を含む) の Mamori の元 (2026-11-09 · MG-050)
+  'src/main/oauthHost.ts',                  // その薄い壁 (env・乱数・SHA-256・Buffer・時計・URLSearchParams・http の待受・fetch・締切の口 · MG-050)
   'src/renderer/oauth/pkceSessionHost.ts',  // sessionStorage の口 (薄い壁)
   'src/renderer/security/dataCrypto.mamori',     // レコード暗号の関門 (KDF 回数・塩・封筒の形) の Mamori の元 (2026-11-02 · MG-021)
   'src/renderer/security/dataCryptoHost.ts',     // WebCrypto / btoa の口 (薄い壁)

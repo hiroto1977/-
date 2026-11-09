@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 478
+- ブロック数: 481
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `e1a53b2ebf313f9945313e1264b7edbdc7a78afc4d3c14ab935a88a33d97b56a`
-- 保護対象: 203 ファイル
+- 末尾(tip)ハッシュ: `c6866c436854b4277f1cefc7cb078b934e694ac818df11e30518050faff7e0a6`
+- 保護対象: 205 ファイル
 
 ## ブロック
 
@@ -491,6 +491,9 @@
 | 475 | `e5db918598c1a184` | `ef5d7c3124b69095` | `d8e7d175d97bee86` | update vitest.config.ts |
 | 476 | `f69e02edf62aef49` | `d8e7d175d97bee86` | `713f576030496903` | update integrity-chain.cjs,mamori-capabilities.json,httpLimits.mamori,httpLimits.ts,httpLimitsHost.ts |
 | 477 | `f6b2d4b9aaf25e2c` | `713f576030496903` | `e1a53b2ebf313f99` | update ast.ts,checker.ts,emit.ts,parser.ts |
+| 478 | `80a2f45bd01d8379` | `e1a53b2ebf313f99` | `52028bade6dcc54a` | update mamori-capabilities.json,oauth.ts,ast.ts,checker.ts,emit.ts,parser.ts |
+| 479 | `e82b696c3c0c3363` | `52028bade6dcc54a` | `55921642cf6cad2d` | update integrity-chain.cjs,oauthHost.ts |
+| 480 | `86c23a544826a1c9` | `55921642cf6cad2d` | `c6866c436854b427` | update integrity-chain.cjs,oauth.mamori |
 
 ## 保護対象ファイル
 
@@ -569,7 +572,9 @@
 - `src/main/fileRequestGate.ts`
 - `src/main/keychainBackend.ts`
 - `src/main/main.ts`
+- `src/main/oauth.mamori`
 - `src/main/oauth.ts`
+- `src/main/oauthHost.ts`
 - `src/main/osSinks.mamori`
 - `src/main/osSinks.ts`
 - `src/main/presenceWiring.ts`

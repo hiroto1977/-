@@ -2968,6 +2968,58 @@
         "summary": "名前ごとの型だけの import use { f, type X } from \"…\" を 0.24 で足した。値と型を 1 行で引ける (生成物は TypeScript の inline type import)。先に破って、関数を型の顔で引く形 (M6)・型の二重指定・type を名前にする形・非 export の名前を断った。変異検査は 3,852 変異体で 99.97% (生存 1 件は規則名の取り違えで、検査が規則名まで見るよう直して手で当てて殺した)。"
       },
       "deviation": "利用者が「切り替えて進めて」と言い、アリーナの輪から言語を育てる輪へ切り替えて、brief の自動選択ではなく手で inline-type-import を選んだ"
+    },
+    {
+      "id": "MG-050",
+      "date": "2026-11-09",
+      "kind": "port",
+      "target": "src/main/oauth.ts",
+      "pickedBy": "manual",
+      "briefPick": "port:src/main/oauth.ts",
+      "version": "0.24",
+      "features": [],
+      "added": [],
+      "rewrite": [],
+      "ported": [
+        "src/main/oauth.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "authorize が関門 (externalUrlOrNull) を通さず素の authorizeUrl を openExternalVetted へ渡す",
+          "result": "refused"
+        },
+        {
+          "tried": "`extern pure global process;` で process を pure と偽って宣言し env を直に読む",
+          "result": "refused"
+        },
+        {
+          "tried": "設定表を鍵で引いて `.constructor` へ届く (OAUTH_CONFIGS[serviceId].constructor)",
+          "result": "refused"
+        },
+        {
+          "tried": "`use { createServer } from \"node:http\"` で能力モジュールを台帳に載せずに待受を直に作る",
+          "result": "refused"
+        },
+        {
+          "tried": "素の文字列を `as VettedExternalUrl` で印付けして sink を呼ぶ",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 3,
+      "mutation": {
+        "files": [
+          "src/main/oauth.ts",
+          "src/main/oauthHost.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 914,
+        "reason": "draft PR #914 に載せる",
+        "summary": "oauth.ts を 0.24 へ移植。待受の「要求ごとに何を返し、閉じるか」は decideCallbackReply (Mamori) が決め、Node の口 (env・乱数・SHA-256・Buffer・時計・URLSearchParams・http の待受・fetch・打ち切り) は判断を持たない薄い host 壁 oauthHost.ts が書くだけ。変異検査は両ファイル 100% (oauth.ts 413 変異体・oauthHost.ts 45)。生存はモジュール直下の定数 (CALLBACK_HTML・env 名) で、読み直したモジュールで留めた。"
+      },
+      "deviation": "利用者の「1～5を導入」で、brief の自動選択ではなく手で選んだ"
     }
   ]
 }
