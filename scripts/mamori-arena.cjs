@@ -289,7 +289,7 @@ if (cmd === 'match') {
     for (const r of crossRows) console.log(`${r.op.padEnd(18)}${String(r.plays).padStart(6)}${String(r.refused).padStart(10)}${String(r.held).padStart(12)}${String(r.red).padStart(6)}${String(r.exhausted).padStart(8)}${String(r.fresh).padStart(9)}`);
     for (const r of results) for (const win of r.rematch.wins) console.log(`RED   ${r.box} [${win.op} ← ${win.from}]: ${win.verdict} — ${win.detail.slice(0, 120)}`);
     console.log(`\n== 掛け合わせ (種 ${runSeed}・${pairs} 本/箱): 戦 ${summary.tally.plays} / 赤の勝ち ${summary.tally.red} / 近い攻めの捕獲 ${summary.tally.near} ==`);
-    const ascii = (o) => JSON.stringify(o, null, 2).replace(/[^\x20-\x7e\n　-ヿ一-鿿＀-￯]/g, (c) => '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + '\n';
+    const ascii = (o) => JSON.stringify(o, null, 2).replace(/[^\x20-\x7e\n\u3000-\u30ff\u4e00-\u9fff\uff00-\uffef]/g, (c) => '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + '\n';
     fs.writeFileSync(evoPath, ascii(state));
     fs.writeFileSync(corpusPath, ascii(corpus));
     process.exit(summary.tally.red > 0 ? 1 : 0);

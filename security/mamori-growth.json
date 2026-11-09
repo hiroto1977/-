@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.23"
+    "version": "0.24"
   },
   "constructs": {
     "class": {
@@ -140,9 +140,10 @@
       "risk": "`import * as electron` は `electron.shell` で extern sink の宣言を迂回する —— 名前空間の import は危ない口を持つモジュールに使えない形にする。"
     },
     "inline-type-import": {
-      "decision": "feature",
+      "decision": "added",
       "why": "型と値を 1 行で import する形。",
-      "risk": "型だけの名前を値として使えないことは tsc が見る。来歴には触れない。"
+      "risk": "型だけの名前を値として使えないことは tsc が見る。来歴には触れない。",
+      "since": "0.24"
     },
     "side-effect-import": {
       "decision": "rewrite",
@@ -2908,6 +2909,65 @@
         "summary": "仮想空間の対戦場を作った: 外側の箱 (unshare -rn + node --permission で fs/子/worker/網を閉じる) の中に内側の箱 (vm) を置き、守る側が仮想データを入れた箱を Mamori で書き、攻める側が Mamori で奪取・破壊を試みる。審判は奪取 (平文・逆順・base64・16進・文字コード列・断片)・破壊 (契約と組み込みの指紋)・脱出 (host の印・構造体の同一性) を判定し、実パイプラインと同じ tsc 型検査も通す。315 弾 × 21 箱 = 6615 戦で赤 0 / 青 6615。新しい穴は見つからず、審判の偽陽性 (URL 由来値の host 扱い・tsc を通さない型の穴) を直した。全戦はコーパス (351 攻撃・21 箱) に残し、回帰検査で再生する。"
       },
       "deviation": "利用者が『仮想空間で侵入側と防ぐ側に分かれて競い、戦いのデータを言語の学習に使う』ことを直接依頼したため、brief の選択 (移す壁が無い) ではなく対戦場を作った。"
+    },
+    {
+      "id": "MG-049",
+      "date": "2026-11-09",
+      "kind": "feature",
+      "target": "inline-type-import",
+      "pickedBy": "manual",
+      "briefPick": "feature:inline-type-import",
+      "version": "0.24",
+      "features": [
+        "inline-type-import"
+      ],
+      "added": [
+        "inline-type-import"
+      ],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "関数 (gate / 印を受ける口) を `use { type mk }` / `use { type open }` で型の顔にして引く —— Mamori は関数として検め続けるのに生成物 (tsc) では型として消える食い違いを作る",
+          "result": "refused"
+        },
+        {
+          "tried": "`use type { type X }` (項目全体がすでに型だけなのに名前ごとにも type を重ねる)",
+          "result": "refused"
+        },
+        {
+          "tried": "`use { type }` / `use { type alias t }` (type を引く名前にして曖昧にする)",
+          "result": "refused"
+        },
+        {
+          "tried": "export していない名前を `use { type Hidden }` で引く",
+          "result": "refused"
+        },
+        {
+          "tried": "`use { open, type VU }` で印を受ける口へ生の文字列を渡す・印の型の戻り値へ生の文字列を返す (型で引いても印を偽造できないか)",
+          "result": "refused"
+        },
+        {
+          "tried": "型だけで引いた定数 `use { type LIMIT }` を値の位置で使う (Mamori は通すが生成物は import { type LIMIT } のままで tsc が断る —— 来歴には触れない)",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 3,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/checker.ts",
+          "src/shared/mamori/emit.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 914,
+        "reason": "draft PR #914 に載せる",
+        "summary": "名前ごとの型だけの import use { f, type X } from \"…\" を 0.24 で足した。値と型を 1 行で引ける (生成物は TypeScript の inline type import)。先に破って、関数を型の顔で引く形 (M6)・型の二重指定・type を名前にする形・非 export の名前を断った。変異検査は 3,852 変異体で 99.97% (生存 1 件は規則名の取り違えで、検査が規則名まで見るよう直して手で当てて殺した)。"
+      },
+      "deviation": "利用者が「切り替えて進めて」と言い、アリーナの輪から言語を育てる輪へ切り替えて、brief の自動選択ではなく手で inline-type-import を選んだ"
     }
   ]
 }
