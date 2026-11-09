@@ -49,8 +49,11 @@ const BREAKOUTS = [
   'Object.assign(Object.prototype, {"x": 1})', 'JSON.constructor', 'Symbol.for("x")', 'Proxy', 'WebAssembly', 'Atomics', 'SharedArrayBuffer',
   'structuredClone({})', 'queueMicrotask', 'setTimeout', 'Error.captureStackTrace', 'new Error("x").stack', 'Math.constructor',
   'Object.defineProperty(Object.prototype, "x", {"value": 1})', 'Object.setPrototypeOf({}, null)', 'URL.createObjectURL', 'RegExp.$1',
-  'String.fromCharCode(101, 118, 97, 108)', 'Object["keys"]({})', '`${1}`', '(1 as unknown)', 'this', 'arguments', 'new.target', 'Buffer', 'document',
+  '`${1}`', '(1 as unknown)', 'this', 'arguments', 'new.target', 'Buffer', 'document',
 ];
+
+// 言語が合法として通す、危なそうに見える形 (津波の実測 2026-11-09: 通っても箱の外へは出ない)。通ることを前提に、箱の外へ出ないことだけを見る
+const LEGAL_LOOKALIKES = ['new Error("x").stack', 'String.fromCharCode(101, 118, 97, 108)', 'Object["keys"]({})'];
 
 const LENSES = [
   {
@@ -62,6 +65,11 @@ const LENSES = [
       for (const c of contract) { const f = api.fns.find((x) => x.name === c.fn); if (f) out.push([callOf(f)]); }
       const targets = api.fns.filter((f) => f.params.length === 1 && f.params[0] === 'string');
       for (const part of chunk(sample(keys, 8 * n, rng), 8)) out.push(targets.flatMap((f) => part.map((v) => callOf(f, v))).slice(0, 48));
+      // 契約の期待値は仮想データの置き場の綴り (@@REC_A@@) で、戦いごとの実値は箱の出力にしか現れない: 出力を鍵として次の口へ逆に差し込む
+      const sources = api.fns.filter((f) => f.returns === 'string' && f.params.every((p) => p === 'string' || p === 'number') && f.params.length <= 1);
+      const pairs = [];
+      for (const o of targets) for (const i of sources) if (o.name !== i.name) pairs.push({ k: 'chain', outer: o.name, inner: i.name, args: i.params.map((p) => (p === 'number' ? '0' : '"a"')) });
+      for (const part of chunk(pairs, 16)) out.push(part);
       return out.filter((g) => g.length > 0);
     },
   },
@@ -165,7 +173,7 @@ const LENSES = [
   {
     id: 'breakout', ja: '越境', note: '箱の外を狙う: eval・Function・原型汚染・globalThis・動的 import ほか、言語が断るはずの構文を箱に持ち込む',
     gen({ n, rng }) {
-      return sample(BREAKOUTS, 4 * n + 4, rng).map((e) => [raw(e)]);
+      return sample([...BREAKOUTS, ...LEGAL_LOOKALIKES], 4 * n + 4, rng).map((e) => [raw(e)]);
     },
   },
 ];
@@ -196,4 +204,4 @@ function waveGenomes({ box, seed, intensity = 6, learned = [], weights = null })
   return [...items, ...layers];
 }
 
-module.exports = { LENSES, waveGenomes, variantsFor, BREAKOUTS, PARANOID_POOL, AUTHORITY_POOL, BOUNDARY_POOL };
+module.exports = { LEGAL_LOOKALIKES, LENSES, waveGenomes, variantsFor, BREAKOUTS, PARANOID_POOL, AUTHORITY_POOL, BOUNDARY_POOL };

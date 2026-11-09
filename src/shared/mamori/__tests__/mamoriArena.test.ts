@@ -250,6 +250,7 @@ describe(`観点 (レンズ) × 多層の津波 (${LEVEL})`, () => {
     waveGenomes: (o: Record<string, unknown>) => { lens: string; genome: { k: string }[] }[];
     variantsFor: (id: string, intensity: number, w: Record<string, number> | null) => number;
     BREAKOUTS: string[];
+    LEGAL_LOOKALIKES: string[];
   };
   const wave = require_('../../../../scripts/lib/mamori-arena-wave.cjs') as {
     runBoxWave: (o: Record<string, unknown>) => { box: string; plays: number; stats: Record<string, { plays: number; refused: number; held: number; red: number; rules: Record<string, number> }>; wins: Win[]; near: Record<string, { fresh: number; program: string }>; tokens: string[] };
@@ -329,13 +330,17 @@ describe(`観点 (レンズ) × 多層の津波 (${LEVEL})`, () => {
     expect(m.plays).toBe(5); expect(m.rules).toEqual({ M6: 3, tsc: 1 });
   });
 
-  it('越境の弾 (言語が断るはずの構文) の 1 つでも通れば、それは箱の外へ出る攻め —— 全部が言語の規則で止まる (対照: 通った弾が無い)', () => {
-    let accepted = 0;
+  it('越境の弾 (言語が断るはずの構文) は全部が言語の規則で止まる・合法に通る見かけだけ危ない形は通っても箱の外へ出ない', () => {
+    const accepted: string[] = [];
     for (const e of lenses.BREAKOUTS) {
       const r = play(VAULT, evo.programOf('vault', [{ k: 'raw', e }], 'breakout-check'), 21);
-      if (r.verdict !== 'refused') accepted++;
+      if (r.verdict !== 'refused') accepted.push(e);
     }
-    expect(accepted).toBe(0);
+    expect(accepted).toEqual([]);
+    for (const e of lenses.LEGAL_LOOKALIKES) {
+      const r = play(VAULT, evo.programOf('vault', [{ k: 'raw', e }], 'legal-check'), 21);
+      expect(r.verdict, e).toBe('held');
+    }
   }, 120_000);
 
   it('進化の記録に観点の成績・波の履歴がある (津波が学習に残っている)', () => {
