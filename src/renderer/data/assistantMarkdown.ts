@@ -33,15 +33,15 @@ export type Block =
 
 /**
  * 行 i を返す。範囲の外は空文字 (呼び手は `i < lines.length` を先に確かめるので届かない)。
- * 添字 `lines[i]` は結果を戻り値にできない (計算した鍵の結果は入れ物に包めない · T-255) ので、1 要素の切り出しを連結して取る。
+ * 添字 `lines[i]` は結果を戻り値にできない (計算した鍵の結果は入れ物に包めない · T-255) ので、1 要素の切り出しを文字列にして取る (1 要素の配列の `toString` はその要素・空なら空文字)。
  */
 function at(lines: readonly string[], i: number): string {
-  return lines.slice(i, i + 1).join('');
+  return lines.slice(i, i + 1).toString();
 }
 
-/** 正規表現の捕獲群 n を返す。群が一致しなかった (undefined) ときは空文字 (`join` は undefined を空に畳む)。 */
+/** 正規表現の捕獲群 n を返す。群が一致しなかった (undefined) ときは空文字 (`toString` は undefined の要素を空に畳む)。 */
 function group(m: RegExpExecArray, n: number): string {
-  return m.slice(n, n + 1).join('');
+  return m.slice(n, n + 1).toString();
 }
 
 /** インライン記法 (**bold** と `code`) を解析する。入れ子は扱わない。 */
@@ -212,6 +212,7 @@ export function parseMarkdown(src: string): Block[] {
   }
 };
   let para = '';
+  // Stryker disable next-line EqualityOperator: `i <= lines.length` でも `at` が範囲外で空文字を返し、空行の枝が段落を流して `i` を進めて抜けるので、答えは同じ (等価)。
   while (i < lines.length) {
     const line = at(lines, i);
     const trimmed = line.trim();
@@ -250,7 +251,8 @@ export function parseMarkdown(src: string): Block[] {
       continue;
     }
     // 表: ヘッダ行 + 区切り行
-    if (trimmed.includes('|') && i + 1 < lines.length && isTableSeparator(at(lines, i + 1))) {
+    // 次の行が範囲の外なら `at` は空文字を返し、空文字は区切り行にならない (`every` は '' で false) ので、範囲の確かめは要らない。
+    if (trimmed.includes('|') && isTableSeparator(at(lines, i + 1))) {
       flushParagraph(para);
       para = '';
       const headers = splitTableRow(trimmed).map((c) => parseInline(c));
@@ -260,7 +262,7 @@ export function parseMarkdown(src: string): Block[] {
       // Stryker disable next-line MethodExpression: `trim()` の有無は `includes('|')`
       // の答えを変えない (前後の空白は縦棒の有無に影響しない)。書き方を周りの
       // 行と揃えるために残す。
-      while (i < lines.length && at(lines, i).trim().includes('|')) {
+      while (at(lines, i).trim().includes('|')) {
         rows.push(splitTableRow(at(lines, i)).map((c) => parseInline(c)));
         i = i + 1;
       }
@@ -282,7 +284,8 @@ export function parseMarkdown(src: string): Block[] {
       para = '';
       const isOrdered = ordered;
       const items: InlineToken[][] = [];
-      while (i < lines.length) {
+      // 範囲の外は `at` が空文字を返し、どの記法にも当たらず break する。
+      while (true) {
         const t = at(lines, i).trim();
         // Stryker disable next-line Regex: `$` は上の見出しと同じ理由で等価。
         const mb = /^[-*]\s+(.*)$/.exec(t);
