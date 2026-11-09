@@ -386,7 +386,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     if (it.kind !== 'reexport') continue;
     const target = it.from === null ? null : resolveUse(it.from, file);
     if (it.from !== null && !it.from.startsWith('./') && !it.from.startsWith('../')) {
-      report('M6', it.pos, `\`export { … } from "${it.from}"\` は書けません —— 再輸出できるのは相対の Mamori module の名前だけです (外の module の口を、検めずに TypeScript の側へ通してしまう)`);
+      report('M6', it.pos, `\`export { … } from <外の module>\` (${it.from}) は書けません —— 再輸出できるのは相対の Mamori module の名前だけです (外の module の口を、検めずに TypeScript の側へ通してしまう)`);
       continue;
     }
     if (target === file) report('M6', it.pos, '自分自身からの再輸出は書けません (宣言に `export` を付けます)');
