@@ -1353,8 +1353,8 @@
       "why": "描く要素の重さの天井 (MAX_RENDER_WEIGHT) による打ち切りを無効にする (1 つの巨大な箇条書き・表が全部 DOM 要素になり、10 万字の返答 1 件で画面が固まる形へ戻す)",
       "edits": [
         {
-          "find": "    if (weight + w > MAX_RENDER_WEIGHT) {",
-          "replace": "    if (false) {"
+          "find": "    if (weight + w > MAX_RENDER_WEIGHT) return [",
+          "replace": "    if (false) return ["
         }
       ]
     },

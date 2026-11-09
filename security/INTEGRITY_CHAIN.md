@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 483
+- ブロック数: 484
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `464844e09428f13cd80a21f9d869e0c8f59b068f7511b356b9024ce22fd65f4c`
-- 保護対象: 205 ファイル
+- 末尾(tip)ハッシュ: `fbdb69410c9d168cd9b6c3c42885be554426dde22d05e2bf05f51945a69c9b71`
+- 保護対象: 206 ファイル
 
 ## ブロック
 
@@ -496,6 +496,7 @@
 | 480 | `86c23a544826a1c9` | `55921642cf6cad2d` | `c6866c436854b427` | update integrity-chain.cjs,oauth.mamori |
 | 481 | `79bf43fa5366a92f` | `c6866c436854b427` | `70060a09f4ce7eb8` | update checker.ts |
 | 482 | `6201da28fdbc36b4` | `70060a09f4ce7eb8` | `464844e09428f13c` | update checker.ts |
+| 483 | `a98a6b0bef76c550` | `464844e09428f13c` | `fbdb69410c9d168c` | update integrity-chain.cjs,assistantMarkdown.mamori,assistantMarkdown.ts |
 
 ## 保護対象ファイル
 
@@ -594,6 +595,7 @@
 - `src/preload/preloadHost.ts`
 - `src/renderer/components/VettedImg.tsx`
 - `src/renderer/components/VettedLink.tsx`
+- `src/renderer/data/assistantMarkdown.mamori`
 - `src/renderer/data/assistantMarkdown.ts`
 - `src/renderer/data/localWrite.ts`
 - `src/renderer/data/recordCipher.ts`
