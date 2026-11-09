@@ -422,6 +422,145 @@ describe(`観点 (レンズ) × 多層の津波 (${LEVEL})`, () => {
   });
 });
 
+describe(`再戦と連打 (${LEVEL})`, () => {
+  type Parts = { head: string[]; body: string[] };
+  const rm = require_('../../../../scripts/lib/mamori-arena-rematch.cjs') as {
+    OPS: string[];
+    parseAttack: (src: string) => Parts | null;
+    render: (p: Parts, extraHead?: string[]) => string;
+    variantOf: (o: { parts: Parts; op: string; rng: () => number; donors?: Parts[]; learned?: string[] }) => { body: string[]; extraHead?: string[] } | null;
+    opWeights: (s: Record<string, unknown> | null) => Record<string, number>;
+    pickSeeds: (o: { corpus: { attacks: { name: string; targets: string[]; firstVerdict: string; source: string }[] }; boxName: string; per?: number }) => { name: string }[];
+    rematchBox: (o: Record<string, unknown>) => { plays: number; ops: Record<string, { plays: number; red: number; held: number }>; wins: { op: string; verdict: string; program: string; from: string }[]; near: Record<string, { fresh: number; program: string; from: string }> };
+    hammerRepeat: (o: Record<string, unknown>) => { red: boolean; plays: number; wobble: { kind: string } | null };
+    applyRematchResults: (o: Record<string, unknown>) => { tally: { red: number; near: number; wobbles: number; plays: number } };
+  };
+  const evo = require_('../../../../scripts/lib/mamori-arena-evolve.cjs') as {
+    programOf: (box: string, g: unknown[], tag: string) => string;
+    mulberry32: (n: number) => () => number;
+  };
+  const SEED_SRC = evo.programOf('vault', [{ k: 'call', fn: 'lookup', args: ['"a"'], aw: false }, { k: 'call', fn: 'check', args: ['"x"'], aw: false }], 'seed');
+  const parts = rm.parseAttack(SEED_SRC)!;
+
+  it('攻撃のプログラムを 頭と体 に分けて、同じ形へ戻せる (往復・async と宣言つきも)', () => {
+    expect(parts.body).toHaveLength(2);
+    expect(rm.render(parts)).toBe(SEED_SRC);
+    const asyncSrc = evo.programOf('async-vault', [{ k: 'call', fn: 'mapNotes', args: ['acbEcho'], aw: true }], 'seed');
+    const p = rm.parseAttack(asyncSrc)!;
+    expect(p.head.some((l) => l.startsWith('async fn acbEcho'))).toBe(true);
+    expect(rm.render(p)).toBe(asyncSrc);
+    // 手書きの攻撃 (programOf の形でない) は読まない = 組み替えで壊さない
+    expect(rm.parseAttack('export fn attack() -> unknown { return 1; }')).toBeNull();
+  });
+
+  it('★ 連打の変種は同じ口を何度も叩く (burst は 8 回以上・alternate は引数を入れ替えて 12 回・interleave は交互)', () => {
+    const rng = evo.mulberry32(5);
+    const burst = rm.variantOf({ parts, op: 'burst', rng })!;
+    expect(burst.body.length).toBeGreaterThanOrEqual(8);
+    const alt = rm.variantOf({ parts, op: 'alternate', rng })!;
+    expect(alt.body.length).toBeGreaterThanOrEqual(12);
+    const inter = rm.variantOf({ parts, op: 'interleave', rng })!;
+    expect(inter.body).toHaveLength(16);
+    expect(inter.body[0]).toBe(inter.body[2]);
+    expect(inter.body[1]).toBe(inter.body[3]);
+    // 連打しても 1 行 1 動きの形は壊れない (もう一度読める)
+    expect(rm.parseAttack(rm.render({ head: parts.head, body: burst.body }))!.body).toEqual(burst.body);
+  });
+
+  it('同じ種は同じ変種・別の視点 (literal-swap / graft) は元と違う・await を持つ動きを移植したら attack は async になる', () => {
+    const a = rm.variantOf({ parts, op: 'literal-swap', rng: evo.mulberry32(9) })!;
+    const b = rm.variantOf({ parts, op: 'literal-swap', rng: evo.mulberry32(9) })!;
+    expect(a).toEqual(b);
+    expect(a.body).not.toEqual(parts.body);
+    const donor = rm.parseAttack(evo.programOf('async-vault', [{ k: 'call', fn: 'mapNotes', args: ['acbEcho'], aw: true }], 'seed'))!;
+    const g = rm.variantOf({ parts, op: 'graft', rng: evo.mulberry32(3), donors: [donor] })!;
+    const out = rm.render({ head: parts.head, body: g.body }, g.extraHead);
+    expect(out).toContain('export async fn attack()');
+    expect(out).toContain('async fn acbEcho');
+    // 変えられない形は null (空振りを戦に数えない)
+    expect(rm.variantOf({ parts: { head: parts.head, body: [] }, op: 'burst', rng: evo.mulberry32(1) })).toBeNull();
+    expect(rm.variantOf({ parts: { head: parts.head, body: [parts.body[0]!] }, op: 'reverse', rng: evo.mulberry32(1) })).toBeNull();
+  });
+
+  it('変え方の重みは届いた変え方へ寄る (観点の重みと同じ式)・統計が無ければ均等', () => {
+    expect(Object.values(rm.opWeights(null)).every((x) => x === 0.5)).toBe(true);
+    const w = rm.opWeights({ burst: { plays: 10, held: 10 }, reverse: { plays: 10, held: 0 } });
+    expect(w.burst).toBeGreaterThan(w.reverse!);
+    expect(Object.keys(w).sort()).toEqual([...rm.OPS].sort());
+  });
+
+  it('種の攻撃の選び方: 名指しの攻撃を先に・同じ字面は 1 つ・per で切る', () => {
+    const corpus = { attacks: [
+      { name: 'x1', targets: ['vault'], firstVerdict: 'refused', source: 'a' },
+      { name: 'wave-win-q', targets: ['vault'], firstVerdict: 'stolen', source: 'b' },
+      { name: 'x2', targets: ['vault'], firstVerdict: 'held', source: 'a' },
+      { name: 'other', targets: ['token'], firstVerdict: 'held', source: 'c' },
+    ] };
+    const picked = rm.pickSeeds({ corpus, boxName: 'vault', per: 5 }).map((a) => a.name);
+    expect(picked[0]).toBe('wave-win-q');
+    expect(picked).not.toContain('other');
+    expect(picked.filter((n) => n === 'x1' || n === 'x2')).toHaveLength(1);
+    expect(rm.pickSeeds({ corpus, boxName: 'vault', per: 1 })).toHaveLength(1);
+  });
+
+  it('★ 再戦: 正直な箱 (VAULT) の前の攻撃を作り直して撃っても赤は 0 ・連打しても箱の奥へ届くだけ', () => {
+    const corpus = { attacks: [{ name: 'seed', targets: ['vault'], firstVerdict: 'held', source: SEED_SRC }] };
+    const r = rm.rematchBox({ compiler, box: VAULT, corpus, seed: 11, per: 3, variants: 12, level: LEVEL });
+    expect(r.plays).toBeGreaterThanOrEqual(3);
+    expect(r.wins).toEqual([]);
+    expect(Object.values(r.ops).reduce((n, s) => n + s.held, 0)).toBeGreaterThan(0);
+  }, 120_000);
+
+  it('★ 再戦: 秘密を返す箱 (LEAKY) には、前の攻撃のどの変種でも stolen になる (視点を変えても穴は穴・対策の根拠が残る)', () => {
+    const src = evo.programOf('leaky', [{ k: 'call', fn: 'dump', args: [], aw: false }], 'seed');
+    const corpus = { attacks: [{ name: 'seed-dump', targets: ['leaky'], firstVerdict: 'stolen', source: src }] };
+    const r = rm.rematchBox({ compiler, box: LEAKY, corpus, seed: 12, per: 2, variants: 5, level: LEVEL });
+    expect(r.wins.length).toBeGreaterThan(0);
+    expect(r.wins.every((w) => w.verdict === 'stolen')).toBe(true);
+    expect(r.wins[0]!.from).toBe('seed-dump');
+  }, 120_000);
+
+  it('★ 連打 (繰り返し): 正直な箱は 5 回撃っても判定が揺れない・赤にもならない / 穴の箱は赤が毎回出る (揺れずに破られる)', () => {
+    const h = rm.hammerRepeat({ compiler, box: VAULT, attack: { name: 'seed', source: SEED_SRC }, seed: 21, level: LEVEL });
+    expect(h.plays).toBe(5);
+    expect(h.wobble).toBeNull();
+    expect(h.red).toBe(false);
+    const leak = evo.programOf('leaky', [{ k: 'call', fn: 'dump', args: [], aw: false }], 'seed');
+    const hl = rm.hammerRepeat({ compiler, box: LEAKY, attack: { name: 'dump', source: leak }, seed: 21, level: LEVEL });
+    expect(hl.red).toBe(true);
+    expect(hl.wobble).toBeNull();
+  }, 180_000);
+
+  it('結果を記録へ畳む: 破れは対策つきで wins と回帰の攻撃へ・近い攻めは捕獲・揺らぎは台帳 (同じ組は 1 件に更新)・ops の成績が積まれる', () => {
+    const state: Record<string, unknown> = { boxes: {}, wins: [], lessons: [], gaps: [] };
+    const corpus = { attacks: [] as { name: string }[] };
+    const mk = (wobble: unknown) => [{
+      box: 'vault',
+      rematch: { plays: 3, ops: { burst: { plays: 3, refused: 0, held: 2, red: 1, void: 0, bounced: 0, exhausted: 0, fresh: 4 } }, wins: [{ op: 'burst', from: 'seed', verdict: 'stolen', detail: 'x', program: 'P' }], near: { alternate: { op: 'alternate', from: 'seed', fresh: 3, program: 'Q' } }, tokens: ['abcd'] },
+      hammer: [{ box: 'vault', attack: 'seed', plays: 5, red: false, wobble }],
+      blue: [],
+    }];
+    const s1 = rm.applyRematchResults({ state, corpus, results: mk({ kind: 'verdict-flip', verdicts: ['held', 'refused'] }), seed: 7 });
+    expect(s1.tally).toMatchObject({ red: 1, near: 1, wobbles: 1 });
+    expect(corpus.attacks.map((a) => a.name).sort()).toEqual(['rematch-alternate-vault', 'rematch-win-burst-vault-7']);
+    const st = state as { wins: { cause: string; lens: string }[]; rematch: { ops: Record<string, { plays: number }>; wobbles: unknown[]; runs: unknown[] } };
+    expect(st.wins[0]!.cause).toContain('仮想データ');
+    expect(st.wins[0]!.lens).toBe('rematch:burst');
+    rm.applyRematchResults({ state, corpus, results: mk({ kind: 'same-seed-output', detail: ['a', 'b'] }), seed: 8 });
+    expect(st.rematch.wobbles).toHaveLength(1);
+    expect(st.rematch.ops.burst!.plays).toBe(6);
+    expect(st.rematch.runs).toHaveLength(2);
+  });
+
+  it('進化の記録に再戦の成績・揺らぎの台帳がある (再戦が学習に残っている)', () => {
+    const path = `${arena.REPO_ROOT}/security/mamori-arena/evolution.json`;
+    const state = JSON.parse(readOriginalSource(path)) as { rematch?: { ops: Record<string, { plays: number }>; runs: unknown[]; wobbles: unknown[] } };
+    expect(state.rematch).toBeDefined();
+    expect(state.rematch!.runs.length).toBeGreaterThanOrEqual(1);
+    for (const op of Object.keys(state.rematch!.ops)) expect(rm.OPS).toContain(op);
+  });
+});
+
 describe(`戦いの記録の再生 (${LEVEL})`, () => {
   const path = `${arena.REPO_ROOT}/security/mamori-arena/corpus.json`;
   const corpus: CorpusFile | null = existsSync(path) ? (JSON.parse(readOriginalSource(path)) as CorpusFile) : null;
