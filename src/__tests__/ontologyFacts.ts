@@ -52,8 +52,10 @@ export function sidebarPlacements(): Map<string, SidebarCategory> {
 export function oauthServiceIds(): Set<string> {
   const text = read('src/main/oauth.ts');
   const start = text.indexOf('export const OAUTH_CONFIGS');
-  const body = text.slice(start, text.indexOf('\n};', start));
-  return new Set([...body.matchAll(/^\s{2}'?([a-z0-9-]+)'?:\s*\{/gm)].map((m) => m[1]!));
+  // oauth.ts は oauth.mamori の生成物で表は 1 行に畳まれる (2026-11-09 · MG-050)。サービスごとの設定は必ず
+  // `鍵: { authorizeUrl: …` で始まるので、その形の鍵を取る (複数行の手書きでも同じ鍵が取れる)。
+  const body = text.slice(start, text.indexOf('};\n', start));
+  return new Set([...body.matchAll(/'?([a-z0-9-]+)'?:\s*\{\s*authorizeUrl:/g)].map((m) => m[1]!));
 }
 
 /** `DESKTOP_ONLY` の台帳 (webShimCredentials.test.ts) の service/action。 */

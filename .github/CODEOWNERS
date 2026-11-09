@@ -144,6 +144,8 @@
 /src/renderer/oauth/pkceSession.mamori @hiroto1977
 /src/renderer/oauth/pkce.mamori @hiroto1977
 /src/renderer/oauth/pkceHost.ts @hiroto1977
+/src/main/oauth.mamori @hiroto1977
+/src/main/oauthHost.ts @hiroto1977
 /src/shared/privateTarget.mamori @hiroto1977
 /src/shared/scanTarget.mamori @hiroto1977
 /src/shared/scanTargetHost.ts @hiroto1977

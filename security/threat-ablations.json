@@ -2181,8 +2181,8 @@
       "why": "export していない名前の use を断らない",
       "edits": [
         {
-          "find": "if (exported !== undefined && !exported.has(n.name)) report(",
-          "replace": "if (false) report("
+          "find": "if (exported !== undefined && !exported.has(n.name)) report('M6', it.pos, `${target} は ${n.name} を export していません (use",
+          "replace": "if (false) report('M6', it.pos, `${target} は ${n.name} を export していません (use"
         }
       ]
     },

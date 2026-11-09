@@ -46,10 +46,6 @@ const LEDGER: Record<string, { why: string; guard: RegExp }> = {
     why: 'loopback 固定の別口。自前の allowlist + 締切 + 上限を持つ。',
     guard: /readBodyWithCap\(/,
   },
-  'src/main/oauth.ts': {
-    why: 'トークン端点。withTimeout の中で本文まで読む。2026-08-31 まで台帳に無かった。',
-    guard: /withTimeout\(/,
-  },
   'src/shared/ai/chat.ts': {
     why: 'LLM 直呼び。AI_CHAT_TIMEOUT_MS の締切と本文上限を自前で持つ。',
     guard: /withTimeout\(/,
@@ -62,6 +58,8 @@ const LEDGER: Record<string, { why: string; guard: RegExp }> = {
     why: 'ブラウザ版の Ollama。withBodyDeadline + readBodyWithCap。',
     guard: /withBodyDeadline\(/,
   },
+  // `src/main/oauth.ts` は 2026-11-09 (MG-050) に**この台帳から外れた**。Mamori へ移した際、省略可の既定 `fetchFn = fetch` を
+  // 素の束縛ではなく壁 `oauthHost.ts` の `hostFetch` (呼ぶ時点の globalThis.fetch を、転送に追随しない init で呼ぶ関数) にしたので、素の `fetch` を値として束ねる綴りが無い。
   // `src/renderer/oauth/pkce.ts` は 2026-11-02 (MG-025) に**この台帳から外れた**。Mamori へ移した際、省略可の既定 `fetchImpl = fetch` を
   // 素の束縛ではなく壁 `pkceHost.ts` の `hostFetch` (呼ぶ時点の globalThis.fetch を呼ぶ関数) にしたので、素の `fetch` を値として束ねる綴りが無い。
   // `src/renderer/data/saasWriteWeb.ts` は 2026-08-31 に**この台帳から外れた**。

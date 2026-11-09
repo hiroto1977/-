@@ -597,7 +597,9 @@ describe('伏字の網羅 — 母集団は「預かっているサービス」(�
         expect(readOriginalSource(resolve(REPO, rel)), rel).not.toContain('assertion:');
       }
       // 対照: 同じ走査は実際に出している綴りを拾う。
-      expect(readOriginalSource(resolve(REPO, 'src/main/oauth.ts'))).toContain('code_verifier:');
+      // (oauth.ts は 2026-11-09 の MG-050 から生成物で、本文の欄は `params.set('code_verifier', …)` の綴りで置く。
+      //  ブラウザ版の pkce.ts は `code_verifier:` の欄キーで置くので、対照は 2 つの綴りを両方とも拾えることを見る)
+      expect(readOriginalSource(resolve(REPO, 'src/main/oauth.ts'))).toContain("params.set('code_verifier'");
     });
 
     /*
