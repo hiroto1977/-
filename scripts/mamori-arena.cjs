@@ -314,7 +314,7 @@ if (cmd === 'match') {
   const variants = Number(opt('variants', '4'));
   const pairs = Number(opt('pairs', '60'));
   const only = opt('only') ? opt('only').split(',') : null;
-  const ascii = (o) => JSON.stringify(o, null, 2).replace(/[^\x20-\x7e\n　-ヿ一-鿿＀-￯]/g, (c) => '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + '\n';
+  const ascii = (o) => JSON.stringify(o, null, 2).replace(/[^\x20-\x7e\n\u3000-\u30ff\u4e00-\u9fff\uff00-\uffef]/g, (c) => '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + '\n';
   (async () => {
     let anyRed = 0;
     for (let t = 1; t <= ticks; t++) {
