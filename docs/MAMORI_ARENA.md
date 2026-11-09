@@ -36,6 +36,7 @@ node scripts/mamori-arena.cjs match --box x.box.mamori --attack y.attack.mamori 
 node scripts/mamori-arena.cjs tournament --boxes <dir> --attacks <dir> [--out result.json]
 node scripts/mamori-arena.cjs learn --boxes <dir> --attacks <dir>[,<dir>…]     # 結果を security/mamori-arena/corpus.json へ足す
 node scripts/mamori-arena.cjs wave [--waves 2] [--intensity 6] [--jobs 4]       # 津波: 11 の観点 × 多層 × 複数の波を全部の箱へ同時に撃つ (捕獲・解析・対策・学習)
+node scripts/mamori-arena.cjs cross [--pairs 90] [--jobs 4] [--seed N] [--only a,b]  # 掛け合わせ: 違う攻撃どうしを親に新しい攻めを編む (周回 8)
 node scripts/mamori-arena.cjs rematch [--per 12] [--variants 6] [--jobs 4] [--blue]  # 再戦と連打: 前の攻撃を視点・攻め方を変えて撃ち直し、同じ口へ立て続けに撃って判定の揺らぎを探す
 node scripts/mamori-arena.cjs replay                                           # 記録を再生して赤の得点が 0 のままか見る
 ```
@@ -157,6 +158,28 @@ node scripts/mamori-arena.cjs replay                                           #
 - 青の弱体化の再戦での捕獲 (`--blue`) は津波 (`wave`) の仕事なので既定では回さない (最初の試走では変種だけだと弱体化を逃した)。
 
 **限界 (正直に)**: 変種の組み替えは `programOf` の形 (1 行 1 動き) の攻撃だけに効く (corpus の約 36% = 194 / 545)。手書きの電池の弾 (`bat-*`) は形が違うので組み替えず、そのまま `replay` に残る。
+
+## 掛け合わせ (周回 8 · 2026-11-09)
+
+再戦は 1 つの攻撃を作り直す。掛け合わせ (`cross`) は **違う攻撃どうしを親にして、どちらの親にも無かった攻め方を編み出す**。親は同じ箱向けの攻撃に限らず、
+全コーパスのうち「動きが使う名前をその箱が export している」物 (箱の形が違っても、ある口への撃ち方と別の口への撃ち方を混ぜれば新しい順序・状態の交錯が生まれる)。
+
+| 掛け合わせ | 中身 |
+| --- | --- |
+| cross-splice | A の前半 + B の後半 (一点交叉) |
+| cross-weave | A1 B1 A2 B2 … (交互) |
+| cross-sandwich | A の動きごとに B の動きを 1 つ挟む |
+| cross-pingpong | A の 1 手と B の 1 手を 16 回ずつ往復 |
+| cross-literal | A の文字列引数を B から採った文字列へ (引数の交配) |
+| cross-mouth | A の呼び先を B が叩く別の口へ (口の交配・引数は A のまま) |
+| cross-triple | 三親を交互に織る |
+| cross-parallel | A と B の await する動きを 1 本の Promise.all へ (別の口を同時に走らせる) |
+| cross-stack | 掛け合わせの上に再戦の変え方をもう 1 手 |
+
+**種 802 (24 箱 × 90 本)**: 戦 1,661 / **赤の勝ち 0** / 近い攻めの捕獲 174。止められた戦は cross-mouth が最多 (145 戦中 78 —— 引数の型が合わない口へ差し替えると
+言語が断る) で、他の掛け合わせはほぼ全部が箱の奥まで届いて止められた (held)。新しい語を最も引いたのは cross-triple (501) と cross-weave (461)。
+**今日 1 つも破れていない理由は再戦と同じ**: 箱はモジュール直下の状態を持てず (M6)、各戦は新しいプロセスなので、掛け合わせた動きの間に積み上がる場所が無い。
+検査: `mamoriArenaCross.test.ts` (8 件・対照: weave を A だけに壊すと 2 件が鳴る)。
 
 ## 悪夢の台帳 (毎周、赤が「自分が守る側ならこれは無理だ」と思う手を考えて撃つ · 守る側は防ぎ方を考えて学ぶ)
 
