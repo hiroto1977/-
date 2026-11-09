@@ -349,13 +349,18 @@ if (cmd === 'match') {
       const ws = wave.applyWaveResults({ state, corpus, results: waveResults, seed: runSeed, waves, intensity });
       const rs = rm.applyRematchResults({ state, corpus, results: rematchResults, seed: runSeed });
       const redWins = ws.tally.red + rs.tally.red;
-      const blues = [...waveResults.flatMap((r) => r.blue || []), ...rematchResults.flatMap((r) => r.blue || [])];
-      const caught = blues.filter((b) => b.caught).length;
-      const missed = blues.filter((b) => !b.caught);
+      // 青の弱体化測定: 赤の手ごと (観点の波 / 再戦) の捕獲と、「赤のどの手でも捕まえたか」(箱 × 弱体化ごとの OR) を分けて数える。
+      // 再戦は過去の攻撃の変種しか撃たないので、まだ攻撃の無い弱体化には届かない —— それを赤全体の死角と読まない。
+      const blueBy = { wave: waveResults.flatMap((r) => r.blue || []), rematch: rematchResults.flatMap((r) => r.blue || []) };
+      const combined = new Map();
+      for (const [hand, rows] of Object.entries(blueBy)) for (const b of rows) { const k = b.box + '+' + b.op; const c = combined.get(k) || { op: b.op, hands: [] }; if (b.caught) c.hands.push(hand); combined.set(k, c); }
+      const caught = [...combined.values()].filter((c) => c.hands.length > 0).length;
+      const missed = [...combined.values()].filter((c) => c.hands.length === 0);
+      const handCaught = (hand) => blueBy[hand].filter((b) => b.caught).length;
       const wobbles = rs.tally.wobbles || 0;
       for (const r of waveResults) for (const win of (r.wave.wins || [])) console.log(`RED   ${r.box} [${win.lens}]: ${win.verdict} — ${win.detail.slice(0, 120)}`);
       for (const r of rematchResults) for (const win of ((r.rematch || {}).wins || [])) console.log(`RED   ${r.box} [${win.op} ← ${win.from}]: ${win.verdict} — ${win.detail.slice(0, 120)}`);
-      console.log(`拍 ${t}/${ticks} (種 ${runSeed}): 赤 戦 ${ws.tally.plays + rs.tally.plays} · 赤の勝ち ${redWins} · 近い攻めの捕獲 ${ws.tally.near + rs.tally.near} · 揺らぎ ${wobbles} | 青 弱体化に対し 捕まえた ${caught} · 逃した ${missed.length}${missed.length ? ' (' + [...new Set(missed.map((b) => b.op))].join(',') + ')' : ''}`);
+      console.log(`拍 ${t}/${ticks} (種 ${runSeed}): 赤 戦 ${ws.tally.plays + rs.tally.plays} · 赤の勝ち ${redWins} · 近い攻めの捕獲 ${ws.tally.near + rs.tally.near} · 揺らぎ ${wobbles} | 青 弱体化 ${combined.size} 件: 赤のどの手かが捕まえた ${caught} · どの手も逃した ${missed.length}${missed.length ? ' (' + [...new Set(missed.map((b) => b.op))].join(',') + ')' : ''} [手ごと: 波 ${handCaught('wave')}/${blueBy.wave.length} · 再戦 ${handCaught('rematch')}/${blueBy.rematch.length}]`);
       anyRed += redWins;
       fs.writeFileSync(evoPath, ascii(state));
       fs.writeFileSync(corpusPath, ascii(corpus));
