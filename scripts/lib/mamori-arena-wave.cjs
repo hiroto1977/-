@@ -60,11 +60,11 @@ function runBoxWave({ compiler, box, seed, waves = 2, intensity = 6, level = 'st
 }
 
 /** 青の較正: 守りを 1 つ外した箱を、津波 (弱め) で撃つ。どの観点が捕まえたかを残す (捕まえた = 赤の目が利く・逃した = 赤の盲点か冗長な守り)。 */
-function blueCalibrate({ compiler, box, seed, level = 'strong', seen = new Set() }) {
+function blueCalibrate({ compiler, box, seed, level = 'strong', seen = new Set(), waves = 1, intensity = 1 }) {
   const out = [];
   for (const w of evo.weaken(box.source)) {
     const weak = { name: box.name + '+' + w.op, source: w.source, spec: box.spec };
-    const r = runBoxWave({ compiler, box: weak, seed, waves: 1, intensity: 1, level, seen: new Set(seen) });
+    const r = runBoxWave({ compiler, box: weak, seed, waves, intensity, level, seen: new Set(seen) });
     out.push({ box: box.name, op: w.op, caught: r.wins.length > 0, lenses: unique(r.wins.map((x) => lensKey(x.lens))), verdict: r.wins[0] ? r.wins[0].verdict : null, program: r.wins[0] ? r.wins[0].program : null, plays: r.plays });
   }
   return out;

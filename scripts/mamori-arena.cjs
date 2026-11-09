@@ -12,7 +12,7 @@
  *                                                 全部の箱へ同時に撃つ。守る側は捕獲 (近い攻めを corpus へ) → 解析 (観点 × 止めた規則) → 対策 (破れたら原因と直し方) → 学習 (届く観点へ重み・語を次の鍵に)
  *   node scripts/mamori-arena.cjs rematch [--per 12] [--variants 6] [--jobs 4] [--seed N] [--only a,b] [--blue] [--no-hammer]   再戦と連打: 前に撃った攻撃を 視点・攻め方を変えて撃ち直し
  *                                                 (literal-swap / reverse / burst / alternate / interleave / graft ...)、同じ口へ立て続けに撃って判定の揺らぎ (非決定) を探す
- *   node scripts/mamori-arena.cjs melee [--ticks 2] [--jobs 4] [--waves 2] [--intensity 6] [--per 8] [--variants 4] [--pairs 60] [--seed N] [--only a,b]   合戦: 攻め (赤: 津波・再戦と連打・掛け合わせ) と守り (青: 弱体化した箱で赤の目を測る) を
+ *   node scripts/mamori-arena.cjs melee [--ticks 2] [--jobs 4] [--waves 2] [--intensity 6] [--per 8] [--variants 4] [--pairs 60] [--blue-waves N] [--blue-intensity N] [--seed N] [--only a,b]   合戦: 攻め (赤: 津波・再戦と連打・掛け合わせ) と守り (青: 弱体化した箱で赤の目を測る) を
  *                                                 同じ拍の中で同時に走らせ、拍の終わりに双方の結果を畳んで次の拍の種にする
  *   node scripts/mamori-arena.cjs replay          security/mamori-arena/corpus.json を再生して、攻撃側の得点が 0 のままか見る (exit 1 = 破られた)
  *
@@ -151,7 +151,7 @@ if (cmd === 'match') {
     const box = corpus.boxes.find((b) => b.name === name);
     const seen = new Set(((state.boxes[name] || {}).tokens) || []);
     const w = wave.runBoxWave({ compiler, box, seed: runSeed * 7919 + name.length, waves, intensity, level, seen, weights });
-    const blue = noBlue ? [] : wave.blueCalibrate({ compiler, box, seed: runSeed, level, seen: new Set(w.tokens) });
+    const blue = noBlue ? [] : wave.blueCalibrate({ compiler, box, seed: runSeed, level, seen: new Set(w.tokens), waves: Number(opt('blue-waves', '1')), intensity: Number(opt('blue-intensity', '1')) });
     return { box: name, wave: w, blue };
   });
   (async () => {
@@ -313,6 +313,9 @@ if (cmd === 'match') {
   const per = Number(opt('per', '8'));
   const variants = Number(opt('variants', '4'));
   const pairs = Number(opt('pairs', '60'));
+  // 青の弱体化測定は、赤の本気の強さで測る (既定は赤の強さと同じ・1 にすれば従来の最小の波)
+  const blueWaves = Number(opt('blue-waves', String(waves)));
+  const blueIntensity = Number(opt('blue-intensity', String(intensity)));
   const only = opt('only') ? opt('only').split(',') : null;
   const ascii = (o) => JSON.stringify(o, null, 2).replace(/[^\x20-\x7e\n\u3000-\u30ff\u4e00-\u9fff\uff00-\uffef]/g, (c) => '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + '\n';
   (async () => {
@@ -333,7 +336,7 @@ if (cmd === 'match') {
         add('red', 'wave', ['wave', '--waves', String(waves), '--intensity', String(intensity), '--no-blue'], g, i);
         add('red', 'rematch', ['rematch', '--per', String(per), '--variants', String(variants)], g, i);
         add('red', 'cross', ['cross', '--pairs', String(pairs)], g, i);
-        add('blue', 'wave', ['wave', '--waves', '0'], g, i);
+        add('blue', 'wave', ['wave', '--waves', '0', '--blue-waves', String(blueWaves), '--blue-intensity', String(blueIntensity)], g, i);
         add('blue', 'rematch', ['rematch', '--per', '0', '--variants', '0', '--blue', '--no-hammer'], g, i);
       });
       const argvList = jobsList.map((j) => [...j.args, '--out', j.out]);
