@@ -12,6 +12,8 @@
  *                                                 全部の箱へ同時に撃つ。守る側は捕獲 (近い攻めを corpus へ) → 解析 (観点 × 止めた規則) → 対策 (破れたら原因と直し方) → 学習 (届く観点へ重み・語を次の鍵に)
  *   node scripts/mamori-arena.cjs rematch [--per 12] [--variants 6] [--jobs 4] [--seed N] [--only a,b] [--blue] [--no-hammer]   再戦と連打: 前に撃った攻撃を 視点・攻め方を変えて撃ち直し
  *                                                 (literal-swap / reverse / burst / alternate / interleave / graft ...)、同じ口へ立て続けに撃って判定の揺らぎ (非決定) を探す
+ *   node scripts/mamori-arena.cjs melee [--ticks 2] [--jobs 4] [--waves 2] [--intensity 6] [--per 8] [--variants 4] [--pairs 60] [--seed N] [--only a,b]   合戦: 攻め (赤: 津波・再戦と連打・掛け合わせ) と守り (青: 弱体化した箱で赤の目を測る) を
+ *                                                 同じ拍の中で同時に走らせ、拍の終わりに双方の結果を畳んで次の拍の種にする
  *   node scripts/mamori-arena.cjs replay          security/mamori-arena/corpus.json を再生して、攻撃側の得点が 0 のままか見る (exit 1 = 破られた)
  *
  * 既定の箱は strong (ネットワークも閉じる)。使えなければ exit 2 (弱い箱で黙って走らせない)。
@@ -294,6 +296,70 @@ if (cmd === 'match') {
     fs.writeFileSync(corpusPath, ascii(corpus));
     process.exit(summary.tally.red > 0 ? 1 : 0);
   })();
+} else if (cmd === 'melee') {
+  // 合戦 (周回 9): 攻め (赤) と守り (青) を同じ拍で同時に動かす。1 拍ごとに、津波・再戦と連打・掛け合わせの赤の子プロセスと、
+  // 弱体化した箱で赤の目を測る青の子プロセスを**全部いっぺんに**走らせ、拍の終わりに両方の結果を同じ台帳へ畳んで、次の拍はその学習から始める
+  // (赤の重みも青の鍵 (語) も、前の拍の双方の結果で動く)。これまでの回は赤→青を箱ごとに順に進めていたが、ここは同じ拍の中で動く。
+  const wave = require('./lib/mamori-arena-wave.cjs');
+  const rm = require('./lib/mamori-arena-rematch.cjs');
+  const os = require('node:os');
+  const dir = path.join(arena.REPO_ROOT, 'security', 'mamori-arena');
+  const corpusPath = path.join(dir, 'corpus.json');
+  const evoPath = path.join(dir, 'evolution.json');
+  const ticks = Number(opt('ticks', '2'));
+  const jobs = Number(opt('jobs', '4'));
+  const waves = Number(opt('waves', '2'));
+  const intensity = Number(opt('intensity', '6'));
+  const per = Number(opt('per', '8'));
+  const variants = Number(opt('variants', '4'));
+  const pairs = Number(opt('pairs', '60'));
+  const only = opt('only') ? opt('only').split(',') : null;
+  const ascii = (o) => JSON.stringify(o, null, 2).replace(/[^\x20-\x7e\n　-ヿ一-鿿＀-￯]/g, (c) => '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + '\n';
+  (async () => {
+    let anyRed = 0;
+    for (let t = 1; t <= ticks; t++) {
+      const corpus = JSON.parse(fs.readFileSync(corpusPath, 'utf8'));
+      const state = fs.existsSync(evoPath) ? JSON.parse(fs.readFileSync(evoPath, 'utf8')) : { version: 1, boxes: {}, history: [], lessons: [], gaps: [], wins: [] };
+      const baseSeed = Number(opt('seed', String(((state.rematch || {}).runs || []).length + (state.waves || []).length + 1)));
+      const runSeed = baseSeed + t - 1;
+      const names = corpus.boxes.map((b) => b.name).filter((n) => (only ? only.includes(n) : true));
+      const n = Math.max(1, Math.min(jobs, names.length));
+      const groups = Array.from({ length: n }, () => []);
+      names.forEach((nm, i) => groups[i % n].push(nm));
+      const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'mamori-melee-'));
+      const jobsList = [];
+      const add = (side, kind, args, g, i) => jobsList.push({ side, kind, out: path.join(tmp, `${side}-${kind}-${i}.json`), args: [...args, '--chunk', '--only', g.join(','), '--seed', String(runSeed), '--level', level] });
+      groups.forEach((g, i) => {
+        add('red', 'wave', ['wave', '--waves', String(waves), '--intensity', String(intensity), '--no-blue'], g, i);
+        add('red', 'rematch', ['rematch', '--per', String(per), '--variants', String(variants)], g, i);
+        add('red', 'cross', ['cross', '--pairs', String(pairs)], g, i);
+        add('blue', 'wave', ['wave', '--waves', '0'], g, i);
+        add('blue', 'rematch', ['rematch', '--per', '0', '--variants', '0', '--blue', '--no-hammer'], g, i);
+      });
+      const argvList = jobsList.map((j) => [...j.args, '--out', j.out]);
+      const done = await wave.runParallel(__filename, argvList);
+      done.forEach((d, i) => { if (d.code !== 0) { console.error(`melee: 子プロセス ${jobsList[i].side}/${jobsList[i].kind} が失敗 (exit ${d.code}): ${d.stderr.slice(0, 400)}`); process.exit(2); } });
+      const load = (side, kind) => jobsList.filter((j) => j.side === side && j.kind === kind).flatMap((j) => JSON.parse(fs.readFileSync(j.out, 'utf8')));
+      const waveResults = [...load('red', 'wave'), ...load('blue', 'wave')];
+      const rematchResults = [...load('red', 'rematch'), ...load('red', 'cross'), ...load('blue', 'rematch')];
+      fs.rmSync(tmp, { recursive: true, force: true });
+      const ws = wave.applyWaveResults({ state, corpus, results: waveResults, seed: runSeed, waves, intensity });
+      const rs = rm.applyRematchResults({ state, corpus, results: rematchResults, seed: runSeed });
+      const redWins = ws.tally.red + rs.tally.red;
+      const blues = [...waveResults.flatMap((r) => r.blue || []), ...rematchResults.flatMap((r) => r.blue || [])];
+      const caught = blues.filter((b) => b.caught).length;
+      const missed = blues.filter((b) => !b.caught);
+      const wobbles = rs.tally.wobbles || 0;
+      for (const r of waveResults) for (const win of (r.wave.wins || [])) console.log(`RED   ${r.box} [${win.lens}]: ${win.verdict} — ${win.detail.slice(0, 120)}`);
+      for (const r of rematchResults) for (const win of ((r.rematch || {}).wins || [])) console.log(`RED   ${r.box} [${win.op} ← ${win.from}]: ${win.verdict} — ${win.detail.slice(0, 120)}`);
+      console.log(`拍 ${t}/${ticks} (種 ${runSeed}): 赤 戦 ${ws.tally.plays + rs.tally.plays} · 赤の勝ち ${redWins} · 近い攻めの捕獲 ${ws.tally.near + rs.tally.near} · 揺らぎ ${wobbles} | 青 弱体化に対し 捕まえた ${caught} · 逃した ${missed.length}${missed.length ? ' (' + [...new Set(missed.map((b) => b.op))].join(',') + ')' : ''}`);
+      anyRed += redWins;
+      fs.writeFileSync(evoPath, ascii(state));
+      fs.writeFileSync(corpusPath, ascii(corpus));
+    }
+    console.log(`\n== 合戦 (${ticks} 拍・同時): 赤の勝ち 合計 ${anyRed} ==`);
+    process.exit(anyRed > 0 ? 1 : 0);
+  })();
 } else if (cmd === 'replay') {
   const corpusPath = path.join(arena.REPO_ROOT, 'security', 'mamori-arena', 'corpus.json');
   const corpus = JSON.parse(fs.readFileSync(corpusPath, 'utf8'));
@@ -307,6 +373,6 @@ if (cmd === 'match') {
   console.log(bad === 0 ? `✅ ${corpus.attacks.length} 攻撃 × ${corpus.boxes.length} 箱: 攻撃側の得点は 0` : `❌ ${bad} 件で再び破られた`);
   process.exit(bad === 0 ? 0 : 1);
 } else {
-  console.error('usage: match | tournament | learn | evolve | wave | rematch | cross | replay');
+  console.error('usage: match | tournament | learn | evolve | wave | rematch | cross | melee | replay');
   process.exit(2);
 }
