@@ -29,6 +29,7 @@ const NUMBER_POOL = ['0', '1', '(0 - 1)', '255', '65536', '1000000007', '0.5'];
 function parseExports(source) {
   const fns = [];
   const consts = [];
+  const others = []; // 引数が string / number / boolean / コールバック以外の口 (配列・unknown・印つきの型): 瞬間移動の観点が形ごとに撃つ
   const re = /^export\s+(?:gate\s+)?fn\s+(\w+)\s*\((.*)\)\s*->\s*([^{]+?)\s*\{/gm;
   let m;
   while ((m = re.exec(source)) !== null) {
@@ -43,10 +44,11 @@ function parseExports(source) {
       else { ok = false; break; }
     }
     if (ok) fns.push({ name: m[1], params, returns: m[3].trim() });
+    else others.push({ name: m[1], params: m[2].split(/,(?![^(]*\))/).map((x) => x.trim()).filter(Boolean), returns: m[3].trim() });
   }
   const cre = /^export\s+const\s+(\w+)\b/gm;
   while ((m = cre.exec(source)) !== null) consts.push(m[1]);
-  return { fns, consts };
+  return { fns, consts, others };
 }
 
 const CALLBACKS = {
@@ -99,7 +101,7 @@ function moveExpr(m) {
 function moveNames(m) {
   if (m.k === 'call') return [m.fn];
   if (m.k === 'chain') return [m.outer, m.inner];
-  if (m.k === 'expr') return m.names || [];
+  if (m.k === 'expr' || m.k === 'block') return m.names || [];
   if (m.k === 'raw') return [];
   return [m.c];
 }
@@ -107,7 +109,8 @@ function moveNames(m) {
 function programOf(boxName, genome, tag) {
   const names = [...new Set(genome.flatMap(moveNames))];
   // 1 つの動きが例外を投げても後ろの動きが走るよう、動きごとに try で包む (投げた例外そのものも戦利品として返す: 秘密を文面に載せる箱を見逃さない)
-  const body = genome.map((m) => `  try { r.push(${moveExpr(m)}); } catch (e) { r.push(e); }`).join('\n');
+  // 'block' は文の並び (局所の配列を作って渡し、戻ってから中身を見る)。r に積む物は文の中で自分で積む
+  const body = genome.map((m) => (m.k === 'block' ? `  try { ${m.code} } catch (e) { r.push(e); }` : `  try { r.push(${moveExpr(m)}); } catch (e) { r.push(e); }`)).join('\n');
   return `// target: ${boxName}\n// goal: steal / destroy (自律進化 ${tag})\n` + (names.length > 0 ? `use { ${names.join(', ')} } from "./defender";\n` : '')
     + `export fn attack() -> unknown {\n  const r: unknown[] = [];\n${body}\n  return r;\n}\n`;
 }

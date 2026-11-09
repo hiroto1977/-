@@ -263,8 +263,8 @@ describe(`観点 (レンズ) × 多層の津波 (${LEVEL})`, () => {
   };
   const evo = require_('../../../../scripts/lib/mamori-arena-evolve.cjs') as { programOf: (box: string, g: unknown[], tag: string) => string };
 
-  it('観点は 10 ・それぞれ日本語の名と狙いを持つ (思考の視点が欠けない)', () => {
-    expect(lenses.LENSES.map((l) => l.ja)).toEqual(['逆算', '俯瞰', '批判', '合理', '客観', '抽象', '妄想', '心理的不安', '時間', '越境']);
+  it('観点は 11 ・それぞれ日本語の名と狙いを持つ (思考の視点が欠けない)', () => {
+    expect(lenses.LENSES.map((l) => l.ja)).toEqual(['逆算', '俯瞰', '批判', '合理', '客観', '抽象', '妄想', '心理的不安', '時間', '瞬間移動', '越境']);
     for (const l of lenses.LENSES) { expect(l.id).toMatch(/^[a-z]+$/); expect(l.note.length).toBeGreaterThan(10); }
   });
 
@@ -300,6 +300,23 @@ describe(`観点 (レンズ) × 多層の津波 (${LEVEL})`, () => {
     expect(table.find((t) => t.lens === 'breakout')?.reach).toBe(0);
     expect(table.find((t) => t.lens === 'breakout')?.topRule).toBeTruthy();
   }, 120_000);
+
+  it('★ 瞬間移動: 相手のエリアの内部の名前へ飛ぶ攻めは門前で跳ね返され (bounced)・形の違う物を持ち込む攻めは箱の奥まで届く・赤の勝ちは 0', () => {
+    const r = wave.runBoxWave({ compiler, box: VAULT, seed: 3, waves: 1, intensity: 3, level: LEVEL });
+    expect(r.wins).toEqual([]);
+    expect((r.stats.teleport as { bounced?: number } | undefined)?.bounced ?? 0).toBeGreaterThan(0);
+    const distrust = { name: 'distrust', source: 'const SECRET = "@@SECRET@@";\nexport fn joinSafe(xs: string[]) -> string {\n  const out: string[] = [];\n  for (const x of xs.slice(0, 10)) { out.push(x); }\n  return out.join(",");\n}\nexport fn rec() -> string { return "@@REC_A@@"; }\n', spec: { contract: [{ fn: 'rec', args: [], expect: '@@REC_A@@' }] } };
+    const d = wave.runBoxWave({ compiler, box: distrust, seed: 3, waves: 1, intensity: 3, level: LEVEL });
+    expect(d.wins).toEqual([]);
+    expect((d.stats.teleport as { held?: number } | undefined)?.held ?? 0, '配列を持ち込む攻めが箱の奥まで届かない').toBeGreaterThan(0);
+    // ghost (内部の名前へ飛ぶだけ) の攻めは多層の重ねに入らない: 入ると重ね全体が門前で返され他の層が見えなくなる
+    for (const x of lenses.waveGenomes({ box: distrust, seed: 8, intensity: 4 }).filter((y) => y.lens.startsWith('layered'))) expect(x.genome.some((m) => (m as { ghost?: boolean }).ghost)).toBe(false);
+  }, 120_000);
+
+  it('瞬間移動は箱の源から内部の名前 (export していない const・fn) を読み取って指名する (SECRET / REC を含む)', () => {
+    const names = lenses.waveGenomes({ box: VAULT, seed: 3, intensity: 8 }).filter((x) => x.lens === 'teleport').flatMap((x) => x.genome.map((m) => (m as { e?: string }).e));
+    expect(names).toContain('SECRET');
+  });
 
   it('★ 青の較正: 守りを外した箱 (秘密を返す口を足した) を、観点のどれかが捕まえる (レンズ全体の目が利いている)', () => {
     const blue = wave.blueCalibrate({ compiler, box: VAULT, seed: 4, level: LEVEL });

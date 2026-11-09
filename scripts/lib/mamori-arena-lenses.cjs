@@ -2,7 +2,7 @@
 /**
  * 対戦場の「観点 (レンズ)」(2026-11-09 · 周回 3)。赤の攻めを 1 つの発想に閉じ込めず、思考の視点ごとに別の発生器で撃つ。
  *
- *   逆算 / 俯瞰 / 批判 / 合理 / 客観 / 抽象 / 妄想 / 心理的不安 / 時間 / 越境 の 10 観点。
+ *   逆算 / 俯瞰 / 批判 / 合理 / 客観 / 抽象 / 妄想 / 心理的不安 / 時間 / 越境 の 11 観点。
  *   どの観点も「箱が export する名前 (API)」「箱の契約 (spec.contract)」「前の戦いで覚えた語 (learned)」だけを材料にし、
  *   種 (rng) を決めれば同じ攻めが出る。観点が生む物は遺伝子 (動きの列) で、`evo.programOf` が攻撃のプログラムにする。
  *   層 (layer) は別の観点の動きを 1 本のプログラムに重ねる —— 多層の同時攻撃。
@@ -171,6 +171,47 @@ const LENSES = [
     },
   },
   {
+    id: 'teleport', ja: '瞬間移動', note: '相手のエリアへ一瞬で入り、足跡を残して戻る: 内部の名前の指名・コールバックからの再突入・局所の配列を持ち込んで戻って読む・unknown への形違いの値',
+    gen({ api, source, n, rng }) {
+      const out = [];
+      // 1) 内部の名前へ直に飛ぶ (export していない物): 言語が門前で返す
+      const privates = unique([...String(source || '').matchAll(/^(?:const|let)\s+([A-Za-z_]\w*)/gm).map((m) => m[1]), ...String(source || '').matchAll(/^(?:async\s+)?fn\s+(\w+)/gm).map((m) => m[1]), 'SECRET', 'REC', 'NOTES', 'STORE', 'KEY']).filter((x) => !api.fns.some((f) => f.name === x) && !api.consts.includes(x));
+      for (const name of sample(privates, 3 * n, rng)) out.push([{ ...expr(name, [name]), ghost: true }]);
+      // 2) コールバックで中へ入り、中から別の口へ再突入して出る (入った瞬間の公開値を鍵に持ち帰る)
+      const sf = api.fns.filter((f) => f.params.length === 1 && f.params[0] === 'string');
+      for (const f of api.fns.filter((x) => x.params.some((p) => p === 'cb:string'))) {
+        const withCb = (cb) => `${f.name}(${f.params.map((p) => (p === 'cb:string' ? cb : p === 'string' ? '"a"' : p === 'number' ? '0' : 'true')).join(', ')})`;
+        out.push([{ k: 'block', names: [f.name], code: `r.push(${withCb('(s: string) => { r.push(s); return s; }')});` }]);
+        out.push([{ k: 'block', names: [f.name], code: `r.push(${withCb(`(s: string) => { r.push(${f.name}((t: string) => t)); return s; }`)});` }]);
+        for (const g of sample(sf, n, rng)) out.push([{ k: 'block', names: [f.name, g.name], code: `r.push(${withCb(`(s: string) => { r.push(s); r.push(${g.name}(s)); return ${g.name}(s); }`)});` }]);
+      }
+      // 3) 形の違う物を持ち込む: 配列は局所に作って渡し、戻ってから中身を読む (足跡を残して戻る)
+      for (const o of api.others) {
+        const t = o.params.map((p) => p.replace(/\s+/g, ' '));
+        const argFor = (p, shape) => {
+          const ty = p.replace(/^\w+\??\s*:\s*/, '');
+          if (/^\(\(s: string\) => string\)\[\]$/.test(ty)) return shape === 0 ? '[(s: string) => { r.push(s); return s; }]' : shape === 1 ? '[(s: string) => { throw new Error(s); }, (s: string) => s + s]' : '[]';
+          if (/\[\]$/.test(ty)) return shape === 0 ? '["a", "__proto__", "constructor"]' : shape === 1 ? '[]' : 'localList';
+          if (ty === 'unknown') return ['{"name": "x"}', '{"name": "__proto__"}', '[]', 'null', '{"name": {"a": 1}}'][shape % 5];
+          if (ty === 'string') return '"a"';
+          if (ty === 'number') return '0';
+          if (ty === 'boolean') return 'true';
+          return '{}';
+        };
+        for (let shape = 0; shape < Math.min(5, 2 + n); shape++) {
+          const args = t.map((p) => argFor(p, shape)).join(', ');
+          const plant = args.includes('localList');
+          out.push([{ k: 'block', names: [o.name], code: plant ? `const localList: string[] = ["a"]; r.push(${o.name}(${args})); localList.push("z"); r.push(${o.name}(${args})); r.push(localList);` : `r.push(${o.name}(${args}));` }]);
+        }
+      }
+      // 4) 出入り: 全部の口を呼び (入る)・定数を覗き・もう一度全部の口を呼ぶ (戻る) —— 往復で状態や出力が変わるかを見る
+      const calls = api.fns.map((f) => callOf(f)).slice(0, 20);
+      const peek = api.consts.flatMap((c) => [{ k: 'values', c }, { k: 'entries', c }]);
+      if (calls.length > 0) out.push([...calls, ...peek, ...calls]);
+      return out.filter((g) => g.length > 0);
+    },
+  },
+  {
     id: 'breakout', ja: '越境', note: '箱の外を狙う: eval・Function・原型汚染・globalThis・動的 import ほか、言語が断るはずの構文を箱に持ち込む',
     gen({ n, rng }) {
       return sample([...BREAKOUTS, ...LEGAL_LOOKALIKES], 4 * n + 4, rng).map((e) => [raw(e)]);
@@ -186,16 +227,17 @@ function variantsFor(lensId, intensity, weights) {
 
 /** 箱 1 つに対する 1 波ぶんの攻め。観点ごとの攻めと、観点をまたいで重ねた層 (layered) を返す。 */
 function waveGenomes({ box, seed, intensity = 6, learned = [], weights = null }) {
+  const source = box.source;
   const api = evo.parseExports(box.source);
   const rng = evo.mulberry32(seed);
   const spec = box.spec || {};
   const items = [];
   for (const lens of LENSES) {
     const n = variantsFor(lens.id, intensity, weights);
-    for (const genome of lens.gen({ api, spec, learned, n, rng })) items.push({ lens: lens.id, genome });
+    for (const genome of lens.gen({ api, source, spec, learned, n, rng })) items.push({ lens: lens.id, genome });
   }
   // 多層: 別の観点の攻めを 2〜3 本重ねて 1 つのプログラムにする (同時多発)。重ねる元は breakout を除く (構文で全体が断られて他の層が見えなくなる)
-  const base = items.filter((x) => x.lens !== 'breakout');
+  const base = items.filter((x) => x.lens !== 'breakout' && !x.genome.some((m) => m.ghost));
   const layers = [];
   for (let i = 0; i < intensity * 3 && base.length >= 2; i++) {
     const picks = sample(base, 2 + Math.floor(rng() * 2), rng);
