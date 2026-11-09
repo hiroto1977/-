@@ -12,6 +12,7 @@
  *                                                 全部の箱へ同時に撃つ。守る側は捕獲 (近い攻めを corpus へ) → 解析 (観点 × 止めた規則) → 対策 (破れたら原因と直し方) → 学習 (届く観点へ重み・語を次の鍵に)
  *   node scripts/mamori-arena.cjs rematch [--per 12] [--variants 6] [--jobs 4] [--seed N] [--only a,b] [--blue] [--no-hammer]   再戦と連打: 前に撃った攻撃を 視点・攻め方を変えて撃ち直し
  *                                                 (literal-swap / reverse / burst / alternate / interleave / graft ...)、同じ口へ立て続けに撃って判定の揺らぎ (非決定) を探す
+ *   node scripts/mamori-arena.cjs raw [--only a,b] [--seed N]   生の TypeScript の呼び手: 言語のコンパイルを通らず箱の公開物へ直接書き込む (凍結が実行時に働くかを測る)
  *   node scripts/mamori-arena.cjs melee [--ticks 2] [--jobs 4] [--waves 2] [--intensity 6] [--per 8] [--variants 4] [--pairs 60] [--blue-waves N] [--blue-intensity N] [--seed N] [--only a,b]   合戦: 攻め (赤: 津波・再戦と連打・掛け合わせ) と守り (青: 弱体化した箱で赤の目を測る) を
  *                                                 同じ拍の中で同時に走らせ、拍の終わりに双方の結果を畳んで次の拍の種にする
  *   node scripts/mamori-arena.cjs replay          security/mamori-arena/corpus.json を再生して、攻撃側の得点が 0 のままか見る (exit 1 = 破られた)
@@ -296,6 +297,24 @@ if (cmd === 'match') {
     fs.writeFileSync(corpusPath, ascii(corpus));
     process.exit(summary.tally.red > 0 ? 1 : 0);
   })();
+} else if (cmd === 'raw') {
+  // 生の TypeScript の呼び手: Mamori の攻める側のコンパイルを通らず、箱の公開物へ直接書き込む (周回 9)。
+  // 実物の箱で壊れたら赤の勝ち (凍結が働いていない)。凍結を外した弱体化の箱で壊れたら青の較正が捕まえた。
+  const rawLib = require('./lib/mamori-arena-raw.cjs');
+  const corpus = JSON.parse(fs.readFileSync(path.join(arena.REPO_ROOT, 'security', 'mamori-arena', 'corpus.json'), 'utf8'));
+  const only = opt('only') ? opt('only').split(',') : null;
+  const seed = Number(opt('seed', '1'));
+  let red = 0, caught = 0, missed = 0, plays = 0;
+  for (const box of corpus.boxes) {
+    if (only && !only.includes(box.name)) continue;
+    const r = rawLib.rawBox({ compiler, box, seed, level });
+    plays += r.plays;
+    for (const w of r.wins) { red++; console.log(`RED   ${r.box} [${w.op}]: ${w.verdict} — ${w.detail.slice(0, 160)}`); }
+    for (const b of r.blue) { if (b.caught) caught++; else missed++; console.log(`BLUE  ${b.box} +unfreeze: ${b.caught ? '捕まえた (' + b.how + ')' : '見逃し'}`); }
+    if (r.attacks === 0) console.log(`--    ${r.box}: 公開した定数も引数なしの関数も無い`);
+  }
+  console.log(`\n== 生の呼び手: 戦 ${plays} / 赤の勝ち ${red} / unfreeze 捕獲 ${caught} 見逃し ${missed} ==`);
+  process.exit(red > 0 ? 1 : 0);
 } else if (cmd === 'melee') {
   // 合戦 (周回 9): 攻め (赤) と守り (青) を同じ拍で同時に動かす。1 拍ごとに、津波・再戦と連打・掛け合わせの赤の子プロセスと、
   // 弱体化した箱で赤の目を測る青の子プロセスを**全部いっぺんに**走らせ、拍の終わりに両方の結果を同じ台帳へ畳んで、次の拍はその学習から始める

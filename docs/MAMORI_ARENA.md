@@ -205,7 +205,20 @@ node scripts/mamori-arena.cjs melee [--ticks 2] [--jobs 4] [--waves 2] [--intens
 
 - `readonly-records` / `switch-dispatch` / `cap-object` は返り値を**呼び出しごとに作り直す**ので、凍結が無くても次の呼び出しに影響しない (凍結は害を防いでいない = 等価な弱体化)。
 - `config` / `frozen-table` はモジュール直下の凍った定数を呼び出し間で**共有して公開**する。凍結を外せば書き込みが残るはずだが、赤の攻め (`Object.assign(PUBLIC.rows, …)`・`shared.a = …`) は**攻める側のコンパイルの時点で言語が断る**ので、箱まで届かない。
-- したがって **今の対戦では、実行時の凍結は「言語の規則 (M6 の書き込みの禁止) の後ろの二重の守り」で、赤は凍結の有無を見分けられない。** 過去に `destroyed` が 1 件も出ていないのも同じ理由。凍結そのものを測るには、言語を通らない生の JavaScript の攻め (`rawParentsFor` / `nestRaw` の系統) を共有の定数へ向ける観点が要る (次の手)。
+- したがって **今の対戦では、実行時の凍結は「言語の規則 (M6 の書き込みの禁止) の後ろの二重の守り」で、赤は凍結の有無を見分けられない。** 過去に `destroyed` が 1 件も出ていないのも同じ理由。凍結そのものを測るには、言語を通らない生の JavaScript の攻め (`rawParentsFor` / `nestRaw` の系統) を共有の定数へ向ける観点が要る (→ 次の節で実装した)。
+
+### 生の TypeScript の呼び手 (周回 9 の続き · `raw` 子命令)
+
+`node scripts/mamori-arena.cjs raw [--only a,b]` —— 攻める側を Mamori でなく**生の TypeScript**で書く手 (`scripts/lib/mamori-arena-raw.cjs`・審判は `playRaw`)。言語のコンパイルを通らないので、箱の公開した定数と関数の返り値を、全部の欄について書き換え・`defineProperty`・`delete`・配列の `push` / `length = 0` で再帰的に壊し、契約 (同じ呼び出しが同じ答え) が崩れるかを見る。凍結を外した弱体化 (`unfreeze`) の箱にも撃って、青の較正が捕まえるかを測る。
+
+実測 (31 戦・種 1):
+
+- **実物の箱は壊れない (赤の勝ち 0)** —— 凍結は実際に働いている。
+- **`config` / `frozen-table` の `unfreeze` を捕まえた** (`raw-tamper-consts`) —— 共有して公開する凍った定数は、凍結を外すと書き込みが残る。前の節で「言語の後ろの二重の守り」と呼んだ物の**実行時の凍結が本当に働いていること**が、初めて測れた。
+- `readonly-records` / `switch-dispatch` / `cap-object` の 3 件は**捕まえられない** —— 返り値を呼び出しごとに作り直すので、壊しても次の呼び出しに残らない (引数ありの関数も 文字列・数・空の物 の 3 通りで呼んで確かめた)。**等価な弱体化**で、見逃しではない。
+- ★ 初回は赤が 2 勝した (`config` / `frozen-table` の `raw-replace-consts` = `m.X = …` で公開名を付け替える手) が、**道具の artifact**だった: CommonJS に変換した生成物では exports の欄が普通の欄で付け替わるが、ESM の名前空間は読み取り専用 (付け替えは TypeError)、束ねた単一 HTML には exports という物が無い。実行形態の性質で箱の凍結とは別の話なので、攻めから外して理由を `mamori-arena-raw.cjs` に書いた。
+- 検査: `src/shared/mamori/__tests__/mamoriArenaRaw.test.ts` (6 件)。
+
 
 ## 悪夢の台帳 (毎周、赤が「自分が守る側ならこれは無理だ」と思う手を考えて撃つ · 守る側は防ぎ方を考えて学ぶ)
 
