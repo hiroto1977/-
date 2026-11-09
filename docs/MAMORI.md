@@ -81,7 +81,7 @@ Mamori では、その 2 つは**書けない**:
 
 ## 0.25 —— 再輸出 `export { a, type T } from "./m";` / `export { x };` を足した (MG-051 · 2026-11-09)
 
-他の module の名前をそのまま公開する形で、`proxy.ts` / `userPresence.ts` / `assistantMarkdown.ts` が持つ。足す前に 8 通りで破った。
+他の module の名前をそのまま公開する形で、`proxy.ts` / `userPresence.ts` / `assistantMarkdown.ts` が持つ。足す前に 9 通りで破った (⑨ は組み直しのとき実測で見つけた穴)。
 
 | 破る形 | 結果 |
 | --- | --- |
@@ -93,6 +93,7 @@ Mamori では、その 2 つは**書けない**:
 | ⑥ export していない名前・宣言のない名前 | M6 で断る |
 | ⑦ 自分で宣言した名前の `export { f };` | M6 で断る (宣言に `export` を付ける 1 つの書き方) |
 | ⑧ 関数を `type` で再輸出 (検めと生成物の食い違い) | M6 で断る |
+| ⑨ `use default fs from "node:fs"; export { fs };` (外の module の既定の値を再輸出して、素の口を TypeScript の呼び手へ漏らす · 0.25 の最初の実装は通していた) | M6 で断る (既定の import は中で使うだけ) |
 
 - **再輸出は TypeScript の呼び手のため**で、Mamori の `use` では引けない (`table.exports` に載らない) —— 名前を再輸出の連鎖で隠して `use` の検めを迂回する道を作らない。
 - 変換は `export { a, type T } from './m';` / `export { a };` で、`type` の並びを保つ。
