@@ -158,8 +158,8 @@ describe('言語を育てる輪 —— 実物の台帳と壁', () => {
 
   it('★ 移す候補の母集団は「必ず測る壁」のうちまだ TypeScript の物 (Mamori で書いた壁は入らない)', () => {
     const walls = growth.wallFiles(ROOT).map((f) => f.path);
-    expect(walls.length).toBeGreaterThanOrEqual(10);
-    for (const done of ['src/shared/proxyEndpoint.ts', 'src/shared/externalUrlGate.ts', 'src/shared/imageUrlGate.ts', 'src/main/shellOpenGate.ts']) {
+    expect(walls.length).toBeGreaterThanOrEqual(5); // 移すたびに減る (MG-052 で 9)
+    for (const done of ['src/shared/proxyEndpoint.ts', 'src/shared/externalUrlGate.ts', 'src/shared/imageUrlGate.ts', 'src/main/shellOpenGate.ts', 'src/renderer/data/assistantMarkdown.ts']) {
       expect(walls, done).not.toContain(done);
     }
   });
