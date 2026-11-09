@@ -79,6 +79,24 @@ Mamori では、その 2 つは**書けない**:
 - **既知の差 (正直に)**: `(a?.b).c` は丸括弧を構文木に残さないので生成物は `a?.b.c` になる (`a` が null のとき `.c` を読む前に止まる —— 例外が減る向きで、印の流れには触れない)。
 - **この周で移せた壁は 0 本** (`optional-chain` だけで足りる壁が無い —— 足りない構文は他にも要る)。言語の幅を広げた周で、次は `index` の塞ぎ方 (字面の鍵は FORBIDDEN_MEMBERS を通し、字面でない鍵は数だけ) を決めてから足す。
 
+## 0.25 —— 再輸出 `export { a, type T } from "./m";` / `export { x };` を足した (MG-051 · 2026-11-09)
+
+他の module の名前をそのまま公開する形で、`proxy.ts` / `userPresence.ts` / `assistantMarkdown.ts` が持つ。足す前に 8 通りで破った。
+
+| 破る形 | 結果 |
+| --- | --- |
+| ① `extern sink { shell } from "electron"; export { shell };` (口を再輸出して TypeScript の呼び手へ素の口を漏らす) | M6 で断る |
+| ② `extern pure` の host の口の再輸出 | M6 で断る |
+| ③ `export { shell } from "electron"` (外の module・`node:` ・npm・絶対パス) | M6 で断る (相対の Mamori module だけ) |
+| ④ Mamori でない TypeScript の module からの再輸出 | M6 で断る (印を受ける口かどうか Mamori から見えない) |
+| ⑤ `export * from "./a"` | M0 で断る (何が出ていくか読めない) |
+| ⑥ export していない名前・宣言のない名前 | M6 で断る |
+| ⑦ 自分で宣言した名前の `export { f };` | M6 で断る (宣言に `export` を付ける 1 つの書き方) |
+| ⑧ 関数を `type` で再輸出 (検めと生成物の食い違い) | M6 で断る |
+
+- **再輸出は TypeScript の呼び手のため**で、Mamori の `use` では引けない (`table.exports` に載らない) —— 名前を再輸出の連鎖で隠して `use` の検めを迂回する道を作らない。
+- 変換は `export { a, type T } from './m';` / `export { a };` で、`type` の並びを保つ。
+
 ## 0.24 —— 名前ごとの型だけの import `use { f, type X } from "…";` を足した (MG-049 · 2026-11-09)
 
 `use { mk, type VU, type Name alias N } from "./a";` のように、**値と型を 1 行で引ける**。0.23 までは `use type { X }` (項目全体が型だけ) しか無く、値と型を同じ module から引く壁 (`oauth.ts` ほか) は 2 行に分けて書く必要があった。生成物は TypeScript の inline type import (`import { mk, type VU, type Name as N } from './a';`) になる。`use type { … }` と普通の `use` の生成物は 0.23 までと 1 字も変わらない。
@@ -517,15 +535,16 @@ T-234 (`sinkTyped*` の文脈と印の型の判定)・T-232 (`RegExp.$1`)・`.co
 - 戦いのデータは `security/mamori-arena/corpus.json` に残し、`mamoriArena.test.ts` が毎回再生する (学習データ)。
 - 侵入役の新手を AI に書かせる段は、安全装置に止められた。迂回せず、新手は人が追加する (`*.attack.mamori`)。
 
-## 文法 (0.13)
+## 文法 (0.25)
 
 ```
 module    := header* item*
 header    := '//!' 行                         生成物の先頭の docblock になる
-item      := doc* ( use | extern | vetted | type | interface | const | fn )
+item      := doc* ( use | reexport | extern | vetted | type | interface | const | fn )
 doc       := '///' 行                         項目の docblock になる
 use       := 'use' 'type'? '{' ('type'? name ('alias' name)?) (',' …)* '}' 'from' 文字列 ';'   (名前ごとの `type` は 'use type' でないときだけ · 0.24)
            | 'use' 'default' name 'from' 文字列 ';'
+reexport  := 'export' '{' ('type'? name) (',' …)* '}' ('from' 文字列)? ';'      (from つきは相対の Mamori module の export だけ・from なしは use で引いた名前だけ・口 (extern) は出せない · 0.25)
 extern    := 'extern' ('sink' | 'pure') '{' name (',' name)* '}' 'from' 文字列 ';'
            | 'extern' ('sink' | 'pure') 'global' name ';'
 vetted    := 'export'? 'vetted' 名前 '=' 文字列 ';'

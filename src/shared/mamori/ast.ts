@@ -149,6 +149,17 @@ export type Item =
       readonly pos: Pos;
     }
   | {
+      /**
+       * `export { a, type T } from "./m";` / `export { a };` (0.25 · MG-051)。再輸出は TypeScript の呼び手のための物で、Mamori の `use` では引けない
+       * (`table.exports` に載らない)。`from` が null なら `use` で引いた名前の再輸出 (自分で宣言した名前には `export` を付ける)。
+       */
+      readonly kind: 'reexport';
+      readonly names: readonly { readonly name: string; readonly typeOnly: boolean }[];
+      readonly from: string | null;
+      readonly doc: Doc;
+      readonly pos: Pos;
+    }
+  | {
       readonly kind: 'extern';
       /** `sink` は危ない口 (使えるのは sink 関数の中だけ)・`pure` は副作用の判断を持たない値。 */
       readonly authority: 'sink' | 'pure';

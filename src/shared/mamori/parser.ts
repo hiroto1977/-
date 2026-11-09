@@ -957,6 +957,27 @@ export function parse(file: string, src: string): Module {
       expectP(';');
       return { kind: 'use', typeOnly, names, defaultName, from, doc, pos: t.pos };
     }
+    if (isW('export') && isP('*', 1)) fail(peek(), '`export *` は書けません —— 再輸出する名前は 1 つずつ挙げます (`export { a, b } from "./m";`)。名前を挙げないと、何が TypeScript の側へ出ていくか読めません');
+    if (isW('export') && isP('{', 1)) {
+      next();
+      next();
+      const names: { name: string; typeOnly: boolean }[] = [];
+      while (!isP('}')) {
+        const inlineType = isW('type');
+        if (inlineType) next();
+        names.push({ name: ident(), typeOnly: inlineType });
+        if (!isP('}')) expectP(',');
+      }
+      if (names.length === 0) fail(peek(), '`export { }` に名前がありません');
+      expectP('}');
+      let from: string | null = null;
+      if (isW('from')) {
+        next();
+        from = str();
+      }
+      expectP(';');
+      return { kind: 'reexport', names, from, doc, pos: t.pos };
+    }
     if (isW('extern')) {
       next();
       const a = ident();

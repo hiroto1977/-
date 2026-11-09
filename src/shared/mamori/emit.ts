@@ -223,6 +223,10 @@ function item(it: Item, vettedLabels: readonly string[], preludeDone: { value: b
       const names = it.names.map((n) => (n.typeOnly ? 'type ' : '') + (n.alias === null ? n.name : `${n.name} as ${n.alias}`)).join(', ');
       return [...docblock(it.doc), `${kw} { ${names} } from ${quote(it.from)};`];
     }
+    case 'reexport': {
+      const names = it.names.map((n) => (n.typeOnly ? 'type ' : '') + n.name).join(', ');
+      return [...docblock(it.doc), it.from === null ? `export { ${names} };` : `export { ${names} } from ${quote(it.from)};`];
+    }
     case 'extern':
       return it.from === null ? [] : [...docblock(it.doc), `import { ${it.names.join(', ')} } from ${quote(it.from)};`];
     case 'vetted': {
