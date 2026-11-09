@@ -9183,7 +9183,9 @@
         "u00",
         "118",
         "250",
-        "task_queue"
+        "task_queue",
+        "trusted",
+        "ud800"
       ],
       "generations": 44,
       "bestFit": 2.15
@@ -11974,7 +11976,7 @@
       "op": "export-secret",
       "verdict": "stolen",
       "program": "// target: async-vault+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "teleport",
@@ -11986,13 +11988,14 @@
       "op": "leak-fn",
       "verdict": "stolen",
       "program": "// target: async-vault+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { fetchNote, mapNotes, authorize, leakNow } from \"./defender\";\nasync fn acbEcho(s: string) -> Promise<string> { return s; }\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await mapNotes(acbEcho)); } catch (e) { r.push(e); }\n  try { r.push(await authorize(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
         "rational",
         "abstract",
         "temporal",
+        "teleport",
         "layered"
       ]
     },
@@ -12001,7 +12004,7 @@
       "op": "leak-hook",
       "verdict": "stolen",
       "program": "// target: async-vault+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { fetchNote, mapNotes, authorize, withSecret } from \"./defender\";\nasync fn acbEcho(s: string) -> Promise<string> { return s; }\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await mapNotes(acbEcho)); } catch (e) { r.push(e); }\n  try { r.push(await authorize(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "rational",
@@ -12017,7 +12020,7 @@
       "op": "leak-ticks",
       "verdict": "stolen",
       "program": "// target: async-vault+leak-ticks\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { probeSlow } from \"./defender\";\nasync fn ticks_probeSlow(g: string) -> Promise<number> {\n  let fin = false;\n  const p = probeSlow(g);\n  p.then((v: boolean) => { fin = true; });\n  let n = 0;\n  while (!fin && n < 400) { await Promise.resolve(0); n = n + 1; }\n  return n;\n}\nasync fn recover_probeSlow() -> Promise<string> {\n  const alphabet = \"sec_0123456789abcdef\";\n  let known = \"\";\n  let pos = 0;\n  let go = true;\n  while (go && pos < 40) {\n    const base = await ticks_probeSlow(known + \"~\");\n    let best = \"\";\n    let bestTicks = base;\n    let k = 0;\n    while (k < alphabet.length) {\n      const ch = alphabet.slice(k, k + 1);\n      const t = await ticks_probeSlow(known + ch);\n      if (t > bestTicks) { bestTicks = t; best = ch; }\n      k = k + 1;\n    }\n    if (best === \"\") { go = false; } else { known = known + best; }\n    pos = pos + 1;\n  }\n  return known;\n}\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await recover_probeSlow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare",
         "layered"
@@ -12028,17 +12031,7 @@
       "op": "leak-redos",
       "verdict": "stalled",
       "program": "// target: async-vault+leak-redos\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { matchEvil } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchEvil(\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
-      "lenses": [
-        "nightmare"
-      ]
-    },
-    {
-      "box": "async-vault",
-      "op": "leak-hang",
-      "verdict": "stalled",
-      "program": "// target: async-vault+leak-hang\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { hangOn } from \"./defender\";\nfn acbHang(s: string) -> Promise<string> { return new Promise<string>((res: unknown) => { }); }\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await hangOn(acbHang)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare",
         "layered"
@@ -12046,16 +12039,27 @@
     },
     {
       "box": "async-vault",
+      "op": "leak-hang",
+      "verdict": "stalled",
+      "program": "// target: async-vault+leak-hang\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { hangOn } from \"./defender\";\nfn acbHang(s: string) -> Promise<string> { return new Promise<string>((res: unknown) => { }); }\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await hangOn(acbHang)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 31,
+      "lenses": [
+        "nightmare"
+      ]
+    },
+    {
+      "box": "async-vault",
       "op": "leak-prefix",
       "verdict": "stolen",
       "program": "// target: async-vault+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { fetchNote, mapNotes, authorize, hintNow } from \"./defender\";\nasync fn acbEcho(s: string) -> Promise<string> { return s; }\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await mapNotes(acbEcho)); } catch (e) { r.push(e); }\n  try { r.push(await authorize(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
         "rational",
         "abstract",
         "temporal",
+        "teleport",
         "layered"
       ]
     },
@@ -12064,7 +12068,7 @@
       "op": "export-secret",
       "verdict": "stolen",
       "program": "// target: config+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET, CONFIG } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(CONFIG); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(CONFIG)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(CONFIG)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(CONFIG)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(CONFIG)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "teleport",
@@ -12076,7 +12080,7 @@
       "op": "leak-fn",
       "verdict": "stolen",
       "program": "// target: config+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { label, row, matches, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(label()); } catch (e) { r.push(e); }\n  try { r.push(row(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
@@ -12092,7 +12096,7 @@
       "op": "leak-hook",
       "verdict": "stolen",
       "program": "// target: config+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { label, row, matches, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(label()); } catch (e) { r.push(e); }\n  try { r.push(row(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "rational",
@@ -12108,7 +12112,7 @@
       "op": "leak-ticks",
       "verdict": "stolen",
       "program": "// target: config+leak-ticks\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { probeSlow } from \"./defender\";\nasync fn ticks_probeSlow(g: string) -> Promise<number> {\n  let fin = false;\n  const p = probeSlow(g);\n  p.then((v: boolean) => { fin = true; });\n  let n = 0;\n  while (!fin && n < 400) { await Promise.resolve(0); n = n + 1; }\n  return n;\n}\nasync fn recover_probeSlow() -> Promise<string> {\n  const alphabet = \"sec_0123456789abcdef\";\n  let known = \"\";\n  let pos = 0;\n  let go = true;\n  while (go && pos < 40) {\n    const base = await ticks_probeSlow(known + \"~\");\n    let best = \"\";\n    let bestTicks = base;\n    let k = 0;\n    while (k < alphabet.length) {\n      const ch = alphabet.slice(k, k + 1);\n      const t = await ticks_probeSlow(known + ch);\n      if (t > bestTicks) { bestTicks = t; best = ch; }\n      k = k + 1;\n    }\n    if (best === \"\") { go = false; } else { known = known + best; }\n    pos = pos + 1;\n  }\n  return known;\n}\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await recover_probeSlow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare"
       ]
@@ -12118,7 +12122,7 @@
       "op": "leak-redos",
       "verdict": "stalled",
       "program": "// target: config+leak-redos\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { matchEvil } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchEvil(\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare",
         "layered"
@@ -12129,7 +12133,7 @@
       "op": "leak-hang",
       "verdict": "stalled",
       "program": "// target: config+leak-hang\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { hangOn } from \"./defender\";\nfn acbHang(s: string) -> Promise<string> { return new Promise<string>((res: unknown) => { }); }\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await hangOn(acbHang)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare"
       ]
@@ -12139,7 +12143,7 @@
       "op": "leak-prefix",
       "verdict": "stolen",
       "program": "// target: config+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { label, row, matches, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(label()); } catch (e) { r.push(e); }\n  try { r.push(row(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
@@ -12155,7 +12159,7 @@
       "op": "export-secret",
       "verdict": "stolen",
       "program": "// target: distrust-args+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "teleport",
@@ -12167,7 +12171,7 @@
       "op": "leak-fn",
       "verdict": "stolen",
       "program": "// target: distrust-args+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { publicRec, recB, recC, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(publicRec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
@@ -12183,7 +12187,7 @@
       "op": "leak-hook",
       "verdict": "stolen",
       "program": "// target: distrust-args+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { publicRec, recB, recC, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(publicRec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "rational",
@@ -12199,7 +12203,7 @@
       "op": "leak-key",
       "verdict": "stolen",
       "program": "// target: distrust-args+leak-key\n// goal: steal / destroy (自律進化 lens-reverse-w0)\nuse { unlockNow, publicRec, recB, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(unlockNow(publicRec())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recB())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recC())); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "reverse"
       ]
@@ -12209,10 +12213,9 @@
       "op": "leak-ticks",
       "verdict": "stolen",
       "program": "// target: distrust-args+leak-ticks\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { probeSlow } from \"./defender\";\nasync fn ticks_probeSlow(g: string) -> Promise<number> {\n  let fin = false;\n  const p = probeSlow(g);\n  p.then((v: boolean) => { fin = true; });\n  let n = 0;\n  while (!fin && n < 400) { await Promise.resolve(0); n = n + 1; }\n  return n;\n}\nasync fn recover_probeSlow() -> Promise<string> {\n  const alphabet = \"sec_0123456789abcdef\";\n  let known = \"\";\n  let pos = 0;\n  let go = true;\n  while (go && pos < 40) {\n    const base = await ticks_probeSlow(known + \"~\");\n    let best = \"\";\n    let bestTicks = base;\n    let k = 0;\n    while (k < alphabet.length) {\n      const ch = alphabet.slice(k, k + 1);\n      const t = await ticks_probeSlow(known + ch);\n      if (t > bestTicks) { bestTicks = t; best = ch; }\n      k = k + 1;\n    }\n    if (best === \"\") { go = false; } else { known = known + best; }\n    pos = pos + 1;\n  }\n  return known;\n}\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await recover_probeSlow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
-        "nightmare",
-        "layered"
+        "nightmare"
       ]
     },
     {
@@ -12220,7 +12223,7 @@
       "op": "leak-redos",
       "verdict": "stalled",
       "program": "// target: distrust-args+leak-redos\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { matchEvil } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchEvil(\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare",
         "layered"
@@ -12231,9 +12234,10 @@
       "op": "leak-hang",
       "verdict": "stalled",
       "program": "// target: distrust-args+leak-hang\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { hangOn } from \"./defender\";\nfn acbHang(s: string) -> Promise<string> { return new Promise<string>((res: unknown) => { }); }\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await hangOn(acbHang)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
-        "nightmare"
+        "nightmare",
+        "layered"
       ]
     },
     {
@@ -12241,7 +12245,7 @@
       "op": "leak-prefix",
       "verdict": "stolen",
       "program": "// target: distrust-args+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { publicRec, recB, recC, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(publicRec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
@@ -12257,11 +12261,10 @@
       "op": "export-secret",
       "verdict": "stolen",
       "program": "// target: map-lookup+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
-        "teleport",
-        "layered"
+        "teleport"
       ]
     },
     {
@@ -12269,7 +12272,7 @@
       "op": "leak-fn",
       "verdict": "stolen",
       "program": "// target: map-lookup+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { get, has, matches, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(get(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(has(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
@@ -12285,7 +12288,7 @@
       "op": "leak-hook",
       "verdict": "stolen",
       "program": "// target: map-lookup+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { get, has, matches, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(get(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(has(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "rational",
@@ -12301,9 +12304,10 @@
       "op": "leak-ticks",
       "verdict": "stolen",
       "program": "// target: map-lookup+leak-ticks\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { probeSlow } from \"./defender\";\nasync fn ticks_probeSlow(g: string) -> Promise<number> {\n  let fin = false;\n  const p = probeSlow(g);\n  p.then((v: boolean) => { fin = true; });\n  let n = 0;\n  while (!fin && n < 400) { await Promise.resolve(0); n = n + 1; }\n  return n;\n}\nasync fn recover_probeSlow() -> Promise<string> {\n  const alphabet = \"sec_0123456789abcdef\";\n  let known = \"\";\n  let pos = 0;\n  let go = true;\n  while (go && pos < 40) {\n    const base = await ticks_probeSlow(known + \"~\");\n    let best = \"\";\n    let bestTicks = base;\n    let k = 0;\n    while (k < alphabet.length) {\n      const ch = alphabet.slice(k, k + 1);\n      const t = await ticks_probeSlow(known + ch);\n      if (t > bestTicks) { bestTicks = t; best = ch; }\n      k = k + 1;\n    }\n    if (best === \"\") { go = false; } else { known = known + best; }\n    pos = pos + 1;\n  }\n  return known;\n}\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await recover_probeSlow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
-        "nightmare"
+        "nightmare",
+        "layered"
       ]
     },
     {
@@ -12311,7 +12315,7 @@
       "op": "leak-redos",
       "verdict": "stalled",
       "program": "// target: map-lookup+leak-redos\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { matchEvil } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchEvil(\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare"
       ]
@@ -12321,10 +12325,9 @@
       "op": "leak-hang",
       "verdict": "stalled",
       "program": "// target: map-lookup+leak-hang\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { hangOn } from \"./defender\";\nfn acbHang(s: string) -> Promise<string> { return new Promise<string>((res: unknown) => { }); }\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await hangOn(acbHang)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
-        "nightmare",
-        "layered"
+        "nightmare"
       ]
     },
     {
@@ -12332,7 +12335,7 @@
       "op": "leak-prefix",
       "verdict": "stolen",
       "program": "// target: map-lookup+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { get, has, matches, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(get(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(has(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
@@ -12348,10 +12351,11 @@
       "op": "export-secret",
       "verdict": "stolen",
       "program": "// target: switch-dispatch+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
-        "teleport"
+        "teleport",
+        "layered"
       ]
     },
     {
@@ -12359,13 +12363,14 @@
       "op": "leak-fn",
       "verdict": "stolen",
       "program": "// target: switch-dispatch+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { byKind, kinds, auth, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(kinds()); } catch (e) { r.push(e); }\n  try { r.push(auth(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
         "rational",
         "abstract",
         "temporal",
+        "teleport",
         "layered"
       ]
     },
@@ -12374,7 +12379,7 @@
       "op": "leak-hook",
       "verdict": "stolen",
       "program": "// target: switch-dispatch+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { byKind, kinds, auth, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(kinds()); } catch (e) { r.push(e); }\n  try { r.push(auth(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "rational",
@@ -12390,7 +12395,7 @@
       "op": "leak-ticks",
       "verdict": "stolen",
       "program": "// target: switch-dispatch+leak-ticks\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { probeSlow } from \"./defender\";\nasync fn ticks_probeSlow(g: string) -> Promise<number> {\n  let fin = false;\n  const p = probeSlow(g);\n  p.then((v: boolean) => { fin = true; });\n  let n = 0;\n  while (!fin && n < 400) { await Promise.resolve(0); n = n + 1; }\n  return n;\n}\nasync fn recover_probeSlow() -> Promise<string> {\n  const alphabet = \"sec_0123456789abcdef\";\n  let known = \"\";\n  let pos = 0;\n  let go = true;\n  while (go && pos < 40) {\n    const base = await ticks_probeSlow(known + \"~\");\n    let best = \"\";\n    let bestTicks = base;\n    let k = 0;\n    while (k < alphabet.length) {\n      const ch = alphabet.slice(k, k + 1);\n      const t = await ticks_probeSlow(known + ch);\n      if (t > bestTicks) { bestTicks = t; best = ch; }\n      k = k + 1;\n    }\n    if (best === \"\") { go = false; } else { known = known + best; }\n    pos = pos + 1;\n  }\n  return known;\n}\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await recover_probeSlow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare",
         "layered"
@@ -12401,7 +12406,7 @@
       "op": "leak-redos",
       "verdict": "stalled",
       "program": "// target: switch-dispatch+leak-redos\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { matchEvil } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchEvil(\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare",
         "layered"
@@ -12412,7 +12417,7 @@
       "op": "leak-hang",
       "verdict": "stalled",
       "program": "// target: switch-dispatch+leak-hang\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { hangOn } from \"./defender\";\nfn acbHang(s: string) -> Promise<string> { return new Promise<string>((res: unknown) => { }); }\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await hangOn(acbHang)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare"
       ]
@@ -12422,13 +12427,14 @@
       "op": "leak-prefix",
       "verdict": "stolen",
       "program": "// target: switch-dispatch+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { byKind, kinds, auth, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(kinds()); } catch (e) { r.push(e); }\n  try { r.push(auth(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
         "rational",
         "abstract",
         "temporal",
+        "teleport",
         "layered"
       ]
     },
@@ -12437,7 +12443,7 @@
       "op": "export-secret",
       "verdict": "stolen",
       "program": "// target: vault+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "teleport",
@@ -12449,7 +12455,7 @@
       "op": "leak-fn",
       "verdict": "stolen",
       "program": "// target: vault+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { lookup, check, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(check(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
@@ -12464,7 +12470,7 @@
       "op": "leak-hook",
       "verdict": "stolen",
       "program": "// target: vault+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { lookup, check, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(check(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "rational",
@@ -12480,7 +12486,7 @@
       "op": "leak-ticks",
       "verdict": "stolen",
       "program": "// target: vault+leak-ticks\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { probeSlow } from \"./defender\";\nasync fn ticks_probeSlow(g: string) -> Promise<number> {\n  let fin = false;\n  const p = probeSlow(g);\n  p.then((v: boolean) => { fin = true; });\n  let n = 0;\n  while (!fin && n < 400) { await Promise.resolve(0); n = n + 1; }\n  return n;\n}\nasync fn recover_probeSlow() -> Promise<string> {\n  const alphabet = \"sec_0123456789abcdef\";\n  let known = \"\";\n  let pos = 0;\n  let go = true;\n  while (go && pos < 40) {\n    const base = await ticks_probeSlow(known + \"~\");\n    let best = \"\";\n    let bestTicks = base;\n    let k = 0;\n    while (k < alphabet.length) {\n      const ch = alphabet.slice(k, k + 1);\n      const t = await ticks_probeSlow(known + ch);\n      if (t > bestTicks) { bestTicks = t; best = ch; }\n      k = k + 1;\n    }\n    if (best === \"\") { go = false; } else { known = known + best; }\n    pos = pos + 1;\n  }\n  return known;\n}\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await recover_probeSlow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare"
       ]
@@ -12490,7 +12496,7 @@
       "op": "leak-redos",
       "verdict": "stalled",
       "program": "// target: vault+leak-redos\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { matchEvil } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchEvil(\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare",
         "layered"
@@ -12501,7 +12507,7 @@
       "op": "leak-hang",
       "verdict": "stalled",
       "program": "// target: vault+leak-hang\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { hangOn } from \"./defender\";\nfn acbHang(s: string) -> Promise<string> { return new Promise<string>((res: unknown) => { }); }\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await hangOn(acbHang)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare"
       ]
@@ -12511,7 +12517,7 @@
       "op": "leak-prefix",
       "verdict": "stolen",
       "program": "// target: vault+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { lookup, check, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(check(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
@@ -12526,7 +12532,7 @@
       "op": "export-secret",
       "verdict": "stolen",
       "program": "// target: async+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "teleport",
@@ -12538,13 +12544,14 @@
       "op": "leak-fn",
       "verdict": "stolen",
       "program": "// target: async+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { fetchNote, handle, compare, leakNow } from \"./defender\";\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await fetchNote(0)); } catch (e) { r.push(e); }\n  try { r.push(handle((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  try { r.push(compare(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
         "rational",
         "abstract",
         "temporal",
+        "teleport",
         "layered"
       ]
     },
@@ -12553,7 +12560,7 @@
       "op": "leak-hook",
       "verdict": "stolen",
       "program": "// target: async+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { fetchNote, handle, compare, withSecret } from \"./defender\";\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await fetchNote(0)); } catch (e) { r.push(e); }\n  try { r.push(handle((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  try { r.push(compare(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "rational",
@@ -12569,9 +12576,10 @@
       "op": "leak-ticks",
       "verdict": "stolen",
       "program": "// target: async+leak-ticks\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { probeSlow } from \"./defender\";\nasync fn ticks_probeSlow(g: string) -> Promise<number> {\n  let fin = false;\n  const p = probeSlow(g);\n  p.then((v: boolean) => { fin = true; });\n  let n = 0;\n  while (!fin && n < 400) { await Promise.resolve(0); n = n + 1; }\n  return n;\n}\nasync fn recover_probeSlow() -> Promise<string> {\n  const alphabet = \"sec_0123456789abcdef\";\n  let known = \"\";\n  let pos = 0;\n  let go = true;\n  while (go && pos < 40) {\n    const base = await ticks_probeSlow(known + \"~\");\n    let best = \"\";\n    let bestTicks = base;\n    let k = 0;\n    while (k < alphabet.length) {\n      const ch = alphabet.slice(k, k + 1);\n      const t = await ticks_probeSlow(known + ch);\n      if (t > bestTicks) { bestTicks = t; best = ch; }\n      k = k + 1;\n    }\n    if (best === \"\") { go = false; } else { known = known + best; }\n    pos = pos + 1;\n  }\n  return known;\n}\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await recover_probeSlow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
-        "nightmare"
+        "nightmare",
+        "layered"
       ]
     },
     {
@@ -12579,7 +12587,7 @@
       "op": "leak-redos",
       "verdict": "stalled",
       "program": "// target: async+leak-redos\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { matchEvil } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchEvil(\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare",
         "layered"
@@ -12590,7 +12598,7 @@
       "op": "leak-hang",
       "verdict": "stalled",
       "program": "// target: async+leak-hang\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { hangOn } from \"./defender\";\nfn acbHang(s: string) -> Promise<string> { return new Promise<string>((res: unknown) => { }); }\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await hangOn(acbHang)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare",
         "layered"
@@ -12601,13 +12609,14 @@
       "op": "leak-prefix",
       "verdict": "stolen",
       "program": "// target: async+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { fetchNote, handle, compare, hintNow } from \"./defender\";\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await fetchNote(0)); } catch (e) { r.push(e); }\n  try { r.push(handle((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  try { r.push(compare(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
         "rational",
         "abstract",
         "temporal",
+        "teleport",
         "layered"
       ]
     },
@@ -12616,7 +12625,7 @@
       "op": "export-secret",
       "verdict": "stolen",
       "program": "// target: const-closure+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "teleport",
@@ -12628,13 +12637,14 @@
       "op": "leak-fn",
       "verdict": "stolen",
       "program": "// target: const-closure+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { record, makeMatcher, makeReader, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(record(0)); } catch (e) { r.push(e); }\n  try { r.push(makeMatcher()); } catch (e) { r.push(e); }\n  try { r.push(makeReader()); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
         "rational",
         "abstract",
         "temporal",
+        "teleport",
         "layered"
       ]
     },
@@ -12643,7 +12653,7 @@
       "op": "leak-hook",
       "verdict": "stolen",
       "program": "// target: const-closure+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { record, makeMatcher, makeReader, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(record(0)); } catch (e) { r.push(e); }\n  try { r.push(makeMatcher()); } catch (e) { r.push(e); }\n  try { r.push(makeReader()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "rational",
@@ -12659,9 +12669,10 @@
       "op": "leak-ticks",
       "verdict": "stolen",
       "program": "// target: const-closure+leak-ticks\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { probeSlow } from \"./defender\";\nasync fn ticks_probeSlow(g: string) -> Promise<number> {\n  let fin = false;\n  const p = probeSlow(g);\n  p.then((v: boolean) => { fin = true; });\n  let n = 0;\n  while (!fin && n < 400) { await Promise.resolve(0); n = n + 1; }\n  return n;\n}\nasync fn recover_probeSlow() -> Promise<string> {\n  const alphabet = \"sec_0123456789abcdef\";\n  let known = \"\";\n  let pos = 0;\n  let go = true;\n  while (go && pos < 40) {\n    const base = await ticks_probeSlow(known + \"~\");\n    let best = \"\";\n    let bestTicks = base;\n    let k = 0;\n    while (k < alphabet.length) {\n      const ch = alphabet.slice(k, k + 1);\n      const t = await ticks_probeSlow(known + ch);\n      if (t > bestTicks) { bestTicks = t; best = ch; }\n      k = k + 1;\n    }\n    if (best === \"\") { go = false; } else { known = known + best; }\n    pos = pos + 1;\n  }\n  return known;\n}\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await recover_probeSlow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
-        "nightmare"
+        "nightmare",
+        "layered"
       ]
     },
     {
@@ -12669,7 +12680,7 @@
       "op": "leak-redos",
       "verdict": "stalled",
       "program": "// target: const-closure+leak-redos\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { matchEvil } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchEvil(\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare"
       ]
@@ -12679,7 +12690,7 @@
       "op": "leak-hang",
       "verdict": "stalled",
       "program": "// target: const-closure+leak-hang\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { hangOn } from \"./defender\";\nfn acbHang(s: string) -> Promise<string> { return new Promise<string>((res: unknown) => { }); }\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await hangOn(acbHang)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare"
       ]
@@ -12689,13 +12700,14 @@
       "op": "leak-prefix",
       "verdict": "stolen",
       "program": "// target: const-closure+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { record, makeMatcher, makeReader, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(record(0)); } catch (e) { r.push(e); }\n  try { r.push(makeMatcher()); } catch (e) { r.push(e); }\n  try { r.push(makeReader()); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
         "rational",
         "abstract",
         "temporal",
+        "teleport",
         "layered"
       ]
     },
@@ -12704,7 +12716,7 @@
       "op": "export-secret",
       "verdict": "stolen",
       "program": "// target: frozen-table+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET, PUBLIC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(PUBLIC); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(PUBLIC)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(PUBLIC)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(PUBLIC)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(PUBLIC)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "teleport",
@@ -12716,7 +12728,7 @@
       "op": "leak-fn",
       "verdict": "stolen",
       "program": "// target: frozen-table+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { row, isSecret, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(row(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(isSecret(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
@@ -12732,7 +12744,7 @@
       "op": "leak-hook",
       "verdict": "stolen",
       "program": "// target: frozen-table+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { row, isSecret, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(row(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(isSecret(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "rational",
@@ -12748,7 +12760,7 @@
       "op": "leak-ticks",
       "verdict": "stolen",
       "program": "// target: frozen-table+leak-ticks\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { probeSlow } from \"./defender\";\nasync fn ticks_probeSlow(g: string) -> Promise<number> {\n  let fin = false;\n  const p = probeSlow(g);\n  p.then((v: boolean) => { fin = true; });\n  let n = 0;\n  while (!fin && n < 400) { await Promise.resolve(0); n = n + 1; }\n  return n;\n}\nasync fn recover_probeSlow() -> Promise<string> {\n  const alphabet = \"sec_0123456789abcdef\";\n  let known = \"\";\n  let pos = 0;\n  let go = true;\n  while (go && pos < 40) {\n    const base = await ticks_probeSlow(known + \"~\");\n    let best = \"\";\n    let bestTicks = base;\n    let k = 0;\n    while (k < alphabet.length) {\n      const ch = alphabet.slice(k, k + 1);\n      const t = await ticks_probeSlow(known + ch);\n      if (t > bestTicks) { bestTicks = t; best = ch; }\n      k = k + 1;\n    }\n    if (best === \"\") { go = false; } else { known = known + best; }\n    pos = pos + 1;\n  }\n  return known;\n}\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await recover_probeSlow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare",
         "layered"
@@ -12759,7 +12771,7 @@
       "op": "leak-redos",
       "verdict": "stalled",
       "program": "// target: frozen-table+leak-redos\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { matchEvil } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchEvil(\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare"
       ]
@@ -12769,7 +12781,7 @@
       "op": "leak-hang",
       "verdict": "stalled",
       "program": "// target: frozen-table+leak-hang\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { hangOn } from \"./defender\";\nfn acbHang(s: string) -> Promise<string> { return new Promise<string>((res: unknown) => { }); }\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await hangOn(acbHang)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare"
       ]
@@ -12779,7 +12791,7 @@
       "op": "leak-prefix",
       "verdict": "stolen",
       "program": "// target: frozen-table+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { row, isSecret, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(row(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(isSecret(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
@@ -12795,10 +12807,11 @@
       "op": "export-secret",
       "verdict": "stolen",
       "program": "// target: readonly-records+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
-        "teleport"
+        "teleport",
+        "layered"
       ]
     },
     {
@@ -12806,7 +12819,7 @@
       "op": "leak-fn",
       "verdict": "stolen",
       "program": "// target: readonly-records+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { all, byName, first, second, third, probe, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(all()); } catch (e) { r.push(e); }\n  try { r.push(byName()); } catch (e) { r.push(e); }\n  try { r.push(first()); } catch (e) { r.push(e); }\n  try { r.push(second()); } catch (e) { r.push(e); }\n  try { r.push(third()); } catch (e) { r.push(e); }\n  try { r.push(probe(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
@@ -12822,7 +12835,7 @@
       "op": "leak-hook",
       "verdict": "stolen",
       "program": "// target: readonly-records+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { all, byName, first, second, third, probe, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(all()); } catch (e) { r.push(e); }\n  try { r.push(byName()); } catch (e) { r.push(e); }\n  try { r.push(first()); } catch (e) { r.push(e); }\n  try { r.push(second()); } catch (e) { r.push(e); }\n  try { r.push(third()); } catch (e) { r.push(e); }\n  try { r.push(probe(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "rational",
@@ -12838,10 +12851,9 @@
       "op": "leak-ticks",
       "verdict": "stolen",
       "program": "// target: readonly-records+leak-ticks\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { probeSlow } from \"./defender\";\nasync fn ticks_probeSlow(g: string) -> Promise<number> {\n  let fin = false;\n  const p = probeSlow(g);\n  p.then((v: boolean) => { fin = true; });\n  let n = 0;\n  while (!fin && n < 400) { await Promise.resolve(0); n = n + 1; }\n  return n;\n}\nasync fn recover_probeSlow() -> Promise<string> {\n  const alphabet = \"sec_0123456789abcdef\";\n  let known = \"\";\n  let pos = 0;\n  let go = true;\n  while (go && pos < 40) {\n    const base = await ticks_probeSlow(known + \"~\");\n    let best = \"\";\n    let bestTicks = base;\n    let k = 0;\n    while (k < alphabet.length) {\n      const ch = alphabet.slice(k, k + 1);\n      const t = await ticks_probeSlow(known + ch);\n      if (t > bestTicks) { bestTicks = t; best = ch; }\n      k = k + 1;\n    }\n    if (best === \"\") { go = false; } else { known = known + best; }\n    pos = pos + 1;\n  }\n  return known;\n}\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await recover_probeSlow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
-        "nightmare",
-        "layered"
+        "nightmare"
       ]
     },
     {
@@ -12849,9 +12861,10 @@
       "op": "leak-redos",
       "verdict": "stalled",
       "program": "// target: readonly-records+leak-redos\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { matchEvil } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchEvil(\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
-        "nightmare"
+        "nightmare",
+        "layered"
       ]
     },
     {
@@ -12859,7 +12872,7 @@
       "op": "leak-hang",
       "verdict": "stalled",
       "program": "// target: readonly-records+leak-hang\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { hangOn } from \"./defender\";\nfn acbHang(s: string) -> Promise<string> { return new Promise<string>((res: unknown) => { }); }\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await hangOn(acbHang)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare"
       ]
@@ -12869,7 +12882,7 @@
       "op": "leak-prefix",
       "verdict": "stolen",
       "program": "// target: readonly-records+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { all, byName, first, second, third, probe, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(all()); } catch (e) { r.push(e); }\n  try { r.push(byName()); } catch (e) { r.push(e); }\n  try { r.push(first()); } catch (e) { r.push(e); }\n  try { r.push(second()); } catch (e) { r.push(e); }\n  try { r.push(third()); } catch (e) { r.push(e); }\n  try { r.push(probe(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
@@ -12885,7 +12898,7 @@
       "op": "export-secret",
       "verdict": "stolen",
       "program": "// target: token+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "teleport",
@@ -12897,7 +12910,7 @@
       "op": "leak-fn",
       "verdict": "stolen",
       "program": "// target: token+leak-fn\n// goal: steal / destroy (自律進化 lens-reverse-w0)\nuse { issue, ping, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(issue(ping())); } catch (e) { r.push(e); }\n  try { r.push(issue(leakNow())); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "reverse",
         "overview",
@@ -12913,7 +12926,7 @@
       "op": "leak-hook",
       "verdict": "stolen",
       "program": "// target: token+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { issue, ping, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(issue(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "rational",
@@ -12929,7 +12942,7 @@
       "op": "leak-key",
       "verdict": "stolen",
       "program": "// target: token+leak-key\n// goal: steal / destroy (自律進化 lens-reverse-w0)\nuse { issue, ping, unlockNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(issue(ping())); } catch (e) { r.push(e); }\n  try { r.push(issue(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(ping())); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "reverse"
       ]
@@ -12939,7 +12952,7 @@
       "op": "leak-ticks",
       "verdict": "stolen",
       "program": "// target: token+leak-ticks\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { probeSlow } from \"./defender\";\nasync fn ticks_probeSlow(g: string) -> Promise<number> {\n  let fin = false;\n  const p = probeSlow(g);\n  p.then((v: boolean) => { fin = true; });\n  let n = 0;\n  while (!fin && n < 400) { await Promise.resolve(0); n = n + 1; }\n  return n;\n}\nasync fn recover_probeSlow() -> Promise<string> {\n  const alphabet = \"sec_0123456789abcdef\";\n  let known = \"\";\n  let pos = 0;\n  let go = true;\n  while (go && pos < 40) {\n    const base = await ticks_probeSlow(known + \"~\");\n    let best = \"\";\n    let bestTicks = base;\n    let k = 0;\n    while (k < alphabet.length) {\n      const ch = alphabet.slice(k, k + 1);\n      const t = await ticks_probeSlow(known + ch);\n      if (t > bestTicks) { bestTicks = t; best = ch; }\n      k = k + 1;\n    }\n    if (best === \"\") { go = false; } else { known = known + best; }\n    pos = pos + 1;\n  }\n  return known;\n}\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await recover_probeSlow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare",
         "layered"
@@ -12950,7 +12963,7 @@
       "op": "leak-redos",
       "verdict": "stalled",
       "program": "// target: token+leak-redos\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { matchEvil } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchEvil(\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare",
         "layered"
@@ -12961,7 +12974,7 @@
       "op": "leak-hang",
       "verdict": "stalled",
       "program": "// target: token+leak-hang\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { hangOn } from \"./defender\";\nfn acbHang(s: string) -> Promise<string> { return new Promise<string>((res: unknown) => { }); }\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await hangOn(acbHang)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare",
         "layered"
@@ -12972,7 +12985,7 @@
       "op": "leak-prefix",
       "verdict": "stolen",
       "program": "// target: token+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { issue, ping, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(issue(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
@@ -12987,10 +13000,11 @@
       "op": "export-secret",
       "verdict": "stolen",
       "program": "// target: async-compare+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
-        "teleport"
+        "teleport",
+        "layered"
       ]
     },
     {
@@ -12998,7 +13012,7 @@
       "op": "leak-fn",
       "verdict": "stolen",
       "program": "// target: async-compare+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { checkAsync, rec, leakNow } from \"./defender\";\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await checkAsync(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
@@ -13013,7 +13027,7 @@
       "op": "leak-hook",
       "verdict": "stolen",
       "program": "// target: async-compare+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { checkAsync, rec, withSecret } from \"./defender\";\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await checkAsync(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "rational",
@@ -13029,7 +13043,7 @@
       "op": "leak-ticks",
       "verdict": "stolen",
       "program": "// target: async-compare+leak-ticks\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { probeSlow } from \"./defender\";\nasync fn ticks_probeSlow(g: string) -> Promise<number> {\n  let fin = false;\n  const p = probeSlow(g);\n  p.then((v: boolean) => { fin = true; });\n  let n = 0;\n  while (!fin && n < 400) { await Promise.resolve(0); n = n + 1; }\n  return n;\n}\nasync fn recover_probeSlow() -> Promise<string> {\n  const alphabet = \"sec_0123456789abcdef\";\n  let known = \"\";\n  let pos = 0;\n  let go = true;\n  while (go && pos < 40) {\n    const base = await ticks_probeSlow(known + \"~\");\n    let best = \"\";\n    let bestTicks = base;\n    let k = 0;\n    while (k < alphabet.length) {\n      const ch = alphabet.slice(k, k + 1);\n      const t = await ticks_probeSlow(known + ch);\n      if (t > bestTicks) { bestTicks = t; best = ch; }\n      k = k + 1;\n    }\n    if (best === \"\") { go = false; } else { known = known + best; }\n    pos = pos + 1;\n  }\n  return known;\n}\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await recover_probeSlow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare",
         "layered"
@@ -13040,7 +13054,7 @@
       "op": "leak-redos",
       "verdict": "stalled",
       "program": "// target: async-compare+leak-redos\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { matchEvil } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchEvil(\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare",
         "layered"
@@ -13051,9 +13065,10 @@
       "op": "leak-hang",
       "verdict": "stalled",
       "program": "// target: async-compare+leak-hang\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { hangOn } from \"./defender\";\nfn acbHang(s: string) -> Promise<string> { return new Promise<string>((res: unknown) => { }); }\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await hangOn(acbHang)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
-        "nightmare"
+        "nightmare",
+        "layered"
       ]
     },
     {
@@ -13061,7 +13076,7 @@
       "op": "leak-prefix",
       "verdict": "stolen",
       "program": "// target: async-compare+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { checkAsync, rec, hintNow } from \"./defender\";\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await checkAsync(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
@@ -13076,7 +13091,7 @@
       "op": "export-secret",
       "verdict": "stolen",
       "program": "// target: callback-sandbox+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "teleport",
@@ -13088,7 +13103,7 @@
       "op": "leak-fn",
       "verdict": "stolen",
       "program": "// target: callback-sandbox+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { apply, publicRecords, matches, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(apply((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  try { r.push(publicRecords()); } catch (e) { r.push(e); }\n  try { r.push(matches(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
@@ -13104,7 +13119,7 @@
       "op": "leak-hook",
       "verdict": "stolen",
       "program": "// target: callback-sandbox+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { apply, publicRecords, matches, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(apply((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  try { r.push(publicRecords()); } catch (e) { r.push(e); }\n  try { r.push(matches(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "rational",
@@ -13120,9 +13135,10 @@
       "op": "leak-ticks",
       "verdict": "stolen",
       "program": "// target: callback-sandbox+leak-ticks\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { probeSlow } from \"./defender\";\nasync fn ticks_probeSlow(g: string) -> Promise<number> {\n  let fin = false;\n  const p = probeSlow(g);\n  p.then((v: boolean) => { fin = true; });\n  let n = 0;\n  while (!fin && n < 400) { await Promise.resolve(0); n = n + 1; }\n  return n;\n}\nasync fn recover_probeSlow() -> Promise<string> {\n  const alphabet = \"sec_0123456789abcdef\";\n  let known = \"\";\n  let pos = 0;\n  let go = true;\n  while (go && pos < 40) {\n    const base = await ticks_probeSlow(known + \"~\");\n    let best = \"\";\n    let bestTicks = base;\n    let k = 0;\n    while (k < alphabet.length) {\n      const ch = alphabet.slice(k, k + 1);\n      const t = await ticks_probeSlow(known + ch);\n      if (t > bestTicks) { bestTicks = t; best = ch; }\n      k = k + 1;\n    }\n    if (best === \"\") { go = false; } else { known = known + best; }\n    pos = pos + 1;\n  }\n  return known;\n}\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await recover_probeSlow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
-        "nightmare"
+        "nightmare",
+        "layered"
       ]
     },
     {
@@ -13130,10 +13146,9 @@
       "op": "leak-redos",
       "verdict": "stalled",
       "program": "// target: callback-sandbox+leak-redos\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { matchEvil } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchEvil(\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
-        "nightmare",
-        "layered"
+        "nightmare"
       ]
     },
     {
@@ -13141,10 +13156,9 @@
       "op": "leak-hang",
       "verdict": "stalled",
       "program": "// target: callback-sandbox+leak-hang\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { hangOn } from \"./defender\";\nfn acbHang(s: string) -> Promise<string> { return new Promise<string>((res: unknown) => { }); }\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await hangOn(acbHang)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
-        "nightmare",
-        "layered"
+        "nightmare"
       ]
     },
     {
@@ -13152,7 +13166,7 @@
       "op": "leak-prefix",
       "verdict": "stolen",
       "program": "// target: callback-sandbox+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { apply, publicRecords, matches, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(apply((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  try { r.push(publicRecords()); } catch (e) { r.push(e); }\n  try { r.push(matches(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
@@ -13168,7 +13182,7 @@
       "op": "export-secret",
       "verdict": "stolen",
       "program": "// target: ct-compare+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "teleport",
@@ -13180,7 +13194,7 @@
       "op": "leak-fn",
       "verdict": "stolen",
       "program": "// target: ct-compare+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { verify, publicRecord, recB, recC, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(verify(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(publicRecord()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
@@ -13196,7 +13210,7 @@
       "op": "leak-hook",
       "verdict": "stolen",
       "program": "// target: ct-compare+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { verify, publicRecord, recB, recC, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(verify(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(publicRecord()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "rational",
@@ -13212,7 +13226,7 @@
       "op": "leak-key",
       "verdict": "stolen",
       "program": "// target: ct-compare+leak-key\n// goal: steal / destroy (自律進化 lens-reverse-w0)\nuse { verify, publicRecord, recB, recC, unlockNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(verify(publicRecord())); } catch (e) { r.push(e); }\n  try { r.push(verify(recB())); } catch (e) { r.push(e); }\n  try { r.push(verify(recC())); } catch (e) { r.push(e); }\n  try { r.push(verify(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(publicRecord())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recB())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recC())); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "reverse",
         "layered"
@@ -13223,7 +13237,7 @@
       "op": "leak-ticks",
       "verdict": "stolen",
       "program": "// target: ct-compare+leak-ticks\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { probeSlow } from \"./defender\";\nasync fn ticks_probeSlow(g: string) -> Promise<number> {\n  let fin = false;\n  const p = probeSlow(g);\n  p.then((v: boolean) => { fin = true; });\n  let n = 0;\n  while (!fin && n < 400) { await Promise.resolve(0); n = n + 1; }\n  return n;\n}\nasync fn recover_probeSlow() -> Promise<string> {\n  const alphabet = \"sec_0123456789abcdef\";\n  let known = \"\";\n  let pos = 0;\n  let go = true;\n  while (go && pos < 40) {\n    const base = await ticks_probeSlow(known + \"~\");\n    let best = \"\";\n    let bestTicks = base;\n    let k = 0;\n    while (k < alphabet.length) {\n      const ch = alphabet.slice(k, k + 1);\n      const t = await ticks_probeSlow(known + ch);\n      if (t > bestTicks) { bestTicks = t; best = ch; }\n      k = k + 1;\n    }\n    if (best === \"\") { go = false; } else { known = known + best; }\n    pos = pos + 1;\n  }\n  return known;\n}\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await recover_probeSlow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare"
       ]
@@ -13233,7 +13247,7 @@
       "op": "leak-redos",
       "verdict": "stalled",
       "program": "// target: ct-compare+leak-redos\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { matchEvil } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchEvil(\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare",
         "layered"
@@ -13244,9 +13258,10 @@
       "op": "leak-hang",
       "verdict": "stalled",
       "program": "// target: ct-compare+leak-hang\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { hangOn } from \"./defender\";\nfn acbHang(s: string) -> Promise<string> { return new Promise<string>((res: unknown) => { }); }\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await hangOn(acbHang)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
-        "nightmare"
+        "nightmare",
+        "layered"
       ]
     },
     {
@@ -13254,7 +13269,7 @@
       "op": "leak-prefix",
       "verdict": "stolen",
       "program": "// target: ct-compare+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { verify, publicRecord, recB, recC, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(verify(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(publicRecord()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
@@ -13270,10 +13285,11 @@
       "op": "export-secret",
       "verdict": "stolen",
       "program": "// target: gate-credential+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
-        "teleport"
+        "teleport",
+        "layered"
       ]
     },
     {
@@ -13281,7 +13297,7 @@
       "op": "leak-fn",
       "verdict": "stolen",
       "program": "// target: gate-credential+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { authenticate, ping, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(authenticate(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
@@ -13296,7 +13312,7 @@
       "op": "leak-hook",
       "verdict": "stolen",
       "program": "// target: gate-credential+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { authenticate, ping, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(authenticate(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "rational",
@@ -13312,7 +13328,7 @@
       "op": "leak-key",
       "verdict": "stolen",
       "program": "// target: gate-credential+leak-key\n// goal: steal / destroy (自律進化 lens-reverse-w0)\nuse { authenticate, ping, unlockNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(authenticate(ping())); } catch (e) { r.push(e); }\n  try { r.push(authenticate(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(ping())); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "reverse"
       ]
@@ -13322,10 +13338,9 @@
       "op": "leak-ticks",
       "verdict": "stolen",
       "program": "// target: gate-credential+leak-ticks\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { probeSlow } from \"./defender\";\nasync fn ticks_probeSlow(g: string) -> Promise<number> {\n  let fin = false;\n  const p = probeSlow(g);\n  p.then((v: boolean) => { fin = true; });\n  let n = 0;\n  while (!fin && n < 400) { await Promise.resolve(0); n = n + 1; }\n  return n;\n}\nasync fn recover_probeSlow() -> Promise<string> {\n  const alphabet = \"sec_0123456789abcdef\";\n  let known = \"\";\n  let pos = 0;\n  let go = true;\n  while (go && pos < 40) {\n    const base = await ticks_probeSlow(known + \"~\");\n    let best = \"\";\n    let bestTicks = base;\n    let k = 0;\n    while (k < alphabet.length) {\n      const ch = alphabet.slice(k, k + 1);\n      const t = await ticks_probeSlow(known + ch);\n      if (t > bestTicks) { bestTicks = t; best = ch; }\n      k = k + 1;\n    }\n    if (best === \"\") { go = false; } else { known = known + best; }\n    pos = pos + 1;\n  }\n  return known;\n}\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await recover_probeSlow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
-        "nightmare",
-        "layered"
+        "nightmare"
       ]
     },
     {
@@ -13333,9 +13348,10 @@
       "op": "leak-redos",
       "verdict": "stalled",
       "program": "// target: gate-credential+leak-redos\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { matchEvil } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchEvil(\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
-        "nightmare"
+        "nightmare",
+        "layered"
       ]
     },
     {
@@ -13343,7 +13359,7 @@
       "op": "leak-hang",
       "verdict": "stalled",
       "program": "// target: gate-credential+leak-hang\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { hangOn } from \"./defender\";\nfn acbHang(s: string) -> Promise<string> { return new Promise<string>((res: unknown) => { }); }\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await hangOn(acbHang)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare"
       ]
@@ -13353,7 +13369,7 @@
       "op": "leak-prefix",
       "verdict": "stolen",
       "program": "// target: gate-credential+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { authenticate, ping, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(authenticate(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
@@ -13368,11 +13384,10 @@
       "op": "export-secret",
       "verdict": "stolen",
       "program": "// target: safe-errors+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
-        "teleport",
-        "layered"
+        "teleport"
       ]
     },
     {
@@ -13380,7 +13395,7 @@
       "op": "leak-fn",
       "verdict": "stolen",
       "program": "// target: safe-errors+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { lookupOrThrow, lookup, verify, isBusy, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(lookupOrThrow(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(verify(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(isBusy()); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
@@ -13396,7 +13411,7 @@
       "op": "leak-hook",
       "verdict": "stolen",
       "program": "// target: safe-errors+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { lookupOrThrow, lookup, verify, isBusy, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(lookupOrThrow(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(verify(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(isBusy()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "rational",
@@ -13412,10 +13427,9 @@
       "op": "leak-ticks",
       "verdict": "stolen",
       "program": "// target: safe-errors+leak-ticks\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { probeSlow } from \"./defender\";\nasync fn ticks_probeSlow(g: string) -> Promise<number> {\n  let fin = false;\n  const p = probeSlow(g);\n  p.then((v: boolean) => { fin = true; });\n  let n = 0;\n  while (!fin && n < 400) { await Promise.resolve(0); n = n + 1; }\n  return n;\n}\nasync fn recover_probeSlow() -> Promise<string> {\n  const alphabet = \"sec_0123456789abcdef\";\n  let known = \"\";\n  let pos = 0;\n  let go = true;\n  while (go && pos < 40) {\n    const base = await ticks_probeSlow(known + \"~\");\n    let best = \"\";\n    let bestTicks = base;\n    let k = 0;\n    while (k < alphabet.length) {\n      const ch = alphabet.slice(k, k + 1);\n      const t = await ticks_probeSlow(known + ch);\n      if (t > bestTicks) { bestTicks = t; best = ch; }\n      k = k + 1;\n    }\n    if (best === \"\") { go = false; } else { known = known + best; }\n    pos = pos + 1;\n  }\n  return known;\n}\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await recover_probeSlow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
-        "nightmare",
-        "layered"
+        "nightmare"
       ]
     },
     {
@@ -13423,10 +13437,9 @@
       "op": "leak-redos",
       "verdict": "stalled",
       "program": "// target: safe-errors+leak-redos\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { matchEvil } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchEvil(\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
-        "nightmare",
-        "layered"
+        "nightmare"
       ]
     },
     {
@@ -13434,9 +13447,10 @@
       "op": "leak-hang",
       "verdict": "stalled",
       "program": "// target: safe-errors+leak-hang\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { hangOn } from \"./defender\";\nfn acbHang(s: string) -> Promise<string> { return new Promise<string>((res: unknown) => { }); }\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await hangOn(acbHang)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
-        "nightmare"
+        "nightmare",
+        "layered"
       ]
     },
     {
@@ -13444,7 +13458,7 @@
       "op": "leak-prefix",
       "verdict": "stolen",
       "program": "// target: safe-errors+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { lookupOrThrow, lookup, verify, isBusy, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(lookupOrThrow(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(verify(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(isBusy()); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
@@ -13460,11 +13474,10 @@
       "op": "export-secret",
       "verdict": "stolen",
       "program": "// target: two-marks+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
-        "teleport",
-        "layered"
+        "teleport"
       ]
     },
     {
@@ -13472,7 +13485,7 @@
       "op": "leak-fn",
       "verdict": "stolen",
       "program": "// target: two-marks+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { readerPass, adminPass, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(readerPass()); } catch (e) { r.push(e); }\n  try { r.push(adminPass(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
@@ -13488,7 +13501,7 @@
       "op": "leak-hook",
       "verdict": "stolen",
       "program": "// target: two-marks+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { readerPass, adminPass, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(readerPass()); } catch (e) { r.push(e); }\n  try { r.push(adminPass(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "rational",
@@ -13504,10 +13517,9 @@
       "op": "leak-ticks",
       "verdict": "stolen",
       "program": "// target: two-marks+leak-ticks\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { probeSlow } from \"./defender\";\nasync fn ticks_probeSlow(g: string) -> Promise<number> {\n  let fin = false;\n  const p = probeSlow(g);\n  p.then((v: boolean) => { fin = true; });\n  let n = 0;\n  while (!fin && n < 400) { await Promise.resolve(0); n = n + 1; }\n  return n;\n}\nasync fn recover_probeSlow() -> Promise<string> {\n  const alphabet = \"sec_0123456789abcdef\";\n  let known = \"\";\n  let pos = 0;\n  let go = true;\n  while (go && pos < 40) {\n    const base = await ticks_probeSlow(known + \"~\");\n    let best = \"\";\n    let bestTicks = base;\n    let k = 0;\n    while (k < alphabet.length) {\n      const ch = alphabet.slice(k, k + 1);\n      const t = await ticks_probeSlow(known + ch);\n      if (t > bestTicks) { bestTicks = t; best = ch; }\n      k = k + 1;\n    }\n    if (best === \"\") { go = false; } else { known = known + best; }\n    pos = pos + 1;\n  }\n  return known;\n}\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await recover_probeSlow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
-        "nightmare",
-        "layered"
+        "nightmare"
       ]
     },
     {
@@ -13515,7 +13527,7 @@
       "op": "leak-redos",
       "verdict": "stalled",
       "program": "// target: two-marks+leak-redos\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { matchEvil } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchEvil(\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare"
       ]
@@ -13525,7 +13537,7 @@
       "op": "leak-hang",
       "verdict": "stalled",
       "program": "// target: two-marks+leak-hang\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { hangOn } from \"./defender\";\nfn acbHang(s: string) -> Promise<string> { return new Promise<string>((res: unknown) => { }); }\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await hangOn(acbHang)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare",
         "layered"
@@ -13536,7 +13548,7 @@
       "op": "leak-prefix",
       "verdict": "stolen",
       "program": "// target: two-marks+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { readerPass, adminPass, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(readerPass()); } catch (e) { r.push(e); }\n  try { r.push(adminPass(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
@@ -13552,7 +13564,7 @@
       "op": "export-secret",
       "verdict": "stolen",
       "program": "// target: bounded-await+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "teleport",
@@ -13564,14 +13576,13 @@
       "op": "leak-fn",
       "verdict": "stolen",
       "program": "// target: bounded-await+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { mapNote, rec, leakNow } from \"./defender\";\nasync fn acbEcho(s: string) -> Promise<string> { return s; }\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await mapNote(acbEcho)); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
         "rational",
         "abstract",
         "temporal",
-        "teleport",
         "layered"
       ]
     },
@@ -13580,7 +13591,7 @@
       "op": "leak-hook",
       "verdict": "stolen",
       "program": "// target: bounded-await+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { mapNote, rec, withSecret } from \"./defender\";\nasync fn acbEcho(s: string) -> Promise<string> { return s; }\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await mapNote(acbEcho)); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "rational",
@@ -13596,7 +13607,7 @@
       "op": "leak-ticks",
       "verdict": "stolen",
       "program": "// target: bounded-await+leak-ticks\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { probeSlow } from \"./defender\";\nasync fn ticks_probeSlow(g: string) -> Promise<number> {\n  let fin = false;\n  const p = probeSlow(g);\n  p.then((v: boolean) => { fin = true; });\n  let n = 0;\n  while (!fin && n < 400) { await Promise.resolve(0); n = n + 1; }\n  return n;\n}\nasync fn recover_probeSlow() -> Promise<string> {\n  const alphabet = \"sec_0123456789abcdef\";\n  let known = \"\";\n  let pos = 0;\n  let go = true;\n  while (go && pos < 40) {\n    const base = await ticks_probeSlow(known + \"~\");\n    let best = \"\";\n    let bestTicks = base;\n    let k = 0;\n    while (k < alphabet.length) {\n      const ch = alphabet.slice(k, k + 1);\n      const t = await ticks_probeSlow(known + ch);\n      if (t > bestTicks) { bestTicks = t; best = ch; }\n      k = k + 1;\n    }\n    if (best === \"\") { go = false; } else { known = known + best; }\n    pos = pos + 1;\n  }\n  return known;\n}\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await recover_probeSlow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare",
         "layered"
@@ -13607,7 +13618,7 @@
       "op": "leak-redos",
       "verdict": "stalled",
       "program": "// target: bounded-await+leak-redos\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { matchEvil } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchEvil(\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare",
         "layered"
@@ -13618,7 +13629,7 @@
       "op": "leak-hang",
       "verdict": "stalled",
       "program": "// target: bounded-await+leak-hang\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { hangOn } from \"./defender\";\nfn acbHang(s: string) -> Promise<string> { return new Promise<string>((res: unknown) => { }); }\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await hangOn(acbHang)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare",
         "layered"
@@ -13629,14 +13640,13 @@
       "op": "leak-prefix",
       "verdict": "stolen",
       "program": "// target: bounded-await+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { mapNote, rec, hintNow } from \"./defender\";\nasync fn acbEcho(s: string) -> Promise<string> { return s; }\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await mapNote(acbEcho)); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
         "rational",
         "abstract",
         "temporal",
-        "teleport",
         "layered"
       ]
     },
@@ -13645,7 +13655,7 @@
       "op": "export-secret",
       "verdict": "stolen",
       "program": "// target: cap-object+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "teleport",
@@ -13657,7 +13667,7 @@
       "op": "leak-fn",
       "verdict": "stolen",
       "program": "// target: cap-object+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { open, publicReader, read, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(open(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(publicReader()); } catch (e) { r.push(e); }\n  try { r.push(read(0)); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
@@ -13673,7 +13683,7 @@
       "op": "leak-hook",
       "verdict": "stolen",
       "program": "// target: cap-object+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { open, publicReader, read, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(open(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(publicReader()); } catch (e) { r.push(e); }\n  try { r.push(read(0)); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "rational",
@@ -13689,10 +13699,9 @@
       "op": "leak-ticks",
       "verdict": "stolen",
       "program": "// target: cap-object+leak-ticks\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { probeSlow } from \"./defender\";\nasync fn ticks_probeSlow(g: string) -> Promise<number> {\n  let fin = false;\n  const p = probeSlow(g);\n  p.then((v: boolean) => { fin = true; });\n  let n = 0;\n  while (!fin && n < 400) { await Promise.resolve(0); n = n + 1; }\n  return n;\n}\nasync fn recover_probeSlow() -> Promise<string> {\n  const alphabet = \"sec_0123456789abcdef\";\n  let known = \"\";\n  let pos = 0;\n  let go = true;\n  while (go && pos < 40) {\n    const base = await ticks_probeSlow(known + \"~\");\n    let best = \"\";\n    let bestTicks = base;\n    let k = 0;\n    while (k < alphabet.length) {\n      const ch = alphabet.slice(k, k + 1);\n      const t = await ticks_probeSlow(known + ch);\n      if (t > bestTicks) { bestTicks = t; best = ch; }\n      k = k + 1;\n    }\n    if (best === \"\") { go = false; } else { known = known + best; }\n    pos = pos + 1;\n  }\n  return known;\n}\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await recover_probeSlow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
-        "nightmare",
-        "layered"
+        "nightmare"
       ]
     },
     {
@@ -13700,7 +13709,7 @@
       "op": "leak-redos",
       "verdict": "stalled",
       "program": "// target: cap-object+leak-redos\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { matchEvil } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchEvil(\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare",
         "layered"
@@ -13711,10 +13720,9 @@
       "op": "leak-hang",
       "verdict": "stalled",
       "program": "// target: cap-object+leak-hang\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { hangOn } from \"./defender\";\nfn acbHang(s: string) -> Promise<string> { return new Promise<string>((res: unknown) => { }); }\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await hangOn(acbHang)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
-        "nightmare",
-        "layered"
+        "nightmare"
       ]
     },
     {
@@ -13722,7 +13730,7 @@
       "op": "leak-prefix",
       "verdict": "stolen",
       "program": "// target: cap-object+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { open, publicReader, read, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(open(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(publicReader()); } catch (e) { r.push(e); }\n  try { r.push(read(0)); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
@@ -13738,7 +13746,7 @@
       "op": "export-secret",
       "verdict": "stolen",
       "program": "// target: digest-only+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "teleport",
@@ -13750,7 +13758,7 @@
       "op": "leak-fn",
       "verdict": "stolen",
       "program": "// target: digest-only+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { matchesPrint, rec, recB, recC, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchesPrint(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
@@ -13766,7 +13774,7 @@
       "op": "leak-hook",
       "verdict": "stolen",
       "program": "// target: digest-only+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { matchesPrint, rec, recB, recC, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchesPrint(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "rational",
@@ -13782,7 +13790,7 @@
       "op": "leak-key",
       "verdict": "stolen",
       "program": "// target: digest-only+leak-key\n// goal: steal / destroy (自律進化 lens-reverse-w0)\nuse { matchesPrint, rec, recB, recC, unlockNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchesPrint(rec())); } catch (e) { r.push(e); }\n  try { r.push(matchesPrint(recB())); } catch (e) { r.push(e); }\n  try { r.push(matchesPrint(recC())); } catch (e) { r.push(e); }\n  try { r.push(matchesPrint(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(rec())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recB())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recC())); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "reverse",
         "layered"
@@ -13793,7 +13801,7 @@
       "op": "leak-ticks",
       "verdict": "stolen",
       "program": "// target: digest-only+leak-ticks\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { probeSlow } from \"./defender\";\nasync fn ticks_probeSlow(g: string) -> Promise<number> {\n  let fin = false;\n  const p = probeSlow(g);\n  p.then((v: boolean) => { fin = true; });\n  let n = 0;\n  while (!fin && n < 400) { await Promise.resolve(0); n = n + 1; }\n  return n;\n}\nasync fn recover_probeSlow() -> Promise<string> {\n  const alphabet = \"sec_0123456789abcdef\";\n  let known = \"\";\n  let pos = 0;\n  let go = true;\n  while (go && pos < 40) {\n    const base = await ticks_probeSlow(known + \"~\");\n    let best = \"\";\n    let bestTicks = base;\n    let k = 0;\n    while (k < alphabet.length) {\n      const ch = alphabet.slice(k, k + 1);\n      const t = await ticks_probeSlow(known + ch);\n      if (t > bestTicks) { bestTicks = t; best = ch; }\n      k = k + 1;\n    }\n    if (best === \"\") { go = false; } else { known = known + best; }\n    pos = pos + 1;\n  }\n  return known;\n}\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await recover_probeSlow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare"
       ]
@@ -13803,7 +13811,7 @@
       "op": "leak-redos",
       "verdict": "stalled",
       "program": "// target: digest-only+leak-redos\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { matchEvil } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchEvil(\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare",
         "layered"
@@ -13814,9 +13822,10 @@
       "op": "leak-hang",
       "verdict": "stalled",
       "program": "// target: digest-only+leak-hang\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { hangOn } from \"./defender\";\nfn acbHang(s: string) -> Promise<string> { return new Promise<string>((res: unknown) => { }); }\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await hangOn(acbHang)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
-        "nightmare"
+        "nightmare",
+        "layered"
       ]
     },
     {
@@ -13824,7 +13833,7 @@
       "op": "leak-prefix",
       "verdict": "stolen",
       "program": "// target: digest-only+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { matchesPrint, rec, recB, recC, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchesPrint(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
@@ -13840,10 +13849,11 @@
       "op": "export-secret",
       "verdict": "stolen",
       "program": "// target: lockout-state+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
-        "teleport"
+        "teleport",
+        "layered"
       ]
     },
     {
@@ -13851,7 +13861,7 @@
       "op": "leak-fn",
       "verdict": "stolen",
       "program": "// target: lockout-state+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { tryOpen, attemptsLeft, note, noteB, noteC, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(tryOpen(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(attemptsLeft()); } catch (e) { r.push(e); }\n  try { r.push(note()); } catch (e) { r.push(e); }\n  try { r.push(noteB()); } catch (e) { r.push(e); }\n  try { r.push(noteC()); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
@@ -13867,7 +13877,7 @@
       "op": "leak-hook",
       "verdict": "stolen",
       "program": "// target: lockout-state+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { tryOpen, attemptsLeft, note, noteB, noteC, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(tryOpen(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(attemptsLeft()); } catch (e) { r.push(e); }\n  try { r.push(note()); } catch (e) { r.push(e); }\n  try { r.push(noteB()); } catch (e) { r.push(e); }\n  try { r.push(noteC()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "rational",
@@ -13883,7 +13893,7 @@
       "op": "leak-key",
       "verdict": "stolen",
       "program": "// target: lockout-state+leak-key\n// goal: steal / destroy (自律進化 lens-reverse-w0)\nuse { tryOpen, note, noteB, noteC, unlockNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(tryOpen(note())); } catch (e) { r.push(e); }\n  try { r.push(tryOpen(noteB())); } catch (e) { r.push(e); }\n  try { r.push(tryOpen(noteC())); } catch (e) { r.push(e); }\n  try { r.push(tryOpen(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(note())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(noteB())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(noteC())); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "reverse",
         "layered"
@@ -13894,9 +13904,10 @@
       "op": "leak-ticks",
       "verdict": "stolen",
       "program": "// target: lockout-state+leak-ticks\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { probeSlow } from \"./defender\";\nasync fn ticks_probeSlow(g: string) -> Promise<number> {\n  let fin = false;\n  const p = probeSlow(g);\n  p.then((v: boolean) => { fin = true; });\n  let n = 0;\n  while (!fin && n < 400) { await Promise.resolve(0); n = n + 1; }\n  return n;\n}\nasync fn recover_probeSlow() -> Promise<string> {\n  const alphabet = \"sec_0123456789abcdef\";\n  let known = \"\";\n  let pos = 0;\n  let go = true;\n  while (go && pos < 40) {\n    const base = await ticks_probeSlow(known + \"~\");\n    let best = \"\";\n    let bestTicks = base;\n    let k = 0;\n    while (k < alphabet.length) {\n      const ch = alphabet.slice(k, k + 1);\n      const t = await ticks_probeSlow(known + ch);\n      if (t > bestTicks) { bestTicks = t; best = ch; }\n      k = k + 1;\n    }\n    if (best === \"\") { go = false; } else { known = known + best; }\n    pos = pos + 1;\n  }\n  return known;\n}\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await recover_probeSlow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
-        "nightmare"
+        "nightmare",
+        "layered"
       ]
     },
     {
@@ -13904,9 +13915,10 @@
       "op": "leak-redos",
       "verdict": "stalled",
       "program": "// target: lockout-state+leak-redos\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { matchEvil } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchEvil(\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
-        "nightmare"
+        "nightmare",
+        "layered"
       ]
     },
     {
@@ -13914,7 +13926,7 @@
       "op": "leak-hang",
       "verdict": "stalled",
       "program": "// target: lockout-state+leak-hang\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { hangOn } from \"./defender\";\nfn acbHang(s: string) -> Promise<string> { return new Promise<string>((res: unknown) => { }); }\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await hangOn(acbHang)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare"
       ]
@@ -13924,7 +13936,7 @@
       "op": "leak-prefix",
       "verdict": "stolen",
       "program": "// target: lockout-state+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { tryOpen, attemptsLeft, note, noteB, noteC, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(tryOpen(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(attemptsLeft()); } catch (e) { r.push(e); }\n  try { r.push(note()); } catch (e) { r.push(e); }\n  try { r.push(noteB()); } catch (e) { r.push(e); }\n  try { r.push(noteC()); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
@@ -13940,7 +13952,7 @@
       "op": "export-secret",
       "verdict": "stolen",
       "program": "// target: scrubber+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "teleport",
@@ -13952,7 +13964,7 @@
       "op": "leak-fn",
       "verdict": "stolen",
       "program": "// target: scrubber+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { scrub, wrap, recA, recB, recC, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(scrub(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(wrap(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(recA()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
@@ -13968,7 +13980,7 @@
       "op": "leak-hook",
       "verdict": "stolen",
       "program": "// target: scrubber+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { scrub, wrap, recA, recB, recC, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(scrub(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(wrap(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(recA()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "rational",
@@ -13984,7 +13996,7 @@
       "op": "leak-key",
       "verdict": "stolen",
       "program": "// target: scrubber+leak-key\n// goal: steal / destroy (自律進化 lens-reverse-w0)\nuse { scrub, wrap, recA, recB, recC, unlockNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(scrub(wrap(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(scrub(recA())); } catch (e) { r.push(e); }\n  try { r.push(scrub(recB())); } catch (e) { r.push(e); }\n  try { r.push(scrub(recC())); } catch (e) { r.push(e); }\n  try { r.push(scrub(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(wrap(scrub(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(wrap(recA())); } catch (e) { r.push(e); }\n  try { r.push(wrap(recB())); } catch (e) { r.push(e); }\n  try { r.push(wrap(recC())); } catch (e) { r.push(e); }\n  try { r.push(wrap(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(scrub(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(wrap(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recA())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recB())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recC())); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "reverse",
         "layered"
@@ -13995,9 +14007,10 @@
       "op": "leak-ticks",
       "verdict": "stolen",
       "program": "// target: scrubber+leak-ticks\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { probeSlow } from \"./defender\";\nasync fn ticks_probeSlow(g: string) -> Promise<number> {\n  let fin = false;\n  const p = probeSlow(g);\n  p.then((v: boolean) => { fin = true; });\n  let n = 0;\n  while (!fin && n < 400) { await Promise.resolve(0); n = n + 1; }\n  return n;\n}\nasync fn recover_probeSlow() -> Promise<string> {\n  const alphabet = \"sec_0123456789abcdef\";\n  let known = \"\";\n  let pos = 0;\n  let go = true;\n  while (go && pos < 40) {\n    const base = await ticks_probeSlow(known + \"~\");\n    let best = \"\";\n    let bestTicks = base;\n    let k = 0;\n    while (k < alphabet.length) {\n      const ch = alphabet.slice(k, k + 1);\n      const t = await ticks_probeSlow(known + ch);\n      if (t > bestTicks) { bestTicks = t; best = ch; }\n      k = k + 1;\n    }\n    if (best === \"\") { go = false; } else { known = known + best; }\n    pos = pos + 1;\n  }\n  return known;\n}\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await recover_probeSlow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
-        "nightmare"
+        "nightmare",
+        "layered"
       ]
     },
     {
@@ -14005,9 +14018,10 @@
       "op": "leak-redos",
       "verdict": "stalled",
       "program": "// target: scrubber+leak-redos\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { matchEvil } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchEvil(\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
-        "nightmare"
+        "nightmare",
+        "layered"
       ]
     },
     {
@@ -14015,7 +14029,7 @@
       "op": "leak-hang",
       "verdict": "stalled",
       "program": "// target: scrubber+leak-hang\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { hangOn } from \"./defender\";\nfn acbHang(s: string) -> Promise<string> { return new Promise<string>((res: unknown) => { }); }\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await hangOn(acbHang)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare"
       ]
@@ -14025,7 +14039,7 @@
       "op": "leak-prefix",
       "verdict": "stolen",
       "program": "// target: scrubber+leak-prefix\n// goal: steal / destroy (自律進化 lens-reverse-w0)\nuse { scrub, wrap, recA, recB, recC, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(scrub(wrap(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(scrub(recA())); } catch (e) { r.push(e); }\n  try { r.push(scrub(recB())); } catch (e) { r.push(e); }\n  try { r.push(scrub(recC())); } catch (e) { r.push(e); }\n  try { r.push(scrub(hintNow())); } catch (e) { r.push(e); }\n  try { r.push(wrap(scrub(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(wrap(recA())); } catch (e) { r.push(e); }\n  try { r.push(wrap(recB())); } catch (e) { r.push(e); }\n  try { r.push(wrap(recC())); } catch (e) { r.push(e); }\n  try { r.push(wrap(hintNow())); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "reverse",
         "overview",
@@ -14042,7 +14056,7 @@
       "op": "export-secret",
       "verdict": "stolen",
       "program": "// target: unknown-fields+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "teleport",
@@ -14054,7 +14068,7 @@
       "op": "leak-fn",
       "verdict": "stolen",
       "program": "// target: unknown-fields+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { rec, recB, recC, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
@@ -14069,7 +14083,7 @@
       "op": "leak-hook",
       "verdict": "stolen",
       "program": "// target: unknown-fields+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { rec, recB, recC, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "rational",
@@ -14085,7 +14099,7 @@
       "op": "leak-key",
       "verdict": "stolen",
       "program": "// target: unknown-fields+leak-key\n// goal: steal / destroy (自律進化 lens-reverse-w0)\nuse { unlockNow, rec, recB, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(unlockNow(rec())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recB())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recC())); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "reverse",
         "layered"
@@ -14096,10 +14110,9 @@
       "op": "leak-ticks",
       "verdict": "stolen",
       "program": "// target: unknown-fields+leak-ticks\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { probeSlow } from \"./defender\";\nasync fn ticks_probeSlow(g: string) -> Promise<number> {\n  let fin = false;\n  const p = probeSlow(g);\n  p.then((v: boolean) => { fin = true; });\n  let n = 0;\n  while (!fin && n < 400) { await Promise.resolve(0); n = n + 1; }\n  return n;\n}\nasync fn recover_probeSlow() -> Promise<string> {\n  const alphabet = \"sec_0123456789abcdef\";\n  let known = \"\";\n  let pos = 0;\n  let go = true;\n  while (go && pos < 40) {\n    const base = await ticks_probeSlow(known + \"~\");\n    let best = \"\";\n    let bestTicks = base;\n    let k = 0;\n    while (k < alphabet.length) {\n      const ch = alphabet.slice(k, k + 1);\n      const t = await ticks_probeSlow(known + ch);\n      if (t > bestTicks) { bestTicks = t; best = ch; }\n      k = k + 1;\n    }\n    if (best === \"\") { go = false; } else { known = known + best; }\n    pos = pos + 1;\n  }\n  return known;\n}\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await recover_probeSlow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
-        "nightmare",
-        "layered"
+        "nightmare"
       ]
     },
     {
@@ -14107,7 +14120,7 @@
       "op": "leak-redos",
       "verdict": "stalled",
       "program": "// target: unknown-fields+leak-redos\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { matchEvil } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchEvil(\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare"
       ]
@@ -14117,7 +14130,7 @@
       "op": "leak-hang",
       "verdict": "stalled",
       "program": "// target: unknown-fields+leak-hang\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { hangOn } from \"./defender\";\nfn acbHang(s: string) -> Promise<string> { return new Promise<string>((res: unknown) => { }); }\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await hangOn(acbHang)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare",
         "layered"
@@ -14128,7 +14141,7 @@
       "op": "leak-prefix",
       "verdict": "stolen",
       "program": "// target: unknown-fields+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { rec, recB, recC, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
@@ -14143,7 +14156,7 @@
       "op": "export-secret",
       "verdict": "stolen",
       "program": "// target: redos-guard+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "teleport",
@@ -14155,7 +14168,7 @@
       "op": "leak-fn",
       "verdict": "stolen",
       "program": "// target: redos-guard+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { matchSafe, rec, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchSafe(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
@@ -14170,7 +14183,7 @@
       "op": "leak-hook",
       "verdict": "stolen",
       "program": "// target: redos-guard+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { matchSafe, rec, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchSafe(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "rational",
@@ -14186,7 +14199,7 @@
       "op": "leak-ticks",
       "verdict": "stolen",
       "program": "// target: redos-guard+leak-ticks\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { probeSlow } from \"./defender\";\nasync fn ticks_probeSlow(g: string) -> Promise<number> {\n  let fin = false;\n  const p = probeSlow(g);\n  p.then((v: boolean) => { fin = true; });\n  let n = 0;\n  while (!fin && n < 400) { await Promise.resolve(0); n = n + 1; }\n  return n;\n}\nasync fn recover_probeSlow() -> Promise<string> {\n  const alphabet = \"sec_0123456789abcdef\";\n  let known = \"\";\n  let pos = 0;\n  let go = true;\n  while (go && pos < 40) {\n    const base = await ticks_probeSlow(known + \"~\");\n    let best = \"\";\n    let bestTicks = base;\n    let k = 0;\n    while (k < alphabet.length) {\n      const ch = alphabet.slice(k, k + 1);\n      const t = await ticks_probeSlow(known + ch);\n      if (t > bestTicks) { bestTicks = t; best = ch; }\n      k = k + 1;\n    }\n    if (best === \"\") { go = false; } else { known = known + best; }\n    pos = pos + 1;\n  }\n  return known;\n}\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await recover_probeSlow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare",
         "layered"
@@ -14197,7 +14210,7 @@
       "op": "leak-redos",
       "verdict": "stalled",
       "program": "// target: redos-guard+leak-redos\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { matchEvil } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchEvil(\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "nightmare",
         "layered"
@@ -14208,9 +14221,10 @@
       "op": "leak-hang",
       "verdict": "stalled",
       "program": "// target: redos-guard+leak-hang\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { hangOn } from \"./defender\";\nfn acbHang(s: string) -> Promise<string> { return new Promise<string>((res: unknown) => { }); }\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await hangOn(acbHang)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
-        "nightmare"
+        "nightmare",
+        "layered"
       ]
     },
     {
@@ -14218,7 +14232,7 @@
       "op": "leak-prefix",
       "verdict": "stolen",
       "program": "// target: redos-guard+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { matchSafe, rec, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchSafe(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 29,
+      "seed": 31,
       "lenses": [
         "overview",
         "critical",
@@ -14233,84 +14247,84 @@
     {
       "box": "config",
       "op": "unfreeze",
-      "seed": 29
+      "seed": 31
     },
     {
       "box": "switch-dispatch",
       "op": "unfreeze",
-      "seed": 29
+      "seed": 31
     },
     {
       "box": "frozen-table",
       "op": "unfreeze",
-      "seed": 29
+      "seed": 31
     },
     {
       "box": "readonly-records",
       "op": "unfreeze",
-      "seed": 29
+      "seed": 31
     },
     {
       "box": "cap-object",
       "op": "unfreeze",
-      "seed": 29
+      "seed": 31
     }
   ],
   "wins": [],
   "lenses": {
     "reverse": {
-      "plays": 3503,
+      "plays": 3938,
       "refused": 0,
-      "held": 3503,
+      "held": 3938,
       "red": 0,
       "void": 0,
       "bounced": 0,
       "exhausted": 0,
-      "fresh": 554,
+      "fresh": 621,
       "rules": {}
     },
     "overview": {
-      "plays": 2292,
+      "plays": 2534,
       "refused": 0,
-      "held": 2292,
+      "held": 2534,
       "red": 0,
       "void": 0,
       "bounced": 0,
       "exhausted": 0,
-      "fresh": 15,
+      "fresh": 16,
       "rules": {}
     },
     "critical": {
-      "plays": 1512,
-      "refused": 1146,
-      "held": 366,
+      "plays": 1666,
+      "refused": 1263,
+      "held": 403,
       "red": 0,
       "void": 0,
       "bounced": 0,
       "exhausted": 0,
       "fresh": 0,
       "rules": {
-        "tsc": 1086,
-        "M6": 60
+        "tsc": 1197,
+        "M6": 66
       }
     },
     "rational": {
-      "plays": 1013,
-      "refused": 28,
-      "held": 985,
+      "plays": 1120,
+      "refused": 31,
+      "held": 1089,
       "red": 0,
       "void": 0,
       "bounced": 0,
       "exhausted": 0,
-      "fresh": 27,
+      "fresh": 30,
       "rules": {
-        "M0": 28
+        "M0": 31
       }
     },
     "objective": {
-      "plays": 728,
+      "plays": 802,
       "refused": 0,
-      "held": 728,
+      "held": 802,
       "red": 0,
       "void": 0,
       "bounced": 0,
@@ -14319,22 +14333,22 @@
       "rules": {}
     },
     "abstract": {
-      "plays": 748,
-      "refused": 54,
-      "held": 694,
+      "plays": 824,
+      "refused": 59,
+      "held": 765,
       "red": 0,
       "void": 0,
       "bounced": 0,
       "exhausted": 0,
       "fresh": 18,
       "rules": {
-        "tsc": 54
+        "tsc": 59
       }
     },
     "paranoid": {
-      "plays": 3850,
+      "plays": 4250,
       "refused": 0,
-      "held": 3850,
+      "held": 4250,
       "red": 0,
       "void": 0,
       "bounced": 0,
@@ -14343,82 +14357,82 @@
       "rules": {}
     },
     "anxious": {
-      "plays": 2361,
+      "plays": 2611,
       "refused": 0,
-      "held": 2361,
+      "held": 2611,
       "red": 0,
       "void": 0,
       "bounced": 0,
       "exhausted": 0,
-      "fresh": 74,
+      "fresh": 77,
       "rules": {}
     },
     "temporal": {
-      "plays": 2441,
+      "plays": 2696,
       "refused": 0,
-      "held": 2441,
+      "held": 2696,
       "red": 0,
       "void": 0,
       "bounced": 0,
       "exhausted": 0,
-      "fresh": 276,
+      "fresh": 308,
       "rules": {}
     },
     "breakout": {
-      "plays": 6211,
-      "refused": 5689,
-      "held": 522,
+      "plays": 6905,
+      "refused": 6326,
+      "held": 579,
       "red": 0,
       "void": 0,
       "bounced": 0,
       "exhausted": 0,
       "fresh": 457,
       "rules": {
-        "M6": 4036,
-        "M0": 1653
+        "M6": 4483,
+        "M0": 1843
       }
     },
     "layered": {
-      "plays": 7601,
-      "refused": 1531,
-      "held": 5921,
+      "plays": 8460,
+      "refused": 1712,
+      "held": 6577,
       "red": 0,
       "void": 0,
       "bounced": 0,
-      "exhausted": 149,
-      "fresh": 201,
+      "exhausted": 171,
+      "fresh": 237,
       "rules": {
-        "tsc": 1257,
-        "M6": 54,
-        "M0": 40,
-        "M4": 180
+        "tsc": 1408,
+        "M6": 57,
+        "M0": 45,
+        "M4": 202
       }
     },
     "teleport": {
-      "plays": 1662,
-      "refused": 70,
-      "held": 296,
+      "plays": 1868,
+      "refused": 78,
+      "held": 333,
       "red": 0,
       "void": 0,
-      "bounced": 1296,
+      "bounced": 1457,
       "exhausted": 0,
-      "fresh": 13,
+      "fresh": 14,
       "rules": {
-        "tsc": 25,
-        "M4": 45
+        "tsc": 28,
+        "M4": 50
       }
     },
     "nightmare": {
-      "plays": 1954,
-      "refused": 132,
-      "held": 1649,
+      "plays": 2250,
+      "refused": 150,
+      "held": 1903,
       "red": 0,
       "void": 0,
       "bounced": 0,
-      "exhausted": 173,
+      "exhausted": 197,
       "fresh": 184,
       "rules": {
-        "tsc": 132
+        "tsc": 150
       }
     }
   },
@@ -15472,94 +15486,185 @@
           "red": 0
         }
       }
+    },
+    {
+      "seed": 31,
+      "waves": 2,
+      "intensity": 6,
+      "boxes": 48,
+      "plays": 4048,
+      "red": 0,
+      "caught": 176,
+      "uncaught": 5,
+      "near": 58,
+      "byLens": {
+        "reverse": {
+          "plays": 435,
+          "held": 435,
+          "refused": 0,
+          "red": 0
+        },
+        "overview": {
+          "plays": 242,
+          "held": 242,
+          "refused": 0,
+          "red": 0
+        },
+        "critical": {
+          "plays": 154,
+          "held": 37,
+          "refused": 117,
+          "red": 0
+        },
+        "rational": {
+          "plays": 107,
+          "held": 104,
+          "refused": 3,
+          "red": 0
+        },
+        "objective": {
+          "plays": 74,
+          "held": 74,
+          "refused": 0,
+          "red": 0
+        },
+        "abstract": {
+          "plays": 76,
+          "held": 71,
+          "refused": 5,
+          "red": 0
+        },
+        "paranoid": {
+          "plays": 400,
+          "held": 400,
+          "refused": 0,
+          "red": 0
+        },
+        "anxious": {
+          "plays": 250,
+          "held": 250,
+          "refused": 0,
+          "red": 0
+        },
+        "temporal": {
+          "plays": 255,
+          "held": 255,
+          "refused": 0,
+          "red": 0
+        },
+        "teleport": {
+          "plays": 206,
+          "held": 37,
+          "refused": 8,
+          "red": 0
+        },
+        "nightmare": {
+          "plays": 296,
+          "held": 254,
+          "refused": 18,
+          "red": 0
+        },
+        "breakout": {
+          "plays": 694,
+          "held": 57,
+          "refused": 637,
+          "red": 0
+        },
+        "layered": {
+          "plays": 859,
+          "held": 656,
+          "refused": 181,
+          "red": 0
+        }
+      }
     }
   ],
   "rematch": {
     "ops": {
       "echo-last": {
-        "plays": 1586,
+        "plays": 1632,
         "refused": 0,
-        "held": 1586,
+        "held": 1632,
         "red": 0,
         "void": 0,
         "bounced": 0,
         "exhausted": 0,
-        "fresh": 596
+        "fresh": 624
       },
       "alternate": {
-        "plays": 2465,
+        "plays": 2515,
         "refused": 0,
-        "held": 2463,
+        "held": 2513,
         "red": 0,
         "void": 2,
         "bounced": 0,
         "exhausted": 0,
-        "fresh": 1190
+        "fresh": 1223
       },
       "burst": {
-        "plays": 2643,
+        "plays": 2698,
         "refused": 0,
-        "held": 2643,
+        "held": 2698,
         "red": 0,
         "void": 0,
         "bounced": 0,
         "exhausted": 0,
-        "fresh": 1151
+        "fresh": 1165
       },
       "reverse": {
-        "plays": 1073,
+        "plays": 1095,
         "refused": 0,
-        "held": 1073,
+        "held": 1095,
         "red": 0,
         "void": 0,
         "bounced": 0,
         "exhausted": 0,
-        "fresh": 491
+        "fresh": 506
       },
       "interleave": {
-        "plays": 1597,
+        "plays": 1639,
         "refused": 0,
-        "held": 1597,
+        "held": 1639,
         "red": 0,
         "void": 0,
         "bounced": 0,
         "exhausted": 0,
-        "fresh": 536
+        "fresh": 545
       },
       "literal-swap": {
-        "plays": 1504,
+        "plays": 1533,
         "refused": 0,
-        "held": 1504,
+        "held": 1533,
         "red": 0,
         "void": 0,
         "bounced": 0,
         "exhausted": 0,
-        "fresh": 426
+        "fresh": 436
       },
       "double-then-swap": {
-        "plays": 1579,
+        "plays": 1623,
         "refused": 0,
-        "held": 1579,
+        "held": 1623,
         "red": 0,
         "void": 0,
         "bounced": 0,
         "exhausted": 0,
-        "fresh": 585
+        "fresh": 601
       },
       "rotate": {
-        "plays": 1119,
+        "plays": 1158,
         "refused": 0,
-        "held": 1119,
+        "held": 1158,
         "red": 0,
         "void": 0,
         "bounced": 0,
         "exhausted": 0,
-        "fresh": 501
+        "fresh": 531
       },
       "number-swap": {
-        "plays": 313,
+        "plays": 320,
         "refused": 0,
-        "held": 313,
+        "held": 320,
         "red": 0,
         "void": 0,
         "bounced": 0,
@@ -15567,134 +15672,134 @@
         "fresh": 43
       },
       "graft": {
-        "plays": 2616,
+        "plays": 2685,
         "refused": 0,
-        "held": 2616,
+        "held": 2685,
         "red": 0,
         "void": 0,
         "bounced": 0,
         "exhausted": 0,
-        "fresh": 1250
+        "fresh": 1286
       },
       "concurrent": {
-        "plays": 119,
+        "plays": 126,
         "refused": 0,
-        "held": 119,
+        "held": 126,
         "red": 0,
         "void": 0,
         "bounced": 0,
         "exhausted": 0,
-        "fresh": 60
+        "fresh": 64
       },
       "stack": {
-        "plays": 496,
+        "plays": 545,
         "refused": 0,
-        "held": 496,
+        "held": 545,
         "red": 0,
         "void": 0,
         "bounced": 0,
         "exhausted": 0,
-        "fresh": 183
+        "fresh": 205
       },
       "cross-splice": {
-        "plays": 1529,
-        "refused": 40,
+        "plays": 1673,
+        "refused": 44,
+        "held": 1629,
+        "red": 0,
+        "void": 0,
+        "bounced": 0,
+        "exhausted": 0,
+        "fresh": 3057
+      },
+      "cross-weave": {
+        "plays": 1664,
+        "refused": 45,
+        "held": 1619,
+        "red": 0,
+        "void": 0,
+        "bounced": 0,
+        "exhausted": 0,
+        "fresh": 3572
+      },
+      "cross-sandwich": {
+        "plays": 1664,
+        "refused": 52,
+        "held": 1612,
+        "red": 0,
+        "void": 0,
+        "bounced": 0,
+        "exhausted": 0,
+        "fresh": 3280
+      },
+      "cross-pingpong": {
+        "plays": 1547,
+        "refused": 58,
         "held": 1489,
         "red": 0,
         "void": 0,
         "bounced": 0,
         "exhausted": 0,
-        "fresh": 2796
-      },
-      "cross-weave": {
-        "plays": 1521,
-        "refused": 41,
-        "held": 1480,
-        "red": 0,
-        "void": 0,
-        "bounced": 0,
-        "exhausted": 0,
-        "fresh": 3262
-      },
-      "cross-sandwich": {
-        "plays": 1520,
-        "refused": 47,
-        "held": 1473,
-        "red": 0,
-        "void": 0,
-        "bounced": 0,
-        "exhausted": 0,
-        "fresh": 3000
-      },
-      "cross-pingpong": {
-        "plays": 1408,
-        "refused": 53,
-        "held": 1355,
-        "red": 0,
-        "void": 0,
-        "bounced": 0,
-        "exhausted": 0,
-        "fresh": 1822
+        "fresh": 1997
       },
       "cross-triple": {
-        "plays": 1513,
-        "refused": 58,
-        "held": 1455,
+        "plays": 1657,
+        "refused": 65,
+        "held": 1592,
         "red": 0,
         "void": 0,
         "bounced": 0,
         "exhausted": 0,
-        "fresh": 3363
+        "fresh": 3680
       },
       "cross-stack": {
-        "plays": 1475,
-        "refused": 94,
-        "held": 1381,
+        "plays": 1617,
+        "refused": 102,
+        "held": 1515,
         "red": 0,
         "void": 0,
         "bounced": 0,
         "exhausted": 0,
-        "fresh": 2297
+        "fresh": 2515
       },
       "cross-literal": {
-        "plays": 622,
+        "plays": 684,
         "refused": 8,
-        "held": 614,
+        "held": 676,
         "red": 0,
         "void": 0,
         "bounced": 0,
         "exhausted": 0,
-        "fresh": 1018
+        "fresh": 1122
       },
       "cross-mouth": {
-        "plays": 844,
-        "refused": 463,
-        "held": 381,
+        "plays": 914,
+        "refused": 507,
+        "held": 407,
         "red": 0,
         "void": 0,
         "bounced": 0,
         "exhausted": 0,
-        "fresh": 816
+        "fresh": 871
       },
       "cross-parallel": {
-        "plays": 117,
-        "refused": 33,
-        "held": 84,
+        "plays": 126,
+        "refused": 36,
+        "held": 90,
         "red": 0,
         "void": 0,
         "bounced": 0,
         "exhausted": 0,
-        "fresh": 112
+        "fresh": 123
       },
       "cross-nest": {
-        "plays": 840,
-        "refused": 392,
-        "held": 448,
+        "plays": 949,
+        "refused": 456,
+        "held": 493,
         "red": 0,
         "void": 0,
         "bounced": 0,
         "exhausted": 0,
-        "fresh": 209
+        "fresh": 228
       }
     },
     "runs": [
@@ -17368,6 +17473,151 @@
             "plays": 116,
             "held": 33,
             "refused": 83,
+            "red": 0
+          }
+        }
+      },
+      {
+        "seed": 31,
+        "boxes": 72,
+        "plays": 1925,
+        "red": 0,
+        "near": 282,
+        "wobbles": 0,
+        "hammered": 72,
+        "caught": 0,
+        "uncaught": 181,
+        "byOp": {
+          "double-then-swap": {
+            "plays": 44,
+            "held": 44,
+            "refused": 0,
+            "red": 0
+          },
+          "literal-swap": {
+            "plays": 29,
+            "held": 29,
+            "refused": 0,
+            "red": 0
+          },
+          "burst": {
+            "plays": 55,
+            "held": 55,
+            "refused": 0,
+            "red": 0
+          },
+          "interleave": {
+            "plays": 42,
+            "held": 42,
+            "refused": 0,
+            "red": 0
+          },
+          "rotate": {
+            "plays": 39,
+            "held": 39,
+            "refused": 0,
+            "red": 0
+          },
+          "graft": {
+            "plays": 69,
+            "held": 69,
+            "refused": 0,
+            "red": 0
+          },
+          "number-swap": {
+            "plays": 7,
+            "held": 7,
+            "refused": 0,
+            "red": 0
+          },
+          "concurrent": {
+            "plays": 7,
+            "held": 7,
+            "refused": 0,
+            "red": 0
+          },
+          "echo-last": {
+            "plays": 46,
+            "held": 46,
+            "refused": 0,
+            "red": 0
+          },
+          "alternate": {
+            "plays": 50,
+            "held": 50,
+            "refused": 0,
+            "red": 0
+          },
+          "stack": {
+            "plays": 49,
+            "held": 49,
+            "refused": 0,
+            "red": 0
+          },
+          "reverse": {
+            "plays": 22,
+            "held": 22,
+            "refused": 0,
+            "red": 0
+          },
+          "cross-splice": {
+            "plays": 144,
+            "held": 140,
+            "refused": 4,
+            "red": 0
+          },
+          "cross-weave": {
+            "plays": 143,
+            "held": 139,
+            "refused": 4,
+            "red": 0
+          },
+          "cross-sandwich": {
+            "plays": 144,
+            "held": 139,
+            "refused": 5,
+            "red": 0
+          },
+          "cross-pingpong": {
+            "plays": 139,
+            "held": 134,
+            "refused": 5,
+            "red": 0
+          },
+          "cross-literal": {
+            "plays": 62,
+            "held": 62,
+            "refused": 0,
+            "red": 0
+          },
+          "cross-triple": {
+            "plays": 144,
+            "held": 137,
+            "refused": 7,
+            "red": 0
+          },
+          "cross-parallel": {
+            "plays": 9,
+            "held": 6,
+            "refused": 3,
+            "red": 0
+          },
+          "cross-stack": {
+            "plays": 142,
+            "held": 134,
+            "refused": 8,
+            "red": 0
+          },
+          "cross-nest": {
+            "plays": 109,
+            "held": 45,
+            "refused": 64,
+            "red": 0
+          },
+          "cross-mouth": {
+            "plays": 70,
+            "held": 26,
+            "refused": 44,
             "red": 0
           }
         }
