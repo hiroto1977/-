@@ -16,6 +16,7 @@
  *   cross-triple    A B C の三親を交互に織る
  *   cross-parallel  A と B の await する動きを 1 本の Promise.all に束ねる (別の口を同時に走らせる)
  *   cross-stack     上の掛け合わせの結果に、再戦の変え方 (burst / reverse / …) をもう 1 手重ねる
+ *   cross-nest      手書きの攻撃どうし (programOf の形でない物) を入れ子にする: B の本体を関数 crossB() に包み、A の動きの後ろで呼び、結果を並べて返す
  *
  * 判定は審判のまま。種を決めれば同じ列になる。コンパイラが断れば refused として数える。
  */
@@ -23,7 +24,7 @@ const arena = require('./mamori-arena-judge.cjs');
 const evo = require('./mamori-arena-evolve.cjs');
 const rm = require('./mamori-arena-rematch.cjs');
 
-const CROSS_OPS = ['cross-splice', 'cross-weave', 'cross-sandwich', 'cross-pingpong', 'cross-literal', 'cross-mouth', 'cross-triple', 'cross-parallel', 'cross-stack'];
+const CROSS_OPS = ['cross-nest', 'cross-splice', 'cross-weave', 'cross-sandwich', 'cross-pingpong', 'cross-literal', 'cross-mouth', 'cross-triple', 'cross-parallel', 'cross-stack'];
 const MAX_STEPS = 160;
 const STRING_RE = /"((?:[^"\\\n]|\\.)*)"/g;
 const AWAIT_RE = [/^ {2}try \{ r\.push\(\(await (.+)\)\); \} catch \(e\) \{ r\.push\(e\); \}$/, /^ {2}try \{ r\.push\(await (.+)\); \} catch \(e\) \{ r\.push\(e\); \}$/];
@@ -135,6 +136,85 @@ function crossOf({ op, a, b, c, rng, names, learned = [] }) {
   }
 }
 
+/**
+ * 手書きの攻撃 (programOf の形でない物) を 頭 (use / 補助の宣言) と 本体 に分ける。
+ * 読めるのは `export [async] fn attack() -> T {` … `}` の複数行形と、1 行形 `{ … return X; }` だけ。
+ */
+function parseRaw(src) {
+  const lines = String(src).split('\n');
+  const uses = [];
+  const helpers = [];
+  let at = -1;
+  for (let i = 0; i < lines.length; i++) {
+    const l = lines[i];
+    if (/^export (async )?fn attack\(\)/.test(l)) { at = i; break; }
+    if (l.startsWith('//') || l.trim() === '') continue;
+    const m = /^use \{ ([^}]*) \} from "\.\/defender";$/.exec(l);
+    if (m) uses.push(...m[1].split(',').map((x) => x.trim()).filter(Boolean)); else helpers.push(l);
+  }
+  if (at < 0) return null;
+  const header = lines[at];
+  const isAsync = /^export async fn/.test(header);
+  let inner;
+  const one = /^export (?:async )?fn attack\(\) -> [^{]+\{ (.*) \}$/.exec(header);
+  if (one) {
+    if (lines.slice(at + 1).some((l) => l.trim() !== '')) return null;
+    inner = [`  ${one[1]}`];
+  } else {
+    if (!/\{$/.test(header)) return null;
+    const rest = lines.slice(at + 1);
+    while (rest.length && rest[rest.length - 1].trim() === '') rest.pop();
+    if (rest.length < 2 || rest[rest.length - 1] !== '}') return null;
+    inner = rest.slice(0, -1);
+  }
+  if (inner.length === 0 || inner.some((l) => /^\s*(\/\/|\/\*)/.test(l))) return null;
+  return { uses, helpers, isAsync, inner };
+}
+
+/** A の本体を「動き」と「最後の return 式」に分ける (最後の行が `return X;` の物だけ)。 */
+function splitReturn(inner) {
+  const last = inner[inner.length - 1];
+  const m = /^\s*(.*?)\breturn (.+);$/.exec(last);
+  if (!m || (m[1] && m[1].trim() !== '' && /\breturn\b/.test(m[1]))) return null;
+  const lead = m[1].trim();
+  return { stmts: [...inner.slice(0, -1), ...(lead ? [`  ${lead}`] : [])], ret: m[2] };
+}
+
+function rawParentsFor({ corpus, box }) {
+  const names = exportedNames(box);
+  const seen = new Set();
+  const out = [];
+  for (const a of corpus.attacks) {
+    if (seen.has(a.source) || rm.parseAttack(a.source)) continue;
+    seen.add(a.source);
+    const p = parseRaw(a.source);
+    if (!p || !p.uses.every((n) => names.has(n))) continue;
+    out.push({ name: a.name, raw: p, ret: splitReturn(p.inner), held: a.firstVerdict === 'held' });
+  }
+  return out;
+}
+
+const helperName = (l) => { const m = /^(?:async )?fn (\w+)/.exec(l) || /^(?:const|let) (\w+)/.exec(l); return m ? m[1] : null; };
+
+/** 手書きの攻撃の入れ子: B の本体を関数 crossB に包み、A の動きの後ろで呼んで結果を並べて返す。 */
+function nestRaw(a, b) {
+  if (!a.ret) return null;
+  const hs = new Set(a.raw.helpers.map(helperName).filter(Boolean));
+  if (b.raw.helpers.some((l) => hs.has(helperName(l)))) return null;
+  const async = a.raw.isAsync || b.raw.isAsync;
+  const uses = [...new Set([...a.raw.uses, ...b.raw.uses])];
+  const call = b.raw.isAsync ? 'await crossB()' : 'crossB()';
+  const fnHead = b.raw.isAsync ? 'async fn crossB() -> Promise<unknown> {' : 'fn crossB() -> unknown {';
+  const lines = [
+    ...(uses.length ? [`use { ${uses.join(', ')} } from "./defender";`] : []),
+    ...a.raw.helpers, ...b.raw.helpers,
+    fnHead, ...b.raw.inner, '}',
+    async ? 'export async fn attack() -> Promise<unknown> {' : 'export fn attack() -> unknown {',
+    ...a.ret.stmts, `  const crossRes: unknown = ${call};`, `  return [${a.ret.ret}, crossRes];`, '}', '',
+  ];
+  return lines.join('\n');
+}
+
 const newStat = () => ({ plays: 0, refused: 0, held: 0, red: 0, void: 0, bounced: 0, exhausted: 0, fresh: 0 });
 
 /**
@@ -151,9 +231,38 @@ function crossBox({ compiler, box, corpus, seed, pairs = 60, level = 'strong', s
   const near = {};
   const done = new Set();
   let plays = 0;
-  if (parents.length < 2) return { box: box.name, seeds: parents.length, plays, ops, wins, near, tokens: [...seen].slice(0, 400) };
+  // 手書きの親は、箱の奥まで届いた (held) 物を選ぶ —— 言語が断った弾 (電池の弾など) どうしを混ぜても、子は親と同じ規則で止まるだけ
+  const rawAll = rawParentsFor({ corpus, box }).filter((p) => p.held);
+  const rawParents = rawAll.filter((p) => p.ret);
+  if (parents.length < 2 && rawParents.length < 1) return { box: box.name, seeds: parents.length, plays, ops, wins, near, tokens: [...seen].slice(0, 400) };
   for (let n = 0; n < pairs; n++) {
     const op = CROSS_OPS[n % CROSS_OPS.length];
+    if (op === 'cross-nest') {
+      if (rawParents.length === 0 || rawAll.length < 2) continue;
+      const ra = pick(rawParents, rng);
+      let rb = pick(rawAll, rng);
+      for (let t = 0; t < 8 && rb === ra; t++) rb = pick(rawAll, rng);
+      if (rb === ra) continue;
+      const nested = nestRaw(ra, rb);
+      if (!nested || done.has(nested)) continue;
+      done.add(nested);
+      const rres = arena.play({ compiler, box, attackSrc: nested, seed: seed * 31 + n, level });
+      plays++;
+      const rs = ops[op] || (ops[op] = newStat());
+      rs.plays++;
+      const rtag = { op, from: `${ra.name} x ${rb.name}` };
+      if (rres.side === 'red') { rs.red++; wins.push({ ...rtag, verdict: rres.verdict, detail: String(rres.detail).slice(0, 200), program: nested }); continue; }
+      if (rres.verdict === 'n/a') { rs.bounced++; continue; }
+      if (rres.verdict === 'hang') { rs.exhausted++; continue; }
+      if (rres.side === 'void') { rs.void++; continue; }
+      if (rres.verdict === 'refused') { rs.refused++; continue; }
+      rs.held++;
+      const rfresh = Math.max(0, Math.round((evo.fitnessOf(rres, seen) - 2) * 20));
+      rs.fresh += rfresh;
+      if (rfresh > 0 && (!near[op] || rfresh > near[op].fresh)) near[op] = { ...rtag, fresh: rfresh, program: nested };
+      continue;
+    }
+    if (parents.length < 2) continue;
     const a = pick(parents, rng);
     let b = pick(parents, rng);
     for (let t = 0; t < 8 && b === a; t++) b = pick(parents, rng);
@@ -182,4 +291,4 @@ function crossBox({ compiler, box, corpus, seed, pairs = 60, level = 'strong', s
   return { box: box.name, seeds: parents.length, plays, ops, wins, near, tokens: [...seen].slice(0, 400) };
 }
 
-module.exports = { CROSS_OPS, exportedNames, parentsFor, crossOf, crossBox };
+module.exports = { CROSS_OPS, exportedNames, parentsFor, crossOf, crossBox, parseRaw, splitReturn, rawParentsFor, nestRaw };

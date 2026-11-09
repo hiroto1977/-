@@ -14585,94 +14585,104 @@
         "fresh": 95
       },
       "cross-splice": {
-        "plays": 576,
-        "refused": 13,
-        "held": 563,
+        "plays": 600,
+        "refused": 15,
+        "held": 585,
         "red": 0,
         "void": 0,
         "bounced": 0,
         "exhausted": 0,
-        "fresh": 1003
+        "fresh": 1050
       },
       "cross-weave": {
-        "plays": 568,
-        "refused": 16,
-        "held": 552,
+        "plays": 592,
+        "refused": 17,
+        "held": 575,
         "red": 0,
         "void": 0,
         "bounced": 0,
         "exhausted": 0,
-        "fresh": 1153
+        "fresh": 1213
       },
       "cross-sandwich": {
-        "plays": 567,
-        "refused": 15,
-        "held": 552,
+        "plays": 591,
+        "refused": 19,
+        "held": 572,
         "red": 0,
         "void": 0,
         "bounced": 0,
         "exhausted": 0,
-        "fresh": 1097
+        "fresh": 1150
       },
       "cross-pingpong": {
-        "plays": 515,
-        "refused": 15,
-        "held": 500,
+        "plays": 539,
+        "refused": 20,
+        "held": 519,
         "red": 0,
         "void": 0,
         "bounced": 0,
         "exhausted": 0,
-        "fresh": 632
+        "fresh": 663
       },
       "cross-triple": {
-        "plays": 556,
-        "refused": 18,
-        "held": 538,
+        "plays": 578,
+        "refused": 23,
+        "held": 555,
         "red": 0,
         "void": 0,
         "bounced": 0,
         "exhausted": 0,
-        "fresh": 1206
+        "fresh": 1256
       },
       "cross-stack": {
-        "plays": 546,
-        "refused": 38,
-        "held": 508,
+        "plays": 568,
+        "refused": 39,
+        "held": 529,
         "red": 0,
         "void": 0,
         "bounced": 0,
         "exhausted": 0,
-        "fresh": 827
+        "fresh": 863
       },
       "cross-literal": {
-        "plays": 223,
+        "plays": 243,
         "refused": 4,
-        "held": 219,
+        "held": 239,
         "red": 0,
         "void": 0,
         "bounced": 0,
         "exhausted": 0,
-        "fresh": 325
+        "fresh": 361
       },
       "cross-mouth": {
-        "plays": 320,
-        "refused": 173,
-        "held": 147,
+        "plays": 327,
+        "refused": 175,
+        "held": 152,
         "red": 0,
         "void": 0,
         "bounced": 0,
         "exhausted": 0,
-        "fresh": 298
+        "fresh": 307
       },
       "cross-parallel": {
-        "plays": 36,
-        "refused": 8,
-        "held": 28,
+        "plays": 41,
+        "refused": 10,
+        "held": 31,
         "red": 0,
         "void": 0,
         "bounced": 0,
         "exhausted": 0,
-        "fresh": 34
+        "fresh": 39
+      },
+      "cross-nest": {
+        "plays": 24,
+        "refused": 8,
+        "held": 16,
+        "red": 0,
+        "void": 0,
+        "bounced": 0,
+        "exhausted": 0,
+        "fresh": 13
       }
     },
     "runs": [
@@ -15402,6 +15412,152 @@
             "plays": 21,
             "held": 18,
             "refused": 3,
+            "red": 0
+          }
+        }
+      },
+      {
+        "seed": 811,
+        "boxes": 2,
+        "plays": 64,
+        "red": 0,
+        "near": 16,
+        "wobbles": 0,
+        "hammered": 0,
+        "caught": 0,
+        "uncaught": 0,
+        "byOp": {
+          "cross-nest": {
+            "plays": 8,
+            "held": 0,
+            "refused": 8,
+            "red": 0
+          },
+          "cross-splice": {
+            "plays": 8,
+            "held": 6,
+            "refused": 2,
+            "red": 0
+          },
+          "cross-weave": {
+            "plays": 8,
+            "held": 7,
+            "refused": 1,
+            "red": 0
+          },
+          "cross-sandwich": {
+            "plays": 8,
+            "held": 6,
+            "refused": 2,
+            "red": 0
+          },
+          "cross-pingpong": {
+            "plays": 8,
+            "held": 5,
+            "refused": 3,
+            "red": 0
+          },
+          "cross-literal": {
+            "plays": 7,
+            "held": 7,
+            "refused": 0,
+            "red": 0
+          },
+          "cross-triple": {
+            "plays": 6,
+            "held": 4,
+            "refused": 2,
+            "red": 0
+          },
+          "cross-parallel": {
+            "plays": 3,
+            "held": 1,
+            "refused": 2,
+            "red": 0
+          },
+          "cross-stack": {
+            "plays": 6,
+            "held": 6,
+            "refused": 0,
+            "red": 0
+          },
+          "cross-mouth": {
+            "plays": 2,
+            "held": 1,
+            "refused": 1,
+            "red": 0
+          }
+        }
+      },
+      {
+        "seed": 812,
+        "boxes": 4,
+        "plays": 132,
+        "red": 0,
+        "near": 33,
+        "wobbles": 0,
+        "hammered": 0,
+        "caught": 0,
+        "uncaught": 0,
+        "byOp": {
+          "cross-nest": {
+            "plays": 16,
+            "held": 16,
+            "refused": 0,
+            "red": 0
+          },
+          "cross-splice": {
+            "plays": 16,
+            "held": 16,
+            "refused": 0,
+            "red": 0
+          },
+          "cross-weave": {
+            "plays": 16,
+            "held": 16,
+            "refused": 0,
+            "red": 0
+          },
+          "cross-sandwich": {
+            "plays": 16,
+            "held": 14,
+            "refused": 2,
+            "red": 0
+          },
+          "cross-pingpong": {
+            "plays": 16,
+            "held": 14,
+            "refused": 2,
+            "red": 0
+          },
+          "cross-literal": {
+            "plays": 13,
+            "held": 13,
+            "refused": 0,
+            "red": 0
+          },
+          "cross-mouth": {
+            "plays": 5,
+            "held": 4,
+            "refused": 1,
+            "red": 0
+          },
+          "cross-triple": {
+            "plays": 16,
+            "held": 13,
+            "refused": 3,
+            "red": 0
+          },
+          "cross-parallel": {
+            "plays": 2,
+            "held": 2,
+            "refused": 0,
+            "red": 0
+          },
+          "cross-stack": {
+            "plays": 16,
+            "held": 15,
+            "refused": 1,
             "red": 0
           }
         }
