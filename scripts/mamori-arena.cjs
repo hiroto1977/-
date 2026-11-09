@@ -8,6 +8,8 @@
  *   node scripts/mamori-arena.cjs learn --boxes <dir> --attacks <dir>[,<dir>…] [--seed N]   総当たりの結果を security/mamori-arena/corpus.json へ足す (言語の学習用の記録)
  *   node scripts/mamori-arena.cjs evolve [--gens 3] [--pop 10] [--seed N] [--no-blue] [--only a,b]   戦いの合間の自律学習・自律進化 (赤は動きを突然変異・交叉で進化・青は弱体化した箱を作って赤の目を測る)。
  *                                                 結果は security/mamori-arena/evolution.json に残り、次の回の種になる。精鋭は corpus.json の攻撃にも入る
+ *   node scripts/mamori-arena.cjs wave [--waves 2] [--intensity 6] [--jobs 4] [--seed N] [--only a,b] [--no-blue]   津波: 10 の観点 (逆算・俯瞰・批判・合理・客観・抽象・妄想・心理的不安・時間・越境) × 多層の重ね × 複数の波を
+ *                                                 全部の箱へ同時に撃つ。守る側は捕獲 (近い攻めを corpus へ) → 解析 (観点 × 止めた規則) → 対策 (破れたら原因と直し方) → 学習 (届く観点へ重み・語を次の鍵に)
  *   node scripts/mamori-arena.cjs replay          security/mamori-arena/corpus.json を再生して、攻撃側の得点が 0 のままか見る (exit 1 = 破られた)
  *
  * 既定の箱は strong (ネットワークも閉じる)。使えなければ exit 2 (弱い箱で黙って走らせない)。
@@ -125,6 +127,62 @@ if (cmd === 'match') {
   fs.writeFileSync(corpusPath, ascii(corpus));
   console.log(`\n== 進化 (種 ${runSeed}): 戦 ${tally.plays} / 赤の勝ち ${tally.red} / 青の弱体化: 赤が捕まえた ${tally.caught} · 逃した ${tally.uncaught} ==`);
   process.exit(tally.red > 0 ? 1 : 0);
+} else if (cmd === 'wave') {
+  const wave = require('./lib/mamori-arena-wave.cjs');
+  const lensLib = require('./lib/mamori-arena-lenses.cjs');
+  const os = require('node:os');
+  const dir = path.join(arena.REPO_ROOT, 'security', 'mamori-arena');
+  const corpusPath = path.join(dir, 'corpus.json');
+  const evoPath = path.join(dir, 'evolution.json');
+  const corpus = JSON.parse(fs.readFileSync(corpusPath, 'utf8'));
+  const state = fs.existsSync(evoPath) ? JSON.parse(fs.readFileSync(evoPath, 'utf8')) : { version: 1, boxes: {}, history: [], lessons: [], gaps: [], wins: [] };
+  const waves = Number(opt('waves', '2'));
+  const intensity = Number(opt('intensity', '6'));
+  const runSeed = Number(opt('seed', String((state.waves || []).length + (state.history || []).length + 1)));
+  const only = opt('only') ? opt('only').split(',') : null;
+  const names = corpus.boxes.map((b) => b.name).filter((n) => (only ? only.includes(n) : true));
+  const noBlue = argv.includes('--no-blue');
+  const weights = wave.weightsFrom(state.lenses);
+  const compute = (list) => list.map((name) => {
+    const box = corpus.boxes.find((b) => b.name === name);
+    const seen = new Set(((state.boxes[name] || {}).tokens) || []);
+    const w = wave.runBoxWave({ compiler, box, seed: runSeed * 7919 + name.length, waves, intensity, level, seen, weights });
+    const blue = noBlue ? [] : wave.blueCalibrate({ compiler, box, seed: runSeed, level, seen: new Set(w.tokens) });
+    return { box: name, wave: w, blue };
+  });
+  (async () => {
+    let results;
+    if (argv.includes('--chunk')) {
+      results = compute(names);
+      fs.writeFileSync(opt('out'), JSON.stringify(results));
+      process.exit(0);
+    }
+    const jobs = Math.max(1, Math.min(Number(opt('jobs', '4')), names.length));
+    if (jobs <= 1) results = compute(names);
+    else {
+      const groups = Array.from({ length: jobs }, () => []);
+      names.forEach((n, i) => groups[i % jobs].push(n));
+      const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'mamori-wave-'));
+      const argvList = groups.map((g, i) => ['wave', '--chunk', '--only', g.join(','), '--seed', String(runSeed), '--waves', String(waves), '--intensity', String(intensity), '--level', level, '--out', path.join(tmp, i + '.json')].concat(noBlue ? ['--no-blue'] : []));
+      const done = await wave.runParallel(__filename, argvList);
+      done.forEach((d, i) => { if (d.code !== 0) { console.error(`wave: 子プロセス ${i} が失敗 (exit ${d.code}): ${d.stderr.slice(0, 400)}`); process.exit(2); } });
+      results = groups.flatMap((_, i) => JSON.parse(fs.readFileSync(path.join(tmp, i + '.json'), 'utf8')));
+      fs.rmSync(tmp, { recursive: true, force: true });
+    }
+    const summary = wave.applyWaveResults({ state, corpus, results, seed: runSeed, waves, intensity });
+    const jaOf = Object.fromEntries(lensLib.LENSES.map((l) => [l.id, l.ja]));
+    jaOf.layered = '多層(重ね)';
+    console.log('観点        戦    止められた  奥まで届いた  赤  新しい語  止めた規則(最多)');
+    for (const r of summary.table) console.log(`${(jaOf[r.lens] || r.lens).padEnd(8, '　')}${String(r.plays).padStart(6)}${String(r.refused).padStart(10)}${String(r.held).padStart(12)}${String(r.red).padStart(6)}${String(r.fresh).padStart(8)}  ${r.topRule || '-'}`);
+    for (const r of results) for (const win of r.wave.wins) console.log(`RED   ${r.box} [${win.lens}]: ${win.verdict} — ${win.detail.slice(0, 120)}`);
+    const caught = results.flatMap((r) => r.blue).filter((b) => b.caught).length;
+    const unc = results.flatMap((r) => r.blue).filter((b) => !b.caught);
+    console.log(`\n== 津波 (種 ${runSeed}・${waves} 波 × 強さ ${intensity}): 戦 ${summary.tally.plays} / 赤の勝ち ${summary.tally.red} / 近い攻めの捕獲 ${summary.tally.near} / 青の弱体化: 観点が捕まえた ${caught} · 逃した ${unc.length}${unc.length ? ' (' + [...new Set(unc.map((b) => b.op))].join(',') + ')' : ''} ==`);
+    const ascii = (o) => JSON.stringify(o, null, 2).replace(/[^\x20-\x7e\n\u3000-\u30ff\u4e00-\u9fff\uff00-\uffef]/g, (c) => '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + '\n';
+    fs.writeFileSync(evoPath, ascii(state));
+    fs.writeFileSync(corpusPath, ascii(corpus));
+    process.exit(summary.tally.red > 0 ? 1 : 0);
+  })();
 } else if (cmd === 'replay') {
   const corpusPath = path.join(arena.REPO_ROOT, 'security', 'mamori-arena', 'corpus.json');
   const corpus = JSON.parse(fs.readFileSync(corpusPath, 'utf8'));
@@ -138,6 +196,6 @@ if (cmd === 'match') {
   console.log(bad === 0 ? `✅ ${corpus.attacks.length} 攻撃 × ${corpus.boxes.length} 箱: 攻撃側の得点は 0` : `❌ ${bad} 件で再び破られた`);
   process.exit(bad === 0 ? 0 : 1);
 } else {
-  console.error('usage: match | tournament | learn | evolve | replay');
+  console.error('usage: match | tournament | learn | evolve | wave | replay');
   process.exit(2);
 }

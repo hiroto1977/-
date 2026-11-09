@@ -243,6 +243,112 @@ describe(`自律学習・自律進化 (${LEVEL})`, () => {
   });
 });
 
+describe(`観点 (レンズ) × 多層の津波 (${LEVEL})`, () => {
+  type Win = { lens: string; verdict: string; detail: string; program: string };
+  const lenses = require_('../../../../scripts/lib/mamori-arena-lenses.cjs') as {
+    LENSES: { id: string; ja: string; note: string }[];
+    waveGenomes: (o: Record<string, unknown>) => { lens: string; genome: { k: string }[] }[];
+    variantsFor: (id: string, intensity: number, w: Record<string, number> | null) => number;
+    BREAKOUTS: string[];
+  };
+  const wave = require_('../../../../scripts/lib/mamori-arena-wave.cjs') as {
+    runBoxWave: (o: Record<string, unknown>) => { box: string; plays: number; stats: Record<string, { plays: number; refused: number; held: number; red: number; rules: Record<string, number> }>; wins: Win[]; near: Record<string, { fresh: number; program: string }>; tokens: string[] };
+    blueCalibrate: (o: Record<string, unknown>) => { op: string; caught: boolean; lenses: string[] }[];
+    analyzeStats: (s: Record<string, unknown>) => { lens: string; reach: number; topRule: string | null }[];
+    countermeasureOf: (w: { lens: string; verdict: string }) => { cause: string; hardening: string; lens: string };
+    applyWaveResults: (o: Record<string, unknown>) => { tally: { red: number; near: number; caught: number; uncaught: number }; table: unknown[]; weights: Record<string, number> };
+    weightsFrom: (s: Record<string, unknown>) => Record<string, number>;
+    mergeStat: (a: unknown, b: unknown) => { plays: number; rules: Record<string, number> };
+  };
+  const evo = require_('../../../../scripts/lib/mamori-arena-evolve.cjs') as { programOf: (box: string, g: unknown[], tag: string) => string };
+
+  it('観点は 10 ・それぞれ日本語の名と狙いを持つ (思考の視点が欠けない)', () => {
+    expect(lenses.LENSES.map((l) => l.ja)).toEqual(['逆算', '俯瞰', '批判', '合理', '客観', '抽象', '妄想', '心理的不安', '時間', '越境']);
+    for (const l of lenses.LENSES) { expect(l.id).toMatch(/^[a-z]+$/); expect(l.note.length).toBeGreaterThan(10); }
+  });
+
+  it('★ 同じ種は同じ波・種を変えると別の波・多層 (layered) は別々の観点を重ねる', () => {
+    const a = lenses.waveGenomes({ box: VAULT, seed: 5, intensity: 3 });
+    const b = lenses.waveGenomes({ box: VAULT, seed: 5, intensity: 3 });
+    const c = lenses.waveGenomes({ box: VAULT, seed: 6, intensity: 3 });
+    expect(JSON.stringify(a)).toBe(JSON.stringify(b));
+    expect(JSON.stringify(a)).not.toBe(JSON.stringify(c));
+    const layered = a.filter((x) => x.lens.startsWith('layered:'));
+    expect(layered.length).toBeGreaterThan(0);
+    for (const l of layered) { expect(l.lens.split(':')[1]?.split('+').length ?? 0).toBeGreaterThanOrEqual(2); expect(l.lens).not.toContain('breakout'); }
+    for (const lens of lenses.LENSES) expect(a.some((x) => x.lens === lens.id), `観点 ${lens.id} の攻めが出ない`).toBe(true);
+  });
+
+  it('重みは届く観点へ多く撃つ・重みが無ければ均等 (学習が次の波の配分を変える)', () => {
+    expect(lenses.variantsFor('reverse', 6, { reverse: 0.9 })).toBeGreaterThan(lenses.variantsFor('reverse', 6, { reverse: 0.1 }));
+    expect(lenses.variantsFor('reverse', 6, null)).toBe(6);
+    expect(lenses.variantsFor('reverse', 1, { reverse: 0 })).toBeGreaterThanOrEqual(1);
+    const w = wave.weightsFrom({ reverse: { plays: 10, held: 9 }, breakout: { plays: 10, held: 0 } });
+    expect(w.reverse).toBeGreaterThan(w.breakout ?? 1);
+  });
+
+  it('★ 津波を VAULT に当てる: 赤の勝ちは 0 ・越境は言語の規則 (M6) で全部止まる・他の観点は箱の奥まで届く', () => {
+    const r = wave.runBoxWave({ compiler, box: VAULT, seed: 3, waves: 1, intensity: 2, level: LEVEL });
+    expect(r.wins).toEqual([]);
+    const s = r.stats;
+    expect((s.breakout?.refused ?? 0)).toBe(s.breakout?.plays);
+    expect(Object.keys(s.breakout?.rules ?? {})).toContain('M6');
+    for (const id of ['reverse', 'overview', 'paranoid', 'anxious', 'temporal']) expect(s[id]?.held ?? 0, `観点 ${id} が箱の奥まで届かない`).toBeGreaterThan(0);
+    expect(r.plays).toBeGreaterThanOrEqual(30);
+    const table = wave.analyzeStats(s);
+    expect(table.find((t) => t.lens === 'breakout')?.reach).toBe(0);
+    expect(table.find((t) => t.lens === 'breakout')?.topRule).toBeTruthy();
+  }, 120_000);
+
+  it('★ 青の較正: 守りを外した箱 (秘密を返す口を足した) を、観点のどれかが捕まえる (レンズ全体の目が利いている)', () => {
+    const blue = wave.blueCalibrate({ compiler, box: VAULT, seed: 4, level: LEVEL });
+    expect(blue.length).toBeGreaterThan(0);
+    for (const b of blue) { expect(b.caught, `${b.op} を観点のどれも捕まえられなかった`).toBe(true); expect(b.lenses.length).toBeGreaterThan(0); }
+  }, 120_000);
+
+  it('★ 対策: 破られた攻めは原因と直し方に分類され、回帰の攻撃として corpus へ・赤の勝ちは記録へ入る (捕獲 → 解析 → 対策 → 学習)', () => {
+    for (const verdict of ['stolen', 'destroyed', 'escaped']) {
+      const cm = wave.countermeasureOf({ lens: 'layered:anxious+reverse', verdict });
+      expect(cm.cause.length).toBeGreaterThan(5); expect(cm.hardening.length).toBeGreaterThan(5); expect(cm.lens).toBe('layered');
+    }
+    const state = { boxes: {} as Record<string, unknown>, history: [], lessons: [] as unknown[], gaps: [] as unknown[], wins: [] as unknown[], lenses: undefined, waves: undefined };
+    const corpus = { boxes: [], attacks: [] as { name: string }[], history: [] };
+    const win = { lens: 'reverse', verdict: 'stolen', detail: 'x', program: 'p' };
+    const out = wave.applyWaveResults({
+      state, corpus, seed: 9, waves: 1, intensity: 2,
+      results: [{ box: 'vault', wave: { plays: 3, stats: { reverse: { plays: 3, refused: 0, held: 2, red: 1, void: 0, fresh: 4, rules: {} } }, wins: [win], near: { reverse: { fresh: 4, program: 'q' } }, tokens: ['alpha-token'] }, blue: [{ box: 'vault', op: 'unfreeze', caught: false, lenses: [] }, { box: 'vault', op: 'leak-fn', caught: true, lenses: ['reverse'], verdict: 'stolen', program: 'z' }] }],
+    });
+    expect(out.tally).toMatchObject({ red: 1, near: 1, caught: 1, uncaught: 1 });
+    expect(state.wins.length).toBe(1);
+    expect(corpus.attacks.map((a) => a.name).sort()).toEqual(['wave-reverse-vault', 'wave-win-reverse-vault-9']);
+    expect(state.gaps).toHaveLength(1);
+    expect(state.lessons.length).toBeGreaterThanOrEqual(2);
+    expect(out.weights.reverse).toBeGreaterThan(0);
+    // 統計の合算 (次の波へ積む)
+    const m = wave.mergeStat({ plays: 2, rules: { M6: 1 } }, { plays: 3, rules: { M6: 2, tsc: 1 } });
+    expect(m.plays).toBe(5); expect(m.rules).toEqual({ M6: 3, tsc: 1 });
+  });
+
+  it('越境の弾 (言語が断るはずの構文) の 1 つでも通れば、それは箱の外へ出る攻め —— 全部が言語の規則で止まる (対照: 通った弾が無い)', () => {
+    let accepted = 0;
+    for (const e of lenses.BREAKOUTS) {
+      const r = play(VAULT, evo.programOf('vault', [{ k: 'raw', e }], 'breakout-check'), 21);
+      if (r.verdict !== 'refused') accepted++;
+    }
+    expect(accepted).toBe(0);
+  }, 120_000);
+
+  it('進化の記録に観点の成績・波の履歴がある (津波が学習に残っている)', () => {
+    const p = `${arena.REPO_ROOT}/security/mamori-arena/evolution.json`;
+    const e = JSON.parse(readOriginalSource(p)) as { wins: unknown[]; lenses?: Record<string, { plays: number; red: number }>; waves?: { red: number }[] };
+    expect(e.wins).toEqual([]);
+    expect(Object.keys(e.lenses ?? {}).length).toBeGreaterThanOrEqual(10);
+    for (const l of lenses.LENSES) expect(e.lenses?.[l.id]?.plays ?? 0, `観点 ${l.id} の戦が記録に無い`).toBeGreaterThan(0);
+    expect((e.waves ?? []).length).toBeGreaterThan(0);
+    for (const w of e.waves ?? []) expect(w.red).toBe(0);
+  });
+});
+
 describe(`戦いの記録の再生 (${LEVEL})`, () => {
   const path = `${arena.REPO_ROOT}/security/mamori-arena/corpus.json`;
   const corpus: CorpusFile | null = existsSync(path) ? (JSON.parse(readOriginalSource(path)) as CorpusFile) : null;

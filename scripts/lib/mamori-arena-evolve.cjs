@@ -88,6 +88,7 @@ function moveExpr(m) {
   switch (m.k) {
     case 'call': return `${m.fn}(${m.args.join(', ')})`;
     case 'chain': return `${m.outer}(${m.inner}(${m.args.join(', ')}))`;
+    case 'expr': case 'raw': return m.e;
     case 'read': return m.c;
     case 'keys': return `Object.keys(${m.c})`;
     case 'values': return `Object.values(${m.c})`;
@@ -98,6 +99,8 @@ function moveExpr(m) {
 function moveNames(m) {
   if (m.k === 'call') return [m.fn];
   if (m.k === 'chain') return [m.outer, m.inner];
+  if (m.k === 'expr') return m.names || [];
+  if (m.k === 'raw') return [];
   return [m.c];
 }
 
@@ -235,4 +238,4 @@ function evolveBlue({ compiler, box, seed, level = 'strong', maxMutants = 6, see
   return results;
 }
 
-module.exports = { mulberry32, parseExports, programOf, mutate, crossover, fitnessOf, evolveRed, weaken, evolveBlue, STRING_POOL };
+module.exports = { mulberry32, parseExports, programOf, mutate, crossover, fitnessOf, evolveRed, weaken, evolveBlue, STRING_POOL, CALLBACKS };
