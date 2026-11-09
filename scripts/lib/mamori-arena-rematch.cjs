@@ -16,7 +16,7 @@ const lenses = require('./mamori-arena-lenses.cjs');
 const wave = require('./mamori-arena-wave.cjs');
 
 const NUMBER_SWAPS = ['0', '1', '(0 - 1)', '255', '65536', '1000000007', '0.5'];
-const OPS = ['literal-swap', 'number-swap', 'reverse', 'rotate', 'burst', 'alternate', 'interleave', 'graft', 'echo-last', 'double-then-swap'];
+const OPS = ['literal-swap', 'number-swap', 'reverse', 'rotate', 'burst', 'alternate', 'interleave', 'graft', 'echo-last', 'double-then-swap', 'concurrent'];
 
 const STRING_RE = /"((?:[^"\\\n]|\\.)*)"/g;
 const NUMBER_RE = /(?<![\w.])\d+(?:\.\d+)?(?![\w.])/g;
@@ -100,6 +100,14 @@ function variantOf({ parts, op, rng, donors = [], learned = [] }) {
     case 'echo-last': return { body: [...steps, steps[steps.length - 1], steps[steps.length - 1]] };
     // 同じ動きを 2 度続け、2 度目だけ引数を変える (直前の呼び出しの残りを突く)
     case 'double-then-swap': { const l = swapStr(line); if (!l || l === line) return null; return { body: [...steps.slice(0, i + 1), l, ...steps.slice(i + 1)] }; }
+    // 同時多発: await する動きを Promise.all で 8〜24 本いっぺんに走らせる (microtask の交錯で定数 tick・有限回の打ち切りが崩れないか)
+    case 'concurrent': {
+      const m = /^ {2}try \{ r\.push\(\(await (.+)\)\); \} catch \(e\) \{ r\.push\(e\); \}$/.exec(line) || /^ {2}try \{ r\.push\(await (.+)\); \} catch \(e\) \{ r\.push\(e\); \}$/.exec(line);
+      if (!m) return null;
+      const n = pick([8, 24], rng);
+      const calls = Array.from({ length: n }, () => m[1]).join(', ');
+      return { body: [...steps.slice(0, i), `  try { r.push(await Promise.all([${calls}])); } catch (e) { r.push(e); }`, ...steps.slice(i + 1)] };
+    }
     default: return null;
   }
 }

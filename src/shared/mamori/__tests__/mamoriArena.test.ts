@@ -467,6 +467,15 @@ describe(`再戦と連打 (${LEVEL})`, () => {
     expect(rm.parseAttack(rm.render({ head: parts.head, body: burst.body }))!.body).toEqual(burst.body);
   });
 
+  it('★ 同時多発 (concurrent): await する動きを Promise.all で 8〜24 本いっぺんに走らせる・await の無い動きには効かない', () => {
+    const asyncParts = rm.parseAttack(evo.programOf('async-compare', [{ k: 'call', fn: 'checkAsync', args: ['"a"'], aw: true }], 'seed'))!;
+    const v = rm.variantOf({ parts: asyncParts, op: 'concurrent', rng: evo.mulberry32(1) })!;
+    expect(v.body).toHaveLength(1);
+    expect(v.body[0]).toMatch(/await Promise\.all\(\[(checkAsync\("a"\)(, )?){8,24}\]\)/);
+    expect(rm.render({ head: asyncParts.head, body: v.body })).toContain('export async fn attack()');
+    expect(rm.variantOf({ parts, op: 'concurrent', rng: evo.mulberry32(1) })).toBeNull();
+  });
+
   it('同じ種は同じ変種・別の視点 (literal-swap / graft) は元と違う・await を持つ動きを移植したら attack は async になる', () => {
     const a = rm.variantOf({ parts, op: 'literal-swap', rng: evo.mulberry32(9) })!;
     const b = rm.variantOf({ parts, op: 'literal-swap', rng: evo.mulberry32(9) })!;
