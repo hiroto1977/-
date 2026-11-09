@@ -140,6 +140,11 @@ const EXEMPT: readonly { readonly file: string; readonly why: string }[] = [
       + '注記の中の `url(…)` を数えないことは同じファイルの標本が留める',
   },
   {
+    file: 'scripts/lib/mamori-arena-rematch.cjs',
+    why: '**注記を落とす物ではなく、攻撃のプログラムの頭を組み直す物** (`render` · 2026-11-09 周回 5)。攻撃は Mamori のソースで、頭の `// target` / `// goal` の行を残して宣言 (`use` / 補助関数) を並べ直すだけ。'
+      + '本文 (動きの行) からは 1 文字も落とさず、JS の注記を剥がす用途ではない (対象は箱に撃つ Mamori の文字列)。振る舞いは mamoriArena.test.ts の往復の検査が留める',
+  },
+  {
     file: 'scripts/lint-mutation-scope.cjs',
     why: '**注記を落とす物ではなく、注記そのものを探す物**。`Stryker disable` / `restore` の pragma は定義上コメントの中に在るので、行頭アンカーの正規表現で `//` と `/*` を見るのは「注記か」を判じているのではなく**針そのもの**である (落としたら母集団が空になる · 2026-09-25 パス 463)',
   },
