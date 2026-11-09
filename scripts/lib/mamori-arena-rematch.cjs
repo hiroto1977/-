@@ -67,39 +67,39 @@ function swapOneLiteral(line, rng, re, replacement) {
 
 /** 1 つの変種 (op は変え方の名前)。変えられなければ null。 */
 function variantOf({ parts, op, rng, donors = [], learned = [] }) {
-  const body = parts.body;
-  if (body.length === 0) return null;
+  const steps = parts.body;
+  if (steps.length === 0) return null;
   const stringPool = [...pools(), ...learned];
-  const i = Math.floor(rng() * body.length);
-  const line = body[i];
+  const i = Math.floor(rng() * steps.length);
+  const line = steps[i];
   const swapStr = (l) => swapOneLiteral(l, rng, STRING_RE, () => JSON.stringify(pick(stringPool, rng)));
   switch (op) {
-    case 'literal-swap': { const l = swapStr(line); if (!l || l === line) return null; return { body: body.map((x, j) => (j === i ? l : x)) }; }
-    case 'number-swap': { const l = swapOneLiteral(line, rng, NUMBER_RE, () => pick(NUMBER_SWAPS, rng)); if (!l || l === line) return null; return { body: body.map((x, j) => (j === i ? l : x)) }; }
-    case 'reverse': return body.length > 1 ? { body: [...body].reverse() } : null;
-    case 'rotate': return body.length > 1 ? { body: [...body.slice(1), body[0]] } : null;
+    case 'literal-swap': { const l = swapStr(line); if (!l || l === line) return null; return { body: steps.map((x, j) => (j === i ? l : x)) }; }
+    case 'number-swap': { const l = swapOneLiteral(line, rng, NUMBER_RE, () => pick(NUMBER_SWAPS, rng)); if (!l || l === line) return null; return { body: steps.map((x, j) => (j === i ? l : x)) }; }
+    case 'reverse': return steps.length > 1 ? { body: [...steps].reverse() } : null;
+    case 'rotate': return steps.length > 1 ? { body: [...steps.slice(1), steps[0]] } : null;
     // 連打: 同じ動きを何十回も (同じ場所へ立て続けに) 叩く。回数は 2 の冪で段階的に
-    case 'burst': { const n = pick([8, 32, 64, 256], rng); return { body: [...body.slice(0, i), ...Array.from({ length: n }, () => line), ...body.slice(i + 1)] }; }
+    case 'burst': { const n = pick([8, 32, 64, 256], rng); return { body: [...steps.slice(0, i), ...Array.from({ length: n }, () => line), ...steps.slice(i + 1)] }; }
     // 引数を入れ替えながら同じ口を連打 (同じ関数・違う引数で状態の揺らぎを誘う)
     case 'alternate': {
       const out = [];
       for (let k = 0; k < 12; k++) out.push(swapStr(line) || line);
-      return { body: [...body.slice(0, i), ...out, ...body.slice(i + 1)] };
+      return { body: [...steps.slice(0, i), ...out, ...steps.slice(i + 1)] };
     }
     // 2 つの動きを A B A B ... と交互に (順序と状態の揺らぎ)
-    case 'interleave': { if (body.length < 2) return null; const j = (i + 1 + Math.floor(rng() * (body.length - 1))) % body.length; const out = []; for (let k = 0; k < 8; k++) out.push(body[i], body[j]); return { body: out }; }
+    case 'interleave': { if (steps.length < 2) return null; const j = (i + 1 + Math.floor(rng() * (steps.length - 1))) % steps.length; const out = []; for (let k = 0; k < 8; k++) out.push(steps[i], steps[j]); return { body: out }; }
     // 別の攻撃 (同じ箱に撃った攻撃) の動きを 1 つ移植する (視点の掛け合わせ)
     case 'graft': {
       if (donors.length === 0) return null;
       const d = pick(donors, rng);
       if (d.body.length === 0) return null;
       const grafted = pick(d.body, rng);
-      return { body: [...body.slice(0, i + 1), grafted, ...body.slice(i + 1)], extraHead: d.head.filter((l) => !l.startsWith('//')) };
+      return { body: [...steps.slice(0, i + 1), grafted, ...steps.slice(i + 1)], extraHead: d.head.filter((l) => !l.startsWith('//')) };
     }
     // 最後の動きを繰り返す (戻った後にもう一度 = 「戻って来る」攻めの二度目)
-    case 'echo-last': return { body: [...body, body[body.length - 1], body[body.length - 1]] };
+    case 'echo-last': return { body: [...steps, steps[steps.length - 1], steps[steps.length - 1]] };
     // 同じ動きを 2 度続け、2 度目だけ引数を変える (直前の呼び出しの残りを突く)
-    case 'double-then-swap': { const l = swapStr(line); if (!l || l === line) return null; return { body: [...body.slice(0, i + 1), l, ...body.slice(i + 1)] }; }
+    case 'double-then-swap': { const l = swapStr(line); if (!l || l === line) return null; return { body: [...steps.slice(0, i + 1), l, ...steps.slice(i + 1)] }; }
     default: return null;
   }
 }

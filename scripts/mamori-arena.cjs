@@ -238,7 +238,7 @@ if (cmd === 'match') {
     const caught = results.flatMap((r) => r.blue).filter((b) => b.caught).length;
     const unc = results.flatMap((r) => r.blue).filter((b) => !b.caught);
     console.log(`\n== 再戦と連打 (種 ${runSeed}・種の攻撃 ${per}/箱 × 変種 ${variants}): 戦 ${summary.tally.plays} / 赤の勝ち ${summary.tally.red} / 近い攻めの捕獲 ${summary.tally.near} / 連打した攻撃 ${summary.tally.hammered} · 揺らぎ ${summary.tally.wobbles} / 青の弱体化: 変種が捕まえた ${caught} · 逃した ${unc.length}${unc.length ? ' (' + [...new Set(unc.map((b) => b.op))].join(',') + ')' : ''} ==`);
-    const ascii = (o) => JSON.stringify(o, null, 2).replace(/[^\x20-\x7e\n　-ヿ一-鿿＀-￯]/g, (c) => '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + '\n';
+    const ascii = (o) => JSON.stringify(o, null, 2).replace(/[^\x20-\x7e\n\u3000-\u30ff\u4e00-\u9fff\uff00-\uffef]/g, (c) => '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + '\n';
     fs.writeFileSync(evoPath, ascii(state));
     fs.writeFileSync(corpusPath, ascii(corpus));
     process.exit(summary.tally.red > 0 ? 1 : 0);

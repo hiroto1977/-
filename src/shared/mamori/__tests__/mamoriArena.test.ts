@@ -261,7 +261,7 @@ describe(`観点 (レンズ) × 多層の津波 (${LEVEL})`, () => {
     weightsFrom: (s: Record<string, unknown>) => Record<string, number>;
     mergeStat: (a: unknown, b: unknown) => { plays: number; rules: Record<string, number> };
   };
-  const evo = require_('../../../../scripts/lib/mamori-arena-evolve.cjs') as { programOf: (box: string, g: unknown[], tag: string) => string };
+  const evo = require_('../../../../scripts/lib/mamori-arena-evolve.cjs') as { programOf: (box: string, g: unknown[], tag: string) => string; parseExports: (src: string) => { fns: { name: string; async?: boolean; params: string[] }[] } };
 
   it('観点は 12 ・それぞれ日本語の名と狙いを持つ (思考の視点が欠けない)', () => {
     expect(lenses.LENSES.map((l) => l.ja)).toEqual(['逆算', '俯瞰', '批判', '合理', '客観', '抽象', '妄想', '心理的不安', '時間', '瞬間移動', '悪夢', '越境']);
