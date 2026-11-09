@@ -405,8 +405,8 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         } else if (!usedLocals.has(n.name)) {
           report('M6', it.pos, `${n.name} は宣言されていません (\`export { … }\` は use で引いた名前の再輸出)`);
         } else {
-          const used = usedLocals.get(n.name);
-          if (n.typeOnly && used !== undefined && table.fns.get(fnKey(used.target, used.name)) !== undefined) report('M6', it.pos, `\`type ${n.name}\` は関数です —— 型だけの再輸出で関数は出せません`);
+          const used = usedLocals.get(n.name)!;
+          if (n.typeOnly && table.fns.get(fnKey(used.target, used.name)) !== undefined) report('M6', it.pos, `\`type ${n.name}\` は関数です —— 型だけの再輸出で関数は出せません`);
         }
       }
       continue;

@@ -105,6 +105,7 @@ describe('0.25: 再輸出 export { … } from / export { x }', () => {
     expect(withA('export { mk, mk } from "./a";\n').rules).toEqual([expect.stringMatching(/^M6 .*mk を 2 度再輸出しています/)]);
     expect(project([['src/x/a.mamori', 'export const A: number = 1;\nexport { A } from "./a";\n']]).rules).toEqual([expect.stringMatching(/^M6 自分自身からの再輸出/)]);
     expect(withA('export { } from "./a";\n').rules.join('\n')).toMatch(/名前がありません/);
+    expect(withA('use { mk } from "./a";\nexport { mk, mk };\n').rules).toEqual([expect.stringMatching(/^M6 .*mk を 2 度再輸出しています/)]);
   });
 
   it('★ 破る⑨: 既定の import (use default) の再輸出は書けない (外の module の口 fs / path が素で漏れる)', () => {
