@@ -42,7 +42,7 @@ describe('0.24: 名前ごとの型だけの import use { f, type X }', () => {
   it('★ 破る①: 関数を type で引く (gate / 印を受ける口を型の顔で持ち込む) は M6 で断る —— 検めと生成物の見る物が食い違わない', () => {
     for (const fn of ['mk', 'open']) {
       const r = project([['src/x/a.mamori', A], ['src/x/c.mamori', `use { type ${fn} } from "./a";\nexport fn go(raw: string) -> string {\n  return raw;\n}\n`]]);
-      expect(r.rules, fn).toEqual([expect.stringContaining(`type ${fn}\` は関数です`)]);
+      expect(r.rules, fn).toEqual([expect.stringMatching(new RegExp(`^M6 .*type ${fn}\` は関数です`))]);
     }
   });
 
