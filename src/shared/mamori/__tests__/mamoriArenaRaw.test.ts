@@ -13,7 +13,10 @@ const raw = require_('../../../../scripts/lib/mamori-arena-raw.cjs') as {
   rawAttacksFor: (box: { source: string }) => { name: string; src: string }[];
   rawBox: (o: { compiler: unknown; box: unknown; seed: number; level?: string }) => { box: string; wins: unknown[]; blue: { op: string; caught: boolean }[]; attacks: number };
 };
-const arena = require_('../../../../scripts/lib/mamori-arena-judge.cjs') as { loadCompiler: () => unknown };
+const arena = require_('../../../../scripts/lib/mamori-arena-judge.cjs') as { loadCompiler: () => unknown; strongAvailable: () => boolean };
+// CI のランナーは unshare -rn (網を閉じた箱) が使えない。そのとき既定の 'strong' は 'unavailable' を返し、赤が勝てず青の較正が「捕まえなかった」と読める。
+// 凍結の観測は網に依らないので、使えない環境では 'permission' (弱い箱) で測る (mamoriArena.test.ts と同じ形)。
+const LEVEL = arena.strongAvailable() ? 'strong' : 'permission';
 const corpus = require_('../../../../security/mamori-arena/corpus.json') as { boxes: { name: string; source: string; spec: unknown }[] };
 
 describe('生の呼び手の攻めは箱の export から導かれる', () => {
@@ -34,7 +37,7 @@ describe('生の呼び手の攻めは箱の export から導かれる', () => {
 
 describe('生の呼び手の実測 (実物の審判)', () => {
   const compiler = arena.loadCompiler();
-  const run = (name: string) => raw.rawBox({ compiler, box: corpus.boxes.find((b) => b.name === name), seed: 1 });
+  const run = (name: string) => raw.rawBox({ compiler, box: corpus.boxes.find((b) => b.name === name), seed: 1, level: LEVEL });
   it('実物の箱は壊れない (赤の勝ち 0)', () => {
     for (const name of ['config', 'frozen-table', 'readonly-records', 'cap-object', 'switch-dispatch']) expect(run(name).wins, name).toEqual([]);
   });
