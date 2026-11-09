@@ -1,10 +1,17 @@
+// 生成物 —— src/renderer/data/assistantMarkdown.mamori から Mamori のコンパイラが組んだ。手で編集しない (`npm run mamori:build`)。
+// 言語の仕様は docs/MAMORI.md。生成物が元と食い違えば src/shared/mamori/__tests__/mamoriGenerated.test.ts が落ちる。
 /**
  * 軽量 Markdown パーサ — 純ロジック・依存ゼロ。
  *
- * アシスタントの応答 (見出し / 表 / 箇条書き / コード / 太字・インラインコード) を
- * React で安全に描画するための AST に変換する。生 HTML 文字列の注入 (React の危険な
- * innerHTML シンク) を避けるため、HTML ではなくブロック/インラインのデータ構造を返す
- * (XSS 面を持たない)。
+ * ## Mamori で書いてある (2026-11-09 · MG-052)
+ *
+ * 元は TypeScript で、Mamori 0.25 で書き直した。アシスタントの応答 (見出し / 表 / 箇条書き / コード / 太字・インラインコード) を
+ * React で安全に描画するための AST に変換する。生 HTML 文字列の注入 (React の危険な innerHTML シンク) を避けるため、
+ * HTML ではなくブロック/インラインのデータ構造を返す (XSS 面を持たない)。応答は攻撃者が誘導しうる (プロンプト注入・
+ * 乗っ取られた proxy・悪意ある MCP サーバ) ので、ここは第三者の文を構文解析する場所で、Mamori の M0 と M6 が効く ——
+ * `as` (型の書き換え)・`.constructor` (文字列をコードとして走らせる道)・テンプレート文字列・宣言していない外の名前が書けない。
+ * 判定は 1 つも変えていない。非 null 断定 `x!` は `at` / `group` の 2 つの口に集め、`i++` は `i = i + 1` へ、
+ * `m[0].length` を使う箇所は表の長さの代わりに残りの文字列を直に取る形へ書き直した (組み上がるブロックは 1 字も変えない)。
  *
  * フルスペックの Markdown ではなく、ビジネス成果物で多用する要素に絞る。
  */
@@ -24,30 +31,52 @@ export type Block =
   | { readonly type: 'table'; readonly headers: InlineToken[][]; readonly rows: InlineToken[][][] }
   | { readonly type: 'code'; readonly text: string };
 
+/**
+ * 行 i を返す。範囲の外は空文字 (呼び手は `i < lines.length` を先に確かめるので届かない)。
+ * 添字 `lines[i]` は結果を戻り値にできない (計算した鍵の結果は入れ物に包めない · T-255) ので、1 要素の切り出しを連結して取る。
+ */
+function at(lines: readonly string[], i: number): string {
+  return lines.slice(i, i + 1).join('');
+}
+
+/** 正規表現の捕獲群 n を返す。群が一致しなかった (undefined) ときは空文字 (`join` は undefined を空に畳む)。 */
+function group(m: RegExpExecArray, n: number): string {
+  return m.slice(n, n + 1).join('');
+}
+
 /** インライン記法 (**bold** と `code`) を解析する。入れ子は扱わない。 */
 export function parseInline(text: string): InlineToken[] {
   const tokens: InlineToken[] = [];
   // **bold** または `code` を順に切り出す。
   const re = /\*\*([^*]+)\*\*|`([^`]+)`/g;
   let last = 0;
-  for (let m = re.exec(text); m !== null; m = re.exec(text)) {
-    if (m.index > last) tokens.push({ text: text.slice(last, m.index) });
-    if (m[1] !== undefined) tokens.push({ text: m[1], bold: true });
-    // `m[1]` が undefined ということは `code` 側が一致したということなので、
-    // `m[2] !== undefined` を確かめ直す意味が無い (変異検査が等価だと示した)。
-    else tokens.push({ text: m[2]!, code: true });
+  let m = re.exec(text);
+  while (m !== null) {
+    if (m.index > last) {
+      tokens.push({ text: text.slice(last, m.index) });
+    }
+    if (m[1] !== undefined) {
+      tokens.push({ text: group(m, 1), bold: true });
+    } else {
+      // `m[1]` が undefined ということは `code` 側が一致したということ。
+      tokens.push({ text: group(m, 2), code: true });
+    }
     last = m.index + m[0].length;
+    m = re.exec(text);
   }
-  if (last < text.length) tokens.push({ text: text.slice(last) });
+  if (last < text.length) {
+    tokens.push({ text: text.slice(last) });
+  }
   return tokens.length > 0 ? tokens : [{ text }];
 }
 
 /**
- * 見えない字と、1 字を `\uXXXX` へ逃がす綴りは **shared の 1 つ** (`shared/escape.ts` ·
- * パス 519)。書き込みの確認 (`voiceWriteRequirements.ts`) も同じ物を読むので、ここで
- * 再定義しない。`escapeUnits` は `bestAnswers.ts` が今までどおりここから読む。
+ * 見えない字と、1 字を `\uXXXX` へ逃がす綴りは **shared の 1 つ** (`shared/escape.ts` · パス 519)。
+ * 書き込みの確認 (`voiceWriteRequirements.ts`) も同じ物を読むので、ここで再定義しない。
+ * `escapeUnits` は `bestAnswers.ts` が今までどおりここから読む。
  */
 const INVISIBLE = INVISIBLE_UNITS;
+
 export { escapeUnits };
 
 /**
@@ -80,8 +109,12 @@ export function externalTextOnOneLine(text: string): string {
 /** `| a | b |` 形式の行をセル配列へ分解する。前後の空セルを落とす。 */
 function splitTableRow(line: string): string[] {
   let s = line.trim();
-  if (s.startsWith('|')) s = s.slice(1);
-  if (s.endsWith('|')) s = s.slice(0, -1);
+  if (s.startsWith('|')) {
+    s = s.slice(1);
+  }
+  if (s.endsWith('|')) {
+    s = s.slice(0, -1);
+  }
   return s.split('|').map((c) => c.trim());
 }
 
@@ -106,9 +139,9 @@ function isTableSeparator(line: string): boolean {
  * `#### x\n` を並べた応答を通した実測 (2026-08-29):
  *
  * ```
- *   0.1MiB   14,979 blocks   parse  13ms   render    108ms   html   1.3MiB
- *     1MiB  149,796 blocks   parse  74ms   render    803ms   html  13.4MiB
- *    10MiB 1,497,965 blocks  parse 746ms   render 15,630ms   html 134.3MiB
+ * 0.1MiB   14,979 blocks   parse  13ms   render    108ms   html   1.3MiB
+ * 1MiB  149,796 blocks   parse  74ms   render    803ms   html  13.4MiB
+ * 10MiB 1,497,965 blocks  parse 746ms   render 15,630ms   html 134.3MiB
  * ```
  *
  * **解析は線形** (10MiB で 746ms)。溢れるのは**その先の描画**で、
@@ -135,21 +168,21 @@ function isTableSeparator(line: string): boolean {
  * ブロック数を別に比べない: 1 ブロックの重み (`blockWeight`) は 1 以上で、この数は `MAX_RENDER_WEIGHT` と
  * 同じなので、ブロック数が上限に届けば重みの天井が必ず先に効く (別に比べると片方が決して効かない等価な枝になる)。
  */
-export const MAX_RENDER_BLOCKS = 20_000;
+export const MAX_RENDER_BLOCKS = 20000;
 
 /**
  * 描く要素の重さの合計の天井 (threat: T-156)。ブロック数だけを縛ると、1 つの表や 1 つの箇条書きが
  * 数万個の要素を持てる —— 10 万字の返答 1 件が DOM 要素 10 万個になった (実測: 表 5 万セル)。
  * 重さ = 1 + (箇条書きの項目数 | 表の見出し数 + セル数)。超える最初のブロックから打ち切る。
  */
-export const MAX_RENDER_WEIGHT = 20_000;
+export const MAX_RENDER_WEIGHT = 20000;
 
 /** ブロック 1 つが描く要素の数の目安 (自分 1 + 子の数)。 */
 export function blockWeight(b: Block): number {
   // インライン記法が作る要素 (`**…**` / `` `…` ``) も 1 つずつ数える (T-196): 段落・見出し・項目・セルの中の
   // 記法の数が天井の外だと、`` `a`x の繰り返し `` 10 万字が重さ 2 で通り、約 5 万の DOM 要素になった (実測)。
   // 数えるのは**要素になる断片だけ** (地の文は 1 つの文字列ノードで、これまでの重さを変えない)。
-  const styled = (c: InlineToken[]): number => c.filter((t) => t.bold === true || t.code === true).length;
+  const styled = (c: InlineToken[]) => c.filter((t) => t.bold === true || t.code === true).length;
   if (b.type === 'heading' || b.type === 'paragraph') return 1 + styled(b.spans);
   if (b.type === 'list') return 1 + b.items.length + b.items.reduce((n, item) => n + styled(item), 0);
   if (b.type === 'table') {
@@ -172,72 +205,68 @@ export function parseMarkdown(src: string): Block[] {
   const lines = src.replace(/\r\n/g, '\n').split('\n');
   const blocks: Block[] = [];
   let i = 0;
-
-  const flushParagraph = (buf: string[]) => {
-    if (buf.length > 0) blocks.push({ type: 'paragraph', spans: parseInline(buf.join(' ')) });
-  };
-
-  let para: string[] = [];
-
+  // 段落の途中の行は空白でつないだ 1 本の文字列に溜める (空の行は段落区切りで先に流すので、溜まる行は空でない)。
+  const flushParagraph = (buf: string) => {
+  if (buf !== '') {
+    blocks.push({ type: 'paragraph', spans: parseInline(buf) });
+  }
+};
+  let para = '';
   while (i < lines.length) {
-    const line = lines[i]!;
+    const line = at(lines, i);
     const trimmed = line.trim();
-
     // コードフェンス ```
     if (trimmed.startsWith('```')) {
       flushParagraph(para);
-      para = [];
+      para = '';
       const code: string[] = [];
-      i++;
-      while (i < lines.length && !lines[i]!.trim().startsWith('```')) {
-        code.push(lines[i]!);
-        i++;
+      i = i + 1;
+      while (i < lines.length && !at(lines, i).trim().startsWith('```')) {
+        code.push(at(lines, i));
+        i = i + 1;
       }
-      i++; // 終了フェンスを飛ばす
+      i = i + 1;
+      // 終了フェンスを飛ばす
       blocks.push({ type: 'code', text: code.join('\n') });
       continue;
     }
-
     // 空行 → 段落区切り
     if (trimmed === '') {
       flushParagraph(para);
-      para = [];
-      i++;
+      para = '';
+      i = i + 1;
       continue;
     }
-
     // 見出し # .. ######
     // Stryker disable next-line Regex: `$` を落としても差が出ない —— `.` は改行に
     // 一致せず、渡すのは 1 行を trim した文字列なので `(.*)` が既に行末まで届く。
     // 意図 (行末までが本文) を示すために残す。
     const h = /^(#{1,6})\s+(.*)$/.exec(trimmed);
-    if (h) {
+    if (h !== null) {
       flushParagraph(para);
-      para = [];
-      blocks.push({ type: 'heading', level: h[1]!.length, spans: parseInline(h[2]!) });
-      i++;
+      para = '';
+      blocks.push({ type: 'heading', level: group(h, 1).length, spans: parseInline(group(h, 2)) });
+      i = i + 1;
       continue;
     }
-
     // 表: ヘッダ行 + 区切り行
-    if (trimmed.includes('|') && i + 1 < lines.length && isTableSeparator(lines[i + 1]!)) {
+    if (trimmed.includes('|') && i + 1 < lines.length && isTableSeparator(at(lines, i + 1))) {
       flushParagraph(para);
-      para = [];
-      const headers = splitTableRow(trimmed).map(parseInline);
-      i += 2;
+      para = '';
+      const headers = splitTableRow(trimmed).map((c) => parseInline(c));
+      i = i + 2;
       const rows: InlineToken[][][] = [];
       // 空行の判定は要らない: trim が空なら `includes('|')` が先に false になる。
       // Stryker disable next-line MethodExpression: `trim()` の有無は `includes('|')`
       // の答えを変えない (前後の空白は縦棒の有無に影響しない)。書き方を周りの
       // 行と揃えるために残す。
-      while (i < lines.length && lines[i]!.trim().includes('|')) {
-        rows.push(splitTableRow(lines[i]!).map(parseInline));
-        i++;
+      while (i < lines.length && at(lines, i).trim().includes('|')) {
+        rows.push(splitTableRow(at(lines, i)).map((c) => parseInline(c)));
+        i = i + 1;
       }
       blocks.push({ type: 'table', headers, rows });
       continue;
     }
-
     // 箇条書き (- / * / 1.)
     // ここは「箇条書きが始まるか」だけを見る。項目の本文は下のループが
     // 取り直すので、捕獲群は要らない (`exec` だと使われない捕獲が残り、
@@ -250,27 +279,30 @@ export function parseMarkdown(src: string): Block[] {
     const ordered = /^\d+\.\s+/.test(trimmed);
     if (isBullet || ordered) {
       flushParagraph(para);
-      para = [];
+      para = '';
       const isOrdered = ordered;
       const items: InlineToken[][] = [];
       while (i < lines.length) {
-        const t = lines[i]!.trim();
+        const t = at(lines, i).trim();
         // Stryker disable next-line Regex: `$` は上の見出しと同じ理由で等価。
         const mb = /^[-*]\s+(.*)$/.exec(t);
         // Stryker disable next-line Regex: `$` は上と同じ理由で等価。
         const mo = /^\d+\.\s+(.*)$/.exec(t);
-        if (isOrdered && mo) items.push(parseInline(mo[1]!));
-        else if (!isOrdered && mb) items.push(parseInline(mb[1]!));
-        else break;
-        i++;
+        if (isOrdered && mo !== null) {
+          items.push(parseInline(group(mo, 1)));
+        } else if (!isOrdered && mb !== null) {
+          items.push(parseInline(group(mb, 1)));
+        } else {
+          break;
+        }
+        i = i + 1;
       }
       blocks.push({ type: 'list', ordered: isOrdered, items });
       continue;
     }
-
     // 通常テキスト
-    para.push(trimmed);
-    i++;
+    para = para === '' ? trimmed : para + ' ' + trimmed;
+    i = i + 1;
   }
   flushParagraph(para);
   // ブロック数と描く要素の重さの両方で頭打ちにする。上限**ちょうど**の応答は 1 つも欠けない。
@@ -278,11 +310,9 @@ export function parseMarkdown(src: string): Block[] {
   let weight = 0;
   for (const b of blocks) {
     const w = blockWeight(b);
-    if (weight + w > MAX_RENDER_WEIGHT) {
-      return [...kept, { type: 'paragraph', spans: [{ text: BLOCKS_TRUNCATED_NOTICE }] }];
-    }
+    if (weight + w > MAX_RENDER_WEIGHT) return [...kept, { type: 'paragraph', spans: [{ text: BLOCKS_TRUNCATED_NOTICE }] }];
     kept.push(b);
-    weight += w;
+    weight = weight + w;
   }
   return kept;
 }
