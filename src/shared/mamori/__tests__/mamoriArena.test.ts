@@ -476,6 +476,16 @@ describe(`再戦と連打 (${LEVEL})`, () => {
     expect(rm.variantOf({ parts, op: 'concurrent', rng: evo.mulberry32(1) })).toBeNull();
   });
 
+  it('★ 重ね撃ち (stack): 別の変え方を 2〜3 回続けて掛ける (元より増える・同じ種は同じ・下限を満たさなければ null)', () => {
+    const outs = Array.from({ length: 12 }, (_, i) => rm.variantOf({ parts, op: 'stack', rng: evo.mulberry32(i + 1) }));
+    const ok = outs.filter(Boolean);
+    expect(ok.length).toBeGreaterThan(0);
+    expect(ok.some((v) => v!.body.length > parts.body.length)).toBe(true);
+    // 順序の入れ替えを 2 回掛けると元に戻ることもある (それは許す)。ほとんどは元と違う
+    expect(ok.filter((v) => JSON.stringify(v!.body) !== JSON.stringify(parts.body)).length).toBeGreaterThan(ok.length / 2);
+    expect(rm.variantOf({ parts, op: 'stack', rng: evo.mulberry32(4) })).toEqual(rm.variantOf({ parts, op: 'stack', rng: evo.mulberry32(4) }));
+  });
+
   it('同じ種は同じ変種・別の視点 (literal-swap / graft) は元と違う・await を持つ動きを移植したら attack は async になる', () => {
     const a = rm.variantOf({ parts, op: 'literal-swap', rng: evo.mulberry32(9) })!;
     const b = rm.variantOf({ parts, op: 'literal-swap', rng: evo.mulberry32(9) })!;

@@ -16,7 +16,7 @@ const lenses = require('./mamori-arena-lenses.cjs');
 const wave = require('./mamori-arena-wave.cjs');
 
 const NUMBER_SWAPS = ['0', '1', '(0 - 1)', '255', '65536', '1000000007', '0.5'];
-const OPS = ['literal-swap', 'number-swap', 'reverse', 'rotate', 'burst', 'alternate', 'interleave', 'graft', 'echo-last', 'double-then-swap', 'concurrent'];
+const OPS = ['literal-swap', 'number-swap', 'reverse', 'rotate', 'burst', 'alternate', 'interleave', 'graft', 'echo-last', 'double-then-swap', 'concurrent', 'stack'];
 
 const STRING_RE = /"((?:[^"\\\n]|\\.)*)"/g;
 const NUMBER_RE = /(?<![\w.])\d+(?:\.\d+)?(?![\w.])/g;
@@ -107,6 +107,23 @@ function variantOf({ parts, op, rng, donors = [], learned = [] }) {
       const n = pick([8, 24], rng);
       const calls = Array.from({ length: n }, () => m[1]).join(', ');
       return { body: [...steps.slice(0, i), `  try { r.push(await Promise.all([${calls}])); } catch (e) { r.push(e); }`, ...steps.slice(i + 1)] };
+    }
+    // 重ね撃ち: 別の変え方を 2〜3 回、続けて同じ攻撃へ掛ける (視点の積み重ね・同じ場所へ手を変えて立て続けに)
+    case 'stack': {
+      const base = OPS.filter((o) => o !== 'stack' && o !== 'graft');
+      let cur = { head: parts.head, body: steps };
+      let extraHead = [];
+      let applied = 0;
+      const want = 2 + Math.floor(rng() * 2);
+      for (let t = 0; t < want * 3 && applied < want; t++) {
+        const next = variantOf({ parts: cur, op: pick(base, rng), rng, donors, learned });
+        if (!next) continue;
+        const grown = next.body;
+        cur = { head: cur.head, body: grown.length > 160 ? grown.filter((_, idx) => idx < 160) : grown };
+        extraHead = [...extraHead, ...(next.extraHead || [])];
+        applied++;
+      }
+      return applied >= 2 ? { body: cur.body, extraHead } : null;
     }
     default: return null;
   }
