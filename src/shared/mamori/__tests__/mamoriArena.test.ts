@@ -523,7 +523,7 @@ describe(`再戦と連打 (${LEVEL})`, () => {
   it('★ 再戦: 秘密を返す箱 (LEAKY) には、前の攻撃のどの変種でも stolen になる (視点を変えても穴は穴・対策の根拠が残る)', () => {
     const src = evo.programOf('leaky', [{ k: 'call', fn: 'dump', args: [], aw: false }], 'seed');
     const corpus = { attacks: [{ name: 'seed-dump', targets: ['leaky'], firstVerdict: 'stolen', source: src }] };
-    const r = rm.rematchBox({ compiler, box: LEAKY, corpus, seed: 12, per: 2, variants: 5, level: LEVEL });
+    const r = rm.rematchBox({ compiler, box: LEAKY, corpus, seed: 12, per: 2, variants: 24, level: LEVEL });
     expect(r.wins.length).toBeGreaterThan(0);
     expect(r.wins.every((w) => w.verdict === 'stolen')).toBe(true);
     expect(r.wins[0]!.from).toBe('seed-dump');
