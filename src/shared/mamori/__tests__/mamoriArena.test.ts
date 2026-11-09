@@ -1,6 +1,6 @@
 import { createRequire } from 'node:module';
 import { existsSync } from 'node:fs';
-import { describe, expect, it } from 'vitest';
+import { describe as describeAlways, expect, it } from 'vitest';
 import ts from 'typescript';
 import { compileProject, formatDiagnostic } from '../compile';
 import { readOriginalSource } from '../../__tests__/originalSource';
@@ -23,6 +23,10 @@ import { readOriginalSource } from '../../__tests__/originalSource';
  * 同じ検査を行い、どちらの強さで走ったかを題名に出す (弱い箱で黙って強い箱の結果を名乗らない)。
  */
 
+// 変異検査 (Stryker) の worker では走らせない: この検査は 24 箱 × 数百の攻撃を実プロセスで再生し (約 6 分)、コンパイラのどの変異体も覆うので、
+// 変異体 1 つごとに 6 分の再生が走って測定が数時間かかる (2026-11-09 実測: Mamori 0.24 の parser / emit の測定が 2 時間の上限に当たった)。
+// コンパイラの変異体は mamori の単体検査 (mamoriV*.test.ts ほか) が殺す。対戦場の再生は通常の `npm test` と CI が走らせる。
+const describe = describeAlways.skipIf(Boolean(process.env.STRYKER_MUTATOR_WORKER));
 const require_ = createRequire(import.meta.url);
 const arena = require_('../../../../scripts/lib/mamori-arena-judge.cjs') as {
   play: (o: { compiler: unknown; box: unknown; attackSrc: string; seed?: number; level?: string }) => { verdict: string; side: string; detail: string; rules?: string[] };
