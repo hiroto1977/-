@@ -199,7 +199,7 @@ describe(`自律学習・自律進化 (${LEVEL})`, () => {
 
   it('★ 青の弱体化 (対照): 秘密を返す関数を足した箱・秘密を export した箱を、赤が必ず捕まえる (物差しと赤の目が生きている)', () => {
     const ops = evo.weaken(VAULT.source).map((w) => w.op);
-    expect(ops).toEqual(expect.arrayContaining(['export-secret', 'leak-fn', 'leak-prefix', 'leak-hook', 'leak-ticks']));
+    expect(ops).toEqual(expect.arrayContaining(['export-secret', 'leak-fn', 'leak-prefix', 'leak-hook', 'leak-ticks', 'leak-redos', 'leak-hang']));
     const blue = evo.evolveBlue({ compiler, box: VAULT, seed: 3, level: LEVEL });
     expect(blue.length).toBeGreaterThan(0);
     for (const b of blue) expect(b.caught, `${b.op} を赤が捕まえられなかった`).toBe(true);
@@ -335,6 +335,26 @@ describe(`観点 (レンズ) × 多層の津波 (${LEVEL})`, () => {
     expect((r.stats.nightmare as { held?: number } | undefined)?.held ?? 0, '計時の攻めが箱の奥まで届かない (対照が空になる)').toBeGreaterThan(0);
   }, 120_000);
 
+  it('★ 悪夢 2 (戻らなくさせる): 数十文字の入力で戻らなくなる口 (破滅的な正規表現) と、戻らない関数を無期限に待つ口は、速く終わる攻めで stalled (口の欠陥) として破られる', () => {
+    const redos = { name: 'redos', source: 'const SECRET = "@@SECRET@@";\nexport fn matchEvil(s: string) -> boolean { return /^(a+)+$/.test(s); }\nexport fn rec() -> string { return "@@REC_A@@"; }\n', spec: { contract: [{ fn: 'rec', args: [], expect: '@@REC_A@@' }] } };
+    const hang = { name: 'hang', source: 'const SECRET = "@@SECRET@@";\nexport async fn hangOn(cb: (s: string) => Promise<string>) -> Promise<string> { return await cb("x"); }\nexport fn rec() -> string { return "@@REC_A@@"; }\n', spec: { contract: [{ fn: 'rec', args: [], expect: '@@REC_A@@' }] } };
+    for (const box of [redos, hang]) {
+      const r = wave.runBoxWave({ compiler, box, seed: 3, waves: 1, intensity: 1, level: LEVEL });
+      expect(r.wins.some((w) => w.verdict === 'stalled' && w.lens.includes('nightmare')), `${box.name}: 戻らない口を stalled として捕まえられない`).toBe(true);
+    }
+  }, 180_000);
+
+  it('★ 悪夢 2 への対策: 入力の長さを縛り線形に走査する箱 (redos-guard)・戻らない関数を有限回の tick で打ち切る箱 (bounded-await と直した async-vault) は stalled にならない', () => {
+    const p = `${arena.REPO_ROOT}/security/mamori-arena/corpus.json`;
+    const boxes = (JSON.parse(readOriginalSource(p)) as { boxes: { name: string; source: string; spec: unknown }[] }).boxes;
+    for (const name of ['redos-guard', 'bounded-await', 'async-vault']) {
+      const box = boxes.find((b) => b.name === name);
+      expect(box, `${name} の箱が記録に無い`).toBeTruthy();
+      const r = wave.runBoxWave({ compiler, box, seed: 3, waves: 1, intensity: 1, level: LEVEL });
+      expect(r.wins, name).toEqual([]);
+    }
+  }, 240_000);
+
   it('async の口 (export async fn と Promise を返すコールバック) も API に入る (盲点の回帰: async-vault は今まで一度も撃たれていなかった)', () => {
     const api = evo.parseExports('export async fn a(k: string) -> Promise<string> { return k; }\nexport async fn m(cb: (s: string) => Promise<string>) -> Promise<string> { return ""; }\n');
     expect(api.fns.map((f) => f.name)).toEqual(['a', 'm']);
@@ -411,6 +431,18 @@ describe(`戦いの記録の再生 (${LEVEL})`, () => {
     expect(corpus!.boxes.length).toBeGreaterThanOrEqual(4);
     expect(corpus!.attacks.length).toBeGreaterThanOrEqual(300);
   });
+
+  it('★ stalled で破られた攻めの回帰: 直した箱は同じ攻めでもう口が戻らなくならない (hang が再び出たら欠陥が戻っている)', () => {
+    const stalled = corpus!.attacks.filter((a) => (a as { firstVerdict?: string }).firstVerdict === 'stalled');
+    for (const atk of stalled) {
+      for (const name of (atk as { targets?: string[] }).targets ?? []) {
+        const box = corpus!.boxes.find((b) => b.name === name);
+        if (!box) continue;
+        const r = arena.play({ compiler, box, attackSrc: atk.source, seed: 7, level: LEVEL });
+        expect(r.verdict, `${atk.name} × ${name}`).not.toBe('hang');
+      }
+    }
+  }, 300_000);
 
   it('★ 記録した攻撃のどれも、どの箱からも奪えず壊せず、箱の外へも出ない (赤の得点 0)', () => {
     const breaches: string[] = [];

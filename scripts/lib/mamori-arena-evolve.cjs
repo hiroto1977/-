@@ -70,6 +70,8 @@ const ACB_HELPERS = {
   acbFalse: 'async fn acbFalse(s: string) -> Promise<boolean> { return false; }',
   acbZero: 'async fn acbZero(s: string) -> Promise<number> { return s.length; }',
   acbOne: 'async fn acbOne(s: string) -> Promise<number> { return 1; }',
+  // 決して解決しない Promise を返す (プールには入れない: 悪夢の観点だけが使う。口が呼び出し側の関数を無期限に待てば、その口は戻らない)
+  acbHang: 'fn acbHang(s: string) -> Promise<string> { return new Promise<string>((res: unknown) => { }); }',
 };
 const CALLBACKS_ASYNC = {
   string: ['acbEcho', 'acbThrow', 'acbDouble', 'acbEmpty'],
@@ -263,6 +265,10 @@ function weaken(source) {
     if (recKey) out.push({ op: 'leak-key', source: source + `\nexport fn unlockNow(k: string) -> string { if (k === "${recKey[1]}") { return SECRET; } return ""; }\n` });
     // 非同期の計時の漏えい: 秘密の先頭から何文字合っているかで await の回数が変わる口 (時計は言語が出さないので、イベントループの回数が唯一の時計になる)
     out.push({ op: 'leak-ticks', source: source + '\nexport async fn probeSlow(g: string) -> Promise<boolean> {\n  let i = 0;\n  while (i < 40) {\n    if (g.length > i && g.slice(i, i + 1) === SECRET.slice(i, i + 1)) { await Promise.resolve(0); } else { return false; }\n    i = i + 1;\n  }\n  return true;\n}\n' });
+    // 入力で止まる口 (破滅的な正規表現): 数十文字の入力で戻らなくなる。守る側の「入力の長さと形を先に縛る」を測る
+    out.push({ op: 'leak-redos', source: source + '\nexport fn matchEvil(s: string) -> boolean { return /^(a+)+$/.test(s); }\n' });
+    // 呼び出し側の関数を無期限に待つ口: 戻らない関数を渡されると、その口も戻らない (有限回の tick で打ち切らない await)
+    out.push({ op: 'leak-hang', source: source + '\nexport async fn hangOn(cb: (s: string) => Promise<string>) -> Promise<string> { return await cb("x"); }\n' });
     out.push({ op: 'leak-prefix', source: source + '\nexport fn hintNow() -> string { return SECRET.slice(0, 16); }\n' });
   }
   return out;
@@ -272,7 +278,7 @@ function weaken(source) {
 function evolveBlue({ compiler, box, seed, level = 'strong', maxMutants = 6, seen = new Set() }) {
   const results = [];
   // leak-ticks (await の回数の計時) は進化の赤 (動きの列) では原理的に撃てない —— 津波の「悪夢」の観点 (wave) が較正する
-  for (const w of weaken(box.source).filter((x) => x.op !== 'leak-ticks').slice(0, maxMutants)) {
+  for (const w of weaken(box.source).filter((x) => !['leak-ticks', 'leak-redos', 'leak-hang'].includes(x.op)).slice(0, maxMutants)) {
     const weak = { name: box.name + '+' + w.op, source: w.source, spec: box.spec };
     const r = evolveRed({ compiler, box: weak, gens: 1, pop: 6, seed, level, seen: new Set(seen) });
     results.push({ box: box.name, op: w.op, caught: r.wins.length > 0, verdict: r.wins[0] ? r.wins[0].verdict : null, program: r.wins[0] ? r.wins[0].program : null, plays: r.plays });

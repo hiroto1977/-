@@ -35,6 +35,8 @@ function runBoxWave({ compiler, box, seed, waves = 2, intensity = 6, level = 'st
       plays++;
       const s = stats[lensKey(it.lens)] || (stats[lensKey(it.lens)] = newStat());
       s.plays++;
+      // 速く終わるはずの攻め (fast) で口が戻らなかった = 口の側の欠陥 (入力で止まる・呼び出し側の関数を無期限に待つ)。可用性の破られ方なので赤の勝ち (stalled)
+      if (res.verdict === 'hang' && it.genome.some((m) => m.fast)) { s.red++; wins.push({ lens: it.lens, verdict: 'stalled', detail: '速く終わるはずの攻めで口が戻らなかった (期限 2.5 秒)', program: src }); continue; }
       if (res.side === 'red') { s.red++; wins.push({ lens: it.lens, verdict: res.verdict, detail: String(res.detail).slice(0, 200), program: src }); continue; }
       // 門前で返された (相手のエリアに無い名前へ飛んだ) = bounced。採点外だが、瞬間移動の攻めが跳ね返されたことの記録になる
       if (res.verdict === 'n/a') { s.bounced++; continue; }
@@ -84,6 +86,7 @@ function countermeasureOf(win) {
     case 'stolen': return { cause: '仮想データが返り値・例外・コールバックのどれかに載った', hardening: '秘密を返す口を gate + mint 越しにする / 返すのは digest だけにする / 例外の文面に値を載せない', lens };
     case 'destroyed': return { cause: '契約か組み込みの指紋が書き換わった', hardening: '凍結 (Object.freeze) を足す / 書き込める経路を module の外に出さない / 言語側なら M6 の書き換え口を塞ぐ', lens };
     case 'escaped': return { cause: '箱の外 (host の物) に届いた', hardening: '言語の穴: FORBIDDEN_MEMBERS / BUILTIN_MEMBERS / M4 の表に不足が無いかを先に破って回帰検査にする (台帳 T-xxx)', lens };
+    case 'stalled': return { cause: '口が入力・呼び出し側の関数で止まり戻らなかった (可用性)', hardening: '入力の長さと形を先に縛る / 破滅的な正規表現を使わず線形の走査にする / 呼び出し側の関数を待つ await は有限回の tick で打ち切る (race + 数える spin)', lens };
     default: return { cause: '判定 ' + win.verdict, hardening: '審判の出力を読み、規則を特定してから直す', lens };
   }
 }
