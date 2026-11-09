@@ -75,6 +75,12 @@
       "gates": [],
       "sinks": []
     },
+    "src/renderer/data/assistantMarkdown.mamori": {
+      "externals": [],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
     "src/renderer/network/liveRead.mamori": {
       "externals": [
         "pure ../../shared/api/cursor: fetchCursorSnapshotWith, DEFAULT_USAGE_DAYS",
