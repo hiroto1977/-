@@ -69,8 +69,8 @@ export interface CallbackReply {
   readonly status: number;
   readonly headers?: Record<string, string>;
   readonly body?: string;
-  /** `continue` = 待受を続ける / `resolve` = 認可コードで解決して閉じる / `reject` = 拒否して閉じる。 */
-  readonly settle: 'continue' | 'resolve' | 'reject';
+  /** false = 待受を続ける / true = 閉じる (`message` が在れば拒否・無ければ `code` / `state` で解決)。 */
+  readonly done: boolean;
   readonly code?: string;
   readonly state?: string;
   readonly message?: string;
@@ -115,8 +115,8 @@ export function hostListenForCallback(
   const server = http.createServer((req, res) => {
     const reply = decide(req.headers.host, req.url);
     res.writeHead(reply.status, reply.headers).end(reply.body);
-    if (reply.settle === 'continue') return;
-    if (reply.settle === 'reject') {
+    if (!reply.done) return;
+    if (reply.message !== undefined) {
       reject(new Error(reply.message));
     } else {
       resolve({ code: reply.code as string, state: reply.state as string });

@@ -485,7 +485,7 @@ const OAUTH_CALLBACK_WINDOW_MS = 5 * 60000;
  * `cancel()` と正規のコールバックの 3 つだけ (state-mismatch の枝が最初からそう書いている)。
  */
 export function decideCallbackReply(hostHeader: string | undefined, reqUrl: string | undefined, expectedState: string): CallbackReply {
-  if (!isLoopbackHost(hostHeader)) return { status: 400, headers: { 'Content-Type': 'text/plain' }, body: 'bad host', settle: 'continue' };
+  if (!isLoopbackHost(hostHeader)) return { status: 400, headers: { 'Content-Type': 'text/plain' }, body: 'bad host', done: false };
   // 多層防御: `classifyCallback` が投げたら **400 (非終端) に倒す**。
   // ここは攻撃者が任意の URL を送れる唯一の入口で、request listener の中の
   // 同期 throw は `uncaughtException` になり、main.ts に受け手が無いので
@@ -506,19 +506,19 @@ export function decideCallbackReply(hostHeader: string | undefined, reqUrl: stri
     // Stryker disable next-line StringLiteral
     outcome = classifyCallback(reqUrl ?? '/', expectedState);
   } catch {
-    return { status: 400, body: 'bad request', settle: 'continue' };
+    return { status: 400, body: 'bad request', done: false };
   }
   switch (outcome.kind) {
     case 'wrong-path':
       // 404 を返すだけ。数えない・閉じない (threat: T-062 · 上の注記)。
-      return { status: 404, settle: 'continue' };
+      return { status: 404, done: false };
     case 'state-mismatch':
       // Non-terminal: a forged callback (no state / wrong state) is
       // refused with 400, but the listener keeps waiting for the
       // legitimate provider callback. Without this, a local attacker
       // could DoS every OAuth flow by spraying the loopback port.
       // The 5-minute timeout remains the bound for this case.
-      return { status: 400, body: 'state mismatch', settle: 'continue' };
+      return { status: 400, body: 'state mismatch', done: false };
     case 'oauth-error':
       // State already validated before this branch — this IS the
       // legitimate provider responding with an error. Terminal.
@@ -530,12 +530,12 @@ export function decideCallbackReply(hostHeader: string | undefined, reqUrl: stri
       // 『ブラウザに中身を推測させない』と書いてある)。揃える:
       //   - charset を明示 —— 無いと符号化の推測が残る
       //   - nosniff —— 宣言した text/plain を HTML と読み替えさせない
-      return { status: 400, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'X-Content-Type-Options': 'nosniff' }, body: 'OAuth error: ' + outcome.error, settle: 'reject', message: 'OAuth provider returned error: ' + outcome.error };
+      return { status: 400, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'X-Content-Type-Options': 'nosniff' }, body: 'OAuth error: ' + outcome.error, done: true, message: 'OAuth provider returned error: ' + outcome.error };
     case 'missing-params':
       // State validated → provider somehow omitted `code`. Terminal.
-      return { status: 400, body: 'missing code', settle: 'reject', message: 'OAuth callback missing code' };
+      return { status: 400, body: 'missing code', done: true, message: 'OAuth callback missing code' };
     case 'success':
-      return { status: 200, headers: { 'Content-Type': 'text/html; charset=utf-8' }, body: CALLBACK_HTML, settle: 'resolve', code: outcome.code, state: outcome.state };
+      return { status: 200, headers: { 'Content-Type': 'text/html; charset=utf-8' }, body: CALLBACK_HTML, done: true, code: outcome.code, state: outcome.state };
   }
 }
 
