@@ -3080,6 +3080,69 @@
         "summary": "再輸出 `export { a, type T } from \"./m\";` / `export { x };` を足した。再輸出は TypeScript の呼び手のためで Mamori の use では引けない。足す前に 8 通りで破り、組み直しの実測で 9 つ目 (use default の再輸出で外の口が漏れる) を見つけて M6 で塞いだ。検査は分岐の無い形へ組み直して等価変異を無くし、parser / checker / emit は変異検査 100%。"
       },
       "deviation": "利用者の「1～5を導入」で、brief の自動選択ではなく手で選んだ。0.25 の最初の実装は use default の再輸出を通していたので、変異検査の組み直しの途中で塞いだ"
+    },
+    {
+      "id": "MG-052",
+      "date": "2026-11-09",
+      "kind": "port",
+      "target": "src/renderer/data/assistantMarkdown.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/renderer/data/assistantMarkdown.ts",
+      "version": "0.25",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "non-null",
+        "c-for",
+        "compound-assign"
+      ],
+      "ported": [
+        "src/renderer/data/assistantMarkdown.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "`lines[i]` / `m[k]` の結果 (計算した鍵) を戻り値に入れる (移植で実際に当たった)",
+          "result": "refused"
+        },
+        {
+          "tried": "`let` の配列へ `.push` して段落を溜める (移植で実際に当たった)",
+          "result": "refused"
+        },
+        {
+          "tried": "`t.constructor(\"return 1\")()` で文字列をコードとして走らせる",
+          "result": "refused"
+        },
+        {
+          "tried": "テンプレート文字列 `<b>${t}</b>` で HTML を組む",
+          "result": "refused"
+        },
+        {
+          "tried": "`document.body.innerHTML = t` で DOM へ直に書く",
+          "result": "refused"
+        },
+        {
+          "tried": "`m[1]!` の非 null 断定・`t as string` の型の書き換え",
+          "result": "refused"
+        },
+        {
+          "tried": "`extern sink { shell }` を `export { shell }` で再輸出",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 4,
+      "mutation": {
+        "files": [
+          "src/renderer/data/assistantMarkdown.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 914,
+        "reason": "draft PR #914 に載せる",
+        "summary": "モデル応答の Markdown 構文解析 assistantMarkdown.ts を Mamori 0.25 へ移した。非 null 断定は at / group (1 要素の切り出しを toString で取る) に集め、段落の溜め場は let 配列への push が M6 で断られるので空白でつないだ 1 本の文字列に、i++ は i = i + 1 へ書き直した。元の TypeScript と 4000 本の乱数入力 + 境界の標本で差分比較し一致、既存の検査は編集なしで緑。範囲の確かめは at の空文字に任せて冗長な守りを消し、変異検査は 100%。対照 4 方向 (at / group / 段落の連結 / A-413 の重さの天井) がすべて鳴る。"
+      },
+      "deviation": null
     }
   ]
 }

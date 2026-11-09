@@ -4081,6 +4081,14 @@
       "leafCount": 206,
       "note": "update integrity-chain.cjs,assistantMarkdown.mamori,assistantMarkdown.ts",
       "hash": "fbdb69410c9d168cd9b6c3c42885be554426dde22d05e2bf05f51945a69c9b71"
+    },
+    {
+      "index": 484,
+      "prevHash": "fbdb69410c9d168cd9b6c3c42885be554426dde22d05e2bf05f51945a69c9b71",
+      "merkleRoot": "b83969d9a5df12242a374015dfd5925bdbf82be9476d831e4054770ed31cd232",
+      "leafCount": 206,
+      "note": "update assistantMarkdown.mamori,assistantMarkdown.ts",
+      "hash": "6997d6e4f86d8b310b3974731677109188fe4c9fa9556dbc5887053a136a214e"
     }
   ],
   "tipManifest": {
@@ -4179,8 +4187,8 @@
     "src/preload/preloadHost.ts": "c2622f6493c10176ce3a3464bbbfa32cb8c593f395677c7bc09f2fe335696cfa",
     "src/renderer/components/VettedImg.tsx": "d55ffb54b76cafa0a314c2a6ac1704e9a7f35d4770bd159e0c489e6f272cda27",
     "src/renderer/components/VettedLink.tsx": "5907fa72ba0c5f5ba1d9035aa8be67f3e72d872c69b83a57d8a9862f0f73b7a1",
-    "src/renderer/data/assistantMarkdown.mamori": "fc4dcddee0f2b20509f7c231d69ef0bc4d1cd7cd9d81ef5480f8e890573e7f4e",
-    "src/renderer/data/assistantMarkdown.ts": "9b456d7957955c04431204600ba08a6577fab2cc6a149b25c22a9860b686f7a4",
+    "src/renderer/data/assistantMarkdown.mamori": "692c760677900a9709b5af8645f0ba1f69feb4930d82c905932eca11def66049",
+    "src/renderer/data/assistantMarkdown.ts": "164eef1336cdb48e2fc2570f8bb1037b4d8e43c266a47cfb4cb06189c231d529",
     "src/renderer/data/localWrite.ts": "5f8ce8c143e6213eebc1d3214c6701e5d0d0bf59a00d9c2cee0911733d398ac8",
     "src/renderer/data/recordCipher.ts": "fc1669348ae06264b58391730ea2fa682d6a9032f44e7c821b507e1533c58ed4",
     "src/renderer/fs/fsa.ts": "d38f695c737809da99791ab61051dca1718c8827277a293e197e2f3ff4271054",
