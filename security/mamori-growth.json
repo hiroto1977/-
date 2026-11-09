@@ -2866,6 +2866,48 @@
         "reason": "draft PR を作る",
         "summary": "httpLimits.ts を 0.23 へ移植。Response / 本文の読み取り / Uint8Array / TextDecoder / 時計と中断は Mamori に無い (setTimeout は pure で宣言できない) ので、判断も上限の数も持たない薄い host 壁 httpLimitsHost.ts を extern pure で読む。T extends RequestInit は制約が置けず egressInit<T> にして no-cors の判定を host に。変異検査の生存 7 件 (断りの文面・unref・AbortSignal.any が無い環境・no-cors の入力の幅) を値で留める検査を足し、両ファイル 100%。"
       }
+    },
+    {
+      "id": "MG-048",
+      "date": "2026-11-08",
+      "kind": "probe",
+      "target": "対戦場 (security/mamori-arena)",
+      "pickedBy": "manual",
+      "briefPick": "probe:arena",
+      "version": "0.23",
+      "features": [],
+      "added": [],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "既存の電池 315 弾 (グローバル名・メンバ脱出・静的状態・構文脱出・字句の罠) を守る側 21 箱へ総当たり (6615 戦)",
+          "result": "refused"
+        },
+        {
+          "tried": "箱の中から host の realm へ出る (URL 経由の constructor / process / require / fs / child_process / worker)",
+          "result": "refused"
+        },
+        {
+          "tried": "秘密を逆順・base64・16進・文字コード列・断片に変えて返す (奪取の変形)",
+          "result": "refused"
+        },
+        {
+          "tried": "組み込みの prototype / Object を書き換えて契約を壊す (破壊)",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 14,
+      "mutation": {
+        "unavailable": "この周は言語の元 (checker・parser・emit) を 1 行も変えていない。足したのは scripts/ の対戦場と審判・コーパス・回帰検査で、Stryker の mutate の外 (審判の判定は mamoriArena.test.ts の対照 14 件が持つ)。"
+      },
+      "report": {
+        "pr": null,
+        "reason": "draft PR を作る",
+        "summary": "仮想空間の対戦場を作った: 外側の箱 (unshare -rn + node --permission で fs/子/worker/網を閉じる) の中に内側の箱 (vm) を置き、守る側が仮想データを入れた箱を Mamori で書き、攻める側が Mamori で奪取・破壊を試みる。審判は奪取 (平文・逆順・base64・16進・文字コード列・断片)・破壊 (契約と組み込みの指紋)・脱出 (host の印・構造体の同一性) を判定し、実パイプラインと同じ tsc 型検査も通す。315 弾 × 21 箱 = 6615 戦で赤 0 / 青 6615。新しい穴は見つからず、審判の偽陽性 (URL 由来値の host 扱い・tsc を通さない型の穴) を直した。全戦はコーパス (351 攻撃・21 箱) に残し、回帰検査で再生する。"
+      },
+      "deviation": "利用者が『仮想空間で侵入側と防ぐ側に分かれて競い、戦いのデータを言語の学習に使う』ことを直接依頼したため、brief の選択 (移す壁が無い) ではなく対戦場を作った。"
     }
   ]
 }
