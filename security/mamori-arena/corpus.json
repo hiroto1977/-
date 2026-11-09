@@ -3,7 +3,7 @@
   "boxes": [
     {
       "name": "async-vault",
-      "source": "// 守りの仕組み: async の箱。非同期の取得は拒否も解決も秘密を含めない。await の途中で callback を受けても公開値だけ渡す。\nconst SECRET = \"@@SECRET@@\";\nconst NOTES = { a: \"@@REC_A@@\", b: \"@@REC_B@@\", c: \"@@REC_C@@\" };\n\nasync fn fetchInternal(k: string) -> Promise<string> {\n  if (k === \"a\") { return NOTES.a; }\n  if (k === \"b\") { return NOTES.b; }\n  if (k === \"c\") { return NOTES.c; }\n  throw new Error(\"missing\");\n}\nexport async fn fetchNote(k: string) -> Promise<string> {\n  try {\n    return await fetchInternal(k);\n  } catch (e) {\n    return \"\";\n  }\n}\nexport async fn mapNotes(cb: (s: string) => Promise<string>) -> Promise<string> {\n  let out = \"\";\n  try {\n    out = await cb(NOTES.a);\n  } catch (e) {\n    out = \"cb-failed\";\n  }\n  if (typeof out !== \"string\") { return \"\"; }\n  return out;\n}\nexport async fn authorize(s: string) -> Promise<boolean> { return s === SECRET; }\n",
+      "source": "// 守りの仕組み: async の箱。非同期の取得は拒否も解決も秘密を含めない。await の途中で callback を受けても公開値だけ渡す。\nconst SECRET = \"@@SECRET@@\";\nconst NOTES = { a: \"@@REC_A@@\", b: \"@@REC_B@@\", c: \"@@REC_C@@\" };\n\nasync fn fetchInternal(k: string) -> Promise<string> {\n  if (k === \"a\") { return NOTES.a; }\n  if (k === \"b\") { return NOTES.b; }\n  if (k === \"c\") { return NOTES.c; }\n  throw new Error(\"missing\");\n}\nexport async fn fetchNote(k: string) -> Promise<string> {\n  try {\n    return await fetchInternal(k);\n  } catch (e) {\n    return \"\";\n  }\n}\n// 呼び出し側の関数を待つ await は、有限回の tick (spin) と競わせて打ち切る。戻らない関数を渡されても口は戻る (悪夢の周 4: 無期限に待つ口は stalled)\nasync fn spin(n: number) -> Promise<string> {\n  let i = 0;\n  while (i < n) { await Promise.resolve(0); i = i + 1; }\n  return \"timeout\";\n}\nexport async fn mapNotes(cb: (s: string) => Promise<string>) -> Promise<string> {\n  let out = \"\";\n  try {\n    out = await Promise.race([cb(NOTES.a), spin(2000)]);\n  } catch (e) {\n    out = \"cb-failed\";\n  }\n  if (typeof out !== \"string\") { return \"\"; }\n  return out;\n}\nexport async fn authorize(s: string) -> Promise<boolean> { return s === SECRET; }\n",
       "spec": {
         "contract": [
           {
@@ -705,6 +705,46 @@
             "fn": "checkAsync",
             "args": [
               "x"
+            ],
+            "expect": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "bounded-await",
+      "source": "// 守りの仕組み: 呼び出し側の関数を待つ await を、有限回の tick と競わせて打ち切る (race + spin)。\n// 決して戻らない関数を渡されても口は戻る。戻り値は型と長さを確かめてから使う。\nconst SECRET = \"@@SECRET@@\";\nconst NOTE = \"@@REC_A@@\";\n\nasync fn spin(n: number) -> Promise<string> {\n  let i = 0;\n  while (i < n) { await Promise.resolve(0); i = i + 1; }\n  return \"timeout\";\n}\nexport async fn mapNote(cb: (s: string) => Promise<string>) -> Promise<string> {\n  try {\n    const winner = await Promise.race([cb(NOTE), spin(2000)]);\n    if (typeof winner !== \"string\") { return \"\"; }\n    return winner.length > 64 ? \"\" : winner;\n  } catch (e) {\n    return \"cb-failed\";\n  }\n}\nexport fn rec() -> string { return NOTE; }\n",
+      "spec": {
+        "contract": [
+          {
+            "fn": "rec",
+            "args": [],
+            "expect": "@@REC_A@@"
+          }
+        ]
+      }
+    },
+    {
+      "name": "redos-guard",
+      "source": "// 守りの仕組み: 入力の長さを先に縛り、形の検査は破滅的な正規表現ではなく線形の走査で行う。\n// 数十文字の「悪い形」の入力で口が戻らなくなること (ReDoS) を、設計で作らない。\nconst SECRET = \"@@SECRET@@\";\nconst REC = \"@@REC_A@@\";\nconst MAX = 64;\n\nexport fn matchSafe(s: string) -> boolean {\n  if (s.length > MAX) { return false; }\n  let i = 0;\n  while (i < s.length) {\n    if (s.slice(i, i + 1) !== \"a\") { return false; }\n    i = i + 1;\n  }\n  return true;\n}\nexport fn rec() -> string { return REC; }\n",
+      "spec": {
+        "contract": [
+          {
+            "fn": "rec",
+            "args": [],
+            "expect": "@@REC_A@@"
+          },
+          {
+            "fn": "matchSafe",
+            "args": [
+              "aaa"
+            ],
+            "expect": true
+          },
+          {
+            "fn": "matchSafe",
+            "args": [
+              "aab"
             ],
             "expect": false
           }
@@ -5417,7 +5457,7 @@
       ],
       "firstVerdict": "held",
       "rules": [],
-      "detail": "観点 anxious の波で箱の奥まで届き新しい語を 1 個引いた攻め"
+      "detail": "観点 anxious の波で箱の奥まで届き新しい語を 2 個引いた攻め"
     },
     {
       "name": "wave-breakout-async-vault",
@@ -5511,7 +5551,7 @@
     },
     {
       "name": "wave-temporal-distrust-args",
-      "source": "// target: distrust-args\n// goal: steal / destroy (自律進化 lens-temporal-w1)\nuse { recB, recC, publicRec } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(publicRec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(publicRec()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: distrust-args\n// goal: steal / destroy (自律進化 lens-temporal-w1)\nuse { publicRec, recC, recB } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(publicRec()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(publicRec()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "distrust-args"
       ],
@@ -5521,13 +5561,13 @@
     },
     {
       "name": "wave-reverse-map-lookup",
-      "source": "// target: map-lookup\n// goal: steal / destroy (自律進化 lens-reverse-w1)\nuse { get, has, matches } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(get(\"runCall\")); } catch (e) { r.push(e); }\n  try { r.push(get(\"c\")); } catch (e) { r.push(e); }\n  try { r.push(get(\"rec-b-6aa4f2d23a\")); } catch (e) { r.push(e); }\n  try { r.push(get(\"rec-a-75e59322b5\")); } catch (e) { r.push(e); }\n  try { r.push(get(\"rec-a-be6fcb5cfe\")); } catch (e) { r.push(e); }\n  try { r.push(get(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(get(\"constructor\")); } catch (e) { r.push(e); }\n  try { r.push(get(\"rec-c-e067ffc2e8\")); } catch (e) { r.push(e); }\n  try { r.push(has(\"runCall\")); } catch (e) { r.push(e); }\n  try { r.push(has(\"c\")); } catch (e) { r.push(e); }\n  try { r.push(has(\"rec-b-6aa4f2d23a\")); } catch (e) { r.push(e); }\n  try { r.push(has(\"rec-a-75e59322b5\")); } catch (e) { r.push(e); }\n  try { r.push(has(\"rec-a-be6fcb5cfe\")); } catch (e) { r.push(e); }\n  try { r.push(has(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(has(\"constructor\")); } catch (e) { r.push(e); }\n  try { r.push(has(\"rec-c-e067ffc2e8\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"runCall\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"c\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"rec-b-6aa4f2d23a\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"rec-a-75e59322b5\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"rec-a-be6fcb5cfe\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"constructor\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"rec-c-e067ffc2e8\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: map-lookup\n// goal: steal / destroy (自律進化 lens-reverse-w0)\nuse { get } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(get(\"a\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "map-lookup"
       ],
       "firstVerdict": "held",
       "rules": [],
-      "detail": "観点 reverse の波で箱の奥まで届き新しい語を 2 個引いた攻め"
+      "detail": "観点 reverse の波で箱の奥まで届き新しい語を 1 個引いた攻め"
     },
     {
       "name": "wave-abstract-map-lookup",
@@ -5651,7 +5691,7 @@
     },
     {
       "name": "wave-layered-const-closure",
-      "source": "// target: const-closure\n// goal: steal / destroy (自律進化 lens-layered-w0)\nuse { makeReader, record, makeMatcher } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push([makeReader() === makeReader(), String(makeReader()).length, String(makeReader()).length, String(makeReader()).length]); } catch (e) { r.push(e); }\n  try { r.push(record(0)); } catch (e) { r.push(e); }\n  try { r.push(makeReader()); } catch (e) { r.push(e); }\n  try { r.push(makeMatcher()); } catch (e) { r.push(e); }\n  try { r.push(record(0)); } catch (e) { r.push(e); }\n  try { r.push(makeReader()); } catch (e) { r.push(e); }\n  try { r.push(makeMatcher()); } catch (e) { r.push(e); }\n  try { r.push(makeReader()); } catch (e) { r.push(e); }\n  try { r.push(record(0)); } catch (e) { r.push(e); }\n  try { r.push(makeMatcher()); } catch (e) { r.push(e); }\n  try { r.push(makeReader()); } catch (e) { r.push(e); }\n  try { r.push(record(0)); } catch (e) { r.push(e); }\n  try { r.push(makeMatcher()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: const-closure\n// goal: steal / destroy (自律進化 lens-layered-w1)\nuse { record, makeMatcher, makeReader } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(record(0)); } catch (e) { r.push(e); }\n  try { r.push(makeMatcher()); } catch (e) { r.push(e); }\n  try { r.push(makeReader()); } catch (e) { r.push(e); }\n  try { r.push(record(0)); } catch (e) { r.push(e); }\n  try { r.push(makeMatcher()); } catch (e) { r.push(e); }\n  try { r.push(makeReader()); } catch (e) { r.push(e); }\n  try { r.push(makeReader()); } catch (e) { r.push(e); }\n  try { r.push(record(0)); } catch (e) { r.push(e); }\n  try { r.push(makeMatcher()); } catch (e) { r.push(e); }\n  try { r.push(makeReader()); } catch (e) { r.push(e); }\n  try { r.push(record(0)); } catch (e) { r.push(e); }\n  try { r.push(makeMatcher()); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "const-closure"
       ],
@@ -5661,7 +5701,7 @@
     },
     {
       "name": "wave-temporal-const-closure",
-      "source": "// target: const-closure\n// goal: steal / destroy (自律進化 lens-temporal-w1)\nuse { makeReader, makeMatcher, record } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(makeReader()); } catch (e) { r.push(e); }\n  try { r.push(makeMatcher()); } catch (e) { r.push(e); }\n  try { r.push(record(0)); } catch (e) { r.push(e); }\n  try { r.push(makeReader()); } catch (e) { r.push(e); }\n  try { r.push(makeMatcher()); } catch (e) { r.push(e); }\n  try { r.push(record(0)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: const-closure\n// goal: steal / destroy (自律進化 lens-temporal-w1)\nuse { makeReader, record, makeMatcher } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(makeReader()); } catch (e) { r.push(e); }\n  try { r.push(record(0)); } catch (e) { r.push(e); }\n  try { r.push(makeMatcher()); } catch (e) { r.push(e); }\n  try { r.push(makeReader()); } catch (e) { r.push(e); }\n  try { r.push(record(0)); } catch (e) { r.push(e); }\n  try { r.push(makeMatcher()); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "const-closure"
       ],
@@ -5761,17 +5801,17 @@
     },
     {
       "name": "wave-temporal-readonly-records",
-      "source": "// target: readonly-records\n// goal: steal / destroy (自律進化 lens-temporal-w1)\nuse { first, second, third, all, byName, probe } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(first()); } catch (e) { r.push(e); }\n  try { r.push(second()); } catch (e) { r.push(e); }\n  try { r.push(third()); } catch (e) { r.push(e); }\n  try { r.push(all()); } catch (e) { r.push(e); }\n  try { r.push(byName()); } catch (e) { r.push(e); }\n  try { r.push(probe(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(first()); } catch (e) { r.push(e); }\n  try { r.push(second()); } catch (e) { r.push(e); }\n  try { r.push(third()); } catch (e) { r.push(e); }\n  try { r.push(all()); } catch (e) { r.push(e); }\n  try { r.push(byName()); } catch (e) { r.push(e); }\n  try { r.push(probe(\"a\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: readonly-records\n// goal: steal / destroy (自律進化 lens-temporal-w0)\nuse { all, byName, first, second, third, probe } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(all()); } catch (e) { r.push(e); }\n  try { r.push(byName()); } catch (e) { r.push(e); }\n  try { r.push(first()); } catch (e) { r.push(e); }\n  try { r.push(second()); } catch (e) { r.push(e); }\n  try { r.push(third()); } catch (e) { r.push(e); }\n  try { r.push(probe(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(probe(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(third()); } catch (e) { r.push(e); }\n  try { r.push(second()); } catch (e) { r.push(e); }\n  try { r.push(first()); } catch (e) { r.push(e); }\n  try { r.push(byName()); } catch (e) { r.push(e); }\n  try { r.push(all()); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "readonly-records"
       ],
       "firstVerdict": "held",
       "rules": [],
-      "detail": "観点 temporal の波で箱の奥まで届き新しい語を 3 個引いた攻め"
+      "detail": "観点 temporal の波で箱の奥まで届き新しい語を 1 個引いた攻め"
     },
     {
       "name": "wave-layered-readonly-records",
-      "source": "// target: readonly-records\n// goal: steal / destroy (自律進化 lens-layered-w0)\nuse { byName, all, first, second, third, probe } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(byName()); } catch (e) { r.push(e); }\n  try { r.push(all()); } catch (e) { r.push(e); }\n  try { r.push(byName()); } catch (e) { r.push(e); }\n  try { r.push(first()); } catch (e) { r.push(e); }\n  try { r.push(second()); } catch (e) { r.push(e); }\n  try { r.push(third()); } catch (e) { r.push(e); }\n  try { r.push(probe(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(all()); } catch (e) { r.push(e); }\n  try { r.push(byName()); } catch (e) { r.push(e); }\n  try { r.push(first()); } catch (e) { r.push(e); }\n  try { r.push(second()); } catch (e) { r.push(e); }\n  try { r.push(third()); } catch (e) { r.push(e); }\n  try { r.push(probe(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(probe(\"0\")); } catch (e) { r.push(e); }\n  try { r.push(probe(\"1\")); } catch (e) { r.push(e); }\n  try { r.push(probe(\"2\")); } catch (e) { r.push(e); }\n  try { r.push(probe(\"3\")); } catch (e) { r.push(e); }\n  try { r.push(probe(\"4\")); } catch (e) { r.push(e); }\n  try { r.push(probe(\"5\")); } catch (e) { r.push(e); }\n  try { r.push(probe(\"6\")); } catch (e) { r.push(e); }\n  try { r.push(probe(\"7\")); } catch (e) { r.push(e); }\n  try { r.push(probe(\"8\")); } catch (e) { r.push(e); }\n  try { r.push(probe(\"9\")); } catch (e) { r.push(e); }\n  try { r.push(probe(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(probe(\"b\")); } catch (e) { r.push(e); }\n  try { r.push(probe(\"c\")); } catch (e) { r.push(e); }\n  try { r.push(probe(\"d\")); } catch (e) { r.push(e); }\n  try { r.push(probe(\"e\")); } catch (e) { r.push(e); }\n  try { r.push(probe(\"f\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: readonly-records\n// goal: steal / destroy (自律進化 lens-layered-w0)\nuse { probe, first, third, all, second, byName } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(probe(\"111111111111111111111111111111x\")); } catch (e) { r.push(e); }\n  try { r.push(first()); } catch (e) { r.push(e); }\n  try { r.push(third()); } catch (e) { r.push(e); }\n  try { r.push(all()); } catch (e) { r.push(e); }\n  try { r.push(second()); } catch (e) { r.push(e); }\n  try { r.push(byName()); } catch (e) { r.push(e); }\n  try { r.push(probe(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(first()); } catch (e) { r.push(e); }\n  try { r.push(third()); } catch (e) { r.push(e); }\n  try { r.push(all()); } catch (e) { r.push(e); }\n  try { r.push(second()); } catch (e) { r.push(e); }\n  try { r.push(byName()); } catch (e) { r.push(e); }\n  try { r.push(probe(\"a\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "readonly-records"
       ],
@@ -5791,7 +5831,7 @@
     },
     {
       "name": "wave-layered-token",
-      "source": "// target: token\n// goal: steal / destroy (自律進化 lens-layered-w1)\nuse { ping, issue } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(issue(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(issue(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(issue(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(issue(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(issue(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(issue(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(issue(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(issue(\"a\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: token\n// goal: steal / destroy (自律進化 lens-layered-w1)\nuse { issue, ping } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(issue(\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab\")); } catch (e) { r.push(e); }\n  try { r.push(issue(\"rec-a-3ada34996c\")); } catch (e) { r.push(e); }\n  try { r.push(issue(\"@@REC_A@@\")); } catch (e) { r.push(e); }\n  try { r.push(issue(\"rec-a-ed6329477d\")); } catch (e) { r.push(e); }\n  try { r.push(issue(\"rec-a-c787287562\")); } catch (e) { r.push(e); }\n  try { r.push(issue(\"rec-a-f69903fb95\")); } catch (e) { r.push(e); }\n  try { r.push(issue(\"rec-a-e212289835\")); } catch (e) { r.push(e); }\n  try { r.push(issue(\"rec-a-579a4d42e0\")); } catch (e) { r.push(e); }\n  try { r.push(issue(\"anonymous\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(issue(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(issue(\"a\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "token"
       ],
@@ -5861,13 +5901,13 @@
     },
     {
       "name": "wave-layered-callback-sandbox",
-      "source": "// target: callback-sandbox\n// goal: steal / destroy (自律進化 lens-layered-w1)\nuse { apply, publicRecords, matches } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(apply((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  try { r.push(publicRecords()); } catch (e) { r.push(e); }\n  try { r.push(matches(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(publicRecords()); } catch (e) { r.push(e); }\n  try { r.push(apply((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  try { r.push(matches(\"rec-c-f\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"rec-c-f722da\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"rec-a-2f0b5bca4\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"rec-a-ad2434300f\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"rec-c-9251\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"rec-c-dd71e74af4\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"rec-a-0820671096\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"rec-c-fdfe45c585\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: callback-sandbox\n// goal: steal / destroy (自律進化 lens-layered-w0)\nuse { publicRecords, apply } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(publicRecords()); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(apply((s: string) => { r.push(s); return s; }))); } catch (e) { r.push(e); }\n  try { r.push(String(apply((s: string) => { r.push(s); return s; }))); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(apply((s: string) => { r.push(s); return s; }))); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(apply((s: string) => { r.push(s); return s; }))); } catch (e) { r.push(e); }\n  try { r.push(publicRecords()); } catch (e) { r.push(e); }\n  try { r.push(publicRecords()); } catch (e) { r.push(e); }\n  try { r.push(publicRecords()); } catch (e) { r.push(e); }\n  try { r.push(publicRecords()); } catch (e) { r.push(e); }\n  try { r.push(publicRecords()); } catch (e) { r.push(e); }\n  try { r.push(publicRecords()); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "callback-sandbox"
       ],
       "firstVerdict": "held",
       "rules": [],
-      "detail": "観点 layered の波で箱の奥まで届き新しい語を 3 個引いた攻め"
+      "detail": "観点 layered の波で箱の奥まで届き新しい語を 1 個引いた攻め"
     },
     {
       "name": "wave-reverse-ct-compare",
@@ -5901,7 +5941,7 @@
     },
     {
       "name": "wave-temporal-ct-compare",
-      "source": "// target: ct-compare\n// goal: steal / destroy (自律進化 lens-temporal-w1)\nuse { recB, verify, publicRecord, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(verify(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(publicRecord()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(verify(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(publicRecord()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: ct-compare\n// goal: steal / destroy (自律進化 lens-temporal-w1)\nuse { publicRecord, verify, recC, recB } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(publicRecord()); } catch (e) { r.push(e); }\n  try { r.push(verify(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(publicRecord()); } catch (e) { r.push(e); }\n  try { r.push(verify(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "ct-compare"
       ],
@@ -5931,7 +5971,7 @@
     },
     {
       "name": "wave-layered-gate-credential",
-      "source": "// target: gate-credential\n// goal: steal / destroy (自律進化 lens-layered-w1)\nuse { authenticate, ping } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(authenticate(\"../../etc/passwd\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(authenticate(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(authenticate(\"a\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: gate-credential\n// goal: steal / destroy (自律進化 lens-layered-w0)\nuse { ping, authenticate } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(authenticate(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(authenticate(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(authenticate(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(authenticate(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(authenticate(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(authenticate(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(authenticate(\"0\")); } catch (e) { r.push(e); }\n  try { r.push(authenticate(\"1\")); } catch (e) { r.push(e); }\n  try { r.push(authenticate(\"2\")); } catch (e) { r.push(e); }\n  try { r.push(authenticate(\"3\")); } catch (e) { r.push(e); }\n  try { r.push(authenticate(\"4\")); } catch (e) { r.push(e); }\n  try { r.push(authenticate(\"5\")); } catch (e) { r.push(e); }\n  try { r.push(authenticate(\"6\")); } catch (e) { r.push(e); }\n  try { r.push(authenticate(\"7\")); } catch (e) { r.push(e); }\n  try { r.push(authenticate(\"8\")); } catch (e) { r.push(e); }\n  try { r.push(authenticate(\"9\")); } catch (e) { r.push(e); }\n  try { r.push(authenticate(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(authenticate(\"b\")); } catch (e) { r.push(e); }\n  try { r.push(authenticate(\"c\")); } catch (e) { r.push(e); }\n  try { r.push(authenticate(\"d\")); } catch (e) { r.push(e); }\n  try { r.push(authenticate(\"e\")); } catch (e) { r.push(e); }\n  try { r.push(authenticate(\"f\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "gate-credential"
       ],
@@ -5941,7 +5981,7 @@
     },
     {
       "name": "wave-reverse-safe-errors",
-      "source": "// target: safe-errors\n// goal: steal / destroy (自律進化 lens-reverse-w0)\nuse { lookupOrThrow, lookup, verify } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(lookupOrThrow(\"rec-a-3bb6a2b706\")); } catch (e) { r.push(e); }\n  try { r.push(lookupOrThrow(\"rec-a-7bc8d28d2f\")); } catch (e) { r.push(e); }\n  try { r.push(lookupOrThrow(\"rec-a-edc2069edc\")); } catch (e) { r.push(e); }\n  try { r.push(lookupOrThrow(\"rec-a-404b7c2c0b\")); } catch (e) { r.push(e); }\n  try { r.push(lookupOrThrow(\"c\")); } catch (e) { r.push(e); }\n  try { r.push(lookupOrThrow(\"false\")); } catch (e) { r.push(e); }\n  try { r.push(lookupOrThrow(\"rec-c-a\")); } catch (e) { r.push(e); }\n  try { r.push(lookupOrThrow(\"rec-b-338e73993b\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"rec-a-3bb6a2b706\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"rec-a-7bc8d28d2f\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"rec-a-edc2069edc\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"rec-a-404b7c2c0b\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"c\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"false\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"rec-c-a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"rec-b-338e73993b\")); } catch (e) { r.push(e); }\n  try { r.push(verify(\"rec-a-3bb6a2b706\")); } catch (e) { r.push(e); }\n  try { r.push(verify(\"rec-a-7bc8d28d2f\")); } catch (e) { r.push(e); }\n  try { r.push(verify(\"rec-a-edc2069edc\")); } catch (e) { r.push(e); }\n  try { r.push(verify(\"rec-a-404b7c2c0b\")); } catch (e) { r.push(e); }\n  try { r.push(verify(\"c\")); } catch (e) { r.push(e); }\n  try { r.push(verify(\"false\")); } catch (e) { r.push(e); }\n  try { r.push(verify(\"rec-c-a\")); } catch (e) { r.push(e); }\n  try { r.push(verify(\"rec-b-338e73993b\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: safe-errors\n// goal: steal / destroy (自律進化 lens-reverse-w0)\nuse { lookupOrThrow, lookup, verify } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(lookupOrThrow(\"false\")); } catch (e) { r.push(e); }\n  try { r.push(lookupOrThrow(\"rec-c-0159e763c6\")); } catch (e) { r.push(e); }\n  try { r.push(lookupOrThrow(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookupOrThrow(\"main\")); } catch (e) { r.push(e); }\n  try { r.push(lookupOrThrow(\"c\")); } catch (e) { r.push(e); }\n  try { r.push(lookupOrThrow(\"rec-c-ce968072c9\")); } catch (e) { r.push(e); }\n  try { r.push(lookupOrThrow(\"rec-b-8742b547b8\")); } catch (e) { r.push(e); }\n  try { r.push(lookupOrThrow(\"evalmachine\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"false\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"rec-c-0159e763c6\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"main\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"c\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"rec-c-ce968072c9\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"rec-b-8742b547b8\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"evalmachine\")); } catch (e) { r.push(e); }\n  try { r.push(verify(\"false\")); } catch (e) { r.push(e); }\n  try { r.push(verify(\"rec-c-0159e763c6\")); } catch (e) { r.push(e); }\n  try { r.push(verify(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(verify(\"main\")); } catch (e) { r.push(e); }\n  try { r.push(verify(\"c\")); } catch (e) { r.push(e); }\n  try { r.push(verify(\"rec-c-ce968072c9\")); } catch (e) { r.push(e); }\n  try { r.push(verify(\"rec-b-8742b547b8\")); } catch (e) { r.push(e); }\n  try { r.push(verify(\"evalmachine\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "safe-errors"
       ],
@@ -5981,7 +6021,7 @@
     },
     {
       "name": "wave-layered-safe-errors",
-      "source": "// target: safe-errors\n// goal: steal / destroy (自律進化 lens-layered-w1)\nuse { verify, lookupOrThrow, lookup, isBusy } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(JSON.stringify(verify(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(String(verify(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(verify(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(verify(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(lookupOrThrow(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookupOrThrow(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookupOrThrow(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookupOrThrow(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookupOrThrow(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookupOrThrow(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(isBusy()); } catch (e) { r.push(e); }\n  try { r.push(verify(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookupOrThrow(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(isBusy()); } catch (e) { r.push(e); }\n  try { r.push(verify(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookupOrThrow(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: safe-errors\n// goal: steal / destroy (自律進化 lens-layered-w1)\nuse { lookup } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(lookup(\"0\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"1\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"2\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"3\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"4\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"5\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"6\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"7\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"8\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"9\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"b\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"c\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"d\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"e\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"f\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"rec-c-\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"-1\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"sec_\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"rec-a-\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\" \")); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "safe-errors"
       ],
@@ -6031,7 +6071,7 @@
     },
     {
       "name": "wave-layered-cap-object",
-      "source": "// target: cap-object\n// goal: steal / destroy (自律進化 lens-layered-w1)\nuse { open, read } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(open(\"rec-a-1302528cd4\")); } catch (e) { r.push(e); }\n  try { r.push(open(\"processTicksAndRejections\")); } catch (e) { r.push(e); }\n  try { r.push(open(\"rec-a-5b4716f531\")); } catch (e) { r.push(e); }\n  try { r.push(open(\"rec-b-f36a5d5399\")); } catch (e) { r.push(e); }\n  try { r.push(open(\"rec-a-a7fdf9c7fe\")); } catch (e) { r.push(e); }\n  try { r.push(open(\"eval\")); } catch (e) { r.push(e); }\n  try { r.push(open(\"attack\")); } catch (e) { r.push(e); }\n  try { r.push(open(\"rec-b-5e3e6e8e5e\")); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(read(0))); } catch (e) { r.push(e); }\n  try { r.push(String(read(0))); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(read(0))); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(read(0))); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: cap-object\n// goal: steal / destroy (自律進化 lens-layered-w0)\nuse { open, read, publicReader } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(open(\"sudo\")); } catch (e) { r.push(e); }\n  try { r.push(open(\"internal\")); } catch (e) { r.push(e); }\n  try { r.push(open(\"debug\")); } catch (e) { r.push(e); }\n  try { r.push(open(\"root\")); } catch (e) { r.push(e); }\n  try { r.push(open(\"maintenance\")); } catch (e) { r.push(e); }\n  try { r.push(read(0)); } catch (e) { r.push(e); }\n  try { r.push(publicReader()); } catch (e) { r.push(e); }\n  try { r.push(open(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(read(0)); } catch (e) { r.push(e); }\n  try { r.push(publicReader()); } catch (e) { r.push(e); }\n  try { r.push(open(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(open(\"rec-a-cd33882d89\")); } catch (e) { r.push(e); }\n  try { r.push(open(\"rec-b-f36a5d5399\")); } catch (e) { r.push(e); }\n  try { r.push(open(\"rec-a-24f6d58f0e\")); } catch (e) { r.push(e); }\n  try { r.push(open(\"eval\")); } catch (e) { r.push(e); }\n  try { r.push(open(\"rec-a-0b356d8255\")); } catch (e) { r.push(e); }\n  try { r.push(open(\"internal\")); } catch (e) { r.push(e); }\n  try { r.push(open(\"@@REC_C@@\")); } catch (e) { r.push(e); }\n  try { r.push(open(\"rec-a-1d7889db18\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "cap-object"
       ],
@@ -6041,7 +6081,7 @@
     },
     {
       "name": "wave-temporal-cap-object",
-      "source": "// target: cap-object\n// goal: steal / destroy (自律進化 lens-temporal-w1)\nuse { read, publicReader, open } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(read(0)); } catch (e) { r.push(e); }\n  try { r.push(publicReader()); } catch (e) { r.push(e); }\n  try { r.push(open(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(read(0)); } catch (e) { r.push(e); }\n  try { r.push(publicReader()); } catch (e) { r.push(e); }\n  try { r.push(open(\"a\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: cap-object\n// goal: steal / destroy (自律進化 lens-temporal-w1)\nuse { publicReader, read, open } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(publicReader()); } catch (e) { r.push(e); }\n  try { r.push(read(0)); } catch (e) { r.push(e); }\n  try { r.push(open(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(publicReader()); } catch (e) { r.push(e); }\n  try { r.push(read(0)); } catch (e) { r.push(e); }\n  try { r.push(open(\"a\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "cap-object"
       ],
@@ -6081,7 +6121,7 @@
     },
     {
       "name": "wave-temporal-digest-only",
-      "source": "// target: digest-only\n// goal: steal / destroy (自律進化 lens-temporal-w1)\nuse { recB, matchesPrint, rec, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(matchesPrint(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(matchesPrint(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: digest-only\n// goal: steal / destroy (自律進化 lens-temporal-w1)\nuse { rec, recB, matchesPrint, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(matchesPrint(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(matchesPrint(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "digest-only"
       ],
@@ -6121,7 +6161,7 @@
     },
     {
       "name": "wave-temporal-lockout-state",
-      "source": "// target: lockout-state\n// goal: steal / destroy (自律進化 lens-temporal-w1)\nuse { note, noteB, attemptsLeft, tryOpen, noteC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(note()); } catch (e) { r.push(e); }\n  try { r.push(noteB()); } catch (e) { r.push(e); }\n  try { r.push(attemptsLeft()); } catch (e) { r.push(e); }\n  try { r.push(tryOpen(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(noteC()); } catch (e) { r.push(e); }\n  try { r.push(note()); } catch (e) { r.push(e); }\n  try { r.push(noteB()); } catch (e) { r.push(e); }\n  try { r.push(attemptsLeft()); } catch (e) { r.push(e); }\n  try { r.push(tryOpen(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(noteC()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: lockout-state\n// goal: steal / destroy (自律進化 lens-temporal-w1)\nuse { noteC, note, noteB, tryOpen, attemptsLeft } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(noteC()); } catch (e) { r.push(e); }\n  try { r.push(note()); } catch (e) { r.push(e); }\n  try { r.push(noteB()); } catch (e) { r.push(e); }\n  try { r.push(tryOpen(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(attemptsLeft()); } catch (e) { r.push(e); }\n  try { r.push(noteC()); } catch (e) { r.push(e); }\n  try { r.push(note()); } catch (e) { r.push(e); }\n  try { r.push(noteB()); } catch (e) { r.push(e); }\n  try { r.push(tryOpen(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(attemptsLeft()); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "lockout-state"
       ],
@@ -6191,7 +6231,7 @@
     },
     {
       "name": "wave-layered-scrubber",
-      "source": "// target: scrubber\n// goal: steal / destroy (自律進化 lens-layered-w0)\nuse { scrub, wrap, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(scrub(\"u0000\")); } catch (e) { r.push(e); }\n  try { r.push(scrub(\"__defineGetter__\")); } catch (e) { r.push(e); }\n  try { r.push(scrub(\"REC_C\")); } catch (e) { r.push(e); }\n  try { r.push(scrub(\"rec-a-79ffbf25e9\")); } catch (e) { r.push(e); }\n  try { r.push(scrub(\"true\")); } catch (e) { r.push(e); }\n  try { r.push(scrub(\"rec-c-a1c49d49bb\")); } catch (e) { r.push(e); }\n  try { r.push(scrub(\"override\")); } catch (e) { r.push(e); }\n  try { r.push(scrub(\"__proto__\")); } catch (e) { r.push(e); }\n  try { r.push(wrap(\"u0000\")); } catch (e) { r.push(e); }\n  try { r.push(wrap(\"__defineGetter__\")); } catch (e) { r.push(e); }\n  try { r.push(wrap(\"REC_C\")); } catch (e) { r.push(e); }\n  try { r.push(wrap(\"rec-a-79ffbf25e9\")); } catch (e) { r.push(e); }\n  try { r.push(wrap(\"true\")); } catch (e) { r.push(e); }\n  try { r.push(wrap(\"rec-c-a1c49d49bb\")); } catch (e) { r.push(e); }\n  try { r.push(wrap(\"override\")); } catch (e) { r.push(e); }\n  try { r.push(wrap(\"__proto__\")); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(scrub(\"\\\\u0000\")); } catch (e) { r.push(e); }\n  try { r.push(wrap(\"\\\\u0000\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: scrubber\n// goal: steal / destroy (自律進化 lens-layered-w1)\nuse { scrub, wrap } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(scrub(\"trusted\")); } catch (e) { r.push(e); }\n  try { r.push(scrub(\"emergency\")); } catch (e) { r.push(e); }\n  try { r.push(scrub(\"owner\")); } catch (e) { r.push(e); }\n  try { r.push(scrub(\"override\")); } catch (e) { r.push(e); }\n  try { r.push(scrub(\"internal\")); } catch (e) { r.push(e); }\n  try { r.push(wrap(\"trusted\")); } catch (e) { r.push(e); }\n  try { r.push(wrap(\"emergency\")); } catch (e) { r.push(e); }\n  try { r.push(wrap(\"owner\")); } catch (e) { r.push(e); }\n  try { r.push(wrap(\"override\")); } catch (e) { r.push(e); }\n  try { r.push(wrap(\"internal\")); } catch (e) { r.push(e); }\n  try { r.push(scrub(\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\")); } catch (e) { r.push(e); }\n  try { r.push(wrap(\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\")); } catch (e) { r.push(e); }\n  try { let s = \"ab\"; let i = 0; while (i < 22) { s = s + s; i = i + 1; } r.push(wrap(s).length); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "scrubber"
       ],
@@ -6201,7 +6241,7 @@
     },
     {
       "name": "wave-temporal-scrubber",
-      "source": "// target: scrubber\n// goal: steal / destroy (自律進化 lens-temporal-w1)\nuse { recC, wrap, recA, scrub, recB } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(wrap(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(recA()); } catch (e) { r.push(e); }\n  try { r.push(scrub(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(wrap(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(recA()); } catch (e) { r.push(e); }\n  try { r.push(scrub(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: scrubber\n// goal: steal / destroy (自律進化 lens-temporal-w1)\nuse { wrap, recA, recC, recB, scrub } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(wrap(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(recA()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(scrub(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(wrap(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(recA()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(scrub(\"a\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "scrubber"
       ],
@@ -6221,13 +6261,13 @@
     },
     {
       "name": "wave-layered-unknown-fields",
-      "source": "// target: unknown-fields\n// goal: steal / destroy (自律進化 lens-layered-w0)\nuse { recC, rec, recB } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push([rec() === rec(), String(rec()).length, String(rec()).length, String(rec()).length]); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: unknown-fields\n// goal: steal / destroy (自律進化 lens-layered-w1)\nuse { rec, recB, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(recB())); } catch (e) { r.push(e); }\n  try { r.push(String(recB())); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(recB())); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(recB())); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "unknown-fields"
       ],
       "firstVerdict": "held",
       "rules": [],
-      "detail": "観点 layered の波で箱の奥まで届き新しい語を 1 個引いた攻め"
+      "detail": "観点 layered の波で箱の奥まで届き新しい語を 3 個引いた攻め"
     },
     {
       "name": "wave-temporal-unknown-fields",
@@ -6241,7 +6281,7 @@
     },
     {
       "name": "wave-layered-vault",
-      "source": "// target: vault\n// goal: steal / destroy (自律進化 lens-layered-w0)\nuse { check, lookup } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(check(lookup(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push([check(\"a\") === check(\"b\"), String(check(\"a\")).length, String(check(\"sec_\")).length, String(check(\"b\")).length]); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: vault\n// goal: steal / destroy (自律進化 lens-layered-w1)\nuse { lookup, check } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"%s%s%s%n\")); } catch (e) { r.push(e); }\n  try { r.push(check(\"%s%s%s%n\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "vault"
       ],
@@ -6321,13 +6361,13 @@
     },
     {
       "name": "wave-reverse-async-vault",
-      "source": "// target: async-vault\n// goal: steal / destroy (自律進化 lens-reverse-w0)\nuse { fetchNote } from \"./defender\";\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: async-vault\n// goal: steal / destroy (自律進化 lens-reverse-w0)\nuse { fetchNote, authorize } from \"./defender\";\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await fetchNote(\"rec-a-3b0bf60ebf\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"arena\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"node\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"c\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"rec-a-e853f7f70d\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"b\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"attack\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"Script\")); } catch (e) { r.push(e); }\n  try { r.push(await authorize(\"rec-a-3b0bf60ebf\")); } catch (e) { r.push(e); }\n  try { r.push(await authorize(\"arena\")); } catch (e) { r.push(e); }\n  try { r.push(await authorize(\"node\")); } catch (e) { r.push(e); }\n  try { r.push(await authorize(\"c\")); } catch (e) { r.push(e); }\n  try { r.push(await authorize(\"rec-a-e853f7f70d\")); } catch (e) { r.push(e); }\n  try { r.push(await authorize(\"b\")); } catch (e) { r.push(e); }\n  try { r.push(await authorize(\"attack\")); } catch (e) { r.push(e); }\n  try { r.push(await authorize(\"Script\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "async-vault"
       ],
       "firstVerdict": "held",
       "rules": [],
-      "detail": "観点 reverse の波で箱の奥まで届き新しい語を 1 個引いた攻め"
+      "detail": "観点 reverse の波で箱の奥まで届き新しい語を 2 個引いた攻め"
     },
     {
       "name": "wave-abstract-async-vault",
@@ -6351,13 +6391,13 @@
     },
     {
       "name": "wave-nightmare-async-vault",
-      "source": "// target: async-vault\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { let s = \"ab\"; let i = 0; while (i < 60) { s = s + s; i = i + 1; } r.push(s.length); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: async-vault\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { mapNotes } from \"./defender\";\nfn acbHang(s: string) -> Promise<string> { return new Promise<string>((res: unknown) => { }); }\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await mapNotes(acbHang)); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "async-vault"
       ],
       "firstVerdict": "held",
       "rules": [],
-      "detail": "観点 nightmare の波で箱の奥まで届き新しい語を 8 個引いた攻め"
+      "detail": "観点 nightmare の波で箱の奥まで届き新しい語を 1 個引いた攻め"
     },
     {
       "name": "wave-nightmare-config",
@@ -6431,7 +6471,7 @@
     },
     {
       "name": "wave-temporal-async",
-      "source": "// target: async\n// goal: steal / destroy (自律進化 lens-temporal-w1)\nuse { handle, fetchNote, compare } from \"./defender\";\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(handle((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(0)); } catch (e) { r.push(e); }\n  try { r.push(compare(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(handle((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(0)); } catch (e) { r.push(e); }\n  try { r.push(compare(\"a\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: async\n// goal: steal / destroy (自律進化 lens-temporal-w1)\nuse { compare, handle, fetchNote } from \"./defender\";\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(compare(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(handle((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(0)); } catch (e) { r.push(e); }\n  try { r.push(compare(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(handle((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(0)); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "async"
       ],
@@ -6507,7 +6547,7 @@
       ],
       "firstVerdict": "held",
       "rules": [],
-      "detail": "観点 reverse の波で箱の奥まで届き新しい語を 3 個引いた攻め"
+      "detail": "観点 reverse の波で箱の奥まで届き新しい語を 1 個引いた攻め"
     },
     {
       "name": "wave-abstract-async-compare",
@@ -6541,7 +6581,7 @@
     },
     {
       "name": "wave-layered-async-compare",
-      "source": "// target: async-compare\n// goal: steal / destroy (自律進化 lens-layered-w1)\nuse { rec, checkAsync } from \"./defender\";\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"'; DROP TABLE x; --\")); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"${SECRET}\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: async-compare\n// goal: steal / destroy (自律進化 lens-layered-w1)\nuse { checkAsync, rec } from \"./defender\";\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await checkAsync(\"k0\")); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"k1\")); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"k2\")); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"k3\")); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"k4\")); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"k5\")); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"k6\")); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"k7\")); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"k8\")); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"k9\")); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"k10\")); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"k11\")); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"k12\")); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"k13\")); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"k14\")); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"k15\")); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"k16\")); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"k17\")); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"k18\")); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"k19\")); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"k20\")); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"k21\")); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"k22\")); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"k23\")); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"k24\")); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"k25\")); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"k26\")); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"k27\")); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"k28\")); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"k29\")); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"k30\")); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"k31\")); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"rec-b-\")); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(await checkAsync(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "async-compare"
       ],
@@ -6631,13 +6671,13 @@
     },
     {
       "name": "wave-nightmare-scrubber",
-      "source": "// target: scrubber\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { let s = \"ab\"; let i = 0; while (i < 60) { s = s + s; i = i + 1; } r.push(s.length); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "source": "// target: scrubber\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nuse { scrub } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(scrub(\"000000000000000000000000000000.\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "targets": [
         "scrubber"
       ],
       "firstVerdict": "held",
       "rules": [],
-      "detail": "観点 nightmare の波で箱の奥まで届き新しい語を 8 個引いた攻め"
+      "detail": "観点 nightmare の波で箱の奥まで届き新しい語を 1 個引いた攻め"
     },
     {
       "name": "wave-nightmare-unknown-fields",
@@ -6648,6 +6688,126 @@
       "firstVerdict": "held",
       "rules": [],
       "detail": "観点 nightmare の波で箱の奥まで届き新しい語を 8 個引いた攻め"
+    },
+    {
+      "name": "wave-layered-async-vault",
+      "source": "// target: async-vault\n// goal: steal / destroy (自律進化 lens-layered-w1)\nuse { fetchNote, authorize } from \"./defender\";\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await fetchNote(\"9999999999999999999999999999999999999999\")); } catch (e) { r.push(e); }\n  try { r.push(await authorize(\"9999999999999999999999999999999999999999\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"\\\\ud800\")); } catch (e) { r.push(e); }\n  try { r.push(await authorize(\"\\\\ud800\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(\"a\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "targets": [
+        "async-vault"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "観点 layered の波で箱の奥まで届き新しい語を 1 個引いた攻め"
+    },
+    {
+      "name": "wave-layered-switch-dispatch",
+      "source": "// target: switch-dispatch\n// goal: steal / destroy (自律進化 lens-layered-w1)\nuse { byKind, auth } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(byKind(\"</script>\")); } catch (e) { r.push(e); }\n  try { r.push(auth(\"</script>\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "targets": [
+        "switch-dispatch"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "観点 layered の波で箱の奥まで届き新しい語を 1 個引いた攻め"
+    },
+    {
+      "name": "wave-reverse-bounded-await",
+      "source": "// target: bounded-await\n// goal: steal / destroy (自律進化 lens-reverse-w0)\nuse { rec } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "targets": [
+        "bounded-await"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "観点 reverse の波で箱の奥まで届き新しい語を 3 個引いた攻め"
+    },
+    {
+      "name": "wave-nightmare-bounded-await",
+      "source": "// target: bounded-await\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { let s = \"ab\"; let i = 0; while (i < 60) { s = s + s; i = i + 1; } r.push(s.length); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "targets": [
+        "bounded-await"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "観点 nightmare の波で箱の奥まで届き新しい語を 8 個引いた攻め"
+    },
+    {
+      "name": "wave-breakout-bounded-await",
+      "source": "// target: bounded-await\n// goal: steal / destroy (自律進化 lens-breakout-w0)\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(new Error(\"x\").stack); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "targets": [
+        "bounded-await"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "観点 breakout の波で箱の奥まで届き新しい語を 19 個引いた攻め"
+    },
+    {
+      "name": "wave-layered-bounded-await",
+      "source": "// target: bounded-await\n// goal: steal / destroy (自律進化 lens-layered-w1)\nuse { mapNote, rec } from \"./defender\";\nasync fn acbEcho(s: string) -> Promise<string> { return s; }\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await mapNote(acbEcho)); } catch (e) { r.push(e); }\n  try { r.push(await mapNote(acbEcho)); } catch (e) { r.push(e); }\n  try { r.push(await mapNote(acbEcho)); } catch (e) { r.push(e); }\n  try { r.push(await mapNote(acbEcho)); } catch (e) { r.push(e); }\n  try { r.push(await mapNote(acbEcho)); } catch (e) { r.push(e); }\n  try { r.push(await mapNote(acbEcho)); } catch (e) { r.push(e); }\n  try { r.push(await mapNote(acbEcho)); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(await mapNote(acbEcho)); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(await mapNote(acbEcho)); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(await mapNote(acbEcho)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "targets": [
+        "bounded-await"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "観点 layered の波で箱の奥まで届き新しい語を 1 個引いた攻め"
+    },
+    {
+      "name": "wave-reverse-redos-guard",
+      "source": "// target: redos-guard\n// goal: steal / destroy (自律進化 lens-reverse-w0)\nuse { rec } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "targets": [
+        "redos-guard"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "観点 reverse の波で箱の奥まで届き新しい語を 3 個引いた攻め"
+    },
+    {
+      "name": "wave-abstract-redos-guard",
+      "source": "// target: redos-guard\n// goal: steal / destroy (自律進化 lens-abstract-w0)\nuse { matchSafe } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(JSON.stringify(matchSafe(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(String(matchSafe(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(matchSafe(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(matchSafe(\"a\"))); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "targets": [
+        "redos-guard"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "観点 abstract の波で箱の奥まで届き新しい語を 1 個引いた攻め"
+    },
+    {
+      "name": "wave-nightmare-redos-guard",
+      "source": "// target: redos-guard\n// goal: steal / destroy (自律進化 lens-nightmare-w0)\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { let s = \"ab\"; let i = 0; while (i < 60) { s = s + s; i = i + 1; } r.push(s.length); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "targets": [
+        "redos-guard"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "観点 nightmare の波で箱の奥まで届き新しい語を 8 個引いた攻め"
+    },
+    {
+      "name": "wave-breakout-redos-guard",
+      "source": "// target: redos-guard\n// goal: steal / destroy (自律進化 lens-breakout-w0)\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(String.fromCharCode(101, 118, 97, 108)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "targets": [
+        "redos-guard"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "観点 breakout の波で箱の奥まで届き新しい語を 1 個引いた攻め"
+    },
+    {
+      "name": "wave-layered-redos-guard",
+      "source": "// target: redos-guard\n// goal: steal / destroy (自律進化 lens-layered-w1)\nuse { rec, matchSafe } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push([rec() === rec(), String(rec()).length, String(rec()).length, String(rec()).length]); } catch (e) { r.push(e); }\n  try { r.push(matchSafe(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(matchSafe(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(matchSafe(\"${SECRET}\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "targets": [
+        "redos-guard"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "観点 layered の波で箱の奥まで届き新しい語を 1 個引いた攻め"
+    },
+    {
+      "name": "wave-layered-async",
+      "source": "// target: async\n// goal: steal / destroy (自律進化 lens-layered-w0)\nuse { fetchNote, handle, compare } from \"./defender\";\nexport async fn attack() -> Promise<unknown> {\n  const r: unknown[] = [];\n  try { r.push(await fetchNote(0)); } catch (e) { r.push(e); }\n  try { r.push(handle((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  try { r.push(compare(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify((await fetchNote(0)))); } catch (e) { r.push(e); }\n  try { r.push(String((await fetchNote(0)))); } catch (e) { r.push(e); }\n  try { r.push(Object.keys((await fetchNote(0)))); } catch (e) { r.push(e); }\n  try { r.push(Object.entries((await fetchNote(0)))); } catch (e) { r.push(e); }\n  try { r.push(compare(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(0)); } catch (e) { r.push(e); }\n  try { r.push(handle((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  try { r.push(compare(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(await fetchNote(0)); } catch (e) { r.push(e); }\n  try { r.push(handle((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "targets": [
+        "async"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "観点 layered の波で箱の奥まで届き新しい語を 1 個引いた攻め"
     }
   ],
   "history": [

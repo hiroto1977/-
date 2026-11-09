@@ -248,7 +248,7 @@ const LENSES = [
       // 3) 入力で止まる口 (ReDoS ほか): 数十文字〜数千文字の「悪い形」の入力。攻める側のプログラムは速く終わるので、箱の口が戻らなければ口の欠陥 (stalled)
       const evils = ['a'.repeat(34) + '!', '('.repeat(2500), ' '.repeat(2500) + 'x', 'a'.repeat(40) + 'b', '1'.repeat(30) + 'x', '<'.repeat(2500), '0'.repeat(30) + '.'];
       const syncStr = api.fns.filter((f) => !f.async && f.params.includes('string'));
-      for (const f of syncStr) for (const v of sample(evils, Math.min(evils.length, n + 2), rng)) out.push([{ ...callOf(f, v), fast: true }]);
+      for (const f of syncStr) for (const v of unique([evils[0], evils[3], ...sample(evils, Math.min(evils.length, n + 2), rng)])) out.push([{ ...callOf(f, v), fast: true }]);
       // 4) 呼び出し側の関数が決して戻らない: await で待つ口は、有限回の tick で打ち切らないと戻らない
       for (const f of api.fns.filter((x) => x.async && x.params.some((p) => p === 'acb:string'))) {
         out.push([{ k: 'block', names: [f.name], fast: true, code: `r.push(await ${f.name}(${f.params.map((p) => (p === 'acb:string' ? 'acbHang' : p === 'string' ? '"a"' : p === 'number' ? '0' : 'true')).join(', ')}));` }]);

@@ -138,6 +138,12 @@ function applyWaveResults({ state, corpus, results, seed, waves, intensity }) {
       const at = corpus.attacks.findIndex((x) => x.name === name);
       if (at >= 0) corpus.attacks[at] = entry; else corpus.attacks.push(entry);
     }
+    // 今の弱体化の一覧に無い古い穴・教訓 (廃止した op・この箱では作れなくなった op) は残さない (赤の盲点の台帳が古い欠陥で膨らまないように)
+    if ((r.blue || []).length > 0) {
+      const ops = new Set(r.blue.map((x) => x.op));
+      state.gaps = state.gaps.filter((x) => x.box !== r.box || ops.has(x.op));
+      state.lessons = state.lessons.filter((x) => x.box !== r.box || ops.has(x.op) || String(x.op).startsWith('red-win:'));
+    }
     for (const b of r.blue || []) {
       state.gaps = state.gaps.filter((x) => !(x.box === b.box && x.op === b.op));
       state.lessons = state.lessons.filter((x) => !(x.box === b.box && x.op === b.op));
