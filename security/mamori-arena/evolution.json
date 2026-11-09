@@ -160,7 +160,50 @@
         "rec-c-90d94e987b",
         "rec-a-a4a8214b2f",
         "rec-b-955200835f",
-        "rec-c-6bb474f616"
+        "rec-c-6bb474f616",
+        "rec-a-ea57e14969",
+        "rec-b-245a169b5d",
+        "rec-c-5d0d46a0e5",
+        "false",
+        "rec-a-e",
+        "Error",
+        "attack",
+        "arena",
+        "evalmachine",
+        "anonymous",
+        "Script",
+        "runInContext",
+        "node",
+        "149",
+        "runCall",
+        "eval",
+        "151",
+        "main",
+        "178",
+        "process",
+        "processTicksAndRejections",
+        "internal",
+        "task_queues",
+        "105",
+        "rec-a-ea57e1",
+        "rec-c-7ff2544fd5",
+        "rec-b-2a3fa02eb0",
+        "rec-a-7ecb645c36",
+        "rec-a-bd4850535e",
+        "rec-b-ed8581300a",
+        "rec-c-b0e6e31ee1",
+        "rec-a-b",
+        "rec-a-c350376cda",
+        "rec-c-29f069cf7a",
+        "rec-b-1bec37c738",
+        "rec-a-c35037",
+        "rec-a-4b8d9e68fa",
+        "rec-b-557eb9b082",
+        "rec-c-591822e9d2",
+        "rec-a-4",
+        "rec-c-b838d5d5a8",
+        "rec-a-702aa44cd8",
+        "rec-b-4b21d5eabf"
       ],
       "generations": 41,
       "bestFit": 2.45
@@ -429,7 +472,125 @@
         "rec-a-c9ec308a17",
         "rec-b-42fd964674",
         "rec-c-e80ed2a998",
-        "sec_"
+        "sec_",
+        "rec-a-4bd7e1b7ea",
+        "rec-b-852305ad8d",
+        "rec-c-3fc897e631",
+        "REC_B",
+        "REC_A",
+        "REC_C",
+        "hello",
+        "rec-c-",
+        "rec-a-",
+        "9999999999999999999999999999999999999999",
+        "DROP",
+        "TABLE",
+        "0x41414141",
+        "script",
+        "SECRET",
+        "undefined",
+        "u200b",
+        "etc",
+        "passwd",
+        "__defineGetter__",
+        "u202e",
+        "NaN",
+        "ud800",
+        "u0000",
+        "null",
+        "please",
+        "true",
+        "CEO",
+        "system",
+        "internal",
+        "support",
+        "root",
+        "trusted",
+        "override",
+        "sudo",
+        "emergency",
+        "yes",
+        "owner",
+        "urgent",
+        "password",
+        "debug",
+        "maintenance",
+        "letmein",
+        "k10",
+        "k11",
+        "k12",
+        "k13",
+        "k14",
+        "k15",
+        "k16",
+        "k17",
+        "k18",
+        "k19",
+        "k20",
+        "k21",
+        "k22",
+        "k23",
+        "k24",
+        "k25",
+        "k26",
+        "k27",
+        "k28",
+        "k29",
+        "k30",
+        "k31",
+        "Error",
+        "attack",
+        "arena",
+        "evalmachine",
+        "anonymous",
+        "Script",
+        "runInContext",
+        "node",
+        "149",
+        "runCall",
+        "eval",
+        "151",
+        "main",
+        "178",
+        "process",
+        "processTicksAndRejections",
+        "task_queues",
+        "105",
+        "rec-b-8a5d",
+        "9999",
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "rec-b-335c4d81ba",
+        "rec-a-f4e10ba5a1",
+        "rec-c-56b59c410e",
+        "emergen",
+        "rec-",
+        "rec-b",
+        "rec-a-a8016d9a11",
+        "rec-b-60fc6c3c2c",
+        "rec-c-b804f97bea",
+        "9999999999999999",
+        "rec-b-",
+        "rec-c-8e",
+        "constru",
+        "rec-a-a80",
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "rec-b-60828594e3",
+        "rec-c-e89f93aeae",
+        "rec-a-6f44404d7b",
+        "rec-c-e",
+        "rec-a-b232a611cd",
+        "rec-b-3bdf905f98",
+        "rec-c-3adaa4fe5f",
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "9999999999999999999999999999999999",
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "rec-b-b06f850032",
+        "rec-a-4c6f21b7cb",
+        "rec-c-f6bcd2a199"
       ],
       "generations": 41,
       "bestFit": 2.3
@@ -515,7 +676,27 @@
         "name",
         "message",
         "public",
-        "publicpublic"
+        "publicpublic",
+        "false",
+        "Error",
+        "attack",
+        "arena",
+        "evalmachine",
+        "anonymous",
+        "Script",
+        "runInContext",
+        "node",
+        "149",
+        "runCall",
+        "eval",
+        "151",
+        "main",
+        "178",
+        "process",
+        "processTicksAndRejections",
+        "internal",
+        "task_queues",
+        "105"
       ],
       "generations": 42,
       "bestFit": 2.35
@@ -665,7 +846,68 @@
         "rec-a-137cb7b1bb",
         "rec-b-592deb74da",
         "rec-c-dd71e74af4",
-        "rec-a-137cb7b1bbrec-a-137cb7b1bb"
+        "rec-a-137cb7b1bbrec-a-137cb7b1bb",
+        "rec-a-8c9369289d",
+        "rec-b-bbb8bfb4d7",
+        "rec-c-9251b7fe5c",
+        "rec-a-8c9369289drec-a-8c9369289d",
+        "rec-b-bbb8bfb",
+        "false",
+        "rec-c-9251b7",
+        "eval",
+        "rec-b-bb",
+        "rec-b-bbb8b",
+        "rec-c-9251",
+        "rec-a-2f0b5bca4a",
+        "rec-b-d96bfde093",
+        "rec-c-7bd61abcc3",
+        "rec-c-7",
+        "rec-a-2f0b5bca4",
+        "rec-a-2f0b5bca",
+        "rec-a-5722a6487c",
+        "rec-b-71820e2aaf",
+        "rec-c-f722da023d",
+        "rec-a-5722a6487crec-a-5722a6487c",
+        "rec-b-71820e2",
+        "rec-c-f722da",
+        "Error",
+        "attack",
+        "arena",
+        "evalmachine",
+        "anonymous",
+        "Script",
+        "runInContext",
+        "node",
+        "149",
+        "runCall",
+        "151",
+        "main",
+        "178",
+        "process",
+        "processTicksAndRejections",
+        "internal",
+        "task_queues",
+        "105",
+        "rec-b-71820e2aa",
+        "rec-c-f",
+        "rec-a-1004abde26",
+        "rec-b-23303d4b8c",
+        "rec-c-085163e720",
+        "lengt",
+        "rec-b-23",
+        "rec-a-29ef803dfb",
+        "rec-b-63eb04ad53",
+        "rec-c-db70e1e97e",
+        "rec-a-29ef803dfbrec-a-29ef803dfb",
+        "rec-b-63eb04a",
+        "rec-c-db70e1",
+        "rec-b-63eb04ad53rec-b-63eb04ad53",
+        "rec-b-63",
+        "rec-a-dcc34a44fb",
+        "rec-b-fd3d063194",
+        "rec-c-efd88c5719",
+        "rec-a-dcc3",
+        "rec-a-dcc34a44fbrec-a-dcc34a44fb"
       ],
       "generations": 42,
       "bestFit": 2.25
@@ -800,7 +1042,38 @@
         "rec-a-5af30c24f6",
         "rec-b-57cd9e7004",
         "rec-b-b0f536bdc5",
-        "rec-a-cd33882d89"
+        "rec-a-cd33882d89",
+        "rec-a-5b4716f531",
+        "object",
+        "Object",
+        "eval",
+        "Error",
+        "attack",
+        "arena",
+        "evalmachine",
+        "anonymous",
+        "Script",
+        "runInContext",
+        "node",
+        "149",
+        "runCall",
+        "151",
+        "main",
+        "178",
+        "process",
+        "processTicksAndRejections",
+        "internal",
+        "task_queues",
+        "105",
+        "rec-a-5b4716f53",
+        "rec-a-75e59322b5",
+        "rec-a-f04d827459",
+        "rec-a-1302528cd4",
+        "rec-a-be6fcb5cfe",
+        "siz",
+        "rec-a-b",
+        "rec-a-a7fdf9c7fe",
+        "retur"
       ],
       "generations": 42,
       "bestFit": 2.3
@@ -982,7 +1255,46 @@
         "rec-c-6219b0ea5c",
         "rec-a-15f57853ac",
         "rec-b-9f630a4600",
-        "rec-c-5ae2791a12"
+        "rec-c-5ae2791a12",
+        "rec-a-c650ba7dda",
+        "rec-b-c5ae05a814",
+        "rec-c-69e2d4812b",
+        "false",
+        "eval",
+        "Error",
+        "attack",
+        "arena",
+        "evalmachine",
+        "anonymous",
+        "Script",
+        "runInContext",
+        "node",
+        "149",
+        "runCall",
+        "151",
+        "main",
+        "178",
+        "process",
+        "processTicksAndRejections",
+        "internal",
+        "task_queues",
+        "105",
+        "rec-c-7ac2fded5b",
+        "rec-b-a1ee05e11b",
+        "rec-a-f0e10fafc9",
+        "lengt",
+        "rec-a-cef2279398",
+        "rec-b-a4322b4932",
+        "rec-c-9d7b516bd3",
+        "rec-b-d3caea87c8",
+        "rec-c-20d179166f",
+        "rec-a-85d10fe9f4",
+        "rec-a-666810058b",
+        "rec-b-f925a50a65",
+        "rec-c-9d17308c1e",
+        "rec-b-cf8131d0cd",
+        "rec-c-8f44ce3054",
+        "rec-a-a9d289fa50"
       ],
       "generations": 39,
       "bestFit": 2.35
@@ -1085,7 +1397,38 @@
         "rec-a-90162306db",
         "rec-b-2023cc75ed",
         "rec-a-a2cf1632e9",
-        "rec-b-2d3e752a07"
+        "rec-b-2d3e752a07",
+        "rec-a-a950db8b0a",
+        "len",
+        "rec-a-a950db",
+        "rec-a-fd13ad9dea",
+        "eval",
+        "Error",
+        "attack",
+        "arena",
+        "evalmachine",
+        "anonymous",
+        "Script",
+        "runInContext",
+        "node",
+        "149",
+        "runCall",
+        "151",
+        "main",
+        "178",
+        "process",
+        "processTicksAndRejections",
+        "internal",
+        "task_queues",
+        "105",
+        "rec-a-fff6f584b6",
+        "rec-",
+        "rec-a-6fc2c7d4ac",
+        "rec-a-0a0903c609",
+        "lengt",
+        "rec-a-0a",
+        "rec-a-7a5425bd0a",
+        "leng"
       ],
       "generations": 42,
       "bestFit": 2.25
@@ -1266,7 +1609,45 @@
         "rec-c-e7a31f2d73",
         "rec-a-cd33882d89",
         "rec-b-b0f536bdc5",
-        "rec-c-46e551b137"
+        "rec-c-46e551b137",
+        "rec-a-5b4716f531",
+        "rec-b-334a43629d",
+        "rec-c-0fde3af96e",
+        "false",
+        "Error",
+        "attack",
+        "arena",
+        "evalmachine",
+        "anonymous",
+        "Script",
+        "runInContext",
+        "node",
+        "149",
+        "runCall",
+        "eval",
+        "151",
+        "main",
+        "178",
+        "process",
+        "processTicksAndRejections",
+        "internal",
+        "task_queues",
+        "105",
+        "rec-c-e33ed45fb9",
+        "rec-a-75e59322b5",
+        "rec-b-1a04e5fc60",
+        "rec-a-f04d827459",
+        "rec-b-6aa4f2d23a",
+        "rec-c-8dafe39b1e",
+        "rec-c-9f4bde7c88",
+        "rec-b-3a247aef6b",
+        "rec-a-1302528cd4",
+        "rec-a-be6fcb5cfe",
+        "rec-b-de1bff3031",
+        "rec-c-15958344d3",
+        "rec-b-895133e27b",
+        "rec-a-a7fdf9c7fe",
+        "rec-c-e067ffc2e8"
       ],
       "generations": 39,
       "bestFit": 2.25
@@ -1447,7 +1828,45 @@
         "rec-c-8a934c9154",
         "rec-a-3bb6a2b706",
         "rec-b-c91e84d3a2",
-        "rec-c-a8f402d3da"
+        "rec-c-a8f402d3da",
+        "rec-a-404b7c2c0b",
+        "rec-b-8742b547b8",
+        "rec-c-47b54210ec",
+        "false",
+        "Error",
+        "attack",
+        "arena",
+        "evalmachine",
+        "anonymous",
+        "Script",
+        "runInContext",
+        "node",
+        "149",
+        "runCall",
+        "eval",
+        "151",
+        "main",
+        "178",
+        "process",
+        "processTicksAndRejections",
+        "internal",
+        "task_queues",
+        "105",
+        "rec-b-43548c3252",
+        "rec-c-a8a6d71fec",
+        "rec-a-0c0ee96c73",
+        "rec-a-7bc8d28d2f",
+        "rec-b-bcb83f7f8d",
+        "rec-c-018d97e451",
+        "rec-a-aa8c6d5a67",
+        "rec-c-226df0a796",
+        "rec-b-dd33164e31",
+        "rec-a-c494bf81ef",
+        "rec-b-338e73993b",
+        "rec-c-9d7f10fad5",
+        "rec-c-0159e763c6",
+        "rec-a-5ba83d531d",
+        "rec-b-91a1d75b55"
       ],
       "generations": 39,
       "bestFit": 2.25
@@ -1501,7 +1920,52 @@
         "rec-c-2a3442ab5c",
         "rec-a-a2cf1632e9",
         "rec-b-2d3e752a07",
-        "rec-c-e4d2688ace"
+        "rec-c-e4d2688ace",
+        "rec-a-a950db8b0a",
+        "rec-b-16b86419a2",
+        "rec-c-ee074effec",
+        "eval",
+        "Error",
+        "attack",
+        "arena",
+        "evalmachine",
+        "anonymous",
+        "Script",
+        "runInContext",
+        "node",
+        "149",
+        "runCall",
+        "151",
+        "main",
+        "178",
+        "process",
+        "processTicksAndRejections",
+        "internal",
+        "task_queues",
+        "105",
+        "rec-b-1",
+        "rec-a-fd13ad9dea",
+        "rec-c-0d1dad2aab",
+        "rec-b-ded9a1b165",
+        "rec-a-f",
+        "rec-a-fff6f584b6",
+        "rec-b-8be89807cf",
+        "rec-c-1ff0f87004",
+        "rec-c-1",
+        "rec-c-997d4aa3d2",
+        "rec-b-e1e7649494",
+        "rec-a-6fc2c7d4ac",
+        "rec-a-6",
+        "rec-a-0a0903c609",
+        "rec-b-90f3ab1fec",
+        "rec-c-cfdb4442ab",
+        "__proto__",
+        "constructor",
+        "rec-b-9",
+        "rec",
+        "rec-b-3757651f27",
+        "rec-c-8d4d434f9b",
+        "rec-a-7a5425bd0a"
       ],
       "generations": 39,
       "bestFit": 2.25
@@ -1599,7 +2063,33 @@
         "rec-b-c039ea72b9",
         "rec-b-d2302d32c4",
         "rec-b-bdf2af63b2",
-        "rec-b-80c69eb3e1"
+        "rec-b-80c69eb3e1",
+        "rec-b-65f0d93de8",
+        "Error",
+        "attack",
+        "arena",
+        "evalmachine",
+        "anonymous",
+        "Script",
+        "runInContext",
+        "node",
+        "149",
+        "runCall",
+        "eval",
+        "151",
+        "main",
+        "178",
+        "process",
+        "processTicksAndRejections",
+        "internal",
+        "task_queues",
+        "105",
+        "rec-b-31db2f6b4b",
+        "rec-b-80f4c95654",
+        "lengt",
+        "rec-b-d44d679db8",
+        "rec-b-0b76e1f824",
+        "rec-b-8ca6857502"
       ],
       "generations": 42,
       "bestFit": 2.15
@@ -1810,7 +2300,46 @@
         "rec-c-2a3442ab5c",
         "rec-a-a2cf1632e9",
         "rec-b-2d3e752a07",
-        "rec-c-e4d2688ace"
+        "rec-c-e4d2688ace",
+        "rec-a-a950db8b0a",
+        "rec-b-16b86419a2",
+        "rec-c-ee074effec",
+        "false",
+        "Error",
+        "attack",
+        "arena",
+        "evalmachine",
+        "anonymous",
+        "Script",
+        "runInContext",
+        "node",
+        "149",
+        "runCall",
+        "eval",
+        "151",
+        "main",
+        "178",
+        "process",
+        "processTicksAndRejections",
+        "internal",
+        "task_queues",
+        "105",
+        "rec-b-ded9a1b165",
+        "rec-c-0d1dad2aab",
+        "rec-a-fd13ad9dea",
+        "rec-a-fff6f584b6",
+        "rec-b-8be89807cf",
+        "rec-c-1ff0f87004",
+        "len",
+        "rec-c-997d4aa3d2",
+        "rec-a-6fc2c7d4ac",
+        "rec-b-e1e7649494",
+        "rec-a-0a0903c609",
+        "rec-b-90f3ab1fec",
+        "rec-c-cfdb4442ab",
+        "rec-c-8d4d434f9b",
+        "rec-a-7a5425bd0a",
+        "rec-b-3757651f27"
       ],
       "generations": 39,
       "bestFit": 2.25
@@ -1960,7 +2489,53 @@
         "rec-b-f190242c07",
         "rec-a-cd33882d89",
         "rec-c-46e551b137",
-        "rec-b-b0f536bdc5"
+        "rec-b-b0f536bdc5",
+        "rec-a-5b4716f531",
+        "rec-b-334a43629d",
+        "rec-c-0fde3af96e",
+        "true",
+        "false",
+        "rec-a-5",
+        "eval",
+        "Error",
+        "attack",
+        "arena",
+        "evalmachine",
+        "anonymous",
+        "Script",
+        "runInContext",
+        "node",
+        "149",
+        "runCall",
+        "151",
+        "main",
+        "178",
+        "process",
+        "processTicksAndRejections",
+        "internal",
+        "task_queues",
+        "105",
+        "rec-b-1a04e5fc60",
+        "rec-a-75e59322b5",
+        "rec-c-e33ed45fb9",
+        "rec-a-7",
+        "rec-a-f04d827459",
+        "rec-c-8dafe39b1e",
+        "rec-b-6aa4f2d23a",
+        "rec-a-f",
+        "len",
+        "rec-b-3a247aef6b",
+        "rec-c-9f4bde7c88",
+        "rec-a-1302528cd4",
+        "rec-a-1302528cd",
+        "rec-a-be6fcb5cfe",
+        "rec-c-15958344d3",
+        "rec-b-de1bff3031",
+        "rec-a-b",
+        "leng",
+        "rec-c-e067ffc2e8",
+        "rec-b-895133e27b",
+        "rec-a-a7fdf9c7fe"
       ],
       "generations": 39,
       "bestFit": 2.1
@@ -2222,7 +2797,96 @@
         "rec-c-dd71e74af4",
         "rec-c-dd71",
         "rec-b-592d",
-        "rec-c-dd"
+        "rec-c-dd",
+        "rec-a-8c9369289d",
+        "rec-b-bbb8bfb4d7",
+        "rec-c-9251b7fe5c",
+        "rec-b-bbb8bfb",
+        "false",
+        "rec-c-9251b7fe",
+        "rec-c-92",
+        "rec-a-8c9369289",
+        "rec-b-bb",
+        "rec-c-9251b7fe5",
+        "rec-b-bbb8bfb4",
+        "rec-a-8",
+        "rec-b-bbb8b",
+        "rec",
+        "rec-c-7bd61abcc3",
+        "rec-a-2f0b5bca4a",
+        "rec-b-d96bfde093",
+        "rec-b-d9",
+        "rec-b-",
+        "rec-a",
+        "rec-c-7bd61ab",
+        "rec-c-7bd61abc",
+        "rec-b-d96bfde",
+        "rec-a-2",
+        "rec-c-7bd",
+        "rec-a-5722a6487c",
+        "rec-b-71820e2aaf",
+        "rec-c-f722da023d",
+        "rec-b-71820e2",
+        "rec-c-f722da02",
+        "rec-c-f7",
+        "rec-a-5722a6487",
+        "rec-b-71820e2aa",
+        "rec-c-f",
+        "rec-a-57",
+        "rec-a-5",
+        "Error",
+        "attack",
+        "arena",
+        "evalmachine",
+        "anonymous",
+        "Script",
+        "runInContext",
+        "node",
+        "149",
+        "runCall",
+        "eval",
+        "151",
+        "main",
+        "178",
+        "process",
+        "processTicksAndRejections",
+        "internal",
+        "task_queues",
+        "105",
+        "rec-a-1004abde26",
+        "rec-b-23303d4b8c",
+        "rec-c-085163e720",
+        "rec-b-2",
+        "rec-b-23303d4b8",
+        "rec-b-23303d4b",
+        "rec-a-10",
+        "rec-b-23",
+        "rec-a-1004abde",
+        "rec-c-085163e72",
+        "rec-a-29ef803dfb",
+        "rec-b-63eb04ad53",
+        "rec-c-db70e1e97e",
+        "rec-b-63eb04a",
+        "rec-c-db70e1e9",
+        "rec-c-db",
+        "rec-a-29ef803df",
+        "rec-b-63eb",
+        "rec-a-29ef80",
+        "rec-b-63eb04ad5",
+        "rec-a-29e",
+        "rec-b",
+        "rec-c-efd88c5719",
+        "rec-a-dcc34a44fb",
+        "rec-b-fd3d063194",
+        "rec-c-efd88c57",
+        "rec-a-dcc34a",
+        "rec-a-dcc34a44",
+        "rec-b-fd",
+        "rec-b-fd3d063",
+        "rec-a-dcc34a44f",
+        "rec-a-dcc",
+        "rec-b-fd3d",
+        "rec-c-efd88"
       ],
       "generations": 39,
       "bestFit": 2.25
@@ -2419,7 +3083,64 @@
         "rec-b-c91e84d3a2",
         "rec-c-183d002c20",
         "rec-a-7888f4bfd7",
-        "rec-b-0aa07ddf88"
+        "rec-b-0aa07ddf88",
+        "rec-a-404b7c2c0b",
+        "rec-c-47b54210ec",
+        "rec",
+        "rec-b-8742b547b8",
+        "false",
+        "den",
+        "rec-a-4",
+        "Error",
+        "attack",
+        "arena",
+        "evalmachine",
+        "anonymous",
+        "Script",
+        "runInContext",
+        "node",
+        "149",
+        "runCall",
+        "eval",
+        "151",
+        "main",
+        "178",
+        "process",
+        "processTicksAndRejections",
+        "internal",
+        "task_queues",
+        "105",
+        "mess",
+        "rec-a-0c0ee96c73",
+        "rec-b-43548c3252",
+        "rec-c-a8a6d71fec",
+        "rec-c-a",
+        "rec-a-0",
+        "looku",
+        "look",
+        "fail",
+        "rec-a-7bc8d28d2f",
+        "rec-a-7",
+        "rec-b-bcb83f7f8d",
+        "rec-c-018d97e451",
+        "mes",
+        "messag",
+        "rec-a-7bc8d28d2",
+        "rec-a-aa8c6d5a67",
+        "rec-b-dd33164e31",
+        "rec-c-226df0a796",
+        "rec-a-a",
+        "rec-b-",
+        "rec-a-c494bf81ef",
+        "rec-c-9d7f10fad5",
+        "rec-b-338e73993b",
+        "rec-b-338e",
+        "rec-a-c",
+        "sta",
+        "rec-a-5ba83d531d",
+        "rec-b-91a1d75b55",
+        "rec-c-0159e763c6",
+        "rec-a"
       ],
       "generations": 44,
       "bestFit": 2.5
@@ -2540,7 +3261,48 @@
         "rec-a-20748abec2",
         "rec-b-80c69eb3e1",
         "rec-c-d0be87d84d",
-        "rec-a-47852f1271"
+        "rec-a-47852f1271",
+        "rec-a-30fc21ed6f",
+        "rec-b-65f0d93de8",
+        "rec-c-8d201e1933",
+        "false",
+        "rec-a-3",
+        "Error",
+        "attack",
+        "arena",
+        "evalmachine",
+        "anonymous",
+        "Script",
+        "runInContext",
+        "node",
+        "149",
+        "runCall",
+        "eval",
+        "151",
+        "main",
+        "178",
+        "process",
+        "processTicksAndRejections",
+        "internal",
+        "task_queues",
+        "105",
+        "rec-b-31db2f6b4b",
+        "rec-a-b07de1c977",
+        "rec-c-0352c008f0",
+        "rec-a-945e075ad8",
+        "rec-b-80f4c95654",
+        "rec-c-57f4e72d06",
+        "rec-a-9",
+        "rec-a-4e6754fd1b",
+        "rec-b-d44d679db8",
+        "rec-c-4406466c9f",
+        "rec-a-cc95d9c09c",
+        "rec-c-05847ac154",
+        "rec-b-0b76e1f824",
+        "rec-a-c",
+        "rec-c-c5fd4df8fd",
+        "rec-b-8ca6857502",
+        "rec-a-4721aed6d9"
       ],
       "generations": 39,
       "bestFit": 2.1
@@ -2658,7 +3420,32 @@
         "rec-a-f421335a72",
         "rec-a-7387336eef",
         "rec-a-f69903fb95",
-        "rec-a-c787287562"
+        "rec-a-c787287562",
+        "rec-a-4b43c14918",
+        "rec-a-360eecd275",
+        "rec-a-813b2bfd63",
+        "Error",
+        "attack",
+        "arena",
+        "evalmachine",
+        "anonymous",
+        "Script",
+        "runInContext",
+        "node",
+        "149",
+        "runCall",
+        "eval",
+        "151",
+        "main",
+        "178",
+        "process",
+        "processTicksAndRejections",
+        "internal",
+        "task_queues",
+        "105",
+        "rec-a-dfe5764792",
+        "rec-a-6aea6221aa",
+        "rec-a-d29659effd"
       ],
       "generations": 55,
       "bestFit": 2.15
@@ -2753,7 +3540,26 @@
       "tokens": [
         "returned",
         "reader",
-        "length"
+        "length",
+        "Error",
+        "attack",
+        "arena",
+        "evalmachine",
+        "anonymous",
+        "Script",
+        "runInContext",
+        "node",
+        "149",
+        "runCall",
+        "eval",
+        "151",
+        "main",
+        "178",
+        "process",
+        "processTicksAndRejections",
+        "internal",
+        "task_queues",
+        "105"
       ],
       "generations": 44,
       "bestFit": 2.15
@@ -2807,7 +3613,52 @@
         "rec-c-a9defe87d9",
         "rec-a-6e92a78667",
         "rec-b-014119a77d",
-        "rec-c-54d4e605e3"
+        "rec-c-54d4e605e3",
+        "rec-a-d9b51300e6",
+        "rec-b-1a66d4aeed",
+        "rec-c-46a9377284",
+        "rec-b-1",
+        "rec-a-eadf55a41d",
+        "rec-c-534eb2d96a",
+        "rec-b-6a22652f6a",
+        "rec-a-dcdfdb3dfb",
+        "rec-b-eae1db31a5",
+        "rec-c-8536c39913",
+        "eval",
+        "rec-c-8",
+        "rec-c-b16e11660c",
+        "rec-b-ce33a154c9",
+        "rec-a-d2c3114fe1",
+        "Error",
+        "attack",
+        "arena",
+        "evalmachine",
+        "anonymous",
+        "Script",
+        "runInContext",
+        "node",
+        "149",
+        "runCall",
+        "151",
+        "main",
+        "178",
+        "process",
+        "processTicksAndRejections",
+        "internal",
+        "task_queues",
+        "105",
+        "rec-a-a66ea5026b",
+        "rec-b-918836eb7e",
+        "rec-c-fe338b126a",
+        "__proto__",
+        "no-name",
+        "none",
+        "rec-a-a66",
+        "rec-c-f",
+        "rec-c-660d62df39",
+        "rec-b-615737f48f",
+        "rec-a-a3f0440520",
+        "rec-b-6"
       ],
       "generations": 39,
       "bestFit": 2.25
@@ -2959,10 +3810,82 @@
         "rec-a-c787287562",
         "rec-c-4479544e12",
         "rec-b-59451634ad",
-        "rec-a-d3e883b655"
+        "rec-a-d3e883b655",
+        "rec-a-68f7ec61fa",
+        "false",
+        "rec-b-aa9254f18a",
+        "rec-c-d3a305f922",
+        "rec-a-6",
+        "rec-a-4b43c14918",
+        "rec-b-e62a1c27e5",
+        "rec-c-e8084e5670",
+        "rec-a-4",
+        "Error",
+        "attack",
+        "arena",
+        "evalmachine",
+        "anonymous",
+        "Script",
+        "runInContext",
+        "node",
+        "149",
+        "runCall",
+        "eval",
+        "151",
+        "main",
+        "178",
+        "process",
+        "processTicksAndRejections",
+        "internal",
+        "task_queues",
+        "105",
+        "rec-b-f876986130",
+        "rec-c-100b6621af",
+        "rec-a-360eecd275",
+        "rec-a-813b2bfd63",
+        "rec-b-4905170197",
+        "rec-c-ef71f9a646",
+        "rec-a-8",
+        "rec-a",
+        "rec-c-9a0d52b9ce",
+        "rec-b-c5f4dd610f",
+        "rec-a-dfe5764792",
+        "rec-a-6aea6221aa",
+        "rec-c-73d2055fbe",
+        "rec-b-b3eb5bbe0b",
+        "rec-",
+        "rec-a-d29659effd"
       ],
       "generations": 57,
       "bestFit": 2.15
+    },
+    "async-vault": {
+      "elites": [],
+      "tokens": [
+        "returned",
+        "eval",
+        "length",
+        "Error",
+        "attack",
+        "arena",
+        "evalmachine",
+        "anonymous",
+        "Script",
+        "runInContext",
+        "node",
+        "149",
+        "runCall",
+        "151",
+        "main",
+        "178",
+        "process",
+        "processTicksAndRejections",
+        "internal",
+        "task_queues",
+        "105"
+      ],
+      "generations": 0,
+      "bestFit": 0
     }
   },
   "history": [
@@ -3189,412 +4112,6 @@
   ],
   "lessons": [
     {
-      "box": "frozen-table",
-      "op": "export-secret",
-      "verdict": "stolen",
-      "program": "// target: frozen-table+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { row, isSecret, SECRET, PUBLIC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(row(\"[object Object]\"));\n  r.push(isSecret(\"constructor\"));\n  r.push(SECRET);\n  r.push(PUBLIC);\n  return r;\n}\n",
-      "seed": 1
-    },
-    {
-      "box": "frozen-table",
-      "op": "leak-fn",
-      "verdict": "stolen",
-      "program": "// target: frozen-table+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { row, isSecret, leakNow, PUBLIC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(row(\"[object Object]\"));\n  r.push(isSecret(\"constructor\"));\n  r.push(leakNow());\n  r.push(PUBLIC);\n  return r;\n}\n",
-      "seed": 1
-    },
-    {
-      "box": "scrubber",
-      "op": "export-secret",
-      "verdict": "stolen",
-      "program": "// target: scrubber+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { scrub, wrap, recA, recB, recC, SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(scrub(\"[object Object]\"));\n  r.push(wrap(\"constructor\"));\n  r.push(recA());\n  r.push(recB());\n  r.push(recC());\n  r.push(SECRET);\n  return r;\n}\n",
-      "seed": 1
-    },
-    {
-      "box": "scrubber",
-      "op": "leak-fn",
-      "verdict": "stolen",
-      "program": "// target: scrubber+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { scrub, wrap, recA, recB, recC, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(scrub(\"[object Object]\"));\n  r.push(wrap(\"constructor\"));\n  r.push(recA());\n  r.push(recB());\n  r.push(recC());\n  r.push(leakNow());\n  return r;\n}\n",
-      "seed": 1
-    },
-    {
-      "box": "scrubber",
-      "op": "leak-prefix",
-      "verdict": "stolen",
-      "program": "// target: scrubber+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { scrub, wrap, recA, recB, recC, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(scrub(\"[object Object]\"));\n  r.push(wrap(\"constructor\"));\n  r.push(recA());\n  r.push(recB());\n  r.push(recC());\n  r.push(hintNow());\n  return r;\n}\n",
-      "seed": 1
-    },
-    {
-      "box": "async",
-      "op": "export-secret",
-      "verdict": "stolen",
-      "program": "// target: async+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { compare, SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(compare(\"admin\"));\n  r.push(SECRET);\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "async",
-      "op": "leak-fn",
-      "verdict": "stolen",
-      "program": "// target: async+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { compare, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(compare(\"toString\"));\n  r.push(leakNow());\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "async",
-      "op": "leak-prefix",
-      "verdict": "stolen",
-      "program": "// target: async+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { compare, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(compare(\"toString\"));\n  r.push(hintNow());\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "callback-sandbox",
-      "op": "export-secret",
-      "verdict": "stolen",
-      "program": "// target: callback-sandbox+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { publicRecords, matches, SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(publicRecords());\n  r.push(matches(\"c\"));\n  r.push(SECRET);\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "callback-sandbox",
-      "op": "leak-fn",
-      "verdict": "stolen",
-      "program": "// target: callback-sandbox+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { publicRecords, matches, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(publicRecords());\n  r.push(matches(\"-1\"));\n  r.push(leakNow());\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "callback-sandbox",
-      "op": "leak-prefix",
-      "verdict": "stolen",
-      "program": "// target: callback-sandbox+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { publicRecords, matches, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(publicRecords());\n  r.push(matches(\"-1\"));\n  r.push(hintNow());\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "cap-object",
-      "op": "export-secret",
-      "verdict": "stolen",
-      "program": "// target: cap-object+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { open, publicReader, read, SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(open(\"toString\"));\n  r.push(publicReader());\n  r.push(read(0.5));\n  r.push(SECRET);\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "cap-object",
-      "op": "leak-fn",
-      "verdict": "stolen",
-      "program": "// target: cap-object+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { open, publicReader, read, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(open(\"rec\"));\n  r.push(publicReader());\n  r.push(read(65536));\n  r.push(leakNow());\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "config",
-      "op": "export-secret",
-      "verdict": "stolen",
-      "program": "// target: config+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { label, row, matches, SECRET, CONFIG } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(label());\n  r.push(row(\"c\"));\n  r.push(matches(\"@@\"));\n  r.push(SECRET);\n  r.push(CONFIG);\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "config",
-      "op": "leak-fn",
-      "verdict": "stolen",
-      "program": "// target: config+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { label, row, matches, leakNow, CONFIG } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(label());\n  r.push(row(\"-1\"));\n  r.push(matches(\"c\"));\n  r.push(leakNow());\n  r.push(CONFIG);\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "const-closure",
-      "op": "export-secret",
-      "verdict": "stolen",
-      "program": "// target: const-closure+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { record, makeMatcher, makeReader, SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(record(65536));\n  r.push(makeMatcher());\n  r.push(makeReader());\n  r.push(SECRET);\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "const-closure",
-      "op": "leak-fn",
-      "verdict": "stolen",
-      "program": "// target: const-closure+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { record, makeMatcher, makeReader, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(record(1000000007));\n  r.push(makeMatcher());\n  r.push(makeReader());\n  r.push(leakNow());\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "const-closure",
-      "op": "leak-prefix",
-      "verdict": "stolen",
-      "program": "// target: const-closure+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { record, makeMatcher, makeReader, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(record(1000000007));\n  r.push(makeMatcher());\n  r.push(makeReader());\n  r.push(hintNow());\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "ct-compare",
-      "op": "export-secret",
-      "verdict": "stolen",
-      "program": "// target: ct-compare+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { verify, publicRecord, recB, recC, SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(verify(\"-1\"));\n  r.push(publicRecord());\n  r.push(recB());\n  r.push(recC());\n  r.push(SECRET);\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "ct-compare",
-      "op": "leak-fn",
-      "verdict": "stolen",
-      "program": "// target: ct-compare+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { verify, publicRecord, recB, recC, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(verify(\"rec\"));\n  r.push(publicRecord());\n  r.push(recB());\n  r.push(recC());\n  r.push(leakNow());\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "ct-compare",
-      "op": "leak-prefix",
-      "verdict": "stolen",
-      "program": "// target: ct-compare+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { verify, publicRecord, recB, recC, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(verify(\"rec\"));\n  r.push(publicRecord());\n  r.push(recB());\n  r.push(recC());\n  r.push(hintNow());\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "digest-only",
-      "op": "export-secret",
-      "verdict": "stolen",
-      "program": "// target: digest-only+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { matchesPrint, rec, recB, recC, SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(matchesPrint(\"-1\"));\n  r.push(rec());\n  r.push(recB());\n  r.push(recC());\n  r.push(SECRET);\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "digest-only",
-      "op": "leak-fn",
-      "verdict": "stolen",
-      "program": "// target: digest-only+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { matchesPrint, rec, recB, recC, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(matchesPrint(\"rec\"));\n  r.push(rec());\n  r.push(recB());\n  r.push(recC());\n  r.push(leakNow());\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "digest-only",
-      "op": "leak-prefix",
-      "verdict": "stolen",
-      "program": "// target: digest-only+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { matchesPrint, rec, recB, recC, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(matchesPrint(\"rec\"));\n  r.push(rec());\n  r.push(recB());\n  r.push(recC());\n  r.push(hintNow());\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "distrust-args",
-      "op": "export-secret",
-      "verdict": "stolen",
-      "program": "// target: distrust-args+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { publicRec, recB, recC, SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(publicRec());\n  r.push(recB());\n  r.push(recC());\n  r.push(SECRET);\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "distrust-args",
-      "op": "leak-fn",
-      "verdict": "stolen",
-      "program": "// target: distrust-args+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { publicRec, recB, recC, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(publicRec());\n  r.push(recB());\n  r.push(recC());\n  r.push(leakNow());\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "distrust-args",
-      "op": "leak-prefix",
-      "verdict": "stolen",
-      "program": "// target: distrust-args+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { publicRec, recB, recC, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(publicRec());\n  r.push(recB());\n  r.push(recC());\n  r.push(hintNow());\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "gate-credential",
-      "op": "export-secret",
-      "verdict": "stolen",
-      "program": "// target: gate-credential+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { authenticate, ping, SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(authenticate(\"toString\"));\n  r.push(ping());\n  r.push(SECRET);\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "gate-credential",
-      "op": "leak-fn",
-      "verdict": "stolen",
-      "program": "// target: gate-credential+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { authenticate, ping, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(authenticate(\"rec\"));\n  r.push(ping());\n  r.push(leakNow());\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "gate-credential",
-      "op": "leak-prefix",
-      "verdict": "stolen",
-      "program": "// target: gate-credential+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { authenticate, ping, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(authenticate(\"rec\"));\n  r.push(ping());\n  r.push(hintNow());\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "lockout-state",
-      "op": "export-secret",
-      "verdict": "stolen",
-      "program": "// target: lockout-state+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { tryOpen, attemptsLeft, note, noteB, noteC, SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(tryOpen(\"-1\"));\n  r.push(attemptsLeft());\n  r.push(note());\n  r.push(noteB());\n  r.push(noteC());\n  r.push(SECRET);\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "lockout-state",
-      "op": "leak-fn",
-      "verdict": "stolen",
-      "program": "// target: lockout-state+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { tryOpen, attemptsLeft, note, noteB, noteC, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(tryOpen(\"rec\"));\n  r.push(attemptsLeft());\n  r.push(note());\n  r.push(noteB());\n  r.push(noteC());\n  r.push(leakNow());\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "lockout-state",
-      "op": "leak-prefix",
-      "verdict": "stolen",
-      "program": "// target: lockout-state+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { tryOpen, attemptsLeft, note, noteB, noteC, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(tryOpen(\"rec\"));\n  r.push(attemptsLeft());\n  r.push(note());\n  r.push(noteB());\n  r.push(noteC());\n  r.push(hintNow());\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "map-lookup",
-      "op": "export-secret",
-      "verdict": "stolen",
-      "program": "// target: map-lookup+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { get, has, matches, SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(get(\"admin\"));\n  r.push(has(\"\"));\n  r.push(matches(\"token\"));\n  r.push(SECRET);\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "map-lookup",
-      "op": "leak-fn",
-      "verdict": "stolen",
-      "program": "// target: map-lookup+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { get, has, matches, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(get(\"toString\"));\n  r.push(has(\"admin\"));\n  r.push(matches(\"\"));\n  r.push(leakNow());\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "map-lookup",
-      "op": "leak-prefix",
-      "verdict": "stolen",
-      "program": "// target: map-lookup+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { get, has, matches, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(get(\"toString\"));\n  r.push(has(\"admin\"));\n  r.push(matches(\"\"));\n  r.push(hintNow());\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "readonly-records",
-      "op": "export-secret",
-      "verdict": "stolen",
-      "program": "// target: readonly-records+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(Object.values(SECRET));\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "safe-errors",
-      "op": "leak-fn",
-      "verdict": "stolen",
-      "program": "// target: safe-errors+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(leakNow());\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "safe-errors",
-      "op": "leak-prefix",
-      "verdict": "stolen",
-      "program": "// target: safe-errors+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(hintNow());\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "switch-dispatch",
-      "op": "export-secret",
-      "verdict": "stolen",
-      "program": "// target: switch-dispatch+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { byKind, kinds, auth, SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(byKind(\"toString\"));\n  r.push(kinds());\n  r.push(auth(\"admin\"));\n  r.push(SECRET);\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "switch-dispatch",
-      "op": "leak-fn",
-      "verdict": "stolen",
-      "program": "// target: switch-dispatch+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { byKind, kinds, auth, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(byKind(\"rec\"));\n  r.push(kinds());\n  r.push(auth(\"-1\"));\n  r.push(leakNow());\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "token",
-      "op": "export-secret",
-      "verdict": "stolen",
-      "program": "// target: token+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { issue, ping, SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(issue(\"toString\"));\n  r.push(ping());\n  r.push(SECRET);\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "token",
-      "op": "leak-fn",
-      "verdict": "stolen",
-      "program": "// target: token+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { issue, ping, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(issue(\"rec\"));\n  r.push(ping());\n  r.push(leakNow());\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "token",
-      "op": "leak-prefix",
-      "verdict": "stolen",
-      "program": "// target: token+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { issue, ping, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(issue(\"rec\"));\n  r.push(ping());\n  r.push(hintNow());\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "two-marks",
-      "op": "export-secret",
-      "verdict": "stolen",
-      "program": "// target: two-marks+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { readerPass, adminPass, SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(readerPass());\n  r.push(adminPass(\"c\"));\n  r.push(SECRET);\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "two-marks",
-      "op": "leak-fn",
-      "verdict": "stolen",
-      "program": "// target: two-marks+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { readerPass, adminPass, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(readerPass());\n  r.push(adminPass(\"-1\"));\n  r.push(leakNow());\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "two-marks",
-      "op": "leak-prefix",
-      "verdict": "stolen",
-      "program": "// target: two-marks+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { readerPass, adminPass, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(readerPass());\n  r.push(adminPass(\"-1\"));\n  r.push(hintNow());\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "unknown-fields",
-      "op": "export-secret",
-      "verdict": "stolen",
-      "program": "// target: unknown-fields+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { rec, recB, recC, SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(rec());\n  r.push(recB());\n  r.push(recC());\n  r.push(SECRET);\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "unknown-fields",
-      "op": "leak-fn",
-      "verdict": "stolen",
-      "program": "// target: unknown-fields+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { rec, recB, recC, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(rec());\n  r.push(recB());\n  r.push(recC());\n  r.push(leakNow());\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "unknown-fields",
-      "op": "leak-prefix",
-      "verdict": "stolen",
-      "program": "// target: unknown-fields+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { rec, recB, recC, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(rec());\n  r.push(recB());\n  r.push(recC());\n  r.push(hintNow());\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "vault",
-      "op": "export-secret",
-      "verdict": "stolen",
-      "program": "// target: vault+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { lookup, check, SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(lookup(\"admin\"));\n  r.push(check(\"\"));\n  r.push(SECRET);\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "vault",
-      "op": "leak-fn",
-      "verdict": "stolen",
-      "program": "// target: vault+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { lookup, check, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(lookup(\"toString\"));\n  r.push(check(\"admin\"));\n  r.push(leakNow());\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "vault",
-      "op": "leak-prefix",
-      "verdict": "stolen",
-      "program": "// target: vault+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { lookup, check, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  r.push(lookup(\"toString\"));\n  r.push(check(\"admin\"));\n  r.push(hintNow());\n  return r;\n}\n",
-      "seed": 2
-    },
-    {
-      "box": "safe-errors",
-      "op": "export-secret",
-      "verdict": "stolen",
-      "program": "// target: safe-errors+export-secret\n// goal: steal / destroy (自律進化 g0)\nuse { lookupOrThrow, lookup, verify, isBusy, SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(lookupOrThrow(\"admin\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"length\")); } catch (e) { r.push(e); }\n  try { r.push(verify(\"prototype\")); } catch (e) { r.push(e); }\n  try { r.push(isBusy()); } catch (e) { r.push(e); }\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 4
-    },
-    {
-      "box": "readonly-records",
-      "op": "leak-fn",
-      "verdict": "stolen",
-      "program": "// target: readonly-records+leak-fn\n// goal: steal / destroy (自律進化 g0)\nuse { all, byName, first, second, third, probe, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(all()); } catch (e) { r.push(e); }\n  try { r.push(byName()); } catch (e) { r.push(e); }\n  try { r.push(first()); } catch (e) { r.push(e); }\n  try { r.push(second()); } catch (e) { r.push(e); }\n  try { r.push(third()); } catch (e) { r.push(e); }\n  try { r.push(probe(\"\")); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 6
-    },
-    {
-      "box": "token",
-      "op": "leak-hook",
-      "verdict": "stolen",
-      "program": "// target: token+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { issue, ping, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(issue(\"{}\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => s + s)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 43
-    },
-    {
-      "box": "vault",
-      "op": "leak-hook",
-      "verdict": "stolen",
-      "program": "// target: vault+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { lookup, check, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(lookup(\"token\")); } catch (e) { r.push(e); }\n  try { r.push(check(\"__proto__\")); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 43
-    },
-    {
-      "box": "token",
-      "op": "leak-key",
-      "verdict": "stolen",
-      "program": "// target: token+leak-key\n// goal: steal / destroy (自律進化 g0)\nuse { issue, ping, unlockNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(issue(ping())); } catch (e) { r.push(e); }\n  try { r.push(issue(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(ping())); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 54
-    },
-    {
       "box": "vault",
       "op": "leak-key",
       "verdict": "stolen",
@@ -3602,94 +4119,10 @@
       "seed": 54
     },
     {
-      "box": "async",
-      "op": "leak-hook",
-      "verdict": "stolen",
-      "program": "// target: async+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { handle, compare, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(handle((s: string) => s + s)); } catch (e) { r.push(e); }\n  try { r.push(compare(\"-1\")); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { throw new Error(s); })); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 17
-    },
-    {
-      "box": "callback-sandbox",
-      "op": "leak-hook",
-      "verdict": "stolen",
-      "program": "// target: callback-sandbox+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { apply, publicRecords, matches, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(apply((s: string) => { throw new Error(s); })); } catch (e) { r.push(e); }\n  try { r.push(publicRecords()); } catch (e) { r.push(e); }\n  try { r.push(matches(\"@@\")); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => s + s)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 17
-    },
-    {
-      "box": "cap-object",
-      "op": "leak-hook",
-      "verdict": "stolen",
-      "program": "// target: cap-object+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { open, publicReader, read, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(open(\"@@\")); } catch (e) { r.push(e); }\n  try { r.push(publicReader()); } catch (e) { r.push(e); }\n  try { r.push(read(255)); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => s + s)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 17
-    },
-    {
-      "box": "config",
-      "op": "leak-hook",
-      "verdict": "stolen",
-      "program": "// target: config+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { label, row, matches, withSecret, CONFIG } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(label()); } catch (e) { r.push(e); }\n  try { r.push(row(\"rec-b-c7cc89ca64\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"@@\")); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => s + s)); } catch (e) { r.push(e); }\n  try { r.push(CONFIG); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 17
-    },
-    {
       "box": "config",
       "op": "leak-key",
       "verdict": "stolen",
       "program": "// target: config+leak-key\n// goal: steal / destroy (自律進化 g0)\nuse { row, label, unlockNow, matches } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(row(label())); } catch (e) { r.push(e); }\n  try { r.push(row(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(matches(label())); } catch (e) { r.push(e); }\n  try { r.push(matches(row(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(matches(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(label())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(row(\"a\"))); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 17
-    },
-    {
-      "box": "const-closure",
-      "op": "leak-hook",
-      "verdict": "stolen",
-      "program": "// target: const-closure+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { record, makeMatcher, makeReader, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(record(1000000007)); } catch (e) { r.push(e); }\n  try { r.push(makeMatcher()); } catch (e) { r.push(e); }\n  try { r.push(makeReader()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { throw new Error(s); })); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 17
-    },
-    {
-      "box": "ct-compare",
-      "op": "leak-hook",
-      "verdict": "stolen",
-      "program": "// target: ct-compare+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { verify, publicRecord, recB, recC, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(verify(\"rec-c-e00fb4ee8c\")); } catch (e) { r.push(e); }\n  try { r.push(publicRecord()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => s + s)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 17
-    },
-    {
-      "box": "ct-compare",
-      "op": "leak-key",
-      "verdict": "stolen",
-      "program": "// target: ct-compare+leak-key\n// goal: steal / destroy (自律進化 g0)\nuse { verify, publicRecord, recB, recC, unlockNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(verify(publicRecord())); } catch (e) { r.push(e); }\n  try { r.push(verify(recB())); } catch (e) { r.push(e); }\n  try { r.push(verify(recC())); } catch (e) { r.push(e); }\n  try { r.push(verify(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(publicRecord())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recB())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recC())); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 17
-    },
-    {
-      "box": "digest-only",
-      "op": "leak-hook",
-      "verdict": "stolen",
-      "program": "// target: digest-only+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { matchesPrint, rec, recB, recC, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchesPrint(\"rec-c-d49efbb9dd\")); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => s + s)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 17
-    },
-    {
-      "box": "digest-only",
-      "op": "leak-key",
-      "verdict": "stolen",
-      "program": "// target: digest-only+leak-key\n// goal: steal / destroy (自律進化 g0)\nuse { matchesPrint, rec, recB, recC, unlockNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchesPrint(rec())); } catch (e) { r.push(e); }\n  try { r.push(matchesPrint(recB())); } catch (e) { r.push(e); }\n  try { r.push(matchesPrint(recC())); } catch (e) { r.push(e); }\n  try { r.push(matchesPrint(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(rec())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recB())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recC())); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 17
-    },
-    {
-      "box": "distrust-args",
-      "op": "leak-hook",
-      "verdict": "stolen",
-      "program": "// target: distrust-args+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { publicRec, recB, recC, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(publicRec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => s + s)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 17
-    },
-    {
-      "box": "distrust-args",
-      "op": "leak-key",
-      "verdict": "stolen",
-      "program": "// target: distrust-args+leak-key\n// goal: steal / destroy (自律進化 g0)\nuse { unlockNow, publicRec, recB, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(unlockNow(publicRec())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recB())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recC())); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 17
-    },
-    {
-      "box": "frozen-table",
-      "op": "leak-hook",
-      "verdict": "stolen",
-      "program": "// target: frozen-table+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { row, isSecret, withSecret, PUBLIC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(row(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(isSecret(\"rec-c-ae5b08e14f\")); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { throw new Error(s); })); } catch (e) { r.push(e); }\n  try { r.push(PUBLIC); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "seed": 17
     },
     {
@@ -3700,45 +4133,10 @@
       "seed": 17
     },
     {
-      "box": "gate-credential",
-      "op": "leak-hook",
-      "verdict": "stolen",
-      "program": "// target: gate-credential+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { authenticate, ping, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(authenticate(\"-1\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { throw new Error(s); })); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 17
-    },
-    {
-      "box": "lockout-state",
-      "op": "leak-hook",
-      "verdict": "stolen",
-      "program": "// target: lockout-state+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { tryOpen, attemptsLeft, note, noteB, noteC, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(tryOpen(\"[object Object]\")); } catch (e) { r.push(e); }\n  try { r.push(attemptsLeft()); } catch (e) { r.push(e); }\n  try { r.push(note()); } catch (e) { r.push(e); }\n  try { r.push(noteB()); } catch (e) { r.push(e); }\n  try { r.push(noteC()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { throw new Error(s); })); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 17
-    },
-    {
-      "box": "lockout-state",
-      "op": "leak-key",
-      "verdict": "stolen",
-      "program": "// target: lockout-state+leak-key\n// goal: steal / destroy (自律進化 g0)\nuse { tryOpen, note, noteB, noteC, unlockNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(tryOpen(note())); } catch (e) { r.push(e); }\n  try { r.push(tryOpen(noteB())); } catch (e) { r.push(e); }\n  try { r.push(tryOpen(noteC())); } catch (e) { r.push(e); }\n  try { r.push(tryOpen(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(note())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(noteB())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(noteC())); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 17
-    },
-    {
-      "box": "map-lookup",
-      "op": "leak-hook",
-      "verdict": "stolen",
-      "program": "// target: map-lookup+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { get, has, matches, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(get(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(has(\"rec-c-e7a31f2d73\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"hasOwnProperty\")); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => s + s)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 17
-    },
-    {
       "box": "map-lookup",
       "op": "leak-key",
       "verdict": "stolen",
       "program": "// target: map-lookup+leak-key\n// goal: steal / destroy (自律進化 g0)\nuse { get, unlockNow, has, matches } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(get(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(has(get(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(has(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(matches(get(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(matches(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(get(\"a\"))); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 17
-    },
-    {
-      "box": "readonly-records",
-      "op": "leak-hook",
-      "verdict": "stolen",
-      "program": "// target: readonly-records+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { all, byName, first, second, third, probe, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(all()); } catch (e) { r.push(e); }\n  try { r.push(byName()); } catch (e) { r.push(e); }\n  try { r.push(first()); } catch (e) { r.push(e); }\n  try { r.push(second()); } catch (e) { r.push(e); }\n  try { r.push(third()); } catch (e) { r.push(e); }\n  try { r.push(probe(\"[object Object]\")); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { throw new Error(s); })); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "seed": 17
     },
     {
@@ -3756,45 +4154,10 @@
       "seed": 17
     },
     {
-      "box": "scrubber",
-      "op": "leak-hook",
-      "verdict": "stolen",
-      "program": "// target: scrubber+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { scrub, wrap, recA, recB, recC, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(scrub(\"object\")); } catch (e) { r.push(e); }\n  try { r.push(wrap(\"@@\")); } catch (e) { r.push(e); }\n  try { r.push(recA()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => s + s)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 17
-    },
-    {
-      "box": "scrubber",
-      "op": "leak-key",
-      "verdict": "stolen",
-      "program": "// target: scrubber+leak-key\n// goal: steal / destroy (自律進化 g0)\nuse { scrub, wrap, recA, recB, recC, unlockNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(scrub(wrap(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(scrub(recA())); } catch (e) { r.push(e); }\n  try { r.push(scrub(recB())); } catch (e) { r.push(e); }\n  try { r.push(scrub(recC())); } catch (e) { r.push(e); }\n  try { r.push(scrub(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(wrap(scrub(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(wrap(recA())); } catch (e) { r.push(e); }\n  try { r.push(wrap(recB())); } catch (e) { r.push(e); }\n  try { r.push(wrap(recC())); } catch (e) { r.push(e); }\n  try { r.push(wrap(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(scrub(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(wrap(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recA())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recB())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recC())); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 17
-    },
-    {
-      "box": "switch-dispatch",
-      "op": "leak-hook",
-      "verdict": "stolen",
-      "program": "// target: switch-dispatch+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { byKind, kinds, auth, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(byKind(\"@@\")); } catch (e) { r.push(e); }\n  try { r.push(kinds()); } catch (e) { r.push(e); }\n  try { r.push(auth(\"sec_\")); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => s + s)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 17
-    },
-    {
       "box": "switch-dispatch",
       "op": "leak-key",
       "verdict": "stolen",
       "program": "// target: switch-dispatch+leak-key\n// goal: steal / destroy (自律進化 g0)\nuse { byKind, unlockNow, auth } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(byKind(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(auth(byKind(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(auth(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(byKind(\"a\"))); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 17
-    },
-    {
-      "box": "unknown-fields",
-      "op": "leak-hook",
-      "verdict": "stolen",
-      "program": "// target: unknown-fields+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { rec, recB, recC, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => s + s)); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 17
-    },
-    {
-      "box": "unknown-fields",
-      "op": "leak-key",
-      "verdict": "stolen",
-      "program": "// target: unknown-fields+leak-key\n// goal: steal / destroy (自律進化 g0)\nuse { unlockNow, rec, recB, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(unlockNow(rec())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recB())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recC())); } catch (e) { r.push(e); }\n  return r;\n}\n",
       "seed": 17
     },
     {
@@ -3812,60 +4175,1272 @@
       "seed": 18
     },
     {
-      "box": "safe-errors",
-      "op": "leak-hook",
+      "box": "async-vault",
+      "op": "export-secret",
       "verdict": "stolen",
-      "program": "// target: safe-errors+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { lookupOrThrow, lookup, verify, isBusy, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(lookupOrThrow(\"rec-b-cfc0ee542a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"rec-c-ce968072c9\")); } catch (e) { r.push(e); }\n  try { r.push(verify(\"constructor\")); } catch (e) { r.push(e); }\n  try { r.push(isBusy()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { throw new Error(s); })); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 18
+      "program": "// target: async-vault+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview"
+      ]
     },
     {
-      "box": "cap-object",
+      "box": "async-vault",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: async-vault+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "critical",
+        "rational",
+        "abstract",
+        "temporal",
+        "layered"
+      ]
+    },
+    {
+      "box": "async-vault",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: async-vault+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "rational",
+        "objective",
+        "abstract",
+        "temporal",
+        "teleport"
+      ]
+    },
+    {
+      "box": "async-vault",
       "op": "leak-prefix",
       "verdict": "stolen",
-      "program": "// target: cap-object+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { open, publicReader, read, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(open(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(publicReader()); } catch (e) { r.push(e); }\n  try { r.push(read(0)); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 19
+      "program": "// target: async-vault+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "critical",
+        "rational",
+        "abstract",
+        "temporal",
+        "layered"
+      ]
+    },
+    {
+      "box": "config",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: config+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET, CONFIG } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(CONFIG); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(CONFIG)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(CONFIG)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(CONFIG)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(CONFIG)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "teleport"
+      ]
+    },
+    {
+      "box": "config",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: config+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { label, row, matches, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(label()); } catch (e) { r.push(e); }\n  try { r.push(row(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "rational",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "config",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: config+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { label, row, matches, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(label()); } catch (e) { r.push(e); }\n  try { r.push(row(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "rational",
+        "objective",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
     },
     {
       "box": "config",
       "op": "leak-prefix",
       "verdict": "stolen",
-      "program": "// target: config+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { label, row, matches, hintNow, CONFIG } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(label()); } catch (e) { r.push(e); }\n  try { r.push(row(\"x\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"label\")); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  try { r.push(CONFIG); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 19
+      "program": "// target: config+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { label, row, matches, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(label()); } catch (e) { r.push(e); }\n  try { r.push(row(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "rational",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
     },
     {
-      "box": "frozen-table",
-      "op": "leak-prefix",
+      "box": "distrust-args",
+      "op": "export-secret",
       "verdict": "stolen",
-      "program": "// target: frozen-table+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { row, isSecret, hintNow, PUBLIC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(row(\"length\")); } catch (e) { r.push(e); }\n  try { r.push(isSecret(\"frozen\")); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  try { r.push(PUBLIC); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 19
+      "program": "// target: distrust-args+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "teleport"
+      ]
     },
     {
-      "box": "gate-credential",
+      "box": "distrust-args",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: distrust-args+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { publicRec, recB, recC, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(publicRec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "rational",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "distrust-args",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: distrust-args+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { publicRec, recB, recC, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(publicRec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "rational",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "distrust-args",
       "op": "leak-key",
       "verdict": "stolen",
-      "program": "// target: gate-credential+leak-key\n// goal: steal / destroy (自律進化 g0)\nuse { authenticate, ping, unlockNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(authenticate(ping())); } catch (e) { r.push(e); }\n  try { r.push(authenticate(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(ping())); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 19
+      "program": "// target: distrust-args+leak-key\n// goal: steal / destroy (自律進化 lens-reverse-w0)\nuse { unlockNow, publicRec, recB, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(unlockNow(publicRec())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recB())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recC())); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "reverse"
+      ]
     },
     {
-      "box": "readonly-records",
+      "box": "distrust-args",
       "op": "leak-prefix",
       "verdict": "stolen",
-      "program": "// target: readonly-records+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { all, byName, first, second, third, probe, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(all()); } catch (e) { r.push(e); }\n  try { r.push(byName()); } catch (e) { r.push(e); }\n  try { r.push(first()); } catch (e) { r.push(e); }\n  try { r.push(second()); } catch (e) { r.push(e); }\n  try { r.push(third()); } catch (e) { r.push(e); }\n  try { r.push(probe(\"rec-c-06\")); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 19
+      "program": "// target: distrust-args+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { publicRec, recB, recC, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(publicRec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "rational",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "map-lookup",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: map-lookup+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "teleport"
+      ]
+    },
+    {
+      "box": "map-lookup",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: map-lookup+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { get, has, matches, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(get(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(has(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "critical",
+        "rational",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "map-lookup",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: map-lookup+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { get, has, matches, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(get(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(has(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "rational",
+        "objective",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "map-lookup",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: map-lookup+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { get, has, matches, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(get(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(has(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(matches(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "critical",
+        "rational",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "switch-dispatch",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: switch-dispatch+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "teleport"
+      ]
+    },
+    {
+      "box": "switch-dispatch",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: switch-dispatch+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { byKind, kinds, auth, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(kinds()); } catch (e) { r.push(e); }\n  try { r.push(auth(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "critical",
+        "rational",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "switch-dispatch",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: switch-dispatch+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { byKind, kinds, auth, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(kinds()); } catch (e) { r.push(e); }\n  try { r.push(auth(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "rational",
+        "objective",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
     },
     {
       "box": "switch-dispatch",
       "op": "leak-prefix",
       "verdict": "stolen",
-      "program": "// target: switch-dispatch+leak-prefix\n// goal: steal / destroy (自律進化 g0)\nuse { byKind, kinds, auth, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(kinds()); } catch (e) { r.push(e); }\n  try { r.push(auth(\"rec-c-93fb8e0e53\")); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 19
+      "program": "// target: switch-dispatch+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { byKind, kinds, auth, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(byKind(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(kinds()); } catch (e) { r.push(e); }\n  try { r.push(auth(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "critical",
+        "rational",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "vault",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: vault+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "teleport"
+      ]
+    },
+    {
+      "box": "vault",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: vault+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { lookup, check, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(check(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "critical",
+        "rational",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "vault",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: vault+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { lookup, check, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(check(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "rational",
+        "objective",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "vault",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: vault+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { lookup, check, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(check(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "critical",
+        "rational",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "async",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: async+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "teleport"
+      ]
+    },
+    {
+      "box": "async",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: async+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { handle, compare, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(handle((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  try { r.push(compare(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "critical",
+        "rational",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "async",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: async+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { handle, compare, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(handle((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  try { r.push(compare(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "rational",
+        "objective",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "async",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: async+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { handle, compare, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(handle((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  try { r.push(compare(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "critical",
+        "rational",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "const-closure",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: const-closure+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "teleport"
+      ]
+    },
+    {
+      "box": "const-closure",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: const-closure+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { record, makeMatcher, makeReader, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(record(0)); } catch (e) { r.push(e); }\n  try { r.push(makeMatcher()); } catch (e) { r.push(e); }\n  try { r.push(makeReader()); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "const-closure",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: const-closure+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { record, makeMatcher, makeReader, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(record(0)); } catch (e) { r.push(e); }\n  try { r.push(makeMatcher()); } catch (e) { r.push(e); }\n  try { r.push(makeReader()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "objective",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "const-closure",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: const-closure+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { record, makeMatcher, makeReader, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(record(0)); } catch (e) { r.push(e); }\n  try { r.push(makeMatcher()); } catch (e) { r.push(e); }\n  try { r.push(makeReader()); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "frozen-table",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: frozen-table+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET, PUBLIC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(PUBLIC); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(PUBLIC)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(PUBLIC)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(PUBLIC)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(PUBLIC)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "teleport"
+      ]
+    },
+    {
+      "box": "frozen-table",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: frozen-table+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { row, isSecret, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(row(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(isSecret(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "critical",
+        "rational",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "frozen-table",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: frozen-table+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { row, isSecret, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(row(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(isSecret(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "rational",
+        "objective",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "frozen-table",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: frozen-table+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { row, isSecret, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(row(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(isSecret(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "critical",
+        "rational",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "readonly-records",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: readonly-records+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "teleport"
+      ]
+    },
+    {
+      "box": "readonly-records",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: readonly-records+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { all, byName, first, second, third, probe, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(all()); } catch (e) { r.push(e); }\n  try { r.push(byName()); } catch (e) { r.push(e); }\n  try { r.push(first()); } catch (e) { r.push(e); }\n  try { r.push(second()); } catch (e) { r.push(e); }\n  try { r.push(third()); } catch (e) { r.push(e); }\n  try { r.push(probe(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "readonly-records",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: readonly-records+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { all, byName, first, second, third, probe, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(all()); } catch (e) { r.push(e); }\n  try { r.push(byName()); } catch (e) { r.push(e); }\n  try { r.push(first()); } catch (e) { r.push(e); }\n  try { r.push(second()); } catch (e) { r.push(e); }\n  try { r.push(third()); } catch (e) { r.push(e); }\n  try { r.push(probe(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "objective",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "readonly-records",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: readonly-records+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { all, byName, first, second, third, probe, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(all()); } catch (e) { r.push(e); }\n  try { r.push(byName()); } catch (e) { r.push(e); }\n  try { r.push(first()); } catch (e) { r.push(e); }\n  try { r.push(second()); } catch (e) { r.push(e); }\n  try { r.push(third()); } catch (e) { r.push(e); }\n  try { r.push(probe(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "token",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: token+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "token",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: token+leak-fn\n// goal: steal / destroy (自律進化 lens-reverse-w0)\nuse { issue, ping, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(issue(ping())); } catch (e) { r.push(e); }\n  try { r.push(issue(leakNow())); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "reverse",
+        "overview",
+        "critical",
+        "rational",
+        "abstract",
+        "temporal",
+        "layered"
+      ]
+    },
+    {
+      "box": "token",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: token+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { issue, ping, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(issue(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "rational",
+        "objective",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "token",
+      "op": "leak-key",
+      "verdict": "stolen",
+      "program": "// target: token+leak-key\n// goal: steal / destroy (自律進化 lens-reverse-w0)\nuse { issue, ping, unlockNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(issue(ping())); } catch (e) { r.push(e); }\n  try { r.push(issue(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(ping())); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "reverse"
+      ]
+    },
+    {
+      "box": "token",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: token+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { issue, ping, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(issue(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "critical",
+        "rational",
+        "abstract",
+        "temporal",
+        "layered"
+      ]
+    },
+    {
+      "box": "callback-sandbox",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: callback-sandbox+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "teleport"
+      ]
+    },
+    {
+      "box": "callback-sandbox",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: callback-sandbox+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { apply, publicRecords, matches, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(apply((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  try { r.push(publicRecords()); } catch (e) { r.push(e); }\n  try { r.push(matches(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "rational",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "callback-sandbox",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: callback-sandbox+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { apply, publicRecords, matches, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(apply((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  try { r.push(publicRecords()); } catch (e) { r.push(e); }\n  try { r.push(matches(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "rational",
+        "objective",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "callback-sandbox",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: callback-sandbox+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { apply, publicRecords, matches, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(apply((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  try { r.push(publicRecords()); } catch (e) { r.push(e); }\n  try { r.push(matches(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "rational",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "ct-compare",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: ct-compare+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "teleport"
+      ]
+    },
+    {
+      "box": "ct-compare",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: ct-compare+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { verify, publicRecord, recB, recC, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(verify(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(publicRecord()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "rational",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "ct-compare",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: ct-compare+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { verify, publicRecord, recB, recC, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(verify(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(publicRecord()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "rational",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "ct-compare",
+      "op": "leak-key",
+      "verdict": "stolen",
+      "program": "// target: ct-compare+leak-key\n// goal: steal / destroy (自律進化 lens-reverse-w0)\nuse { verify, publicRecord, recB, recC, unlockNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(verify(publicRecord())); } catch (e) { r.push(e); }\n  try { r.push(verify(recB())); } catch (e) { r.push(e); }\n  try { r.push(verify(recC())); } catch (e) { r.push(e); }\n  try { r.push(verify(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(publicRecord())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recB())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recC())); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "reverse"
+      ]
+    },
+    {
+      "box": "ct-compare",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: ct-compare+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { verify, publicRecord, recB, recC, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(verify(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(publicRecord()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "rational",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "gate-credential",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: gate-credential+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "teleport"
+      ]
+    },
+    {
+      "box": "gate-credential",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: gate-credential+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { authenticate, ping, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(authenticate(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "critical",
+        "rational",
+        "abstract",
+        "temporal",
+        "teleport"
+      ]
+    },
+    {
+      "box": "gate-credential",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: gate-credential+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { authenticate, ping, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(authenticate(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "rational",
+        "objective",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "gate-credential",
+      "op": "leak-key",
+      "verdict": "stolen",
+      "program": "// target: gate-credential+leak-key\n// goal: steal / destroy (自律進化 lens-reverse-w0)\nuse { authenticate, ping, unlockNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(authenticate(ping())); } catch (e) { r.push(e); }\n  try { r.push(authenticate(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(ping())); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "reverse"
+      ]
+    },
+    {
+      "box": "gate-credential",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: gate-credential+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { authenticate, ping, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(authenticate(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(ping()); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "critical",
+        "rational",
+        "abstract",
+        "temporal",
+        "teleport"
+      ]
+    },
+    {
+      "box": "safe-errors",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: safe-errors+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "teleport"
+      ]
+    },
+    {
+      "box": "safe-errors",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: safe-errors+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { lookupOrThrow, lookup, verify, isBusy, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(lookupOrThrow(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(verify(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(isBusy()); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "critical",
+        "rational",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "safe-errors",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: safe-errors+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { lookupOrThrow, lookup, verify, isBusy, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(lookupOrThrow(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(verify(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(isBusy()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "rational",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "safe-errors",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: safe-errors+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { lookupOrThrow, lookup, verify, isBusy, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(lookupOrThrow(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(lookup(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(verify(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(isBusy()); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "critical",
+        "rational",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "two-marks",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: two-marks+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "teleport"
+      ]
+    },
+    {
+      "box": "two-marks",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: two-marks+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { readerPass, adminPass, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(readerPass()); } catch (e) { r.push(e); }\n  try { r.push(adminPass(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "rational",
+        "abstract",
+        "temporal",
+        "teleport"
+      ]
     },
     {
       "box": "two-marks",
       "op": "leak-hook",
       "verdict": "stolen",
-      "program": "// target: two-marks+leak-hook\n// goal: steal / destroy (自律進化 g0)\nuse { withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { throw new Error(s); })); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => s + s)); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => \"\")); } catch (e) { r.push(e); }\n  return r;\n}\n",
-      "seed": 61
+      "program": "// target: two-marks+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { readerPass, adminPass, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(readerPass()); } catch (e) { r.push(e); }\n  try { r.push(adminPass(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "rational",
+        "objective",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "two-marks",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: two-marks+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { readerPass, adminPass, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(readerPass()); } catch (e) { r.push(e); }\n  try { r.push(adminPass(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "rational",
+        "abstract",
+        "temporal",
+        "teleport"
+      ]
+    },
+    {
+      "box": "cap-object",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: cap-object+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "teleport"
+      ]
+    },
+    {
+      "box": "cap-object",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: cap-object+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { open, publicReader, read, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(open(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(publicReader()); } catch (e) { r.push(e); }\n  try { r.push(read(0)); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "rational",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "cap-object",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: cap-object+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { open, publicReader, read, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(open(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(publicReader()); } catch (e) { r.push(e); }\n  try { r.push(read(0)); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "rational",
+        "objective",
+        "abstract",
+        "temporal",
+        "teleport"
+      ]
+    },
+    {
+      "box": "cap-object",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: cap-object+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { open, publicReader, read, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(open(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(publicReader()); } catch (e) { r.push(e); }\n  try { r.push(read(0)); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "rational",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "digest-only",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: digest-only+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "teleport"
+      ]
+    },
+    {
+      "box": "digest-only",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: digest-only+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { matchesPrint, rec, recB, recC, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchesPrint(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "rational",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "digest-only",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: digest-only+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { matchesPrint, rec, recB, recC, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchesPrint(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "rational",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "digest-only",
+      "op": "leak-key",
+      "verdict": "stolen",
+      "program": "// target: digest-only+leak-key\n// goal: steal / destroy (自律進化 lens-reverse-w0)\nuse { matchesPrint, rec, recB, recC, unlockNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchesPrint(rec())); } catch (e) { r.push(e); }\n  try { r.push(matchesPrint(recB())); } catch (e) { r.push(e); }\n  try { r.push(matchesPrint(recC())); } catch (e) { r.push(e); }\n  try { r.push(matchesPrint(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(rec())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recB())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recC())); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "reverse"
+      ]
+    },
+    {
+      "box": "digest-only",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: digest-only+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { matchesPrint, rec, recB, recC, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(matchesPrint(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "rational",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "lockout-state",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: lockout-state+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "teleport"
+      ]
+    },
+    {
+      "box": "lockout-state",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: lockout-state+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { tryOpen, attemptsLeft, note, noteB, noteC, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(tryOpen(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(attemptsLeft()); } catch (e) { r.push(e); }\n  try { r.push(note()); } catch (e) { r.push(e); }\n  try { r.push(noteB()); } catch (e) { r.push(e); }\n  try { r.push(noteC()); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "critical",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "lockout-state",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: lockout-state+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { tryOpen, attemptsLeft, note, noteB, noteC, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(tryOpen(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(attemptsLeft()); } catch (e) { r.push(e); }\n  try { r.push(note()); } catch (e) { r.push(e); }\n  try { r.push(noteB()); } catch (e) { r.push(e); }\n  try { r.push(noteC()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "lockout-state",
+      "op": "leak-key",
+      "verdict": "stolen",
+      "program": "// target: lockout-state+leak-key\n// goal: steal / destroy (自律進化 lens-reverse-w0)\nuse { tryOpen, note, noteB, noteC, unlockNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(tryOpen(note())); } catch (e) { r.push(e); }\n  try { r.push(tryOpen(noteB())); } catch (e) { r.push(e); }\n  try { r.push(tryOpen(noteC())); } catch (e) { r.push(e); }\n  try { r.push(tryOpen(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(note())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(noteB())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(noteC())); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "reverse"
+      ]
+    },
+    {
+      "box": "lockout-state",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: lockout-state+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { tryOpen, attemptsLeft, note, noteB, noteC, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(tryOpen(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(attemptsLeft()); } catch (e) { r.push(e); }\n  try { r.push(note()); } catch (e) { r.push(e); }\n  try { r.push(noteB()); } catch (e) { r.push(e); }\n  try { r.push(noteC()); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "critical",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "scrubber",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: scrubber+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "scrubber",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: scrubber+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { scrub, wrap, recA, recB, recC, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(scrub(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(wrap(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(recA()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "scrubber",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: scrubber+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { scrub, wrap, recA, recB, recC, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(scrub(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(wrap(\"a\")); } catch (e) { r.push(e); }\n  try { r.push(recA()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "objective",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "scrubber",
+      "op": "leak-key",
+      "verdict": "stolen",
+      "program": "// target: scrubber+leak-key\n// goal: steal / destroy (自律進化 lens-reverse-w0)\nuse { scrub, wrap, recA, recB, recC, unlockNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(scrub(wrap(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(scrub(recA())); } catch (e) { r.push(e); }\n  try { r.push(scrub(recB())); } catch (e) { r.push(e); }\n  try { r.push(scrub(recC())); } catch (e) { r.push(e); }\n  try { r.push(scrub(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(wrap(scrub(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(wrap(recA())); } catch (e) { r.push(e); }\n  try { r.push(wrap(recB())); } catch (e) { r.push(e); }\n  try { r.push(wrap(recC())); } catch (e) { r.push(e); }\n  try { r.push(wrap(unlockNow(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(scrub(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(wrap(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recA())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recB())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recC())); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "reverse",
+        "layered"
+      ]
+    },
+    {
+      "box": "scrubber",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: scrubber+leak-prefix\n// goal: steal / destroy (自律進化 lens-reverse-w0)\nuse { scrub, wrap, recA, recB, recC, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(scrub(wrap(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(scrub(recA())); } catch (e) { r.push(e); }\n  try { r.push(scrub(recB())); } catch (e) { r.push(e); }\n  try { r.push(scrub(recC())); } catch (e) { r.push(e); }\n  try { r.push(scrub(hintNow())); } catch (e) { r.push(e); }\n  try { r.push(wrap(scrub(\"a\"))); } catch (e) { r.push(e); }\n  try { r.push(wrap(recA())); } catch (e) { r.push(e); }\n  try { r.push(wrap(recB())); } catch (e) { r.push(e); }\n  try { r.push(wrap(recC())); } catch (e) { r.push(e); }\n  try { r.push(wrap(hintNow())); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "reverse",
+        "overview",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "unknown-fields",
+      "op": "export-secret",
+      "verdict": "stolen",
+      "program": "// target: unknown-fields+export-secret\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { SECRET } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(SECRET); } catch (e) { r.push(e); }\n  try { r.push(Object.keys(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.values(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(Object.entries(SECRET)); } catch (e) { r.push(e); }\n  try { r.push(JSON.stringify(SECRET)); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "unknown-fields",
+      "op": "leak-fn",
+      "verdict": "stolen",
+      "program": "// target: unknown-fields+leak-fn\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { rec, recB, recC, leakNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(leakNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "critical",
+        "rational",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "unknown-fields",
+      "op": "leak-hook",
+      "verdict": "stolen",
+      "program": "// target: unknown-fields+leak-hook\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { rec, recB, recC, withSecret } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(withSecret((s: string) => { r.push(s); return s; })); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "rational",
+        "objective",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
+    },
+    {
+      "box": "unknown-fields",
+      "op": "leak-key",
+      "verdict": "stolen",
+      "program": "// target: unknown-fields+leak-key\n// goal: steal / destroy (自律進化 lens-reverse-w0)\nuse { unlockNow, rec, recB, recC } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(unlockNow(rec())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recB())); } catch (e) { r.push(e); }\n  try { r.push(unlockNow(recC())); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "reverse"
+      ]
+    },
+    {
+      "box": "unknown-fields",
+      "op": "leak-prefix",
+      "verdict": "stolen",
+      "program": "// target: unknown-fields+leak-prefix\n// goal: steal / destroy (自律進化 lens-overview-w0)\nuse { rec, recB, recC, hintNow } from \"./defender\";\nexport fn attack() -> unknown {\n  const r: unknown[] = [];\n  try { r.push(rec()); } catch (e) { r.push(e); }\n  try { r.push(recB()); } catch (e) { r.push(e); }\n  try { r.push(recC()); } catch (e) { r.push(e); }\n  try { r.push(hintNow()); } catch (e) { r.push(e); }\n  return r;\n}\n",
+      "seed": 24,
+      "lenses": [
+        "overview",
+        "critical",
+        "rational",
+        "abstract",
+        "temporal",
+        "teleport",
+        "layered"
+      ]
     }
   ],
   "gaps": [
@@ -3895,30 +5470,494 @@
       "seed": 18
     },
     {
-      "box": "cap-object",
-      "op": "unfreeze",
-      "seed": 19
-    },
-    {
       "box": "config",
       "op": "unfreeze",
-      "seed": 19
-    },
-    {
-      "box": "frozen-table",
-      "op": "unfreeze",
-      "seed": 19
-    },
-    {
-      "box": "readonly-records",
-      "op": "unfreeze",
-      "seed": 19
+      "seed": 24
     },
     {
       "box": "switch-dispatch",
       "op": "unfreeze",
-      "seed": 19
+      "seed": 24
+    },
+    {
+      "box": "frozen-table",
+      "op": "unfreeze",
+      "seed": 24
+    },
+    {
+      "box": "readonly-records",
+      "op": "unfreeze",
+      "seed": 24
+    },
+    {
+      "box": "cap-object",
+      "op": "unfreeze",
+      "seed": 24
     }
   ],
-  "wins": []
+  "wins": [],
+  "lenses": {
+    "reverse": {
+      "plays": 819,
+      "refused": 0,
+      "held": 819,
+      "red": 0,
+      "void": 0,
+      "bounced": 0,
+      "fresh": 199,
+      "rules": {}
+    },
+    "overview": {
+      "plays": 627,
+      "refused": 0,
+      "held": 627,
+      "red": 0,
+      "void": 0,
+      "bounced": 0,
+      "fresh": 6,
+      "rules": {}
+    },
+    "critical": {
+      "plays": 406,
+      "refused": 304,
+      "held": 102,
+      "red": 0,
+      "void": 0,
+      "bounced": 0,
+      "fresh": 0,
+      "rules": {
+        "tsc": 286,
+        "M6": 18
+      }
+    },
+    "rational": {
+      "plays": 278,
+      "refused": 6,
+      "held": 272,
+      "red": 0,
+      "void": 0,
+      "bounced": 0,
+      "fresh": 12,
+      "rules": {
+        "M0": 6
+      }
+    },
+    "objective": {
+      "plays": 194,
+      "refused": 0,
+      "held": 194,
+      "red": 0,
+      "void": 0,
+      "bounced": 0,
+      "fresh": 0,
+      "rules": {}
+    },
+    "abstract": {
+      "plays": 200,
+      "refused": 15,
+      "held": 185,
+      "red": 0,
+      "void": 0,
+      "bounced": 0,
+      "fresh": 15,
+      "rules": {
+        "tsc": 15
+      }
+    },
+    "paranoid": {
+      "plays": 1026,
+      "refused": 0,
+      "held": 1026,
+      "red": 0,
+      "void": 0,
+      "bounced": 0,
+      "fresh": 15,
+      "rules": {}
+    },
+    "anxious": {
+      "plays": 650,
+      "refused": 0,
+      "held": 650,
+      "red": 0,
+      "void": 0,
+      "bounced": 0,
+      "fresh": 55,
+      "rules": {}
+    },
+    "temporal": {
+      "plays": 674,
+      "refused": 0,
+      "held": 674,
+      "red": 0,
+      "void": 0,
+      "bounced": 0,
+      "fresh": 119,
+      "rules": {}
+    },
+    "breakout": {
+      "plays": 1656,
+      "refused": 1512,
+      "held": 144,
+      "red": 0,
+      "void": 0,
+      "bounced": 0,
+      "fresh": 400,
+      "rules": {
+        "M6": 1066,
+        "M0": 446
+      }
+    },
+    "layered": {
+      "plays": 2152,
+      "refused": 437,
+      "held": 1715,
+      "red": 0,
+      "void": 0,
+      "bounced": 0,
+      "fresh": 87,
+      "rules": {
+        "tsc": 385,
+        "M6": 12,
+        "M0": 14,
+        "M4": 26
+      }
+    },
+    "teleport": {
+      "plays": 179,
+      "refused": 7,
+      "held": 30,
+      "red": 0,
+      "void": 0,
+      "bounced": 142,
+      "fresh": 6,
+      "rules": {
+        "tsc": 2,
+        "M4": 5
+      }
+    }
+  },
+  "waves": [
+    {
+      "seed": 21,
+      "waves": 1,
+      "intensity": 2,
+      "boxes": 1,
+      "plays": 54,
+      "red": 0,
+      "caught": 4,
+      "uncaught": 0,
+      "near": 3,
+      "byLens": {
+        "reverse": {
+          "plays": 4,
+          "held": 4,
+          "refused": 0,
+          "red": 0
+        },
+        "overview": {
+          "plays": 3,
+          "held": 3,
+          "refused": 0,
+          "red": 0
+        },
+        "critical": {
+          "plays": 4,
+          "held": 0,
+          "refused": 4,
+          "red": 0
+        },
+        "rational": {
+          "plays": 2,
+          "held": 2,
+          "refused": 0,
+          "red": 0
+        },
+        "objective": {
+          "plays": 2,
+          "held": 2,
+          "refused": 0,
+          "red": 0
+        },
+        "abstract": {
+          "plays": 2,
+          "held": 2,
+          "refused": 0,
+          "red": 0
+        },
+        "paranoid": {
+          "plays": 6,
+          "held": 6,
+          "refused": 0,
+          "red": 0
+        },
+        "anxious": {
+          "plays": 8,
+          "held": 8,
+          "refused": 0,
+          "red": 0
+        },
+        "temporal": {
+          "plays": 5,
+          "held": 5,
+          "refused": 0,
+          "red": 0
+        },
+        "breakout": {
+          "plays": 12,
+          "held": 0,
+          "refused": 12,
+          "red": 0
+        },
+        "layered": {
+          "plays": 6,
+          "held": 4,
+          "refused": 2,
+          "red": 0
+        }
+      }
+    },
+    {
+      "seed": 22,
+      "waves": 2,
+      "intensity": 6,
+      "boxes": 21,
+      "plays": 2773,
+      "red": 0,
+      "caught": 84,
+      "uncaught": 13,
+      "near": 84,
+      "byLens": {
+        "breakout": {
+          "plays": 515,
+          "held": 41,
+          "refused": 474,
+          "red": 0
+        },
+        "reverse": {
+          "plays": 214,
+          "held": 214,
+          "refused": 0,
+          "red": 0
+        },
+        "overview": {
+          "plays": 202,
+          "held": 202,
+          "refused": 0,
+          "red": 0
+        },
+        "critical": {
+          "plays": 134,
+          "held": 34,
+          "refused": 100,
+          "red": 0
+        },
+        "rational": {
+          "plays": 92,
+          "held": 90,
+          "refused": 2,
+          "red": 0
+        },
+        "objective": {
+          "plays": 64,
+          "held": 64,
+          "refused": 0,
+          "red": 0
+        },
+        "abstract": {
+          "plays": 66,
+          "held": 61,
+          "refused": 5,
+          "red": 0
+        },
+        "paranoid": {
+          "plays": 340,
+          "held": 340,
+          "refused": 0,
+          "red": 0
+        },
+        "anxious": {
+          "plays": 214,
+          "held": 214,
+          "refused": 0,
+          "red": 0
+        },
+        "temporal": {
+          "plays": 219,
+          "held": 219,
+          "refused": 0,
+          "red": 0
+        },
+        "layered": {
+          "plays": 713,
+          "held": 583,
+          "refused": 130,
+          "red": 0
+        }
+      }
+    },
+    {
+      "seed": 23,
+      "waves": 2,
+      "intensity": 6,
+      "boxes": 21,
+      "plays": 2880,
+      "red": 0,
+      "caught": 92,
+      "uncaught": 5,
+      "near": 55,
+      "byLens": {
+        "breakout": {
+          "plays": 527,
+          "held": 49,
+          "refused": 478,
+          "red": 0
+        },
+        "reverse": {
+          "plays": 291,
+          "held": 291,
+          "refused": 0,
+          "red": 0
+        },
+        "overview": {
+          "plays": 211,
+          "held": 211,
+          "refused": 0,
+          "red": 0
+        },
+        "critical": {
+          "plays": 134,
+          "held": 34,
+          "refused": 100,
+          "red": 0
+        },
+        "rational": {
+          "plays": 92,
+          "held": 90,
+          "refused": 2,
+          "red": 0
+        },
+        "objective": {
+          "plays": 64,
+          "held": 64,
+          "refused": 0,
+          "red": 0
+        },
+        "abstract": {
+          "plays": 66,
+          "held": 61,
+          "refused": 5,
+          "red": 0
+        },
+        "paranoid": {
+          "plays": 340,
+          "held": 340,
+          "refused": 0,
+          "red": 0
+        },
+        "anxious": {
+          "plays": 214,
+          "held": 214,
+          "refused": 0,
+          "red": 0
+        },
+        "temporal": {
+          "plays": 224,
+          "held": 224,
+          "refused": 0,
+          "red": 0
+        },
+        "layered": {
+          "plays": 717,
+          "held": 574,
+          "refused": 143,
+          "red": 0
+        }
+      }
+    },
+    {
+      "seed": 24,
+      "waves": 2,
+      "intensity": 6,
+      "boxes": 21,
+      "plays": 3154,
+      "red": 0,
+      "caught": 92,
+      "uncaught": 5,
+      "near": 52,
+      "byLens": {
+        "teleport": {
+          "plays": 179,
+          "held": 30,
+          "refused": 7,
+          "red": 0
+        },
+        "breakout": {
+          "plays": 602,
+          "held": 54,
+          "refused": 548,
+          "red": 0
+        },
+        "reverse": {
+          "plays": 310,
+          "held": 310,
+          "refused": 0,
+          "red": 0
+        },
+        "overview": {
+          "plays": 211,
+          "held": 211,
+          "refused": 0,
+          "red": 0
+        },
+        "critical": {
+          "plays": 134,
+          "held": 34,
+          "refused": 100,
+          "red": 0
+        },
+        "rational": {
+          "plays": 92,
+          "held": 90,
+          "refused": 2,
+          "red": 0
+        },
+        "objective": {
+          "plays": 64,
+          "held": 64,
+          "refused": 0,
+          "red": 0
+        },
+        "abstract": {
+          "plays": 66,
+          "held": 61,
+          "refused": 5,
+          "red": 0
+        },
+        "paranoid": {
+          "plays": 340,
+          "held": 340,
+          "refused": 0,
+          "red": 0
+        },
+        "anxious": {
+          "plays": 214,
+          "held": 214,
+          "refused": 0,
+          "red": 0
+        },
+        "temporal": {
+          "plays": 226,
+          "held": 226,
+          "refused": 0,
+          "red": 0
+        },
+        "layered": {
+          "plays": 716,
+          "held": 554,
+          "refused": 162,
+          "red": 0
+        }
+      }
+    }
+  ]
 }
