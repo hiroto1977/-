@@ -499,16 +499,16 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       report('M6', it.pos, `クラス ${it.name} の基底の \`Error\` が、このモジュールの名前 (use・extern・定数・関数) で隠れています —— 生成物の \`extends Error\` はそちらを指します`);
     }
     // Stryker disable next-line StringLiteral,ObjectLiteral: 役は 'gate' / 'sink' と比べるだけで、'plain' の綴りや他の欄は gate / sink の枝の中でしか読まれない (等価)
-    const plain: Ctx = { role: 'plain', returnVetted: null, destVetted: null };
+    const classCtx: Ctx = { role: 'plain', returnVetted: null, destVetted: null };
     const scope = new Map<string, Binding>();
     checkOptionalParams(it.params);
     for (const p of it.params) {
       bindLocal(scope, p.name, { vetted: carriedMark(p.type, table.vetted), authority: 'local', numeric: !p.optional && p.type?.text === 'number' }, p.pos);
-      if (p.init !== null) checkExpr(p.init, [moduleScope], plain);
+      if (p.init !== null) checkExpr(p.init, [moduleScope], classCtx);
     }
     for (const a of it.superArgs) {
       refuseInert(a, [moduleScope, scope], '`super` の引数');
-      checkExpr(a, [moduleScope, scope], plain);
+      checkExpr(a, [moduleScope, scope], classCtx);
     }
   }
 
