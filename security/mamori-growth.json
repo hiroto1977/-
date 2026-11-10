@@ -3149,6 +3149,68 @@
         "summary": "モデル応答の Markdown 構文解析 assistantMarkdown.ts を Mamori 0.25 へ移した。非 null 断定は at / group (1 要素の切り出しを toString で取る) に集め、段落の溜め場は let 配列への push が M6 で断られるので空白でつないだ 1 本の文字列に、i++ は i = i + 1 へ書き直した。元の TypeScript と 4000 本の乱数入力 + 境界の標本で差分比較し一致、既存の検査は編集なしで緑。範囲の確かめは at の空文字に任せて冗長な守りを消し、変異検査は 100%。対照 4 方向 (at / group / 段落の連結 / A-413 の重さの天井) がすべて鳴る。"
       },
       "deviation": null
+    },
+    {
+      "id": "MG-053",
+      "date": "2026-11-10",
+      "kind": "feature",
+      "target": "async-arrow",
+      "pickedBy": "brief",
+      "briefPick": "port:src/main/userPresence.ts",
+      "version": "0.26",
+      "features": [
+        "async-arrow"
+      ],
+      "added": [
+        "async-arrow"
+      ],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "async arrow の本体で宣言していない名前 `fetch` を呼ぶ",
+          "result": "refused"
+        },
+        {
+          "tried": "gate 関数の中の async arrow で `mint VU(s)` して関門を迂回",
+          "result": "refused"
+        },
+        {
+          "tried": "sink 関数の中の async arrow で `shell.openExternal(u)` を呼び、外側の役を引き継がせる",
+          "result": "refused"
+        },
+        {
+          "tried": "計算した鍵の添字の結果 `m[k]` を `await` して async arrow の戻り値にする (T-255 の迂回)",
+          "result": "refused"
+        },
+        {
+          "tried": "`async 1` のように async の後ろが arrow でも fn でもない形",
+          "result": "refused"
+        },
+        {
+          "tried": "async arrow の引数の既定値に隠した宣言なしの名前 `q = fetch(\"x\")`",
+          "result": "refused"
+        },
+        {
+          "tried": "印の無い値 `raw` を async arrow の中から印つきの口 `open(raw)` へ渡す",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 3,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/emit.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 914,
+        "reason": "draft PR #914 に載せる",
+        "summary": "Mamori 0.26 に非同期の arrow `async (x) => …` / `async x => …` を足した (userPresence.ts の createPresenceGate の async 閉包を移すために要る)。新しい規則は足さず、arrow は外側の役を引き継がず plain で検める (0.9) を async にもそのまま掛けた。足す前に 8 通りで破り、7 形が断られ、1 形 (async を引数の名前にした `async => 1`) は arrow として通る正しい形だった。変異検査は触った範囲 (emit 19 / parser 53 + 15 変異体) で 100%。対照 3 方向 (emit が async を付けない / parser が async arrow を読まない / 検めが外側の役を引き継ぐ) がすべて鳴る。MG-052 の抜け 5 件 (件数・能力台帳・生の呼び手の環境差・CODEOWNERS・読み込み位置) も同じ周で CI の失敗から直した。"
+      },
+      "deviation": "brief は userPresence.ts の移植を選んだが、createPresenceGate の async 閉包が Mamori に無かったので、移植の前に足す側 (feature) へ進めた。移植は次の周"
     }
   ]
 }
