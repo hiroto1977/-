@@ -105,8 +105,8 @@
       "why": "平常時に確かめる段階 (destructive / credential-write / external-write) でも本人確認を出さずに通す",
       "edits": [
         {
-          "find": "      if (!alert && !CONFIRMED_TIERS.has(req.tier)) return { ok: true };",
-          "replace": "      if (!alert) return { ok: true };"
+          "find": "  if (!alert && !CONFIRMED_TIERS.has(req.tier)) return { ok: true };",
+          "replace": "  if (!alert) return { ok: true };"
         }
       ]
     },
@@ -117,12 +117,12 @@
       "why": "承認を『チャンネル + 見せた要約』で再利用する形を戻す (承認を観測した直後に別の値を無確認で書ける)",
       "edits": [
         {
-          "find": "      const summary = safeSummary(req.summary);\n      if (pending) {",
-          "replace": "      const summary = safeSummary(req.summary);\n      if ((globalThis as Record<string, unknown>).__ablationLastOk === req.channel + summary) return { ok: true };\n      if (pending) {"
+          "find": "  const summary = safeSummary(req.summary);\n  if (pending) return deny(",
+          "replace": "  const summary = safeSummary(req.summary);\n  if ((globalThis as Record<string, unknown>).__ablationLastOk === req.channel + summary) return { ok: true };\n  if (pending) return deny("
         },
         {
-          "find": "        record('approved', req);\n        return { ok: true };",
-          "replace": "        record('approved', req);\n        (globalThis as Record<string, unknown>).__ablationLastOk = req.channel + summary;\n        return { ok: true };"
+          "find": "    record('approved', req);\n    return { ok: true };",
+          "replace": "    record('approved', req);\n    (globalThis as Record<string, unknown>).__ablationLastOk = req.channel + summary;\n    return { ok: true };"
         }
       ]
     },
@@ -1305,8 +1305,8 @@
       "why": "速度の上限へ重みの分だけ数える繰り返しを 1 回分に戻す (重い呼び出し chatAll が 1 回としか数えられず、上限の内側で実質 5 倍の課金が通る形へ戻す)",
       "edits": [
         {
-          "find": "      for (let i = 0; i < weight; i += 1) list.push(t);",
-          "replace": "      list.push(t);"
+          "find": "  while (i < weight) {\n    added.push(t);",
+          "replace": "  while (i < 1) {\n    added.push(t);"
         }
       ]
     },
@@ -1317,8 +1317,8 @@
       "why": "全 AI 合議 (assistant/chatAll) の重みの台帳の値を 1 にする (提供者の数だけ課金される呼び出しを 1 回と数える形へ戻す)",
       "edits": [
         {
-          "find": "  'assistant/chatAll': MAX_CALL_WEIGHT,",
-          "replace": "  'assistant/chatAll': 1,"
+          "find": "new Map<string, number>([['assistant/chatAll', MAX_CALL_WEIGHT]])",
+          "replace": "new Map<string, number>([['assistant/chatAll', 1]])"
         }
       ]
     },
@@ -1341,8 +1341,8 @@
       "why": "警戒の元が閾値 (6 件) に届いても警戒態勢へ入らないようにする (不審な操作が重なっても門が平常のまま振る舞い、手探りの攻撃を許す形へ戻す)",
       "edits": [
         {
-          "find": "    if (alarms.length < ALARMS_TO_ALERT) return;",
-          "replace": "    if (alarms.length < ALARMS_TO_ALERT + 1) return;"
+          "find": "  if (alarms.length < ALARMS_TO_ALERT) return;",
+          "replace": "  if (alarms.length < ALARMS_TO_ALERT + 1) return;"
         }
       ]
     },
@@ -1381,8 +1381,8 @@
       "why": "課金される egress の 1 時間・1 日の重みの予算の判定を無効にする (速度の上限ぎりぎりを守って静かに撃ち続ける攻撃者が止まらず、1 日で数万の重みが通る形へ戻す)",
       "edits": [
         {
-          "find": "        if (history.length + weight > shrink(budget.perDay) || lastHour + weight > shrink(budget.perHour)) {",
-          "replace": "        if (false) {"
+          "find": "    if (history.length + weight > perDay || lastHour + weight > perHour) {",
+          "replace": "    if (false) {"
         }
       ]
     },
@@ -1489,8 +1489,8 @@
       "why": "確認の要約の欄ごとの予算による切り詰めを外す (先頭の欄の引用で膨らんだ値が全体の 2,400 字を食い、後ろの欄 (宛先など) が確認に出ない形へ戻す)",
       "edits": [
         {
-          "find": "    return moreThanChars(line, budget) ? `${clampToCeiling(line, budget - 1)}…` : line;",
-          "replace": "    return line;"
+          "find": "  return moreThanChars(line, budget) ? clampToCeiling(line, budget - 1) + '…' : line;",
+          "replace": "  return line;"
         }
       ]
     },

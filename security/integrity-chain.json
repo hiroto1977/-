@@ -88,7 +88,9 @@
     "src/main/shellOpenGate.mamori",
     "src/main/shellOpenGate.ts",
     "src/main/stateFile.ts",
+    "src/main/userPresence.mamori",
     "src/main/userPresence.ts",
+    "src/main/userPresenceHost.ts",
     "src/main/windowOpen.ts",
     "src/main/windowPrefs.ts",
     "src/preload/bridgeTypes.ts",
@@ -4097,6 +4099,14 @@
       "leafCount": 206,
       "note": "update mamori-capabilities.json,ast.ts,emit.ts,parser.ts",
       "hash": "9cae5cdf2c5491ac4aff19946318c5ab91a3c3b33b043756ac36bfee9d24f7ee"
+    },
+    {
+      "index": 486,
+      "prevHash": "9cae5cdf2c5491ac4aff19946318c5ab91a3c3b33b043756ac36bfee9d24f7ee",
+      "merkleRoot": "a78affd0eeef5c5d3981dd76c7b014dd5c480c11f19c23aff43e17a9f3441515",
+      "leafCount": 208,
+      "note": "update integrity-chain.cjs,mamori-capabilities.json,userPresence.mamori,userPresence.ts,userPresenceHost.ts",
+      "hash": "13278eb9f1589f170e0840846c687499f7ce1281bbefa792cb1927750cfa8d59"
     }
   ],
   "tipManifest": {
@@ -4134,7 +4144,7 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "d385ddfc52ec74abf184207bfbb1ac655e730db2b7c6d7e758e35e67e79a5737",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "93093d572e25d87beb1fff43312e8c7a0322429fb965e4a1ea47c8d4129f542a",
+    "scripts/integrity-chain.cjs": "43e0095f30e21837a353aa1283cedea2609b09c298ac30dede1952679d01af14",
     "scripts/knowledge-autopilot.cjs": "ee8f7ae4a4ad29dda6c02f83c113c45fa1648522f807e711aa86b7746f372968",
     "scripts/lib/artifact-freshness.cjs": "add621dfe55e0eab31354f0d6979c9c67b513ed8b8348b9137ca7fa53dd569c1",
     "scripts/lib/json-for-script.cjs": "cb79bf1fb2f3c10c6854ec16d9c12bb0695dee5561751333db4531545702fd70",
@@ -4162,7 +4172,7 @@
     "scripts/verify-e2e-playwright-pin.cjs": "417854f96cbaa4af4dd30a378b722b58093d56e78aa7eaba9bd17df412f57d45",
     "scripts/verify-packaged-fuses.cjs": "4162ab0e5d390c5cccf4cd8ac533027bd1d8a5cbceb0a069059d4f3800643d9f",
     "scripts/verify-release-artifacts.cjs": "1bd668bc052b476a9b3f976dc80ddf8faa4f080aed5617d354a8c7647ee9f557",
-    "security/mamori-capabilities.json": "3a07f37487c6d280aba3ced05795265cf64575031636ad7f81daeb6fe8d39c26",
+    "security/mamori-capabilities.json": "8eb7cbe3534bf855eec0c24cfd148a033d294e2944b59d7deabb9c17e7f8b430",
     "src/main/atomicWrite.ts": "63b6ff1fb7d8990b76409c62556d69f99a14475f73662e89507e8899a32a9c3f",
     "src/main/clients/assistant.mamori": "2a929c90e2ce3c27eadb128f35ea8f09f065e8b657a6a06679c99128e7d93cbd",
     "src/main/clients/assistant.ts": "f4c1987f2333770647cf133b7815cbb57da0477d7ac2ffb9ce7cb757f035fe8a",
@@ -4186,7 +4196,9 @@
     "src/main/shellOpenGate.mamori": "e0a9c53ce86e9869d27730d84e452db31929c9b1f1be87ce522c0bbb67f5421a",
     "src/main/shellOpenGate.ts": "4612d8cc9c61827225a11b61dbdfff4f200bb28524eb86dd1ba471a471b645c9",
     "src/main/stateFile.ts": "984eebe8582b3c6c88669d17e778932f6b87a682640d1f162acd182d5947169b",
-    "src/main/userPresence.ts": "9092ae077824586caa9f177185eb80c643f5ee77794a51e993b1b76ba17a064f",
+    "src/main/userPresence.mamori": "f8e8699a50606d025f5b9f3107850daed121332b1c5ada54971661838b436f8a",
+    "src/main/userPresence.ts": "0abd1f30dd3c4039889f15a74b08890caa050e2f0110c09b524f89ef5c7fc8db",
+    "src/main/userPresenceHost.ts": "95ba85cbbff976f35b8b131cc36c348a27e52ac773c787a791a2a06cc0753879",
     "src/main/windowOpen.ts": "cf4fd5bdd9d04d9468dbc308cb979f09f946d237ec0e0ac033c83d87b9cfbf79",
     "src/main/windowPrefs.ts": "0bccea9e29b489da1b4a7962eaa53e237cf93fed9d4692371a3a43a6a4985dee",
     "src/preload/bridgeTypes.ts": "c45b51269fc6297e30b82c70d9eac2f92b25c6cd0d4b4b9a5993d3a1676d4b66",

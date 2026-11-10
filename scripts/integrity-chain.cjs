@@ -731,6 +731,8 @@ const PROTECTED = [
   'src/renderer/data/assistantMarkdown.mamori', // モデル応答の構文解析 (見出し・表・箇条書き・コード・描く重さの天井) の Mamori の元 (2026-11-09 · MG-052)
   'src/main/oauth.mamori',                  // OAuth の認可・更新の本体 (待受の応答を決める decideCallbackReply を含む) の Mamori の元 (2026-11-09 · MG-050)
   'src/main/oauthHost.ts',                  // その薄い壁 (env・乱数・SHA-256・Buffer・時計・URLSearchParams・http の待受・fetch・締切の口 · MG-050)
+  'src/main/userPresence.mamori',           // 画面から独立した本人確認の門 (速度・予算・警戒・ロックアウト・要約の整え) の Mamori の元 (2026-11-10 · MG-054)
+  'src/main/userPresenceHost.ts',           // その薄い壁 (時計・欄の読み・原型の読み・path.resolve · MG-054)
   'src/renderer/oauth/pkceSessionHost.ts',  // sessionStorage の口 (薄い壁)
   'src/renderer/security/dataCrypto.mamori',     // レコード暗号の関門 (KDF 回数・塩・封筒の形) の Mamori の元 (2026-11-02 · MG-021)
   'src/renderer/security/dataCryptoHost.ts',     // WebCrypto / btoa の口 (薄い壁)

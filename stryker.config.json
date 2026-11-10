@@ -79,6 +79,7 @@
     "src/renderer/data/bestAnswers.ts",
     "src/renderer/data/bestAnswersJob.ts",
     "src/main/userPresence.ts",
+    "src/main/userPresenceHost.ts",
     "src/main/selfAttestation.ts",
     "src/renderer/security/egressStepUp.ts",
     "src/main/windowOpen.ts",

@@ -67,6 +67,14 @@
       ],
       "sinks": []
     },
+    "src/main/userPresence.mamori": {
+      "externals": [
+        "pure ./userPresenceHost: hostNow, hostField, hostPrototypeKind, hostResolvePath"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
     "src/preload/preload.mamori": {
       "externals": [
         "pure ./preloadHost: invokeIpc, exposeBridge"
