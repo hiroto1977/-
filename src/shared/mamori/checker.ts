@@ -440,6 +440,34 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
   /** 名前 → 関数の外形 (このモジュールの物か、use で引いた他の Mamori の物)。 */
   const signatureOf = (name: string): FnSignature | undefined => localFns.get(name) ?? importedFns.get(name);
 
+  /**
+   * `interface N extends B { … }` (0.30 · MG-061)。基底に置けるのは**先に宣言した interface か use で引いた名前**だけ。
+   * - 印の型は断る (M4): 印は `mint` でだけ作る。印の型を継いだ型の値は、印を持たないのに印の型として受け取られる (`tsc` は原始型との交差を継げないと
+   *   止めるが、Mamori の層でも先に断る)。
+   * - 型の別名・定数・関数・口・クラス・まだ宣言していない interface・自分自身・宣言していない名前 (`Record` / `Error` / `Array` ほかの組み込み) は断る (M6):
+   *   別名は印の型や和の型を隠せ、組み込みの型は原型の名前を欄として持ち込む。use で引いた名前が関数なら断る (型として消える名前ではない)。
+   */
+  const interfacesSoFar = new Set<string>();
+  const checkInterfaceBase = (it: Extract<Item, { kind: 'interface' }>): void => {
+    interfacesSoFar.add(it.name);
+    const base = it.base;
+    if (base === null) return;
+    if (base.name === it.name) {
+      report('M6', base.pos, `interface ${it.name} は自分自身を継げません`);
+    } else if (table.vetted.has(base.name)) {
+      report('M4', base.pos, `interface ${it.name} は印の型 ${base.name} を継げません —— 印は \`mint\` でだけ作ります (印の型を継いだ型の値は、印を持たないのに印の型として受け取られます)`);
+    } else if (!interfacesSoFar.has(base.name) && !usedLocals.has(base.name)) {
+      const why = externNames.has(base.name) || defaultLocals.has(base.name)
+        ? '外の口です (interface だけが継げます)'
+        : declaredNames.has(base.name)
+          ? '先に宣言した interface ではありません (型の別名・定数・関数・まだ宣言していない物は継げません)'
+          : '宣言されていません (継げるのは先に宣言した interface か、use で引いた名前だけです。組み込みの型 Record / Error / Array ほかは継げません)';
+      report('M6', base.pos, `interface ${it.name} の基底 ${base.name} は${why}`);
+    } else if (usedLocals.has(base.name) && signatureOf(base.name) !== undefined) {
+      report('M6', base.pos, `interface ${it.name} の基底 ${base.name} は関数です —— interface だけが継げます`);
+    }
+  };
+
   for (const it of module.items) {
     // 定数の初期値は役割を持たない。role は 'sink' / 'gate' との比べにしか使われないので、'plain' の綴りや
     // 器そのものを替えても答えは変わらない (等価) —— 答えは「定数の初期値からも参照できない」(M2) と
@@ -452,6 +480,10 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     }
     if (it.kind === 'class') {
       checkClass(it);
+      continue;
+    }
+    if (it.kind === 'interface') {
+      checkInterfaceBase(it);
       continue;
     }
     if (it.kind !== 'fn') continue;

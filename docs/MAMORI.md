@@ -79,6 +79,25 @@ Mamori では、その 2 つは**書けない**:
 - **既知の差 (正直に)**: `(a?.b).c` は丸括弧を構文木に残さないので生成物は `a?.b.c` になる (`a` が null のとき `.c` を読む前に止まる —— 例外が減る向きで、印の流れには触れない)。
 - **この周で移せた壁は 0 本** (`optional-chain` だけで足りる壁が無い —— 足りない構文は他にも要る)。言語の幅を広げた周で、次は `index` の塞ぎ方 (字面の鍵は FORBIDDEN_MEMBERS を通し、字面でない鍵は数だけ) を決めてから足す。
 
+## 0.30 —— `interface 名 extends 基底 { … }` を足した (MG-061 · 2026-11-10)
+
+`windowPrefs.ts` の `WindowPrefsDeps extends StateFileDeps` ほか、依存を束ねた型に要る。**interface が基底を継げると、印の型 (`vetted`) を継いだ型・印を隠した別名・原型の名前を欄に持つ組み込みの型を持ち込める。** 印は `mint` でだけ作る、を保ったまま足した。足す前に 8 通りで破った (0.29 は `extends` そのものを M0 で断つ)。
+
+| 破る形 | 結果 |
+| --- | --- |
+| ① 印の型を継ぐ (`interface F extends VU`) | M4 で断る (use で引いた印の名前も) |
+| ② 印を隠す型の別名を継ぐ (`type A = VU; interface F extends A`) | M6 で断る |
+| ③ 定数・関数・後ろで宣言する interface・自分自身を継ぐ | M6 で断る |
+| ④ 組み込みの型 (`Record` / `Error` / `Array` / `Object` / `Function` / `Promise` / `Map`) を継ぐ | M6 で断る (宣言していない名前) |
+| ⑤ 型引数つきの基底 `extends Record<string, unknown>` | M0 で断る |
+| ⑥ 基底を複数 `extends A, B` | M0 で断る |
+| ⑦ use で引いた関数・`extern` の口・既定の import を継ぐ | M6 で断る |
+| ⑧ 基底に式・型の演算・字面を置く (`typeof B` / `B & C` / `{ a: number }` ほか) | 断る |
+
+- 新しい規則は「基底は**先に宣言した interface か use で引いた名前**ただ 1 つ」で、印の型は M4・それ以外は M6。独立の判定は `mamoriInspect.ts` が生成物の構文木で見る (基底が名前でない・型引数・印の別名・先に宣言した interface でも import でもない)。電池の文脈 `ifaceBase` が 40 通りの基底を掛け合わせる。
+- **残した物 (測って決めた)**: use で引いた名前が**別の module の型の別名**で印を隠している場合は、Mamori は見えない (export の表に別名の中身は載らない) —— 生成物の `tsc` が「interface は原始型との交差を継げない」と断つ。TypeScript の module から引いた名前は interface かどうかも Mamori からは見えない。
+- 移せる壁: `windowPrefs.ts` の足りない構文が `interface-extends` ×1 → 残りは別の構文 (数えるのは `npm run mamori:grow -- report`)。
+
 ## 0.29 —— `'k' in x` を足した (MG-060 · 2026-11-10)
 
 判別付きの和の絞り込み (`if ('tooLarge' in r)` — `selfAttestation.ts` ほか) に要る。**`in` は原型の鎖をたどる**ので、`'toString' in {}` も `'constructor' in {}` も真になる —— 自分の鍵かを問うつもりのコードが、どの物にも真と答える (許可表の照合に使えば全部通る)。自分の鍵を問うなら `Object.hasOwn(x, 'k')` が先で、`in` は**左辺を字面の文字列だけ**にして足した。足す前に 6 通りで破った (0.28 は `in` そのものを M0 で断る)。
@@ -612,7 +631,7 @@ T-234 (`sinkTyped*` の文脈と印の型の判定)・T-232 (`RegExp.$1`)・`.co
 - 戦いのデータは `security/mamori-arena/corpus.json` に残し、`mamoriArena.test.ts` が毎回再生する (学習データ)。
 - 侵入役の新手を AI に書かせる段は、安全装置に止められた。迂回せず、新手は人が追加する (`*.attack.mamori`)。
 
-## 文法 (0.29)
+## 文法 (0.30)
 
 ```
 module    := header* item*
@@ -626,7 +645,7 @@ extern    := 'extern' ('sink' | 'pure') '{' name (',' name)* '}' 'from' 文字�
            | 'extern' ('sink' | 'pure') 'global' name ';'
 vetted    := 'export'? 'vetted' 名前 '=' 文字列 ';'
 type      := 'export'? 'type' 名前 '=' '|'? 型 ';'      先頭に | を書けば 1 行に 1 つずつ並べて写す
-interface := 'export'? 'interface' 名前 '{' (doc* 'readonly'? 名前 '?'? ':' 型 ';')* '}'
+interface := 'export'? 'interface' 名前 ('extends' 名前)? '{' (doc* 'readonly'? 名前 '?'? ':' 型 ';')* '}'
 class     := 'export'? 'class' 名前 'extends' 'Error' '{' 'constructor' '(' 引数* ')' '{' 'super' '(' 式* ')' ';' '}' '}'      (例外の型だけ · 欄もメソッドも `this` も無い · 他の module から `use` では引けない · 0.27)
 const     := 'export'? 'const' 名前 (':' 型)? '=' 式 ';'
 let       := 'let' 名前 ':' 型 '=' 式 ';'      (モジュール直下の状態 · export できない · 型が要る · 印の型は不可 · 代入は関数の中から · 欄・添字への代入と書き換えるメソッドは今も断る · 0.28)

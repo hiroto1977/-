@@ -1042,6 +1042,15 @@ export function parse(file: string, src: string): Module {
     if (isW('interface')) {
       next();
       const name = ident();
+      // `extends 基底` (0.30 · MG-061)。基底は名前 1 つだけ —— 型引数 `B<T>` と複数の基底は、印の型を別名や交差で混ぜ込む道になるので書けない。
+      let base: { readonly name: string; readonly pos: Pos } | null = null;
+      if (isW('extends')) {
+        next();
+        const bpos = peek().pos;
+        base = { name: ident(), pos: bpos };
+        if (isP('<')) fail(peek(), '`interface … extends` の基底に型引数は付けられません (基底は宣言した interface の名前 1 つだけ)');
+        if (isP(',')) fail(peek(), '`interface … extends` の基底は 1 つだけです');
+      }
       expectP('{');
       const members: Member[] = [];
       for (;;) {
@@ -1062,7 +1071,7 @@ export function parse(file: string, src: string): Module {
         members.push({ name: mname, readonly: ro, optional, type: mtype, doc: mdoc, pos: mpos });
       }
       expectP('}');
-      return { kind: 'interface', exported, name, members, doc, pos: t.pos };
+      return { kind: 'interface', exported, name, base, members, doc, pos: t.pos };
     }
     if (isW('class')) {
       next();

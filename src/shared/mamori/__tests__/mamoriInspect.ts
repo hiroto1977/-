@@ -174,6 +174,23 @@ export function inspectEmitted(file: string, text: string, externGlobals: Readon
     if (aliasText.has(m)) return /^Vetted</.test(aliasText.get(m)!);
     return false;
   };
+  // 0.30 の interface extends: 基底は先に宣言した interface か import した名前 1 つだけ (印の型・型の別名・組み込みの型・自分自身・後ろに宣言した物・式は穴)。
+  const earlierInterfaces = new Set<string>();
+  sf.forEachChild((c) => {
+    if (!ts.isInterfaceDeclaration(c)) return;
+    for (const h of c.heritageClauses ?? []) {
+      if (h.token !== ts.SyntaxKind.ExtendsKeyword) { found.push({ kind: 'hole', reason: 'interface が extends 以外の継承を持つ' }); continue; }
+      if (h.types.length !== 1) found.push({ kind: 'hole', reason: `interface ${c.name.text} の基底が 1 つでない` });
+      for (const t of h.types) {
+        const e = t.expression;
+        if (t.typeArguments !== undefined) found.push({ kind: 'hole', reason: `interface ${c.name.text} の基底に型引数: ${t.getText(sf)}` });
+        else if (!ts.isIdentifier(e)) found.push({ kind: 'hole', reason: `interface ${c.name.text} の基底が名前でない: ${t.getText(sf)}` });
+        else if (aliasText.has(e.text)) found.push({ kind: 'hole', reason: `interface ${c.name.text} が型の別名 ${e.text} を継いでいる` });
+        else if (!earlierInterfaces.has(e.text) && !imported.has(e.text)) found.push({ kind: 'hole', reason: `interface ${c.name.text} の基底 ${e.text} が先に宣言した interface でも import でもない` });
+      }
+    }
+    earlierInterfaces.add(c.name.text);
+  });
   const sinkCalls = (n: ts.Node): void => {
     if (ts.isCallExpression(n) && ts.isIdentifier(n.expression) && n.expression.text === 'openUrl') {
       const a = n.arguments[0];

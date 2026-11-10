@@ -251,7 +251,7 @@ function item(it: Item, vettedLabels: readonly string[], preludeDone: { value: b
       if (!it.multiline) return [...docblock(it.doc), `${exp}type ${it.name} = ${it.type.text};`];
       return [...docblock(it.doc), `${exp}type ${it.name} =`, ...topLevelUnion(it.type.text).map((m, i, all) => `${IND}| ${m}${i === all.length - 1 ? ';' : ''}`)];
     case 'interface':
-      return [...docblock(it.doc), `${exp}interface ${it.name} {`, ...it.members.flatMap(member), '}'];
+      return [...docblock(it.doc), `${exp}interface ${it.name}${it.base === null ? '' : ` extends ${it.base.name}`} {`, ...it.members.flatMap(member), '}'];
     case 'const':
       return [...docblock(it.doc), `${exp}const ${it.name}${it.type === null ? '' : `: ${it.type.text}`} = ${expr(it.init)};`];
     case 'let':

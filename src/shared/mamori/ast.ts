@@ -173,8 +173,20 @@ export type Item =
   | { readonly kind: 'vetted'; readonly exported: boolean; readonly name: string; readonly label: string; readonly doc: Doc; readonly pos: Pos }
   /** `type 名前 = 型;` (0.2)。`multiline` は元が先頭の `|` で書いた和の型 (変換も 1 行に 1 つずつ並べる)。 */
   | { readonly kind: 'type'; readonly exported: boolean; readonly name: string; readonly type: TypeRef; readonly multiline: boolean; readonly doc: Doc; readonly pos: Pos }
-  /** `interface 名前 { 欄; … }` (0.2)。欄は `///` の説明・`readonly`・`?` を持てる。 */
-  | { readonly kind: 'interface'; readonly exported: boolean; readonly name: string; readonly members: readonly Member[]; readonly doc: Doc; readonly pos: Pos }
+  /** 欄は `///` の説明・`readonly`・`?` を持てる。 */
+  /**
+   * `interface 名前 { 欄; … }` (0.2)・`interface 名前 extends 基底 { … }` (0.30 · MG-061)。基底は名前 1 つだけ (型引数・複数は書けない)。
+   * 基底に置けるのは**先に宣言した interface か use で引いた名前**だけで、印の型・型の別名・関数・組み込みの型は断る (checker の M4 / M6)。
+   */
+  | {
+      readonly kind: 'interface';
+      readonly exported: boolean;
+      readonly name: string;
+      readonly base: { readonly name: string; readonly pos: Pos } | null;
+      readonly members: readonly Member[];
+      readonly doc: Doc;
+      readonly pos: Pos;
+    }
   | { readonly kind: 'const'; readonly exported: boolean; readonly name: string; readonly type: TypeRef | null; readonly init: Expr; readonly doc: Doc; readonly pos: Pos }
   /** モジュール直下の `let 名前: 型 = 初期値;` (0.28 · MG-058)。export できず、型の宣言が要る。書き換えられるのはこのモジュールの関数の中からだけ。 */
   | { readonly kind: 'let'; readonly name: string; readonly type: TypeRef; readonly init: Expr; readonly doc: Doc; readonly pos: Pos }

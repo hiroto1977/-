@@ -140,6 +140,13 @@ const TYPE_SMUGGLE: readonly string[] = [
   '{ a: number } & { b: fetch("x") }; const D: number',
 ];
 
+/** `interface Z extends ○ { … }` の基底に置く綴り (0.30 · MG-061)。印の型・型の別名・組み込みの型・自分自身・後ろの物・関数・口・式・型引数・複数。 */
+const EXTENDS_BASES: readonly string[] = [
+  'VU', 'Maybe', 'B0', 'B1', 'Z', 'Record', 'Error', 'Array', 'Object', 'Function', 'Promise', 'Map', 'go', 'openUrl', 'shell', 'string', 'unknown', 'any',
+  'Record<string, unknown>', 'Array<number>', 'VU & B0', 'B0 | B1', 'B0, B0', 'B0 & B0', 'B0<number>', 'Object.prototype', 'B0.constructor', '(B0)', 'typeof B0', 'keyof B0',
+  'B0 /* x */', '{ a: number }', '`B0`', '"B0"', '1', 'B0()', 'B0[]', 'this', 'constructor', '__proto__', 'prototype',
+];
+
 const PAYLOADS: readonly string[] = [
   ...GLOBAL_NAMES.map((n) => n),
   ...GLOBAL_NAMES.map((n) => `${n}("1")`),
@@ -191,6 +198,7 @@ const CONTEXTS: Readonly<Record<string, (e: string) => string>> = {
   sinkTypedConst: (e) => `${PRELUDE}type Maybe = VU | string;\nexport fn go(raw: string) -> unknown {\n  const u: ${e} = raw;\n  return openUrl(u);\n}\n`,
   sinkTypedArrow: (e) => `${PRELUDE}type Maybe = VU | string;\nexport fn go(xs: readonly string[]) -> unknown {\n  return xs.map((u: ${e}) => openUrl(u));\n}\n`,
   sinkTypedAlias: (e) => `${PRELUDE}type Maybe = ${e};\nexport fn go(u: Maybe) -> unknown {\n  return openUrl(u);\n}\n`,
+  ifaceBase: (e) => `${PRELUDE}type Maybe = VU | string;\ninterface B0 {\n  b: number;\n}\nexport interface Z extends ${e} {\n  a: number;\n}\nexport interface B1 {\n  c: number;\n}\n`,
   typeSmuggleTop: (e) => `export const C: ${e} = 1;\n`,
   typeSmuggleRet: (e) => `export fn go() -> ${e} {\n  return 1;\n}\n`,
   typeSmuggleLet: (e) => `export fn go() -> unknown {\n  let v: ${e};\n  return 1;\n}\n`,
@@ -323,7 +331,7 @@ export function runBattery(seed: number, rounds: number): Report {
 
   for (let i = 0; i < rounds; i++) {
     const ctx = pick(ctxNames);
-    const payload = ctx.startsWith('sinkTyped') ? pick(TYPE_PAYLOADS) : ctx.startsWith('typeSmuggle') ? pick(TYPE_SMUGGLE) : pick(PAYLOADS);
+    const payload = ctx.startsWith('sinkTyped') ? pick(TYPE_PAYLOADS) : ctx.startsWith('typeSmuggle') ? pick(TYPE_SMUGGLE) : ctx === 'ifaceBase' ? pick(EXTENDS_BASES) : pick(PAYLOADS);
     const base = CONTEXTS[ctx]!(payload);
     const tag = `seed=${seed} #${i} ctx=${ctx} payload=${JSON.stringify(payload.length > 60 ? payload.slice(0, 60) + '…' : payload)}`;
     const baseVerdict = examine(`${tag} env=identity`, [file(base)]);
