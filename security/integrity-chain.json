@@ -4148,6 +4148,14 @@
       "leafCount": 209,
       "note": "update VettedLink.tsx,linkSpoof.ts",
       "hash": "a3f706d8c37852176317c3ef1a79dc4d3c5c505dd3302bb1576ac52b16458112"
+    },
+    {
+      "index": 492,
+      "prevHash": "a3f706d8c37852176317c3ef1a79dc4d3c5c505dd3302bb1576ac52b16458112",
+      "merkleRoot": "cf02e797ce1e246704d8c9061b1dc26619f2740952c86e327db0e13d20a8d9a8",
+      "leafCount": 209,
+      "note": "update VettedLink.tsx",
+      "hash": "18f99d603104d86bb54f32fbbd218b56a99d69472403b78425edd5ba62f70961"
     }
   ],
   "tipManifest": {
@@ -4247,7 +4255,7 @@
     "src/preload/preload.ts": "d8ad0ea1561ed8db531994e42f3a76b93ce0cf97e6c9bb0cd10b461deec5eed7",
     "src/preload/preloadHost.ts": "c2622f6493c10176ce3a3464bbbfa32cb8c593f395677c7bc09f2fe335696cfa",
     "src/renderer/components/VettedImg.tsx": "d55ffb54b76cafa0a314c2a6ac1704e9a7f35d4770bd159e0c489e6f272cda27",
-    "src/renderer/components/VettedLink.tsx": "5a2f6e30105fa19652ad9b8fe875acaa35fec7d8940a595fb13658aea25e11ae",
+    "src/renderer/components/VettedLink.tsx": "048b58bfe6f7647a533688f999e3fab0bdfeb6a58fd32be5721af69f1de04540",
     "src/renderer/data/assistantMarkdown.mamori": "692c760677900a9709b5af8645f0ba1f69feb4930d82c905932eca11def66049",
     "src/renderer/data/assistantMarkdown.ts": "164eef1336cdb48e2fc2570f8bb1037b4d8e43c266a47cfb4cb06189c231d529",
     "src/renderer/data/localWrite.ts": "5f8ce8c143e6213eebc1d3214c6701e5d0d0bf59a00d9c2cee0911733d398ac8",

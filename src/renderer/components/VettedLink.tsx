@@ -72,12 +72,10 @@ export function VettedLink({
 /** 子が文字列 (の並び) のときだけ表示文字として読む。要素・画像が混ざれば `null` (食い違いは判定しない)。 */
 function labelText(children: ReactNode): string | null {
   if (typeof children === 'string') return children;
-  if (typeof children === 'number') return String(children);
   if (Array.isArray(children)) {
     let out = '';
     for (const c of children) {
       if (typeof c === 'string') out += c;
-      else if (typeof c === 'number') out += String(c);
       else return null;
     }
     return out;
