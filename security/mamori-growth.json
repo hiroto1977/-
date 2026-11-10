@@ -3709,6 +3709,48 @@
       },
       "version": "0.30",
       "deviation": "利用者が「1〜4 全て推奨される順番で行う」と指示した順 (3 番目) で、brief の順位 (selfAttestation.ts の移植が先頭) ではなく依頼に従った。"
+    },
+    {
+      "id": "MG-062",
+      "date": "2026-11-10",
+      "kind": "probe",
+      "target": "language",
+      "pickedBy": "manual",
+      "briefPick": "probe:language",
+      "version": "0.30",
+      "features": [],
+      "added": [],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "0.29 の `in`: 左辺を連結・テンプレート・`\\u{..}`・`\\x..`・行継続・`a in b in c` で作り、原型の名前 (constructor / hasOwnProperty / __lookupGetter__) を探る",
+          "result": "refused"
+        },
+        {
+          "tried": "0.29 の `in`: 右辺を関数の戻り・`new URL`・module-let・`x?.y`・`Object.assign` にして、検めの外の値を探らせる",
+          "result": "refused"
+        },
+        {
+          "tried": "0.30 の `extends`: 基底を `extends` 自身・`constructor`・既定の import・名前空間の import・重複宣言・const に隠された名前にする",
+          "result": "refused"
+        },
+        {
+          "tried": "攻撃の電池 (audit:mamori-battery) を時刻から引いた新しい種 3 つ × 20000 本 (弾 × 文脈 × 環境 + 0.29/0.30 の弾) で回し、生成物を独立の構文木で判定",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 0,
+      "mutation": {
+        "unavailable": "この周は言語の元 (checker・parser・emit) を 1 行も変えていない。足したのは台帳の記録だけで、手探りの 28 通りと電池 60000 本が検査の代わりをした。"
+      },
+      "report": {
+        "pr": 917,
+        "reason": "draft PR #917 に載せる",
+        "summary": "言語の穴探し (0.29 の in・0.30 の interface extends 直後)。手で 28 通りを破り、電池を新しい種 3 つ × 20000 本 (60000 本) 回した。穴は見つからなかった。受け入れたが害の無かった物: use で引いた TypeScript の型 (Mamori から interface かどうか見えない型) を基底にする形は通るが、生成物の tsc が型として検め、型の層に留まる。重複した interface 宣言 (TypeScript は併合する) は型の層で、値の宣言とは別の名前空間。"
+      },
+      "deviation": "利用者が「1〜4 全て推奨される順番で行う」と指示した順 (4 番目) で、brief の順位 (fsa.ts の移植が先頭) ではなく依頼に従った。"
     }
   ]
 }
