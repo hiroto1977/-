@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.29"
+    "version": "0.30"
   },
   "constructs": {
     "class": {
@@ -159,9 +159,10 @@
       "why": "読み込むだけでコードが走る import は、何が走るかを言語の外に置く —— extern で名前を宣言して使う形へ書き直す。"
     },
     "interface-extends": {
-      "decision": "feature",
+      "decision": "added",
       "why": "型を重ねる宣言 (共通の欄を持つ型を 2 つ書かない)。",
-      "risk": "印の型を extends しても印は運ばない (印は mint でだけ作る)。"
+      "risk": "印の型を extends しても印は運ばない (印は mint でだけ作る)。",
+      "since": "0.30"
     },
     "declare": {
       "decision": "rewrite",
@@ -3646,6 +3647,68 @@
         "summary": "Mamori 0.29 に `'k' in x` を足した (判別付きの和の絞り込み `if ('tooLarge' in r)` に要る・selfAttestation.ts が使う)。`in` は原型の鎖をたどるので `'toString' in {}` も真になる —— 自分の鍵を問うなら Object.hasOwn が先で、`in` は左辺を字面の文字列だけにして足した: 計算した鍵・Object.prototype の名前 (実行系から導く) と prototype・FORBIDDEN_MEMBERS の名前は M0 で断り、右辺の inert は M6、右辺の他の検めは他の式と同じ。結果は真偽で印を運ばない。`in` は予約語。足す前に 6 通りで破り、すべて断られた。対照 5 方向 (左辺の字面制限・原型の名前の禁止・右辺の inert・emit の強さ・禁止一覧の導出) がそれぞれ狙った検査で鳴り、変異検査は差分の行で 100% (初回 96.30% の生存 1 件は、in 以外の右辺に inert 検めを掛ける変異で、比較・算術の右辺に inert を置く形が今までどおり通ることを留める検査で閉じた)。残した物: 左辺が Array / Function の原型の名前 (`'map' in x`) は通る・束縛の名前に予約語を置ける (`const in = 1;` も `const throw = 1;` と同じ・0.28 以前から) のは tsc が断つ。"
       },
       "deviation": "利用者が「1〜4 全て推奨される順番で行う」と指示した順 (2 番目) で、brief の順位 (secrets.ts の移植が先頭) ではなく依頼に従った。"
+    },
+    {
+      "id": "MG-061",
+      "date": "2026-11-10",
+      "kind": "feature",
+      "target": "interface-extends",
+      "pickedBy": "manual",
+      "features": [
+        "interface-extends"
+      ],
+      "added": [
+        "interface-extends"
+      ],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "印の型を継ぐ (`interface F extends VU`)・use で引いた印の名前を継ぐ。印を持たない型の値が印の型として受け取られる道",
+          "result": "refused"
+        },
+        {
+          "tried": "印を隠す型の別名を継ぐ (`type A = VU; interface F extends A`)",
+          "result": "refused"
+        },
+        {
+          "tried": "定数・関数・後ろで宣言する interface・自分自身を継ぐ",
+          "result": "refused"
+        },
+        {
+          "tried": "組み込みの型 (Record / Error / Array / Object / Function / Promise / Map) を継いで、原型の名前を欄に持ち込む",
+          "result": "refused"
+        },
+        {
+          "tried": "型引数つきの基底 `extends Record<string, unknown>` と複数の基底 `extends A, B` で印の型を混ぜ込む",
+          "result": "refused"
+        },
+        {
+          "tried": "use で引いた関数・extern の口・既定の import を基底にする",
+          "result": "refused"
+        },
+        {
+          "tried": "基底に式・型の演算・字面 (typeof B / B & C / { a: number } / 配列 / 呼び出し / 原型の名前) を置く。攻撃の電池に 40 通りの基底の文脈 ifaceBase を足し、新しい種で 6000 本回した",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 2,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/checker.ts",
+          "src/shared/mamori/emit.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 917,
+        "reason": "draft PR #917 に載せる",
+        "summary": "Mamori 0.30 に `interface 名 extends 基底 { … }` を足した (windowPrefs.ts の WindowPrefsDeps extends StateFileDeps ほか依存を束ねた型に要る)。基底は先に宣言した interface か use で引いた名前 1 つだけ: 印の型は M4、型の別名・定数・関数・後ろの interface・自分自身・口・宣言していない名前 (組み込みの Record / Error / Array ほか) は M6、型引数と複数の基底は M0 で断る。足す前に 8 通りで破り、すべて断られた。独立の判定器 mamoriInspect が生成物の基底を見て、電池に 40 通りの基底の文脈を足し新しい種で通した。対照 2 方向 (基底の検めを全部外す / 印の拒否だけ外す) がそれぞれ検査で鳴り、変異検査は差分の行で 100% (94 件 killed)。残した物: use で引いた別 module の型の別名が印を隠している場合は Mamori から見えず、生成物の tsc が (interface は原始型との交差を継げないと) 断つ。"
+      },
+      "version": "0.30",
+      "deviation": "利用者が「1〜4 全て推奨される順番で行う」と指示した順 (3 番目) で、brief の順位 (selfAttestation.ts の移植が先頭) ではなく依頼に従った。"
     }
   ]
 }
