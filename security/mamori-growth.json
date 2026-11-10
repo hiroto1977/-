@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.30"
+    "version": "0.31"
   },
   "constructs": {
     "class": {
@@ -178,9 +178,10 @@
       "risk": "yield した値は印を運ばない (for…of の回す変数と同じ)。"
     },
     "satisfies": {
-      "decision": "feature",
+      "decision": "added",
       "why": "型を絞らずに検める宣言。",
-      "risk": "型の検査だけで実行時に何もしない —— 来歴には触れない。"
+      "risk": "型の検査だけで実行時に何もしない —— 来歴には触れない。",
+      "since": "0.31"
     },
     "nested-function": {
       "decision": "rewrite",
@@ -3804,6 +3805,121 @@
         "reason": "draft PR #917 に載せる",
         "summary": "File System Access の書き出し口 src/renderer/fs/fsa.ts を Mamori (fsa.mamori) へ移した。対応の判定・フォルダの選択と保管・名前の関門 isSafeFilename を通してから書く・読み書きの権限が無ければ断る・「選んでいない」(null) と失敗の言い分けは Mamori の側に残し、Mamori で宣言できない口 (window の showDirectoryPicker・indexedDB の開く / 消す / 置く / 読む) と型の戻し (as) だけを判断を持たない host の壁 fsaHost.ts へ閉じ込めた。足す前に 5 通りで言語を破り、すべて断られた。対照 4 方向 (名前の関門を外す / 権限の断りを外す / 読むだけの権限を問う / 非対応でも読み込む) がそれぞれ検査で鳴った。変異検査は fsa.ts・fsaHost.ts とも 100% (初回の生存 2 件は再読み込み後に問う権限の種類 queryPermission({ mode: 'readwrite' }) で、問う権限を記録する検査を足して閉じた)。lint:forbidden の例外の台帳は fsaHost.ts へ移し、整合性チェーンと CODEOWNERS に元と壁を足した。"
       }
+    },
+    {
+      "id": "MG-064",
+      "date": "2026-11-10",
+      "kind": "probe",
+      "target": "language",
+      "pickedBy": "manual",
+      "briefPick": "port:src/main/selfAttestation.ts",
+      "version": "0.30",
+      "features": [],
+      "added": [],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "型引数の綴りに式を隠す: `n<m ? shell.openExternal(raw) : k>(x)` を plain の関数に書く。Mamori は「型引数つきの呼び出し 1 つ」と読み (型の綴りは検めない)、生成物を TypeScript は「条件式 + 危ない口の呼び出し」と読む",
+          "result": "hole"
+        },
+        {
+          "tried": "束縛の型の綴りに 2 つ目の束縛を隠す: `let a: number, okUrl = (s: string) => JSON.parse(s);`。Mamori は束縛 1 つ、TypeScript は 2 つ目の束縛 okUrl を作り module の gate を覆う",
+          "result": "hole"
+        },
+        {
+          "tried": "逆向き: Mamori が「比べ 2 つ」と読む `f(n < n, n > (raw ?? raw))` の括弧を落とした生成物を、TypeScript が型引数つきの呼び出し `n<n, n>(…)` と読む",
+          "result": "hole"
+        },
+        {
+          "tried": "塞いだ後: 型の綴り 14 通り (深さ 0 の `,`・`?` `:` の条件・呼び出しの括弧・`typeof 式`・和や交差の中の呼び出し・関数の型の戻りの式) × 型を置く 5 つの位置 (型引数・束縛の型・module の const の型・satisfies の型 2 つ)",
+          "result": "refused"
+        },
+        {
+          "tried": "塞いだ後: 種つきの総当たり 3 種 × 1500 本 (`<` `>` `,` `?` `:` 括弧・名前・呼び出しを混ぜた式と型) で、受け入れた物の Mamori の木と TypeScript の木の形を突き合わせる",
+          "result": "refused"
+        },
+        {
+          "tried": "塞いだ後: 攻撃の電池に T-260 の弾 14 通りと型を置く文脈 3 つを足し、木の形の突き合わせを判定に入れて回す",
+          "result": "refused"
+        }
+      ],
+      "threats": [
+        "T-260"
+      ],
+      "controls": 4,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/emit.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 917,
+        "reason": "draft PR #917 に載せる",
+        "summary": "satisfies を足す前の破りで、言語の穴 T-260 が出た: Mamori が検めた木と、生成物を TypeScript が読んだ木が食い違う 3 形 (型引数の綴りに式を隠す・束縛の型に 2 つ目の束縛を隠す・括弧を落とした比べが型引数つきの呼び出しに化ける)。検査器が見るのは Mamori の木で、走るのは TypeScript の木なので、食い違えば検めていない呼び出しが走る。3 層で塞いだ: ① 型の綴りを 1 つの型として読める並びだけに絞る型の文法 (parser の checkTypeShape) ② 式の中の `<` の比べを括って出す (emit の nested) ③ 2 つの木の形を突き合わせる独立の判定 (mamoriShape) を実物の .mamori 全件・攻撃の電池・種つきの総当たりに掛け、生成物だけを見る判定には「1 文に束縛 2 つ」「`,` の式」を足した。対照 4 方向 (型の文法を外す / 括らずに出す / 生成物の判定を切る / 木の形の突き合わせを空にする) がそれぞれ検査で鳴った。生成物 6 本が括弧の分だけ変わった (判定は不変)。型の位置の `readonly` / `keyof` / `typeof` は必ず前置の語として読み、単独では断る。変えた行の変異検査は 100% (生存 33 件を仕分け: 断りの理由を留める検査を足し、等価 3 件は理由つきの pragma)。穴の開け直し A-595 / A-596 は名指しの回帰検査が捕まえた。残した物: `a < (b > (c === 1))` の類は生成物が TypeScript の構文の誤りで止まる (黙って別の木にはならない)。"
+      },
+      "deviation": "利用者の依頼「足りない基準を埋めて」(E2 = satisfies を足す) の途中、足す前の破りで穴が出たので、構文を足す前に穴を塞ぐ周を先に置いた (brief の順位 selfAttestation.ts の移植ではなく)。"
+    },
+    {
+      "id": "MG-065",
+      "date": "2026-11-10",
+      "kind": "feature",
+      "target": "satisfies",
+      "pickedBy": "manual",
+      "briefPick": "port:src/main/selfAttestation.ts",
+      "version": "0.31",
+      "features": [
+        "satisfies"
+      ],
+      "added": [
+        "satisfies"
+      ],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "印の型を satisfies で名乗って (`const u = raw satisfies VU;` と和・括弧・配列・null つきの綴り) 危ない口へ渡す",
+          "result": "refused"
+        },
+        {
+          "tried": "計算した鍵の添字の結果 (inert) に satisfies を付けて、呼ぶ・包む・返す (inert を外す)",
+          "result": "refused"
+        },
+        {
+          "tried": "初期値に危ない口・宣言していない名前を置いて satisfies で型だけ整える",
+          "result": "refused"
+        },
+        {
+          "tried": "式の途中に置く (`f(x satisfies T)` / `(x satisfies T).k` / `return x satisfies T;` / 引数の既定値) —— 値を包む演算子として使う",
+          "result": "refused"
+        },
+        {
+          "tried": "let に付ける (`let v = 1 satisfies number;` の後で別の値を入れる)",
+          "result": "refused"
+        },
+        {
+          "tried": "satisfies の型に式・2 つ目の束縛を隠す (T-260 の 14 通り) と、攻撃の電池の新しい文脈 6 つ (satLocal / satTop / sinkTypedSat / typeSmuggleSat / typeSmuggleSatTop / typeSmuggleArg)",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 4,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/checker.ts",
+          "src/shared/mamori/emit.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 917,
+        "reason": "draft PR #917 に載せる",
+        "summary": "Mamori 0.31 に `const x = 式 satisfies 型;` を足した (表の定数に要る)。式の途中の演算子にはせず、const の初期値の末尾にだけ付けられる形に狭めた —— 値を包む新しい種類の式を作ると、検査器が式の種類ごとに決めている運び方 (inert・危ない口の名前・印) をその包みが覆う道になる。束縛の印・inert・数の判定は初期値の式だけから決まり、型に印は置けない (M4)・let には付けられない (M0)・型は T-260 の型の文法を通る。生成物では初期値を関係演算子より強い物まで括ってから付ける。足す前に 6 通りで破り、すべて断られた (その途中で見つかった T-260 は MG-064 で先に塞いだ)。独立の判定は const の初期値の末尾でない satisfies の生成物を穴として挙げる。対照 4 方向 (印の拒否を外す / let に許す / 括らずに付ける / 独立の判定を切る) がそれぞれ検査で鳴った。"
+      },
+      "deviation": "利用者の依頼「足りない基準を埋めて」に従い、基準 E2 (足すと決めた構文の消化) を床以上にするため、brief の順位 (selfAttestation.ts の移植) ではなく足す候補の satisfies を足した。"
     }
   ]
 }

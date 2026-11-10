@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 502
+- ブロック数: 503
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `dd5cbc1589c628086a8d5ab4a368d8412b18eeb5668e67e825f830afe7e3bef5`
-- 保護対象: 215 ファイル
+- 末尾(tip)ハッシュ: `a98c771a588946f1ce228009deb75b68287710a42ae345c6d2fc08e1444a7f2f`
+- 保護対象: 217 ファイル
 
 ## ブロック
 
@@ -515,6 +515,7 @@
 | 499 | `df2ae74b9c5f8ba2` | `e80d546b314a6cc3` | `8189228bbbc42747` | update checker.ts,emit.ts,parser.ts |
 | 500 | `b930313c0fd20e37` | `8189228bbbc42747` | `1994f0dbfb9b6bf9` | update parser.ts |
 | 501 | `ab666476df5eb586` | `1994f0dbfb9b6bf9` | `dd5cbc1589c62808` | update ast.ts,checker.ts,emit.ts,parser.ts |
+| 502 | `81d42c85cdb241f9` | `dd5cbc1589c62808` | `a98c771a588946f1` | update integrity-chain.cjs,mamori-capabilities.json,userPresence.ts,assistantMarkdown.ts,fsa.mamori,fsa.ts |
 
 ## 保護対象ファイル
 
@@ -621,7 +622,9 @@
 - `src/renderer/data/assistantMarkdown.ts`
 - `src/renderer/data/localWrite.ts`
 - `src/renderer/data/recordCipher.ts`
+- `src/renderer/fs/fsa.mamori`
 - `src/renderer/fs/fsa.ts`
+- `src/renderer/fs/fsaHost.ts`
 - `src/renderer/keyIntent.ts`
 - `src/renderer/network/liveRead.mamori`
 - `src/renderer/network/liveRead.ts`
