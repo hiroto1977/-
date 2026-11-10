@@ -4107,6 +4107,14 @@
       "leafCount": 208,
       "note": "update integrity-chain.cjs,mamori-capabilities.json,userPresence.mamori,userPresence.ts,userPresenceHost.ts",
       "hash": "13278eb9f1589f170e0840846c687499f7ce1281bbefa792cb1927750cfa8d59"
+    },
+    {
+      "index": 487,
+      "prevHash": "13278eb9f1589f170e0840846c687499f7ce1281bbefa792cb1927750cfa8d59",
+      "merkleRoot": "2ff4657ed7b08d68a09f2bf025129f9f335ca99bb8a903a3c60d616d90394258",
+      "leafCount": 208,
+      "note": "update userPresence.mamori,userPresence.ts",
+      "hash": "3a8449dd56b593a969d3c1883710a40101bfa712049d70eab300bcfc8c4b4231"
     }
   ],
   "tipManifest": {
@@ -4196,8 +4204,8 @@
     "src/main/shellOpenGate.mamori": "e0a9c53ce86e9869d27730d84e452db31929c9b1f1be87ce522c0bbb67f5421a",
     "src/main/shellOpenGate.ts": "4612d8cc9c61827225a11b61dbdfff4f200bb28524eb86dd1ba471a471b645c9",
     "src/main/stateFile.ts": "984eebe8582b3c6c88669d17e778932f6b87a682640d1f162acd182d5947169b",
-    "src/main/userPresence.mamori": "f8e8699a50606d025f5b9f3107850daed121332b1c5ada54971661838b436f8a",
-    "src/main/userPresence.ts": "0abd1f30dd3c4039889f15a74b08890caa050e2f0110c09b524f89ef5c7fc8db",
+    "src/main/userPresence.mamori": "c359a4c1fb74c1d63533cb89e7fc696a7f430f3124efd7fd687299d58b06aab2",
+    "src/main/userPresence.ts": "85ee09a14783b7c17f8a9e9bdcc99e4922d55c55fb71d91515728233cf5e05d0",
     "src/main/userPresenceHost.ts": "95ba85cbbff976f35b8b131cc36c348a27e52ac773c787a791a2a06cc0753879",
     "src/main/windowOpen.ts": "cf4fd5bdd9d04d9468dbc308cb979f09f946d237ec0e0ac033c83d87b9cfbf79",
     "src/main/windowPrefs.ts": "0bccea9e29b489da1b4a7962eaa53e237cf93fed9d4692371a3a43a6a4985dee",

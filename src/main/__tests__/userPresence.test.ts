@@ -816,6 +816,23 @@ describe('費用の予算 — 速度の上限ぎりぎりを守って静かに�
     expect((await h.gate.guard(egress(1), true)).ok).toBe(true);
   });
 
+  it('★ 警戒中は 1 日の予算も 1/4 (375): 1 時間の枠は空いていても、1 日で 372 使っていれば 1 回 (373) は通り、重み 5 (378) は断られる。平常なら通る', async () => {
+    const h = harness(() => true);
+    for (let hour = 0; hour < 3; hour += 1) {
+      const r = await drive(h, 4, 31, 1); // 毎時 124 (1 時間の予算の内)
+      expect(r.admitted).toBe(124);
+      h.advance(BUDGET_HOUR_MS - 31 * WINDOW_MS);
+    }
+    h.advance(BUDGET_HOUR_MS); // 1 時間の枠は空く (1 日の窓にはまだ 372 が残る)
+    for (let i = 0; i < ALARMS_TO_ALERT; i += 1) h.gate.report('file-denied', 'x');
+    expect(h.gate.posture()).toBe('alert');
+    expect((await h.gate.guard(egress(1), true)).ok).toBe(true); // 373 <= 375
+    h.advance(WINDOW_MS); // 警戒中の速度の上限 (重み 5/分) に当たらないよう 1 分あける
+    const over = await h.gate.guard(egress(MAX_CALL_WEIGHT), true); // 378 > 375
+    expect(over.ok).toBe(false);
+    expect(over.ok === false && over.message).toContain('費用の使用量の上限');
+  });
+
   it('★ 警戒中は予算も 1/4 (75/時): 70 使用済みなら 1 回 (75) は通り、次 (80) は断られる。平常へ戻れば通る', async () => {
     const h = harness(() => true);
     for (let i = 0; i < 14; i += 1) {

@@ -141,6 +141,11 @@ function postureOf(t: number, alertUntil: number): Posture {
   return t < alertUntil ? 'alert' : 'normal';
 }
 
+/** 警戒中は上限を 1/4 に (最低 1)。平常はそのまま。 */
+function shrunk(n: number, alert: boolean): number {
+  return alert ? Math.max(1, Math.floor(n / ALERT_RATE_DIVISOR)) : n;
+}
+
 /** 断りの返事を 1 か所で組む (リテラルの `ok: false` が `boolean` に広がらないよう型を付ける)。 */
 function denial(message: string): PresenceDecision {
   return { ok: false, message: message };
@@ -424,7 +429,7 @@ export function createPresenceGate(deps: PresenceDeps): PresenceGate {
   // 速度の制限 (段階ごと)。断った呼び出しも数える —— 連打で上限を押し続ける間は通らない。
   const recent = (calls.get(req.tier) ?? []).filter((x) => within(t, x, WINDOW_MS));
   const w = req.weight;
-  const weight = Math.min(Math.max(w !== undefined && Number.isInteger(w) ? w : 1, 1), MAX_CALL_WEIGHT);
+  const weight = Math.min(Math.max(Number.isInteger(w) ? Number(w) : 1, 1), MAX_CALL_WEIGHT);
   const added: number[] = [];
   let i = 0;
   while (i < weight) {
@@ -437,19 +442,18 @@ export function createPresenceGate(deps: PresenceDeps): PresenceGate {
   const kept = [...recent, ...added].slice(-(rate + 1));
   calls.set(req.tier, kept);
   const alert = postureOf(t, alertUntil) === 'alert';
-  const limit = alert ? Math.max(1, Math.floor(rate / ALERT_RATE_DIVISOR)) : rate;
+  const limit = shrunk(rate, alert);
   if (kept.length > limit) return deny('rate-limited', req, '短時間に操作が集中したため断りました。しばらく待ってからやり直してください。');
   // 費用の予算 (T-158): 速度の上限を通った呼び出しだけを数える。超える呼び出しは通さず、数えない。
   const budget = BUDGET_FREE_CHANNELS.has(req.channel) ? undefined : BUDGET_BY_TIER.get(req.tier);
   if (budget !== undefined) {
     const history = (spent.get(req.tier) ?? []).filter((x) => within(t, x, BUDGET_DAY_MS));
     const lastHour = history.filter((x) => within(t, x, BUDGET_HOUR_MS)).length;
-    const perDay = alert ? Math.max(1, Math.floor(budget.perDay / ALERT_RATE_DIVISOR)) : budget.perDay;
-    const perHour = alert ? Math.max(1, Math.floor(budget.perHour / ALERT_RATE_DIVISOR)) : budget.perHour;
-    if (history.length + weight > perDay || lastHour + weight > perHour) {
-      spent.set(req.tier, history);
-      return deny('budget-exceeded', req, '費用の使用量の上限 (1 時間・1 日) に達したため断りました。しばらく待ってからやり直してください。');
-    }
+    const perDay = shrunk(budget.perDay, alert);
+    const perHour = shrunk(budget.perHour, alert);
+    // 断った呼び出しは数えない。古い要素を落とした `history` を書き戻さなくても、次の呼び出しが同じ窓で落とし直すので答えは同じ
+    // (残る古い要素は断る前に保たれていた分だけで、予算の上限を超えて伸びない)。
+    if (history.length + weight > perDay || lastHour + weight > perHour) return deny('budget-exceeded', req, '費用の使用量の上限 (1 時間・1 日) に達したため断りました。しばらく待ってからやり直してください。');
     spent.set(req.tier, [...history, ...added]);
   }
   // 警戒中は `read` 以外の全段階を確かめる (平常は CONFIRMED_TIERS だけ)。
