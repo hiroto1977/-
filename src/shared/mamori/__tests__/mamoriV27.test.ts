@@ -175,3 +175,80 @@ describe('0.27: 先に破った形', () => {
     expect(r.rules.join('\n')).toContain('M4');
   });
 });
+
+describe('0.27: 変異検査が教えた穴 (差分の行だけを測った初回 84.17%)', () => {
+  const LABELS = 'const LABELS: string[] = ["a", "b"];\n';
+  const cls = (ctor: string, sup: string, pre = LABELS): string => `${pre}class K extends Error {\n  constructor(${ctor}) {\n    super(${sup});\n  }\n}\n`;
+  const VU = 'extern sink { shell } from "electron";\nexport vetted VettedUrl = "url";\n';
+
+  it('★ 生成物は constructor の引数・super の引数を ", " で繋ぎ、閉じ括弧 2 つを行ごとに出す (字面で留める)', () => {
+    const r = one(cls('a: string, b: number', 'a, b'));
+    expect(r.rules).toEqual([]);
+    expect(r.output).toContain('class K extends Error {\n  constructor(a: string, b: number) {\n    super(a, b);\n    this.name = \'K\';\n  }\n}\n');
+  });
+
+  it('★ 基底の Error を隠す名前 (定数 / use の別名) は理由つきで断る', () => {
+    const r = one('const Error = 1;\nclass K extends Error {\n  constructor() {\n    super("x");\n  }\n}\n');
+    expect(r.rules.join('\n')).toContain('M6 クラス K の基底');
+    expect(r.rules.join('\n')).toContain('隠れています');
+    expect(r.rules.join('\n')).toContain('extends Error');
+  });
+
+  it('★ 引数の既定値はモジュールの名前を読める (宣言を通す) —— 宣言していない名前は断る', () => {
+    expect(one(cls('m: string = LABELS[0]', 'm')).rules).toEqual([]);
+    const bad = one(cls('m: string = zzz', 'm'));
+    expect(bad.rules.join('\n')).toContain('宣言していない名前 zzz');
+  });
+
+  it('★ 省ける引数は印を名乗れない (checkOptionalParams を通す)', () => {
+    const r = one(VU + cls('u?: VettedUrl', '"x"', ''));
+    expect(r.rules.join('\n')).toContain('省ける引数 u?:');
+    expect(r.rules.join('\n')).toContain('VettedUrl');
+  });
+
+  it('★ 引数は局所の名前: instanceof の右辺に置けない (authority local)', () => {
+    const r = one(cls('p: number', 'LABELS.length === 0 && p instanceof p ? "a" : "b"'));
+    expect(r.rules.join('\n')).toContain('このモジュールの局所の名前');
+  });
+
+  it('★ 数の引数は添字の鍵にできる・省ける数と文字列と型なしは鍵にできない', () => {
+    expect(one(cls('i: number', 'LABELS[i] === "a" ? "x" : "y"')).rules).toEqual([]);
+    for (const ctor of ['i?: number', 'i: string', 'i']) {
+      const r = one(cls(ctor, 'LABELS[i] === "a" ? "x" : "y"'));
+      expect(r.rules.join('\n'), ctor).toContain('添字の鍵は');
+    }
+  });
+
+  it('★ super の引数に計算した鍵の添字の結果は入れられない (引数に包めない)', () => {
+    const r = one(cls('i: number', 'LABELS[i]'));
+    expect(r.rules.join('\n')).toContain('`super` の引数に入れられません');
+  });
+
+  it('★ super の引数に module の計算した鍵の添字の値 (inert な const) も入れられない', () => {
+    const r = one('const LABELS: string[] = ["a"];\nconst IDX: number = 0;\nconst PICK = LABELS[IDX];\nclass K extends Error {\n  constructor() {\n    super(PICK);\n  }\n}\n');
+    expect(r.rules.join('\n')).toContain('M6 計算した鍵の添字の結果は`super` の引数に入れられません');
+  });
+
+  it('★ super の引数は引数と module の名前の両方を読む', () => {
+    expect(one(cls('a: string', 'a + LABELS[0] + "!"')).rules).toEqual([]);
+  });
+
+  it('★ クラスを呼ぶ・クラスのメンバを呼ぶ・値として持ち出す文は、使える形を名指しする', () => {
+    const call = one(CLS + 'export fn f() -> void {\n  StoreFullError(1);\n}\n');
+    expect(call.rules.join('\n')).toContain('M6 クラス StoreFullError は');
+    expect(call.rules.join('\n')).toContain('new StoreFullError(…)');
+    expect(call.rules.join('\n')).toContain('instanceof StoreFullError');
+    const value = one(CLS + 'export fn f() -> unknown {\n  const c = StoreFullError;\n  return c;\n}\n');
+    expect(value.rules.join('\n')).toContain('M6 クラス StoreFullError は');
+    expect(value.rules.join('\n')).toContain('new StoreFullError(…)');
+    expect(value.rules.join('\n')).toContain('instanceof StoreFullError');
+  });
+
+  it('★ ③ constructor の本体の 2 つ目の文は「1 文だけ」で断る (this.name も同じ)', () => {
+    for (const body of ['super("x");\n    this.x = 1;', 'super("x");\n    this.name = "Evil";']) {
+      const r = one(`class A extends Error {\n  constructor() {\n    ${body}\n  }\n}\n`);
+      expect(r.rules.join('\n'), body).toContain('1 文だけです');
+    }
+  });
+});
+
