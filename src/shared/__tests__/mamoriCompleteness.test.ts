@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { createRequire } from 'node:module';
-import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
+import { readOriginalSource } from './originalSource';
 
 /*
  * **Mamori の完成度の基準** (2026-11-10)。基準の表 `security/mamori-completeness.json` (5 つの視点 × 15 の基準・1.0 の条件) を、
@@ -30,9 +30,11 @@ const growth = req(join(ROOT, 'scripts', 'mamori-growth.cjs')) as {
   wallFiles: (root: string) => unknown;
   countMamoriFiles: (root: string) => number;
 };
-const rubric = JSON.parse(readFileSync(join(ROOT, 'security', 'mamori-completeness.json'), 'utf8')) as Rubric;
-const ledger = JSON.parse(readFileSync(join(ROOT, 'security', 'mamori-growth.json'), 'utf8'));
+const rubric = JSON.parse(readOriginalSource(join(ROOT, 'security', 'mamori-completeness.json'))) as Rubric;
+const ledger = JSON.parse(readOriginalSource(join(ROOT, 'security', 'mamori-growth.json')));
 const allCriteria = rubric.perspectives.flatMap((p) => p.criteria);
+/** 採点が「測れなかった」と言うときの文面 (測り方が無い基準・読めない入力)。実物の採点にこの文面が 1 つも出ないことを見る —— 針が当たる標本は下の it が持つ。 */
+const UNMEASURED = /測り方.*が無い|測れていない/;
 
 const realInput = (): Record<string, unknown> => {
   const now = '2026-11-10';
@@ -69,9 +71,22 @@ describe('Mamori の完成度の基準 (視点 × 基準)', () => {
       expect(p.score >= 0 && p.score <= 1, p.id).toBe(true);
       for (const c of p.criteria) {
         expect(c.score >= 0 && c.score <= 1, c.id).toBe(true);
-        expect(c.detail, c.id).not.toMatch(/測り方.*が無い|測れていない/);
+        expect(c.detail, c.id).not.toMatch(UNMEASURED);
       }
     }
+  });
+
+  it('針の標本: 測り方の無い基準と読めない入力の文面に、上の針が当たる', () => {
+    // 測り方が実装に無い基準を 1 つ足した表 —— 採点は 0 点で「測り方 (…) が無い」と書く
+    const extra = { ...rubric, perspectives: [{ ...rubric.perspectives[0]!, criteria: [{ ...allCriteria[0]!, id: 'Z9', metric: 'no-such-metric' }] }] };
+    const unknown = comp.scoreAll(extra, realInput()).flatMap((p) => p.criteria);
+    expect(unknown.length).toBe(1);
+    expect(unknown[0]!.score).toBe(0);
+    expect(unknown[0]!.detail).toMatch(UNMEASURED);
+    // 周の記録が読めない入力 —— 「測れていない」と書く
+    const noCycles = comp.metrics['recent-holes']!({ ...realInput(), ledger: {} });
+    expect(noCycles.score).toBe(0);
+    expect(noCycles.detail).toMatch(UNMEASURED);
   });
 
   it('★ 測れなかった物を満点にしない (空の入力はどの基準も 1 点にならない)', () => {
@@ -95,7 +110,9 @@ describe('Mamori の完成度の基準 (視点 × 基準)', () => {
   it('★ 基準ごとの対照: 穴が出れば H1 が下がり、壁が増えれば E1 が下がり、規則が検査から消えれば V1 が下がる', () => {
     const base = realInput();
     const m = comp.metrics;
-    expect(m['recent-holes']!(base).score).toBe(1);
+    // 穴の無い周だけの台帳で測る —— 実物の台帳は穴を見つけた周 (MG-064 の T-260 ほか) を持ちうるので、実物に「穴 0 件」を求めない
+    const noHole = { ...base, ledger: { ...(base.ledger as object), cycles: [{ probes: [{ result: 'refused' }] }] } };
+    expect(m['recent-holes']!(noHole).score).toBe(1);
     const withHole = { ...base, ledger: { ...(base.ledger as object), cycles: [{ probes: [{ result: 'hole' }] }] } };
     expect(m['recent-holes']!(withHole).score).toBeLessThan(1);
     expect(m['wall-migration']!({ ...base, mamoriFiles: 10, tsWalls: 90 }).score).toBeCloseTo(0.1, 5);
