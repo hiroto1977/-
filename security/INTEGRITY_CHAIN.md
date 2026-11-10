@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 489
+- ブロック数: 491
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `66f6d8ee506f03f48c45f72ca415531c5b3dddccd327ee535d4b3fb2fe30811a`
-- 保護対象: 208 ファイル
+- 末尾(tip)ハッシュ: `25d021490720186e0d113ff0001d37aa697d522acacb5485d6b9182084b79dcf`
+- 保護対象: 209 ファイル
 
 ## ブロック
 
@@ -502,6 +502,8 @@
 | 486 | `a78affd0eeef5c5d` | `9cae5cdf2c5491ac` | `13278eb9f1589f17` | update integrity-chain.cjs,mamori-capabilities.json,userPresence.mamori,userPresence.ts,userPresenceHost.ts |
 | 487 | `2ff4657ed7b08d68` | `13278eb9f1589f17` | `3a8449dd56b593a9` | update userPresence.mamori,userPresence.ts |
 | 488 | `09bba92d794942c8` | `3a8449dd56b593a9` | `66f6d8ee506f03f4` | update mamori-capabilities.json,userPresence.mamori,userPresence.ts,userPresenceHost.ts |
+| 489 | `75c6b06c177dc848` | `66f6d8ee506f03f4` | `d5d354d9058959bd` | update VettedLink.tsx |
+| 490 | `ea782457955e30c7` | `d5d354d9058959bd` | `25d021490720186e` | update integrity-chain.cjs,linkSpoof.ts |
 
 ## 保護対象ファイル
 
@@ -668,6 +670,7 @@
 - `src/shared/imageUrlGate.ts`
 - `src/shared/inputCeiling.ts`
 - `src/shared/isoDate.ts`
+- `src/shared/linkSpoof.ts`
 - `src/shared/localDate.ts`
 - `src/shared/lookup.ts`
 - `src/shared/mamori/ast.ts`

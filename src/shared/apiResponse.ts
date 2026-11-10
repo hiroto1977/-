@@ -354,8 +354,17 @@ export const MAX_DISPLAY_FIELD_CHARS = 256;
  * 利用者が設定したホストの応答 / **保管層から読んだ値**)。
  */
 export function displayField(v: unknown, max: number = MAX_DISPLAY_FIELD_CHARS): string {
+  return revealInvisible(clampedDisplayField(v, max));
+}
+
+/**
+ * 天井だけを掛ける (見えない字は**そのまま**)。自分で別の逃がし (JSON の引用など) を掛ける呼び手のための口で、
+ * `displayField` の後に別の逃がしを掛けると `\u202e` の `\` が二重に逃げる (`quoteModelText`・実測)。
+ * 画面へ素で出す物は `displayField` を使う。
+ */
+export function clampedDisplayField(v: unknown, max: number = MAX_DISPLAY_FIELD_CHARS): string {
   if (typeof v !== 'string') return '';
-  return revealInvisible(charsOverCeiling(v, max) === 0 ? v : clampToCeiling(v, max) + '…');
+  return charsOverCeiling(v, max) === 0 ? v : clampToCeiling(v, max) + '…';
 }
 
 /**

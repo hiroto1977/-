@@ -8,11 +8,11 @@ import { linkSpoofWarning } from '../linkSpoof';
 
 describe('linkSpoofWarning', () => {
   it('★ 似た文字のドメイン (punycode) は行き先のホストを名乗って警告する', () => {
-    // раураl.com (キリル文字の р / а / у) は URL の解析で xn-- へ畳まれる
+    // キリル文字で作った似たドメイン (下の escape) は URL の解析で xn-- へ畳まれる
     const w = linkSpoofWarning('https://xn--80aa4aa.com/login', null);
     expect(w?.kind).toBe('lookalike-host');
     expect(w?.message).toContain('xn--80aa4aa.com');
-    const real = linkSpoofWarning('https://раураl.com/', null);
+    const real = linkSpoofWarning('https://\u0440\u0430\u0443\u0440\u0430l.com/', null);
     expect(real?.kind).toBe('lookalike-host');
   });
 

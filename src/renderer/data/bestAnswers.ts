@@ -31,7 +31,7 @@
  * - **近い重複は畳む** —— 3 件が同じことを言うなら、3 件ある意味が無い。
  * - **3 件に満たないときは理由を言う** (失敗・重複の件数)。空欄にしない。
  */
-import { displayField } from '../../shared/apiResponse';
+import { clampedDisplayField, displayField } from '../../shared/apiResponse';
 import { countChars } from '../../shared/inputCeiling';
 import { ERROR_MESSAGE_MAX_CHARS, redactForMessage } from '../../shared/redact';
 import { escapeUnits, externalTextOnOneLine } from './assistantMarkdown';
@@ -334,7 +334,7 @@ export const MAX_FABRICATED_CITATIONS_SHOWN = 3;
  *   逃がしの記法を持たないので、見える形で逃がすほかない
  */
 export function quoteModelText(text: string): string {
-  return JSON.stringify(displayField(text)).replace(INVISIBLE_OR_INLINE_MARK, escapeUnits);
+  return JSON.stringify(clampedDisplayField(text)).replace(INVISIBLE_OR_INLINE_MARK, escapeUnits);
 }
 
 /**

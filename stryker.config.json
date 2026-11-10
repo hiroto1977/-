@@ -264,6 +264,7 @@
     "src/shared/employerBenefits.ts",
     "src/shared/eraseReport.ts",
     "src/shared/escape.ts",
+    "src/shared/linkSpoof.ts",
     "src/shared/externalUrlGate.ts",
     "src/shared/financialHealthBands.ts",
     "src/shared/formatters.ts",

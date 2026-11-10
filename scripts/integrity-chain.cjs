@@ -185,6 +185,7 @@ const PROTECTED = [
   'src/shared/ollamaCore.mamori',
   'src/renderer/components/VettedImg.tsx',
   'src/renderer/components/VettedLink.tsx',
+  'src/shared/linkSpoof.ts',
   'src/shared/mamori/ast.ts',
   'src/shared/mamori/parser.ts',
   'src/shared/mamori/checker.ts',
