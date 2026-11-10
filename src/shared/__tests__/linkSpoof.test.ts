@@ -9,10 +9,10 @@ import { linkSpoofWarning } from '../linkSpoof';
 describe('linkSpoofWarning', () => {
   it('★ 似た文字のドメイン (punycode) は行き先のホストを名乗って警告する', () => {
     // キリル文字で作った似たドメイン (下の escape) は URL の解析で xn-- へ畳まれる
-    const w = linkSpoofWarning('https://xn--80aa4aa.com/login', null);
+    const w = linkSpoofWarning('https://xn--80aa4aa.com/login', '');
     expect(w?.kind).toBe('lookalike-host');
     expect(w?.message).toContain('xn--80aa4aa.com');
-    const real = linkSpoofWarning('https://\u0440\u0430\u0443\u0440\u0430l.com/', null);
+    const real = linkSpoofWarning('https://\u0440\u0430\u0443\u0440\u0430l.com/', '');
     expect(real?.kind).toBe('lookalike-host');
   });
 
@@ -38,8 +38,28 @@ describe('linkSpoofWarning', () => {
     }
   });
 
-  it('表示が文字列でない (画像など) なら食い違いは判定しない (punycode だけ見る)', () => {
-    expect(linkSpoofWarning('https://www.nta.go.jp/', null)).toBeNull();
+  it('表示が読めない (画像など・空文字) なら食い違いは判定しない (punycode だけ見る)', () => {
+    expect(linkSpoofWarning('https://www.nta.go.jp/', '')).toBeNull();
+  });
+
+  it('★ 行き先の末尾のドット (FQDN の書き方) は同じホストとして扱う', () => {
+    expect(linkSpoofWarning('https://nta.go.jp./x', 'nta.go.jp')).toBeNull();
+    expect(linkSpoofWarning('https://www.nta.go.jp./x', 'nta.go.jp')).toBeNull();
+  });
+
+  it('★ 親子はドットの境界で見る (evilnta.go.jp は nta.go.jp の子ではない)', () => {
+    expect(linkSpoofWarning('https://evilnta.go.jp/', 'nta.go.jp')?.message).toBe('表示は nta.go.jp ですが、行き先は evilnta.go.jp です。');
+    expect(linkSpoofWarning('https://nta.go.jp/', 'evilnta.go.jp')?.message).toBe('表示は evilnta.go.jp ですが、行き先は nta.go.jp です。');
+  });
+
+  it('★ 似た文字のドメインの警告文は全文を留める', () => {
+    expect(linkSpoofWarning('https://xn--80aa4aa.com/', '')?.message).toBe(
+      '行き先のドメイン xn--80aa4aa.com は、似た文字で作られた別のドメインかもしれません。',
+    );
+  });
+
+  it('★ 表示のドメインが URL として解析できなければ判定しない (投げない)', () => {
+    expect(linkSpoofWarning('https://www.nta.go.jp/', '\uFFFF.example.com')).toBeNull();
   });
 
   it('行き先が解析できなければ null (その場合は関門が既に断っている)', () => {

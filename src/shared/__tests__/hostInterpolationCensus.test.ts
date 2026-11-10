@@ -98,7 +98,7 @@ const LEDGER: readonly LedgerRow[] = [
   },
   {
     file: 'src/shared/linkSpoof.ts',
-    needle: "new URL('https://' + m[1]).hostname",
+    needle: "hostOf('https://' + m[1])",
     reason: '(c) 表示文字のドメインらしい綴りをホストへ正規化して行き先と比べるだけ。通信しない・URL として画面にも出さない (出るのはホスト名だけ)',
   },
   {

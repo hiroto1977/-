@@ -37,11 +37,7 @@ function hostOf(href: string): string | null {
 function labelHostOf(label: string): string | null {
   const m = LABEL_HOST.exec(label);
   if (m === null) return null;
-  try {
-    return new URL('https://' + m[1]).hostname.toLowerCase().replace(/\.$/, '');
-  } catch {
-    return null;
-  }
+  return hostOf('https://' + m[1]);
 }
 
 function related(a: string, b: string): boolean {
@@ -49,16 +45,15 @@ function related(a: string, b: string): boolean {
 }
 
 /**
- * `href` (関門を通した行き先) と `label` (利用者が読む表示。文字列でなければ `null`) を突き合わせる。
+ * `href` (関門を通した行き先) と `label` (利用者が読む表示。読める文字列が無ければ空文字) を突き合わせる。
  * 食い違いが無ければ `null`。行き先が解析できなければ `null` (その場合は関門が既に断っている)。
  */
-export function linkSpoofWarning(href: string, label: string | null): LinkSpoof | null {
+export function linkSpoofWarning(href: string, label: string): LinkSpoof | null {
   const host = hostOf(href);
   if (host === null) return null;
   if (host.split('.').some((part) => part.startsWith('xn--'))) {
     return { kind: 'lookalike-host', message: '行き先のドメイン ' + host + ' は、似た文字で作られた別のドメインかもしれません。' };
   }
-  if (label === null) return null;
   const shown = labelHostOf(label);
   if (shown !== null && !related(shown, host)) {
     return { kind: 'label-mismatch', message: '表示は ' + shown + ' ですが、行き先は ' + host + ' です。' };

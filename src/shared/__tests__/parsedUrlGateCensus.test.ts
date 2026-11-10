@@ -78,8 +78,6 @@ const LEDGER: readonly Row[] = [
     why: '検め済みの Ollama の基底 URL から、送り先として名乗るホストだけを取り出す (送り先そのものは parseOllamaEndpoint が決める・T-010)' },
   { file: 'src/shared/linkSpoof.ts', needle: 'return new URL(href).hostname', kind: 'display',
     why: '関門を通した行き先のホストだけを取り出して、表示文字との食い違いを警告する。通信しない・送り先を決めない・値は外へ出ない' },
-  { file: 'src/shared/linkSpoof.ts', needle: "new URL('https://' + m[1]).hostname", kind: 'display',
-    why: '表示文字の中のドメインらしい綴りをホストへ正規化して比べるだけ。通信しない・値は警告の文にホストとして入るだけ' },
   { file: 'src/main/userPresence.ts', needle: 'host = new URL(String(hostField(o, k))).host;', kind: 'display',
     why: '資格情報の束を置き換える確認に、送り先のホストを見せるためだけに取り出す (T-181)。通信しない・送り先を決めない (決めるのは aiEndpoint の関門)。読めない URL は「(読めない URL)」と見せる' },
   { file: 'src/shared/ai/credentials.ts', needle: 'host = new URL(url as string).hostname;', kind: 'display',
@@ -237,7 +235,7 @@ describe('value-gate は解析後の値を返す (振る舞いで確かめる)',
    * (このリポジトリが繰り返し直してきた形)。行が増減したらここが鳴り、
    * 書き換えるときに「どの種類が増えたのか」を読むことになる。
    */
-  it('★ 種類ごとの行数は実測どおり (台帳 39 行が 40 か所を覆う)', () => {
+  it('★ 種類ごとの行数は実測どおり (台帳 38 行が 39 か所を覆う)', () => {
     const byKind = (k: Row['kind']): number => LEDGER.filter((r) => r.kind === k).length;
     expect({
       'value-gate': byKind('value-gate'),
@@ -245,10 +243,10 @@ describe('value-gate は解析後の値を返す (振る舞いで確かめる)',
       pin: byKind('pin'),
       internal: byKind('internal'),
       display: byKind('display'),
-    }).toEqual({ 'value-gate': 11, predicate: 11, pin: 4, internal: 5, display: 8 });
-    expect(LEDGER).toHaveLength(39);
+    }).toEqual({ 'value-gate': 11, predicate: 11, pin: 4, internal: 5, display: 7 });
+    expect(LEDGER).toHaveLength(38);
     // web-shim の同じ綴りの 2 行が 1 行の台帳に対応するので、か所は台帳より 1 多い。
-    expect(SITES).toHaveLength(40);
+    expect(SITES).toHaveLength(39);
     expect(VALUE_GATE_BEHAVIOR.length).toBeGreaterThanOrEqual(5);
   });
 });

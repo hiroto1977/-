@@ -4140,6 +4140,14 @@
       "leafCount": 209,
       "note": "update integrity-chain.cjs,linkSpoof.ts",
       "hash": "25d021490720186e0d113ff0001d37aa697d522acacb5485d6b9182084b79dcf"
+    },
+    {
+      "index": 491,
+      "prevHash": "25d021490720186e0d113ff0001d37aa697d522acacb5485d6b9182084b79dcf",
+      "merkleRoot": "c629f39f1de4e998a1e2166a1f1a084dafc1d017530419c6583532cd39d7d94b",
+      "leafCount": 209,
+      "note": "update VettedLink.tsx,linkSpoof.ts",
+      "hash": "a3f706d8c37852176317c3ef1a79dc4d3c5c505dd3302bb1576ac52b16458112"
     }
   ],
   "tipManifest": {
@@ -4239,7 +4247,7 @@
     "src/preload/preload.ts": "d8ad0ea1561ed8db531994e42f3a76b93ce0cf97e6c9bb0cd10b461deec5eed7",
     "src/preload/preloadHost.ts": "c2622f6493c10176ce3a3464bbbfa32cb8c593f395677c7bc09f2fe335696cfa",
     "src/renderer/components/VettedImg.tsx": "d55ffb54b76cafa0a314c2a6ac1704e9a7f35d4770bd159e0c489e6f272cda27",
-    "src/renderer/components/VettedLink.tsx": "b1cace89c8e4dc6b3f7dcfc9638a85445cccd4670718e4871ae13ec772a1323a",
+    "src/renderer/components/VettedLink.tsx": "5a2f6e30105fa19652ad9b8fe875acaa35fec7d8940a595fb13658aea25e11ae",
     "src/renderer/data/assistantMarkdown.mamori": "692c760677900a9709b5af8645f0ba1f69feb4930d82c905932eca11def66049",
     "src/renderer/data/assistantMarkdown.ts": "164eef1336cdb48e2fc2570f8bb1037b4d8e43c266a47cfb4cb06189c231d529",
     "src/renderer/data/localWrite.ts": "5f8ce8c143e6213eebc1d3214c6701e5d0d0bf59a00d9c2cee0911733d398ac8",
@@ -4306,7 +4314,7 @@
     "src/shared/imageUrlGate.ts": "8c9b192e5aa33f2945a4bd2cef68e0b1b0b4a49e50170c38d9b6494394bc5a7b",
     "src/shared/inputCeiling.ts": "bdfc78b888dfbb8efc8d3176eec25587b32d93a7d1c9562c03f0036ece77623c",
     "src/shared/isoDate.ts": "cfe317b22c6b482c42bca40a9d19a5cbd3204b5cbace6e7336befe77690f01cd",
-    "src/shared/linkSpoof.ts": "57a38a8723b2844f48cc2caab3d707fa2cf9c678ae5c299db08416d3bff7287c",
+    "src/shared/linkSpoof.ts": "c28c8040c25fa46e11d41bccfc86a83fa2902ae1608bc0d0800d7ce676dc474d",
     "src/shared/localDate.ts": "9220ae751caf1637071d5804fb67d4629125bed1c4a9a7913fdd2968c5294da1",
     "src/shared/lookup.ts": "59d9cc9880667ad419dae2c5039b53e078a4ad8f2c2ed704f8dde67e771d3534",
     "src/shared/mamori/ast.ts": "e8c7978068fccc36f327dfddce6b4a024a64a428b2dce4aa4f5116b6c6c44deb",

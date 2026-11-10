@@ -39,7 +39,7 @@ export function VettedLink({
   readonly style?: CSSProperties;
   readonly className?: string;
 }) {
-  const spoof = linkSpoofWarning(href, labelText(children));
+  const spoof = linkSpoofWarning(href, labelText(children) ?? '');
   const link = (
     <a
       href={href}
