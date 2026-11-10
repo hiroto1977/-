@@ -35,8 +35,9 @@ describe('生の呼び手の攻めは箱の export から導かれる', () => {
   });
 });
 
+// コンパイラはファイルの読み込み時に 1 度だけ読む (describe の本体で読むと変異検査が数えられない · inTestModuleLoadCensus)。
+const compiler = arena.loadCompiler();
 describe('生の呼び手の実測 (実物の審判)', () => {
-  const compiler = arena.loadCompiler();
   const run = (name: string) => raw.rawBox({ compiler, box: corpus.boxes.find((b) => b.name === name), seed: 1, level: LEVEL });
   it('実物の箱は壊れない (赤の勝ち 0)', () => {
     for (const name of ['config', 'frozen-table', 'readonly-records', 'cap-object', 'switch-dispatch']) expect(run(name).wins, name).toEqual([]);
