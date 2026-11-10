@@ -76,7 +76,7 @@ const LEDGER: readonly Row[] = [
     why: 'loopback の要求行を解くための再解析 (基準は定数)' },
   { file: 'src/renderer/data/chatbotOllama.ts', needle: 'const host = new URL(base).hostname;', kind: 'display',
     why: '検め済みの Ollama の基底 URL から、送り先として名乗るホストだけを取り出す (送り先そのものは parseOllamaEndpoint が決める・T-010)' },
-  { file: 'src/main/userPresence.ts', needle: 'host = new URL(o[k] as string).host;', kind: 'display',
+  { file: 'src/main/userPresence.ts', needle: 'host = new URL(String(hostField(o, k))).host;', kind: 'display',
     why: '資格情報の束を置き換える確認に、送り先のホストを見せるためだけに取り出す (T-181)。通信しない・送り先を決めない (決めるのは aiEndpoint の関門)。読めない URL は「(読めない URL)」と見せる' },
   { file: 'src/shared/ai/credentials.ts', needle: 'host = new URL(url as string).hostname;', kind: 'display',
     why: '保存した Ollama の URL から、断りに名乗るホスト名だけを取り出す (ループバックは null)。送り先そのものは providers.ts の assertOllamaHostAllowed が決め、ここは通信しない (T-119)' },
