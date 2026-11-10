@@ -143,7 +143,7 @@ function gather(root, { ledger, growth, mamoriFiles, tsWalls }) {
     }
   };
   const walk = (dir, accept, out = []) => {
-    let entries = [];
+    let entries;
     try {
       entries = fs.readdirSync(path.join(root, dir), { withFileTypes: true });
     } catch {
@@ -161,13 +161,13 @@ function gather(root, { ledger, growth, mamoriFiles, tsWalls }) {
   const files = new Set([...testFiles, ...walk('src/shared', (n) => n.endsWith('.test.ts'))]);
   const testsText = testFiles.map((p) => fs.readFileSync(path.join(root, p), 'utf8')).join('\n');
   const mamoriSources = walk('src', (n) => n.endsWith('.mamori')).map((p) => ({ path: p, source: fs.readFileSync(path.join(root, p), 'utf8') }));
-  let protectedPaths = [];
+  let protectedPaths;
   try {
     protectedPaths = require(path.join(root, 'scripts/integrity-chain.cjs')).PROTECTED;
   } catch {
     protectedPaths = [];
   }
-  let mamoriDoc = '';
+  let mamoriDoc;
   try {
     mamoriDoc = fs.readFileSync(path.join(root, 'docs/MAMORI.md'), 'utf8');
   } catch {
