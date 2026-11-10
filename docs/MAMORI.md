@@ -79,6 +79,58 @@ Mamori では、その 2 つは**書けない**:
 - **既知の差 (正直に)**: `(a?.b).c` は丸括弧を構文木に残さないので生成物は `a?.b.c` になる (`a` が null のとき `.c` を読む前に止まる —— 例外が減る向きで、印の流れには触れない)。
 - **この周で移せた壁は 0 本** (`optional-chain` だけで足りる壁が無い —— 足りない構文は他にも要る)。言語の幅を広げた周で、次は `index` の塞ぎ方 (字面の鍵は FORBIDDEN_MEMBERS を通し、字面でない鍵は数だけ) を決めてから足す。
 
+## 0.26 —— 非同期の arrow `async (x) => …` / `async x => …` を足した (MG-053 · 2026-11-09)
+
+締切や直列化の中で走らせる閉包 (`userPresence.ts` の `createPresenceGate` の `async guard`) を書くための物。足す前に 8 通りで破った。
+
+| 破る形 | 結果 |
+| --- | --- |
+| ① async arrow の本体で宣言していない名前 (`fetch`) を呼ぶ | M で断る |
+| ② gate の中の async arrow で `mint` | M1 で断る (arrow は plain の役 · 0.9) |
+| ③ sink 関数の中の async arrow で口を呼ぶ | 断る (外側の役を引き継がない) |
+| ④ 計算した鍵の添字の結果を `await` して戻り値にする (T-255 の迂回) | 断る |
+| ⑤ `async` を引数の名前にした `async => 1` | 通る正しい形 (引数 `async` の arrow であって async arrow ではない) |
+| ⑥ `async 1` のように後ろが arrow でも fn でもない | 構文で断る |
+| ⑦ 引数の既定値に隠した宣言なしの名前 | 断る |
+| ⑧ 印の無い値で印つきの口を呼ぶ | M4 で断る |
+
+- 新しい規則は 1 つも足していない: arrow は外側の役を引き継がず plain で検める (0.9) を async にもそのまま掛ける。`await` の結果が印を運ぶ規則も変えない。
+- 変換は `async (x) => …` / `async (x) => { … }` で、`async` でない arrow には付かない。
+
+## 0.25 —— 再輸出 `export { a, type T } from "./m";` / `export { x };` を足した (MG-051 · 2026-11-09)
+
+他の module の名前をそのまま公開する形で、`proxy.ts` / `userPresence.ts` / `assistantMarkdown.ts` が持つ。足す前に 9 通りで破った (⑨ は組み直しのとき実測で見つけた穴)。
+
+| 破る形 | 結果 |
+| --- | --- |
+| ① `extern sink { shell } from "electron"; export { shell };` (口を再輸出して TypeScript の呼び手へ素の口を漏らす) | M6 で断る |
+| ② `extern pure` の host の口の再輸出 | M6 で断る |
+| ③ `export { shell } from "electron"` (外の module・`node:` ・npm・絶対パス) | M6 で断る (相対の Mamori module だけ) |
+| ④ Mamori でない TypeScript の module からの再輸出 | M6 で断る (印を受ける口かどうか Mamori から見えない) |
+| ⑤ `export * from "./a"` | M0 で断る (何が出ていくか読めない) |
+| ⑥ export していない名前・宣言のない名前 | M6 で断る |
+| ⑦ 自分で宣言した名前の `export { f };` | M6 で断る (宣言に `export` を付ける 1 つの書き方) |
+| ⑧ 関数を `type` で再輸出 (検めと生成物の食い違い) | M6 で断る |
+| ⑨ `use default fs from "node:fs"; export { fs };` (外の module の既定の値を再輸出して、素の口を TypeScript の呼び手へ漏らす · 0.25 の最初の実装は通していた) | M6 で断る (既定の import は中で使うだけ) |
+
+- **再輸出は TypeScript の呼び手のため**で、Mamori の `use` では引けない (`table.exports` に載らない) —— 名前を再輸出の連鎖で隠して `use` の検めを迂回する道を作らない。
+- 変換は `export { a, type T } from './m';` / `export { a };` で、`type` の並びを保つ。
+
+## 0.24 —— 名前ごとの型だけの import `use { f, type X } from "…";` を足した (MG-049 · 2026-11-09)
+
+`use { mk, type VU, type Name alias N } from "./a";` のように、**値と型を 1 行で引ける**。0.23 までは `use type { X }` (項目全体が型だけ) しか無く、値と型を同じ module から引く壁 (`oauth.ts` ほか) は 2 行に分けて書く必要があった。生成物は TypeScript の inline type import (`import { mk, type VU, type Name as N } from './a';`) になる。`use type { … }` と普通の `use` の生成物は 0.23 までと 1 字も変わらない。
+
+**足す前に破った。** `type` を付けた名前は生成物 (tsc) では型として消える。Mamori が検める物と tsc が見る物が食い違えば、検めをすり抜ける口になる。
+
+| 破った形 | 0.24 |
+| --- | --- |
+| `use { type mk }` / `use { type open }` (関数を型の顔で引く) | 断る (M6 · 関数は `use { f }` で引く —— 検めと生成物の見る物を揃える) |
+| `use type { type X }` (項目全体がすでに型だけ) | 断る (パーサ · 重ねられない) |
+| `use { type }` / `use { type alias t }` (`type` を名前にする) | 断る (`type` は予約語) |
+| `use { type Hidden }` (export していない名前) | 断る (M6 · 種類を問わず export した名前だけ引ける) |
+| `use { type LIMIT }` を値の位置で使う | Mamori は通す (来歴には触れない)。生成物は `import { type LIMIT }` のままなので **tsc が断る** |
+| `use { open, type VU }` で `open(raw)` / `-> VU { return raw; }` | 断る (M4 / M1 が効いたまま —— 型で引いても印は gate の `mint` でしか作れない) |
+
 ## 0.23 —— 型引数を持つ関数宣言 `fn f<T, U>(…)` を足した (MG-045 · 2026-11-06)
 
 `fn id<T>(x: T) -> T` のように、関数宣言に型引数を並べられる (`export` / `async` もよい)。**名前だけ**を並べる。生成物は `function id<T>(x: T): T` のまま出る。
@@ -502,15 +554,16 @@ T-234 (`sinkTyped*` の文脈と印の型の判定)・T-232 (`RegExp.$1`)・`.co
 - 戦いのデータは `security/mamori-arena/corpus.json` に残し、`mamoriArena.test.ts` が毎回再生する (学習データ)。
 - 侵入役の新手を AI に書かせる段は、安全装置に止められた。迂回せず、新手は人が追加する (`*.attack.mamori`)。
 
-## 文法 (0.13)
+## 文法 (0.26)
 
 ```
 module    := header* item*
 header    := '//!' 行                         生成物の先頭の docblock になる
-item      := doc* ( use | extern | vetted | type | interface | const | fn )
+item      := doc* ( use | reexport | extern | vetted | type | interface | const | fn )
 doc       := '///' 行                         項目の docblock になる
-use       := 'use' 'type'? '{' name ('alias' name)? (',' …)* '}' 'from' 文字列 ';'
+use       := 'use' 'type'? '{' ('type'? name ('alias' name)?) (',' …)* '}' 'from' 文字列 ';'   (名前ごとの `type` は 'use type' でないときだけ · 0.24)
            | 'use' 'default' name 'from' 文字列 ';'
+reexport  := 'export' '{' ('type'? name) (',' …)* '}' ('from' 文字列)? ';'      (from つきは相対の Mamori module の export だけ・from なしは use で引いた名前だけ・口 (extern) は出せない · 0.25)
 extern    := 'extern' ('sink' | 'pure') '{' name (',' name)* '}' 'from' 文字列 ';'
            | 'extern' ('sink' | 'pure') 'global' name ';'
 vetted    := 'export'? 'vetted' 名前 '=' 文字列 ';'
@@ -526,7 +579,7 @@ fn        := 'export'? ('gate' | 'sink')? 'async'? 'fn' 名前 ('<' 名前 (',' 
            | 名前 '=' 式 ';' | 式 ';'
 式        := 2 項 (?? || && === !== < > <= >= instanceof + - * / %) | 単項 (! - typeof await)
            | 呼び出し・メンバ・new (呼ぶ側の名前・メンバの直後に型引数 `<型, …>` を付けられる · 0.21) | 配列 | 文字列・数 (10 進 / 16 進 `0x1f` · 0.3)・正規表現・true/false/null/undefined
-           | '(' 引数 ')' '=>' 式 | 'mint' 印 '(' 式 ')'
+           | 'async'? '(' 引数 ')' '=>' 式 (`async 名前 => 式` も · async の arrow は 0.26) | 'mint' 印 '(' 式 ')'
            | 式 '?' 式 ':' 式 | '{' (鍵 ':' 式 | 名前) (',' …)* '}' | 'field' 式 '.' 名前      (0.2)
 鍵        := 名前 | 文字列            (`__proto__` は書けない・計算した鍵 `[k]` は無い。展開 `...x` は配列の項と、オブジェクトの欄より前にだけ置ける · 0.15)
 ```
@@ -587,9 +640,12 @@ export sink fn openExternalVetted(url: VettedExternalUrl) -> Promise<void> {
 | `src/shared/outboundContentGate.mamori` | `src/shared/outboundContentGate.ts` | 出力インターセプター (端末の外へ出る本文に資格情報 / マイナンバー / カード番号の形が在れば送らない · `SECRET_SHAPES` / `scanPayload` / `outboundContentRefusal` · 0.19 · MG-038 · 正規表現の `exec` は `while` · 再帰する `walk` は先に空の関数で宣言して据える · Luhn の桁の表は算術へ · `redactSecrets` / 段階の台帳 / 文字数の天井は外から読む) |
 | `src/shared/actionTier.mamori` | `src/shared/actionTier.ts` | action の段階の台帳 (`service/action` → Tier・載っていない action は `external-write` に倒す fail closed · 0.21 · MG-042 · `new Set<Tier>(…)` が型引数つき · 非 null 断定は `Object.entries` を歩いて鍵を比べる形へ・template は連結へ) |
 | `src/shared/redact.mamori` | `src/shared/redact.ts` | 秘密の伏字 (`redactSecrets` / `redactForMessage` / `safeErrorMessage` と文字数の梯子 · 0.22 · MG-044 · 正規表現と `.replace` の連鎖は `let out` への代入の列へ (式の途中に注記は置けない) · 置換の関数は `scheme?: string` の省ける引数 · template 文字列は `+` の連結へ · `clampToCeiling` は外から読む) |
+| `src/main/oauth.mamori` | `src/main/oauth.ts` | OAuth 2.0 Authorization Code + PKCE (RFC 7636 / 8252) の主プロセス側 (https だけを通す関門 `assertHttpsEndpoint`・state の定時間比較・迷い要求を数えず待受を閉じない `decideCallbackReply` (T-062)・転送に追随しない token 交換・応答サイズの上限・失敗本文の伏字・OS へ渡す認可 URL を `externalUrlOrNull` の印つきで `openExternalVetted` へ · 0.24 · MG-050 · host 壁 `oauthHost.ts` が `process.env` / 乱数 / SHA-256 / `Buffer` / 時計 / `URLSearchParams` / `http` の待受 / 打ち切りを持つ (判断なし・待受は `decide` が返した応答をそのまま書くだけ) · `OAUTH_CONFIGS[serviceId]` の添字は無いので表を歩いて鍵を比べる `configOf` · 欄の途中に展開が在る `new URLSearchParams({…, ...x, …})` は欄を 1 つずつ足す形へ (順序は同じ) · 同名の `generatePkce` がブラウザ版 `pkce.mamori` にも在り `fn` の名前は 1 つなので別名の const で公開 · 組み上がる文字列・パラメータの順序は 1 字も変えず、既存の検査は編集なしで緑) |
 | `src/preload/preload.mamori` | `src/preload/preload.ts` | レンダラーが main へ触れる唯一の面 (`window.serviceHub` の 15 本の口 · チャンネル名は字面で固定 · 0.23 · MG-046 · `electron` は能力モジュールで `use` できず、`extern sink` は印の行き先を要るので、薄い host の口 `preloadHost.ts` (`invokeIpc` / `exposeBridge`) を `extern pure` で読む · 型引数つきの `type` (`FetchResult<T = unknown>` ほか) が Mamori に無いので型は `bridgeTypes.ts` に置いた · 型引数つきの arrow は無いので `fetchSnapshot` / `invoke` は `fn name<T>(…)` に · 露出は `export const bridgeExposed = exposeBridge('serviceHub', api)` の const の初期化で、読み込んだ瞬間に 1 度だけ呼ばれる) |
 | `src/shared/httpLimits.mamori` | `src/shared/httpLimits.ts` | 外から来る応答の上限と待ち時間 (`readBodyWithCap` / `readFailureBody` / `declaredLengthExceeds` / `isOverCap` / `egressInit` / `isRedirectResponse` / `redirectRefusal` / `withTimeout` / `withBodyDeadline` と定数 · 0.23 · MG-047 · `Response` / 本文の読み取り部品 / `Uint8Array` / `TextDecoder` / 時計と中断 (`setTimeout` は `extern pure global` で宣言できない) は薄い host 壁 `httpLimitsHost.ts` (判断も上限の数も持たない) を `extern pure` で読む · template 文字列は `+` の連結へ · `for (;;)` は `while (true)` へ · `total += n` は `total = total + n` へ · `T extends RequestInit` は制約が置けないので `egressInit<T>` にして no-cors の判定を host に · 型の `{ redirect: … }` は `interface EgressRedirect` に · `withTimeout` の引数名 `fn` は予約語なので `run` に · `res.headers?.get?.(…)` は `?.(` が無いので `hostHeader` に) |
+| `src/renderer/data/assistantMarkdown.mamori` | `src/renderer/data/assistantMarkdown.ts` | モデル応答の Markdown 構文解析 (`parseMarkdown` / `parseInline` / `blockWeight` / `externalTextOnOneLine` と描画の重さの天井 `MAX_RENDER_WEIGHT` · 0.25 · MG-052 · 見出し・表・箇条書き・コードを `while` の添字で歩く。非 null 断定 `x!` は言語に無いので、行は `lines.slice(i, i + 1).join('')`・正規表現の捕獲群は `m.slice(n, n + 1).join('')` で取る (`x[k]` の結果は戻り値にできない · T-255 · 範囲外は undefined を空に畳む `join` で空文字)。段落の溜め場は `let` の配列への `push` が M6 で断られるので、空白でつないだ 1 本の文字列に溜める (溜まる行は空でない)。`i++` は `i = i + 1`・`const ... as` は無し・見えない字の逃がしは `escape.mamori` から引き `export { escapeUnits }` で再輸出 (0.25)。元の TypeScript と 4000 本の乱数入力 + 境界の標本で差分比較し、ブロック・断りの文・天井が一致、既存の検査は編集なしで緑) |
 | `src/renderer/security/lockWorkspace.mamori` | `src/renderer/security/lockWorkspace.ts` | 施錠で鍵をメモリから落とす本体 (`lockWorkspace` は鍵を落としてから知らせる・`lockEverywhere` は自分を施錠してから他のタブへ配る —— どちらも 0.20 の `finally` · 0.20 · MG-040 · host 壁 `lockWorkspaceHost.ts` が購読の入れ物・共有の 1 本の道 (`BroadcastChannel`)・`onmessage` の据え付けを持つ · モジュール直下の `let` が無いため状態は host) |
+| `src/main/userPresence.mamori` | `src/main/userPresence.ts` | 画面から独立した本人確認の門 (`createPresenceGate` の速度・費用の予算・警戒態勢・ロックアウトと減衰・確認の連打を断る・要約の整え `safeSummary`・payload を欄ごとに見せる `describePayload`・資格情報の置き換えで送り先を見せる `describeCredentialWrite`・信頼できる呼び出し元 `isTrustedSenderUrl` · 0.26 · MG-054 · `async guard` は async arrow の閉包 (0.26)。時計 / `Object.getPrototypeOf` / `path.resolve` / 欄の読みは判断を持たない薄い壁 `userPresenceHost.ts` へ。`RATE_LIMIT[tier]` / `BUDGET[tier]` / `calls[tier]` の文字列の鍵の添字は `Map` (表は `Object.entries` から組む) へ、`push` / `shift` は `let` の配列の組み直しへ、`i++` / `+=` は `i = i + 1`・template は連結へ、`UNSAFE_RANGES` の対は `{ lo, hi }` の物へ書き直した。元の TypeScript と、4,000 本の乱数入力 (要約・payload・資格情報の束・URL) + 300 本 × 120 手の状態遷移 (確認・速度・予算・警戒・ロック・減衰・時計の進み) で差分比較し、判定・文面・記録・態勢が一致。**唯一の振る舞いの差**は知らない段階の速度の上限で、元は表の欄が無く `NaN` と比べて「通す」に倒れていた (型が `Tier` なので呼び手からは届かない) のを、上限 0 として「断る」へ倒した (fail closed)。既存の検査は編集なしで緑) |
 
 残りの TypeScript は Mamori で書いた gate / sink を呼ぶ側で、呼ぶ側には TypeScript の型の印が掛かる
 (パス 559)。書き出しのファイル書き込みはパス 560 で gate と sink の組として移し、pending の天井を 4 → 3 へ下げた。

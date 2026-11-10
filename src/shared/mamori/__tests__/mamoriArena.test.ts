@@ -1,6 +1,6 @@
 import { createRequire } from 'node:module';
 import { existsSync } from 'node:fs';
-import { describe, expect, it } from 'vitest';
+import { describe as describeAlways, expect, it } from 'vitest';
 import ts from 'typescript';
 import { compileProject, formatDiagnostic } from '../compile';
 import { readOriginalSource } from '../../__tests__/originalSource';
@@ -23,6 +23,10 @@ import { readOriginalSource } from '../../__tests__/originalSource';
  * 同じ検査を行い、どちらの強さで走ったかを題名に出す (弱い箱で黙って強い箱の結果を名乗らない)。
  */
 
+// 変異検査 (Stryker) の worker では走らせない: この検査は 24 箱 × 数百の攻撃を実プロセスで再生し (約 6 分)、コンパイラのどの変異体も覆うので、
+// 変異体 1 つごとに 6 分の再生が走って測定が数時間かかる (2026-11-09 実測: Mamori 0.24 の parser / emit の測定が 2 時間の上限に当たった)。
+// コンパイラの変異体は mamori の単体検査 (mamoriV*.test.ts ほか) が殺す。対戦場の再生は通常の `npm test` と CI が走らせる。
+const describe = describeAlways.skipIf(Boolean(process.env.STRYKER_MUTATOR_WORKER));
 const require_ = createRequire(import.meta.url);
 const arena = require_('../../../../scripts/lib/mamori-arena-judge.cjs') as {
   play: (o: { compiler: unknown; box: unknown; attackSrc: string; seed?: number; level?: string }) => { verdict: string; side: string; detail: string; rules?: string[] };
@@ -467,6 +471,25 @@ describe(`再戦と連打 (${LEVEL})`, () => {
     expect(rm.parseAttack(rm.render({ head: parts.head, body: burst.body }))!.body).toEqual(burst.body);
   });
 
+  it('★ 同時多発 (concurrent): await する動きを Promise.all で 8〜24 本いっぺんに走らせる・await の無い動きには効かない', () => {
+    const asyncParts = rm.parseAttack(evo.programOf('async-compare', [{ k: 'call', fn: 'checkAsync', args: ['"a"'], aw: true }], 'seed'))!;
+    const v = rm.variantOf({ parts: asyncParts, op: 'concurrent', rng: evo.mulberry32(1) })!;
+    expect(v.body).toHaveLength(1);
+    expect(v.body[0]).toMatch(/await Promise\.all\(\[(checkAsync\("a"\)(, )?){8,24}\]\)/);
+    expect(rm.render({ head: asyncParts.head, body: v.body })).toContain('export async fn attack()');
+    expect(rm.variantOf({ parts, op: 'concurrent', rng: evo.mulberry32(1) })).toBeNull();
+  });
+
+  it('★ 重ね撃ち (stack): 別の変え方を 2〜3 回続けて掛ける (元より増える・同じ種は同じ・下限を満たさなければ null)', () => {
+    const outs = Array.from({ length: 12 }, (_, i) => rm.variantOf({ parts, op: 'stack', rng: evo.mulberry32(i + 1) }));
+    const ok = outs.filter(Boolean);
+    expect(ok.length).toBeGreaterThan(0);
+    expect(ok.some((v) => v!.body.length > parts.body.length)).toBe(true);
+    // 順序の入れ替えを 2 回掛けると元に戻ることもある (それは許す)。ほとんどは元と違う
+    expect(ok.filter((v) => JSON.stringify(v!.body) !== JSON.stringify(parts.body)).length).toBeGreaterThan(ok.length / 2);
+    expect(rm.variantOf({ parts, op: 'stack', rng: evo.mulberry32(4) })).toEqual(rm.variantOf({ parts, op: 'stack', rng: evo.mulberry32(4) }));
+  });
+
   it('同じ種は同じ変種・別の視点 (literal-swap / graft) は元と違う・await を持つ動きを移植したら attack は async になる', () => {
     const a = rm.variantOf({ parts, op: 'literal-swap', rng: evo.mulberry32(9) })!;
     const b = rm.variantOf({ parts, op: 'literal-swap', rng: evo.mulberry32(9) })!;
@@ -514,7 +537,7 @@ describe(`再戦と連打 (${LEVEL})`, () => {
   it('★ 再戦: 秘密を返す箱 (LEAKY) には、前の攻撃のどの変種でも stolen になる (視点を変えても穴は穴・対策の根拠が残る)', () => {
     const src = evo.programOf('leaky', [{ k: 'call', fn: 'dump', args: [], aw: false }], 'seed');
     const corpus = { attacks: [{ name: 'seed-dump', targets: ['leaky'], firstVerdict: 'stolen', source: src }] };
-    const r = rm.rematchBox({ compiler, box: LEAKY, corpus, seed: 12, per: 2, variants: 5, level: LEVEL });
+    const r = rm.rematchBox({ compiler, box: LEAKY, corpus, seed: 12, per: 2, variants: 24, level: LEVEL });
     expect(r.wins.length).toBeGreaterThan(0);
     expect(r.wins.every((w) => w.verdict === 'stolen')).toBe(true);
     expect(r.wins[0]!.from).toBe('seed-dump');
@@ -557,7 +580,8 @@ describe(`再戦と連打 (${LEVEL})`, () => {
     const state = JSON.parse(readOriginalSource(path)) as { rematch?: { ops: Record<string, { plays: number }>; runs: unknown[]; wobbles: unknown[] } };
     expect(state.rematch).toBeDefined();
     expect(state.rematch!.runs.length).toBeGreaterThanOrEqual(1);
-    for (const op of Object.keys(state.rematch!.ops)) expect(rm.OPS).toContain(op);
+    const crossOps = (require_('../../../../scripts/lib/mamori-arena-cross.cjs') as { CROSS_OPS: string[] }).CROSS_OPS;
+    for (const op of Object.keys(state.rematch!.ops)) expect([...rm.OPS, ...crossOps]).toContain(op);
   });
 });
 

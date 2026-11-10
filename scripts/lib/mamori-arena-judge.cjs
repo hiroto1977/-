@@ -187,6 +187,36 @@ function play({ compiler, box, attackSrc, seed = 1, level = 'strong' }) {
   return { verdict: out.verdict, side, detail: String(out.detail || '').replace(new RegExp(data.SECRET, 'g'), '<SECRET>'), emitted: both.outputs.get('arena/attack.ts') };
 }
 
+/**
+ * 生の TypeScript の呼び手による 1 試合 (周回 9)。攻めは Mamori を通らない素の TS —— 生成物 (`defender.ts`) を import して使う
+ * TypeScript の側の呼び手を表す。Mamori の攻めは**攻める側のコンパイルの時点で言語が書き込みを断る**ので、実行時の凍結
+ * (`Object.freeze`) が本当に働いているかは見えない。ここは言語の規則を通さずに、箱が公開した物へ直接書き込めるかを測る。
+ * 型検査は掛けない (JavaScript の呼び手・`as any` の呼び手は型に止められない)。
+ */
+function playRaw({ compiler, box, attackTs, seed = 1, level = 'strong' }) {
+  const { compileProject, formatDiagnostic, ts } = compiler;
+  const data = virtualData(seed);
+  const defSrc = substitute(box.source, data);
+  const alone = compileProject([{ path: 'arena/defender.mamori', source: defSrc }]);
+  if (!alone.ok) return { verdict: 'bad-box', side: 'void', detail: alone.diagnostics.map(formatDiagnostic).slice(0, 3).join(' / ') };
+  const contract = JSON.parse(substitute(JSON.stringify(box.spec.contract), data));
+  const payload = {
+    modules: [
+      { name: 'defender', js: toJs(ts, alone.outputs.get('arena/defender.ts'), 'defender') },
+      { name: 'attack', js: toJs(ts, attackTs, 'attack') },
+    ],
+    contract,
+    secrets: [['SECRET', data.SECRET]],
+    hostCanary: data.HOST,
+    attackFn: 'attack',
+    timeoutMs: 2500,
+  };
+  const out = runBox(payload, level);
+  const red = out.verdict === 'stolen' || out.verdict === 'destroyed' || out.verdict === 'escaped';
+  const side = red ? 'red' : out.verdict === 'held' ? 'blue' : 'void';
+  return { verdict: out.verdict, side, detail: String(out.detail || '').replace(new RegExp(data.SECRET, 'g'), '<SECRET>') };
+}
+
 function loadBoxes(dir) {
   return fs.readdirSync(dir).filter((f) => f.endsWith('.box.mamori')).sort().map((f) => {
     const base = f.slice(0, -'.box.mamori'.length);
@@ -229,4 +259,4 @@ function tournament({ compiler, boxes, attacks, seed = 1, level = 'strong', onRo
   return { rounds, red: count('red'), blue: count('blue'), void: count('void'), byVerdict };
 }
 
-module.exports = { typecheck, targetsOf, REPO_ROOT, virtualData, substitute, loadCompiler, play, tournament, loadBoxes, loadAttacks, strongAvailable, runBox };
+module.exports = { typecheck, targetsOf, REPO_ROOT, virtualData, substitute, loadCompiler, play, playRaw, tournament, loadBoxes, loadAttacks, strongAvailable, runBox };

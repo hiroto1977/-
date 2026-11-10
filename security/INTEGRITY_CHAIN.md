@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 477
+- ブロック数: 493
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `713f5760304969038d4e69782ea772309611caf24cd3b5807c5e451b03210608`
-- 保護対象: 203 ファイル
+- 末尾(tip)ハッシュ: `18f99d603104d86bb54f32fbbd218b56a99d69472403b78425edd5ba62f70961`
+- 保護対象: 209 ファイル
 
 ## ブロック
 
@@ -490,6 +490,22 @@
 | 474 | `e1a99ed60d8f266e` | `72b60ad147d48525` | `ef5d7c3124b69095` | update preloadHost.ts |
 | 475 | `e5db918598c1a184` | `ef5d7c3124b69095` | `d8e7d175d97bee86` | update vitest.config.ts |
 | 476 | `f69e02edf62aef49` | `d8e7d175d97bee86` | `713f576030496903` | update integrity-chain.cjs,mamori-capabilities.json,httpLimits.mamori,httpLimits.ts,httpLimitsHost.ts |
+| 477 | `f6b2d4b9aaf25e2c` | `713f576030496903` | `e1a53b2ebf313f99` | update ast.ts,checker.ts,emit.ts,parser.ts |
+| 478 | `80a2f45bd01d8379` | `e1a53b2ebf313f99` | `52028bade6dcc54a` | update mamori-capabilities.json,oauth.ts,ast.ts,checker.ts,emit.ts,parser.ts |
+| 479 | `e82b696c3c0c3363` | `52028bade6dcc54a` | `55921642cf6cad2d` | update integrity-chain.cjs,oauthHost.ts |
+| 480 | `86c23a544826a1c9` | `55921642cf6cad2d` | `c6866c436854b427` | update integrity-chain.cjs,oauth.mamori |
+| 481 | `79bf43fa5366a92f` | `c6866c436854b427` | `70060a09f4ce7eb8` | update checker.ts |
+| 482 | `6201da28fdbc36b4` | `70060a09f4ce7eb8` | `464844e09428f13c` | update checker.ts |
+| 483 | `a98a6b0bef76c550` | `464844e09428f13c` | `fbdb69410c9d168c` | update integrity-chain.cjs,assistantMarkdown.mamori,assistantMarkdown.ts |
+| 484 | `b83969d9a5df1224` | `fbdb69410c9d168c` | `6997d6e4f86d8b31` | update assistantMarkdown.mamori,assistantMarkdown.ts |
+| 485 | `1e4f81a2eacac659` | `6997d6e4f86d8b31` | `9cae5cdf2c5491ac` | update mamori-capabilities.json,ast.ts,emit.ts,parser.ts |
+| 486 | `a78affd0eeef5c5d` | `9cae5cdf2c5491ac` | `13278eb9f1589f17` | update integrity-chain.cjs,mamori-capabilities.json,userPresence.mamori,userPresence.ts,userPresenceHost.ts |
+| 487 | `2ff4657ed7b08d68` | `13278eb9f1589f17` | `3a8449dd56b593a9` | update userPresence.mamori,userPresence.ts |
+| 488 | `09bba92d794942c8` | `3a8449dd56b593a9` | `66f6d8ee506f03f4` | update mamori-capabilities.json,userPresence.mamori,userPresence.ts,userPresenceHost.ts |
+| 489 | `75c6b06c177dc848` | `66f6d8ee506f03f4` | `d5d354d9058959bd` | update VettedLink.tsx |
+| 490 | `ea782457955e30c7` | `d5d354d9058959bd` | `25d021490720186e` | update integrity-chain.cjs,linkSpoof.ts |
+| 491 | `c629f39f1de4e998` | `25d021490720186e` | `a3f706d8c3785217` | update VettedLink.tsx,linkSpoof.ts |
+| 492 | `cf02e797ce1e2467` | `a3f706d8c3785217` | `18f99d603104d86b` | update VettedLink.tsx |
 
 ## 保護対象ファイル
 
@@ -568,7 +584,9 @@
 - `src/main/fileRequestGate.ts`
 - `src/main/keychainBackend.ts`
 - `src/main/main.ts`
+- `src/main/oauth.mamori`
 - `src/main/oauth.ts`
+- `src/main/oauthHost.ts`
 - `src/main/osSinks.mamori`
 - `src/main/osSinks.ts`
 - `src/main/presenceWiring.ts`
@@ -577,7 +595,9 @@
 - `src/main/shellOpenGate.mamori`
 - `src/main/shellOpenGate.ts`
 - `src/main/stateFile.ts`
+- `src/main/userPresence.mamori`
 - `src/main/userPresence.ts`
+- `src/main/userPresenceHost.ts`
 - `src/main/windowOpen.ts`
 - `src/main/windowPrefs.ts`
 - `src/preload/bridgeTypes.ts`
@@ -586,6 +606,7 @@
 - `src/preload/preloadHost.ts`
 - `src/renderer/components/VettedImg.tsx`
 - `src/renderer/components/VettedLink.tsx`
+- `src/renderer/data/assistantMarkdown.mamori`
 - `src/renderer/data/assistantMarkdown.ts`
 - `src/renderer/data/localWrite.ts`
 - `src/renderer/data/recordCipher.ts`
@@ -651,6 +672,7 @@
 - `src/shared/imageUrlGate.ts`
 - `src/shared/inputCeiling.ts`
 - `src/shared/isoDate.ts`
+- `src/shared/linkSpoof.ts`
 - `src/shared/localDate.ts`
 - `src/shared/lookup.ts`
 - `src/shared/mamori/ast.ts`

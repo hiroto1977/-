@@ -12,6 +12,9 @@
  *                                                 全部の箱へ同時に撃つ。守る側は捕獲 (近い攻めを corpus へ) → 解析 (観点 × 止めた規則) → 対策 (破れたら原因と直し方) → 学習 (届く観点へ重み・語を次の鍵に)
  *   node scripts/mamori-arena.cjs rematch [--per 12] [--variants 6] [--jobs 4] [--seed N] [--only a,b] [--blue] [--no-hammer]   再戦と連打: 前に撃った攻撃を 視点・攻め方を変えて撃ち直し
  *                                                 (literal-swap / reverse / burst / alternate / interleave / graft ...)、同じ口へ立て続けに撃って判定の揺らぎ (非決定) を探す
+ *   node scripts/mamori-arena.cjs raw [--only a,b] [--seed N]   生の TypeScript の呼び手: 言語のコンパイルを通らず箱の公開物へ直接書き込む (凍結が実行時に働くかを測る)
+ *   node scripts/mamori-arena.cjs melee [--ticks 2] [--jobs 4] [--waves 2] [--intensity 6] [--per 8] [--variants 4] [--pairs 60] [--blue-waves N] [--blue-intensity N] [--seed N] [--only a,b]   合戦: 攻め (赤: 津波・再戦と連打・掛け合わせ) と守り (青: 弱体化した箱で赤の目を測る) を
+ *                                                 同じ拍の中で同時に走らせ、拍の終わりに双方の結果を畳んで次の拍の種にする
  *   node scripts/mamori-arena.cjs replay          security/mamori-arena/corpus.json を再生して、攻撃側の得点が 0 のままか見る (exit 1 = 破られた)
  *
  * 既定の箱は strong (ネットワークも閉じる)。使えなければ exit 2 (弱い箱で黙って走らせない)。
@@ -149,7 +152,7 @@ if (cmd === 'match') {
     const box = corpus.boxes.find((b) => b.name === name);
     const seen = new Set(((state.boxes[name] || {}).tokens) || []);
     const w = wave.runBoxWave({ compiler, box, seed: runSeed * 7919 + name.length, waves, intensity, level, seen, weights });
-    const blue = noBlue ? [] : wave.blueCalibrate({ compiler, box, seed: runSeed, level, seen: new Set(w.tokens) });
+    const blue = noBlue ? [] : wave.blueCalibrate({ compiler, box, seed: runSeed, level, seen: new Set(w.tokens), waves: Number(opt('blue-waves', '1')), intensity: Number(opt('blue-intensity', '1')) });
     return { box: name, wave: w, blue };
   });
   (async () => {
@@ -243,6 +246,147 @@ if (cmd === 'match') {
     fs.writeFileSync(corpusPath, ascii(corpus));
     process.exit(summary.tally.red > 0 ? 1 : 0);
   })();
+} else if (cmd === 'cross') {
+  // 掛け合わせ: 違う攻撃どうしを親にして新しい攻め方を編み出す (周回 8)。親は全コーパス・箱が export する名前に収まる物
+  const rm = require('./lib/mamori-arena-rematch.cjs');
+  const cx = require('./lib/mamori-arena-cross.cjs');
+  const os = require('node:os');
+  const dir = path.join(arena.REPO_ROOT, 'security', 'mamori-arena');
+  const corpusPath = path.join(dir, 'corpus.json');
+  const evoPath = path.join(dir, 'evolution.json');
+  const corpus = JSON.parse(fs.readFileSync(corpusPath, 'utf8'));
+  const state = fs.existsSync(evoPath) ? JSON.parse(fs.readFileSync(evoPath, 'utf8')) : { version: 1, boxes: {}, history: [], lessons: [], gaps: [], wins: [] };
+  const pairs = Number(opt('pairs', '90'));
+  const runSeed = Number(opt('seed', String(((state.rematch || {}).runs || []).length + (state.waves || []).length + 1)));
+  const only = opt('only') ? opt('only').split(',') : null;
+  const names = corpus.boxes.map((b) => b.name).filter((n) => (only ? only.includes(n) : true));
+  const compute = (list) => list.map((name) => {
+    const box = corpus.boxes.find((b) => b.name === name);
+    const seen = new Set(((state.boxes[name] || {}).tokens) || []);
+    const rematch = cx.crossBox({ compiler, box, corpus, seed: runSeed * 7919 + name.length, pairs, level, seen });
+    return { box: name, rematch, hammer: [], blue: [] };
+  });
+  (async () => {
+    const wave = require('./lib/mamori-arena-wave.cjs');
+    let results;
+    if (argv.includes('--chunk')) {
+      results = compute(names);
+      fs.writeFileSync(opt('out'), JSON.stringify(results));
+      process.exit(0);
+    }
+    const jobs = Math.max(1, Math.min(Number(opt('jobs', '4')), names.length));
+    if (jobs <= 1) results = compute(names);
+    else {
+      const groups = Array.from({ length: jobs }, () => []);
+      names.forEach((n, i) => groups[i % jobs].push(n));
+      const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'mamori-cross-'));
+      const argvList = groups.map((g, i) => ['cross', '--chunk', '--only', g.join(','), '--seed', String(runSeed), '--pairs', String(pairs), '--level', level, '--out', path.join(tmp, i + '.json')]);
+      const done = await wave.runParallel(__filename, argvList);
+      done.forEach((d, i) => { if (d.code !== 0) { console.error(`cross: 子プロセス ${i} が失敗 (exit ${d.code}): ${d.stderr.slice(0, 400)}`); process.exit(2); } });
+      results = groups.flatMap((_, i) => JSON.parse(fs.readFileSync(path.join(tmp, i + '.json'), 'utf8')));
+      fs.rmSync(tmp, { recursive: true, force: true });
+    }
+    const summary = rm.applyRematchResults({ state, corpus, results, seed: runSeed });
+    const crossRows = summary.table.filter((r) => r.op.startsWith('cross-'));
+    console.log('掛け合わせ          戦    止められた  奥まで届いた  赤  打ち切り  新しい語');
+    for (const r of crossRows) console.log(`${r.op.padEnd(18)}${String(r.plays).padStart(6)}${String(r.refused).padStart(10)}${String(r.held).padStart(12)}${String(r.red).padStart(6)}${String(r.exhausted).padStart(8)}${String(r.fresh).padStart(9)}`);
+    for (const r of results) for (const win of r.rematch.wins) console.log(`RED   ${r.box} [${win.op} ← ${win.from}]: ${win.verdict} — ${win.detail.slice(0, 120)}`);
+    console.log(`\n== 掛け合わせ (種 ${runSeed}・${pairs} 本/箱): 戦 ${summary.tally.plays} / 赤の勝ち ${summary.tally.red} / 近い攻めの捕獲 ${summary.tally.near} ==`);
+    const ascii = (o) => JSON.stringify(o, null, 2).replace(/[^\x20-\x7e\n\u3000-\u30ff\u4e00-\u9fff\uff00-\uffef]/g, (c) => '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + '\n';
+    fs.writeFileSync(evoPath, ascii(state));
+    fs.writeFileSync(corpusPath, ascii(corpus));
+    process.exit(summary.tally.red > 0 ? 1 : 0);
+  })();
+} else if (cmd === 'raw') {
+  // 生の TypeScript の呼び手: Mamori の攻める側のコンパイルを通らず、箱の公開物へ直接書き込む (周回 9)。
+  // 実物の箱で壊れたら赤の勝ち (凍結が働いていない)。凍結を外した弱体化の箱で壊れたら青の較正が捕まえた。
+  const rawLib = require('./lib/mamori-arena-raw.cjs');
+  const corpus = JSON.parse(fs.readFileSync(path.join(arena.REPO_ROOT, 'security', 'mamori-arena', 'corpus.json'), 'utf8'));
+  const only = opt('only') ? opt('only').split(',') : null;
+  const seed = Number(opt('seed', '1'));
+  let red = 0, caught = 0, missed = 0, plays = 0;
+  for (const box of corpus.boxes) {
+    if (only && !only.includes(box.name)) continue;
+    const r = rawLib.rawBox({ compiler, box, seed, level });
+    plays += r.plays;
+    for (const w of r.wins) { red++; console.log(`RED   ${r.box} [${w.op}]: ${w.verdict} — ${w.detail.slice(0, 160)}`); }
+    for (const b of r.blue) { if (b.caught) caught++; else missed++; console.log(`BLUE  ${b.box} +unfreeze: ${b.caught ? '捕まえた (' + b.how + ')' : '見逃し'}`); }
+    if (r.attacks === 0) console.log(`--    ${r.box}: 公開した定数も引数なしの関数も無い`);
+  }
+  console.log(`\n== 生の呼び手: 戦 ${plays} / 赤の勝ち ${red} / unfreeze 捕獲 ${caught} 見逃し ${missed} ==`);
+  process.exit(red > 0 ? 1 : 0);
+} else if (cmd === 'melee') {
+  // 合戦 (周回 9): 攻め (赤) と守り (青) を同じ拍で同時に動かす。1 拍ごとに、津波・再戦と連打・掛け合わせの赤の子プロセスと、
+  // 弱体化した箱で赤の目を測る青の子プロセスを**全部いっぺんに**走らせ、拍の終わりに両方の結果を同じ台帳へ畳んで、次の拍はその学習から始める
+  // (赤の重みも青の鍵 (語) も、前の拍の双方の結果で動く)。これまでの回は赤→青を箱ごとに順に進めていたが、ここは同じ拍の中で動く。
+  const wave = require('./lib/mamori-arena-wave.cjs');
+  const rm = require('./lib/mamori-arena-rematch.cjs');
+  const os = require('node:os');
+  const dir = path.join(arena.REPO_ROOT, 'security', 'mamori-arena');
+  const corpusPath = path.join(dir, 'corpus.json');
+  const evoPath = path.join(dir, 'evolution.json');
+  const ticks = Number(opt('ticks', '2'));
+  const jobs = Number(opt('jobs', '4'));
+  const waves = Number(opt('waves', '2'));
+  const intensity = Number(opt('intensity', '6'));
+  const per = Number(opt('per', '8'));
+  const variants = Number(opt('variants', '4'));
+  const pairs = Number(opt('pairs', '60'));
+  // 青の弱体化測定は、赤の本気の強さで測る (既定は赤の強さと同じ・1 にすれば従来の最小の波)
+  const blueWaves = Number(opt('blue-waves', String(waves)));
+  const blueIntensity = Number(opt('blue-intensity', String(intensity)));
+  const only = opt('only') ? opt('only').split(',') : null;
+  const ascii = (o) => JSON.stringify(o, null, 2).replace(/[^\x20-\x7e\n\u3000-\u30ff\u4e00-\u9fff\uff00-\uffef]/g, (c) => '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + '\n';
+  (async () => {
+    let anyRed = 0;
+    for (let t = 1; t <= ticks; t++) {
+      const corpus = JSON.parse(fs.readFileSync(corpusPath, 'utf8'));
+      const state = fs.existsSync(evoPath) ? JSON.parse(fs.readFileSync(evoPath, 'utf8')) : { version: 1, boxes: {}, history: [], lessons: [], gaps: [], wins: [] };
+      const baseSeed = Number(opt('seed', String(((state.rematch || {}).runs || []).length + (state.waves || []).length + 1)));
+      const runSeed = baseSeed + t - 1;
+      const names = corpus.boxes.map((b) => b.name).filter((n) => (only ? only.includes(n) : true));
+      const n = Math.max(1, Math.min(jobs, names.length));
+      const groups = Array.from({ length: n }, () => []);
+      names.forEach((nm, i) => groups[i % n].push(nm));
+      const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'mamori-melee-'));
+      const jobsList = [];
+      const add = (side, kind, args, g, i) => jobsList.push({ side, kind, out: path.join(tmp, `${side}-${kind}-${i}.json`), args: [...args, '--chunk', '--only', g.join(','), '--seed', String(runSeed), '--level', level] });
+      groups.forEach((g, i) => {
+        add('red', 'wave', ['wave', '--waves', String(waves), '--intensity', String(intensity), '--no-blue'], g, i);
+        add('red', 'rematch', ['rematch', '--per', String(per), '--variants', String(variants)], g, i);
+        add('red', 'cross', ['cross', '--pairs', String(pairs)], g, i);
+        add('blue', 'wave', ['wave', '--waves', '0', '--blue-waves', String(blueWaves), '--blue-intensity', String(blueIntensity)], g, i);
+        add('blue', 'rematch', ['rematch', '--per', '0', '--variants', '0', '--blue', '--no-hammer'], g, i);
+      });
+      const argvList = jobsList.map((j) => [...j.args, '--out', j.out]);
+      const done = await wave.runParallel(__filename, argvList);
+      done.forEach((d, i) => { if (d.code !== 0) { console.error(`melee: 子プロセス ${jobsList[i].side}/${jobsList[i].kind} が失敗 (exit ${d.code}): ${d.stderr.slice(0, 400)}`); process.exit(2); } });
+      const load = (side, kind) => jobsList.filter((j) => j.side === side && j.kind === kind).flatMap((j) => JSON.parse(fs.readFileSync(j.out, 'utf8')));
+      const waveResults = [...load('red', 'wave'), ...load('blue', 'wave')];
+      const rematchResults = [...load('red', 'rematch'), ...load('red', 'cross'), ...load('blue', 'rematch')];
+      fs.rmSync(tmp, { recursive: true, force: true });
+      const ws = wave.applyWaveResults({ state, corpus, results: waveResults, seed: runSeed, waves, intensity });
+      const rs = rm.applyRematchResults({ state, corpus, results: rematchResults, seed: runSeed });
+      const redWins = ws.tally.red + rs.tally.red;
+      // 青の弱体化測定: 赤の手ごと (観点の波 / 再戦) の捕獲と、「赤のどの手でも捕まえたか」(箱 × 弱体化ごとの OR) を分けて数える。
+      // 再戦は過去の攻撃の変種しか撃たないので、まだ攻撃の無い弱体化には届かない —— それを赤全体の死角と読まない。
+      const blueBy = { wave: waveResults.flatMap((r) => r.blue || []), rematch: rematchResults.flatMap((r) => r.blue || []) };
+      const combined = new Map();
+      for (const [hand, rows] of Object.entries(blueBy)) for (const b of rows) { const k = b.box + '+' + b.op; const c = combined.get(k) || { op: b.op, hands: [] }; if (b.caught) c.hands.push(hand); combined.set(k, c); }
+      const caught = [...combined.values()].filter((c) => c.hands.length > 0).length;
+      const missed = [...combined.values()].filter((c) => c.hands.length === 0);
+      const handCaught = (hand) => blueBy[hand].filter((b) => b.caught).length;
+      const wobbles = rs.tally.wobbles || 0;
+      for (const r of waveResults) for (const win of (r.wave.wins || [])) console.log(`RED   ${r.box} [${win.lens}]: ${win.verdict} — ${win.detail.slice(0, 120)}`);
+      for (const r of rematchResults) for (const win of ((r.rematch || {}).wins || [])) console.log(`RED   ${r.box} [${win.op} ← ${win.from}]: ${win.verdict} — ${win.detail.slice(0, 120)}`);
+      console.log(`拍 ${t}/${ticks} (種 ${runSeed}): 赤 戦 ${ws.tally.plays + rs.tally.plays} · 赤の勝ち ${redWins} · 近い攻めの捕獲 ${ws.tally.near + rs.tally.near} · 揺らぎ ${wobbles} | 青 弱体化 ${combined.size} 件: 赤のどの手かが捕まえた ${caught} · どの手も逃した ${missed.length}${missed.length ? ' (' + [...new Set(missed.map((b) => b.op))].join(',') + ')' : ''} [手ごと: 波 ${handCaught('wave')}/${blueBy.wave.length} · 再戦 ${handCaught('rematch')}/${blueBy.rematch.length}]`);
+      anyRed += redWins;
+      fs.writeFileSync(evoPath, ascii(state));
+      fs.writeFileSync(corpusPath, ascii(corpus));
+    }
+    console.log(`\n== 合戦 (${ticks} 拍・同時): 赤の勝ち 合計 ${anyRed} ==`);
+    process.exit(anyRed > 0 ? 1 : 0);
+  })();
 } else if (cmd === 'replay') {
   const corpusPath = path.join(arena.REPO_ROOT, 'security', 'mamori-arena', 'corpus.json');
   const corpus = JSON.parse(fs.readFileSync(corpusPath, 'utf8'));
@@ -256,6 +400,6 @@ if (cmd === 'match') {
   console.log(bad === 0 ? `✅ ${corpus.attacks.length} 攻撃 × ${corpus.boxes.length} 箱: 攻撃側の得点は 0` : `❌ ${bad} 件で再び破られた`);
   process.exit(bad === 0 ? 0 : 1);
 } else {
-  console.error('usage: match | tournament | learn | evolve | wave | rematch | replay');
+  console.error('usage: match | tournament | learn | evolve | wave | rematch | cross | melee | replay');
   process.exit(2);
 }

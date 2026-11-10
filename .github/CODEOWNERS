@@ -124,6 +124,7 @@
 /src/shared/ollamaCore.mamori @hiroto1977
 /src/renderer/components/VettedImg.tsx @hiroto1977
 /src/renderer/components/VettedLink.tsx @hiroto1977
+/src/shared/linkSpoof.ts @hiroto1977
 /src/shared/mamori/ @hiroto1977
 /src/main/stateFile.ts @hiroto1977
 /src/main/userPresence.ts @hiroto1977
@@ -133,6 +134,7 @@
 /src/preload/preloadHost.ts @hiroto1977
 /src/preload/bridgeTypes.ts @hiroto1977
 /src/renderer/data/assistantMarkdown.ts @hiroto1977
+/src/renderer/data/assistantMarkdown.mamori @hiroto1977
 /src/renderer/data/localWrite.ts @hiroto1977
 /src/renderer/data/recordCipher.ts @hiroto1977
 /src/renderer/fs/fsa.ts @hiroto1977
@@ -144,6 +146,10 @@
 /src/renderer/oauth/pkceSession.mamori @hiroto1977
 /src/renderer/oauth/pkce.mamori @hiroto1977
 /src/renderer/oauth/pkceHost.ts @hiroto1977
+/src/main/oauth.mamori @hiroto1977
+/src/main/oauthHost.ts @hiroto1977
+/src/main/userPresence.mamori @hiroto1977
+/src/main/userPresenceHost.ts @hiroto1977
 /src/shared/privateTarget.mamori @hiroto1977
 /src/shared/scanTarget.mamori @hiroto1977
 /src/shared/scanTargetHost.ts @hiroto1977

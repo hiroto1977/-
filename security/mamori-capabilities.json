@@ -36,6 +36,14 @@
         "writeExportFileVetted(VettedExportPath)"
       ]
     },
+    "src/main/oauth.mamori": {
+      "externals": [
+        "pure ./oauthHost: hostEnv, hostRandomBytes, hostBase64, hostUtf8Base64, hostSha256, hostNow, hostSearchParams, hostFetch, hostListenForCallback"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
     "src/main/osSinks.mamori": {
       "externals": [
         "sink electron: shell"
@@ -59,10 +67,24 @@
       ],
       "sinks": []
     },
+    "src/main/userPresence.mamori": {
+      "externals": [
+        "pure ./userPresenceHost: hostNow, hostField, hostHasPlainPrototype, hostResolvePath"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
     "src/preload/preload.mamori": {
       "externals": [
         "pure ./preloadHost: invokeIpc, exposeBridge"
       ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
+    "src/renderer/data/assistantMarkdown.mamori": {
+      "externals": [],
       "imports": [],
       "gates": [],
       "sinks": []

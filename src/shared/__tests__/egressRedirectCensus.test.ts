@@ -49,7 +49,10 @@ const SITES: Readonly<Record<string, number>> = {
   'src/main/clients/ollama.ts': 1,
   'src/main/clients/types.ts': 1,
   'src/main/main.ts': 1,
-  'src/main/oauth.ts': 2,
+  // oauth.ts は 2026-11-09 (MG-050) に Mamori へ移り、token 端点への POST が postTokenEndpoint の 1 か所に畳まれた (2 → 1)。
+  // 既定の fetch は壁 oauthHost.ts の hostFetch (egressInit を掛けて fetch を呼ぶ 1 か所)。
+  'src/main/oauth.ts': 1,
+  'src/main/oauthHost.ts': 1,
   'src/renderer/network/ollamaWeb.ts': 1,
   'src/renderer/network/proxy.ts': 1,
   'src/renderer/oauth/pkce.ts': 1,

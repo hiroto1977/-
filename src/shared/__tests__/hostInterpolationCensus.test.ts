@@ -97,6 +97,11 @@ const LEDGER: readonly LedgerRow[] = [
       + '出典の独立性を数える Set の鍵で、パス 478 の実測で読み手は distinctSourceCount だけ',
   },
   {
+    file: 'src/shared/linkSpoof.ts',
+    needle: "hostOf('https://' + m[1])",
+    reason: '(c) 表示文字のドメインらしい綴りをホストへ正規化して行き先と比べるだけ。通信しない・URL として画面にも出さない (出るのはホスト名だけ)',
+  },
+  {
     file: 'src/main/clients/slack.ts',
     needle: '`https://${label}.slack.com/archives/',
     reason: '(d) 第三者の応答 (team.info の domain) は slackWorkspaceDomainOrNull の返り値 label だけを置く',

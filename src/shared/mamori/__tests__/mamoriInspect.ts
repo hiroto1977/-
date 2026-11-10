@@ -117,7 +117,9 @@ export function inspectEmitted(file: string, text: string, externGlobals: Readon
     if (ts.isIdentifier(n)) {
       const parent = n.parent;
       const isMemberName = (ts.isPropertyAccessExpression(parent) && parent.name === n) || (ts.isPropertyAssignment(parent) && parent.name === n) ||
-        (ts.isPropertySignature(parent) && parent.name === n) || (ts.isImportSpecifier(parent) && parent.propertyName === n);
+        (ts.isPropertySignature(parent) && parent.name === n) || (ts.isImportSpecifier(parent) && parent.propertyName === n) ||
+        // `export { a, b } from "mod"` (MG-051 の再輸出) の名前は、このモジュールの式でも束縛でもない (相手の module の名前を指す)
+        (ts.isExportSpecifier(parent) && ts.isExportDeclaration(parent.parent.parent) && parent.parent.parent.moduleSpecifier !== undefined);
       const isBindingName = (ts.isVariableDeclaration(parent) || ts.isParameter(parent) || ts.isFunctionDeclaration(parent) || ts.isTypeAliasDeclaration(parent) ||
         ts.isInterfaceDeclaration(parent) || ts.isImportSpecifier(parent) || ts.isImportClause(parent) || ts.isNamespaceImport(parent) || ts.isTypeParameterDeclaration(parent)) &&
         (parent as { name?: ts.Node }).name === n;

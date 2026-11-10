@@ -54,6 +54,38 @@ describe('VettedLink —— 印つきの href をそのまま <a> に置く', ()
     expect(openExternal).toHaveBeenCalledWith('https://example.com/a?b=1');
   });
 
+  it('★ 表示に書いたドメインと行き先が違えば警告を出し、リンクは今までどおり開ける (機能は残す)', () => {
+    const href = externalUrlOrNull('https://evil.example/x');
+    if (href === null) throw new Error('関門が正当な URL を断った');
+    const openExternal = vi.fn(async () => ({ ok: true }));
+    vi.stubGlobal('serviceHub', { openExternal });
+    host = document.createElement('div');
+    document.body.append(host);
+    root = createRoot(host);
+    act(() => root!.render(createElement(VettedLink, { href, children: '国税庁 nta.go.jp の手引き' })));
+    const note = host.querySelector('[data-link-spoof]');
+    expect(note?.getAttribute('data-link-spoof')).toBe('label-mismatch');
+    expect(note?.textContent).toContain('表示は nta.go.jp ですが、行き先は evil.example です。');
+    act(() => {
+      host!.querySelector('a')!.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+    });
+    expect(openExternal).toHaveBeenCalledWith('https://evil.example/x');
+  });
+
+  it('★ 食い違いが無ければ警告を出さない (描く物は今までと同じ 1 つの <a>)', () => {
+    const href = externalUrlOrNull('https://www.nta.go.jp/');
+    if (href === null) throw new Error('関門が正当な URL を断った');
+    const html = renderToStaticMarkup(createElement(VettedLink, { href, children: '国税庁 nta.go.jp の手引き' }));
+    expect(html).toBe('<a href="https://www.nta.go.jp/" rel="noopener noreferrer">国税庁 nta.go.jp の手引き</a>');
+  });
+
+  it('★ 似た文字のドメインは表示が何であっても警告する', () => {
+    const href = externalUrlOrNull('https://xn--80aa4aa.com/');
+    if (href === null) throw new Error('関門が正当な URL を断った');
+    const html = renderToStaticMarkup(createElement(VettedLink, { href, children: '開く' }));
+    expect(html).toContain('data-link-spoof="lookalike-host"');
+  });
+
   it('対照: 関門は http(s) 以外を断るので、呼び出し側はリンクを描かずに理由を出す形になる', () => {
     expect(externalUrlOrNull('javascript:alert(1)')).toBeNull();
     expect(externalUrlOrNull('file:///etc/passwd')).toBeNull();

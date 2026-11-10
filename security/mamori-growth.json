@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.23"
+    "version": "0.26"
   },
   "constructs": {
     "class": {
@@ -125,10 +125,17 @@
       "risk": "省いた引数は undefined —— 印の型の引数は省けない形にする。",
       "since": "0.22"
     },
+    "async-arrow": {
+      "decision": "added",
+      "why": "非同期の閉包 (締切や直列化の中で走らせる) で使う。",
+      "risk": "await の結果は印を運ばない・閉包は plain の役で検める (外側の gate / sink を引き継がない)。",
+      "since": "0.26"
+    },
     "export-from": {
-      "decision": "feature",
+      "decision": "added",
       "why": "まとめの入口 (index.ts) が使う。",
-      "risk": "extern sink の危ない口を再輸出すると TypeScript の側へ素の口が漏れる —— 危ない口の再輸出を断る。"
+      "risk": "extern sink の危ない口を再輸出すると TypeScript の側へ素の口が漏れる —— 危ない口の再輸出を断る。",
+      "since": "0.25"
     },
     "export-default": {
       "decision": "rewrite",
@@ -140,9 +147,10 @@
       "risk": "`import * as electron` は `electron.shell` で extern sink の宣言を迂回する —— 名前空間の import は危ない口を持つモジュールに使えない形にする。"
     },
     "inline-type-import": {
-      "decision": "feature",
+      "decision": "added",
       "why": "型と値を 1 行で import する形。",
-      "risk": "型だけの名前を値として使えないことは tsc が見る。来歴には触れない。"
+      "risk": "型だけの名前を値として使えないことは tsc が見る。来歴には触れない。",
+      "since": "0.24"
     },
     "side-effect-import": {
       "decision": "rewrite",
@@ -2908,6 +2916,360 @@
         "summary": "仮想空間の対戦場を作った: 外側の箱 (unshare -rn + node --permission で fs/子/worker/網を閉じる) の中に内側の箱 (vm) を置き、守る側が仮想データを入れた箱を Mamori で書き、攻める側が Mamori で奪取・破壊を試みる。審判は奪取 (平文・逆順・base64・16進・文字コード列・断片)・破壊 (契約と組み込みの指紋)・脱出 (host の印・構造体の同一性) を判定し、実パイプラインと同じ tsc 型検査も通す。315 弾 × 21 箱 = 6615 戦で赤 0 / 青 6615。新しい穴は見つからず、審判の偽陽性 (URL 由来値の host 扱い・tsc を通さない型の穴) を直した。全戦はコーパス (351 攻撃・21 箱) に残し、回帰検査で再生する。"
       },
       "deviation": "利用者が『仮想空間で侵入側と防ぐ側に分かれて競い、戦いのデータを言語の学習に使う』ことを直接依頼したため、brief の選択 (移す壁が無い) ではなく対戦場を作った。"
+    },
+    {
+      "id": "MG-049",
+      "date": "2026-11-09",
+      "kind": "feature",
+      "target": "inline-type-import",
+      "pickedBy": "manual",
+      "briefPick": "feature:inline-type-import",
+      "version": "0.24",
+      "features": [
+        "inline-type-import"
+      ],
+      "added": [
+        "inline-type-import"
+      ],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "関数 (gate / 印を受ける口) を `use { type mk }` / `use { type open }` で型の顔にして引く —— Mamori は関数として検め続けるのに生成物 (tsc) では型として消える食い違いを作る",
+          "result": "refused"
+        },
+        {
+          "tried": "`use type { type X }` (項目全体がすでに型だけなのに名前ごとにも type を重ねる)",
+          "result": "refused"
+        },
+        {
+          "tried": "`use { type }` / `use { type alias t }` (type を引く名前にして曖昧にする)",
+          "result": "refused"
+        },
+        {
+          "tried": "export していない名前を `use { type Hidden }` で引く",
+          "result": "refused"
+        },
+        {
+          "tried": "`use { open, type VU }` で印を受ける口へ生の文字列を渡す・印の型の戻り値へ生の文字列を返す (型で引いても印を偽造できないか)",
+          "result": "refused"
+        },
+        {
+          "tried": "型だけで引いた定数 `use { type LIMIT }` を値の位置で使う (Mamori は通すが生成物は import { type LIMIT } のままで tsc が断る —— 来歴には触れない)",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 3,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/checker.ts",
+          "src/shared/mamori/emit.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 914,
+        "reason": "draft PR #914 に載せる",
+        "summary": "名前ごとの型だけの import use { f, type X } from \"…\" を 0.24 で足した。値と型を 1 行で引ける (生成物は TypeScript の inline type import)。先に破って、関数を型の顔で引く形 (M6)・型の二重指定・type を名前にする形・非 export の名前を断った。変異検査は 3,852 変異体で 99.97% (生存 1 件は規則名の取り違えで、検査が規則名まで見るよう直して手で当てて殺した)。"
+      },
+      "deviation": "利用者が「切り替えて進めて」と言い、アリーナの輪から言語を育てる輪へ切り替えて、brief の自動選択ではなく手で inline-type-import を選んだ"
+    },
+    {
+      "id": "MG-050",
+      "date": "2026-11-09",
+      "kind": "port",
+      "target": "src/main/oauth.ts",
+      "pickedBy": "manual",
+      "briefPick": "port:src/main/oauth.ts",
+      "version": "0.24",
+      "features": [],
+      "added": [],
+      "rewrite": [],
+      "ported": [
+        "src/main/oauth.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "authorize が関門 (externalUrlOrNull) を通さず素の authorizeUrl を openExternalVetted へ渡す",
+          "result": "refused"
+        },
+        {
+          "tried": "`extern pure global process;` で process を pure と偽って宣言し env を直に読む",
+          "result": "refused"
+        },
+        {
+          "tried": "設定表を鍵で引いて `.constructor` へ届く (OAUTH_CONFIGS[serviceId].constructor)",
+          "result": "refused"
+        },
+        {
+          "tried": "`use { createServer } from \"node:http\"` で能力モジュールを台帳に載せずに待受を直に作る",
+          "result": "refused"
+        },
+        {
+          "tried": "素の文字列を `as VettedExternalUrl` で印付けして sink を呼ぶ",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 3,
+      "mutation": {
+        "files": [
+          "src/main/oauth.ts",
+          "src/main/oauthHost.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 914,
+        "reason": "draft PR #914 に載せる",
+        "summary": "oauth.ts を 0.24 へ移植。待受の「要求ごとに何を返し、閉じるか」は decideCallbackReply (Mamori) が決め、Node の口 (env・乱数・SHA-256・Buffer・時計・URLSearchParams・http の待受・fetch・打ち切り) は判断を持たない薄い host 壁 oauthHost.ts が書くだけ。変異検査は両ファイル 100% (oauth.ts 413 変異体・oauthHost.ts 45)。生存はモジュール直下の定数 (CALLBACK_HTML・env 名) で、読み直したモジュールで留めた。"
+      },
+      "deviation": "利用者の「1～5を導入」で、brief の自動選択ではなく手で選んだ"
+    },
+    {
+      "id": "MG-051",
+      "date": "2026-11-09",
+      "kind": "feature",
+      "target": "export-from",
+      "pickedBy": "manual",
+      "briefPick": "feature:export-from",
+      "version": "0.25",
+      "features": [
+        "export-from"
+      ],
+      "added": [
+        "export-from"
+      ],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "extern sink の口を `export { shell };` で出して TypeScript の呼び手へ素の口を漏らす",
+          "result": "refused"
+        },
+        {
+          "tried": "外の module (electron / node:fs / left-pad / 絶対パス) からの `export { shell } from \"…\"`",
+          "result": "refused"
+        },
+        {
+          "tried": "Mamori でない TypeScript の module からの再輸出 `export { anything } from \"./plain\"`",
+          "result": "refused"
+        },
+        {
+          "tried": "`export * from \"./a\"` で何が出るか読めない形",
+          "result": "refused"
+        },
+        {
+          "tried": "関数を `export { type mk }` で型として再輸出 (検めと生成物の食い違い)",
+          "result": "refused"
+        },
+        {
+          "tried": "`use default fs from \"node:fs\"; export { fs };` で外の module の既定の値を再輸出",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 3,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/checker.ts",
+          "src/shared/mamori/emit.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 914,
+        "reason": "draft PR #914 に載せる",
+        "summary": "再輸出 `export { a, type T } from \"./m\";` / `export { x };` を足した。再輸出は TypeScript の呼び手のためで Mamori の use では引けない。足す前に 8 通りで破り、組み直しの実測で 9 つ目 (use default の再輸出で外の口が漏れる) を見つけて M6 で塞いだ。検査は分岐の無い形へ組み直して等価変異を無くし、parser / checker / emit は変異検査 100%。"
+      },
+      "deviation": "利用者の「1～5を導入」で、brief の自動選択ではなく手で選んだ。0.25 の最初の実装は use default の再輸出を通していたので、変異検査の組み直しの途中で塞いだ"
+    },
+    {
+      "id": "MG-052",
+      "date": "2026-11-09",
+      "kind": "port",
+      "target": "src/renderer/data/assistantMarkdown.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/renderer/data/assistantMarkdown.ts",
+      "version": "0.25",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "non-null",
+        "c-for",
+        "compound-assign"
+      ],
+      "ported": [
+        "src/renderer/data/assistantMarkdown.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "`lines[i]` / `m[k]` の結果 (計算した鍵) を戻り値に入れる (移植で実際に当たった)",
+          "result": "refused"
+        },
+        {
+          "tried": "`let` の配列へ `.push` して段落を溜める (移植で実際に当たった)",
+          "result": "refused"
+        },
+        {
+          "tried": "`t.constructor(\"return 1\")()` で文字列をコードとして走らせる",
+          "result": "refused"
+        },
+        {
+          "tried": "テンプレート文字列 `<b>${t}</b>` で HTML を組む",
+          "result": "refused"
+        },
+        {
+          "tried": "`document.body.innerHTML = t` で DOM へ直に書く",
+          "result": "refused"
+        },
+        {
+          "tried": "`m[1]!` の非 null 断定・`t as string` の型の書き換え",
+          "result": "refused"
+        },
+        {
+          "tried": "`extern sink { shell }` を `export { shell }` で再輸出",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 4,
+      "mutation": {
+        "files": [
+          "src/renderer/data/assistantMarkdown.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 914,
+        "reason": "draft PR #914 に載せる",
+        "summary": "モデル応答の Markdown 構文解析 assistantMarkdown.ts を Mamori 0.25 へ移した。非 null 断定は at / group (1 要素の切り出しを toString で取る) に集め、段落の溜め場は let 配列への push が M6 で断られるので空白でつないだ 1 本の文字列に、i++ は i = i + 1 へ書き直した。元の TypeScript と 4000 本の乱数入力 + 境界の標本で差分比較し一致、既存の検査は編集なしで緑。範囲の確かめは at の空文字に任せて冗長な守りを消し、変異検査は 100%。対照 4 方向 (at / group / 段落の連結 / A-413 の重さの天井) がすべて鳴る。"
+      },
+      "deviation": null
+    },
+    {
+      "id": "MG-053",
+      "date": "2026-11-10",
+      "kind": "feature",
+      "target": "async-arrow",
+      "pickedBy": "brief",
+      "briefPick": "port:src/main/userPresence.ts",
+      "version": "0.26",
+      "features": [
+        "async-arrow"
+      ],
+      "added": [
+        "async-arrow"
+      ],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "async arrow の本体で宣言していない名前 `fetch` を呼ぶ",
+          "result": "refused"
+        },
+        {
+          "tried": "gate 関数の中の async arrow で `mint VU(s)` して関門を迂回",
+          "result": "refused"
+        },
+        {
+          "tried": "sink 関数の中の async arrow で `shell.openExternal(u)` を呼び、外側の役を引き継がせる",
+          "result": "refused"
+        },
+        {
+          "tried": "計算した鍵の添字の結果 `m[k]` を `await` して async arrow の戻り値にする (T-255 の迂回)",
+          "result": "refused"
+        },
+        {
+          "tried": "`async 1` のように async の後ろが arrow でも fn でもない形",
+          "result": "refused"
+        },
+        {
+          "tried": "async arrow の引数の既定値に隠した宣言なしの名前 `q = fetch(\"x\")`",
+          "result": "refused"
+        },
+        {
+          "tried": "印の無い値 `raw` を async arrow の中から印つきの口 `open(raw)` へ渡す",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 3,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/emit.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 914,
+        "reason": "draft PR #914 に載せる",
+        "summary": "Mamori 0.26 に非同期の arrow `async (x) => …` / `async x => …` を足した (userPresence.ts の createPresenceGate の async 閉包を移すために要る)。新しい規則は足さず、arrow は外側の役を引き継がず plain で検める (0.9) を async にもそのまま掛けた。足す前に 8 通りで破り、7 形が断られ、1 形 (async を引数の名前にした `async => 1`) は arrow として通る正しい形だった。変異検査は触った範囲 (emit 19 / parser 53 + 15 変異体) で 100%。対照 3 方向 (emit が async を付けない / parser が async arrow を読まない / 検めが外側の役を引き継ぐ) がすべて鳴る。MG-052 の抜け 5 件 (件数・能力台帳・生の呼び手の環境差・CODEOWNERS・読み込み位置) も同じ周で CI の失敗から直した。"
+      },
+      "deviation": "brief は userPresence.ts の移植を選んだが、createPresenceGate の async 閉包が Mamori に無かったので、移植の前に足す側 (feature) へ進めた。移植は次の周"
+    },
+    {
+      "id": "MG-054",
+      "date": "2026-11-10",
+      "kind": "port",
+      "target": "src/main/userPresence.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/main/userPresence.ts",
+      "version": "0.26",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "non-null",
+        "c-for",
+        "as-cast",
+        "template",
+        "compound-assign",
+        "nested-function"
+      ],
+      "ported": [
+        "src/main/userPresence.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "`Object.getPrototypeOf(o) === Object.prototype` を本体に書く (移植で実際に当たった —— `.prototype` は M0 で断られ、原型の読みは host 壁へ)",
+          "result": "refused"
+        },
+        {
+          "tried": "`m.get(k).push(1)` / `let a = []; a.push(1)` で const の配列でない物へ push する (移植で実際に当たった)",
+          "result": "refused"
+        },
+        {
+          "tried": "`const o = JSON.parse(s); o.x = 1;` で作っていない物の欄へ代入する",
+          "result": "refused"
+        },
+        {
+          "tried": "`path.resolve(p)` / `Date.now()` / `process.env` を宣言せずに使う",
+          "result": "refused"
+        },
+        {
+          "tried": "async arrow の中で宣言していない `fetch` を呼ぶ閉包を返す",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 11,
+      "mutation": {
+        "files": [
+          "src/main/userPresence.ts",
+          "src/main/userPresenceHost.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 914,
+        "reason": "draft PR #914 に載せる",
+        "summary": "画面から独立した本人確認の門 userPresence.ts (541 行) を Mamori 0.26 へ移した。時計・原型の読み・path.resolve・欄の読みは判断を持たない薄い壁 userPresenceHost.ts に閉じ込め、速度・費用の予算・警戒・ロックアウト・要約の整え・payload の見せ方・信頼できる呼び出し元の判断は全部 Mamori に残した。文字列の鍵の添字は Map へ、push / shift は let の配列の組み直しへ、複合代入・template・c-for・入れ子の関数は書き直した。元の TypeScript と、4000 本の乱数入力 + 300 本 × 120 手の状態遷移で差分比較し一致。唯一の差は知らない段階の速度の上限で、元は NaN と比べて通す側に倒れていたのを上限 0 の断る側 (fail closed) にした。変異検査は両ファイル 100% (初回の生存 3 + host 6 は shrunk の共通化・冗長な判定の除去・警戒中の 1 日の予算の検査で閉じた)。対照は ablation 台帳の 11 行 (A-009 ほか) を生成物の文面へ書き直し、すべて捕まえた。"
+      },
+      "deviation": null
     }
   ]
 }

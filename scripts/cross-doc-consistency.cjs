@@ -73,9 +73,11 @@ function canonicalIpcHandlerCount() {
 function canonicalOAuthCount() {
   const src = read(path.join(REPO_ROOT, 'src/main/oauth.ts'));
   if (src == null) return null;
-  const m = src.match(/OAUTH_CONFIGS[^{]*\{([\s\S]*?)\n\};/);
+  // oauth.ts は oauth.mamori から組んだ生成物で、表は 1 行に畳まれて出る (2026-11-09 · MG-050)。
+  // どちらの綴り (手書きの複数行 / 生成物の 1 行) でも、サービスごとに必ず 1 つ在る `authorizeUrl:` を数える。
+  const m = src.match(/export const OAUTH_CONFIGS[^\n]*= \{([\s\S]*?)\};\n/);
   if (!m) return null;
-  return [...m[1].matchAll(/^\s*'?[a-z][a-z0-9-]*'?:\s*\{/gm)].length;
+  return [...m[1].matchAll(/\bauthorizeUrl:/g)].length;
 }
 
 /*

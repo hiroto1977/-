@@ -76,6 +76,7 @@ const DETECTORS = [
   { id: 'catch-binding', name: 'catch (e)', on: 'code', re: /\bcatch\s*\(/g },
   { id: 'finally', name: 'finally', on: 'code', re: /\bfinally\b/g },
   { id: 'optional-param', name: '省ける引数 x?: T', on: 'code', re: /\(\s*[\w$]+\?\s*:|,\s*[\w$]+\?\s*:(?=[^;{}]*\)\s*(:|\{|=>))/g },
+  { id: 'async-arrow', name: 'async の arrow', on: 'code', re: /\basync\s*(\([^)]*\)|[\w$]+)\s*(:[^=]*)?=>/g },
   { id: 'export-from', name: 'export { … } / export * (再輸出)', on: 'code', re: /^\s*export\s*(\{|\*)/gm },
   { id: 'export-default', name: 'export default', on: 'code', re: /\bexport\s+default\b/g },
   { id: 'namespace-import', name: 'import * as', on: 'code', re: /\bimport\s+\*\s+as\b/g },
