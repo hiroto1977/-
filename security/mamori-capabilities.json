@@ -36,6 +36,24 @@
         "writeExportFileVetted(VettedExportPath)"
       ]
     },
+    "src/main/main.mamori": {
+      "externals": [
+        "pure ../shared/serviceId: isServiceId",
+        "pure ./clients/types: safeErrorMessage",
+        "pure ./selfAttestation: attestationMessage",
+        "pure ./secrets: clearToken, getStorageProtection, getValidToken, listConfiguredServices, setOAuthTokens, setToken",
+        "pure ./clients: LOCAL_SERVICES, readsSavedToken",
+        "pure ./fileRequestGate: installFileRequestGate",
+        "pure ./presenceWiring: reportThreatSignal, requirePresence, requirePresenceFromUrl",
+        "pure ./windowOpen: openFromWindow",
+        "pure ./eraseAll: eraseDesktopData",
+        "pure ./windowPrefs: DEFAULT_WINDOW_PREFS, isBackgroundColor, isWindowScheme, readWindowPrefs, writeWindowPrefs",
+        "pure ./mainHost: app, BrowserWindow, dialog, ipcMain, hostEnv, hostIconPath, hostPreloadPath, hostDistRoot, hostIndexHtml, hostVerifyShipped, hostConsoleError, hostSetTimeout, hostPlatform, hostApplyNativeTheme, hostTimeoutSignal, hostFetch, hostParseJson, lookupFetcher, lookupAction, lookupOAuthConfig, hostAsRecord"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
     "src/main/oauth.mamori": {
       "externals": [
         "pure ./oauthHost: hostEnv, hostRandomBytes, hostBase64, hostUtf8Base64, hostSha256, hostNow, hostSearchParams, hostFetch, hostListenForCallback"
