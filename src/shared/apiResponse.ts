@@ -54,6 +54,7 @@
  * 両方向に留め、`.json()` が 0 件であることは `jsonBodyCensus.test.ts` が留める。
  */
 
+import { escapeUnits, INVISIBLE_UNITS } from './escape';
 import { charsOverCeiling, clampToCeiling } from './inputCeiling';
 
 /**
@@ -354,5 +355,25 @@ export const MAX_DISPLAY_FIELD_CHARS = 256;
  */
 export function displayField(v: unknown, max: number = MAX_DISPLAY_FIELD_CHARS): string {
   if (typeof v !== 'string') return '';
-  return charsOverCeiling(v, max) === 0 ? v : clampToCeiling(v, max) + '…';
+  return revealInvisible(charsOverCeiling(v, max) === 0 ? v : clampToCeiling(v, max) + '…');
+}
+
+/**
+ * **見えない字を、見える綴り (`\u202E`) へ逃がす** (2026-11-10 · 乗っ取り防止 · threat: ai-phishing の穴)。
+ *
+ * 第三者の題名・名前に双方向制御 (U+202E ほか) が 1 字在るだけで、**そのあとに続くアプリ自身の文の
+ * 見え方が入れ替わる** (Trojan Source と同じ仕組み)。実行はされないが「安全」と読める偽の表示を
+ * 作れる。書き込みの確認 (`voiceWritePreview`) と AI の応答は `escapeInvisibleUnits` を既に通っており、
+ * **汎用の表示口だけが通していなかった**ので、ここへ寄せる。文そのものは消さない (切ったことは
+ * `…` で、隠れた字は `\uXXXX` で述べる)。
+ *
+ * ★ **ZWJ (U+200D) は絵文字の連結に要る** (👨‍👩‍👧)。絵文字の基底と絵文字の間に在る 1 字だけ残し、
+ * それ以外の位置の ZWJ は逃がす。ZWNJ ほかは逃がす (日本語の題名には要らない)。
+ * ★ 逃がす前に天井で切ってあるので、増えるのは最大でも天井の 6 倍 (1 字 → `\uXXXX`)。
+ */
+function revealInvisible(text: string): string {
+  return text.replace(INVISIBLE_UNITS, (m, offset: number, whole: string) => {
+    if (m === '\u200D' && /\p{Emoji}$/u.test(whole.slice(0, offset)) && /^\p{Emoji}/u.test(whole.slice(offset + 1))) return m;
+    return escapeUnits(m);
+  });
 }
