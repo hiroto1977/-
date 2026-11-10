@@ -3211,6 +3211,65 @@
         "summary": "Mamori 0.26 に非同期の arrow `async (x) => …` / `async x => …` を足した (userPresence.ts の createPresenceGate の async 閉包を移すために要る)。新しい規則は足さず、arrow は外側の役を引き継がず plain で検める (0.9) を async にもそのまま掛けた。足す前に 8 通りで破り、7 形が断られ、1 形 (async を引数の名前にした `async => 1`) は arrow として通る正しい形だった。変異検査は触った範囲 (emit 19 / parser 53 + 15 変異体) で 100%。対照 3 方向 (emit が async を付けない / parser が async arrow を読まない / 検めが外側の役を引き継ぐ) がすべて鳴る。MG-052 の抜け 5 件 (件数・能力台帳・生の呼び手の環境差・CODEOWNERS・読み込み位置) も同じ周で CI の失敗から直した。"
       },
       "deviation": "brief は userPresence.ts の移植を選んだが、createPresenceGate の async 閉包が Mamori に無かったので、移植の前に足す側 (feature) へ進めた。移植は次の周"
+    },
+    {
+      "id": "MG-054",
+      "date": "2026-11-10",
+      "kind": "port",
+      "target": "src/main/userPresence.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/main/userPresence.ts",
+      "version": "0.26",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "non-null",
+        "c-for",
+        "as-cast",
+        "template",
+        "compound-assign",
+        "nested-function"
+      ],
+      "ported": [
+        "src/main/userPresence.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "`Object.getPrototypeOf(o) === Object.prototype` を本体に書く (移植で実際に当たった —— `.prototype` は M0 で断られ、原型の読みは host 壁へ)",
+          "result": "refused"
+        },
+        {
+          "tried": "`m.get(k).push(1)` / `let a = []; a.push(1)` で const の配列でない物へ push する (移植で実際に当たった)",
+          "result": "refused"
+        },
+        {
+          "tried": "`const o = JSON.parse(s); o.x = 1;` で作っていない物の欄へ代入する",
+          "result": "refused"
+        },
+        {
+          "tried": "`path.resolve(p)` / `Date.now()` / `process.env` を宣言せずに使う",
+          "result": "refused"
+        },
+        {
+          "tried": "async arrow の中で宣言していない `fetch` を呼ぶ閉包を返す",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 11,
+      "mutation": {
+        "files": [
+          "src/main/userPresence.ts",
+          "src/main/userPresenceHost.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 914,
+        "reason": "draft PR #914 に載せる",
+        "summary": "画面から独立した本人確認の門 userPresence.ts (541 行) を Mamori 0.26 へ移した。時計・原型の読み・path.resolve・欄の読みは判断を持たない薄い壁 userPresenceHost.ts に閉じ込め、速度・費用の予算・警戒・ロックアウト・要約の整え・payload の見せ方・信頼できる呼び出し元の判断は全部 Mamori に残した。文字列の鍵の添字は Map へ、push / shift は let の配列の組み直しへ、複合代入・template・c-for・入れ子の関数は書き直した。元の TypeScript と、4000 本の乱数入力 + 300 本 × 120 手の状態遷移で差分比較し一致。唯一の差は知らない段階の速度の上限で、元は NaN と比べて通す側に倒れていたのを上限 0 の断る側 (fail closed) にした。変異検査は両ファイル 100% (初回の生存 3 + host 6 は shrunk の共通化・冗長な判定の除去・警戒中の 1 日の予算の検査で閉じた)。対照は ablation 台帳の 11 行 (A-009 ほか) を生成物の文面へ書き直し、すべて捕まえた。"
+      },
+      "deviation": null
     }
   ]
 }
