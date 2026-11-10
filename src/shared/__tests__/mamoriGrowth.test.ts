@@ -158,8 +158,11 @@ describe('言語を育てる輪 —— 実物の台帳と壁', () => {
 
   it('★ 移す候補の母集団は「必ず測る壁」のうちまだ TypeScript の物 (Mamori で書いた壁は入らない)', () => {
     const walls = growth.wallFiles(ROOT).map((f) => f.path);
-    expect(walls.length).toBeGreaterThanOrEqual(5); // 移すたびに減る (MG-052 で 9)
-    for (const done of ['src/shared/proxyEndpoint.ts', 'src/shared/externalUrlGate.ts', 'src/shared/imageUrlGate.ts', 'src/main/shellOpenGate.ts', 'src/renderer/data/assistantMarkdown.ts', 'src/main/userPresence.ts']) {
+    // 移すたびに減るのが正しい向きなので、床を実測に張り付けない (MG-052 で 9・MG-063 で 4 —— 張り付けていた頃は移した日に落ちた)。
+    // 見るのは「走査が空になっていない」ことだけ: 移せない理由を台帳に記録した壁 (src/preload/preloadHost.ts) が残る限り 1 本は在る。
+    expect(walls.length).toBeGreaterThanOrEqual(1);
+    expect(walls).toContain('src/preload/preloadHost.ts');
+    for (const done of ['src/shared/proxyEndpoint.ts', 'src/shared/externalUrlGate.ts', 'src/shared/imageUrlGate.ts', 'src/main/shellOpenGate.ts', 'src/renderer/data/assistantMarkdown.ts', 'src/main/userPresence.ts', 'src/renderer/fs/fsa.ts']) {
       expect(walls, done).not.toContain(done);
     }
   });

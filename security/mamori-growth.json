@@ -3751,6 +3751,59 @@
         "summary": "言語の穴探し (0.29 の in・0.30 の interface extends 直後)。手で 28 通りを破り、電池を新しい種 3 つ × 20000 本 (60000 本) 回した。穴は見つからなかった。受け入れたが害の無かった物: use で引いた TypeScript の型 (Mamori から interface かどうか見えない型) を基底にする形は通るが、生成物の tsc が型として検め、型の層に留まる。重複した interface 宣言 (TypeScript は併合する) は型の層で、値の宣言とは別の名前空間。"
       },
       "deviation": "利用者が「1〜4 全て推奨される順番で行う」と指示した順 (4 番目) で、brief の順位 (fsa.ts の移植が先頭) ではなく依頼に従った。"
+    },
+    {
+      "id": "MG-063",
+      "date": "2026-11-10",
+      "kind": "port",
+      "target": "src/renderer/fs/fsa.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/renderer/fs/fsa.ts",
+      "version": "0.30",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "as-cast"
+      ],
+      "ported": [
+        "src/renderer/fs/fsa.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "fsa.mamori の中で `extern pure global window;` と宣言して `window.showDirectoryPicker(…)` を直に呼ぶ (host 壁を通さない)",
+          "result": "refused"
+        },
+        {
+          "tried": "宣言なしの `indexedDB.open(…)` と、`extern pure global indexedDB;` と宣言してからの `indexedDB.open(…)` (記憶の口を pure と名乗る)",
+          "result": "refused"
+        },
+        {
+          "tried": "フォルダの handle から計算した鍵でメソッドを取り出して呼ぶ (`const f = handle[k]; f(name, { create: true })`) —— 名前の関門の外で書く口を選ぶ",
+          "result": "refused"
+        },
+        {
+          "tried": "保管した値を `v as FileSystemDirectoryHandle` で handle に戻す (型の書き換えを Mamori の側に置く)",
+          "result": "refused"
+        },
+        {
+          "tried": "宣言なしの `navigator.storage.getDirectory()` で別の記憶の根へ書く",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 4,
+      "mutation": {
+        "files": [
+          "src/renderer/fs/fsa.ts",
+          "src/renderer/fs/fsaHost.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 917,
+        "reason": "draft PR #917 に載せる",
+        "summary": "File System Access の書き出し口 src/renderer/fs/fsa.ts を Mamori (fsa.mamori) へ移した。対応の判定・フォルダの選択と保管・名前の関門 isSafeFilename を通してから書く・読み書きの権限が無ければ断る・「選んでいない」(null) と失敗の言い分けは Mamori の側に残し、Mamori で宣言できない口 (window の showDirectoryPicker・indexedDB の開く / 消す / 置く / 読む) と型の戻し (as) だけを判断を持たない host の壁 fsaHost.ts へ閉じ込めた。足す前に 5 通りで言語を破り、すべて断られた。対照 4 方向 (名前の関門を外す / 権限の断りを外す / 読むだけの権限を問う / 非対応でも読み込む) がそれぞれ検査で鳴った。変異検査は fsa.ts・fsaHost.ts とも 100% (初回の生存 2 件は再読み込み後に問う権限の種類 queryPermission({ mode: 'readwrite' }) で、問う権限を記録する検査を足して閉じた)。lint:forbidden の例外の台帳は fsaHost.ts へ移し、整合性チェーンと CODEOWNERS に元と壁を足した。"
+      }
     }
   ]
 }

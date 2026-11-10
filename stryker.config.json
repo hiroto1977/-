@@ -193,6 +193,7 @@
     "src/renderer/data/workingCapital.ts",
     "src/renderer/fs/folderMirror.ts",
     "src/renderer/fs/fsa.ts",
+    "src/renderer/fs/fsaHost.ts",
     "src/renderer/hashRoute.ts",
     "src/renderer/hooks/useServiceData.ts",
     "src/renderer/keyIntent.ts",

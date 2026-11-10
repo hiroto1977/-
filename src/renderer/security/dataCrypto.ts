@@ -32,7 +32,7 @@ export const MAX_KDF_ITERATIONS = 4000000;
  * `typeof` の判定は書かない —— `Number.isFinite` は型強制をしないので、文字列も null も `{}` も等しく false になり、typeof は結果を変えない。
  */
 export function assertKdfIterations(iterations: number): void {
-  if (!Number.isFinite(iterations) || iterations < MIN_KDF_ITERATIONS || iterations > MAX_KDF_ITERATIONS) {
+  if (!Number.isFinite(iterations) || (iterations < MIN_KDF_ITERATIONS) || iterations > MAX_KDF_ITERATIONS) {
     throw new Error('暗号化データの反復回数が許容範囲外です');
   }
 }

@@ -2665,6 +2665,30 @@
           "replace": "        checkLoopBody([], scopes, ctx);"
         }
       ]
+    },
+    {
+      "id": "A-595",
+      "threat": "T-260",
+      "file": "src/shared/mamori/parser.ts",
+      "why": "型の綴りを 1 つの型として読めるか検めない —— 型引数・束縛の型に式や 2 つ目の束縛を隠せる (直す前の形)",
+      "edits": [
+        {
+          "find": "    checkTypeShape(parts, where);\n",
+          "replace": ""
+        }
+      ]
+    },
+    {
+      "id": "A-596",
+      "threat": "T-260",
+      "file": "src/shared/mamori/emit.ts",
+      "why": "式の中の `<` の比べを括らずに出す —— TypeScript が引数の並びを型引数つきの呼び出しと読む (直す前の形)",
+      "edits": [
+        {
+          "find": "  return e.kind === 'binary' && e.op === '<' ? `(${expr(e)})` : expr(e);",
+          "replace": "  return expr(e);"
+        }
+      ]
     }
   ]
 }

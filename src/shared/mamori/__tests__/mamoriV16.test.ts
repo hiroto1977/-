@@ -117,7 +117,7 @@ describe('0.16 instanceof の変換', () => {
     expect(ts(fn('  return (x === 1) instanceof Error;'))).toContain('(x === 1) instanceof Error');
     // 加減乗除は instanceof より強い (括弧が要らない) —— 強さを関係演算子より強く書くと、要らない括弧が付く
     expect(ts(fn('  return x + 1 instanceof Error;'))).toContain('x + 1 instanceof Error');
-    expect(ts(fn('  return (x < 1) instanceof Error;'))).toContain('x < 1 instanceof Error');
+    expect(ts(fn('  return (x < 1) instanceof Error;'))).toContain('(x < 1) instanceof Error');
     expect(ts(fn('  return x instanceof Error ? true : false;'))).toContain('x instanceof Error ? true : false');
   });
 

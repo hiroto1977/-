@@ -301,6 +301,16 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       if (escape !== undefined) report('M4', ta.pos, `型引数に \`${escape}\` は置けません —— 印を持つ値の型・別の module の型を名指しして、印を名乗る値を作れてしまう`);
     }
   };
+  /**
+   * 初期値の末尾の `satisfies 型` (0.31 · MG-065)。**印の型は名乗れない** —— `satisfies` は型を検めるだけで値を変えず、束縛の印は
+   * 初期値の式 (gate の戻り・mint) からしか来ない。それでも印を綴れる場所を増やすと「印を名乗れるのは gate の戻り値・印を運ぶ束縛の型・
+   * sink の引数だけ」(M1 / M4) の表が 1 行増え、型の検査 (tsc) に守りを預ける所が 1 つ増える。
+   */
+  const checkSatisfies = (t: TypeRef | null): void => {
+    if (t === null) return;
+    const mark = t.names.find((n) => table.vetted.has(n));
+    if (mark !== undefined) report('M4', t.pos, `\`satisfies\` の型に印 ${mark} は置けません —— 印は型で名乗るのではなく、gate を通った値が運びます (束縛の印は初期値の式からだけ決まります)`);
+  };
   const report = (rule: MamoriDiagnostic['rule'], pos: { line: number; col: number }, message: string): void => {
     out.push({ file, line: pos.line, col: pos.col, rule, message });
   };
@@ -473,7 +483,10 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     // 器そのものを替えても答えは変わらない (等価) —— 答えは「定数の初期値からも参照できない」(M2) と
     // 「定数の初期値の奥 (配列の中)」が留める。
     // Stryker disable next-line StringLiteral,ObjectLiteral: 上の注記のとおり等価 (role は 'sink' / 'gate' でないことだけを意味する)
-    if (it.kind === 'const') checkExpr(it.init, [moduleScope], { role: 'plain', returnVetted: null, destVetted: null });
+    if (it.kind === 'const') {
+      checkExpr(it.init, [moduleScope], { role: 'plain', returnVetted: null, destVetted: null });
+      checkSatisfies(it.satisfies);
+    }
     if (it.kind === 'let') {
       checkModuleLet(it);
       continue;
@@ -655,6 +668,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     switch (s.kind) {
       case 'let': {
         if (s.init !== null) checkExpr(s.init, scopes, ctx);
+        checkSatisfies(s.satisfies);
         const declared = carriedMark(s.type, table.vetted);
         const carried = s.init === null ? null : provenance(s.init, scopes);
         if (declared !== null && s.init !== null && carried !== declared) {

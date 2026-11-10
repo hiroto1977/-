@@ -42,6 +42,8 @@ export function inspectEmitted(file: string, text: string, externGlobals: Readon
     if ((ts.isFunctionDeclaration(n) || ts.isClassDeclaration(n) || ts.isTypeAliasDeclaration(n) || ts.isInterfaceDeclaration(n)) && n.name) declared.add(n.name.text);
     if (ts.isVariableDeclaration(n) && ts.isIdentifier(n.name)) declared.add(n.name.text);
     if (ts.isParameter(n) && ts.isIdentifier(n.name)) declared.add(n.name.text);
+    // 分割代入 `const { a, b } = x;` の束ねた名前も束縛である (2026-11-10 · MG-063 —— 集めていなかったので、分割した名前の使用を「宣言していない名前」と数えていた)
+    if (ts.isBindingElement(n) && ts.isIdentifier(n.name)) declared.add(n.name.text);
     if (ts.isImportSpecifier(n)) { declared.add(n.name.text); imported.add(n.name.text); }
     if (ts.isImportClause(n) && n.name) { declared.add(n.name.text); imported.add(n.name.text); }
     if (ts.isNamespaceImport(n)) { declared.add(n.name.text); imported.add(n.name.text); }
@@ -69,12 +71,22 @@ export function inspectEmitted(file: string, text: string, externGlobals: Readon
       if (!ok) found.push({ kind: 'hole', reason: `添字 x[k] の鍵が許した形でない: ${a.getText(sf)}` });
     }
     if (ts.isTemplateExpression(n) || ts.isTaggedTemplateExpression(n)) found.push({ kind: 'hole', reason: 'テンプレート文字列がある' });
+    // Mamori は束縛を 1 文に 1 つしか書けず、`,` の演算子も持たない (2026-11-10 · T-260)。生成物に在れば、Mamori が
+    // 型の綴りと読んだ並びを TypeScript が「2 つ目の束縛」「`,` でつないだ式」と読んでいる —— 検めていない束縛・式である。
+    if (ts.isVariableDeclarationList(n) && n.declarations.length > 1) found.push({ kind: 'hole', reason: `1 つの文に束縛が ${n.declarations.length} つある (Mamori は 1 つしか書けない): ${n.declarations.map((d) => d.name.getText(sf)).join(', ')}` });
+    if (ts.isBinaryExpression(n) && n.operatorToken.kind === ts.SyntaxKind.CommaToken) found.push({ kind: 'hole', reason: '`,` でつないだ式がある (Mamori に `,` の演算子は無い)' });
     if (ts.isAsExpression(n) && ts.isTypeReferenceNode(n.type) && ts.isIdentifier(n.type.typeName) && declared.has(n.type.typeName.text)) {
       // gate の `mint` が出す `as <印の型>` だけは許す (宣言した/取り込んだ名前への型付けで、印の型は gate の外では作れない)
     } else if (ts.isAsExpression(n) && ts.isTypeLiteralNode(n.type) && n.type.members.every((m) => ts.isPropertySignature(m) && m.questionToken !== undefined && m.type?.kind === ts.SyntaxKind.UnknownKeyword)) {
       // 0.2 の `field` (unknown の値の欄を読む) が出す `(raw as { x?: unknown }).x` だけは許す (欄は unknown のまま・書き換えない)
     } else if (ts.isAsExpression(n) || ts.isTypeAssertionExpression(n)) found.push({ kind: 'hole', reason: '型の書き換え (as / <T>) がある' });
     if (ts.isNonNullExpression(n)) found.push({ kind: 'hole', reason: '後置の ! がある' });
+    // `satisfies` (0.31) は const の初期値の末尾にだけ出る。式の途中に在れば、Mamori が検めた木に無い包みである。
+    if (ts.isSatisfiesExpression(n)) {
+      const d = n.parent;
+      const ok = ts.isVariableDeclaration(d) && d.initializer === n && ts.isVariableDeclarationList(d.parent) && (d.parent.flags & ts.NodeFlags.Const) !== 0;
+      if (!ok) found.push({ kind: 'hole', reason: '`satisfies` が const の初期値の末尾でない所に在る' });
+    }
     // 0.15 の展開: 許すのは (1) 配列の字面の項 (2) オブジェクトの字面の**欄より前**だけ。呼び出し・new の引数の展開と、欄より後ろの展開 (字面で書いた欄の上書き) は穴。
     if (ts.isSpreadElement(n) && !ts.isArrayLiteralExpression(n.parent)) found.push({ kind: 'hole', reason: '配列の字面の外の展開 (呼び出しの引数など)' });
     if (ts.isSpreadAssignment(n)) {
@@ -124,9 +136,11 @@ export function inspectEmitted(file: string, text: string, externGlobals: Readon
       const parent = n.parent;
       const isMemberName = (ts.isPropertyAccessExpression(parent) && parent.name === n) || (ts.isPropertyAssignment(parent) && parent.name === n) ||
         (ts.isPropertySignature(parent) && parent.name === n) || (ts.isImportSpecifier(parent) && parent.propertyName === n) ||
+        // 分割代入の付け替え `{ b: c }` の `b` は欄の名前 (束縛は `c`)
+        (ts.isBindingElement(parent) && parent.propertyName === n) ||
         // `export { a, b } from "mod"` (MG-051 の再輸出) の名前は、このモジュールの式でも束縛でもない (相手の module の名前を指す)
         (ts.isExportSpecifier(parent) && ts.isExportDeclaration(parent.parent.parent) && parent.parent.parent.moduleSpecifier !== undefined);
-      const isBindingName = (ts.isVariableDeclaration(parent) || ts.isParameter(parent) || ts.isFunctionDeclaration(parent) || ts.isTypeAliasDeclaration(parent) ||
+      const isBindingName = (ts.isVariableDeclaration(parent) || ts.isParameter(parent) || ts.isBindingElement(parent) || ts.isFunctionDeclaration(parent) || ts.isTypeAliasDeclaration(parent) ||
         ts.isInterfaceDeclaration(parent) || ts.isImportSpecifier(parent) || ts.isImportClause(parent) || ts.isNamespaceImport(parent) || ts.isTypeParameterDeclaration(parent)) &&
         (parent as { name?: ts.Node }).name === n;
       // 組み込みの構築子・名前空間を**値として**渡す形 (Object.freeze(Array) でアプリ全体の組み込みを凍らせる · T-243)。

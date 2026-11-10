@@ -138,6 +138,8 @@
 /src/renderer/data/localWrite.ts @hiroto1977
 /src/renderer/data/recordCipher.ts @hiroto1977
 /src/renderer/fs/fsa.ts @hiroto1977
+/src/renderer/fs/fsa.mamori @hiroto1977
+/src/renderer/fs/fsaHost.ts @hiroto1977
 /src/renderer/keyIntent.ts @hiroto1977
 /src/renderer/network/liveRead.ts @hiroto1977
 /src/renderer/network/proxy.ts @hiroto1977

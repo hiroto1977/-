@@ -241,6 +241,9 @@ export function lex(file: string, src: string): Tok[] {
 const TYPE_PUNCT: ReadonlySet<string> = new Set(['<', '>', '(', ')', '[', ']', '{', '}', ',', ':', ';', '.', '|', '&', '?', '=>', '-']);
 const TYPE_OPEN: Readonly<Record<string, string>> = Object.assign(Object.create(null) as Record<string, string>, { '<': '>', '(': ')', '[': ']', '{': '}' });
 
+/** 型を置く位置: 宣言 (束縛・引数・欄・型の別名) / 関数の戻り値 (型の述語を置ける) / 式の位置 (型引数・satisfies)。 */
+type TypeWhere = 'decl' | 'return' | 'expr';
+
 const STOP_WORDS = new Set(['true', 'false', 'null', 'undefined', 'unknown', 'string', 'number', 'boolean', 'void']);
 
 /** `case` の本体を終えてよい文 (次の case へ落ちる形を書かせない)。 */
@@ -309,8 +312,203 @@ export function parse(file: string, src: string): Module {
     return takeLeading(['comment']);
   };
 
+  /**
+   * 型の綴りが **1 つの型**として読めるかを、文法で検める (2026-11-10 · T-260)。
+   *
+   * 0.30 まで型は「許した記号の並び」として写していた (括弧の種類は突き合わせるが、並びが型かは見ない)。型の綴りは生成物へ
+   * そのまま写るので、**Mamori が型と読んだ並びを TypeScript が式や別の宣言として読む**と、検査した木と走る木が食い違う:
+   *
+   *  - `n<m ? 危ない口の呼び出し : k>(x)` —— Mamori は型引数つきの呼び出し、TypeScript は条件式。plain の関数から
+   *    危ない口を、関門を通っていない値で呼べた (M2 / M4 の迂回・tsc も通る)。
+   *  - `let a: number, okUrl = (s: string) => JSON.parse(s);` —— Mamori は 1 つの束縛 (型が `number, okUrl`)、TypeScript は
+   *    2 つの束縛。隠れた `okUrl` が module の関門を覆い、以後の `okUrl(raw)` は関門ではないのに印つきと数えられた (T-251 の迂回)。
+   *
+   * ここで読める型は TypeScript の型の文法の**部分集合**である (だから TypeScript も同じ並びを同じ 1 つの型として読む):
+   *
+   * ```
+   * 型     := '|'? 交差 ('|' 交差)*
+   * 交差   := 前置 ('&' 前置)*
+   * 前置   := ('readonly' | 'keyof') 前置 | 'typeof' 名前 ('.' 名前)* '[]'* | 基本 '[]'*
+   * 基本   := 名前 ('.' 名前)* ('<' 型 (',' 型)* '>')? | 文字列 | '-'? 数
+   *         | '{' (欄 (';' | ','))* 欄? '}'      欄 := 'readonly'? (名前 | 文字列) '?'? ':' 型
+   *         | '[' (型 ',')* 型? ']'
+   *         | '(' (引数 (',' 引数)*)? ')' '=>' 戻り      引数 := 名前 '?'? ':' 型      戻り := 'asserts' 名前 | ('asserts'? 名前 'is')? 型
+   *         | '(' 型 ')'
+   * ```
+   *
+   * 名前は字句の「名前」なら何でも受ける。TypeScript の予約語を型の名前に置いた綴り (`typeof` 単体・`new`) は TypeScript が構文の誤りとして
+   * 断る (tsc が止める) —— 黙って別の木にはならない。
+   *
+   * 関数の戻り値の型 (`where === 'return'`) だけは先頭に型の述語 `名前 is 型` を置ける。式の位置 (`where === 'expr'` —— 呼び出し・new の
+   * 型引数と `satisfies`) では `(` で始まる型 (関数の型・括弧) を置けない: そこは TypeScript が式と型のどちらにも読みうる位置なので、
+   * 呼び出しの形を作れる括弧をそもそも置かせない (関数の型が要るなら `type` で名前を付けて、名前で引く)。
+   */
+  const checkTypeShape = (parts: readonly Tok[], where: TypeWhere): void => {
+    let i = 0;
+    const bad = (why: string): never => fail(parts[Math.min(i, parts.length - 1)]!, `型の綴りが 1 つの型として読めません (${why}) —— 型の綴りは生成物へそのまま写るので、型として読めない並びは TypeScript が式や別の宣言として読みます (T-260)`);
+    const isPunctAt = (text: string, n = 0): boolean => {
+      const t = parts[i + n];
+      return t !== undefined && t.kind === 'punct' && t.text === text;
+    };
+    const isWordAt = (text: string, n = 0): boolean => {
+      const t = parts[i + n];
+      return t !== undefined && t.kind === 'ident' && t.text === text;
+    };
+    const kindAt = (n = 0): TokKind | undefined => parts[i + n]?.kind;
+    const eat = (text: string): void => {
+      if (!isPunctAt(text)) bad(`\`${text}\` が要ります`);
+      i++;
+    };
+    const name = (): void => {
+      if (kindAt() !== 'ident') bad('名前が要ります');
+      i++;
+    };
+    /** 型を始められる字句か (`readonly` / `keyof` が前置の語なのか、その名前の型なのかを見分ける)。 */
+    const startsType = (n: number): boolean => kindAt(n) === 'ident' || kindAt(n) === 'string' || kindAt(n) === 'number' || isPunctAt('{', n) || isPunctAt('[', n) || isPunctAt('(', n);
+    const type = (): void => {
+      if (isPunctAt('|')) i++;
+      inter();
+      while (isPunctAt('|')) {
+        i++;
+        inter();
+      }
+    };
+    const inter = (): void => {
+      prefix();
+      while (isPunctAt('&')) {
+        i++;
+        prefix();
+      }
+    };
+    const arrays = (): void => {
+      while (isPunctAt('[')) {
+        i++;
+        eat(']');
+      }
+    };
+    const prefix = (): void => {
+      if ((isWordAt('readonly') || isWordAt('keyof')) && startsType(1)) {
+        i++;
+        prefix();
+        return;
+      }
+      if (isWordAt('typeof') && kindAt(1) === 'ident') {
+        i++;
+        name();
+        while (isPunctAt('.')) {
+          i++;
+          name();
+        }
+        arrays();
+        return;
+      }
+      primary();
+      arrays();
+    };
+    /** 関数の型の戻り (型の述語 `x is T` を置ける) と、関数の戻り値の型の先頭。 */
+    const returnType = (): void => {
+      // `asserts x` / `asserts x is T` も戻り値の型の綴りである (印の型を名乗れば M1 が断る · T-248)。
+      if (isWordAt('asserts') && kindAt(1) === 'ident') {
+        i += 2;
+        if (!isWordAt('is')) return;
+        i++;
+      } else if (kindAt() === 'ident' && isWordAt('is', 1)) {
+        i += 2;
+      }
+      type();
+    };
+    const member = (): void => {
+      if (isWordAt('readonly') && (kindAt(1) === 'ident' || kindAt(1) === 'string')) i++;
+      if (kindAt() !== 'ident' && kindAt() !== 'string') bad('欄の名前が要ります');
+      i++;
+      if (isPunctAt('?')) i++;
+      eat(':');
+      type();
+    };
+    const fnParam = (): void => {
+      name();
+      if (isPunctAt('?')) i++;
+      eat(':');
+      type();
+    };
+    const primary = (): void => {
+      if (kindAt() === 'string' || kindAt() === 'number') {
+        i++;
+        return;
+      }
+      if (isPunctAt('-') && kindAt(1) === 'number') {
+        i += 2;
+        return;
+      }
+      if (kindAt() === 'ident') {
+        i++;
+        while (isPunctAt('.')) {
+          i++;
+          name();
+        }
+        if (isPunctAt('<')) {
+          i++;
+          type();
+          while (isPunctAt(',')) {
+            i++;
+            type();
+          }
+          eat('>');
+        }
+        return;
+      }
+      if (isPunctAt('{')) {
+        i++;
+        while (!isPunctAt('}')) {
+          member();
+          if (isPunctAt(';') || isPunctAt(',')) i++;
+          else if (!isPunctAt('}')) bad('欄の区切り `;` が要ります');
+        }
+        i++;
+        return;
+      }
+      if (isPunctAt('[')) {
+        i++;
+        // 組の末尾の `,` は TypeScript も許す (`[string,]`)。
+        while (!isPunctAt(']')) {
+          type();
+          if (isPunctAt(',')) i++;
+          else if (!isPunctAt(']')) bad('組の区切り `,` が要ります');
+        }
+        i++;
+        return;
+      }
+      if (isPunctAt('(')) {
+        if (where === 'expr') bad('式の位置 (型引数・satisfies) には `(` で始まる型を置けません —— 関数の型は `type` で名前を付けて、名前で引きます');
+        i++;
+        // 関数の型: `()` か、`名前 :` / `名前 ? :` で始まる引数の並び。それ以外は括弧で囲んだ型。
+        const params = isPunctAt(')') || (kindAt() === 'ident' && (isPunctAt(':', 1) || (isPunctAt('?', 1) && isPunctAt(':', 2))));
+        if (!params) {
+          type();
+          eat(')');
+          return;
+        }
+        if (!isPunctAt(')')) {
+          fnParam();
+          while (isPunctAt(',')) {
+            i++;
+            fnParam();
+          }
+        }
+        eat(')');
+        eat('=>');
+        returnType();
+        return;
+      }
+      bad('型が要ります');
+    };
+    if (where === 'return') returnType();
+    else type();
+    if (i < parts.length) bad(`\`${parts[i]!.text}\` から先が型に続きません`);
+  };
+
   /** 型の綴りを、深さ 0 の終端まで写す。 */
-  const typeRef = (terminators: readonly string[]): TypeRef => {
+  const typeRef = (terminators: readonly string[], where: TypeWhere = 'decl'): TypeRef => {
     const start = peek();
     const parts: Tok[] = [];
     // 開き括弧の積み (種類つき)。閉じ括弧は積みの先頭と**同じ種類**でなければならない。
@@ -338,6 +536,7 @@ export function parse(file: string, src: string): Module {
       parts.push(next());
     }
     if (parts.length === 0) fail(start, '型が要ります');
+    checkTypeShape(parts, where);
     let text = '';
     parts.forEach((t, idx) => {
       const prev = parts[idx - 1];
@@ -353,10 +552,10 @@ export function parse(file: string, src: string): Module {
   /** 型引数 `<A, B>` を読む (`<` から `>` まで・0.21)。型の綴りは `typeRef` を通るので、型の中へ式は隠せない。 */
   const typeArgs = (): TypeRef[] => {
     expectP('<');
-    const list = [typeRef([',', '>'])];
+    const list = [typeRef([',', '>'], 'expr')];
     while (isP(',')) {
       next();
-      list.push(typeRef([',', '>']));
+      list.push(typeRef([',', '>'], 'expr'));
     }
     expectP('>');
     return list;
@@ -398,6 +597,20 @@ export function parse(file: string, src: string): Module {
     }
   };
   // Stryker restore BlockStatement
+
+  /**
+   * 初期値の末尾の `satisfies 型` (0.31 · MG-065)。**const の初期値の末尾にだけ**付けられる。
+   *
+   * 式を読み終えた直後に名前 `satisfies` が来る形は、ほかの読み方が無い (式の直後に名前は続かない) ので、予約語にはしない。
+   * 型は `;` まで —— 宣言の位置の型なので、型の文法 (`checkTypeShape`) をそのまま通る。`let` には付けられない: 後から別の値を
+   * 入れられる束縛に「この型を満たす」と書いても、満たすのは最初の値だけである。
+   */
+  const satisfiesSuffix = (mutable: boolean): TypeRef | null => {
+    if (!isW('satisfies')) return null;
+    if (mutable) fail(peek(), '`satisfies` は const の初期値の末尾にだけ付けられます (`const x = 式 satisfies 型;`) —— let は後から別の値を入れられるので、満たすのは最初の値だけです');
+    next();
+    return typeRef([';']);
+  };
 
   const params = (): Param[] => {
     expectP('(');
@@ -490,8 +703,9 @@ export function parse(file: string, src: string): Module {
       } else if (!mutable) {
         fail(peek(), '`const` には値が要ります');
       }
+      const sat = satisfiesSuffix(mutable);
       expectP(';');
-      return { kind: 'let', mutable, name, type, init, comments: cs, pos: t.pos };
+      return { kind: 'let', mutable, name, type, init, satisfies: sat, comments: cs, pos: t.pos };
     }
     if (isW('return')) {
       if (inFinally > 0) fail(t, '`finally` の中に `return` は置けません —— try の `return` を上書きし、投げた例外を飲みます (値は `finally` の外で返します)');
@@ -1120,8 +1334,9 @@ export function parse(file: string, src: string): Module {
       }
       expectP('=');
       const init = expr();
+      const sat = satisfiesSuffix(false);
       expectP(';');
-      return { kind: 'const', exported, name, type, init, doc, pos: t.pos };
+      return { kind: 'const', exported, name, type, init, satisfies: sat, doc, pos: t.pos };
     }
     // 'plain' は「gate でも sink でもない」の意味だけを持つ (検査器も変換も 'gate' / 'sink' と比べるだけ) —— 等価。
     // Stryker disable next-line StringLiteral: 上の注記のとおり等価 (役割は 'gate' / 'sink' と比べられるだけ)
@@ -1134,7 +1349,7 @@ export function parse(file: string, src: string): Module {
     const typeParams = isP('<') ? typeParamList() : [];
     const ps = params();
     expectP('->');
-    const returns = typeRef(['{']);
+    const returns = typeRef(['{'], 'return');
     const body = block();
     return { kind: 'fn', exported, role, async: isAsync, name, typeParams, params: ps, returns, body, doc, pos: t.pos };
   };

@@ -262,6 +262,13 @@ const INDIRECT_SITES = [
       + ' Google の読みを入口へ寄せた瞬間に「実在しない保存先」として出た。規則 10 が入口の呼び出しから鍵を解いて突き合わせる。',
   },
   {
+    file: 'src/renderer/fs/fsaHost.ts',
+    // 字面で書くと lint:forbidden が鳴る (ここは保管層ではない) ので組み立てる。
+    expr: 'indexedDB' + '.open(DB_NAME)',
+    keys: ['business-hub-preferences'],
+    why: 'IndexedDB の口 (開く・消す・置く・読む) は Mamori の外の host 関数 (MG-063)。DB の名前は fsa.mamori の `DB_NAME` が持ち、`hostOpenDb(DB_NAME, …)` / `hostDeleteDb(DB_NAME)` の引数で渡る —— host は名前を決めない。同じ DB を proxyHost.ts も開く (そちらは名前を自分で持つ)。',
+  },
+  {
     file: 'src/renderer/web-shim.ts',
     expr: 'TALENT_STORAGE_KEY',
     keys: ['servicehub.talent.state.v1'],

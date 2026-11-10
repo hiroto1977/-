@@ -142,7 +142,7 @@ export function isValidMyNumber(digits: string): boolean {
  * (表を添字で引く形は、鍵が計算した値なので Mamori が断る —— 算術で書く。境目は整数の 4 と 5 の間にあり、等価な比較が出ない。)
  */
 function doubledDigit(d: number): number {
-  return d < 5 ? d * 2 : d * 2 - 9;
+  return (d < 5) ? d * 2 : d * 2 - 9;
 }
 
 /** Luhn (mod 10)。 */

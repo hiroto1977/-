@@ -752,6 +752,8 @@ const PROTECTED = [
   // 「押しても何も出ない」がそのまま戻る)。import は 0 件なので閉包は閉じる。
   'src/renderer/data/localWrite.ts',        // localStorage 書き込みの唯一の入口と失敗の文面
   'src/renderer/fs/fsa.ts',                 // File System Access の書き出し口
+  'src/renderer/fs/fsa.mamori',             // 同じ物の元 (Mamori · 2026-11-10 · MG-063)
+  'src/renderer/fs/fsaHost.ts',             // その薄い壁 (フォルダ選択の口を取り出す・IndexedDB を開く / 消す / 1 件置く・読む・消す · MG-063)
   'src/renderer/network/liveRead.ts',       // ライブ取得の経路選択
   'src/renderer/data/assistantMarkdown.ts', // モデル応答を解析して画面へ出す唯一の場所
   'src/shared/ollama.ts',                   // Ollama の入口 (中身は ollamaCore)

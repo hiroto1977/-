@@ -138,7 +138,7 @@ function within(now: number, at: number, span: number): boolean {
 
 /** いまの態勢。警戒の期限 (`alertUntil`) の手前なら警戒。 */
 function postureOf(t: number, alertUntil: number): Posture {
-  return t < alertUntil ? 'alert' : 'normal';
+  return (t < alertUntil) ? 'alert' : 'normal';
 }
 
 /** 警戒中は上限を 1/4 に (最低 1)。平常はそのまま。 */
@@ -466,7 +466,7 @@ export function createPresenceGate(deps: PresenceDeps): PresenceGate {
   // その口まで 5 分〜60 分塞がると、読む・送る・保存する経路が残ったまま取り消しだけが使えなくなる。
   // 確認は毎回出る (本人確認は外れない) し、1 分あたりの上限 (3 件・警戒中は 1 件) は別に効く。
   const lockable = CONFIRMED_TIERS.has(req.tier) && req.tier !== 'destructive';
-  if (lockable && t < lockedUntil) {
+  if (lockable && (t < lockedUntil)) {
     const minutes = Math.ceil((lockedUntil - t) / 60000);
     return deny('locked-out', req, '確認を断った回数が多いため、あと約 ' + String(minutes) + ' 分は操作できません。');
   }

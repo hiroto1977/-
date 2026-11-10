@@ -7,6 +7,16 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-11-10) — MG-063〜MG-065: fsa の移植・言語の穴 T-260・Mamori 0.31 (`satisfies`)
+
+利用者の依頼「足りない基準を埋めて」(完成度の基準 E1 = 守りの壁の移行 90%・E2 = 足すと決めた構文の消化 90%)。
+- **MG-063 (port)**: `src/renderer/fs/fsa.ts` を `fsa.mamori` へ。Mamori で宣言できない口 (`window` の `showDirectoryPicker`・`indexedDB`) と型の戻しだけを host の壁 `fsaHost.ts` へ。対照 4 方向・変異検査 fsa.ts / fsaHost.ts 100% (生存 2 件 = 再読み込み後に問う権限の種類 → 問う権限を記録する検査で閉じた)。`lint:forbidden` の例外は `fsaHost.ts` へ移した。
+- **MG-064 (probe) = T-260**: `satisfies` を足す前の破りで、**Mamori が検めた木と、生成物を TypeScript が読んだ木が食い違う** 3 形が出た (型引数の綴りに式を隠す `n<m ? 危ない口(raw) : k>(x)`・束縛の型に 2 つ目の束縛を隠す・括弧を落とした比べが型引数つきの呼び出しに化ける)。3 層で塞いだ: ① 型の文法 `checkTypeShape` (parser) ② `<` の比べを括って出す `nested` (emit) ③ 木の形の突き合わせ `__tests__/mamoriShape.ts` (実物 42 本・攻撃の電池・種つきの総当たり 3 種 × 1500 本)。生成物 6 本が括弧の分だけ変わった。台帳 T-260・ablation A-595 / A-596。
+- **MG-065 (feature)**: `const x = 式 satisfies 型;` (0.31)。**const の初期値の末尾だけ** (式の途中の演算子にしない —— 値を包む式の種類を増やすと inert・口の名前・印の運び方を覆う道になる)。型に印は M4・let は M0・型は T-260 の文法を通る。
+- **既知の罠 (このパスで踏んだ)**: 注記に危ない口の綴りをそのまま書くと `lint:forbidden` が鳴る (parser.ts の docblock で 1 件・綴りを再現しない形へ) / 型の検めを足すと既存の受理が 4 件動いた (組の末尾の `,`・`asserts x is T`・import の型引数の文面) / emit の括弧の変更で字面を留める検査 7 件が動いた (期待値を実測へ) / 木の形の突き合わせは class の `super(…)` を数えない (Mamori の木では呼び出しの式ではない) / Stryker の `--incremental false` は「config ファイル false」と読まれて落ちる (付けない)。
+- **完成度の基準**: E1・E2 は床以上になったが、**H1 (直近 10 周の穴 0 件) は T-260 の記録で床の下**になった (隠さない)。数は `npm run mamori:grow -- report`。
+- **次**: brief の順位は `selfAttestation.ts` の移植 (360 行・書き直しだけで移せる)。T-260 の残り (`a < (b > …)` の類が tsc の構文の誤りで止まる) は REMAINING_WORK の先頭。
+
 ## 直近の作業 (2026-11-07) — ローカル LLM への引継ぎパック (`npm run local-llm:handoff`)
 
 利用者の依頼「今まで学習した全てを踏まえローカルLLMに引き継ぐ為のCodeを書いて」。**全部は渡せない** (実測: CLAUDE.md 約 1.1 MB・SESSION_HANDOFF 約 3.1 MB・REMAINING_WORK 約 3.1 MB・小さなモデルの文脈は 4K〜32K トークン) ので、手で選んだ核 (規律 8・約束 4・手順 8・罠 8) と実物から引く事実 (サービス数・ゲート数・法則 126 本・脅威台帳) を tier ごとの文字数予算へ優先順に詰める。節は丸ごと入るか丸ごと外れる。出力は `reports/local-llm-handoff/` (gitignore 済み) の SYSTEM.md / Modelfile / PLAYBOOK.md / laws-index.md / manifest.json。道具は `scripts/lib/local-llm-handoff.cjs` + `scripts/local-llm-handoff.cjs`、検査は `src/shared/__tests__/localLlmHandoff.test.ts` (18 件)、使い方は `docs/LOCAL_LLM_SETUP.md`。ネットワーク・子プロセス・`ollama create` の自動実行は無し。対照 5 方向 (サービス数の抽出を壊す / 予算を無視 / 不明を 0 へ / 出力先ガードを外す / 存在しないパスを道案内へ) はそれぞれ狙った検査だけが落ちた。限界: 核の本文は手で選んだ物なので、新しい規律を学んだら `CORE_RULES` に足す (数は書かない)。モデルの出来は利用者の機械でしか測れず、**ローカルモデルが実際にこの核を守るかは未測定**。

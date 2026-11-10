@@ -49,13 +49,14 @@ describe('0.21: 型引数つきの呼び出し', () => {
 
   it('比較 `a < b` は今までどおり比較のまま (型引数と読まない)', () => {
     expect(out('  return n < m;')).toContain('n < m');
-    expect(out('  return n < m && m > n;')).toContain('n < m && m > n');
+    // T-260: 式の中の `<` の比べは必ず括る (TypeScript が `a < b, c > (d)` を型引数つきの呼び出しと読まないように)
+    expect(out('  return n < m && m > n;')).toContain('(n < m) && m > n');
     // `a < b > (c)` は型引数つきの呼び出しと読む (TypeScript と同じ)
     expect(out('  return n < m > (c);')).toContain('n<m>(c)');
   });
 
   it('`>=` は型引数の閉じにならず、比較として読まれる', () => {
-    expect(out('  return n < m >= n;')).toContain('n < m >= n');
+    expect(out('  return n < m >= n;')).toContain('(n < m) >= n');
   });
 
   it('型引数なしの呼び出しの生成物は 0.20 までと変わらない', () => {
@@ -76,7 +77,9 @@ describe('0.21: 型引数つきの呼び出し', () => {
 
   it('型引数の `typeof` / `import` は断る (印を持つ値の型・別 module の型を名指しできる)', () => {
     expect(diag('  const u = raw;\n  return fromJson<typeof u>(raw);').join('\n')).toMatch(/M4.*型引数に `typeof` は置けません/);
-    expect(diag('  return fromJson<import("./h").T>(raw);').join('\n')).toContain('型引数に `import` は置けません');
+    // T-260: `import("./h").T` は 1 つの型として読めない (型の文法に `import(…)` は無い) ので、型引数の試し読みが外れて
+    // 比べ `fromJson < import(…)…` として読まれ、宣言していない名前 `import` で断られる (TypeScript が型引数と読む形を Mamori が通すことは無い)。
+    expect(diag('  return fromJson<import("./h").T>(raw);').join('\n')).toMatch(/M6.*宣言していない名前 import/);
     expect(diag('  return new Set<typeof raw>(xs);').join('\n')).toContain('`typeof`');
   });
 
@@ -103,12 +106,13 @@ describe('0.21: 型引数つきの呼び出し', () => {
   });
 
   it('呼ぶ側が名前でもメンバでもなければ `<` は比較のまま (添字・呼び出しの結果に型引数は付けない)', () => {
-    expect(out('  return xs[0] < n > (m);')).toContain('xs[0] < n > m');
-    expect(out('  return fromJson(raw) < n > (m);')).toContain('fromJson(raw) < n > m');
+    // T-260: 生成物は `(xs[0] < n) > m` —— 括らない `xs[0] < n > (m === 1)` は TypeScript が `xs[0]<n>(m === 1)` (呼び出し) と読む
+    expect(out('  return xs[0] < n > (m);')).toContain('(xs[0] < n) > m');
+    expect(out('  return fromJson(raw) < n > (m);')).toContain('(fromJson(raw) < n) > m');
   });
 
   it('型引数の直後が `(` でなければ呼び出しではない (比較の途中を型引数と読み違えない)', () => {
-    expect(out('  return xs.length < n && n > m;')).toContain('xs.length < n && n > m');
+    expect(out('  return xs.length < n && n > m;')).toContain('(xs.length < n) && n > m');
   });
 
   it('引数の並びの中の `a < b, c > (d)` は TypeScript と同じく型引数つきの呼び出しと読む', () => {

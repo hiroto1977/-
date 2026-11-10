@@ -52,6 +52,18 @@ function mixesNullish(parent: string, child: Expr): boolean {
   return parent === '??' && child.kind === 'binary' && (child.op === '||' || child.op === '&&');
 }
 
+/**
+ * 式の中 (文の根でない所) に置く式。**`<` の比べは必ず括る** (2026-11-10 · T-260)。
+ *
+ * TypeScript は `a < b, c > (d)` の並びを、型引数つきの呼び出し `a<b, c>(d)` として先に試す。Mamori が「比べ 2 つ」と読んだ式を
+ * 括弧なしで並べると (引数の並び・配列・`&&` の両辺・矢印関数の本体 …)、生成物では**別の木** (Mamori が検めていない呼び出し) になる。
+ * 括った `(a < b)` の直後は必ず `)` なので、TypeScript の型引数の試し読みはそこで止まる。文の根の `a < b` は、直後が `;` `)` `:` で
+ * 同じく止まるので括らない (生成物の `if (i < n)` をそのままにする)。右辺は強さの比べが元から括る (関係演算子以下・矢印関数・条件式)。
+ */
+function nested(e: Expr): string {
+  return e.kind === 'binary' && e.op === '<' ? `(${expr(e)})` : expr(e);
+}
+
 export function expr(e: Expr): string {
   switch (e.kind) {
     case 'ident':
@@ -63,9 +75,9 @@ export function expr(e: Expr): string {
     case 'literal':
       return e.value;
     case 'array':
-      return `[${e.items.map(expr).join(', ')}]`;
+      return `[${e.items.map(nested).join(', ')}]`;
     case 'spread':
-      return `...${expr(e.operand)}`;
+      return `...${nested(e.operand)}`;
     case 'member':
       return `${wrap(e.object, 9)}${e.optional ? '?.' : '.'}${e.prop}`;
     case 'index':
@@ -73,9 +85,9 @@ export function expr(e: Expr): string {
       // (`"constructor"`) は NaN になって表に届かない (検査器が静的に数と分かる式だけを通した上の、実行時の二重の守り)。
       return `${wrap(e.object, 9)}[${e.key.kind === 'number' || e.key.kind === 'string' ? expr(e.key) : `+(${expr(e.key)})`}]`;
     case 'call':
-      return `${wrap(e.callee, 9)}${typeArgs(e.typeArgs)}(${e.args.map(expr).join(', ')})`;
+      return `${wrap(e.callee, 9)}${typeArgs(e.typeArgs)}(${e.args.map(nested).join(', ')})`;
     case 'new':
-      return `new ${expr(e.callee)}${typeArgs(e.typeArgs)}(${e.args.map(expr).join(', ')})`;
+      return `new ${expr(e.callee)}${typeArgs(e.typeArgs)}(${e.args.map(nested).join(', ')})`;
     case 'unary':
       // `-(-a)` を `--a` と出すと、符号の反転ではなく減算代入 (引数・let の書き換え) になる (T-246)。`-` の直後の `-` は括る。
       // Stryker disable next-line ConditionalExpression: 種類の判定を外すと `-(a - b)` (2 項の `-`) も括るが、2 項は強さが 6 < 8 で wrap が元から括る (等価)
@@ -83,8 +95,8 @@ export function expr(e: Expr): string {
       return e.op === '!' || e.op === '-' || e.op === '~' ? `${e.op}${wrap(e.operand, 8)}` : `${e.op} ${wrap(e.operand, 8)}`;
     case 'binary': {
       const p = PREC[e.op]!;
-      const l = prec(e.left) < p || mixesNullish(e.op, e.left) ? `(${expr(e.left)})` : expr(e.left);
-      const r = prec(e.right) <= p || mixesNullish(e.op, e.right) ? `(${expr(e.right)})` : expr(e.right);
+      const l = prec(e.left) < p || mixesNullish(e.op, e.left) ? `(${expr(e.left)})` : nested(e.left);
+      const r = prec(e.right) <= p || mixesNullish(e.op, e.right) ? `(${expr(e.right)})` : nested(e.right);
       return `${l} ${e.op} ${r}`;
     }
     case 'arrow':
@@ -106,9 +118,9 @@ export function expr(e: Expr): string {
 }
 
 function prop(p: Prop): string {
-  if (p.spread) return `...${expr(p.value)}`;
+  if (p.spread) return `...${nested(p.value)}`;
   if (p.shorthand) return p.key;
-  return `${p.quoted ? quote(p.key) : p.key}: ${expr(p.value)}`;
+  return `${p.quoted ? quote(p.key) : p.key}: ${nested(p.value)}`;
 }
 
 /** 型引数 `<A, B>` (無ければ空)。型の綴りは構文の段が `typeRef` で写した物。 */
@@ -117,11 +129,19 @@ function typeArgs(targs: readonly { readonly text: string }[]): string {
 }
 
 function wrap(e: Expr, min: number): string {
-  return prec(e) < min ? `(${expr(e)})` : expr(e);
+  return prec(e) < min ? `(${expr(e)})` : nested(e);
+}
+
+/**
+ * 束縛の初期値。末尾の `satisfies 型` (0.31) が在れば、式を関係演算子より強い物まで括ってから付ける —— TypeScript の `satisfies` は
+ * 関係演算子と同じ強さなので、括らない `a || b satisfies T` は `a || (b satisfies T)` と読まれる (型の検査が別の式に掛かる)。
+ */
+function initializer(init: Expr, satisfies: { readonly text: string } | null): string {
+  return satisfies === null ? expr(init) : `${wrap(init, 6)} satisfies ${satisfies.text}`;
 }
 
 function param(p: Param): string {
-  return `${p.name}${p.optional ? '?' : ''}${p.type === null ? '' : `: ${p.type.text}`}${p.init === null ? '' : ` = ${expr(p.init)}`}`;
+  return `${p.name}${p.optional ? '?' : ''}${p.type === null ? '' : `: ${p.type.text}`}${p.init === null ? '' : ` = ${nested(p.init)}`}`;
 }
 
 function comments(lines: readonly string[], ind: string): string[] {
@@ -137,7 +157,7 @@ function stmt(s: Stmt, depth: number): string[] {
   const head = comments(s.comments, ind);
   switch (s.kind) {
     case 'let':
-      return [...head, `${ind}${s.mutable ? 'let' : 'const'} ${s.name}${s.type === null ? '' : `: ${s.type.text}`}${s.init === null ? '' : ` = ${expr(s.init)}`};`];
+      return [...head, `${ind}${s.mutable ? 'let' : 'const'} ${s.name}${s.type === null ? '' : `: ${s.type.text}`}${s.init === null ? '' : ` = ${initializer(s.init, s.satisfies)}`};`];
     case 'destructure':
       return [...head, `${ind}const { ${s.fields.map((f) => (f.key === f.local ? f.key : `${f.key}: ${f.local}`)).join(', ')} }${s.type === null ? '' : `: ${s.type.text}`} = ${expr(s.init)};`];
     case 'assign':
@@ -253,7 +273,7 @@ function item(it: Item, vettedLabels: readonly string[], preludeDone: { value: b
     case 'interface':
       return [...docblock(it.doc), `${exp}interface ${it.name}${it.base === null ? '' : ` extends ${it.base.name}`} {`, ...it.members.flatMap(member), '}'];
     case 'const':
-      return [...docblock(it.doc), `${exp}const ${it.name}${it.type === null ? '' : `: ${it.type.text}`} = ${expr(it.init)};`];
+      return [...docblock(it.doc), `${exp}const ${it.name}${it.type === null ? '' : `: ${it.type.text}`} = ${initializer(it.init, it.satisfies)};`];
     case 'let':
       return [...docblock(it.doc), `let ${it.name}: ${it.type.text} = ${expr(it.init)};`];
     case 'class':

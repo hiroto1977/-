@@ -206,7 +206,7 @@ const EXPECTED = [
   "  const f1 = (x: number, y: number = 1) => x + y;",
   "  const f2 = (x) => ((y) => x);",
   "  const f3 = (x) => a ?? b;",
-  "  const cmp = a < b && b <= c || c > a && a >= b;",
+  "  const cmp = (a < b) && b <= c || c > a && a >= b;",
   "  const ar = a % b / c;",
   "  return [p1, p2, p3, p4, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, u1, u2, u3, u4, u5, u6, u7, u8, m1, m2, m3, m4, f1, f2, f3, cmp, ar];",
   "}",

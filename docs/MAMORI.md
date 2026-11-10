@@ -96,6 +96,37 @@ Mamori では、その 2 つは**書けない**:
 - **測れなかった物を満点にしない**: 入力が読めない・母集団が空の基準は 0 点 (口を持つ .mamori が 0 本の A2 だけは『載せる物が無い』ので満点)。表の基準と実装の測り方は 1 対 1 で、検査 (`mamoriCompleteness.test.ts`) が両方向に見る。
 - **基準と床は私 (実装した側) の判断**で、実測が決めた物ではない。床を動かすときは表の `why` に理由を書く。今の実物は 1.0 を満たしていない (E1 89% / E2 88% が床の下) —— 足りない基準を埋めるのが次の作業で、`report` が一覧を出す。
 
+## 0.31 —— `const x = 式 satisfies 型;` を足し、型の綴りに式を隠す穴 (T-260) を塞いだ (MG-064 / MG-065 · 2026-11-10)
+
+表の定数 (`const TABLE = { … } satisfies Record<string, Rule>;`) に要る。**式の中に型の綴りを置く場所を 1 つ足す**ので、足す前に、既に在る場所 (0.21 の型引数・束縛の型) で「Mamori が型と読んだ綴りを TypeScript も型と読むか」を先に破った —— **3 形で読みが割れた (T-260)**。
+
+| 破る形 | Mamori の読み | TypeScript の読み |
+| --- | --- | --- |
+| `n<m ? shell.openExternal(raw) : k>(x)` | 型引数つきの呼び出し 1 つ (型の綴りは検めない) | 条件式 + **危ない口の呼び出し** |
+| `let a: number, okUrl = (s: string) => JSON.parse(s);` | 束縛 1 つ | 束縛 2 つ (2 つ目が **module の gate を覆う**) |
+| `f(n < n, n > (raw ?? raw))` (括弧を落とした生成物) | 比べ 2 つ | 型引数つきの呼び出し `n<n, n>(…)` |
+
+Mamori の検査器 (M0〜M7) が見るのは Mamori の木で、走るのは生成した TypeScript である。**2 つの木が食い違えば、検めていない呼び出しが走る。** 3 層で塞いだ。
+
+1. **型の文法** (`parser.ts` の `checkTypeShape`) —— 型の綴りは生成物へそのまま写るので、**1 つの型として読める並び**だけを受ける (下の「文法」の `型`)。型として読めない並び (`?` `:` の条件・深さ 0 の `,`・呼び出しの括弧) は M0。型の述語 (`x is T` / `asserts x`) は関数の戻りだけ、式の位置 (型引数) には `(` で始まる型を置けない (関数の型は `type` で名前を付けて引く)。
+2. **括って出す** (`emit.ts` の `nested`) —— 式の中 (引数・配列の項・演算子の両辺・欄の値・既定値) に座る `<` の比べは括弧で囲んで出す。TypeScript が型引数を試し読みするのは `<` だけなので、`>` `<=` `>=` と文の根の `<` はそのまま。生成物 6 本が括弧の分だけ変わった (判定は不変)。
+3. **木の形の突き合わせ** (`__tests__/mamoriShape.ts`) —— Mamori の木と、生成物を TypeScript が読んだ木の、呼び出し・new・型引数つきの呼び出し・条件式・矢印関数・2 項演算子 (演算子ごと) の数を比べる。実物の `.mamori` 全件・攻撃の電池・種つきの総当たり (3 種 × 1500 本) が食い違い 0 を見る。生成物だけを見る `mamoriInspect.ts` には「1 文に束縛 2 つ」「`,` でつないだ式」を穴として足した。
+
+そのうえで `satisfies` を足した。**式の途中の演算子にはしなかった** —— 値を包む新しい種類の式を作ると、検査器が式の種類ごとに決めている運び方 (inert・危ない口の名前・印) をその包みが覆う道になる。
+
+| 破る形 | 結果 |
+| --- | --- |
+| ① 印の型を名乗る (`const u = raw satisfies VU;` → sink へ) | M4 で断る (名乗っても束縛は印を持たない) |
+| ② 印を運ぶ値に別の型を付ける | 束縛の印は初期値の式だけから決まる (型は足しも消しもしない) |
+| ③ 計算した鍵の添字の結果に付けて inert を外す | inert のまま (呼べない・包めない) |
+| ④ 危ない口・宣言していない名前を初期値に置く | 他の式と同じ検めで断る |
+| ⑤ 式の途中に置く (`f(x satisfies T)` / `(x satisfies T).k`) | M0 で断る |
+| ⑥ `let` に付ける | M0 で断る (後から別の値を入れられる) |
+| ⑦ 型に式・2 つ目の束縛を隠す | 型の文法 (T-260) で断る |
+
+- 生成物では初期値を関係演算子より強い物まで括ってから付ける (`(a || b) satisfies T` —— TypeScript の `satisfies` は関係演算子の強さ)。`satisfies` は予約語にしていない (式の直後に名前は続かないので、ほかの読み方が無い)。
+- **残した物 (測った)**: 正しい Mamori のうち `a < (b > (c === 1))` の類 (`<` の右辺が括弧・配列・矢印関数で始まり、その中に `>` が在る形) は、生成物が TypeScript の**構文の誤り**で止まる (tsc が断る。黙って別の木にはならない)。総当たりでは受け入れた物の 5% 以下 (検査が持つ天井)。直すなら右辺も括る —— `docs/REMAINING_WORK.md`。型の名前に TypeScript の予約語 (`typeof` 単独など) を書いた形も同じく tsc が断つ。
+
 ## 0.30 —— `interface 名 extends 基底 { … }` を足した (MG-061 · 2026-11-10)
 
 `windowPrefs.ts` の `WindowPrefsDeps extends StateFileDeps` ほか、依存を束ねた型に要る。**interface が基底を継げると、印の型 (`vetted`) を継いだ型・印を隠した別名・原型の名前を欄に持つ組み込みの型を持ち込める。** 印は `mint` でだけ作る、を保ったまま足した。足す前に 8 通りで破った (0.29 は `extends` そのものを M0 で断つ)。
@@ -648,7 +679,7 @@ T-234 (`sinkTyped*` の文脈と印の型の判定)・T-232 (`RegExp.$1`)・`.co
 - 戦いのデータは `security/mamori-arena/corpus.json` に残し、`mamoriArena.test.ts` が毎回再生する (学習データ)。
 - 侵入役の新手を AI に書かせる段は、安全装置に止められた。迂回せず、新手は人が追加する (`*.attack.mamori`)。
 
-## 文法 (0.30)
+## 文法 (0.31)
 
 ```
 module    := header* item*
@@ -664,11 +695,11 @@ vetted    := 'export'? 'vetted' 名前 '=' 文字列 ';'
 type      := 'export'? 'type' 名前 '=' '|'? 型 ';'      先頭に | を書けば 1 行に 1 つずつ並べて写す
 interface := 'export'? 'interface' 名前 ('extends' 名前)? '{' (doc* 'readonly'? 名前 '?'? ':' 型 ';')* '}'
 class     := 'export'? 'class' 名前 'extends' 'Error' '{' 'constructor' '(' 引数* ')' '{' 'super' '(' 式* ')' ';' '}' '}'      (例外の型だけ · 欄もメソッドも `this` も無い · 他の module から `use` では引けない · 0.27)
-const     := 'export'? 'const' 名前 (':' 型)? '=' 式 ';'
+const     := 'export'? 'const' 名前 (':' 型)? '=' 式 ('satisfies' 型)? ';'      (`satisfies` は const の初期値の末尾だけ・型に印は置けない · 0.31)
 let       := 'let' 名前 ':' 型 '=' 式 ';'      (モジュール直下の状態 · export できない · 型が要る · 印の型は不可 · 代入は関数の中から · 欄・添字への代入と書き換えるメソッドは今も断る · 0.28)
 fn        := 'export'? ('gate' | 'sink')? 'async'? 'fn' 名前 ('<' 名前 (',' 名前)* '>')? '(' 引数* ')' '->' 型 ブロック   (型引数は plain の関数だけ・制約と既定の型は置けない · 0.23)
 引数      := 名前 '?'? (':' 型)? ('=' 式)?         (`?` には型が要り、既定値とは併せられない・`?` の後ろに `?` でも既定値つきでもない引数は置けない · 0.22)
-文        := ('const' | 'let') 名前 (':' 型)? ('=' 式)? ';' | 'return' 式? ';'
+文        := ('const' | 'let') 名前 (':' 型)? ('=' 式 ('satisfies' 型)?)? ';' | 'return' 式? ';'      (`satisfies` は const だけ · 0.31)
            | 'if' '(' 式 ')' ブロック ('else' (if 文 | ブロック))? | 'try' ブロック ('catch' ('(' 名前 ')')? ブロック)? ('finally' ブロック)?   (catch か finally の少なくとも片方)
            | 'throw' 式 ';' | 'for' '(' 'const' 名前 'of' 式 ')' ブロック | 'while' '(' 式 ')' ブロック | 'break' ';' | 'continue' ';'
            | 'switch' '(' 式 ')' '{' (('case' 式 | 'default') ':')+ 文+ … '}'
@@ -678,11 +709,18 @@ fn        := 'export'? ('gate' | 'sink')? 'async'? 'fn' 名前 ('<' 名前 (',' 
            | 'async'? '(' 引数 ')' '=>' 式 (`async 名前 => 式` も · async の arrow は 0.26) | 'mint' 印 '(' 式 ')'
            | 式 '?' 式 ':' 式 | '{' (鍵 ':' 式 | 名前) (',' …)* '}' | 'field' 式 '.' 名前      (0.2)
 鍵        := 名前 | 文字列            (`__proto__` は書けない・計算した鍵 `[k]` は無い。展開 `...x` は配列の項と、オブジェクトの欄より前にだけ置ける · 0.15)
+型        := '|'? 交差 ('|' 交差)*          (1 つの型として読める並びだけ · T-260 · 0.31)
+交差      := 前置 ('&' 前置)*
+前置      := ('readonly' | 'keyof') 前置 | 'typeof' 名前 ('.' 名前)* '[]'* | 基本 '[]'*
+基本      := 名前 ('.' 名前)* ('<' 型 (',' 型)* '>')? | 文字列 | '-'? 数
+           | '{' ('readonly'? (名前 | 文字列) '?'? ':' 型 (';' | ','))* '}' | '[' (型 ',')* 型? ']'
+           | '(' (名前 '?'? ':' 型 (',' …)*)? ')' '=>' 戻り | '(' 型 ')'
+戻り      := 'asserts' 名前 | ('asserts'? 名前 'is')? 型      (述語は関数の戻りの型と関数の型の戻りだけ・式の位置の型は `(` で始められない)
 ```
 
 - `if` の本体は必ず `{ }` で囲む (囲まない 1 行の `if` は書けない)。
 - `alias` は TypeScript の `import { a as b }` にあたる (`as` は言語に無いので別の語にした)。
-- 型は TypeScript の綴りをそのまま書く (`Promise<VettedShellPath | null>` / `ReadonlySet<string>`)。
+- 型は TypeScript の綴りをそのまま書く (`Promise<VettedShellPath | null>` / `ReadonlySet<string>`)。ただし**上の `型` の文法で読める並びだけ** (0.31 · T-260) —— 条件型・写像型・テンプレートの型・`infer` は無い (要るなら TypeScript の module に書いて `use type` で引く)。
 - **`switch` の各 case の本体は `return` / `throw` / `break` で終える** (次の case へ落ちる形を書けない)。積んだ label (`case 'a': case 'b':`) は 1 つの群れ。
 - **`for` は `for (const x of xs)` だけ**。回す変数は印を運ばない (印の配列から取り出しても素の値 —— 失敗は閉じる向き)。`continue` は for か while の中、`break` は for か while か switch の中だけ。
 - **`while (式) { … }` (0.19)** も本体を `{ }` で囲む。`do … while` は無い。ループの外で宣言した `let` へ、計算した鍵の添字の結果を代入する形は断る (T-259)。
@@ -743,6 +781,7 @@ export sink fn openExternalVetted(url: VettedExternalUrl) -> Promise<void> {
 | `src/renderer/security/lockWorkspace.mamori` | `src/renderer/security/lockWorkspace.ts` | 施錠で鍵をメモリから落とす本体 (`lockWorkspace` は鍵を落としてから知らせる・`lockEverywhere` は自分を施錠してから他のタブへ配る —— どちらも 0.20 の `finally` · 0.20 · MG-040 · host 壁 `lockWorkspaceHost.ts` が購読の入れ物・共有の 1 本の道 (`BroadcastChannel`)・`onmessage` の据え付けを持つ · モジュール直下の `let` が無いため状態は host) |
 | `src/main/userPresence.mamori` | `src/main/userPresence.ts` | 画面から独立した本人確認の門 (`createPresenceGate` の速度・費用の予算・警戒態勢・ロックアウトと減衰・確認の連打を断る・要約の整え `safeSummary`・payload を欄ごとに見せる `describePayload`・資格情報の置き換えで送り先を見せる `describeCredentialWrite`・信頼できる呼び出し元 `isTrustedSenderUrl` · 0.26 · MG-054 · `async guard` は async arrow の閉包 (0.26)。時計 / `Object.getPrototypeOf` / `path.resolve` / 欄の読みは判断を持たない薄い壁 `userPresenceHost.ts` へ。`RATE_LIMIT[tier]` / `BUDGET[tier]` / `calls[tier]` の文字列の鍵の添字は `Map` (表は `Object.entries` から組む) へ、`push` / `shift` は `let` の配列の組み直しへ、`i++` / `+=` は `i = i + 1`・template は連結へ、`UNSAFE_RANGES` の対は `{ lo, hi }` の物へ書き直した。元の TypeScript と、4,000 本の乱数入力 (要約・payload・資格情報の束・URL) + 300 本 × 120 手の状態遷移 (確認・速度・予算・警戒・ロック・減衰・時計の進み) で差分比較し、判定・文面・記録・態勢が一致。**唯一の振る舞いの差**は知らない段階の速度の上限で、元は表の欄が無く `NaN` と比べて「通す」に倒れていた (型が `Tier` なので呼び手からは届かない) のを、上限 0 として「断る」へ倒した (fail closed)。既存の検査は編集なしで緑) |
 | `src/main/main.mamori` | `src/main/main.ts` | 主プロセスの入口 (窓の隔離設定 `contextIsolation` / `sandbox` / `nodeIntegration` / `spellcheck`・権限の許可表・遷移の番人・IPC 15 本の口の判断 = 本人確認・速度・払い出し・同時 1 つの認可・形の検め・起動時の自己検算の扱い · 0.28 · MG-059 · フルポート。host 壁 `mainHost.ts` が `process.env` / `__dirname` / `console` / `setTimeout` / `fetch` / `AbortSignal` / `JSON.parse` / 表の添字引き (`LIVE_FETCHERS[id]` ほか・`Object.hasOwn` で自分の鍵だけ) / electron の再輸出を持つ (判断なし・転送に追随しない `egressInit` は壁でも掛かる = 冪等) · `authorizeInFlight` と `windowPrefs` は 0.28 の module の `let` · 登録と起動は `export const … = fn()` の初期値 (preload.mamori の `bridgeExposed` と同じ形) · `ipcMain.handle('…', async (e, …) => …)` の綴りは生成物に残る (ソース文字列を読む census が使う) · `fn` は予約語なので `runAction` へ・template は `+` の連結へ・arrow の引数に印の型の注記 (`target: VettedExternalUrl`) · 組み上がる文字列は 1 字も変えず、`mainWindow.test.ts` + `mainIpc.test.ts` は編集なしで緑) |
+| `src/renderer/fs/fsa.mamori` | `src/renderer/fs/fsa.ts` | File System Access の書き出し口 (対応の判定・フォルダの選択と保管・**名前の関門 `isSafeFilename` を通してから書く**・読み書きの権限が無ければ断る · MG-063 · `window` と `indexedDB` は host の壁 `fsaHost.ts` が取り出すだけで、呼ぶのは Mamori の側) |
 
 残りの TypeScript は Mamori で書いた gate / sink を呼ぶ側で、呼ぶ側には TypeScript の型の印が掛かる
 (パス 559)。書き出しのファイル書き込みはパス 560 で gate と sink の組として移し、pending の天井を 4 → 3 へ下げた。

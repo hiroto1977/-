@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { existsSync } from 'node:fs';
 import { readOriginalSource } from '../../__tests__/originalSource';
+import { shapeMismatch } from './mamoriShape';
 import { join } from 'node:path';
 import { createRequire } from 'node:module';
 import { compileProject, formatDiagnostic } from '../compile';
@@ -70,6 +71,16 @@ describe('Mamori の生成物 (threat: T-221)', () => {
       const abs = join(ROOT, out);
       expect(existsSync(abs), `${out} が無い (npm run mamori:build)`).toBe(true);
       expect(readOriginalSource(abs), `${out} が .mamori と食い違う —— 生成物を手で直さず npm run mamori:build`).toBe(text);
+    }
+  });
+
+  it('★ どの .mamori も、Mamori が検めた木と生成物を TypeScript が読んだ木の形が一致する (threat: T-260)', () => {
+    // 検査器が見るのは Mamori の木、走るのは生成した TypeScript。呼び出し・new・型引数・条件式・矢印関数・2 項演算子の数が
+    // 食い違えば、検めていない呼び出しが走る (型の綴りに式を隠す・括弧を落として呼び出しに化ける —— T-260)。
+    expect(files.length).toBeGreaterThanOrEqual(30);
+    for (const f of files) {
+      const out = readOriginalSource(join(ROOT, f.path.replace(/\.mamori$/, '.ts')));
+      expect({ path: f.path, mismatch: shapeMismatch(f.path, f.source, out) }).toEqual({ path: f.path, mismatch: [] });
     }
   });
 

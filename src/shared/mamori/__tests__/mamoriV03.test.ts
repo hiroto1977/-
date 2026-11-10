@@ -116,7 +116,7 @@ describe('0.3 の構文: 16 進の数', () => {
   it('★ 16 進の数は綴りのまま書き出す (0x20 / 0X1F / 0xdead)', () => {
     const r = compileProject([{ path: 'src/x/g.mamori', source: 'export fn f(c: number) -> boolean {\n  return c < 0x20 || c === 0X1F || c === 0xdead;\n}\n' }]);
     if (!r.ok) throw new Error(r.diagnostics.map(formatDiagnostic).join('\n'));
-    expect(r.outputs.get('src/x/g.ts')).toContain('  return c < 0x20 || c === 0X1F || c === 0xdead;\n');
+    expect(r.outputs.get('src/x/g.ts')).toContain('  return (c < 0x20) || c === 0X1F || c === 0xdead;\n');
   });
   it('★ 数字の無い 0x / 0X は断る', () => {
     expect(diags('export fn f() -> unknown {\n  return 0x;\n}\n')).toEqual([at(2, 10, 'M0', '`0x` の後に 16 進の数字 (0-9 / a-f) が要ります')]);

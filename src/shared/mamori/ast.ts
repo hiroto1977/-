@@ -92,7 +92,12 @@ export interface Param {
 export type Comments = readonly string[];
 
 export type Stmt =
-  | { readonly kind: 'let'; readonly mutable: boolean; readonly name: string; readonly type: TypeRef | null; readonly init: Expr | null; readonly comments: Comments; readonly pos: Pos }
+  /**
+   * `satisfies` (0.31 · MG-065) は **const の初期値の末尾にだけ**付けられる (`const x = 式 satisfies 型;`)。式の途中の演算子ではない ——
+   * 値を包む新しい種類の式を作ると、包みが inert (計算した鍵の添字の結果) や危ない口の名前を覆う道になる。束縛の印・inert・数の判定は
+   * 初期値の式だけから決まり、`satisfies` の型はどれにも触れない (型の検査だけで、実行時には何も残らない)。
+   */
+  | { readonly kind: 'let'; readonly mutable: boolean; readonly name: string; readonly type: TypeRef | null; readonly init: Expr | null; readonly satisfies: TypeRef | null; readonly comments: Comments; readonly pos: Pos }
   /**
    * `const { a, b: c } = 式;` (0.14 · MG-022)。**浅い分割だけ** —— 入れ子・既定値・残り (`...rest`)・計算した鍵・`let` は無い。
    * 鍵は `.` の後ろと同じ `FORBIDDEN_MEMBERS` を通る (`const { constructor } = x` は T-224 の表を迂回する道になるため)。
@@ -187,7 +192,7 @@ export type Item =
       readonly doc: Doc;
       readonly pos: Pos;
     }
-  | { readonly kind: 'const'; readonly exported: boolean; readonly name: string; readonly type: TypeRef | null; readonly init: Expr; readonly doc: Doc; readonly pos: Pos }
+  | { readonly kind: 'const'; readonly exported: boolean; readonly name: string; readonly type: TypeRef | null; readonly init: Expr; /** 初期値の末尾の `satisfies 型` (0.31)。無ければ null。 */ readonly satisfies: TypeRef | null; readonly doc: Doc; readonly pos: Pos }
   /** モジュール直下の `let 名前: 型 = 初期値;` (0.28 · MG-058)。export できず、型の宣言が要る。書き換えられるのはこのモジュールの関数の中からだけ。 */
   | { readonly kind: 'let'; readonly name: string; readonly type: TypeRef; readonly init: Expr; readonly doc: Doc; readonly pos: Pos }
   /**

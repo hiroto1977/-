@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { compileProject, formatDiagnostic, type SourceFile } from '../compile';
 import { inspectEmitted } from './mamoriInspect';
+import { shapeMismatch } from './mamoriShape';
 
 /*
  * **Mamori の攻撃の電池 (battery)** (2026-10-31 · パス 572 · 対戦 · threat: T-233 / T-234 の系譜)。
@@ -138,6 +139,21 @@ const TYPE_SMUGGLE: readonly string[] = [
   'unknown<= fetch("x"); const D: Array<number',
   'number === fetch("x")',
   '{ a: number } & { b: fetch("x") }; const D: number',
+  // 0.31 · T-260: 型として読めない並び —— TypeScript は式・別の束縛として読む (`;` を使わないので上の形の網に掛からない)
+  'number, hidden = fetch("x")',
+  'number, go = (s: string) => eval(s)',
+  'm ? fetch("x") : k',
+  'number ? fetch("x") : string',
+  'number = fetch("x")',
+  'typeof fetch("x")',
+  'number | fetch("x")',
+  '(fetch("x"))',
+  '[fetch("x")]',
+  '{ a: fetch("x") }',
+  'Array<fetch("x")>',
+  'number & (() => fetch("x"))()',
+  '(a: number) => fetch("x")',
+  'keyof typeof globalThis["fetch"]',
 ];
 
 /** `interface Z extends ○ { … }` の基底に置く綴り (0.30 · MG-061)。印の型・型の別名・組み込みの型・自分自身・後ろの物・関数・口・式・型引数・複数。 */
@@ -203,6 +219,14 @@ const CONTEXTS: Readonly<Record<string, (e: string) => string>> = {
   typeSmuggleRet: (e) => `export fn go() -> ${e} {\n  return 1;\n}\n`,
   typeSmuggleLet: (e) => `export fn go() -> unknown {\n  let v: ${e};\n  return 1;\n}\n`,
   typeSmuggleParam: (e) => `export fn go(p: ${e}) -> unknown {\n  return p;\n}\n`,
+  // 0.21 の型引数・0.31 の satisfies: 型の綴りが**式の中**に座る 2 つの位置 (T-260)
+  typeSmuggleArg: (e) => `export fn go(n: number, m: number, k: number, x: number) -> unknown {\n  return String<${e}>(x);\n}\n`,
+  typeSmuggleSat: (e) => `export fn go(m: number, k: number) -> unknown {\n  const v = 1 satisfies ${e};\n  return v;\n}\n`,
+  typeSmuggleSatTop: (e) => `export const C = 1 satisfies ${e};\n`,
+  // 0.31 · satisfies: 弾が初期値に座る形と、印の型を satisfies で名乗って危ない口へ渡す形
+  satLocal: (e) => `export fn go() -> unknown {\n  const v = ${e} satisfies unknown;\n  return v;\n}\n`,
+  satTop: (e) => `export const C = ${e} satisfies unknown;\n`,
+  sinkTypedSat: (e) => `${PRELUDE}type Maybe = VU | string;\nexport fn go(raw: string) -> unknown {\n  const u = raw satisfies ${e};\n  return openUrl(u);\n}\n`,
   doc: (e) => `/// ${e}\nexport fn go() -> unknown {\n  return 1;\n}\n`,
   header: (e) => `//! ${e}\nexport fn go() -> unknown {\n  return 1;\n}\n`,
   comment: (e) => `export fn go() -> unknown {\n  // ${e}\n  return 1;\n}\n`,
@@ -293,6 +317,18 @@ function compileAttempt(a: Attempt): { ok: true; outputs: ReadonlyMap<string, st
 
 const file = (source: string, path = 'src/x/m0.mamori'): SourceFile => ({ path, source });
 
+/**
+ * 受け入れたプログラムの「Mamori が検めた木」と「生成物を TypeScript が読んだ木」の形の食い違い (2026-11-10 · T-260)。
+ * 生成物だけを見る `inspectEmitted` には映らない穴 (Mamori は型引数つきの呼び出しと読み、TypeScript は条件式として読む …) を拾う。
+ * 生成物に構文の誤りが在る (`flagged`) ときは TypeScript の木が当てにならないので比べない —— その生成物は tsc が止める (lenient)。
+ */
+function treeMismatch(files: readonly SourceFile[], outPath: string, text: string, flagged: boolean): string[] {
+  if (flagged) return [];
+  const src = files.find((f) => f.path.replace(/\.mamori$/, '.ts') === outPath);
+  if (src === undefined) return [];
+  return shapeMismatch(src.path, src.source, text).map((m) => `木の形が食い違う (${m})`);
+}
+
 interface Report {
   attempts: number;
   accepted: number;
@@ -324,7 +360,9 @@ export function runBattery(seed: number, rounds: number): Report {
     }
     rep.accepted++;
     for (const [path, text] of r.outputs) {
-      for (const f of inspectEmitted(path, text)) (f.kind === 'hole' ? rep.holes : rep.lenient).push(`${label} → ${f.reason}`);
+      const found = inspectEmitted(path, text);
+      for (const f of found) (f.kind === 'hole' ? rep.holes : rep.lenient).push(`${label} → ${f.reason}`);
+      rep.holes.push(...treeMismatch(files, path, text, found.length > 0).map((m) => `${label} → ${m}`));
     }
     return 'ok';
   };
@@ -397,7 +435,11 @@ export function runFuzz(seed: number, rounds: number): Report {
     else if (!r.ok) rep.refused++;
     else {
       rep.accepted++;
-      for (const [path, text] of r.outputs) for (const f of inspectEmitted(path, text)) (f.kind === 'hole' ? rep.holes : rep.lenient).push(`${label} → ${f.reason} 元=${JSON.stringify(src)}`);
+      for (const [path, text] of r.outputs) {
+        const found = inspectEmitted(path, text);
+        for (const f of found) (f.kind === 'hole' ? rep.holes : rep.lenient).push(`${label} → ${f.reason} 元=${JSON.stringify(src)}`);
+        rep.holes.push(...treeMismatch([file(src)], path, text, found.length > 0).map((m) => `${label} → ${m} 元=${JSON.stringify(src)}`));
+      }
     }
   }
   return rep;

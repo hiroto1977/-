@@ -126,7 +126,7 @@ const FORBIDDEN_PATTERNS = [
         'src/renderer/data/store.ts',
         'src/renderer/network/proxyHost.ts',
         'src/renderer/library/library.ts',
-        'src/renderer/fs/fsa.ts',
+        'src/renderer/fs/fsaHost.ts',
         // **外から**保管領域を覗いて検証する道具 (アプリの層とは逆向き)。
         // 「保存されている物が本当に暗号化されているか」を実物で確かめる側で、
         // ここを禁じると検証手段のほうが消える。
@@ -1025,7 +1025,9 @@ const KNOWN_SUPPRESSIONS = [
   // `replaceLatestIfUnchanged`) が、比べてから書くまでを 1 つの readwrite 取引の中で行うために
   // 取引と索引の cursor を自分で開く (各 2 か所)。保管層そのものの実装なので、ここが唯一の置き場である。
   '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/data/store.ts :: 32',
-  '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/fs/fsa.ts :: 8',
+  // 2026-11-10 (MG-063): fsa.ts を Mamori へ移した。IndexedDB を触る 8 か所は判断を持たない host の口 (fsaHost.ts) へ移り、
+  // 生成物の fsa.ts には 1 つも残らない (どの DB のどの鍵かは fsa.mamori が決めて引数で渡す)。
+  '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/fs/fsaHost.ts :: 8',
   '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/library/library.ts :: 14',
   '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/network/proxyHost.ts :: 6',
   // 2026-09-07: 13 → 12。届かない後追い診断 (`indexedDB.databases()` で

@@ -4733,6 +4733,39 @@
           "test": "ループの中で宣言した名前へは入れられる (周ごとに宣言し直すので持ち越さない)・字面の鍵は inert ではない"
         }
       ]
+    },
+    {
+      "id": "T-260",
+      "found": "2026-11-10",
+      "foundBy": "MG-064 (`satisfies` を足す前に破る)。式の中に型の綴りを置く新しい場所を足す前に、既に在る場所 (0.21 の型引数・束縛の型) で「Mamori が型と読んだ綴りを TypeScript も型と読むか」を試し、3 形で読みが割れた: ① 型引数の綴り `n<m ? shell.openExternal(raw) : k>(x)` を Mamori は「型引数つきの呼び出し 1 つ」と読み (型の綴りは検めない)、TypeScript は「条件式 + 危ない口の呼び出し」と読んで走らせる ② 束縛の型 `let a: number, okUrl = (s: string) => JSON.parse(s);` を Mamori は 1 つの束縛と読み、TypeScript は 2 つ目の束縛 `okUrl` (module の gate を覆う) を作る ③ 逆向きに、Mamori が「比べ 2 つ」と読んだ `f(n < n, n > (raw ?? raw))` を、括弧を落とした生成物で TypeScript が「型引数つきの呼び出し `n<n, n>(…)`」と読む。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "high",
+      "title": "守りの層を書く言語 Mamori が検めた木と、生成物を TypeScript が読んだ木が食い違い、型の綴りに隠した式 (危ない口の呼び出し・module の関門を覆う 2 つ目の束縛) が検めを受けずに生成物で走る",
+      "status": "mitigated",
+      "fix": "3 層。① src/shared/mamori/parser.ts: 型の綴りを読んだ直後に `checkTypeShape` で **1 つの型として読める並びか**を検める (TypeScript の型の文法の部分集合 —— 名前・型引数・配列・和・交差・オブジェクト・組・関数・typeof・readonly / keyof・字面。述語は関数の戻りだけ・式の位置 (型引数) には `(` で始まる型を置けない)。型として読めない並び (`?` `:` の条件・深さ 0 の `,`・呼び出しの括弧) は M0 で断る。② src/shared/mamori/emit.ts: 式の中 (引数・配列の項・演算子の両辺・欄の値・既定値) に座る `<` の比べを括って出す (`nested`) —— TypeScript が `a < b, c > (d)` を型引数つきの呼び出しと試し読みしない。文の根の `<` は括らない。③ 独立の判定: `mamoriShape.ts` が Mamori の木と生成物の木の形 (呼び出し・new・型引数つきの呼び出し・条件式・矢印関数・2 項演算子の数) を突き合わせ、実物の .mamori 全件・攻撃の電池・種つきの総当たりで食い違い 0 を見る。`mamoriInspect.ts` は「1 文に束縛 2 つ」「`,` でつないだ式」を穴として挙げる。生成物は 6 本が括弧の分だけ変わった (判定は不変)。残り (測った): 正しい Mamori のうち `a < (b > (c === 1))` の類は生成物が TypeScript の構文の誤りで止まる (黙って別の木にはならない) —— docs/REMAINING_WORK.md。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriTypeShape.test.ts",
+        "test": "★ 型引数の綴りに式を隠せない (Mamori は型引数つきの呼び出しと読み、TypeScript は条件式として危ない口を呼ぶ) (threat: T-260)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriTypeShape.test.ts",
+          "test": "★ 束縛の型の綴りに 2 つ目の束縛を隠せない (隠れた束縛が module の関門を覆う) (threat: T-260)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriTypeShape.test.ts",
+          "test": "★ 引数の並び・配列・演算子の両辺・条件式・欄の中の `<` は括る (TypeScript が型引数つきの呼び出しと読まない) (threat: T-260)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriTypeShape.test.ts",
+          "test": "★ 3 つの種 × 1500 本: 受け入れた物は木の形が一致するか、生成物が TypeScript の構文の誤りで止まる (黙って別の木にならない) (threat: T-260)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriGenerated.test.ts",
+          "test": "★ どの .mamori も、Mamori が検めた木と生成物を TypeScript が読んだ木の形が一致する (threat: T-260)"
+        }
+      ]
     }
   ],
   "huntBacklog": [
