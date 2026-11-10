@@ -180,6 +180,8 @@
 /src/renderer/security/vault.ts @hiroto1977
 /src/renderer/security/webCrypto.ts @hiroto1977
 /src/renderer/security/webauthn.ts @hiroto1977
+/src/renderer/security/webauthn.mamori @hiroto1977
+/src/renderer/security/webauthnHost.ts @hiroto1977
 /src/shared/advisorQuestionLimits.ts @hiroto1977
 /src/shared/ai/chat.ts @hiroto1977
 /src/shared/ai/credentials.ts @hiroto1977

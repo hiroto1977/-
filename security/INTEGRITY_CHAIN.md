@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 496
+- ブロック数: 497
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `6b4bd5deb599c9283c6e4f66630a4ea7397dae06e89f9c27a3c1475473ee153d`
-- 保護対象: 211 ファイル
+- 末尾(tip)ハッシュ: `44913ebaf563b4c6bed44ccfb3c22f0e20df75472d31668cd96003b75aa80743`
+- 保護対象: 213 ファイル
 
 ## ブロック
 
@@ -509,6 +509,7 @@
 | 493 | `dffd3a4bb35744b1` | `18f99d603104d86b` | `04a0cd42d0466134` | update integrity-chain.cjs,mamori-capabilities.json,proxy.mamori,proxy.ts,proxyHost.ts |
 | 494 | `29bf4e01d161284f` | `04a0cd42d0466134` | `f348716a49ffb19c` | update ast.ts,checker.ts,emit.ts,parser.ts |
 | 495 | `6692336a6fa632fd` | `f348716a49ffb19c` | `6b4bd5deb599c928` | update checker.ts |
+| 496 | `8787397c7d6de567` | `6b4bd5deb599c928` | `44913ebaf563b4c6` | update integrity-chain.cjs,mamori-capabilities.json,webauthn.mamori,webauthn.ts,webauthnHost.ts |
 
 ## 保護対象ファイル
 
@@ -645,7 +646,9 @@
 - `src/renderer/security/mnemonic.ts`
 - `src/renderer/security/vault.ts`
 - `src/renderer/security/webCrypto.ts`
+- `src/renderer/security/webauthn.mamori`
 - `src/renderer/security/webauthn.ts`
+- `src/renderer/security/webauthnHost.ts`
 - `src/renderer/vettedSinks.mamori`
 - `src/renderer/vettedSinks.ts`
 - `src/shared/actionTier.mamori`

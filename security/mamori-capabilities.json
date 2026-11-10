@@ -164,6 +164,14 @@
       "gates": [],
       "sinks": []
     },
+    "src/renderer/security/webauthn.mamori": {
+      "externals": [
+        "pure ./webauthnHost: hostChallenge, hostUtf8, hostBase64Encode, hostBase64Decode, hostCanAskPlatformAuthenticator, hostAskPlatformAuthenticator, hostCreateCredentialRawId"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
     "src/renderer/vettedSinks.mamori": {
       "externals": [
         "sink global: window"

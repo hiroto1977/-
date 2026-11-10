@@ -736,6 +736,8 @@ const PROTECTED = [
   'src/main/userPresenceHost.ts',           // その薄い壁 (時計・欄の読み・原型の読み・path.resolve · MG-054)
   'src/renderer/network/proxy.mamori',      // BYO プロキシ (宛先の検査・封筒の解析・保存時 MAC) の Mamori の元 (2026-11-10 · MG-055)
   'src/renderer/network/proxyHost.ts',      // その薄い壁 (IndexedDB・保管庫・fetch・Response・Headers · MG-055)
+  'src/renderer/security/webauthn.mamori',  // 生体認証ゲート (登録のオプション・base64url・fail-closed の verifyBiometric) の Mamori の元 (2026-11-10 · MG-057)
+  'src/renderer/security/webauthnHost.ts',  // その薄い壁 (乱数・btoa/atob・TextEncoder・credentials.create・PublicKeyCredential · MG-057)
   'src/renderer/oauth/pkceSessionHost.ts',  // sessionStorage の口 (薄い壁)
   'src/renderer/security/dataCrypto.mamori',     // レコード暗号の関門 (KDF 回数・塩・封筒の形) の Mamori の元 (2026-11-02 · MG-021)
   'src/renderer/security/dataCryptoHost.ts',     // WebCrypto / btoa の口 (薄い壁)

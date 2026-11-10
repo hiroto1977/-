@@ -3396,6 +3396,69 @@
         "summary": "Mamori 0.27 に例外のクラス `class N extends Error { constructor(…) { super(…); } }` を足した (secrets / vault / webauthn / selfAttestation の例外の型を移すために要る)。基底は組み込みの Error ただ 1 つ・constructor は super(…) の 1 文・this も欄もメソッドも無く、name は変換がクラスの名前で付ける。使い道は new N(…) と x instanceof N だけで、値として持ち出す・呼ぶ・メンバを引く形は継いだ Error の静的なメンバ (captureStackTrace) へ届くので断る。足す前に 8 通りで破り、すべて断られた。変異検査は今回の差分の行 (parser 53 / checker 75 / emit 11 の変異体) で 100% (初回 84.17% の生存 22 件は、規則名・文面・引数の束縛 (数の鍵・省ける引数・instanceof の右辺)・module の名前の読み・生成物の字面を主張する検査で閉じた)。全体の変異検査 (4,143 変異体) は一度に回せず時間切れになったので差分の行だけを測った。"
       },
       "deviation": null
+    },
+    {
+      "id": "MG-057",
+      "date": "2026-11-10",
+      "kind": "port",
+      "target": "src/renderer/security/webauthn.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/renderer/security/webauthn.ts",
+      "version": "0.27",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "as-cast",
+        "compound-assign"
+      ],
+      "ported": [
+        "src/renderer/security/webauthn.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "`navigator.credentials.get({})` を宣言せずに呼ぶ (認証器の検証セレモニーを host 壁の外から開く)",
+          "result": "refused"
+        },
+        {
+          "tried": "`window.PublicKeyCredential` を宣言せずに読む",
+          "result": "refused"
+        },
+        {
+          "tried": "`extern pure global navigator;` と宣言して navigator の口を pure の値にする",
+          "result": "refused"
+        },
+        {
+          "tried": "`btoa(s)` を宣言せずに呼ぶ (移植で実際に当たった —— host 壁へ移した)",
+          "result": "refused"
+        },
+        {
+          "tried": "`x as PublicKeyCredential` で認証器の返り値を型へ読み替える (移植で実際に当たった —— host 壁へ移した)",
+          "result": "refused"
+        },
+        {
+          "tried": "`binary += String.fromCharCode(b)` の複合代入 (移植で実際に当たった —— host 壁へ移した)",
+          "result": "refused"
+        },
+        {
+          "tried": "fail-closed のエラーを `extends TypeError` で作って基底の静的なメンバを借りる",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 3,
+      "mutation": {
+        "files": [
+          "src/renderer/security/webauthn.ts",
+          "src/renderer/security/webauthnHost.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 917,
+        "reason": "draft PR #917 に載せる",
+        "summary": "生体認証ゲート webauthn.ts (登録のオプション組み立て・base64url の置換・プラットフォーム認証器の有無・fail-closed の verifyBiometric とそのエラー型) を Mamori 0.27 へ移した。MG-056 で足したエラーのクラスを BiometricVerificationUnimplementedError に使う初の移植。乱数・btoa/atob・TextEncoder・navigator.credentials.create・window.PublicKeyCredential は判断を持たない薄い壁 webauthnHost.ts に閉じ込め、credentials.get はどこにも置かない (検証が未実装のため認証器を呼ぶ口を作らない)。既存の 28 件の検査は 1 字も編集せず通り、差は window の判定を host へ移した点と、キャンセルを null で返す点 (元は falsy 判定) だけ。変異検査は両ファイル 100% (初回 94.59% の生存 4 件は、window / PublicKeyCredential の有無の 3 条件を host 側で直接留める検査と、try/catch が吸収する門の等価変異 (理由つき pragma) で閉じた)。"
+      },
+      "deviation": null
     }
   ]
 }
