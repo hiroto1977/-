@@ -133,6 +133,7 @@
 /src/preload/preloadHost.ts @hiroto1977
 /src/preload/bridgeTypes.ts @hiroto1977
 /src/renderer/data/assistantMarkdown.ts @hiroto1977
+/src/renderer/data/assistantMarkdown.mamori @hiroto1977
 /src/renderer/data/localWrite.ts @hiroto1977
 /src/renderer/data/recordCipher.ts @hiroto1977
 /src/renderer/fs/fsa.ts @hiroto1977
