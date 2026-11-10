@@ -91,6 +91,12 @@ export function inspectEmitted(file: string, text: string, externGlobals: Readon
         found.push({ kind: 'hole', reason: `instanceof の右辺が許した名前でない: ${r.text}` });
       }
     }
+    // 0.29 の in: 左辺は字面の文字列で、`Object.prototype` の名前・`prototype` でない (原型の鎖にも在る名前はどの物にも真と答える / 計算した鍵で原型を探れる)。
+    if (ts.isBinaryExpression(n) && n.operatorToken.kind === ts.SyntaxKind.InKeyword) {
+      const l = n.left;
+      if (!ts.isStringLiteral(l)) found.push({ kind: 'hole', reason: `in の左辺が字面の文字列でない: ${l.getText(sf)}` });
+      else if (l.text === 'prototype' || Object.getOwnPropertyNames(Object.prototype).includes(l.text)) found.push({ kind: 'hole', reason: `in の左辺が原型の名前: ${l.text}` });
+    }
     if (ts.isCallExpression(n) && n.expression.kind === ts.SyntaxKind.ImportKeyword) found.push({ kind: 'hole', reason: '動的 import がある' });
     if (ts.isMetaProperty(n)) found.push({ kind: 'hole', reason: 'メタプロパティがある' });
     if (ts.isClassDeclaration(n) || ts.isClassExpression(n)) found.push({ kind: 'hole', reason: 'クラスがある' });

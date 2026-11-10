@@ -63,6 +63,14 @@ export const FORBIDDEN_MEMBERS: Readonly<Record<string, string>> = {
   ['__proto__']: '`.__proto__` は Mamori に在りません —— 原型に届く道で、`.prototype` と同じ理由で断ります',
 };
 
+/**
+ * `'k' in x` の左辺に置けない鍵 (0.29 · MG-060)。**`in` は原型の鎖をたどる** —— `'toString' in {}` も `'constructor' in {}` も真で、
+ * 「自分の鍵か」を問うつもりのコードが、どの物にも真と答える (許可表の照合に使えば、全部通る)。左辺は字面の文字列だけにして
+ * 計算した鍵 (`k in x` に `'constructor'` を入れて原型を探る) を断ち、字面でも `Object.prototype` の名前と `.` の後ろに置けない名前
+ * (`FORBIDDEN_MEMBERS`) は断る。自分の鍵を問うなら `Object.hasOwn(x, 'k')` を使う。
+ */
+export const IN_FORBIDDEN_KEYS: ReadonlySet<string> = new Set([...Object.getOwnPropertyNames(Object.prototype), ...Object.keys(FORBIDDEN_MEMBERS)]);
+
 const PUNCT = [
   '===', '!==', '...', '->', '=>', '&&', '||', '??', '?.', '<=', '>=', '<<',
   '(', ')', '{', '}', '[', ']', '<', '>', ',', ';', ':', '.', '=', '!', '+', '-', '*', '/', '%', '?', '|', '&', '^', '~',
@@ -659,7 +667,7 @@ export function parse(file: string, src: string): Module {
     ['^'],
     ['&'],
     ['===', '!=='],
-    ['<', '>', '<=', '>=', 'instanceof'],
+    ['<', '>', '<=', '>=', 'instanceof', 'in'],
     ['<<', '>>', '>>>'],
     ['+', '-'],
     ['*', '/', '%'],
@@ -702,6 +710,12 @@ export function parse(file: string, src: string): Module {
     for (let op = binaryOpAt(level); op !== null; op = binaryOpAt(level)) {
       const first = peek();
       for (let n = 0; n < op.count; n++) next();
+      // `'k' in x` (0.29 · MG-060): 左辺は字面の文字列だけで、原型の鎖にも在る名前は断る (どの物にも真と答えてしまう / 計算した鍵で原型を探れてしまう)。
+      if (op.text === 'in') {
+        if (left.kind !== 'string') return fail(first, '`in` の左辺は字面の文字列だけです —— 計算した鍵で原型の名前 (`constructor` ほか) を探れてしまいます (自分の鍵を問うなら `Object.hasOwn(x, k)`)');
+        const key = decodeString(left.raw, first);
+        if (IN_FORBIDDEN_KEYS.has(key)) fail(first, `\`'${key}' in x\` は在りません —— \`in\` は原型の鎖をたどるので、原型にも在る名前はどの物にも真と答えます (自分の鍵を問うなら \`Object.hasOwn(x, '${key}')\`)`);
+      }
       const right = binary(level + 1);
       left = { kind: 'binary', op: op.text, left, right, pos: first.pos };
     }
@@ -1138,6 +1152,8 @@ const RESERVED = new Set([
   'throw', 'for', 'of', 'break', 'continue', 'switch', 'case', 'default', 'field', 'type', 'interface',
   // 0.16 (MG-028)
   'instanceof',
+  // 0.29 (MG-060)
+  'in',
   // 0.19 (MG-036)
   'while',
   // 0.27 (MG-056)

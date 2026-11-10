@@ -1015,7 +1015,11 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       case 'binary':
         checkExpr(e.left, scopes, ctx);
         if (e.op === 'instanceof') checkInstanceofRight(e.right, scopes);
-        else checkExpr(e.right, scopes, ctx);
+        else {
+          // `'k' in x` (0.29 · MG-060): 計算した鍵の結果 (inert) を右辺にして、選んだ物の鍵の在否を探らせない。右辺の値そのものは式の外へ出ない (結果は真偽)。
+          if (e.op === 'in') refuseInert(e.right, scopes, '`in` の右辺');
+          checkExpr(e.right, scopes, ctx);
+        }
         return;
       case 'new':
         checkTypeArgs(e.typeArgs);

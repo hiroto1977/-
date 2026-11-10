@@ -40478,3 +40478,5 @@ PROTECTED の 2026-08-22 の注記はこう書いている ——
 
 - **変異検査が 100% でも「識別子を外した」変異体は無い。** Stryker は `redactForMessage(msg, N)` を `msg` へ置き換える変異体を作らないので、`assistant.ts` の chatAll の伏字の合流点と system の `clampToCeiling` は 100% のまま**検査に無縛**だった (対照で初めて分かった)。共有レイヤをモックして伏字を通らない例外を投げる検査 (`assistantEnsembleRedaction.test.ts`) と、天井の位置が絵文字の system の検査を足した。他の `.mamori` の移植でも、**変異検査の後に「識別子を外す対照」を必ず回す**。
 - **Mamori の生成物は object literal を 1 行に畳む**ので、`ACTIONS` / `LIVE_READERS` のような表を**行頭の綴りで読む census** は黙って 0 件になる。MG-029 (`liveReaderIds`) と MG-030 (`actionKeysOf` / `actionEntries`) で 2 度踏んだ。直したのは深さ 0 のカンマで項を割る読み方で、読めない項は null (走査が鳴る)。次に表を持つファイルを移すときは、先に `grep -rn "ACTIONS\|LIVE_" src/**/__tests__` で行頭前提の読み手を探す。
+
+- **Mamori: 束縛の名前に予約語を置ける** (2026-11-10 · MG-060 で実測): `const in = 1;` / `const throw = 1;` / `const instanceof = 1;` を Mamori は受け、生成された TypeScript が構文エラーになって `tsc` が断つ (0.19 の記録にも同じ記述)。安全面の穴ではない (生成物は通らない) が、断りが M0 の位置つきでなく tsc の文面になる。直すなら束縛の名前 (const / let / 引数 / for / catch / 分割代入) を `RESERVED` で M0 に断る —— 既存の 41 本は予約語を名前に使っていないことを先に測ること。

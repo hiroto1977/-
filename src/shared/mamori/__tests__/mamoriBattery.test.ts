@@ -77,7 +77,7 @@ const STATIC_STATE = [
 const SYNTAX_ESCAPES = [
   'x as any', '<any>x', 'x!', 'x?.y', 'x?.[0]', 'x?.()', '...x', '[...x]', '{ ...x }', 'f(...x)', 'new Set(...x)', '{ a: 1, ...x }', '{ ...x, a: 1 }', '[...x.constructor]', '[...evil]', '{ ...x, __proto__: y }', 'x[0]', 'x["constructor"]', 'x[k]',
   '`a${x}b`', '`a`', 'tag`a`', 'async () => 1', 'await x', 'yield x', 'class A {}', 'new class {}', 'import("fs")', 'import.meta',
-  'new.target', 'delete x.y', 'void 0', 'typeof x', 'x in y', 'x instanceof y', 'x instanceof Function', 'x instanceof Error', 'x instanceof Error.constructor', 'x instanceof (a ? Error : Function)', 'x instanceof f()', 'x instanceof x', 'x instanceof "a"', '(1, 2)', 'x = 1', 'x += 1', 'x++', '++x',
+  'new.target', 'delete x.y', 'void 0', 'typeof x', 'x in y', "'constructor' in y", "'toString' in y", "'__proto__' in y", "'cons\\u0074ructor' in y", "k in y", "'a' in 'b' in y", "1 in y", 'x instanceof y', 'x instanceof Function', 'x instanceof Error', 'x instanceof Error.constructor', 'x instanceof (a ? Error : Function)', 'x instanceof f()', 'x instanceof x', 'x instanceof "a"', '(1, 2)', 'x = 1', 'x += 1', 'x++', '++x',
   'x ??= 1', 'x ||= 1', 'x &&= 1', '{ get a() { return 1; } }', '{ set a(v) {} }', '{ __proto__: x }', '{ "__proto__": x }',
   '{ constructor: x }', '{ [k]: 1 }', '{ a }', '{ a() { return 1; } }', '1n', '0o7', '0b1', '1_000', '.5', '5.', '1e3',
   'function () {}', 'function* () {}', '(function () { return this; })()', 'this', 'super.x', 'x => x', 'async x => x',

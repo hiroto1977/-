@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.28"
+    "version": "0.29"
   },
   "constructs": {
     "class": {
@@ -84,9 +84,10 @@
       "since": "0.16"
     },
     "in-op": {
-      "decision": "feature",
+      "decision": "added",
       "why": "鍵の在否を見る所で使う。",
-      "risk": "原型の鍵にも true を返す —— 自分の鍵を問うなら Object.hasOwn を先に選ぶ。"
+      "risk": "原型の鍵にも true を返す —— 自分の鍵を問うなら Object.hasOwn を先に選ぶ。",
+      "since": "0.29"
     },
     "destructure": {
       "decision": "added",
@@ -3587,6 +3588,64 @@
       "date": "2026-11-10",
       "features": [],
       "added": []
+    },
+    {
+      "id": "MG-060",
+      "date": "2026-11-10",
+      "kind": "feature",
+      "target": "in-op",
+      "pickedBy": "manual",
+      "version": "0.29",
+      "features": [
+        "in-op"
+      ],
+      "added": [
+        "in-op"
+      ],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "左辺を計算した鍵にする (`k in x` / `(k + 'a') in x` / 数 / 欄 / 呼び出し) で原型の名前 (constructor ほか) を実行時に探る",
+          "result": "refused"
+        },
+        {
+          "tried": "字面でも原型の名前 (`'constructor'` `'toString'` `'__proto__'` `Object.prototype` の全名と `prototype`、`\\u` の綴り違い) を左辺にして、どの物にも真と答えさせる",
+          "result": "refused"
+        },
+        {
+          "tried": "右辺に計算した鍵の添字の結果 (inert) を置いて、選んだ物の鍵の在否を探る",
+          "result": "refused"
+        },
+        {
+          "tried": "右辺を宣言していない名前・危ない口 (extern sink)・禁じたメンバ・`Object` / `Function` にする",
+          "result": "refused"
+        },
+        {
+          "tried": "`'a' in u` の結果の真偽を印つきの口 (sink) へ渡して、印の値の存在を使って印を偽造する",
+          "result": "refused"
+        },
+        {
+          "tried": "`in` を名前・欄の省略形・引数名・式の頭に置く (予約語を迂回する)",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 5,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/checker.ts",
+          "src/shared/mamori/emit.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 917,
+        "reason": "draft PR #917 に載せる",
+        "summary": "Mamori 0.29 に `'k' in x` を足した (判別付きの和の絞り込み `if ('tooLarge' in r)` に要る・selfAttestation.ts が使う)。`in` は原型の鎖をたどるので `'toString' in {}` も真になる —— 自分の鍵を問うなら Object.hasOwn が先で、`in` は左辺を字面の文字列だけにして足した: 計算した鍵・Object.prototype の名前 (実行系から導く) と prototype・FORBIDDEN_MEMBERS の名前は M0 で断り、右辺の inert は M6、右辺の他の検めは他の式と同じ。結果は真偽で印を運ばない。`in` は予約語。足す前に 6 通りで破り、すべて断られた。対照 5 方向 (左辺の字面制限・原型の名前の禁止・右辺の inert・emit の強さ・禁止一覧の導出) がそれぞれ狙った検査で鳴り、変異検査は差分の行で 100% (初回 96.30% の生存 1 件は、in 以外の右辺に inert 検めを掛ける変異で、比較・算術の右辺に inert を置く形が今までどおり通ることを留める検査で閉じた)。残した物: 左辺が Array / Function の原型の名前 (`'map' in x`) は通る・束縛の名前に予約語を置ける (`const in = 1;` も `const throw = 1;` と同じ・0.28 以前から) のは tsc が断つ。"
+      },
+      "deviation": "利用者が「1〜4 全て推奨される順番で行う」と指示した順 (2 番目) で、brief の順位 (secrets.ts の移植が先頭) ではなく依頼に従った。"
     }
   ]
 }
