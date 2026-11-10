@@ -3531,6 +3531,62 @@
         "summary": "Mamori 0.28 にモジュール直下の `let name: T = 初期値;` を足した (secrets / main / vault の購読の入れ物・書き込みの鎖・旗を持つ壁を移すために要る)。書けるのは自分のモジュールの let だけで、export できず、型の宣言が要り、印の型にできず、初期値は inert を運べず、代入は関数の中からだけ (inert の代入は断つ)。欄・添字への代入と書き換えるメソッドは今も断る。足す前に 9 通りで破り、すべて断られた。変異検査は差分の行で 100% (初回 95.65% の生存 3 件は、inert な module の const を初期値にする検査と、sink / mint を初期値に隠す検査で 1 件を閉じ、残る 2 件は定数の初期値と同じ理由の等価 (role の綴りと ctx の器) として理由つきの pragma にした)。"
       },
       "deviation": null
+    },
+    {
+      "id": "MG-059",
+      "kind": "port",
+      "target": "src/main/main.ts",
+      "pickedBy": "manual",
+      "version": "0.28",
+      "ported": [
+        "src/main/main.mamori"
+      ],
+      "rewrite": [
+        "as-cast",
+        "as-const",
+        "non-null",
+        "template"
+      ],
+      "probes": [
+        {
+          "tried": "main.mamori で ipcMain.handle の中から素の fetch / process.env を直に呼ぶ (host 壁を通さず外の名前を使う)",
+          "result": "refused"
+        },
+        {
+          "tried": "setWindowOpenHandler の中で印の無い文字列を openExternalVetted(target) へ渡す (arrow の引数の型を省く)",
+          "result": "refused"
+        },
+        {
+          "tried": "fetch:snapshot / action:invoke の表引き LIVE_FETCHERS[serviceId] を Mamori の中で計算した鍵の添字で書く (inert の結果を関数として呼ぶ)",
+          "result": "refused"
+        },
+        {
+          "tried": "authorizeInFlight (module の let) を別の module から use { authorizeInFlight } で引いて書き換える",
+          "result": "refused"
+        },
+        {
+          "tried": "app.whenReady().then の中の async arrow から fn という予約語を変数名にして呼ぶ",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 4,
+      "mutation": {
+        "files": [
+          "src/main/main.ts",
+          "src/main/mainHost.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 917,
+        "reason": "draft PR #917 に載せる",
+        "summary": "主プロセスの入口 src/main/main.ts をまるごと Mamori (main.mamori) へ移した (フルポート)。窓の隔離設定・権限の許可表・遷移の番人・IPC 15 本の口の判断 (本人確認・速度・払い出し・同時 1 つの認可・形の検め)・起動時の自己検算の扱いはすべて Mamori の側に残し、Mamori の extern pure にできない口 (process.env / __dirname / console / setTimeout / fetch / AbortSignal / 表の添字引き / electron の再輸出) だけを判断を持たない薄い壁 mainHost.ts へ閉じ込めた。0.28 の module-let を authorizeInFlight と windowPrefs に使った。fn を変数名にできない・template / as / void が無い・arrow の引数に印の型の注記が要る、の 3 点は書き直しで吸収。既存の検査 (mainWindow / mainIpc 170 件) は編集なしで緑。ソース文字列を読む census (userPresence / aiDefense / deadline / egressRedirect / selfAttestationWiring) は anchors を生成物の綴りへ、ablation 台帳 3 件 (T-215 / T-188 / T-218) は生成物の find へ直し、全 7 件が回帰検査で鳴ることを実測。変異検査は main.ts 605 変異体・mainHost.ts 35 変異体とも 100% (初回の生存 2 件は連結の断片で、確認に出す文を全文で留める検査で閉じ、断片を空文字にする対照が鳴ることを確かめた)。"
+      },
+      "deviation": "利用者が「全部移す（フルポート）」と明示して選び、brief の順位ではなく依頼に従った (main.ts は守りの壁の最後の大物で、module-let が入った 0.28 で初めて書ける)。",
+      "date": "2026-11-10",
+      "features": [],
+      "added": []
     }
   ]
 }
