@@ -15,11 +15,7 @@
 //! 元は TypeScript (835 行)。書き直したのは `as` / `as const` / `!` / template 文字列 / 配列の分割代入 / `void` / 分割代入の引数で、
 //! 組み上がる文字列・条件・順序は 1 字も変えていない。
 
-use type { ServiceId } from "../shared/serviceId";
-use type { OsOpResult, TokenSaveResult } from "../preload/bridgeTypes";
-use type { DesktopEraseReport } from "../shared/eraseReport";
 use type { WindowPrefs } from "./windowPrefs";
-use type { UpdateVerdict } from "../shared/updateCheck";
 use { evaluateUpdate, parseLatestRelease } from "../shared/updateCheck";
 use { externalUrlOrNull } from "../shared/externalUrlGate";
 use { outboundContentRefusal } from "../shared/outboundContentGate";

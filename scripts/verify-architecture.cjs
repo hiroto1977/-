@@ -739,7 +739,7 @@ const METRICS = [
     docPattern: /IPC ハンドラ数 \| (\d+) /,
     compute: () => {
       const src = readFileSafe(path.join(REPO_ROOT, 'src/main/main.ts'));
-      return countOccurrences(src, /^ipcMain\.handle\(/gm);
+      return countOccurrences(src, /^\s*ipcMain\.handle\(/gm);
     },
   },
   {

@@ -55,6 +55,7 @@
     "src/main/eraseAll.ts",
     "src/main/fileRequestGate.ts",
     "src/main/main.ts",
+    "src/main/mainHost.ts",
     "src/main/oauth.ts",
     "src/main/oauthHost.ts",
     "src/main/secrets.ts",

@@ -81,7 +81,7 @@
       "why": "主プロセスの action:invoke から出力インターセプター (本文の資格情報・個人番号の検め) の断りを外す",
       "edits": [
         {
-          "find": "    if (outbound !== null) return { ok: false, code: 'action_failed', message: outbound };\n",
+          "find": "  if (outbound !== null) return { ok: false, code: 'action_failed', message: outbound };\n",
           "replace": ""
         }
       ]
@@ -1565,8 +1565,8 @@
       "why": "action:invoke の入口で型付き配列・Map・Date の payload を断る isPlainPayload の門を外す —— 2,000 万要素の型付き配列で for…in が全キーを列挙し主プロセスが固まる穴を開け直す",
       "edits": [
         {
-          "find": "if (!isPlainPayload(payload)) {\n      return { ok: false, code: 'action_failed', message: '送る内容の形が正しくないため断りました。' };",
-          "replace": "if (false) {\n      return { ok: false, code: 'action_failed', message: '送る内容の形が正しくないため断りました。' };"
+          "find": "if (!isPlainPayload(payload)) return {",
+          "replace": "if (false) return {"
         }
       ]
     },
@@ -1793,8 +1793,8 @@
       "why": "梱包版の起動時に verifyShippedFiles を呼ぶ段を飛ばす —— 検算の関数が正しくても主プロセスが呼ばなければ改竄された梱包物がそのまま起動する穴を開け直す",
       "edits": [
         {
-          "find": "if (app.isPackaged) {\n    const verdict = await verifyShippedFiles",
-          "replace": "if (false) {\n    const verdict = await verifyShippedFiles"
+          "find": "if (app.isPackaged) {\n    const verdict = await hostVerifyShipped",
+          "replace": "if (false) {\n    const verdict = await hostVerifyShipped"
         }
       ]
     },

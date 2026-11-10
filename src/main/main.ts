@@ -19,11 +19,7 @@
  * 組み上がる文字列・条件・順序は 1 字も変えていない。
  */
 
-import type { ServiceId } from '../shared/serviceId';
-import type { OsOpResult, TokenSaveResult } from '../preload/bridgeTypes';
-import type { DesktopEraseReport } from '../shared/eraseReport';
 import type { WindowPrefs } from './windowPrefs';
-import type { UpdateVerdict } from '../shared/updateCheck';
 import { evaluateUpdate, parseLatestRelease } from '../shared/updateCheck';
 import { externalUrlOrNull } from '../shared/externalUrlGate';
 import { outboundContentRefusal } from '../shared/outboundContentGate';

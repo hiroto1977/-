@@ -58,6 +58,7 @@ const LEDGER: Readonly<Record<string, { kind: Kind; why: string }>> = {
   hostFetch: { kind: 'different', why: '薄い host 壁。main は oauthHost.ts・renderer は pkceHost.ts。どちらも判断を持たず、呼ぶ時点の fetch を転送に追随しない init で呼ぶだけ' },
   hostField: { kind: 'different', why: '薄い host 壁 (物の欄を 1 つ読むだけ)。renderer の proxyHost.ts と main の userPresenceHost.ts が同じ名前の口を持つが、判断は持たず、物であることは呼び手が先に確かめる (各本体は自分の壁しか import できない)' },
   hostNow: { kind: 'different', why: '薄い host 壁 (Date.now)。判断を持たない' },
+  hostSetTimeout: { kind: 'different', why: '薄い host 壁 (setTimeout)。main は mainHost.ts (relaunch の遅延)・renderer は autoLockHost.ts (自動施錠の締切) で、どちらも判断を持たず渡された関数を遅らせるだけ' },
   hostRandomBytes: { kind: 'different', why: '薄い host 壁 (OS の乱数)。main は node:crypto・renderer は WebCrypto で実体が別。判断を持たない' },
   hostSearchParams: { kind: 'different', why: '薄い host 壁 (URLSearchParams を作る)。判断を持たない' },
   hostSha256: { kind: 'different', why: '薄い host 壁 (SHA-256)。main は node:crypto・renderer は WebCrypto で実体が別。判断を持たない' },

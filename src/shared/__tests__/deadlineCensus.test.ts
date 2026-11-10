@@ -172,9 +172,14 @@ describe('通信の締切', () => {
   it('★ 更新確認は両ビルドが同じ締切の名前を読む (パス 282 の欠陥)', () => {
     const main = stripNonCode(readOriginalSource(join(REPO_ROOT, 'src/main/main.ts')));
     // 肯定形 —— 名前が消えれば必ず鳴る (「無いことの検査」だけにしない)。
+    // main.ts は 2026-11-10 (MG-059) から Mamori の生成物で、締切は壁 mainHost.ts の hostTimeoutSignal (AbortSignal.timeout) へ渡す。
     expect(main, 'main の更新確認が共有の締切を読んでいない').toContain(
-      'AbortSignal.timeout(DEFAULT_HTTP_TIMEOUT_MS)',
+      'hostTimeoutSignal(DEFAULT_HTTP_TIMEOUT_MS)',
     );
+    expect(
+      stripNonCode(readOriginalSource(join(REPO_ROOT, 'src/main/mainHost.ts'))),
+      '壁が締切の信号を作っていない',
+    ).toContain('AbortSignal.timeout(ms)');
     /*
      * **`timedFetch` の本体だけを見る。** (対照 D で分かったこと)
      *

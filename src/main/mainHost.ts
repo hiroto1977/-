@@ -12,7 +12,8 @@
  */
 import path from 'node:path';
 import { promises as fsPromises } from 'node:fs';
-import { app, nativeTheme, type IpcMainInvokeEvent } from 'electron';
+import { nativeTheme, type IpcMainInvokeEvent } from 'electron';
+import { egressInit } from '../shared/httpLimits';
 import { verifyShippedFiles, type AttestationVerdict } from './selfAttestation';
 import { getValidToken } from './secrets';
 import { LIVE_ACTIONS, LIVE_FETCHERS, type ServiceId } from './clients';
@@ -86,9 +87,9 @@ export function hostTimeoutSignal(ms: number): AbortSignal {
   return AbortSignal.timeout(ms);
 }
 
-/** 呼ぶ時点の `fetch` を呼ぶ (差し替えた物にも追随する)。転送に追随しない規則 (`egressInit`) は呼び手 (main.mamori) が掛ける。 */
+/** 呼ぶ時点の `fetch` を呼ぶ (差し替えた物にも追随する)。転送に追随しない規則 (`egressInit`) は壁でも掛ける (冪等 —— 呼び手 main.mamori も掛けるが、二重でも同じ init)。 */
 export function hostFetch(input: string, init: RequestInit): Promise<Response> {
-  return fetch(input, init);
+  return fetch(input, egressInit({ ...init }));
 }
 
 /** 本文を JSON として読む (呼び手が上限つきで読んだ文字列を渡す)。 */
