@@ -61,6 +61,7 @@ function mixesNullish(parent: string, child: Expr): boolean {
  * 同じく止まるので括らない (生成物の `if (i < n)` をそのままにする)。右辺は強さの比べが元から括る (関係演算子以下・矢印関数・条件式)。
  */
 function nested(e: Expr): string {
+  // Stryker disable next-line ConditionalExpression: `e.kind === 'binary'` は型の絞り込みのためだけに在る —— `op` を持つ式は 2 項と単項だけで、単項の `op` に `<` は無いので、種類を見なくても答えは同じ (等価)
   return e.kind === 'binary' && e.op === '<' ? `(${expr(e)})` : expr(e);
 }
 

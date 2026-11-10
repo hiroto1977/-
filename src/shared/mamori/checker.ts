@@ -482,8 +482,8 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     // 定数の初期値は役割を持たない。role は 'sink' / 'gate' との比べにしか使われないので、'plain' の綴りや
     // 器そのものを替えても答えは変わらない (等価) —— 答えは「定数の初期値からも参照できない」(M2) と
     // 「定数の初期値の奥 (配列の中)」が留める。
-    // Stryker disable next-line StringLiteral,ObjectLiteral: 上の注記のとおり等価 (role は 'sink' / 'gate' でないことだけを意味する)
     if (it.kind === 'const') {
+      // Stryker disable next-line StringLiteral,ObjectLiteral: 上の注記のとおり等価 (role は 'sink' / 'gate' でないことだけを意味する)
       checkExpr(it.init, [moduleScope], { role: 'plain', returnVetted: null, destVetted: null });
       checkSatisfies(it.satisfies);
     }

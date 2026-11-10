@@ -169,6 +169,51 @@ describe('T-260: 型の文法 (TypeScript の型の文法の部分集合)', () =
     // 引数の型・戻り値の型でも同じ文法
     expect(param('Map<string, { a: number }[]>')).toEqual([]);
     expect(ret('string | null')).toEqual([]);
+    // 先頭の `|` はどの位置でも書ける (type 宣言の外でも)・typeof の後ろの `[]`・省ける引数を持つ関数の型
+    expect(param('| "a" | "b"')).toEqual([]);
+    expect(param('Array<| "a" | "b">')).toEqual([]);
+    expect(param('typeof raw0[]')).toEqual([]);
+    expect(param('(a?: number) => void')).toEqual([]);
+    // 欄の名前としての readonly・文字列の欄に付く readonly
+    expect(param('{ readonly: string }')).toEqual([]);
+    expect(param('{ readonly "k": number }')).toEqual([]);
+    expect(param('{ readonly readonly: string }')).toEqual([]);
+  });
+
+  it('★ 断りは、どこで型として読めなくなったかを言う (理由の文を 1 つずつ留める)', () => {
+    const why = (t: string): string => param(t).join('\n');
+    const CASES: readonly (readonly [string, RegExp])[] = [
+      // 並びの残り
+      ['number string', /`string` から先が型に続きません/],
+      ['"x" is string', /`is` から先が型に続きません/],
+      // 記号が足りない
+      ['(a: number) x number', /`=>` が要ります/],
+      ['(a.b: number) => void', /`\)` が要ります/],
+      ['(a ? b) => void', /`\)` が要ります/],
+      ['("a": number) => void', /`\)` が要ります/],
+      ['{ a b: number }', /`:` が要ります/],
+      ['number[string]', /`\]` が要ります/],
+      // 名前が要る所
+      ['A."b"', /名前が要ります/],
+      ['(a: number, 1: number) => void', /名前が要ります/],
+      ['typeof', /名前が要ります/],
+      ['typeof 1', /名前が要ります/],
+      // 欄・組
+      ['{ 1: number }', /欄の名前が要ります/],
+      ['{ readonly }', /`:` が要ります/],
+      ['{ a: number b: string }', /欄の区切り `;` が要ります/],
+      ['[number string]', /組の区切り `,` が要ります/],
+      // 型が要る所
+      ['Array<>', /型が要ります/],
+      ['number |', /型が要ります/],
+      ['readonly', /型が要ります/],
+      ['keyof', /型が要ります/],
+      ['keyof |', /型が要ります/],
+    ];
+    for (const [t, re] of CASES) {
+      expect({ t, d: why(t) }).toEqual({ t, d: expect.stringMatching(NOT_A_TYPE) });
+      expect({ t, d: why(t) }).toEqual({ t, d: expect.stringMatching(re) });
+    }
   });
 
   it('★ 読めない並びは断る (式・2 つ目の束縛・TypeScript だけの型の形)', () => {
@@ -191,6 +236,9 @@ describe('T-260: 型の文法 (TypeScript の型の文法の部分集合)', () =
     expect(param('a is string').join('\n')).toMatch(NOT_A_TYPE);
     expect(decl('asserts a is string').join('\n')).toMatch(NOT_A_TYPE);
     expect(ret('string | a is string').join('\n')).toMatch(NOT_A_TYPE);
+    // 述語の対象は名前だけ (字面を置くと、型の残りとして断る)
+    expect(ret('"x" is string').join('\n')).toMatch(/`is` から先が型に続きません/);
+    expect(ret('1 is string').join('\n')).toMatch(/`is` から先が型に続きません/);
     // `asserts` という名前の型は型である (次が名前でなければ前置の語と読まない)
     expect(ret('asserts | null').filter((x) => /型の綴りが/.test(x))).toEqual([]);
   });

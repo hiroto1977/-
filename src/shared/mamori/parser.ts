@@ -346,14 +346,9 @@ export function parse(file: string, src: string): Module {
   const checkTypeShape = (parts: readonly Tok[], where: TypeWhere): void => {
     let i = 0;
     const bad = (why: string): never => fail(parts[Math.min(i, parts.length - 1)]!, `型の綴りが 1 つの型として読めません (${why}) —— 型の綴りは生成物へそのまま写るので、型として読めない並びは TypeScript が式や別の宣言として読みます (T-260)`);
-    const isPunctAt = (text: string, n = 0): boolean => {
-      const t = parts[i + n];
-      return t !== undefined && t.kind === 'punct' && t.text === text;
-    };
-    const isWordAt = (text: string, n = 0): boolean => {
-      const t = parts[i + n];
-      return t !== undefined && t.kind === 'ident' && t.text === text;
-    };
+    // 字句の綴りは種類ごとに重ならない (文字列は引用符つき・数は数字で始まる・記号と名前は別の字) ので、記号も語も**綴りだけ**で比べる。
+    const isPunctAt = (text: string, n = 0): boolean => parts[i + n]?.text === text;
+    const isWordAt = isPunctAt;
     const kindAt = (n = 0): TokKind | undefined => parts[i + n]?.kind;
     const eat = (text: string): void => {
       if (!isPunctAt(text)) bad(`\`${text}\` が要ります`);
@@ -363,8 +358,6 @@ export function parse(file: string, src: string): Module {
       if (kindAt() !== 'ident') bad('名前が要ります');
       i++;
     };
-    /** 型を始められる字句か (`readonly` / `keyof` が前置の語なのか、その名前の型なのかを見分ける)。 */
-    const startsType = (n: number): boolean => kindAt(n) === 'ident' || kindAt(n) === 'string' || kindAt(n) === 'number' || isPunctAt('{', n) || isPunctAt('[', n) || isPunctAt('(', n);
     const type = (): void => {
       if (isPunctAt('|')) i++;
       inter();
@@ -387,12 +380,13 @@ export function parse(file: string, src: string): Module {
       }
     };
     const prefix = (): void => {
-      if ((isWordAt('readonly') || isWordAt('keyof')) && startsType(1)) {
+      // `readonly` / `keyof` / `typeof` は型の位置では必ず前置の語 (その名前の型は書けない —— 後ろに型・名前が要る)。
+      if (isWordAt('readonly') || isWordAt('keyof')) {
         i++;
         prefix();
         return;
       }
-      if (isWordAt('typeof') && kindAt(1) === 'ident') {
+      if (isWordAt('typeof')) {
         i++;
         name();
         while (isPunctAt('.')) {
@@ -508,6 +502,7 @@ export function parse(file: string, src: string): Module {
   };
 
   /** 型の綴りを、深さ 0 の終端まで写す。 */
+  // Stryker disable next-line StringLiteral: 既定の 'decl' は「'return' でも 'expr' でもない」ことだけを意味する (checkTypeShape はその 2 つとしか比べない) ので、別の綴りにしても答えは変わらない (等価)
   const typeRef = (terminators: readonly string[], where: TypeWhere = 'decl'): TypeRef => {
     const start = peek();
     const parts: Tok[] = [];
