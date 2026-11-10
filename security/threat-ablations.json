@@ -1381,8 +1381,8 @@
       "why": "課金される egress の 1 時間・1 日の重みの予算の判定を無効にする (速度の上限ぎりぎりを守って静かに撃ち続ける攻撃者が止まらず、1 日で数万の重みが通る形へ戻す)",
       "edits": [
         {
-          "find": "    if (history.length + weight > perDay || lastHour + weight > perHour) {",
-          "replace": "    if (false) {"
+          "find": "    if (history.length + weight > perDay || lastHour + weight > perHour) return deny(",
+          "replace": "    if (false) return deny("
         }
       ]
     },
