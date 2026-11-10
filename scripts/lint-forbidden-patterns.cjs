@@ -124,7 +124,7 @@ const FORBIDDEN_PATTERNS = [
         // 保管層のモジュール。
         'src/renderer/security/vault.ts',
         'src/renderer/data/store.ts',
-        'src/renderer/network/proxy.ts',
+        'src/renderer/network/proxyHost.ts',
         'src/renderer/library/library.ts',
         'src/renderer/fs/fsa.ts',
         // **外から**保管領域を覗いて検証する道具 (アプリの層とは逆向き)。
@@ -1027,7 +1027,7 @@ const KNOWN_SUPPRESSIONS = [
   '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/data/store.ts :: 32',
   '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/fs/fsa.ts :: 8',
   '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/library/library.ts :: 14',
-  '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/network/proxy.ts :: 6',
+  '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/network/proxyHost.ts :: 6',
   // 2026-09-07: 13 → 12。届かない後追い診断 (`indexedDB.databases()` で
   // 削除を再確認していた) を消したので、直接触る箇所が 1 つ減った。
   '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/security/vault.ts :: 12',

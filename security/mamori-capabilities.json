@@ -98,6 +98,15 @@
       "gates": [],
       "sinks": []
     },
+    "src/renderer/network/proxy.mamori": {
+      "externals": [
+        "pure ../../shared/headerValue: isHeaderName, isHeaderValue, normalizeHeaderValue",
+        "pure ./proxyHost: hostReadStoredRecord, hostWriteStoredRecord, hostVaultUnlocked, hostAuthTag, hostVerifyAuthTag, hostField, hostFlattenHeaders, hostFetch, hostMakeResponse"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
     "src/renderer/oauth/pkce.mamori": {
       "externals": [
         "pure ./pkceHost: hostBtoa, hostRandomBytes, hostSha256, hostNow, hostFetch, hostSearchParams, hostWithTimeout"

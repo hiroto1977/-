@@ -54,7 +54,8 @@ const SITES: Readonly<Record<string, number>> = {
   'src/main/oauth.ts': 1,
   'src/main/oauthHost.ts': 1,
   'src/renderer/network/ollamaWeb.ts': 1,
-  'src/renderer/network/proxy.ts': 1,
+  // proxy.ts は 2026-11-10 (MG-055) に Mamori へ移り、fetch は壁 proxyHost.ts の hostFetch (egressInit を掛けて fetch を呼ぶ 1 か所) に集まった。
+  'src/renderer/network/proxyHost.ts': 1,
   'src/renderer/oauth/pkce.ts': 1,
   'src/renderer/oauth/pkceHost.ts': 1,
   'src/renderer/web-shim.ts': 2,

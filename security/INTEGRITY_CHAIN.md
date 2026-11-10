@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 493
+- ブロック数: 494
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `18f99d603104d86bb54f32fbbd218b56a99d69472403b78425edd5ba62f70961`
-- 保護対象: 209 ファイル
+- 末尾(tip)ハッシュ: `04a0cd42d0466134675345a98e4e941aa1b800708c88d243c6653e8c50fdb262`
+- 保護対象: 211 ファイル
 
 ## ブロック
 
@@ -506,6 +506,7 @@
 | 490 | `ea782457955e30c7` | `d5d354d9058959bd` | `25d021490720186e` | update integrity-chain.cjs,linkSpoof.ts |
 | 491 | `c629f39f1de4e998` | `25d021490720186e` | `a3f706d8c3785217` | update VettedLink.tsx,linkSpoof.ts |
 | 492 | `cf02e797ce1e2467` | `a3f706d8c3785217` | `18f99d603104d86b` | update VettedLink.tsx |
+| 493 | `dffd3a4bb35744b1` | `18f99d603104d86b` | `04a0cd42d0466134` | update integrity-chain.cjs,mamori-capabilities.json,proxy.mamori,proxy.ts,proxyHost.ts |
 
 ## 保護対象ファイル
 
@@ -614,7 +615,9 @@
 - `src/renderer/keyIntent.ts`
 - `src/renderer/network/liveRead.mamori`
 - `src/renderer/network/liveRead.ts`
+- `src/renderer/network/proxy.mamori`
 - `src/renderer/network/proxy.ts`
+- `src/renderer/network/proxyHost.ts`
 - `src/renderer/oauth/pkce.mamori`
 - `src/renderer/oauth/pkce.ts`
 - `src/renderer/oauth/pkceHost.ts`

@@ -265,11 +265,6 @@ const REVIEWED_VARIABLE_DESTINATIONS = [
       + ' —— 隣の salesforce 同期は最初から `base.origin` を使っており、'
       + ' 同じファイルの中で 2 つの枝の流儀が割れていた。',
   },
-  {
-    file: 'src/renderer/network/proxy.ts',
-    dest: 'proxyChecked.url',
-    guard: 'normalizeProxyEndpoint → shared/proxyEndpoint.ts。保存時・読み出し時・送信直前の 3 か所すべてで通す。http は loopback のみ (全サービスのトークンが乗るため)・userinfo 禁止・制御文字禁止・断片禁止。送るのは検証した正規化 href そのもの',
-  },
 ];
 
 /**

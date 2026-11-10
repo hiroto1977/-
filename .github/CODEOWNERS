@@ -150,6 +150,8 @@
 /src/main/oauthHost.ts @hiroto1977
 /src/main/userPresence.mamori @hiroto1977
 /src/main/userPresenceHost.ts @hiroto1977
+/src/renderer/network/proxy.mamori @hiroto1977
+/src/renderer/network/proxyHost.ts @hiroto1977
 /src/shared/privateTarget.mamori @hiroto1977
 /src/shared/scanTarget.mamori @hiroto1977
 /src/shared/scanTargetHost.ts @hiroto1977
