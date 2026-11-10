@@ -176,6 +176,8 @@ export type Item =
   /** `interface 名前 { 欄; … }` (0.2)。欄は `///` の説明・`readonly`・`?` を持てる。 */
   | { readonly kind: 'interface'; readonly exported: boolean; readonly name: string; readonly members: readonly Member[]; readonly doc: Doc; readonly pos: Pos }
   | { readonly kind: 'const'; readonly exported: boolean; readonly name: string; readonly type: TypeRef | null; readonly init: Expr; readonly doc: Doc; readonly pos: Pos }
+  /** モジュール直下の `let 名前: 型 = 初期値;` (0.28 · MG-058)。export できず、型の宣言が要る。書き換えられるのはこのモジュールの関数の中からだけ。 */
+  | { readonly kind: 'let'; readonly name: string; readonly type: TypeRef; readonly init: Expr; readonly doc: Doc; readonly pos: Pos }
   /**
    * `class N extends Error { constructor(引数) { super(式…); } }` (0.27 · MG-056)。**例外の型だけ** —— 基底は組み込みの `Error` ただ 1 つ・
    * 欄もメソッドも静的な物も持たず、`this` は書けない (変換が `this.name = 'N'` を付ける)。使い道は `new N(…)` と `x instanceof N` だけで、

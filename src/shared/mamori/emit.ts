@@ -254,6 +254,8 @@ function item(it: Item, vettedLabels: readonly string[], preludeDone: { value: b
       return [...docblock(it.doc), `${exp}interface ${it.name} {`, ...it.members.flatMap(member), '}'];
     case 'const':
       return [...docblock(it.doc), `${exp}const ${it.name}${it.type === null ? '' : `: ${it.type.text}`} = ${expr(it.init)};`];
+    case 'let':
+      return [...docblock(it.doc), `let ${it.name}: ${it.type.text} = ${expr(it.init)};`];
     case 'class':
       // `name` は常にクラスの名前で付ける —— 例外の名前で処理を分ける呼び手が、別の名前を名乗る例外に惑わされない (0.27)。
       return [

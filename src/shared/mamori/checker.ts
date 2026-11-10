@@ -237,6 +237,8 @@ interface Binding {
    * 変換後の `tsc` に任せていた —— Mamori の規則として断る (無い = 代入できない、で失敗は閉じる)。
    */
   readonly mutable?: boolean;
+  /** モジュール直下の `let` か (0.28 · MG-058)。関数の呼び出しをまたいで値を運ぶので、計算した鍵の値 (inert) を入れられない・印の型にできない。 */
+  readonly moduleLet?: boolean;
   /** 数と分かっている名前か (型の宣言が `number`・初期値が数の式)。添字の鍵に使える (0.8)。型の宣言は実行時には守られないので、生成物は鍵を数に寄せる。 */
   readonly numeric?: boolean;
   /**
@@ -360,6 +362,8 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       }
     } else if (it.kind === 'const') {
       declare(it.name, { vetted: null, authority: 'local', numeric: it.type?.text === 'number' || isNumericKey(it.init, []), inert: carriesInert(it.init, [moduleScope]) }, it.pos);
+    } else if (it.kind === 'let') {
+      declare(it.name, { vetted: null, authority: 'local', mutable: true, moduleLet: true, numeric: it.type.text === 'number', depth: 0 }, it.pos);
     } else if (it.kind === 'class') {
       declare(it.name, { vetted: null, authority: 'class' }, it.pos);
     } else if (it.kind === 'fn') {
@@ -442,6 +446,10 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     // 「定数の初期値の奥 (配列の中)」が留める。
     // Stryker disable next-line StringLiteral,ObjectLiteral: 上の注記のとおり等価 (role は 'sink' / 'gate' でないことだけを意味する)
     if (it.kind === 'const') checkExpr(it.init, [moduleScope], { role: 'plain', returnVetted: null, destVetted: null });
+    if (it.kind === 'let') {
+      checkModuleLet(it);
+      continue;
+    }
     if (it.kind === 'class') {
       checkClass(it);
       continue;
@@ -485,6 +493,22 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       if (p.init !== null) checkExpr(p.init, [moduleScope], ctx);
     }
     checkBlock(it.body, [moduleScope, scope], ctx);
+  }
+
+  /**
+   * モジュール直下の `let 名前: 型 = 初期値;` (0.28 · MG-058)。
+   * 関数の呼び出しをまたいで値を運ぶので、局所の `let` より厳しく絞る:
+   * - 印の型にできない —— 印は mint でだけ作る (宣言の初期値は mint を書けないので、印の型の let は M4 の洗浄か、読んだ側が印を名乗る穴になる)。
+   * - 初期値は、計算した鍵の添字の結果 (inert) を運べない —— 関数 A が入れた inert を関数 B が読む道は、本体を先頭から 1 度しか検めない検査が追えない (T-259 のモジュール版)。
+   * - export できない (parser が断る) ので、書き換えられるのはこのモジュールの関数の中だけ。
+   */
+  function checkModuleLet(it: Extract<Item, { readonly kind: 'let' }>): void {
+    const mark = carriedMark(it.type, table.vetted);
+    if (mark !== null) {
+      report('M4', it.pos, `モジュール直下の let ${it.name} は印 ${mark} の型にできません —— 印は mint でだけ作る値で、関数の呼び出しをまたいで運ぶと、印を作った関数の外で印を名乗る値が読めてしまう`);
+    }
+    refuseInert(it.init, [moduleScope], 'モジュール直下の let の初期値');
+    checkExpr(it.init, [moduleScope], { role: 'plain', returnVetted: null, destVetted: null });
   }
 
   /**
@@ -637,7 +661,12 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         }
         if (target.authority !== 'local') report('M6', s.pos, `外の名前 ${s.target} へは代入できません`);
         else if (target.mutable !== true) report('M6', s.pos, `${s.target} は let ではないので代入できません (const・引数・回す変数・関数の名前は書き換えない)`);
-        else {
+        else if (target.moduleLet === true) {
+          // モジュールの let は関数の呼び出しをまたぐので、inert の値を入れた先を別の関数が読む道を、入れる段で断つ (T-259 のモジュール版)。
+          if (carriesInert(s.value, scopes)) {
+            report('M6', s.pos, `モジュール直下の ${s.target} へ、計算した鍵の添字の結果を代入できません —— 別の関数が読むときには、その値が計算した鍵から来たことを検めに行けません`);
+          }
+        } else {
           // 宣言した場所がいまのループより浅い = ループの外の名前 (let は必ず depth を持つ)。
           if (target.inert !== true && target.depth! < loopDepth && carriesInert(s.value, scopes)) {
             report('M6', s.pos, `ループの外で宣言した ${s.target} へ、計算した鍵の添字の結果を代入できません —— 本体は先頭から 1 度しか検めないので、次の周の先頭の使い方 (呼び出し・メンバ・戻り値) が、この値を受けても検めた後になります (ループの中で宣言した名前に入れます)`);

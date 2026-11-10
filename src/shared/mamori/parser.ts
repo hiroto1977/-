@@ -1074,6 +1074,19 @@ export function parse(file: string, src: string): Module {
       next();
       return { kind: 'class', exported, name, params: ps, superArgs, doc, pos: t.pos };
     }
+    if (isW('let')) {
+      // モジュール直下の let (0.28 · MG-058)。状態を持つ変数は、このモジュールの中だけに閉じる —— export すると別のモジュールが書き換えられる (関門の判定が呼び出し側の都合で変わる)。
+      if (exported) fail(peek(), '`export let` は書けません —— モジュールの状態は他のモジュールから書き換えられると関門の判定が変わります (読み取りの関数を export します)');
+      next();
+      const name = ident();
+      if (!isP(':')) fail(peek(), `モジュール直下の \`let ${name}\` には型の宣言が要ります (\`let ${name}: 型 = 初期値;\`。在ったのは ${describe(peek())})`);
+      next();
+      const type = typeRef(['=']);
+      expectP('=');
+      const init = expr();
+      expectP(';');
+      return { kind: 'let', name, type, init, doc, pos: t.pos };
+    }
     if (isW('const')) {
       next();
       const name = ident();
@@ -1092,7 +1105,7 @@ export function parse(file: string, src: string): Module {
     let role: 'gate' | 'sink' | 'plain' = 'plain';
     if (isW('gate') || isW('sink')) role = next().text as 'gate' | 'sink';
     const isAsync = take('async');
-    if (!isW('fn')) fail(peek(), `項目が要ります —— use / extern / vetted / type / interface / class / const / fn (在ったのは ${describe(peek())})`);
+    if (!isW('fn')) fail(peek(), `項目が要ります —— use / extern / vetted / type / interface / class / const / let / fn (在ったのは ${describe(peek())})`);
     next();
     const name = ident();
     const typeParams = isP('<') ? typeParamList() : [];

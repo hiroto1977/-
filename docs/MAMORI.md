@@ -79,6 +79,23 @@ Mamori では、その 2 つは**書けない**:
 - **既知の差 (正直に)**: `(a?.b).c` は丸括弧を構文木に残さないので生成物は `a?.b.c` になる (`a` が null のとき `.c` を読む前に止まる —— 例外が減る向きで、印の流れには触れない)。
 - **この周で移せた壁は 0 本** (`optional-chain` だけで足りる壁が無い —— 足りない構文は他にも要る)。言語の幅を広げた周で、次は `index` の塞ぎ方 (字面の鍵は FORBIDDEN_MEMBERS を通し、字面でない鍵は数だけ) を決めてから足す。
 
+## 0.28 —— モジュール直下の `let name: T = 初期値;` を足した (MG-058 · 2026-11-10)
+
+購読の入れ物・共有の道・キャッシュ (`secrets.ts` の `writeChain` / `erasing`、`main.ts` の `authorizeInFlight` ほか) を持つ壁を移すための物。モジュールの状態は呼ばれた順で変わるので、共有の入れ物へ inert や印の無い値を入れて別の関数が読む道 (T-259 のモジュール版) が開く。そこで**書けるのは自分のモジュールの `let` だけ**に絞った。足す前に 12 通りで破った。
+
+| 破る形 | 結果 |
+| --- | --- |
+| ① `export let` (外から書き換えさせる) | 構文で断る |
+| ② 型を書かない `let x = 0;` | 構文で断る (型の宣言が要る) |
+| ③ 印の型 (vetted) の `let` | M4 で断る (印は `mint` でだけ作る) |
+| ④ 計算した鍵の添字の結果 (inert) を初期値にする | M6 で断る |
+| ⑤ 関数の中で inert を代入する | M6 で断る (通常の値は代入できる) |
+| ⑥ 欄・添字への代入・`push` など書き換えるメソッド | 断る (共有の入れ物は変えられない) |
+| ⑦ 他の Mamori の module から `use` で引く | M6 で断る |
+| ⑧ 二重宣言・局所の名前で隠す・`const` / 引数への代入 | M6 で断る |
+| ⑨ 初期値に宣言していない名前・危ない口 | 断る (plain の役) |
+| ⑩ `let Error` で `extends Error` の基底を隠す | M6 で断る |
+
 ## 0.27 —— 例外のクラス `class N extends Error { constructor(…) { super(…); } }` を足した (MG-056 · 2026-11-10)
 
 `Error` を継いだ例外の型 (`secrets.ts` の `SecretsStoreFullError` / `SecretsUnreadableError`・`vault.ts` の `NoRecoveryBranchError`・`webauthn.ts` の `BiometricVerificationUnimplementedError`・`selfAttestation.ts` の `TooManyFilesError`) を書くための物。`class` を一般に足すと、メソッドの中の `this`・private の欄・メソッドが gate / sink の役割を持つか、の 3 つの道が開く (台帳 `security/mamori-growth.json` の risk) ので、**例外の型だけ**に絞った。足す前に 14 通りで破った。
@@ -578,12 +595,12 @@ T-234 (`sinkTyped*` の文脈と印の型の判定)・T-232 (`RegExp.$1`)・`.co
 - 戦いのデータは `security/mamori-arena/corpus.json` に残し、`mamoriArena.test.ts` が毎回再生する (学習データ)。
 - 侵入役の新手を AI に書かせる段は、安全装置に止められた。迂回せず、新手は人が追加する (`*.attack.mamori`)。
 
-## 文法 (0.27)
+## 文法 (0.28)
 
 ```
 module    := header* item*
 header    := '//!' 行                         生成物の先頭の docblock になる
-item      := doc* ( use | reexport | extern | vetted | type | interface | class | const | fn )
+item      := doc* ( use | reexport | extern | vetted | type | interface | class | const | let | fn )
 doc       := '///' 行                         項目の docblock になる
 use       := 'use' 'type'? '{' ('type'? name ('alias' name)?) (',' …)* '}' 'from' 文字列 ';'   (名前ごとの `type` は 'use type' でないときだけ · 0.24)
            | 'use' 'default' name 'from' 文字列 ';'
@@ -595,6 +612,7 @@ type      := 'export'? 'type' 名前 '=' '|'? 型 ';'      先頭に | を書け
 interface := 'export'? 'interface' 名前 '{' (doc* 'readonly'? 名前 '?'? ':' 型 ';')* '}'
 class     := 'export'? 'class' 名前 'extends' 'Error' '{' 'constructor' '(' 引数* ')' '{' 'super' '(' 式* ')' ';' '}' '}'      (例外の型だけ · 欄もメソッドも `this` も無い · 他の module から `use` では引けない · 0.27)
 const     := 'export'? 'const' 名前 (':' 型)? '=' 式 ';'
+let       := 'let' 名前 ':' 型 '=' 式 ';'      (モジュール直下の状態 · export できない · 型が要る · 印の型は不可 · 代入は関数の中から · 欄・添字への代入と書き換えるメソッドは今も断る · 0.28)
 fn        := 'export'? ('gate' | 'sink')? 'async'? 'fn' 名前 ('<' 名前 (',' 名前)* '>')? '(' 引数* ')' '->' 型 ブロック   (型引数は plain の関数だけ・制約と既定の型は置けない · 0.23)
 引数      := 名前 '?'? (':' 型)? ('=' 式)?         (`?` には型が要り、既定値とは併せられない・`?` の後ろに `?` でも既定値つきでもない引数は置けない · 0.22)
 文        := ('const' | 'let') 名前 (':' 型)? ('=' 式)? ';' | 'return' 式? ';'
