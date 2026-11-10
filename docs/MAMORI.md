@@ -79,6 +79,30 @@ Mamori では、その 2 つは**書けない**:
 - **既知の差 (正直に)**: `(a?.b).c` は丸括弧を構文木に残さないので生成物は `a?.b.c` になる (`a` が null のとき `.c` を読む前に止まる —— 例外が減る向きで、印の流れには触れない)。
 - **この周で移せた壁は 0 本** (`optional-chain` だけで足りる壁が無い —— 足りない構文は他にも要る)。言語の幅を広げた周で、次は `index` の塞ぎ方 (字面の鍵は FORBIDDEN_MEMBERS を通し、字面でない鍵は数だけ) を決めてから足す。
 
+## 0.27 —— 例外のクラス `class N extends Error { constructor(…) { super(…); } }` を足した (MG-056 · 2026-11-10)
+
+`Error` を継いだ例外の型 (`secrets.ts` の `SecretsStoreFullError` / `SecretsUnreadableError`・`vault.ts` の `NoRecoveryBranchError`・`webauthn.ts` の `BiometricVerificationUnimplementedError`・`selfAttestation.ts` の `TooManyFilesError`) を書くための物。`class` を一般に足すと、メソッドの中の `this`・private の欄・メソッドが gate / sink の役割を持つか、の 3 つの道が開く (台帳 `security/mamori-growth.json` の risk) ので、**例外の型だけ**に絞った。足す前に 14 通りで破った。
+
+| 破る形 | 結果 |
+| --- | --- |
+| ① 基底が `Error` でない (`extends TypeError` / 自分のクラス / 基底なし) | 構文で断る (基底は組み込みの `Error` ただ 1 つ) |
+| ② メソッド・欄・静的なメンバ・getter・空の本体 | 構文で断る (中は `constructor(…) { super(…); }` の 1 つだけ) |
+| ③ constructor に `super` 以外の文 (`this.x = …` / `this.name = …` / `return`) | 構文で断る (`this` は無く、`name` は変換が付ける) |
+| ④ `N.captureStackTrace(x)` (継いだ `Error` の静的なメンバ) | M6 で断る (クラスは `new` と `instanceof` の相手にだけ) |
+| ⑤ `N` を値として持ち出す (代入・`typeof`・配列・条件・引数) | M6 で断る |
+| ⑥ `N(…)` を `new` なしで呼ぶ | M6 で断る |
+| ⑦ `Error` を `use` / 定数 / 関数で隠してから `extends Error` | M6 で断る (生成物の `extends Error` が別の物を指す) |
+| ⑧ `super(…)` の引数 / 既定値に宣言していない名前・危ない口・`mint` | 断る (他の関数と同じ plain の役) |
+| ⑨ 他の Mamori の module から `use { N }` で引く | M6 で断る (クラスは export の表に載らない · TypeScript の呼び手のための `export class`) |
+| ⑩ 分割代入 / 展開 / `?.` で `N` のメンバを取る | M6 で断る |
+| ⑪ `x instanceof N.y` | M6 で断る (右辺は名前だけ · `N` そのものは通る) |
+| ⑫ 同じ名前の宣言 / 局所の名前で隠す | M6 で断る |
+| ⑬ 関数の中で `class` を書く | 構文で断る (項目だけ) |
+| ⑭ `new N(…)` を印を受ける口へ渡す | M4 で断る (印を運ばない素の値) |
+
+- 変換は `export class N extends Error { constructor(引数) { super(…); this.name = 'N'; } }`。**`name` は常にクラスの名前**で付く (元の TypeScript は付けない例外もあるが、例外の名前で処理を分ける呼び手が別の名前を名乗る例外に惑わされない向き)。
+- 新しい規則は「クラスは例外の型だけ・`new` と `instanceof` の相手にだけ使える」の 1 つ。
+
 ## 0.26 —— 非同期の arrow `async (x) => …` / `async x => …` を足した (MG-053 · 2026-11-09)
 
 締切や直列化の中で走らせる閉包 (`userPresence.ts` の `createPresenceGate` の `async guard`) を書くための物。足す前に 8 通りで破った。
@@ -554,12 +578,12 @@ T-234 (`sinkTyped*` の文脈と印の型の判定)・T-232 (`RegExp.$1`)・`.co
 - 戦いのデータは `security/mamori-arena/corpus.json` に残し、`mamoriArena.test.ts` が毎回再生する (学習データ)。
 - 侵入役の新手を AI に書かせる段は、安全装置に止められた。迂回せず、新手は人が追加する (`*.attack.mamori`)。
 
-## 文法 (0.26)
+## 文法 (0.27)
 
 ```
 module    := header* item*
 header    := '//!' 行                         生成物の先頭の docblock になる
-item      := doc* ( use | reexport | extern | vetted | type | interface | const | fn )
+item      := doc* ( use | reexport | extern | vetted | type | interface | class | const | fn )
 doc       := '///' 行                         項目の docblock になる
 use       := 'use' 'type'? '{' ('type'? name ('alias' name)?) (',' …)* '}' 'from' 文字列 ';'   (名前ごとの `type` は 'use type' でないときだけ · 0.24)
            | 'use' 'default' name 'from' 文字列 ';'
@@ -569,6 +593,7 @@ extern    := 'extern' ('sink' | 'pure') '{' name (',' name)* '}' 'from' 文字�
 vetted    := 'export'? 'vetted' 名前 '=' 文字列 ';'
 type      := 'export'? 'type' 名前 '=' '|'? 型 ';'      先頭に | を書けば 1 行に 1 つずつ並べて写す
 interface := 'export'? 'interface' 名前 '{' (doc* 'readonly'? 名前 '?'? ':' 型 ';')* '}'
+class     := 'export'? 'class' 名前 'extends' 'Error' '{' 'constructor' '(' 引数* ')' '{' 'super' '(' 式* ')' ';' '}' '}'      (例外の型だけ · 欄もメソッドも `this` も無い · 他の module から `use` では引けない · 0.27)
 const     := 'export'? 'const' 名前 (':' 型)? '=' 式 ';'
 fn        := 'export'? ('gate' | 'sink')? 'async'? 'fn' 名前 ('<' 名前 (',' 名前)* '>')? '(' 引数* ')' '->' 型 ブロック   (型引数は plain の関数だけ・制約と既定の型は置けない · 0.23)
 引数      := 名前 '?'? (':' 型)? ('=' 式)?         (`?` には型が要り、既定値とは併せられない・`?` の後ろに `?` でも既定値つきでもない引数は置けない · 0.22)

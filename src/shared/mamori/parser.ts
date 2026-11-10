@@ -1050,6 +1050,30 @@ export function parse(file: string, src: string): Module {
       expectP('}');
       return { kind: 'interface', exported, name, members, doc, pos: t.pos };
     }
+    if (isW('class')) {
+      next();
+      const name = ident();
+      // 基底は組み込みの `Error` ただ 1 つ (0.27 · MG-056)。ほかの基底 (自分で作ったクラス・`use` した名前) は静的なメンバや原型を継がせる口になる。
+      if (!isW('extends')) fail(peek(), '`class` は `class 名前 extends Error { … }` の形だけです (例外の型だけ。基底の無いクラスは書けません)');
+      next();
+      const baseTok = peek();
+      const base = ident();
+      if (base !== 'Error') fail(baseTok, `\`extends ${base}\` は書けません —— クラスの基底は組み込みの \`Error\` だけです (ほかのクラスを継ぐと、その静的なメンバと原型まで継いで、使ってよいメンバの表を迂回できる)`);
+      expectP('{');
+      if (!isW('constructor')) fail(peek(), `クラスの中は \`constructor(…) { super(…); }\` の 1 つだけです (メソッド・欄・静的なメンバ・getter は書けません。在ったのは ${describe(peek())})`);
+      next();
+      const ps = params();
+      expectP('{');
+      if (!isW('super')) fail(peek(), `constructor の本体は \`super(…);\` の 1 文だけです (在ったのは ${describe(peek())})`);
+      next();
+      const superArgs = args();
+      expectP(';');
+      if (!isP('}')) fail(peek(), `constructor の本体は \`super(…);\` の 1 文だけです —— 欄への代入 (\`this.name = …\` を含む) は書けません (\`name\` は変換がクラスの名前で付けます。在ったのは ${describe(peek())})`);
+      next();
+      if (!isP('}')) fail(peek(), `クラスの中は \`constructor(…) { super(…); }\` の 1 つだけです (メソッド・欄・静的なメンバ・getter は書けません。在ったのは ${describe(peek())})`);
+      next();
+      return { kind: 'class', exported, name, params: ps, superArgs, doc, pos: t.pos };
+    }
     if (isW('const')) {
       next();
       const name = ident();
@@ -1068,7 +1092,7 @@ export function parse(file: string, src: string): Module {
     let role: 'gate' | 'sink' | 'plain' = 'plain';
     if (isW('gate') || isW('sink')) role = next().text as 'gate' | 'sink';
     const isAsync = take('async');
-    if (!isW('fn')) fail(peek(), `項目が要ります —— use / extern / vetted / type / interface / const / fn (在ったのは ${describe(peek())})`);
+    if (!isW('fn')) fail(peek(), `項目が要ります —— use / extern / vetted / type / interface / class / const / fn (在ったのは ${describe(peek())})`);
     next();
     const name = ident();
     const typeParams = isP('<') ? typeParamList() : [];
@@ -1103,6 +1127,8 @@ const RESERVED = new Set([
   'instanceof',
   // 0.19 (MG-036)
   'while',
+  // 0.27 (MG-056)
+  'class',
 ]);
 
 function describe(t: Tok): string {

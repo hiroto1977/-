@@ -7,8 +7,8 @@
   "constructs": {
     "class": {
       "decision": "feature",
-      "why": "クラスは守りの層の数本 (vault ほか) が使う。",
-      "risk": "メソッドの中の this・private の欄・メソッドに gate / sink の役割を持たせるか。役割を持たせるなら、メソッドの呼び出しも M4 で印を検める (今の M4 は名前で呼んだ関数しか見ない)。"
+      "why": "例外の型 (Error を継ぐ) が守りの層の数本 (secrets / vault / webauthn / selfAttestation) にある。",
+      "risk": "例外の型だけに絞る (基底は Error ただ 1 つ・constructor は super(…) の 1 文・this も欄もメソッドも無い・name は変換がクラスの名前で付ける)。クラスは new と instanceof の相手にだけ使える —— 値として持ち出す・メンバ・呼ぶ形は Error の静的なメンバ (captureStackTrace) へ届くので断る。他の Mamori の module から use では引けない。一般のクラス (this・private の欄・メソッドに gate / sink の役割) は今も足さない。"
     },
     "index": {
       "decision": "added",

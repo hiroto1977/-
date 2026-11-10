@@ -176,6 +176,22 @@ export type Item =
   /** `interface 名前 { 欄; … }` (0.2)。欄は `///` の説明・`readonly`・`?` を持てる。 */
   | { readonly kind: 'interface'; readonly exported: boolean; readonly name: string; readonly members: readonly Member[]; readonly doc: Doc; readonly pos: Pos }
   | { readonly kind: 'const'; readonly exported: boolean; readonly name: string; readonly type: TypeRef | null; readonly init: Expr; readonly doc: Doc; readonly pos: Pos }
+  /**
+   * `class N extends Error { constructor(引数) { super(式…); } }` (0.27 · MG-056)。**例外の型だけ** —— 基底は組み込みの `Error` ただ 1 つ・
+   * 欄もメソッドも静的な物も持たず、`this` は書けない (変換が `this.name = 'N'` を付ける)。使い道は `new N(…)` と `x instanceof N` だけで、
+   * `N` を値として持ち出す・`N.メンバ`・`N(…)` は断る (`N.captureStackTrace` のように `Error` の静的なメンバを継ぐ)。
+   * 他の Mamori の module から `use` では引けない (クラスは export の表に載らない) —— TypeScript の呼び手のための `export class` である。
+   */
+  | {
+      readonly kind: 'class';
+      readonly exported: boolean;
+      readonly name: string;
+      readonly params: readonly Param[];
+      /** `super(…)` の引数 (message など)。 */
+      readonly superArgs: readonly Expr[];
+      readonly doc: Doc;
+      readonly pos: Pos;
+    }
   | {
       readonly kind: 'fn';
       readonly exported: boolean;

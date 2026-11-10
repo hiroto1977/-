@@ -254,6 +254,17 @@ function item(it: Item, vettedLabels: readonly string[], preludeDone: { value: b
       return [...docblock(it.doc), `${exp}interface ${it.name} {`, ...it.members.flatMap(member), '}'];
     case 'const':
       return [...docblock(it.doc), `${exp}const ${it.name}${it.type === null ? '' : `: ${it.type.text}`} = ${expr(it.init)};`];
+    case 'class':
+      // `name` は常にクラスの名前で付ける —— 例外の名前で処理を分ける呼び手が、別の名前を名乗る例外に惑わされない (0.27)。
+      return [
+        ...docblock(it.doc),
+        `${exp}class ${it.name} extends Error {`,
+        `${IND}constructor(${it.params.map(param).join(', ')}) {`,
+        `${IND}${IND}super(${it.superArgs.map(expr).join(', ')});`,
+        `${IND}${IND}this.name = ${quote(it.name)};`,
+        `${IND}}`,
+        '}',
+      ];
     case 'fn': {
       const sig = `${exp}${it.async ? 'async ' : ''}function ${it.name}${it.typeParams.length === 0 ? '' : `<${it.typeParams.map((p) => p.name).join(', ')}>`}(${it.params.map(param).join(', ')}): ${it.returns.text} {`;
       return [...docblock(it.doc), sig, ...block(it.body, 1), '}'];

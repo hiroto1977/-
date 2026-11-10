@@ -16,7 +16,7 @@
  *
  * 誤りは全部集めて返す (構文と違い、来歴の誤りは互いに独立なので並べて見せる価値がある)。
  */
-import type { Expr, Module, Param, Pos, Stmt, TypeRef } from './ast';
+import type { Expr, Item, Module, Param, Pos, Stmt, TypeRef } from './ast';
 
 export interface MamoriDiagnostic {
   readonly file: string;
@@ -207,7 +207,8 @@ export function collectTable(modules: readonly { readonly file: string; readonly
     exports.set(file, names);
     for (const it of module.items) {
       // export の旗を持つのは名前のある宣言 (fn・const・type・interface・vetted) だけ —— use / extern は旗を持たず、`undefined` は export でない。
-      if ((it as { readonly exported?: boolean }).exported === true) names.add((it as { readonly name: string }).name);
+      // クラス (0.27) は載せない —— 他の Mamori の module から `use` で引けない (TypeScript の呼び手のための `export class`)。
+      if (it.kind !== 'class' && (it as { readonly exported?: boolean }).exported === true) names.add((it as { readonly name: string }).name);
       if (it.kind !== 'fn') continue;
       const sig: FnSignature = {
         module: file,
@@ -228,7 +229,8 @@ export function collectTable(modules: readonly { readonly file: string; readonly
 
 interface Binding {
   readonly vetted: string | null;
-  readonly authority: 'sink' | 'pure' | 'local';
+  /** `class` はこのモジュールで宣言した例外のクラス (0.27)。`new N(…)` と `x instanceof N` の相手にだけ使える。 */
+  readonly authority: 'sink' | 'pure' | 'local' | 'class';
   /**
    * 代入できるか。`let` だけが `true` を持ち、ほか (`const`・引数・回す変数・このモジュールの関数) は持たない
    * (2026-10-30 · パス 563)。0.1 は代入の相手が「このモジュールの名前か」しか見ておらず、`const` や引数への代入を
@@ -358,6 +360,8 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       }
     } else if (it.kind === 'const') {
       declare(it.name, { vetted: null, authority: 'local', numeric: it.type?.text === 'number' || isNumericKey(it.init, []), inert: carriesInert(it.init, [moduleScope]) }, it.pos);
+    } else if (it.kind === 'class') {
+      declare(it.name, { vetted: null, authority: 'class' }, it.pos);
     } else if (it.kind === 'fn') {
       declare(it.name, { vetted: null, authority: 'local' }, it.pos);
       localFns.set(it.name, table.fns.get(fnKey(file, it.name))!);
@@ -438,6 +442,10 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     // 「定数の初期値の奥 (配列の中)」が留める。
     // Stryker disable next-line StringLiteral,ObjectLiteral: 上の注記のとおり等価 (role は 'sink' / 'gate' でないことだけを意味する)
     if (it.kind === 'const') checkExpr(it.init, [moduleScope], { role: 'plain', returnVetted: null, destVetted: null });
+    if (it.kind === 'class') {
+      checkClass(it);
+      continue;
+    }
     if (it.kind !== 'fn') continue;
     const sig = localFns.get(it.name)!;
     // 型引数 (0.23) —— 印の名前を型引数に使うと、`u: VettedUrl` が型引数の方を指して、印を持たない値が印を名乗る引数に見える。
@@ -477,6 +485,31 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       if (p.init !== null) checkExpr(p.init, [moduleScope], ctx);
     }
     checkBlock(it.body, [moduleScope, scope], ctx);
+  }
+
+  /**
+   * 例外のクラス `class N extends Error { constructor(…) { super(…); } }` (0.27 · MG-056)。
+   * 構文は parser が (基底は `Error` だけ・欄もメソッドも `this` も無い) 絞ってある。検査器が見るのは次の 2 つ:
+   * - 基底の `Error` が、このモジュールの名前で隠れていないこと —— `use { X alias Error }` や定数 `Error` があると、生成物の
+   *   `extends Error` はそちらを指して、Mamori が検めていない基底を継ぐ。
+   * - 引数の既定値と `super(…)` の引数は式なので、**plain の役**で検める (宣言していない名前・危ない口・印の作成は他の関数と同じく断る)。
+   */
+  function checkClass(it: Extract<Item, { readonly kind: 'class' }>): void {
+    if (moduleScope.has('Error')) {
+      report('M6', it.pos, `クラス ${it.name} の基底の \`Error\` が、このモジュールの名前 (use・extern・定数・関数) で隠れています —— 生成物の \`extends Error\` はそちらを指します`);
+    }
+    // Stryker disable next-line StringLiteral,ObjectLiteral: 役は 'gate' / 'sink' と比べるだけで、'plain' の綴りや他の欄は gate / sink の枝の中でしか読まれない (等価)
+    const plain: Ctx = { role: 'plain', returnVetted: null, destVetted: null };
+    const scope = new Map<string, Binding>();
+    checkOptionalParams(it.params);
+    for (const p of it.params) {
+      bindLocal(scope, p.name, { vetted: carriedMark(p.type, table.vetted), authority: 'local', numeric: !p.optional && p.type?.text === 'number' }, p.pos);
+      if (p.init !== null) checkExpr(p.init, [moduleScope], plain);
+    }
+    for (const a of it.superArgs) {
+      refuseInert(a, [moduleScope, scope], '`super` の引数');
+      checkExpr(a, [moduleScope, scope], plain);
+    }
   }
 
   interface Ctx {
@@ -820,6 +853,10 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     // Stryker disable next-line ConditionalExpression: 型の絞り込みのためだけに在る —— member でない呼び出しは prop を持たず、次の行の MUTATING_METHODS.has(undefined) が false を返す (等価)
     const viaMember = callee.kind === 'member' ? callee : null;
     if (viaMember !== null && MUTATING_METHODS.has(viaMember.prop)) refuseSharedReceiver(viaMember.object, scopes, `\`.${viaMember.prop}(…)\``);
+    if (b?.authority === 'class') {
+      report('M6', head.pos, `クラス ${name} は \`new ${name}(…)\` と \`x instanceof ${name}\` の相手にだけ使えます —— 呼ぶ (\`${name}(…)\`)・メンバを呼ぶ (\`${name}.m(…)\`) 形は書けません (クラスを呼ぶと実行時に投げ、メンバは継いだ \`Error\` の静的なメンバへ届く)`);
+      return;
+    }
     if (callee.kind === 'ident') {
       // 名前を直に呼ぶ形: 宣言していない名前の検め (M6) だけを通す (印を受ける関数を呼ぶのは正しい使い方)。
       if (b === undefined && !isConstructibleBuiltin(callee, scopes)) checkExpr(callee, scopes, ctx);
@@ -845,7 +882,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     } else if (b.authority === 'sink') {
       report('M2', r.pos, `危ない口 ${r.name} (extern sink) は instanceof の右辺に置けません —— 危ない口は呼ぶ形でしか使えません`);
     } else if (b.authority === 'local') {
-      report('M6', r.pos, `instanceof の右辺は組み込みか宣言した外の名前だけです —— ${r.name} はこのモジュールの局所の名前で、実行時に計算した値かもしれません (組み込みの名前を局所の名前で隠した形も同じ)`);
+      report('M6', r.pos, `instanceof の右辺は組み込みか宣言した外の名前・このモジュールのクラスだけです —— ${r.name} はこのモジュールの局所の名前で、実行時に計算した値かもしれません (組み込みの名前を局所の名前で隠した形も同じ)`);
     }
   }
 
@@ -863,6 +900,10 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
           } else {
             report('M6', e.pos, `組み込みの ${e.name} は値として持ち出せません —— \`${e.name}.m(…)\` と直にメンバを使う形か、呼ぶ・構築する形だけです (\`Object.freeze(${e.name})\` で、アプリ全体の組み込みを凍らせる相手を選べてしまう)`);
           }
+          return;
+        }
+        if (b.authority === 'class') {
+          report('M6', e.pos, `クラス ${e.name} は \`new ${e.name}(…)\` と \`x instanceof ${e.name}\` の相手にだけ使えます —— 値として持ち出す・メンバを使う・呼ぶ形は書けません (\`${e.name}.captureStackTrace\` のように、継いだ \`Error\` の静的なメンバへ届く)`);
           return;
         }
         if (b.authority === 'sink') {
@@ -956,7 +997,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         }
         e.args.forEach((x) => refuseInert(x, scopes, '`new` の引数'));
         // 構築する形で名前を使うのは許す (`new RegExp(…)`)。値として持ち出す形は 'ident' の枝が断る。
-        if (!isConstructibleBuiltin(e.callee, scopes)) checkExpr(e.callee, scopes, ctx);
+        if (!isConstructibleBuiltin(e.callee, scopes) && bindingOf(e.callee, scopes)?.authority !== 'class') checkExpr(e.callee, scopes, ctx);
         e.args.forEach((x) => checkExpr(x, scopes, ctx));
         return;
       case 'arrow':
