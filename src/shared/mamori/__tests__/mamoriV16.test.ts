@@ -47,7 +47,7 @@ describe('0.16 instanceof (threat: T-224 の続き・M6 の右辺の検め)', ()
   });
 
   it('★ 右辺が局所の名前 (const / fn / 引数 / 組み込みを隠す名前 / catch の束縛) は断る', () => {
-    const LOCAL = /M6.*instanceof の右辺は組み込みか宣言した外の名前だけです/;
+    const LOCAL = /M6.*instanceof の右辺は組み込みか宣言した外の名前・このモジュールのクラスだけです/;
     expect(diag('const K = x0();\nfn x0() -> number { return 1; }\n' + fn('  return x instanceof K;')).join('\n')).toMatch(LOCAL);
     expect(diag(fn('  const K = x;\n  return x instanceof K;')).join('\n')).toMatch(LOCAL);
     expect(diag('fn mk() -> number { return 1; }\n' + fn('  return x instanceof mk;')).join('\n')).toMatch(LOCAL);
