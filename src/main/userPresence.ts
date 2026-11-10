@@ -46,7 +46,7 @@ import { clampToCeiling, moreThanChars } from '../shared/inputCeiling';
 import { fileRequestAllowed } from './fileRequestGate';
 import { CONFIRMED_TIERS } from '../shared/actionTier';
 import type { Tier } from '../shared/actionTier';
-import { hostNow, hostField, hostPrototypeKind, hostResolvePath } from './userPresenceHost';
+import { hostNow, hostField, hostHasPlainPrototype, hostResolvePath } from './userPresenceHost';
 
 export { ACTION_TIER, CONFIRMED_TIERS, OUTBOUND_TIERS, tierOfAction, type Tier } from '../shared/actionTier';
 
@@ -328,7 +328,7 @@ function keyLabel(k: string): string {
  */
 export function isPlainPayload(payload: unknown): boolean {
   if (payload === null || typeof payload !== 'object' || Array.isArray(payload)) return true;
-  return hostPrototypeKind(payload) !== 'other';
+  return hostHasPlainPrototype(payload);
 }
 
 /**
@@ -507,7 +507,7 @@ export function createPresenceGate(deps: PresenceDeps): PresenceGate {
 const ENDPOINT_FIELDS: readonly string[] = ['ollamaUrl', 'compatUrl'];
 
 /** 値が入っている (空でない文字列の) 欄だけを残す。 */
-function filledKeys(o: unknown, keys: readonly string[]): string[] {
+function filledKeys(o: object, keys: readonly string[]): string[] {
   return keys.filter((k) => typeof hostField(o, k) === 'string' && hostField(o, k) !== '');
 }
 

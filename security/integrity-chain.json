@@ -4115,6 +4115,14 @@
       "leafCount": 208,
       "note": "update userPresence.mamori,userPresence.ts",
       "hash": "3a8449dd56b593a969d3c1883710a40101bfa712049d70eab300bcfc8c4b4231"
+    },
+    {
+      "index": 488,
+      "prevHash": "3a8449dd56b593a969d3c1883710a40101bfa712049d70eab300bcfc8c4b4231",
+      "merkleRoot": "09bba92d794942c834e686ccb17976dac815ebafc6de1a8050f97d91ee8f7613",
+      "leafCount": 208,
+      "note": "update mamori-capabilities.json,userPresence.mamori,userPresence.ts,userPresenceHost.ts",
+      "hash": "66f6d8ee506f03f48c45f72ca415531c5b3dddccd327ee535d4b3fb2fe30811a"
     }
   ],
   "tipManifest": {
@@ -4180,7 +4188,7 @@
     "scripts/verify-e2e-playwright-pin.cjs": "417854f96cbaa4af4dd30a378b722b58093d56e78aa7eaba9bd17df412f57d45",
     "scripts/verify-packaged-fuses.cjs": "4162ab0e5d390c5cccf4cd8ac533027bd1d8a5cbceb0a069059d4f3800643d9f",
     "scripts/verify-release-artifacts.cjs": "1bd668bc052b476a9b3f976dc80ddf8faa4f080aed5617d354a8c7647ee9f557",
-    "security/mamori-capabilities.json": "8eb7cbe3534bf855eec0c24cfd148a033d294e2944b59d7deabb9c17e7f8b430",
+    "security/mamori-capabilities.json": "9a9fa2444fec85c8c2f95d8fc06dfab8c1482143d8248233462454f47f49cbc3",
     "src/main/atomicWrite.ts": "63b6ff1fb7d8990b76409c62556d69f99a14475f73662e89507e8899a32a9c3f",
     "src/main/clients/assistant.mamori": "2a929c90e2ce3c27eadb128f35ea8f09f065e8b657a6a06679c99128e7d93cbd",
     "src/main/clients/assistant.ts": "f4c1987f2333770647cf133b7815cbb57da0477d7ac2ffb9ce7cb757f035fe8a",
@@ -4204,9 +4212,9 @@
     "src/main/shellOpenGate.mamori": "e0a9c53ce86e9869d27730d84e452db31929c9b1f1be87ce522c0bbb67f5421a",
     "src/main/shellOpenGate.ts": "4612d8cc9c61827225a11b61dbdfff4f200bb28524eb86dd1ba471a471b645c9",
     "src/main/stateFile.ts": "984eebe8582b3c6c88669d17e778932f6b87a682640d1f162acd182d5947169b",
-    "src/main/userPresence.mamori": "c359a4c1fb74c1d63533cb89e7fc696a7f430f3124efd7fd687299d58b06aab2",
-    "src/main/userPresence.ts": "85ee09a14783b7c17f8a9e9bdcc99e4922d55c55fb71d91515728233cf5e05d0",
-    "src/main/userPresenceHost.ts": "95ba85cbbff976f35b8b131cc36c348a27e52ac773c787a791a2a06cc0753879",
+    "src/main/userPresence.mamori": "61357cbfe8ede02f0854915dd5fb6f27381e7f3ffb96510a9cf62b831ca378c3",
+    "src/main/userPresence.ts": "9331e8d982a4955a764012fda75e4b442f7d2204022c98914d3742f130f684c5",
+    "src/main/userPresenceHost.ts": "fedba3931769ba1e1d054d9dfcde6f72cd3c9a01f2de6354704b939d36d94983",
     "src/main/windowOpen.ts": "cf4fd5bdd9d04d9468dbc308cb979f09f946d237ec0e0ac033c83d87b9cfbf79",
     "src/main/windowPrefs.ts": "0bccea9e29b489da1b4a7962eaa53e237cf93fed9d4692371a3a43a6a4985dee",
     "src/preload/bridgeTypes.ts": "c45b51269fc6297e30b82c70d9eac2f92b25c6cd0d4b4b9a5993d3a1676d4b66",

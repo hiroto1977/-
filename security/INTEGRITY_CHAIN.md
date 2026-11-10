@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 488
+- ブロック数: 489
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `3a8449dd56b593a969d3c1883710a40101bfa712049d70eab300bcfc8c4b4231`
+- 末尾(tip)ハッシュ: `66f6d8ee506f03f48c45f72ca415531c5b3dddccd327ee535d4b3fb2fe30811a`
 - 保護対象: 208 ファイル
 
 ## ブロック
@@ -501,6 +501,7 @@
 | 485 | `1e4f81a2eacac659` | `6997d6e4f86d8b31` | `9cae5cdf2c5491ac` | update mamori-capabilities.json,ast.ts,emit.ts,parser.ts |
 | 486 | `a78affd0eeef5c5d` | `9cae5cdf2c5491ac` | `13278eb9f1589f17` | update integrity-chain.cjs,mamori-capabilities.json,userPresence.mamori,userPresence.ts,userPresenceHost.ts |
 | 487 | `2ff4657ed7b08d68` | `13278eb9f1589f17` | `3a8449dd56b593a9` | update userPresence.mamori,userPresence.ts |
+| 488 | `09bba92d794942c8` | `3a8449dd56b593a9` | `66f6d8ee506f03f4` | update mamori-capabilities.json,userPresence.mamori,userPresence.ts,userPresenceHost.ts |
 
 ## 保護対象ファイル
 

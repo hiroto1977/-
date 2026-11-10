@@ -69,7 +69,7 @@
     },
     "src/main/userPresence.mamori": {
       "externals": [
-        "pure ./userPresenceHost: hostNow, hostField, hostPrototypeKind, hostResolvePath"
+        "pure ./userPresenceHost: hostNow, hostField, hostHasPlainPrototype, hostResolvePath"
       ],
       "imports": [],
       "gates": [],

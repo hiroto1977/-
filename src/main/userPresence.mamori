@@ -42,7 +42,7 @@ use { clampToCeiling, moreThanChars } from "../shared/inputCeiling";
 use { fileRequestAllowed } from "./fileRequestGate";
 use { CONFIRMED_TIERS } from "../shared/actionTier";
 use type { Tier } from "../shared/actionTier";
-extern pure { hostNow, hostField, hostPrototypeKind, hostResolvePath } from "./userPresenceHost";
+extern pure { hostNow, hostField, hostHasPlainPrototype, hostResolvePath } from "./userPresenceHost";
 
 // 段階の台帳は 2026-10-29 (パス 552 · threat: T-215) に `shared/actionTier` へ移した ——
 // 出力インターセプター (`outboundContentGate`) が両ビルドで同じ台帳を読むため。
@@ -344,7 +344,7 @@ export fn isPlainPayload(payload: unknown) -> boolean {
   if (payload === null || typeof payload !== 'object' || Array.isArray(payload)) {
     return true;
   }
-  return hostPrototypeKind(payload) !== 'other';
+  return hostHasPlainPrototype(payload);
 }
 
 /// **欄が多すぎる payload か** (T-156)。確認のダイアログが値を見せるのは先頭 `MAX_FIELDS_SHOWN` 欄だけで、
@@ -554,7 +554,7 @@ export fn createPresenceGate(deps: PresenceDeps) -> PresenceGate {
 const ENDPOINT_FIELDS: readonly string[] = ['ollamaUrl', 'compatUrl'];
 
 /// 値が入っている (空でない文字列の) 欄だけを残す。
-fn filledKeys(o: unknown, keys: readonly string[]) -> string[] {
+fn filledKeys(o: object, keys: readonly string[]) -> string[] {
   return keys.filter((k) => typeof hostField(o, k) === 'string' && hostField(o, k) !== '');
 }
 
