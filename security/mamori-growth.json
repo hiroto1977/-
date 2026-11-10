@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.27"
+    "version": "0.28"
   },
   "constructs": {
     "class": {
@@ -3458,6 +3458,77 @@
         "pr": 917,
         "reason": "draft PR #917 に載せる",
         "summary": "生体認証ゲート webauthn.ts (登録のオプション組み立て・base64url の置換・プラットフォーム認証器の有無・fail-closed の verifyBiometric とそのエラー型) を Mamori 0.27 へ移した。MG-056 で足したエラーのクラスを BiometricVerificationUnimplementedError に使う初の移植。乱数・btoa/atob・TextEncoder・navigator.credentials.create・window.PublicKeyCredential は判断を持たない薄い壁 webauthnHost.ts に閉じ込め、credentials.get はどこにも置かない (検証が未実装のため認証器を呼ぶ口を作らない)。既存の 28 件の検査は 1 字も編集せず通り、差は window の判定を host へ移した点と、キャンセルを null で返す点 (元は falsy 判定) だけ。変異検査は両ファイル 100% (初回 94.59% の生存 4 件は、window / PublicKeyCredential の有無の 3 条件を host 側で直接留める検査と、try/catch が吸収する門の等価変異 (理由つき pragma) で閉じた)。"
+      },
+      "deviation": null
+    },
+    {
+      "id": "MG-058",
+      "date": "2026-11-10",
+      "kind": "feature",
+      "target": "module-let",
+      "pickedBy": "brief",
+      "briefPick": "feature:module-let",
+      "version": "0.28",
+      "features": [
+        "module-let"
+      ],
+      "added": [
+        "module-let"
+      ],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "`export let x: number = 0;` で他の module / 外から書き換えられる状態を公開する",
+          "result": "refused"
+        },
+        {
+          "tried": "型の宣言の無い `let x = 0;` (型を推論に任せて型の綴りの検めを外す)",
+          "result": "refused"
+        },
+        {
+          "tried": "印の型の let (`let u: VU | null = null;`) で関数をまたいで印の付いた値を運ぶ",
+          "result": "refused"
+        },
+        {
+          "tried": "初期値・代入に計算した鍵の添字の結果 (inert) を入れて別の関数に読ませる (T-259 のモジュール版)",
+          "result": "refused"
+        },
+        {
+          "tried": "module の let を欄・添字への代入や push / sort などの書き換えるメソッドで共有の入れ物として書き換える",
+          "result": "refused"
+        },
+        {
+          "tried": "別の Mamori の module から `use { count }` で let を引いて書き換える",
+          "result": "refused"
+        },
+        {
+          "tried": "二重宣言・局所の名前で隠す・const / 引数 / 関数名への代入",
+          "result": "refused"
+        },
+        {
+          "tried": "初期値に宣言していない名前・sink の呼び出し・mint を隠す",
+          "result": "refused"
+        },
+        {
+          "tried": "`let Error: …` で `extends Error` の基底を隠して例外のクラスの継ぎ先を差し替える",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 3,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/checker.ts",
+          "src/shared/mamori/emit.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 917,
+        "reason": "draft PR #917 に載せる",
+        "summary": "Mamori 0.28 にモジュール直下の `let name: T = 初期値;` を足した (secrets / main / vault の購読の入れ物・書き込みの鎖・旗を持つ壁を移すために要る)。書けるのは自分のモジュールの let だけで、export できず、型の宣言が要り、印の型にできず、初期値は inert を運べず、代入は関数の中からだけ (inert の代入は断つ)。欄・添字への代入と書き換えるメソッドは今も断る。足す前に 9 通りで破り、すべて断られた。変異検査は差分の行で 100% (初回 95.65% の生存 3 件は、inert な module の const を初期値にする検査と、sink / mint を初期値に隠す検査で 1 件を閉じ、残る 2 件は定数の初期値と同じ理由の等価 (role の綴りと ctx の器) として理由つきの pragma にした)。"
       },
       "deviation": null
     }

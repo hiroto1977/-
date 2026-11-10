@@ -508,6 +508,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       report('M4', it.pos, `モジュール直下の let ${it.name} は印 ${mark} の型にできません —— 印は mint でだけ作る値で、関数の呼び出しをまたいで運ぶと、印を作った関数の外で印を名乗る値が読めてしまう`);
     }
     refuseInert(it.init, [moduleScope], 'モジュール直下の let の初期値');
+    // Stryker disable next-line StringLiteral,ObjectLiteral: 定数の初期値 (448 行) と同じ理由で等価 —— role は 'sink' / 'gate' との比べにしか使われず、returnVetted / destVetted は gate・sink の枝の中でしか読まれない
     checkExpr(it.init, [moduleScope], { role: 'plain', returnVetted: null, destVetted: null });
   }
 

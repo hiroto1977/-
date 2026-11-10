@@ -83,6 +83,19 @@ describe('0.28: 先に破った形', () => {
     expect(t).toContain('モジュール直下の let の初期値');
   });
 
+  it('④b 初期値が inert な module の const でも断る (名前を読む段で scope を引く)', () => {
+    const t = text(TABLE + 'const PICK = T[IDX];\nlet pick: string = PICK;\n');
+    expect(t).toContain('M6 計算した鍵の添字の結果は');
+    expect(t).toContain('モジュール直下の let の初期値');
+  });
+
+  it('⑨b 初期値は plain の役 —— 危ない口 (sink) の呼び出し・mint を隠せない', () => {
+    const sink = text('extern sink { shell } from "electron";\nlet n: number = shell.beep();\n');
+    expect(sink).toContain('shell');
+    const minted = text('export vetted VU = "u";\nlet s: string = mint VU("x");\n');
+    expect(minted).toContain('VU');
+  });
+
   it('⑤ 関数の中から inert を代入して別の関数に読ませる道は、入れる段で断つ', () => {
     const t = text(
       TABLE +
