@@ -3270,6 +3270,64 @@
         "summary": "画面から独立した本人確認の門 userPresence.ts (541 行) を Mamori 0.26 へ移した。時計・原型の読み・path.resolve・欄の読みは判断を持たない薄い壁 userPresenceHost.ts に閉じ込め、速度・費用の予算・警戒・ロックアウト・要約の整え・payload の見せ方・信頼できる呼び出し元の判断は全部 Mamori に残した。文字列の鍵の添字は Map へ、push / shift は let の配列の組み直しへ、複合代入・template・c-for・入れ子の関数は書き直した。元の TypeScript と、4000 本の乱数入力 + 300 本 × 120 手の状態遷移で差分比較し一致。唯一の差は知らない段階の速度の上限で、元は NaN と比べて通す側に倒れていたのを上限 0 の断る側 (fail closed) にした。変異検査は両ファイル 100% (初回の生存 3 + host 6 は shrunk の共通化・冗長な判定の除去・警戒中の 1 日の予算の検査で閉じた)。対照は ablation 台帳の 11 行 (A-009 ほか) を生成物の文面へ書き直し、すべて捕まえた。"
       },
       "deviation": null
+    },
+    {
+      "id": "MG-055",
+      "date": "2026-11-10",
+      "kind": "port",
+      "target": "src/renderer/network/proxy.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/renderer/network/proxy.ts",
+      "version": "0.26",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "as-cast",
+        "template",
+        "non-null",
+        "c-for",
+        "compound-assign"
+      ],
+      "ported": [
+        "src/renderer/network/proxy.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "ヘッダの辞書へ headers[name] = value と添字で代入する (移植で実際に当たった —— Map + Object.fromEntries へ)",
+          "result": "refused"
+        },
+        {
+          "tried": "`JSON.parse(text) as Envelope` で封筒を型へ読み替える",
+          "result": "refused"
+        },
+        {
+          "tried": "`new URL(targetUrl)` を宣言せずに呼ぶ (host 壁の外から)",
+          "result": "refused"
+        },
+        {
+          "tried": "`indexedDB.open(...)` / `crypto.subtle` / `fetch` を宣言せずに使う",
+          "result": "refused"
+        },
+        {
+          "tried": "ヘッダ名 `__proto__` を Map 経由で本物の欄にする (移植で実際に当たった —— 明示的に落とす)",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 10,
+      "mutation": {
+        "files": [
+          "src/renderer/network/proxy.ts",
+          "src/renderer/network/proxyHost.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 917,
+        "reason": "draft PR #917 に載せる",
+        "summary": "BYO プロキシの判断 proxy.ts (宛先の検査・平文 http / userinfo / ポートの拒否・封筒の解析・保存時 MAC の 3 状態・転送への非追随・応答サイズの上限・失敗本文の伏字) を Mamori 0.26 へ移した。IndexedDB・fetch・Response・Headers・保管庫の認証タグは判断を持たない薄い壁 proxyHost.ts に閉じ込めた。既存の 485 件の検査は 1 字も編集せず通り、元の実装と差分比較して一致。違いは封筒のヘッダ名 __proto__ を Map 経由で本物の欄にせず明示的に落とす点だけ (元は代入が原型に当たり無害だった)。変異検査は両ファイル 100% (初回 96.39% の生存 9 件は __proto__・userinfo の片方だけ・プロキシへ送るヘッダ・モジュール直下の値 (未検証の文・MAC の用途名・null body status) を読み直して主張する検査で閉じた)。"
+      },
+      "deviation": null
     }
   ]
 }
