@@ -17,6 +17,8 @@ const BANNED_MEMBERS = new Set([
   // 値から原型・コンストラクタ・getter の定義へ届く名前 (どの値の上でも成らない)。Object / RegExp / Error / URL の静的メンバは基準の名前で別に見る。
   'constructor', 'prototype', '__proto__', '__defineGetter__', '__defineSetter__', '__lookupGetter__', '__lookupSetter__',
 ]);
+/** 印の型の値しか受けない口の名前 (電池の前置きの `openUrl` と、複数ファイルの環境の `open2`)。 */
+const SINK_NAMES = new Set(['openUrl', 'open2']);
 const REGEXP_STATICS = /^(\$[1-9_&`'+]?|lastMatch|lastParen|leftContext|rightContext|input)$/;
 
 export interface Finding {
@@ -205,18 +207,88 @@ export function inspectEmitted(file: string, text: string, externGlobals: Readon
     }
     earlierInterfaces.add(c.name.text);
   });
+  /**
+   * 名前 `name` を束ねた引数が、arrow / 関数式の引数か (2026-11-11 · T-261)。印の型で宣言されていても、arrow は値なので
+   * 呼ぶ側の引数を誰も検めない —— `((u: VU) => openUrl(u))(JSON.parse(raw))`。0.31 までこの物差しは「印の型で宣言された名前」
+   * なら通しており、電池は `xs.map((u: VU) => openUrl(u))` を受け入れても穴と数えなかった (物差しが穴と同じ前提に立っていた)。
+   */
+  const boundByArrowParam = (name: string, from: ts.Node): boolean => {
+    for (let p: ts.Node | undefined = from; p; p = p.parent) {
+      if (!ts.isFunctionLike(p)) continue;
+      for (const prm of (p as ts.SignatureDeclaration).parameters) {
+        if (ts.isIdentifier(prm.name) && prm.name.text === name) return ts.isArrowFunction(p) || ts.isFunctionExpression(p);
+      }
+    }
+    return false;
+  };
   const sinkCalls = (n: ts.Node): void => {
-    if (ts.isCallExpression(n) && ts.isIdentifier(n.expression) && n.expression.text === 'openUrl') {
+    // `open2` は電池の複数ファイルの環境が別の module に置く口 (T-262: 引き方を変えて外形の検めを外す形を見る)
+    if (ts.isCallExpression(n) && ts.isIdentifier(n.expression) && SINK_NAMES.has(n.expression.text)) {
+      const sink = n.expression.text;
       const a = n.arguments[0];
-      if (a === undefined || !ts.isIdentifier(a)) found.push({ kind: 'hole', reason: 'openUrl へ名前でない値を渡している' });
+      if (a === undefined || !ts.isIdentifier(a)) found.push({ kind: 'hole', reason: `${sink} へ名前でない値を渡している` });
       else {
         const t = typeOf(a.text, n);
-        if (t === null || !markOnly(t)) found.push({ kind: 'hole', reason: `openUrl へ印の型でない値 (${a.text}: ${t ?? '型なし'}) を渡している` });
+        if (t === null || !markOnly(t)) found.push({ kind: 'hole', reason: `${sink} へ印の型でない値 (${a.text}: ${t ?? '型なし'}) を渡している` });
+        else if (boundByArrowParam(a.text, n)) found.push({ kind: 'hole', reason: `${sink} へ arrow の引数 ${a.text} を渡している (arrow を呼ぶ側の引数は検められない · T-261)` });
       }
     }
     ts.forEachChild(n, sinkCalls);
   };
   sinkCalls(sf);
+
+  // 印の型の引数は既定値を持たない (2026-11-11 · T-263): 呼び手が省くと、既定値の式の値が関門を通らずに印の型で入る
+  const markDefaults = (n: ts.Node): void => {
+    if (ts.isParameter(n) && n.initializer !== undefined && n.type !== undefined && markOnly(n.type.getText(sf))) {
+      found.push({ kind: 'hole', reason: `印の型の引数 ${n.name.getText(sf)} が既定値を持つ (T-263)` });
+    }
+    ts.forEachChild(n, markDefaults);
+  };
+  markDefaults(sf);
+
+  // 印の型を返す関数 (gate) の戻り値は、印を付ける式 (`式 as 印`)・印を持つ名前・同じ file の印を返す関数の呼び出し・null / undefined だけ (T-263)
+  const markReturning = new Set<string>();
+  const returnMark = (fn: ts.FunctionDeclaration): boolean => {
+    const t = fn.type?.getText(sf) ?? '';
+    const inner = /^Promise<(.*)>$/.exec(t);
+    return markOnly(inner ? inner[1]! : t);
+  };
+  sf.forEachChild((c) => {
+    if (ts.isFunctionDeclaration(c) && c.name && returnMark(c)) markReturning.add(c.name.text);
+  });
+  const carries = (e: ts.Expression, depth: number): boolean => {
+    if (ts.isParenthesizedExpression(e)) return carries(e.expression, depth);
+    if (ts.isAwaitExpression(e)) return carries(e.expression, depth);
+    if (e.kind === ts.SyntaxKind.NullKeyword || (ts.isIdentifier(e) && e.text === 'undefined')) return true;
+    if (ts.isAsExpression(e)) return markOnly(e.type.getText(sf));
+    if (ts.isConditionalExpression(e)) return carries(e.whenTrue, depth) && carries(e.whenFalse, depth);
+    if (ts.isCallExpression(e)) return ts.isIdentifier(e.expression) && markReturning.has(e.expression.text);
+    if (ts.isIdentifier(e)) {
+      const t = typeOf(e.text, e);
+      if (t !== null) return markOnly(t) && !boundByArrowParam(e.text, e);
+      // 型を書いていない束縛: 初期値が印を持つ式なら可 (1 段だけ辿る)
+      if (depth > 0) return false;
+      let init: ts.Expression | undefined;
+      const find = (n: ts.Node): void => {
+        if (ts.isVariableDeclaration(n) && ts.isIdentifier(n.name) && n.name.text === e.text && n.initializer !== undefined) init = n.initializer;
+        ts.forEachChild(n, find);
+      };
+      find(sf);
+      return init !== undefined && carries(init, depth + 1);
+    }
+    return false;
+  };
+  sf.forEachChild((c) => {
+    if (!ts.isFunctionDeclaration(c) || c.body === undefined || !returnMark(c)) return;
+    const returns = (n: ts.Node): void => {
+      if (ts.isFunctionLike(n) && n !== c) return;
+      if (ts.isReturnStatement(n) && n.expression !== undefined && !carries(n.expression, 0)) {
+        found.push({ kind: 'hole', reason: `印の型を返す関数 ${c.name?.text ?? '?'} が、印を付けていない値 (${n.expression.getText(sf).slice(0, 40)}) を返している (T-263)` });
+      }
+      ts.forEachChild(n, returns);
+    };
+    returns(c.body);
+  });
 
   // 字句の層: 識別子・キーワード以外の位置に、制御・bidi・不可視の字が裸で現れていないこと
   const scanner = ts.createScanner(ts.ScriptTarget.ES2022, false, ts.LanguageVariant.Standard, text);

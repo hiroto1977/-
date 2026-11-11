@@ -163,6 +163,30 @@ const EXTENDS_BASES: readonly string[] = [
   'B0 /* x */', '{ a: number }', '`B0`', '"B0"', '1', 'B0()', 'B0[]', 'this', 'constructor', '__proto__', 'prototype',
 ];
 
+/**
+ * 関門を通っていない値の出どころ (2026-11-11 · MG-067 · T-261 / T-263)。`markFlow` の文脈が、印の型を書く場所 (arrow の引数・
+ * 引数の既定値・gate の戻り値) へこれを流す。`JSON.parse(…)` は any を返し、`tsc` は any を印の型へ通す —— Mamori の来歴の検めが
+ * 見ていない場所は、2 枚目の壁も働かない。`null` / `undefined` は gate の戻り値としては正しい (受け入れられ、物差しも通す側)。
+ */
+const ANY_SOURCES: readonly string[] = [
+  'JSON.parse(raw)', 'JSON.parse("1")', 'raw', '"x"', '1', '[raw][0]', 'String(raw)', 'raw ?? raw', '{ a: raw }.a', 'JSON.parse(raw).u',
+  '(raw === "" ? null : JSON.parse(raw))', 'raw === "" ? null : raw', 'null', 'undefined', 'raw.trim()', '[JSON.parse(raw)]', 'Promise.resolve(JSON.parse(raw))',
+  'mint VU(raw)', 'openUrl', 'JSON.parse', '(JSON.parse(raw) ?? null)',
+];
+
+/**
+ * 別の module の口 `open2` の引き方 (T-262)。正規の `use` 以外は、外形 (印を受ける引数) を引かずに呼べてはならない。
+ * 並べるのは **同じ module (src/x/m1) を指す綴りだけ** —— `"m1"` (package)・`"./M1"` (大小の違い)・`"./m1/index"` は TypeScript から見ても
+ * 別の module で、その関数を呼ぶのは正しい形である (最初に混ぜて、物差しが 3 形を穴と数えた —— 弾の誤りだった)。
+ */
+const IMPORT_FORMS: readonly string[] = [
+  'use { open2 } from "./m1";', 'extern pure { open2 } from "./m1";', 'extern sink { open2 } from "./m1";', 'use { open2 } from "./m1.js";', 'use { open2 } from "./m1.ts";',
+  'use { open2 } from "./m1.mjs";', 'use { open2 } from "./m1.mamori";', 'use { open2 } from ".//m1";', 'use { open2 } from "././m1";', 'use { open2 } from "./m1/";',
+  'use { open2 } from "../x/m1";', 'use { open2 } from "../x//m1";', 'use { open2 } from "./../x/m1";', 'use { open2 } from "./m1/../m1";', 'extern pure { open2 } from "./m1.js";',
+  'extern pure { open2 } from ".//m1";', 'use { open2 } from "./x/../m1";', 'extern pure { open2 } from "../x/m1";', 'extern pure { open2 } from "./m1/";', 'use { open2 } from "./m1.cjs";',
+  'use { open2 } from "./m1.tsx";',
+];
+
 const PAYLOADS: readonly string[] = [
   ...GLOBAL_NAMES.map((n) => n),
   ...GLOBAL_NAMES.map((n) => `${n}("1")`),
@@ -227,6 +251,22 @@ const CONTEXTS: Readonly<Record<string, (e: string) => string>> = {
   satLocal: (e) => `export fn go() -> unknown {\n  const v = ${e} satisfies unknown;\n  return v;\n}\n`,
   satTop: (e) => `export const C = ${e} satisfies unknown;\n`,
   sinkTypedSat: (e) => `${PRELUDE}type Maybe = VU | string;\nexport fn go(raw: string) -> unknown {\n  const u = raw satisfies ${e};\n  return openUrl(u);\n}\n`,
+  // 0.32 · MG-067: 印の型を書く場所へ、関門を通っていない値を流す (T-261 arrow の引数・T-263 既定値と gate の戻り値)
+  markFlowArrowCall: (e) => `${PRELUDE}export fn go(raw: string) -> unknown {\n  return ((u: VU) => openUrl(u))(${e});\n}\n`,
+  markFlowArrowAlias: (e) => `${PRELUDE}export fn go(raw: string) -> unknown {\n  const run = (u: VU) => openUrl(u);\n  return run(${e});\n}\n`,
+  markFlowArrowBlock: (e) => `${PRELUDE}export fn go(raw: string) -> unknown {\n  const run = (u: VU) => {\n    return openUrl(u);\n  };\n  return run(${e});\n}\n`,
+  markFlowArrowThen: (e) => `${PRELUDE}export fn go(raw: string) -> unknown {\n  return Promise.resolve(${e}).then((u: VU) => openUrl(u));\n}\n`,
+  markFlowArrowMap: (e) => `${PRELUDE}export fn go(raw: string) -> unknown {\n  const xs: VU[] = ${e};\n  return xs.map((u: VU) => openUrl(u));\n}\n`,
+  markFlowArrowNull: (e) => `${PRELUDE}export fn go(raw: string) -> unknown {\n  return ((u: VU | null) => u === null ? null : openUrl(u))(${e});\n}\n`,
+  markFlowArrowDefault: (e) => `${PRELUDE}export fn go(raw: string) -> unknown {\n  const run = (u: VU = ${e}) => openUrl(u);\n  return run();\n}\n`,
+  markFlowArrowObj: (e) => `${PRELUDE}export fn go(raw: string) -> unknown {\n  const o = { run: (u: VU) => openUrl(u) };\n  return o.run(${e});\n}\n`,
+  markFlowParamDefault: (e) => `${PRELUDE}export sink fn open3(u: VU = ${e}) -> Promise<void> {\n  return shell.openExternal(u);\n}\n`,
+  markFlowFnDefault: (e) => `${PRELUDE}export fn go(raw: string, u: VU = ${e}) -> unknown {\n  return openUrl(u);\n}\n`,
+  markFlowGateReturn: (e) => `${PRELUDE}export gate fn forge(raw: string) -> VU | null {\n  return ${e};\n}\n`,
+  markFlowGateBound: (e) => `${PRELUDE}export gate fn forge(raw: string) -> VU | null {\n  const v = ${e};\n  return v;\n}\n`,
+  markFlowGateCond: (e) => `${PRELUDE}export gate fn forge(raw: string) -> VU | null {\n  return raw === "" ? null : ${e};\n}\n`,
+  markFlowGateLet: (e) => `${PRELUDE}export gate fn forge(raw: string) -> VU | null {\n  let v = null;\n  v = ${e};\n  return v;\n}\n`,
+  markFlowSinkArg: (e) => `${PRELUDE}export fn go(raw: string) -> unknown {\n  return openUrl(${e});\n}\n`,
   doc: (e) => `/// ${e}\nexport fn go() -> unknown {\n  return 1;\n}\n`,
   header: (e) => `//! ${e}\nexport fn go() -> unknown {\n  return 1;\n}\n`,
   comment: (e) => `export fn go() -> unknown {\n  // ${e}\n  return 1;\n}\n`,
@@ -369,7 +409,7 @@ export function runBattery(seed: number, rounds: number): Report {
 
   for (let i = 0; i < rounds; i++) {
     const ctx = pick(ctxNames);
-    const payload = ctx.startsWith('sinkTyped') ? pick(TYPE_PAYLOADS) : ctx.startsWith('typeSmuggle') ? pick(TYPE_SMUGGLE) : ctx === 'ifaceBase' ? pick(EXTENDS_BASES) : pick(PAYLOADS);
+    const payload = ctx.startsWith('sinkTyped') ? pick(TYPE_PAYLOADS) : ctx.startsWith('typeSmuggle') ? pick(TYPE_SMUGGLE) : ctx === 'ifaceBase' ? pick(EXTENDS_BASES) : ctx.startsWith('markFlow') ? pick(ANY_SOURCES) : pick(PAYLOADS);
     const base = CONTEXTS[ctx]!(payload);
     const tag = `seed=${seed} #${i} ctx=${ctx} payload=${JSON.stringify(payload.length > 60 ? payload.slice(0, 60) + '…' : payload)}`;
     const baseVerdict = examine(`${tag} env=identity`, [file(base)]);
@@ -393,6 +433,10 @@ export function runBattery(seed: number, rounds: number): Report {
     examine(`${tag} env=multi-alias`, [file(other, 'src/x/m1.mamori'), file(user, 'src/x/m2.mamori')]);
     examine(`${tag} env=multi-shadow`, [file(shadow, 'src/x/m0.mamori'), file(other, 'src/x/m1.mamori'), file(`use { open2 } from "./m1";\n` + base.replace(PRELUDE, ''), 'src/x/m2.mamori')]);
     examine(`${tag} env=multi-shadow-late`, [file(other, 'src/x/m1.mamori'), file(shadow, 'src/x/m3.mamori'), file(`use { open2 } from "./m1";\n` + base.replace(PRELUDE, ''), 'src/x/m2.mamori')]);
+    // 複数ファイル 3 (T-262): 別の module の口を、外形を引かない顔 (extern・正規でない道の綴り) で引いて、関門を通っていない値で呼ぶ
+    const form = pick(IMPORT_FORMS);
+    const any = pick(ANY_SOURCES);
+    examine(`seed=${seed} #${i} env=multi-import form=${JSON.stringify(form)} arg=${JSON.stringify(any)}`, [file(other, 'src/x/m1.mamori'), file(`${form}\nexport fn go(raw: string) -> unknown {\n  return open2(${any});\n}\n`, 'src/x/m2.mamori')]);
     // 二重・多層: 環境を 2 つ + 整形
     const smug2 = pick(smugNames);
     examine(`${tag} env=${smug}+${smug2}+${fmt}`, [file(FORMAT_ENVS[fmt]!(SMUGGLE_ENVS[smug2]!(SMUGGLE_ENVS[smug]!(base, payload), payload)))]);
@@ -477,6 +521,10 @@ describe('Mamori の攻撃の電池: 弾 × 文脈 × 環境を掛け合わせ�
   it('母集団: 弾・文脈・環境の数 (掛け合わせが十分に広い)', () => {
     expect(PAYLOADS.length).toBeGreaterThanOrEqual(250);
     expect(Object.keys(CONTEXTS).length).toBeGreaterThanOrEqual(35);
+    // 0.32 · MG-067: 印の型を書く場所 × 関門を通っていない値の出どころ × 口の引き方
+    expect(Object.keys(CONTEXTS).filter((k) => k.startsWith('markFlow')).length).toBeGreaterThanOrEqual(15);
+    expect(ANY_SOURCES.length).toBeGreaterThanOrEqual(20);
+    expect(IMPORT_FORMS.length).toBeGreaterThanOrEqual(20);
     expect(Object.keys(FORMAT_ENVS).length + Object.keys(SMUGGLE_ENVS).length).toBeGreaterThanOrEqual(35);
   });
 });
@@ -500,12 +548,35 @@ describe('物差しの対照: 判定は穴の開いた生成物を実際に落�
     '組み込みを値で凍らせる': 'export function go() {\n  return Object.freeze(Array);\n}\n',
     '組み込みを callback で渡す': 'export function go(x: number[]) {\n  return x.filter(Boolean);\n}\n',
     bidiの字句: 'export function go() {\n  return 1 \u202E 2;\n}\n',
+    // 0.32 · MG-067: 物差しは 0.31 まで「印の型で宣言された名前」なら通しており、T-261 の形を穴と数えなかった
+    'arrow の引数を口へ (別名で呼ぶ)': 'type VU = Vetted<"u">;\nfunction openUrl(u: VU) {\n  return 1;\n}\nexport function go(raw: string) {\n  const run = (u: VU) => openUrl(u);\n  return run(JSON.parse(raw));\n}\n',
+    'arrow の引数を口へ (呼び戻し)': 'type VU = Vetted<"u">;\nfunction openUrl(u: VU) {\n  return 1;\n}\nexport function go(raw: string) {\n  return Promise.resolve(JSON.parse(raw)).then((u: VU) => openUrl(u));\n}\n',
+    '関数式の引数を口へ': 'type VU = Vetted<"u">;\nfunction openUrl(u: VU) {\n  return 1;\n}\nexport function go(raw: string) {\n  return (function (u: VU) {\n    return openUrl(u);\n  })(JSON.parse(raw));\n}\n',
+    '印の引数の既定値': 'type VU = Vetted<"u">;\nfunction openUrl(u: VU) {\n  return 1;\n}\nexport function open3(u: VU = JSON.parse("1")) {\n  return openUrl(u);\n}\n',
+    '印を返す関数が any を返す': 'type VU = Vetted<"u">;\nfunction openUrl(u: VU) {\n  return 1;\n}\nexport function forge(raw: string): VU | null {\n  return JSON.parse(raw);\n}\n',
+    '印を返す関数が条件の片方で any を返す': 'type VU = Vetted<"u">;\nfunction openUrl(u: VU) {\n  return 1;\n}\nexport function forge(raw: string): VU | null {\n  return raw === "" ? null : JSON.parse(raw);\n}\n',
+    '印を返す関数が、印の無い束縛を返す': 'type VU = Vetted<"u">;\nfunction openUrl(u: VU) {\n  return 1;\n}\nexport function forge(raw: string): VU | null {\n  const v = JSON.parse(raw);\n  return v;\n}\n',
+    '別の module の口へ名前でない値': 'import { open2 } from "./m1";\nexport function go(raw: string) {\n  return open2(JSON.parse(raw));\n}\n',
   };
   for (const [name, text] of Object.entries(holey)) {
     it(`落とす: ${name}`, () => {
       expect(inspectEmitted('x.ts', text).length).toBeGreaterThan(0);
     });
   }
+  it('通す: 名前つきの関数の印の引数・印を付けて返す関門・印を持つ束縛を返す関門 (0.32 の物差しに偽陽性が無い)', () => {
+    const ok: readonly string[] = [
+      'type VU = Vetted<"u">;\nfunction openUrl(u: VU) {\n  return 1;\n}\nexport function go(u: VU) {\n  return openUrl(u);\n}\n',
+      'type VU = Vetted<"u">;\nfunction openUrl(u: VU) {\n  return 1;\n}\nexport function go(u: VU | null) {\n  return u === null ? null : openUrl(u);\n}\n',
+      'type VU = Vetted<"u">;\nfunction openUrl(u: VU) {\n  return 1;\n}\nexport function forge(raw: string): VU | null {\n  if (raw === "") {\n    return null;\n  }\n  return raw as VU;\n}\n',
+      'type VU = Vetted<"u">;\nfunction openUrl(u: VU) {\n  return 1;\n}\nexport function forge(raw: string): VU | null {\n  const v = raw as VU;\n  return v;\n}\n',
+      'type VU = Vetted<"u">;\nfunction openUrl(u: VU) {\n  return 1;\n}\nexport function inner(raw: string): VU {\n  return raw as VU;\n}\nexport function forge(raw: string): VU | null {\n  return raw === "" ? null : inner(raw);\n}\n',
+      'type VU = Vetted<"u">;\nfunction openUrl(u: VU) {\n  return 1;\n}\nexport async function forge(raw: string): Promise<VU | null> {\n  const t = await Promise.resolve(raw);\n  return t as VU;\n}\n',
+      'type VU = Vetted<"u">;\nfunction openUrl(u: VU) {\n  return 1;\n}\nexport function wrap(u: VU): VU | undefined {\n  return u;\n}\n',
+      // 印の型でない引数の arrow・既定値は今までどおり
+      'type VU = Vetted<"u">;\nfunction openUrl(u: VU) {\n  return 1;\n}\nexport function go(xs: readonly string[], n: number = 1) {\n  return xs.map((s: string) => s.length + n);\n}\n',
+    ];
+    for (const text of ok) expect({ text, found: inspectEmitted('x.ts', text).map((f) => f.reason) }).toEqual({ text, found: [] });
+  });
   it('通す: 実物の .mamori 11 本の生成物 (物差しに偽陽性が無い)', async () => {
     const { readFileSync, readdirSync } = await import('node:fs');
     const { join } = await import('node:path');

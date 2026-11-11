@@ -4803,7 +4803,7 @@
     {
       "id": "T-262",
       "found": "2026-11-11",
-      "foundBy": "MG-067 (言語の穴探しの周)。印を受ける Mamori の関数 `need(v: V)` を、外形 (印を受ける引数) を引かない顔で引く形が 3 つ通った: ① `extern pure { need } from \"./g\"` —— extern の名前は外形を持たないので `need(JSON.parse(raw))` の引数の印の検め (M4) が外れる ② `use { need } from \"./g.js\"` —— TypeScript は `./g.js` を `./g.ts` (= g.mamori の生成物) に解くのに、Mamori は道の字面を正規化するだけなので別の module (この project の外) と見る ③ `use { need } from \".//g\"` / `\"././g\"` —— 同じ理由 (空の区切り・途中の `.`)。どれも生成物は tsc を通り、関門を通っていない値が印を受ける関数へ届いた。",
+      "foundBy": "MG-067 (言語の穴探しの周)。印を受ける Mamori の関数 `need(v: V)` を、外形 (印を受ける引数) を引かない顔で引く形が 3 つ通った: ① `extern pure { need } from \"./g\"` —— extern の名前は外形を持たないので `need(JSON.parse(raw))` の引数の印の検め (M4) が外れる ② `use { need } from \"./g.js\"` —— TypeScript は `./g.js` を `./g.ts` (= g.mamori の生成物) に解くのに、Mamori は道の字面を正規化するだけなので別の module (この project の外) と見る ③ `use { need } from \".//g\"` / `\"../x//g\"` —— 同じ理由 (空の区切りは Mamori の正規化が落とさず、別の module の鍵になる)。どれも生成物は tsc を通り、関門を通っていない値が印を受ける関数へ届いた。測り直し (0.31 のコンパイラへ 13 綴り × use / extern): `use` で通ったのは拡張子つき 4 綴り・空の区切り 2 綴り・末尾の `/` の 7 綴りで、途中の `.` / `..` (`././g`・`./g/../g`) は 0.31 でも正しく同じ module に解いて断っていた (0.32 は綴りを 1 つに決めるため、それも断る)。`extern pure` は 13 綴りすべてで通った。対戦場の対照 (箱 token × 手書きの攻め 12 本・0.31): 赤 9 点 (秘密が丸ごと盗まれる)・採点外 2 (実行器が道を解けない)・守る側 1。",
       "surface": "main-ipc",
       "class": "supply-chain",
       "severity": "high",

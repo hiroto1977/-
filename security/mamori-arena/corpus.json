@@ -11856,6 +11856,151 @@
       "firstVerdict": "held",
       "rules": [],
       "detail": "再戦: wave-reverse-redos-guard を satisfy で作り直し、箱の奥へ届いて新しい語を 1 個引いた攻め"
+    },
+    {
+      "name": "mark-arrow-alias",
+      "source": "// target: token\n// goal: steal\n// idea: 印を名乗る arrow に名前を付けてから呼ぶ (MG-067 \u00b7 T-261 / 0.32)\nuse { reveal } from \"./defender\";\nuse type { Token } from \"./defender\";\nexport fn attack() -> unknown {\n  const run = (t: Token) => reveal(t);\n  return run(JSON.parse(\"1\"));\n}\n",
+      "targets": [
+        "token"
+      ],
+      "firstVerdict": "refused",
+      "rules": [
+        "M4"
+      ],
+      "detail": "arena/attack.mamori:7:16: [M4] arrow の引数 t は印 Token を名乗れません \u2014\u2014 arrow は値なので、呼ぶ側 (即時の呼び出し・別名・`.then` / `.map` の呼び戻し) の引数は検められず、関門を通っていない値を印を受ける関数へ運べます (印を受けるのは名前つきの fn か、Mamori の外の module から use で引いた関数へ"
+    },
+    {
+      "name": "mark-arrow-block",
+      "source": "// target: token\n// goal: steal\n// idea: ブロックの本体を持つ arrow の引数に印を書く (MG-067 \u00b7 T-261 / 0.32)\nuse { reveal } from \"./defender\";\nuse type { Token } from \"./defender\";\nexport fn attack() -> unknown {\n  const run = (t: Token) => { return reveal(t); };\n  return run(JSON.parse(\"1\"));\n}\n",
+      "targets": [
+        "token"
+      ],
+      "firstVerdict": "refused",
+      "rules": [
+        "M4"
+      ],
+      "detail": "arena/attack.mamori:7:16: [M4] arrow の引数 t は印 Token を名乗れません \u2014\u2014 arrow は値なので、呼ぶ側 (即時の呼び出し・別名・`.then` / `.map` の呼び戻し) の引数は検められず、関門を通っていない値を印を受ける関数へ運べます (印を受けるのは名前つきの fn か、Mamori の外の module から use で引いた関数へ"
+    },
+    {
+      "name": "mark-arrow-default",
+      "source": "// target: token\n// goal: steal\n// idea: 印を名乗る arrow の引数に既定値を置き、引数を省いて呼ぶ (MG-067 \u00b7 T-261 / T-263 / 0.32)\nuse { reveal } from \"./defender\";\nuse type { Token } from \"./defender\";\nexport fn attack() -> unknown {\n  const run = (t: Token = JSON.parse(\"1\")) => reveal(t);\n  return run();\n}\n",
+      "targets": [
+        "token"
+      ],
+      "firstVerdict": "refused",
+      "rules": [
+        "M4"
+      ],
+      "detail": "arena/attack.mamori:7:16: [M4] 引数 t は印 Token を名乗るので既定値を持てません \u2014\u2014 既定値は呼び手が引数を省いたときに入る値で、TypeScript の呼び手が省くと関門を通っていない値が印の型で入ります"
+    },
+    {
+      "name": "mark-arrow-iife",
+      "source": "// target: token\n// goal: steal\n// idea: arrow の引数に印を書き、関門を通っていない値で即時に呼ぶ (MG-067 \u00b7 T-261 / 0.32)\nuse { reveal } from \"./defender\";\nuse type { Token } from \"./defender\";\nexport fn attack() -> unknown {\n  return ((t: Token) => reveal(t))(JSON.parse(\"1\"));\n}\n",
+      "targets": [
+        "token"
+      ],
+      "firstVerdict": "refused",
+      "rules": [
+        "M4"
+      ],
+      "detail": "arena/attack.mamori:7:12: [M4] arrow の引数 t は印 Token を名乗れません \u2014\u2014 arrow は値なので、呼ぶ側 (即時の呼び出し・別名・`.then` / `.map` の呼び戻し) の引数は検められず、関門を通っていない値を印を受ける関数へ運べます (印を受けるのは名前つきの fn か、Mamori の外の module から use で引いた関数へ"
+    },
+    {
+      "name": "mark-arrow-map",
+      "source": "// target: token\n// goal: steal\n// idea: any から束縛した印の配列を .map で回す (MG-067 \u00b7 T-261 / 0.32)\nuse { reveal } from \"./defender\";\nuse type { Token } from \"./defender\";\nexport fn attack() -> unknown {\n  const xs: Token[] = JSON.parse(\"[1]\");\n  return xs.map((t: Token) => reveal(t));\n}\n",
+      "targets": [
+        "token"
+      ],
+      "firstVerdict": "refused",
+      "rules": [
+        "M4"
+      ],
+      "detail": "arena/attack.mamori:8:18: [M4] arrow の引数 t は印 Token を名乗れません \u2014\u2014 arrow は値なので、呼ぶ側 (即時の呼び出し・別名・`.then` / `.map` の呼び戻し) の引数は検められず、関門を通っていない値を印を受ける関数へ運べます (印を受けるのは名前つきの fn か、Mamori の外の module から use で引いた関数へ"
+    },
+    {
+      "name": "mark-arrow-then",
+      "source": "// target: token\n// goal: steal\n// idea: Promise の .then の呼び戻しに印を名乗らせる (MG-067 \u00b7 T-261 / 0.32)\nuse { reveal } from \"./defender\";\nuse type { Token } from \"./defender\";\nexport async fn attack() -> Promise<unknown> {\n  return await Promise.resolve(JSON.parse(\"1\")).then((t: Token) => reveal(t));\n}\n",
+      "targets": [
+        "token"
+      ],
+      "firstVerdict": "refused",
+      "rules": [
+        "M4"
+      ],
+      "detail": "arena/attack.mamori:7:55: [M4] arrow の引数 t は印 Token を名乗れません \u2014\u2014 arrow は値なので、呼ぶ側 (即時の呼び出し・別名・`.then` / `.map` の呼び戻し) の引数は検められず、関門を通っていない値を印を受ける関数へ運べます (印を受けるのは名前つきの fn か、Mamori の外の module から use で引いた関数へ"
+    },
+    {
+      "name": "mark-extern-pure",
+      "source": "// target: token\n// goal: steal\n// idea: 印を受ける関数を extern pure で引き、外形の検めを外す (MG-067 \u00b7 T-262 / 0.32)\nextern pure { reveal } from \"./defender\";\nexport fn attack() -> unknown {\n  return reveal(JSON.parse(\"1\"));\n}\n",
+      "targets": [
+        "token"
+      ],
+      "firstVerdict": "refused",
+      "rules": [
+        "M4"
+      ],
+      "detail": "arena/attack.mamori:4:1: [M4] reveal は印を受ける Mamori の関数です \u2014\u2014 `extern` で引くと外形 (印を受ける引数) の検めが外れます (`use { reveal } from \"./defender\"` で引きます)"
+    },
+    {
+      "name": "mark-gate-cond",
+      "source": "// target: token\n// goal: steal\n// idea: 自分の gate の条件演算子の片方から、mint を通らない値を返す (MG-067 \u00b7 T-263 / 0.32)\nuse { reveal } from \"./defender\";\nuse type { Token } from \"./defender\";\nexport gate fn forge(s: string) -> Token | null {\n  return s === \"\" ? null : JSON.parse(s);\n}\nexport fn attack() -> unknown {\n  const t = forge(\"1\");\n  if (t === null) { return 0; }\n  return reveal(t);\n}\n",
+      "targets": [
+        "token"
+      ],
+      "firstVerdict": "refused",
+      "rules": [
+        "M1"
+      ],
+      "detail": "arena/attack.mamori:7:19: [M1] gate 関数の戻り値は `mint Token(\u2026)`・印 Token を持つ値・null / undefined だけです \u2014\u2014 それ以外の値 (`JSON.parse` の結果ほか) を返すと、mint を通らずに印の型の値が関門から出ます"
+    },
+    {
+      "name": "mark-gate-return",
+      "source": "// target: token\n// goal: steal\n// idea: 自分の gate から、mint を通らない値を印の型で返す (MG-067 \u00b7 T-263 / 0.32)\nuse { reveal } from \"./defender\";\nuse type { Token } from \"./defender\";\nexport gate fn forge(s: string) -> Token | null {\n  return JSON.parse(s);\n}\nexport fn attack() -> unknown {\n  const t = forge(\"1\");\n  if (t === null) { return 0; }\n  return reveal(t);\n}\n",
+      "targets": [
+        "token"
+      ],
+      "firstVerdict": "refused",
+      "rules": [
+        "M1"
+      ],
+      "detail": "arena/attack.mamori:7:20: [M1] gate 関数の戻り値は `mint Token(\u2026)`・印 Token を持つ値・null / undefined だけです \u2014\u2014 それ以外の値 (`JSON.parse` の結果ほか) を返すと、mint を通らずに印の型の値が関門から出ます"
+    },
+    {
+      "name": "mark-spec-dotdot",
+      "source": "// target: token\n// goal: steal\n// idea: 道の途中に . を挟む (0.31 でも同じ module に解いて断っていた形 \u2014\u2014 対照 \u00b7 MG-067 / 0.32)\nuse { reveal } from \"././defender\";\nexport fn attack() -> unknown {\n  return reveal(JSON.parse(\"1\"));\n}\n",
+      "targets": [
+        "token"
+      ],
+      "firstVerdict": "refused",
+      "rules": [
+        "M6",
+        "M4"
+      ],
+      "detail": "arena/attack.mamori:4:1: [M6] 道 \"././defender\" は正規の綴りではありません \u2014\u2014 途中の `.` / `..` は書けません (`../` は先頭にだけ並べます) (TypeScript は同じ module に解くのに Mamori は別の module と見て、印を受ける引数の検めが外れます)"
+    },
+    {
+      "name": "mark-spec-dslash",
+      "source": "// target: token\n// goal: steal\n// idea: 道に空の区切りを挟む (MG-067 \u00b7 T-262 / 0.32)\nuse { reveal } from \".//defender\";\nexport fn attack() -> unknown {\n  return reveal(JSON.parse(\"1\"));\n}\n",
+      "targets": [
+        "token"
+      ],
+      "firstVerdict": "refused",
+      "rules": [
+        "M6"
+      ],
+      "detail": "arena/attack.mamori:4:1: [M6] 道 \".//defender\" は正規の綴りではありません \u2014\u2014 空の区切り (`//`・末尾の `/`) は書けません (TypeScript は同じ module に解くのに Mamori は別の module と見て、印を受ける引数の検めが外れます)"
+    },
+    {
+      "name": "mark-spec-js",
+      "source": "// target: token\n// goal: steal\n// idea: 道に拡張子を付けて、同じ module を別の module に見せる (MG-067 \u00b7 T-262 / 0.32)\nuse { reveal } from \"./defender.js\";\nexport fn attack() -> unknown {\n  return reveal(JSON.parse(\"1\"));\n}\n",
+      "targets": [
+        "token"
+      ],
+      "firstVerdict": "refused",
+      "rules": [
+        "M6"
+      ],
+      "detail": "arena/attack.mamori:4:1: [M6] 道 \"./defender.js\" は正規の綴りではありません \u2014\u2014 拡張子 (`.js` / `.ts` ほか) は書けません (TypeScript は同じ module に解くのに Mamori は別の module と見て、印を受ける引数の検めが外れます)"
     }
   ],
   "history": [
@@ -11884,6 +12029,18 @@
       "byVerdict": {
         "refused": 410,
         "held": 24
+      }
+    },
+    {
+      "seed": 67,
+      "level": "strong",
+      "boxes": 1,
+      "attacks": 12,
+      "red": 0,
+      "blue": 12,
+      "void": 0,
+      "byVerdict": {
+        "refused": 12
       }
     }
   ]
