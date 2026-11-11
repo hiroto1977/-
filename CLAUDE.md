@@ -1069,6 +1069,22 @@ npm run perf             # 起動性能ゲート (実 chromium)。起動時の�
 npm run e2e:ollama       # Ollama 連携 E2E (スタブ Ollama + 実 chromium)。未起動/CORS未許可/接続成功の3状態
                          #   ほか計 7 状態。**undici は CORS を実装しない**ので、no-cors の到達確認が壊れる形は
                          #   単体検査に映らない —— 実ブラウザでしか見えない退行はここだけが捕まえる (パス 304)
+npm run build:portal     # 社外向けポータルの単一 HTML を組む → dist/portal-partner.html / dist/portal-customer.html
+                         #   (2026-11-11 · docs/PORTALS.md)。**社内版 (build:web / build:web:lite) の後に組む** ——
+                         #   社内版の vite build は dist/ を掃除するのでポータルの HTML は消える (逆は消えない:
+                         #   build:portal は一時の場所へ組んでから仕上がった 1 ファイルだけを dist/ へ置く)。
+                         #   入口は社内版と別 (`src/renderer/portal/partnerMain.tsx` / `customerMain.tsx`) で、
+                         #   出す画面は台帳 `src/shared/portal.mamori` に名指しした物だけ。橋は
+                         #   `renderer/portal/portalShim.ts` (資格情報を預からない・網へ出ない・書き込まない)。
+                         #   CSP は `connect-src 'none'`・スクリプトは畳み込んだ 1 本のハッシュだけ。
+                         #   仕上がりに社内版だけの文面 (保管庫・社内版の橋・設定画面・AI へ送る経路・サイドバーの検索) が
+                         #   1 つでも在れば**書かずに落ちる**。取り込みの閉包は
+                         #   `src/renderer/portal/__tests__/portalBundleClosure.test.ts` が毎回の npm test で数える
+                         #   (カスタマーは全件名指し・パートナーは「入ってはいけない物 0 件」と目を引く物の台帳)。
+                         #   配る前に `src/renderer/portal/portalContent.ts` (いまは見本) を自社の内容へ書き換える
+npm run e2e:portal       # 組んだ 2 つのポータルを実 chromium で開く (並ぶ画面 = 台帳・社内の殻が無い・
+                         #   資格情報の欄が無い・社内の画面の id を打っても開かない・橋が断る・網へ出ない・
+                         #   CSP 違反と console エラーが 0 件・消す口が自分の鍵だけを消す)。e2e.yml に入っている
 npm run ollama           # Ollama CLI (ブラウザ不要・CORS 無縁)。`-- chat <model> "..."` で対話
 npm run ollama:setup     # 導入→モデル取得→起動→1往復して確認。足りない段だけ埋める
 npm run local-llm:setup   # Linux: Ollama / VS Code / Continue / llama.cpp と安全なモデルを一括導入 (既定は計画の表示のみ・`-- --yes` で実行)。docs/LOCAL_LLM_SETUP.md
@@ -1644,7 +1660,7 @@ npm run lint:zero-fold     # 「割れない値を 0 に倒す」箇所の**母�
                            #   母集団が 26 ファイル (実測 106) と 4 倍ずれていた
 npm run lint:shared-judgement # 「述語は共有したが、no と言われたあとの動作が両ビルドで
                            #   違う」の**母集団**を数え、`docs/REMAINING_WORK.md` の
-                           #   生成ブロックと突き合わせる (shared 180 / 両ビルドが
+                           #   生成ブロックと突き合わせる (shared 181 / 両ビルドが
                            #   import 97 / うち否定で答えられる 48。**この 3 つは
                            #   live metric なので散文だけが古びることはもう無い** ——
                            #   2026-09-15 まで 138 / 44 / 21 と書いたままだった。

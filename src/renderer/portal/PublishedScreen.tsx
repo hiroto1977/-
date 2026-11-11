@@ -8,13 +8,30 @@
  * 問い合わせは**送らない** —— このポータルはサーバを持たない単一 HTML なので、連絡先と、伝えてほしい
  * ことを示すだけにする (フォームを置くと「送った」つもりの問い合わせがどこにも届かない)。
  */
+import type { ReactNode } from 'react';
 import { externalUrlOrNull } from '../../shared/externalUrlGate';
-import { Section } from '../components/StatusBar';
 import { VettedLink } from '../components/VettedLink';
 import { PORTAL_CONTENT_IS_SAMPLE, portalContentFor, type PortalContact, type PortalContent } from './portalContent';
 
 const MUTED = { fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.7 } as const;
 const BODY = { fontSize: 13, lineHeight: 1.8, margin: '4px 0 0' } as const;
+
+/**
+ * 節の枠。見た目は画面の `Section` (`components/StatusBar.tsx`) と同じ class を使うが、**そこから import しない** ——
+ * `StatusBar.tsx` は資格情報の欄と事業仕分けの台帳を取り込むので、借りると顧客向けの HTML の取り込みの閉包に
+ * 社内の部品が入る (`portalBundleClosure.test.ts` が数える)。
+ */
+function Section({ title, count, children }: { title: string; count?: number; children: ReactNode }) {
+  return (
+    <section className="data-section">
+      <header className="data-section-header">
+        <h2>{title}</h2>
+        <span className="count">{count === undefined ? null : `${count} 件`}</span>
+      </header>
+      {children}
+    </section>
+  );
+}
 
 function SampleBadge() {
   if (!PORTAL_CONTENT_IS_SAMPLE) return null;
