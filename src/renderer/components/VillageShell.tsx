@@ -14,14 +14,20 @@
  * - 危機の相談窓口 … 会話の部品 (コンシェルジュ・村人) が、つらい内容を外部のモデルへ送らず窓口を出す。
  *
  * 画面の外の部品はどれも自分の境界に入れる (パス 489): 殻の 1 部品が落ちても、村と役場は残る。
+ *
+ * **ポータルの入口 (2026-11-11)** —— 「ポータル」のボタンは、社内 / パートナー / カスタマーの 3 つの入口を
+ * 同じ窓に開く (`PortalDirectory` · `#portal/<id>`)。村はそのまま残る。一覧から開いた画面を閉じると、
+ * 村ではなく一覧へ戻る。どの画面を社外向けに出すかは `shared/portal.mamori` の台帳が決める。
  */
 import { useEffect, useRef, useState } from 'react';
 import { onNavigate } from '../navigate';
 import { SERVICES } from '../services';
-import { hashForService, serviceIdFromHash } from '../hashRoute';
+import { hashForPortal, hashForService, portalIdFromHash, serviceIdFromHash } from '../hashRoute';
 import { ManualDataSection } from './ManualDataSection';
 import { BestAnswersIndicator } from './BestAnswersIndicator';
 import { isServiceId, type ServiceId } from '../../shared/serviceId';
+import { PORTALS, type PortalId } from '../../shared/portal';
+import { PortalDirectory } from '../portal/PortalDirectory';
 import { ChatbotWidget, clearChatbotHistory } from './ChatbotWidget';
 import { DeviceStoreFailureBanner } from './DeviceStoreFailureBanner';
 import { PageErrorBoundary } from './PageErrorBoundary';
@@ -51,22 +57,37 @@ export function VillageShell() {
   // 初期値は URL ハッシュ (直リンク・共有): 旧画面のサイドバーを廃止したので、78 の画面への入口は
   // 会話とこのハッシュの 2 つ。
   const [openId, setOpenId] = useState<ServiceId | null>(() => openIdFromHash(currentHash()));
-  const hallOpen = openId !== null;
+  // 開いているポータルの一覧 (`#portal/partner`)。画面 (openId) はその上に重なる: 一覧から画面を開いて
+  // 閉じると、村ではなく一覧へ戻る。
+  const [portal, setPortal] = useState<PortalId | null>(() => portalIdFromHash(currentHash()));
+  const hallOpen = openId !== null || portal !== null;
   const hallRef = useRef<HTMLDivElement | null>(null);
   const hallBtnRef = useRef<HTMLButtonElement | null>(null);
+  const portalBtnRef = useRef<HTMLButtonElement | null>(null);
   // 戻す先: 役場のボタンで開いたときだけそのボタン。会話から開いたときは null (= 開いた時に焦点を持っていた物)。
   const returnRef = useRef<HTMLElement | null>(null);
   const hallKeys = useDialogFocus(hallRef, {
     open: hallOpen,
-    onClose: () => setOpenId(null),
+    onClose: closeWindow,
     returnTo: returnRef,
   });
+
+  /** 窓を 1 段閉じる: ポータルの一覧から開いた画面なら一覧へ戻り、そうでなければ村へ戻る。 */
+  function closeWindow() {
+    if (openId !== null && portal !== null) {
+      setOpenId(null);
+      return;
+    }
+    setOpenId(null);
+    setPortal(null);
+  }
 
   useEffect(
     () =>
       onNavigate((target) => {
         if (target === 'village') {
           setOpenId(null);
+          setPortal(null);
           return;
         }
         if (!isServiceId(target) || !SERVICES.some((s) => s.id === target)) return;
@@ -76,20 +97,30 @@ export function VillageShell() {
     [],
   );
 
-  // 窓 → URL ハッシュ (開いた画面を共有・戻る/進むで辿れる)。窓なしは村のハッシュ。
+  // 窓 → URL ハッシュ (開いた画面を共有・戻る/進むで辿れる)。画面 > ポータルの一覧 > 村 の順。
   useEffect(() => {
     try {
-      const h = hashForService(openId ?? 'village');
+      const h = openId !== null ? hashForService(openId) : portal !== null ? hashForPortal(portal) : hashForService('village');
       if (location.hash !== h) location.hash = h;
     } catch {
       /* location 不在環境 */
     }
-  }, [openId]);
+  }, [openId, portal]);
 
   // URL ハッシュ → 窓 (ブラウザ戻る/進む・直リンク)。
   useEffect(() => {
     function onHash() {
-      setOpenId(openIdFromHash(currentHash()));
+      const h = currentHash();
+      const p = portalIdFromHash(h);
+      if (p !== null) {
+        setPortal(p);
+        setOpenId(null);
+        return;
+      }
+      // 画面の hash はポータルの一覧をそのまま残す (一覧から開いた画面)。村・知らない hash は両方閉じる。
+      const id = openIdFromHash(h);
+      setOpenId(id);
+      if (id === null) setPortal(null);
     }
     window.addEventListener('hashchange', onHash);
     return () => window.removeEventListener('hashchange', onHash);
@@ -97,7 +128,11 @@ export function VillageShell() {
 
   const def = openId === null ? undefined : SERVICES.find((s) => s.id === openId);
   const OpenPage = def?.page ?? SettingsPage;
-  const title = openId === null || openId === 'settings' ? '役場' : (def?.label ?? '役場');
+  const portalLabel = portal === null ? null : (PORTALS.find((p) => p.id === portal)?.label ?? 'ポータル');
+  const showDirectory = openId === null && portalLabel !== null;
+  // 窓の名前。'役場' を 1 つ目の枝に置く (dialog の census が字面を読む)。一覧を出しているときはポータルの名前。
+  const title =
+    openId === 'settings' || (openId === null && !showDirectory) ? '役場' : showDirectory ? portalLabel : (def?.label ?? '役場');
 
   return (
     <div className="village-shell" data-village-shell>
@@ -110,6 +145,21 @@ export function VillageShell() {
             <BestAnswersIndicator />
           </ShellPartBoundary>
         </span>
+        <button
+          type="button"
+          ref={portalBtnRef}
+          className="village-hall-btn"
+          data-village-portal-open
+          aria-haspopup="dialog"
+          aria-expanded={portal !== null}
+          onClick={() => {
+            returnRef.current = portalBtnRef.current;
+            setOpenId(null);
+            setPortal('internal');
+          }}
+        >
+          🚪 ポータル <span className="village-hall-sub">社内・取引先・顧客の入口</span>
+        </button>
         <button
           type="button"
           ref={hallBtnRef}
@@ -147,7 +197,7 @@ export function VillageShell() {
       </div>
 
       {hallOpen && (
-        <div className="village-hall-backdrop" onClick={() => setOpenId(null)} aria-hidden="true" />
+        <div className="village-hall-backdrop" onClick={closeWindow} aria-hidden="true" />
       )}
       {hallOpen && (
         <div
@@ -156,21 +206,27 @@ export function VillageShell() {
           aria-label={title}
           className="village-hall"
           data-village-hall
-          data-village-window={openId ?? undefined}
+          data-village-window={openId ?? (showDirectory ? 'portal' : undefined)}
           onKeyDown={hallKeys.onKeyDown}
         >
           <div className="village-hall-head">
             <strong>{openId === 'settings' ? '🏛️ ' : ''}{title}</strong>
-            <button type="button" data-dialog-initial onClick={() => setOpenId(null)}>
-              閉じる ✕
+            <button type="button" data-dialog-initial onClick={closeWindow}>
+              {openId !== null && portal !== null ? '← ポータルへ戻る' : '閉じる ✕'}
             </button>
           </div>
           <div className="village-hall-body">
-            <PageErrorBoundary label={title} key={openId}>
-              <OpenPage />
-              {/* 手入力欄は窓の中の 1 か所 (画面ごとに貼ると漏れる)。置き換えの一覧を持たない画面は「足す」側だけ。 */}
-              <ManualDataSection scope={openId ?? 'settings'} />
-            </PageErrorBoundary>
+            {showDirectory && portal !== null ? (
+              <PageErrorBoundary label={title} key={`portal-${portal}`}>
+                <PortalDirectory portal={portal} onSelectPortal={setPortal} onOpenService={setOpenId} />
+              </PageErrorBoundary>
+            ) : (
+              <PageErrorBoundary label={title} key={openId}>
+                <OpenPage />
+                {/* 手入力欄は窓の中の 1 か所 (画面ごとに貼ると漏れる)。置き換えの一覧を持たない画面は「足す」側だけ。 */}
+                <ManualDataSection scope={openId ?? 'settings'} />
+              </PageErrorBoundary>
+            )}
           </div>
         </div>
       )}

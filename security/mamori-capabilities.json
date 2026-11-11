@@ -281,6 +281,14 @@
       "gates": [],
       "sinks": []
     },
+    "src/shared/portal.mamori": {
+      "externals": [],
+      "imports": [],
+      "gates": [
+        "portalScreenOrNull -> VettedPortalScreen | null"
+      ],
+      "sinks": []
+    },
     "src/shared/privateTarget.mamori": {
       "externals": [],
       "imports": [],
