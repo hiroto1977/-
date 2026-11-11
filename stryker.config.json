@@ -252,6 +252,7 @@
     "src/shared/bankFormat.ts",
     "src/shared/buildingIso.ts",
     "src/shared/businessAdvisor.ts",
+    "src/shared/cloudContinuity.ts",
     "src/shared/connectors/connectorCatalog.ts",
     "src/shared/connectors/connectorHealth.ts",
     "src/shared/connectors/connectorRegistry.ts",

@@ -4422,4 +4422,5 @@ export interface TokenSet {
 | `docs/ONTOLOGY.md` | (生成物 · `npm run ontology:md`) 層とビルド・実体クラス・サービスの facet 行列と公理・法則と執行者 (§8.3) |
 | `docs/MODEL_EFFORT_POLICY.md` | 指示のティア (light / standard / deep) で effort と任せる agent を決める方針 (`scripts/task-tier.cjs` の `UserPromptSubmit` hook・`.claude/agents/`) |
 | `docs/PORTALS.md` | ポータル (社内 / パートナー / カスタマー) —— 対象者ごとの入口。台帳と関門は `src/shared/portal.mamori` (Mamori)、社外向けは別の単一 HTML (`npm run build:portal`)、取り込みの閉包・橋・殻・CSP を留める検査の一覧 (2026-11-11) |
+| `docs/CLOUD_CONTINUITY.md` | 事業継続 —— 他社のクラウドが止まったとき。立ち位置の導出 (出どころと action の段階から)・提供者の台帳 `src/shared/cloudContinuity.ts`・両ビルドの取得の演習・責任の所在 (ソフトウェアは責任を移せない)・設定画面の節 (2026-11-11) |
 | `CLAUDE.md` | Claude Code 向けプロジェクトガイド |

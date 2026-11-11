@@ -1937,6 +1937,13 @@ The browser target adds: `web-shim.ts` (a `window.serviceHub` polyfill imported 
   `npm run mamori:grow -- report` を走らせ、その出力 (版・守りの壁の移行率・構文の数・次の提案の順位) を報告の最後に付ける。
   数は出力をそのまま使い、散文へ書き写さない。出力には完成度の基準 (5 視点 × 15 基準・1.0 の条件は全基準が床以上 · `security/mamori-completeness.json`) の採点も載る —— 報告では合格した基準の数と床の下の基準を伝える (視点の平均 % は満点になりやすい基準に引き上げられる)。提案には先に塞ぐ道 (台帳の risk) を添える。週 1 の予約の指示文
   (`docs/MAMORI_GROWTH_PROMPT.md` の段 6) も同じ。
+- **事業の記録の正本は端末に置く —— クラウドに依る画面を足したら、提供者の台帳に行を足す** (2026-11-11 · `docs/CLOUD_CONTINUITY.md`)。
+  クラウドが止まったときの立ち位置は `src/shared/cloudContinuity.ts` が `SERVICE_DATA_ORIGIN` (`remote`) と `ACTION_TIER`
+  (`external-write` / `egress`) から導く (手で書かない)。クラウドに依る側に入ったサービスは `CLOUD_PROVIDERS` の行
+  (何を預けているか・止まったら何が起きるか・その間の続け方) に載せる —— 載せ忘れは `cloudContinuity.test.ts` が落とす。
+  「預かるデータを見る」以外の取得は、網が止まっていても端末の外へ出ず失敗しない (両ビルドの演習
+  `cloudOutageDrill.test.ts` / `cloudOutageDrillWeb.test.ts`)。**責任の所在は契約と法律で決まり、アプリは移せない** ——
+  画面や文書で「提供者が責任を負う」と書かない (`LIABILITY_NOTE`)。
 - **対照を回すまで、検査は信用しない。** 守っている物を実際に壊し、狙った項目が
   落ちることを見る。**鳴らない対照は「合格」ではなく「その検査についての報せ」である。**
 
