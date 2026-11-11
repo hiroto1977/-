@@ -100,6 +100,29 @@ export default tseslint.config(
     },
   },
   {
+    // 村のページと移動テスト。ブラウザ大域と Node のテストランナーを両方許可する。
+    files: ['local-ai/council/**/*.{js,mjs}'],
+    languageOptions: {
+      globals: {
+        window: 'readonly',
+        document: 'readonly',
+        fetch: 'readonly',
+        console: 'readonly',
+        process: 'readonly',
+        Buffer: 'readonly',
+        setTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearTimeout: 'readonly',
+        clearInterval: 'readonly',
+        WebSocket: 'readonly',
+        URL: 'readonly',
+        addEventListener: 'readonly',
+        innerHeight: 'readonly',
+        innerWidth: 'readonly',
+      },
+    },
+  },
+  {
     // three.js r160 examples の OrbitControls。ブラウザの大域と upstream の this 別名はそのまま。
     files: ['local-ai/council/web/vendor/OrbitControls.js'],
     languageOptions: {
