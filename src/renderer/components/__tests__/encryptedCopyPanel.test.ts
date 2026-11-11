@@ -17,6 +17,7 @@ import { resetRecordStore } from '../../__tests__/recordStoreHarness';
 import { getRecordStore } from '../../data/store';
 import { isEncryptedBackup, parseBackupFile } from '../../data/backup';
 import { ENCRYPTED_COPY_MARKER_KEY } from '../../data/encryptedCopy';
+import { MAX_BACKUP_IMPORT_BYTES } from '../../data/importFile';
 
 const folder = vi.hoisted(() => ({
   supported: true,
@@ -24,6 +25,10 @@ const folder = vi.hoisted(() => ({
   loadThrows: false,
   writeThrows: false,
   files: new Map<string, string>(),
+  /** 読み戻すファイルが名乗る大きさ (null なら中身の長さ)。 */
+  readSize: null as number | null,
+  /** 読み戻しで本文を読んだ回数。 */
+  textReads: 0,
 }));
 
 vi.mock('../../fs/fsa', () => ({
@@ -39,7 +44,13 @@ vi.mock('../../fs/fsa', () => ({
           getFile: async () => {
             const text = folder.files.get(name);
             if (text === undefined) throw new Error('NotFoundError');
-            return { text: async () => text };
+            return {
+              size: folder.readSize ?? text.length,
+              text: async () => {
+                folder.textReads += 1;
+                return text;
+              },
+            };
           },
         }),
       },
@@ -107,6 +118,8 @@ describe('暗号化した控えのパネル', () => {
     folder.hasHandle = true;
     folder.loadThrows = false;
     folder.writeThrows = false;
+    folder.readSize = null;
+    folder.textReads = 0;
     folder.files.clear();
     await resetRecordStore();
   });
@@ -192,6 +205,35 @@ describe('暗号化した控えのパネル', () => {
     await waitForElement(() => result('error'), '失敗の文', { timeoutMs: 20_000 });
     expect(result('error')?.textContent).toBe('控えを書けませんでした (フォルダへの書き込み権限が拒否されています)。');
     expect(freshness()?.getAttribute('data-copy-freshness')).toBe('never');
+  }, 40_000);
+
+  it('★ 読み戻すファイルが復元の上限より大きければ、本文を読まずに断り、鮮度は変えない', async () => {
+    folder.readSize = MAX_BACKUP_IMPORT_BYTES + 1;
+    await seed(1);
+    await mount('never');
+    const { pass, confirm, button } = await fields();
+    type(pass, PASS);
+    type(confirm, PASS);
+    await press(button);
+    await waitForElement(() => result('error'), '失敗の文', { timeoutMs: 20_000 });
+    expect(result('error')?.textContent).toBe(
+      '控えを書きましたが、読み戻して確かめられませんでした (控えが大きすぎます (256.0 MB。上限 256.0 MB))。',
+    );
+    expect(folder.textReads).toBe(0);
+    expect(freshness()?.getAttribute('data-copy-freshness')).toBe('never');
+    expect(localStorage.getItem(ENCRYPTED_COPY_MARKER_KEY)).toBeNull();
+  }, 40_000);
+
+  it('対照: 上限ちょうどの大きさを名乗るファイルは読む', async () => {
+    folder.readSize = MAX_BACKUP_IMPORT_BYTES;
+    await seed(1);
+    await mount('never');
+    const { pass, confirm, button } = await fields();
+    type(pass, PASS);
+    type(confirm, PASS);
+    await press(button);
+    await waitForElement(() => result('ok'), '書けた文', { timeoutMs: 20_000 });
+    expect(folder.textReads).toBe(1);
   }, 40_000);
 
   it('保存先フォルダが未設定なら、設定する場所を名指しし、書く口を出さない', async () => {

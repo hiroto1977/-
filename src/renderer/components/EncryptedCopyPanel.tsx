@@ -20,6 +20,7 @@ import {
   type CopyFreshness,
 } from '../data/encryptedCopy';
 import { isFsaSupported, loadFolderHandle, writeBlobToFolder } from '../fs/fsa';
+import { MAX_BACKUP_IMPORT_BYTES, readImportText } from '../data/importFile';
 
 type FolderState =
   | { readonly state: 'loading' }
@@ -49,9 +50,10 @@ const FIELD = {
 function folderOf(handle: FileSystemDirectoryHandle): CopyFolder {
   return {
     write: (filename, blob) => writeBlobToFolder(handle, filename, blob),
+    // 読み戻しも、復元と同じ大きさの門を通す (同期フォルダの中身は外から入れ替わりうる —— 読む前に断る)。
     read: async (filename) => {
       const file = await (await handle.getFileHandle(filename)).getFile();
-      return file.text();
+      return readImportText(file, MAX_BACKUP_IMPORT_BYTES, '控え');
     },
   };
 }
