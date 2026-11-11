@@ -2689,6 +2689,66 @@
           "replace": "  return expr(e);"
         }
       ]
+    },
+    {
+      "id": "A-597",
+      "threat": "T-261",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "どの arrow の引数にも印を名乗らせ、中で印を運ばせる —— 呼ぶ側の引数は検めないので、any を印を受ける関数へ運べる (直す前の形)",
+      "edits": [
+        {
+          "find": "        const toHost = hostCallbacks.has(e);\n",
+          "replace": "        const toHost = true;\n"
+        }
+      ]
+    },
+    {
+      "id": "A-598",
+      "threat": "T-262",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "印を受ける Mamori の関数を extern で引くのを断らない —— 外形の検めが外れる (直す前の形)",
+      "edits": [
+        {
+          "find": "        if (table.fns.get(fnKey(externTarget, n))?.paramVetted.some((v) => v !== null) === true) {",
+          "replace": "        if (false as boolean) {"
+        }
+      ]
+    },
+    {
+      "id": "A-599",
+      "threat": "T-262",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "道の綴りを検めない —— `./g.js` / `.//g` で Mamori の module を外の module と見せられる (直す前の形)",
+      "edits": [
+        {
+          "find": "    const problem = specifierProblem(from);\n",
+          "replace": "    const problem = null as string | null;\n"
+        }
+      ]
+    },
+    {
+      "id": "A-600",
+      "threat": "T-263",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "印を名乗る引数の既定値を断らない —— TypeScript の呼び手が省くと既定値の any が印の型で入る (直す前の形)",
+      "edits": [
+        {
+          "find": "      if (p.init !== null && mark !== null) report('M4', p.pos, `引数 ",
+          "replace": "      if ((false as boolean) && p.init !== null && mark !== null) report('M4', p.pos, `引数 "
+        }
+      ]
+    },
+    {
+      "id": "A-601",
+      "threat": "T-263",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "gate 関数の戻り値の式を検めない —— `return JSON.parse(s);` で mint を通らない値が印を名乗って関門から出る (直す前の形)",
+      "edits": [
+        {
+          "find": "          if (ctx.role === 'gate' && ctx.returnVetted !== null && !carriesOrEmpty(s.value, scopes, ctx.returnVetted)) {",
+          "replace": "          if (false as boolean) {"
+        }
+      ]
     }
   ]
 }

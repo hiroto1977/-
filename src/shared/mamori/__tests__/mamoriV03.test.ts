@@ -52,9 +52,16 @@ describe('T-225: 印を受ける関数は値として持ち出せない (M4)', (
   it('★ 印を受ける関数の .call で素の値を渡す形は断る (threat: T-225)', () => {
     expect(diags(GO('  return openUrl.call(null, raw);'))).toEqual([at(7, 10, 'M4', AS_VALUE)]);
   });
-  it('対照: 直に呼ぶ・arrow の中で直に呼ぶのは通る (印を持つ値を渡すなら)', () => {
+  it('対照: 直に呼ぶのは通る (印を持つ値を渡すなら)', () => {
     expect(diags(GO('  return openUrl(u);', 'export fn go(u: VettedUrl) -> unknown'))).toEqual([]);
-    expect(diags(GO('  return us.map((u: VettedUrl) => openUrl(u));', 'export fn go(us: readonly VettedUrl[]) -> unknown'))).toEqual([]);
+  });
+  it('★ arrow の引数に印を書いて呼び戻しに渡す形は断る (0.32 · threat: T-261 —— 0.31 まではこの形を「通る対照」として留めていた)', () => {
+    // 2026-11-11 まで、この検査は `us.map((u: VettedUrl) => openUrl(u))` が通ることを対照として主張していた。
+    // arrow の引数は型の綴りだけで印を運び、呼ぶ側 (`.map`) の引数は検められない —— `us` の中身が関門を通ったかは誰も見ていない
+    // (`const us: VettedUrl[] = JSON.parse(raw)` を tsc は通す)。弱さを仕様として留めていた形なので、断る側へ直した。
+    const d = diags(GO('  return us.map((u: VettedUrl) => openUrl(u));', 'export fn go(us: readonly VettedUrl[]) -> unknown')).join('\n');
+    expect(d).toMatch(/M4\] arrow の引数 u は印 VettedUrl を名乗れません/);
+    expect(d).toMatch(/M4\] openUrl の引数 1 は印 VettedUrl を持つ値だけ/);
   });
   it('対照: 印を受けない関数は値として持ち出せる (規則は印を受ける関数にだけ掛かる)', () => {
     expect(diags('fn twice(n: number) -> number {\n  return n * 2;\n}\nexport fn go(xs: readonly number[]) -> unknown {\n  return xs.map(twice);\n}\n')).toEqual([]);
