@@ -4304,10 +4304,15 @@ async function designSuite(browser) {
     const cuteDark = rule(':root[data-design="cute"][data-theme="dark"]');
     const cuteLight = rule(':root[data-design="cute"]');
     if (!cleanDark || !cuteDark || !cuteLight) return null;
+    // 「持たない」は**名前が宣言されていない**ことで決める。値が空かどうかでは決めない ——
+    // 空の値を持つ変数 (vite 8.3.5 の lightningcss が color-scheme の隣に足す `--lightningcss-light: ;`) は
+    // `getPropertyValue` が '' を返すので、値で見ると「宣言が在るのに持たない」と読み違える (2026-11-11 に実測:
+    // 4 枚の表すべてがその名前を持つのに、この検査だけが落ちた)。
+    const cuteDarkNames = new Set(Array.from(cuteDark));
     const out = [];
     for (let i = 0; i < cleanDark.length; i++) {
       const n = cleanDark[i];
-      if (!n.startsWith('--') || cuteDark.getPropertyValue(n) !== '') continue;
+      if (!n.startsWith('--') || cuteDarkNames.has(n)) continue;
       const probe = document.createElement('div');
       document.body.appendChild(probe);
       probe.style.setProperty('--probe', cuteLight.getPropertyValue(n));
