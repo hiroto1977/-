@@ -1944,6 +1944,9 @@ The browser target adds: `web-shim.ts` (a `window.serviceHub` polyfill imported 
   「預かるデータを見る」以外の取得は、網が止まっていても端末の外へ出ず失敗しない (両ビルドの演習
   `cloudOutageDrill.test.ts` / `cloudOutageDrillWeb.test.ts`)。**責任の所在は契約と法律で決まり、アプリは移せない** ——
   画面や文書で「提供者が責任を負う」と書かない (`LIABILITY_NOTE`)。
+  クラウドへ置く控えは**暗号文だけ** (`renderer/data/encryptedCopy.ts` —— 書いたら読み戻して確かめる・パスフレーズは保存しない)。
+  クラウドから取得した内容を端末に保存しない —— 止まっている間に見せる「最後に取得できた内容」はメモリだけで、施錠で消す
+  (`renderer/data/lastGoodFetch.ts`)。
 - **対照を回すまで、検査は信用しない。** 守っている物を実際に壊し、狙った項目が
   落ちることを見る。**鳴らない対照は「合格」ではなく「その検査についての報せ」である。**
 
