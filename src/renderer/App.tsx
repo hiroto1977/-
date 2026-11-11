@@ -159,6 +159,8 @@ export function App() {
   const [chatCollapsed, setChatCollapsed] = useState(false);
   const showChatColumn = chatDocked && !chatCollapsed;
   const contentRef = useRef<HTMLElement>(null);
+  // 状態 → hash の同期が最後に揃えた綴り (まだ揃えていなければ null)。
+  const syncedHashRef = useRef<string | null>(null);
   const sidebarRef = useRef<HTMLElement>(null);
   const mainRef = useRef<HTMLElement>(null);
   const menuBtnRef = useRef<HTMLButtonElement>(null);
@@ -312,6 +314,8 @@ export function App() {
     if (currentShellMode() === 'village') return;
     try {
       const h = portal !== null ? hashForPortal(portal) : hashForService(activeId);
+      // 状態から導いた綴りを覚える (書いたかどうかに依らず毎回) —— 下の聞き手が、自分の書き込みの反響を見分ける。
+      syncedHashRef.current = h;
       if (location.hash !== h) location.hash = h;
     } catch {
       /* location 不在環境 */
@@ -329,6 +333,9 @@ export function App() {
   useEffect(() => {
     function onHash() {
       if (currentShellMode() === 'village') return; // 村の殻が自分で聞く
+      // 自分の書き込みの反響は状態を動かさない (村の殻と同じ規則): hashchange は書いた後に遅れて届くので、
+      // その間に来た画面の切り替え (会話・音声の「開いて」) を古い綴りで上書きしない。
+      if (location.hash === syncedHashRef.current) return;
       const p = portalIdFromHash(location.hash);
       if (p !== null) {
         setPortal(p);

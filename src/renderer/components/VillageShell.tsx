@@ -64,6 +64,8 @@ export function VillageShell() {
   const hallRef = useRef<HTMLDivElement | null>(null);
   const hallBtnRef = useRef<HTMLButtonElement | null>(null);
   const portalBtnRef = useRef<HTMLButtonElement | null>(null);
+  // 状態 → hash の同期が最後に揃えた綴り (まだ揃えていなければ null)。
+  const syncedHashRef = useRef<string | null>(null);
   // 戻す先: 役場のボタンで開いたときだけそのボタン。会話から開いたときは null (= 開いた時に焦点を持っていた物)。
   const returnRef = useRef<HTMLElement | null>(null);
   const hallKeys = useDialogFocus(hallRef, {
@@ -98,9 +100,11 @@ export function VillageShell() {
   );
 
   // 窓 → URL ハッシュ (開いた画面を共有・戻る/進むで辿れる)。画面 > ポータルの一覧 > 村 の順。
+  // 状態から導いた綴りを覚える (書いたかどうかに依らず毎回) —— 下の聞き手が、自分の書き込みの反響を見分ける。
   useEffect(() => {
     try {
       const h = openId !== null ? hashForService(openId) : portal !== null ? hashForPortal(portal) : hashForService('village');
+      syncedHashRef.current = h;
       if (location.hash !== h) location.hash = h;
     } catch {
       /* location 不在環境 */
@@ -111,6 +115,10 @@ export function VillageShell() {
   useEffect(() => {
     function onHash() {
       const h = currentHash();
+      // 自分の書き込みの反響は状態を動かさない。hashchange は書いた後に遅れて届くので、その間に会話の
+      // 「開いて」(まだ描かれていない状態の更新) が来ていると、反響が古い綴りで上書きして開く要求が消える
+      // (2026-11-11 に実 chromium で実測: 窓を閉じた直後の「開いて」で窓が開かなかった)。
+      if (h === syncedHashRef.current) return;
       const p = portalIdFromHash(h);
       if (p !== null) {
         setPortal(p);

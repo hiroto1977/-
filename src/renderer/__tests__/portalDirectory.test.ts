@@ -18,7 +18,7 @@ import { createRoot, type Root } from 'react-dom/client';
 
 import { App } from '../App';
 import { _resetCollectionSubscribersForTests } from '../data/useCollection';
-import { _resetNavigationIntentForTests } from '../navigate';
+import { _resetNavigationIntentForTests, navigateTo } from '../navigate';
 import { SERVICES } from '../services';
 import { CUSTOMER_SCREENS, PARTNER_SCREENS } from '../../shared/portal';
 import { CUSTOMER_CONTENT, PARTNER_CONTENT } from '../portal/portalContent';
@@ -332,6 +332,20 @@ describe('ポータルの入口 (既定のサイドバーの画面)', () => {
     await mountLegacy('#portal/admin');
     expect(container.querySelector('[data-portal-directory]')).toBeNull();
     expect(h1()).toBe('ホーム');
+  });
+
+  it('★ 画面を選んだ直後の「開いて」は消えない: 遅れて届いた自分の書き込みの反響は、状態を動かさない', async () => {
+    await mountLegacy('#compliance');
+    await click(await waitForElement(() => container.querySelector<HTMLButtonElement>('.sidebar-nav .sidebar-item[data-service-id="home"]'), 'サイドバーの項目'));
+    await settleUntil(() => location.hash === '#home', 'ハッシュが画面を指す');
+    // 反響 (#home の hashchange) が届く前に、会話の「開いて」が来る。
+    await act(async () => {
+      navigateTo('docstudio');
+      window.dispatchEvent(new HashChangeEvent('hashchange'));
+    });
+    await settleUntil(() => activeItem() === 'docstudio', '書類スタジオへ移る');
+    expect(h1()).toBe(SERVICES.find((s) => s.id === 'docstudio')!.label);
+    expect(location.hash).toBe('#docstudio');
   });
 
   it('★ hashchange: ポータル → 画面 → ポータル (戻る / 進む)', async () => {

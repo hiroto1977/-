@@ -877,6 +877,27 @@ async function villageSuite(browser) {
   await page.waitForTimeout(300);
   ok((await page.locator('[data-village-hall]').count()) === 0, 'village: 知らない行き先では窓を開かない');
   ok(await noHScroll(page), 'village: 横スクロールなし (デスクトップ)');
+  // 閉じた直後の「開いて」(2026-11-11): 殻は窓を閉じると hash を書き、その hashchange は遅れて届く。その間に
+  // 会話の「開いて」が来ても、反響が古い綴りで上書きして開く要求を消さないこと。頁の中で 1 つの流れとして
+  // 行う (閉じる → microtask 1 つ → 開いて) —— CDP の往復を挟むと、反響が先に届いて競合にならない。
+  await page.locator('[data-village-hall-open]').click();
+  await page.waitForSelector('[role="dialog"][data-village-hall]', { timeout: 15000 });
+  await page.waitForFunction(() => location.hash === '#settings', null, { timeout: 15000 });
+  await page.waitForTimeout(200); // 「開いた」側の hashchange を流し切る
+  const raced = await page.evaluate(async () => {
+    document.querySelector('[data-village-hall] [data-dialog-initial]').click();
+    await Promise.resolve();
+    const wrote = location.hash;
+    window.dispatchEvent(new CustomEvent('servicehub:navigate', { detail: 'tax-accountant' }));
+    await new Promise((r) => setTimeout(r, 600));
+    return { wrote, win: document.querySelector('[data-village-hall]')?.getAttribute('data-village-window') ?? null, hash: location.hash };
+  });
+  ok(
+    raced.wrote === '#village' && raced.win === 'tax-accountant' && raced.hash === '#tax-accountant',
+    `village: ★ 窓を閉じた直後の「開いて」が消えない (自分が書いた hash の反響は状態を動かさない) (${JSON.stringify(raced)})`,
+  );
+  await page.locator('[data-village-hall] [data-dialog-initial]').click();
+  await page.waitForSelector('[data-village-hall]', { state: 'detached', timeout: 10000 });
   // 会話の場面 (2026-11-06): 何もしなくても掛け合いが記録に出る・話しかけると札が進む・「💬 場面」を切ると止まる
   const logLis = page.locator('[data-village-scenes] [role="log"] li');
   await page.waitForSelector('[data-village-scenes] [role="log"] li', { timeout: 15000 });
@@ -5557,7 +5578,7 @@ function installWaitMarginRecorder(browser) {
     ['tablet', tabletSuite, 2],
     // 村の殻 (唯一の入口) を実機で。旧画面のサイドバーの suite (shell) は 2026-11-04 に廃止
     // 2026-11-06: 会話の場面 (掛け合い 2・「💬 場面」・受付→作業中の札・スマホ幅の枠) = +5
-    ['village', villageSuite, 21],
+    ['village', villageSuite, 22],
   ];
   const SUITES = SUITE_TABLE.map(([name]) => name);
   /**

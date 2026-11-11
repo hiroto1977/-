@@ -1040,9 +1040,9 @@ npm run dev              # Vite + Electron, hot reload (desktop dev)
 npm run build:web        # → dist/standalone.html (browser build; runs inline-html.cjs)
 npm run build:web:lite   # → dist/standalone-lite.html (~2MB モバイル版・学術コーパス非搭載)
 npm run e2e              # Playwright 実機 E2E (desktop/phone/tablet)。e2e:lite で LITE 版を検証
-                         #   **39 suite / 実測 722 件** (FULL・LITE とも・2026-11-07 の実測 —— 入力欄の固定で village suite +1・2026-11-06: 会話の場面で village suite +5・2026-11-05: 旧 UI (サイドバー・ドロワー・浮いた窓) の廃止で shell suite −27・design 32→20・controls 63→61・opened 155→135。777 は 2026-10-29 まで)。床は「黙って縮んだら落とす」ための物で、
+                         #   **39 suite / 実測 723 件** (FULL・LITE とも・2026-11-11 の実測 —— 窓を閉じた直後の「開いて」が消えないことで village suite +1・2026-11-07: 入力欄の固定で village suite +1・2026-11-06: 会話の場面で village suite +5・2026-11-05: 旧 UI (サイドバー・ドロワー・浮いた窓) の廃止で shell suite −27・design 32→20・controls 63→61・opened 155→135。777 は 2026-10-29 まで)。床は「黙って縮んだら落とす」ための物で、
                          #   **表に書くのは実測値ただ 1 つ、床は `floorOf()` が導く** (実測の 85%・切り捨て・最低 1。
-                         #   合計の床は実測合計の 85% = **646**)。2026-09-20 (パス 346) まで表は
+                         #   合計の床は実測合計の 85% = **614**)。2026-09-20 (パス 346) まで表は
                          #   **床と `// 実測 N` の 2 つを手書き**で持っており、実測すると 3 つの文がずれていた ——
                          #   `paperAccount` は注記 10 に対し実物 13 で、**その床 8 は実測の 62%** (5 件減っても鳴らない)、
                          #   `theme` の床 10 は 71%、runner の docblock は「実測 (合計 395 件) の 85%」と
