@@ -11428,6 +11428,244 @@
       "firstVerdict": "held",
       "rules": [],
       "detail": "再戦: rematch-cross-sandwich-const-closure x rematch-graft-const-closure を cross-literal で作り直し、箱の奥へ届いて新しい語を 1 個引いた攻め"
+    },
+    {
+      "name": "tree-cmp-generic-shape",
+      "source": "// target: *\n// goal: steal\n// idea: 比べ 2 つを引数に並べる (括弧を落とすと型引数つきの呼び出しに化ける形) (周回 10 \u00b7 T-260 / 0.31)\nexport fn attack() -> unknown {\n  const x: unknown = 1;\n  const n = 3;\n  const m = 4;\n  const k = 5;\n  const f = (v: unknown) => v;\n  return f(n < m, k > (n ?? m));\n}\n",
+      "targets": [
+        "*"
+      ],
+      "firstVerdict": "refused",
+      "rules": [
+        "tsc"
+      ],
+      "detail": "tsc: This expression is not callable.   Type 'Number' has no call signatures."
+    },
+    {
+      "name": "tree-cmp-lenient-paren",
+      "source": "// target: *\n// goal: destroy\n// idea: `<` の右辺が括弧で始まり中に `>` が在る式 (生成物が TypeScript の構文の誤りで止まる類) (周回 10 \u00b7 T-260 / 0.31)\nexport fn attack() -> unknown {\n  const x: unknown = 1;\n  const n = 3;\n  const m = 4;\n  const k = 5;\n  const f = (v: unknown) => v;\n  return n < (m > (k === 1 ? 1 : 0) ? 1 : 0);\n}\n",
+      "targets": [
+        "*"
+      ],
+      "firstVerdict": "refused",
+      "rules": [
+        "tsc"
+      ],
+      "detail": "tsc: This expression is not callable.   Type 'Number' has no call signatures."
+    },
+    {
+      "name": "tree-decl-second-binding",
+      "source": "// target: *\n// goal: escape\n// idea: 束縛の型の綴りに 2 つ目の束縛を隠す (周回 10 \u00b7 T-260 / 0.31)\nexport fn attack() -> unknown {\n  const x: unknown = 1;\n  const n = 3;\n  const m = 4;\n  const k = 5;\n  const f = (v: unknown) => v;\n  let a: number, leak = process.env;\n  return a;\n}\n",
+      "targets": [
+        "*"
+      ],
+      "firstVerdict": "refused",
+      "rules": [
+        "M0"
+      ],
+      "detail": "arena/attack.mamori:10:16: [M0] 型の綴りが 1 つの型として読めません (`,` から先が型に続きません) \u2014\u2014 型の綴りは生成物へそのまま写るので、型として読めない並びは TypeScript が式や別の宣言として読みます (T-260)"
+    },
+    {
+      "name": "tree-decl-second-const",
+      "source": "// target: *\n// goal: escape\n// idea: const の型に 2 つ目の束縛 (周回 10 \u00b7 T-260 / 0.31)\nexport fn attack() -> unknown {\n  const x: unknown = 1;\n  const n = 3;\n  const m = 4;\n  const k = 5;\n  const f = (v: unknown) => v;\n  const a: number, leak = globalThis = 1;\n  return a;\n}\n",
+      "targets": [
+        "*"
+      ],
+      "firstVerdict": "refused",
+      "rules": [
+        "M0"
+      ],
+      "detail": "arena/attack.mamori:10:18: [M0] 型の綴りが 1 つの型として読めません (`,` から先が型に続きません) \u2014\u2014 型の綴りは生成物へそのまま写るので、型として読めない並びは TypeScript が式や別の宣言として読みます (T-260)"
+    },
+    {
+      "name": "tree-sat-let",
+      "source": "// target: *\n// goal: destroy\n// idea: let に satisfies を付けて後から入れ替える (周回 10 \u00b7 T-260 / 0.31)\nexport fn attack() -> unknown {\n  const x: unknown = 1;\n  const n = 3;\n  const m = 4;\n  const k = 5;\n  const f = (v: unknown) => v;\n  let v = 1 satisfies number;\n  v = 2;\n  return v;\n}\n",
+      "targets": [
+        "*"
+      ],
+      "firstVerdict": "refused",
+      "rules": [
+        "M0"
+      ],
+      "detail": "arena/attack.mamori:10:13: [M0] `satisfies` は const の初期値の末尾にだけ付けられます (`const x = 式 satisfies 型;`) \u2014\u2014 let は後から別の値を入れられるので、満たすのは最初の値だけです"
+    },
+    {
+      "name": "tree-sat-mid-expr",
+      "source": "// target: *\n// goal: escape\n// idea: satisfies を式の途中で値の包みに使う (周回 10 \u00b7 T-260 / 0.31)\nexport fn attack() -> unknown {\n  const x: unknown = 1;\n  const n = 3;\n  const m = 4;\n  const k = 5;\n  const f = (v: unknown) => v;\n  return f(x satisfies typeof process);\n}\n",
+      "targets": [
+        "*"
+      ],
+      "firstVerdict": "refused",
+      "rules": [
+        "M0"
+      ],
+      "detail": "arena/attack.mamori:10:14: [M0] `,` が要ります (在ったのは `satisfies`)"
+    },
+    {
+      "name": "tree-sat-plain-ok",
+      "source": "// target: *\n// goal: steal\n// idea: 正しい satisfies で包んだ値を返す (言語の中に留まる対照) (周回 10 \u00b7 T-260 / 0.31)\nexport fn attack() -> unknown {\n  const x: unknown = 1;\n  const n = 3;\n  const m = 4;\n  const k = 5;\n  const f = (v: unknown) => v;\n  const v = { a: 1, b: \"x\" } satisfies { a: number; b: string };\n  return v;\n}\n",
+      "targets": [
+        "*"
+      ],
+      "firstVerdict": "held",
+      "rules": [],
+      "detail": "returned | a|b|x"
+    },
+    {
+      "name": "tree-sat-return",
+      "source": "// target: *\n// goal: escape\n// idea: return に satisfies (周回 10 \u00b7 T-260 / 0.31)\nexport fn attack() -> unknown {\n  const x: unknown = 1;\n  const n = 3;\n  const m = 4;\n  const k = 5;\n  const f = (v: unknown) => v;\n  return x satisfies unknown;\n}\n",
+      "targets": [
+        "*"
+      ],
+      "firstVerdict": "refused",
+      "rules": [
+        "M0"
+      ],
+      "detail": "arena/attack.mamori:10:12: [M0] `;` が要ります (在ったのは `satisfies`)"
+    },
+    {
+      "name": "tree-sat-type-second",
+      "source": "// target: *\n// goal: escape\n// idea: satisfies の型に 2 つ目の束縛 (周回 10 \u00b7 T-260 / 0.31)\nexport fn attack() -> unknown {\n  const x: unknown = 1;\n  const n = 3;\n  const m = 4;\n  const k = 5;\n  const f = (v: unknown) => v;\n  const v = 1 satisfies number, leak = process.env;\n  return v;\n}\n",
+      "targets": [
+        "*"
+      ],
+      "firstVerdict": "refused",
+      "rules": [
+        "M0"
+      ],
+      "detail": "arena/attack.mamori:10:38: [M0] 型の中に `=` は置けません \u2014\u2014 型で使えるのは名前・括弧・`,` `:` `.` `|` `&` `?` `=>` だけです (字句の切れ目の差で型の綴りに式を隠せてしまうため)"
+    },
+    {
+      "name": "tree-sat-type-smuggle",
+      "source": "// target: *\n// goal: escape\n// idea: satisfies の型に式を隠す (周回 10 \u00b7 T-260 / 0.31)\nexport fn attack() -> unknown {\n  const x: unknown = 1;\n  const n = 3;\n  const m = 4;\n  const k = 5;\n  const f = (v: unknown) => v;\n  const v = 1 satisfies m ? process.exit(7) : k;\n  return v;\n}\n",
+      "targets": [
+        "*"
+      ],
+      "firstVerdict": "refused",
+      "rules": [
+        "M0"
+      ],
+      "detail": "arena/attack.mamori:10:27: [M0] 型の綴りが 1 つの型として読めません (`?` から先が型に続きません) \u2014\u2014 型の綴りは生成物へそのまま写るので、型として読めない並びは TypeScript が式や別の宣言として読みます (T-260)"
+    },
+    {
+      "name": "tree-targ-array-call",
+      "source": "// target: *\n// goal: escape\n// idea: Array<\u2026> の中に呼び出し (周回 10 \u00b7 T-260 / 0.31)\nexport fn attack() -> unknown {\n  const x: unknown = 1;\n  const n = 3;\n  const m = 4;\n  const k = 5;\n  const f = (v: unknown) => v;\n  return f<Array<process.exit(7)>>(x);\n}\n",
+      "targets": [
+        "*"
+      ],
+      "firstVerdict": "refused",
+      "rules": [
+        "M6"
+      ],
+      "detail": "arena/attack.mamori:10:12: [M6] 組み込みの Array は値として持ち出せません \u2014\u2014 `Array.m(\u2026)` と直にメンバを使う形か、呼ぶ・構築する形だけです (`Object.freeze(Array)` で、アプリ全体の組み込みを凍らせる相手を選べてしまう)"
+    },
+    {
+      "name": "tree-targ-arrow-ret",
+      "source": "// target: *\n// goal: escape\n// idea: 関数の型の戻りに式 (周回 10 \u00b7 T-260 / 0.31)\nexport fn attack() -> unknown {\n  const x: unknown = 1;\n  const n = 3;\n  const m = 4;\n  const k = 5;\n  const f = (v: unknown) => v;\n  return f<(a: number) => process.exit(7)>(x);\n}\n",
+      "targets": [
+        "*"
+      ],
+      "firstVerdict": "refused",
+      "rules": [
+        "M0"
+      ],
+      "detail": "arena/attack.mamori:10:14: [M0] `)` が要ります (在ったのは `:`)"
+    },
+    {
+      "name": "tree-targ-call-paren",
+      "source": "// target: *\n// goal: escape\n// idea: 型引数に括弧つきの呼び出し (周回 10 \u00b7 T-260 / 0.31)\nexport fn attack() -> unknown {\n  const x: unknown = 1;\n  const n = 3;\n  const m = 4;\n  const k = 5;\n  const f = (v: unknown) => v;\n  return f<(globalThis.process.exit(7))>(x);\n}\n",
+      "targets": [
+        "*"
+      ],
+      "firstVerdict": "refused",
+      "rules": [
+        "M6"
+      ],
+      "detail": "arena/attack.mamori:10:13: [M6] 宣言していない名前 globalThis \u2014\u2014 外の値は `use` / `extern` で宣言します (網・記憶・OS へ届く名前は暗黙に使えません)"
+    },
+    {
+      "name": "tree-targ-cond-exit",
+      "source": "// target: *\n// goal: escape\n// idea: 型引数の綴りに条件式を隠す: Mamori は型引数つきの呼び出し、TypeScript は条件式 + process の呼び出しと読む (周回 10 \u00b7 T-260 / 0.31)\nexport fn attack() -> unknown {\n  const x: unknown = 1;\n  const n = 3;\n  const m = 4;\n  const k = 5;\n  const f = (v: unknown) => v;\n  return String<m ? process.exit(7) : k>(x);\n}\n",
+      "targets": [
+        "*"
+      ],
+      "firstVerdict": "refused",
+      "rules": [
+        "M6"
+      ],
+      "detail": "arena/attack.mamori:10:10: [M6] 組み込みの String は値として持ち出せません \u2014\u2014 `String.m(\u2026)` と直にメンバを使う形か、呼ぶ・構築する形だけです (`Object.freeze(String)` で、アプリ全体の組み込みを凍らせる相手を選べてしまう)"
+    },
+    {
+      "name": "tree-targ-cond-require",
+      "source": "// target: *\n// goal: escape\n// idea: 型引数に require を隠す (周回 10 \u00b7 T-260 / 0.31)\nexport fn attack() -> unknown {\n  const x: unknown = 1;\n  const n = 3;\n  const m = 4;\n  const k = 5;\n  const f = (v: unknown) => v;\n  return f<m ? require(\"node:child_process\").execSync(\"id\") : k>(x);\n}\n",
+      "targets": [
+        "*"
+      ],
+      "firstVerdict": "refused",
+      "rules": [
+        "M6"
+      ],
+      "detail": "arena/attack.mamori:10:16: [M6] 宣言していない名前 require \u2014\u2014 外の値は `use` / `extern` で宣言します (網・記憶・OS へ届く名前は暗黙に使えません)"
+    },
+    {
+      "name": "tree-targ-typeof-call",
+      "source": "// target: *\n// goal: escape\n// idea: typeof 式 の形で呼び出しを隠す (周回 10 \u00b7 T-260 / 0.31)\nexport fn attack() -> unknown {\n  const x: unknown = 1;\n  const n = 3;\n  const m = 4;\n  const k = 5;\n  const f = (v: unknown) => v;\n  return f<typeof process.exit(7)>(x);\n}\n",
+      "targets": [
+        "*"
+      ],
+      "firstVerdict": "refused",
+      "rules": [
+        "M6"
+      ],
+      "detail": "arena/attack.mamori:10:19: [M6] 宣言していない名前 process \u2014\u2014 外の値は `use` / `extern` で宣言します (網・記憶・OS へ届く名前は暗黙に使えません)"
+    },
+    {
+      "name": "tree-type-keyof-alone",
+      "source": "// target: *\n// goal: destroy\n// idea: 前置の語を単独で型に置く (周回 10 \u00b7 T-260 / 0.31)\nexport fn attack() -> unknown {\n  const x: unknown = 1;\n  const n = 3;\n  const m = 4;\n  const k = 5;\n  const f = (v: unknown) => v;\n  const v: keyof = x;\n  return v;\n}\n",
+      "targets": [
+        "*"
+      ],
+      "firstVerdict": "refused",
+      "rules": [
+        "M0"
+      ],
+      "detail": "arena/attack.mamori:10:12: [M0] 型の綴りが 1 つの型として読めません (型が要ります) \u2014\u2014 型の綴りは生成物へそのまま写るので、型として読めない並びは TypeScript が式や別の宣言として読みます (T-260)"
+    },
+    {
+      "name": "tree-type-typeof-global",
+      "source": "// target: *\n// goal: escape\n// idea: typeof で宣言していない名前の型を名指しして値を得ようとする (周回 10 \u00b7 T-260 / 0.31)\nexport fn attack() -> unknown {\n  const x: unknown = 1;\n  const n = 3;\n  const m = 4;\n  const k = 5;\n  const f = (v: unknown) => v;\n  const v: typeof process = x;\n  return v;\n}\n",
+      "targets": [
+        "*"
+      ],
+      "firstVerdict": "refused",
+      "rules": [
+        "tsc"
+      ],
+      "detail": "tsc: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your "
+    },
+    {
+      "name": "tree-vault-hidden-call",
+      "source": "// target: vault\n// goal: steal\n// idea: 型引数の綴りの中から箱の口を呼ぶ (検めていない呼び出し) (周回 10 \u00b7 T-260)\nuse { lookup, check } from \"./defender\";\nexport fn attack() -> unknown {\n  const m = 1;\n  const k = 2;\n  const f = (v: unknown) => v;\n  return f<m ? check.constructor(\"return process\")() : k>(lookup(\"a\"));\n}\n",
+      "targets": [
+        "vault"
+      ],
+      "firstVerdict": "refused",
+      "rules": [
+        "M0"
+      ],
+      "detail": "arena/attack.mamori:9:22: [M0] `.constructor` は Mamori に在りません \u2014\u2014 関数の constructor (`Function`) は文字列をコードとして走らせる口で、`eval` を禁じても `String.constructor(code)()` で同じことができてしまいます"
+    },
+    {
+      "name": "tree-vault-shadow",
+      "source": "// target: vault\n// goal: steal\n// idea: 束縛の型に隠した 2 つ目の束縛で、箱から引いた名前を覆う (周回 10 \u00b7 T-260)\nuse { lookup, check } from \"./defender\";\nexport fn attack() -> unknown {\n  let a: number, lookup = (s: string) => check.constructor(\"return process\")();\n  return lookup(\"a\");\n}\n",
+      "targets": [
+        "vault"
+      ],
+      "firstVerdict": "refused",
+      "rules": [
+        "M0"
+      ],
+      "detail": "arena/attack.mamori:6:16: [M0] 型の綴りが 1 つの型として読めません (`,` から先が型に続きません) \u2014\u2014 型の綴りは生成物へそのまま写るので、型として読めない並びは TypeScript が式や別の宣言として読みます (T-260)"
     }
   ],
   "history": [
@@ -11443,6 +11681,19 @@
         "refused": 6142,
         "n/a": 63,
         "held": 568
+      }
+    },
+    {
+      "seed": 41,
+      "level": "strong",
+      "boxes": 24,
+      "attacks": 20,
+      "red": 0,
+      "blue": 434,
+      "void": 0,
+      "byVerdict": {
+        "refused": 410,
+        "held": 24
       }
     }
   ]
