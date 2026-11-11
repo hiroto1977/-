@@ -283,11 +283,15 @@ export interface OutageExposure {
 /**
  * 資格情報を預けている画面から、「いま依っている提供者」を台帳の順で返す。
  * 画面に結び付かない行 (`infrastructure`) は含めない —— 資格情報の有無では決まらないので、別に並べる。
+ * スロットは**どれか 1 つ**を預けていれば当たる。台帳は第 2 引数で差し替えられる (検査が 2 つ以上のスロットの行を渡すため)。
  */
-export function outageExposure(configured: readonly string[]): readonly OutageExposure[] {
+export function outageExposure(
+  configured: readonly string[],
+  providers: readonly CloudProvider[] = CLOUD_PROVIDERS,
+): readonly OutageExposure[] {
   const held = new Set(configured);
   const out: OutageExposure[] = [];
-  for (const provider of CLOUD_PROVIDERS) {
+  for (const provider of providers) {
     const mine = provider.services.filter((id) => held.has(id));
     const bySlot = provider.slots?.some((slot) => held.has(slot)) ?? false;
     if (mine.length > 0 || bySlot) out.push({ provider, configured: mine });

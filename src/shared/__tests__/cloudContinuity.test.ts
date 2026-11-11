@@ -24,6 +24,7 @@ import {
   OUTBOUND_NOT_THIRD_PARTY,
   outageExposure,
   RESPONSIBILITY_STAYS,
+  type CloudProvider,
 } from '../cloudContinuity';
 
 const REPO = path.resolve(__dirname, '../../..');
@@ -195,6 +196,25 @@ describe('outageExposure —— 資格情報を預けている画面から、い
     const both = outageExposure(['anthropic', 'assistant']);
     expect(both.map((e) => e.provider.id)).toEqual(['ai']);
     expect(both[0]?.configured).toEqual(['assistant']);
+  });
+
+  it('スロットはどれか 1 つを預けていれば当たり、空のスロットの行は当たらない (台帳を差し替えて測る)', () => {
+    // 実物の台帳はスロットが 1 つの行しか持たないので、「どれか 1 つ」と「全部」を見分けられない。
+    const row = (id: string, slots: readonly string[]): CloudProvider => ({
+      id,
+      label: id,
+      kind: 'assist',
+      services: [],
+      entrusted: '検査用の行',
+      whenDown: '検査用の行',
+      meanwhile: '検査用の行',
+      slots,
+    });
+    const ledger = [row('two', ['slot-a', 'slot-b']), row('none', [])];
+    expect(outageExposure(['slot-b'], ledger).map((e) => e.provider.id)).toEqual(['two']);
+    expect(outageExposure(['slot-a', 'slot-b'], ledger).map((e) => e.provider.id)).toEqual(['two']);
+    expect(outageExposure(['other'], ledger)).toEqual([]);
+    expect(outageExposure([], ledger)).toEqual([]);
   });
 
   it('スロットを名乗る行は AI だけで、その名前は設定画面のスロットと保管庫の読み手に実在する', () => {
