@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 504
+- ブロック数: 495
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `23b57f4dece07714a5b6cffc977ad5b2ab5d68cf10ca5368cbbefdeeb697f1ed`
+- 末尾(tip)ハッシュ: `4b3c9a684b7a49680d96bf78a459b8746da8d1e3478f60b14a43c2e90de2c325`
 - 保護対象: 217 ファイル
 
 ## ブロック
@@ -506,17 +506,8 @@
 | 490 | `ea782457955e30c7` | `d5d354d9058959bd` | `25d021490720186e` | update integrity-chain.cjs,linkSpoof.ts |
 | 491 | `c629f39f1de4e998` | `25d021490720186e` | `a3f706d8c3785217` | update VettedLink.tsx,linkSpoof.ts |
 | 492 | `cf02e797ce1e2467` | `a3f706d8c3785217` | `18f99d603104d86b` | update VettedLink.tsx |
-| 493 | `dffd3a4bb35744b1` | `18f99d603104d86b` | `04a0cd42d0466134` | update integrity-chain.cjs,mamori-capabilities.json,proxy.mamori,proxy.ts,proxyHost.ts |
-| 494 | `29bf4e01d161284f` | `04a0cd42d0466134` | `f348716a49ffb19c` | update ast.ts,checker.ts,emit.ts,parser.ts |
-| 495 | `6692336a6fa632fd` | `f348716a49ffb19c` | `6b4bd5deb599c928` | update checker.ts |
-| 496 | `8787397c7d6de567` | `6b4bd5deb599c928` | `44913ebaf563b4c6` | update integrity-chain.cjs,mamori-capabilities.json,webauthn.mamori,webauthn.ts,webauthnHost.ts |
-| 497 | `6e73ad4595c9fe5b` | `44913ebaf563b4c6` | `f765a28115291cc5` | update ast.ts,checker.ts,emit.ts,parser.ts |
-| 498 | `480f161fcf247293` | `f765a28115291cc5` | `e80d546b314a6cc3` | update integrity-chain.cjs,mamori-capabilities.json,main.mamori,main.ts,mainHost.ts |
-| 499 | `df2ae74b9c5f8ba2` | `e80d546b314a6cc3` | `8189228bbbc42747` | update checker.ts,emit.ts,parser.ts |
-| 500 | `b930313c0fd20e37` | `8189228bbbc42747` | `1994f0dbfb9b6bf9` | update parser.ts |
-| 501 | `ab666476df5eb586` | `1994f0dbfb9b6bf9` | `dd5cbc1589c62808` | update ast.ts,checker.ts,emit.ts,parser.ts |
-| 502 | `81d42c85cdb241f9` | `dd5cbc1589c62808` | `a98c771a588946f1` | update integrity-chain.cjs,mamori-capabilities.json,userPresence.ts,assistantMarkdown.ts,fsa.mamori,fsa.ts |
-| 503 | `925b25384cf98fa1` | `a98c771a588946f1` | `23b57f4dece07714` | update checker.ts |
+| 493 | `16dc1e83863084a9` | `18f99d603104d86b` | `c50ae5b06ddcba28` | update release.yml |
+| 494 | `95e3073af2529039` | `c50ae5b06ddcba28` | `4b3c9a684b7a4968` | update integrity-chain.cjs,mamori-capabilities.json,main.mamori,main.ts,mainHost.ts,userPresence.ts |
 
 ## 保護対象ファイル
 
