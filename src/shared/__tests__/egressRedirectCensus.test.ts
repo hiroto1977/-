@@ -49,7 +49,10 @@ const SITES: Readonly<Record<string, number>> = {
   'src/main/clients/ollama.ts': 1,
   'src/main/clients/types.ts': 1,
   'src/main/main.ts': 1,
-  'src/main/oauth.ts': 2,
+  // oauth.ts は 2026-11-09 (MG-050) に Mamori へ移り、token 端点への POST が postTokenEndpoint の 1 か所に畳まれた (2 → 1)。
+  // 既定の fetch は壁 oauthHost.ts の hostFetch (egressInit を掛けて fetch を呼ぶ 1 か所)。
+  'src/main/oauth.ts': 1,
+  'src/main/oauthHost.ts': 1,
   'src/renderer/network/ollamaWeb.ts': 1,
   'src/renderer/network/proxy.ts': 1,
   'src/renderer/oauth/pkce.ts': 1,
@@ -136,7 +139,8 @@ describe('egressRedirectCensus — 網の fetch は全部 egressInit を通す (
 
   it("★ 'follow' を書くのは httpLimits.ts の no-cors の枝 1 つだけ (例外も規則の中に在る · パス 304)", () => {
     const code = stripComments(readOriginalSource(path.join(REPO_ROOT, 'src/shared/httpLimits.ts')));
-    expect(code).toMatch(/if \(init\.mode === 'no-cors'\) return \{ \.\.\.init, redirect: 'follow' \};/);
+    // 判定は host 壁 (`hostIsNoCors` —— `mode === 'no-cors'`) に在る (MG-047)。ここで見るのは「その枝だけが follow を書く」こと。
+    expect(code).toMatch(/if \(hostIsNoCors\(init\)\) return \{ \.\.\.init, redirect: 'follow' \};/);
     // 型注釈 (`{ redirect: 'manual' | 'follow' }`) ではなく、値として書く形だけを数える
     expect(code.match(/, redirect: 'follow' \}/g)).toHaveLength(1);
     expect(code.match(/, redirect: 'manual' \}/g)).toHaveLength(1);

@@ -830,9 +830,11 @@ const METRICS = [
     docPattern: /OAuth 対応サービス \| (\d+) /,
     compute: () => {
       const src = readFileSafe(path.join(REPO_ROOT, 'src/main/oauth.ts'));
-      const m = src.match(/OAUTH_CONFIGS[^=]*= \{([\s\S]*?)^\};/m);
+      // oauth.ts は oauth.mamori の生成物で、表は 1 行に畳まれる (2026-11-09 · MG-050)。
+      // サービスごとに必ず 1 つ在る `authorizeUrl:` を数える (手書きの複数行でも同じ数になる)。
+      const m = src.match(/export const OAUTH_CONFIGS[^\n]*= \{([\s\S]*?)\};\n/);
       if (!m) return null;
-      return countOccurrences(m[1], /^\s*'?[a-z][a-z0-9-]*'?:\s*\{/gm);
+      return countOccurrences(m[1], /\bauthorizeUrl:/g);
     },
   },
   {

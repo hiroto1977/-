@@ -95,7 +95,7 @@ import { App } from '../App';
 import { _resetRecordStoreForTests } from '../data/store';
 import { _resetCollectionSubscribersForTests } from '../data/useCollection';
 import { _resetDeviceStoreFailureForTests } from '../data/deviceStoreFailure';
-import { _resetNavigationIntentForTests, navigateTo } from '../navigate';
+import { _resetNavigationIntentForTests } from '../navigate';
 import { waitForText } from './jsdomWait';
 
 beforeAll(() => {
@@ -184,11 +184,6 @@ beforeEach(async () => {
   root = createRoot(container);
   await act(async () => {
     root!.render(createElement(App));
-  });
-  await settle();
-  // 手入力欄は役場の窓の中 —— 会話の「開いて」と同じ経路でホームの窓を開く。
-  await act(async () => {
-    navigateTo('home');
   });
   await settle();
 });

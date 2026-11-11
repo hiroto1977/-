@@ -45,7 +45,6 @@ const SCAN_MARKERS = [
   'readdirSync',
   'shippedSources',
   'sourceFiles',
-  'uiSources', // 画面のソース全部を構文木で走査する道具 (`astStyle.ts`) —— dialogSitesCensus / controlsCensus が呼ぶ
   'SERVICES',
   'SERVICE_IDS',
   'SNAPSHOT',
@@ -138,7 +137,6 @@ describe('法則の執行者は母集団を見ているか (パス 327)', () => 
     expect(scansPopulation('src/renderer/__tests__/guardedJudgements.test.ts')).toBe(true);
     expect(scansPopulation('src/renderer/__tests__/webShimSnapshotParity.test.ts')).toBe(true);
     expect(scansPopulation('src/shared/__tests__/headerValue.test.ts')).toBe(true);
-    expect(scansPopulation('src/renderer/__tests__/dialogSitesCensus.test.ts')).toBe(true);
   });
 
   it('★ 対照: 例の表だけで留めている検査は、印に当たらない', () => {

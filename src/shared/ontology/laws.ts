@@ -1294,6 +1294,7 @@ export const LAWS: readonly Law[] = [
     provenance: ['パス 493i'],
     enforcedBy: [
       test(T.renderer('keyIntentCensus')),
+      test(T.renderer('sidebarSearchIme')),
       test('src/renderer/pages/__tests__/imeEnterDoesNotSend.test.ts'),
     ],
   },
@@ -1313,9 +1314,10 @@ export const LAWS: readonly Law[] = [
       + '`--user-bubble-bg` / `--composer-bg`) では、同じ特異性の 2 枚がぶつかり**後ろの表が勝つ**。'
       + '順序は実ブラウザの cascade でしか決まらないので e2e が実物の値で見る (期待値は出荷した stylesheet の規則から読む —— '
       + 'theme suite は期待値に `#fff7fa` を写しており、既定のデザインを替えた日にこの suite だけが古びる形だった)。'
-      + '(2026-11-04: 3 列の判定 `chatDock.ts` は旧画面のサイドバーとともに廃止した。会話の列は村の殻が常に持つ。)',
+      + '**見た目の判定 (チャットを列にするか) は JS の 1 か所**で、CSS は組 (`.chat-docked`) の有無だけを読む —— '
+      + '同じ幅を CSS にも書くと、ずれた幅 (拡大率・端数) で列だけが 2 列目に残り画面が次の行へ落ちる。',
     provenance: ['2026-09-26 (Claude 風の 3 列とデザインの切替)'],
-    enforcedBy: [test(T.renderer('themeTokens')), harness('e2e'), harness('e2e:lite')],
+    enforcedBy: [test(T.renderer('themeTokens')), test(T.renderer('chatDock')), harness('e2e'), harness('e2e:lite')],
   },
   {
     id: 'rethrown-failure-has-a-receiver',
@@ -1979,7 +1981,7 @@ export const LAWS: readonly Law[] = [
       + '**表の対が合っていても、媒体規則が地を剥がす** (2 つ前の法則と同じ形の、幅についての現れ)。'
       + '直しは 1 つの hook (`useDialogFocus` —— 印 `data-dialog-initial` へ焦点・Esc・戻り先) を 3 つの dialog が読み、App がドロワーの `inert` と'
       + '焦点を 1 つの効果で持ち、CSS は地を残しチップを 24px にする。**3 層で留める**: ① jsdom で実物を描いて押す '
-      + '(`conciergeDialogFocus` / `useDialogFocus` —— 旧画面のドロワーの `drawerKeyboard` は 2026-11-04 に廃止) ② 構文木と CSS の規則 (`dialogSitesCensus` —— `role` が dialog の JSX は'
+      + '(`conciergeDialogFocus` / `drawerKeyboard` / `useDialogFocus`) ② 構文木と CSS の規則 (`dialogSitesCensus` —— `role` が dialog の JSX は'
       + '名前・ref・onKeyDown を持ち hook を呼ぶ・両方向の台帳 / `openedStateCss` —— スマホの `.main` は地を剥がさず、チップは 24px 以上) '
       + '③ 実機の `opened` suite (e2e の 39 番目・131 件 —— 4 配色 × 開いた全画面・浮いた窓のキーボードの道・スマホ 4 配色のドロワーとシートと'
       + '全画面の字・測定器の対照 2: `inert` の下は「無い」と数える)。'
@@ -1991,6 +1993,7 @@ export const LAWS: readonly Law[] = [
     enforcedBy: [
       test('src/renderer/components/__tests__/conciergeDialogFocus.test.ts'),
       test('src/renderer/components/__tests__/useDialogFocus.test.ts'),
+      test(T.renderer('drawerKeyboard')),
       test(T.renderer('dialogSitesCensus')),
       test(T.renderer('openedStateCss')),
       harness('e2e'),

@@ -681,7 +681,12 @@ export function parse(file: string, src: string): Module {
   };
 
   const expr = (): Expr => {
-    if (isArrowAhead()) return arrow();
+    // `async (x) => …` / `async x => …` (0.26 · MG-053)。`async` だけが後ろに `=>` を取る名前 (`async => 1`) は引数の名前として下の arrow が読む。
+    if (isW('async') && isArrowAhead(1)) {
+      next();
+      return arrow(true);
+    }
+    if (isArrowAhead()) return arrow(false);
     const test = binary(0);
     if (!isP('?')) return test;
     const q = next();
@@ -887,11 +892,11 @@ export function parse(file: string, src: string): Module {
   };
 
   /** `(a, b) => …` / `() => …` / `x => …` が始まるか。 */
-  const isArrowAhead = (): boolean => {
-    if (peek().kind === 'ident' && isP('=>', 1)) return true;
-    if (!isP('(')) return false;
+  const isArrowAhead = (from = 0): boolean => {
+    if (peek(from).kind === 'ident' && isP('=>', from + 1)) return true;
+    if (!isP('(', from)) return false;
     let depth = 0;
-    for (let n = 0; ; n++) {
+    for (let n = from; ; n++) {
       const t = peek(n);
       if (t.kind === 'eof') return false;
       if (isPunctTok(t, '(')) depth++;
@@ -902,7 +907,7 @@ export function parse(file: string, src: string): Module {
     }
   };
 
-  const arrow = (): Expr => {
+  const arrow = (isAsync: boolean): Expr => {
     const pos = peek().pos;
     const ps: Param[] = peek().kind === 'ident' ? [{ name: ident(), optional: false, type: null, init: null, pos }] : params();
     expectP('=>');
@@ -918,9 +923,9 @@ export function parse(file: string, src: string): Module {
       loops = savedLoops;
       breakables = savedBreakables;
       inFinally = savedFinally;
-      return { kind: 'arrow-block', params: ps, body, pos };
+      return { kind: 'arrow-block', async: isAsync, params: ps, body, pos };
     }
-    return { kind: 'arrow', params: ps, body: expr(), pos };
+    return { kind: 'arrow', async: isAsync, params: ps, body: expr(), pos };
   };
 
   const item = (doc: Doc): Item => {
@@ -929,20 +934,25 @@ export function parse(file: string, src: string): Module {
       next();
       const typeOnly = take('type');
       let defaultName: string | null = null;
-      const names: { name: string; alias: string | null }[] = [];
+      const names: { name: string; alias: string | null; typeOnly: boolean }[] = [];
       if (isW('default')) {
         next();
         defaultName = ident();
       } else {
         expectP('{');
         while (!isP('}')) {
+          // `type X` (0.24): 名前ごとの型だけの import。`type` は予約語なので、引く名前そのものが `type` である曖昧さは無い。
+          // `use type { type X }` は冗長で、どちらが効くか読み手に判じさせるので断る。
+          const inlineType = isW('type');
+          if (inlineType && typeOnly) fail(peek(), '`use type { … }` の中で `type X` は重ねられません (項目全体がすでに型だけの import です)');
+          if (inlineType) next();
           const name = ident();
           let alias: string | null = null;
           if (isW('alias')) {
             next();
             alias = ident();
           }
-          names.push({ name, alias });
+          names.push({ name, alias, typeOnly: inlineType });
           if (!isP('}')) expectP(',');
         }
         expectP('}');
@@ -951,6 +961,27 @@ export function parse(file: string, src: string): Module {
       const from = str();
       expectP(';');
       return { kind: 'use', typeOnly, names, defaultName, from, doc, pos: t.pos };
+    }
+    if (isW('export') && isP('*', 1)) fail(peek(), '`export *` は書けません —— 再輸出する名前は 1 つずつ挙げます (`export { a, b } from "./m";`)。名前を挙げないと、何が TypeScript の側へ出ていくか読めません');
+    if (isW('export') && isP('{', 1)) {
+      next();
+      next();
+      const names: { name: string; typeOnly: boolean }[] = [];
+      while (!isP('}')) {
+        const inlineType = isW('type');
+        if (inlineType) next();
+        names.push({ name: ident(), typeOnly: inlineType });
+        if (!isP('}')) expectP(',');
+      }
+      if (names.length === 0) fail(peek(), '`export { }` に名前がありません');
+      expectP('}');
+      let from: string | null = null;
+      if (isW('from')) {
+        next();
+        from = str();
+      }
+      expectP(';');
+      return { kind: 'reexport', names, from, doc, pos: t.pos };
     }
     if (isW('extern')) {
       next();

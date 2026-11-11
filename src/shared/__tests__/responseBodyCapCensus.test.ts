@@ -254,8 +254,8 @@ describe('上限つきの読みと、その別名 (パス 334)', () => {
     expect(hits).toHaveLength(2);
   });
 
-  it('★ 失敗の枝の読みは `readFailureBody` だけ —— 実測 15 か所', () => {
-    expect(FAILURE_CALLS).toHaveLength(15);
+  it('★ 失敗の枝の読みは `readFailureBody` だけ —— 実測 14 か所', () => {
+    expect(FAILURE_CALLS).toHaveLength(14);
     // 別名の中身は 1 行なので、失敗の口は 1 つしかない。
     expect(ALIAS_LEDGER.filter((r) => r.name === 'readFailureBody')).toHaveLength(1);
   });
@@ -264,8 +264,10 @@ describe('上限つきの読みと、その別名 (パス 334)', () => {
     expect({ 呼び出し: CAPPED_CALLS.length, 失敗: FAILURE_CALLS.length, 別名: ALIASES.length }).toEqual({
       // 43 = 以前の 45 から、感情分析が共有のチャット層へ移って web-shim の
       // 失敗本文の読みと上限つき本文の読みが 1 つずつ減った分。
-      呼び出し: 43,
-      失敗: 15,
+      // 41 / 14 = 上の 43 / 15 から、oauth.ts が Mamori へ移り token 端点の読み (authorize と refresh の 2 か所ずつ)
+      // が postTokenEndpoint の 1 か所に畳まれた分 (2026-11-09 · MG-050)。
+      呼び出し: 41,
+      失敗: 14,
       別名: 4,
     });
   });

@@ -551,6 +551,7 @@ describe('打ち切りの注記はモジュール直下の定数を通る (読�
     expect(JSON.stringify(blocks.at(-1))).toContain(BLOCKS_TRUNCATED_NOTICE);
     // 太字・表のセル・箇条書きの項目でも同じ。
     expect(blockWeight({ type: 'paragraph', spans: parseInline('**a**') })).toBe(2);
+    expect(blockWeight({ type: 'heading', level: 2, spans: parseInline('見出し **a** `b`') })).toBe(1 + 2); // 見出しの記法も要素になる
     expect(blockWeight({ type: 'list', ordered: false, items: [parseInline('`a` **b** c')] })).toBe(1 + 1 + 2);
     expect(blockWeight({ type: 'table', headers: [parseInline('**h**')], rows: [[parseInline('`x`')]] })).toBe(1 + 1 + 1 + 1 + 1);
     // 地の文だけなら従来の重さのまま (正当な返答の見た目は変わらない)。

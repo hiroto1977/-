@@ -54,8 +54,51 @@ npm run local-llm:setup -- --tier large       # メモリの自動判定を上�
 
 Continue のテレメトリは VS Code の設定 `continue.telemetryEnabled` を `false` にする (自動では書き換えない)。
 
+## このリポジトリで学んだ規律を渡す (`npm run local-llm:handoff`)
+
+`CLAUDE.md` は約 1.1 MB、`docs/SESSION_HANDOFF.md` と `docs/REMAINING_WORK.md` は各約 3 MB で、文脈 4K〜32K トークンのローカルモデルには**丸ごとは入らない**。
+そこで「全部」ではなく**小さな文脈に畳んだ核**を、モデルの大きさ (tier) ごとの文字数予算に収めて出す。
+
+```bash
+npm run local-llm:handoff                      # 計画の表示だけ (何も書かない)
+npm run local-llm:handoff -- --write           # reports/local-llm-handoff/ へ書く (tier 既定は medium)
+npm run local-llm:handoff -- --write --tier large
+```
+
+| 出力 | 中身 |
+| --- | --- |
+| `SYSTEM.md` | 常駐させる核。規律 8 本・ローカルモデルとしての約束・作業の手順・既知の罠・実物から引いた事実 (サービス数・ゲート数・法則数・脅威台帳の件数)・読みに行く文書の道案内・余りの予算で法則の索引。**節は丸ごと入るか丸ごと外れる** (途中で切れた規則を残さない) |
+| `Modelfile` | `FROM` は導入 script と同じ層のモデル・`num_ctx` は tier 別・`SYSTEM` に上の核 |
+| `PLAYBOOK.md` | 手順・規律の詳細・罠 (RAG や Continue のルールに貼る用) |
+| `laws-index.md` | 法則の id と名前の全件 (statement は `src/shared/ontology/laws.ts`) |
+| `manifest.json` | tier・予算・入った節/入らなかった節・元ファイルと出力の sha256 |
+
+| tier | モデル | `num_ctx` | SYSTEM の予算 |
+| --- | --- | --- | --- |
+| small | `qwen2.5-coder:3b` | 4096 | 2,400 字 (法則の索引なし) |
+| medium | `qwen2.5-coder:7b` | 8192 | 6,000 字 |
+| large | `qwen2.5-coder:14b` | 16384 | 14,000 字 |
+| xlarge | `qwen2.5-coder:32b` | 32768 | 30,000 字 |
+
+使い方 (このコマンドは自動では走らせない。出力の末尾にも同じ案内が出る):
+
+```bash
+ollama pull qwen2.5-coder:7b
+cd reports/local-llm-handoff && ollama create service-hub-dev-medium -f Modelfile
+ollama run service-hub-dev-medium
+```
+
+Continue など別のクライアントでは `SYSTEM.md` を system prompt に貼る (接続先は `127.0.0.1` のまま)。
+
+守り: ネットワークに触らない・子プロセスを作らない・出力先はリポジトリの中だけ・既定は書かない・出力は決定論 (時刻を入れない)・
+秘密の形を含まない。読めない物は 0 に倒さず「不明」と書く。規律の本文 (`CORE_RULES` ほか) は `scripts/lib/local-llm-handoff.cjs` に
+手で選んだ物として置き、**数は書かない** (数は実物から引く)。
+
 ## 検証
 
 導入そのものは利用者の機械でしか走らせられない。`src/shared/__tests__/localLlmSetup.test.ts` は、床が台帳と一致すること・
 `--yes` 無しで何も変えないこと・外向きの `OLLAMA_HOST` で始めないこと・`127.0.0.1` 以外を設定に書かないことを毎回の
 `npm test` で見る。
+
+引継ぎパックは `src/shared/__tests__/localLlmHandoff.test.ts` が、予算・事実が実物と一致すること・読めない物は「不明」・決定論・秘密を含まない・
+Modelfile の `SYSTEM` を壊さない・既定は書かない・出力先の外へ書かないことを毎回の `npm test` で見る。

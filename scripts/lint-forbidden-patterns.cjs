@@ -861,6 +861,13 @@ const KNOWN_SUPPRESSIONS = [
   // 「その書き換えで本当に誰も鳴らないか」を測ることそのものである。
   // 引数は固定でシェルを経由しない (`execFileSync` に配列で渡す)。1 件は呼び出し。
   'child_process exec/spawn :: scripts/verify-survivors.cjs :: 1',
+  // Mamori の対戦場 (2026-11-08): 守る側と攻める側を、ネットワーク・ファイル・子プロセスを全部閉じた箱
+  // (`unshare -rn node --permission` の子プロセス) の中で戦わせる審判。**箱を別プロセスに作らずには成り立たない**
+  // (vm は安全境界ではないので外側の箱が要る)。引数は固定の配列でシェルを経由せず、渡す物は仮想データの JSON だけ
+  // (標準入力)、環境変数は空。箱の中の物は本物の秘密を 1 つも持たない。1 件は呼び出し。
+  'child_process exec/spawn :: scripts/lib/mamori-arena-judge.cjs :: 1',
+  // 対戦場の津波 (2026-11-09): 箱を走らせる審判は同期なので、波を箱の組ごとに別プロセスの CLI へ割って並べる。引数は固定の配列でシェルを経由せず、環境変数は継ぐだけ。1 件は呼び出し。
+  'child_process exec/spawn :: scripts/lib/mamori-arena-wave.cjs :: 1',
   // 実物のデスクトップアプリを起動する道具。`electron .` を子プロセスで
   // 立ち上げ、8 秒生きているかと致命的な出力の有無を見る。起動そのものを
   // 確かめるのが目的なので、プロセスを作らずには成り立たない。
@@ -1042,6 +1049,10 @@ const KNOWN_SUPPRESSIONS = [
   // ずれていないことは `src/shared/__tests__/hostChromeColorCensus.test.ts` が
   // **実物の関数と `isHexColor` に同じ標本を通して**留める。
   'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/inject-pwa.cjs :: 1',
+  // `local-llm-handoff.cjs` の `sanitizeForModelfile` は Modelfile の SYSTEM 文へ入れる前に C0 制御文字と DEL を落とす。
+  // 守るのは「URL を弾く判定」ではなく Modelfile の構文 (`"""` と制御文字で SYSTEM が壊れない) で、
+  // タブ・改行は残す別の判断。`.cjs` は `.ts` の共有実装を読めない。振る舞いは localLlmHandoff.test.ts が留める。
+  'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: scripts/lib/local-llm-handoff.cjs :: 1',
   'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: src/shared/controlChars.ts :: 1',
   'markup / Markdown escaping / color / control-char check reimplemented outside its shared module :: src/shared/escape.ts :: 5',
   // `securityRange.ts` は**出口のエスケープではない**。`applyEvasion` は

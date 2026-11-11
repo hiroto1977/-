@@ -181,7 +181,7 @@ describe('マイクを開く入口すべてに断りが在る (走査)', () => {
 });
 
 describe('「AI へは送りません」の根拠 — 音声から呼べる action の実測', () => {
-  const BAR = path.join(RENDERER, 'components', 'VoiceCommandBar.tsx');
+  const BAR = path.join(RENDERER, 'data', 'voiceCapabilities.ts');
 
   /** `VOICE_ACTIONS` の宣言から action 名を取り出す。 */
   function voiceActions(): string[] {

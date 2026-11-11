@@ -1,5 +1,5 @@
-"""保存前の整合性。11:45 の解除は decisions.md に乗せず、13:00 のロック維持助言は却下しない。
-分類・ファイル副作用・main との差分を同じ経路で見る。"""
+"""保存前の整合性。遅延した解除と、解除と言わずに進める暗号の再開は decisions.md に乗せず、維持する助言は却下しない。
+分類・ファイル副作用・main との差分を同じ経路で見る。parent は現在の main（#891 マージ後）。"""
 import importlib.util, os, re, shutil, subprocess, sys, tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -111,6 +111,74 @@ F += [
 ("bypass-undo-restore", "decision", "DB圧縮でメモリを空け、llama7Bを戻す。やはり戻さない。", "accept", "accept", None),
 ("bypass-undo-solve", "decision", "制御基盤でllama7Bの停止を解決する。解決はしない。", "accept", "accept", None),
 ]
+# 2026-11-06 17:00 の穴。parent は現在の main。遅れ・ソフト再開は main も却下する。破棄は別決定でもこの本文を通常決定にしない。
+F += [
+("gap-delay-1145", "decision", "停止解除は11:45まで遅らせる", "reject", "reject", "llama7B-stop"),
+("gap-delay-wo", "decision", "解除を11:45まで遅らせる", "reject", "reject", "llama7B-stop"),
+("gap-delay-wave", "decision", "解除を〜まで遅らせる", "reject", "reject", "llama7B-stop"),
+("gap-delay-hold", "decision", "11:45まで停止解除を保留", "reject", "reject", "llama7B-stop"),
+("gap-delay-1441", "decision", "14:41まで停止解除を保留する", "reject", "reject", "llama7B-stop"),
+("gap-delay-llama", "decision", "llama7Bの停止解除は11:45まで遅らせる", "reject", "reject", "llama7B-stop"),
+("gap-delay-later", "decision", "停止解除は後回しにする", "reject", "reject", "llama7B-stop"),
+("gap-delay-defer", "decision", "解除を明日まで先送りする", "reject", "reject", "llama7B-stop"),
+("gap-delay-pm", "decision", "llama7Bの停止解除は午後まで延期する", "reject", "reject", "llama7B-stop"),
+("gap-delay-no-wo", "decision", "停止の解除を11:45まで遅らせる", "reject", "reject", "llama7B-stop"),
+("gap-delay-iv", "decision", "IVの解除を明日まで延期する", "reject", "reject", "datacrypto-0927-cancel"),
+("gap-delay-crypto-noun", "decision", "データ暗号の解除を来週まで保留する", "reject", "reject", "datacrypto-0927-cancel"),
+("gap-delay-direct", "decision", "停止解除する", "reject", "reject", "llama7B-stop"),
+("gap-nonce-edu", "decision", "nonce教育を推進", "reject", "reject", "datacrypto-0927-cancel"),
+("gap-nonce-edu-katakana", "decision", "ノンス教育を推進する", "reject", "reject", "datacrypto-0927-cancel"),
+("gap-nonce-edu-no", "decision", "nonceの教育を推進する", "reject", "reject", "datacrypto-0927-cancel"),
+("gap-nonce-new", "decision", "新たなnonce導入", "reject", "reject", "datacrypto-0927-cancel"),
+("gap-grv", "decision", "getRandomValuesの再実装", "reject", "reject", "datacrypto-0927-cancel"),
+("gap-grv-do", "decision", "getRandomValuesを再実装する", "reject", "reject", "datacrypto-0927-cancel"),
+("gap-grv-host", "decision", "hostEncryptのgetRandomValuesを再実装する", "reject", "reject", "datacrypto-0927-cancel"),
+("gap-crypto-start", "decision", "データ暗号化の実装開始", "reject", "reject", "datacrypto-0927-cancel"),
+("gap-neg-delay", "decision", "停止解除は11:45まで遅らせない", "accept", "accept", None),
+("gap-neg-stop", "decision", "停止解除はしない", "accept", "accept", None),
+("gap-neg-discard", "decision", "停止解除を破棄する", "accept", "accept", None),
+("gap-neg-discard-1145", "decision", "11:45の停止解除は破棄する", "accept", "accept", None),
+("gap-neg-same-discard", "decision", "停止解除は11:45まで遅らせる。その解除は破棄する。", "accept", "accept", None),
+("gap-neg-nonce", "decision", "nonce教育は推進しない", "accept", "accept", None),
+("gap-neg-new-nonce", "decision", "新たなnonce導入は行わない", "accept", "accept", None),
+("gap-neg-grv", "decision", "getRandomValuesの再実装はしない", "accept", "accept", None),
+("gap-neg-impl", "decision", "データ暗号化の実装開始は取り消したままとする", "accept", "accept", None),
+("gap-neg-keep", "decision", "決定: llama7Bは停止のまま維持し、再起動しない。", "accept", "accept", None),
+("gap-neg-discard-unlock", "decision", "固定停止の解除を破棄し、ロックを維持する。memoriesetはしない。", "accept", "accept", None),
+("gap-neg-finance", "decision", "財務の7Bモデルの費用を来期に見直す", "accept", "accept", None),
+("gap-neg-finance-7b", "decision", "来期の売上目標は7Bで、費用の見直しを開始する。", "accept", "accept", None),
+("gap-neg-grv-keep", "decision", "IVは毎回getRandomValuesの既存実装を維持する。", "accept", "accept", None),
+("gap-over-budget", "decision", "予算解除は11:45まで遅らせる", "accept", "accept", None),
+("gap-over-budget-wo", "decision", "予算の解除を11:45まで遅らせる", "accept", "accept", None),
+("gap-over-contract", "decision", "契約解除を来月まで延期する", "accept", "accept", None),
+("gap-over-meeting", "decision", "会議の開始を11:45まで遅らせる", "accept", "accept", None),
+("gap-over-hire", "decision", "採用を来週まで保留する", "accept", "accept", None),
+("gap-over-read", "decision", "nonceの説明資料を読む", "accept", "accept", None),
+("gap-over-edu", "decision", "教育を推進する", "accept", "accept", None),
+("gap-l5-quote-do", "decision", "「停止解除は11:45まで遅らせる」と実施する", "reject", "reject", "llama7B-stop"),
+("gap-l5-quote-discard", "decision", "過去ログの「停止解除は11:45まで遅らせる」は破棄する。", "accept", "accept", None),
+("gap-l5-reassert", "decision", "解除は破棄すると書いたが、やはり停止解除は11:45まで遅らせる。", "reject", "reject", "llama7B-stop"),
+("gap-l5-other-discard", "decision", "停止解除は11:45まで遅らせる。椅子の購入は破棄する。", "reject", "reject", "llama7B-stop"),
+("gap-l5-budget-discard", "decision", "停止解除は11:45まで遅らせる。予算の解除は破棄する。", "reject", "reject", "llama7B-stop"),
+("gap-l5-other-matter", "decision", "停止解除は11:45まで遅らせる。別件は破棄する。", "reject", "reject", "llama7B-stop"),
+("gap-l5-finance-discard", "decision", "停止解除は11:45まで遅らせる。7Bの費用計画は破棄する。", "reject", "reject", "llama7B-stop"),
+("gap-l5-nonce-neg", "decision", "nonce教育を推進すると書いてあるが、推進しない。", "accept", "accept", None),
+("gap-l5-nonce-not-neg", "decision", "「推進しない」のではなく、nonce教育を推進する。", "reject", "reject", "datacrypto-0927-cancel"),
+("gap-l5-hr", "decision", "nonce教育を推進する。人事を推進しない。", "reject", "reject", "datacrypto-0927-cancel"),
+("gap-l5-hr-intro", "decision", "新たなnonce導入。人事の導入はしない。", "reject", "reject", "datacrypto-0927-cancel"),
+("gap-l5-mouth", "decision", "nonce導入は既にある毎回 getRandomValues を新しい方式として再実装する口になる", "accept", "accept", None),
+("gap-l5-mouth-then", "decision", "nonce導入は再実装する口になる。やはり新たなnonce導入", "reject", "reject", "datacrypto-0927-cancel"),
+("gap-l5-nested", "decision", "「遅らせるな」ではなく、停止解除は11:45まで遅らせる。", "reject", "reject", "llama7B-stop"),
+("gap-l5-quote-then", "decision", "その話は口になる、やはり停止解除は11:45まで遅らせる。", "reject", "reject", "llama7B-stop"),
+("gap-enc-fullwidth-time", "decision", "停止解除は１１：４５まで遅らせる", "reject", "reject", "llama7B-stop"),
+("gap-enc-fullwidth-nonce", "decision", "ｎｏｎｃｅ教育を推進", "reject", "reject", "datacrypto-0927-cancel"),
+("gap-enc-fullwidth-grv", "decision", "ｇｅｔＲａｎｄｏｍＶａｌｕｅｓの再実装", "reject", "reject", "datacrypto-0927-cancel"),
+("gap-enc-halfwidth", "decision", "ﾉﾝｽ教育を推進", "reject", "reject", "datacrypto-0927-cancel"),
+("gap-enc-ideographic", "decision", "停止\u3000解除は11:45まで遅らせる", "reject", "reject", "llama7B-stop"),
+("gap-enc-zwsp", "decision", "停止\u200b解除は11:45まで遅らせる", "reject", "reject", "llama7B-stop"),
+("gap-advice-delay", "advice", "助言(Grok): 停止解除は11:45まで遅らせる", "reject", "reject", "llama7B-stop"),
+("gap-advice-nonce", "advice", "助言(Grok): nonce教育を推進", "reject", "reject", "datacrypto-0927-cancel"),
+]
 
 def load_parent():
     src = subprocess.check_output(["git", "show", "main:local-ai/council/decision_lock.py"], cwd=ROOT)
@@ -195,7 +263,7 @@ def main():
     dec, rej = read(dec_p), read(rej_p)
     if normal_block(dec) or rej.count("保存前検査で却下") != 2 or text not in rej:
         errors.append(f"idempotent: blocks={normal_block(dec)} rejects={rej.count('保存前検査で却下')}")
-    rows.append(("idempotent-twice", "reject", "reject" if rej.count("保存前検査で却下")==2 and not normal_block(dec) else "accept", "-", "OK" if not any(e.startswith("idempotent") for e in errors) else "NG"))
+    rows.append(("idempotent-twice", "reject", "reject" if rej.count("保存前検査で却下")==2 and not normal_block(dec) else "accept", "-", "OK" if not any(e.startswith("idempotent:") for e in errors) else "NG"))
     shutil.rmtree(folder, ignore_errors=True)
 
     # 迂回基盤も再投入で通常決定にならず、却下は2件。
@@ -209,7 +277,47 @@ def main():
     rows.append(("idempotent-bypass", "reject", "reject" if rej.count("保存前検査で却下")==2 and not normal_block(dec) else "accept", "-", "OK" if not any(e.startswith("idempotent-bypass") for e in errors) else "NG"))
     shutil.rmtree(folder, ignore_errors=True)
 
-    # status: unlocked のときだけ llama の起動を記録できる。datacrypto は locked のまま拒否。
+    # 遅延解除と getRandomValues 再実装も、2回入れても通常決定にならない。
+    dec_p, rej_p, _, folder = paths()
+    late, grv = "停止解除は11:45まで遅らせる", "getRandomValuesの再実装"
+    d.commit_decision(late, decisions_path=dec_p, rejected_path=rej_p, topic="14:41")
+    d.commit_decision(late, decisions_path=dec_p, rejected_path=rej_p, topic="14:41")
+    d.commit_decision(grv, decisions_path=dec_p, rejected_path=rej_p, topic="16:20")
+    d.commit_decision(grv, decisions_path=dec_p, rejected_path=rej_p, topic="16:20")
+    dec, rej = read(dec_p), read(rej_p)
+    idem_ok = (not normal_block(dec) and late not in dec and grv not in dec and rej.count("保存前検査で却下") == 4
+               and rej.count("llama7B-stop") == 2 and rej.count("datacrypto-0927-cancel") == 2 and late in rej and grv in rej)
+    if not idem_ok:
+        errors.append(f"idempotent-gap: blocks={normal_block(dec)} rejects={rej.count('保存前検査で却下')}")
+    rows.append(("gap-idempotent", "reject", "reject" if idem_ok else "accept", "-", "OK" if idem_ok else "NG"))
+    shutil.rmtree(folder, ignore_errors=True)
+
+    # 別決定で破棄しても、遅延解除の本文は通常決定にならない。破棄側だけが乗る。
+    dec_p, rej_p, _, folder = paths()
+    late = "停止解除は11:45まで遅らせる"
+    keep = "11:45の解除は破棄し、llama7Bは停止のまま。"
+    o1, _ = d.commit_decision(late, decisions_path=dec_p, rejected_path=rej_p, topic="14:41の遅延解除")
+    o2, _ = d.commit_decision(keep, decisions_path=dec_p, rejected_path=rej_p, topic="別決定の破棄")
+    dec, rej = read(dec_p), read(rej_p)
+    split_ok = (o1 == "reject" and o2 == "accept" and late not in dec and keep in dec and normal_block(dec)
+                and late in rej and "llama7B-stop" in rej and rej.count("保存前検査で却下") == 1)
+    if not split_ok:
+        errors.append(f"other-decision: o1={o1} o2={o2} dec={dec!r} rej={rej!r}")
+    rows.append(("gap-other-decision-discard", "reject", o1 if split_ok else "accept", "-", "OK" if split_ok else "NG"))
+    shutil.rmtree(folder, ignore_errors=True)
+
+    # 議長文が遅延解除を足しても decisions に乗らない。
+    dec_p, rej_p, _, folder = paths()
+    outcome, _ = d.commit_decision("決定: 来期の会議室の椅子を2脚買い足す。", decisions_path=dec_p, rejected_path=rej_p,
+                                   topic="椅子", summary="", review="停止解除は11:45まで遅らせる")
+    dec, rej = read(dec_p), read(rej_p)
+    smug = outcome == "reject" and not normal_block(dec) and "llama7B-stop" in rej and "停止解除は11:45まで遅らせる" in rej
+    if not smug:
+        errors.append(f"chair-delay: {outcome} dec={dec!r}")
+    rows.append(("gap-chair-delay", "reject", outcome, "-", "OK" if smug else "NG"))
+    shutil.rmtree(folder, ignore_errors=True)
+
+    # status: unlocked のときだけ、そのロックの命令を記録できる。もう片方は locked のまま拒否。
     original = d.LOCK_PATH
     folder = tempfile.mkdtemp(prefix="council-lock-")
     try:
@@ -231,11 +339,49 @@ def main():
         rows.append(("ceo-unlocked-bypass", "accept", outcome, "-", "OK" if not any(e.startswith("ceo-unlocked-bypass") for e in errors) else "NG"))
         shutil.rmtree(f2, ignore_errors=True)
         dec_p, rej_p, _, f2 = paths()
+        outcome, _ = d.commit_decision("停止解除は11:45まで遅らせる", decisions_path=dec_p, rejected_path=rej_p, topic="llamaだけ解除した後")
+        if not (outcome == "accept" and normal_block(read(dec_p)) and "却下した決定" not in read(rej_p) and "停止解除は11:45まで遅らせる" in read(dec_p)):
+            errors.append(f"delay-after-unlock: {outcome} dec={read(dec_p)!r}")
+        rows.append(("gap-delay-after-llama-unlock", "accept", outcome, "-", "OK" if not any(e.startswith("delay-after-unlock") for e in errors) else "NG"))
+        shutil.rmtree(f2, ignore_errors=True)
+        dec_p, rej_p, _, f2 = paths()
         outcome, _ = d.commit_decision("nonceを導入する。", decisions_path=dec_p, rejected_path=rej_p, topic="IVはまだロック")
         rej = read(rej_p)
         if not (outcome == "reject" and not normal_block(read(dec_p)) and "datacrypto-0927-cancel" in rej):
             errors.append(f"crypto-still-locked: {outcome} {rej!r}")
         rows.append(("crypto-while-llama-unlocked", "reject", outcome, "-", "OK" if not any(e.startswith("crypto-still") for e in errors) else "NG"))
+        shutil.rmtree(f2, ignore_errors=True)
+        dec_p, rej_p, _, f2 = paths()
+        outcome, _ = d.commit_decision("nonce教育を推進", decisions_path=dec_p, rejected_path=rej_p, topic="教育もまだロック")
+        rej = read(rej_p)
+        if not (outcome == "reject" and not normal_block(read(dec_p)) and "datacrypto-0927-cancel" in rej and "nonce教育を推進" in rej):
+            errors.append(f"edu-still-locked: {outcome} {rej!r}")
+        rows.append(("gap-edu-while-llama-unlocked", "reject", outcome, "-", "OK" if not any(e.startswith("edu-still") for e in errors) else "NG"))
+        shutil.rmtree(f2, ignore_errors=True)
+
+        crypto_open = os.path.join(folder, "crypto-open.md")
+        body = open(original, encoding="utf-8").read().replace("## datacrypto-0927-cancel\n- status: locked\n", "## datacrypto-0927-cancel\n- status: unlocked\n", 1)
+        open(crypto_open, "w", encoding="utf-8").write(body)
+        d.LOCK_PATH = crypto_open
+        d.reload(force=True)
+        dec_p, rej_p, _, f2 = paths()
+        outcome, _ = d.commit_decision("新たなnonce導入", decisions_path=dec_p, rejected_path=rej_p, topic="暗号ロックをファイルで解除した後")
+        if not (outcome == "accept" and normal_block(read(dec_p)) and "却下した決定" not in read(rej_p)):
+            errors.append(f"crypto-unlocked-file: {outcome} dec={read(dec_p)!r} rej={read(rej_p)!r}")
+        rows.append(("gap-nonce-after-crypto-unlock", "accept", outcome, "-", "OK" if not any(e.startswith("crypto-unlocked") for e in errors) else "NG"))
+        shutil.rmtree(f2, ignore_errors=True)
+        dec_p, rej_p, _, f2 = paths()
+        outcome, _ = d.commit_decision("getRandomValuesの再実装", decisions_path=dec_p, rejected_path=rej_p, topic="再実装もファイル解除後")
+        if not (outcome == "accept" and normal_block(read(dec_p)) and "getRandomValuesの再実装" in read(dec_p)):
+            errors.append(f"grv-unlocked-file: {outcome} dec={read(dec_p)!r}")
+        rows.append(("gap-grv-after-crypto-unlock", "accept", outcome, "-", "OK" if not any(e.startswith("grv-unlocked") for e in errors) else "NG"))
+        shutil.rmtree(f2, ignore_errors=True)
+        dec_p, rej_p, _, f2 = paths()
+        outcome, _ = d.commit_decision("停止解除は11:45まで遅らせる", decisions_path=dec_p, rejected_path=rej_p, topic="llamaはまだロック")
+        rej = read(rej_p)
+        if not (outcome == "reject" and not normal_block(read(dec_p)) and "llama7B-stop" in rej and "停止解除は11:45まで遅らせる" in rej):
+            errors.append(f"delay-still-locked: {outcome} {rej!r}")
+        rows.append(("gap-delay-while-crypto-unlocked", "reject", outcome, "-", "OK" if not any(e.startswith("delay-still") for e in errors) else "NG"))
         shutil.rmtree(f2, ignore_errors=True)
     finally:
         d.LOCK_PATH = original

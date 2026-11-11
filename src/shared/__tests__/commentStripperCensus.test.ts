@@ -140,6 +140,16 @@ const EXEMPT: readonly { readonly file: string; readonly why: string }[] = [
       + '注記の中の `url(…)` を数えないことは同じファイルの標本が留める',
   },
   {
+    file: 'scripts/lib/mamori-arena-cross.cjs',
+    why: '**注記を落とす物ではなく、攻撃のプログラム (Mamori のソース) の本体行を組み替える物** (掛け合わせ · 2026-11-09 周回 8)。`// ` で始まる行を頭から分けるのは、攻撃の `// target` / `// goal` の行を子へ持ち込まないためで、本体の行からは 1 文字も落とさない。'
+      + '手書きの攻撃の読み (`parseRaw`) は注記の行を含む本体を親にしない (読めない物は null)。振る舞いは mamoriArenaCross.test.ts が留める',
+  },
+  {
+    file: 'scripts/lib/mamori-arena-rematch.cjs',
+    why: '**注記を落とす物ではなく、攻撃のプログラムの頭を組み直す物** (`render` · 2026-11-09 周回 5)。攻撃は Mamori のソースで、頭の `// target` / `// goal` の行を残して宣言 (`use` / 補助関数) を並べ直すだけ。'
+      + '本文 (動きの行) からは 1 文字も落とさず、JS の注記を剥がす用途ではない (対象は箱に撃つ Mamori の文字列)。振る舞いは mamoriArena.test.ts の往復の検査が留める',
+  },
+  {
     file: 'scripts/lint-mutation-scope.cjs',
     why: '**注記を落とす物ではなく、注記そのものを探す物**。`Stryker disable` / `restore` の pragma は定義上コメントの中に在るので、行頭アンカーの正規表現で `//` と `/*` を見るのは「注記か」を判じているのではなく**針そのもの**である (落としたら母集団が空になる · 2026-09-25 パス 463)',
   },
@@ -241,6 +251,7 @@ const MIGRATED: readonly string[] = [
   'src/renderer/__tests__/desktopPathClaims.test.ts',
   'src/renderer/__tests__/deviceStoreWritePolicy.test.ts',
   'src/renderer/__tests__/disclaimerRendered.test.ts',
+  'src/renderer/__tests__/drawerKeyboard.test.ts',
   'src/renderer/__tests__/errorMessageSurfaceCensus.test.ts',
   'src/renderer/__tests__/fixedTickAssertionCensus.test.ts',
   'src/renderer/__tests__/inlineColorCensus.test.ts',
@@ -306,6 +317,7 @@ const MIGRATED: readonly string[] = [
   'src/shared/__tests__/limitCoverageCensus.test.ts',
   'src/shared/__tests__/linkRedirectGuard.test.ts',
   'src/shared/__tests__/localFileOpenPolicy.test.ts',
+  'src/shared/__tests__/localLlmHandoff.test.ts',
   'src/shared/__tests__/localLlmSetup.test.ts',
   'src/shared/__tests__/markupExportCensus.test.ts',
   'src/shared/__tests__/nonFiniteEntryPoints.test.ts',

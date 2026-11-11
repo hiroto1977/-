@@ -48,6 +48,11 @@ const LEDGER: Record<string, LedgerEntry> = {
     keys: ['(呼び出し側が渡す鍵)'],
     why: '成否を返す唯一の入口。ここだけが setItem を直接呼んでよい理由は、失敗の種別を文面に写して返すため。',
   },
+  'src/renderer/App.tsx': {
+    policy: 'deliberate-swallow',
+    keys: ['servicehub.recents', 'servicehub.favorites'],
+    why: '最近開いた / お気に入りの並び。失っても次に開いた物から積み直せるので、警告を出す方が邪魔になる。',
+  },
   'src/renderer/components/ChatbotWidget.tsx': {
     policy: 'deliberate-swallow',
     keys: ['chatbot-history'],

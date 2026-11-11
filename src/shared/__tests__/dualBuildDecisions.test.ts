@@ -51,6 +51,16 @@ const LEDGER: Readonly<Record<string, { kind: Kind; why: string }>> = {
   // --- 判定: パリティ検査が突き合わせている ---
   // buildRfc2822 / isSafeHeaderValue は 2026-09-19 (パス 321) に shared/rfc2822.ts の 1 つへ
   // 畳んだ (両ビルドは re-export)。2 実装ではなくなったので、この台帳からは消えた。
+  // --- 薄い host 壁 (2026-11-09 · MG-050): main の `oauthHost.ts` と renderer の `pkceHost.ts` が同じ名前の口を持つ ---
+  // どちらも**判断を持たない**口 (乱数・SHA-256・時計・URLSearchParams・fetch・締切を呼ぶだけ)。判断は両ビルドとも Mamori の
+  // 本体 (`oauth.mamori` / `pkce.mamori`) が持ち、その判定の突き合わせは各本体の検査が見る。名前が同じなのは Mamori の
+  // `extern pure { … } from "./xHost"` の綴りを揃えたため。取り違えて呼ぶ道は無い (各本体は自分の壁しか import できない)。
+  hostFetch: { kind: 'different', why: '薄い host 壁。main は oauthHost.ts・renderer は pkceHost.ts。どちらも判断を持たず、呼ぶ時点の fetch を転送に追随しない init で呼ぶだけ' },
+  hostNow: { kind: 'different', why: '薄い host 壁 (Date.now)。判断を持たない' },
+  hostRandomBytes: { kind: 'different', why: '薄い host 壁 (OS の乱数)。main は node:crypto・renderer は WebCrypto で実体が別。判断を持たない' },
+  hostSearchParams: { kind: 'different', why: '薄い host 壁 (URLSearchParams を作る)。判断を持たない' },
+  hostSha256: { kind: 'different', why: '薄い host 壁 (SHA-256)。main は node:crypto・renderer は WebCrypto で実体が別。判断を持たない' },
+  hostWithTimeout: { kind: 'different', why: '薄い host 壁 (通常の HTTP の締切の中で走らせる)。締切の数は shared/httpLimits の定数で、壁は渡すだけ' },
   parseAtlassianToken: { kind: 'decision', why: '送り先ホストの許可 (atlassianSiteParity)' },
   // parseSecurityKeys は 2026-09-19 (パス 321) に shared/api/security.ts の 1 つへ畳んだ (両ビルドは re-export)。
   safeStateEquals: {

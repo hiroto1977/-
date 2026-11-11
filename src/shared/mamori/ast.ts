@@ -38,13 +38,14 @@ export type Expr =
   | { readonly kind: 'new'; readonly callee: Expr; readonly typeArgs: readonly TypeRef[]; readonly args: readonly Expr[]; readonly pos: Pos }
   | { readonly kind: 'unary'; readonly op: '!' | '-' | '~' | 'typeof' | 'await'; readonly operand: Expr; readonly pos: Pos }
   | { readonly kind: 'binary'; readonly op: string; readonly left: Expr; readonly right: Expr; readonly pos: Pos }
-  | { readonly kind: 'arrow'; readonly params: readonly Param[]; readonly body: Expr; readonly pos: Pos }
+  /** `async (x) => …` (0.26 · MG-053)。`async` が付いても本体は plain の役で検め、`await` の扱いは async 関数と同じ (印は await を通っても運ばれる)。 */
+  | { readonly kind: 'arrow'; readonly async: boolean; readonly params: readonly Param[]; readonly body: Expr; readonly pos: Pos }
   /**
    * 本体がブロックの arrow (0.9)。`=> {` は必ずブロックを開く (オブジェクトの字面を返すなら `=> ({ … })` と括る)。
    * 本体の中の文は、外の関数の gate / sink の役割を継がない (`mint` と危ない口は使えない) —— 外へ渡された arrow が
    * 関門や危ない口の検めを飛ばして呼べる道にならないように。
    */
-  | { readonly kind: 'arrow-block'; readonly params: readonly Param[]; readonly body: readonly Stmt[]; readonly pos: Pos }
+  | { readonly kind: 'arrow-block'; readonly async: boolean; readonly params: readonly Param[]; readonly body: readonly Stmt[]; readonly pos: Pos }
   | { readonly kind: 'mint'; readonly vetted: string; readonly value: Expr; readonly pos: Pos }
   /** オブジェクトの字面 (0.2)。鍵は名前か文字列だけ —— 展開 (`...`)・計算した鍵 (`[k]`)・`__proto__` は書けない。 */
   | { readonly kind: 'object'; readonly props: readonly Prop[]; readonly pos: Pos }
@@ -141,9 +142,21 @@ export type Item =
       readonly kind: 'use';
       /** `use type { … }` なら true (型だけの import)。 */
       readonly typeOnly: boolean;
-      readonly names: readonly { readonly name: string; readonly alias: string | null }[];
+      /** `typeOnly` (名前ごと) は `use { f, type X }` の `type X` (0.24)。`use type { … }` (項目全体) とは同時に使えない。 */
+      readonly names: readonly { readonly name: string; readonly alias: string | null; readonly typeOnly: boolean }[];
       readonly defaultName: string | null;
       readonly from: string;
+      readonly doc: Doc;
+      readonly pos: Pos;
+    }
+  | {
+      /**
+       * `export { a, type T } from "./m";` / `export { a };` (0.25 · MG-051)。再輸出は TypeScript の呼び手のための物で、Mamori の `use` では引けない
+       * (`table.exports` に載らない)。`from` が null なら `use` で引いた名前の再輸出 (自分で宣言した名前には `export` を付ける)。
+       */
+      readonly kind: 'reexport';
+      readonly names: readonly { readonly name: string; readonly typeOnly: boolean }[];
+      readonly from: string | null;
       readonly doc: Doc;
       readonly pos: Pos;
     }
