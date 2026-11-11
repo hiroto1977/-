@@ -47,6 +47,15 @@
 禁止パターンは `advice_guard.py`（dataCrypto の実装着手、`as BufferSource`、Mamori への `as` / `while` 追加、JSON.stringify を暗号化と扱う、IV の定期再生成、正規表現アンカーの除去、C++/Python 混在）。否定文（〜しない / 禁止 など）は違反にしません。
 `COUNCIL_ADVICE_GUARD=0` で無効化できます。`COUNCIL_ADVICE_GUARD_LLM=1` で検証モデルにも確認させます（既定は OFF）。テスト: `python3 test_advice_guard.py`。
 
+## 通る2形を消さない
+
+パーサ（`src/shared/mamori/parser.ts`）が既に受理する次の2形を、消す・削除する・廃止する・取り消す決定は `decisions.md` に書きません。却下は `rejected_decisions.md` に識別子 `mamori-two-forms` で残します。
+
+1. 浅いオブジェクト分割 `const { email, token } = o;` / `const { a, b: c } = x;`（`const [` と `let {` は対象外）
+2. `for (const ch of s)` / `for (const n of xs)`（`of` だけ。`in` は対象外）
+
+「2形は残す」「削除しない」「構文教育は不要」、経費や無関係な API の削除、例としての引用は記録できます。「2形残す」を「消す」に読み替える決定は記録しません。CEOロック（`locked_decisions.md`）ではなく、`commit_decision` が `syntax_forms_guard.py` を見ます。テスト: `python3 test_syntax_forms_guard.py`。
+
 ## 閉ループ（決定→実行記録→検証）
 会議の本文は `decision_lock.commit_decision` が保存前検査を通したときだけ `decisions.md` に書きます。通ったあと、閉ループがマーカー `<!-- loop:決定ID -->` を足してディスクから読み戻し、次のアクションを実行して検証します。検査が却下した決定は `rejected_decisions.md` だけに残り、実行ファイルは作りません（同じ決定IDのマーカーが両方に残ることは排他違反です）。`accept_and_verify` を直接呼ぶ経路は、検査と記録と実行をその関数がまとめて行います。
 
