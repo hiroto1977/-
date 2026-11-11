@@ -20,7 +20,7 @@ import {
   type CopyFolder,
   type CopyMarker,
 } from '../encryptedCopy';
-import { isEncryptedBackup, parseBackupFile } from '../backup';
+import { isEncryptedBackup, parseBackupFile, sha256Hex } from '../backup';
 import type { StoredRecord } from '../store';
 
 const PASS = 'correct horse battery';
@@ -77,6 +77,16 @@ describe('控えのファイル名', () => {
     expect(isEncryptedCopyFilename('service-hub-backup-2026-11-11-encrypted.json')).toBe(false);
     expect(isEncryptedCopyFilename('service-hub-copy--encrypted.json')).toBe(false);
   });
+
+  it('前と後ろの両方を見る (同じ長さの別の前置き・別の後置きは、日付が正しくても認めない)', () => {
+    // 前置きだけが違う (長さは同じ 17 字) —— 切り出した日付は正しいので、前置きを見なければ通る。
+    expect(isEncryptedCopyFilename('service-hub-copx-2026-11-11-encrypted.json')).toBe(false);
+    // 後置きだけが違う (長さは同じ 15 字)。
+    expect(isEncryptedCopyFilename('service-hub-copy-2026-11-11-encrypted.jsox')).toBe(false);
+    // 標本: 上の 2 つは、前置き・後置きを落とせば暦の日付が残る形である。
+    expect('service-hub-copx-2026-11-11-encrypted.json'.slice(17, -15)).toBe('2026-11-11');
+    expect('service-hub-copy-2026-11-11-encrypted.jsox'.slice(17, -15)).toBe('2026-11-11');
+  });
 });
 
 describe('記録の指紋', () => {
@@ -97,6 +107,16 @@ describe('記録の指紋', () => {
     expect(x).not.toBe(y);
   });
 
+  it('指紋は「[id, 更新時刻] の JSON を並べ替えて改行でつないだ物」の sha256 である (値を留める)', async () => {
+    const got = await recordsFingerprint([
+      { id: 'b', updatedAt: 2 },
+      { id: 'a', updatedAt: 1 },
+    ]);
+    expect(got).toBe(await sha256Hex('["a",1]\n["b",2]'));
+    // 対照: 区切りが無ければ別の値になる。
+    expect(got).not.toBe(await sha256Hex('["a",1]["b",2]'));
+  });
+
   it('1 件も無い記録の指紋と、1 件の指紋は違う', async () => {
     expect(await recordsFingerprint([])).not.toBe(await recordsFingerprint([rec('a', 1)]));
   });
@@ -107,12 +127,18 @@ describe('目印の読み', () => {
     expect(readCopyMarker({ ...MARKER })).toEqual(MARKER);
   });
 
+  it('件数 1 は読む (下限ちょうど)', () => {
+    expect(readCopyMarker({ ...MARKER, count: 1 })).toEqual({ ...MARKER, count: 1 });
+  });
+
   it('余分な欄は持ち込まない', () => {
     expect(readCopyMarker({ ...MARKER, passphrase: 'x' })).toEqual(MARKER);
   });
 
   it.each([
     ['null', null],
+    ['undefined', undefined],
+    ['数', 5],
     ['配列', [MARKER]],
     ['文字列', 'x'],
     ['時刻が文字列', { ...MARKER, at: '2026-11-11' }],
@@ -125,6 +151,9 @@ describe('目印の読み', () => {
     ['指紋の前後に余分な字', { ...MARKER, fingerprint: 'x' + FP }],
     ['指紋のあとに余分な字', { ...MARKER, fingerprint: FP + 'x' }],
     ['指紋が数', { ...MARKER, fingerprint: 1 }],
+    // 正規表現は文字列でない値を文字列へ直して照合する —— 型を先に見なければ、1 要素の配列が通る。
+    ['指紋が 1 要素の配列', { ...MARKER, fingerprint: [FP] }],
+    ['件数が負', { ...MARKER, count: -1 }],
     ['名前が別の形', { ...MARKER, filename: '../evil.json' }],
     ['名前が数', { ...MARKER, filename: 5 }],
   ])('形の違う目印は「無い」: %s', (_label, raw) => {
@@ -246,6 +275,35 @@ describe('書く → 読み戻す → 確かめる → 覚える', () => {
     expect(copyFreshness(loadCopyMarker().marker, 2, await recordsFingerprint(records)).state).toBe('current');
     expect(copyFreshness(loadCopyMarker().marker, 3, await recordsFingerprint([...records, rec('c', 30)])).state).toBe('stale');
   }, 30_000);
+
+  it('フォルダへ渡す中身は JSON を名乗る', async () => {
+    const types: string[] = [];
+    const inner = memoryFolder();
+    const folder: CopyFolder = {
+      write: async (filename, blob) => {
+        types.push(blob.type);
+        await inner.write(filename, blob);
+      },
+      read: inner.read,
+    };
+    const res = await writeEncryptedCopy({ records: [rec('a', 10)], passphrase: PASS, confirm: PASS, folder, now: NOW });
+    expect(res.ok).toBe(true);
+    expect(types).toEqual(['application/json']);
+  }, 30_000);
+
+  it('今日の日付が読めなければ、名前を決められないと断り、1 字も書かない', async () => {
+    const folder = memoryFolder();
+    const res = await writeEncryptedCopy({
+      records: [rec('a', 10)],
+      passphrase: PASS,
+      confirm: PASS,
+      folder,
+      now: new Date(Number.NaN),
+    });
+    expect(res).toEqual({ ok: false, message: '今日の日付を読めないので、控えの名前を決められません。' });
+    expect(folder.writes).toEqual([]);
+    expect(loadCopyMarker().marker).toBeNull();
+  });
 
   it('対照の標本: 平文で書けば中身は読める (暗号文に無いことの主張が空でない証拠)', () => {
     const plain = JSON.stringify([rec('a', 10, 123_456)]);

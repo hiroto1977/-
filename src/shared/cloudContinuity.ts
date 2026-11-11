@@ -20,7 +20,7 @@
  */
 import { ACTION_TIER, OUTBOUND_TIERS } from './actionTier';
 import { originOf } from './dataOrigin';
-import { has, lookup } from './lookup';
+import { has } from './lookup';
 import { SERVICE_IDS, type ServiceId } from './serviceId';
 
 /** クラウドが止まったときの、その画面の立ち位置。 */
@@ -38,11 +38,8 @@ export const OUTBOUND_NOT_THIRD_PARTY: Readonly<Record<string, string>> = {
 /** そのサービスが、端末の外へ出る action を 1 つでも持つか (`ACTION_TIER` から導く)。 */
 export function hasOutboundAction(id: string): boolean {
   const prefix = id + '/';
-  return Object.keys(ACTION_TIER).some((key) => {
-    if (!key.startsWith(prefix)) return false;
-    const tier = lookup(ACTION_TIER, key);
-    return tier !== undefined && OUTBOUND_TIERS.has(tier);
-  });
+  // 表そのものを歩く (自前の鍵と値の組だけが出る —— 鍵で引き直さないので「引けなかった」の枝が無い)。
+  return Object.entries(ACTION_TIER).some(([key, tier]) => key.startsWith(prefix) && OUTBOUND_TIERS.has(tier));
 }
 
 /** クラウドが止まったときの立ち位置を、出どころと action の段階から導く。 */
@@ -292,7 +289,7 @@ export function outageExposure(configured: readonly string[]): readonly OutageEx
   const out: OutageExposure[] = [];
   for (const provider of CLOUD_PROVIDERS) {
     const mine = provider.services.filter((id) => held.has(id));
-    const bySlot = (provider.slots ?? []).some((slot) => held.has(slot));
+    const bySlot = provider.slots?.some((slot) => held.has(slot)) ?? false;
     if (mine.length > 0 || bySlot) out.push({ provider, configured: mine });
   }
   return out;

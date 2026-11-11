@@ -64,13 +64,18 @@ export async function recordsFingerprint(records: readonly Pick<StoredRecord, 'i
   return sha256Hex(lines.join('\n'));
 }
 
+/** 1 以上の整数か。`Number.isInteger` は数でない値に false を返すので、型の検査を別に置かない。 */
+function isPositiveInt(v: unknown): v is number {
+  return Number.isInteger(v) && (v as number) >= 1;
+}
+
 /** 端末から読んだ目印を検める。形が違えば「無い」。 */
 export function readCopyMarker(raw: unknown): CopyMarker | null {
   if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) return null;
   const r = raw as Record<string, unknown>;
   const { at, count, fingerprint, filename } = r;
   if (typeof at !== 'number' || parseTimestamp(at) === null) return null;
-  if (typeof count !== 'number' || !Number.isInteger(count) || count < 1) return null;
+  if (!isPositiveInt(count)) return null;
   if (typeof fingerprint !== 'string' || !FINGERPRINT_SHAPE.test(fingerprint)) return null;
   if (typeof filename !== 'string' || !isEncryptedCopyFilename(filename)) return null;
   return { at, count, fingerprint, filename };
