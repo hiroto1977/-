@@ -83,6 +83,11 @@ const LEDGER: Record<string, LedgerEntry> = {
     keys: ['DOCSTUDIO_DRAFT_KEY'],
     why: '社外向けポータルの「この端末に残した入力を消す」。消した後に入口 (readLocalString) で読み直し、読めて・無いときだけ「消した」と答える。読めなければ消えたふりをせず「消せませんでした」と述べる (2026-11-11)。',
   },
+  'src/renderer/data/encryptedCopy.ts': {
+    policy: 'three-state',
+    keys: ['servicehub.encryptedCopy.last'],
+    why: '入口 (readLocalJson) を通す。控えの目印を読めなければ loadCopyMarker が readable: false を返し、画面は「最新」とも「古い」とも言わず、確かめられないと言う (2026-11-11)。壊れた目印は readCopyMarker が「無い」へ倒す —— 控えを書き直せば戻る。',
+  },
   'src/renderer/theme.ts': {
     policy: 'three-state',
     keys: ['servicehub.theme', 'servicehub.design'],

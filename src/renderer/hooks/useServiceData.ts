@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { FetchResult, ServiceId } from '../../preload/bridgeTypes';
 import { isRefreshable, originOf, type DataOrigin } from '../../shared/dataOrigin';
 import { reportDeviceStoreFailure } from '../data/deviceStoreFailure';
+import { forgetFetch, lastGoodFetch, rememberFetch, staleDataNote } from '../data/lastGoodFetch';
 
 export type Source = 'snapshot' | 'live';
 export type Status = 'idle' | 'loading' | 'error';
@@ -104,6 +105,19 @@ export function useServiceData<T>(
     // 壊れた値で throw した) ここで捕まえないと status が 'loading' のまま残り、
     // バッジが「読込中…」で永久に止まる。約束は main (と web-shim の床 · パス 312) で守るが、止まらない
     // ことは renderer 側でも保証する。
+    /*
+     * 取得が失敗したとき、最後に取得できた内容が在ればそれを見せる (2026-11-11 · `data/lastGoodFetch.ts`)。
+     * クラウドが止まっている間こそ「最後に見えていた姿」が要る —— 直す前は、画面を開き直すと同梱の見本に戻っていた。
+     * 返すのは画面に出す文で、**いつの内容か**を名乗る。覚えが無ければ失敗の文のまま (見本は見本のバッジで出る)。
+     */
+    const showLastGood = (message: string): string => {
+      const last = lastGoodFetch(serviceId);
+      if (last === null) return message;
+      setData(last.data as T);
+      setSource('live');
+      setPayloadIsMock(false);
+      return staleDataNote(message, last.at);
+    };
     let result: FetchResult<T>;
     try {
       result = await window.serviceHub.fetchSnapshot<T>(serviceId);
@@ -113,7 +127,7 @@ export function useServiceData<T>(
       if (mine !== latest.current) return;
       setStatus('error');
       const message = e instanceof Error ? e.message : String(e);
-      setErrorMessage(message);
+      setErrorMessage(showLastGood(message));
       setErrorKind(classifyError(message));
       return;
     }
@@ -124,11 +138,19 @@ export function useServiceData<T>(
       setSource('live');
       setPayloadIsMock(declaresMock(result.data));
       setStatus('idle');
-    } else {
+      // クラウドから取得した内容だけを覚える (見本・端末の記録は `rememberFetch` が断る)。
+      rememberFetch(serviceId, result.data);
+    } else if (result.code === 'not_configured') {
+      // 資格情報が無い: その資格情報で取得した内容は見せ続けない。
+      forgetFetch(serviceId);
       setStatus('error');
       setErrorMessage(result.message);
-      setErrorKind(result.code === 'not_configured' ? 'auth' : classifyError(result.message));
-      if (result.code === 'not_configured') setIsConfigured(false);
+      setErrorKind('auth');
+      setIsConfigured(false);
+    } else {
+      setStatus('error');
+      setErrorMessage(showLastGood(result.message));
+      setErrorKind(classifyError(result.message));
     }
   }, [serviceId]);
 

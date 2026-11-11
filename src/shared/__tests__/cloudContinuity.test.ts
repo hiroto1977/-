@@ -11,6 +11,7 @@ import path from 'node:path';
 import { ACTION_TIER, OUTBOUND_TIERS } from '../actionTier';
 import { SERVICE_DATA_ORIGIN } from '../dataOrigin';
 import { SERVICE_IDS, type ServiceId } from '../serviceId';
+import { readOriginalSource } from './originalSource';
 import {
   CLOUD_DATA_MEANWHILE,
   CLOUD_DATA_WHEN_DOWN,
@@ -200,8 +201,8 @@ describe('outageExposure —— 資格情報を預けている画面から、い
     const withSlots = CLOUD_PROVIDERS.filter((p) => p.slots !== undefined);
     expect(withSlots.map((p) => p.id)).toEqual(['ai']);
     expect(withSlots[0]?.slots).toEqual(['anthropic']);
-    const settings = fs.readFileSync(path.join(REPO, 'src/renderer/pages/SettingsPage.tsx'), 'utf8');
-    const shim = fs.readFileSync(path.join(REPO, 'src/renderer/web-shim.ts'), 'utf8');
+    const settings = readOriginalSource(path.join(REPO, 'src/renderer/pages/SettingsPage.tsx'));
+    const shim = readOriginalSource(path.join(REPO, 'src/renderer/web-shim.ts'));
     expect(settings).toContain("vaultKey: 'anthropic'");
     expect(shim).toContain("'anthropic'");
     // サービスの id と重ならない (重なるなら services に書く)。
@@ -256,7 +257,7 @@ describe('文面', () => {
   });
 
   it('★ 25 条と委託元の報告は、確証済みのコンプライアンスの知識に同じ内容が在る', () => {
-    const corpus = fs.readFileSync(path.join(REPO, 'src/renderer/data/complianceKnowledge.ts'), 'utf8');
+    const corpus = readOriginalSource(path.join(REPO, 'src/renderer/data/complianceKnowledge.ts'));
     expect(corpus).toContain('委託先の監督（25条）');
     expect(corpus).toContain('報告義務を負うのは原則として委託元');
   });

@@ -9,6 +9,7 @@ import { BackupPanel } from '../components/BackupPanel';
 import { RecordShapeAuditPanel } from '../components/RecordShapeAuditPanel';
 import { CloudContinuityPanel } from '../components/CloudContinuityPanel';
 import { CloudSyncPanel } from '../components/CloudSyncPanel';
+import { EncryptedCopyPanel } from '../components/EncryptedCopyPanel';
 import { ParametersPanel } from '../components/ParametersPanel';
 import { PARAMETERS } from '../../shared/parameters';
 import { usePlan } from '../plan/usePlan';
@@ -1227,6 +1228,8 @@ export function SettingsPage() {
       </Section>
 
       <BackupPanel />
+
+      <EncryptedCopyPanel />
 
       <RecordShapeAuditPanel />
 

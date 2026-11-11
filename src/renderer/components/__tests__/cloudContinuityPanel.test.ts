@@ -100,6 +100,6 @@ describe('事業継続のパネル', () => {
     expect(line).toContain(`この端末だけで動く: ${t.local}`);
     expect(line).toContain(`クラウドが預かるデータを見る: ${t.cloudData}`);
     expect(text()).toContain('事業の記録 (売上・KPI・貸借対照表・書類ほか) はこの端末に保存します');
-    expect(text()).toContain('「バックアップ / 復元」');
+    expect(text()).toContain('「暗号化した控え」');
   });
 });

@@ -111,6 +111,12 @@ const LEDGER: readonly Row[] = [
     why: 'パスワード変更と施錠は保管庫の操作なのでブラウザ版だけ。2026-09-09 (パス 137) から isBrowserBuild で出し分けており、すべてのデータを削除だけが橋を通って両ビルドで働く。',
   },
   {
+    tag: 'EncryptedCopyPanel',
+    reach: 'both',
+    declaredIn: 'components/EncryptedCopyPanel.tsx',
+    why: '端末の記録 (IndexedDB の記録の保管層・両ビルド共通) を暗号化して保存先フォルダ (File System Access · デスクトップ版でも使えることをパス 456 で実測) へ書く。目印は localStorage の入口を通す。保管庫にも橋にも触れない。',
+  },
+  {
     tag: 'CloudContinuityPanel', reach: 'both', declaredIn: 'components/CloudContinuityPanel.tsx',
     why: '橋の listConfigured を読んで、依っている提供者を台帳 (shared/cloudContinuity.ts) から並べるだけ (書き込みは無い)。橋は実行形態ごとに保管先を振り分くので両ビルドで正しい。',
   },

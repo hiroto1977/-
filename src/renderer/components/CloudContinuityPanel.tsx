@@ -79,7 +79,7 @@ export function CloudContinuityPanel() {
       </p>
       <p style={{ ...MUTED, margin: '6px 0 0' }}>
         事業の記録 (売上・KPI・貸借対照表・書類ほか) はこの端末に保存します。どのクラウドが止まっても読み書きできます。
-        端末の故障に備える控えは、この画面の「バックアップ / 復元」から書き出してください。
+        端末の故障に備える控えは、この画面の「暗号化した控え」で、クラウドと同期しているフォルダへ暗号文として書けます。
       </p>
 
       <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginTop: 14 }}>いま資格情報を預けているクラウド</div>

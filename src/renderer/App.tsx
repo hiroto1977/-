@@ -14,6 +14,7 @@ import { isBrowserBuild } from './runtimeMode';
 import { getVault } from './security/vault';
 import { startAutoLock } from './security/autoLock';
 import { lockWorkspace, startLockRelay, subscribeWorkspaceLocked } from './security/lockWorkspace';
+import { forgetAllFetches } from './data/lastGoodFetch';
 import { usePlan } from './plan/usePlan';
 import { VoiceCommandBar } from './components/VoiceCommandBar';
 import { ChatbotWidget, clearChatbotHistory } from './components/ChatbotWidget';
@@ -229,7 +230,11 @@ export function App() {
    */
   useEffect(() => {
     if (!browserMode) return undefined;
-    const unsubscribe = subscribeWorkspaceLocked(() => setVaultUnlocked(false));
+    const unsubscribe = subscribeWorkspaceLocked(() => {
+      // 施錠したら、クラウドから取得して覚えていた内容も消す (`data/lastGoodFetch.ts` —— メモリだけの覚え)。
+      forgetAllFetches();
+      setVaultUnlocked(false);
+    });
     const stopRelay = startLockRelay();
     return () => {
       unsubscribe();
