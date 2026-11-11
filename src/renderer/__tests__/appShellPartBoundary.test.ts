@@ -234,6 +234,7 @@ const LEDGER: Record<string, { readonly where: Where; readonly why: string }> = 
   LockScreen: { where: 'page-boundary', why: '「ロック画面」の境界に入る (パス 136 以前から)' },
   PageComponent: { where: 'page-boundary', why: '選んだ画面そのもの' },
   ManualDataSection: { where: 'page-boundary', why: '画面ごとの手入力欄 (画面と同じ枠で落ちる)' },
+  PortalDirectory: { where: 'page-boundary', why: 'ポータルの一覧 (社内 / パートナー / カスタマー) —— 画面の場所に出るので、画面と同じ境界に入る (2026-11-11)' },
   BestAnswersIndicator: { where: 'shell-boundary', why: '上部バー —— ベスト3 の進み具合の印' },
   VoiceCommandBar: { where: 'shell-boundary', why: '上部バー —— 音声コマンドの結果を描く' },
   DeviceStoreFailureBanner: { where: 'shell-boundary', why: '画面の上の帯 —— 画面が落ちても残すため画面の境界の外に置く (だから自分の境界が要る)' },
@@ -276,8 +277,8 @@ describe('App.tsx が描く部品は、どれも境界の中に在る (走査・
   const code = stripComments(readOriginalSource(APP));
   const found = scan(code);
 
-  it('★ 走査は空でない (実測 12 種 —— 増えたら台帳を読み直す)', () => {
-    expect(new Set(found.map((f) => f.name)).size).toBe(12);
+  it('★ 走査は空でない (実測 13 種 —— 増えたら台帳を読み直す)', () => {
+    expect(new Set(found.map((f) => f.name)).size).toBe(13);
   });
 
   it('★ 描く部品と台帳は両方向に一致する (新しい部品は理由と居場所を書くまで落ちる)', () => {
