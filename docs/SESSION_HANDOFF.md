@@ -14,8 +14,9 @@
 - **穴 3 家系 (どれも、関門を通っていない値が印を受ける関数・危ない口へ届く)**: T-261 arrow の引数に印の型を書く (`((v: V) => need(v))(JSON.parse(raw))`・`.then` / `.map` の呼び戻し) / T-262 Mamori の関数を別の顔で引く (`extern pure { need } from "./g"`・`use … from "./g.js"`・`".//g"`) / T-263 印の引数の既定値と、gate の `return JSON.parse(s);`。
 - **塞ぎ (`checker.ts`)**: arrow の引数は印を名乗れない (外の module の関数へ直に渡す呼び戻しだけ書ける —— 実物は `main.mamori` の `openFromWindow` の 1 か所)・印を受ける Mamori の関数は extern で引けない・相対の道は正規の綴りだけ (`specifierProblem`)・印を名乗る引数は既定値を持てない・gate の戻り値は `mint`・印を持つ値・null / undefined だけ。実物の `.mamori` 42 本は 1 本も変えずに通る (生成物は不変)。
 - **対戦場の対照**: 手書きの攻め 12 本 (`mark-*`) × 箱 `token`。0.31 (worktree) では赤 9 点 (秘密が丸ごと盗まれる)、0.32 では赤 0 点。corpus 1,046 → 1,058 本。
-- **既存の検査が穴を仕様として留めていた 2 件を書き直した** (`mamoriV03` の「通る対照」・`mamoriCheckerCoverage` の「arrow の中で印を運ぶ」)。回帰検査は `mamoriV32.test.ts` (19 件)。開け直し A-597〜A-601 は 5 件とも名指しの検査が捕まえた。
+- **既存の検査が穴を仕様として留めていた 2 件を書き直した** (`mamoriV03` の「通る対照」・`mamoriCheckerCoverage` の「arrow の中で印を運ぶ」)。回帰検査は `mamoriV32.test.ts` (22 件)。開け直し A-597〜A-601 は 5 件とも名指しの検査が捕まえた。
 - **攻撃の電池の物差しが、穴と同じ前提に立っていた**: `mamoriInspect.ts` は「印の型で宣言された名前なら口へ渡してよい」と見ており、電池は `xs.map((u: VU) => openUrl(u))` を受け入れても穴と数えなかった。物差しに 3 規則 (arrow の引数・既定値・印を返す関数の戻り値) を足し、電池に `markFlow` の文脈 15 × 値の出どころ 21 × 口の引き方 21 を足した。対照: 同じ電池を 0.31 に当てると 3 つの種すべてで穴を挙げる。
+- **変異検査 (変えた行だけ・`checker.ts`)**: 1 度目は 93.43% (生存 13)。等価 2 件は形ごと消した (呼ぶ側が名前かの判定は型の絞り込みのためだけに在るので、その 1 行にだけ理由つきの pragma・`isArrow` の重ね掛けは登録を「式そのもの」にして消した)。残る 11 件は検査の穴だった (道の綴りの錨・`some` と `every`・外の関数の種類 (`extern sink` と宣言の無い組み込みは外の関数に数えない)・局所の束縛が同じ名前を覆う形・gate が字面を返す形ほか) —— 検査を足して 2 度目は **100.00% (Killed 182 / 生存 0)**。
 - **残した物**: 外の module と印を受ける関数を値としてやり取りする 2 形は Mamori だけでは閉じられない (REMAINING_WORK の先頭)。
 - **完成度の基準**: H1 (直近 10 周の穴 0 件) は、この周の穴の記録でさらに床の下が続く (隠さない)。数は `npm run mamori:grow -- report`。
 - **手探りの道具** (リポジトリの外・作り直すなら): 守る側の module (`vetted V`・`gate fn check`・`fn need(v: V)`) と攻める側の本体を `compileProject` → 生成物を `tsc` に掛け、「Mamori が受け入れ かつ tsc も通る」形を挙げる。対戦場の審判 (`scripts/lib/mamori-arena-judge.cjs` の `loadCompiler` / `typecheck`) がそのまま使える。

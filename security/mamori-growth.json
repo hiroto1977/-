@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.31"
+    "version": "0.32"
   },
   "constructs": {
     "class": {
@@ -3962,6 +3962,83 @@
         "summary": "言語の穴探し (0.31 の型の文法と satisfies の直後・対戦場の周回 10)。手書きの攻め 20 本・合戦 5 拍・生の呼び手で計 31,228 戦、赤の勝ち 0・判定の揺らぎ 0。穴は見つからなかった。受け入れたが害の無かった物: `const v: typeof process = x;` は型の文法として通り tsc が断る (型は実行時に消える)。隣り合う比べ 2 つ `f(n < m, k > (x))` は Mamori も TypeScript も型引数つきの呼び出しと読む (同じ木・tsc が断る・書き手は括弧が要る)。再戦に変え方 satisfy を足し、包んでも箱の答えが親と同じことを検査で留めた。青の弱体化 181 件は 176 件を赤が捕まえ、逃した 5 件は周回 9 と同じ凍結を外した箱 (等価 3・生の呼び手が捕まえる 2)。"
       },
       "deviation": "利用者の依頼「合戦を続けて」に従い、brief の順位 (selfAttestation.ts の移植) ではなく対戦場の合戦 (言語の穴探し) を回した。"
+    },
+    {
+      "id": "MG-067",
+      "date": "2026-11-11",
+      "kind": "probe",
+      "target": "language",
+      "pickedBy": "manual",
+      "briefPick": "port:src/main/selfAttestation.ts",
+      "version": "0.32",
+      "features": [],
+      "added": [],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "arrow の引数に印の型を書き、関門を通っていない値 (JSON.parse の any) を渡す: 即時の呼び出し `((v: V) => need(v))(JSON.parse(raw))`・別名を付けて呼ぶ・`Promise.resolve(JSON.parse(raw)).then((v: V) => need(v))`・any から束縛した `V[]` の `.map((v: V) => need(v))`・JSON.parse の reviver。Mamori は arrow の引数の印の型をそのまま信じて中で印を運び、呼ぶ側の引数は検めない。tsc は any を印の型へ通す",
+          "result": "hole"
+        },
+        {
+          "tried": "印を受ける Mamori の関数を `extern pure { need } from \"./g\"` で引き、`need(JSON.parse(raw))` と呼ぶ (extern の名前は外形を持たないので、引数の印の検めが外れる)",
+          "result": "hole"
+        },
+        {
+          "tried": "道の綴りを変えて同じ Mamori の module を別の module に見せる: `use { need } from \"./g.js\"` / `\".//g\"` / `\"../x//g\"`。TypeScript は同じ module に解き、Mamori は外の module と見て外形を引かない (13 綴り × use / extern を 0.31 で測った: use で通るのは拡張子つき 4・空の区切り 2・末尾の / の 7 綴り)",
+          "result": "hole"
+        },
+        {
+          "tried": "印を名乗る引数に既定値を置く: `sink fn out(u: V = JSON.parse(\"1\")) { return open(u); }`・印を名乗る arrow の引数の既定値を省いて呼ぶ `const run = (t: V = JSON.parse(\"1\")) => need(t); run();`",
+          "result": "hole"
+        },
+        {
+          "tried": "gate 関数から mint を通らない値を印の型で返す: `gate fn g(s: string) -> V | null { return JSON.parse(s); }`・条件演算子の片方・束縛を挟む形・別の module が、引いた印の gate を自分で書く形",
+          "result": "hole"
+        },
+        {
+          "tried": "any の出どころ × 印を受ける場所の残り (名前つきの fn の引数・sink の行き先・束縛の型・分割代入・展開・条件・ループ・await・catch の束縛・field・計算した鍵の添字の結果) で、印の無い値を印を受ける関数・危ない口へ渡す",
+          "result": "refused"
+        },
+        {
+          "tried": "鍵の逃がし (文字列の逃がしで `__proto__` / `constructor` / `prototype` を綴る・数の鍵・添字)・constructor / prototype の経路・正規表現と割り算の読み分け・数の字面・行末の扱い・注記・宣言していない名前へ届く形",
+          "result": "refused"
+        },
+        {
+          "tried": "述語・型引数・別名・再輸出・interface extends・satisfies を使って印を付け替える / 洗う形",
+          "result": "refused"
+        },
+        {
+          "tried": "外の module の関数へ渡す呼び戻しだけに印を許す規則を、メンバの呼び出し・`.call`・入れ子のオブジェクト・配列の項・条件演算子・呼び戻しの中の別の arrow・Mamori の関数 (同じ module / use / extern)・`use type` で引いた名前で迂回する",
+          "result": "refused"
+        },
+        {
+          "tried": "攻撃の電池を新しい種 (時刻から引く) で 6,000 周 (弾 × 文脈 × 環境の掛け合わせと字の揺さぶり) 回し、受け入れた生成物を TypeScript の構文木で独立に判定する",
+          "result": "refused"
+        },
+        {
+          "tried": "対戦場: 手書きの攻め 12 本 (mark-*) を箱 token (reveal(t: Token) が秘密を返す) へ撃つ。0.31 のコンパイラ (git worktree) を対照に置く",
+          "result": "refused"
+        }
+      ],
+      "threats": [
+        "T-261",
+        "T-262",
+        "T-263"
+      ],
+      "controls": 7,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/checker.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 917,
+        "reason": "draft PR #917 に載せる",
+        "summary": "言語の穴探しの周。0.31 のコンパイラへ「any の出どころ (JSON.parse の戻り値ほか) × 印を受ける場所」を掛けた手探り 368 形を撃ち、印が関門を通らずに付く 3 家系 (5 形) を見つけて塞いだ (構文は足していない・版は 0.32): T-261 arrow の引数に印の型を書く → arrow の引数は印を名乗れない (Mamori の外の module の関数へ直に渡す呼び戻しだけ書ける) / T-262 印を受ける Mamori の関数を extern・正規でない道の綴りで引く → extern では引けない・相対の道は正規の綴りだけ / T-263 印の引数の既定値と gate の戻り値 → 印を名乗る引数は既定値を持てない・gate の戻り値は mint・印を持つ値・null / undefined だけ。tsc は any を印の型へ通すので 2 枚目の壁は働いていなかった。対戦場の対照: 手書きの攻め 12 本 × 箱 token は 0.31 で赤 9 点 (秘密が丸ごと盗まれる)・0.32 で赤 0 点。実物の .mamori 42 本は 1 本も変えずに通り、生成物は不変。既存の検査 2 件が穴の形を「通る対照」「正しい動き」として留めていたので書き直した。回帰検査 mamoriV32.test.ts (22 件)。攻撃の電池の物差しが穴と同じ前提に立っていた (印の型で宣言された名前なら口へ渡してよい) ので 3 規則を足し、電池に軸 (markFlow の文脈 15 × 値の出どころ 21 × 口の引き方 21) を足した —— 同じ電池を 0.31 に当てると 3 つの種すべてで穴を挙げる。穴の開け直し A-597〜A-601 は 5 件とも名指しの回帰検査が捕まえた。残した物: 外の module と印を受ける関数を値としてやり取りする 2 形 (外の関数が型引数で呼び戻しと値を結ぶ・Mamori の関数が関数型の引数を any で呼ぶ) は Mamori だけでは閉じられない (docs/REMAINING_WORK.md)。完成度の基準 H1 (直近 10 周の穴 0 件) は床の下が続く。"
+      },
+      "deviation": "利用者の依頼「穴を探す周を回して」により、brief の順位 (selfAttestation.ts の移植) ではなく言語の穴探しを回した。穴が出たので、同じ周の中で塞いだ (構文は足していない)。"
     }
   ]
 }
