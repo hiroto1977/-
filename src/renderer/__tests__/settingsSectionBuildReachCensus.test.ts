@@ -111,6 +111,10 @@ const LEDGER: readonly Row[] = [
     why: 'パスワード変更と施錠は保管庫の操作なのでブラウザ版だけ。2026-09-09 (パス 137) から isBrowserBuild で出し分けており、すべてのデータを削除だけが橋を通って両ビルドで働く。',
   },
   {
+    tag: 'CloudContinuityPanel', reach: 'both', declaredIn: 'components/CloudContinuityPanel.tsx',
+    why: '橋の listConfigured を読んで、依っている提供者を台帳 (shared/cloudContinuity.ts) から並べるだけ (書き込みは無い)。橋は実行形態ごとに保管先を振り分くので両ビルドで正しい。',
+  },
+  {
     tag: 'CloudSyncPanel', reach: 'no-store', declaredIn: 'components/CloudSyncPanel.tsx',
     why: '送信路の実装が 1 つも無く、保存もしない (setItem / 記録のストアの出現は 0 件)。今すぐ同期は押せず、未接続であることを画面が書く。',
   },

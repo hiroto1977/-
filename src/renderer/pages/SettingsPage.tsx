@@ -7,6 +7,7 @@ import { SERVICES, CATEGORY_LABEL, type ServiceCategory } from '../services';
 import { summarizeConnections } from '../data/connectionStatus';
 import { BackupPanel } from '../components/BackupPanel';
 import { RecordShapeAuditPanel } from '../components/RecordShapeAuditPanel';
+import { CloudContinuityPanel } from '../components/CloudContinuityPanel';
 import { CloudSyncPanel } from '../components/CloudSyncPanel';
 import { ParametersPanel } from '../components/ParametersPanel';
 import { PARAMETERS } from '../../shared/parameters';
@@ -1230,6 +1231,8 @@ export function SettingsPage() {
       <RecordShapeAuditPanel />
 
       <CloudSyncPanel />
+
+      <CloudContinuityPanel />
 
       <Section title="数値パラメータ (法定値・参考値・しきい値・前提)" count={PARAMETERS.length}>
         <ParametersPanel />
