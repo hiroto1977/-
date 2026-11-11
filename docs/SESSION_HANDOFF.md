@@ -7,6 +7,20 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-11-11) — ポータル (社内 / パートナー / カスタマー)
+
+利用者の依頼「新しいプログラム言語を用いて、各種ポータルサイトに分けて作り直して」(選択: 既存の殻を残して入口を足す・社外向けは別の HTML・振り分けと関門を Mamori で)。正は `docs/PORTALS.md`。
+- **台帳と関門 (Mamori)**: `src/shared/portal.mamori` → 生成物 `portal.ts`。社外向けに出す画面は名指し (`PARTNER_SCREENS` 3 件・`CUSTOMER_SCREENS` 4 件・理由つき)。関門 `portalScreenOrNull` が印 `VettedPortalScreen` を作り、画面を開く口 `renderer/portal/PortalScreenView.tsx` は印つきの値しか受けない。
+- **社内版の中の入口**: 一覧 `renderer/portal/PortalDirectory.tsx` (3 つのタブ)。**既定の殻はサイドバーの画面** (村の殻は `?ui=village` だけ —— 2026-11-07 の #908 から) なので、入口は 2 つの殻の両方に足した: サイドバーの「🚪 ポータル」(画面の場所に一覧) と、村の殻の上部の「🚪 ポータル」(窓に一覧)。`#portal/<id>` の直リンク。
+- **社外向けの単一 HTML**: `npm run build:portal` → `dist/portal-partner.html` / `dist/portal-customer.html`。入口は別 (`portal/partnerMain.tsx` / `customerMain.tsx`)・殻 `PortalApp.tsx`・橋 `portalShim.ts` (資格情報を預からない・網へ出ない・書き込まない)・CSP は `connect-src 'none'`。掲載情報 `portalContent.ts` は**見本** (架空の会社・`example.co.jp`)。
+- **閉包の検査**: `portal/__tests__/portalBundleClosure.test.ts` が入口からの取り込みを esbuild で数える。測ったら、掲載頁が節の枠を `StatusBar.tsx` から借りているだけで、カスタマーの閉包に事業仕分けの台帳・書類スタジオのデータまで入る道が在った (束ね方によっては落ちるが、辿れること自体を閉じた) —— 枠を掲載頁の中に持たせてカスタマーの閉包は 21 ファイル (全件名指し)。
+- **対照 15 方向すべて狙った検査が鳴る** (関門を緩める・一覧が全画面を並べる・画面を選んでも一覧が閉じない・村の窓が一覧へ戻らない・橋が関門を通さない・ビルドの確認が文面を見ない・入口が社内の画面を取り込む・殻が印を自作する・消す口が読み直さない ほか)。1 つは最初「当てていなかった」(生成物の 1 行の形が違った) ので当て直した。
+- **鳴った台帳** (登録済み): `dialogSitesCensus` (窓の名前の 1 つ目の枝)・`vettedTypes` の MINTERS・`mamoriGenerated`・`appShellPartBoundary`・`followableUrlCensus`・`storageReadLedger`・`versionNamingCensus`・`artifactCspCensus` (CSP を組み立てる builder の行に `assembled`)・`artifactFreshness` (道具 9 → 10)・`commentStripperCensus`・`inTestModuleLoadCensus` (動的 import を先頭の import へ)・`mutateScopeCensus`・`finiteShapeGuards` (形ごと直した)・shared-judgement census (180 → 181)・整合性チェーン (能力の台帳・e2e.yml)。
+- **e2e.yml** にポータルのビルドと `e2e:portal` を足した (社内版の後に組む)。
+- **実機 (2026-11-11 · e2e.yml と同じ順序 · 最終コード)**: `perf` OK (LITE DCL 288 ms / heap 10.3 MB・FULL DCL 641 ms / heap 37.1 MB)・`e2e` **722 件 ❌ 0**・`e2e:lite` **722 件 ❌ 0**・`e2e:portal` **79 件 ❌ 0** (パートナー 24・カスタマー 22・社内版の既定の殻 17・村の殻 16 —— どの画面も字と地の対比 AA を contrast suite と同じ道具で測る・スマホ幅の横はみ出し・社内版の 2 つの殻の入口から 3 つの一覧)。`smoke:app` / `e2e:ollama` は回していない (主プロセスも Ollama の経路も触っていない)。
+- **出荷物**: FULL 12,196,700 B / LITE 3,609,324 B (どちらも +18,243 B —— 一覧・関門・入口の分。LITE はハード上限 4,000,000 B まで 390,676 B で、警告線 3,400,000 B は以前から超えている)。ポータルは partner 1,437,530 B / customer 295,245 B。
+- **既知の罠 (このパスで踏んだ)**: 検査が全部 `[data-village-shell]` を待って時間切れ —— 既定の殻が村ではないことを忘れていた (製品の側の穴でもあった: 既定の殻に入口が無かった) / `tsc` が通っても `eslint` が「不要な抑止」で落ちる (検査ファイルの `require` に抑止は要らない) / ビルドの確認の針に AI のヘッダ名を選んだら、提供者の表 (`ai/providers.ts`) が見本経由で束に入っていて鳴った —— 針は「送る経路」の文面へ替え、表が入ることは台帳に理由つきで載せた。
+
 ## 直近の作業 (2026-11-11) — MG-067: 言語の穴探しの周 · Mamori 0.32 (T-261 / T-262 / T-263)
 
 利用者の依頼「穴を探す周を回して」。構文は足していない。正は `docs/MAMORI.md` の「0.32」の節と脅威台帳。

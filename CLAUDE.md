@@ -1084,7 +1084,10 @@ npm run build:portal     # 社外向けポータルの単一 HTML を組む → 
                          #   配る前に `src/renderer/portal/portalContent.ts` (いまは見本) を自社の内容へ書き換える
 npm run e2e:portal       # 組んだ 2 つのポータルを実 chromium で開く (並ぶ画面 = 台帳・社内の殻が無い・
                          #   資格情報の欄が無い・社内の画面の id を打っても開かない・橋が断る・網へ出ない・
-                         #   CSP 違反と console エラーが 0 件・消す口が自分の鍵だけを消す)。e2e.yml に入っている
+                         #   CSP 違反と console エラーが 0 件・消す口が自分の鍵だけを消す・字と地の対比が AA を割らない)。
+                         #   **加えて社内版の中の入口** (`dist/standalone.html` の既定の殻のサイドバーと、村の殻 `?ui=village`) から
+                         #   3 つの一覧が開き、社外向けの一覧に台帳の画面だけが並ぶことを見る。
+                         #   3 つの HTML が要る (社内版 → ポータルの順に組む)。実測 79 件 (2026-11-11)。e2e.yml に入っている
 npm run ollama           # Ollama CLI (ブラウザ不要・CORS 無縁)。`-- chat <model> "..."` で対話
 npm run ollama:setup     # 導入→モデル取得→起動→1往復して確認。足りない段だけ埋める
 npm run local-llm:setup   # Linux: Ollama / VS Code / Continue / llama.cpp と安全なモデルを一括導入 (既定は計画の表示のみ・`-- --yes` で実行)。docs/LOCAL_LLM_SETUP.md

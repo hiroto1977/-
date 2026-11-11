@@ -38,8 +38,12 @@ renderer/portal/PortalScreenView.tsx   画面を開く唯一の口 (印つきの
 
 ```bash
 npm run build:portal     # dist/portal-partner.html と dist/portal-customer.html を組む
-npm run e2e:portal       # 組んだ 2 つを実ブラウザ (chromium) で開いて確かめる
+npm run e2e:portal       # 組んだ 2 つと、社内版の中の一覧 (dist/standalone.html) を実ブラウザ (chromium) で開いて確かめる
 ```
+
+- `e2e:portal` は 3 つの HTML が要る (`dist/standalone.html` / `dist/portal-partner.html` / `dist/portal-customer.html`)。
+  無ければ走らずに断る。実測 (2026-11-11): **79 件 ❌ 0** —— パートナー 24・カスタマー 22・社内版の既定の殻 17・村の殻 16。
+  どの画面も字と地の対比 (WCAG AA) を社内版の contrast suite と同じ道具で測る。
 
 - **社内版の後に組む。** `npm run build:web` / `build:web:lite` は `dist/` を掃除するので、ポータルの HTML は消える。
   `build:portal` は一時の場所へ組んでから仕上がった 1 ファイルだけを `dist/` へ置くので、社内版を消さない。
@@ -75,7 +79,8 @@ npm run e2e:portal       # 組んだ 2 つを実ブラウザ (chromium) で開�
 | 橋が預からない・送らない・書かない | `src/renderer/portal/__tests__/portalShim.test.ts` (15 の口を全部呼ぶ) |
 | 殻が社内の画面のハッシュを開かない・消す口が自分の鍵だけを消す | `src/renderer/portal/__tests__/portalApp.test.ts` |
 | CSP と仕上がりの確認 | `src/shared/__tests__/buildPortal.test.ts` |
-| 実物の HTML が網へ出ない・社内の殻が無い・CSP 違反が無い | `npm run e2e:portal` (実 chromium) |
+| 実物の HTML が網へ出ない・社内の殻が無い・CSP 違反が無い・字と地の対比が AA を割らない | `npm run e2e:portal` (実 chromium) |
+| 社内版の 2 つの殻 (サイドバー / 村) の入口から 3 つの一覧が開き、社外向けの一覧に台帳の画面だけが並ぶ | `npm run e2e:portal` (実 chromium · `dist/standalone.html`) |
 | 社内版の一覧 (3 つのタブ) | `src/renderer/__tests__/portalDirectory.test.ts` |
 
 ## 分かっていること (限界)

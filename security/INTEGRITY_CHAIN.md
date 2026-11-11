@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 495
+- ブロック数: 496
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `4b3c9a684b7a49680d96bf78a459b8746da8d1e3478f60b14a43c2e90de2c325`
+- 末尾(tip)ハッシュ: `9130e60e494099b8a88e9a84332dd0a7b95911ce46b8bfa9d438e73d7a24f4a7`
 - 保護対象: 217 ファイル
 
 ## ブロック
@@ -508,6 +508,7 @@
 | 492 | `cf02e797ce1e2467` | `a3f706d8c3785217` | `18f99d603104d86b` | update VettedLink.tsx |
 | 493 | `16dc1e83863084a9` | `18f99d603104d86b` | `c50ae5b06ddcba28` | update release.yml |
 | 494 | `95e3073af2529039` | `c50ae5b06ddcba28` | `4b3c9a684b7a4968` | update integrity-chain.cjs,mamori-capabilities.json,main.mamori,main.ts,mainHost.ts,userPresence.ts |
+| 495 | `cba0daaecb689718` | `4b3c9a684b7a4968` | `9130e60e494099b8` | update e2e.yml,mamori-capabilities.json |
 
 ## 保護対象ファイル
 
