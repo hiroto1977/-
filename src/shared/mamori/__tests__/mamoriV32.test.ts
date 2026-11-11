@@ -17,6 +17,8 @@ import { specifierProblem } from '../checker';
 const G = 'export vetted V = "v";\nexport vetted W = "w";\n'
   + 'export gate fn check(s: string) -> V | null {\n  if (s === "ok") { return mint V(s); }\n  return null;\n}\n'
   + 'export fn need(v: V) -> string {\n  return "got";\n}\n'
+  + 'export fn need2(v: V, label: string) -> string {\n  return label;\n}\n'
+  + 'export fn zero() -> string {\n  return "z";\n}\n'
   + 'extern sink global open;\nexport sink fn go(u: V) -> unknown {\n  return open(u);\n}\n';
 const HEAD = 'use { check, need, go } from "./g";\nuse type { V } from "./g";\n';
 const attack = (body: string, pre = ''): string => `${HEAD}${pre}export fn attack(raw: string) -> unknown {\n${body}\n}\n`;
@@ -90,6 +92,28 @@ describe('0.32 · T-261: arrow の引数は印を名乗れない', () => {
     expect(text(attack(FORMS[6]![1], 'use type { hostRun } from "./host";\n'))).toMatch(ARROW_MARK);
   });
 
+  it('★ 呼び戻しを渡してよい相手は「外の module から pure で引いた関数」だけ (extern sink の口・global の関数は相手にならない)', () => {
+    // extern sink の口 (sink 関数の中でだけ呼べる) へ渡す呼び戻し
+    expect(text('use { need } from "./g";\nuse type { V } from "./g";\nextern sink { hostSink } from "./host";\nexport sink fn out(u: V) -> unknown {\n  return hostSink(u, (v: V) => need(v));\n}\n')).toMatch(ARROW_MARK);
+    // global の関数 (`setTimeout(cb, 0, 値)` のように、呼び戻しへ渡す値を呼び手が選べる物が在る)
+    expect(text(attack('  return parseInt((v: V) => need(v));', 'extern pure global parseInt;\n'))).toMatch(ARROW_MARK);
+  });
+
+  it('★ 局所の束縛が外の関数の名前を覆っていれば、呼び戻しの相手ではない (覆うこと自体も M6 で断る)', () => {
+    const HOST = 'extern pure { hostRun } from "./host";\n';
+    const viaConst = text(attack('  const hostRun = (cb: (v: string) => string) => cb(raw);\n  return hostRun((v: V) => need(v));', HOST));
+    expect(viaConst).toMatch(ARROW_MARK);
+    expect(viaConst).toContain('[M6] 局所の名前 hostRun は、モジュール直下の同名の宣言');
+    const viaParam = text(`${HEAD}${HOST}export fn attack(hostRun: (cb: (v: V) => string) => string, raw: string) -> unknown {\n  return hostRun((v: V) => need(v));\n}\n`);
+    expect(viaParam).toMatch(ARROW_MARK);
+  });
+
+  it('対照: 外の関数の引数に arrow でない式 (名前・展開つきのオブジェクト・配列) が並んでも、直に書いた arrow だけが呼び戻し', () => {
+    const HOST = 'extern pure { hostRun } from "./host";\n';
+    expect(diag(attack('  const o = { a: 1 };\n  return hostRun(raw, { ...o, open: (v: V) => need(v), raw }, [raw], 1);', HOST))).toEqual([]);
+    expect(diag(attack('  return hostRun();', HOST))).toEqual([]);
+  });
+
   it('★ Mamori の関数は「外の関数」ではない (同じ module・use で引いた別の module・extern で引いた別の module)', () => {
     const RUN = 'fn run(cb: (v: V) => string, a: string) -> string {\n  return cb(JSON.parse(a));\n}\n';
     expect(text(attack('  return run((v: V) => need(v), raw);', RUN))).toMatch(ARROW_MARK);
@@ -106,6 +130,8 @@ describe('0.32 · T-262: Mamori の関数を別の顔で引けない', () => {
     expect(text('extern pure { need } from "./g";\nexport fn attack(raw: string) -> unknown {\n  return need(JSON.parse(raw));\n}\n')).toMatch(REFUSED);
     expect(text('extern pure { go } from "./g";\nexport fn attack(raw: string) -> unknown {\n  return go(JSON.parse(raw));\n}\n')).toMatch(REFUSED);
     expect(text('use type { V } from "./g";\nextern sink { need } from "./g";\nexport sink fn out(u: V, raw: string) -> unknown {\n  return need(u);\n}\n')).toMatch(REFUSED);
+    // 印を受ける引数が 1 つでも在れば (ほかの引数が素の値でも)
+    expect(text('extern pure { need2 } from "./g";\nexport fn attack(raw: string) -> unknown {\n  return need2(JSON.parse(raw), "x");\n}\n')).toMatch(/\[M4\] need2 は印を受ける Mamori の関数です/);
     // 並べた名前のどれか 1 つでも
     expect(text('extern pure { check, need } from "./g";\nexport fn attack(raw: string) -> unknown {\n  return check(raw);\n}\n')).toMatch(REFUSED);
   });
@@ -114,6 +140,8 @@ describe('0.32 · T-262: Mamori の関数を別の顔で引けない', () => {
     const B = { 'src/x/b.mamori': 'export fn writeOut(path: string, body: string) -> string {\n  return path + body;\n}\n' };
     expect(diag('use type { V } from "./g";\nextern sink { writeOut } from "./b";\nexport sink fn save(u: V, body: string) -> unknown {\n  return writeOut(u, body);\n}\n', B)).toEqual([]);
     expect(diag('extern pure { check } from "./g";\nexport fn probe(raw: string) -> unknown {\n  return check(raw) === null;\n}\n')).toEqual([]);
+    // 引数の無い関数も (印を受ける引数が 1 つも無い)
+    expect(diag('extern pure { zero } from "./g";\nexport fn probe() -> unknown {\n  return zero();\n}\n')).toEqual([]);
   });
 
   it('★ 相対の道は正規の綴りだけ —— TypeScript が同じ module に解く別の綴りで外形を外せない (threat: T-262)', () => {
@@ -137,18 +165,21 @@ describe('0.32 · T-262: Mamori の関数を別の顔で引けない', () => {
   });
 
   it('★ `X/index.mamori` を `./X` と名指せない (TypeScript は index に解く)', () => {
-    const D = { 'src/x/d/index.mamori': 'use type { V } from "../g";\nexport fn need2(v: V) -> string {\n  return "got";\n}\n' };
-    expect(text('use { need2 } from "./d";\nexport fn attack(raw: string) -> unknown {\n  return need2(JSON.parse(raw));\n}\n', D)).toContain('[M6] 道 "./d" は src/x/d/index.mamori を指します');
+    const D = { 'src/x/d/index.mamori': 'use type { V } from "../g";\nexport fn needIdx(v: V) -> string {\n  return "got";\n}\n' };
+    expect(text('use { needIdx } from "./d";\nexport fn attack(raw: string) -> unknown {\n  return needIdx(JSON.parse(raw));\n}\n', D)).toContain('[M6] 道 "./d" は src/x/d/index.mamori を指します');
     // index まで綴れば外形を引ける
-    const d = diag('use { need2 } from "./d/index";\nexport fn attack(raw: string) -> unknown {\n  return need2(JSON.parse(raw));\n}\n', D);
+    const d = diag('use { needIdx } from "./d/index";\nexport fn attack(raw: string) -> unknown {\n  return needIdx(JSON.parse(raw));\n}\n', D);
     expect(d).toHaveLength(1);
-    expect(d[0]).toContain('[M4] need2 の引数 1 は印 V を持つ値だけを受けます');
+    expect(d[0]).toContain('[M4] needIdx の引数 1 は印 V を持つ値だけを受けます');
   });
 
   it('specifierProblem: 相対でない道は見ない・正規なら null・理由は 4 通り', () => {
     for (const ok of ['electron', 'node:fs', '@scope/pkg', './a', './a/b', '../a', '../../a/b-c_d', './a.config', './a.json']) expect(specifierProblem(ok), ok).toBeNull();
     expect(specifierProblem('.a')).toBe('`./` か `../` で始めます');
     expect(specifierProblem('..')).toBe('`./` か `../` で始めます');
+    // 途中に `./` / `../` が在っても、先頭がそうでなければ「始め方」の誤り (途中の一致を先頭と読まない)
+    expect(specifierProblem('.a/./b')).toBe('`./` か `../` で始めます');
+    expect(specifierProblem('.a/../b')).toBe('`./` か `../` で始めます');
     expect(specifierProblem('.//a')).toBe('空の区切り (`//`・末尾の `/`) は書けません');
     expect(specifierProblem('./a/')).toBe('空の区切り (`//`・末尾の `/`) は書けません');
     expect(specifierProblem('./')).toBe('空の区切り (`//`・末尾の `/`) は書けません');
@@ -197,6 +228,10 @@ describe('0.32 · T-263: 印は mint と来歴を通ってだけ入る (既定�
       ['メンバの呼び出し', '  return s.trim();'],
       ['素の引数', '  return s;'],
       ['論理演算子で繋ぐ', '  return p ?? JSON.parse(s);'],
+      ['真偽の字面', '  return true;'],
+      ['真偽の字面 (false)', '  return false;'],
+      ['文字列の字面', '  return "x";'],
+      ['数の字面', '  return 1;'],
     ];
     for (const [label, body] of FORMS) expect(gdiag(body).join('\n'), label).toMatch(RETURN);
     // 印を含むだけの戻り値の型 (配列) でも同じ
@@ -236,5 +271,12 @@ describe('0.32 · T-263: 印は mint と来歴を通ってだけ入る (既定�
 
   it('★ gate でない関数の return は、この検めの対象ではない (印を名乗る戻り値は別の規則 M1 が断る)', () => {
     expect(diag(`${HEAD}export fn plain(raw: string) -> unknown {\n  return JSON.parse(raw);\n}\n`)).toEqual([]);
+    // 印を名乗る plain の関数: 断るのは「名乗れるのは gate 関数だけ」の 1 件だけ (戻り値の式の検めを重ねない)
+    const d = diag(`${HEAD}export fn plain(raw: string) -> V {\n  return JSON.parse(raw);\n}\n`);
+    expect(d).toHaveLength(1);
+    expect(d[0]).toContain('[M1] plain: 戻り値の型に印 V を名乗れるのは gate 関数だけです');
+    // 印を名乗らない gate 関数 (戻り値の型が印でない) の戻り値は検めない
+    expect(diag('export gate fn g(s: string) -> boolean {\n  return true;\n}\n')).toEqual([]);
+    expect(diag('export gate fn g(s: string) -> string {\n  return s === "" ? "a" : JSON.parse(s);\n}\n')).toEqual([]);
   });
 });

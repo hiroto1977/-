@@ -355,7 +355,6 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
   const hostFns = new Set<string>();
   /** 上の位置に直に書いた arrow (その場で 1 度だけ外の関数へ渡る)。 */
   const hostCallbacks = new WeakSet<Expr>();
-  const isArrow = (x: Expr): boolean => x.kind === 'arrow' || x.kind === 'arrow-block';
   /** 名前を 1 つ宣言する。同じ名前を 2 度 (use・定数・関数・extern のあいだで) 宣言すると、あとの物が前の物の外形を隠す (0.4 · T-241)。 */
   const declare = (name: string, b: Binding, pos: { line: number; col: number }): void => {
     if (moduleScope.has(name)) report('M6', pos, `名前 ${name} を 2 度宣言しています (use・extern・定数・関数のあいだで名前は重ねられない)`);
@@ -1203,10 +1202,16 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         checkCallee(e.callee, e.args, scopes, ctx);
         if (!scalarResultCall(e.callee, scopes)) e.args.forEach((x) => refuseInert(x, scopes, '呼び出しの引数'));
         // 外の module の関数を名前で直に呼ぶ形なら、引数に直に書いた arrow (と、引数のオブジェクトの字面の欄に直に書いた arrow) は呼び戻し (0.32 · T-261)。
-        if (e.callee.kind === 'ident' && hostFns.has(e.callee.name) && lookup(scopes, e.callee.name) === moduleScope.get(e.callee.name)) {
-          for (const a of e.args) {
-            if (isArrow(a)) hostCallbacks.add(a);
-            else if (a.kind === 'object') for (const p of a.props) if (isArrow(p.value)) hostCallbacks.add(p.value);
+        // Stryker disable next-line ConditionalExpression: 型の絞り込みのためだけに在る —— 名前でない呼ぶ側 (メンバ・呼び出しの結果) は `name` を持たず、下の `hostFns.has(undefined)` が必ず偽で同じ答えになる
+        if (e.callee.kind === 'ident') {
+          const callee = e.callee.name;
+          // 局所の束縛が同じ名前を覆っていれば、呼んでいるのは外の関数ではない (覆うこと自体は M6 が別に断る)
+          if (hostFns.has(callee) && lookup(scopes, callee) === moduleScope.get(callee)) {
+            // 式そのものを登録する (arrow かは問わない —— 引くのは arrow の枝だけなので、ほかの式を入れても答えは変わらない)
+            for (const a of e.args) {
+              hostCallbacks.add(a);
+              if (a.kind === 'object') for (const p of a.props) hostCallbacks.add(p.value);
+            }
           }
         }
         e.args.forEach((x) => checkExpr(x, scopes, ctx));
