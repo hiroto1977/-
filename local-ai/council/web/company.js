@@ -1,7 +1,6 @@
 // 企業連携による村の拡張/縮小（/api/company の scale を描画）。未連携なら何も描かない。
-/* global window, document, fetch, addEventListener, setInterval, innerHeight */
-
 import * as THREE from 'three';
+import {tickExtraResident} from './villageMotion.mjs';
 const R0=46;                      // 既存の村（最外周 r≈40）の外側に企業区画の帯を作る
 const KINDS={houses:{c:0xe0b080,roof:0xc0504d},vacant:{c:0x9e9e9e,roof:0x616161},workshops:{c:0x8d6e63,roof:0x37474f},
   stalls:{c:0xfff3e0,roof:0xff7043},warehouses:{c:0xb0bec5,roof:0x546e7a},wasteland:{c:0x8d6e4a}};
@@ -18,7 +17,7 @@ function mk(k,i,band){const g=new THREE.Group(),[x,z]=slot(k,i,band),K=KINDS[k];
   g.scale.setScalar(.001);g.userData={k,t:1,x,z};root.add(g);return g}
 function mkRes(i,band){const g=new THREE.Group(),c=[0x42a5f5,0x66bb6a,0xffa726,0xab47bc,0xef5350][i%5];
   const b=new THREE.Mesh(BOX,mat(c));b.scale.set(.45,.7,.35);b.position.y=.55;g.add(b);const h=new THREE.Mesh(BOX,mat(0xffe0bd));h.scale.setScalar(.4);h.position.y=1.1;g.add(h);
-  const [x,z]=slot('houses',i*1.7+.5,band);g.position.set(x,0,z);g.scale.setScalar(.001);g.userData={k:'residents',t:1,tx:x,tz:z,wait:0};root.add(g);return g}
+  const [x,z]=slot('houses',i*1.7+.5,band);g.position.set(x,0,z);g.scale.setScalar(.001);g.userData={k:'residents',t:1,tx:x,tz:z,wait:0,inside:0,mode:'wander'};root.add(g);return g}
 function sync(k,n,band){const L=items[k];const alive=L.filter(g=>g.userData.t>0);
   while(alive.length<n){const g=k==='residents'?mkRes(L.length,band):mk(k,L.length,band);L.push(g);alive.push(g)}
   for(let i=alive.length-1;i>=n;i--)alive[i].userData.t=0}       // 減少: 縮むアニメーション後に削除
@@ -35,9 +34,10 @@ window.__companyTick=(dt)=>{if(!S&&window.__S){S=window.__S;S.add(root);apply(sc
   for(const k in items){const L=items[k];for(let i=L.length-1;i>=0;i--){const g=L[i],u=g.userData,cur=g.scale.x,to=u.t?1:0;
     const nx=cur+(to-cur)*Math.min(1,dt*2.5);g.scale.setScalar(Math.max(.001,nx));
     if(!u.t&&nx<.02){root.remove(g);L.splice(i,1);continue}
-    if(k==='residents'&&u.t){const d=Math.hypot(u.tx-g.position.x,u.tz-g.position.z);
-      if(d<.3){if((u.wait-=dt)<0){const a=Math.random()*Math.PI*2,rr=R0+1+Math.random()*Math.max(2,curR-2);u.tx=Math.cos(a)*rr;u.tz=Math.sin(a)*rr;u.wait=1+Math.random()*4}}
-      else{const sp=Math.min(d,dt*1.6);g.position.x+=(u.tx-g.position.x)/d*sp;g.position.z+=(u.tz-g.position.z)/d*sp;g.rotation.y=Math.atan2(u.tx-g.position.x,u.tz-g.position.z)}}}}};
+    if(k==='residents'&&u.t){const houses=items.houses.filter(h=>h.userData.t).map(h=>({x:h.position.x,z:h.position.z}));
+      const pose={x:g.position.x,z:g.position.z,rot:g.rotation.y,visible:g.visible};
+      tickExtraResident(u,pose,dt,{houses,rng:Math.random,pickOutdoor(){const a=Math.random()*Math.PI*2,rr=R0+1+Math.random()*Math.max(2,curR-2);return {x:Math.cos(a)*rr,z:Math.sin(a)*rr}}});
+      g.position.x=pose.x;g.position.z=pose.z;g.rotation.y=pose.rot;g.visible=pose.visible}}}};
 // ---- 企業指標パネル ----
 const P=document.createElement('div');P.id='company';P.style.cssText='position:fixed;left:10px;top:150px;background:#fffaf0f2;border:3px solid #c9a46a;border-radius:12px;padding:6px 10px;font-size:12px;max-width:260px;display:none;z-index:5';
 document.body.appendChild(P);const yen=v=>v==null?'—':Math.abs(v)>=1e8?(v/1e8).toFixed(1)+'億円':Math.abs(v)>=1e4?(v/1e4).toFixed(0)+'万円':v+'円';

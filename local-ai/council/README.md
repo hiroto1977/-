@@ -35,7 +35,7 @@
 ## 固定決定（CEOロック）
 `locked_decisions.md` の `status: locked` 項目は、CEO（清継）が `status: unlocked` に書き換えるまで覆せません。
 - 議題: 固定決定を復活・再開しようとする受信箱／助言／CEO指示は会議にかけず却下（`rejected_decisions.md` に理由）
-- 決定: 役員決定がロックを覆す文なら助言ガードと同様に差し戻し・不記録
+- 決定: 役員決定がロックを覆す文なら助言ガードと同様に差し戻し・不記録。llama7B-stop が locked のあいだは、停止を迂回する新規基盤（メモリ管理プラットフォーム、システムレベルメモリ制御、代替の制御プレーン、再起動ツール、停止対象を戻す目的の DB圧縮・リーク掃除）も記録しない。業務のプラットフォーム開発や、起動を命じない監視は対象外。
 - 起動: `start-all.sh` は `llama7B-stop` が locked のとき `ENABLE_7B` を強制 0（7B の既定も 0）
 - 健全性表示: ロック中サービスは「固定停止」と出し、停止中リストから外す（再起動議題化を防ぐ）
 - プロンプト: 各役の system に固定決定ダイジェストを付与
@@ -46,6 +46,15 @@
 役員の決定が助言（`advice_inbox.md` の行や、禁止パターン）と食い違うときは `decisions.md` に書かず、`rejected_decisions.md` に理由を残して役員に1回だけやり直させます。掲示板には 🛑 カードが出ます。
 禁止パターンは `advice_guard.py`（dataCrypto の実装着手、`as BufferSource`、Mamori への `as` / `while` 追加、JSON.stringify を暗号化と扱う、IV の定期再生成、正規表現アンカーの除去、C++/Python 混在）。否定文（〜しない / 禁止 など）は違反にしません。
 `COUNCIL_ADVICE_GUARD=0` で無効化できます。`COUNCIL_ADVICE_GUARD_LLM=1` で検証モデルにも確認させます（既定は OFF）。テスト: `python3 test_advice_guard.py`。
+
+## 通る2形を消さない
+
+パーサ（`src/shared/mamori/parser.ts`）が既に受理する次の2形を、消す・削除する・廃止する・取り消す決定は `decisions.md` に書きません。却下は `rejected_decisions.md` に識別子 `mamori-two-forms` で残します。
+
+1. 浅いオブジェクト分割 `const { email, token } = o;` / `const { a, b: c } = x;`（`const [` と `let {` は対象外）
+2. `for (const ch of s)` / `for (const n of xs)`（`of` だけ。`in` は対象外）
+
+「2形は残す」「削除しない」「構文教育は不要」、経費や無関係な API の削除、例としての引用は記録できます。「2形残す」を「消す」に読み替える決定は記録しません。CEOロック（`locked_decisions.md`）ではなく、`commit_decision` が `syntax_forms_guard.py` を見ます。テスト: `python3 test_syntax_forms_guard.py`。
 
 ## 閉ループ（決定→実行記録→検証）
 会議の本文は `decision_lock.commit_decision` が保存前検査を通したときだけ `decisions.md` に書きます。通ったあと、閉ループがマーカー `<!-- loop:決定ID -->` を足してディスクから読み戻し、次のアクションを実行して検証します。検査が却下した決定は `rejected_decisions.md` だけに残り、実行ファイルは作りません（同じ決定IDのマーカーが両方に残ることは排他違反です）。`accept_and_verify` を直接呼ぶ経路は、検査と記録と実行をその関数がまとめて行います。
@@ -72,7 +81,7 @@ Three.js（`web/vendor` に同梱、ビルド不要）のボクセル風の村�
 
 `web/vendor/three.module.min.js` は Three.js r160 のビルド済みファイルです。先頭のライセンス表記は Copyright 2010-2023 Three.js Authors、SPDX-License-Identifier: MIT です。`OrbitControls.js` は同じ版の examples 由来です（MIT。このファイル自体にはライセンスヘッダがありません）。minify 済みの `three.module.min.js` は eslint の対象外で、`lint:network-targets` の母集団からも外しています。
 
-- 清継さん以外の住民は自由に歩き回ります（建物の入口で中に入って消え、しばらくして出てくる・立ち止まる・ぶつからないようにすれ違う）。会議の発言者は会議ホールのテーブルへ歩き、それ以外は手が空くと机でタイピングします
+- 清継さん以外の住民は広場や道を歩き、家の入口から中に入ってしばらくして出てくる。勤務時間（9〜18時）でも管理職・一般職は机に張り付かず、短い机仕事のあと外へ出て部署の家にも入る。夜は家に入るが、眠ったまま消え続けず、出てきてまた歩く。人が入口に重なっても脇にずれて入れる。会議の発言者は会議ホールの席へ歩き、呼びかけられると立ち止まってこちらを向く
 - 住民をクリックするか、チャットで `@CFO 質問` のように名前を書くと、その人が立ち止まってこちらを向き、吹き出しで返事します（`/api/chat`）。届いた返答は状態欄にも名前つきで残します
 - ローカルモデルが止まっている、または日本語の応答を作れないときは、吹き出しを「（応答なし）」のままにせず、状態欄にその理由を出します
 - 会話は `user_thread.md` に、議論は `logs/YYYY-MM-DD.md` に保存されます

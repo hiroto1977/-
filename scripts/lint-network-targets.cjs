@@ -430,6 +430,16 @@ const REVIEWED_OUTSIDE_SENDS = [
       + ' `/api/company` だけで、ホストはページと同じオリジン（既定は 127.0.0.1 の評議会）から動かない。'
       + '資格情報も環境変数も載せず、読むのは村の規模の JSON だけ（5 秒間隔）。',
   },
+  {
+    file: 'local-ai/council/test_village_motion.mjs',
+    needle: 'fetch(`http://127.0.0.1:${dbg}/json/version`)',
+    guard:
+      '村の移動テストが、自分で起動したヘッドレス Chrome の CDP バージョンポーリング。'
+      + '送り先は**ループバック 127.0.0.1 と自分で選んだポート** (`port + 1`、その Chrome の'
+      + ' `--remote-debugging-port` に渡した当人) だけで、外へは出ない。'
+      + '資格情報は載せず、読むのは `/json/version` の応答 (`webSocketDebuggerUrl` の取得) だけ。'
+      + '起動待ちとして最大 50 回まで繰り返す。',
+  },
 ];
 
 /**
