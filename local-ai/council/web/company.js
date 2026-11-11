@@ -44,14 +44,24 @@ document.body.appendChild(P);const yen=v=>v==null?'—':Math.abs(v)>=1e8?(v/1e8)
 function place(){const h=document.getElementById('hud'),c=document.getElementById('chat');if(!h)return;const top=h.getBoundingClientRect().bottom+8,bot=c?c.getBoundingClientRect().top-8:innerHeight-10;
   P.style.top=top+'px';P.style.maxHeight=Math.max(40,bot-top)+'px';P.style.overflow='auto'}
 addEventListener('resize',place);setInterval(place,2000);
-function panel(j){place();if(!j.enabled&&!j.linked){P.style.display='block';P.innerHTML='<b>🏢 企業データ</b>：未連携';return}
-  P.style.display='block';const m=j.metrics||{},s=j.scale||{},H={normal:'🟢 健全',warning:'🟡 注意',crisis:'🔴 危機'}[s.health]||'';
-  const row=(a,b)=>`<div>${a}：<b>${b}</b></div>`;
-  P.innerHTML=`<b>🏢 ${(j.name||'企業').replace(/[<>&]/g,'')}</b> ${H}`+(j.error?`<div style="color:#c0392b">⚠ ${String(j.error).replace(/[<>&]/g,'')}</div>`:'')+
-   row('売上',yen(m.revenue))+row('営業利益',yen(m.operating_income))+row('純利益',yen(m.net_income))+row('総資産',yen(m.total_assets))+row('純資産',yen(m.net_assets))+
+const esc=s=>String(s??'').replace(/[<>&]/g,'');
+function statusLabel(j){
+  if(j&&typeof j.label==='string'&&j.label) return j.label;
+  if(j&&j.demo) return j.linked?'架空（デモ）':'架空（デモ）・未取得';
+  if(j&&j.linked) return '連携中';
+  return '未連携';
+}
+function panel(j){place();P.style.display='block';
+  const label=statusLabel(j);P.dataset.companyLabel=label;
+  if(label==='未連携'&&!(j&&j.error)){P.innerHTML='<b>🏢 企業データ</b>：未連携';return}
+  const m=j.metrics||{},s=j.scale||{},H={normal:'🟢 健全',warning:'🟡 注意',crisis:'🔴 危機'}[s.health]||'';
+  const row=(a,b)=>`<div>${a}：<b>${esc(b)}</b></div>`;
+  const fict=(j.fictional||j.demo)?'<div class="sm">実在の企業ではありません</div>':'';
+  P.innerHTML=`<b>🏢 企業データ</b>：${esc(label)}`+fict+(j.linked?`<div><b>${esc(j.name||'企業')}</b> ${H}</div>`:'')+(j.error?`<div style="color:#c0392b">⚠ ${esc(j.error)}</div>`:'')+
+   (j.linked?row('売上',yen(m.revenue))+row('営業利益',yen(m.operating_income))+row('純利益',yen(m.net_income))+row('総資産',yen(m.total_assets))+row('純資産',yen(m.net_assets))+
    row('現金',yen(m.cash))+row('従業員',m.employees??'—')+row('取引先',m.partners??'—')+
    `<div class="sm">村: 住民${s.residents??0} 家${s.houses??0} 空き家${s.vacant??0} 工房${s.workshops??0} 屋台${s.stalls??0} 倉庫${s.warehouses??0} 荒れ地${s.wasteland??0} 区画${s.plots??0}</div>`+
-   `<div class="sm">最終取得: ${j.last_fetch||'—'}</div>`}
+   `<div class="sm">最終取得: ${esc(j.last_fetch||'—')}</div>`:'');}
 let lastKey='';async function poll(){try{const j=await (await fetch('/api/company')).json();window.__company=j;panel(j);
   const s=j.linked?j.scale:null,key=JSON.stringify(s);if(key!==lastKey){lastKey=key;apply(s)}}catch{return}}
 poll();setInterval(poll,5000);window.__companyCount=()=>Object.fromEntries(Object.entries(items).map(([k,L])=>[k,L.filter(g=>g.userData.t).length]));

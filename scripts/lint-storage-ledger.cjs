@@ -178,6 +178,8 @@ const STORES = {
   },
 
   // -- localStorage --
+  'servicehub.recents': { medium: 'localstorage', holds: '最近開いたサービス', backedUp: false },
+  'servicehub.favorites': { medium: 'localstorage', holds: 'お気に入りのサービス', backedUp: false },
   'servicehub.plan': { medium: 'localstorage', holds: '料金プランの選択', backedUp: false },
   'servicehub.internalLicense': { medium: 'localstorage', holds: '招待コードの引き換え状態', backedUp: false },
   'servicehub.recordEncryption': {
@@ -236,6 +238,12 @@ const STORES = {
  * **どこが追えないか**と**そこへ何が流れるか**を書いて残す。
  */
 const INDIRECT_SITES = [
+  {
+    file: 'src/renderer/App.tsx',
+    expr: 'key',
+    keys: ['servicehub.recents', 'servicehub.favorites'],
+    why: '`loadIds(key)` / `saveIds(key, …)` の助数関数越し。呼び出し元は RECENTS_KEY / FAVORITES_KEY の 2 つだけ。',
+  },
   {
     file: 'src/renderer/oauth/pkceSessionHost.ts',
     expr: 'key',

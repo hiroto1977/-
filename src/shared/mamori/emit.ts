@@ -89,10 +89,10 @@ export function expr(e: Expr): string {
     }
     case 'arrow':
       // 本体がオブジェクトの字面なら括る (括らないと TypeScript は `{` を関数の本体と読む)。
-      return `(${e.params.map(param).join(', ')}) => ${e.body.kind === 'object' ? `(${expr(e.body)})` : wrap(e.body, 1)}`;
+      return `${e.async ? 'async ' : ''}(${e.params.map(param).join(', ')}) => ${e.body.kind === 'object' ? `(${expr(e.body)})` : wrap(e.body, 1)}`;
     case 'arrow-block':
       // 式の中なので深さは分からない: 本体は 1 段下げ、閉じ括弧は行頭 (体裁だけの差で、tsc は気にしない)。
-      return `(${e.params.map(param).join(', ')}) => {\n${block(e.body, 1).join('\n')}\n}`;
+      return `${e.async ? 'async ' : ''}(${e.params.map(param).join(', ')}) => {\n${block(e.body, 1).join('\n')}\n}`;
     case 'mint':
       return `${wrap(e.value, 6)} as ${e.vetted}`;
     case 'object':
@@ -220,8 +220,12 @@ function item(it: Item, vettedLabels: readonly string[], preludeDone: { value: b
     case 'use': {
       const kw = it.typeOnly ? 'import type' : 'import';
       if (it.defaultName !== null) return [...docblock(it.doc), `${kw} ${it.defaultName} from ${quote(it.from)};`];
-      const names = it.names.map((n) => (n.alias === null ? n.name : `${n.name} as ${n.alias}`)).join(', ');
+      const names = it.names.map((n) => (n.typeOnly ? 'type ' : '') + (n.alias === null ? n.name : `${n.name} as ${n.alias}`)).join(', ');
       return [...docblock(it.doc), `${kw} { ${names} } from ${quote(it.from)};`];
+    }
+    case 'reexport': {
+      const names = it.names.map((n) => (n.typeOnly ? 'type ' : '') + n.name).join(', ');
+      return [...docblock(it.doc), it.from === null ? `export { ${names} };` : `export { ${names} } from ${quote(it.from)};`];
     }
     case 'extern':
       return it.from === null ? [] : [...docblock(it.doc), `import { ${it.names.join(', ')} } from ${quote(it.from)};`];

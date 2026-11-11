@@ -38,7 +38,7 @@ import { externalTextOnOneLine, parseMarkdown, type Block, type InlineToken } fr
 import { replyTo } from '../data/chatbot';
 import { detectCrisis, detectHarmToOthers } from '../data/counseling';
 import { buildOrgIndex, type RawOrg, type RawTeam } from '../data/chatOrg';
-import { CAPABILITIES } from '../components/VoiceCommandBar';
+import { CAPABILITIES } from '../data/voiceCapabilities';
 import { org as registryOrg, teams as registryTeams } from '../../../orchestration/registry.json';
 import { safeCssUrl } from '../../shared/imageUrlGate';
 import { isHexColor } from '../../shared/escape';

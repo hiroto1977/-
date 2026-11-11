@@ -4,3 +4,5 @@ user_thread.md
 decisions.md
 __pycache__/
 recurring_state.json
+execution_log.jsonl
+loop_state.json

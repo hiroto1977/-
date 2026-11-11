@@ -36,6 +36,7 @@ import 'fake-indexeddb/auto';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { readOriginalSource } from '../../shared/__tests__/originalSource';
+import { waitForText } from './jsdomWait';
 import { WEB_BUILD_SUFFIX, isWebBuildVersion } from '../../shared/buildDestinations';
 import { evaluateUpdate } from '../../shared/updateCheck';
 import { isBrowserBuild } from '../runtimeMode';
@@ -43,6 +44,7 @@ import { rereadModule } from '../../shared/__tests__/rereadModule';
 // 依存先を先頭で読み込んでおく (検査の中で初めて評価すると、依存先の値まで
 // 「その検査が覆った」と数えられる —— rereadModule.ts の docblock・パス 495)。
 import '../web-shim';
+import { App } from '../App';
 
 vi.mock('../security/vault', () => ({
   getVault: () => ({
@@ -147,5 +149,53 @@ describe('実物の shim が作る版と、比べる側が繋がっている', (
     expect(evaluateUpdate(current, rel).status).toBe('up-to-date');
     // 接尾辞を付けると、同じ版に対して「更新があります」になる (パス 402 の semver の順序)。
     expect(evaluateUpdate(`${current}${WEB_BUILD_SUFFIX}`, rel).status).toBe('update-available');
+  });
+});
+
+describe('版が分かっていないときに数を名乗らない', () => {
+  /**
+   * サイドバーの版は直す前 `{version ? `v${version}` : 'v0.1.0'}` で、
+   * 橋の `getVersion` が落ちると**その直書きが残り続ける** ——
+   * 実測 (2026-09-25 · 直す前 · reject する橋で実物の App を描く):
+   * サイドバーは永久に `v0.1.0` と言い、`build: ALL-ACCESS` も並ぶ。
+   * 版を上げた日には、動いているどの版に対しても偽になる。
+   */
+  it('★ 橋の getVersion が落ちたら、版の数ではなく理由を出す', async () => {
+    const { act, createElement } = await import('react');
+    const { createRoot } = await import('react-dom/client');
+    installHub({
+      getVersion: () => Promise.reject(new Error('橋が落ちた')),
+      listConfigured: () => Promise.resolve([]),
+      fetchSnapshot: () => Promise.resolve({ ok: false, code: 'x', message: 'x' }),
+      invoke: () => Promise.resolve({ ok: false, code: 'x', message: 'x' }),
+      openExternal: () => Promise.resolve(),
+      oauthSupported: () => Promise.resolve(false),
+      setToken: () => Promise.resolve(),
+      clearToken: () => Promise.resolve(),
+    } as never);
+    const host = document.createElement('div');
+    document.body.appendChild(host);
+    const root = createRoot(host);
+    await act(async () => {
+      root.render(createElement(App));
+    });
+    /*
+     * 錠は**版の札そのものが出ること**ではなく、シェルが出ること ——
+     * `App` は `browserMode` / `vaultUnlocked` が決まるまで「読み込み中…」を出すので、
+     * `build: ALL-ACCESS` は判定が終わったときにだけ現れる。
+     * 主張したい物 (版の数を名乗らないこと) で待つと、待ちが主張を飲み込む (パス 379)。
+     */
+    await waitForText(() => host.textContent ?? '', 'build: ALL-ACCESS');
+    const text = host.textContent ?? '';
+    // 版の札そのものは出ている (隠したのではなく、数の代わりに理由を出す)。
+    expect(text).toContain('build: ALL-ACCESS');
+    expect(text).toContain('版不明');
+    // 版の数を名乗らない。針が的に当たることは標本で示す。
+    expect(text).not.toMatch(/v\d+\.\d+\.\d+/);
+    expect('v0.1.0 · build: ALL-ACCESS').toMatch(/v\d+\.\d+\.\d+/);
+    await act(async () => {
+      root.unmount();
+    });
+    host.remove();
   });
 });

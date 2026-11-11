@@ -1040,7 +1040,7 @@ npm run dev              # Vite + Electron, hot reload (desktop dev)
 npm run build:web        # → dist/standalone.html (browser build; runs inline-html.cjs)
 npm run build:web:lite   # → dist/standalone-lite.html (~2MB モバイル版・学術コーパス非搭載)
 npm run e2e              # Playwright 実機 E2E (desktop/phone/tablet)。e2e:lite で LITE 版を検証
-                         #   **39 suite / 実測 716 件** (FULL・LITE とも・2026-11-05 の実測 —— 旧 UI (サイドバー・ドロワー・浮いた窓) の廃止で shell suite −27・design 32→20・controls 63→61・opened 155→135。777 は 2026-10-29 まで)。床は「黙って縮んだら落とす」ための物で、
+                         #   **39 suite / 実測 722 件** (FULL・LITE とも・2026-11-07 の実測 —— 入力欄の固定で village suite +1・2026-11-06: 会話の場面で village suite +5・2026-11-05: 旧 UI (サイドバー・ドロワー・浮いた窓) の廃止で shell suite −27・design 32→20・controls 63→61・opened 155→135。777 は 2026-10-29 まで)。床は「黙って縮んだら落とす」ための物で、
                          #   **表に書くのは実測値ただ 1 つ、床は `floorOf()` が導く** (実測の 85%・切り捨て・最低 1。
                          #   合計の床は実測合計の 85% = **646**)。2026-09-20 (パス 346) まで表は
                          #   **床と `// 実測 N` の 2 つを手書き**で持っており、実測すると 3 つの文がずれていた ——
@@ -1072,6 +1072,7 @@ npm run e2e:ollama       # Ollama 連携 E2E (スタブ Ollama + 実 chromium)�
 npm run ollama           # Ollama CLI (ブラウザ不要・CORS 無縁)。`-- chat <model> "..."` で対話
 npm run ollama:setup     # 導入→モデル取得→起動→1往復して確認。足りない段だけ埋める
 npm run local-llm:setup   # Linux: Ollama / VS Code / Continue / llama.cpp と安全なモデルを一括導入 (既定は計画の表示のみ・`-- --yes` で実行)。docs/LOCAL_LLM_SETUP.md
+npm run local-llm:handoff # このリポジトリで学んだ規律を、ローカル LLM の小さな文脈へ畳んで出す (SYSTEM.md / Modelfile / PLAYBOOK.md / 法則の索引・既定は計画の表示のみ・`-- --write` で reports/ へ)。docs/LOCAL_LLM_SETUP.md
                          #   `-- --check` で現状確認のみ / `-- --origin <URL>` でブラウザ許可も案内
 npm run build:renderer   # tsc -b + vite build only (no packaging)
 npm run build            # full desktop build: tsc -b, vite build, electron-builder installers
@@ -1557,7 +1558,7 @@ npm run lint:deps          # 依存の供給網 (本番依存の閉包 3 件 —
                            #   **`package.json` は鎖には入れない** —— 全履歴 12 コミットで
                            #   「安定資産」の基準 (パス 347) を満たさないので、門で形を見る
 npm run lint:storage       # ブラウザに残す物の台帳 (IndexedDB 4 / Cache Storage 1 /
-                           #   localStorage 22 / sessionStorage 4。cookie と OPFS は 0 件だが走査はする)。
+                           #   localStorage 24 / sessionStorage 4。cookie と OPFS は 0 件だが走査はする)。
                            #   新しい保存先が黙って増えないこと・バックアップが覆うのは 1 つだけ・
                            #   **媒体そのものが `docs/DATA_PROTECTION.md` の在庫に載っていること**・
                            #   **ハードリセット (すべてのデータを削除) が台帳の全行を覆うこと** (規則 11、パス 136)
@@ -1643,8 +1644,8 @@ npm run lint:zero-fold     # 「割れない値を 0 に倒す」箇所の**母�
                            #   母集団が 26 ファイル (実測 106) と 4 倍ずれていた
 npm run lint:shared-judgement # 「述語は共有したが、no と言われたあとの動作が両ビルドで
                            #   違う」の**母集団**を数え、`docs/REMAINING_WORK.md` の
-                           #   生成ブロックと突き合わせる (shared 178 / 両ビルドが
-                           #   import 96 / うち否定で答えられる 48。**この 3 つは
+                           #   生成ブロックと突き合わせる (shared 180 / 両ビルドが
+                           #   import 97 / うち否定で答えられる 48。**この 3 つは
                            #   live metric なので散文だけが古びることはもう無い** ——
                            #   2026-09-15 まで 138 / 44 / 21 と書いたままだった。
                            #   44 / 21 はパス 247 が初めて数えた値で、

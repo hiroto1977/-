@@ -71,6 +71,7 @@
     "ollama": "node scripts/ollama-cli.cjs",
     "ollama:setup": "bash scripts/ollama-setup.sh",
     "local-llm:setup": "bash scripts/local-llm-setup.sh",
+    "local-llm:handoff": "node scripts/local-llm-handoff.cjs",
     "orchestrate": "node scripts/orchestrate.cjs",
     "orchestrate:context": "node scripts/orchestrate-context.cjs",
     "orchestrate:dispatch": "node scripts/orchestrate.cjs dispatch",
