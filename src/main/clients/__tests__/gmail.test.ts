@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { localIsoDate } from '../../../shared/localDate';
 import { fetchGmailSnapshot, ACTIONS, buildRfc2822, isSafeHeaderValue } from '../gmail';
 import { FetchError } from '../types';
 
@@ -167,7 +168,9 @@ describe('ACTIONS["create-draft"] — header injection defense', () => {
         fetch: fetchMock,
         payload: { to: 'a@b.com\r\nBcc: attacker@evil.com', subject: 'hi', body: 'hello' },
       }),
-    ).rejects.toThrow(/CR\/LF\/NUL/);
+      // 2026-09-09 (パス 111) から、共有の台帳が 1 行の欄として先に断る。
+      // `buildRfc2822` の CR/LF 検査は二重の備えとして残り、下の describe が直接に見る。
+    ).rejects.toThrow(/制御文字/);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 });
@@ -184,7 +187,7 @@ describe('ACTIONS["create-draft"] mutation-killing tests', () => {
         fetch: fetchMock,
         payload: { to: 'x@y.com' /* no subject */ },
       }),
-    ).rejects.toThrow(/to and subject are required/);
+    ).rejects.toThrow(/^subject は必須です$/);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
@@ -196,7 +199,7 @@ describe('ACTIONS["create-draft"] mutation-killing tests', () => {
         fetch: fetchMock,
         payload: { subject: 'hi' /* no to */ },
       }),
-    ).rejects.toThrow(/to and subject are required/);
+    ).rejects.toThrow(/^to は必須です$/);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 });
@@ -227,10 +230,19 @@ describe('fetchGmailSnapshot mutation-killing tests', () => {
         }),
       );
     const snap = await fetchGmailSnapshot({ token: 't', fetch: fetchMock });
-    // Asserts the .slice(0, 10) actually happened — kills a mutation that
-    // drops .toISOString() or returns the raw number.
+    // 利用者の時計の日付 (時間帯に依らず、同じ helper で組んだ値と一致する)。
     expect(snap.threads[0]!.date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-    expect(snap.threads[0]!.date.length).toBe(10);
+    expect(snap.threads[0]!.date).toBe(localIsoDate(new Date(1746931200000)));
+  });
+
+  it('internalDate が無い・壊れている 1 通で受信箱ごと落とさない (日付は空文字)', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ messages: [{ id: 'm', threadId: 't' }] }))
+      .mockResolvedValueOnce(jsonResponse({ id: 'm', threadId: 't', internalDate: 'garbage', payload: { headers: [] } }));
+    const snap = await fetchGmailSnapshot({ token: 't', fetch: fetchMock });
+    expect(snap.threads).toHaveLength(1);
+    expect(snap.threads[0]!.date).toBe('');
   });
 });
 
@@ -358,5 +370,37 @@ describe('ACTIONS["create-draft"]', () => {
     // The RFC 2822 message must end with the empty body (\r\n\r\n).
     expect(decoded).not.toContain('Stryker was here');
     expect(decoded).toMatch(/\r\n\r\n$/);
+  });
+});
+
+
+describe('fetchGmailSnapshot — 相手が頼んだ数を超えて返しても詳細の要求は 10 本まで (threat: T-113)', () => {
+  it('一覧が 500 件でも、Bearer つきの詳細要求は 10 本 + 一覧 1 本だけ', async () => {
+    const rows = Array.from({ length: 500 }, (_, i) => ({ id: `m${i}`, threadId: `t${i}` }));
+    const fetchMock = vi.fn<typeof fetch>().mockImplementation((input) => {
+      const url = String(input);
+      if (url.includes('/messages?')) return Promise.resolve(jsonResponse({ messages: rows }));
+      return Promise.resolve(jsonResponse({ id: 'x', payload: { headers: [] } }));
+    });
+    await fetchGmailSnapshot({ token: 't', fetch: fetchMock });
+    expect(fetchMock).toHaveBeenCalledTimes(1 + 10);
+    const detail = fetchMock.mock.calls.map((c) => String(c[0])).filter((u) => !u.includes('/messages?'));
+    expect(detail).toHaveLength(10);
+    expect(detail[9]).toContain('/messages/m9?');
+  });
+
+  it('標本: 10 件ちょうどなら 10 本、3 件なら 3 本 (天井は下限を削らない)', async () => {
+    for (const n of [10, 3]) {
+      const rows = Array.from({ length: n }, (_, i) => ({ id: `m${i}` }));
+      const fetchMock = vi.fn<typeof fetch>().mockImplementation((input) =>
+        Promise.resolve(
+          String(input).includes('/messages?')
+            ? jsonResponse({ messages: rows })
+            : jsonResponse({ id: 'x', payload: { headers: [] } }),
+        ),
+      );
+      await fetchGmailSnapshot({ token: 't', fetch: fetchMock });
+      expect(fetchMock).toHaveBeenCalledTimes(1 + n);
+    }
   });
 });

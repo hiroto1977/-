@@ -1,0 +1,356 @@
+{
+ "source": "/workspace/repo-analysis/orchestration",
+ "ceo": "CEO (オーナー・最高経営責任者)",
+ "people": [
+  {
+   "id": "coo",
+   "tier": "COO",
+   "name": "COO",
+   "title": "COO (最高執行責任者・オーケストレーター)",
+   "dept": "全社統括",
+   "parent": "ceo",
+   "model": "balanced"
+  },
+  {
+   "id": "cfo",
+   "tier": "役員",
+   "name": "CFO",
+   "title": "最高財務責任者 (CFO)",
+   "dept": "財務・税務・資金調達",
+   "parent": "coo",
+   "model": "balanced",
+   "knowledge": "財務・税務・資金調達 — ビジネス法務・経済学の概念、税務/法務コンプライアンス、税制優遇補助金を参照する。"
+  },
+  {
+   "id": "chro",
+   "tier": "役員",
+   "name": "CHRO",
+   "title": "最高人事責任者 (CHRO)",
+   "dept": "人事・給与・労務",
+   "parent": "coo",
+   "model": "balanced",
+   "knowledge": "人事・給与・労務 — 人間科学・ビジネス法務の概念、労務コンプライアンス、雇用/福祉補助金、相談窓口を参照する。"
+  },
+  {
+   "id": "cso",
+   "tier": "役員",
+   "name": "CSO",
+   "title": "最高戦略責任者 (CSO)",
+   "dept": "経営戦略・分析・成長・予測・予実管理",
+   "parent": "coo",
+   "model": "balanced",
+   "knowledge": "経営戦略・分析・成長・予測 — 経営学・経済学の概念と、事業系補助金、経済史を参照する。"
+  },
+  {
+   "id": "cio",
+   "tier": "役員",
+   "name": "CIO",
+   "title": "最高投資責任者 (CIO / Chief Investment Officer)",
+   "dept": "投資・資産運用・為替",
+   "parent": "coo",
+   "model": "balanced",
+   "knowledge": "投資・資産運用・為替 — 経済学・情報社会学の概念と経済史を参照する。"
+  },
+  {
+   "id": "cqo",
+   "tier": "役員",
+   "name": "CQO",
+   "title": "最高品質責任者 (CQO)",
+   "dept": "品質保証・セキュリティ",
+   "parent": "coo",
+   "model": "balanced",
+   "knowledge": "品質保証・セキュリティ — 情報社会学・ビジネス法務の概念と法務コンプライアンスを参照する。"
+  },
+  {
+   "id": "sec-cfo-1",
+   "tier": "秘書",
+   "name": "CFO秘書室長",
+   "title": "CFO秘書室 筆頭秘書（ブリーフィング・リスク整理）",
+   "dept": "財務・税務・資金調達",
+   "parent": "cfo",
+   "model": "qwen3-1.7b",
+   "duties": [
+    "日程・段取り(論点整理/アジェンダ)",
+    "資料・ブリーフィング準備",
+    "調査チーム/他役員との連絡・渉外",
+    "記録・進捗・品質の一次トラッキング"
+   ]
+  },
+  {
+   "id": "sec-chro-1",
+   "tier": "秘書",
+   "name": "CHRO秘書室長",
+   "title": "CHRO秘書室 筆頭秘書（ブリーフィング・リスク整理）",
+   "dept": "人事・給与・労務",
+   "parent": "chro",
+   "model": "glm-edge-1.5b",
+   "duties": [
+    "日程・段取り(論点整理/アジェンダ)",
+    "資料・ブリーフィング準備",
+    "調査チーム/他役員との連絡・渉外",
+    "記録・進捗・品質の一次トラッキング"
+   ]
+  },
+  {
+   "id": "sec-cso-1",
+   "tier": "秘書",
+   "name": "CSO秘書室長",
+   "title": "CSO秘書室 筆頭秘書（ブリーフィング・リスク整理）",
+   "dept": "経営戦略・分析・成長・予測・予実管理",
+   "parent": "cso",
+   "model": "internlm2.5-1.8b",
+   "duties": [
+    "日程・段取り(論点整理/アジェンダ)",
+    "資料・ブリーフィング準備",
+    "調査チーム/他役員との連絡・渉外",
+    "記録・進捗・品質の一次トラッキング"
+   ]
+  },
+  {
+   "id": "sec-cio-1",
+   "tier": "秘書",
+   "name": "CIO秘書室長",
+   "title": "CIO秘書室 筆頭秘書（ブリーフィング・リスク整理）",
+   "dept": "投資・資産運用・為替",
+   "parent": "cio",
+   "model": "yi-1.5-6b",
+   "duties": [
+    "日程・段取り(論点整理/アジェンダ)",
+    "資料・ブリーフィング準備",
+    "調査チーム/他役員との連絡・渉外",
+    "記録・進捗・品質の一次トラッキング"
+   ]
+  },
+  {
+   "id": "sec-cqo-1",
+   "tier": "秘書",
+   "name": "CQO秘書室長",
+   "title": "CQO秘書室 筆頭秘書（ブリーフィング・リスク整理）",
+   "dept": "品質保証・セキュリティ",
+   "parent": "cqo",
+   "model": "minicpm3-4b",
+   "duties": [
+    "日程・段取り(論点整理/アジェンダ)",
+    "資料・ブリーフィング準備",
+    "調査チーム/他役員との連絡・渉外",
+    "記録・進捗・品質の一次トラッキング"
+   ]
+  },
+  {
+   "id": "mgr-tax",
+   "tier": "管理職",
+   "name": "税務部長",
+   "title": "税務部長",
+   "dept": "財務・税務・資金調達",
+   "parent": "cfo",
+   "model": "deepseek-r1-1.5b"
+  },
+  {
+   "id": "staff-tax-deductions",
+   "tier": "一般職",
+   "name": "税務(所得控除)",
+   "title": "税務(所得控除)チーム担当（配偶者/扶養/社保/生命保険/医療費/iDeCo等）",
+   "dept": "税務部長",
+   "parent": "mgr-tax",
+   "model": "qwen3-4b"
+  },
+  {
+   "id": "staff-tax-credits",
+   "tier": "一般職",
+   "name": "税務(税額控除)",
+   "title": "税務(税額控除)チーム担当（住宅ローン/配当/ふるさと納税）",
+   "dept": "税務部長",
+   "parent": "mgr-tax",
+   "model": "qwen3-1.7b"
+  },
+  {
+   "id": "mgr-funding",
+   "tier": "管理職",
+   "name": "資金調達部長",
+   "title": "資金調達部長",
+   "dept": "財務・税務・資金調達",
+   "parent": "cfo",
+   "model": "glm-edge-1.5b"
+  },
+  {
+   "id": "staff-funding-cashflow",
+   "tier": "一般職",
+   "name": "資金調達(資金繰り)",
+   "title": "資金調達(資金繰り)チーム担当（月次CF/ランウェイ/DSCR/返済）",
+   "dept": "資金調達部長",
+   "parent": "mgr-funding",
+   "model": "internlm2.5-1.8b"
+  },
+  {
+   "id": "staff-funding-cost",
+   "tier": "一般職",
+   "name": "資金調達(コスト)",
+   "title": "資金調達(コスト)チーム担当（実効調達コスト率/自己負担比率/質スコア）",
+   "dept": "資金調達部長",
+   "parent": "mgr-funding",
+   "model": "yi-1.5-6b"
+  },
+  {
+   "id": "mgr-payroll",
+   "tier": "管理職",
+   "name": "給与・人件費部長",
+   "title": "給与・人件費部長",
+   "dept": "人事・給与・労務",
+   "parent": "chro",
+   "model": "minicpm3-4b"
+  },
+  {
+   "id": "staff-payroll",
+   "tier": "一般職",
+   "name": "給与/賞与",
+   "title": "給与/賞与チーム担当（賞与の源泉徴収/月次手取り/通勤手当非課税限度）",
+   "dept": "給与・人件費部長",
+   "parent": "mgr-payroll",
+   "model": "deepseek-r1-1.5b"
+  },
+  {
+   "id": "staff-labor-cost",
+   "tier": "一般職",
+   "name": "人件費(生産性)",
+   "title": "人件費(生産性)チーム担当（労働分配率/人件費率/一人当たり人件費）",
+   "dept": "給与・人件費部長",
+   "parent": "mgr-payroll",
+   "model": "qwen3-4b"
+  },
+  {
+   "id": "mgr-investment",
+   "tier": "管理職",
+   "name": "投資部長",
+   "title": "投資部長",
+   "dept": "投資・資産運用・為替",
+   "parent": "cio",
+   "model": "qwen3-1.7b"
+  },
+  {
+   "id": "staff-real-estate",
+   "tier": "一般職",
+   "name": "投資(不動産)",
+   "title": "投資(不動産)チーム担当（利回り/CCR/イールドギャップ）",
+   "dept": "投資部長",
+   "parent": "mgr-investment",
+   "model": "glm-edge-1.5b"
+  },
+  {
+   "id": "staff-mutual-funds",
+   "tier": "一般職",
+   "name": "投資(投信)",
+   "title": "投資(投信)チーム担当（複利/シャープレシオ/積立）",
+   "dept": "投資部長",
+   "parent": "mgr-investment",
+   "model": "internlm2.5-1.8b"
+  },
+  {
+   "id": "mgr-household",
+   "tier": "管理職",
+   "name": "家計・為替部長",
+   "title": "家計・為替部長",
+   "dept": "投資・資産運用・為替",
+   "parent": "cio",
+   "model": "yi-1.5-6b"
+  },
+  {
+   "id": "staff-savings-planning",
+   "tier": "一般職",
+   "name": "家計/貯蓄計画",
+   "title": "家計/貯蓄計画チーム担当（目標達成積立/72の法則/緊急予備資金）",
+   "dept": "家計・為替部長",
+   "parent": "mgr-household",
+   "model": "minicpm3-4b"
+  },
+  {
+   "id": "staff-fx-currency",
+   "tier": "一般職",
+   "name": "為替/外貨",
+   "title": "為替/外貨チーム担当（外貨換算/為替損益/実効レート）",
+   "dept": "家計・為替部長",
+   "parent": "mgr-household",
+   "model": "deepseek-r1-1.5b"
+  },
+  {
+   "id": "mgr-management",
+   "tier": "管理職",
+   "name": "経営分析部長",
+   "title": "経営分析部長",
+   "dept": "経営戦略・分析・成長・予測・予実管理",
+   "parent": "cso",
+   "model": "qwen3-4b"
+  },
+  {
+   "id": "staff-kpi-analysis",
+   "tier": "一般職",
+   "name": "経営(KPI/BEP)",
+   "title": "経営(KPI/BEP)チーム担当（損益分岐点/目標利益/販売数量/価格）",
+   "dept": "経営分析部長",
+   "parent": "mgr-management",
+   "model": "qwen3-1.7b"
+  },
+  {
+   "id": "staff-depreciation",
+   "tier": "一般職",
+   "name": "減価償却",
+   "title": "減価償却チーム担当（定額法/定率法/耐用年数/少額減価償却）",
+   "dept": "経営分析部長",
+   "parent": "mgr-management",
+   "model": "glm-edge-1.5b"
+  },
+  {
+   "id": "mgr-fpa",
+   "tier": "管理職",
+   "name": "経営管理部長 (FP&A)",
+   "title": "経営管理部長 (FP&A)",
+   "dept": "経営戦略・分析・成長・予測・予実管理",
+   "parent": "cso",
+   "model": "internlm2.5-1.8b"
+  },
+  {
+   "id": "staff-revenue-forecast",
+   "tier": "一般職",
+   "name": "経営(予測)",
+   "title": "経営(予測)チーム担当（着地見込み(ランレート年換算)/トレンド外挿）",
+   "dept": "経営管理部長 (FP&A)",
+   "parent": "mgr-fpa",
+   "model": "yi-1.5-6b"
+  },
+  {
+   "id": "staff-budget-planning",
+   "tier": "一般職",
+   "name": "経営(予算)",
+   "title": "経営(予算)チーム担当（予算策定/予算実績差異(BVA)/達成率）",
+   "dept": "経営管理部長 (FP&A)",
+   "parent": "mgr-fpa",
+   "model": "minicpm3-4b"
+  },
+  {
+   "id": "mgr-quality",
+   "tier": "管理職",
+   "name": "品質保証部長",
+   "title": "品質保証部長",
+   "dept": "品質保証・セキュリティ",
+   "parent": "cqo",
+   "model": "deepseek-r1-1.5b"
+  },
+  {
+   "id": "staff-quality-audit",
+   "tier": "一般職",
+   "name": "品質監査",
+   "title": "品質監査チーム担当（端数処理/ゼロ除算/境界値/復興税順序の監査）",
+   "dept": "品質保証部長",
+   "parent": "mgr-quality",
+   "model": "qwen3-4b"
+  },
+  {
+   "id": "staff-security",
+   "tier": "一般職",
+   "name": "セキュリティ",
+   "title": "セキュリティチーム担当（パスワード強度/エントロピー/突破時間）",
+   "dept": "品質保証部長",
+   "parent": "mgr-quality",
+   "model": "qwen3-1.7b"
+  }
+ ]
+}

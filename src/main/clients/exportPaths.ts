@@ -1,0 +1,127 @@
+// 生成物 —— src/main/clients/exportPaths.mamori から Mamori のコンパイラが組んだ。手で編集しない (`npm run mamori:build`)。
+// 言語の仕様は docs/MAMORI.md。生成物が元と食い違えば src/shared/mamori/__tests__/mamoriGenerated.test.ts が落ちる。
+/**
+ * exportPaths — レンダラーから来る書き出しの行き先を調べる**唯一の関門**と、書き出しを置いてよい場所の唯一の定義 (Mamori へ移植 · MG-020)。
+ *
+ * 2026-07 の監査の前は、4 つの書き手 (business / stocks / templates / teamradar) が同じ関門の写しを持ち、どれも `$HOME` 配下ならどこでも受けていた。
+ * 書き出しは `action:invoke` からレンダラーへ届くので、乗っ取られたレンダラーが home の下のどこにでも `.html` / `.md` / `.svg` を作る・
+ * 上書きできた。画面は既定の行き先しか使わないので、書き出しの根 (`~/.local/business-hub/data/`) に狭めても失う機能は無い。
+ *
+ * 規則: 解決したパスは `exportWriteRoot` の直下か `templates/` の中・拡張子は完全一致 (実行できる物は無い)・NUL / CR / LF なし・長さ 1024 まで・
+ * 葉の名前は `isSafeFilename`。書き出しはファイルを 0600 で書き (既存の緩い権限も `chmod` で直す)、根は 0700 にする (他人の rename / unlink を断つ · T-176)。
+ *
+ * symlink は書き込みの直前に実体まで辿って根の中か確かめ、書き出し先そのものが symlink なら断る (`assertExportTargetContained`)。
+ * 起動時の権限直し (`repairExportPermissions`) は symlink を辿らない —— 辿ると `chmod` が根の外の実体に当たる。
+ */
+
+import { promises as fs } from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { isSafeFilename } from '../../shared/safeFilename';
+
+/** 書き出しの根そのものを本人だけにする (T-176)。権限は 8 進が書けないので 10 進で書く (448 = 0o700 · 384 = 0o600 · 63 = 0o077)。直した (または既に 0700) なら 1、触れない・symlink・ディレクトリでないなら 0。 */
+export async function ensurePrivateExportRoot(root: string = exportRoot()): Promise<number> {
+  try {
+    await fs.mkdir(root, { recursive: true, mode: 448 });
+    const st = await fs.lstat(root);
+    if (!st.isDirectory()) return 0;
+    if ((st.mode & 63) === 0) return 0;
+    await fs.chmod(root, 448);
+    return 1;
+  } catch (_e) {
+    return 0;
+  }
+}
+
+/** 1 つのディレクトリの下の緩い権限を直し、直した数を返す (再帰)。読めないディレクトリは 0。symlink は辿らない (`isFile()` が落とす)。 */
+async function repairDir(dir: string): Promise<number> {
+  const entries = await fs.readdir(dir, { withFileTypes: true }).catch(() => null);
+  if (entries === null) return 0;
+  let fixed = 0;
+  for (const e of entries) {
+    const full = path.join(dir, e.name);
+    if (e.isDirectory()) {
+      fixed = fixed + await repairDir(full);
+      continue;
+    }
+    if (!e.isFile()) {
+      continue;
+    }
+    try {
+      const st = await fs.lstat(full);
+      if ((st.mode & 63) === 0) {
+        continue;
+      }
+      await fs.chmod(full, 384);
+      fixed = fixed + 1;
+    } catch (_err) {
+      // 読めない・直せないファイルは数えずに次へ (競合で消えた・所有者が違う)。
+    }
+  }
+  return fixed;
+}
+
+/** 既に書き出されたファイルの緩い権限を一度だけ均す。直した数を返す。 */
+export async function repairExportPermissions(root: string = exportRoot()): Promise<number> {
+  return repairDir(root);
+}
+
+/** 書き出し先が根の中にあり、symlink でないことを書く直前に確かめる。駄目なら投げる。 */
+export async function assertExportTargetContained(filePath: string, home: string = os.homedir()): Promise<void> {
+  const resolved = path.resolve(filePath);
+  const lexicalRoot = exportWriteRoot(home);
+  const realRoot = await fs.realpath(lexicalRoot).catch(() => lexicalRoot);
+  const dir = path.dirname(resolved);
+  const realDir = await fs.realpath(dir).catch(() => dir);
+  if (realDir !== realRoot && !realDir.startsWith(realRoot + path.sep)) {
+    throw new Error('書き出し先が許可された領域の外を指しています (symlink の可能性)');
+  }
+  const st = await fs.lstat(resolved).catch(() => null);
+  if (st !== null && st.isSymbolicLink()) {
+    throw new Error('書き出し先が symlink です — 指す先へ書き込むため拒否します');
+  }
+}
+
+/** 閉じ込めを確かめてから 0600 で書き、既存ファイルの権限も直す。 */
+export async function writeExportFile(filePath: string, content: string, home: string = os.homedir()): Promise<void> {
+  await assertExportTargetContained(filePath, home);
+  // Stryker disable next-line ObjectLiteral: `{ mode: 384 }` → `{}` は観測できる差を持たない。直後の `chmod` が同じ 0600 を当てるので、関数が返った時点の権限はどちらでも 600 になる。それでも `mode` を残すのは、作成から chmod までの短い間も他人に読ませないため (多層防御)。
+  await fs.writeFile(filePath, content, { mode: 384 });
+  await fs.chmod(filePath, 384);
+}
+
+/** 書き出しの根 (`~/.local/business-hub`)。 */
+export function exportRoot(home: string = os.homedir()): string {
+  return path.join(path.resolve(home), '.local', 'business-hub');
+}
+
+/** 書き出しを置いてよい場所 (`<根>/data`)。 */
+export function exportWriteRoot(home: string = os.homedir()): string {
+  return path.join(exportRoot(home), 'data');
+}
+
+/** 書き出しの親として許す 2 つのディレクトリ。 */
+export function exportParentDirs(home: string = os.homedir()): readonly string[] {
+  const root = exportWriteRoot(home);
+  return [root, path.join(root, 'templates')];
+}
+
+/** 書き出してよい行き先か (純関数)。 */
+export function isSafeExportPath(filePath: string, home: string, ext: string): boolean {
+  if (typeof filePath !== 'string') return false;
+  // Stryker disable next-line ConditionalExpression: 後段と重なる保険 (単独では観測不能)
+  if (filePath.length === 0) return false;
+  if (filePath.length > 1024) return false;
+  // Stryker disable next-line ConditionalExpression: 後段 (葉の名前の関門・親が固定の 2 つのどちらか) と重なる保険 (単独では観測不能)
+  if (/[\0\r\n]/.test(filePath)) return false;
+  if (!filePath.endsWith(ext)) return false;
+  // threat: T-177 —— 葉の名前が Windows で別物になる形 (予約された装置名・`:` の代替データストリーム・末尾のドット/空白)。
+  if (!isSafeFilename(path.basename(filePath))) return false;
+  // threat: T-060 —— 正規化済みの絶対パスだけを受ける。書き出しが `mkdir -p` へ渡すのは生の `filePath` の親なので、`..` を挟んだ
+  // `data/templates/../../state.json/../data/y.html` は resolve すると通るが mkdir は `state.json` という名のディレクトリを作っていた。
+  // 調べた物と書く物を同じにする (`..` / 相対 / 末尾の区切り / 重なった区切りは resolve で形が変わるので断る)。
+  // Stryker disable next-line ConditionalExpression: 親が固定の 2 つの正規化済みの絶対パスと完全一致する検査 (下) が同じ物を落とす (単独では観測不能)
+  if (path.resolve(filePath) !== filePath) return false;
+  // threat: T-042 —— 親は固定の 2 つだけ (任意の深さの子孫は通さない)。
+  return exportParentDirs(home).includes(path.dirname(filePath));
+}

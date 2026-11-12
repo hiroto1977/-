@@ -1,0 +1,100 @@
+{
+  "version": 1,
+  "purpose": "常設の AI ホワイトハッカー班の名簿 (scripts/hacker-team.cjs · threat: T-222)。週 1 の狩りの輪 (docs/HUNT_CYCLE_PROMPT.md) が brief で今週の編成を決め、record で 1 周の結果から学んだ型 (patterns) と名簿の進化 (evolution) をここへ書き戻す。役の追加・引退も record を通す —— 手で書くなら同じ検め (teamProblems) が通ること。",
+  "lineup": { "red": 3 },
+  "roles": [
+    {
+      "id": "recon",
+      "kind": "red",
+      "core": true,
+      "name": "偵察 (攻撃面の地図)",
+      "surfaces": ["any"],
+      "classes": ["ai-automated-attack"],
+      "mission": "前の周より後に増えた入口 (IPC の口・action・fetch の送り先・画面の入力欄・workflow・依存) を git log と走査で数え、まだどの検査も名指していない入口を挙げる。攻撃者が最初に見る地図を、こちらが先に描く。"
+    },
+    {
+      "id": "injection",
+      "kind": "red",
+      "name": "注入 (文字列が境界を越える所)",
+      "surfaces": ["renderer", "main-ipc", "ai"],
+      "classes": ["compromised-renderer", "ai-phishing"],
+      "mission": "外から来た文字列が別の言語の文脈へ入る所 (HTML / SVG / Markdown / CSV の数式 / URL の authority / ヘッダ / プロンプト) を探し、エスケープや関門を通らずに届く道を実際の値で作る。"
+    },
+    {
+      "id": "egress",
+      "kind": "red",
+      "name": "流出 (資格情報と本文が外へ出る道)",
+      "surfaces": ["network", "main-ipc", "renderer"],
+      "classes": ["ssrf-and-credential-egress"],
+      "mission": "資格情報・利用者の記録が端末の外へ出る全経路 (fetch・転送・プロキシ・openExternal・エラー文・ログ) を辿り、送り先の検めと実際の送り先が食い違う所・伏字を通らない所を探す。"
+    },
+    {
+      "id": "os-boundary",
+      "kind": "red",
+      "name": "OS の境界 (ファイル・シェル・IPC)",
+      "surfaces": ["main-ipc"],
+      "classes": ["living-off-the-land", "compromised-renderer"],
+      "mission": "乗っ取られたレンダラーが main の IPC で何をできるかを、引数を 1 つずつ敵対的にして確かめる (パスの脱出・symlink・大きさ・拡張子・OS に開かせる口・プロセスの起動)。"
+    },
+    {
+      "id": "supply",
+      "kind": "red",
+      "name": "供給網 (依存・CI・インストール時のコード)",
+      "surfaces": ["supply-chain"],
+      "classes": ["supply-chain"],
+      "mission": "lockfile・workflow・install 時に走るコード・MCP の起動子・配る単一 HTML を、上流が乗っ取られた日の目で読み、門が見ていない取得経路と秘密の置き場を探す。"
+    },
+    {
+      "id": "vault",
+      "kind": "red",
+      "name": "保管庫 (暗号・消去・復元)",
+      "surfaces": ["renderer", "main-ipc"],
+      "classes": ["ransomware-extortion"],
+      "mission": "保管庫・バックアップ・ハードリセット・復元の往復で、暗号化されずに残る物・消えずに残る物・取り違えて上書きされる物・断らずに受け入れる壊れた控えを探す。"
+    },
+    {
+      "id": "wallet",
+      "kind": "red",
+      "name": "財布 (費用と資源の暴走)",
+      "surfaces": ["ai", "renderer", "main-ipc", "network"],
+      "classes": ["denial-of-wallet"],
+      "mission": "天井の無い読み・締切の無い待ち・件数の無い配列・繰り返し送れる課金の口を探し、1 回の入力で費用や記憶を桁違いに使わせる値を作る。"
+    },
+    {
+      "id": "ai-agent",
+      "kind": "red",
+      "name": "AI の口 (間接プロンプトインジェクション)",
+      "surfaces": ["ai", "renderer"],
+      "classes": ["ai-phishing", "ai-automated-attack"],
+      "mission": "第三者の文 (メール・チャット・配られた文書・API の応答) が AI へ渡る口と、AI の応答が画面・書面・外向きの操作へ戻る道を辿り、応答が守りの判断を握る所を探す。"
+    },
+    {
+      "id": "variant",
+      "kind": "variant",
+      "core": true,
+      "name": "変種狩り (学んだ型の写しを探す)",
+      "surfaces": ["any"],
+      "classes": [],
+      "mission": "名簿の patterns (前の周までに学んだ型) と、この面の最近の穴を種に、同じ形が別のファイル・別の綴り・別のビルドに残っていないかを走査する。1 つ直した穴の隣に、同じ穴がもう 1 つある前提で探す。"
+    },
+    {
+      "id": "blue",
+      "kind": "blue",
+      "core": true,
+      "name": "反証役 (再現できない物を落とす)",
+      "surfaces": ["any"],
+      "classes": [],
+      "mission": "赤の指摘を 1 件ずつ実物のコードで再現しようとし、再現できない物・既に台帳に在る物・重さを盛った物を落とす。迷ったら『再現できない』へ倒す。"
+    },
+    {
+      "id": "evolver",
+      "kind": "evolver",
+      "core": true,
+      "name": "進化役 (班と手順書を作り替える)",
+      "surfaces": ["any"],
+      "classes": [],
+      "mission": "この周で確認した穴から学ぶ型 (learned) を書き、収穫の無い役の引退・新しい攻撃の型を受け持つ役の追加・手順書や門の改善を evolution として提案する。提案は record が検めてから名簿へ入る。"
+    }
+  ],
+  "patterns": []
+}

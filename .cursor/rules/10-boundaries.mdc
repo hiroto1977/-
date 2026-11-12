@@ -1,0 +1,39 @@
+---
+description: main / preload / renderer のプロセス境界とセキュリティ規約
+globs: src/**/*.ts,src/**/*.tsx
+alwaysApply: false
+---
+
+# プロセス境界
+
+TypeScript のビルドコンテキストが 3 つあり、`tsconfig` の project references で分かれている。
+
+| 置き場所 | 役割 |
+|---|---|
+| `src/main/` | Electron メインプロセス。IPC ハンドラ、`secrets.ts`（`safeStorage` 暗号化）、`oauth.ts`（PKCE）、`clients/` の実 REST クライアント |
+| `src/preload/` | `contextBridge.exposeInMainWorld` で `window.serviceHub` を公開するだけ。型は `src/shared/bridge.d.ts` にグローバル宣言 |
+| `src/renderer/` | React アプリ。**生のトークンを一切見ない** |
+
+`npm run lint:imports` がこの境界を強制する。renderer から `src/main/` を import するコードは
+書かない（型だけなら `src/shared/` に置く）。
+
+## 触ってはいけないもの
+
+- `nodeIntegration: true` にしない / `contextIsolation` を外さない
+  （`npm run lint:forbidden` が落とす）
+- `innerHTML` / `eval` / `dangerouslySetInnerHTML` を使わない
+- 外部リンクは `window.serviceHub.openExternal(url)` を通す。`window.open` は使わない
+- メインプロセスを呼ぶ経路は `window.serviceHub` **だけ**。足りなければ preload の
+  ブリッジを拡張する
+
+## サービスを足すとき
+
+`src/shared/serviceId.ts` の `SERVICE_IDS` が唯一の真実。ここに足せば型システムが
+依存箇所を全部指してくれる。**手で配線せず scaffold を使う**:
+
+```bash
+npm run scaffold -- <id> "<Label>" <ICON> [bearer|oauth|json]
+```
+
+`clients/index.ts` の `LIVE_FETCHERS` は `Record<ServiceId, fetcher>` の**全射**で、
+モジュール読み込み時の不変条件が欠けを検出して起動時に落とす（初クリック時ではなく）。

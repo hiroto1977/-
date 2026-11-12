@@ -1,0 +1,247 @@
+import { jpyWhole } from './formatters';
+import { localIsoDate } from './localDate';
+import { MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN } from './welfareScheme';
+import { employerBenefits, type BenefitMechanism, type BenefitSpec } from './employerBenefits';
+import type { WelfareSchemeInput, WelfareSchemeResult } from './welfareScheme';
+
+/**
+ * 福利厚生スキームの実務ドキュメント生成 (純ロジック・概算・ひな形)。
+ *
+ * 試算結果 (welfareScheme) と連動して、
+ *   1. 従業員向け説明資料 (額面が下がっても実質手取りが増える根拠)
+ *   2. 給与変更・天引き同意書 (労使協定 / 個別同意のひな形)
+ *   3. 福利厚生規程ひな形 (社宅 / 食事補助 / 育児支援 / カフェテリアプラン)
+ * の Markdown を出力する。**いずれもひな形であり、税務・法務の最終確認は
+ * 税理士・社労士・弁護士へ。** 数値は概算。
+ *
+ * 文面は変異検査の対象に載っており、**測定から外してはいない** (以前ここに「block-level で
+ * 全変異体を無効化」と書いていたが、その pragma はどこにも無く、注記だけが残っていた · パス 502)。
+ * 数値の正しさは welfareScheme のテストで担保し、本モジュールは「数値・見出しが
+ * 文面に現れる」ことと、文の**繋ぎ目** (届かなかった側の名指し・手元残りの句) を値ごとに
+ * テストで検証する (`welfareDocsOutOfRange.test.ts`)。
+ */
+
+const yen = jpyWhole;
+const today = () => localIsoDate();
+
+/**
+ * 両筋書きが目標手元残りに届いたか。片方でも届いていなければ、この資料は
+ * 「手元残りは同じ」と言ってはいけない (パス 103)。
+ */
+function bothReachedTarget(result: WelfareSchemeResult): boolean {
+  return result.normal.reachedTarget && result.scheme.reachedTarget;
+}
+
+/**
+ * 目標に届かなかったときの断り書き。**この資料は基本給の引き下げを従業員に
+ * 説明する物**なので、「手元残りは同じ」が成り立たないなら、成り立たないと
+ * 書く (2026-09-09 · パス 103)。
+ *
+ * 直す前の実測 (目標手元残り ¥1,600,000): 表は ① ¥1,444,127 / ② ¥1,600,000 を
+ * 並べ、2 行下の散文が「手元残りは **同じ ¥1,600,000** をキープします」と書き、
+ * 実質手取りの増加を ¥170,000 ではなく **¥325,873** (1.92 倍) と書いていた。
+ */
+function outOfRangeNotice(result: WelfareSchemeResult): string {
+  const { normal, scheme } = result;
+  const sides = [
+    normal.reachedTarget ? null : `① これまで（${yen(normal.freeCash)}）`,
+    scheme.reachedTarget ? null : `② 新制度（${yen(scheme.freeCash)}）`,
+  ].filter((x): x is string => x !== null);
+  return `> ⚠ **この目標の手元残りは、本試算モデルの範囲を超えています。**
+> ${sides.join(' と ')} が目標額に届いていないため、**下表の 2 つの筋書きは
+> 「同じ手元残り」での比較になっていません。**額面の上限に張り付いた結果を
+> 並べているだけなので、差額をそのまま制度の効果として読まないでください。
+> 目標額を下げるか、税理士・社労士にご相談ください。
+
+`;
+}
+
+/** 従業員向け説明資料 (Markdown)。 */
+export function employeeExplanationMarkdown(result: WelfareSchemeResult): string {
+  const { normal, scheme, diff } = result;
+  const reached = bothReachedTarget(result);
+  return `# 新しい給与・福利厚生制度のご説明
+
+${reached ? '' : outOfRangeNotice(result)}## なぜ額面（基本給）が下がるのに、手取りが増えるのか
+
+会社が **社宅・食事補助・育児補助・自社EC ポイント** を直接ご提供することで、
+その分の基本給を下げます。額面が下がると **社会保険料と税金も下がる** ため、
+生活費を払った後に自由に使えるお金（手元残り）${reached ? 'は同じでも' : 'の変化は下表のとおりで'}、**会社が現物で
+提供する価値の分だけ、あなたの実質的な手取りは増えます。**
+
+## 数字での比較（月額・概算）
+
+| 項目 | ① これまで | ② 新制度 |
+|---|---|---|
+| 額面基本給 | ${yen(normal.gross)} | ${yen(scheme.gross)} |
+| 社会保険料（あなたの負担） | ${yen(normal.employeeSocialInsurance)} | ${yen(scheme.employeeSocialInsurance)} |
+| 所得税・住民税（概算） | ${yen(normal.tax)} | ${yen(scheme.tax)} |
+| 口座振込額 | ${yen(normal.netPaid)} | ${yen(scheme.netPaid)} |
+| **自由に使えるお金（手元残り）** | **${yen(normal.freeCash)}** | **${yen(scheme.freeCash)}** |
+| 会社が提供する現物価値（非課税） | ${yen(normal.inKindValue)} | ${yen(scheme.inKindValue)} |
+| **あなたの実質的な手元残り** | **${yen(normal.employeeRealValue)}** | **${yen(scheme.employeeRealValue)}** |
+
+## ポイント
+
+${
+    reached
+      ? `- 手元残り（自由に使えるお金）は **同じ ${yen(scheme.freeCash)}** をキープします。`
+      : `- 手元残りは **同額になっていません**（① ${yen(normal.freeCash)} / ② ${yen(scheme.freeCash)}）。目標額が本試算モデルの範囲を超えています。`
+  }
+- 会社が家賃・食事・育児・EC を負担/支給するため、あなたが支払う固定費が減ります。
+${
+    reached
+      ? `- 結果として、実質的な手取りは **月 ${yen(diff.employeeRealValue)} 増える** 計算です。`
+      : `- 実質的な手取りの差 **月 ${yen(diff.employeeRealValue)}** は、手元残りが揃っていないため制度の効果とは言えません。`
+  }
+
+## ご注意（必ずお読みください）
+
+- 額面基本給が下がるため、**残業代の単価・賞与・将来の年金額** など、額面に
+  連動する項目に影響する場合があります。
+- 上表は概算です。実際の社会保険料・税額は標準報酬月額の等級や自治体により
+  前後します。ご不明点は人事までお問い合わせください。
+
+_作成日: ${today()}（概算・社内説明用）_
+`;
+}
+
+/** 給与変更・天引き 同意書 (Markdown)。 */
+export function consentFormMarkdown(result: WelfareSchemeResult): string {
+  const { normal, scheme } = result;
+  // **署名を求める書面**なので、下表が「同じ手元残りでの比較」でないなら黙らない。
+  const reached = bothReachedTarget(result);
+  return `# 給与制度変更に関する同意書
+
+${reached ? '' : outOfRangeNotice(result)}私は、会社が導入する福利厚生制度（社宅・食事補助・育児補助・カフェテリアプラン）
+の適用に伴い、下記の給与変更および給与天引きについて、内容を理解したうえで同意します。
+
+## 変更内容（月額・概算）
+
+| 項目 | 変更前 | 変更後 |
+|---|---|---|
+| 額面基本給 | ${yen(normal.gross)} | ${yen(scheme.gross)} |
+| 給与天引き（社宅・食事の自己負担分） | ${yen(normal.payrollDeduction)} | ${yen(scheme.payrollDeduction)} |
+| 口座振込額 | ${yen(normal.netPaid)} | ${yen(scheme.netPaid)} |
+| 自由に使えるお金（手元残り） | ${yen(normal.freeCash)} | ${yen(scheme.freeCash)} |
+
+## 確認事項
+
+1. 額面基本給の変更、および社宅家賃・食事代の自己負担分（合計
+   ${yen(scheme.payrollDeduction)}／月）を給与から控除（天引き）することに同意します。
+2. 会社が提供する現物給付（非課税）は、各制度の規程に従うことを理解しています。
+3. 額面に連動する手当・賞与・将来の年金額への影響について説明を受けました。
+
+会社名：＿＿＿＿＿＿＿＿＿＿＿＿
+
+適用開始：＿＿＿＿年＿＿月分給与より
+
+従業員 氏名：＿＿＿＿＿＿＿＿＿＿ 署名／捺印：＿＿＿＿＿ 日付：＿＿＿＿
+
+_本書は労使協定・就業規則の定めと併せて運用してください（${today()} 作成のひな形）。_
+`;
+}
+
+/** 福利厚生規程 ひな形 (Markdown)。 */
+export function welfareRegulationMarkdown(input: WelfareSchemeInput): string {
+  const rentSelf = Math.max(0, input.rentTotal - input.rentCompanyShare);
+  return `# 福利厚生規程（ひな形）
+
+## 第1条（目的）
+本規程は、従業員の生活支援および子育て支援を目的として、会社が提供する
+福利厚生（社宅・食事補助・育児支援・カフェテリアプラン）の運用について定める。
+
+## 第2条（社宅）
+1. 会社は、対象従業員に対し会社名義で賃借した住宅を社宅として貸与する。
+2. 会社負担は月 ${yen(input.rentCompanyShare)} を上限とし、賃料相当額のうち
+   従業員負担分（月 ${yen(rentSelf)} 相当）を給与から控除する
+   （非課税となる賃料相当額の徴収基準を満たすこと）。
+
+## 第3条（食事補助）
+1. 会社は、対象従業員に対し食事の現物支給または食事補助を行う。
+2. 非課税の要件（従業員が食事代の半額以上を負担し、かつ会社負担が
+   月 ${yen(MEAL_SUBSIDY_TAX_FREE_LIMIT_YEN)}（税抜）以下）を満たす範囲で運用する。
+   会社負担の目安は月 ${yen(input.mealCompanyShare)}。
+
+## 第4条（育児支援）
+会社は、ベビーシッター利用券の付与等により、対象従業員の育児を支援する
+（目安：月 ${yen(input.childcare)} 相当・非課税の役務提供の範囲）。
+
+## 第5条（カフェテリアプラン）
+1. 会社は、全従業員を対象に、毎月一律のカフェテリアポイント
+   （月 ${yen(input.ecPoints)} 相当）を付与する。
+2. ポイントは会社が定めるメニュー（自社EC 等）の範囲で利用でき、
+   現金との交換はできない（換金性を排除し非課税枠を維持する）。
+
+## 第6条（年金制度による還元）
+1. 会社は、次の制度により従業員の老後資産形成を支援することができる。
+   導入する制度・掛金額・対象者は労使協議のうえ定め、別途規程を設ける。
+${pensionArticle()}
+2. 前項のうち従業員が給与の一部を掛金へ振り替える制度については、
+   標準報酬月額の低下により将来の公的給付が減少することを、
+   加入の意思確認の前に書面で説明する。
+
+## 第7条（非課税要件の遵守）
+本規程の運用は、所得税法・所得税基本通達その他関係法令に定める非課税要件を
+満たす範囲で行う。要件を満たさない給付は課税対象となる場合がある。
+
+## 第8条（改廃）
+本規程の改廃は、労使協議のうえ会社が行う。
+
+---
+
+## 付表：会社負担で還元できる給付と要件
+
+給付は**効き方が 3 種類**あり、社会保険・所得税・受け取る時点が異なる。
+同じ「会社負担」として一括りにしない。
+
+${benefitTable()}
+
+附則：本規程は＿＿＿＿年＿＿月＿＿日から施行する。
+
+_本書はひな形です。施行前に税理士・社労士・弁護士の確認を受けてください（${today()} 作成）。_
+`;
+}
+
+
+/** 効き方の日本語表記。 */
+const MECHANISM_LABEL: Record<BenefitMechanism, string> = {
+  'in-kind': '現物・手当（いま受け取る）',
+  'employer-pension': '会社が上乗せ（将来受け取る・額面は下がらない）',
+  'salary-conversion': '給与から振替（将来受け取る・標準報酬月額が下がる）',
+};
+
+/** 第6条に並べる年金制度の箇条書き。 */
+function pensionArticle(): string {
+  return employerBenefits().filter(
+    (b) => b.mechanism === 'employer-pension' || b.mechanism === 'salary-conversion',
+  )
+    .map((b) => `   - ${b.label}：${b.summary}`)
+    .join('\n');
+}
+
+/** 1 件分の付表。要件と出典、そして副作用を落とさない。 */
+function benefitEntry(b: BenefitSpec): string {
+  const conditions = b.conditions.map((c) => `- ${c}`).join('\n');
+  const caveat =
+    b.caveat === null ? '' : `\n**注意：** ${b.caveat}\n`;
+  const sources = b.sources.map((s) => `- ${s.label}: ${s.url}`).join('\n');
+  return `### ${b.label}
+
+区分：${MECHANISM_LABEL[b.mechanism]}
+
+${b.summary}
+
+**要件**
+
+${conditions}
+${caveat}
+**出典**
+
+${sources}`;
+}
+
+/** 付表の本体。 */
+function benefitTable(): string {
+  return employerBenefits().map(benefitEntry).join('\n\n');
+}

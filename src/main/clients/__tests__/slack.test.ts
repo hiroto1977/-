@@ -166,12 +166,12 @@ describe('ACTIONS["send-message"]', () => {
     });
   });
 
-  it('rejects with the literal "channel and text are required" when fields are missing', async () => {
+  it('rejects by naming the missing field (共有の台帳 — パス 110) when fields are missing', async () => {
     // Kills StringLiteral mutant on slack.ts:95 (error text → "").
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
       ACTIONS['send-message']!({ token: 't', fetch: fetchMock, payload: { channel: 'C' } }),
-    ).rejects.toThrow(/^channel and text are required$/);
+    ).rejects.toThrow(/^text は必須です$/);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
@@ -179,7 +179,7 @@ describe('ACTIONS["send-message"]', () => {
     const fetchMock = vi.fn<typeof fetch>();
     await expect(
       ACTIONS['send-message']!({ token: 't', fetch: fetchMock, payload: { text: 'hi' } }),
-    ).rejects.toThrow(/^channel and text are required$/);
+    ).rejects.toThrow(/^channel は必須です$/);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
@@ -196,22 +196,27 @@ describe('ACTIONS["send-message"]', () => {
     ).rejects.toBeInstanceOf(FetchError);
   });
 
-  it('defaults send-message return ts/channel to fallbacks (kills slack.ts:113 `?? ""` / `?? channel`)', async () => {
-    // Slack may technically omit `ts`/`channel` from a 200 response;
-    // we coerce them to safe defaults. Pin both with toBe so the
-    // StringLiteral → 'Stryker was here!' mutant on the `''` fallback
-    // dies, and the symmetric `?? channel` fallback for `channel` is
-    // exercised.
+  it('ok:true なのに ts が無い応答は断る (空に倒さない —— ブラウザ版と同じ規則 · 2026-09-18)', async () => {
+    // 2026-09-18 まで main は `ts` を '' に倒して「送れた」と報告していた (この検査が
+    // その倒し込みを留めていた)。共有の readSlackPost に寄せたので、要求する側に揃う。
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
       jsonResponse({ ok: true /* no ts, no channel */ }),
+    );
+    await expect(
+      ACTIONS['send-message']!({ token: 't', fetch: fetchMock, payload: { channel: 'C-input', text: 'hi' } }),
+    ).rejects.toThrow(/ts/);
+  });
+
+  it('channel が応答に無ければ、送った先 (要求の channel) で補う', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      jsonResponse({ ok: true, ts: '1700000000.000100' /* no channel */ }),
     );
     const result = (await ACTIONS['send-message']!({
       token: 't',
       fetch: fetchMock,
       payload: { channel: 'C-input', text: 'hi' },
     })) as { ts: string; channel: string };
-    expect(result.ts).toBe('');
-    expect(result.ts).not.toContain('Stryker');
+    expect(result.ts).toBe('1700000000.000100');
     expect(result.channel).toBe('C-input');
   });
 
@@ -348,5 +353,54 @@ describe('fetchSlackSnapshot permalink behavior', () => {
 
     const snap = await fetchSlackSnapshot({ token: 'x', fetch: fetchMock });
     expect(snap.channels[0]!.permalink).toBe('https://slack.com/app_redirect?channel=C2');
+  });
+});
+
+/*
+ * パス 324: `team.info` の `team.domain` は第三者の応答で、それまでは文字列のまま
+ * `https://${domain}.slack.com/archives/…` の authority に置かれていた。`/` `?` `#` `\` の 1 字で
+ * host が `.slack.com` の外へ出る (標本は下)。断った値は `app_redirect` へ倒し、ホストに置くのは
+ * `slackWorkspaceDomainOrNull` の返り値だけ。`channelId` は encodeURIComponent。
+ */
+describe('buildChannelPermalink — ホストの位置に置く team.domain は 1 ラベルの文法で断る (パス 324)', () => {
+  const HOSTILE = ['evil.example/x?', 'evil.example?', 'evil.example#', 'evil.example\\', 'ac.me', 'a b', '', '-acme', 'a'.repeat(64)];
+
+  it('標本: 直す前の形は応答の 1 字で host が slack.com の外へ出た', () => {
+    const before = (domain: string, id: string) => `https://${domain}.slack.com/archives/${id}`;
+    expect(new URL(before('acme', 'C1')).hostname).toBe('acme.slack.com');
+    expect(new URL(before('evil.example/x?', 'C1')).hostname).toBe('evil.example');
+  });
+
+  it.each(HOSTILE)('★ 断った値 %j は app_redirect へ倒す (host は slack.com)', (domain) => {
+    const url = buildChannelPermalink('C1', domain);
+    expect(url).toBe('https://slack.com/app_redirect?channel=C1');
+    expect(new URL(url).hostname).toBe('slack.com');
+  });
+
+  it('文字列でない domain (応答の形が違う) も app_redirect へ倒す', () => {
+    expect(buildChannelPermalink('C1', 5)).toBe('https://slack.com/app_redirect?channel=C1');
+    expect(buildChannelPermalink('C1', { domain: 'acme' })).toBe('https://slack.com/app_redirect?channel=C1');
+    expect(buildChannelPermalink('C1', null)).toBe('https://slack.com/app_redirect?channel=C1');
+  });
+
+  it('通った値は返り値そのものをホストに置く', () => {
+    expect(buildChannelPermalink('C1', 'acme-corp')).toBe('https://acme-corp.slack.com/archives/C1');
+    expect(new URL(buildChannelPermalink('C1', 'ACME')).hostname).toBe('acme.slack.com');
+  });
+
+  it('channelId はパスとクエリの動的部分なので encodeURIComponent (不変条件 #6)', () => {
+    expect(buildChannelPermalink('C1/../x?y#z', 'acme')).toBe('https://acme.slack.com/archives/C1%2F..%2Fx%3Fy%23z');
+    expect(buildChannelPermalink('C1&team=T9', undefined)).toBe('https://slack.com/app_redirect?channel=C1%26team%3DT9');
+    expect(new URL(buildChannelPermalink('../../evil', 'acme')).pathname).toBe('/archives/..%2F..%2Fevil');
+  });
+
+  it('★ fetchSlackSnapshot: 応答の domain が敵対的なら permalink は slack.com に留まる', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ ok: true, channels: [{ id: 'C1', name: 'general', is_archived: false }] }))
+      .mockResolvedValueOnce(jsonResponse({ ok: true, team: { id: 'T1', name: 'Evil', domain: 'evil.example/x?' } }));
+    const snap = await fetchSlackSnapshot({ token: 'x', fetch: fetchMock });
+    expect(snap.channels[0]!.permalink).toBe('https://slack.com/app_redirect?channel=C1');
+    expect(new URL(snap.channels[0]!.permalink).hostname).toBe('slack.com');
   });
 });

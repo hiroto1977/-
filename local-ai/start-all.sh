@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+# 全サービスを起動（冪等: 応答済みのポートは起動しない）。
+#   ./start-all.sh          … 1回だけ起動
+#   ./start-all.sh --watch  … 起動後も60秒ごとに監視し、落ちたサービスを再起動（restart-on-failure 相当）
+# 起動対象は ENABLE_3B / ENABLE_7B / ENABLE_LITELLM / ENABLE_EXTRAS (1/0) で切替。
+# RAM対策: 7B は既定OFF。ENABLE_7B=1 でも MemAvailable が MIN_FREE_MB_7B (既定 6000MB) 未満なら起動しない。council/locked_decisions.md の llama7B-stop が locked なら強制OFF。
+# 追加モデル (llama-swap) はオンデマンド起動・5分でアンロードなので常駐メモリはほぼ0。
+set -euo pipefail
+HERE="$(cd "$(dirname "$0")" && pwd)"
+export PATH="/home/box/ollama/bin:$HOME/.local/bin:$PATH"
+ENABLE_3B="${ENABLE_3B:-1}"; ENABLE_7B="${ENABLE_7B:-0}"
+ENABLE_LITELLM="${ENABLE_LITELLM:-1}"; ENABLE_EXTRAS="${ENABLE_EXTRAS:-1}"; MIN_FREE_MB_7B="${MIN_FREE_MB_7B:-6000}"
+# CEO固定決定 llama7B-stop: locked_decisions.md が locked なら強制OFF（解除はファイルの status 変更のみ）
+LOCK_MD="$HERE/council/locked_decisions.md"
+if [ -f "$LOCK_MD" ] && awk '
+  /^##[[:space:]]+llama7B-stop([[:space:]]|$)/ {inblock=1; next}
+  /^##[[:space:]]+/ {if(inblock) exit}
+  inblock && /-[[:space:]]*status:[[:space:]]*locked/ {found=1; exit}
+  END {exit !found}
+' "$LOCK_MD"; then
+  ENABLE_7B=0
+fi
+mem_avail_mb() { awk '/MemAvailable/ {print int($2/1024)}' /proc/meminfo; }
+LOG=/tmp/local-ai-autostart.log
+up() { curl -s -m 3 -o /dev/null "http://127.0.0.1:$1${2:-/}" ; }
+log() { echo "$(date '+%F %T') $*" | tee -a "$LOG"; }
+start_all() {
+  # 毎周期ロックを再読込（--watch 長期プロセスが起動時の ENABLE_7B を抱え続けないように）
+  local enable_7b="$ENABLE_7B"
+  if [ -f "$LOCK_MD" ] && awk '
+    /^##[[:space:]]+llama7B-stop([[:space:]]|$)/ {inblock=1; next}
+    /^##[[:space:]]+/ {if(inblock) exit}
+    inblock && /-[[:space:]]*status:[[:space:]]*locked/ {found=1; exit}
+    END {exit !found}
+  ' "$LOCK_MD"; then
+    if [ "$enable_7b" = 1 ]; then log "llama7B-stop locked: ENABLE_7B を強制OFF"; fi
+    enable_7b=0
+  fi
+  # ロック中は既に動いている 8086 も止める
+  if [ "$enable_7b" = 0 ]; then
+    if up 8086 /health || ss -ltn "sport = :8086" 2>/dev/null | grep -q LISTEN || pgrep -f 'llama-server.*8086|Qwen2.5-7B-Instruct' >/dev/null 2>&1; then
+      log "llama7B-stop locked: 8086 を停止"
+      pkill -f 'llama-server.*--port 8086' 2>/dev/null || true
+      pkill -f 'Qwen2.5-7B-Instruct' 2>/dev/null || true
+      sleep 1
+    fi
+  fi
+  up 11434 || { log "start ollama"; nohup ollama serve >/tmp/ollama.log 2>&1 & sleep 3; }
+  up 8081 /health || { log "start llama 1.5b"; MODEL_SIZE=1.5b "$HERE/start-llamacpp.sh" >>"$LOG" 2>&1; }
+  if [ "$ENABLE_3B" = 1 ]; then up 8085 /health || { log "start llama 3b"; MODEL_SIZE=3b "$HERE/start-llamacpp.sh" >>"$LOG" 2>&1; }; fi
+  if [ "$enable_7b" = 1 ] && ! up 8086 /health; then
+    if [ "$(mem_avail_mb)" -ge "$MIN_FREE_MB_7B" ]; then log "start llama 7b"; MODEL_SIZE=7b "$HERE/start-llamacpp.sh" >>"$LOG" 2>&1
+    else log "skip llama 7b: MemAvailable $(mem_avail_mb)MB < ${MIN_FREE_MB_7B}MB（smart は balanced/fast にフォールバック）"; fi
+  fi
+  up 8084 /readyz || { log "start localai"; "$HERE/start-localai.sh" >>"$LOG" 2>&1; }
+  if [ "$ENABLE_EXTRAS" = 1 ]; then up 8090 /v1/models || { log "start llama-swap"; "$HERE/orchestrator/start-llama-swap.sh" >>"$LOG" 2>&1; }; fi
+  if [ "$ENABLE_LITELLM" = 1 ]; then { up 4000 /health/liveliness || ss -ltn "sport = :4000" | grep -q LISTEN || pgrep -f "litellm .*--port 4000" >/dev/null; } || { log "start litellm"; "$HERE/orchestrator/start-litellm.sh" >>"$LOG" 2>&1; sleep 20; }; fi
+  if [ "${ENABLE_COUNCIL:-1}" = 1 ]; then up 8091 || { log "start council"; "$HERE/council/start-council.sh" >>"$LOG" 2>&1; }; fi
+  if ! up 8080 /health; then
+    urls="http://127.0.0.1:8081/v1"; keys="none"
+    [ "$ENABLE_3B" = 1 ] && { urls+=";http://127.0.0.1:8085/v1"; keys+=";none"; }
+    [ "$enable_7b" = 1 ] && { urls+=";http://127.0.0.1:8086/v1"; keys+=";none"; }
+    urls+=";http://127.0.0.1:8084/v1"; keys+=";none"
+    if [ "$ENABLE_LITELLM" = 1 ] && [ -s "$HOME/litellm/master_key" ]; then
+      urls+=";http://127.0.0.1:4000/v1"; keys+=";$(cat "$HOME/litellm/master_key")"
+    fi
+    log "start open-webui (${urls})"
+    OPENAI_API_BASE_URLS="$urls" OPENAI_API_KEYS="$keys" "$HERE/start.sh" >>"$LOG" 2>&1
+  fi
+}
+# 多重起動防止
+exec 9>/tmp/local-ai-start-all.lock
+flock -n 9 || { echo "start-all は既に実行中です"; exit 0; }
+start_all 9>&- || log "start_all でエラー（ログを確認）"
+if [ "${1:-}" = "--watch" ]; then
+  while sleep 60 9>&-; do
+    # 起動直後(WebUIは~30秒かかる)の誤検知を避けるため、落ちているものだけ再起動
+    start_all 9>&- || log "start_all でエラー（次の周期で再試行）"
+  done
+fi

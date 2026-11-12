@@ -1,0 +1,211 @@
+import { createRequire } from 'node:module';
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
+import { describe, expect, it } from 'vitest';
+
+/*
+ * **週次の依存監査が、実際に配線されていること。**
+ *
+ * 2026-09-10 (パス 143) に勧告 4 件を見つけたのは「たまたま手で `npm audit` を
+ * 打ったから」で、自動で気付く道は 1 本も無かった —— `ci.yml` は
+ * `--omit=dev --audit-level=high` しか落とさず (意図的)、`lint:deps` は網に
+ * 出ないので `checkedOn` の 180 日警告まで。**`qs` の床は 24 日で低すぎに
+ * なっていた**ので、その警告では間に合わない。
+ *
+ * 週次の予定実行は誰の PR も赤くしないので `ci.yml` の懸念は当たらない。
+ * ここで留めるのは**鎖がつながっていること** —— 予定 → スクリプト →
+ * 報告ファイル → Issue。どこか 1 つが外れると、門は存在するのに何も守らない
+ * (`lint:citations` が 2026-07-30 まで CI に無かったのと同じ形)。
+ *
+ * 検査は**肯定形**で書く。「有ることの検査は、無ければ必ず鳴る」(CLAUDE.md)。
+ */
+
+const req = createRequire(import.meta.url);
+const reporter = req('../../../scripts/dependency-audit-report.cjs') as {
+  buildReport: (input: {
+    all: { name: string; severity: string; ghsa: string[] }[] | null;
+    prod: { name: string; severity: string; ghsa: string[] }[] | null;
+    floors: { package: string; atLeast: string; checkedOn: string; recorded: string[]; hits: string[]; status: string; detail: string }[] | null;
+    pins?: { file: string; line: number; repo: string; sha: string; tag: string | null; status: string; why: string }[] | null;
+    generatedAt: string;
+  }) => { actionable: number; markdown: string; summary: Record<string, number> };
+  advisoriesOf: (report: unknown) => unknown;
+};
+
+const REPO_ROOT = path.resolve(__dirname, '../../..');
+const read = (f: string) => readFileSync(path.join(REPO_ROOT, f), 'utf8');
+const WF = read('.github/workflows/dependency-audit.yml');
+const PKG = JSON.parse(read('package.json')) as { scripts: Record<string, string> };
+const IGNORE = read('.gitignore');
+
+const REPORT_PATH = 'orchestration/dependency-audit.json';
+
+describe('週次の依存監査は、予定 → スクリプト → 報告 → Issue までつながっている', () => {
+  it('★ ワークフローが `npm run audit:report` を走らせる', () => {
+    expect(WF).toContain('npm run audit:report');
+  });
+
+  it('★ `audit:report` は報告スクリプトと自己検査の両方を走らせる', () => {
+    const s = PKG.scripts['audit:report'];
+    expect(s, 'audit:report が package.json に無い').toBeTruthy();
+    expect(s).toContain('scripts/dependency-audit-report.cjs');
+    expect(s, '自己検査を回さないと規則が壊れても気付けない').toContain('--self-test');
+  });
+
+  it('★ 床の測り直し (audit:floors) と同じ実装を使う (2 つ持つと片方が腐る)', () => {
+    const src = read('scripts/dependency-audit-report.cjs');
+    expect(src).toContain("require('./audit-floors.cjs')");
+    expect(src).toContain('probeFloors');
+    expect(PKG.scripts['audit:floors']).toContain('scripts/audit-floors.cjs');
+  });
+
+  it('★ SHA 固定の実在確認 (audit:pinned-action-shas) と同じ実装を使う (パス 535 · threat: T-124)', () => {
+    const src = read('scripts/dependency-audit-report.cjs');
+    expect(src).toContain("require('./audit-pinned-action-shas.cjs')");
+    expect(src).toContain('pins: auditPins()');
+    expect(PKG.scripts['audit:pinned-action-shas']).toContain('scripts/audit-pinned-action-shas.cjs');
+  });
+
+  it('★ 毎日の予定と手動起動の両方を持つ (2026-10-11 · パス 509 で週次から毎日へ)', () => {
+    expect(WF).toMatch(/schedule:\s*\n\s*- cron: '0 \d+ \* \* \*'/);
+    expect(WF).toContain('workflow_dispatch');
+  });
+
+  it('★ 権限が明示され、Issue を書ける (lint:workflow-security の規則 1)', () => {
+    expect(WF).toContain('permissions:');
+    expect(WF).toContain('contents: read');
+    expect(WF).toContain('issues: write');
+  });
+
+  it('★ 報告ファイルを読んで Issue を作成/更新し、片付いたら閉じる (判断は module · パス 306)', () => {
+    // パス 306 まで判断は YAML の中の script に在り、この検査は綴りで留めていた。閉じた Issue を
+    // 再開できない形 (state: 'open' で探して閉じる) をその綴りの検査は通していた —— 判断を
+    // `scripts/dependency-audit-issue.cjs` へ出し、振る舞いは `dependencyAuditIssue.test.ts` が見る。
+    // ここは配線 (workflow が報告を読んで module を呼ぶ・module が作成 / 更新 / 閉じるを持つ) を留める。
+    expect(WF).toContain(REPORT_PATH);
+    expect(WF).toContain("require('./scripts/dependency-audit-issue.cjs')");
+    expect(WF).toContain('await syncIssue({ github, context, report })');
+    const MOD = read('scripts/dependency-audit-issue.cjs');
+    expect(MOD).toContain('issues.create');
+    expect(MOD).toContain('issues.update');
+    expect(MOD, '要対応 0 件で閉じないと、古い内容が開いたまま残る').toContain(
+      "const state = report.actionable > 0 ? 'open' : 'closed';",
+    );
+  });
+
+  it('★ 測定が「測れず」で落ちても、報告が在れば Issue に反映する (2026-10-22: step 失敗で反映が飛んでいた)', () => {
+    const at = WF.indexOf('name: 要対応を Issue に反映');
+    expect(at, 'Issue 反映の step が無い').toBeGreaterThan(0);
+    const step = WF.slice(at, WF.indexOf('uses:', at));
+    expect(step, '前の step が落ちたとき飛ばされる').toContain('!cancelled()');
+    expect(step, '報告ファイルが無いのに読みに行かない').toContain(`hashFiles('${REPORT_PATH}') != ''`);
+  });
+
+  it('★ npm の呼び出しには締切があり、job にも上限がある (遅いレジストリが 10 分を飲んだ 2026-10-22)', () => {
+    expect(WF).toMatch(/timeout-minutes:\s*\d+/);
+    for (const f of ['scripts/dependency-audit-report.cjs', 'scripts/audit-floors.cjs']) {
+      const src = read(f);
+      const calls = src.match(/execFileSync\(\s*'npm'[^;]*?\);/gs) ?? [];
+      expect(calls.length, `${f} に npm の呼び出しが無い`).toBeGreaterThan(0);
+      for (const c of calls) expect(c, `${f}: 締切の無い npm 呼び出し`).toContain('timeout: NPM_TIMEOUT_MS');
+    }
+  });
+
+  it('報告ファイルは生成物なので追跡しない (作業樹を汚さない)', () => {
+    expect(IGNORE).toContain(REPORT_PATH);
+  });
+
+  /*
+   * **PR の門は狭いままである**ことも留める。狭さは意図した判断なので、
+   * 週次を足したついでに広げてしまっていないかを見る (逆向きの守り)。
+   */
+  it('CI の門は `--omit=dev --audit-level=high` のまま (週次で広げても PR は赤くしない)', () => {
+    expect(read('.github/workflows/ci.yml')).toContain('npm audit --omit=dev --audit-level=high');
+  });
+});
+
+describe('報告の組み立て — 数え落としと「測れていないのに 0 件」を塞ぐ', () => {
+  const at = '2026-09-10';
+  const floor = (status: string, extra: Record<string, unknown> = {}) => ({
+    package: 'x',
+    atLeast: '1.0.0',
+    checkedOn: at,
+    recorded: [],
+    hits: [],
+    status,
+    detail: '',
+    ...extra,
+  }) as never;
+  const adv = (name: string, severity: string) => ({ name, severity, ghsa: ['GHSA-test'] });
+  // pins と watch は必須 (渡し忘れは「測っていない」になる)。既存の検査はどちらにも無関係なので空を渡す。
+  const cleanWatch = { exploited: [], likely: [], trend: [], gaps: [], hotGaps: [], naSeen: [], stackKev: [], notes: [], problems: [] };
+  const run = (input: Parameters<typeof reporter.buildReport>[0]) => reporter.buildReport({ pins: [], watch: cleanWatch, ...input } as never);
+  const pin = (status: string) => ({ file: 'w.yml', line: 3, repo: 'o/r', sha: 'a'.repeat(40), tag: 'v5', status, why: 'テスト' });
+
+  it('★ 出荷される依存の勧告は重大度を問わず要対応 (文書が「prod 0 件」と言っている)', () => {
+    expect(run({ all: [adv('p', 'low')], prod: [adv('p', 'low')], floors: [], generatedAt: at }).actionable).toBe(1);
+  });
+
+  it('★ dev だけの勧告も数える — CI が意図的に見ない範囲がここに出る', () => {
+    const r = run({ all: [adv('vitest', 'moderate')], prod: [], floors: [], generatedAt: at });
+    expect(r.summary.dev).toBe(1);
+    expect(r.markdown).toContain('`vitest`');
+  });
+
+  it('★ prod に在る名前を dev に二重計上しない', () => {
+    const r = run({ all: [adv('p', 'high'), adv('d', 'low')], prod: [adv('p', 'high')], floors: [], generatedAt: at });
+    expect([r.summary.prod, r.summary.dev]).toEqual([1, 1]);
+  });
+
+  it('★ 測れなかった項目を「0 件だから健全」にしない', () => {
+    expect(run({ all: null, prod: [], floors: [], generatedAt: at }).actionable).toBe(1);
+    expect(run({ all: [], prod: null, floors: [], generatedAt: at }).actionable).toBe(1);
+    expect(run({ all: [], prod: [], floors: null, generatedAt: at }).actionable).toBe(1);
+    expect(run({ all: [], prod: [], floors: [floor('unmeasured', { detail: '網に出られない' })], generatedAt: at }).actionable).toBe(1);
+  });
+
+  it('★ 低すぎる床を名指しする (qs が 24 日で陥った形)', () => {
+    const r = run({
+      all: [],
+      prod: [],
+      floors: [floor('too-low', { package: 'qs', atLeast: '6.15.2', hits: ['GHSA-4mjr-xmp4-gh2g'] })],
+      generatedAt: at,
+    });
+    expect(r.summary.lowFloors).toBe(1);
+    expect(r.markdown).toContain('**低すぎます**');
+    expect(r.markdown).toContain('`qs`');
+  });
+
+  it('★ 作り話の SHA 固定 (missing / no-tag) は要対応・古い固定 (moved) は報せるだけ (threat: T-124)', () => {
+    const base = { all: [], prod: [], floors: [] as never[], generatedAt: at };
+    expect(run({ ...base, pins: [pin('match'), pin('missing')] }).actionable).toBe(1);
+    expect(run({ ...base, pins: [pin('no-tag')] }).actionable).toBe(1);
+    const moved = run({ ...base, pins: [pin('moved'), pin('match')] });
+    expect(moved.actionable).toBe(0);
+    expect(moved.summary.movedPins).toBe(1);
+    expect(moved.markdown).toContain('⚠️');
+    const bad = run({ ...base, pins: [pin('missing')] });
+    expect(bad.summary.badPins).toBe(1);
+    expect(bad.markdown).toContain('w.yml:3');
+    expect(bad.markdown).toContain('❌');
+  });
+
+  it('★ 測れなかった SHA 固定を「健全」にしない (網が使えない・読めない・渡し忘れ)', () => {
+    const base = { all: [], prod: [], floors: [] as never[], generatedAt: at };
+    expect(run({ ...base, pins: [pin('unreachable'), pin('unreachable')] }).actionable).toBe(1);
+    expect(run({ ...base, pins: null }).actionable).toBe(1);
+    // undefined は `{ pins: [], ...input }` の既定を上書きして届くので「測っていない」になる。
+    expect(run({ ...base, pins: undefined }).actionable).toBe(1);
+  });
+
+  it('対照: 何も無ければ要対応 0 で、Issue は閉じる側になる', () => {
+    const r = run({ all: [], prod: [], floors: [floor('ok')], generatedAt: at });
+    expect(r.actionable).toBe(0);
+    expect(r.markdown).toContain('0 件。');
+  });
+
+  it('対照: 形の違う audit 出力は null になり、空配列と混ざらない', () => {
+    expect(reporter.advisoriesOf({})).toBeNull();
+    expect(reporter.advisoriesOf({ vulnerabilities: {} })).toEqual([]);
+  });
+});

@@ -1,0 +1,18 @@
+[package]
+name = "mamori-verify"
+version = "0.2.0"
+edition = "2021"
+publish = false
+description = "Mamori の M0 (禁じた綴り) を TypeScript の実装とは独立に検める第 2 の実装。依存 crate は 0。"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+
+[profile.release]
+opt-level = "s"
+lto = true
+panic = "abort"
+codegen-units = 1
+strip = true

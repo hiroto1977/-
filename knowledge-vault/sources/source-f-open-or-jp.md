@@ -1,0 +1,24 @@
+---
+title: "f-open.or.jp"
+type: source-domain
+host: "f-open.or.jp"
+cite_count: 1
+tags:
+  - source-domain
+  - index
+---
+
+# f-open.or.jp
+
+> [!info] 出典ドメイン索引 ・ 引用 **1 件**（運営団体 1）
+
+## このドメインを出典とする項目
+
+- [[subsidy-fukushima|福島県中小企業等生産性向上推進事業補助金（福島県）]] — 福島県産業振興センター
+
+## 関連
+- 索引: [[出典ドメイン索引]]
+- ヴォルト入口: [[Home]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

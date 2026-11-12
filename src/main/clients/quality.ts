@@ -42,7 +42,7 @@ export interface QualitySnapshot {
   readonly latestCommit: string;
 }
 
-// Stryker disable next-line all
+// Stryker disable all
 const STUB: QualitySnapshot = {
   unitTests: { staticCount: 0, runtimeCount: 0 },
   mutation: { score: 0, mutateModules: 0, killed: 0, threshold: 99.8 },
@@ -51,6 +51,7 @@ const STUB: QualitySnapshot = {
   artifactSizes: { standaloneHtmlKb: 0, electronMainKb: 0 },
   latestCommit: '',
 };
+// Stryker restore all
 
 export async function fetchQualitySnapshotImpl(_ctx: FetchContext): Promise<QualitySnapshot> {
   return STUB;

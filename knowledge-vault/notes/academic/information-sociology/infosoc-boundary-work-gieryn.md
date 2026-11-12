@@ -1,0 +1,50 @@
+---
+collection: academic
+id: infosoc-boundary-work-gieryn
+category: "information-sociology"
+category_ja: "情報社会学"
+title: "境界画定作業——科学と非科学の境界を引く営み"
+as_of: "2026-06-27"
+source_count: 2
+authoritative: true
+tags:
+  - collection/academic
+  - academic/information-sociology
+  - knowledge/verified
+aliases:
+  - "境界画定作業——科学と非科学の境界を引く営み"
+---
+
+# 境界画定作業——科学と非科学の境界を引く営み
+
+> [!info] コレクション: [[学術概念]] ・ 区分: 情報社会学 ・ asOf: 2026-06-27 ・ 出典: 2件（うち権威ある出典 ✓）
+
+## 概要
+境界画定作業（boundary-work、バウンダリー・ワーク）は、トーマス・ギエリンが1983年の論文で提示した、科学社会学・科学技術社会論（STS）の概念で、科学者（やその他の人々）が、「科学」と「非科学」（疑似科学、宗教、政治、「素人」の知識など）との「境界」を構築し、維持し、拡張し、あるいは防衛するために用いる、レトリック上・実践上の戦略を指す。ギエリンは、哲学上の「線引き問題（demarcation problem、科学を非科学から分かつ、固定された本質的な基準を求める問い——ポパーの反証可能性のような）」を、社会学的な問いへと組み替えた。すなわち、科学に実在する固定された本質があるのではなく、その境界は社会的に「構築」され「争われる」——人々が、自らの目的と状況に応じて、戦略的に境界を引いたり引き直したりする、というのである。科学者が境界画定作業を行うのは、(1)自らの権威・管轄を新たな領域へと「拡張」するため（科学がある問題について語りうると主張する）、(2)専門的な権威と資源を「独占」するため（「まがいもの」や疑似科学、競争相手を排除する）、(3)自らの「自律」を守るため（科学を別個の領域として線引きすることで、外部・政治からの干渉をかわす）である。境界は柔軟で一貫しない——科学の「本質」は、その時々の境界紛争において、レトリック上の目的にかなうように、異なって帰属される（たとえば、資金を求めるときには科学は「役に立つ」とされ、統制に抗するときには「純粋で自律的」とされる）。境界画定作業は、科学の権威、信頼性をめぐる争い、科学と政策の接点、論争（創造説、気候変動否定、代替医療などをめぐるもの）、そして知識の線引き・「文化的な地図作り」を分析するための、STSの基礎的な概念である。ギエリンはこれを著書『科学の文化的境界』（1999年）でさらに展開した。境界画定作業は、科学と非科学の境界が固定された本質ではなく、目的に応じて戦略的に構築され争われるものであることを明らかにした、科学社会学・情報社会論の重要な概念である。
+
+## 提唱者・初出
+トーマス・ギエリン ／ ロバート・マートン ／ カール・ポパー ／ ブルーノ・ラトゥール
+
+## 出典
+- [Gieryn, T. F. (1983) Boundary-work and the demarcation of science from non-science — American Sociological Review](https://doi.org/10.2307/2095325) `学術`
+- [Wikipedia: Boundary-work — demarcation, scientific authority, credibility, STS](https://en.wikipedia.org/wiki/Boundary-work) `リファレンス`
+
+## 関連概念
+- [[econ-consumption-capm|消費資本資産価格モデル（CCAPM／消費ベースCAPM）——資産価格を、リターンと総消費成長の共変動（消費ベータ）で決めるモデル]] — 同じ思想家
+- [[infosoc-narcotizing-dysfunction|麻酔的逆機能]] — 同じ思想家
+- [[infosoc-status-conferral|地位付与機能]] — 同じ思想家
+- [[econ-black-scholes|ブラック＝ショールズ・モデル]] — 同じ思想家
+- [[infosoc-actor-network-theory|アクターネットワーク理論]] — 同じ思想家
+- [[econ-option-pricing-black-scholes|ブラック＝ショールズ・オプション価格理論と金融デリバティブの数理経済学]] — 同じ思想家
+- [[infosoc-co-production-jasanoff|共産出——科学的知識と社会秩序はともに生み出される]] — 同じ思想家
+- [[infosoc-cyborg-haraway|サイボーグ宣言——機械と有機体の混淆が脱構築する近代の二項対立]] — 同じ思想家
+- [[infosoc-definition-of-situation-thomas|状況の定義とトマスの公理——主観的解釈が現実の帰結を生む]] — 同じ思想家
+- [[infosoc-epistemic-cultures-knorr-cetina|認識文化——科学分野ごとに異なる知の作り方]] — 同じ思想家
+
+## 関連
+- コレクション: [[学術概念]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*
