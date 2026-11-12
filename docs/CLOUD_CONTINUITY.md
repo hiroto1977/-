@@ -59,6 +59,7 @@
   そのフォルダをクラウドと同期しているフォルダにすれば、**提供者が持つのは暗号文だけ**になる。
 - **パスフレーズは保存しない。** 書くたびに 2 つの欄へ打つ (一致しなければ書かない —— 打ち間違えた控えは開けない)。
 - **書いた物を読み戻し、そのパスフレーズで開けて件数が合うことを確かめてから「書けた」と言う。**
+  読み戻しは復元と同じ大きさの門を通る (同期フォルダの中身は外から入れ替わりうるので、読む前に断る)。
 - ファイル名は日付ごとに 1 つ (`service-hub-copy-YYYY-MM-DD-encrypted.json`)。同じ日は上書き、別の日は世代として残る。
   空の控えは書かない (同じ日の控えを空で上書きしないため)。
 - **鮮度を言う。** 端末は目印 (書いた時刻・件数・記録の指紋・ファイル名) を覚え、記録が変わったら
@@ -110,7 +111,6 @@
 | `src/main/clients/__tests__/cloudOutageDrill.test.ts` | デスクトップ版の取得の演習と対照 |
 | `src/renderer/__tests__/cloudOutageDrillWeb.test.ts` | ブラウザ版の取得の演習と対照 |
 | `src/renderer/components/__tests__/cloudContinuityPanel.test.ts` | 節の 3 状態 (預けている / 預けていない / 読めない)・スロット `anthropic`・責任の断りが常に出ること |
-
 | `src/renderer/data/__tests__/encryptedCopy.test.ts` / `src/renderer/components/__tests__/encryptedCopyPanel.test.ts` | 控えが暗号文であること・読み戻して確かめること・断ったら 1 字も書かないこと・目印に中身が入らないこと・鮮度 (最新 / 古い / 未作成) が画面に出ること |
 | `src/renderer/data/__tests__/lastGoodFetch.test.ts` / `src/renderer/hooks/__tests__/useServiceData.test.ts` / `src/renderer/__tests__/appManualLock.test.ts` | 覚える範囲 (クラウドから取得した内容だけ)・失敗したら時刻つきで見せること・資格情報が無ければ消すこと・施錠で全部消えること |
 
@@ -126,4 +126,4 @@
 - **保存先フォルダを同期するのは OS の側のクライアント。** フォルダがクラウドと同期されているかを、アプリは確かめられない。
 - **パスフレーズを忘れると控えは開けない。** 復旧の手段は無い。
 - **演習が測るのは取得まで。** 操作 (action) がクラウドの停止でどう失敗するかは、個々の検査が見る。
-- **端末そのものの故障**は別の話で、控え (バックアップ) が受け持つ。
+- **変異検査**: `cloudContinuity.ts` / `encryptedCopy.ts` / `lastGoodFetch.ts` / `useServiceData.ts` は対象で 100% (2026-11-12 の実測)。画面の部品 (`.tsx`) は対象外。
