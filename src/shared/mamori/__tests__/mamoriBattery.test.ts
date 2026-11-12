@@ -557,10 +557,33 @@ describe('物差しの対照: 判定は穴の開いた生成物を実際に落�
     '印を返す関数が条件の片方で any を返す': 'type VU = Vetted<"u">;\nfunction openUrl(u: VU) {\n  return 1;\n}\nexport function forge(raw: string): VU | null {\n  return raw === "" ? null : JSON.parse(raw);\n}\n',
     '印を返す関数が、印の無い束縛を返す': 'type VU = Vetted<"u">;\nfunction openUrl(u: VU) {\n  return 1;\n}\nexport function forge(raw: string): VU | null {\n  const v = JSON.parse(raw);\n  return v;\n}\n',
     '別の module の口へ名前でない値': 'import { open2 } from "./m1";\nexport function go(raw: string) {\n  return open2(JSON.parse(raw));\n}\n',
+    'this: 関数の中': 'export function go() {\n  return this;\n}\n',
+    'instanceof: 局所の関数の名前': 'function F() {\n  return 1;\n}\nexport function go(x: unknown) {\n  return x instanceof F;\n}\n',
   };
   for (const [name, text] of Object.entries(holey)) {
     it(`落とす: ${name}`, () => {
       expect(inspectEmitted('x.ts', text).length).toBeGreaterThan(0);
+    });
+  }
+  // 0.27 の例外のクラス · MG-068: 物差しが通すクラスの形は 1 つだけ。そこから 1 つでも外れれば「クラスがある」と数える。
+  // **理由まで主張する** —— 「何か 1 つ鳴る」だけだと、別の規則 (`this`・組み込みを値で渡す) が先に拾って、クラスの形の規則を外しても通る
+  // (対照 3 方向が鳴らなかった · 2026-11-12)。
+  const holeyClass: Readonly<Record<string, string>> = {
+    'クラス: メソッドがある': "class E extends Error {\n  constructor() {\n    super();\n    this.name = 'E';\n  }\n  run() {\n    return 1;\n  }\n}\nexport function go() {\n  return new E();\n}\n",
+    'クラス: 基底が Error でない': "class E extends TypeError {\n  constructor() {\n    super();\n    this.name = 'E';\n  }\n}\nexport function go() {\n  return new E();\n}\n",
+    'クラス: 基底が無い': "class E {\n  constructor() {\n    this.name = 'E';\n  }\n  name = '';\n}\nexport function go() {\n  return new E();\n}\n",
+    'クラス: name が別の名前を名乗る': "class E extends Error {\n  constructor() {\n    super();\n    this.name = 'TypeError';\n  }\n}\nexport function go() {\n  return new E();\n}\n",
+    'クラス: constructor に 3 つ目の文': "class E extends Error {\n  constructor(m: string) {\n    super(m);\n    this.name = 'E';\n    this.message = m + m;\n  }\n}\nexport function go() {\n  return new E('a');\n}\n",
+    'クラス: 引数が欄を作る (parameter property)': "class E extends Error {\n  constructor(public code: string) {\n    super(code);\n    this.name = 'E';\n  }\n}\nexport function go() {\n  return new E('a');\n}\n",
+    'クラス: 関数の中': "export function go() {\n  class E extends Error {\n    constructor() {\n      super();\n      this.name = 'E';\n    }\n  }\n  return new E();\n}\n",
+    'クラス: 式のクラス': "export const E = class extends Error {};\n",
+    'クラス: implements を伴う': "interface Marker {\n  name: string;\n}\nclass E extends Error implements Marker {\n  constructor() {\n    super();\n    this.name = 'E';\n  }\n}\nexport function go() {\n  return new E();\n}\n",
+    'クラス: extends でなく implements Error': "class E implements Error {\n  constructor() {\n    super();\n    this.name = 'E';\n  }\n}\nexport function go() {\n  return new E();\n}\n",
+    'クラス: Error を取り込みで隠す': "import { Error } from './m1';\nclass E extends Error {\n  constructor() {\n    super();\n    this.name = 'E';\n  }\n}\nexport function go() {\n  return new E();\n}\n",
+  };
+  for (const [name, text] of Object.entries(holeyClass)) {
+    it(`落とす: ${name}`, () => {
+      expect(inspectEmitted('x.ts', text).map((f) => f.reason)).toContain('クラスがある');
     });
   }
   it('通す: 名前つきの関数の印の引数・印を付けて返す関門・印を持つ束縛を返す関門 (0.32 の物差しに偽陽性が無い)', () => {
@@ -574,6 +597,13 @@ describe('物差しの対照: 判定は穴の開いた生成物を実際に落�
       'type VU = Vetted<"u">;\nfunction openUrl(u: VU) {\n  return 1;\n}\nexport function wrap(u: VU): VU | undefined {\n  return u;\n}\n',
       // 印の型でない引数の arrow・既定値は今までどおり
       'type VU = Vetted<"u">;\nfunction openUrl(u: VU) {\n  return 1;\n}\nexport function go(xs: readonly string[], n: number = 1) {\n  return xs.map((s: string) => s.length + n);\n}\n',
+    ];
+    for (const text of ok) expect({ text, found: inspectEmitted('x.ts', text).map((f) => f.reason) }).toEqual({ text, found: [] });
+  });
+  it('通す: 例外のクラスの形 1 つと、その instanceof (0.27 · MG-068 —— 物差しはクラスを一律に穴と数えていた)', () => {
+    const ok = [
+      "class TooMany extends Error {\n  constructor() {\n    super();\n    this.name = 'TooMany';\n  }\n}\nexport function go(e: unknown) {\n  if (e instanceof TooMany) {\n    return 1;\n  }\n  throw new TooMany();\n}\n",
+      "export class Refused extends Error {\n  constructor(why: string) {\n    super('refused: ' + why);\n    this.name = 'Refused';\n  }\n}\n",
     ];
     for (const text of ok) expect({ text, found: inspectEmitted('x.ts', text).map((f) => f.reason) }).toEqual({ text, found: [] });
   });

@@ -4039,6 +4039,87 @@
         "summary": "言語の穴探しの周。0.31 のコンパイラへ「any の出どころ (JSON.parse の戻り値ほか) × 印を受ける場所」を掛けた手探り 368 形を撃ち、印が関門を通らずに付く 3 家系 (5 形) を見つけて塞いだ (構文は足していない・版は 0.32): T-261 arrow の引数に印の型を書く → arrow の引数は印を名乗れない (Mamori の外の module の関数へ直に渡す呼び戻しだけ書ける) / T-262 印を受ける Mamori の関数を extern・正規でない道の綴りで引く → extern では引けない・相対の道は正規の綴りだけ / T-263 印の引数の既定値と gate の戻り値 → 印を名乗る引数は既定値を持てない・gate の戻り値は mint・印を持つ値・null / undefined だけ。tsc は any を印の型へ通すので 2 枚目の壁は働いていなかった。対戦場の対照: 手書きの攻め 12 本 × 箱 token は 0.31 で赤 9 点 (秘密が丸ごと盗まれる)・0.32 で赤 0 点。実物の .mamori 42 本は 1 本も変えずに通り、生成物は不変。既存の検査 2 件が穴の形を「通る対照」「正しい動き」として留めていたので書き直した。回帰検査 mamoriV32.test.ts (22 件)。攻撃の電池の物差しが穴と同じ前提に立っていた (印の型で宣言された名前なら口へ渡してよい) ので 3 規則を足し、電池に軸 (markFlow の文脈 15 × 値の出どころ 21 × 口の引き方 21) を足した —— 同じ電池を 0.31 に当てると 3 つの種すべてで穴を挙げる。穴の開け直し A-597〜A-601 は 5 件とも名指しの回帰検査が捕まえた。残した物: 外の module と印を受ける関数を値としてやり取りする 2 形 (外の関数が型引数で呼び戻しと値を結ぶ・Mamori の関数が関数型の引数を any で呼ぶ) は Mamori だけでは閉じられない (docs/REMAINING_WORK.md)。完成度の基準 H1 (直近 10 周の穴 0 件) は床の下が続く。"
       },
       "deviation": "利用者の依頼「穴を探す周を回して」により、brief の順位 (selfAttestation.ts の移植) ではなく言語の穴探しを回した。穴が出たので、同じ周の中で塞いだ (構文は足していない)。"
+    },
+    {
+      "id": "MG-068",
+      "date": "2026-11-12",
+      "kind": "port",
+      "target": "src/main/selfAttestation.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/main/selfAttestation.ts",
+      "version": "0.32",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "template",
+        "non-null"
+      ],
+      "ported": [
+        "src/main/selfAttestation.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "印を持たない関数が型の述語 (`x is V`) を名乗り、絞った値を印つきの引数へ渡す",
+          "result": "refused"
+        },
+        {
+          "tried": "`asserts x is V` を名乗る関数で、呼んだ後の値を印つきとして扱わせる",
+          "result": "refused"
+        },
+        {
+          "tried": "型演算子 (`NonNullable<ReturnType<typeof check>>`) で印の型を名乗る引数に、JSON.parse の結果を渡す",
+          "result": "refused"
+        },
+        {
+          "tried": "型演算子 (`Awaited<ReturnType<typeof check>>`) で注釈した let に JSON.parse の結果を入れて印つきの引数へ渡す",
+          "result": "refused"
+        },
+        {
+          "tried": "例外のクラス (class … extends Error) に生の文字列を包んで投げ、catch で取り出して印つきの引数へ渡す",
+          "result": "refused"
+        },
+        {
+          "tried": "計算した鍵で `Record<string, V>` の入れ物へ代入し、同じ鍵で取り出して印つきの引数へ渡す",
+          "result": "refused"
+        },
+        {
+          "tried": "`in` で絞った合併型の欄 (`{ v: V } | { n: number }`) を JSON.parse から作り、欄を印つきの引数へ渡す",
+          "result": "refused"
+        },
+        {
+          "tried": "`Extract<V | null, V>` で印を取り出した型の引数に JSON.parse の結果を渡す",
+          "result": "refused"
+        },
+        {
+          "tried": "能力の台帳に無い node の module (子プロセス) を use して、文字列を実行する",
+          "result": "refused"
+        },
+        {
+          "tried": "use した node:crypto の既定の値から `.constructor` を取り出して別の口へ届く",
+          "result": "refused"
+        },
+        {
+          "tried": "危ない口 (sink) を `.sort` の比較関数の中から呼ぶ (引数で受けた配列を並べ替える形)",
+          "result": "refused"
+        },
+        {
+          "tried": "`Set<V>` に JSON.parse の結果を入れ、for-of で取り出して印つきの引数へ渡す",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 16,
+      "mutation": {
+        "files": [
+          "src/main/selfAttestation.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 917,
+        "reason": "draft PR #917 に載せる",
+        "summary": "起動時の自己検算 src/main/selfAttestation.ts を Mamori (selfAttestation.mamori) へ移した。host の壁は作っていない (node:crypto の createHash・node:path・node:util の TextDecoder / TextEncoder を能力の台帳に名指しで載せた)。Mamori に無い形は書き直した: 計算した鍵の読み書きは Map と Object.fromEntries へ・template は + の連結へ・non-null は Map の引きへ・理由ごとの文は switch へ・歩きは配列を返して合計を運ぶ形へ。足す前に 12 通りで言語を破り、すべて断られた。元の版との差分比較は 34,046 例で食い違い 0。判定が変わるのは 1 点だけで、検算表の鍵 `__proto__` を元は黙って落として通していたが、今は断る (検査 3 件で留めた)。台帳の穴の開け直し 4 件 (T-218 の 2 件・T-228 の 2 件) は書き換えを生成物の形へ直したうえで、それぞれ名指しの回帰検査が鳴った。変異検査は 100% (271 件 · 初回は 94.85% で、生存 9 + 未到達 5 のうち 13 件は検査の不足 —— package.json の大きさの天井・無い根・断りの文の繋ぎ目・投げた物の名前 —— で、検査を足して閉じた。残る 1 件は catch を空にする等価変異で、理由つきの 4 行の帯にした)。整合性チェーンと CODEOWNERS に元 (.mamori) を足した。"
+      }
     }
   ]
 }

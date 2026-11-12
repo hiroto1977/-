@@ -206,8 +206,8 @@ const VARIABLE_PATH_ALLOWED: Readonly<Record<string, { count: number; why: strin
     why: '**原文の道具そのもの** —— sandbox の道を原文の道へ写してから読むのが仕事なので、生の読みはその写し先 (変数) を読む。この 4 件が在るから他のすべての検査が原文を読める。helper を母集団へ入れた日 (パス 490) に初めて数えられた',
   },
   'src/main/__tests__/fileReadSizeGateCensus.test.ts': {
-    count: 13,
-    why: 'この census の母集団は `readFile` の呼び出しそのものなので、台帳の needle と標本が**数える綴りを引用する**。実際の読みは `readOriginalSource` だけを通しており、引用は文字列リテラルで走らない —— 綴りを分割して走査を避けるより、理由つきで載せる方が読める (パス 326)。**件数は 2026-09-25 (パス 462) に 6 → 9 へ実測で直した** —— 自前の注記除去が glob の `**` から始まる偽の注記で 45 行を食っており、その中の引用 3 件が見えていなかった。**2026-10-29 (パス 553) に 9 → 12** —— `selfAttestation.ts` の読み 3 件 (表・同梱ファイル・stat) を台帳に載せたので、その needle の引用が 3 件増えた。**2026-10-30 (パス 566-C) に 12 → 13** —— `package.json` を読む needle を 1 つ載せた分 (T-228。綴りはこの検査自身が生の読みと数えるので再現しない)',
+    count: 12,
+    why: 'この census の母集団は `readFile` の呼び出しそのものなので、台帳の needle と標本が**数える綴りを引用する**。実際の読みは `readOriginalSource` だけを通しており、引用は文字列リテラルで走らない —— 綴りを分割して走査を避けるより、理由つきで載せる方が読める (パス 326)。**件数は 2026-09-25 (パス 462) に 6 → 9 へ実測で直した** —— 自前の注記除去が glob の `**` から始まる偽の注記で 45 行を食っており、その中の引用 3 件が見えていなかった。**2026-10-29 (パス 553) に 9 → 12** —— `selfAttestation.ts` の読み 3 件 (表・同梱ファイル・stat) を台帳に載せたので、その needle の引用が 3 件増えた。**2026-10-30 (パス 566-C) に 12 → 13** —— `package.json` を読む needle を 1 つ載せた分 (T-228。綴りはこの検査自身が生の読みと数えるので再現しない)。**2026-11-12 (MG-068) に 13 → 12** —— 検算を Mamori へ移すと fs の型の宣言が関数型の欄になり、census の針に当たらなくなったので、その 1 行を台帳から外した',
   },
   'src/shared/mamori/__tests__/mamoriArena.test.ts': {
     count: 1,
@@ -221,7 +221,7 @@ const VARIABLE_PATH_ALLOWED: Readonly<Record<string, { count: number; why: strin
       + '**この worker の中では走らせられない** (原文の道具へ移す先が無い)',
   },
   'src/main/__tests__/selfAttestation.test.ts': {
-    count: 23,
+    count: 25,
     why: '**読むのは一時の木** (`mkdtemp` に植えた出荷物の写し) で、ソースの原文ではない (パス 553 · T-218)。検算の契約は'
       + '「実物の `fs/promises` を `AttestationFs` として当てて壊し方ごとに 1 件」なので、偽の fs が実物の `readFile` / `readdir` を'
       + '包む形で道が変数になる。sandbox の計装された本文を読む余地は無い (一時の木に検査対象のソースは無い)',

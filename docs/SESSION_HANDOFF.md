@@ -7,6 +7,22 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-11-12) — MG-068: 起動時の自己検算 `selfAttestation.ts` を Mamori へ移した (0.32 のまま)
+
+利用者の依頼「元の作業に戻って作業を進めて」。輪の道具 (`npm run mamori:grow -- brief`) の 1 番目の候補を 1 周として回した。構文は足していない。
+- **移した物**: `src/main/selfAttestation.mamori` → 生成物 `src/main/selfAttestation.ts`。host の壁は作っていない —— `node:crypto` の `createHash`・`node:path`・`node:util` の `TextDecoder` / `TextEncoder` を能力の台帳 (`security/mamori-capabilities.json`) に名指しで載せた (`extern pure global` で宣言できる組み込みではないので `use` で引く)。
+- **書き直した形 (Mamori に無い物)**: 計算した鍵の読み書き (`files[k]`) → `new Map(Object.entries(…))` と `Object.fromEntries(…)` / template → `+` の連結 / 後置の `!` → Map の引き / 理由ごとの文の表 → `switch` / 引数の配列へ push する歩き → **配列を返して合計 (`already`) を運ぶ**歩き (`.push` / `.sort` は関数の中で `const a = [ … ]` と作った配列にしか書けない)。
+- **判定が変わるのは 1 点だけ**: 検算表の鍵 `__proto__`。元は素のオブジェクトへの代入で黙って落ちて `ok: true` だった。今は同じ表が `manifest-malformed`、root を鍵ごと計算し直した表は `file-missing: __proto__` (同梱物にその名前は置けない)。厳しくなる向き。検査 3 件で留めた。
+- **差分比較**: 元の版 (移す前の写し) と生成物へ同じ入力 34,046 例を食わせて食い違い 0 (上の 1 点を除く)。道具は使い捨て (scratchpad)。
+- **先に破った**: 12 通り (型の述語・`asserts`・型演算子で印を名乗る引数と let・例外のクラスに包む・計算した鍵の入れ物・`in` で絞った欄・`Extract`・台帳に無い node の module・`.constructor`・`.sort` の比較関数から危ない口・`Set` 経由)。すべて断られた (穴 0)。
+- **変異検査 (`src/main/selfAttestation.ts`)**: 初回 94.85% (生存 9 + 未到達 5)。13 件は検査の不足だった —— package.json の大きさの天井 (元の版にも検査が無かった)・許された根が無い木・断りの文の繋ぎ目 3 片・投げた物の名前・package.json が無いときの detail。検査を足して閉じた。残る 1 件は `catch` の中身を空にする等価変異で、**`next-line` の注記は生成物では効かなかった** (下の罠)。4 行の帯 (`Stryker disable BlockStatement` … `restore`) にして 100% (271 件)。
+- **台帳の穴の開け直し**: `security/threat-ablations.json` の A-521 / A-535 / A-536 の書き換えを生成物の形へ直し、T-218 (2 件)・T-228 (2 件) とも名指しの回帰検査が鳴った。
+- **攻撃の電池の物差しがクラスを知らなかった**: `mamoriInspect.ts` は 0.27 でクラスが入ったあともクラスを一律に穴と数えていた。走査の根 (`src/shared` / `src/main` / `src/main/clients` / `src/renderer` の**直下**) にクラスを持つ `.mamori` が 1 本も無かったので鳴らなかった (`webauthn.mamori` は 1 段下)。物差しに「通すクラスの形は `class N extends Error { constructor(…) { super(…); this.name = 'N'; } }` ただ 1 つ」「`this` はその 1 か所だけ」「`instanceof` の右辺に書ける局所の名前は形の合う例外のクラスだけ」を独立に書いた。対照 12 方向が鳴る (**1 度目は 3 方向が鳴らなかった** —— 「何か 1 つ鳴る」だけの主張だと別の規則が先に拾う。クラスの標本は理由まで主張する形に分けた)。
+- **台帳 2 つ**: `fileReadSizeGateCensus` の型の宣言の行は、fs の型が関数型の欄になって針に当たらなくなったので外した。`originalSourcePolicy` の件数を実測へ (検算の検査 23 → 25・census 13 → 12)。
+- **保護対象**: `.mamori` を整合性チェーン (block #496) と CODEOWNERS に足した。
+- **罠 (この周で踏んだ)**: ① `// Stryker disable next-line …` は「注記の直後の文」に効く。Mamori の生成物は `try { … } catch (_e) { … }` を必ず複数行に出すので、`catch` の中身を指す `next-line` は書けない (try の中の最後に置いた注記は前の文の後ろに付く)。帯で囲む ② `extern pure global` で宣言できるのは Date ほか決まった組み込みだけ。`TextEncoder` / `TextDecoder` は `use { … } from "node:util"` で引く ③ node の module を `use` したら `npm run mamori:build -- --write-capabilities` で台帳を引き直し、差分を読む。
+- **完成度と次の候補**: 数は `npm run mamori:grow -- report`。残る TypeScript の壁は `secrets.ts` (846 行)・`vault.ts` (1,790 行) と、移せない `preloadHost.ts`。
+
 ## 直近の作業 (2026-11-11) — 事業継続 (他社のクラウドが止まったとき)
 
 利用者の依頼「他社クラウドが止まっても事業が止まらない範囲で他社クラウドに管理してもらい、訴訟リスクは他社クラウドが担保する方向で、ローカル最適化して再構築」。正は `docs/CLOUD_CONTINUITY.md`。

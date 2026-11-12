@@ -27,6 +27,38 @@ export interface Finding {
   readonly kind: 'hole' | 'lenient';
 }
 
+/**
+ * 0.27 の例外のクラス: 生成物に出てよいクラスの形は
+ * `class N extends Error { constructor(引数) { super(…); this.name = 'N'; } }` ただ 1 つ (2026-11-12 · MG-068)。
+ * 形が合えば、その中のただ 1 つの `this` (`this.name = 'N'` の左辺) を返す。合わなければ `null`。
+ *
+ * この物差しは 0.27 でクラスが入ったあともクラスを一律に穴と数えていた —— 実物の走査の根 (`src/shared` / `src/main` /
+ * `src/main/clients` / `src/renderer` の直下) にクラスを持つ `.mamori` が 1 本も無かったので鳴らなかった
+ * (`webauthn.mamori` は 1 段下の `src/renderer/security/` に居る)。`selfAttestation.mamori` が根の直下に入って初めて鳴った。
+ */
+function exceptionClassThis(n: ts.ClassDeclaration, errorIsShadowed: boolean): ts.Node | null {
+  if (errorIsShadowed || !ts.isSourceFile(n.parent) || !n.name || n.typeParameters) return null;
+  if ((n.modifiers ?? []).some((m) => m.kind !== ts.SyntaxKind.ExportKeyword)) return null;
+  const clauses = n.heritageClauses ?? [];
+  const clause = clauses[0];
+  if (clauses.length !== 1 || !clause || clause.token !== ts.SyntaxKind.ExtendsKeyword) return null;
+  const base = clause.types[0];
+  if (clause.types.length !== 1 || !base || base.typeArguments || !ts.isIdentifier(base.expression) || base.expression.text !== 'Error') return null;
+  const ctor = n.members[0];
+  if (n.members.length !== 1 || !ctor || !ts.isConstructorDeclaration(ctor) || !ctor.body) return null;
+  if ((ctor.modifiers ?? []).length > 0 || ctor.parameters.some((p) => (p.modifiers ?? []).length > 0 || p.dotDotDotToken !== undefined)) return null;
+  const callSuper = ctor.body.statements[0];
+  const setName = ctor.body.statements[1];
+  if (ctor.body.statements.length !== 2 || !callSuper || !setName) return null;
+  if (!ts.isExpressionStatement(callSuper) || !ts.isCallExpression(callSuper.expression) || callSuper.expression.expression.kind !== ts.SyntaxKind.SuperKeyword) return null;
+  if (!ts.isExpressionStatement(setName) || !ts.isBinaryExpression(setName.expression) || setName.expression.operatorToken.kind !== ts.SyntaxKind.EqualsToken) return null;
+  const left = setName.expression.left;
+  const right = setName.expression.right;
+  if (!ts.isPropertyAccessExpression(left) || left.expression.kind !== ts.SyntaxKind.ThisKeyword || left.name.text !== 'name') return null;
+  if (!ts.isStringLiteral(right) || right.text !== n.name.text) return null;
+  return left.expression;
+}
+
 /** 受け入れた生成物 1 つを、TypeScript の構文解析器で読み直して穴を探す。 */
 export function inspectEmitted(file: string, text: string, externGlobals: ReadonlySet<string> = new Set()): Finding[] {
   const found: Finding[] = [];
@@ -53,6 +85,22 @@ export function inspectEmitted(file: string, text: string, externGlobals: Readon
     ts.forEachChild(n, collect);
   };
   collect(sf);
+
+  // 0.27 の例外のクラス (形が合う物だけ)。`Error` を自分で宣言・取り込みしていれば `extends Error` は別の物を指すので合わない。
+  const exceptionClasses = new Set<string>();
+  const allowedThis = new Set<ts.Node>();
+  const errorIsShadowed = declared.has('Error');
+  const collectClasses = (n: ts.Node): void => {
+    if (ts.isClassDeclaration(n)) {
+      const t = exceptionClassThis(n, errorIsShadowed);
+      if (t !== null && n.name) {
+        exceptionClasses.add(n.name.text);
+        allowedThis.add(t);
+      }
+    }
+    ts.forEachChild(n, collectClasses);
+  };
+  collectClasses(sf);
 
   const inType = (n: ts.Node): boolean => {
     for (let p: ts.Node | undefined = n.parent; p; p = p.parent) {
@@ -97,11 +145,11 @@ export function inspectEmitted(file: string, text: string, externGlobals: Readon
         found.push({ kind: 'hole', reason: '欄より後ろのオブジェクトの展開' });
       }
     }
-    // 0.16 の instanceof: 右辺は名前だけで、その名前は組み込み・`extern pure global`・取り込んだ名前に限る (局所の名前・計算した式は穴)。
+    // 0.16 の instanceof: 右辺は名前だけで、その名前は組み込み・`extern pure global`・取り込んだ名前・**形の合う例外のクラス** (0.27) に限る (他の局所の名前・計算した式は穴)。
     if (ts.isBinaryExpression(n) && n.operatorToken.kind === ts.SyntaxKind.InstanceOfKeyword) {
       const r = n.right;
       if (!ts.isIdentifier(r)) found.push({ kind: 'hole', reason: `instanceof の右辺が名前でない: ${r.getText(sf)}` });
-      else if (declared.has(r.text) ? !imported.has(r.text) : !(externGlobals.has(r.text) || ALLOWED_BUILTINS.has(r.text))) {
+      else if (declared.has(r.text) ? !(imported.has(r.text) || exceptionClasses.has(r.text)) : !(externGlobals.has(r.text) || ALLOWED_BUILTINS.has(r.text))) {
         found.push({ kind: 'hole', reason: `instanceof の右辺が許した名前でない: ${r.text}` });
       }
     }
@@ -113,7 +161,11 @@ export function inspectEmitted(file: string, text: string, externGlobals: Readon
     }
     if (ts.isCallExpression(n) && n.expression.kind === ts.SyntaxKind.ImportKeyword) found.push({ kind: 'hole', reason: '動的 import がある' });
     if (ts.isMetaProperty(n)) found.push({ kind: 'hole', reason: 'メタプロパティがある' });
-    if (ts.isClassDeclaration(n) || ts.isClassExpression(n)) found.push({ kind: 'hole', reason: 'クラスがある' });
+    // クラスは例外の型の形 1 つだけ (0.27)。メソッド・欄・別の基底・式のクラスは穴。`this` はその形の `this.name = 'N'` の左辺にだけ出る。
+    if (ts.isClassExpression(n) || (ts.isClassDeclaration(n) && !(n.name && exceptionClasses.has(n.name.text) && exceptionClassThis(n, errorIsShadowed) !== null))) {
+      found.push({ kind: 'hole', reason: 'クラスがある' });
+    }
+    if (n.kind === ts.SyntaxKind.ThisKeyword && !allowedThis.has(n)) found.push({ kind: 'hole', reason: '`this` がある (Mamori に `this` は無い)' });
     if (ts.isNewExpression(n) && ts.isIdentifier(n.expression) && (n.expression.text === 'Function' || n.expression.text === 'AsyncFunction')) found.push({ kind: 'hole', reason: 'new Function がある' });
     if (ts.isComputedPropertyName(n) && !inType(n)) found.push({ kind: 'hole', reason: '計算した鍵がある' });
     if ((ts.isGetAccessor(n) || ts.isSetAccessor(n)) && !inType(n)) found.push({ kind: 'hole', reason: 'アクセサがある' });
