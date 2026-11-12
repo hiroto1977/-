@@ -134,6 +134,36 @@ describe('secrets — 保管ファイルの形 (鍵 `__proto__`・鍵の並び�
     expect(logged).toHaveBeenCalled();
   });
 
+  it('★ 値が空文字の鍵は「保存されていない」と読む (復号へ進まない)', async () => {
+    const m = await secretsModule();
+    await fs.writeFile(storeFile(), JSON.stringify({ github: '', slack: plain('xoxb-y') }));
+    expect(await m.readStoredToken('github')).toEqual({ ok: false, reason: 'absent' });
+    expect(await m.getToken('github')).toBeNull();
+    // 対照: 同じファイルの空でない鍵は読める (ファイルは読めている)
+    expect(await m.getToken('slack')).toBe('xoxb-y');
+  });
+
+  it('★ 読めなかったときに残すログの文は、道と大きさを含む 1 文そのまま (断片ごとに欠けない)', async () => {
+    const m = await secretsModule();
+    const logged = vi.spyOn(console, 'error').mockImplementation(() => {});
+    // 1) 大きすぎる保管ファイル (上限 1 MiB を 1 byte 超える)
+    const limit = 1024 * 1024;
+    await fs.writeFile(storeFile(), 'x'.repeat(limit + 1));
+    await expect(m.listConfiguredServices()).rejects.toThrow();
+    expect(logged.mock.calls).toEqual([[`[secrets] secrets file ${storeFile()} is ${limit + 1} bytes (limit ${limit}); refusing to load`]]);
+    // 対照: 上限ちょうどは大きさでは断らない (中身が JSON でないので別の文になる)
+    logged.mockClear();
+    await fs.writeFile(storeFile(), 'x'.repeat(limit));
+    await expect(m.listConfiguredServices()).rejects.toThrow();
+    expect(logged.mock.calls).toEqual([[`[secrets] secrets file at ${storeFile()} is not valid JSON and no usable backup exists; treating as empty`]]);
+    // 2) 本体が壊れていて控えが読める
+    logged.mockClear();
+    await fs.writeFile(storeFile(), '{broken');
+    await fs.writeFile(`${storeFile()}.prev`, JSON.stringify({ github: plain('gh-token') }));
+    expect(await m.listConfiguredServices()).toEqual(['github']);
+    expect(logged.mock.calls[0]).toEqual([`[secrets] primary secrets file at ${storeFile()} was corrupt; recovered from .prev backup`]);
+  });
+
   it('★ 読みの結果が null (ファイルがまだ無い) なら空の保管として書ける', async () => {
     const m = await secretsModule();
     const logged = vi.spyOn(console, 'error').mockImplementation(() => {});

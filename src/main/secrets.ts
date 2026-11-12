@@ -321,8 +321,8 @@ const TS_INNER = 'ts1:';
 
 type Stamped =
   | { readonly kind: 'at'; readonly version: 1 | 2; readonly storedAt: number; readonly inner: string }
-  | { readonly kind: 'oauth'; readonly inner: string }
-  | { readonly kind: 'undated'; readonly inner: string };
+  | { readonly kind: 'oauth'; readonly version: 0; readonly inner: string }
+  | { readonly kind: 'undated'; readonly version: 0; readonly inner: string };
 
 function parseAtBody(rest: string, version: 1 | 2): Stamped {
   const sep = rest.indexOf(':');
@@ -334,10 +334,10 @@ function parseAtBody(rest: string, version: 1 | 2): Stamped {
 }
 
 function unstamp(value: string): Stamped {
-  if (value.startsWith(STAMP_OAUTH)) return { kind: 'oauth', inner: value.slice(STAMP_OAUTH.length) };
+  if (value.startsWith(STAMP_OAUTH)) return { kind: 'oauth', version: 0, inner: value.slice(STAMP_OAUTH.length) };
   if (value.startsWith(STAMP_AT_V2)) return parseAtBody(value.slice(STAMP_AT_V2.length), 2);
   if (value.startsWith(STAMP_AT)) return parseAtBody(value.slice(STAMP_AT.length), 1);
-  return { kind: 'undated', inner: value };
+  return { kind: 'undated', version: 0, inner: value };
 }
 
 /**
@@ -411,7 +411,7 @@ async function decode(value: string): Promise<StoredTokenRead> {
   if (!read.ok) return read;
   // atv2: 暗号文の中の時刻が平文の時刻と一致するか検める (threat: T-230)。平文の `atv2:<ms>:` を
   // 前倒しして若返らせても、暗号文は元の時刻で封緘されているので不一致で断る (= 復号できない扱い)。
-  if (s.kind === 'at' && s.version === 2) {
+  if (s.version === 2) {
     if (!read.token.startsWith(TS_INNER)) return { ok: false, reason: 'undecryptable', message: UNDECRYPTABLE_CORRUPT };
     // 復号して得た平文の中身 (`ts1:<ms>:<token>` の `ts1:` を外した残り)。応答の本文ではない
     // ので `lint:forbidden` の本文を切る綴りの網には掛けない (名前を `tsInner` にして区別する)。
@@ -796,7 +796,11 @@ export async function getValidToken(serviceId: ServiceId): Promise<StoredTokenRe
   const config = lookup(OAUTH_CONFIGS, serviceId);
   // 非有限の期限は「期限が記録されていない」と同じ扱い (更新しない)。
   // `Infinity` は元から false 側だったが `-Infinity` は毎回更新に倒れていた (パス 98)。
-  const expiresSoon = typeof tokens.expiresAt === 'number' && Number.isFinite(tokens.expiresAt) && (tokens.expiresAt - hostNow() < REFRESH_WINDOW_MS);
+  // Stryker disable next-line ConditionalExpression: 等価。`typeof` は型を絞るためだけに在る —— 数でない期限は
+  // 次の行の `Number.isFinite` が偽を返すので、条件を常に真にしても答えは変わらない (常に偽にする側は
+  // 「期限が迫っていれば更新する」の検査が落ちる · 手で当てて確かめた)。
+  const expiresAt = typeof tokens.expiresAt === 'number' ? tokens.expiresAt : Number.NaN;
+  const expiresSoon = Number.isFinite(expiresAt) && (expiresAt - hostNow() < REFRESH_WINDOW_MS);
   if (expiresSoon && tokens.refreshToken && config) {
     const existing = inflightRefresh.get(serviceId);
     if (existing) return { ok: true, token: await existing };

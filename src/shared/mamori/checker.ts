@@ -92,7 +92,7 @@ const MUTATING_METHODS: ReadonlySet<string> = new Set(['push', 'pop', 'shift', '
  * 読むだけの表は `ReadonlyMap<…>` / `ReadonlySet<…>` (書き換えは `tsc` が断る)、書き換える状態は `Map<…>` / `Set<…>` と名乗る。
  * `WeakMap` / `WeakSet` は載せない —— 宣言なしで使える組み込みではなく、pure でも宣言できないので、Mamori では作れない (M6)。
  */
-const SHARED_COLLECTIONS: ReadonlySet<string> = new Set(['Map', 'Set']);
+const SHARED_COLLECTIONS: ReadonlySet<string | null> = new Set(['Map', 'Set']);
 const SCALAR_GLOBAL_FNS: ReadonlySet<string> = new Set(['Number', 'String', 'Boolean']);
 /** 結果が数・文字列・真偽の値だけになる組み込みのメンバの呼び出し (`Math.max(xs[i], 0)` `Object.hasOwn(o, xs[k])`)。 */
 const SCALAR_BUILTIN_OBJECTS: ReadonlySet<string> = new Set(['Math', 'Number']);
@@ -334,7 +334,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     for (const ta of targs) {
       const mark = ta.names.find((n) => table.vetted.has(n));
       if (mark !== undefined) report('M4', ta.pos, `型引数に印 ${mark} は置けません —— 型を引数に取る関数が、関門 (mint) を通らずに印を名乗る値を返せてしまう`);
-      const escape = ta.names.find((n) => n === 'typeof' || n === 'import');
+      const escape = ta.names.find((n) => TYPE_SPELLING_WORDS.has(n));
       if (escape !== undefined) report('M4', ta.pos, `型引数に \`${escape}\` は置けません —— 印を持つ値の型・別の module の型を名指しして、印を名乗る値を作れてしまう`);
     }
   };
@@ -1164,11 +1164,13 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         return;
       case 'new':
         checkTypeArgs(e.typeArgs);
-        if (ctx.sharedUntyped !== undefined && e.callee.kind === 'ident' && SHARED_COLLECTIONS.has(e.callee.name)) {
+        // 構築子の名前 (識別子でなければ null —— 表は null を持たないので当たらない。「識別子か」を別の条件に書くと、
+        // その条件を常に真にしても答えが変わらない等価変異が残る)。
+        if (ctx.sharedUntyped !== undefined && SHARED_COLLECTIONS.has(identName(e.callee))) {
           report(
             'M6',
             e.pos,
-            `モジュール直下の const ${ctx.sharedUntyped} は型を書かずに \`new ${e.callee.name}(…)\` を持てません —— 推論される型は書き換えられるので、どの関数からも \`.set\` / \`.add\` / \`.delete\` / \`.clear\` が通り、この表を読む別の関数 (関門・上限) の判定が変わります。読むだけの表は \`const ${ctx.sharedUntyped}: Readonly${e.callee.name}<…> = …\` と書き (書き換えは tsc が断ります)、書き換える状態は \`${e.callee.name}<…>\` と型で名乗ってください`,
+            `モジュール直下の const ${ctx.sharedUntyped} は型を書かずに \`new ${identName(e.callee)}(…)\` を持てません —— 推論される型は書き換えられるので、どの関数からも \`.set\` / \`.add\` / \`.delete\` / \`.clear\` が通り、この表を読む別の関数 (関門・上限) の判定が変わります。読むだけの表は \`const ${ctx.sharedUntyped}: Readonly${identName(e.callee)}<…> = …\` と書き (書き換えは tsc が断ります)、書き換える状態は \`${identName(e.callee)}<…>\` と型で名乗ってください`,
           );
         }
         if (carriesInert(e.callee, scopes)) {

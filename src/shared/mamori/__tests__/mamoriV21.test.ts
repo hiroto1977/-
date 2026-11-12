@@ -80,6 +80,15 @@ describe('0.21: 型引数つきの呼び出し', () => {
     // T-260: `import("./h").T` は 1 つの型として読めない (型の文法に `import(…)` は無い) ので、型引数の試し読みが外れて
     // 比べ `fromJson < import(…)…` として読まれ、宣言していない名前 `import` で断られる (TypeScript が型引数と読む形を Mamori が通すことは無い)。
     expect(diag('  return fromJson<import("./h").T>(raw);').join('\n')).toMatch(/M6.*宣言していない名前 import/);
+    // 裸の `import` は型の名前として読めるので、型引数の検めまで届く (2026-11-12 · MG-069 の変異検査で、この枝に検査が無いと分かった)。
+    // 入れ子・欄・配列・合併のどこに置いても同じ理由で断る。
+    for (const t of ['import', 'Array<import>', 'import.V', '{ a: import }', 'import[]', 'Map<string, import>', 'string | import']) {
+      const d = diag(`  return fromJson<${t}>(raw);`);
+      expect(d, t).toHaveLength(1);
+      expect(d[0], t).toMatch(/M4.*型引数に `import` は置けません/);
+    }
+    // 対照: 同じ場所の普通の名前は通る (針が `import` の語そのものに当たっている)
+    expect(diag('  return fromJson<Array<string>>(raw);')).toEqual([]);
     expect(diag('  return new Set<typeof raw>(xs);').join('\n')).toContain('`typeof`');
   });
 

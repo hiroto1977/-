@@ -2749,7 +2749,7 @@
       "why": "型を書いていないモジュール直下の const の初期値の中の `new Map` / `new Set` を断らない —— 推論された書き換えられる表を、同じ module のどの関数からも `.set` / `.add` / `.delete` / `.clear` で書き換えられる (直す前の形)",
       "edits": [
         {
-          "find": "        if (ctx.sharedUntyped !== undefined && e.callee.kind === 'ident' && SHARED_COLLECTIONS.has(e.callee.name)) {",
+          "find": "        if (ctx.sharedUntyped !== undefined && SHARED_COLLECTIONS.has(identName(e.callee))) {",
           "replace": "        if (false as boolean) {"
         }
       ]
