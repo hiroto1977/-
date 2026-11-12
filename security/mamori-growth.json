@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.32"
+    "version": "0.33"
   },
   "constructs": {
     "class": {
@@ -4119,6 +4119,98 @@
         "pr": 917,
         "reason": "draft PR #917 に載せる",
         "summary": "起動時の自己検算 src/main/selfAttestation.ts を Mamori (selfAttestation.mamori) へ移した。host の壁は作っていない (node:crypto の createHash・node:path・node:util の TextDecoder / TextEncoder を能力の台帳に名指しで載せた)。Mamori に無い形は書き直した: 計算した鍵の読み書きは Map と Object.fromEntries へ・template は + の連結へ・non-null は Map の引きへ・理由ごとの文は switch へ・歩きは配列を返して合計を運ぶ形へ。足す前に 12 通りで言語を破り、すべて断られた。元の版との差分比較は 34,046 例で食い違い 0。判定が変わるのは 1 点だけで、検算表の鍵 `__proto__` を元は黙って落として通していたが、今は断る (検査 3 件で留めた)。台帳の穴の開け直し 4 件 (T-218 の 2 件・T-228 の 2 件) は書き換えを生成物の形へ直したうえで、それぞれ名指しの回帰検査が鳴った。変異検査は 100% (271 件 · 初回は 94.85% で、生存 9 + 未到達 5 のうち 13 件は検査の不足 —— package.json の大きさの天井・無い根・断りの文の繋ぎ目・投げた物の名前 —— で、検査を足して閉じた。残る 1 件は catch を空にする等価変異で、理由つきの 4 行の帯にした)。整合性チェーンと CODEOWNERS に元 (.mamori) を足した。"
+      }
+    },
+    {
+      "id": "MG-069",
+      "date": "2026-11-12",
+      "kind": "port",
+      "target": "src/main/secrets.ts",
+      "pickedBy": "brief",
+      "briefPick": "port:src/main/secrets.ts",
+      "version": "0.33",
+      "features": [],
+      "added": [],
+      "rewrite": [
+        "template",
+        "as-cast",
+        "loose-eq",
+        "delete"
+      ],
+      "ported": [
+        "src/main/secrets.mamori"
+      ],
+      "probes": [
+        {
+          "tried": "モジュール直下の const を型を書かずに `new Map(…)` で始め、無関係な関数から `.set` で書き換える (同じ表を読む別の関数の上限・重みが変わる —— 実物の `userPresence.mamori` の 3 つの表がこの形だった)",
+          "result": "hole"
+        },
+        {
+          "tried": "同じ形の Set (`.add` / `.delete` / `.clear`)・オブジェクトの欄や配列の要素に包んだ Map / Set・条件演算子で作った Set・`Object.freeze(new Map())`・別名を付けて書き換える",
+          "result": "hole"
+        },
+        {
+          "tried": "モジュールの let に載せた約束 (Promise<any>) を await して印つきの引数へ渡す",
+          "result": "refused"
+        },
+        {
+          "tried": "約束の then の受け口に印つきの関数・危ない口を値として渡す",
+          "result": "refused"
+        },
+        {
+          "tried": "then の arrow の引数 (any) をそのまま印つきの引数へ渡す",
+          "result": "refused"
+        },
+        {
+          "tried": "`Object.fromEntries` (any) を印の Record に注釈して欄を渡す・注釈なしで渡す",
+          "result": "refused"
+        },
+        {
+          "tried": "`Map<string, V>` へ any を入れて get で取り出す・`new Map(Object.entries(any))` の get を渡す",
+          "result": "refused"
+        },
+        {
+          "tried": "`Object.entries(any)` の組の 2 つ目を印つきの引数へ渡す",
+          "result": "refused"
+        },
+        {
+          "tried": "例外に any を投げて catch の束縛を渡す・`Promise.reject` の catch の受け口の引数を渡す",
+          "result": "refused"
+        },
+        {
+          "tried": "型引数つきの関数 (fn id<T>) で any を印へ通す・戻りの T を推論で印にする",
+          "result": "refused"
+        },
+        {
+          "tried": "モジュールの let の関数を危ない口へ差し替える",
+          "result": "refused"
+        },
+        {
+          "tried": "finally の中で印を名乗る値を返す",
+          "result": "refused"
+        },
+        {
+          "tried": "(塞いだ後) 関数が返した Map を型の無い const に入れて書き換える —— 規則は初期値の中の `new` しか見ないので通る (残した物として docs に記録)",
+          "result": "hole"
+        }
+      ],
+      "threats": [
+        "T-264"
+      ],
+      "controls": 23,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/checker.ts",
+          "src/main/secrets.ts",
+          "src/main/secretsHost.ts",
+          "src/main/userPresence.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 917,
+        "reason": "draft PR #917 に載せる",
+        "summary": "資格情報の保管 src/main/secrets.ts を Mamori (secrets.mamori) へ移し、移す前に言語を破って穴を 1 つ塞いだ (0.33)。穴 (T-264): モジュール直下の const を型を書かずに `new Map(…)` / `new Set(…)` で始めると、同じ module のどの関数からも書き換えられ、その表を読む別の関数 (関門・上限) の判定が変わる —— 実物では主プロセスの人の合図の門 userPresence.mamori の 3 つの表がこの形だった。型を書いていないモジュール直下の const の初期値の中の new Map / new Set を断る規則 (M6) を足し、3 つの表は ReadonlyMap と名乗らせた。残した物: 関数が返した Map を型の無い const に入れる形はまだ通る (docs に記録)。移植: OS の口 (userData の道・safeStorage の暗号化と復号・base64・時刻・ログ) は薄い壁 secretsHost.ts に置き、判断は .mamori に置いた。Mamori に無い形は書き直した: 計算した鍵の読み書きは Map と Object.fromEntries へ・template は + の連結へ・as は型の注釈と絞り込みへ・== null は === の 2 つへ・delete は Map の delete へ。Map と素のオブジェクトで振る舞いが違う 2 点 (鍵 `__proto__`・鍵の並び) は読むときと書くときに揃え、保管ファイルの bytes は元と同じ (検査 8 件)。元の版との差分比較: 更新の流れを入れる前の 1,200 場面 / 18,383 手で食い違い 0・入れた後の種 11 / 12 / 14 / 22 (各 300 場面 · 9,346 / 9,507 / 9,637 / 9,156 手) で食い違い 0。種 13 と 21 は 1 件ずつ食い違ったが、元の版どうしを比べても同じ種で食い違う (本体が壊れた保管ファイルを並列に読む手で、控えから戻した旨のログの回数が入出力の順で変わる) —— 道具の揺れで、移植の差ではない。差分比較の対照 9 方向 (期限の窓・二重の更新・T-031・非有限の期限・消去中・暗号文の中の時刻・劣化の札・制御文字・保管の上限) はすべて食い違いを出した。変異検査は 4 ファイルとも 100% (checker.ts 1,654 件・secrets.ts 461 件・secretsHost.ts・userPresence.ts)。初回は 99.17% で、secrets.ts の生存 16 + 未到達 3 は 1 件ずつ原文へ当てて本物と確かめた。型を絞るためだけの条件は形を変えて消し (包みの種類の全部に version を持たせる・構築子の名前を表で引く)、残りは検査 9 件 (旧い包み at: の読み・繰り上げ暗号化が包みの種類を保つ・暗号文の中の時刻の照合・空文字の鍵・ログの文の全文) で閉じた。等価変異として残したのは typeof で数に絞る 1 行だけ (理由つき)。新しい検査の対照 14 方向はすべて鳴った。台帳の穴の開け直しは T-264 (A-602) と保管まわりの T-031 / T-054 / T-079 / T-091 / T-230 の 7 件すべてを名指しの回帰検査が捕まえた。整合性チェーン・CODEOWNERS・変異検査の対象に元 (.mamori) と壁を足した。"
       }
     }
   ]
