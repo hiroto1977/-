@@ -21,6 +21,7 @@
 - **台帳 2 つ**: `fileReadSizeGateCensus` の型の宣言の行は、fs の型が関数型の欄になって針に当たらなくなったので外した。`originalSourcePolicy` の件数を実測へ (検算の検査 23 → 25・census 13 → 12)。
 - **保護対象**: `.mamori` を整合性チェーン (block #496) と CODEOWNERS に足した。
 - **罠 (この周で踏んだ)**: ① `// Stryker disable next-line …` は「注記の直後の文」に効く。Mamori の生成物は `try { … } catch (_e) { … }` を必ず複数行に出すので、`catch` の中身を指す `next-line` は書けない (try の中の最後に置いた注記は前の文の後ろに付く)。帯で囲む ② `extern pure global` で宣言できるのは Date ほか決まった組み込みだけ。`TextEncoder` / `TextDecoder` は `use { … } from "node:util"` で引く ③ node の module を `use` したら `npm run mamori:build -- --write-capabilities` で台帳を引き直し、差分を読む。
+- **検証 (最終のコード)**: `npm test` 1,266 ファイル / 27,789 件 ❌ 0・`verify:all` の 39 ゲート (`audit:verify-keep-going`) 落ち 0・`chain:verify` 緑 (block #496)。実機: `smoke:app` OK (実物の `electron .` が生き続けた)・`smoke:packaged` OK (梱包した実物が起動し、`app.asar` の 1 byte の改竄で自己検算が理由を刷って窓を作らない —— 移した検算そのものが梱包版で働くことの確認)。ブラウザ版は 12,207,426 B / 3,620,063 B で 1 byte も動いていない (検算は主プロセスだけの物 · 両方を組んで測った) ので `perf` / `e2e` は回していない。
 - **完成度と次の候補**: 数は `npm run mamori:grow -- report`。残る TypeScript の壁は `secrets.ts` (846 行)・`vault.ts` (1,790 行) と、移せない `preloadHost.ts`。
 
 ## 直近の作業 (2026-11-11) — 事業継続 (他社のクラウドが止まったとき)
