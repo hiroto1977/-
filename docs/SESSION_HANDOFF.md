@@ -23,6 +23,7 @@
 - **罠 (この周で踏んだ)**: ① `// Stryker disable next-line …` は「注記の直後の文」に効く。Mamori の生成物は `try { … } catch (_e) { … }` を必ず複数行に出すので、`catch` の中身を指す `next-line` は書けない (try の中の最後に置いた注記は前の文の後ろに付く)。帯で囲む ② `extern pure global` で宣言できるのは Date ほか決まった組み込みだけ。`TextEncoder` / `TextDecoder` は `use { … } from "node:util"` で引く ③ node の module を `use` したら `npm run mamori:build -- --write-capabilities` で台帳を引き直し、差分を読む。
 - **検証 (最終のコード)**: `npm test` 1,266 ファイル / 27,789 件 ❌ 0・`verify:all` の 39 ゲート (`audit:verify-keep-going`) 落ち 0・`chain:verify` 緑 (block #496)。実機: `smoke:app` OK (実物の `electron .` が生き続けた)・`smoke:packaged` OK (梱包した実物が起動し、`app.asar` の 1 byte の改竄で自己検算が理由を刷って窓を作らない —— 移した検算そのものが梱包版で働くことの確認)。ブラウザ版は 12,207,426 B / 3,620,063 B で 1 byte も動いていない (検算は主プロセスだけの物 · 両方を組んで測った) ので `perf` / `e2e` は回していない。
 - **完成度と次の候補**: 数は `npm run mamori:grow -- report`。残る TypeScript の壁は `secrets.ts` (846 行)・`vault.ts` (1,790 行) と、移せない `preloadHost.ts`。
+- **週 1 の予約 2 本 (同日 · 利用者の依頼「推奨される組み合わせを実行」)**: 予約はリポジトリを付けずに作られていた (設定の sources が空)。リポジトリ無しのセッションから足す道 (push) は、無人の実行では権限の判定が断る (確認用のセッション 1 つで実測)。指示文の先頭に「始める前に」(足すのを試みる → 断られたら理由と直し方を書いて終える / 開いた PR の枝を土台にする / 最後の周が 5 日以内なら回さない) を足し、文書 2 本と予約 2 本 (`trig_018x9FJf4AjgmEnYSGzu7xud` / `trig_01SFM9gWmvpjfYoqy1BDkF5q`) を同じ本文にした (言語を育てる輪の予約は文書より古い本文のままだった)。**予約にリポジトリを付けるのは利用者の側の設定で、まだ済んでいない** —— 済むまで輪は回らない。詳細は `docs/REMAINING_WORK.md` の先頭。
 
 ## 直近の作業 (2026-11-11) — 事業継続 (他社のクラウドが止まったとき)
 

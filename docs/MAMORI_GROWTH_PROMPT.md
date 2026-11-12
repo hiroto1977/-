@@ -4,12 +4,32 @@
 指示文と道具 (`scripts/mamori-growth.cjs`) の一致は `src/shared/__tests__/mamoriGrowth.test.ts` が見る。
 予約の本文を変えたらここも変え、ここを変えたら予約も更新する。
 
+**2026-11-12 から、指示文は「始める前に」の段で始まる。** 予約はリポジトリを付けずに作られていた
+(実測: 予約の `folders` が空。11/05 の実行は木が無いまま 70 秒で終わり、PR も Issue も記録も出さなかった)。
+セッションのリポジトリは始まるときに決まるので、**本来の直しは予約にリポジトリを付けること**である ——
+Claude Code の予定実行の設定で持ち主が選ぶ (指示文からも、予約を書き換える道具からも付けられない)。
+リポジトリ無しのセッションが自分で足す道 (add_repo · push) は、無人の実行では権限の判定が断った
+(2026-11-12 · 確認用のセッションで実測)。だから「始める前に」の a. は、足せなければ理由と直し方を書いて終える。
+b. と c. はリポジトリが付いた後に効く: 土台の枝を決め (台帳を変えている開いた PR が在ればその枝 —— main から切ると、
+まだ main に入っていない周と MG-xxx の番号・作業が重なる。2026-11-04 に並行した進化を合流し直した)、
+土台の台帳の最後の周が 5 日以内なら回さない (人が同じ枝で輪を回している週に、同じ壁を二重に移さない)。
+
 ---
 
 <!-- prompt:start -->
 あなたは Service Hub (このリポジトリ) の守りの言語 Mamori を 1 周ぶん育てる。言語の仕様は docs/MAMORI.md、
 台帳は security/mamori-growth.json、道具は `npm run mamori:grow`。先に docs/SESSION_HANDOFF.md と docs/MAMORI.md を読む。
 security/mamori-growth.json がまだ無い木 (この輪が main に入る前) なら、何もせず、そう書いた Issue を開いて終える。
+
+始める前に (リポジトリと土台): 予約のセッションは、リポジトリが付いていないまま始まることがある。
+a. `git rev-parse --show-toplevel` がこのリポジトリを指さなければ、リポジトリを足す道具 (add_repo · owner `hiroto1977` ·
+   repo `-` · access `push`) を呼び、返ってきた手順どおりに clone する (clone の後に呼べと案内された道具が在れば呼ぶ)。
+   clone した場所へ移り、`npm ci` を済ませてから下の段へ進む。足せなければ (無人の実行では権限の判定が断ることがある)、
+   断られた理由と直し方 (「予定実行の設定で、この予約にリポジトリ hiroto1977/- を選ぶ」) を最後の返答に書いて終える。木が無いまま進めない。
+b. 土台を決める: 開いている PR のうち、言語を育てた記録 (security/mamori-growth.json) を変えている物を GitHub の道具で探す。無ければ main を土台にする。
+   在れば、その PR の head の枝を土台にして新しい枝を切り、draft PR の base もその枝にする (複数在れば、台帳がいちばん進んでいる物)。
+   main から切ると、まだ main に入っていない周と番号・作業が重なる。探せなければ (GitHub の道具が無い)、始めずに理由を書いて終える。
+c. 土台の security/mamori-growth.json の最後の周の日付が 5 日以内なら、今週は誰かがその枝で輪を回している。新しい周を始めず、そう書いて終える。
 
 1. 決める (brief): `npm run mamori:grow -- brief` を走らせ、「今週育てる物」(port = 守りの壁の TypeScript を 1 本 Mamori へ移す /
    feature = 構文を 1 つ足す / probe = 言語の穴を探す) と、壁ごとの足りない構文・足す候補の順位・記録の雛形を読む。
@@ -33,7 +53,7 @@ security/mamori-growth.json がまだ無い木 (この輪が main に入る前) 
    生存は検査で殺すか、等価なら理由つきの pragma (生成物には .mamori の `//` 注記として書く)。
    保護対象を触ったら `npm run chain:verify` → `npm run chain:append`。`npm test && npm run verify:all` を全部回す。
    出荷物が動いたら (src/renderer・src/shared の生成物) `perf` / `e2e` / `e2e:lite`。
-5. 記録と報告: セッションに指定された branch (無ければ main から `claude/mamori-grow-<YYYY-MM-DD>`) に commit して push し、
+5. 記録と報告: セッションに指定された branch (無ければ「始める前に」で決めた土台から `claude/mamori-grow-<YYYY-MM-DD>`) に commit して push し、
    **draft PR** を開く (本文: 今週育てた物 / 破った試し (実測の表) / 足した規則 / 機械 (検査名と件数) / 対照 (方向と落ちた件数) /
    変異検査 / 残した物)。**マージはしない** (人が決める)。最後に brief の雛形を埋めた JSON を scratchpad に書き、
    `npm run mamori:grow -- record <そのファイル>` で 1 周を security/mamori-growth.json へ記録し (言語の版と構文の判断も進む)、
