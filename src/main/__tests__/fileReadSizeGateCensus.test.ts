@@ -83,13 +83,6 @@ const LEDGER: readonly Row[] = [
   },
   {
     file: 'src/main/selfAttestation.ts',
-    needle: 'readFile(p: string): Promise<Uint8Array>;',
-    gate: 'st.size > MAX_SHIPPED_FILE_BYTES',
-    cap: 'MAX_SHIPPED_FILE_BYTES',
-    why: '読みではなく検算が受け取るファイル API の**型の宣言** (`AttestationFs`)。針は綴りで当たるので理由つきで載せる (パス 553)',
-  },
-  {
-    file: 'src/main/selfAttestation.ts',
     needle: 'sha256Hex(await fs.readFile(abs))',
     gate: 'st.size > MAX_SHIPPED_FILE_BYTES',
     cap: 'MAX_SHIPPED_FILE_BYTES',

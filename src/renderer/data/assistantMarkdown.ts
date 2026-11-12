@@ -222,7 +222,7 @@ export function parseMarkdown(src: string): Block[] {
       para = '';
       const code: string[] = [];
       i = i + 1;
-      while (i < lines.length && !at(lines, i).trim().startsWith('```')) {
+      while ((i < lines.length) && !at(lines, i).trim().startsWith('```')) {
         code.push(at(lines, i));
         i = i + 1;
       }

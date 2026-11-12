@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { compileProject, formatDiagnostic, type SourceFile } from '../compile';
 import { inspectEmitted } from './mamoriInspect';
+import { shapeMismatch } from './mamoriShape';
 
 /*
  * **Mamori の攻撃の電池 (battery)** (2026-10-31 · パス 572 · 対戦 · threat: T-233 / T-234 の系譜)。
@@ -77,7 +78,7 @@ const STATIC_STATE = [
 const SYNTAX_ESCAPES = [
   'x as any', '<any>x', 'x!', 'x?.y', 'x?.[0]', 'x?.()', '...x', '[...x]', '{ ...x }', 'f(...x)', 'new Set(...x)', '{ a: 1, ...x }', '{ ...x, a: 1 }', '[...x.constructor]', '[...evil]', '{ ...x, __proto__: y }', 'x[0]', 'x["constructor"]', 'x[k]',
   '`a${x}b`', '`a`', 'tag`a`', 'async () => 1', 'await x', 'yield x', 'class A {}', 'new class {}', 'import("fs")', 'import.meta',
-  'new.target', 'delete x.y', 'void 0', 'typeof x', 'x in y', 'x instanceof y', 'x instanceof Function', 'x instanceof Error', 'x instanceof Error.constructor', 'x instanceof (a ? Error : Function)', 'x instanceof f()', 'x instanceof x', 'x instanceof "a"', '(1, 2)', 'x = 1', 'x += 1', 'x++', '++x',
+  'new.target', 'delete x.y', 'void 0', 'typeof x', 'x in y', "'constructor' in y", "'toString' in y", "'__proto__' in y", "'cons\\u0074ructor' in y", "k in y", "'a' in 'b' in y", "1 in y", 'x instanceof y', 'x instanceof Function', 'x instanceof Error', 'x instanceof Error.constructor', 'x instanceof (a ? Error : Function)', 'x instanceof f()', 'x instanceof x', 'x instanceof "a"', '(1, 2)', 'x = 1', 'x += 1', 'x++', '++x',
   'x ??= 1', 'x ||= 1', 'x &&= 1', '{ get a() { return 1; } }', '{ set a(v) {} }', '{ __proto__: x }', '{ "__proto__": x }',
   '{ constructor: x }', '{ [k]: 1 }', '{ a }', '{ a() { return 1; } }', '1n', '0o7', '0b1', '1_000', '.5', '5.', '1e3',
   'function () {}', 'function* () {}', '(function () { return this; })()', 'this', 'super.x', 'x => x', 'async x => x',
@@ -138,6 +139,52 @@ const TYPE_SMUGGLE: readonly string[] = [
   'unknown<= fetch("x"); const D: Array<number',
   'number === fetch("x")',
   '{ a: number } & { b: fetch("x") }; const D: number',
+  // 0.31 · T-260: 型として読めない並び —— TypeScript は式・別の束縛として読む (`;` を使わないので上の形の網に掛からない)
+  'number, hidden = fetch("x")',
+  'number, go = (s: string) => eval(s)',
+  'm ? fetch("x") : k',
+  'number ? fetch("x") : string',
+  'number = fetch("x")',
+  'typeof fetch("x")',
+  'number | fetch("x")',
+  '(fetch("x"))',
+  '[fetch("x")]',
+  '{ a: fetch("x") }',
+  'Array<fetch("x")>',
+  'number & (() => fetch("x"))()',
+  '(a: number) => fetch("x")',
+  'keyof typeof globalThis["fetch"]',
+];
+
+/** `interface Z extends ○ { … }` の基底に置く綴り (0.30 · MG-061)。印の型・型の別名・組み込みの型・自分自身・後ろの物・関数・口・式・型引数・複数。 */
+const EXTENDS_BASES: readonly string[] = [
+  'VU', 'Maybe', 'B0', 'B1', 'Z', 'Record', 'Error', 'Array', 'Object', 'Function', 'Promise', 'Map', 'go', 'openUrl', 'shell', 'string', 'unknown', 'any',
+  'Record<string, unknown>', 'Array<number>', 'VU & B0', 'B0 | B1', 'B0, B0', 'B0 & B0', 'B0<number>', 'Object.prototype', 'B0.constructor', '(B0)', 'typeof B0', 'keyof B0',
+  'B0 /* x */', '{ a: number }', '`B0`', '"B0"', '1', 'B0()', 'B0[]', 'this', 'constructor', '__proto__', 'prototype',
+];
+
+/**
+ * 関門を通っていない値の出どころ (2026-11-11 · MG-067 · T-261 / T-263)。`markFlow` の文脈が、印の型を書く場所 (arrow の引数・
+ * 引数の既定値・gate の戻り値) へこれを流す。`JSON.parse(…)` は any を返し、`tsc` は any を印の型へ通す —— Mamori の来歴の検めが
+ * 見ていない場所は、2 枚目の壁も働かない。`null` / `undefined` は gate の戻り値としては正しい (受け入れられ、物差しも通す側)。
+ */
+const ANY_SOURCES: readonly string[] = [
+  'JSON.parse(raw)', 'JSON.parse("1")', 'raw', '"x"', '1', '[raw][0]', 'String(raw)', 'raw ?? raw', '{ a: raw }.a', 'JSON.parse(raw).u',
+  '(raw === "" ? null : JSON.parse(raw))', 'raw === "" ? null : raw', 'null', 'undefined', 'raw.trim()', '[JSON.parse(raw)]', 'Promise.resolve(JSON.parse(raw))',
+  'mint VU(raw)', 'openUrl', 'JSON.parse', '(JSON.parse(raw) ?? null)',
+];
+
+/**
+ * 別の module の口 `open2` の引き方 (T-262)。正規の `use` 以外は、外形 (印を受ける引数) を引かずに呼べてはならない。
+ * 並べるのは **同じ module (src/x/m1) を指す綴りだけ** —— `"m1"` (package)・`"./M1"` (大小の違い)・`"./m1/index"` は TypeScript から見ても
+ * 別の module で、その関数を呼ぶのは正しい形である (最初に混ぜて、物差しが 3 形を穴と数えた —— 弾の誤りだった)。
+ */
+const IMPORT_FORMS: readonly string[] = [
+  'use { open2 } from "./m1";', 'extern pure { open2 } from "./m1";', 'extern sink { open2 } from "./m1";', 'use { open2 } from "./m1.js";', 'use { open2 } from "./m1.ts";',
+  'use { open2 } from "./m1.mjs";', 'use { open2 } from "./m1.mamori";', 'use { open2 } from ".//m1";', 'use { open2 } from "././m1";', 'use { open2 } from "./m1/";',
+  'use { open2 } from "../x/m1";', 'use { open2 } from "../x//m1";', 'use { open2 } from "./../x/m1";', 'use { open2 } from "./m1/../m1";', 'extern pure { open2 } from "./m1.js";',
+  'extern pure { open2 } from ".//m1";', 'use { open2 } from "./x/../m1";', 'extern pure { open2 } from "../x/m1";', 'extern pure { open2 } from "./m1/";', 'use { open2 } from "./m1.cjs";',
+  'use { open2 } from "./m1.tsx";',
 ];
 
 const PAYLOADS: readonly string[] = [
@@ -191,10 +238,35 @@ const CONTEXTS: Readonly<Record<string, (e: string) => string>> = {
   sinkTypedConst: (e) => `${PRELUDE}type Maybe = VU | string;\nexport fn go(raw: string) -> unknown {\n  const u: ${e} = raw;\n  return openUrl(u);\n}\n`,
   sinkTypedArrow: (e) => `${PRELUDE}type Maybe = VU | string;\nexport fn go(xs: readonly string[]) -> unknown {\n  return xs.map((u: ${e}) => openUrl(u));\n}\n`,
   sinkTypedAlias: (e) => `${PRELUDE}type Maybe = ${e};\nexport fn go(u: Maybe) -> unknown {\n  return openUrl(u);\n}\n`,
+  ifaceBase: (e) => `${PRELUDE}type Maybe = VU | string;\ninterface B0 {\n  b: number;\n}\nexport interface Z extends ${e} {\n  a: number;\n}\nexport interface B1 {\n  c: number;\n}\n`,
   typeSmuggleTop: (e) => `export const C: ${e} = 1;\n`,
   typeSmuggleRet: (e) => `export fn go() -> ${e} {\n  return 1;\n}\n`,
   typeSmuggleLet: (e) => `export fn go() -> unknown {\n  let v: ${e};\n  return 1;\n}\n`,
   typeSmuggleParam: (e) => `export fn go(p: ${e}) -> unknown {\n  return p;\n}\n`,
+  // 0.21 の型引数・0.31 の satisfies: 型の綴りが**式の中**に座る 2 つの位置 (T-260)
+  typeSmuggleArg: (e) => `export fn go(n: number, m: number, k: number, x: number) -> unknown {\n  return String<${e}>(x);\n}\n`,
+  typeSmuggleSat: (e) => `export fn go(m: number, k: number) -> unknown {\n  const v = 1 satisfies ${e};\n  return v;\n}\n`,
+  typeSmuggleSatTop: (e) => `export const C = 1 satisfies ${e};\n`,
+  // 0.31 · satisfies: 弾が初期値に座る形と、印の型を satisfies で名乗って危ない口へ渡す形
+  satLocal: (e) => `export fn go() -> unknown {\n  const v = ${e} satisfies unknown;\n  return v;\n}\n`,
+  satTop: (e) => `export const C = ${e} satisfies unknown;\n`,
+  sinkTypedSat: (e) => `${PRELUDE}type Maybe = VU | string;\nexport fn go(raw: string) -> unknown {\n  const u = raw satisfies ${e};\n  return openUrl(u);\n}\n`,
+  // 0.32 · MG-067: 印の型を書く場所へ、関門を通っていない値を流す (T-261 arrow の引数・T-263 既定値と gate の戻り値)
+  markFlowArrowCall: (e) => `${PRELUDE}export fn go(raw: string) -> unknown {\n  return ((u: VU) => openUrl(u))(${e});\n}\n`,
+  markFlowArrowAlias: (e) => `${PRELUDE}export fn go(raw: string) -> unknown {\n  const run = (u: VU) => openUrl(u);\n  return run(${e});\n}\n`,
+  markFlowArrowBlock: (e) => `${PRELUDE}export fn go(raw: string) -> unknown {\n  const run = (u: VU) => {\n    return openUrl(u);\n  };\n  return run(${e});\n}\n`,
+  markFlowArrowThen: (e) => `${PRELUDE}export fn go(raw: string) -> unknown {\n  return Promise.resolve(${e}).then((u: VU) => openUrl(u));\n}\n`,
+  markFlowArrowMap: (e) => `${PRELUDE}export fn go(raw: string) -> unknown {\n  const xs: VU[] = ${e};\n  return xs.map((u: VU) => openUrl(u));\n}\n`,
+  markFlowArrowNull: (e) => `${PRELUDE}export fn go(raw: string) -> unknown {\n  return ((u: VU | null) => u === null ? null : openUrl(u))(${e});\n}\n`,
+  markFlowArrowDefault: (e) => `${PRELUDE}export fn go(raw: string) -> unknown {\n  const run = (u: VU = ${e}) => openUrl(u);\n  return run();\n}\n`,
+  markFlowArrowObj: (e) => `${PRELUDE}export fn go(raw: string) -> unknown {\n  const o = { run: (u: VU) => openUrl(u) };\n  return o.run(${e});\n}\n`,
+  markFlowParamDefault: (e) => `${PRELUDE}export sink fn open3(u: VU = ${e}) -> Promise<void> {\n  return shell.openExternal(u);\n}\n`,
+  markFlowFnDefault: (e) => `${PRELUDE}export fn go(raw: string, u: VU = ${e}) -> unknown {\n  return openUrl(u);\n}\n`,
+  markFlowGateReturn: (e) => `${PRELUDE}export gate fn forge(raw: string) -> VU | null {\n  return ${e};\n}\n`,
+  markFlowGateBound: (e) => `${PRELUDE}export gate fn forge(raw: string) -> VU | null {\n  const v = ${e};\n  return v;\n}\n`,
+  markFlowGateCond: (e) => `${PRELUDE}export gate fn forge(raw: string) -> VU | null {\n  return raw === "" ? null : ${e};\n}\n`,
+  markFlowGateLet: (e) => `${PRELUDE}export gate fn forge(raw: string) -> VU | null {\n  let v = null;\n  v = ${e};\n  return v;\n}\n`,
+  markFlowSinkArg: (e) => `${PRELUDE}export fn go(raw: string) -> unknown {\n  return openUrl(${e});\n}\n`,
   doc: (e) => `/// ${e}\nexport fn go() -> unknown {\n  return 1;\n}\n`,
   header: (e) => `//! ${e}\nexport fn go() -> unknown {\n  return 1;\n}\n`,
   comment: (e) => `export fn go() -> unknown {\n  // ${e}\n  return 1;\n}\n`,
@@ -285,6 +357,18 @@ function compileAttempt(a: Attempt): { ok: true; outputs: ReadonlyMap<string, st
 
 const file = (source: string, path = 'src/x/m0.mamori'): SourceFile => ({ path, source });
 
+/**
+ * 受け入れたプログラムの「Mamori が検めた木」と「生成物を TypeScript が読んだ木」の形の食い違い (2026-11-10 · T-260)。
+ * 生成物だけを見る `inspectEmitted` には映らない穴 (Mamori は型引数つきの呼び出しと読み、TypeScript は条件式として読む …) を拾う。
+ * 生成物に構文の誤りが在る (`flagged`) ときは TypeScript の木が当てにならないので比べない —— その生成物は tsc が止める (lenient)。
+ */
+function treeMismatch(files: readonly SourceFile[], outPath: string, text: string, flagged: boolean): string[] {
+  if (flagged) return [];
+  const src = files.find((f) => f.path.replace(/\.mamori$/, '.ts') === outPath);
+  if (src === undefined) return [];
+  return shapeMismatch(src.path, src.source, text).map((m) => `木の形が食い違う (${m})`);
+}
+
 interface Report {
   attempts: number;
   accepted: number;
@@ -316,14 +400,16 @@ export function runBattery(seed: number, rounds: number): Report {
     }
     rep.accepted++;
     for (const [path, text] of r.outputs) {
-      for (const f of inspectEmitted(path, text)) (f.kind === 'hole' ? rep.holes : rep.lenient).push(`${label} → ${f.reason}`);
+      const found = inspectEmitted(path, text);
+      for (const f of found) (f.kind === 'hole' ? rep.holes : rep.lenient).push(`${label} → ${f.reason}`);
+      rep.holes.push(...treeMismatch(files, path, text, found.length > 0).map((m) => `${label} → ${m}`));
     }
     return 'ok';
   };
 
   for (let i = 0; i < rounds; i++) {
     const ctx = pick(ctxNames);
-    const payload = ctx.startsWith('sinkTyped') ? pick(TYPE_PAYLOADS) : ctx.startsWith('typeSmuggle') ? pick(TYPE_SMUGGLE) : pick(PAYLOADS);
+    const payload = ctx.startsWith('sinkTyped') ? pick(TYPE_PAYLOADS) : ctx.startsWith('typeSmuggle') ? pick(TYPE_SMUGGLE) : ctx === 'ifaceBase' ? pick(EXTENDS_BASES) : ctx.startsWith('markFlow') ? pick(ANY_SOURCES) : pick(PAYLOADS);
     const base = CONTEXTS[ctx]!(payload);
     const tag = `seed=${seed} #${i} ctx=${ctx} payload=${JSON.stringify(payload.length > 60 ? payload.slice(0, 60) + '…' : payload)}`;
     const baseVerdict = examine(`${tag} env=identity`, [file(base)]);
@@ -347,6 +433,10 @@ export function runBattery(seed: number, rounds: number): Report {
     examine(`${tag} env=multi-alias`, [file(other, 'src/x/m1.mamori'), file(user, 'src/x/m2.mamori')]);
     examine(`${tag} env=multi-shadow`, [file(shadow, 'src/x/m0.mamori'), file(other, 'src/x/m1.mamori'), file(`use { open2 } from "./m1";\n` + base.replace(PRELUDE, ''), 'src/x/m2.mamori')]);
     examine(`${tag} env=multi-shadow-late`, [file(other, 'src/x/m1.mamori'), file(shadow, 'src/x/m3.mamori'), file(`use { open2 } from "./m1";\n` + base.replace(PRELUDE, ''), 'src/x/m2.mamori')]);
+    // 複数ファイル 3 (T-262): 別の module の口を、外形を引かない顔 (extern・正規でない道の綴り) で引いて、関門を通っていない値で呼ぶ
+    const form = pick(IMPORT_FORMS);
+    const any = pick(ANY_SOURCES);
+    examine(`seed=${seed} #${i} env=multi-import form=${JSON.stringify(form)} arg=${JSON.stringify(any)}`, [file(other, 'src/x/m1.mamori'), file(`${form}\nexport fn go(raw: string) -> unknown {\n  return open2(${any});\n}\n`, 'src/x/m2.mamori')]);
     // 二重・多層: 環境を 2 つ + 整形
     const smug2 = pick(smugNames);
     examine(`${tag} env=${smug}+${smug2}+${fmt}`, [file(FORMAT_ENVS[fmt]!(SMUGGLE_ENVS[smug2]!(SMUGGLE_ENVS[smug]!(base, payload), payload)))]);
@@ -389,7 +479,11 @@ export function runFuzz(seed: number, rounds: number): Report {
     else if (!r.ok) rep.refused++;
     else {
       rep.accepted++;
-      for (const [path, text] of r.outputs) for (const f of inspectEmitted(path, text)) (f.kind === 'hole' ? rep.holes : rep.lenient).push(`${label} → ${f.reason} 元=${JSON.stringify(src)}`);
+      for (const [path, text] of r.outputs) {
+        const found = inspectEmitted(path, text);
+        for (const f of found) (f.kind === 'hole' ? rep.holes : rep.lenient).push(`${label} → ${f.reason} 元=${JSON.stringify(src)}`);
+        rep.holes.push(...treeMismatch([file(src)], path, text, found.length > 0).map((m) => `${label} → ${m} 元=${JSON.stringify(src)}`));
+      }
     }
   }
   return rep;
@@ -427,6 +521,10 @@ describe('Mamori の攻撃の電池: 弾 × 文脈 × 環境を掛け合わせ�
   it('母集団: 弾・文脈・環境の数 (掛け合わせが十分に広い)', () => {
     expect(PAYLOADS.length).toBeGreaterThanOrEqual(250);
     expect(Object.keys(CONTEXTS).length).toBeGreaterThanOrEqual(35);
+    // 0.32 · MG-067: 印の型を書く場所 × 関門を通っていない値の出どころ × 口の引き方
+    expect(Object.keys(CONTEXTS).filter((k) => k.startsWith('markFlow')).length).toBeGreaterThanOrEqual(15);
+    expect(ANY_SOURCES.length).toBeGreaterThanOrEqual(20);
+    expect(IMPORT_FORMS.length).toBeGreaterThanOrEqual(20);
     expect(Object.keys(FORMAT_ENVS).length + Object.keys(SMUGGLE_ENVS).length).toBeGreaterThanOrEqual(35);
   });
 });
@@ -450,12 +548,65 @@ describe('物差しの対照: 判定は穴の開いた生成物を実際に落�
     '組み込みを値で凍らせる': 'export function go() {\n  return Object.freeze(Array);\n}\n',
     '組み込みを callback で渡す': 'export function go(x: number[]) {\n  return x.filter(Boolean);\n}\n',
     bidiの字句: 'export function go() {\n  return 1 \u202E 2;\n}\n',
+    // 0.32 · MG-067: 物差しは 0.31 まで「印の型で宣言された名前」なら通しており、T-261 の形を穴と数えなかった
+    'arrow の引数を口へ (別名で呼ぶ)': 'type VU = Vetted<"u">;\nfunction openUrl(u: VU) {\n  return 1;\n}\nexport function go(raw: string) {\n  const run = (u: VU) => openUrl(u);\n  return run(JSON.parse(raw));\n}\n',
+    'arrow の引数を口へ (呼び戻し)': 'type VU = Vetted<"u">;\nfunction openUrl(u: VU) {\n  return 1;\n}\nexport function go(raw: string) {\n  return Promise.resolve(JSON.parse(raw)).then((u: VU) => openUrl(u));\n}\n',
+    '関数式の引数を口へ': 'type VU = Vetted<"u">;\nfunction openUrl(u: VU) {\n  return 1;\n}\nexport function go(raw: string) {\n  return (function (u: VU) {\n    return openUrl(u);\n  })(JSON.parse(raw));\n}\n',
+    '印の引数の既定値': 'type VU = Vetted<"u">;\nfunction openUrl(u: VU) {\n  return 1;\n}\nexport function open3(u: VU = JSON.parse("1")) {\n  return openUrl(u);\n}\n',
+    '印を返す関数が any を返す': 'type VU = Vetted<"u">;\nfunction openUrl(u: VU) {\n  return 1;\n}\nexport function forge(raw: string): VU | null {\n  return JSON.parse(raw);\n}\n',
+    '印を返す関数が条件の片方で any を返す': 'type VU = Vetted<"u">;\nfunction openUrl(u: VU) {\n  return 1;\n}\nexport function forge(raw: string): VU | null {\n  return raw === "" ? null : JSON.parse(raw);\n}\n',
+    '印を返す関数が、印の無い束縛を返す': 'type VU = Vetted<"u">;\nfunction openUrl(u: VU) {\n  return 1;\n}\nexport function forge(raw: string): VU | null {\n  const v = JSON.parse(raw);\n  return v;\n}\n',
+    '別の module の口へ名前でない値': 'import { open2 } from "./m1";\nexport function go(raw: string) {\n  return open2(JSON.parse(raw));\n}\n',
+    'this: 関数の中': 'export function go() {\n  return this;\n}\n',
+    'instanceof: 局所の関数の名前': 'function F() {\n  return 1;\n}\nexport function go(x: unknown) {\n  return x instanceof F;\n}\n',
   };
   for (const [name, text] of Object.entries(holey)) {
     it(`落とす: ${name}`, () => {
       expect(inspectEmitted('x.ts', text).length).toBeGreaterThan(0);
     });
   }
+  // 0.27 の例外のクラス · MG-068: 物差しが通すクラスの形は 1 つだけ。そこから 1 つでも外れれば「クラスがある」と数える。
+  // **理由まで主張する** —— 「何か 1 つ鳴る」だけだと、別の規則 (`this`・組み込みを値で渡す) が先に拾って、クラスの形の規則を外しても通る
+  // (対照 3 方向が鳴らなかった · 2026-11-12)。
+  const holeyClass: Readonly<Record<string, string>> = {
+    'クラス: メソッドがある': "class E extends Error {\n  constructor() {\n    super();\n    this.name = 'E';\n  }\n  run() {\n    return 1;\n  }\n}\nexport function go() {\n  return new E();\n}\n",
+    'クラス: 基底が Error でない': "class E extends TypeError {\n  constructor() {\n    super();\n    this.name = 'E';\n  }\n}\nexport function go() {\n  return new E();\n}\n",
+    'クラス: 基底が無い': "class E {\n  constructor() {\n    this.name = 'E';\n  }\n  name = '';\n}\nexport function go() {\n  return new E();\n}\n",
+    'クラス: name が別の名前を名乗る': "class E extends Error {\n  constructor() {\n    super();\n    this.name = 'TypeError';\n  }\n}\nexport function go() {\n  return new E();\n}\n",
+    'クラス: constructor に 3 つ目の文': "class E extends Error {\n  constructor(m: string) {\n    super(m);\n    this.name = 'E';\n    this.message = m + m;\n  }\n}\nexport function go() {\n  return new E('a');\n}\n",
+    'クラス: 引数が欄を作る (parameter property)': "class E extends Error {\n  constructor(public code: string) {\n    super(code);\n    this.name = 'E';\n  }\n}\nexport function go() {\n  return new E('a');\n}\n",
+    'クラス: 関数の中': "export function go() {\n  class E extends Error {\n    constructor() {\n      super();\n      this.name = 'E';\n    }\n  }\n  return new E();\n}\n",
+    'クラス: 式のクラス': "export const E = class extends Error {};\n",
+    'クラス: implements を伴う': "interface Marker {\n  name: string;\n}\nclass E extends Error implements Marker {\n  constructor() {\n    super();\n    this.name = 'E';\n  }\n}\nexport function go() {\n  return new E();\n}\n",
+    'クラス: extends でなく implements Error': "class E implements Error {\n  constructor() {\n    super();\n    this.name = 'E';\n  }\n}\nexport function go() {\n  return new E();\n}\n",
+    'クラス: Error を取り込みで隠す': "import { Error } from './m1';\nclass E extends Error {\n  constructor() {\n    super();\n    this.name = 'E';\n  }\n}\nexport function go() {\n  return new E();\n}\n",
+  };
+  for (const [name, text] of Object.entries(holeyClass)) {
+    it(`落とす: ${name}`, () => {
+      expect(inspectEmitted('x.ts', text).map((f) => f.reason)).toContain('クラスがある');
+    });
+  }
+  it('通す: 名前つきの関数の印の引数・印を付けて返す関門・印を持つ束縛を返す関門 (0.32 の物差しに偽陽性が無い)', () => {
+    const ok: readonly string[] = [
+      'type VU = Vetted<"u">;\nfunction openUrl(u: VU) {\n  return 1;\n}\nexport function go(u: VU) {\n  return openUrl(u);\n}\n',
+      'type VU = Vetted<"u">;\nfunction openUrl(u: VU) {\n  return 1;\n}\nexport function go(u: VU | null) {\n  return u === null ? null : openUrl(u);\n}\n',
+      'type VU = Vetted<"u">;\nfunction openUrl(u: VU) {\n  return 1;\n}\nexport function forge(raw: string): VU | null {\n  if (raw === "") {\n    return null;\n  }\n  return raw as VU;\n}\n',
+      'type VU = Vetted<"u">;\nfunction openUrl(u: VU) {\n  return 1;\n}\nexport function forge(raw: string): VU | null {\n  const v = raw as VU;\n  return v;\n}\n',
+      'type VU = Vetted<"u">;\nfunction openUrl(u: VU) {\n  return 1;\n}\nexport function inner(raw: string): VU {\n  return raw as VU;\n}\nexport function forge(raw: string): VU | null {\n  return raw === "" ? null : inner(raw);\n}\n',
+      'type VU = Vetted<"u">;\nfunction openUrl(u: VU) {\n  return 1;\n}\nexport async function forge(raw: string): Promise<VU | null> {\n  const t = await Promise.resolve(raw);\n  return t as VU;\n}\n',
+      'type VU = Vetted<"u">;\nfunction openUrl(u: VU) {\n  return 1;\n}\nexport function wrap(u: VU): VU | undefined {\n  return u;\n}\n',
+      // 印の型でない引数の arrow・既定値は今までどおり
+      'type VU = Vetted<"u">;\nfunction openUrl(u: VU) {\n  return 1;\n}\nexport function go(xs: readonly string[], n: number = 1) {\n  return xs.map((s: string) => s.length + n);\n}\n',
+    ];
+    for (const text of ok) expect({ text, found: inspectEmitted('x.ts', text).map((f) => f.reason) }).toEqual({ text, found: [] });
+  });
+  it('通す: 例外のクラスの形 1 つと、その instanceof (0.27 · MG-068 —— 物差しはクラスを一律に穴と数えていた)', () => {
+    const ok = [
+      "class TooMany extends Error {\n  constructor() {\n    super();\n    this.name = 'TooMany';\n  }\n}\nexport function go(e: unknown) {\n  if (e instanceof TooMany) {\n    return 1;\n  }\n  throw new TooMany();\n}\n",
+      "export class Refused extends Error {\n  constructor(why: string) {\n    super('refused: ' + why);\n    this.name = 'Refused';\n  }\n}\n",
+    ];
+    for (const text of ok) expect({ text, found: inspectEmitted('x.ts', text).map((f) => f.reason) }).toEqual({ text, found: [] });
+  });
   it('通す: 実物の .mamori 11 本の生成物 (物差しに偽陽性が無い)', async () => {
     const { readFileSync, readdirSync } = await import('node:fs');
     const { join } = await import('node:path');

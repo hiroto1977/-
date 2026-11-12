@@ -81,7 +81,7 @@
       "why": "主プロセスの action:invoke から出力インターセプター (本文の資格情報・個人番号の検め) の断りを外す",
       "edits": [
         {
-          "find": "    if (outbound !== null) return { ok: false, code: 'action_failed', message: outbound };\n",
+          "find": "  if (outbound !== null) return { ok: false, code: 'action_failed', message: outbound };\n",
           "replace": ""
         }
       ]
@@ -217,7 +217,7 @@
       "why": "OAuth 更新の書き戻しから「保存値が更新の開始時と同じか」の確認を外す —— 更新中に消した資格情報を古い応答が復活させる",
       "edits": [
         {
-          "find": "    if (now === null || !now.ok || now.token !== before) return;\n",
+          "find": "  if (now === null || !now.ok || now.token !== before) return;\n",
           "replace": ""
         }
       ]
@@ -729,16 +729,8 @@
       "why": "OPAQUE_JSON_SLOTS から atlassian / youtube / security を外す (保存した瞬間から broken-token-set と断られ、3 つのスロットが使えなくなる)",
       "edits": [
         {
-          "find": "  'atlassian', // {email, token, site}\n",
-          "replace": ""
-        },
-        {
-          "find": "  'youtube', // {apiKey, channelId}\n",
-          "replace": ""
-        },
-        {
-          "find": "  'security', // {hibp, vt}\n",
-          "replace": ""
+          "find": "new Set<ServiceId>(['assistant', 'atlassian', 'youtube', 'security'])",
+          "replace": "new Set<ServiceId>(['assistant'])"
         }
       ]
     },
@@ -1565,8 +1557,8 @@
       "why": "action:invoke の入口で型付き配列・Map・Date の payload を断る isPlainPayload の門を外す —— 2,000 万要素の型付き配列で for…in が全キーを列挙し主プロセスが固まる穴を開け直す",
       "edits": [
         {
-          "find": "if (!isPlainPayload(payload)) {\n      return { ok: false, code: 'action_failed', message: '送る内容の形が正しくないため断りました。' };",
-          "replace": "if (false) {\n      return { ok: false, code: 'action_failed', message: '送る内容の形が正しくないため断りました。' };"
+          "find": "if (!isPlainPayload(payload)) return {",
+          "replace": "if (false) return {"
         }
       ]
     },
@@ -1781,8 +1773,8 @@
       "why": "1 ファイルずつの sha256 照合の不一致判定を外す —— 同梱ファイルを 1 つ書き換えられても起動して UI を出す穴 (Linux の唯一の段) を開け直す",
       "edits": [
         {
-          "find": "if (r.hash !== manifest.files[rel]) return",
-          "replace": "if (false) return"
+          "find": "    if (r.hash !== expected.get(rel)) return",
+          "replace": "    if (false) return"
         }
       ]
     },
@@ -1793,8 +1785,8 @@
       "why": "梱包版の起動時に verifyShippedFiles を呼ぶ段を飛ばす —— 検算の関数が正しくても主プロセスが呼ばなければ改竄された梱包物がそのまま起動する穴を開け直す",
       "edits": [
         {
-          "find": "if (app.isPackaged) {\n    const verdict = await verifyShippedFiles",
-          "replace": "if (false) {\n    const verdict = await verifyShippedFiles"
+          "find": "if (app.isPackaged) {\n    const verdict = await hostVerifyShipped",
+          "replace": "if (false) {\n    const verdict = await hostVerifyShipped"
         }
       ]
     },
@@ -1961,8 +1953,8 @@
       "why": "入口 (package.json の main) の検めを殺す —— main を別の出荷物へすげ替える 2 ファイル改竄が通る S2 の穴を開け直す",
       "edits": [
         {
-          "find": "    if (main !== ENTRY_POINT) return { ok: false, reason: 'bad-entry-point', detail: 'package.json' };",
-          "replace": "    if (false && main !== ENTRY_POINT) return { ok: false, reason: 'bad-entry-point', detail: 'package.json' };"
+          "find": "    if (entryPoint !== ENTRY_POINT) return { ok: false, reason: 'bad-entry-point', detail: 'package.json' };",
+          "replace": "    if (false && entryPoint !== ENTRY_POINT) return { ok: false, reason: 'bad-entry-point', detail: 'package.json' };"
         }
       ]
     },
@@ -1997,8 +1989,8 @@
       "why": "デスクトップ版 secrets の atv2 の読みから『暗号文の中の時刻 == 平文の時刻』の一致検査を落とす —— 前倒しした atv2 記録が復号できて若返る",
       "edits": [
         {
-          "find": "    if (sep === -1 || Number(tsInner.slice(0, sep)) !== s.storedAt) {",
-          "replace": "    if (sep === -1) {"
+          "find": "    if (sep === -1 || Number(tsInner.slice(0, sep)) !== s.storedAt) return",
+          "replace": "    if (sep === -1) return"
         }
       ]
     },
@@ -2663,6 +2655,102 @@
         {
           "find": "        checkExpr(s.test, scopes, ctx);\n        checkLoopBody(s.body, scopes, ctx);",
           "replace": "        checkLoopBody([], scopes, ctx);"
+        }
+      ]
+    },
+    {
+      "id": "A-595",
+      "threat": "T-260",
+      "file": "src/shared/mamori/parser.ts",
+      "why": "型の綴りを 1 つの型として読めるか検めない —— 型引数・束縛の型に式や 2 つ目の束縛を隠せる (直す前の形)",
+      "edits": [
+        {
+          "find": "    checkTypeShape(parts, where);\n",
+          "replace": ""
+        }
+      ]
+    },
+    {
+      "id": "A-596",
+      "threat": "T-260",
+      "file": "src/shared/mamori/emit.ts",
+      "why": "式の中の `<` の比べを括らずに出す —— TypeScript が引数の並びを型引数つきの呼び出しと読む (直す前の形)",
+      "edits": [
+        {
+          "find": "  return e.kind === 'binary' && e.op === '<' ? `(${expr(e)})` : expr(e);",
+          "replace": "  return expr(e);"
+        }
+      ]
+    },
+    {
+      "id": "A-597",
+      "threat": "T-261",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "どの arrow の引数にも印を名乗らせ、中で印を運ばせる —— 呼ぶ側の引数は検めないので、any を印を受ける関数へ運べる (直す前の形)",
+      "edits": [
+        {
+          "find": "        const toHost = hostCallbacks.has(e);\n",
+          "replace": "        const toHost = true;\n"
+        }
+      ]
+    },
+    {
+      "id": "A-598",
+      "threat": "T-262",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "印を受ける Mamori の関数を extern で引くのを断らない —— 外形の検めが外れる (直す前の形)",
+      "edits": [
+        {
+          "find": "        if (table.fns.get(fnKey(externTarget, n))?.paramVetted.some((v) => v !== null) === true) {",
+          "replace": "        if (false as boolean) {"
+        }
+      ]
+    },
+    {
+      "id": "A-599",
+      "threat": "T-262",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "道の綴りを検めない —— `./g.js` / `.//g` で Mamori の module を外の module と見せられる (直す前の形)",
+      "edits": [
+        {
+          "find": "    const problem = specifierProblem(from);\n",
+          "replace": "    const problem = null as string | null;\n"
+        }
+      ]
+    },
+    {
+      "id": "A-600",
+      "threat": "T-263",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "印を名乗る引数の既定値を断らない —— TypeScript の呼び手が省くと既定値の any が印の型で入る (直す前の形)",
+      "edits": [
+        {
+          "find": "      if (p.init !== null && mark !== null) report('M4', p.pos, `引数 ",
+          "replace": "      if ((false as boolean) && p.init !== null && mark !== null) report('M4', p.pos, `引数 "
+        }
+      ]
+    },
+    {
+      "id": "A-601",
+      "threat": "T-263",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "gate 関数の戻り値の式を検めない —— `return JSON.parse(s);` で mint を通らない値が印を名乗って関門から出る (直す前の形)",
+      "edits": [
+        {
+          "find": "          if (ctx.role === 'gate' && ctx.returnVetted !== null && !carriesOrEmpty(s.value, scopes, ctx.returnVetted)) {",
+          "replace": "          if (false as boolean) {"
+        }
+      ]
+    },
+    {
+      "id": "A-602",
+      "threat": "T-264",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "型を書いていないモジュール直下の const の初期値の中の `new Map` / `new Set` を断らない —— 推論された書き換えられる表を、同じ module のどの関数からも `.set` / `.add` / `.delete` / `.clear` で書き換えられる (直す前の形)",
+      "edits": [
+        {
+          "find": "        if (ctx.sharedUntyped !== undefined && SHARED_COLLECTIONS.has(identName(e.callee))) {",
+          "replace": "        if (false as boolean) {"
         }
       ]
     }

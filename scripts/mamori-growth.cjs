@@ -525,7 +525,12 @@ function main(argv) {
     const ledger = readJson(LEDGER);
     const brief = buildBrief({ ledger, files: wallFiles(REPO_ROOT), now });
     const c = buildCompleteness({ ledger, brief, mamoriFiles: countMamoriFiles(REPO_ROOT) });
-    console.log(json ? JSON.stringify({ ...c, markdown: undefined }, null, 2) : c.markdown);
+    // 完成度の基準 (視点 × 基準 · security/mamori-completeness.json) を実測から採点して載せる。
+    const comp = require('./lib/mamori-completeness.cjs');
+    const rubric = readJson(path.join(REPO_ROOT, 'security/mamori-completeness.json'));
+    const perspectives = comp.scoreAll(rubric, comp.gather(REPO_ROOT, { ledger, growth: growthStatus(ledger, now), mamoriFiles: c.mamoriFiles, tsWalls: c.tsWalls }));
+    const summary = comp.summarize(rubric, perspectives);
+    console.log(json ? JSON.stringify({ ...c, markdown: undefined, rubric: { perspectives, summary } }, null, 2) : `${c.markdown}\n\n${comp.render(perspectives, summary)}`);
     return brief.problems.length > 0 ? 1 : 0;
   }
   if (cmd === 'status') {

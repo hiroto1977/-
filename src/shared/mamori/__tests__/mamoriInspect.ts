@@ -17,12 +17,46 @@ const BANNED_MEMBERS = new Set([
   // 値から原型・コンストラクタ・getter の定義へ届く名前 (どの値の上でも成らない)。Object / RegExp / Error / URL の静的メンバは基準の名前で別に見る。
   'constructor', 'prototype', '__proto__', '__defineGetter__', '__defineSetter__', '__lookupGetter__', '__lookupSetter__',
 ]);
+/** 印の型の値しか受けない口の名前 (電池の前置きの `openUrl` と、複数ファイルの環境の `open2`)。 */
+const SINK_NAMES = new Set(['openUrl', 'open2']);
 const REGEXP_STATICS = /^(\$[1-9_&`'+]?|lastMatch|lastParen|leftContext|rightContext|input)$/;
 
 export interface Finding {
   readonly reason: string;
   /** `hole` = 検めを受けないコードが生成物に在る。`lenient` = 生成物が TypeScript として読めない (tsc/typecheck が止める = 閉じた側に落ちる)。 */
   readonly kind: 'hole' | 'lenient';
+}
+
+/**
+ * 0.27 の例外のクラス: 生成物に出てよいクラスの形は
+ * `class N extends Error { constructor(引数) { super(…); this.name = 'N'; } }` ただ 1 つ (2026-11-12 · MG-068)。
+ * 形が合えば、その中のただ 1 つの `this` (`this.name = 'N'` の左辺) を返す。合わなければ `null`。
+ *
+ * この物差しは 0.27 でクラスが入ったあともクラスを一律に穴と数えていた —— 実物の走査の根 (`src/shared` / `src/main` /
+ * `src/main/clients` / `src/renderer` の直下) にクラスを持つ `.mamori` が 1 本も無かったので鳴らなかった
+ * (`webauthn.mamori` は 1 段下の `src/renderer/security/` に居る)。`selfAttestation.mamori` が根の直下に入って初めて鳴った。
+ */
+function exceptionClassThis(n: ts.ClassDeclaration, errorIsShadowed: boolean): ts.Node | null {
+  if (errorIsShadowed || !ts.isSourceFile(n.parent) || !n.name || n.typeParameters) return null;
+  if ((n.modifiers ?? []).some((m) => m.kind !== ts.SyntaxKind.ExportKeyword)) return null;
+  const clauses = n.heritageClauses ?? [];
+  const clause = clauses[0];
+  if (clauses.length !== 1 || !clause || clause.token !== ts.SyntaxKind.ExtendsKeyword) return null;
+  const base = clause.types[0];
+  if (clause.types.length !== 1 || !base || base.typeArguments || !ts.isIdentifier(base.expression) || base.expression.text !== 'Error') return null;
+  const ctor = n.members[0];
+  if (n.members.length !== 1 || !ctor || !ts.isConstructorDeclaration(ctor) || !ctor.body) return null;
+  if ((ctor.modifiers ?? []).length > 0 || ctor.parameters.some((p) => (p.modifiers ?? []).length > 0 || p.dotDotDotToken !== undefined)) return null;
+  const callSuper = ctor.body.statements[0];
+  const setName = ctor.body.statements[1];
+  if (ctor.body.statements.length !== 2 || !callSuper || !setName) return null;
+  if (!ts.isExpressionStatement(callSuper) || !ts.isCallExpression(callSuper.expression) || callSuper.expression.expression.kind !== ts.SyntaxKind.SuperKeyword) return null;
+  if (!ts.isExpressionStatement(setName) || !ts.isBinaryExpression(setName.expression) || setName.expression.operatorToken.kind !== ts.SyntaxKind.EqualsToken) return null;
+  const left = setName.expression.left;
+  const right = setName.expression.right;
+  if (!ts.isPropertyAccessExpression(left) || left.expression.kind !== ts.SyntaxKind.ThisKeyword || left.name.text !== 'name') return null;
+  if (!ts.isStringLiteral(right) || right.text !== n.name.text) return null;
+  return left.expression;
 }
 
 /** 受け入れた生成物 1 つを、TypeScript の構文解析器で読み直して穴を探す。 */
@@ -42,6 +76,8 @@ export function inspectEmitted(file: string, text: string, externGlobals: Readon
     if ((ts.isFunctionDeclaration(n) || ts.isClassDeclaration(n) || ts.isTypeAliasDeclaration(n) || ts.isInterfaceDeclaration(n)) && n.name) declared.add(n.name.text);
     if (ts.isVariableDeclaration(n) && ts.isIdentifier(n.name)) declared.add(n.name.text);
     if (ts.isParameter(n) && ts.isIdentifier(n.name)) declared.add(n.name.text);
+    // 分割代入 `const { a, b } = x;` の束ねた名前も束縛である (2026-11-10 · MG-063 —— 集めていなかったので、分割した名前の使用を「宣言していない名前」と数えていた)
+    if (ts.isBindingElement(n) && ts.isIdentifier(n.name)) declared.add(n.name.text);
     if (ts.isImportSpecifier(n)) { declared.add(n.name.text); imported.add(n.name.text); }
     if (ts.isImportClause(n) && n.name) { declared.add(n.name.text); imported.add(n.name.text); }
     if (ts.isNamespaceImport(n)) { declared.add(n.name.text); imported.add(n.name.text); }
@@ -49,6 +85,22 @@ export function inspectEmitted(file: string, text: string, externGlobals: Readon
     ts.forEachChild(n, collect);
   };
   collect(sf);
+
+  // 0.27 の例外のクラス (形が合う物だけ)。`Error` を自分で宣言・取り込みしていれば `extends Error` は別の物を指すので合わない。
+  const exceptionClasses = new Set<string>();
+  const allowedThis = new Set<ts.Node>();
+  const errorIsShadowed = declared.has('Error');
+  const collectClasses = (n: ts.Node): void => {
+    if (ts.isClassDeclaration(n)) {
+      const t = exceptionClassThis(n, errorIsShadowed);
+      if (t !== null && n.name) {
+        exceptionClasses.add(n.name.text);
+        allowedThis.add(t);
+      }
+    }
+    ts.forEachChild(n, collectClasses);
+  };
+  collectClasses(sf);
 
   const inType = (n: ts.Node): boolean => {
     for (let p: ts.Node | undefined = n.parent; p; p = p.parent) {
@@ -69,12 +121,22 @@ export function inspectEmitted(file: string, text: string, externGlobals: Readon
       if (!ok) found.push({ kind: 'hole', reason: `添字 x[k] の鍵が許した形でない: ${a.getText(sf)}` });
     }
     if (ts.isTemplateExpression(n) || ts.isTaggedTemplateExpression(n)) found.push({ kind: 'hole', reason: 'テンプレート文字列がある' });
+    // Mamori は束縛を 1 文に 1 つしか書けず、`,` の演算子も持たない (2026-11-10 · T-260)。生成物に在れば、Mamori が
+    // 型の綴りと読んだ並びを TypeScript が「2 つ目の束縛」「`,` でつないだ式」と読んでいる —— 検めていない束縛・式である。
+    if (ts.isVariableDeclarationList(n) && n.declarations.length > 1) found.push({ kind: 'hole', reason: `1 つの文に束縛が ${n.declarations.length} つある (Mamori は 1 つしか書けない): ${n.declarations.map((d) => d.name.getText(sf)).join(', ')}` });
+    if (ts.isBinaryExpression(n) && n.operatorToken.kind === ts.SyntaxKind.CommaToken) found.push({ kind: 'hole', reason: '`,` でつないだ式がある (Mamori に `,` の演算子は無い)' });
     if (ts.isAsExpression(n) && ts.isTypeReferenceNode(n.type) && ts.isIdentifier(n.type.typeName) && declared.has(n.type.typeName.text)) {
       // gate の `mint` が出す `as <印の型>` だけは許す (宣言した/取り込んだ名前への型付けで、印の型は gate の外では作れない)
     } else if (ts.isAsExpression(n) && ts.isTypeLiteralNode(n.type) && n.type.members.every((m) => ts.isPropertySignature(m) && m.questionToken !== undefined && m.type?.kind === ts.SyntaxKind.UnknownKeyword)) {
       // 0.2 の `field` (unknown の値の欄を読む) が出す `(raw as { x?: unknown }).x` だけは許す (欄は unknown のまま・書き換えない)
     } else if (ts.isAsExpression(n) || ts.isTypeAssertionExpression(n)) found.push({ kind: 'hole', reason: '型の書き換え (as / <T>) がある' });
     if (ts.isNonNullExpression(n)) found.push({ kind: 'hole', reason: '後置の ! がある' });
+    // `satisfies` (0.31) は const の初期値の末尾にだけ出る。式の途中に在れば、Mamori が検めた木に無い包みである。
+    if (ts.isSatisfiesExpression(n)) {
+      const d = n.parent;
+      const ok = ts.isVariableDeclaration(d) && d.initializer === n && ts.isVariableDeclarationList(d.parent) && (d.parent.flags & ts.NodeFlags.Const) !== 0;
+      if (!ok) found.push({ kind: 'hole', reason: '`satisfies` が const の初期値の末尾でない所に在る' });
+    }
     // 0.15 の展開: 許すのは (1) 配列の字面の項 (2) オブジェクトの字面の**欄より前**だけ。呼び出し・new の引数の展開と、欄より後ろの展開 (字面で書いた欄の上書き) は穴。
     if (ts.isSpreadElement(n) && !ts.isArrayLiteralExpression(n.parent)) found.push({ kind: 'hole', reason: '配列の字面の外の展開 (呼び出しの引数など)' });
     if (ts.isSpreadAssignment(n)) {
@@ -83,17 +145,27 @@ export function inspectEmitted(file: string, text: string, externGlobals: Readon
         found.push({ kind: 'hole', reason: '欄より後ろのオブジェクトの展開' });
       }
     }
-    // 0.16 の instanceof: 右辺は名前だけで、その名前は組み込み・`extern pure global`・取り込んだ名前に限る (局所の名前・計算した式は穴)。
+    // 0.16 の instanceof: 右辺は名前だけで、その名前は組み込み・`extern pure global`・取り込んだ名前・**形の合う例外のクラス** (0.27) に限る (他の局所の名前・計算した式は穴)。
     if (ts.isBinaryExpression(n) && n.operatorToken.kind === ts.SyntaxKind.InstanceOfKeyword) {
       const r = n.right;
       if (!ts.isIdentifier(r)) found.push({ kind: 'hole', reason: `instanceof の右辺が名前でない: ${r.getText(sf)}` });
-      else if (declared.has(r.text) ? !imported.has(r.text) : !(externGlobals.has(r.text) || ALLOWED_BUILTINS.has(r.text))) {
+      else if (declared.has(r.text) ? !(imported.has(r.text) || exceptionClasses.has(r.text)) : !(externGlobals.has(r.text) || ALLOWED_BUILTINS.has(r.text))) {
         found.push({ kind: 'hole', reason: `instanceof の右辺が許した名前でない: ${r.text}` });
       }
     }
+    // 0.29 の in: 左辺は字面の文字列で、`Object.prototype` の名前・`prototype` でない (原型の鎖にも在る名前はどの物にも真と答える / 計算した鍵で原型を探れる)。
+    if (ts.isBinaryExpression(n) && n.operatorToken.kind === ts.SyntaxKind.InKeyword) {
+      const l = n.left;
+      if (!ts.isStringLiteral(l)) found.push({ kind: 'hole', reason: `in の左辺が字面の文字列でない: ${l.getText(sf)}` });
+      else if (l.text === 'prototype' || Object.getOwnPropertyNames(Object.prototype).includes(l.text)) found.push({ kind: 'hole', reason: `in の左辺が原型の名前: ${l.text}` });
+    }
     if (ts.isCallExpression(n) && n.expression.kind === ts.SyntaxKind.ImportKeyword) found.push({ kind: 'hole', reason: '動的 import がある' });
     if (ts.isMetaProperty(n)) found.push({ kind: 'hole', reason: 'メタプロパティがある' });
-    if (ts.isClassDeclaration(n) || ts.isClassExpression(n)) found.push({ kind: 'hole', reason: 'クラスがある' });
+    // クラスは例外の型の形 1 つだけ (0.27)。メソッド・欄・別の基底・式のクラスは穴。`this` はその形の `this.name = 'N'` の左辺にだけ出る。
+    if (ts.isClassExpression(n) || (ts.isClassDeclaration(n) && !(n.name && exceptionClasses.has(n.name.text) && exceptionClassThis(n, errorIsShadowed) !== null))) {
+      found.push({ kind: 'hole', reason: 'クラスがある' });
+    }
+    if (n.kind === ts.SyntaxKind.ThisKeyword && !allowedThis.has(n)) found.push({ kind: 'hole', reason: '`this` がある (Mamori に `this` は無い)' });
     if (ts.isNewExpression(n) && ts.isIdentifier(n.expression) && (n.expression.text === 'Function' || n.expression.text === 'AsyncFunction')) found.push({ kind: 'hole', reason: 'new Function がある' });
     if (ts.isComputedPropertyName(n) && !inType(n)) found.push({ kind: 'hole', reason: '計算した鍵がある' });
     if ((ts.isGetAccessor(n) || ts.isSetAccessor(n)) && !inType(n)) found.push({ kind: 'hole', reason: 'アクセサがある' });
@@ -118,9 +190,11 @@ export function inspectEmitted(file: string, text: string, externGlobals: Readon
       const parent = n.parent;
       const isMemberName = (ts.isPropertyAccessExpression(parent) && parent.name === n) || (ts.isPropertyAssignment(parent) && parent.name === n) ||
         (ts.isPropertySignature(parent) && parent.name === n) || (ts.isImportSpecifier(parent) && parent.propertyName === n) ||
+        // 分割代入の付け替え `{ b: c }` の `b` は欄の名前 (束縛は `c`)
+        (ts.isBindingElement(parent) && parent.propertyName === n) ||
         // `export { a, b } from "mod"` (MG-051 の再輸出) の名前は、このモジュールの式でも束縛でもない (相手の module の名前を指す)
         (ts.isExportSpecifier(parent) && ts.isExportDeclaration(parent.parent.parent) && parent.parent.parent.moduleSpecifier !== undefined);
-      const isBindingName = (ts.isVariableDeclaration(parent) || ts.isParameter(parent) || ts.isFunctionDeclaration(parent) || ts.isTypeAliasDeclaration(parent) ||
+      const isBindingName = (ts.isVariableDeclaration(parent) || ts.isParameter(parent) || ts.isBindingElement(parent) || ts.isFunctionDeclaration(parent) || ts.isTypeAliasDeclaration(parent) ||
         ts.isInterfaceDeclaration(parent) || ts.isImportSpecifier(parent) || ts.isImportClause(parent) || ts.isNamespaceImport(parent) || ts.isTypeParameterDeclaration(parent)) &&
         (parent as { name?: ts.Node }).name === n;
       // 組み込みの構築子・名前空間を**値として**渡す形 (Object.freeze(Array) でアプリ全体の組み込みを凍らせる · T-243)。
@@ -168,18 +242,105 @@ export function inspectEmitted(file: string, text: string, externGlobals: Readon
     if (aliasText.has(m)) return /^Vetted</.test(aliasText.get(m)!);
     return false;
   };
+  // 0.30 の interface extends: 基底は先に宣言した interface か import した名前 1 つだけ (印の型・型の別名・組み込みの型・自分自身・後ろに宣言した物・式は穴)。
+  const earlierInterfaces = new Set<string>();
+  sf.forEachChild((c) => {
+    if (!ts.isInterfaceDeclaration(c)) return;
+    for (const h of c.heritageClauses ?? []) {
+      if (h.token !== ts.SyntaxKind.ExtendsKeyword) { found.push({ kind: 'hole', reason: 'interface が extends 以外の継承を持つ' }); continue; }
+      if (h.types.length !== 1) found.push({ kind: 'hole', reason: `interface ${c.name.text} の基底が 1 つでない` });
+      for (const t of h.types) {
+        const e = t.expression;
+        if (t.typeArguments !== undefined) found.push({ kind: 'hole', reason: `interface ${c.name.text} の基底に型引数: ${t.getText(sf)}` });
+        else if (!ts.isIdentifier(e)) found.push({ kind: 'hole', reason: `interface ${c.name.text} の基底が名前でない: ${t.getText(sf)}` });
+        else if (aliasText.has(e.text)) found.push({ kind: 'hole', reason: `interface ${c.name.text} が型の別名 ${e.text} を継いでいる` });
+        else if (!earlierInterfaces.has(e.text) && !imported.has(e.text)) found.push({ kind: 'hole', reason: `interface ${c.name.text} の基底 ${e.text} が先に宣言した interface でも import でもない` });
+      }
+    }
+    earlierInterfaces.add(c.name.text);
+  });
+  /**
+   * 名前 `name` を束ねた引数が、arrow / 関数式の引数か (2026-11-11 · T-261)。印の型で宣言されていても、arrow は値なので
+   * 呼ぶ側の引数を誰も検めない —— `((u: VU) => openUrl(u))(JSON.parse(raw))`。0.31 までこの物差しは「印の型で宣言された名前」
+   * なら通しており、電池は `xs.map((u: VU) => openUrl(u))` を受け入れても穴と数えなかった (物差しが穴と同じ前提に立っていた)。
+   */
+  const boundByArrowParam = (name: string, from: ts.Node): boolean => {
+    for (let p: ts.Node | undefined = from; p; p = p.parent) {
+      if (!ts.isFunctionLike(p)) continue;
+      for (const prm of (p as ts.SignatureDeclaration).parameters) {
+        if (ts.isIdentifier(prm.name) && prm.name.text === name) return ts.isArrowFunction(p) || ts.isFunctionExpression(p);
+      }
+    }
+    return false;
+  };
   const sinkCalls = (n: ts.Node): void => {
-    if (ts.isCallExpression(n) && ts.isIdentifier(n.expression) && n.expression.text === 'openUrl') {
+    // `open2` は電池の複数ファイルの環境が別の module に置く口 (T-262: 引き方を変えて外形の検めを外す形を見る)
+    if (ts.isCallExpression(n) && ts.isIdentifier(n.expression) && SINK_NAMES.has(n.expression.text)) {
+      const sink = n.expression.text;
       const a = n.arguments[0];
-      if (a === undefined || !ts.isIdentifier(a)) found.push({ kind: 'hole', reason: 'openUrl へ名前でない値を渡している' });
+      if (a === undefined || !ts.isIdentifier(a)) found.push({ kind: 'hole', reason: `${sink} へ名前でない値を渡している` });
       else {
         const t = typeOf(a.text, n);
-        if (t === null || !markOnly(t)) found.push({ kind: 'hole', reason: `openUrl へ印の型でない値 (${a.text}: ${t ?? '型なし'}) を渡している` });
+        if (t === null || !markOnly(t)) found.push({ kind: 'hole', reason: `${sink} へ印の型でない値 (${a.text}: ${t ?? '型なし'}) を渡している` });
+        else if (boundByArrowParam(a.text, n)) found.push({ kind: 'hole', reason: `${sink} へ arrow の引数 ${a.text} を渡している (arrow を呼ぶ側の引数は検められない · T-261)` });
       }
     }
     ts.forEachChild(n, sinkCalls);
   };
   sinkCalls(sf);
+
+  // 印の型の引数は既定値を持たない (2026-11-11 · T-263): 呼び手が省くと、既定値の式の値が関門を通らずに印の型で入る
+  const markDefaults = (n: ts.Node): void => {
+    if (ts.isParameter(n) && n.initializer !== undefined && n.type !== undefined && markOnly(n.type.getText(sf))) {
+      found.push({ kind: 'hole', reason: `印の型の引数 ${n.name.getText(sf)} が既定値を持つ (T-263)` });
+    }
+    ts.forEachChild(n, markDefaults);
+  };
+  markDefaults(sf);
+
+  // 印の型を返す関数 (gate) の戻り値は、印を付ける式 (`式 as 印`)・印を持つ名前・同じ file の印を返す関数の呼び出し・null / undefined だけ (T-263)
+  const markReturning = new Set<string>();
+  const returnMark = (fn: ts.FunctionDeclaration): boolean => {
+    const t = fn.type?.getText(sf) ?? '';
+    const inner = /^Promise<(.*)>$/.exec(t);
+    return markOnly(inner ? inner[1]! : t);
+  };
+  sf.forEachChild((c) => {
+    if (ts.isFunctionDeclaration(c) && c.name && returnMark(c)) markReturning.add(c.name.text);
+  });
+  const carries = (e: ts.Expression, depth: number): boolean => {
+    if (ts.isParenthesizedExpression(e)) return carries(e.expression, depth);
+    if (ts.isAwaitExpression(e)) return carries(e.expression, depth);
+    if (e.kind === ts.SyntaxKind.NullKeyword || (ts.isIdentifier(e) && e.text === 'undefined')) return true;
+    if (ts.isAsExpression(e)) return markOnly(e.type.getText(sf));
+    if (ts.isConditionalExpression(e)) return carries(e.whenTrue, depth) && carries(e.whenFalse, depth);
+    if (ts.isCallExpression(e)) return ts.isIdentifier(e.expression) && markReturning.has(e.expression.text);
+    if (ts.isIdentifier(e)) {
+      const t = typeOf(e.text, e);
+      if (t !== null) return markOnly(t) && !boundByArrowParam(e.text, e);
+      // 型を書いていない束縛: 初期値が印を持つ式なら可 (1 段だけ辿る)
+      if (depth > 0) return false;
+      let init: ts.Expression | undefined;
+      const find = (n: ts.Node): void => {
+        if (ts.isVariableDeclaration(n) && ts.isIdentifier(n.name) && n.name.text === e.text && n.initializer !== undefined) init = n.initializer;
+        ts.forEachChild(n, find);
+      };
+      find(sf);
+      return init !== undefined && carries(init, depth + 1);
+    }
+    return false;
+  };
+  sf.forEachChild((c) => {
+    if (!ts.isFunctionDeclaration(c) || c.body === undefined || !returnMark(c)) return;
+    const returns = (n: ts.Node): void => {
+      if (ts.isFunctionLike(n) && n !== c) return;
+      if (ts.isReturnStatement(n) && n.expression !== undefined && !carries(n.expression, 0)) {
+        found.push({ kind: 'hole', reason: `印の型を返す関数 ${c.name?.text ?? '?'} が、印を付けていない値 (${n.expression.getText(sf).slice(0, 40)}) を返している (T-263)` });
+      }
+      ts.forEachChild(n, returns);
+    };
+    returns(c.body);
+  });
 
   // 字句の層: 識別子・キーワード以外の位置に、制御・bidi・不可視の字が裸で現れていないこと
   const scanner = ts.createScanner(ts.ScriptTarget.ES2022, false, ts.LanguageVariant.Standard, text);

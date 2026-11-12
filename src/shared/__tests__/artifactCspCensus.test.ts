@@ -46,6 +46,7 @@ import { readOriginalSource } from './originalSource';
  *    `shipped: 'download'` の行は `package.json` に `build:*` として実在する。
  */
 const req = createRequire(import.meta.url);
+const portal = req('../../../scripts/build-portal.cjs') as { buildPortalCsp: (hashes: readonly string[]) => string };
 const gate = req('../../../scripts/lint-artifact-csp.cjs') as {
   evaluate: (profile: string, html: string, name: string) => string[];
 };
@@ -55,7 +56,7 @@ const REPO_ROOT = join(__dirname, '../../..');
 type Shipped = 'pages' | 'download';
 
 /** CSP を書く builder の台帳。`why` は「誰が受け取るか」を書く。 */
-const LEDGER: Record<string, { profile: string; shipped: Shipped; why: string }> = {
+const LEDGER: Record<string, { profile: string; shipped: Shipped; why: string; assembled?: () => string }> = {
   'scripts/build-landing.cjs': {
     profile: 'document',
     shipped: 'pages',
@@ -95,6 +96,13 @@ const LEDGER: Record<string, { profile: string; shipped: Shipped; why: string }>
     profile: 'document',
     shipped: 'download',
     why: '電子定款メーカー (会社法の定款ジェネレータ)。利用者が開いて印刷する。CI では組まないので、ここが唯一の門。',
+  },
+  'scripts/build-portal.cjs': {
+    profile: 'document',
+    shipped: 'download',
+    // CSP はソースに字面で無い —— 畳み込んだスクリプトのハッシュを入れて組み立てる。実物の関数に組ませて当てる。
+    assembled: () => portal.buildPortalCsp(["'sha256-AAAA'"]),
+    why: '社外向けポータル (取引先・顧客へ配る単一 HTML · 2026-11-11)。網へ出ない (connect-src none)。CI では組まないので、ここと e2e:portal が門。',
   },
 };
 
@@ -142,7 +150,8 @@ describe('CSP を書く出荷物の母集団 (パス 344)', () => {
   });
 
   it.each(Object.keys(LEDGER))('★ %s の CSP が台帳のプロファイルを実際に通る', (rel) => {
-    const csp = cspMetaOf(readOriginalSource(join(REPO_ROOT, rel)));
+    const assembled = LEDGER[rel]!.assembled;
+    const csp = cspMetaOf(assembled === undefined ? readOriginalSource(join(REPO_ROOT, rel)) : assembled());
     expect(csp, `${rel} から CSP メタを取り出せません`).not.toBeNull();
     const html = `<!doctype html><html><head><meta http-equiv="Content-Security-Policy" content="${csp!}"></head><body></body></html>`;
     expect(gate.evaluate(LEDGER[rel]!.profile, html, rel)).toEqual([]);

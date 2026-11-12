@@ -106,7 +106,10 @@ describe('0.20: finally の中も来歴の規則の下に居る', () => {
     expect(diag('  try {\n    n;\n  } finally {\n    xs[n]();\n  }\n  return 1;')[0]).toContain('呼び出せません');
     expect(diag('  try {\n    n;\n  } finally {\n    openUrl(u);\n  }\n  return 1;')[0]).toContain('[M4]');
     // 印は finally の中でも mint で作れば通る (関門の中)
-    expect(compile(`${PRE}export gate fn g(u: string) -> VettedUrl | null {\n  let v = null;\n  try {\n    u.length;\n  } finally {\n    v = mint VettedUrl(u);\n  }\n  return v;\n}\n`).diagnostics).toEqual([]);
+    expect(compile(`${PRE}export gate fn g(u: string) -> VettedUrl | null {\n  try {\n    u.length;\n  } finally {\n    const w = mint VettedUrl(u);\n    w.length;\n  }\n  return null;\n}\n`).diagnostics).toEqual([]);
+    // ★ ただし印を持たない束縛 (`let v = null;`) へ入れてから返す形は断る (0.32 · T-263): gate の戻り値は印を持つ値か null / undefined だけ ——
+    // 束縛の印は宣言のときに決まり、あとの代入では付かない (付くことにすると、最後の代入が mint だったかを流れで追うことになる)。
+    expect(compile(`${PRE}export gate fn g(u: string) -> VettedUrl | null {\n  let v = null;\n  try {\n    u.length;\n  } finally {\n    v = mint VettedUrl(u);\n  }\n  return v;\n}\n`).diagnostics.join('\n')).toMatch(/\[M1\] gate 関数の戻り値は `mint VettedUrl\(…\)`・印 VettedUrl を持つ値・null \/ undefined だけです/);
   });
 
   it('try の中で宣言した名前は finally から見えない (ブロックの中だけ)', () => {

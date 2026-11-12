@@ -349,6 +349,22 @@ describe('フォルダ handle の永続化', () => {
     } finally { restore(); }
   });
 
+  it('★ 再読み込み後に問うのは読み書きの権限 (readwrite) である (読むだけの権限を問うと、書けないフォルダを granted と読む)', async () => {
+    const asked: unknown[] = [];
+    const restore = stubRead({
+      kind: 'directory',
+      name: 'stored',
+      queryPermission: (descriptor: unknown) => {
+        asked.push(descriptor);
+        return Promise.resolve('granted');
+      },
+    });
+    try {
+      await loadFolderHandle();
+      expect(asked).toEqual([{ mode: 'readwrite' }]);
+    } finally { restore(); }
+  });
+
   it('queryPermission が投げたら unknown に落とす (例外にしない)', async () => {
     const restore = stubRead({
       kind: 'directory',

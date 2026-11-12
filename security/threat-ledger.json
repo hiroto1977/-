@@ -4733,6 +4733,155 @@
           "test": "ループの中で宣言した名前へは入れられる (周ごとに宣言し直すので持ち越さない)・字面の鍵は inert ではない"
         }
       ]
+    },
+    {
+      "id": "T-260",
+      "found": "2026-11-10",
+      "foundBy": "MG-064 (`satisfies` を足す前に破る)。式の中に型の綴りを置く新しい場所を足す前に、既に在る場所 (0.21 の型引数・束縛の型) で「Mamori が型と読んだ綴りを TypeScript も型と読むか」を試し、3 形で読みが割れた: ① 型引数の綴り `n<m ? shell.openExternal(raw) : k>(x)` を Mamori は「型引数つきの呼び出し 1 つ」と読み (型の綴りは検めない)、TypeScript は「条件式 + 危ない口の呼び出し」と読んで走らせる ② 束縛の型 `let a: number, okUrl = (s: string) => JSON.parse(s);` を Mamori は 1 つの束縛と読み、TypeScript は 2 つ目の束縛 `okUrl` (module の gate を覆う) を作る ③ 逆向きに、Mamori が「比べ 2 つ」と読んだ `f(n < n, n > (raw ?? raw))` を、括弧を落とした生成物で TypeScript が「型引数つきの呼び出し `n<n, n>(…)`」と読む。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "high",
+      "title": "守りの層を書く言語 Mamori が検めた木と、生成物を TypeScript が読んだ木が食い違い、型の綴りに隠した式 (危ない口の呼び出し・module の関門を覆う 2 つ目の束縛) が検めを受けずに生成物で走る",
+      "status": "mitigated",
+      "fix": "3 層。① src/shared/mamori/parser.ts: 型の綴りを読んだ直後に `checkTypeShape` で **1 つの型として読める並びか**を検める (TypeScript の型の文法の部分集合 —— 名前・型引数・配列・和・交差・オブジェクト・組・関数・typeof・readonly / keyof・字面。述語は関数の戻りだけ・式の位置 (型引数) には `(` で始まる型を置けない)。型として読めない並び (`?` `:` の条件・深さ 0 の `,`・呼び出しの括弧) は M0 で断る。② src/shared/mamori/emit.ts: 式の中 (引数・配列の項・演算子の両辺・欄の値・既定値) に座る `<` の比べを括って出す (`nested`) —— TypeScript が `a < b, c > (d)` を型引数つきの呼び出しと試し読みしない。文の根の `<` は括らない。③ 独立の判定: `mamoriShape.ts` が Mamori の木と生成物の木の形 (呼び出し・new・型引数つきの呼び出し・条件式・矢印関数・2 項演算子の数) を突き合わせ、実物の .mamori 全件・攻撃の電池・種つきの総当たりで食い違い 0 を見る。`mamoriInspect.ts` は「1 文に束縛 2 つ」「`,` でつないだ式」を穴として挙げる。生成物は 6 本が括弧の分だけ変わった (判定は不変)。残り (測った): 正しい Mamori のうち `a < (b > (c === 1))` の類は生成物が TypeScript の構文の誤りで止まる (黙って別の木にはならない) —— docs/REMAINING_WORK.md。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriTypeShape.test.ts",
+        "test": "★ 型引数の綴りに式を隠せない (Mamori は型引数つきの呼び出しと読み、TypeScript は条件式として危ない口を呼ぶ) (threat: T-260)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriTypeShape.test.ts",
+          "test": "★ 束縛の型の綴りに 2 つ目の束縛を隠せない (隠れた束縛が module の関門を覆う) (threat: T-260)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriTypeShape.test.ts",
+          "test": "★ 引数の並び・配列・演算子の両辺・条件式・欄の中の `<` は括る (TypeScript が型引数つきの呼び出しと読まない) (threat: T-260)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriTypeShape.test.ts",
+          "test": "★ 3 つの種 × 1500 本: 受け入れた物は木の形が一致するか、生成物が TypeScript の構文の誤りで止まる (黙って別の木にならない) (threat: T-260)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriGenerated.test.ts",
+          "test": "★ どの .mamori も、Mamori が検めた木と生成物を TypeScript が読んだ木の形が一致する (threat: T-260)"
+        }
+      ]
+    },
+    {
+      "id": "T-261",
+      "found": "2026-11-11",
+      "foundBy": "MG-067 (言語の穴探しの周)。0.31 のコンパイラへ「any の出どころ (`JSON.parse` の戻り値・any の配列・Promise) × 印を受ける場所」を掛けた手探りを撃ち、arrow の引数に印の型を書く形が通った: `((v: V) => need(v))(JSON.parse(raw))`・`const run = (v: V) => need(v); run(JSON.parse(raw));`・`Promise.resolve(JSON.parse(raw)).then((v: V) => need(v))`・`xs.map((v: V) => need(v))` (xs は any から束縛した `V[]`)。Mamori は arrow の引数の印の型をそのまま信じて中で印を運び、arrow を呼ぶ側の引数は検めていなかった。`tsc` は any を印の型へ通すので 2 枚目の壁も働かない。既存の検査 2 件 (mamoriV03 の対照・mamoriCheckerCoverage の ★) は、この形を正しい動きとして留めていた。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "high",
+      "title": "守りの層を書く言語 Mamori で、arrow の引数に印の型を書くと、関門を通っていない値 (any) を印を受ける関数・危ない口へ運べた",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: arrow の引数は印 (印 / 印 | null / 印 | undefined) を名乗れない (M4)。名乗れるのは、Mamori の外の module から引いた関数 (`extern pure { f } from \"./host\"`・この project の .mamori でない module からの `use`) を名前で直に呼ぶときの、引数に直に書いた arrow と、引数のオブジェクトの字面の欄に直に書いた arrow だけ (呼び戻しに渡す値の型は外の module の側で tsc が検める —— 実物は main.mamori の `openFromWindow(…, { open: (target: VettedExternalUrl) => … })` の 1 か所)。メンバの呼び出し・`.call`・入れ子のオブジェクト・配列の項・条件演算子・Mamori の関数へ渡す形は断る。断った引数は印を運ばない (中で印を受ける関数を呼ぶ形も M4)。残り (測った・docs/MAMORI.md の限界): 外の module の関数が型引数で呼び戻しと値を結ぶ形 (`hostApply<T>(cb: (x: T) => R, v: T)` へ arrow と any を渡す) と、Mamori の関数が関数型の引数を any で呼ぶ形 (`cb(JSON.parse(a))`) は、外の module の側が印を受ける関数を渡したときに通る —— 外の module の側の協力が要る。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV32.test.ts",
+        "test": "★ arrow の引数に印を書いて、関門を通っていない値を印を受ける関数へ運べない (threat: T-261)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV32.test.ts",
+          "test": "★ 外の関数へ渡す形でも、直に書いた引数・欄でなければ断る (呼ぶ側を選べる・入れ物に包める形)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV32.test.ts",
+          "test": "★ Mamori の関数は「外の関数」ではない (同じ module・use で引いた別の module・extern で引いた別の module)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV03.test.ts",
+          "test": "★ arrow の引数に印を書いて呼び戻しに渡す形は断る (0.32 · threat: T-261 —— 0.31 まではこの形を「通る対照」として留めていた)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriCheckerCoverage.test.ts",
+          "test": "★ arrow の引数は印を名乗れない (運ぶのは、外の module の関数へ直に渡す呼び戻しだけ · 0.32 · threat: T-261)"
+        }
+      ]
+    },
+    {
+      "id": "T-262",
+      "found": "2026-11-11",
+      "foundBy": "MG-067 (言語の穴探しの周)。印を受ける Mamori の関数 `need(v: V)` を、外形 (印を受ける引数) を引かない顔で引く形が 3 つ通った: ① `extern pure { need } from \"./g\"` —— extern の名前は外形を持たないので `need(JSON.parse(raw))` の引数の印の検め (M4) が外れる ② `use { need } from \"./g.js\"` —— TypeScript は `./g.js` を `./g.ts` (= g.mamori の生成物) に解くのに、Mamori は道の字面を正規化するだけなので別の module (この project の外) と見る ③ `use { need } from \".//g\"` / `\"../x//g\"` —— 同じ理由 (空の区切りは Mamori の正規化が落とさず、別の module の鍵になる)。どれも生成物は tsc を通り、関門を通っていない値が印を受ける関数へ届いた。測り直し (0.31 のコンパイラへ 13 綴り × use / extern): `use` で通ったのは拡張子つき 4 綴り・空の区切り 2 綴り・末尾の `/` の 7 綴りで、途中の `.` / `..` (`././g`・`./g/../g`) は 0.31 でも正しく同じ module に解いて断っていた (0.32 は綴りを 1 つに決めるため、それも断る)。`extern pure` は 13 綴りすべてで通った。対戦場の対照 (箱 token × 手書きの攻め 12 本・0.31): 赤 9 点 (秘密が丸ごと盗まれる)・採点外 2 (実行器が道を解けない)・守る側 1。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "high",
+      "title": "守りの層を書く言語 Mamori で、印を受ける Mamori の関数を extern・正規でない道の綴りで引くと、引数の印の検めが外れた",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: ① 印を受ける引数を持つ Mamori の関数は `extern` で引けない (M4 —— `use` で引く)。印を受けない Mamori の関数を口として宣言する形 (`extern sink { writeExportFile } from \"./exportPaths\"` ほか実物 3 か所) は今までどおり ② `use` / `extern … from` / `export … from` の相対の道は正規の綴りだけ (`specifierProblem` · M6): `./` か `../` で始まる・空の区切りと末尾の `/` が無い・途中に `.` / `..` が無い (`../` は先頭にだけ並べる)・拡張子 (`.js` `.ts` `.mjs` `.cjs` `.jsx` `.tsx` `.mts` `.cts` `.mamori`) で終わらない ③ `X/index.mamori` が project に在るとき `./X` とは名指せない (M6 —— TypeScript は index に解く)。残り (測った): project の一部の .mamori だけをコンパイルに渡すと、渡していない Mamori module は外の module と見なされる (`npm run mamori:build` と検査は全件を渡す)。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV32.test.ts",
+        "test": "★ 印を受ける Mamori の関数を extern で引けない (外形の検めが外れる) (threat: T-262)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV32.test.ts",
+          "test": "★ 相対の道は正規の綴りだけ —— TypeScript が同じ module に解く別の綴りで外形を外せない (threat: T-262)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV32.test.ts",
+          "test": "★ `X/index.mamori` を `./X` と名指せない (TypeScript は index に解く)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV32.test.ts",
+          "test": "specifierProblem: 相対でない道は見ない・正規なら null・理由は 4 通り"
+        }
+      ]
+    },
+    {
+      "id": "T-263",
+      "found": "2026-11-11",
+      "foundBy": "MG-067 (言語の穴探しの周)。印が mint も来歴も通らずに付く形が 2 つ通った: ① 印を名乗る引数の既定値 —— `export sink fn out(u: V = JSON.parse(\"1\")) { return open(u); }`。0.22 は `x?: 印` を断ったが `x: 印 = 式` を見ておらず、Mamori の呼び手は引数を渡さないと断られるのに、TypeScript の呼び手は省け、既定値の any が印の型で口へ届く ② gate 関数の戻り値 —— `export gate fn g(s: string) -> V | null { return JSON.parse(s); }`。戻り値の式を検めておらず、mint を通らない値が印を名乗って関門から出た (条件演算子の片方・束縛を挟む形・別の印の gate の戻り値も同じ)。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "high",
+      "title": "守りの層を書く言語 Mamori で、印を名乗る引数の既定値と gate 関数の戻り値から、mint を通らない値 (any) が印の型で入れた",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: ① 印を名乗る引数 (fn・arrow とも) は既定値を持てない (M4 —— 既定値の式を 1 つずつ裁かず、印の引数は必ず呼び手が渡す) ② gate 関数の `return 式;` は `mint 印(…)`・その印を持つ値 (印を持つ束縛・引数・同じ印の gate の戻り値・await した値)・null / undefined の字面・両方の枝がそうである条件演算子だけ (`carriesOrEmpty` · M1)。印を持たない束縛を経由する形 (`let v = null; v = mint V(s); return v;`) は書けなくなった —— 実物の .mamori 42 本に該当は無い。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV32.test.ts",
+        "test": "★ gate 関数は、mint を通らない値を印の型で返せない (threat: T-263)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV32.test.ts",
+          "test": "★ 印を名乗る引数は既定値を持てない (TypeScript の呼び手が省くと、関門を通っていない値が印の型で入る) (threat: T-263)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV32.test.ts",
+          "test": "★ async の gate も同じ (await した値も来歴で見る)"
+        }
+      ]
+    },
+    {
+      "id": "T-264",
+      "found": "2026-11-12",
+      "foundBy": "MG-069 (資格情報の保管 secrets.ts を移す周) の「先に破る」段。モジュール直下の const を型を書かずに `new Map(…)` / `new Set(…)` で始めると、同じ module の無関係な関数からの `.set` / `.add` / `.delete` / `.clear` が、Mamori のコンパイラも生成物の tsc も通った (10 形: 直の書き換え・引数で渡して書き換え・オブジェクトの欄・配列の要素・三項・`Object.freeze(new Map())`・別名ほか)。実物では主プロセスの人の合図の門 `userPresence.mamori` の 3 つの表 (呼び出しの重み ACTION_WEIGHT・段ごとの頻度の上限 RATE_BY_TIER・予算 BUDGET_BY_TIER) がこの形だった。0.18 (T-258) の「残した物」は『Mamori は `new Map()` を持たない』と書いていたが、その前提は偽だった。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "守りの層を書く言語 Mamori が、型を書いていないモジュール直下の Map / Set (上限・重み・許可の表) を、同じ module のどの関数からも書き換えられる形で通した",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: 型を書いていないモジュール直下の const の初期値の中の `new Map(…)` / `new Set(…)` を断る (M6 · 0.33)。オブジェクトの欄・配列の要素・三項・呼び出しの引数に包んでも断り、`satisfies` は宣言の型に数えない。読むだけの表は `ReadonlyMap<…>` / `ReadonlySet<…>` と書く (書き換えは生成物を tsc が断る —— 3 形を実測)、書き換える状態 (進行中の処理の表) は `Map<…>` / `Set<…>` と型で名乗る。arrow の本体 (呼ぶたびに新しい入れ物) と関数の中の const は対象外。実物の userPresence.mamori の 3 つの表に ReadonlyMap の型を付けた (生成物の差は型の注釈だけ)。残る限界: 関数が返した Map を型なしの const で受ける形と、型で書き換えられると名乗った状態は、今も同じ module の関数から書き換えられる (配列の受け手の規則ほど厳しくない)。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV33.test.ts",
+        "test": "★ モジュール直下の const を型なしで new Map / Set で始めると断る (threat: T-264)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV33.test.ts",
+          "test": "★ 入れ物に包んでも断る: オブジェクトの欄・配列の要素・三項・呼び出しの引数・export (threat: T-264)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV33.test.ts",
+          "test": "★ `satisfies` は宣言の型ではない —— 束縛の型は推論のままなので断る (threat: T-264)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV33.test.ts",
+          "test": "★ 断りは直し方を名指しする: 読むだけなら Readonly の型・書き換えるなら型で名乗る (threat: T-264)"
+        }
+      ]
     }
   ],
   "huntBacklog": [

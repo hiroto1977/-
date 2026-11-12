@@ -92,7 +92,12 @@ export interface Param {
 export type Comments = readonly string[];
 
 export type Stmt =
-  | { readonly kind: 'let'; readonly mutable: boolean; readonly name: string; readonly type: TypeRef | null; readonly init: Expr | null; readonly comments: Comments; readonly pos: Pos }
+  /**
+   * `satisfies` (0.31 · MG-065) は **const の初期値の末尾にだけ**付けられる (`const x = 式 satisfies 型;`)。式の途中の演算子ではない ——
+   * 値を包む新しい種類の式を作ると、包みが inert (計算した鍵の添字の結果) や危ない口の名前を覆う道になる。束縛の印・inert・数の判定は
+   * 初期値の式だけから決まり、`satisfies` の型はどれにも触れない (型の検査だけで、実行時には何も残らない)。
+   */
+  | { readonly kind: 'let'; readonly mutable: boolean; readonly name: string; readonly type: TypeRef | null; readonly init: Expr | null; readonly satisfies: TypeRef | null; readonly comments: Comments; readonly pos: Pos }
   /**
    * `const { a, b: c } = 式;` (0.14 · MG-022)。**浅い分割だけ** —— 入れ子・既定値・残り (`...rest`)・計算した鍵・`let` は無い。
    * 鍵は `.` の後ろと同じ `FORBIDDEN_MEMBERS` を通る (`const { constructor } = x` は T-224 の表を迂回する道になるため)。
@@ -173,9 +178,39 @@ export type Item =
   | { readonly kind: 'vetted'; readonly exported: boolean; readonly name: string; readonly label: string; readonly doc: Doc; readonly pos: Pos }
   /** `type 名前 = 型;` (0.2)。`multiline` は元が先頭の `|` で書いた和の型 (変換も 1 行に 1 つずつ並べる)。 */
   | { readonly kind: 'type'; readonly exported: boolean; readonly name: string; readonly type: TypeRef; readonly multiline: boolean; readonly doc: Doc; readonly pos: Pos }
-  /** `interface 名前 { 欄; … }` (0.2)。欄は `///` の説明・`readonly`・`?` を持てる。 */
-  | { readonly kind: 'interface'; readonly exported: boolean; readonly name: string; readonly members: readonly Member[]; readonly doc: Doc; readonly pos: Pos }
-  | { readonly kind: 'const'; readonly exported: boolean; readonly name: string; readonly type: TypeRef | null; readonly init: Expr; readonly doc: Doc; readonly pos: Pos }
+  /** 欄は `///` の説明・`readonly`・`?` を持てる。 */
+  /**
+   * `interface 名前 { 欄; … }` (0.2)・`interface 名前 extends 基底 { … }` (0.30 · MG-061)。基底は名前 1 つだけ (型引数・複数は書けない)。
+   * 基底に置けるのは**先に宣言した interface か use で引いた名前**だけで、印の型・型の別名・関数・組み込みの型は断る (checker の M4 / M6)。
+   */
+  | {
+      readonly kind: 'interface';
+      readonly exported: boolean;
+      readonly name: string;
+      readonly base: { readonly name: string; readonly pos: Pos } | null;
+      readonly members: readonly Member[];
+      readonly doc: Doc;
+      readonly pos: Pos;
+    }
+  | { readonly kind: 'const'; readonly exported: boolean; readonly name: string; readonly type: TypeRef | null; readonly init: Expr; /** 初期値の末尾の `satisfies 型` (0.31)。無ければ null。 */ readonly satisfies: TypeRef | null; readonly doc: Doc; readonly pos: Pos }
+  /** モジュール直下の `let 名前: 型 = 初期値;` (0.28 · MG-058)。export できず、型の宣言が要る。書き換えられるのはこのモジュールの関数の中からだけ。 */
+  | { readonly kind: 'let'; readonly name: string; readonly type: TypeRef; readonly init: Expr; readonly doc: Doc; readonly pos: Pos }
+  /**
+   * `class N extends Error { constructor(引数) { super(式…); } }` (0.27 · MG-056)。**例外の型だけ** —— 基底は組み込みの `Error` ただ 1 つ・
+   * 欄もメソッドも静的な物も持たず、`this` は書けない (変換が `this.name = 'N'` を付ける)。使い道は `new N(…)` と `x instanceof N` だけで、
+   * `N` を値として持ち出す・`N.メンバ`・`N(…)` は断る (`N.captureStackTrace` のように `Error` の静的なメンバを継ぐ)。
+   * 他の Mamori の module から `use` では引けない (クラスは export の表に載らない) —— TypeScript の呼び手のための `export class` である。
+   */
+  | {
+      readonly kind: 'class';
+      readonly exported: boolean;
+      readonly name: string;
+      readonly params: readonly Param[];
+      /** `super(…)` の引数 (message など)。 */
+      readonly superArgs: readonly Expr[];
+      readonly doc: Doc;
+      readonly pos: Pos;
+    }
   | {
       readonly kind: 'fn';
       readonly exported: boolean;

@@ -18,7 +18,7 @@ describe('起動時の自己検算の配線', () => {
     const start = main.indexOf('app.whenReady().then(async () => {');
     expect(start).toBeGreaterThan(0);
     const body = main.slice(start);
-    const attest = body.indexOf('verifyShippedFiles(path.join(__dirname');
+    const attest = body.indexOf('await hostVerifyShipped()');
     const prefs = body.indexOf('await readWindowPrefs()');
     const window = body.indexOf('createWindow()');
     expect(attest).toBeGreaterThan(0);
@@ -28,11 +28,16 @@ describe('起動時の自己検算の配線', () => {
     expect(body.slice(0, attest)).toContain('if (app.isPackaged) {');
   });
 
+  it('★ 検算の根は main.js の 1 つ上 (host 壁が path.join(__dirname, ..) と実ファイル系で呼ぶ)', () => {
+    const host = stripComments(read('src/main/mainHost.ts'));
+    expect(host).toContain("verifyShippedFiles(path.join(__dirname, '..'), fsPromises)");
+  });
+
   it('★ 通らなければ理由を stderr に刷り、ダイアログを出して app.exit(1) で止まる (窓は作らない)', () => {
-    const start = main.indexOf('verifyShippedFiles(path.join(__dirname');
+    const start = main.indexOf('await hostVerifyShipped()');
     const block = main.slice(start, main.indexOf('createWindow()', start));
     expect(block).toContain('if (!verdict.ok) {');
-    expect(block).toContain("console.error(`[self-attestation] ${verdict.reason}: ${verdict.detail}`)");
+    expect(block).toContain("hostConsoleError('[self-attestation] ' + verdict.reason + ': ' + verdict.detail)");
     expect(block).toContain('dialog.showErrorBox(');
     expect(block).toContain('attestationMessage(verdict)');
     expect(block).toContain('app.exit(1);');

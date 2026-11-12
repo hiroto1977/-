@@ -67,7 +67,7 @@ function canonicalServiceList() {
 function canonicalIpcHandlerCount() {
   const src = read(path.join(REPO_ROOT, 'src/main/main.ts'));
   if (src == null) return null;
-  return [...src.matchAll(/^ipcMain\.handle\(/gm)].length;
+  return [...src.matchAll(/^\s*ipcMain\.handle\(/gm)].length;
 }
 
 function canonicalOAuthCount() {

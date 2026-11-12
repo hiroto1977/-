@@ -1040,9 +1040,9 @@ npm run dev              # Vite + Electron, hot reload (desktop dev)
 npm run build:web        # → dist/standalone.html (browser build; runs inline-html.cjs)
 npm run build:web:lite   # → dist/standalone-lite.html (~2MB モバイル版・学術コーパス非搭載)
 npm run e2e              # Playwright 実機 E2E (desktop/phone/tablet)。e2e:lite で LITE 版を検証
-                         #   **39 suite / 実測 722 件** (FULL・LITE とも・2026-11-07 の実測 —— 入力欄の固定で village suite +1・2026-11-06: 会話の場面で village suite +5・2026-11-05: 旧 UI (サイドバー・ドロワー・浮いた窓) の廃止で shell suite −27・design 32→20・controls 63→61・opened 155→135。777 は 2026-10-29 まで)。床は「黙って縮んだら落とす」ための物で、
+                         #   **39 suite / 実測 723 件** (FULL・LITE とも・2026-11-11 の実測 —— 窓を閉じた直後の「開いて」が消えないことで village suite +1・2026-11-07: 入力欄の固定で village suite +1・2026-11-06: 会話の場面で village suite +5・2026-11-05: 旧 UI (サイドバー・ドロワー・浮いた窓) の廃止で shell suite −27・design 32→20・controls 63→61・opened 155→135。777 は 2026-10-29 まで)。床は「黙って縮んだら落とす」ための物で、
                          #   **表に書くのは実測値ただ 1 つ、床は `floorOf()` が導く** (実測の 85%・切り捨て・最低 1。
-                         #   合計の床は実測合計の 85% = **646**)。2026-09-20 (パス 346) まで表は
+                         #   合計の床は実測合計の 85% = **614**)。2026-09-20 (パス 346) まで表は
                          #   **床と `// 実測 N` の 2 つを手書き**で持っており、実測すると 3 つの文がずれていた ——
                          #   `paperAccount` は注記 10 に対し実物 13 で、**その床 8 は実測の 62%** (5 件減っても鳴らない)、
                          #   `theme` の床 10 は 71%、runner の docblock は「実測 (合計 395 件) の 85%」と
@@ -1069,6 +1069,25 @@ npm run perf             # 起動性能ゲート (実 chromium)。起動時の�
 npm run e2e:ollama       # Ollama 連携 E2E (スタブ Ollama + 実 chromium)。未起動/CORS未許可/接続成功の3状態
                          #   ほか計 7 状態。**undici は CORS を実装しない**ので、no-cors の到達確認が壊れる形は
                          #   単体検査に映らない —— 実ブラウザでしか見えない退行はここだけが捕まえる (パス 304)
+npm run build:portal     # 社外向けポータルの単一 HTML を組む → dist/portal-partner.html / dist/portal-customer.html
+                         #   (2026-11-11 · docs/PORTALS.md)。**社内版 (build:web / build:web:lite) の後に組む** ——
+                         #   社内版の vite build は dist/ を掃除するのでポータルの HTML は消える (逆は消えない:
+                         #   build:portal は一時の場所へ組んでから仕上がった 1 ファイルだけを dist/ へ置く)。
+                         #   入口は社内版と別 (`src/renderer/portal/partnerMain.tsx` / `customerMain.tsx`) で、
+                         #   出す画面は台帳 `src/shared/portal.mamori` に名指しした物だけ。橋は
+                         #   `renderer/portal/portalShim.ts` (資格情報を預からない・網へ出ない・書き込まない)。
+                         #   CSP は `connect-src 'none'`・スクリプトは畳み込んだ 1 本のハッシュだけ。
+                         #   仕上がりに社内版だけの文面 (保管庫・社内版の橋・設定画面・AI へ送る経路・サイドバーの検索) が
+                         #   1 つでも在れば**書かずに落ちる**。取り込みの閉包は
+                         #   `src/renderer/portal/__tests__/portalBundleClosure.test.ts` が毎回の npm test で数える
+                         #   (カスタマーは全件名指し・パートナーは「入ってはいけない物 0 件」と目を引く物の台帳)。
+                         #   配る前に `src/renderer/portal/portalContent.ts` (いまは見本) を自社の内容へ書き換える
+npm run e2e:portal       # 組んだ 2 つのポータルを実 chromium で開く (並ぶ画面 = 台帳・社内の殻が無い・
+                         #   資格情報の欄が無い・社内の画面の id を打っても開かない・橋が断る・網へ出ない・
+                         #   CSP 違反と console エラーが 0 件・消す口が自分の鍵だけを消す・字と地の対比が AA を割らない)。
+                         #   **加えて社内版の中の入口** (`dist/standalone.html` の既定の殻のサイドバーと、村の殻 `?ui=village`) から
+                         #   3 つの一覧が開き、社外向けの一覧に台帳の画面だけが並ぶことを見る。
+                         #   3 つの HTML が要る (社内版 → ポータルの順に組む)。実測 79 件 (2026-11-11)。e2e.yml に入っている
 npm run ollama           # Ollama CLI (ブラウザ不要・CORS 無縁)。`-- chat <model> "..."` で対話
 npm run ollama:setup     # 導入→モデル取得→起動→1往復して確認。足りない段だけ埋める
 npm run local-llm:setup   # Linux: Ollama / VS Code / Continue / llama.cpp と安全なモデルを一括導入 (既定は計画の表示のみ・`-- --yes` で実行)。docs/LOCAL_LLM_SETUP.md
@@ -1558,7 +1577,7 @@ npm run lint:deps          # 依存の供給網 (本番依存の閉包 3 件 —
                            #   **`package.json` は鎖には入れない** —— 全履歴 12 コミットで
                            #   「安定資産」の基準 (パス 347) を満たさないので、門で形を見る
 npm run lint:storage       # ブラウザに残す物の台帳 (IndexedDB 4 / Cache Storage 1 /
-                           #   localStorage 24 / sessionStorage 4。cookie と OPFS は 0 件だが走査はする)。
+                           #   localStorage 25 / sessionStorage 4。cookie と OPFS は 0 件だが走査はする)。
                            #   新しい保存先が黙って増えないこと・バックアップが覆うのは 1 つだけ・
                            #   **媒体そのものが `docs/DATA_PROTECTION.md` の在庫に載っていること**・
                            #   **ハードリセット (すべてのデータを削除) が台帳の全行を覆うこと** (規則 11、パス 136)
@@ -1644,8 +1663,8 @@ npm run lint:zero-fold     # 「割れない値を 0 に倒す」箇所の**母�
                            #   母集団が 26 ファイル (実測 106) と 4 倍ずれていた
 npm run lint:shared-judgement # 「述語は共有したが、no と言われたあとの動作が両ビルドで
                            #   違う」の**母集団**を数え、`docs/REMAINING_WORK.md` の
-                           #   生成ブロックと突き合わせる (shared 180 / 両ビルドが
-                           #   import 97 / うち否定で答えられる 48。**この 3 つは
+                           #   生成ブロックと突き合わせる (shared 182 / 両ビルドが
+                           #   import 98 / うち否定で答えられる 48。**この 3 つは
                            #   live metric なので散文だけが古びることはもう無い** ——
                            #   2026-09-15 まで 138 / 44 / 21 と書いたままだった。
                            #   44 / 21 はパス 247 が初めて数えた値で、
@@ -1916,8 +1935,18 @@ The browser target adds: `web-shim.ts` (a `window.serviceHub` polyfill imported 
   来歴の規則を外す道 (risk) は `security/mamori-growth.json` が持ち、育てるのは週 1 の輪 (`npm run mamori:grow`) である。
 - **Mamori に関わる作業が終わる度に、言語の現在の完成度と次の作業の提案を利用者へ伝える** (2026-11-01 の依頼)。
   `npm run mamori:grow -- report` を走らせ、その出力 (版・守りの壁の移行率・構文の数・次の提案の順位) を報告の最後に付ける。
-  数は出力をそのまま使い、散文へ書き写さない。提案には先に塞ぐ道 (台帳の risk) を添える。週 1 の予約の指示文
+  数は出力をそのまま使い、散文へ書き写さない。出力には完成度の基準 (5 視点 × 15 基準・1.0 の条件は全基準が床以上 · `security/mamori-completeness.json`) の採点も載る —— 報告では合格した基準の数と床の下の基準を伝える (視点の平均 % は満点になりやすい基準に引き上げられる)。提案には先に塞ぐ道 (台帳の risk) を添える。週 1 の予約の指示文
   (`docs/MAMORI_GROWTH_PROMPT.md` の段 6) も同じ。
+- **事業の記録の正本は端末に置く —— クラウドに依る画面を足したら、提供者の台帳に行を足す** (2026-11-11 · `docs/CLOUD_CONTINUITY.md`)。
+  クラウドが止まったときの立ち位置は `src/shared/cloudContinuity.ts` が `SERVICE_DATA_ORIGIN` (`remote`) と `ACTION_TIER`
+  (`external-write` / `egress`) から導く (手で書かない)。クラウドに依る側に入ったサービスは `CLOUD_PROVIDERS` の行
+  (何を預けているか・止まったら何が起きるか・その間の続け方) に載せる —— 載せ忘れは `cloudContinuity.test.ts` が落とす。
+  「預かるデータを見る」以外の取得は、網が止まっていても端末の外へ出ず失敗しない (両ビルドの演習
+  `cloudOutageDrill.test.ts` / `cloudOutageDrillWeb.test.ts`)。**責任の所在は契約と法律で決まり、アプリは移せない** ——
+  画面や文書で「提供者が責任を負う」と書かない (`LIABILITY_NOTE`)。
+  クラウドへ置く控えは**暗号文だけ** (`renderer/data/encryptedCopy.ts` —— 書いたら読み戻して確かめる・パスフレーズは保存しない)。
+  クラウドから取得した内容を端末に保存しない —— 止まっている間に見せる「最後に取得できた内容」はメモリだけで、施錠で消す
+  (`renderer/data/lastGoodFetch.ts`)。
 - **対照を回すまで、検査は信用しない。** 守っている物を実際に壊し、狙った項目が
   落ちることを見る。**鳴らない対照は「合格」ではなく「その検査についての報せ」である。**
 

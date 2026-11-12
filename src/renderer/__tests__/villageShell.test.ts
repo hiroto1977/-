@@ -144,6 +144,48 @@ describe('村の殻 (?ui=village)', () => {
     expect(container.querySelector('[data-village-hall]')).toBeNull();
   });
 
+  // --- 自分が書いた hash の反響 (2026-11-11) ---------------------------------------------------
+  // 殻は「窓 → hash」を書き、「hash → 窓」を hashchange で聞く。hashchange は書いた後に遅れて届くので、
+  // その間に会話の「開いて」(まだ描かれていない状態の更新) が来ると、反響が古い綴りで上書きして
+  // 開く要求が消えていた (実 chromium で実測: 窓を閉じた直後の「開いて」で窓が開かない)。
+  it('★ 閉じた直後の「開いて」は消えない: 遅れて届いた自分の書き込みの反響は、状態を動かさない', async () => {
+    await mount('?ui=village');
+    await waitForElement(() => container.querySelector('[data-village-shell]'), '村の殻');
+    await act(async () => { navigateTo('settings'); });
+    const hall = await waitForElement(() => container.querySelector<HTMLElement>('[data-village-hall]'), '役場の窓');
+    await act(async () => { hall.querySelector<HTMLButtonElement>('[data-dialog-initial]')!.click(); });
+    expect(container.querySelector('[data-village-hall]')).toBeNull();
+    expect(location.hash).toBe('#village'); // 殻が書いた綴り。この書き込みの hashchange はまだ届いていない
+    // 反響が届く前に「開いて」が来る: 開く要求 → 古い綴り (#village) のままの hashchange、を同じ act の中で。
+    await act(async () => {
+      navigateTo('tax-accountant');
+      window.dispatchEvent(new HashChangeEvent('hashchange'));
+    });
+    const win = await waitForElement(() => container.querySelector<HTMLElement>('[data-village-window="tax-accountant"]'), '税理士の窓');
+    expect(win.getAttribute('aria-label')).toBe('税理士');
+    expect(location.hash).toBe('#tax-accountant');
+  });
+
+  it('★ 対照: 戻る → 進む は今までどおり効く (覚えるのは「最後に書いた綴り」ではなく「状態と揃っている綴り」)', async () => {
+    await mount('?ui=village');
+    await waitForElement(() => container.querySelector('[data-village-shell]'), '村の殻');
+    await act(async () => { navigateTo('tax-accountant'); });
+    await waitForElement(() => container.querySelector('[data-village-window="tax-accountant"]'), '税理士の窓');
+    expect(location.hash).toBe('#tax-accountant');
+    // 戻る: 村の綴りへ。状態 (税理士) と違う綴りなので、窓を閉じる。
+    await act(async () => {
+      window.location.hash = '#village';
+      window.dispatchEvent(new HashChangeEvent('hashchange'));
+    });
+    expect(container.querySelector('[data-village-hall]')).toBeNull();
+    // 進む: 殻が最後に**書いた**綴り (#tax-accountant) と同じだが、いまの状態 (村) とは違う —— 開く。
+    await act(async () => {
+      window.location.hash = '#tax-accountant';
+      window.dispatchEvent(new HashChangeEvent('hashchange'));
+    });
+    await waitForElement(() => container.querySelector('[data-village-window="tax-accountant"]'), '進むで開き直した窓');
+  });
+
   it('★ 知らない行き先・サイドバーに居ないサービスは無視する (窓は開かない)', async () => {
     await mount('?ui=village');
     await waitForElement(() => container.querySelector('[data-village-shell]'), '村の殻');

@@ -480,6 +480,32 @@ describe(`再戦と連打 (${LEVEL})`, () => {
     expect(rm.variantOf({ parts, op: 'concurrent', rng: evo.mulberry32(1) })).toBeNull();
   });
 
+  it('★ 包み直し (satisfy · 0.31): 動きの結果を satisfies で受けてから積む —— 箱の答えは親と同じ (値を変えない)・await の動きも・2 文の行は触らない', () => {
+    const v = rm.variantOf({ parts, op: 'satisfy', rng: evo.mulberry32(2) })!;
+    const changed = v.body.filter((l, i) => l !== parts.body[i]);
+    expect(changed).toHaveLength(1);
+    expect(changed[0]).toMatch(/^ {2}try \{ const sv = (lookup\("a"\)|check\("x"\)) satisfies unknown; r\.push\(sv\); \} catch \(e\) \{ r\.push\(e\); \}$/);
+    // 包んだ後も 1 行 1 動きの形のまま (次の再戦の親になれる)・同じ行をもう一度は包まない
+    const wrapped = rm.render({ head: parts.head, body: v.body });
+    expect(rm.parseAttack(wrapped)!.body).toEqual(v.body);
+    expect(rm.variantOf({ parts: { head: parts.head, body: changed }, op: 'satisfy', rng: evo.mulberry32(2) })).toBeNull();
+    // 箱へ撃つ: 親と同じ判定・同じ答え (satisfies は値を変えない)。対照: 包む式を別の値にすり替えると答えが変わる
+    const parent = play(VAULT, SEED_SRC);
+    const child = play(VAULT, wrapped);
+    expect(parent.verdict).toBe('held');
+    expect({ verdict: child.verdict, detail: child.detail }).toEqual({ verdict: parent.verdict, detail: parent.detail });
+    const swapped = play(VAULT, wrapped.replace(/const sv = .+? satisfies unknown;/, 'const sv = "zz" satisfies unknown;'));
+    expect(swapped.verdict).toBe('held');
+    expect(swapped.detail).not.toBe(parent.detail);
+    // await の動きも包める ・2 つの文を持つ行は対象外
+    const asyncParts = rm.parseAttack(evo.programOf('async-compare', [{ k: 'call', fn: 'checkAsync', args: ['"a"'], aw: true }], 'seed'))!;
+    const av = rm.variantOf({ parts: asyncParts, op: 'satisfy', rng: evo.mulberry32(1) })!;
+    expect(av.body[0]).toContain('const sv = await checkAsync("a") satisfies unknown;');
+    const two = '  try { r.push(lookup("a")); r.push(check("x")); } catch (e) { r.push(e); }';
+    expect(rm.variantOf({ parts: { head: parts.head, body: [two] }, op: 'satisfy', rng: evo.mulberry32(1) })).toBeNull();
+    expect(rm.OPS).toContain('satisfy');
+  }, 120_000);
+
   it('★ 重ね撃ち (stack): 別の変え方を 2〜3 回続けて掛ける (元より増える・同じ種は同じ・下限を満たさなければ null)', () => {
     const outs = Array.from({ length: 12 }, (_, i) => rm.variantOf({ parts, op: 'stack', rng: evo.mulberry32(i + 1) }));
     const ok = outs.filter(Boolean);

@@ -8,6 +8,7 @@ import {
   _resetDeviceStoreFailureForTests,
   currentDeviceStoreFailure,
 } from '../../data/deviceStoreFailure';
+import { forgetAllFetches, lastGoodFetch, rememberFetch, staleDataNote } from '../../data/lastGoodFetch';
 import type { FetchResult, ServiceId } from '../../../preload/bridgeTypes';
 
 // React 18 の act() 警告を抑止。
@@ -78,6 +79,8 @@ const errHub = (code: 'not_configured' | 'fetch_failed' | 'not_implemented', mes
 beforeEach(() => {
   setHub(undefined);
   _resetDeviceStoreFailureForTests();
+  // 最後に取得できた内容の覚えはモジュールの中に在る (メモリ)。前の検査の取得を持ち越さない。
+  forgetAllFetches();
 });
 
 describe('useServiceData — initial state', () => {
@@ -808,5 +811,106 @@ describe('payloadIsMock — 名乗りの読み方', () => {
     expect(await fetched(null)).toBe(false);
     expect(await fetched(42)).toBe(false);
     expect(await fetched('isMock')).toBe(false);
+  });
+});
+
+describe('クラウドが止まったとき —— 最後に取得できた内容を見せる (2026-11-11)', () => {
+  const AT = new Date(2026, 10, 11, 9, 5, 0).getTime();
+
+  it('★ 取得できた内容を覚え、開き直して取得が失敗したら、いつの内容かを名乗ってそれを見せる', async () => {
+    setHub(okHub({ v: 2 }));
+    const first = setup('github', { v: 1 });
+    await first.mount();
+    await first.refresh();
+    expect(first.ref.current.data).toEqual({ v: 2 });
+    first.unmount();
+    const at = lastGoodFetch('github')?.at ?? Number.NaN;
+    expect(lastGoodFetch('github')?.data).toEqual({ v: 2 });
+
+    setHub(errHub('fetch_failed', 'fetch failed'));
+    const again = setup('github', { v: 1 });
+    await again.mount();
+    expect(again.ref.current.data).toEqual({ v: 1 }); // 取得する前は同梱の見本
+    await again.refresh();
+    expect(again.ref.current.status).toBe('error');
+    expect(again.ref.current.data).toEqual({ v: 2 });
+    expect(again.ref.current.source).toBe('live');
+    expect(again.ref.current.payloadIsMock).toBe(false);
+    expect(again.ref.current.errorMessage).toBe(staleDataNote('fetch failed', at));
+    expect(again.ref.current.errorKind).toBe('network');
+    again.unmount();
+  });
+
+  it('★ IPC が reject したときも同じ (覚えが在ればそれを見せる)', async () => {
+    rememberFetch('github', { v: 7 }, AT);
+    setHub({
+      listConfigured: async () => [],
+      fetchSnapshot: async () => {
+        throw new Error('ipc channel closed');
+      },
+    });
+    const h = setup('github', { v: 1 });
+    await h.mount();
+    await h.refresh();
+    expect(h.ref.current.data).toEqual({ v: 7 });
+    expect(h.ref.current.source).toBe('live');
+    expect(h.ref.current.errorMessage).toBe(staleDataNote('ipc channel closed', AT));
+    h.unmount();
+  });
+
+  it('対照: 覚えが無ければ、失敗の文のまま同梱の見本を見せる', async () => {
+    setHub(errHub('fetch_failed', 'fetch failed'));
+    const h = setup('github', { v: 1 });
+    await h.mount();
+    await h.refresh();
+    expect(h.ref.current.data).toEqual({ v: 1 });
+    expect(h.ref.current.source).toBe('snapshot');
+    expect(h.ref.current.errorMessage).toBe('fetch failed');
+    h.unmount();
+  });
+
+  it('★ 資格情報が無いと断られたら、覚えを消して見せない', async () => {
+    rememberFetch('github', { v: 7 }, AT);
+    setHub(errHub('not_configured', 'トークン未設定'));
+    const h = setup('github', { v: 1 });
+    await h.mount();
+    await h.refresh();
+    expect(h.ref.current.data).toEqual({ v: 1 });
+    expect(h.ref.current.source).toBe('snapshot');
+    expect(h.ref.current.errorMessage).toBe('トークン未設定');
+    expect(h.ref.current.errorKind).toBe('auth');
+    expect(h.ref.current.isConfigured).toBe(false);
+    expect(lastGoodFetch('github')).toBeNull();
+    h.unmount();
+  });
+
+  it('★ 見本を名乗る内容 (isMock) は覚えない —— 次の失敗で見本を「最後に取得できた内容」として出さない', async () => {
+    setHub(okHub({ isMock: true, v: 3 }));
+    const first = setup('github', { v: 1 });
+    await first.mount();
+    await first.refresh();
+    expect(first.ref.current.payloadIsMock).toBe(true);
+    first.unmount();
+    expect(lastGoodFetch('github')).toBeNull();
+  });
+
+  it('★ クラウドから取得する画面でなければ覚えない', async () => {
+    setHub(okHub({ v: 5 }));
+    const h = setup('home', { v: 1 });
+    await h.mount();
+    await h.refresh();
+    h.unmount();
+    expect(lastGoodFetch('home')).toBeNull();
+  });
+
+  it('別のサービスの覚えを取り違えない', async () => {
+    rememberFetch('slack', { v: 9 }, AT);
+    setHub(errHub('fetch_failed', 'fetch failed'));
+    const h = setup('github', { v: 1 });
+    await h.mount();
+    await h.refresh();
+    expect(h.ref.current.data).toEqual({ v: 1 });
+    expect(h.ref.current.errorMessage).toBe('fetch failed');
+    h.unmount();
   });
 });

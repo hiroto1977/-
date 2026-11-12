@@ -734,6 +734,15 @@ const PROTECTED = [
   'src/main/oauthHost.ts',                  // その薄い壁 (env・乱数・SHA-256・Buffer・時計・URLSearchParams・http の待受・fetch・締切の口 · MG-050)
   'src/main/userPresence.mamori',           // 画面から独立した本人確認の門 (速度・予算・警戒・ロックアウト・要約の整え) の Mamori の元 (2026-11-10 · MG-054)
   'src/main/userPresenceHost.ts',           // その薄い壁 (時計・欄の読み・原型の読み・path.resolve · MG-054)
+  'src/main/main.mamori',                   // 主プロセスの入口 (窓の隔離設定・IPC の口の判断・起動時の自己検算の扱い) の Mamori の元 (2026-11-10 · MG-059)
+  'src/main/mainHost.ts',                   // その薄い壁 (env・パス・console・setTimeout・fetch・JSON・表の添字引き・electron の再輸出 · MG-059)
+  'src/main/secrets.mamori',                // 主プロセスの資格情報の保管 (書き込みの直列化・読めない保管ファイルを空と混ぜない・包みと有効時間・TokenSet の更新) の Mamori の元 (2026-11-12 · MG-069)
+  'src/main/secretsHost.ts',                // その薄い壁 (userData の道・OS キーチェーンの暗号化と復号・base64・byte 数・時計・console · MG-069)
+  'src/main/selfAttestation.mamori',        // 起動時の自己検算 (同梱物の sha256 を表と両方向に突き合わせる) の Mamori の元 (2026-11-12 · MG-068 · host の壁なし)
+  'src/renderer/network/proxy.mamori',      // BYO プロキシ (宛先の検査・封筒の解析・保存時 MAC) の Mamori の元 (2026-11-10 · MG-055)
+  'src/renderer/network/proxyHost.ts',      // その薄い壁 (IndexedDB・保管庫・fetch・Response・Headers · MG-055)
+  'src/renderer/security/webauthn.mamori',  // 生体認証ゲート (登録のオプション・base64url・fail-closed の verifyBiometric) の Mamori の元 (2026-11-10 · MG-057)
+  'src/renderer/security/webauthnHost.ts',  // その薄い壁 (乱数・btoa/atob・TextEncoder・credentials.create・PublicKeyCredential · MG-057)
   'src/renderer/oauth/pkceSessionHost.ts',  // sessionStorage の口 (薄い壁)
   'src/renderer/security/dataCrypto.mamori',     // レコード暗号の関門 (KDF 回数・塩・封筒の形) の Mamori の元 (2026-11-02 · MG-021)
   'src/renderer/security/dataCryptoHost.ts',     // WebCrypto / btoa の口 (薄い壁)
@@ -746,6 +755,8 @@ const PROTECTED = [
   // 「押しても何も出ない」がそのまま戻る)。import は 0 件なので閉包は閉じる。
   'src/renderer/data/localWrite.ts',        // localStorage 書き込みの唯一の入口と失敗の文面
   'src/renderer/fs/fsa.ts',                 // File System Access の書き出し口
+  'src/renderer/fs/fsa.mamori',             // 同じ物の元 (Mamori · 2026-11-10 · MG-063)
+  'src/renderer/fs/fsaHost.ts',             // その薄い壁 (フォルダ選択の口を取り出す・IndexedDB を開く / 消す / 1 件置く・読む・消す · MG-063)
   'src/renderer/network/liveRead.ts',       // ライブ取得の経路選択
   'src/renderer/data/assistantMarkdown.ts', // モデル応答を解析して画面へ出す唯一の場所
   'src/shared/ollama.ts',                   // Ollama の入口 (中身は ollamaCore)

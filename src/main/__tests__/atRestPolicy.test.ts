@@ -27,7 +27,12 @@ const PLAINTEXT_LEDGER: Record<string, string> = {
 };
 
 const STATE_PATH_DEF = /\bfunction (defaultStatePath|storePath|secretsPath)\(\): string\b/;
-const SEALS = /\bsealJsonDocument\(|\bsafeStorage\.encryptString(?:Async)?\(/;
+/**
+ * 封緘の口。`secrets.ts` は 2026-11-12 (MG-069) から Mamori の生成物で、OS キーチェーンの口は薄い壁 `secretsHost.ts` の
+ * `hostEncryptToBase64` に在る (`electron` は Mamori から直に読めない)。壁の名前だけを数えると、壁が暗号化をやめても
+ * 黙るので、壁の中身は下の `it` が別に見る。
+ */
+const SEALS = /\bsealJsonDocument\(|\bsafeStorage\.encryptString(?:Async)?\(|\bhostEncryptToBase64\(/;
 
 /**
  * 注記を落とす (説明の中で名前を挙げる箇所がある)。共有の字句解析器を通すので、
@@ -61,6 +66,16 @@ describe('main: 状態ファイルの封緘の台帳 (母集団は実装から)'
     ]) {
       expect(files, `${f} が走査に無い`).toContain(f);
     }
+  });
+
+  it('★ 薄い壁 hostEncryptToBase64 は OS キーチェーンで暗号化する (名前だけの封緘にしない)', () => {
+    const host = code(readOriginalSource(join(REPO, 'src/main/secretsHost.ts')));
+    const body = /export async function hostEncryptToBase64\([^)]*\)[^{]*\{([\s\S]*?)\n\}/.exec(host);
+    expect(body, 'secretsHost.ts に hostEncryptToBase64 が無い').not.toBeNull();
+    expect(body![1]).toContain('safeStorage.encryptStringAsync(');
+    // 壁を呼ぶのは secrets.ts だけ (他の状態ファイルが名前だけ借りて封緘を名乗らない)
+    const callers = MODULES.filter((m) => /\bhostEncryptToBase64\(/.test(code(readOriginalSource(join(REPO, m.file))))).map((m) => m.file);
+    expect(callers).toEqual(['src/main/secrets.ts']);
   });
 
   it('★ 封緘していない状態ファイルは、台帳に理由が無ければ落ちる', () => {

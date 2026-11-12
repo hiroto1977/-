@@ -287,6 +287,7 @@ const MIGRATED: readonly string[] = [
   'src/renderer/pages/__tests__/thirdPartyFieldCeiling.test.ts',
   'src/renderer/pages/__tests__/villageAiErrorFold.test.ts',
   'src/renderer/pages/__tests__/villageCrisisNoAi.test.ts',
+  'src/renderer/portal/__tests__/portalBundleClosure.test.ts',
   'src/shared/__tests__/absenceSampleCensus.test.ts',
   'src/shared/__tests__/advisorArrayBounds.test.ts',
   'src/shared/__tests__/advisorQuestionParity.test.ts',

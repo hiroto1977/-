@@ -21,7 +21,7 @@ describe('出力インターセプター (T-215) は全 action が通る漏斗�
     const handler = src.slice(src.indexOf("'action:invoke'"));
     const gate = handler.indexOf('outboundContentRefusal(serviceId, action, payload)');
     const presence = handler.indexOf('requirePresence(e, {');
-    const run = handler.indexOf('await fn({ token, payload: safePayload })');
+    const run = handler.indexOf('await runAction({ token: token, payload: safePayload })');
     expect(gate, '関門が呼ばれていない').toBeGreaterThan(0);
     expect(presence).toBeGreaterThan(gate);
     expect(run).toBeGreaterThan(gate);

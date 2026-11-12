@@ -935,6 +935,10 @@ describe('oauth:isSupported / oauth:authorize', () => {
     presenceRequests.length = 0;
     await invoke('oauth:authorize', 'github', 'abcdefgh.apps.googleusercontent.com');
     expect(presenceRequests[0]).toMatchObject({ channel: 'oauth:authorize', tier: 'credential-write' });
+    // 確認に出す文は全文で留める (MG-059 の変異検査: 連結の断片だけの toContain では空文字へ変えても通る)
+    expect(presenceRequests[0]).toMatchObject({
+      summary: 'github を、クライアント ID「abcdefgh.apps.googleusercontent.com」で認可します。心当たりが無ければ「実行しない」を選んでください。',
+    });
   });
 
   it('OAuth 設定が無いサービスは断る', async () => {

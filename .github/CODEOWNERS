@@ -95,6 +95,8 @@
 /src/main/main.ts @hiroto1977
 /src/main/oauth.ts @hiroto1977
 /src/main/secrets.ts @hiroto1977
+/src/main/secrets.mamori @hiroto1977
+/src/main/secretsHost.ts @hiroto1977
 /src/main/shellOpenGate.ts @hiroto1977
 /src/main/presenceWiring.ts @hiroto1977
 /src/main/windowOpen.ts @hiroto1977
@@ -138,6 +140,8 @@
 /src/renderer/data/localWrite.ts @hiroto1977
 /src/renderer/data/recordCipher.ts @hiroto1977
 /src/renderer/fs/fsa.ts @hiroto1977
+/src/renderer/fs/fsa.mamori @hiroto1977
+/src/renderer/fs/fsaHost.ts @hiroto1977
 /src/renderer/keyIntent.ts @hiroto1977
 /src/renderer/network/liveRead.ts @hiroto1977
 /src/renderer/network/proxy.ts @hiroto1977
@@ -150,6 +154,10 @@
 /src/main/oauthHost.ts @hiroto1977
 /src/main/userPresence.mamori @hiroto1977
 /src/main/userPresenceHost.ts @hiroto1977
+/src/main/main.mamori @hiroto1977
+/src/main/mainHost.ts @hiroto1977
+/src/renderer/network/proxy.mamori @hiroto1977
+/src/renderer/network/proxyHost.ts @hiroto1977
 /src/shared/privateTarget.mamori @hiroto1977
 /src/shared/scanTarget.mamori @hiroto1977
 /src/shared/scanTargetHost.ts @hiroto1977
@@ -178,6 +186,8 @@
 /src/renderer/security/vault.ts @hiroto1977
 /src/renderer/security/webCrypto.ts @hiroto1977
 /src/renderer/security/webauthn.ts @hiroto1977
+/src/renderer/security/webauthn.mamori @hiroto1977
+/src/renderer/security/webauthnHost.ts @hiroto1977
 /src/shared/advisorQuestionLimits.ts @hiroto1977
 /src/shared/ai/chat.ts @hiroto1977
 /src/shared/ai/credentials.ts @hiroto1977
@@ -196,6 +206,7 @@
 /src/shared/promptInjection.ts @hiroto1977
 # 起動時の自己検算 (2026-10-29 · パス 553 · threat: T-218)。表の書き手と読み手は同じ算法の写し。
 /src/main/selfAttestation.ts @hiroto1977
+/src/main/selfAttestation.mamori @hiroto1977
 /scripts/build-integrity-manifest.cjs @hiroto1977
 /src/main/__tests__/selfAttestation.test.ts @hiroto1977
 # 送り先の変更に持ち主の確認 (2026-10-29 · パス 554 · threat: T-219)。判定と文面 (鎖の保護対象) と回帰検査。

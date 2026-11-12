@@ -82,7 +82,7 @@ const LEDGER: readonly Row[] = [
     why: '資格情報の束を置き換える確認に、送り先のホストを見せるためだけに取り出す (T-181)。通信しない・送り先を決めない (決めるのは aiEndpoint の関門)。読めない URL は「(読めない URL)」と見せる' },
   { file: 'src/shared/ai/credentials.ts', needle: 'host = new URL(url as string).hostname;', kind: 'display',
     why: '保存した Ollama の URL から、断りに名乗るホスト名だけを取り出す (ループバックは null)。送り先そのものは providers.ts の assertOllamaHostAllowed が決め、ここは通信しない (T-119)' },
-  { file: 'src/renderer/network/proxy.ts', needle: 'parsed = new URL(targetUrl)', kind: 'predicate',
+  { file: 'src/renderer/network/proxy.ts', needle: 'return new URL(targetUrl);', kind: 'predicate',
     why: '送り先が private / reserved かを判定するだけ' },
   { file: 'src/renderer/oauth/callbackPaste.ts', needle: 'parsed = new URL(trimmed)', kind: 'predicate',
     why: '貼り付けられた URI の種別 (callback / no-callback) を返すだけ' },
