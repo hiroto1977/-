@@ -1781,8 +1781,8 @@
       "why": "1 ファイルずつの sha256 照合の不一致判定を外す —— 同梱ファイルを 1 つ書き換えられても起動して UI を出す穴 (Linux の唯一の段) を開け直す",
       "edits": [
         {
-          "find": "if (r.hash !== manifest.files[rel]) return",
-          "replace": "if (false) return"
+          "find": "    if (r.hash !== expected.get(rel)) return",
+          "replace": "    if (false) return"
         }
       ]
     },
@@ -1961,8 +1961,8 @@
       "why": "入口 (package.json の main) の検めを殺す —— main を別の出荷物へすげ替える 2 ファイル改竄が通る S2 の穴を開け直す",
       "edits": [
         {
-          "find": "    if (main !== ENTRY_POINT) return { ok: false, reason: 'bad-entry-point', detail: 'package.json' };",
-          "replace": "    if (false && main !== ENTRY_POINT) return { ok: false, reason: 'bad-entry-point', detail: 'package.json' };"
+          "find": "    if (entryPoint !== ENTRY_POINT) return { ok: false, reason: 'bad-entry-point', detail: 'package.json' };",
+          "replace": "    if (false && entryPoint !== ENTRY_POINT) return { ok: false, reason: 'bad-entry-point', detail: 'package.json' };"
         }
       ]
     },

@@ -12,6 +12,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
   attestationMessage,
   buildManifest,
+  listFilesUnderRoots,
   listShippedFiles,
   ALLOWED_ROOT_ENTRIES,
   MANIFEST_FILE,
@@ -106,6 +107,49 @@ describe('出荷物の歩き', () => {
     await fsp.rm(path.join(root, 'build'), { recursive: true });
     expect((await listShippedFiles(root, make(MAX_SHIPPED_FILES))).length).toBe(MAX_SHIPPED_FILES);
     await expect(listShippedFiles(root, make(MAX_SHIPPED_FILES + 1))).rejects.toThrow();
+    // 投げた物は名前で見分けられる (MG-068: Mamori の class は name を明示して立てる)。
+    await expect(listShippedFiles(root, make(MAX_SHIPPED_FILES + 1))).rejects.toMatchObject({ name: 'TooManyFilesError' });
+  });
+
+  it('★ 件数の天井は根と入れ子をまたいで数える (MG-068: 歩きが配列を返す形にしたので、合計を運ぶ)', async () => {
+    // 偽の木: dist の直下に a 件・dist/sub に b 件・dist/sub/deep に c 件・dist-electron に d 件 (build は無い)
+    const make = (a: number, b: number, c: number, d: number, subFirst = false): AttestationFs => {
+      const dist = path.join(root, 'dist');
+      const sub = path.join(dist, 'sub');
+      const deep = path.join(sub, 'deep');
+      const de = path.join(root, 'dist-electron');
+      const names = (n: number): string[] => Array.from({ length: n }, (_, i) => `f${i}.js`);
+      const dirs = new Map<string, string[]>([
+        [dist, subFirst ? ['sub', ...names(a)] : [...names(a), 'sub']],
+        [sub, [...names(b), 'deep']],
+        [deep, names(c)],
+        [de, names(d)],
+      ]);
+      return {
+        readdir: (p) => Promise.resolve(dirs.get(p) ?? []),
+        stat: (p) => {
+          if (dirs.has(p)) return Promise.resolve({ size: 0, isFile: () => false, isDirectory: () => true });
+          if (p.endsWith('.js')) return Promise.resolve({ size: 1, isFile: () => true, isDirectory: () => false });
+          return Promise.reject(new Error('ENOENT'));
+        },
+        readFile: () => Promise.resolve(new Uint8Array()),
+      };
+    };
+    const M = MAX_SHIPPED_FILES;
+    // 入れ子: 3 段に分けて合計ちょうど → 歩ける / 最後の段で 1 つ超え → 投げる
+    expect((await listShippedFiles(root, make(4000, 3000, 3000, 0))).length).toBe(M);
+    await expect(listShippedFiles(root, make(4000, 3000, 3001, 0))).rejects.toThrow();
+    // 直下のファイルを先に数えた分を、入れ子の歩きへ運ぶ (sub の中で天井を超える)
+    expect((await listShippedFiles(root, make(1, M - 1, 0, 0))).length).toBe(M);
+    await expect(listShippedFiles(root, make(1, M, 0, 0))).rejects.toThrow();
+    // 入れ子から戻った後の直下のファイルでも合計を見る (sub の中で数えた分を親が忘れない)
+    expect((await listShippedFiles(root, make(1, M - 1, 0, 0, true))).length).toBe(M);
+    await expect(listShippedFiles(root, make(1, M, 0, 0, true))).rejects.toThrow();
+    // 2 つの根: 1 つ目の根で数えた分を 2 つ目の根へ運ぶ
+    expect((await listShippedFiles(root, make(6000, 0, 0, 4000))).length).toBe(M);
+    await expect(listShippedFiles(root, make(6000, 0, 0, 4001))).rejects.toThrow();
+    // 対照: どの段も天井の内側なら、合計が天井ちょうどでも投げない (段ごとに数え直していない)
+    expect((await listShippedFiles(root, make(M - 2, 1, 1, 0))).length).toBe(M);
   });
 
   it('根が無ければその根は空 (ビルド前の木でも歩ける)', async () => {
@@ -132,6 +176,10 @@ describe('manifest の形', () => {
       },
     };
     await expect(buildManifest(root, big)).rejects.toThrow('dist-electron/preload.js');
+    // 文は 1 文まるごと (MG-068: template を + の連結へ書き直したので、繋ぎ目の 3 片を値ごと留める)。
+    await expect(buildManifest(root, big)).rejects.toThrow(
+      new Error('dist-electron/preload.js は ' + (MAX_SHIPPED_FILE_BYTES + 1) + ' byte で天井 ' + MAX_SHIPPED_FILE_BYTES + ' を超えている'),
+    );
   });
 
   it('組んだ表は往復で同じ物に戻り、鍵は昇順・root は files から導いた値', async () => {
@@ -279,7 +327,36 @@ describe('検算', () => {
     await fsp.writeFile(path.join(root, 'package.json'), '{"name":"x"}');
     expect(refusal(await verifyShippedFiles(root, fsp)).reason).toBe('bad-entry-point');
     await fsp.rm(path.join(root, 'package.json'));
-    expect(refusal(await verifyShippedFiles(root, fsp)).reason).toBe('bad-entry-point');
+    expect(refusal(await verifyShippedFiles(root, fsp))).toEqual({ ok: false, reason: 'bad-entry-point', detail: 'package.json' });
+  });
+
+  it('★ package.json が天井を超えていれば読まずに bad-entry-point (ちょうど天井は読む · MG-068 の変異検査が教えた未到達)', async () => {
+    await writeManifest();
+    const reads: string[] = [];
+    const sized = (size: number): AttestationFs => ({
+      readdir: (p) => fsp.readdir(p),
+      readFile: (p) => {
+        reads.push(path.basename(p));
+        return fsp.readFile(p);
+      },
+      stat: async (p) => {
+        const st = await fsp.stat(p);
+        return p === path.join(root, 'package.json') ? { size, isFile: () => true, isDirectory: () => false } : st;
+      },
+    });
+    // 中身は正しい入口のまま —— 断るのは大きさだけである (門を外すと通ってしまう)。
+    expect(refusal(await verifyShippedFiles(root, sized(MAX_MANIFEST_BYTES + 1)))).toEqual({ ok: false, reason: 'bad-entry-point', detail: 'package.json' });
+    expect(reads).not.toContain('package.json');
+    reads.length = 0;
+    expect((await verifyShippedFiles(root, sized(MAX_MANIFEST_BYTES))).ok).toBe(true);
+    expect(reads).toContain('package.json');
+  });
+
+  it('★ 許された根が 1 つ無くても検算は通る (build/ を同梱しない木 · 無い根は歩かない)', async () => {
+    await fsp.rm(path.join(root, 'build'), { recursive: true });
+    await writeManifest();
+    expect(await listFilesUnderRoots(root, fsp)).toEqual(['dist-electron/main.js', 'dist-electron/preload.js', 'dist/assets/index-abc.js', 'dist/index.html']);
+    expect((await verifyShippedFiles(root, fsp)).ok).toBe(true);
   });
 
   it('★ 許された根 build/ の中へ足した物は file-unlisted —— 根の名前 build を許すだけで中を見ていなかった穴 (threat: T-228 の M1)', async () => {
@@ -371,5 +448,61 @@ describe('検算', () => {
     const reasons = ['manifest-missing', 'manifest-too-large', 'manifest-malformed', 'file-missing', 'file-unlisted', 'file-too-large', 'too-many-files', 'hash-mismatch', 'unreadable'] as const;
     const texts = reasons.map((reason) => attestationMessage({ ok: false, reason, detail: 'x' }));
     expect(new Set(texts).size).toBe(reasons.length);
+  });
+
+  it('★ 断りの文は理由ごとに決まった 1 文 (MG-068: 表を switch に書き直したので、10 通りを値ごと留める)', () => {
+    const TEXT: Readonly<Record<Extract<AttestationVerdict, { ok: false }>['reason'], string>> = {
+      'manifest-missing': '検算表が見つからないか読めません',
+      'manifest-too-large': '検算表が大きすぎます',
+      'manifest-malformed': '検算表の形が正しくありません',
+      'file-missing': '検算表に在るファイルが見つかりません',
+      'file-unlisted': '検算表に無いファイルが同梱されています',
+      'file-too-large': 'ファイルが大きすぎて検算できません',
+      'too-many-files': '同梱されたファイルが多すぎます',
+      'hash-mismatch': 'ファイルの中身が組んだときと違います',
+      'bad-entry-point': 'アプリの入口 (package.json の main) が組んだときと違います',
+      unreadable: 'ファイルを読めません',
+    };
+    const reasons = Object.keys(TEXT) as (keyof typeof TEXT)[];
+    expect(reasons.length).toBe(10);
+    for (const reason of reasons) {
+      expect(attestationMessage({ ok: false, reason, detail: 'dist/a.js' }), reason).toBe(
+        `アプリのファイルが組んだときと違うため、安全のため起動しません。\n理由: ${TEXT[reason]} (dist/a.js)\n配布元からインストールし直してください。`,
+      );
+    }
+  });
+});
+
+describe('検算表の鍵 __proto__ (MG-068 · 書き直しで厳しくなった 1 点)', () => {
+  // 元の実装は `files['__proto__'] = ハッシュ` が何も書かないので、その鍵を黙って落として残りで通していた。
+  // JSON.parse は `__proto__` を自分の鍵として作るので、文字列で組む (オブジェクトの字面では原型の差し替えになる)。
+  const withProtoKey = (files: Readonly<Record<string, string>>, root: string, hash: string): string => {
+    const body = [`"__proto__":"${hash}"`, ...Object.entries(files).map(([k, v]) => `${JSON.stringify(k)}:"${v}"`)].join(',');
+    return `{"version":1,"algorithm":"sha256","files":{${body}},"root":"${root}"}`;
+  };
+
+  it('★ 鍵を除いた root で組んだ表は manifest-malformed (元は通していた)', async () => {
+    const m = await buildManifest(root, fsp);
+    const hash = Object.values(m.files)[0] ?? '';
+    await fsp.writeFile(path.join(root, MANIFEST_FILE), withProtoKey(m.files, m.root, hash));
+    expect(refusal(await verifyShippedFiles(root, fsp))).toEqual({ ok: false, reason: 'manifest-malformed', detail: MANIFEST_FILE });
+  });
+
+  it('★ 鍵を含めて root を計算し直した表は file-missing: __proto__ (同梱物にその名前は置けない)', async () => {
+    const m = await buildManifest(root, fsp);
+    const hash = Object.values(m.files)[0] ?? '';
+    const files: Record<string, string> = Object.fromEntries([['__proto__', hash], ...Object.entries(m.files)]);
+    expect(Object.keys(files)).toContain('__proto__');
+    const text = withProtoKey(m.files, manifestRoot(files), hash);
+    expect(Object.keys(parseManifest(text)?.files ?? {})).toContain('__proto__');
+    await fsp.writeFile(path.join(root, MANIFEST_FILE), text);
+    expect(refusal(await verifyShippedFiles(root, fsp))).toEqual({ ok: false, reason: 'file-missing', detail: '__proto__' });
+  });
+
+  it('対照: 同じ組み立てで鍵を足さなければ通る (断ったのは鍵のせい)', async () => {
+    const m = await buildManifest(root, fsp);
+    const body = Object.entries(m.files).map(([k, v]) => `${JSON.stringify(k)}:"${v}"`).join(',');
+    await fsp.writeFile(path.join(root, MANIFEST_FILE), `{"version":1,"algorithm":"sha256","files":{${body}},"root":"${m.root}"}`);
+    expect((await verifyShippedFiles(root, fsp)).ok).toBe(true);
   });
 });

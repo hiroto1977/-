@@ -74,6 +74,16 @@
         "showItemInFolderVetted(VettedShellPath)"
       ]
     },
+    "src/main/selfAttestation.mamori": {
+      "externals": [],
+      "imports": [
+        "node:crypto: createHash",
+        "node:path: default path",
+        "node:util: TextDecoder, TextEncoder"
+      ],
+      "gates": [],
+      "sinks": []
+    },
     "src/main/shellOpenGate.mamori": {
       "externals": [],
       "imports": [

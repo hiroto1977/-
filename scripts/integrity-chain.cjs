@@ -736,6 +736,7 @@ const PROTECTED = [
   'src/main/userPresenceHost.ts',           // その薄い壁 (時計・欄の読み・原型の読み・path.resolve · MG-054)
   'src/main/main.mamori',                   // 主プロセスの入口 (窓の隔離設定・IPC の口の判断・起動時の自己検算の扱い) の Mamori の元 (2026-11-10 · MG-059)
   'src/main/mainHost.ts',                   // その薄い壁 (env・パス・console・setTimeout・fetch・JSON・表の添字引き・electron の再輸出 · MG-059)
+  'src/main/selfAttestation.mamori',        // 起動時の自己検算 (同梱物の sha256 を表と両方向に突き合わせる) の Mamori の元 (2026-11-12 · MG-068 · host の壁なし)
   'src/renderer/network/proxy.mamori',      // BYO プロキシ (宛先の検査・封筒の解析・保存時 MAC) の Mamori の元 (2026-11-10 · MG-055)
   'src/renderer/network/proxyHost.ts',      // その薄い壁 (IndexedDB・保管庫・fetch・Response・Headers · MG-055)
   'src/renderer/security/webauthn.mamori',  // 生体認証ゲート (登録のオプション・base64url・fail-closed の verifyBiometric) の Mamori の元 (2026-11-10 · MG-057)

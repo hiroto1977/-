@@ -1,3 +1,5 @@
+// 生成物 —— src/main/selfAttestation.mamori から Mamori のコンパイラが組んだ。手で編集しない (`npm run mamori:build`)。
+// 言語の仕様は docs/MAMORI.md。生成物が元と食い違えば src/shared/mamori/__tests__/mamoriGenerated.test.ts が落ちる。
 /**
  * **起動時の自己検算** —— 梱包した実物が、組んだときの物と 1 byte も違わないことを、窓を作る前に確かめる
  * (2026-10-29 · パス 553 · threat: T-218)。
@@ -56,12 +58,30 @@
  *   (CI の単一 HTML の天井と同じ数)。超えていれば読まずに断る。
  * - 算法は `scripts/build-integrity-manifest.cjs` と**同じ 1 つ** (`.cjs` は `.ts` を require できないので写し)。
  *   同じ標本で 1 字も違わないことは `selfAttestationParity.test.ts` が留める (法則 `copy-pinned-by-parity`)。
+ *
+ * ## Mamori へ移植 (MG-068 · 2026-11-12)
+ *
+ * 元は TypeScript。判定は下の 1 つを除いて変えていない —— 元の実装と生成物を、乱数で組んだ木・壊した検算表・件数の天井の
+ * 前後 (9,999〜10,002 件を 1 つの根 / 入れ子 / 2 つの根に分けて) で突き合わせ、34,046 通りで答えの差は 0 件だった (2026-11-12 実測)。
+ * Mamori は計算した鍵の添字 (`files[rel]`) を持たない —— `out["__proto__"]` で原型を差し替えられるため (M6) ——
+ * ので、表の読み書きを 3 つ書き直した: ① 表を組む所は組 (`[道, ハッシュ]`) を並べて `Object.fromEntries` ②
+ * 表を引く所は `new Map(Object.entries(表))` の `get` ③ 理由の文は `switch`。並べ替えは、この関数の中で作った
+ * 配列にだけ `.sort()` を掛ける (引数の配列を並べ替えない · 0.18)。
+ *
+ * ★ 書き直しで答えが変わる入力が 1 つ在る (厳しくなる向き · 実測): 検算表の `files` が鍵 `__proto__` を持つとき。
+ *   元は `files['__proto__'] = ハッシュ` が何も書かない (原型の setter が文字列を捨てる) ので、その鍵を黙って落とし、
+ *   残りの鍵で計算した root と合えば検算を通していた (`ok: true`)。今はその鍵が自分の鍵として残るので、同じ表は
+ *   root が合わず `manifest-malformed`、鍵を含めて root を計算し直した表は `file-missing: __proto__` で断る
+ *   (同梱物の根にその名前は置けない)。`selfAttestation.test.ts` が両方を留める。
  */
+
 import { createHash } from 'node:crypto';
 import path from 'node:path';
+import { TextDecoder, TextEncoder } from 'node:util';
 
 /** manifest の置き場 (アプリの根からの相対)。出荷物の歩きからは**この 1 つだけ**を外す。 */
 export const MANIFEST_FILE = 'dist-electron/integrity.json';
+
 /**
  * 出荷物の入口 (package.json の `main`)。梱包版の package.json はこれを指し、この検算はこの main.js の中に在る
  * (2026-10-30 · パス 566 · threat: T-228)。package.json は manifest に載せられない (builder が
@@ -69,12 +89,16 @@ export const MANIFEST_FILE = 'dist-electron/integrity.json';
  * すげ替える 2 ファイル改竄を断る。限界は docblock 参照 (入口を入口の中から検める構造上の穴)。
  */
 export const ENTRY_POINT = 'dist-electron/main.js';
+
 /** manifest の形の版。形を変えたら上げる (古い版は「読めない」として断る)。 */
 export const MANIFEST_VERSION = 1;
+
 /** ハッシュの算法 (Node の `createHash` の名前)。 */
 export const HASH_ALGORITHM = 'sha256';
+
 /** 出荷物の根 (再帰で歩く)。`electron-builder.json` の `files` と同じ 2 つ。 */
 export const SHIPPED_DIRS: readonly string[] = ['dist', 'dist-electron'];
+
 /**
  * 出荷物の単独のファイル。`electron-builder.json` の `files` は `package.json` も挙げるが、**表には載せない** ——
  * electron-builder は梱包時に package.json を書き換える (scripts / devDependencies を落とした 503 byte の物を入れる ·
@@ -83,18 +107,22 @@ export const SHIPPED_DIRS: readonly string[] = ['dist', 'dist-electron'];
  * 走らない —— 容器の中から容器の入口を検めることは構造上できない (docblock の「限界」)。根の一覧には居てよい。
  */
 export const SHIPPED_FILES: readonly string[] = ['build/icon.png'];
+
 /**
  * 容器 (app.asar) の根に居てよい物。これ以外が根に在れば断る —— 表に載らない場所へ置いた物も「同梱できない」。
  * `electron-builder.json` は `!node_modules/**` で依存を外している (主プロセスも preload も node の組み込みと
  * `electron` しか require しない —— `selfAttestationWiring.test.ts` が束を読んで留める)。
  */
 export const ALLOWED_ROOT_ENTRIES: readonly string[] = ['build', 'dist', 'dist-electron', 'package.json'];
+
 /** 1 ファイルの大きさの天井 (byte)。超えていれば読まずに断る。 */
 export const MAX_SHIPPED_FILE_BYTES = 16 * 1024 * 1024;
+
 /** manifest そのものの天井 (byte)。出荷物は 10 件台なので 1 MiB は 1 万件分の余裕。 */
 export const MAX_MANIFEST_BYTES = 1024 * 1024;
+
 /** 出荷物の件数の天井。歩きが暴走しない床 (asar に 1 万件が入る形は出荷の形ではない)。 */
-export const MAX_SHIPPED_FILES = 10_000;
+export const MAX_SHIPPED_FILES = 10000;
 
 export interface IntegrityManifest {
   readonly version: number;
@@ -107,9 +135,9 @@ export interface IntegrityManifest {
 
 /** 検算が使う最小のファイル API (Electron の asar も Node の `fs/promises` もこの形を持つ)。 */
 export interface AttestationFs {
-  readFile(p: string): Promise<Uint8Array>;
-  stat(p: string): Promise<{ readonly size: number; isFile(): boolean; isDirectory(): boolean }>;
-  readdir(p: string): Promise<string[]>;
+  readFile: (p: string) => Promise<Uint8Array>;
+  stat: (p: string) => Promise<{ readonly size: number; isFile: () => boolean; isDirectory: () => boolean }>;
+  readdir: (p: string) => Promise<string[]>;
 }
 
 export type AttestationReason =
@@ -129,6 +157,7 @@ export type AttestationVerdict =
   | { readonly ok: false; readonly reason: AttestationReason; readonly detail: string };
 
 const HEX_SHA256 = /^[0-9a-f]{64}$/;
+
 /** manifest の鍵に許す綴り (posix の相対パス・`..` と先頭の `/` は形で落ちる)。 */
 const SAFE_REL_PATH = /^[A-Za-z0-9_][A-Za-z0-9_.-]*(\/[A-Za-z0-9_.-]+)*$/;
 
@@ -138,15 +167,22 @@ export function sha256Hex(bytes: Uint8Array): string {
 
 /** `files` の root: 鍵を昇順に並べ `path\nhash\n` で繋いだ文字列の sha256。 */
 export function manifestRoot(files: Readonly<Record<string, string>>): string {
-  const lines = Object.keys(files)
-    .sort()
-    .map((p) => `${p}\n${files[p]}\n`)
-    .join('');
+  const keys = [...Object.keys(files)];
+  keys.sort();
+  const byPath = new Map(Object.entries(files));
+  const lines = keys.map((p) => p + '\n' + byPath.get(p) + '\n').join('');
   return sha256Hex(new TextEncoder().encode(lines));
 }
 
 function toPosix(rel: string): string {
   return rel.split(path.sep).join('/');
+}
+
+/** 歩いて集めた道から manifest 自身を外し、昇順に並べる (並べるのはここで作った配列だけ)。 */
+function withoutManifestSorted(found: readonly string[]): string[] {
+  const kept = [...found.filter((p) => p !== MANIFEST_FILE)];
+  kept.sort();
+  return kept;
 }
 
 /**
@@ -157,12 +193,18 @@ export async function listShippedFiles(appRoot: string, fs: AttestationFs): Prom
   const out: string[] = [];
   for (const d of SHIPPED_DIRS) {
     const abs = path.join(appRoot, d);
-    if (await exists(fs, abs)) await walkFiles(abs, appRoot, fs, out);
+    if (await exists(fs, abs)) {
+      for (const f of await walkFiles(abs, appRoot, fs, out.length)) {
+        out.push(f);
+      }
+    }
   }
   for (const f of SHIPPED_FILES) {
-    if (await exists(fs, path.join(appRoot, f))) out.push(f);
+    if (await exists(fs, path.join(appRoot, f))) {
+      out.push(f);
+    }
   }
-  return out.filter((p) => p !== MANIFEST_FILE).sort();
+  return withoutManifestSorted(out);
 }
 
 /**
@@ -183,31 +225,51 @@ export async function listFilesUnderRoots(appRoot: string, fs: AttestationFs): P
   const out: string[] = [];
   for (const entry of ALLOWED_ROOT_ENTRIES) {
     const abs = path.join(appRoot, entry);
-    if (!(await exists(fs, abs))) continue;
+    if (!await exists(fs, abs)) {
+      continue;
+    }
     const st = await fs.stat(abs);
     // 根に居てよい**ファイル** (package.json) は manifest に載らない (builder が書き換える) ので歩かない ——
     // その代わり `main` の値だけを verifyShippedFiles が別に検める。ディレクトリだけを丸ごと歩く。
-    if (st.isDirectory()) await walkFiles(abs, appRoot, fs, out);
+    if (st.isDirectory()) {
+      for (const f of await walkFiles(abs, appRoot, fs, out.length)) {
+        out.push(f);
+      }
+    }
   }
-  return out.filter((p) => p !== MANIFEST_FILE).sort();
+  return withoutManifestSorted(out);
 }
 
-/** 1 つのディレクトリを再帰で歩き、ファイルの相対パス (posix) を `out` に積む。件数の天井で暴走を止める。 */
-async function walkFiles(dir: string, appRoot: string, fs: AttestationFs, out: string[]): Promise<void> {
-  // 歩く順は呼び手の `.sort()` が決めるので、ここでは並べない (並べても答えは変わらない —— 等価の形は持たない)
+/**
+ * 1 つのディレクトリを再帰で歩き、ファイルの相対パス (posix) を返す。件数の天井で暴走を止める ——
+ * `already` は呼び手がここまでに集めた件数で、合計が天井を超えた時点で投げる。
+ */
+async function walkFiles(dir: string, appRoot: string, fs: AttestationFs, already: number): Promise<string[]> {
+  // 歩く順は呼び手の並べ替えが決めるので、ここでは並べない (並べても答えは変わらない —— 等価の形は持たない)
+  const found: string[] = [];
   for (const name of await fs.readdir(dir)) {
     const abs = path.join(dir, name);
     const st = await fs.stat(abs);
     if (st.isDirectory()) {
-      await walkFiles(abs, appRoot, fs, out);
+      for (const f of await walkFiles(abs, appRoot, fs, already + found.length)) {
+        found.push(f);
+      }
     } else if (st.isFile()) {
-      out.push(toPosix(path.relative(appRoot, abs)));
-      if (out.length > MAX_SHIPPED_FILES) throw new TooManyFilesError();
+      found.push(toPosix(path.relative(appRoot, abs)));
+      if (already + found.length > MAX_SHIPPED_FILES) {
+        throw new TooManyFilesError();
+      }
     }
   }
+  return found;
 }
 
-class TooManyFilesError extends Error {}
+class TooManyFilesError extends Error {
+  constructor() {
+    super();
+    this.name = 'TooManyFilesError';
+  }
+}
 
 function exists(fs: AttestationFs, abs: string): Promise<boolean> {
   const present = fs.stat(abs).then(() => true);
@@ -224,20 +286,25 @@ export async function hashShippedFile(abs: string, fs: AttestationFs): Promise<{
 
 /** ビルドが書く manifest を組む (出荷物を歩いて 1 つずつハッシュ)。天井を超えるファイルが在れば投げる。 */
 export async function buildManifest(appRoot: string, fs: AttestationFs): Promise<IntegrityManifest> {
-  const files: Record<string, string> = {};
+  const pairs: [string, string][] = [];
   for (const rel of await listShippedFiles(appRoot, fs)) {
     const r = await hashShippedFile(path.join(appRoot, rel), fs);
-    if ('tooLarge' in r) throw new Error(`${rel} は ${r.tooLarge} byte で天井 ${MAX_SHIPPED_FILE_BYTES} を超えている`);
-    files[rel] = r.hash;
+    if ('tooLarge' in r) {
+      throw new Error(rel + ' は ' + r.tooLarge + ' byte で天井 ' + MAX_SHIPPED_FILE_BYTES + ' を超えている');
+    }
+    pairs.push([rel, r.hash]);
   }
+  const files: Record<string, string> = Object.fromEntries(pairs);
   return { version: MANIFEST_VERSION, algorithm: HASH_ALGORITHM, files, root: manifestRoot(files) };
 }
 
 /** manifest の文字列表現 (鍵を昇順・2 空白・末尾改行)。`.cjs` の書き手と 1 字も違わない形。 */
 export function serializeManifest(m: IntegrityManifest): string {
-  const files: Record<string, string> = {};
-  for (const k of Object.keys(m.files).sort()) files[k] = m.files[k]!;
-  return `${JSON.stringify({ version: m.version, algorithm: m.algorithm, files, root: m.root }, null, 2)}\n`;
+  const keys = [...Object.keys(m.files)];
+  keys.sort();
+  const byPath = new Map(Object.entries(m.files));
+  const files = Object.fromEntries(keys.map((k) => [k, byPath.get(k)]));
+  return JSON.stringify({ version: m.version, algorithm: m.algorithm, files, root: m.root }, null, 2) + '\n';
 }
 
 /** 鍵を数え上げてよい物か (null でも配列でもないオブジェクト)。 */
@@ -250,18 +317,25 @@ function isRecord(v: unknown): v is Record<string, unknown> {
 /** manifest の文字列を読む。形が 1 つでも違えば `null` (版・算法・鍵の綴り・16 進・root の一致)。 */
 export function parseManifest(text: string): IntegrityManifest | null {
   let v: unknown;
-  // Stryker disable next-line BlockStatement: 投げた (読めない) 後の器は undefined のままで、次の門が同じ null を返す (等価)
-  try { v = JSON.parse(text); } catch { return null; }
+  try {
+    // Stryker disable BlockStatement: catch の中身を空にしても、投げた (読めない) 後の器は undefined のままで次の門が同じ null を返す (等価)。try の中身を空にする変異体はこの注記より前に数えられるので測られる
+    v = JSON.parse(text);
+  } catch (_e) {
+    // Stryker restore BlockStatement
+    return null;
+  }
   if (!isRecord(v)) return null;
   if (v.version !== MANIFEST_VERSION || v.algorithm !== HASH_ALGORITHM) return null;
   const rawFiles = v.files;
   if (!isRecord(rawFiles)) return null;
-  const files: Record<string, string> = {};
-  for (const k of Object.keys(rawFiles)) {
-    const h = rawFiles[k];
+  const pairs: [string, string][] = [];
+  for (const e of Object.entries(rawFiles)) {
+    const k = e[0];
+    const h = e[1];
     if (!SAFE_REL_PATH.test(k) || typeof h !== 'string' || !HEX_SHA256.test(h)) return null;
-    files[k] = h;
+    pairs.push([k, h]);
   }
+  const files: Record<string, string> = Object.fromEntries(pairs);
   // root は厳密な不等号で比べる (文字列でない root は文字列と等しくなれないので、型の門は要らない)
   const root = manifestRoot(files);
   if (v.root !== root) return null;
@@ -279,22 +353,22 @@ export async function verifyShippedFiles(appRoot: string, fs: AttestationFs): Pr
     const st = await fs.stat(manifestAbs);
     if (st.size > MAX_MANIFEST_BYTES) return { ok: false, reason: 'manifest-too-large', detail: MANIFEST_FILE };
     manifest = parseManifest(new TextDecoder().decode(await fs.readFile(manifestAbs)));
-  } catch {
+  } catch (_e) {
     return { ok: false, reason: 'manifest-missing', detail: MANIFEST_FILE };
   }
   if (manifest === null) return { ok: false, reason: 'manifest-malformed', detail: MANIFEST_FILE };
-
   let rootEntries: string[];
   try {
     rootEntries = await fs.readdir(appRoot);
-  } catch {
+  } catch (_e) {
     return { ok: false, reason: 'unreadable', detail: '.' };
   }
   const allowedRoot = new Set(ALLOWED_ROOT_ENTRIES);
-  for (const name of [...rootEntries].sort()) {
+  const names = [...rootEntries];
+  names.sort();
+  for (const name of names) {
     if (!allowedRoot.has(name)) return { ok: false, reason: 'file-unlisted', detail: name };
   }
-
   // 入口 (package.json の `main`) が、この検算を持つ main.js を指しているか (threat: T-228 の S2)。
   // package.json は manifest に載らない (builder が書き換える) ので、`main` の値だけをここで検める ——
   // `main` を別の既存の出荷物へすげ替える 2 ファイル改竄を断る。入口を新しいファイルへ向けて
@@ -304,20 +378,17 @@ export async function verifyShippedFiles(appRoot: string, fs: AttestationFs): Pr
     const st = await fs.stat(pkgAbs);
     if (st.size > MAX_MANIFEST_BYTES) return { ok: false, reason: 'bad-entry-point', detail: 'package.json' };
     const pkg: unknown = JSON.parse(new TextDecoder().decode(await fs.readFile(pkgAbs)));
-    const main = isRecord(pkg) ? pkg.main : undefined;
-    if (main !== ENTRY_POINT) return { ok: false, reason: 'bad-entry-point', detail: 'package.json' };
-  } catch {
+    const entryPoint = isRecord(pkg) ? pkg.main : undefined;
+    if (entryPoint !== ENTRY_POINT) return { ok: false, reason: 'bad-entry-point', detail: 'package.json' };
+  } catch (_e) {
     return { ok: false, reason: 'bad-entry-point', detail: 'package.json' };
   }
-
   let actual: string[];
   try {
     // 実行時は同梱できる根のディレクトリを**丸ごと**歩く (build/ の中も) —— manifest に無い物は tamper。
     actual = await listFilesUnderRoots(appRoot, fs);
   } catch (e) {
-    return e instanceof TooManyFilesError
-      ? { ok: false, reason: 'too-many-files', detail: String(MAX_SHIPPED_FILES) }
-      : { ok: false, reason: 'unreadable', detail: SHIPPED_DIRS.join(', ') };
+    return e instanceof TooManyFilesError ? { ok: false, reason: 'too-many-files', detail: String(MAX_SHIPPED_FILES) } : { ok: false, reason: 'unreadable', detail: SHIPPED_DIRS.join(', ') };
   }
   const listed = new Set(Object.keys(manifest.files));
   for (const rel of actual) {
@@ -327,33 +398,47 @@ export async function verifyShippedFiles(appRoot: string, fs: AttestationFs): Pr
   for (const rel of listed) {
     if (!present.has(rel)) return { ok: false, reason: 'file-missing', detail: rel };
   }
+  const expected = new Map(Object.entries(manifest.files));
   for (const rel of actual) {
     let r: Awaited<ReturnType<typeof hashShippedFile>>;
     try {
       r = await hashShippedFile(path.join(appRoot, rel), fs);
-    } catch {
+    } catch (_e) {
       return { ok: false, reason: 'unreadable', detail: rel };
     }
     if ('tooLarge' in r) return { ok: false, reason: 'file-too-large', detail: rel };
-    if (r.hash !== manifest.files[rel]) return { ok: false, reason: 'hash-mismatch', detail: rel };
+    if (r.hash !== expected.get(rel)) return { ok: false, reason: 'hash-mismatch', detail: rel };
   }
   return { ok: true, checked: actual.length, root: manifest.root };
 }
 
-const REASON_TEXT: Readonly<Record<AttestationReason, string>> = {
-  'manifest-missing': '検算表が見つからないか読めません',
-  'manifest-too-large': '検算表が大きすぎます',
-  'manifest-malformed': '検算表の形が正しくありません',
-  'file-missing': '検算表に在るファイルが見つかりません',
-  'file-unlisted': '検算表に無いファイルが同梱されています',
-  'file-too-large': 'ファイルが大きすぎて検算できません',
-  'too-many-files': '同梱されたファイルが多すぎます',
-  'hash-mismatch': 'ファイルの中身が組んだときと違います',
-  'bad-entry-point': 'アプリの入口 (package.json の main) が組んだときと違います',
-  unreadable: 'ファイルを読めません',
-};
+/** 理由ごとの文 (表を計算した鍵で引く代わりに、理由を 1 つずつ名指す)。 */
+function reasonText(reason: AttestationReason): string {
+  switch (reason) {
+    case 'manifest-missing':
+      return '検算表が見つからないか読めません';
+    case 'manifest-too-large':
+      return '検算表が大きすぎます';
+    case 'manifest-malformed':
+      return '検算表の形が正しくありません';
+    case 'file-missing':
+      return '検算表に在るファイルが見つかりません';
+    case 'file-unlisted':
+      return '検算表に無いファイルが同梱されています';
+    case 'file-too-large':
+      return 'ファイルが大きすぎて検算できません';
+    case 'too-many-files':
+      return '同梱されたファイルが多すぎます';
+    case 'hash-mismatch':
+      return 'ファイルの中身が組んだときと違います';
+    case 'bad-entry-point':
+      return 'アプリの入口 (package.json の main) が組んだときと違います';
+    case 'unreadable':
+      return 'ファイルを読めません';
+  }
+}
 
 /** 利用者へ出す文。理由と道だけ (中身・ハッシュ・推測は言わない)。直す手は 1 つ: 配布元から入れ直す。 */
 export function attestationMessage(v: Extract<AttestationVerdict, { ok: false }>): string {
-  return `アプリのファイルが組んだときと違うため、安全のため起動しません。\n理由: ${REASON_TEXT[v.reason]} (${v.detail})\n配布元からインストールし直してください。`;
+  return 'アプリのファイルが組んだときと違うため、安全のため起動しません。\n理由: ' + reasonText(v.reason) + ' (' + v.detail + ')\n配布元からインストールし直してください。';
 }

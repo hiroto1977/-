@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 496
+- ブロック数: 497
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `0cde336b2aa0f9c482e78ce0a06900de4e244eac6e305502291df8a88d8e45fe`
-- 保護対象: 217 ファイル
+- 末尾(tip)ハッシュ: `e42fa489ad6b1e0714689fa2c229b0586d7edc5f4ad344bdc2e93bdc41a1b0aa`
+- 保護対象: 218 ファイル
 
 ## ブロック
 
@@ -509,6 +509,7 @@
 | 493 | `16dc1e83863084a9` | `18f99d603104d86b` | `c50ae5b06ddcba28` | update release.yml |
 | 494 | `5516313179114527` | `c50ae5b06ddcba28` | `f99c8222cfdb2363` | update eslint.config.js |
 | 495 | `4744a94bddd7f6bd` | `f99c8222cfdb2363` | `0cde336b2aa0f9c4` | update e2e.yml,integrity-chain.cjs,mamori-capabilities.json,main.mamori,main.ts,mainHost.ts |
+| 496 | `fb09e9d3af08cc8c` | `0cde336b2aa0f9c4` | `e42fa489ad6b1e07` | update integrity-chain.cjs,mamori-capabilities.json,selfAttestation.mamori,selfAttestation.ts |
 
 ## 保護対象ファイル
 
@@ -596,6 +597,7 @@
 - `src/main/osSinks.ts`
 - `src/main/presenceWiring.ts`
 - `src/main/secrets.ts`
+- `src/main/selfAttestation.mamori`
 - `src/main/selfAttestation.ts`
 - `src/main/shellOpenGate.mamori`
 - `src/main/shellOpenGate.ts`
