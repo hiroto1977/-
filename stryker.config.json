@@ -59,6 +59,7 @@
     "src/main/oauth.ts",
     "src/main/oauthHost.ts",
     "src/main/secrets.ts",
+    "src/main/secretsHost.ts",
     "src/main/shellOpenGate.ts",
     "src/main/stateFile.ts",
     "src/main/windowPrefs.ts",

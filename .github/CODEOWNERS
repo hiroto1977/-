@@ -95,6 +95,8 @@
 /src/main/main.ts @hiroto1977
 /src/main/oauth.ts @hiroto1977
 /src/main/secrets.ts @hiroto1977
+/src/main/secrets.mamori @hiroto1977
+/src/main/secretsHost.ts @hiroto1977
 /src/main/shellOpenGate.ts @hiroto1977
 /src/main/presenceWiring.ts @hiroto1977
 /src/main/windowOpen.ts @hiroto1977

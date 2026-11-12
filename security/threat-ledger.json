@@ -4853,6 +4853,35 @@
           "test": "★ async の gate も同じ (await した値も来歴で見る)"
         }
       ]
+    },
+    {
+      "id": "T-264",
+      "found": "2026-11-12",
+      "foundBy": "MG-069 (資格情報の保管 secrets.ts を移す周) の「先に破る」段。モジュール直下の const を型を書かずに `new Map(…)` / `new Set(…)` で始めると、同じ module の無関係な関数からの `.set` / `.add` / `.delete` / `.clear` が、Mamori のコンパイラも生成物の tsc も通った (10 形: 直の書き換え・引数で渡して書き換え・オブジェクトの欄・配列の要素・三項・`Object.freeze(new Map())`・別名ほか)。実物では主プロセスの人の合図の門 `userPresence.mamori` の 3 つの表 (呼び出しの重み ACTION_WEIGHT・段ごとの頻度の上限 RATE_BY_TIER・予算 BUDGET_BY_TIER) がこの形だった。0.18 (T-258) の「残した物」は『Mamori は `new Map()` を持たない』と書いていたが、その前提は偽だった。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "守りの層を書く言語 Mamori が、型を書いていないモジュール直下の Map / Set (上限・重み・許可の表) を、同じ module のどの関数からも書き換えられる形で通した",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: 型を書いていないモジュール直下の const の初期値の中の `new Map(…)` / `new Set(…)` を断る (M6 · 0.33)。オブジェクトの欄・配列の要素・三項・呼び出しの引数に包んでも断り、`satisfies` は宣言の型に数えない。読むだけの表は `ReadonlyMap<…>` / `ReadonlySet<…>` と書く (書き換えは生成物を tsc が断る —— 3 形を実測)、書き換える状態 (進行中の処理の表) は `Map<…>` / `Set<…>` と型で名乗る。arrow の本体 (呼ぶたびに新しい入れ物) と関数の中の const は対象外。実物の userPresence.mamori の 3 つの表に ReadonlyMap の型を付けた (生成物の差は型の注釈だけ)。残る限界: 関数が返した Map を型なしの const で受ける形と、型で書き換えられると名乗った状態は、今も同じ module の関数から書き換えられる (配列の受け手の規則ほど厳しくない)。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV33.test.ts",
+        "test": "★ モジュール直下の const を型なしで new Map / Set で始めると断る (threat: T-264)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV33.test.ts",
+          "test": "★ 入れ物に包んでも断る: オブジェクトの欄・配列の要素・三項・呼び出しの引数・export (threat: T-264)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV33.test.ts",
+          "test": "★ `satisfies` は宣言の型ではない —— 束縛の型は推論のままなので断る (threat: T-264)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV33.test.ts",
+          "test": "★ 断りは直し方を名指しする: 読むだけなら Readonly の型・書き換えるなら型で名乗る (threat: T-264)"
+        }
+      ]
     }
   ],
   "huntBacklog": [

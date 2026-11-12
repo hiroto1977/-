@@ -217,7 +217,7 @@
       "why": "OAuth 更新の書き戻しから「保存値が更新の開始時と同じか」の確認を外す —— 更新中に消した資格情報を古い応答が復活させる",
       "edits": [
         {
-          "find": "    if (now === null || !now.ok || now.token !== before) return;\n",
+          "find": "  if (now === null || !now.ok || now.token !== before) return;\n",
           "replace": ""
         }
       ]
@@ -729,16 +729,8 @@
       "why": "OPAQUE_JSON_SLOTS から atlassian / youtube / security を外す (保存した瞬間から broken-token-set と断られ、3 つのスロットが使えなくなる)",
       "edits": [
         {
-          "find": "  'atlassian', // {email, token, site}\n",
-          "replace": ""
-        },
-        {
-          "find": "  'youtube', // {apiKey, channelId}\n",
-          "replace": ""
-        },
-        {
-          "find": "  'security', // {hibp, vt}\n",
-          "replace": ""
+          "find": "new Set<ServiceId>(['assistant', 'atlassian', 'youtube', 'security'])",
+          "replace": "new Set<ServiceId>(['assistant'])"
         }
       ]
     },
@@ -1997,8 +1989,8 @@
       "why": "デスクトップ版 secrets の atv2 の読みから『暗号文の中の時刻 == 平文の時刻』の一致検査を落とす —— 前倒しした atv2 記録が復号できて若返る",
       "edits": [
         {
-          "find": "    if (sep === -1 || Number(tsInner.slice(0, sep)) !== s.storedAt) {",
-          "replace": "    if (sep === -1) {"
+          "find": "    if (sep === -1 || Number(tsInner.slice(0, sep)) !== s.storedAt) return",
+          "replace": "    if (sep === -1) return"
         }
       ]
     },
@@ -2747,6 +2739,18 @@
         {
           "find": "          if (ctx.role === 'gate' && ctx.returnVetted !== null && !carriesOrEmpty(s.value, scopes, ctx.returnVetted)) {",
           "replace": "          if (false as boolean) {"
+        }
+      ]
+    },
+    {
+      "id": "A-602",
+      "threat": "T-264",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "型を書いていないモジュール直下の const の初期値の中の `new Map` / `new Set` を断らない —— 推論された書き換えられる表を、同じ module のどの関数からも `.set` / `.add` / `.delete` / `.clear` で書き換えられる (直す前の形)",
+      "edits": [
+        {
+          "find": "        if (ctx.sharedUntyped !== undefined && e.callee.kind === 'ident' && SHARED_COLLECTIONS.has(e.callee.name)) {",
+          "replace": "        if (false as boolean) {"
         }
       ]
     }

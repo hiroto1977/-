@@ -57,6 +57,7 @@ const EXPECTED = [
   'src/shared/ollamaCore.mamori',
   'src/shared/portal.mamori',
   'src/main/selfAttestation.mamori',
+  'src/main/secrets.mamori',
 ];
 
 describe('Mamori の生成物 (threat: T-221)', () => {

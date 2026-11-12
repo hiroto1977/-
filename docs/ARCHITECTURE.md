@@ -1689,7 +1689,7 @@ sequenceDiagram
   M->>M: setOAuthTokens(svc, ts)
 ```
 
-### 2.5 OAuth トークン更新 state machine (`src/main/secrets.ts:177-262`)
+### 2.5 OAuth トークン更新 state machine (`src/main/secrets.ts:728-817`)
 
 ```mermaid
 stateDiagram-v2
@@ -1736,7 +1736,7 @@ flowchart LR
 ```
 
 OAuth サービスは値が `JSON.stringify(TokenSet)`、それ以外は生 bearer 文字列。
-`getValidToken()` (`src/main/secrets.ts:739-807`) が `JSON.parse` → `isTokenSet` で振り分け。
+`getValidToken()` (`src/main/secrets.ts:768-817`) が `JSON.parse` → `isTokenSet` で振り分け。
 
 ---
 
@@ -2010,7 +2010,7 @@ graph TB
 | **token 漏洩 (プロキシがヘッダを JSON で返す)** | 利用者の BYO Worker が `{"headers":{"authorization":"Bearer …"}}` を返す | `redactSecrets` を**ヘッダ名起点**にした (線上の `名前: 値` と JSON の `"名前":"値"` の両方)。旧規則はコロン直結のみを見ており、この形が素通りしていた (2026-08-20 実測) |
 | **Renderer XSS** | (理論) | CSP + React auto-escape + `dangerouslySetInnerHTML` 0 件 |
 | **External URL 開封** | `javascript:` / `file:` | `app:openExternal` http(s) 限定 (`main.ts:100-115`) |
-| **secrets.json 改竄/巨大化** | ディスク満杯 / 攻撃者 | 1MB cap + shape 検証 (`secrets.ts:14-39`) |
+| **secrets.json 改竄/巨大化** | ディスク満杯 / 攻撃者 | 1MB cap + shape 検証 (`secrets.ts:46-115`) |
 | **OAuth CSRF** | 偽 state | 32B randomBytes + `state !== expectedState` reject (`oauth.ts:217-219`) |
 | **OAuth DNS rebinding on loopback** | 別 host が callback ヒット | Host header pin (`oauth.ts:196-201`) |
 
@@ -2256,7 +2256,7 @@ $ npm run mutate:next -- --top=5
 per-file の kill / survived / no-cov / ignored / invalid は `docs/QUALITY.md` が
 Stryker の JSON レポート (reports/mutation 配下の生成物) から機械生成して持つ
 (`npm run quality:report`)。
-Stryker の対象 (`stryker.config.json` の `mutate`) は **355 ファイル**。
+Stryker の対象 (`stryker.config.json` の `mutate`) は **356 ファイル**。
 2026-10-26 に `renderer/data` の `aegisLang` と `aegisLangSafety` の 2 モジュール (外へ何も出さない小さな言語の実行系と、実行前の安全の走査・規則ベースの修復の提案 —— Python の原型 AegisLang の考え方だけを移した純ロジック) を足した —— 1 度目の測定は **88.65% (生存 154)** で、生存の大半は利用者に見せる日本語の断りの文を値で主張していない物 (文面を空にしても検査が落ちない) と、走査の上限の添字の等価変異だった。文面を全件そのまま留める検査と、境界・状態の検査を足し、等価な添字は走査の形ごと消して (sticky 正規表現・`indexOf`・`split` と `map`)、**100.00% (Killed 1,286 / 生存 0 / 未到達 0)**。残した 2 つの `Stryker disable` は理由つき (収束しない入力への保険の周回上限・空の編集を適用しても変わらない最適化)。
 2026-10-07 (パス 506) に `src/renderer/components/useDialogFocus.ts` (dialog の焦点の道 —— 開いたら印の操作子へ・Esc で閉じる / 取り消す・
 消えたら押した物へ戻す) を足した —— push した直後の CI で `mutateScopeCensus` が「同名の検査が在り 100 行以上なのに `mutate` の外」と
@@ -2406,13 +2406,13 @@ classDiagram
   }
 
   class SecretsStore~secrets.ts~ {
-    +setToken(id, token) : secrets.ts:469
-    +getToken(id) : secrets.ts:546
-    +clearToken(id) : secrets.ts:551
-    +listConfiguredServices() : secrets.ts:573
-    +setOAuthTokens(id, ts) : secrets.ts:685
+    +setToken(id, token) : secrets.ts:468
+    +getToken(id) : secrets.ts:549
+    +clearToken(id) : secrets.ts:554
+    +listConfiguredServices() : secrets.ts:576
+    +setOAuthTokens(id, ts) : secrets.ts:681
     +getOAuthTokens(id) : secrets.ts:716
-    +getValidToken(id) : secrets.ts:777 ~auto-refresh~
+    +getValidToken(id) : secrets.ts:768 ~auto-refresh~
   }
 
   class OAuthHelper~oauth.ts~ {
@@ -2500,7 +2500,7 @@ classDiagram
 | 10 | Skill name は path traversal を含まない | `skills.test.ts` + property fuzz 500 試行 |
 | 11 | Gmail `to` は CR/LF/NUL を含まない | `rfc2822.test.ts` (shared の 1 つ) + `gmail.test.ts` + property fuzz 400 試行 |
 | 12 | OAuth callback の Host ヘッダは loopback のみ | `isLoopbackHost` `src/main/oauth.ts:408-413` |
-| 13 | secrets.json は ≤ 1 MB かつ plain object | `MAX_STORE_SIZE` `src/main/secrets.ts:27` / `parseStore` `src/main/secrets.ts:80-93` |
+| 13 | secrets.json は ≤ 1 MB かつ plain object | `MAX_STORE_SIZE` `src/main/secrets.ts:46` / `parseStore` `src/main/secrets.ts:93-115` |
 | 14 | 新規 client は `LIVE_FETCHERS` (`src/main/clients/index.ts:81-90`) / `SERVICES` (`src/renderer/services.ts:102`) 両方に登録 | scaffold script + `lint:test-coverage` |
 | 15 | ブラウザ権限は**既定で拒否** — 許すのはクリップボードの 2 つだけ (Electron の既定は全部承認) | `ALLOWED_PERMISSIONS` `src/main/main.ts:65` + `src/main/__tests__/mainWindow.test.ts` 「権限要求 — 既定は拒否、クリップボードだけ許す」24 件 |
 | 16 | PR で `npm run typecheck && npm test && npm run verify:arch` が green | CI (`.github/workflows/ci.yml`) |

@@ -96,6 +96,37 @@ Mamori では、その 2 つは**書けない**:
 - **測れなかった物を満点にしない**: 入力が読めない・母集団が空の基準は 0 点 (口を持つ .mamori が 0 本の A2 だけは『載せる物が無い』ので満点)。表の基準と実装の測り方は 1 対 1 で、検査 (`mamoriCompleteness.test.ts`) が両方向に見る。
 - **基準と床は私 (実装した側) の判断**で、実測が決めた物ではない。床を動かすときは表の `why` に理由を書く。今の実物は 1.0 を満たしていない (E1 89% / E2 88% が床の下) —— 足りない基準を埋めるのが次の作業で、`report` が一覧を出す。
 
+## 0.33 —— 型を書いていない共有の Map / Set を断る (T-264 · MG-069 · 2026-11-12)
+
+資格情報の保管 (`secrets.ts`) を移す周の「先に破る」段で見つけた穴。モジュール直下の const を**型を書かずに** `new Map(…)` / `new Set(…)` で
+始めると、`tsc` は書き換えられる型を推論し、**同じ module のどの関数からも**書き換えられた。
+
+| 破った形 | 0.32 まで |
+| --- | --- |
+| `const LIMITS = new Map<string, number>([…]);` を、無関係な関数が `LIMITS.set("free", 1000000)` | 通った (Mamori も `tsc` も) |
+| 同じく `ALLOWED.add(…)` / `.delete(…)` / `.clear()` (Set) | 通った |
+| 引数で渡して書き換える・別名を作って書き換える | 通った |
+| オブジェクトの欄 `const CFG = { m: new Map() }`・配列の要素・三項・`Object.freeze(new Map())` (凍るのは入れ物の殻だけ) | 通った |
+| `const LIMITS: ReadonlyMap<string, number> = new Map(…);` へ `.set` | `tsc` が断る (3 形で実測) |
+
+その表を読む別の関数 (上限・重み・許可の判定) の答えが変わる。実物では、主プロセスの人の合図の門 `userPresence.mamori` の 3 つの表
+(呼び出しの重み・段ごとの頻度の上限・予算) がこの形だった。0.18 (T-258) は配列について同じ穴を塞ぎ、Map / Set は
+「Mamori は `new Map()` を持たない」として残したが、**その前提は偽だった** (`new Map(…)` はどの版でも書ける)。
+
+0.33 は**宣言**で分ける (M6): 型を書いていないモジュール直下の const の初期値の中の `new Map(…)` / `new Set(…)` を断る。
+オブジェクトの欄・配列の要素・三項・呼び出しの引数に包んでも断り、`satisfies` は宣言の型に数えない (束縛の型は推論のまま)。
+
+- 読むだけの表は `const X: ReadonlyMap<…> = new Map(…);` / `ReadonlySet<…>` と書く —— 書き換えは生成物を `tsc` が断る。
+- 書き換える状態 (進行中の処理の表・購読者の集まり) は `Map<…>` / `Set<…>` と型で名乗る (`autoLock.mamori` の `listeners`・`secrets.mamori` の `inflightRefresh`)。
+- arrow の本体 (`() => new Map()` —— 呼ぶたびに新しい入れ物) と、関数の中の const は対象外。`WeakMap` / `WeakSet` は Mamori では作れない (宣言なしで使える組み込みではなく、pure でも宣言できない)。
+
+配列のように受け手で断らなかったのは、Map / Set には正当に書き換える状態が在るため (配列の書き換えは局所の物だけで足りた)。
+実物への影響は `userPresence.mamori` の 3 行に `ReadonlyMap` の型を付けただけ (生成物の差は型の注釈だけ)。
+
+残した物 (測って決めた): ① 関数が返した Map を型なしの const で受ける形 (`const T = make();`) は今も書き換えられる —— 初期値の式の中の `new` しか見ない
+② 型で書き換えられると名乗った状態は、同じ module のどの関数からも書き換えられる (名乗ることを求めるだけで、書き手は絞らない)
+③ 引数で受けた Map / Set の書き換えは断らない (呼び手が `Readonly` の型で渡せば `tsc` が断る)。
+
 ## 0.32 —— 印が関門を通らずに付く 3 つの道を塞いだ (T-261 / T-262 / T-263 · MG-067 · 2026-11-11)
 
 構文は 1 つも足していない。言語の穴探しの周で、0.31 のコンパイラへ「**any の出どころ** (`JSON.parse` の戻り値・any から束縛した配列・Promise) × **印を受ける場所**」を掛けた手探りを撃った。`tsc` は any を印の型へ通すので、Mamori の来歴の検めが見ていない場所はそのまま穴になる。通った形は 3 家系だった。
@@ -414,6 +445,9 @@ Mamori の検査器 (M0〜M7) が見るのは Mamori の木で、走るのは生
 残した物 (測って決めた): `Map` / `Set` の書き換え (`set` `add` `delete` `clear`) —— Mamori は `new Map()` を持たないので、書けるのは import した TypeScript の
 物だけで、そちらは host 壁の仕事。
 
+> **訂正 (2026-11-12 · 0.33)**: 上の「Mamori は `new Map()` を持たない」は偽だった —— `new Map(…)` / `new Set(…)` はどの版でも書け、型を書いていない
+> モジュール直下の表は同じ module のどの関数からも書き換えられた (T-264)。0.33 が宣言の規則で塞いだ (上の「0.33」の節)。
+
 ## 0.17 —— 欄への代入 `o.k = v;` を足し、計算した鍵の結果が入れ物に包まれて消える穴 (T-257) を塞いだ (MG-033 · 2026-11-05)
 
 `brief` が選んだ候補は「欄への代入」(使う壁 10 本)。台帳の risk は「共有の物へ書くと他のモジュールの判定まで変わる」。
@@ -714,7 +748,7 @@ T-234 (`sinkTyped*` の文脈と印の型の判定)・T-232 (`RegExp.$1`)・`.co
 - 戦いのデータは `security/mamori-arena/corpus.json` に残し、`mamoriArena.test.ts` が毎回再生する (学習データ)。
 - 侵入役の新手を AI に書かせる段は、安全装置に止められた。迂回せず、新手は人が追加する (`*.attack.mamori`)。
 
-## 文法 (0.32)
+## 文法 (0.33)
 
 ```
 module    := header* item*
@@ -766,6 +800,7 @@ fn        := 'export'? ('gate' | 'sink')? 'async'? 'fn' 名前 ('<' 名前 (',' 
 - **`from "…"` の相対の道は正規の綴りだけ (0.32 · T-262)**: `./` か `../` で始め、空の区切り・末尾の `/`・途中の `.` / `..`・拡張子を書かない。`X/index.mamori` は `./X/index` と綴る。
 - **arrow の引数は印の型 (印 / 印 | null / 印 | undefined) を名乗れない (0.32 · T-261)**。名乗れるのは、Mamori の外の module の関数を名前で直に呼ぶときの、引数 (と、引数のオブジェクトの字面の欄) に直に書いた arrow だけ。
 - **gate 関数の `return` の式は、`mint 印(…)`・その印を持つ値・`null` / `undefined`・両方の枝がそうである条件演算子だけ (0.32 · T-263)**。
+- **モジュール直下の const は、型を書かずに `new Map(…)` / `new Set(…)` を持てない (0.33 · T-264)**。読むだけの表は `ReadonlyMap<…>` / `ReadonlySet<…>`、書き換える状態は `Map<…>` / `Set<…>` と型で名乗る。
 
 ## 例
 
@@ -821,6 +856,7 @@ export sink fn openExternalVetted(url: VettedExternalUrl) -> Promise<void> {
 | `src/main/main.mamori` | `src/main/main.ts` | 主プロセスの入口 (窓の隔離設定 `contextIsolation` / `sandbox` / `nodeIntegration` / `spellcheck`・権限の許可表・遷移の番人・IPC 15 本の口の判断 = 本人確認・速度・払い出し・同時 1 つの認可・形の検め・起動時の自己検算の扱い · 0.28 · MG-059 · フルポート。host 壁 `mainHost.ts` が `process.env` / `__dirname` / `console` / `setTimeout` / `fetch` / `AbortSignal` / `JSON.parse` / 表の添字引き (`LIVE_FETCHERS[id]` ほか・`Object.hasOwn` で自分の鍵だけ) / electron の再輸出を持つ (判断なし・転送に追随しない `egressInit` は壁でも掛かる = 冪等) · `authorizeInFlight` と `windowPrefs` は 0.28 の module の `let` · 登録と起動は `export const … = fn()` の初期値 (preload.mamori の `bridgeExposed` と同じ形) · `ipcMain.handle('…', async (e, …) => …)` の綴りは生成物に残る (ソース文字列を読む census が使う) · `fn` は予約語なので `runAction` へ・template は `+` の連結へ・arrow の引数に印の型の注記 (`target: VettedExternalUrl`) · 組み上がる文字列は 1 字も変えず、`mainWindow.test.ts` + `mainIpc.test.ts` は編集なしで緑) |
 | `src/renderer/fs/fsa.mamori` | `src/renderer/fs/fsa.ts` | File System Access の書き出し口 (対応の判定・フォルダの選択と保管・**名前の関門 `isSafeFilename` を通してから書く**・読み書きの権限が無ければ断る · MG-063 · `window` と `indexedDB` は host の壁 `fsaHost.ts` が取り出すだけで、呼ぶのは Mamori の側) |
 | `src/main/selfAttestation.mamori` | `src/main/selfAttestation.ts` | 起動時の自己検算 (`verifyShippedFiles` は検算表を読む → 根の一覧 → 入口 `main` → 同梱できる根を丸ごと歩く → 両方向の差 → 1 つずつの sha256・`buildManifest` / `parseManifest` / `serializeManifest` / `attestationMessage` · 0.32 · MG-068 · host の壁なし —— `node:crypto` の `createHash`・`node:path`・`node:util` の `TextDecoder` / `TextEncoder` を `use` で引く)。計算した鍵の添字が無いので、表を組む所は `Object.fromEntries`・引く所は `Map`・理由の文は `switch` に書き直した。元の実装との突き合わせ 34,046 通りで差 0。答えが変わるのは検算表が鍵 `__proto__` を持つときだけ (元は黙って落として通した → 断る) |
+| `src/main/secrets.mamori` | `src/main/secrets.ts` | 主プロセスの資格情報の保管 (書き込みの直列化 `withWriteLock` と消去中の断り・読めない保管ファイルを空と混ぜない `readStore` / `readStoreForWrite`・包みと有効時間 `atv2:` / `at:` / `oauth:`・キーチェーンが無いときの難読化・`getValidToken` の更新と重複の排除 · 0.33 · MG-069 · host の壁 `secretsHost.ts` —— userData の道・OS キーチェーンの暗号化と復号・base64・byte 数・時計・console)。計算した鍵の読み書きは保管ファイルの中身を `Map<string, string>` で持つ形へ・`OAUTH_CONFIGS[id]` は共有の `lookup` へ・template は `+` の連結へ・8 進の `0o600` は 16 進の `0x180` へ書き直した。元の実装との突き合わせで差 0 (件数は周の記録)。鍵 `__proto__` は読むときと書くときの両方で落とす (元は原型への代入になり何も起きなかった —— 保管ファイルの bytes は同じ) |
 
 残りの TypeScript は Mamori で書いた gate / sink を呼ぶ側で、呼ぶ側には TypeScript の型の印が掛かる
 (パス 559)。書き出しのファイル書き込みはパス 560 で gate と sink の組として移し、pending の天井を 4 → 3 へ下げた。

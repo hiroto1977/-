@@ -83,6 +83,16 @@ const LOGICAL_OPS: ReadonlySet<string> = new Set(['??', '||', '&&']);
  * モジュール直下の許可リストや他のモジュールから渡された配列を、別の関数から書き換えられる。
  */
 const MUTATING_METHODS: ReadonlySet<string> = new Set(['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse', 'fill', 'copyWithin']);
+
+/**
+ * 書き換えるメソッドを持つ組み込みの入れ物 (0.33 · T-264)。モジュール直下の const を**型を書かずに**これで始めると、
+ * `tsc` は書き換えられる型 (`Map<…>` / `Set<…>`) を推論する —— どの関数からも `.set` / `.add` / `.delete` / `.clear` が通り、
+ * その表を読む別の関数 (関門・上限) の判定が変わる。配列の側は 0.18 (T-258) が受け手で断るが、Map / Set は
+ * 「正当に書き換える状態」(進行中の処理の表) も在るので、受け手ではなく**宣言**で分ける: 型を書かせる。
+ * 読むだけの表は `ReadonlyMap<…>` / `ReadonlySet<…>` (書き換えは `tsc` が断る)、書き換える状態は `Map<…>` / `Set<…>` と名乗る。
+ * `WeakMap` / `WeakSet` は載せない —— 宣言なしで使える組み込みではなく、pure でも宣言できないので、Mamori では作れない (M6)。
+ */
+const SHARED_COLLECTIONS: ReadonlySet<string> = new Set(['Map', 'Set']);
 const SCALAR_GLOBAL_FNS: ReadonlySet<string> = new Set(['Number', 'String', 'Boolean']);
 /** 結果が数・文字列・真偽の値だけになる組み込みのメンバの呼び出し (`Math.max(xs[i], 0)` `Object.hasOwn(o, xs[k])`)。 */
 const SCALAR_BUILTIN_OBJECTS: ReadonlySet<string> = new Set(['Math', 'Number']);
@@ -547,7 +557,10 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     // 「定数の初期値の奥 (配列の中)」が留める。
     if (it.kind === 'const') {
       // Stryker disable next-line StringLiteral,ObjectLiteral: 上の注記のとおり等価 (role は 'sink' / 'gate' でないことだけを意味する)
-      checkExpr(it.init, [moduleScope], { role: 'plain', returnVetted: null, destVetted: null });
+      const constCtx: Ctx = { role: 'plain', returnVetted: null, destVetted: null };
+      // 型を書いていない const の初期値の中の `new Map(…)` / `new Set(…)` は断る (0.33 · T-264)。`satisfies` は宣言の型ではない
+      // (束縛の型は推論のまま = 書き換えられる) ので数えない。
+      checkExpr(it.init, [moduleScope], it.type === null ? { ...constCtx, sharedUntyped: it.name } : constCtx);
       checkSatisfies(it.satisfies);
     }
     if (it.kind === 'let') {
@@ -650,6 +663,11 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     readonly returnVetted: string | null;
     /** sink 関数の行き先 (第 1 引数) の印。sink 関数の外と、行き先の型が印でない (M3 を出した) ときは null。 */
     readonly destVetted: string | null;
+    /**
+     * 型を書いていないモジュール直下の const の初期値を検めている間だけ、その const の名前 (0.33 · T-264)。
+     * arrow の本体は新しい Ctx で検めるので、`() => new Map()` (呼ぶたびに新しい入れ物) には届かない。
+     */
+    readonly sharedUntyped?: string;
   }
 
   /** 名前の式ならその束縛、そうでなければ undefined (`f()()` / `a.b.c(…)` の頭は名前ではない)。 */
@@ -1146,6 +1164,13 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         return;
       case 'new':
         checkTypeArgs(e.typeArgs);
+        if (ctx.sharedUntyped !== undefined && e.callee.kind === 'ident' && SHARED_COLLECTIONS.has(e.callee.name)) {
+          report(
+            'M6',
+            e.pos,
+            `モジュール直下の const ${ctx.sharedUntyped} は型を書かずに \`new ${e.callee.name}(…)\` を持てません —— 推論される型は書き換えられるので、どの関数からも \`.set\` / \`.add\` / \`.delete\` / \`.clear\` が通り、この表を読む別の関数 (関門・上限) の判定が変わります。読むだけの表は \`const ${ctx.sharedUntyped}: Readonly${e.callee.name}<…> = …\` と書き (書き換えは tsc が断ります)、書き換える状態は \`${e.callee.name}<…>\` と型で名乗ってください`,
+          );
+        }
         if (carriesInert(e.callee, scopes)) {
           report('M6', e.pos, '計算した鍵の添字の結果は new の相手にできません —— `new x[k]()` で選んだ構築子を呼べてしまう');
           // new の呼ぶ側は名前だけなので、inert と分かったあとに呼ぶ側を検め直しても診断は増えない。引数は別。

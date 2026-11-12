@@ -74,6 +74,20 @@
         "showItemInFolderVetted(VettedShellPath)"
       ]
     },
+    "src/main/secrets.mamori": {
+      "externals": [
+        "pure ../shared/credentialTtl: expiredStoredCredentialMessage, isRefreshableTokenSetJson, storedCredentialExpired",
+        "pure ../shared/lookup: lookup",
+        "pure ./atomicWrite: atomicWriteFile, backupPathOf, readFileWithBackup",
+        "pure ./keychainBackend: realKeychainAvailable",
+        "pure ./secretsHost: hostUserDataPath, hostEncryptToBase64, hostDecryptAvailable, hostDecryptFromBase64, hostUtf8ToBase64, hostBase64ToUtf8, hostUtf8ByteLength, hostNow, hostLogError, hostLogWarn"
+      ],
+      "imports": [
+        "node:fs: promises"
+      ],
+      "gates": [],
+      "sinks": []
+    },
     "src/main/selfAttestation.mamori": {
       "externals": [],
       "imports": [

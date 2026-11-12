@@ -58,7 +58,7 @@ export { ACTION_TIER, CONFIRMED_TIERS, OUTBOUND_TIERS, tierOfAction, type Tier }
  */
 export const MAX_CALL_WEIGHT = 5;
 
-const ACTION_WEIGHT = new Map<string, number>([['assistant/chatAll', MAX_CALL_WEIGHT]]);
+const ACTION_WEIGHT: ReadonlyMap<string, number> = new Map<string, number>([['assistant/chatAll', MAX_CALL_WEIGHT]]);
 
 export function weightOfAction(serviceId: string, action: string): number {
   const key = serviceId + '/' + action;
@@ -91,9 +91,9 @@ export const BUDGET_FREE_CHANNELS: ReadonlySet<string> = new Set<string>(['app:o
 /** 1 分あたりの上限 (段階ごと)。確かめる段階は人の速さ以上に速く来たら怪しい。 */
 export const RATE_LIMIT: Readonly<Record<Tier, number>> = { destructive: 3, 'credential-write': 6, 'external-write': 10, egress: 20, 'local-write': 60, read: 120 };
 
-const RATE_BY_TIER = new Map<string, number>(Object.entries(RATE_LIMIT));
+const RATE_BY_TIER: ReadonlyMap<string, number> = new Map<string, number>(Object.entries(RATE_LIMIT));
 
-const BUDGET_BY_TIER = new Map<string, { readonly perHour: number; readonly perDay: number } | undefined>(Object.entries(BUDGET));
+const BUDGET_BY_TIER: ReadonlyMap<string, { readonly perHour: number; readonly perDay: number } | undefined> = new Map<string, { readonly perHour: number; readonly perDay: number } | undefined>(Object.entries(BUDGET));
 
 /**
  * **警戒態勢** (threat: T-155)。確認を断る・速度の上限・信頼できない呼び出し元・別の確認の割り込み・
