@@ -224,6 +224,7 @@
     "src/renderer/security/lockWorkspaceHost.ts",
     "src/renderer/security/mnemonic.ts",
     "src/renderer/security/vault.ts",
+    "src/renderer/security/vaultHost.ts",
     "src/renderer/security/webCrypto.ts",
     "src/renderer/security/webauthn.ts",
     "src/renderer/security/webauthnHost.ts",

@@ -122,7 +122,7 @@ const FORBIDDEN_PATTERNS = [
     allowFile: (rel) =>
       [
         // 保管層のモジュール。
-        'src/renderer/security/vault.ts',
+        'src/renderer/security/vaultHost.ts',
         'src/renderer/data/store.ts',
         'src/renderer/network/proxyHost.ts',
         'src/renderer/library/library.ts',
@@ -1032,7 +1032,9 @@ const KNOWN_SUPPRESSIONS = [
   '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/network/proxyHost.ts :: 6',
   // 2026-09-07: 13 → 12。届かない後追い診断 (`indexedDB.databases()` で
   // 削除を再確認していた) を消したので、直接触る箇所が 1 つ減った。
-  '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/security/vault.ts :: 12',
+  // 2026-11-15 (MG-070): vault.ts を Mamori へ移した。IndexedDB を触る 12 か所は判断を持たない host の口 (vaultHost.ts) へ移り、
+  // 生成物の vault.ts には 1 つも残らない (どの store のどの鍵へ何を書くかは vault.mamori が決めて引数で渡す)。
+  '保管領域 (IndexedDB) の内部を直接触っている :: src/renderer/security/vaultHost.ts :: 12',
   'CSS の url() へ生の値を差し込んでいる :: src/shared/imageUrlGate.ts :: 1',
   'hand-rolled RFC 2822 header line :: src/shared/rfc2822.ts :: 2',
   'hardcoded Claude model id :: src/shared/ai/providers.ts :: 2',

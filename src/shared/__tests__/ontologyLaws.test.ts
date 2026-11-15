@@ -269,14 +269,32 @@ describe('safety-limits-not-parameters: 安全上限は parameters.ts の台帳�
 });
 
 describe('key-bound-to-slot: vault は暗号文を保管場所に束ねる', () => {
-  it('封緘と解錠の両方が additionalData を渡す', () => {
-    const vault = readOriginalSource(join(REPO_ROOT, 'src/renderer/security/vault.ts'));
-    const calls = vault.split('\n').filter((l) => /\{\s*name:\s*'AES-GCM'.*additionalData:\s*aad\b/.test(l));
+  // 2026-11-15 (MG-070): `vault.ts` は Mamori 生成物になり、AES-GCM の口は薄い壁 `vaultHost.ts` へ移った。
+  // 束ねる仕組みは 2 段になったので、両方を見る —— 壁が AAD を WebCrypto へ渡すこと (1) と、
+  // 保管庫がトークンの封緘と解錠で保管場所から組んだ AAD を壁へ渡すこと (2)。
+  it('封緘と解錠の両方が additionalData を渡す (壁)', () => {
+    const host = readOriginalSource(join(REPO_ROOT, 'src/renderer/security/vaultHost.ts'));
+    const calls = host.split('\n').filter((l) => /\{\s*name:\s*'AES-GCM'.*additionalData:\s*aad\b/.test(l));
     expect(calls.length, '封緘と解錠の 2 か所').toBeGreaterThanOrEqual(2);
+  });
+
+  it('★ 保管庫はトークンの封緘と解錠で、保管場所 (serviceId) から組んだ AAD を壁へ渡す', () => {
+    const vault = readOriginalSource(join(REPO_ROOT, 'src/renderer/security/vault.ts'));
+    // AAD は serviceId から組む (v1: 場所だけ / v2: 場所 + 保存時刻)。
+    expect(vault).toMatch(/hostUtf8\('service-hub-token-v1:' \+ serviceId\)/);
+    expect(vault).toMatch(/hostUtf8\('service-hub-token-v2:' \+ serviceId \+ ':' \+ storedAt\)/);
+    const lines = vault.split('\n');
+    const seals = lines.filter((l) => /hostEncryptString\([^)]*tokenAad(V2)?\(/.test(l));
+    const opens = lines.filter((l) => /hostDecryptString\([^)]*tokenAad(V2)?\(/.test(l));
+    expect(seals.length, 'トークンを閉じる所が AAD を渡す').toBeGreaterThanOrEqual(1);
+    expect(opens.length, 'トークンを開く所が AAD を渡す').toBeGreaterThanOrEqual(2);
   });
 
   it('★ 標本: additionalData を落とした行は数えない', () => {
     const line = "        : { name: 'AES-GCM', iv: iv as BufferSource },";
     expect(/\{\s*name:\s*'AES-GCM'.*additionalData:\s*aad\b/.test(line)).toBe(false);
+    // 保管庫の側の針も、AAD を渡さない呼びには当たらない。
+    expect(/hostEncryptString\([^)]*tokenAad(V2)?\(/.test('const sealed = await hostEncryptString(key, token);')).toBe(false);
+    expect(/hostEncryptString\([^)]*tokenAad(V2)?\(/.test('const sealed = await hostEncryptString(key, token, tokenAadV2(serviceId, storedAt));')).toBe(true);
   });
 });

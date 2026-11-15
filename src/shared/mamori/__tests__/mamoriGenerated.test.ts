@@ -58,6 +58,7 @@ const EXPECTED = [
   'src/shared/portal.mamori',
   'src/main/selfAttestation.mamori',
   'src/main/secrets.mamori',
+  'src/renderer/security/vault.mamori',
 ];
 
 describe('Mamori の生成物 (threat: T-221)', () => {

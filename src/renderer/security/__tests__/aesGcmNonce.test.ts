@@ -157,11 +157,12 @@ describe('AES-GCM で暗号化する場所は、すべて毎回 IV を作り直�
    * (数を上げるだけの更新をするなら、上の規則が新しい箇所に当たるかを見ること)。
    */
   // `dataCrypto.ts` は Mamori 生成物 (MG-021) になり、暗号化の口は薄い壁 `dataCryptoHost.ts` の `hostEncrypt` 1 つ (IV も壁の中で作る)。
+  // `vault.ts` も Mamori 生成物 (MG-070) になり、口は薄い壁 `vaultHost.ts` の `hostEncryptString` / `hostEncryptBytes` (IV は壁の中で作る)。
   it('暗号化箇所は 3 つ (増減したら nonce の扱いを見直す)', () => {
     expect(sites.map((s) => s.rel).sort()).toEqual([
       'security/dataCryptoHost.ts',
-      'security/vault.ts',
-      'security/vault.ts',
+      'security/vaultHost.ts',
+      'security/vaultHost.ts',
     ]);
   });
 });

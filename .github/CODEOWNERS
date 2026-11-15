@@ -184,6 +184,8 @@
 /src/renderer/security/lockWorkspaceHost.ts @hiroto1977
 /src/renderer/security/mnemonic.ts @hiroto1977
 /src/renderer/security/vault.ts @hiroto1977
+/src/renderer/security/vault.mamori @hiroto1977
+/src/renderer/security/vaultHost.ts @hiroto1977
 /src/renderer/security/webCrypto.ts @hiroto1977
 /src/renderer/security/webauthn.ts @hiroto1977
 /src/renderer/security/webauthn.mamori @hiroto1977

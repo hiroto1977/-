@@ -361,12 +361,12 @@
       "why": "unlock の鍵を据える直前の施錠世代の確認 (assertNotLockedSince) を 2 か所とも外す —— 導出中に届いた lock() を解錠が上書きし、施錠したつもりの保管庫が開く",
       "edits": [
         {
-          "find": "        this.assertNotLockedSince(epoch);\n        this.currentKey = key;",
-          "replace": "        this.currentKey = key;"
+          "find": "      assertNotLockedSince(epoch);\n      currentKey = key;",
+          "replace": "      currentKey = key;"
         },
         {
-          "find": "      this.assertNotLockedSince(epoch);\n      this.currentKey = passwordKey;",
-          "replace": "      this.currentKey = passwordKey;"
+          "find": "    assertNotLockedSince(epoch);\n    currentKey = passwordKey;",
+          "replace": "    currentKey = passwordKey;"
         }
       ]
     },
@@ -485,8 +485,8 @@
       "why": "changePassword の完了時に「操作の開始から施錠が届いていない」「開始時に解錠だった」の判定を外し、無条件に currentKey を据える (パスワード変更の PBKDF2 の窓に届いた施錠を完了が上書きして解錠に戻る)",
       "edits": [
         {
-          "find": "      if (unlockedAtStart && this.lockToken === epoch) this.currentKey = newPasswordKey; // threat: T-063",
-          "replace": "      this.currentKey = newPasswordKey; // threat: T-063"
+          "find": "    if (unlockedAtStart && lockToken === epoch) {\n      currentKey = newPasswordKey;\n    }",
+          "replace": "    currentKey = newPasswordKey;"
         }
       ]
     },
@@ -497,8 +497,8 @@
       "why": "recoverWithMnemonic の完了時の世代の判定を外し、無条件に復旧した鍵を据える (復旧の窓に届いた施錠が上書きされる)",
       "edits": [
         {
-          "find": "        if (this.lockToken === epoch) this.currentKey = recovered; // threat: T-063",
-          "replace": "        this.currentKey = recovered; // threat: T-063"
+          "find": "      if (lockToken === epoch) {\n        currentKey = recovered;\n      }",
+          "replace": "      currentKey = recovered;"
         }
       ]
     },
@@ -506,11 +506,11 @@
       "id": "A-205",
       "threat": "T-064",
       "file": "src/renderer/security/vault.ts",
-      "why": "initialize の meta / master-wrap の書き込みから add: true を外し put に戻す (2 つの窓が同時に初期化すると両方成功し、後の方が meta と master-wrap を黙って上書きする)",
+      "why": "initialize の meta / master-wrap の書き込みを add (第 3 引数 true) から put (false) へ戻す (2 つの窓が同時に初期化すると両方成功し、後の方が meta と master-wrap を黙って上書きする)",
       "edits": [
         {
-          "find": "            ],\n            { add: true },",
-          "replace": "            ],\n            {},"
+          "find": "ciphertext: passwordWrappedMaster.ciphertext } }], true);",
+          "replace": "ciphertext: passwordWrappedMaster.ciphertext } }], false);"
         }
       ]
     },
@@ -1977,8 +1977,8 @@
       "why": "ブラウザ版 vault の v2 AAD から storedAt を落とす (serviceId だけで束ねる前へ戻す) —— 保存時刻が認証されなくなり、前倒しした記録が復号できて若返る",
       "edits": [
         {
-          "find": "service-hub-token-v2:${serviceId}:${storedAt}",
-          "replace": "service-hub-token-v2:${serviceId}"
+          "find": "hostUtf8('service-hub-token-v2:' + serviceId + ':' + storedAt)",
+          "replace": "hostUtf8('service-hub-token-v2:' + serviceId)"
         }
       ]
     },

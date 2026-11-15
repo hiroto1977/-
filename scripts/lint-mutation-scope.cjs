@@ -175,7 +175,6 @@ const PRAGMA_BARE = {
   'src/renderer/library/library.ts':             1,
   'src/renderer/plan/internalLicense.ts':        1,
   'src/renderer/security/mnemonic.ts':           1,
-  'src/renderer/security/vault.ts':              2,
   'src/shared/funding.ts':                       2,
   // 2026-09-17 (パス 300): `renderer/network/proxy.ts` に在った 3 つ (v6 の ULA / link-local /
   // 2001:db8 の正規表現) が遮断表ごと shared へ移った。理由の書き方は移した先の注記のとおり。

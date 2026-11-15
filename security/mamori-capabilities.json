@@ -214,6 +214,15 @@
       "gates": [],
       "sinks": []
     },
+    "src/renderer/security/vault.mamori": {
+      "externals": [
+        "pure ./vaultHost: hostOpenDb, hostGet, hostPut, hostPutAll, hostDelete, hostKeys, hostDeleteDb, hostRandomBytes, hostUtf8, hostDeriveKey, hostGenerateMasterKey, hostExportRawKey, hostImportNonExtractable, hostEncryptString, hostDecryptString, hostEncryptBytes, hostDecryptBytes, hostZero, hostIsBufferView, hostErrorName, hostWarn",
+        "pure global: Date"
+      ],
+      "imports": [],
+      "gates": [],
+      "sinks": []
+    },
     "src/renderer/security/webauthn.mamori": {
       "externals": [
         "pure ./webauthnHost: hostChallenge, hostUtf8, hostBase64Encode, hostBase64Decode, hostCanAskPlatformAuthenticator, hostAskPlatformAuthenticator, hostCreateCredentialRawId"
