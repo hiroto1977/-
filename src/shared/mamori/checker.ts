@@ -361,7 +361,9 @@ function collectSharedRegex(modules: readonly { readonly file: string; readonly 
     grew = false;
     for (const { file, module } of modules) {
       const names = shared.get(file)!;
-      const used = new Map<string, { readonly target: string; readonly name: string }>();
+      // 引く鍵は「名前、または名前でない (null)」—— 名前でない初期値はどちらの表にも無いので、門を置かずにそのまま引く (置くと等価な条件になる)。
+      const known: ReadonlyMap<string | null, SharedRegexKind> = names;
+      const used = new Map<string | null, { readonly target: string; readonly name: string }>();
       for (const it of module.items) {
         if (it.kind !== 'use') continue;
         for (const n of it.names) used.set(n.alias ?? n.name, { target: resolveUse(it.from, file), name: n.name });
@@ -369,9 +371,8 @@ function collectSharedRegex(modules: readonly { readonly file: string; readonly 
       for (const it of module.items) {
         if (it.kind !== 'const' || names.has(it.name)) continue;
         const source = identName(it.init);
-        if (source === null) continue;
         const from = used.get(source);
-        const kind = names.get(source) ?? (from === undefined ? undefined : shared.get(from.target)?.get(from.name));
+        const kind = known.get(source) ?? (from === undefined ? undefined : shared.get(from.target)?.get(from.name));
         if (kind !== undefined) {
           names.set(it.name, kind);
           grew = true;
@@ -575,7 +576,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         declare(n, { vetted: null, authority: it.authority }, it.pos);
       }
     } else if (it.kind === 'const') {
-      declare(it.name, { vetted: null, authority: 'local', numeric: it.type?.text === 'number' || isNumericKey(it.init, []), inert: carriesInert(it.init, [moduleScope]), sharedRegex: table.sharedRegex.get(file)?.get(it.name), untypedShared: it.type === null }, it.pos);
+      declare(it.name, { vetted: null, authority: 'local', numeric: it.type?.text === 'number' || isNumericKey(it.init, []), inert: carriesInert(it.init, [moduleScope]), sharedRegex: table.sharedRegex.get(file)!.get(it.name), untypedShared: it.type === null }, it.pos);
     } else if (it.kind === 'let') {
       declare(it.name, { vetted: null, authority: 'local', mutable: true, moduleLet: true, numeric: it.type.text === 'number', depth: 0 }, it.pos);
     } else if (it.kind === 'class') {
@@ -1197,6 +1198,9 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     // Stryker disable next-line ConditionalExpression: 型の絞り込みのためだけに在る —— member でない呼び出しは prop を持たず、次の行の MUTATING_METHODS.has(undefined) が false を返す (等価)
     const viaMember = callee.kind === 'member' ? callee : null;
     if (viaMember !== null && MUTATING_METHODS.has(viaMember.prop)) refuseSharedReceiver(viaMember.object, scopes, `\`.${viaMember.prop}(…)\``);
+    // 文字列のメソッドの引数は、共有の g の正規表現を置いてよい場所 (0.34 · T-266)。式そのものを登録する (引くのは名前の枝だけ)。
+    // 引数を検めるのはこの関数から戻った後なので、ここで登録すれば間に合う。
+    if (viaMember !== null && REGEX_ARG_METHODS.has(viaMember.prop)) for (const a of args) regexUses.add(a);
     // 型を書いていない直下の const を、入れ物・日付を書き換えるメソッドの受け手にする形 (0.34 · T-267)。
     // 受け手は名前そのものでも、その欄・添字の先 (`BASE.searchParams.set(…)`) でも同じ。局所の別名 (`const m = T;`) も辿る。
     if (viaMember !== null && isSharedWriteMethod(viaMember.prop)) {
@@ -1435,8 +1439,6 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       }
       case 'call': {
         checkTypeArgs(e.typeArgs);
-        // 文字列のメソッドの引数は、共有の g の正規表現を置いてよい場所 (0.34 · T-266)。式そのものを登録する (引くのは名前の枝だけ)。
-        if (e.callee.kind === 'member' && REGEX_ARG_METHODS.has(e.callee.prop)) for (const a of e.args) regexUses.add(a);
         checkCallee(e.callee, e.args, scopes, ctx);
         if (!scalarResultCall(e.callee, scopes)) e.args.forEach((x) => refuseInert(x, scopes, '呼び出しの引数'));
         // 外の module の関数を名前で直に呼ぶ形なら、引数に直に書いた arrow (と、引数のオブジェクトの字面の欄に直に書いた arrow) は呼び戻し (0.32 · T-261)。

@@ -136,6 +136,16 @@ describe('0.34: 共有の正規表現は状態を持てない (threat: T-266)', 
     const exporter = 'export const RE = /ok/g;\nexport const PLAIN = /ok/;\n';
     const imported = diagnostics(exporter, 'use { RE } from "./m0";\n' + F('  return RE.test(x);'));
     expect(imported).toEqual([expect.stringContaining('src/x/m1.mamori:3:10: ' + SHARED_G('RE'))]);
+    // 引いた名前の別名 (`const A = RE;`)・`alias` で付け替えた名前の別名も、表で辿る
+    expect(diagnostics(exporter, 'use { RE } from "./m0";\nconst A = RE;\n' + F('  return A.test(x);'))).toEqual([expect.stringContaining('src/x/m1.mamori:4:10: ' + SHARED_G('A'))]);
+    expect(diagnostics(exporter, 'use { RE alias R2 } from "./m0";\nconst A = R2;\n' + F('  return A.exec(x);'))).toEqual([expect.stringContaining('src/x/m1.mamori:4:10: ' + SHARED_G('A'))]);
+    // 対照: g の無い正規表現を引いた別名は、判定に使える (別名というだけでは断らない)
+    expect(diagnostics(exporter, 'use { PLAIN } from "./m0";\nconst A = PLAIN;\n' + F('  return A.test(x);'))).toEqual([]);
+    // 2 段の別名 (m0 → m1 → m2) は、module を読む順に依らず辿る —— 先に読む module が、後で読む module の別名を引いている
+    const chain = diagnostics('use { B } from "./m1";\nconst A = B;\n' + F('  return A.test(x);'), 'use { RE } from "./m2";\nexport const B = RE;\n', 'export const RE = /ok/g;\n');
+    expect(chain).toEqual([expect.stringContaining('src/x/m0.mamori:4:10: ' + SHARED_G('A'))]);
+    // 文字列のメソッドでないメソッドの引数には渡せない (`.replace` ほか 6 つの名前だけ)
+    expect(diagnostics('const RE = /ok/g;\n' + F('  const o = { check: (re: RegExp) => re.test(x) };\n  return o.check(RE);'))).toEqual([expect.stringContaining(SHARED_G('RE'))]);
     // 対照: 引いた先でも、文字列のメソッドの引数には渡せる。g の無い正規表現は `.test` に使える
     expect(diagnostics(exporter, 'use { RE, PLAIN } from "./m0";\n' + F('  return x.replace(RE, "") + String(PLAIN.test(x));'))).toEqual([]);
   });
@@ -148,7 +158,7 @@ describe('0.34: 共有の正規表現は状態を持てない (threat: T-266)', 
     expect(diagnostics('const TABLE = { re: /ok/g };\n' + F('  return TABLE.re.test(x);'))).toEqual([expect.stringContaining(NESTED)]);
     expect(diagnostics('const TABLE = [/ok/g];\n' + F('  return TABLE[0].test(x);'))).toEqual([expect.stringContaining(NESTED)]);
     expect(diagnostics('const TABLE = [new RegExp("ok", "g")];\n' + F('  return x.length;'))).toEqual([expect.stringContaining(NESTED)]);
-    const FLAGS = 'flag を文字列の字面で書きます';
+    const FLAGS = '[M6] モジュール直下の RE の正規表現は、flag を文字列の字面で書きます';
     expect(diagnostics('const FLAGS = "g";\nconst RE = new RegExp("^ok$", FLAGS);\n' + F('  return RE.test(x);'))).toEqual([expect.stringContaining(FLAGS)]);
     // 逃がしの綴りで g を隠す (`"\u0067"`) —— 字面でも、逆斜線を含む flag は読まない
     expect(diagnostics('const RE = new RegExp("^ok$", "\\u0067");\n' + F('  return RE.test(x);'))).toEqual([expect.stringContaining(FLAGS)]);
@@ -169,19 +179,26 @@ describe('0.34: 共有の正規表現は状態を持てない (threat: T-266)', 
     expect(diagnostics('const RE = /ok/g;\n' + F('  return x.replace(RE, "") + x.replaceAll(RE, "") + x.split(RE).length + [...x.matchAll(RE)].length + x.search(RE) + (x.match(RE)?.length ?? 0);'))).toEqual([]);
     expect(diagnostics(F('  const re = /ok/g;\n  return re.test(x);'))).toEqual([]);
     expect(diagnostics(F('  const re = /ok/y;\n  return re.exec(x);'))).toEqual([]);
+    // flag は最後の `/` の後ろだけ —— 本体が g / y で終わる正規表現 (`/ag/`・`/ay/`) は g も y も持たない
+    expect(diagnostics('const RE = /ag/;\nconst RE2 = /ay/;\n' + F('  return RE.test(x) || RE2.test(x);'))).toEqual([]);
+    // 正規表現でない `new` の第 2 引数は flag ではない (`new Error("…", { cause })` を flag の分からない正規表現と読まない)
+    expect(diagnostics('const BOOM = new Error("boom", { cause: 1 });\n' + F('  return BOOM.message + x;'))).toEqual([]);
   });
 });
 
 describe('0.34: 共有の Date / URL と、型を書いていない共有の受け手 (threat: T-267)', () => {
   it('★ モジュール直下の const に `new Date(…)` / `new URL(…)` は置けない —— 型を書いても・入れ物に包んでも (threat: T-267)', () => {
     const DATE_AT = (name: string): string => `[M6] モジュール直下の const ${name} に \`new Date(…)\` は置けません`;
-    expect(diagnostics(`${DATE}const EPOCH = new Date(0);\n${F('  return EPOCH.getTime();')}`)).toEqual([expect.stringContaining(DATE_AT('EPOCH'))]);
+    const date = diagnostics(`${DATE}const EPOCH = new Date(0);\n${F('  return EPOCH.getTime();')}`);
+    expect(date).toEqual([expect.stringContaining(DATE_AT('EPOCH'))]);
+    // 断りは、その組み込みの書き換えるメソッドを名指しする (Date と URL で別)
+    expect(date[0]).toContain('Date は書き換えるメソッド (`.setTime(…)` ほか) を持ち');
     expect(diagnostics(`${DATE}const EPOCH: Date = new Date(0);\n${F('  return EPOCH.getTime();')}`)).toEqual([expect.stringContaining(DATE_AT('EPOCH'))]);
     expect(diagnostics(`${DATE}const T = { at: new Date(0) };\n${F('  return T.at.getTime();')}`)).toEqual([expect.stringContaining(DATE_AT('T'))]);
     expect(diagnostics(`${DATE}const T = [new Date(0)];\n${F('  return T.length;')}`)).toEqual([expect.stringContaining(DATE_AT('T'))]);
     const url = diagnostics('const BASE = new URL("https://example.invalid/");\n' + F('  return BASE.href;'));
     expect(url).toEqual([expect.stringContaining('[M6] モジュール直下の const BASE に `new URL(…)` は置けません')]);
-    expect(url[0]).toContain('`.searchParams.set(…)` ほか');
+    expect(url[0]).toContain('URL は書き換えるメソッド (`.searchParams.set(…)` ほか) を持ち');
   });
 
   it('★ 型を書いていない直下の const (関数が返した入れ物) は、書き換えるメソッドの受け手にできない —— 0.33 が残した ① (threat: T-267)', () => {
@@ -200,6 +217,11 @@ describe('0.34: 共有の Date / URL と、型を書いていない共有の受�
     // 関数が返した日付の `.setHours(…)` ほか (set + 大文字で始まる名前)
     const d = diagnostics(`${DATE}fn mk() -> Date {\n  return new Date(0);\n}\nconst T = mk();\n${F('  T.setHours(1);\n  return T.getTime();')}`);
     expect(d).toEqual([expect.stringContaining(UNTYPED_RECEIVER('T', 'setHours'))]);
+    // `.append(…)` (Headers / URLSearchParams / FormData) も書き換える
+    const HEADERS = 'interface Bag {\n  readonly append: (k: string, v: string) => void;\n  readonly offsetAt: (n: number) => number;\n}\nextern pure { mk } from "./host";\nconst H = mk();\n';
+    expect(diagnostics(HEADERS + F('  H.append("k", x);\n  return 1;'))).toEqual([expect.stringContaining(UNTYPED_RECEIVER('H', 'append'))]);
+    // 対照: 名前の途中に set + 大文字が在るだけのメソッド (`offsetAt`) は書き換えるメソッドではない
+    expect(diagnostics(HEADERS + F('  return H.offsetAt(1);'))).toEqual([]);
   });
 
   it('対照: 型で名乗った状態は書き換えられる・関数の中の Date / URL は自分の物・型なしの const は読める', () => {
