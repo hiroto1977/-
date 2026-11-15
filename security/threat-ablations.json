@@ -2753,6 +2753,78 @@
           "replace": "        if (false as boolean) {"
         }
       ]
+    },
+    {
+      "id": "A-603",
+      "threat": "T-265",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "`.call` / `.apply` / `.bind` を断らない —— 自分の入れ物のメソッドを借りて、受け手 (this) を共有の表にすり替えられる (直す前の形)",
+      "edits": [
+        {
+          "find": "        if (BORROWING_MEMBERS.has(e.prop)) report('M6', e.pos, ",
+          "replace": "        if ((false as boolean) && BORROWING_MEMBERS.has(e.prop)) report('M6', e.pos, "
+        }
+      ]
+    },
+    {
+      "id": "A-604",
+      "threat": "T-265",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "受け手を書き換えるメソッドを値として取り出す形を断らない —— 呼び戻しの thisArg (`[x].forEach(tmp.add, 読むだけの集合)`) で受け手を選べる (直す前の形)",
+      "edits": [
+        {
+          "find": "        if (CALL_ONLY_METHODS.has(e.prop) && !calledMembers.has(e)) {",
+          "replace": "        if ((false as boolean) && CALL_ONLY_METHODS.has(e.prop) && !calledMembers.has(e)) {"
+        }
+      ]
+    },
+    {
+      "id": "A-605",
+      "threat": "T-266",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "共有の g の正規表現の名前を、文字列のメソッドの引数の外でも使わせる —— `RE.test(x)` が lastIndex を進め、関門が 2 度目に素通りする (直す前の形)",
+      "edits": [
+        {
+          "find": "        if (b.sharedRegex === 'g' && !regexUses.has(e)) {",
+          "replace": "        if ((false as boolean) && b.sharedRegex === 'g' && !regexUses.has(e)) {"
+        }
+      ]
+    },
+    {
+      "id": "A-606",
+      "threat": "T-266",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "`.compile` を断らない —— 共有の正規表現をその場で別の式へ作り替えられる (直す前の形)",
+      "edits": [
+        {
+          "find": "  ['compile', '正規表現をその場で別の式へ作り替える古いメソッドで、共有の正規表現を読む関門の判定を書き換えられます'],\n",
+          "replace": ""
+        }
+      ]
+    },
+    {
+      "id": "A-607",
+      "threat": "T-267",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "モジュール直下の const の `new Date(…)` / `new URL(…)` を断らない —— どの関数からも `.setTime(…)` / `.searchParams.set(…)` で書き換えられる (直す前の形)",
+      "edits": [
+        {
+          "find": "          if (!ctx.sharedInit.mutable && SHARED_MUTABLE_OBJECTS.has(built)) {",
+          "replace": "          if ((false as boolean) && !ctx.sharedInit.mutable && SHARED_MUTABLE_OBJECTS.has(built)) {"
+        }
+      ]
+    },
+    {
+      "id": "A-608",
+      "threat": "T-267",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "型を書いていない直下の const を、書き換えるメソッドの受け手にする形を断らない —— 関数が返した Map / Set を型なしで受けて書き換えられる (0.33 が残した ①)",
+      "edits": [
+        {
+          "find": "    if (viaMember !== null && isSharedWriteMethod(viaMember.prop)) {",
+          "replace": "    if ((false as boolean) && viaMember !== null && isSharedWriteMethod(viaMember.prop)) {"
+        }
+      ]
     }
   ]
 }

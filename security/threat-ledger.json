@@ -4882,6 +4882,89 @@
           "test": "★ 断りは直し方を名指しする: 読むだけなら Readonly の型・書き換えるなら型で名乗る (threat: T-264)"
         }
       ]
+    },
+    {
+      "id": "T-265",
+      "found": "2026-11-15",
+      "foundBy": "MG-071 (言語の穴探しの周)。0.33 までの「共有の状態は書き換えさせない」規則 (T-258 の配列・T-264 の Map / Set) は受け手を名前で見ていた。規則を破るプログラムを約 195 本書いて当てると、自分で作った入れ物のメソッドを借りて、受け手 (this) を共有の表にすり替える形 —— `tmp.push.call(共有の配列, x)`・`tmp.set.call(読むだけの表, k, v)`・`.apply`・`.bind`・呼び戻しの thisArg (`[x].forEach(tmp.add, 読むだけの集合)`)・分割代入 (`const { push } = tmp;`) —— を、Mamori のコンパイラも生成物の tsc も通した (tsc はメソッドの this を検めない)。`ReadonlyMap` / `ReadonlySet` / `readonly T[]` と名乗った表まで書き換えられた。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "守りの層を書く言語 Mamori が、メソッドを借りて受け手 (this) をすり替える形 (.call / .apply / .bind・thisArg) を通し、読むだけと名乗った共有の表を書き換えられた",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: `.call` / `.apply` / `.bind` を言語から外す (M6 · 0.34 —— 書き換えないメソッドでも・`?.` でも・字面の添字でも・分割代入でも断る)。受け手を書き換えるメソッド (push ほか配列の 9 つと set / add / delete / clear / append) は呼ぶ形 (`x.push(…)`) でしか書けない —— 値として取り出す (別名・引数・返す・分割代入) と、呼び戻しの thisArg で受け手を選べるため。実物の 46 本の .mamori はどれも当たらず、生成物は 1 byte も変わらない。残る限界: 自分のオブジェクトに書いた同名のメソッド (`{ replace: (re) => … }`) や、引数で受けた入れ物 (Map / Set / Date) の書き換えは今も通る (T-264 の残した ③ と同じ)。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV34.test.ts",
+        "test": "★ `.call` / `.apply` / `.bind` で自分の入れ物のメソッドを借り、共有の表を書き換える形は断る (threat: T-265)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV34.test.ts",
+          "test": "★ 借りる口は、書き換えないメソッドでも・印を受けない関数でも・`?.` でも・字面の添字でも断る (threat: T-265)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV34.test.ts",
+          "test": "★ 呼び戻しの thisArg で受け手を選ぶ形は断る —— 書き換えるメソッドは値として持ち出せない (threat: T-265)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV34.test.ts",
+          "test": "★ 分割代入で取り出す形も断る (threat: T-265)"
+        }
+      ]
+    },
+    {
+      "id": "T-266",
+      "found": "2026-11-15",
+      "foundBy": "MG-071 (言語の穴探しの周)。共有の正規表現が状態を持てた。① `SAFE.compile(\".*\")` は正規表現をその場で別の式へ作り替える古いメソッドで、その正規表現を読むすべての関門の答えが変わる (引数で受けた正規表現でも同じ)。② モジュール直下の `/…/g`・`/…/y` (`new RegExp(…, \"g\")` も) は `lastIndex` を呼び出しをまたいで持ち、`.test` / `.exec` の答えが交互に変わる —— 同じ入力を 2 度渡すと、関門が 2 度目に素通りする。どちらも Mamori のコンパイラと生成物の tsc を通った。実物の .mamori に該当は無い (直下の g の正規表現は文字列のメソッドの引数にだけ渡している)。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "守りの層を書く言語 Mamori が、状態を持つ共有の正規表現 (その場で作り替える .compile・モジュール直下の g / y) を通し、関門の答えが呼ぶたびに変わる形を書けた",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: `.compile` を言語から外す (M6 · 0.34)。モジュール直下の g の正規表現は、直下の const の初期値そのものにだけ置け、名前は文字列のメソッド (.replace / .replaceAll / .match / .matchAll / .split / .search —— どれも lastIndex を始めに戻すか、写しを使う) の引数にだけ渡せる。`.test` / `.exec` の受け手・別名・局所の別名・関数の引数・`use` で引いた先でも断る (名前で辿る)。y の付く物・入れ物の中の g・flag を字面で書いていない `new RegExp` は直下に置けない。呼び出しの結果を置いた直下の const と、入れ直せる直下の let は `.test` / `.exec` の受け手にできない。関数の中の g / y は自分の物なので今までどおり書ける。残る限界: 工場関数が閉じ込めた g の正規表現 (呼び出しをまたいで生きる) と、引数で受けた正規表現の flag は見ない。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV34.test.ts",
+        "test": "★ モジュール直下の g の正規表現を `.test` / `.exec` の受け手にする形は断る (threat: T-266)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV34.test.ts",
+          "test": "★ `.compile` は無い —— 共有の正規表現を別の式へ作り替えられる (threat: T-266)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV34.test.ts",
+          "test": "★ 別名・局所の別名・関数の引数・`use` で引いた先でも同じ (threat: T-266)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV34.test.ts",
+          "test": "★ y の付いた正規表現・入れ物の中の g の正規表現・flag の分からない正規表現は、直下に置けない (threat: T-266)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV34.test.ts",
+          "test": "★ 中身の見えない共有の正規表現 (呼び出しの結果・入れ直せる let) は `.test` / `.exec` の受け手にできない (threat: T-266)"
+        }
+      ]
+    },
+    {
+      "id": "T-267",
+      "found": "2026-11-15",
+      "foundBy": "MG-071 (言語の穴探しの周)。入れ物でない共有の状態と、0.33 (T-264) が「残した物 ①」と記録した形。① モジュール直下の `const EPOCH = new Date(0);` / `const BASE = new URL(…);` は、同じ module のどの関数からも `.setTime(…)` / `.searchParams.set(…)` で書き換えられ、読むだけの型が無いので tsc も断れない (型を書いても同じ)。② 関数や即時実行の arrow が返した Map / Set / Date を型なしの直下の const で受けると、0.33 の宣言の規則 (初期値の中の `new` だけを見る) に当たらず、`.set` / `.add` / `.delete` / `.clear` / `.setHours` が通った。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "守りの層を書く言語 Mamori が、モジュール直下の Date / URL と、関数が返した入れ物を型なしで受けた共有の const を、同じ module のどの関数からも書き換えられる形で通した",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: モジュール直下の const の初期値の中の `new Date(…)` / `new URL(…)` を断る (M6 · 0.34 —— 型を書いても・オブジェクトや配列に包んでも)。型を書いていないモジュール直下の const は、入れ物・日付を書き換えるメソッド (set / add / delete / clear / append と set + 大文字で始まる名前) の受け手にできない —— 名前そのものでも・局所の別名でも・欄や添字をたどった先でも (根の名前で見る)。型で名乗った状態 (`Map<…>`)・直下の let・関数の中の Date / URL は今までどおり書ける。残る限界: 関数が返した Date を型つきの const で受ける形 (型で名乗った = 書き換えられると宣言した扱い) と、引数で渡した先での書き換えは今も通る。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV34.test.ts",
+        "test": "★ モジュール直下の const に `new Date(…)` / `new URL(…)` は置けない —— 型を書いても・入れ物に包んでも (threat: T-267)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV34.test.ts",
+          "test": "★ 型を書いていない直下の const (関数が返した入れ物) は、書き換えるメソッドの受け手にできない —— 0.33 が残した ① (threat: T-267)"
+        }
+      ]
     }
   ],
   "huntBacklog": [
