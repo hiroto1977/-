@@ -7,6 +7,22 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-11-15) — MG-070: ブラウザ版の保管庫 `vault.ts` を Mamori へ移した (0.33 のまま)
+
+利用者の依頼「システム開発を継続して」。言語を育てる輪 (`npm run mamori:grow -- brief`) の 1 番目の候補 (`port:src/renderer/security/vault.ts`) を 1 周として回した。構文は足していない。
+- **移した物**: `src/renderer/security/vault.mamori` (1,408 行) → 生成物 `src/renderer/security/vault.ts` (1,307 行 · 元は 1,789 行)。IndexedDB と WebCrypto の口 (開く・読む・書く・まとめて書く・消す・鍵を作る・包む・解く・乱数・UTF-8・ゼロ埋め・警告) は薄い壁 `src/renderer/security/vaultHost.ts` (362 行 · 判断を持たない · 検査 30 件) に置いた。
+- **書き直した形 (Mamori に無い物)**: `class BrowserVault` (状態を欄に持つクラス) → **状態を閉じ込めた工場関数** `createBrowserVault()` (Mamori のクラスは例外の形 1 つだけ) / template → `+` の連結 / `as` → 型の注釈と、壁の読みの型引数 / 欄と欄のあいだの注記 → 関数の中へ (Mamori はオブジェクトの欄のあいだに注記を置けない)。
+- **口は `readonly` にした (元より厳しい向き)**: 元はクラスの method だったので、型の上では `getVault().verifyPassword = …` と差し替えられた。`Vault` の 19 の欄をどれも `readonly` の関数にしたので、その書き方は `tsc` が断る (検査 `vault.test.ts` に `@ts-expect-error` の対照 3 つ)。実行時の凍結はしていない (`REMAINING_WORK.md`)。
+- **先に破った**: 20 通り (壁の読みの型引数に印の型・印を欄に持つ interface / type / その場の型・印の注釈つきの受け・戻りの型での推論・閉じ込めた let の上書き・欄の束に危ない口・返した束の欄の差し替え・`Date` の構築子の鎖 / 差し替え / 原型・`.catch(() => null)` の結果) + 対照 2。すべて断られた (穴 0)。
+- **差分比較 (元の版と生成物へ同じ操作の列)**: 種 11 / 12 / 13 × 400 場面 (14,248 + 14,644 + 13,664 = 42,556 手) を 3 通り (生成物だけ / 元 → 生成物 / 生成物 → 元。後の 2 つは同じ保管領域を読み込み直しをまたいで共有する) で食い違い 0。種 7 × 400 場面 (14,076 手) も 0。輸出する名前と定数・`meetsPasswordPolicy`・`describeWipeOutcome`・`NoRecoveryBranchError` も一致。対照 3 方向 (トークンの AAD・認証タグの AAD・復旧鍵の接頭辞) は食い違いを出した。道具は使い捨て (scratchpad)。
+- **変異検査**: 初回 94.44% (生存 24 + 未到達 11 · break 99.8 の下)。内訳は 4 つ: ① template を `+` の連結へ直したので、断片ごとに変異体が生まれた (AAD の接頭辞・区切りの `:`・断りの文の前後) ② 旧形式 (v1 = serviceId だけを束ねた記録) を読む枝が、検査で 1 度も走っていなかった (パス 566-C で v2 を足したときから —— 元の版にも在った不足) ③ 変異検査の道具が 10 へ上がって観点が 1 つ増えた (`CallExpression` —— 呼び出しの文と `throw new …` を丸ごと消す。dependabot #924 を main から取り込んだ)。設定の検証 (`assertKdfIterations` / `assertSaltBytes`) を消しても、後ろの照合が別の文で断るので落ちなかった ④ Mamori はモジュール直下の `//` の注記を生成物へ出さないので、store の名前と KCV の平文の pragma が消えた。**検査 `vaultStoredFormats.test.ts` 24 件で閉じた** —— 検査の側で WebCrypto を直接呼び、字面の綴りで記録を封じて開く (v2 / v1 / 版なし・認証タグ・壊した設定は理由の文で断る・断りの文の全文・読み直した実装の store の名前と KCV の平文)。生存と未到達の 28 方向を 1 件ずつ生成物へ当て、全部がその検査で落ちることを確かめた (`audit:survivors` と同じ手順)。等価変異として残したのは 4 か所 (理由つき · `REMAINING_WORK.md`)。**2 度目は 2 ファイルとも 100%** (`vault.ts` 502 件・`vaultHost.ts` 117 件・生存 0・未到達 0・29 分 52 秒)。
+- **台帳の穴の開け直し**: `security/threat-ablations.json` の A-118 / A-203 / A-204 / A-205 / A-538 の書き換えを生成物の形へ直し (どれも 1 か所だけに当たる)、T-049 / T-063 / T-064 / T-230 の 6 件 (A-539 を含む) すべてを名指しの回帰検査が捕まえた。
+- **母集団を数える検査 5 本を新しい形へ**: `webCryptoGuardCensus` (鍵を作る口は壁 2 本)・`aesGcmNonce` (IV を作る所は壁 2 本の 3 か所)・`vaultPairedWrites` (対の書き込みは `hostPutAll`)・`kdfParamsCensus` (PBKDF2 の導出は壁 2 本に 1 つずつ)・`ontologyLaws` (鍵をスロットに結ぶ AAD)。門の台帳 2 つ (`lint:forbidden` の IndexedDB の例外・`lint:mutation-scope` の無言の pragma) も壁へ移した。
+- **保護対象**: `vault.mamori` と `vaultHost.ts` を整合性チェーン (block #498)・CODEOWNERS に足し、壁を変異検査の対象へ (`mutate` 357)。能力の台帳 (`security/mamori-capabilities.json`) に `vault.mamori` の行。
+- **罠 (この周で踏んだ)**: ① Mamori はオブジェクトの欄と欄のあいだに注記を置けない (`[M0] 名前が要ります`) —— 注記は次の関数の中へ ② `mamori:build -- --write-capabilities` は台帳を書くだけで生成物を書き直さない (もう 1 度 `mamori:build`) ③ 全件の検査 (`npm test`) はこの環境で 11 分強かかる —— 裏で回すなら締切を長く取り、他の重い仕事と並べない ④ 差分比較の対照に日本語の文字列を使うと当たらない (esbuild が束の中の非 ASCII を逃がす) —— 対照は ASCII の綴りで ⑤ 生成物の method は行頭が `}, 名前: async (…) => {` になる —— 関数の境目を行頭の形で切る census は針を直す。
+- **検証 (最終のコード)**: __VERIFY__
+- **完成度と次の候補**: 数は `npm run mamori:grow -- report`。残る TypeScript の壁は、移せない `preloadHost.ts` (Issue #910) だけになった。
+
 ## 直近の作業 (2026-11-12) — MG-069: 資格情報の保管 `secrets.ts` を Mamori へ移し、型なしの共有 Map / Set を断る (0.33 · T-264)
 
 利用者の依頼「推奨される組み合わせを実行」(= 週 1 の予約 2 本の直し + 輪の次の候補)。輪の道具 (`npm run mamori:grow -- brief`) の 1 番目の候補 (`port:src/main/secrets.ts`) を 1 周として回した。

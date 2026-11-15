@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 498
+- ブロック数: 499
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `140f5a38228e45f0831437efbe7830bffcd6112727dbe99a9ae5e2eb8f1fc183`
-- 保護対象: 220 ファイル
+- 末尾(tip)ハッシュ: `a29e86275683a4a94881ea956aa39d75cb47c5e4de76ff87bccaa4be31681918`
+- 保護対象: 222 ファイル
 
 ## ブロック
 
@@ -511,6 +511,7 @@
 | 495 | `4744a94bddd7f6bd` | `f99c8222cfdb2363` | `0cde336b2aa0f9c4` | update e2e.yml,integrity-chain.cjs,mamori-capabilities.json,main.mamori,main.ts,mainHost.ts |
 | 496 | `fb09e9d3af08cc8c` | `0cde336b2aa0f9c4` | `e42fa489ad6b1e07` | update integrity-chain.cjs,mamori-capabilities.json,selfAttestation.mamori,selfAttestation.ts |
 | 497 | `3fa4b588e9938423` | `e42fa489ad6b1e07` | `140f5a38228e45f0` | update integrity-chain.cjs,mamori-capabilities.json,secrets.mamori,secrets.ts,secretsHost.ts,userPresence.mamori |
+| 498 | `6af8cf72144ff6f3` | `140f5a38228e45f0` | `a29e86275683a4a9` | update integrity-chain.cjs,mamori-capabilities.json,vault.mamori,vault.ts,vaultHost.ts |
 
 ## 保護対象ファイル
 
@@ -652,7 +653,9 @@
 - `src/renderer/security/lockWorkspace.ts`
 - `src/renderer/security/lockWorkspaceHost.ts`
 - `src/renderer/security/mnemonic.ts`
+- `src/renderer/security/vault.mamori`
 - `src/renderer/security/vault.ts`
+- `src/renderer/security/vaultHost.ts`
 - `src/renderer/security/webCrypto.ts`
 - `src/renderer/security/webauthn.mamori`
 - `src/renderer/security/webauthn.ts`
