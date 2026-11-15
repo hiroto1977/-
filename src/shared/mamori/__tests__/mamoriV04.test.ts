@@ -230,7 +230,8 @@ describe('T-237: 正規表現の字面の中の見えない字・方向を変え
     expect(diags('export const C = [/a\u202Eb/, 1];\n')).toEqual([`src/x/m0.mamori:1:19: [M0] ${HIDDEN('注記と文字列')}`]);
   });
   it('対照: 正規表現の普通の字・`\\uXXXX` の綴りは通る', () => {
-    expect(diags('export const C = [/a\\u202Eb[/]/gi, 1];\n')).toEqual([]);
+    // flag は `i` と `m` —— g の付いた正規表現は、モジュール直下の配列の中には置けなくなった (0.34 · T-266 · 状態を持つ)。
+    expect(diags('export const C = [/a\\u202Eb[/]/im, 1];\n')).toEqual([]);
   });
 });
 

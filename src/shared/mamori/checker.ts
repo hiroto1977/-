@@ -85,6 +85,80 @@ const LOGICAL_OPS: ReadonlySet<string> = new Set(['??', '||', '&&']);
 const MUTATING_METHODS: ReadonlySet<string> = new Set(['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse', 'fill', 'copyWithin']);
 
 /**
+ * **値として持ち出せない**メソッドの名前 (0.34 · T-265)。呼ぶ形 (`a.push(v)` / `m.set(k, v)`) でしか書けない。
+ *
+ * 受け手を書き換えるメソッドを値として取り出すと、**受け手 (this) を呼ぶ側が選べる**: 組み込みの呼び戻しの第 2 引数 (thisArg) へ
+ * 渡す形 `["evil"].forEach(tmp.add, 読むだけの集まり)` は、`.call` を断っても残る。`tsc` はメソッドの this を検めないので、
+ * 「書き換える相手は自分で作った配列だけ」(T-258) と「読むだけの表は Readonly の型で名乗る」(T-264) の両方を迂回した。
+ * 配列を書き換える 9 つに、Map / Set / URLSearchParams の書き換え (`set` / `add` / `delete` / `clear` / `append`) を足した表。
+ */
+const CALL_ONLY_METHODS: ReadonlySet<string> = new Set([...MUTATING_METHODS, 'set', 'add', 'delete', 'clear', 'append']);
+
+/**
+ * 書けないメンバの名前 (0.34 · T-265 / T-266)。呼ぶ形でも値としても書けない。
+ *
+ * - `call` / `apply` / `bind` —— **受け手 (this) を呼ぶ側が選ぶ**口。`tmp.push.call(共有の配列, x)` は「書き換える相手は自分で作った配列だけ」(T-258) を、
+ *   `tmp.set.call(読むだけの表, k, v)` は「読むだけの表は Readonly の型で名乗れば tsc が断る」(T-264) を素通りした (`tsc` はメソッドの this を検めない)。
+ * - `compile` —— 正規表現を**その場で別の式へ作り替える**古いメソッド。`SAFE.compile(".*")` 1 行で、その正規表現を読むすべての関門の答えが変わる
+ *   (引数で受けた・`use` で引いた正規表現でも同じ)。
+ *
+ * 構文の表 (`FORBIDDEN_MEMBERS` · parser) ではなくここ (M6) に置くのは、共有の状態を書き換える道の規則だから (T-258 / T-264 と同じ段)。
+ */
+const BORROWING_MEMBERS: ReadonlyMap<string, string> = new Map([
+  ['call', '受け手 (this) を呼ぶ側が選べるので、`tmp.push.call(共有の配列, x)` / `tmp.set.call(読むだけの表, k, v)` で、書き換えの検め (T-258 / T-264) を迂回できます'],
+  ['apply', '`.call` と同じく、受け手 (this) を呼ぶ側が選べる口です'],
+  ['bind', '受け手 (this) を縛った関数を作れるので、`.call` と同じ迂回になります'],
+  ['compile', '正規表現をその場で別の式へ作り替える古いメソッドで、共有の正規表現を読む関門の判定を書き換えられます'],
+]);
+
+/**
+ * 正規表現を引数に取る文字列のメソッド (0.34 · T-266)。**共有の g の正規表現を渡せるのはここだけ** —— どれも正規表現の
+ * 状態 (`lastIndex`) を読まない (`replace` / `match` は先頭で 0 に戻し、`split` / `matchAll` は写しを作り、`search` は戻す)。
+ */
+const REGEX_ARG_METHODS: ReadonlySet<string> = new Set(['replace', 'replaceAll', 'match', 'matchAll', 'split', 'search']);
+
+/**
+ * モジュール直下の const に置けない、書き換えるメソッドを持つ組み込み (0.34 · T-267)。`new Date(0)` / `new URL(…)` を直下の const に置くと、
+ * どの関数からも `.setTime(…)` / `.searchParams.set(…)` で書き換えられ、それを読む別の関数 (期限・行き先の判定) の答えが変わる。
+ * Map / Set (T-264) と違って読むだけの型が無いので、型を書いても断る —— 使う関数の中で作る。
+ */
+const SHARED_MUTABLE_OBJECTS: ReadonlySet<string | null> = new Set(['Date', 'URL']);
+
+/**
+ * 受け手の入れ物・日付を書き換えるメソッドか (0.34 · T-267)。**型を書いていないモジュール直下の const** はこれの受け手にできない ——
+ * T-264 は初期値の式の中の `new Map(…)` しか見ないので、関数が返した入れ物 (`const T = make();`・`const T = (() => new Map())();`) は
+ * 型なしのまま書き換えられた (0.33 が「残した物 ①」とした形)。書き換える状態は型で名乗らせる (`const T: Map<…> = make();`)。
+ */
+function isSharedWriteMethod(prop: string): boolean {
+  return ['set', 'add', 'delete', 'clear', 'append'].includes(prop) || /^set[A-Z]/.test(prop);
+}
+
+/** 正規表現の字面の flag (`/a/gi` → `gi`)。 */
+function regexFlags(raw: string): string {
+  return raw.slice(raw.lastIndexOf('/') + 1);
+}
+
+/**
+ * 初期値の式そのものが正規表現なら、その flag。正規表現でなければ undefined、flag が字面で分からなければ null
+ * (`new RegExp(p, flags)` の第 2 引数が文字列の字面でない)。第 2 引数が無い `new RegExp(…)` は flag を持たない
+ * (第 1 引数に正規表現の字面を置いた形は、その字面を別に検める)。
+ */
+function regexInitFlags(init: Expr): string | null | undefined {
+  if (init.kind === 'regex') return regexFlags(init.raw);
+  if (init.kind !== 'new' || identName(init.callee) !== 'RegExp') return undefined;
+  const flags = init.args[1];
+  if (flags === undefined) return '';
+  // 逃がしを含む字面 (`"\\u0067"` = g) は綴りから flag を読めないので、分からない側へ倒す。
+  return flags.kind === 'string' && !flags.raw.includes('\\') ? flags.raw : null;
+}
+
+/** 初期値が **g の付いた正規表現そのもの**か (名前で追う共有の正規表現 · 0.34 · T-266)。y の付く物・flag の分からない物は直下に置けない (別に断る)。 */
+function isGlobalRegexInit(init: Expr): boolean {
+  const flags = regexInitFlags(init);
+  return typeof flags === 'string' && flags.includes('g') && !flags.includes('y');
+}
+
+/**
  * 書き換えるメソッドを持つ組み込みの入れ物 (0.33 · T-264)。モジュール直下の const を**型を書かずに**これで始めると、
  * `tsc` は書き換えられる型 (`Map<…>` / `Set<…>`) を推論する —— どの関数からも `.set` / `.add` / `.delete` / `.clear` が通り、
  * その表を読む別の関数 (関門・上限) の判定が変わる。配列の側は 0.18 (T-258) が受け手で断るが、Map / Set は
@@ -140,6 +214,9 @@ const CONSTRUCTIBLE: ReadonlySet<string | null> = new Set(['RegExp', 'Error', 'T
  */
 const PLAIN_BUILTINS: ReadonlySet<string | null> = new Set([...PURE_GLOBALS].filter((n) => n !== 'Object' && !BUILTIN_MEMBERS.has(n)));
 
+/** 共有の正規表現としての扱い (`ProjectTable.sharedRegex`)。 */
+export type SharedRegexKind = 'g' | 'opaque';
+
 /** 関数の外形 (他のモジュールから引くため)。 */
 export interface FnSignature {
   readonly module: string;
@@ -158,6 +235,12 @@ export interface ProjectTable {
   readonly fns: ReadonlyMap<string, FnSignature>;
   /** モジュールの道 → export した名前の集まり (関数に限らず、定数・型・印も)。`use` で引ける名前はここに在る物だけ。 */
   readonly exports: ReadonlyMap<string, ReadonlySet<string>>;
+  /**
+   * モジュールの道 → 直下の const の名前 → 共有の正規表現としての扱い (0.34 · T-266)。別名 (`const A = B;`) と、`use` で引いた先の名前も辿る。
+   * - `g`: 初期値が g の付いた正規表現そのもの。文字列のメソッドの引数にしか渡せない (`.test` / `.exec` は `lastIndex` を進め、同じ入力への答えが呼ぶたびに変わる)。
+   * - `opaque`: 初期値が呼び出しの結果 (`const RE = make();`)。g の正規表現かどうかを検められないので、`.test` / `.exec` の受け手にできない。
+   */
+  readonly sharedRegex: ReadonlyMap<string, ReadonlyMap<string, SharedRegexKind>>;
 }
 
 /** `道 + 名前` の鍵 (`fns` を引く)。 */
@@ -255,7 +338,48 @@ export function collectTable(modules: readonly { readonly file: string; readonly
       fns.set(fnKey(file, it.name), sig);
     }
   }
-  return { table: { vetted, fns, exports }, diagnostics };
+  return { table: { vetted, fns, exports, sharedRegex: collectSharedRegex(modules) }, diagnostics };
+}
+
+/**
+ * g の付いた共有の正規表現の名前を集める (0.34 · T-266)。直下の const の初期値が正規表現そのもの (`/…/g`・`new RegExp(…, "g…")`) なら載せ、
+ * 別名 (`const A = B;` —— B は同じ module の名前か、`use` で引いた名前) は増えなくなるまで辿る。
+ */
+function collectSharedRegex(modules: readonly { readonly file: string; readonly module: Module }[]): Map<string, Map<string, SharedRegexKind>> {
+  const shared = new Map<string, Map<string, SharedRegexKind>>();
+  for (const { file, module } of modules) {
+    const names = new Map<string, SharedRegexKind>();
+    shared.set(file, names);
+    for (const it of module.items) {
+      if (it.kind !== 'const') continue;
+      if (isGlobalRegexInit(it.init)) names.set(it.name, 'g');
+      else if (it.init.kind === 'call') names.set(it.name, 'opaque');
+    }
+  }
+  let grew = true;
+  while (grew) {
+    grew = false;
+    for (const { file, module } of modules) {
+      const names = shared.get(file)!;
+      const used = new Map<string, { readonly target: string; readonly name: string }>();
+      for (const it of module.items) {
+        if (it.kind !== 'use') continue;
+        for (const n of it.names) used.set(n.alias ?? n.name, { target: resolveUse(it.from, file), name: n.name });
+      }
+      for (const it of module.items) {
+        if (it.kind !== 'const' || names.has(it.name)) continue;
+        const source = identName(it.init);
+        if (source === null) continue;
+        const from = used.get(source);
+        const kind = names.get(source) ?? (from === undefined ? undefined : shared.get(from.target)?.get(from.name));
+        if (kind !== undefined) {
+          names.set(it.name, kind);
+          grew = true;
+        }
+      }
+    }
+  }
+  return shared;
 }
 
 interface Binding {
@@ -285,6 +409,10 @@ interface Binding {
    * `const f = x[k]; f(…)` の洗浄を塞ぐ。一度付いた印は、別の値を入れても残す (失敗は閉じる)。
    */
   readonly inert?: boolean;
+  /** 共有の正規表現としての扱い (0.34 · T-266)。`g` は文字列のメソッド (`.replace` ほか) の引数にしか渡せず、`opaque` (呼び出しの結果) は `.test` / `.exec` の受け手にできない。 */
+  readonly sharedRegex?: SharedRegexKind;
+  /** 型を書いていないモジュール直下の const か (0.34 · T-267)。入れ物を書き換えるメソッド (`.set` / `.add` ほか) の受け手にできない。 */
+  readonly untypedShared?: boolean;
 }
 
 /**
@@ -365,6 +493,10 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
   const hostFns = new Set<string>();
   /** 上の位置に直に書いた arrow (その場で 1 度だけ外の関数へ渡る)。 */
   const hostCallbacks = new WeakSet<Expr>();
+  /** 呼ぶ側に立つメンバの式 (`a.push(…)` の `a.push`)。書き換えるメソッドの名前は、ここに在る式でしか書けない (0.34 · T-265)。 */
+  const calledMembers = new WeakSet<Expr>();
+  /** 共有の g の正規表現の名前を置いてよい場所の式 —— 文字列のメソッドの引数と、直下の const の別名の初期値 (0.34 · T-266)。 */
+  const regexUses = new WeakSet<Expr>();
   /** 名前を 1 つ宣言する。同じ名前を 2 度 (use・定数・関数・extern のあいだで) 宣言すると、あとの物が前の物の外形を隠す (0.4 · T-241)。 */
   const declare = (name: string, b: Binding, pos: { line: number; col: number }): void => {
     if (moduleScope.has(name)) report('M6', pos, `名前 ${name} を 2 度宣言しています (use・extern・定数・関数のあいだで名前は重ねられない)`);
@@ -417,7 +549,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       // Stryker disable next-line ConditionalExpression,StringLiteral: 上の注記のとおり等価 (null の鍵は引かれない・'pure' は 'sink' / 'local' でないことだけを意味する)
       if (it.defaultName !== null) declare(it.defaultName, { vetted: null, authority: 'pure' }, it.pos);
       // Stryker disable next-line StringLiteral: 上の注記のとおり等価 ('pure' は 'sink' / 'local' でないことだけを意味する)
-      for (const n of it.names) declare(n.alias ?? n.name, { vetted: null, authority: 'pure' }, it.pos);
+      for (const n of it.names) declare(n.alias ?? n.name, { vetted: null, authority: 'pure', sharedRegex: table.sharedRegex.get(target)?.get(n.name) }, it.pos);
     } else if (it.kind === 'extern') {
       if (it.from !== null) checkSpecifier(it.from, it.pos);
       // Stryker disable next-line ConditionalExpression,StringLiteral: `from` が null (global) の口は道を持たない —— 空の道は「外:」の鍵に解かれ、どの module の外形にも当たらない (等価)
@@ -443,7 +575,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         declare(n, { vetted: null, authority: it.authority }, it.pos);
       }
     } else if (it.kind === 'const') {
-      declare(it.name, { vetted: null, authority: 'local', numeric: it.type?.text === 'number' || isNumericKey(it.init, []), inert: carriesInert(it.init, [moduleScope]) }, it.pos);
+      declare(it.name, { vetted: null, authority: 'local', numeric: it.type?.text === 'number' || isNumericKey(it.init, []), inert: carriesInert(it.init, [moduleScope]), sharedRegex: table.sharedRegex.get(file)?.get(it.name), untypedShared: it.type === null }, it.pos);
     } else if (it.kind === 'let') {
       declare(it.name, { vetted: null, authority: 'local', mutable: true, moduleLet: true, numeric: it.type.text === 'number', depth: 0 }, it.pos);
     } else if (it.kind === 'class') {
@@ -560,7 +692,10 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       const constCtx: Ctx = { role: 'plain', returnVetted: null, destVetted: null };
       // 型を書いていない const の初期値の中の `new Map(…)` / `new Set(…)` は断る (0.33 · T-264)。`satisfies` は宣言の型ではない
       // (束縛の型は推論のまま = 書き換えられる) ので数えない。
-      checkExpr(it.init, [moduleScope], it.type === null ? { ...constCtx, sharedUntyped: it.name } : constCtx);
+      // 共有の初期値 (0.34 · T-266 / T-267): 正規表現の flag と、書き換えるメソッドを持つ組み込みを見る。別名 (`const A = B;`) は共有の正規表現を運んでよい。
+      regexUses.add(it.init);
+      const shared = { name: it.name, direct: it.init, mutable: false };
+      checkExpr(it.init, [moduleScope], it.type === null ? { ...constCtx, sharedUntyped: it.name, sharedInit: shared } : { ...constCtx, sharedInit: shared });
       checkSatisfies(it.satisfies);
     }
     if (it.kind === 'let') {
@@ -630,7 +765,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     }
     refuseInert(it.init, [moduleScope], 'モジュール直下の let の初期値');
     // Stryker disable next-line StringLiteral,ObjectLiteral: 定数の初期値 (448 行) と同じ理由で等価 —— role は 'sink' / 'gate' との比べにしか使われず、returnVetted / destVetted は gate・sink の枝の中でしか読まれない
-    checkExpr(it.init, [moduleScope], { role: 'plain', returnVetted: null, destVetted: null });
+    checkExpr(it.init, [moduleScope], { role: 'plain', returnVetted: null, destVetted: null, sharedInit: { name: it.name, direct: it.init, mutable: true } });
   }
 
   /**
@@ -668,6 +803,30 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
      * arrow の本体は新しい Ctx で検めるので、`() => new Map()` (呼ぶたびに新しい入れ物) には届かない。
      */
     readonly sharedUntyped?: string;
+    /**
+     * モジュール直下の const / let の初期値を検めている間だけ、その名前と初期値の式そのもの (0.34 · T-266 / T-267)。
+     * 呼び出しをまたいで生き続ける値なので、状態を持つ正規表現 (g / y) と、書き換えるメソッドを持つ組み込み (Date / URL) を見る。
+     * arrow の本体は新しい Ctx で検める (呼ぶたびに新しい値を作る) ので、ここへは届かない。
+     */
+    readonly sharedInit?: { readonly name: string; readonly direct: Expr; readonly mutable: boolean };
+  }
+
+  /**
+   * モジュール直下の初期値の中の正規表現 (0.34 · T-266)。g / y の付いた正規表現は `lastIndex` という状態を持ち、`.test` / `.exec` のたびに進む ——
+   * 直下に置くと呼び出しをまたいで残り、**同じ入力への答えが呼ぶたびに変わる** (`/x/g.test("x")` は true・false・true…)。関門なら 2 度目に素通りする。
+   * - y は断る (置き換えのメソッドも y の `lastIndex` を読む)。
+   * - g は、直下の const の初期値そのもの (`const RE = /…/g;`) のときだけ置ける —— 名前で追い、文字列のメソッドの引数にしか渡せない。
+   *   表の欄・配列の項・let の中では名前で追えないので断る。
+   * - flag が字面で分からない `new RegExp(p, flags)` は断る。
+   */
+  function checkSharedRegex(e: Expr, flags: string | null, shared: NonNullable<Ctx['sharedInit']>): void {
+    if (flags === null) {
+      report('M6', e.pos, `モジュール直下の ${shared.name} の正規表現は、flag を文字列の字面で書きます —— 実行時に決まる flag は g / y (状態を持つ正規表現) かどうかを検められません`);
+    } else if (flags.includes('y')) {
+      report('M6', e.pos, `モジュール直下の ${shared.name} に y の付いた正規表現は置けません —— \`lastIndex\` という状態を持ち、呼び出しをまたいで残るので、同じ入力への答えが呼ぶたびに変わります (使う関数の中で作ります)`);
+    } else if (flags.includes('g') && (shared.mutable || e !== shared.direct)) {
+      report('M6', e.pos, `モジュール直下の ${shared.name} の中に g の付いた正規表現は置けません —— \`lastIndex\` という状態を持ち、\`.test\` / \`.exec\` のたびに進むので、同じ入力への答えが呼ぶたびに変わります。g の正規表現は \`const 名前 = /…/g;\` と直下の const の初期値そのものに書くか (文字列のメソッドの引数にだけ渡せます)、使う関数の中で作ります`);
+    }
   }
 
   /** 名前の式ならその束縛、そうでなければ undefined (`f()()` / `a.b.c(…)` の頭は名前ではない)。 */
@@ -754,6 +913,15 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     loopDepth--;
   }
 
+  /**
+   * 局所の別名 (`const m = T;`) が運ぶ共有の印 (0.34 · T-266 / T-267)。型を書いていない直下の const と、呼び出しの結果を置いた直下の const は、
+   * 局所の名前に受けても同じ物なので、書き換えるメソッド・`.test` / `.exec` の受け手にできない。
+   */
+  function sharedAlias(init: Expr | null, scopes: readonly Map<string, Binding>[]): { readonly untypedShared?: boolean; readonly sharedRegex?: SharedRegexKind } {
+    const b = init === null ? undefined : bindingOf(init, scopes);
+    return { untypedShared: b?.untypedShared, sharedRegex: b?.sharedRegex };
+  }
+
   function checkStmt(s: Stmt, scopes: Map<string, Binding>[], own: Map<string, Binding>, ctx: Ctx): void {
     switch (s.kind) {
       case 'let': {
@@ -766,7 +934,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         }
         // Stryker disable next-line OptionalChaining: const (= !mutable) は必ず初期値を持つので、init が null になるのは let だけで、そのとき !mutable が先に偽になり `?.` は評価されない (等価)
         const owned = !s.mutable && (s.init?.kind === 'object' || s.init?.kind === 'array');
-        bindLocal(own, s.name, { vetted: declared ?? carried, authority: 'local', mutable: s.mutable, numeric: s.type?.text === 'number' || (s.type === null && s.init !== null && isNumericKey(s.init, scopes)), owned, inert: s.init !== null && carriesInert(s.init, scopes), depth: loopDepth }, s.pos);
+        bindLocal(own, s.name, { vetted: declared ?? carried, authority: 'local', mutable: s.mutable, numeric: s.type?.text === 'number' || (s.type === null && s.init !== null && isNumericKey(s.init, scopes)), owned, inert: s.init !== null && carriesInert(s.init, scopes), depth: loopDepth, ...sharedAlias(s.init, scopes) }, s.pos);
         return;
       }
       case 'destructure': {
@@ -785,6 +953,11 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
           if ((b === undefined && PURE_GLOBALS.has(root.name)) || (b !== undefined && b.authority !== 'local')) {
             report('M6', root.pos, `外の名前 ${root.name} のメンバは分割代入で取り出せません (組み込み・危ない口の表を迂回します —— \`${root.name}.メンバ\` と書いて呼びます)`);
           }
+        }
+        // 書き換えるメソッドを分割代入で取り出す形 (`const { push } = tmp;`) も、値として持ち出す形 (0.34 · T-265)。
+        for (const f of s.fields) {
+          if (BORROWING_MEMBERS.has(f.key)) report('M6', s.pos, `\`${f.key}\` は分割代入で取り出せません —— \`.${f.key}\` は Mamori に在りません (${BORROWING_MEMBERS.get(f.key)!})`);
+          if (CALL_ONLY_METHODS.has(f.key)) report('M6', s.pos, `\`${f.key}\` は分割代入で取り出せません —— 受け手を書き換えるメソッドは呼ぶ形 (\`x.${f.key}(…)\`) でしか書けません (取り出すと、受け手を呼ぶ側が選べます)`);
         }
         for (const f of s.fields) bindLocal(own, f.local, { vetted: null, authority: 'local', inert: false }, s.pos);
         return;
@@ -1024,6 +1197,21 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     // Stryker disable next-line ConditionalExpression: 型の絞り込みのためだけに在る —— member でない呼び出しは prop を持たず、次の行の MUTATING_METHODS.has(undefined) が false を返す (等価)
     const viaMember = callee.kind === 'member' ? callee : null;
     if (viaMember !== null && MUTATING_METHODS.has(viaMember.prop)) refuseSharedReceiver(viaMember.object, scopes, `\`.${viaMember.prop}(…)\``);
+    // 型を書いていない直下の const を、入れ物・日付を書き換えるメソッドの受け手にする形 (0.34 · T-267)。
+    // 受け手は名前そのものでも、その欄・添字の先 (`BASE.searchParams.set(…)`) でも同じ。局所の別名 (`const m = T;`) も辿る。
+    if (viaMember !== null && isSharedWriteMethod(viaMember.prop)) {
+      const root = destructureRoots(viaMember.object).find((r) => lookup(scopes, r.name)?.untypedShared === true);
+      if (root !== undefined) {
+        report('M6', viaMember.pos, `型を書いていないモジュール直下の const ${root.name} は \`.${viaMember.prop}(…)\` の受け手にできません —— どの関数からも書き換えられ、それを読む別の関数 (関門・上限) の判定が変わります。書き換える状態は \`const 名前: Map<…> = …\` のように型で名乗り、読むだけの表は \`ReadonlyMap<…>\` / \`ReadonlySet<…>\` と書きます`);
+      }
+    }
+    // 状態を持つかもしれない共有の正規表現を `.test` / `.exec` の受け手にする形 (0.34 · T-266): 呼び出しの結果を置いた直下の const と、入れ直せる直下の let。
+    if (viaMember !== null && (viaMember.prop === 'test' || viaMember.prop === 'exec')) {
+      const rb = bindingOf(viaMember.object, scopes);
+      if (rb?.sharedRegex === 'opaque' || rb?.moduleLet === true) {
+        report('M6', viaMember.pos, `${identName(viaMember.object)} は \`.${viaMember.prop}(…)\` の受け手にできません —— ${rb.moduleLet === true ? 'モジュール直下の let は入れ直せる' : '呼び出しの結果を置いたモジュール直下の const は中身が見えない'}ので、g / y の付いた正規表現 (\`lastIndex\` を持ち、同じ入力への答えが呼ぶたびに変わる) かどうかを検められません。判定に使う正規表現は \`const 名前 = /…/;\` と字面で書くか、使う関数の中で作ります`);
+      }
+    }
     if (b?.authority === 'class') {
       report('M6', head.pos, `クラス ${name} は \`new ${name}(…)\` と \`x instanceof ${name}\` の相手にだけ使えます —— 呼ぶ (\`${name}(…)\`)・メンバを呼ぶ (\`${name}.m(…)\`) 形は書けません (クラスを呼ぶと実行時に投げ、メンバは継いだ \`Error\` の静的なメンバへ届く)`);
       return;
@@ -1033,6 +1221,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       if (b === undefined && !isConstructibleBuiltin(callee, scopes)) checkExpr(callee, scopes, ctx);
       return;
     }
+    calledMembers.add(callee);
     checkExpr(callee, scopes, ctx);
   }
 
@@ -1083,6 +1272,9 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
             : `危ない口 ${e.name} は sink 関数の中でも呼ぶ形 (${e.name}(…) / ${e.name}.m(…)) でしか使えません —— 値として持ち出す・返すと、関門の外から素の値で呼べてしまう`);
           return;
         }
+        if (b.sharedRegex === 'g' && !regexUses.has(e)) {
+          report('M6', e.pos, `共有の正規表現 ${e.name} (g) は、文字列のメソッド (${[...REGEX_ARG_METHODS].map((m) => '.' + m).join(' / ')}) の引数にだけ渡せます —— \`${e.name}.test(…)\` / \`.exec(…)\` は \`lastIndex\` を進め、同じ入力への答えが呼ぶたびに変わります (関門なら 2 度目に素通りする)。判定に使うなら g を外すか、使う関数の中で作ります`);
+        }
         if (b === moduleScope.get(e.name) && signatureOf(e.name)?.paramVetted.some((v) => v !== null) === true) {
           report('M4', e.pos, `${e.name} は印を受ける関数なので、直に呼ぶことしかできません —— 値として持ち出すと (.call / .apply / .bind・別名・オブジェクトや配列・条件演算子)、引数の印の検めを迂回できる`);
         }
@@ -1096,7 +1288,16 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
           checkExpr(x, scopes, ctx);
         });
         return;
+      case 'regex':
+        if (ctx.sharedInit !== undefined) checkSharedRegex(e, regexFlags(e.raw), ctx.sharedInit);
+        return;
       case 'member':
+        // 受け手を選ぶ口 (`.call` / `.apply` / `.bind`) と、正規表現を作り替える `.compile` は書けない (0.34 · T-265 / T-266)。
+        if (BORROWING_MEMBERS.has(e.prop)) report('M6', e.pos, `\`.${e.prop}\` は Mamori に在りません —— ${BORROWING_MEMBERS.get(e.prop)!}`);
+        // 書き換えるメソッドは呼ぶ形でだけ (0.34 · T-265)。値として取り出すと、呼び戻しの thisArg で受け手を選べる。
+        if (CALL_ONLY_METHODS.has(e.prop) && !calledMembers.has(e)) {
+          report('M6', e.pos, `\`.${e.prop}\` は呼ぶ形 (\`x.${e.prop}(…)\`) でしか書けません —— 受け手を書き換えるメソッドを値として取り出すと、\`[v].forEach(tmp.${e.prop}, 共有の入れ物)\` のように受け手 (this) を呼ぶ側が選べ、書き換えの検め (T-258 / T-264) を迂回できます`);
+        }
         if (carriesInert(e.object, scopes)) {
           report('M6', e.pos, '計算した鍵の添字の結果はメンバの相手にできません —— `x[k].constructor` が禁じた名前の表を迂回する');
           checkExpr(e.object, scopes, ctx);
@@ -1173,6 +1374,14 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
             `モジュール直下の const ${ctx.sharedUntyped} は型を書かずに \`new ${identName(e.callee)}(…)\` を持てません —— 推論される型は書き換えられるので、どの関数からも \`.set\` / \`.add\` / \`.delete\` / \`.clear\` が通り、この表を読む別の関数 (関門・上限) の判定が変わります。読むだけの表は \`const ${ctx.sharedUntyped}: Readonly${identName(e.callee)}<…> = …\` と書き (書き換えは tsc が断ります)、書き換える状態は \`${identName(e.callee)}<…>\` と型で名乗ってください`,
           );
         }
+        if (ctx.sharedInit !== undefined) {
+          const built = identName(e.callee);
+          if (!ctx.sharedInit.mutable && SHARED_MUTABLE_OBJECTS.has(built)) {
+            report('M6', e.pos, `モジュール直下の const ${ctx.sharedInit.name} に \`new ${built}(…)\` は置けません —— ${built} は書き換えるメソッド (${built === 'Date' ? '`.setTime(…)` ほか' : '`.searchParams.set(…)` ほか'}) を持ち、どの関数からも書き換えられるので、それを読む別の関数の判定が変わります (読むだけの型が無いので、使う関数の中で作ります)`);
+          }
+          const flags = regexInitFlags(e);
+          if (flags !== undefined) checkSharedRegex(e, flags, ctx.sharedInit);
+        }
         if (carriesInert(e.callee, scopes)) {
           report('M6', e.pos, '計算した鍵の添字の結果は new の相手にできません —— `new x[k]()` で選んだ構築子を呼べてしまう');
           // new の呼ぶ側は名前だけなので、inert と分かったあとに呼ぶ側を検め直しても診断は増えない。引数は別。
@@ -1226,6 +1435,8 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       }
       case 'call': {
         checkTypeArgs(e.typeArgs);
+        // 文字列のメソッドの引数は、共有の g の正規表現を置いてよい場所 (0.34 · T-266)。式そのものを登録する (引くのは名前の枝だけ)。
+        if (e.callee.kind === 'member' && REGEX_ARG_METHODS.has(e.callee.prop)) for (const a of e.args) regexUses.add(a);
         checkCallee(e.callee, e.args, scopes, ctx);
         if (!scalarResultCall(e.callee, scopes)) e.args.forEach((x) => refuseInert(x, scopes, '呼び出しの引数'));
         // 外の module の関数を名前で直に呼ぶ形なら、引数に直に書いた arrow (と、引数のオブジェクトの字面の欄に直に書いた arrow) は呼び戻し (0.32 · T-261)。

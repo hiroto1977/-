@@ -104,11 +104,16 @@ describe('0.33: 型を書いていない共有の Map / Set は持てない (thr
 
   it('入れ物でない `new` は、型なしの const でも今までどおり通る', () => {
     expect(diagnostics(`const PATTERN = new RegExp("^a$");\n${READER}`)).toEqual([]);
-    expect(diagnostics(`const BASE = new URL("https://example.invalid/");\n${READER}`)).toEqual([]);
+    // `new URL(…)` はこの規則には当たらないが、0.34 (T-267) が別の規則で断る (書き換えるメソッドを持ち、読むだけの型が無い)。
+    const url = diagnostics(`const BASE = new URL("https://example.invalid/");\n${READER}`);
+    expect(url).toHaveLength(1);
+    expect(url[0]).not.toContain(NEEDLE);
+    expect(url[0]).toContain('モジュール直下の const BASE に `new URL(…)` は置けません');
   });
 
   it('対照: 規則が無ければ通っていた形である —— 型なしの表を、無関係な関数が書き換える (0.32 までの穴の形)', () => {
-    // 断りは宣言の 1 件だけで、書き換える側 (`.set`) には別の断りが無い = 宣言の規則が唯一の壁である
+    // 0.33 では断りは宣言の 1 件だけで、書き換える側 (`.set`) には別の断りが無かった = 宣言の規則が唯一の壁だった。
+    // 0.34 (T-267) からは受け手の側にも断りが在る (関数が返した入れ物を型なしで受ける形 = 0.33 が残した ① を塞ぐため)。
     const src = [
       'const LIMITS = new Map<string, number>([["free", 1]]);',
       'export fn limitOf(tier: string) -> number {',
@@ -120,9 +125,11 @@ describe('0.33: 型を書いていない共有の Map / Set は持てない (thr
       '',
     ].join('\n');
     const d = diagnostics(src);
-    expect(d).toHaveLength(1);
+    expect(d).toHaveLength(2);
     expect(d[0]).toContain('1:16');
     expect(d[0]).toContain(NEEDLE);
+    expect(d[1]).toContain('6:9');
+    expect(d[1]).toContain('型を書いていないモジュール直下の const LIMITS は `.set(…)` の受け手にできません');
     // 型で読むだけと名乗れば Mamori は通す (書き換えは生成物を tsc が断る —— `mamoriGenerated` と typecheck の仕事)
     expect(diagnostics(src.replace('const LIMITS = ', 'const LIMITS: ReadonlyMap<string, number> = '))).toEqual([]);
   });

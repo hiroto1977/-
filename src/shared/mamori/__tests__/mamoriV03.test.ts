@@ -31,15 +31,19 @@ function diags(...sources: string[]): string[] {
 }
 const at = (line: number, col: number, rule: string, message: string): string => `src/x/m0.mamori:${line}:${col}: [${rule}] ${message}`;
 const AS_VALUE = 'openUrl は印を受ける関数なので、直に呼ぶことしかできません —— 値として持ち出すと (.call / .apply / .bind・別名・オブジェクトや配列・条件演算子)、引数の印の検めを迂回できる';
+// 0.34 (T-265): `.call` / `.apply` / `.bind` そのものが言語に無い —— 印を受ける関数に限らず断るので、M4 の断りの前に M6 が 1 件並ぶ。
+const NO_CALL = '`.call` は Mamori に在りません —— 受け手 (this) を呼ぶ側が選べるので、`tmp.push.call(共有の配列, x)` / `tmp.set.call(読むだけの表, k, v)` で、書き換えの検め (T-258 / T-264) を迂回できます';
+const NO_APPLY = '`.apply` は Mamori に在りません —— `.call` と同じく、受け手 (this) を呼ぶ側が選べる口です';
+const NO_BIND = '`.bind` は Mamori に在りません —— 受け手 (this) を縛った関数を作れるので、`.call` と同じ迂回になります';
 const SHELL_AS_VALUE = '危ない口 shell は sink 関数の中でも呼ぶ形 (shell(…) / shell.m(…)) でしか使えません —— 値として持ち出す・返すと、関門の外から素の値で呼べてしまう';
 const SHELL_ONLY_IN_SINK = '危ない口 shell (extern sink) は sink 関数の中でだけ使えます';
 const SHELL_OTHER_ARG = '危ない口 shell へ渡す第 1 引数は、行き先 (印 VettedUrl を持つ値) だけです —— 行き先以外の値を流すと、sink 関数の印の型が意味を失う';
 
 describe('T-225: 印を受ける関数は値として持ち出せない (M4)', () => {
   const CASES: readonly [string, string, string[]][] = [
-    ['.call', GO('  return openUrl.call(null, raw);'), [at(7, 10, 'M4', AS_VALUE)]],
-    ['.apply', GO('  return openUrl.apply(null, [raw]);'), [at(7, 10, 'M4', AS_VALUE)]],
-    ['.bind', GO('  return openUrl.bind(null, raw)();'), [at(7, 10, 'M4', AS_VALUE)]],
+    ['.call', GO('  return openUrl.call(null, raw);'), [at(7, 17, 'M6', NO_CALL), at(7, 10, 'M4', AS_VALUE)]],
+    ['.apply', GO('  return openUrl.apply(null, [raw]);'), [at(7, 17, 'M6', NO_APPLY), at(7, 10, 'M4', AS_VALUE)]],
+    ['.bind', GO('  return openUrl.bind(null, raw)();'), [at(7, 17, 'M6', NO_BIND), at(7, 10, 'M4', AS_VALUE)]],
     ['別名', GO('  const f = openUrl;\n  return f(raw);'), [at(7, 13, 'M4', AS_VALUE)]],
     ['オブジェクトに包む', GO('  return { g: openUrl }.g(raw);'), [at(7, 15, 'M4', AS_VALUE)]],
     ['配列に包む', GO('  return [openUrl].map((f) => f(raw));'), [at(7, 11, 'M4', AS_VALUE)]],
@@ -50,7 +54,7 @@ describe('T-225: 印を受ける関数は値として持ち出せない (M4)', (
     it(`★ ${name} で持ち出すと断る (threat: T-225)`, () => expect(diags(src)).toEqual(want));
   }
   it('★ 印を受ける関数の .call で素の値を渡す形は断る (threat: T-225)', () => {
-    expect(diags(GO('  return openUrl.call(null, raw);'))).toEqual([at(7, 10, 'M4', AS_VALUE)]);
+    expect(diags(GO('  return openUrl.call(null, raw);'))).toEqual([at(7, 17, 'M6', NO_CALL), at(7, 10, 'M4', AS_VALUE)]);
   });
   it('対照: 直に呼ぶのは通る (印を持つ値を渡すなら)', () => {
     expect(diags(GO('  return openUrl(u);', 'export fn go(u: VettedUrl) -> unknown'))).toEqual([]);
@@ -72,7 +76,7 @@ describe('T-225: 印を受ける関数は値として持ち出せない (M4)', (
   it('★ 別のモジュールから use で引いた印を受ける関数も同じ', () => {
     const a = `${VETTED}${EXTERN}${SINK}`;
     const b = 'use { openUrl } from "./m0";\nexport fn go(raw: string) -> unknown {\n  return openUrl.call(null, raw);\n}\n';
-    expect(diags(a, b)).toEqual([`src/x/m1.mamori:3:10: [M4] ${AS_VALUE}`]);
+    expect(diags(a, b)).toEqual([`src/x/m1.mamori:3:17: [M6] ${NO_CALL}`, `src/x/m1.mamori:3:10: [M4] ${AS_VALUE}`]);
   });
 });
 
