@@ -186,10 +186,10 @@ describe('保管した記録の形 —— 現行 (v2 · serviceId と保存時�
     await vault.initialize(PW);
     const master = await masterKeyOf(PW);
     const storedAt = anHourAgo();
-    const sealed = await seal(master, 'xoxb-hand-sealed', aadV2('slack', storedAt));
+    const sealed = await seal(master, 'hand-sealed-sample', aadV2('slack', storedAt));
     await rawPut('tokens', 'slack', { ...sealed, v: 2, storedAt });
 
-    expect(await vault.getToken('slack')).toBe('xoxb-hand-sealed');
+    expect(await vault.getToken('slack')).toBe('hand-sealed-sample');
   });
 
   it('★ 保管庫が書いた記録を、検査の側が同じ綴りの AAD で開ける (逆向き)', async () => {
