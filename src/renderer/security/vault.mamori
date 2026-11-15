@@ -1067,11 +1067,13 @@ fn createBrowserVault() -> Vault {
       // 「検証失敗」に畳む (呼び出し側が「使える」と誤認しないため)。GCM が改竄を検知し、復号できた
       // 平文を元の `data` と**定数時間**で比べる。
       const key = currentKey;
+      // Stryker disable next-line ConditionalExpression: 早期 return を外しても、鍵の無い復号が下の try の中で投げて catch が false を返すので、観測できる差が無い (等価変異)。意図 —— 施錠中は検証しない —— を残すために書く
       if (!key) {
         return false;
       }
       // IndexedDB の structured clone や jsdom とのレルム違いで Uint8Array の同一性が崩れうるので、
       // 型の同一性ではなく「バイト列の眺めか」で見る (壁の `hostIsBufferView`)。
+      // Stryker disable next-line ConditionalExpression: 条件を丸ごと偽にしても、形の壊れたタグは下の try の中で (欄の読みか復号が) 投げて catch が false を返すので、観測できる差が無い (等価変異)。個々の判定を反転する変異は検査が落とす
       if (!tag || !hostIsBufferView(tag.iv) || !hostIsBufferView(tag.ciphertext)) {
         return false;
       }
@@ -1298,7 +1300,7 @@ fn createBrowserVault() -> Vault {
           if (meta.recoveryVersion === undefined) {
             // 移行はベストエフォート — 失敗しても復旧自体は成功しており、金庫は
             // v0 のまま使える。移行を失敗させる手段が検査に無く、受ける側には到達しない。
-            // Stryker disable BlockStatement,StringLiteral: 移行の失敗を受ける側 (catch) へ届く経路が検査に無い (上の注記)
+            // Stryker disable BlockStatement,StringLiteral,CallExpression: 移行の失敗を受ける側 (catch) へ届く経路が検査に無い (上の注記)
             try {
               const migratedRecoverySalt = hostRandomBytes(SALT_BYTES);
               const migratedRecoveryKey = await deriveKeyFromMnemonic(mnemonic, migratedRecoverySalt, 1, PBKDF2_ITERATIONS);
@@ -1322,7 +1324,7 @@ fn createBrowserVault() -> Vault {
                 err,
               );
             }
-            // Stryker restore BlockStatement,StringLiteral
+            // Stryker restore BlockStatement,StringLiteral,CallExpression
           }
 
           // meta と master-wrap は **同時に**入れ替える (片方だけ書けた状態は

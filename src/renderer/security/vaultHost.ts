@@ -256,7 +256,7 @@ export async function hostExportRawKey(key: CryptoKey): Promise<Uint8Array> {
  */
 export async function hostImportNonExtractable(raw: Uint8Array): Promise<CryptoKey> {
   const missing = webCryptoUnavailableReason();
-  // Stryker disable next-line ConditionalExpression: 到達しない防御 —— 上の注記のとおり鍵を導出・生成する口が先に断つので、この行に届く経路は無い (WebCrypto が在るとき missing は null で、外しても答えは同じ)。webCryptoGuardCensus が「鍵を作る関数は守る」を綴りで要求するので置いてある
+  // Stryker disable next-line ConditionalExpression,CallExpression: 到達しない防御 —— 上の注記のとおり鍵を導出・生成する口が先に断つので、この行に届く経路は無い (WebCrypto が在るとき missing は null で、外しても答えは同じ)。webCryptoGuardCensus が「鍵を作る関数は守る」を綴りで要求するので置いてある
   if (missing !== null) throw new Error(missing);
   return crypto.subtle.importKey(
     'raw',
