@@ -1123,3 +1123,45 @@ describe('Vault — 保存された反復回数の検証', () => {
     expect(getVault().isUnlocked()).toBe(true);
   });
 });
+
+/**
+ * **保管庫の口は `readonly`** (2026-11-15 · MG-070)。
+ *
+ * 元の TypeScript では `class BrowserVault` の method だったので、型の上では
+ * `getVault().verifyPassword = async () => true` と差し替えられた。Mamori へ移した版は
+ * `Vault` の欄をどれも `readonly` の関数にしてあるので、その書き方は `tsc` が断る。
+ *
+ * 対照は `@ts-expect-error` —— 守りが外れると「不要な @ts-expect-error」で
+ * `npm run typecheck` が落ちる (vitest は型を剥がすので、実行時の主張は別に置く)。
+ * ★ 実行時には凍結していない (`REMAINING_WORK.md` の MG-070 に理由)。
+ */
+describe('Vault — 口は readonly (型が差し替えを断る)', () => {
+  it('★ 照合・解錠・読み出しの口へ別の関数を代入する書き方は型で断られる', () => {
+    const vault = getVault();
+    const swaps = [
+      (): void => {
+        // @ts-expect-error —— readonly の欄へは代入できない (照合を「常に通す」へ替えさせない)
+        vault.verifyPassword = async () => true;
+      },
+      (): void => {
+        // @ts-expect-error —— readonly の欄へは代入できない (解錠を空にさせない)
+        vault.unlock = async () => undefined;
+      },
+      (): void => {
+        // @ts-expect-error —— readonly の欄へは代入できない (読み出しを別の値へ替えさせない)
+        vault.getToken = async () => 'x';
+      },
+    ];
+    // 走らせない (走らせると共有の口が本当に替わる) —— 型の検査だけが目的。
+    expect(swaps).toHaveLength(3);
+  });
+
+  it('口の数は 19 (欄が増えたら readonly を付けたかをここで見直す)', () => {
+    const vault = getVault();
+    const names = Object.keys(vault).sort();
+    expect(names).toHaveLength(19);
+    for (const n of names) {
+      expect(typeof (vault as unknown as Record<string, unknown>)[n], n).toBe('function');
+    }
+  });
+});

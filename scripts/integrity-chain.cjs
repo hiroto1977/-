@@ -738,6 +738,8 @@ const PROTECTED = [
   'src/main/mainHost.ts',                   // その薄い壁 (env・パス・console・setTimeout・fetch・JSON・表の添字引き・electron の再輸出 · MG-059)
   'src/main/secrets.mamori',                // 主プロセスの資格情報の保管 (書き込みの直列化・読めない保管ファイルを空と混ぜない・包みと有効時間・TokenSet の更新) の Mamori の元 (2026-11-12 · MG-069)
   'src/main/secretsHost.ts',                // その薄い壁 (userData の道・OS キーチェーンの暗号化と復号・base64・byte 数・時計・console · MG-069)
+  'src/renderer/security/vault.mamori',     // ブラウザ版の保管庫の元 (鍵の導出の床・KCV・master 鍵の包み・24 語の復旧枝・施錠の世代・トークンの AAD と有効時間・対の書き込み · MG-070 · 生成物は vault.ts)
+  'src/renderer/security/vaultHost.ts',     // その薄い壁 (IndexedDB の読み書きと 1 取引の束ね書き・WebCrypto の導出 / 生成 / 暗号化 / 復号・乱数・UTF-8・console · MG-070)
   'src/main/selfAttestation.mamori',        // 起動時の自己検算 (同梱物の sha256 を表と両方向に突き合わせる) の Mamori の元 (2026-11-12 · MG-068 · host の壁なし)
   'src/renderer/network/proxy.mamori',      // BYO プロキシ (宛先の検査・封筒の解析・保存時 MAC) の Mamori の元 (2026-11-10 · MG-055)
   'src/renderer/network/proxyHost.ts',      // その薄い壁 (IndexedDB・保管庫・fetch・Response・Headers · MG-055)
