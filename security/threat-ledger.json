@@ -5068,7 +5068,7 @@
       "severity": "medium",
       "title": "守りの層を書く言語 Mamori の「戻り値の型に印を名乗れるのは関門だけ」が印の名前の綴りしか見ておらず、別名・型の別名・interface の欄・直下の const の型・typeof で同じ型を名乗る関数が、関門を通っていない値を印の型で返せた",
       "status": "mitigated",
-      "fix": "src/shared/mamori/checker.ts: 印を指す綴りを広く断る (0.36)。印は別名で引けない (M4)。型の別名の中・interface の欄・直下の const / let の型 (印そのもの `印` / `印 | null` を除く) に印の名前は書けない (M1)。印そのものの型の直下の const は、初期値が印を運ぶときだけ置ける (M4)。`typeof 名前` は、名前が印に関わる値のとき、関門でない関数の戻り値・型の別名・interface の欄・直下の const / let の型に書けない (M1)。印に関わる値 = `use` で引いた、外形 (引数・戻り値) に印の名前か `typeof` を書いた関数と、型が印の名前か `typeof` を書いた const・型を書いていない const (初期値が字面そのものでない物)。この module の宣言は、型が印を指す関数・クラス (constructor の引数)・直下の const / let を、名指しの鎖が増えなくなるまで辿る。この module の型を書いていない const は、module が印の名前か印に関わる値を 1 つでも持つときに当たる。残る限界: ① Mamori の外の型 —— `extern` で引いたホストの関数の `typeof`・TypeScript の module から `use type` で引いた型の中身は見えない ② 型引数を戻り値に書いた関数 (`fn f<T>(x: string) -> T { return JSON.parse(x); }`) は、TypeScript の呼び手の文脈 (`open(f(…))`) から T が印に推論される —— any を返す関数を Mamori は書けない (`any` は M0) が、型引数を通した any は tsc も止めない。生成物に型つきの lint (any を返す・渡す形を断る) を掛ける形で次に塞ぐ (docs/REMAINING_WORK.md)。",
+      "fix": "src/shared/mamori/checker.ts: 印を指す綴りを広く断る (0.36)。印は別名で引けない (M4)。型の別名の中・interface の欄・直下の const / let の型 (印そのもの `印` / `印 | null` を除く) に印の名前は書けない (M1)。印そのものの型の直下の const は、初期値が印を運ぶときだけ置ける (M4)。`typeof 名前` は、名前が印に関わる値のとき、関門でない関数の戻り値・型の別名・interface の欄・直下の const / let の型に書けない (M1)。印に関わる値 = `use` で引いた、外形 (引数・戻り値) に印の名前か `typeof` を書いた関数と、型が印の名前か `typeof` を書いた const・型を書いていない const (初期値が字面そのものでない物)。この module の宣言は、型が印を指す関数・クラス (constructor の引数)・直下の const / let を、名指しの鎖が増えなくなるまで辿る。この module の型を書いていない const は、module が印の名前か印に関わる値を 1 つでも持つときに当たる。残る限界: ① Mamori の外の型 —— `extern` で引いたホストの関数の `typeof`・TypeScript の module から `use type` で引いた型の中身は見えない ② 型引数を戻り値に書いた関数 (`fn f<T>(x: string) -> T { return JSON.parse(x); }`) は、TypeScript の呼び手の文脈 (`open(f(…))`) から T が印に推論される —— any を返す関数を Mamori は書けない (`any` は M0) が、型引数を通した any は tsc も止めない。MG-074 (T-272) で、型検査器を使う検査 (src/shared/__tests__/markFlowCensus.test.ts) が呼び手の側と生成物の定義の側の両方で塞いだ。",
       "regression": {
         "file": "src/shared/mamori/__tests__/mamoriV36.test.ts",
         "test": "★ `typeof` で関門・印を受ける関数・印の型の値を名指しして、戻り値の型に印を名乗れない (threat: T-271)"
@@ -5111,6 +5111,50 @@
           "test": "★ constructor の引数に印の型を持つクラスは `typeof` で名指しできない (threat: T-271)"
         }
       ]
+    },
+    {
+      "id": "T-272",
+      "found": "2026-11-16",
+      "foundBy": "MG-074 (言語の穴探しの周)。T-271 が残した「型引数を通した any」を塞ぐ方法を測っていて、同じ穴が Mamori の外 (TypeScript の呼び手) に広く在ることが分かった。「危ない口は関門が作る印つきの型しか受けない」(T-220) を見ていたのは tsc と、綴りの検査 (vettedTypes.test.ts —— `as Vetted…` を数える) だけで、次の行はどちらも通った (TypeScript 5.9.3 · strict で実測): ① 型の無い値を印の位置へ置く —— `openExternalVetted(JSON.parse(s))`・`const u: 印 = JSON.parse(s)`・`return JSON.parse(s)` (戻り値が印)・その欄 (`v.url`)・`Array.isArray` の後の要素・`JSON.parse` そのものを印を返す関数の型へ ② 型引数が文脈や明示で印に決まる —— `open(f(s))` で `f<T>(x: string): T`・`open(first([], s))` (T が never に推論される)・`f<印>(s)`・`new Holder<印>().get(s)` ③ 型の言い換え —— `JSON.parse(s) as Settings` (Settings が印の欄を持つ · 綴りに印の名前が出ない)・`x as never` ④ 本体の無い宣言 —— 多重定義 `function f(x: string): 印;` に `string` を返す実装・`declare const u: 印` ⑤ 型の述語 `v is 印を欄に持つ型` ⑥ `// @ts-expect-error 説明` の下の行 (eslint は説明つきを通す)。どれも「うっかり」書ける形で、①② は取得した JSON の欄を口へ渡すだけで起きる。出荷コードには 1 件も無かった (両 project を走査して 0 件)。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "印 (関門を通った値の型) の守りが tsc と綴りの検査だけに頼っており、型の無い値・型引数の推論・印を欄に持つ型への言い換え・本体の無い宣言・型検査を黙らせる指示で、関門を通らない値を危ない口へ渡す行が型の誤りなしに書けた",
+      "status": "mitigated",
+      "fix": "src/shared/__tests__/markFlow.ts + markFlowCensus.test.ts: 両方の TypeScript の project (主プロセス・preload / renderer・shared) を型検査器に掛け、検査でない全ファイルの式について「式の型」と「置かれた位置が求める型」を訊く。印 (unique symbol の欄を持つ型) を含む位置へ any (入れ物の中身・関数の戻り値の any を含む) が入る式・型引数つきの関数やクラスが印を運ぶ引数なしに印で具体化される呼び出し (標準の関数へ型引数を明示できるのは useState だけ)・印を含む型への言い換えと述語・`as never`・本体の無い宣言・リポジトリの .d.ts が印を名乗る形・型検査を黙らせる指示を、違反として 0 件に留める。Mamori の生成物については定義の側も見る (型の無い値を型引数の位置へ置く形 —— Mamori には言い換えが無いので、型引数から値を作れるのはこれだけ)。鳴ることは標本 (markFlowSamples.ts / markFlowSamplesGenerated.ts) の行末の印と両方向に突き合わせる。残る限界: 印を運ぶ引数を渡したうえで別の引数から値を作る型引数つきの関数 (TypeScript で書いた物)・欄の型が any の物 (戻り値の型を書いていない class の getter) を印の欄を持つ型として渡す形・検査ファイルの中 (docs/REMAINING_WORK.md)。",
+      "regression": {
+        "file": "src/shared/__tests__/markFlowCensus.test.ts",
+        "test": "★ 標本の行末の印と、鳴った行が両方向に一致する (threat: T-272)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/__tests__/markFlowCensus.test.ts",
+          "test": "★ 主プロセス・preload: 関門を通らない値が印へ流れ込む道は 0 件 (threat: T-272)"
+        },
+        {
+          "file": "src/shared/__tests__/markFlowCensus.test.ts",
+          "test": "★ renderer・shared: 関門を通らない値が印へ流れ込む道は 0 件 (threat: T-272)"
+        },
+        {
+          "file": "src/shared/__tests__/markFlowCensus.test.ts",
+          "test": "★ 生成物の標本: 型の無い値を型引数の位置へ置く形が鳴る (threat: T-272)"
+        }
+      ]
+    },
+    {
+      "id": "T-273",
+      "found": "2026-11-16",
+      "foundBy": "MG-074 (言語の穴探しの周)。T-272 の検査を書いたあと、その検査をすり抜ける形を 70 通りほど当てて見つけた。型の無い値も言い換えも使わずに、印の中身を差し替える道 —— TypeScript の型の規則そのものが緩い所: ① メソッドの引数は双変 —— `const r: { run(u: string): string } = { run: 印を受ける関数 }` が通り、`r.run(生の文字列)` で口へ届く・印を受ける関数を any / unknown / Function の位置へ渡す (`Reflect.apply(sink, undefined, [生])`・`anyの配列.map(sink)`)・`sink as (u: string) => …` ② 配列・Map・Set は共変 —— `const ys: string[] = 印の配列; ys.push(生)`・引数に渡す形も同じ ③ 欄も共変 —— `const loose: { u: string } = 印を欄に持つ物; loose.u = 生` ④ 既に在る物を書き換える標準の関数 —— `Object.assign(印を欄に持つ物, { u: 生 })`・`new Proxy(印を欄に持つ物, { get: () => 生 })`。Mamori の中では同じ形はどれも断られる (入れ物を経た値は印を失い、書き換えの相手は自分で作った物だけ —— 17 形を当てて確かめた)。出荷コードには 1 件も無かった。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "TypeScript の型の規則が緩い所 (メソッドの引数の双変・入れ物と欄の共変・Object.assign / Proxy) を使うと、型の無い値も言い換えも書かずに、印を受ける関数を印を求めない型として持ち出したり、印を入れた物の中身を生の値に差し替えたりできた",
+      "status": "mitigated",
+      "fix": "src/shared/__tests__/markFlow.ts + markFlowCensus.test.ts: 同じ走査で、印を受ける関数が同じ位置で印を求めない型 (any / unknown / Function / 引数が印でない関数) の位置へ置かれる式・言い換えと、印を入れた配列 / Map / Set や印を欄に持つ物が、中身に印を求めない書き換えられる型の位置へ置かれる式 (写し `{ ...物 }` / `[...配列]` と readonly の受け手は通す)・`Object.assign` / `Object.defineProperty` / `Reflect.set` ほかの第 1 引数と `new Proxy` の相手が印を持つ形を、違反として 0 件に留める。残る限界: 印を受ける関数を欄に持つ物ごと型の無い位置へ渡してから呼ぶ形 (言い換えを経ない場合)・型の上で別名と区別できない写し (`印の配列.slice()` を `string[]` で受ける) も鳴る —— 受け手を readonly にする (docs/REMAINING_WORK.md)。",
+      "regression": {
+        "file": "src/shared/__tests__/markFlowCensus.test.ts",
+        "test": "★ 印を受ける関数・印の入れ物を、印を求めない型として持ち出す形が鳴る (threat: T-273)"
+      }
     }
   ],
   "huntBacklog": [

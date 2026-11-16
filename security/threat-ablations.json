@@ -3041,6 +3041,138 @@
           "replace": "if (mark === null) void 0;"
         }
       ]
+    },
+    {
+      "id": "A-627",
+      "threat": "T-272",
+      "file": "src/shared/__tests__/markFlow.ts",
+      "why": "型の無い値が印の位置へ入る式 (代入・返す値・欄の値) を数えない",
+      "edits": [
+        {
+          "find": "if (anyInto(t, ctx, containsMark)) push('any-to-mark', n);",
+          "replace": "if ((false as boolean) && anyInto(t, ctx, containsMark)) push('any-to-mark', n);"
+        }
+      ]
+    },
+    {
+      "id": "A-628",
+      "threat": "T-272",
+      "file": "src/shared/__tests__/markFlow.ts",
+      "why": "型の無い値が、印を求める引数へ渡る形を数えない",
+      "edits": [
+        {
+          "find": "if (anyInto(given, want, containsMark)) push('any-to-mark', arg);",
+          "replace": "if ((false as boolean) && anyInto(given, want, containsMark)) push('any-to-mark', arg);"
+        }
+      ]
+    },
+    {
+      "id": "A-629",
+      "threat": "T-272",
+      "file": "src/shared/__tests__/markFlow.ts",
+      "why": "型引数つきの関数が、印を運ぶ引数なしに印で具体化される呼び出しを数えない",
+      "edits": [
+        {
+          "find": "else push('generic-from-nothing', n);",
+          "replace": "else void 0;"
+        }
+      ]
+    },
+    {
+      "id": "A-630",
+      "threat": "T-272",
+      "file": "src/shared/__tests__/markFlow.ts",
+      "why": "印を含む型への言い換えを、印を運ぶ物からの言い換えと同じに扱う",
+      "edits": [
+        {
+          "find": "push(containsMark(checker.getTypeAtLocation(n.expression)) ? 'ok-cast-from-mark' : 'cast-to-mark', n);",
+          "replace": "push('ok-cast-from-mark', n);"
+        }
+      ]
+    },
+    {
+      "id": "A-631",
+      "threat": "T-272",
+      "file": "src/shared/__tests__/markFlow.ts",
+      "why": "生成物の中で、型の無い値を型引数の位置へ置く形を数えない",
+      "edits": [
+        {
+          "find": "else if (generated && anyInto(t, ctx, hasTypeParam)) push('any-to-type-param', n);",
+          "replace": "else if ((false as boolean) && generated && anyInto(t, ctx, hasTypeParam)) push('any-to-type-param', n);"
+        }
+      ]
+    },
+    {
+      "id": "A-632",
+      "threat": "T-272",
+      "file": "src/shared/__tests__/markFlow.ts",
+      "why": "型検査を黙らせる指示 (`@ts-expect-error` ほか) の行を数えない",
+      "edits": [
+        {
+          "find": "for (let m = directive.exec(sf.text); m !== null; m = directive.exec(sf.text)) {",
+          "replace": "for (let m = directive.exec(''); m !== null; m = directive.exec('')) {"
+        }
+      ]
+    },
+    {
+      "id": "A-633",
+      "threat": "T-272",
+      "file": "src/shared/__tests__/markFlow.ts",
+      "why": "どの型の位置にも置ける言い換え `as never` を数えない",
+      "edits": [
+        {
+          "find": "if ((to.flags & ts.TypeFlags.Never) !== 0) push('cast-to-never', n);",
+          "replace": "if ((false as boolean) && (to.flags & ts.TypeFlags.Never) !== 0) push('cast-to-never', n);"
+        }
+      ]
+    },
+    {
+      "id": "A-634",
+      "threat": "T-273",
+      "file": "src/shared/__tests__/markFlow.ts",
+      "why": "印を受ける関数を、印を求めない型の位置へ置く式を数えない",
+      "edits": [
+        {
+          "find": "if (sinkWidened(t, ctx)) push('sink-widened', n);",
+          "replace": "if ((false as boolean) && sinkWidened(t, ctx)) push('sink-widened', n);"
+        }
+      ]
+    },
+    {
+      "id": "A-635",
+      "threat": "T-273",
+      "file": "src/shared/__tests__/markFlow.ts",
+      "why": "印を入れた配列・Map・Set を、中身に印を求めない入れ物として渡す形を数えない",
+      "edits": [
+        {
+          "find": "return a.some((x, i) => containsMark(x) && loose(b[i] as ts.Type));",
+          "replace": "return false;"
+        }
+      ]
+    },
+    {
+      "id": "A-636",
+      "threat": "T-273",
+      "file": "src/shared/__tests__/markFlow.ts",
+      "why": "印を持つ物を書き換える標準の関数 (Object.assign ほか) と Proxy を数えない",
+      "edits": [
+        {
+          "find": "if (ts.isCallExpression(n) ? isMutatorCall(n) : ts.isIdentifier(n.expression) && n.expression.text === 'Proxy') {",
+          "replace": "if ((false as boolean) && (ts.isCallExpression(n) ? isMutatorCall(n) : ts.isIdentifier(n.expression) && n.expression.text === 'Proxy')) {"
+        }
+      ]
+    },
+    {
+      "id": "A-637",
+      "threat": "T-273",
+      "file": "src/shared/__tests__/markFlow.ts",
+      "why": "印を受ける関数を `.call` / `.apply` / `.bind` で借りて呼ぶ形を数えない",
+      "edits": [
+        {
+          "find": "&& markParams(checker.getTypeAtLocation(n.expression.expression)).length > 0\n            ) {",
+          "replace": "&& (false as boolean) && markParams(checker.getTypeAtLocation(n.expression.expression)).length > 0\n            ) {"
+        }
+      ]
     }
   ]
 }

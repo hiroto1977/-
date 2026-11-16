@@ -1,11 +1,30 @@
 # Service Hub — 残りの作業手順書
 
+## MG-074 (言語の穴探し · 印へ流れ込む道の検査 · T-272 / T-273) で測って残した物 (2026-11-16)
+
+言語の版は 0.36 のまま。`src/shared/__tests__/markFlowCensus.test.ts` が、TypeScript の呼び手の側で印 (関門を通った値の型) へ流れ込む道を型検査器で数える
+(`docs/MAMORI.md` の「印の型へ流れ込む道を、型検査器で数える」の節)。直した後の検査へ約 80 通りの書き方を当てて、**今も通る**ことを確かめた形:
+
+- **印を運ぶ引数を渡したうえで、別の引数から値を作る型引数つきの関数 (TypeScript で書いた物)** —— `function first<T>(xs: T[], raw: string): T { return JSON.parse(raw); }` に
+  `first([本物の印], 生)` と渡すと、呼び手の側は「印を運ぶ引数が在る」ので通る。定義の側 (型の無い値を型引数の位置へ返す) を見るのは Mamori の生成物だけ ——
+  TypeScript の側は `x as T` (型引数への言い換え) が `jsonFetch<T>` ほかで正当に使われており、定義では見分けられない。
+  塞ぐなら「型引数を戻り値に持つリポジトリの関数は、印で具体化させない」(今日の該当は 0 件) を足す。
+- **欄の型が any の物を、印の欄を持つ型として渡す** —— 戻り値の型を書いていない class の getter (`get u() { return JSON.parse(s); }`) を持つ物を `const b: Box = new Fake()`。
+  物の字面 (`{ get u() { … } }`) は見ているが、class を経ると欄の any は式の型に現れない。全ての式の欄を辿ると走査の時間が数倍になるので足していない。
+- **印を受ける関数を、欄に持つ物ごと型の無い位置へ渡す** —— `console.log({ sink })` のような形は違反にしていない (言い換え `as any` / `as unknown` を経る形だけ鳴る)。
+- **型の上で区別できない写しも鳴る** —— `const copy: string[] = 印の配列.slice();` は別名ではないが、`container-widened` で落ちる。受け手を `readonly string[]` にする (今日の該当は 0 件)。
+- **検査ファイルは数えない** —— `__tests__` / `__audits__` の中は、型の守りの対照のために意図して外す。検査から出荷コードへ値が流れる道は無い。
+- **走査の費用** —— 型検査器を 2 つ立てるので、この検査は単体で 30〜40 秒かかる (renderer・shared の project が 25 秒前後)。位置が求める型を訊く前に式の型でふるう形にして 1/2 にした。
+  全件の `npm test` の中では他の検査と CPU を取り合うので、制限時間は 10 分に置いた。
+- **生成物の「any の流れ」8 か所は、印に関わらないので残した** —— 型情報つきの lint (`@typescript-eslint/no-unsafe-*`) を 46 本に掛けると 8 件
+  (`Object.entries(…)` の値を型なしで受ける 3 件・`JSON.parse(value)` を `object` を受ける関数へ渡す userPresence の 5 件)。どれも印にも型引数にも届かない。
+
 ## MG-073 (言語の穴探し · Mamori 0.36 · T-270 / T-271) で測って残した物 (2026-11-16)
 
 0.36 は「印の名前は module ごとに解く」「印の型は別の綴り (別名・型の別名・interface の欄・直下の const の型・`typeof`) で名乗れない」を足した
 (`docs/MAMORI.md` の 0.36 の節)。直した後のコンパイラへ当てて、**今も通る**ことを確かめた形 (Mamori と `tsc --strict` の両方):
 
-- **★ 型引数を通した any (次に塞ぐ)** —— `export fn forge<T>(x: string) -> T { return JSON.parse(x); }` を、TypeScript の呼び手が `open(forge("javascript:alert(1)"))` と書くと、
+- **型引数を通した any (MG-074 · T-272 で塞いだ —— 下の経緯は、Mamori の検査で塞げなかった理由の記録)** —— `export fn forge<T>(x: string) -> T { return JSON.parse(x); }` を、TypeScript の呼び手が `open(forge("javascript:alert(1)"))` と書くと、
   T が文脈から印に推論され `tsc` は止めない。`any` を返す関数は M0 で書けないが、型引数を通すと同じことができる。
   塞ぐ案を 2 つ測って捨てた (`tsc` 5.9.3 · strict): ① 「戻り値に書いた型引数は引数の型にも書く」—— 実物の橋 (preload の `fetchSnapshot<T>(serviceId) -> Promise<FetchResult<T>>`) が落ち、
   しかも `first<T>(xs: readonly T[], raw: string) -> T` に `[]` を渡す形 (`open(first([], "…"))`)・省ける引数 (`hint?: T`) を省く形は通る (`hint: T | null` に `null` を渡す形は断られた)

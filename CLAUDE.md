@@ -1924,6 +1924,10 @@ The browser target adds: `web-shim.ts` (a `window.serviceHub` polyfill imported 
   素の `shell.*` / `window.open` を包みの外で呼ばない (同じ検査と `lint:forbidden` が鳴る)。素の `string` を受ける危ない口を
   新しく足すなら、印を持たせるか、`SINK_LEDGER` に理由と守り手を書いて pending の天井を上げる差分をレビューに出す。
   型の守りの対照は `@ts-expect-error` で書く (`npm run typecheck` が検査する —— 守りが外れると「不要な @ts-expect-error」で落ちる)。
+  **印の型の位置へ、型の無い値 (any) を置かない** (2026-11-16 · MG-074 · T-272 / T-273) —— `tsc` は `openExternalVetted(JSON.parse(s))` も、
+  型引数が文脈から印に推論される `open(await jsonFetch(url))` も、印を欄に持つ型への `as` も断らない。取得した値は `unknown` で受けて関門を通す。
+  印を入れた配列や物を渡す先は `readonly` で受ける。出荷コードに `@ts-expect-error` / `@ts-ignore` を書かない (対照は検査ファイルに書く)。
+  `src/shared/__tests__/markFlowCensus.test.ts` が型検査器で全ファイルを数える (規則の一覧は `docs/MAMORI.md`)。
 - **守りの層は Mamori で書く —— `.ts` の生成物を手で直さない** (2026-10-30 · パス 560 · T-221)。
   `src/shared/vetted.ts` / `externalUrlGate.ts` / `src/main/shellOpenGate.ts` / `osSinks.ts` / `src/renderer/vettedSinks.ts` / `src/main/clients/exportSink.ts` / `src/shared/imageUrlGate.ts` は
   隣の `.mamori` から `npm run mamori:build` で組む生成物である (手で直すと `mamoriGenerated.test.ts` が落ちる)。

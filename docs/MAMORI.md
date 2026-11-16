@@ -96,6 +96,43 @@ Mamori では、その 2 つは**書けない**:
 - **測れなかった物を満点にしない**: 入力が読めない・母集団が空の基準は 0 点 (口を持つ .mamori が 0 本の A2 だけは『載せる物が無い』ので満点)。表の基準と実装の測り方は 1 対 1 で、検査 (`mamoriCompleteness.test.ts`) が両方向に見る。
 - **基準と床は私 (実装した側) の判断**で、実測が決めた物ではない。床を動かすときは表の `why` に理由を書く。今の実物は 1.0 を満たしていない (E1 89% / E2 88% が床の下) —— 足りない基準を埋めるのが次の作業で、`report` が一覧を出す。
 
+## 印の型へ流れ込む道を、型検査器で数える (T-272 / T-273 · MG-074 · 2026-11-16 · 言語の版は 0.36 のまま)
+
+Mamori が守るのは `.mamori` の中である。関門が作った印は TypeScript の型 (`Vetted<…>`) として外へ出て、**その先は `tsc` が守る** —— と考えていた。
+実測 (TypeScript 5.9.3 · strict) すると、`tsc` は次の行を断らない:
+
+```ts
+openExternalVetted(JSON.parse(s));            // 型の無い値 (any) は、どの型の位置にも置ける
+openExternalVetted(await jsonFetch(url));     // 型引数 T が、呼び出しの文脈から印に推論される
+const cfg = JSON.parse(s) as Settings;        // Settings が印の欄を持つ (綴りに印の名前が出ない)
+const r: { run(u: string): void } = { run: openExternalVetted };   // メソッドの引数は双変
+const ys: string[] = 印の配列; ys.push(生);    // 配列は共変
+```
+
+それまでの検査 (`vettedTypes.test.ts`) は綴り (`as Vetted…`) を数えていたので、どれも映らなかった。Mamori の中では同じ形はどれも断られる
+(入れ物を経た値は印を失い、書き換えの相手は自分で作った物だけ —— 17 形を当てて確かめた)。穴は **TypeScript の呼び手の側**に在った。
+
+**直し**: `src/shared/__tests__/markFlowCensus.test.ts` (道具は `markFlow.ts`) が、両方の TypeScript の project を型検査器に掛け、検査でない全ファイルの式について
+「式の型」と「置かれた位置が求める型」を訊く。印 = `unique symbol` の欄を持つ型 (綴りではなく型で見分ける)。違反は 0 件に留める:
+
+| 規則 | 断る形 |
+|---|---|
+| `any-to-mark` | 型の無い値 (入れ物の中身・関数の戻り値の any を含む) が、印を含む型の位置へ入る |
+| `generic-from-nothing` | 型引数つきの関数・クラスが、印を運ぶ引数なしに印で具体化される (標準の関数へ明示できるのは `useState` だけ) |
+| `cast-to-mark` / `cast-to-never` / `predicate-names-mark` | 印を含む型への言い換え・`as never`・印を含む型の述語 |
+| `bodyless-names-mark` / `dts-names-mark` | 本体の無い宣言 (多重定義・`declare`・リポジトリの `.d.ts`) が印を名乗る |
+| `ts-directive` | 型検査を黙らせる指示 (`@ts-expect-error` / `@ts-ignore` / `@ts-nocheck`) |
+| `any-to-type-param` | (生成物だけ) 型の無い値を型引数 `T` の位置へ置く —— Mamori には言い換えが無いので、`T` から値を作れるのはこれだけ |
+| `sink-widened` | 印を受ける関数を、同じ位置で印を求めない型 (any / unknown / Function / 引数が印でない関数) として持ち出す |
+| `container-widened` | 印を入れた配列・Map・Set や印を欄に持つ物を、印を求めない書き換えられる型として渡す・`Object.assign` ほか・`new Proxy` |
+
+鳴ることは標本 (`markFlowSamples.ts` / `markFlowSamplesGenerated.ts`) の行末の印と**両方向**に突き合わせる (規則を 1 つ外すと、その標本の行で落ちる)。
+検査ファイルは数えない (型の守りの対照は `@ts-expect-error` で書く)。
+
+**残る限界** (台帳の T-272 / T-273 · `docs/REMAINING_WORK.md`): TypeScript で書いた型引数つきの関数に、印を運ぶ引数を 1 つ渡したうえで別の引数から値を作らせる形
+(`first([印], 生)`)・欄の型が any の物を印の欄を持つ型として渡す形・印を受ける関数を欄に持つ物ごと型の無い位置へ渡す形。
+型の上で別名と区別できない写し (`印の配列.slice()` を `string[]` で受ける) は違反として鳴る —— 受け手を `readonly string[]` にする。
+
 ## 0.36 —— 印の名前は、印を宣言した先を指すときだけ印である。印の型は別の綴りで名乗れない (T-270 / T-271 · MG-073 · 2026-11-16)
 
 言語の穴探しの周。規則を破るプログラムを約 200 本書いて当てると、**印の「名前」に頼っていた 2 つの規則**が破れた
@@ -146,10 +183,9 @@ any を印の型の位置へ置く 39 形・`import("…").印` の綴りは、�
 
 - **Mamori の外の型は中身が見えない**: `extern` で引いたホストの関数の `ReturnType<typeof hostGate>`・TypeScript の module の `export type U = VUrl;` を
   `use type { U }` で引いた綴り。TypeScript の側のレビューと `tsc` が守る。
-- **型引数を通した any**: `fn f<T>(x: string) -> T { return JSON.parse(x); }` は、TypeScript の呼び手が `open(f("…"))` と書くと T が文脈から印に推論され、
-  `tsc` は止めない (`any` を返す関数は M0 で書けないが、型引数を通すと同じことができる)。型引数を戻り値にだけ書く形は実物の橋 (preload の
-  `fetchSnapshot<T>`) が使っており、引数に T を置く規則も空の配列 `[]` を渡す形で抜ける (実測) ので、Mamori の検査では塞げなかった。
-  **根は「any が型つきの位置へ流れること」**で、生成物に型つきの lint (any を返す・渡す・代入する形を断る) を掛けるのが次の手 (`docs/REMAINING_WORK.md`)。
+- **型引数を通した any** (MG-074 で塞いだ · T-272): `fn f<T>(x: string) -> T { return JSON.parse(x); }` は、TypeScript の呼び手が `open(f("…"))` と書くと
+  T が文脈から印に推論され、`tsc` は止めない。Mamori の検査 (型を持たない) では塞げなかったので、型検査器を使う検査が 2 か所で止める ——
+  呼び手の側 (印を運ぶ引数なしに、型引数が印で具体化される呼び出し) と、生成物の定義の側 (型の無い値を型引数の位置へ置く形)。下の節。
 - 直下の const は来歴を運ばない: `const HOME: 印 | null = 関門("…");` を読んだ値は、印を受ける口へ渡せない (失敗は閉じる向き)。
 
 ## 0.35 —— 読むだけと名乗った表は、読む位置にしか書けない (T-268 / T-269 · MG-072 · 2026-11-16)

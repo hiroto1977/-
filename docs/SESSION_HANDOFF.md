@@ -7,6 +7,31 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-11-16) — MG-074: 言語の穴探しの周 · 印へ流れ込む道を型検査器で数える (T-272 / T-273 · 版は 0.36 のまま)
+
+利用者の依頼「続けて」(`/loop ∞`)。言語を育てる輪 (`npm run mamori:grow -- brief`) が選んだ `probe:language` をもう 1 周回した。Mamori のコンパイラは触っていない。
+- **出発点**: MG-073 が残した「型引数を通した any」(`fn f<T>(x: string) -> T { return JSON.parse(x); }` を TypeScript の呼び手が `open(f("…"))`) を塞ぐ方法を測った。
+  生成物 46 本に型情報つきの lint を掛けると 8 件 (どれも印に関わらない) —— ところが測っている途中で、**同じ穴が Mamori の外に広く在る**ことが分かった。
+- **T-272 型の無い値・型引数・言い換えで印を名乗る**: `openExternalVetted(JSON.parse(s))`・`open(await jsonFetch(url))` (T が文脈から印に推論される)・`JSON.parse(s) as Settings` (Settings が印の欄を持つ)・
+  `x as never`・多重定義 `function f(x: string): 印;` に `string` を返す実装・`declare const u: 印`・`// @ts-expect-error 説明` の下の行は、**`tsc` (strict) も綴りの検査 (`vettedTypes.test.ts`) も通る**
+  (TypeScript 5.9.3 で実測)。「危ない口は関門が作る印つきの型しか受けない」(T-220) は、型の無い値に対しては成り立っていなかった。出荷コードには 1 件も無い。
+- **T-273 TypeScript の型の緩い所で印の中身を差し替える**: メソッドの引数の双変 (`const r: { run(u: string): … } = { run: 印を受ける関数 }`)・配列 / Map / Set と欄の共変
+  (`const ys: string[] = 印の配列; ys.push(生)`)・`Object.assign(印を欄に持つ物, …)`・`new Proxy(…)`・`sink.call(undefined, 型の無い値)`。型の無い値も言い換えも書かずに通る。出荷コードには 1 件も無い。
+- **Mamori の中は固い**: 同じ形 (入れ物の別名・欄の広げ・`Object.assign`・口を値として持ち出す・Map / Set の別名) を 17 通り Mamori へ当てて、どれも断られた
+  (入れ物を経た値は印を失う・書き換えの相手は自分で作った物だけ)。穴は TypeScript の呼び手の側に在る。
+- **直し**: `src/shared/__tests__/markFlow.ts` (道具) + `markFlowCensus.test.ts` (9 件)。両方の TypeScript の project を型検査器に掛け、検査でない全ファイルの式について「式の型」と
+  「置かれた位置が求める型」を訊く。印は綴りではなく型 (`unique symbol` の欄) で見分ける。規則 10 種 (`any-to-mark` / `generic-from-nothing` / `cast-to-mark` / `cast-to-never` /
+  `predicate-names-mark` / `bodyless-names-mark` / `dts-names-mark` / `ts-directive` / `sink-widened` / `container-widened`) と、生成物だけの `any-to-type-param`。
+  標本 `markFlowSamples.ts` / `markFlowSamplesGenerated.ts` の行末の印 (`// !! 規則` / `// ok`) と**両方向**に突き合わせる。
+- **検査を自分で破った**: 最初の版へ約 80 通りの書き方を当て、見逃した 16 形 (`as never`・`Object.assign`・欄の広げ・`Readonly<印を欄に持つ型>` への言い換え・型引数つきのクラス・
+  `JSON.parse` そのものを印を返す関数の型へ・getter・Proxy・`.call` ほか) を規則に足した。偽陽性は 2 形 (組の分割代入・写し `{ ...物 }`) を外した。
+- **残した穴 (測った · 台帳と `docs/REMAINING_WORK.md`)**: TypeScript で書いた型引数つきの関数に、印を運ぶ引数を渡したうえで別の引数から値を作らせる形・欄の型が any の class を印の欄を持つ型として渡す形・
+  印を受ける関数を欄に持つ物ごと型の無い位置へ渡す形 (言い換えを経ない場合)。
+- **罠 (この周で踏んだ)**: ① 走査の時間の半分は「位置が求める型を訊く」呼び出しで、データの表 (何十万個の `{ … }`) に訊いていた —— 式の型で先にふるって 1/2 にした
+  ② 標準の写しの型 (`Readonly<…>`) を「標準の宣言なので欄を辿らない」に数えて、`x as Readonly<印を欄に持つ型>` を見逃した ③ 「穴を開け直す」確認で 1 件が鳴らなかった ——
+  引数の位置の検査は、式の位置の検査と同じ行を見ていた (二重)。引数の位置でしか見えない形 (展開した引数) を標本に足して、その検査が効いていることを留めた。
+- **完成度と次の候補**: 数は `npm run mamori:grow -- report`。
+
 ## 直近の作業 (2026-11-16) — MG-073: 言語の穴探しの周 · Mamori 0.36 (T-270 / T-271)
 
 利用者の依頼「続けて」。言語を育てる輪 (`npm run mamori:grow -- brief`) が選んだ `probe:language` (言語の穴探し) をもう 1 周回した。移植も構文の追加も無い。
