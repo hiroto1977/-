@@ -259,8 +259,13 @@ export interface FnSignature {
 }
 
 export interface ProjectTable {
-  /** 宣言した印の名前 → ラベル。 */
+  /**
+   * 印の名前 → ラベル。`collectTable` が返す表ではプロジェクト全体の印、`checkModule` の中では**その module で印として読める名前だけ**
+   * (`marksIn` · 0.36 · T-270)。
+   */
   readonly vetted: ReadonlyMap<string, string>;
+  /** 印の名前 → 宣言した module の道 (0.36 · T-270)。印の名前はプロジェクトで 1 つ。 */
+  readonly vettedHome: ReadonlyMap<string, string>;
   /** 関数の外形。鍵は `道 + 名前` (名前だけで引くと、別のモジュールの同名の関数が外形を上書きする —— 0.4 · T-241)。 */
   readonly fns: ReadonlyMap<string, FnSignature>;
   /** モジュールの道 → export した名前の集まり (関数に限らず、定数・型・印も)。`use` で引ける名前はここに在る物だけ。 */
@@ -343,17 +348,53 @@ function carriedMark(t: TypeRef | null, vetted: ReadonlyMap<string, string>): st
   return t!.text.split('|').every((part) => ['null', 'undefined', mark].includes(part.trim())) ? mark : null;
 }
 
+/**
+ * この module で**印として読める名前** (0.36 · T-270)。印の名前が印を指すのは、この module が `vetted` で宣言したときと、
+ * 印を宣言した Mamori の module から**別名を付けずに** `use` で引いたときだけ。
+ *
+ * 0.35 までは「プロジェクトのどこかで宣言した印と同じ綴り」なら印と見ていた。ところが綴りが指す先は module ごとに違う ——
+ * `type VUrl = string;` (この module の別名)・`use type { VUrl } from "./types";` (印を宣言していない module の同名の型)・
+ * `use type { Plain alias VUrl } from …` (別名) と書けば、Mamori には「印 1 つを受ける sink 関数」に見える `open(u: VUrl)` が、
+ * `tsc` には素の `string` を受ける関数になった (M3 を名前だけで満たせた)。
+ */
+export function marksIn(file: string, module: Module, vetted: ReadonlyMap<string, string>, vettedHome: ReadonlyMap<string, string>): ReadonlyMap<string, string> {
+  const here = new Map<string, string>();
+  for (const it of module.items) {
+    if (it.kind === 'vetted') here.set(it.name, it.label);
+    if (it.kind !== 'use') continue;
+    const target = resolveUse(it.from, file);
+    for (const n of it.names) {
+      const label = vetted.get(n.name);
+      if (label !== undefined && n.alias === null && vettedHome.get(n.name) === target) here.set(n.name, label);
+    }
+  }
+  return here;
+}
+
 export function collectTable(modules: readonly { readonly file: string; readonly module: Module }[]): { table: ProjectTable; diagnostics: MamoriDiagnostic[] } {
   const vetted = new Map<string, string>();
+  const vettedHome = new Map<string, string>();
   const fns = new Map<string, FnSignature>();
   const exports = new Map<string, Set<string>>();
   const exportedFnNames = new Set<string>();
   const diagnostics: MamoriDiagnostic[] = [];
-  for (const { module } of modules) {
-    for (const it of module.items) if (it.kind === 'vetted') vetted.set(it.name, it.label);
+  for (const { file, module } of modules) {
+    for (const it of module.items) {
+      if (it.kind !== 'vetted') continue;
+      // 印の名前はプロジェクトで 1 つ (0.36 · T-270) —— 来歴は印の名前で比べるので、同じ名前の印が 2 つ在ると、片方の関門が作った値を
+      // もう片方の印を受ける口へ渡す形が Mamori を通る (`tsc` は別の型として断るが、Mamori の検めが 1 層欠ける)。
+      if (vettedHome.has(it.name)) {
+        diagnostics.push({ file, line: it.pos.line, col: it.pos.col, rule: 'M1', message: `印 ${it.name} を 2 度宣言しています (${vettedHome.get(it.name)} にも在る) —— 印の名前はプロジェクトで 1 つです (来歴は印の名前で比べるので、同じ名前の印は取り違えられます)` });
+        continue;
+      }
+      vetted.set(it.name, it.label);
+      vettedHome.set(it.name, file);
+    }
   }
   for (const { file, module } of modules) {
     const names = new Set<string>();
+    // 関数の外形が名乗る印も、その module で印として読める名前だけ (0.36 · T-270)。
+    const marksHere = marksIn(file, module, vetted, vettedHome);
     exports.set(file, names);
     for (const it of module.items) {
       // export の旗を持つのは名前のある宣言 (fn・const・type・interface・vetted) だけ —— use / extern は旗を持たず、`undefined` は export でない。
@@ -364,8 +405,8 @@ export function collectTable(modules: readonly { readonly file: string; readonly
         module: file,
         name: it.name,
         role: it.role,
-        paramVetted: it.params.map((p) => carriedMark(p.type, vetted)),
-        returnVetted: vettedOf(it.returns, vetted),
+        paramVetted: it.params.map((p) => carriedMark(p.type, marksHere)),
+        returnVetted: vettedOf(it.returns, marksHere),
       };
       if (it.exported && exportedFnNames.has(it.name)) {
         diagnostics.push({ file, line: it.pos.line, col: it.pos.col, rule: 'M6', message: `関数 ${it.name} が 2 つのモジュールで export されています (名前で引くので 1 つにする)` });
@@ -374,7 +415,7 @@ export function collectTable(modules: readonly { readonly file: string; readonly
       fns.set(fnKey(file, it.name), sig);
     }
   }
-  return { table: { vetted, fns, exports, sharedRegex: collectSharedRegex(modules), sharedConsts: collectSharedConsts(modules) }, diagnostics };
+  return { table: { vetted, vettedHome, fns, exports, sharedRegex: collectSharedRegex(modules), sharedConsts: collectSharedConsts(modules) }, diagnostics };
 }
 
 /** 直下の const の、共有の値としての扱いを集める (0.35 · T-268 / T-269)。型つきで読むだけの表でもない const は載せない。 */
@@ -481,8 +522,10 @@ function identName(e: Expr): string | null {
   return null;
 }
 
-export function checkModule(file: string, module: Module, table: ProjectTable): MamoriDiagnostic[] {
+export function checkModule(file: string, module: Module, project: ProjectTable): MamoriDiagnostic[] {
   const out: MamoriDiagnostic[] = [];
+  // この module の中では、印の表は「この module で印として読める名前」だけ (0.36 · T-270)。プロジェクト全体の印の名前は `project.vetted`。
+  const table: ProjectTable = { ...project, vetted: marksIn(file, module, project.vetted, project.vettedHome) };
   /**
    * いま検めているループ(`for` / `while`)の入れ子の深さ。`let` はこの深さを覚え、ループの外で宣言した名前へ、本体の末尾で
    * inert な値を入れる形を断つ。本体は先頭から 1 度しか検めないので、次の周の先頭の使い方は、その値を受ける前の姿で検め終わっている (0.19 · T-259)。
@@ -580,14 +623,26 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     const asIndex = resolveUse(from + '/index', file);
     if (table.exports.has(asIndex)) report('M6', pos, `道 "${from}" は ${asIndex} を指します —— \`index\` まで綴ります (TypeScript は \`${from}/index\` に解くのに、Mamori は別の module と見ます)`);
   };
+  /**
+   * 印の名前を、印でない物に付ける宣言を断る (0.36 · T-270)。型の綴りの `VUrl` がこの module で指すのは、その宣言 (型の別名・interface・
+   * クラス・外の module から引いた同名の物) であって印ではない。印の表 (`marksIn`) がその名前を印と見ないので口は作れないが、
+   * 断りの文を「印の型 1 つで受けます (在ったのは VUrl)」にしないために、宣言の場所で理由を言う。
+   */
+  const refuseMarkName = (name: string | null, pos: { line: number; col: number }, what: string): void => {
+    if (name === null || !project.vetted.has(name) || table.vetted.has(name)) return;
+    report('M4', pos, `${what} ${name} は印の名前です —— この module では \`${name}\` が印ではなくその宣言を指すので、\`u: ${name}\` と書いた口が印を持たない値を受けます (印は、宣言した Mamori の module から別名を付けずに \`use type { ${name} } from "…"\` で引きます)`);
+  };
   for (const it of module.items) {
+    if (it.kind === 'type' || it.kind === 'interface' || it.kind === 'class') refuseMarkName(it.name, it.pos, it.kind === 'class' ? 'クラス' : '型');
     if (it.kind === 'use') {
       checkSpecifier(it.from, it.pos);
+      refuseMarkName(it.defaultName, it.pos, '`use default` で引いた名前');
       const target = resolveUse(it.from, file);
       if (CAPABILITY_MODULES.has(it.from)) report('M6', it.pos, `\`use … from "${it.from}"\` は宣言できません —— ${it.from} はコード・OS・プロセス・網の口を持つので \`extern sink\` で宣言し、sink 関数の中に閉じ込めます`);
       const exported = table.exports.get(target);
       for (const n of it.names) {
         const local = n.alias ?? n.name;
+        refuseMarkName(local, it.pos, '`use` で引いた名前');
         // 引く名前が export されていない —— 変換後の tsc も止めるが、Mamori の検めが 1 層欠けていた (0.4 · T-241)。
         if (exported !== undefined && !exported.has(n.name)) report('M6', it.pos, `${target} は ${n.name} を export していません (use で引けるのは export した名前だけ)`);
         // 引けなければ undefined (外の module・Mamori でない相対の module・export していない名前は M6 が別に断る)。
@@ -618,6 +673,8 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       // Stryker disable next-line ConditionalExpression,StringLiteral: `from` が null (global) の口は道を持たない —— 空の道は「外:」の鍵に解かれ、どの module の外形にも当たらない (等価)
       const externTarget = it.from === null ? '' : resolveUse(it.from, file);
       for (const n of it.names) {
+        // extern の名前は、生成物では値と型の両方を引く import になる —— 印の名前を引くと、型の綴りが外の module の同名の型を指す (0.36 · T-270)。
+        refuseMarkName(n, it.pos, '`extern` で引いた名前');
         // Mamori の module の**印を受ける関数**を extern で引く形 (0.32 · T-262)。extern の名前は外形を持たないので、呼び出しの引数の印の検め (M4) が外れた ——
         // `extern pure { need } from "./g"; need(JSON.parse(raw));`。印を受けない関数を口として宣言する形 (`extern sink { writeExportFile } from "./exportPaths"`) は今も書ける。
         if (table.fns.get(fnKey(externTarget, n))?.paramVetted.some((v) => v !== null) === true) {
@@ -779,7 +836,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     // gate / sink は印を作る・危ない口を呼ぶ関数なので、型を引数に取らせない (型を替えて呼べる口は増やさない)。
     for (const tp of it.typeParams) {
       if (TYPE_SPELLING_WORDS.has(tp.name)) report('M4', tp.pos, `型引数の名前に \`${tp.name}\` は置けません —— 型の綴りの \`${tp.name}\` は印を持つ値の型・別の module の型を名指しする口で、型引数の名前と取り違えられます`);
-      if (table.vetted.has(tp.name)) report('M4', tp.pos, `型引数 ${tp.name} は印の名前です —— 型引数の名前で印を名乗れてしまい、印を持たない値を印を受ける口へ渡せます`);
+      if (project.vetted.has(tp.name)) report('M4', tp.pos, `型引数 ${tp.name} は印の名前です —— 型引数の名前で印を名乗れてしまい、印を持たない値を印を受ける口へ渡せます`);
     }
     if (it.role !== 'plain' && it.typeParams.length > 0) {
       report('M4', it.typeParams[0]!.pos, `${it.role} 関数 ${it.name} は型引数を持てません —— 印を作る・危ない口を呼ぶ関数を、呼ぶ側の型で変えられる形にしない`);
