@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.33"
+    "version": "0.34"
   },
   "constructs": {
     "class": {
@@ -4281,6 +4281,90 @@
         "pr": 917,
         "reason": "draft PR #917 に載せる",
         "summary": "ブラウザ版の保管庫 src/renderer/security/vault.ts (1,789 行) を Mamori (vault.mamori 1,408 行) へ移した。構文は足していない (0.33 のまま)。IndexedDB と WebCrypto の口は薄い壁 vaultHost.ts (362 行 · 判断を持たない · 検査 30 件) に置き、判断は .mamori に置いた。Mamori に無い形は書き直した: 状態を欄に持つクラスは状態を閉じ込めた工場関数へ・template は + の連結へ・as は型の注釈と壁の読みの型引数へ。保管庫の 19 の口は readonly の関数にしたので、口を別の関数へ差し替える書き方は型が断る (元より厳しい向き · 対照 3 つ)。先に破る試しは 20 通りで穴 0 (壁の読みの型引数に印の型・印を欄に持つ型・閉じ込めた let の上書き・欄の束に危ない口・返した束の欄の差し替え・Date の構築子の鎖と差し替えと原型・catch の結果)。module の let を同じ module の別の関数から入れ替える形は通るが、0.33 までの設計どおりで穴には数えていない (docs に記録)。元の版との差分比較: 種 11 / 12 / 13 × 400 場面 (42,556 手) を 3 通り (生成物だけ・元から生成物へ・生成物から元へ。後の 2 つは同じ保管領域を読み込み直しをまたいで共有) で食い違い 0・種 7 × 400 場面 (14,076 手) も 0。差分比較の対照 3 方向 (トークンの AAD・認証タグの AAD・復旧鍵の接頭辞) は食い違いを出した。変異検査: 初回 94.44% (生存 24 + 未到達 11)。内訳は、template を連結へ直して生まれた断片ごとの変異体・旧形式 (v1) を読む枝が検査で 1 度も走っていなかった (元の版にも在った不足)・変異検査の道具が 10 へ上がって増えた観点 (呼び出しと throw を丸ごと消す)・モジュール直下の注記が生成物に出ないので消えた pragma。検査 vaultStoredFormats.test.ts 24 件 (検査の側で WebCrypto を直接呼び、字面の綴りで記録を封じて開く) で閉じ、28 方向を 1 件ずつ生成物へ当てて全部落ちることを確かめた。等価変異として残したのは 4 か所 (理由つき)。2 度目は 2 ファイルとも 100% (vault.ts 502 件・vaultHost.ts 117 件)。台帳の穴の開け直しは T-049 / T-063 / T-064 / T-230 の 6 件 (A-118 / A-203 / A-204 / A-205 / A-538 / A-539) すべてを名指しの回帰検査が捕まえた (書き換え 5 件を生成物の形へ直した)。母集団を数える検査 5 本と門の台帳 2 つを壁の形へ直し、整合性チェーン・CODEOWNERS・変異検査の対象に元 (.mamori) と壁を足した。残る TypeScript の壁は、移せない preloadHost.ts (Issue #910) だけになった。"
+      }
+    },
+    {
+      "id": "MG-071",
+      "date": "2026-11-15",
+      "kind": "probe",
+      "target": "language",
+      "pickedBy": "brief",
+      "briefPick": "probe:language",
+      "version": "0.34",
+      "features": [],
+      "added": [],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "自分の入れ物のメソッドを借りて、受け手を共有の配列 / 読むだけの表にする (`tmp.push.call(LIST, x)`・`tmp.set.call(TABLE, k, v)`・`.apply`・`.bind`)",
+          "result": "hole"
+        },
+        {
+          "tried": "呼び戻しの thisArg で受け手を選ぶ (`[x].forEach(tmp.add, ALLOWED)`)・書き換えるメソッドを値として取り出す (別名・引数・分割代入)",
+          "result": "hole"
+        },
+        {
+          "tried": "共有の正規表現をその場で作り替える (`SAFE.compile(\".*\")`)",
+          "result": "hole"
+        },
+        {
+          "tried": "モジュール直下の g / y の正規表現を関門が `.test` / `.exec` で使う (lastIndex が残り、同じ入力の 2 度目に答えが変わる)・別名や use の先から使う",
+          "result": "hole"
+        },
+        {
+          "tried": "モジュール直下の `new Date(0)` / `new URL(…)` を別の関数から書き換える (`setTime`・`searchParams.set`)",
+          "result": "hole"
+        },
+        {
+          "tried": "関数が返した Map / Set を型なしの直下の const で受けて `.set` / `.add` / `.clear` (0.33 が残した形)・局所の別名や欄をたどった先から書き換える",
+          "result": "hole"
+        },
+        {
+          "tried": "印の付け替え: 関門を通さずに印つきの値を作る (as・型引数・戻り値の型・既定値・arrow の引数・JSON.parse / Promise の any)",
+          "result": "refused"
+        },
+        {
+          "tried": "名前の隠し: 禁じた名前へ字面の添字・分割代入・別名・`?.`・構築子の鎖でたどり着く",
+          "result": "refused"
+        },
+        {
+          "tried": "入れ物: 共有の配列・型つきの Map / Set を、受け手の名前を書いて書き換える (0.18 / 0.33 の規則の再確認)",
+          "result": "refused"
+        },
+        {
+          "tried": "危ない口: extern sink を値として持ち出す・入れ物に載せる・印の無い値を渡す",
+          "result": "refused"
+        },
+        {
+          "tried": "flag を逃がして書いた `new RegExp(p, \"\\u0067\")`・flag を変数で渡す形を直下に置く (0.34 の規則を先に破る)",
+          "result": "refused"
+        },
+        {
+          "tried": "0.34 の規則の迂回: `f[\"call\"]`・`const { call } = f;`・`?.call`・括弧で包む・`setHours` などの set + 大文字のメソッド・`.append`",
+          "result": "refused"
+        },
+        {
+          "tried": "3 つの module をまたぐ別名の鎖 (m0 が m1 の B を引き、m1 が m2 の RE を引く)・`use { RE alias R2 }` で共有の g の正規表現を `.test` へ",
+          "result": "refused"
+        }
+      ],
+      "threats": [
+        "T-265",
+        "T-266",
+        "T-267"
+      ],
+      "controls": 6,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/checker.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 917,
+        "reason": "draft PR #917 に載せる",
+        "summary": "言語の穴探しの周 (移植も構文の追加も無い)。規則を破るプログラムを約 195 本書いて 0.33 のコンパイラへ当てた。印の付け替え・名前の隠し・入れ物・危ない口の 4 群はどれも断られた。共有の状態を、受け手を名前で書かずに書き換える道に穴が 3 家系在った。T-265: 借りたメソッド (`tmp.push.call(共有の配列, x)`・`.apply`・`.bind`・呼び戻しの thisArg) —— 受け手を呼ぶ側が選ぶので、ReadonlyMap と名乗った表まで書き換えられた。T-266: 状態を持つ共有の正規表現 (`.compile` で作り替える・直下の g / y を `.test` / `.exec` —— lastIndex が残り、関門が 2 度目に答えを変える)。T-267: 直下の `new Date` / `new URL` の書き換えと、関数が返した Map / Set を型なしの直下の const で受けて書き換える形 (0.33 が残した形)。直しはどれも checker の M6 (0.34): `.call` / `.apply` / `.bind` / `.compile` を言語から外す・受け手を書き換えるメソッド 14 個は呼ぶ形でしか書けない・直下の g の正規表現は const の初期値そのものにだけ置けて、名前は文字列のメソッド 6 つの引数にだけ渡せる (別名と use の先も表で辿る)・y / 入れ物の中の g / flag の読めない new RegExp は直下に置けない・直下の const に new Date / new URL は置けない・型を書いていない直下の const は書き換えるメソッドの受け手にできない。parser の禁じた綴りの表は Rust の検算役と対なので触っていない。実物の 46 本の .mamori は新しい規則に当たらず、生成物も出荷物も 1 byte も変わらない (両ビルドの md5 が MG-070 と同じ)。既存の検査 5 本は主張を緩めずに新しい規則の形へ直した。回帰検査 mamoriV34.test.ts (15 件)・台帳 T-265 / T-266 / T-267・穴の開け直し A-603〜A-608 (最終のコードで 6 件とも名指しの検査が捕まえた)。変異検査は checker.ts の全体: 初回 98.96% (生存 20)。17 件は検査の不足で検査を足し、3 件は等価で形ごと消した。全体を測り直して 100.00% (Killed 1911 / Timeout 3 / 生存 0 · 39 分 46 秒)。残した物 (測って docs に記録): 自分で書いたオブジェクトの同名のメソッドへ共有の g の正規表現を渡す形・型つきの直下の const で受けた Date の書き換え・引数で渡した先での書き換え・工場関数が閉じ込めた g の正規表現・直下に置いた反復子の .next()。"
       }
     }
   ]
