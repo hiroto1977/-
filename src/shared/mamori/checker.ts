@@ -127,7 +127,8 @@ const SHARED_MUTABLE_OBJECTS: ReadonlySet<string | null> = new Set(['Date', 'URL
 /**
  * 受け手の入れ物・日付を書き換えるメソッドか (0.34 · T-267)。**型を書いていないモジュール直下の const** はこれの受け手にできない ——
  * T-264 は初期値の式の中の `new Map(…)` しか見ないので、関数が返した入れ物 (`const T = make();`・`const T = (() => new Map())();`) は
- * 型なしのまま書き換えられた (0.33 が「残した物 ①」とした形)。書き換える状態は型で名乗らせる (`const T: Map<…> = make();`)。
+ * 型なしのまま書き換えられた (0.33 が「残した物 ①」とした形)。書き換える状態は型で名乗らせる (`const T: Map<…> = new Map();`)。
+ * 0.37 (T-274) から、この module の関数が返した物を置いた直下の const は名前そのものが読めない —— この規則が見るのは、host (`extern pure`) の関数が返した物と、直下で作った入れ物である。
  */
 function isSharedWriteMethod(prop: string): boolean {
   return ['set', 'add', 'delete', 'clear', 'append'].includes(prop) || /^set[A-Z]/.test(prop);
@@ -429,7 +430,7 @@ export function collectTable(modules: readonly { readonly file: string; readonly
       fns.set(fnKey(file, it.name), sig);
     }
   }
-  return { table: { vetted, vettedHome, markConsts: collectMarkConsts(modules, vetted), fns, exports, sharedRegex: collectSharedRegex(modules), sharedConsts: collectSharedConsts(modules) }, diagnostics };
+  return { table: { vetted, vettedHome, markConsts: collectMarkConsts(modules, vetted), fns, exports, sharedRegex: collectSharedRegex(modules), sharedConsts: collectSharedConsts(modules, fns) }, diagnostics };
 }
 
 /** 型の綴りが印の名前 (プロジェクトのどの印でも) か `typeof` を書いているか (0.36 · T-271)。`typeof` の相手は辿らず、広く取る。 */
@@ -467,6 +468,8 @@ interface LoadEnv {
   readonly hostPure: ReadonlySet<string>;
   /** この module が直下で宣言した名前 (組み込みと同じ綴りを隠す物を、組み込みと読まないため)。 */
   readonly declared: ReadonlySet<string>;
+  /** 印を返す関門 (この module の gate 関数と、`use` で引いた gate 関数) の名前 —— 返すのは印の付いた文字列か null / undefined だけ (0.32 · T-263)。 */
+  readonly gates: ReadonlySet<string>;
 }
 
 /** 名前が、この module で隠していない組み込みか (`Object` / `Math` / `Map` ほか)。 */
@@ -503,10 +506,9 @@ function isLoadData(e: Expr, env: LoadEnv): boolean {
       return isDataCall(e, env);
     case 'arrow':
     case 'arrow-block':
-    case 'mint':
       return false;
     default:
-      // 文字列・数・正規表現・true / false / null / undefined。
+      // 文字列・数・正規表現・true / false / null / undefined (`mint` は直下に書けない —— M1 が別に断る)。
       return true;
   }
 }
@@ -524,7 +526,7 @@ function isDataReceiver(x: Expr, env: LoadEnv): boolean {
  */
 function isDataCall(e: Expr & { readonly kind: 'call' | 'new' }, env: LoadEnv): boolean {
   const c = e.callee;
-  const callee = c.kind === 'ident' ? isBuiltinName(c.name, env) || env.hostPure.has(c.name) : e.kind === 'call' && c.kind === 'member' && isDataReceiver(c.object, env);
+  const callee = c.kind === 'ident' ? isBuiltinName(c.name, env) || env.hostPure.has(c.name) || env.gates.has(c.name) : c.kind === 'member' && isDataReceiver(c.object, env);
   return callee && e.args.every((a) => isLoadData(a, env));
 }
 
@@ -532,18 +534,22 @@ function isDataCall(e: Expr & { readonly kind: 'call' | 'new' }, env: LoadEnv): 
 const NON_INVOKING_CTORS: ReadonlySet<string> = new Set(['Map', 'Set', 'RegExp', 'Error', 'TypeError', 'RangeError']);
 /** 引数を呼び戻さない組み込みの関数 —— 結果は数・文字列・真偽。 */
 const NON_INVOKING_FNS: ReadonlySet<string> = new Set(['Number', 'String', 'Boolean']);
-/** 引数を呼び戻さない `Object` のメンバ —— 結果は引数そのもの (`freeze`) か、引数の欄を並べ直した入れ物。 */
-const NON_INVOKING_OBJECT_MEMBERS: ReadonlySet<string> = new Set(['freeze', 'entries', 'keys', 'values', 'fromEntries']);
+/**
+ * メンバのどれも引数を呼び戻さない組み込みの名前空間。`Object` で書けるメンバ (`OBJECT_MEMBERS`) は、引数そのもの (`freeze`)・引数の欄を並べ直した入れ物・真偽を返す。
+ * `Math` / `Number` / `String` のメンバは数・文字列・真偽しか返さない。`JSON` (`parse` の reviver)・`Array` (`from` の写す関数)・`Promise` (thenable) は呼び戻すので入れない。
+ */
+const NON_INVOKING_NAMESPACES: ReadonlySet<string> = new Set(['Object', 'Math', 'Number', 'String']);
 
 /**
- * **引数を呼び戻さない組み込みの呼び出し**か (0.37 · T-274): `new Map(…)` / `new Set(…)` / `new RegExp(…)` / `Object.freeze(…)` / `Object.entries(…)` / `String(…)` ほか。
+ * **引数を呼び戻さない組み込みの呼び出し**か (0.37 · T-274): `new Map(…)` / `new Set(…)` / `new RegExp(…)` / `Object.freeze(…)` / `Object.entries(…)` / `Math.max(…)` / `String(…)` ほか。
  * 引数に置いた arrow・関数の名前は**置かれるだけで走らない**ので、結果が閉じ込めた状態を持つかは、引数の中の呼び出しだけで決まる
  * (`new Map([["a", (x) => x]])` は置いただけの arrow の表・`new Map([["a", make()]])` は関数の結果を持つ)。
+ * 印を返す関門の呼び出しも同じ扱い —— 返すのは印の付いた文字列か null / undefined だけで、閉包を返せない (`export const START = 関門("…");`)。
  */
 function isNonInvokingCall(e: Expr & { readonly kind: 'call' | 'new' }, env: LoadEnv): boolean {
   const c = e.callee;
-  if (c.kind === 'ident') return isBuiltinName(c.name, env) && (e.kind === 'new' ? NON_INVOKING_CTORS : NON_INVOKING_FNS).has(c.name);
-  return e.kind === 'call' && c.kind === 'member' && c.object.kind === 'ident' && c.object.name === 'Object' && isBuiltinName('Object', env) && NON_INVOKING_OBJECT_MEMBERS.has(c.prop);
+  if (c.kind === 'ident') return env.gates.has(c.name) || (isBuiltinName(c.name, env) && (e.kind === 'new' ? NON_INVOKING_CTORS : NON_INVOKING_FNS).has(c.name));
+  return c.kind === 'member' && c.object.kind === 'ident' && NON_INVOKING_NAMESPACES.has(c.object.name) && isBuiltinName(c.object.name, env);
 }
 
 /**
@@ -576,8 +582,6 @@ function holdsLoadResult(e: Expr, env: LoadEnv): boolean {
       return holdsLoadResult(e.left, env) || holdsLoadResult(e.right, env);
     case 'cond':
       return holdsLoadResult(e.test, env) || holdsLoadResult(e.then, env) || holdsLoadResult(e.otherwise, env);
-    case 'mint':
-      return holdsLoadResult(e.value, env);
     default:
       // 名前・字面は呼び出しを含まない。arrow は置いただけ (本体は呼ばれるまで走らない)。
       return false;
@@ -604,17 +608,27 @@ function declaredNames(module: Module): Set<string> {
  * 直下の const の、共有の値としての扱いを集める (0.35 · T-268 / T-269 · 0.37 · T-274)。型つきで読むだけの表でも、関数の結果でもない const は載せない。
  * 関数の結果を含む const (`load-result`) は、型を書いても・読むだけの表と名乗っても同じ扱い (関数が返した入れ物は、返した側が書き換える口を残せる)。
  */
-function collectSharedConsts(modules: readonly { readonly file: string; readonly module: Module }[]): Map<string, Map<string, SharedConstKind>> {
+function collectSharedConsts(modules: readonly { readonly file: string; readonly module: Module }[], fns: ReadonlyMap<string, FnSignature>): Map<string, Map<string, SharedConstKind>> {
+  const isMarkGate = (target: string, name: string): boolean => {
+    const sig = fns.get(fnKey(target, name));
+    return sig !== undefined && sig.role === 'gate' && sig.returnVetted !== null;
+  };
   const shared = new Map<string, Map<string, SharedConstKind>>();
   for (const { file, module } of modules) {
     const names = new Map<string, SharedConstKind>();
     shared.set(file, names);
     const data = new Set<string>();
     const hostPure = new Set<string>();
+    const gates = new Set<string>();
     for (const it of module.items) {
       if (it.kind === 'extern' && it.authority === 'pure') for (const n of it.names) hostPure.add(n);
+      if (it.kind === 'fn' && isMarkGate(file, it.name)) gates.add(it.name);
+      if (it.kind === 'use') {
+        const target = resolveUse(it.from, file);
+        for (const n of it.names) if (isMarkGate(target, n.name)) gates.add(n.alias ?? n.name);
+      }
     }
-    const env: LoadEnv = { data, hostPure, declared: declaredNames(module) };
+    const env: LoadEnv = { data, hostPure, declared: declaredNames(module), gates };
     // 宣言の順に見る —— 初期値がその場で読めるのは、先に宣言した const だけ (後ろの const は読み込みの時点でまだ無い)。
     for (const it of module.items) {
       if (it.kind !== 'const') continue;

@@ -35,6 +35,8 @@ const CALL_FORM = (m: string): string => `[M6] \`.${m}\` は呼ぶ形 (\`x.${m}(
 const SHARED_G = (name: string): string => `[M6] 共有の正規表現 ${name} (g) は、文字列のメソッド (.replace / .replaceAll / .match / .matchAll / .split / .search) の引数にだけ渡せます`;
 /** 0.35 (T-268) の断り —— 読むだけの表の名前を、読む位置でない所 (引数・返す値) に書いた形に重なって出る。 */
 const READ_ONLY_TABLE = (name: string): string => `[M6] 読むだけの表 ${name} は、読む位置にだけ書けます`;
+/** 0.37 (T-274): 関数の結果を置いた直下の const は、Mamori の中で読めない —— 0.34 の 2 つの規則 (中身の見えない正規表現・型なしの受け手) の、この module の関数が返した物についての後継。 */
+const LOAD_RESULT = (name: string): string => `[M6] ${name} は、関数の呼び出しの結果を置いたモジュール直下の const なので、Mamori の中では読めません`;
 const UNTYPED_RECEIVER = (name: string, m: string): string => `[M6] 型を書いていないモジュール直下の const ${name} は \`.${m}(…)\` の受け手にできません`;
 
 describe('0.34: 受け手 (this) を呼ぶ側が選ぶ口は無い (threat: T-265)', () => {
@@ -174,8 +176,12 @@ describe('0.34: 共有の正規表現は状態を持てない (threat: T-266)', 
   });
 
   it('★ 中身の見えない共有の正規表現 (呼び出しの結果・入れ直せる let) は `.test` / `.exec` の受け手にできない (threat: T-266)', () => {
-    const opaque = diagnostics('fn mk() -> RegExp {\n  return /ok/g;\n}\nconst RE = mk();\n' + F('  return RE.test(x);'));
+    // 中身の見えない呼び出しの結果 —— host (`extern pure`) の関数が返した正規表現は、g かどうかを検められない
+    const opaque = diagnostics('extern pure { mk } from "./host";\nconst RE = mk();\n' + F('  return RE.test(x);'));
     expect(opaque).toEqual([expect.stringContaining('[M6] RE は `.test(…)` の受け手にできません —— 呼び出しの結果を置いたモジュール直下の const は中身が見えない')]);
+    // この module の関数が返した正規表現は、0.37 から名前そのものが読めない (T-274) —— 2 つの断りが同じ行に出る
+    const own = diagnostics('fn mk() -> RegExp {\n  return /ok/g;\n}\nconst RE = mk();\n' + F('  return RE.test(x);'));
+    expect(own).toEqual([expect.stringContaining('`.test(…)` の受け手にできません'), expect.stringContaining(LOAD_RESULT('RE'))]);
     const viaLet = diagnostics('let re: RegExp = /ok/;\n' + F('  return re.exec(x);'));
     expect(viaLet).toEqual([expect.stringContaining('[M6] re は `.exec(…)` の受け手にできません —— モジュール直下の let は入れ直せる')]);
     // let の初期値そのものが g でも断る (let は別名を持てるので、名前では追えない)
@@ -211,20 +217,24 @@ describe('0.34: 共有の Date / URL と、型を書いていない共有の受�
   });
 
   it('★ 型を書いていない直下の const (関数が返した入れ物) は、書き換えるメソッドの受け手にできない —— 0.33 が残した ① (threat: T-267)', () => {
-    const MK = 'fn mk() -> Map<string, number> {\n  return new Map<string, number>();\n}\nconst T = mk();\n';
+    // host (`extern pure`) の関数が返した入れ物 —— 0.37 (T-274) から、この module の関数が返した物は名前そのものが読めないので、ここは host の物で見る
+    const MK = 'extern pure { mk } from "./host";\nconst T = mk();\n';
     for (const m of ['set(x, 1)', 'delete(x)', 'clear()']) {
       const d = diagnostics(MK + F(`  T.${m};\n  return T.size;`));
       expect(d, m).toEqual([expect.stringContaining(UNTYPED_RECEIVER('T', m.slice(0, m.indexOf('('))))]);
-      expect(d[0], m).toContain('6:4');
+      expect(d[0], m).toContain('4:4');
     }
-    expect(diagnostics('const T = (() => new Set<string>())();\n' + F('  T.add(x);\n  return T.size;'))).toEqual([expect.stringContaining(UNTYPED_RECEIVER('T', 'add'))]);
+    // この module の関数・その場で呼ぶ arrow が返した入れ物は、受け手の断りに加えて、読む形すべてが断られる (0.37 · T-274)
+    const OWN = 'fn mk() -> Map<string, number> {\n  return new Map<string, number>();\n}\nconst T = mk();\n';
+    expect(diagnostics(OWN + F('  T.set(x, 1);\n  return 1;'))).toEqual([expect.stringContaining(UNTYPED_RECEIVER('T', 'set')), expect.stringContaining(LOAD_RESULT('T'))]);
+    expect(diagnostics('const T = (() => new Set<string>())();\n' + F('  T.add(x);\n  return 1;'))).toEqual([expect.stringContaining(UNTYPED_RECEIVER('T', 'add')), expect.stringContaining(LOAD_RESULT('T'))]);
     // 局所の別名で受けても同じ
     expect(diagnostics(MK + F('  const m = T;\n  m.delete(x);\n  return m.size;'))).toEqual([expect.stringContaining(UNTYPED_RECEIVER('m', 'delete'))]);
     // 欄をたどった先でも同じ (根の名前で見る)
-    const NESTED = 'interface Box {\n  readonly inner: Map<string, number>;\n}\nfn mk() -> Box {\n  return { inner: new Map<string, number>() };\n}\nconst T = mk();\n';
+    const NESTED = 'interface Box {\n  readonly inner: Map<string, number>;\n}\nextern pure { mk } from "./host";\nconst T = mk();\n';
     expect(diagnostics(NESTED + F('  T.inner.clear();\n  return 1;'))).toEqual([expect.stringContaining(UNTYPED_RECEIVER('T', 'clear'))]);
     // 関数が返した日付の `.setHours(…)` ほか (set + 大文字で始まる名前)
-    const d = diagnostics(`${DATE}fn mk() -> Date {\n  return new Date(0);\n}\nconst T = mk();\n${F('  T.setHours(1);\n  return T.getTime();')}`);
+    const d = diagnostics(`${DATE}extern pure { mk } from "./host";\nconst T = mk();\n${F('  T.setHours(1);\n  return T.getTime();')}`);
     expect(d).toEqual([expect.stringContaining(UNTYPED_RECEIVER('T', 'setHours'))]);
     // `.append(…)` (Headers / URLSearchParams / FormData) も書き換える
     const HEADERS = 'interface Bag {\n  readonly append: (k: string, v: string) => void;\n  readonly offsetAt: (n: number) => number;\n}\nextern pure { mk } from "./host";\nconst H = mk();\n';
@@ -236,7 +246,7 @@ describe('0.34: 共有の Date / URL と、型を書いていない共有の受�
   it('対照: 型で名乗った状態は書き換えられる・関数の中の Date / URL は自分の物・型なしの const は読める', () => {
     expect(diagnostics('const T: Map<string, number> = new Map<string, number>();\n' + F('  T.set(x, 1);\n  return T.size;'))).toEqual([]);
     expect(diagnostics(`${DATE}${F('  const d = new Date(0);\n  d.setTime(1);\n  const u = new URL("https://example.invalid/");\n  u.searchParams.set("k", x);\n  return d.getTime() + u.href.length;')}`)).toEqual([]);
-    expect(diagnostics('fn mk() -> Map<string, number> {\n  return new Map<string, number>();\n}\nconst T = mk();\n' + F('  return T.get(x) ?? T.size;'))).toEqual([]);
+    expect(diagnostics('extern pure { mk } from "./host";\nconst T = mk();\n' + F('  return T.get(x) ?? T.size;'))).toEqual([]);
     // 入れ直せる状態 (直下の let) は型で名乗っているので、Date を持てる
     expect(diagnostics(`${DATE}let last: Date = new Date(0);\n${F('  return last.getTime();')}`)).toEqual([]);
     // 時計を読むだけの形 (`Date.now()`) は Date を作らない
