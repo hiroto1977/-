@@ -34,6 +34,14 @@
   **次のセッションで確かめる事**: 2026-11-17 05:49 JST の予約の回 (当番の要約 → 見張り用の文脈の大きさ・ラベル・全文を読んだ件数)。
   準備の確認に使ったセッション 1 つ (`session_01JCfemYRsPU4Wzr263gmPcH`) は、仕舞う操作が自動モードの判定に断られたので残っている。
 - **既知の罠**: 生成物と突き合わせる検査は、変異検査の sandbox では repo の本物を読む (`originalSourcePath`) —— sandbox の写しから組み直すと計器の印で必ず食い違う。
+  見張り番の生成物は UTF-8 で組む (`charset: 'utf8'`) —— ascii で組むと日本語が `\\u` の連なりになり、`lint:malware` の「難読化の塊」に当たる。
+- **変異検査**: `inboundThreat.ts` / `inboundWatch.ts` / `bootProtection.ts` は 1 度目 91.59% (生存 39) → 形を消し検査を足して 3 本とも **100.00%**、`mutate` へ入れた (357 → 360)。
+  差出人の読みを 1 つ強くした (後ろに字が続く形・前に別の `<…>` が在る形でも、最後の `<アドレス>` と表示名を比べる)。
+- **検証 (最終のコード · MG-075 の分も含む)**: `typecheck` 緑・`npm test` **1,282 ファイル / 28,016 件 ❌ 0** (1 度目は 1 件 —— 生成物の `\\u` の連なりが `lint:malware` の台帳に無い —— が落ち、UTF-8 で組み直した)・
+  `verify:all` 39 ゲート exit 0 (`audit:verify-keep-going` · 1 度目は `verify:arch` の数 3 つと `lint:shared-judgement` の census が鳴り、実測へ直した)・`chain:verify` 緑。
+  実機: `smoke:app` OK・`perf` OK (LITE DCL 279 ms / heap 8.1 MB・FULL DCL 588 ms / heap 30.2 MB)・`e2e` **723 件 ❌ 0**・`e2e:lite` **723 件 ❌ 0**。
+  出荷物 **12,221,980 B / 3,634,617 B** (両方 +15,820 B —— 受信の検疫と起動の守りの点検の分。LITE は警告線 3,400,000 B の上・天井 4,000,000 B まで 365,383 B)。
+  `e2e:ollama` / `e2e:portal` / `smoke:packaged` は回していない (Ollama の経路・ポータル・梱包の設定を触っていない)。
 
 ## 直近の作業 (2026-11-16) — MG-075: 言語の穴探しの周 · Mamori 0.37 (T-274)
 
