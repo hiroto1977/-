@@ -130,7 +130,12 @@ describe('0.33: 型を書いていない共有の Map / Set は持てない (thr
     expect(d[0]).toContain(NEEDLE);
     expect(d[1]).toContain('6:9');
     expect(d[1]).toContain('型を書いていないモジュール直下の const LIMITS は `.set(…)` の受け手にできません');
-    // 型で読むだけと名乗れば Mamori は通す (書き換えは生成物を tsc が断る —— `mamoriGenerated` と typecheck の仕事)
-    expect(diagnostics(src.replace('const LIMITS = ', 'const LIMITS: ReadonlyMap<string, number> = '))).toEqual([]);
+    // 型で読むだけと名乗った表の書き換えは、0.34 までは生成物の tsc だけが断っていた。0.35 (T-268) は Mamori も断る (読む位置にしか書けない)。
+    const readonly = diagnostics(src.replace('const LIMITS = ', 'const LIMITS: ReadonlyMap<string, number> = '));
+    expect(readonly).toHaveLength(1);
+    expect(readonly[0]).toContain('6:3');
+    expect(readonly[0]).toContain('[M6] 読むだけの表 LIMITS は、読む位置にだけ書けます');
+    // 型で書き換える状態と名乗れば通る (0.33 の「宣言で分ける」は今もそのまま)
+    expect(diagnostics(src.replace('const LIMITS = ', 'const LIMITS: Map<string, number> = '))).toEqual([]);
   });
 });

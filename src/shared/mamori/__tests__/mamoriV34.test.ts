@@ -33,6 +33,8 @@ const DATE = 'extern pure global Date;\n';
 const NO_MEMBER = (m: string): string => `[M6] \`.${m}\` は Mamori に在りません`;
 const CALL_FORM = (m: string): string => `[M6] \`.${m}\` は呼ぶ形 (\`x.${m}(…)\`) でしか書けません`;
 const SHARED_G = (name: string): string => `[M6] 共有の正規表現 ${name} (g) は、文字列のメソッド (.replace / .replaceAll / .match / .matchAll / .split / .search) の引数にだけ渡せます`;
+/** 0.35 (T-268) の断り —— 読むだけの表の名前を、読む位置でない所 (引数・返す値) に書いた形に重なって出る。 */
+const READ_ONLY_TABLE = (name: string): string => `[M6] 読むだけの表 ${name} は、読む位置にだけ書けます`;
 const UNTYPED_RECEIVER = (name: string, m: string): string => `[M6] 型を書いていないモジュール直下の const ${name} は \`.${m}(…)\` の受け手にできません`;
 
 describe('0.34: 受け手 (this) を呼ぶ側が選ぶ口は無い (threat: T-265)', () => {
@@ -44,7 +46,10 @@ describe('0.34: 受け手 (this) を呼ぶ側が選ぶ口は無い (threat: T-26
       ['bind', 'push', LIST, '  const tmp: string[] = [];\n  const f = tmp.push.bind(LIST);\n  return f(x);'],
     ];
     for (const [borrow, method, decl, body] of cases) {
-      const d = diagnostics(decl + F(body));
+      const all = diagnostics(decl + F(body));
+      // 0.35 (T-268) は、読むだけの表 TABLE を引数に渡す・返す形を別の理由でも断る (配列の LIST には掛からない)。0.34 の 2 件はそのまま並ぶ。
+      const d = all.filter((m) => !m.includes(READ_ONLY_TABLE('TABLE')));
+      expect(all.length - d.length, body).toBe(decl === TABLE ? 2 : 0);
       expect(d, body).toHaveLength(2);
       expect(d[0], body).toContain(NO_MEMBER(borrow));
       expect(d[1], body).toContain(CALL_FORM(method));
@@ -65,10 +70,13 @@ describe('0.34: 受け手 (this) を呼ぶ側が選ぶ口は無い (threat: T-26
 
   it('★ 呼び戻しの thisArg で受け手を選ぶ形は断る —— 書き換えるメソッドは値として持ち出せない (threat: T-265)', () => {
     const thisArg = diagnostics(ALLOWED + F('  const tmp = new Set<string>();\n  [x].forEach(tmp.add, ALLOWED);\n  return ALLOWED.has(x);'));
-    expect(thisArg).toHaveLength(1);
+    // 2 件目は 0.35 (T-268): 読むだけの表 ALLOWED を引数 (thisArg) に渡す形そのものも断る。
+    expect(thisArg).toHaveLength(2);
     expect(thisArg[0]).toContain('4:18');
     expect(thisArg[0]).toContain(CALL_FORM('add'));
     expect(thisArg[0]).toContain('`[v].forEach(tmp.add, 共有の入れ物)`');
+    expect(thisArg[1]).toContain('4:24');
+    expect(thisArg[1]).toContain(READ_ONLY_TABLE('ALLOWED'));
     // 別名に取る・返す・引数に渡す —— どれも「値として持ち出す」形
     for (const m of ['add', 'delete', 'clear']) expect(diagnostics(F(`  const tmp = new Set<string>();\n  const f = tmp.${m};\n  return f;`)), m).toEqual([expect.stringContaining(CALL_FORM(m))]);
     for (const m of ['set', 'delete', 'clear']) expect(diagnostics(F(`  const tmp = new Map<string, number>();\n  return tmp.${m};`)), m).toEqual([expect.stringContaining(CALL_FORM(m))]);
@@ -92,10 +100,11 @@ describe('0.34: 受け手 (this) を呼ぶ側が選ぶ口は無い (threat: T-26
   });
 
   it('対照: 規則が無ければ通っていた形である —— 生成物は読むだけの表を書き換える (tsc はメソッドの this を検めない)', () => {
-    // 断りを作っているのは 0.34 の 2 つの規則だけで、それ以前の規則 (T-258 の受け手・T-264 の宣言) は 1 件も言わない。
+    // 断りを作っているのは 0.34 の 2 つの規則 (と、0.35 の「読むだけの表は読む位置にだけ」) で、それ以前の規則 (T-258 の受け手・T-264 の宣言) は 1 件も言わない。
     const d = diagnostics(TABLE + F('  const tmp = new Map<string, number>();\n  tmp.set.call(TABLE, x, 9);\n  return TABLE;'));
-    expect(d.every((m) => m.includes(NO_MEMBER('call')) || m.includes(CALL_FORM('set')))).toBe(true);
-    // 同じ書き換えを名前で書けば、Mamori は通し (型で読むだけと名乗った表)、生成物を tsc が断る —— 借りる形だけが両方を抜けていた
+    expect(d.every((m) => m.includes(NO_MEMBER('call')) || m.includes(CALL_FORM('set')) || m.includes(READ_ONLY_TABLE('TABLE')))).toBe(true);
+    expect(d.filter((m) => m.includes(NO_MEMBER('call')) || m.includes(CALL_FORM('set')))).toHaveLength(2);
+    // 読む形は通る。0.34 までは、同じ書き換えを名前で書けば Mamori は通し、生成物を tsc が断っていた —— 借りる形だけが両方を抜けていた
     expect(diagnostics(TABLE + F('  return TABLE.get(x);'))).toEqual([]);
   });
 });

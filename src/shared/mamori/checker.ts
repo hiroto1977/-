@@ -167,6 +167,30 @@ function isGlobalRegexInit(init: Expr): boolean {
  * `WeakMap` / `WeakSet` は載せない —— 宣言なしで使える組み込みではなく、pure でも宣言できないので、Mamori では作れない (M6)。
  */
 const SHARED_COLLECTIONS: ReadonlySet<string | null> = new Set(['Map', 'Set']);
+/**
+ * 読むだけの表の名前を書ける、メンバの位置 (0.35 · T-268)。どれも表を書き換えず、表そのものを別の場所へ渡さない。
+ * `forEach` は載せない —— 呼び戻しの第 3 引数が表そのものなので、そこから持ち出せる。回すなら `for (const e of 表)`。
+ */
+const TABLE_READ_MEMBERS: ReadonlySet<string> = new Set(['get', 'has', 'size', 'keys', 'values', 'entries']);
+
+/**
+ * 型の綴りが読むだけの表 (`ReadonlyMap` / `ReadonlySet`) を名指しするか (0.35 · T-268)。
+ * 読むだけの型を守るのは生成物の `tsc` だけで、`tsc` の型は絞り込み (`x instanceof Map`・型述語) と any (`Object.values` の結果・
+ * `Array.isArray` の後・Promise の `catch` の引数) で外れる。そう名乗った名前は、Mamori の側で**読む位置にしか書けない**ことにする。
+ */
+function namesReadonlyTable(t: TypeRef | null): boolean {
+  return t !== null && (t.names.includes('ReadonlyMap') || t.names.includes('ReadonlySet'));
+}
+
+/**
+ * モジュール直下の const が読むだけの表か (0.35 · T-268)。型が `ReadonlyMap` / `ReadonlySet` を名指しするか、
+ * 初期値そのものが `new Map(…)` / `new Set(…)` で、型の頭が `Map<` / `Set<` (書き換える状態) でないとき ——
+ * 型の別名 (`type Table = ReadonlyMap<…>`) や合併で名乗った表も、読むだけの側へ倒す (失敗は閉じる向き)。
+ */
+function isReadonlyTableConst(type: TypeRef | null, init: Expr): boolean {
+  if (namesReadonlyTable(type)) return true;
+  return type !== null && init.kind === 'new' && SHARED_COLLECTIONS.has(identName(init.callee)) && !/^(?:Map|Set)</.test(type.text);
+}
 const SCALAR_GLOBAL_FNS: ReadonlySet<string> = new Set(['Number', 'String', 'Boolean']);
 /** 結果が数・文字列・真偽の値だけになる組み込みのメンバの呼び出し (`Math.max(xs[i], 0)` `Object.hasOwn(o, xs[k])`)。 */
 const SCALAR_BUILTIN_OBJECTS: ReadonlySet<string> = new Set(['Math', 'Number']);
@@ -217,6 +241,9 @@ const PLAIN_BUILTINS: ReadonlySet<string | null> = new Set([...PURE_GLOBALS].fil
 /** 共有の正規表現としての扱い (`ProjectTable.sharedRegex`)。 */
 export type SharedRegexKind = 'g' | 'opaque';
 
+/** 共有の const としての扱い (`ProjectTable.sharedConsts`)。 */
+export type SharedConstKind = 'readonly-table' | 'untyped';
+
 /** 関数の外形 (他のモジュールから引くため)。 */
 export interface FnSignature {
   readonly module: string;
@@ -241,6 +268,12 @@ export interface ProjectTable {
    * - `opaque`: 初期値が呼び出しの結果 (`const RE = make();`)。g の正規表現かどうかを検められないので、`.test` / `.exec` の受け手にできない。
    */
   readonly sharedRegex: ReadonlyMap<string, ReadonlyMap<string, SharedRegexKind>>;
+  /**
+   * モジュールの道 → 直下の const の名前 → 共有の値としての扱い (0.35 · T-268 / T-269)。`use` で引いた先でも同じ扱いにするために持つ。
+   * - `readonly-table`: 読むだけの表 (`isReadonlyTableConst`)。名前は読む位置にしか書けない。
+   * - `untyped`: 型を書いていない const。入れ物を書き換えるメソッドの受け手にできない (0.34 · T-267 —— 0.34 は同じ module の中しか見ていなかった)。
+   */
+  readonly sharedConsts: ReadonlyMap<string, ReadonlyMap<string, SharedConstKind>>;
 }
 
 /** `道 + 名前` の鍵 (`fns` を引く)。 */
@@ -338,7 +371,22 @@ export function collectTable(modules: readonly { readonly file: string; readonly
       fns.set(fnKey(file, it.name), sig);
     }
   }
-  return { table: { vetted, fns, exports, sharedRegex: collectSharedRegex(modules) }, diagnostics };
+  return { table: { vetted, fns, exports, sharedRegex: collectSharedRegex(modules), sharedConsts: collectSharedConsts(modules) }, diagnostics };
+}
+
+/** 直下の const の、共有の値としての扱いを集める (0.35 · T-268 / T-269)。型つきで読むだけの表でもない const は載せない。 */
+function collectSharedConsts(modules: readonly { readonly file: string; readonly module: Module }[]): Map<string, Map<string, SharedConstKind>> {
+  const shared = new Map<string, Map<string, SharedConstKind>>();
+  for (const { file, module } of modules) {
+    const names = new Map<string, SharedConstKind>();
+    shared.set(file, names);
+    for (const it of module.items) {
+      if (it.kind !== 'const') continue;
+      if (it.type === null) names.set(it.name, 'untyped');
+      else if (isReadonlyTableConst(it.type, it.init)) names.set(it.name, 'readonly-table');
+    }
+  }
+  return shared;
 }
 
 /**
@@ -414,6 +462,8 @@ interface Binding {
   readonly sharedRegex?: SharedRegexKind;
   /** 型を書いていないモジュール直下の const か (0.34 · T-267)。入れ物を書き換えるメソッド (`.set` / `.add` ほか) の受け手にできない。 */
   readonly untypedShared?: boolean;
+  /** 読むだけの表か (0.35 · T-268)。型が `ReadonlyMap` / `ReadonlySet` を名指しする名前と、読むだけの直下の表。読む位置 (`TABLE_READ_MEMBERS`・`for … of`・展開・`new Map(表)`) にしか書けない。 */
+  readonly readonlyTable?: boolean;
 }
 
 /**
@@ -498,6 +548,8 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
   const calledMembers = new WeakSet<Expr>();
   /** 共有の g の正規表現の名前を置いてよい場所の式 —— 文字列のメソッドの引数と、直下の const の別名の初期値 (0.34 · T-266)。 */
   const regexUses = new WeakSet<Expr>();
+  /** 読むだけの表の名前を置いてよい場所の式 —— 読むメンバの受け手・`for … of` の回す相手・展開・`new Map(…)` / `new Set(…)` の引数 (0.35 · T-268)。 */
+  const tableReads = new WeakSet<Expr>();
   /** 名前を 1 つ宣言する。同じ名前を 2 度 (use・定数・関数・extern のあいだで) 宣言すると、あとの物が前の物の外形を隠す (0.4 · T-241)。 */
   const declare = (name: string, b: Binding, pos: { line: number; col: number }): void => {
     if (moduleScope.has(name)) report('M6', pos, `名前 ${name} を 2 度宣言しています (use・extern・定数・関数のあいだで名前は重ねられない)`);
@@ -550,7 +602,11 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       // Stryker disable next-line ConditionalExpression,StringLiteral: 上の注記のとおり等価 (null の鍵は引かれない・'pure' は 'sink' / 'local' でないことだけを意味する)
       if (it.defaultName !== null) declare(it.defaultName, { vetted: null, authority: 'pure' }, it.pos);
       // Stryker disable next-line StringLiteral: 上の注記のとおり等価 ('pure' は 'sink' / 'local' でないことだけを意味する)
-      for (const n of it.names) declare(n.alias ?? n.name, { vetted: null, authority: 'pure', sharedRegex: table.sharedRegex.get(target)?.get(n.name) }, it.pos);
+      for (const n of it.names) {
+        // 引いた先の直下の const の扱い (0.35 · T-268 / T-269): 読むだけの表・型を書いていない const は、module をまたいでも同じ物。
+        const shared = table.sharedConsts.get(target)?.get(n.name);
+        declare(n.alias ?? n.name, { vetted: null, authority: 'pure', sharedRegex: table.sharedRegex.get(target)?.get(n.name), untypedShared: shared === 'untyped', readonlyTable: shared === 'readonly-table' }, it.pos);
+      }
     } else if (it.kind === 'extern') {
       if (it.from !== null) checkSpecifier(it.from, it.pos);
       // Stryker disable next-line ConditionalExpression,StringLiteral: `from` が null (global) の口は道を持たない —— 空の道は「外:」の鍵に解かれ、どの module の外形にも当たらない (等価)
@@ -576,9 +632,9 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         declare(n, { vetted: null, authority: it.authority }, it.pos);
       }
     } else if (it.kind === 'const') {
-      declare(it.name, { vetted: null, authority: 'local', numeric: it.type?.text === 'number' || isNumericKey(it.init, []), inert: carriesInert(it.init, [moduleScope]), sharedRegex: table.sharedRegex.get(file)!.get(it.name), untypedShared: it.type === null }, it.pos);
+      declare(it.name, { vetted: null, authority: 'local', numeric: it.type?.text === 'number' || isNumericKey(it.init, []), inert: carriesInert(it.init, [moduleScope]), sharedRegex: table.sharedRegex.get(file)!.get(it.name), untypedShared: it.type === null, readonlyTable: isReadonlyTableConst(it.type, it.init) }, it.pos);
     } else if (it.kind === 'let') {
-      declare(it.name, { vetted: null, authority: 'local', mutable: true, moduleLet: true, numeric: it.type.text === 'number', depth: 0 }, it.pos);
+      declare(it.name, { vetted: null, authority: 'local', mutable: true, moduleLet: true, numeric: it.type.text === 'number', depth: 0, readonlyTable: isReadonlyTableConst(it.type, it.init) }, it.pos);
     } else if (it.kind === 'class') {
       declare(it.name, { vetted: null, authority: 'class' }, it.pos);
     } else if (it.kind === 'fn') {
@@ -746,7 +802,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     const scope = new Map<string, Binding>();
     checkOptionalParams(it.params);
     for (const p of it.params) {
-      bindLocal(scope, p.name, { vetted: carriedMark(p.type, table.vetted), authority: 'local', numeric: !p.optional && p.type?.text === 'number' }, p.pos);
+      bindLocal(scope, p.name, { vetted: carriedMark(p.type, table.vetted), authority: 'local', numeric: !p.optional && p.type?.text === 'number', readonlyTable: namesReadonlyTable(p.type) }, p.pos);
       if (p.init !== null) checkExpr(p.init, [moduleScope], ctx);
     }
     checkBlock(it.body, [moduleScope, scope], ctx);
@@ -785,7 +841,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     const scope = new Map<string, Binding>();
     checkOptionalParams(it.params);
     for (const p of it.params) {
-      bindLocal(scope, p.name, { vetted: carriedMark(p.type, table.vetted), authority: 'local', numeric: !p.optional && p.type?.text === 'number' }, p.pos);
+      bindLocal(scope, p.name, { vetted: carriedMark(p.type, table.vetted), authority: 'local', numeric: !p.optional && p.type?.text === 'number', readonlyTable: namesReadonlyTable(p.type) }, p.pos);
       if (p.init !== null) checkExpr(p.init, [moduleScope], classCtx);
     }
     for (const a of it.superArgs) {
@@ -935,7 +991,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         }
         // Stryker disable next-line OptionalChaining: const (= !mutable) は必ず初期値を持つので、init が null になるのは let だけで、そのとき !mutable が先に偽になり `?.` は評価されない (等価)
         const owned = !s.mutable && (s.init?.kind === 'object' || s.init?.kind === 'array');
-        bindLocal(own, s.name, { vetted: declared ?? carried, authority: 'local', mutable: s.mutable, numeric: s.type?.text === 'number' || (s.type === null && s.init !== null && isNumericKey(s.init, scopes)), owned, inert: s.init !== null && carriesInert(s.init, scopes), depth: loopDepth, ...sharedAlias(s.init, scopes) }, s.pos);
+        bindLocal(own, s.name, { vetted: declared ?? carried, authority: 'local', mutable: s.mutable, numeric: s.type?.text === 'number' || (s.type === null && s.init !== null && isNumericKey(s.init, scopes)), owned, inert: s.init !== null && carriesInert(s.init, scopes), depth: loopDepth, readonlyTable: namesReadonlyTable(s.type), ...sharedAlias(s.init, scopes) }, s.pos);
         return;
       }
       case 'destructure': {
@@ -1054,6 +1110,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         return;
       case 'for': {
         refuseInert(s.iterable, scopes, 'for の回す相手');
+        tableReads.add(s.iterable);
         checkExpr(s.iterable, scopes, ctx);
         // 回す変数は印を運ばない (印の配列から取り出しても素の値 —— 失敗は閉じる向き)。
         const loopVar = new Map<string, Binding>();
@@ -1279,6 +1336,9 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         if (b.sharedRegex === 'g' && !regexUses.has(e)) {
           report('M6', e.pos, `共有の正規表現 ${e.name} (g) は、文字列のメソッド (${[...REGEX_ARG_METHODS].map((m) => '.' + m).join(' / ')}) の引数にだけ渡せます —— \`${e.name}.test(…)\` / \`.exec(…)\` は \`lastIndex\` を進め、同じ入力への答えが呼ぶたびに変わります (関門なら 2 度目に素通りする)。判定に使うなら g を外すか、使う関数の中で作ります`);
         }
+        if (b.readonlyTable === true && !tableReads.has(e)) {
+          report('M6', e.pos, `読むだけの表 ${e.name} は、読む位置にだけ書けます —— \`${e.name}.get(…)\` / \`.has(…)\` / \`.size\` / \`.keys()\` / \`.values()\` / \`.entries()\`・\`for (const x of ${e.name})\`・展開 \`[...${e.name}]\`・\`new Map(${e.name})\` / \`new Set(${e.name})\` (写し)。引数に渡す・別名を作る・返す・入れ物に入れる・\`instanceof\` や型述語で絞り込むと、生成物の \`tsc\` の読むだけの型が外れ (絞り込み・any)、どの関数からも \`.set\` / \`.add\` / \`.delete\` / \`.clear\` が通ります`);
+        }
         if (b === moduleScope.get(e.name) && signatureOf(e.name)?.paramVetted.some((v) => v !== null) === true) {
           report('M4', e.pos, `${e.name} は印を受ける関数なので、直に呼ぶことしかできません —— 値として持ち出すと (.call / .apply / .bind・別名・オブジェクトや配列・条件演算子)、引数の印の検めを迂回できる`);
         }
@@ -1298,6 +1358,8 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       case 'member':
         // 受け手を選ぶ口 (`.call` / `.apply` / `.bind`) と、正規表現を作り替える `.compile` は書けない (0.34 · T-265 / T-266)。
         if (BORROWING_MEMBERS.has(e.prop)) report('M6', e.pos, `\`.${e.prop}\` は Mamori に在りません —— ${BORROWING_MEMBERS.get(e.prop)!}`);
+        // 読むメンバの受け手は、読むだけの表の名前を置いてよい場所 (0.35 · T-268)。
+        if (TABLE_READ_MEMBERS.has(e.prop)) tableReads.add(e.object);
         // 書き換えるメソッドは呼ぶ形でだけ (0.34 · T-265)。値として取り出すと、呼び戻しの thisArg で受け手を選べる。
         if (CALL_ONLY_METHODS.has(e.prop) && !calledMembers.has(e)) {
           report('M6', e.pos, `\`.${e.prop}\` は呼ぶ形 (\`x.${e.prop}(…)\`) でしか書けません —— 受け手を書き換えるメソッドを値として取り出すと、\`[v].forEach(tmp.${e.prop}, 共有の入れ物)\` のように受け手 (this) を呼ぶ側が選べ、書き換えの検め (T-258 / T-264) を迂回できます`);
@@ -1342,6 +1404,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         return;
       case 'spread':
         refuseInert(e.operand, scopes, '展開');
+        tableReads.add(e.operand);
         checkExpr(e.operand, scopes, ctx);
         return;
       case 'object':
@@ -1378,8 +1441,17 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
             `モジュール直下の const ${ctx.sharedUntyped} は型を書かずに \`new ${identName(e.callee)}(…)\` を持てません —— 推論される型は書き換えられるので、どの関数からも \`.set\` / \`.add\` / \`.delete\` / \`.clear\` が通り、この表を読む別の関数 (関門・上限) の判定が変わります。読むだけの表は \`const ${ctx.sharedUntyped}: Readonly${identName(e.callee)}<…> = …\` と書き (書き換えは tsc が断ります)、書き換える状態は \`${identName(e.callee)}<…>\` と型で名乗ってください`,
           );
         }
+        // 組み込みの `new Map(表)` / `new Set(表)` は写しを作る —— 読むだけの表の名前を引数に置いてよい (0.35 · T-268)。
+        // 同名の外の名前 (`extern pure { Map } from "./host"`) は組み込みではないので数えない。
+        if (SHARED_COLLECTIONS.has(identName(e.callee)) && bindingOf(e.callee, scopes) === undefined) for (const a of e.args) tableReads.add(a);
         if (ctx.sharedInit !== undefined) {
           const built = identName(e.callee);
+          // 型つきの直下の const / let の初期値の**中**の `new Map(…)` / `new Set(…)` (0.35 · T-268)。欄・配列の項・引数に包んだ表は
+          // 名前で追えない (`CFG.limits` の読むだけの型は `tsc` だけが守り、絞り込みと any で外れる)。表は初期値そのものに置く。
+          // 型を書いていない const は 0.33 の規則 (上) が先に断るので、ここでは重ねない。
+          if (ctx.sharedUntyped === undefined && SHARED_COLLECTIONS.has(built) && e !== ctx.sharedInit.direct) {
+            report('M6', e.pos, `モジュール直下の ${ctx.sharedInit.name} の初期値の中に \`new ${built}(…)\` は置けません —— 欄・配列の項・引数に包んだ表は名前で追えず、読むだけの型 (\`tsc\`) は絞り込みと any で外れます。表は \`const 名前: 型 = new ${built}(…);\` と初期値そのものに置きます (表の中の値を並びにしたいなら \`readonly T[]\`)`);
+          }
           if (!ctx.sharedInit.mutable && SHARED_MUTABLE_OBJECTS.has(built)) {
             report('M6', e.pos, `モジュール直下の const ${ctx.sharedInit.name} に \`new ${built}(…)\` は置けません —— ${built} は書き換えるメソッド (${built === 'Date' ? '`.setTime(…)` ほか' : '`.searchParams.set(…)` ほか'}) を持ち、どの関数からも書き換えられるので、それを読む別の関数の判定が変わります (読むだけの型が無いので、使う関数の中で作ります)`);
           }
@@ -1414,7 +1486,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         for (const p of e.params as readonly Param[]) {
           const mark = carriedMark(p.type, table.vetted);
           if (mark !== null && !toHost) report('M4', p.pos, `arrow の引数 ${p.name} は印 ${mark} を名乗れません —— arrow は値なので、呼ぶ側 (即時の呼び出し・別名・\`.then\` / \`.map\` の呼び戻し) の引数は検められず、関門を通っていない値を印を受ける関数へ運べます (印を受けるのは名前つきの fn か、Mamori の外の module から use で引いた関数へ直に渡す呼び戻しだけ)`);
-          bindLocal(inner, p.name, { vetted: toHost ? mark : null, authority: 'local', numeric: !p.optional && p.type?.text === 'number' }, p.pos);
+          bindLocal(inner, p.name, { vetted: toHost ? mark : null, authority: 'local', numeric: !p.optional && p.type?.text === 'number', readonlyTable: namesReadonlyTable(p.type) }, p.pos);
         }
         // 既定値 (`(q = fetch("x")) => q`) も式 —— 0.7 まで検めていなかったので、plain 関数の中で宣言していない名前・
         // 危ない口・印の無い値での印つきの口の呼び出しを、arrow の引数の既定値に隠せた (T-244)。
