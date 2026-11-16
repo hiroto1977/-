@@ -7,6 +7,21 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-11-16) — MG-073: 言語の穴探しの周 · Mamori 0.36 (T-270 / T-271)
+
+利用者の依頼「続けて」。言語を育てる輪 (`npm run mamori:grow -- brief`) が選んだ `probe:language` (言語の穴探し) をもう 1 周回した。移植も構文の追加も無い。
+- **試した形**: 規則を破るプログラムを約 200 本 (共有のバイト列の別の窓・module をまたぐ再 export・禁じた名前の文字列での組み立て・`return` / `throw` の改行と注記・any を印の型の位置へ置く 39 形・印の名前の付け替え・印の別の綴り)。穴は 2 家系で、どちらも**印の「名前」に頼っていた規則**。
+- **T-270 印の名前の乗っ取り**: 検査器は「プロジェクトのどこかで宣言した印と同じ綴り」をどの module でも印と見ていた。`type VUrl = string;` (別名)・`interface VUrl`・`use type { VUrl } from "./types";` (印を宣言していない module の同名の型)・`use type { Plain alias VUrl }` と書いた module では、`sink fn open2(u: VUrl)` が Mamori には「印を受ける口」(M3)・`tsc` には `string` を受ける関数だった。同じ名前の印の 2 重の宣言も通っていた。
+- **T-271 印の別の綴り**: 「戻り値の型に印を名乗れるのは gate だけ」(M1 · T-248) は印の名前の綴りしか見ていなかった。別名で引く・型の別名・interface の欄・直下の const の型・`typeof` (`ReturnType<typeof 関門>` / `Parameters<typeof 印を受ける関数>` / `typeof 印の型の const` / `typeof 型を書いていない const`) で同じ型を名乗れ、`return JSON.parse(x);` の any が印の型で TypeScript の呼び手へ出た。
+- **直し (`checker.ts` · 0.36)**: ① 印の名前は **module ごとに解く** (`marksIn` —— `vetted` で宣言した module と、そこから別名なしで `use` で引いた module だけ)。認める側 (M3・外形・来歴) は module の表、断る側 (戻り値・`satisfies`・省ける引数・型引数・継ぎ) はプロジェクトの表 ② 印の名前を別の宣言に付けられない (M4)・同じ名前の印は 2 度宣言できない (M1) ③ 印は別名で引けない (M4) ④ 型の別名の中・interface の欄・直下の const / let の型 (印そのものを除く) に印の名前は書けない (M1)。印そのものの型の直下の const は印を運ぶ初期値だけ (M4) ⑤ `typeof 印に関わる値` は印の綴りとして断る (M1) —— 印に関わる値は、引いた値 (`FnSignature.markRelated` / `ProjectTable.markConsts`) と、この module の宣言を名指しの鎖が増えなくなるまで辿った物。
+- **直しを 2 度作り直した**: 最初の版 (印の表を module ごとにするだけ) は T-271 の 5 家系を残し、2 つ目の版 (`typeof` の相手を「印を受ける・返す関数」と「型なしの const」で見る) は、引いた印の型の const・`readonly 印[]` を引数に持つ関数・`typeof 関門` を引数に書いた関数・引いた値の別名の 6 形を残した (どれも直した後のコンパイラへ当てて見つけた)。3 つ目で「外形が印を指す」を型の綴りから決める形にした。
+- **残した穴 (測った · 台帳の T-271 と `docs/REMAINING_WORK.md`)**: **型引数を通した any** —— `fn f<T>(x: string) -> T { return JSON.parse(x); }` は、TypeScript の呼び手が `open(f("…"))` と書くと T が印に推論される。引数に T を書かせる規則は実物の橋 (preload の `fetchSnapshot<T>`) を落とし `[]` を渡す形で抜け、`NoInfer<T>` も `[]` で抜ける (`tsc` 5.9.3 で実測)。根は「any が型つきの位置へ流れること」で、次の手は**生成物に型情報つきの lint を掛ける門**。Mamori の外の型 (`extern` の関数の `typeof`・TypeScript の module の型の別名) も中身が見えない。
+- **実物への影響は 0**: 46 本の `.mamori` はどれも新しい規則に当たらず、`mamori:check` は「生成物は最新」のまま (`typeof` を型に書く実物は preload の `typeof api`・dataCrypto の `typeof KDF`・`typeof fetch` で、どれも印に関わらない)。出荷物は動かない。
+- **既存の検査 2 本を新しい規則へ**: `mamoriV04` (T-234 の「別名の union は印を運ばない」は、別名そのものの断り M1 が 1 件先に並ぶ)・`mamoriV30` (印を欄に持つ interface は、0.35 まで通して `tsc` に任せていた —— 0.36 は欄で断る)。台帳の A-568 (T-248 の穴の開け直し) も、書き換える行が動いたので当て直した。
+- **回帰検査**: `src/shared/mamori/__tests__/mamoriV36.test.ts` (18 件 · 断る形と、通ってよい対照)。台帳 T-270 / T-271・穴の開け直し A-614〜A-626。
+- **罠 (この周で踏んだ)**: ① 「塞いだ」と思った直後に、直した後のコンパイラへ同じ家系の別の形を当てると 2 度とも穴が残っていた —— 直しの検査は、直す前の標本だけでなく**直した規則の隣**を当てる ② 文書に書きかけた「`hint: T | null` に `null` を渡す形で抜ける」は実測で偽だった (`tsc` は断る) —— 抜けるのは `[]` と省ける引数 ③ 外形に `typeof` を書いた関数を広く「印に関わる」と見ると、`fn kdf() -> typeof KDF` が在るだけで module の `typeof api` が書けなくなった (この module の宣言は鎖を辿る形へ直した)。
+- **完成度と次の候補**: 数は `npm run mamori:grow -- report`。
+
 ## 直近の作業 (2026-11-16) — MG-072: 言語の穴探しの周 · Mamori 0.35 (T-268 / T-269)
 
 利用者の依頼「続けて」。言語を育てる輪 (`npm run mamori:grow -- brief`) が選んだ `probe:language` (言語の穴探し) をもう 1 周回した。移植も構文の追加も無い。
