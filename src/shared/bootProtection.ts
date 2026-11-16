@@ -93,10 +93,9 @@ export function bootDetailsLine(detection: BootProtection): string {
  * Linux の UEFI 変数 `SecureBoot-…` の中身から状態を読む。
  *
  * efivarfs のファイルは **先頭 4 byte が属性・5 byte 目が値** (1 = 有効 / 0 = 無効)。
- * 5 byte に満たない・値が 0 / 1 以外は `unknown` —— 読めない物を「無効」と言わない。
+ * 5 byte に満たない (5 byte 目が無い)・値が 0 / 1 以外は `unknown` —— 読めない物を「無効」と言わない。
  */
 export function secureBootFromEfiVar(bytes: Uint8Array): BootProtection {
-  if (bytes.length < 5) return 'unknown';
   const value = bytes[4];
   if (value === 1) return 'enabled';
   if (value === 0) return 'disabled';

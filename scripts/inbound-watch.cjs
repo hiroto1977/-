@@ -176,9 +176,7 @@ function parseLink(raw) {
   }
 }
 function pathExtension(pathname) {
-  const name = pathname.slice(pathname.lastIndexOf("/") + 1);
-  const dot = name.lastIndexOf(".");
-  return dot < 0 ? "" : name.slice(dot + 1).toLowerCase();
+  return pathname.slice(pathname.lastIndexOf(".")).slice(1).toLowerCase();
 }
 function tallyLink(tally, raw) {
   const u = parseLink(raw);
@@ -216,12 +214,11 @@ function shownTargets(text) {
   ];
 }
 function tallySender(tally, sender) {
-  const m = /^([^<]*)<([^<>\s]+)>\s*$/.exec(sender);
-  const display = m === null ? "" : m[1];
-  const address = m === null ? sender.trim() : m[2];
+  const m = /(.*)<([^<>\s]+)>/.exec(sender);
+  const address = m === null ? sender : m[2];
   const host = address.slice(address.lastIndexOf("@") + 1).toLowerCase();
   if (host.includes("xn--") || /[\u0080-\uffff]/.test(host)) hit(tally, "lookalike-host");
-  const named = HOST_TOKEN_RE.exec(display);
+  const named = m === null ? null : HOST_TOKEN_RE.exec(m[1]);
   if (named !== null && !sameSite(named[0], host)) hit(tally, "sender-spoof");
 }
 function tallyText(tally, text) {
@@ -231,10 +228,12 @@ function tallyText(tally, text) {
   const scripts = countMatches(text, SCRIPT_SCHEME_RE);
   hit(tally, "dangerous-scheme", scripts);
   for (const p of pairs) tallyShownTarget(tally, p.shown, p.href);
-  for (const m of text.replace(LINK_RE, " ").matchAll(FILE_EXT_RE)) {
-    const ext = m[1].toLowerCase();
-    if (EXECUTABLE_EXTS.has(ext)) hit(tally, "dangerous-file");
-    else if (MACRO_EXTS.has(ext)) hit(tally, "macro-file");
+  for (const piece of text.split(LINK_RE)) {
+    for (const m of piece.matchAll(FILE_EXT_RE)) {
+      const ext = m[1].toLowerCase();
+      if (EXECUTABLE_EXTS.has(ext)) hit(tally, "dangerous-file");
+      else if (MACRO_EXTS.has(ext)) hit(tally, "macro-file");
+    }
   }
   hit(tally, "hidden-chars", countMatches(text, HIDDEN_CHARS_RE));
   const norm = text.normalize("NFKC").toLowerCase();
@@ -244,9 +243,9 @@ function tallyText(tally, text) {
   return links.size + scripts;
 }
 function defangLink(raw) {
-  const at = raw.indexOf("://");
-  const scheme = at < 0 ? "" : raw.slice(0, at).replace(/^http/i, "hxxp") + "[:]//";
-  const rest = at < 0 ? raw : raw.slice(at + 3);
+  const head = raw.slice(0, raw.indexOf("://") + 1);
+  const scheme = head === "" ? "" : head.slice(0, -1).replace(/^http/i, "hxxp") + "[:]//";
+  const rest = raw.slice(head.length).replace(/^\/\//, "");
   const end = rest.search(/[/?#]/);
   const authority = end < 0 ? rest : rest.slice(0, end);
   const tail = end < 0 ? "" : rest.slice(end);
@@ -262,7 +261,7 @@ function analyzeInbound(input) {
   const text = tooLong ? clampToCeiling(full, MAX_INBOUND_TEXT_CHARS) : full;
   if (tooLong) hit(tally, "too-long");
   const links = tallyText(tally, text);
-  if (typeof input.sender === "string" && input.sender.trim() !== "") tallySender(tally, input.sender);
+  if (typeof input.sender === "string") tallySender(tally, input.sender);
   const findings = INBOUND_CODES.filter((code) => tally.has(code)).map((code) => ({ code, level: INBOUND_RULES[code].level, text: INBOUND_RULES[code].text, count: tally.get(code) }));
   const level = findings.some((f) => f.level === "danger") ? "danger" : findings.length > 0 ? "caution" : "ok";
   return { level, findings, links, defanged: defangText(text) };
@@ -274,11 +273,11 @@ var MAX_WATCH_ID_CHARS = 200;
 var MIN_CAUTION_KINDS = 2;
 var WATCH_LABEL_DANGER = "\u691C\u75AB-\u5371\u967A\u306E\u7591\u3044";
 var WATCH_LABEL_CAUTION = "\u691C\u75AB-\u8981\u6CE8\u610F";
-function isRecord(v) {
-  return typeof v === "object" && v !== null && !Array.isArray(v);
+function fieldOf(item, key) {
+  return Object(item)[key];
 }
-function textOf(v) {
-  return typeof v === "string" ? v : "";
+function isString(v) {
+  return typeof v === "string";
 }
 function watchLabelFor(level, kinds) {
   if (level === "danger") return WATCH_LABEL_DANGER;
@@ -291,7 +290,8 @@ function judgeInboundItems(input) {
   let malformed = 0;
   let overLimit = 0;
   for (const item of input) {
-    if (!isRecord(item) || typeof item.id !== "string" || item.id.trim() === "" || moreThanChars(item.id, MAX_WATCH_ID_CHARS)) {
+    const id = fieldOf(item, "id");
+    if (!isString(id) || id.trim() === "" || moreThanChars(id, MAX_WATCH_ID_CHARS)) {
       malformed += 1;
       continue;
     }
@@ -299,12 +299,10 @@ function judgeInboundItems(input) {
       overLimit += 1;
       continue;
     }
-    const subject = textOf(item.subject);
-    const body = textOf(item.body);
-    const text = subject !== "" && body !== "" ? subject + "\n" + body : subject + body;
-    const r = analyzeInbound({ text, sender: textOf(item.sender) });
+    const text = [fieldOf(item, "subject"), fieldOf(item, "body")].filter(isString).join("\n");
+    const r = analyzeInbound({ text, sender: fieldOf(item, "sender") });
     verdicts.push({
-      id: item.id,
+      id,
       level: r.level,
       label: watchLabelFor(r.level, r.findings.length),
       codes: r.findings.map((f) => f.code),

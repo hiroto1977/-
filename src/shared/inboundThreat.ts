@@ -192,11 +192,15 @@ function parseLink(raw: string): URL | null {
   }
 }
 
-/** パスの最後の名前の拡張子 (小文字)。無ければ空文字。 */
+/**
+ * 道の最後の `.` より後ろ (小文字)。
+ *
+ * - `.` が最後の名前より前に在れば (`/a.exe/readme`)、結果は `/` を含むので拡張子の表のどれにも当たらない。
+ * - `.` が無ければ `lastIndexOf` は -1 で、`slice(-1)` は末尾の 1 字 —— そこから先頭 (= `.` の位置) を落とすので空になる
+ *   (`mailto:exe` の `exe` を拡張子と読まない)。
+ */
 function pathExtension(pathname: string): string {
-  const name = pathname.slice(pathname.lastIndexOf('/') + 1);
-  const dot = name.lastIndexOf('.');
-  return dot < 0 ? '' : name.slice(dot + 1).toLowerCase();
+  return pathname.slice(pathname.lastIndexOf('.')).slice(1).toLowerCase();
 }
 
 /** リンク 1 本の兆候を数える。 */
@@ -244,12 +248,12 @@ function shownTargets(text: string): { readonly shown: string; readonly href: st
 
 /** 差出人 (`表示名 <アドレス>` か、アドレスだけ) の兆候を数える。 */
 function tallySender(tally: Tally, sender: string): void {
-  const m = /^([^<]*)<([^<>\s]+)>\s*$/.exec(sender);
-  const display = m === null ? '' : m[1]!;
-  const address = m === null ? sender.trim() : m[2]!;
+  // 最後の `<アドレス>` を読む (前に別の `<…>` が在っても・後ろに字が続いても)。それより前が表示名。
+  const m = /(.*)<([^<>\s]+)>/.exec(sender);
+  const address = m === null ? sender : m[2]!;
   const host = address.slice(address.lastIndexOf('@') + 1).toLowerCase();
   if (host.includes('xn--') || /[\u0080-\uffff]/.test(host)) hit(tally, 'lookalike-host');
-  const named = HOST_TOKEN_RE.exec(display);
+  const named = m === null ? null : HOST_TOKEN_RE.exec(m[1]!);
   if (named !== null && !sameSite(named[0], host)) hit(tally, 'sender-spoof');
 }
 
@@ -262,11 +266,13 @@ function tallyText(tally: Tally, text: string): number {
   const scripts = countMatches(text, SCRIPT_SCHEME_RE);
   hit(tally, 'dangerous-scheme', scripts);
   for (const p of pairs) tallyShownTarget(tally, p.shown, p.href);
-  // ファイル名は、リンクを除いた残りの文から拾う (リンクの中のホスト名を拡張子と読まない —— リンクのパスは上で見た)。
-  for (const m of text.replace(LINK_RE, ' ').matchAll(FILE_EXT_RE)) {
-    const ext = m[1]!.toLowerCase();
-    if (EXECUTABLE_EXTS.has(ext)) hit(tally, 'dangerous-file');
-    else if (MACRO_EXTS.has(ext)) hit(tally, 'macro-file');
+  // ファイル名は、リンクで区切った残りの文から拾う (リンクの中のホスト名を拡張子と読まない —— リンクのパスは上で見た)。
+  for (const piece of text.split(LINK_RE)) {
+    for (const m of piece.matchAll(FILE_EXT_RE)) {
+      const ext = m[1]!.toLowerCase();
+      if (EXECUTABLE_EXTS.has(ext)) hit(tally, 'dangerous-file');
+      else if (MACRO_EXTS.has(ext)) hit(tally, 'macro-file');
+    }
   }
   hit(tally, 'hidden-chars', countMatches(text, HIDDEN_CHARS_RE));
   const norm = text.normalize('NFKC').toLowerCase();
@@ -278,9 +284,10 @@ function tallyText(tally: Tally, text: string): number {
 
 /** リンク 1 本を押せない綴りへ: `https://a.example/x` → `hxxps[:]//a[.]example/x`。 */
 function defangLink(raw: string): string {
-  const at = raw.indexOf('://');
-  const scheme = at < 0 ? '' : raw.slice(0, at).replace(/^http/i, 'hxxp') + '[:]//';
-  const rest = at < 0 ? raw : raw.slice(at + 3);
+  // `://` より前 (scheme と `:`)。`www.` だけのリンクは空 (`indexOf` が -1 なので 0 字)。
+  const head = raw.slice(0, raw.indexOf('://') + 1);
+  const scheme = head === '' ? '' : head.slice(0, -1).replace(/^http/i, 'hxxp') + '[:]//';
+  const rest = raw.slice(head.length).replace(/^\/\//, '');
   const end = rest.search(/[/?#]/);
   const authority = end < 0 ? rest : rest.slice(0, end);
   const tail = end < 0 ? '' : rest.slice(end);
@@ -321,7 +328,7 @@ export function analyzeInbound(input: InboundInput): InboundReport {
   const text = tooLong ? clampToCeiling(full, MAX_INBOUND_TEXT_CHARS) : full;
   if (tooLong) hit(tally, 'too-long');
   const links = tallyText(tally, text);
-  if (typeof input.sender === 'string' && input.sender.trim() !== '') tallySender(tally, input.sender);
+  if (typeof input.sender === 'string') tallySender(tally, input.sender);
   const findings = INBOUND_CODES.filter((code) => tally.has(code)).map((code) => ({ code, level: INBOUND_RULES[code].level, text: INBOUND_RULES[code].text, count: tally.get(code)! }));
   const level: InboundLevel = findings.some((f) => f.level === 'danger') ? 'danger' : findings.length > 0 ? 'caution' : 'ok';
   return { level, findings, links, defanged: defangText(text) };

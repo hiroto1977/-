@@ -52,12 +52,19 @@ export interface WatchResult {
   readonly overLimit: number;
 }
 
-function isRecord(v: unknown): v is Record<string, unknown> {
-  return typeof v === 'object' && v !== null && !Array.isArray(v);
+/** 入力の 1 項目から読む欄。 */
+type WatchField = 'id' | 'sender' | 'subject' | 'body';
+
+/**
+ * 項目の欄を読む。物でない項目 (null・数・文字列) と配列は、どの欄も undefined になる ——
+ * `Object(…)` は null / undefined を空の物に、ほかの値を包みにするので、読んでも投げない。
+ */
+function fieldOf(item: unknown, key: WatchField): unknown {
+  return (Object(item) as Record<string, unknown>)[key];
 }
 
-function textOf(v: unknown): string {
-  return typeof v === 'string' ? v : '';
+function isString(v: unknown): v is string {
+  return typeof v === 'string';
 }
 
 /** 札を決める (規則は上の docblock)。 */
@@ -79,7 +86,8 @@ export function judgeInboundItems(input: unknown): WatchResult {
   let malformed = 0;
   let overLimit = 0;
   for (const item of input) {
-    if (!isRecord(item) || typeof item.id !== 'string' || item.id.trim() === '' || moreThanChars(item.id, MAX_WATCH_ID_CHARS)) {
+    const id = fieldOf(item, 'id');
+    if (!isString(id) || id.trim() === '' || moreThanChars(id, MAX_WATCH_ID_CHARS)) {
       malformed += 1;
       continue;
     }
@@ -87,12 +95,11 @@ export function judgeInboundItems(input: unknown): WatchResult {
       overLimit += 1;
       continue;
     }
-    const subject = textOf(item.subject);
-    const body = textOf(item.body);
-    const text = subject !== '' && body !== '' ? subject + '\n' + body : subject + body;
-    const r = analyzeInbound({ text, sender: textOf(item.sender) });
+    // 件名と本文を改行でつなぐ (文字列でない欄は入れない)。差出人は `analyzeInbound` が型を見る。
+    const text = [fieldOf(item, 'subject'), fieldOf(item, 'body')].filter(isString).join('\n');
+    const r = analyzeInbound({ text, sender: fieldOf(item, 'sender') });
     verdicts.push({
-      id: item.id,
+      id,
       level: r.level,
       label: watchLabelFor(r.level, r.findings.length),
       codes: r.findings.map((f) => f.code),

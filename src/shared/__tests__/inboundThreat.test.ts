@@ -172,6 +172,8 @@ describe('受信の検疫: リンク 1 本ずつの規則', () => {
   it('同じ綴りのリンクは 1 本と数え、兆候の回数は当たった本数', () => {
     const r = analyzeInbound({ text: 'http://a.example/ と http://a.example/ と http://b.example/' });
     expect(r.links).toBe(2);
+    // `//` を持たない scheme (javascript: ほか) も 1 本と数える
+    expect(analyzeInbound({ text: 'javascript:alert(1) と https://a.example/' }).links).toBe(2);
     expect(r.findings).toEqual([{ code: 'plain-http', level: 'caution', text: INBOUND_RULES['plain-http'].text, count: 2 }]);
   });
 });
@@ -184,6 +186,13 @@ describe('受信の検疫: 表示つきのリンク・ファイル名・差出�
     expect(codesOf('[WWW.Bank.Example](https://bank.example/)')).toEqual([]);
     expect(codesOf('[こちらを押す](https://evil.example/)')).toEqual([]);
     expect(codesOf('[notbank.example](https://bank.example/)')).toEqual(['mismatched-link']);
+    // 名前の後ろが一致するだけ (`.` で区切られていない) は、同じ送り主ではない —— 両方の向きで
+    expect(codesOf('[ank.example](https://bank.example/)')).toEqual(['mismatched-link']);
+    // `www.` を除くのは先頭だけ (途中の `www.` を落として別のホストを同じと読まない)
+    expect(codesOf('[a.www.bank.example](https://a.bank.example/)')).toEqual(['mismatched-link']);
+    // ホストを持たない行き先 (mailto:) は、宛先の食い違いとしては数えない —— リンクとしては数える
+    expect(codesOf('[bank.example](mailto:info@bank.example)')).toEqual(['other-scheme']);
+    expect(analyzeInbound({ text: '[bank.example](mailto:info@bank.example)' }).links).toBe(1);
     expect(codesOf('<a class="b" href=https://evil.example/ target=_blank>bank.example</a>')).toEqual(['mismatched-link']);
     // 相対の行き先は、リンクとしても宛先の食い違いとしても数えない
     expect(codesOf('[bank.example](/login)')).toEqual([]);
@@ -194,6 +203,9 @@ describe('受信の検疫: 表示つきのリンク・ファイル名・差出�
     expect(codesOf('[こちら](http://203.0.113.7/a.exe)').sort()).toEqual(['dangerous-file', 'ip-host', 'plain-http']);
     expect(codesOf('<a href="javascript:steal()">こちら</a>')).toEqual(['dangerous-scheme']);
     expect(codesOf('[こちら](www.evil.example/x.scr)')).toEqual(['dangerous-file']);
+    // 拡張子は `.` の後ろだけ: `.` の無い行き先の末尾を拡張子と読まず、`.` で始まる名前は読む
+    expect(codesOf('[こちら](mailto:exe)')).toEqual(['other-scheme']);
+    expect(codesOf('[こちら](mailto:.exe)').sort()).toEqual(['dangerous-file', 'other-scheme']);
   });
 
   it('ファイル名: 文の中の拡張子を拾う。リンクの中のホスト名は拡張子と読まない', () => {
@@ -213,6 +225,13 @@ describe('受信の検疫: 表示つきのリンク・ファイル名・差出�
     expect(codesOf('', 'Support <x@EVIL.xn--80ak6aa92e.example>')).toEqual(['lookalike-host']);
     expect(codesOf('', 'x@b\u00fccher.example')).toEqual(['lookalike-host']);
     expect(codesOf('', 'Name <user@a.example> ')).toEqual([]);
+    // 後ろに空白・字が続いても、前に別の `<…>` が在っても、最後の `<アドレス>` と表示名を比べる
+    expect(codesOf('', 'bank.example <x@evil.example> ')).toEqual(['sender-spoof']);
+    expect(codesOf('', 'bank.example <x@evil.example> (via list)')).toEqual(['sender-spoof']);
+    expect(codesOf('', '<x> bank.example <a@evil.example>')).toEqual(['sender-spoof']);
+    // 比べるのはアドレスの @ より後ろ (ホスト) だけ
+    expect(codesOf('', 'bank.example <x@bank.example>')).toEqual([]);
+    expect(codesOf('', 'xn--user@a.example')).toEqual([]);
     // アドレスの @ より前 (名前の側) は見ない
     expect(codesOf('', 'bank.example@evil.example')).toEqual([]);
   });
@@ -317,6 +336,10 @@ describe('受信の検疫: 無効化 (押せない綴り)', () => {
     expect(defangText('https://a.example#f.g')).toBe('hxxps[:]//a[.]example#f.g');
     expect(defangText('https://[2001:db8::1]/x')).toBe('hxxps[:]//[2001:db8::1]/x');
     expect(defangText('詳細はhttps://a.example/xをご覧ください')).toBe('詳細はhxxps[:]//a[.]example/xをご覧ください');
+    // 書き換えるのは先頭の http だけ・ホストが空でも道の点は残す・`www.` のリンクの道の `//` は残す
+    expect(defangText('xhttp://a.example')).toBe('xhttp[:]//a[.]example');
+    expect(defangText('https:///x.y')).toBe('hxxps[:]///x.y');
+    expect(defangText('www.a.example/x//y')).toBe('www[.]a[.]example/x//y');
     expect(defangText('javascript:alert(1) と data:text/html,x と VBScript:x')).toBe('javascript[:]alert(1) と data[:]text/html,x と VBScript[:]x');
   });
 
