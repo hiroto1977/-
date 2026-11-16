@@ -77,10 +77,14 @@ describe('0.30 interface extends (先に宣言した interface か use で引い
     expect(diag('interface A {\n  a: number;\n}\ninterface B extends A {\n  b: number;\n}\nexport interface C extends B {\n  c: number;\n}\n')).toEqual([]);
   });
 
-  it('★ 印の型を欄に持つ interface を継いでも、欄の印は継ぎ先の素の値で作れない (M4 は欄に及ぶ)', () => {
+  it('★ 印の型を欄に持つ interface は、継ぐ前に欄で断る (0.36 · threat: T-270)', () => {
     const pre = 'export vetted VU = "u";\ninterface Base {\n  url: VU;\n}\nexport interface Child extends Base {\n  n: number;\n}\n';
-    // 印の型を受ける関数へは印つきの値しか渡せない —— 継いだ型の欄から取り出した値も同じ (欄の型は tsc が見る)
-    expect(diag(pre)).toEqual([]);
+    // 0.35 までは通した (欄の型は tsc が見る、という理由) —— ところが欄に印を書いた interface は
+    // `JSON.parse(x) as` を使わなくても `-> Base` と書くだけで印を名乗る値の入れ物になる (関門を通らない)。
+    // 0.36 は欄に印の型を書くこと自体を断るので、継いだ先へも印は運ばれない。
+    const d = diag(pre);
+    expect(d).toHaveLength(1);
+    expect(d[0]).toContain('src/x/m0.mamori:3:8: [M1] interface Base の欄 url の型に印の型は書けません');
   });
 });
 

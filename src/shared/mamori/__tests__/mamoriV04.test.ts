@@ -158,7 +158,11 @@ describe('T-234: 印を運ぶのは型が印そのもの (または印 + null) �
   });
   it('★ 印の配列・別名の union も印を運ばない (threat: T-234)', () => {
     expect(diags(MARKED + 'export fn go(us: readonly VU[]) -> unknown {\n  return openUrl(us);\n}\n')).toEqual([`src/x/m0.mamori:7:18: [M4] ${NOT_MARKED}`]);
-    expect(diags(MARKED + 'type Maybe = VU | string;\nexport fn go(u: Maybe) -> unknown {\n  return openUrl(u);\n}\n')).toEqual([`src/x/m0.mamori:8:18: [M4] ${NOT_MARKED}`]);
+    // 0.36 (T-270) から、印を中に書いた型の別名そのものも断る (M1) —— 別名の union が印を運ばないこと (M4) は今までどおり
+    const viaAlias = diags(MARKED + 'type Maybe = VU | string;\nexport fn go(u: Maybe) -> unknown {\n  return openUrl(u);\n}\n');
+    expect(viaAlias).toHaveLength(2);
+    expect(viaAlias[0]).toContain('src/x/m0.mamori:6:14: [M1] 型の別名 Maybe の中に印の型は書けません');
+    expect(viaAlias[1]).toBe(`src/x/m0.mamori:8:18: [M4] ${NOT_MARKED}`);
   });
   it('★ 変数の型注釈と arrow の引数でも同じ (threat: T-234)', () => {
     expect(diags(MARKED + 'export fn go(raw: string) -> unknown {\n  const u: VU | string = raw;\n  return openUrl(u);\n}\n')).toEqual([`src/x/m0.mamori:8:18: [M4] ${NOT_MARKED}`]);
