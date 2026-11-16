@@ -5204,6 +5204,39 @@
           "test": "★ `use` で引いた先でも読めない・型つきの表と名乗っても同じ (threat: T-274)"
         }
       ]
+    },
+    {
+      "id": "T-275",
+      "found": "2026-11-16",
+      "foundBy": "MG-076 (言語の穴探しの周)。規則を破るプログラムを約 310 本 (名前の隠し 25・組み込みの隠し 40 + 21・直下の印の const 20・sink の本文 31・道の綴り 15・型検査を黙らせる注記と文字列の逃がし 53・関門の戻り値と呼ぶ形 30・共有の入れ物の中身 18 ほか) 当てて、ほぼ全部が断られたあと、**検査器が束縛を引かずに読む語**を探して辿った。構文の段は式の `true` / `false` / `null` / `undefined` を値の字面として読む。`true` / `false` / `null` は JavaScript の予約語だが **`undefined` は予約語ではない** —— 束縛の名前に書け、tsc (strict) も関数の中の `const undefined = …`・引数・`for (const undefined of …)`・分割代入・module 直下の const / let / fn を通す。0.37 までの構文の段は名前の位置でどの語でも受けたので、検査器は `undefined` を「値を持たない字面」と読み、生成物の TypeScript はその場の束縛を引いた (検めた物と走る物が別)。Mamori と tsc の両方を通った形 (手元の足場で実測): ① `gate fn forge(x: string) -> VU | null { const undefined = JSON.parse(x); return undefined; }` —— M1 (T-263) は「null / undefined を返す」と読んで通し、mint を通らない any が印の型で関門から出て `open(v)` へ届く (局所の const / let・for の回す変数・分割代入・module 直下の const の 5 形) ② `sink fn undefined(u: VU) { rawOpen(u); }` を `undefined(JSON.parse(evil));` と呼ぶ —— 呼ぶ側が名前ではなく字面なので、外形 (印を受ける引数) を引かず M4 が何も言わない ③ `const undefined = xs[k]; return undefined;`・`catch (undefined) { return undefined; }` —— 計算した鍵の添字の結果 (inert · T-257) を字面として戻り値へ持ち出す ④ `const undefined = make();` (関数の結果を置いた直下の const) を `undefined(evil)` と直に呼ぶ —— 0.37 (T-274) の「読めない」が掛からない。tsc だけが断っていた隣の形も測った: 引数の名前 `null` / `true` / `false` (構文の誤り)・`use { open alias undefined }` (import の名前)・`type undefined = string;`・`interface unknown { … }`・型引数 `undefined`。実物の 46 本に該当する書き方は無かった。この周で足場の欠陥も 1 つ直した: tsc は構文の誤りが 1 つでも在ると型の検査を全体で飛ばすので、同じ回に構文で落ちる標本が混ざると、他の標本が全部「tsc も通った」に見えた (構文で落ちた標本を外して回し直す形にした)。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "守りの層を書く言語 Mamori が、`undefined` と名付けた束縛を通し、検査器はその名前を「値を持たない字面」と読むのに生成物はその場の束縛を引くので、関門から mint を通らない値を返す・印を受ける関数を検めなしで呼ぶ・inert の値と関数の結果の const を持ち出す形が書けた",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/parser.ts (0.38): 名前を 1 つ読む口 `ident()` が**字面の語 (`true` / `false` / `null` / `undefined`) を断る** (M0)。名前を読む所 (関数と arrow の引数・局所の const / let・catch・for の回す変数・分割代入の名前 / 別名 / 鍵・module 直下の const / let / fn・クラス・型の別名・interface とその基底・印・型引数・use / extern の名前と別名・use default・再輸出・mint の印の名前・new の相手・オブジェクトの鍵・メンバと field の欄) はすべてこの口を通るので、新しい束縛の位置を足しても同じ規則が掛かる。式の位置の字面は今までどおり `primary` が同じ表 (`LITERAL_WORDS`) で読む。字面の語と同じ綴りの鍵は文字列で書く (`{ \"null\": 1 }` / `o[\"null\"]`)。加えて、検査器が**語で**読む型の綴り (`k: number` は数と分かる鍵・`印 | undefined` は印を運ぶ型) の前提を構文の段でも持つ: 型・import の名前を読む口 `typeName()` (型の別名・interface・クラス・印・型引数・use / extern の名前と別名・use default) が**型の語** (`unknown` / `never` / `number` / `bigint` / `boolean` / `string` / `symbol` / `void` / `object` —— TypeScript が型の名前に使わせない表から、どこにも書けない `any` を除いた物) を断る。値の名前 (引数 `number`・`const string = …`) は型を指さないので今までどおり書ける。実物の 46 本は書き換えなしで通り、生成物は 1 byte も変わらない。残る限界: JavaScript の予約語 (`enum` / `var` / `function` ほか) と `arguments` を名前に書く形は今も構文の段を通り、tsc が構文の誤りとして断る (検査器の読みは変わらないので、検めた物と走る物は食い違わない · docs/REMAINING_WORK.md)。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV38.test.ts",
+        "test": "★ 関門の中で `undefined` と名付けた束縛を返す形を断る —— mint を通らない値が関門から出た (threat: T-275)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV38.test.ts",
+          "test": "★ 印を受ける関数を `undefined` と名付けて、検めなしで呼ぶ形を断る (threat: T-275)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV38.test.ts",
+          "test": "★ 計算した鍵の添字の結果と、関数の結果を置いた直下の const を「字面」として持ち出す形を断る (threat: T-275)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV38.test.ts",
+          "test": "★ 名前を読む位置はどこでも同じ —— 4 つの語 × 束縛・宣言・鍵・メンバの 37 の位置 (threat: T-275)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV38.test.ts",
+          "test": "★ 型の語は、型・import の名前にできない —— 9 語 × 型を指す宣言の 11 の位置 (threat: T-275)"
+        }
+      ]
     }
   ],
   "huntBacklog": [

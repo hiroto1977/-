@@ -1938,6 +1938,7 @@ The browser target adds: `web-shim.ts` (a `window.serviceHub` polyfill imported 
   `.` の後ろの `constructor` / `prototype` / `__proto__` と、組み込みの `Object` の書き換えるメンバは断る。足す候補の構文と、その構文が
   来歴の規則を外す道 (risk) は `security/mamori-growth.json` が持ち、育てるのは週 1 の輪 (`npm run mamori:grow`) である。
   **モジュール直下の const に、関数の結果を置いて読まない** (0.37 · T-274) —— 関数が返した閉包は状態を持てる。状態は型つきの直下の `let` に、決まった値は字面と組み込み (`new Map(…)` / `Object.freeze(…)` ほか) で組む。
+  **`true` / `false` / `null` / `undefined` を名前に書かない** (0.38 · T-275) —— 検査器は字面として読み、TypeScript はその場の束縛を引く。同じ綴りの鍵は文字列で書く (`{ "null": 1 }`)。型の語 (`number` / `string` / `unknown` ほか) は型の名前にしない。
 - **Mamori に関わる作業が終わる度に、言語の現在の完成度と次の作業の提案を利用者へ伝える** (2026-11-01 の依頼)。
   `npm run mamori:grow -- report` を走らせ、その出力 (版・守りの壁の移行率・構文の数・次の提案の順位) を報告の最後に付ける。
   数は出力をそのまま使い、散文へ書き写さない。出力には完成度の基準 (5 視点 × 15 基準・1.0 の条件は全基準が床以上 · `security/mamori-completeness.json`) の採点も載る —— 報告では合格した基準の数と床の下の基準を伝える (視点の平均 % は満点になりやすい基準に引き上げられる)。提案には先に塞ぐ道 (台帳の risk) を添える。週 1 の予約の指示文

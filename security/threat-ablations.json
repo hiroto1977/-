@@ -3293,6 +3293,54 @@
           "replace": "loadResult: false as boolean }, it.pos);"
         }
       ]
+    },
+    {
+      "id": "A-648",
+      "threat": "T-275",
+      "file": "src/shared/mamori/parser.ts",
+      "why": "名前を読む口が字面の語を断らない —— `const undefined = JSON.parse(x); return undefined;` が関門を通る (直す前の形)",
+      "edits": [
+        {
+          "find": "    if (LITERAL_WORDS.has(t.text)) {\n      return fail(t, `\\`${t.text}\\` は名前にできません",
+          "replace": "    if ((false as boolean) && LITERAL_WORDS.has(t.text)) {\n      return fail(t, `\\`${t.text}\\` は名前にできません"
+        }
+      ]
+    },
+    {
+      "id": "A-649",
+      "threat": "T-275",
+      "file": "src/shared/mamori/parser.ts",
+      "why": "字面の語の表から `undefined` を落とす —— 予約語でない唯一の語が、名前としても式としても普通の名前になる",
+      "edits": [
+        {
+          "find": "const LITERAL_WORDS: ReadonlySet<string> = new Set(['true', 'false', 'null', 'undefined']);",
+          "replace": "const LITERAL_WORDS: ReadonlySet<string> = new Set(['true', 'false', 'null']);"
+        }
+      ]
+    },
+    {
+      "id": "A-650",
+      "threat": "T-275",
+      "file": "src/shared/mamori/parser.ts",
+      "why": "型・import の名前を読む口が型の語を断らない —— `type number = string;` が構文の段を通り、数と分かる鍵の前提を tsc の 1 層に預ける",
+      "edits": [
+        {
+          "find": "    if (TYPE_WORDS.has(name)) {",
+          "replace": "    if ((false as boolean) && TYPE_WORDS.has(name)) {"
+        }
+      ]
+    },
+    {
+      "id": "A-651",
+      "threat": "T-275",
+      "file": "src/shared/mamori/parser.ts",
+      "why": "型引数の名前を、型の語を断らない口で読む —— `fn f<number>(k: number)` の `number` が型引数を指す",
+      "edits": [
+        {
+          "find": "      const at = peek();\n      const name = typeName();\n      if (isW('extends')) fail(peek(), '型引数に制約",
+          "replace": "      const at = peek();\n      const name = ident();\n      if (isW('extends')) fail(peek(), '型引数に制約"
+        }
+      ]
     }
   ]
 }

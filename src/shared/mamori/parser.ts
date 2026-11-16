@@ -246,6 +246,34 @@ type TypeWhere = 'decl' | 'return' | 'expr';
 
 const STOP_WORDS = new Set(['true', 'false', 'null', 'undefined', 'unknown', 'string', 'number', 'boolean', 'void']);
 
+/**
+ * **字面の語** (0.38 · T-275)。式の位置では値の字面として読む —— だから**名前には使えない**。
+ *
+ * `true` / `false` / `null` は JavaScript の予約語だが、**`undefined` は予約語ではない** —— 束縛の名前に書け、`tsc` も
+ * 関数の中の `const undefined = …`・引数・`for (const undefined of …)`・分割代入・module 直下の const / fn を通す。0.37 までの構文の段は
+ * 名前の位置でどの語でも受けたので、検査器は `undefined` を「値を持たない字面」と読み、生成物の TypeScript はその場の束縛を引いた:
+ *
+ *   gate fn forge(x: string) -> VU | null {
+ *     const undefined = JSON.parse(x);     // 型は any
+ *     return undefined;                    // 検査器には「null / undefined を返す」(M1 を通る) —— 走るのは束縛の中身
+ *   }
+ *
+ * **検めた物と走る物が別**になる。同じ綴りで、印を受ける関数を検めなしで呼べ (`sink fn undefined(u: 印)` を `undefined(JSON.parse(x))`)、
+ * 計算した鍵の添字の結果 (inert) と、関数の結果を置いた直下の const (0.37 · T-274) を「字面」として持ち出せた。
+ */
+const LITERAL_WORDS: ReadonlySet<string> = new Set(['true', 'false', 'null', 'undefined']);
+
+/** 式の位置の字面の語か (`primary` が字面の節を組むときに、語を字面の型へ絞る)。表は `LITERAL_WORDS` の 1 つ。 */
+const isLiteralWord = (word: string): word is 'true' | 'false' | 'null' | 'undefined' => LITERAL_WORDS.has(word);
+
+/**
+ * **型の語** (0.38 · T-275)。TypeScript が型・import の名前に使わせない語 (`checkTypeNameIsReserved` と同じ表から `any` を除いた物 ——
+ * `any` はどの位置でも書けない)。検査器は型の綴りを**語で**読む (`k: number` は数と分かる鍵・`印 | undefined` は印を運ぶ型) ので、
+ * その語が別の型を指す宣言 (`type number = string;`・`interface unknown { … }`・`fn f<string>(…)`・`use { x alias number }`) は、
+ * `tsc` が断る前に構文の段で断る (守りを `tsc` の 1 層に預けない)。値の名前 (`const string = …`・引数 `number`) は型を指さないので書ける。
+ */
+const TYPE_WORDS: ReadonlySet<string> = new Set(['unknown', 'never', 'number', 'bigint', 'boolean', 'string', 'symbol', 'void', 'object']);
+
 /** `case` の本体を終えてよい文 (次の case へ落ちる形を書かせない)。 */
 const CASE_ENDS: ReadonlySet<Stmt['kind']> = new Set(['return', 'throw', 'jump']);
 
@@ -272,7 +300,27 @@ export function parse(file: string, src: string): Module {
   };
   const expectP = (text: string): Tok => (isP(text) ? next() : fail(peek(), `\`${text}\` が要ります (在ったのは ${describe(peek())})`));
   const expectW = (text: string): Tok => (isW(text) ? next() : fail(peek(), `\`${text}\` が要ります (在ったのは ${describe(peek())})`));
-  const ident = (): string => (peek().kind === 'ident' ? next().text : fail(peek(), `名前が要ります (在ったのは ${describe(peek())})`));
+  /**
+   * 名前を 1 つ読む (束縛・宣言・鍵・メンバ —— 式の位置の名前は `primary` が読む)。**字面の語は名前にできない** (0.38 · T-275 · `LITERAL_WORDS` の注記)。
+   * 名前を読む所はすべてここを通るので、新しい束縛の位置を足しても同じ規則が掛かる。
+   */
+  const ident = (): string => {
+    const t = peek();
+    if (t.kind !== 'ident') return fail(t, `名前が要ります (在ったのは ${describe(t)})`);
+    if (LITERAL_WORDS.has(t.text)) {
+      return fail(t, `\`${t.text}\` は名前にできません —— Mamori は式の \`${t.text}\` を値の字面として読みますが、TypeScript はその場の同名の束縛を引くので、検めた値と走る値が食い違います (\`const undefined = JSON.parse(x); return undefined;\` は、関門から mint を通らない値を返します)`);
+    }
+    return next().text;
+  };
+  /** 型・import の名前を 1 つ読む (型の別名・interface・クラス・印・型引数・use / extern で引く名前)。**型の語は名前にできない** (0.38 · T-275 · `TYPE_WORDS` の注記)。 */
+  const typeName = (): string => {
+    const t = peek();
+    const name = ident();
+    if (TYPE_WORDS.has(name)) {
+      return fail(t, `\`${name}\` は型・import の名前にできません —— Mamori は型の綴りを語で読むので (\`k: number\` は数と分かる鍵・\`印 | undefined\` は印を運ぶ型)、その語が別の型を指すと、検めた型と走る型が食い違います`);
+    }
+    return name;
+  };
   /** `.` の後ろの名前。原型・Function へ届く名前は断る (T-224)。表は自分の鍵だけで引く。 */
   const memberName = (): string => {
     const t = peek();
@@ -565,7 +613,7 @@ export function parse(file: string, src: string): Module {
     const list: TypeParam[] = [];
     do {
       const at = peek();
-      const name = ident();
+      const name = typeName();
       if (isW('extends')) fail(peek(), '型引数に制約 (`T extends X`) は置けません —— 制約に印の型を置くと、型を引数に取る関数が印を名乗る値の型を持てます');
       if (isP('=')) fail(peek(), '型引数に既定の型 (`T = X`) は置けません —— 呼ぶ側が書かなかった型を関数の側が決めてしまいます');
       if (list.some((p) => p.name === name)) fail(at, `型引数 ${name} が二重です`);
@@ -1079,7 +1127,7 @@ export function parse(file: string, src: string): Module {
       return { kind: 'array', items, pos: t.pos };
     }
     if (t.kind === 'ident') {
-      if (t.text === 'true' || t.text === 'false' || t.text === 'null' || t.text === 'undefined') {
+      if (isLiteralWord(t.text)) {
         next();
         return { kind: 'literal', value: t.text, pos: t.pos };
       }
@@ -1160,7 +1208,7 @@ export function parse(file: string, src: string): Module {
       const names: { name: string; alias: string | null; typeOnly: boolean }[] = [];
       if (isW('default')) {
         next();
-        defaultName = ident();
+        defaultName = typeName();
       } else {
         expectP('{');
         while (!isP('}')) {
@@ -1169,11 +1217,11 @@ export function parse(file: string, src: string): Module {
           const inlineType = isW('type');
           if (inlineType && typeOnly) fail(peek(), '`use type { … }` の中で `type X` は重ねられません (項目全体がすでに型だけの import です)');
           if (inlineType) next();
-          const name = ident();
+          const name = typeName();
           let alias: string | null = null;
           if (isW('alias')) {
             next();
-            alias = ident();
+            alias = typeName();
           }
           names.push({ name, alias, typeOnly: inlineType });
           if (!isP('}')) expectP(',');
@@ -1213,14 +1261,14 @@ export function parse(file: string, src: string): Module {
       const authority = a as 'sink' | 'pure';
       if (isW('global')) {
         next();
-        const name = ident();
+        const name = typeName();
         expectP(';');
         return { kind: 'extern', authority, names: [name], from: null, doc, pos: t.pos };
       }
       expectP('{');
       const names: string[] = [];
       while (!isP('}')) {
-        names.push(ident());
+        names.push(typeName());
         if (!isP('}')) expectP(',');
       }
       expectP('}');
@@ -1232,7 +1280,7 @@ export function parse(file: string, src: string): Module {
     const exported = take('export');
     if (isW('vetted')) {
       next();
-      const name = ident();
+      const name = typeName();
       expectP('=');
       const label = str();
       expectP(';');
@@ -1240,7 +1288,7 @@ export function parse(file: string, src: string): Module {
     }
     if (isW('type')) {
       next();
-      const name = ident();
+      const name = typeName();
       expectP('=');
       const multiline = isP('|');
       if (multiline) next();
@@ -1250,7 +1298,7 @@ export function parse(file: string, src: string): Module {
     }
     if (isW('interface')) {
       next();
-      const name = ident();
+      const name = typeName();
       // `extends 基底` (0.30 · MG-061)。基底は名前 1 つだけ —— 型引数 `B<T>` と複数の基底は、印の型を別名や交差で混ぜ込む道になるので書けない。
       let base: { readonly name: string; readonly pos: Pos } | null = null;
       if (isW('extends')) {
@@ -1284,7 +1332,7 @@ export function parse(file: string, src: string): Module {
     }
     if (isW('class')) {
       next();
-      const name = ident();
+      const name = typeName();
       // 基底は組み込みの `Error` ただ 1 つ (0.27 · MG-056)。ほかの基底 (自分で作ったクラス・`use` した名前) は静的なメンバや原型を継がせる口になる。
       if (!isW('extends')) fail(peek(), '`class` は `class 名前 extends Error { … }` の形だけです (例外の型だけ。基底の無いクラスは書けません)');
       next();
