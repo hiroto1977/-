@@ -2869,8 +2869,8 @@
       "why": "`use` で引いた名前へ、読むだけの表の扱いを運ばない —— 引いた先の module では絞り込みと any への洗いが通る",
       "edits": [
         {
-          "find": "untypedShared: shared === 'untyped', readonlyTable: shared === 'readonly-table' }, it.pos);",
-          "replace": "untypedShared: shared === 'untyped', readonlyTable: (false as boolean) && shared === 'readonly-table' }, it.pos);"
+          "find": "const readonlyTable = shared === 'readonly-table';",
+          "replace": "const readonlyTable = (false as boolean) && shared === 'readonly-table';"
         }
       ]
     },
@@ -2881,8 +2881,8 @@
       "why": "`use` で引いた名前へ、型を書いていない const の扱いを運ばない —— 引いた先の module では `.set(…)` / `.clear()` が通る (0.34 の形)",
       "edits": [
         {
-          "find": "untypedShared: shared === 'untyped', readonlyTable: shared === 'readonly-table' }, it.pos);",
-          "replace": "untypedShared: (false as boolean) && shared === 'untyped', readonlyTable: shared === 'readonly-table' }, it.pos);"
+          "find": "const untypedShared = shared === 'untyped';",
+          "replace": "const untypedShared = (false as boolean) && shared === 'untyped';"
         }
       ]
     }

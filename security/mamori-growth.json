@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.34"
+    "version": "0.35"
   },
   "constructs": {
     "class": {
@@ -4365,6 +4365,81 @@
         "pr": 917,
         "reason": "draft PR #917 に載せる",
         "summary": "言語の穴探しの周 (移植も構文の追加も無い)。規則を破るプログラムを約 195 本書いて 0.33 のコンパイラへ当てた。印の付け替え・名前の隠し・入れ物・危ない口の 4 群はどれも断られた。共有の状態を、受け手を名前で書かずに書き換える道に穴が 3 家系在った。T-265: 借りたメソッド (`tmp.push.call(共有の配列, x)`・`.apply`・`.bind`・呼び戻しの thisArg) —— 受け手を呼ぶ側が選ぶので、ReadonlyMap と名乗った表まで書き換えられた。T-266: 状態を持つ共有の正規表現 (`.compile` で作り替える・直下の g / y を `.test` / `.exec` —— lastIndex が残り、関門が 2 度目に答えを変える)。T-267: 直下の `new Date` / `new URL` の書き換えと、関数が返した Map / Set を型なしの直下の const で受けて書き換える形 (0.33 が残した形)。直しはどれも checker の M6 (0.34): `.call` / `.apply` / `.bind` / `.compile` を言語から外す・受け手を書き換えるメソッド 14 個は呼ぶ形でしか書けない・直下の g の正規表現は const の初期値そのものにだけ置けて、名前は文字列のメソッド 6 つの引数にだけ渡せる (別名と use の先も表で辿る)・y / 入れ物の中の g / flag の読めない new RegExp は直下に置けない・直下の const に new Date / new URL は置けない・型を書いていない直下の const は書き換えるメソッドの受け手にできない。parser の禁じた綴りの表は Rust の検算役と対なので触っていない。実物の 46 本の .mamori は新しい規則に当たらず、生成物も出荷物も 1 byte も変わらない (両ビルドの md5 が MG-070 と同じ)。既存の検査 5 本は主張を緩めずに新しい規則の形へ直した。回帰検査 mamoriV34.test.ts (15 件)・台帳 T-265 / T-266 / T-267・穴の開け直し A-603〜A-608 (最終のコードで 6 件とも名指しの検査が捕まえた)。変異検査は checker.ts の全体: 初回 98.96% (生存 20)。17 件は検査の不足で検査を足し、3 件は等価で形ごと消した。全体を測り直して 100.00% (Killed 1911 / Timeout 3 / 生存 0 · 39 分 46 秒)。残した物 (測って docs に記録): 自分で書いたオブジェクトの同名のメソッドへ共有の g の正規表現を渡す形・型つきの直下の const で受けた Date の書き換え・引数で渡した先での書き換え・工場関数が閉じ込めた g の正規表現・直下に置いた反復子の .next()。"
+      }
+    },
+    {
+      "id": "MG-072",
+      "date": "2026-11-16",
+      "kind": "probe",
+      "target": "language",
+      "pickedBy": "brief",
+      "briefPick": "probe:language",
+      "version": "0.35",
+      "features": [],
+      "added": [],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "読むだけと名乗った表を `instanceof` で絞り込んで書き換える (`if (TABLE instanceof Map) { TABLE.set(k, v); }`・ReadonlySet と `instanceof Set`・局所の別名・条件演算子・&&)",
+          "result": "hole"
+        },
+        {
+          "tried": "自分で書いた型述語 (`m is Map<string, number>`) と `asserts m is Map<…>` で、読むだけの表を書き換えられる型へ絞り込む",
+          "result": "hole"
+        },
+        {
+          "tried": "any に洗って書き換える: 表を欄に持つ物の `Object.values` / `Object.entries`・`Array.isArray(unknown)` の後の要素・`Promise.reject(表).catch((e) => e.set(…))`・`Object.fromEntries`・any の値を Map を受ける関数へ渡す",
+          "result": "hole"
+        },
+        {
+          "tried": "`export const T = mk();` (型なし) を別の module が `use` で引いて `T.set(…)` / `T.setTime(…)` —— 0.34 の受け手の規則を module の境で抜ける",
+          "result": "hole"
+        },
+        {
+          "tried": "`\"set\" in TABLE && typeof TABLE.set === \"function\"` で絞り込んで呼ぶ・`Object.getOwnPropertyDescriptor(BOX, \"t\").value`・`new AggregateError([TABLE]).errors[0]`・`Reflect.get`・`new Proxy(TABLE, {})`",
+          "result": "refused"
+        },
+        {
+          "tried": "印の偽造: 型述語 `s is V`・`asserts s is V`・呼び出しの引数の展開・型引数 `pick<V>(…)`・catch の変数・等値の絞り込み・述語の型を持つ arrow / interface の欄・`find` の any",
+          "result": "refused"
+        },
+        {
+          "tried": "名前の逃がし: `f[\"\\u0063all\"]`・`x[\"\\u0063onstructor\"]`・鍵 `\"\\u005f_proto__\"`・連結した鍵 `f[\"ca\" + \"ll\"]`・逃がした鍵での書き換えるメソッドの取り出し",
+          "result": "refused"
+        },
+        {
+          "tried": "生成物へのコードの注入: docblock の `*/`・`from` の道の引用符・印のラベルの引用符・行注記の中の行区切り",
+          "result": "refused"
+        },
+        {
+          "tried": "生成物の式の計算の食い違い: 優先順位・括弧・単項の重なり (`-(-a)` / `a - -b`)・`??` と `||` の混在・正規表現と割り算 (70 式 × 4 組の値)",
+          "result": "refused"
+        },
+        {
+          "tried": "0.35 の規則を先に破る: 省いた欄 `{ TABLE }`・引数の既定値・`field`・await・throw・switch・分割代入・直下の別名・型の別名 / 合併で名乗る・同名の外のクラスの `new Map(表)`・`forEach` の第 3 引数・直下の let・constructor の引数",
+          "result": "refused"
+        },
+        {
+          "tried": "表を欄・配列の項・表の値に包む (`const CFG: Cfg = { limits: new Map() }`・`ReadonlyMap<string, ReadonlySet<string>>` の中の `new Set`) —— 名前で追えない表を作る",
+          "result": "refused"
+        }
+      ],
+      "threats": [
+        "T-268",
+        "T-269"
+      ],
+      "controls": 5,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/checker.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 917,
+        "reason": "draft PR #917 に載せる",
+        "summary": "言語の穴探しの周 (移植も構文の追加も無い)。規則を破るプログラムを約 150 本と、式の計算の食い違い 70 式を 0.34 のコンパイラへ当てた。印の偽造・名前の逃がし・生成物へのコードの注入・式の計算はどれも断られた (または一致した)。穴は 2 家系。T-268: 0.33 が「読むだけの表は ReadonlyMap / ReadonlySet と書く —— 書き換えは tsc が断る」とした tsc の型が、絞り込み (`TABLE instanceof Map`・自分で書いた型述語・asserts) と any への洗い (`Object.values`・`Array.isArray(unknown)` の後の要素・Promise の catch の理由・`Object.fromEntries`) で外れ、`TABLE.set(…)` / `.clear()` が Mamori も tsc も通った。T-269: 0.34 の「型を書いていない直下の const は書き換えるメソッドの受け手にできない」が同じ module の中しか見ておらず、`use` で引いた先では通った。直しは checker の M6 (0.35): 絞り込みと any の出どころを 1 つずつ塞がず、読むだけの表の名前を書ける場所を決めた —— 読むメンバ 6 つの受け手・for-of・展開・組み込みの `new Map(表)` / `new Set(表)` だけ。引数に渡す・別名・返す・入れ物に入れる・instanceof の左・書き換えるメソッドの受け手は断る (tsc の型に頼らない)。型の別名・合併で名乗った直下の表も読むだけの側へ倒し、直下の初期値の中 (欄・配列の項・引数) の `new Map` / `new Set` は置けない。直下の const の扱い (読むだけの表・型なし) は module ごとの表にして `use` の先でも同じにした。実物の 46 本の .mamori は新しい規則に当たらず、生成物も出荷物も 1 byte も変わらない。回帰検査 mamoriV35 (10 件)・穴の開け直し A-609〜A-613 (5 件とも caught)。変異検査は checker.ts の全体で 99.95% (生存 1 = 等価の pragma が編集でずれた物)、pragma を戻して直した範囲を測り直し 100.00%。"
       }
     }
   ]

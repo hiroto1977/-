@@ -163,7 +163,10 @@ function isGlobalRegexInit(init: Expr): boolean {
  * `tsc` は書き換えられる型 (`Map<…>` / `Set<…>`) を推論する —— どの関数からも `.set` / `.add` / `.delete` / `.clear` が通り、
  * その表を読む別の関数 (関門・上限) の判定が変わる。配列の側は 0.18 (T-258) が受け手で断るが、Map / Set は
  * 「正当に書き換える状態」(進行中の処理の表) も在るので、受け手ではなく**宣言**で分ける: 型を書かせる。
- * 読むだけの表は `ReadonlyMap<…>` / `ReadonlySet<…>` (書き換えは `tsc` が断る)、書き換える状態は `Map<…>` / `Set<…>` と名乗る。
+ * 読むだけの表は `ReadonlyMap<…>` / `ReadonlySet<…>`、書き換える状態は `Map<…>` / `Set<…>` と名乗る。
+ * ★ 0.34 まで「読むだけの表の書き換えは `tsc` が断る」としていたが、その型は絞り込み (`instanceof Map`・型述語) と
+ * any への洗い (`Object.values`・`catch` の理由) で外れた (T-268)。0.35 からは Mamori 自身が、読むだけの表の名前を
+ * 読む位置にしか書かせない (下の `TABLE_READ_MEMBERS` と `isReadonlyTableConst`)。
  * `WeakMap` / `WeakSet` は載せない —— 宣言なしで使える組み込みではなく、pure でも宣言できないので、Mamori では作れない (M6)。
  */
 const SHARED_COLLECTIONS: ReadonlySet<string | null> = new Set(['Map', 'Set']);
@@ -601,11 +604,14 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       // 「use で引いた名前へは代入できない」「use default で引いた名前も同じ」が答えのほうを留める。
       // Stryker disable next-line ConditionalExpression,StringLiteral: 上の注記のとおり等価 (null の鍵は引かれない・'pure' は 'sink' / 'local' でないことだけを意味する)
       if (it.defaultName !== null) declare(it.defaultName, { vetted: null, authority: 'pure' }, it.pos);
-      // Stryker disable next-line StringLiteral: 上の注記のとおり等価 ('pure' は 'sink' / 'local' でないことだけを意味する)
       for (const n of it.names) {
         // 引いた先の直下の const の扱い (0.35 · T-268 / T-269): 読むだけの表・型を書いていない const は、module をまたいでも同じ物。
+        // 2 つの判定は declare の行と分けて書く —— 下の pragma (等価な 'pure' の綴り) が、この 2 つの綴りの変異体まで隠さないように。
         const shared = table.sharedConsts.get(target)?.get(n.name);
-        declare(n.alias ?? n.name, { vetted: null, authority: 'pure', sharedRegex: table.sharedRegex.get(target)?.get(n.name), untypedShared: shared === 'untyped', readonlyTable: shared === 'readonly-table' }, it.pos);
+        const untypedShared = shared === 'untyped';
+        const readonlyTable = shared === 'readonly-table';
+        // Stryker disable next-line StringLiteral: 上の注記のとおり等価 ('pure' は 'sink' / 'local' でないことだけを意味する)
+        declare(n.alias ?? n.name, { vetted: null, authority: 'pure', sharedRegex: table.sharedRegex.get(target)?.get(n.name), untypedShared, readonlyTable }, it.pos);
       }
     } else if (it.kind === 'extern') {
       if (it.from !== null) checkSpecifier(it.from, it.pos);
