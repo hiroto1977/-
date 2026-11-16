@@ -4516,6 +4516,74 @@
         "reason": "draft PR #917 に載せる",
         "summary": "印の名前を綴りだけで見分けていた穴 (T-270) と、印の型に別の綴りを付ける穴 (T-271) を塞いだ (0.36)。印は宣言した module と、そこから別名なしで引いた module でだけ印として扱い、印の名前を型・interface・class・use・extern に付けること、同じ印を 2 度宣言すること、印を別名で引くこと、型の別名・interface の欄・直下の const / let・関門でない関数の戻り値に印の型や印に関わる値の typeof を書くことを断る。生成物 46 本と出荷物は不変。型引数を通した any (TypeScript の呼び手が T を印に推論する形) は Mamori の検査では塞げず、残る限界として台帳と REMAINING_WORK に残した。変異検査は全体 99.22% (生存 17 + 未到達 1) → 等価な形を消し対照を 3 件足して、直した範囲 446 変異体で 100.00%。"
       }
+    },
+    {
+      "id": "MG-074",
+      "date": "2026-11-16",
+      "kind": "probe",
+      "target": "language",
+      "pickedBy": "brief",
+      "briefPick": "probe:language",
+      "version": "0.36",
+      "features": [],
+      "added": [],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "型引数を通した any (0.36 が残した形): `fn forge<T>(x: string) -> T { return JSON.parse(x); }` を TypeScript の呼び手が `open(forge(\"…\"))` (T が文脈から印に推論される)・`first([], 生)` (T が never に推論される)・`forge<印>(…)` を変数で受ける",
+          "result": "hole"
+        },
+        {
+          "tried": "Mamori の外で、型の無い値を印の位置へ置く: `openExternalVetted(JSON.parse(s))`・`const u: 印 = JSON.parse(s)`・戻り値が印の関数で `return JSON.parse(s)`・その欄 `v.url`・`Array.isArray` の後の要素・`JSON.parse` そのものを印を返す関数の型へ・getter が型の無い値を返す物",
+          "result": "hole"
+        },
+        {
+          "tried": "印を欄に持つ型への言い換え (`JSON.parse(s) as Settings` —— 綴りに印の名前が出ない)・`x as never`・`Readonly<印を欄に持つ型>` への言い換え・印を含む型の述語 (`v is Box`・`asserts v is Box`)",
+          "result": "hole"
+        },
+        {
+          "tried": "本体の無い宣言で印を名乗る: 多重定義 `function f(x: string): 印;` に `string` を返す実装・`declare const u: 印`",
+          "result": "hole"
+        },
+        {
+          "tried": "型検査を黙らせる指示: `// @ts-expect-error 説明` の下の行で素の文字列を口へ渡す (eslint は説明つきを通す)",
+          "result": "hole"
+        },
+        {
+          "tried": "印を受ける関数を、印を求めない型として持ち出す: メソッドの引数の双変 (`const r: { run(u: string): … } = { run: sink }`)・any / unknown / Function の位置 (`Reflect.apply(sink, undefined, [生])`・`anyの配列.map(sink)`)・`sink as (u: string) => …`・`sink.call(undefined, 型の無い値)`",
+          "result": "hole"
+        },
+        {
+          "tried": "印を入れた物の中身を差し替える: 配列・Map・Set の共変 (`const ys: string[] = 印の配列; ys.push(生)`)・欄の共変 (`const loose: { u: string } = 印を欄に持つ物`)・`Object.assign(印を欄に持つ物, { u: 生 })`・`new Proxy(印を欄に持つ物, …)`",
+          "result": "hole"
+        },
+        {
+          "tried": "同じ差し替えを Mamori の中で書く 17 形: 配列の別名へ `.push` / 添字の代入 / `.fill`・物を欄が string の型で受けて代入・`Object.assign`・口を値として持ち出す (別名・配列・欄)・Map / Set の別名へ `.set` / `.add`・引数で受けた配列を書き換える関数・Record の別名・let の合併型の上書き",
+          "result": "refused"
+        },
+        {
+          "tried": "入れ物を経た印を口へ渡す: `const xs: 印[] = [関門の結果]; open(xs[0])`・`for (const u of xs) open(u)`・Map / Set から取り出した値",
+          "result": "refused"
+        },
+        {
+          "tried": "module の拡張で口に多重定義を足す (`declare module \"…/vettedSinks\" { export function openWindowVetted(u: string): void; }`)・印の欄 (unique symbol) を自分の型に書いて印を偽造する",
+          "result": "refused"
+        }
+      ],
+      "threats": [
+        "T-272",
+        "T-273"
+      ],
+      "controls": 11,
+      "mutation": {
+        "unavailable": "この周はコンパイラの本体も変異検査の対象のファイルも変えていない (足したのは検査の道具 src/shared/__tests__/markFlow.ts と標本と検査)。道具の規則は、穴の開け直し 11 件 (A-627〜A-637) と標本の行末の印の両方向の一致で留めた。"
+      },
+      "report": {
+        "pr": 917,
+        "reason": "draft PR #917 に載せる",
+        "summary": "0.36 が残した「型引数を通した any」を塞ぐ途中で、同じ穴が Mamori の外 (TypeScript の呼び手) に広く在ることを見つけて塞いだ (言語の版は 0.36 のまま)。tsc も綴りの検査も、型の無い値・型引数の推論・印を欄に持つ型への言い換え・本体の無い宣言・型検査を黙らせる指示で印を名乗る行 (T-272) と、メソッドの引数の双変・入れ物と欄の共変・Object.assign / Proxy で印の中身を差し替える行 (T-273) を通していた。型検査器を使う検査 (markFlowCensus.test.ts) が両方の TypeScript の project の全ファイルを数え、違反 0 件に留める。Mamori の生成物は定義の側 (型の無い値を型引数の位置へ置く形) も見る。出荷コードに該当は無く、出荷物は不変。Mamori の中は同じ形を 17 通り当ててどれも断られた。残る限界 (印を運ぶ引数を渡したうえで別の引数から値を作る TypeScript の型引数つきの関数 ほか) は台帳と REMAINING_WORK に残した。"
+      }
     }
   ]
 }

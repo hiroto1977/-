@@ -381,6 +381,7 @@
 /src/main/clients/__tests__/advisorSmuggledChars.test.ts @hiroto1977
 /src/main/__tests__/windowOpen.test.ts @hiroto1977
 /src/shared/__tests__/vettedTypes.test.ts @hiroto1977
+/src/shared/__tests__/markFlowCensus.test.ts @hiroto1977
 /src/renderer/data/__tests__/storeImportShapes.test.ts @hiroto1977
 /src/renderer/data/__tests__/docstudioStore.test.ts @hiroto1977
 /src/shared/api/__tests__/pathSegment.test.ts @hiroto1977
