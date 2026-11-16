@@ -363,7 +363,10 @@
     "src/shared/welfareScheme.ts",
     "src/shared/workAssignment.ts",
     "src/shared/writeFieldLimits.ts",
-    "src/shared/zoningPlanner.ts"
+    "src/shared/zoningPlanner.ts",
+    "src/shared/inboundThreat.ts",
+    "src/shared/inboundWatch.ts",
+    "src/shared/bootProtection.ts"
   ],
   "testRunner": "vitest",
   "vitest": {

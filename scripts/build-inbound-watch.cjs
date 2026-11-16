@@ -65,7 +65,7 @@ function build() {
     format: 'cjs',
     platform: 'node',
     target: 'node20',
-    charset: 'ascii',
+    charset: 'utf8',
     legalComments: 'none',
     banner: { js: BANNER },
   });

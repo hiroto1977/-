@@ -29,10 +29,10 @@ function moreThanChars(value, n) {
 }
 
 // src/shared/promptInjection.ts
-var LABEL_ROLE_HIJACK = "AI \u306E\u5F79\u5272\u3092\u4E57\u3063\u53D6\u308B\u6307\u793A";
-var LABEL_INSTRUCTION_OVERRIDE = "\u3053\u308C\u307E\u3067\u306E\u6307\u793A\u3092\u7121\u8996\u30FB\u4E0A\u66F8\u304D\u3055\u305B\u308B\u6307\u793A";
-var LABEL_HIDDEN_DIRECTIVE = "\u5229\u7528\u8005\u306B\u96A0\u3057\u3066\u52D5\u304F\u3088\u3046\u6C42\u3081\u308B\u6307\u793A";
-var LABEL_DELIMITER_FORGERY = "\u30B7\u30B9\u30C6\u30E0\u306E\u533A\u5207\u308A (system / developer \u306E\u5370) \u306E\u507D\u88C5";
+var LABEL_ROLE_HIJACK = "AI の役割を乗っ取る指示";
+var LABEL_INSTRUCTION_OVERRIDE = "これまでの指示を無視・上書きさせる指示";
+var LABEL_HIDDEN_DIRECTIVE = "利用者に隠して動くよう求める指示";
+var LABEL_DELIMITER_FORGERY = "システムの区切り (system / developer の印) の偽装";
 function labelOf(group) {
   switch (group) {
     case "role-hijack":
@@ -61,25 +61,25 @@ function detectPromptInjection(text) {
 // src/shared/inboundThreat.ts
 var MAX_INBOUND_TEXT_CHARS = 1e5;
 var INBOUND_RULES = {
-  "dangerous-scheme": { level: "danger", text: "\u62BC\u3059\u3068\u30D7\u30ED\u30B0\u30E9\u30E0\u3084\u7AEF\u672B\u306E\u6A5F\u80FD\u304C\u52D5\u304F\u7A2E\u985E\u306E\u30EA\u30F3\u30AF\u304C\u3042\u308A\u307E\u3059 (\u30A6\u30A7\u30D6\u306E\u30DA\u30FC\u30B8\u3067\u306F\u3042\u308A\u307E\u305B\u3093)\u3002" },
-  "disguised-host": { level: "danger", text: "\u672C\u7269\u3089\u3057\u3044\u540D\u524D\u3092\u300C@\u300D\u306E\u524D\u306B\u7F6E\u3044\u3066\u3001\u884C\u304D\u5148\u3092\u507D\u3063\u3066\u3044\u308B\u30EA\u30F3\u30AF\u304C\u3042\u308A\u307E\u3059\u3002" },
-  "mismatched-link": { level: "danger", text: "\u8868\u793A\u3055\u308C\u3066\u3044\u308B\u5B9B\u5148\u3068\u3001\u5B9F\u969B\u306E\u884C\u304D\u5148\u304C\u9055\u3046\u30EA\u30F3\u30AF\u304C\u3042\u308A\u307E\u3059\u3002" },
-  "dangerous-file": { level: "danger", text: "\u958B\u304F\u3068\u30D7\u30ED\u30B0\u30E9\u30E0\u304C\u52D5\u304F\u7A2E\u985E\u306E\u30D5\u30A1\u30A4\u30EB\u540D\u304C\u3042\u308A\u307E\u3059\u3002" },
-  "ai-injection": { level: "danger", text: "AI \u306B\u547D\u4EE4\u3092\u51FA\u305D\u3046\u3068\u3059\u308B\u6587\u304C\u542B\u307E\u308C\u3066\u3044\u307E\u3059 (AI \u306B\u8AAD\u307E\u305B\u306A\u3044\u3067\u304F\u3060\u3055\u3044)\u3002" },
-  "sender-spoof": { level: "danger", text: "\u5DEE\u51FA\u4EBA\u306E\u8868\u793A\u540D\u304C\u3001\u5B9F\u969B\u306E\u30A2\u30C9\u30EC\u30B9\u3068\u5225\u306E\u9001\u308A\u4E3B\u3092\u540D\u4E57\u3063\u3066\u3044\u307E\u3059\u3002" },
-  "lookalike-host": { level: "caution", text: "\u898B\u305F\u76EE\u306E\u4F3C\u305F\u5225\u306E\u6587\u5B57\u3092\u4F7F\u3048\u308B\u5F62\u306E\u5B9B\u5148 (\u56FD\u969B\u5316\u30C9\u30E1\u30A4\u30F3) \u304C\u3042\u308A\u307E\u3059\u3002" },
-  "ip-host": { level: "caution", text: "\u540D\u524D\u3067\u306F\u306A\u304F\u6570\u5B57 (IP \u30A2\u30C9\u30EC\u30B9) \u3067\u66F8\u304B\u308C\u305F\u884C\u304D\u5148\u304C\u3042\u308A\u307E\u3059\u3002" },
-  "shortened-link": { level: "caution", text: "\u77ED\u7E2E\u30EA\u30F3\u30AF\u304C\u3042\u308A\u307E\u3059 (\u672C\u5F53\u306E\u884C\u304D\u5148\u304C\u898B\u3048\u307E\u305B\u3093)\u3002" },
-  "redirect-link": { level: "caution", text: "\u5225\u306E\u30DA\u30FC\u30B8\u3078\u8EE2\u9001\u3059\u308B\u5F62\u306E\u30EA\u30F3\u30AF\u304C\u3042\u308A\u307E\u3059 (\u6700\u5F8C\u306E\u884C\u304D\u5148\u304C\u898B\u304B\u3051\u3068\u9055\u3046\u3053\u3068\u304C\u3042\u308A\u307E\u3059)\u3002" },
-  "plain-http": { level: "caution", text: "\u6697\u53F7\u5316\u3055\u308C\u3066\u3044\u306A\u3044 (http \u306E) \u30EA\u30F3\u30AF\u304C\u3042\u308A\u307E\u3059\u3002" },
-  "odd-port": { level: "caution", text: "\u901A\u5E38\u3068\u9055\u3046\u51FA\u5165\u53E3 (\u30DD\u30FC\u30C8\u756A\u53F7) \u3092\u6307\u5B9A\u3057\u305F\u30EA\u30F3\u30AF\u304C\u3042\u308A\u307E\u3059\u3002" },
-  "other-scheme": { level: "caution", text: "\u30A6\u30A7\u30D6\u4EE5\u5916\u306E\u5B9B\u5148 (\u5225\u306E\u30A2\u30D7\u30EA\u3092\u958B\u304F\u5F62) \u306E\u30EA\u30F3\u30AF\u304C\u3042\u308A\u307E\u3059\u3002" },
-  "unreadable-link": { level: "caution", text: "\u5F62\u304C\u5D29\u308C\u3066\u3044\u3066\u884C\u304D\u5148\u3092\u8AAD\u307F\u53D6\u308C\u306A\u3044\u30EA\u30F3\u30AF\u304C\u3042\u308A\u307E\u3059\u3002" },
-  "macro-file": { level: "caution", text: "\u4E2D\u306B\u30D7\u30ED\u30B0\u30E9\u30E0 (\u30DE\u30AF\u30ED) \u3092\u6301\u3066\u308B\u7A2E\u985E\u306E\u30D5\u30A1\u30A4\u30EB\u540D\u304C\u3042\u308A\u307E\u3059\u3002" },
-  "hidden-chars": { level: "caution", text: "\u76EE\u306B\u898B\u3048\u306A\u3044\u6587\u5B57\u304C\u6DF7\u3056\u3063\u3066\u3044\u307E\u3059 (\u6587\u306E\u4E00\u90E8\u3092\u96A0\u3059\u30FB\u4E26\u3073\u3092\u5165\u308C\u66FF\u3048\u308B\u9053\u5177\u3067\u3059)\u3002" },
-  "account-pressure": { level: "caution", text: "\u30A2\u30AB\u30A6\u30F3\u30C8\u306E\u505C\u6B62\u30FB\u78BA\u8A8D\u306A\u3069\u3092\u7406\u7531\u306B\u3001\u6025\u304C\u305B\u308B\u6587\u304C\u3042\u308A\u307E\u3059\u3002" },
-  "asks-secret": { level: "caution", text: "\u30D1\u30B9\u30EF\u30FC\u30C9\u3084\u8A8D\u8A3C\u30B3\u30FC\u30C9\u306A\u3069\u306E\u5165\u529B\u30FB\u8FD4\u4FE1\u3092\u6C42\u3081\u308B\u6587\u304C\u3042\u308A\u307E\u3059\u3002" },
-  "too-long": { level: "caution", text: "\u6587\u9762\u304C\u9577\u3059\u304E\u308B\u305F\u3081\u3001\u5148\u982D\u306E\u4E00\u90E8\u3060\u3051\u3092\u8ABF\u3079\u307E\u3057\u305F (\u6B8B\u308A\u306F\u8ABF\u3079\u3066\u3044\u307E\u305B\u3093)\u3002" }
+  "dangerous-scheme": { level: "danger", text: "押すとプログラムや端末の機能が動く種類のリンクがあります (ウェブのページではありません)。" },
+  "disguised-host": { level: "danger", text: "本物らしい名前を「@」の前に置いて、行き先を偽っているリンクがあります。" },
+  "mismatched-link": { level: "danger", text: "表示されている宛先と、実際の行き先が違うリンクがあります。" },
+  "dangerous-file": { level: "danger", text: "開くとプログラムが動く種類のファイル名があります。" },
+  "ai-injection": { level: "danger", text: "AI に命令を出そうとする文が含まれています (AI に読ませないでください)。" },
+  "sender-spoof": { level: "danger", text: "差出人の表示名が、実際のアドレスと別の送り主を名乗っています。" },
+  "lookalike-host": { level: "caution", text: "見た目の似た別の文字を使える形の宛先 (国際化ドメイン) があります。" },
+  "ip-host": { level: "caution", text: "名前ではなく数字 (IP アドレス) で書かれた行き先があります。" },
+  "shortened-link": { level: "caution", text: "短縮リンクがあります (本当の行き先が見えません)。" },
+  "redirect-link": { level: "caution", text: "別のページへ転送する形のリンクがあります (最後の行き先が見かけと違うことがあります)。" },
+  "plain-http": { level: "caution", text: "暗号化されていない (http の) リンクがあります。" },
+  "odd-port": { level: "caution", text: "通常と違う出入口 (ポート番号) を指定したリンクがあります。" },
+  "other-scheme": { level: "caution", text: "ウェブ以外の宛先 (別のアプリを開く形) のリンクがあります。" },
+  "unreadable-link": { level: "caution", text: "形が崩れていて行き先を読み取れないリンクがあります。" },
+  "macro-file": { level: "caution", text: "中にプログラム (マクロ) を持てる種類のファイル名があります。" },
+  "hidden-chars": { level: "caution", text: "目に見えない文字が混ざっています (文の一部を隠す・並びを入れ替える道具です)。" },
+  "account-pressure": { level: "caution", text: "アカウントの停止・確認などを理由に、急がせる文があります。" },
+  "asks-secret": { level: "caution", text: "パスワードや認証コードなどの入力・返信を求める文があります。" },
+  "too-long": { level: "caution", text: "文面が長すぎるため、先頭の一部だけを調べました (残りは調べていません)。" }
 };
 var INBOUND_CODES = Object.keys(INBOUND_RULES);
 var DANGEROUS_SCHEMES = /* @__PURE__ */ new Set(["javascript:", "vbscript:", "data:", "file:", "smb:", "ms-msdt:", "search-ms:", "ms-officecmd:"]);
@@ -271,8 +271,8 @@ function analyzeInbound(input) {
 var MAX_WATCH_ITEMS = 200;
 var MAX_WATCH_ID_CHARS = 200;
 var MIN_CAUTION_KINDS = 2;
-var WATCH_LABEL_DANGER = "\u691C\u75AB-\u5371\u967A\u306E\u7591\u3044";
-var WATCH_LABEL_CAUTION = "\u691C\u75AB-\u8981\u6CE8\u610F";
+var WATCH_LABEL_DANGER = "検疫-危険の疑い";
+var WATCH_LABEL_CAUTION = "検疫-要注意";
 function fieldOf(item, key) {
   return Object(item)[key];
 }
@@ -320,18 +320,18 @@ function fail(message) {
   process.exit(2);
 }
 var file = process.argv[2];
-if (typeof file !== "string" || file === "") fail("\u5165\u529B\u306E JSON \u30D5\u30A1\u30A4\u30EB\u3092 1 \u3064\u6E21\u3057\u3066\u304F\u3060\u3055\u3044");
+if (typeof file !== "string" || file === "") fail("入力の JSON ファイルを 1 つ渡してください");
 var size = 0;
 try {
   size = fs.statSync(file).size;
 } catch {
-  fail("\u5165\u529B\u30D5\u30A1\u30A4\u30EB\u3092\u958B\u3051\u307E\u305B\u3093");
+  fail("入力ファイルを開けません");
 }
-if (size > MAX_INPUT_BYTES) fail("\u5165\u529B\u30D5\u30A1\u30A4\u30EB\u304C\u5927\u304D\u3059\u304E\u307E\u3059");
+if (size > MAX_INPUT_BYTES) fail("入力ファイルが大きすぎます");
 var parsed;
 try {
   parsed = JSON.parse(fs.readFileSync(file, "utf8"));
 } catch {
-  fail("\u5165\u529B\u3092 JSON \u3068\u3057\u3066\u8AAD\u3081\u307E\u305B\u3093");
+  fail("入力を JSON として読めません");
 }
 process.stdout.write(JSON.stringify(judgeInboundItems(parsed), null, 2) + "\n");

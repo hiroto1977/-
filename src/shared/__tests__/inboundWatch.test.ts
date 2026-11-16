@@ -63,6 +63,9 @@ describe('judgeInboundItems —— メールの一覧を判定する', () => {
     expect(r.verdicts.map((v) => v.level)).toEqual(['danger', 'danger', 'caution']);
     // 件名の末尾と本文の先頭がつながって別のリンクにならない (改行で切れる)。
     expect(r.verdicts[2]?.codes).toEqual(['shortened-link']);
+    // つなぎ目に改行が無ければ `https://bit` + `.ly/abc` が短縮リンクになる —— 改行で切れるので鳴らない。
+    expect(judgeInboundItems([{ id: 'k', subject: 'https://bit', body: '.ly/abc' }]).verdicts[0]?.codes).toEqual([]);
+    expect(judgeInboundItems([{ id: 'k', subject: 'https://bit.ly/abc' }]).verdicts[0]?.codes).toEqual(['shortened-link']);
   });
 
   it('★ 理由と符号にメールの文面が入らない (固定の語彙だけ)', () => {
