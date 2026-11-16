@@ -4217,6 +4217,14 @@
       "leafCount": 222,
       "note": "update integrity-chain.cjs,mamori-capabilities.json,vault.mamori,vault.ts,vaultHost.ts",
       "hash": "a29e86275683a4a94881ea956aa39d75cb47c5e4de76ff87bccaa4be31681918"
+    },
+    {
+      "index": 499,
+      "prevHash": "a29e86275683a4a94881ea956aa39d75cb47c5e4de76ff87bccaa4be31681918",
+      "merkleRoot": "cc639330c24bcd944110c66a936dbc9bc265541e22072ec75e9d8b0bdb842c61",
+      "leafCount": 222,
+      "note": "update checker.ts",
+      "hash": "acf7f76037eb80cffb24c87f6cd6a467a1660aca2637cdf218d55caebf7fc28f"
     }
   ],
   "tipManifest": {
@@ -4401,7 +4409,7 @@
     "src/shared/lookup.ts": "59d9cc9880667ad419dae2c5039b53e078a4ad8f2c2ed704f8dde67e771d3534",
     "src/shared/mamori/ast.ts": "6ef25c15b28ae03b53aba44d3ec83b19086323a129f31e32c236e8c1c8118cb1",
     "src/shared/mamori/capabilities.ts": "a62f4a2bee3099bb4ced100b86aad254126f18ba52de5fe5dc4e224fea904462",
-    "src/shared/mamori/checker.ts": "86e4d1767ca41f92de9359698971c9d4c65adac419c9df2dff87c7ad371326c0",
+    "src/shared/mamori/checker.ts": "fa521c7885b49503b3955dc5d925cf6b2951fc80ec0fbd2e08fa9f52bc200883",
     "src/shared/mamori/compile.ts": "a21bed94095d71f5f3384d4813ed55de86eea7434117617bfba6dc135def875a",
     "src/shared/mamori/emit.ts": "47620b03cb02e4687ed1fcecd253828ce5017cd8e2fffd9e4ad13fe3946fed0c",
     "src/shared/mamori/parser.ts": "a41d043820743067b1e865fd2dbaade2c84004b6f79bed4f2da48bcb7270ab46",
