@@ -375,8 +375,9 @@ export function marksIn(file: string, module: Module, vetted: ReadonlyMap<string
     if (it.kind !== 'use') continue;
     const target = resolveUse(it.from, file);
     for (const n of it.names) {
-      const label = vetted.get(n.name);
-      if (label !== undefined && n.alias === null && vettedHome.get(n.name) === target) here.set(n.name, label);
+      // 印を宣言した module から、別名を付けずに引いた名前だけ (どちらかが欠ければ label は無い)。
+      const label = n.alias === null && vettedHome.get(n.name) === target ? vetted.get(n.name) : undefined;
+      if (label !== undefined) here.set(n.name, label);
     }
   }
   return here;
@@ -833,11 +834,11 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
    * 「戻り値の型に印を名乗れるのは gate 関数だけ」(M1 · T-248) は印の名前の綴りしか見ていなかったので、`typeof`・型の別名・interface の欄・
    * 直下の const の型で、同じ型を別の綴りで名乗れた (どれも `return JSON.parse(x);` の any を `tsc` が通す)。
    */
-  const markSpelling = (t: TypeRef, extra: readonly string[]): string | null => {
+  const markSpelling = (t: TypeRef, extra?: ReadonlySet<string>): string | null => {
     const direct = vettedOf(t, project.vetted);
     if (direct !== null) return direct;
     if (!t.names.includes('typeof')) return null;
-    return t.names.find((n) => markValues.has(n) || extra.includes(n)) ?? null;
+    return t.names.find((n) => markValues.has(n) || extra?.has(n) === true) ?? null;
   };
   /**
    * 印に関わる値の名前を、この module の宣言から増えなくなるまで集める (0.36 · T-271)。`typeof 名前` でその型を名指しすると、印の名前を 1 字も書かずに
@@ -848,25 +849,26 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
    * - 型を書いていない const (初期値が字面そのものでない物) —— module が印の名前か、上のどれかを 1 つでも持つときだけ
    *   (`const K = 関門("…");` / `const W = 引いた値;` の型は推論で印を含む。印に関わる物が 1 つも無い module の `typeof api` は今までどおり書ける)。
    */
-  const declaredTypes = (it: Item): readonly (TypeRef | null)[] => {
-    if (it.kind === 'fn') return [...it.params.map((p) => p.type), it.returns];
-    if (it.kind === 'class') return it.params.map((p) => p.type);
-    return it.kind === 'const' || it.kind === 'let' ? [it.type] : [];
-  };
+  const declared: { readonly name: string; readonly types: readonly (TypeRef | null)[]; readonly untypedInit: Expr | null }[] = [];
+  for (const it of module.items) {
+    if (it.kind === 'fn') declared.push({ name: it.name, types: [...it.params.map((p) => p.type), it.returns], untypedInit: null });
+    else if (it.kind === 'class') declared.push({ name: it.name, types: it.params.map((p) => p.type), untypedInit: null });
+    else if (it.kind === 'const') declared.push({ name: it.name, types: [it.type], untypedInit: it.type === null ? it.init : null });
+    else if (it.kind === 'let') declared.push({ name: it.name, types: [it.type], untypedInit: null });
+  }
   for (let grew = true; grew; ) {
     grew = false;
-    for (const it of module.items) {
-      if (it.kind !== 'fn' && it.kind !== 'class' && it.kind !== 'const' && it.kind !== 'let') continue;
-      if (markValues.has(it.name)) continue;
-      const opaque = it.kind === 'const' && it.type === null && !isPlainLiteral(it.init) && (table.vetted.size > 0 || markValues.size > 0);
-      if (!opaque && !declaredTypes(it).some((t) => t !== null && markSpelling(t, []) !== null)) continue;
-      markValues.add(it.name);
+    for (const d of declared) {
+      if (markValues.has(d.name)) continue;
+      const opaque = d.untypedInit !== null && !isPlainLiteral(d.untypedInit) && (table.vetted.size > 0 || markValues.size > 0);
+      if (!opaque && !d.types.some((t) => t !== null && markSpelling(t) !== null)) continue;
+      markValues.add(d.name);
       grew = true;
     }
   }
   /** 印を指す型の綴りを、印を名乗れない場所 (`where`) で断る。印の名前なら M1 の文、`typeof` の名指しなら理由を言う。 */
-  const refuseMarkSpelling = (t: TypeRef, extra: readonly string[], where: string): void => {
-    const named = markSpelling(t, extra);
+  const refuseMarkSpelling = (t: TypeRef, where: string): void => {
+    const named = markSpelling(t);
     if (named === null) return;
     const how = project.vetted.has(named)
       ? `印 ${named} を名乗れるのは gate 関数の戻り値・印を運ぶ引数と局所の束縛だけです`
@@ -917,8 +919,9 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
       // (`export const US: readonly 印[] = JSON.parse(…);` は、関門を通っていない値を印の型で TypeScript の呼び手へ渡した)。
       if (it.type !== null) {
         const exact = carriedMark(it.type, table.vetted);
-        if (exact === null) refuseMarkSpelling(it.type, [], `モジュール直下の const ${it.name} の型`);
-        else if (provenance(it.init, [moduleScope]) !== exact) report('M4', it.pos, `${it.name} は印 ${exact} の型ですが、入れる値は印を持ちません`);
+        if (exact === null) refuseMarkSpelling(it.type, `モジュール直下の const ${it.name} の型`);
+        // 直下の束縛は印を運ばない (どれも `vetted: null`) ので、名前の来歴は引かない —— 印を運ぶ初期値は関門の呼び出しだけ。
+        else if (provenance(it.init, []) !== exact) report('M4', it.pos, `${it.name} は印 ${exact} の型ですが、入れる値は印を持ちません`);
       }
       const shared = { name: it.name, direct: it.init, mutable: false };
       checkExpr(it.init, [moduleScope], it.type === null ? { ...constCtx, sharedUntyped: it.name, sharedInit: shared } : { ...constCtx, sharedInit: shared });
@@ -935,11 +938,11 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
     if (it.kind === 'interface') {
       checkInterfaceBase(it);
       // 印を欄に持つ型へ名前を付ける形 (0.36 · T-271) —— `-> Box` と書いた plain 関数が M1 を素通りする。
-      for (const m of it.members) refuseMarkSpelling(m.type, [], `interface ${it.name} の欄 ${m.name} の型`);
+      for (const m of it.members) refuseMarkSpelling(m.type, `interface ${it.name} の欄 ${m.name} の型`);
       continue;
     }
     if (it.kind === 'type') {
-      refuseMarkSpelling(it.type, [], `型の別名 ${it.name} の中`);
+      refuseMarkSpelling(it.type, `型の別名 ${it.name} の中`);
       continue;
     }
     if (it.kind !== 'fn') continue;
@@ -959,11 +962,12 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
     // 0.36 (T-271): 印の名前はプロジェクト全体で見る (この module が引いていない印の綴りでも断る)。`typeof` で印に関わる値 (関門・印を受ける関数・
     // 印の型の引数) を名指しする形も同じ —— `-> ReturnType<typeof 関門>` は印の名前を書かずに `印 | null` を名乗る。
     if (it.role !== 'gate') {
-      const named = markSpelling(it.returns, it.params.filter((p) => p.type !== null && markSpelling(p.type, []) !== null).map((p) => p.name));
-      if (named !== null && project.vetted.has(named)) {
-        report('M1', it.returns.pos, `${it.name}: 戻り値の型に印 ${named} を名乗れるのは gate 関数だけです (型述語 \`x is ${named}\` も同じ —— \`tsc\` は述語を検めないので、関門を通らずに印の型を偽造できます)`);
-      } else if (named !== null) {
-        report('M1', it.returns.pos, `${it.name}: 戻り値の型に \`typeof ${named}\` は書けません —— ${named} は印に関わる値 (印を受ける・返す関数・印の型の値・型を書いていない直下の const) で、その型を名指しすると、関門を通らずに印の型を名乗る値を返せます (戻り値の型に印を名乗れるのは gate 関数だけ)`);
+      const named = markSpelling(it.returns, new Set(it.params.filter((p) => p.type !== null && markSpelling(p.type) !== null).map((p) => p.name)));
+      if (named !== null) {
+        const how = project.vetted.has(named)
+          ? `戻り値の型に印 ${named} を名乗れるのは gate 関数だけです (型述語 \`x is ${named}\` も同じ —— \`tsc\` は述語を検めないので、関門を通らずに印の型を偽造できます)`
+          : `戻り値の型に \`typeof ${named}\` は書けません —— ${named} は印に関わる値 (印を受ける・返す関数・印の型の値・型を書いていない直下の const) で、その型を名指しすると、関門を通らずに印の型を名乗る値を返せます (戻り値の型に印を名乗れるのは gate 関数だけ)`;
+        report('M1', it.returns.pos, `${it.name}: ${how}`);
       }
     }
     if (it.role === 'sink') {
@@ -1000,7 +1004,7 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
   function checkModuleLet(it: Extract<Item, { readonly kind: 'let' }>): void {
     // 0.36 (T-271): 印そのものの型だけでなく、印を含む型 (`印[]`)・`typeof` で印に関わる値を名指しする型も断る。
     const mark = carriedMark(it.type, table.vetted);
-    if (mark === null) refuseMarkSpelling(it.type, [], `モジュール直下の let ${it.name} の型`);
+    if (mark === null) refuseMarkSpelling(it.type, `モジュール直下の let ${it.name} の型`);
     if (mark !== null) {
       report('M4', it.pos, `モジュール直下の let ${it.name} は印 ${mark} の型にできません —— 印は mint でだけ作る値で、関数の呼び出しをまたいで運ぶと、印を作った関数の外で印を名乗る値が読めてしまう`);
     }

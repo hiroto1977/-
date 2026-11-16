@@ -132,6 +132,8 @@ describe('0.36: 印の型は、印の名前のほかの綴りで名乗れない 
       at(0, 1, 1, ALIAS('VU', 'VPath')),
       at(0, 3, 10, '[M1] mint VPath: そんな印は宣言されていません'),
     ]);
+    // 別名で引いた module では、元の名前も印として読まない (危ない口の行き先に書けない)
+    expect(diagnostics(SINK('use type { VU alias U } from "./m1";\n'), REAL)).toEqual([at(0, 1, 1, ALIAS('VU', 'U')), at(0, 3, 22, SINK_DEST('open2', 'VU'))]);
     // 対照: 印でない名前の別名は今までどおり (TypeScript の module の同名の型も、印を宣言した module ではないので別名で引ける)
     expect(diagnostics(FORGE('U', 'use type { Plain alias U } from "./types";\n'), REAL)).toEqual([]);
     expect(diagnostics(FORGE('U', 'use type { VU alias U } from "./types";\n'), REAL)).toEqual([]);
@@ -154,6 +156,9 @@ describe('0.36: 印の型は、印の名前のほかの綴りで名乗れない 
   it('★ 印そのものの型の直下の const は、印を運ぶ初期値だけを受ける (threat: T-271)', () => {
     expect(diagnostics(USE_MARK + 'export const U: VU = JSON.parse("1");\n', REAL)).toEqual([at(0, 2, 1, NOT_CARRIED('U', 'VU'))]);
     expect(diagnostics(USE_MARK + 'export const U: VU | null = JSON.parse("1");\n', REAL)).toEqual([at(0, 2, 1, NOT_CARRIED('U', 'VU'))]);
+    // 直下の束縛は印を運ばない —— 印の型の const を別の const へ写す形も断る (失敗は閉じる向き)
+    const copied = USE_MARK + 'use { g } from "./m1";\nconst A: VU | null = g("https://a");\nexport const B: VU | null = A;\n';
+    expect(diagnostics(copied, REAL)).toEqual([at(0, 4, 1, NOT_CARRIED('B', 'VU'))]);
     // 対照: 関門の結果は置ける (本物の module の `HOME` がこの形)。直下の let は今までどおり印の型にできない (0.28)。
     expect(diagnostics(USE_MARK + 'use { g } from "./m1";\nexport const START: VU | null = g("https://example.com");\n', REAL)).toEqual([]);
     expect(diagnostics(USE_MARK + 'let CUR: VU | null = null;\n', REAL).join('\n')).toContain('[M4] モジュール直下の let CUR は印 VU の型にできません');
@@ -249,6 +254,7 @@ describe('0.36: 印の型は、印の名前のほかの綴りで名乗れない 
     const useG = 'use { g } from "./m1";\n';
     expect(diagnostics(useG + 'fn count(x: string) -> number {\n  return x.length;\n}\nexport fn n(x: string) -> ReturnType<typeof count> {\n  return g(x) === null ? 0 : count(x);\n}\n', REAL)).toEqual([]);
     expect(diagnostics(useG + 'const MAX: number = 3;\nexport fn n(x: string) -> typeof MAX {\n  return g(x) === null ? 0 : MAX;\n}\n', REAL)).toEqual([]);
+    expect(diagnostics(useG + 'const LEN: number = "abc".length;\nexport fn n(x: string) -> typeof LEN {\n  return g(x) === null ? 0 : LEN;\n}\n', REAL)).toEqual([]);
     expect(diagnostics(useG + 'const MODE = "x";\nexport fn n(x: string) -> typeof MODE | null {\n  return g(x) === null ? null : MODE;\n}\n', REAL)).toEqual([]);
     expect(diagnostics(useG + 'export fn n(k: number, x: string) -> typeof k {\n  return g(x) === null ? 0 : k;\n}\n', REAL)).toEqual([]);
     // 字面の const は文字列・数・真偽のどれでも同じ。型を書いていない引数を持つ関数・クラスも (型が無い引数は印を指さない)

@@ -2929,8 +2929,8 @@
       "why": "引いた名前が印かどうかを、引いた先の module を見ずに決める —— 印を宣言していない module の同名の型が印になる",
       "edits": [
         {
-          "find": "if (label !== undefined && n.alias === null && vettedHome.get(n.name) === target) here.set(n.name, label);",
-          "replace": "if (label !== undefined && n.alias === null) here.set(n.name, label);"
+          "find": "const label = n.alias === null && vettedHome.get(n.name) === target ? vetted.get(n.name) : undefined;",
+          "replace": "const label = n.alias === null ? vetted.get(n.name) : undefined;"
         }
       ]
     },
@@ -2953,7 +2953,7 @@
       "why": "`typeof` で印に関わる値を名指しする綴りを見ない —— `-> ReturnType<typeof 関門>` が通る",
       "edits": [
         {
-          "find": "return t.names.find((n) => markValues.has(n) || extra.includes(n)) ?? null;",
+          "find": "return t.names.find((n) => markValues.has(n) || extra?.has(n) === true) ?? null;",
           "replace": "return null;"
         }
       ]
@@ -2965,7 +2965,7 @@
       "why": "型の別名の中の印を断らない —— `type U = 印;` で `-> U` が通る",
       "edits": [
         {
-          "find": "refuseMarkSpelling(it.type, [], `型の別名 ${it.name} の中`);",
+          "find": "refuseMarkSpelling(it.type, `型の別名 ${it.name} の中`);",
           "replace": "void it.type;"
         }
       ]
@@ -2977,7 +2977,7 @@
       "why": "interface の欄の印を断らない —— `-> Box` と書いた関数が印を欄に持つ値を返せる",
       "edits": [
         {
-          "find": "for (const m of it.members) refuseMarkSpelling(m.type, [], `interface ${it.name} の欄 ${m.name} の型`);",
+          "find": "for (const m of it.members) refuseMarkSpelling(m.type, `interface ${it.name} の欄 ${m.name} の型`);",
           "replace": "void it.members;"
         }
       ]
@@ -2989,7 +2989,7 @@
       "why": "直下の const の型に書いた、印そのものでない印の型 (`readonly 印[]`・`typeof 関門`) を断らない",
       "edits": [
         {
-          "find": "if (exact === null) refuseMarkSpelling(it.type, [], `モジュール直下の const ${it.name} の型`);",
+          "find": "if (exact === null) refuseMarkSpelling(it.type, `モジュール直下の const ${it.name} の型`);",
           "replace": "if (exact === null) void 0;"
         }
       ]
@@ -3001,8 +3001,8 @@
       "why": "印そのものの型の直下の const に、印を運ばない初期値 (`JSON.parse(…)`) を置ける",
       "edits": [
         {
-          "find": "else if (provenance(it.init, [moduleScope]) !== exact)",
-          "replace": "else if ((false as boolean) && provenance(it.init, [moduleScope]) !== exact)"
+          "find": "else if (provenance(it.init, []) !== exact)",
+          "replace": "else if ((false as boolean) && provenance(it.init, []) !== exact)"
         }
       ]
     },
@@ -3025,7 +3025,7 @@
       "why": "この module の型を書いていない const を印に関わる値として数えない —— `const K = 関門(\"…\");` の `typeof K` が通る",
       "edits": [
         {
-          "find": "const opaque = it.kind === 'const' && it.type === null && !isPlainLiteral(it.init) && (table.vetted.size > 0 || markValues.size > 0);",
+          "find": "const opaque = d.untypedInit !== null && !isPlainLiteral(d.untypedInit) && (table.vetted.size > 0 || markValues.size > 0);",
           "replace": "const opaque = false as boolean;"
         }
       ]
@@ -3037,7 +3037,7 @@
       "why": "直下の let の型に書いた、印そのものでない印の型を断らない",
       "edits": [
         {
-          "find": "if (mark === null) refuseMarkSpelling(it.type, [], `モジュール直下の let ${it.name} の型`);",
+          "find": "if (mark === null) refuseMarkSpelling(it.type, `モジュール直下の let ${it.name} の型`);",
           "replace": "if (mark === null) void 0;"
         }
       ]
