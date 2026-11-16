@@ -23,6 +23,7 @@ import { isAutoLockActive, subscribeAutoLockActive } from '../security/autoLock'
 import type { ActionData } from '../../shared/actionData';
 import { ProxyRequiredNote } from '../components/ProxyRequiredNote';
 import { externalTextOnOneLine } from '../data/assistantMarkdown';
+import { InboundQuarantine } from '../components/InboundQuarantine';
 
 const GRADE_COLOR: Record<string, string> = {
   A: 'var(--success)',
@@ -403,6 +404,10 @@ export function SecurityPage() {
             ) : null}
           </div>
         ) : null}
+      </Section>
+
+      <Section title="受信の検疫 (開く前に調べる・送信しません)">
+        <InboundQuarantine />
       </Section>
 
       <Section title="パスワード強度チェッカー (ローカル評価・送信しません)">

@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
+import { analyzeInbound, inboundBadge } from '../../shared/inboundThreat';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { GoogleConnectCard } from '../components/GoogleConnectCard';
@@ -111,6 +112,8 @@ export function GmailPage() {
             title: t.subject,
             meta: `${t.sender} · ${t.date}`,
             href: `https://mail.google.com/mail/u/0/#inbox/${t.id}`,
+            // 受信の検疫: 件名と差出人を、開く前にこの端末の中で調べる (網へ出ない・AI に訊かない)。
+            badge: inboundBadge(analyzeInbound({ text: t.subject, sender: t.sender }).level) ?? undefined,
           }))}
         />
       </Section>
