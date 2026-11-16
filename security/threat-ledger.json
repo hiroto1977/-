@@ -4965,6 +4965,62 @@
           "test": "★ 型を書いていない直下の const (関数が返した入れ物) は、書き換えるメソッドの受け手にできない —— 0.33 が残した ① (threat: T-267)"
         }
       ]
+    },
+    {
+      "id": "T-268",
+      "found": "2026-11-16",
+      "foundBy": "MG-072 (言語の穴探しの周)。0.33 (T-264) は「読むだけの表は `ReadonlyMap<…>` / `ReadonlySet<…>` と書く —— 書き換えは生成物の tsc が断る」とした。その tsc の型が Mamori の中で外れる道を 2 家系見つけた。① 絞り込み: `if (TABLE instanceof Map) { TABLE.set(k, v); }`・自分で書いた型述語 (`fn isMut(m: unknown) -> m is Map<string, number>`)・`asserts m is Map<…>` —— 絞り込んだ中では tsc が書き換えられる型と見る。② any に洗う: 表を欄に持つ物の `Object.values(…)` / `Object.entries(…)`・`Array.isArray(unknown)` の後の要素・`Promise.reject(表).catch((e) => e.set(…))`・`Object.fromEntries(…)` の結果は any で、any の `.set(…)` / `.clear()` を tsc は止めない (any の値を `Map` を受ける関数へ渡す形も通る)。どれも Mamori と tsc の両方を通り、その表を読む関門・上限の答えが変わる。実物では、人の合図の門 (userPresence) の重み・頻度・予算の表と、開いてよい拡張子・スキーム・段の集合 (13 個) がこの宣言の形だった。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "守りの層を書く言語 Mamori が、読むだけと名乗った共有の表 (ReadonlyMap / ReadonlySet) を、型の絞り込み (instanceof・型述語) と any への洗い (Object.values・Array.isArray・Promise の catch) で書き換えられる形で通した",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: 読むだけの表の名前は、読む位置にしか書けない (M6 · 0.35) —— 読むメンバ (get / has / size / keys / values / entries) の受け手・`for … of` の回す相手・展開・組み込みの `new Map(表)` / `new Set(表)` (写し) の引数だけ。引数に渡す・別名を作る・返す・入れ物に入れる・`instanceof` の左に置く・書き換えるメソッドの受け手にする形はどれも断る (tsc の型に頼らない)。読むだけの表 = 型が ReadonlyMap / ReadonlySet を名指しする束縛 (直下の const / let・引数・局所・arrow と constructor の引数) と、初期値そのものが `new Map(…)` / `new Set(…)` で型の頭が `Map<` / `Set<` でない直下の const / let (型の別名・合併で名乗った表も読むだけの側へ倒す)。`use` で引いた先でも同じ扱い。欄・配列の項・引数に包んだ表は名前で追えないので、型つきの直下の const / let の初期値の中の `new Map(…)` / `new Set(…)` を断る (表は初期値そのものに置く)。残る限界: 呼び出しの結果を置いた直下の const の中の表 (`const CFG: Cfg = build();` の `CFG.limits`)・関数の戻り値や Mamori の外の module から来た読むだけの表は名前を持たず、tsc の型だけが守る (絞り込みと any で外れる)。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV35.test.ts",
+        "test": "★ 絞り込みで読むだけの型を外す形は断る —— instanceof・型述語・asserts (threat: T-268)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV35.test.ts",
+          "test": "★ any に洗って書き換える形は断る —— 表を入れ物に入れる・引数に渡す所で止まる (threat: T-268)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV35.test.ts",
+          "test": "★ 名前を持ち出す形はどれも断る —— 別名・返す・引数・入れ物・既定値・await・throw・switch・分割代入・field (threat: T-268)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV35.test.ts",
+          "test": "★ `use` で引いた先でも・別名 (alias) で引いても同じ表である (threat: T-268)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV35.test.ts",
+          "test": "★ 型が ReadonlyMap / ReadonlySet を名指しする束縛は、引数・局所・arrow の引数・constructor の引数・直下の let でも同じ (threat: T-268)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV35.test.ts",
+          "test": "★ 型の別名・合併で名乗った直下の表も、読むだけの側へ倒す (型の頭が Map< / Set< のときだけ書き換える状態) (threat: T-268)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV35.test.ts",
+          "test": "★ 直下の初期値の中 (欄・配列の項・引数) の new Map / new Set は置けない (threat: T-268)"
+        }
+      ]
+    },
+    {
+      "id": "T-269",
+      "found": "2026-11-16",
+      "foundBy": "MG-072 (言語の穴探しの周)。0.34 (T-267) の「型を書いていないモジュール直下の const は、書き換えるメソッドの受け手にできない」は、同じ module の中の名前しか見ていなかった。`export const T = mk();` を別の module が `use { T } from \"./m\"` で引くと、`T.set(…)` / `T.clear()` / `T.setTime(…)` が通った (引いた名前の束縛は、引いた先の const が型を持つかを運んでいなかった)。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "守りの層を書く言語 Mamori の「型を書いていない共有の const は書き換えるメソッドの受け手にできない」規則 (0.34) が、use で引いた先の module では掛からなかった",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: 直下の const の扱い (型を書いていない / 読むだけの表) を module ごとの表 (`ProjectTable.sharedConsts`) に集め、`use` で引いた名前の束縛へ運ぶ (0.35)。引いた先でも・別名 (alias) で引いても・局所の別名に受けても・欄をたどった先でも、書き換えるメソッド (set / add / delete / clear / append と set + 大文字) の受け手にできない。残る限界: Mamori の外の module (TypeScript) から引いた値は扱いを持たない (TypeScript の側の型が守る)。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV35.test.ts",
+        "test": "★ 引いた先で `.set` / `.add` / `.delete` / `.clear` / `.append` / `.setTime` の受け手にする形は断る (threat: T-269)"
+      }
     }
   ],
   "huntBacklog": [

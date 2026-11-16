@@ -2825,6 +2825,66 @@
           "replace": "    if ((false as boolean) && viaMember !== null && isSharedWriteMethod(viaMember.prop)) {"
         }
       ]
+    },
+    {
+      "id": "A-609",
+      "threat": "T-268",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "読むだけの表の名前を、読む位置でない所に書く形を断らない —— `TABLE instanceof Map` の中の `TABLE.set(…)`・any に洗う形が通る (直す前の形)",
+      "edits": [
+        {
+          "find": "        if (b.readonlyTable === true && !tableReads.has(e)) {",
+          "replace": "        if ((false as boolean) && b.readonlyTable === true && !tableReads.has(e)) {"
+        }
+      ]
+    },
+    {
+      "id": "A-610",
+      "threat": "T-268",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "直下の初期値の中 (欄・配列の項) の `new Map(…)` / `new Set(…)` を断らない —— 欄に包んだ表は名前で追えず、Object.values で any に洗って書き換えられる",
+      "edits": [
+        {
+          "find": "          if (ctx.sharedUntyped === undefined && SHARED_COLLECTIONS.has(built) && e !== ctx.sharedInit.direct) {",
+          "replace": "          if ((false as boolean) && ctx.sharedUntyped === undefined && SHARED_COLLECTIONS.has(built) && e !== ctx.sharedInit.direct) {"
+        }
+      ]
+    },
+    {
+      "id": "A-611",
+      "threat": "T-268",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "型の別名・合併で名乗った表を読むだけの側へ倒さない —— `type Table = ReadonlyMap<…>; const TABLE: Table = new Map();` の表が規則を抜ける",
+      "edits": [
+        {
+          "find": "  return type !== null && init.kind === 'new' && SHARED_COLLECTIONS.has(identName(init.callee)) && !/^(?:Map|Set)</.test(type.text);",
+          "replace": "  return (false as boolean) && type !== null && init.kind === 'new' && SHARED_COLLECTIONS.has(identName(init.callee)) && !/^(?:Map|Set)</.test(type.text);"
+        }
+      ]
+    },
+    {
+      "id": "A-612",
+      "threat": "T-268",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "`use` で引いた名前へ、読むだけの表の扱いを運ばない —— 引いた先の module では絞り込みと any への洗いが通る",
+      "edits": [
+        {
+          "find": "untypedShared: shared === 'untyped', readonlyTable: shared === 'readonly-table' }, it.pos);",
+          "replace": "untypedShared: shared === 'untyped', readonlyTable: (false as boolean) && shared === 'readonly-table' }, it.pos);"
+        }
+      ]
+    },
+    {
+      "id": "A-613",
+      "threat": "T-269",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "`use` で引いた名前へ、型を書いていない const の扱いを運ばない —— 引いた先の module では `.set(…)` / `.clear()` が通る (0.34 の形)",
+      "edits": [
+        {
+          "find": "untypedShared: shared === 'untyped', readonlyTable: shared === 'readonly-table' }, it.pos);",
+          "replace": "untypedShared: (false as boolean) && shared === 'untyped', readonlyTable: shared === 'readonly-table' }, it.pos);"
+        }
+      ]
     }
   ]
 }
