@@ -3173,6 +3173,126 @@
           "replace": "&& (false as boolean) && markParams(checker.getTypeAtLocation(n.expression.expression)).length > 0\n            ) {"
         }
       ]
+    },
+    {
+      "id": "A-638",
+      "threat": "T-274",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "関数の結果を置いた const を、直に呼ぶ位置で断らない —— `const ADD = make();` の `ADD(x)` が通る",
+      "edits": [
+        {
+          "find": "if (b?.loadResult === true) refuseLoadResult(callee.name, callee.pos);",
+          "replace": "if (b?.loadResult === true) void 0;"
+        }
+      ]
+    },
+    {
+      "id": "A-639",
+      "threat": "T-274",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "関数の結果を置いた const を、値として読む位置で断らない —— 別名・引数・入れ物へ持ち出せる",
+      "edits": [
+        {
+          "find": "        if (b.loadResult === true) {\n          refuseLoadResult(e.name, e.pos);",
+          "replace": "        if ((false as boolean) && b.loadResult === true) {\n          refuseLoadResult(e.name, e.pos);"
+        }
+      ]
+    },
+    {
+      "id": "A-640",
+      "threat": "T-274",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "初期値の中の呼び出しを関数の結果と数えない —— 工場の結果を置いた const がどれも読める",
+      "edits": [
+        {
+          "find": "return isNonInvokingCall(e, env) ? e.args.some((a) => holdsLoadResult(a, env)) : !isDataCall(e, env);",
+          "replace": "return isNonInvokingCall(e, env) && e.args.some((a) => holdsLoadResult(a, env));"
+        }
+      ]
+    },
+    {
+      "id": "A-641",
+      "threat": "T-274",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "引数を呼び戻さない組み込みの、引数の中の関数の結果を見ない —— `Object.freeze(make())` が読める",
+      "edits": [
+        {
+          "find": "return isNonInvokingCall(e, env) ? e.args.some((a) => holdsLoadResult(a, env)) : !isDataCall(e, env);",
+          "replace": "return !isNonInvokingCall(e, env) && !isDataCall(e, env);"
+        }
+      ]
+    },
+    {
+      "id": "A-642",
+      "threat": "T-274",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "データだけの呼び出しの引数を見ない —— 組み込みが呼び戻す arrow (`[0].map(() => …)`) の結果が読める",
+      "edits": [
+        {
+          "find": "return callee && e.args.every((a) => isLoadData(a, env));",
+          "replace": "return callee;"
+        }
+      ]
+    },
+    {
+      "id": "A-643",
+      "threat": "T-274",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "メソッドの受け手がデータかを見ない —— arrow を持つ表のメソッド (`F.mk()`) の結果が読める",
+      "edits": [
+        {
+          "find": "if (x.kind === 'ident') return isBuiltinName(x.name, env) || env.hostPure.has(x.name) || env.data.has(x.name);",
+          "replace": "if (x.kind === 'ident') return true;"
+        }
+      ]
+    },
+    {
+      "id": "A-644",
+      "threat": "T-274",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "組み込みと同じ綴りを module が宣言していても組み込みと読む —— `fn Map(…)` の結果が読める",
+      "edits": [
+        {
+          "find": "return PURE_GLOBALS.has(name) && !env.declared.has(name);",
+          "replace": "return PURE_GLOBALS.has(name);"
+        }
+      ]
+    },
+    {
+      "id": "A-645",
+      "threat": "T-274",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "印を返さない gate 関数も関門の結果と数える —— 閉包を返す gate 関数の結果が読める",
+      "edits": [
+        {
+          "find": "return sig !== undefined && sig.role === 'gate' && sig.returnVetted !== null;",
+          "replace": "return sig !== undefined && sig.role === 'gate';"
+        }
+      ]
+    },
+    {
+      "id": "A-646",
+      "threat": "T-274",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "`use` で引いた先へ「関数の結果」の印を運ばない —— 別の module から工場の結果を読める",
+      "edits": [
+        {
+          "find": "const loadResult = shared === 'load-result';",
+          "replace": "const loadResult = false as boolean;"
+        }
+      ]
+    },
+    {
+      "id": "A-647",
+      "threat": "T-274",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "この module の const へ「関数の結果」の印を付けない —— 宣言した module の中で読める",
+      "edits": [
+        {
+          "find": "loadResult: table.sharedConsts.get(file)!.get(it.name) === 'load-result' }, it.pos);",
+          "replace": "loadResult: false as boolean }, it.pos);"
+        }
+      ]
     }
   ]
 }
