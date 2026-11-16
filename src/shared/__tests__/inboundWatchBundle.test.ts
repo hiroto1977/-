@@ -97,6 +97,15 @@ describe('見張り番の生成物 scripts/inbound-watch.cjs', () => {
     }
   });
 
+  it('★ 生成物は 48 KiB 未満 (見張り用のセッションは 64 KiB を超えるファイルを取り出さない)', () => {
+    // 見張り用のセッションは `blob_limit_kb: 64` で木を取り出す —— 大きな CLAUDE.md (1 MiB 超) を読まずに済ませ、
+    // 1 回の利用量を約 5 分の 1 にするため (実測 2026-11-16: 文脈 564,384 → 106,169 token)。
+    // 生成物がその線を超えると、見張り番は「スクリプトが無い」で止まる。余裕を持って手前で落とす。
+    const bytes = Buffer.byteLength(readOriginalSource(SCRIPT), 'utf8');
+    expect(bytes).toBeGreaterThan(5_000);
+    expect(bytes).toBeLessThan(48 * 1024);
+  });
+
   it('組み直しの --check が今の木で通る', () => {
     expect(execFileSync(process.execPath, [BUILDER, '--check'], { encoding: 'utf8' })).toContain('一致します');
   });
