@@ -2341,8 +2341,8 @@
       "why": "gate 以外の戻り値の型の印を断る規則を外す —— 型述語などで関門を通らずに印の型を偽造できる口を開け直す",
       "edits": [
         {
-          "find": "if (it.role !== 'gate' && sig.returnVetted !== null) {",
-          "replace": "if (false) {"
+          "find": "if (it.role !== 'gate') {",
+          "replace": "if ((false as boolean) && it.role !== 'gate') {"
         }
       ]
     },
@@ -2883,6 +2883,162 @@
         {
           "find": "const untypedShared = shared === 'untyped';",
           "replace": "const untypedShared = (false as boolean) && shared === 'untyped';"
+        }
+      ]
+    },
+    {
+      "id": "A-614",
+      "threat": "T-270",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "module ごとの印の表を使わず、プロジェクトのどこかで宣言した綴りを印と見る (0.35 の形) —— 印の名前を型の別名に付けた module の危ない口が M3 を通る",
+      "edits": [
+        {
+          "find": "const table: ProjectTable = { ...project, vetted: marksIn(file, module, project.vetted, project.vettedHome) };",
+          "replace": "const table: ProjectTable = project;"
+        }
+      ]
+    },
+    {
+      "id": "A-615",
+      "threat": "T-270",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "印の名前を別の宣言 (型の別名・interface・クラス・引いた同名の物) に付ける形を断らない",
+      "edits": [
+        {
+          "find": "if (!project.vetted.has(name)) return;",
+          "replace": "if ((true as boolean) || !project.vetted.has(name)) return;"
+        }
+      ]
+    },
+    {
+      "id": "A-616",
+      "threat": "T-270",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "同じ名前の印の 2 度目の宣言を断らない",
+      "edits": [
+        {
+          "find": "if (vettedHome.has(it.name)) {",
+          "replace": "if ((false as boolean) && vettedHome.has(it.name)) {"
+        }
+      ]
+    },
+    {
+      "id": "A-617",
+      "threat": "T-270",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "引いた名前が印かどうかを、引いた先の module を見ずに決める —— 印を宣言していない module の同名の型が印になる",
+      "edits": [
+        {
+          "find": "if (label !== undefined && n.alias === null && vettedHome.get(n.name) === target) here.set(n.name, label);",
+          "replace": "if (label !== undefined && n.alias === null) here.set(n.name, label);"
+        }
+      ]
+    },
+    {
+      "id": "A-618",
+      "threat": "T-271",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "印に別名を付けて引く形を断らない —— `-> 別名` と書いた関数が M1 を素通りする",
+      "edits": [
+        {
+          "find": "if (isMark && n.alias !== null) {",
+          "replace": "if ((false as boolean) && isMark && n.alias !== null) {"
+        }
+      ]
+    },
+    {
+      "id": "A-619",
+      "threat": "T-271",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "`typeof` で印に関わる値を名指しする綴りを見ない —— `-> ReturnType<typeof 関門>` が通る",
+      "edits": [
+        {
+          "find": "return t.names.find((n) => markValues.has(n) || extra.includes(n)) ?? null;",
+          "replace": "return null;"
+        }
+      ]
+    },
+    {
+      "id": "A-620",
+      "threat": "T-271",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "型の別名の中の印を断らない —— `type U = 印;` で `-> U` が通る",
+      "edits": [
+        {
+          "find": "refuseMarkSpelling(it.type, [], `型の別名 ${it.name} の中`);",
+          "replace": "void it.type;"
+        }
+      ]
+    },
+    {
+      "id": "A-621",
+      "threat": "T-271",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "interface の欄の印を断らない —— `-> Box` と書いた関数が印を欄に持つ値を返せる",
+      "edits": [
+        {
+          "find": "for (const m of it.members) refuseMarkSpelling(m.type, [], `interface ${it.name} の欄 ${m.name} の型`);",
+          "replace": "void it.members;"
+        }
+      ]
+    },
+    {
+      "id": "A-622",
+      "threat": "T-271",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "直下の const の型に書いた、印そのものでない印の型 (`readonly 印[]`・`typeof 関門`) を断らない",
+      "edits": [
+        {
+          "find": "if (exact === null) refuseMarkSpelling(it.type, [], `モジュール直下の const ${it.name} の型`);",
+          "replace": "if (exact === null) void 0;"
+        }
+      ]
+    },
+    {
+      "id": "A-623",
+      "threat": "T-271",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "印そのものの型の直下の const に、印を運ばない初期値 (`JSON.parse(…)`) を置ける",
+      "edits": [
+        {
+          "find": "else if (provenance(it.init, [moduleScope]) !== exact)",
+          "replace": "else if ((false as boolean) && provenance(it.init, [moduleScope]) !== exact)"
+        }
+      ]
+    },
+    {
+      "id": "A-624",
+      "threat": "T-271",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "`use` で引いた値を印に関わる値として数えない —— 引いた関門・印の型の const・型を書いていない const の `typeof` が通る",
+      "edits": [
+        {
+          "find": "if (table.fns.get(fnKey(target, n.name))?.markRelated === true || table.markConsts.get(target)?.has(n.name) === true) markValues.add(local);",
+          "replace": "void local;"
+        }
+      ]
+    },
+    {
+      "id": "A-625",
+      "threat": "T-271",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "この module の型を書いていない const を印に関わる値として数えない —— `const K = 関門(\"…\");` の `typeof K` が通る",
+      "edits": [
+        {
+          "find": "const opaque = it.kind === 'const' && it.type === null && !isPlainLiteral(it.init) && (table.vetted.size > 0 || markValues.size > 0);",
+          "replace": "const opaque = false as boolean;"
+        }
+      ]
+    },
+    {
+      "id": "A-626",
+      "threat": "T-271",
+      "file": "src/shared/mamori/checker.ts",
+      "why": "直下の let の型に書いた、印そのものでない印の型を断らない",
+      "edits": [
+        {
+          "find": "if (mark === null) refuseMarkSpelling(it.type, [], `モジュール直下の let ${it.name} の型`);",
+          "replace": "if (mark === null) void 0;"
         }
       ]
     }

@@ -96,6 +96,62 @@ Mamori では、その 2 つは**書けない**:
 - **測れなかった物を満点にしない**: 入力が読めない・母集団が空の基準は 0 点 (口を持つ .mamori が 0 本の A2 だけは『載せる物が無い』ので満点)。表の基準と実装の測り方は 1 対 1 で、検査 (`mamoriCompleteness.test.ts`) が両方向に見る。
 - **基準と床は私 (実装した側) の判断**で、実測が決めた物ではない。床を動かすときは表の `why` に理由を書く。今の実物は 1.0 を満たしていない (E1 89% / E2 88% が床の下) —— 足りない基準を埋めるのが次の作業で、`report` が一覧を出す。
 
+## 0.36 —— 印の名前は、印を宣言した先を指すときだけ印である。印の型は別の綴りで名乗れない (T-270 / T-271 · MG-073 · 2026-11-16)
+
+言語の穴探しの周。規則を破るプログラムを約 200 本書いて当てると、**印の「名前」に頼っていた 2 つの規則**が破れた
+(共有のバイト列を別の窓から書き換える形・module をまたぐ再 export・禁じた名前の文字列での組み立て・`return` / `throw` の改行と注記・
+any を印の型の位置へ置く 39 形・`import("…").印` の綴りは、どれも断られた)。
+
+**T-270 —— 印の名前の乗っ取り (M3 を名前だけで満たす)**。0.35 まで、検査器は「プロジェクトのどこかで宣言した印と同じ綴り」をどの module でも印と見ていた。
+
+| 破った形 (`VUrl` は別の module が宣言した印) | 0.35 まで |
+| --- | --- |
+| `type VUrl = string;` + `export sink fn open2(u: VUrl) -> void { rawOpen(u); }` —— この module の `VUrl` は型の別名 | 通った (Mamori には「印 1 つを受ける口」・`tsc` には `string` を受ける関数) |
+| `interface VUrl { … }`・`use type { VUrl } from "./types";` (印を宣言していない module の同名の型)・`use type { Plain alias VUrl } from …` | 通った |
+| 同じ名前の印を 2 つの module が宣言する (`vetted VUrl = "a"` と `vetted VUrl = "b"`) | 通った (来歴は印の名前で比べる) |
+
+**T-271 —— 印の別の綴り (M1 を名前を書かずに抜ける)**。「戻り値の型に印を名乗れるのは gate 関数だけ」(0.11 · T-248) は印の名前の綴りしか見ていなかった。
+どの形も `return JSON.parse(x);` の any を `tsc` が通すので、関門を通っていない値が印の型で TypeScript の呼び手へ出た。
+
+| 破った形 | 0.35 まで |
+| --- | --- |
+| `use type { VUrl alias U } from "./gate";` → `fn forge(x: string) -> U` | 通った |
+| `type U = VUrl;`・`type Mk = (x: string) => VUrl;` → `-> U` | 通った |
+| `interface Box { readonly u: VUrl; }` → `-> Box` | 通った |
+| `export const US: readonly VUrl[] = JSON.parse(…);`・`export const U: VUrl = JSON.parse(…);` | 通った |
+| `-> ReturnType<typeof 関門>` (`VUrl \| null`)・`-> Parameters<typeof 印を受ける関数>` (`[VUrl]`)・`-> typeof 印の型の const` | 通った |
+| `const K = 関門("…");` → `-> typeof K`・`const wrap = (x: string) => 関門(x);` → `-> ReturnType<typeof wrap>` (型は推論で印を含む・引いた先でも同じ) | 通った |
+| `fn relay(u: ReturnType<typeof 関門>, x: string) -> typeof u` (引数の型を `typeof` で書く) | 通った |
+
+0.36 の規則:
+
+- **印の名前は module ごとに解く (T-270)**。名前が印を指すのは、その module が `vetted` で宣言したときと、**印を宣言した Mamori の module から別名を付けずに
+  `use` で引いたとき**だけ。危ない口の行き先 (M3)・関数の外形が運ぶ印・来歴の検めはこの表を使う (狭く認める)。断る側 —— 戻り値の型・`satisfies`・省ける引数・
+  型引数・interface の継ぎ —— はプロジェクト全体の印の名前を見る (広く断る)。
+- **印の名前を別の宣言に付けられない (M4 · T-270)**: 型の別名・interface・クラス・`use` / `use default` / `extern` で引いた同名の物・別名 (`alias 印の名前`)。
+  印を宣言した module の中でも同じ。**同じ名前の印は 2 度宣言できない (M1)**。
+- **印は別名で引けない (M4 · T-271)**。`use type { VUrl alias U }` は断る —— 印は宣言した名前のまま引く。
+- **印の型を書ける場所は、関門の戻り値・印を運ぶ引数・局所の束縛だけ (M1 · T-271)**。型の別名の中・interface の欄・直下の const / let の型
+  (印そのもの `印` / `印 | null` の const を除く) には書けない。印そのものの型の直下の const は、初期値が印を運ぶとき (関門の結果) だけ置ける (M4)。
+- **`typeof 印に関わる値` は印の綴りである (M1 · T-271)**。関門でない関数の戻り値・型の別名・interface の欄・直下の const / let の型に書けない。
+  印に関わる値とは:
+  - `use` で引いた値: 外形 (引数・戻り値) に印の名前か `typeof` を書いた関数、型が印の名前か `typeof` を書いた const、型を書いていない const (初期値が文字列・数・真偽の字面そのものでない物)。
+  - この module の宣言: 型が印を指す関数・クラス (constructor の引数)・直下の const / let。`typeof 別の印に関わる値` も印を指すので、名指しの鎖が増えなくなるまで辿る。
+  - この module の型を書いていない const (字面でない物) —— module が印の名前か印に関わる値を 1 つでも持つとき。
+  - その関数の、型が印を指す引数 (`fn f(u: 印 | null) -> typeof u`)。
+- 今までどおり書ける形: 印に関わる物が 1 つも無い module の `typeof api` / `typeof KDF` (preload・dataCrypto の形)・`typeof fetch` (ホストの global)・
+  外形が印に関わらない関数の `ReturnType<typeof f>`・型を書いた (印でない) const と字面の const の `typeof`。
+
+**残る限界 (台帳の T-270 / T-271 に書いた)**:
+
+- **Mamori の外の型は中身が見えない**: `extern` で引いたホストの関数の `ReturnType<typeof hostGate>`・TypeScript の module の `export type U = VUrl;` を
+  `use type { U }` で引いた綴り。TypeScript の側のレビューと `tsc` が守る。
+- **型引数を通した any**: `fn f<T>(x: string) -> T { return JSON.parse(x); }` は、TypeScript の呼び手が `open(f("…"))` と書くと T が文脈から印に推論され、
+  `tsc` は止めない (`any` を返す関数は M0 で書けないが、型引数を通すと同じことができる)。型引数を戻り値にだけ書く形は実物の橋 (preload の
+  `fetchSnapshot<T>`) が使っており、引数に T を置く規則も空の配列 `[]` を渡す形で抜ける (実測) ので、Mamori の検査では塞げなかった。
+  **根は「any が型つきの位置へ流れること」**で、生成物に型つきの lint (any を返す・渡す・代入する形を断る) を掛けるのが次の手 (`docs/REMAINING_WORK.md`)。
+- 直下の const は来歴を運ばない: `const HOME: 印 | null = 関門("…");` を読んだ値は、印を受ける口へ渡せない (失敗は閉じる向き)。
+
 ## 0.35 —— 読むだけと名乗った表は、読む位置にしか書けない (T-268 / T-269 · MG-072 · 2026-11-16)
 
 言語の穴探しの周。0.33 (T-264) は「読むだけの表は `ReadonlyMap<…>` / `ReadonlySet<…>` と書く —— 書き換えは生成物の `tsc` が断る」とした。
@@ -828,7 +884,7 @@ T-234 (`sinkTyped*` の文脈と印の型の判定)・T-232 (`RegExp.$1`)・`.co
 - 戦いのデータは `security/mamori-arena/corpus.json` に残し、`mamoriArena.test.ts` が毎回再生する (学習データ)。
 - 侵入役の新手を AI に書かせる段は、安全装置に止められた。迂回せず、新手は人が追加する (`*.attack.mamori`)。
 
-## 文法 (0.35)
+## 文法 (0.36)
 
 ```
 module    := header* item*
@@ -885,6 +941,8 @@ fn        := 'export'? ('gate' | 'sink')? 'async'? 'fn' 名前 ('<' 名前 (',' 
 - **モジュール直下の g の正規表現は `const 名前 = /…/g;` と書き、文字列のメソッドの引数にだけ渡す (0.34 · T-266)**。判定 (`.test` / `.exec`) に使う共有の正規表現には g / y を付けない。
 - **モジュール直下の const に `new Date(…)` / `new URL(…)` は置けない。型を書いていない直下の const は、書き換えるメソッドの受け手にできない (0.34 · T-267)**。`use` で引いた先でも同じ (0.35 · T-269)。
 - **読むだけの表 (`ReadonlyMap` / `ReadonlySet` と名乗った名前・型の頭が `Map<` / `Set<` でない直下の `new Map(…)` / `new Set(…)`) の名前は、読む位置にだけ書く (0.35 · T-268)**: `表.get(…)` / `.has(…)` / `.size` / `.keys()` / `.values()` / `.entries()`・`for (const x of 表)`・`[...表]`・`new Map(表)` / `new Set(表)`。直下の `new Map(…)` / `new Set(…)` は初期値そのものに置く (欄・配列の項に包まない)。
+- **印の名前が印を指すのは、`vetted` で宣言した module と、そこから別名なしで `use` で引いた module だけ (0.36 · T-270)**。印の名前を型の別名・interface・クラス・引いた同名の物・別名に付けられない。同じ名前の印は 2 度宣言できない。
+- **印の型を書けるのは、関門の戻り値・印を運ぶ引数・局所の束縛・印そのものの型の直下の const だけ (0.36 · T-271)**。印は別名で引けない。型の別名の中・interface の欄・直下の const / let の型 (印そのものを除く) に印の名前は書けない。`typeof 印に関わる値` (関門・印を受ける関数・印の型の const・型を書いていない const) は、関門でない関数の戻り値・型の別名・interface の欄・直下の const / let の型に書けない。
 
 ## 例
 

@@ -5021,6 +5021,96 @@
         "file": "src/shared/mamori/__tests__/mamoriV35.test.ts",
         "test": "★ 引いた先で `.set` / `.add` / `.delete` / `.clear` / `.append` / `.setTime` の受け手にする形は断る (threat: T-269)"
       }
+    },
+    {
+      "id": "T-270",
+      "found": "2026-11-16",
+      "foundBy": "MG-073 (言語の穴探しの周)。検査器は「プロジェクトのどこかで宣言した印と同じ綴り」を、どの module でも印と見ていた。ところが綴りが指す先は module ごとに違う。`type VUrl = string;` (この module の型の別名)・`interface VUrl { … }`・`use type { VUrl } from \"./types\";` (印を宣言していない module の同名の型)・`use type { Plain alias VUrl } from …` (印の名前を別名に付ける) と書いた module では、`export sink fn open2(u: VUrl) -> void { rawOpen(u); }` が Mamori には「印 1 つを受ける危ない口」(M3) に見え、tsc には素の string を受ける関数だった。TypeScript の呼び手は `open2(\"javascript:alert(1)\")` を型の誤りなしに書ける (Mamori と tsc --strict の両方を通ることを手元の足場で実測)。同じ名前の印を 2 つの module が宣言する形も通っていた (来歴は印の名前で比べる)。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "守りの層を書く言語 Mamori が、印の名前を綴りだけで見分けており、印と同じ名前の型 (別名・interface・別の module の同名の型) を行き先に書いた危ない口を「印を受ける口」として通した",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: 印の名前は module ごとに解く (0.36)。名前が印を指すのは、その module が `vetted` で宣言したときと、印を宣言した Mamori の module から別名を付けずに `use` で引いたときだけ (`marksIn`)。危ない口の行き先 (M3)・関数の外形が運ぶ印・来歴の検めはこの表を使う。断る側 (戻り値・`satisfies`・省ける引数・型引数・interface の継ぎ) はプロジェクト全体の印の名前を広く見る。印の名前を別の宣言に付ける形 —— 型の別名・interface・クラス・`use` / `use default` / `extern` で引いた同名の物・別名 —— は宣言の場所で断る (M4)。同じ名前の印の 2 度目の宣言は断る (M1)。残る限界: TypeScript の module の中で印に別名を付けた型 (`export type U = VUrl;`) を `use type { U }` で引いた綴りは、Mamori からは中身が見えない (TypeScript の側のレビューが守る)。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV36.test.ts",
+        "test": "★ 印の名前を型の別名・interface・クラスに付けた module では、その名前で危ない口を作れない (threat: T-270)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV36.test.ts",
+          "test": "★ 印を宣言していない module から同じ名前を引いても印にならない —— use type・use・別名・extern・use default (threat: T-270)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV36.test.ts",
+          "test": "★ 宣言も import も無い印の名前は印として読まない —— 口の行き先にも、名乗る場所にも書けない (threat: T-270)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV36.test.ts",
+          "test": "★ 同じ名前の印は 2 度宣言できない —— 別の module でも同じ module でも (threat: T-270)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV36.test.ts",
+          "test": "★ 偽の印を名乗る module の関門が作った値は、本物の印を受ける口へ渡せない (threat: T-270)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV36.test.ts",
+          "test": "★ 印を宣言した module の中でも、印の名前を別の宣言に付け直せない (threat: T-270)"
+        }
+      ]
+    },
+    {
+      "id": "T-271",
+      "found": "2026-11-16",
+      "foundBy": "MG-073 (言語の穴探しの周)。「戻り値の型に印を名乗れるのは gate 関数だけ」(M1 · 0.11 · T-248) は、印の名前の綴りしか見ていなかった。同じ型を別の綴りで名乗る道を 5 家系見つけた: ① 別名で引く (`use type { VUrl alias U }` → `-> U`) ② 型の別名 (`type U = VUrl;`・`type Mk = (x: string) => VUrl;`) ③ interface の欄 (`interface Box { readonly u: VUrl; }` → `-> Box`) ④ 直下の const の型 (`export const US: readonly VUrl[] = JSON.parse(…);`・`export const U: VUrl = JSON.parse(…);`) ⑤ `typeof` (`-> ReturnType<typeof 関門>`・`Parameters<typeof 印を受ける関数>`・`typeof 印の型の const`・`typeof 型を書いていない const` —— `const K = 関門(\"…\");` の型は推論で印を含む・引いた先でも同じ)。どれも `return JSON.parse(x);` の any を tsc が通すので、関門を通っていない値が印の型で TypeScript の呼び手へ出て、`open(forge(\"javascript:alert(1)\"))` が型の誤りなしに書けた (Mamori と tsc --strict の両方を通ることを手元の足場で実測)。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "medium",
+      "title": "守りの層を書く言語 Mamori の「戻り値の型に印を名乗れるのは関門だけ」が印の名前の綴りしか見ておらず、別名・型の別名・interface の欄・直下の const の型・typeof で同じ型を名乗る関数が、関門を通っていない値を印の型で返せた",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/checker.ts: 印を指す綴りを広く断る (0.36)。印は別名で引けない (M4)。型の別名の中・interface の欄・直下の const / let の型 (印そのもの `印` / `印 | null` を除く) に印の名前は書けない (M1)。印そのものの型の直下の const は、初期値が印を運ぶときだけ置ける (M4)。`typeof 名前` は、名前が印に関わる値のとき、関門でない関数の戻り値・型の別名・interface の欄・直下の const / let の型に書けない (M1)。印に関わる値 = `use` で引いた、外形 (引数・戻り値) に印の名前か `typeof` を書いた関数と、型が印の名前か `typeof` を書いた const・型を書いていない const (初期値が字面そのものでない物)。この module の宣言は、型が印を指す関数・クラス (constructor の引数)・直下の const / let を、名指しの鎖が増えなくなるまで辿る。この module の型を書いていない const は、module が印の名前か印に関わる値を 1 つでも持つときに当たる。残る限界: ① Mamori の外の型 —— `extern` で引いたホストの関数の `typeof`・TypeScript の module から `use type` で引いた型の中身は見えない ② 型引数を戻り値に書いた関数 (`fn f<T>(x: string) -> T { return JSON.parse(x); }`) は、TypeScript の呼び手の文脈 (`open(f(…))`) から T が印に推論される —— any を返す関数を Mamori は書けない (`any` は M0) が、型引数を通した any は tsc も止めない。生成物に型つきの lint (any を返す・渡す形を断る) を掛ける形で次に塞ぐ (docs/REMAINING_WORK.md)。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV36.test.ts",
+        "test": "★ `typeof` で関門・印を受ける関数・印の型の値を名指しして、戻り値の型に印を名乗れない (threat: T-271)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV36.test.ts",
+          "test": "★ 印に別名を付けて引けない (threat: T-271)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV36.test.ts",
+          "test": "★ 型の別名・interface の欄に印の型は書けない (threat: T-271)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV36.test.ts",
+          "test": "★ 直下の const / let の型に、印そのもの以外の印の型は書けない (threat: T-271)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV36.test.ts",
+          "test": "★ 印そのものの型の直下の const は、印を運ぶ初期値だけを受ける (threat: T-271)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV36.test.ts",
+          "test": "★ `typeof` の名指しは、型の別名・interface の欄・直下の const / let の型でも断る (threat: T-271)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV36.test.ts",
+          "test": "★ 型を書いていない直下の const は、印に関わる module では `typeof` で名指しできない (threat: T-271)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV36.test.ts",
+          "test": "★ 引いた先でも: 型を書いていない const・印の型の const・その別名は `typeof` で名指しできない (threat: T-271)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV36.test.ts",
+          "test": "★ 外形が印に関わる関数は、印そのものの型でなくても `typeof` で名指しできない —— 引いた先でも (threat: T-271)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV36.test.ts",
+          "test": "★ constructor の引数に印の型を持つクラスは `typeof` で名指しできない (threat: T-271)"
+        }
+      ]
     }
   ],
   "huntBacklog": [

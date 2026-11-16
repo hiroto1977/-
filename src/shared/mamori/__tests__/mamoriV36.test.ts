@@ -28,7 +28,8 @@ const REAL =
   'export vetted VU = "u";\nextern sink { rawOpen } from "./host";\nexport sink fn open(u: VU) -> void {\n  rawOpen(u);\n}\n' +
   'export gate fn g(x: string) -> VU | null {\n  if (x.startsWith("https://")) {\n    return mint VU(x);\n  }\n  return null;\n}\n' +
   'export const wrapped = (x: string) => g(x);\nexport const HOME: VU | null = g("https://example.com");\nexport const KDF = "PBKDF2";\nexport const LIMIT: number = 3;\n' +
-  'export fn relayMany(us: readonly VU[]) -> void {\n  return;\n}\nexport fn viaTypeof(u: ReturnType<typeof g>) -> void {\n  return;\n}\nexport fn helper(x: string) -> number {\n  return x.length;\n}\n';
+  'export fn relayMany(us: readonly VU[]) -> void {\n  return;\n}\nexport fn viaTypeof(u: ReturnType<typeof g>) -> void {\n  return;\n}\nexport fn helper(x: string) -> number {\n  return x.length;\n}\n' +
+  'export const COUNT = 3;\nexport const FLAG = true;\nexport const SIZE: number = "abc".length;\nexport fn loose(x, y: string) -> number {\n  return y.length;\n}\n';
 /** 印の名前 `t` を行き先に書いた危ない口 (標本では m0 に置く)。 */
 const SINK = (pre: string, t = 'VU'): string => `${pre}extern sink { rawOpen } from "./host";\nexport sink fn open2(u: ${t}) -> void {\n  rawOpen(u);\n}\n`;
 const USE_MARK = 'use type { VU } from "./m1";\n';
@@ -250,9 +251,12 @@ describe('0.36: 印の型は、印の名前のほかの綴りで名乗れない 
     expect(diagnostics(useG + 'const MAX: number = 3;\nexport fn n(x: string) -> typeof MAX {\n  return g(x) === null ? 0 : MAX;\n}\n', REAL)).toEqual([]);
     expect(diagnostics(useG + 'const MODE = "x";\nexport fn n(x: string) -> typeof MODE | null {\n  return g(x) === null ? null : MODE;\n}\n', REAL)).toEqual([]);
     expect(diagnostics(useG + 'export fn n(k: number, x: string) -> typeof k {\n  return g(x) === null ? 0 : k;\n}\n', REAL)).toEqual([]);
-    // 引いた値: 外形が印に関わらない関数・字面の const・型を書いた const
-    expect(diagnostics('use { helper } from "./m1";\nexport type N = ReturnType<typeof helper>;\n', REAL)).toEqual([]);
-    expect(diagnostics('use { KDF, LIMIT } from "./m1";\nexport interface Env {\n  readonly kdf: typeof KDF;\n  readonly limit: typeof LIMIT;\n}\n', REAL)).toEqual([]);
+    // 字面の const は文字列・数・真偽のどれでも同じ。型を書いていない引数を持つ関数・クラスも (型が無い引数は印を指さない)
+    const literals = 'const N = 3;\nconst ON = true;\nfn loose2(x, y: string) -> number {\n  return y.length;\n}\nclass Oops extends Error {\n  constructor(m) {\n    super("x");\n  }\n}\n';
+    expect(diagnostics(useG + literals + 'export interface Env {\n  readonly n: typeof N;\n  readonly on: typeof ON;\n  readonly f: typeof loose2;\n  readonly e: typeof Oops;\n}\nexport fn n(x: string) -> number {\n  return g(x) === null ? 0 : 1;\n}\n', REAL)).toEqual([]);
+    // 引いた値: 外形が印に関わらない関数 (型を書いていない引数を持つ物も)・字面の const (文字列・数・真偽)・型を書いた const (初期値が字面でなくても)
+    expect(diagnostics('use { helper, loose } from "./m1";\nexport type N = ReturnType<typeof helper>;\nexport type L = typeof loose;\n', REAL)).toEqual([]);
+    expect(diagnostics('use { KDF, LIMIT, COUNT, FLAG, SIZE } from "./m1";\nexport interface Env {\n  readonly kdf: typeof KDF;\n  readonly limit: typeof LIMIT;\n  readonly count: typeof COUNT;\n  readonly flag: typeof FLAG;\n  readonly size: typeof SIZE;\n}\n', REAL)).toEqual([]);
     // 外形に `typeof` を書いた関数 (印に関わらない値の名指し) が在っても、module は印に関わらないまま
     const withTypeof = 'const api = {\n  ping: (x: string) => x.length,\n};\nfn call(f: typeof api, x: string) -> ReturnType<typeof api.ping> {\n  return f.ping(x);\n}\nexport type Bridge = typeof api;\nexport type Call = typeof call;\n';
     expect(diagnostics(withTypeof)).toEqual([]);

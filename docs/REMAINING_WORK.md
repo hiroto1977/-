@@ -1,5 +1,26 @@
 # Service Hub — 残りの作業手順書
 
+## MG-073 (言語の穴探し · Mamori 0.36 · T-270 / T-271) で測って残した物 (2026-11-16)
+
+0.36 は「印の名前は module ごとに解く」「印の型は別の綴り (別名・型の別名・interface の欄・直下の const の型・`typeof`) で名乗れない」を足した
+(`docs/MAMORI.md` の 0.36 の節)。直した後のコンパイラへ当てて、**今も通る**ことを確かめた形 (Mamori と `tsc --strict` の両方):
+
+- **★ 型引数を通した any (次に塞ぐ)** —— `export fn forge<T>(x: string) -> T { return JSON.parse(x); }` を、TypeScript の呼び手が `open(forge("javascript:alert(1)"))` と書くと、
+  T が文脈から印に推論され `tsc` は止めない。`any` を返す関数は M0 で書けないが、型引数を通すと同じことができる。
+  塞ぐ案を 2 つ測って捨てた (`tsc` 5.9.3 · strict): ① 「戻り値に書いた型引数は引数の型にも書く」—— 実物の橋 (preload の `fetchSnapshot<T>(serviceId) -> Promise<FetchResult<T>>`) が落ち、
+  しかも `first<T>(xs: readonly T[], raw: string) -> T` に `[]` を渡す形 (`open(first([], "…"))`)・省ける引数 (`hint?: T`) を省く形は通る (`hint: T | null` に `null` を渡す形は断られた)
+  ② 生成物の戻り値の型を `NoInfer<T>` にする —— 引数に T が無い形と省ける引数の形は断られるが、`[]` を渡す形は通る。
+  **根は「any が型つきの位置へ流れること」**で、型を持たない Mamori の検査では見分けられない (any の出どころ —— `JSON.parse`・ホストの関数・`Object.fromEntries` ほか —— は数え切れない)。
+  次の手の候補: **生成物 (46 本の `.ts`) に、型情報つきの lint (`@typescript-eslint/no-unsafe-return` / `no-unsafe-argument` / `no-unsafe-assignment` の系) を門として掛ける** ——
+  いまの eslint は型情報なしで走る (`parserOptions.project` が無い) ので、生成物だけを対象にした設定が要る。ホストの橋 (`invokeIpc` ほか) が any を返す所は、理由つきの台帳にする。
+  これが入れば、T-271 の 5 家系 (どれも `return JSON.parse(x);` の any に依る) も、綴りの規則と別の層で止まる。
+- **Mamori の外の型は中身が見えない** —— `extern pure { hostGate } from "./host";` の `-> ReturnType<typeof hostGate>` (ホストの関数が印を返すなら印の型)・
+  TypeScript の module の `export type U = VUrl;` を `use type { U }` で引いた綴り。TypeScript の側のレビューと `tsc` が守る。上の型つきの lint が入れば、any を返す側で止まる。
+- **`use` で引いた関数の `typeof` は広く断る** —— 外形に `typeof` を 1 つでも書いた関数 (`exchangeGoogleCode(args, fetchImpl: typeof fetch = hostFetch)`) は、引いた先では印に関わる値として扱う
+  (相手を辿らない)。この module の宣言は名指しの鎖を最後まで辿るので、`typeof fetch` を書いた関数は印に関わらない。引いた先でも辿るなら、module をまたぐ不動点が要る (実物に該当する書き方は無い)。
+- **直下の const は来歴を運ばない** —— `const HOME: 印 | null = 関門("…");` を読んだ値は、印を受ける口へ渡せない (M4 · 失敗は閉じる向き)。起動時に 1 度だけ関門を通した値を使い回す書き方が要るなら、
+  直下の const の束縛に印を運ばせる (初期値が印を運ぶことは 0.36 が検めている)。
+
 ## MG-072 (言語の穴探し · Mamori 0.35 · T-268 / T-269) で測って残した物 (2026-11-16)
 
 0.35 は「読むだけと名乗った表の名前は、読む位置にしか書けない」を足した (`docs/MAMORI.md` の 0.35 の節)。直した後のコンパイラへ当てて、**今も通る**ことを確かめた形:
