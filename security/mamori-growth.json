@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.35"
+    "version": "0.36"
   },
   "constructs": {
     "class": {
@@ -4440,6 +4440,81 @@
         "pr": 917,
         "reason": "draft PR #917 に載せる",
         "summary": "言語の穴探しの周 (移植も構文の追加も無い)。規則を破るプログラムを約 150 本と、式の計算の食い違い 70 式を 0.34 のコンパイラへ当てた。印の偽造・名前の逃がし・生成物へのコードの注入・式の計算はどれも断られた (または一致した)。穴は 2 家系。T-268: 0.33 が「読むだけの表は ReadonlyMap / ReadonlySet と書く —— 書き換えは tsc が断る」とした tsc の型が、絞り込み (`TABLE instanceof Map`・自分で書いた型述語・asserts) と any への洗い (`Object.values`・`Array.isArray(unknown)` の後の要素・Promise の catch の理由・`Object.fromEntries`) で外れ、`TABLE.set(…)` / `.clear()` が Mamori も tsc も通った。T-269: 0.34 の「型を書いていない直下の const は書き換えるメソッドの受け手にできない」が同じ module の中しか見ておらず、`use` で引いた先では通った。直しは checker の M6 (0.35): 絞り込みと any の出どころを 1 つずつ塞がず、読むだけの表の名前を書ける場所を決めた —— 読むメンバ 6 つの受け手・for-of・展開・組み込みの `new Map(表)` / `new Set(表)` だけ。引数に渡す・別名・返す・入れ物に入れる・instanceof の左・書き換えるメソッドの受け手は断る (tsc の型に頼らない)。型の別名・合併で名乗った直下の表も読むだけの側へ倒し、直下の初期値の中 (欄・配列の項・引数) の `new Map` / `new Set` は置けない。直下の const の扱い (読むだけの表・型なし) は module ごとの表にして `use` の先でも同じにした。実物の 46 本の .mamori は新しい規則に当たらず、生成物も出荷物も 1 byte も変わらない。回帰検査 mamoriV35 (10 件)・穴の開け直し A-609〜A-613 (5 件とも caught)。変異検査は checker.ts の全体で 99.95% (生存 1 = 等価の pragma が編集でずれた物)、pragma を戻して直した範囲を測り直し 100.00%。"
+      }
+    },
+    {
+      "id": "MG-073",
+      "date": "2026-11-16",
+      "kind": "probe",
+      "target": "language",
+      "pickedBy": "brief",
+      "briefPick": "probe:language",
+      "version": "0.36",
+      "features": [],
+      "added": [],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "印の名前を、印でない宣言に付けた module で危ない口を作る: `type VUrl = string;`・`interface VUrl`・`use type { VUrl } from \"./types\";` (印を宣言していない module の同名の型)・`use type { Plain alias VUrl }` + `sink fn open2(u: VUrl)`",
+          "result": "hole"
+        },
+        {
+          "tried": "同じ名前の印を 2 つの module が宣言する (`vetted VUrl = \"a\"` / `vetted VUrl = \"b\"`) —— 片方の関門が作った値をもう片方の印を受ける口へ渡す",
+          "result": "hole"
+        },
+        {
+          "tried": "印を別名で引く (`use type { VUrl alias U }`)・型の別名 (`type U = VUrl;`)・interface の欄 (`interface Box { u: VUrl }`) で、関門でない関数の戻り値に印の型を名乗る (`-> U { return JSON.parse(x); }`)",
+          "result": "hole"
+        },
+        {
+          "tried": "直下の const の型で印を名乗る: `export const US: readonly VUrl[] = JSON.parse(…);`・`export const U: VUrl = JSON.parse(…);`",
+          "result": "hole"
+        },
+        {
+          "tried": "`typeof` で印を名指しする: `-> ReturnType<typeof 関門>`・`Parameters<typeof 印を受ける関数>`・`typeof 印の型の const`・`typeof 型を書いていない const` (`const K = 関門(\"…\");`)・引数の型を `typeof` で書く・引いた先の値とその別名",
+          "result": "hole"
+        },
+        {
+          "tried": "型引数を通した any: `fn forge<T>(x: string) -> T { return JSON.parse(x); }` を TypeScript の呼び手が `open(forge(\"…\"))` と書く (T が文脈から印に推論される) —— Mamori の検査では塞げず、台帳 T-271 の残る限界と REMAINING_WORK に残した",
+          "result": "hole"
+        },
+        {
+          "tried": "共有のバイト列を別の窓から書き換える (`Uint8Array` / `DataView` / `ArrayBuffer` を extern で引く)・module をまたぐ再 export で印や口を別の名前にする",
+          "result": "refused"
+        },
+        {
+          "tried": "禁じた名前を文字列の逃がしで組み立てる (`\"\\u0063onstructor\"`・連結した鍵)・`return` / `throw` の後の改行と注記で式を切り離す",
+          "result": "refused"
+        },
+        {
+          "tried": "any を印の型の位置へ置く 39 形 (局所の束縛・条件演算子・`??`・配列の分割・`await`・呼び戻しの引数・既定値・`satisfies`・型引数) と、`import(\"…\").印` の綴り",
+          "result": "refused"
+        },
+        {
+          "tried": "0.36 の規則を先に破る: 印を宣言した module の中で名前を付け直す・`use default` / `extern` で同名の物を引く・`typeof` の鎖を宣言の順を入れ替えて書く・constructor の引数に印を持つクラスの `ConstructorParameters<typeof …>`・`typeof` を書かずに値の名前だけを型に書く",
+          "result": "refused"
+        },
+        {
+          "tried": "引数の型だけを `typeof 関門` で書いた関数から本物の口へ渡す (`fn relay(u: ReturnType<typeof g>) { open(u); }`)・偽の印を名乗る module の関門の結果を本物の口へ渡す",
+          "result": "refused"
+        }
+      ],
+      "threats": [
+        "T-270",
+        "T-271"
+      ],
+      "controls": 13,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/checker.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 917,
+        "reason": "draft PR #917 に載せる",
+        "summary": "印の名前を綴りだけで見分けていた穴 (T-270) と、印の型に別の綴りを付ける穴 (T-271) を塞いだ (0.36)。印は宣言した module と、そこから別名なしで引いた module でだけ印として扱い、印の名前を型・interface・class・use・extern に付けること、同じ印を 2 度宣言すること、印を別名で引くこと、型の別名・interface の欄・直下の const / let・関門でない関数の戻り値に印の型や印に関わる値の typeof を書くことを断る。生成物 46 本と出荷物は不変。型引数を通した any (TypeScript の呼び手が T を印に推論する形) は Mamori の検査では塞げず、残る限界として台帳と REMAINING_WORK に残した。変異検査は全体 99.22% (生存 17 + 未到達 1) → 等価な形を消し対照を 3 件足して、直した範囲 446 変異体で 100.00%。"
       }
     }
   ]
