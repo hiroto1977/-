@@ -403,6 +403,27 @@
         ],
         "threats": []
       }
+    },
+    {
+      "id": "spoofing-phishing",
+      "name": "なりすまし・偽装の文面 (フィッシング・見た目の偽装・偽装リンク)",
+      "kind": "ours",
+      "cwes": [
+        "CWE-451",
+        "CWE-1007",
+        "CWE-290",
+        "CWE-357",
+        "CWE-646"
+      ],
+      "defenses": {
+        "files": [
+          "src/shared/inboundThreat.ts",
+          "src/shared/linkSpoof.ts",
+          "src/shared/inboundWatch.ts"
+        ],
+        "gates": [],
+        "threats": []
+      }
     }
   ],
   "notApplicable": [

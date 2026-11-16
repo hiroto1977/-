@@ -5386,6 +5386,11 @@
       "surface": "supply-chain",
       "item": "2 本目の追跡済み Windows .bat ランチャーを足したとき、CI のどの層が落とすか(npm test の回帰検査か verify:all か)",
       "why": "2026-10-25 に監査役が指摘。npm test が ci.yml で走るので実質は捕まるが、ゲートとしての強制の層を確かめていない。"
+    },
+    {
+      "surface": "renderer",
+      "item": "受信の検疫 (src/shared/inboundThreat.ts) をすり抜ける文面 —— 新しい同形異字の組・分割や符号化で隠したリンク・HTML の実体参照で綴ったスキーム・画像だけのメール。見つけた形は security/inbound-samples.json に標本として足し、規則を広げる",
+      "why": "2026-11-16 に足した判定は標本 35 件で縛っているだけで、攻撃者の側から総当たりで破る狩りはまだ 1 度もしていない。見張り番 (クラウド) も同じ規則でラベルを決めるので、すり抜けは両方に効く。"
     }
   ],
   "clearedBacklog": [
