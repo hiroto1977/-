@@ -245,7 +245,7 @@ const PLAIN_BUILTINS: ReadonlySet<string | null> = new Set([...PURE_GLOBALS].fil
 export type SharedRegexKind = 'g' | 'opaque';
 
 /** 共有の const としての扱い (`ProjectTable.sharedConsts`)。 */
-export type SharedConstKind = 'readonly-table' | 'untyped';
+export type SharedConstKind = 'readonly-table' | 'untyped' | 'load-result';
 
 /** 関数の外形 (他のモジュールから引くため)。 */
 export interface FnSignature {
@@ -291,6 +291,7 @@ export interface ProjectTable {
    * モジュールの道 → 直下の const の名前 → 共有の値としての扱い (0.35 · T-268 / T-269)。`use` で引いた先でも同じ扱いにするために持つ。
    * - `readonly-table`: 読むだけの表 (`isReadonlyTableConst`)。名前は読む位置にしか書けない。
    * - `untyped`: 型を書いていない const。入れ物を書き換えるメソッドの受け手にできない (0.34 · T-267 —— 0.34 は同じ module の中しか見ていなかった)。
+   * - `load-result`: 初期値が、その場で走らせた関数の結果を含む const (0.37 · T-274 · `holdsLoadResult`)。名前は Mamori の中で読めない。
    */
   readonly sharedConsts: ReadonlyMap<string, ReadonlyMap<string, SharedConstKind>>;
 }
@@ -458,14 +459,170 @@ function collectMarkConsts(modules: readonly { readonly file: string; readonly m
   return out;
 }
 
-/** 直下の const の、共有の値としての扱いを集める (0.35 · T-268 / T-269)。型つきで読むだけの表でもない const は載せない。 */
+/** 直下の初期値を「字面と組み込みだけ」で組んだかを見るための、module の名前の表 (0.37 · T-274)。 */
+interface LoadEnv {
+  /** 字面・先に宣言したデータの const・組み込みと `extern pure` の呼び出しだけで組んだ const の名前 (閉包を 1 つも含まない)。 */
+  readonly data: ReadonlySet<string>;
+  /** `extern pure` で宣言した名前 —— 副作用も状態も持たないと host が名乗った関数。 */
+  readonly hostPure: ReadonlySet<string>;
+  /** この module が直下で宣言した名前 (組み込みと同じ綴りを隠す物を、組み込みと読まないため)。 */
+  readonly declared: ReadonlySet<string>;
+}
+
+/** 名前が、この module で隠していない組み込みか (`Object` / `Math` / `Map` ほか)。 */
+function isBuiltinName(name: string, env: LoadEnv): boolean {
+  return PURE_GLOBALS.has(name) && !env.declared.has(name);
+}
+
+/**
+ * 式が**データだけ**か (0.37 · T-274): 字面・データの const・それらの欄と演算・「データだけの呼び出し」で組んだ式。
+ * arrow と、データの const でない名前 (関数・`use` で引いた名前・arrow を持つ const) を 1 つでも含めば偽 —— 閉包を含まないと言える式だけを真にする。
+ */
+function isLoadData(e: Expr, env: LoadEnv): boolean {
+  switch (e.kind) {
+    case 'ident':
+      return env.data.has(e.name);
+    case 'array':
+      return e.items.every((x) => isLoadData(x, env));
+    case 'object':
+      return e.props.every((p) => isLoadData(p.value, env));
+    case 'member':
+    case 'field':
+      return isLoadData(e.object, env);
+    case 'index':
+      return isLoadData(e.object, env) && isLoadData(e.key, env);
+    case 'unary':
+    case 'spread':
+      return isLoadData(e.operand, env);
+    case 'binary':
+      return isLoadData(e.left, env) && isLoadData(e.right, env);
+    case 'cond':
+      return isLoadData(e.test, env) && isLoadData(e.then, env) && isLoadData(e.otherwise, env);
+    case 'call':
+    case 'new':
+      return isDataCall(e, env);
+    case 'arrow':
+    case 'arrow-block':
+    case 'mint':
+      return false;
+    default:
+      // 文字列・数・正規表現・true / false / null / undefined。
+      return true;
+  }
+}
+
+/** メソッドの受け手がデータか: 隠していない組み込みの名前空間 (`Object.entries` / `Math.max`)・`extern pure` の名前・その欄、またはデータの式 (`[…].join`)。 */
+function isDataReceiver(x: Expr, env: LoadEnv): boolean {
+  if (x.kind === 'ident') return isBuiltinName(x.name, env) || env.hostPure.has(x.name) || env.data.has(x.name);
+  if (x.kind === 'member') return isDataReceiver(x.object, env);
+  return isLoadData(x, env);
+}
+
+/**
+ * **データだけの呼び出し**か (0.37 · T-274): 呼ぶ相手が組み込み (`new Map(…)` / `Number(…)` / `Object.entries(…)`)・`extern pure` の関数・
+ * データを受け手にするメソッドで、**引数もデータだけ** (arrow と関数の名前を渡さない —— 組み込みが呼び戻して、その結果を返せる)。
+ */
+function isDataCall(e: Expr & { readonly kind: 'call' | 'new' }, env: LoadEnv): boolean {
+  const c = e.callee;
+  const callee = c.kind === 'ident' ? isBuiltinName(c.name, env) || env.hostPure.has(c.name) : e.kind === 'call' && c.kind === 'member' && isDataReceiver(c.object, env);
+  return callee && e.args.every((a) => isLoadData(a, env));
+}
+
+/** 引数を呼び戻さない組み込みの構築子 —— 結果は、引数を入れただけの入れ物か、文字列から作った値。 */
+const NON_INVOKING_CTORS: ReadonlySet<string> = new Set(['Map', 'Set', 'RegExp', 'Error', 'TypeError', 'RangeError']);
+/** 引数を呼び戻さない組み込みの関数 —— 結果は数・文字列・真偽。 */
+const NON_INVOKING_FNS: ReadonlySet<string> = new Set(['Number', 'String', 'Boolean']);
+/** 引数を呼び戻さない `Object` のメンバ —— 結果は引数そのもの (`freeze`) か、引数の欄を並べ直した入れ物。 */
+const NON_INVOKING_OBJECT_MEMBERS: ReadonlySet<string> = new Set(['freeze', 'entries', 'keys', 'values', 'fromEntries']);
+
+/**
+ * **引数を呼び戻さない組み込みの呼び出し**か (0.37 · T-274): `new Map(…)` / `new Set(…)` / `new RegExp(…)` / `Object.freeze(…)` / `Object.entries(…)` / `String(…)` ほか。
+ * 引数に置いた arrow・関数の名前は**置かれるだけで走らない**ので、結果が閉じ込めた状態を持つかは、引数の中の呼び出しだけで決まる
+ * (`new Map([["a", (x) => x]])` は置いただけの arrow の表・`new Map([["a", make()]])` は関数の結果を持つ)。
+ */
+function isNonInvokingCall(e: Expr & { readonly kind: 'call' | 'new' }, env: LoadEnv): boolean {
+  const c = e.callee;
+  if (c.kind === 'ident') return isBuiltinName(c.name, env) && (e.kind === 'new' ? NON_INVOKING_CTORS : NON_INVOKING_FNS).has(c.name);
+  return e.kind === 'call' && c.kind === 'member' && c.object.kind === 'ident' && c.object.name === 'Object' && isBuiltinName('Object', env) && NON_INVOKING_OBJECT_MEMBERS.has(c.prop);
+}
+
+/**
+ * 直下の初期値が、**その場で走らせた関数の結果**を含むか (0.37 · T-274)。置いただけの arrow の本体は走らないので見ない。
+ *
+ * 関数が返した物は、関数の中の配列・let・Map を閉じ込めた閉包かもしれない: `fn make() { const xs = ["https://ok/"]; return (x) => { xs.push(x); return xs; }; }` を
+ * `const ADD = make();` と置くと、const と名乗る名前の後ろに**呼び出しをまたぐ状態**ができ、関門が読む許可リストを別の関数が書き換えられる
+ * (T-258 / T-264 / T-267 が直下の入れ物について断った形の、閉じ込めた先での現れ)。Mamori は型を解かないので、返した物が状態を持つかは見分けられない ——
+ * 引数を呼び戻さない組み込み (`isNonInvokingCall`) は引数の中だけを見て、ほかの呼び出しはデータだけ (`isDataCall`) でなければ「関数の結果」とする。
+ * そういう初期値の const は、名前を Mamori の中で読めなくする。状態を持つ物は let に置く (状態と名乗る)。
+ */
+function holdsLoadResult(e: Expr, env: LoadEnv): boolean {
+  switch (e.kind) {
+    case 'call':
+    case 'new':
+      return isNonInvokingCall(e, env) ? e.args.some((a) => holdsLoadResult(a, env)) : !isDataCall(e, env);
+    case 'array':
+      return e.items.some((x) => holdsLoadResult(x, env));
+    case 'object':
+      return e.props.some((p) => holdsLoadResult(p.value, env));
+    case 'member':
+    case 'field':
+      return holdsLoadResult(e.object, env);
+    case 'index':
+      return holdsLoadResult(e.object, env) || holdsLoadResult(e.key, env);
+    case 'unary':
+    case 'spread':
+      return holdsLoadResult(e.operand, env);
+    case 'binary':
+      return holdsLoadResult(e.left, env) || holdsLoadResult(e.right, env);
+    case 'cond':
+      return holdsLoadResult(e.test, env) || holdsLoadResult(e.then, env) || holdsLoadResult(e.otherwise, env);
+    case 'mint':
+      return holdsLoadResult(e.value, env);
+    default:
+      // 名前・字面は呼び出しを含まない。arrow は置いただけ (本体は呼ばれるまで走らない)。
+      return false;
+  }
+}
+
+/** module が直下で宣言した名前 (use・extern・fn・const・let・class)。 */
+function declaredNames(module: Module): Set<string> {
+  const names = new Set<string>();
+  for (const it of module.items) {
+    if (it.kind === 'use') {
+      if (it.defaultName !== null) names.add(it.defaultName);
+      for (const n of it.names) names.add(n.alias ?? n.name);
+    } else if (it.kind === 'extern') {
+      for (const n of it.names) names.add(n);
+    } else if (it.kind === 'fn' || it.kind === 'const' || it.kind === 'let' || it.kind === 'class') {
+      names.add(it.name);
+    }
+  }
+  return names;
+}
+
+/**
+ * 直下の const の、共有の値としての扱いを集める (0.35 · T-268 / T-269 · 0.37 · T-274)。型つきで読むだけの表でも、関数の結果でもない const は載せない。
+ * 関数の結果を含む const (`load-result`) は、型を書いても・読むだけの表と名乗っても同じ扱い (関数が返した入れ物は、返した側が書き換える口を残せる)。
+ */
 function collectSharedConsts(modules: readonly { readonly file: string; readonly module: Module }[]): Map<string, Map<string, SharedConstKind>> {
   const shared = new Map<string, Map<string, SharedConstKind>>();
   for (const { file, module } of modules) {
     const names = new Map<string, SharedConstKind>();
     shared.set(file, names);
+    const data = new Set<string>();
+    const hostPure = new Set<string>();
+    for (const it of module.items) {
+      if (it.kind === 'extern' && it.authority === 'pure') for (const n of it.names) hostPure.add(n);
+    }
+    const env: LoadEnv = { data, hostPure, declared: declaredNames(module) };
+    // 宣言の順に見る —— 初期値がその場で読めるのは、先に宣言した const だけ (後ろの const は読み込みの時点でまだ無い)。
     for (const it of module.items) {
       if (it.kind !== 'const') continue;
+      if (holdsLoadResult(it.init, env)) {
+        names.set(it.name, 'load-result');
+        continue;
+      }
+      if (isLoadData(it.init, env)) data.add(it.name);
       if (it.type === null) names.set(it.name, 'untyped');
       else if (isReadonlyTableConst(it.type, it.init)) names.set(it.name, 'readonly-table');
     }
@@ -546,6 +703,8 @@ interface Binding {
   readonly sharedRegex?: SharedRegexKind;
   /** 型を書いていないモジュール直下の const か (0.34 · T-267)。入れ物を書き換えるメソッド (`.set` / `.add` ほか) の受け手にできない。 */
   readonly untypedShared?: boolean;
+  /** 初期値が、その場で走らせた関数の結果を含むモジュール直下の const か (0.37 · T-274)。名前は Mamori の中で読めない (`use` で引いた先でも同じ)。 */
+  readonly loadResult?: boolean;
   /** 読むだけの表か (0.35 · T-268)。型が `ReadonlyMap` / `ReadonlySet` を名指しする名前と、読むだけの直下の表。読む位置 (`TABLE_READ_MEMBERS`・`for … of`・展開・`new Map(表)`) にしか書けない。 */
   readonly readonlyTable?: boolean;
 }
@@ -717,8 +876,9 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
         const shared = table.sharedConsts.get(target)?.get(n.name);
         const untypedShared = shared === 'untyped';
         const readonlyTable = shared === 'readonly-table';
+        const loadResult = shared === 'load-result';
         // Stryker disable next-line StringLiteral: 上の注記のとおり等価 ('pure' は 'sink' / 'local' でないことだけを意味する)
-        declare(n.alias ?? n.name, { vetted: null, authority: 'pure', sharedRegex: table.sharedRegex.get(target)?.get(n.name), untypedShared, readonlyTable }, it.pos);
+        declare(n.alias ?? n.name, { vetted: null, authority: 'pure', sharedRegex: table.sharedRegex.get(target)?.get(n.name), untypedShared, readonlyTable, loadResult }, it.pos);
       }
     } else if (it.kind === 'extern') {
       if (it.from !== null) checkSpecifier(it.from, it.pos);
@@ -747,7 +907,7 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
         declare(n, { vetted: null, authority: it.authority }, it.pos);
       }
     } else if (it.kind === 'const') {
-      declare(it.name, { vetted: null, authority: 'local', numeric: it.type?.text === 'number' || isNumericKey(it.init, []), inert: carriesInert(it.init, [moduleScope]), sharedRegex: table.sharedRegex.get(file)!.get(it.name), untypedShared: it.type === null, readonlyTable: isReadonlyTableConst(it.type, it.init) }, it.pos);
+      declare(it.name, { vetted: null, authority: 'local', numeric: it.type?.text === 'number' || isNumericKey(it.init, []), inert: carriesInert(it.init, [moduleScope]), sharedRegex: table.sharedRegex.get(file)!.get(it.name), untypedShared: it.type === null, readonlyTable: isReadonlyTableConst(it.type, it.init), loadResult: table.sharedConsts.get(file)!.get(it.name) === 'load-result' }, it.pos);
     } else if (it.kind === 'let') {
       declare(it.name, { vetted: null, authority: 'local', mutable: true, moduleLet: true, numeric: it.type.text === 'number', depth: 0, readonlyTable: isReadonlyTableConst(it.type, it.init) }, it.pos);
     } else if (it.kind === 'class') {
@@ -1072,6 +1232,14 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
     } else if (flags.includes('g') && (shared.mutable || e !== shared.direct)) {
       report('M6', e.pos, `モジュール直下の ${shared.name} の中に g の付いた正規表現は置けません —— \`lastIndex\` という状態を持ち、\`.test\` / \`.exec\` のたびに進むので、同じ入力への答えが呼ぶたびに変わります。g の正規表現は \`const 名前 = /…/g;\` と直下の const の初期値そのものに書くか (文字列のメソッドの引数にだけ渡せます)、使う関数の中で作ります`);
     }
+  }
+
+  /**
+   * 関数の結果を置いた直下の const の名前を読む形を断る (0.37 · T-274)。値として読む形 (`checkExpr` の名前の枝) と、直に呼ぶ形 (`checkCallee`) の両方から呼ぶ。
+   * 読めないのは Mamori の中だけ —— `export` して TypeScript の側で読む・起動の副作用のために置く形 (`export const booted = boot();`) は今までどおり書ける。
+   */
+  function refuseLoadResult(name: string, pos: Pos): void {
+    report('M6', pos, `${name} は、関数の呼び出しの結果を置いたモジュール直下の const なので、Mamori の中では読めません —— 関数が返した物は、閉じ込めた配列・let・Map を呼び出しをまたいで持てるので、const と名乗る名前の後ろで関門の判定が変わります。状態を持つ物は型つきの \`let\` に置き (状態と名乗る)、決まった値は字面と組み込み (\`new Map(…)\` / \`Object.entries(…)\` ほか) だけで組みます`);
   }
 
   /** 名前の式ならその束縛、そうでなければ undefined (`f()()` / `a.b.c(…)` の頭は名前ではない)。 */
@@ -1466,6 +1634,8 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
       return;
     }
     if (callee.kind === 'ident') {
+      // 関数の結果を置いた直下の const を直に呼ぶ形 (`ADD(x)`) —— 名前の枝を通らないので、ここで断る (0.37 · T-274)。
+      if (b?.loadResult === true) refuseLoadResult(callee.name, callee.pos);
       // 名前を直に呼ぶ形: 宣言していない名前の検め (M6) だけを通す (印を受ける関数を呼ぶのは正しい使い方)。
       if (b === undefined && !isConstructibleBuiltin(callee, scopes)) checkExpr(callee, scopes, ctx);
       return;
@@ -1519,6 +1689,10 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
           report('M2', e.pos, ctx.role !== 'sink'
             ? `危ない口 ${e.name} (extern sink) は sink 関数の中でだけ使えます`
             : `危ない口 ${e.name} は sink 関数の中でも呼ぶ形 (${e.name}(…) / ${e.name}.m(…)) でしか使えません —— 値として持ち出す・返すと、関門の外から素の値で呼べてしまう`);
+          return;
+        }
+        if (b.loadResult === true) {
+          refuseLoadResult(e.name, e.pos);
           return;
         }
         if (b.sharedRegex === 'g' && !regexUses.has(e)) {
