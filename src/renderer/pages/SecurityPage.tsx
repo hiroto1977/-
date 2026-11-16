@@ -24,6 +24,8 @@ import type { ActionData } from '../../shared/actionData';
 import { ProxyRequiredNote } from '../components/ProxyRequiredNote';
 import { externalTextOnOneLine } from '../data/assistantMarkdown';
 import { InboundQuarantine } from '../components/InboundQuarantine';
+import { BootProtectionCard } from '../components/BootProtectionCard';
+import { bootProtectionOf } from '../../shared/bootProtection';
 
 const GRADE_COLOR: Record<string, string> = {
   A: 'var(--success)',
@@ -67,7 +69,7 @@ export function SecurityPage() {
     'security',
     SNAPSHOT.security,
   );
-  const { norton, keysConfigured } = data;
+  const { norton, boot, keysConfigured } = data;
 
   // レッド×ブルー演習場 (純ロジック・決定論的・実行を伴わない) を毎回算出。
   const range = useMemo(() => runSecurityRange(DEFAULT_RANGE_CORPUS, DEFAULT_EVASIONS), []);
@@ -201,6 +203,10 @@ export function SecurityPage() {
             業務効率化の中核は下記 HIBP / VirusTotal による横断的なチェックです。
           </p>
         </div>
+      </Section>
+
+      <Section title="起動の守りの点検 (ブートセクタ型への備え)">
+        <BootProtectionCard detection={bootProtectionOf(boot)} />
       </Section>
 
       <Section

@@ -97,6 +97,11 @@ const LEDGER: readonly LedgerRow[] = [
       + '出典の独立性を数える Set の鍵で、パス 478 の実測で読み手は distinctSourceCount だけ',
   },
   {
+    file: 'src/shared/inboundThreat.ts',
+    needle: "'https://' + raw",
+    reason: '(c) 文面に在った www. 始まりの綴りへ scheme を補い、兆候を数えるために解析するだけ。通信しない・URL として画面にも出さない (画面に出るのは無効化した文面と固定の文)',
+  },
+  {
     file: 'src/shared/linkSpoof.ts',
     needle: "hostOf('https://' + m[1])",
     reason: '(c) 表示文字のドメインらしい綴りをホストへ正規化して行き先と比べるだけ。通信しない・URL として画面にも出さない (出るのはホスト名だけ)',

@@ -161,7 +161,9 @@ const ASKS_SECRET_RES: readonly RegExp[] = [
 type Tally = Map<InboundCode, number>;
 
 function hit(tally: Tally, code: InboundCode, times = 1): void {
-  if (times > 0) tally.set(code, (tally.get(code) ?? 0) + times);
+  if (times <= 0) return;
+  const before = tally.get(code);
+  tally.set(code, before === undefined ? times : before + times);
 }
 
 /** 文面の中で、式が当たった回数。 */

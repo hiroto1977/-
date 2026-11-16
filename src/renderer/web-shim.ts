@@ -1453,6 +1453,8 @@ const unguarded = {
         // 端末のファイルを読めないので「探せない」。同梱値の detection も
         // 'unavailable' だが、ここで明示しておく (snapshot の既定に依存しない)。
         norton: { ...mod.SNAPSHOT.security.norton, detection: 'unavailable' },
+        // 起動の守りも同じ: ブラウザ版は端末の設定を読めない (同梱値に依らず明示する)。
+        boot: { detection: 'unavailable' },
         keysConfigured: { hibp: Boolean(keys.hibp), vt: Boolean(keys.vt) },
       }) as ActionResult<T>;
     }

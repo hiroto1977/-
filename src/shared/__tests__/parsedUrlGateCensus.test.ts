@@ -112,6 +112,8 @@ const LEDGER: readonly Row[] = [
     why: 'パス 300。内側を向いた送り先かを判定するだけ' },
   { file: 'src/shared/grokSnapshot.ts', needle: 'new URL(spec.defaultBaseUrl).hostname', kind: 'internal',
     why: '提供者の台帳 (AI_PROVIDERS.grok) の固定の既定 URL から、画面に出すホスト名だけを取る。外から来る値ではない' },
+  { file: 'src/shared/inboundThreat.ts', needle: "return new URL(/^www\\./i.test(raw) ? 'https://' + raw : raw)", kind: 'predicate',
+    why: '受信の検疫 (2026-11-16)。文面のリンクの兆候 (偽装ホスト・IP 直書き・ポートほか) を数えるだけ。解析結果は通信にも画面にも出ない' },
   { file: 'src/shared/ollamaCore.ts', needle: 'u = new URL(base)', kind: 'predicate',
     why: '許してよい接続先かを判定するだけ' },
   { file: 'src/shared/ollamaCore.ts', needle: 'u = new URL(withScheme)', kind: 'value-gate',
@@ -235,7 +237,7 @@ describe('value-gate は解析後の値を返す (振る舞いで確かめる)',
    * (このリポジトリが繰り返し直してきた形)。行が増減したらここが鳴り、
    * 書き換えるときに「どの種類が増えたのか」を読むことになる。
    */
-  it('★ 種類ごとの行数は実測どおり (台帳 38 行が 39 か所を覆う)', () => {
+  it('★ 種類ごとの行数は実測どおり (台帳 39 行が 40 か所を覆う)', () => {
     const byKind = (k: Row['kind']): number => LEDGER.filter((r) => r.kind === k).length;
     expect({
       'value-gate': byKind('value-gate'),
@@ -243,10 +245,10 @@ describe('value-gate は解析後の値を返す (振る舞いで確かめる)',
       pin: byKind('pin'),
       internal: byKind('internal'),
       display: byKind('display'),
-    }).toEqual({ 'value-gate': 11, predicate: 11, pin: 4, internal: 5, display: 7 });
-    expect(LEDGER).toHaveLength(38);
+    }).toEqual({ 'value-gate': 11, predicate: 12, pin: 4, internal: 5, display: 7 });
+    expect(LEDGER).toHaveLength(39);
     // web-shim の同じ綴りの 2 行が 1 行の台帳に対応するので、か所は台帳より 1 多い。
-    expect(SITES).toHaveLength(39);
+    expect(SITES).toHaveLength(40);
     expect(VALUE_GATE_BEHAVIOR.length).toBeGreaterThanOrEqual(5);
   });
 });
