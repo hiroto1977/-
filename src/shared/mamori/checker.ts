@@ -467,7 +467,7 @@ interface LoadEnv {
   /** `extern pure` で宣言した名前 —— 副作用も状態も持たないと host が名乗った関数。 */
   readonly hostPure: ReadonlySet<string>;
   /** この module が直下で宣言した名前 (組み込みと同じ綴りを隠す物を、組み込みと読まないため)。 */
-  readonly declared: ReadonlySet<string>;
+  readonly declared: ReadonlySet<string | null>;
   /** 印を返す関門 (この module の gate 関数と、`use` で引いた gate 関数) の名前 —— 返すのは印の付いた文字列か null / undefined だけ (0.32 · T-263)。 */
   readonly gates: ReadonlySet<string>;
 }
@@ -549,7 +549,11 @@ const NON_INVOKING_NAMESPACES: ReadonlySet<string> = new Set(['Object', 'Math', 
 function isNonInvokingCall(e: Expr & { readonly kind: 'call' | 'new' }, env: LoadEnv): boolean {
   const c = e.callee;
   if (c.kind === 'ident') return env.gates.has(c.name) || (isBuiltinName(c.name, env) && (e.kind === 'new' ? NON_INVOKING_CTORS : NON_INVOKING_FNS).has(c.name));
-  return c.kind === 'member' && c.object.kind === 'ident' && NON_INVOKING_NAMESPACES.has(c.object.name) && isBuiltinName(c.object.name, env);
+  if (c.kind !== 'member') return false;
+  const ns = identName(c.object);
+  // Stryker disable next-line ConditionalExpression: 等価 —— ns が null なら次の行の has(null) が偽で同じく返る (型の絞り込みのためだけに在る)
+  if (ns === null) return false;
+  return NON_INVOKING_NAMESPACES.has(ns) && isBuiltinName(ns, env);
 }
 
 /**
@@ -582,18 +586,18 @@ function holdsLoadResult(e: Expr, env: LoadEnv): boolean {
       return holdsLoadResult(e.left, env) || holdsLoadResult(e.right, env);
     case 'cond':
       return holdsLoadResult(e.test, env) || holdsLoadResult(e.then, env) || holdsLoadResult(e.otherwise, env);
-    default:
-      // 名前・字面は呼び出しを含まない。arrow は置いただけ (本体は呼ばれるまで走らない)。
-      return false;
   }
+  // 名前・字面は呼び出しを含まない。arrow は置いただけ (本体は呼ばれるまで走らない)。
+  return false;
 }
 
 /** module が直下で宣言した名前 (use・extern・fn・const・let・class)。 */
-function declaredNames(module: Module): Set<string> {
-  const names = new Set<string>();
+function declaredNames(module: Module): Set<string | null> {
+  const names = new Set<string | null>();
   for (const it of module.items) {
     if (it.kind === 'use') {
-      if (it.defaultName !== null) names.add(it.defaultName);
+      // default の名前が無い use は null を入れる (どの名前とも一致しない)。
+      names.add(it.defaultName);
       for (const n of it.names) names.add(n.alias ?? n.name);
     } else if (it.kind === 'extern') {
       for (const n of it.names) names.add(n);
@@ -621,11 +625,18 @@ function collectSharedConsts(modules: readonly { readonly file: string; readonly
     const hostPure = new Set<string>();
     const gates = new Set<string>();
     for (const it of module.items) {
-      if (it.kind === 'extern' && it.authority === 'pure') for (const n of it.names) hostPure.add(n);
-      if (it.kind === 'fn' && isMarkGate(file, it.name)) gates.add(it.name);
-      if (it.kind === 'use') {
-        const target = resolveUse(it.from, file);
-        for (const n of it.names) if (isMarkGate(target, n.name)) gates.add(n.alias ?? n.name);
+      switch (it.kind) {
+        case 'extern':
+          if (it.authority === 'pure') for (const n of it.names) hostPure.add(n);
+          break;
+        case 'fn':
+          if (isMarkGate(file, it.name)) gates.add(it.name);
+          break;
+        case 'use': {
+          const target = resolveUse(it.from, file);
+          for (const n of it.names) if (isMarkGate(target, n.name)) gates.add(n.alias ?? n.name);
+          break;
+        }
       }
     }
     const env: LoadEnv = { data, hostPure, declared: declaredNames(module), gates };

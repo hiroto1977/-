@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.36"
+    "version": "0.37"
   },
   "constructs": {
     "class": {
@@ -4583,6 +4583,68 @@
         "pr": 917,
         "reason": "draft PR #917 に載せる",
         "summary": "0.36 が残した「型引数を通した any」を塞ぐ途中で、同じ穴が Mamori の外 (TypeScript の呼び手) に広く在ることを見つけて塞いだ (言語の版は 0.36 のまま)。tsc も綴りの検査も、型の無い値・型引数の推論・印を欄に持つ型への言い換え・本体の無い宣言・型検査を黙らせる指示で印を名乗る行 (T-272) と、メソッドの引数の双変・入れ物と欄の共変・Object.assign / Proxy で印の中身を差し替える行 (T-273) を通していた。型検査器を使う検査 (markFlowCensus.test.ts) が両方の TypeScript の project の全ファイルを数え、違反 0 件に留める。Mamori の生成物は定義の側 (型の無い値を型引数の位置へ置く形) も見る。出荷コードに該当は無く、出荷物は不変。Mamori の中は同じ形を 17 通り当ててどれも断られた。残る限界 (印を運ぶ引数を渡したうえで別の引数から値を作る TypeScript の型引数つきの関数 ほか) は台帳と REMAINING_WORK に残した。"
+      }
+    },
+    {
+      "id": "MG-075",
+      "date": "2026-11-16",
+      "kind": "probe",
+      "target": "language",
+      "pickedBy": "brief",
+      "briefPick": "probe:language",
+      "version": "0.37",
+      "features": [],
+      "added": [],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "攻撃の電池 (弾 × 文脈 × 環境の掛け合わせと文字の揺さぶり) を回す",
+          "result": "refused"
+        },
+        {
+          "tried": "印の偽造 31 形: 関門を通さずに印の型の値を作る (mint の位置・戻り値の型・型の別名・satisfies・省ける引数・型引数・再輸出・同名の印)",
+          "result": "refused"
+        },
+        {
+          "tried": "共有の表の書き換え 30 形: 読むだけと名乗った直下の Map / Set / 配列 / 物を、別名・欄・添字・展開・引数・借りたメソッド・Object のメンバで書き換える",
+          "result": "refused"
+        },
+        {
+          "tried": "名前の取り違え 25 形: 組み込み・印・関門・口と同じ綴りの宣言 (fn / const / let / class / extern / use / 別名)・内側の束縛での隠し・catch と分割代入の束縛",
+          "result": "refused"
+        },
+        {
+          "tried": "工場関数が返した閉包を直下の const に置いて直に呼ぶ: `fn make() { const xs = [\"https://ok/\"]; return (x) => { xs.push(x); return xs; }; }` + `const ADD = make();` を関門が読み、別の関数が `ADD(\"javascript:\")` で足す",
+          "result": "hole"
+        },
+        {
+          "tried": "型を書いた直下の const に工場の結果を置き、名前を変えたメソッドで書き換える: `const STATE: State = make(); STATE.plus(x)` (0.34 の規則はメソッドの名前 set / add で見ていた)",
+          "result": "hole"
+        },
+        {
+          "tried": "その場で呼ぶ arrow・組み込みが呼び戻す arrow の結果を直下の const に置く: `const ADD = (() => { … })();`・`const A = [0].map(() => { … 閉包を返す … });`",
+          "result": "hole"
+        },
+        {
+          "tried": "直した後のコンパイラへ 30 形を当て直す: 入れ物・条件・演算・欄・添字・展開・await に包む・組み込みと同じ綴りの宣言で組み込みを装う・印を返さない gate 関数の結果・`use` で引いた先で読む・`new Promise(executor)` / `JSON.parse(s, reviver)` / `Array.from(xs, f)`",
+          "result": "refused"
+        }
+      ],
+      "threats": [
+        "T-274"
+      ],
+      "controls": 10,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/checker.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 917,
+        "summary": "言語の穴探しの周。印の偽造・共有の表の書き換え・名前の取り違え (86 形) と攻撃の電池は全部断られた。破れたのは「共有の状態は書き換えさせない」規則 —— 直下に書いた入れ物しか見ておらず、関数が返した閉包 (閉じ込めた配列・let・Map を呼び出しをまたいで持てる) を直下の const に置いて読む形が通った (T-274)。0.37: 初期値がその場で走らせた関数の結果を含む直下の const は、名前を Mamori の中で読めない (値として読む形・直に呼ぶ形・use で引いた先・型を書いた形)。関数の結果でないと言えるのは、引数を呼び戻さない組み込みと、データだけの呼び出しだけ。実物の 46 本は書き換えなしで通り、生成物は 1 byte も変わらない。変えた行の変異検査は 1 度目 94.68% (生存 15 —— 検査の不足 10・等価 5) → 検査を足し等価な形を消して 100.00% (269 変異体)。穴の開け直し 10 件 (A-638〜A-647) は名指しの回帰検査が全部捕まえた。",
+        "reason": "draft PR #917 に載せる"
       }
     }
   ]

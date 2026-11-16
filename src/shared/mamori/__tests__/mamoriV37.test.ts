@@ -72,6 +72,8 @@ describe('0.37: 関数の結果を置いた直下の const は読めない (thre
     const MANY = 'fn many() -> string[] {\n  return [];\n}\nfn pick() -> string {\n  return "0";\n}\n';
     const shapes: readonly string[] = [
       'const X = { add: make() };',
+      'const X = { a: 1, add: make() };',
+      'const X = { add: make(), a: 1 };',
       'const X = [make()];',
       'const X = LIMIT > 0 ? make() : null;',
       'const X = LIMIT > 0 ? null : make();',
@@ -86,6 +88,11 @@ describe('0.37: 関数の結果を置いた直下の const は読めない (thre
       'const X = [...many()];',
     ];
     for (const decl of shapes) expect(reads(`const LIMIT = 3;\nconst LIST = ["a"];\n${ADDER}${MANY}${decl}\n`), decl).toEqual(refused());
+    // 対照: 同じ形でも、関数の結果を含まなければ読める
+    const plain: readonly string[] = [
+      'const X = { a: 1, b: [LIMIT] };', 'const X = LIMIT > 0 ? "a" : "b";', 'const X = LIMIT + 1;', 'const X = -LIMIT;', 'const X = LIST.length;', 'const X = [...LIST];', 'const X = LIST[0];',
+    ];
+    for (const decl of plain) expect(reads(`const LIMIT = 3;\nconst LIST = ["a"];\n${decl}\n`), decl).toEqual([]);
     // 添字の鍵の側 (計算した鍵の結果は戻り値に置けないので、比較の中で読む)
     const COMPARE = 'export fn go(x: string) -> unknown {\n  return X === x;\n}\n';
     expect(diagnostics(`const LIST = ["a"];\n${MANY}const X = LIST[Number(pick())];\n${COMPARE}`)).toEqual(refused());
@@ -179,7 +186,7 @@ describe('0.37: 関数の結果を置いた直下の const は読めない (thre
       // 名前: 関数・arrow を持つ表・引いた名前
       'h(helper)', 'h(STORED)', 'h(IMPORTED)',
       // 配列・オブジェクトの中
-      'h([1, helper])', 'h({ a: helper })',
+      'h([1, helper])', 'h([helper, 1])', 'h({ a: helper })', 'h({ a: 1, b: helper })', 'h({ a: helper, b: 1 })',
       // 欄・field・添字 (相手と鍵)
       'h(STORED.f)', 'h(field STORED.f)', 'h([helper][0])', 'h(LIST[N] + 1)',
       // 単項・展開
@@ -205,17 +212,20 @@ describe('0.37: 関数の結果を置いた直下の const は読めない (thre
   it('★ 組み込みと同じ綴りをこの module が宣言していれば、組み込みとは読まない (threat: T-274)', () => {
     const HOST = 'use { IMPORTED } from "./host";\n';
     // 宣言の形ごと: fn・const・let・class・extern・use・use default・use の別名
-    expect(reads(HOST + 'fn Map(x: string) -> (y: string) => string {\n  return (y: string) => x + y;\n}\nconst X = Map(IMPORTED);\n')).toEqual(refused());
+    expect(reads(HOST + 'fn String(x: string) -> (y: string) => string {\n  return (y: string) => x + y;\n}\nconst X = String(IMPORTED);\n')).toEqual(refused());
     expect(reads(HOST + 'const Number = (x: string) => x;\nconst X = Number(IMPORTED);\n')).toEqual(refused());
-    expect(reads(HOST + 'let String: (x: string) => string = (x: string) => x;\nconst X = String(IMPORTED);\n')).toEqual(refused());
+    expect(reads(HOST + 'let Boolean: (x: string) => string = (x: string) => x;\nconst X = Boolean(IMPORTED);\n')).toEqual(refused());
     expect(reads(HOST + 'class RangeError extends Error {\n  constructor(m: string) {\n    super(m);\n  }\n}\nconst X = new RangeError(IMPORTED);\n')).toEqual(refused());
-    expect(reads(HOST + 'extern pure { Boolean } from "./pure";\nconst X = Boolean(IMPORTED);\n')).toEqual(refused());
+    expect(reads(HOST + 'extern pure { RegExp } from "./pure";\nconst X = new RegExp(IMPORTED);\n')).toEqual(refused());
     expect(reads(HOST + 'use { TypeError } from "./other";\nconst X = new TypeError(IMPORTED);\n')).toEqual(refused());
     expect(reads(HOST + 'use default Error from "./other";\nconst X = new Error(IMPORTED);\n')).toEqual(refused());
     expect(reads(HOST + 'use { mk alias Math } from "./other";\nconst X = Math.max(IMPORTED, 1);\n')).toEqual(refused());
     // データだけの呼び出しの側 (受け手の名前空間・呼ぶ相手) でも同じ
     expect(reads('use { mk alias JSON } from "./other";\nconst X = JSON.parse("[1]");\n')).toEqual(refused());
     expect(reads('use { mk alias Promise } from "./other";\nconst X = new Promise(1);\n')).toEqual(refused());
+    // 対照: 型だけの宣言 (型の別名・interface) は、値の名前を隠さない
+    expect(reads(HOST + 'type Number = number;\nconst X = Number(IMPORTED);\n')).toEqual([]);
+    expect(reads(HOST + 'interface Boolean {\n  readonly a: number;\n}\nconst X = Boolean(IMPORTED);\n')).toEqual([]);
     // 対照: 別名の元の名前 (`mk`) は宣言した名前ではない —— 組み込みを隠すのは、引いた先の名前 (`alias` の右) だけ
     expect(reads(HOST + 'use { Math alias mk } from "./other";\nconst X = Math.max(IMPORTED, 1);\n')).toEqual([]);
   });
@@ -236,6 +246,10 @@ describe('0.37: 関数の結果を置いた直下の const は読めない (thre
     // 印を返さない gate 関数は、閉包を返せる —— 関門の結果とは数えない
     const PLAIN_GATE = 'gate fn make() -> (x: string) => string {\n  return (x: string) => x;\n}\n';
     expect(reads(PLAIN_GATE + 'const X = make();\n')).toEqual(refused());
+    // 印を返すと名乗った関門でない関数 (M1 が別に断る) も、関門の結果とは数えない
+    expect(diagnostics('export vetted VU = "u";\nfn g(x: string) -> VU | null {\n  return null;\n}\nconst X = g("a");\n' + READ('X'))).toEqual([expect.stringContaining('[M1] g: 戻り値の型に印 VU を名乗れるのは gate 関数だけです'), expect.stringContaining(LOAD('X'))]);
+    // `extern pure` でない host の口 (extern sink) の結果は、データの呼び出しとは数えない
+    expect(diagnostics('extern sink { open } from "./host";\nconst X = open("a");\n' + READ('X'))).toEqual([expect.stringContaining('[M2] 危ない口 open'), expect.stringContaining(LOAD('X'))]);
     // 引いた先が関門でない同名の関数・Mamori の外の module の同名の関数も、関門の結果とは数えない
     expect(diagnostics('use { g } from "./m1";\nconst X = g("https://a");\n' + READ('X'), 'export fn g(x: string) -> string {\n  return x;\n}\n')).toEqual(refused());
     expect(reads('use { g } from "./host";\nconst X = g("https://a");\n')).toEqual(refused());
