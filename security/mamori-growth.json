@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.37"
+    "version": "0.38"
   },
   "constructs": {
     "class": {
@@ -4645,6 +4645,71 @@
         "pr": 917,
         "summary": "言語の穴探しの周。印の偽造・共有の表の書き換え・名前の取り違え (86 形) と攻撃の電池は全部断られた。破れたのは「共有の状態は書き換えさせない」規則 —— 直下に書いた入れ物しか見ておらず、関数が返した閉包 (閉じ込めた配列・let・Map を呼び出しをまたいで持てる) を直下の const に置いて読む形が通った (T-274)。0.37: 初期値がその場で走らせた関数の結果を含む直下の const は、名前を Mamori の中で読めない (値として読む形・直に呼ぶ形・use で引いた先・型を書いた形)。関数の結果でないと言えるのは、引数を呼び戻さない組み込みと、データだけの呼び出しだけ。実物の 46 本は書き換えなしで通り、生成物は 1 byte も変わらない。変えた行の変異検査は 1 度目 94.68% (生存 15 —— 検査の不足 10・等価 5) → 検査を足し等価な形を消して 100.00% (269 変異体)。穴の開け直し 10 件 (A-638〜A-647) は名指しの回帰検査が全部捕まえた。",
         "reason": "draft PR #917 に載せる"
+      }
+    },
+    {
+      "id": "MG-076",
+      "date": "2026-11-16",
+      "kind": "probe",
+      "target": "language",
+      "pickedBy": "brief",
+      "briefPick": "probe:language",
+      "version": "0.38",
+      "features": [],
+      "added": [],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "名前の隠し 27 形: 関門・口と同じ綴りの束縛 (引数・局所の const / let・for の回す変数・catch・分割代入・arrow の引数) で、印を受ける関数の外形を隠して呼ぶ",
+          "result": "refused"
+        },
+        {
+          "tried": "組み込みの隠し 62 形: `String` / `Object` / `Map` / `JSON` ほかと同じ綴りの束縛で、数と分かる鍵・読むだけの表・データだけの呼び出しの前提を外す",
+          "result": "refused"
+        },
+        {
+          "tried": "直下の印の const の初期値 20 形・口 (sink) の本文で印でない値を素の口へ渡す 31 形・module の道の綴り 15 形 (`./x` と `./x.mamori`・`../a/../x`・大小違い)",
+          "result": "refused"
+        },
+        {
+          "tried": "型検査を黙らせる注記と文字列の逃がし 54 形: `@ts-` で始まる docblock と行注記・`\\u` で綴った鍵と名前・字句の切れ目 (正規表現と割り算・`>>` と型引数)",
+          "result": "refused"
+        },
+        {
+          "tried": "関門の戻り値と呼ぶ形 30 形・共有の入れ物の中身 18 形 (読むだけの配列の中の配列・Set の配列・Map の中の Set を for-of と Object.values で取り出して書き換える)",
+          "result": "refused"
+        },
+        {
+          "tried": "関門の中で `undefined` と名付けた束縛を返す: `const undefined = JSON.parse(x); return undefined;` (局所の const / let・for の回す変数・分割代入・直下の const) —— 検査器は字面と読み、生成物は束縛を引く",
+          "result": "hole"
+        },
+        {
+          "tried": "印を受ける関数を `undefined` と名付けて検めなしで呼ぶ: `sink fn undefined(u: 印) { rawOpen(u); }` + `undefined(JSON.parse(evil));` (呼ぶ相手が字面なので外形を引かない)",
+          "result": "hole"
+        },
+        {
+          "tried": "計算した鍵の添字の結果・catch の値・関数の結果を置いた直下の const を `undefined` と名付けて持ち出す: `const undefined = xs[k]; return undefined;`・`const undefined = make(); undefined(evil);`",
+          "result": "hole"
+        },
+        {
+          "tried": "直した後のコンパイラへ当て直す: 字面の 4 語 × 名前を読む 37 の位置 (束縛・宣言・use / extern・鍵・メンバ・mint・new)・型の 9 語 × 型を指す宣言の 11 の位置・対照 6 形 (字面を値として書く・型の語を値の名前に使う・文字列の鍵)",
+          "result": "refused"
+        }
+      ],
+      "threats": [
+        "T-275"
+      ],
+      "controls": 4,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 917,
+        "summary": "言語の穴探しの周。名前の隠し・組み込みの隠し・印の const・口の本文・道の綴り・注記と文字列の逃がし・関門の戻り値・共有の入れ物の中身 (約 310 形) はほぼ全部断られた。破れたのは「検めた物と走る物は同じ」—— 構文の段は式の true / false / null / undefined を字面として読むのに、名前の位置ではどの語でも受けた。undefined は JavaScript の予約語ではないので、`const undefined = JSON.parse(x); return undefined;` が Mamori と tsc (strict) を通り、関門から mint を通らない値が印の型で出た (T-275)。0.38: 名前を読む口が字面の 4 語を断り、型・import の名前を読む口が型の 9 語を断る (後者は 0.37 まで tsc の 1 層だけが断っていた)。実物の 46 本は書き換えなし・生成物は不変。穴の開け直し 4 件は名指しの回帰検査が捕まえた。測る足場の欠陥 (tsc は構文の誤りが在ると型の検査を全体で飛ばす) も直した。"
       }
     }
   ]
