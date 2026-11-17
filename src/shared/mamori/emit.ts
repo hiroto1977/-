@@ -80,7 +80,8 @@ export function expr(e: Expr): string {
     case 'spread':
       return `...${nested(e.operand)}`;
     case 'member':
-      return `${wrap(e.object, 9)}${e.optional ? '?.' : '.'}${e.prop}`;
+      // 数の字面のメンバは括る (0.39 · T-276): `1.e3` と並べると、TypeScript は「数 1 の欄 e3」ではなく指数つきの数 1000 と読む。
+      return `${e.object.kind === 'number' ? `(${e.object.raw})` : wrap(e.object, 9)}${e.optional ? '?.' : '.'}${e.prop}`;
     case 'index':
       // 数リテラルと識別子にならない文字列はそのまま。それ以外の鍵は数に寄せる (`+`) —— 型の宣言が嘘でも、文字列の鍵
       // (`"constructor"`) は NaN になって表に届かない (検査器が静的に数と分かる式だけを通した上の、実行時の二重の守り)。
@@ -172,7 +173,7 @@ function stmt(s: Stmt, depth: number): string[] {
     case 'return':
       return [...head, `${ind}return${s.value === null ? '' : ` ${expr(s.value)}`};`];
     case 'expr':
-      return [...head, `${ind}${expr(s.expr)};`];
+      return [...head, `${ind}${statementHead(expr(s.expr))};`];
     case 'comment':
       return head;
     case 'throw':
@@ -222,6 +223,16 @@ function stmt(s: Stmt, depth: number): string[] {
       return out;
     }
   }
+}
+
+/**
+ * 文の頭に置く式 (0.39 · T-276)。**`{` で始まる式は括る** —— 括らないと、TypeScript は文の頭の `{` をオブジェクトの字面ではなく
+ * ブロックとして読む (`({ a: x })(y);` が「ブロック `{ a: x }` と、式の文 `(y);`」になり、Mamori が検めた呼び出しが無くなる)。
+ * 式の綴りが `{` で始まるのは、いちばん左の項がオブジェクトの字面のときだけである (文字列は引用符・正規表現は `/` で始まる)。
+ * 添字への代入 (`a[i] = v;`) の相手は検査器が「この関数の中で作った配列の名前」に絞るので、そこには `{` で始まる綴りは届かない。
+ */
+function statementHead(text: string): string {
+  return text.startsWith('{') ? `(${text})` : text;
 }
 
 function docblock(lines: readonly string[], ind = ''): string[] {

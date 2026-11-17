@@ -274,6 +274,24 @@ const isLiteralWord = (word: string): word is 'true' | 'false' | 'null' | 'undef
  */
 const TYPE_WORDS: ReadonlySet<string> = new Set(['unknown', 'never', 'number', 'bigint', 'boolean', 'string', 'symbol', 'void', 'object']);
 
+/**
+ * TypeScript が型の位置で**語として**読む名前 (0.39 · T-276)。単独の型としてだけ書ける —— `<型>` を続けた綴り (と、`null` / `true` /
+ * `false` / `this` に `.名前` を続けた綴り) は TypeScript の型の文法に無く、型引数の位置では比べの並びとして読み直される
+ * (検めた呼び出しが走らず、型の綴りが式として走る)。`string.x` の形は TypeScript が型の参照と読むが、その名前の名前空間は作れない。
+ */
+const TYPE_KEYWORDS: ReadonlySet<string> = new Set([...TYPE_WORDS, 'undefined', 'null', 'true', 'false', 'this']);
+
+/**
+ * 型の頭に置けない語 (0.39 · T-276): JavaScript の予約語 (TypeScript は型の名前として読まない) と、TypeScript が型の演算子として
+ * 読む `infer` / `unique`。`typeof` / `keyof` / `readonly` は前置の語として、`void` / `null` / `this` ほかは型の語として、別に読む。
+ * `import` はここに入れない —— TypeScript は `import("…").T` を型として読むので木は食い違わず、型引数の `import` は検査器 (M4) が断る。
+ */
+const TYPE_HEAD_REFUSED: ReadonlySet<string> = new Set([
+  'break', 'case', 'catch', 'class', 'const', 'continue', 'debugger', 'default', 'delete', 'do', 'else', 'enum', 'export', 'extends',
+  'finally', 'for', 'function', 'if', 'in', 'instanceof', 'new', 'return', 'super', 'switch', 'throw', 'try', 'var', 'while', 'with',
+  'yield', 'let', 'static', 'implements', 'interface', 'package', 'private', 'protected', 'public', 'await', 'infer', 'unique',
+]);
+
 /** `case` の本体を終えてよい文 (次の case へ落ちる形を書かせない)。 */
 const CASE_ENDS: ReadonlySet<Stmt['kind']> = new Set(['return', 'throw', 'jump']);
 
@@ -384,8 +402,15 @@ export function parse(file: string, src: string): Module {
    *         | '(' 型 ')'
    * ```
    *
-   * 名前は字句の「名前」なら何でも受ける。TypeScript の予約語を型の名前に置いた綴り (`typeof` 単体・`new`) は TypeScript が構文の誤りとして
-   * 断る (tsc が止める) —— 黙って別の木にはならない。
+   * **型の頭の名前は、TypeScript が型の名前として読める語だけ (0.39 · MG-077 · T-276)。** 0.38 までは字句の「名前」なら何でも受け、
+   * 「予約語を置いた綴りは TypeScript が構文の誤りとして断る」と書いていた —— 型引数の位置ではそれが偽だった。TypeScript は
+   * `f<型>(x)` の型が読めないと、誤りにせず**比べの並び** (`(f < 式) > (x)`) として読み直す。実測 (2026-11-17 · TypeScript の構文木):
+   * 型の語に `<型>` を続けた綴り (`string<number>` —— `void` を除く 13 語)・`null` / `true` / `false` / `this` に `.名前` を続けた綴り・
+   * `infer` / `super` を頭に置いた綴りがその形で、Mamori が検めた呼び出しは走らず、型の綴りは式として走る。
+   * 残り (`string.x`・ほかの予約語) は TypeScript が型の参照か構文の誤りとして読み、`tsc` が断る —— 同じ規則 1 つで構文の段でも断る
+   * (守りを `tsc` の 1 層に預けない)。型の語は単独でだけ書け、予約語と `infer` / `unique` は型の頭に置けない
+   * (`.` の後ろの名前は TypeScript も何でも受けるので縛らない)。型引数の位置で型として読めなければ、Mamori も比べの並びとして読む
+   * (TypeScript と同じ木 —— 型の綴りだった名前は式として M6 ほかの検めを受ける)。
    *
    * 関数の戻り値の型 (`where === 'return'`) だけは先頭に型の述語 `名前 is 型` を置ける。式の位置 (`where === 'expr'` —— 呼び出し・new の
    * 型引数と `satisfies`) では `(` で始まる型 (関数の型・括弧) を置けない: そこは TypeScript が式と型のどちらにも読みうる位置なので、
@@ -405,6 +430,14 @@ export function parse(file: string, src: string): Module {
     const name = (): void => {
       if (kindAt() !== 'ident') bad('名前が要ります');
       i++;
+    };
+    /** 型の頭の名前 (`.` の前・`typeof` の直後)。TypeScript が型の名前として読めない語は置けない (T-276)。 */
+    const headName = (): string => {
+      if (kindAt() !== 'ident') bad('名前が要ります');
+      const word = parts[i]!.text;
+      if (TYPE_HEAD_REFUSED.has(word)) bad(`\`${word}\` は型の名前にできません`);
+      i++;
+      return word;
     };
     const type = (): void => {
       if (isPunctAt('|')) i++;
@@ -436,7 +469,7 @@ export function parse(file: string, src: string): Module {
       }
       if (isWordAt('typeof')) {
         i++;
-        name();
+        headName();
         while (isPunctAt('.')) {
           i++;
           name();
@@ -483,7 +516,9 @@ export function parse(file: string, src: string): Module {
         return;
       }
       if (kindAt() === 'ident') {
-        i++;
+        const head = headName();
+        // 型の語 (`string` / `this` / `null` ほか) は単独の型で、`.名前` も `<型>` も続かない (T-276)。
+        if (TYPE_KEYWORDS.has(head) && (isPunctAt('.') || isPunctAt('<'))) bad(`型の語 \`${head}\` の後ろに \`${parts[i]!.text}\` は続きません`);
         while (isPunctAt('.')) {
           i++;
           name();
