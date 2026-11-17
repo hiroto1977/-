@@ -324,6 +324,11 @@ function usedAcrossCases(name: string): string {
  * モジュール直下の const / let / クラスを、宣言より前で直に使ったときの断り (0.46 · MG-086)。直下の宣言は書いた順に作られ、
  * 宣言の文に届く前に読むと、モジュールを読み込んだ時点で投げる。関数・arrow の中から使う形は、呼ばれるのが後なので断らない。
  */
+/** arrow の引数を、その引数の既定値・左の引数の既定値の中で使った所の断り (0.48 · MG-088)。 */
+function usedBeforeParam(name: string): string {
+  return `arrow の引数 ${name} を、その引数が作られる前 (自分か、左の引数の既定値の中) で使っています —— 引数は左から順に作られ、既定値が読めるのは左の引数だけです (読むと、呼んだ時に投げます)`;
+}
+
 function usedBeforeLoaded(name: string): string {
   return `モジュール直下の名前 ${name} を、宣言より前で使っています —— 直下の const / let / クラスは書いた順に作られ、宣言の文に届く前に読むと読み込みの時点で投げます (使う宣言を先に置くか、関数・arrow の中から使います)`;
 }
@@ -2010,14 +2015,17 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
         // arrow を呼ぶ側の引数は検めていなかった (名前つきの fn は呼び出しごとに来歴を検め、値として持ち出せない) —— `((v: V) => need(v))(JSON.parse(raw))` や
         // `Promise.resolve(JSON.parse(raw)).then((v: V) => need(v))` で、関門を通っていない値 (`tsc` は any を印の型へ通す) が印を受ける関数へ届いた。
         const toHost = hostCallbacks.has(e);
+        // 引数は左から順に作られる (0.48 · MG-088): 既定値を検める間、自分と右の引数は「これから宣言する名前」として持ち、既定値を検めた後で束ねる。
+        // 0.47 までは全部の引数を先に束ねていたので、既定値が自分・右の引数を読む形 (`(a = b, b = 1) => …`) が通り、生成物を `tsc` が断っていた (2372 / 2373)。
+        declaresLater.set(inner, new Map((e.params as readonly Param[]).map((p) => [p.name, usedBeforeParam(p.name)])));
         for (const p of e.params as readonly Param[]) {
           const mark = carriedMark(p.type, table.vetted);
           if (mark !== null && !toHost) report('M4', p.pos, `arrow の引数 ${p.name} は印 ${mark} を名乗れません —— arrow は値なので、呼ぶ側 (即時の呼び出し・別名・\`.then\` / \`.map\` の呼び戻し) の引数は検められず、関門を通っていない値を印を受ける関数へ運べます (印を受けるのは名前つきの fn か、Mamori の外の module から use で引いた関数へ直に渡す呼び戻しだけ)`);
+          // 既定値 (`(q = fetch("x")) => q`) も式 —— 0.7 まで検めていなかったので、plain 関数の中で宣言していない名前・
+          // 危ない口・印の無い値での印つきの口の呼び出しを、arrow の引数の既定値に隠せた (T-244)。
+          if (p.init !== null) checkExpr(p.init, [...scopes, inner], body);
           bindLocal(inner, p.name, { vetted: toHost ? mark : null, authority: 'local', numeric: !p.optional && p.type?.text === 'number', readonlyTable: namesReadonlyTable(p.type) }, p.pos);
         }
-        // 既定値 (`(q = fetch("x")) => q`) も式 —— 0.7 まで検めていなかったので、plain 関数の中で宣言していない名前・
-        // 危ない口・印の無い値での印つきの口の呼び出しを、arrow の引数の既定値に隠せた (T-244)。
-        for (const p of e.params as readonly Param[]) if (p.init !== null) checkExpr(p.init, [...scopes, inner], body);
         if (e.kind === 'arrow') {
           refuseInert(e.body, [...scopes, inner], 'arrow の戻り値');
           checkExpr(e.body, [...scopes, inner], body);
