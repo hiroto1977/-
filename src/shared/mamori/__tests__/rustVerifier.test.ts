@@ -60,7 +60,7 @@ const inFn = (body: string): string => `export fn f(a: unknown) -> unknown {\n  
 const LEX_REFUSALS: readonly LexRefusal[] = [
   {
     needle: 'HIDDEN_CHARS_MESSAGE', sites: 3, message: /裸で置けません/,
-    samples: [[inFn('// ‮ x\n  return a;'), 8], [inFn('return "a​b";'), 8], [inFn('return /a﻿b/;'), 8]],
+    samples: [[inFn('// \u202e x\n  return a;'), 8], [inFn('return "a\u200bb";'), 8], [inFn('return /a\ufeffb/;'), 8]],
   },
   {
     needle: 'TS_DIRECTIVE_MESSAGE', sites: 1, message: /`@ts-…` の指示は書けません/,
