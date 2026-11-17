@@ -297,6 +297,16 @@ export interface ProjectTable {
   readonly sharedConsts: ReadonlyMap<string, ReadonlyMap<string, SharedConstKind>>;
 }
 
+/** 同じブロックで同じ名前を 2 度宣言したときの断り (0.44 · MG-084)。 */
+function redeclaredInBlock(name: string): string {
+  return `局所の名前 ${name} を同じブロックで 2 度宣言しています —— 引数・catch の束縛・const / let・分割代入の束縛は、同じブロックの中で名前を重ねられません (TypeScript も断ります)`;
+}
+
+/** 同じ switch の別の case で同じ名前を宣言したときの断り (0.44 · MG-084)。 */
+function redeclaredInSwitch(name: string): string {
+  return `局所の名前 ${name} を同じ switch の別の case でも宣言しています —— 生成物では case の本体は 1 つのブロックを共有するので、名前を重ねられません (TypeScript も断ります)`;
+}
+
 /** `道 + 名前` の鍵 (`fns` を引く)。 */
 function fnKey(file: string, name: string): string {
   return `${file}\u0000${name}`;
@@ -834,6 +844,9 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
    */
   const bindLocal = (scope: Map<string, Binding>, name: string, b: Binding, pos: { line: number; col: number }): void => {
     if (moduleScope.has(name)) report('M6', pos, `局所の名前 ${name} は、モジュール直下の同名の宣言 (use・extern・fn・定数) を隠します —— 呼び出しの外形 (印) は名前で引くので、別の名前にしてください`);
+    // 同じブロックの中で同じ名前を 2 度宣言させない (0.44 · MG-084)。関数・arrow の引数と catch の束縛は、本体の直下と同じブロックに居る
+    // (JavaScript の決まり —— `function f(a) { const a = 1; }` は構文の誤り)。入れ子のブロックと for の本体は別のブロックなので重ねられる。
+    if (scope.has(name)) report('M6', pos, redeclaredInBlock(name));
     scope.set(name, b);
   };
   /**
@@ -1175,7 +1188,8 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
       bindLocal(scope, p.name, { vetted: carriedMark(p.type, table.vetted), authority: 'local', numeric: !p.optional && p.type?.text === 'number', readonlyTable: namesReadonlyTable(p.type) }, p.pos);
       if (p.init !== null) checkExpr(p.init, [moduleScope], ctx);
     }
-    checkBlock(it.body, [moduleScope, scope], ctx);
+    // 本体の直下は引数と同じブロック (0.44 · MG-084) —— 引数と同じ名前の const / let を本体の直下に置けない。
+    checkBlock(it.body, [moduleScope], ctx, scope);
   }
 
   /**
@@ -1338,8 +1352,16 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
     return provenance(e, scopes) === mark;
   }
 
-  function checkBlock(stmts: readonly Stmt[], scopes: Map<string, Binding>[], ctx: Ctx): void {
-    const own = new Map<string, Binding>();
+  /** ブロックの直下で宣言する名前 (const / let と分割代入の束縛) を、書いた順に並べる。入れ子のブロックの中は数えない。 */
+  function blockDeclarations(stmts: readonly Stmt[]): { readonly name: string; readonly pos: { line: number; col: number } }[] {
+    return stmts.flatMap((s) => (s.kind === 'let' ? [{ name: s.name, pos: s.pos }] : s.kind === 'destructure' ? s.fields.map((f) => ({ name: f.local, pos: s.pos })) : []));
+  }
+
+  /**
+   * ブロックを検める。`own` はそのブロックの束縛の置き場で、関数・arrow の引数と catch の束縛を先に置いた Map を渡すと、
+   * 本体の直下がそれと同じブロックになる (0.44 · MG-084 —— 引数・束ねた例外と同じ名前を本体の直下で宣言できない)。
+   */
+  function checkBlock(stmts: readonly Stmt[], scopes: Map<string, Binding>[], ctx: Ctx, own: Map<string, Binding> = new Map<string, Binding>()): void {
     const chain = [...scopes, own];
     for (const s of stmts) checkStmt(s, chain, own, ctx);
   }
@@ -1470,12 +1492,12 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
       case 'try': {
         checkBlock(s.body, scopes, ctx);
         if (s.handler !== null) {
-          // 束ねた例外 (`catch (e)` · 0.12) は印を運ばない局所の値 (生成物では `unknown`)。回す変数と同じ扱いで、handler の中だけで見える。
+          // 束ねた例外 (`catch (e)` · 0.12) は印を運ばない局所の値 (生成物では `unknown`)。handler の中だけで見える。
+          // handler の直下は束ねた例外と同じブロック (0.44 · MG-084) —— `catch (e) { const e = 1; }` は書けない。
           const caught = new Map<string, Binding>();
           // Stryker disable next-line ConditionalExpression: param が null のときの true 枝は null 鍵の束縛を足すだけで、名前の引きには当たらない (等価)
           if (s.param !== null) bindLocal(caught, s.param, { vetted: null, authority: 'local' }, s.pos);
-          // Stryker disable next-line ConditionalExpression: param が null のとき caught は空の Map なので、足しても足さなくても名前の引きは同じ (等価)
-          checkBlock(s.handler, s.param === null ? scopes : [...scopes, caught], ctx);
+          checkBlock(s.handler, scopes, ctx, caught);
         }
         // `finally` (0.20): try / catch のどこで抜けても走る。inert は一度立てたら下ろさない (rebind は粘る) ので、
         // try の途中で例外が飛んで代入に届かなかった姿も、届いた姿も、どちらも `finally` の使い方の検めに入る。
@@ -1502,13 +1524,22 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
         checkExpr(s.test, scopes, ctx);
         checkLoopBody(s.body, scopes, ctx);
         return;
-      case 'switch':
+      case 'switch': {
         checkExpr(s.test, scopes, ctx);
         for (const c of s.cases) {
           for (const t of c.tests) if (t !== null) checkExpr(t, scopes, ctx);
           checkBlock(c.body, scopes, ctx);
         }
+        // 生成物では case の本体は 1 つのブロックを共有する (`switch (x) { case 1: … case 2: … }`) ので、別の case で同じ名前を宣言できない
+        // (0.44 · MG-084)。同じ case の中の重なりは bindLocal が断るので、ここで数えるのは「前の case が宣言した名前」だけ。
+        const earlier = new Set<string>();
+        for (const c of s.cases) {
+          const here = blockDeclarations(c.body);
+          for (const d of here) if (earlier.has(d.name)) report('M6', d.pos, redeclaredInSwitch(d.name));
+          for (const d of here) earlier.add(d.name);
+        }
         return;
+      }
       // 'comment' / 'jump' は何も検めない (注記の文は名前ではない) —— 枝を書かずに switch を抜ける。
     }
   }
@@ -1881,7 +1912,8 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
           refuseInert(e.body, [...scopes, inner], 'arrow の戻り値');
           checkExpr(e.body, [...scopes, inner], plain);
         }
-        else checkBlock(e.body, [...scopes, inner], plain);
+        // ブロックの本体の直下は引数と同じブロック (0.44 · MG-084)。
+        else checkBlock(e.body, [...scopes], plain, inner);
         return;
       }
       case 'mint': {
