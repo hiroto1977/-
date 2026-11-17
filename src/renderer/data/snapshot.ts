@@ -19,6 +19,7 @@ import type { CursorSnapshot } from '../../shared/api/cursor';
 import { buildHydroponicsSnapshot } from '../../shared/hydroponicsControl';
 import { buildMentorSnapshot } from '../../shared/mentor';
 import { buildGrokSnapshot } from '../../shared/grokSnapshot';
+import { buildVrioSnapshot } from '../../shared/vrio';
 
 /**
  * 見本の画像は **インライン (`data:`) にする**。
@@ -1244,6 +1245,9 @@ export const SNAPSHOT = {
 
   /** Grok (xAI) の画面 (2026-11-04)。提供者の台帳から導いた見本だけ —— 状態は `assistant/providers` が答える。 */
   grok: buildGrokSnapshot(),
+
+  /** VRIO 分析: 階層・職種・判定の台帳の見出しだけ。評価と企画の中身は画面の入力に在り、ここには持たない。 */
+  vrio: buildVrioSnapshot(),
 
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)
 
