@@ -371,6 +371,16 @@ export function parse(file: string, src: string): Module {
     }
     return name;
   };
+  /**
+   * **同じ並びの中で、同じ名前を 2 度書かせない** (0.43 · MG-083)。引数の並び (fn / arrow / constructor / 関数の型)・分割代入の束縛・
+   * interface と物の型の欄・オブジェクトの字面の鍵が対象 —— 0.42 までどれも構文の段を通り、生成物を `tsc` が断っていた
+   * (検めた物と走る物は食い違わないが、守りが `tsc` の 1 層だった)。どの並びも TypeScript が断る形で、正当な書き方は無い。
+   * `seen` はその並び 1 つぶん (入れ子の並びは自分の `seen` を持つ —— `(a: number, cb: (a: number) => void)` は重なりではない)。
+   */
+  const noRepeat = (seen: Set<string>, name: string, t: Tok, what: string): void => {
+    if (seen.has(name)) fail(t, `${what} \`${name}\` が二重です —— 同じ並びに同じ名前は 1 度だけ書けます (TypeScript も断ります)`);
+    seen.add(name);
+  };
   /** 束縛・宣言の名前を 1 つ読む (引数・const / let・for-of・catch・fn・型と import の名前)。 */
   const bindingName = (): string => {
     const t = peek();
@@ -538,9 +548,12 @@ export function parse(file: string, src: string): Module {
       }
       type();
     };
-    const member = (): void => {
+    const member = (seen: Set<string>): void => {
       if (isWordAt('readonly') && (kindAt(1) === 'ident' || kindAt(1) === 'string')) i++;
       if (kindAt() !== 'ident' && kindAt() !== 'string') bad('欄の名前が要ります');
+      // 同じ欄を 2 度書かせない (0.43 · MG-083)。文字列で書いた名前 (`'a'`) は、名前で書いた `a` と同じ欄である。
+      const nt = parts[i]!;
+      noRepeat(seen, nt.kind === 'string' ? decodeString(nt.text, nt) : nt.text, nt, '欄');
       i++;
       if (isPunctAt('?')) i++;
       eat(':');
@@ -551,17 +564,19 @@ export function parse(file: string, src: string): Module {
      * 受け取り、生成物を `tsc` が断っていた (守りが `tsc` の 1 層だった)。`this` だけは TypeScript の `this` 引数の注釈なので、
      * **先頭の引数に限って**書ける (`?` は付かない)。Mamori 自身の語 (`type` / `from` ほか) は TypeScript の名前として正しいので断らない。
      */
-    const fnParam = (first: boolean): void => {
-      const t = parts[i];
-      if (t !== undefined && t.kind === 'ident') {
-        if (t.text === 'this') {
-          if (!first) fail(t, '`this` は関数の型の先頭の引数にだけ書けます (TypeScript の `this` 引数の注釈) —— 2 つ目以降には置けません');
-          if (isPunctAt('?', 1)) fail(t, '`this` の引数に `?` は付けられません (TypeScript の `this` 引数の注釈は省略できません)');
-        } else if (BINDING_REFUSED.has(t.text)) {
-          fail(t, `\`${t.text}\` は関数の型の引数の名前にできません —— JavaScript の予約語 (と、モジュールで束縛にできない \`arguments\`) です (先頭の引数の \`this\` だけは書けます)`);
-        }
+    const fnParam = (first: boolean, seen: Set<string>): void => {
+      // 名前でなければここで断る (0.43 · MG-083 で `name()` の検めをここへ寄せた —— 下の 3 つの決まりは名前の字句だけに掛かる)。
+      if (kindAt() !== 'ident') bad('名前が要ります');
+      const t = parts[i]!;
+      if (t.text === 'this') {
+        if (!first) fail(t, '`this` は関数の型の先頭の引数にだけ書けます (TypeScript の `this` 引数の注釈) —— 2 つ目以降には置けません');
+        if (isPunctAt('?', 1)) fail(t, '`this` の引数に `?` は付けられません (TypeScript の `this` 引数の注釈は省略できません)');
+      } else if (BINDING_REFUSED.has(t.text)) {
+        fail(t, `\`${t.text}\` は関数の型の引数の名前にできません —— JavaScript の予約語 (と、モジュールで束縛にできない \`arguments\`) です (先頭の引数の \`this\` だけは書けます)`);
       }
-      name();
+      // 同じ並びに同じ名前を 2 度書かせない (0.43 · MG-083)。
+      noRepeat(seen, t.text, t, '関数の型の引数');
+      i++;
       if (isPunctAt('?')) i++;
       eat(':');
       type();
@@ -596,8 +611,9 @@ export function parse(file: string, src: string): Module {
       }
       if (isPunctAt('{')) {
         i++;
+        const seen = new Set<string>();
         while (!isPunctAt('}')) {
-          member();
+          member(seen);
           if (isPunctAt(';') || isPunctAt(',')) i++;
           else if (!isPunctAt('}')) bad('欄の区切り `;` が要ります');
         }
@@ -626,10 +642,11 @@ export function parse(file: string, src: string): Module {
           return;
         }
         if (!isPunctAt(')')) {
-          fnParam(true);
+          const seen = new Set<string>();
+          fnParam(true, seen);
           while (isPunctAt(',')) {
             i++;
-            fnParam(false);
+            fnParam(false, seen);
           }
         }
         eat(')');
@@ -753,9 +770,12 @@ export function parse(file: string, src: string): Module {
   const params = (): Param[] => {
     expectP('(');
     const out: Param[] = [];
+    const seen = new Set<string>();
     while (!isP(')')) {
-      const pos = peek().pos;
+      const at = peek();
+      const pos = at.pos;
       const name = bindingName();
+      noRepeat(seen, name, at, '引数');
       const qmark = peek();
       const optional = isP('?');
       if (optional) {
@@ -806,15 +826,19 @@ export function parse(file: string, src: string): Module {
         if (mutable) fail(peek(), '分割代入は `const` だけです (`let { … }` は書けません)');
         next();
         const fields: { key: string; local: string }[] = [];
+        const seen = new Set<string>();
         while (!isP('}')) {
           const keyTok = peek();
           const key = memberName();
           let local: string;
           if (isP(':')) {
             next();
+            const localTok = peek();
             local = bindingName();
+            noRepeat(seen, local, localTok, '分割代入の束縛');
           } else {
             local = asBinding(keyTok, key);
+            noRepeat(seen, local, keyTok, '分割代入の束縛');
           }
           fields.push({ key, local });
           if (!isP('}')) expectP(',');
@@ -1195,6 +1219,7 @@ export function parse(file: string, src: string): Module {
     if (isP('{')) {
       next();
       const props: Prop[] = [];
+      const seen = new Set<string>();
       while (!isP('}')) {
         const kt = peek();
         if (isP('...')) {
@@ -1210,6 +1235,8 @@ export function parse(file: string, src: string): Module {
         const key = quoted ? str() : ident();
         // `{ __proto__: x }` は欄ではなく**原型を差し替える** (文字列で書いても同じ)。
         if (key === '__proto__') fail(kt, '鍵 `__proto__` は在りません —— オブジェクトの字面では欄ではなく原型を差し替えます');
+        // 同じ鍵を 2 度書かせない (0.43 · MG-083)。後ろの値が前の値を黙って上書きする形で、文字列で書いた鍵 (`'a'`) も同じ鍵である。
+        noRepeat(seen, key, kt, '鍵');
         if (isP(':')) {
           next();
           props.push({ key, quoted, value: expr(), shorthand: false, spread: false, pos: kt.pos });
@@ -1423,6 +1450,7 @@ export function parse(file: string, src: string): Module {
       }
       expectP('{');
       const members: Member[] = [];
+      const memberNames = new Set<string>();
       for (;;) {
         if (peek().kind === 'comment') fail(peek(), 'interface の中は `///` の説明だけ置けます (`//` は置けません)');
         const mdoc = takeLeading(['doc']);
@@ -1432,7 +1460,9 @@ export function parse(file: string, src: string): Module {
         }
         const mpos = peek().pos;
         const ro = take('readonly');
+        const mtok = peek();
         const mname = ident();
+        noRepeat(memberNames, mname, mtok, '欄');
         const optional = isP('?');
         if (optional) next();
         expectP(':');
