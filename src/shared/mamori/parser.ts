@@ -364,6 +364,11 @@ export function parse(file: string, src: string): Module {
     if (BINDING_REFUSED.has(name)) {
       return fail(t, `\`${name}\` は束縛・宣言の名前にできません —— JavaScript の予約語 (と、モジュールで束縛にできない \`arguments\`) です。メンバ (\`x.${name}\`) と鍵 (\`{ ${name}: … }\`) には書けます`);
     }
+    // Mamori 自身の語 (0.41 · MG-081): 式の位置では読めない (`RESERVED` —— `primary` が断る) ので、束縛しても値を取り出せない。
+    // 0.40 までは `const mint = 1;` を受け取っていた (生成物は正しいが、読み手に「この名前は使える」と思わせる)。
+    if (RESERVED.has(name)) {
+      return fail(t, `\`${name}\` は束縛・宣言の名前にできません —— Mamori の語です (式の位置では読めないので、束縛しても使えません)。メンバ (\`x.${name}\`) と鍵 (\`{ ${name}: … }\`) には書けます`);
+    }
     return name;
   };
   /** 束縛・宣言の名前を 1 つ読む (引数・const / let・for-of・catch・fn・型と import の名前)。 */

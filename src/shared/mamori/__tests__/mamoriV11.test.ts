@@ -44,7 +44,8 @@ describe('T-248: 戻り値の型の印は gate 関数だけ', () => {
     expect(d[0]).toMatch(/^src\/x\/m0\.mamori:6:32: \[M1\] isUrl: /);
   });
   it('対照: gate 関数は印を返せる・印を名乗らない型述語や戻り値は plain でも書ける', () => {
-    expect(diag(PRE + 'export gate fn gate(raw: string) -> VettedUrl {\n  return mint VettedUrl(raw);\n}\n')).toEqual([]);
+    // 関数の名前は `gate` にできない (0.41 —— Mamori 自身の語は束縛の名前にならない) ので、別の名前で書く
+    expect(diag(PRE + 'export gate fn vetUrl(raw: string) -> VettedUrl {\n  return mint VettedUrl(raw);\n}\n')).toEqual([]);
     expect(diag(PRE + 'export fn isStr(s: unknown) -> s is string {\n  return typeof s === "string";\n}\n')).toEqual([]);
     expect(diag(PRE + 'export fn n(raw: string) -> string | null {\n  return raw;\n}\n')).toEqual([]);
     expect(diag(PRE + 'export fn p(raw: string) -> Promise<void> {\n  return openUrl(raw);\n}\n').join('\n')).not.toContain(MSG);
