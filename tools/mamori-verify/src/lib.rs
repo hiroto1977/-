@@ -9,6 +9,7 @@
 //!   6 `.constructor` / `.prototype` / `.__proto__` ほか原型に届く道 (字面の添字 `["constructor"]` も)
 //!   7 (欠番 —— `...` は 0.15 から文法に在る。置ける位置は構文の段が検める)   8 制御・不可視・方向を変える字が裸で在る (Trojan Source)
 //!   9 知らない字 (コードの位置の非 ASCII・制御文字・記号)   10 `__proto__` の鍵   11 閉じていない文字列・正規表現
+//!   12 JavaScript の数の文法に無い綴り (先頭の 0 `08`・連続した `_` `1__0`・末尾の `_` `1_`・数字の無い `0x`) —— 0.3 · Mamori 0.40 (MG-079)
 //!   0xFFFF_FFFF 入力が置き場より大きく、検められなかった
 //!
 //! ABI (0.2 · 解析エージェントの報告 D1/D2/D3 を受けて作り直した):
@@ -225,6 +226,28 @@ fn decode_string(s: &[u8], a: usize, b: usize, out: &mut [u8; 24]) -> usize {
     n
 }
 
+/// 10 進の整数部の綴り (数字と `_` の並び・先頭は数字) が JavaScript の数の文法に在るか。
+/// TS の実装 (正規表現 1 本) とは別の書き方で持つ: 1 字ずつ前の字を見て、
+///   ・`0` で始まるなら `0` ただ 1 字だけ (`00` `08` `0_1` は無い)
+///   ・`_` の次は必ず数字 (`1__0` と、末尾の `_` = `1_` は無い)
+fn decimal_integer_ok(part: &[u8]) -> bool {
+    if part[0] == b'0' {
+        return part.len() == 1;
+    }
+    let mut prev_underscore = false;
+    for &c in part {
+        if c == b'_' {
+            if prev_underscore {
+                return false;
+            }
+            prev_underscore = true;
+        } else {
+            prev_underscore = false;
+        }
+    }
+    !prev_underscore
+}
+
 /// 次の空白でない字の位置 (行注記は飛ばさない —— 字面の添字・鍵の直後にだけ使う)。
 fn skip_ws(s: &[u8], mut i: usize) -> usize {
     while i < s.len() && matches!(s[i], b' ' | b'\t' | b'\r' | b'\n') {
@@ -307,12 +330,21 @@ pub fn verify_bytes(s: &[u8]) -> u32 {
         if c.is_ascii_digit() {
             if c == b'0' && i + 1 < n && (s[i + 1] == b'x' || s[i + 1] == b'X') {
                 i += 2;
+                let digits = i;
                 while i < n && hex_val(s[i]).is_some() {
                     i += 1;
                 }
+                // `0x` だけ (16 進の数字が 1 つも無い)
+                if i == digits {
+                    return 12;
+                }
             } else {
+                let a = i;
                 while i < n && (s[i].is_ascii_digit() || s[i] == b'_') {
                     i += 1;
+                }
+                if !decimal_integer_ok(&s[a..i]) {
+                    return 12;
                 }
                 if i + 1 < n && s[i] == b'.' && s[i + 1].is_ascii_digit() {
                     i += 1;
@@ -332,11 +364,12 @@ pub fn verify_bytes(s: &[u8]) -> u32 {
                 i += 1;
             }
             let word = &s[start..i];
-            if after_dot {
-                if forbidden_member(word) {
-                    return 6;
-                }
-            } else if word == b"as" {
+            if after_dot && forbidden_member(word) {
+                return 6;
+            }
+            // 禁じた語は `.` の後ろでも断る (0.3 · MG-079): TS の字句の段は位置を見ずに断るので、
+            // ここだけ `x.eval` / `x.as` / `x.any` を通すと「TS は断り Rust は通す」形になる (揺さぶりの検査が見つけた)。
+            if word == b"as" {
                 return 1;
             } else if word == b"any" {
                 return 2;

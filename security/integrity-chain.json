@@ -4281,6 +4281,14 @@
       "leafCount": 222,
       "note": "update parser.ts",
       "hash": "81d6b7fec0d221077aa65d2fbc1fccb6c0c2e72521ce2f17e5810e2ae9fd03d1"
+    },
+    {
+      "index": 507,
+      "prevHash": "81d6b7fec0d221077aa65d2fbc1fccb6c0c2e72521ce2f17e5810e2ae9fd03d1",
+      "merkleRoot": "247d986bc5911d4c781850883f95c51c4ec893421f4f71100df7aef1edaada48",
+      "leafCount": 222,
+      "note": "update BUILD.json,Cargo.lock,Cargo.toml,mamori_verify.wasm,lib.rs",
+      "hash": "fdb36c6a2917f6ae83efacb0f07d7e91a4e87ca5cc4a01e0fe09c9843c2c00c2"
     }
   ],
   "tipManifest": {
@@ -4498,11 +4506,11 @@
     "src/shared/vetted.mamori": "508da455004485581a8d5de5eb00ac218038eb91407721927c46a43a20c983fc",
     "src/shared/vetted.ts": "bcd3559513bda46db5cefebf0bd58fa72cd2fc44e345dcf8824cb2ef89044919",
     "src/shared/writeFieldLimits.ts": "321322d9817665544a8dac005c1ed9812d8305c110a0fbe7e331675b5a35c066",
-    "tools/mamori-verify/BUILD.json": "7b76dd6debff3a296978a0bde1ad9c95737ac9775742fd3bf42a01a4b7eae485",
-    "tools/mamori-verify/Cargo.lock": "46612f649704d1d986c582de5f41dc20ba751aaa46013a55547b0e87deb3f1fb",
-    "tools/mamori-verify/Cargo.toml": "38f61fca5551b2d3ec1d2d99f3da70dc7446d537d52d2497fae1c1d84e075c99",
-    "tools/mamori-verify/dist/mamori_verify.wasm": "5db5320002e50b5e0d9a000af175c48ba71328ebea709718fd91d5f75aaac9a6",
-    "tools/mamori-verify/src/lib.rs": "d8f9d6a4d46881333d7ebe286d7bc5821983807e7833a68666d8e9513888e48f",
+    "tools/mamori-verify/BUILD.json": "c0901af69b6a12c2c21ab4f1dd1ba5af52dfb4da33ca6afe5366541d6da1e520",
+    "tools/mamori-verify/Cargo.lock": "cc80b66f351ca00193a3d8f91131f06d906ea024fb11ce1790d2b74e6284416e",
+    "tools/mamori-verify/Cargo.toml": "86b5bf536ac9182b44f81f1ef799657b39b69df1a9eedfd85f7fc831c58f7875",
+    "tools/mamori-verify/dist/mamori_verify.wasm": "d3444dad42031f9e70751b2a5ec9982b9c49660f425ca08f3bc2a90edfbc241b",
+    "tools/mamori-verify/src/lib.rs": "71af245ed2682767a20bdc2d55f60a614098a3f36fd2a318afc4940c8cba8355",
     "vite.config.ts": "be7089bad650fda5406b2b3a33e70db81f45e17c0b3414c92c4b8b7d4a38cc22",
     "vitest.audit.config.ts": "2461afaaddfa15b7a4520cca93807db66b7ebb3db25e46db4dac38b0002a7978",
     "vitest.config.ts": "66e089fec0f1ee8fcff09d91c596baceaaae588e3e04c67822f4b4780b4d64f9"
