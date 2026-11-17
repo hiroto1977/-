@@ -68,9 +68,9 @@ describe('0.23: 型引数を持つ関数宣言 fn f<T>(…)', () => {
     expect(d).toContain('型引数 VettedUrl は印の名前です');
   });
 
-  it('型引数の名前に typeof / import は使えない (M4)', () => {
-    expect(refused('fn f<typeof>(x: number) -> number {\n  return x;\n}\n')).toContain('[M4] 型引数の名前に `typeof` は置けません');
-    expect(refused('fn f<import>(x: number) -> number {\n  return x;\n}\n')).toContain('[M4] 型引数の名前に `import` は置けません');
+  it('型引数の名前に typeof / import は使えない (0.40 から構文の段 M0 —— 予約語はどの束縛・宣言の名前にもできない)', () => {
+    expect(refused('fn f<typeof>(x: number) -> number {\n  return x;\n}\n')).toContain('[M0] `typeof` は束縛・宣言の名前にできません');
+    expect(refused('fn f<import>(x: number) -> number {\n  return x;\n}\n')).toContain('[M0] `import` は束縛・宣言の名前にできません');
   });
 
   it('gate 関数と sink 関数は型引数を持てない (M4)', () => {

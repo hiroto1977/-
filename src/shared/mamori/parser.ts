@@ -185,6 +185,11 @@ export function lex(file: string, src: string): Tok[] {
       // 16 進 (`0x20`) は 0.3 から (パス 564) —— 制御文字やビットの境目は 16 進で書くほうが読み手が確かめやすい。
       const m = /0[xX][0-9a-fA-F]*|[0-9][0-9_]*(\.[0-9]+)?/.exec(src.slice(i))!;
       if (m[0] === '0x' || m[0] === '0X') throw new MamoriError(file, pos, '`' + m[0] + '` の後に 16 進の数字 (0-9 / a-f) が要ります');
+      // 10 進の綴りは JavaScript の文法どおりだけ (0.40 · MG-078): 先頭の 0 (`08` `00` `0_1`)・連続した `_`・末尾の `_` (`1_` `1_.5`) は断る。
+      // 上の字句の式はこれらを数として受け、生成物を `tsc` が構文の誤りで断っていた (守りが `tsc` の 1 層だった)。
+      if (!isHexSpelling(m[0]) && !DECIMAL_SPELLING.test(m[0])) {
+        throw new MamoriError(file, pos, '数の綴り `' + m[0] + '` は書けません —— 先頭の 0 (`08`)・連続した `_` (`1__0`)・末尾の `_` (`1_`) は JavaScript の数の文法に在りません');
+      }
       out.push({ kind: 'number', text: m[0], pos });
       advance(m[0].length);
       continue;
@@ -263,6 +268,27 @@ const STOP_WORDS = new Set(['true', 'false', 'null', 'undefined', 'unknown', 'st
  */
 const LITERAL_WORDS: ReadonlySet<string> = new Set(['true', 'false', 'null', 'undefined']);
 
+/**
+ * **束縛・宣言の名前にできない語** (0.40 · MG-078): JavaScript の予約語と、モジュール (= 厳格モード) で束縛にできない語。
+ *
+ * 0.39 まで、`fn f(enum: string)`・`const var = 1;`・引数 `arguments` は構文の段を通り、生成物を `tsc` が断っていた
+ * (検めた物と走る物は食い違わないが、守りが `tsc` の 1 層だった)。**メンバ (`x.delete(k)`)・鍵 (`{ default: 1 }`) には掛けない** ——
+ * JavaScript はその位置に予約語を書ける。字面の語 (`true` ほか) は `LITERAL_WORDS` が、型の語は `TYPE_WORDS` が別に持つ。`eval` は字句の段が
+ * どの位置でも先に断る (`FORBIDDEN_WORDS`) ので、ここには並べない。
+ */
+const BINDING_REFUSED: ReadonlySet<string> = new Set([
+  'break', 'case', 'catch', 'class', 'const', 'continue', 'debugger', 'default', 'delete', 'do', 'else', 'enum', 'export', 'extends',
+  'finally', 'for', 'function', 'if', 'import', 'in', 'instanceof', 'new', 'return', 'super', 'switch', 'this', 'throw', 'try', 'typeof',
+  'var', 'void', 'while', 'with', 'let', 'static', 'yield', 'implements', 'interface', 'package', 'private', 'protected', 'public',
+  'await', 'arguments',
+]);
+
+/** JavaScript の 10 進の数の綴り (整数部は `0` か、0 で始まらない数字の並びで、`_` は数字と数字の間に 1 つずつ)。 */
+const DECIMAL_SPELLING = /^(0|[1-9][0-9]*(_[0-9]+)*)(\.[0-9]+)?$/;
+
+/** 16 進の綴りか (字句の式が `0x` + 16 進の数字として切り出した物)。 */
+const isHexSpelling = (text: string): boolean => text[1] === 'x' || text[1] === 'X';
+
 /** 式の位置の字面の語か (`primary` が字面の節を組むときに、語を字面の型へ絞る)。表は `LITERAL_WORDS` の 1 つ。 */
 const isLiteralWord = (word: string): word is 'true' | 'false' | 'null' | 'undefined' => LITERAL_WORDS.has(word);
 
@@ -330,6 +356,18 @@ export function parse(file: string, src: string): Module {
     }
     return next().text;
   };
+  /** その名前を束縛・宣言に使えるか (0.40 · MG-078 · `BINDING_REFUSED` の注記)。分割代入の省略形 (`{ k }`) は鍵がそのまま束縛になるので、読んだ後にここを通す。 */
+  const asBinding = (t: Tok, name: string): string => {
+    if (BINDING_REFUSED.has(name)) {
+      return fail(t, `\`${name}\` は束縛・宣言の名前にできません —— JavaScript の予約語 (と、モジュールで束縛にできない \`arguments\`) です。メンバ (\`x.${name}\`) と鍵 (\`{ ${name}: … }\`) には書けます`);
+    }
+    return name;
+  };
+  /** 束縛・宣言の名前を 1 つ読む (引数・const / let・for-of・catch・fn・型と import の名前)。 */
+  const bindingName = (): string => {
+    const t = peek();
+    return asBinding(t, ident());
+  };
   /** 型・import の名前を 1 つ読む (型の別名・interface・クラス・印・型引数・use / extern で引く名前)。**型の語は名前にできない** (0.38 · T-275 · `TYPE_WORDS` の注記)。 */
   const typeName = (): string => {
     const t = peek();
@@ -337,7 +375,7 @@ export function parse(file: string, src: string): Module {
     if (TYPE_WORDS.has(name)) {
       return fail(t, `\`${name}\` は型・import の名前にできません —— Mamori は型の綴りを語で読むので (\`k: number\` は数と分かる鍵・\`印 | undefined\` は印を運ぶ型)、その語が別の型を指すと、検めた型と走る型が食い違います`);
     }
-    return name;
+    return asBinding(t, name);
   };
   /** `.` の後ろの名前。原型・Function へ届く名前は断る (T-224)。表は自分の鍵だけで引く。 */
   const memberName = (): string => {
@@ -695,7 +733,7 @@ export function parse(file: string, src: string): Module {
     const out: Param[] = [];
     while (!isP(')')) {
       const pos = peek().pos;
-      const name = ident();
+      const name = bindingName();
       const qmark = peek();
       const optional = isP('?');
       if (optional) {
@@ -747,11 +785,14 @@ export function parse(file: string, src: string): Module {
         next();
         const fields: { key: string; local: string }[] = [];
         while (!isP('}')) {
+          const keyTok = peek();
           const key = memberName();
-          let local = key;
+          let local: string;
           if (isP(':')) {
             next();
-            local = ident();
+            local = bindingName();
+          } else {
+            local = asBinding(keyTok, key);
           }
           fields.push({ key, local });
           if (!isP('}')) expectP(',');
@@ -768,7 +809,7 @@ export function parse(file: string, src: string): Module {
         expectP(';');
         return { kind: 'destructure', fields, type: annotated, init: source, comments: cs, pos: t.pos };
       }
-      const name = ident();
+      const name = bindingName();
       let type: TypeRef | null = null;
       if (isP(':')) {
         next();
@@ -820,7 +861,7 @@ export function parse(file: string, src: string): Module {
       next();
       expectP('(');
       expectW('const');
-      const name = ident();
+      const name = bindingName();
       expectW('of');
       const iterable = expr();
       expectP(')');
@@ -894,7 +935,7 @@ export function parse(file: string, src: string): Module {
         next();
         if (isP('(')) {
           next();
-          param = ident();
+          param = bindingName();
           expectP(')');
         }
         handler = block();
@@ -1009,9 +1050,23 @@ export function parse(file: string, src: string): Module {
         if (IN_FORBIDDEN_KEYS.has(key)) fail(first, `\`'${key}' in x\` は在りません —— \`in\` は原型の鎖をたどるので、原型にも在る名前はどの物にも真と答えます (自分の鍵を問うなら \`Object.hasOwn(x, '${key}')\`)`);
       }
       const right = binary(level + 1);
+      // `??` と `||` / `&&` は括弧なしで混ぜられない (0.40 · MG-078): JavaScript の文法が断る並びで、0.39 までは変換が括弧を足して通していた。
+      // 逆の向き (`||` / `&&` の辺に括らない `??`) は、`??` がいちばん弱いので構文の木に現れない。
+      if (op.text === '??' && (mixesWithNullish(left) || mixesWithNullish(right))) {
+        fail(first, '`??` と `||` / `&&` は括弧なしで混ぜられません —— JavaScript の文法に無い並びです (`(a || b) ?? c` か `a || (b ?? c)` と括ります)');
+      }
       left = { kind: 'binary', op: op.text, left, right, pos: first.pos };
     }
     return left;
+  };
+
+  /** 括弧で括った式 (`( 式 )` の中身の節)。構文の木は括弧を持たないので、`??` の辺を検めるためだけにここへ覚える。 */
+  const parenthesized = new WeakSet<Expr>();
+  /** `??` の辺に、括っていない `||` / `&&` が在るか。 */
+  const mixesWithNullish = (side: Expr): boolean => {
+    // 2 項でない節は `op` に `||` / `&&` を持たない (単項の op は `!` / `-` / `~` / `typeof` / `await`) ので、種類の判定を外しても等価。
+    // Stryker disable next-line ConditionalExpression: 上の注記のとおり等価 (2 項でない節の op は || / && にならない)
+    return side.kind === 'binary' && (side.op === '||' || side.op === '&&') && !parenthesized.has(side);
   };
 
   /**
@@ -1112,6 +1167,7 @@ export function parse(file: string, src: string): Module {
       next();
       const e = expr();
       expectP(')');
+      parenthesized.add(e);
       return e;
     }
     if (isP('{')) {
@@ -1215,7 +1271,7 @@ export function parse(file: string, src: string): Module {
 
   const arrow = (isAsync: boolean): Expr => {
     const pos = peek().pos;
-    const ps: Param[] = peek().kind === 'ident' ? [{ name: ident(), optional: false, type: null, init: null, pos }] : params();
+    const ps: Param[] = peek().kind === 'ident' ? [{ name: bindingName(), optional: false, type: null, init: null, pos }] : params();
     expectP('=>');
     if (isP('{')) {
       // 本体のブロックは arrow の外の for / switch の内側ではない: `break` / `continue` は arrow を越えない。
@@ -1393,7 +1449,7 @@ export function parse(file: string, src: string): Module {
       // モジュール直下の let (0.28 · MG-058)。状態を持つ変数は、このモジュールの中だけに閉じる —— export すると別のモジュールが書き換えられる (関門の判定が呼び出し側の都合で変わる)。
       if (exported) fail(peek(), '`export let` は書けません —— モジュールの状態は他のモジュールから書き換えられると関門の判定が変わります (読み取りの関数を export します)');
       next();
-      const name = ident();
+      const name = bindingName();
       if (!isP(':')) fail(peek(), `モジュール直下の \`let ${name}\` には型の宣言が要ります (\`let ${name}: 型 = 初期値;\`。在ったのは ${describe(peek())})`);
       next();
       const type = typeRef(['=']);
@@ -1404,7 +1460,7 @@ export function parse(file: string, src: string): Module {
     }
     if (isW('const')) {
       next();
-      const name = ident();
+      const name = bindingName();
       let type: TypeRef | null = null;
       if (isP(':')) {
         next();
@@ -1423,7 +1479,7 @@ export function parse(file: string, src: string): Module {
     const isAsync = take('async');
     if (!isW('fn')) fail(peek(), `項目が要ります —— use / extern / vetted / type / interface / class / const / let / fn (在ったのは ${describe(peek())})`);
     next();
-    const name = ident();
+    const name = bindingName();
     const typeParams = isP('<') ? typeParamList() : [];
     const ps = params();
     expectP('->');

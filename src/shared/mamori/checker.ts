@@ -307,7 +307,7 @@ function fnKey(file: string, name: string): string {
  * 相対でない (外の module) は `外:` を前に付けた名前を返す —— 道の鍵のどれにも当たらないので、引くと「無い」になる
  * (null を返して呼ぶ側が分岐すると、その分岐を外しても同じ答えになる等価変異が残る)。
  */
-// 型の綴りで特別な意味を持つ語 (型引数の名前にできない)。
+// 型の綴りで特別な意味を持つ語 (型引数に置けない)。型引数の**名前**に置けないことは、0.40 から構文の段 (予約語は束縛・宣言の名前にできない) が持つ。
 const TYPE_SPELLING_WORDS: ReadonlySet<string> = new Set(['typeof', 'import']);
 
 /** TypeScript が別の拡張子へ読み替える末尾 (`./g.js` は `./g.ts` に解かれる)。Mamori の module を指す道には書かない。 */
@@ -1135,7 +1135,6 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
     // 型引数 (0.23) —— 印の名前を型引数に使うと、`u: VettedUrl` が型引数の方を指して、印を持たない値が印を名乗る引数に見える。
     // gate / sink は印を作る・危ない口を呼ぶ関数なので、型を引数に取らせない (型を替えて呼べる口は増やさない)。
     for (const tp of it.typeParams) {
-      if (TYPE_SPELLING_WORDS.has(tp.name)) report('M4', tp.pos, `型引数の名前に \`${tp.name}\` は置けません —— 型の綴りの \`${tp.name}\` は印を持つ値の型・別の module の型を名指しする口で、型引数の名前と取り違えられます`);
       if (project.vetted.has(tp.name)) report('M4', tp.pos, `型引数 ${tp.name} は印の名前です —— 型引数の名前で印を名乗れてしまい、印を持たない値を印を受ける口へ渡せます`);
     }
     if (it.role !== 'plain' && it.typeParams.length > 0) {
