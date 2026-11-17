@@ -83,6 +83,13 @@ describe('村の殻 (?ui=village)', () => {
     expect(container.querySelector('[data-village-hall-open]')).not.toBeNull();
   });
 
+  it('★ 音声コマンド: 殻のヘッダーにマイクの入口が出る (旧画面の topbar だけだった)', async () => {
+    await mount('?ui=village');
+    const bar = await waitForElement(() => container.querySelector('.village-shell-bar'), '殻のヘッダー');
+    // jsdom は音声認識に非対応なので入口は「音声非対応」の表示で出る —— 部品が載っていること自体を見る。
+    expect(bar.querySelector('.voice-command-bar, .voice-unsupported')).not.toBeNull();
+  });
+
   it('★ 対照: 既定 (?ui=village なし) では旧画面 (サイドバー) が出て、村の殻は出ない', async () => {
     await mount('');
     await waitForElement(() => container.querySelector('.sidebar'), '旧画面のサイドバー');
