@@ -358,6 +358,8 @@ describe('伏字の網羅 — 母集団は「預かっているサービス」(�
     { service: 'skills', issuer: 'Anthropic API キー', carrier: 'prefix', sample: `sk-ant-api03-${FILL}` },
     { service: 'business', issuer: 'Anthropic API キー', carrier: 'prefix', sample: `sk-ant-api03-${FILL}` },
     { service: 'teamradar', issuer: 'Anthropic API キー', carrier: 'prefix', sample: `sk-ant-api03-${FILL}` },
+    // Stripe の制限付きキー (2026-11-18 · 取得が鍵を読むようになった)。`rk_live_` / `sk_live_` は接頭辞で伏せられる。
+    { service: 'stripe', issuer: 'Stripe 制限付きキー (rk_live_)', carrier: 'prefix', sample: `rk_live_${FILL}` },
     // Cursor の Admin API キーは `key_` + 16 進 (types.test.ts が Cursor 風の
     // TOKEN に使っている形)。発行元が分かる接頭辞を持つので裸でも伏せられる
     // (パス 516 · T-021 —— それまで `header-only` に `'H'.repeat(40)` という
@@ -397,7 +399,7 @@ describe('伏字の網羅 — 母集団は「預かっているサービス」(�
    * `shpat_` / `shpss_` は上の `PREFIXED` が母集団に依らず留めており、
    * 既に保存した人の値や第三者が本文に反射した値には今日も掛かる。
    */
-  it('★ 預かる 22 サービスすべてに行が在り、余計な行が無い', () => {
+  it('★ 預かる 23 サービスすべてに行が在り、余計な行が無い', () => {
     const listed = HELD_FORMATS.map((f) => f.service);
     expect([...listed].sort()).toEqual([...HELD_SERVICES].sort());
   });

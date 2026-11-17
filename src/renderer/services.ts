@@ -382,7 +382,7 @@ export const SERVICES: ServiceDefinition[] = [
     id: 'stripe',
     label: 'Stripe',
     icon: 'SP',
-    description: '決済 — MRR / 顧客 / 請求 / トランザクション (snapshot)',
+    description: '決済 — 残高 / 最近の入金 (読み取り専用・鍵を登録すると実データ)',
     page: StripePage,
     category: 'integrations',
   },

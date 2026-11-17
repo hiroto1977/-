@@ -89,7 +89,8 @@ export const SERVICE_CREDENTIAL_USE: Record<ServiceId, CredentialUse> = {
    * 設定画面の掃除から消せる** (法則 `escape-hatch-stays-open`)。
    */
   shopify: 'none',
-  stripe: 'none',
+  // 2026-11-18: 取得が鍵を読むようになった (`main/clients/stripe.ts` → `shared/api/stripe.ts`)。
+  stripe: 'fetch',
   line: 'none',
   storage: 'none',
   'tax-accountant': 'none',

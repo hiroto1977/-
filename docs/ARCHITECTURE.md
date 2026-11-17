@@ -1794,7 +1794,7 @@ union を参照する。
 | `linear` | Linear (snapshot) | Bearer (将来) | | | (read-only — issue / cycle / project) |
 | `sentry` | Sentry (snapshot) | Bearer (将来) | | | (read-only — errors / performance / releases) |
 | `shopify` | Shopify EC (snapshot) | Bearer (将来) | | | (read-only — 注文 / 売上 / 商品) |
-| `stripe` | Stripe 決済 (snapshot) | Bearer (将来) | | | (read-only — MRR / 顧客 / 請求) |
+| `stripe` | Stripe 決済 — 残高と最近の入金 (2026-11-18 から実データ) | Bearer (読み取り専用の制限付きキー) | ✅ | | (read-only — 残高 / 最近の入金 10 件。返金・請求の作成などの書き込みは持たない) |
 | `line` | LINE 公式アカウント (snapshot) | Bearer (将来) | | | (read-only — 友達 / 配信 / 統計) |
 | `storage` | ストレージ最適化 (snapshot のみ) | none | ✅ | | (read-only — ディスク使用 / クリーンアップ推奨 / フラグメント率 / メモリ) |
 | `tax-accountant` | 税理士連携 (snapshot のみ) | Bearer (将来) | | | (read-only — 連絡先 / 相談履歴 / 書類 / 月次顧問料・**書類スタジオで作る書類** (2026-09-04): 仕分け表の逆引き `docsForProfessional` — `src/renderer/data/businessTriage.ts` — がこの士業の独占 / 相談先の書式を並べ、書類スタジオへ intent 付きで遷移する。計算書類が関わる士業〔税理士・公認会計士〕は「経営サマリーの数値から計算書類を作る」、全士業に「経営サマリーを開く」「金融機関等提出用の書面を開く」。「やり取り中の書類」の各行に「書類スタジオで探す →」〔題名を書式検索に入れて開く〕) |
@@ -1941,6 +1941,7 @@ undici は CORS を実装しないので単体検査には映らず、CI の外�
 | freee | `api.freee.co.jp` | `GET /api/1/companies`, `GET /api/1/deals` | Bearer | `freee.ts:21` |
 | base | `api.thebase.in` | `GET /1/items` | Bearer | `base.ts:34` |
 | cursor (両ビルド。ブラウザ版はプロキシ経由 —— api.cursor.com はブラウザ発の CORS を許可しない) | `api.cursor.com` | `GET /teams/members`, `POST /teams/daily-usage-data`, `POST /teams/spend` | Bearer (Admin API キー) | `src/shared/api/cursor.ts:252-262` |
+| stripe (両ビルド。ブラウザ版はプロキシ経由 —— 開発環境から api.stripe.com へ届かず、ブラウザ発の CORS は確かめていない) | `api.stripe.com` | `GET /v1/balance`, `GET /v1/charges?limit=10` | Bearer (読み取り専用の制限付きキー) | `src/shared/api/stripe.ts:255-260` |
 | shopify→discord | `discord.com` | `POST` webhook (payload 由来。https + hostname 完全一致で絞る) | webhook URL | `shopify.ts:172-194` |
 | shopify→line | `api.line.me` | `POST /v2/bot/message/push` | Bearer | `shopify.ts:205-215` |
 | shopify→stripe | `api.stripe.com` | `POST /v1/customers` | Bearer | `shopify.ts:354-366` |
@@ -2257,7 +2258,7 @@ $ npm run mutate:next -- --top=5
 per-file の kill / survived / no-cov / ignored / invalid は `docs/QUALITY.md` が
 Stryker の JSON レポート (reports/mutation 配下の生成物) から機械生成して持つ
 (`npm run quality:report`)。
-Stryker の対象 (`stryker.config.json` の `mutate`) は **361 ファイル**。
+Stryker の対象 (`stryker.config.json` の `mutate`) は **362 ファイル**。
 2026-10-26 に `renderer/data` の `aegisLang` と `aegisLangSafety` の 2 モジュール (外へ何も出さない小さな言語の実行系と、実行前の安全の走査・規則ベースの修復の提案 —— Python の原型 AegisLang の考え方だけを移した純ロジック) を足した —— 1 度目の測定は **88.65% (生存 154)** で、生存の大半は利用者に見せる日本語の断りの文を値で主張していない物 (文面を空にしても検査が落ちない) と、走査の上限の添字の等価変異だった。文面を全件そのまま留める検査と、境界・状態の検査を足し、等価な添字は走査の形ごと消して (sticky 正規表現・`indexOf`・`split` と `map`)、**100.00% (Killed 1,286 / 生存 0 / 未到達 0)**。残した 2 つの `Stryker disable` は理由つき (収束しない入力への保険の周回上限・空の編集を適用しても変わらない最適化)。
 2026-10-07 (パス 506) に `src/renderer/components/useDialogFocus.ts` (dialog の焦点の道 —— 開いたら印の操作子へ・Esc で閉じる / 取り消す・
 消えたら押した物へ戻す) を足した —— push した直後の CI で `mutateScopeCensus` が「同名の検査が在り 100 行以上なのに `mutate` の外」と

@@ -115,7 +115,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `sme-consultant` | professionals | sample | none | ✅ |  | ✅ | — | — | — |
 | `stocks` | tools | local | action | ✅ |  |  | `advise` `backtest` `compare-strategies` `export-dashboard` `export-dashboard-md` `register-ticker` `unregister-ticker` | `advise` `compare-strategies` `export-dashboard` `export-dashboard-md` `register-ticker` `unregister-ticker` | `backtest` |
 | `storage` | tools | sample | none | ✅ |  |  | — | — | — |
-| `stripe` | integrations | sample | none |  |  |  | — | — | — |
+| `stripe` | integrations | remote | fetch |  |  |  | — | — | — |
 | `super-delivery` | integrations | sample | none | ✅ |  |  | — | — | — |
 | `talent` | tools | local | none | ✅ |  |  | `judge-leader` `save-state` | `judge-leader` `save-state` | — |
 | `tax` | tools | sample | none | ✅ |  |  | — | — | — |
@@ -134,8 +134,8 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 集計:
 
 - 配置: おすすめ 12 / 士業連携 8 / 分析・ツール 24 / 外部サービス連携 33 / 消費されるだけ 2
-- 出所: remote 15 / local 19 / sample 45
-- 資格情報の読み手 — fetch 15 / action 7 / none 57
+- 出所: remote 16 / local 19 / sample 44
+- 資格情報の読み手 — fetch 16 / action 7 / none 56
 - LOCAL_SERVICES 56 / OAuth 10 / action を持つ 27 / デスクトップだけの action 10
 
 ## 4. facet の公理と例外
