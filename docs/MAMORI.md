@@ -848,9 +848,11 @@ JavaScript / TypeScript の既知の脆弱性クラス (型の綴りの密輸・
 | T-253 | ALM・SHY・タグ文字 U+E0000 台・Hangul filler・Braille blank ほか、BMP の一部だけだった隠し字の表 | 表を広げた（ZWJ / ZWNJ / U+FE0F / U+3000 は絵文字・日本語に要るので外す） |
 | T-254 | 注記の `// @ts-ignore` が生成物の型検査を黙らせた | 注記に `@ts-…` の指示を書けない（M0） |
 
-Rust → Wasm の検算役 (`tools/mamori-verify/`) は v0.2 に作り直した: アロケータを持たない静的 8 MiB の入力窓 (`INPUT`) と固定の ABI（`input_ptr` / `input_cap` / `verify(len)`・0 = 禁じた綴り無し・1〜11 = 規則・`0xFFFFFFFF` = 長すぎ）。呼び手は 0 以外をすべて拒み、UTF-8 のバイト長を渡す。組んだ物は `BUILD.json` に sha256（lib.rs / Cargo.toml / Cargo.lock / wasm）を残し、`scripts/build-mamori-verify.cjs --check` と `rustVerifier.test.ts` が突き合わせる。TypeScript 側と Rust 側の食い違いは 2100 件の乱択（fuzz）で比べ、Rust だけが断る物は「型・構文の位置で生成物に穴が無い」と分類して許す。**検算役は TypeScript の M0 の代わりではなく二重の目**で、整合性チェーンと CODEOWNERS の保護対象に入った。
+Rust → Wasm の検算役 (`tools/mamori-verify/`) は v0.2 に作り直した: アロケータを持たない静的 8 MiB の入力窓 (`INPUT`) と固定の ABI（`input_ptr` / `input_cap` / `verify(len)`・0 = 禁じた綴り無し・1〜11 = 規則 (0.3 で 12・0.4 で 13 を足した)・`0xFFFFFFFF` = 長すぎ）。呼び手は 0 以外をすべて拒み、UTF-8 のバイト長を渡す。組んだ物は `BUILD.json` に sha256（lib.rs / Cargo.toml / Cargo.lock / wasm）を残し、`scripts/build-mamori-verify.cjs --check` と `rustVerifier.test.ts` が突き合わせる。TypeScript 側と Rust 側の食い違いは 2100 件の乱択（fuzz）で比べ、Rust だけが断る物は「型・構文の位置で生成物に穴が無い」と分類して許す。**検算役は TypeScript の M0 の代わりではなく二重の目**で、整合性チェーンと CODEOWNERS の保護対象に入った。
 
 **検算役 0.3 (MG-079 · 2026-11-17)**: 規則 12 (JavaScript の数の文法に無い綴り —— 先頭の 0・連続した `_`・末尾の `_`・数字の無い `0x`) を足した。TypeScript 側は正規表現 1 本、Rust 側は 1 字ずつ前の字を見る書き方で、数に関わる 7 字の長さ 1〜5 の並び 19,607 本すべてで「TS が断る ⟺ Rust が規則 12」が一致する (`rustVerifier.test.ts`)。同じ周で、禁じた語 (`as` / `any` / `eval`) を `.` の後ろでも断るようにした —— 0.2 までは `x.eval` を通しており、TS の字句の段 (位置を見ずに断る) より緩かった。揺さぶりの検査に数の綴りの差し込みを足して乱数の並びが変わった日に、初めてその形が作られて見つかった。
+
+**検算役 0.4 (MG-080 · 2026-11-17)**: 規則 13 (行注記の中の `@ts-…` の指示 · TS 側の T-254) を足した。TS の字句の段が断る理由 (`lex` の中の `throw` 14 か所 / 12 種) を原文から拾い、検算役のどの番号が受け持つかを台帳 (`rustVerifier.test.ts` の `LEX_REFUSALS`) と両方向で突き合わせる —— TS の字句の段に断りを足すと、台帳に行と標本を書くまで検査が落ちる。台帳を作った日に、`@ts-…` の指示が 0.13 から検算役へ写されていなかったことが母集団との突き合わせで出た。突き合わせの「綴りの理由」の一覧も、手書きをやめて台帳から導く。
 
 回帰検査は `mamoriV13.test.ts`（各 describe に `threat: T-25x`）・台帳は `security/threat-ledger.json`・開け直しは `security/threat-ablations.json`（A-570〜A-575）。見つけた方法の再現には `npm run audit:mamori-battery`（隠し字の表を広げた弾も入っている）。
 
