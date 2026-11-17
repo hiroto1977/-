@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.40"
+    "version": "0.41"
   },
   "constructs": {
     "class": {
@@ -4891,6 +4891,49 @@
       "report": {
         "pr": 931,
         "summary": "直す側だけの周 (穴探しは止めたまま・言語は 0.40 のまま)。MG-079 が残した「TS の字句の段が断る理由を全部並べて Rust に当てる総当たりが無い」を閉じた。parser.ts の lex の中の throw 14 か所 / 12 種を原文から拾い、検算役のどの番号が受け持つかを台帳 (rustVerifier.test.ts の LEX_REFUSALS) と両方向で突き合わせ、行ごとの標本を両方の実装へ当てる。突き合わせの「綴りの理由」の一覧も台帳から導く (手書きの一覧に足し忘れると黙る形を無くした)。台帳を作った日に写し忘れが 1 つ出た: 行注記の中の `@ts-…` の指示 (T-254) を検算役は 1 度も断っていなかった —— 規則 13 として写した (検算役 0.3 → 0.4)。言語の穴ではない (TS が断るので生成物には届かない) ので脅威台帳には載せていない。対照 6 方向はすべて鳴る (英小文字の条件の対照は 1 度目に鳴らず、`@ts-` の直後が英小文字でない標本を足して鳴らせた)。台帳が覆うのは字句の段だけで、構文の段と検査器の断りは母集団に入っていない (REMAINING_WORK に記録)。"
+      }
+    },
+    {
+      "id": "MG-081",
+      "date": "2026-11-17",
+      "kind": "probe",
+      "target": "language",
+      "pickedBy": "brief",
+      "briefPick": "probe:language",
+      "version": "0.41",
+      "features": [],
+      "added": [],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "Mamori 自身の語 12 語 (`use` `extern` `vetted` `fn` `gate` `sink` `mint` `from` `alias` `of` `field` `type`) を、束縛・宣言の名前 12 か所 (引数・const / let・分割代入の省略形と付け替え・for-of・catch・矢印関数 2 形・直下の const / let・関数の名前) に置く —— 0.40 は受け取っていた (式の位置では読めないので値は取り出せない)。0.41 は構文の段で断る",
+          "result": "refused"
+        },
+        {
+          "tried": "同じ 12 語を、型・import の名前 4 か所 (型の別名・型引数の名前・use の名前・interface) と、型だけの import の名前 (`use { type mint }`) に置く",
+          "result": "refused"
+        },
+        {
+          "tried": "前提の確かめ: 同じ 12 語を式の位置で読む (`return mint;`) —— 構文の段が断る (だから束縛しても使えなかった)",
+          "result": "refused"
+        },
+        {
+          "tried": "対照: メンバ (`o.type`)・鍵 (`{ type: 1, from: 2 }`)・分割代入の鍵 (`{ type: kind }`)・interface の欄・型の中の引数の名前 (`(target: string, type: string) => void`)・その語を含むだけの名前 (`types` `gateway` `minted`) —— 今までどおり受け取り、生成物へそのまま写る",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 3,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 932,
+        "summary": "直す側だけの周 (穴探しは止めたまま)。MG-078 が「断るかは決めていない」と残した形を閉じた: Mamori 自身の語 12 語を束縛・宣言の名前に置く形 (`const mint = 1;`) を構文の段 (M0) で断る。その名前は式の位置では読めない (構文の段が断る) ので、束縛しても値を取り出せず、読み手に「この名前は使える」と思わせるだけだった。0.41 の不変条件は「式の位置で読めない語は、束縛の名前にもできない」で、語の表は足さず式の位置の断りと同じ表 (RESERVED) を引く。メンバ・鍵・型の中の引数の名前は今までどおり書ける。穴ではないので脅威台帳には載せていない。実物の 46 本は書き換えなし・生成物は不変 (既存の検査の標本 1 つは関数の名前を替えた)。対照 3 方向 (断りを外す・省略形を素通しにする・順序を入れ替える) は狙った検査を落とした。変えた行の変異検査は 100% (Killed 4)。型の中の引数の名前は束縛の名前の検めを通らない (REMAINING_WORK に記録)。"
       }
     }
   ]
