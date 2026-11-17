@@ -486,6 +486,12 @@ const VERDICTS = {
     + '(MentorPage.tsx と、パス 555 で足した data/mentorRoster.ts · TeamPage.tsx · WorkloadShareTable.tsx)。main が import するのは `buildMentorSnapshot` と型 `MentorSnapshot` だけ '
     + '(main/clients/mentor.ts) で、それは null を返さない。危機の判定は renderer の `counseling.ts` を '
     + '注入で受けるので、この module 自身は判定を持たない',
+  vrio:
+    '非対称は起きない (実測・2026-11-17) —— 否定で答えるのは `scoreEmployee` の `total: null` (採点が 1〜5 の整数として '
+    + '読めない)・`promotionGate` の null (ゲートの無い階層 / 読めない採点)・`employeeFeedback` の null の 3 つで、'
+    + '**読み手は renderer の VrioPage.tsx だけ**。main が import するのは `buildVrioSnapshot` と型 `VrioSnapshot` だけ '
+    + '(main/clients/vrio.ts) で、それは id の一覧を返し null を返さない。ブラウザ版の読み手も同じ画面 1 枚 '
+    + '(data/snapshot.ts は `buildVrioSnapshot` だけ) なので、「no のあとの動作」は 1 か所にしか無い',
   team:
     '非対称は起きない (実測・パス 551) —— この module が母集団に入ったのは `shared/mentor.ts` が '
     + '型 `Role` を import したため (型だけの辺・値は 1 つも読まない)。否定で答える `isRole` / `can` / '

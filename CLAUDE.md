@@ -11,7 +11,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Service Hub — a Japanese-facing business dashboard exposing **78 services** through a unified,
+Service Hub — a Japanese-facing business dashboard exposing **79 services** through a unified,
 category-grouped sidebar (おすすめ / 士業連携 / 分析・ツール / 外部サービス連携). **Not every service has a sidebar
 entry of its own**: `uber-eats` and `demae-can` are consumed inside the Business Dashboard instead
 (`BusinessPage.tsx` reads their snapshots directly). That split is a reasoned, bidirectional ledger in
@@ -1521,7 +1521,7 @@ npm run lint:test-coverage # サービスごとに `<id>.test.ts` が在り、**
                            #   直書きした action は検査を素通りする)、`ACTIONS` を export する
                            #   クライアントは全部 `LIVE_ACTIONS` に載る (逆向き)。
                            #   **action を持たないサービスは許される** —— 2026-09-15 実測で
-                           #   **78 のうち 50 が action を 1 つも登録していない** (ゲートの
+                           #   **79 のうち 51 が action を 1 つも登録していない** (ゲートの
                            #   self-test にも「テストはあるが action 0 件 → 0 件鳴る」が在る)。
                            #   2026-09-15 まで、この行は「every service must have a test +
                            #   an action registered」と書かれていた —— **後半は偽**で、
@@ -1663,8 +1663,8 @@ npm run lint:zero-fold     # 「割れない値を 0 に倒す」箇所の**母�
                            #   母集団が 26 ファイル (実測 106) と 4 倍ずれていた
 npm run lint:shared-judgement # 「述語は共有したが、no と言われたあとの動作が両ビルドで
                            #   違う」の**母集団**を数え、`docs/REMAINING_WORK.md` の
-                           #   生成ブロックと突き合わせる (shared 185 / 両ビルドが
-                           #   import 99 / うち否定で答えられる 48。**この 3 つは
+                           #   生成ブロックと突き合わせる (shared 186 / 両ビルドが
+                           #   import 100 / うち否定で答えられる 49。**この 3 つは
                            #   live metric なので散文だけが古びることはもう無い** ——
                            #   2026-09-15 まで 138 / 44 / 21 と書いたままだった。
                            #   44 / 21 はパス 247 が初めて数えた値で、
