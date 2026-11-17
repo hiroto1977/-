@@ -146,6 +146,20 @@ describe('0.43: 同じ並びの中で、同じ名前を 2 度書かせない (MG
     expect(compile('export fn t() -> number {\n  const o = { a: 1, b: 2, b: 3, a: 4 };\n  return o.a;\n}\n').diagnostics).toEqual(only(2, 27, DUP('鍵', 'b')));
   });
 
+  it('対照: 関数の型の引数の名前の位置に、名前でない字句は置けない (前からの断りのまま)', () => {
+    const NAME_NEEDED = '[M0] 型の綴りが 1 つの型として読めません (名前が要ります)';
+    for (const src of [
+      'export type F = (a: number, 1: number) => void;\n',
+      'export type F = (a: number, "b": number) => void;\n',
+      'export type F = (a: number, ) => void;\n',
+      'export type F = (a: number, : number) => void;\n',
+    ]) {
+      const d = compile(src).diagnostics;
+      expect(d, src).toHaveLength(1);
+      expect(d[0], src).toContain(`src/x/m0.mamori:1:29: ${NAME_NEEDED}`);
+    }
+  });
+
   it('対照: 重なりでない形は今までどおり受け取り、生成物の形も変わらない', () => {
     expect(Object.keys(ACCEPTED).length).toBeGreaterThanOrEqual(14);
     for (const [label, [src]] of Object.entries(ACCEPTED)) {
