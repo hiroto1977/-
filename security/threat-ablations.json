@@ -2257,8 +2257,8 @@
       "why": "arrow の引数の既定値を検めない —— 既定値に宣言していない名前・危ない口・印の無い値の呼び出しを隠す口を開け直す",
       "edits": [
         {
-          "find": "if (p.init !== null) checkExpr(p.init, [...scopes, inner], plain);",
-          "replace": "if (false) checkExpr(p.init!, [...scopes, inner], plain);"
+          "find": "if (p.init !== null) checkExpr(p.init, [...scopes, inner], body);",
+          "replace": "if (false) checkExpr(p.init!, [...scopes, inner], body);"
         }
       ]
     },
