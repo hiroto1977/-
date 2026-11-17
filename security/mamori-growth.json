@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.43"
+    "version": "0.44"
   },
   "constructs": {
     "class": {
@@ -5028,6 +5028,57 @@
       "report": {
         "pr": 933,
         "summary": "直す側だけの周 (穴探しは止めたまま)。MG-082 が残した 1 つ目を閉じた: 同じ並びの中で同じ名前を 2 度書く形を構文の段 (M0) で断る。対象は 5 つの並び —— 引数 (fn / arrow / constructor)・関数の型の引数・分割代入の束縛・interface と物の型の欄・オブジェクトの字面の鍵。0.42 まではどれも受け取り、生成物を tsc が断っていた (2300 / 2451 / 1117 —— 守りが tsc の 1 層)。判定は 1 つ (noRepeat) で、並びごとに見た名前の集まりを持つ。入れ子の並びは別の並び・文字列で書いた名前は名前で書いた物と同じ・同じ鍵から別々の束縛を取る形は断らない。どの断りも TypeScript の答えと同じであることを同じ検査の中で TypeScript に訊いて確かめた (断る 33 形は TypeScript も断る・受け取る 14 形は診断 0 件)。穴ではないので脅威台帳には載せていない。実物の 46 本は書き換えなし・生成物は不変。対照 14 方向は狙った検査を落とした。変えた行の変異検査は 1 回目 97.04% (生存 4 件は 0.42 で入れた 1 行の等価な条件) → 条件を書き直して 100% (Killed 133)。同じブロックの中の宣言の重なり (`const a = 1; const a = 2;` ほか) は断っていない (tsc が断る · 有効範囲の話 · REMAINING_WORK に記録)。"
+      }
+    },
+    {
+      "id": "MG-084",
+      "date": "2026-11-17",
+      "kind": "probe",
+      "target": "language",
+      "pickedBy": "brief",
+      "briefPick": "probe:language",
+      "version": "0.44",
+      "features": [],
+      "added": [],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "同じブロックで同じ名前を 2 度宣言する (`const a = 1; const a = 2;`) —— const と const・let と let・const と let・分割代入との組・分割代入の別名・間に別の文を挟む形・3 度宣言する形。0.43 は受け取り、生成物を tsc が断っていた (2451)。0.44 は検査器 (M6) で 2 度目の宣言の文の頭で断る",
+          "result": "refused"
+        },
+        {
+          "tried": "入れ子のブロックの中で同じ名前を 2 度宣言する —— if / else / while / for / try / catch (束縛なし) / finally / arrow のブロックの本体 / 同じ case の中。0.43 は受け取り、tsc が断っていた (2451)。0.44 はどのブロックでも同じ決まりで断る",
+          "result": "refused"
+        },
+        {
+          "tried": "引数と同じ名前の const / let / 分割代入を本体の直下に置く (`fn t(a: number) { const a = 1; }`) —— fn・async fn・2 つ目の引数・arrow のブロックの本体。0.43 は受け取り、本体の宣言が引数を黙って隠していた (tsc は 2300 で断る)。0.44 は引数を本体の直下と同じブロックに置いて断る",
+          "result": "refused"
+        },
+        {
+          "tried": "catch の束縛と同じ名前の const / let / 分割代入を handler の直下に置く (`catch (e) { const e = 1; }`) —— 0.43 は受け取り、tsc が断っていた (2492)。0.44 は束縛を handler の直下と同じブロックに置いて断る",
+          "result": "refused"
+        },
+        {
+          "tried": "同じ switch の別々の case で同じ名前を宣言する (`case 1: const a = 1; … default: const a = 2;`) —— case と default・case と case (let / 分割代入 / 別名)・1 つ目と 3 つ目・3 つの case すべて。生成物では case の本体は 1 つのブロックを共有するので tsc が断っていた (2451)。0.44 は別の文で断る",
+          "result": "refused"
+        },
+        {
+          "tried": "対照: 別々のブロックの同じ名前 —— 入れ子の if が外の const や引数と同じ名前・if と else・try と catch と finally・catch の束縛と handler の入れ子・for の回す変数と本体・arrow の引数や本体と外の const・case の const と外の const・別の case の入れ子・2 つの switch・2 つの関数 —— 重なりではないので今までどおり受け取り、生成物へそのまま写る (TypeScript の診断も 0 件)",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 14,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/checker.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 933,
+        "summary": "直す側だけの周 (穴探しは止めたまま)。MG-083 が残した 1 つ目を閉じた: 同じブロックの中で同じ名前を 2 度宣言する形を検査器 (M6) で断る。対象は 3 つ —— 同じブロックの const / let / 分割代入の束縛・頭 (引数・catch の束縛) と本体の直下・同じ switch の別々の case。0.43 まではどれも受け取り、生成物を tsc が断っていた (2451 / 2300 / 2492 —— 守りが tsc の 1 層)。判定は束縛を置く 1 か所 (bindLocal) で、関数・arrow の引数と catch の束縛は本体の直下と同じ置き場に入れる。switch は case の本体の直下の宣言を前の case と突き合わせる (生成物では case の本体が 1 つのブロックを共有する)。入れ子のブロック・for の本体・別の関数・別の switch は別のブロックなので今までどおり受け取る。どの断りも TypeScript の答えと同じであることを同じ検査の中で TypeScript に訊いて確かめた (断る 35 形は TypeScript も断る・受け取る 17 形は診断 0 件)。穴ではないので脅威台帳には載せていない。実物の 46 本は書き換えなし・生成物は不変。対照 14 方向は狙った検査を落とした。変えた行の変異検査は 100% (Killed 55)。同じブロックで宣言より前に名前を読む形と、別の case が宣言した名前を読む形は見ていない (REMAINING_WORK に記録)。"
       }
     }
   ]
