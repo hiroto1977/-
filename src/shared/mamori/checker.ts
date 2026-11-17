@@ -307,6 +307,19 @@ function redeclaredInSwitch(name: string): string {
   return `局所の名前 ${name} を同じ switch の別の case でも宣言しています —— 生成物では case の本体は 1 つのブロックを共有するので、名前を重ねられません (TypeScript も断ります)`;
 }
 
+/**
+ * 同じブロックの宣言より前で名前を使ったときの断り (0.45 · MG-085)。外側に同じ名前が在っても、生成物ではこのブロックの宣言を指す
+ * (JavaScript の決まり —— ブロックの const / let はブロックの先頭から見え、宣言の文に届くまでは読むと投げる)。
+ */
+function usedBeforeDeclared(name: string): string {
+  return `局所の名前 ${name} を、同じブロックの宣言より前で使っています —— 生成物ではこのブロックの ${name} を指すので、外側の同じ名前は読めず、宣言の文より前に走ると実行時に投げます (使うのは宣言の文の後にします)`;
+}
+
+/** 同じ switch の case の本体が宣言する名前を、case の値・別の case から使ったときの断り (0.45 · MG-085)。 */
+function usedAcrossCases(name: string): string {
+  return `局所の名前 ${name} は、同じ switch の case の本体が宣言しています —— 生成物では case の値と全部の case の本体が 1 つのブロックを共有するので、ここで使うと外側の同じ名前ではなくその宣言を指し、宣言の文を通っていなければ実行時に投げます (名前を変えるか、switch の外で宣言します)`;
+}
+
 /** `道 + 名前` の鍵 (`fns` を引く)。 */
 function fnKey(file: string, name: string): string {
   return `${file}\u0000${name}`;
@@ -832,6 +845,11 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
   const regexUses = new WeakSet<Expr>();
   /** 読むだけの表の名前を置いてよい場所の式 —— 読むメンバの受け手・`for … of` の回す相手・展開・`new Map(…)` / `new Set(…)` の引数 (0.35 · T-268)。 */
   const tableReads = new WeakSet<Expr>();
+  /**
+   * ブロックの束縛の置き場 → そのブロックが**これから宣言する**名前と、先に使ったときの断り (0.45 · MG-085)。
+   * 置き場 (`own`) は宣言の文を通った名前だけを持つので、「ここに在るが置き場にまだ無い名前」が、宣言より前の名前になる。
+   */
+  const declaresLater = new WeakMap<Map<string, Binding>, ReadonlyMap<string, string>>();
   /** 名前を 1 つ宣言する。同じ名前を 2 度 (use・定数・関数・extern のあいだで) 宣言すると、あとの物が前の物の外形を隠す (0.4 · T-241)。 */
   const declare = (name: string, b: Binding, pos: { line: number; col: number }): void => {
     if (moduleScope.has(name)) report('M6', pos, `名前 ${name} を 2 度宣言しています (use・extern・定数・関数のあいだで名前は重ねられない)`);
@@ -1297,6 +1315,34 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
     return undefined;
   }
 
+  /**
+   * 名前を、いちばん内側でその名前を持つ (か、これから宣言する) ブロックで引く。そのブロックがまだ宣言の文に届いていなければ断りの文、
+   * 届いているか、どのブロックも宣言しないなら undefined (0.45 · MG-085)。
+   * 0.44 までは、宣言の文に届く前の名前は「無い物」として外側へ引きに行っていた —— 外側に同じ名前が在ると検査器はそちらを読み、
+   * 生成物 (JavaScript) は内側の宣言を指す (`tsc` は 2448 で断る)。検査器と生成物が、同じ綴りで別の束縛を見ていた。
+   */
+  function earlyUse(scopes: readonly Map<string, Binding>[], name: string): string | undefined {
+    const scope = [...scopes].reverse().find((s) => s.has(name) || declaresLater.get(s)?.has(name) === true);
+    return scope === undefined || scope.has(name) ? undefined : declaresLater.get(scope)!.get(name);
+  }
+
+  /** 名前を同じブロックの宣言より前で使っていれば、断って true (0.45 · MG-085)。 */
+  function refuseEarlyName(name: string, pos: { line: number; col: number }, scopes: readonly Map<string, Binding>[]): boolean {
+    const refusal = earlyUse(scopes, name);
+    if (refusal === undefined) return false;
+    report('M6', pos, refusal);
+    return true;
+  }
+
+  /** 式が名前そのもので、その名前を同じブロックの宣言より前で使っていれば、断って true (名前でない式は false)。 */
+  function refuseEarlyUse(e: Expr, scopes: readonly Map<string, Binding>[]): boolean {
+    switch (e.kind) {
+      case 'ident':
+        return refuseEarlyName(e.name, e.pos, scopes);
+    }
+    return false;
+  }
+
   /** 式が運ぶ印 (無ければ null)。 */
   /** 分割代入の元の式の「名前空間として指している根」(名前だけ)。呼び出し・`new`・字面の結果は値なので根にならない。 */
   function destructureRoots(e: Expr): readonly (Expr & { readonly kind: 'ident' })[] {
@@ -1361,7 +1407,15 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
    * ブロックを検める。`own` はそのブロックの束縛の置き場で、関数・arrow の引数と catch の束縛を先に置いた Map を渡すと、
    * 本体の直下がそれと同じブロックになる (0.44 · MG-084 —— 引数・束ねた例外と同じ名前を本体の直下で宣言できない)。
    */
-  function checkBlock(stmts: readonly Stmt[], scopes: Map<string, Binding>[], ctx: Ctx, own: Map<string, Binding> = new Map<string, Binding>()): void {
+  function checkBlock(
+    stmts: readonly Stmt[],
+    scopes: Map<string, Binding>[],
+    ctx: Ctx,
+    own: Map<string, Binding> = new Map<string, Binding>(),
+    later: ReadonlyMap<string, string> = new Map(blockDeclarations(stmts).map((d) => [d.name, usedBeforeDeclared(d.name)])),
+  ): void {
+    // このブロックが宣言する名前は、宣言の文に届くまで使えない (0.45 · MG-085)。switch の case は、ほかの case の宣言も合わせて渡す。
+    declaresLater.set(own, later);
     const chain = [...scopes, own];
     for (const s of stmts) checkStmt(s, chain, own, ctx);
   }
@@ -1423,6 +1477,8 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
       }
       case 'assign': {
         checkExpr(s.value, scopes, ctx);
+        // 同じブロックがこの後で宣言する名前への代入 (0.45 · MG-085) —— 外側の同じ名前の束縛で「代入できるか」を答えない。
+        if (refuseEarlyName(s.target, s.pos, scopes)) return;
         const target = lookup(scopes, s.target);
         if (target === undefined) {
           report('M6', s.pos, `宣言していない名前 ${s.target} へ代入しています`);
@@ -1462,8 +1518,12 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
         return;
       }
       case 'member-assign': {
+        const early = earlyUse(scopes, s.object);
         const target = lookup(scopes, s.object);
-        if (target === undefined) {
+        if (early !== undefined) {
+          // 同じブロックがこの後で宣言する名前の欄への代入 (0.45 · MG-085)。
+          report('M6', s.pos, early);
+        } else if (target === undefined) {
           report('M6', s.pos, `宣言していない名前 ${s.object} の欄へ代入しています`);
         } else if (target.owned !== true) {
           report('M6', s.pos, `${s.object} の欄へは代入できません —— 書けるのは、この関数の中で \`const ${s.object} = { … }\` と作った物の欄だけです (引数・外の名前・let・組み込みを書き換えると、他のモジュールの判定まで変わる)`);
@@ -1526,9 +1586,15 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
         return;
       case 'switch': {
         checkExpr(s.test, scopes, ctx);
+        // 生成物では case の値と全部の case の本体が 1 つのブロックを共有する。どれかの case の本体が宣言する名前は、case の値からも
+        // 別の case からも、外側の同じ名前ではなくその宣言を指す (0.45 · MG-085)。自分の case の宣言は、宣言の文の後なら使える。
+        const across = new Map(s.cases.flatMap((c) => blockDeclarations(c.body)).map((d) => [d.name, usedAcrossCases(d.name)]));
+        const tests = new Map<string, Binding>();
+        declaresLater.set(tests, across);
         for (const c of s.cases) {
-          for (const t of c.tests) if (t !== null) checkExpr(t, scopes, ctx);
-          checkBlock(c.body, scopes, ctx);
+          for (const t of c.tests) if (t !== null) checkExpr(t, [...scopes, tests], ctx);
+          const own = blockDeclarations(c.body).map((d) => [d.name, usedBeforeDeclared(d.name)] as const);
+          checkBlock(c.body, scopes, ctx, new Map<string, Binding>(), new Map([...across, ...own]));
         }
         // 生成物では case の本体は 1 つのブロックを共有する (`switch (x) { case 1: … case 2: … }`) ので、別の case で同じ名前を宣言できない
         // (0.44 · MG-084)。同じ case の中の重なりは bindLocal が断るので、ここで数えるのは「前の case が宣言した名前」だけ。
@@ -1646,6 +1712,8 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
   }
 
   function checkCallee(callee: Expr, args: readonly Expr[], scopes: readonly Map<string, Binding>[], ctx: Ctx): void {
+    // 呼ぶ側の頭の名前を、同じブロックの宣言より前で使う形 (0.45 · MG-085)。この後の検めは外側の同じ名前の束縛で答えるので、先に断って抜ける。
+    if (refuseEarlyUse(callee.kind === 'member' ? callee.object : callee, scopes)) return;
     if (carriesInert(callee, scopes)) {
       report('M6', callee.pos, '計算した鍵の添字の結果は呼び出せません —— `const f = x[k]; f(…)` で、鍵が選んだ関数を関門の外から呼べてしまう');
       checkExpr(callee, scopes, ctx);
@@ -1710,6 +1778,7 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
       report('M6', r.pos, 'instanceof の右辺は名前だけです —— 組み込みか `use` / `extern pure` で宣言した名前を直に書きます (メンバ・呼び出し・条件・添字は、実行時に計算した値の `Symbol.hasInstance` を辿れてしまう)');
       return;
     }
+    if (refuseEarlyName(r.name, r.pos, scopes)) return;
     const b = lookup(scopes, r.name);
     if (b === undefined) {
       if (!PURE_GLOBALS.has(r.name)) report('M6', r.pos, `宣言していない名前 ${r.name} —— 外の値は \`use\` / \`extern\` で宣言します (網・記憶・OS へ届く名前は暗黙に使えません)`);
@@ -1723,6 +1792,8 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
   function checkExpr(e: Expr, scopes: readonly Map<string, Binding>[], ctx: Ctx): void {
     switch (e.kind) {
       case 'ident': {
+        // 同じブロックがこの後で宣言する名前 (0.45 · MG-085) —— 外側の同じ名前 (束縛・組み込み) で答えない。
+        if (refuseEarlyName(e.name, e.pos, scopes)) return;
         const b = lookup(scopes, e.name);
         if (b === undefined) {
           if (e.name === 'Object') {
@@ -1773,6 +1844,8 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
         if (ctx.sharedInit !== undefined) checkSharedRegex(e, regexFlags(e.raw), ctx.sharedInit);
         return;
       case 'member':
+        // 受け手の名前を同じブロックの宣言より前で使う形 (0.45 · MG-085) —— 組み込みの名前 (`Math.PI`) は下で名前の枝を通らないので、ここで見る。
+        if (refuseEarlyUse(e.object, scopes)) return;
         // 受け手を選ぶ口 (`.call` / `.apply` / `.bind`) と、正規表現を作り替える `.compile` は書けない (0.34 · T-265 / T-266)。
         if (BORROWING_MEMBERS.has(e.prop)) report('M6', e.pos, `\`.${e.prop}\` は Mamori に在りません —— ${BORROWING_MEMBERS.get(e.prop)!}`);
         // 読むメンバの受け手は、読むだけの表の名前を置いてよい場所 (0.35 · T-268)。
@@ -1849,6 +1922,11 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
         return;
       case 'new':
         checkTypeArgs(e.typeArgs);
+        // 構築子の名前を同じブロックの宣言より前で使う形 (0.45 · MG-085) —— 組み込みの名前 (`new Map()`) は名前の枝を通らないので、ここで見る。
+        if (refuseEarlyUse(e.callee, scopes)) {
+          e.args.forEach((x) => checkExpr(x, scopes, ctx));
+          return;
+        }
         // 構築子の名前 (識別子でなければ null —— 表は null を持たないので当たらない。「識別子か」を別の条件に書くと、
         // その条件を常に真にしても答えが変わらない等価変異が残る)。
         if (ctx.sharedUntyped !== undefined && SHARED_COLLECTIONS.has(identName(e.callee))) {

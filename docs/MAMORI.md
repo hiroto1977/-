@@ -46,7 +46,7 @@ Mamori では、その 2 つは**書けない**:
 | M3 | `sink` 関数の**最初の引数 (行き先)** の型は、宣言した印の型 1 つ (`T \| null` も不可)。2 つ目からは本文で型を問わない。引数の無い sink も断る | 素の `string` を行き先に受ける危ない口を作る |
 | M4 | 印の型を受ける引数には、印を持つ値だけを渡せる (モジュールをまたいでも)。**印を受ける関数は直に呼ぶことしかできない** —— 値として持ち出すと検めを迂回できる (0.3 · T-225) | 文字列の字面・素の引数・別の種類の印を渡す・`openUrl.call(null, raw)` / `.apply` / `.bind`・`const f = openUrl;`・`{ g: openUrl }`・`[openUrl]`・`c ? openUrl : …`・`for (const f of [openUrl])`・**arrow の引数に印を書く `(v: V) => need(v)` (外の module の関数へ直に渡す呼び戻しだけ書ける)・印を受ける Mamori の関数を `extern` で引く (0.32 · T-261 / T-262)**・**印を名乗る引数の既定値 `u: V = 式` (0.32 · T-263)** |
 | M5 | 印を持つ変数を、印の無い値で上書きできない | `let u = 関門(x); u = '…';` (印の洗浄) |
-| M6 | 外の名前は `use` / `extern` で宣言する。宣言なしで使えるのは副作用の判断を持たない組み込み (`URL` / `Set` / `Map` / `Promise` / `Number` / `String` / `Boolean` / `Math` / `JSON` / `Object` / `Array` / `Error` / `RegExp` / `TypeError` / `RangeError`) だけ。**`Object` は読むだけ・凍らせるだけのメンバ (`hasOwn` / `keys` / `values` / `entries` / `fromEntries` / `freeze` / `isFrozen`) に限り、値として持ち出せない** (0.2)。**代入できるのは `let` の名前だけ** —— 外の名前・`const`・引数・回す変数・関数の名前へは代入できない (0.2。0.1 は「このモジュールの名前か」しか見ず、`const` と引数への代入を変換後の `tsc` に任せていた —— 引数への代入は `tsc` も通す)。**同じブロックの中で同じ名前を 2 度宣言できない** —— 引数・catch の束縛は本体の直下と同じブロックで、同じ switch の case どうしも名前を重ねられない (0.44) | `window` / `fetch` / `process` / `require` / `globalThis` / `document` / `localStorage` / `indexedDB` / `navigator` を暗黙に使う・`Object.setPrototypeOf` / `defineProperty` / `assign`・`const o = Object;`・`code = 'x';` (引数)・`for (const k of xs) { k = 1; }`・**`RegExp.$1` / `RegExp.input` / `RegExp.lastMatch` (他のモジュールの直近の正規表現の一致と入力)・`Error.captureStackTrace` / `Error.stackTraceLimit`・`URL.createObjectURL` / `URL.revokeObjectURL`・`const r = RegExp;` (0.4 · T-232)**・**`extern pure global window;` / `document` / `globalThis` / `fetch` / `process` ほか host の 29 名を pure で宣言する (sink を経ずに `window.open(生の値)` / `document.write(html)` / `return window;` が通る · 0.11 · T-249)**・**正規でない道の綴り `from "./g.js"` / `".//g"` / `"././g"` / `"./g/"`・`X/index.mamori` を `"./X"` と名指す (0.32 · T-262)** |
+| M6 | 外の名前は `use` / `extern` で宣言する。宣言なしで使えるのは副作用の判断を持たない組み込み (`URL` / `Set` / `Map` / `Promise` / `Number` / `String` / `Boolean` / `Math` / `JSON` / `Object` / `Array` / `Error` / `RegExp` / `TypeError` / `RangeError`) だけ。**`Object` は読むだけ・凍らせるだけのメンバ (`hasOwn` / `keys` / `values` / `entries` / `fromEntries` / `freeze` / `isFrozen`) に限り、値として持ち出せない** (0.2)。**代入できるのは `let` の名前だけ** —— 外の名前・`const`・引数・回す変数・関数の名前へは代入できない (0.2。0.1 は「このモジュールの名前か」しか見ず、`const` と引数への代入を変換後の `tsc` に任せていた —— 引数への代入は `tsc` も通す)。**同じブロックの中で同じ名前を 2 度宣言できない** —— 引数・catch の束縛は本体の直下と同じブロックで、同じ switch の case どうしも名前を重ねられない (0.44)。**同じブロックの宣言より前で名前を使えない** —— 読む・呼ぶ・構築する・代入するのは宣言の文の後で、同じ switch の case の本体が宣言する名前は case の値と別の case から使えない (0.45) | `window` / `fetch` / `process` / `require` / `globalThis` / `document` / `localStorage` / `indexedDB` / `navigator` を暗黙に使う・`Object.setPrototypeOf` / `defineProperty` / `assign`・`const o = Object;`・`code = 'x';` (引数)・`for (const k of xs) { k = 1; }`・**`RegExp.$1` / `RegExp.input` / `RegExp.lastMatch` (他のモジュールの直近の正規表現の一致と入力)・`Error.captureStackTrace` / `Error.stackTraceLimit`・`URL.createObjectURL` / `URL.revokeObjectURL`・`const r = RegExp;` (0.4 · T-232)**・**`extern pure global window;` / `document` / `globalThis` / `fetch` / `process` ほか host の 29 名を pure で宣言する (sink を経ずに `window.open(生の値)` / `document.write(html)` / `return window;` が通る · 0.11 · T-249)**・**正規でない道の綴り `from "./g.js"` / `".//g"` / `"././g"` / `"./g/"`・`X/index.mamori` を `"./X"` と名指す (0.32 · T-262)** |
 | M7 | **能力の台帳 (0.5 · T-242)**: 守りの層が届く先 4 種 (`extern` の外の値・相対でない `use` の外の module・`gate fn` (印を作れる関数)・`sink fn` (危ない口を呼べる関数)) を構文木から導き、`security/mamori-capabilities.json` と**両方向**に突き合わせる。出荷の道 (CLI と生成物の検査) は必ず台帳を渡し、台帳が読めなければ断る | 台帳に無い `extern` / import / gate / sink を足す・台帳に在るのに実在しない能力 (古い申告)・台帳だけに在るモジュール |
 
 1 つの関数は `gate` と `sink` を兼ねられない (頭に書ける役割は 1 語だけで、`sink` が印を作れば M1、
@@ -96,6 +96,42 @@ Mamori では、その 2 つは**書けない**:
 - **測れなかった物を満点にしない**: 入力が読めない・母集団が空の基準は 0 点 (口を持つ .mamori が 0 本の A2 だけは『載せる物が無い』ので満点)。表の基準と実装の測り方は 1 対 1 で、検査 (`mamoriCompleteness.test.ts`) が両方向に見る。
 - **基準と床は私 (実装した側) の判断**で、実測が決めた物ではない。床を動かすときは表の `why` に理由を書く。今の実物は 1.0 を満たしていない (E1 89% / E2 88% が床の下) —— 足りない基準を埋めるのが次の作業で、`report` が一覧を出す。
 
+## 0.45 —— 同じブロックの宣言より前で、名前を使わせない (MG-085 · 2026-11-17)
+
+穴ではなく、守りの層を 1 つ足す周。JavaScript のブロックの `const` / `let` は**ブロックの先頭から見え**、宣言の文に届くまでは読むと投げる。
+0.44 までの検査器は文を上から順に検め、宣言の文に届く前の名前を「無い物」として外側へ引きに行っていた —— 外側に同じ名前が在ると検査器はそちらで答え、
+生成物は内側の宣言を指す (`tsc` は 2448 / 2454 で断る)。守りが `tsc` の 1 層で、しかも**検査器と生成物が、同じ綴りで別の束縛を見ていた**。実測で、次の形がどれも通っていた:
+
+| 形 | 例 | TypeScript の答え |
+| --- | --- | --- |
+| 同じブロックの宣言より前で読む | `if (c) { const y = x; const x = 2; }` (外側に `x`) | 2448 / 2454 |
+| 自分の初期値で自分を読む | `const x = x + 1;` (外側に `x`) | 2448 |
+| 宣言より前に代入する・欄へ代入する | `x = 5; let x = 2;` / `o.a = 3; const o = { a: 2 };` | 2448 |
+| 宣言より前に呼ぶ・構築する・`instanceof` の右辺に置く | `f(); const f = …;` / `new Map(); const Map = 2;` | 2448 |
+| 同じ switch の別の case が宣言する名前を読む | `case 1: return x; default: const x = 2;` | 2448 / 2454 |
+| case の値が、case の本体の宣言する名前を読む | `case k: const k = 2;` | 2448 / 2454 |
+
+- **断るのは検査器 (M6) で、場所は名前を使った所**。ブロックを検める前にその直下の宣言 (const / let・分割代入の束縛) を集めておき、名前を引くたびに
+  「いちばん内側でその名前を持つ (か、これから宣言する) ブロック」を探す。そのブロックがまだ宣言の文に届いていなければ断る (`earlyUse`)。
+- **外側に同じ名前が無い形の答えも変わる**: 0.44 までは「宣言していない名前」と答えていた `const a = b; const b = 1;` は、0.45 では「同じブロックの宣言より前で使っています」と答える (断ることは同じ)。
+- **見る場所は 7 つ**: 名前を読む式・メンバの受け手 (`Math.PI` —— 組み込みの名前は名前の枝を通らない)・呼ぶ側の頭 (`f()` / `xs.push()`)・構築子 (`new Map()`)・
+  `instanceof` の右辺・代入の相手・欄への代入の相手。断ったあとは外側の同じ名前の束縛で答えない (断りは使った所の 1 つ)。
+- **入れ子のブロックと arrow の本体の中から使う形も断る** (その名前を持つ、より内側のブロックが無いかぎり)。arrow の中から後の宣言を読む形
+  (`const f = () => x; const x = 2;`) は TypeScript が通す (閉包は宣言の後で呼ぶかもしれない) が、検査器は本体を宣言の順に 1 度しか検めず、外側の同じ名前で答えることになるので、
+  **Mamori は断る** (TypeScript より厳しい側。外側に同じ名前が無い形は 0.44 までも「宣言していない名前」で断っていた)。
+- **switch は別の文で断る** (`同じ switch の case の本体が宣言しています`)。生成物では case の値と全部の case の本体が 1 つのブロックを共有するので、
+  どれかの case の本体が宣言する名前は、case の値からも別の case からも、外側の同じ名前ではなくその宣言を指す。自分の case の宣言は、宣言の文の後なら使える。
+  switch の主語 (`switch (x)`) はブロックの外なので、case が同じ名前を宣言していても外側の名前を読む。
+- **今までどおり通る形**: 宣言の後で使う・入れ子のブロックが先に同じ名前を宣言して読む・隣のブロックが宣言する名前・条件 (`if` / `while`) と回す相手 (`for … of`) は外の名前・
+  for の回す変数 / arrow の引数 / 束ねた例外と同じ名前を外のブロックが後で宣言する形・関数がモジュールの後ろの const を読む形。
+- 前からの断りは前の文のまま答える: どのブロックも宣言しない名前は「宣言していない名前」・引数や束ねた例外と同じ名前の宣言は 0.44 の文 (名前は宣言を通っているので、使う所は断らない)・
+  モジュールの名前を隠す局所の名前 (T-251) は宣言の所で答える (使う所の断りと両方が並ぶ)。
+- 実物の 46 本は書き換えなしで通り、生成物は 1 byte も変わらない。
+- 検査は `mamoriV45.test.ts` (TypeScript も断る 37 形・TypeScript は通すが断る 3 形・受け取る 26 形・TypeScript の答えとの突き合わせ・場所と文の全文一致・対照)。
+  対照 18 方向は鳴る。変えた行の変異検査は 100% (71 killed —— 1 回目は生存 1 件で、局所の名前を構築する標本を足して閉じた)。
+- **まだ見ていない物**: モジュール直下の初期値が後ろの const / let を直に読む形 (`const a: number = b; const b: number = 1;` —— 実測で通り、TypeScript は 2448 で断る)・
+  arrow の引数の既定値が本体の宣言する名前を読む形・型の位置の `typeof 名前` は、この周には入れていない (`docs/REMAINING_WORK.md` の「MG-085」)。
+
 ## 0.44 —— 同じブロックの中で、同じ名前を 2 度宣言させない (MG-084 · 2026-11-17)
 
 穴ではなく、守りの層を 1 つ足す周。0.43 は「並び」の中の重なりを構文の段で断った。残っていたのは**有効範囲 (ブロック)** の中の重なりで、
@@ -117,7 +153,7 @@ Mamori では、その 2 つは**書けない**:
 - 前からの断りは前の文のまま答える: モジュール直下の名前を隠す局所の名前 (T-251) は先に答え、重なりの断りはその後ろに並ぶ。並びの重なり (0.43) は構文の段で先に止まる。
 - 実物の 46 本は書き換えなしで通り、生成物は 1 byte も変わらない。
 - 検査は `mamoriV44.test.ts` (断る 35 形・受け取る 17 形・TypeScript の答えとの突き合わせ・場所と文の全文一致・対照)。対照 14 方向は鳴る。変えた行の変異検査は 100% (55 killed)。
-- **まだ見ていない物**: 同じブロックで宣言より前に名前を読む形・別の case が宣言した名前を読む形 (検査器は case ごとに名前を引く) は、この周には入れていない
+- (0.45 · MG-085 で断るようにした) **まだ見ていない物**: 同じブロックで宣言より前に名前を読む形・別の case が宣言した名前を読む形 (検査器は case ごとに名前を引く) は、この周には入れていない
   (`docs/REMAINING_WORK.md` の「MG-084」)。
 
 ## 0.43 —— 同じ並びの中で、同じ名前を 2 度書かせない (MG-083 · 2026-11-17)
@@ -1137,7 +1173,7 @@ T-234 (`sinkTyped*` の文脈と印の型の判定)・T-232 (`RegExp.$1`)・`.co
 - 戦いのデータは `security/mamori-arena/corpus.json` に残し、`mamoriArena.test.ts` が毎回再生する (学習データ)。
 - 侵入役の新手を AI に書かせる段は、安全装置に止められた。迂回せず、新手は人が追加する (`*.attack.mamori`)。
 
-## 文法 (0.44)
+## 文法 (0.45)
 
 ```
 module    := header* item*
