@@ -320,6 +320,14 @@ function usedAcrossCases(name: string): string {
   return `局所の名前 ${name} は、同じ switch の case の本体が宣言しています —— 生成物では case の値と全部の case の本体が 1 つのブロックを共有するので、ここで使うと外側の同じ名前ではなくその宣言を指し、宣言の文を通っていなければ実行時に投げます (名前を変えるか、switch の外で宣言します)`;
 }
 
+/**
+ * モジュール直下の const / let / クラスを、宣言より前で直に使ったときの断り (0.46 · MG-086)。直下の宣言は書いた順に作られ、
+ * 宣言の文に届く前に読むと、モジュールを読み込んだ時点で投げる。関数・arrow の中から使う形は、呼ばれるのが後なので断らない。
+ */
+function usedBeforeLoaded(name: string): string {
+  return `モジュール直下の名前 ${name} を、宣言より前で使っています —— 直下の const / let / クラスは書いた順に作られ、宣言の文に届く前に読むと読み込みの時点で投げます (使う宣言を先に置くか、関数・arrow の中から使います)`;
+}
+
 /** `道 + 名前` の鍵 (`fns` を引く)。 */
 function fnKey(file: string, name: string): string {
   return `${file}\u0000${name}`;
@@ -1120,6 +1128,11 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
     }
   };
 
+  /** モジュール直下の const / let / クラスの名前を、書いた順に (0.46 · MG-086 —— 直下の宣言はこの順に作られる)。 */
+  const loadOrder = module.items.filter((it): it is Extract<Item, { readonly kind: 'const' | 'let' | 'class' }> => it.kind === 'const' || it.kind === 'let' || it.kind === 'class').map((it) => it.name);
+  /** その宣言と、その後ろの直下の宣言の名前 → 宣言より前で使ったときの断り (自分の初期値で自分を読む形も含む)。 */
+  const notYetLoaded = (name: string): ReadonlyMap<string, string> => new Map(loadOrder.slice(loadOrder.indexOf(name)).map((n) => [n, usedBeforeLoaded(n)]));
+
   for (const it of module.items) {
     // 定数の初期値は役割を持たない。role は 'sink' / 'gate' との比べにしか使われないので、'plain' の綴りや
     // 器そのものを替えても答えは変わらない (等価) —— 答えは「定数の初期値からも参照できない」(M2) と
@@ -1140,7 +1153,9 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
         else if (provenance(it.init, []) !== exact) report('M4', it.pos, `${it.name} は印 ${exact} の型ですが、入れる値は印を持ちません`);
       }
       const shared = { name: it.name, direct: it.init, mutable: false };
-      checkExpr(it.init, [moduleScope], it.type === null ? { ...constCtx, sharedUntyped: it.name, sharedInit: shared } : { ...constCtx, sharedInit: shared });
+      // 初期値が、この宣言・後ろの宣言の名前を直に使う形 (0.46 · MG-086) —— 読み込みの時点ではまだ作られていない。
+      const later = notYetLoaded(it.name);
+      checkExpr(it.init, [moduleScope], it.type === null ? { ...constCtx, sharedUntyped: it.name, sharedInit: shared, notYetLoaded: later } : { ...constCtx, sharedInit: shared, notYetLoaded: later });
       checkSatisfies(it.satisfies);
     }
     if (it.kind === 'let') {
@@ -1226,7 +1241,9 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
     }
     refuseInert(it.init, [moduleScope], 'モジュール直下の let の初期値');
     // Stryker disable next-line StringLiteral,ObjectLiteral: 定数の初期値 (448 行) と同じ理由で等価 —— role は 'sink' / 'gate' との比べにしか使われず、returnVetted / destVetted は gate・sink の枝の中でしか読まれない
-    checkExpr(it.init, [moduleScope], { role: 'plain', returnVetted: null, destVetted: null, sharedInit: { name: it.name, direct: it.init, mutable: true } });
+    const letCtx: Ctx = { role: 'plain', returnVetted: null, destVetted: null, sharedInit: { name: it.name, direct: it.init, mutable: true } };
+    // 初期値が、この宣言・後ろの宣言の名前を直に使う形 (0.46 · MG-086)。
+    checkExpr(it.init, [moduleScope], { ...letCtx, notYetLoaded: notYetLoaded(it.name) });
   }
 
   /**
@@ -1270,6 +1287,11 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
      * arrow の本体は新しい Ctx で検める (呼ぶたびに新しい値を作る) ので、ここへは届かない。
      */
     readonly sharedInit?: { readonly name: string; readonly direct: Expr; readonly mutable: boolean };
+    /**
+     * モジュール直下の const / let の初期値を検めている間だけ: この宣言と、その後ろで宣言する直下の const / let / クラスの名前 → 断りの文 (0.46 · MG-086)。
+     * arrow の本体は新しい Ctx で検める (呼ばれるのは読み込みの後) ので、ここへは届かない。
+     */
+    readonly notYetLoaded?: ReadonlyMap<string, string>;
   }
 
   /**
@@ -1327,18 +1349,19 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
   }
 
   /** 名前を同じブロックの宣言より前で使っていれば、断って true (0.45 · MG-085)。 */
-  function refuseEarlyName(name: string, pos: { line: number; col: number }, scopes: readonly Map<string, Binding>[]): boolean {
-    const refusal = earlyUse(scopes, name);
+  function refuseEarlyName(name: string, pos: { line: number; col: number }, scopes: readonly Map<string, Binding>[], ctx: Ctx): boolean {
+    // ブロックの宣言 (0.45) が先に答える。モジュール直下の初期値の中 (局所の名前は無い) では、まだ作られていない直下の名前を見る (0.46 · MG-086)。
+    const refusal = earlyUse(scopes, name) ?? ctx.notYetLoaded?.get(name);
     if (refusal === undefined) return false;
     report('M6', pos, refusal);
     return true;
   }
 
   /** 式が名前そのもので、その名前を同じブロックの宣言より前で使っていれば、断って true (名前でない式は false)。 */
-  function refuseEarlyUse(e: Expr, scopes: readonly Map<string, Binding>[]): boolean {
+  function refuseEarlyUse(e: Expr, scopes: readonly Map<string, Binding>[], ctx: Ctx): boolean {
     switch (e.kind) {
       case 'ident':
-        return refuseEarlyName(e.name, e.pos, scopes);
+        return refuseEarlyName(e.name, e.pos, scopes, ctx);
     }
     return false;
   }
@@ -1478,7 +1501,7 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
       case 'assign': {
         checkExpr(s.value, scopes, ctx);
         // 同じブロックがこの後で宣言する名前への代入 (0.45 · MG-085) —— 外側の同じ名前の束縛で「代入できるか」を答えない。
-        if (refuseEarlyName(s.target, s.pos, scopes)) return;
+        if (refuseEarlyName(s.target, s.pos, scopes, ctx)) return;
         const target = lookup(scopes, s.target);
         if (target === undefined) {
           report('M6', s.pos, `宣言していない名前 ${s.target} へ代入しています`);
@@ -1713,7 +1736,7 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
 
   function checkCallee(callee: Expr, args: readonly Expr[], scopes: readonly Map<string, Binding>[], ctx: Ctx): void {
     // 呼ぶ側の頭の名前を、同じブロックの宣言より前で使う形 (0.45 · MG-085)。この後の検めは外側の同じ名前の束縛で答えるので、先に断って抜ける。
-    if (refuseEarlyUse(callee.kind === 'member' ? callee.object : callee, scopes)) return;
+    if (refuseEarlyUse(callee.kind === 'member' ? callee.object : callee, scopes, ctx)) return;
     if (carriesInert(callee, scopes)) {
       report('M6', callee.pos, '計算した鍵の添字の結果は呼び出せません —— `const f = x[k]; f(…)` で、鍵が選んだ関数を関門の外から呼べてしまう');
       checkExpr(callee, scopes, ctx);
@@ -1773,12 +1796,12 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
    * (メンバ・呼び出し・条件・添字・局所の名前) は、宣言していない値へ届く道になる。名前を値として読む形ではないので、組み込みの
    * 持ち出しの断りは掛けない (比べるだけで、値は式の外へ出ない)。
    */
-  function checkInstanceofRight(r: Expr, scopes: readonly Map<string, Binding>[]): void {
+  function checkInstanceofRight(r: Expr, scopes: readonly Map<string, Binding>[], ctx: Ctx): void {
     if (r.kind !== 'ident') {
       report('M6', r.pos, 'instanceof の右辺は名前だけです —— 組み込みか `use` / `extern pure` で宣言した名前を直に書きます (メンバ・呼び出し・条件・添字は、実行時に計算した値の `Symbol.hasInstance` を辿れてしまう)');
       return;
     }
-    if (refuseEarlyName(r.name, r.pos, scopes)) return;
+    if (refuseEarlyName(r.name, r.pos, scopes, ctx)) return;
     const b = lookup(scopes, r.name);
     if (b === undefined) {
       if (!PURE_GLOBALS.has(r.name)) report('M6', r.pos, `宣言していない名前 ${r.name} —— 外の値は \`use\` / \`extern\` で宣言します (網・記憶・OS へ届く名前は暗黙に使えません)`);
@@ -1793,7 +1816,7 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
     switch (e.kind) {
       case 'ident': {
         // 同じブロックがこの後で宣言する名前 (0.45 · MG-085) —— 外側の同じ名前 (束縛・組み込み) で答えない。
-        if (refuseEarlyName(e.name, e.pos, scopes)) return;
+        if (refuseEarlyName(e.name, e.pos, scopes, ctx)) return;
         const b = lookup(scopes, e.name);
         if (b === undefined) {
           if (e.name === 'Object') {
@@ -1845,7 +1868,7 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
         return;
       case 'member':
         // 受け手の名前を同じブロックの宣言より前で使う形 (0.45 · MG-085) —— 組み込みの名前 (`Math.PI`) は下で名前の枝を通らないので、ここで見る。
-        if (refuseEarlyUse(e.object, scopes)) return;
+        if (refuseEarlyUse(e.object, scopes, ctx)) return;
         // 受け手を選ぶ口 (`.call` / `.apply` / `.bind`) と、正規表現を作り替える `.compile` は書けない (0.34 · T-265 / T-266)。
         if (BORROWING_MEMBERS.has(e.prop)) report('M6', e.pos, `\`.${e.prop}\` は Mamori に在りません —— ${BORROWING_MEMBERS.get(e.prop)!}`);
         // 読むメンバの受け手は、読むだけの表の名前を置いてよい場所 (0.35 · T-268)。
@@ -1913,7 +1936,7 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
         return;
       case 'binary':
         checkExpr(e.left, scopes, ctx);
-        if (e.op === 'instanceof') checkInstanceofRight(e.right, scopes);
+        if (e.op === 'instanceof') checkInstanceofRight(e.right, scopes, ctx);
         else {
           // `'k' in x` (0.29 · MG-060): 計算した鍵の結果 (inert) を右辺にして、選んだ物の鍵の在否を探らせない。右辺の値そのものは式の外へ出ない (結果は真偽)。
           if (e.op === 'in') refuseInert(e.right, scopes, '`in` の右辺');
@@ -1923,7 +1946,7 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
       case 'new':
         checkTypeArgs(e.typeArgs);
         // 構築子の名前を同じブロックの宣言より前で使う形 (0.45 · MG-085) —— 組み込みの名前 (`new Map()`) は名前の枝を通らないので、ここで見る。
-        if (refuseEarlyUse(e.callee, scopes)) {
+        if (refuseEarlyUse(e.callee, scopes, ctx)) {
           e.args.forEach((x) => checkExpr(x, scopes, ctx));
           return;
         }

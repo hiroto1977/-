@@ -206,7 +206,8 @@ describe('0.37: 関数の結果を置いた直下の const は読めない (thre
     // データの const は宣言の順に増える —— 先に宣言したデータの const だけが、後ろの初期値で「データ」として読める
     expect(reads(`${HELPERS}const A = [LIMIT, "x"];\nconst B = { a: A };\nconst X = h(B);\n`)).toEqual([]);
     expect(reads(`${HELPERS}const A = [helper];\nconst X = h(A);\n`)).toEqual(refused());
-    expect(reads(`${HELPERS}const X = h(LATER);\nconst LATER = 1;\n`)).toEqual(refused());
+    // 後ろの const は「データ」に数えない (X は関数の結果のまま)。0.46 (MG-086) からは、後ろの const を初期値で直に読む形そのものも断る (読み込みの時点でまだ無い) —— 断りは 2 つ並ぶ
+    expect(reads(`${HELPERS}const X = h(LATER);\nconst LATER = 1;\n`)).toEqual([expect.stringContaining('[M6] モジュール直下の名前 LATER を、宣言より前で使っています'), ...refused()]);
   });
 
   it('★ 組み込みと同じ綴りをこの module が宣言していれば、組み込みとは読まない (threat: T-274)', () => {
