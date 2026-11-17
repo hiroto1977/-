@@ -1273,7 +1273,10 @@ export function parse(file: string, src: string): Module {
       }
       if (t.text === 'new') {
         next();
-        let callee: Expr = { kind: 'ident', name: ident(), pos: peek().pos };
+        // 構築子の名前の場所は、名前の頭 (0.49 · MG-089)。0.48 までは名前を読んだ**後**の字句の場所を付けていた (`name: ident()` が先に進めてから `peek()` していた) ので、
+        // 構築子の名前についての断り (宣言していない名前・宣言より前の使用・クラスでない物の構築) が、名前の直後の桁 (`(` / `.` / `<`) を指していた。
+        const head = peek();
+        let callee: Expr = { kind: 'ident', name: ident(), pos: head.pos };
         while (isP('.')) {
           const dot = next();
           callee = { kind: 'member', object: callee, prop: memberName(), optional: false, pos: dot.pos };
