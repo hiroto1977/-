@@ -46,6 +46,9 @@ const SPELLING_REASONS: readonly RegExp[] = [
   /知らない文字です/,
   /鍵 `__proto__`/,
   /閉じていません|行の内で閉じていません/,
+  // 0.40 (MG-078) の数の綴りと、数字の無い `0x` —— 検算役は 0.3 (MG-079) から規則 12 で断る
+  /数の綴り `/,
+  /の後に 16 進の数字/,
 ];
 const SPELLING_TEXTS = new Set<string>([...Object.values(FORBIDDEN_WORDS), ...Object.values(FORBIDDEN_MEMBERS)]);
 const isSpellingReason = (m: string): boolean => SPELLING_TEXTS.has(m) || SPELLING_REASONS.some((re) => re.test(m));
@@ -218,6 +221,14 @@ describe('Rust 検算役 · TS コンパイラとの M0 の突き合わせ', () 
     ['hash', 'return #a;'],
     ['unclosed string', 'return "abc'],
     ['regex after brace as', 'return {}/{(a as number)/1;'],
+    ['number leading zero', 'return 08;'],
+    ['number double zero', 'return 00;'],
+    ['number zero underscore', 'return 0_1;'],
+    ['number trailing underscore', 'return 1_;'],
+    ['number double underscore', 'return 1__0;'],
+    ['number underscore before dot', 'return 1_.5;'],
+    ['number leading zero fraction', 'return 01.5;'],
+    ['hex without digits', 'return 0x;'],
   ];
 
   for (const [name, body] of SPELLINGS) {
@@ -232,6 +243,85 @@ describe('Rust 検算役 · TS コンパイラとの M0 の突き合わせ', () 
     });
   }
 
+  /** TS が数の綴り (0.40) か数字の無い `0x` で断ったか。字句の段の誤りは診断か例外で届くので、両方を読む。 */
+  const NUMBER_REASON = /数の綴り `|の後に 16 進の数字/;
+  function tsRefusesNumber(src: string): boolean {
+    try {
+      const r = compileProject([{ path: 'src/x/m0.mamori', source: src }]);
+      return !r.ok && r.diagnostics.some((d) => d.rule === 'M0' && NUMBER_REASON.test(d.message));
+    } catch (e) {
+      return NUMBER_REASON.test(String((e as Error).message));
+    }
+  }
+
+  /**
+   * 数の綴りの総当たり (MG-079): 数に関わる 7 字 (`0` `1` `8` `_` `.` `x` `f`) の長さ 1〜5 の並びすべてを式の位置へ置き、
+   * 「TS が数の綴りで断る ⟺ Rust が規則 12 を返す」を両方向で見る。この 7 字からは他の禁じた綴りが作れないので、
+   * Rust が 0 でも 12 でもない番号を返すことも無い。2 つの実装は書き方が違う (TS は正規表現 1 本・Rust は 1 字ずつ前の字を見る)。
+   */
+  it('★ 数の綴りの総当たり: TS が断る ⟺ Rust が規則 12 (7 字 × 長さ 1〜5 = 19,607 本)', () => {
+    const ALPHABET = ['0', '1', '8', '_', '.', 'x', 'f'];
+    const mismatches: string[] = [];
+    let total = 0;
+    let refused = 0;
+    let accepted = 0;
+    const walkWords = (word: string): void => {
+      if (word.length > 0) {
+        total++;
+        const src = `export fn f(a: unknown) -> unknown {\n  return ${word};\n}\n`;
+        const t = tsRefusesNumber(src);
+        const r = rust(src);
+        if (r !== 0 && r !== 12) mismatches.push(`${word}: Rust が ${r} を返した`);
+        else if (t !== (r === 12)) mismatches.push(`${word}: TS ${t ? '断る' : '通す'} / Rust ${r}`);
+        if (r === 12) refused++;
+        else accepted++;
+      }
+      if (word.length < 5) for (const c of ALPHABET) walkWords(word + c);
+    };
+    walkWords('');
+    expect(total).toBe(7 + 7 ** 2 + 7 ** 3 + 7 ** 4 + 7 ** 5);
+    expect(mismatches.slice(0, 10), `食い違い ${mismatches.length} 件`).toEqual([]);
+    // 両側に標本が在る (どちらかが 0 なら、総当たりは片方の答えしか見ていない)
+    expect(refused).toBeGreaterThan(1000);
+    expect(accepted).toBeGreaterThan(1000);
+  });
+
+  /**
+   * 禁じた語は `.` の後ろでも両方が断る (MG-079)。検算役は 0.2 まで `.` の後ろの語を原型への道 (規則 6) だけで見ており、
+   * `x.eval` / `x.as` / `x.any` を通していた —— TS の字句の段は位置を見ずに断るので「TS は断り Rust は通す」形だった。
+   * 揺さぶりの検査は差し込む物の表を変えた日に初めてこの形へ届いた (それまでの種の並びでは 1 度も作られなかった)。
+   */
+  it('★ 禁じた語 (as / any / eval) は `.` / `?.` の後ろでも TS と Rust の両方が断る', () => {
+    const wrap = (body: string): string => `export fn f(a: unknown) -> unknown {\n  return ${body};\n}\n`;
+    const CODE: Readonly<Record<string, number>> = { as: 1, any: 2, eval: 3 };
+    for (const word of Object.keys(FORBIDDEN_WORDS)) {
+      expect(CODE[word], `検算役の番号の表に無い禁じた語: ${word}`).toBeDefined();
+      for (const body of [`a.${word}`, `a?.${word}`, `a.${word}(1)`, `a . ${word}`, `a.b.${word}`]) {
+        const src = wrap(body);
+        expect(tsVerdict(src).spelling, `TS が断らない: ${body}`).toBe(true);
+        expect(rust(src), `Rust: ${body}`).toBe(CODE[word]);
+      }
+    }
+    // 対照: その語を含むだけの名前は、どちらも綴りでは断らない
+    for (const body of ['a.asset', 'a.anything', 'a.evaluate', 'a.has']) {
+      const src = wrap(body);
+      expect(tsVerdict(src).spelling, body).toBe(false);
+      expect(rust(src), body).toBe(0);
+    }
+  });
+
+  it('対照: 正しい数の綴りは Rust も通し、断るときは規則 12 を名乗る', () => {
+    const wrap = (w: string): string => `export fn f(a: unknown) -> unknown {\n  return ${w};\n}\n`;
+    for (const ok of ['0', '7', '10', '1_000', '1_0_0', '0.5', '10.25', '1_000.5', '0x1F', '0X0a', '0xff']) expect(rust(wrap(ok)), ok).toBe(0);
+    for (const bad of ['08', '00', '007', '0_1', '1_', '1__0', '1_.5', '01.5', '0x', '0X']) expect(rust(wrap(bad)), bad).toBe(12);
+    // 文字列と注記の中の同じ綴りは数ではない
+    expect(rust(wrap('"08"'))).toBe(0);
+    expect(rust('// 08 1__0 0x\n' + wrap('1'))).toBe(0);
+    // 名前の途中の数字は数ではない (`a08` `x1_`)
+    expect(rust(wrap('a08'))).toBe(0);
+    expect(rust(wrap('x1_'))).toBe(0);
+  });
+
   /**
    * 変異ファジング: 実物の原文へ禁じた綴り・隠し字・行終端を、行頭・注記の中・文字列の中・識別子の途中などへ
    * 種つきで差し込み、「TS が M0 で断る ∧ Rust が通す」を 0 件にする。
@@ -241,6 +331,8 @@ describe('Rust 検算役 · TS コンパイラとの M0 の突き合わせ', () 
       'as', ' as ', 'any', 'eval(1)', '`t`', '/* c */', '.constructor', '?.prototype', '.__proto__', '...a', '["constructor"]',
       "['__proto__']", '{ __proto__: 1 }', '\r', '\u2028', '\u2029', '\u202e', '\u200b', '\u0000', '\ufeff', ' ', 'é', '#', '@', '\\',
       '"', "'", '/', '//', '/[/', '}/', ')/', '"]', '["', '\u0085', '\u061c', '\u180e', 'ａ', '\u00ad', '\u034f', '\u3164', '\u2800', '\u206a', '\u2065', '\u{E0041}', '\u{E0100}', '\u115f',
+      // 数の綴り (0.40 · 検算役は 0.3 から規則 12): 名前の途中・数の途中・文字列の中へも差し込まれる
+      '08', ' 00 ', '1__0', ' 1_ ', '0x ', '0_1', '_', '0',
     ];
     const files = realFiles.map((f) => readOriginalSource(f));
     const tsHoles: string[] = [];

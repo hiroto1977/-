@@ -3,9 +3,9 @@
   "rustc": "rustc 1.97.0 (2d8144b78 2026-07-07)",
   "target": "wasm32-unknown-unknown",
   "files": {
-    "tools/mamori-verify/Cargo.lock": "46612f649704d1d986c582de5f41dc20ba751aaa46013a55547b0e87deb3f1fb",
-    "tools/mamori-verify/Cargo.toml": "38f61fca5551b2d3ec1d2d99f3da70dc7446d537d52d2497fae1c1d84e075c99",
-    "tools/mamori-verify/dist/mamori_verify.wasm": "5db5320002e50b5e0d9a000af175c48ba71328ebea709718fd91d5f75aaac9a6",
-    "tools/mamori-verify/src/lib.rs": "d8f9d6a4d46881333d7ebe286d7bc5821983807e7833a68666d8e9513888e48f"
+    "tools/mamori-verify/Cargo.lock": "cc80b66f351ca00193a3d8f91131f06d906ea024fb11ce1790d2b74e6284416e",
+    "tools/mamori-verify/Cargo.toml": "86b5bf536ac9182b44f81f1ef799657b39b69df1a9eedfd85f7fc831c58f7875",
+    "tools/mamori-verify/dist/mamori_verify.wasm": "d3444dad42031f9e70751b2a5ec9982b9c49660f425ca08f3bc2a90edfbc241b",
+    "tools/mamori-verify/src/lib.rs": "71af245ed2682767a20bdc2d55f60a614098a3f36fd2a318afc4940c8cba8355"
   }
 }

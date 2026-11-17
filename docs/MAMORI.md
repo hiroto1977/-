@@ -117,7 +117,7 @@ Mamori では、その 2 つは**書けない**:
   `eval` は字句の段がどの位置でも先に断る (0.1)。字面の語と型の語は 0.38 の規則のまま。
 - 型引数の名前の `typeof` / `import` は、0.39 まで検査器 (M4) が断っていた。0.40 からは上の規則 (M0) が先に断るので、検査器の同じ判定は消した
   (型引数**に置く**型の綴りの `typeof` / `import` を断る M4 はそのまま)。
-- 実物の 46 本は書き換えなしで通り、生成物は 1 byte も変わらない。Rust の検算役 (`tools/mamori-verify`) にはこの 3 つを写していない (`docs/REMAINING_WORK.md`)。
+- 実物の 46 本は書き換えなしで通り、生成物は 1 byte も変わらない。Rust の検算役 (`tools/mamori-verify`) には、数の綴りだけを MG-079 で写した (検算役 0.3 · 規則 12)。`??` の混ぜ書きと束縛の名前は構文の木が要るので、字句だけを読む検算役には写していない (`docs/REMAINING_WORK.md`)。
 
 ## 0.39 —— 検めた木と、生成物を TypeScript が読む木を揃える 3 つの直し (T-276 · MG-077 · 2026-11-17)
 
@@ -849,6 +849,8 @@ JavaScript / TypeScript の既知の脆弱性クラス (型の綴りの密輸・
 | T-254 | 注記の `// @ts-ignore` が生成物の型検査を黙らせた | 注記に `@ts-…` の指示を書けない（M0） |
 
 Rust → Wasm の検算役 (`tools/mamori-verify/`) は v0.2 に作り直した: アロケータを持たない静的 8 MiB の入力窓 (`INPUT`) と固定の ABI（`input_ptr` / `input_cap` / `verify(len)`・0 = 禁じた綴り無し・1〜11 = 規則・`0xFFFFFFFF` = 長すぎ）。呼び手は 0 以外をすべて拒み、UTF-8 のバイト長を渡す。組んだ物は `BUILD.json` に sha256（lib.rs / Cargo.toml / Cargo.lock / wasm）を残し、`scripts/build-mamori-verify.cjs --check` と `rustVerifier.test.ts` が突き合わせる。TypeScript 側と Rust 側の食い違いは 2100 件の乱択（fuzz）で比べ、Rust だけが断る物は「型・構文の位置で生成物に穴が無い」と分類して許す。**検算役は TypeScript の M0 の代わりではなく二重の目**で、整合性チェーンと CODEOWNERS の保護対象に入った。
+
+**検算役 0.3 (MG-079 · 2026-11-17)**: 規則 12 (JavaScript の数の文法に無い綴り —— 先頭の 0・連続した `_`・末尾の `_`・数字の無い `0x`) を足した。TypeScript 側は正規表現 1 本、Rust 側は 1 字ずつ前の字を見る書き方で、数に関わる 7 字の長さ 1〜5 の並び 19,607 本すべてで「TS が断る ⟺ Rust が規則 12」が一致する (`rustVerifier.test.ts`)。同じ周で、禁じた語 (`as` / `any` / `eval`) を `.` の後ろでも断るようにした —— 0.2 までは `x.eval` を通しており、TS の字句の段 (位置を見ずに断る) より緩かった。揺さぶりの検査に数の綴りの差し込みを足して乱数の並びが変わった日に、初めてその形が作られて見つかった。
 
 回帰検査は `mamoriV13.test.ts`（各 describe に `threat: T-25x`）・台帳は `security/threat-ledger.json`・開け直しは `security/threat-ablations.json`（A-570〜A-575）。見つけた方法の再現には `npm run audit:mamori-battery`（隠し字の表を広げた弾も入っている）。
 
