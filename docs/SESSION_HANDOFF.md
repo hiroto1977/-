@@ -18,6 +18,9 @@
 - 対照 6 方向 (10 進の検めを外す・数字の無い `0x`・連続した `_`・先頭の 0・末尾の `_`・`.` の後ろの語) はすべて鳴る。Rust の組み立ては再現できる
   (`rustup target add wasm32-unknown-unknown` → `node scripts/build-mamori-verify.cjs`・直す前の原文から組むと `BUILD.json` と同じ wasm になることを先に確かめた)。
 - 残した物は `docs/REMAINING_WORK.md` の「MG-079」(字句の段の断りの総当たりが無い ほか)。
+- 締め: `npm test` **1285 ファイル / 28,054 件 ❌ 0**・`audit:verify-keep-going` **39 / 39**・`chain:verify` 緑 (block #507 —— `tools/mamori-verify/src/lib.rs`)。
+  両ビルドは **12,221,980 B / 3,634,617 B で不変** (md5 `5869a938…` / `09bffb9b…` —— 両方を組んで見た) ので実機は回していない。変異検査は対象外 (Rust と検査だけ・理由は育成の台帳に)。
+- PR は **#930** (draft・マージは利用者が決める)。
 
 ## 直近の作業 (2026-11-17) — MG-078: JavaScript の文法に無い綴りを断る · Mamori 0.40
 
