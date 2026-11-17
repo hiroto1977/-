@@ -10,6 +10,7 @@
 //!   7 (欠番 —— `...` は 0.15 から文法に在る。置ける位置は構文の段が検める)   8 制御・不可視・方向を変える字が裸で在る (Trojan Source)
 //!   9 知らない字 (コードの位置の非 ASCII・制御文字・記号)   10 `__proto__` の鍵   11 閉じていない文字列・正規表現
 //!   12 JavaScript の数の文法に無い綴り (先頭の 0 `08`・連続した `_` `1__0`・末尾の `_` `1_`・数字の無い `0x`) —— 0.3 · Mamori 0.40 (MG-079)
+//!   13 行注記の中の `@ts-…` の指示 (生成物の型検査を黙らせる `@ts-ignore` ほか · TS の T-254 と同じ) —— 0.4 · MG-080
 //!   0xFFFF_FFFF 入力が置き場より大きく、検められなかった
 //!
 //! ABI (0.2 · 解析エージェントの報告 D1/D2/D3 を受けて作り直した):
@@ -226,6 +227,19 @@ fn decode_string(s: &[u8], a: usize, b: usize, out: &mut [u8; 24]) -> usize {
     n
 }
 
+/// `s[a..b]` (行注記 1 つ) に `@ts-` + 英小文字が在るか。生成した TypeScript へ注記はそのまま運ばれるので、
+/// `@ts-ignore` / `@ts-expect-error` / `@ts-nocheck` は次の行 (かファイル全体) の型検査を黙らせる。
+fn ts_directive(s: &[u8], a: usize, b: usize) -> bool {
+    let mut k = a;
+    while k + 4 < b {
+        if s[k] == b'@' && s[k + 1] == b't' && s[k + 2] == b's' && s[k + 3] == b'-' && s[k + 4].is_ascii_lowercase() {
+            return true;
+        }
+        k += 1;
+    }
+    false
+}
+
 /// 10 進の整数部の綴り (数字と `_` の並び・先頭は数字) が JavaScript の数の文法に在るか。
 /// TS の実装 (正規表現 1 本) とは別の書き方で持つ: 1 字ずつ前の字を見て、
 ///   ・`0` で始まるなら `0` ただ 1 字だけ (`00` `08` `0_1` は無い)
@@ -277,6 +291,9 @@ pub fn verify_bytes(s: &[u8]) -> u32 {
             }
             if any_hidden(s, a, i) {
                 return 8;
+            }
+            if ts_directive(s, a, i) {
+                return 13;
             }
             continue;
         }

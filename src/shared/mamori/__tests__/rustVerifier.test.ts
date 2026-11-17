@@ -38,18 +38,57 @@ function rust(src: string): number {
   return ex.verify(written) >>> 0;
 }
 
-/** Rust が受け持つ「禁じた綴り」の理由 (TS の M0 は文法の誤りも M0 と呼ぶので、綴りの禁止だけを理由の文で選ぶ)。 */
-const SPELLING_REASONS: readonly RegExp[] = [
-  /テンプレート文字列は在りません/,
-  /`\/\* … \*\/` の注記は在りません/,
-  /裸で置けません/,
-  /知らない文字です/,
-  /鍵 `__proto__`/,
-  /閉じていません|行の内で閉じていません/,
-  // 0.40 (MG-078) の数の綴りと、数字の無い `0x` —— 検算役は 0.3 (MG-079) から規則 12 で断る
-  /数の綴り `/,
-  /の後に 16 進の数字/,
+/**
+ * 字句の段 (`lex`) が断る理由の台帳 (MG-080)。**母集団は parser.ts の `lex` の中の `throw new MamoriError(…)` から導く** ——
+ * 行ごとに、その断りを検算役のどの番号が受け持つか (`rust`) と、実際に両方へ当てる標本を持つ。
+ *
+ * 0.40 の数の綴りは、検算役へ写されないまま 1 周のあいだ比べられていなかった (突き合わせの「綴りの理由」の一覧が手書きで、
+ * 足し忘れると「綴りの理由ではない」と数えて黙る)。同じ形で `@ts-…` の指示 (T-254) は 0.13 から写されていなかった ——
+ * この台帳を作った日に、母集団と突き合わせて初めて出た。今は TS の字句の段に断りを足すと、ここに行を書くまで検査が落ちる。
+ */
+interface LexRefusal {
+  /** `throw new MamoriError(file, pos, <式>)` の <式> に含まれる綴り (行をただ 1 つに決める)。 */
+  readonly needle: string;
+  /** その綴りを持つ throw の数。 */
+  readonly sites: number;
+  /** 利用者が読む文に当たる式。 */
+  readonly message: RegExp;
+  /** 両方へ当てる標本 (原文の全体) と、検算役が返す番号。 */
+  readonly samples: readonly (readonly [string, number])[];
+}
+const inFn = (body: string): string => `export fn f(a: unknown) -> unknown {\n  ${body}\n}\n`;
+const LEX_REFUSALS: readonly LexRefusal[] = [
+  {
+    needle: 'HIDDEN_CHARS_MESSAGE', sites: 3, message: /裸で置けません/,
+    samples: [[inFn('// ‮ x\n  return a;'), 8], [inFn('return "a​b";'), 8], [inFn('return /a﻿b/;'), 8]],
+  },
+  {
+    needle: 'TS_DIRECTIVE_MESSAGE', sites: 1, message: /`@ts-…` の指示は書けません/,
+    samples: [
+      [inFn('// @ts-ignore\n  return a;'), 13], [inFn('// @ts-nocheck\n  return a;'), 13], [inFn('/// @ts-expect-error\n  return a;'), 13],
+      ['//! @ts-nocheck\n' + inFn('return a;'), 13], [inFn('return a; // x @ts-ignore'), 13],
+    ],
+  },
+  { needle: 'の注記は在りません', sites: 1, message: /`\/\* … \*\/` の注記は在りません/, samples: [[inFn('return /* c */ a;'), 5]] },
+  { needle: "'文字列が行の内で閉じていません'", sites: 1, message: /^文字列が行の内で閉じていません/, samples: [[inFn('return "abc'), 11], [inFn("return 'abc"), 11]] },
+  { needle: "'文字列が閉じていません'", sites: 1, message: /^文字列が閉じていません/, samples: [['export fn f() -> string {\n  return "abc', 11]] },
+  { needle: 'テンプレート文字列は在りません', sites: 1, message: /テンプレート文字列は在りません/, samples: [[inFn('return `t`;'), 4]] },
+  { needle: 'の後に 16 進の数字', sites: 1, message: /の後に 16 進の数字/, samples: [[inFn('return 0x;'), 12], [inFn('return 0X;'), 12]] },
+  { needle: '数の綴り', sites: 1, message: /数の綴り `/, samples: [[inFn('return 08;'), 12], [inFn('return 1__0;'), 12], [inFn('return 1_;'), 12]] },
+  {
+    needle: 'FORBIDDEN_WORDS[word]!', sites: 1, message: /は Mamori に在りません/,
+    samples: [[inFn('return a as number;'), 1], [inFn('const x: any = a;\n  return x;'), 2], [inFn('return eval(1);'), 3]],
+  },
+  { needle: "'正規表現が行の内で閉じていません'", sites: 1, message: /^正規表現が行の内で閉じていません/, samples: [[inFn('return /abc'), 11]] },
+  { needle: "'正規表現が閉じていません'", sites: 1, message: /^正規表現が閉じていません/, samples: [['export fn f() -> unknown {\n  return /abc', 11]] },
+  { needle: '知らない文字です', sites: 1, message: /知らない文字です/, samples: [[inFn('return #a;'), 9], [inFn('return café;'), 9], [inFn('return a @ a;'), 9]] },
 ];
+
+/**
+ * Rust が受け持つ「禁じた綴り」の理由 (TS の M0 は文法の誤りも M0 と呼ぶので、綴りの禁止だけを理由の文で選ぶ)。
+ * 字句の段の理由は上の台帳から導く (手で並べない)。構文の段で断る綴り (`__proto__` の鍵・`.` の後ろの名前) だけをここに足す。
+ */
+const SPELLING_REASONS: readonly RegExp[] = [...LEX_REFUSALS.map((r) => r.message), /鍵 `__proto__`/];
 const SPELLING_TEXTS = new Set<string>([...Object.values(FORBIDDEN_WORDS), ...Object.values(FORBIDDEN_MEMBERS)]);
 const isSpellingReason = (m: string): boolean => SPELLING_TEXTS.has(m) || SPELLING_REASONS.some((re) => re.test(m));
 
@@ -176,6 +215,63 @@ describe('Rust 検算役 · 供給網と unsafe (言語の網羅 · threat: T-18
     expect(code).toContain('#![no_std]');
     expect(code).toContain('unreachable()');
     expect(code).not.toMatch(/loop\s*\{\s*\}/);
+  });
+});
+
+describe('Rust 検算役 · 字句の段の断りの母集団 (MG-080)', () => {
+  const parserSrc = readOriginalSource(join(ROOT, 'src/shared/mamori/parser.ts'));
+  const start = parserSrc.indexOf('export function lex(');
+  const lexBody = parserSrc.slice(start, parserSrc.indexOf('\n}\n', start));
+  const thrown = [...lexBody.matchAll(/throw new MamoriError\(file, pos, (.+)\);\s*$/gm)].map((m) => m[1]!);
+
+  /** TS が最初に述べた断りの文 (字句の段の誤りは診断か例外で届く)。断らなければ null。 */
+  function tsMessage(src: string): string | null {
+    try {
+      const r = compileProject([{ path: 'src/x/m0.mamori', source: src }]);
+      return r.ok ? null : (r.diagnostics[0]?.message ?? null);
+    } catch (e) {
+      return String((e as Error).message);
+    }
+  }
+
+  it('走査が生きている: lex の中の throw を全部拾えている (形の違う throw が増えたら落ちる)', () => {
+    expect(start).toBeGreaterThan(0);
+    expect(thrown.length).toBeGreaterThanOrEqual(14);
+    expect(thrown.length).toBe((lexBody.match(/\bthrow\b/g) ?? []).length);
+  });
+
+  it('★ 両方向: lex の throw はどれも台帳のただ 1 行に当たり、台帳の行はどれも実物の throw を持つ (数も一致)', () => {
+    const unmatched: string[] = [];
+    const counts = new Map<string, number>();
+    for (const expr of thrown) {
+      const rows = LEX_REFUSALS.filter((r) => expr.includes(r.needle));
+      if (rows.length !== 1) unmatched.push(`${expr} → ${rows.length} 行`);
+      else counts.set(rows[0]!.needle, (counts.get(rows[0]!.needle) ?? 0) + 1);
+    }
+    expect(unmatched, '台帳に無い (か 2 行に当たる) 字句の段の断り —— LEX_REFUSALS に行と標本を書き、検算役が受け持つ番号を決める').toEqual([]);
+    expect(LEX_REFUSALS.map((r) => [r.needle, counts.get(r.needle) ?? 0])).toEqual(LEX_REFUSALS.map((r) => [r.needle, r.sites]));
+  });
+
+  for (const row of LEX_REFUSALS) {
+    it(`★ ${row.needle}: TS がその文で断り、Rust が台帳の番号で断る (標本 ${row.samples.length} つ)`, () => {
+      expect(row.samples.length).toBeGreaterThan(0);
+      for (const [src, code] of row.samples) {
+        const msg = tsMessage(src);
+        expect(msg, `TS が断らない: ${JSON.stringify(src)}`).not.toBeNull();
+        expect(msg!, JSON.stringify(src)).toMatch(row.message);
+        expect(rust(src), `Rust: ${JSON.stringify(src)}`).toBe(code);
+      }
+    });
+  }
+
+  it('対照: 断りの綴りに似ているだけの原文は、どちらも通す', () => {
+    // `@ts-` の直後が英小文字でなければ指示ではない (TS の式 `@ts-[a-z]` と同じ境目 —— 行末の `@ts-`・数字・英大文字)
+    const NOT_DIRECTIVES = ['// @ts-\n  return a;', '// x @ts-', '// @ts-1 x\n  return a;', '// @ts-Ignore\n  return a;', '// @ts- ignore\n  return a;'];
+    for (const body of [...NOT_DIRECTIVES, '// ts-ignore と書いただけ\n  return a;', '// @ts と書いただけ\n  return a;', '// @TS-IGNORE\n  return a;', 'return "@ts-ignore";', 'return 0x0;', 'return 10;']) {
+      const src = inFn(body);
+      expect(tsMessage(src), body).toBeNull();
+      expect(rust(src), body).toBe(0);
+    }
   });
 });
 
@@ -333,6 +429,8 @@ describe('Rust 検算役 · TS コンパイラとの M0 の突き合わせ', () 
       '"', "'", '/', '//', '/[/', '}/', ')/', '"]', '["', '\u0085', '\u061c', '\u180e', 'ａ', '\u00ad', '\u034f', '\u3164', '\u2800', '\u206a', '\u2065', '\u{E0041}', '\u{E0100}', '\u115f',
       // 数の綴り (0.40 · 検算役は 0.3 から規則 12): 名前の途中・数の途中・文字列の中へも差し込まれる
       '08', ' 00 ', '1__0', ' 1_ ', '0x ', '0_1', '_', '0',
+      // 注記の中の指示 (T-254 · 検算役は 0.4 から規則 13): 行注記の中へ入れば両方が断り、コードの位置なら `@` が知らない字
+      ' @ts-ignore ', '// @ts-nocheck\n', '@ts-',
     ];
     const files = realFiles.map((f) => readOriginalSource(f));
     const tsHoles: string[] = [];
