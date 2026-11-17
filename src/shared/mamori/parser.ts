@@ -278,7 +278,10 @@ const LITERAL_WORDS: ReadonlySet<string> = new Set(['true', 'false', 'null', 'un
  */
 const BINDING_REFUSED: ReadonlySet<string> = new Set([
   'break', 'case', 'catch', 'class', 'const', 'continue', 'debugger', 'default', 'delete', 'do', 'else', 'enum', 'export', 'extends',
-  'finally', 'for', 'function', 'if', 'import', 'in', 'instanceof', 'new', 'return', 'super', 'switch', 'this', 'throw', 'try', 'typeof',
+  // この語は行の最後に置く —— 後ろに引用符の対が同じ行で続くと、lint:deps の走査 (規則 11) が
+  // 外部パッケージの読み込みの綴りと読み違える (実測: 全件の検査が 1 件落ちた)。
+  'finally', 'for', 'function', 'if', 'import',
+  'in', 'instanceof', 'new', 'return', 'super', 'switch', 'this', 'throw', 'try', 'typeof',
   'var', 'void', 'while', 'with', 'let', 'static', 'yield', 'implements', 'interface', 'package', 'private', 'protected', 'public',
   'await', 'arguments',
 ]);
