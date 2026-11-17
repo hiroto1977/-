@@ -364,6 +364,11 @@ export function parse(file: string, src: string): Module {
     if (BINDING_REFUSED.has(name)) {
       return fail(t, `\`${name}\` は束縛・宣言の名前にできません —— JavaScript の予約語 (と、モジュールで束縛にできない \`arguments\`) です。メンバ (\`x.${name}\`) と鍵 (\`{ ${name}: … }\`) には書けます`);
     }
+    // Mamori 自身の語 (0.41 · MG-081): 式の位置では読めない (`RESERVED` —— `primary` が断る) ので、束縛しても値を取り出せない。
+    // 0.40 までは `const mint = 1;` を受け取っていた (生成物は正しいが、読み手に「この名前は使える」と思わせる)。
+    if (RESERVED.has(name)) {
+      return fail(t, `\`${name}\` は束縛・宣言の名前にできません —— Mamori の語です (式の位置では読めないので、束縛しても使えません)。メンバ (\`x.${name}\`) と鍵 (\`{ ${name}: … }\`) には書けます`);
+    }
     return name;
   };
   /** 束縛・宣言の名前を 1 つ読む (引数・const / let・for-of・catch・fn・型と import の名前)。 */
@@ -541,7 +546,21 @@ export function parse(file: string, src: string): Module {
       eat(':');
       type();
     };
-    const fnParam = (): void => {
+    /**
+     * 関数の型の引数 1 つ。名前は値の束縛と同じ表 (`BINDING_REFUSED`) に従う (0.42 · MG-082) —— 0.41 まで `(return: number) => void` を
+     * 受け取り、生成物を `tsc` が断っていた (守りが `tsc` の 1 層だった)。`this` だけは TypeScript の `this` 引数の注釈なので、
+     * **先頭の引数に限って**書ける (`?` は付かない)。Mamori 自身の語 (`type` / `from` ほか) は TypeScript の名前として正しいので断らない。
+     */
+    const fnParam = (first: boolean): void => {
+      const t = parts[i];
+      if (t !== undefined && t.kind === 'ident') {
+        if (t.text === 'this') {
+          if (!first) fail(t, '`this` は関数の型の先頭の引数にだけ書けます (TypeScript の `this` 引数の注釈) —— 2 つ目以降には置けません');
+          if (isPunctAt('?', 1)) fail(t, '`this` の引数に `?` は付けられません (TypeScript の `this` 引数の注釈は省略できません)');
+        } else if (BINDING_REFUSED.has(t.text)) {
+          fail(t, `\`${t.text}\` は関数の型の引数の名前にできません —— JavaScript の予約語 (と、モジュールで束縛にできない \`arguments\`) です (先頭の引数の \`this\` だけは書けます)`);
+        }
+      }
       name();
       if (isPunctAt('?')) i++;
       eat(':');
@@ -607,10 +626,10 @@ export function parse(file: string, src: string): Module {
           return;
         }
         if (!isPunctAt(')')) {
-          fnParam();
+          fnParam(true);
           while (isPunctAt(',')) {
             i++;
-            fnParam();
+            fnParam(false);
           }
         }
         eat(')');

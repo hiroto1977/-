@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 509
+- ブロック数: 511
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `30a93942d597586c934e04123644fe9db341892c5bfbd5c1da4b7f92f9987685`
+- 末尾(tip)ハッシュ: `02633e175275f41d116743bbfc357316889f46d13d164376a9fbb36d84c15fe5`
 - 保護対象: 222 ファイル
 
 ## ブロック
@@ -522,6 +522,8 @@
 | 506 | `1c4d1cfea0b4f831` | `6628615f298801ab` | `81d6b7fec0d22107` | update parser.ts |
 | 507 | `247d986bc5911d4c` | `81d6b7fec0d22107` | `fdb36c6a2917f6ae` | update BUILD.json,Cargo.lock,Cargo.toml,mamori_verify.wasm,lib.rs |
 | 508 | `de36606e41a35a2d` | `fdb36c6a2917f6ae` | `30a93942d597586c` | update BUILD.json,Cargo.lock,Cargo.toml,mamori_verify.wasm,lib.rs |
+| 509 | `6262cd5aad8fe6e6` | `30a93942d597586c` | `33bac6660eb25cde` | update parser.ts |
+| 510 | `a65e62722a781154` | `33bac6660eb25cde` | `02633e175275f41d` | update parser.ts |
 
 ## 保護対象ファイル
 
