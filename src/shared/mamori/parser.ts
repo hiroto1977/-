@@ -546,7 +546,21 @@ export function parse(file: string, src: string): Module {
       eat(':');
       type();
     };
-    const fnParam = (): void => {
+    /**
+     * 関数の型の引数 1 つ。名前は値の束縛と同じ表 (`BINDING_REFUSED`) に従う (0.42 · MG-082) —— 0.41 まで `(return: number) => void` を
+     * 受け取り、生成物を `tsc` が断っていた (守りが `tsc` の 1 層だった)。`this` だけは TypeScript の `this` 引数の注釈なので、
+     * **先頭の引数に限って**書ける (`?` は付かない)。Mamori 自身の語 (`type` / `from` ほか) は TypeScript の名前として正しいので断らない。
+     */
+    const fnParam = (first: boolean): void => {
+      const t = parts[i];
+      if (t !== undefined && t.kind === 'ident') {
+        if (t.text === 'this') {
+          if (!first) fail(t, '`this` は関数の型の先頭の引数にだけ書けます (TypeScript の `this` 引数の注釈) —— 2 つ目以降には置けません');
+          if (isPunctAt('?', 1)) fail(t, '`this` の引数に `?` は付けられません (TypeScript の `this` 引数の注釈は省略できません)');
+        } else if (BINDING_REFUSED.has(t.text)) {
+          fail(t, `\`${t.text}\` は関数の型の引数の名前にできません —— JavaScript の予約語 (と、モジュールで束縛にできない \`arguments\`) です (先頭の引数の \`this\` だけは書けます)`);
+        }
+      }
       name();
       if (isPunctAt('?')) i++;
       eat(':');
@@ -612,10 +626,10 @@ export function parse(file: string, src: string): Module {
           return;
         }
         if (!isPunctAt(')')) {
-          fnParam();
+          fnParam(true);
           while (isPunctAt(',')) {
             i++;
-            fnParam();
+            fnParam(false);
           }
         }
         eat(')');
