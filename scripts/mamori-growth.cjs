@@ -31,7 +31,7 @@
  */
 const fs = require('node:fs');
 const path = require('node:path');
-const { stripNonCode } = require('./lib/strip-non-code.cjs');
+const { stripNonCode, stripComments } = require('./lib/strip-non-code.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const LEDGER = path.join(REPO_ROOT, 'security', 'mamori-growth.json');
@@ -125,6 +125,34 @@ function measureFile(source) {
   return out;
 }
 
+/**
+ * 能力モジュール (コード・OS・プロセス・網の口を持つ外の module) の写し。
+ * 本物は `src/shared/mamori/checker.ts` の `CAPABILITY_MODULES` —— `.cjs` からは `.ts` を require できないので
+ * 写しは避けられない (前例: `scripts/lib/strip-non-code.cjs`)。**片方を変えたらもう片方も変える。**
+ * ファイル・パスの module (`fs` / `path` ほか) はここに無い —— checker 側で M7 の台帳が見る別の門。
+ */
+const CAPABILITY_MODULES = new Set(
+  ['electron', 'child_process', 'vm', 'worker_threads', 'cluster', 'net', 'tls', 'dgram', 'http', 'http2', 'https', 'dns', 'module', 'repl', 'inspector', 'v8', 'process'].flatMap((m) => [m, `node:${m}`]),
+);
+
+/**
+ * 原文が直接 import している能力モジュールを返す (重複なし・名前順)。
+ * 注記は落としてから見る (注記の中の import は数えない) —— リテラルの中身が要るので `stripComments`。
+ * 見る形は `… from 'x'` / 副作用だけの `import 'x'` / `import('x')` / `require('x')`。
+ * 相対 import (`./electron` のような同名の自前ファイル) は集合に無いので当たらない。
+ */
+function capabilityImports(source) {
+  const text = stripComments(source);
+  const found = new Set();
+  const take = (re) => {
+    for (const m of text.matchAll(re)) if (CAPABILITY_MODULES.has(m[1])) found.add(m[1]);
+  };
+  take(/\bfrom\s*['"]([^'"]+)['"]/g);
+  take(/^\s*import\s*['"]([^'"]+)['"]/gm);
+  take(/\b(?:import|require)\s*\(\s*['"]([^'"]+)['"]/g);
+  return [...found].sort();
+}
+
 /** 台帳の形の誤り。 */
 function ledgerProblems(ledger) {
   const out = [];
@@ -143,8 +171,10 @@ function ledgerProblems(ledger) {
       if (c?.decision === 'feature' && !isNonEmptyString(c?.risk)) out.push(`構文 ${id} は足す候補なのに risk (来歴の規則を外す道になるか) が無い`);
     }
   }
-  // 移せないと実測で分かった壁 (任意)。検出器は構文の綴りしか数えないので、host の壁 (capability モジュールを
-  // 直に呼ぶ・rest 引数・sink の型引数) は「足りない構文が無い」=「移せる」と誤って数える。証拠つきで除く。
+  // 移せないと実測で分かった壁 (任意)。検出器は構文の綴りしか数えないので、host の壁 (rest 引数・sink の型引数
+  // のように import 以外の形で能力に触れる物) は「足りない構文が無い」=「移せる」と誤って数える。証拠つきで除く。
+  // 能力モジュールの直接 import は buildBrief が原文から実測して自動で除く (Issue #910) ので、ここに書くのは
+  // それ以外の理由で移せない壁だけ。
   if (ledger.unportable !== undefined) {
     const u = ledger.unportable;
     if (u === null || typeof u !== 'object' || Array.isArray(u)) out.push('unportable が物でない');
@@ -186,7 +216,10 @@ function buildBrief({ ledger, files, now }) {
       const counts = measureFile(f.source);
       const missing = Object.keys(counts).filter((id) => decisionOf(ledger, id) !== 'added');
       const needs = missing.filter((id) => decisionOf(ledger, id) === 'feature');
-      const blocked = unportableReason(ledger, f.path);
+      // 能力モジュールを直接 import する壁は host の壁 —— 構文が足りていても書き直しでは移せない (Issue #910)。
+      // 台帳の unportable (実測の証拠) が在ればそちらを優先し、無ければ import の実測で除く。
+      const caps = capabilityImports(f.source);
+      const blocked = unportableReason(ledger, f.path) ?? (caps.length > 0 ? `実測: 能力モジュール (${caps.join(' / ')}) を直接 import する host の壁 —— 書き直しでは移せない (Issue #910)` : null);
       return { path: f.path, lines: f.lines, counts, missing, needs, blocked, portable: needs.length === 0 && blocked === null };
     })
     .sort((a, b) => a.lines - b.lines || (a.path < b.path ? -1 : 1));
@@ -478,6 +511,14 @@ function selfTest() {
   check('移せないと台帳が言う壁は port に選ばない', bu.measured.find((m) => m.path === 'src/a.ts').portable === false && bu.pick.kind === 'feature' && bu.markdown.includes('⛔ 移せない'));
   check('unportable の理由が短ければ台帳の問題', ledgerProblems(L({ unportable: { 'src/a.ts': 'x' } })).some((p) => p.includes('unportable')));
   check('unportable が物でなければ台帳の問題', ledgerProblems(L({ unportable: [] })).some((p) => p.includes('unportable')));
+  const capFiles = [
+    { path: 'src/host.ts', lines: 5, source: "import { ipcRenderer } from 'electron';\nexport const s = `x`;\n" },
+    { path: 'src/plain.ts', lines: 10, source: 'export const s = `y`;\n' },
+  ];
+  const bc = buildBrief({ ledger: L(), files: capFiles, now: '2026-10-30' });
+  check('能力モジュールを import する壁は、台帳に無くても port に選ばない (Issue #910)', bc.measured.find((m) => m.path === 'src/host.ts').portable === false && bc.measured.find((m) => m.path === 'src/host.ts').blocked.includes('electron') && bc.pick.kind === 'port' && bc.pick.target === 'src/plain.ts' && bc.markdown.includes('⛔ 移せない'));
+  check('対照: import を外せば同じ壁が port に選ばれる', buildBrief({ ledger: L(), files: [{ ...capFiles[0], source: 'export const s = `x`;\n' }, capFiles[1]], now: '2026-10-30' }).pick.target === 'src/host.ts');
+  check('能力モジュールの検出: node: 接頭辞・副作用 import・require も拾い、注記と相対 import は数えない', capabilityImports("import * as net from 'node:net';\nimport 'node:dns';\nconst p = require('process');\n").join(',') === 'node:dns,node:net,process' && capabilityImports("// import { app } from 'electron';\nimport { x } from './electron';\nimport { readFileSync } from 'node:fs';\n").length === 0);
   const b3 = buildBrief({ ledger: L(), files: [], now: '2026-10-30' });
   check('どちらも無ければ probe', b3.pick.kind === 'probe');
   check('次の id は MG-001', b1.id === 'MG-001');
@@ -569,4 +610,4 @@ function main(argv) {
 }
 
 if (require.main === module) process.exit(main(process.argv.slice(2)));
-module.exports = { DETECTORS, DETECTOR_IDS, measureFile, buildBrief, buildCompleteness, countMamoriFiles, cycleProblems, applyCycle, growthStatus, renderGrowth, ledgerProblems, wallFiles, dayNumber, versionKey, MIN_PROBES, DEFAULT_CADENCE_DAYS, STALL_MULTIPLIER };
+module.exports = { DETECTORS, DETECTOR_IDS, measureFile, capabilityImports, CAPABILITY_MODULES, buildBrief, buildCompleteness, countMamoriFiles, cycleProblems, applyCycle, growthStatus, renderGrowth, ledgerProblems, wallFiles, dayNumber, versionKey, MIN_PROBES, DEFAULT_CADENCE_DAYS, STALL_MULTIPLIER };

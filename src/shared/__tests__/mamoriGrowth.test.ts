@@ -18,6 +18,8 @@ const growth = req(join(ROOT, 'scripts', 'mamori-growth.cjs')) as {
   DETECTORS: readonly { id: string; name: string }[];
   DETECTOR_IDS: readonly string[];
   measureFile: (src: string) => Record<string, number>;
+  capabilityImports: (src: string) => string[];
+  CAPABILITY_MODULES: ReadonlySet<string>;
   buildCompleteness: (i: { ledger: Ledger; brief: Brief; mamoriFiles: number }) => { version: string | null; mamoriFiles: number; tsWalls: number; migrationPct: number | null; constructs: { added: number; feature: number; rewrite: number }; proposals: { kind: string; target: string; why: string }[]; markdown: string };
   countMamoriFiles: (root: string) => number;
   buildBrief: (i: { ledger: Ledger; files: readonly { path: string; lines: number; source: string }[]; now: string }) => Brief;
@@ -222,6 +224,34 @@ describe('言語を育てる輪 —— 選び方・記録・止まり', () => {
     expect(growth.buildBrief({ ledger: L(), files, now: '2026-10-30' }).pick.target).toBe('src/short.ts');
   });
 
+  it('★ 能力モジュールを直接 import する壁は、台帳に書かなくても port に選ばない (Issue #910)', () => {
+    const files = [f('src/host.ts', "import { ipcRenderer } from 'electron';\nconst s = `x`;\n"), f('src/plain.ts', 'const s = `y`;\n\n')];
+    const b = growth.buildBrief({ ledger: L(), files, now: '2026-10-30' });
+    expect(b.measured.find((m) => m.path === 'src/host.ts')).toMatchObject({ portable: false });
+    expect(b.measured.find((m) => m.path === 'src/host.ts')!.blocked).toContain('electron');
+    expect(b.pick).toMatchObject({ kind: 'port', target: 'src/plain.ts' });
+    expect(b.markdown).toContain('⛔ 移せない');
+    // 対照: import を外せば同じ壁が選ばれる (この検査が空でないこと)
+    const plain = [f('src/host.ts', 'const s = `x`;\n'), files[1]!];
+    expect(growth.buildBrief({ ledger: L(), files: plain, now: '2026-10-30' }).pick.target).toBe('src/host.ts');
+  });
+
+  it('★ 能力モジュールの検出: node: 接頭辞・副作用 import・require も拾い、注記と相対 import・fs は数えない', () => {
+    expect(growth.capabilityImports("import * as net from 'node:net';\nimport 'node:dns';\nconst p = require('process');\n")).toEqual(['node:dns', 'node:net', 'process']);
+    expect(growth.capabilityImports("// import { app } from 'electron';\nimport { x } from './electron';\nimport { readFileSync } from 'node:fs';\n")).toEqual([]);
+  });
+
+  it('★ 能力モジュールの表は本物 (checker.ts の CAPABILITY_MODULES) と一致する —— .cjs の写しが片方だけ進むと落ちる', () => {
+    const base = ['electron', 'child_process', 'vm', 'worker_threads', 'cluster', 'net', 'tls', 'dgram', 'http', 'http2', 'https', 'dns', 'module', 'repl', 'inspector', 'v8', 'process'];
+    const expected = new Set(base.flatMap((m) => [m, `node:${m}`]));
+    expect(growth.CAPABILITY_MODULES).toEqual(expected);
+    // checker.ts 側の元の表 (文字列を割って書く 'child' + '_process' のような形も拾う)
+    const checker = readOriginalSource(join(ROOT, 'src', 'shared', 'mamori', 'checker.ts'));
+    const literal = /\[([^\]]*)\]\s*\.flatMap/.exec(checker.slice(checker.indexOf('CAPABILITY_MODULES')))?.[1] ?? '';
+    const checkerBase = literal.split(',').map((t) => t.split('+').map((p) => p.trim().replace(/^['"]|['"]$/g, '')).join('')).filter((t) => t.length > 0);
+    expect(checkerBase.sort()).toEqual([...base].sort());
+  });
+
   it('★ unportable は証拠つき —— 理由が短い・物でない台帳は問題として挙げる', () => {
     const short = L();
     short.unportable = { 'src/a.ts': 'x' };
@@ -239,6 +269,13 @@ describe('言語を育てる輪 —— 選び方・記録・止まり', () => {
     const b = growth.buildBrief({ ledger, files, now: '2026-11-08' });
     expect(b.measured[0]!.portable).toBe(false);
     expect(b.pick.kind).not.toBe('port');
+    // 対照 (Issue #910): 台帳の unportable を外しても、electron の直接 import の実測で除かれる
+    const bare = realLedger();
+    delete bare.unportable;
+    const b2 = growth.buildBrief({ ledger: bare, files, now: '2026-11-08' });
+    expect(b2.measured[0]!.portable).toBe(false);
+    expect(b2.measured[0]!.blocked).toContain('electron');
+    expect(b2.pick.kind).not.toBe('port');
   });
 
   it('★ どちらも無ければ probe (言語の穴を探す)', () => {
