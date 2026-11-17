@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 505
+- ブロック数: 507
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `d1996eee26cfc7225e83697b1b3166cd757029ac55a80048818eda55e9eb8f7a`
+- 末尾(tip)ハッシュ: `81d6b7fec0d221077aa65d2fbc1fccb6c0c2e72521ce2f17e5810e2ae9fd03d1`
 - 保護対象: 222 ファイル
 
 ## ブロック
@@ -518,6 +518,8 @@
 | 502 | `86ed7b473ab59c79` | `8220a9c91b5f9e22` | `5ea554f8f0ca92b7` | update checker.ts |
 | 503 | `53074107e9674f14` | `5ea554f8f0ca92b7` | `e391f649edf8bfbf` | update parser.ts |
 | 504 | `9ee380c4916f1855` | `e391f649edf8bfbf` | `d1996eee26cfc722` | update emit.ts,parser.ts |
+| 505 | `96548b327d66a373` | `d1996eee26cfc722` | `6628615f298801ab` | update checker.ts,parser.ts |
+| 506 | `1c4d1cfea0b4f831` | `6628615f298801ab` | `81d6b7fec0d22107` | update parser.ts |
 
 ## 保護対象ファイル
 

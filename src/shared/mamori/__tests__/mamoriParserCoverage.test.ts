@@ -236,7 +236,8 @@ describe('構文木の形', () => {
   });
 
   it('★ 演算子の強さの段 (同じ段は左から・下の段ほど強い)', () => {
-    const s = body(FN('  return a ?? b || c && d === e < f + g * h;'))[0]!;
+    // `??` の辺の `||` / `&&` は括る (0.40 —— 括らない混ぜ書きは断る)。括弧は木に残らないので、右へたどる並びは同じ
+    const s = body(FN('  return a ?? (b || c && d === e < f + g * h);'))[0]!;
     if (s.kind !== 'return' || s.value === null) throw new Error('return ではない');
     const ops: string[] = [];
     let v = s.value;
