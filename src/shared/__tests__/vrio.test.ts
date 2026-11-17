@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { rereadModule } from './rereadModule';
 import {
   VRIO_CHECKS,
   VRIO_GATE_SCORE,
@@ -268,5 +269,49 @@ describe('VRIO: 商品企画の判定', () => {
       expect(VRIO_VERDICTS[id].people.length, `${id}.people`).toBeGreaterThanOrEqual(2);
       for (const line of [...VRIO_VERDICTS[id].next, ...VRIO_VERDICTS[id].people]) expect(line.endsWith('。'), `${id}: ${line}`).toBe(true);
     }
+  });
+});
+
+/**
+ * **モジュール直下の値 (ウェイト・職種の観点・育成の一手・判定の文) を、読み直して字面で留める。**
+ *
+ * `renderer/data/snapshot.ts` が `buildVrioSnapshot()` を読むので、snapshot を検査の中で読み込む
+ * 検査はこのモジュールを評価し直して直下の値を**覆う**が、値を主張しない。上の検査は先頭の静的
+ * import で値を読むので、直下の値を書き換える変異体には届かない (`rereadModule.ts` の docblock)。
+ * ここで読み直し、**値を持つ export を全部**字面 (スナップショット) と比べる —— 関数でない export を
+ * 走査で集めるので、表を足した日にも抜けない。
+ */
+describe('VRIO: モジュール直下の値 (読み直して字面で留める)', () => {
+  it('★ 値を持つ export は 14 個で、すべて字面と一致する', async () => {
+    const mod = await rereadModule<typeof import('../vrio')>(import.meta.url, '../vrio');
+    const values = Object.fromEntries(
+      Object.entries(mod)
+        .filter(([, value]) => typeof value !== 'function')
+        .sort(([x], [y]) => (x < y ? -1 : 1)),
+    );
+    expect(Object.keys(values)).toEqual([
+      'VRIO_CHECKS',
+      'VRIO_GATE_SCORE',
+      'VRIO_JOBS',
+      'VRIO_JOB_IDS',
+      'VRIO_KEYS',
+      'VRIO_LABEL',
+      'VRIO_MAX_SCORE',
+      'VRIO_MIN_SCORE',
+      'VRIO_SCORE_CHOICES',
+      'VRIO_STANDARD_SCORE',
+      'VRIO_TIERS',
+      'VRIO_TIER_IDS',
+      'VRIO_VERDICTS',
+      'VRIO_VERDICT_IDS',
+    ]);
+    expect(values).toMatchSnapshot();
+  });
+
+  it('読み直した側の関数も、読み直した表で同じ答えを出す (表と関数がつながっている)', async () => {
+    const mod = await rereadModule<typeof import('../vrio')>(import.meta.url, '../vrio');
+    expect(mod.scoreEmployee('staff', s(4, 3, 3, 2)).total).toBe(3.35);
+    expect(mod.decideProduct(a(true, true, false, true))).toBe('temporary');
+    expect(mod.buildVrioSnapshot()).toEqual(buildVrioSnapshot());
   });
 });

@@ -119,7 +119,10 @@ export type VrioScores = Readonly<Record<VrioKey, number>>;
 
 /** 採点として読める値か (1〜5 の整数)。 */
 export function isVrioScore(value: unknown): value is number {
-  return typeof value === 'number' && Number.isInteger(value) && value >= VRIO_MIN_SCORE && value <= VRIO_MAX_SCORE;
+  // Number.isInteger は数でない値に false を返すので、typeof は重ねない (同じ答えの判定を 2 つ並べない)。
+  if (!Number.isInteger(value)) return false;
+  const n = value as number;
+  return n >= VRIO_MIN_SCORE && n <= VRIO_MAX_SCORE;
 }
 
 export interface VrioScoreRow {
@@ -289,7 +292,7 @@ export function vrioStandardGapText(total: number | null): string {
   if (total === null) return '採点が読めないため、算定していません';
   const hundredths = Math.round(total * 100) - VRIO_STANDARD_SCORE * 100;
   if (hundredths === 0) return `標準 (${VRIO_STANDARD_SCORE.toFixed(2)}) と同じ`;
-  return `標準 (${VRIO_STANDARD_SCORE.toFixed(2)}) より ${hundredths > 0 ? '+' : '−'}${(Math.abs(hundredths) / 100).toFixed(2)}`;
+  return `標準 (${VRIO_STANDARD_SCORE.toFixed(2)}) より ${Math.sign(hundredths) === 1 ? '+' : '−'}${(Math.abs(hundredths) / 100).toFixed(2)}`;
 }
 
 /** 昇格ゲートの見出しと説明。 */
