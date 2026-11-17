@@ -7,6 +7,30 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-11-17) — VRIO 分析の画面をアプリに足した (79 個目のサービス `vrio`)
+
+- 利用者の依頼: VRIO (V 経済的価値 / R 希少性 / I 模倣困難性 / O 組織体制) の役割文を貼り、「任意で入力したら判定及び反映される仕組みを構築して」。
+  まず単体のページ (Artifact・履歴つき) を公開し、続けて「両方やる」(= アプリ本体にも組み込む) を選んだ。PR #938 (MG-089) は利用者の選択で先に取り込み済み。
+- 足した物: `src/shared/vrio.ts` (ウェイト・職種の観点・育成の一手・総合スコア・昇格の推奨ゲート・商品企画の判定)・`src/main/clients/vrio.ts` (取得口は id の台帳だけ)・
+  `src/renderer/pages/VrioPage.tsx` (2 節: 従業員の評価 / 商品企画の GO / NO-GO)・サイドバーの項 (分析・ツール)・会話の別名。
+- 画面の決まり: 入力は選択欄 10 個だけ (名前の欄・保存・送信は無い)。開いた直後は「記入例」の札を出し、値を変えた節の札だけ外す。読めない採点は 0 点に倒さず「算定できない」。
+  依頼に無い組み合わせ (V が Yes・R が No) は競争均衡として補い、補ったことを画面が名乗る。
+- 検証: `shared/__tests__/vrio.test.ts` 31 件 (手計算との一致 3.35 / 3.40 / 3.75 / 2.70・ゲートの境界・16 通りの判定・直下の値を読み直して字面で留める)・
+  `pages/__tests__/vrioPage.test.ts` 11 件 (jsdom で値を変える)・`clients/__tests__/vrio.test.ts` 2 件・別名 7 件。
+  変異検査: `vrio.ts` **100.00% (327 killed)** —— 1 回目は 54.38% (生存 151)。`mutate` へ入れた (360 → 361)。
+- 締め (実測): `npm test` **1297 ファイル / 28,176 件 ❌ 0**・`audit:verify-keep-going` **39 / 39** (1 回目は verify:arch / lint:docs / lint:shared-judgement / chain:verify の 4 本が、
+  数と台帳の更新を名指しした)・`chain:verify` 緑 (block #518 —— `manifest.webmanifest` と `.cursor/rules/00-project.mdc`)。
+  両ビルドは **12,238,598 B / 3,651,235 B (両方 +16,618 B)** (md5 `eea69c5b…` / `bcdfa2ea…`)。LITE はハード上限 (4,000,000 B) まで 348,765 B。
+  実機: `perf` OK (LITE DCL 253 ms / heap 8.0 MB・FULL DCL 549 ms / heap 30.2 MB)・`e2e` **723 件 ❌ 0**・`e2e:lite` **723 件 ❌ 0**。
+  `smoke:app` / `e2e:ollama` は回していない (主プロセスの起動経路も Ollama の経路も触っていない —— 足した main のクライアントは見本を返す 1 行)。
+- 残した物は `docs/REMAINING_WORK.md` の「VRIO 分析の画面」(保存と履歴は無い・ウェイトは台帳に載せていない・補った判定・実機の専用 suite は無い)。
+- ★ 罠 (このパスで踏んだ): ① サービスを 1 つ足すと、数を名乗る場所が 12 か所動く (README の一覧と分類の件数・USER_GUIDE・`.cursor/rules/00-project.mdc`・manifest の「N サービス」・
+  ARCHITECTURE の表 4 か所と §3.1 の行・CLAUDE.md の 5 か所・期待表 2 本の件数)。`audit:verify-keep-going` と `npm test` が全部名指しするので、門に訊いてから直す。
+  ② `.cursor/rules/*.mdc` と `assets/manifest.webmanifest` は保護対象 —— 触ったら `chain:append` (block #518)。
+  ③ `data/snapshot.ts` が読む shared のモジュールは、直下の表が「覆うが主張しない」形になる (変異検査で static の生存)。読み直して字面で留める検査を最初から書く。
+  ④ 別名はひらがなだけでは漢字の発話に当たらない (「人事評価を開いて」が `unknown` だった)。漢字で言う語は漢字の別名を足す。
+  ⑤ `sidebarCoverage.test.ts` が CLAUDE.md の「78 services」を直書きで照合していた —— 数は `SERVICE_IDS.length` から組む形に直した。
+
 ## 直近の作業 (2026-11-17) — MG-089: 構築子の名前についての断りは、名前の頭を指す · Mamori 0.49
 
 - 利用者の「マージして続けて」で、PR #937 (MG-088) を main へ取り込み (ci 成功を確かめてから squash)、**直す側だけ**の周をもう 1 つ回した (穴を探して試す作業は止めたまま)。PR は **#938 (draft)**。
