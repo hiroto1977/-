@@ -851,6 +851,11 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
   const calledMembers = new WeakSet<Expr>();
   /** 共有の g の正規表現の名前を置いてよい場所の式 —— 文字列のメソッドの引数と、直下の const の別名の初期値 (0.34 · T-266)。 */
   const regexUses = new WeakSet<Expr>();
+  /**
+   * 呼ぶ側の頭に直に書いた式 → その呼び出しを検めた所の「まだ作られていない直下の名前」(0.47 · MG-087)。引くのは arrow の枝だけ。
+   * その場で呼ぶ arrow (`(() => b)()`) の本体は、呼び出しの式を評価した時に走る —— モジュール直下の初期値の中なら、読み込みの時点で走る。
+   */
+  const runsInPlace = new WeakMap<Expr, ReadonlyMap<string, string> | undefined>();
   /** 読むだけの表の名前を置いてよい場所の式 —— 読むメンバの受け手・`for … of` の回す相手・展開・`new Map(…)` / `new Set(…)` の引数 (0.35 · T-268)。 */
   const tableReads = new WeakSet<Expr>();
   /**
@@ -1351,7 +1356,8 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
   /** 名前を同じブロックの宣言より前で使っていれば、断って true (0.45 · MG-085)。 */
   function refuseEarlyName(name: string, pos: { line: number; col: number }, scopes: readonly Map<string, Binding>[], ctx: Ctx): boolean {
     // ブロックの宣言 (0.45) が先に答える。モジュール直下の初期値の中 (局所の名前は無い) では、まだ作られていない直下の名前を見る (0.46 · MG-086)。
-    const refusal = earlyUse(scopes, name) ?? ctx.notYetLoaded?.get(name);
+    // その場で呼ぶ arrow の中 (0.47 · MG-087) では局所の名前が在る —— 直下の名前を指す (局所の束縛が覆っていない) ときだけ、直下の断りで答える。
+    const refusal = earlyUse(scopes, name) ?? (lookup(scopes, name) === moduleScope.get(name) ? ctx.notYetLoaded?.get(name) : undefined);
     if (refusal === undefined) return false;
     report('M6', pos, refusal);
     return true;
@@ -1994,6 +2000,9 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
         // sink 関数が危ない口を包んだ閉包を値として返せ、gate の中の arrow で mint も通った。
         // Stryker disable next-line ObjectLiteral,StringLiteral: 役を比べるのは 'gate' / 'sink' だけで 'plain' と比べる所は無く、plain の他の 2 欄は gate / sink の枝の中でしか読まれない (等価)
         const plain: Ctx = { role: 'plain', returnVetted: null, destVetted: null };
+        // その場で呼ぶ arrow (`(() => b)()`) の本体と引数の既定値は、呼んだ所で走る —— モジュール直下の初期値の中で呼ぶなら、
+        // まだ作られていない直下の名前を本体でも断る (0.47 · MG-087)。値として置くだけの arrow は登録が無く、今までどおり何も持たない。
+        const body: Ctx = { ...plain, notYetLoaded: runsInPlace.get(e) };
         // 引数への代入は arrow の本体 (式) では書けない。ブロックの本体では書けるが、'local' / mutable でない束縛へは代入を断る。
         // Stryker disable next-line StringLiteral: 引数の権限は代入の判定にしか効かず、引数は let ではないので mutable の門が先に断る (等価)
         checkOptionalParams(e.params as readonly Param[]);
@@ -2008,13 +2017,13 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
         }
         // 既定値 (`(q = fetch("x")) => q`) も式 —— 0.7 まで検めていなかったので、plain 関数の中で宣言していない名前・
         // 危ない口・印の無い値での印つきの口の呼び出しを、arrow の引数の既定値に隠せた (T-244)。
-        for (const p of e.params as readonly Param[]) if (p.init !== null) checkExpr(p.init, [...scopes, inner], plain);
+        for (const p of e.params as readonly Param[]) if (p.init !== null) checkExpr(p.init, [...scopes, inner], body);
         if (e.kind === 'arrow') {
           refuseInert(e.body, [...scopes, inner], 'arrow の戻り値');
-          checkExpr(e.body, [...scopes, inner], plain);
+          checkExpr(e.body, [...scopes, inner], body);
         }
         // ブロックの本体の直下は引数と同じブロック (0.44 · MG-084)。
-        else checkBlock(e.body, [...scopes], plain, inner);
+        else checkBlock(e.body, [...scopes], body, inner);
         return;
       }
       case 'mint': {
@@ -2030,6 +2039,8 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
       }
       case 'call': {
         checkTypeArgs(e.typeArgs);
+        // 式そのものを登録する (arrow かは問わない —— 引くのは arrow の枝だけなので、ほかの式を入れても答えは変わらない)
+        runsInPlace.set(e.callee, ctx.notYetLoaded);
         checkCallee(e.callee, e.args, scopes, ctx);
         if (!scalarResultCall(e.callee, scopes)) e.args.forEach((x) => refuseInert(x, scopes, '呼び出しの引数'));
         // 外の module の関数を名前で直に呼ぶ形なら、引数に直に書いた arrow (と、引数のオブジェクトの字面の欄に直に書いた arrow) は呼び戻し (0.32 · T-261)。
