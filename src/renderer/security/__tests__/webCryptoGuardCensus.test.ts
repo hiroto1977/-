@@ -64,15 +64,16 @@ function keyProducingFunctions(src: string): { name: string; body: string }[] {
 
 /** 鍵を扱うモジュール (この 2 つが `crypto.subtle` を持つ。`mnemonic.ts` は digest だけ)。 */
 // `dataCrypto.ts` は Mamori 生成物 (MG-021) で WebCrypto を直接触らない —— `crypto.subtle` の口は薄い壁 `dataCryptoHost.ts` に在る。
-const MODULES = ['vault.ts', 'dataCryptoHost.ts'] as const;
+// `vault.ts` も Mamori 生成物 (MG-070) になり、同じく薄い壁 `vaultHost.ts` が `crypto.subtle` の口を持つ。
+const MODULES = ['vaultHost.ts', 'dataCryptoHost.ts'] as const;
 
 describe('鍵を作る所はすべて WebCrypto の有無を見る (走査で数える · パス 171)', () => {
   it('★ 走査が実物に当たる (鍵を作る関数が見つかる)', () => {
     const found = MODULES.flatMap((m) => keyProducingFunctions(readOriginalSource(path.join(SECURITY, m))));
     expect(found.length, '鍵を作る関数が 1 つも見つからない (走査が死んでいる)').toBeGreaterThanOrEqual(3);
-    // 実測 (2026-09-12): vault の deriveKey / deriveKeyFromMnemonic / generateMasterKey
+    // 実測 (2026-11-15 · MG-070): vaultHost の hostDeriveKey / hostGenerateMasterKey / hostImportNonExtractable
     // と dataCryptoHost の hostDeriveKey。名前で 1 つ確かめて、走査が本物を見ていることを示す。
-    expect(found.map((f) => f.name)).toContain('generateMasterKey');
+    expect(found.map((f) => f.name)).toContain('hostGenerateMasterKey');
   });
 
   it('★ 鍵を作る関数はすべて守っている (守り漏れが 0 件)', () => {
@@ -88,10 +89,11 @@ describe('鍵を作る所はすべて WebCrypto の有無を見る (走査で数
   it('★ 鍵を使うだけの呼びには守りを求めない (到達できない行を増やさない)', () => {
     // `encrypt` / `decrypt` しか呼ばない関数は母集団の外 —— 走査がそれを
     // 拾っていないことを、実物の中で確かめる。
-    const src = readOriginalSource(path.join(SECURITY, 'vault.ts'));
+    const src = readOriginalSource(path.join(SECURITY, 'vaultHost.ts'));
     const names = keyProducingFunctions(src).map((f) => f.name);
-    expect(names, 'encryptBytes を鍵の生産者として数えている').not.toContain('encryptBytes');
-    expect(names, 'decryptBytes を鍵の生産者として数えている').not.toContain('decryptBytes');
+    expect(names.length, '鍵を作る関数が見つからない (否定の主張が空回りする)').toBeGreaterThanOrEqual(3);
+    expect(names, 'hostEncryptBytes を鍵の生産者として数えている').not.toContain('hostEncryptBytes');
+    expect(names, 'hostDecryptBytes を鍵の生産者として数えている').not.toContain('hostDecryptBytes');
     // ただし本物に encrypt/decrypt が在ることは確かめる (走査の対象が空でない)。
     expect(src).toContain('crypto.subtle.encrypt');
     expect(src).toContain('crypto.subtle.decrypt');

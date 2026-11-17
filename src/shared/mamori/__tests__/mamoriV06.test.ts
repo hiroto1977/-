@@ -105,6 +105,10 @@ describe('0.6: `?.` は `.` と同じ検めを通る (破る試し)', () => {
 describe('0.6: 印を受ける関数を `?.` で持ち出す形は無い', () => {
   it('`openUrl?.call(…)` の形は、値として持ち出す M4 の規則で断られる (`.call` と同じ)', () => {
     const src = `${VETTED}${EXTERN}${SINK}export fn go(raw: string) -> unknown {\n  return openUrl?.call(null, raw);\n}\n`;
-    expect(compile(src).diagnostics[0]).toContain('[M4] openUrl は印を受ける関数なので、直に呼ぶことしかできません');
+    // 0.34 (T-265) から `.call` そのものが言語に無いので、M6 の断りが先に 1 件並ぶ。M4 の断りは今までどおり出る。
+    const d = compile(src).diagnostics;
+    expect(d[0]).toContain('[M6] `.call` は Mamori に在りません');
+    expect(d[1]).toContain('[M4] openUrl は印を受ける関数なので、直に呼ぶことしかできません');
+    expect(d).toHaveLength(2);
   });
 });

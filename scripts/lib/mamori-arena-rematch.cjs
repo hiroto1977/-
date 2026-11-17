@@ -16,11 +16,13 @@ const lenses = require('./mamori-arena-lenses.cjs');
 const wave = require('./mamori-arena-wave.cjs');
 
 const NUMBER_SWAPS = ['0', '1', '(0 - 1)', '255', '65536', '1000000007', '0.5'];
-const OPS = ['literal-swap', 'number-swap', 'reverse', 'rotate', 'burst', 'alternate', 'interleave', 'graft', 'echo-last', 'double-then-swap', 'concurrent', 'stack'];
+const OPS = ['literal-swap', 'number-swap', 'reverse', 'rotate', 'burst', 'alternate', 'interleave', 'graft', 'echo-last', 'double-then-swap', 'concurrent', 'stack', 'satisfy'];
 
 const STRING_RE = /"((?:[^"\\\n]|\\.)*)"/g;
 const NUMBER_RE = /(?<![\w.])\d+(?:\.\d+)?(?![\w.])/g;
 const BODY_LINE_RE = /^ {2}try \{ .* \} catch \(e\) \{ r\.push\(e\); \}$/;
+// 動き 1 つだけを積む行 (`r.push(式);`)。式の中に文の区切りが在る行 (2 つ以上の文) は対象にしない
+const SINGLE_PUSH_RE = /^ {2}try \{ r\.push\((.+)\); \} catch \(e\) \{ r\.push\(e\); \}$/;
 
 /** 攻撃のプログラムを 頭 (宣言) / 体 (動き 1 つずつの行) / 尻 に分ける。programOf の形でなければ null。 */
 function parseAttack(src) {
@@ -107,6 +109,13 @@ function variantOf({ parts, op, rng, donors = [], learned = [] }) {
       const n = pick([8, 24], rng);
       const calls = Array.from({ length: n }, () => m[1]).join(', ');
       return { body: [...steps.slice(0, i), `  try { r.push(await Promise.all([${calls}])); } catch (e) { r.push(e); }`, ...steps.slice(i + 1)] };
+    }
+    // 包み直し (周回 10 · Mamori 0.31): 動きの結果を `const sv = 式 satisfies unknown;` で 1 度受けてから積む。
+    // satisfies は値を変えない注記のはずなので、包んでも箱の答えは親と同じになる (違えば、検めた木と走る木が食い違っている)
+    case 'satisfy': {
+      const m = SINGLE_PUSH_RE.exec(line);
+      if (!m || m[1].includes('; ')) return null;
+      return { body: steps.map((x, j) => (j === i ? `  try { const sv = ${m[1]} satisfies unknown; r.push(sv); } catch (e) { r.push(e); }` : x)) };
     }
     // 重ね撃ち: 別の変え方を 2〜3 回、続けて同じ攻撃へ掛ける (視点の積み重ね・同じ場所へ手を変えて立て続けに)
     case 'stack': {

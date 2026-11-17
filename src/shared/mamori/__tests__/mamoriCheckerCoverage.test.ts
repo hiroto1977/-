@@ -121,8 +121,12 @@ describe('来歴 (provenance) は式の形ごとに正しく運ばれる', () =>
     expect(rules(VETTED + SINK + 'export fn go() -> Promise<void> {\n  return openUrl(nope);\n}\n')).toEqual(['M6', 'M4']);
   });
 
-  it('★ arrow の引数の印の型は、arrow の中で印を運ぶ', () => {
-    expect(rules(VETTED + SINK + 'export fn go() -> unknown {\n  return (u: VettedUrl) => openUrl(u);\n}\n')).toEqual([]);
+  it('★ arrow の引数は印を名乗れない (運ぶのは、外の module の関数へ直に渡す呼び戻しだけ · 0.32 · threat: T-261)', () => {
+    // 2026-11-11 まで、この検査は「arrow の引数の印の型は、arrow の中で印を運ぶ」と題して、返した arrow が通ることを主張していた。
+    // 返した arrow を誰が何で呼ぶかは検められない (名前つきの fn は値として持ち出せない —— T-225 —— のに、arrow は持ち出せた)。
+    expect(rules(VETTED + SINK + 'export fn go() -> unknown {\n  return (u: VettedUrl) => openUrl(u);\n}\n')).toEqual(['M4', 'M4']);
+    // 外の module の関数へ直に渡す呼び戻しの中では運ぶ (呼び戻しに渡す値の型は、外の module の側で tsc が検める)
+    expect(rules(VETTED + SINK + 'extern pure { hostRun } from "./host";\nexport fn go() -> unknown {\n  return hostRun((u: VettedUrl) => openUrl(u));\n}\n')).toEqual([]);
   });
 
   it('★ 型の無い let でも、関門の戻り値の印を運ぶ (印を持たない値と取り違えない)', () => {

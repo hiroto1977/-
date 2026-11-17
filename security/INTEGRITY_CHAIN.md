@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 495
+- ブロック数: 505
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `f99c8222cfdb2363600772117527e1ebea85684a8ecc8a9f794e473e4c92cb00`
-- 保護対象: 209 ファイル
+- 末尾(tip)ハッシュ: `d1996eee26cfc7225e83697b1b3166cd757029ac55a80048818eda55e9eb8f7a`
+- 保護対象: 222 ファイル
 
 ## ブロック
 
@@ -508,6 +508,16 @@
 | 492 | `cf02e797ce1e2467` | `a3f706d8c3785217` | `18f99d603104d86b` | update VettedLink.tsx |
 | 493 | `16dc1e83863084a9` | `18f99d603104d86b` | `c50ae5b06ddcba28` | update release.yml |
 | 494 | `5516313179114527` | `c50ae5b06ddcba28` | `f99c8222cfdb2363` | update eslint.config.js |
+| 495 | `4744a94bddd7f6bd` | `f99c8222cfdb2363` | `0cde336b2aa0f9c4` | update e2e.yml,integrity-chain.cjs,mamori-capabilities.json,main.mamori,main.ts,mainHost.ts |
+| 496 | `fb09e9d3af08cc8c` | `0cde336b2aa0f9c4` | `e42fa489ad6b1e07` | update integrity-chain.cjs,mamori-capabilities.json,selfAttestation.mamori,selfAttestation.ts |
+| 497 | `3fa4b588e9938423` | `e42fa489ad6b1e07` | `140f5a38228e45f0` | update integrity-chain.cjs,mamori-capabilities.json,secrets.mamori,secrets.ts,secretsHost.ts,userPresence.mamori |
+| 498 | `6af8cf72144ff6f3` | `140f5a38228e45f0` | `a29e86275683a4a9` | update integrity-chain.cjs,mamori-capabilities.json,vault.mamori,vault.ts,vaultHost.ts |
+| 499 | `cc639330c24bcd94` | `a29e86275683a4a9` | `acf7f76037eb80cf` | update checker.ts |
+| 500 | `3f93a6932312032b` | `acf7f76037eb80cf` | `4f8e227ed0945456` | update checker.ts |
+| 501 | `c21d69797fde5695` | `4f8e227ed0945456` | `8220a9c91b5f9e22` | update checker.ts |
+| 502 | `86ed7b473ab59c79` | `8220a9c91b5f9e22` | `5ea554f8f0ca92b7` | update checker.ts |
+| 503 | `53074107e9674f14` | `5ea554f8f0ca92b7` | `e391f649edf8bfbf` | update parser.ts |
+| 504 | `9ee380c4916f1855` | `e391f649edf8bfbf` | `d1996eee26cfc722` | update emit.ts,parser.ts |
 
 ## 保護対象ファイル
 
@@ -585,14 +595,19 @@
 - `src/main/eraseAll.ts`
 - `src/main/fileRequestGate.ts`
 - `src/main/keychainBackend.ts`
+- `src/main/main.mamori`
 - `src/main/main.ts`
+- `src/main/mainHost.ts`
 - `src/main/oauth.mamori`
 - `src/main/oauth.ts`
 - `src/main/oauthHost.ts`
 - `src/main/osSinks.mamori`
 - `src/main/osSinks.ts`
 - `src/main/presenceWiring.ts`
+- `src/main/secrets.mamori`
 - `src/main/secrets.ts`
+- `src/main/secretsHost.ts`
+- `src/main/selfAttestation.mamori`
 - `src/main/selfAttestation.ts`
 - `src/main/shellOpenGate.mamori`
 - `src/main/shellOpenGate.ts`
@@ -612,11 +627,15 @@
 - `src/renderer/data/assistantMarkdown.ts`
 - `src/renderer/data/localWrite.ts`
 - `src/renderer/data/recordCipher.ts`
+- `src/renderer/fs/fsa.mamori`
 - `src/renderer/fs/fsa.ts`
+- `src/renderer/fs/fsaHost.ts`
 - `src/renderer/keyIntent.ts`
 - `src/renderer/network/liveRead.mamori`
 - `src/renderer/network/liveRead.ts`
+- `src/renderer/network/proxy.mamori`
 - `src/renderer/network/proxy.ts`
+- `src/renderer/network/proxyHost.ts`
 - `src/renderer/oauth/pkce.mamori`
 - `src/renderer/oauth/pkce.ts`
 - `src/renderer/oauth/pkceHost.ts`
@@ -640,9 +659,13 @@
 - `src/renderer/security/lockWorkspace.ts`
 - `src/renderer/security/lockWorkspaceHost.ts`
 - `src/renderer/security/mnemonic.ts`
+- `src/renderer/security/vault.mamori`
 - `src/renderer/security/vault.ts`
+- `src/renderer/security/vaultHost.ts`
 - `src/renderer/security/webCrypto.ts`
+- `src/renderer/security/webauthn.mamori`
 - `src/renderer/security/webauthn.ts`
+- `src/renderer/security/webauthnHost.ts`
 - `src/renderer/vettedSinks.mamori`
 - `src/renderer/vettedSinks.ts`
 - `src/shared/actionTier.mamori`

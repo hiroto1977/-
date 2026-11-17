@@ -63,6 +63,14 @@ export const FORBIDDEN_MEMBERS: Readonly<Record<string, string>> = {
   ['__proto__']: '`.__proto__` は Mamori に在りません —— 原型に届く道で、`.prototype` と同じ理由で断ります',
 };
 
+/**
+ * `'k' in x` の左辺に置けない鍵 (0.29 · MG-060)。**`in` は原型の鎖をたどる** —— `'toString' in {}` も `'constructor' in {}` も真で、
+ * 「自分の鍵か」を問うつもりのコードが、どの物にも真と答える (許可表の照合に使えば、全部通る)。左辺は字面の文字列だけにして
+ * 計算した鍵 (`k in x` に `'constructor'` を入れて原型を探る) を断ち、字面でも `Object.prototype` の名前と `.` の後ろに置けない名前
+ * (`FORBIDDEN_MEMBERS`) は断る。自分の鍵を問うなら `Object.hasOwn(x, 'k')` を使う。
+ */
+export const IN_FORBIDDEN_KEYS: ReadonlySet<string> = new Set([...Object.getOwnPropertyNames(Object.prototype), ...Object.keys(FORBIDDEN_MEMBERS)]);
+
 const PUNCT = [
   '===', '!==', '...', '->', '=>', '&&', '||', '??', '?.', '<=', '>=', '<<',
   '(', ')', '{', '}', '[', ']', '<', '>', ',', ';', ':', '.', '=', '!', '+', '-', '*', '/', '%', '?', '|', '&', '^', '~',
@@ -233,7 +241,56 @@ export function lex(file: string, src: string): Tok[] {
 const TYPE_PUNCT: ReadonlySet<string> = new Set(['<', '>', '(', ')', '[', ']', '{', '}', ',', ':', ';', '.', '|', '&', '?', '=>', '-']);
 const TYPE_OPEN: Readonly<Record<string, string>> = Object.assign(Object.create(null) as Record<string, string>, { '<': '>', '(': ')', '[': ']', '{': '}' });
 
+/** 型を置く位置: 宣言 (束縛・引数・欄・型の別名) / 関数の戻り値 (型の述語を置ける) / 式の位置 (型引数・satisfies)。 */
+type TypeWhere = 'decl' | 'return' | 'expr';
+
 const STOP_WORDS = new Set(['true', 'false', 'null', 'undefined', 'unknown', 'string', 'number', 'boolean', 'void']);
+
+/**
+ * **字面の語** (0.38 · T-275)。式の位置では値の字面として読む —— だから**名前には使えない**。
+ *
+ * `true` / `false` / `null` は JavaScript の予約語だが、**`undefined` は予約語ではない** —— 束縛の名前に書け、`tsc` も
+ * 関数の中の `const undefined = …`・引数・`for (const undefined of …)`・分割代入・module 直下の const / fn を通す。0.37 までの構文の段は
+ * 名前の位置でどの語でも受けたので、検査器は `undefined` を「値を持たない字面」と読み、生成物の TypeScript はその場の束縛を引いた:
+ *
+ *   gate fn forge(x: string) -> VU | null {
+ *     const undefined = JSON.parse(x);     // 型は any
+ *     return undefined;                    // 検査器には「null / undefined を返す」(M1 を通る) —— 走るのは束縛の中身
+ *   }
+ *
+ * **検めた物と走る物が別**になる。同じ綴りで、印を受ける関数を検めなしで呼べ (`sink fn undefined(u: 印)` を `undefined(JSON.parse(x))`)、
+ * 計算した鍵の添字の結果 (inert) と、関数の結果を置いた直下の const (0.37 · T-274) を「字面」として持ち出せた。
+ */
+const LITERAL_WORDS: ReadonlySet<string> = new Set(['true', 'false', 'null', 'undefined']);
+
+/** 式の位置の字面の語か (`primary` が字面の節を組むときに、語を字面の型へ絞る)。表は `LITERAL_WORDS` の 1 つ。 */
+const isLiteralWord = (word: string): word is 'true' | 'false' | 'null' | 'undefined' => LITERAL_WORDS.has(word);
+
+/**
+ * **型の語** (0.38 · T-275)。TypeScript が型・import の名前に使わせない語 (`checkTypeNameIsReserved` と同じ表から `any` を除いた物 ——
+ * `any` はどの位置でも書けない)。検査器は型の綴りを**語で**読む (`k: number` は数と分かる鍵・`印 | undefined` は印を運ぶ型) ので、
+ * その語が別の型を指す宣言 (`type number = string;`・`interface unknown { … }`・`fn f<string>(…)`・`use { x alias number }`) は、
+ * `tsc` が断る前に構文の段で断る (守りを `tsc` の 1 層に預けない)。値の名前 (`const string = …`・引数 `number`) は型を指さないので書ける。
+ */
+const TYPE_WORDS: ReadonlySet<string> = new Set(['unknown', 'never', 'number', 'bigint', 'boolean', 'string', 'symbol', 'void', 'object']);
+
+/**
+ * TypeScript が型の位置で**語として**読む名前 (0.39 · T-276)。単独の型としてだけ書ける —— `<型>` を続けた綴り (と、`null` / `true` /
+ * `false` / `this` に `.名前` を続けた綴り) は TypeScript の型の文法に無く、型引数の位置では比べの並びとして読み直される
+ * (検めた呼び出しが走らず、型の綴りが式として走る)。`string.x` の形は TypeScript が型の参照と読むが、その名前の名前空間は作れない。
+ */
+const TYPE_KEYWORDS: ReadonlySet<string> = new Set([...TYPE_WORDS, 'undefined', 'null', 'true', 'false', 'this']);
+
+/**
+ * 型の頭に置けない語 (0.39 · T-276): JavaScript の予約語 (TypeScript は型の名前として読まない) と、TypeScript が型の演算子として
+ * 読む `infer` / `unique`。`typeof` / `keyof` / `readonly` は前置の語として、`void` / `null` / `this` ほかは型の語として、別に読む。
+ * `import` はここに入れない —— TypeScript は `import("…").T` を型として読むので木は食い違わず、型引数の `import` は検査器 (M4) が断る。
+ */
+const TYPE_HEAD_REFUSED: ReadonlySet<string> = new Set([
+  'break', 'case', 'catch', 'class', 'const', 'continue', 'debugger', 'default', 'delete', 'do', 'else', 'enum', 'export', 'extends',
+  'finally', 'for', 'function', 'if', 'in', 'instanceof', 'new', 'return', 'super', 'switch', 'throw', 'try', 'var', 'while', 'with',
+  'yield', 'let', 'static', 'implements', 'interface', 'package', 'private', 'protected', 'public', 'await', 'infer', 'unique',
+]);
 
 /** `case` の本体を終えてよい文 (次の case へ落ちる形を書かせない)。 */
 const CASE_ENDS: ReadonlySet<Stmt['kind']> = new Set(['return', 'throw', 'jump']);
@@ -261,7 +318,27 @@ export function parse(file: string, src: string): Module {
   };
   const expectP = (text: string): Tok => (isP(text) ? next() : fail(peek(), `\`${text}\` が要ります (在ったのは ${describe(peek())})`));
   const expectW = (text: string): Tok => (isW(text) ? next() : fail(peek(), `\`${text}\` が要ります (在ったのは ${describe(peek())})`));
-  const ident = (): string => (peek().kind === 'ident' ? next().text : fail(peek(), `名前が要ります (在ったのは ${describe(peek())})`));
+  /**
+   * 名前を 1 つ読む (束縛・宣言・鍵・メンバ —— 式の位置の名前は `primary` が読む)。**字面の語は名前にできない** (0.38 · T-275 · `LITERAL_WORDS` の注記)。
+   * 名前を読む所はすべてここを通るので、新しい束縛の位置を足しても同じ規則が掛かる。
+   */
+  const ident = (): string => {
+    const t = peek();
+    if (t.kind !== 'ident') return fail(t, `名前が要ります (在ったのは ${describe(t)})`);
+    if (LITERAL_WORDS.has(t.text)) {
+      return fail(t, `\`${t.text}\` は名前にできません —— Mamori は式の \`${t.text}\` を値の字面として読みますが、TypeScript はその場の同名の束縛を引くので、検めた値と走る値が食い違います (\`const undefined = JSON.parse(x); return undefined;\` は、関門から mint を通らない値を返します)`);
+    }
+    return next().text;
+  };
+  /** 型・import の名前を 1 つ読む (型の別名・interface・クラス・印・型引数・use / extern で引く名前)。**型の語は名前にできない** (0.38 · T-275 · `TYPE_WORDS` の注記)。 */
+  const typeName = (): string => {
+    const t = peek();
+    const name = ident();
+    if (TYPE_WORDS.has(name)) {
+      return fail(t, `\`${name}\` は型・import の名前にできません —— Mamori は型の綴りを語で読むので (\`k: number\` は数と分かる鍵・\`印 | undefined\` は印を運ぶ型)、その語が別の型を指すと、検めた型と走る型が食い違います`);
+    }
+    return name;
+  };
   /** `.` の後ろの名前。原型・Function へ届く名前は断る (T-224)。表は自分の鍵だけで引く。 */
   const memberName = (): string => {
     const t = peek();
@@ -301,8 +378,215 @@ export function parse(file: string, src: string): Module {
     return takeLeading(['comment']);
   };
 
+  /**
+   * 型の綴りが **1 つの型**として読めるかを、文法で検める (2026-11-10 · T-260)。
+   *
+   * 0.30 まで型は「許した記号の並び」として写していた (括弧の種類は突き合わせるが、並びが型かは見ない)。型の綴りは生成物へ
+   * そのまま写るので、**Mamori が型と読んだ並びを TypeScript が式や別の宣言として読む**と、検査した木と走る木が食い違う:
+   *
+   *  - `n<m ? 危ない口の呼び出し : k>(x)` —— Mamori は型引数つきの呼び出し、TypeScript は条件式。plain の関数から
+   *    危ない口を、関門を通っていない値で呼べた (M2 / M4 の迂回・tsc も通る)。
+   *  - `let a: number, okUrl = (s: string) => JSON.parse(s);` —— Mamori は 1 つの束縛 (型が `number, okUrl`)、TypeScript は
+   *    2 つの束縛。隠れた `okUrl` が module の関門を覆い、以後の `okUrl(raw)` は関門ではないのに印つきと数えられた (T-251 の迂回)。
+   *
+   * ここで読める型は TypeScript の型の文法の**部分集合**である (だから TypeScript も同じ並びを同じ 1 つの型として読む):
+   *
+   * ```
+   * 型     := '|'? 交差 ('|' 交差)*
+   * 交差   := 前置 ('&' 前置)*
+   * 前置   := ('readonly' | 'keyof') 前置 | 'typeof' 名前 ('.' 名前)* '[]'* | 基本 '[]'*
+   * 基本   := 名前 ('.' 名前)* ('<' 型 (',' 型)* '>')? | 文字列 | '-'? 数
+   *         | '{' (欄 (';' | ','))* 欄? '}'      欄 := 'readonly'? (名前 | 文字列) '?'? ':' 型
+   *         | '[' (型 ',')* 型? ']'
+   *         | '(' (引数 (',' 引数)*)? ')' '=>' 戻り      引数 := 名前 '?'? ':' 型      戻り := 'asserts' 名前 | ('asserts'? 名前 'is')? 型
+   *         | '(' 型 ')'
+   * ```
+   *
+   * **型の頭の名前は、TypeScript が型の名前として読める語だけ (0.39 · MG-077 · T-276)。** 0.38 までは字句の「名前」なら何でも受け、
+   * 「予約語を置いた綴りは TypeScript が構文の誤りとして断る」と書いていた —— 型引数の位置ではそれが偽だった。TypeScript は
+   * `f<型>(x)` の型が読めないと、誤りにせず**比べの並び** (`(f < 式) > (x)`) として読み直す。実測 (2026-11-17 · TypeScript の構文木):
+   * 型の語に `<型>` を続けた綴り (`string<number>` —— `void` を除く 13 語)・`null` / `true` / `false` / `this` に `.名前` を続けた綴り・
+   * `infer` / `super` を頭に置いた綴りがその形で、Mamori が検めた呼び出しは走らず、型の綴りは式として走る。
+   * 残り (`string.x`・ほかの予約語) は TypeScript が型の参照か構文の誤りとして読み、`tsc` が断る —— 同じ規則 1 つで構文の段でも断る
+   * (守りを `tsc` の 1 層に預けない)。型の語は単独でだけ書け、予約語と `infer` / `unique` は型の頭に置けない
+   * (`.` の後ろの名前は TypeScript も何でも受けるので縛らない)。型引数の位置で型として読めなければ、Mamori も比べの並びとして読む
+   * (TypeScript と同じ木 —— 型の綴りだった名前は式として M6 ほかの検めを受ける)。
+   *
+   * 関数の戻り値の型 (`where === 'return'`) だけは先頭に型の述語 `名前 is 型` を置ける。式の位置 (`where === 'expr'` —— 呼び出し・new の
+   * 型引数と `satisfies`) では `(` で始まる型 (関数の型・括弧) を置けない: そこは TypeScript が式と型のどちらにも読みうる位置なので、
+   * 呼び出しの形を作れる括弧をそもそも置かせない (関数の型が要るなら `type` で名前を付けて、名前で引く)。
+   */
+  const checkTypeShape = (parts: readonly Tok[], where: TypeWhere): void => {
+    let i = 0;
+    const bad = (why: string): never => fail(parts[Math.min(i, parts.length - 1)]!, `型の綴りが 1 つの型として読めません (${why}) —— 型の綴りは生成物へそのまま写るので、型として読めない並びは TypeScript が式や別の宣言として読みます (T-260)`);
+    // 字句の綴りは種類ごとに重ならない (文字列は引用符つき・数は数字で始まる・記号と名前は別の字) ので、記号も語も**綴りだけ**で比べる。
+    const isPunctAt = (text: string, n = 0): boolean => parts[i + n]?.text === text;
+    const isWordAt = isPunctAt;
+    const kindAt = (n = 0): TokKind | undefined => parts[i + n]?.kind;
+    const eat = (text: string): void => {
+      if (!isPunctAt(text)) bad(`\`${text}\` が要ります`);
+      i++;
+    };
+    const name = (): void => {
+      if (kindAt() !== 'ident') bad('名前が要ります');
+      i++;
+    };
+    /** 型の頭の名前 (`.` の前・`typeof` の直後)。TypeScript が型の名前として読めない語は置けない (T-276)。 */
+    const headName = (): string => {
+      if (kindAt() !== 'ident') bad('名前が要ります');
+      const word = parts[i]!.text;
+      if (TYPE_HEAD_REFUSED.has(word)) bad(`\`${word}\` は型の名前にできません`);
+      i++;
+      return word;
+    };
+    const type = (): void => {
+      if (isPunctAt('|')) i++;
+      inter();
+      while (isPunctAt('|')) {
+        i++;
+        inter();
+      }
+    };
+    const inter = (): void => {
+      prefix();
+      while (isPunctAt('&')) {
+        i++;
+        prefix();
+      }
+    };
+    const arrays = (): void => {
+      while (isPunctAt('[')) {
+        i++;
+        eat(']');
+      }
+    };
+    const prefix = (): void => {
+      // `readonly` / `keyof` / `typeof` は型の位置では必ず前置の語 (その名前の型は書けない —— 後ろに型・名前が要る)。
+      if (isWordAt('readonly') || isWordAt('keyof')) {
+        i++;
+        prefix();
+        return;
+      }
+      if (isWordAt('typeof')) {
+        i++;
+        headName();
+        while (isPunctAt('.')) {
+          i++;
+          name();
+        }
+        arrays();
+        return;
+      }
+      primary();
+      arrays();
+    };
+    /** 関数の型の戻り (型の述語 `x is T` を置ける) と、関数の戻り値の型の先頭。 */
+    const returnType = (): void => {
+      // `asserts x` / `asserts x is T` も戻り値の型の綴りである (印の型を名乗れば M1 が断る · T-248)。
+      if (isWordAt('asserts') && kindAt(1) === 'ident') {
+        i += 2;
+        if (!isWordAt('is')) return;
+        i++;
+      } else if (kindAt() === 'ident' && isWordAt('is', 1)) {
+        i += 2;
+      }
+      type();
+    };
+    const member = (): void => {
+      if (isWordAt('readonly') && (kindAt(1) === 'ident' || kindAt(1) === 'string')) i++;
+      if (kindAt() !== 'ident' && kindAt() !== 'string') bad('欄の名前が要ります');
+      i++;
+      if (isPunctAt('?')) i++;
+      eat(':');
+      type();
+    };
+    const fnParam = (): void => {
+      name();
+      if (isPunctAt('?')) i++;
+      eat(':');
+      type();
+    };
+    const primary = (): void => {
+      if (kindAt() === 'string' || kindAt() === 'number') {
+        i++;
+        return;
+      }
+      if (isPunctAt('-') && kindAt(1) === 'number') {
+        i += 2;
+        return;
+      }
+      if (kindAt() === 'ident') {
+        const head = headName();
+        // 型の語 (`string` / `this` / `null` ほか) は単独の型で、`.名前` も `<型>` も続かない (T-276)。
+        if (TYPE_KEYWORDS.has(head) && (isPunctAt('.') || isPunctAt('<'))) bad(`型の語 \`${head}\` の後ろに \`${parts[i]!.text}\` は続きません`);
+        while (isPunctAt('.')) {
+          i++;
+          name();
+        }
+        if (isPunctAt('<')) {
+          i++;
+          type();
+          while (isPunctAt(',')) {
+            i++;
+            type();
+          }
+          eat('>');
+        }
+        return;
+      }
+      if (isPunctAt('{')) {
+        i++;
+        while (!isPunctAt('}')) {
+          member();
+          if (isPunctAt(';') || isPunctAt(',')) i++;
+          else if (!isPunctAt('}')) bad('欄の区切り `;` が要ります');
+        }
+        i++;
+        return;
+      }
+      if (isPunctAt('[')) {
+        i++;
+        // 組の末尾の `,` は TypeScript も許す (`[string,]`)。
+        while (!isPunctAt(']')) {
+          type();
+          if (isPunctAt(',')) i++;
+          else if (!isPunctAt(']')) bad('組の区切り `,` が要ります');
+        }
+        i++;
+        return;
+      }
+      if (isPunctAt('(')) {
+        if (where === 'expr') bad('式の位置 (型引数・satisfies) には `(` で始まる型を置けません —— 関数の型は `type` で名前を付けて、名前で引きます');
+        i++;
+        // 関数の型: `()` か、`名前 :` / `名前 ? :` で始まる引数の並び。それ以外は括弧で囲んだ型。
+        const params = isPunctAt(')') || (kindAt() === 'ident' && (isPunctAt(':', 1) || (isPunctAt('?', 1) && isPunctAt(':', 2))));
+        if (!params) {
+          type();
+          eat(')');
+          return;
+        }
+        if (!isPunctAt(')')) {
+          fnParam();
+          while (isPunctAt(',')) {
+            i++;
+            fnParam();
+          }
+        }
+        eat(')');
+        eat('=>');
+        returnType();
+        return;
+      }
+      bad('型が要ります');
+    };
+    if (where === 'return') returnType();
+    else type();
+    if (i < parts.length) bad(`\`${parts[i]!.text}\` から先が型に続きません`);
+  };
+
   /** 型の綴りを、深さ 0 の終端まで写す。 */
-  const typeRef = (terminators: readonly string[]): TypeRef => {
+  // Stryker disable next-line StringLiteral: 既定の 'decl' は「'return' でも 'expr' でもない」ことだけを意味する (checkTypeShape はその 2 つとしか比べない) ので、別の綴りにしても答えは変わらない (等価)
+  const typeRef = (terminators: readonly string[], where: TypeWhere = 'decl'): TypeRef => {
     const start = peek();
     const parts: Tok[] = [];
     // 開き括弧の積み (種類つき)。閉じ括弧は積みの先頭と**同じ種類**でなければならない。
@@ -330,6 +614,7 @@ export function parse(file: string, src: string): Module {
       parts.push(next());
     }
     if (parts.length === 0) fail(start, '型が要ります');
+    checkTypeShape(parts, where);
     let text = '';
     parts.forEach((t, idx) => {
       const prev = parts[idx - 1];
@@ -345,10 +630,10 @@ export function parse(file: string, src: string): Module {
   /** 型引数 `<A, B>` を読む (`<` から `>` まで・0.21)。型の綴りは `typeRef` を通るので、型の中へ式は隠せない。 */
   const typeArgs = (): TypeRef[] => {
     expectP('<');
-    const list = [typeRef([',', '>'])];
+    const list = [typeRef([',', '>'], 'expr')];
     while (isP(',')) {
       next();
-      list.push(typeRef([',', '>']));
+      list.push(typeRef([',', '>'], 'expr'));
     }
     expectP('>');
     return list;
@@ -363,7 +648,7 @@ export function parse(file: string, src: string): Module {
     const list: TypeParam[] = [];
     do {
       const at = peek();
-      const name = ident();
+      const name = typeName();
       if (isW('extends')) fail(peek(), '型引数に制約 (`T extends X`) は置けません —— 制約に印の型を置くと、型を引数に取る関数が印を名乗る値の型を持てます');
       if (isP('=')) fail(peek(), '型引数に既定の型 (`T = X`) は置けません —— 呼ぶ側が書かなかった型を関数の側が決めてしまいます');
       if (list.some((p) => p.name === name)) fail(at, `型引数 ${name} が二重です`);
@@ -390,6 +675,20 @@ export function parse(file: string, src: string): Module {
     }
   };
   // Stryker restore BlockStatement
+
+  /**
+   * 初期値の末尾の `satisfies 型` (0.31 · MG-065)。**const の初期値の末尾にだけ**付けられる。
+   *
+   * 式を読み終えた直後に名前 `satisfies` が来る形は、ほかの読み方が無い (式の直後に名前は続かない) ので、予約語にはしない。
+   * 型は `;` まで —— 宣言の位置の型なので、型の文法 (`checkTypeShape`) をそのまま通る。`let` には付けられない: 後から別の値を
+   * 入れられる束縛に「この型を満たす」と書いても、満たすのは最初の値だけである。
+   */
+  const satisfiesSuffix = (mutable: boolean): TypeRef | null => {
+    if (!isW('satisfies')) return null;
+    if (mutable) fail(peek(), '`satisfies` は const の初期値の末尾にだけ付けられます (`const x = 式 satisfies 型;`) —— let は後から別の値を入れられるので、満たすのは最初の値だけです');
+    next();
+    return typeRef([';']);
+  };
 
   const params = (): Param[] => {
     expectP('(');
@@ -482,8 +781,9 @@ export function parse(file: string, src: string): Module {
       } else if (!mutable) {
         fail(peek(), '`const` には値が要ります');
       }
+      const sat = satisfiesSuffix(mutable);
       expectP(';');
-      return { kind: 'let', mutable, name, type, init, comments: cs, pos: t.pos };
+      return { kind: 'let', mutable, name, type, init, satisfies: sat, comments: cs, pos: t.pos };
     }
     if (isW('return')) {
       if (inFinally > 0) fail(t, '`finally` の中に `return` は置けません —— try の `return` を上書きし、投げた例外を飲みます (値は `finally` の外で返します)');
@@ -659,7 +959,7 @@ export function parse(file: string, src: string): Module {
     ['^'],
     ['&'],
     ['===', '!=='],
-    ['<', '>', '<=', '>=', 'instanceof'],
+    ['<', '>', '<=', '>=', 'instanceof', 'in'],
     ['<<', '>>', '>>>'],
     ['+', '-'],
     ['*', '/', '%'],
@@ -702,6 +1002,12 @@ export function parse(file: string, src: string): Module {
     for (let op = binaryOpAt(level); op !== null; op = binaryOpAt(level)) {
       const first = peek();
       for (let n = 0; n < op.count; n++) next();
+      // `'k' in x` (0.29 · MG-060): 左辺は字面の文字列だけで、原型の鎖にも在る名前は断る (どの物にも真と答えてしまう / 計算した鍵で原型を探れてしまう)。
+      if (op.text === 'in') {
+        if (left.kind !== 'string') return fail(first, '`in` の左辺は字面の文字列だけです —— 計算した鍵で原型の名前 (`constructor` ほか) を探れてしまいます (自分の鍵を問うなら `Object.hasOwn(x, k)`)');
+        const key = decodeString(left.raw, first);
+        if (IN_FORBIDDEN_KEYS.has(key)) fail(first, `\`'${key}' in x\` は在りません —— \`in\` は原型の鎖をたどるので、原型にも在る名前はどの物にも真と答えます (自分の鍵を問うなら \`Object.hasOwn(x, '${key}')\`)`);
+      }
       const right = binary(level + 1);
       left = { kind: 'binary', op: op.text, left, right, pos: first.pos };
     }
@@ -856,7 +1162,7 @@ export function parse(file: string, src: string): Module {
       return { kind: 'array', items, pos: t.pos };
     }
     if (t.kind === 'ident') {
-      if (t.text === 'true' || t.text === 'false' || t.text === 'null' || t.text === 'undefined') {
+      if (isLiteralWord(t.text)) {
         next();
         return { kind: 'literal', value: t.text, pos: t.pos };
       }
@@ -937,7 +1243,7 @@ export function parse(file: string, src: string): Module {
       const names: { name: string; alias: string | null; typeOnly: boolean }[] = [];
       if (isW('default')) {
         next();
-        defaultName = ident();
+        defaultName = typeName();
       } else {
         expectP('{');
         while (!isP('}')) {
@@ -946,11 +1252,11 @@ export function parse(file: string, src: string): Module {
           const inlineType = isW('type');
           if (inlineType && typeOnly) fail(peek(), '`use type { … }` の中で `type X` は重ねられません (項目全体がすでに型だけの import です)');
           if (inlineType) next();
-          const name = ident();
+          const name = typeName();
           let alias: string | null = null;
           if (isW('alias')) {
             next();
-            alias = ident();
+            alias = typeName();
           }
           names.push({ name, alias, typeOnly: inlineType });
           if (!isP('}')) expectP(',');
@@ -990,14 +1296,14 @@ export function parse(file: string, src: string): Module {
       const authority = a as 'sink' | 'pure';
       if (isW('global')) {
         next();
-        const name = ident();
+        const name = typeName();
         expectP(';');
         return { kind: 'extern', authority, names: [name], from: null, doc, pos: t.pos };
       }
       expectP('{');
       const names: string[] = [];
       while (!isP('}')) {
-        names.push(ident());
+        names.push(typeName());
         if (!isP('}')) expectP(',');
       }
       expectP('}');
@@ -1009,7 +1315,7 @@ export function parse(file: string, src: string): Module {
     const exported = take('export');
     if (isW('vetted')) {
       next();
-      const name = ident();
+      const name = typeName();
       expectP('=');
       const label = str();
       expectP(';');
@@ -1017,7 +1323,7 @@ export function parse(file: string, src: string): Module {
     }
     if (isW('type')) {
       next();
-      const name = ident();
+      const name = typeName();
       expectP('=');
       const multiline = isP('|');
       if (multiline) next();
@@ -1027,7 +1333,16 @@ export function parse(file: string, src: string): Module {
     }
     if (isW('interface')) {
       next();
-      const name = ident();
+      const name = typeName();
+      // `extends 基底` (0.30 · MG-061)。基底は名前 1 つだけ —— 型引数 `B<T>` と複数の基底は、印の型を別名や交差で混ぜ込む道になるので書けない。
+      let base: { readonly name: string; readonly pos: Pos } | null = null;
+      if (isW('extends')) {
+        next();
+        const bpos = peek().pos;
+        base = { name: ident(), pos: bpos };
+        if (isP('<')) fail(peek(), '`interface … extends` の基底に型引数は付けられません (基底は宣言した interface の名前 1 つだけ)');
+        if (isP(',')) fail(peek(), '`interface … extends` の基底は 1 つだけです');
+      }
       expectP('{');
       const members: Member[] = [];
       for (;;) {
@@ -1048,7 +1363,44 @@ export function parse(file: string, src: string): Module {
         members.push({ name: mname, readonly: ro, optional, type: mtype, doc: mdoc, pos: mpos });
       }
       expectP('}');
-      return { kind: 'interface', exported, name, members, doc, pos: t.pos };
+      return { kind: 'interface', exported, name, base, members, doc, pos: t.pos };
+    }
+    if (isW('class')) {
+      next();
+      const name = typeName();
+      // 基底は組み込みの `Error` ただ 1 つ (0.27 · MG-056)。ほかの基底 (自分で作ったクラス・`use` した名前) は静的なメンバや原型を継がせる口になる。
+      if (!isW('extends')) fail(peek(), '`class` は `class 名前 extends Error { … }` の形だけです (例外の型だけ。基底の無いクラスは書けません)');
+      next();
+      const baseTok = peek();
+      const base = ident();
+      if (base !== 'Error') fail(baseTok, `\`extends ${base}\` は書けません —— クラスの基底は組み込みの \`Error\` だけです (ほかのクラスを継ぐと、その静的なメンバと原型まで継いで、使ってよいメンバの表を迂回できる)`);
+      expectP('{');
+      if (!isW('constructor')) fail(peek(), `クラスの中は \`constructor(…) { super(…); }\` の 1 つだけです (メソッド・欄・静的なメンバ・getter は書けません。在ったのは ${describe(peek())})`);
+      next();
+      const ps = params();
+      expectP('{');
+      if (!isW('super')) fail(peek(), `constructor の本体は \`super(…);\` の 1 文だけです (在ったのは ${describe(peek())})`);
+      next();
+      const superArgs = args();
+      expectP(';');
+      if (!isP('}')) fail(peek(), `constructor の本体は \`super(…);\` の 1 文だけです —— 欄への代入 (\`this.name = …\` を含む) は書けません (\`name\` は変換がクラスの名前で付けます。在ったのは ${describe(peek())})`);
+      next();
+      if (!isP('}')) fail(peek(), `クラスの中は \`constructor(…) { super(…); }\` の 1 つだけです (メソッド・欄・静的なメンバ・getter は書けません。在ったのは ${describe(peek())})`);
+      next();
+      return { kind: 'class', exported, name, params: ps, superArgs, doc, pos: t.pos };
+    }
+    if (isW('let')) {
+      // モジュール直下の let (0.28 · MG-058)。状態を持つ変数は、このモジュールの中だけに閉じる —— export すると別のモジュールが書き換えられる (関門の判定が呼び出し側の都合で変わる)。
+      if (exported) fail(peek(), '`export let` は書けません —— モジュールの状態は他のモジュールから書き換えられると関門の判定が変わります (読み取りの関数を export します)');
+      next();
+      const name = ident();
+      if (!isP(':')) fail(peek(), `モジュール直下の \`let ${name}\` には型の宣言が要ります (\`let ${name}: 型 = 初期値;\`。在ったのは ${describe(peek())})`);
+      next();
+      const type = typeRef(['=']);
+      expectP('=');
+      const init = expr();
+      expectP(';');
+      return { kind: 'let', name, type, init, doc, pos: t.pos };
     }
     if (isW('const')) {
       next();
@@ -1060,21 +1412,22 @@ export function parse(file: string, src: string): Module {
       }
       expectP('=');
       const init = expr();
+      const sat = satisfiesSuffix(false);
       expectP(';');
-      return { kind: 'const', exported, name, type, init, doc, pos: t.pos };
+      return { kind: 'const', exported, name, type, init, satisfies: sat, doc, pos: t.pos };
     }
     // 'plain' は「gate でも sink でもない」の意味だけを持つ (検査器も変換も 'gate' / 'sink' と比べるだけ) —— 等価。
     // Stryker disable next-line StringLiteral: 上の注記のとおり等価 (役割は 'gate' / 'sink' と比べられるだけ)
     let role: 'gate' | 'sink' | 'plain' = 'plain';
     if (isW('gate') || isW('sink')) role = next().text as 'gate' | 'sink';
     const isAsync = take('async');
-    if (!isW('fn')) fail(peek(), `項目が要ります —— use / extern / vetted / type / interface / const / fn (在ったのは ${describe(peek())})`);
+    if (!isW('fn')) fail(peek(), `項目が要ります —— use / extern / vetted / type / interface / class / const / let / fn (在ったのは ${describe(peek())})`);
     next();
     const name = ident();
     const typeParams = isP('<') ? typeParamList() : [];
     const ps = params();
     expectP('->');
-    const returns = typeRef(['{']);
+    const returns = typeRef(['{'], 'return');
     const body = block();
     return { kind: 'fn', exported, role, async: isAsync, name, typeParams, params: ps, returns, body, doc, pos: t.pos };
   };
@@ -1101,8 +1454,12 @@ const RESERVED = new Set([
   'throw', 'for', 'of', 'break', 'continue', 'switch', 'case', 'default', 'field', 'type', 'interface',
   // 0.16 (MG-028)
   'instanceof',
+  // 0.29 (MG-060)
+  'in',
   // 0.19 (MG-036)
   'while',
+  // 0.27 (MG-056)
+  'class',
 ]);
 
 function describe(t: Tok): string {

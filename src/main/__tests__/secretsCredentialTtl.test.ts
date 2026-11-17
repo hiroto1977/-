@@ -171,6 +171,59 @@ describe('secrets — 保存した資格情報の有効時間 (threat: T-213)', 
     expect((await readRaw()).github).toBe(`at:${T0 - 1000}:${encrypted('ghp_old')}`);
   });
 
+  it('★ 旧い包み `at:<ms>:` (暗号文の中に時刻を持たない版) は、そのまま読める', async () => {
+    // 現行の検め (暗号文の中の `ts1:<ms>:`) は `atv2:` の記録だけの物。旧い版に掛けると、有効な鍵を「復号できない」と断る。
+    const m = await secretsModule();
+    await writeRaw({ github: `at:${T0 - 1000}:${encrypted('ghp_legacy')}` });
+    expect(await m.readStoredToken('github')).toEqual({ ok: true, token: 'ghp_legacy' });
+    expect(await m.getToken('github')).toBe('ghp_legacy');
+  });
+
+  it('★ plain: の繰り上げ暗号化は、現行の包み `atv2:` も日付の無い記録も、包みの種類を変えない', async () => {
+    const m = await secretsModule();
+    const plainOf = (v: string): string => `plain:${Buffer.from(v, 'utf8').toString('base64')}`;
+    const at = T0 - 1000;
+    await writeRaw({ github: `atv2:${at}:${plainOf(`ts1:${at}:ghp_v2`)}`, notion: plainOf('ntn_undated') });
+    await m.setToken('slack', 'xoxb-y');
+    const raw = await readRaw();
+    // 現行の包みは現行の包みのまま (旧い `at:` へ落とさない —— 落とすと暗号文の中の時刻が鍵の一部として読まれる)
+    expect(raw.github).toBe(stampedV2('ghp_v2', at));
+    // 日付の無い記録に、この道は時刻を付けない (付けるのは一覧の移行だけ)
+    expect(raw.notion).toBe(encrypted('ntn_undated'));
+    expect(await m.readStoredToken('github')).toEqual({ ok: true, token: 'ghp_v2' });
+  });
+
+  it('★ 現行の包みの中身が `ts1:` で始まらなければ、時刻の位置が合っていても復号を断る (threat: T-230)', async () => {
+    const m = await secretsModule();
+    // 先頭 4 字が印でない (`xxxx`) —— 印の検めを外すと、4 字を捨てたあとの `<ms>:<token>` が合ってしまう形
+    await writeRaw({ github: `atv2:${T0}:${encrypted(`xxxx${T0}:ghp_x`)}` });
+    expect(await m.readStoredToken('github')).toEqual({
+      ok: false,
+      reason: 'undecryptable',
+      message: '保存された資格情報を復号できません。値が壊れているか、保存時と別の鍵が使われています。設定画面から削除して、もう一度登録してください。',
+    });
+    // 対照: 同じ時刻・同じ鍵で印が正しければ読める (断ったのは印のため)
+    await writeRaw({ github: `atv2:${T0}:${encrypted(`ts1:${T0}:ghp_x`)}` });
+    expect(await m.readStoredToken('github')).toEqual({ ok: true, token: 'ghp_x' });
+  });
+
+  it('★ 暗号文の中に区切りが無ければ、末尾を落とした数字が時刻に合っても復号を断る (threat: T-230)', async () => {
+    const m = await secretsModule();
+    // 中身 `ts1:<T0>0` —— 区切りが無いときの位置 (-1) で切ると `<T0>` になり、平文の時刻と合ってしまう形
+    await writeRaw({ github: `atv2:${T0}:${encrypted(`ts1:${T0}0`)}` });
+    const read = await m.readStoredToken('github');
+    expect(read.ok).toBe(false);
+    expect((read as { reason: string }).reason).toBe('undecryptable');
+  });
+
+  it('★ 暗号文の中の時刻が 1 桁でも (区切りが 1 文字目の次に在っても) 読める', async () => {
+    // 区切りの位置が 1 の記録。「無い」の印 (-1) を別の数と取り違えると、この形だけを断る。
+    const m = await secretsModule();
+    now = 5;
+    await writeRaw({ github: `atv2:5:${encrypted('ts1:5:ghp_x')}` });
+    expect(await m.readStoredToken('github')).toEqual({ ok: true, token: 'ghp_x' });
+  });
+
   it('★ 区切りの無い包みは、数字だけで時刻に読めても期限切れ (`at:<数字>` を日付として拾わない)', async () => {
     // `at:` の後に `:` が無い = 壊れた包み。末尾の 1 字を落とすと今の時刻になる数字を置き、
     // 「区切りが無い」の判定を外すと `Number(先頭)` が生きた時刻に読めてしまう形を当てる。

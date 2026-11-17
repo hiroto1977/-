@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { compileProject, formatDiagnostic } from '../compile';
+import { inspectEmitted } from './mamoriInspect';
 
 /*
  * **Mamori 0.14 —— 分割代入 `const { a, b: c } = 式;` (MG-022)。** 足す前に破った。
@@ -142,5 +143,24 @@ describe('0.14 分割代入 (threat: T-224 の続き)', () => {
     for (const init of ['typeof Math', '!Math', '-Math']) {
       expect(diag(fn(`  const { length } = ${init};`)).join('\n'), init).not.toContain('分割代入で取り出せません');
     }
+  });
+
+  /*
+   * 独立の判定 (mamoriInspect) は、分割で束ねた名前を束縛として数える (2026-11-10 · MG-063)。
+   * 集めていなかった頃は、`const { a, b } = x;` の `a` / `b` の使用を「宣言していない名前」と数えていた ——
+   * Rust の検算役とのファジング (rustVerifier) が、fsa.mamori を足して種の当たり先がずれた日にそれを踏んだ。
+   */
+  it('★ 独立の判定: 分割で束ねた名前は束縛 (使っても穴と数えない)・付け替えの欄の名前は束縛でも使用でもない', () => {
+    const holes = (src: string): string[] => inspectEmitted('x.ts', src).filter((f) => f.kind === 'hole').map((f) => f.reason);
+    expect(holes(ts(fn('  const { a, b } = x;\n  if (a.length > b) { return a; }')))).toEqual([]);
+    expect(holes(ts(fn('  const { a: first, b: second } = x;\n  if (first.length > second) { return first; }')))).toEqual([]);
+    // 手で書いた生成物でも同じ
+    expect(holes('export function f(x: { a: string }): string {\n  const { a } = x;\n  return a;\n}\n')).toEqual([]);
+  });
+
+  it('★ 独立の判定 (対照): 束ねていない名前・付け替える前の欄の名前を使えば、今までどおり穴と数える', () => {
+    const holes = (src: string): string[] => inspectEmitted('x.ts', src).filter((f) => f.kind === 'hole').map((f) => f.reason);
+    expect(holes('export function f(x: { a: string }): string {\n  const { a } = x;\n  return a + ghost;\n}\n').join('|')).toContain('宣言していない名前 ghost');
+    expect(holes('export function f(x: { b: string }): string {\n  const { b: c } = x;\n  return c + b;\n}\n').join('|')).toContain('宣言していない名前 b');
   });
 });

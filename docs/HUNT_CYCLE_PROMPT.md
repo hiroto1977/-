@@ -13,6 +13,15 @@
 > 網の方針で OSV / CISA KEV に届かない (実測: CONNECT 403) ので、毎日の dependency-audit が常設 Issue の本文に
 > 要約 (`<!-- threat-watch-digest:v1 … -->` · id と数と日付だけ) を埋め、セッションはそれを GitHub の MCP で
 > 読んで `brief --watch` へ渡す。急増した「表に無い種類」1 つずつに進化役の判断が無ければ record が断る。
+>
+> **2026-11-12 から、指示文は「始める前に」の段で始まる** —— 予約はリポジトリを付けずに作られていた
+> (実測: 予約の `folders` が空。11/09 の実行は木が無いまま 23 秒で終わり、PR も Issue も記録も出さなかった)。
+> セッションのリポジトリは始まるときに決まるので、**本来の直しは予約にリポジトリを付けること**である ——
+> Claude Code の予定実行の設定で持ち主が選ぶ (指示文からも、予約を書き換える道具からも付けられない)。
+> リポジトリ無しのセッションが自分で足す道 (add_repo · push) は、無人の実行では権限の判定が断った
+> (2026-11-12 · 確認用のセッションで実測)。だから「始める前に」の a. は、足せなければ理由と直し方を書いて終える。
+> b. と c. はリポジトリが付いた後に効く: 土台の枝を決め (台帳を変えている開いた PR が在ればその枝 —— main から切ると、
+> まだ main に入っていない周と T-xxx の番号が重なる)、土台の台帳の最後の周が 5 日以内なら回さない。
 
 ## 予約の形
 
@@ -33,6 +42,16 @@
 班の名簿は security/hacker-team.json (赤・変種狩り・反証役・進化役)。先に docs/SESSION_HANDOFF.md と
 docs/THREAT_HUNT.md を読む。security/hacker-team.json がまだ無い木 (班の仕組みが main に入る前) なら、
 班の段を飛ばして 1 体の auditor で同じ 4 段を回し、PR の本文にそう書く。
+
+始める前に (リポジトリと土台): 予約のセッションは、リポジトリが付いていないまま始まることがある。
+a. `git rev-parse --show-toplevel` がこのリポジトリを指さなければ、リポジトリを足す道具 (add_repo · owner `hiroto1977` ·
+   repo `-` · access `push`) を呼び、返ってきた手順どおりに clone する (clone の後に呼べと案内された道具が在れば呼ぶ)。
+   clone した場所へ移り、`npm ci` を済ませてから下の段へ進む。足せなければ (無人の実行では権限の判定が断ることがある)、
+   断られた理由と直し方 (「予定実行の設定で、この予約にリポジトリ hiroto1977/- を選ぶ」) を最後の返答に書いて終える。木が無いまま進めない。
+b. 土台を決める: 開いている PR のうち、脅威台帳 (security/threat-ledger.json) か輪の記録 (security/hunt-cycles.json) を変えている物を GitHub の道具で探す。無ければ main を土台にする。
+   在れば、その PR の head の枝を土台にして新しい枝を切り、draft PR の base もその枝にする (複数在れば、台帳がいちばん進んでいる物)。
+   main から切ると、まだ main に入っていない周と番号・作業が重なる。探せなければ (GitHub の道具が無い)、始めずに理由を書いて終える。
+c. 土台の security/hunt-cycles.json の最後の周の日付が 5 日以内なら、今週は誰かがその枝で輪を回している。新しい周を始めず、そう書いて終える。
 
 0. 脅威ウォッチの要約: このセッションは網の方針で OSV / CISA KEV に届かないので、毎日の dependency-audit が
    書く常設 Issue「🔐 依存の勧告とセキュリティの床（自動更新）」(作者が github-actions[bot] の物だけ・閉じていても
@@ -64,7 +83,7 @@ docs/THREAT_HUNT.md を読む。security/hacker-team.json がまだ無い木 (�
    変えた・変えなかった理由) ③ 「進化役への入力」の急増した種類 1 つずつの判断 (evolution.watch.decisions:
    add:<役 id> = 受け持つ赤を足す / covered:<役 id> = 既にいる赤が受け持つ / na:<理由> = このアプリに該当しない
    —— na なら security/weakness-map.json の notApplicable に足す変更も PR に入れる) を提案させる。提案は自分で読み、根拠の無い物は落とす。
-   セッションに指定された branch (無ければ main から `claude/hunt-cycle-<YYYY-MM-DD>`) に commit して push し、
+   セッションに指定された branch (無ければ「始める前に」で決めた土台から `claude/hunt-cycle-<YYYY-MM-DD>`) に commit して push し、
    **draft PR** を開く。本文は 今週の班 / 見つけた物 (実測の表) / 直し / 機械 (検査名と件数) / 対照 (方向と
    落ちた件数) / 学んだ型 / 名簿の変更 / 残した物。**マージはしない** (人が決める)。最後に brief の雛形
    (team / learned / evolution を含む) を埋めた JSON を scratchpad に書き、

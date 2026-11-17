@@ -29,7 +29,7 @@ const GUARDED: Readonly<Record<string, string>> = {
   'app:eraseAll': 'eraseDesktopData(',
   'secrets:set': 'await setToken(',
   'secrets:clear': 'await clearToken(',
-  'action:invoke': 'await fn(',
+  'action:invoke': 'await runAction(',
   'app:openExternal': 'await openExternalVetted(',
   'oauth:authorize': 'await authorize(',
 };
@@ -103,7 +103,7 @@ describe('本人確認の母集団 (threat: T-147)', () => {
       expect(gate, `${name} は ${call} を呼ぶ`).toBeGreaterThan(-1);
       expect(body, `${name} は確認を直には呼ばない (速度だけ)`).not.toContain('requirePresence(');
       // 副作用 (取得・開く・書く・通信) より前に置き、断られたら戻る。
-      const effect = { 'app:checkUpdate': 'await fetch(', 'app:setColorScheme': 'windowPrefs = prefs', 'fetch:snapshot': 'isServiceId(', 'app:revealInFolder': 'shellTargetOrNull(', 'app:openPath': 'shellTargetOrNull(' }[name]!;
+      const effect = { 'app:checkUpdate': 'await hostFetch(', 'app:setColorScheme': 'windowPrefs = prefs', 'fetch:snapshot': 'isServiceId(', 'app:revealInFolder': 'shellTargetOrNull(', 'app:openPath': 'shellTargetOrNull(' }[name]!;
       const side = body.indexOf(effect);
       expect(side, `${name} の副作用 ${effect}`).toBeGreaterThan(-1);
       expect(gate, `${name}: 門が副作用より前`).toBeLessThan(side);

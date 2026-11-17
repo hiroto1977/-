@@ -158,7 +158,11 @@ describe('T-234: 印を運ぶのは型が印そのもの (または印 + null) �
   });
   it('★ 印の配列・別名の union も印を運ばない (threat: T-234)', () => {
     expect(diags(MARKED + 'export fn go(us: readonly VU[]) -> unknown {\n  return openUrl(us);\n}\n')).toEqual([`src/x/m0.mamori:7:18: [M4] ${NOT_MARKED}`]);
-    expect(diags(MARKED + 'type Maybe = VU | string;\nexport fn go(u: Maybe) -> unknown {\n  return openUrl(u);\n}\n')).toEqual([`src/x/m0.mamori:8:18: [M4] ${NOT_MARKED}`]);
+    // 0.36 (T-270) から、印を中に書いた型の別名そのものも断る (M1) —— 別名の union が印を運ばないこと (M4) は今までどおり
+    const viaAlias = diags(MARKED + 'type Maybe = VU | string;\nexport fn go(u: Maybe) -> unknown {\n  return openUrl(u);\n}\n');
+    expect(viaAlias).toHaveLength(2);
+    expect(viaAlias[0]).toContain('src/x/m0.mamori:6:14: [M1] 型の別名 Maybe の中に印の型は書けません');
+    expect(viaAlias[1]).toBe(`src/x/m0.mamori:8:18: [M4] ${NOT_MARKED}`);
   });
   it('★ 変数の型注釈と arrow の引数でも同じ (threat: T-234)', () => {
     expect(diags(MARKED + 'export fn go(raw: string) -> unknown {\n  const u: VU | string = raw;\n  return openUrl(u);\n}\n')).toEqual([`src/x/m0.mamori:8:18: [M4] ${NOT_MARKED}`]);
@@ -230,7 +234,8 @@ describe('T-237: 正規表現の字面の中の見えない字・方向を変え
     expect(diags('export const C = [/a\u202Eb/, 1];\n')).toEqual([`src/x/m0.mamori:1:19: [M0] ${HIDDEN('注記と文字列')}`]);
   });
   it('対照: 正規表現の普通の字・`\\uXXXX` の綴りは通る', () => {
-    expect(diags('export const C = [/a\\u202Eb[/]/gi, 1];\n')).toEqual([]);
+    // flag は `i` と `m` —— g の付いた正規表現は、モジュール直下の配列の中には置けなくなった (0.34 · T-266 · 状態を持つ)。
+    expect(diags('export const C = [/a\\u202Eb[/]/im, 1];\n')).toEqual([]);
   });
 });
 

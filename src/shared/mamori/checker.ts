@@ -16,7 +16,7 @@
  *
  * 誤りは全部集めて返す (構文と違い、来歴の誤りは互いに独立なので並べて見せる価値がある)。
  */
-import type { Expr, Module, Param, Pos, Stmt, TypeRef } from './ast';
+import type { Expr, Item, Module, Param, Pos, Stmt, TypeRef } from './ast';
 
 export interface MamoriDiagnostic {
   readonly file: string;
@@ -83,6 +83,118 @@ const LOGICAL_OPS: ReadonlySet<string> = new Set(['??', '||', '&&']);
  * モジュール直下の許可リストや他のモジュールから渡された配列を、別の関数から書き換えられる。
  */
 const MUTATING_METHODS: ReadonlySet<string> = new Set(['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse', 'fill', 'copyWithin']);
+
+/**
+ * **値として持ち出せない**メソッドの名前 (0.34 · T-265)。呼ぶ形 (`a.push(v)` / `m.set(k, v)`) でしか書けない。
+ *
+ * 受け手を書き換えるメソッドを値として取り出すと、**受け手 (this) を呼ぶ側が選べる**: 組み込みの呼び戻しの第 2 引数 (thisArg) へ
+ * 渡す形 `["evil"].forEach(tmp.add, 読むだけの集まり)` は、`.call` を断っても残る。`tsc` はメソッドの this を検めないので、
+ * 「書き換える相手は自分で作った配列だけ」(T-258) と「読むだけの表は Readonly の型で名乗る」(T-264) の両方を迂回した。
+ * 配列を書き換える 9 つに、Map / Set / URLSearchParams の書き換え (`set` / `add` / `delete` / `clear` / `append`) を足した表。
+ */
+const CALL_ONLY_METHODS: ReadonlySet<string> = new Set([...MUTATING_METHODS, 'set', 'add', 'delete', 'clear', 'append']);
+
+/**
+ * 書けないメンバの名前 (0.34 · T-265 / T-266)。呼ぶ形でも値としても書けない。
+ *
+ * - `call` / `apply` / `bind` —— **受け手 (this) を呼ぶ側が選ぶ**口。`tmp.push.call(共有の配列, x)` は「書き換える相手は自分で作った配列だけ」(T-258) を、
+ *   `tmp.set.call(読むだけの表, k, v)` は「読むだけの表は Readonly の型で名乗れば tsc が断る」(T-264) を素通りした (`tsc` はメソッドの this を検めない)。
+ * - `compile` —— 正規表現を**その場で別の式へ作り替える**古いメソッド。`SAFE.compile(".*")` 1 行で、その正規表現を読むすべての関門の答えが変わる
+ *   (引数で受けた・`use` で引いた正規表現でも同じ)。
+ *
+ * 構文の表 (`FORBIDDEN_MEMBERS` · parser) ではなくここ (M6) に置くのは、共有の状態を書き換える道の規則だから (T-258 / T-264 と同じ段)。
+ */
+const BORROWING_MEMBERS: ReadonlyMap<string, string> = new Map([
+  ['call', '受け手 (this) を呼ぶ側が選べるので、`tmp.push.call(共有の配列, x)` / `tmp.set.call(読むだけの表, k, v)` で、書き換えの検め (T-258 / T-264) を迂回できます'],
+  ['apply', '`.call` と同じく、受け手 (this) を呼ぶ側が選べる口です'],
+  ['bind', '受け手 (this) を縛った関数を作れるので、`.call` と同じ迂回になります'],
+  ['compile', '正規表現をその場で別の式へ作り替える古いメソッドで、共有の正規表現を読む関門の判定を書き換えられます'],
+]);
+
+/**
+ * 正規表現を引数に取る文字列のメソッド (0.34 · T-266)。**共有の g の正規表現を渡せるのはここだけ** —— どれも正規表現の
+ * 状態 (`lastIndex`) を読まない (`replace` / `match` は先頭で 0 に戻し、`split` / `matchAll` は写しを作り、`search` は戻す)。
+ */
+const REGEX_ARG_METHODS: ReadonlySet<string> = new Set(['replace', 'replaceAll', 'match', 'matchAll', 'split', 'search']);
+
+/**
+ * モジュール直下の const に置けない、書き換えるメソッドを持つ組み込み (0.34 · T-267)。`new Date(0)` / `new URL(…)` を直下の const に置くと、
+ * どの関数からも `.setTime(…)` / `.searchParams.set(…)` で書き換えられ、それを読む別の関数 (期限・行き先の判定) の答えが変わる。
+ * Map / Set (T-264) と違って読むだけの型が無いので、型を書いても断る —— 使う関数の中で作る。
+ */
+const SHARED_MUTABLE_OBJECTS: ReadonlySet<string | null> = new Set(['Date', 'URL']);
+
+/**
+ * 受け手の入れ物・日付を書き換えるメソッドか (0.34 · T-267)。**型を書いていないモジュール直下の const** はこれの受け手にできない ——
+ * T-264 は初期値の式の中の `new Map(…)` しか見ないので、関数が返した入れ物 (`const T = make();`・`const T = (() => new Map())();`) は
+ * 型なしのまま書き換えられた (0.33 が「残した物 ①」とした形)。書き換える状態は型で名乗らせる (`const T: Map<…> = new Map();`)。
+ * 0.37 (T-274) から、この module の関数が返した物を置いた直下の const は名前そのものが読めない —— この規則が見るのは、host (`extern pure`) の関数が返した物と、直下で作った入れ物である。
+ */
+function isSharedWriteMethod(prop: string): boolean {
+  return ['set', 'add', 'delete', 'clear', 'append'].includes(prop) || /^set[A-Z]/.test(prop);
+}
+
+/** 正規表現の字面の flag (`/a/gi` → `gi`)。 */
+function regexFlags(raw: string): string {
+  return raw.slice(raw.lastIndexOf('/') + 1);
+}
+
+/**
+ * 初期値の式そのものが正規表現なら、その flag。正規表現でなければ undefined、flag が字面で分からなければ null
+ * (`new RegExp(p, flags)` の第 2 引数が文字列の字面でない)。第 2 引数が無い `new RegExp(…)` は flag を持たない
+ * (第 1 引数に正規表現の字面を置いた形は、その字面を別に検める)。
+ */
+function regexInitFlags(init: Expr): string | null | undefined {
+  if (init.kind === 'regex') return regexFlags(init.raw);
+  if (init.kind !== 'new' || identName(init.callee) !== 'RegExp') return undefined;
+  const flags = init.args[1];
+  if (flags === undefined) return '';
+  // 逃がしを含む字面 (`"\\u0067"` = g) は綴りから flag を読めないので、分からない側へ倒す。
+  return flags.kind === 'string' && !flags.raw.includes('\\') ? flags.raw : null;
+}
+
+/** 初期値が **g の付いた正規表現そのもの**か (名前で追う共有の正規表現 · 0.34 · T-266)。y の付く物・flag の分からない物は直下に置けない (別に断る)。 */
+function isGlobalRegexInit(init: Expr): boolean {
+  const flags = regexInitFlags(init);
+  return typeof flags === 'string' && flags.includes('g') && !flags.includes('y');
+}
+
+/**
+ * 書き換えるメソッドを持つ組み込みの入れ物 (0.33 · T-264)。モジュール直下の const を**型を書かずに**これで始めると、
+ * `tsc` は書き換えられる型 (`Map<…>` / `Set<…>`) を推論する —— どの関数からも `.set` / `.add` / `.delete` / `.clear` が通り、
+ * その表を読む別の関数 (関門・上限) の判定が変わる。配列の側は 0.18 (T-258) が受け手で断るが、Map / Set は
+ * 「正当に書き換える状態」(進行中の処理の表) も在るので、受け手ではなく**宣言**で分ける: 型を書かせる。
+ * 読むだけの表は `ReadonlyMap<…>` / `ReadonlySet<…>`、書き換える状態は `Map<…>` / `Set<…>` と名乗る。
+ * ★ 0.34 まで「読むだけの表の書き換えは `tsc` が断る」としていたが、その型は絞り込み (`instanceof Map`・型述語) と
+ * any への洗い (`Object.values`・`catch` の理由) で外れた (T-268)。0.35 からは Mamori 自身が、読むだけの表の名前を
+ * 読む位置にしか書かせない (下の `TABLE_READ_MEMBERS` と `isReadonlyTableConst`)。
+ * `WeakMap` / `WeakSet` は載せない —— 宣言なしで使える組み込みではなく、pure でも宣言できないので、Mamori では作れない (M6)。
+ */
+const SHARED_COLLECTIONS: ReadonlySet<string | null> = new Set(['Map', 'Set']);
+/**
+ * 読むだけの表の名前を書ける、メンバの位置 (0.35 · T-268)。どれも表を書き換えず、表そのものを別の場所へ渡さない。
+ * `forEach` は載せない —— 呼び戻しの第 3 引数が表そのものなので、そこから持ち出せる。回すなら `for (const e of 表)`。
+ */
+const TABLE_READ_MEMBERS: ReadonlySet<string> = new Set(['get', 'has', 'size', 'keys', 'values', 'entries']);
+
+/**
+ * 型の綴りが読むだけの表 (`ReadonlyMap` / `ReadonlySet`) を名指しするか (0.35 · T-268)。
+ * 読むだけの型を守るのは生成物の `tsc` だけで、`tsc` の型は絞り込み (`x instanceof Map`・型述語) と any (`Object.values` の結果・
+ * `Array.isArray` の後・Promise の `catch` の引数) で外れる。そう名乗った名前は、Mamori の側で**読む位置にしか書けない**ことにする。
+ */
+function namesReadonlyTable(t: TypeRef | null): boolean {
+  return t !== null && (t.names.includes('ReadonlyMap') || t.names.includes('ReadonlySet'));
+}
+
+/**
+ * モジュール直下の const が読むだけの表か (0.35 · T-268)。型が `ReadonlyMap` / `ReadonlySet` を名指しするか、
+ * 初期値そのものが `new Map(…)` / `new Set(…)` で、型の頭が `Map<` / `Set<` (書き換える状態) でないとき ——
+ * 型の別名 (`type Table = ReadonlyMap<…>`) や合併で名乗った表も、読むだけの側へ倒す (失敗は閉じる向き)。
+ */
+function isReadonlyTableConst(type: TypeRef | null, init: Expr): boolean {
+  if (namesReadonlyTable(type)) return true;
+  return type !== null && init.kind === 'new' && SHARED_COLLECTIONS.has(identName(init.callee)) && !/^(?:Map|Set)</.test(type.text);
+}
 const SCALAR_GLOBAL_FNS: ReadonlySet<string> = new Set(['Number', 'String', 'Boolean']);
 /** 結果が数・文字列・真偽の値だけになる組み込みのメンバの呼び出し (`Math.max(xs[i], 0)` `Object.hasOwn(o, xs[k])`)。 */
 const SCALAR_BUILTIN_OBJECTS: ReadonlySet<string> = new Set(['Math', 'Number']);
@@ -130,6 +242,12 @@ const CONSTRUCTIBLE: ReadonlySet<string | null> = new Set(['RegExp', 'Error', 'T
  */
 const PLAIN_BUILTINS: ReadonlySet<string | null> = new Set([...PURE_GLOBALS].filter((n) => n !== 'Object' && !BUILTIN_MEMBERS.has(n)));
 
+/** 共有の正規表現としての扱い (`ProjectTable.sharedRegex`)。 */
+export type SharedRegexKind = 'g' | 'opaque';
+
+/** 共有の const としての扱い (`ProjectTable.sharedConsts`)。 */
+export type SharedConstKind = 'readonly-table' | 'untyped' | 'load-result';
+
 /** 関数の外形 (他のモジュールから引くため)。 */
 export interface FnSignature {
   readonly module: string;
@@ -139,15 +257,44 @@ export interface FnSignature {
   readonly paramVetted: readonly (string | null)[];
   /** 戻り値が名乗る印 (無ければ null)。 */
   readonly returnVetted: string | null;
+  /**
+   * 外形 (引数・戻り値の型) が印に関わるか (0.36 · T-271)。印の名前を書いた型 (`readonly 印[]` のように印そのものでない型も)・`typeof` を書いた型が
+   * 1 つでも在れば立つ。立っている関数は `typeof 関数` で名指しできない (`Parameters<typeof f>` / `ReturnType<typeof f>` が印の型を名乗る)。
+   */
+  readonly markRelated: boolean;
 }
 
 export interface ProjectTable {
-  /** 宣言した印の名前 → ラベル。 */
+  /**
+   * 印の名前 → ラベル。`collectTable` が返す表ではプロジェクト全体の印、`checkModule` の中では**その module で印として読める名前だけ**
+   * (`marksIn` · 0.36 · T-270)。
+   */
   readonly vetted: ReadonlyMap<string, string>;
+  /** 印の名前 → 宣言した module の道 (0.36 · T-270)。印の名前はプロジェクトで 1 つ。 */
+  readonly vettedHome: ReadonlyMap<string, string>;
+  /**
+   * module ごとの、印に関わるかもしれない直下の const の名前 (0.36 · T-271)。型が印の名前か `typeof` を書いた const と、
+   * 型を書いていない const (初期値が文字列・数・真偽の字面そのものでない物 —— `const K = 関門("…");` の型は推論で印を含む)。
+   * `use` で引いた先で `typeof 名前` と名指しできない。
+   */
+  readonly markConsts: ReadonlyMap<string, ReadonlySet<string>>;
   /** 関数の外形。鍵は `道 + 名前` (名前だけで引くと、別のモジュールの同名の関数が外形を上書きする —— 0.4 · T-241)。 */
   readonly fns: ReadonlyMap<string, FnSignature>;
   /** モジュールの道 → export した名前の集まり (関数に限らず、定数・型・印も)。`use` で引ける名前はここに在る物だけ。 */
   readonly exports: ReadonlyMap<string, ReadonlySet<string>>;
+  /**
+   * モジュールの道 → 直下の const の名前 → 共有の正規表現としての扱い (0.34 · T-266)。別名 (`const A = B;`) と、`use` で引いた先の名前も辿る。
+   * - `g`: 初期値が g の付いた正規表現そのもの。文字列のメソッドの引数にしか渡せない (`.test` / `.exec` は `lastIndex` を進め、同じ入力への答えが呼ぶたびに変わる)。
+   * - `opaque`: 初期値が呼び出しの結果 (`const RE = make();`)。g の正規表現かどうかを検められないので、`.test` / `.exec` の受け手にできない。
+   */
+  readonly sharedRegex: ReadonlyMap<string, ReadonlyMap<string, SharedRegexKind>>;
+  /**
+   * モジュールの道 → 直下の const の名前 → 共有の値としての扱い (0.35 · T-268 / T-269)。`use` で引いた先でも同じ扱いにするために持つ。
+   * - `readonly-table`: 読むだけの表 (`isReadonlyTableConst`)。名前は読む位置にしか書けない。
+   * - `untyped`: 型を書いていない const。入れ物を書き換えるメソッドの受け手にできない (0.34 · T-267 —— 0.34 は同じ module の中しか見ていなかった)。
+   * - `load-result`: 初期値が、その場で走らせた関数の結果を含む const (0.37 · T-274 · `holdsLoadResult`)。名前は Mamori の中で読めない。
+   */
+  readonly sharedConsts: ReadonlyMap<string, ReadonlyMap<string, SharedConstKind>>;
 }
 
 /** `道 + 名前` の鍵 (`fns` を引く)。 */
@@ -162,6 +309,27 @@ function fnKey(file: string, name: string): string {
  */
 // 型の綴りで特別な意味を持つ語 (型引数の名前にできない)。
 const TYPE_SPELLING_WORDS: ReadonlySet<string> = new Set(['typeof', 'import']);
+
+/** TypeScript が別の拡張子へ読み替える末尾 (`./g.js` は `./g.ts` に解かれる)。Mamori の module を指す道には書かない。 */
+const RESOLVED_EXTENSION = /\.(?:[cm]?[jt]sx?|mamori)$/;
+
+/**
+ * 相対の道の綴りが**正規**か (0.32 · T-262)。正規 = `./` 1 つか `../` の並びで始まり、あとは空でも `.` でも `..` でもない区切りが `/` 1 つずつで並び、
+ * 末尾に拡張子 (`.js` / `.ts` ほか) を持たない。0.31 までは綴りを見ずに道を組んでおり、TypeScript が同じ module に解く別の綴り
+ * (`./g.js`・`.//g`) を Mamori は別の (Mamori でない) module と見た —— その module の関数の外形 (印を受ける引数) を引けず、
+ * `use { need } from "./g.js"; need(JSON.parse(raw));` で関門を通っていない値が印を受ける関数へ届いた。
+ * 相対でない道 (外の package・`node:`) はここでは見ない (能力の台帳 M7 が持つ)。正規なら null、そうでなければ理由。
+ */
+export function specifierProblem(from: string): string | null {
+  if (!from.startsWith('.')) return null;
+  const head = /^(?:\.\/|(?:\.\.\/)+)/.exec(from);
+  if (head === null) return '`./` か `../` で始めます';
+  const segs = from.slice(head[0].length).split('/');
+  if (segs.some((seg) => seg === '')) return '空の区切り (`//`・末尾の `/`) は書けません';
+  if (segs.some((seg) => seg === '.' || seg === '..')) return '途中の `.` / `..` は書けません (`../` は先頭にだけ並べます)';
+  if (RESOLVED_EXTENSION.test(from)) return '拡張子 (`.js` / `.ts` ほか) は書けません';
+  return null;
+}
 
 export function resolveUse(from: string, fromFile: string): string {
   if (!from.startsWith('./') && !from.startsWith('../')) return `外:${from}`;
@@ -193,28 +361,67 @@ function carriedMark(t: TypeRef | null, vetted: ReadonlyMap<string, string>): st
   return t!.text.split('|').every((part) => ['null', 'undefined', mark].includes(part.trim())) ? mark : null;
 }
 
+/**
+ * この module で**印として読める名前** (0.36 · T-270)。印の名前が印を指すのは、この module が `vetted` で宣言したときと、
+ * 印を宣言した Mamori の module から**別名を付けずに** `use` で引いたときだけ。
+ *
+ * 0.35 までは「プロジェクトのどこかで宣言した印と同じ綴り」なら印と見ていた。ところが綴りが指す先は module ごとに違う ——
+ * `type VUrl = string;` (この module の別名)・`use type { VUrl } from "./types";` (印を宣言していない module の同名の型)・
+ * `use type { Plain alias VUrl } from …` (別名) と書けば、Mamori には「印 1 つを受ける sink 関数」に見える `open(u: VUrl)` が、
+ * `tsc` には素の `string` を受ける関数になった (M3 を名前だけで満たせた)。
+ */
+export function marksIn(file: string, module: Module, vetted: ReadonlyMap<string, string>, vettedHome: ReadonlyMap<string, string>): ReadonlyMap<string, string> {
+  const here = new Map<string, string>();
+  for (const it of module.items) {
+    if (it.kind === 'vetted') here.set(it.name, it.label);
+    if (it.kind !== 'use') continue;
+    const target = resolveUse(it.from, file);
+    for (const n of it.names) {
+      // 印を宣言した module から、別名を付けずに引いた名前だけ (どちらかが欠ければ label は無い)。
+      const label = n.alias === null && vettedHome.get(n.name) === target ? vetted.get(n.name) : undefined;
+      if (label !== undefined) here.set(n.name, label);
+    }
+  }
+  return here;
+}
+
 export function collectTable(modules: readonly { readonly file: string; readonly module: Module }[]): { table: ProjectTable; diagnostics: MamoriDiagnostic[] } {
   const vetted = new Map<string, string>();
+  const vettedHome = new Map<string, string>();
   const fns = new Map<string, FnSignature>();
   const exports = new Map<string, Set<string>>();
   const exportedFnNames = new Set<string>();
   const diagnostics: MamoriDiagnostic[] = [];
-  for (const { module } of modules) {
-    for (const it of module.items) if (it.kind === 'vetted') vetted.set(it.name, it.label);
+  for (const { file, module } of modules) {
+    for (const it of module.items) {
+      if (it.kind !== 'vetted') continue;
+      // 印の名前はプロジェクトで 1 つ (0.36 · T-270) —— 来歴は印の名前で比べるので、同じ名前の印が 2 つ在ると、片方の関門が作った値を
+      // もう片方の印を受ける口へ渡す形が Mamori を通る (`tsc` は別の型として断るが、Mamori の検めが 1 層欠ける)。
+      if (vettedHome.has(it.name)) {
+        diagnostics.push({ file, line: it.pos.line, col: it.pos.col, rule: 'M1', message: `印 ${it.name} を 2 度宣言しています (${vettedHome.get(it.name)} にも在る) —— 印の名前はプロジェクトで 1 つです (来歴は印の名前で比べるので、同じ名前の印は取り違えられます)` });
+        continue;
+      }
+      vetted.set(it.name, it.label);
+      vettedHome.set(it.name, file);
+    }
   }
   for (const { file, module } of modules) {
     const names = new Set<string>();
+    // 関数の外形が名乗る印も、その module で印として読める名前だけ (0.36 · T-270)。
+    const marksHere = marksIn(file, module, vetted, vettedHome);
     exports.set(file, names);
     for (const it of module.items) {
       // export の旗を持つのは名前のある宣言 (fn・const・type・interface・vetted) だけ —— use / extern は旗を持たず、`undefined` は export でない。
-      if ((it as { readonly exported?: boolean }).exported === true) names.add((it as { readonly name: string }).name);
+      // クラス (0.27) は載せない —— 他の Mamori の module から `use` で引けない (TypeScript の呼び手のための `export class`)。
+      if (it.kind !== 'class' && (it as { readonly exported?: boolean }).exported === true) names.add((it as { readonly name: string }).name);
       if (it.kind !== 'fn') continue;
       const sig: FnSignature = {
         module: file,
         name: it.name,
         role: it.role,
-        paramVetted: it.params.map((p) => carriedMark(p.type, vetted)),
-        returnVetted: vettedOf(it.returns, vetted),
+        paramVetted: it.params.map((p) => carriedMark(p.type, marksHere)),
+        returnVetted: vettedOf(it.returns, marksHere),
+        markRelated: [...it.params.map((p) => p.type), it.returns].some((t) => t !== null && spellsMark(t, vetted)),
       };
       if (it.exported && exportedFnNames.has(it.name)) {
         diagnostics.push({ file, line: it.pos.line, col: it.pos.col, rule: 'M6', message: `関数 ${it.name} が 2 つのモジュールで export されています (名前で引くので 1 つにする)` });
@@ -223,18 +430,285 @@ export function collectTable(modules: readonly { readonly file: string; readonly
       fns.set(fnKey(file, it.name), sig);
     }
   }
-  return { table: { vetted, fns, exports }, diagnostics };
+  return { table: { vetted, vettedHome, markConsts: collectMarkConsts(modules, vetted), fns, exports, sharedRegex: collectSharedRegex(modules), sharedConsts: collectSharedConsts(modules, fns) }, diagnostics };
+}
+
+/** 型の綴りが印の名前 (プロジェクトのどの印でも) か `typeof` を書いているか (0.36 · T-271)。`typeof` の相手は辿らず、広く取る。 */
+function spellsMark(t: TypeRef, vetted: ReadonlyMap<string, string>): boolean {
+  return vettedOf(t, vetted) !== null || t.names.includes('typeof');
+}
+
+/** 初期値が文字列・数・真偽 (と null / undefined) の字面そのものか —— 印を運べない値。 */
+function isPlainLiteral(e: Expr): boolean {
+  return e.kind === 'string' || e.kind === 'number' || e.kind === 'literal';
+}
+
+/** 直下の const が印に関わるかもしれないか (`ProjectTable.markConsts` の注記)。 */
+function isMarkConst(type: TypeRef | null, init: Expr, vetted: ReadonlyMap<string, string>): boolean {
+  return type === null ? !isPlainLiteral(init) : spellsMark(type, vetted);
+}
+
+function collectMarkConsts(modules: readonly { readonly file: string; readonly module: Module }[], vetted: ReadonlyMap<string, string>): Map<string, Set<string>> {
+  const out = new Map<string, Set<string>>();
+  for (const { file, module } of modules) {
+    const names = new Set<string>();
+    out.set(file, names);
+    for (const it of module.items) {
+      if (it.kind === 'const' && isMarkConst(it.type, it.init, vetted)) names.add(it.name);
+    }
+  }
+  return out;
+}
+
+/** 直下の初期値を「字面と組み込みだけ」で組んだかを見るための、module の名前の表 (0.37 · T-274)。 */
+interface LoadEnv {
+  /** 字面・先に宣言したデータの const・組み込みと `extern pure` の呼び出しだけで組んだ const の名前 (閉包を 1 つも含まない)。 */
+  readonly data: ReadonlySet<string>;
+  /** `extern pure` で宣言した名前 —— 副作用も状態も持たないと host が名乗った関数。 */
+  readonly hostPure: ReadonlySet<string>;
+  /** この module が直下で宣言した名前 (組み込みと同じ綴りを隠す物を、組み込みと読まないため)。 */
+  readonly declared: ReadonlySet<string | null>;
+  /** 印を返す関門 (この module の gate 関数と、`use` で引いた gate 関数) の名前 —— 返すのは印の付いた文字列か null / undefined だけ (0.32 · T-263)。 */
+  readonly gates: ReadonlySet<string>;
+}
+
+/** 名前が、この module で隠していない組み込みか (`Object` / `Math` / `Map` ほか)。 */
+function isBuiltinName(name: string, env: LoadEnv): boolean {
+  return PURE_GLOBALS.has(name) && !env.declared.has(name);
+}
+
+/**
+ * 式が**データだけ**か (0.37 · T-274): 字面・データの const・それらの欄と演算・「データだけの呼び出し」で組んだ式。
+ * arrow と、データの const でない名前 (関数・`use` で引いた名前・arrow を持つ const) を 1 つでも含めば偽 —— 閉包を含まないと言える式だけを真にする。
+ */
+function isLoadData(e: Expr, env: LoadEnv): boolean {
+  switch (e.kind) {
+    case 'ident':
+      return env.data.has(e.name);
+    case 'array':
+      return e.items.every((x) => isLoadData(x, env));
+    case 'object':
+      return e.props.every((p) => isLoadData(p.value, env));
+    case 'member':
+    case 'field':
+      return isLoadData(e.object, env);
+    case 'index':
+      return isLoadData(e.object, env) && isLoadData(e.key, env);
+    case 'unary':
+    case 'spread':
+      return isLoadData(e.operand, env);
+    case 'binary':
+      return isLoadData(e.left, env) && isLoadData(e.right, env);
+    case 'cond':
+      return isLoadData(e.test, env) && isLoadData(e.then, env) && isLoadData(e.otherwise, env);
+    case 'call':
+    case 'new':
+      return isDataCall(e, env);
+    case 'arrow':
+    case 'arrow-block':
+      return false;
+    default:
+      // 文字列・数・正規表現・true / false / null / undefined (`mint` は直下に書けない —— M1 が別に断る)。
+      return true;
+  }
+}
+
+/** メソッドの受け手がデータか: 隠していない組み込みの名前空間 (`Object.entries` / `Math.max`)・`extern pure` の名前・その欄、またはデータの式 (`[…].join`)。 */
+function isDataReceiver(x: Expr, env: LoadEnv): boolean {
+  if (x.kind === 'ident') return isBuiltinName(x.name, env) || env.hostPure.has(x.name) || env.data.has(x.name);
+  if (x.kind === 'member') return isDataReceiver(x.object, env);
+  return isLoadData(x, env);
+}
+
+/**
+ * **データだけの呼び出し**か (0.37 · T-274): 呼ぶ相手が組み込み (`new Map(…)` / `Number(…)` / `Object.entries(…)`)・`extern pure` の関数・
+ * データを受け手にするメソッドで、**引数もデータだけ** (arrow と関数の名前を渡さない —— 組み込みが呼び戻して、その結果を返せる)。
+ */
+function isDataCall(e: Expr & { readonly kind: 'call' | 'new' }, env: LoadEnv): boolean {
+  const c = e.callee;
+  const callee = c.kind === 'ident' ? isBuiltinName(c.name, env) || env.hostPure.has(c.name) || env.gates.has(c.name) : c.kind === 'member' && isDataReceiver(c.object, env);
+  return callee && e.args.every((a) => isLoadData(a, env));
+}
+
+/** 引数を呼び戻さない組み込みの構築子 —— 結果は、引数を入れただけの入れ物か、文字列から作った値。 */
+const NON_INVOKING_CTORS: ReadonlySet<string> = new Set(['Map', 'Set', 'RegExp', 'Error', 'TypeError', 'RangeError']);
+/** 引数を呼び戻さない組み込みの関数 —— 結果は数・文字列・真偽。 */
+const NON_INVOKING_FNS: ReadonlySet<string> = new Set(['Number', 'String', 'Boolean']);
+/**
+ * メンバのどれも引数を呼び戻さない組み込みの名前空間。`Object` で書けるメンバ (`OBJECT_MEMBERS`) は、引数そのもの (`freeze`)・引数の欄を並べ直した入れ物・真偽を返す。
+ * `Math` / `Number` / `String` のメンバは数・文字列・真偽しか返さない。`JSON` (`parse` の reviver)・`Array` (`from` の写す関数)・`Promise` (thenable) は呼び戻すので入れない。
+ */
+const NON_INVOKING_NAMESPACES: ReadonlySet<string> = new Set(['Object', 'Math', 'Number', 'String']);
+
+/**
+ * **引数を呼び戻さない組み込みの呼び出し**か (0.37 · T-274): `new Map(…)` / `new Set(…)` / `new RegExp(…)` / `Object.freeze(…)` / `Object.entries(…)` / `Math.max(…)` / `String(…)` ほか。
+ * 引数に置いた arrow・関数の名前は**置かれるだけで走らない**ので、結果が閉じ込めた状態を持つかは、引数の中の呼び出しだけで決まる
+ * (`new Map([["a", (x) => x]])` は置いただけの arrow の表・`new Map([["a", make()]])` は関数の結果を持つ)。
+ * 印を返す関門の呼び出しも同じ扱い —— 返すのは印の付いた文字列か null / undefined だけで、閉包を返せない (`export const START = 関門("…");`)。
+ */
+function isNonInvokingCall(e: Expr & { readonly kind: 'call' | 'new' }, env: LoadEnv): boolean {
+  const c = e.callee;
+  if (c.kind === 'ident') return env.gates.has(c.name) || (isBuiltinName(c.name, env) && (e.kind === 'new' ? NON_INVOKING_CTORS : NON_INVOKING_FNS).has(c.name));
+  if (c.kind !== 'member') return false;
+  const ns = identName(c.object);
+  // Stryker disable next-line ConditionalExpression: 等価 —— ns が null なら次の行の has(null) が偽で同じく返る (型の絞り込みのためだけに在る)
+  if (ns === null) return false;
+  return NON_INVOKING_NAMESPACES.has(ns) && isBuiltinName(ns, env);
+}
+
+/**
+ * 直下の初期値が、**その場で走らせた関数の結果**を含むか (0.37 · T-274)。置いただけの arrow の本体は走らないので見ない。
+ *
+ * 関数が返した物は、関数の中の配列・let・Map を閉じ込めた閉包かもしれない: `fn make() { const xs = ["https://ok/"]; return (x) => { xs.push(x); return xs; }; }` を
+ * `const ADD = make();` と置くと、const と名乗る名前の後ろに**呼び出しをまたぐ状態**ができ、関門が読む許可リストを別の関数が書き換えられる
+ * (T-258 / T-264 / T-267 が直下の入れ物について断った形の、閉じ込めた先での現れ)。Mamori は型を解かないので、返した物が状態を持つかは見分けられない ——
+ * 引数を呼び戻さない組み込み (`isNonInvokingCall`) は引数の中だけを見て、ほかの呼び出しはデータだけ (`isDataCall`) でなければ「関数の結果」とする。
+ * そういう初期値の const は、名前を Mamori の中で読めなくする。状態を持つ物は let に置く (状態と名乗る)。
+ */
+function holdsLoadResult(e: Expr, env: LoadEnv): boolean {
+  switch (e.kind) {
+    case 'call':
+    case 'new':
+      return isNonInvokingCall(e, env) ? e.args.some((a) => holdsLoadResult(a, env)) : !isDataCall(e, env);
+    case 'array':
+      return e.items.some((x) => holdsLoadResult(x, env));
+    case 'object':
+      return e.props.some((p) => holdsLoadResult(p.value, env));
+    case 'member':
+    case 'field':
+      return holdsLoadResult(e.object, env);
+    case 'index':
+      return holdsLoadResult(e.object, env) || holdsLoadResult(e.key, env);
+    case 'unary':
+    case 'spread':
+      return holdsLoadResult(e.operand, env);
+    case 'binary':
+      return holdsLoadResult(e.left, env) || holdsLoadResult(e.right, env);
+    case 'cond':
+      return holdsLoadResult(e.test, env) || holdsLoadResult(e.then, env) || holdsLoadResult(e.otherwise, env);
+  }
+  // 名前・字面は呼び出しを含まない。arrow は置いただけ (本体は呼ばれるまで走らない)。
+  return false;
+}
+
+/** module が直下で宣言した名前 (use・extern・fn・const・let・class)。 */
+function declaredNames(module: Module): Set<string | null> {
+  const names = new Set<string | null>();
+  for (const it of module.items) {
+    if (it.kind === 'use') {
+      // default の名前が無い use は null を入れる (どの名前とも一致しない)。
+      names.add(it.defaultName);
+      for (const n of it.names) names.add(n.alias ?? n.name);
+    } else if (it.kind === 'extern') {
+      for (const n of it.names) names.add(n);
+    } else if (it.kind === 'fn' || it.kind === 'const' || it.kind === 'let' || it.kind === 'class') {
+      names.add(it.name);
+    }
+  }
+  return names;
+}
+
+/**
+ * 直下の const の、共有の値としての扱いを集める (0.35 · T-268 / T-269 · 0.37 · T-274)。型つきで読むだけの表でも、関数の結果でもない const は載せない。
+ * 関数の結果を含む const (`load-result`) は、型を書いても・読むだけの表と名乗っても同じ扱い (関数が返した入れ物は、返した側が書き換える口を残せる)。
+ */
+function collectSharedConsts(modules: readonly { readonly file: string; readonly module: Module }[], fns: ReadonlyMap<string, FnSignature>): Map<string, Map<string, SharedConstKind>> {
+  const isMarkGate = (target: string, name: string): boolean => {
+    const sig = fns.get(fnKey(target, name));
+    return sig !== undefined && sig.role === 'gate' && sig.returnVetted !== null;
+  };
+  const shared = new Map<string, Map<string, SharedConstKind>>();
+  for (const { file, module } of modules) {
+    const names = new Map<string, SharedConstKind>();
+    shared.set(file, names);
+    const data = new Set<string>();
+    const hostPure = new Set<string>();
+    const gates = new Set<string>();
+    for (const it of module.items) {
+      switch (it.kind) {
+        case 'extern':
+          if (it.authority === 'pure') for (const n of it.names) hostPure.add(n);
+          break;
+        case 'fn':
+          if (isMarkGate(file, it.name)) gates.add(it.name);
+          break;
+        case 'use': {
+          const target = resolveUse(it.from, file);
+          for (const n of it.names) if (isMarkGate(target, n.name)) gates.add(n.alias ?? n.name);
+          break;
+        }
+      }
+    }
+    const env: LoadEnv = { data, hostPure, declared: declaredNames(module), gates };
+    // 宣言の順に見る —— 初期値がその場で読めるのは、先に宣言した const だけ (後ろの const は読み込みの時点でまだ無い)。
+    for (const it of module.items) {
+      if (it.kind !== 'const') continue;
+      if (holdsLoadResult(it.init, env)) {
+        names.set(it.name, 'load-result');
+        continue;
+      }
+      if (isLoadData(it.init, env)) data.add(it.name);
+      if (it.type === null) names.set(it.name, 'untyped');
+      else if (isReadonlyTableConst(it.type, it.init)) names.set(it.name, 'readonly-table');
+    }
+  }
+  return shared;
+}
+
+/**
+ * g の付いた共有の正規表現の名前を集める (0.34 · T-266)。直下の const の初期値が正規表現そのもの (`/…/g`・`new RegExp(…, "g…")`) なら載せ、
+ * 別名 (`const A = B;` —— B は同じ module の名前か、`use` で引いた名前) は増えなくなるまで辿る。
+ */
+function collectSharedRegex(modules: readonly { readonly file: string; readonly module: Module }[]): Map<string, Map<string, SharedRegexKind>> {
+  const shared = new Map<string, Map<string, SharedRegexKind>>();
+  for (const { file, module } of modules) {
+    const names = new Map<string, SharedRegexKind>();
+    shared.set(file, names);
+    for (const it of module.items) {
+      if (it.kind !== 'const') continue;
+      if (isGlobalRegexInit(it.init)) names.set(it.name, 'g');
+      else if (it.init.kind === 'call') names.set(it.name, 'opaque');
+    }
+  }
+  let grew = true;
+  while (grew) {
+    grew = false;
+    for (const { file, module } of modules) {
+      const names = shared.get(file)!;
+      // 引く鍵は「名前、または名前でない (null)」—— 名前でない初期値はどちらの表にも無いので、門を置かずにそのまま引く (置くと等価な条件になる)。
+      const known: ReadonlyMap<string | null, SharedRegexKind> = names;
+      const used = new Map<string | null, { readonly target: string; readonly name: string }>();
+      for (const it of module.items) {
+        if (it.kind !== 'use') continue;
+        for (const n of it.names) used.set(n.alias ?? n.name, { target: resolveUse(it.from, file), name: n.name });
+      }
+      for (const it of module.items) {
+        if (it.kind !== 'const' || names.has(it.name)) continue;
+        const source = identName(it.init);
+        const from = used.get(source);
+        const kind = known.get(source) ?? (from === undefined ? undefined : shared.get(from.target)?.get(from.name));
+        if (kind !== undefined) {
+          names.set(it.name, kind);
+          grew = true;
+        }
+      }
+    }
+  }
+  return shared;
 }
 
 interface Binding {
   readonly vetted: string | null;
-  readonly authority: 'sink' | 'pure' | 'local';
+  /** `class` はこのモジュールで宣言した例外のクラス (0.27)。`new N(…)` と `x instanceof N` の相手にだけ使える。 */
+  readonly authority: 'sink' | 'pure' | 'local' | 'class';
   /**
    * 代入できるか。`let` だけが `true` を持ち、ほか (`const`・引数・回す変数・このモジュールの関数) は持たない
    * (2026-10-30 · パス 563)。0.1 は代入の相手が「このモジュールの名前か」しか見ておらず、`const` や引数への代入を
    * 変換後の `tsc` に任せていた —— Mamori の規則として断る (無い = 代入できない、で失敗は閉じる)。
    */
   readonly mutable?: boolean;
+  /** モジュール直下の `let` か (0.28 · MG-058)。関数の呼び出しをまたいで値を運ぶので、計算した鍵の値 (inert) を入れられない・印の型にできない。 */
+  readonly moduleLet?: boolean;
   /** 数と分かっている名前か (型の宣言が `number`・初期値が数の式)。添字の鍵に使える (0.8)。型の宣言は実行時には守られないので、生成物は鍵を数に寄せる。 */
   readonly numeric?: boolean;
   /**
@@ -250,6 +724,14 @@ interface Binding {
    * `const f = x[k]; f(…)` の洗浄を塞ぐ。一度付いた印は、別の値を入れても残す (失敗は閉じる)。
    */
   readonly inert?: boolean;
+  /** 共有の正規表現としての扱い (0.34 · T-266)。`g` は文字列のメソッド (`.replace` ほか) の引数にしか渡せず、`opaque` (呼び出しの結果) は `.test` / `.exec` の受け手にできない。 */
+  readonly sharedRegex?: SharedRegexKind;
+  /** 型を書いていないモジュール直下の const か (0.34 · T-267)。入れ物を書き換えるメソッド (`.set` / `.add` ほか) の受け手にできない。 */
+  readonly untypedShared?: boolean;
+  /** 初期値が、その場で走らせた関数の結果を含むモジュール直下の const か (0.37 · T-274)。名前は Mamori の中で読めない (`use` で引いた先でも同じ)。 */
+  readonly loadResult?: boolean;
+  /** 読むだけの表か (0.35 · T-268)。型が `ReadonlyMap` / `ReadonlySet` を名指しする名前と、読むだけの直下の表。読む位置 (`TABLE_READ_MEMBERS`・`for … of`・展開・`new Map(表)`) にしか書けない。 */
+  readonly readonlyTable?: boolean;
 }
 
 /**
@@ -264,8 +746,10 @@ function identName(e: Expr): string | null {
   return null;
 }
 
-export function checkModule(file: string, module: Module, table: ProjectTable): MamoriDiagnostic[] {
+export function checkModule(file: string, module: Module, project: ProjectTable): MamoriDiagnostic[] {
   const out: MamoriDiagnostic[] = [];
+  // この module の中では、印の表は「この module で印として読める名前」だけ (0.36 · T-270)。プロジェクト全体の印の名前は `project.vetted`。
+  const table: ProjectTable = { ...project, vetted: marksIn(file, module, project.vetted, project.vettedHome) };
   /**
    * いま検めているループ(`for` / `while`)の入れ子の深さ。`let` はこの深さを覚え、ループの外で宣言した名前へ、本体の末尾で
    * inert な値を入れる形を断つ。本体は先頭から 1 度しか検めないので、次の周の先頭の使い方は、その値を受ける前の姿で検め終わっている (0.19 · T-259)。
@@ -285,17 +769,33 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
   const checkOptionalParams = (ps: readonly Param[]): void => {
     for (const p of ps) {
       if (!p.optional) continue;
-      const mark = vettedOf(p.type, table.vetted);
+      const mark = vettedOf(p.type, project.vetted);
       if (mark !== null) report('M4', p.pos, `省ける引数 ${p.name}?: は印 ${mark} を名乗れません —— 省いた呼び出しは値が undefined になり、印を受ける口へ印の無い値を渡せてしまう (印の型の引数は省けません)`);
+    }
+    // 既定値つきの引数も省ける (0.32 · T-263)。0.22 は `x?: 印` だけを断り、`x: 印 = 式` を見ていなかった —— Mamori の呼び手は引数を渡さないと断られるが、
+    // TypeScript の呼び手は省け、そのとき入るのは既定値の式 (`JSON.parse(…)` の any でも `tsc` は通す) で、関門を通っていない値が印の型で口へ届く。
+    for (const p of ps) {
+      const mark = vettedOf(p.type, project.vetted);
+      if (p.init !== null && mark !== null) report('M4', p.pos, `引数 ${p.name} は印 ${mark} を名乗るので既定値を持てません —— 既定値は呼び手が引数を省いたときに入る値で、TypeScript の呼び手が省くと関門を通っていない値が印の型で入ります`);
     }
   };
   const checkTypeArgs = (targs: readonly TypeRef[]): void => {
     for (const ta of targs) {
-      const mark = ta.names.find((n) => table.vetted.has(n));
+      const mark = ta.names.find((n) => project.vetted.has(n));
       if (mark !== undefined) report('M4', ta.pos, `型引数に印 ${mark} は置けません —— 型を引数に取る関数が、関門 (mint) を通らずに印を名乗る値を返せてしまう`);
-      const escape = ta.names.find((n) => n === 'typeof' || n === 'import');
+      const escape = ta.names.find((n) => TYPE_SPELLING_WORDS.has(n));
       if (escape !== undefined) report('M4', ta.pos, `型引数に \`${escape}\` は置けません —— 印を持つ値の型・別の module の型を名指しして、印を名乗る値を作れてしまう`);
     }
+  };
+  /**
+   * 初期値の末尾の `satisfies 型` (0.31 · MG-065)。**印の型は名乗れない** —— `satisfies` は型を検めるだけで値を変えず、束縛の印は
+   * 初期値の式 (gate の戻り・mint) からしか来ない。それでも印を綴れる場所を増やすと「印を名乗れるのは gate の戻り値・印を運ぶ束縛の型・
+   * sink の引数だけ」(M1 / M4) の表が 1 行増え、型の検査 (tsc) に守りを預ける所が 1 つ増える。
+   */
+  const checkSatisfies = (t: TypeRef | null): void => {
+    if (t === null) return;
+    const mark = t.names.find((n) => project.vetted.has(n));
+    if (mark !== undefined) report('M4', t.pos, `\`satisfies\` の型に印 ${mark} は置けません —— 印は型で名乗るのではなく、gate を通った値が運びます (束縛の印は初期値の式からだけ決まります)`);
   };
   const report = (rule: MamoriDiagnostic['rule'], pos: { line: number; col: number }, message: string): void => {
     out.push({ file, line: pos.line, col: pos.col, rule, message });
@@ -305,6 +805,23 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
   const localFns = new Map<string, FnSignature>();
   /** `use` で引いた他の Mamori の関数の外形 (使う側の名前 = 別名 → 外形)。道で解くので、別名にも同名の別の関数にも惑わされない。 */
   const importedFns = new Map<string, FnSignature | undefined>();
+  /** 印に関わる値の名前 —— `typeof 名前` で名指しできない (0.36 · T-271)。下の use の loop と、関数の外形を集めた後の loop が入れる。 */
+  const markValues = new Set<string>();
+  /**
+   * Mamori の外の module から `use` で引いた関数の名前 (0.32 · T-261)。**印を名乗る引数を持つ arrow を渡してよいのは、この名前を直に呼ぶ
+   * 呼び出しの引数 (か、その引数のオブジェクトの字面の欄) だけ** —— 外の module は TypeScript で、呼び戻しに渡す値の型は `tsc` が外の module の
+   * 側で検める (export した関数の印の引数を TypeScript の呼び手が渡すのと同じ信頼)。Mamori の中の呼び手 (即時の呼び出し・別名・`.then` / `.map` ほかの
+   * 組み込みのメソッド・Mamori の関数) は引数の来歴を検められないので、そこへ渡す arrow は印を名乗れない。
+   */
+  const hostFns = new Set<string>();
+  /** 上の位置に直に書いた arrow (その場で 1 度だけ外の関数へ渡る)。 */
+  const hostCallbacks = new WeakSet<Expr>();
+  /** 呼ぶ側に立つメンバの式 (`a.push(…)` の `a.push`)。書き換えるメソッドの名前は、ここに在る式でしか書けない (0.34 · T-265)。 */
+  const calledMembers = new WeakSet<Expr>();
+  /** 共有の g の正規表現の名前を置いてよい場所の式 —— 文字列のメソッドの引数と、直下の const の別名の初期値 (0.34 · T-266)。 */
+  const regexUses = new WeakSet<Expr>();
+  /** 読むだけの表の名前を置いてよい場所の式 —— 読むメンバの受け手・`for … of` の回す相手・展開・`new Map(…)` / `new Set(…)` の引数 (0.35 · T-268)。 */
+  const tableReads = new WeakSet<Expr>();
   /** 名前を 1 つ宣言する。同じ名前を 2 度 (use・定数・関数・extern のあいだで) 宣言すると、あとの物が前の物の外形を隠す (0.4 · T-241)。 */
   const declare = (name: string, b: Binding, pos: { line: number; col: number }): void => {
     if (moduleScope.has(name)) report('M6', pos, `名前 ${name} を 2 度宣言しています (use・extern・定数・関数のあいだで名前は重ねられない)`);
@@ -319,13 +836,47 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     if (moduleScope.has(name)) report('M6', pos, `局所の名前 ${name} は、モジュール直下の同名の宣言 (use・extern・fn・定数) を隠します —— 呼び出しの外形 (印) は名前で引くので、別の名前にしてください`);
     scope.set(name, b);
   };
+  /**
+   * `from "…"` の道の検め (use・extern・再輸出に共通 · 0.32 · T-262)。綴りが正規でない道と、`X/index.mamori` を `./X` と名指す道を断る ——
+   * どちらも TypeScript は Mamori の module に解くのに、Mamori は別の module と見て外形の検めが外れる。
+   */
+  const checkSpecifier = (from: string, pos: { line: number; col: number }): void => {
+    const problem = specifierProblem(from);
+    if (problem !== null) {
+      report('M6', pos, `道 "${from}" は正規の綴りではありません —— ${problem} (TypeScript は同じ module に解くのに Mamori は別の module と見て、印を受ける引数の検めが外れます)`);
+      return;
+    }
+    const asIndex = resolveUse(from + '/index', file);
+    if (table.exports.has(asIndex)) report('M6', pos, `道 "${from}" は ${asIndex} を指します —— \`index\` まで綴ります (TypeScript は \`${from}/index\` に解くのに、Mamori は別の module と見ます)`);
+  };
+  /**
+   * 印の名前を、印でない物に付ける宣言を断る (0.36 · T-270)。型の綴りの `VUrl` がこの module で指すのは、その宣言 (型の別名・interface・
+   * クラス・外の module から引いた同名の物) であって印ではない。印の表 (`marksIn`) がその名前を印と見ないので口は作れないが、
+   * 断りの文を「印の型 1 つで受けます (在ったのは VUrl)」にしないために、宣言の場所で理由を言う。
+   */
+  const refuseMarkName = (name: string | null, pos: { line: number; col: number }, what: string): void => {
+    // Stryker disable next-line ConditionalExpression: 等価 —— name が null なら次の行の has(null) が偽で同じく返る (型の絞り込みのためだけに在る)
+    if (name === null) return;
+    if (!project.vetted.has(name)) return;
+    report('M4', pos, `${what} ${name} は印の名前です —— この module では \`${name}\` が印ではなくその宣言を指すので、\`u: ${name}\` と書いた口が印を持たない値を受けます (印は、宣言した Mamori の module から別名を付けずに \`use type { ${name} } from "…"\` で引きます)`);
+  };
   for (const it of module.items) {
+    if (it.kind === 'type' || it.kind === 'interface' || it.kind === 'class') refuseMarkName(it.name, it.pos, it.kind === 'class' ? 'クラス' : '型');
     if (it.kind === 'use') {
+      checkSpecifier(it.from, it.pos);
+      refuseMarkName(it.defaultName, it.pos, '`use default` で引いた名前');
       const target = resolveUse(it.from, file);
       if (CAPABILITY_MODULES.has(it.from)) report('M6', it.pos, `\`use … from "${it.from}"\` は宣言できません —— ${it.from} はコード・OS・プロセス・網の口を持つので \`extern sink\` で宣言し、sink 関数の中に閉じ込めます`);
       const exported = table.exports.get(target);
       for (const n of it.names) {
         const local = n.alias ?? n.name;
+        // 印そのものを引く形 (宣言した module から・別名なし) だけが、印の名前を名乗れる。
+        const isMark = project.vettedHome.get(n.name) === target;
+        if (!isMark || n.alias !== null) refuseMarkName(local, it.pos, '`use` で引いた名前');
+        // 印に別名を付けて引く形 (0.36 · T-271) —— 別名は印の表に無い名前なので、`-> 別名` と書いた plain 関数が「戻り値の型に印を名乗れるのは gate だけ」(M1) を素通りした。
+        if (isMark && n.alias !== null) {
+          report('M4', it.pos, `印 ${n.name} は別名 (${n.alias}) で引けません —— 別名は印の名前ではないので、\`-> ${n.alias}\` と書いた関数が、関門を通らずに印の型を名乗る値を返せます (印は宣言した名前のまま引きます)`);
+        }
         // 引く名前が export されていない —— 変換後の tsc も止めるが、Mamori の検めが 1 層欠けていた (0.4 · T-241)。
         if (exported !== undefined && !exported.has(n.name)) report('M6', it.pos, `${target} は ${n.name} を export していません (use で引けるのは export した名前だけ)`);
         // 引けなければ undefined (外の module・Mamori でない相対の module・export していない名前は M6 が別に断る)。
@@ -333,6 +884,10 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         // 検めと生成物 (tsc) の見る物が食い違う —— 関門 (gate) や印を受ける関数を型の顔で引けてしまう。
         if (n.typeOnly && table.fns.get(fnKey(target, n.name)) !== undefined) report('M6', it.pos, `\`type ${n.name}\` は関数です —— 型だけの import で関数は引けません (関数は \`use { ${n.name} }\` で引きます)`);
         importedFns.set(local, table.fns.get(fnKey(target, n.name)));
+        // 引いた値が印に関わるか (0.36 · T-271) —— `typeof 名前` で名指しできない。型だけの import でも `typeof` は書けるので、旗は見ない。
+        if (table.fns.get(fnKey(target, n.name))?.markRelated === true || table.markConsts.get(target)?.has(n.name) === true) markValues.add(local);
+        // Mamori の外の module (この project の .mamori ではない) から値として引いた名前 —— 呼び戻しを渡してよい相手 (0.32 · T-261)。
+        if (exported === undefined && !it.typeOnly && !n.typeOnly) hostFns.add(local);
       }
       // ★ 'pure' は「sink でも、このモジュールの名前でもない」の意味だけを持ち、比べられるのは 'sink' と 'local' だけ
       // なので、その綴りを別の文字列に替えても答えは変わらない (等価)。既定の名前が無い (null) ときに null を鍵として
@@ -340,10 +895,30 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       // 「use で引いた名前へは代入できない」「use default で引いた名前も同じ」が答えのほうを留める。
       // Stryker disable next-line ConditionalExpression,StringLiteral: 上の注記のとおり等価 (null の鍵は引かれない・'pure' は 'sink' / 'local' でないことだけを意味する)
       if (it.defaultName !== null) declare(it.defaultName, { vetted: null, authority: 'pure' }, it.pos);
-      // Stryker disable next-line StringLiteral: 上の注記のとおり等価 ('pure' は 'sink' / 'local' でないことだけを意味する)
-      for (const n of it.names) declare(n.alias ?? n.name, { vetted: null, authority: 'pure' }, it.pos);
-    } else if (it.kind === 'extern') {
       for (const n of it.names) {
+        // 引いた先の直下の const の扱い (0.35 · T-268 / T-269): 読むだけの表・型を書いていない const は、module をまたいでも同じ物。
+        // 2 つの判定は declare の行と分けて書く —— 下の pragma (等価な 'pure' の綴り) が、この 2 つの綴りの変異体まで隠さないように。
+        const shared = table.sharedConsts.get(target)?.get(n.name);
+        const untypedShared = shared === 'untyped';
+        const readonlyTable = shared === 'readonly-table';
+        const loadResult = shared === 'load-result';
+        // Stryker disable next-line StringLiteral: 上の注記のとおり等価 ('pure' は 'sink' / 'local' でないことだけを意味する)
+        declare(n.alias ?? n.name, { vetted: null, authority: 'pure', sharedRegex: table.sharedRegex.get(target)?.get(n.name), untypedShared, readonlyTable, loadResult }, it.pos);
+      }
+    } else if (it.kind === 'extern') {
+      if (it.from !== null) checkSpecifier(it.from, it.pos);
+      // Stryker disable next-line ConditionalExpression,StringLiteral: `from` が null (global) の口は道を持たない —— 空の道は「外:」の鍵に解かれ、どの module の外形にも当たらない (等価)
+      const externTarget = it.from === null ? '' : resolveUse(it.from, file);
+      for (const n of it.names) {
+        // extern の名前は、生成物では値と型の両方を引く import になる —— 印の名前を引くと、型の綴りが外の module の同名の型を指す (0.36 · T-270)。
+        refuseMarkName(n, it.pos, '`extern` で引いた名前');
+        // Mamori の module の**印を受ける関数**を extern で引く形 (0.32 · T-262)。extern の名前は外形を持たないので、呼び出しの引数の印の検め (M4) が外れた ——
+        // `extern pure { need } from "./g"; need(JSON.parse(raw));`。印を受けない関数を口として宣言する形 (`extern sink { writeExportFile } from "./exportPaths"`) は今も書ける。
+        if (table.fns.get(fnKey(externTarget, n))?.paramVetted.some((v) => v !== null) === true) {
+          report('M4', it.pos, `${n} は印を受ける Mamori の関数です —— \`extern\` で引くと外形 (印を受ける引数) の検めが外れます (\`use { ${n} } from "${it.from}"\` で引きます)`);
+        }
+        // Mamori の外の module の関数 —— 呼び戻しを渡してよい相手 (T-261)。
+        if (it.authority === 'pure' && it.from !== null && !table.exports.has(externTarget)) hostFns.add(n);
         if (it.authority === 'pure' && it.from === null && SINK_BEARING_GLOBALS.has(n)) {
           report('M6', it.pos, `\`extern pure global ${n}\` は宣言できません —— ${n} は網・記憶・移動・DOM・コードの口をメンバとして持つので、\`pure\` と宣言すると sink を経ずに \`${n}.…(生の値)\` が通ります (危ない口は \`extern sink global ${n}\`、値を読むだけなら型の戻しだけの小さな関数を \`extern pure { … } from "./host"\` で読む)`);
         }
@@ -357,7 +932,11 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         declare(n, { vetted: null, authority: it.authority }, it.pos);
       }
     } else if (it.kind === 'const') {
-      declare(it.name, { vetted: null, authority: 'local', numeric: it.type?.text === 'number' || isNumericKey(it.init, []), inert: carriesInert(it.init, [moduleScope]) }, it.pos);
+      declare(it.name, { vetted: null, authority: 'local', numeric: it.type?.text === 'number' || isNumericKey(it.init, []), inert: carriesInert(it.init, [moduleScope]), sharedRegex: table.sharedRegex.get(file)!.get(it.name), untypedShared: it.type === null, readonlyTable: isReadonlyTableConst(it.type, it.init), loadResult: table.sharedConsts.get(file)!.get(it.name) === 'load-result' }, it.pos);
+    } else if (it.kind === 'let') {
+      declare(it.name, { vetted: null, authority: 'local', mutable: true, moduleLet: true, numeric: it.type.text === 'number', depth: 0, readonlyTable: isReadonlyTableConst(it.type, it.init) }, it.pos);
+    } else if (it.kind === 'class') {
+      declare(it.name, { vetted: null, authority: 'class' }, it.pos);
     } else if (it.kind === 'fn') {
       declare(it.name, { vetted: null, authority: 'local' }, it.pos);
       localFns.set(it.name, table.fns.get(fnKey(file, it.name))!);
@@ -415,6 +994,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       report('M6', it.pos, `\`export { … } from <外の module>\` (${it.from}) は書けません —— 再輸出できるのは相対の Mamori module の名前だけです (外の module の口を、検めずに TypeScript の側へ通してしまう)`);
       continue;
     }
+    checkSpecifier(it.from, it.pos);
     const target = resolveUse(it.from, file);
     if (target === file) report('M6', it.pos, '自分自身からの再輸出は書けません (宣言に `export` を付けます)');
     const exported = table.exports.get(target);
@@ -432,19 +1012,131 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
   /** 名前 → 関数の外形 (このモジュールの物か、use で引いた他の Mamori の物)。 */
   const signatureOf = (name: string): FnSignature | undefined => localFns.get(name) ?? importedFns.get(name);
 
+  /**
+   * 型の綴りが**印を指す**か (0.36 · T-271)。印の名前そのもの (プロジェクトのどの印でも —— 断る側は広く取る) か、`typeof` で印に関わる値
+   * (`markValues` と、その場の引数 `extra`) を名指しする形。指していれば、その名前を返す。
+   *
+   * 「戻り値の型に印を名乗れるのは gate 関数だけ」(M1 · T-248) は印の名前の綴りしか見ていなかったので、`typeof`・型の別名・interface の欄・
+   * 直下の const の型で、同じ型を別の綴りで名乗れた (どれも `return JSON.parse(x);` の any を `tsc` が通す)。
+   */
+  const markSpelling = (t: TypeRef, extra?: ReadonlySet<string>): string | null => {
+    const direct = vettedOf(t, project.vetted);
+    if (direct !== null) return direct;
+    if (!t.names.includes('typeof')) return null;
+    return t.names.find((n) => markValues.has(n) || extra?.has(n) === true) ?? null;
+  };
+  /**
+   * 印に関わる値の名前を、この module の宣言から増えなくなるまで集める (0.36 · T-271)。`typeof 名前` でその型を名指しすると、印の名前を 1 字も書かずに
+   * 印の型を名乗れる (`ReturnType<typeof 関門>` は `印 | null`・`Parameters<typeof 印を受ける関数>` は `[印]`・`typeof 印の型の const` は印そのもの)。
+   *
+   * - `use` で引いた値 (上の use の loop が入れた): 外形が印に関わる関数 (`FnSignature.markRelated`) と、印に関わるかもしれない const (`ProjectTable.markConsts`)。
+   * - 型が印を指す宣言: 関数 (引数・戻り値)・クラス (constructor の引数)・直下の const / let。`typeof 別の印に関わる値` も印を指すので、増えなくなるまで回す。
+   * - 型を書いていない const (初期値が字面そのものでない物) —— module が印の名前か、上のどれかを 1 つでも持つときだけ
+   *   (`const K = 関門("…");` / `const W = 引いた値;` の型は推論で印を含む。印に関わる物が 1 つも無い module の `typeof api` は今までどおり書ける)。
+   */
+  const declared: { readonly name: string; readonly types: readonly (TypeRef | null)[]; readonly untypedInit: Expr | null }[] = [];
+  for (const it of module.items) {
+    if (it.kind === 'fn') declared.push({ name: it.name, types: [...it.params.map((p) => p.type), it.returns], untypedInit: null });
+    else if (it.kind === 'class') declared.push({ name: it.name, types: it.params.map((p) => p.type), untypedInit: null });
+    else if (it.kind === 'const') declared.push({ name: it.name, types: [it.type], untypedInit: it.type === null ? it.init : null });
+    else if (it.kind === 'let') declared.push({ name: it.name, types: [it.type], untypedInit: null });
+  }
+  for (let grew = true; grew; ) {
+    grew = false;
+    for (const d of declared) {
+      if (markValues.has(d.name)) continue;
+      const opaque = d.untypedInit !== null && !isPlainLiteral(d.untypedInit) && (table.vetted.size > 0 || markValues.size > 0);
+      if (!opaque && !d.types.some((t) => t !== null && markSpelling(t) !== null)) continue;
+      markValues.add(d.name);
+      grew = true;
+    }
+  }
+  /** 印を指す型の綴りを、印を名乗れない場所 (`where`) で断る。印の名前なら M1 の文、`typeof` の名指しなら理由を言う。 */
+  const refuseMarkSpelling = (t: TypeRef, where: string): void => {
+    const named = markSpelling(t);
+    if (named === null) return;
+    const how = project.vetted.has(named)
+      ? `印 ${named} を名乗れるのは gate 関数の戻り値・印を運ぶ引数と局所の束縛だけです`
+      : `\`typeof ${named}\` は印に関わる値 (印を受ける・返す関数・印の型の値・型を書いていない直下の const) の型を名指しします`;
+    report('M1', t.pos, `${where}に印の型は書けません —— ${how} (印に別の綴りを付けると、関門を通らずに印の型を名乗る値を作れます)`);
+  };
+
+  /**
+   * `interface N extends B { … }` (0.30 · MG-061)。基底に置けるのは**先に宣言した interface か use で引いた名前**だけ。
+   * - 印の型は断る (M4): 印は `mint` でだけ作る。印の型を継いだ型の値は、印を持たないのに印の型として受け取られる (`tsc` は原始型との交差を継げないと
+   *   止めるが、Mamori の層でも先に断る)。
+   * - 型の別名・定数・関数・口・クラス・まだ宣言していない interface・自分自身・宣言していない名前 (`Record` / `Error` / `Array` ほかの組み込み) は断る (M6):
+   *   別名は印の型や和の型を隠せ、組み込みの型は原型の名前を欄として持ち込む。use で引いた名前が関数なら断る (型として消える名前ではない)。
+   */
+  const interfacesSoFar = new Set<string>();
+  const checkInterfaceBase = (it: Extract<Item, { kind: 'interface' }>): void => {
+    interfacesSoFar.add(it.name);
+    const base = it.base;
+    if (base === null) return;
+    if (base.name === it.name) {
+      report('M6', base.pos, `interface ${it.name} は自分自身を継げません`);
+    } else if (project.vetted.has(base.name)) {
+      report('M4', base.pos, `interface ${it.name} は印の型 ${base.name} を継げません —— 印は \`mint\` でだけ作ります (印の型を継いだ型の値は、印を持たないのに印の型として受け取られます)`);
+    } else if (!interfacesSoFar.has(base.name) && !usedLocals.has(base.name)) {
+      const why = externNames.has(base.name) || defaultLocals.has(base.name)
+        ? '外の口です (interface だけが継げます)'
+        : declaredNames.has(base.name)
+          ? '先に宣言した interface ではありません (型の別名・定数・関数・まだ宣言していない物は継げません)'
+          : '宣言されていません (継げるのは先に宣言した interface か、use で引いた名前だけです。組み込みの型 Record / Error / Array ほかは継げません)';
+      report('M6', base.pos, `interface ${it.name} の基底 ${base.name} は${why}`);
+    } else if (usedLocals.has(base.name) && signatureOf(base.name) !== undefined) {
+      report('M6', base.pos, `interface ${it.name} の基底 ${base.name} は関数です —— interface だけが継げます`);
+    }
+  };
+
   for (const it of module.items) {
     // 定数の初期値は役割を持たない。role は 'sink' / 'gate' との比べにしか使われないので、'plain' の綴りや
     // 器そのものを替えても答えは変わらない (等価) —— 答えは「定数の初期値からも参照できない」(M2) と
     // 「定数の初期値の奥 (配列の中)」が留める。
-    // Stryker disable next-line StringLiteral,ObjectLiteral: 上の注記のとおり等価 (role は 'sink' / 'gate' でないことだけを意味する)
-    if (it.kind === 'const') checkExpr(it.init, [moduleScope], { role: 'plain', returnVetted: null, destVetted: null });
+    if (it.kind === 'const') {
+      // Stryker disable next-line StringLiteral,ObjectLiteral: 上の注記のとおり等価 (role は 'sink' / 'gate' でないことだけを意味する)
+      const constCtx: Ctx = { role: 'plain', returnVetted: null, destVetted: null };
+      // 型を書いていない const の初期値の中の `new Map(…)` / `new Set(…)` は断る (0.33 · T-264)。`satisfies` は宣言の型ではない
+      // (束縛の型は推論のまま = 書き換えられる) ので数えない。
+      // 共有の初期値 (0.34 · T-266 / T-267): 正規表現の flag と、書き換えるメソッドを持つ組み込みを見る。別名 (`const A = B;`) は共有の正規表現を運んでよい。
+      regexUses.add(it.init);
+      // 型が印を指す直下の const (0.36 · T-271): 印そのもの (`印` / `印 | null`) なら初期値が印を運ぶこと、そうでなければ断る
+      // (`export const US: readonly 印[] = JSON.parse(…);` は、関門を通っていない値を印の型で TypeScript の呼び手へ渡した)。
+      if (it.type !== null) {
+        const exact = carriedMark(it.type, table.vetted);
+        if (exact === null) refuseMarkSpelling(it.type, `モジュール直下の const ${it.name} の型`);
+        // 直下の束縛は印を運ばない (どれも `vetted: null`) ので、名前の来歴は引かない —— 印を運ぶ初期値は関門の呼び出しだけ。
+        else if (provenance(it.init, []) !== exact) report('M4', it.pos, `${it.name} は印 ${exact} の型ですが、入れる値は印を持ちません`);
+      }
+      const shared = { name: it.name, direct: it.init, mutable: false };
+      checkExpr(it.init, [moduleScope], it.type === null ? { ...constCtx, sharedUntyped: it.name, sharedInit: shared } : { ...constCtx, sharedInit: shared });
+      checkSatisfies(it.satisfies);
+    }
+    if (it.kind === 'let') {
+      checkModuleLet(it);
+      continue;
+    }
+    if (it.kind === 'class') {
+      checkClass(it);
+      continue;
+    }
+    if (it.kind === 'interface') {
+      checkInterfaceBase(it);
+      // 印を欄に持つ型へ名前を付ける形 (0.36 · T-271) —— `-> Box` と書いた plain 関数が M1 を素通りする。
+      for (const m of it.members) refuseMarkSpelling(m.type, `interface ${it.name} の欄 ${m.name} の型`);
+      continue;
+    }
+    if (it.kind === 'type') {
+      refuseMarkSpelling(it.type, `型の別名 ${it.name} の中`);
+      continue;
+    }
     if (it.kind !== 'fn') continue;
     const sig = localFns.get(it.name)!;
     // 型引数 (0.23) —— 印の名前を型引数に使うと、`u: VettedUrl` が型引数の方を指して、印を持たない値が印を名乗る引数に見える。
     // gate / sink は印を作る・危ない口を呼ぶ関数なので、型を引数に取らせない (型を替えて呼べる口は増やさない)。
     for (const tp of it.typeParams) {
       if (TYPE_SPELLING_WORDS.has(tp.name)) report('M4', tp.pos, `型引数の名前に \`${tp.name}\` は置けません —— 型の綴りの \`${tp.name}\` は印を持つ値の型・別の module の型を名指しする口で、型引数の名前と取り違えられます`);
-      if (table.vetted.has(tp.name)) report('M4', tp.pos, `型引数 ${tp.name} は印の名前です —— 型引数の名前で印を名乗れてしまい、印を持たない値を印を受ける口へ渡せます`);
+      if (project.vetted.has(tp.name)) report('M4', tp.pos, `型引数 ${tp.name} は印の名前です —— 型引数の名前で印を名乗れてしまい、印を持たない値を印を受ける口へ渡せます`);
     }
     if (it.role !== 'plain' && it.typeParams.length > 0) {
       report('M4', it.typeParams[0]!.pos, `${it.role} 関数 ${it.name} は型引数を持てません —— 印を作る・危ない口を呼ぶ関数を、呼ぶ側の型で変えられる形にしない`);
@@ -452,8 +1144,16 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     // 戻り値の型に印を名乗れるのは gate 関数だけ (0.11 · T-248)。0.10 まで、plain / sink 関数が `-> VettedUrl` と宣言でき、
     // 型述語 (`-> s is VettedUrl` / `asserts s is …` / `this is …`) は **`tsc` も検めない型の主張**なので、戻り値に `true` を
     // 返すだけで、関門 (`mint`) を通らずに生成物の呼び出し側へ印の型を渡せた (印を作れるのは gate の `mint` だけ、の穴)。
-    if (it.role !== 'gate' && sig.returnVetted !== null) {
-      report('M1', it.returns.pos, `${it.name}: 戻り値の型に印 ${sig.returnVetted} を名乗れるのは gate 関数だけです (型述語 \`x is ${sig.returnVetted}\` も同じ —— \`tsc\` は述語を検めないので、関門を通らずに印の型を偽造できます)`);
+    // 0.36 (T-271): 印の名前はプロジェクト全体で見る (この module が引いていない印の綴りでも断る)。`typeof` で印に関わる値 (関門・印を受ける関数・
+    // 印の型の引数) を名指しする形も同じ —— `-> ReturnType<typeof 関門>` は印の名前を書かずに `印 | null` を名乗る。
+    if (it.role !== 'gate') {
+      const named = markSpelling(it.returns, new Set(it.params.filter((p) => p.type !== null && markSpelling(p.type) !== null).map((p) => p.name)));
+      if (named !== null) {
+        const how = project.vetted.has(named)
+          ? `戻り値の型に印 ${named} を名乗れるのは gate 関数だけです (型述語 \`x is ${named}\` も同じ —— \`tsc\` は述語を検めないので、関門を通らずに印の型を偽造できます)`
+          : `戻り値の型に \`typeof ${named}\` は書けません —— ${named} は印に関わる値 (印を受ける・返す関数・印の型の値・型を書いていない直下の const) で、その型を名指しすると、関門を通らずに印の型を名乗る値を返せます (戻り値の型に印を名乗れるのは gate 関数だけ)`;
+        report('M1', it.returns.pos, `${it.name}: ${how}`);
+      }
     }
     if (it.role === 'sink') {
       const dest = it.params[0];
@@ -473,10 +1173,54 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     const scope = new Map<string, Binding>();
     checkOptionalParams(it.params);
     for (const p of it.params) {
-      bindLocal(scope, p.name, { vetted: carriedMark(p.type, table.vetted), authority: 'local', numeric: !p.optional && p.type?.text === 'number' }, p.pos);
+      bindLocal(scope, p.name, { vetted: carriedMark(p.type, table.vetted), authority: 'local', numeric: !p.optional && p.type?.text === 'number', readonlyTable: namesReadonlyTable(p.type) }, p.pos);
       if (p.init !== null) checkExpr(p.init, [moduleScope], ctx);
     }
     checkBlock(it.body, [moduleScope, scope], ctx);
+  }
+
+  /**
+   * モジュール直下の `let 名前: 型 = 初期値;` (0.28 · MG-058)。
+   * 関数の呼び出しをまたいで値を運ぶので、局所の `let` より厳しく絞る:
+   * - 印の型にできない —— 印は mint でだけ作る (宣言の初期値は mint を書けないので、印の型の let は M4 の洗浄か、読んだ側が印を名乗る穴になる)。
+   * - 初期値は、計算した鍵の添字の結果 (inert) を運べない —— 関数 A が入れた inert を関数 B が読む道は、本体を先頭から 1 度しか検めない検査が追えない (T-259 のモジュール版)。
+   * - export できない (parser が断る) ので、書き換えられるのはこのモジュールの関数の中だけ。
+   */
+  function checkModuleLet(it: Extract<Item, { readonly kind: 'let' }>): void {
+    // 0.36 (T-271): 印そのものの型だけでなく、印を含む型 (`印[]`)・`typeof` で印に関わる値を名指しする型も断る。
+    const mark = carriedMark(it.type, table.vetted);
+    if (mark === null) refuseMarkSpelling(it.type, `モジュール直下の let ${it.name} の型`);
+    if (mark !== null) {
+      report('M4', it.pos, `モジュール直下の let ${it.name} は印 ${mark} の型にできません —— 印は mint でだけ作る値で、関数の呼び出しをまたいで運ぶと、印を作った関数の外で印を名乗る値が読めてしまう`);
+    }
+    refuseInert(it.init, [moduleScope], 'モジュール直下の let の初期値');
+    // Stryker disable next-line StringLiteral,ObjectLiteral: 定数の初期値 (448 行) と同じ理由で等価 —— role は 'sink' / 'gate' との比べにしか使われず、returnVetted / destVetted は gate・sink の枝の中でしか読まれない
+    checkExpr(it.init, [moduleScope], { role: 'plain', returnVetted: null, destVetted: null, sharedInit: { name: it.name, direct: it.init, mutable: true } });
+  }
+
+  /**
+   * 例外のクラス `class N extends Error { constructor(…) { super(…); } }` (0.27 · MG-056)。
+   * 構文は parser が (基底は `Error` だけ・欄もメソッドも `this` も無い) 絞ってある。検査器が見るのは次の 2 つ:
+   * - 基底の `Error` が、このモジュールの名前で隠れていないこと —— `use { X alias Error }` や定数 `Error` があると、生成物の
+   *   `extends Error` はそちらを指して、Mamori が検めていない基底を継ぐ。
+   * - 引数の既定値と `super(…)` の引数は式なので、**plain の役**で検める (宣言していない名前・危ない口・印の作成は他の関数と同じく断る)。
+   */
+  function checkClass(it: Extract<Item, { readonly kind: 'class' }>): void {
+    if (moduleScope.has('Error')) {
+      report('M6', it.pos, `クラス ${it.name} の基底の \`Error\` が、このモジュールの名前 (use・extern・定数・関数) で隠れています —— 生成物の \`extends Error\` はそちらを指します`);
+    }
+    // Stryker disable next-line StringLiteral,ObjectLiteral: 役は 'gate' / 'sink' と比べるだけで、'plain' の綴りや他の欄は gate / sink の枝の中でしか読まれない (等価)
+    const classCtx: Ctx = { role: 'plain', returnVetted: null, destVetted: null };
+    const scope = new Map<string, Binding>();
+    checkOptionalParams(it.params);
+    for (const p of it.params) {
+      bindLocal(scope, p.name, { vetted: carriedMark(p.type, table.vetted), authority: 'local', numeric: !p.optional && p.type?.text === 'number', readonlyTable: namesReadonlyTable(p.type) }, p.pos);
+      if (p.init !== null) checkExpr(p.init, [moduleScope], classCtx);
+    }
+    for (const a of it.superArgs) {
+      refuseInert(a, [moduleScope, scope], '`super` の引数');
+      checkExpr(a, [moduleScope, scope], classCtx);
+    }
   }
 
   interface Ctx {
@@ -484,6 +1228,43 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     readonly returnVetted: string | null;
     /** sink 関数の行き先 (第 1 引数) の印。sink 関数の外と、行き先の型が印でない (M3 を出した) ときは null。 */
     readonly destVetted: string | null;
+    /**
+     * 型を書いていないモジュール直下の const の初期値を検めている間だけ、その const の名前 (0.33 · T-264)。
+     * arrow の本体は新しい Ctx で検めるので、`() => new Map()` (呼ぶたびに新しい入れ物) には届かない。
+     */
+    readonly sharedUntyped?: string;
+    /**
+     * モジュール直下の const / let の初期値を検めている間だけ、その名前と初期値の式そのもの (0.34 · T-266 / T-267)。
+     * 呼び出しをまたいで生き続ける値なので、状態を持つ正規表現 (g / y) と、書き換えるメソッドを持つ組み込み (Date / URL) を見る。
+     * arrow の本体は新しい Ctx で検める (呼ぶたびに新しい値を作る) ので、ここへは届かない。
+     */
+    readonly sharedInit?: { readonly name: string; readonly direct: Expr; readonly mutable: boolean };
+  }
+
+  /**
+   * モジュール直下の初期値の中の正規表現 (0.34 · T-266)。g / y の付いた正規表現は `lastIndex` という状態を持ち、`.test` / `.exec` のたびに進む ——
+   * 直下に置くと呼び出しをまたいで残り、**同じ入力への答えが呼ぶたびに変わる** (`/x/g.test("x")` は true・false・true…)。関門なら 2 度目に素通りする。
+   * - y は断る (置き換えのメソッドも y の `lastIndex` を読む)。
+   * - g は、直下の const の初期値そのもの (`const RE = /…/g;`) のときだけ置ける —— 名前で追い、文字列のメソッドの引数にしか渡せない。
+   *   表の欄・配列の項・let の中では名前で追えないので断る。
+   * - flag が字面で分からない `new RegExp(p, flags)` は断る。
+   */
+  function checkSharedRegex(e: Expr, flags: string | null, shared: NonNullable<Ctx['sharedInit']>): void {
+    if (flags === null) {
+      report('M6', e.pos, `モジュール直下の ${shared.name} の正規表現は、flag を文字列の字面で書きます —— 実行時に決まる flag は g / y (状態を持つ正規表現) かどうかを検められません`);
+    } else if (flags.includes('y')) {
+      report('M6', e.pos, `モジュール直下の ${shared.name} に y の付いた正規表現は置けません —— \`lastIndex\` という状態を持ち、呼び出しをまたいで残るので、同じ入力への答えが呼ぶたびに変わります (使う関数の中で作ります)`);
+    } else if (flags.includes('g') && (shared.mutable || e !== shared.direct)) {
+      report('M6', e.pos, `モジュール直下の ${shared.name} の中に g の付いた正規表現は置けません —— \`lastIndex\` という状態を持ち、\`.test\` / \`.exec\` のたびに進むので、同じ入力への答えが呼ぶたびに変わります。g の正規表現は \`const 名前 = /…/g;\` と直下の const の初期値そのものに書くか (文字列のメソッドの引数にだけ渡せます)、使う関数の中で作ります`);
+    }
+  }
+
+  /**
+   * 関数の結果を置いた直下の const の名前を読む形を断る (0.37 · T-274)。値として読む形 (`checkExpr` の名前の枝) と、直に呼ぶ形 (`checkCallee`) の両方から呼ぶ。
+   * 読めないのは Mamori の中だけ —— `export` して TypeScript の側で読む・起動の副作用のために置く形 (`export const booted = boot();`) は今までどおり書ける。
+   */
+  function refuseLoadResult(name: string, pos: Pos): void {
+    report('M6', pos, `${name} は、関数の呼び出しの結果を置いたモジュール直下の const なので、Mamori の中では読めません —— 関数が返した物は、閉じ込めた配列・let・Map を呼び出しをまたいで持てるので、const と名乗る名前の後ろで関門の判定が変わります。状態を持つ物は型つきの \`let\` に置き (状態と名乗る)、決まった値は字面と組み込み (\`new Map(…)\` / \`Object.entries(…)\` ほか) だけで組みます`);
   }
 
   /** 名前の式ならその束縛、そうでなければ undefined (`f()()` / `a.b.c(…)` の頭は名前ではない)。 */
@@ -549,6 +1330,15 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     }
   }
 
+  /** 式が印 `mark` を持つ値か、null / undefined の字面か (条件演算子は両方の枝がそうであること)。gate 関数の戻り値の検め (T-263)。 */
+  function carriesOrEmpty(e: Expr, scopes: readonly Map<string, Binding>[], mark: string): boolean {
+    if (e.kind === 'literal') return e.value === 'null' || e.value === 'undefined';
+    // `mint 別の印(…)` / `mint 無い印(…)` は mint の枝が断る (同じ誤りを 2 度言わない)。
+    if (e.kind === 'mint') return true;
+    if (e.kind === 'cond') return carriesOrEmpty(e.then, scopes, mark) && carriesOrEmpty(e.otherwise, scopes, mark);
+    return provenance(e, scopes) === mark;
+  }
+
   function checkBlock(stmts: readonly Stmt[], scopes: Map<string, Binding>[], ctx: Ctx): void {
     const own = new Map<string, Binding>();
     const chain = [...scopes, own];
@@ -561,10 +1351,20 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     loopDepth--;
   }
 
+  /**
+   * 局所の別名 (`const m = T;`) が運ぶ共有の印 (0.34 · T-266 / T-267)。型を書いていない直下の const と、呼び出しの結果を置いた直下の const は、
+   * 局所の名前に受けても同じ物なので、書き換えるメソッド・`.test` / `.exec` の受け手にできない。
+   */
+  function sharedAlias(init: Expr | null, scopes: readonly Map<string, Binding>[]): { readonly untypedShared?: boolean; readonly sharedRegex?: SharedRegexKind } {
+    const b = init === null ? undefined : bindingOf(init, scopes);
+    return { untypedShared: b?.untypedShared, sharedRegex: b?.sharedRegex };
+  }
+
   function checkStmt(s: Stmt, scopes: Map<string, Binding>[], own: Map<string, Binding>, ctx: Ctx): void {
     switch (s.kind) {
       case 'let': {
         if (s.init !== null) checkExpr(s.init, scopes, ctx);
+        checkSatisfies(s.satisfies);
         const declared = carriedMark(s.type, table.vetted);
         const carried = s.init === null ? null : provenance(s.init, scopes);
         if (declared !== null && s.init !== null && carried !== declared) {
@@ -572,7 +1372,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         }
         // Stryker disable next-line OptionalChaining: const (= !mutable) は必ず初期値を持つので、init が null になるのは let だけで、そのとき !mutable が先に偽になり `?.` は評価されない (等価)
         const owned = !s.mutable && (s.init?.kind === 'object' || s.init?.kind === 'array');
-        bindLocal(own, s.name, { vetted: declared ?? carried, authority: 'local', mutable: s.mutable, numeric: s.type?.text === 'number' || (s.type === null && s.init !== null && isNumericKey(s.init, scopes)), owned, inert: s.init !== null && carriesInert(s.init, scopes), depth: loopDepth }, s.pos);
+        bindLocal(own, s.name, { vetted: declared ?? carried, authority: 'local', mutable: s.mutable, numeric: s.type?.text === 'number' || (s.type === null && s.init !== null && isNumericKey(s.init, scopes)), owned, inert: s.init !== null && carriesInert(s.init, scopes), depth: loopDepth, readonlyTable: namesReadonlyTable(s.type), ...sharedAlias(s.init, scopes) }, s.pos);
         return;
       }
       case 'destructure': {
@@ -592,6 +1392,11 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
             report('M6', root.pos, `外の名前 ${root.name} のメンバは分割代入で取り出せません (組み込み・危ない口の表を迂回します —— \`${root.name}.メンバ\` と書いて呼びます)`);
           }
         }
+        // 書き換えるメソッドを分割代入で取り出す形 (`const { push } = tmp;`) も、値として持ち出す形 (0.34 · T-265)。
+        for (const f of s.fields) {
+          if (BORROWING_MEMBERS.has(f.key)) report('M6', s.pos, `\`${f.key}\` は分割代入で取り出せません —— \`.${f.key}\` は Mamori に在りません (${BORROWING_MEMBERS.get(f.key)!})`);
+          if (CALL_ONLY_METHODS.has(f.key)) report('M6', s.pos, `\`${f.key}\` は分割代入で取り出せません —— 受け手を書き換えるメソッドは呼ぶ形 (\`x.${f.key}(…)\`) でしか書けません (取り出すと、受け手を呼ぶ側が選べます)`);
+        }
         for (const f of s.fields) bindLocal(own, f.local, { vetted: null, authority: 'local', inert: false }, s.pos);
         return;
       }
@@ -604,7 +1409,12 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         }
         if (target.authority !== 'local') report('M6', s.pos, `外の名前 ${s.target} へは代入できません`);
         else if (target.mutable !== true) report('M6', s.pos, `${s.target} は let ではないので代入できません (const・引数・回す変数・関数の名前は書き換えない)`);
-        else {
+        else if (target.moduleLet === true) {
+          // モジュールの let は関数の呼び出しをまたぐので、inert の値を入れた先を別の関数が読む道を、入れる段で断つ (T-259 のモジュール版)。
+          if (carriesInert(s.value, scopes)) {
+            report('M6', s.pos, `モジュール直下の ${s.target} へ、計算した鍵の添字の結果を代入できません —— 別の関数が読むときには、その値が計算した鍵から来たことを検めに行けません`);
+          }
+        } else {
           // 宣言した場所がいまのループより浅い = ループの外の名前 (let は必ず depth を持つ)。
           if (target.inert !== true && target.depth! < loopDepth && carriesInert(s.value, scopes)) {
             report('M6', s.pos, `ループの外で宣言した ${s.target} へ、計算した鍵の添字の結果を代入できません —— 本体は先頭から 1 度しか検めないので、次の周の先頭の使い方 (呼び出し・メンバ・戻り値) が、この値を受けても検めた後になります (ループの中で宣言した名前に入れます)`);
@@ -646,6 +1456,11 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         if (s.value !== null) {
           refuseInert(s.value, scopes, '戻り値');
           checkExpr(s.value, scopes, ctx);
+          // gate 関数の戻り値は、その印を持つ値か null / undefined だけ (0.32 · T-263)。0.31 までは戻り値の式を検めておらず、
+          // `return JSON.parse(s);` (any は `tsc` が印の型へ通す) で、mint を通らない値が印を名乗って関門から出た。
+          if (ctx.role === 'gate' && ctx.returnVetted !== null && !carriesOrEmpty(s.value, scopes, ctx.returnVetted)) {
+            report('M1', s.value.pos, `gate 関数の戻り値は \`mint ${ctx.returnVetted}(…)\`・印 ${ctx.returnVetted} を持つ値・null / undefined だけです —— それ以外の値 (\`JSON.parse\` の結果ほか) を返すと、mint を通らずに印の型の値が関門から出ます`);
+          }
         }
         return;
       case 'if':
@@ -676,6 +1491,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         return;
       case 'for': {
         refuseInert(s.iterable, scopes, 'for の回す相手');
+        tableReads.add(s.iterable);
         checkExpr(s.iterable, scopes, ctx);
         // 回す変数は印を運ばない (印の配列から取り出しても素の値 —— 失敗は閉じる向き)。
         const loopVar = new Map<string, Binding>();
@@ -820,11 +1636,36 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     // Stryker disable next-line ConditionalExpression: 型の絞り込みのためだけに在る —— member でない呼び出しは prop を持たず、次の行の MUTATING_METHODS.has(undefined) が false を返す (等価)
     const viaMember = callee.kind === 'member' ? callee : null;
     if (viaMember !== null && MUTATING_METHODS.has(viaMember.prop)) refuseSharedReceiver(viaMember.object, scopes, `\`.${viaMember.prop}(…)\``);
+    // 文字列のメソッドの引数は、共有の g の正規表現を置いてよい場所 (0.34 · T-266)。式そのものを登録する (引くのは名前の枝だけ)。
+    // 引数を検めるのはこの関数から戻った後なので、ここで登録すれば間に合う。
+    if (viaMember !== null && REGEX_ARG_METHODS.has(viaMember.prop)) for (const a of args) regexUses.add(a);
+    // 型を書いていない直下の const を、入れ物・日付を書き換えるメソッドの受け手にする形 (0.34 · T-267)。
+    // 受け手は名前そのものでも、その欄・添字の先 (`BASE.searchParams.set(…)`) でも同じ。局所の別名 (`const m = T;`) も辿る。
+    if (viaMember !== null && isSharedWriteMethod(viaMember.prop)) {
+      const root = destructureRoots(viaMember.object).find((r) => lookup(scopes, r.name)?.untypedShared === true);
+      if (root !== undefined) {
+        report('M6', viaMember.pos, `型を書いていないモジュール直下の const ${root.name} は \`.${viaMember.prop}(…)\` の受け手にできません —— どの関数からも書き換えられ、それを読む別の関数 (関門・上限) の判定が変わります。書き換える状態は \`const 名前: Map<…> = …\` のように型で名乗り、読むだけの表は \`ReadonlyMap<…>\` / \`ReadonlySet<…>\` と書きます`);
+      }
+    }
+    // 状態を持つかもしれない共有の正規表現を `.test` / `.exec` の受け手にする形 (0.34 · T-266): 呼び出しの結果を置いた直下の const と、入れ直せる直下の let。
+    if (viaMember !== null && (viaMember.prop === 'test' || viaMember.prop === 'exec')) {
+      const rb = bindingOf(viaMember.object, scopes);
+      if (rb?.sharedRegex === 'opaque' || rb?.moduleLet === true) {
+        report('M6', viaMember.pos, `${identName(viaMember.object)} は \`.${viaMember.prop}(…)\` の受け手にできません —— ${rb.moduleLet === true ? 'モジュール直下の let は入れ直せる' : '呼び出しの結果を置いたモジュール直下の const は中身が見えない'}ので、g / y の付いた正規表現 (\`lastIndex\` を持ち、同じ入力への答えが呼ぶたびに変わる) かどうかを検められません。判定に使う正規表現は \`const 名前 = /…/;\` と字面で書くか、使う関数の中で作ります`);
+      }
+    }
+    if (b?.authority === 'class') {
+      report('M6', head.pos, `クラス ${name} は \`new ${name}(…)\` と \`x instanceof ${name}\` の相手にだけ使えます —— 呼ぶ (\`${name}(…)\`)・メンバを呼ぶ (\`${name}.m(…)\`) 形は書けません (クラスを呼ぶと実行時に投げ、メンバは継いだ \`Error\` の静的なメンバへ届く)`);
+      return;
+    }
     if (callee.kind === 'ident') {
+      // 関数の結果を置いた直下の const を直に呼ぶ形 (`ADD(x)`) —— 名前の枝を通らないので、ここで断る (0.37 · T-274)。
+      if (b?.loadResult === true) refuseLoadResult(callee.name, callee.pos);
       // 名前を直に呼ぶ形: 宣言していない名前の検め (M6) だけを通す (印を受ける関数を呼ぶのは正しい使い方)。
       if (b === undefined && !isConstructibleBuiltin(callee, scopes)) checkExpr(callee, scopes, ctx);
       return;
     }
+    calledMembers.add(callee);
     checkExpr(callee, scopes, ctx);
   }
 
@@ -845,7 +1686,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
     } else if (b.authority === 'sink') {
       report('M2', r.pos, `危ない口 ${r.name} (extern sink) は instanceof の右辺に置けません —— 危ない口は呼ぶ形でしか使えません`);
     } else if (b.authority === 'local') {
-      report('M6', r.pos, `instanceof の右辺は組み込みか宣言した外の名前だけです —— ${r.name} はこのモジュールの局所の名前で、実行時に計算した値かもしれません (組み込みの名前を局所の名前で隠した形も同じ)`);
+      report('M6', r.pos, `instanceof の右辺は組み込みか宣言した外の名前・このモジュールのクラスだけです —— ${r.name} はこのモジュールの局所の名前で、実行時に計算した値かもしれません (組み込みの名前を局所の名前で隠した形も同じ)`);
     }
   }
 
@@ -865,11 +1706,25 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
           }
           return;
         }
+        if (b.authority === 'class') {
+          report('M6', e.pos, `クラス ${e.name} は \`new ${e.name}(…)\` と \`x instanceof ${e.name}\` の相手にだけ使えます —— 値として持ち出す・メンバを使う・呼ぶ形は書けません (\`${e.name}.captureStackTrace\` のように、継いだ \`Error\` の静的なメンバへ届く)`);
+          return;
+        }
         if (b.authority === 'sink') {
           report('M2', e.pos, ctx.role !== 'sink'
             ? `危ない口 ${e.name} (extern sink) は sink 関数の中でだけ使えます`
             : `危ない口 ${e.name} は sink 関数の中でも呼ぶ形 (${e.name}(…) / ${e.name}.m(…)) でしか使えません —— 値として持ち出す・返すと、関門の外から素の値で呼べてしまう`);
           return;
+        }
+        if (b.loadResult === true) {
+          refuseLoadResult(e.name, e.pos);
+          return;
+        }
+        if (b.sharedRegex === 'g' && !regexUses.has(e)) {
+          report('M6', e.pos, `共有の正規表現 ${e.name} (g) は、文字列のメソッド (${[...REGEX_ARG_METHODS].map((m) => '.' + m).join(' / ')}) の引数にだけ渡せます —— \`${e.name}.test(…)\` / \`.exec(…)\` は \`lastIndex\` を進め、同じ入力への答えが呼ぶたびに変わります (関門なら 2 度目に素通りする)。判定に使うなら g を外すか、使う関数の中で作ります`);
+        }
+        if (b.readonlyTable === true && !tableReads.has(e)) {
+          report('M6', e.pos, `読むだけの表 ${e.name} は、読む位置にだけ書けます —— \`${e.name}.get(…)\` / \`.has(…)\` / \`.size\` / \`.keys()\` / \`.values()\` / \`.entries()\`・\`for (const x of ${e.name})\`・展開 \`[...${e.name}]\`・\`new Map(${e.name})\` / \`new Set(${e.name})\` (写し)。引数に渡す・別名を作る・返す・入れ物に入れる・\`instanceof\` や型述語で絞り込むと、生成物の \`tsc\` の読むだけの型が外れ (絞り込み・any)、どの関数からも \`.set\` / \`.add\` / \`.delete\` / \`.clear\` が通ります`);
         }
         if (b === moduleScope.get(e.name) && signatureOf(e.name)?.paramVetted.some((v) => v !== null) === true) {
           report('M4', e.pos, `${e.name} は印を受ける関数なので、直に呼ぶことしかできません —— 値として持ち出すと (.call / .apply / .bind・別名・オブジェクトや配列・条件演算子)、引数の印の検めを迂回できる`);
@@ -884,7 +1739,18 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
           checkExpr(x, scopes, ctx);
         });
         return;
+      case 'regex':
+        if (ctx.sharedInit !== undefined) checkSharedRegex(e, regexFlags(e.raw), ctx.sharedInit);
+        return;
       case 'member':
+        // 受け手を選ぶ口 (`.call` / `.apply` / `.bind`) と、正規表現を作り替える `.compile` は書けない (0.34 · T-265 / T-266)。
+        if (BORROWING_MEMBERS.has(e.prop)) report('M6', e.pos, `\`.${e.prop}\` は Mamori に在りません —— ${BORROWING_MEMBERS.get(e.prop)!}`);
+        // 読むメンバの受け手は、読むだけの表の名前を置いてよい場所 (0.35 · T-268)。
+        if (TABLE_READ_MEMBERS.has(e.prop)) tableReads.add(e.object);
+        // 書き換えるメソッドは呼ぶ形でだけ (0.34 · T-265)。値として取り出すと、呼び戻しの thisArg で受け手を選べる。
+        if (CALL_ONLY_METHODS.has(e.prop) && !calledMembers.has(e)) {
+          report('M6', e.pos, `\`.${e.prop}\` は呼ぶ形 (\`x.${e.prop}(…)\`) でしか書けません —— 受け手を書き換えるメソッドを値として取り出すと、\`[v].forEach(tmp.${e.prop}, 共有の入れ物)\` のように受け手 (this) を呼ぶ側が選べ、書き換えの検め (T-258 / T-264) を迂回できます`);
+        }
         if (carriesInert(e.object, scopes)) {
           report('M6', e.pos, '計算した鍵の添字の結果はメンバの相手にできません —— `x[k].constructor` が禁じた名前の表を迂回する');
           checkExpr(e.object, scopes, ctx);
@@ -925,6 +1791,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         return;
       case 'spread':
         refuseInert(e.operand, scopes, '展開');
+        tableReads.add(e.operand);
         checkExpr(e.operand, scopes, ctx);
         return;
       case 'object':
@@ -944,10 +1811,40 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
       case 'binary':
         checkExpr(e.left, scopes, ctx);
         if (e.op === 'instanceof') checkInstanceofRight(e.right, scopes);
-        else checkExpr(e.right, scopes, ctx);
+        else {
+          // `'k' in x` (0.29 · MG-060): 計算した鍵の結果 (inert) を右辺にして、選んだ物の鍵の在否を探らせない。右辺の値そのものは式の外へ出ない (結果は真偽)。
+          if (e.op === 'in') refuseInert(e.right, scopes, '`in` の右辺');
+          checkExpr(e.right, scopes, ctx);
+        }
         return;
       case 'new':
         checkTypeArgs(e.typeArgs);
+        // 構築子の名前 (識別子でなければ null —— 表は null を持たないので当たらない。「識別子か」を別の条件に書くと、
+        // その条件を常に真にしても答えが変わらない等価変異が残る)。
+        if (ctx.sharedUntyped !== undefined && SHARED_COLLECTIONS.has(identName(e.callee))) {
+          report(
+            'M6',
+            e.pos,
+            `モジュール直下の const ${ctx.sharedUntyped} は型を書かずに \`new ${identName(e.callee)}(…)\` を持てません —— 推論される型は書き換えられるので、どの関数からも \`.set\` / \`.add\` / \`.delete\` / \`.clear\` が通り、この表を読む別の関数 (関門・上限) の判定が変わります。読むだけの表は \`const ${ctx.sharedUntyped}: Readonly${identName(e.callee)}<…> = …\` と書き (書き換えは tsc が断ります)、書き換える状態は \`${identName(e.callee)}<…>\` と型で名乗ってください`,
+          );
+        }
+        // 組み込みの `new Map(表)` / `new Set(表)` は写しを作る —— 読むだけの表の名前を引数に置いてよい (0.35 · T-268)。
+        // 同名の外の名前 (`extern pure { Map } from "./host"`) は組み込みではないので数えない。
+        if (SHARED_COLLECTIONS.has(identName(e.callee)) && bindingOf(e.callee, scopes) === undefined) for (const a of e.args) tableReads.add(a);
+        if (ctx.sharedInit !== undefined) {
+          const built = identName(e.callee);
+          // 型つきの直下の const / let の初期値の**中**の `new Map(…)` / `new Set(…)` (0.35 · T-268)。欄・配列の項・引数に包んだ表は
+          // 名前で追えない (`CFG.limits` の読むだけの型は `tsc` だけが守り、絞り込みと any で外れる)。表は初期値そのものに置く。
+          // 型を書いていない const は 0.33 の規則 (上) が先に断るので、ここでは重ねない。
+          if (ctx.sharedUntyped === undefined && SHARED_COLLECTIONS.has(built) && e !== ctx.sharedInit.direct) {
+            report('M6', e.pos, `モジュール直下の ${ctx.sharedInit.name} の初期値の中に \`new ${built}(…)\` は置けません —— 欄・配列の項・引数に包んだ表は名前で追えず、読むだけの型 (\`tsc\`) は絞り込みと any で外れます。表は \`const 名前: 型 = new ${built}(…);\` と初期値そのものに置きます (表の中の値を並びにしたいなら \`readonly T[]\`)`);
+          }
+          if (!ctx.sharedInit.mutable && SHARED_MUTABLE_OBJECTS.has(built)) {
+            report('M6', e.pos, `モジュール直下の const ${ctx.sharedInit.name} に \`new ${built}(…)\` は置けません —— ${built} は書き換えるメソッド (${built === 'Date' ? '`.setTime(…)` ほか' : '`.searchParams.set(…)` ほか'}) を持ち、どの関数からも書き換えられるので、それを読む別の関数の判定が変わります (読むだけの型が無いので、使う関数の中で作ります)`);
+          }
+          const flags = regexInitFlags(e);
+          if (flags !== undefined) checkSharedRegex(e, flags, ctx.sharedInit);
+        }
         if (carriesInert(e.callee, scopes)) {
           report('M6', e.pos, '計算した鍵の添字の結果は new の相手にできません —— `new x[k]()` で選んだ構築子を呼べてしまう');
           // new の呼ぶ側は名前だけなので、inert と分かったあとに呼ぶ側を検め直しても診断は増えない。引数は別。
@@ -956,7 +1853,7 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         }
         e.args.forEach((x) => refuseInert(x, scopes, '`new` の引数'));
         // 構築する形で名前を使うのは許す (`new RegExp(…)`)。値として持ち出す形は 'ident' の枝が断る。
-        if (!isConstructibleBuiltin(e.callee, scopes)) checkExpr(e.callee, scopes, ctx);
+        if (!isConstructibleBuiltin(e.callee, scopes) && bindingOf(e.callee, scopes)?.authority !== 'class') checkExpr(e.callee, scopes, ctx);
         e.args.forEach((x) => checkExpr(x, scopes, ctx));
         return;
       case 'arrow':
@@ -969,7 +1866,15 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         // 引数への代入は arrow の本体 (式) では書けない。ブロックの本体では書けるが、'local' / mutable でない束縛へは代入を断る。
         // Stryker disable next-line StringLiteral: 引数の権限は代入の判定にしか効かず、引数は let ではないので mutable の門が先に断る (等価)
         checkOptionalParams(e.params as readonly Param[]);
-        for (const p of e.params as readonly Param[]) bindLocal(inner, p.name, { vetted: carriedMark(p.type, table.vetted), authority: 'local', numeric: !p.optional && p.type?.text === 'number' }, p.pos);
+        // 引数が印を名乗れるのは、外の module の関数へ直に渡す呼び戻しだけ (0.32 · T-261)。0.31 まではどの arrow の引数も型の綴りだけで印を運び、
+        // arrow を呼ぶ側の引数は検めていなかった (名前つきの fn は呼び出しごとに来歴を検め、値として持ち出せない) —— `((v: V) => need(v))(JSON.parse(raw))` や
+        // `Promise.resolve(JSON.parse(raw)).then((v: V) => need(v))` で、関門を通っていない値 (`tsc` は any を印の型へ通す) が印を受ける関数へ届いた。
+        const toHost = hostCallbacks.has(e);
+        for (const p of e.params as readonly Param[]) {
+          const mark = carriedMark(p.type, table.vetted);
+          if (mark !== null && !toHost) report('M4', p.pos, `arrow の引数 ${p.name} は印 ${mark} を名乗れません —— arrow は値なので、呼ぶ側 (即時の呼び出し・別名・\`.then\` / \`.map\` の呼び戻し) の引数は検められず、関門を通っていない値を印を受ける関数へ運べます (印を受けるのは名前つきの fn か、Mamori の外の module から use で引いた関数へ直に渡す呼び戻しだけ)`);
+          bindLocal(inner, p.name, { vetted: toHost ? mark : null, authority: 'local', numeric: !p.optional && p.type?.text === 'number', readonlyTable: namesReadonlyTable(p.type) }, p.pos);
+        }
         // 既定値 (`(q = fetch("x")) => q`) も式 —— 0.7 まで検めていなかったので、plain 関数の中で宣言していない名前・
         // 危ない口・印の無い値での印つきの口の呼び出しを、arrow の引数の既定値に隠せた (T-244)。
         for (const p of e.params as readonly Param[]) if (p.init !== null) checkExpr(p.init, [...scopes, inner], plain);
@@ -995,6 +1900,19 @@ export function checkModule(file: string, module: Module, table: ProjectTable): 
         checkTypeArgs(e.typeArgs);
         checkCallee(e.callee, e.args, scopes, ctx);
         if (!scalarResultCall(e.callee, scopes)) e.args.forEach((x) => refuseInert(x, scopes, '呼び出しの引数'));
+        // 外の module の関数を名前で直に呼ぶ形なら、引数に直に書いた arrow (と、引数のオブジェクトの字面の欄に直に書いた arrow) は呼び戻し (0.32 · T-261)。
+        // Stryker disable next-line ConditionalExpression: 型の絞り込みのためだけに在る —— 名前でない呼ぶ側 (メンバ・呼び出しの結果) は `name` を持たず、下の `hostFns.has(undefined)` が必ず偽で同じ答えになる
+        if (e.callee.kind === 'ident') {
+          const callee = e.callee.name;
+          // 局所の束縛が同じ名前を覆っていれば、呼んでいるのは外の関数ではない (覆うこと自体は M6 が別に断る)
+          if (hostFns.has(callee) && lookup(scopes, callee) === moduleScope.get(callee)) {
+            // 式そのものを登録する (arrow かは問わない —— 引くのは arrow の枝だけなので、ほかの式を入れても答えは変わらない)
+            for (const a of e.args) {
+              hostCallbacks.add(a);
+              if (a.kind === 'object') for (const p of a.props) hostCallbacks.add(p.value);
+            }
+          }
+        }
         e.args.forEach((x) => checkExpr(x, scopes, ctx));
         // メンバの呼び出しは外形を持たない。この門を外しても、名前の無い呼ぶ側を引いて undefined が返り、
         // 下の門で同じく抜ける (等価)。

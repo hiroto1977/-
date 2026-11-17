@@ -12,6 +12,9 @@
  * ところが実測すると、**ハッシュだけは 3 つの導出すべてが `'SHA-256'` のリテラルを書き写していた**
  * (`security/dataCryptoHost.ts` の 1 つ (`dataCrypto.ts` は Mamori 生成物で WebCrypto は壁へ移した · MG-021)と `security/vault.ts` の 2 つ = パスワード枝と合言葉の復元枝)。
  * 反復回数は引数で渡されて凍結値を通るのに、ハッシュだけが通っていなかった。
+ * (2026-11-15 · MG-070: `vault.ts` も Mamori 生成物になり、2 つの枝は薄い壁 `security/vaultHost.ts` の
+ * `hostDeriveKey` **1 つ**を通る —— 導出は 3 か所から 2 か所になった。合言葉の枝が先頭に付ける綴りは
+ * 入力の文字列の側で、導出のパラメータは同じである。)
  *
  * 実際の壊れ方: `PBKDF2_HASH` を `'SHA-512'` にすると、封筒へ書く
  * `BACKUP_KEY_DERIVATION = kdfLabel()` は SHA-512 と名乗るのに、導出は SHA-256 のまま進む。
@@ -79,13 +82,13 @@ describe('鍵導出のパラメータ (パス 327)', () => {
     expect(KDF_SITES.length).toBeGreaterThanOrEqual(1);
   });
 
-  it('★ PBKDF2 の導出は 3 か所で、どれも凍結値 PBKDF2_HASH を読む', () => {
-    expect(KDF_SITES).toHaveLength(3);
+  it('★ PBKDF2 の導出は 2 か所 (2 つの壁に 1 つずつ) で、どれも凍結値 PBKDF2_HASH を読む', () => {
+    expect(KDF_SITES).toHaveLength(2);
     for (const s of KDF_SITES) {
       expect(s.text, `${s.file}:${s.line}`).toContain('hash: PBKDF2_HASH');
     }
     const files = [...new Set(KDF_SITES.map((s) => s.file))].sort();
-    expect(files).toEqual(['src/renderer/security/dataCryptoHost.ts', 'src/renderer/security/vault.ts']);
+    expect(files).toEqual(['src/renderer/security/dataCryptoHost.ts', 'src/renderer/security/vaultHost.ts']);
   });
 
   it("★ 導出のハッシュに 'SHA-256' のリテラルを書き写した行は 0 (凍結値の宣言だけが持つ)", () => {

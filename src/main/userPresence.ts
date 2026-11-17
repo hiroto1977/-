@@ -58,7 +58,7 @@ export { ACTION_TIER, CONFIRMED_TIERS, OUTBOUND_TIERS, tierOfAction, type Tier }
  */
 export const MAX_CALL_WEIGHT = 5;
 
-const ACTION_WEIGHT = new Map<string, number>([['assistant/chatAll', MAX_CALL_WEIGHT]]);
+const ACTION_WEIGHT: ReadonlyMap<string, number> = new Map<string, number>([['assistant/chatAll', MAX_CALL_WEIGHT]]);
 
 export function weightOfAction(serviceId: string, action: string): number {
   const key = serviceId + '/' + action;
@@ -91,9 +91,9 @@ export const BUDGET_FREE_CHANNELS: ReadonlySet<string> = new Set<string>(['app:o
 /** 1 分あたりの上限 (段階ごと)。確かめる段階は人の速さ以上に速く来たら怪しい。 */
 export const RATE_LIMIT: Readonly<Record<Tier, number>> = { destructive: 3, 'credential-write': 6, 'external-write': 10, egress: 20, 'local-write': 60, read: 120 };
 
-const RATE_BY_TIER = new Map<string, number>(Object.entries(RATE_LIMIT));
+const RATE_BY_TIER: ReadonlyMap<string, number> = new Map<string, number>(Object.entries(RATE_LIMIT));
 
-const BUDGET_BY_TIER = new Map<string, { readonly perHour: number; readonly perDay: number } | undefined>(Object.entries(BUDGET));
+const BUDGET_BY_TIER: ReadonlyMap<string, { readonly perHour: number; readonly perDay: number } | undefined> = new Map<string, { readonly perHour: number; readonly perDay: number } | undefined>(Object.entries(BUDGET));
 
 /**
  * **警戒態勢** (threat: T-155)。確認を断る・速度の上限・信頼できない呼び出し元・別の確認の割り込み・
@@ -138,7 +138,7 @@ function within(now: number, at: number, span: number): boolean {
 
 /** いまの態勢。警戒の期限 (`alertUntil`) の手前なら警戒。 */
 function postureOf(t: number, alertUntil: number): Posture {
-  return t < alertUntil ? 'alert' : 'normal';
+  return (t < alertUntil) ? 'alert' : 'normal';
 }
 
 /** 警戒中は上限を 1/4 に (最低 1)。平常はそのまま。 */
@@ -466,7 +466,7 @@ export function createPresenceGate(deps: PresenceDeps): PresenceGate {
   // その口まで 5 分〜60 分塞がると、読む・送る・保存する経路が残ったまま取り消しだけが使えなくなる。
   // 確認は毎回出る (本人確認は外れない) し、1 分あたりの上限 (3 件・警戒中は 1 件) は別に効く。
   const lockable = CONFIRMED_TIERS.has(req.tier) && req.tier !== 'destructive';
-  if (lockable && t < lockedUntil) {
+  if (lockable && (t < lockedUntil)) {
     const minutes = Math.ceil((lockedUntil - t) / 60000);
     return deny('locked-out', req, '確認を断った回数が多いため、あと約 ' + String(minutes) + ' 分は操作できません。');
   }

@@ -4,6 +4,7 @@
 
 import type { ShigyoSnapshot } from '../../shared/shigyoTypes';
 import type { NortonDetection } from '../../shared/nortonDetection';
+import type { BootProtection } from '../../shared/bootProtection';
 import {
   LEADER_DISQUALIFIERS,
   LEADER_DISQUALIFIERS_SOURCE,
@@ -375,6 +376,8 @@ export const SNAPSHOT = {
       // `installed: false` を「無い」と読ませないため、状態を明示する (パス 165)。
       detection: 'unavailable' as NortonDetection,
     },
+    // 起動の守り (セキュアブート)。同梱値 = 端末を見ていないので「確認できません」(警告にしない)。
+    boot: { detection: 'unavailable' as BootProtection },
     breaches: [] as { email: string; checkedAt: string; count: number }[],
     lastUrlScan: null as { url: string; scannedAt: string; positives: number; total: number } | null,
     keysConfigured: { hibp: false, vt: false },

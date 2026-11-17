@@ -204,6 +204,10 @@ describe('クラウド同期: 送信路の有無と、画面の言い分が噛�
       why: 'Cloudflare は連携先の SaaS。退避機能ではないので serviceHub を呼ぶのが正しい',
     },
     {
+      file: 'src/renderer/components/CloudContinuityPanel.tsx',
+      why: '事業継続の節 (2026-11-11)。退避機能ではない —— 橋の listConfigured で資格情報の一覧を読むだけで、記録は 1 件も送らない',
+    },
+    {
       file: 'src/renderer/cloud/cloudProviderAdapter.ts',
       why: '送信路が入るときの受け皿そのもの。ここは上の transportIsWired が双方向で見る',
     },

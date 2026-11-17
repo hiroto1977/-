@@ -26,7 +26,7 @@
 export function hasControlChar(s: string): boolean {
   for (const ch of s) {
     const c = ch.charCodeAt(0);
-    if (c < 0x20 || c === 0x7f) return true;
+    if ((c < 0x20) || c === 0x7f) return true;
   }
   return false;
 }

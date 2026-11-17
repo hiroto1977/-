@@ -54,6 +54,7 @@ import {
 } from './types';
 import type { ActionData } from '../../shared/actionData';
 import type { NortonDetection } from '../../shared/nortonDetection';
+import { secureBootFromEfiVar, type BootProtection } from '../../shared/bootProtection';
 
 interface NortonStatus {
   installed: boolean;
@@ -68,8 +69,14 @@ interface NortonStatus {
   detection: NortonDetection;
 }
 
+/** 起動の守り (セキュアブート) の点検結果。文面と色は `shared/bootProtection.ts` が持つ。 */
+interface BootStatus {
+  detection: BootProtection;
+}
+
 export interface SecuritySnapshot {
   norton: NortonStatus;
+  boot: BootStatus;
   breaches: { email: string; checkedAt: string; count: number }[];
   lastUrlScan: {
     url: string;
@@ -160,6 +167,45 @@ export async function detectNorton(
   };
 }
 
+/** Linux の efivarfs が出すセキュアブートの変数 (UEFI 仕様の GUID · 中身は属性 4 byte + 値 1 byte)。 */
+export const SECURE_BOOT_EFIVAR =
+  '/sys/firmware/efi/efivars/SecureBoot-8be4df61-93ca-11d2-aa0d-00e098032b8c';
+
+/** 先頭 8 byte だけを読む (変数は 5 byte。大きさを信用せず、固定の器へ読む)。 */
+async function readHead(file: string): Promise<Uint8Array> {
+  const handle = await fs.open(file, 'r');
+  try {
+    const buf = new Uint8Array(8);
+    const { bytesRead } = await handle.read(buf, 0, buf.length, 0);
+    return buf.subarray(0, bytesRead);
+  } finally {
+    await handle.close();
+  }
+}
+
+/**
+ * 起動の守り (セキュアブート) が有効かを点検する。**読むだけ** —— 設定は変えない・子プロセスも作らない。
+ *
+ * - Linux: efivarfs の変数を読む。無ければ `not-exposed` (旧式の BIOS 起動・仮想環境)、読めなければ `unknown`。
+ * - それ以外の OS: 子プロセスなしに読める口が無いので `manual` (画面が確かめ方を示す)。
+ *
+ * 読めなかった事を「無効」と言わない (警告色は `disabled` だけ · `shared/bootProtection.ts`)。
+ */
+export async function detectBootProtection(
+  platform: NodeJS.Platform = process.platform,
+  // 既定の読み手は実物のファイルを読む。検査は読み手を差し替える。
+  // Stryker disable next-line ArrowFunction: 既定の読み手は実機の efivarfs にしか意味が無く、検査は必ず読み手を渡す
+  read: (file: string) => Promise<Uint8Array> = (file) => readHead(file),
+): Promise<BootStatus> {
+  if (platform !== 'linux') return { detection: 'manual' };
+  try {
+    return { detection: secureBootFromEfiVar(await read(SECURE_BOOT_EFIVAR)) };
+  } catch (e) {
+    const code = typeof e === 'object' && e !== null && 'code' in e ? (e as { code?: unknown }).code : undefined;
+    return { detection: code === 'ENOENT' ? 'not-exposed' : 'unknown' };
+  }
+}
+
 export async function fetchSecuritySnapshot(ctx: FetchContext): Promise<SecuritySnapshot> {
   const keys = parseSecurityKeys(ctx.token);
   const norton = await detectNorton();
@@ -171,6 +217,7 @@ export async function fetchSecuritySnapshot(ctx: FetchContext): Promise<Security
 
   return {
     norton,
+    boot: await detectBootProtection(),
     breaches: [],
     lastUrlScan: null,
     keysConfigured: { hibp: !!keys.hibp, vt: !!keys.vt },

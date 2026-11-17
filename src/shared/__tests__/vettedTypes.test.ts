@@ -74,6 +74,8 @@ const MINTERS: Readonly<Record<string, number>> = {
   'main/shellOpenGate.ts': 1,
   'main/clients/exportSink.ts': 1,
   'shared/imageUrlGate.ts': 2,
+  // ポータルの画面の関門 (2026-11-11)。社内の枝と社外の枝の return 1 か所ずつ。
+  'shared/portal.ts': 2,
 };
 
 function countBy(re: RegExp): Map<string, number> {
@@ -132,6 +134,8 @@ describe('型で守る: 印を作るのは関門の中だけ (T-220)', () => {
     const img = stripNonCode(readOriginalSource(join(SRC, 'shared/imageUrlGate.ts')));
     expect(img).toMatch(/return\s+parsed\.toString\(\)\s+as\s+VettedImageSrc;/);
     expect(img).toMatch(/return\s+normalized\s+as\s+VettedImageSrc;/);
+    const portal = stripNonCode(readOriginalSource(join(SRC, 'shared/portal.ts')));
+    expect(portal.match(/return\s+[^;]+\s+as\s+VettedPortalScreen;/g) ?? []).toHaveLength(2);
   });
 
   it('標本: 針はキャストと述語に当たり、型の import・引数の注釈には当たらない', () => {

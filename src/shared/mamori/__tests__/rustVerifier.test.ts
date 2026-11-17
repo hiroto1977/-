@@ -245,6 +245,7 @@ describe('Rust 検算役 · TS コンパイラとの M0 の突き合わせ', () 
     const files = realFiles.map((f) => readOriginalSource(f));
     const tsHoles: string[] = [];
     let stricter = 0;
+    let bothRefused = 0;
     const rustMissed: string[] = [];
     let cases = 0;
     for (const seed of [11, 22, 33]) {
@@ -259,6 +260,7 @@ describe('Rust 検算役 · TS コンパイラとの M0 の突き合わせ', () 
         const r = rust(src);
         const label = `seed=${seed} #${n} at=${at} payload=${JSON.stringify(p)} ctx=${JSON.stringify(src.slice(Math.max(0, at - 24), at + 24))}`;
         if (t.spelling && r === 0) rustMissed.push(label);
+        if (t.spelling && r !== 0) bothRefused++;
         if (t.ok && r !== 0) {
           // TS が通した生成物に危険な綴りが残るなら TS の穴、残らなければ Rust が型の位置などで厳しいだけ
           const holes = t.emitted.flatMap((e) => inspectEmitted('x.ts', e).filter((f) => f.kind === 'hole').map((f) => f.reason));
@@ -271,7 +273,10 @@ describe('Rust 検算役 · TS コンパイラとの M0 の突き合わせ', () 
     expect(rustMissed, `Rust が通した (検算役の穴):\n${rustMissed.slice(0, 10).join('\n')}`).toEqual([]);
     // Rust だけが断った形のうち、TS の生成物に危険な綴りが残るもの = TS コンパイラの穴 (0 件)
     expect(tsHoles, `TS が通し、生成物に穴が残る:\n${tsHoles.slice(0, 10).join('\n')}`).toEqual([]);
-    // 残りは Rust が型の位置・文法の誤りの位置でも綴りを断るだけ (保守側)。0 でないことで比べる物が生きていると分かる
-    expect(stricter).toBeGreaterThan(0);
+    // 残りは Rust が型の位置・文法の誤りの位置でも綴りを断るだけ (保守側)。0.38 まではこの種で 2 件在った (戻り値の型の語の後ろの
+    // `.constructor` / `.__proto__`) —— 0.39 (T-276) で TS のコンパイラも型の語の後ろの `.名前` を断るようになり、この種では 0 件になった。
+    // だから「比べる物が生きている」ことは、両方が断った件数で見る (0 件なら、差し込みが 1 つも綴りの検めに届いていない)。
+    expect(stricter).toBeGreaterThanOrEqual(0);
+    expect(bothRefused).toBeGreaterThan(100);
   });
 });

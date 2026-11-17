@@ -102,6 +102,7 @@ const LEDGER: Readonly<Record<string, { kind: Kind; why: string }>> = {
   'src/renderer/data/wordpressMcpAccess.ts': { kind: 'measure-next', why: '取得した payload から「MCP ツールが使えるか」を述べる (パス 177)。名乗りを作る判断。' },
   'src/renderer/hooks/useRealtimeTick.ts': { kind: 'measure-next', why: '描画の刻み。止め忘れると毎秒の再描画が残る。' },
   'src/renderer/plan/usePlan.ts': { kind: 'measure-next', why: '内部ライセンスの有効化と「全機能を使えるか」の出どころ。機能の開閉を決める。' },
+  'src/renderer/portal/portalShim.ts': { kind: 'measure-next', why: '社外向けポータルの橋 (2026-11-11)。`fetchSnapshot` が入口の関門を通すか・どの口も資格情報を預からず書き込まないかを決める。`portalShim.test.ts` が 15 の口を全部呼ぶが、変異検査では未測定。' },
   'src/renderer/theme.ts': { kind: 'measure-next', why: '配色の解決と適用 (パス 317)。OS 追随の停止まで持つ。' },
   'src/shared/api/cloudflare.ts': { kind: 'measure-next', why: '**資格情報を使う書き込み口**。DNS レコードとキャッシュ削除の欄を検める。2026-09-20 (パス 357): ad-hoc の報告は生存 21 件だったが `audit:survivors` で **21/21 が偽** (既存の検査が全部殺す)。全掃引で確かめてから入れる。' },
   'src/shared/api/microsoft365.ts': { kind: 'measure-next', why: '**資格情報を使う書き込み口**。両ビルドが 1 つの実装を通る (パス 274) のに未測定。2026-09-20 (パス 357): ad-hoc の報告は生存 9 件だったが `audit:survivors` で **9/9 が偽**。全掃引で確かめてから入れる。' },

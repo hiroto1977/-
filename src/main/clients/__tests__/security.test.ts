@@ -4,7 +4,9 @@ import os from 'node:os';
 import path from 'node:path';
 import {
   ACTIONS,
+  detectBootProtection,
   detectNorton,
+  SECURE_BOOT_EFIVAR,
   fetchSecuritySnapshot,
   findExistingDirectory,
   nortonNotFoundDetails,
@@ -944,5 +946,40 @@ describe('ACTIONS["scan-url"]', () => {
       ACTIONS['scan-url']!({ token: goodToken, fetch: fetchMock, payload: {} }),
     ).rejects.toThrow(/url/);
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+});
+
+describe('detectBootProtection —— 起動の守り (セキュアブート) の点検', () => {
+  const bytes = (...b: number[]): Uint8Array => Uint8Array.from(b);
+  const failWith = (code: string) => (): Promise<Uint8Array> => Promise.reject(Object.assign(new Error('x'), { code }));
+
+  it('★ Linux: 変数を読んで有効・無効を言い分ける (読むのは UEFI のセキュアブート変数 1 つ)', async () => {
+    const seen: string[] = [];
+    const read = (value: number) => (file: string): Promise<Uint8Array> => {
+      seen.push(file);
+      return Promise.resolve(bytes(6, 0, 0, 0, value));
+    };
+    expect(await detectBootProtection('linux', read(1))).toEqual({ detection: 'enabled' });
+    expect(await detectBootProtection('linux', read(0))).toEqual({ detection: 'disabled' });
+    expect(seen).toEqual([SECURE_BOOT_EFIVAR, SECURE_BOOT_EFIVAR]);
+    expect(SECURE_BOOT_EFIVAR).toBe('/sys/firmware/efi/efivars/SecureBoot-8be4df61-93ca-11d2-aa0d-00e098032b8c');
+  });
+
+  it('★ Linux: 変数が無ければ not-exposed・読めなければ unknown (どちらも「無効」と言わない)', async () => {
+    expect(await detectBootProtection('linux', failWith('ENOENT'))).toEqual({ detection: 'not-exposed' });
+    expect(await detectBootProtection('linux', failWith('EACCES'))).toEqual({ detection: 'unknown' });
+    expect(await detectBootProtection('linux', () => Promise.reject(new Error('no code')))).toEqual({ detection: 'unknown' });
+    expect(await detectBootProtection('linux', () => Promise.reject('string'))).toEqual({ detection: 'unknown' });
+    expect(await detectBootProtection('linux', () => Promise.reject(null))).toEqual({ detection: 'unknown' });
+    // 中身が短い・想定外でも unknown。
+    expect(await detectBootProtection('linux', () => Promise.resolve(bytes(6, 0)))).toEqual({ detection: 'unknown' });
+  });
+
+  it('★ Linux 以外は読まずに manual (子プロセスなしに読める口が無い)', async () => {
+    const read = vi.fn<(file: string) => Promise<Uint8Array>>(() => Promise.resolve(bytes(6, 0, 0, 0, 1)));
+    for (const platform of ['win32', 'darwin', 'freebsd', 'aix'] as NodeJS.Platform[]) {
+      expect(await detectBootProtection(platform, read)).toEqual({ detection: 'manual' });
+    }
+    expect(read).not.toHaveBeenCalled();
   });
 });

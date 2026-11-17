@@ -69,6 +69,10 @@ const READERS: readonly { file: string; why: string }[] = [
     why: 'ブラウザ版の橋が版に接尾辞を足して名乗る (作る側)。',
   },
   {
+    file: 'src/renderer/portal/portalShim.ts',
+    why: '社外向けポータルの橋が、版の数を持たずに接尾辞だけを名乗る (作る側 · 2026-11-11)。画面は「ブラウザ版」として振る舞う。',
+  },
+  {
     file: 'src/renderer/runtimeMode.ts',
     why: '橋が名乗った版の接尾辞で実行形態を決める (比べる側)。',
   },

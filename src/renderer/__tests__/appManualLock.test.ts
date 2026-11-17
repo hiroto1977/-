@@ -41,6 +41,7 @@ import {
   lockEverywhere,
 } from '../security/lockWorkspace';
 import { navigateTo } from '../navigate';
+import { forgetAllFetches, lastGoodFetch, rememberFetch, rememberedFetchCount } from '../data/lastGoodFetch';
 import { waitForText } from './jsdomWait';
 
 if (!('subtle' in globalThis.crypto)) {
@@ -157,6 +158,33 @@ describe('App — 施錠はロック画面まで届く', () => {
     // 画面だけの施錠ではないこと。
     expect(getVault().isUnlocked()).toBe(false);
     await expect(getVault().getToken('github')).rejects.toThrow();
+  });
+
+  it('★ 施錠すると、クラウドから取得して覚えていた内容も消える (自分のタブ・他のタブの両方)', async () => {
+    // 覚えはメモリだけ (`data/lastGoodFetch.ts`)。施錠したあとに、開いていた頃の取得内容を残さない。
+    forgetAllFetches();
+    expect(rememberFetch('github', { repos: ['private-repo'] })).toBe(true);
+    expect(rememberedFetchCount()).toBe(1);
+    await act(async () => {
+      lockEverywhere();
+    });
+    await settle();
+    expect(showsLockScreen()).toBe(true);
+    expect(rememberedFetchCount()).toBe(0);
+    expect(lastGoodFetch('github')).toBeNull();
+  });
+
+  it('★ 他のタブからの施錠要求でも、覚えていた取得内容が消える', async () => {
+    forgetAllFetches();
+    rememberFetch('slack', { channels: ['general'] });
+    const other = new BroadcastChannel(LOCK_CHANNEL);
+    opened.push(other);
+    await act(async () => {
+      other.postMessage(LOCK_MESSAGE);
+    });
+    await settleUntilLocked();
+    expect(showsLockScreen()).toBe(true);
+    expect(rememberedFetchCount()).toBe(0);
   });
 
   it('★ 他のタブからの施錠要求でもロック画面へ差し替わる', async () => {

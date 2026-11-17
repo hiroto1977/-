@@ -45,7 +45,8 @@ describe('await を書かずに reject しうる handler の台帳 (threat: T-12
     expect(by).toEqual(['secrets:list', 'secrets:protection']);
     const secrets = readOriginalSource(path.join(REPO, 'src/main/secrets.ts'));
     // readStore は ENOENT 以外の stat の失敗を握り潰さず投げる (secretsWrite.test.ts が留める)
-    expect(secrets).toMatch(/if \(\(err as NodeJS\.ErrnoException\)\.code !== 'ENOENT'\) throw err;/);
+    // (2026-11-12 · MG-069 から secrets.ts は Mamori の生成物 —— `field err.code` が `(err as { code?: unknown }).code` に、1 行の if がブロックになる)
+    expect(secrets).toMatch(/if \(\(err as \{ code\?: unknown \}\)\.code !== 'ENOENT'\) \{\n\s+throw err;\n\s+\}/);
   });
 
   it('★ 実物に新しい式本体の handler を足すと鳴る (台帳に無い形)', () => {

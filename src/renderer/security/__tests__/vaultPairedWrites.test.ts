@@ -46,6 +46,12 @@
  * 2. この組を書く関数の母集団が**全部 `idbPutAll` を通る** —— 両方向の台帳。
  * 3. 旧形式の前方互換 (master-wrap が無い金庫を passwordKey で開ける) は**残っている**
  *    —— 直しは「作る側を原子的にする」であって、前方互換を消すことではない。
+ *
+ * ## 2026-11-15 (MG-070)
+ *
+ * `vault.ts` は Mamori 生成物になり、IndexedDB の口は薄い壁 `vaultHost.ts` へ移った ——
+ * `idbPutAll` は `hostPutAll` (1 トランザクション)、`idbPut` は `hostPut` と名前が変わった。
+ * 見る物は同じ (対の書き込みは束ねる側だけを通る) で、針の綴りだけを新しい形へ合わせた。
  */
 import { describe, expect, it, beforeEach, vi } from 'vitest';
 import 'fake-indexeddb/auto';
@@ -132,28 +138,33 @@ describe('meta と master-wrap の対の書き込み (パス 361)', () => {
     expect(paired).toEqual([['vault', 'master-wrap']]);
   }, 120_000);
 
-  it('★ この組を書く関数は全部 `idbPutAll` を通る (両方向の台帳)', () => {
-    // 母集団 = `master-wrap` を **put する** 関数。`idbPut(` で書いている物が
+  it('★ この組を書く関数は全部 `hostPutAll` を通る (両方向の台帳)', () => {
+    // 母集団 = `master-wrap` を **put する** 関数。1 件ずつの `hostPut(` で書いている物が
     // 1 つでも残っていたら落ちる (綴りではなく助けの選択を見る)。
-    const singlePutMasterWrap = /idbPut\(\s*db,\s*META_STORE,\s*'master-wrap'/g;
+    const singlePutMasterWrap = /hostPut\(\s*db,\s*META_STORE,\s*'master-wrap'/g;
     expect(VAULT_SRC.match(singlePutMasterWrap)).toBeNull();
-    // 針が当たることの標本 —— 旧い綴りは実際にこの針に掛かる。
-    expect("        await idbPut(db, META_STORE, 'master-wrap', {").toMatch(
-      /idbPut\(\s*db,\s*META_STORE,\s*'master-wrap'/,
+    // 針が当たることの標本 —— 1 件ずつ書く綴りは実際にこの針に掛かる。
+    expect("        await hostPut(db, META_STORE, 'master-wrap', {").toMatch(
+      /hostPut\(\s*db,\s*META_STORE,\s*'master-wrap'/,
     );
-    // 逆向き: `master-wrap` を書く所は 3 つで、どれも `idbPutAll` の配列の中に在る。
+    // 走査が実物に当たっていること —— 1 件ずつの口そのものは (トークンの書き込みで) 在る。
+    expect(VAULT_SRC).toContain('hostPut(db, TOKEN_STORE,');
+    // 逆向き: `master-wrap` を書く所は 3 つで、どれも `hostPutAll` の配列の中に在る。
     const inPutAll = [...VAULT_SRC.matchAll(/key: 'master-wrap'/g)].length;
     expect(inPutAll).toBe(3);
     // その 3 つが `initialize` / `changePassword` / `recoverWithMnemonic` に在ること。
-    for (const fn of ['async initialize(', 'async changePassword(', 'async recoverWithMnemonic(']) {
+    for (const fn of ['initialize: async (', 'changePassword: async (', 'recoverWithMnemonic: async (']) {
       const start = VAULT_SRC.indexOf(fn);
       expect(start, `${fn} が見つかりません`).toBeGreaterThan(0);
-      // 次のメソッド宣言までを本体とする (固定幅で切ると長いメソッドの末尾が落ちる ——
-      // `recoverWithMnemonic` は v0 移行のぶんだけ長い)。
+      // 次の欄 (生成物では行頭の `}, 名前: `) までを本体とする (固定幅で切ると長い関数の末尾が
+      // 落ちる —— `recoverWithMnemonic` は v0 移行のぶんだけ長い)。
       const rest = VAULT_SRC.slice(start + fn.length);
-      const nextMethod = rest.search(/\n {2}(?:async )?[A-Za-z_][\w]*\(/);
-      const body = nextMethod === -1 ? rest : rest.slice(0, nextMethod);
-      expect(body, `${fn} が master-wrap を idbPutAll で書いていません`).toContain("key: 'master-wrap'");
+      const nextMethod = rest.search(/\n\}, [A-Za-z_]\w*: /);
+      expect(nextMethod, `${fn} の終わりが見つかりません (切り出しが死んでいる)`).toBeGreaterThan(0);
+      const body = rest.slice(0, nextMethod);
+      expect(body, `${fn} が master-wrap を hostPutAll で書いていません`).toMatch(
+        /hostPutAll\(db, \[[^\n]*key: 'master-wrap'/,
+      );
     }
   });
 

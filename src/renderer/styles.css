@@ -895,6 +895,12 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
 .fav-toggle:hover, .fav-toggle:focus-visible { opacity: 1 !important; }
 .fav-toggle:hover { transform: scale(1.2); }
 
+/* ポータルの入口。サービスの一覧 (nav) と同じ左右の余白で、一覧の外に置く (検索・畳みで消えない)。 */
+.sidebar-portal {
+  display: flex;
+  flex-direction: column;
+  padding: 0 8px 6px;
+}
 .sidebar-nav {
   flex: 1;
   display: flex;

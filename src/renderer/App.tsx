@@ -4,7 +4,9 @@ import { SERVICES, CATEGORY_LABEL, type ServiceCategory, type ServiceDefinition,
 import { ShellContext, type ShellService, type ShellState } from './shellContext';
 import { isServiceId } from '../shared/serviceId';
 import { filterServices } from './sidebarFilter';
-import { serviceIdFromHash, hashForService } from './hashRoute';
+import { serviceIdFromHash, hashForService, portalIdFromHash, hashForPortal } from './hashRoute';
+import { PORTALS, type PortalId } from '../shared/portal';
+import { PortalDirectory } from './portal/PortalDirectory';
 import { ManualDataSection } from './components/ManualDataSection';
 import { pushRecent, toggleFavorite, keepKnown, RECENTS_MAX } from './recents';
 import { LockScreen } from './security/LockScreen';
@@ -12,6 +14,7 @@ import { isBrowserBuild } from './runtimeMode';
 import { getVault } from './security/vault';
 import { startAutoLock } from './security/autoLock';
 import { lockWorkspace, startLockRelay, subscribeWorkspaceLocked } from './security/lockWorkspace';
+import { forgetAllFetches } from './data/lastGoodFetch';
 import { usePlan } from './plan/usePlan';
 import { VoiceCommandBar } from './components/VoiceCommandBar';
 import { ChatbotWidget, clearChatbotHistory } from './components/ChatbotWidget';
@@ -136,6 +139,11 @@ function initialActiveId(): ServiceId {
 
 export function App() {
   const [activeId, setActiveId] = useState<ServiceId>(initialActiveId);
+  // ポータルの一覧 (社内 / パートナー / カスタマー · 2026-11-11)。開いているあいだは画面の代わりに一覧を出す。
+  // `#portal/<id>` の直リンクで始められる。村の殻 (?ui=village) は自分で持つので、ここでは読まない。
+  const [portal, setPortal] = useState<PortalId | null>(() =>
+    currentShellMode() === 'village' ? null : portalIdFromHash(typeof location !== 'undefined' ? location.hash : ''),
+  );
   const [version, setVersion] = useState<string>('');
   const [query, setQuery] = useState('');
   const searchRef = useRef<HTMLInputElement>(null);
@@ -152,6 +160,8 @@ export function App() {
   const [chatCollapsed, setChatCollapsed] = useState(false);
   const showChatColumn = chatDocked && !chatCollapsed;
   const contentRef = useRef<HTMLElement>(null);
+  // 状態 → hash の同期が最後に揃えた綴り (まだ揃えていなければ null)。
+  const syncedHashRef = useRef<string | null>(null);
   const sidebarRef = useRef<HTMLElement>(null);
   const mainRef = useRef<HTMLElement>(null);
   const menuBtnRef = useRef<HTMLButtonElement>(null);
@@ -220,7 +230,11 @@ export function App() {
    */
   useEffect(() => {
     if (!browserMode) return undefined;
-    const unsubscribe = subscribeWorkspaceLocked(() => setVaultUnlocked(false));
+    const unsubscribe = subscribeWorkspaceLocked(() => {
+      // 施錠したら、クラウドから取得して覚えていた内容も消す (`data/lastGoodFetch.ts` —— メモリだけの覚え)。
+      forgetAllFetches();
+      setVaultUnlocked(false);
+    });
     const stopRelay = startLockRelay();
     return () => {
       unsubscribe();
@@ -297,28 +311,46 @@ export function App() {
     // 村の殻 (?ui=village) は自分で URL ハッシュを持つ。ここで旧画面の先頭 (#home) を書くと、村が
     // 「ホーム」の窓を開いたまま始まる。
     if (currentShellMode() === 'village') return;
+    setRecents((prev) => pushRecent(prev, activeId));
+  }, [activeId]);
+
+  // 表示中の物 → URL ハッシュ。ポータルの一覧を開いているあいだは `#portal/<id>`、それ以外は画面の id。
+  useEffect(() => {
+    if (currentShellMode() === 'village') return;
     try {
-      const h = hashForService(activeId);
+      const h = portal !== null ? hashForPortal(portal) : hashForService(activeId);
+      // 状態から導いた綴りを覚える (書いたかどうかに依らず毎回) —— 下の聞き手が、自分の書き込みの反響を見分ける。
+      syncedHashRef.current = h;
       if (location.hash !== h) location.hash = h;
     } catch {
       /* location 不在環境 */
     }
-    setRecents((prev) => pushRecent(prev, activeId));
-  }, [activeId]);
+  }, [activeId, portal]);
 
   // 画面を切り替えたら本文を先頭へ戻す (前の画面のスクロール位置を引き継がない)。
   useEffect(() => {
     const el = contentRef.current;
     if (el) scrollElementToTop(el, 'auto');
     setScrolled(false);
-  }, [activeId]);
+  }, [activeId, portal]);
 
   // URL ハッシュ → activeId (ブラウザ戻る/進む・直リンク・共有)。
   useEffect(() => {
     function onHash() {
       if (currentShellMode() === 'village') return; // 村の殻が自分で聞く
+      // 自分の書き込みの反響は状態を動かさない (村の殻と同じ規則): hashchange は書いた後に遅れて届くので、
+      // その間に来た画面の切り替え (会話・音声の「開いて」) を古い綴りで上書きしない。
+      if (location.hash === syncedHashRef.current) return;
+      const p = portalIdFromHash(location.hash);
+      if (p !== null) {
+        setPortal(p);
+        return;
+      }
       const id = serviceIdFromHash(location.hash);
-      if (id) setActiveId(id);
+      if (id) {
+        setActiveId(id);
+        setPortal(null);
+      }
     }
     window.addEventListener('hashchange', onHash);
     return () => window.removeEventListener('hashchange', onHash);
@@ -348,6 +380,7 @@ export function App() {
 
   /** サービスを選択し、属するカテゴリを展開する。モバイルではドロワーも閉じる。 */
   function selectService(id: ServiceId) {
+    setPortal(null); // 画面を選んだら、ポータルの一覧は閉じる (同じ画面を選び直したときも)
     setActiveId(id);
     const def = SERVICES.find((s) => s.id === id);
     if (def) setCollapsed((prev) => ({ ...prev, [def.category]: false }));
@@ -469,6 +502,7 @@ export function App() {
   };
 
   const activeFav = favoriteSet.has(active.id);
+  const portalDef = portal === null ? null : (PORTALS.find((p) => p.id === portal) ?? null);
 
   const appClass = ['app', navOpen ? 'nav-open' : '', showChatColumn ? 'chat-docked' : ''].filter(Boolean).join(' ');
   // コンシェルジュは画面の外の部品なので、どちらの形でも自分の境界に入れる (パス 489)。
@@ -528,6 +562,26 @@ export function App() {
               {SHORTCUT_LABEL}
             </kbd>
           )}
+        </div>
+        {/*
+          ポータルの入口 (2026-11-11)。社内 / パートナー / カスタマーの 3 つの一覧を画面の場所に開く。
+          サービスの一覧 (nav) の外に置く —— 検索で絞っても畳んでも消えない。
+        */}
+        <div className="sidebar-portal">
+          <button
+            type="button"
+            className={`sidebar-item ${portal !== null ? 'active' : ''}`}
+            data-portal-open
+            aria-current={portal !== null ? 'page' : undefined}
+            title="社内・取引先・顧客のポータルに分けて、出す画面を見る"
+            onClick={() => {
+              setPortal((p) => p ?? 'internal');
+              setNavOpen(false);
+            }}
+          >
+            <span className="icon" aria-hidden="true">🚪</span>
+            <span>ポータル</span>
+          </button>
         </div>
         <nav className="sidebar-nav" aria-label="サービス一覧">
           {filtered !== null ? (
@@ -661,29 +715,42 @@ export function App() {
               💬 <span className="chat-toggle-label">チャット</span>
             </button>
           ) : null}
-          <span className="topbar-icon" aria-hidden="true">
-            {active.icon}
-          </span>
-          <h1>{active.label}</h1>
-          <span className="chip crumb">
-            <span aria-hidden="true">{CATEGORY_EMOJI[active.category]}</span>
-            {CATEGORY_LABEL[active.category]}
-          </span>
-          <span className="description">{active.description}</span>
+          {portalDef !== null ? (
+            <>
+              <span className="topbar-icon" aria-hidden="true">🚪</span>
+              <h1>{portalDef.label}</h1>
+              <span className="description">対象: {portalDef.audience}</span>
+            </>
+          ) : (
+            <>
+              <span className="topbar-icon" aria-hidden="true">
+                {active.icon}
+              </span>
+              <h1>{active.label}</h1>
+              <span className="chip crumb">
+                <span aria-hidden="true">{CATEGORY_EMOJI[active.category]}</span>
+                {CATEGORY_LABEL[active.category]}
+              </span>
+              <span className="description">{active.description}</span>
+            </>
+          )}
           <div className="topbar-right">
             <ShellPartBoundary label="ベスト3 の進み具合">
               <BestAnswersIndicator />
             </ShellPartBoundary>
-            <button
-              type="button"
-              className={`topbar-fav ${activeFav ? 'on' : ''}`}
-              aria-label={activeFav ? 'お気に入りから外す' : 'お気に入りに追加'}
-              aria-pressed={activeFav}
-              title={activeFav ? 'お気に入りから外す' : 'お気に入りに追加'}
-              onClick={() => toggleFav(active.id)}
-            >
-              {activeFav ? '♥' : '♡'}
-            </button>
+            {/* お気に入りは画面に付く物。ポータルの一覧を出しているあいだは出さない (下の画面を指してしまう)。 */}
+            {portalDef === null && (
+              <button
+                type="button"
+                className={`topbar-fav ${activeFav ? 'on' : ''}`}
+                aria-label={activeFav ? 'お気に入りから外す' : 'お気に入りに追加'}
+                aria-pressed={activeFav}
+                title={activeFav ? 'お気に入りから外す' : 'お気に入りに追加'}
+                onClick={() => toggleFav(active.id)}
+              >
+                {activeFav ? '♥' : '♡'}
+              </button>
+            )}
             <ShellPartBoundary label="音声コマンド">
               <VoiceCommandBar />
             </ShellPartBoundary>
@@ -699,8 +766,13 @@ export function App() {
             <DeviceStoreFailureBanner />
           </ShellPartBoundary>
           {/* key で画面ごとに張り直す —— 切り替えのたびに `.page-enter` がふわっと現れる。 */}
-          <div key={active.id} className="page-enter">
-            {activeUnlocked ? (
+          <div key={portal !== null ? `portal-${portal}` : active.id} className="page-enter">
+            {portal !== null ? (
+              // ポータルの一覧。画面を選ぶと一覧を閉じてその画面へ移る (サイドバーの「ポータル」で戻れる)。
+              <PageErrorBoundary label={portalDef?.label ?? 'ポータル'} onGoHome={() => selectService('home')}>
+                <PortalDirectory portal={portal} onSelectPortal={setPortal} onOpenService={selectService} />
+              </PageErrorBoundary>
+            ) : activeUnlocked ? (
               // 画面の描画エラーはこの枠に閉じる (境界が無いと React はツリー全体を外し、サイドバーごと白くなる)。
               // 別の画面へ移れば新しい境界 (外側の key が張り直す)。
               <PageErrorBoundary label={active.label} onGoHome={() => selectService('home')}>

@@ -105,7 +105,7 @@ export function buildLoopbackBase(port: number | string): string | null {
   if (!/^\d+$/.test(trimmed)) return null;
   // 正規表現が 10 進数字だけを通すので Number() の結果は必ず整数。
   const n = Number(trimmed);
-  if (n < 1 || n > 65535) return null;
+  if ((n < 1) || n > 65535) return null;
   return 'http://127.0.0.1:' + n;
 }
 
@@ -263,7 +263,7 @@ export function compareOllamaVersions(a: string, b: string): number {
  */
 export function prereleaseIsBelowFloor(version: string, floor: string): boolean {
   const { core } = splitVersionPrerelease(version);
-  return compareOllamaVersions(version, floor) < 0 && compareOllamaVersions(core, floor) >= 0;
+  return (compareOllamaVersions(version, floor) < 0) && compareOllamaVersions(core, floor) >= 0;
 }
 
 /** MIN_SAFE_VERSION 以上か。空文字や壊れた文字列は「安全でない」扱い — 不明なバージョンを黙って通すより安全側に倒す。 */
@@ -328,7 +328,7 @@ export function applicableAdvisories(version: string, ledger: readonly OllamaAdv
   const out: FixedAdvisory[] = [];
   for (const a of ledger) {
     const fixed = a.fixedIn;
-    if (fixed !== null && compareOllamaVersions(version, fixed) < 0) {
+    if (fixed !== null && (compareOllamaVersions(version, fixed) < 0)) {
       out.push({ ...a, fixedIn: fixed });
     }
   }
