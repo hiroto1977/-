@@ -109,8 +109,9 @@ describe('サイドバーは SERVICE_IDS を覆う', () => {
    */
   it('★ CLAUDE.md の散文が台帳の例外を 1 つずつ名指ししている', () => {
     const claudeMd = readOriginalSource(path.resolve(__dirname, '../../../CLAUDE.md'));
-    // 走査が実物に当たっていること (空のファイルで通らない)。
-    expect(claudeMd).toContain('exposing **78 services**');
+    // 走査が実物に当たっていること (空のファイルで通らない)。数は写さず実物から組む ——
+    // 2026-11-17 まで `78` と直書きで、サービスを 1 つ足すたびにこの行だけが落ちていた。
+    expect(claudeMd).toContain(`exposing **${SERVICE_IDS.length} services**`);
     expect(claudeMd, 'サイドバーに出ない物が在るという断りが消えた').toContain(
       'Not every service has a sidebar',
     );

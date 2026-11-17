@@ -20,6 +20,31 @@
   ★ 差出人の読みは振る舞いを 1 つ強くした: `表示名 <アドレス>` の後ろに字が続く形・前に別の `<…>` が在る形でも、最後の `<アドレス>` と表示名を比べる (以前は比べずに通していた)。
   2 度目 **99.76% (生存 1 —— 件名と本文のつなぎ目)** → 標本を足して 3 度目に `inboundWatch.ts` を単独で測り直し、3 本とも `mutate` へ入れた (357 → 360)。
 
+## VRIO 分析の画面 (アプリへの組み込み) で測って残した物 (2026-11-17)
+
+利用者の依頼 (「任意で入力したら判定及び反映される仕組み」→「両方やる」) で、VRIO (V 経済的価値 / R 希少性 / I 模倣困難性 / O 組織体制) の
+判定を 79 個目のサービス `vrio` として足した。画面は 2 節 (従業員の評価・商品企画の GO / NO-GO) で、判定は `src/shared/vrio.ts` に 1 つ在る。
+先に公開した単体のページ (Artifact) は別物で、履歴はそちらにだけ在る。
+
+- **入力は保存しない** —— 点数と Yes / No は画面の部品の中にだけ在り、画面を離れると消える (画面もそう述べる)。履歴・名前の欄・書き出しは無い。
+  足すなら記録ストアの collection (形の表・バックアップの確認文の分類・点検パネル) まで一式が要る。人の評価は機微なので、
+  `plaintextExposureClassification` の分類を先に決めること。
+- **ウェイト・ゲート・標準点は台帳 (`shared/parameters.ts`) に載せていない** —— 階層ごとのウェイト (役員 20/20/30/30 ほか)・昇格の推奨ゲート (4 点)・
+  標準 (3 点) は依頼文の値をモジュールの定数として持つ。設定画面から変えたいという要望が来たら台帳へ登録し、`parameterWiring.test.ts` で
+  「上書きすると画面が動く」を留める (登録だけして配線しない形を作らない)。
+- **「V が Yes・R が No」は補った判定** —— 依頼の分岐に無い組み合わせで、一般的な読み方 (競争均衡) を当てている。画面はそう名乗る
+  (`VRIO_VERDICTS.parity.supplemented`)。利用者が別の扱いを決めたら、表の 1 行と注記を替える。
+- **補う要素の選び方は私が決めた規則** —— 2 点以下を全部 (点の低い順・同点はその階層のウェイトの重い順)、無ければ 3 点のうちウェイトの重い順に 2 つまで。
+  依頼文は「不足している要素に応じた教育施策」としか言っていない。
+- **変異検査**: `src/shared/vrio.ts` は 100.00% (327 killed · 生存 0)。1 回目は 54.38% (生存 151) で、149 件はモジュール直下の表が
+  `data/snapshot.ts` 経由で検査の中から読み直されていた形 (覆うが主張しない)、2 件は等価 (`typeof` と `Number.isInteger` の重ね掛け・
+  0 を先に返した後の `> 0`) だった。前者は読み直してスナップショットで留め、後者は形ごと消した。`mutate` に入れた (360 → 361)。
+- **`.tsx` (画面) は変異検査の外** —— 配線は jsdom の 11 件 (`vrioPage.test.ts`) と実機の全画面の掃引 (字と地の対比・操作子) が見る。
+  VRIO の画面だけを開いて値を変える実機の suite は足していない (手元の 1 回の確認: PC 1280px とスマホ 412px で、値を変えると総合スコアが
+  3.35 → 3.85・判定が一時的 → 持続的に変わり、横はみ出し 0・console エラー 0)。
+- **村の殻 (`?ui=village`) からの開き方** は音声・会話の別名に頼る。解析器の単体検査で 6 つの言い方 (「VRIOを開いて」「ブリオ分析を開いて」「人事評価を開いて」ほか) が `vrio` を指すことは留めた ——
+  最初の版は別名がひらがなだけで、漢字の「人事評価を開いて」が `unknown` だった (実測して漢字の別名を足した)。村の殻で実際に窓が開くところまでは、実機で見ていない。
+
 ## MG-089 (構築子の名前の断りの場所 · Mamori 0.49) で測って残した物 (2026-11-17)
 
 0.49 は、`new 名前(…)` の名前についての断り (宣言していない名前・宣言より前の使用・sink の外の危ない口) の場所を、名前の直後の字句から**名前の頭**へ直した
@@ -7941,7 +7966,7 @@ loopback 以外の平文 http を必ず弾く**。LAN を名前で絞らない�
 
 ## 現状（2026-08-17 実測）
 
-- [x] **78 サービス**の UI + スナップショット表示（おすすめ / 士業連携 / 分析・ツール / 外部サービス連携）
+- [x] **79 サービス**の UI + スナップショット表示（おすすめ / 士業連携 / 分析・ツール / 外部サービス連携）
 - [x] 全 75 サービスのライブフェッチャー（`LIVE_FETCHERS` は総和型。欠けたら起動時に落ちる）
 - [x] write アクション（`LIVE_ACTIONS`）+ `lint:test-coverage` が全サービスのテストとアクションを強制
 - [x] OAuth 2.0 + PKCE code flow — **10 プロバイダ配線済み**
@@ -32689,7 +32714,7 @@ src/shared/ のモジュール                                        138
 「読んだ結果」か `未読 (…)` のどちらかで、読んでいない物に「対称だろう」とは書かない。
 
 <!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/shared-judgement-census.cjs。npm run lint:shared-judgement は check だけ) -->
-shared **185** モジュール / 両ビルドが import **99** / うち否定で答えられる **48**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
+shared **186** モジュール / 両ビルドが import **100** / うち否定で答えられる **49**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
 
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |
@@ -32739,6 +32764,7 @@ shared **185** モジュール / 両ビルドが import **99** / うち否定で
 | `tokenResponse` | 1 | 1 | 対称 (パス 260 で**そう作った**) —— 認可サーバのトークン端点の応答を見る規則で、否定のあとの動作は両ビルドで同じ 2 行: `if (!parsed.ok) throw new Error(parsed.message)` (main/oauth.ts の交換・更新の 2 か所と renderer/oauth/pkce.ts)。文面も共有の 1 組。この pass の前は main 側に検査そのものが無く (`JSON.parse(…) as TokenResponse`)、ブラウザ版だけが見ていた —— 非対称の極として在った |
 | `updateCheck` | 1 | 3 | 対称 (実測・パス 250) —— 両ビルドが `evaluateUpdate(current, parseLatestRelease(...))` と 3 つの失敗経路 (!res.ok / catch / 形が違う) を同じ形で `evaluateUpdate(current, null)` へ寄せ、画面は共有の describeUpdate を読む。 ★ **パス 282 で閉じた**: この行はパス 250 から「**ただし締切の値だけ割れている** (main は素の 10_000・ブラウザ版は DEFAULT_HTTP_TIMEOUT_MS = 30_000。理由はどこにも無い)」と**生きた食い違いを記録したまま置いて**いた。main を `DEFAULT_HTTP_TIMEOUT_MS` へ寄せ、`shared/__tests__/deadlineCensus.test.ts` が両ビルドの締切を留める。★ 教訓: 「理由はどこにも無い」と書けたなら、それは**書いた時点で欠陥**である ——記録しただけで 32 パス残った |
 | `vaultToken` | 1 | 1 | **欠陥だった → パス 246 で直した** (main が生の JSON を Bearer に載せていた) |
+| `vrio` | 1 | 2 | 非対称は起きない (実測・2026-11-17) —— 否定で答えるのは `scoreEmployee` の `total: null` (採点が 1〜5 の整数として 読めない)・`promotionGate` の null (ゲートの無い階層 / 読めない採点)・`employeeFeedback` の null の 3 つで、**読み手は renderer の VrioPage.tsx だけ**。main が import するのは `buildVrioSnapshot` と型 `VrioSnapshot` だけ (main/clients/vrio.ts) で、それは id の一覧を返し null を返さない。ブラウザ版の読み手も同じ画面 1 枚 (data/snapshot.ts は `buildVrioSnapshot` だけ) なので、「no のあとの動作」は 1 か所にしか無い |
 | `watchlistState` | 1 | 1 | 対称 (パス 309 で**そう作った**) —— 銘柄のウォッチリストの保存値を読む 1 つの規則で、否定は `readStoredWatchlist` の `{ kind: 'unreadable', reason }` と `isSafeSymbol` の false。main は `loadStoredWatchlist` (clients/stocks.ts) が ENOENT だけを none にして残りを unreadable に載せ、ブラウザ版は `readWatchlist` (data/stocksWatchlistWeb.ts) が Web Storage の例外を同じ形にする。そこから先は**両方が同じ 2 つ**を通る —— `symbolsOrEmpty(stored)` (読めなかった物を空として扱う唯一の場所) と `watchlistStoredNote(stored, shown)` (画面の 1 行)。意図した非対称は `shown` の 1 引数だけ: 空のときデスクトップは見本の銘柄・ブラウザ版は空 (パス 161 の決定) で、注記の文もそこだけ違う。`isSafeSymbol` はパス 309 まで main と renderer に写しが 1 つずつ在った (docblock が「同じ規則」と言うだけ) —— 両方が re-export になったので規則は 1 つ。画面は `data.storedNote` を ⚠ つきで刷る (StocksPage.tsx の data-watchlist-stored-note)。★ 直す前は main が `catch { return DEFAULT_STATE }`、ブラウザ版が `catch { return [] }` で、否定そのものが無かった (ENOENT も EACCES も壊れた JSON も空)。 |
 | `writeFieldLimits` | 1 | 11 | 対称 (実測・パス 282 で辿り直した) —— `scanTarget` と同じく、パス 247 は「対称 (実測)」の 4 文字だけで根拠が書かれていなかった。**外部サービスへ利用者の資格情報で書き込む前の関門**なので、4 文字では足りない。 ★ 実測 (パス 282): 双子は **10 組** (slack / github / calendar / gmail / drive / canva / notion / atlassian / wordpress / cloudflare ×2 の欄)。**10 組すべてが同じ形**で、main は `checkWriteFields(ctx.payload, TABLE)`・ブラウザ版は `checkWriteFields(input, 同じ TABLE)` を呼び、否定 (`!== null`) のあとは両側とも `throw new Error(describeWriteFieldFailure(bad))`。欄の台帳は `shared/writeFieldLimits.ts` に 1 つずつで、ラベルも天井も**両ビルドが同じ定数を読む**。GitHub の labels だけ 2 段目 (`checkWriteLabels`) が在り、それも両側に在る。MS365 の 2 表はパス 274/275 で `shared/api/microsoft365.ts` へ移したので**両ビルドが同じ実装**を通る (表の上では「片側だけ」に見えるが、それは共有へ寄せた結果である)。 ★ 11 番目 (パス 283): `shopify` の注文 —— **ブラウザ版に相手が居ない**。7 つの同期 action (slack / discord / line / gmail / notion / salesforce / stripe) は main にしか無く、`webShimCredentials.test.ts` の `BROWSER_SURFACE` がその不在を既に台帳で留めている (増減したら鳴る)。だからこの 1 組は**非対称ではなく片側しか存在しない** —— 断りの動作が両ビルドで違う、という家系の外に在る。main 側の欄は `SHOPIFY_ORDER_FIELDS` + `checkShopifyLineItems` で、他の 10 組と同じ `describeWriteFieldFailure` の文を投げる。パス 283 まで `assertOrder` は `id` と `name` の真偽値しか見ておらず、`lineItems` が配列でないと `items.map is not a function`・`total` がオブジェクトだと `[object Object]` が 7 つの第三者へ出ていた。 ★ パス 285 で閉じた —— 残っていた非対称は「**同じ条件に文が 2 つ**」で (パス 283 はこれを「文面の言語」と書いたが、**軸は言語ではない** —— 言語が同じでも 2 つ在れば片方だけ動く)。2 件とも main が英語・ブラウザ版が日本語だった: Cloudflare のパージの「どちらかが要る」と Gmail の to の CR/LF。`CLOUDFLARE_PURGE_NEEDS_TARGET` / `RFC2822_HEADER_UNSAFE` を `shared/writeFieldLimits.ts` の台帳の隣に置き、main の 2 経路と saasWriteWeb の 2 経路が同じ定数を読む。留めるのは `shared/__tests__/refusalTwins.test.ts` (両ビルドを実際に呼んで同じ文が返ることを見る —— 綴りを写した検査は無言で古びるので、main 側の検査 11 か所も台帳を読むように直した)。 ★ パス 321 (2026-09-19・オントロジーの組み直し): **双子そのものを畳んだ**。12 表すべてで main と saasWriteWeb は共有の中継 (`shared/api/*.ts` の `checkX` → `xInit` → `parseCreatedX`) を 通り、`checkWriteFields(…, 表)` を呼ぶのは shared の 1 か所ずつ。`writeFieldLimits.test.ts` の LEDGERS は全行が `via` になり、直呼びの枝は母集団 0 (型を明示して分岐は残す)。 上の「10 組すべてが同じ形」は 2026-09-19 より前の記述である |
 <!-- shared-judgement-census:end -->

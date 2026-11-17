@@ -74,6 +74,7 @@ import { TalentPage } from './pages/TalentPage';
 import { MentorPage } from './pages/MentorPage';
 import { GrokPage } from './pages/GrokPage';
 import { HydroponicsPage } from './pages/HydroponicsPage';
+import { VrioPage } from './pages/VrioPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -723,6 +724,14 @@ export const SERVICES: ServiceDefinition[] = [
     icon: 'GK',
     description: 'xAI の Grok — 接続状態の確認と直接の質問 (鍵と既定の提供者は AI アシスタントのエージェント設定)',
     page: GrokPage,
+    category: 'tools',
+  },
+  {
+    id: 'vrio',
+    label: 'VRIO 分析',
+    icon: 'VR',
+    description: '従業員の評価 (階層ウェイト × 職種の観点・昇格ゲート・育成の一手) と、商品企画の GO / NO-GO 判定 (入力は画面の中だけ)',
+    page: VrioPage,
     category: 'tools',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE

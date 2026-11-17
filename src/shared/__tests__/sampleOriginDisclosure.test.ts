@@ -60,6 +60,7 @@ const LEDGER: Partial<Record<ServiceId, string>> = {
   tax: 'records — 試算の入力は利用者のもの。説明も「概算」と述べている',
   grok: 'derived — 画面は assistant/providers (保管した鍵と既定の提供者) から状態を読み、質問は assistant/chat へ送る。同梱の見本は 1 件も出さない (fetcher は LIVE_FETCHERS の invariant を満たす stub)',
   mentor: 'records — 画面は記録ストア (mentor-sessions) と team-members から作る。fetcher が返すのは聞き取りの問いの台帳だけで、人の記録の見本は 1 件も持たない。説明は「端末内」と述べている (パス 551)',
+  vrio: 'derived — 画面は利用者がその場で選ぶ点数と Yes / No から判定を作る。fetcher が返すのは階層・職種・判定の id の台帳だけで、人の評価の見本は 1 件も持たない。開いた直後の値は画面が「記入例」の札で名乗り、値を変えると外す。説明は「入力は画面の中だけ」と述べている',
   sales: 'derived — 画面は記録ストアから作る。実測でバッジも出ない。説明は「ローカル保存・実データ」',
   team: 'derived — 同上 (メンバーはプランと記録から)',
   overview: 'derived — 同上。説明は「実データ集約」',

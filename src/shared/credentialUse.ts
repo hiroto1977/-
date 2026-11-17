@@ -113,6 +113,7 @@ export const SERVICE_CREDENTIAL_USE: Record<ServiceId, CredentialUse> = {
   team: 'none',
   mentor: 'none',
   grok: 'none',
+  vrio: 'none',
   youtube: 'fetch',
   overview: 'none',
   coconala: 'none',
