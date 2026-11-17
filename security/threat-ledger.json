@@ -5237,6 +5237,39 @@
           "test": "★ 型の語は、型・import の名前にできない —— 9 語 × 型を指す宣言の 11 の位置 (threat: T-275)"
         }
       ]
+    },
+    {
+      "id": "T-276",
+      "found": "2026-11-17",
+      "foundBy": "MG-077 (言語の穴探しの周)。手で書く標本ではなく、種つきで作った式・文・型の綴りを 0.38 のコンパイラへ当て、受け入れた物について「Mamori が検めた木」と「生成物を TypeScript が読んだ木」を同じ S 式へ畳んで比べた (式の値の往復 24,000 本は食い違い 0・木の形の突き合わせ 約 14 万本)。構文の誤りで止まらずに別の木になる形が 3 つ出た。① 型引数の綴りに TypeScript が型として読めない語の並びを書いた形 —— TypeScript は `f<型>(x)` の型が読めないと、誤りにせず比べの並び `(f < 式) > (x)` として読み直す。TypeScript の構文木で実測すると、型の語 + `<型>` (`string<number>` —— `void` を除く 13 語)・`null` / `true` / `false` / `this` + `.名前`・頭の `infer` / `super` がその形だった (`string.x` は型の参照として読まれ、ほかの予約語は構文の誤りになる)。0.38 の構文の段は型の頭の名前に字句の「名前」なら何でも受け、注記に「予約語を置いた綴りは TypeScript が構文の誤りとして断る」と書いていた。② 数の字面のメンバ `1.e3` (空白や括弧を挟んで書いても、変換が `1.e3` と詰めて出す) —— Mamori は「数 1 の欄 e3」、TypeScript は指数つきの数 1000 と読む。③ 文の頭のオブジェクトの字面 `({ k: x })(y);` —— 変換が括弧を落とし、TypeScript は文の頭の `{` をブロックと読む (検めた呼び出しとオブジェクトの字面が木から無くなる)。木の形の突き合わせ (T-260 の `mamoriShape.ts`) は呼び出し・new・型引数・条件式・矢印関数・2 項演算子だけを数えており、② と ③ は映らなかった。確かめた害は「検めた呼び出しが走らない」「型の綴りに書いた名前が、検めを受けずに値として読まれる」「検めた値と走る値が違う」まで。印の無い値が危ない口へ届く形は確かめていない (比べの結果は真偽値で、印の型には tsc が通さない)。実物の 46 本に該当する書き方は無かった。",
+      "surface": "main-ipc",
+      "class": "supply-chain",
+      "severity": "low",
+      "title": "守りの層を書く言語 Mamori が検めた木と、生成物を TypeScript が読んだ木が、型引数の綴り (型の語 + `<型>` ほか)・数の字面のメンバ (`1.e3`)・文の頭のオブジェクトの字面の 3 つの形で食い違い、検めた呼び出しが走らず、型の綴りに書いた名前が検めを受けずに値として読まれた",
+      "status": "mitigated",
+      "fix": "src/shared/mamori/parser.ts (0.39): 型の綴りを読む段 (`checkTypeShape`) の頭の名前に規則を 2 つ置いた —— 型の語 (`unknown` / `never` / `number` / `bigint` / `boolean` / `string` / `symbol` / `void` / `object` / `undefined` / `null` / `true` / `false` / `this`) は単独の型としてだけ書け (`.名前` も `<型>` も続かない)、JavaScript の予約語と `infer` / `unique` は型の頭 (`typeof` の直後を含む) に置けない。`.` の後ろの名前は TypeScript も何でも受けるので縛らない。型引数の位置で型として読めなければ、Mamori も TypeScript と同じ比べの並びとして読むので、型の綴りだった名前は式として M6 ほかの検めを受ける。src/shared/mamori/emit.ts (0.39): 数の字面のメンバは括って出す (`(1).e3`)。式の文が `{` で始まるときは式ごと括って出す (`({ k: x }(y));`)。src/shared/mamori/__tests__/mamoriShape.ts: 木の形の突き合わせが、メンバ・数の字面・オブジェクトの字面も数える (実物の生成物・攻撃の電池・種つきの総当たりが同じ道具を通る)。実物の 46 本は書き換えなしで通り、生成物は 1 byte も変わらない。残る限界: 突き合わせは種類ごとの数を比べる物で、木そのものの一致ではない (数が同じで並びだけが違う形は映らない —— 手元の足場は S 式で比べ、直した後は食い違い 0)。",
+      "regression": {
+        "file": "src/shared/mamori/__tests__/mamoriV39.test.ts",
+        "test": "★ 型の語の後ろに `.名前` / `<型>` を続けた型を断る —— TypeScript の型の文法に無く、型引数の位置では比べ 2 つに読み直される (threat: T-276)"
+      },
+      "alsoRegressions": [
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV39.test.ts",
+          "test": "★ 型引数の位置では、Mamori も TypeScript と同じく比べの並びと読む —— 型の綴りだった名前は式として検めを受ける (threat: T-276)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV39.test.ts",
+          "test": "★ 予約語と `infer` / `unique` は型の頭に置けない (`typeof` の直後でも) (threat: T-276)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV39.test.ts",
+          "test": "★ 数の字面のメンバは括る —— `1.e3` と並べると TypeScript は指数つきの数と読む (threat: T-276)"
+        },
+        {
+          "file": "src/shared/mamori/__tests__/mamoriV39.test.ts",
+          "test": "★ 文の頭の `{` は括る —— 括らないと TypeScript はブロックと読み、検めた呼び出しが無くなる (threat: T-276)"
+        }
+      ]
     }
   ],
   "huntBacklog": [

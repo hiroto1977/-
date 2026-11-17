@@ -3341,6 +3341,54 @@
           "replace": "      const at = peek();\n      const name = ident();\n      if (isW('extends')) fail(peek(), '型引数に制約"
         }
       ]
+    },
+    {
+      "id": "A-652",
+      "threat": "T-276",
+      "file": "src/shared/mamori/parser.ts",
+      "why": "型の語の後ろの `.名前` / `<型>` を断らない —— `f<string<number>>(x)` を Mamori だけが型引数つきの呼び出しと読む",
+      "edits": [
+        {
+          "find": "        if (TYPE_KEYWORDS.has(head) && (isPunctAt('.') || isPunctAt('<'))) bad(",
+          "replace": "        if ((false as boolean) && TYPE_KEYWORDS.has(head) && (isPunctAt('.') || isPunctAt('<'))) bad("
+        }
+      ]
+    },
+    {
+      "id": "A-653",
+      "threat": "T-276",
+      "file": "src/shared/mamori/parser.ts",
+      "why": "型の頭の名前に予約語と `infer` / `unique` を受ける —— `f<infer.x>(a)` の `infer.x` が検めを受けずに式として走る",
+      "edits": [
+        {
+          "find": "      if (TYPE_HEAD_REFUSED.has(word)) bad(",
+          "replace": "      if ((false as boolean) && TYPE_HEAD_REFUSED.has(word)) bad("
+        }
+      ]
+    },
+    {
+      "id": "A-654",
+      "threat": "T-276",
+      "file": "src/shared/mamori/emit.ts",
+      "why": "数の字面のメンバを括らずに出す —— `1.e3` を TypeScript が指数つきの数と読む",
+      "edits": [
+        {
+          "find": "      return `${e.object.kind === 'number' ? `(${e.object.raw})` : wrap(e.object, 9)}${e.optional ? '?.' : '.'}${e.prop}`;",
+          "replace": "      return `${wrap(e.object, 9)}${e.optional ? '?.' : '.'}${e.prop}`;"
+        }
+      ]
+    },
+    {
+      "id": "A-655",
+      "threat": "T-276",
+      "file": "src/shared/mamori/emit.ts",
+      "why": "文の頭の `{` を括らずに出す —— TypeScript がブロックと読み、検めた呼び出しが無くなる",
+      "edits": [
+        {
+          "find": "  return text.startsWith('{') ? `(${text})` : text;",
+          "replace": "  return text;"
+        }
+      ]
     }
   ]
 }

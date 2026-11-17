@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.38"
+    "version": "0.39"
   },
   "constructs": {
     "class": {
@@ -4710,6 +4710,64 @@
       "report": {
         "pr": 917,
         "summary": "言語の穴探しの周。名前の隠し・組み込みの隠し・印の const・口の本文・道の綴り・注記と文字列の逃がし・関門の戻り値・共有の入れ物の中身 (約 310 形) はほぼ全部断られた。破れたのは「検めた物と走る物は同じ」—— 構文の段は式の true / false / null / undefined を字面として読むのに、名前の位置ではどの語でも受けた。undefined は JavaScript の予約語ではないので、`const undefined = JSON.parse(x); return undefined;` が Mamori と tsc (strict) を通り、関門から mint を通らない値が印の型で出た (T-275)。0.38: 名前を読む口が字面の 4 語を断り、型・import の名前を読む口が型の 9 語を断る (後者は 0.37 まで tsc の 1 層だけが断っていた)。実物の 46 本は書き換えなし・生成物は不変。穴の開け直し 4 件は名指しの回帰検査が捕まえた。測る足場の欠陥 (tsc は構文の誤りが在ると型の検査を全体で飛ばす) も直した。"
+      }
+    },
+    {
+      "id": "MG-077",
+      "date": "2026-11-17",
+      "kind": "probe",
+      "target": "language",
+      "pickedBy": "brief",
+      "briefPick": "probe:language",
+      "version": "0.39",
+      "features": [],
+      "added": [],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "式の値の往復 24,000 本 (種つき): 全部括った式と括弧なしの鎖を、検めた木の値と生成物の値で比べる (2 項 20 種・単項 4 種・条件式・呼び出し・矢印関数)",
+          "result": "refused"
+        },
+        {
+          "tried": "名前の影 28 形 (関門と同じ名前を分割代入・async の 1 引数の arrow・既定値・for・catch・switch の中の const・直下の同名の物で作る)・印を受ける関数を値として持ち出す 10 形・let の書き換えと条件式 20 形",
+          "result": "refused"
+        },
+        {
+          "tried": "木の形の突き合わせ 約 14 万本 (種つき): 式・文・型の綴りを作り、受け入れた物の Mamori の木と生成物を TypeScript が読んだ木を S 式で比べる (数・文字列・正規表現の綴り・型引数・new・添字・分割代入・switch・try)",
+          "result": "refused"
+        },
+        {
+          "tried": "型引数の綴りに TypeScript が型として読めない語の並び: `f<string<number>>(a)`・`f<null.x>(a)`・`f<infer.x>(a)` —— Mamori は型引数つきの呼び出し、TypeScript は比べの並びと読む",
+          "result": "hole"
+        },
+        {
+          "tried": "数の字面のメンバ `1.e3` (`1 .e3` / `(1).e3` と書いても変換が詰めて出す) —— Mamori は数 1 の欄、TypeScript は指数つきの数 1000 と読む",
+          "result": "hole"
+        },
+        {
+          "tried": "文の頭のオブジェクトの字面 `({ k: x })(y);` —— 変換が括弧を落とし、TypeScript はブロックと式の文に読む (検めた呼び出しが木から無くなる)",
+          "result": "hole"
+        },
+        {
+          "tried": "直した後のコンパイラへ当て直す: 木の形の突き合わせ (種 2 つ × 8,000 本・型引数に絞った 30,000 本) は食い違い 0・型の語 14 語 × `.名前` / `<型>`・型の頭の予約語と infer / unique 42 語・対照 (単独の型の語・`.` の後ろの名前)",
+          "result": "refused"
+        }
+      ],
+      "threats": [
+        "T-276"
+      ],
+      "controls": 4,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts",
+          "src/shared/mamori/emit.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 917,
+        "summary": "言語の穴探しの周。手で書く標本ではなく、種つきで作った式・文・型の綴りを 0.38 のコンパイラへ当て、検めた木と生成物を TypeScript が読んだ木を比べた (式の値の往復 24,000 本は食い違い 0・木の形の突き合わせ 約 14 万本)。構文の誤りで止まらずに別の木になる形が 3 つ出た (T-276): 型引数に TypeScript が型として読めない語の並び (型の語 + `<型>`・`null` / `true` / `false` / `this` + `.名前`・頭の `infer` / `super`) を書くと Mamori だけが呼び出しと読む・数の字面のメンバ `1.e3` を TypeScript は指数つきの数と読む・文の頭のオブジェクトの字面を TypeScript はブロックと読む。0.39: 型の語は単独の型としてだけ書け、予約語と infer / unique は型の頭に置けない (型引数の位置で型として読めなければ Mamori も比べの並びと読む)。数の字面のメンバと文の頭の `{` は括って出す。木の形の突き合わせはメンバ・数の字面・オブジェクトの字面も数える。実物の 46 本は書き換えなし・生成物は不変。穴の開け直し 4 件は名指しの回帰検査が捕まえた。印の無い値が危ない口へ届く形は確かめていない (周の途中で自動の安全確認が応答を 1 度止め、利用者の選択で直す側だけを進めた)。"
       }
     }
   ]
