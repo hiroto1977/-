@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.41"
+    "version": "0.42"
   },
   "constructs": {
     "class": {
@@ -4934,6 +4934,49 @@
       "report": {
         "pr": 932,
         "summary": "直す側だけの周 (穴探しは止めたまま)。MG-078 が「断るかは決めていない」と残した形を閉じた: Mamori 自身の語 12 語を束縛・宣言の名前に置く形 (`const mint = 1;`) を構文の段 (M0) で断る。その名前は式の位置では読めない (構文の段が断る) ので、束縛しても値を取り出せず、読み手に「この名前は使える」と思わせるだけだった。0.41 の不変条件は「式の位置で読めない語は、束縛の名前にもできない」で、語の表は足さず式の位置の断りと同じ表 (RESERVED) を引く。メンバ・鍵・型の中の引数の名前は今までどおり書ける。穴ではないので脅威台帳には載せていない。実物の 46 本は書き換えなし・生成物は不変 (既存の検査の標本 1 つは関数の名前を替えた)。対照 3 方向 (断りを外す・省略形を素通しにする・順序を入れ替える) は狙った検査を落とした。変えた行の変異検査は 100% (Killed 4)。型の中の引数の名前は束縛の名前の検めを通らない (REMAINING_WORK に記録)。"
+      }
+    },
+    {
+      "id": "MG-082",
+      "date": "2026-11-17",
+      "kind": "probe",
+      "target": "language",
+      "pickedBy": "brief",
+      "briefPick": "probe:language",
+      "version": "0.42",
+      "features": [],
+      "added": [],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "JavaScript の予約語と `arguments` の 43 語 (`this` を除く) を、関数の型の引数の名前に置く —— 型の別名・省略できる引数・2 つ目の引数・関数の引数の型・interface の欄・関数の型の中の関数の型・関数の型の戻りの 7 か所。0.41 は受け取り、生成物を tsc が断っていた。0.42 は構文の段で断る",
+          "result": "refused"
+        },
+        {
+          "tried": "`this` を関数の型の 2 つ目以降の引数に置く (`(a: number, this: number) => void`)・先頭と 2 つ目の両方に置く —— TypeScript が断る形。0.42 は構文の段で断る",
+          "result": "refused"
+        },
+        {
+          "tried": "`this?` (省略できる `this` 引数) を関数の型に置く —— TypeScript が断る形。0.42 は構文の段で断る",
+          "result": "refused"
+        },
+        {
+          "tried": "対照: 先頭の `this` 引数 (`(this: number, a: string) => void`)・Mamori 自身の語 12 語と普通の名前を 7 か所の引数の名前に・物の型の欄の名前の予約語 (`{ readonly return: number }`)・括弧で囲んだ型 —— 今までどおり受け取り、生成物へそのまま写る (TypeScript の診断も 0 件)",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 7,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/parser.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 932,
+        "summary": "直す側だけの周 (穴探しは止めたまま)。MG-081 が残した 1 つ目を閉じた: 型の綴りの中の引数の名前 (`(return: number) => void`) に JavaScript の予約語を書く形を構文の段 (M0) で断る。0.41 までは受け取り、生成物を tsc が断っていた (守りが tsc の 1 層)。語の表は足さず値の束縛と同じ表 (BINDING_REFUSED) を引く。`this` は TypeScript の this 引数の注釈なので先頭の引数に限って書ける (2 つ目以降と `this?` は断る)。Mamori 自身の語と欄の名前は今までどおり。どの決まりも TypeScript の答えと同じであることを同じ検査の中で TypeScript に訊いて確かめた (43 語は TypeScript も断る・先頭の this と Mamori の語は診断 0 件)。穴ではないので脅威台帳には載せていない。実物の 46 本は書き換えなし・生成物は不変。対照 7 方向は狙った検査を落とした。変えた行の変異検査は 100% (Killed 10 + Timeout 1)。同じ名前の引数を 2 つ書く形は断っていない (tsc が断る · REMAINING_WORK に記録)。"
       }
     }
   ]
