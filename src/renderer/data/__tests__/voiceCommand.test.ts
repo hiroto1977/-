@@ -1064,3 +1064,26 @@ describe('outsideQuotes — 線形 (threat: T-094)', () => {
     expect(out.endsWith(' #g に送って')).toBe(true);
   });
 });
+
+describe('VRIO 分析の別名 (2026-11-17)', () => {
+  /*
+   * 最初の版は別名がひらがなだけ (「じんじひょうか」) で、漢字で打った「人事評価を開いて」が
+   * `unknown` になった (実測)。正規化はカタカナをひらがなへ寄せるが、漢字は読みへ直さない ——
+   * 漢字で言う・打つ語は漢字の別名が要る (`talent` の「人材育成」と同じ形)。
+   */
+  it.each(['VRIOを開いて', 'VRIO 分析を開いて', 'ブリオ分析を開いて', 'ぶりおを開いて', '人事評価を開いて', '企画評価を開いて'])(
+    '★ 「%s」は VRIO 分析を開く',
+    (utterance) => {
+      const intent = parseVoiceCommand(utterance);
+      expect(intent.kind).toBe('navigate');
+      expect(intent.kind === 'navigate' ? intent.serviceId : null).toBe('vrio');
+    },
+  );
+
+  it('対照: 人材育成・専属カウンセラーの別名は横取りしない', () => {
+    const talent = parseVoiceCommand('人材育成を開いて');
+    expect(talent.kind === 'navigate' ? talent.serviceId : null).toBe('talent');
+    const mentor = parseVoiceCommand('専属カウンセラーを開いて');
+    expect(mentor.kind === 'navigate' ? mentor.serviceId : null).toBe('mentor');
+  });
+});
