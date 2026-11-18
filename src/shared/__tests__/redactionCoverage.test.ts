@@ -337,7 +337,7 @@ describe('伏字の網羅 — 母集団は「預かっているサービス」(�
     readonly sample: string;
   }
 
-  // 預かる 23 サービスすべてに 1 行。**足りなければ下の突き合わせが鳴る。**
+  // 預かる 24 サービスすべてに 1 行。**足りなければ下の突き合わせが鳴る。**
   const HELD_FORMATS: readonly Held[] = [
     { service: 'github', issuer: 'GitHub 細粒度 PAT', carrier: 'prefix', sample: `github_pat_${FILL}_${FILL}${FILL}` },
     { service: 'notion', issuer: 'Notion 内部連携 (新)', carrier: 'prefix', sample: `ntn_${FILL}${FILL}` },
@@ -360,6 +360,10 @@ describe('伏字の網羅 — 母集団は「預かっているサービス」(�
     { service: 'teamradar', issuer: 'Anthropic API キー', carrier: 'prefix', sample: `sk-ant-api03-${FILL}` },
     // Stripe の制限付きキー (2026-11-18 · 取得が鍵を読むようになった)。`rk_live_` / `sk_live_` は接頭辞で伏せられる。
     { service: 'stripe', issuer: 'Stripe 制限付きキー (rk_live_)', carrier: 'prefix', sample: `rk_live_${FILL}` },
+    // Asana の個人アクセストークン (2026-11-18 · 取得が鍵を読むようになった)。伏字が知るのは旧い形
+    // `1/<gid>:<32 桁の 16 進>` だけ (標本は実行時に組み立てる —— 連続した文字列で置くと push 保護が止める)。
+    // 新しい形 (`2/…`) は裸では伏せられない —— 脅威台帳の「裸のトークンの伏字の網」に記録が在る。
+    { service: 'asana', issuer: 'Asana 個人アクセストークン (1/<gid>:<hex>)', carrier: 'prefix', sample: ['1/', '1201234567890123', ':', '0123456789abcdef'.repeat(2)].join('') },
     // Cursor の Admin API キーは `key_` + 16 進 (types.test.ts が Cursor 風の
     // TOKEN に使っている形)。発行元が分かる接頭辞を持つので裸でも伏せられる
     // (パス 516 · T-021 —— それまで `header-only` に `'H'.repeat(40)` という
@@ -399,7 +403,7 @@ describe('伏字の網羅 — 母集団は「預かっているサービス」(�
    * `shpat_` / `shpss_` は上の `PREFIXED` が母集団に依らず留めており、
    * 既に保存した人の値や第三者が本文に反射した値には今日も掛かる。
    */
-  it('★ 預かる 23 サービスすべてに行が在り、余計な行が無い', () => {
+  it('★ 預かる 24 サービスすべてに行が在り、余計な行が無い', () => {
     const listed = HELD_FORMATS.map((f) => f.service);
     expect([...listed].sort()).toEqual([...HELD_SERVICES].sort());
   });

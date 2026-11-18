@@ -141,6 +141,7 @@
     },
     "src/renderer/network/liveRead.mamori": {
       "externals": [
+        "pure ../../shared/api/asana: fetchAsanaSnapshotWith",
         "pure ../../shared/api/cursor: fetchCursorSnapshotWith, DEFAULT_USAGE_DAYS",
         "pure ../../shared/api/stripe: fetchStripeSnapshotWith",
         "pure ../../shared/lookup: lookup"

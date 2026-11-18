@@ -233,11 +233,12 @@ describe('LIVE_READERS — 読み直して static 変異体を届かせる', () 
     return rereadModule<typeof import('../liveRead')>(import.meta.url, '../liveRead');
   };
 
-  it('★ 表に載っているのは cursor と stripe だけ (増減に気付く)', async () => {
+  it('★ 表に載っているのは cursor と stripe と asana だけ (増減に気付く)', async () => {
     const m = await fresh();
-    expect(Object.keys(m.LIVE_READERS)).toEqual(['cursor', 'stripe']);
+    expect(Object.keys(m.LIVE_READERS)).toEqual(['cursor', 'stripe', 'asana']);
     expect(m.canLiveRead('cursor')).toBe(true);
     expect(m.canLiveRead('stripe')).toBe(true);
+    expect(m.canLiveRead('asana')).toBe(true);
     expect(m.canLiveRead('github')).toBe(false);
   });
 
@@ -276,6 +277,51 @@ describe('LIVE_READERS — 読み直して static 変異体を届かせる', () 
     const m = await fresh();
     const getProxyJsonFetch = vi.fn(() => Promise.reject(new Error('呼ばれてはいけない')));
     const res = await m.liveRead('stripe', { readCredential: () => Promise.resolve(null), getProxyJsonFetch, now: () => 0 });
+    expect(res).toMatchObject({ ok: false, code: 'not_configured' });
+    expect(getProxyJsonFetch).not.toHaveBeenCalled();
+  });
+
+  /*
+   * Asana (2026-11-18): 読み取りは shared の `fetchAsanaSnapshotWith` を通り、プロキシ経由の
+   * 通信手段と保管庫の鍵が**そのまま**届く (送り先は app.asana.com の 2 つだけ)。
+   */
+  it('★ asana の read が、渡した通信手段と鍵で利用者とタスクを読む', async () => {
+    const m = await fresh();
+    const jsonFetch = vi
+      .fn<(url: string, init: RequestInit) => Promise<unknown>>()
+      .mockResolvedValueOnce({ data: { name: '山田', workspaces: [{ gid: '42', name: '本社' }] } })
+      .mockResolvedValueOnce({ data: [{ gid: '100', name: '見積もりを送る', due_on: '2026-11-20' }] });
+    const res = await m.liveRead('asana', {
+      readCredential: () => Promise.resolve('pat-example'),
+      getProxyJsonFetch: () => Promise.resolve(jsonFetch),
+      now: () => 0,
+    });
+    expect(res).toEqual({
+      ok: true,
+      data: {
+        userName: '山田',
+        workspaceName: '本社',
+        workspaceCount: 1,
+        tasks: [{ id: '100', name: '見積もりを送る', dueOn: '2026-11-20', dueRead: true }],
+        meRead: true,
+        tasksAsked: true,
+        tasksRead: true,
+        more: false,
+      },
+    });
+    expect(jsonFetch.mock.calls).toEqual([
+      ['https://app.asana.com/api/1.0/users/me?opt_fields=name,workspaces.name', { headers: { Authorization: 'Bearer pat-example' } }],
+      [
+        'https://app.asana.com/api/1.0/tasks?assignee=me&workspace=42&completed_since=now&limit=20&opt_fields=name,due_on',
+        { headers: { Authorization: 'Bearer pat-example' } },
+      ],
+    ]);
+  });
+
+  it('asana: 鍵が無ければ通信手段を取りに行かず「未登録」と答える', async () => {
+    const m = await fresh();
+    const getProxyJsonFetch = vi.fn(() => Promise.reject(new Error('呼ばれてはいけない')));
+    const res = await m.liveRead('asana', { readCredential: () => Promise.resolve(null), getProxyJsonFetch, now: () => 0 });
     expect(res).toMatchObject({ ok: false, code: 'not_configured' });
     expect(getProxyJsonFetch).not.toHaveBeenCalled();
   });

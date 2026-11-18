@@ -56,7 +56,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `ai-blogkun` | integrations | sample | none | ✅ |  |  | — | — | — |
 | `amazon` | integrations | sample | none | ✅ |  |  | — | — | — |
 | `amazon-associates` | integrations | sample | none | ✅ |  |  | — | — | — |
-| `asana` | integrations | sample | none |  |  |  | — | — | — |
+| `asana` | integrations | remote | fetch |  |  |  | — | — | — |
 | `assistant` | featured | local | action | ✅ |  |  | `chat` `chatAll` `providers` | `chat` `chatAll` `providers` | — |
 | `atlassian` | integrations | remote | fetch |  | ✅ |  | `create-issue` | `create-issue` | — |
 | `base` | integrations | remote | fetch |  |  |  | — | — | — |
@@ -134,8 +134,8 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 集計:
 
 - 配置: おすすめ 12 / 士業連携 8 / 分析・ツール 24 / 外部サービス連携 33 / 消費されるだけ 2
-- 出所: remote 16 / local 19 / sample 44
-- 資格情報の読み手 — fetch 16 / action 7 / none 56
+- 出所: remote 17 / local 19 / sample 43
+- 資格情報の読み手 — fetch 17 / action 7 / none 55
 - LOCAL_SERVICES 56 / OAuth 10 / action を持つ 27 / デスクトップだけの action 10
 
 ## 4. facet の公理と例外

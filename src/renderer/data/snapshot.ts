@@ -17,6 +17,7 @@ import { MIN_SAFE_VERSION } from '../../shared/ollama';
 import { NO_DEAL_INTAKE } from '../../shared/freeeIntake';
 import type { CursorSnapshot } from '../../shared/api/cursor';
 import type { StripeSnapshot } from '../../shared/api/stripe';
+import type { AsanaSnapshot } from '../../shared/api/asana';
 import { buildHydroponicsSnapshot } from '../../shared/hydroponicsControl';
 import { buildMentorSnapshot } from '../../shared/mentor';
 import { buildGrokSnapshot } from '../../shared/grokSnapshot';
@@ -615,14 +616,22 @@ export const SNAPSHOT = {
     count: 3,
   },
 
+  // 見本 (鍵を登録するまでの表示)。形は実物 (`shared/api/asana.ts` の `AsanaSnapshot`) と同じ 1 つ ——
+  // 画面の型はこの見本から推論されるので、`as AsanaSnapshot` で実物と同じ幅にする (パス 410)。
   asana: {
-    items: [
-      { id: 't-1', name: '✅ Phase 6: Live API 接続 — 進捗 40% (12/30 完了)' },
-      { id: 't-2', name: '🚧 Q3 OKR 設定 — 期限 7 日後 / 担当 5 名' },
-      { id: 't-3', name: '⏳ ユーザーインタビュー × 8 — 5 件実施済' },
-    ] as { id: string; name: string }[],
-    count: 3,
-  },
+    userName: '見本の利用者',
+    workspaceName: '見本のワークスペース',
+    workspaceCount: 1,
+    tasks: [
+      { id: '1', name: '見本: 四半期の目標を決める', dueOn: '2026-11-25', dueRead: true },
+      { id: '2', name: '見本: 利用者インタビューの日程を調整する', dueOn: null, dueRead: true },
+      { id: '3', name: '見本: 請求書のひな形を見直す', dueOn: '2026-12-01', dueRead: true },
+    ],
+    meRead: true as boolean,
+    tasksAsked: true as boolean,
+    tasksRead: true as boolean,
+    more: false as boolean,
+  } as AsanaSnapshot,
 
   linear: {
     items: [

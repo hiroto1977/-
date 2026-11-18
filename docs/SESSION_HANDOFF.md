@@ -7,6 +7,34 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-11-18 · 続き) — Asana を実データへつないだ (読み取り専用)
+
+- 利用者の依頼: 「続けて」(接続はおまかせの 2 つ目)。Stripe と同じ形で Asana を選んだ (1 サービス 1 PR)。
+- **Asana**: 利用者とワークスペース (`GET /users/me?opt_fields=name,workspaces.name`) と、1 つ目のワークスペースの**自分の担当の未完了タスク 20 件まで**
+  (`GET /tasks?assignee=me&workspace=<gid>&completed_since=now&limit=20&opt_fields=name,due_on`) を読む。**書き込みは 1 つも持たない**。メールアドレスは照会しない。
+  判定と正規化は `src/shared/api/asana.ts` に 1 つ。デスクトップ版は `main/clients/asana.ts`、ブラウザ版は `liveRead.mamori` の `LIVE_READERS` に 1 行 (プロキシ経由)。画面は `AsanaPage.tsx`。
+  - 2 つ目の照会は 1 つ目の答え (ワークスペースの gid) で決まる。gid は**数字だけ**を確かめ (`asanaGid`)、符号化して URL へ入れる。読めるワークスペースが無ければタスクは照会しない。
+  - 期限は「日付」「期限なし」「期限が読めません」を言い分ける。一覧が読めなかったときは「0 件」と混ぜずに ⚠ で述べる。
+  - 見ていない範囲 (2 つ目以降のワークスペース・21 件目以降) が在れば画面が述べる (`asanaScopeNote`)。
+  - 鍵 (個人アクセストークン) は権限を広く持つと画面が述べる。ブラウザ版だけ、プロキシの登録と許可リスト (app.asana.com) を押す前に述べる。
+  - 宣言: `SERVICE_DATA_ORIGIN.asana` sample → remote (remote 17 / sample 43)・`SERVICE_CREDENTIAL_USE.asana` none → fetch (fetch 17 / none 55)・`CLOUD_PROVIDERS` に行。
+- **宛先の走査の死角を 1 つ塞いだ** (Asana を足して分かった): 共有のアダプタが送信の行で URL の定数だけを名乗ると、`verify:arch` の宛先の走査に映らない。
+  Stripe は `main/clients/shopify.ts` が同じホストを持っていたので隠れていた。Stripe も Asana も**送信の行で基底の定数を名乗る**形 (`${X_API_BASE}${X_PATH}`) へ直し、
+  `egressMatrixReverse.test.ts` に「共有の読み取りアダプタの宛先は、そのファイル自身から映る」を足した (対照: 基底を送信の行から外すと 0 件・宛先を書き換えると別のホストが映る)。
+  次のサービスも同じ形で書くこと。
+- 検証: `shared/api/__tests__/asana.test.ts` 64 件・`main/clients/__tests__/asana.test.ts` 5 件・`pages/__tests__/asanaPage.test.ts` 10 件 (jsdom)・`liveRead.test.ts` +2・
+  `thirdPartyScreenCeiling` に 1 行。変異検査: `asana.ts` **100.00% (142 killed)** —— 1 回目 99.32% (`objectField` の `v !== null` が等価 —— `typeof null` は `'object'` で
+  そのまま返せば `null` になるので枝ごと消した)・`stripe.ts` **100.00% (169 killed)** (送信の行を直した後)。`mutate` 362 → 363。
+- 締め (実測): `npm test` **1301 ファイル / 28,338 件 ❌ 0**・`audit:verify-keep-going` **39 / 39** (1 回目は verify:arch と chain:verify・全件テストで台帳 3 本が名指しした ——
+  宛先の走査・通信する fetcher の台帳・Mamori の能力の台帳の並び)・`chain:verify` 緑 (block #520 / #521)。
+  両ビルドは **12,247,526 B / 3,660,163 B (両方 +4,208 B)** (md5 `bb1d5dbe…` / `6a6a1f08…`)。LITE はハード上限 (4,000,000 B) まで 339,837 B。
+  実機: `perf` OK (LITE DCL 250 ms / heap 8.1 MB・FULL DCL 576 ms / heap 30.3 MB)・`e2e` **723 件 ❌ 0**・`e2e:lite` **723 件 ❌ 0**。
+  `smoke:app` / `e2e:ollama` は回していない (主プロセスの起動経路も Ollama の経路も触っていない)。
+- **本物の Asana には 1 度もつないでいない** —— 開発環境から `app.asana.com` へ届かない。確かめたのは、公開の API 仕様の形に合わせた応答を実物の client に食わせる所まで。
+- ★ **PR #942 (Stripe) の squash の本文に、wip コミットの `[skip ci]` が入っていた** —— `merge_pull_request` に `commit_message` を渡さなかったので、既定の本文
+  (コミットの一覧) がそのまま使われ、main への push で **ci も pages も走らなかった** (実測: main の最新の pages の実行は #941 のまま)。公開サイトは Stripe の変更をまだ含まない。
+  **次に取り込むときは `commit_message` を必ず渡す** (`[skip ci]` を含まない本文)。この PR を取り込めば、main の検査と公開が Stripe の分ごと走る。
+
 ## 直近の作業 (2026-11-18) — Stripe を実データへつないだ (読み取り専用) ・ メール検疫の見張り番を作り直した
 
 - 利用者の依頼: 「見張り番を直して、接続はおまかせ」。完成度の確認で出した穴 1 (見本だけのサービス 24 個) の 1 つ目として Stripe を選んだ (1 サービス 1 PR)。

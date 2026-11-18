@@ -24,6 +24,27 @@
   ★ 差出人の読みは振る舞いを 1 つ強くした: `表示名 <アドレス>` の後ろに字が続く形・前に別の `<…>` が在る形でも、最後の `<アドレス>` と表示名を比べる (以前は比べずに通していた)。
   2 度目 **99.76% (生存 1 —— 件名と本文のつなぎ目)** → 標本を足して 3 度目に `inboundWatch.ts` を単独で測り直し、3 本とも `mutate` へ入れた (357 → 360)。
 
+## Asana の実データ接続で測って残した物 (2026-11-18)
+
+- **本物の Asana との往復は未確認**: 開発環境から `app.asana.com` へ届かない。応答の形は公開の API 仕様に合わせた標本で、実物の応答では確かめていない。
+  利用者が個人アクセストークンを登録して「更新」を押した最初の回が、初めての実測になる。
+- **ブラウザ版はプロキシ経由だけ**: Asana がブラウザ発の CORS を許すかを確かめられなかったので、直接つなぐ分岐は足していない。
+  利用者のプロキシの許可リスト `UPSTREAM_ALLOWLIST` に `app.asana.com` を足す必要がある (`docs/PROXY_EXAMPLE.md` の既定の一覧には無い)。
+- **鍵は読み取り専用にできない**: Asana の個人アクセストークンは利用者の権限を広く持つ。画面はそう述べ、このアプリが送るのは 2 つの照会だけだと述べる。
+  伏字の網が知るのは旧い形 (`1/<gid>:<32 桁の 16 進>`) だけで、新しい形 (`2/…`) は裸では伏せられない (脅威台帳の「裸のトークンの伏字の網」)。
+  ヘッダ名や項目名が付いた形 (`Authorization: Bearer …`) では伏せられる。
+- **読むのは 1 つ目のワークスペースの、自分の担当の未完了タスク 20 件まで**: 2 つ目以降のワークスペース・21 件目以降・プロジェクト・完了済み・
+  他人の担当は読まない。見ていない範囲が在るときは画面が述べる (`asanaScopeNote`)。ワークスペースを選ぶ口は無い。
+- **並び順は Asana が返した順のまま**: 期限の近い順には並べ替えていない。期限切れの印も出さない (今日の日付との比較を足していない)。
+- **時刻つきの期限 (`due_at`) は読まない**: 日付 (`due_on`) だけを読む。
+- **実機の専用 suite は無い**: 画面は jsdom の 10 件と、全画面の走査 (contrast / controls / opened) が見る。
+- **宛先の走査の死角を 1 つ塞いだ**: Stripe を足したとき、共有のアダプタは送信の行で URL の定数 (`…_URL`) だけを名乗っており、
+  基底の定数が送信文脈に現れなかった (`api.stripe.com` が台帳に見つかっていたのは `main/clients/shopify.ts` が同じホストを持っていたため)。
+  Asana を足して「表に在るのに走査で見つからない」と鳴って分かった。両方とも送信の行で基底を名乗る形へ直し、
+  `egressMatrixReverse.test.ts` に「共有の読み取りアダプタの宛先は、そのファイル自身から映る」を足した。
+  **関数が返した URL (`const url = buildUrl(x); jsonFetch(url)`) は今も走査に映らない** —— 送信の行に基底の定数か字面が要る。
+- **次に実データへつなぐ候補**: Linear / Sentry / Dropbox / Shopify / LINE / Discord。1 サービス 1 PR。
+
 ## Stripe の実データ接続で測って残した物 (2026-11-18)
 
 - **本物の Stripe との往復は未確認**: 開発環境から `api.stripe.com` へ届かない。応答の形は公開の API 仕様に合わせた標本で、実物の応答では確かめていない。
@@ -34,7 +55,7 @@
 - **返金は「全額返金済み」の印 (`refunded: true`) だけを見る**: 一部返金 (`amount_refunded`) は「成功」と出る。
 - **残高の内訳 (カード / 銀行振込ほかの `source_types`) は出さない**。同じ通貨が 2 行来たら最初の 1 行だけを使う (Stripe は通貨ごとに 1 行を返す)。
 - **実機の専用 suite は無い**: 画面は jsdom の 9 件と、全画面の走査 (contrast / controls / opened) が見る。
-- **次に実データへつなぐ候補** (公開の token API を持つ見本だけのサービス): Shopify / LINE / Dropbox / Asana / Linear / Sentry / Discord。1 サービス 1 PR。
+- **次に実データへつなぐ候補** (公開の token API を持つ見本だけのサービス): Shopify / LINE / Dropbox / Linear / Sentry / Discord (Asana は同日につないだ —— 上の節)。1 サービス 1 PR。
 
 ## VRIO 分析の画面 (アプリへの組み込み) で測って残した物 (2026-11-17)
 
@@ -32730,7 +32751,7 @@ src/shared/ のモジュール                                        138
 「読んだ結果」か `未読 (…)` のどちらかで、読んでいない物に「対称だろう」とは書かない。
 
 <!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/shared-judgement-census.cjs。npm run lint:shared-judgement は check だけ) -->
-shared **187** モジュール / 両ビルドが import **101** / うち否定で答えられる **50**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
+shared **188** モジュール / 両ビルドが import **102** / うち否定で答えられる **51**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
 
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |
@@ -32738,6 +32759,7 @@ shared **187** モジュール / 両ビルドが import **101** / うち否定�
 | `ai/credentials` | 1 | 3 | 対称 (実測・パス 529) —— 新しい `remoteEndpointHost` (保存した Ollama の URL が端末の外のホストなら そのホスト名、ループバック・未設定・読めない URL は null) の読み手は `providerStatuses` の中の 1 か所だけで、その `providerStatuses` を呼ぶのは main の assistant クライアントとブラウザ版 `web-shim.ts` の `assistant/providers` アクション。**同じ関数が同じ状態を返す**ので、「null のあとの動作」は 画面側 (`assistantEgressRecipients`) の 1 か所が決め、両ビルドで割れない。null は「この端末として扱う」と読む向きなので、判定不能 (読めない URL) を端末内と読む側に倒すが、読めない URL では接続先を組み立てられず送れないので、外へ出る道にはならない |
 | `ai/localGateway` | 3 | 1 | 対称ではない送り方がある (実測) —— 否定で答えるのは 2 つ。(1) `isLlmPurpose` の false。読むのは main の `assistant.ts` とブラウザ版 `web-shim.ts` の `callAssistantChat` だけで、どちらも知らない用途を `assistant` に倒してから `runLocalThenAnthropic` する。感情とスキルはこの述語に問わない。(2) `localGatewayIsLoopback` の false。問いを発するのはブラウザ版の `callAssistantChat` だけ (importer は main 3 / renderer 1)。false のあと、提供者を省略しているときは直接叩かず、`resolveProvider` とプロキシ経路へ残す。main はこの述語を呼ばず、提供者の省略時は URL が遠隔でも `runLocalThenAnthropic` で直接送る (main は任意の URL へ届く。ブラウザは鍵を載せて遠隔を直に叩かない)。同じ「提供者なし・遠隔の互換 URL」でも送り方が割れる。これは意図した分岐で、false のあとにブラウザが黙って直に fetch する道は無い。ローカルが失敗して Anthropic の鍵が空のとき `runLocalThenAnthropic` は同じ例外を投げる。main は IPC の catch、ブラウザ版は `err('action_failed', message)` で、伏字と長さの天井は `aiEndpoint` の判定と同じ運び方である |
 | `aiEndpoint` | 0 | 0 | 対称 (実測・パス 269) —— 直接の import は **両ビルドとも 0 件** (表の 0 / 0)。越境するのは shared を 2 段たどった先だけで、辿ると否定は 1 つに絞れる: `normalizeAiBaseUrl` の `{ok:false, reason}` を読むのは `ai/providers.ts` の `resolveBase` **だけ**で、そこは `buildRequest` の中に在り、両ビルドは `runAiChat` (main/clients/assistant.ts:44 / web-shim.ts:188) からそこへ入る。**投げたあとの動作が一致する**: main は `action:invoke` の catch が `{code:'action_failed', message: safeErrorMessage(err)}`、ブラウザ版は `err('action_failed', e.message)` で、その `err()` 自身が `redactForMessage(message, ERROR_MESSAGE_MAX_CHARS)` を掛ける —— **同じ関数・同じ天井**なので code も伏字も文面の長さも同じ (serviceAdvisor と同じ形)。 ★ ただし `chatAll` の**提供者ごと**の伏字だけは、2026-09-15 まで `redactForMessage(msg, 300)` という**字面がビルドごとに 1 つずつ**在った (パス 167/250/252 と同じ家系)。パス 269 で `MAX_ENSEMBLE_ERROR_CHARS` を `shared/assistantLimits.ts` に置き、両ビルドがその名を読むようにして `assistantTurnsParity.test.ts` に字面の再登場を禁じる門を足した。 もう 1 つの輸出 `isLoopbackHostname` は越境しない —— 唯一の読み手 `shared/proxyEndpoint.ts` の消費者が renderer だけ (network/proxy.ts / SettingsPage.tsx) である |
+| `api/asana` | 1 | 3 | 対称 (実測・2026-11-18) —— 両ビルドが同じ `fetchAsanaSnapshotWith` を呼び (main は clients/asana.ts、ブラウザ版は network/liveRead.ts)、否定を返す物 (`asanaDue` の dueOn → null と dueRead の false / `asanaIntakeNote` → null / `asanaScopeNote` → null / `meRead` `tasksAsked` `tasksRead` の false / `buildAsanaSnapshot` に渡す null = 照会しなかった) の**消費者はどれも AsanaPage 1 つだけ**で、その画面は両ビルドで同じ 1 本のソースである。読めなかった期限は「期限が読めません」・読めなかった一覧は ⚠ の 1 文で、どちらのビルドでも同じ文になる |
 | `api/cloudflare` | 1 | 1 | 対称 (実測・2026-09-19 パス 321) —— 欄の判定 (`checkDnsRecord` / `checkPurge`)・本文・URL・封筒 (`readCloudflareEnvelope`: `success !== true` を断る) を両ビルドが同じ関数で通る。それまで封筒の条件は main が falsy・ブラウザ版が `!== true` と違い、文も 「unknown Cloudflare error」/「unknown error」で割れていた (`CLOUDFLARE_UNKNOWN_ERROR` の 1 つへ)。断りの後は両ビルドとも投げる: main は serviceId つきの FetchError `cloudflare <message>`、ブラウザ版は Error `Cloudflare: <message>` —— 運び方 (例外の型) だけが流儀。main の読み (user / zones) も同じ封筒の判定と `CLOUDFLARE_API` を通る |
 | `api/cursor` | 1 | 3 | 対称 (実測・パス 250 / パス 263 で 1 → 3 に増えた) —— 両ビルドが同じ `fetchCursorSnapshotWith` を呼び (main は clients/cursor.ts、ブラウザ版は network/liveRead.ts)、否定を返す 3 つ (`acceptRateOf` → null / `buildCursorSnapshot` の totals 3 欄 → null / `cursorIntakeNote` → null) の**消費者はどれも CursorPage 1 つだけ**で、その画面は両ビルドで同じ 1 本の ソースである (renderer は 1 つ)。パス 263 で足した `readRows` の `read: false` は**このモジュールの外へ出ない** (`normalizeMembers` / `normalizeUsage` / `normalizeSpend` が `state` に畳んでから返す)。応答の上限も MAX_PROXY_RESPONSE_BYTES = MAX_HTTP_RESPONSE_BYTES で 1 つ |
 | `api/slack` | 1 | 1 | 対称 (実測・2026-09-18 オントロジーの組み直し) —— `readSlackPost` の `ok: false` (Slack は HTTP 200 でも失敗を返す) を両ビルドが**投げて**断る: main は FetchError `slack <error>`、ブラウザ版は Error `Slack: <error>`。運び方 (例外の型) だけが流儀で、条件と error の綴りは 1 つ。`ts` の無い ok:true は `requireString` が両ビルドで同じ文で投げる (main はそれまで '' に倒していた —— 揃えたときに要求する側へ)。消費者は main の sendMessage と saasWriteWeb の sendSlackMessage の 2 つだけ |

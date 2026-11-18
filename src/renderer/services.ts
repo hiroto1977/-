@@ -350,7 +350,7 @@ export const SERVICES: ServiceDefinition[] = [
     id: 'asana',
     label: 'Asana',
     icon: 'AS',
-    description: 'プロジェクト管理 — タスク / プロジェクト / 進捗 (snapshot)',
+    description: 'タスク管理 — 自分の担当の未完了タスク (読み取り専用・鍵を登録すると実データ)',
     page: AsanaPage,
     category: 'integrations',
   },

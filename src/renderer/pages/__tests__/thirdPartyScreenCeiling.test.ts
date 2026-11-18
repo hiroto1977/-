@@ -35,6 +35,8 @@ import path from 'node:path';
 import { act, createElement, type ComponentType } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { readOriginalDir, readOriginalSource } from '../../../shared/__tests__/originalSource';
+import { fetchAsanaSnapshot } from '../../../main/clients/asana';
+import { AsanaPage } from '../AsanaPage';
 import { fetchAtlassianSnapshot } from '../../../main/clients/atlassian';
 import { AtlassianPage } from '../AtlassianPage';
 import { fetchBaseSnapshot } from '../../../main/clients/base';
@@ -129,6 +131,17 @@ interface Sweep {
 }
 
 const SWEEPS: readonly Sweep[] = [
+  {
+    id: 'asana',
+    token: 't',
+    bodies: [
+      { data: { name: BIG, workspaces: [{ gid: '42', name: BIG }, { gid: '43', name: BIG }] } },
+      { data: [{ gid: '100', name: BIG, due_on: BIG }], next_page: { offset: BIG } },
+    ],
+    load: async (c) => fetchAsanaSnapshot(c as never),
+    page: async () => AsanaPage,
+    landed: 'xxxxxxxxxx',
+  },
   {
     id: 'atlassian',
     token: JSON.stringify({ email: 'a@b.c', token: 't', site: 'https://ex.atlassian.net' }),
@@ -294,6 +307,7 @@ const ROLE: Readonly<Record<string, string>> = {
   'notion.ts': 'swept-here',
   'slack.ts': 'swept-here',
   'stripe.ts': 'swept-here',
+  'asana.ts': 'swept-here',
   'wordpress.ts': 'swept-here',
   'cloudflare.ts': 'swept-elsewhere: thirdPartyFieldCeiling.test.ts → clients/cloudflare (パス 411)',
   'github.ts': 'swept-elsewhere: thirdPartyFieldCeiling.test.ts → clients/github (パス 411)',

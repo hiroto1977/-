@@ -70,7 +70,8 @@ export const SERVICE_DATA_ORIGIN: Record<ServiceId, DataOrigin> = {
   dropbox: 'sample',
   salesforce: 'sample',
   discord: 'sample',
-  asana: 'sample',
+  // 2026-11-18: 自分の担当の未完了タスクを Asana から読む (`shared/api/asana.ts`)。それまでは同梱の見本だった。
+  asana: 'remote',
   linear: 'sample',
   sentry: 'sample',
   shopify: 'sample',

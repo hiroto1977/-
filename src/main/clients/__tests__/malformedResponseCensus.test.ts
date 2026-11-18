@@ -63,7 +63,7 @@ const RAW_TYPE_ERROR = /Cannot read propert|is not a function|is not iterable|of
  * ここを直す** —— 直さないと census が何も駆動していない状態で緑になる。
  */
 const NETWORK_FETCHERS = [
-  'base', 'calendar', 'canva', 'cloudflare', 'cursor', 'drive', 'freee',
+  'asana', 'base', 'calendar', 'canva', 'cloudflare', 'cursor', 'drive', 'freee',
   'github', 'gmail', 'microsoft-365', 'notion', 'ollama', 'slack', 'stripe', 'wordpress',
 ] as const;
 
