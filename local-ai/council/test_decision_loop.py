@@ -326,12 +326,12 @@ class LoopTest(unittest.TestCase):
             self.assertEqual(on_rej, want_rej, topic)
             self.assertFalse(on_dec and on_rej, topic)
             self.assertEqual(state["exclusive"], not (on_dec and on_rej))
+        # index.html は機械室のランプで変わる。閉ループが触らないファイルだけを origin/main と突き合わせる。
         for rel in (
             "local-ai/council/locked_decisions.md",
             "local-ai/council/advice_guard.py",
             "local-ai/council/company_link.py",
             "local-ai/council/web/company.js",
-            "local-ai/council/web/index.html",
             "local-ai/start-all.sh",
         ):
             committed = subprocess.check_output(["git", "show", f"origin/main:{rel}"], cwd=REPO)
