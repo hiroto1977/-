@@ -4035,6 +4035,64 @@ async function hydroponicsSuite(browser) {
   );
   ok(true, 'hydroponics: ★ ロットを削除できる');
 
+  // 11. **養蜂** (2026-11-18) —— 同じ画面の上の切り替えから開く。産物は増やせて、減らせる。
+  await page.locator('[data-farm-view="beekeeping"]').click();
+  await page.waitForSelector('[data-bee-products] li', { timeout: 20000 });
+  ok((await page.locator('[data-bee-products] li').count()) === 3, 'hydroponics: 養蜂 — 参考の産物 3 件が出る');
+  ok(
+    (await page.locator('[data-bee-no-estimate]').count()) === 1 && (await page.locator('[data-bee-estimate]').count()) === 0,
+    'hydroponics: ★ 養蜂 — 保存するまで概算を出さない (置き値を結果に見せない)',
+  );
+  await page.locator('[data-farm-list-editor="産物"] summary').click();
+  await page.locator('input[aria-label="産物の名前"]').fill('E2Eローヤルゼリー');
+  await page.locator('input[aria-label="1 群あたりの年間採取量 (kg)"]').fill('0.2');
+  await page.locator('[data-farm-list-editor="産物"] input[aria-label="単価 (円/kg)"]').fill('50000');
+  await page.getByRole('button', { name: 'この産物を足す' }).click();
+  await page.waitForFunction(() => document.querySelectorAll('[data-bee-products] li').length === 4, undefined, { timeout: 20000 });
+  ok(true, 'hydroponics: ★ 養蜂 — 産物を足せる (3 → 4 件)');
+  await page.locator('[data-beekeeping-panel]').getByRole('button', { name: '保存して概算する' }).click();
+  await page.waitForSelector('[data-bee-estimate]', { timeout: 20000 });
+  ok(
+    (await page.locator('[data-bee-estimate-row]').count()) === 4,
+    'hydroponics: ★ 養蜂 — 保存すると概算が出て、足した産物も行に入る',
+  );
+  await page.getByRole('button', { name: 'E2Eローヤルゼリー を消す' }).click();
+  await page.waitForFunction(() => document.querySelectorAll('[data-bee-estimate-row]').length === 3, undefined, { timeout: 20000 });
+  ok(true, 'hydroponics: ★ 養蜂 — 産物を消すと概算の行からも消える');
+
+  // 12. **養殖 (海水魚・淡水魚)** —— 魚種は水の種類で分かれ、足した魚種で概算できる。
+  await page.locator('[data-farm-view="aquaculture"]').click();
+  await page.waitForSelector('[data-fish-water="sea"] li', { timeout: 20000 });
+  ok(
+    (await page.locator('[data-fish-water="sea"] li').count()) === 2 && (await page.locator('[data-fish-water="fresh"] li').count()) === 3,
+    'hydroponics: 養殖 — 参考の魚種が海水 2・淡水 3 に分かれて出る',
+  );
+  await page.locator('[data-farm-list-editor="魚種"] summary').click();
+  await page.locator('select[aria-label="足す魚種の水の種類"]').selectOption('sea');
+  await page.locator('input[aria-label="魚種の名前"]').fill('E2Eシマアジ');
+  for (const [label, v] of [
+    ['出荷までの日数 (日)', '540'],
+    ['出荷時の重さ (g/尾)', '1000'],
+    ['生残率 (%)', '80'],
+    ['増肉係数 (餌 kg ÷ 増重 kg)', '2.5'],
+    ['単価 (円/kg)', '1500'],
+    ['水温の目安 下限 (℃)', '18'],
+    ['水温の目安 上限 (℃)', '28'],
+  ]) {
+    await page.locator(`[data-farm-list-editor="魚種"] input[aria-label="${label}"]`).fill(v);
+  }
+  await page.getByRole('button', { name: 'この魚種を足す' }).click();
+  await page.waitForFunction(() => document.querySelectorAll('[data-fish-water="sea"] li').length === 3, undefined, { timeout: 20000 });
+  ok(true, 'hydroponics: ★ 養殖 — 海水魚を足せる (海水 2 → 3 件)');
+  await page.locator('select[aria-label="魚種"]').selectOption({ label: 'E2Eシマアジ' });
+  await page.locator('[data-aquaculture-panel]').getByRole('button', { name: '保存して概算する' }).click();
+  await page.waitForSelector('[data-fish-estimate]', { timeout: 20000 });
+  t = (await page.locator('[data-fish-estimate]').textContent()) ?? '';
+  ok(
+    t.includes('E2Eシマアジ') && (await page.locator('[data-fish-profit]').count()) === 1,
+    `hydroponics: ★ 養殖 — 足した魚種で概算が出る — 実際 "${t.replace(/\s+/g, ' ').slice(0, 70)}"`,
+  );
+
   const realErrs = errs.filter((e) => !/favicon|Autofocus/.test(e));
   ok(realErrs.length === 0, `hydroponics: コンソールエラー 0 件 (${realErrs.length})`);
   if (realErrs.length) console.log(realErrs.join('\n'));
@@ -5561,7 +5619,7 @@ function installWaitMarginRecorder(browser) {
     ['demoMix', demoMixSuite, 10],
     ['paperAccount', paperAccountSuite, 13],
     ['serviceAdvice', serviceAdviceSuite, 15],
-    ['hydroponics', hydroponicsSuite, 24],
+    ['hydroponics', hydroponicsSuite, 32],
     ['parameters', parameterSuite, 11],
     ['writeCeiling', writeCeilingSuite, 9],
     ['aiCeiling', aiCeilingSuite, 10],

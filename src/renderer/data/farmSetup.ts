@@ -22,6 +22,7 @@ import {
 } from '../../shared/aquaculture';
 import { farmListOrDefault, findFarmItem } from '../../shared/farmProductList';
 import { latestRecord } from './latestRecord';
+import { isFiniteNumber } from '../../shared/num';
 
 /** 養蜂の産物の一覧。 */
 export const BEE_PRODUCTS_COLLECTION = 'beekeeping-products';
@@ -79,7 +80,7 @@ export const BEE_PLAN_DEFAULTS: BeekeepingPlanRecord = {
 /** 欄 1 つを文字列へ。保存値が数でなければ置き値。 */
 function fieldText(saved: Readonly<Record<string, unknown>> | null, defaults: Readonly<Record<string, unknown>>, key: string): string {
   const v = saved === null ? undefined : saved[key];
-  return String(typeof v === 'number' && Number.isFinite(v) ? v : defaults[key]);
+  return String(isFiniteNumber(v) ? v : defaults[key]);
 }
 
 /** 保存値 → 入力欄。保存値が無ければ置き値から開く。 */
