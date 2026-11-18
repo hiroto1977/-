@@ -358,7 +358,7 @@ export const SERVICES: ServiceDefinition[] = [
     id: 'linear',
     label: 'Linear',
     icon: 'LN',
-    description: 'イシュー追跡 — issue / cycle / project (snapshot)',
+    description: '課題管理 — 自分の担当の未完了の課題 (読み取り専用・鍵を登録すると実データ)',
     page: LinearPage,
     category: 'integrations',
   },

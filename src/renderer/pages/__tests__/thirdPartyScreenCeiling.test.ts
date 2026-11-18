@@ -54,7 +54,9 @@ import { FreeePage } from '../FreeePage';
 import { fetchGmailSnapshot } from '../../../main/clients/gmail';
 import { GmailPage } from '../GmailPage';
 import { fetchLineSnapshot } from '../../../main/clients/line';
+import { fetchLinearSnapshot } from '../../../main/clients/linear';
 import { LinePage } from '../LinePage';
+import { LinearPage } from '../LinearPage';
 import { fetchNotionSnapshot } from '../../../main/clients/notion';
 import { NotionPage } from '../NotionPage';
 import { fetchSlackSnapshot } from '../../../main/clients/slack';
@@ -233,6 +235,26 @@ const SWEEPS: readonly Sweep[] = [
     landed: 'xxxxxxxxxx',
   },
   {
+    id: 'linear',
+    token: 't',
+    bodies: [
+      {
+        data: {
+          viewer: {
+            name: BIG,
+            assignedIssues: {
+              nodes: [{ identifier: BIG, title: BIG, priority: 2, dueDate: BIG, state: { name: BIG }, team: { name: BIG } }],
+              pageInfo: { hasNextPage: true },
+            },
+          },
+        },
+      },
+    ],
+    load: async (c) => fetchLinearSnapshot(c as never),
+    page: async () => LinearPage,
+    landed: 'xxxxxxxxxx',
+  },
+  {
     id: 'notion',
     token: 't',
     bodies: [{ results: [{ id: 'p1', object: BIG, url: 'https://x.example', last_edited_time: '2026-01-01T00:00:00Z', properties: { Name: { type: 'title', title: [{ plain_text: BIG }] } } }] }],
@@ -319,6 +341,7 @@ const ROLE: Readonly<Record<string, string>> = {
   'stripe.ts': 'swept-here',
   'asana.ts': 'swept-here',
   'line.ts': 'swept-here',
+  'linear.ts': 'swept-here',
   'wordpress.ts': 'swept-here',
   'cloudflare.ts': 'swept-elsewhere: thirdPartyFieldCeiling.test.ts → clients/cloudflare (パス 411)',
   'github.ts': 'swept-elsewhere: thirdPartyFieldCeiling.test.ts → clients/github (パス 411)',

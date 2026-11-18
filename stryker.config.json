@@ -249,6 +249,7 @@
     "src/shared/api/stripe.ts",
     "src/shared/api/asana.ts",
     "src/shared/api/line.ts",
+    "src/shared/api/linear.ts",
     "src/shared/api/github.ts",
     "src/shared/api/google.ts",
     "src/shared/api/http.ts",

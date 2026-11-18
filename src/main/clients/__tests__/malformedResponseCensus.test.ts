@@ -64,7 +64,7 @@ const RAW_TYPE_ERROR = /Cannot read propert|is not a function|is not iterable|of
  */
 const NETWORK_FETCHERS = [
   'asana', 'base', 'calendar', 'canva', 'cloudflare', 'cursor', 'drive', 'freee',
-  'github', 'gmail', 'line', 'microsoft-365', 'notion', 'ollama', 'slack', 'stripe', 'wordpress',
+  'github', 'gmail', 'line', 'linear', 'microsoft-365', 'notion', 'ollama', 'slack', 'stripe', 'wordpress',
 ] as const;
 
 /** 壊れた 200 を返す fetch。どの URL でも同じ本文。 */

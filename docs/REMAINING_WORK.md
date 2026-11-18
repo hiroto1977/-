@@ -39,6 +39,23 @@
   (`numericInputReaderCensus.test.ts`)。直した後も、既存のファイルの答えは変わっていない (12 件とも緑)。`FarmListEditor` の欄は `value={numbers[f] ?? ''}` で、この走査の母集団に入らない (読み手は `parseCropNumber` = `readNumeric`)。
 - **実機で確かめたのは**: 切り替え・産物を足す / 消す・保存して概算・海水魚を足す・足した魚種で概算 (e2e の `hydroponics` suite に 8 件)。水温の点検と「参考を戻す」は jsdom の検査だけ。
 
+## Linear の実データ接続で測って残した物 (2026-11-18)
+
+- **本物の Linear との往復は未確認**: 開発環境から `api.linear.app` へ届かない。照会 (GraphQL) と応答の形は公開の API の仕様に合わせた物で、実物では確かめていない。
+  利用者が個人の API キーを登録して「更新」を押した最初の回が、初めての実測になる。照会の綴りが 1 つでも違えば Linear は HTTP 400 で断るので、そのときは画面の失敗の文に出る。
+- **ブラウザ版はプロキシ経由だけ**: Linear がブラウザ発の CORS を許すかを確かめられなかったので、直接つなぐ分岐は足していない。
+  利用者のプロキシの許可リスト `UPSTREAM_ALLOWLIST` に `api.linear.app` を足す必要がある (`docs/PROXY_EXAMPLE.md` の既定の一覧には無い)。
+- **照会は `POST`**: Linear の API は GraphQL なので、読み取りでも `POST /graphql` を使う。本文は固定の照会 1 つ (`LINEAR_ISSUES_QUERY`) で、変更 (mutation) は書いていない ——
+  検査が「`query ` で始まる・`mutation` を含まない・本文に鍵が入らない」を留める。ほかの読み取り (Stripe / Asana / LINE) は `GET` だけ。
+- **鍵の置き方は接頭辞で決める**: `lin_api_…` (個人の API キー) は `Authorization` にそのまま、それ以外は `Bearer` を付ける (OAuth のアクセストークン向け)。
+  このアプリに Linear の OAuth の流れは無いので、`Bearer` の枝を実際に通るのは、利用者がほかで取ったトークンを貼ったときだけ。
+- **鍵の権限**: 個人の API キーは、作るときに権限を選べる (読み取りだけにできる)。画面がそう案内する。選ばなければ書き込みの権限も持つ。
+- **読むのは自分の担当の未完了の課題・先頭 20 件だけ**: 並び順は指定していない (Linear の既定)。21 件目以降が在れば画面が述べる。
+  プロジェクト・サイクル・コメント・課題の本文・URL・メールアドレスは読まない。
+- **断り (`errors`) の文面は画面に出さない**: HTTP 200 で `errors` を持つ応答は「Linear が照会を断りました」とだけ述べる。原因の切り分けには足りないことがある (相手の文面を伏字に通して出すかは別の作業)。
+- **実機の専用 suite は無い**: 画面は jsdom の 11 件と、全画面の走査 (contrast / controls / opened) が見る。
+- **次に実データへつなぐ候補**: Sentry / Dropbox / Shopify / Discord。1 サービス 1 PR。
+
 ## LINE の実データ接続で測って残した物 (2026-11-18)
 
 - **本物の LINE との往復は未確認**: 開発環境から `api.line.me` へ届かない。応答の形は公開の Messaging API の仕様に合わせた標本で、実物の応答では確かめていない。
@@ -58,7 +75,7 @@
   そちらは**どの画面からも呼ばれていない**送信の口で、今回の読み取りとは別の資格情報 (payload の token) を使う。
 - **`lint:shared-judgement` の針は `return null` の文だけを見る**: 三項演算子で `null` を返す関数だけのモジュールは「否定で答えられる」に数えられない
   (LINE の部品を足したとき 1 度そうなった —— `lineIntakeNote` を文の `return null` にして母集団に入れた)。針を広げるかは別の作業。
-- **次に実データへつなぐ候補**: Linear / Sentry / Dropbox / Shopify / Discord。1 サービス 1 PR。
+- **次に実データへつなぐ候補**: (Linear は 2026-11-18 につないだ) Sentry / Dropbox / Shopify / Discord。1 サービス 1 PR。
 
 ## Asana の実データ接続で測って残した物 (2026-11-18)
 
@@ -32787,7 +32804,7 @@ src/shared/ のモジュール                                        138
 「読んだ結果」か `未読 (…)` のどちらかで、読んでいない物に「対称だろう」とは書かない。
 
 <!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/shared-judgement-census.cjs。npm run lint:shared-judgement は check だけ) -->
-shared **192** モジュール / 両ビルドが import **103** / うち否定で答えられる **52**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
+shared **193** モジュール / 両ビルドが import **104** / うち否定で答えられる **53**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
 
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |
@@ -32799,6 +32816,7 @@ shared **192** モジュール / 両ビルドが import **103** / うち否定�
 | `api/cloudflare` | 1 | 1 | 対称 (実測・2026-09-19 パス 321) —— 欄の判定 (`checkDnsRecord` / `checkPurge`)・本文・URL・封筒 (`readCloudflareEnvelope`: `success !== true` を断る) を両ビルドが同じ関数で通る。それまで封筒の条件は main が falsy・ブラウザ版が `!== true` と違い、文も 「unknown Cloudflare error」/「unknown error」で割れていた (`CLOUDFLARE_UNKNOWN_ERROR` の 1 つへ)。断りの後は両ビルドとも投げる: main は serviceId つきの FetchError `cloudflare <message>`、ブラウザ版は Error `Cloudflare: <message>` —— 運び方 (例外の型) だけが流儀。main の読み (user / zones) も同じ封筒の判定と `CLOUDFLARE_API` を通る |
 | `api/cursor` | 1 | 3 | 対称 (実測・パス 250 / パス 263 で 1 → 3 に増えた) —— 両ビルドが同じ `fetchCursorSnapshotWith` を呼び (main は clients/cursor.ts、ブラウザ版は network/liveRead.ts)、否定を返す 3 つ (`acceptRateOf` → null / `buildCursorSnapshot` の totals 3 欄 → null / `cursorIntakeNote` → null) の**消費者はどれも CursorPage 1 つだけ**で、その画面は両ビルドで同じ 1 本の ソースである (renderer は 1 つ)。パス 263 で足した `readRows` の `read: false` は**このモジュールの外へ出ない** (`normalizeMembers` / `normalizeUsage` / `normalizeSpend` が `state` に畳んでから返す)。応答の上限も MAX_PROXY_RESPONSE_BYTES = MAX_HTTP_RESPONSE_BYTES で 1 つ |
 | `api/line` | 1 | 3 | 対称 (実測・2026-11-18) —— 両ビルドが同じ `fetchLineSnapshotWith` を呼び (main は clients/line.ts、ブラウザ版は network/liveRead.ts)、否定を返す物 (`lineCount` → null / `lineChatMode` → null / `normalizeLineQuota` の quotaType・quotaLimit の null / `normalizeLineUsage` → null / `lineIntakeNote` → null) の**消費者はどれも LinePage 1 つだけ**で、その画面は両ビルドで同じ 1 本のソースである。読めなかった通数は「読めません」・読めなかった物は ⚠ の 1 文で名指しし、どちらのビルドでも同じ文になる |
+| `api/linear` | 1 | 3 | 対称 (実測・2026-11-18) —— 両ビルドが同じ `fetchLinearSnapshotWith` を呼び (main は clients/linear.ts、ブラウザ版は network/liveRead.ts)、否定を返す物 (`linearPriority` → null / `linearDue` の dueDate → null と dueRead の false / `linearIntakeNote` → null / `linearScopeNote` → null / `viewerRead` `issuesRead` の false) の**消費者はどれも LinearPage 1 つだけ**で、その画面は両ビルドで同じ 1 本のソースである。読めなかった優先度と期限は「読めません」・読めなかった一覧と断りは ⚠ の 1 文で、どちらのビルドでも同じ文になる |
 | `api/slack` | 1 | 1 | 対称 (実測・2026-09-18 オントロジーの組み直し) —— `readSlackPost` の `ok: false` (Slack は HTTP 200 でも失敗を返す) を両ビルドが**投げて**断る: main は FetchError `slack <error>`、ブラウザ版は Error `Slack: <error>`。運び方 (例外の型) だけが流儀で、条件と error の綴りは 1 つ。`ts` の無い ok:true は `requireString` が両ビルドで同じ文で投げる (main はそれまで '' に倒していた —— 揃えたときに要求する側へ)。消費者は main の sendMessage と saasWriteWeb の sendSlackMessage の 2 つだけ |
 | `api/stripe` | 1 | 3 | 対称 (実測・2026-11-18) —— 両ビルドが同じ `fetchStripeSnapshotWith` を呼び (main は clients/stripe.ts、ブラウザ版は network/liveRead.ts)、否定を返す物 (`stripeCreatedDate` → null / 金額の null / `normalizeStripeBalance` の livemode → null / `stripeIntakeNote` → null / `balanceRead` `chargesRead` の false) の**消費者はどれも StripePage 1 つだけ**で、その画面は両ビルドで同じ 1 本のソースである。読めなかった金額は「金額不明」・読めなかった一覧は ⚠ の 1 文で、どちらのビルドでも同じ文になる |
 | `apiResponse` | 15 | 20 | 対称 (実測・2026-09-26 パス 482 で数え直した) —— このモジュールが母集団に入ったのは、`apiNumberOf` (第三者が文字列で返す数の読み手) を足して「否定で答えられる」述語が増えたため (パス 416)。**両ビルドの食い違いは無い** —— ただし**2026-09-23 に書いた理由は 2 か所で古びていた**: 「renderer がこのモジュールから直接読むのは `parseJsonText` と `displayField` の 2 種類だけ」「`null` を返す読み手に両ビルドが届く道は `shared/api/*.ts` ただ 1 つ」と書いたが、パス 442 / 443 から renderer は **`finiteNumberOf` も直接読む** (保管した販売記録と KPI 実績の金額を読む漏斗)。**それでも割れないのは、問うている値が別だから**である —— renderer の `finiteNumberOf` が読むのは **renderer 自身の保管層** (IndexedDB の販売記録・KPI 実績。main はこの保管層を読まない) の値で、「no」のあとの動作 (行を落として件数を述べる) は renderer にしか無い。main 側の読み手は `src/main/clients/` の第三者の応答を読む main 専用の経路で、**ブラウザ版はそれらのクライアントを 1 行も読み込まない** (パス 262 / 412 で実測)。**同じ値を両ビルドが問う形**は `shared/api/*.ts` (cursor ほか) を通る物だけで、そこは実装が 1 つなので「no のあとの動作」も 1 つしかない。`parseJsonText` は `null` を返さず**投げる**・`displayField` は `null` を返さない (非文字列は空文字・長すぎる値は天井 + `…`) ので、この 2 つは「no」と言う枝そのものを持たない。★ **読み手はここに並べない —— 名前だけでなく種類も** —— 2026-09-23 の文は名前を並べるのをやめて「2 種類だけ」と**種類**を並べたが、種類が 1 つ増えた日に同じく偽になった。数は左の列が数え、この欄は**なぜ対称なのか** (誰の値を問うているか) だけを述べる。つまり非対称になりうる組が今日 0 件である |

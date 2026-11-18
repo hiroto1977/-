@@ -19,6 +19,7 @@ import type { CursorSnapshot } from '../../shared/api/cursor';
 import type { StripeSnapshot } from '../../shared/api/stripe';
 import type { AsanaSnapshot } from '../../shared/api/asana';
 import type { LineSnapshot } from '../../shared/api/line';
+import type { LinearSnapshot } from '../../shared/api/linear';
 import { buildHydroponicsSnapshot } from '../../shared/hydroponicsControl';
 import { buildMentorSnapshot } from '../../shared/mentor';
 import { buildGrokSnapshot } from '../../shared/grokSnapshot';
@@ -634,14 +635,20 @@ export const SNAPSHOT = {
     more: false as boolean,
   } as AsanaSnapshot,
 
+  // 見本 (鍵を登録するまでの表示)。形は実物 (`shared/api/linear.ts` の `LinearSnapshot`) と同じ 1 つ ——
+  // 画面の型はこの見本から推論されるので、`as LinearSnapshot` で実物と同じ幅にする (パス 410)。
   linear: {
-    items: [
-      { id: 'ENG-142', name: '🐛 ENG-142: SSRF guard で NAT64 prefix 取りこぼし (P1)' },
-      { id: 'ENG-148', name: '✨ ENG-148: AI advisor の Anthropic 接続 (P2)' },
-      { id: 'cycle', name: '🔄 Cycle 23: 8 issues / 完了 5 / 進行中 2' },
-    ] as { id: string; name: string }[],
-    count: 3,
-  },
+    userName: '見本の利用者',
+    issues: [
+      { identifier: 'DEMO-1', title: '見本: ログイン画面の表示が遅い', priority: 2, dueDate: '2026-11-25', dueRead: true, stateName: '進行中', teamName: '見本のチーム' },
+      { identifier: 'DEMO-2', title: '見本: 請求書の PDF 出力を追加する', priority: 3, dueDate: null, dueRead: true, stateName: '未着手', teamName: '見本のチーム' },
+      { identifier: 'DEMO-3', title: '見本: 利用規約の文言を見直す', priority: 0, dueDate: '2026-12-01', dueRead: true, stateName: 'バックログ', teamName: '見本のチーム' },
+    ],
+    viewerRead: true as boolean,
+    issuesRead: true as boolean,
+    more: false as boolean,
+    refused: false as boolean,
+  } as LinearSnapshot,
 
   sentry: {
     items: [

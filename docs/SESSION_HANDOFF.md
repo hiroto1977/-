@@ -7,6 +7,41 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-11-18 · 続き 4) — Linear を実データへつないだ (読み取り専用)
+
+- 利用者の依頼: 「マージして作業を継続して」。PR #945 (養蜂・養殖) を取り込み (squash `7497015`・`commit_message` を渡した)、
+  接続はおまかせの 4 つ目として Linear を選んだ (1 サービス 1 PR)。
+- **Linear (課題管理)**: 自分に割り当てられた未完了の課題 (完了・取り消し以外・先頭 20 件) と利用者の名前を読む。
+  API は GraphQL で、**送る本文は固定の照会 1 つ** (`LINEAR_ISSUES_QUERY`) —— 利用者の入力も応答から読んだ値も入らない。
+  **変更 (mutation) は 1 つも持たない**。メールアドレスも課題の本文も照会しない。
+  判定と正規化は `src/shared/api/linear.ts` に 1 つ。デスクトップ版は `main/clients/linear.ts`、ブラウザ版は `liveRead.mamori` の
+  `LIVE_READERS` に 1 行 (プロキシ経由)。画面は `LinearPage.tsx`。
+  - 期限は「期限なし」(欄が `null` / 無い) と「期限が読めません」(欄は在るが日付でない) を言い分ける。優先度は 0〜4 の整数だけを受け、
+    それ以外は「優先度が読めません」。
+  - 一覧そのものが読めなかった (`nodes` が配列でない) ときは「0 件」と混ぜずに ⚠ で述べる。
+  - GraphQL は断りを HTTP 200 の本文の `errors` で返すことがある → `refused`。相手の文面は画面へ出さず、断られたことと確かめる所だけを述べる。
+  - 21 件目以降が在れば (`pageInfo.hasNextPage`)、そう述べる。
+  - `Authorization` は個人の API キー (`lin_api_…`) ならそのまま、それ以外は `Bearer` を付ける (Linear の決まり)。
+  - 鍵の作り方と「読み取りだけを選ぶ」ことを画面が述べる。ブラウザ版だけ、プロキシの登録と許可リスト (api.linear.app) を押す前に述べる。
+  - 宣言: `SERVICE_DATA_ORIGIN.linear` sample → remote (remote 19 / sample 41)・`SERVICE_CREDENTIAL_USE.linear` none → fetch (fetch 19 / none 53)・
+    `CLOUD_PROVIDERS` に行。送り先のホストは 32 → 33 (`api.linear.app`)。
+- **全体の検査が 2 件捕まえた (どちらも優先度の読み)**: ① `nonFiniteEntryPoints` —— `linearPriority(v)` が引数を `=== 0` と比べるだけの門だった
+  ② `prototypeKeyLookup` —— `linearPriorityText('constructor')` が表の prototype 側の値を返した。
+  直し: 受ける値の一覧 (`[0, 1, 2, 3, 4]`) から同じ物を探す形にし、文を引く側も必ずその読みを通してから表を引く
+  (型の外の値は「優先度が読めません」)。免除の台帳には載せていない。
+- 検証: `shared/api/__tests__/linear.test.ts` 28 件・`main/clients/__tests__/linear.test.ts` 5 件・`pages/__tests__/linearPage.test.ts` 10 件 (jsdom)・
+  `liveRead.test.ts` +2・`thirdPartyScreenCeiling` / `redactionCoverage` / `malformedResponseCensus` に 1 行ずつ。
+  変異検査: `linear.ts` **100.00% (126 killed)** (直す前の形でも 100.00% / 139 killed)。`mutate` 368 → 369。
+- 締め (実測): `npm test` **1310 ファイル / 28,629 件 ❌ 0**・`audit:verify-keep-going` **39 / 39**・`chain:verify` 緑 (block #523)。
+  main の pages は #944 (LINE)・#945 (養蜂・養殖) とも成功 —— 公開サイトはその分を含む。
+  両ビルドは **12,280,805 B / 3,693,442 B (両方 +4,357 B)** (md5 `db094e31…` / `5818bbd6…`)。LITE はハード上限 (4,000,000 B) まで 306,558 B。
+  実機: `perf` OK (LITE DCL 322 ms / heap 8.1 MB・FULL DCL 687 ms / heap 30.3 MB)・`e2e` **731 件 ❌ 0**・`e2e:lite` **731 件 ❌ 0**。
+  `smoke:app` / `e2e:ollama` は回していない (主プロセスの起動経路も Ollama の経路も触っていない)。
+- **本物の Linear には 1 度もつないでいない** —— 開発環境から `api.linear.app` へ届かない。確かめたのは、公開の API 仕様の形に合わせた応答を
+  実物の client に食わせる所まで。残した物は `docs/REMAINING_WORK.md` の「Linear の実データ接続で測って残した物」。
+- 既知の罠 (このパスで踏んだ): `docs/ARCHITECTURE.md` の表の行でバッククォートに入れた語は、`verify:arch` が「引いた行の近くに在る記号」として
+  探す (照会の欄名を入れたら漂流と数えられた —— 記号でない語はバッククォートに入れない)。
+
 ## 直近の作業 (2026-11-18 · 続き 3) — 水耕栽培の画面に養蜂と養殖 (海水魚・淡水魚) を足した・種類は自由に増減できる
 
 - 利用者の依頼: 「水耕栽培に追加で養蜂、海水魚/淡水魚養殖できるようにしてください。それと水耕栽培/養蜂/養殖する商品の種類を任意で増減できる仕様にして」。

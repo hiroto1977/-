@@ -337,7 +337,7 @@ describe('伏字の網羅 — 母集団は「預かっているサービス」(�
     readonly sample: string;
   }
 
-  // 預かる 25 サービスすべてに 1 行。**足りなければ下の突き合わせが鳴る。**
+  // 預かる 26 サービスすべてに 1 行。**足りなければ下の突き合わせが鳴る。**
   const HELD_FORMATS: readonly Held[] = [
     { service: 'github', issuer: 'GitHub 細粒度 PAT', carrier: 'prefix', sample: `github_pat_${FILL}_${FILL}${FILL}` },
     { service: 'notion', issuer: 'Notion 内部連携 (新)', carrier: 'prefix', sample: `ntn_${FILL}${FILL}` },
@@ -384,6 +384,8 @@ describe('伏字の網羅 — 母集団は「預かっているサービス」(�
     // LINE のチャネルアクセストークン (2026-11-18 · 取得が鍵を読むようになった)。発行元の分かる接頭辞を持たない
     // 長い文字列なので、裸では伏せられない —— 伏せるのは Authorization ヘッダの値として現れたときである。
     { service: 'line', issuer: 'LINE チャネルアクセストークン', carrier: 'header-only', sample: 'L'.repeat(172) },
+    // Linear の個人の API キー (2026-11-18 · 取得が鍵を読むようになった)。接頭辞 `lin_api_` は伏字の表に前から在る。
+    { service: 'linear', issuer: 'Linear 個人の API キー', carrier: 'prefix', sample: `lin_api_${FILL}${FILL}` },
   ];
 
   const HELD_SERVICES = (Object.keys(SERVICE_CREDENTIAL_USE) as ServiceId[]).filter((id) =>
@@ -406,7 +408,7 @@ describe('伏字の網羅 — 母集団は「預かっているサービス」(�
    * `shpat_` / `shpss_` は上の `PREFIXED` が母集団に依らず留めており、
    * 既に保存した人の値や第三者が本文に反射した値には今日も掛かる。
    */
-  it('★ 預かる 25 サービスすべてに行が在り、余計な行が無い', () => {
+  it('★ 預かる 26 サービスすべてに行が在り、余計な行が無い', () => {
     const listed = HELD_FORMATS.map((f) => f.service);
     expect([...listed].sort()).toEqual([...HELD_SERVICES].sort());
   });

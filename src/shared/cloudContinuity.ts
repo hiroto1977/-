@@ -214,6 +214,15 @@ export const CLOUD_PROVIDERS: readonly CloudProvider[] = [
     meanwhile: CLOUD_DATA_MEANWHILE,
   },
   {
+    id: 'linear',
+    label: 'Linear',
+    kind: 'data',
+    services: ['linear'],
+    entrusted: '課題 (題名・状態・優先度・期限)。',
+    whenDown: CLOUD_DATA_WHEN_DOWN,
+    meanwhile: CLOUD_DATA_MEANWHILE,
+  },
+  {
     id: 'cursor',
     label: 'Cursor',
     kind: 'data',
