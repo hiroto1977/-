@@ -237,8 +237,7 @@ export function AquaculturePanel(): ReactElement {
             )}
             <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, lineHeight: 1.9 }}>
               <li data-fish-harvest>
-                {estimateSpecies.label} ({WATER_KIND_LABELS[estimateSpecies.water]}): 出荷 {estimate.harvestCount.toLocaleString('ja-JP')} 尾・{kgText(estimate.harvestKg)}
-                (出荷まで {estimate.growOutDays} 日)
+                {`${estimateSpecies.label} (${WATER_KIND_LABELS[estimateSpecies.water]}): 出荷 ${estimate.harvestCount.toLocaleString('ja-JP')} 尾・${kgText(estimate.harvestKg)} (出荷まで ${estimate.growOutDays} 日)`}
               </li>
               <li data-fish-revenue>売上: {jpy(estimate.revenueYen)}</li>
               <li data-fish-cost>
