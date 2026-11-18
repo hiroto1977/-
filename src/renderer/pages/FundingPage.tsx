@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
 import { EligibilityChecker } from '../components/EligibilityChecker';
+import { FundingApplicationDraft } from '../components/FundingApplicationDraft';
 import { useServiceData } from '../hooks/useServiceData';
 import { accountingCfSeriesLabel, fundingLinkLabel } from '../../shared/funding';
 import { jpyWhole } from '../../shared/formatters';
@@ -499,6 +500,12 @@ export function FundingPage() {
 
       <Section title="使える制度の判定 — 年齢・事業形態から絞り込む">
         <EligibilityChecker />
+      </Section>
+
+      {/* 申請書類の下書き (2026-11-18): 業種と計画の中身を入れると、補助金・助成金の申請書類の型に沿った
+          下書きを組む。入力は保存せず、端末の外へも送らない (判定と文面は data/fundingApplication.ts)。 */}
+      <Section title="申請書類の下書きを作る — 業種と計画から (補助金・助成金)">
+        <FundingApplicationDraft />
       </Section>
 
       {!hasData && (
