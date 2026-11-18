@@ -590,7 +590,7 @@ export function FundingApplicationDraft(): ReactElement {
 
       <div style={groupTitleStyle}>下書き</div>
       {withheld !== null && (
-        <div role="alert" data-application-withheld style={{ fontSize: 12, lineHeight: 1.6, color: 'var(--danger)', marginBottom: 12 }}>
+        <div role="alert" data-application-withheld data-refused-fields style={{ fontSize: 12, lineHeight: 1.6, color: 'var(--danger)', marginBottom: 12 }}>
           {withheld}
         </div>
       )}

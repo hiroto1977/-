@@ -78,8 +78,10 @@ const MIN_ANCHORS = 12;
  * 動的な `href` の実測 (2026-09-16 パス 298 時点は 2)。増えたら読んで判断する。
  * 2026-11-11 に 3: 社外向けポータルの「取扱説明書・資料」(`portal/PublishedScreen.tsx`) が、会社が載せる
  * 資料の URL を `externalUrlOrNull` に通してから `VettedLink` へ渡す (関門の戻り値でなければ上の走査が鳴る)。
+ * 2026-11-18 に 4: 資金調達の申請書類の下書き (`components/FundingApplicationDraft.tsx`) が、確証済みの制度の出典の URL を
+ * 同じ形 (`externalUrlOrNull` の戻り値を `VettedLink` へ) で出す。
  */
-const DYNAMIC_HREF_SITES = 3;
+const DYNAMIC_HREF_SITES = 4;
 /**
  * 外へ出る `<a href>` の唯一の口 (2026-10-30 · パス 560)。中の `href={href}` は印つきの型
  * `VettedExternalUrl` で受けた引数なので、`externalUrlOrNull` の代入ではなく**型**が守る

@@ -171,6 +171,20 @@ const UNIT_OF_UNLABELLED: Readonly<Record<string, string>> = {
 const DYNAMIC_LABELS: Readonly<Record<string, string>> = {
   'src/renderer/data/inputGuards.ts :: label':
     '`dependentCountSpec(label)` —— 呼び手は扶養親族の人数の欄だけで、名前は「…の人数」(下の検査が呼び手の字面を確かめる)。単位は「人」。',
+  'src/renderer/components/FundingApplicationDraft.tsx :: NUMBER_FIELD_LABELS.foundedYear':
+    '申請書類の下書きの欄。名前は下書きの行・未記入の一覧と同じ 1 つ (`data/fundingApplication.ts` の `NUMBER_FIELD_LABELS`) を読む。創業・設立の年 (西暦) なので「年」。',
+  'src/renderer/components/FundingApplicationDraft.tsx :: NUMBER_FIELD_LABELS.employees':
+    '同じ表の「従業員数」。人数なので「人」(下書きも「N 人」と書く —— `fundingApplication.test.ts`)。',
+  'src/renderer/components/FundingApplicationDraft.tsx :: NUMBER_FIELD_LABELS.capitalYen':
+    '同じ表の「資本金」。円の額 (下書きは `yenText` で「N 円」と書く)。',
+  'src/renderer/components/FundingApplicationDraft.tsx :: NUMBER_FIELD_LABELS.annualRevenueYen':
+    '同じ表の「直近の年間売上高」。円の額 (下書きは `yenText` で「N 円」と書く)。',
+  'src/renderer/components/FundingApplicationDraft.tsx :: NUMBER_FIELD_LABELS.ratePct':
+    '同じ表の「補助率」。公募要領の率をそのまま入れる欄で、単位は「%」(下書きも「N%」と書く)。',
+  'src/renderer/components/FundingApplicationDraft.tsx :: NUMBER_FIELD_LABELS.capYen':
+    '同じ表の「上限額」。円の額 (下書きは `yenText` で「N 円」と書く)。',
+  'src/renderer/components/FundingApplicationDraft.tsx :: expenseAmountLabel(index)':
+    '費目の行ごとの金額の欄。名前は `expenseAmountLabel(i)` (「費目 N の金額」) で、断りの文と同じ関数から組む。円の額。',
   "src/renderer/components/WelfareSchemeCard.tsx :: f.label.replace(/^┗ /, '')":
     '福利厚生カードの金額の欄の表 (`fields`) から組む。表の行はどれも円の額 (家賃・食事・育児補助・EC ポイント・目標の手元残り)。',
 };
