@@ -39,6 +39,26 @@
   (`numericInputReaderCensus.test.ts`)。直した後も、既存のファイルの答えは変わっていない (12 件とも緑)。`FarmListEditor` の欄は `value={numbers[f] ?? ''}` で、この走査の母集団に入らない (読み手は `parseCropNumber` = `readNumeric`)。
 - **実機で確かめたのは**: 切り替え・産物を足す / 消す・保存して概算・海水魚を足す・足した魚種で概算 (e2e の `hydroponics` suite に 8 件)。水温の点検と「参考を戻す」は jsdom の検査だけ。
 
+## Sentry の実データ接続で測って残した物 (2026-11-18)
+
+- **本物の Sentry との往復は未確認**: 開発環境から `sentry.io` へ届かない。応答の形は公開の API の仕様に合わせた標本で、実物の応答では確かめていない。
+  利用者が個人のトークンを登録して「更新」を押した最初の回が、初めての実測になる。
+- **つなぐ先は `sentry.io` だけ**: 自社で動かしている Sentry には対応していない (送り先は定数 1 つで、利用者の入力からは作らない)。画面がそう述べる。
+  **データを EU に置いている組織 (`de.sentry.io`) を `sentry.io` から読めるかは確かめていない** —— 組織の一覧の応答は地域ごとの URL を名乗るが、
+  応答から読んだホストへは送らない (送り先を相手の答えで決めない)。読めなければ画面の失敗の文に出る。
+- **ブラウザ版はプロキシ経由だけ**: Sentry がブラウザ発の CORS を許すかを確かめられなかったので、直接つなぐ分岐は足していない。
+  利用者のプロキシの許可リスト `UPSTREAM_ALLOWLIST` に `sentry.io` を足す必要がある (`docs/PROXY_EXAMPLE.md` の既定の一覧には無い)。
+- **照会は 2 つで、2 つ目は 1 つ目の答えで決まる**: 組織の一覧の、slug の読める 1 つ目の組織だけを読む。slug は小文字の英数字・`-`・`_` (50 字まで) で
+  あることを確かめ、符号化してから道へ入れる。組織が 2 つ以上あれば画面が述べる (組織を選ぶ手は無い)。
+- **「ほかにも在る」は 1 件多く照会して決める**: Sentry は続きの有無を応答のヘッダ (`Link`) で伝えるが、共有の通信手段が返すのは本文だけなので、
+  21 件を照会して 21 件返ってきたら「ほかにも在る」と述べる (画面に出すのは 20 件)。
+- **期間は Sentry の既定のまま**: 照会に期間 (`statsPeriod`) を付けていない。既定の期間より前に最後に起きた問題は一覧に出ないことがある。並び順も既定のまま。
+- **鍵の権限**: 画面は読み取りの 2 つ (`org:read`・`event:read`) だけを選ぶよう案内する。組織のトークン (`sntrys_…`) で組織の一覧を読めるかは確かめていない。
+- **伏字**: 個人のトークンの接頭辞 `sntryu_` を伏字の表へ足した (それまで表に在ったのは `sntrys_` だけ)。
+- **読むのは題名・重大度・発生回数・最終発生日・プロジェクト名だけ**: イベントの中身 (スタックトレース・利用者の情報)・担当者・URL は読まない。
+- **実機の専用 suite は無い**: 画面は jsdom の 10 件と、全画面の走査 (contrast / controls / opened) が見る。
+- **次に実データへつなぐ候補**: Dropbox / Shopify / Discord。1 サービス 1 PR。
+
 ## Linear の実データ接続で測って残した物 (2026-11-18)
 
 - **本物の Linear との往復は未確認**: 開発環境から `api.linear.app` へ届かない。照会 (GraphQL) と応答の形は公開の API の仕様に合わせた物で、実物では確かめていない。
@@ -54,7 +74,7 @@
   プロジェクト・サイクル・コメント・課題の本文・URL・メールアドレスは読まない。
 - **断り (`errors`) の文面は画面に出さない**: HTTP 200 で `errors` を持つ応答は「Linear が照会を断りました」とだけ述べる。原因の切り分けには足りないことがある (相手の文面を伏字に通して出すかは別の作業)。
 - **実機の専用 suite は無い**: 画面は jsdom の 11 件と、全画面の走査 (contrast / controls / opened) が見る。
-- **次に実データへつなぐ候補**: Sentry / Dropbox / Shopify / Discord。1 サービス 1 PR。
+- **次に実データへつなぐ候補**: (Sentry は同じ日につないだ) Dropbox / Shopify / Discord。1 サービス 1 PR。
 
 ## LINE の実データ接続で測って残した物 (2026-11-18)
 
@@ -32804,7 +32824,7 @@ src/shared/ のモジュール                                        138
 「読んだ結果」か `未読 (…)` のどちらかで、読んでいない物に「対称だろう」とは書かない。
 
 <!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/shared-judgement-census.cjs。npm run lint:shared-judgement は check だけ) -->
-shared **193** モジュール / 両ビルドが import **104** / うち否定で答えられる **53**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
+shared **194** モジュール / 両ビルドが import **105** / うち否定で答えられる **54**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
 
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |
@@ -32817,6 +32837,7 @@ shared **193** モジュール / 両ビルドが import **104** / うち否定�
 | `api/cursor` | 1 | 3 | 対称 (実測・パス 250 / パス 263 で 1 → 3 に増えた) —— 両ビルドが同じ `fetchCursorSnapshotWith` を呼び (main は clients/cursor.ts、ブラウザ版は network/liveRead.ts)、否定を返す 3 つ (`acceptRateOf` → null / `buildCursorSnapshot` の totals 3 欄 → null / `cursorIntakeNote` → null) の**消費者はどれも CursorPage 1 つだけ**で、その画面は両ビルドで同じ 1 本の ソースである (renderer は 1 つ)。パス 263 で足した `readRows` の `read: false` は**このモジュールの外へ出ない** (`normalizeMembers` / `normalizeUsage` / `normalizeSpend` が `state` に畳んでから返す)。応答の上限も MAX_PROXY_RESPONSE_BYTES = MAX_HTTP_RESPONSE_BYTES で 1 つ |
 | `api/line` | 1 | 3 | 対称 (実測・2026-11-18) —— 両ビルドが同じ `fetchLineSnapshotWith` を呼び (main は clients/line.ts、ブラウザ版は network/liveRead.ts)、否定を返す物 (`lineCount` → null / `lineChatMode` → null / `normalizeLineQuota` の quotaType・quotaLimit の null / `normalizeLineUsage` → null / `lineIntakeNote` → null) の**消費者はどれも LinePage 1 つだけ**で、その画面は両ビルドで同じ 1 本のソースである。読めなかった通数は「読めません」・読めなかった物は ⚠ の 1 文で名指しし、どちらのビルドでも同じ文になる |
 | `api/linear` | 1 | 3 | 対称 (実測・2026-11-18) —— 両ビルドが同じ `fetchLinearSnapshotWith` を呼び (main は clients/linear.ts、ブラウザ版は network/liveRead.ts)、否定を返す物 (`linearPriority` → null / `linearDue` の dueDate → null と dueRead の false / `linearIntakeNote` → null / `linearScopeNote` → null / `viewerRead` `issuesRead` の false) の**消費者はどれも LinearPage 1 つだけ**で、その画面は両ビルドで同じ 1 本のソースである。読めなかった優先度と期限は「読めません」・読めなかった一覧と断りは ⚠ の 1 文で、どちらのビルドでも同じ文になる |
+| `api/sentry` | 1 | 3 | 対称 (実測・2026-11-18) —— 両ビルドが同じ `fetchSentrySnapshotWith` を呼び (main は clients/sentry.ts、ブラウザ版は network/liveRead.ts)、否定を返す物 (`sentryLevel` → null / `sentryCount` → null / `lastSeen` の null / `sentryIntakeNote` → null / `sentryScopeNote` → null / `orgsRead` `issuesAsked` `issuesRead` の false) の**消費者はどれも SentryPage 1 つだけ**で、その画面は両ビルドで同じ 1 本のソースである。読めなかった重大度・発生回数・最終発生日は「読めません」・読めなかった一覧は ⚠ の 1 文で、どちらのビルドでも同じ文になる |
 | `api/slack` | 1 | 1 | 対称 (実測・2026-09-18 オントロジーの組み直し) —— `readSlackPost` の `ok: false` (Slack は HTTP 200 でも失敗を返す) を両ビルドが**投げて**断る: main は FetchError `slack <error>`、ブラウザ版は Error `Slack: <error>`。運び方 (例外の型) だけが流儀で、条件と error の綴りは 1 つ。`ts` の無い ok:true は `requireString` が両ビルドで同じ文で投げる (main はそれまで '' に倒していた —— 揃えたときに要求する側へ)。消費者は main の sendMessage と saasWriteWeb の sendSlackMessage の 2 つだけ |
 | `api/stripe` | 1 | 3 | 対称 (実測・2026-11-18) —— 両ビルドが同じ `fetchStripeSnapshotWith` を呼び (main は clients/stripe.ts、ブラウザ版は network/liveRead.ts)、否定を返す物 (`stripeCreatedDate` → null / 金額の null / `normalizeStripeBalance` の livemode → null / `stripeIntakeNote` → null / `balanceRead` `chargesRead` の false) の**消費者はどれも StripePage 1 つだけ**で、その画面は両ビルドで同じ 1 本のソースである。読めなかった金額は「金額不明」・読めなかった一覧は ⚠ の 1 文で、どちらのビルドでも同じ文になる |
 | `apiResponse` | 15 | 20 | 対称 (実測・2026-09-26 パス 482 で数え直した) —— このモジュールが母集団に入ったのは、`apiNumberOf` (第三者が文字列で返す数の読み手) を足して「否定で答えられる」述語が増えたため (パス 416)。**両ビルドの食い違いは無い** —— ただし**2026-09-23 に書いた理由は 2 か所で古びていた**: 「renderer がこのモジュールから直接読むのは `parseJsonText` と `displayField` の 2 種類だけ」「`null` を返す読み手に両ビルドが届く道は `shared/api/*.ts` ただ 1 つ」と書いたが、パス 442 / 443 から renderer は **`finiteNumberOf` も直接読む** (保管した販売記録と KPI 実績の金額を読む漏斗)。**それでも割れないのは、問うている値が別だから**である —— renderer の `finiteNumberOf` が読むのは **renderer 自身の保管層** (IndexedDB の販売記録・KPI 実績。main はこの保管層を読まない) の値で、「no」のあとの動作 (行を落として件数を述べる) は renderer にしか無い。main 側の読み手は `src/main/clients/` の第三者の応答を読む main 専用の経路で、**ブラウザ版はそれらのクライアントを 1 行も読み込まない** (パス 262 / 412 で実測)。**同じ値を両ビルドが問う形**は `shared/api/*.ts` (cursor ほか) を通る物だけで、そこは実装が 1 つなので「no のあとの動作」も 1 つしかない。`parseJsonText` は `null` を返さず**投げる**・`displayField` は `null` を返さない (非文字列は空文字・長すぎる値は天井 + `…`) ので、この 2 つは「no」と言う枝そのものを持たない。★ **読み手はここに並べない —— 名前だけでなく種類も** —— 2026-09-23 の文は名前を並べるのをやめて「2 種類だけ」と**種類**を並べたが、種類が 1 つ増えた日に同じく偽になった。数は左の列が数え、この欄は**なぜ対称なのか** (誰の値を問うているか) だけを述べる。つまり非対称になりうる組が今日 0 件である |

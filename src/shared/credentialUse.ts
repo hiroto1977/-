@@ -73,7 +73,8 @@ export const SERVICE_CREDENTIAL_USE: Record<ServiceId, CredentialUse> = {
   asana: 'fetch',
   // 2026-11-18: 取得が鍵を読むようになった (`main/clients/linear.ts` → `shared/api/linear.ts`)。
   linear: 'fetch',
-  sentry: 'none',
+  // 2026-11-18: 取得が鍵を読むようになった (`main/clients/sentry.ts` → `shared/api/sentry.ts`)。
+  sentry: 'fetch',
   /*
    * **`shopify` は 2026-09-24 (パス 452) に `action` から `none` へ。**
    *

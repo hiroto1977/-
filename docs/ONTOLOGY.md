@@ -107,7 +107,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `sales` | featured | sample | none | ✅ |  |  | — | — | — |
 | `salesforce` | integrations | sample | none |  |  |  | — | — | — |
 | `security` | tools | local | action | ✅ |  |  | `check-email-breach` `scan-url` | `check-email-breach` `scan-url` | — |
-| `sentry` | integrations | sample | none |  |  |  | — | — | — |
+| `sentry` | integrations | remote | fetch |  |  |  | — | — | — |
 | `settings` | featured | local | none | ✅ |  |  | — | — | — |
 | `shopify` | integrations | sample | none | ✅ |  |  | `sync-to-discord` `sync-to-gmail` `sync-to-line` `sync-to-notion` `sync-to-salesforce` `sync-to-slack` `sync-to-stripe` | — | `sync-to-discord` `sync-to-gmail` `sync-to-line` `sync-to-notion` `sync-to-salesforce` `sync-to-slack` `sync-to-stripe` |
 | `skills` | tools | local | action | ✅ |  |  | `run-skill` | — | `run-skill` |
@@ -134,8 +134,8 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 集計:
 
 - 配置: おすすめ 12 / 士業連携 8 / 分析・ツール 24 / 外部サービス連携 33 / 消費されるだけ 2
-- 出所: remote 19 / local 19 / sample 41
-- 資格情報の読み手 — fetch 19 / action 7 / none 53
+- 出所: remote 20 / local 19 / sample 40
+- 資格情報の読み手 — fetch 20 / action 7 / none 52
 - LOCAL_SERVICES 56 / OAuth 10 / action を持つ 27 / デスクトップだけの action 10
 
 ## 4. facet の公理と例外

@@ -76,7 +76,9 @@ describe('クラウド全停止の演習 (デスクトップ版の取得)', () =
   });
 
   it('★ 預かるデータを見る画面を除く全サービスの取得は、端末の外へ 1 度も出ない', async () => {
-    expect(offCloud.length).toBeGreaterThanOrEqual(60);
+    // 走査が死んでいないことの床 (実測 59 · 2026-11-18)。実データへつなぐたびに 1 つ減るのが正しい向きなので、
+    // 実測には張り付けない (60 に置いていた床は、Sentry をつないだ日に落ちた)。
+    expect(offCloud.length).toBeGreaterThanOrEqual(40);
     const leaked: string[] = [];
     for (const id of offCloud) {
       const { calls } = await drill(id);

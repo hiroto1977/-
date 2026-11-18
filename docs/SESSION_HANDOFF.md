@@ -7,6 +7,43 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-11-18 · 続き 5) — Sentry を実データへつないだ (読み取り専用)
+
+- 利用者の依頼: 「マージして作業を継続して」。PR #946 (Linear) を取り込み (squash `3d55cbe`・`commit_message` を渡した)、
+  接続はおまかせの 5 つ目として Sentry を選んだ (1 サービス 1 PR)。
+- **Sentry (エラー監視)**: 組織の一覧 (`GET /api/0/organizations/`) と、slug の読める 1 つ目の組織の未解決の問題
+  (`GET /api/0/organizations/<slug>/issues/?query=is:unresolved&limit=21`) を読む。**書き込みは 1 つも持たない**。
+  イベントの中身 (スタックトレース・利用者の情報) は照会しない。
+  判定と正規化は `src/shared/api/sentry.ts` に 1 つ。デスクトップ版は `main/clients/sentry.ts`、ブラウザ版は `liveRead.mamori` の
+  `LIVE_READERS` に 1 行 (プロキシ経由)。画面は `SentryPage.tsx`。
+  - slug は小文字の英数字・`-`・`_` (50 字まで) であることを確かめ、`refuseDotSegment` と符号化を通してから道へ入れる。
+  - 「ほかにも在る」は **1 件多く照会して**決める (Sentry は続きを応答のヘッダで伝えるが、共有の通信手段が返すのは本文だけ)。画面に出すのは 20 件。
+  - 発生回数は 0 以上の整数 (数か 10 進の文字列) だけ・重大度は 5 つの値だけ・最終発生日は日時として読めた物だけを受け、
+    それ以外は「読めません」と述べる (0 や空欄にしない)。
+  - 応答が配列でない (一覧が読めない)・読める組織が無い、を「0 件」と混ぜずに ⚠ で述べる。組織が 2 つ以上あれば、見ているのが 1 つ目だけだと述べる。
+  - Sentry の 2 つの照会は**配列を直接返す**ので、デスクトップ版は封筒を要求しない口 (`jsonFetchAny`) を使う (台帳 `ANY_CALLERS` は cursor と sentry の 2 件)。
+  - 鍵は個人のトークン (`sntryu_…`)。画面は読み取りの権限 2 つ (`org:read`・`event:read`) だけを選ぶよう案内し、つなぐ先が sentry.io だけ
+    (自社運用の Sentry は対象外) だと述べる。ブラウザ版だけ、プロキシの登録と許可リスト (sentry.io) を押す前に述べる。
+  - **伏字の表に `sntryu_` を足した** (`redact.mamori` → `redact.ts`)。それまで表に在ったのは組織のトークン `sntrys_` だけで、
+    預かることにした鍵の形が裸で本文に現れると伏せられなかった。
+  - 宣言: `SERVICE_DATA_ORIGIN.sentry` sample → remote (remote 20 / sample 40)・`SERVICE_CREDENTIAL_USE.sentry` none → fetch (fetch 20 / none 52)・
+    `CLOUD_PROVIDERS` に行。送り先のホストは 33 → 34 (`sentry.io`)。
+- 検証: `shared/api/__tests__/sentry.test.ts` 40 件・`main/clients/__tests__/sentry.test.ts` 5 件・`pages/__tests__/sentryPage.test.ts` 10 件 (jsdom)・
+  `liveRead.test.ts` +2・`thirdPartyScreenCeiling` / `redactionCoverage` / `malformedResponseCensus` に 1 行ずつ。
+  変異検査: `sentry.ts` **100.00% (160 killed)**・`redact.ts` **100.00% (200 killed)** (どちらも 1 回目で)。`mutate` 369 → 370。
+- 途中で検査が捕まえた物 (どれも設計どおり):
+  - `pathInterpolationCensus` (変異検査の前段の全件実行で) —— 道の区間へ素の `encodeURIComponent` で値を入れていた。台帳へは載せず、
+    共通の関門 `refuseDotSegment` を通す形にした。
+  - クラウド全停止の演習 2 本の床 `>= 60` —— 実測 (見本のままのサービス数) に張り付いており、つないだ日に落ちた。走査の生死を見る床 (40) へ下げた。
+  - `StatusBar.render.test.ts` の「鍵を預からないサービス」の標本が sentry だった —— 今も預からない dropbox へ替えた。
+- 締め (実測): `npm test` **1312 ファイル / 28,688 件 ❌ 0**・`audit:verify-keep-going` **39 / 39**・`chain:verify` 緑 (block #524)。
+  両ビルドは **12,285,720 B / 3,698,357 B (両方 +4,915 B)** (md5 `a2c3c4ad…` / `7e878812…`)。LITE はハード上限 (4,000,000 B) まで 301,643 B。
+  実機: `perf` OK (LITE DCL 289 ms / heap 8 MB・FULL DCL 665 ms / heap 30.4 MB)・`e2e` **731 件 ❌ 0**・`e2e:lite` **731 件 ❌ 0**。
+  `smoke:app` / `e2e:ollama` は回していない (主プロセスの起動経路も Ollama の経路も触っていない)。main の pages は #946 (Linear) の分も成功 —— 公開サイトはその分を含む。
+- **本物の Sentry には 1 度もつないでいない** —— 開発環境から `sentry.io` へ届かない。確かめたのは、公開の API 仕様の形に合わせた応答を
+  実物の client に食わせる所まで。データを EU に置いている組織を `sentry.io` から読めるかも確かめていない。
+  残した物は `docs/REMAINING_WORK.md` の「Sentry の実データ接続で測って残した物」。
+
 ## 直近の作業 (2026-11-18 · 続き 4) — Linear を実データへつないだ (読み取り専用)
 
 - 利用者の依頼: 「マージして作業を継続して」。PR #945 (養蜂・養殖) を取り込み (squash `7497015`・`commit_message` を渡した)、

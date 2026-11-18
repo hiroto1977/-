@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 524
+- ブロック数: 525
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `7ac47a6cc4e3323e5d2db3209caa7c58f184ebb9c71762fde23ddd2992a8793d`
+- 末尾(tip)ハッシュ: `988ecb112d3b1a34768bad99ff71a8ae8cb3ae6de5b09ec44a92623075d46ee6`
 - 保護対象: 222 ファイル
 
 ## ブロック
@@ -537,6 +537,7 @@
 | 521 | `b8d5a41218209f0c` | `1cbf1dd199a65950` | `285f7733aea7edc9` | update mamori-capabilities.json |
 | 522 | `8a85cacb07514518` | `285f7733aea7edc9` | `a1841300d4c1ba8f` | update integrity-chain.cjs,mamori-capabilities.json,liveRead.mamori,liveRead.ts |
 | 523 | `473a31db91cb0ef3` | `a1841300d4c1ba8f` | `7ac47a6cc4e3323e` | update integrity-chain.cjs,mamori-capabilities.json,liveRead.mamori,liveRead.ts |
+| 524 | `dc34c74a522f3d35` | `7ac47a6cc4e3323e` | `988ecb112d3b1a34` | update integrity-chain.cjs,mamori-capabilities.json,liveRead.mamori,liveRead.ts,redact.mamori,redact.ts |
 
 ## 保護対象ファイル
 

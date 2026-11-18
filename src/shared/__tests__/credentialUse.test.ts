@@ -52,7 +52,7 @@ const EXPECTED: ReadonlyArray<readonly [ServiceId, CredentialUse]> = [
   ['discord', 'none'],
   ['asana', 'fetch'],
   ['linear', 'fetch'],
-  ['sentry', 'none'],
+  ['sentry', 'fetch'],
   // **`action` → `none`** (2026-09-24 · パス 452)。7 つのコネクタは `ctx.payload` から
   // **連携先**の資格情報を取り出し、Shopify 自身の `ctx.token` を読む出荷コードは 0 件
   // だった (ゲートの針が `\btoken\b` をファイル全体に当てていたため通っていた)。
@@ -114,7 +114,7 @@ const AUDITED_UNUSED: readonly ServiceId[] = [
   // 'line' は 2026-11-18 に抜けた —— 取得が鍵を読むようになった (`main/clients/line.ts`)。
   // 'linear' は 2026-11-18 に抜けた —— 取得が鍵を読むようになった (`main/clients/linear.ts`)。
   'salesforce',
-  'sentry',
+  // 'sentry' は 2026-11-18 に抜けた —— 取得が鍵を読むようになった (`main/clients/sentry.ts`)。
   // 'stripe' は 2026-11-18 に抜けた —— 取得が鍵を読むようになった (`main/clients/stripe.ts`)。
   // 9 件目 (パス 452) —— 別の道で見つかった。上の docblock に理由。
   'shopify',
@@ -134,10 +134,10 @@ describe('SERVICE_CREDENTIAL_USE', () => {
 
   it('3 分類の件数を固定する', () => {
     const count = (u: CredentialUse) => EXPECTED.filter(([, v]) => v === u).length;
-    expect(count('fetch')).toBe(19);
+    expect(count('fetch')).toBe(20);
     // shopify が `action` → `none` (パス 452)。
     expect(count('action')).toBe(7);
-    expect(count('none')).toBe(53);
+    expect(count('none')).toBe(52);
   });
 
   it('監査で見つかった 9 件は none のままである', () => {
@@ -175,15 +175,15 @@ describe('collectsCredential', () => {
 
 describe('unusedStoredCredentials', () => {
   it('保存済みのうち読み手のいないものだけを返す', () => {
-    expect(unusedStoredCredentials(['github', 'dropbox', 'security', 'sentry'])).toEqual([
+    expect(unusedStoredCredentials(['github', 'dropbox', 'security', 'salesforce'])).toEqual([
       'dropbox',
-      'sentry',
+      'salesforce',
     ]);
   });
 
   it('順序は入力のまま (画面の並びを勝手に変えない)', () => {
-    expect(unusedStoredCredentials(['sentry', 'dropbox', 'discord'])).toEqual([
-      'sentry',
+    expect(unusedStoredCredentials(['salesforce', 'dropbox', 'discord'])).toEqual([
+      'salesforce',
       'dropbox',
       'discord',
     ]);

@@ -119,6 +119,7 @@ describe('egress マトリクスの逆向き (パス 340)', () => {
     expect(inFile('app.asana.com', 'src/shared/api/asana.ts')).toBe(true);
     expect(inFile('api.line.me', 'src/shared/api/line.ts')).toBe(true);
     expect(inFile('api.linear.app', 'src/shared/api/linear.ts')).toBe(true);
+    expect(inFile('sentry.io', 'src/shared/api/sentry.ts')).toBe(true);
     expect(inFile('api.cursor.com', 'src/shared/api/cursor.ts')).toBe(true);
     // 対照: 送らないファイルからは映らない (針が何にでも当たる検査にしない)。
     expect(inFile('app.asana.com', 'src/shared/api/stripe.ts')).toBe(false);

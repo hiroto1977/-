@@ -223,6 +223,15 @@ export const CLOUD_PROVIDERS: readonly CloudProvider[] = [
     meanwhile: CLOUD_DATA_MEANWHILE,
   },
   {
+    id: 'sentry',
+    label: 'Sentry',
+    kind: 'data',
+    services: ['sentry'],
+    entrusted: 'エラーの記録 (問題の題名・重大度・発生回数・最終発生日)。',
+    whenDown: CLOUD_DATA_WHEN_DOWN,
+    meanwhile: CLOUD_DATA_MEANWHILE,
+  },
+  {
     id: 'cursor',
     label: 'Cursor',
     kind: 'data',
