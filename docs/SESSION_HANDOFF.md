@@ -7,6 +7,37 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-11-18) — Stripe を実データへつないだ (読み取り専用) ・ メール検疫の見張り番を作り直した
+
+- 利用者の依頼: 「見張り番を直して、接続はおまかせ」。完成度の確認で出した穴 1 (見本だけのサービス 24 個) の 1 つ目として Stripe を選んだ (1 サービス 1 PR)。
+- **Stripe**: 残高 (`GET /v1/balance`) と最近の入金 10 件 (`GET /v1/charges?limit=10`) を読む。**書き込みは 1 つも持たない**。
+  判定と正規化は `src/shared/api/stripe.ts` に 1 つ (通信手段は呼び出し側が渡す)。デスクトップ版は `main/clients/stripe.ts` が `jsonFetch` を渡し、
+  ブラウザ版は `renderer/network/liveRead.mamori` の `LIVE_READERS` に 1 行 (プロキシ経由)。画面は `StripePage.tsx`。
+  - 金額は通貨の最小単位で来る —— 桁は通貨から決める (円 0 桁・ドル 2 桁・ディナール 3 桁)。読めない金額は 0 にせず「金額不明」、読めない通貨は桁を推測せず「通貨不明」。
+  - 一覧が読めなかったとき (`data` が配列でない) は「0 件」と混ぜずに ⚠ で述べる。
+  - 鍵は「制限付きキー (読み取り専用)」を案内する。ブラウザ版だけ、プロキシの登録と許可リスト (api.stripe.com) を押す前に述べる。
+  - 宣言: `SERVICE_DATA_ORIGIN.stripe` sample → remote (remote 16 / sample 44)・`SERVICE_CREDENTIAL_USE.stripe` none → fetch (fetch 16 / none 56)・`CLOUD_PROVIDERS` に行。
+- 検証: `shared/api/__tests__/stripe.test.ts` 57 件・`main/clients/__tests__/stripe.test.ts` 4 件・`pages/__tests__/stripePage.test.ts` 9 件 (jsdom · 3 つの実行形態 · 対照 3 方向)・
+  `liveRead.test.ts` +2・`thirdPartyScreenCeiling` に 1 行 (200,000 字の欄でも画面は 20,000 字未満)。
+  変異検査: `stripe.ts` **100.00% (167 killed)** —— 1 回目 99.38% (通貨の照合の `^` が等価 → 天井で切る形をやめ、両端を留めた照合 1 つへ)・
+  2 回目 99.40% (型の門が未検証 → 文字列にすると 3 文字の英字に見える値 `['usd']` / `NaN` の標本を足した)。`mutate` へ入れた (361 → 362)。
+- 締め (実測): `npm test` **1299 ファイル / 28,249 件 ❌ 0**・`audit:verify-keep-going` **39 / 39** (1 回目は verify:arch と lint:shared-judgement が数と台帳を名指しした)・
+  `chain:verify` 緑 (block #519 —— `liveRead.mamori` / `liveRead.ts` / `mamori-capabilities.json` / `integrity-chain.cjs`)。
+  両ビルドは **12,242,982 B / 3,655,619 B (両方 +4,384 B)** (md5 `d5475e7b…` / `0c1ddcee…`)。LITE はハード上限 (4,000,000 B) まで 344,381 B。
+  実機: `perf` OK (LITE DCL 239 ms / heap 8.0 MB・FULL DCL 551 ms / heap 30.3 MB)・`e2e` **723 件 ❌ 0**・`e2e:lite` **723 件 ❌ 0**。
+  `smoke:app` / `e2e:ollama` は回していない (主プロセスの起動経路も Ollama の経路も触っていない)。
+- **本物の Stripe には 1 度もつないでいない** —— 開発環境から `api.stripe.com` へ届かない (出口の方針が CONNECT を 403 で断る)。確かめたのは、公開の API 仕様の形に合わせた応答を
+  実物の client に食わせる所まで。ブラウザ発の CORS も確かめていないので、直接つなぐ分岐は足していない (プロキシ経由だけ)。
+- **見張り番**: 2026-11-18 05:49 の回 (省エネ版) がラベル 0 件で止まった → 小分け版へ 3 度作り直した (経緯と実測は `docs/INBOUND_QUARANTINE.md`)。
+  今動いている予約は `trig_01XVCdp1fZLZhjUgFGjVjMJy` (小分け版 3 · 当番 `session_01JCfemWDaAQQKRnse9Ynn9n`)。
+  ★ **ラベルはまだ 1 度も付いていない** —— Gmail の接続にラベルを作る許可が無い。利用者が Gmail をつなぎ直すまで、調べても印を付けられない。
+- 残した物は `docs/REMAINING_WORK.md` の「Stripe の実データ接続」と「受信の検疫・見張り番」。
+- ★ 罠 (このパスで踏んだ): ① Mamori のオブジェクトの中に `//` の注記は書けない (M0) —— 注記は `///` の文書注記へ。新しい外の名前は `security/mamori-capabilities.json` に足す (M7)。
+  ② 保護対象 (`liveRead.ts`) が新しいモジュールを読むと、鎖の閉包検査が鳴る —— `DEP_EXCLUSIONS` + `EXCLUSION_KINDS` (`guarded-by`) に理由つきで。
+  ③ 見本の型は `as StripeSnapshot`、最上位の真偽値は `as boolean` (`snapshotFieldWidth` が鳴る)。
+  ④ 予約の指示文は、その予約が届く会話の中からしか書き換えられない。古い当番へ新しい予約を向けても、当番がセッションを作れなかった —— 当番ごと作り直す。
+  ⑤ 見張り用のセッションは、途中経過の文章を返した時点で終わる (続きを起こす人は居ない)。指示に「文章の返答は最後の 1 回だけ」と書く。
+
 ## 直近の作業 (2026-11-17) — VRIO 分析の画面をアプリに足した (79 個目のサービス `vrio`)
 
 - 利用者の依頼: VRIO (V 経済的価値 / R 希少性 / I 模倣困難性 / O 組織体制) の役割文を貼り、「任意で入力したら判定及び反映される仕組みを構築して」。
