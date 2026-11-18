@@ -3,6 +3,7 @@ import { Section, StatusBar } from '../components/StatusBar';
 import { Stat } from '../components/Stat';
 import { tableStyle, thStyle, tdStyle, tdNum } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
+import { wrapColumns } from '../components/wrapColumns';
 
 const fmtMb = (mb: number) => (mb >= 1024 ? `${(mb / 1024).toFixed(1)} GB` : `${mb} MB`);
 
@@ -44,7 +45,7 @@ export function LinuxPage() {
       />
 
       <Section title="システム概要" count={4}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 8 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: wrapColumns(4, 150), gap: 12, marginBottom: 8 }}>
           <Stat label="メモリ使用率" value={`${memory.usagePct.toFixed(1)}%`} positive={memory.usagePct < MEMORY_WARN_PCT} />
           <Stat label="使用 / 合計" value={`${fmtMb(memory.usedMb)} / ${fmtMb(memory.totalMb)}`} />
           <Stat
@@ -108,7 +109,7 @@ export function LinuxPage() {
       </Section>
 
       <Section title="開発環境の連携" count={devEnv.toolchain.length}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 8 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: wrapColumns(4, 150), gap: 12, marginBottom: 8 }}>
           <Stat label="Node ランタイム" value={`v${devEnv.nodeVersion}`} />
           <Stat label="プラットフォーム" value={`${devEnv.platform} / ${devEnv.arch}`} />
           <Stat

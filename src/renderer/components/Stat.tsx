@@ -58,6 +58,13 @@ const cardStyle: React.CSSProperties = {
   border: '1px solid var(--border)',
   borderRadius: 16,
   boxShadow: 'var(--shadow-sm)',
+  // 格子の 1 列が中身より細いとき、列を押し広げずに中で折り返す (2026-11-18 · スマホ幅で右へ出ていた)。
+  minWidth: 0,
 };
 const labelStyle: React.CSSProperties = { fontSize: 11, fontWeight: 700, color: 'var(--text-mute)', marginBottom: 4 };
-const valueStyle: React.CSSProperties = { fontSize: 19, fontWeight: 800, fontVariantNumeric: 'tabular-nums' };
+const valueStyle: React.CSSProperties = {
+  fontSize: 19,
+  fontWeight: 800,
+  fontVariantNumeric: 'tabular-nums',
+  overflowWrap: 'anywhere',
+};

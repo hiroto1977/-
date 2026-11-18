@@ -1647,8 +1647,11 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   gap: 10px;
   font-size: 13px;
   color: var(--text);
-  flex: 1;
-  min-width: 0;
+  /* 幅の基準を 0 にしない (2026-11-18)。0 だと、折り返しのある行で「残りが数 px でも同じ行に収まる」と数えられ、
+     後ろの要素 (担当士業の札 —— 折り返さない) が同じ行に来たとき、ここが 1 字ずつの縦書きに潰れる
+     (スマホ幅の事業ダッシュボードで実測)。基準を持たせると、収まらない後ろの要素が次の行へ送られる。 */
+  flex: 1 1 160px;
+  min-width: min(160px, 100%);
 }
 .status-bar img {
   width: 28px;
@@ -1816,6 +1819,45 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
 .upgrade-card .lock { font-size: 40px; margin-bottom: 8px; }
 .upgrade-card h2 { margin: 0 0 8px; font-size: 16px; }
 .upgrade-card p { margin: 0 0 14px; color: var(--text-muted); font-size: 13px; line-height: 1.6; }
+
+/* --- 事業ダッシュボード (BusinessPage): 絞り込みの列 + 本文の 2 列。狭い枠では縦に積む ---
+   2026-11-18: スマホ幅で 240px 固定の列の右に本文を並べたままだったので、本文が約 100px に潰れて右が切れていた
+   (横には動かせない)。**画面の幅ではなく、この画面が置かれた枠の幅で決める** (container query) —— 同じ画面は
+   村の殻の役場の窓にも開くので、窓が狭ければ画面が広くても積む。 */
+.biz-page { padding: 24px; display: flex; flex-direction: column; gap: 20px; container-type: inline-size; }
+.biz-layout { display: flex; gap: 20px; align-items: flex-start; }
+.biz-sideboard {
+  flex: 0 0 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.biz-main { flex: 1; display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+@container (max-width: 720px) {
+  .biz-layout { flex-direction: column; align-items: stretch; }
+  .biz-sideboard {
+    flex: none;
+    align-self: stretch;
+    position: static;
+    max-height: none;
+    overflow-y: visible;
+    padding-right: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+  }
+  .biz-sideboard > .biz-sideboard-full { grid-column: 1 / -1; }
+}
+@media (max-width: 768px) {
+  /* 殻の本文が既に 16px の余白を持つ (`.content`)。二重に取ると 412px の画面で本文が 332px になる。 */
+  .biz-page { padding: 0; }
+}
 
 /* --- 書類スタジオ (DocstudioPage): 書面プレビュー + 印刷 --- */
 .ds-paper {

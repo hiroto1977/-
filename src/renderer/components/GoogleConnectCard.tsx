@@ -21,7 +21,7 @@ import { externalTextOnOneLine } from '../data/assistantMarkdown';
  * 秘密情報ではない。
  *
  * **実行形態で変わるのは 2 つで、向きが逆である** (2026-09-25 · パス 457 で実測):
- * 取得はブラウザ版では同梱スナップショットのまま (`LIVE_READERS` は `cursor` / `stripe` / `asana` / `line` / `linear` / `sentry` の 6 件だけ)、
+ * 取得はブラウザ版では同梱スナップショットのまま (`LIVE_READERS` は `cursor` / `stripe` / `asana` / `line` / `linear` / `sentry` / `discord` の 7 件だけ)、
  * **送信はブラウザ版でも本当に走る** (`web-shim.ts` の invoke が 3 つの action を
  * `runProxyBearer` → `saasWriteWeb` へ振り分け、googleapis.com へ POST する)。
  * 方法 A のサインインは逆にデスクトップ版だけ (loopback で受け取るため)。

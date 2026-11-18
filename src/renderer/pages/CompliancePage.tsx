@@ -9,6 +9,7 @@ import {
   type ComplianceDomain,
 } from '../data/complianceKnowledge';
 import { runComplianceResearch } from '../data/complianceResearch';
+import { wrapColumns } from '../components/wrapColumns';
 
 const DOMAIN_LABEL: Record<ComplianceDomain, string> = {
   tax: '税務',
@@ -46,7 +47,7 @@ export function CompliancePage() {
       />
 
       <Section title="確証サマリ" count={report.confirmed}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 8 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: wrapColumns(4, 150), gap: 12, marginBottom: 8 }}>
           <Stat label="確証済み" value={`${report.confirmed} 件`} positive />
           <Stat label="破棄(未確証)" value={`${report.discarded} 件`} positive={report.discarded === 0} />
           {report.byDomain.map((d) => (

@@ -68,7 +68,8 @@ export const SERVICE_CREDENTIAL_USE: Record<ServiceId, CredentialUse> = {
   'microsoft-365': 'fetch',
   dropbox: 'none',
   salesforce: 'none',
-  discord: 'none',
+  // 2026-11-18: 取得が鍵を読むようになった (`main/clients/discord.ts` → `shared/api/discord.ts`)。
+  discord: 'fetch',
   // 2026-11-18: 取得が鍵を読むようになった (`main/clients/asana.ts` → `shared/api/asana.ts`)。
   asana: 'fetch',
   // 2026-11-18: 取得が鍵を読むようになった (`main/clients/linear.ts` → `shared/api/linear.ts`)。

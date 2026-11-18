@@ -7,6 +7,61 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-11-18 · 続き 7) — 資金調達レーダーに「申請書類の下書き」を足した
+
+- 利用者の依頼: 「資金調達レーダーで全ての事業や業種を踏まえ必要な情報を入力する事で補助金や助成金の申請書類のテンプレートを作ってくれる仕様にして」。
+- **判定と文面**: `src/renderer/data/fundingApplication.ts` (純関数)。`buildApplicationDraft(input, today)` が 8 節の下書きを組み、`applicationDraftMarkdown` が Markdown にする
+  (利用者が打つ欄は 1 行の場所で `escapeMarkdownInline`・段落で `escapeMarkdownText`)。業種は日本標準産業分類の大分類 20 (`INDUSTRIES`・書き方の手がかりつき)。
+  申請額の目安は `expenseTotals` (計算できた形 / できなかった形の 2 つだけを型が持つ —— 申請額と自己負担は必ず一緒)。
+- **画面**: `src/renderer/components/FundingApplicationDraft.tsx` を `FundingPage.tsx` の「使える制度の判定」の下に置いた。数の欄は `GuardedNumber` + `refusingSpecs('save', …)`、
+  文の欄は `CeilingNotice` (切らずに断る)。断りの文は `[data-refused-fields]` も名乗る (関門が「保存できません」と述べた欄を画面の断りが名指しする —— `guardClaimsOnScreen` が全欄で見る)。
+  制度の出典は `externalUrlOrNull` → `VettedLink`。入力は保存せず、端末の外へも送らない。
+- **途中で検査が捕まえた物 (どれも設計どおり)**: 台帳 7 件 (`downloadFilenameCensus`・`markdownExportCensus`・`followableUrlCensus`・`guardUnitCensus`・`guardClaimsOnScreen` ×2・`mutateScopeCensus`)。
+  変異検査の 1 度目は 99.11% (生存 4) —— どれも等価だったので形ごと消した (`isAmount` を `isFiniteNumber` へ・申請額と自己負担を 1 つの形へ) → **100.00% (443 killed)**。`mutate` 371 → 372。
+  実機の検査の `ok(true, …)` は直前が投げる待ちでないと `e2eSuiteFloors` が落とす (待ちを関数に包んだら鳴った)。
+- 実機: `desktop` suite 63 → **67** 件・全 suite **743** 件・床 **631**。スマホ幅 (412px) で資金調達の画面に切れ・横スクロールが無いことを実測。
+- **実機で出た、アプリの外の現象**: フル版の `design` suite の再読込の段が 3 回続けて落ちた —— 検査用のブラウザの文脈が、再読込で localStorage を丸ごと落としていた
+  (ずっと前に書いた会話の履歴も一緒に消える・保管庫は残る)。検査に対照の鍵を入れ、「ブラウザが落とした」と「アプリが保存しなかった」を見分ける形にした。
+  原因 (なぜこの組み直しから出たか) は未特定 —— `docs/REMAINING_WORK.md` に実測を残した。
+- **最終の実測 (2026-11-18)**: `npm test` 1317 ファイル / 28,824 件 ❌ 0・`verify:all` の 39 ゲート緑・`perf` OK (LITE DCL 346 ms / heap 8.0 MB・FULL DCL 835 ms / heap 30.4 MB)・
+  `e2e` **743 件 ❌ 0** (検査を直した後)・`e2e:lite` **743 件 ❌ 0**。出荷物: FULL 12,314,567 B / LITE 3,727,236 B (LITE は天井 4,000,000 B まで 272,764 B・警告線 3,400,000 B は超えたまま)。
+
+## 直近の作業 (2026-11-18 · 続き 6) — スマホ幅で右が切れる表示を直した・Discord を実データへつないだ (読み取り専用)
+
+- 利用者の依頼: 「マージして」(PR #947 = Sentry を取り込んだ · squash `fef88cb`)・「サービスハブの使用感を確かめたい」(公開ページの軽量版の URL と初回の手順を案内した)・
+  スマホの画面の写真つきで「左右にスクロールせずきちんと見れないので、修正して」。接続はおまかせの 6 つ目として Discord をつないだ。
+- **スマホ幅の表示**: 事業ダッシュボードが 2 列の固定の並びで、スマホ幅では本文が右へ出て切れていた (`.main` が横を切るので横スクロールにもならない)。
+  - `styles.css` に `.biz-page` / `.biz-layout` / `.biz-sideboard` / `.biz-main` を置き、枠の幅が 720px 以下なら縦に積む (`@container (max-width: 720px)` ——
+    画面の幅ではなく**枠の幅**で決めるので、村の殻の窓の中でも同じに働く)。`BusinessPage.tsx` の固定の列数の格子 5 つは `repeat(auto-fit, minmax(min(Npx, 100%), 1fr))` へ。
+  - `.status-bar .who` を `flex: 1 1 160px; min-width: min(160px, 100%)` へ (隣の折り返さない札に押されて、幅 0 から 1 文字ずつ縦に並んでいた)。
+  - 細い折れ線 (`Sparkline`) に `viewBox` を持たせて枠に合わせて縮む形に。チームレーダーの図は `overflow: visible`。
+  - 測り方: 「いちばん近い横を切る祖先の右端を越えている要素」。実機の `opened` suite に、村の殻の窓の中の走査 (+1)・**既定の殻のスマホ幅の走査** (+4)・測り方の対照 (+1) を足した (135 → **141** 件・全 suite **737** 件・床 626)。
+    既定の殻は `location.hash` を書き換えて画面を移る (その殻は hashchange で画面を替える)。
+  - `renderer/__tests__/phoneLayoutCss.test.ts` (8 件): 規則の在ること・`@container` の中身・画面が class を使うこと・固定の列数の格子が無いこと・`.who` の最小幅。
+    `themeCss.ts` の `rules()` が `@container` の中も歩くようにした (それまでは `@media` / `@supports` だけ)。
+  - 対照 4 方向: `.who` を元へ戻す / `@container` の規則を消す / 固定の格子を 1 つ戻す / `rules()` が `@container` へ降りない —— どれも狙った検査が落ちる。
+  - **2 度目 (横へ動かさないと見えない物)**: 1 度目の実機で、税の計算の流れる数字の行が「切れている」と出た (行の 3 列の固定の並びが枠より広く、`<svg>` の子が枠の外へ出ていた)。
+    測り直すと、表を除いて横に動かさないと見えない物が 8 画面に在った。列の数を固定した格子 24 か所を `wrapColumns(列数, 最小の幅)` (`components/wrapColumns.ts`) へ、
+    流れる数字の行を折り返す並びへ、カード・札・入力の行を枠より広がらない形へ直した。実機の `opened` suite に「横へ動かさないと見えない物 (表を除く) は 0 件」と対照を足した
+    (141 → **143** 件・全 suite **739** 件・床 **628**)。`phoneLayoutCss.test.ts` は 14 件 (画面と部品に列の数を固定した格子が無いこと・直した並びの綴り)。
+    表だけが横に動く 4 画面 (投資信託・ストレージ・コネクタ・Docker) は意図して残した。
+    2 度目の実機で、流れる数字の折れ線の**末尾の点が 3px 欠ける**と出た (点を右端ちょうどに置いていた) —— 線を左右 3px 内側へ寄せ、`RealtimeTicker.test.ts` に 1 件足した。
+  - **最終の実測 (2026-11-18)**: `npm test` 1315 ファイル / 28,756 件 ❌ 0 (そのあと足した 1 件は関連 168 ファイル / 1,644 件で確認)・`verify:all` の 39 ゲート緑・
+    `perf` OK (LITE DCL 310 ms / heap 8.2 MB・FULL DCL 653 ms / heap 30.4 MB)・`e2e` **739 件 ❌ 0**・`e2e:lite` **739 件 ❌ 0**。
+    出荷物: FULL 12,289,754 B / LITE 3,702,391 B (LITE は警告線 3,400,000 B を超えたまま・天井 4,000,000 B まで 297,609 B)。
+- **Discord (チャット)**: ボットが参加しているサーバーの一覧 (`GET /users/@me/guilds?limit=21&with_counts=true`) を読む。**書き込みは 1 つも持たない**。メッセージの本文は読まない。
+  判定と正規化は `src/shared/api/discord.ts` に 1 つ。デスクトップ版は `main/clients/discord.ts` (配列を直接返す照会なので `jsonFetchAny`・`ANY_CALLERS` は 3 件に)、
+  ブラウザ版は `liveRead.mamori` の `LIVE_READERS` に 1 行 (プロキシ経由・7 件目)。画面は `DiscordPage.tsx`。
+  - 参加人数は 0 以上の整数だけを受け、読めなければ「参加人数が読めません」(0 人と言わない)。一覧が読めない (配列でない) を「0 件」と混ぜずに ⚠ で述べる。21 件目以降が在ればそう述べる。
+  - 鍵はボットのトークン (`Authorization: Bot …`)。デスクトップ版だけ固定の `User-Agent` を名乗る。
+  - 宣言: `SERVICE_DATA_ORIGIN.discord` sample → remote (remote 21 / sample 39)・`SERVICE_CREDENTIAL_USE.discord` none → fetch (fetch 21 / none 51)・`CLOUD_PROVIDERS` に行。
+    送り先のホストは増えない (`discord.com` は Shopify の通知の送り先として既に表に在った)。
+  - `api/discord` は否定を返す綴り (`return null` / `return false` / `ok: false`) を持たないので、`lint:shared-judgement` の母集団には入らない (判定の行は足していない)。
+- 検証: `shared/api/__tests__/discord.test.ts`・`main/clients/__tests__/discord.test.ts` 5 件・`pages/__tests__/discordPage.test.ts` 9 件 (jsdom)・`liveRead.test.ts` +2・
+  台帳の検査に 1 行ずつ。変異検査: `discord.ts` **100.00% (37 killed)**。`mutate` 370 → 371。
+- 途中で検査が捕まえた物 (どれも設計どおり): `ontologyDoc` (生成物の再生成)・`lint:shared-judgement` (母集団に無い行を台帳へ書いていた)・
+  `commentStripperCensus` (新しい検査が共有の注記除去を読むので台帳へ)・`verify:arch` の数・`chain:verify` (block #525)。
+
 ## 直近の作業 (2026-11-18 · 続き 5) — Sentry を実データへつないだ (読み取り専用)
 
 - 利用者の依頼: 「マージして作業を継続して」。PR #946 (Linear) を取り込み (squash `3d55cbe`・`commit_message` を渡した)、

@@ -49,7 +49,7 @@ const EXPECTED: ReadonlyArray<readonly [ServiceId, CredentialUse]> = [
   ['microsoft-365', 'fetch'],
   ['dropbox', 'none'],
   ['salesforce', 'none'],
-  ['discord', 'none'],
+  ['discord', 'fetch'],
   ['asana', 'fetch'],
   ['linear', 'fetch'],
   ['sentry', 'fetch'],
@@ -109,7 +109,7 @@ const EXPECTED: ReadonlyArray<readonly [ServiceId, CredentialUse]> = [
  */
 const AUDITED_UNUSED: readonly ServiceId[] = [
   // 'asana' は 2026-11-18 に抜けた —— 取得が鍵を読むようになった (`main/clients/asana.ts`)。
-  'discord',
+  // 'discord' は 2026-11-18 に抜けた —— 取得が鍵を読むようになった (`main/clients/discord.ts`)。
   'dropbox',
   // 'line' は 2026-11-18 に抜けた —— 取得が鍵を読むようになった (`main/clients/line.ts`)。
   // 'linear' は 2026-11-18 に抜けた —— 取得が鍵を読むようになった (`main/clients/linear.ts`)。
@@ -134,10 +134,10 @@ describe('SERVICE_CREDENTIAL_USE', () => {
 
   it('3 分類の件数を固定する', () => {
     const count = (u: CredentialUse) => EXPECTED.filter(([, v]) => v === u).length;
-    expect(count('fetch')).toBe(20);
+    expect(count('fetch')).toBe(21);
     // shopify が `action` → `none` (パス 452)。
     expect(count('action')).toBe(7);
-    expect(count('none')).toBe(52);
+    expect(count('none')).toBe(51);
   });
 
   it('監査で見つかった 9 件は none のままである', () => {
@@ -182,10 +182,10 @@ describe('unusedStoredCredentials', () => {
   });
 
   it('順序は入力のまま (画面の並びを勝手に変えない)', () => {
-    expect(unusedStoredCredentials(['salesforce', 'dropbox', 'discord'])).toEqual([
+    expect(unusedStoredCredentials(['salesforce', 'dropbox', 'shopify'])).toEqual([
       'salesforce',
       'dropbox',
-      'discord',
+      'shopify',
     ]);
   });
 

@@ -86,12 +86,23 @@ function clock(ms: number): string {
 }
 
 /** 直近 `window` 点だけを保つ折れ線。毎秒 1 点ずつ左へ流れる。 */
+/** 末尾の点の半径と、線を左右から内側へ寄せる量 (半径より大きく —— 点が枠の中に収まる)。 */
+const END_DOT_RADIUS = 2.5;
+const END_DOT_INSET = 3;
+
 function RollingLine({ values, color }: { values: readonly number[]; color: string }) {
   const W = 220;
   const H = 36;
   if (values.length < 2) {
     return (
-      <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} role="img" aria-label="推移 (計測中)">
+      <svg
+        width={W}
+        height={H}
+        viewBox={`0 0 ${W} ${H}`}
+        role="img"
+        aria-label="推移 (計測中)"
+        style={{ display: 'block', maxWidth: '100%', flex: '0 1 auto' }}
+      >
         <rect x={0} y={0} width={W} height={H} fill="none" />
       </svg>
     );
@@ -99,15 +110,26 @@ function RollingLine({ values, color }: { values: readonly number[]; color: stri
   const min = Math.min(...values);
   const max = Math.max(...values);
   const span = max - min || 1;
-  const step = W / (values.length - 1);
-  const points = values.map((v, i) => `${(i * step).toFixed(2)},${(H - ((v - min) / span) * (H - 4) - 2).toFixed(2)}`);
+  // 線は左右を END_DOT_INSET だけ内側に描く。右端ちょうど (cx = W) に末尾の点を置くと、
+  // 点の右半分が <svg> の枠の外へ出て切れる (実機のスマホ幅の検査が +3px と測った · 2026-11-18)。
+  const step = (W - 2 * END_DOT_INSET) / (values.length - 1);
+  const points = values.map(
+    (v, i) => `${(END_DOT_INSET + i * step).toFixed(2)},${(H - ((v - min) / span) * (H - 4) - 2).toFixed(2)}`,
+  );
   return (
-    <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} role="img" aria-label="直近の推移" style={{ display: 'block' }}>
+    <svg
+      width={W}
+      height={H}
+      viewBox={`0 0 ${W} ${H}`}
+      role="img"
+      aria-label="直近の推移"
+      style={{ display: 'block', maxWidth: '100%', flex: '0 1 auto' }}
+    >
       <polyline points={points.join(' ')} fill="none" stroke={color} strokeWidth={1.5} />
       <circle
-        cx={W}
+        cx={W - END_DOT_INSET}
         cy={Number(points[points.length - 1]?.split(',')[1] ?? H / 2)}
-        r={2.5}
+        r={END_DOT_RADIUS}
         fill={color}
       />
     </svg>
@@ -173,14 +195,17 @@ export function RealtimeTicker({
           return (
             <div
               key={r.label}
+              // 幅が足りなければ折り返す (2026-11-18)。それまでは 3 列の格子で、列の最小幅の合計が
+              // 500px を超えていたので、スマホ幅では折れ線が枠の右へ出て、横へ動かさないと見えなかった。
+              data-ticker-row
               style={{
-                display: 'grid',
-                gridTemplateColumns: 'minmax(120px, 1fr) minmax(140px, auto) auto',
-                gap: 12,
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '4px 12px',
                 alignItems: 'center',
               }}
             >
-              <div>
+              <div style={{ flex: '1 1 160px', minWidth: 0 }}>
                 <div style={{ fontSize: 12, color: BOARD_LABEL }}>{r.label}</div>
                 <div style={{ fontSize: 11, color: BOARD_MUTED }}>
                   年額 {yen0.format(annual)} 円 / 秒あたり {rate.toFixed(4)} 円
@@ -194,6 +219,8 @@ export function RealtimeTicker({
                   fontWeight: 600,
                   color,
                   textAlign: 'right',
+                  flex: '0 1 auto',
+                  minWidth: 'min(140px, 100%)',
                 }}
               >
                 {yen2.format(soFar)} 円

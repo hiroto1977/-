@@ -157,7 +157,15 @@ export function ServiceActionPanel<S extends RecordEntryServiceId>({ serviceId, 
   return (
     <Section title={`業務操作 (${serviceLabel})`} count={2}>
       {/* record-entry */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 140px auto', gap: 8, alignItems: 'center', marginBottom: 10 }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 140px) auto',
+          gap: 8,
+          alignItems: 'center',
+          marginBottom: 10,
+        }}
+      >
         <input
           type="text"
           value={note}
@@ -254,6 +262,10 @@ const inputStyle: React.CSSProperties = {
   borderRadius: 10,
   color: 'var(--text)',
   fontSize: 13,
+  // 格子の列に合わせて縮む (2026-11-18)。既定の幅のままだと、スマホ幅で金額の欄とボタンが右へ出ていた。
+  minWidth: 0,
+  width: '100%',
+  boxSizing: 'border-box',
 };
 
 const buttonStyle: React.CSSProperties = {

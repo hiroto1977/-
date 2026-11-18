@@ -80,7 +80,7 @@ export function effectiveTables(css: string = CSS): Record<ThemeName, Map<string
  * **トークンを使う側**の検査が読む。
  *
  * 小さな読み手で足りる範囲 (`styles.css` は入れ子の規則を持たず、文字列に `{` `}` を含まない) に限る:
- * コメントを落とし、`@media` / `@supports` の中へは降りて (`context` に条件を残す)、`@keyframes` / `@font-face` などは飛ばす。
+ * コメントを落とし、`@media` / `@supports` / `@container` の中へは降りて (`context` に条件を残す)、`@keyframes` / `@font-face` などは飛ばす。
  * 宣言は `;` で切るが、括弧の中 (`url(data:…;base64,…)` ・`rgba(…)`) と引用符の中の `;` では切らない。
  */
 export interface CssRule {
@@ -140,7 +140,8 @@ export function rules(css: string = CSS): CssRule[] {
         j++;
       }
       const body = text.slice(open + 1, j - 1);
-      if (/^@(?:media|supports)\b/.test(prelude)) walk(body, context ? `${context} ${prelude}` : prelude);
+      // `@container` の中へも降りる (2026-11-18) —— 降りないと、枠の幅で切り替える規則がどの検査にも映らない。
+      if (/^@(?:media|supports|container)\b/.test(prelude)) walk(body, context ? `${context} ${prelude}` : prelude);
       else if (!prelude.startsWith('@')) out.push({ selector: prelude.replace(/\s+/g, ' '), decls: declarations(body), context });
       i = j;
     }

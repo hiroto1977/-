@@ -233,15 +233,16 @@ describe('LIVE_READERS — 読み直して static 変異体を届かせる', () 
     return rereadModule<typeof import('../liveRead')>(import.meta.url, '../liveRead');
   };
 
-  it('★ 表に載っているのは cursor / stripe / asana / line / linear / sentry だけ (増減に気付く)', async () => {
+  it('★ 表に載っているのは cursor / stripe / asana / line / linear / sentry / discord だけ (増減に気付く)', async () => {
     const m = await fresh();
-    expect(Object.keys(m.LIVE_READERS)).toEqual(['cursor', 'stripe', 'asana', 'line', 'linear', 'sentry']);
+    expect(Object.keys(m.LIVE_READERS)).toEqual(['cursor', 'stripe', 'asana', 'line', 'linear', 'sentry', 'discord']);
     expect(m.canLiveRead('cursor')).toBe(true);
     expect(m.canLiveRead('stripe')).toBe(true);
     expect(m.canLiveRead('asana')).toBe(true);
     expect(m.canLiveRead('line')).toBe(true);
     expect(m.canLiveRead('linear')).toBe(true);
     expect(m.canLiveRead('sentry')).toBe(true);
+    expect(m.canLiveRead('discord')).toBe(true);
     expect(m.canLiveRead('github')).toBe(false);
   });
 
@@ -442,6 +443,37 @@ describe('LIVE_READERS — 読み直して static 変異体を届かせる', () 
     const m = await fresh();
     const getProxyJsonFetch = vi.fn(() => Promise.reject(new Error('呼ばれてはいけない')));
     const res = await m.liveRead('sentry', { readCredential: () => Promise.resolve(null), getProxyJsonFetch, now: () => 0 });
+    expect(res).toMatchObject({ ok: false, code: 'not_configured' });
+    expect(getProxyJsonFetch).not.toHaveBeenCalled();
+  });
+
+  /*
+   * Discord (2026-11-18): 読み取りは shared の `fetchDiscordSnapshotWith` を通り、プロキシ経由の
+   * 通信手段と保管庫の鍵が**そのまま**届く (送り先は discord.com の 1 つの道だけ・GET)。
+   */
+  it('★ discord の read が、渡した通信手段と鍵で参加しているサーバーを読む', async () => {
+    const m = await fresh();
+    const jsonFetch = vi
+      .fn<(url: string, init: RequestInit) => Promise<unknown>>()
+      .mockResolvedValueOnce([{ id: '111', name: '開発', approximate_member_count: 42 }]);
+    const res = await m.liveRead('discord', {
+      readCredential: () => Promise.resolve('aaa.bbb.ccc'),
+      getProxyJsonFetch: () => Promise.resolve(jsonFetch),
+      now: () => 0,
+    });
+    expect(res).toEqual({
+      ok: true,
+      data: { guilds: [{ id: '111', name: '開発', memberCount: 42 }], guildsRead: true, more: false },
+    });
+    expect(jsonFetch.mock.calls).toEqual([
+      ['https://discord.com/api/v10/users/@me/guilds?limit=21&with_counts=true', { headers: { Authorization: 'Bot aaa.bbb.ccc' } }],
+    ]);
+  });
+
+  it('discord: 鍵が無ければ通信手段を取りに行かず「未登録」と答える', async () => {
+    const m = await fresh();
+    const getProxyJsonFetch = vi.fn(() => Promise.reject(new Error('呼ばれてはいけない')));
+    const res = await m.liveRead('discord', { readCredential: () => Promise.resolve(null), getProxyJsonFetch, now: () => 0 });
     expect(res).toMatchObject({ ok: false, code: 'not_configured' });
     expect(getProxyJsonFetch).not.toHaveBeenCalled();
   });

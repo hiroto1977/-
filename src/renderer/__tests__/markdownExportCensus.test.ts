@@ -35,7 +35,7 @@
  *
  * ## この検査が数えるもの / 数えないもの
  *
- * 母集団は **`text/markdown` の成果物を作る行**である (実測 8 行 / 5 ファイル)。
+ * 母集団は **`text/markdown` の成果物を作る行**である (実測 8 行 / 5 ファイル・2026-11-18 に資金調達の申請書類の下書きで 9 行 / 6 ファイル)。
  * 各行について「その本文を組み立てるモジュール」を台帳が名指しし、
  * 自由文が入るなら `escaped` を要求する (機械が import を確かめる)。
  *
@@ -131,6 +131,13 @@ const LEDGER: readonly {
     why: '表題の `${label}` は利用者が打った事業名 (businessUnitName が保管値をそのまま返す)。2026-09-20 (パス 332) の判断「利用者が打った文字列は 1 つも通らない」は偽で、最初の補間がまさに事業名だった —— `<img onerror>` が書き出した .md の 1 行目に素で載った (threat: T-022)。`escapeMarkdownInline` を通す。残りの補間 (ROWS の固定ラベル・diagnosis の定数表の文・数字) は利用者が編集できない。',
   },
   {
+    file: 'src/renderer/components/FundingApplicationDraft.tsx',
+    sites: 1,
+    producer: 'src/renderer/data/fundingApplication.ts',
+    freeText: 'escaped',
+    why: '申請書類の下書き。利用者が打つ欄 (事業者名・所在地・計画の名前・課題・内容・効果・費目の名前・一覧に無い制度の名前) は、1 行の場所では `escapeMarkdownInline`、段落では `escapeMarkdownText` を通す (`fundingApplication.test.ts` が生 HTML・表の区切り・改行で確かめる)。',
+  },
+  {
     file: 'src/renderer/components/WelfareSchemeCard.tsx',
     sites: 1,
     producer: 'src/shared/welfareDocs.ts',
@@ -163,7 +170,7 @@ describe('text/markdown を書き出す所の母集団 (パス 332)', () => {
     for (const s of SITES) actual.set(s.file, (actual.get(s.file) ?? 0) + 1);
     const expected = new Map(LEDGER.map((r) => [r.file, r.sites]));
     expect([...actual.entries()].sort()).toEqual([...expected.entries()].sort());
-    expect(SITES).toHaveLength(8);
+    expect(SITES).toHaveLength(9);
   });
 
   it('★ `escaped` の行は、本文を組み立てるモジュールが実際に門を import している', () => {
@@ -182,7 +189,7 @@ describe('text/markdown を書き出す所の母集団 (パス 332)', () => {
 
   it('数えた内訳を留める', () => {
     const n = (k: string) => LEDGER.filter((r) => r.freeText === k).length;
-    expect({ escaped: n('escaped'), none: n('none') }).toEqual({ escaped: 3, none: 2 });
+    expect({ escaped: n('escaped'), none: n('none') }).toEqual({ escaped: 4, none: 2 });
   });
 
   it('★ 標本: import の判定は、同名のローカル関数では満たされない (対照が鳴らなかった形)', () => {

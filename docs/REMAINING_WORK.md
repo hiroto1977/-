@@ -39,6 +39,77 @@
   (`numericInputReaderCensus.test.ts`)。直した後も、既存のファイルの答えは変わっていない (12 件とも緑)。`FarmListEditor` の欄は `value={numbers[f] ?? ''}` で、この走査の母集団に入らない (読み手は `parseCropNumber` = `readNumeric`)。
 - **実機で確かめたのは**: 切り替え・産物を足す / 消す・保存して概算・海水魚を足す・足した魚種で概算 (e2e の `hydroponics` suite に 8 件)。水温の点検と「参考を戻す」は jsdom の検査だけ。
 
+## 資金調達レーダーの「申請書類の下書き」で測って残した物 (2026-11-18)
+
+- **何を足したか**: 資金調達レーダーの画面に「申請書類の下書きを作る」の節。制度 (確証済みの一覧の事業向け 96 件・雇用向け 17 件か、一覧に無い制度の名前)・
+  事業者のこと (事業形態・業種 = 日本標準産業分類の大分類 20・所在地・創業の年・従業員数・資本金・売上高)・計画の中身 (課題・内容・効果)・日程・経費と補助率を入れると、
+  補助金 / 助成金の申請書類の型に沿った下書き (8 節) を画面に出す。「Markdown で保存」と「コピー」で持ち出せる。
+- **所定の様式ではない**: 制度ごとの様式・審査の観点は持っていない。下書きは共通の型 (申請者の概要 → 制度 → 課題 → 内容 → 効果 → 日程 → 経費 → 提出前の確認) で、
+  提出するときは最新の公募要領の様式へ書き写す前提 (画面と下書きの両方がそう述べる)。採択・支給を保証しないことも述べる。
+- **制度ごとの金額は持たない**: 補助率と上限額は、利用者が公募要領から入れる (公募回ごとに変わるので、アプリが古い値を持つほうが害が大きい)。
+  申請額の目安 = 経費の合計 × 補助率 (上限額まで・1 円未満切り捨て)。補助率が無い・費目の金額が抜けているときは計算せず、理由を述べる (0 円と出さない)。
+- **保存しない・送らない**: 入力はこの画面の間だけ持つ (記録のストアにも localStorage にも書かない・AI へも送らない)。画面を離れると消える —— 画面がそう述べる。
+  続きから書き直せる保存は足していない (足すなら、事業者名・所在地を含む記録になるので、バックアップと平文の確認文の台帳に載せる判断が要る)。
+- **読めない値・長すぎる文**: 在る間は下書きを作らず、保存とコピーのボタンも押せない (直す欄を名指しする)。空欄は断らず、下書きに「（未記入）」と書いて件数を述べる。
+- **業種は名前と書き方の手がかりだけ**: 業種ごとに使える制度を絞り込む判定は足していない (既に在る「使える制度の判定」は年齢・事業形態・認定の有無で見る)。
+  確証済みの一覧の制度に業種の欄が無いので、絞り込むなら一覧の側に業種の対象を確証つきで足す作業が要る。
+- **代わりに申請はしない**: 官公署に出す書類の作成を業として代わりに行えるのは行政書士、雇用関係の助成金は社会保険労務士 —— 下書きの末尾がそう述べる。
+- **福祉の給付と税の特例は一覧に出さない**: 申請書類の形が違う (給付の申請書・申告書)。
+- **検査**: `data/__tests__/fundingApplication.test.ts` (文面を値ごと)・`components/__tests__/fundingApplicationDraft.test.ts` (jsdom で実際に打つ)・
+  実機の `desktop` suite に 4 件 (入力が下書きへ繋がる・読めない補助率の間は下書きと保存を止める)。変異検査: `fundingApplication.ts` **100.00% (443 killed)**。
+- **測っていない物**: 実際の公募要領の様式と見比べた使い勝手・長い計画 (1,200 字いっぱい × 3 欄) を入れたときのスマホでの読みやすさ・印刷。
+- **実機の検査で出た、アプリの外の現象 (原因は未特定)**: フル版の `design` suite の「再読込しても解錠の前から『かわいい』」が、この作業の組み直しの後に **3 回続けて落ちた** (軽量版は通る)。
+  再読込の後の localStorage を読むと、デザインの選択だけでなく、**ずっと前に書いて 1 度目の再読込は越えていた会話の履歴まで消えていた** (残るのは起動時に書き直される 3 鍵だけ・IndexedDB の保管庫は残る)。
+  アプリの側でデザインの鍵を書くのは `selectDesign` の 1 か所で同期の書き込み・消すのは「すべてのデータを削除」だけ —— つまり落としたのは検査用のブラウザの文脈である。
+  単独の再現 (新しいブラウザで 設定 → 「かわいい」 → 再読込) はフル版で 9 回に 1 回・軽量版 6 回で 0 回。suite の中では、再読込の直前にブラウザへの往復を 1 つ挟むと 2 回とも起きなかった。
+  - 直し (検査の側): 選んだ直後に検査が**対照の鍵**を 1 つ書き、再読込の後にそれも消えていたら「ブラウザが落とした」として選び直してもう 1 度試す (2 回まで)。
+    対照の鍵が残っているのにデザインだけ無ければ、やり直さずに落とす (対照: 再読込の前にデザインの鍵だけを消すと、落とした回数 0 のまま 4 件が落ちる)。
+  - **分かっていないこと**: なぜこの組み直しから出るようになったか (出荷物が 25 KB 増えた以外の違いは見つけていない)・ブラウザのどの仕組みが落とすのか・
+    利用者の普通のブラウザ (保存を端末に残す文脈) でも起きるか。同じ形 (書いてすぐ再読込) の検査は `theme` suite ほかにも在り、そちらには対照の鍵を入れていない。
+
+## スマホ幅の表示の修正 (右が切れて見えない) で測って残した物 (2026-11-18)
+
+- **見つけ方**: 利用者がスマホ (公開ページの軽量版) で事業ダッシュボードを開き、右側が切れて左右にも動かせない画面を送ってくれた。
+  `.main` は横をはみ出した分を切るので、はみ出しは横スクロールにならず**見えないだけ**になる。文書の幅を見る検査 (`noHScroll`) には映らない。
+- **測り方を足した**: 「いちばん近い、横を切る祖先 (`overflow-x: hidden / clip`) の右端を越えている要素」を数える (横に動かせる祖先の中は数えない)。
+  412×915 で全画面を回すと、直す前は事業ダッシュボードの本文が丸ごと右へ出ていた (2 列の並びが幅に関わらず固定だった)。
+- **直した物**: 事業ダッシュボードの 2 列を、枠の幅が 720px 以下なら縦に積む (`@container`)。カテゴリの一覧は 2 列の格子にする。
+  画面の中の固定の列数の格子 5 つを、幅に合わせて折り返す形へ。細い折れ線は枠に合わせて縮む (`viewBox`)。
+  上の帯 (`.status-bar .who`) は、幅が足りないと 1 文字ずつ縦に並んでいたので、最小の幅を持たせて折り返す。チームレーダーの図は枠の外へ描ける (`overflow: visible`)。
+- **村の景色 (`village`) は直していない**: 飾りの絵で、枠の外へ出る分は意図して切っている。実機の検査の台帳 (`CLIP_LEDGER`) に理由つきで載せた。
+- **実機の検査**: `opened` suite に既定の殻 (サイドバーの殻・公開ページが出す側) のスマホ幅の走査を足した (135 → 141 件)。
+  それまでスマホ幅で全画面を回していたのは村の殻だけで、公開ページが実際に出す殻は 1 画面も測っていなかった。
+- **2 度目の測定 (横へ動かさないと見えない物)**: 「切れて見えない」を直した後、同じ 412×915 で「横に動かせる枠 (`overflow-x: auto / scroll`) の中で、
+  右端を越えている物 (表を除く)」を全 77 画面で数えると、**8 画面**に在った (株式・テンプレート・設定・不動産・投資信託・品質・税の計算・書類スタジオ ——
+  流れる数字の行・担当の札・数字のカード・数値パラメータの行・記録の行・色の欄)。同じ形になる「列の数を固定した格子」は画面と部品に 24 か所在り、まとめて直した。
+  - 直した物: 列の数を固定した格子は `components/wrapColumns.ts` の `wrapColumns(列数, 最小の幅)` へ (広い画面では今までどおりの列数・1 列が最小の幅より狭くなる幅では折り返す)。
+    流れる数字の行 (`RealtimeTicker`) は折り返す並びへ。数字のカード (`Stat`)・担当の札・数値パラメータの行・記録の行・色の欄は、枠より広がらない形へ。
+  - 実機の検査: `opened` suite に「横へ動かさないと見えない物 (表を除く) は 0 件 (全画面)」と測り方の対照を足した (141 → **143** 件・全 suite **739** 件・床 **628**)。
+    「切れて見えない」の測り方も直した —— 比べる相手を「切る祖先の右端」だけにした (画面の右端と小さい方を取っていたので、横に動かせる枠の中の `<svg>` の子を「切れている」と数えた)。
+  - **表は直していない (意図)**: 表だけが横に動く画面が 4 つ残る (投資信託・ストレージ・コネクタ・Docker)。表は自分のカードの中で横に動き、画面全体は動かない。
+    列を畳んで縦に並べ直す形は、画面ごとの設計が要るので別の作業。
+  - 流れる数字の折れ線の末尾の点は、右端ちょうどに置いていて右半分 (3px) が欠けていた —— 線を左右 3px 内側へ寄せた (実機の検査が見つけた)。
+  - `security/LockScreen.tsx` の `repeat(4, 1fr)` は触っていない (24 語の表示・保護対象・スマホ幅でも 4 列で収まる)。
+- **測っていない物**: タブレット幅 (768〜1024px)・横向き・文字を大きくする設定・実物のスマホ (検査は Chromium の 412×915)。
+  中身が自分の枠の中で折り返さずに**重なる**形 (切れてはいない) は、この測り方に映らない。
+- **公開ページへの反映**: 取り込み (マージ) の後に `pages.yml` が組み直す。開発環境から公開ページそのものは確かめられない。
+
+## Discord の実データ接続で測って残した物 (2026-11-18)
+
+- **本物の Discord との往復は未確認**: 開発環境から `discord.com` へ届かない。応答の形は公開の API の仕様に合わせた標本で、実物の応答では確かめていない。
+  利用者がボットのトークンを登録して「更新」を押した最初の回が、初めての実測になる。
+- **読むのはサーバーの名前と参加人数 (概数) だけ**: 照会は `GET /users/@me/guilds?limit=21&with_counts=true` の 1 つ。
+  メッセージの本文・参加者の名前・チャンネルの一覧は照会しない。書き込み (送信・変更) は 1 つも持たない。
+- **鍵はボットのトークン**: `Authorization: Bot <トークン>` で送る。利用者の個人のアカウントのトークンは使わない (画面がボットのトークンだと述べる)。
+- **`User-Agent` の形は未確認**: Discord は `DiscordBot (<名前>, <版>)` の形で名乗ることを求める。デスクトップ版は固定の名前で名乗る (利用者・端末を指す値は入れない)。
+  ブラウザ版はブラウザが `User-Agent` を決めるので付けられない —— プロキシ経由で通るかは確かめていない。
+- **ブラウザ版はプロキシ経由だけ**: 利用者のプロキシの許可リスト `UPSTREAM_ALLOWLIST` に `discord.com` を足す必要がある (画面が押す前に述べる)。
+- **伏字**: ボットのトークンには決まった接頭辞が無いので、伏字の表に形の規則は足していない。ヘッダ (`Authorization: Bot …`) の形で現れた分は既存の規則が伏せる。
+  裸で本文に現れたトークンは伏せられない (`redactionCoverage` の台帳は `header-only` と名乗る)。
+- **「ほかにも在る」は 1 件多く照会して決める**: 21 件を照会して 21 件返ってきたら「ほかにも在る」と述べる (画面に出すのは 20 件)。
+- **実機の専用 suite は無い**: 画面は jsdom の 9 件と、全画面の走査 (contrast / controls / opened) が見る。
+- **次に実データへつなぐ候補**: Dropbox / Shopify。1 サービス 1 PR。
+
 ## Sentry の実データ接続で測って残した物 (2026-11-18)
 
 - **本物の Sentry との往復は未確認**: 開発環境から `sentry.io` へ届かない。応答の形は公開の API の仕様に合わせた標本で、実物の応答では確かめていない。
@@ -57,7 +128,7 @@
 - **伏字**: 個人のトークンの接頭辞 `sntryu_` を伏字の表へ足した (それまで表に在ったのは `sntrys_` だけ)。
 - **読むのは題名・重大度・発生回数・最終発生日・プロジェクト名だけ**: イベントの中身 (スタックトレース・利用者の情報)・担当者・URL は読まない。
 - **実機の専用 suite は無い**: 画面は jsdom の 10 件と、全画面の走査 (contrast / controls / opened) が見る。
-- **次に実データへつなぐ候補**: Dropbox / Shopify / Discord。1 サービス 1 PR。
+- **次に実データへつなぐ候補**: (Discord は同じ日につないだ) Dropbox / Shopify。1 サービス 1 PR。
 
 ## Linear の実データ接続で測って残した物 (2026-11-18)
 
@@ -32824,7 +32895,7 @@ src/shared/ のモジュール                                        138
 「読んだ結果」か `未読 (…)` のどちらかで、読んでいない物に「対称だろう」とは書かない。
 
 <!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/shared-judgement-census.cjs。npm run lint:shared-judgement は check だけ) -->
-shared **194** モジュール / 両ビルドが import **105** / うち否定で答えられる **54**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
+shared **195** モジュール / 両ビルドが import **106** / うち否定で答えられる **54**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
 
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |
@@ -32850,7 +32921,7 @@ shared **194** モジュール / 両ビルドが import **105** / うち否定�
 | `depreciation` | 0 | 1 | 非対称は起きない (実測・パス 281 で理由を書き直した) —— 結論は変わらないが、**パス 272 が書いた理由は偽だった**。 ★ 旧い行はこう述べていた: 「到達の鎖は `taxCalc.ts` 1 本だけで、`taxCalc.ts` を import する main / preload のファイルは 0 件 (実測)。税の計算は画面 (renderer) だけが読む。main 側がこのモジュールの問いを1 度も発しない」。前半 (`src/main` / `src/preload` の中に直の import が 0 件) は**真**だが、後半は**偽** —— 実測した鎖は `main/clients/funding.ts` → `shared/funding.ts` → `taxCalc.ts` → ここ で、**`shared/funding.ts` を 1 枚はさんで main へ繋がっている**。**1 ホップで測って閉包について述べていた** —— この本は到達を閉包で見る(パス 268 でそう直した) ので、この行が母集団に在ること自体が反証である(到達していなければ行は存在しない)。 ★ 正しい理由は**辺の中身**である: 鎖の 2 つの辺はどちらも**定数だけ**を持ち出す —— `funding.ts` が `taxCalc` から取るのは `CONSUMPTION_TAX_STANDARD` 1 つ、`taxCalc` が ここ から取るのは `SME_*` の 5 定数で、`taxCalc` はこのモジュールの**関数を 1 つも呼ばない** (`isSchedulableLife` / `straightLineAnnual` の呼び手は `RealEstatePage.tsx` = renderer だけ)。だから main 側は否定で答える問いを発しない。`controlChars` (パス 280) と同じ形 —— **読まれてはいたが、足りなかった**。 到達の鎖と辺の名前は `shared/__tests__/judgementReachEdges.test.ts` が両方向に留める (経路が変わる・名前が増える・定数が関数に化ける、のどれでも鳴る) |
 | `emotionsLimits` | 1 | 5 | 対称 (実測・パス 254) —— analyze-text の門は両ビルドとも `countChars(text) > MAX_ANALYZE_TEXT_CHARS` (main/clients/emotions.ts:313 / web-shim.ts:733)、log-mood の note も同じ形 (emotions.ts:220 / emotionsWeb.ts:172)。packAnalyzeText の否定 (included === 0) の消費者も GmailPage / SlackPage の両方が 押せなくする。**ただし予算を積む単位が割れていた** —— 門は文字で測るのに packAnalyzeText は `row.length` (コード単位)。絵文字 10 個の件名 600 行で 2,617 字送った時点で 362 行を落とし、画面は「5000 字までのため」と **成り立たない理由**を述べていた。パス 254 で countChars へ直した |
 | `eraseReport` | 1 | 4 | 意図した非対称 (実測・パス 252) —— 報告の型と文面は共有で、否定 (allDeleted が偽) の扱いも 両ビルドで同じ (残った物を名指し・「データは残っています」・再読込/再起動をしない)。**消す順序だけが逆向き**: ブラウザ版は保管庫を最後 (記録が平文の IndexedDB なので「保管庫だけ新しく記録は前の人の物」を避ける)、デスクトップ版はトークンを先頭。デスクトップ版は atRest.ts の封筒 1 組でトークンも状態ファイルも同じ強さなのでその非対称が起きず、process が途中で死んだときに残るのは「遠隔から使えるトークン」か「局所で読める記録」かの選択になる。前者のほうが重いのでトークンを先に消す。理由を desktopEraseTargets へ書いた |
-| `externalUrlGate` | 3 | 5 | 閉じている (実測・パス 241 で 3 経路 → パス 291 で 4 経路) —— 否定 (`null`) の扱いは 4 経路すべてで「開かない」の 1 つ: main.ts の `app:openExternal` と setWindowOpenHandler、ブラウザ版 web-shim の同名の polyfill、そしてパス 291 で足した `oauth.ts` の authorize URL (投げて中断する)。 ★ **その 4 本目に twin は無い** —— ブラウザ版の `authorize` は `not_supported` を返すだけで、貼り付け式 PKCE (`renderer/oauth/pkce.ts`) は URL を画面に出し**利用者が自分で開く**ので、「この authorize URL を外部ブラウザへ渡してよいか」という問いを発するのは main だけ。だから非対称になりようがない (`depreciation` の「問いを発しない」と同じ形だが、あちらは辺が定数だけ・こちらは片側の実装が存在しない)。★ **パス 298 で 4 → 6 経路。** 足した 2 つは画面の `<a>` で、プラットフォームが自分で辿る属性 (`EligibilityChecker` / `WelfareSchemeCard`)。それまで台帳の生の値を属性に置いており、React のクリック handler で打ち消しても中クリックや右クリックの「新しいタブで開く」は関門の外だった (「調べた物と使われる物が別」—— パス 291 / 295 / 296 と同じ家系)。否定の扱いは**両方とも同じ 1 つ** —— link を描かずに ⚠ の文を出す。この 2 つは renderer だけの経路だが、main 側に双子は在りようがない (デスクトップ版も同じ renderer を描く) ので非対称ではない。母集団は `shared/__tests__/followableUrlCensus.test.ts` が両方向に留める |
+| `externalUrlGate` | 3 | 6 | 閉じている (実測・パス 241 で 3 経路 → パス 291 で 4 経路) —— 否定 (`null`) の扱いは 4 経路すべてで「開かない」の 1 つ: main.ts の `app:openExternal` と setWindowOpenHandler、ブラウザ版 web-shim の同名の polyfill、そしてパス 291 で足した `oauth.ts` の authorize URL (投げて中断する)。 ★ **その 4 本目に twin は無い** —— ブラウザ版の `authorize` は `not_supported` を返すだけで、貼り付け式 PKCE (`renderer/oauth/pkce.ts`) は URL を画面に出し**利用者が自分で開く**ので、「この authorize URL を外部ブラウザへ渡してよいか」という問いを発するのは main だけ。だから非対称になりようがない (`depreciation` の「問いを発しない」と同じ形だが、あちらは辺が定数だけ・こちらは片側の実装が存在しない)。★ **パス 298 で 4 → 6 経路。** 足した 2 つは画面の `<a>` で、プラットフォームが自分で辿る属性 (`EligibilityChecker` / `WelfareSchemeCard`)。それまで台帳の生の値を属性に置いており、React のクリック handler で打ち消しても中クリックや右クリックの「新しいタブで開く」は関門の外だった (「調べた物と使われる物が別」—— パス 291 / 295 / 296 と同じ家系)。否定の扱いは**両方とも同じ 1 つ** —— link を描かずに ⚠ の文を出す。この 2 つは renderer だけの経路だが、main 側に双子は在りようがない (デスクトップ版も同じ renderer を描く) ので非対称ではない。母集団は `shared/__tests__/followableUrlCensus.test.ts` が両方向に留める |
 | `freeeIntake` | 1 | 5 | 意図した非対称 (実測・パス 268) —— 否定で答える 3 つ (`dealIntakeNote` / `dealIntakeSheetNote` / `dealIntakeImportNote`) の**消費者は renderer だけ** (FreeePage / bankSubmission / docImports)。main が import するのは `NO_DEAL_INTAKE` と型だけで、**負で答える 3 関数の呼び出しは src/main・src/preload で実測 0 件**。ただし非対称は 1 段上に在る —— 落ちた件数を数える `FreeeDealIntake` を**作れるのは main の freee.ts だけ**で、ブラウザ版に freee の live 読みは無い (読むのは cursor だけ)。だからブラウザ版の 3 つの消費者は常に `NO_DEAL_INTAKE` を見て `null` を返す (注記が出ない)。**原因は「判定の非対称」ではなく「クライアントの不在」**で、funding (パス 265) と同じ形である |
 | `funding` | 1 | 2 | 一部読んだ (パス 265) —— 否定で答える 2 つのうち、`fundingLinkSource` は **両ビルドが同じ実装を読む** (画面が 1 つしか無いので、文言も判定も共有)。ただし `sample` を作れるのは**デスクトップ版だけ**である —— ブラウザ版の web-shim は funding に枝を持たず `not_implemented` を返すので、画面は同梱の 控え (`accountingSource: 'none'`) を見続ける。**意図した非対称**で、その原因はデスクトップの fetcher が見本の Map を渡すこと (Phase 6 の 実 API 差込みまで) のほうに在る。もう 1 つ (`isSpecifiedIncome` 系の判定) は未読 |
 | `headerValue` | 0 | 1 | 対称 (パス 296 で**そう作った**) —— 「`Headers` がこの値を受理するか」の規則で、境界を越えるのは `shared/tokenInput.ts` 経由の 1 本だけ。そこは実測で**同一の 1 行**: main が `return { ok: false, code: 'invalid_token', message: checked.message }` (main/main.ts:348-350)、ブラウザ版も同じ code と同じ message (web-shim.ts:1154-1155)。残る 2 つの読み手は越境しない —— `shared/proxyEndpoint.ts` の消費者は renderer だけ (network/proxy.ts / SettingsPage.tsx。aiEndpoint の行が同じ事実を既に述べている)、`parseProxyEnvelope` は renderer にしか無い。この pass の前は**規則が 3 通りに割れていた** —— 応答側は Latin1 を見て (パス 295)、資格情報の入口は C0/DEL だけ、共有秘密は型と長さだけ。1 つに寄せた |
@@ -32858,8 +32929,8 @@ shared **194** モジュール / 両ビルドが import **105** / うち否定�
 | `hydroponicCrops` | 0 | 5 | 非対称は起きない (実測・パス 272) —— **到達の鎖を端まで辿った**: main → `clients/hydroponics.ts` → `hydroponicsControl` → `hydroponicCrops` → {`hydroponics`, `readNumeric`}。main が import するのは **`buildHydroponicsSnapshot` 1 つだけ**で (`clients/hydroponics.ts:1` — 残りは再輸出と型)、その関数の本体は `READING_FIELDS.map(...)` と `DEFAULT_CROP_LIST.map(...)` の **2 つの射影しか無い** (実測。否定で答える関数を 1 つも呼ばない)。つまり **main 側はこのモジュールの問いを 1 度も発しない** —— `hydroponicsControl` (パス 268) と同じ形。2026-09-23 (パス 420) に renderer 側の読み手が 3 → 4 になった (`data/hydroponicsLog.ts` が `CROP_ID_RE` を読み、ロットの `cropId` が**参照先と同じ形**であることを要求する) が、**main の側は 1 つも増えていない** —— 実測で `cropIdText` / `MAX_CROP_ID_CHARS` の `src/main/` からの参照は **0 件**である。 |
 | `hydroponics` | 0 | 3 | 非対称は起きない (実測・パス 272) —— `hydroponicCrops` と同じ鎖の先に在る (main → clients/hydroponics.ts → hydroponicsControl → hydroponicCrops → ここ)。main が import する `buildHydroponicsSnapshot` は 2 つの定数表を射影するだけで、この鎖の否定で答える関数を 1 つも呼ばない (実測) |
 | `hydroponicsControl` | 1 | 6 | 非対称は起きない (実測・パス 268) —— 否定で答える 7 つ (`readingFromStored` / `batchFromStored` / `batchSchedule` / `nextSolutionChange` / `lowPotassiumSwitchDate` / `latestReading` / `isBatchState`) の**消費者は renderer だけ** (hydroponicsLog.ts / HydroponicsPage.tsx —— **左の数は importer 全体を数えるので、この 2 本より多い**。2026-09-23 (パス 421) に 5 → 6 になったのは `OverviewPage.tsx` が `cropIdText` を読んだためで、それは `null` を返さないので 7 つには入らない)。main が import するのは `buildHydroponicsSnapshot` と型 2 つだけで、その関数は READING_FIELD_SPECS / DEFAULT_* / DEFAULT_CROP_LIST を**射影する純関数** (否定で答える関数を 1 つも呼ばない —— 実測)。測定記録とロットは業務レコード (IndexedDB) に在り main は触らないので、**main 側がこの問いを 1 度も発しない** |
-| `inputCeiling` | 14 | 56 | 対称 (実測・パス 281 で測り直した) —— 天井と床の判定そのもの (countChars / clampToCeiling / atLeastChars / moreThanChars)。否定 (false) はどのビルドでも「天井を超えていない」「床を満たさない」の 1 つの意味しか持たず、**動作を決めるのは呼ぶ側**である。 ★ **パス 281 の訂正**: ここには「呼ぶ側の対称性は ceilingUnitCensus.test.ts が母集団で見る (両方向の台帳)」と書いてあった —— **その検査は呼ぶ側の対称性を見ていない**。あちらが数えるのは「文字で数えると宣言した定数が `.length` の比較か`.slice(` の引数に現れる」箇所、つまり**単位**であって、ビルド間の非対称ではない(あちらの冒頭が自分で「数えていなかったのは単位である」と述べている)。`controlChars` (パス 280) と同じ「別の物へ預けた」形。 ★ 実測 (パス 281): 4 つの述語のうち**ビルドの境を越えるのは 2 つだけ** —— `countChars` と `clampToCeiling` は main (assistant / skills / emotions / ollama / templates) と web-shim の両側から呼ばれる。`atLeastChars` / `moreThanChars` は**main からも web-shim からも 1 度も呼ばれない** (2026-09-23 · パス 422 に再実測して 0 件)。 ★ **パス 422 の訂正**: ここには「呼び手は `renderer/security/vault.ts` **1 ファイルだけ**」と書いてあった —— **今日の実測は 9 ファイル**である (入口の天井が `.length` から `moreThanChars` へ移った分)。**判定は変わらない**が、散文が名前を並べていたので数が動いた日に偽になった (パス 419 / 421 と同じ家系)。**左の数は importer 全体を数える** —— 名前を並べるのをやめ、非対称かどうかを決める事実 (main 側の呼び出しが 0 件であること) だけを書く。デスクトップ版にマスターパスワードは無く、記録の入口は renderer 側にしか無いので、**この 2 つに main 側の双子が存在しない**。越える 2 つについては天井の定数が `shared/` に 1 つずつ在り、**同じ定数を両側が読む** (ollama の prompt/system は `shared/ollama.ts`・assistant は `shared/assistantLimits.ts`・emotions は `shared/emotionsLimits.ts`)。数の一致は `ceilingLiteralCensus` が、単位の一致は `ceilingUnitCensus` が見る |
-| `isoDate` | 8 | 36 | 対称 (実測・パス 256) —— 負で答える関数は 8 つだが、**両ビルドが呼んでいるのは 2 つだけ** (main/preload 側の消費者を機械的に数えた): (1) `isCalendarDate` + `calendarDateMessage` —— main/clients/emotions.ts:212 と renderer/data/emotionsWeb.ts:177 が**同一の行**で投げる (`throw new Error(calendarDateMessage('date'))`)。 (2) `isoDateFromTimestamp` —— main/clients/stocks.ts:776 と renderer/data/stocksWatchlistWeb.ts:194 がともに `?? ''` で空文字に倒す。いずれも**見本のローソク生成の中**で、入力は `Date.now()` ± 日数なので `null` の枠は実質到達しない。 残り 6 つ (`parseIsoDate` / `isCalendarMonth` / `isCalendarDateOrMonth` / `parseTimestamp` / `addIsoDays` / `isoDaysBetween`) は **main/preload 側の消費者が 0 件** なので、ビルド間の非対称は**原理的に起きない**。 ★ **2026-09-22 (パス 394) に 9 つ目 `isoMonthOf` が増えた** —— 消費者は `main/clients/freee.ts` **だけ** (renderer は 0 件) なので、こちらも非対称は起きない (**片方のビルドしか呼ばない**)。ブラウザ版の bundle からは tree-shaking で落ちることを 両方組んで実測した (+0 B)。上の「負で答える関数は 8 つ」はこの行が足された時点の数で、**今は 9 つ**である。 ★ 台帳の粒度について: この台帳は**モジュール**単位で「両ビルドがimport」を数えるが、非対称が宿るのは**両ビルドが呼ぶ関数**だけである。isoDate はその差が最も大きい例 (33 のimport元・負で答える 8 関数・境界を越えるのは 2 つ)。 ★ **2026-09-22 (パス 410) に 10 個目 `displayDateOf` が増え、main 側の import 元が 3 → 8 になった** (`drive` / `github` / `microsoft-365` / `notion` / `wordpress` の 5 client を日付の読みへ寄せた)。**これは非対称ではなく、設計した対である** —— 境界 (main の client) が `string | null` へ正規化し、画面 (renderer) が同じ module の `dateText` でその `null` に**理由を与える** (「日付が読めません」)。`displayDateOf` を呼ぶのは main 側と `shared/ollama.ts` だけ、`dateText` を呼ぶのは画面だけで、**同じ関数が両側で違う扱いを受ける形は 1 つも無い** (実測)。`dateText` は `string | null` を受けて必ず文字列を返すので、そもそも否定で答えない。 ★ **2026-09-27 (パス 493) に 11 個目 `isTimestampMs` が増え、renderer 側の import 元が 29 → 30 になった** —— 読み手は `shared/emotionsShape.ts` の `isAnalysisEntry` (main の `emotions.ts` とブラウザ版の `emotionsWeb.ts` が**同じ 1 つの述語**として呼ぶ) と、ブラウザ版だけが持つ記録の保管層 `renderer/data/store.ts`。否定の答え (時刻が範囲外) は両ビルドとも「その要素・その記録を落とす」に倒れるので非対称は無い (実測)。 |
+| `inputCeiling` | 14 | 57 | 対称 (実測・パス 281 で測り直した) —— 天井と床の判定そのもの (countChars / clampToCeiling / atLeastChars / moreThanChars)。否定 (false) はどのビルドでも「天井を超えていない」「床を満たさない」の 1 つの意味しか持たず、**動作を決めるのは呼ぶ側**である。 ★ **パス 281 の訂正**: ここには「呼ぶ側の対称性は ceilingUnitCensus.test.ts が母集団で見る (両方向の台帳)」と書いてあった —— **その検査は呼ぶ側の対称性を見ていない**。あちらが数えるのは「文字で数えると宣言した定数が `.length` の比較か`.slice(` の引数に現れる」箇所、つまり**単位**であって、ビルド間の非対称ではない(あちらの冒頭が自分で「数えていなかったのは単位である」と述べている)。`controlChars` (パス 280) と同じ「別の物へ預けた」形。 ★ 実測 (パス 281): 4 つの述語のうち**ビルドの境を越えるのは 2 つだけ** —— `countChars` と `clampToCeiling` は main (assistant / skills / emotions / ollama / templates) と web-shim の両側から呼ばれる。`atLeastChars` / `moreThanChars` は**main からも web-shim からも 1 度も呼ばれない** (2026-09-23 · パス 422 に再実測して 0 件)。 ★ **パス 422 の訂正**: ここには「呼び手は `renderer/security/vault.ts` **1 ファイルだけ**」と書いてあった —— **今日の実測は 9 ファイル**である (入口の天井が `.length` から `moreThanChars` へ移った分)。**判定は変わらない**が、散文が名前を並べていたので数が動いた日に偽になった (パス 419 / 421 と同じ家系)。**左の数は importer 全体を数える** —— 名前を並べるのをやめ、非対称かどうかを決める事実 (main 側の呼び出しが 0 件であること) だけを書く。デスクトップ版にマスターパスワードは無く、記録の入口は renderer 側にしか無いので、**この 2 つに main 側の双子が存在しない**。越える 2 つについては天井の定数が `shared/` に 1 つずつ在り、**同じ定数を両側が読む** (ollama の prompt/system は `shared/ollama.ts`・assistant は `shared/assistantLimits.ts`・emotions は `shared/emotionsLimits.ts`)。数の一致は `ceilingLiteralCensus` が、単位の一致は `ceilingUnitCensus` が見る |
+| `isoDate` | 8 | 37 | 対称 (実測・パス 256) —— 負で答える関数は 8 つだが、**両ビルドが呼んでいるのは 2 つだけ** (main/preload 側の消費者を機械的に数えた): (1) `isCalendarDate` + `calendarDateMessage` —— main/clients/emotions.ts:212 と renderer/data/emotionsWeb.ts:177 が**同一の行**で投げる (`throw new Error(calendarDateMessage('date'))`)。 (2) `isoDateFromTimestamp` —— main/clients/stocks.ts:776 と renderer/data/stocksWatchlistWeb.ts:194 がともに `?? ''` で空文字に倒す。いずれも**見本のローソク生成の中**で、入力は `Date.now()` ± 日数なので `null` の枠は実質到達しない。 残り 6 つ (`parseIsoDate` / `isCalendarMonth` / `isCalendarDateOrMonth` / `parseTimestamp` / `addIsoDays` / `isoDaysBetween`) は **main/preload 側の消費者が 0 件** なので、ビルド間の非対称は**原理的に起きない**。 ★ **2026-09-22 (パス 394) に 9 つ目 `isoMonthOf` が増えた** —— 消費者は `main/clients/freee.ts` **だけ** (renderer は 0 件) なので、こちらも非対称は起きない (**片方のビルドしか呼ばない**)。ブラウザ版の bundle からは tree-shaking で落ちることを 両方組んで実測した (+0 B)。上の「負で答える関数は 8 つ」はこの行が足された時点の数で、**今は 9 つ**である。 ★ 台帳の粒度について: この台帳は**モジュール**単位で「両ビルドがimport」を数えるが、非対称が宿るのは**両ビルドが呼ぶ関数**だけである。isoDate はその差が最も大きい例 (33 のimport元・負で答える 8 関数・境界を越えるのは 2 つ)。 ★ **2026-09-22 (パス 410) に 10 個目 `displayDateOf` が増え、main 側の import 元が 3 → 8 になった** (`drive` / `github` / `microsoft-365` / `notion` / `wordpress` の 5 client を日付の読みへ寄せた)。**これは非対称ではなく、設計した対である** —— 境界 (main の client) が `string | null` へ正規化し、画面 (renderer) が同じ module の `dateText` でその `null` に**理由を与える** (「日付が読めません」)。`displayDateOf` を呼ぶのは main 側と `shared/ollama.ts` だけ、`dateText` を呼ぶのは画面だけで、**同じ関数が両側で違う扱いを受ける形は 1 つも無い** (実測)。`dateText` は `string | null` を受けて必ず文字列を返すので、そもそも否定で答えない。 ★ **2026-09-27 (パス 493) に 11 個目 `isTimestampMs` が増え、renderer 側の import 元が 29 → 30 になった** —— 読み手は `shared/emotionsShape.ts` の `isAnalysisEntry` (main の `emotions.ts` とブラウザ版の `emotionsWeb.ts` が**同じ 1 つの述語**として呼ぶ) と、ブラウザ版だけが持つ記録の保管層 `renderer/data/store.ts`。否定の答え (時刻が範囲外) は両ビルドとも「その要素・その記録を落とす」に倒れるので非対称は無い (実測)。 |
 | `mentor` | 1 | 6 | 非対称は起きない (実測・パス 551) —— 否定で答えるのは `sanitizeMentorSession` (読めない保存値は null) と、`mediationPlan` の `steps: null` (同意が揃わない) の 2 つで、**読み手は renderer だけ** (MentorPage.tsx と、パス 555 で足した data/mentorRoster.ts · TeamPage.tsx · WorkloadShareTable.tsx)。main が import するのは `buildMentorSnapshot` と型 `MentorSnapshot` だけ (main/clients/mentor.ts) で、それは null を返さない。危機の判定は renderer の `counseling.ts` を 注入で受けるので、この module 自身は判定を持たない |
 | `mutualFundsMetrics` | 0 | 2 | 対称 (実測・パス 272) —— main の到達は `serviceAdvisor` 経由 (4 クライアント: real-estate / mutual-funds / uber-eats / demae-can)。`serviceAdvisor` がこのモジュールから取るのは**4 つ** (`serviceAdvisor.ts:37`): 定数 `RETURN_FLOOR_PCT` / `RETURN_ENTRY_CEILING_PCT` と述語 `isImpossibleReturnPct` / `isAboveEntryCeilingPct` (どちらも 1 行の比較。2026-09-27 · パス 493j に 2 → 4 —— 上端の外を「捨てずに言う」断りのため)。**2 つの述語は確かに越境する** —— `adviseService` の中で `isImpossibleReturnPct` は真の枝 (:586 警告を組む) と偽の枝 (:607 測れる集合から外す) の両方、`isAboveEntryCeilingPct` は真の枝 (:598 断りを組む) だけが使われる (偽の枝は何もしない —— 値は比較に残る)。だが**否定のあとの動作は両ビルドで同じ 1 つの実装の中に在る** —— `adviseService` が返す助言の*中身*を形づくるだけで `ok: false` を作らず、同じオブジェクトが両ビルドへ返る (`serviceAdvisor` の判定はパス 268 で対称と実測済み)。★ この行は **module 単位の到達と call 単位の到達が違う**ことの例である (`isoDate` の ★ と同じ話)。 |
 | `ollamaCore` | 0 | 0 | **非対称だった → パス 248 で直した** (許可経路の台帳を読むのは renderer だけ) |

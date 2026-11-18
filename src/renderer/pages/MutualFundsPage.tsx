@@ -575,7 +575,7 @@ export function MutualFundsPage() {
       <Section title="ドルコスト平均法シミュレーション (概算)">
         <div className="field-grid" style={{ marginBottom: 12 }}>
           <GuardedNumber spec={MF_REFUSAL_SPECS.dcaMonthly} value={dcaMonthly} onChange={setDcaMonthly} width={120} />
-          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2, flex: 1, minWidth: 240 }}>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2, flex: 1, minWidth: 'min(240px, 100%)' }}>
             各期の基準価額 (カンマ区切り)
             <input type="text" value={dcaPrices} onChange={(e) => setDcaPrices(e.target.value)} style={{ ...simInputStyle, width: '100%' }} />
           </label>

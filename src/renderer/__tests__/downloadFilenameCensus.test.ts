@@ -72,6 +72,10 @@ const SINKS: Record<string, { nameFrom: NameFrom; why: string }> = {
     nameFrom: 'stored',
     why: '`financial-report-${unit.id}-…` と `statement-…-${unit.id}-…`。id は記録層の無検査キャスト由来。届く先は a.download だけ (画面の文にも実ファイル書き込みにも入らない) ので UA の消毒が最後の関門になる —— 実測して分類した。',
   },
+  'src/renderer/components/FundingApplicationDraft.tsx': {
+    nameFrom: 'literal',
+    why: '`applicationDraftFilename(localIsoDate())` —— `funding-application-draft-<今日の日付>.md`。利用者の入力 (事業者名・制度名・計画の名前) は名前に入れない (`fundingApplication.test.ts` と `fundingApplicationDraft.test.ts` が名前を値ごと留める)。',
+  },
   'src/renderer/components/WelfareSchemeCard.tsx': {
     nameFrom: 'literal',
     why: '呼び出し 3 件はすべて文字列リテラル (employee-explanation.md ほか)。',

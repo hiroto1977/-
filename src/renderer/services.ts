@@ -342,7 +342,7 @@ export const SERVICES: ServiceDefinition[] = [
     id: 'discord',
     label: 'Discord',
     icon: 'DS',
-    description: 'チャット — サーバー / チャンネル / メッセージ (snapshot)',
+    description: 'チャット — ボットが参加しているサーバーの一覧 (読み取り専用・鍵を登録すると実データ)',
     page: DiscordPage,
     category: 'integrations',
   },

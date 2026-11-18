@@ -127,9 +127,9 @@ describe('UI を閉じる旗は、ブラウザ版でも開けること', () => {
       .toBeGreaterThan(4000);
   });
 
-  /* 走査が死んで 0 件になったのを「違反なし」と読まない (実物の LIVE_READERS は cursor / stripe / asana / line / linear / sentry の 6 件)。 */
+  /* 走査が死んで 0 件になったのを「違反なし」と読まない (実物の LIVE_READERS は cursor / stripe / asana / line / linear / sentry / discord の 7 件)。 */
   it('★ LIVE_READERS の走査が生きている (書式が 1 行でも複数行でも鍵を拾う)', () => {
-    expect(liveReaderIds(LIVE_READ_SRC)).toEqual(['cursor', 'stripe', 'asana', 'line', 'linear', 'sentry']);
+    expect(liveReaderIds(LIVE_READ_SRC)).toEqual(['cursor', 'stripe', 'asana', 'line', 'linear', 'sentry', 'discord']);
     const oneLine = "export const LIVE_READERS: X = { cursor: { read: (a) => a }, 'foo-bar': { read: (b) => b } };\n";
     const multiLine = "export const LIVE_READERS: X = {\n  cursor: {\n    read: (a) => a,\n  },\n  'foo-bar': {\n    read: (b) => b,\n  },\n};\n";
     expect(liveReaderIds(oneLine)).toEqual(['cursor', 'foo-bar']);

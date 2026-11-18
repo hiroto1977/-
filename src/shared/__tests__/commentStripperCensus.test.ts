@@ -264,6 +264,7 @@ const MIGRATED: readonly string[] = [
   'src/renderer/__tests__/maxLengthCensus.test.ts',
   'src/renderer/__tests__/numericCeilingEnforced.test.ts',
   'src/renderer/__tests__/numericInputReaderCensus.test.ts',
+  'src/renderer/__tests__/phoneLayoutCss.test.ts',
   'src/renderer/__tests__/staticProseClaims.test.ts',
   'src/renderer/__tests__/storageClaims.test.ts',
   'src/renderer/__tests__/submitGuardCensus.test.ts',
