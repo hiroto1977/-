@@ -1,0 +1,104 @@
+/**
+ * **スマホ幅で右が切れない並び** (2026-11-18) —— 利用者の実機 (412px) で見つかった 3 つの崩れが戻らないこと。
+ *
+ * 1. **事業ダッシュボードの 2 列** —— 240px 固定の絞り込みの列の右に本文を並べたままだったので、本文が約 100px に
+ *    潰れて右が切れていた (枠が横を切るので、横へ動かして見ることもできない)。狭い枠では縦に積む。
+ *    切り替えは**画面の幅ではなく枠の幅** (`@container`) で決める —— 同じ画面は村の殻の役場の窓にも開く。
+ * 2. **状態の帯の名前 (`.status-bar .who`)** —— 幅の基準が 0 だったので、後ろの折り返さない札 (担当士業) と同じ行に
+ *    押し込まれ、1 字ずつの縦書きに潰れることが在った。基準を持たせて、収まらない札を次の行へ送る。
+ * 3. **列の数を固定した格子** —— `repeat(5, 1fr)` のような格子は狭い枠でも 5 列のままで、中身が枠を越える。
+ *    事業ダッシュボードの格子は、収まる数だけ並べる形 (`auto-fit` + `minmax(min(…px, 100%), 1fr)`) で書く。
+ *
+ * 描いた結果 (どの画面にも右が切れた要素が無いこと) は実機の suite `opened` が全画面で測る。
+ * ここは**規則の綴り**を留める (値を写さず、向きと有無だけを見る)。
+ */
+import { describe, expect, it } from 'vitest';
+import { resolve } from 'node:path';
+import { declOf, rules } from './themeCss';
+import { readOriginalSource } from '../../shared/__tests__/originalSource';
+import { stripComments } from '../../shared/__tests__/stripNonCode';
+
+const BUSINESS = readOriginalSource(resolve(new URL('../pages/BusinessPage.tsx', import.meta.url).pathname));
+
+/** 列の数を固定した格子 (`repeat(3, 1fr)` / `1fr 1fr 1fr`)。 */
+const FIXED_COLUMNS = /gridTemplateColumns:\s*'(?:repeat\(\s*\d+\s*,|(?:1fr\s+)+1fr')/;
+
+describe('事業ダッシュボード: 狭い枠では絞り込みと本文を縦に積む', () => {
+  it('★ 画面の根は枠として名乗り (container-type)、2 列は基本の規則では横並び', () => {
+    const page = rules().find((r) => r.selector === '.biz-page' && r.context === '');
+    expect(declOf(page!, 'container-type')).toBe('inline-size');
+    const layout = rules().find((r) => r.selector === '.biz-layout' && r.context === '');
+    expect(declOf(layout!, 'display')).toBe('flex');
+    expect(declOf(layout!, 'flex-direction'), '基本は横並び (flex の既定)').toBeUndefined();
+    const main = rules().find((r) => r.selector === '.biz-main' && r.context === '');
+    expect(declOf(main!, 'min-width'), '本文は中身の幅で枠を押し広げない').toBe('0');
+  });
+
+  it('★ 枠が狭いとき (@container) は縦に積み、絞り込みは固定の幅と追従をやめる', () => {
+    const narrow = rules().filter((r) => r.context.startsWith('@container'));
+    const layout = narrow.find((r) => r.selector === '.biz-layout');
+    expect(layout, '狭い枠の .biz-layout の規則が在る').toBeDefined();
+    expect(layout!.context).toMatch(/max-width:\s*\d+px/);
+    expect(declOf(layout!, 'flex-direction')).toBe('column');
+    const side = narrow.find((r) => r.selector === '.biz-sideboard');
+    expect(declOf(side!, 'flex'), '240px 固定をやめる').toBe('none');
+    expect(declOf(side!, 'position'), '追従 (sticky) をやめる').toBe('static');
+    expect(declOf(side!, 'max-height')).toBe('none');
+  });
+
+  it('★ 画面はその規則の class を使い、2 列の並びを inline の style に書き戻していない', () => {
+    const code = stripComments(BUSINESS);
+    for (const cls of ['biz-page', 'biz-layout', 'biz-sideboard', 'biz-main']) {
+      expect(code, cls).toContain(`className="${cls}"`);
+    }
+    expect(code, '絞り込みの列の幅を inline で固定しない').not.toContain("flex: '0 0 240px'");
+    // 標本: 針は直す前の綴りに当たる。
+    expect("style={{ flex: '0 0 240px', display: 'flex' }}").toContain("flex: '0 0 240px'");
+  });
+
+  it('★ 列の数を固定した格子が無い (収まる数だけ並べる)', () => {
+    const lines = stripComments(BUSINESS).split('\n');
+    const fixed = lines.map((l, i) => ({ l, n: i + 1 })).filter(({ l }) => FIXED_COLUMNS.test(l));
+    expect(fixed.map(({ n, l }) => `${n}: ${l.trim()}`)).toEqual([]);
+    const grids = lines.filter((l) => l.includes('gridTemplateColumns'));
+    expect(grids.length, '格子そのものは在る (走査が空虚でない)').toBeGreaterThanOrEqual(6);
+    for (const l of grids) expect(l, l.trim()).toMatch(/repeat\(auto-fi(?:t|ll), minmax\(min\(\d+px, 100%\), 1fr\)\)/);
+  });
+
+  it('標本: 針は直す前の 3 つの綴りを落とし、今の綴りは落とさない', () => {
+    expect(FIXED_COLUMNS.test("gridTemplateColumns: 'repeat(5, 1fr)',")).toBe(true);
+    expect(FIXED_COLUMNS.test("gridTemplateColumns: '1fr 1fr 1fr',")).toBe(true);
+    expect(FIXED_COLUMNS.test("gridTemplateColumns: '1fr 1fr 1fr 1fr',")).toBe(true);
+    expect(FIXED_COLUMNS.test("gridTemplateColumns: 'repeat(auto-fit, minmax(min(84px, 100%), 1fr))',")).toBe(false);
+  });
+});
+
+describe('状態の帯の名前は、後ろの札に押し潰されない', () => {
+  it('★ .status-bar .who の幅の基準は 0 でなく、最小の幅を持つ', () => {
+    const who = rules().find((r) => r.selector === '.status-bar .who' && r.context === '');
+    expect(who).toBeDefined();
+    const flex = declOf(who!, 'flex') ?? '';
+    const basis = flex.trim().split(/\s+/)[2] ?? '';
+    expect(/^\d+px$/.test(basis), `flex の 3 つ目 (基準) を px で持つ (${flex})`).toBe(true);
+    expect(parseFloat(basis)).toBeGreaterThanOrEqual(100);
+    const min = declOf(who!, 'min-width') ?? '';
+    expect(min, '枠より広くは要求しない (min(…px, 100%))').toMatch(/^min\(\d+px, 100%\)$/);
+    const bar = rules().find((r) => r.selector === '.status-bar' && r.context === '');
+    expect(declOf(bar!, 'flex-wrap'), '収まらない要素は次の行へ送る').toBe('wrap');
+  });
+
+  it('標本: 針は直す前の形 (flex: 1 / min-width: 0) を落とす', () => {
+    const before = '.status-bar .who { display: flex; flex: 1; min-width: 0; }';
+    const who = rules(before).find((r) => r.selector === '.status-bar .who');
+    const basis = (declOf(who!, 'flex') ?? '').trim().split(/\s+/)[2] ?? '';
+    expect(/^\d+px$/.test(basis)).toBe(false);
+    expect(declOf(who!, 'min-width')).toBe('0');
+  });
+
+  it('対照: @container の中の規則も走査に映る (降りないと 1 つも見えない)', () => {
+    const css = '.a { color: red; }\n@container (max-width: 720px) { .a { flex-direction: column; } }';
+    const inner = rules(css).filter((r) => r.context.startsWith('@container'));
+    expect(inner.map((r) => r.selector)).toEqual(['.a']);
+    expect(declOf(inner[0]!, 'flex-direction')).toBe('column');
+  });
+});

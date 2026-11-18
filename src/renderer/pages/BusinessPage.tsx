@@ -100,8 +100,17 @@ function Sparkline({
     .join(' ');
   const color = positive === false ? 'var(--danger)' : 'var(--success)';
   return (
-    <svg width={width} height={height} aria-hidden="true">
-      <polyline fill="none" stroke={color} strokeWidth={1.5} points={pts} />
+    // viewBox を持たせる (2026-11-18): 幅の狭い枠では svg が縮む (`max-width: 100%`) が、viewBox が無いと
+    // 中の折れ線は縮まず、右端が切れていた (スマホ幅で実測)。線の太さは縮めない。
+    <svg
+      width={width}
+      height={height}
+      viewBox={`0 0 ${width} ${height}`}
+      preserveAspectRatio="none"
+      style={{ maxWidth: '100%' }}
+      aria-hidden="true"
+    >
+      <polyline fill="none" stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" points={pts} />
     </svg>
   );
 }
@@ -184,7 +193,7 @@ function CategoryCard({ unit }: { unit: BusinessUnit }) {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(84px, 100%), 1fr))', gap: 8 }}>
         <div>
           <div style={{ fontSize: 10, color: 'var(--text-mute)' }}>売上</div>
           <div style={{ fontSize: 14, fontWeight: 600 }}>{yen.format(c.revenue)}</div>
@@ -215,7 +224,7 @@ function CategoryCard({ unit }: { unit: BusinessUnit }) {
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: '1fr 1fr 1fr 1fr',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(64px, 100%), 1fr))',
           gap: 8,
           fontSize: 11,
           color: 'var(--text-mute)',
@@ -261,25 +270,15 @@ function Sideboard({
 }) {
   const grandTotal = aggregateRevenue + foodDeliveryRevenue;
   return (
-    <aside
-      style={{
-        flex: '0 0 240px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 4,
-        position: 'sticky',
-        top: 0,
-        alignSelf: 'flex-start',
-        maxHeight: 'calc(100vh - 48px)',
-        overflowY: 'auto',
-        paddingRight: 4,
-      }}
-    >
-      <div style={{ fontSize: 11, color: 'var(--text-mute)', padding: '4px 8px', marginBottom: 4 }}>
+    <aside className="biz-sideboard" data-biz-sideboard>
+      {/* 並べ方 (広い枠では左の列・狭い枠では本文の上に 2 列の格子) は styles.css の `.biz-*` が持つ。
+          `biz-sideboard-full` は格子のときに横いっぱいを使う行。 */}
+      <div className="biz-sideboard-full" style={{ fontSize: 11, color: 'var(--text-mute)', padding: '4px 8px', marginBottom: 4 }}>
         カテゴリ絞り込み
       </div>
       <button
         type="button"
+        className="biz-sideboard-full"
         onClick={() => onSelect('all')}
         style={{
           textAlign: 'left',
@@ -404,7 +403,7 @@ function DetailView({ unit }: { unit: BusinessUnit }) {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(140px, 100%), 1fr))', gap: 12 }}>
         <div>
           <div style={{ fontSize: 11, color: 'var(--text-mute)' }}>月次売上</div>
           <div style={{ fontSize: 20, fontWeight: 700 }}>{yen.format(c.revenue)}</div>
@@ -440,7 +439,7 @@ function DetailView({ unit }: { unit: BusinessUnit }) {
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(110px, 100%), 1fr))',
           gap: 12,
           padding: '12px 0',
           borderTop: '1px solid var(--border)',
@@ -813,7 +812,7 @@ export function BusinessPage() {
   const foodNet = foodEstimate.netRevenue; // 手数料控除後の純売上 (手取り)
 
   return (
-    <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 20 }}>
+    <div className="biz-page" data-biz-page>
       {/*
         * **読む口が在るなら、書く口も在る** (2026-09-24 · パス 451)。
         * この画面の「AI 経営アドバイザー」は Anthropic を呼ぶので main / ブラウザ版とも
@@ -851,7 +850,7 @@ export function BusinessPage() {
         </div>
       )}
 
-      <div style={{ display: 'flex', gap: 20, alignItems: 'flex-start' }}>
+      <div className="biz-layout" data-biz-layout>
         <Sideboard
           units={data.units}
           selected={selectedCategory}
@@ -859,7 +858,7 @@ export function BusinessPage() {
           aggregateRevenue={agg.revenue}
           foodDeliveryRevenue={foodRevenue}
         />
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 20, minWidth: 0 }}>
+        <div className="biz-main" data-biz-main>
       <Section title="全社合算" count={data.units.length}>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           <Tile label="月次売上 (事業合計)" value={yen.format(agg.revenue)} />
@@ -1267,7 +1266,7 @@ function CrossServiceKpis() {
         `pages/__tests__/moneyNotationOneScreen.test.ts` の冒頭に置いた。
         **この画面には円記号を字面で書かない** —— 同じテストがそれを留めている。
       */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12, marginBottom: 12 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(150px, 100%), 1fr))', gap: 12, marginBottom: 12 }}>
         <Stat label="月次売上推計 (フードデリバリー)" value={yen.format(monthlyFoodDelivery)} />
         <Stat label="月次 CF (不動産)" value={yen.format(monthlyCashflow)} positive={monthlyCashflow >= 0} />
         <Stat label="投資元本 (株式cash + 投信評価額)" value={yen.format(investmentValuation)} />

@@ -110,6 +110,8 @@ function RadarChart({
         maxWidth: size,
         height: 'auto',
         margin: '0 auto',
+        // 軸の名前は図の端ぎりぎりに置くので、狭い枠では数 px だけ図の箱を越える。箱で切らない (スマホ幅で 2px 切れていた)。
+        overflow: 'visible',
       }}
     >
       {rings.map((lvl) => {

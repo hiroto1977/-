@@ -5028,6 +5028,49 @@ async function openedSuite(browser) {
       },
       [cfg.theme, cfg.design, REQUEST],
     );
+  /**
+   * 右が切れて**見えない**要素を数える (2026-11-18)。`noHScroll` は文書の横スクロールしか見ないので、
+   * 枠が横を切っている (`overflow: hidden`) 画面では「はみ出しているのに横へ動かせない」形が映らない ——
+   * スマホ幅の事業ダッシュボードがその形で、利用者の実機の画面で見つかった。
+   *
+   * 数えるのは「最も近い、横を切るか横へ動かせる祖先」の右端を 1px より多く越える要素。その祖先が
+   * 横へ動かせる (`auto` / `scroll`) なら数えない (利用者は動かして見られる)。祖先が既に数えられていれば
+   * 子は数えない (外側の 1 件だけを挙げる)。
+   */
+  const clippedIn = (rootSel) => {
+    const root = document.querySelector(rootSel);
+    if (!root) return null;
+    const W = window.innerWidth;
+    const clipper = (el) => {
+      for (let n = el.parentElement; n && n !== document.documentElement; n = n.parentElement) {
+        const ox = getComputedStyle(n).overflowX;
+        if (ox === 'auto' || ox === 'scroll') return { scroll: true, n };
+        if (ox === 'hidden' || ox === 'clip') return { scroll: false, n };
+      }
+      return { scroll: false, n: null };
+    };
+    const bad = [];
+    const seen = new Set();
+    for (const el of root.querySelectorAll('*')) {
+      const rc = el.getBoundingClientRect();
+      if (rc.width === 0 || rc.height === 0) continue;
+      const c = clipper(el);
+      if (c.scroll) continue;
+      const limit = c.n ? Math.min(c.n.getBoundingClientRect().right, W) : W;
+      if (rc.right <= limit + 1) continue;
+      let inner = false;
+      for (let q = el.parentElement; q && q !== root; q = q.parentElement) if (seen.has(q)) { inner = true; break; }
+      seen.add(el);
+      if (inner) continue;
+      bad.push(`${el.tagName.toLowerCase()} +${Math.round(rc.right - limit)}px「${(el.textContent || '').trim().slice(0, 16)}」`);
+    }
+    return bad;
+  };
+  /**
+   * 切れていてよい画面 (理由つき・両方向)。村の場面は枠で切って見せる飾りの地図で、読む文はその外に在る。
+   */
+  const CLIP_LEDGER = { village: '村の場面 (飾りの地図) は枠で切って見せる。読む文と操作子は場面の外に在る' };
+  const clipSummary = (rows) => rows.slice(0, 4).map((r) => `${r.page}: ${r.what}`).join(' / ');
   /** キーボードの様式にする (Tab → Shift+Tab) —— さもないと `:focus-visible` が一致せず、輪の規則が掛からない。 */
   const modality = async (page) => {
     await page.keyboard.press('Tab');
@@ -5267,13 +5310,24 @@ async function openedSuite(browser) {
     await chatChecks(page, label);
     await hallChecks(page, label);
     // 全画面の字 (役場の窓の地は不透明のパネル)
-    const acc = { screens: 0, text: [] };
+    const acc = { screens: 0, text: [], clipped: [] };
     const ids = SERVICE_IDS;
     for (const id of ids) {
       await openService(page, id);
       await settled(page);
       acc.screens += 1;
       acc.text.push(...tag(await page.evaluate(textExpr), id));
+      // 並びは配色に依らないので、切れている要素は 1 つ目の配色でだけ測る。
+      if (cfg === CONFIGS[0]) {
+        const bad = await page.evaluate(clippedIn, '[data-village-hall]');
+        acc.clipped.push(...(bad ?? ['窓が無い']).map((what) => ({ page: id, what })));
+      }
+    }
+    if (cfg === CONFIGS[0]) {
+      ok(
+        acc.clipped.length === 0,
+        `opened[${label}]: ★ 役場の窓の中で、右が切れて見えない要素は 0 件 (全画面)${acc.clipped.length ? ` · ${acc.clipped.length} 件: ${clipSummary(acc.clipped)}` : ''}`,
+      );
     }
     const textV = violationsOf(acc.text);
     ok(acc.screens >= 60 && acc.text.length >= 8000, `opened[${label}]: 全画面の字を測れた (画面 ${acc.screens}・字 ${acc.text.length} 行)`);
@@ -5282,6 +5336,113 @@ async function openedSuite(browser) {
       `opened[${label}]: ★ スマホ幅の全画面の字は 4.5:1 (大きい字 3:1) 以上 (WCAG 1.4.3)${textV.length ? ` · 割った ${textV.length} 行 / ${new Set(textV.map((r) => r.page)).size} 画面: ${textSummary(textV)}` : ''}`,
     );
     await ctx.close();
+  }
+
+  // ---- 2b. スマホ 412×915・既定の殻 (サイドバーの画面): 右が切れて見えない要素と、状態の帯の名前 ----
+  // 公開している HTML を素で開くと出るのはこの殻である (`?ui=village` を付けない)。村の殻の窓と同じ画面を
+  // 別の枠 (`.main` → `.content`) に置くので、枠の余白と幅が違う —— 2026-11-18 に利用者の実機で、事業ダッシュボードの
+  // 右の列が切れているのが見つかった。画面は URL のハッシュで替える (殻が hashchange を聞く)。
+  {
+    const label = 'スマホ · 既定の殻';
+    const ctx = await browser.newContext({ viewport: { width: 412, height: 915 }, hasTouch: true });
+    const page = await ctx.newPage();
+    page.on('download', (d) => d.cancel().catch(() => {}));
+    await init(page, CONFIGS[0]);
+    await page.goto('file://' + targetAbs, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('text=はじめてのご利用', { timeout: 30000 });
+    const pw = page.locator('input[type="password"]');
+    await pw.nth(0).fill(PASS);
+    await pw.nth(1).fill(PASS);
+    await page.getByRole('button', { name: 'パスワードを設定して開始' }).click();
+    await page.waitForSelector('input[type="checkbox"]', { timeout: 30000 });
+    await page.locator('input[type="checkbox"]').check();
+    await page.getByRole('button', { name: /記録完了/ }).click();
+    await page.waitForSelector('main.main', { timeout: 30000 });
+    await page.addStyleTag({ content: STILL });
+    const titles = new Set();
+    const clipped = [];
+    const squeezed = [];
+    let bars = 0;
+    for (const id of [...SERVICE_IDS, 'village']) {
+      await page.evaluate((h) => { location.hash = h; }, '#' + id);
+      await page.waitForFunction((h) => location.hash === h, '#' + id, { timeout: 5000 });
+      await settled(page);
+      titles.add(await page.evaluate(() => document.querySelector('.topbar')?.textContent ?? ''));
+      const bad = (await page.evaluate(clippedIn, 'main.main')) ?? ['本文の枠が無い'];
+      if (CLIP_LEDGER[id] === undefined) clipped.push(...bad.map((what) => ({ page: id, what })));
+      else if (bad.length === 0) clipped.push({ page: id, what: '台帳に在るのに切れていない (台帳から消す)' });
+      // 状態の帯の名前 (`.who`) は、後ろの札と同じ行に押し込まれると 1 字ずつの縦書きに潰れる。
+      const who = await page.evaluate(() => {
+        const el = document.querySelector('main.main .status-bar .who');
+        return el ? Math.round(el.getBoundingClientRect().width) : null;
+      });
+      if (who !== null) {
+        bars += 1;
+        if (who < 100) squeezed.push(`${id}: ${who}px`);
+      }
+    }
+    ok(titles.size >= 60, `opened[${label}]: 全画面を開けた (見出しの違う画面 ${titles.size}・状態の帯 ${bars})`);
+    ok(
+      clipped.length === 0,
+      `opened[${label}]: ★ 右が切れて見えない要素は 0 件 (全画面)${clipped.length ? ` · ${clipped.length} 件: ${clipSummary(clipped)}` : ''}`,
+    );
+    ok(
+      bars >= 40 && squeezed.length === 0,
+      `opened[${label}]: ★ 状態の帯の名前が潰れていない (幅 100px 以上)${squeezed.length ? ` · ${squeezed.join(' / ')}` : ''}`,
+    );
+    // 事業ダッシュボード: 絞り込みの列と本文が縦に積まれ、本文が枠の幅を使う。
+    await page.evaluate(() => { location.hash = '#business'; });
+    await page.waitForSelector('[data-biz-main]', { timeout: 10000 });
+    await settled(page);
+    const biz = await page.evaluate(() => {
+      const side = document.querySelector('[data-biz-sideboard]').getBoundingClientRect();
+      const body = document.querySelector('[data-biz-main]').getBoundingClientRect();
+      return { sideBottom: Math.round(side.bottom), bodyTop: Math.round(body.top), bodyW: Math.round(body.width), right: Math.round(body.right), W: window.innerWidth };
+    });
+    ok(
+      biz.bodyTop >= biz.sideBottom && biz.bodyW >= 300 && biz.right <= biz.W,
+      `opened[${label}]: ★ 事業ダッシュボードは絞り込みの下に本文を積む (本文の幅 ${biz.bodyW}px・上端 ${biz.bodyTop} ≧ 絞り込みの下端 ${biz.sideBottom})`,
+    );
+    await ctx.close();
+  }
+
+  // ---- 2c. 測定器の対照 (about:blank): 切る枠の中は数え、横へ動かせる枠の中は数えない ----
+  {
+    const cctx = await browser.newContext({ viewport: { width: 412, height: 600 } });
+    const cp = await cctx.newPage();
+    await cp.goto('about:blank');
+    await cp.evaluate(() => {
+      document.body.style.margin = '0';
+      const mk = (id, overflow) => {
+        const box = document.createElement('div');
+        box.id = id;
+        box.style.cssText = `width:200px;overflow-x:${overflow};`;
+        const wide = document.createElement('div');
+        wide.style.cssText = 'width:500px;height:20px';
+        wide.textContent = 'wide';
+        const inner = document.createElement('span');
+        inner.textContent = 'inner';
+        inner.style.cssText = 'display:block;width:480px;height:10px';
+        wide.appendChild(inner);
+        box.appendChild(wide);
+        document.body.appendChild(box);
+      };
+      mk('clip', 'hidden');
+      mk('scroll', 'auto');
+      const fit = document.createElement('div');
+      fit.id = 'fit';
+      fit.style.cssText = 'width:200px;overflow-x:hidden';
+      fit.innerHTML = '<div style="width:180px;height:20px">fit</div>';
+      document.body.appendChild(fit);
+    });
+    const inClip = await cp.evaluate(clippedIn, '#clip');
+    const inScroll = await cp.evaluate(clippedIn, '#scroll');
+    const inFit = await cp.evaluate(clippedIn, '#fit');
+    ok(
+      inClip.length === 1 && inClip[0].includes('+300px') && inScroll.length === 0 && inFit.length === 0,
+      `opened: 対照 ★ 切る枠の中のはみ出しは外側の 1 件だけ数え、横へ動かせる枠・収まっている枠は数えない (切る ${inClip.length}・動かせる ${inScroll.length}・収まる ${inFit.length})`,
+    );
+    await cctx.close();
   }
 
   // ---- 3. 測定器そのものの対照 (about:blank): inert の下は「無い」と数える ----
@@ -5632,7 +5793,8 @@ function installWaitMarginRecorder(browser) {
     // 2026-10-07 (パス 506 の直後): スマホ 2 配色に「開いたドロワーも測った」の床を足して 61 → 63
     ['controls', controlsSuite, 61],
     // パス 506: 開いた窓 (details / 手入力 / 浮いた窓 / ドロワー) とスマホ幅の字を実機で 4 配色。実測値は初回の実行で確かめる
-    ['opened', openedSuite, 135],
+    // 2026-11-18: スマホ幅で右が切れて見えない要素 (村の殻の窓 1・既定の殻 4・測定器の対照 1) = +6
+    ['opened', openedSuite, 141],
     ['tablet', tabletSuite, 2],
     // 村の殻 (唯一の入口) を実機で。旧画面のサイドバーの suite (shell) は 2026-11-04 に廃止
     // 2026-11-06: 会話の場面 (掛け合い 2・「💬 場面」・受付→作業中の札・スマホ幅の枠) = +5
