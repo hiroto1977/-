@@ -20,7 +20,7 @@ import type { ServiceId } from './serviceId';
  * 分類は判断ではなく、ソースツリーから機械的に決まる規則にしている
  * (`scripts/lint-data-origin.cjs` が双方向で照合する):
  *
- * - `sample` — fetcher が stub (`createSnapshotStub` / `createShigyoFetcher` /
+ * - `sample` — fetcher が stub (`createSnapshotStub` /
  *   `return STUB`)。I/O は一切無い。画面は同梱データを出す。
  * - `local`  — stub ではなく `LOCAL_SERVICES` に載っている。OS・ファイル・
  *   レコードストアから導出し、資格情報を必要としない。
@@ -82,14 +82,17 @@ export const SERVICE_DATA_ORIGIN: Record<ServiceId, DataOrigin> = {
   // 2026-11-18: アカウントの情報と今月の配信数を LINE から読む (`shared/api/line.ts`)。それまでは同梱の見本だった。
   line: 'remote',
   storage: 'sample',
-  'tax-accountant': 'sample',
-  'labor-consultant': 'sample',
-  lawyer: 'sample',
-  'judicial-scrivener': 'sample',
-  'admin-scrivener': 'sample',
-  'sme-consultant': 'sample',
-  'patent-attorney': 'sample',
-  cpa: 'sample',
+  // 2026-11-18: 端末内の record store に登録した連絡先・相談・書類・顧問料が正
+  // (`renderer/data/shigyoDirectory.ts`)。fetcher は見本を持たない空の土台を返す
+  // (`shared/shigyoTypes.ts` の `buildShigyoSnapshot`)。それまでは同梱の見本だった。
+  'tax-accountant': 'local',
+  'labor-consultant': 'local',
+  lawyer: 'local',
+  'judicial-scrivener': 'local',
+  'admin-scrivener': 'local',
+  'sme-consultant': 'local',
+  'patent-attorney': 'local',
+  cpa: 'local',
   base: 'remote',
   netsea: 'sample',
   'super-delivery': 'sample',

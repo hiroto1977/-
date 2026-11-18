@@ -2,7 +2,7 @@
 // Captured on 2026-05-11. Refreshing this snapshot is a manual step
 // until each ServiceClient is wired up to call the live REST APIs.
 
-import type { ShigyoSnapshot } from '../../shared/shigyoTypes';
+import { buildShigyoSnapshot } from '../../shared/shigyoTypes';
 import type { NortonDetection } from '../../shared/nortonDetection';
 import type { BootProtection } from '../../shared/bootProtection';
 import {
@@ -804,135 +804,20 @@ export const SNAPSHOT = {
   },
 
   // ── 士業連携。個別の専門家との連絡先 / 相談履歴 / 書類 / 顧問料を軽量 CRM
-  //    として管理する。ここにあるのは「デモ」バッジ付きの初期表示行で、
-  //    利用者が追加した分は Phase 6 で IndexedDB 永続化済み
+  //    として管理する。記録はすべて利用者が端末内に登録した物
   //    (`data/shigyoDirectory.ts` + ShigyoConsole の追加/編集フォーム)。
 
-  // 士業 8 種は共通の ShigyoSnapshot 構造。各ブロックを `satisfies
-  // ShigyoSnapshot` で検証することで、従来の per-field `as {...}[]` /
-  // `as number` キャストを排した (HANDOFF 罠 5 / PR #7 R1 #4)。月次料金は
-  // ShigyoSnapshot.monthlyFee が `number` 型なのでリテラル narrow されない。
-  taxAccountant: {
-    contacts: [
-      { id: 'ta-1', name: '山田 太郎', firm: '山田税理士事務所', email: 'yamada@example.com', phone: '03-1234-5678' },
-    ],
-    recentConsultations: [
-      { id: 'tc-1', contactId: 'ta-1', date: '2026-05-10', topic: '法人税申告書のレビュー', status: '完了' },
-      { id: 'tc-2', contactId: 'ta-1', date: '2026-05-18', topic: '消費税インボイス対応', status: '対応中' },
-    ],
-    pendingDocuments: [
-      { id: 'td-1', title: '4 月度 試算表', direction: 'received', date: '2026-05-15' },
-      { id: 'td-2', title: '源泉徴収簿', direction: 'sent', date: '2026-05-12' },
-    ],
-    monthlyFee: 33_000,
-    outstandingInvoice: 0,
-  } satisfies ShigyoSnapshot,
-
-  laborConsultant: {
-    contacts: [
-      { id: 'lc-1', name: '鈴木 花子', firm: '鈴木社労士事務所', email: 'suzuki-sr@example.com' },
-    ],
-    recentConsultations: [
-      { id: 'lcc-1', contactId: 'lc-1', date: '2026-05-08', topic: '新入社員の社会保険手続', status: '完了' },
-      { id: 'lcc-2', contactId: 'lc-1', date: '2026-05-20', topic: '就業規則の改定', status: '相談予約' },
-    ],
-    pendingDocuments: [
-      { id: 'lcd-1', title: '労働保険申告書', direction: 'received', date: '2026-05-14' },
-    ],
-    monthlyFee: 22_000,
-    outstandingInvoice: 22_000,
-  } satisfies ShigyoSnapshot,
-
-  lawyer: {
-    contacts: [
-      { id: 'lw-1', name: '佐藤 一郎', firm: '佐藤法律事務所', email: 'sato@law.example.com', phone: '03-3000-1100' },
-    ],
-    recentConsultations: [
-      { id: 'lwc-1', contactId: 'lw-1', date: '2026-05-05', topic: '取引基本契約書 v3 レビュー', status: '完了' },
-      { id: 'lwc-2', contactId: 'lw-1', date: '2026-05-19', topic: '退職トラブル相談', status: '対応中' },
-    ],
-    pendingDocuments: [
-      { id: 'lwd-1', title: '基本契約書 修正版', direction: 'received', date: '2026-05-12' },
-    ],
-    monthlyFee: 55_000,
-    outstandingInvoice: 0,
-  } satisfies ShigyoSnapshot,
-
-  judicialScrivener: {
-    contacts: [
-      { id: 'js-1', name: '高橋 二郎', firm: '高橋司法書士事務所', email: 'takahashi@js.example.com' },
-    ],
-    recentConsultations: [
-      { id: 'jsc-1', contactId: 'js-1', date: '2026-04-22', topic: '本店所在地変更登記', status: '完了' },
-      { id: 'jsc-2', contactId: 'js-1', date: '2026-05-15', topic: '不動産抵当権抹消', status: '対応中' },
-    ],
-    pendingDocuments: [
-      { id: 'jsd-1', title: '登記完了証 (本店移転)', direction: 'received', date: '2026-05-02' },
-    ],
-    monthlyFee: 0,
-    outstandingInvoice: 88_000,
-  } satisfies ShigyoSnapshot,
-
-  adminScrivener: {
-    contacts: [
-      { id: 'as-1', name: '田中 三郎', firm: '田中行政書士事務所', phone: '03-5500-2200' },
-    ],
-    recentConsultations: [
-      { id: 'asc-1', contactId: 'as-1', date: '2026-05-12', topic: 'IT 導入補助金 2026 申請', status: '対応中' },
-    ],
-    pendingDocuments: [
-      { id: 'asd-1', title: '事業計画書 (補助金申請用)', direction: 'sent', date: '2026-05-16' },
-    ],
-    monthlyFee: 0,
-    outstandingInvoice: 0,
-  } satisfies ShigyoSnapshot,
-
-  smeConsultant: {
-    contacts: [
-      { id: 'sm-1', name: '伊藤 四郎', firm: '伊藤経営コンサルティング', email: 'ito@sme.example.com' },
-    ],
-    recentConsultations: [
-      { id: 'smc-1', contactId: 'sm-1', date: '2026-04-30', topic: '事業承継診断', status: '完了' },
-      { id: 'smc-2', contactId: 'sm-1', date: '2026-05-17', topic: '中期経営計画策定', status: '相談中' },
-    ],
-    pendingDocuments: [
-      { id: 'smd-1', title: '経営診断レポート Q1', direction: 'received', date: '2026-04-28' },
-    ],
-    monthlyFee: 44_000,
-    outstandingInvoice: 0,
-  } satisfies ShigyoSnapshot,
-
-  patentAttorney: {
-    contacts: [
-      { id: 'pa-1', name: '渡辺 五郎', firm: '渡辺特許事務所', email: 'watanabe@patent.example.com', phone: '03-7700-3300' },
-    ],
-    recentConsultations: [
-      { id: 'pac-1', contactId: 'pa-1', date: '2026-05-03', topic: '商標出願 (新サービス名)', status: '対応中' },
-      { id: 'pac-2', contactId: 'pa-1', date: '2026-05-18', topic: '特許出願戦略相談', status: '相談予約' },
-    ],
-    pendingDocuments: [
-      { id: 'pad-1', title: '商標出願書 ドラフト', direction: 'received', date: '2026-05-11' },
-      { id: 'pad-2', title: '先行技術調査結果', direction: 'received', date: '2026-05-08' },
-    ],
-    monthlyFee: 0,
-    outstandingInvoice: 165_000,
-  } satisfies ShigyoSnapshot,
-
-  cpa: {
-    contacts: [
-      { id: 'cp-1', name: '中村 六実', firm: '中村公認会計士事務所', email: 'nakamura@cpa.example.com', phone: '03-8800-4400' },
-    ],
-    recentConsultations: [
-      { id: 'cpc-1', contactId: 'cp-1', date: '2026-05-09', topic: '決算書の任意監査 (金融機関提出用)', status: '対応中' },
-      { id: 'cpc-2', contactId: 'cp-1', date: '2026-05-21', topic: '経費精算フローの内部統制整備', status: '相談予約' },
-    ],
-    pendingDocuments: [
-      { id: 'cpd-1', title: '監査計画書 ドラフト', direction: 'received', date: '2026-05-13' },
-      { id: 'cpd-2', title: '固定資産台帳 (確認依頼)', direction: 'sent', date: '2026-05-16' },
-    ],
-    monthlyFee: 0,
-    outstandingInvoice: 110_000,
-  } satisfies ShigyoSnapshot,
+  // 士業 8 件は端末内の記録が正 (2026-11-18) —— 同梱の見本 (架空の専門家や
+  // 顧問料) は置かず、見本を持たない土台だけを置く。組み立ては shared の
+  // `buildShigyoSnapshot` に寄せる (主プロセス・ブラウザ版と同じ物)。
+  taxAccountant: buildShigyoSnapshot(),
+  laborConsultant: buildShigyoSnapshot(),
+  lawyer: buildShigyoSnapshot(),
+  judicialScrivener: buildShigyoSnapshot(),
+  adminScrivener: buildShigyoSnapshot(),
+  smeConsultant: buildShigyoSnapshot(),
+  patentAttorney: buildShigyoSnapshot(),
+  cpa: buildShigyoSnapshot(),
 
   base: {
     items: [

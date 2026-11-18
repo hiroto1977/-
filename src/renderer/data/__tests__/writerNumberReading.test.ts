@@ -65,6 +65,7 @@ import { parseAssignment } from '../../../shared/workAssignment';
 import { parseGoal } from '../kpiImprovementStore';
 import { parseAmountInput } from '../../components/serviceActionUtils';
 import { parseNumericInput } from '../eligibility';
+import { parseShigyoContact } from '../shigyoDirectory';
 import { readOriginalDirEntries, readOriginalSource } from '../../../shared/__tests__/originalSource';
 import { stripComments } from '../../../shared/__tests__/stripNonCode';
 
@@ -431,6 +432,17 @@ probes.push(
   },
 );
 
+// 士業の連絡先の金額 (任意の 2 欄 —— 空欄は 0、負と読めない物は断る)
+for (const key of ['monthlyFee', 'outstandingInvoice'] as const) {
+  probes.push({
+    writer: 'parseShigyoContact',
+    field: key,
+    write: (s) => attempt(() => parseShigyoContact({ serviceId: 'tax-accountant', name: '田中', [key]: s })),
+    pick: get(key),
+    blank: { value: 0 },
+  });
+}
+
 const label = (p: Probe): string => `${p.writer} · ${p.field}`;
 const show = (o: Outcome): string => JSON.stringify(o);
 
@@ -469,8 +481,9 @@ const WRITER_LEDGER: Readonly<Record<string, LedgerRow>> = {
     kind: 'no-numbers',
     why: '月次改善の輪の 1 周 (打ち手・見込みの増分・月)。見込みの増分は画面の入力欄ではなく、機械が候補から計算した数をそのまま受ける',
   },
-  parseShigyoContact: { kind: 'no-numbers', why: '士業の連絡先 (氏名・事務所・電話・メール) —— 電話番号は文字列のまま持つ' },
+  parseShigyoContact: { kind: 'numbers', why: '士業の連絡先の月次顧問料・未払い請求額 (任意の 2 欄)。氏名・事務所・電話・メールは文字列のまま持つ' },
   parseShigyoConsultation: { kind: 'no-numbers', why: '相談の日付・テーマ・状態だけを読む' },
+  parseShigyoDocument: { kind: 'no-numbers', why: '書類の書類名・方向・日付だけを読む (金額の欄は無い)' },
   parseSubmissionProfile: { kind: 'no-numbers', why: '書面の代表者名・所在地などの文字列だけを読む' },
   parseBankFormat: { kind: 'no-numbers', why: '書面の書式 (単位・負数・端数・年号) を許可リストで選ぶ' },
   parseAiCredentials: { kind: 'no-numbers', why: '保管庫の AI の資格情報 (JSON) から文字列の欄だけを読む' },

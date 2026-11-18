@@ -1,5 +1,31 @@
 # Service Hub — 残りの作業手順書
 
+## 士業 8 画面のローカル化 (2026-11-18) で測って残した物
+
+- **やったこと**: 士業 8 画面 (税理士 / 公認会計士 / 社労士 / 弁護士 / 司法書士 / 行政書士 / 中小企業診断士 / 弁理士) を
+  同梱見本 (`sample`) から端末内の記録 (`local`) へ移した。土台は見本を持たない空の snapshot
+  (`shared/shigyoTypes.ts` の `buildShigyoSnapshot` —— 主プロセスの `createShigyoLocalFetcher` と
+  ブラウザ版の web-shim が同じ関数を呼ぶ。水耕栽培と同じ形)。SNAPSHOT の見本行 (架空の専門家・
+  顧問料・書類) は全て外した。パス 187 が残した「月次顧問料には自分の額が無い」は、
+  連携先ごとの顧問料・未払い請求額を `ShigyoContactEntry` に足して解消した (画面の合計は自分の
+  連携先の合算。古い記録は欄が無いので 0 として扱い、形は `opt(num)`)。書類は新しい
+  collection `shigyo-documents` (追加と削除のみ) に置き、`shigyo-consultations` と同じく
+  中身で機微な記録として平文バックアップの確認に数える。
+- **BusinessPage の横断 KPI が変わる**: 士業顧問料の合計は SNAPSHOT の見本 (7 件ぶん ¥154,000) を
+  数えていた。見本を外したので 0 になる —— 自分の連携先を登録すれば、その合算は ShigyoConsole 側の
+  見出しに出る。横断 KPI に自分の合算を出すなら、record store を読む口が要る (画面ごとに読む形は既にある)。
+- **書類は編集が無い**: 追加と削除だけ (相談履歴の状態変更に相当する手も無い)。題名を直すには
+  消して足し直す。編集が要るなら相談の `editIfUnchanged` と同じ形で足す。
+- **見本が混ざる断り (`shigyoDemoMixNote`) は数の内訳だけになった**: 顧問料の主張は落とした
+  (自分の額を見本だと言わないため)。土台が見本を持たない以上、この断りが画面に出ることは無いが、
+  混ぜる側の形 (一覧の結合) が残るので文も残してある。
+- **0 倒しが 2 件増えた (ShigyoConsole 1 → 3・全体 285 → 287)**: 増えたのは `yenOf`
+  (顧問料の欄が無い古い記録と不正な値を 0 と読む —— 欄は任意で「未登録 = 0」が宣言した
+  意味なので、読めない物を黙って別の数に倒す欠陥ではない) と、書類を日付の新しい順に
+  並べる比較子の `: 0` (同じ日付なら 0)。どちらも正しい 0。
+- **実機の確認はしていない**: 専用 e2e suite は無く、jsdom の検査と全画面の走査が見る範囲。
+  デスクトップ版で「更新」を押したときの取得 (空の土台が返る) は単体検査まで。
+
 ## 受信の検疫・見張り番 (2026-11-16) で測って残した物
 
 - **見張り番の費用**: `blob_limit_kb: 64` で CLAUDE.md を読まない形にした (空の文脈 564,384 → 106,169 token)。省エネ版の試運転 (40 スレッド) は
@@ -20143,7 +20169,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/zero-fold-census.cjs。npm run lint:zero-fold は check だけ) -->
-合計 **112 ファイル / 285 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **112 ファイル / 287 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
@@ -20176,6 +20202,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/shared/tradeTax.ts` | 4 |
 | `src/shared/waterCyclePlanner.ts` | 4 |
 | `src/main/clients/kpi.ts` | 3 |
+| `src/renderer/components/ShigyoConsole.tsx` | 3 |
 | `src/renderer/data/backup.ts` | 3 |
 | `src/renderer/data/charts.ts` | 3 |
 | `src/renderer/data/financialStatements.ts` | 3 |
@@ -20220,7 +20247,6 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/main/oauth.ts` | 1 |
 | `src/main/userPresence.ts` | 1 |
 | `src/renderer/components/RealtimeTicker.tsx` | 1 |
-| `src/renderer/components/ShigyoConsole.tsx` | 1 |
 | `src/renderer/data/assistantContext.ts` | 1 |
 | `src/renderer/data/balanceSheet.ts` | 1 |
 | `src/renderer/data/cashPlan.ts` | 1 |

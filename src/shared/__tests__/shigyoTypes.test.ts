@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  buildShigyoSnapshot,
   sumShigyoMonthlyFees,
   sumShigyoOutstanding,
   type ShigyoSnapshot,
@@ -42,5 +43,24 @@ describe('sumShigyoOutstanding', () => {
 
   it('sums the outstanding invoices across snapshots', () => {
     expect(sumShigyoOutstanding([make(0, 88_000), make(1, 165_000), make(2, 0)])).toBe(253_000);
+  });
+});
+
+describe('buildShigyoSnapshot', () => {
+  it('見本の人も金額も持たない空の土台を返す', () => {
+    const snap = buildShigyoSnapshot();
+    expect(snap.contacts).toEqual([]);
+    expect(snap.recentConsultations).toEqual([]);
+    expect(snap.pendingDocuments).toEqual([]);
+    expect(snap.monthlyFee).toBe(0);
+    expect(snap.outstandingInvoice).toBe(0);
+  });
+
+  it('呼び出しごとに独立した物を返す (片方の書き換えが他方へ漏れない)', () => {
+    const a = buildShigyoSnapshot();
+    const b = buildShigyoSnapshot();
+    expect(a).toEqual(b);
+    expect(a).not.toBe(b);
+    expect(a.contacts).not.toBe(b.contacts);
   });
 });
