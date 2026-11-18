@@ -57,6 +57,10 @@ const OTHER_BOUNDS: Readonly<Record<string, Bound>> = {
   'parameter-overrides': { kind: 'latest-one', why: '数値パラメータの上書き。最新の 1 件に重ねて有効値を決め、行の一覧は描かない。' },
   'hydroponics-setup': { kind: 'latest-one', why: '水耕栽培の設備・費用の設定。最新の 1 件だけを採用して欄を開き、行の一覧は描かない。' },
   'hydroponics-crops': { kind: 'latest-one', why: '品目の一覧は 1 記録の中にまとまる。最新の 1 件だけを採用し、行の一覧は描かない。' },
+  'beekeeping-products': { kind: 'latest-one', why: '養蜂の産物の一覧は 1 記録の中にまとまる。最新の 1 件だけを採用し、行の一覧は描かない。' },
+  'beekeeping-plan': { kind: 'latest-one', why: '養蜂の概算の入力 (群数と費用)。最新の 1 件だけを採用して欄を開き、行の一覧は描かない。' },
+  'aquaculture-species': { kind: 'latest-one', why: '養殖の魚種の一覧は 1 記録の中にまとまる。最新の 1 件だけを採用し、行の一覧は描かない。' },
+  'aquaculture-plan': { kind: 'latest-one', why: '養殖の概算の入力 (魚種・尾数・費用)。最新の 1 件だけを採用して欄を開き、行の一覧は描かない。' },
   'hydroponics-control': { kind: 'latest-one', why: '水耕栽培の運転の設定。最新の 1 件だけを採用して目標域と調製を決め、行の一覧は描かない。' },
   'highlight-settings': { kind: 'latest-one', why: '経営ハイライトのしきい値。最新の 1 件だけを採用して判定に使い、行の一覧は描かない。' },
   'overview-overrides': {
