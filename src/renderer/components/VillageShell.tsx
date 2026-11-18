@@ -15,6 +15,10 @@
  *
  * 画面の外の部品はどれも自分の境界に入れる (パス 489): 殻の 1 部品が落ちても、村と役場は残る。
  *
+ * **音声コマンド (2026-11-17 配線)** —— マイクの入口 (`VoiceCommandBar`) は旧画面の topbar にだけ
+ * 載っていて、既定の殻では利用者の画面に出ていなかった。ヘッダーの右側へ、ベスト3 の印と同じ
+ * 境界に入れて置く。実行の知らせは会話の部品と同じ口 (`conversationWork`) へ出す。
+ *
  * **ポータルの入口 (2026-11-11)** —— 「ポータル」のボタンは、社内 / パートナー / カスタマーの 3 つの入口を
  * 同じ窓に開く (`PortalDirectory` · `#portal/<id>`)。村はそのまま残る。一覧から開いた画面を閉じると、
  * 村ではなく一覧へ戻る。どの画面を社外向けに出すかは `shared/portal.mamori` の台帳が決める。
@@ -25,6 +29,7 @@ import { SERVICES } from '../services';
 import { hashForPortal, hashForService, portalIdFromHash, serviceIdFromHash } from '../hashRoute';
 import { ManualDataSection } from './ManualDataSection';
 import { BestAnswersIndicator } from './BestAnswersIndicator';
+import { VoiceCommandBar } from './VoiceCommandBar';
 import { isServiceId, type ServiceId } from '../../shared/serviceId';
 import { PORTALS, type PortalId } from '../../shared/portal';
 import { PortalDirectory } from '../portal/PortalDirectory';
@@ -149,6 +154,9 @@ export function VillageShell() {
           <span aria-hidden="true">⛏️🌳</span> ブロックの村
         </h1>
         <span className="village-shell-bar-right">
+          <ShellPartBoundary label="音声コマンド">
+            <VoiceCommandBar />
+          </ShellPartBoundary>
           <ShellPartBoundary label="ベスト3 の進み具合">
             <BestAnswersIndicator />
           </ShellPartBoundary>

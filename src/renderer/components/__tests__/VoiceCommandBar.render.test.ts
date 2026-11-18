@@ -12,6 +12,7 @@ import { createElement, act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { VoiceCommandBar } from '../VoiceCommandBar';
+import { subscribeConversationWork, type ConversationWorkEvent } from '../../data/conversationWork';
 
 /**
  * **確認 → invoke の配線は「必要な項目が揃った未来」で測る** (2026-09-09 · パス 109)。
@@ -347,5 +348,39 @@ describe('VoiceCommandBar — invoke の結果を読む', () => {
     await runCreateIssue();
     expect(container.textContent).toContain('bridge が落ちました');
     expect(dispatched.some((e) => e.detail === 'github')).toBe(false);
+  });
+
+  // 村の景色が「作業の様子」を見る口 (conversationWork)。会話の部品 (ChatbotWidget) は
+  // 同じ知らせを出すのに、この入口は出していなかった —— 実行が見えていなかった。
+  it('作業の知らせ: 成功は running → done を同じ印で出す', async () => {
+    const events: ConversationWorkEvent[] = [];
+    const off = subscribeConversationWork((e) => events.push(e));
+    try {
+      invoke.mockResolvedValue({ ok: true, data: { issueUrl: 'https://example.test/1' } });
+      await runCreateIssue();
+    } finally {
+      off();
+    }
+    expect(events.map((e) => e.stage)).toEqual(['running', 'done']);
+    expect(events[0]!.serviceId).toBe('github');
+    expect(events[0]!.runId).not.toBe('');
+    expect(events[1]!.runId).toBe(events[0]!.runId);
+    expect(events[1]!.action).toBe(events[0]!.action);
+  });
+
+  it('作業の知らせ: 失敗 (ok:false) と reject はどちらも running → failed で閉じる', async () => {
+    const events: ConversationWorkEvent[] = [];
+    const off = subscribeConversationWork((e) => events.push(e));
+    try {
+      invoke.mockResolvedValue({ ok: false, code: 'not_configured', message: 'トークン未設定' });
+      await runCreateIssue();
+      expect(events.map((e) => e.stage)).toEqual(['running', 'failed']);
+      events.length = 0;
+      invoke.mockRejectedValue(new Error('bridge が落ちました'));
+      await runCreateIssue();
+      expect(events.map((e) => e.stage)).toEqual(['running', 'failed']);
+    } finally {
+      off();
+    }
   });
 });
