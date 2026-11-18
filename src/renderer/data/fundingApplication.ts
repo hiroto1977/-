@@ -26,6 +26,7 @@ import { escapeMarkdownInline, escapeMarkdownText } from '../../shared/escape';
 import { moreThanChars } from '../../shared/inputCeiling';
 import { isCalendarMonth } from '../../shared/isoDate';
 import { lookup } from '../../shared/lookup';
+import { isFiniteNumber } from '../../shared/num';
 
 /** 申請書類の型。補助金 = 事業の計画と経費を書く / 助成金 = 雇用・労務の取組を書く。 */
 export type ApplicationKind = 'subsidy' | 'grant';
@@ -162,7 +163,8 @@ export interface ApplicationInput {
 
 /** 0 以上の有限の数か。 */
 export function isAmount(v: number | null): v is number {
-  return v !== null && Number.isFinite(v) && v >= 0;
+  // `null` は `isFiniteNumber` が落とす (`null >= 0` は真なので、有限の判定を先に通す)。
+  return isFiniteNumber(v) && v >= 0;
 }
 
 /** 数の欄の文。未記入と「使えない値」を言い分ける (どちらも 0 にはしない)。 */
@@ -226,21 +228,37 @@ export function filledExpenses(lines: readonly ExpenseLine[]): readonly ExpenseL
   return lines.filter((l) => l.name.trim() !== '' || l.amount !== null);
 }
 
-/** 経費と申請額の目安。 */
-export interface ExpenseTotals {
+/** 経費の合計 (申請額を計算できたかに依らない欄)。 */
+interface ExpenseSum {
   /** 金額の入っている費目の合計 (円)。 */
   readonly total: number;
   /** 金額が未記入か、使えない値の費目の数。 */
   readonly unreadable: number;
-  /** 申請額の目安 (円)。計算できなければ `null`。 */
-  readonly requested: number | null;
-  /** 自己負担の目安 (円)。計算できなければ `null`。 */
-  readonly own: number | null;
-  /** 上限額で頭打ちになったか。 */
-  readonly capped: boolean;
-  /** 申請額を計算しなかった理由。計算できたら `null`。 */
-  readonly reason: string | null;
 }
+
+/**
+ * 経費と申請額の目安。**計算できた形と、できなかった形の 2 つだけ** ——
+ * 申請額と自己負担は必ず一緒に在るか、一緒に無い (片方だけの形を型が持たない)。
+ */
+export type ExpenseTotals = ExpenseSum &
+  (
+    | {
+        /** 申請額の目安 (円)。 */
+        readonly requested: number;
+        /** 自己負担の目安 (円)。 */
+        readonly own: number;
+        /** 上限額で頭打ちになったか。 */
+        readonly capped: boolean;
+        readonly reason: null;
+      }
+    | {
+        readonly requested: null;
+        readonly own: null;
+        readonly capped: false;
+        /** 申請額を計算しなかった理由。 */
+        readonly reason: string;
+      }
+  );
 
 /**
  * 経費の合計と、申請額の目安 (= 合計 × 補助率。上限額が入っていればそこまで。1 円未満は切り捨て)。
@@ -422,7 +440,7 @@ function expenseBlocks(input: ApplicationInput): readonly DraftBlock[] {
     `${NUMBER_FIELD_LABELS.ratePct} (公募要領から入れた値): ${numberText(input.ratePct, (n) => `${n}%`)}`,
     `${NUMBER_FIELD_LABELS.capYen} (公募要領から入れた値): ${input.capYen === null ? '入力なし' : numberText(input.capYen, yenText)}`,
   ];
-  if (totals.requested !== null && totals.own !== null) {
+  if (totals.requested !== null) {
     items.push(
       `申請額の目安: ${yenText(totals.requested)}${totals.capped ? ' (上限額で頭打ち)' : ''}`,
       `自己負担の目安: ${yenText(totals.own)}`,
