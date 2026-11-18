@@ -94,6 +94,8 @@ describe('定数', () => {
     expect(m.LINEAR_PRIORITY_UNREADABLE).toBe('優先度が読めません');
     expect(m.LINEAR_PRIORITY_LABELS).toEqual({ 0: '優先度なし', 1: '緊急', 2: '高', 3: '中', 4: '低' });
     expect(m.LINEAR_PERSONAL_KEY_PREFIX).toBe('lin_api_');
+    // 受ける優先度の一覧 (直下の値) は、読み手の答えで留める。
+    expect([0, 1, 2, 3, 4, 5].map((v) => m.linearPriority(v))).toEqual([0, 1, 2, 3, 4, null]);
   });
 });
 
@@ -232,6 +234,10 @@ describe('画面の文', () => {
   it('★ 優先度: 5 つの呼び名と「読めません」を言い分ける', () => {
     expect([0, 1, 2, 3, 4].map((p) => linearPriorityText(linearPriority(p)))).toEqual(['優先度なし', '緊急', '高', '中', '低']);
     expect(linearPriorityText(null)).toBe('優先度が読めません');
+    // 型の外の値 (prototype の鍵・一覧に無い数) で引いても、表の外の値を返さない。
+    for (const v of ['constructor', '__proto__', 'toString', 7, '2']) {
+      expect(linearPriorityText(v as never), String(v)).toBe('優先度が読めません');
+    }
     expect(LINEAR_PRIORITY_LABELS[0]).toBe('優先度なし');
     expect(LINEAR_PRIORITY_UNREADABLE).toBe('優先度が読めません');
   });

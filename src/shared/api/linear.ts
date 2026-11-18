@@ -111,9 +111,12 @@ function objectField(obj: unknown, field: string): object | null {
   return typeof v === 'object' && !Array.isArray(v) ? v : null;
 }
 
-/** 優先度の欄を読む。0〜4 の整数だけを受ける。 */
+/** 受ける優先度の値 (この並びに在る値だけを読む)。 */
+const LINEAR_PRIORITIES: readonly LinearPriority[] = [0, 1, 2, 3, 4];
+
+/** 優先度の欄を読む。0〜4 の整数だけを受ける (一覧に在る値と同じ物だけ —— 文字列の `'2'` や `NaN` は読まない)。 */
 export function linearPriority(v: unknown): LinearPriority | null {
-  return v === 0 || v === 1 || v === 2 || v === 3 || v === 4 ? v : null;
+  return LINEAR_PRIORITIES.find((p) => p === v) ?? null;
 }
 
 /** 期限の欄を読む。`null` / 無い = 期限なし (読めた)。日付でない値 = 読めなかった。 */
@@ -164,9 +167,13 @@ export function linearIssueTitle(issue: Pick<LinearIssue, 'identifier' | 'title'
   return issue.identifier === '' ? title : `${issue.identifier} ${title}`;
 }
 
-/** 画面に出す優先度の文。 */
+/**
+ * 画面に出す優先度の文。表は {@link linearPriority} を通した値でだけ引く ——
+ * 素の値で引くと、`'constructor'` のような鍵が prototype 側の値を返す。
+ */
 export function linearPriorityText(priority: LinearPriority | null): string {
-  return priority === null ? LINEAR_PRIORITY_UNREADABLE : LINEAR_PRIORITY_LABELS[priority];
+  const p = linearPriority(priority);
+  return p === null ? LINEAR_PRIORITY_UNREADABLE : LINEAR_PRIORITY_LABELS[p];
 }
 
 /** 画面に出す期限の文。 */

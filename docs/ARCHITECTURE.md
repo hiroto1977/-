@@ -1944,7 +1944,7 @@ undici は CORS を実装しないので単体検査には映らず、CI の外�
 | stripe (両ビルド。ブラウザ版はプロキシ経由 —— 開発環境から api.stripe.com へ届かず、ブラウザ発の CORS は確かめていない) | `api.stripe.com` | `GET /v1/balance`, `GET /v1/charges?limit=10` | Bearer (読み取り専用の制限付きキー) | `src/shared/api/stripe.ts:255-260` |
 | asana (両ビルド。ブラウザ版はプロキシ経由 —— 開発環境から app.asana.com へ届かず、ブラウザ発の CORS は確かめていない) | `app.asana.com` | `GET /api/1.0/users/me`, `GET /api/1.0/tasks?assignee=me&workspace=<gid>` (gid は数字だけを確かめて符号化) | Bearer (個人アクセストークン) | `src/shared/api/asana.ts:229-235` |
 | line (両ビルド。ブラウザ版はプロキシ経由 —— 開発環境から api.line.me へ届かず、ブラウザ発の CORS は確かめていない) | `api.line.me` | `GET /v2/bot/info`, `GET /v2/bot/message/quota`, `GET /v2/bot/message/quota/consumption` | Bearer (チャネルアクセストークン) | `src/shared/api/line.ts:186-192` |
-| linear (両ビルド。ブラウザ版はプロキシ経由 —— 開発環境から api.linear.app へ届かず、ブラウザ発の CORS は確かめていない) | `api.linear.app` | `POST /graphql` (本文は固定の照会 1 つ —— 利用者の名前と自分の担当の未完了の課題。変更の照会は無い) | 個人の API キー (`lin_api_…` はそのまま・それ以外は Bearer) | `src/shared/api/linear.ts:229-231` |
+| linear (両ビルド。ブラウザ版はプロキシ経由 —— 開発環境から api.linear.app へ届かず、ブラウザ発の CORS は確かめていない) | `api.linear.app` | `POST /graphql` (本文は固定の照会 1 つ —— 利用者の名前と自分の担当の未完了の課題。変更の照会は無い) | 個人の API キー (`lin_api_…` はそのまま・それ以外は Bearer) | `src/shared/api/linear.ts:236-238` |
 | shopify→discord | `discord.com` | `POST` webhook (payload 由来。https + hostname 完全一致で絞る) | webhook URL | `shopify.ts:172-194` |
 | shopify→line | `api.line.me` | `POST /v2/bot/message/push` | Bearer | `shopify.ts:205-215` |
 | shopify→stripe | `api.stripe.com` | `POST /v1/customers` | Bearer | `shopify.ts:354-366` |
