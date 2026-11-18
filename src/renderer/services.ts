@@ -712,9 +712,9 @@ export const SERVICES: ServiceDefinition[] = [
   },
   {
     id: 'hydroponics',
-    label: '水耕栽培',
+    label: '水耕栽培・養蜂・養殖',
     icon: 'HP',
-    description: '毎日の測定 (EC / pH / 温度 / 湿度 / CO₂ / 溶存酸素 / 液位) → 判定 → 今日やること。播種・定植・収穫・養液交換の日程も自動で出す',
+    description: '水耕栽培の毎日の測定 (EC / pH / 温度ほか) → 判定 → 今日やること・日程。養蜂と養殖 (海水魚・淡水魚) は、種類を自由に増減して収支を概算',
     page: HydroponicsPage,
     category: 'tools',
   },

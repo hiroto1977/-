@@ -103,7 +103,10 @@ export type NumKind =
   // 経営サマリーの養液の点検と、受給判定の年齢が足した 3 種 (2026-09-27 · パス 493q)。
   | 'ec' // mS/cm (養液そのものの EC —— 上の `ecRise` とは桁の尋ねが違う)
   | 'ph' // pH (単位ではないが、断りの文に出る語として「pH」を置く)
-  | 'age'; // 歳（整数）
+  | 'age' // 歳（整数）
+  // 養蜂・養殖の概算が足した 2 種 (2026-11-18)。
+  | 'hives' // 群（整数）—— 蜜蜂の群の数
+  | 'fishCount'; // 尾（整数）—— 魚の数
 
 export interface NumSpec {
   readonly label: string;
@@ -232,6 +235,10 @@ const KIND: Record<NumKind, KindRule> = {
   ec: { unit: 'mS/cm', negativeIsFatal: true },
   ph: { unit: 'pH', negativeIsFatal: true },
   age: { unit: '歳', negativeIsFatal: true, integer: true, sane: 120 },
+  // 養蜂・養殖の概算が足した 2 種 (2026-11-18)。近い kind (人・件) を借りると、断りの文が
+  // 「0 人 として記録されます」と嘘の単位を言う (上の days / energy と同じ理由)。
+  hives: { unit: '群', negativeIsFatal: true, integer: true, sane: 10000 },
+  fishCount: { unit: '尾', negativeIsFatal: true, integer: true, sane: 10000000 },
 };
 
 /**
