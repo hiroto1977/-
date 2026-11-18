@@ -1,12 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import {
   MAX_CONSULTATION_TOPIC_CHARS,
+  MAX_DOCUMENT_TITLE_CHARS,
   parseShigyoContact,
   parseShigyoConsultation,
+  parseShigyoDocument,
   contactToForm,
   CONSULTATION_STATUSES,
+  DOCUMENT_DIRECTIONS,
   SHIGYO_CONTACTS_COLLECTION,
   SHIGYO_CONSULTATIONS_COLLECTION,
+  SHIGYO_DOCUMENTS_COLLECTION,
 } from '../shigyoDirectory';
 import { calendarDateMessage } from '../../../shared/isoDate';
 
@@ -15,7 +19,7 @@ describe('parseShigyoContact (専門家の任意登録)', () => {
 
   it('parses a valid contact (trim 込み)', () => {
     const c = parseShigyoContact({ ...valid, name: ' 中村 六実 ' });
-    expect(c).toEqual({ serviceId: 'cpa', name: '中村 六実', firm: '中村会計事務所', phone: '03-1234-5678', email: 'n@example.com' });
+    expect(c).toEqual({ serviceId: 'cpa', name: '中村 六実', firm: '中村会計事務所', phone: '03-1234-5678', email: 'n@example.com', monthlyFee: 0, outstandingInvoice: 0 });
   });
 
   it('firm/phone/email は任意 (空欄可)', () => {
@@ -158,5 +162,74 @@ describe('parseShigyoConsultation (相談履歴の任意登録)', () => {
   it('exposes stable collection names', () => {
     expect(SHIGYO_CONTACTS_COLLECTION).toBe('shigyo-contacts');
     expect(SHIGYO_CONSULTATIONS_COLLECTION).toBe('shigyo-consultations');
+  });
+});
+
+describe('parseShigyoContact の金額 (顧問料・未払い請求額)', () => {
+  const base = { serviceId: 'tax-accountant' as const, name: '山田' };
+
+  it('未入力は 0 (任意の欄)', () => {
+    const c = parseShigyoContact(base);
+    expect(c.monthlyFee).toBe(0);
+    expect(c.outstandingInvoice).toBe(0);
+    const blank = parseShigyoContact({ ...base, monthlyFee: '', outstandingInvoice: '  ' });
+    expect(blank.monthlyFee).toBe(0);
+    expect(blank.outstandingInvoice).toBe(0);
+  });
+
+  it('数値と文字列のどちらでも読む (画面と同じ読み方: カンマ・全角も)', () => {
+    const c = parseShigyoContact({ ...base, monthlyFee: 33000, outstandingInvoice: '22,000' });
+    expect(c.monthlyFee).toBe(33000);
+    expect(c.outstandingInvoice).toBe(22000);
+    expect(parseShigyoContact({ ...base, monthlyFee: '３３０００' }).monthlyFee).toBe(33000);
+  });
+
+  it('負の値と読めない値は断る (合計が黙って狂わないように)', () => {
+    expect(() => parseShigyoContact({ ...base, monthlyFee: -1 })).toThrow('月次顧問料');
+    expect(() => parseShigyoContact({ ...base, monthlyFee: 'abc' })).toThrow('月次顧問料');
+    expect(() => parseShigyoContact({ ...base, outstandingInvoice: -100 })).toThrow('未払い請求額');
+    expect(() => parseShigyoContact({ ...base, outstandingInvoice: Number.NaN })).toThrow('未払い請求額');
+  });
+
+  it('contactToForm は金額を往復させる (0 は空欄に戻る)', () => {
+    const c = parseShigyoContact({ ...base, monthlyFee: '33000', outstandingInvoice: 0 });
+    const form = contactToForm(c);
+    expect(form.monthlyFee).toBe('33000');
+    expect(form.outstandingInvoice).toBe('');
+    expect(parseShigyoContact({ serviceId: 'tax-accountant', ...form })).toEqual(c);
+  });
+
+  it('金額の欄が無い古い記録でも contactToForm は空欄を返す', () => {
+    const legacy = { serviceId: 'cpa' as const, name: '中村', firm: '', phone: '', email: '' };
+    const form = contactToForm(legacy as never);
+    expect(form.monthlyFee).toBe('');
+    expect(form.outstandingInvoice).toBe('');
+  });
+});
+
+describe('parseShigyoDocument (書類の記録)', () => {
+  const base = { serviceId: 'lawyer' as const, title: '基本契約書 修正版', direction: 'received' as const, date: '2026-05-12' };
+
+  it('正しい書類を読む (trim 込み)', () => {
+    const d = parseShigyoDocument({ ...base, title: ' 基本契約書 修正版 ' });
+    expect(d).toEqual({ serviceId: 'lawyer', title: '基本契約書 修正版', direction: 'received', date: '2026-05-12' });
+    expect(parseShigyoDocument({ ...base, direction: 'sent' }).direction).toBe('sent');
+    expect(DOCUMENT_DIRECTIONS).toEqual(['received', 'sent']);
+    expect(SHIGYO_DOCUMENTS_COLLECTION).toBe('shigyo-documents');
+  });
+
+  it('空・長すぎる書類名を断る', () => {
+    expect(() => parseShigyoDocument({ ...base, title: '' })).toThrow('書類名');
+    expect(() => parseShigyoDocument({ ...base, title: 'あ'.repeat(MAX_DOCUMENT_TITLE_CHARS + 1) })).toThrow('書類名');
+  });
+
+  it('不正な方向を断る', () => {
+    expect(() => parseShigyoDocument({ ...base, direction: '不明' })).toThrow('方向');
+    expect(() => parseShigyoDocument({ ...base, direction: undefined })).toThrow('方向');
+  });
+
+  it('暦に無い日付を断る', () => {
+    expect(() => parseShigyoDocument({ ...base, date: '2026-02-30' })).toThrow('日付');
+    expect(() => parseShigyoDocument({ ...base, date: '' })).toThrow('日付');
   });
 });

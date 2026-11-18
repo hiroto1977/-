@@ -209,37 +209,39 @@ describe('投資信託 — 合計に見本が混ざっていることを画面�
 });
 
 /**
- * 士業コンソールは 8 画面で共有されている —— 見出しの「連携 N 名 · 顧問料 ¥X/月」が
- * 見本と自分の登録を混ぜ、顧問料は snapshot の値である (この画面は連携先ごとの
- * 顧問料を持たない)。一覧の行には「デモ」の印が在ったが、見出しには無かった。
+ * 士業コンソールは 8 画面で共有されている —— 2026-11-18 のローカル化までは、見出しの
+ * 「連携 N 名 · 顧問料 ¥X/月」が同梱の見本 (snapshot) と自分の登録を混ぜていた
+ * (連携先ごとの顧問料の欄が無く、顧問料は見本の値だった)。土台が見本を持たなく
+ * なった今、見出しの数は**自分の登録だけ**から来る。ここで留めるのはその裏側:
+ * 見本の混ざりを述べる断りが**出ない**こと、登録が無ければ「未登録」と言うこと、
+ * 登録した顧問料がそのまま見出しに出ること。
  */
-describe('士業コンソール — 見出しの数と顧問料の出所を言う', () => {
-  it('★ 何も登録していないとき「見本です」と述べる (税理士)', async () => {
-    await mountPage('tax-accountant', '自分の連携先はまだ登録されていません');
-    const t = noteText('data-shigyo-demo-mix');
-    expect(t).not.toBeNull();
-    expect(t).toContain('表示中の連携先 1 名と月次顧問料 ¥33,000 は同梱の見本です');
-    expect(t).toContain('自分の連携先はまだ登録されていません');
+describe('士業コンソール — 見出しの数は自分の登録だけから来る', () => {
+  it('★ 何も登録していないとき「未登録」と述べ、見本の混ざりは述べない (税理士)', async () => {
+    await mountPage('tax-accountant', '連携先が未登録です');
+    expect(allText()).toContain('連携 0 名');
+    expect(allText()).toContain('顧問料 ¥0/月');
+    expect(allText()).not.toContain('同梱の見本');
+    expect(noteText('data-shigyo-demo-mix')).toBeNull();
   });
 
-  it('★ 自分の連携先を 1 名登録すると、見出しの内訳と顧問料の出所を述べる', async () => {
+  it('★ 自分の連携先を 1 名登録すると、見出しの顧問料は自分の登録の額になる', async () => {
     await getRecordStore().insert(SHIGYO_CONTACTS_COLLECTION, {
-      serviceId: 'tax-accountant', name: '自分の税理士', firm: '', phone: '', email: '',
+      serviceId: 'tax-accountant', name: '自分の税理士', firm: '', phone: '', email: '', monthlyFee: 33000, outstandingInvoice: 0,
     });
-    await mountPage('tax-accountant', '自分が登録した連携先は 1 名');
-    const t = noteText('data-shigyo-demo-mix');
-    expect(t).not.toBeNull();
-    expect(t).toContain('「連携 2 名」には同梱の見本 1 名が含まれています');
-    expect(t).toContain('自分が登録した連携先は 1 名');
-    expect(t).toContain('月次顧問料 ¥33,000 は見本の値です');
-    // 対照: 見出しそのものは変えていない。
-    expect(allText()).toContain('連携 2 名');
+    // 錠は置いた記録の行そのもの —— 届いた描画で見出しの数も一緒に出る。
+    await mountPage('tax-accountant', '自分の税理士');
+    expect(allText()).toContain('連携 1 名');
+    expect(allText()).toContain('顧問料 ¥33,000/月');
+    expect(allText()).not.toContain('同梱の見本');
+    expect(noteText('data-shigyo-demo-mix')).toBeNull();
   });
 
-  it('★ 8 士業のどれでも出る (共有部品なので 1 つ直せば全部に効くこと)', async () => {
+  it('★ 8 士業のどれでも同じ (共有部品なので 1 つ直せば全部に効くこと)', async () => {
     for (const id of ['labor-consultant', 'lawyer'] as const) {
-      await mountPage(id, 'は同梱の見本です');
-      expect(noteText('data-shigyo-demo-mix'), id).not.toBeNull();
+      await mountPage(id, '連携先が未登録です');
+      expect(allText(), id).toContain('連携 0 名');
+      expect(allText(), id).not.toContain('同梱の見本');
       if (root) {
         await act(async () => { root!.unmount(); });
         root = null;

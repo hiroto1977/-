@@ -30,7 +30,7 @@ import { parseMember } from '../members';
 import { parseBusinessUnit } from '../businessUnits';
 import { parseSubmissionProfile, EMPTY_PROFILE } from '../bankSubmission';
 import { parseBankFormat } from '../../../shared/bankFormat';
-import { parseShigyoContact, parseShigyoConsultation } from '../shigyoDirectory';
+import { parseShigyoContact, parseShigyoConsultation, parseShigyoDocument } from '../shigyoDirectory';
 import { parseHoldingEntry, parsePropertyEntry } from '../investments';
 import { parseManualMetric } from '../manualData';
 import { parseCustomMetric } from '../overviewOverrides';
@@ -120,7 +120,13 @@ describe('書く側の出力 → collectionShapes (往復)', () => {
   it('shigyo-contacts / shigyo-consultations: parseShigyoContact / parseShigyoConsultation', () => {
     roundTrips('shigyo-contacts', parseShigyoContact({ serviceId: 'tax-accountant', name: '田中', firm: '', phone: '', email: '' }));
     roundTrips('shigyo-contacts', parseShigyoContact({ serviceId: 'tax-accountant', name: '田中' }));
+    roundTrips('shigyo-contacts', parseShigyoContact({ serviceId: 'tax-accountant', name: '田中', monthlyFee: '33000', outstandingInvoice: 22000 }));
     roundTrips('shigyo-consultations', parseShigyoConsultation({ serviceId: 'tax-accountant', date: '2026-04-01', topic: '決算', status: '相談予約' }));
+  });
+
+  it('shigyo-documents: parseShigyoDocument', () => {
+    roundTrips('shigyo-documents', parseShigyoDocument({ serviceId: 'tax-accountant', title: '試算表', direction: 'received', date: '2026-04-01' }));
+    roundTrips('shigyo-documents', parseShigyoDocument({ serviceId: 'lawyer', title: '契約書', direction: 'sent', date: '2026-04-02' }));
   });
 
   it('realestate-properties / mutualfund-holdings: parsePropertyEntry / parseHoldingEntry (任意欄あり / 無し)', () => {
