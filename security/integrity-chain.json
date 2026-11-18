@@ -4409,6 +4409,14 @@
       "leafCount": 222,
       "note": "update integrity-chain.cjs,mamori-capabilities.json,liveRead.mamori,liveRead.ts",
       "hash": "a1841300d4c1ba8fe8a32be49a48ad4bed41314171c01889e7a686189bac431b"
+    },
+    {
+      "index": 523,
+      "prevHash": "a1841300d4c1ba8fe8a32be49a48ad4bed41314171c01889e7a686189bac431b",
+      "merkleRoot": "473a31db91cb0ef349ab922c04adb9859cb60da3c4e9a4233d8d6bcd61c57685",
+      "leafCount": 222,
+      "note": "update integrity-chain.cjs,mamori-capabilities.json,liveRead.mamori,liveRead.ts",
+      "hash": "7ac47a6cc4e3323e5d2db3209caa7c58f184ebb9c71762fde23ddd2992a8793d"
     }
   ],
   "tipManifest": {
@@ -4446,7 +4454,7 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "d385ddfc52ec74abf184207bfbb1ac655e730db2b7c6d7e758e35e67e79a5737",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "eb996e4926292a1ff9cff8f05be20378e55bec882f0f6aabd2bd3fb7b0499735",
+    "scripts/integrity-chain.cjs": "bb0277f2d47fce81c0db034e3cccafad86b919643ae2f7a23651bb881226fcfa",
     "scripts/knowledge-autopilot.cjs": "ee8f7ae4a4ad29dda6c02f83c113c45fa1648522f807e711aa86b7746f372968",
     "scripts/lib/artifact-freshness.cjs": "add621dfe55e0eab31354f0d6979c9c67b513ed8b8348b9137ca7fa53dd569c1",
     "scripts/lib/json-for-script.cjs": "cb79bf1fb2f3c10c6854ec16d9c12bb0695dee5561751333db4531545702fd70",
@@ -4474,7 +4482,7 @@
     "scripts/verify-e2e-playwright-pin.cjs": "417854f96cbaa4af4dd30a378b722b58093d56e78aa7eaba9bd17df412f57d45",
     "scripts/verify-packaged-fuses.cjs": "4162ab0e5d390c5cccf4cd8ac533027bd1d8a5cbceb0a069059d4f3800643d9f",
     "scripts/verify-release-artifacts.cjs": "1bd668bc052b476a9b3f976dc80ddf8faa4f080aed5617d354a8c7647ee9f557",
-    "security/mamori-capabilities.json": "e4d563ff407914931cce139a8e7480e42a1b23608817b38e8702ad55743e1fcd",
+    "security/mamori-capabilities.json": "9aa2883e60c1c69fbe9cfb55ef7d55af0d522af1c67f983073a62460f1e79d18",
     "src/main/atomicWrite.ts": "63b6ff1fb7d8990b76409c62556d69f99a14475f73662e89507e8899a32a9c3f",
     "src/main/clients/assistant.mamori": "2a929c90e2ce3c27eadb128f35ea8f09f065e8b657a6a06679c99128e7d93cbd",
     "src/main/clients/assistant.ts": "f4c1987f2333770647cf133b7815cbb57da0477d7ac2ffb9ce7cb757f035fe8a",
@@ -4522,8 +4530,8 @@
     "src/renderer/fs/fsa.ts": "155a4627627a04dc81acc0e7a728f2f7e6843eff191262fdad8966da9803cd10",
     "src/renderer/fs/fsaHost.ts": "11e611992a32442b3525f72994c5e23c0b4fd436a342a7300e5f33d32b8bb550",
     "src/renderer/keyIntent.ts": "6b9cb4b2ba8b16de9a0a8d9113a54b154045f7abe895cda0914344131bf5caa7",
-    "src/renderer/network/liveRead.mamori": "cdcc0c2696a9b6a47544ea09f43c884869bedf8720f990a5af5fd0daa2cf52f3",
-    "src/renderer/network/liveRead.ts": "f7ddad7eb16175fe68f343b66f74bcb13cb5d04cafa5d4ce5d23cf7852dcc066",
+    "src/renderer/network/liveRead.mamori": "4007857b21d1da65ecd464f8b3c27fa0da9c45a667a7f03d203e60ac982354e7",
+    "src/renderer/network/liveRead.ts": "6009325e9a50bb0e8b15eb7cc6d9de0963bd34cb6278d72e1ab3fc7636b3d68c",
     "src/renderer/network/proxy.mamori": "74e971544b207bb3d4aff29d2bf203b97fc9eeb8406e9a0a70e11e40cffe895a",
     "src/renderer/network/proxy.ts": "ffd8d93da7af9688864255ad10ffbf7033e76f88879f725e8a68b4e19bb78654",
     "src/renderer/network/proxyHost.ts": "853e15a2f120f059f2c9b05d27090cee13df8d35d0ca7e15639a235a9ece0d7c",

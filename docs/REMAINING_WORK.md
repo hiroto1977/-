@@ -39,6 +39,23 @@
   (`numericInputReaderCensus.test.ts`)。直した後も、既存のファイルの答えは変わっていない (12 件とも緑)。`FarmListEditor` の欄は `value={numbers[f] ?? ''}` で、この走査の母集団に入らない (読み手は `parseCropNumber` = `readNumeric`)。
 - **実機で確かめたのは**: 切り替え・産物を足す / 消す・保存して概算・海水魚を足す・足した魚種で概算 (e2e の `hydroponics` suite に 8 件)。水温の点検と「参考を戻す」は jsdom の検査だけ。
 
+## Linear の実データ接続で測って残した物 (2026-11-18)
+
+- **本物の Linear との往復は未確認**: 開発環境から `api.linear.app` へ届かない。照会 (GraphQL) と応答の形は公開の API の仕様に合わせた物で、実物では確かめていない。
+  利用者が個人の API キーを登録して「更新」を押した最初の回が、初めての実測になる。照会の綴りが 1 つでも違えば Linear は HTTP 400 で断るので、そのときは画面の失敗の文に出る。
+- **ブラウザ版はプロキシ経由だけ**: Linear がブラウザ発の CORS を許すかを確かめられなかったので、直接つなぐ分岐は足していない。
+  利用者のプロキシの許可リスト `UPSTREAM_ALLOWLIST` に `api.linear.app` を足す必要がある (`docs/PROXY_EXAMPLE.md` の既定の一覧には無い)。
+- **照会は `POST`**: Linear の API は GraphQL なので、読み取りでも `POST /graphql` を使う。本文は固定の照会 1 つ (`LINEAR_ISSUES_QUERY`) で、変更 (mutation) は書いていない ——
+  検査が「`query ` で始まる・`mutation` を含まない・本文に鍵が入らない」を留める。ほかの読み取り (Stripe / Asana / LINE) は `GET` だけ。
+- **鍵の置き方は接頭辞で決める**: `lin_api_…` (個人の API キー) は `Authorization` にそのまま、それ以外は `Bearer` を付ける (OAuth のアクセストークン向け)。
+  このアプリに Linear の OAuth の流れは無いので、`Bearer` の枝を実際に通るのは、利用者がほかで取ったトークンを貼ったときだけ。
+- **鍵の権限**: 個人の API キーは、作るときに権限を選べる (読み取りだけにできる)。画面がそう案内する。選ばなければ書き込みの権限も持つ。
+- **読むのは自分の担当の未完了の課題・先頭 20 件だけ**: 並び順は指定していない (Linear の既定)。21 件目以降が在れば画面が述べる。
+  プロジェクト・サイクル・コメント・課題の本文・URL・メールアドレスは読まない。
+- **断り (`errors`) の文面は画面に出さない**: HTTP 200 で `errors` を持つ応答は「Linear が照会を断りました」とだけ述べる。原因の切り分けには足りないことがある (相手の文面を伏字に通して出すかは別の作業)。
+- **実機の専用 suite は無い**: 画面は jsdom の 11 件と、全画面の走査 (contrast / controls / opened) が見る。
+- **次に実データへつなぐ候補**: Sentry / Dropbox / Shopify / Discord。1 サービス 1 PR。
+
 ## LINE の実データ接続で測って残した物 (2026-11-18)
 
 - **本物の LINE との往復は未確認**: 開発環境から `api.line.me` へ届かない。応答の形は公開の Messaging API の仕様に合わせた標本で、実物の応答では確かめていない。
@@ -58,7 +75,7 @@
   そちらは**どの画面からも呼ばれていない**送信の口で、今回の読み取りとは別の資格情報 (payload の token) を使う。
 - **`lint:shared-judgement` の針は `return null` の文だけを見る**: 三項演算子で `null` を返す関数だけのモジュールは「否定で答えられる」に数えられない
   (LINE の部品を足したとき 1 度そうなった —— `lineIntakeNote` を文の `return null` にして母集団に入れた)。針を広げるかは別の作業。
-- **次に実データへつなぐ候補**: Linear / Sentry / Dropbox / Shopify / Discord。1 サービス 1 PR。
+- **次に実データへつなぐ候補**: (Linear は 2026-11-18 につないだ) Sentry / Dropbox / Shopify / Discord。1 サービス 1 PR。
 
 ## Asana の実データ接続で測って残した物 (2026-11-18)
 
