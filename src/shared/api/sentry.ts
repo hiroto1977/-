@@ -39,6 +39,7 @@
 import { apiNumberOf, displayField, objectRows } from '../apiResponse';
 import { displayDateOf } from '../isoDate';
 import { has } from '../lookup';
+import { refuseDotSegment } from './pathSegment';
 
 /** Sentry API の基底。送り先はこの定数だけで、利用者の入力からは作らない。 */
 export const SENTRY_API_BASE = 'https://sentry.io/api/0';
@@ -113,9 +114,12 @@ export function sentryOrgSlug(v: unknown): string {
   return /^[a-z0-9][a-z0-9_-]{0,49}$/.test(v) ? v : '';
 }
 
-/** 未解決の問題の照会の道。`orgSlug` は {@link sentryOrgSlug} を通した値を渡す (ここでも符号化する)。 */
+/**
+ * 未解決の問題の照会の道。`orgSlug` は {@link sentryOrgSlug} を通した値を渡す。
+ * ここでも符号化し、`.` と `..` は区間として受けずに断る (符号化では畳み込みを防げない · `pathSegment.ts`)。
+ */
 export function sentryIssuesPath(orgSlug: string): string {
-  return `/organizations/${encodeURIComponent(orgSlug)}/issues/?query=is%3Aunresolved&limit=${SENTRY_ISSUE_LIMIT + 1}`;
+  return `/organizations/${encodeURIComponent(refuseDotSegment(orgSlug))}/issues/?query=is%3Aunresolved&limit=${SENTRY_ISSUE_LIMIT + 1}`;
 }
 
 /** 重大度の欄を読む。表に在る 5 つの値だけを受ける (表そのものの鍵だけ —— prototype 側の名前は読まない)。 */

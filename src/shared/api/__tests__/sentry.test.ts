@@ -99,6 +99,11 @@ describe('sentryIssuesPath', () => {
   it('★ slug は符号化して入れる (関門を通らない値が来ても道を壊さない)', () => {
     expect(sentryIssuesPath('a/b?c')).toBe('/organizations/a%2Fb%3Fc/issues/?query=is%3Aunresolved&limit=21');
   });
+
+  it('★ `.` と `..` は区間として受けない (符号化しても畳まれて別の道になる)', () => {
+    expect(() => sentryIssuesPath('..')).toThrow(new Error('パスの部品に "." と ".." は使えません。'));
+    expect(() => sentryIssuesPath('.')).toThrow(new Error('パスの部品に "." と ".." は使えません。'));
+  });
 });
 
 describe('sentryLevel', () => {
