@@ -7,6 +7,33 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-11-18 · 続き 6) — スマホ幅で右が切れる表示を直した・Discord を実データへつないだ (読み取り専用)
+
+- 利用者の依頼: 「マージして」(PR #947 = Sentry を取り込んだ · squash `fef88cb`)・「サービスハブの使用感を確かめたい」(公開ページの軽量版の URL と初回の手順を案内した)・
+  スマホの画面の写真つきで「左右にスクロールせずきちんと見れないので、修正して」。接続はおまかせの 6 つ目として Discord をつないだ。
+- **スマホ幅の表示**: 事業ダッシュボードが 2 列の固定の並びで、スマホ幅では本文が右へ出て切れていた (`.main` が横を切るので横スクロールにもならない)。
+  - `styles.css` に `.biz-page` / `.biz-layout` / `.biz-sideboard` / `.biz-main` を置き、枠の幅が 720px 以下なら縦に積む (`@container (max-width: 720px)` ——
+    画面の幅ではなく**枠の幅**で決めるので、村の殻の窓の中でも同じに働く)。`BusinessPage.tsx` の固定の列数の格子 5 つは `repeat(auto-fit, minmax(min(Npx, 100%), 1fr))` へ。
+  - `.status-bar .who` を `flex: 1 1 160px; min-width: min(160px, 100%)` へ (隣の折り返さない札に押されて、幅 0 から 1 文字ずつ縦に並んでいた)。
+  - 細い折れ線 (`Sparkline`) に `viewBox` を持たせて枠に合わせて縮む形に。チームレーダーの図は `overflow: visible`。
+  - 測り方: 「いちばん近い横を切る祖先の右端を越えている要素」。実機の `opened` suite に、村の殻の窓の中の走査 (+1)・**既定の殻のスマホ幅の走査** (+4)・測り方の対照 (+1) を足した (135 → **141** 件・全 suite **737** 件・床 626)。
+    既定の殻は `location.hash` を書き換えて画面を移る (その殻は hashchange で画面を替える)。
+  - `renderer/__tests__/phoneLayoutCss.test.ts` (8 件): 規則の在ること・`@container` の中身・画面が class を使うこと・固定の列数の格子が無いこと・`.who` の最小幅。
+    `themeCss.ts` の `rules()` が `@container` の中も歩くようにした (それまでは `@media` / `@supports` だけ)。
+  - 対照 4 方向: `.who` を元へ戻す / `@container` の規則を消す / 固定の格子を 1 つ戻す / `rules()` が `@container` へ降りない —— どれも狙った検査が落ちる。
+- **Discord (チャット)**: ボットが参加しているサーバーの一覧 (`GET /users/@me/guilds?limit=21&with_counts=true`) を読む。**書き込みは 1 つも持たない**。メッセージの本文は読まない。
+  判定と正規化は `src/shared/api/discord.ts` に 1 つ。デスクトップ版は `main/clients/discord.ts` (配列を直接返す照会なので `jsonFetchAny`・`ANY_CALLERS` は 3 件に)、
+  ブラウザ版は `liveRead.mamori` の `LIVE_READERS` に 1 行 (プロキシ経由・7 件目)。画面は `DiscordPage.tsx`。
+  - 参加人数は 0 以上の整数だけを受け、読めなければ「参加人数が読めません」(0 人と言わない)。一覧が読めない (配列でない) を「0 件」と混ぜずに ⚠ で述べる。21 件目以降が在ればそう述べる。
+  - 鍵はボットのトークン (`Authorization: Bot …`)。デスクトップ版だけ固定の `User-Agent` を名乗る。
+  - 宣言: `SERVICE_DATA_ORIGIN.discord` sample → remote (remote 21 / sample 39)・`SERVICE_CREDENTIAL_USE.discord` none → fetch (fetch 21 / none 51)・`CLOUD_PROVIDERS` に行。
+    送り先のホストは増えない (`discord.com` は Shopify の通知の送り先として既に表に在った)。
+  - `api/discord` は否定を返す綴り (`return null` / `return false` / `ok: false`) を持たないので、`lint:shared-judgement` の母集団には入らない (判定の行は足していない)。
+- 検証: `shared/api/__tests__/discord.test.ts`・`main/clients/__tests__/discord.test.ts` 5 件・`pages/__tests__/discordPage.test.ts` 9 件 (jsdom)・`liveRead.test.ts` +2・
+  台帳の検査に 1 行ずつ。変異検査: `discord.ts` **100.00% (37 killed)**。`mutate` 370 → 371。
+- 途中で検査が捕まえた物 (どれも設計どおり): `ontologyDoc` (生成物の再生成)・`lint:shared-judgement` (母集団に無い行を台帳へ書いていた)・
+  `commentStripperCensus` (新しい検査が共有の注記除去を読むので台帳へ)・`verify:arch` の数・`chain:verify` (block #525)。
+
 ## 直近の作業 (2026-11-18 · 続き 5) — Sentry を実データへつないだ (読み取り専用)
 
 - 利用者の依頼: 「マージして作業を継続して」。PR #946 (Linear) を取り込み (squash `3d55cbe`・`commit_message` を渡した)、

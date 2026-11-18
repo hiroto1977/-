@@ -5432,7 +5432,10 @@ async function openedSuite(browser) {
       const fit = document.createElement('div');
       fit.id = 'fit';
       fit.style.cssText = 'width:200px;overflow-x:hidden';
-      fit.innerHTML = '<div style="width:180px;height:20px">fit</div>';
+      const small = document.createElement('div');
+      small.style.cssText = 'width:180px;height:20px';
+      small.textContent = 'fit';
+      fit.appendChild(small);
       document.body.appendChild(fit);
     });
     const inClip = await cp.evaluate(clippedIn, '#clip');
