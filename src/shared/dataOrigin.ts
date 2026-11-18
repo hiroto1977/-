@@ -74,7 +74,8 @@ export const SERVICE_DATA_ORIGIN: Record<ServiceId, DataOrigin> = {
   linear: 'sample',
   sentry: 'sample',
   shopify: 'sample',
-  stripe: 'sample',
+  // 2026-11-18: 残高と最近の入金を Stripe から読む (`shared/api/stripe.ts`)。それまでは同梱の見本だった。
+  stripe: 'remote',
   line: 'sample',
   storage: 'sample',
   'tax-accountant': 'sample',

@@ -187,6 +187,15 @@ export const CLOUD_PROVIDERS: readonly CloudProvider[] = [
     meanwhile: CLOUD_DATA_MEANWHILE,
   },
   {
+    id: 'stripe',
+    label: 'Stripe',
+    kind: 'data',
+    services: ['stripe'],
+    entrusted: 'カード決済の残高と入金の記録。',
+    whenDown: CLOUD_DATA_WHEN_DOWN,
+    meanwhile: CLOUD_DATA_MEANWHILE,
+  },
+  {
     id: 'cursor',
     label: 'Cursor',
     kind: 'data',

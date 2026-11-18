@@ -55,6 +55,8 @@ import { fetchNotionSnapshot } from '../../../main/clients/notion';
 import { NotionPage } from '../NotionPage';
 import { fetchSlackSnapshot } from '../../../main/clients/slack';
 import { SlackPage } from '../SlackPage';
+import { fetchStripeSnapshot } from '../../../main/clients/stripe';
+import { StripePage } from '../StripePage';
 import { fetchWordPressSnapshot } from '../../../main/clients/wordpress';
 import { WordPressPage } from '../WordPressPage';
 
@@ -227,6 +229,17 @@ const SWEEPS: readonly Sweep[] = [
     landed: 'xxxxxxxxxx',
   },
   {
+    id: 'stripe',
+    token: 't',
+    bodies: [
+      { available: [{ amount: 1, currency: BIG }], pending: [{ amount: 2, currency: 'jpy' }], livemode: true },
+      { data: [{ id: BIG, amount: 3, currency: 'jpy', status: BIG, refunded: false, created: 1767225600, description: BIG }] },
+    ],
+    load: async (c) => fetchStripeSnapshot(c as never),
+    page: async () => StripePage,
+    landed: 'xxxxxxxxxx',
+  },
+  {
     id: 'wordpress',
     token: 't',
     bodies: [{ sites: [{ ID: 1, name: BIG, description: BIG, URL: 'https://x.example', plan: { product_slug: 'free' }, is_private: false, last_updated: '2026-01-01T00:00:00Z' }] }],
@@ -280,6 +293,7 @@ const ROLE: Readonly<Record<string, string>> = {
   'gmail.ts': 'swept-here',
   'notion.ts': 'swept-here',
   'slack.ts': 'swept-here',
+  'stripe.ts': 'swept-here',
   'wordpress.ts': 'swept-here',
   'cloudflare.ts': 'swept-elsewhere: thirdPartyFieldCeiling.test.ts → clients/cloudflare (パス 411)',
   'github.ts': 'swept-elsewhere: thirdPartyFieldCeiling.test.ts → clients/github (パス 411)',

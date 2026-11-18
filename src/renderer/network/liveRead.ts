@@ -35,6 +35,7 @@
  */
 
 import { fetchCursorSnapshotWith, DEFAULT_USAGE_DAYS } from '../../shared/api/cursor';
+import { fetchStripeSnapshotWith } from '../../shared/api/stripe';
 import { lookup } from '../../shared/lookup';
 
 /** 通信手段。`fetchSnapshot` と同じく JSON として読めた本体を返す。 */
@@ -69,8 +70,12 @@ interface LiveReader {
  * 「まだ実データにできない」という表明**なので、増やしたら
  * `docs/BROWSER_REDESIGN.md` にも書くこと。api.cursor.com はブラウザ発の
  * 呼び出しに CORS を許可しないのでプロキシ経由。
+ *
+ * `stripe` (2026-11-18): 残高と最近の入金 (読み取りだけ)。これもプロキシを通す —— `api.stripe.com` が
+ * ブラウザ発の呼び出しを許すかは、この開発環境からは確かめられていない (届かない)。プロキシの
+ * 許可リストに `api.stripe.com` を足して使う。
  */
-export const LIVE_READERS: Readonly<Record<string, LiveReader>> = { cursor: { read: (jsonFetch, token, nowMs) => fetchCursorSnapshotWith(jsonFetch, token, nowMs, DEFAULT_USAGE_DAYS) } };
+export const LIVE_READERS: Readonly<Record<string, LiveReader>> = { cursor: { read: (jsonFetch, token, nowMs) => fetchCursorSnapshotWith(jsonFetch, token, nowMs, DEFAULT_USAGE_DAYS) }, stripe: { read: (jsonFetch, token) => fetchStripeSnapshotWith(jsonFetch, token) } };
 
 /** 読み取りの結果。失敗しても「なぜ実データでないか」を必ず言葉で返す。 */
 export type LiveReadResult =

@@ -233,11 +233,51 @@ describe('LIVE_READERS — 読み直して static 変異体を届かせる', () 
     return rereadModule<typeof import('../liveRead')>(import.meta.url, '../liveRead');
   };
 
-  it('★ 表に載っているのは cursor だけ (増減に気付く)', async () => {
+  it('★ 表に載っているのは cursor と stripe だけ (増減に気付く)', async () => {
     const m = await fresh();
-    expect(Object.keys(m.LIVE_READERS)).toEqual(['cursor']);
+    expect(Object.keys(m.LIVE_READERS)).toEqual(['cursor', 'stripe']);
     expect(m.canLiveRead('cursor')).toBe(true);
+    expect(m.canLiveRead('stripe')).toBe(true);
     expect(m.canLiveRead('github')).toBe(false);
+  });
+
+  /*
+   * Stripe (2026-11-18): 読み取りは shared の `fetchStripeSnapshotWith` を通り、プロキシ経由の
+   * 通信手段と保管庫の鍵が**そのまま**届く (送り先は api.stripe.com の 2 つだけ)。
+   */
+  it('★ stripe の read が、渡した通信手段と鍵で残高と入金を読む', async () => {
+    const m = await fresh();
+    const jsonFetch = vi
+      .fn<(url: string, init: RequestInit) => Promise<unknown>>()
+      .mockResolvedValueOnce({ available: [{ amount: 100, currency: 'jpy' }], pending: [], livemode: true })
+      .mockResolvedValueOnce({ data: [{ id: 'ch_1', amount: 100, currency: 'jpy', status: 'succeeded' }] });
+    const res = await m.liveRead('stripe', {
+      readCredential: () => Promise.resolve('rk_test_example'),
+      getProxyJsonFetch: () => Promise.resolve(jsonFetch),
+      now: () => 0,
+    });
+    expect(res).toEqual({
+      ok: true,
+      data: {
+        balances: [{ currency: 'jpy', available: 100, pending: null }],
+        charges: [{ id: 'ch_1', amount: 100, currency: 'jpy', status: 'succeeded', refunded: false, created: null, description: '' }],
+        balanceRead: true,
+        chargesRead: true,
+        livemode: true,
+      },
+    });
+    expect(jsonFetch.mock.calls).toEqual([
+      ['https://api.stripe.com/v1/balance', { headers: { Authorization: 'Bearer rk_test_example' } }],
+      ['https://api.stripe.com/v1/charges?limit=10', { headers: { Authorization: 'Bearer rk_test_example' } }],
+    ]);
+  });
+
+  it('stripe: 鍵が無ければ通信手段を取りに行かず「未登録」と答える', async () => {
+    const m = await fresh();
+    const getProxyJsonFetch = vi.fn(() => Promise.reject(new Error('呼ばれてはいけない')));
+    const res = await m.liveRead('stripe', { readCredential: () => Promise.resolve(null), getProxyJsonFetch, now: () => 0 });
+    expect(res).toMatchObject({ ok: false, code: 'not_configured' });
+    expect(getProxyJsonFetch).not.toHaveBeenCalled();
   });
 
   /*

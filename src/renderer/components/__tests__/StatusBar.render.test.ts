@@ -310,8 +310,8 @@ describe('StatusBar — 読み手のいない資格情報は求めない', () =>
   it("'none' のサービスでも認証エラーの再入力へ落ちない", () => {
     const html = renderToStaticMarkup(
       createElement(StatusBar, {
-        who: 'Stripe',
-        serviceId: 'stripe',
+        who: 'Sentry',
+        serviceId: 'sentry',
         tokenSetup: setup,
         status: 'error',
         errorKind: 'auth',

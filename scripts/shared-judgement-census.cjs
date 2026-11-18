@@ -191,6 +191,12 @@ const VERDICTS = {
     + '**このモジュールの外へ出ない** (`normalizeMembers` / `normalizeUsage` / '
     + '`normalizeSpend` が `state` に畳んでから返す)。応答の上限も '
     + 'MAX_PROXY_RESPONSE_BYTES = MAX_HTTP_RESPONSE_BYTES で 1 つ',
+  'api/stripe':
+    '対称 (実測・2026-11-18) —— 両ビルドが同じ `fetchStripeSnapshotWith` を呼び (main は clients/stripe.ts、'
+    + 'ブラウザ版は network/liveRead.ts)、否定を返す物 (`stripeCreatedDate` → null / 金額の null / '
+    + '`normalizeStripeBalance` の livemode → null / `stripeIntakeNote` → null / `balanceRead` `chargesRead` の false) の'
+    + '**消費者はどれも StripePage 1 つだけ**で、その画面は両ビルドで同じ 1 本のソースである。'
+    + '読めなかった金額は「金額不明」・読めなかった一覧は ⚠ の 1 文で、どちらのビルドでも同じ文になる',
   safeFilename:
     '対称 (実測・2026-10-24 · T-177) —— isSafeFilename が no と言ったあとの動作は 4 つの消費者で同じ '
     + '「その名前では書かない・開かない」: ライブラリの put と FSA の書き込み (renderer) は filename が不正です で投げ、'

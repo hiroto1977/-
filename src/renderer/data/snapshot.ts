@@ -16,6 +16,7 @@ import { NO_SECURED_FUNDING_NOTE, type FundingLinkSource } from '../../shared/fu
 import { MIN_SAFE_VERSION } from '../../shared/ollama';
 import { NO_DEAL_INTAKE } from '../../shared/freeeIntake';
 import type { CursorSnapshot } from '../../shared/api/cursor';
+import type { StripeSnapshot } from '../../shared/api/stripe';
 import { buildHydroponicsSnapshot } from '../../shared/hydroponicsControl';
 import { buildMentorSnapshot } from '../../shared/mentor';
 import { buildGrokSnapshot } from '../../shared/grokSnapshot';
@@ -651,15 +652,19 @@ export const SNAPSHOT = {
     count: 4,
   },
 
+  // 見本 (鍵を登録するまでの表示)。形は実物 (`shared/api/stripe.ts` の `StripeSnapshot`) と同じ 1 つ ——
+  // 画面の型はこの見本から推論されるので、`as StripeSnapshot` で実物と同じ幅 (`number | null` ほか) にする (パス 410)。
   stripe: {
-    items: [
-      { id: 'mrr', name: '💳 MRR: $48,200 (前月比 +8.4%)' },
-      { id: 'cust', name: '👥 アクティブ顧客: 412 名 / 解約率 1.8%' },
-      { id: 'inv', name: '📄 未払い請求書: 7 件 ($3,420 相当)' },
-      { id: 'today', name: '⚡ 今日の決済: 23 件 / $4,180 / 失敗 1 件' },
-    ] as { id: string; name: string }[],
-    count: 4,
-  },
+    balances: [{ currency: 'jpy', available: 128400, pending: 36200 }],
+    charges: [
+      { id: 'ch_sample_3', amount: 18400, currency: 'jpy', status: 'succeeded', refunded: false, created: '2026-11-16', description: '見本: オンライン注文' },
+      { id: 'ch_sample_2', amount: 6200, currency: 'jpy', status: 'succeeded', refunded: true, created: '2026-11-15', description: '見本: 返金した注文' },
+      { id: 'ch_sample_1', amount: 11600, currency: 'jpy', status: 'failed', refunded: false, created: '2026-11-14', description: '見本: カードの承認が通らなかった注文' },
+    ],
+    balanceRead: true as boolean,
+    chargesRead: true as boolean,
+    livemode: false as boolean | null,
+  } as StripeSnapshot,
 
   line: {
     items: [

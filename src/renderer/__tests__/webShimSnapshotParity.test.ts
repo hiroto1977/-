@@ -6,7 +6,7 @@
  * 51 サービス分を突き合わせた。ブラウザ版 (`web-shim.ts`) は別実装で
  * **5 サービスだけ**自前に合成する (stocks / emotions / talent / teamradar / security)。
  * 残りは `not_implemented` を返して画面が同梱を見続けるか、`liveRead` 経由で
- * **shared の実装**を通る (`LIVE_READERS` は今 cursor 1 件で、main と同じ
+ * **shared の実装**を通る (`LIVE_READERS` は今 cursor と stripe の 2 件で、main と同じ
  * `fetchCursorSnapshotWith` を呼ぶので形はずれようがない)。
  *
  * 合成の 5 件は**ブラウザ版だけの道**なので、ここがずれると

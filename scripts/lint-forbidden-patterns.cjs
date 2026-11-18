@@ -868,6 +868,10 @@ const KNOWN_SUPPRESSIONS = [
   'child_process exec/spawn :: scripts/lib/mamori-arena-judge.cjs :: 1',
   // 対戦場の津波 (2026-11-09): 箱を走らせる審判は同期なので、波を箱の組ごとに別プロセスの CLI へ割って並べる。引数は固定の配列でシェルを経由せず、環境変数は継ぐだけ。1 件は呼び出し。
   'child_process exec/spawn :: scripts/lib/mamori-arena-wave.cjs :: 1',
+  // 言語を育てる輪 (2026-11-18): 「能力モジュールを直接 import する壁は Mamori へ移せない」を判定するための
+  // **モジュール名の一覧** (`CAPABILITY_MODULES` —— 本物は `src/shared/mamori/checker.ts`) に、名前が文字列として 1 つ在るだけ。
+  // この本は子プロセスを作らない (require も呼び出しも 0 件)。1 件はその一覧の中の綴り。
+  'child_process exec/spawn :: scripts/mamori-growth.cjs :: 1',
   // 実物のデスクトップアプリを起動する道具。`electron .` を子プロセスで
   // 立ち上げ、8 秒生きているかと致命的な出力の有無を見る。起動そのものを
   // 確かめるのが目的なので、プロセスを作らずには成り立たない。
