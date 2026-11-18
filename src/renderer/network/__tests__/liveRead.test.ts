@@ -233,13 +233,14 @@ describe('LIVE_READERS — 読み直して static 変異体を届かせる', () 
     return rereadModule<typeof import('../liveRead')>(import.meta.url, '../liveRead');
   };
 
-  it('★ 表に載っているのは cursor / stripe / asana / line だけ (増減に気付く)', async () => {
+  it('★ 表に載っているのは cursor / stripe / asana / line / linear だけ (増減に気付く)', async () => {
     const m = await fresh();
-    expect(Object.keys(m.LIVE_READERS)).toEqual(['cursor', 'stripe', 'asana', 'line']);
+    expect(Object.keys(m.LIVE_READERS)).toEqual(['cursor', 'stripe', 'asana', 'line', 'linear']);
     expect(m.canLiveRead('cursor')).toBe(true);
     expect(m.canLiveRead('stripe')).toBe(true);
     expect(m.canLiveRead('asana')).toBe(true);
     expect(m.canLiveRead('line')).toBe(true);
+    expect(m.canLiveRead('linear')).toBe(true);
     expect(m.canLiveRead('github')).toBe(false);
   });
 
@@ -358,6 +359,55 @@ describe('LIVE_READERS — 読み直して static 変異体を届かせる', () 
     const m = await fresh();
     const getProxyJsonFetch = vi.fn(() => Promise.reject(new Error('呼ばれてはいけない')));
     const res = await m.liveRead('line', { readCredential: () => Promise.resolve(null), getProxyJsonFetch, now: () => 0 });
+    expect(res).toMatchObject({ ok: false, code: 'not_configured' });
+    expect(getProxyJsonFetch).not.toHaveBeenCalled();
+  });
+
+  /*
+   * Linear (2026-11-18): 読み取りは shared の `fetchLinearSnapshotWith` を通り、プロキシ経由の
+   * 通信手段と保管庫の鍵が**そのまま**届く (送り先は api.linear.app/graphql の 1 つだけ・本文は固定の照会)。
+   */
+  it('★ linear の read が、渡した通信手段と鍵で利用者と課題を読む', async () => {
+    const m = await fresh();
+    const jsonFetch = vi.fn<(url: string, init: RequestInit) => Promise<unknown>>().mockResolvedValueOnce({
+      data: {
+        viewer: {
+          name: '山田',
+          assignedIssues: {
+            nodes: [{ identifier: 'ENG-12', title: '直す', priority: 2, dueDate: null, state: { name: '進行中' }, team: { name: '開発' } }],
+            pageInfo: { hasNextPage: false },
+          },
+        },
+      },
+    });
+    const res = await m.liveRead('linear', {
+      readCredential: () => Promise.resolve('lin_api_example'),
+      getProxyJsonFetch: () => Promise.resolve(jsonFetch),
+      now: () => 0,
+    });
+    expect(res).toEqual({
+      ok: true,
+      data: {
+        userName: '山田',
+        issues: [{ identifier: 'ENG-12', title: '直す', priority: 2, dueDate: null, dueRead: true, stateName: '進行中', teamName: '開発' }],
+        viewerRead: true,
+        issuesRead: true,
+        more: false,
+        refused: false,
+      },
+    });
+    expect(jsonFetch).toHaveBeenCalledTimes(1);
+    const [url, init] = jsonFetch.mock.calls[0]!;
+    expect(url).toBe('https://api.linear.app/graphql');
+    expect(init.method).toBe('POST');
+    expect(init.headers).toEqual({ Authorization: 'lin_api_example', 'Content-Type': 'application/json' });
+    expect(String(init.body).startsWith('{"query":"query { viewer {')).toBe(true);
+  });
+
+  it('linear: 鍵が無ければ通信手段を取りに行かず「未登録」と答える', async () => {
+    const m = await fresh();
+    const getProxyJsonFetch = vi.fn(() => Promise.reject(new Error('呼ばれてはいけない')));
+    const res = await m.liveRead('linear', { readCredential: () => Promise.resolve(null), getProxyJsonFetch, now: () => 0 });
     expect(res).toMatchObject({ ok: false, code: 'not_configured' });
     expect(getProxyJsonFetch).not.toHaveBeenCalled();
   });
