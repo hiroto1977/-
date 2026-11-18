@@ -26,7 +26,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 79 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 32 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **20876** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **20877** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` (**2026-09-01 の報告** —— 今のコードを測った物ではない。`docs/REMAINING_WORK.md` の「パス 494」) |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` (同上) |
@@ -1942,7 +1942,7 @@ undici は CORS を実装しないので単体検査には映らず、CI の外�
 | base | `api.thebase.in` | `GET /1/items` | Bearer | `base.ts:34` |
 | cursor (両ビルド。ブラウザ版はプロキシ経由 —— api.cursor.com はブラウザ発の CORS を許可しない) | `api.cursor.com` | `GET /teams/members`, `POST /teams/daily-usage-data`, `POST /teams/spend` | Bearer (Admin API キー) | `src/shared/api/cursor.ts:252-262` |
 | stripe (両ビルド。ブラウザ版はプロキシ経由 —— 開発環境から api.stripe.com へ届かず、ブラウザ発の CORS は確かめていない) | `api.stripe.com` | `GET /v1/balance`, `GET /v1/charges?limit=10` | Bearer (読み取り専用の制限付きキー) | `src/shared/api/stripe.ts:255-260` |
-| asana (両ビルド。ブラウザ版はプロキシ経由 —— 開発環境から app.asana.com へ届かず、ブラウザ発の CORS は確かめていない) | `app.asana.com` | `GET /api/1.0/users/me`, `GET /api/1.0/tasks?assignee=me&workspace=<gid>` (gid は数字だけを確かめて符号化) | Bearer (個人アクセストークン) | `src/shared/api/asana.ts:226-232` |
+| asana (両ビルド。ブラウザ版はプロキシ経由 —— 開発環境から app.asana.com へ届かず、ブラウザ発の CORS は確かめていない) | `app.asana.com` | `GET /api/1.0/users/me`, `GET /api/1.0/tasks?assignee=me&workspace=<gid>` (gid は数字だけを確かめて符号化) | Bearer (個人アクセストークン) | `src/shared/api/asana.ts:229-235` |
 | shopify→discord | `discord.com` | `POST` webhook (payload 由来。https + hostname 完全一致で絞る) | webhook URL | `shopify.ts:172-194` |
 | shopify→line | `api.line.me` | `POST /v2/bot/message/push` | Bearer | `shopify.ts:205-215` |
 | shopify→stripe | `api.stripe.com` | `POST /v1/customers` | Bearer | `shopify.ts:354-366` |

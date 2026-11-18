@@ -91,10 +91,13 @@ export function asanaTasksPath(workspaceGid: string): string {
   return `/tasks?assignee=me&workspace=${encodeURIComponent(workspaceGid)}&completed_since=now&limit=${ASANA_TASK_LIMIT}&opt_fields=name,due_on`;
 }
 
-/** `obj[field]` が物 (配列でない) ならそれを、違えば `null`。 */
+/**
+ * `obj[field]` が物 (配列でない) ならそれを、違えば `null`。
+ * `null` は `typeof` が `'object'` と答えるので、そのまま返せば `null` になる (別に検める枝を持たない)。
+ */
 function objectField(obj: unknown, field: string): object | null {
   const v = (Object(obj) as Record<string, unknown>)[field];
-  return v !== null && typeof v === 'object' && !Array.isArray(v) ? v : null;
+  return typeof v === 'object' && !Array.isArray(v) ? v : null;
 }
 
 interface WorkspaceRow {
