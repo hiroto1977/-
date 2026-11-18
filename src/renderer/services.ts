@@ -390,7 +390,7 @@ export const SERVICES: ServiceDefinition[] = [
     id: 'line',
     label: 'LINE',
     icon: 'LN2',
-    description: '公式アカウント — 友達 / 配信 / メッセージ統計 (snapshot)',
+    description: '公式アカウント — アカウントの情報と今月の配信数 (読み取り専用・鍵を登録すると実データ)',
     page: LinePage,
     category: 'integrations',
   },

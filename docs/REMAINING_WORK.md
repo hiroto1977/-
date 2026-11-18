@@ -24,6 +24,27 @@
   ★ 差出人の読みは振る舞いを 1 つ強くした: `表示名 <アドレス>` の後ろに字が続く形・前に別の `<…>` が在る形でも、最後の `<アドレス>` と表示名を比べる (以前は比べずに通していた)。
   2 度目 **99.76% (生存 1 —— 件名と本文のつなぎ目)** → 標本を足して 3 度目に `inboundWatch.ts` を単独で測り直し、3 本とも `mutate` へ入れた (357 → 360)。
 
+## LINE の実データ接続で測って残した物 (2026-11-18)
+
+- **本物の LINE との往復は未確認**: 開発環境から `api.line.me` へ届かない。応答の形は公開の Messaging API の仕様に合わせた標本で、実物の応答では確かめていない。
+  利用者がチャネルアクセストークンを登録して「更新」を押した最初の回が、初めての実測になる。
+- **ブラウザ版はプロキシ経由だけ**: LINE がブラウザ発の CORS を許すかを確かめられなかったので、直接つなぐ分岐は足していない。
+  利用者のプロキシの許可リスト `UPSTREAM_ALLOWLIST` に `api.line.me` を足す必要がある (`docs/PROXY_EXAMPLE.md` の既定の一覧には無い)。
+- **鍵は読み取り専用にできない**: チャネルアクセストークンは友だちへメッセージを送る権限も持つ。画面はそう述べ、このアプリが送るのは 3 つの照会だけだと述べる。
+  発行元の分かる接頭辞を持たないので、**裸では伏字に掛からない** (ヘッダ名や項目名が付いた形では伏せられる —— `redactionCoverage` の `header-only`)。
+- **読むのはアカウントの情報・配信の上限・今月の配信数の 3 つだけ**: 友だちの数 (`GET /v2/bot/insight/followers?date=…`) は読まない ——
+  日付 (前日) を渡す必要が在り、集計が済んでいない日は `unready` を返す。足すなら「どの日の数か」を画面が述べる形で。
+  配信ごとの開封・クリックの統計、リッチメニュー、Webhook の設定も読まない。
+- **3 つの照会のどれか 1 つが失敗すると、取得全体が失敗する**: 配信数の照会だけが権限で断られても、アカウントの情報は出ない (Stripe / Asana と同じ形)。
+- **配信数が上限を超えたときは、超えた通数を述べるだけ**: 追加メッセージの料金は算定しない。
+- **既読モード (`markAsReadMode`) は読まない**。応答モード (`chatMode`) だけを出す。
+- **実機の専用 suite は無い**: 画面は jsdom の 11 件と、全画面の走査 (contrast / controls / opened) が見る。
+- **`api.line.me` は表に既に在ったホスト**: Shopify のコネクタ (`sync-to-line`・`POST /v2/bot/message/push`) が同じホストを持つので、ホストの数は 32 のまま。
+  そちらは**どの画面からも呼ばれていない**送信の口で、今回の読み取りとは別の資格情報 (payload の token) を使う。
+- **`lint:shared-judgement` の針は `return null` の文だけを見る**: 三項演算子で `null` を返す関数だけのモジュールは「否定で答えられる」に数えられない
+  (LINE の部品を足したとき 1 度そうなった —— `lineIntakeNote` を文の `return null` にして母集団に入れた)。針を広げるかは別の作業。
+- **次に実データへつなぐ候補**: Linear / Sentry / Dropbox / Shopify / Discord。1 サービス 1 PR。
+
 ## Asana の実データ接続で測って残した物 (2026-11-18)
 
 - **本物の Asana との往復は未確認**: 開発環境から `app.asana.com` へ届かない。応答の形は公開の API 仕様に合わせた標本で、実物の応答では確かめていない。
@@ -32751,7 +32772,7 @@ src/shared/ のモジュール                                        138
 「読んだ結果」か `未読 (…)` のどちらかで、読んでいない物に「対称だろう」とは書かない。
 
 <!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/shared-judgement-census.cjs。npm run lint:shared-judgement は check だけ) -->
-shared **188** モジュール / 両ビルドが import **102** / うち否定で答えられる **51**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
+shared **189** モジュール / 両ビルドが import **103** / うち否定で答えられる **52**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
 
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |
@@ -32762,6 +32783,7 @@ shared **188** モジュール / 両ビルドが import **102** / うち否定�
 | `api/asana` | 1 | 3 | 対称 (実測・2026-11-18) —— 両ビルドが同じ `fetchAsanaSnapshotWith` を呼び (main は clients/asana.ts、ブラウザ版は network/liveRead.ts)、否定を返す物 (`asanaDue` の dueOn → null と dueRead の false / `asanaIntakeNote` → null / `asanaScopeNote` → null / `meRead` `tasksAsked` `tasksRead` の false / `buildAsanaSnapshot` に渡す null = 照会しなかった) の**消費者はどれも AsanaPage 1 つだけ**で、その画面は両ビルドで同じ 1 本のソースである。読めなかった期限は「期限が読めません」・読めなかった一覧は ⚠ の 1 文で、どちらのビルドでも同じ文になる |
 | `api/cloudflare` | 1 | 1 | 対称 (実測・2026-09-19 パス 321) —— 欄の判定 (`checkDnsRecord` / `checkPurge`)・本文・URL・封筒 (`readCloudflareEnvelope`: `success !== true` を断る) を両ビルドが同じ関数で通る。それまで封筒の条件は main が falsy・ブラウザ版が `!== true` と違い、文も 「unknown Cloudflare error」/「unknown error」で割れていた (`CLOUDFLARE_UNKNOWN_ERROR` の 1 つへ)。断りの後は両ビルドとも投げる: main は serviceId つきの FetchError `cloudflare <message>`、ブラウザ版は Error `Cloudflare: <message>` —— 運び方 (例外の型) だけが流儀。main の読み (user / zones) も同じ封筒の判定と `CLOUDFLARE_API` を通る |
 | `api/cursor` | 1 | 3 | 対称 (実測・パス 250 / パス 263 で 1 → 3 に増えた) —— 両ビルドが同じ `fetchCursorSnapshotWith` を呼び (main は clients/cursor.ts、ブラウザ版は network/liveRead.ts)、否定を返す 3 つ (`acceptRateOf` → null / `buildCursorSnapshot` の totals 3 欄 → null / `cursorIntakeNote` → null) の**消費者はどれも CursorPage 1 つだけ**で、その画面は両ビルドで同じ 1 本の ソースである (renderer は 1 つ)。パス 263 で足した `readRows` の `read: false` は**このモジュールの外へ出ない** (`normalizeMembers` / `normalizeUsage` / `normalizeSpend` が `state` に畳んでから返す)。応答の上限も MAX_PROXY_RESPONSE_BYTES = MAX_HTTP_RESPONSE_BYTES で 1 つ |
+| `api/line` | 1 | 3 | 対称 (実測・2026-11-18) —— 両ビルドが同じ `fetchLineSnapshotWith` を呼び (main は clients/line.ts、ブラウザ版は network/liveRead.ts)、否定を返す物 (`lineCount` → null / `lineChatMode` → null / `normalizeLineQuota` の quotaType・quotaLimit の null / `normalizeLineUsage` → null / `lineIntakeNote` → null) の**消費者はどれも LinePage 1 つだけ**で、その画面は両ビルドで同じ 1 本のソースである。読めなかった通数は「読めません」・読めなかった物は ⚠ の 1 文で名指しし、どちらのビルドでも同じ文になる |
 | `api/slack` | 1 | 1 | 対称 (実測・2026-09-18 オントロジーの組み直し) —— `readSlackPost` の `ok: false` (Slack は HTTP 200 でも失敗を返す) を両ビルドが**投げて**断る: main は FetchError `slack <error>`、ブラウザ版は Error `Slack: <error>`。運び方 (例外の型) だけが流儀で、条件と error の綴りは 1 つ。`ts` の無い ok:true は `requireString` が両ビルドで同じ文で投げる (main はそれまで '' に倒していた —— 揃えたときに要求する側へ)。消費者は main の sendMessage と saasWriteWeb の sendSlackMessage の 2 つだけ |
 | `api/stripe` | 1 | 3 | 対称 (実測・2026-11-18) —— 両ビルドが同じ `fetchStripeSnapshotWith` を呼び (main は clients/stripe.ts、ブラウザ版は network/liveRead.ts)、否定を返す物 (`stripeCreatedDate` → null / 金額の null / `normalizeStripeBalance` の livemode → null / `stripeIntakeNote` → null / `balanceRead` `chargesRead` の false) の**消費者はどれも StripePage 1 つだけ**で、その画面は両ビルドで同じ 1 本のソースである。読めなかった金額は「金額不明」・読めなかった一覧は ⚠ の 1 文で、どちらのビルドでも同じ文になる |
 | `apiResponse` | 15 | 20 | 対称 (実測・2026-09-26 パス 482 で数え直した) —— このモジュールが母集団に入ったのは、`apiNumberOf` (第三者が文字列で返す数の読み手) を足して「否定で答えられる」述語が増えたため (パス 416)。**両ビルドの食い違いは無い** —— ただし**2026-09-23 に書いた理由は 2 か所で古びていた**: 「renderer がこのモジュールから直接読むのは `parseJsonText` と `displayField` の 2 種類だけ」「`null` を返す読み手に両ビルドが届く道は `shared/api/*.ts` ただ 1 つ」と書いたが、パス 442 / 443 から renderer は **`finiteNumberOf` も直接読む** (保管した販売記録と KPI 実績の金額を読む漏斗)。**それでも割れないのは、問うている値が別だから**である —— renderer の `finiteNumberOf` が読むのは **renderer 自身の保管層** (IndexedDB の販売記録・KPI 実績。main はこの保管層を読まない) の値で、「no」のあとの動作 (行を落として件数を述べる) は renderer にしか無い。main 側の読み手は `src/main/clients/` の第三者の応答を読む main 専用の経路で、**ブラウザ版はそれらのクライアントを 1 行も読み込まない** (パス 262 / 412 で実測)。**同じ値を両ビルドが問う形**は `shared/api/*.ts` (cursor ほか) を通る物だけで、そこは実装が 1 つなので「no のあとの動作」も 1 つしかない。`parseJsonText` は `null` を返さず**投げる**・`displayField` は `null` を返さない (非文字列は空文字・長すぎる値は天井 + `…`) ので、この 2 つは「no」と言う枝そのものを持たない。★ **読み手はここに並べない —— 名前だけでなく種類も** —— 2026-09-23 の文は名前を並べるのをやめて「2 種類だけ」と**種類**を並べたが、種類が 1 つ増えた日に同じく偽になった。数は左の列が数え、この欄は**なぜ対称なのか** (誰の値を問うているか) だけを述べる。つまり非対称になりうる組が今日 0 件である |

@@ -7,6 +7,31 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-11-18 · 続き 2) — LINE を実データへつないだ (読み取り専用)
+
+- 利用者の依頼: 「マージして作業を継続して」。PR #943 (Asana) を取り込み (squash `9768ab0`・`commit_message` を渡したので main の ci / pages / mutation が走った ——
+  pages は成功し、公開サイトは Stripe と Asana の分を含む)、接続はおまかせの 3 つ目として LINE を選んだ (1 サービス 1 PR)。
+- **LINE 公式アカウント (Messaging API)**: アカウントの情報 (`GET /v2/bot/info`)・配信の上限 (`GET /v2/bot/message/quota`)・今月の配信数
+  (`GET /v2/bot/message/quota/consumption`) を読む。**書き込みは 1 つも持たない** (メッセージの送信・友だちの一覧やプロフィールの照会は無い)。
+  判定と正規化は `src/shared/api/line.ts` に 1 つ。デスクトップ版は `main/clients/line.ts`、ブラウザ版は `liveRead.mamori` の `LIVE_READERS` に 1 行 (プロキシ経由)。画面は `LinePage.tsx`。
+  - 通数は **0 以上の整数だけ**を数として受ける (`lineCount`)。読めなければ `null` で、画面が「0 通」「上限なし」と混ぜずに「読めません」と述べる。
+  - 残りの通数は上限と配信数の両方が読めたときだけ出す。配信数が上限を超えていれば、超えた通数を述べる。
+  - 読めなかった物 (アカウントの情報 / 配信の上限 / 今月の配信数) を ⚠ の 1 文で名指しする (`lineIntakeNote`)。
+  - 鍵 (チャネルアクセストークン) は送信の権限も持つと画面が述べる。ブラウザ版だけ、プロキシの登録と許可リスト (api.line.me) を押す前に述べる。
+  - 内部 ID (`userId`) と画像の URL は読まない。
+  - 宣言: `SERVICE_DATA_ORIGIN.line` sample → remote (remote 18 / sample 42)・`SERVICE_CREDENTIAL_USE.line` none → fetch (fetch 18 / none 54)・`CLOUD_PROVIDERS` に行。
+  - 送信の行は基底の定数を名乗る形 (`${LINE_API_BASE}${LINE_INFO_PATH}`)。`api.line.me` は Shopify のコネクタが既に持つホストなので、ホストの数は 32 のまま。
+- 検証: `shared/api/__tests__/line.test.ts` 64 件・`main/clients/__tests__/line.test.ts` 4 件・`pages/__tests__/linePage.test.ts` 11 件 (jsdom)・`liveRead.test.ts` +2・
+  `thirdPartyScreenCeiling` に 1 行。変異検査: `line.ts` **100.00% (131 killed・1 回目で)**。`mutate` 363 → 364。
+- 締め (実測): `npm test` **1303 ファイル / 28,420 件 ❌ 0**・`audit:verify-keep-going` **39 / 39** (1 回目は verify:arch の数 2 つ)・`chain:verify` 緑 (block #522)。
+  両ビルドは **12,251,099 B / 3,663,736 B (両方 +3,573 B)** (md5 `781b0bc3…` / `47be899d…`)。LITE はハード上限 (4,000,000 B) まで 336,264 B。
+  実機: `perf` OK (LITE DCL 262 ms / heap 8 MB・FULL DCL 592 ms / heap 30.3 MB)・`e2e` **723 件 ❌ 0**・`e2e:lite` **723 件 ❌ 0**。
+  `smoke:app` / `e2e:ollama` は回していない (主プロセスの起動経路も Ollama の経路も触っていない)。
+- **本物の LINE には 1 度もつないでいない** —— 開発環境から `api.line.me` へ届かない。確かめたのは、公開の API 仕様の形に合わせた応答を実物の client に食わせる所まで。
+- 測って分かった物: `lint:shared-judgement` の針は**文の `return null`** だけを見る。三項演算子で `null` を返す関数だけのモジュールは母集団に入らない
+  (`lineIntakeNote` を文の形にして入れた・census は shared 189 / 両ビルド 103 / 否定 52)。
+- 利用者のスマホ (ノートン プライベート ブラウザ) のショートカットに、公開サイトの軽量版 (`…/lite.html`) を登録済み (利用者が自分で操作)。
+
 ## 直近の作業 (2026-11-18 · 続き) — Asana を実データへつないだ (読み取り専用)
 
 - 利用者の依頼: 「続けて」(接続はおまかせの 2 つ目)。Stripe と同じ形で Asana を選んだ (1 サービス 1 PR)。

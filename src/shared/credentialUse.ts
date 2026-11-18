@@ -92,7 +92,8 @@ export const SERVICE_CREDENTIAL_USE: Record<ServiceId, CredentialUse> = {
   shopify: 'none',
   // 2026-11-18: 取得が鍵を読むようになった (`main/clients/stripe.ts` → `shared/api/stripe.ts`)。
   stripe: 'fetch',
-  line: 'none',
+  // 2026-11-18: 取得が鍵を読むようになった (`main/clients/line.ts` → `shared/api/line.ts`)。
+  line: 'fetch',
   storage: 'none',
   'tax-accountant': 'none',
   'labor-consultant': 'none',

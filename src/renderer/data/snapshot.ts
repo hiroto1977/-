@@ -18,6 +18,7 @@ import { NO_DEAL_INTAKE } from '../../shared/freeeIntake';
 import type { CursorSnapshot } from '../../shared/api/cursor';
 import type { StripeSnapshot } from '../../shared/api/stripe';
 import type { AsanaSnapshot } from '../../shared/api/asana';
+import type { LineSnapshot } from '../../shared/api/line';
 import { buildHydroponicsSnapshot } from '../../shared/hydroponicsControl';
 import { buildMentorSnapshot } from '../../shared/mentor';
 import { buildGrokSnapshot } from '../../shared/grokSnapshot';
@@ -675,14 +676,16 @@ export const SNAPSHOT = {
     livemode: false as boolean | null,
   } as StripeSnapshot,
 
+  // 見本 (鍵を登録するまでの表示)。形は実物 (`shared/api/line.ts` の `LineSnapshot`) と同じ 1 つ ——
+  // 画面の型はこの見本から推論されるので、`as LineSnapshot` で実物と同じ幅にする (パス 410)。
   line: {
-    items: [
-      { id: 'fr', name: '👤 友だち: 18,420 名 (前月比 +312)' },
-      { id: 'br', name: '📢 直近配信: 「Q3 新機能のご紹介」配信数 17,890 · 開封率 24%' },
-      { id: 'msg', name: '💬 今日の応答メッセージ: 142 件 / 自動応答 89 件' },
-    ] as { id: string; name: string }[],
-    count: 3,
-  },
+    displayName: '見本の公式アカウント',
+    basicId: '@sample',
+    chatMode: 'bot',
+    quotaType: 'limited',
+    quotaLimit: 5000,
+    usage: 1240,
+  } as LineSnapshot,
 
   storage: {
     // Snapshot-only. Phase 6 で Electron main プロセスの `os` / `fs` API
