@@ -84,16 +84,17 @@ async function performIntent(intent: VoiceIntent): Promise<IntentOutcome> {
     // 載せるのはサービスと操作名と段階と実行の印だけ —— 話した文も引数も載せない。
     const runId = newConversationWorkRunId();
     publishConversationWork({ stage: 'running', serviceId: intent.serviceId, action: intent.action, runId });
-    let result: Awaited<ReturnType<typeof window.serviceHub.invoke>>;
+    // 戻り値の仕分け (`classifyActionResult`) は呼びと同じ式に置く —— 失敗の枝がこの呼びに
+    // 付いていることを `invokeFailureSurfaced.test.ts` が呼びの塊から読むため (try の外へ離すと映らない)。
+    let classified: ReturnType<typeof classifyActionResult>;
     try {
-      result = await window.serviceHub.invoke(intent.serviceId, intent.action, intent.params ?? {});
+      classified = classifyActionResult(await window.serviceHub.invoke(intent.serviceId, intent.action, intent.params ?? {}));
     } catch (err) {
       // 橋が reject した (通信断など)。景色を「作業中」で止めず失敗として閉じてから、
       // 従来どおり呼び出し側へ投げる (文の表示はそちらが持つ)。
       publishConversationWork({ stage: 'failed', serviceId: intent.serviceId, action: intent.action, runId });
       throw err;
     }
-    const classified = classifyActionResult(result);
     publishConversationWork({
       stage: classified.verdict === 'failed' ? 'failed' : 'done',
       serviceId: intent.serviceId,
