@@ -5056,13 +5056,42 @@ async function openedSuite(browser) {
       if (rc.width === 0 || rc.height === 0) continue;
       const c = clipper(el);
       if (c.scroll) continue;
-      const limit = c.n ? Math.min(c.n.getBoundingClientRect().right, W) : W;
+      // 切る祖先が在れば、比べるのはその右端だけ (画面の幅とは比べない)。切る祖先そのものが横へ動かせる枠の中で
+      // 画面の外へ出ているとき (`.data-section` の中の `<svg>` —— svg は既定で中身を切る)、その中身は枠を動かせば見える。
+      const limit = c.n ? c.n.getBoundingClientRect().right : W;
       if (rc.right <= limit + 1) continue;
       let inner = false;
       for (let q = el.parentElement; q && q !== root; q = q.parentElement) if (seen.has(q)) { inner = true; break; }
       seen.add(el);
       if (inner) continue;
       bad.push(`${el.tagName.toLowerCase()} +${Math.round(rc.right - limit)}px「${(el.textContent || '').trim().slice(0, 16)}」`);
+    }
+    return bad;
+  };
+  /**
+   * **横へ動かさないと見えない物** (表を除く) —— 横へ動かせる枠 (`overflow-x: auto / scroll`) の中で、
+   * その枠の右端を越えている、最も外側の要素。表 (`<table>`) は列が多ければ枠の中で横へ動かして読む物なので数えない。
+   * 切れてはいない (動かせば見える) が、スマホでは 1 画面ずつ横へ動かすことになる (2026-11-18 の 2 度目の測定)。
+   */
+  const sidewaysIn = (rootSel) => {
+    const root = document.querySelector(rootSel);
+    if (!root) return null;
+    const bad = [];
+    for (const box of [root, ...root.querySelectorAll('*')]) {
+      const ox = getComputedStyle(box).overflowX;
+      if (ox !== 'auto' && ox !== 'scroll') continue;
+      if (box.scrollWidth <= box.clientWidth + 1) continue;
+      const lim = box.getBoundingClientRect().right;
+      for (const el of box.querySelectorAll('*')) {
+        const rc = el.getBoundingClientRect();
+        if (rc.width === 0 || rc.height === 0 || rc.right <= lim + 1) continue;
+        let outer = false;
+        for (let q = el.parentElement; q && q !== box; q = q.parentElement) {
+          if (q.getBoundingClientRect().right > lim + 1) { outer = true; break; }
+        }
+        if (outer || el.tagName === 'TABLE' || el.closest('table')) continue;
+        bad.push(`${el.tagName.toLowerCase()} +${Math.round(rc.right - lim)}px「${(el.textContent || '').trim().slice(0, 16)}」`);
+      }
     }
     return bad;
   };
@@ -5361,6 +5390,7 @@ async function openedSuite(browser) {
     await page.addStyleTag({ content: STILL });
     const titles = new Set();
     const clipped = [];
+    const sideways = [];
     const squeezed = [];
     let bars = 0;
     for (const id of [...SERVICE_IDS, 'village']) {
@@ -5371,6 +5401,10 @@ async function openedSuite(browser) {
       const bad = (await page.evaluate(clippedIn, 'main.main')) ?? ['本文の枠が無い'];
       if (CLIP_LEDGER[id] === undefined) clipped.push(...bad.map((what) => ({ page: id, what })));
       else if (bad.length === 0) clipped.push({ page: id, what: '台帳に在るのに切れていない (台帳から消す)' });
+      if (CLIP_LEDGER[id] === undefined) {
+        const wide = (await page.evaluate(sidewaysIn, 'main.main')) ?? [];
+        sideways.push(...wide.map((what) => ({ page: id, what })));
+      }
       // 状態の帯の名前 (`.who`) は、後ろの札と同じ行に押し込まれると 1 字ずつの縦書きに潰れる。
       const who = await page.evaluate(() => {
         const el = document.querySelector('main.main .status-bar .who');
@@ -5385,6 +5419,10 @@ async function openedSuite(browser) {
     ok(
       clipped.length === 0,
       `opened[${label}]: ★ 右が切れて見えない要素は 0 件 (全画面)${clipped.length ? ` · ${clipped.length} 件: ${clipSummary(clipped)}` : ''}`,
+    );
+    ok(
+      sideways.length === 0,
+      `opened[${label}]: ★ 横へ動かさないと見えない物 (表を除く) は 0 件 (全画面)${sideways.length ? ` · ${sideways.length} 件: ${clipSummary(sideways)}` : ''}`,
     );
     ok(
       bars >= 40 && squeezed.length === 0,
@@ -5437,13 +5475,49 @@ async function openedSuite(browser) {
       small.textContent = 'fit';
       fit.appendChild(small);
       document.body.appendChild(fit);
+      // 横へ動かせる枠の中に、中身を切る箱 (svg と同じ) が画面の外まで伸びている形。箱の中身は枠を動かせば見える。
+      const nested = document.createElement('div');
+      nested.id = 'nested';
+      nested.style.cssText = 'width:200px;overflow-x:auto';
+      const clipBox = document.createElement('div');
+      clipBox.style.cssText = 'width:1500px;height:20px;overflow:hidden';
+      const leaf = document.createElement('div');
+      leaf.style.cssText = 'width:1490px;height:10px';
+      leaf.textContent = 'leaf';
+      clipBox.appendChild(leaf);
+      nested.appendChild(clipBox);
+      document.body.appendChild(nested);
     });
     const inClip = await cp.evaluate(clippedIn, '#clip');
     const inScroll = await cp.evaluate(clippedIn, '#scroll');
     const inFit = await cp.evaluate(clippedIn, '#fit');
+    const inNested = await cp.evaluate(clippedIn, '#nested');
+    // 横へ動かせる枠の中のはみ出しは `sidewaysIn` が数える (表は数えない)。
+    await cp.evaluate(() => {
+      const box = document.createElement('div');
+      box.id = 'wide-table';
+      box.style.cssText = 'width:200px;overflow-x:auto';
+      const table = document.createElement('table');
+      table.style.cssText = 'width:600px';
+      const cell = table.insertRow().insertCell();
+      cell.textContent = 'cell';
+      box.appendChild(table);
+      document.body.appendChild(box);
+    });
+    const sideScroll = await cp.evaluate(sidewaysIn, '#scroll');
+    const sideTable = await cp.evaluate(sidewaysIn, '#wide-table');
+    const sideFit = await cp.evaluate(sidewaysIn, '#fit');
     ok(
-      inClip.length === 1 && inClip[0].includes('+300px') && inScroll.length === 0 && inFit.length === 0,
-      `opened: 対照 ★ 切る枠の中のはみ出しは外側の 1 件だけ数え、横へ動かせる枠・収まっている枠は数えない (切る ${inClip.length}・動かせる ${inScroll.length}・収まる ${inFit.length})`,
+      sideScroll.length === 1 && sideScroll[0].includes('+300px') && sideTable.length === 0 && sideFit.length === 0,
+      `opened: 対照 ★ 横へ動かせる枠の中のはみ出しは外側の 1 件だけ数え、表と収まっている枠は数えない (動かせる ${sideScroll.length}・表 ${sideTable.length}・収まる ${sideFit.length})`,
+    );
+    ok(
+      inClip.length === 1 &&
+        inClip[0].includes('+300px') &&
+        inScroll.length === 0 &&
+        inFit.length === 0 &&
+        inNested.length === 0,
+      `opened: 対照 ★ 切る枠の中のはみ出しは外側の 1 件だけ数え、横へ動かせる枠・収まっている枠・動かせる枠の中の切る箱の中身は数えない (切る ${inClip.length}・動かせる ${inScroll.length}・収まる ${inFit.length}・箱の中 ${inNested.length})`,
     );
     await cctx.close();
   }
@@ -5797,7 +5871,7 @@ function installWaitMarginRecorder(browser) {
     ['controls', controlsSuite, 61],
     // パス 506: 開いた窓 (details / 手入力 / 浮いた窓 / ドロワー) とスマホ幅の字を実機で 4 配色。実測値は初回の実行で確かめる
     // 2026-11-18: スマホ幅で右が切れて見えない要素 (村の殻の窓 1・既定の殻 4・測定器の対照 1) = +6
-    ['opened', openedSuite, 141],
+    ['opened', openedSuite, 143],
     ['tablet', tabletSuite, 2],
     // 村の殻 (唯一の入口) を実機で。旧画面のサイドバーの suite (shell) は 2026-11-04 に廃止
     // 2026-11-06: 会話の場面 (掛け合い 2・「💬 場面」・受付→作業中の札・スマホ幅の枠) = +5

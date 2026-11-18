@@ -46,7 +46,9 @@ function DutyOwner({ serviceId }: { serviceId?: string }) {
     <span
       data-duty-owner={serviceId}
       title={owners.map((o) => `${o.label}: ${o.title}`).join(' / ')}
-      style={{ fontSize: 11, color: 'var(--text-mute)', whiteSpace: 'nowrap' }}
+      // 折り返してよい (2026-11-18)。担当が多い画面 (書類スタジオは 8 士業) では 1 行が 500px を超え、
+      // スマホ幅で帯ごと右へ出ていた。帯は折り返すので、収まる幅の間は今までどおり 1 行に出る。
+      style={{ fontSize: 11, color: 'var(--text-mute)', maxWidth: '100%', overflowWrap: 'anywhere' }}
     >
       ⚖️ 担当: {uniq.map((o) => o.label + (o.scope === 'exclusive' ? '（独占）' : '')).join('・')}
     </span>

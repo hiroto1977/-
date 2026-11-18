@@ -3,6 +3,7 @@ import { Section, StatusBar } from '../components/StatusBar';
 import { Stat } from '../components/Stat';
 import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
+import { wrapColumns } from '../components/wrapColumns';
 
 const VERDICT_COLOR: Record<string, string> = {
   要修正: 'var(--danger)',
@@ -32,7 +33,7 @@ export function QualityPage() {
       />
 
       <Section title="主要指標" count={4}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: wrapColumns(4, 150), gap: 12, marginBottom: 16 }}>
           <Stat label="ユニットテスト (静的)" value={unitTests.staticCount.toLocaleString()} />
           <Stat label="ユニットテスト (実行時)" value={unitTests.runtimeCount.toLocaleString()} />
           <Stat
@@ -99,7 +100,7 @@ export function QualityPage() {
       </Section>
 
       <Section title="成果物サイズ" count={2}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: wrapColumns(2, 200), gap: 12 }}>
           <Stat label="standalone.html" value={`${artifactSizes.standaloneHtmlKb} KB`} />
           <Stat label="dist-electron/main.js" value={`${artifactSizes.electronMainKb} KB`} />
         </div>

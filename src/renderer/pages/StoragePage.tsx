@@ -3,6 +3,7 @@ import { Section, StatusBar } from '../components/StatusBar';
 import { Stat } from '../components/Stat';
 import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
+import { wrapColumns } from '../components/wrapColumns';
 
 const DIFFICULTY_LABEL: Record<string, string> = {
   safe: '✅ 安全',
@@ -83,7 +84,7 @@ export function StoragePage() {
       </Section>
 
       <Section title="パフォーマンス指標" count={4}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 8 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: wrapColumns(4, 150), gap: 12, marginBottom: 8 }}>
           <Stat
             label="フラグメント率 (HDD)"
             value={`${performance.fragmentationPct.toFixed(1)}%`}

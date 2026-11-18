@@ -222,7 +222,7 @@ export function TemplatesPage() {
               border: '1px solid var(--border)',
               borderRadius: 10,
               padding: 16,
-              minWidth: 360,
+              minWidth: 'min(360px, 100%)',
             }}
           >
             <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 8 }}>
@@ -331,9 +331,9 @@ export function TemplatesPage() {
               </label>
               );
             })}
-            <div style={{ display: 'flex', gap: 8 }}>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               {(['accentColor', 'secondaryColor'] as const).map((key) => (
-                <label key={key} style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4, fontSize: 11, color: 'var(--text-mute)' }}>
+                <label key={key} style={{ flex: '1 1 140px', minWidth: 0, display: 'flex', flexDirection: 'column', gap: 4, fontSize: 11, color: 'var(--text-mute)' }}>
                   {key === 'accentColor' ? 'メインカラー' : 'サブカラー'}
                   <div style={{ display: 'flex', gap: 4 }}>
                     <input
@@ -350,6 +350,7 @@ export function TemplatesPage() {
                       onChange={(e) => update(key, e.target.value)}
                       style={{
                         flex: 1,
+                        minWidth: 0,
                         padding: '4px 8px',
                         background: 'var(--bg-elev)',
                         border: '1px solid var(--control-border)',

@@ -495,14 +495,15 @@ export function StocksPage() {
             ⚠ {data.storedNote}
           </div>
         )}
-        <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+        <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
           <input
             type="text"
             value={registerSymbol}
             onChange={(e) => setRegisterSymbol(e.target.value)}
             placeholder="銘柄コード (例: AAPL / 7203.T / ^N225)"
             style={{
-              flex: 1,
+              flex: '1 1 180px',
+              minWidth: 0,
               padding: '8px 12px',
               background: 'var(--bg-elev)',
               border: '1px solid var(--control-border)',

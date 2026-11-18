@@ -129,6 +129,7 @@ import {
 } from '../../shared/taxRegistrationLicense';
 import { stampDutyAmount, type DocumentType } from '../../shared/taxStampDuty';
 import { estimateRealEstatePurchaseTaxCost } from '../../shared/taxRealEstateTransactionCost';
+import { wrapColumns } from '../components/wrapColumns';
 
 /**
  * 丸める前に「算定不能」を保つ (パス 208)。
@@ -1034,7 +1035,7 @@ export function TaxPage() {
             style={inputStyle}
           />
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: wrapColumns(2, 200), gap: 12 }}>
           <Stat label={`所得税 (速算表 + 復興税${surtaxPct}%)`} value={jpy(incomeTax)} />
           <Stat label={`住民税 (所得割${residentPct}% + 均等割)`} value={jpy(residentTax)} />
         </div>
@@ -1071,7 +1072,7 @@ export function TaxPage() {
             <input type="text" inputMode="decimal" value={bonusCountStr} onChange={(e) => setBonusCountStr(e.target.value)} style={{ ...inputStyle, width: 90 }} />
           </label>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: wrapColumns(3, 170), gap: 12 }}>
           <Stat label="所得税" value={jpy(netSalary.incomeTax)} />
           <Stat label="住民税" value={jpy(netSalary.residentTax)} />
           <Stat label="手取り (年)" value={jpy(netSalary.takeHome)} positive />
@@ -1198,7 +1199,7 @@ export function TaxPage() {
             </select>
           </label>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: wrapColumns(3, 170), gap: 12 }}>
           <Stat label="所得税 (税額控除後)" value={jpy(precise.afterCredits.incomeTax)} />
           <Stat label="住民税 (税額控除後)" value={jpy(precise.afterCredits.residentTax)} />
           <Stat label="手取り (年)" value={jpy(precise.finalTakeHome)} positive />
@@ -1270,7 +1271,7 @@ export function TaxPage() {
             障害退職 (控除+100万)
           </label>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: wrapColumns(3, 170), gap: 12 }}>
           <Stat label="所得税 (退職所得)" value={jpy(retirement.incomeTax)} />
           <Stat label="住民税 (退職所得)" value={jpy(retirement.residentTax)} />
           <Stat label="手取り" value={jpy(retirement.takeHome)} positive />
@@ -1297,7 +1298,7 @@ export function TaxPage() {
             <input type="text" inputMode="decimal" value={casualExpStr} onChange={(e) => setCasualExpStr(e.target.value)} style={{ ...inputStyle, width: 160 }} />
           </label>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: wrapColumns(2, 200), gap: 12 }}>
           <Stat label="一時所得の金額 (1/2前)" value={jpy(casual.casualIncome)} />
           <Stat label="課税所得への算入額 (×1/2)" value={jpy(casual.taxableAmount)} positive />
         </div>
@@ -1341,7 +1342,7 @@ export function TaxPage() {
             取得費不明 (概算取得費{cgEstimatePct}%)
           </label>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: wrapColumns(3, 170), gap: 12 }}>
           <Stat label="所得税 (譲渡所得)" value={jpy(capitalGains.incomeTax)} />
           <Stat label="住民税 (譲渡所得)" value={jpy(capitalGains.residentTax)} />
           <Stat label="税額合計" value={jpy(capitalGains.totalTax)} />
@@ -1387,7 +1388,7 @@ export function TaxPage() {
         >
           {furusato.eligibility.eligible ? '✅' : 'ℹ️'} {furusato.eligibility.reason}
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: wrapColumns(2, 200), gap: 12 }}>
           <div style={{ border: '1px solid var(--border)', borderRadius: 8, padding: 12 }}>
             <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)', marginBottom: 6 }}>確定申告</div>
             <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.7 }}>
@@ -1439,7 +1440,7 @@ export function TaxPage() {
           ✅ 最有利: <strong>{dividendMethodLabel[dividendComparison.best]}</strong>
           （税負担 {jpy(dividendComparison[dividendComparison.best].totalTax)}）
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: wrapColumns(3, 170), gap: 12 }}>
           {([dividendComparison.withholding, dividendComparison.separate, dividendComparison.aggregate]).map((m) => (
             <div
               key={m.method}
@@ -1484,7 +1485,7 @@ export function TaxPage() {
             65歳以上 (12/31時点)
           </label>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: wrapColumns(2, 200), gap: 12 }}>
           <Stat label="公的年金等控除" value={jpy(pension.deduction)} />
           <Stat label="雑所得 (課税対象)" value={jpy(pension.taxableIncome)} positive />
         </div>
@@ -1510,7 +1511,7 @@ export function TaxPage() {
             軽減税率 ({displayValue('tax.consumptionReducedRate', reducedRate)}%)
           </label>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: wrapColumns(2, 200), gap: 12 }}>
           <Stat label={`消費税 (${consumptionRatePct}%)`} value={jpy(consumptionTax)} />
           <Stat label="税込合計" value={jpy(netAmount + consumptionTax)} />
         </div>
@@ -1596,7 +1597,7 @@ export function TaxPage() {
             </div>
           )}
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: wrapColumns(4, 150), gap: 12 }}>
           <Stat label="本則課税" value={jpy(consumptionMethods.standard)} positive={consumptionMethods.best === 'standard'} />
           <Stat label="簡易課税" value={jpy(consumptionMethods.simplified)} positive={consumptionMethods.best === 'simplified'} />
           <Stat label="2割特例" value={jpy(consumptionMethods.twentyPercent)} positive={consumptionMethods.best === 'twenty-percent'} />
@@ -1669,7 +1670,7 @@ export function TaxPage() {
             </div>
           )}
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: wrapColumns(2, 200), gap: 12 }}>
           <Stat
             label="個別対応方式 — 控除税額"
             value={jpy(inputCredit.compare.itemized)}
@@ -1755,7 +1756,7 @@ export function TaxPage() {
               onChange={(e) => setCsRateStr(e.target.value)}
               aria-label="消費税率"
               data-cs-rate-slider
-              style={{ width: '100%' }}
+              style={{ width: '100%', boxSizing: 'border-box', marginInline: 0 }}
             />
           </label>
           <GuardedNumber spec={{ label: '税率 (%) 直接入力', kind: 'percent', allowZero: true, max: MAX_RATE * 100 }} value={csRateStr} onChange={setCsRateStr} width={130} />
@@ -1956,7 +1957,7 @@ export function TaxPage() {
               住宅用地特例を適用
             </label>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: wrapColumns(3, 170), gap: 12 }}>
             <Stat label={`固定資産税 (${displayValue('fixedAsset.standardRate', faRates.fixedRate)}%)`} value={jpy(fixedAsset.fixedAssetTax)} />
             <Stat label={`都市計画税 (${displayValue('fixedAsset.cityPlanningRate', faRates.cityPlanningRate)}%)`} value={jpy(fixedAsset.cityPlanningTax)} />
             <Stat label="合計 (年)" value={jpy(fixedAsset.total)} />
@@ -2003,7 +2004,7 @@ export function TaxPage() {
               新築家屋
             </label>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: wrapColumns(3, 170), gap: 12 }}>
             <Stat label="適用税率" value={`${(acquisition.rate * 100).toFixed(1)}%`} />
             <Stat label="課税標準" value={jpy(acquisition.taxableBase)} />
             <Stat label="不動産取得税" value={jpy(acquisition.tax)} />
@@ -2040,7 +2041,7 @@ export function TaxPage() {
               </select>
             </label>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: wrapColumns(2, 200), gap: 12 }}>
             <Stat label="適用税率 (本則)" value={`${(registration.rate * 100).toFixed(1)}%`} />
             <Stat label="登録免許税" value={jpy(registration.tax)} />
           </div>
@@ -2070,7 +2071,7 @@ export function TaxPage() {
               <input type="text" inputMode="decimal" value={stampAmountStr} onChange={(e) => setStampAmountStr(e.target.value)} style={{ ...inputStyle, width: 180 }} />
             </label>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(1, 1fr)', gap: 12 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 12 }}>
             <Stat label="印紙税額" value={jpy(stamp)} />
           </div>
         </div>
@@ -2112,7 +2113,7 @@ export function TaxPage() {
               </select>
             </label>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: wrapColumns(4, 150), gap: 12 }}>
             <Stat label="不動産取得税" value={jpy(purchaseCost.acquisitionTax)} />
             <Stat label="登録免許税" value={jpy(purchaseCost.registrationTax)} />
             <Stat label="印紙税" value={jpy(purchaseCost.stampDuty)} />

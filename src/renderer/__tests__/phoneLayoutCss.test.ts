@@ -15,8 +15,9 @@
 import { describe, expect, it } from 'vitest';
 import { resolve } from 'node:path';
 import { declOf, rules } from './themeCss';
-import { readOriginalSource } from '../../shared/__tests__/originalSource';
+import { readOriginalDir, readOriginalSource } from '../../shared/__tests__/originalSource';
 import { stripComments } from '../../shared/__tests__/stripNonCode';
+import { wrapColumns } from '../components/wrapColumns';
 
 const BUSINESS = readOriginalSource(resolve(new URL('../pages/BusinessPage.tsx', import.meta.url).pathname));
 
@@ -102,3 +103,107 @@ describe('状態の帯の名前は、後ろの札に押し潰されない', () =
     expect(declOf(inner[0]!, 'flex-direction')).toBe('column');
   });
 });
+
+/**
+ * ## 2 度目の測定 (同じ日): 「横へ動かさないと見えない」画面が 8 つ残っていた
+ *
+ * 1 度目は「切れて見えない」要素だけを数えた。実機の suite が税金の画面の折れ線を指したので、
+ * 「枠の中で横へ動かせば見える」物 (表を除く) も 412px で数えると、8 画面に在った ——
+ * 列の数を固定した格子 (税金・品質ほか 6 画面 24 か所)・最小の幅を固定した欄・折り返さない札・幅の固定された並び。
+ * ここはその綴りが戻らないことを留める (描いた結果は実機の suite `opened` が測る)。
+ */
+const RENDERER = resolve(new URL('..', import.meta.url).pathname);
+
+/** 画面と部品の `.tsx` (直下)。 */
+function screenSources(): ReadonlyArray<{ file: string; code: string }> {
+  const out: Array<{ file: string; code: string }> = [];
+  for (const dir of ['pages', 'components']) {
+    for (const name of readOriginalDir(resolve(RENDERER, dir))) {
+      if (!name.endsWith('.tsx')) continue;
+      out.push({ file: `${dir}/${name}`, code: stripComments(readOriginalSource(resolve(RENDERER, dir, name))) });
+    }
+  }
+  return out;
+}
+
+describe('画面と部品: 列の数を固定した格子を書かない', () => {
+  it('★ pages / components のどの画面にも、列の数を固定した格子が無い', () => {
+    const sources = screenSources();
+    expect(sources.length, '走査が空虚でない').toBeGreaterThanOrEqual(100);
+    const fixed = sources.flatMap(({ file, code }) =>
+      code
+        .split('\n')
+        .map((l, i) => ({ l, n: i + 1 }))
+        .filter(({ l }) => FIXED_COLUMNS.test(l))
+        .map(({ l, n }) => `${file}:${n}: ${l.trim()}`),
+    );
+    expect(fixed).toEqual([]);
+    // 格子そのものは使われている (針が何も見ていないのではない)。
+    const grids = sources.reduce((sum, { code }) => sum + (code.match(/gridTemplateColumns/g)?.length ?? 0), 0);
+    expect(grids).toBeGreaterThanOrEqual(60);
+    const wrapped = sources.reduce((sum, { code }) => sum + (code.match(/wrapColumns\(/g)?.length ?? 0), 0);
+    expect(wrapped, '折り返す格子の指定を通る所').toBeGreaterThanOrEqual(24);
+  });
+
+  it('wrapColumns: 広い枠では N 列・1 列が minPx を割ると折り返し・枠より広くは要求しない', () => {
+    expect(wrapColumns(4, 150)).toBe('repeat(auto-fill, minmax(min(100%, max(150px, calc((100% - 36px) / 4))), 1fr))');
+    expect(wrapColumns(2, 200)).toBe('repeat(auto-fill, minmax(min(100%, max(200px, calc((100% - 12px) / 2))), 1fr))');
+    expect(wrapColumns(3, 170, 8)).toBe('repeat(auto-fill, minmax(min(100%, max(170px, calc((100% - 16px) / 3))), 1fr))');
+    // 固定の列数の針には当たらない。
+    expect(FIXED_COLUMNS.test(`gridTemplateColumns: '${wrapColumns(4, 150)}',`)).toBe(false);
+  });
+});
+
+describe('画面と部品: 幅を固定して枠の右へ出ていた並びが戻らない', () => {
+  const source = (file: string): string => {
+    const hit = screenSources().find((s) => s.file === file);
+    if (hit === undefined) throw new Error(`ファイルが無い: ${file}`);
+    return hit.code;
+  };
+
+  it('★ 秒単位の表示 (RealtimeTicker) の行は折り返し、折れ線は枠に合わせて縮む', () => {
+    const code = source('components/RealtimeTicker.tsx');
+    expect(code).toContain('data-ticker-row');
+    expect(code).toContain("flexWrap: 'wrap'");
+    expect(code, '3 列の格子へ戻していない').not.toContain("minmax(120px, 1fr) minmax(140px, auto) auto");
+    expect(code.match(/maxWidth: '100%'/g)?.length, '折れ線の svg (2 つ) は枠より広くならない').toBe(2);
+    // 標本: 針は直す前の綴りに当たる。
+    expect("gridTemplateColumns: 'minmax(120px, 1fr) minmax(140px, auto) auto',").toContain(
+      'minmax(120px, 1fr) minmax(140px, auto) auto',
+    );
+  });
+
+  it('★ 担当士業の札は折り返せる (nowrap にしない)', () => {
+    const code = source('components/StatusBar.tsx');
+    const at = code.indexOf('data-duty-owner={serviceId}');
+    expect(at).toBeGreaterThan(0);
+    // 札の開きタグ (属性の中の矢印 `=>` で切らないよう、中身の文の手前までを取る)。
+    const tag = code.slice(at, code.indexOf('担当:', at));
+    expect(tag).not.toContain("whiteSpace: 'nowrap'");
+    expect(tag).toContain("maxWidth: '100%'");
+    expect("style={{ fontSize: 11, whiteSpace: 'nowrap' }}").toContain("whiteSpace: 'nowrap'");
+  });
+
+  it('★ 数値の札 (Stat) は格子の列を押し広げず、値は中で折り返す', () => {
+    const code = source('components/Stat.tsx');
+    expect(code).toContain('minWidth: 0');
+    expect(code).toContain("overflowWrap: 'anywhere'");
+  });
+
+  it('★ 最小の幅は枠より広く要求しない (設定の数値の行・記録の行・基準価額の欄・書式の見本)', () => {
+    expect(source('components/ParametersPanel.tsx')).not.toContain("'minmax(220px, 1fr) auto'");
+    expect(source('components/ParametersPanel.tsx')).toContain("'minmax(0, 1fr) auto'");
+    expect(source('components/ServiceActionPanel.tsx')).not.toContain("'1fr 140px auto'");
+    expect(source('components/ServiceActionPanel.tsx')).toContain("'minmax(0, 1fr) minmax(0, 140px) auto'");
+    expect(source('pages/MutualFundsPage.tsx')).not.toContain('minWidth: 240 ');
+    expect(source('pages/MutualFundsPage.tsx')).toContain("minWidth: 'min(240px, 100%)'");
+    expect(source('pages/TemplatesPage.tsx')).not.toContain('minWidth: 360,');
+    expect(source('pages/TemplatesPage.tsx')).toContain("minWidth: 'min(360px, 100%)'");
+    // 標本: 針は直す前の綴りに当たる。
+    expect("gridTemplateColumns: 'minmax(220px, 1fr) auto',").toContain("'minmax(220px, 1fr) auto'");
+    expect("gridTemplateColumns: '1fr 140px auto', gap: 8").toContain("'1fr 140px auto'");
+    expect('gap: 2, flex: 1, minWidth: 240 }}>').toContain('minWidth: 240 ');
+    expect('padding: 16,\n minWidth: 360,').toContain('minWidth: 360,');
+  });
+});
+

@@ -128,7 +128,7 @@ function ParameterRow({
       data-overridden={overridden ? 'true' : 'false'}
       style={{
         display: 'grid',
-        gridTemplateColumns: 'minmax(220px, 1fr) auto',
+        gridTemplateColumns: 'minmax(0, 1fr) auto',
         gap: 8,
         alignItems: 'center',
         padding: '8px 0',

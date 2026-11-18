@@ -26,6 +26,7 @@ import { externalTextOnOneLine } from '../data/assistantMarkdown';
 import { InboundQuarantine } from '../components/InboundQuarantine';
 import { BootProtectionCard } from '../components/BootProtectionCard';
 import { bootProtectionOf } from '../../shared/bootProtection';
+import { wrapColumns } from '../components/wrapColumns';
 
 const GRADE_COLOR: Record<string, string> = {
   A: 'var(--success)',
@@ -459,7 +460,7 @@ export function SecurityPage() {
       </Section>
 
       <Section title="データベース・セキュリティ診断 (ローカル IndexedDB レコードストア)">
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 10 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: wrapColumns(3, 170), gap: 12, marginBottom: 10 }}>
           <div style={statCardStyle}>
             <div style={statLabelStyle}>セキュリティ・グレード</div>
             <div style={{ ...statValueStyle, color: GRADE_COLOR[dbReport.grade] }}>{dbReport.grade}</div>
@@ -586,7 +587,7 @@ export function SecurityPage() {
       </Section>
 
       <Section title="レッドチーム×ブルーチーム演習場 (実行を伴わない検知精度ハーネス)">
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 10 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: wrapColumns(3, 170), gap: 12, marginBottom: 10 }}>
           <div style={statCardStyle}>
             <div style={statLabelStyle}>総合検知率</div>
             <div style={{ ...statValueStyle, color: range.overallDetectionRate >= 0.95 ? 'var(--success)' : 'var(--warning)' }}>
