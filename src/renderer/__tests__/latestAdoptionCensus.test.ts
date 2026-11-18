@@ -84,6 +84,11 @@ const ADOPTED: readonly { readonly constant: string; readonly collection: string
   { constant: 'BANK_SUBMISSION_COLLECTION', collection: 'bank-submission-settings', definedIn: 'src/renderer/data/bankSubmission.ts' },
   { constant: 'HYDROPONICS_CONTROL_COLLECTION', collection: 'hydroponics-control', definedIn: 'src/renderer/data/hydroponicsLog.ts' },
   { constant: 'PARAMETER_OVERRIDES_COLLECTION', collection: 'parameter-overrides', definedIn: 'src/renderer/data/parameterOverrides.ts' },
+  // 養蜂・養殖 (2026-11-18)。一覧 2 つと、概算の入力 2 つ。
+  { constant: 'BEE_PRODUCTS_COLLECTION', collection: 'beekeeping-products', definedIn: 'src/renderer/data/farmSetup.ts' },
+  { constant: 'BEE_PLAN_COLLECTION', collection: 'beekeeping-plan', definedIn: 'src/renderer/data/farmSetup.ts' },
+  { constant: 'FISH_SPECIES_COLLECTION', collection: 'aquaculture-species', definedIn: 'src/renderer/data/farmSetup.ts' },
+  { constant: 'FISH_PLAN_COLLECTION', collection: 'aquaculture-plan', definedIn: 'src/renderer/data/farmSetup.ts' },
 ];
 const ADOPTED_NAMES = new Set(ADOPTED.map((a) => a.constant));
 
@@ -174,6 +179,26 @@ const SITES: readonly Site[] = [
     why: '貸借対照表は期で選ぶ (`currentBalanceSheet`)。ここの最新は「最後に入力した控え」を注記で名指しするだけで、画面の値を選ばない。',
   },
   {
+    file: 'src/renderer/components/AquaculturePanel.tsx', fn: 'AquaculturePanel', callee: F, arg: 'FISH_PLAN_COLLECTION',
+    kind: 'adopts', constant: 'FISH_PLAN_COLLECTION',
+    why: '養殖の概算の入力の欄 (保管層が答えてから開き、保存は開いた時の最新のままなら)。',
+  },
+  {
+    file: 'src/renderer/components/BeekeepingPanel.tsx', fn: 'BeekeepingPanel', callee: F, arg: 'BEE_PLAN_COLLECTION',
+    kind: 'adopts', constant: 'BEE_PLAN_COLLECTION',
+    why: '養蜂の概算の入力の欄 (保管層が答えてから開き、保存は開いた時の最新のままなら)。',
+  },
+  {
+    file: 'src/renderer/data/farmSetup.ts', fn: 'beeProductsFromRecords', callee: L, arg: null, kind: 'adopts',
+    constant: 'BEE_PRODUCTS_COLLECTION',
+    why: '養蜂の産物の一覧は最新の 1 件を採用する (一覧はまるごと 1 記録で、増減のたびに 1 件足す)。',
+  },
+  {
+    file: 'src/renderer/data/farmSetup.ts', fn: 'fishSpeciesFromRecords', callee: L, arg: null, kind: 'adopts',
+    constant: 'FISH_SPECIES_COLLECTION',
+    why: '養殖の魚種の一覧は最新の 1 件を採用する (一覧はまるごと 1 記録で、増減のたびに 1 件足す)。',
+  },
+  {
     file: 'src/renderer/data/hydroponicsLog.ts', fn: 'readControlRecord', callee: L, arg: null, kind: 'adopts',
     constant: 'HYDROPONICS_CONTROL_COLLECTION',
     why: '運転の設定は最新の 1 件を採用する (調製の指示と作業リストがそれを読む)。',
@@ -206,12 +231,12 @@ const SITES: readonly Site[] = [
     why: '提出者情報を計算書類と資金繰り表の取り込みへ写す (読みだけ —— 押すまで書かない)。欄は持たない。',
   },
   {
-    file: 'src/renderer/pages/HydroponicsPage.tsx', fn: 'HydroponicsPage', callee: L, arg: null, kind: 'adopts',
+    file: 'src/renderer/pages/HydroponicsPage.tsx', fn: 'HydroponicsOperations', callee: L, arg: null, kind: 'adopts',
     constant: 'HYDROPONICS_COLLECTION',
     why: '水耕栽培の設定 (設備・費用) を画面の試算に使う (読みだけ —— この画面は設定の欄を持たない)。',
   },
   {
-    file: 'src/renderer/pages/HydroponicsPage.tsx', fn: 'HydroponicsPage', callee: F, arg: 'HYDROPONICS_CONTROL_COLLECTION',
+    file: 'src/renderer/pages/HydroponicsPage.tsx', fn: 'HydroponicsOperations', callee: F, arg: 'HYDROPONICS_CONTROL_COLLECTION',
     kind: 'adopts', constant: 'HYDROPONICS_CONTROL_COLLECTION',
     why: '運転の設定の欄 (保管層が答えてから開き、保存は開いた時の最新のままなら)。',
   },

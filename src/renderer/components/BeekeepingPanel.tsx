@@ -206,11 +206,10 @@ function BeePlanFields({
   const save = (): void => {
     // **⛔ の欄が 1 つでも在れば書かない** —— 保存した値は残り、以後の概算がそれを読む。
     if (refused.length > 0) return;
-    onSave({
-      hives: readNumberOr0(form.hives),
-      costPerHiveYen: readNumberOr0(form.costPerHiveYen),
-      fixedCostYen: readNumberOr0(form.fixedCostYen),
-    });
+    // 読むのは下の欄が出しているのと同じ値 (`form[k]`) —— 欄と読み手を同じ鍵で結ぶ。
+    const record = {} as Record<BeePlanFieldKey, number>;
+    for (const k of BEE_PLAN_FIELD_KEYS) record[k] = readNumberOr0(form[k]);
+    onSave(record);
   };
   return (
     <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end' }}>

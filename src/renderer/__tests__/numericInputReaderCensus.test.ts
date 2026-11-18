@@ -156,7 +156,10 @@ export function numericInputFiles(): NumericInputFile[] {
     if (vars.size === 0) continue;
     const readers = new Set<string>();
     for (const v of vars) {
-      const re = new RegExp(`([A-Za-z_$][A-Za-z0-9_$]*)\\s*\\(\\s*${v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'g');
+      // 語の境目を要求するのは、値の式が語の字で終わるときだけ —— `form[k]` のように `]` で終わる式の
+      // 後ろに `\\b` を置くと、次が `)` のとき境目が無く**どの読み手にも当たらない** (2026-11-18)。
+      const tail = /[A-Za-z0-9_$]$/.test(v) ? '\\b' : '';
+      const re = new RegExp(`([A-Za-z_$][A-Za-z0-9_$]*)\\s*\\(\\s*${v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}${tail}`, 'g');
       for (const m of c.matchAll(re)) if (m[1] !== undefined) readers.add(m[1]);
     }
     out.push({

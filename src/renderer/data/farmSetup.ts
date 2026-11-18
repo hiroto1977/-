@@ -44,19 +44,19 @@ export interface FishSpeciesListRecord extends Record<string, unknown> {
 
 type StoredRow = { readonly createdAt: number; readonly data: unknown };
 
-/** 最新の 1 件の `key` の欄。レコードの data が物でなくても投げない。 */
-function latestField(records: readonly StoredRow[], key: string): unknown {
-  return (Object(latestRecord(records)?.data) as Record<string, unknown>)[key];
+/** レコードの `key` の欄。レコードが無くても、data が物でなくても投げない。 */
+function recordField(row: StoredRow | null, key: string): unknown {
+  return (Object(row?.data) as Record<string, unknown>)[key];
 }
 
 /** 保存レコードから産物の一覧を組む。保存が無い・壊れている・空のときは参考の一覧。 */
 export function beeProductsFromRecords(records: readonly StoredRow[]): readonly BeeProduct[] {
-  return farmListOrDefault(BEE_PRODUCT_SPEC, latestField(records, 'products'));
+  return farmListOrDefault(BEE_PRODUCT_SPEC, recordField(latestRecord(records), 'products'));
 }
 
 /** 保存レコードから魚種の一覧を組む。保存が無い・壊れている・空のときは参考の一覧。 */
 export function fishSpeciesFromRecords(records: readonly StoredRow[]): readonly FishSpecies[] {
-  return farmListOrDefault(FISH_SPECIES_SPEC, latestField(records, 'species'));
+  return farmListOrDefault(FISH_SPECIES_SPEC, recordField(latestRecord(records), 'species'));
 }
 
 /** 保存する養蜂の概算の入力。 */
