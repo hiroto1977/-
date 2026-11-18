@@ -4374,8 +4374,10 @@ async function designSuite(browser) {
   ok((await page.evaluate(() => localStorage.getItem('servicehub.design'))) === 'cute', 'design: 選択は servicehub.design に残る');
 
   // 6. 再読込: 解錠の前 (ロック画面) から効いている —— main.tsx が描画より先に適用する
+  console.log('DEBUG design before reload', JSON.stringify(await page.evaluate(() => ({ url: location.href.slice(-40), ls: Object.keys(localStorage), v: localStorage.getItem('servicehub.design') }))));
   await page.reload({ waitUntil: 'domcontentloaded' });
   await page.waitForSelector('text=ロック解除', { timeout: 30000 });
+  console.log('DEBUG design after reload', JSON.stringify(await page.evaluate(() => { const o = {}; try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); o[k] = (localStorage.getItem(k) || '').slice(0, 40); } } catch (e) { o.__err = String(e); } return { url: location.href.slice(-40), attr: document.documentElement.getAttribute('data-design'), ls: o }; })), JSON.stringify(errs));
   ok((await design()) === 'cute', `design: ★ 再読込しても解錠の前から「かわいい」 (実際 ${await design()})`);
   await page.locator('input[type="password"]').first().fill(PASS);
   await page.getByRole('button', { name: 'ロック解除' }).click();
