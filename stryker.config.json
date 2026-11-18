@@ -251,6 +251,7 @@
     "src/shared/api/line.ts",
     "src/shared/api/linear.ts",
     "src/shared/api/sentry.ts",
+    "src/shared/api/discord.ts",
     "src/shared/api/github.ts",
     "src/shared/api/google.ts",
     "src/shared/api/http.ts",

@@ -63,7 +63,7 @@ const RAW_TYPE_ERROR = /Cannot read propert|is not a function|is not iterable|of
  * ここを直す** —— 直さないと census が何も駆動していない状態で緑になる。
  */
 const NETWORK_FETCHERS = [
-  'asana', 'base', 'calendar', 'canva', 'cloudflare', 'cursor', 'drive', 'freee',
+  'asana', 'base', 'calendar', 'canva', 'cloudflare', 'cursor', 'discord', 'drive', 'freee',
   'github', 'gmail', 'line', 'linear', 'microsoft-365', 'notion', 'ollama', 'sentry', 'slack', 'stripe', 'wordpress',
 ] as const;
 
@@ -281,12 +281,12 @@ describe('封筒を確かめない口 (jsonFetchAny) の呼び出し元', () => 
    * 全部の形を自分で正規化する**」場合だけ (理由は `types.ts` の docblock)。
    * 増やすならここに足す —— 足さずに使うと落ちる。
    */
-  const ANY_CALLERS = ['cursor.ts', 'sentry.ts'] as const;
+  const ANY_CALLERS = ['cursor.ts', 'discord.ts', 'sentry.ts'] as const;
 
   const dir = resolve(new URL('..', import.meta.url).pathname);
   const files = readOriginalDir(dir).filter((f) => f.endsWith('.ts') && f !== 'types.ts');
 
-  it('★ 台帳どおりの 2 件だけが封筒の要求を外している', () => {
+  it('★ 台帳どおりの 3 件だけが封筒の要求を外している', () => {
     const callers = files.filter((f) => /\bjsonFetchAny\s*\(/.test(readOriginalSource(resolve(dir, f))));
     expect([...callers].sort(), 'jsonFetchAny を使うなら ANY_CALLERS に理由つきで足すこと').toEqual(
       [...ANY_CALLERS].sort(),

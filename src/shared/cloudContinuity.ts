@@ -232,6 +232,15 @@ export const CLOUD_PROVIDERS: readonly CloudProvider[] = [
     meanwhile: CLOUD_DATA_MEANWHILE,
   },
   {
+    id: 'discord',
+    label: 'Discord',
+    kind: 'data',
+    services: ['discord'],
+    entrusted: 'チャットのサーバー (サーバーの名前・参加人数)。',
+    whenDown: CLOUD_DATA_WHEN_DOWN,
+    meanwhile: CLOUD_DATA_MEANWHILE,
+  },
+  {
     id: 'cursor',
     label: 'Cursor',
     kind: 'data',

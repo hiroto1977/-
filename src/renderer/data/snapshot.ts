@@ -21,6 +21,7 @@ import type { AsanaSnapshot } from '../../shared/api/asana';
 import type { LineSnapshot } from '../../shared/api/line';
 import type { LinearSnapshot } from '../../shared/api/linear';
 import type { SentrySnapshot } from '../../shared/api/sentry';
+import type { DiscordSnapshot } from '../../shared/api/discord';
 import { buildHydroponicsSnapshot } from '../../shared/hydroponicsControl';
 import { buildMentorSnapshot } from '../../shared/mentor';
 import { buildGrokSnapshot } from '../../shared/grokSnapshot';
@@ -610,14 +611,16 @@ export const SNAPSHOT = {
     count: 4,
   },
 
+  // 見本 (鍵を登録するまでの表示)。形は実物 (`shared/api/discord.ts` の `DiscordSnapshot`) と同じ 1 つ ——
+  // 画面の型はこの見本から推論されるので、`as DiscordSnapshot` で実物と同じ幅にする (パス 410)。
   discord: {
-    items: [
-      { id: 'srv-1', name: '🔵 Service Hub Dev (1,242 メンバー · 8 チャンネル)' },
-      { id: 'srv-2', name: '🟢 ユーザーコミュニティ (4,521 メンバー · 12 チャンネル)' },
-      { id: 'msg', name: '💬 今日の活動: 89 メッセージ / 4 スレッド' },
-    ] as { id: string; name: string }[],
-    count: 3,
-  },
+    guilds: [
+      { id: 'demo-1', name: '見本: 開発チームのサーバー', memberCount: 42 },
+      { id: 'demo-2', name: '見本: お客さま向けコミュニティ', memberCount: 1250 },
+    ],
+    guildsRead: true as boolean,
+    more: false as boolean,
+  } as DiscordSnapshot,
 
   // 見本 (鍵を登録するまでの表示)。形は実物 (`shared/api/asana.ts` の `AsanaSnapshot`) と同じ 1 つ ——
   // 画面の型はこの見本から推論されるので、`as AsanaSnapshot` で実物と同じ幅にする (パス 410)。

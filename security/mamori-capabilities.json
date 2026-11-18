@@ -143,6 +143,7 @@
       "externals": [
         "pure ../../shared/api/asana: fetchAsanaSnapshotWith",
         "pure ../../shared/api/cursor: fetchCursorSnapshotWith, DEFAULT_USAGE_DAYS",
+        "pure ../../shared/api/discord: fetchDiscordSnapshotWith",
         "pure ../../shared/api/line: fetchLineSnapshotWith",
         "pure ../../shared/api/linear: fetchLinearSnapshotWith",
         "pure ../../shared/api/sentry: fetchSentrySnapshotWith",
