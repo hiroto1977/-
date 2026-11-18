@@ -26,6 +26,10 @@
     流れる数字の行を折り返す並びへ、カード・札・入力の行を枠より広がらない形へ直した。実機の `opened` suite に「横へ動かさないと見えない物 (表を除く) は 0 件」と対照を足した
     (141 → **143** 件・全 suite **739** 件・床 **628**)。`phoneLayoutCss.test.ts` は 14 件 (画面と部品に列の数を固定した格子が無いこと・直した並びの綴り)。
     表だけが横に動く 4 画面 (投資信託・ストレージ・コネクタ・Docker) は意図して残した。
+    2 度目の実機で、流れる数字の折れ線の**末尾の点が 3px 欠ける**と出た (点を右端ちょうどに置いていた) —— 線を左右 3px 内側へ寄せ、`RealtimeTicker.test.ts` に 1 件足した。
+  - **最終の実測 (2026-11-18)**: `npm test` 1315 ファイル / 28,756 件 ❌ 0 (そのあと足した 1 件は関連 168 ファイル / 1,644 件で確認)・`verify:all` の 39 ゲート緑・
+    `perf` OK (LITE DCL 310 ms / heap 8.2 MB・FULL DCL 653 ms / heap 30.4 MB)・`e2e` **739 件 ❌ 0**・`e2e:lite` **739 件 ❌ 0**。
+    出荷物: FULL 12,289,754 B / LITE 3,702,391 B (LITE は警告線 3,400,000 B を超えたまま・天井 4,000,000 B まで 297,609 B)。
 - **Discord (チャット)**: ボットが参加しているサーバーの一覧 (`GET /users/@me/guilds?limit=21&with_counts=true`) を読む。**書き込みは 1 つも持たない**。メッセージの本文は読まない。
   判定と正規化は `src/shared/api/discord.ts` に 1 つ。デスクトップ版は `main/clients/discord.ts` (配列を直接返す照会なので `jsonFetchAny`・`ANY_CALLERS` は 3 件に)、
   ブラウザ版は `liveRead.mamori` の `LIVE_READERS` に 1 行 (プロキシ経由・7 件目)。画面は `DiscordPage.tsx`。
