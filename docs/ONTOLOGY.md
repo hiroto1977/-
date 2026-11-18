@@ -90,7 +90,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `lawyer` | professionals | sample | none | ✅ |  | ✅ | — | — | — |
 | `library` | featured | local | none | ✅ |  |  | — | — | — |
 | `line` | integrations | remote | fetch |  |  |  | — | — | — |
-| `linear` | integrations | sample | none |  |  |  | — | — | — |
+| `linear` | integrations | remote | fetch |  |  |  | — | — | — |
 | `linux` | tools | local | none | ✅ |  |  | — | — | — |
 | `mentor` | tools | sample | none | ✅ |  |  | — | — | — |
 | `microsoft-365` | integrations | remote | fetch |  | ✅ |  | `create-event` `send-mail` | `create-event` `send-mail` | — |
@@ -134,8 +134,8 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 集計:
 
 - 配置: おすすめ 12 / 士業連携 8 / 分析・ツール 24 / 外部サービス連携 33 / 消費されるだけ 2
-- 出所: remote 18 / local 19 / sample 42
-- 資格情報の読み手 — fetch 18 / action 7 / none 54
+- 出所: remote 19 / local 19 / sample 41
+- 資格情報の読み手 — fetch 19 / action 7 / none 53
 - LOCAL_SERVICES 56 / OAuth 10 / action を持つ 27 / デスクトップだけの action 10
 
 ## 4. facet の公理と例外
