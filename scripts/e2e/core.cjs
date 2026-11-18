@@ -4374,11 +4374,33 @@ async function designSuite(browser) {
   ok((await page.evaluate(() => localStorage.getItem('servicehub.design'))) === 'cute', 'design: 選択は servicehub.design に残る');
 
   // 6. 再読込: 解錠の前 (ロック画面) から効いている —— main.tsx が描画より先に適用する
-  console.log('DEBUG design before reload', JSON.stringify(await page.evaluate(() => ({ url: location.href.slice(-40), ls: Object.keys(localStorage), v: localStorage.getItem('servicehub.design') }))));
-  await page.reload({ waitUntil: 'domcontentloaded' });
-  await page.waitForSelector('text=ロック解除', { timeout: 30000 });
-  console.log('DEBUG design after reload', JSON.stringify(await page.evaluate(() => { const o = {}; try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); o[k] = (localStorage.getItem(k) || '').slice(0, 40); } } catch (e) { o.__err = String(e); } return { url: location.href.slice(-40), attr: document.documentElement.getAttribute('data-design'), ls: o }; })), JSON.stringify(errs));
-  ok((await design()) === 'cute', `design: ★ 再読込しても解錠の前から「かわいい」 (実際 ${await design()})`);
+  //
+  // ★ 検査用のブラウザの文脈 (保存を端末に残さない) は、再読込の瞬間に localStorage を**丸ごと**落とすことがある
+  //   (2026-11-18 実測: フル版でこの段が 3 回続けて落ち、再読込の後は「かわいい」の選択だけでなく、段 2 で書いて
+  //   1 度目の再読込は越えていた会話の履歴まで消えていた。IndexedDB の保管庫は残る。単独の再現は 9 回に 1 回)。
+  //   それはアプリの保存の欠陥ではないので、**対照の鍵**で見分ける: 選んだ直後に検査が自分の鍵を 1 つ書き、
+  //   再読込の後にそれも消えていたら「ブラウザが落とした」—— 選び直してもう 1 度試す (2 回まで)。
+  //   対照の鍵は残っているのにデザインだけ無いなら、それはアプリの欠陥なので、やり直さずにそのまま落とす。
+  const RELOAD_CONTROL_KEY = 'e2e.reload-control';
+  let storageDrops = 0;
+  for (;;) {
+    await page.evaluate((k) => localStorage.setItem(k, '1'), RELOAD_CONTROL_KEY);
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('text=ロック解除', { timeout: 30000 });
+    const controlKept = await page.evaluate((k) => localStorage.getItem(k) === '1', RELOAD_CONTROL_KEY);
+    if (controlKept || storageDrops >= 2) break;
+    storageDrops += 1;
+    console.log(`  (design: 再読込でブラウザが localStorage を丸ごと落とした —— 対照の鍵も消えた。選び直して試し直す ${storageDrops}/2)`);
+    await page.locator('input[type="password"]').first().fill(PASS);
+    await page.getByRole('button', { name: 'ロック解除' }).click();
+    await page.waitForSelector('[data-design-section]', { timeout: 30000 });
+    await page.locator('[data-design-choice="cute"]').click();
+    await page.waitForFunction(() => document.documentElement.getAttribute('data-design') === 'cute', undefined, { timeout: 5000 });
+  }
+  ok(
+    (await design()) === 'cute',
+    `design: ★ 再読込しても解錠の前から「かわいい」 (実際 ${await design()}・ブラウザが保存を丸ごと落とした回数 ${storageDrops})`,
+  );
   await page.locator('input[type="password"]').first().fill(PASS);
   await page.getByRole('button', { name: 'ロック解除' }).click();
   await page.waitForSelector('[data-design-section]', { timeout: 30000 });
