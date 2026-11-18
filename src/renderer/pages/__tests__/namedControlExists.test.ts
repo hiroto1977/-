@@ -93,6 +93,12 @@ const LEDGER: readonly Row[] = [
   { name: 'SVG を保存', kind: 'same-screen-control', renderedIn: 'src/renderer/pages/TeamRadarPage.tsx', why: 'チームレーダーの書き出しボタン (実物の label は「SVG を保存 (Canva 用)」で、名指しはその前方一致)。' },
   { name: 'チーム情報を保存', kind: 'same-screen-control', renderedIn: 'src/renderer/pages/TeamRadarPage.tsx', why: '同じ画面の保存ボタン。文は shared の状態モジュールが組むが、出る先はこの画面である。' },
   { name: 'もう一度確認', kind: 'same-screen-control', renderedIn: 'src/renderer/security/LockScreen.tsx', why: '24 語の控えを確かめ直すボタン。文は保管庫が組み、押す所は施錠画面に在る。' },
+  {
+    name: '保存して概算する',
+    kind: 'same-screen-control',
+    renderedIn: ['src/renderer/components/BeekeepingPanel.tsx', 'src/renderer/components/AquaculturePanel.tsx'],
+    why: '養蜂・養殖の概算の保存ボタン (2026-11-18)。「開いた後に別の画面で保存し直されていた」断りと、概算をまだ出していないときの案内が名指しする —— 押す所は同じ欄のすぐ下に在る。',
+  },
   { name: '接続テスト', kind: 'same-screen-control', renderedIn: 'src/renderer/pages/OllamaPage.tsx', why: '同じ Ollama 画面の疎通確認ボタン —— 文も同じ画面の案内文なので、押す所は目の前に在る。' },
   { name: '暗号化パスワード', kind: 'same-screen-control', renderedIn: 'src/renderer/components/BackupPanel.tsx', why: '同じ部品の入力欄 (placeholder がその綴りを出す)。' },
   { name: '更新', kind: 'same-screen-control', renderedIn: 'src/renderer/components/StatusBar.tsx', why: '全サービス画面が載せる共通の取得ボタン —— freee の空状態がそれを名指しする。' },
