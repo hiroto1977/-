@@ -37,8 +37,8 @@ export const ASANA_API_BASE = 'https://app.asana.com/api/1.0';
 /** 未完了のタスクを何件読むか (Asana の `limit` は 1〜100)。 */
 export const ASANA_TASK_LIMIT = 20;
 
-/** 利用者とワークスペースの照会の URL。 */
-export const ASANA_ME_URL = `${ASANA_API_BASE}/users/me?opt_fields=name,workspaces.name`;
+/** 利用者とワークスペースの照会の道 (基底は送る所で付ける —— 宛先の走査が送信の行で基底を見られるように)。 */
+export const ASANA_ME_PATH = '/users/me?opt_fields=name,workspaces.name';
 
 /** 1 件のタスク。 */
 export interface AsanaTask {
@@ -86,9 +86,9 @@ export function asanaGid(v: unknown): string {
   return /^\d{1,32}$/.test(v) ? v : '';
 }
 
-/** 未完了のタスクの照会の URL。`workspaceGid` は {@link asanaGid} を通した値を渡す。 */
-export function asanaTasksUrl(workspaceGid: string): string {
-  return `${ASANA_API_BASE}/tasks?assignee=me&workspace=${encodeURIComponent(workspaceGid)}&completed_since=now&limit=${ASANA_TASK_LIMIT}&opt_fields=name,due_on`;
+/** 未完了のタスクの照会の道。`workspaceGid` は {@link asanaGid} を通した値を渡す (ここでも符号化する)。 */
+export function asanaTasksPath(workspaceGid: string): string {
+  return `/tasks?assignee=me&workspace=${encodeURIComponent(workspaceGid)}&completed_since=now&limit=${ASANA_TASK_LIMIT}&opt_fields=name,due_on`;
 }
 
 /** `obj[field]` が物 (配列でない) ならそれを、違えば `null`。 */
@@ -225,7 +225,8 @@ export function asanaHeaders(token: string): Record<string, string> {
 /** 利用者と未完了のタスクを取得する。**通信手段は呼び出し側が渡す。** */
 export async function fetchAsanaSnapshotWith(jsonFetch: AsanaJsonFetch, token: string): Promise<AsanaSnapshot> {
   const headers = asanaHeaders(token);
-  const me = normalizeAsanaMe(await jsonFetch(ASANA_ME_URL, { headers }));
+  const me = normalizeAsanaMe(await jsonFetch(`${ASANA_API_BASE}${ASANA_ME_PATH}`, { headers }));
   if (me.workspaceGid === '') return buildAsanaSnapshot(me, null);
-  return buildAsanaSnapshot(me, normalizeAsanaTasks(await jsonFetch(asanaTasksUrl(me.workspaceGid), { headers })));
+  const tasksBody = await jsonFetch(`${ASANA_API_BASE}${asanaTasksPath(me.workspaceGid)}`, { headers });
+  return buildAsanaSnapshot(me, normalizeAsanaTasks(tasksBody));
 }

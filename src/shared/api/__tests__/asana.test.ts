@@ -8,7 +8,7 @@ import { describe, expect, it, vi } from 'vitest';
 import {
   ASANA_API_BASE,
   ASANA_DUE_UNREADABLE,
-  ASANA_ME_URL,
+  ASANA_ME_PATH,
   ASANA_NAME_MISSING,
   ASANA_NO_DUE,
   ASANA_TASK_LIMIT,
@@ -19,7 +19,7 @@ import {
   asanaIntakeNote,
   asanaScopeNote,
   asanaTaskTitle,
-  asanaTasksUrl,
+  asanaTasksPath,
   buildAsanaSnapshot,
   fetchAsanaSnapshotWith,
   normalizeAsanaMe,
@@ -29,25 +29,25 @@ import {
 import { rereadModule } from '../../__tests__/rereadModule';
 
 const ME_URL = 'https://app.asana.com/api/1.0/users/me?opt_fields=name,workspaces.name';
-const TASKS_URL_42 =
-  'https://app.asana.com/api/1.0/tasks?assignee=me&workspace=42&completed_since=now&limit=20&opt_fields=name,due_on';
+const TASKS_PATH_42 = '/tasks?assignee=me&workspace=42&completed_since=now&limit=20&opt_fields=name,due_on';
+const TASKS_URL_42 = `https://app.asana.com/api/1.0${TASKS_PATH_42}`;
 
 describe('定数', () => {
   it('送り先は app.asana.com だけ', () => {
     expect(ASANA_API_BASE).toBe('https://app.asana.com/api/1.0');
     expect(ASANA_TASK_LIMIT).toBe(20);
-    expect(ASANA_ME_URL).toBe(ME_URL);
+    expect(ASANA_ME_PATH).toBe('/users/me?opt_fields=name,workspaces.name');
   });
 
   it('★ 直下の値を読み直しても同じ (文・URL を値ごと留める)', async () => {
     const m = await rereadModule<typeof import('../asana')>(import.meta.url, '../asana');
     expect(m.ASANA_API_BASE).toBe('https://app.asana.com/api/1.0');
     expect(m.ASANA_TASK_LIMIT).toBe(20);
-    expect(m.ASANA_ME_URL).toBe(ME_URL);
+    expect(m.ASANA_ME_PATH).toBe('/users/me?opt_fields=name,workspaces.name');
     expect(m.ASANA_NAME_MISSING).toBe('(名前なし)');
     expect(m.ASANA_NO_DUE).toBe('期限なし');
     expect(m.ASANA_DUE_UNREADABLE).toBe('期限が読めません');
-    expect(m.asanaTasksUrl('42')).toBe(TASKS_URL_42);
+    expect(m.asanaTasksPath('42')).toBe(TASKS_PATH_42);
   });
 });
 
@@ -84,14 +84,14 @@ describe('asanaGid', () => {
   });
 });
 
-describe('asanaTasksUrl', () => {
-  it('ワークスペースの gid を入れた URL を組む', () => {
-    expect(asanaTasksUrl('42')).toBe(TASKS_URL_42);
+describe('asanaTasksPath', () => {
+  it('ワークスペースの gid を入れた道を組む', () => {
+    expect(asanaTasksPath('42')).toBe(TASKS_PATH_42);
   });
 
   it('★ gid は符号化して入れる (区切りの字が URL の構造を変えない)', () => {
-    expect(asanaTasksUrl('1&x=2')).toBe(
-      'https://app.asana.com/api/1.0/tasks?assignee=me&workspace=1%26x%3D2&completed_since=now&limit=20&opt_fields=name,due_on',
+    expect(asanaTasksPath('1&x=2')).toBe(
+      '/tasks?assignee=me&workspace=1%26x%3D2&completed_since=now&limit=20&opt_fields=name,due_on',
     );
   });
 });

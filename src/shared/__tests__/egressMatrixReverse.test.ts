@@ -104,6 +104,24 @@ describe('egress マトリクスの逆向き (パス 340)', () => {
     expect(documentedButUnfound()).toEqual(LEDGER.map((r) => r.host).sort());
   });
 
+  /*
+   * 共有の読み取りアダプタ (`shared/api/stripe.ts` / `asana.ts`) の宛先は、**そのファイル自身**から映る
+   * (2026-11-18)。Stripe を足した当初、送信の行は URL の定数 (`…_URL`) だけを名乗っており、基底の定数は
+   * 送信文脈に 1 度も現れなかった —— `api.stripe.com` が台帳に見つかっていたのは、たまたま
+   * `main/clients/shopify.ts` が同じホストを持っていたからである (Asana を足して初めて分かった:
+   * `app.asana.com` は表に在るのに走査で見つからなかった)。送信の行で基底を名乗る形へ直した。
+   */
+  it('★ 共有の読み取りアダプタの宛先は、そのファイル自身から映る', () => {
+    const found = foundHosts();
+    const inFile = (host: string, file: string): boolean =>
+      (found.get(host) ?? []).some((p) => p.replace(/\\/g, '/').endsWith(file));
+    expect(inFile('api.stripe.com', 'src/shared/api/stripe.ts')).toBe(true);
+    expect(inFile('app.asana.com', 'src/shared/api/asana.ts')).toBe(true);
+    expect(inFile('api.cursor.com', 'src/shared/api/cursor.ts')).toBe(true);
+    // 対照: 送らないファイルからは映らない (針が何にでも当たる検査にしない)。
+    expect(inFile('app.asana.com', 'src/shared/api/stripe.ts')).toBe(false);
+  });
+
   it('★ AI 提供者の既定の送り先は、走査に映る (パス 340 で塞いだ穴)', () => {
     const found = foundHosts();
     for (const host of [

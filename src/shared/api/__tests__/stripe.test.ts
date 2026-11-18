@@ -8,8 +8,8 @@ import { describe, expect, it, vi } from 'vitest';
 import {
   STRIPE_AMOUNT_UNKNOWN,
   STRIPE_API_BASE,
-  STRIPE_BALANCE_URL,
-  STRIPE_CHARGES_URL,
+  STRIPE_BALANCE_PATH,
+  STRIPE_CHARGES_PATH,
   STRIPE_CHARGE_LIMIT,
   STRIPE_CURRENCY_UNKNOWN,
   buildStripeSnapshot,
@@ -36,16 +36,16 @@ describe('定数', () => {
   it('送り先は api.stripe.com の 2 つだけ', () => {
     expect(STRIPE_API_BASE).toBe('https://api.stripe.com');
     expect(STRIPE_CHARGE_LIMIT).toBe(10);
-    expect(STRIPE_BALANCE_URL).toBe('https://api.stripe.com/v1/balance');
-    expect(STRIPE_CHARGES_URL).toBe('https://api.stripe.com/v1/charges?limit=10');
+    expect(STRIPE_BALANCE_PATH).toBe('/v1/balance');
+    expect(STRIPE_CHARGES_PATH).toBe('/v1/charges?limit=10');
   });
 
   it('★ 直下の値を読み直しても同じ (表・文・URL を値ごと留める)', async () => {
     const m = await rereadModule<typeof import('../stripe')>(import.meta.url, '../stripe');
     expect(m.STRIPE_API_BASE).toBe('https://api.stripe.com');
     expect(m.STRIPE_CHARGE_LIMIT).toBe(10);
-    expect(m.STRIPE_BALANCE_URL).toBe('https://api.stripe.com/v1/balance');
-    expect(m.STRIPE_CHARGES_URL).toBe('https://api.stripe.com/v1/charges?limit=10');
+    expect(m.STRIPE_BALANCE_PATH).toBe('/v1/balance');
+    expect(m.STRIPE_CHARGES_PATH).toBe('/v1/charges?limit=10');
     expect(m.STRIPE_AMOUNT_UNKNOWN).toBe('金額不明');
     expect(m.STRIPE_CURRENCY_UNKNOWN).toBe('通貨不明');
     expect([...m.STRIPE_ZERO_DECIMAL].sort()).toEqual([

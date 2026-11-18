@@ -245,16 +245,16 @@ export function stripeHeaders(token: string): Record<string, string> {
   return { Authorization: `Bearer ${token}` };
 }
 
-/** 入金の一覧の URL。 */
-export const STRIPE_CHARGES_URL = `${STRIPE_API_BASE}/v1/charges?limit=${STRIPE_CHARGE_LIMIT}`;
+/** 入金の一覧の道 (基底は送る所で付ける —— 宛先の走査が送信の行で基底を見られるように)。 */
+export const STRIPE_CHARGES_PATH = `/v1/charges?limit=${STRIPE_CHARGE_LIMIT}`;
 
-/** 残高の URL。 */
-export const STRIPE_BALANCE_URL = `${STRIPE_API_BASE}/v1/balance`;
+/** 残高の道。 */
+export const STRIPE_BALANCE_PATH = '/v1/balance';
 
 /** 残高と最近の入金を取得する。**通信手段は呼び出し側が渡す。** */
 export async function fetchStripeSnapshotWith(jsonFetch: StripeJsonFetch, token: string): Promise<StripeSnapshot> {
   const headers = stripeHeaders(token);
-  const balanceBody = await jsonFetch(STRIPE_BALANCE_URL, { headers });
-  const chargesBody = await jsonFetch(STRIPE_CHARGES_URL, { headers });
+  const balanceBody = await jsonFetch(`${STRIPE_API_BASE}${STRIPE_BALANCE_PATH}`, { headers });
+  const chargesBody = await jsonFetch(`${STRIPE_API_BASE}${STRIPE_CHARGES_PATH}`, { headers });
   return buildStripeSnapshot(balanceBody, chargesBody);
 }

@@ -26,7 +26,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | client モジュール (fetcher + actions) | 79 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 32 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **20831** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **20876** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` (**2026-09-01 の報告** —— 今のコードを測った物ではない。`docs/REMAINING_WORK.md` の「パス 494」) |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` (同上) |
@@ -34,7 +34,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod / dev) | 0 vulnerabilities (2026-09-10 実測。CI が `--omit=dev --audit-level=high` で毎回確認 —— dev 依存と moderate 以下を落とさないのは意図的で、理由は `ci.yml` の注記。**その外側は `lint:deps` のセキュリティの床 6 件**が受け持つ: 自分で押さえた版は道を問わず台帳に載り、緩めば落ちる) | `package-lock.json` |
 | 陰性対照つきゲート | 36 / 39 (`lint:malware` を足した · パス 510。残る 3 件は外部ツール 2 (`typecheck` / eslint) と `chain:verify` (対照は `integrityChainWitness.test.ts` が持つ)。★ 2026-09-25 (パス 467) に `lint:knowledge-refs` と `verify:orchestration` へ `--self-test` を付けた —— 2 本は「2026-08-25 に実物へ違反を植えて鳴ることを確認済み」という理由で免除されていたが、それは**母集団が非空のとき**の対照で、**空にする側**は 1 度も試されておらず、実測すると壊れた台帳も `rounds: []` も `org.secretaries` 削除も**すべて ✅ exit 0** だった。`lint:doi-prefix` は同じ理由で今も免除だが、空にする側は測っていない) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
-| `file:line` 参照数 | 700 | 自己検証 |
+| `file:line` 参照数 | 701 | 自己検証 |
 | 図の中の `file:line` 参照数 | 29 | 自己検証 (mermaid のクラス図・パス 180) |
 
 ### 統合フロー図
@@ -1892,7 +1892,7 @@ union を参照する。
 | shopify | `sync-to-salesforce` | order + token + instanceUrl | **送り先が payload 由来**。https かつ salesforce.com / *.salesforce.com のみ (2026-08-23 まで https しか見ておらず、トークンと顧客情報が任意のホストへ届いた) | `shopify.ts:414-420` |
 | shopify | `sync-to-stripe` | order + token | 送り先は定数 (api.stripe.com) | `shopify.ts:414-420` |
 
-### 3.3 ネットワーク egress マトリクス (31 ホスト + ユーザー指定)
+### 3.3 ネットワーク egress マトリクス (32 ホスト + ユーザー指定)
 
 デスクトップ版の外部接続は **main プロセスからのみ** (renderer は CSP `connect-src 'self'`)。ブラウザ版は同じ宛先へ
 renderer が直接つなぐ (`src/renderer/data/saasWriteWeb.ts` / `src/shared/api/` の各クライアント / `src/renderer/network/ollamaWeb.ts` /
@@ -1942,7 +1942,7 @@ undici は CORS を実装しないので単体検査には映らず、CI の外�
 | base | `api.thebase.in` | `GET /1/items` | Bearer | `base.ts:34` |
 | cursor (両ビルド。ブラウザ版はプロキシ経由 —— api.cursor.com はブラウザ発の CORS を許可しない) | `api.cursor.com` | `GET /teams/members`, `POST /teams/daily-usage-data`, `POST /teams/spend` | Bearer (Admin API キー) | `src/shared/api/cursor.ts:252-262` |
 | stripe (両ビルド。ブラウザ版はプロキシ経由 —— 開発環境から api.stripe.com へ届かず、ブラウザ発の CORS は確かめていない) | `api.stripe.com` | `GET /v1/balance`, `GET /v1/charges?limit=10` | Bearer (読み取り専用の制限付きキー) | `src/shared/api/stripe.ts:255-260` |
-| asana (両ビルド。ブラウザ版はプロキシ経由 —— 開発環境から app.asana.com へ届かず、ブラウザ発の CORS は確かめていない) | `app.asana.com` | `GET /api/1.0/users/me`, `GET /api/1.0/tasks?assignee=me&workspace=<gid>` (gid は数字だけを確かめて符号化) | Bearer (個人アクセストークン) | `src/shared/api/asana.ts:226-231` |
+| asana (両ビルド。ブラウザ版はプロキシ経由 —— 開発環境から app.asana.com へ届かず、ブラウザ発の CORS は確かめていない) | `app.asana.com` | `GET /api/1.0/users/me`, `GET /api/1.0/tasks?assignee=me&workspace=<gid>` (gid は数字だけを確かめて符号化) | Bearer (個人アクセストークン) | `src/shared/api/asana.ts:226-232` |
 | shopify→discord | `discord.com` | `POST` webhook (payload 由来。https + hostname 完全一致で絞る) | webhook URL | `shopify.ts:172-194` |
 | shopify→line | `api.line.me` | `POST /v2/bot/message/push` | Bearer | `shopify.ts:205-215` |
 | shopify→stripe | `api.stripe.com` | `POST /v1/customers` | Bearer | `shopify.ts:354-366` |
