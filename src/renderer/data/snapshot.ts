@@ -20,6 +20,7 @@ import type { StripeSnapshot } from '../../shared/api/stripe';
 import type { AsanaSnapshot } from '../../shared/api/asana';
 import type { LineSnapshot } from '../../shared/api/line';
 import type { LinearSnapshot } from '../../shared/api/linear';
+import type { SentrySnapshot } from '../../shared/api/sentry';
 import { buildHydroponicsSnapshot } from '../../shared/hydroponicsControl';
 import { buildMentorSnapshot } from '../../shared/mentor';
 import { buildGrokSnapshot } from '../../shared/grokSnapshot';
@@ -650,14 +651,21 @@ export const SNAPSHOT = {
     refused: false as boolean,
   } as LinearSnapshot,
 
+  // 見本 (鍵を登録するまでの表示)。形は実物 (`shared/api/sentry.ts` の `SentrySnapshot`) と同じ 1 つ ——
+  // 画面の型はこの見本から推論されるので、`as SentrySnapshot` で実物と同じ幅にする (パス 410)。
   sentry: {
-    items: [
-      { id: 'err-1', name: '🔴 [main] Uncaught TypeError in autoLock.ts (24 件 / 4h)' },
-      { id: 'err-2', name: '🟡 [renderer] Slow vault.unlock (>3s, 12 件)' },
-      { id: 'rel', name: '🚀 v1.4.2 release: 0 new issues / 142 regressions resolved' },
-    ] as { id: string; name: string }[],
-    count: 3,
-  },
+    orgName: '見本の組織',
+    orgCount: 1,
+    issues: [
+      { shortId: 'DEMO-1', title: '見本: TypeError: 値を読み取れません', level: 'error', count: 24, lastSeen: '2026-11-17', projectName: '見本のアプリ' },
+      { shortId: 'DEMO-2', title: '見本: 応答が遅い画面があります', level: 'warning', count: 12, lastSeen: '2026-11-16', projectName: '見本のアプリ' },
+      { shortId: 'DEMO-3', title: '見本: 支払いの処理が失敗しました', level: 'fatal', count: 1, lastSeen: '2026-11-15', projectName: '見本の API' },
+    ],
+    orgsRead: true as boolean,
+    issuesAsked: true as boolean,
+    issuesRead: true as boolean,
+    more: false as boolean,
+  } as SentrySnapshot,
 
   shopify: {
     items: [

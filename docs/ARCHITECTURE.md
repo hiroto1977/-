@@ -25,7 +25,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | IPC ハンドラ数 | 15 | `src/main/main.ts:213-432` |
 | client モジュール (fetcher + actions) | 79 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
-| 外部接続先ホスト | 33 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
+| 外部接続先ホスト | 34 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
 | ユニットテスト | **21061** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` (**2026-09-01 の報告** —— 今のコードを測った物ではない。`docs/REMAINING_WORK.md` の「パス 494」) |
@@ -1892,7 +1892,7 @@ union を参照する。
 | shopify | `sync-to-salesforce` | order + token + instanceUrl | **送り先が payload 由来**。https かつ salesforce.com / *.salesforce.com のみ (2026-08-23 まで https しか見ておらず、トークンと顧客情報が任意のホストへ届いた) | `shopify.ts:414-420` |
 | shopify | `sync-to-stripe` | order + token | 送り先は定数 (api.stripe.com) | `shopify.ts:414-420` |
 
-### 3.3 ネットワーク egress マトリクス (33 ホスト + ユーザー指定)
+### 3.3 ネットワーク egress マトリクス (34 ホスト + ユーザー指定)
 
 デスクトップ版の外部接続は **main プロセスからのみ** (renderer は CSP `connect-src 'self'`)。ブラウザ版は同じ宛先へ
 renderer が直接つなぐ (`src/renderer/data/saasWriteWeb.ts` / `src/shared/api/` の各クライアント / `src/renderer/network/ollamaWeb.ts` /
@@ -1945,6 +1945,7 @@ undici は CORS を実装しないので単体検査には映らず、CI の外�
 | asana (両ビルド。ブラウザ版はプロキシ経由 —— 開発環境から app.asana.com へ届かず、ブラウザ発の CORS は確かめていない) | `app.asana.com` | `GET /api/1.0/users/me`, `GET /api/1.0/tasks?assignee=me&workspace=<gid>` (gid は数字だけを確かめて符号化) | Bearer (個人アクセストークン) | `src/shared/api/asana.ts:229-235` |
 | line (両ビルド。ブラウザ版はプロキシ経由 —— 開発環境から api.line.me へ届かず、ブラウザ発の CORS は確かめていない) | `api.line.me` | `GET /v2/bot/info`, `GET /v2/bot/message/quota`, `GET /v2/bot/message/quota/consumption` | Bearer (チャネルアクセストークン) | `src/shared/api/line.ts:186-192` |
 | linear (両ビルド。ブラウザ版はプロキシ経由 —— 開発環境から api.linear.app へ届かず、ブラウザ発の CORS は確かめていない) | `api.linear.app` | `POST /graphql` (本文は固定の照会 1 つ —— 利用者の名前と自分の担当の未完了の課題。変更の照会は無い) | 個人の API キー (`lin_api_…` はそのまま・それ以外は Bearer) | `src/shared/api/linear.ts:236-238` |
+| sentry (両ビルド。ブラウザ版はプロキシ経由 —— 開発環境から sentry.io へ届かず、ブラウザ発の CORS は確かめていない) | `sentry.io` | `GET /api/0/organizations/`・`GET /api/0/organizations/<slug>/issues/` (未解決だけ・21 件まで。slug は 1 つ目の照会の答えを形で確かめてから入れる。書き込みの照会は無い) | 個人のトークン (Bearer) | `src/shared/api/sentry.ts:279-285` |
 | shopify→discord | `discord.com` | `POST` webhook (payload 由来。https + hostname 完全一致で絞る) | webhook URL | `shopify.ts:172-194` |
 | shopify→line | `api.line.me` | `POST /v2/bot/message/push` | Bearer | `shopify.ts:205-215` |
 | shopify→stripe | `api.stripe.com` | `POST /v1/customers` | Bearer | `shopify.ts:354-366` |

@@ -224,6 +224,7 @@ describe('伏字の網羅 — 発行元が分かる接頭辞', () => {
     ['Stripe (秘密鍵)', `sk_live_${FILLER}`],
     ['Stripe (制限鍵)', `rk_live_${FILLER}`],
     ['Stripe (試験鍵)', `sk_test_${FILLER}`],
+    ['Sentry (個人のトークン)', `sntryu_${FILLER}`],
     ['Shopify (管理 API)', `shpat_${FILLER}`],
     ['Shopify (共有秘密)', `shpss_${FILLER}`],
     ['GitHub (PAT)', `ghp_${FILLER}`],
@@ -337,7 +338,7 @@ describe('伏字の網羅 — 母集団は「預かっているサービス」(�
     readonly sample: string;
   }
 
-  // 預かる 26 サービスすべてに 1 行。**足りなければ下の突き合わせが鳴る。**
+  // 預かる 27 サービスすべてに 1 行。**足りなければ下の突き合わせが鳴る。**
   const HELD_FORMATS: readonly Held[] = [
     { service: 'github', issuer: 'GitHub 細粒度 PAT', carrier: 'prefix', sample: `github_pat_${FILL}_${FILL}${FILL}` },
     { service: 'notion', issuer: 'Notion 内部連携 (新)', carrier: 'prefix', sample: `ntn_${FILL}${FILL}` },
@@ -386,6 +387,9 @@ describe('伏字の網羅 — 母集団は「預かっているサービス」(�
     { service: 'line', issuer: 'LINE チャネルアクセストークン', carrier: 'header-only', sample: 'L'.repeat(172) },
     // Linear の個人の API キー (2026-11-18 · 取得が鍵を読むようになった)。接頭辞 `lin_api_` は伏字の表に前から在る。
     { service: 'linear', issuer: 'Linear 個人の API キー', carrier: 'prefix', sample: `lin_api_${FILL}${FILL}` },
+    // Sentry の個人のトークン (2026-11-18 · 取得が鍵を読むようになった)。接頭辞 `sntryu_` を同じ日に伏字の表へ足した
+    // (それまで表に在ったのは組織のトークン `sntrys_` だけ)。
+    { service: 'sentry', issuer: 'Sentry 個人のトークン', carrier: 'prefix', sample: `sntryu_${FILL}${FILL}` },
   ];
 
   const HELD_SERVICES = (Object.keys(SERVICE_CREDENTIAL_USE) as ServiceId[]).filter((id) =>
@@ -408,7 +412,7 @@ describe('伏字の網羅 — 母集団は「預かっているサービス」(�
    * `shpat_` / `shpss_` は上の `PREFIXED` が母集団に依らず留めており、
    * 既に保存した人の値や第三者が本文に反射した値には今日も掛かる。
    */
-  it('★ 預かる 26 サービスすべてに行が在り、余計な行が無い', () => {
+  it('★ 預かる 27 サービスすべてに行が在り、余計な行が無い', () => {
     const listed = HELD_FORMATS.map((f) => f.service);
     expect([...listed].sort()).toEqual([...HELD_SERVICES].sort());
   });

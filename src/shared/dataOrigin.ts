@@ -74,7 +74,8 @@ export const SERVICE_DATA_ORIGIN: Record<ServiceId, DataOrigin> = {
   asana: 'remote',
   // 2026-11-18: 自分の担当の未完了の課題を Linear から読む (`shared/api/linear.ts`)。それまでは同梱の見本だった。
   linear: 'remote',
-  sentry: 'sample',
+  // 2026-11-18: 未解決の問題を Sentry から読む (`shared/api/sentry.ts`)。それまでは同梱の見本だった。
+  sentry: 'remote',
   shopify: 'sample',
   // 2026-11-18: 残高と最近の入金を Stripe から読む (`shared/api/stripe.ts`)。それまでは同梱の見本だった。
   stripe: 'remote',

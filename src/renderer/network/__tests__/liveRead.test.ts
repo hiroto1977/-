@@ -233,14 +233,15 @@ describe('LIVE_READERS — 読み直して static 変異体を届かせる', () 
     return rereadModule<typeof import('../liveRead')>(import.meta.url, '../liveRead');
   };
 
-  it('★ 表に載っているのは cursor / stripe / asana / line / linear だけ (増減に気付く)', async () => {
+  it('★ 表に載っているのは cursor / stripe / asana / line / linear / sentry だけ (増減に気付く)', async () => {
     const m = await fresh();
-    expect(Object.keys(m.LIVE_READERS)).toEqual(['cursor', 'stripe', 'asana', 'line', 'linear']);
+    expect(Object.keys(m.LIVE_READERS)).toEqual(['cursor', 'stripe', 'asana', 'line', 'linear', 'sentry']);
     expect(m.canLiveRead('cursor')).toBe(true);
     expect(m.canLiveRead('stripe')).toBe(true);
     expect(m.canLiveRead('asana')).toBe(true);
     expect(m.canLiveRead('line')).toBe(true);
     expect(m.canLiveRead('linear')).toBe(true);
+    expect(m.canLiveRead('sentry')).toBe(true);
     expect(m.canLiveRead('github')).toBe(false);
   });
 
@@ -402,6 +403,47 @@ describe('LIVE_READERS — 読み直して static 変異体を届かせる', () 
     expect(init.method).toBe('POST');
     expect(init.headers).toEqual({ Authorization: 'lin_api_example', 'Content-Type': 'application/json' });
     expect(String(init.body).startsWith('{"query":"query { viewer {')).toBe(true);
+  });
+
+  /*
+   * Sentry (2026-11-18): 読み取りは shared の `fetchSentrySnapshotWith` を通り、プロキシ経由の
+   * 通信手段と保管庫の鍵が**そのまま**届く (送り先は sentry.io の 2 つの道だけ・どちらも GET)。
+   */
+  it('★ sentry の read が、渡した通信手段と鍵で組織と未解決の問題を読む', async () => {
+    const m = await fresh();
+    const jsonFetch = vi
+      .fn<(url: string, init: RequestInit) => Promise<unknown>>()
+      .mockResolvedValueOnce([{ slug: 'acme', name: 'Acme' }])
+      .mockResolvedValueOnce([{ shortId: 'WEB-1', title: '直す', level: 'error', count: '3', lastSeen: '2026-11-17T12:00:00Z', project: { name: 'web' } }]);
+    const res = await m.liveRead('sentry', {
+      readCredential: () => Promise.resolve('sntryu_example'),
+      getProxyJsonFetch: () => Promise.resolve(jsonFetch),
+      now: () => 0,
+    });
+    expect(res).toEqual({
+      ok: true,
+      data: {
+        orgName: 'Acme',
+        orgCount: 1,
+        issues: [{ shortId: 'WEB-1', title: '直す', level: 'error', count: 3, lastSeen: '2026-11-17', projectName: 'web' }],
+        orgsRead: true,
+        issuesAsked: true,
+        issuesRead: true,
+        more: false,
+      },
+    });
+    expect(jsonFetch.mock.calls).toEqual([
+      ['https://sentry.io/api/0/organizations/', { headers: { Authorization: 'Bearer sntryu_example' } }],
+      ['https://sentry.io/api/0/organizations/acme/issues/?query=is%3Aunresolved&limit=21', { headers: { Authorization: 'Bearer sntryu_example' } }],
+    ]);
+  });
+
+  it('sentry: 鍵が無ければ通信手段を取りに行かず「未登録」と答える', async () => {
+    const m = await fresh();
+    const getProxyJsonFetch = vi.fn(() => Promise.reject(new Error('呼ばれてはいけない')));
+    const res = await m.liveRead('sentry', { readCredential: () => Promise.resolve(null), getProxyJsonFetch, now: () => 0 });
+    expect(res).toMatchObject({ ok: false, code: 'not_configured' });
+    expect(getProxyJsonFetch).not.toHaveBeenCalled();
   });
 
   it('linear: 鍵が無ければ通信手段を取りに行かず「未登録」と答える', async () => {

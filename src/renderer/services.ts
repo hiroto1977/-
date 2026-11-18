@@ -366,7 +366,7 @@ export const SERVICES: ServiceDefinition[] = [
     id: 'sentry',
     label: 'Sentry',
     icon: 'SN',
-    description: 'エラー監視 — issues / performance / releases (snapshot)',
+    description: 'エラー監視 — 未解決の問題の一覧 (読み取り専用・鍵を登録すると実データ)',
     page: SentryPage,
     category: 'integrations',
   },

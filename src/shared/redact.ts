@@ -77,7 +77,7 @@
  *   - 発行元が分かる接頭辞 — sk-ant-… / sk-proj-… / sk-… (OpenAI) /
  *     ghp_… ghs_… ghu_… gho_… ghr_… **github_pat_…** (GitHub) /
  *     xoxb-… xoxp-… xoxa-… (Slack) / secret_… **ntn_…** (Notion) /
- *     **lin_api_… lin_oauth_…** (Linear) / **sntrys_…** (Sentry) /
+ *     **lin_api_… lin_oauth_…** (Linear) / **sntrys_… sntryu_…** (Sentry) /
  *     shpat_… shpss_… shpca_… (Shopify) / sk_live_… rk_live_… **whsec_…**
  *     (Stripe) / AIza… ya29.… **1//…** (Google) / **sl.…** (Dropbox) /
  *     **1/<gid>:<hex>** (Asana) / ATATT… (Atlassian) / **eyJ….….…** (JWT —
@@ -214,7 +214,7 @@ export function redactSecrets(input: string): string {
   // `redactForMessage(body, 200)` に通して画面へ出す。`compat`
   // (LiteLLM / LM Studio / 自前サーバ) が本文に鍵を書き返せば、
   // 伏字を通り抜けて表示される。
-  out = out.replace(/\b(sk-ant-|sk-proj-|ghp_|ghs_|ghu_|gho_|ghr_|github_pat_|xoxp-|xoxb-|xoxa-|secret_|ntn_|lin_api_|lin_oauth_|AIza|shpat_|shpss_|shpca_|sk_live_|sk_test_|rk_live_|rk_test_|whsec_|cfut_|cfat_|cfk_)[A-Za-z0-9_-]{8,}/g, '$1[REDACTED]');
+  out = out.replace(/\b(sk-ant-|sk-proj-|ghp_|ghs_|ghu_|gho_|ghr_|github_pat_|xoxp-|xoxb-|xoxa-|secret_|ntn_|lin_api_|lin_oauth_|sntryu_|AIza|shpat_|shpss_|shpca_|sk_live_|sk_test_|rk_live_|rk_test_|whsec_|cfut_|cfat_|cfk_)[A-Za-z0-9_-]{8,}/g, '$1[REDACTED]');
   // **Cursor の Admin API キー (`key_` + 16 進)。** (2026-10-13 · パス 516 · threat: T-021)
   //
   // `cursor` は `credentialUse.ts` で `fetch` (資格情報を預かる) で、

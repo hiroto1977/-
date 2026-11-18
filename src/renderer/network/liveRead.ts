@@ -39,6 +39,7 @@ import { fetchStripeSnapshotWith } from '../../shared/api/stripe';
 import { fetchAsanaSnapshotWith } from '../../shared/api/asana';
 import { fetchLineSnapshotWith } from '../../shared/api/line';
 import { fetchLinearSnapshotWith } from '../../shared/api/linear';
+import { fetchSentrySnapshotWith } from '../../shared/api/sentry';
 import { lookup } from '../../shared/lookup';
 
 /** 通信手段。`fetchSnapshot` と同じく JSON として読めた本体を返す。 */
@@ -86,8 +87,11 @@ interface LiveReader {
  *
  * `linear` (2026-11-18): 自分の担当の未完了の課題 (読み取りだけ・GraphQL の照会 1 つ)。同じくプロキシを通す ——
  * `api.linear.app` へもこの開発環境からは届かない。プロキシの許可リストに `api.linear.app` を足して使う。
+ *
+ * `sentry` (2026-11-18): 組織の一覧と、1 つ目の組織の未解決の問題 (読み取りだけ)。同じくプロキシを通す ——
+ * `sentry.io` へもこの開発環境からは届かない。プロキシの許可リストに `sentry.io` を足して使う。
  */
-export const LIVE_READERS: Readonly<Record<string, LiveReader>> = { cursor: { read: (jsonFetch, token, nowMs) => fetchCursorSnapshotWith(jsonFetch, token, nowMs, DEFAULT_USAGE_DAYS) }, stripe: { read: (jsonFetch, token) => fetchStripeSnapshotWith(jsonFetch, token) }, asana: { read: (jsonFetch, token) => fetchAsanaSnapshotWith(jsonFetch, token) }, line: { read: (jsonFetch, token) => fetchLineSnapshotWith(jsonFetch, token) }, linear: { read: (jsonFetch, token) => fetchLinearSnapshotWith(jsonFetch, token) } };
+export const LIVE_READERS: Readonly<Record<string, LiveReader>> = { cursor: { read: (jsonFetch, token, nowMs) => fetchCursorSnapshotWith(jsonFetch, token, nowMs, DEFAULT_USAGE_DAYS) }, stripe: { read: (jsonFetch, token) => fetchStripeSnapshotWith(jsonFetch, token) }, asana: { read: (jsonFetch, token) => fetchAsanaSnapshotWith(jsonFetch, token) }, line: { read: (jsonFetch, token) => fetchLineSnapshotWith(jsonFetch, token) }, linear: { read: (jsonFetch, token) => fetchLinearSnapshotWith(jsonFetch, token) }, sentry: { read: (jsonFetch, token) => fetchSentrySnapshotWith(jsonFetch, token) } };
 
 /** 読み取りの結果。失敗しても「なぜ実データでないか」を必ず言葉で返す。 */
 export type LiveReadResult =
