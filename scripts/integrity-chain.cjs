@@ -847,6 +847,10 @@ const DEP_EXCLUSIONS = {
   'src/shared/api/asana.ts':
     'サービス API のアダプタ (読み取りだけ)。送り先のホストは定数 1 つで lint:network-targets の台帳が見ており、'
     + '上限・打ち切りは httpLimits (保護対象) が持つ。',
+  // 2026-11-18: `liveRead.ts` (保護対象) が LINE の読み取りを足したので閉包に出た。上の cursor / stripe / asana と同じ class。
+  'src/shared/api/line.ts':
+    'サービス API のアダプタ (読み取りだけ)。送り先のホストは定数 1 つで lint:network-targets の台帳が見ており、'
+    + '上限・打ち切りは httpLimits (保護対象) が持つ。',
 };
 
 /** 相対 import を実ファイルへ解決する (拡張子省略に対応)。解決できなければ null。 */
@@ -1013,6 +1017,7 @@ const EXCLUSION_KINDS = {
   'src/shared/api/cursor.ts': { kind: 'guarded-by', guardedBy: ['src/shared/httpLimits.ts'] },
   'src/shared/api/stripe.ts': { kind: 'guarded-by', guardedBy: ['src/shared/httpLimits.ts'] },
   'src/shared/api/asana.ts': { kind: 'guarded-by', guardedBy: ['src/shared/httpLimits.ts'] },
+  'src/shared/api/line.ts': { kind: 'guarded-by', guardedBy: ['src/shared/httpLimits.ts'] },
 };
 
 /**
@@ -1750,8 +1755,8 @@ function cmdSelfTest() {
     check('★ paths-only: 保護対象の読み手が居なければ鳴る',
       K['paths-only']('src/main/clients/emotions.ts', { reads: ['storePath'] }, []) === '保護対象の読み手が居ない (古い除外)');
     // guarded-by —— 名乗った相手が保護対象でなければ鳴る
-    check('guarded-by: 実物の 4 件は通る',
-      ['src/shared/updateCheck.ts', 'src/shared/api/cursor.ts', 'src/shared/api/stripe.ts', 'src/shared/api/asana.ts']
+    check('guarded-by: 実物の 5 件は通る',
+      ['src/shared/updateCheck.ts', 'src/shared/api/cursor.ts', 'src/shared/api/stripe.ts', 'src/shared/api/asana.ts', 'src/shared/api/line.ts']
         .every((f) => K['guarded-by'](f, EXCLUSION_KINDS[f], PROTECTED) === null));
     check('★ guarded-by: 名乗らなければ鳴る',
       K['guarded-by']('src/shared/updateCheck.ts', {}, PROTECTED) === 'guardedBy (判断を持つ保護対象) を名乗っていない');

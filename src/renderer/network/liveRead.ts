@@ -37,6 +37,7 @@
 import { fetchCursorSnapshotWith, DEFAULT_USAGE_DAYS } from '../../shared/api/cursor';
 import { fetchStripeSnapshotWith } from '../../shared/api/stripe';
 import { fetchAsanaSnapshotWith } from '../../shared/api/asana';
+import { fetchLineSnapshotWith } from '../../shared/api/line';
 import { lookup } from '../../shared/lookup';
 
 /** 通信手段。`fetchSnapshot` と同じく JSON として読めた本体を返す。 */
@@ -78,8 +79,11 @@ interface LiveReader {
  *
  * `asana` (2026-11-18): 自分の担当の未完了タスク (読み取りだけ)。Stripe と同じくプロキシを通す ——
  * `app.asana.com` へもこの開発環境からは届かない。プロキシの許可リストに `app.asana.com` を足して使う。
+ *
+ * `line` (2026-11-18): 公式アカウントの情報と今月の配信数 (読み取りだけ)。同じくプロキシを通す ——
+ * `api.line.me` へもこの開発環境からは届かない。プロキシの許可リストに `api.line.me` を足して使う。
  */
-export const LIVE_READERS: Readonly<Record<string, LiveReader>> = { cursor: { read: (jsonFetch, token, nowMs) => fetchCursorSnapshotWith(jsonFetch, token, nowMs, DEFAULT_USAGE_DAYS) }, stripe: { read: (jsonFetch, token) => fetchStripeSnapshotWith(jsonFetch, token) }, asana: { read: (jsonFetch, token) => fetchAsanaSnapshotWith(jsonFetch, token) } };
+export const LIVE_READERS: Readonly<Record<string, LiveReader>> = { cursor: { read: (jsonFetch, token, nowMs) => fetchCursorSnapshotWith(jsonFetch, token, nowMs, DEFAULT_USAGE_DAYS) }, stripe: { read: (jsonFetch, token) => fetchStripeSnapshotWith(jsonFetch, token) }, asana: { read: (jsonFetch, token) => fetchAsanaSnapshotWith(jsonFetch, token) }, line: { read: (jsonFetch, token) => fetchLineSnapshotWith(jsonFetch, token) } };
 
 /** 読み取りの結果。失敗しても「なぜ実データでないか」を必ず言葉で返す。 */
 export type LiveReadResult =

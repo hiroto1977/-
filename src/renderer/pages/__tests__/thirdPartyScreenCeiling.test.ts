@@ -53,6 +53,8 @@ import { fetchFreeeSnapshot } from '../../../main/clients/freee';
 import { FreeePage } from '../FreeePage';
 import { fetchGmailSnapshot } from '../../../main/clients/gmail';
 import { GmailPage } from '../GmailPage';
+import { fetchLineSnapshot } from '../../../main/clients/line';
+import { LinePage } from '../LinePage';
 import { fetchNotionSnapshot } from '../../../main/clients/notion';
 import { NotionPage } from '../NotionPage';
 import { fetchSlackSnapshot } from '../../../main/clients/slack';
@@ -223,6 +225,14 @@ const SWEEPS: readonly Sweep[] = [
     landed: 'xxxxxxxxxx',
   },
   {
+    id: 'line',
+    token: 't',
+    bodies: [{ displayName: BIG, basicId: BIG, chatMode: BIG }, { type: 'limited', value: 5 }, { totalUsage: 3 }],
+    load: async (c) => fetchLineSnapshot(c as never),
+    page: async () => LinePage,
+    landed: 'xxxxxxxxxx',
+  },
+  {
     id: 'notion',
     token: 't',
     bodies: [{ results: [{ id: 'p1', object: BIG, url: 'https://x.example', last_edited_time: '2026-01-01T00:00:00Z', properties: { Name: { type: 'title', title: [{ plain_text: BIG }] } } }] }],
@@ -308,6 +318,7 @@ const ROLE: Readonly<Record<string, string>> = {
   'slack.ts': 'swept-here',
   'stripe.ts': 'swept-here',
   'asana.ts': 'swept-here',
+  'line.ts': 'swept-here',
   'wordpress.ts': 'swept-here',
   'cloudflare.ts': 'swept-elsewhere: thirdPartyFieldCeiling.test.ts → clients/cloudflare (パス 411)',
   'github.ts': 'swept-elsewhere: thirdPartyFieldCeiling.test.ts → clients/github (パス 411)',
