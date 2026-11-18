@@ -69,7 +69,8 @@ export const SERVICE_CREDENTIAL_USE: Record<ServiceId, CredentialUse> = {
   dropbox: 'none',
   salesforce: 'none',
   discord: 'none',
-  asana: 'none',
+  // 2026-11-18: 取得が鍵を読むようになった (`main/clients/asana.ts` → `shared/api/asana.ts`)。
+  asana: 'fetch',
   linear: 'none',
   sentry: 'none',
   /*

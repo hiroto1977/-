@@ -345,7 +345,7 @@ export function proxyUnusedNote(kind: BuildKind): string | null {
  *
  * | 向き | ブラウザ版の実測 |
  * | --- | --- |
- * | 取得 | **同梱スナップショット** —— `LIVE_READERS` は `cursor` と `stripe` の **2 件だけ**なので、 |
+ * | 取得 | **同梱スナップショット** —— `LIVE_READERS` は `cursor` / `stripe` / `asana` の **3 件だけ**なので、 |
  * |      | drive / calendar / gmail は `not_implemented` へ落ちる |
  * | 送信 | **本当に送る** —— `web-shim.ts` の invoke が 3 つの action を |
  * |      | `runProxyBearer` → `saasWriteWeb` の writer へ振り分ける |

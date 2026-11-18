@@ -50,7 +50,7 @@ const EXPECTED: ReadonlyArray<readonly [ServiceId, CredentialUse]> = [
   ['dropbox', 'none'],
   ['salesforce', 'none'],
   ['discord', 'none'],
-  ['asana', 'none'],
+  ['asana', 'fetch'],
   ['linear', 'none'],
   ['sentry', 'none'],
   // **`action` → `none`** (2026-09-24 · パス 452)。7 つのコネクタは `ctx.payload` から
@@ -108,7 +108,7 @@ const EXPECTED: ReadonlyArray<readonly [ServiceId, CredentialUse]> = [
  * 自分の読み手として数えていた。
  */
 const AUDITED_UNUSED: readonly ServiceId[] = [
-  'asana',
+  // 'asana' は 2026-11-18 に抜けた —— 取得が鍵を読むようになった (`main/clients/asana.ts`)。
   'discord',
   'dropbox',
   'line',
@@ -134,10 +134,10 @@ describe('SERVICE_CREDENTIAL_USE', () => {
 
   it('3 分類の件数を固定する', () => {
     const count = (u: CredentialUse) => EXPECTED.filter(([, v]) => v === u).length;
-    expect(count('fetch')).toBe(16);
+    expect(count('fetch')).toBe(17);
     // shopify が `action` → `none` (パス 452)。
     expect(count('action')).toBe(7);
-    expect(count('none')).toBe(56);
+    expect(count('none')).toBe(55);
   });
 
   it('監査で見つかった 9 件は none のままである', () => {
@@ -182,10 +182,10 @@ describe('unusedStoredCredentials', () => {
   });
 
   it('順序は入力のまま (画面の並びを勝手に変えない)', () => {
-    expect(unusedStoredCredentials(['sentry', 'dropbox', 'asana'])).toEqual([
+    expect(unusedStoredCredentials(['sentry', 'dropbox', 'linear'])).toEqual([
       'sentry',
       'dropbox',
-      'asana',
+      'linear',
     ]);
   });
 

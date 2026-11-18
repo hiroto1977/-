@@ -143,6 +143,7 @@
       "externals": [
         "pure ../../shared/api/cursor: fetchCursorSnapshotWith, DEFAULT_USAGE_DAYS",
         "pure ../../shared/api/stripe: fetchStripeSnapshotWith",
+        "pure ../../shared/api/asana: fetchAsanaSnapshotWith",
         "pure ../../shared/lookup: lookup"
       ],
       "imports": [],
