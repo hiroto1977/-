@@ -75,15 +75,21 @@ export const SAMPLES: Readonly<Record<string, Sample>> = {
     optional: ['profile', 'format'],
   },
   'shigyo-contacts': {
-    good: { serviceId: 'tax-accountant', name: '田中', firm: '事務所', phone: '03', email: 't@example.com' },
+    good: { serviceId: 'tax-accountant', name: '田中', firm: '事務所', phone: '03', email: 't@example.com', monthlyFee: 33000, outstandingInvoice: 0 },
     required: ['serviceId', 'name'],
-    optional: ['firm', 'phone', 'email'],
+    optional: ['firm', 'phone', 'email', 'monthlyFee', 'outstandingInvoice'],
   },
   'shigyo-consultations': {
     good: { serviceId: 'tax-accountant', date: '2026-04-01', topic: '決算', status: '相談予約' },
     required: ['serviceId', 'date', 'topic', 'status'],
     optional: [],
     enumOut: [['status', '不明']],
+  },
+  'shigyo-documents': {
+    good: { serviceId: 'tax-accountant', title: '試算表', direction: 'received', date: '2026-04-01' },
+    required: ['serviceId', 'title', 'direction', 'date'],
+    optional: [],
+    enumOut: [['direction', '不明']],
   },
   'mentor-sessions': {
     good: { member: 'a@example.com', answers: { style: '率直に' }, checkins: [], relations: [], shareWithTeam: false },

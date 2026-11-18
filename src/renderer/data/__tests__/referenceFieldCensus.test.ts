@@ -102,6 +102,12 @@ const LEDGER: readonly Row[] = [
       + '次に読む人は「連絡先と同じ」が**どの性質について同じ**なのかを自分で確かめ直すことになる。',
   },
   {
+    collection: 'shigyo-documents', field: 'serviceId', kind: 'resolved-not-printed',
+    refersTo: '`ServiceId`',
+    why: '実測 —— 書類の一覧も `serviceId` で自分の士業の分だけに絞り込むだけで、id そのものは刷らない。'
+      + '知らない id の行はどの士業の画面にも現れない (消すのは設定の点検パネル · 法則 `escape-hatch-stays-open`)。',
+  },
+  {
     collection: 'kpi-improvement-cycles', field: 'leverId', kind: 'entrance-checked',
     refersTo: '打ち手の一覧 (`LEVER_STEPS` の鍵)',
     why: 'パス 571 —— `parseCycle` が一覧の鍵だけを受け、形の表も同じ一覧 (`LEVER_IDS`) の列挙。読み手 (`improvementState`) は一覧に無い値の行を落とす。画面は固定の名前 (`LEVER_STEPS[id].label`) だけを刷り、保管した文字列は刷らない。',

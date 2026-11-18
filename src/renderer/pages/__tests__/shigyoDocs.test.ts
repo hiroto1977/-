@@ -8,7 +8,8 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
-import { _resetRecordStoreForTests } from '../../data/store';
+import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
+import { SHIGYO_DOCUMENTS_COLLECTION } from '../../data/shigyoDirectory';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { _resetNavigationIntentForTests, onNavigate, takeNavigationIntent } from '../../navigate';
 import { docsForProfessional } from '../../data/businessTriage';
@@ -144,10 +145,18 @@ describe('士業のページ — 書類スタジオで作る書類', () => {
   });
 
   it('やり取り中の書類から書類スタジオの検索へ飛べる', async () => {
+    // 書類は自分の記録 (shigyo-documents) が正 —— 土台の snapshot は見本を持たない
+    // (2026-11-18 のローカル化)。自分の書類を 1 件置いてから画面を開く。
+    await getRecordStore().insert(SHIGYO_DOCUMENTS_COLLECTION, {
+      serviceId: 'tax-accountant', title: '試算表', direction: 'received', date: '2026-04-01',
+    });
     await mount('tax-accountant');
+    // 記録が IndexedDB から届くまで条件で待つ (固定回数で待たない)。
+    for (let i = 0; i < 50 && !q.hasButton('書類スタジオで探す →'); i += 1) await settle();
     const rows = Array.from(container.querySelectorAll('button')).filter((b) => b.textContent === '書類スタジオで探す →');
     expect(rows.length).toBeGreaterThan(0);
     const title = rows[0]!.closest('tr')!.querySelectorAll('td')[1]!.textContent!;
+    expect(title).toBe('試算表');
     const seen: string[] = [];
     const off = onNavigate((id) => seen.push(id));
     await click(rows[0]!);

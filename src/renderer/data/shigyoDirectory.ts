@@ -1,7 +1,8 @@
 /**
- * 士業連携のユーザー登録データ (Phase 6) — 連絡先と相談履歴を record store に
- * 永続化する。8 士業ページ共通の `ShigyoConsole` がここを読み書きし、
- * snapshot のデモ行と結合して表示する。
+ * 士業連携のユーザー登録データ — 連絡先・相談履歴・書類を record store に
+ * 永続化する。8 士業ページ共通の `ShigyoConsole` がここを読み書きする。
+ * 取得 (snapshot) は見本を持たない空の土台 (`shared/shigyoTypes.ts` の
+ * `buildShigyoSnapshot`) で、画面に出る記録はすべてここに登録した物である。
  *
  * 規約は `investments.ts` / `members.ts` と同じ:
  *   - コレクション名 + payload 型 + parse 検証 (throw は日本語メッセージ)
@@ -11,8 +12,9 @@
 
 import type { ServiceId } from '../../shared/serviceId';
 import { calendarDateMessage, isCalendarDate } from '../../shared/isoDate';
-import type { ShigyoConsultationStatus } from '../../shared/shigyoTypes';
+import type { ShigyoConsultationStatus, ShigyoDocument } from '../../shared/shigyoTypes';
 import { moreThanChars } from '../../shared/inputCeiling';
+import { readEntryNumber } from '../../shared/readNumeric';
 
 /**
  * **保管した自由文を画面へ出すときの天井。数は入口が既に宣言している物**
@@ -38,6 +40,8 @@ export const MAX_CONTACT_PHONE_CHARS = 20; // `isLoosePhone` の `{3,20}`。
  * だから表示側は天井を持てず、復元で入った 200,000 字がそのまま一覧に出た (実測 201,933 字)。
  */
 export const MAX_CONSULTATION_TOPIC_CHARS = 80;
+/** 書類名の天井 —— 相談テーマと同じ 80 (一覧の 1 行に収まる長さ)。 */
+export const MAX_DOCUMENT_TITLE_CHARS = 80;
 // **`_CHARS` ではない** —— RFC 5321 の 254 は**オクテット**の上限で、文字数ではない
 // (パス 419: `_CHARS` と名付けたら `ceilingUnitCensus` が「文字で数えろ」と正しく鳴った)。
 /** メールアドレスの上限 —— **オクテット**。単位の理由は `members.ts` の同じ定数に書いた。 */
@@ -46,6 +50,7 @@ export const MAX_CONTACT_EMAIL_LEN = 254;
 
 export const SHIGYO_CONTACTS_COLLECTION = 'shigyo-contacts';
 export const SHIGYO_CONSULTATIONS_COLLECTION = 'shigyo-consultations';
+export const SHIGYO_DOCUMENTS_COLLECTION = 'shigyo-documents';
 
 /** 相談ステータスの選択肢 (表示順)。 */
 export const CONSULTATION_STATUSES: readonly ShigyoConsultationStatus[] = [
@@ -73,6 +78,18 @@ export interface ShigyoContactEntry extends Record<string, unknown> {
   readonly phone: string;
   /** メールアドレス (任意)。 */
   readonly email: string;
+  /**
+   * この連携先への月次顧問料 (円・任意。未入力は 0)。
+   *
+   * 2026-11-18 に足した —— それまで画面の「月次顧問料」は同梱見本の値で、
+   * 自分の専門家を登録しても自分の額が出なかった (パス 187 が残した物)。
+   * 画面の合計は、自分の連携先の顧問料の合算である。
+   * **後から足した欄なので、古い記録には無い** —— 読む側は `opt(num)` の形で
+   * 受け、合計では 0 として扱う (`collectionShapes.ts` と同じ約束)。
+   */
+  readonly monthlyFee: number;
+  /** この連携先への未払い請求額 (円・任意。未入力は 0)。顧問料と同じ扱い。 */
+  readonly outstandingInvoice: number;
 }
 
 /** 緩めのメール形式チェック (保存するだけで送信はしない)。 */
@@ -85,12 +102,27 @@ function isLoosePhone(s: string): boolean {
   return new RegExp(`^[0-9+()\\-\\s]{3,${MAX_CONTACT_PHONE_CHARS}}$`).test(s);
 }
 
+/**
+ * 金額の欄 (任意) を読む。空欄は 0 —— 「顧問料なし」と「未入力」を画面の
+ * 合計で分ける意味は無い。読めない値と負の値は断る (合計が黙って狂うより、
+ * 入口で言う)。読み方は保存の入口の共通方針 (`readEntryNumber` —— 全角・
+ * カンマ・¥ を画面と同じに読む)。
+ */
+function parseYenField(v: unknown, label: string): number {
+  const r = readEntryNumber(v);
+  if (r.kind === 'blank') return 0;
+  if (r.kind === 'unreadable' || r.value < 0) throw new Error(`${label}は 0 以上の数値で入力してください`);
+  return r.value;
+}
+
 export function parseShigyoContact(input: {
   serviceId: ServiceId;
   name?: unknown;
   firm?: unknown;
   phone?: unknown;
   email?: unknown;
+  monthlyFee?: unknown;
+  outstandingInvoice?: unknown;
 }): ShigyoContactEntry {
   const name = typeof input.name === 'string' ? input.name.trim() : '';
   if (name.length === 0 || moreThanChars(name, MAX_CONTACT_NAME_CHARS)) throw new Error(`氏名は 1〜${MAX_CONTACT_NAME_CHARS} 文字で入力してください`);
@@ -104,7 +136,10 @@ export function parseShigyoContact(input: {
   const email = typeof input.email === 'string' ? input.email.trim() : '';
   if (email !== '' && !isLooseEmail(email)) throw new Error('メールアドレスの形式が正しくありません');
 
-  return { serviceId: input.serviceId, name, firm, phone, email };
+  const monthlyFee = parseYenField(input.monthlyFee, '月次顧問料');
+  const outstandingInvoice = parseYenField(input.outstandingInvoice, '未払い請求額');
+
+  return { serviceId: input.serviceId, name, firm, phone, email, monthlyFee, outstandingInvoice };
 }
 
 /** ユーザー登録の相談履歴。 */
@@ -140,34 +175,78 @@ export function parseShigyoConsultation(input: {
 
 /** 保存済み連絡先を編集フォームの初期値 (文字列) に変換する。 */
 export function contactToForm(c: ShigyoContactEntry): {
-  name: string; firm: string; phone: string; email: string;
+  name: string; firm: string; phone: string; email: string; monthlyFee: string; outstandingInvoice: string;
 } {
-  return { name: c.name, firm: c.firm, phone: c.phone, email: c.email };
+  // 金額は 0 (未入力) を空欄で出す —— 「0」と刷ると、登録していない人が
+  // 「0 円で契約している」ように読める。古い記録 (欄が無い) も空欄。
+  const yen = (v: number | undefined): string => (typeof v === 'number' && Number.isFinite(v) && v > 0 ? String(v) : '');
+  return {
+    name: c.name,
+    firm: c.firm,
+    phone: c.phone,
+    email: c.email,
+    monthlyFee: yen(c.monthlyFee),
+    outstandingInvoice: yen(c.outstandingInvoice),
+  };
+}
+
+/** 書類の方向の選択肢 (表示順)。型は snapshot の `ShigyoDocument` と同じ 2 値。 */
+export const DOCUMENT_DIRECTIONS: readonly ShigyoDocument['direction'][] = ['received', 'sent'];
+
+function isDocumentDirection(v: unknown): v is ShigyoDocument['direction'] {
+  return v === 'received' || v === 'sent';
+}
+
+/** ユーザー登録の書類 (やり取り中)。 */
+export interface ShigyoDocumentEntry extends Record<string, unknown> {
+  /** どの士業ページの書類か。 */
+  readonly serviceId: ServiceId;
+  readonly title: string;
+  readonly direction: ShigyoDocument['direction'];
+  /** 日付 (YYYY-MM-DD)。 */
+  readonly date: string;
+}
+
+export function parseShigyoDocument(input: {
+  serviceId: ServiceId;
+  title?: unknown;
+  direction?: unknown;
+  date?: unknown;
+}): ShigyoDocumentEntry {
+  const title = typeof input.title === 'string' ? input.title.trim() : '';
+  if (title.length === 0 || moreThanChars(title, MAX_DOCUMENT_TITLE_CHARS)) {
+    throw new Error(`書類名は 1〜${MAX_DOCUMENT_TITLE_CHARS} 文字で入力してください`);
+  }
+
+  if (!isDocumentDirection(input.direction)) throw new Error('方向が不正です');
+
+  const date = typeof input.date === 'string' ? input.date.trim() : '';
+  if (!isCalendarDate(date)) throw new Error(`${calendarDateMessage('日付')} (例: 2026-07-25)`);
+
+  return { serviceId: input.serviceId, title, direction: input.direction, date };
 }
 
 /**
- * **見出しの「連携 N 名」と「月次顧問料」に同梱の見本が混ざっていることの断り**
- * (2026-09-12 · パス 187)。
+ * **見出しの「連携 N 名」に同梱の見本が混ざっていることの断り** (2026-09-12 · パス 187)。
  *
  * `investments.ts` の `demoMixNote` / `fundDemoMixNote` と同じ家系 —— 一覧の行は
- * 「デモ」と印がつくが、**見出しの数と金額には印が付かない**。実測で、自分の
- * 連携先を 1 名登録した人の見出しは「連携 2 名 · 顧問料 ¥33,000/月」になる ——
- * 2 名のうち 1 名は見本で、その ¥33,000 は snapshot の値 (登録した連携先の
- * 顧問料ではない。この画面は連携先ごとの顧問料を持たない)。
+ * 「デモ」と印がつくが、**見出しの数には印が付かない**。
  *
- * 顧問料は見本が 1 件でも在れば見本の値なので、**常に出所を言う**。
+ * **顧問料の主張は 2026-11-18 に落とした** —— 土台 (`buildShigyoSnapshot`) が
+ * 見本の人も金額も持たなくなったので、見出しの顧問料は自分の連携先の合算だけに
+ * なった。「見本の値です」と言い続けると、今度は自分の額を見本だと偽ることに
+ * なる。残る主張は連携先の数の内訳だけである。
  *
  * @param demoCount 同梱の見本の連携先の数
  * @param userCount 利用者が登録した連携先の数
- * @param feeLabel 月次顧問料の表示文字列 (呼び側が `jpy` で整形して渡す)
  */
-export function shigyoDemoMixNote(demoCount: number, userCount: number, feeLabel: string): string | null {
+export function shigyoDemoMixNote(demoCount: number, userCount: number): string | null {
   // **文に NaN を埋めない。** 走査は関門に出てくる `demoCount` / `userCount` を
   // 挙げたが、実測ではどちらが非有限でも「連携 NaN 名」という文章が出ていた。
   if (!Number.isFinite(demoCount) || !Number.isFinite(userCount)) return null;
   if (demoCount === 0) return null;
   if (userCount === 0) {
-    return `表示中の連携先 ${demoCount} 名と月次顧問料 ${feeLabel} は同梱の見本です（自分の連携先はまだ登録されていません）。`;
+    return `表示中の連携先 ${demoCount} 名は同梱の見本です（自分の連携先はまだ登録されていません）。`;
   }
-  return `「連携 ${demoCount + userCount} 名」には同梱の見本 ${demoCount} 名が含まれています（自分が登録した連携先は ${userCount} 名）。月次顧問料 ${feeLabel} は見本の値です。`;
+  return `「連携 ${demoCount + userCount} 名」には同梱の見本 ${demoCount} 名が含まれています（自分が登録した連携先は ${userCount} 名）。`;
 }
