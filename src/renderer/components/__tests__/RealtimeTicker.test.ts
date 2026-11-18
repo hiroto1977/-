@@ -100,6 +100,35 @@ describe('RealtimeTicker', () => {
     expect(points.length).toBeLessThanOrEqual(5);
   });
 
+  it('★ 末尾の点と線は図の枠の中に収まる (右端ちょうどに点を置くと右半分が切れる)', () => {
+    vi.useFakeTimers();
+    const el = render([{ label: 'x', annual: 100_000_000 }], { windowPoints: 5 });
+    act(() => {
+      vi.advanceTimersByTime(20_000);
+    });
+    const svg = el.querySelector('svg');
+    const dot = el.querySelector('circle');
+    const poly = el.querySelector('polyline');
+    expect(svg).not.toBeNull();
+    expect(dot).not.toBeNull();
+    const width = Number(svg?.getAttribute('width'));
+    const cx = Number(dot?.getAttribute('cx'));
+    const r = Number(dot?.getAttribute('r'));
+    expect(width).toBeGreaterThan(0);
+    expect(r).toBeGreaterThan(0);
+    expect(cx + r).toBeLessThanOrEqual(width);
+    expect(cx - r).toBeGreaterThanOrEqual(0);
+    const xs = (poly?.getAttribute('points') ?? '')
+      .trim()
+      .split(/\s+/)
+      .map((pt) => Number(pt.split(',')[0]));
+    expect(xs.length).toBeGreaterThanOrEqual(2);
+    // 線の最後の点と丸の中心は同じ場所 (丸だけ内側へ寄せると線の先とずれる)。
+    expect(xs[xs.length - 1]).toBeCloseTo(cx, 1);
+    expect(Math.min(...xs)).toBeGreaterThanOrEqual(r);
+    expect(Math.max(...xs)).toBeLessThanOrEqual(width - r);
+  });
+
   it('注記を差し替えられる', () => {
     const el = render(ROWS, { note: 'これは注記です' });
     expect(el.textContent).toContain('これは注記です');
