@@ -1,7 +1,7 @@
 /**
  * VoiceCommandBar (round 84) — 音声コマンドの最小 UI。
  *
- * App ヘッダに置くマイクボタン。Web Speech API (`../voice/speechAdapter.ts`)
+ * 殻 (VillageShell) のヘッダーに置くマイクボタン (旧画面では App の topbar)。Web Speech API (`../voice/speechAdapter.ts`)
  * で日本語発話を認識し、純粋ステートマシン (`../data/voiceSession.ts`) を介して
  *   認識テキスト → 解釈結果 → (破壊的なら) 確認ダイアログ → 実行
  * を進める。実行は既存の navigation CustomEvent / `window.serviceHub.invoke`
@@ -23,6 +23,7 @@ import {
 } from '../data/voiceSession';
 import { isExecutableIntent, VoiceIntent } from '../data/voiceCommand';
 import { classifyActionResult } from '../data/actionOutcome';
+import { newConversationWorkRunId, publishConversationWork } from '../data/conversationWork';
 import {
   isSpeechRecognitionSupported,
   startSpeechRecognition,
@@ -79,8 +80,26 @@ async function performIntent(intent: VoiceIntent): Promise<IntentOutcome> {
   // **確認の門と同じ述語を通す** (`isExecutableIntent`)。3 か所が別々の基準で
   // 判定していると「確認を求めないなら実行もされない」を誰も保証できない。
   if (isExecutableIntent(intent)) {
-    const result = await window.serviceHub.invoke(intent.serviceId, intent.action, intent.params ?? {});
+    // 村の景色に「いま実行中」を知らせる (会話の部品 `ChatbotWidget.runIntent` と同じ口)。
+    // 載せるのはサービスと操作名と段階と実行の印だけ —— 話した文も引数も載せない。
+    const runId = newConversationWorkRunId();
+    publishConversationWork({ stage: 'running', serviceId: intent.serviceId, action: intent.action, runId });
+    let result: Awaited<ReturnType<typeof window.serviceHub.invoke>>;
+    try {
+      result = await window.serviceHub.invoke(intent.serviceId, intent.action, intent.params ?? {});
+    } catch (err) {
+      // 橋が reject した (通信断など)。景色を「作業中」で止めず失敗として閉じてから、
+      // 従来どおり呼び出し側へ投げる (文の表示はそちらが持つ)。
+      publishConversationWork({ stage: 'failed', serviceId: intent.serviceId, action: intent.action, runId });
+      throw err;
+    }
     const classified = classifyActionResult(result);
+    publishConversationWork({
+      stage: classified.verdict === 'failed' ? 'failed' : 'done',
+      serviceId: intent.serviceId,
+      action: intent.action,
+      runId,
+    });
     if (classified.verdict === 'failed') {
       return { ok: false, message: `実行できませんでした: ${externalTextOnOneLine(classified.message)}` };
     }
@@ -267,7 +286,7 @@ export function VoiceCommandBar() {
             background: 'var(--panel, rgba(0,0,0,0.05))',
           }}
         >
-          {/* **マイクの声について書く。** この入口は `App.tsx` に載っているので
+          {/* **マイクの声について書く。** この入口は殻のヘッダーに載っているので
               **全画面**に在るのに、2026-09-09 (パス 108) まで何も書いていなかった。
               書き起こす前に音声そのものがブラウザの提供元へ出る場合があり、
               しかも経路は選べない。文面は `shared/voiceEgressNotice.ts`。
