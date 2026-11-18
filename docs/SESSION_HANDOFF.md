@@ -7,6 +7,20 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-11-18 · 続き 7) — 資金調達レーダーに「申請書類の下書き」を足した
+
+- 利用者の依頼: 「資金調達レーダーで全ての事業や業種を踏まえ必要な情報を入力する事で補助金や助成金の申請書類のテンプレートを作ってくれる仕様にして」。
+- **判定と文面**: `src/renderer/data/fundingApplication.ts` (純関数)。`buildApplicationDraft(input, today)` が 8 節の下書きを組み、`applicationDraftMarkdown` が Markdown にする
+  (利用者が打つ欄は 1 行の場所で `escapeMarkdownInline`・段落で `escapeMarkdownText`)。業種は日本標準産業分類の大分類 20 (`INDUSTRIES`・書き方の手がかりつき)。
+  申請額の目安は `expenseTotals` (計算できた形 / できなかった形の 2 つだけを型が持つ —— 申請額と自己負担は必ず一緒)。
+- **画面**: `src/renderer/components/FundingApplicationDraft.tsx` を `FundingPage.tsx` の「使える制度の判定」の下に置いた。数の欄は `GuardedNumber` + `refusingSpecs('save', …)`、
+  文の欄は `CeilingNotice` (切らずに断る)。断りの文は `[data-refused-fields]` も名乗る (関門が「保存できません」と述べた欄を画面の断りが名指しする —— `guardClaimsOnScreen` が全欄で見る)。
+  制度の出典は `externalUrlOrNull` → `VettedLink`。入力は保存せず、端末の外へも送らない。
+- **途中で検査が捕まえた物 (どれも設計どおり)**: 台帳 7 件 (`downloadFilenameCensus`・`markdownExportCensus`・`followableUrlCensus`・`guardUnitCensus`・`guardClaimsOnScreen` ×2・`mutateScopeCensus`)。
+  変異検査の 1 度目は 99.11% (生存 4) —— どれも等価だったので形ごと消した (`isAmount` を `isFiniteNumber` へ・申請額と自己負担を 1 つの形へ) → **100.00% (443 killed)**。`mutate` 371 → 372。
+  実機の検査の `ok(true, …)` は直前が投げる待ちでないと `e2eSuiteFloors` が落とす (待ちを関数に包んだら鳴った)。
+- 実機: `desktop` suite 63 → **67** 件・全 suite **743** 件・床 **631**。スマホ幅 (412px) で資金調達の画面に切れ・横スクロールが無いことを実測。
+
 ## 直近の作業 (2026-11-18 · 続き 6) — スマホ幅で右が切れる表示を直した・Discord を実データへつないだ (読み取り専用)
 
 - 利用者の依頼: 「マージして」(PR #947 = Sentry を取り込んだ · squash `fef88cb`)・「サービスハブの使用感を確かめたい」(公開ページの軽量版の URL と初回の手順を案内した)・

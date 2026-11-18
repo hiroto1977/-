@@ -140,6 +140,7 @@
     "src/renderer/data/financialStatements.ts",
     "src/renderer/data/financialTrend.ts",
     "src/renderer/data/foodDelivery.ts",
+    "src/renderer/data/fundingApplication.ts",
     "src/renderer/data/highlightSettings.ts",
     "src/renderer/data/hydroponicsSetup.ts",
     "src/renderer/data/importFile.ts",

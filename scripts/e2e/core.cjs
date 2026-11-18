@@ -496,6 +496,38 @@ async function desktopSuite(browser) {
   );
   ok(true, 'eligibility: 年齢を直すと判定が戻る');
 
+  // 申請書類の下書き (2026-11-18): 入力 → 下書きが実際に変わるところ。判定と文面は単体の検査が
+  // 値ごと留めているが、欄の state が下書きへ繋がっているかは実ブラウザでしか分からない。
+  const application = page.locator('[data-funding-application]');
+  const draftHas = (t) => document.querySelector('[data-application-draft]')?.textContent?.includes(t) === true;
+  await application.locator('input[aria-label="事業者名"]').fill('E2E商店');
+  await page.waitForFunction(draftHas, '事業者名: E2E商店', { timeout: 15000 });
+  ok(true, 'application: 事業者名を入れると下書きに出る');
+  await application.locator('input[aria-label="費目 1 の名前"]').fill('機械装置費');
+  await application.locator('input[aria-label="費目 1 の金額"]').fill('1,000,000');
+  await application.locator('input[aria-label="補助率"]').fill('50');
+  await page.waitForFunction(draftHas, '申請額の目安: 500,000 円', { timeout: 15000 });
+  ok(true, 'application: 費目と補助率から申請額の目安 (500,000 円) が出る');
+  // ★ 読めない値が在る間は下書きを出さず、保存もできない (直す欄を名指しする)。
+  await application.locator('input[aria-label="補助率"]').fill('半分');
+  await page.waitForFunction(
+    () => document.querySelector('[data-application-withheld]')?.textContent?.includes('補助率') === true,
+    undefined,
+    { timeout: 15000 },
+  );
+  ok(
+    (await page.locator('[data-application-draft]').count()) === 0 &&
+      (await page.locator('[data-save-application]').isDisabled()),
+    'application: ★ 読めない補助率の間は下書きを出さず、保存のボタンも押せない',
+  );
+  await application.locator('input[aria-label="補助率"]').fill('50');
+  await page.waitForFunction(draftHas, '申請額の目安: 500,000 円', { timeout: 15000 });
+  ok(
+    (await page.locator('[data-application-withheld]').count()) === 0 &&
+      !(await page.locator('[data-save-application]').isDisabled()),
+    'application: 補助率を直すと下書きと保存のボタンが戻る',
+  );
+
   // 株主名簿: 人数の増減。単体テストは差分計算だけを見ているので、
   // 「増やした行が書面に出るか」「削除で繰り上がるか」は実ブラウザで確かめる。
   await gotoService(page, '#docstudio', '[data-doc-id="kabunushi-meibo"]');
@@ -5828,7 +5860,7 @@ function installWaitMarginRecorder(browser) {
   const SUITE_TABLE = [
     // desktop: パス 493q で +2 (制度判定の年齢に読めない値を打つと判定を断る・直すと戻る)
     // パス 566-C で +1 (財務データへのマージ復元が T-227 の確認を出すことを見る)
-    ['desktop', desktopSuite, 63],
+    ['desktop', desktopSuite, 67],
     ['manualData', manualDataSuite, 19],
     ['dataOrigin', dataOriginSuite, 9],
     ['credential', credentialSuite, 8],
