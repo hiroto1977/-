@@ -71,7 +71,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `cpa` | professionals | local | none | ✅ |  | ✅ | — | — | — |
 | `cursor` | integrations | remote | fetch |  |  |  | — | — | — |
 | `demae-can` | consumed | sample | none | ✅ |  |  | `advise` `record-entry` | `advise` `record-entry` | — |
-| `discord` | integrations | sample | none |  |  |  | — | — | — |
+| `discord` | integrations | remote | fetch |  |  |  | — | — | — |
 | `docker` | tools | sample | none | ✅ |  |  | — | — | — |
 | `docstudio` | featured | local | none | ✅ |  |  | `list-collections` | — | `list-collections` |
 | `drive` | integrations | remote | fetch |  | ✅ |  | `create-folder` | `create-folder` | — |
@@ -134,8 +134,8 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 集計:
 
 - 配置: おすすめ 12 / 士業連携 8 / 分析・ツール 24 / 外部サービス連携 33 / 消費されるだけ 2
-- 出所: remote 20 / local 27 / sample 32
-- 資格情報の読み手 — fetch 20 / action 7 / none 52
+- 出所: remote 21 / local 27 / sample 31
+- 資格情報の読み手 — fetch 21 / action 7 / none 51
 - LOCAL_SERVICES 56 / OAuth 10 / action を持つ 27 / デスクトップだけの action 10
 
 ## 4. facet の公理と例外
