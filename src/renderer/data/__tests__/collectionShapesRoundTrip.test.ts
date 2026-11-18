@@ -37,6 +37,10 @@ import { parseCustomMetric } from '../overviewOverrides';
 import { parseHighlightSettings } from '../highlightSettings';
 import { HYDROPONICS_DEFAULTS } from '../hydroponicsSetup';
 import { DEFAULT_CROP_LIST } from '../../../shared/hydroponicCrops';
+import { BEE_PLAN_DEFAULTS, FISH_PLAN_DEFAULTS } from '../farmSetup';
+import { BEE_PRODUCT_SPEC, DEFAULT_BEE_PRODUCTS } from '../../../shared/beekeeping';
+import { DEFAULT_FISH_SPECIES, FISH_SPECIES_SPEC } from '../../../shared/aquaculture';
+import { addFarmItem } from '../../../shared/farmProductList';
 import { parseBatch, parseControlRecord, parseReading } from '../hydroponicsLog';
 import { executeFreeConnector } from '../connectorExecution';
 import { FREE_CONNECTOR_REGISTRY } from '../../../shared/connectors/freeConnectors';
@@ -155,6 +159,20 @@ describe('書く側の出力 → collectionShapes (往復)', () => {
     roundTrips('hydroponics-setup', HYDROPONICS_DEFAULTS);
     roundTrips('hydroponics-setup', { ...HYDROPONICS_DEFAULTS, lowPotassium: true, switchDaysBeforeHarvest: 7, measuredPotassiumMgPer100g: 120, measuredSodiumMgPer100g: 10 });
     roundTrips('hydroponics-crops', { crops: DEFAULT_CROP_LIST });
+  });
+
+  it('beekeeping-* / aquaculture-*: 一覧は実物の足す口の結果・概算は置き値 (2026-11-18)', () => {
+    // 一覧は**実物の書き手** (`addFarmItem` の結果) を通す —— 画面が保存するのはこの形である。
+    const bees = addFarmItem(BEE_PRODUCT_SPEC, DEFAULT_BEE_PRODUCTS, { label: 'ローヤルゼリー', yieldPerHiveKg: 0.2, pricePerKgYen: 50000 });
+    expect(bees.ok).toBe(true);
+    roundTrips('beekeeping-products', { products: bees.ok ? bees.items : [] });
+    roundTrips('beekeeping-plan', BEE_PLAN_DEFAULTS);
+    const fish = addFarmItem(FISH_SPECIES_SPEC, DEFAULT_FISH_SPECIES, {
+      label: 'アユ', water: 'fresh', growOutDays: 150, harvestWeightG: 80, survivalPct: 70, feedConversion: 1.5, pricePerKgYen: 3000, tempLowC: 15, tempHighC: 25,
+    });
+    expect(fish.ok).toBe(true);
+    roundTrips('aquaculture-species', { species: fish.ok ? fish.items : [] });
+    roundTrips('aquaculture-plan', FISH_PLAN_DEFAULTS);
   });
 
   it('hydroponics-readings / -batches / -control: 書く側の parse (パス 194)', () => {

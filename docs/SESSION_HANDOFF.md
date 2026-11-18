@@ -7,6 +7,34 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-11-18 · 続き 3) — 水耕栽培の画面に養蜂と養殖 (海水魚・淡水魚) を足した・種類は自由に増減できる
+
+- 利用者の依頼: 「水耕栽培に追加で養蜂、海水魚/淡水魚養殖できるようにしてください。それと水耕栽培/養蜂/養殖する商品の種類を任意で増減できる仕様にして」。
+  PR #944 (LINE) は先に取り込み済み (squash `9688e9f`)。
+- **置き場所**: 新しいサービス id は足さず、`hydroponics` の画面のいちばん上に切り替え (水耕栽培 / 養蜂 / 養殖 (海水魚・淡水魚)) を置いた (`HydroponicsPage` は包みになり、
+  もとの中身は `HydroponicsOperations`)。サイドバーのラベルは「水耕栽培・養蜂・養殖」。サービス数は 79 のまま。
+- **種類の増減**: 一覧の処理を `src/shared/farmProductList.ts` に 1 つ置いた (足す・消す・参考を戻す・最後の 1 件は消せない・同じ名前は断る・上限 50 件・名前 40 文字 ——
+  数は水耕栽培の品目 `hydroponicCrops.ts` と同じ定数を読む)。事業ごとの決まりは `FarmListSpec` で渡す。画面の欄は `components/FarmListEditor.tsx` 1 つ。
+  - 養蜂の産物: `src/shared/beekeeping.ts` (参考 3 件: 百花蜜 / アカシア蜜 / 蜜蝋 —— **置き値**)。
+  - 養殖の魚種: `src/shared/aquaculture.ts` (参考 5 件: ニジマス / ティラピア / ホンモロコ = 淡水、マダイ / ヒラメ = 海水 —— **置き値**)。魚種ごとに海水 / 淡水を持つ。
+  - 水耕栽培の品目の増減は前から在る (経営サマリー → 水耕栽培 → 「品目を増やす・減らす」)。
+- **概算**: 養蜂は群数 × 産物ごとの採取量 × 単価 − 費用 (年間)。養殖は 1 回の出荷まで (出荷尾数 = 尾数 × 生残率・餌 = 出荷量 × 増肉係数) と年換算。
+  **保存した入力からだけ出す** (初期値は置き値なので、保存するまで数字を出さない)。養殖は今日の水温を魚種の目安と比べる (保存しない)。
+- **保存**: collection 4 つ (`beekeeping-products` / `beekeeping-plan` / `aquaculture-species` / `aquaculture-plan`・どれも「最新の 1 件を採用」・`renderer/data/farmSetup.ts`)。
+  一覧の変更は `applyToLatest`、概算の入力は `useLatestForm`。端末の中だけで、外へは送らない。
+- 入力の単位語を 2 つ足した (`inputGuards.ts` の `hives` = 群 / `fishCount` = 尾)。
+- 許可・届出は**判定しない** —— 養蜂 (飼育届) と養殖 (許可・届出・漁業権) は窓口で確かめるよう述べるだけ。
+- 台帳に足した物: 採用の census (collection 4・呼び口 4)・形の表と標本 (23 → 27)・行数の天井・平文の分類・参照の欄 (`aquaculture-plan.speciesId`)・名指しの操作子 (「保存して概算する」)。
+  ★ 数値入力の読み手の走査の針を 1 つ直した (`]` で終わる式の後ろに語の境目を要求していて、`value={form[k]}` の欄がどの読み手にも当たらなかった)。
+- 検証: `farmProductList.test.ts` 54 件・`beekeeping` / `aquaculture` / `farmSetup` 計 66 件・`farmPanels.test.ts` 24 件 (jsdom)・e2e `hydroponics` suite +8 (24 → 32)。
+  変異検査: `farmProductList.ts` / `beekeeping.ts` / `aquaculture.ts` は 1 回目で **100.00%**、`farmSetup.ts` は 96.30% (生存 1 —— `typeof v === 'number' && Number.isFinite(v)` の typeof が等価 →
+  `isFiniteNumber` へ寄せて形ごと消した) → 測り直して `farmSetup.ts` / `inputGuards.ts` とも **100.00% (343 killed)**。`mutate` 364 → 368。
+- 締め (実測): `npm test` **1308 ファイル / 28,583 件 ❌ 0**・`audit:verify-keep-going` **39 / 39** (1 回目は verify:arch の数 3 つ・lint:docs の README のラベル・census の再生成)。
+  両ビルドは **12,276,448 B / 3,689,085 B (両方 +25,349 B)** (md5 `1a042d1c…` / `661c273e…`)。LITE はハード上限 (4,000,000 B) まで 310,915 B。
+  実機: `perf` OK (LITE DCL 304 ms / heap 8.2 MB・FULL DCL 687 ms / heap 30.3 MB)・`e2e` **731 件 ❌ 0**・`e2e:lite` **731 件 ❌ 0**。
+  `smoke:app` / `e2e:ollama` は回していない (主プロセスも Ollama の経路も触っていない)。保護対象は触っていない (`chain:verify` 緑)。
+- 残した物は `docs/REMAINING_WORK.md` の「養蜂・養殖 …」の節 (経営サマリーと書面には未掲載・数値は置き値・養殖の点検は水温だけ・届出の判定なし)。
+
 ## 直近の作業 (2026-11-18 · 続き 2) — LINE を実データへつないだ (読み取り専用)
 
 - 利用者の依頼: 「マージして作業を継続して」。PR #943 (Asana) を取り込み (squash `9768ab0`・`commit_message` を渡したので main の ci / pages / mutation が走った ——

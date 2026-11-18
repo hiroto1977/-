@@ -603,6 +603,8 @@ describe('KIND 表と正規表現の static 変異体を測る (動的 import �
     celsius: '℃', liters: 'L', ppmAir: 'ppm', normality: 'N', ecRise: 'mS/cm',
     // パス 493q: 経営サマリーの養液の点検と、受給判定の年齢
     ec: 'mS/cm', ph: 'pH', age: '歳',
+    // 2026-11-18: 養蜂の群数と、養殖の尾数
+    hives: '群', fishCount: '尾',
   } as const satisfies Record<NumSpec['kind'], string>;
   /** 桁を尋ねる既定。`null` は**種類としては尋ねない** —— 上限は欄の spec が持つ (暦の月・年・団体・戸)。 */
   const SANE = {
@@ -613,12 +615,14 @@ describe('KIND 表と正規表現の static 変異体を測る (動的 import �
     celsius: 60, liters: 100000, ppmAir: 50000, normality: 40, ecRise: 5,
     // 養液の EC / pH は上限を欄の spec (測定の妥当範囲) が持つので、種類としては尋ねない
     ec: null, ph: null, age: 120,
+    hives: 10000, fishCount: 10000000,
   } as const satisfies Record<NumSpec['kind'], number | null>;
   type Kind = keyof typeof UNITS;
   const KINDS = Object.keys(UNITS) as Kind[];
   /** 整数を求める種類 (数えられる物)。 */
   const INTEGER: ReadonlySet<Kind> = new Set<Kind>([
     'people', 'days', 'tiers', 'times', 'municipalities', 'dwellings', 'calendarMonth', 'calendarYear', 'age',
+    'hives', 'fishCount',
   ]);
 
   it('kind ごとの単位・マイナス・0・整数・上限・桁ミスの既定が写しと一致する', async () => {

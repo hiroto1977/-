@@ -191,6 +191,15 @@ const FIELD_SHAPES: Readonly<Record<string, CollectionShape>> = {
   // 品目の 1 件ずつは読む側 (`sanitizeCropList`) が落とす。ここは配列であることだけ。
   'hydroponics-crops': shape({ crops: opt(arr) }),
   /*
+   * 養蜂・養殖 (2026-11-18)。一覧の 1 件ずつは読む側 (`sanitizeFarmList`) が落とす —— ここは配列で
+   * あることだけ。概算の入力は数であること (読む側は `nonNeg` を通すが、文字列が入ると掛け算が
+   * 文字列連結になるので入口で断る)。
+   */
+  'beekeeping-products': shape({ products: opt(arr) }),
+  'beekeeping-plan': shape({ hives: num, costPerHiveYen: num, fixedCostYen: num }),
+  'aquaculture-species': shape({ species: opt(arr) }),
+  'aquaculture-plan': shape({ speciesId: str, stockCount: num, fryYenPerFish: num, feedYenPerKg: num, otherCostYen: num }),
+  /*
    * 運転管理 (2026-09-13 ・ パス 194)。
    *
    * - 測定: `at` は**暦に在る日**。`values` の中身は読む側

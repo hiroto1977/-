@@ -159,7 +159,7 @@ const SERVICE_ALIASES: Readonly<Record<ServiceId, readonly string[]>> = {
   grok: ['ぐろっく', 'ぐろっくえーあい', 'grok', 'ぐろく', 'xai', 'えっくすえーあい'],
   vrio: ['ぶりお', 'ぶりおぶんせき', 'vrio', 'じんじひょうか', '人事評価', 'きかくひょうか', '企画評価'],
   mentor: ['かうんせらー', 'せんぞくかうんせらー', '専属カウンセラー', 'めんたー', 'mentor', 'counselor', 'そうだんやく'],
-  hydroponics: ['すいこうさいばい', '水耕栽培', '水耕', 'ようえき', '養液', 'ようえきかんり', 'ec', 'ph', 'ざっしょく', '植物工場', 'hydroponics'],
+  hydroponics: ['すいこうさいばい', '水耕栽培', '水耕', 'ようえき', '養液', 'ようえきかんり', 'ec', 'ph', 'ざっしょく', '植物工場', 'hydroponics', 'ようほう', '養蜂', 'はちみつ', 'ようしょく', '養殖'],
   templates: ['テンプレート', 'てんぷれーと', 'templates', '雛形', 'ひながた', 'template'],
   library: ['ライブラリ', 'らいぶらり', 'library', '資料', 'しりょう'],
   settings: ['設定', 'せってい', 'settings', 'こんふぃぐ', 'setting'],

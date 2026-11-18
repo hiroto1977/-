@@ -10,6 +10,8 @@ import { useServiceData } from '../hooks/useServiceData';
 import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
 import { useLatestForm } from '../data/useLatestForm';
+import { BeekeepingPanel } from '../components/BeekeepingPanel';
+import { AquaculturePanel } from '../components/AquaculturePanel';
 import { ChangedLatestNote } from '../components/ChangedLatestNote';
 import { SNAPSHOT } from '../data/snapshot';
 import { localIsoDate } from '../../shared/localDate';
@@ -159,7 +161,48 @@ interface BatchForm {
   note: string;
 }
 
+/** 画面の 3 つの面。 */
+const FARM_VIEWS = ['hydroponics', 'beekeeping', 'aquaculture'] as const;
+type FarmView = (typeof FARM_VIEWS)[number];
+
+const FARM_VIEW_LABELS: Readonly<Record<FarmView, string>> = {
+  hydroponics: '水耕栽培',
+  beekeeping: '養蜂',
+  aquaculture: '養殖 (海水魚・淡水魚)',
+};
+
+/**
+ * 水耕栽培・養蜂・養殖の画面。上のボタンで 3 つの面を切り替える (2026-11-18)。
+ *
+ * 開いたときは水耕栽培 (これまでの画面そのまま)。養蜂と養殖は、種類の一覧 (増やす・減らす) と
+ * 収支の概算を持つ。選んだ面は保存しない —— 開くたびに水耕栽培から始まる。
+ */
 export function HydroponicsPage() {
+  const [view, setView] = useState<FarmView>('hydroponics');
+  return (
+    <div data-farm-page={view}>
+      <div role="group" aria-label="表示する事業" data-farm-views style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '0 0 12px' }}>
+        {FARM_VIEWS.map((v) => (
+          <button
+            key={v}
+            type="button"
+            aria-pressed={view === v}
+            data-farm-view={v}
+            className={view === v ? 'primary' : undefined}
+            onClick={() => setView(v)}
+          >
+            {FARM_VIEW_LABELS[v]}
+          </button>
+        ))}
+      </div>
+      {view === 'hydroponics' && <HydroponicsOperations />}
+      {view === 'beekeeping' && <BeekeepingPanel />}
+      {view === 'aquaculture' && <AquaculturePanel />}
+    </div>
+  );
+}
+
+function HydroponicsOperations() {
   const { data, source, status, errorMessage, refresh } = useServiceData('hydroponics', SNAPSHOT.hydroponics);
 
   const readingCol = useCollection<HydroponicReadingRecord>(HYDROPONICS_READINGS_COLLECTION);

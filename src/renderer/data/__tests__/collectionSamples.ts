@@ -140,6 +140,19 @@ export const SAMPLES: Readonly<Record<string, Sample>> = {
     ],
   },
   'hydroponics-crops': { good: { crops: [] }, required: [], optional: ['crops'] },
+  // 養蜂・養殖 (2026-11-18)。一覧はまるごと 1 記録・概算の入力は別の collection。
+  'beekeeping-products': { good: { products: [] }, required: [], optional: ['products'] },
+  'beekeeping-plan': {
+    good: { hives: 10, costPerHiveYen: 15000, fixedCostYen: 200000 },
+    required: ['hives', 'costPerHiveYen', 'fixedCostYen'],
+    optional: [],
+  },
+  'aquaculture-species': { good: { species: [] }, required: [], optional: ['species'] },
+  'aquaculture-plan': {
+    good: { speciesId: 'rainbow-trout', stockCount: 5000, fryYenPerFish: 30, feedYenPerKg: 200, otherCostYen: 300000 },
+    required: ['speciesId', 'stockCount', 'fryYenPerFish', 'feedYenPerKg', 'otherCostYen'],
+    optional: [],
+  },
   // 運転管理 (2026-09-13 ・ パス 194)。
   'hydroponics-readings': {
     good: { at: '2026-09-13', values: { ec: 1.0, ph: 6.0, co2Ppm: null }, batchId: 'b1', note: 'n' },

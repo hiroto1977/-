@@ -24,6 +24,21 @@
   ★ 差出人の読みは振る舞いを 1 つ強くした: `表示名 <アドレス>` の後ろに字が続く形・前に別の `<…>` が在る形でも、最後の `<アドレス>` と表示名を比べる (以前は比べずに通していた)。
   2 度目 **99.76% (生存 1 —— 件名と本文のつなぎ目)** → 標本を足して 3 度目に `inboundWatch.ts` を単独で測り直し、3 本とも `mutate` へ入れた (357 → 360)。
 
+## 養蜂・養殖 (海水魚・淡水魚) を水耕栽培の画面へ足して、測って残した物 (2026-11-18)
+
+- **経営サマリー・金融機関等提出用の書面・経営レポートには載せていない**: 養蜂と養殖の概算は「水耕栽培・養蜂・養殖」の画面の中だけに出る。
+  水耕栽培の計画は経営サマリーの「参考 (水耕栽培の計画)」に載るが、養蜂・養殖は載らない。載せるなら、置き値を書面へ流さない門 (保存した入力だけを使う) を同じ形で通す。
+- **参考の一覧の数値は置き値で、出典を持たない**: 養蜂の採取量・単価 (百花蜜 / アカシア蜜 / 蜜蝋)、養殖の日数・重さ・生残率・増肉係数・単価・水温の目安
+  (ニジマス / ティラピア / ホンモロコ / マダイ / ヒラメ) は、入力欄を埋めやすくするための値。画面がそう述べる。確証つきコーパスには入れていない (独立 2 出典を確かめていない)。
+- **養殖で点検するのは水温だけ**: 塩分・溶存酸素・アンモニア・pH は見ない。水温の値は保存しない (その場の点検)。水耕栽培のような毎日の測定の記録・作業リスト・日程は、養蜂にも養殖にも無い。
+- **養殖の概算の式は簡略**: 餌の量 = 出荷量 × 増肉係数 (種苗の重さを差し引かず、途中で死んだ魚が食べた餌を数えない)。年換算は「同じ規模で途切れず続けた場合」。画面の但し書きがそう述べる。
+- **許可・届出の要否は判定しない**: 養蜂 (養蜂振興法の飼育届) と養殖 (許可・届出・漁業権) は、窓口で確かめるよう述べるだけ。条文の出典つきの項目としてコーパスに足すなら、独立 2 出典 (うち公的 1) を確かめてから。
+- **水耕栽培の品目の増減は、今も経営サマリーの側に在る** (「水耕栽培」→「品目を増やす・減らす」)。養蜂の産物・養殖の魚種は同じ画面の中で増減する。置き場所が 2 つに分かれている —— 水耕栽培の品目の欄を運転管理の画面にも出すかは未着手。
+- **一覧の上限と名前の決まりは水耕栽培の品目と同じ数を読む** (50 件・40 文字・`custom-<n>`)。別の上限が要る事業が出たら `FarmListSpec` に持たせる。
+- **数値入力の読み手の走査の針を 1 つ直した**: 値の式が `]` で終わる欄 (`value={form[k]}`) は、後ろに語の境目を要求していたのでどの読み手にも当たらなかった
+  (`numericInputReaderCensus.test.ts`)。直した後も、既存のファイルの答えは変わっていない (12 件とも緑)。`FarmListEditor` の欄は `value={numbers[f] ?? ''}` で、この走査の母集団に入らない (読み手は `parseCropNumber` = `readNumeric`)。
+- **実機で確かめたのは**: 切り替え・産物を足す / 消す・保存して概算・海水魚を足す・足した魚種で概算 (e2e の `hydroponics` suite に 8 件)。水温の点検と「参考を戻す」は jsdom の検査だけ。
+
 ## LINE の実データ接続で測って残した物 (2026-11-18)
 
 - **本物の LINE との往復は未確認**: 開発環境から `api.line.me` へ届かない。応答の形は公開の Messaging API の仕様に合わせた標本で、実物の応答では確かめていない。
@@ -32772,7 +32787,7 @@ src/shared/ のモジュール                                        138
 「読んだ結果」か `未読 (…)` のどちらかで、読んでいない物に「対称だろう」とは書かない。
 
 <!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/shared-judgement-census.cjs。npm run lint:shared-judgement は check だけ) -->
-shared **189** モジュール / 両ビルドが import **103** / うち否定で答えられる **52**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
+shared **192** モジュール / 両ビルドが import **103** / うち否定で答えられる **52**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
 
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |
@@ -32801,7 +32816,7 @@ shared **189** モジュール / 両ビルドが import **103** / うち否定�
 | `funding` | 1 | 2 | 一部読んだ (パス 265) —— 否定で答える 2 つのうち、`fundingLinkSource` は **両ビルドが同じ実装を読む** (画面が 1 つしか無いので、文言も判定も共有)。ただし `sample` を作れるのは**デスクトップ版だけ**である —— ブラウザ版の web-shim は funding に枝を持たず `not_implemented` を返すので、画面は同梱の 控え (`accountingSource: 'none'`) を見続ける。**意図した非対称**で、その原因はデスクトップの fetcher が見本の Map を渡すこと (Phase 6 の 実 API 差込みまで) のほうに在る。もう 1 つ (`isSpecifiedIncome` 系の判定) は未読 |
 | `headerValue` | 0 | 1 | 対称 (パス 296 で**そう作った**) —— 「`Headers` がこの値を受理するか」の規則で、境界を越えるのは `shared/tokenInput.ts` 経由の 1 本だけ。そこは実測で**同一の 1 行**: main が `return { ok: false, code: 'invalid_token', message: checked.message }` (main/main.ts:348-350)、ブラウザ版も同じ code と同じ message (web-shim.ts:1154-1155)。残る 2 つの読み手は越境しない —— `shared/proxyEndpoint.ts` の消費者は renderer だけ (network/proxy.ts / SettingsPage.tsx。aiEndpoint の行が同じ事実を既に述べている)、`parseProxyEnvelope` は renderer にしか無い。この pass の前は**規則が 3 通りに割れていた** —— 応答側は Latin1 を見て (パス 295)、資格情報の入口は C0/DEL だけ、共有秘密は型と長さだけ。1 つに寄せた |
 | `httpLimits` | 10 | 8 | 対称 (実測・パス 282 で総当たりにした) —— 呼び出し側の網は両ビルドに在る (パス 249 で訂正。ブラウザ版は webShimTimeouts.test.ts)。 ★ パス 248 は「手で選んだ 3 経路だけで母集団の総当たりではない」と**自分で認めていた**。パス 282 でその総当たりをやったら、**認めていた穴の中に生きた欠陥が 1 件**在った —— `main/main.ts` の `app:checkUpdate` が `AbortSignal.timeout(10_000)` という**裸の数**で、ブラウザ版の同じ口 (`web-shim.ts` の `checkUpdate` → `timedFetch`) は `DEFAULT_HTTP_TIMEOUT_MS` (30 秒) を読んでいた。**同じ問いに 3 倍違う締切**で、遅い回線で先に諦めるのは「新しい版が出た」を受けて実際に更新できる**デスクトップ版**の側だった。しかも同じ関数の 3 行下の注記が 2026-08-31 に**本文の上限**の同じ食い違いを直したときのもので、そこに「同じ問いに答えが 2 つある状態を残さない —— 実行対象が違うだけで判断が変わる理由が無い」と書いてある —— **その直しは 1 行手前で止まっていた**。 直しと同時に `shared/__tests__/deadlineCensus.test.ts` が母集団を走査する: 締切を作る 4 形 (`AbortSignal.timeout` / `withBodyDeadline` / `withTimeout` / `timeoutMs`) の時間の引数が**名前**であること (値の一致は要求しない —— `AI_CHAT_TIMEOUT_MS` の 2 分のように意図して違う締切は在る。名前が付いていれば理由が定義の隣に書ける)。実測 24 呼び出し・裸の数 0 件・例外の台帳 0 件 |
-| `hydroponicCrops` | 0 | 4 | 非対称は起きない (実測・パス 272) —— **到達の鎖を端まで辿った**: main → `clients/hydroponics.ts` → `hydroponicsControl` → `hydroponicCrops` → {`hydroponics`, `readNumeric`}。main が import するのは **`buildHydroponicsSnapshot` 1 つだけ**で (`clients/hydroponics.ts:1` — 残りは再輸出と型)、その関数の本体は `READING_FIELDS.map(...)` と `DEFAULT_CROP_LIST.map(...)` の **2 つの射影しか無い** (実測。否定で答える関数を 1 つも呼ばない)。つまり **main 側はこのモジュールの問いを 1 度も発しない** —— `hydroponicsControl` (パス 268) と同じ形。2026-09-23 (パス 420) に renderer 側の読み手が 3 → 4 になった (`data/hydroponicsLog.ts` が `CROP_ID_RE` を読み、ロットの `cropId` が**参照先と同じ形**であることを要求する) が、**main の側は 1 つも増えていない** —— 実測で `cropIdText` / `MAX_CROP_ID_CHARS` の `src/main/` からの参照は **0 件**である。 |
+| `hydroponicCrops` | 0 | 5 | 非対称は起きない (実測・パス 272) —— **到達の鎖を端まで辿った**: main → `clients/hydroponics.ts` → `hydroponicsControl` → `hydroponicCrops` → {`hydroponics`, `readNumeric`}。main が import するのは **`buildHydroponicsSnapshot` 1 つだけ**で (`clients/hydroponics.ts:1` — 残りは再輸出と型)、その関数の本体は `READING_FIELDS.map(...)` と `DEFAULT_CROP_LIST.map(...)` の **2 つの射影しか無い** (実測。否定で答える関数を 1 つも呼ばない)。つまり **main 側はこのモジュールの問いを 1 度も発しない** —— `hydroponicsControl` (パス 268) と同じ形。2026-09-23 (パス 420) に renderer 側の読み手が 3 → 4 になった (`data/hydroponicsLog.ts` が `CROP_ID_RE` を読み、ロットの `cropId` が**参照先と同じ形**であることを要求する) が、**main の側は 1 つも増えていない** —— 実測で `cropIdText` / `MAX_CROP_ID_CHARS` の `src/main/` からの参照は **0 件**である。 |
 | `hydroponics` | 0 | 3 | 非対称は起きない (実測・パス 272) —— `hydroponicCrops` と同じ鎖の先に在る (main → clients/hydroponics.ts → hydroponicsControl → hydroponicCrops → ここ)。main が import する `buildHydroponicsSnapshot` は 2 つの定数表を射影するだけで、この鎖の否定で答える関数を 1 つも呼ばない (実測) |
 | `hydroponicsControl` | 1 | 6 | 非対称は起きない (実測・パス 268) —— 否定で答える 7 つ (`readingFromStored` / `batchFromStored` / `batchSchedule` / `nextSolutionChange` / `lowPotassiumSwitchDate` / `latestReading` / `isBatchState`) の**消費者は renderer だけ** (hydroponicsLog.ts / HydroponicsPage.tsx —— **左の数は importer 全体を数えるので、この 2 本より多い**。2026-09-23 (パス 421) に 5 → 6 になったのは `OverviewPage.tsx` が `cropIdText` を読んだためで、それは `null` を返さないので 7 つには入らない)。main が import するのは `buildHydroponicsSnapshot` と型 2 つだけで、その関数は READING_FIELD_SPECS / DEFAULT_* / DEFAULT_CROP_LIST を**射影する純関数** (否定で答える関数を 1 つも呼ばない —— 実測)。測定記録とロットは業務レコード (IndexedDB) に在り main は触らないので、**main 側がこの問いを 1 度も発しない** |
 | `inputCeiling` | 14 | 56 | 対称 (実測・パス 281 で測り直した) —— 天井と床の判定そのもの (countChars / clampToCeiling / atLeastChars / moreThanChars)。否定 (false) はどのビルドでも「天井を超えていない」「床を満たさない」の 1 つの意味しか持たず、**動作を決めるのは呼ぶ側**である。 ★ **パス 281 の訂正**: ここには「呼ぶ側の対称性は ceilingUnitCensus.test.ts が母集団で見る (両方向の台帳)」と書いてあった —— **その検査は呼ぶ側の対称性を見ていない**。あちらが数えるのは「文字で数えると宣言した定数が `.length` の比較か`.slice(` の引数に現れる」箇所、つまり**単位**であって、ビルド間の非対称ではない(あちらの冒頭が自分で「数えていなかったのは単位である」と述べている)。`controlChars` (パス 280) と同じ「別の物へ預けた」形。 ★ 実測 (パス 281): 4 つの述語のうち**ビルドの境を越えるのは 2 つだけ** —— `countChars` と `clampToCeiling` は main (assistant / skills / emotions / ollama / templates) と web-shim の両側から呼ばれる。`atLeastChars` / `moreThanChars` は**main からも web-shim からも 1 度も呼ばれない** (2026-09-23 · パス 422 に再実測して 0 件)。 ★ **パス 422 の訂正**: ここには「呼び手は `renderer/security/vault.ts` **1 ファイルだけ**」と書いてあった —— **今日の実測は 9 ファイル**である (入口の天井が `.length` から `moreThanChars` へ移った分)。**判定は変わらない**が、散文が名前を並べていたので数が動いた日に偽になった (パス 419 / 421 と同じ家系)。**左の数は importer 全体を数える** —— 名前を並べるのをやめ、非対称かどうかを決める事実 (main 側の呼び出しが 0 件であること) だけを書く。デスクトップ版にマスターパスワードは無く、記録の入口は renderer 側にしか無いので、**この 2 つに main 側の双子が存在しない**。越える 2 つについては天井の定数が `shared/` に 1 つずつ在り、**同じ定数を両側が読む** (ollama の prompt/system は `shared/ollama.ts`・assistant は `shared/assistantLimits.ts`・emotions は `shared/emotionsLimits.ts`)。数の一致は `ceilingLiteralCensus` が、単位の一致は `ceilingUnitCensus` が見る |

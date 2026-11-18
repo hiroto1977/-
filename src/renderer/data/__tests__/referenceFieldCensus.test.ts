@@ -73,6 +73,13 @@ const LEDGER: readonly Row[] = [
     why: 'パス 421 —— 入口 (`OverviewPage` の保存) は**解決した品目の id** を書くので構造的に安全だが、復元で入った値は「一覧にありません」の 1 文に載る。天井は `cropIdText`。',
   },
   {
+    collection: 'aquaculture-plan', field: 'speciesId', kind: 'resolved-not-printed',
+    refersTo: '魚種の一覧の id (`CROP_ID_RE` と同じ形)',
+    why: '2026-11-18 —— 読み手は `resolveSpecies` (= `findFarmItem`) で一覧の魚種へ解決し、見つからなければ一覧の先頭へ落ちる。'
+      + '画面が刷るのは解決した魚種の名前 (入口で 40 字まで) で、**保管した id そのものは刷らない** '
+      + '(一覧に無いときの断り `[data-fish-species-missing]` も id を名乗らない)。',
+  },
+  {
     collection: 'hydroponics-readings', field: 'batchId', kind: 'resolved-not-printed',
     refersTo: 'ロットの id',
     why: '実測 —— 200,000 字を入れても画面に 1 文字も届かない (読み手は `batches.items.find` で解決し、見つからなければ `undefined` へ落ちる)。文へ入れる所は `batchIdText` を通る。',
