@@ -17,6 +17,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
 import { BROWSER_FETCH_UNSUPPORTED_NOTE, BROWSER_LIVE_READ_SERVICES } from '../../../shared/browserFetchReach';
 import { SERVICE_DATA_ORIGIN } from '../../../shared/dataOrigin';
+import { SNAPSHOT } from '../../data/snapshot';
 import { settleUntil } from '../../__tests__/jsdomWait';
 
 const UNREADABLE = Object.entries(SERVICE_DATA_ORIGIN)
@@ -28,6 +29,8 @@ let version = '0.1.0-web';
 let configured: string[] = [];
 let asked: string[] = [];
 let versionAsked = 0;
+const UNSUPPORTED = { ok: false, code: 'not_implemented', message: BROWSER_FETCH_UNSUPPORTED_NOTE };
+let answer: unknown = UNSUPPORTED;
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -38,7 +41,7 @@ beforeAll(() => {
     listConfigured: () => Promise.resolve([...configured]),
     fetchSnapshot: (id: string) => {
       asked.push(id);
-      return Promise.resolve({ ok: false, code: 'not_implemented', message: BROWSER_FETCH_UNSUPPORTED_NOTE });
+      return Promise.resolve(answer);
     },
     invoke: () => Promise.resolve({ ok: false, code: 'x', message: 'x' }),
     openExternal: () => Promise.resolve(),
@@ -56,6 +59,7 @@ beforeEach(() => {
   configured = [...UNREADABLE];
   asked = [];
   versionAsked = 0;
+  answer = UNSUPPORTED;
   container = document.createElement('div');
   document.body.appendChild(container);
 });
@@ -103,18 +107,18 @@ describe('ブラウザ版で実データを読めない連携先の画面', () =
     });
   }
 
-  it('対照: デスクトップ版の同じ画面 (GitHub) には「更新」が在り、押す前に案内は出ない', async () => {
+  it('対照: デスクトップ版の同じ画面 (GitHub) は、資格情報を保存済みなら「更新」が在り、この案内は出ない', async () => {
     version = '0.1.0';
-    configured = [];
+    configured = ['github'];
+    // デスクトップ版の橋は取得できる —— ここでは同梱の内容をそのまま返す。
+    answer = { ok: true, data: SNAPSHOT.github };
     await open('github');
-    // 実行形態の問い合わせが済むのを待ってから見る (済む前は、どちらの版でも案内は出ない)。
-    await settleUntil(() => versionAsked >= 1 && hasRefresh(), 'github: 実行形態を訊き終え、「更新」が在る');
+    // 開いただけで取得が走り (鍵が在る)、その答えが届いて札が「ライブ」になるまで待つ。
+    await settleUntil(() => versionAsked >= 1 && asked.includes('github') && badge() === 'ライブ', 'github: 取得の答えが届く');
     await act(async () => {
       await Promise.resolve();
     });
     expect(notes()).toEqual([]);
     expect(hasRefresh()).toBe(true);
-    expect(badge()).toBe('サンプル（未連携）');
-    expect(asked).toEqual([]); // 資格情報が無ければ、開いただけでは取得しない
   });
 });
