@@ -124,7 +124,8 @@ export function CropListEditor({ crops, changeCrops, seed, onAdded, removedNote 
 
   return (
     <details data-crop-list-editor style={{ marginBottom: 10 }}>
-      <summary style={{ fontSize: 12, color: 'var(--text-mute)', cursor: 'pointer', minHeight: 24 }}>
+      {/* 見出しは本文の色で少し太く —— 薄い小さな字だと、品目を選ぶ欄のすぐ上に在っても見落とす。 */}
+      <summary style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', cursor: 'pointer', minHeight: 24 }}>
         品目を増やす・減らす（現在 {crops.length} 品目）
       </summary>
       <div style={{ padding: '8px 0 0', display: 'flex', flexDirection: 'column', gap: 8 }}>
