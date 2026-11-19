@@ -6,7 +6,7 @@
  * 判定はこの関数 1 つで、状態バーがそれを読んで「更新」を出さず、灰色の案内を出す。
  */
 import { describe, expect, it } from 'vitest';
-import { FETCH_NEEDS_CREDENTIAL_NOTE, fetchNeedsCredentialNote } from '../fetchNeedsCredential';
+import { FETCH_NEEDS_CREDENTIAL_NOTE, fetchNeedsCredentialNote, reentryFixesFetch } from '../fetchNeedsCredential';
 import { SERVICE_IDS } from '../serviceId';
 import { originOf, type DataOrigin } from '../dataOrigin';
 import { credentialUseOf, type CredentialUse } from '../credentialUse';
@@ -74,5 +74,40 @@ describe('実物の台帳 —— 連携先の画面はどれも取得に資格�
     expect(hit).toEqual([]);
     // 対照が空で通らないこと: 連携先でなく資格情報を預かるサービスが実在する。
     expect(others.some((id) => credentialUseOf(id) !== 'none')).toBe(true);
+  });
+});
+
+describe('reentryFixesFetch —— 取得が認証で断られたとき、登録の欄へ入れ直すと直るか', () => {
+  const USES = ['fetch', 'action', 'none'] as const;
+
+  it('★ 12 通りのうち、直ると言うのは 1 通りだけ (取得に使う × 欄が在る × 認証で断られた)', () => {
+    const yes: string[] = [];
+    for (const use of USES) {
+      for (const hasSlot of [true, false]) {
+        for (const authFailed of [true, false]) {
+          if (reentryFixesFetch(use, hasSlot, authFailed)) yes.push(`${use}/${hasSlot}/${authFailed}`);
+        }
+      }
+    }
+    expect(yes).toEqual(['fetch/true/true']);
+  });
+
+  it('認証で断られていなければ言わない (レート制限・網の不調は入れ直しても直らない)', () => {
+    expect(reentryFixesFetch('fetch', true, false)).toBe(false);
+  });
+
+  it('登録の欄が無ければ言わない (入れ直す場所が無い)', () => {
+    expect(reentryFixesFetch('fetch', false, true)).toBe(false);
+  });
+
+  it('★ 欄が AI の鍵 (使い道が action) の画面では言わない —— 取得はその鍵を使わない', () => {
+    expect(reentryFixesFetch('action', true, true)).toBe(false);
+    expect(reentryFixesFetch('none', true, true)).toBe(false);
+  });
+
+  it('実物の台帳: 欄を持ちうるサービスは fetch と action の両方が実在する (片方だけなら上の区別は空になる)', () => {
+    const uses = new Set(SERVICE_IDS.map((id) => credentialUseOf(id)));
+    expect(uses.has('fetch')).toBe(true);
+    expect(uses.has('action')).toBe(true);
   });
 });

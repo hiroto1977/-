@@ -363,7 +363,7 @@ const EMPTY_PROPERTY_FORM = {
 };
 
 export function RealEstatePage() {
-  const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
+  const { data, source, status, errorMessage, errorKind, refresh, isConfigured } = useServiceData(
     'real-estate',
     SNAPSHOT.realEstate,
   );
@@ -789,6 +789,7 @@ export function RealEstatePage() {
         source={source}
         status={status}
         errorMessage={errorMessage}
+        errorKind={errorKind}
         isConfigured={isConfigured}
         onRefresh={refresh}
         who={<>不動産投資 · {properties.length} 物件 / 月次 CF {jpy(portfolio.netCashflow)}</>}

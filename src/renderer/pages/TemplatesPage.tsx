@@ -49,7 +49,7 @@ function svgDataUrl(svg: string): VettedImageSrc | undefined {
 export function TemplatesPage() {
   /** どの実行形態か (パス 161)。分かるまでは null —— 実行形態に依る文を出さない。 */
   const buildKind = useBuildKind();
-  const { data, source, status, errorMessage, refresh } = useServiceData<TemplatesSnapshot>(
+  const { data, source, status, errorMessage, errorKind, refresh } = useServiceData<TemplatesSnapshot>(
     'templates',
     SNAPSHOT.templates,
   );
@@ -151,6 +151,7 @@ export function TemplatesPage() {
         source={source}
         status={status}
         errorMessage={errorMessage}
+        errorKind={errorKind}
         isConfigured
         onRefresh={refresh}
       />

@@ -42,3 +42,22 @@ export function fetchNeedsCredentialNote(
   if (configured) return null;
   return FETCH_NEEDS_CREDENTIAL_NOTE;
 }
+
+/**
+ * 取得が認証で断られたとき、この画面の登録の欄へ入れ直すと直るか。
+ *
+ * 直るのは、取得そのものが資格情報を使う画面 (`credentialUse` が 'fetch') だけ。使い道が 'action' の画面
+ * (株式・事業ダッシュボード・スキル・感情ログほか) の欄は AI の鍵で、取得には使わない —— 取得の失敗で
+ * その欄を開いて「再認証」と言うと、直らない手へ誘うことになる。
+ *
+ * 状態バーはこの答えで、登録の欄を自動で開くか・ボタンを「再認証」と呼ぶかを決める。
+ * 札 (「認証エラー」) は失敗の種類そのものなので、この答えに依らない。
+ *
+ * @param hasSlot    この画面に資格情報を登録する欄が在るか
+ * @param authFailed 取得が認証で断られたか (失敗の種類が 'auth')
+ */
+export function reentryFixesFetch(use: CredentialUse, hasSlot: boolean, authFailed: boolean): boolean {
+  if (!authFailed) return false;
+  if (!hasSlot) return false;
+  return use === 'fetch';
+}

@@ -31,7 +31,7 @@ const gb = (n: number) => `${n.toFixed(1)} GB`;
 const MEMORY_WARN_PCT = 80;
 
 export function StoragePage() {
-  const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
+  const { data, source, status, errorMessage, errorKind, refresh, isConfigured } = useServiceData(
     'storage',
     SNAPSHOT.storage,
   );
@@ -49,6 +49,7 @@ export function StoragePage() {
         source={source}
         status={status}
         errorMessage={errorMessage}
+        errorKind={errorKind}
         isConfigured={isConfigured}
         onRefresh={refresh}
         who={<>ストレージ最適化 · 解放見込み {mb(totalPotentialFreeMb)}</>}

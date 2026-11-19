@@ -24,7 +24,7 @@ import {
  *   実行形態がまだ分からない間も述べない —— `useBuildKind` と同じ天秤)。
  */
 export function DiscordPage() {
-  const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
+  const { data, source, status, errorMessage, errorKind, refresh, isConfigured } = useServiceData(
     'discord',
     SNAPSHOT.discord,
   );
@@ -40,6 +40,7 @@ export function DiscordPage() {
         source={source}
         status={status}
         errorMessage={errorMessage}
+        errorKind={errorKind}
         isConfigured={isConfigured}
         onRefresh={refresh}
         who={<>Discord · サーバー {guilds.length} 件</>}

@@ -70,7 +70,7 @@ function Tile({ label, value, sub, name }: { label: string; value: string; sub: 
 }
 
 export function A8netPage() {
-  const { source, status, errorMessage, refresh, isConfigured } = useServiceData('a8net', SNAPSHOT.a8net);
+  const { source, status, errorMessage, errorKind, refresh, isConfigured } = useServiceData('a8net', SNAPSHOT.a8net);
   const { records, add, edit, remove } = useCollection<A8netRewardEntry>(A8NET_REWARDS_COLLECTION);
   const rowWindow = useRowWindow(records);
   const summary = useMemo(() => summarizeA8netRewards(records.map((r) => r.data)), [records]);
@@ -123,6 +123,7 @@ export function A8netPage() {
         source={source}
         status={status}
         errorMessage={errorMessage}
+        errorKind={errorKind}
         isConfigured={isConfigured}
         onRefresh={refresh}
         who={

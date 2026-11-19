@@ -12,7 +12,7 @@ const VERDICT_COLOR: Record<string, string> = {
 };
 
 export function QualityPage() {
-  const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
+  const { data, source, status, errorMessage, errorKind, refresh, isConfigured } = useServiceData(
     'quality',
     SNAPSHOT.quality,
   );
@@ -27,6 +27,7 @@ export function QualityPage() {
         source={source}
         status={status}
         errorMessage={errorMessage}
+        errorKind={errorKind}
         isConfigured={isConfigured}
         onRefresh={refresh}
         who={<>品質ダッシュボード · commit {latestCommit} · Mutation {mutation.score.toFixed(2)}%</>}

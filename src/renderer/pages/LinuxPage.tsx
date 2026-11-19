@@ -26,7 +26,7 @@ const perCoreColor = (n: number | null): string | undefined =>
   n === null ? undefined : n >= 100 ? 'var(--danger)' : n >= 70 ? 'var(--warning)' : 'var(--success)';
 
 export function LinuxPage() {
-  const { data, source, payloadIsMock, status, errorMessage, refresh, isConfigured } = useServiceData(
+  const { data, source, payloadIsMock, status, errorMessage, errorKind, refresh, isConfigured } = useServiceData(
     'linux',
     SNAPSHOT.linux,
   );
@@ -41,6 +41,7 @@ export function LinuxPage() {
         payloadIsMock={payloadIsMock}
         status={status}
         errorMessage={errorMessage}
+        errorKind={errorKind}
         isConfigured={isConfigured}
         onRefresh={refresh}
         who={<>{system.platformLabel} · {system.hostname} · 稼働 {uptimeLabel}</>}

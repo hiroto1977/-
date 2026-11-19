@@ -86,7 +86,7 @@ export function TalentPage(): React.JSX.Element {
   // (病・STEP・10ヶ条) は出る —— snapshot が shared の実物を**写しではなく
   // 参照**しているため。ここを空にしていたら、取得を stub した smoke で
   // 診断票も 10ヶ条も STEP も全部消えた (2026-08-28 実測)。
-  const { data, source, status, errorMessage, refresh } = useServiceData(
+  const { data, source, status, errorMessage, errorKind, refresh } = useServiceData(
     'talent',
     // **二重キャストにしない。** `as unknown as` は型検査を恒久的に黙らせるので、
     // `TalentSnapshot` と同梱データがずれても気づけない。単一キャストなら
@@ -214,6 +214,7 @@ export function TalentPage(): React.JSX.Element {
         source={source}
         status={status}
         errorMessage={errorMessage}
+        errorKind={errorKind}
         onRefresh={refresh}
       />
       {/* 保存先が読めなかった / 読み込みで項目を落としたときだけ出る (パス 121)。黙って空にしない。 */}

@@ -1659,7 +1659,7 @@ function OverviewImportPanel({
 }
 
 export function DocstudioPage() {
-  const { source, status, errorMessage, refresh } = useServiceData('docstudio', SNAPSHOT.docstudio);
+  const { source, status, errorMessage, errorKind, refresh } = useServiceData('docstudio', SNAPSHOT.docstudio);
   /*
    * **読むのは 1 回だけ。** 2026-09-12 まで `loadStore()` をマウント時に 3 回
    * 呼んでいた (差込値・群れ・会社形態)。同じ鍵を 3 度読む理由が無く、
@@ -1940,6 +1940,7 @@ export function DocstudioPage() {
           source={source}
           status={status}
           errorMessage={errorMessage}
+          errorKind={errorKind}
           isConfigured
           onRefresh={refresh}
           who={<>書類スタジオ · 経営{STUDIO_TEMPLATES.length}書式 + 電子定款 + 就業規則 + 決算書 — 入力→交付前チェック→事業仕分け→印刷/PDF</>}

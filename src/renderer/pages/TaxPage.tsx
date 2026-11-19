@@ -229,7 +229,7 @@ const TRADE_READS = {
 } as const satisfies Record<string, readonly (keyof typeof TRADE_SPECS)[]>;
 
 export function TaxPage() {
-  const { source, status, errorMessage, refresh, isConfigured } = useServiceData('tax', SNAPSHOT.tax);
+  const { source, status, errorMessage, errorKind, refresh, isConfigured } = useServiceData('tax', SNAPSHOT.tax);
 
   const [incomeStr, setIncomeStr] = useState('5000000');
   const [grossStr, setGrossStr] = useState('6000000');
@@ -990,6 +990,7 @@ export function TaxPage() {
         source={source}
         status={status}
         errorMessage={errorMessage}
+        errorKind={errorKind}
         isConfigured={isConfigured}
         onRefresh={refresh}
         who={<>税務試算 · 概算シミュレーション</>}

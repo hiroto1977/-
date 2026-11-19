@@ -9,7 +9,7 @@ const STATUS_LABEL: Record<'ok' | 'warn' | 'action', string> = {
 };
 
 export function ObsidianPage() {
-  const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
+  const { data, source, status, errorMessage, errorKind, refresh, isConfigured } = useServiceData(
     'obsidian',
     SNAPSHOT.obsidian,
   );
@@ -23,6 +23,7 @@ export function ObsidianPage() {
         source={source}
         status={status}
         errorMessage={errorMessage}
+        errorKind={errorKind}
         isConfigured={isConfigured}
         onRefresh={refresh}
         who={
