@@ -3564,7 +3564,11 @@ async function demoMixSuite(browser) {
   await page.getByPlaceholder('12000000').fill('20000000');
   await page.getByRole('button', { name: '＋ 物件を追加' }).click();
   await headlineHas('1 物件 / 月次 CF ¥90,000');
-  ok(true, 'demoMix: ★ 不動産 — 足した自分の物件がそのまま合計になる (1 物件・月次CF ¥90,000)');
+  const headlineAfterAdd = (await page.locator('.status-bar').textContent()) ?? '';
+  ok(
+    headlineAfterAdd.includes('1 物件 / 月次 CF ¥90,000'),
+    `demoMix: ★ 不動産 — 足した自分の物件がそのまま合計になる (1 物件・月次CF ¥90,000) — 実際 ${JSON.stringify(headlineAfterAdd.slice(0, 60))}`,
+  );
   const rentTile = ((await page.locator('body').innerText()).match(/月次家賃収入 \(実績\)\s*([¥￥][\d,]+)/) ?? [])[1] ?? '(見つからない)';
   // 見本が在った頃の合計は ¥913,000 (見本 ¥823,000 + 自分 ¥90,000) だった。
   ok(rentTile === '¥90,000' && !(await body()).includes('913,000'), `demoMix: ★ 不動産 — 家賃収入は自分の ¥90,000 だけ (見本の ¥823,000 を足さない) — 実際 ${rentTile}`);
