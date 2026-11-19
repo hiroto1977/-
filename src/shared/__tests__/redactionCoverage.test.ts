@@ -338,7 +338,7 @@ describe('伏字の網羅 — 母集団は「預かっているサービス」(�
     readonly sample: string;
   }
 
-  // 預かる 28 サービスすべてに 1 行。**足りなければ下の突き合わせが鳴る。**
+  // 預かる 29 サービスすべてに 1 行。**足りなければ下の突き合わせが鳴る。**
   const HELD_FORMATS: readonly Held[] = [
     { service: 'github', issuer: 'GitHub 細粒度 PAT', carrier: 'prefix', sample: `github_pat_${FILL}_${FILL}${FILL}` },
     { service: 'notion', issuer: 'Notion 内部連携 (新)', carrier: 'prefix', sample: `ntn_${FILL}${FILL}` },
@@ -393,6 +393,10 @@ describe('伏字の網羅 — 母集団は「預かっているサービス」(�
     // Discord のボットのトークン (2026-11-18 · 取得が鍵を読むようになった)。発行元の分かる接頭辞を持たない
     // (点で区切った 3 つの区間) ので、裸では伏せない。受け持つのはヘッダ名の規則で、方式 `Bot` はその規則が知っている。
     { service: 'discord', issuer: 'Discord ボットのトークン', carrier: 'header-only', sample: 'M'.repeat(70) },
+    // Dropbox のアクセストークン (2026-11-19 · 取得が鍵を読むようになった)。App Console の
+    // 発行トークンは発行元の分かる接頭辞を持たない長い文字列なので、裸では伏せられない ——
+    // 伏せるのは Authorization ヘッダの値として現れたときである。
+    { service: 'dropbox', issuer: 'Dropbox アクセストークン', carrier: 'header-only', sample: 'P'.repeat(64) },
   ];
 
   const HELD_SERVICES = (Object.keys(SERVICE_CREDENTIAL_USE) as ServiceId[]).filter((id) =>
@@ -415,7 +419,7 @@ describe('伏字の網羅 — 母集団は「預かっているサービス」(�
    * `shpat_` / `shpss_` は上の `PREFIXED` が母集団に依らず留めており、
    * 既に保存した人の値や第三者が本文に反射した値には今日も掛かる。
    */
-  it('★ 預かる 28 サービスすべてに行が在り、余計な行が無い', () => {
+  it('★ 預かる 29 サービスすべてに行が在り、余計な行が無い', () => {
     const listed = HELD_FORMATS.map((f) => f.service);
     expect([...listed].sort()).toEqual([...HELD_SERVICES].sort());
   });

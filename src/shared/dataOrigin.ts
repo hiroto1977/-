@@ -62,15 +62,15 @@ export const SERVICE_DATA_ORIGIN: Record<ServiceId, DataOrigin> = {
   settings: 'local',
   'uber-eats': 'sample',
   'demae-can': 'sample',
-  'real-estate': 'sample',
-  'mutual-funds': 'sample',
+  'real-estate': 'local',
+  'mutual-funds': 'local',
   // 2026-11-19: 図の台帳と自己検査は端末内で完結する (座標計算は renderer の純関数、
   // 見本データは「仮想データ」と明示した検証用)。fetcher はサービスのメタ情報を返す。
   // それまでは同梱の見本だった。
   charts: 'local',
   quality: 'sample',
   'microsoft-365': 'remote',
-  dropbox: 'sample',
+  dropbox: 'remote',
   salesforce: 'sample',
   // 2026-11-18: ボットが参加しているサーバーの一覧を Discord から読む (`shared/api/discord.ts`)。それまでは同梱の見本だった。
   discord: 'remote',
@@ -115,7 +115,7 @@ export const SERVICE_DATA_ORIGIN: Record<ServiceId, DataOrigin> = {
   // 2026-11-19: 記録は renderer の record store (`mentor-sessions`) が正で、fetcher は
   // 聞き取りの問いの台帳だけを返す。それまでは同梱の見本だった。
   mentor: 'local',
-  grok: 'sample',
+  grok: 'local',
   // 2026-11-19: 判定は画面の入力から shared の純関数が作り、fetcher は階層・職種・
   // 判定の台帳の見出しだけを返す。それまでは同梱の見本だった。
   vrio: 'local',

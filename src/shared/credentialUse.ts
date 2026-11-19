@@ -66,7 +66,8 @@ export const SERVICE_CREDENTIAL_USE: Record<ServiceId, CredentialUse> = {
   charts: 'none',
   quality: 'none',
   'microsoft-365': 'fetch',
-  dropbox: 'none',
+  // 2026-11-19: 取得が鍵を読むようになった (`main/clients/dropbox.ts` → `shared/api/dropbox.ts`)。
+  dropbox: 'fetch',
   salesforce: 'none',
   // 2026-11-18: 取得が鍵を読むようになった (`main/clients/discord.ts` → `shared/api/discord.ts`)。
   discord: 'fetch',
