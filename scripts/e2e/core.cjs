@@ -1310,14 +1310,42 @@ async function dataOriginSuite(browser) {
   );
   await page.evaluate(() => window.serviceHub.clearToken('github'));
 
-  // 対照: ブラウザ版から読める連携先 (Stripe) には「更新」が在り、案内は出ない。
+  // ブラウザ版から読める連携先 (Stripe)。資格情報が無い間は「更新」を出さない (2026-11-19 · `shared/fetchNeedsCredential.ts`)。
+  //
+  // 直す前は「更新」が在り、押すと赤い「エラー」+「表示中の数字は同梱のサンプルです」+
+  // 「資格情報が未登録です。登録すると実データに切り替わります。」が出た。まだ登録していないのは故障ではないので、
+  // 押す前から灰色の案内を 1 つ出す。登録の欄は出たまま。
   await gotoService(page, '#stripe', '.status-bar');
-  await page.waitForSelector('.status-bar button', { timeout: 15000 });
+  await page.waitForSelector('.status-bar [data-fetch-needs-credential]', { timeout: 15000 });
+  const stripeBar = (await page.locator('.status-bar').innerText()).replace(/\s+/g, ' ');
+  const stripeBadge = ((await page.textContent('.status-bar .badge')) ?? '').trim();
+  ok(
+    (await page.locator('.status-bar button', { hasText: /^更新$/ }).count()) === 0
+      && (await page.locator('.status-bar [data-fetch-needs-credential]').count()) === 1
+      && (await page.locator('.status-bar [data-fetch-unsupported]').count()) === 0
+      && (await page.locator('.status-bar [data-fetch-error]').count()) === 0
+      && (await page.locator('.status-bar button').count()) >= 1
+      && stripeBadge === 'サンプル（未連携）'
+      && stripeBar.includes('資格情報を登録すると、実データに切り替わります'),
+    `Stripe: ★ 資格情報が無い間は「更新」を出さず、灰色の案内を出す (札 "${stripeBadge}" / ${JSON.stringify(stripeBar.slice(0, 90))})`,
+  );
+
+  // 対照: 資格情報を保存すると「更新」が出て、案内は消える (取得そのものはプロキシが要るので、ここでは結果を見ない)。
+  await page.evaluate(() => window.serviceHub.setToken('stripe', 'e2e-not-a-real-key'));
+  await gotoService(page, '#kpi', '.status-bar');
+  await gotoService(page, '#stripe', '.status-bar');
+  await page.waitForFunction(
+    () => Array.from(document.querySelectorAll('.status-bar button')).some((b) => (b.textContent ?? '').trim() === '更新'),
+    undefined,
+    { timeout: 15000 },
+  );
   ok(
     (await page.locator('.status-bar button', { hasText: /^更新$/ }).count()) === 1
+      && (await page.locator('.status-bar [data-fetch-needs-credential]').count()) === 0
       && (await page.locator('.status-bar [data-fetch-unsupported]').count()) === 0,
-    'Stripe: 対照 —— ブラウザ版から読める連携先には「更新」が在り、案内は出ない',
+    'Stripe: 対照 —— 資格情報を保存すると「更新」が出て、案内は出ない',
   );
+  await page.evaluate(() => window.serviceHub.clearToken('stripe'));
 
   ok(errs.length === 0, `取得元の表示: ページエラー 0 (実際 ${errs.length})`);
   await ctx.close();
@@ -6123,7 +6151,7 @@ function installWaitMarginRecorder(browser) {
     ['desktop', desktopSuite, 67],
     ['manualData', manualDataSuite, 19],
     // 2026-11-19: 「内蔵サンプル」の標本を不動産へ移し、士業 (端末内の記録) が見本を名乗らないことを足した = +2
-    ['dataOrigin', dataOriginSuite, 20],
+    ['dataOrigin', dataOriginSuite, 21],
     ['credential', credentialSuite, 8],
     ['businessComparison', businessComparisonSuite, 13],
     ['kessanTax', kessanTaxSuite, 34],
