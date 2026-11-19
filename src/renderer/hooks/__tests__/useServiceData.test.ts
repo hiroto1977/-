@@ -532,6 +532,93 @@ describe('useServiceData — sample サービス (取得先が無い画面)', ()
   });
 });
 
+describe('この実行形態では取得しない (not_implemented) —— 失敗にしない (2026-11-19)', () => {
+  /*
+   * ブラウザ版は、連携先 22 画面のうち 14 (GitHub ほか) の実データを読めない。直す前は橋の
+   * `not_implemented` を失敗 ('error') として持ち、画面は赤い「エラー」+「表示中の数字は同梱のサンプルです」を出した。
+   * 取得できないのは仕様なので、'unsupported' として持つ (札は取得元の宣言のまま・文は灰色の案内になる)。
+   */
+  const NOTE = 'ブラウザ版では、この画面の実データを取得できません。';
+
+  it('★ status は unsupported。文は橋が返した物・種別は無し・見本と取得元はそのまま', async () => {
+    setHub(errHub('not_implemented', NOTE));
+    const h = setup('github', { v: 1 });
+    await h.mount();
+    await h.refresh();
+    expect(h.ref.current.status).toBe('unsupported');
+    expect(h.ref.current.errorMessage).toBe(NOTE);
+    expect(h.ref.current.errorKind).toBeUndefined();
+    expect(h.ref.current.data).toEqual({ v: 1 });
+    expect(h.ref.current.source).toBe('snapshot');
+    expect(h.ref.current.payloadIsMock).toBe(false);
+    h.unmount();
+  });
+
+  it('対照: 同じ文でも code が fetch_failed なら、今までどおり error', async () => {
+    setHub(errHub('fetch_failed', NOTE));
+    const h = setup('github', { v: 1 });
+    await h.mount();
+    await h.refresh();
+    expect(h.ref.current.status).toBe('error');
+    expect(h.ref.current.errorKind).toBe('unknown');
+    h.unmount();
+  });
+
+  it('★ 資格情報を保存している画面は開いただけで取得するが、失敗にも「未設定」にもならない', async () => {
+    setHub({
+      listConfigured: async () => ['github'],
+      fetchSnapshot: async () => ({ ok: false, code: 'not_implemented', message: NOTE }) as FetchResult<unknown>,
+    });
+    const h = setup('github', { v: 1 });
+    await h.mount();
+    expect(h.ref.current.status).toBe('unsupported');
+    expect(h.ref.current.isConfigured).toBe(true);
+    h.unmount();
+  });
+
+  it('★ 覚えていた「最後に取得できた内容」を出さず、消しもしない (失敗でも資格情報の不在でもない)', async () => {
+    setHub(okHub({ v: 2 }));
+    const first = setup('github', { v: 1 });
+    await first.mount();
+    await first.refresh();
+    first.unmount();
+    expect(lastGoodFetch('github')?.data).toEqual({ v: 2 });
+
+    setHub(errHub('not_implemented', NOTE));
+    const again = setup('github', { v: 1 });
+    await again.mount();
+    await again.refresh();
+    expect(again.ref.current.status).toBe('unsupported');
+    expect(again.ref.current.data).toEqual({ v: 1 });
+    expect(again.ref.current.source).toBe('snapshot');
+    expect(again.ref.current.errorMessage).toBe(NOTE);
+    expect(lastGoodFetch('github')?.data).toEqual({ v: 2 });
+    again.unmount();
+  });
+
+  it('取り直して取得できたら、案内は消えて idle に戻る', async () => {
+    let call = 0;
+    setHub({
+      listConfigured: async () => [],
+      fetchSnapshot: async () => {
+        call += 1;
+        return (call === 1
+          ? { ok: false, code: 'not_implemented', message: NOTE }
+          : { ok: true, data: { v: 9 } }) as FetchResult<unknown>;
+      },
+    });
+    const h = setup('github', { v: 1 });
+    await h.mount();
+    await h.refresh();
+    expect(h.ref.current.status).toBe('unsupported');
+    await h.refresh();
+    expect(h.ref.current.status).toBe('idle');
+    expect(h.ref.current.errorMessage).toBeUndefined();
+    expect(h.ref.current.data).toEqual({ v: 9 });
+    h.unmount();
+  });
+});
+
 describe('useServiceData — IPC が reject した場合', () => {
   /**
    * 2026-08 監査の回帰。`fetch:snapshot` は失敗を戻り値で表す約束だが、

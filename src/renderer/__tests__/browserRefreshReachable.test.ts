@@ -17,7 +17,8 @@
  *
  * - 状態バーを子の部品が描く画面 (士業 8 画面の `ShigyoConsole`) は、画面のファイルに
  *   `<StatusBar` の綴りが無いので母集団に入らない。その枝は `webShimSnapshotBranches.test.ts` が別に見る。
- * - 'remote' の画面はここでは見ない (資格情報が要る別の経路 —— `liveRead` と各画面の断りが持つ)。
+ * - 'remote' の画面はここでは見ない。連携先 22 のうちブラウザ版から読めない 14 は「更新」を出さず案内を出す ——
+ *   `browserRemoteFetchReach.test.ts` (橋) と `pages/__tests__/remoteScreensBrowserNotice.test.ts` (画面) が見る。
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { join } from 'node:path';

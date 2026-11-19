@@ -267,6 +267,7 @@
     "src/shared/atlassianSite.ts",
     "src/shared/balanceSheetFreshness.ts",
     "src/shared/bankFormat.ts",
+    "src/shared/browserFetchReach.ts",
     "src/shared/buildingIso.ts",
     "src/shared/businessAdvisor.ts",
     "src/shared/cloudContinuity.ts",

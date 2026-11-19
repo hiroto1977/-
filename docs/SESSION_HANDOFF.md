@@ -7,6 +7,37 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-11-19 · 続き 3) — ブラウザ版で実データを読めない連携先 14 画面の「更新」を、案内に替えた
+
+- **症状**: ブラウザ版の連携先の画面 (GitHub ほか) で「更新」を押すと、赤い「エラー」+「表示中の数字は同梱のサンプルです」+
+  「ブラウザ版では live fetch を行いません。同梱の snapshot を使用します。」が出た。実機 (実 chromium · LITE · 412×915) で連携先 22 画面を押して数えると、
+  **14 画面** (GitHub / WordPress / Atlassian / Notion / Google Drive / Calendar / Gmail / Slack / Canva / Cloudflare / Microsoft 365 / BASE / YouTube / freee) がこの文、
+  残る 8 画面 (Cursor / Stripe / Asana / LINE / Linear / Sentry / Discord / Dropbox) は「資格情報が未登録です。登録すると実データに切り替わります。」だった。
+  14 画面は資格情報を保存していると開いただけで出る (鍵が在ると自動で取得する)。
+- **原因**: ブラウザ版 (単一 HTML) から実データを読めるのは `network/liveRead.ts` の `LIVE_READERS` の 8 つだけ。残る 14 は取得がデスクトップ版の主プロセスに在り、
+  橋 (`web-shim.ts`) は `not_implemented` を返す。取得の hook (`useServiceData`) はそれを失敗 (`error`) として持っていた —— 取得できないのは仕様で、故障ではない。
+- **直し** (3 か所が同じ判定と同じ 1 文を読む —— `shared/browserFetchReach.ts`):
+  - 画面 (`StatusBar`): ブラウザ版 × 連携先 × 読めないサービスのとき、**「更新」を出さず**、押す前から灰色の案内を 1 つ出す
+    (「ブラウザ版では、この画面の実データを取得できません（取得はデスクトップ版の機能です）。表示しているのは見本です。」)。札は「サンプル（未連携）」のまま。
+    実行形態が分かるまで (`useBuildKind` が `null`) は今までどおり。資格情報の欄は残す (11 画面は書き込みの操作に使う)。
+  - 橋 (`web-shim.ts`): その 14 画面には同じ 1 文で `not_implemented` を返す (連携先でない画面の落ち先の文は変えていない)。
+  - hook (`useServiceData`): `not_implemented` は新しい状態 **`unsupported`** として持つ (`error` にしない・見本と取得元は触らない・最後に取得できた内容を出しも消しもしない)。
+    状態バーは `unsupported` の文を灰色の同じ枠 (`[data-fetch-unsupported]`) に出し、赤い文 (`[data-fetch-error]`) と「同梱のサンプルです」は出さない。
+- **一覧の写し**: 読める 8 つの一覧 (`BROWSER_LIVE_READ_SERVICES`) は `LIVE_READERS` の鍵の写し。`StatusBar` は `renderer/network/` を取り込めない
+  (社外向けポータルの束に網の経路を入れない —— `portalBundleClosure.test.ts`) ので shared に置き、`browserRemoteFetchReach.test.ts` が両方向に結ぶ。
+- **検査**: `shared/__tests__/browserFetchReach.test.ts` 9 件・`renderer/__tests__/browserRemoteFetchReach.test.ts` 7 件 (実物の shim)・
+  `components/__tests__/statusBarFetchUnsupported.test.ts` 10 件・`pages/__tests__/remoteScreensBrowserNotice.test.ts` 16 件 (14 画面を資格情報つきで実際に描く)・
+  `useServiceData.test.ts` +5・e2e の `dataOrigin` suite +2 (18 → 20・全 suite 759 件)。
+- **対照 7 方向すべて鳴る**: A 橋の枝を外す ❌2 / B hook が失敗として持つ ❌18 / C 状態バーが「更新」を出したまま ❌18 / D 案内を赤い文のまま出す ❌16 /
+  E 実行形態を見ない ❌7 / F 一覧から stripe を外す ❌7 / G 押す前の案内を出さない ❌18 (件数は実測)。
+- **測って残した物**: `docs/REMAINING_WORK.md` の先頭の節 (読める 8 画面の「未登録」も赤い「エラー」で出る・BASE / YouTube / freee はブラウザ版で資格情報の使い道が無い・
+  Google 3 画面と Microsoft 365 は自分の注記と案内が重なる・Ollama の的外れな 1 文)。
+- **検査の結果**: `npm test` 1,328 ファイル / 28,990 件・`verify:all` 39 ゲート exit 0 (`verify:arch` のユニットテスト数 21334 → 21368・`mutate` 374 → 375・
+  `lint:shared-judgement` の census を再生成 —— shared 201 → 202)。変異検査と実機の結果はこの節の末尾の行。
+- **変異検査**: `useServiceData.ts` 100.00% (Killed 109)・`browserFetchReach.ts` 100.00% (Killed 15)。生存 0・未到達 0 (18 分)。`browserFetchReach.ts` を `mutate` へ入れた。
+- **実機の検査 (最終コード)**: FULL 12,330,276 B / LITE 3,742,913 B (両方 +866 B)・`perf` OK (LITE DCL 297 ms / heap 8.3 MB・FULL DCL 596 ms / heap 30.4 MB)・
+  `e2e` **759 件 ❌ 0**・`e2e:lite` **759 件 ❌ 0** (`dataOrigin` 20 件)。`smoke:app` / `e2e:ollama` / `e2e:portal` は回していない —— 主プロセスも Ollama の経路も触っていない。
+
 ## 直近の作業 (2026-11-19 · 続き 2) — ブラウザ版の「更新」で赤い失敗が出る 7 画面を直した
 
 - **症状**: ブラウザ版で「更新」を押すと、赤い「エラー」と「ブラウザ版では live fetch を行いません。同梱の snapshot を使用します。」と
