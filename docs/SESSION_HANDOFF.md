@@ -34,6 +34,9 @@
   Google 3 画面と Microsoft 365 は自分の注記と案内が重なる・Ollama の的外れな 1 文)。
 - **検査の結果**: `npm test` 1,328 ファイル / 28,990 件・`verify:all` 39 ゲート exit 0 (`verify:arch` のユニットテスト数 21334 → 21368・`mutate` 374 → 375・
   `lint:shared-judgement` の census を再生成 —— shared 201 → 202)。変異検査と実機の結果はこの節の末尾の行。
+- **変異検査**: `useServiceData.ts` 100.00% (Killed 109)・`browserFetchReach.ts` 100.00% (Killed 15)。生存 0・未到達 0 (18 分)。`browserFetchReach.ts` を `mutate` へ入れた。
+- **実機の検査 (最終コード)**: FULL 12,330,276 B / LITE 3,742,913 B (両方 +866 B)・`perf` OK (LITE DCL 297 ms / heap 8.3 MB・FULL DCL 596 ms / heap 30.4 MB)・
+  `e2e` **759 件 ❌ 0**・`e2e:lite` **759 件 ❌ 0** (`dataOrigin` 20 件)。`smoke:app` / `e2e:ollama` / `e2e:portal` は回していない —— 主プロセスも Ollama の経路も触っていない。
 
 ## 直近の作業 (2026-11-19 · 続き 2) — ブラウザ版の「更新」で赤い失敗が出る 7 画面を直した
 
