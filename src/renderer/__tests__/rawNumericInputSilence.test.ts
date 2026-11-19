@@ -171,6 +171,11 @@ const DRAFT_LEDGER: Readonly<Record<string, DraftRow>> = Object.freeze({
   'hydroponics|CO₂ 濃度 (ppm)': READING_ROW,
   'hydroponics|溶存酸素 (mg/L)': READING_ROW,
   'hydroponics|養液タンク液位 (%)': READING_ROW,
+  'a8net|報酬額': {
+    file: 'renderer/pages/A8netPage.tsx',
+    writer: 'parseA8netReward',
+    why: '「＋ 成果を記録」を押したときに読み、0 以上の整数でなければ断る (保存しない・空欄は 0 円にしない)',
+  },
   'hydroponics|パネル枚数': {
     file: 'renderer/pages/HydroponicsPage.tsx',
     writer: 'parseBatch',

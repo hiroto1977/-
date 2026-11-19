@@ -101,7 +101,10 @@ export const SERVICE_DATA_ORIGIN: Record<ServiceId, DataOrigin> = {
   netsea: 'sample',
   'super-delivery': 'sample',
   topseller: 'sample',
-  a8net: 'sample',
+  // 2026-11-19: 成果は renderer の record store (`a8net-rewards`) に利用者が記録した物が正で、
+  // fetcher は見本を持たない空の土台を返す (`shared/a8netSnapshot.ts` の `buildA8netSnapshot`)。
+  // A8.net にメディア会員向けの公開 API は無いので、つなぐ先は無い。それまでは同梱の見本だった。
+  a8net: 'local',
   'ai-blogkun': 'sample',
   moneyforward: 'sample',
   amazon: 'sample',

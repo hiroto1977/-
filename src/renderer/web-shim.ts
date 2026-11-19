@@ -88,6 +88,7 @@ import { buildShigyoSnapshot } from '../shared/shigyoTypes';
 import { buildTaxSnapshot } from '../shared/taxSnapshot';
 import { buildComplianceSnapshot } from '../shared/complianceSnapshot';
 import { buildRealEstateSnapshot } from '../shared/realEstateSnapshot';
+import { buildA8netSnapshot } from '../shared/a8netSnapshot';
 import { buildMutualFundsSnapshot } from '../shared/mutualFundsSnapshot';
 import { PROFESSIONAL_IDS } from './data/professionalMap';
 import { MAX_ANALYZE_TEXT_CHARS } from '../shared/emotionsLimits';
@@ -1409,6 +1410,15 @@ const unguarded = {
      */
     if (serviceId === 'mutual-funds') {
       return ok(buildMutualFundsSnapshot()) as ActionResult<T>;
+    }
+    /*
+     * A8.net (2026-11-19)。返すのは見本を持たない空の土台だけで、
+     * **デスクトップ版と同じ関数**を呼ぶ (`shared/a8netSnapshot.ts` の
+     * `buildA8netSnapshot`)。成果は record store (IndexedDB) に利用者が記録し、
+     * 画面が自分の記録だけから集計する (投資信託と同じ形)。
+     */
+    if (serviceId === 'a8net') {
+      return ok(buildA8netSnapshot()) as ActionResult<T>;
     }
     /*
      * コネクター / 自動化 (2026-11-19)。カタログは shared/connectors が正で

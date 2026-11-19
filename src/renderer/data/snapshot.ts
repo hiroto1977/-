@@ -28,6 +28,7 @@ import { buildMentorSnapshot } from '../../shared/mentor';
 import { buildGrokSnapshot } from '../../shared/grokSnapshot';
 import { buildRealEstateSnapshot } from '../../shared/realEstateSnapshot';
 import { buildMutualFundsSnapshot } from '../../shared/mutualFundsSnapshot';
+import { buildA8netSnapshot } from '../../shared/a8netSnapshot';
 import { buildVrioSnapshot } from '../../shared/vrio';
 
 /**
@@ -833,13 +834,9 @@ export const SNAPSHOT = {
     ] as { id: string; name: string }[],
   },
 
-  a8net: {
-    items: [
-      { id: 'a8-4001', name: '[確定] 動画配信サービス 登録 — ¥1,200' },
-      { id: 'a8-4002', name: '[確定] クレジットカード発行 — ¥3,000' },
-      { id: 'a8-4003', name: '[保留] 格安SIM 申込 — ¥1,500' },
-    ] as { id: string; name: string }[],
-  },
+  // A8.net: 成果は利用者が record store (`a8net-rewards`) に記録した物が正。土台は
+  // 見本を持たない空で、`shared/a8netSnapshot.ts` の `buildA8netSnapshot` に寄せる (2026-11-19)。
+  a8net: buildA8netSnapshot(),
 
   'ai-blogkun': {
     items: [

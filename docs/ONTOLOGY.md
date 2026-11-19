@@ -51,7 +51,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 
 | id | 配置 | 出所 | 資格情報 | local | OAuth | 士業 | デスクトップの action | ブラウザ版の action | デスクトップだけ |
 |---|---|---|---|:---:|:---:|:---:|---|---|---|
-| `a8net` | integrations | sample | none | ✅ |  |  | — | — | — |
+| `a8net` | integrations | local | none | ✅ |  |  | — | — | — |
 | `admin-scrivener` | professionals | local | none | ✅ |  | ✅ | — | — | — |
 | `ai-blogkun` | integrations | sample | none | ✅ |  |  | — | — | — |
 | `amazon` | integrations | sample | none | ✅ |  |  | — | — | — |
@@ -134,7 +134,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 集計:
 
 - 配置: おすすめ 12 / 士業連携 8 / 分析・ツール 24 / 外部サービス連携 33 / 消費されるだけ 2
-- 出所: remote 22 / local 39 / sample 18
+- 出所: remote 22 / local 40 / sample 17
 - 資格情報の読み手 — fetch 22 / action 7 / none 50
 - LOCAL_SERVICES 56 / OAuth 10 / action を持つ 27 / デスクトップだけの action 10
 

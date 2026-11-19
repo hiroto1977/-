@@ -201,7 +201,8 @@ describe('e2e の suite ごとの床 (パス 303 · 346)', () => {
     // + 2026-11-19 (士業の画面が端末内の記録になった後の検査の引き直し): dataOrigin suite +2 = 747
     // + 同じ日 (不動産・投資信託も端末内の記録になった後の引き直し): demoMix 10 → 9・serviceAdvice 15 → 17
     //   (登録が 0 件のとき「改善提案」を押す前に言う) = 748
-    expect(sumMeasured).toBe(748);
+    // 2026-11-19 (同日): A8.net の画面が端末内の成果の記録になったので demoMix suite +2 = 750
+    expect(sumMeasured).toBe(750);
   });
 });
 

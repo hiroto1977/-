@@ -97,6 +97,8 @@ export const BACKUP_COLLECTION_RECORD_LIMITS: Readonly<Record<string, number>> =
   // 2026-10-24 (T-175): 下の 7 つも画面が全行を描く。実 Chromium で 20,000 行が 5〜25 秒、100,000 行が 123 秒
   // (タブが固まる) と測った。正当な利用はどれも桁が 1〜3 つ下なので、少ない数で止める (切らずに断る)。
   'mutualfund-holdings': 2_000,
+  // A8.net の成果の記録 (2026-11-19): 一覧は窓を掛けるが、集計は全行を読む。月 100 件 × 数年より十分広い天井。
+  'a8net-rewards': 20_000,
   'realestate-properties': 2_000,
   'shigyo-contacts': 5_000,
   'shigyo-consultations': 5_000,

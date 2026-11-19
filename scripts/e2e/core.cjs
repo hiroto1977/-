@@ -3605,6 +3605,39 @@ async function demoMixSuite(browser) {
     'demoMix: ★ 士業 — 記録が無ければ 連携 0 名・顧問料 ¥0 で、見本の断りも出ない (見本を混ぜていない)',
   );
 
+  // --- A8.net: 見本の成果を並べず、記録した自分の成果がそのまま合計になる ---
+  //
+  // 2026-11-19 から A8.net の画面は端末内の記録だけを出す (同梱の見本 3 件
+  // 「[確定] 動画配信サービス 登録 — ¥1,200」ほかは無い)。A8.net に公開の連携口は無いので、
+  // 成果は利用者が自分で記録する。
+  await page.goto(FILE + '#/a8net', { waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('[data-a8net-empty]', { timeout: 30000 });
+  const a8Empty = await body();
+  ok(
+    ((await page.locator('.status-bar').textContent()) ?? '').includes('記録 0 件')
+      && !a8Empty.includes('クレジットカード発行') && !a8Empty.includes('格安SIM')
+      && (await page.locator('[data-a8net-reward]').count()) === 0,
+    'demoMix: ★ A8.net — 記録が無ければ 記録 0 件 で、見本の成果を 1 件も並べない',
+  );
+  await page.getByLabel('発生月').fill('2026-11');
+  await page.getByLabel('プログラム名').fill('E2E自分の案件');
+  await page.getByLabel('報酬額').fill('1,200');
+  await page.locator('select[aria-label="状態"]').selectOption('pending');
+  await page.getByRole('button', { name: '＋ 成果を記録' }).click();
+  await page.waitForSelector('[data-a8net-reward]', { timeout: 15000 });
+  // 一覧で「確定」へ変えると、未確定から確定へ金額が移る。
+  await page.locator('select[aria-label="成果「E2E自分の案件」の状態を変更"]').selectOption('confirmed');
+  await page.waitForFunction(
+    () => (document.querySelector('.status-bar')?.textContent ?? '').includes('確定 ¥1,200 / 未確定 ¥0'),
+    undefined,
+    { timeout: 15000 },
+  );
+  const a8Tile = ((await page.locator('[data-a8net-tile="confirmed"]').textContent()) ?? '').replace(/\s+/g, ' ');
+  ok(
+    a8Tile.includes('¥1,200') && a8Tile.includes('1 件') && (await page.locator('[data-a8net-reward]').count()) === 1,
+    `demoMix: ★ A8.net — 記録した自分の成果がそのまま合計になり、状態を「確定」に変えると確定報酬へ移る — 実際 ${JSON.stringify(a8Tile)}`,
+  );
+
   ok(errs.length === 0, `demoMix: コンソールエラー 0 件 (${errs.join(' | ')})`);
   await ctx.close();
 }
@@ -6041,7 +6074,7 @@ function installWaitMarginRecorder(browser) {
     ['talent', talentSuite, 14],
     ['teamRadar', teamRadarSuite, 17],
     // 2026-11-19: 不動産・投資信託・士業が端末内の記録だけになり、「見本が混ざる断り」から「見本を混ぜていない」へ書き直した = 9
-    ['demoMix', demoMixSuite, 9],
+    ['demoMix', demoMixSuite, 11],
     ['paperAccount', paperAccountSuite, 13],
     // 2026-11-19: 登録が 0 件のとき押す前に言う (不動産・投資信託) を足した = +2
     ['serviceAdvice', serviceAdviceSuite, 17],
