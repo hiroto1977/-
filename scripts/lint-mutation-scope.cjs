@@ -158,7 +158,6 @@ const PRAGMA_BARE = {
   'src/main/clients/quality.ts':                 2,
   'src/main/clients/real-estate.ts':             4,
   'src/main/clients/settings.ts':                2,
-  'src/main/clients/shigyo.ts':                  2,
   'src/main/clients/shopify.ts':                 2,
   'src/main/clients/skills.ts':                  3,
   'src/main/clients/snapshotStub.ts':            1,
