@@ -1,5 +1,38 @@
 # Service Hub — 残りの作業手順書
 
+## 分析・内部画面 9 件のローカル化 (2026-11-19 · ローカル完結バッチ 2) で測って残した物
+
+- **やったこと**: charts / sales / team / mentor / vrio / overview / tax / compliance / connectors の
+  9 件を `sample` から `local` へ移した。9 件とも既に `LOCAL_SERVICES` に載り、画面は record store /
+  純粋計算 / 確証済み知識で動いていた —— `sample` だったのは fetcher のモジュールが stub マーカー
+  (`createSnapshotStub` 等) を含んでいたためだけ (`lint:data-origin` の導出規則)。fetcher を
+  「毎回組み立てる土台」に書き換えた: sales / team / overview / connectors は空の土台 `{items: []}`、
+  mentor / vrio は shared の `buildMentorSnapshot` / `buildVrioSnapshot`、charts はモジュール内の
+  `buildChartsSnapshot` (renderer の SNAPSHOT は main から import できないので値はここに持ち、
+  ずれは charts.test が突き合わせる)。tax / compliance は自分の id で `useServiceData` を呼ぶため、
+  組み立てを shared (`taxSnapshot.ts` / `complianceSnapshot.ts`) へ出し、ブラウザ版 web-shim にも
+  同じ関数を呼ぶ分岐を足した (connectors も分岐あり。無いとブラウザ版で更新が
+  `not_implemented` エラーになる —— 士業と同じ壊れ方)。
+- **quality は `sample` のまま据え置いた**: 画面の数値は初期フェーズに手で書いた静的な台帳で実態と
+  乖離している (テスト数 1175 と書いて実数は 21129)。記録上の計画は `scripts/quality-report.cjs` の
+  生成物を取り込むことだが、それはビルド成果物でパッケージ済みアプリの実行時には存在しない。
+  宣言だけ `local` に倒すと、古い手書きの数を「端末の実データ」と偽ることになる。実データ化は
+  別作業 (実行時に測れる物の設計が要る)。
+- **storage も `sample` のまま据え置いた**: 画面は一般的な Windows PC のイラスト値を出し、サイドバーも
+  「この PC は読み取らない」と開示している。実データ化には main での OS ディスク / プロセス走査という
+  別機能が要る (クライアントのコメントで Phase 6 と明記)。測れない欄を 0 で返すと偽の測定値を
+  主張することになる (`stubOriginAgreement` が名指しする害そのもの)。
+- **床を 2 つ実態へ合わせた**: sample が 22 件になったので `sampleOriginDisclosure` の走査の床を
+  30 → 20 へ、`stubOriginAgreement` の inert の床を 30 → 20 へ下げた (実測 inert 22 / fresh 36 /
+  network 21 で、宣言 sample 22 / local 36 / remote 21 と一致)。どちらも「分類が壊れて 0 に倒れたら
+  鳴る」ための床で、実態より上に置くと正しい変更で落ちる。
+- **バッチ 1 の残件を 1 つ拾った**: `useServiceData.test.ts` の sample の標本が士業
+  (tax-accountant / lawyer) のままで、バッチ 1 の `local` 化以降この 2 件は落ちていた
+  (pristine な main でも再現を確認)。標本を今も sample の docker / obsidian へ差し替えた。
+- **残る sample は 22 件**: 外部 API・本人操作が前提のもの (dropbox / salesforce / shopify /
+  amazon 系 / 卸 3 件 / ai-blogkun / moneyforward / uber-eats / demae-can / tiktok / coconala /
+  obsidian / docker / real-estate / mutual-funds / grok) と、上記の quality / storage。
+
 ## 士業 8 画面のローカル化 (2026-11-18) で測って残した物
 
 - **やったこと**: 士業 8 画面 (税理士 / 公認会計士 / 社労士 / 弁護士 / 司法書士 / 行政書士 / 中小企業診断士 / 弁理士) を
@@ -32921,7 +32954,7 @@ src/shared/ のモジュール                                        138
 「読んだ結果」か `未読 (…)` のどちらかで、読んでいない物に「対称だろう」とは書かない。
 
 <!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/shared-judgement-census.cjs。npm run lint:shared-judgement は check だけ) -->
-shared **195** モジュール / 両ビルドが import **106** / うち否定で答えられる **54**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
+shared **197** モジュール / 両ビルドが import **108** / うち否定で答えられる **54**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
 
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |
