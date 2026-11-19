@@ -46,6 +46,7 @@ import { executeFreeConnector } from '../connectorExecution';
 import { FREE_CONNECTOR_REGISTRY } from '../../../shared/connectors/freeConnectors';
 import { addCheckIn, answerQuestion, emptyMentorSession, setRelation } from '../../../shared/mentor';
 import { parseAssignment } from '../../../shared/workAssignment';
+import { parseA8netReward } from '../a8netRewards';
 
 /** IndexedDB / バックアップと同じ往復 (structured clone は NaN を残すが、バックアップ JSON は null にする)。 */
 const viaJson = (v: unknown): Record<string, unknown> => JSON.parse(JSON.stringify(v)) as Record<string, unknown>;
@@ -215,6 +216,11 @@ describe('書く側の出力 → collectionShapes (往復)', () => {
   it('work-assignments: 実物の書き手 (parseAssignment) の出力', () => {
     roundTrips('work-assignments', parseAssignment({ member: 'a@example.com', title: '月次決算', hoursPerWeek: '8' }), 'no-note');
     roundTrips('work-assignments', parseAssignment({ member: 'a@example.com', title: '月次決算', hoursPerWeek: '2.5', note: '締め日まで' }), 'note');
+  });
+
+  it('a8net-rewards: 実物の書き手 (parseA8netReward) の出力', () => {
+    roundTrips('a8net-rewards', parseA8netReward({ month: '2026-11', program: '動画配信サービス 登録', amount: '1,200', status: 'pending' }), 'pending');
+    roundTrips('a8net-rewards', parseA8netReward({ month: '2026-10', program: 'P', amount: 0, status: 'rejected' }), 'zero');
   });
 
   /**

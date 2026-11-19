@@ -202,6 +202,7 @@ describe('summarizeA8netRewards —— 集計', () => {
 describe('unreadableA8netRewardsNote —— 合計から外した行の断り', () => {
   it('外した行が無ければ何も言わない', () => {
     expect(unreadableA8netRewardsNote(0)).toBeNull();
+    expect(unreadableA8netRewardsNote(Number.NaN)).toBeNull();
   });
 
   it('件数と、消せる場所 (同じ画面の一覧の ×) を言う', () => {
