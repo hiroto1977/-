@@ -127,9 +127,12 @@ describe('dataOrigin ⇄ fetcher の一致 (外側の証人)', () => {
     const map = await classified;
     const n = (k: Kind) => SERVICE_IDS.filter((id) => map.get(id) === k).length;
     // 2026-09-08 実測: inert 42 / fresh 18 / network 15 (計 75)。
+    // 2026-11-19 実測: inert 22 / fresh 36 / network 21 (計 79) —— ローカル完結
+    // バッチ 1・2 で士業 8 件と分析・内部画面 9 件の fetcher が「モジュール定数」から
+    // 「毎回組み立てる土台」へ変わり、inert は残る sample 22 件とちょうど一致する。
     // electron の mock 変更などで**全部が network に倒れる**と上の 2 本は
     // 空配列を比べるだけの空の検査になるので、各バケツに床を置く。
-    expect(n('inert')).toBeGreaterThanOrEqual(30);
+    expect(n('inert')).toBeGreaterThanOrEqual(20);
     expect(n('fresh')).toBeGreaterThanOrEqual(10);
     expect(n('network')).toBeGreaterThanOrEqual(10);
     expect(n('inert') + n('fresh') + n('network')).toBe(SERVICE_IDS.length);

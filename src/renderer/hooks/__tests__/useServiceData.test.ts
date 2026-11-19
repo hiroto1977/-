@@ -473,7 +473,8 @@ describe('useServiceData — sample サービス (取得先が無い画面)', ()
         return { ok: true, data: { contacts: [], monthlyFee: 0 } } as FetchResult<unknown>;
       },
     });
-    const h = setup('tax-accountant', { contacts: [{ name: '顧問税理士' }], monthlyFee: 33000 });
+    // 標本は今も 'sample' のものを使う (士業は 2026-11-19 のバッチ 1 で 'local' 化した)。
+    const h = setup('docker', { contacts: [{ name: '顧問税理士' }], monthlyFee: 33000 });
     await h.mount();
     await h.refresh();
     expect(calls).toBe(0); // IPC そのものを呼ばない
@@ -504,7 +505,7 @@ describe('useServiceData — sample サービス (取得先が無い画面)', ()
 
   it('ブラウザ版の not_implemented でエラー表示にならない', async () => {
     setHub(errHub('not_implemented', 'ブラウザ版では live fetch を行いません。'));
-    const h = setup('lawyer', { contacts: [] });
+    const h = setup('obsidian', { contacts: [] });
     await h.mount();
     await h.refresh();
     expect(h.ref.current.status).toBe('idle'); // 取得先が無いだけで、異常ではない
