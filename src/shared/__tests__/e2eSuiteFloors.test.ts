@@ -197,7 +197,8 @@ describe('e2e の suite ごとの床 (パス 303 · 346)', () => {
     // + 2026-11-18 (スマホ幅で右が切れる画面): opened suite +6 (村の殻の窓 1・既定の殻 4・測定器の対照 1) = 737
     // + 同じ日 (横へ動かさないと見えない物): opened suite +2 (既定の殻 1・測定器の対照 1) = 739
     // + 同じ日 (資金調達レーダーの申請書類の下書き): desktop suite +4 = 743
-    expect(sumMeasured).toBe(743);
+    // + 2026-11-19 (水耕栽培の画面で品目を増やす・減らす): hydroponics suite +2 = 745
+    expect(sumMeasured).toBe(745);
   });
 });
 
