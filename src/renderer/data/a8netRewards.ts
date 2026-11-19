@@ -109,8 +109,10 @@ const zeroTotals = (): Record<A8netRewardStatus, number> => ({ pending: 0, confi
 
 /** 保管した報酬額を数として読む。数でない・負の値は読めない (null)。 */
 export function a8netRewardAmountOf(v: unknown): number | null {
-  const n = finiteNumberOf(v);
-  return n !== null && n >= 0 ? n : null;
+  // 読めない値は負の印へ倒し、下の 1 つの比較で「数でない」と「負」を同じ null にする
+  // (`n !== null && n >= 0` と書くと null の判定が等価になる —— `null >= 0` は真で、返すのも null)。
+  const n = finiteNumberOf(v) ?? -1;
+  return n >= 0 ? n : null;
 }
 
 /**

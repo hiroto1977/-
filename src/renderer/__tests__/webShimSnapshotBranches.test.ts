@@ -21,6 +21,9 @@ import { rereadModule } from '../../shared/__tests__/rereadModule';
 import '../web-shim';
 import { buildTaxSnapshot } from '../../shared/taxSnapshot';
 import { buildComplianceSnapshot } from '../../shared/complianceSnapshot';
+import { buildA8netSnapshot } from '../../shared/a8netSnapshot';
+import { SERVICE_IDS } from '../../shared/serviceId';
+import { originOf } from '../../shared/dataOrigin';
 
 /** 金庫の中身をテストごとに差し替える。 */
 const tokens = new Map<string, string>();
@@ -323,5 +326,34 @@ describe('ローカル完結バッチ 2 — 台帳・標識・土台を返す分
     const snap = await hub.fetchSnapshot('connectors');
     expect(snap.ok, snap.message).toBe(true);
     expect(snap.data).toEqual({ items: [] });
+  });
+});
+
+/**
+ * **A8.net の取得は、ブラウザ版でも通る** (2026-11-19)。
+ *
+ * `SERVICE_DATA_ORIGIN` を 'local' にすると、画面の「更新」は取得を呼ぶようになる
+ * ('sample' は呼ばない)。そのときブラウザ版の `fetchSnapshot` に枝が無いと
+ * `not_implemented` へ落ち、**押すたびに「ブラウザ版では live fetch を行いません」の
+ * 失敗が画面に出る**。宣言 (`shared/dataOrigin.ts`) と枝 (`web-shim.ts`) は別々の
+ * ファイルに手で書くので、片方だけ動かしても他の検査は鳴らなかった —— 対照として
+ * A8.net の枝を外しても、この検査を足す前は関係する検査が全部緑だった。
+ */
+describe('A8.net — 端末内の記録の土台を返す分岐 (2026-11-19)', () => {
+  it('★ 見本を持たない空の土台がデスクトップ版 (shared の組み立て) と一致する', async () => {
+    const hub = await loadHub();
+    const snap = await hub.fetchSnapshot('a8net');
+    expect(snap.ok, snap.message).toBe(true);
+    expect(snap.data).toEqual(buildA8netSnapshot());
+    expect(snap.data).toEqual({ items: [] });
+  });
+
+  it('対照: 枝の無いサービス (見本のままの画面) は not_implemented へ落ちる (検査が何でも通すのではない)', async () => {
+    const hub = await loadHub();
+    const sample = SERVICE_IDS.find((id) => originOf(id) === 'sample');
+    expect(sample).toBeDefined();
+    const r = await hub.fetchSnapshot(sample!);
+    expect(r.ok).toBe(false);
+    expect(r.code).toBe('not_implemented');
   });
 });
