@@ -152,6 +152,10 @@ const FIELD_SHAPES: Readonly<Record<string, CollectionShape>> = {
     monthlyExpenses: opt(num),
     monthlyLoan: opt(num),
   }),
+  // A8.net の成果の記録 (2026-11-19): 発生月と状態は**文字列としてだけ**見る —— 読めない綴りの行は
+  // 読み手 (`summarizeA8netRewards`) が合計から外して件数を言い、一覧の × で消せる。形で落とすと
+  // 復元で行ごと消え、利用者が消す手を失う (業務の割当と同じ判断)。
+  'a8net-rewards': shape({ month: str, program: str, amount: num, status: str }),
   'mutualfund-holdings': shape({
     code: opt(str),
     name: str,

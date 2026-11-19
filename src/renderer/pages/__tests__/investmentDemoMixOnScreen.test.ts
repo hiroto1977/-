@@ -1,23 +1,17 @@
 /** @vitest-environment jsdom */
 /**
- * **合計に同梱の見本が混ざっていることを、画面が言う** (2026-09-12 · パス 187)。
+ * **合計は自分の登録だけから来る** (2026-09-12 · パス 187 → 2026-11-19 · ローカル完結バッチ 3)。
  *
- * 不動産・投資信託のタイルは「snapshot の見本 + 自分の記録」を 1 本のリストで
- * 集計する。見本は桁で勝つので、自分の分は合計の中で見えなくなる。実測:
+ * 不動産・投資信託のタイルはかつて「snapshot の見本 + 自分の記録」を 1 本の
+ * リストで集計し、見本は桁で勝つので自分の分が合計の中で見えなくなっていた
+ * (実測: 家賃収入 合計 ¥913,000 に対し自分の分 ¥90,000、実質コスト 5 年累計は
+ * 自分の 10 万に対し 83 倍の ¥594,505 を刷っていた)。パス 187 は混ざっている
+ * ことの断りを並べて述べる形で対処した。
  *
- * | | 合計 (見本を含む) | 自分の分 |
- * | --- | ---: | ---: |
- * | 家賃収入 (月) | ¥913,000 | ¥90,000 |
- * | 月次キャッシュフロー | +¥248,000 | +¥5,000 |
- * | 投資信託 評価額 | ¥8,340,140 | ¥100,000 |
- * | 投資信託 評価損益率 | +14.6% | +5.3% |
- * | 実質コスト 5年累計 | ¥594,505 | ¥7,128 |
- *
- * 最後の行が一番効く —— 「実質コスト」は `totalValuation` を**元本として**
- * コストを複利で積むので、自分の 10 万に対し 83 倍の負担を刷っていた
- * (画面の既定: 信託報酬 1.0% / 隠れコスト 0.2% / 想定年率 5% / 保有 5 年)。
- *
- * 合計は消さない (一覧の見本の行と釣り合う)。**並べて述べる**。
+ * 2026-11-19 のローカル完結バッチ 3 で同梱の見本そのものを外し、画面は
+ * **空から始まって自分の登録だけ**を集計するようになった。ここで留めるのは
+ * その裏側: 見本の混ざりを述べる断りが**出ない**こと、登録が無ければ合計は
+ * 0 であること、登録した数字がそのまま合計に出ること。
  */
 import 'fake-indexeddb/auto';
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
@@ -28,7 +22,6 @@ import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { HOLDINGS_COLLECTION, PROPERTIES_COLLECTION } from '../../data/investments';
 import { SHIGYO_CONTACTS_COLLECTION } from '../../data/shigyoDirectory';
-import { SNAPSHOT } from '../../data/snapshot';
 import type { ServiceId } from '../../../shared/serviceId';
 import { waitForText } from '../../__tests__/jsdomWait';
 
@@ -105,105 +98,75 @@ afterEach(async () => {
   container.remove();
 });
 
-const demoProps = SNAPSHOT.realEstate.properties.length;
-const demoHoldings = SNAPSHOT.mutualFunds.holdings.length;
-
-describe('不動産投資 — 合計に見本が混ざっていることを画面が言う', () => {
-  it('★ 何も登録していないとき「見本を表示している」と述べる', async () => {
-    await mountPage('real-estate', '自分の物件はまだ登録されていません');
-    const t = noteText('data-portfolio-demo-mix');
-    expect(t).not.toBeNull();
-    expect(t).toContain(`同梱の見本 ${demoProps} 件を表示しています`);
-    expect(t).toContain('自分の物件はまだ登録されていません');
+describe('不動産投資 — 合計は自分の登録だけから来る', () => {
+  it('★ 何も登録していないとき合計は 0 で、見本の混ざりは述べない', async () => {
+    await mountPage('real-estate', '0 物件');
+    const all = allText();
+    expect(all).toContain('月次 CF ¥0');
+    expect(all).not.toContain('同梱の見本');
+    expect(noteText('data-portfolio-demo-mix')).toBeNull();
+    // 旧見本の数字 (家賃 ¥913,000 / CF +¥248,000) はどこにも出ない。
+    expect(all).not.toContain('¥913,000');
+    expect(all).not.toContain('¥248,000');
   });
 
-  it('★ 自分の物件を 1 件登録すると、自分の分の家賃と手残りを述べる', async () => {
+  it('★ 自分の物件を 1 件登録すると、合計は自分の数字そのままになる', async () => {
     await getRecordStore().insert(PROPERTIES_COLLECTION, {
       name: '自分の物件', type: '区分所有',
       monthlyRent: 90_000, purchasePrice: 20_000_000, occupied: true,
       monthlyExpenses: 30_000, monthlyLoan: 55_000,
     });
-    await mountPage('real-estate', '自分の物件は 1 件');
-    const t = noteText('data-portfolio-demo-mix');
-    expect(t).not.toBeNull();
-    expect(t).toContain(`同梱の見本 ${demoProps} 件が含まれています`);
-    expect(t).toContain('自分の物件は 1 件');
-    // 自分の分 (¥90,000 / +¥5,000) —— 合計のタイルは ¥913,000 / +¥248,000 を刷る。
-    expect(t).toContain('¥90,000');
-    expect(t).toContain('¥5,000');
-    // 対照: 合計の側は変えていない (タイルに ¥913,000 が在る)。
+    // 錠は置いた記録の行そのもの —— 届いた描画で合計の数も一緒に出る。
+    await mountPage('real-estate', '自分の物件');
     const all = allText();
-    expect(all).toContain('¥913,000');
-  });
-
-  it('★ 対照: 断りは合計の数字をそのまま繰り返さない (自分の分を述べている)', async () => {
-    await getRecordStore().insert(PROPERTIES_COLLECTION, {
-      name: '自分の物件', type: '区分所有',
-      monthlyRent: 90_000, purchasePrice: 20_000_000, occupied: true,
-      monthlyExpenses: 30_000, monthlyLoan: 55_000,
-    });
-    await mountPage('real-estate', '自分の物件は 1 件');
-    const t = noteText('data-portfolio-demo-mix') ?? '';
-    // 断りが**在る**ことを先に言う —— 無い断りは not.toContain を無条件に通す。
-    expect(t).toContain('自分の物件は 1 件');
-    expect(t).not.toContain('¥913,000');
-    expect(t).not.toContain('¥248,000');
-    // 対照: この 2 つは画面には在る (not.toContain が綴り違いで黙る空検査でないこと)。
-    const all = allText();
-    expect(all).toContain('¥913,000');
-    expect(all).toContain('¥248,000');
+    expect(all).toContain('1 物件');
+    // 家賃 ¥90,000 − 経費 ¥30,000 − 返済 ¥55,000 = 手残り ¥5,000 がそのまま合計。
+    expect(all).toContain('¥90,000');
+    expect(all).toContain('¥5,000');
+    expect(all).not.toContain('同梱の見本');
+    expect(noteText('data-portfolio-demo-mix')).toBeNull();
   });
 });
 
-describe('投資信託 — 合計に見本が混ざっていることを画面が言う', () => {
-  it('★ 何も登録していないとき「見本を表示している」と述べる', async () => {
-    await mountPage('mutual-funds', '自分の銘柄はまだ登録されていません');
-    const t = noteText('data-fund-demo-mix');
-    expect(t).not.toBeNull();
-    expect(t).toContain(`同梱の見本 ${demoHoldings} 銘柄を表示しています`);
-    // 元本の断りは「自分の銘柄が在る」ときだけ (0 件では出さない)。
-    expect(noteText('data-fund-cost-user-only')).toBeNull();
-  });
-
-  it('★ 自分の銘柄を 1 件登録すると、自分の評価額・損益・損益率を述べる', async () => {
-    await getRecordStore().insert(HOLDINGS_COLLECTION, {
-      code: 'MINE0001', name: '自分の銘柄',
-      valuation: 100_000, acquisitionCost: 95_000, ytdReturnPct: 4,
-    });
-    await mountPage('mutual-funds', '自分の銘柄は 1 銘柄');
-    const t = noteText('data-fund-demo-mix');
-    expect(t).not.toBeNull();
-    expect(t).toContain(`同梱の見本 ${demoHoldings} 銘柄が含まれています`);
-    expect(t).toContain('自分の銘柄は 1 銘柄');
-    expect(t).toContain('¥100,000');
-    expect(t).toContain('¥5,000');
-    expect(t).toContain('5.3%');
-    // 対照: 合計のタイルは変えていない。
-    expect(allText()).toContain('¥8,340,140');
-  });
-
-  it('★ 実質コストの元本に見本が入っていることを述べ、自分の分の額も出す (83 倍)', async () => {
-    await getRecordStore().insert(HOLDINGS_COLLECTION, {
-      code: 'MINE0001', name: '自分の銘柄',
-      valuation: 100_000, acquisitionCost: 95_000, ytdReturnPct: 4,
-    });
-    await mountPage('mutual-funds', '見本を除く元本 ¥100,000');
-    const t = noteText('data-fund-cost-user-only');
-    expect(t).not.toBeNull();
-    expect(t).toContain(`同梱の見本 ${demoHoldings} 銘柄が含まれています`);
-    expect(t).toContain('見本を除く元本 ¥100,000');
-    // 既定の入力 (信託報酬 1.0% / 隠れ 0.2% / 想定年率 5% / 保有 5 年) での実測。
-    expect(t).toContain('¥1,200');
-    expect(t).toContain('¥7,128');
-    // 合計の側 (¥594,505) は節の中に残っている —— 消していない。
+describe('投資信託 — 合計は自分の登録だけから来る', () => {
+  it('★ 何も登録していないとき合計は 0 で、見本の混ざりは述べない', async () => {
+    await mountPage('mutual-funds', '0 銘柄');
     const all = allText();
-    expect(all).toContain('¥594,505');
+    expect(all).toContain('評価額 ¥0');
+    expect(all).not.toContain('同梱の見本');
+    expect(noteText('data-fund-demo-mix')).toBeNull();
+    expect(noteText('data-fund-cost-user-only')).toBeNull();
+    // 旧見本の数字 (評価額 ¥8,340,140) はどこにも出ない。
+    expect(all).not.toContain('¥8,340,140');
   });
 
-  it('★ 対照: 自分の銘柄が無ければ元本の断りは出ない (常に出る文ではない)', async () => {
-    // 肯定の前提 (元本の節そのもの) を**先に**待つ —— 待たずに否定を見ると、
-    // 節がまだ描かれていないだけで通る。
-    await mountPage('mutual-funds', 'を元本とし');
+  it('★ 自分の銘柄を 1 件登録すると、合計は自分の数字そのままになる', async () => {
+    await getRecordStore().insert(HOLDINGS_COLLECTION, {
+      code: 'MINE0001', name: '自分の銘柄',
+      valuation: 100_000, acquisitionCost: 95_000, ytdReturnPct: 4,
+    });
+    await mountPage('mutual-funds', '自分の銘柄');
+    const all = allText();
+    expect(all).toContain('1 銘柄');
+    expect(all).toContain('¥100,000');
+    expect(all).toContain('¥95,000');
+    expect(all).toContain('¥5,000');
+    expect(all).toContain('5.3%');
+    expect(all).not.toContain('同梱の見本');
+    expect(noteText('data-fund-demo-mix')).toBeNull();
+  });
+
+  it('★ 実質コストの元本は自分の評価額だけ (旧見本込みの 83 倍にはならない)', async () => {
+    await getRecordStore().insert(HOLDINGS_COLLECTION, {
+      code: 'MINE0001', name: '自分の銘柄',
+      valuation: 100_000, acquisitionCost: 95_000, ytdReturnPct: 4,
+    });
+    await mountPage('mutual-funds', '評価額 ¥100,000 を元本とし');
+    const all = allText();
+    // 既定の入力 (信託報酬 1.0% / 隠れ 0.2% / 想定年率 5% / 保有 5 年) での実測。
+    // 元本が自分の ¥100,000 だけなので、累計の蝕み効果は ¥7,128 (旧: 見本込み ¥594,505)。
+    expect(all).toContain('¥7,128');
+    expect(all).not.toContain('¥594,505');
     expect(noteText('data-fund-cost-user-only')).toBeNull();
   });
 });

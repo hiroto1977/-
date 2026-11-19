@@ -273,14 +273,15 @@ describe('StatusBar — 読み手のいない資格情報は求めない', () =>
    * 2026-08 監査の回帰。asana / discord / dropbox / line / linear / salesforce /
    * sentry / stripe は fetcher もアクションも token を読まないのに、トークン
    * 入力欄を出して暗号化保存していた (2026-11-18 に asana / line / linear / sentry / stripe は
-   * 取得が鍵を読むようになり、この一覧から抜けた)。呼び出し元 8 ページからは `tokenSetup` を
+   * 取得が鍵を読むようになり、この一覧から抜けた。dropbox も 2026-11-19 に抜けた)。
+   * 呼び出し元 8 ページからは `tokenSetup` を
    * 外したが、**この層でも塞ぐ**（新しいページが同じ形で足されても効くように）。
    */
   const setup = { label: 'API トークン', placeholder: 'Bearer token' } as const;
 
   it("credentialUse が 'none' のサービスでは tokenSetup を無視する", () => {
     const html = renderToStaticMarkup(
-      createElement(StatusBar, { who: 'Dropbox', serviceId: 'dropbox', tokenSetup: setup }),
+      createElement(StatusBar, { who: 'Salesforce', serviceId: 'salesforce', tokenSetup: setup }),
     );
     expect(html).not.toContain('API トークン');
     expect(html).not.toContain('トークン設定');
@@ -311,9 +312,10 @@ describe('StatusBar — 読み手のいない資格情報は求めない', () =>
   it("'none' のサービスでも認証エラーの再入力へ落ちない", () => {
     const html = renderToStaticMarkup(
       createElement(StatusBar, {
-        // 2026-11-18 まで標本は sentry だった —— 取得が鍵を読むようになったので、今も 'none' の dropbox へ替えた。
-        who: 'Dropbox',
-        serviceId: 'dropbox',
+        // 標本は今も 'none' のものを使う (sentry → dropbox と替えてきたが、
+        // どちらも取得が鍵を読むようになったので salesforce へ替えた。2026-11-19)。
+        who: 'Salesforce',
+        serviceId: 'salesforce',
         tokenSetup: setup,
         status: 'error',
         errorKind: 'auth',

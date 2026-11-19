@@ -62,6 +62,7 @@ import { parseBusinessUnit } from '../businessUnits';
 import { fundValuation, parseHoldingEntry, parsePropertyEntry } from '../investments';
 import { parseCropNumber } from '../../../shared/hydroponicCrops';
 import { parseAssignment } from '../../../shared/workAssignment';
+import { parseA8netReward } from '../a8netRewards';
 import { parseGoal } from '../kpiImprovementStore';
 import { parseAmountInput } from '../../components/serviceActionUtils';
 import { parseNumericInput } from '../eligibility';
@@ -271,6 +272,14 @@ probes.push({
   pick: get('hoursPerWeek'),
   blank: { refuse: true },
 });
+// A8.net の成果 (2026-11-19): 報酬額。空欄は 0 円にせず断る (0 と「未入力」は別の事実)。
+probes.push({
+  writer: 'parseA8netReward',
+  field: 'amount',
+  write: (s) => attempt(() => parseA8netReward({ month: '2026-11', program: 'P', amount: s, status: 'pending' })),
+  pick: get('amount'),
+  blank: { refuse: true },
+});
 // 月次改善の輪: 目標の営業利益率。空欄は断る (0% を目標にしない)。範囲は 0% より大きく 100% 未満。
 probes.push({
   writer: 'parseGoal',
@@ -476,6 +485,7 @@ const WRITER_LEDGER: Readonly<Record<string, LedgerRow>> = {
   parseCropNumber: { kind: 'numbers', why: '品目の下書きの数値の欄' },
   parseMember: { kind: 'no-numbers', why: 'チームの氏名・メール・役割だけを読む' },
   parseAssignment: { kind: 'numbers', why: '業務の割当の週の時間 (パス 556)' },
+  parseA8netReward: { kind: 'numbers', why: 'A8.net の成果の報酬額 (円・0 以上の整数)' },
   parseGoal: { kind: 'numbers', why: '月次改善の輪の目標の営業利益率 (0% より大きく 100% 未満)' },
   parseCycle: {
     kind: 'no-numbers',

@@ -39,6 +39,7 @@ import { SERVICES } from '../../services';
 import { hasCollectionShape } from '../collectionShapes';
 import { auditRecordShapes } from '../recordShapeAudit';
 import { MEMBERS_COLLECTION } from '../members';
+import { A8NET_REWARDS_COLLECTION } from '../a8netRewards';
 import { SALES_COLLECTION } from '../sales';
 import { KPI_ACTUALS_COLLECTION } from '../kpiActuals';
 import { BALANCE_SHEET_COLLECTION } from '../balanceSheet';
@@ -85,6 +86,8 @@ const KPI_BAD_PERIOD = { period: 'bad', unit: 'A', revenue: 1, cogs: 0, advertis
 const KPI_BAD_AMOUNT = { period: '2026-04', unit: 'A', revenue: null, cogs: 0, advertising: 0, sga: 0, depreciation: 0 };
 const KPI_OK = { period: '2026-04', unit: 'A', revenue: 1, cogs: 0, advertising: 0, sga: 0, depreciation: 0 };
 const MEMBER_OK = { name: '山田', email: 'a@example.com', role: 'member' };
+// 発生月が読めない成果 —— 形の表は発生月を文字列としてだけ見るので通る (読み手が合計から外す)。
+const A8NET_BAD_MONTH = { month: 'bad', program: '案件', amount: 1000, status: 'confirmed' };
 // 貸借対照表の欄が数でない —— 形の表 (`currentAssets: num`) が断る側 (パス 444)。
 // **内数 ≦ 親項目** (`recordRelations.ts`) も同時に満たす必要があるので、
 // 壊す欄以外は 0 にしておく (親を壊すと内数との関係でも落ち、原因が 2 つになる)。
@@ -231,6 +234,14 @@ const LEDGER: readonly Row[] = [
     file: 'src/renderer/data/chatbotOllama.ts',
     kinds: ['other-screen'],
     why: '**記録ではなくモデルについての文** —— AI コンシェルジュに行き先を選ぶ口が無いので、導入済みの一覧が出る「Ollama」の画面を名乗る (パス 449)。',
+  },
+  {
+    fn: 'unreadableA8netRewardsNote',
+    file: 'src/renderer/data/a8netRewards.ts',
+    kinds: ['list-x'],
+    collection: A8NET_REWARDS_COLLECTION,
+    sample: A8NET_BAD_MONTH,
+    why: '発生月が読めない成果は形の表を通る (`month: str`) ので、復元でも落ちず A8.net の画面の一覧に出ていて × で消せる。一覧は読めない行も並べる (2026-11-19)。',
   },
   {
     fn: 'duplicateMemberMessage',

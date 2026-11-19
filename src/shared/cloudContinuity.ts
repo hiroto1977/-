@@ -241,6 +241,15 @@ export const CLOUD_PROVIDERS: readonly CloudProvider[] = [
     meanwhile: CLOUD_DATA_MEANWHILE,
   },
   {
+    id: 'dropbox',
+    label: 'Dropbox',
+    kind: 'data',
+    services: ['dropbox'],
+    entrusted: 'ファイルの保管 (画面が読むのはアカウント名・メールアドレス・容量・最近のアイテムの名前と大きさ)。',
+    whenDown: CLOUD_DATA_WHEN_DOWN,
+    meanwhile: CLOUD_DATA_MEANWHILE,
+  },
+  {
     id: 'cursor',
     label: 'Cursor',
     kind: 'data',

@@ -9,6 +9,10 @@
  * **shared の実装**を通る (`LIVE_READERS` は今 cursor / stripe / asana / line / linear / sentry / discord の 7 件で、main と同じ
  * `fetchCursorSnapshotWith` を呼ぶので形はずれようがない)。
  *
+ * (2026-11-19: 同梱の内容しか返せない 7 画面 —— `data/browserBundledFetch.ts` —— は合成ではなく、
+ * 同梱の内容の写しに `isMock: true` を重ねて返す。形は `webShimSnapshotBranches.test.ts` が
+ * 同梱の内容との**完全な一致**で見るので、ここの欄の突き合わせには入れない。)
+ *
  * 合成の 5 件は**ブラウザ版だけの道**なので、ここがずれると
  * `hiroto1977.github.io/-/app.html` でだけ画面が壊れる —— 同梱にしか無い欄は
  * 「取得できた瞬間に」消え、合成にしか無い欄は未取得のあいだ出ない。

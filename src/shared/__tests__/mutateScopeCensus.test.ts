@@ -105,6 +105,7 @@ const LEDGER: Readonly<Record<string, { kind: Kind; why: string }>> = {
   'src/renderer/portal/portalShim.ts': { kind: 'measure-next', why: '社外向けポータルの橋 (2026-11-11)。`fetchSnapshot` が入口の関門を通すか・どの口も資格情報を預からず書き込まないかを決める。`portalShim.test.ts` が 15 の口を全部呼ぶが、変異検査では未測定。' },
   'src/renderer/theme.ts': { kind: 'measure-next', why: '配色の解決と適用 (パス 317)。OS 追随の停止まで持つ。' },
   'src/shared/api/cloudflare.ts': { kind: 'measure-next', why: '**資格情報を使う書き込み口**。DNS レコードとキャッシュ削除の欄を検める。2026-09-20 (パス 357): ad-hoc の報告は生存 21 件だったが `audit:survivors` で **21/21 が偽** (既存の検査が全部殺す)。全掃引で確かめてから入れる。' },
+  'src/shared/api/dropbox.ts': { kind: 'measure-next', why: '**資格情報を使う読み取り口** (2026-11-19 · ローカル完結バッチ 3 で新設)。アカウント・容量・最近のアイテムの応答を正規化し、読めない値を 0 に倒さない判断を持つ。両ビルドが同じ関数を通る。全掃引で確かめてから入れる。' },
   'src/shared/api/microsoft365.ts': { kind: 'measure-next', why: '**資格情報を使う書き込み口**。両ビルドが 1 つの実装を通る (パス 274) のに未測定。2026-09-20 (パス 357): ad-hoc の報告は生存 9 件だったが `audit:survivors` で **9/9 が偽**。全掃引で確かめてから入れる。' },
   'src/shared/api/security.ts': { kind: 'measure-next', why: '**資格情報を使う書き込み口** (HIBP / VirusTotal)。両ビルドが同じ関数を通る (パス 321)。2026-09-20 (パス 357): ad-hoc の報告は生存 5 件だったが `audit:survivors` で **5/5 が偽**。全掃引で確かめてから入れる。' },
   'src/shared/apiResponse.ts': { kind: 'measure-next', why: '**第三者の「成功した」応答を読むところで検証する** (パス 261・311・330)。ここが緩むと空の応答が成功として通る。' },

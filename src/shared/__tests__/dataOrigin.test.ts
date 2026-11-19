@@ -25,7 +25,7 @@ const EXPECTED: ReadonlyArray<readonly [ServiceId, DataOrigin]> = [
   ['cloudflare', 'remote'],
   ['emotions', 'local'],
   ['ollama', 'local'],
-  ['grok', 'sample'],
+  ['grok', 'local'],
   ['vrio', 'local'],
   ['kpi', 'local'],
   ['stocks', 'local'],
@@ -38,12 +38,12 @@ const EXPECTED: ReadonlyArray<readonly [ServiceId, DataOrigin]> = [
   ['settings', 'local'],
   ['uber-eats', 'sample'],
   ['demae-can', 'sample'],
-  ['real-estate', 'sample'],
-  ['mutual-funds', 'sample'],
+  ['real-estate', 'local'],
+  ['mutual-funds', 'local'],
   ['charts', 'local'],
   ['quality', 'sample'],
   ['microsoft-365', 'remote'],
-  ['dropbox', 'sample'],
+  ['dropbox', 'remote'],
   ['salesforce', 'sample'],
   ['discord', 'remote'],
   ['asana', 'remote'],
@@ -66,7 +66,7 @@ const EXPECTED: ReadonlyArray<readonly [ServiceId, DataOrigin]> = [
   ['netsea', 'sample'],
   ['super-delivery', 'sample'],
   ['topseller', 'sample'],
-  ['a8net', 'sample'],
+  ['a8net', 'local'],
   ['ai-blogkun', 'sample'],
   ['moneyforward', 'sample'],
   ['amazon', 'sample'],
@@ -104,9 +104,9 @@ describe('SERVICE_DATA_ORIGIN', () => {
 
   it('3 分類の件数を固定する — 片方向に倒れた表を検出する', () => {
     const count = (o: DataOrigin) => EXPECTED.filter(([, v]) => v === o).length;
-    expect(count('sample')).toBe(22);
-    expect(count('local')).toBe(36);
-    expect(count('remote')).toBe(21);
+    expect(count('sample')).toBe(17);
+    expect(count('local')).toBe(40);
+    expect(count('remote')).toBe(22);
   });
 });
 
