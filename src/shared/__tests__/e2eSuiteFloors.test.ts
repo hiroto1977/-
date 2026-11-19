@@ -205,7 +205,8 @@ describe('e2e の suite ごとの床 (パス 303 · 346)', () => {
     // 2026-11-19 (同日): 同梱の内容を返す 7 画面の「更新」で dataOrigin suite +7 = 757
     // 2026-11-19 (同日): ブラウザ版で実データを読めない連携先の案内で dataOrigin suite +2 = 759
     // 2026-11-19 (同日): 資格情報が無い連携先の画面の案内で dataOrigin suite +1 = 760
-    expect(sumMeasured).toBe(760);
+    // 2026-11-20: 売上集計の入力欄 (日付の選ぶ欄・記録した知らせ・今月の売上・行を直す) で desktop suite +5 = 765
+    expect(sumMeasured).toBe(765);
   });
 });
 

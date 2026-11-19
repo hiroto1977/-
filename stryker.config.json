@@ -290,6 +290,7 @@
     "src/shared/linkSpoof.ts",
     "src/shared/externalUrlGate.ts",
     "src/shared/fetchNeedsCredential.ts",
+    "src/renderer/data/salesTrend.ts",
     "src/shared/financialHealthBands.ts",
     "src/shared/formatters.ts",
     "src/shared/funding.ts",

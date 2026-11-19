@@ -1473,8 +1473,11 @@ export const LAWS: readonly Law[] = [
       'パス 395 (節の不変条件が §7 を出した・§2 は未入力を 0 と刷っていた)',
       'パス 401 (¥0 が法的結論・5 通りの原因・札が 2 年について偽)',
       'パス 403 (安全の判定: 未解析 0 / 0 が「きれい」と同じ緑だった)',
+      '2026-11-20 (売上集計の「今月の売上」: 今月の記録が無い月は 0 円ではなく「—」と理由・前月比は暦の 1 つ前の月が無ければ「—」)',
     ],
     enforcedBy: [
+      test('src/renderer/data/__tests__/salesTrend.test.ts'),
+      test('src/renderer/pages/__tests__/salesFormOnScreen.test.ts'),
       test('src/renderer/data/__tests__/blankRowReasonOnSheet.test.ts'),
       test('src/renderer/data/__tests__/blankReasonMatrix.test.ts'),
       test('src/renderer/pages/__tests__/mortgageCreditReason.test.ts'),
