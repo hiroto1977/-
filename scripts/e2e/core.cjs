@@ -136,23 +136,32 @@ async function desktopSuite(browser) {
   await setupVault(page);
   await page.waitForSelector('text=ポートフォリオ KPI', { timeout: 30000 });
   const has = async (s) => (await page.locator('body').textContent()).includes(s);
-  ok((await has('￥243,000')) || (await has('¥243,000')), 'real-estate: 基準 月次CF ¥243,000 (snapshot 再現)');
+  /** 状態バーの見出し (件数と合計) —— 合計は 1 か所で読む (本文の別の数字に当てない)。 */
+  const headline = async () => ((await page.locator('.status-bar').textContent()) ?? '');
+  // 不動産と投資信託は 2026-11-19 から端末内の記録だけを出す (同梱の見本の物件・銘柄は無い)。
+  // それまでの基準は見本 4 件の合計 (月次CF ¥243,000) だった —— 今は 0 から始まる。
+  ok((await headline()).includes('0 物件 / 月次 CF ¥0'), `real-estate: 記録が無ければ 0 物件・月次CF ¥0 (同梱の見本を数えない) — 実際 ${JSON.stringify(await headline())}`);
   await page.getByPlaceholder('例: 福岡市アパート').fill('E2E物件');
   await page.getByPlaceholder('100000').first().fill('100000');
   await page.getByPlaceholder('12000000').fill('12000000');
   await page.getByRole('button', { name: '＋ 物件を追加' }).click();
   await page.waitForSelector('text=E2E物件', { timeout: 15000 });
-  ok((await has('￥343,000')) || (await has('¥343,000')), 'real-estate: 追加で月次CF ¥343,000');
+  await page.waitForFunction(
+    () => (document.querySelector('.status-bar')?.textContent ?? '').includes('1 物件 / 月次 CF ¥100,000'),
+    undefined,
+    { timeout: 15000 },
+  );
+  ok(true, 'real-estate: 追加で 1 物件・月次CF ¥100,000 (自分の物件そのまま)');
   await page.locator('button', { hasText: '編集' }).first().click();
   await page.waitForSelector('text=物件を編集中', { timeout: 10000 });
   await page.getByPlaceholder('100000').first().fill('150000');
   await page.getByRole('button', { name: '保存 (自動反映)' }).click();
   await page.waitForFunction(
-    () => document.body.textContent.includes('393,000'),
+    () => (document.querySelector('.status-bar')?.textContent ?? '').includes('月次 CF ¥150,000'),
     undefined,
     { timeout: 15000 },
   );
-  ok(true, 'real-estate: 編集の保存が KPI へ自動反映 (¥393,000)');
+  ok(true, 'real-estate: 編集の保存が KPI へ自動反映 (¥150,000)');
   await page.locator('button', { hasText: '削除' }).first().click();
   await page.waitForFunction(() => !document.body.textContent.includes('E2E物件'), undefined, { timeout: 15000 });
 
@@ -167,15 +176,22 @@ async function desktopSuite(browser) {
   await page.getByPlaceholder('空欄=自動計算').fill('300000');
   await page.getByRole('button', { name: '＋ 銘柄を追加' }).click();
   await page.waitForSelector('text=E2Eファンド', { timeout: 15000 });
-  ok((await has('￥8,540,140')) || (await has('¥8,540,140')), 'funds: 手動評価額30万で合計 ¥8,540,140');
+  await page.waitForFunction(
+    () => (document.querySelector('.status-bar')?.textContent ?? '').includes('1 銘柄 / 評価額 ¥300,000'),
+    undefined,
+    { timeout: 15000 },
+  );
+  ok(true, 'funds: 手動評価額30万で 1 銘柄・評価額 ¥300,000 (同梱の見本を数えない)');
   // パス 122: YTD を空欄のまま足した行は「+0.0%」(緑) ではなく「—」。リスクの注記が除外を言う。
   // (パス 121 までの版はここで「+0.0%」を刷り、注記は「保有銘柄のYTDリターンの母標準偏差です」だけだった)
   const ytdCell = ((await page.locator('tbody tr', { hasText: 'E2Eファンド' }).locator('td').nth(5).textContent()) ?? '').trim();
   ok(ytdCell === '—', `funds: ★ 空欄の YTD は「—」で刷る (実際 "${ytdCell}")`);
   await page.waitForFunction(() => document.body.textContent.includes('未入力 1 銘柄は除外'), undefined, { timeout: 15000 });
   ok(true, 'funds: ★ リスクの注記が「未入力 1 銘柄は除外」と言う');
-  // パス 123: 取得額を空欄のまま足しても、取得原価のタイルは動かない (旧: ¥7,180,000 → ¥7,480,000)。注記が除外を言う。
-  ok((await has('7,180,000')) && !(await has('7,480,000')), 'funds: ★ 取得額未入力の銘柄は取得原価に入らない (¥7,180,000 のまま)');
+  // パス 123: 取得額を空欄のまま足しても、取得原価のタイルは動かない。注記が除外を言う。
+  // (見本が在った頃は ¥7,180,000 のままを見ていた。今は自分の銘柄だけなので ¥0 のまま —— 評価額の 30 万を取得原価に数えない。)
+  const costTile = ((await page.locator('body').innerText()).match(/取得原価\s*([¥￥][\d,]+)/) ?? [])[1] ?? '(見つからない)';
+  ok(costTile === '¥0' || costTile === '￥0', `funds: ★ 取得額未入力の銘柄は取得原価に入らない (¥0 のまま) — 実際 ${costTile}`);
   await page.waitForFunction(() => document.body.textContent.includes('取得額未入力 1 銘柄'), undefined, { timeout: 15000 });
   ok(true, 'funds: ★ 注記が「取得額未入力 1 銘柄」を言う');
   await page.locator('button', { hasText: '編集' }).first().click();
@@ -183,8 +199,12 @@ async function desktopSuite(browser) {
   await page.getByPlaceholder('500000').fill('200000');
   await page.getByPlaceholder('32000').fill('20000');
   await page.getByRole('button', { name: '保存 (自動反映)' }).click();
-  await page.waitForFunction(() => document.body.textContent.includes('8,640,140'), undefined, { timeout: 15000 });
-  ok(true, 'funds: 評価額空欄で auto 切替 (口数×基準価額 → ¥8,640,140)');
+  await page.waitForFunction(
+    () => (document.querySelector('.status-bar')?.textContent ?? '').includes('評価額 ¥400,000'),
+    undefined,
+    { timeout: 15000 },
+  );
+  ok(true, 'funds: 評価額空欄で auto 切替 (口数×基準価額 → ¥400,000)');
   await page.locator('button', { hasText: '削除' }).first().click();
   await page.waitForFunction(() => !document.body.textContent.includes('E2Eファンド'), undefined, { timeout: 15000 });
 
@@ -1155,29 +1175,29 @@ async function dataOriginSuite(browser) {
   collectErrors(page, errs);
   await page.addInitScript(() => localStorage.setItem('servicehub.plan', 'enterprise'));
 
-  // sample: 不動産投資。同梱の見本の数字が残り、更新ボタンが無いこと。
+  // sample: ストレージ。同梱の見本を出し、更新ボタンが無いこと。
   //
-  // ここは 2026-11-18 まで税理士の画面だった。士業 8 画面はその日から端末内の記録だけを
-  // 出す (`SERVICE_DATA_ORIGIN` が `local`) ので、「内蔵サンプル」の標本ではなくなった ——
-  // **e2e が CI に無いあいだに 1 日ぶん古いまま**になっていた (2026-11-19 に走らせて発覚)。
-  // 標本は demoMix suite が「同梱の見本 4 件」を見ている画面に揃える (見本でなくなる日は
-  // そちらも一緒に鳴る)。
-  await page.goto(FILE + '#real-estate', { waitUntil: 'domcontentloaded' });
+  // ここは 2026-11-18 まで税理士の画面だった。士業 8 画面はその日から、不動産・投資信託は
+  // 2026-11-19 から端末内の記録だけを出す (`SERVICE_DATA_ORIGIN` が `local`) ので、
+  // 「内蔵サンプル」の標本ではなくなった —— **e2e が CI に無いあいだに古いまま**になっていた
+  // (2026-11-19 に走らせて発覚)。標本は「この PC は読み取らない」と名乗る画面にした ——
+  // 実データにするには主プロセスでのディスクの走査という別の機能が要り、当面は見本のままである。
+  await page.goto(FILE + '#storage', { waitUntil: 'domcontentloaded' });
   await setupVault(page);
   await page.waitForSelector('.status-bar', { timeout: 30000 });
   const badge = (await page.textContent('.status-bar .badge')) ?? '';
-  ok(badge.trim() === '内蔵サンプル', `不動産: バッジが「内蔵サンプル」(実際 "${badge.trim()}")`);
+  ok(badge.trim() === '内蔵サンプル', `ストレージ: バッジが「内蔵サンプル」(実際 "${badge.trim()}")`);
   ok(
     (await page.locator('.status-bar .badge.ok').count()) === 0,
-    '不動産: 緑 (ライブ) バッジを出さない',
+    'ストレージ: 緑 (ライブ) バッジを出さない',
   );
   ok(
     (await page.locator('.status-bar button', { hasText: '更新' }).count()) === 0,
-    '不動産: 更新ボタンを出さない (押すと空になる経路そのものを消す)',
+    'ストレージ: 更新ボタンを出さない (押すと空になる経路そのものを消す)',
   );
   ok(
     (await page.locator('[data-sample-note]').count()) === 1,
-    '不動産: 「外部連携なし」の断り書きを出す',
+    'ストレージ: 「外部連携なし」の断り書きを出す',
   );
 
   // local (端末内の記録): 税理士。見本を名乗らず、「外部連携なし」の断りも出さない。
@@ -1246,15 +1266,17 @@ async function credentialSuite(browser) {
   collectErrors(page, errs);
   await page.addInitScript(() => localStorage.setItem('servicehub.plan', 'enterprise'));
 
-  await page.goto(FILE + '#dropbox', { waitUntil: 'domcontentloaded' });
+  // 標本は Salesforce (2026-11-19 までは Dropbox だった —— Dropbox はその日から読み取り専用で
+  // 実データを取得し、トークンを読むようになったので「読み手のいない資格情報」ではなくなった)。
+  await page.goto(FILE + '#salesforce', { waitUntil: 'domcontentloaded' });
   await setupVault(page);
   await page.waitForSelector('.status-bar', { timeout: 30000 });
   // ラベルは画面ごとに違う (GitHub は「PAT を設定」) ので、文字列ではなく
-  // **押した結果**で見る。dropbox は sample かつ none なので、更新もトークンも
+  // **押した結果**で見る。salesforce は sample かつ none なので、更新もトークンも
   // 出ないボタン 0 個が正しい姿。
   ok(
     (await page.locator('.status-bar button').count()) === 0,
-    `Dropbox: 状態バーにボタンを出さない (更新もトークンも無い) — 実際 ${JSON.stringify(
+    `Salesforce: 状態バーにボタンを出さない (更新もトークンも無い) — 実際 ${JSON.stringify(
       await page.locator('.status-bar button').allTextContents(),
     )}`,
   );
@@ -1271,22 +1293,22 @@ async function credentialSuite(browser) {
 
   // 過去に保存された分を作ってから設定画面へ。
   const stored = await page.evaluate(async () => {
-    await window.serviceHub.setToken('dropbox', 'stale-token-from-before-the-audit');
-    return (await window.serviceHub.listConfigured()).includes('dropbox');
+    await window.serviceHub.setToken('salesforce', 'stale-token-from-before-the-audit');
+    return (await window.serviceHub.listConfigured()).includes('salesforce');
   });
-  ok(stored === true, '設定前提: dropbox のトークンを保存できた');
+  ok(stored === true, '設定前提: salesforce のトークンを保存できた');
 
   await gotoService(page, '#settings', '[data-unused-credentials]');
   ok(
-    (await page.locator('[data-unused-credential="dropbox"]').count()) === 1,
-    '設定: 使われていない資格情報として dropbox が挙がる',
+    (await page.locator('[data-unused-credential="salesforce"]').count()) === 1,
+    '設定: 使われていない資格情報として salesforce が挙がる',
   );
   await page.locator('[data-unused-credentials] button', { hasText: '削除' }).first().click();
   await page.waitForFunction(
-    () => document.querySelectorAll('[data-unused-credential="dropbox"]').length === 0,
+    () => document.querySelectorAll('[data-unused-credential="salesforce"]').length === 0,
     { timeout: 15000 },
   );
-  const gone = await page.evaluate(async () => (await window.serviceHub.listConfigured()).includes('dropbox'));
+  const gone = await page.evaluate(async () => (await window.serviceHub.listConfigured()).includes('salesforce'));
   ok(gone === false, '設定: 削除すると保存先からも消える');
   ok(
     (await page.locator('[data-unused-credentials]').count()) === 0,
@@ -1324,9 +1346,16 @@ async function kessanTaxSuite(browser) {
   const page = await ctx.newPage();
   const errors = [];
   collectErrors(page, errors);
-  await page.goto(FILE + '#docstudio', { waitUntil: 'domcontentloaded' });
+  // 参考の別紙 (投資ポートフォリオ) は 2026-11-19 から端末内の登録だけを載せる (同梱の見本は無い)。
+  // 紙に明細が載る姿を見るために、先に自分の銘柄を 1 件登録しておく。
+  await page.goto(FILE + '#mutual-funds', { waitUntil: 'domcontentloaded' });
   await setupVault(page);
-  await page.waitForSelector('[data-collection]', { timeout: 30000 });
+  await page.waitForSelector('text=銘柄を追加', { timeout: 30000 });
+  await page.getByPlaceholder('例: ニッセイ外国株式').fill('E2E保有ファンド');
+  await page.getByPlaceholder('空欄=自動計算').fill('300000');
+  await page.getByRole('button', { name: '＋ 銘柄を追加' }).click();
+  await page.waitForSelector('tbody tr:has-text("E2E保有ファンド")', { timeout: 15000 });
+  await gotoService(page, '#docstudio', '[data-collection]');
   await page.locator('[data-collection="kessan"]').click();
   await page.waitForSelector('[data-kessan-sheets]', { timeout: 15000 });
   /** 紙の並び (書面ごとの `data-kessan-page`)。 */
@@ -1412,8 +1441,16 @@ async function kessanTaxSuite(browser) {
   ok((await page.locator('[data-kessan-sheets]').innerText()).includes('決算公告') === false, 'kessan[all]: ★ まとめてに決算公告の要旨は入らない (440 条の公告は計算書類ではない)');
   const annexText = await page.locator('[data-kessan-page="portfolio"]').innerText();
   ok(annexText.includes('会社法435条2項の計算書類') && annexText.includes('含まれません'), 'kessan[all]: ★ 参考の紙が「計算書類ではない」と自分で言う');
-  ok((await page.locator('[data-kessan-page="portfolio"] [data-annex-origin]').getAttribute('data-annex-origin')) === 'sample', 'kessan[all]: ★ 保有明細の出所が見本であることを紙が言う');
-  ok(annexText.includes('貸借対照表 投資有価証券（簿価）'), 'kessan[all]: 参考の紙は貸借対照表の簿価と並べて突き合わせできる');
+  // 出所は端末内の登録 (2026-11-19 までは同梱の見本で、紙は「見本データです」と断っていた)。
+  ok(
+    (await page.locator('[data-kessan-page="portfolio"] [data-annex-origin]').getAttribute('data-annex-origin')) === 'local'
+      && annexText.includes('この端末に登録された値') && !annexText.includes('見本データ'),
+    'kessan[all]: ★ 保有明細の出所が端末内の登録であることを紙が言う (見本を名乗らない)',
+  );
+  ok(
+    annexText.includes('E2E保有ファンド') && annexText.includes('貸借対照表 投資有価証券（簿価）'),
+    'kessan[all]: 参考の紙は自分が登録した保有を載せ、貸借対照表の簿価と並べて突き合わせできる',
+  );
   // 規則が実ブラウザの cascade で紙に届くこと (2 枚目以降だけ)。stylesheet の順序で負けて 1 行も効かない形は
   // 原文の検査では見えない (パス 322 の hero がそれだった)。
   await page.emulateMedia({ media: 'print' });
@@ -3491,43 +3528,47 @@ async function teamRadarSuite(browser) {
 
 
 /**
- * **合計に同梱の見本が混ざっていることを、実機の画面が言う** (パス 187)。
+ * **合計に同梱の見本を混ぜていないことを、実機の画面で見る**。
  *
- * jsdom では 3 画面すべてで確かめてあるが、断りは**出荷する 1 枚の HTML の中で
- * 出る**必要がある (画面がタイルを刷る側と同じ節に置いたので、束ね方が変われば
- * 消えうる)。ここは「見本だけ」の既定の状態と、自分の行を 1 件足した後を見る。
+ * この suite はパス 187 で「合計に同梱の見本が混ざっていることを画面が言う」を見るために足した。
+ * 士業は 2026-11-18、不動産と投資信託は 2026-11-19 から端末内の記録だけを出す (同梱の見本の
+ * 物件・銘柄・連携先は無い) ので、混ざる物が無くなった。今見るのは逆向き ——
+ * **記録が無ければ 0 から始まり、足した自分の記録がそのまま合計になり、見本の断りは出ない**。
+ * 断りの部品は画面に残っている (土台が見本を持つ形へ戻れば出る) ので、出ないことは実機で見る。
  */
 async function demoMixSuite(browser) {
-  console.log('\n=== demoMix (合計に見本が混ざっていることの断り · パス 187) ===');
+  console.log('\n=== demoMix (合計に同梱の見本を混ぜていない) ===');
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 1000 } });
   const page = await ctx.newPage();
   const errs = [];
   collectErrors(page, errs);
   const body = async () => (await page.locator('body').textContent()) ?? '';
+  const headlineHas = (text) => page.waitForFunction(
+    (t) => (document.querySelector('.status-bar')?.textContent ?? '').includes(t),
+    text,
+    { timeout: 30000 },
+  );
 
-  // --- 不動産: 既定は見本 4 件だけ ---
+  // --- 不動産: 記録が無ければ 0 物件 ---
   await page.goto(FILE + '#/real-estate', { waitUntil: 'domcontentloaded' });
   await setupVault(page);
-  await page.waitForSelector('[data-portfolio-demo-mix]', { timeout: 30000 });
-  let note = (await page.locator('[data-portfolio-demo-mix]').textContent()) ?? '';
-  ok(note.includes('同梱の見本 4 件を表示しています'), 'demoMix: ★ 不動産 — 見本だけなら「見本を表示している」と言う');
-  ok(!note.includes('見本を除くと'), 'demoMix: 自分の物件が 0 件なら「見本を除くと ¥0」は言わない');
+  await headlineHas('0 物件 / 月次 CF ¥0');
+  ok(
+    (await page.locator('[data-portfolio-demo-mix]').count()) === 0 && !(await body()).includes('同梱の見本'),
+    'demoMix: ★ 不動産 — 記録が無ければ 0 物件・月次CF ¥0 で、見本の断りも出ない (見本を数えていない)',
+  );
 
-  // 自分の物件を 1 件足すと、自分の分の数字を述べる (合計は消えない)。
+  // 自分の物件を 1 件足すと、その物件がそのまま合計になる (見本 4 件の家賃 ¥823,000 は足されない)。
   await page.getByPlaceholder('例: 福岡市アパート').fill('E2E自分の物件');
   await page.getByPlaceholder('100000').first().fill('90000');
   await page.getByPlaceholder('12000000').fill('20000000');
   await page.getByRole('button', { name: '＋ 物件を追加' }).click();
-  await page.waitForFunction(
-    () => (document.querySelector('[data-portfolio-demo-mix]')?.textContent ?? '').includes('自分の物件は 1 件'),
-    undefined,
-    { timeout: 20000 },
-  );
-  note = (await page.locator('[data-portfolio-demo-mix]').textContent()) ?? '';
-  ok(note.includes('同梱の見本 4 件が含まれています'), 'demoMix: ★ 不動産 — 合計に見本が混ざっていると言う');
-  ok(note.includes('¥90,000'), 'demoMix: ★ 不動産 — 自分の家賃収入 (¥90,000) を述べる');
-  // 見本 4 件の家賃は ¥823,000 なので、自分の ¥90,000 を足した合計は ¥913,000。
-  ok((await body()).includes('¥913,000'), 'demoMix: 合計の側は消していない (家賃 ¥913,000)');
+  await headlineHas('1 物件 / 月次 CF ¥90,000');
+  ok(true, 'demoMix: ★ 不動産 — 足した自分の物件がそのまま合計になる (1 物件・月次CF ¥90,000)');
+  const rentTile = ((await page.locator('body').innerText()).match(/月次家賃収入 \(実績\)\s*([¥￥][\d,]+)/) ?? [])[1] ?? '(見つからない)';
+  // 見本が在った頃の合計は ¥913,000 (見本 ¥823,000 + 自分 ¥90,000) だった。
+  ok(rentTile === '¥90,000' && !(await body()).includes('913,000'), `demoMix: ★ 不動産 — 家賃収入は自分の ¥90,000 だけ (見本の ¥823,000 を足さない) — 実際 ${rentTile}`);
+  ok((await page.locator('[data-portfolio-demo-mix]').count()) === 0, 'demoMix: 不動産 — 自分の物件だけなら混在の断りは出ない');
   // 後片付け (表のセルから消えるまで待つ)。
   await page.locator('button', { hasText: '削除' }).first().click();
   await page.waitForFunction(
@@ -3536,11 +3577,10 @@ async function demoMixSuite(browser) {
     { timeout: 15000 },
   );
 
-  // --- 投資信託: 見出しの断りと、実質コストの元本の断り ---
+  // --- 投資信託: 記録が無ければ 0 銘柄 ---
   await page.goto(FILE + '#/mutual-funds', { waitUntil: 'domcontentloaded' });
-  await page.waitForSelector('[data-fund-demo-mix]', { timeout: 30000 });
-  note = (await page.locator('[data-fund-demo-mix]').textContent()) ?? '';
-  ok(note.includes('同梱の見本 4 銘柄を表示しています'), 'demoMix: ★ 投信 — 見本だけなら「見本を表示している」と言う');
+  await headlineHas('0 銘柄 / 評価額 ¥0');
+  ok((await page.locator('[data-fund-demo-mix]').count()) === 0 && !(await body()).includes('同梱の見本'), 'demoMix: ★ 投信 — 記録が無ければ 0 銘柄・評価額 ¥0 で、見本の断りも出ない');
   ok(await page.locator('[data-fund-cost-user-only]').count() === 0, 'demoMix: 自分の銘柄が 0 件なら元本の断りは出ない');
   ok((await body()).includes('を元本とし'), 'demoMix: 対照 — 元本の説明そのものは在る (節が消えたのではない)');
 
@@ -3649,43 +3689,71 @@ async function serviceAdviceSuite(browser) {
   await page.waitForSelector('text=ポートフォリオ KPI', { timeout: 30000 });
   const body = async () => (await page.locator('body').textContent()) ?? '';
 
-  // 1. 既定 (見本 4 物件): 提案が返り、赤い失敗が出ない。パス 118 までのブラウザ版は
-  //    action_not_found (「AI 提案の取得に失敗」) だった。
+  /** 物件を 1 件足す (表に出るまで待つ)。 */
+  const addProperty = async (name, rent, price, occupied) => {
+    await page.getByPlaceholder('例: 福岡市アパート').fill(name);
+    await page.getByPlaceholder('100000').first().fill(String(rent));
+    await page.getByPlaceholder('12000000').fill(String(price));
+    const box = page.locator('label', { hasText: '入居中' }).locator('input[type="checkbox"]').first();
+    if (occupied) await box.check(); else await box.uncheck();
+    await page.getByRole('button', { name: '＋ 物件を追加' }).click();
+    await page.waitForSelector(`td:has-text("${name}")`, { timeout: 15000 });
+  };
+
+  // 0. 登録がまだ無い (2026-11-19 から不動産・投資信託は端末内の登録だけを出す —— 同梱の見本は無い):
+  //    押す前に言い、ボタンは押せない。直す前は押せて、読み取りの断り (内部の欄名の文) が赤く出た。
+  await page.waitForSelector('[data-advise-not-ready]', { timeout: 20000 });
+  ok(
+    ((await page.locator('[data-advise-not-ready]').textContent()) ?? '').includes('物件がまだ登録されていません')
+      && (await page.getByRole('button', { name: '改善提案' }).isDisabled())
+      && (await page.locator('[data-advise-error]').count()) === 0,
+    'serviceAdvice: ★ 物件が 0 件なら、押す前に「まだ登録されていません」と言い、ボタンは押せない (赤い失敗を出さない)',
+  );
+
+  // 1. 空室の物件を 1 件足す: 提案が返り、赤い失敗が出ない。パス 118 までのブラウザ版は
+  //    action_not_found (「AI 提案の取得に失敗」) だった。提案は**その物件**について語る。
+  await addProperty('E2E空室物件', 100000, 12000000, false);
   await page.getByRole('button', { name: '改善提案' }).click();
   await page.waitForSelector('text=根拠:', { timeout: 20000 });
   let t = await body();
   ok(!t.includes('提案の取得に失敗'), 'serviceAdvice: ★ ブラウザ版で提案が返る (action_not_found ではない)');
-  ok(t.includes('空室 1 件の解消') && t.includes('大阪市ワンルーム (¥72,000/月)'), 'serviceAdvice: 空室は画面の行 (大阪) を名指しする');
-  ok(t.includes('4 物件 (同梱の見本 4 件を含む)'), 'serviceAdvice: 根拠が件数と見本の混在を言う');
-  ok(t.includes('低利回り物件の見直し: 渋谷区マンション 1LDK'), 'serviceAdvice: 低利回りは表の最低 (渋谷 4.8%) を名指しする');
+  ok(t.includes('空室 1 件の解消') && t.includes('E2E空室物件 (¥100,000/月)'), 'serviceAdvice: ★ 空室は画面の行 (足した物件) を名指しする (固定文ではない)');
+  ok(t.includes('1 物件 (すべて利用者の入力)'), 'serviceAdvice: 根拠が件数と出所 (すべて利用者の入力) を言う');
 
-  // 2. 空室の物件を足すと、提案は**その物件**について語る (見本の数字を写した固定文ではない)。
-  await page.getByPlaceholder('例: 福岡市アパート').fill('E2E空室物件');
-  await page.getByPlaceholder('100000').first().fill('100000');
-  await page.getByPlaceholder('12000000').fill('12000000');
-  await page.locator('label', { hasText: '入居中' }).locator('input[type="checkbox"]').first().uncheck();
-  await page.getByRole('button', { name: '＋ 物件を追加' }).click();
-  await page.waitForSelector('text=E2E空室物件', { timeout: 15000 });
+  // 2. 入居中の物件をもう 1 件足すと、根拠の件数が動き、利回りの比較が出る。
+  await addProperty('E2E入居物件', 90000, 20000000, true);
   await page.getByRole('button', { name: '改善提案' }).click();
-  await page.waitForFunction(() => document.body.textContent.includes('空室 2 件の解消'), undefined, { timeout: 20000 });
+  await page.waitForFunction(() => document.body.textContent.includes('2 物件 (すべて利用者の入力)'), undefined, { timeout: 20000 });
+  ok(true, 'serviceAdvice: 根拠の件数が 2 に動く');
   t = await body();
-  ok(t.includes('E2E空室物件 (¥100,000/月)'), 'serviceAdvice: ★ 足した物件が提案に出る (固定文ではない)');
-  ok(t.includes('5 物件 (同梱の見本 4 件を含む)'), 'serviceAdvice: 根拠の件数が 5 に動く');
-  // 後片付け (利用者行だけに「削除」が在る)。提案の文にも物件名が残るので、表のセルだけを見る。
-  await page.locator('button', { hasText: '削除' }).first().click();
-  await page.waitForFunction(
-    () => !Array.from(document.querySelectorAll('td')).some((td) => td.textContent.includes('E2E空室物件')),
-    undefined,
-    { timeout: 15000 },
-  );
+  ok(t.includes('低利回り物件の見直し: E2E入居物件'), 'serviceAdvice: 低利回りは表の最低 (足した物件) を名指しする');
+  ok(t.includes('キャッシュフローの主力: E2E入居物件'), 'serviceAdvice: キャッシュフローの主力は画面の行から出る');
+  // 物件は消さない —— 下の 4. と 5. はこの画面へ戻って提案を押す (物件が 0 件だと押せない)。
 
-  // 3. 投資信託: 集中度と評価損益率が画面のタイルと同じ数字で出る。
+  // 3. 投資信託: 登録が無ければ押せず、足すと集中度と評価損益率が画面のタイルと同じ数字で出る。
   await gotoService(page, '#mutual-funds', 'text=保有銘柄');
+  await page.waitForSelector('[data-advise-not-ready]', { timeout: 20000 });
+  ok(
+    ((await page.locator('[data-advise-not-ready]').textContent()) ?? '').includes('銘柄がまだ登録されていません')
+      && (await page.getByRole('button', { name: '改善提案' }).isDisabled()),
+    'serviceAdvice: ★ 銘柄が 0 件なら、押す前に言い、ボタンは押せない',
+  );
+  const addFund = async (name, cost, valuation) => {
+    await page.getByPlaceholder('例: ニッセイ外国株式').fill(name);
+    await page.getByPlaceholder('空欄=未入力 (損益は算定しない)').fill(String(cost));
+    await page.getByPlaceholder('空欄=自動計算').fill(String(valuation));
+    await page.getByRole('button', { name: '＋ 銘柄を追加' }).click();
+    await page.waitForSelector(`tbody tr:has-text("${name}")`, { timeout: 15000 });
+  };
+  // 取得額 50 万 + 30 万 = 80 万・評価額 60 万 + 30 万 = 90 万 → 集中度 66.7%・評価損益率 +12.5%。
+  await addFund('E2E主力ファンド', 500000, 600000);
+  await addFund('E2E二番手ファンド', 300000, 300000);
   await page.getByRole('button', { name: '改善提案' }).click();
   await page.waitForSelector('text=根拠:', { timeout: 20000 });
   t = await body();
-  ok(t.includes('分散の状況') && t.includes('39.3%'), 'serviceAdvice: 投資信託の集中度が画面の評価額から出る (S&P500 39.3%)');
-  ok(t.includes('含み益 14.8%'), 'serviceAdvice: 評価損益率はタイルと同じ 14.8%');
+  const fundAdvice = t.slice(t.indexOf('根拠:'), t.indexOf('根拠:') + 420);
+  ok(t.includes('集中リスク: E2E主力ファンド') && t.includes('66.7%'), `serviceAdvice: 投資信託の集中度が画面の評価額から出る (E2E主力ファンド 66.7%) — 実際 ${JSON.stringify(fundAdvice)}`);
+  ok(t.includes('含み益 12.5%'), `serviceAdvice: 評価損益率はタイルと同じ 12.5% — 実際 ${JSON.stringify(fundAdvice)}`);
   ok(!t.includes('提案の取得に失敗'), 'serviceAdvice: 投資信託でも失敗しない');
 
   // 4. **記録と提案は互いの結果を消さない** (2026-09-13 · パス 192)。
@@ -5968,9 +6036,11 @@ function installWaitMarginRecorder(browser) {
     ['phone', phoneSuite, 10],
     ['talent', talentSuite, 14],
     ['teamRadar', teamRadarSuite, 17],
-    ['demoMix', demoMixSuite, 10],
+    // 2026-11-19: 不動産・投資信託・士業が端末内の記録だけになり、「見本が混ざる断り」から「見本を混ぜていない」へ書き直した = 9
+    ['demoMix', demoMixSuite, 9],
     ['paperAccount', paperAccountSuite, 13],
-    ['serviceAdvice', serviceAdviceSuite, 15],
+    // 2026-11-19: 登録が 0 件のとき押す前に言う (不動産・投資信託) を足した = +2
+    ['serviceAdvice', serviceAdviceSuite, 17],
     ['hydroponics', hydroponicsSuite, 34],
     ['parameters', parameterSuite, 11],
     ['writeCeiling', writeCeilingSuite, 9],

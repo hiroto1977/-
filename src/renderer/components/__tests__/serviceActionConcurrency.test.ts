@@ -35,7 +35,9 @@ import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { resetRecordStore } from '../../__tests__/recordStoreHarness';
-import { waitForText } from '../../__tests__/jsdomWait';
+import { settleUntil, waitForText } from '../../__tests__/jsdomWait';
+import { getRecordStore } from '../../data/store';
+import { PROPERTIES_COLLECTION } from '../../data/investments';
 
 const REC = {
   ok: true,
@@ -88,7 +90,14 @@ async function settle(): Promise<void> {
   }
 }
 
-beforeEach(async () => {
+/**
+ * 画面を描く。`seed` なら自分の物件を 1 件置いてから描き、提案のボタンが押せるようになるまで待つ。
+ *
+ * 不動産の画面は 2026-11-19 から端末内の登録だけを出す (同梱の見本の物件は無い)。物件が
+ * 1 件も無いと提案は組めないので、パネルは押す前にそう言ってボタンを押せなくする ——
+ * 記録と提案の干渉を見る検査は、提案が押せる状態 (物件 1 件) から始める。
+ */
+async function mount(seed: boolean): Promise<void> {
   calls = [];
   hold = false;
   held = [];
@@ -96,6 +105,17 @@ beforeEach(async () => {
   document.body.appendChild(container);
   _resetCollectionSubscribersForTests();
   await resetRecordStore();
+  if (seed) {
+    await getRecordStore().insert(PROPERTIES_COLLECTION, {
+      name: '一棟目',
+      type: 'アパート',
+      monthlyRent: 100_000,
+      purchasePrice: 20_000_000,
+      occupied: true,
+      monthlyExpenses: 20_000,
+      monthlyLoan: 10_000,
+    });
+  }
   const def = SERVICES.find((s) => s.id === 'real-estate');
   if (!def) throw new Error('real-estate service missing');
   root = createRoot(container);
@@ -103,7 +123,10 @@ beforeEach(async () => {
     root!.render(createElement(def.page));
   });
   await settle();
-});
+  if (seed) {
+    await settleUntil(() => button('改善提案')?.disabled === false, '置いた物件が届いて、改善提案のボタンが押せる');
+  }
+}
 
 afterEach(async () => {
   if (root) {
@@ -152,6 +175,8 @@ const screen = (): string => (container.textContent ?? '').replace(/\s+/g, ' ');
 const recordCalls = (): number => calls.filter((c) => c === 'record-entry').length;
 
 describe('業務操作パネル — 記録と提案は互いを消さない', () => {
+  beforeEach(() => mount(true));
+
   it('走査の的が在る (メモ欄と 2 つのボタン)', () => {
     expect(noteField()).toBeDefined();
     expect(button('メモを記録')).toBeDefined();
@@ -262,5 +287,40 @@ describe('業務操作パネル — 記録と提案は互いを消さない', ()
     expect(screen(), '記録の失敗が出ていない').toContain('STORE_REFUSED');
     expect(screen(), '★ 記録が失敗したら提案が消えました').toContain('ADVICE_TITLE');
     expect(container.querySelector('[data-record-error]'), '記録の失敗に印が無い').not.toBeNull();
+  });
+});
+
+describe('業務操作パネル — 提案の元になる登録がまだ無いとき (2026-11-19)', () => {
+  beforeEach(() => mount(false));
+
+  it('★ 押す前に言い、ボタンは押せない (内部の欄名の赤い失敗を出さない)', async () => {
+    await waitForText(() => container.querySelector('[data-advise-not-ready]')?.textContent ?? '', '物件がまだ登録されていません');
+    expect(container.querySelector('[data-advise-not-ready]')?.textContent).toBe(
+      '物件がまだ登録されていません。上の欄から 1 件登録すると、その数字から改善提案を組み立てます。',
+    );
+    expect(button('改善提案')?.disabled).toBe(true);
+    // 押しても飛ばない (disabled のボタンは onClick が発火しない)。
+    await click('改善提案');
+    expect(calls.filter((c) => c === 'advise')).toEqual([]);
+    expect(container.querySelector('[data-advise-error]')).toBeNull();
+    expect(container.textContent ?? '').not.toContain('properties');
+  });
+
+  it('記録の側は今までどおり押せる (提案が組めないことは記録を止めない)', async () => {
+    await typeNote('メモ');
+    await click('メモを記録');
+    await waitForText(() => container.querySelector('[data-record-feedback]')?.textContent ?? '', 'メモを受け付けました');
+    expect(calls).toEqual(['record-entry']);
+  });
+});
+
+describe('業務操作パネル — 登録が在れば断りは出ない (対照)', () => {
+  beforeEach(() => mount(true));
+
+  it('物件が 1 件在れば、断りは出ず、押すと提案が飛ぶ', async () => {
+    expect(container.querySelector('[data-advise-not-ready]')).toBeNull();
+    await click('改善提案');
+    await waitForText(() => container.textContent ?? '', 'ADVICE_TITLE');
+    expect(calls).toEqual(['advise']);
   });
 });
