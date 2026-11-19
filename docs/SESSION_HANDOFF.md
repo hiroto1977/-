@@ -7,6 +7,37 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-11-19 · 続き) — A8.net の画面を「自分の成果を記録して合計を見る」画面へ (sample → local)
+
+- **なぜ**: A8.net の画面は同梱の見本 3 件 (「[確定] 動画配信サービス 登録」ほか) を並べるだけで、利用者の成果を 1 件も扱えなかった。
+  A8.net にメディア会員向けの公開 API は無いので、接続ではなく**端末内の記録**にした (士業・不動産・投資信託と同じ「sample → local」の形)。
+- **画面**: 発生月 (`<input type="month">`)・プログラム名 (60 文字まで)・報酬額 (0〜1 億円の整数)・状態 (未確定 / 確定 / 否認) を入れて「＋ 成果を記録」。
+  タイル 3 枚 (確定 / 未確定 / 否認の合計と件数)・月ごとの表 (新しい月が先)・一覧 (状態を `<select>` で変える・× で消す)。
+  状態バーは `A8.net · 確定 ¥X / 未確定 ¥Y`。記録が無いときは案内 (`A8NET_EMPTY_NOTE` —— 端末の中だけに保存し A8.net へ何も送らないと言う)。
+- **判定は `renderer/data/a8netRewards.ts` の 1 か所**: 書き手 `parseA8netReward` (報酬額は `readEntryNumber` —— 空欄を 0 円にせず断る)・
+  集計 `summarizeA8netRewards` (合計・件数・月の表を**同じ「読める行」だけ**から取り、外した件数を返す —— 法則 `one-subset-per-answer`)・
+  断り `unreadableA8netRewardsNote` (逃げ口は同じ画面の一覧の ×)。読める行が 1 件も無いときタイルの金額は `—` (¥0 と刷らない)。
+- **土台は 3 か所が同じ関数を呼ぶ**: `shared/a8netSnapshot.ts` の `buildA8netSnapshot()` (見本を持たない空の土台) を、主プロセスの fetcher・
+  ブラウザ版の `web-shim.ts`・renderer の `SNAPSHOT.a8net` が呼ぶ。
+- **形の表は緩く置いた**: `'a8net-rewards': { month: str, program: str, amount: num, status: str }` —— 発生月や状態の綴りが崩れた行を復元で捨てない
+  (金額は本物なので)。読めない行は合計から外して件数を言い、一覧に出すので × で消せる。
+- **登録した台帳** (新しい collection・書き手・画面を足すと鳴る物): `collectionShapes` / `BACKUP_COLLECTION_RECORD_LIMITS` / `collectionSamples` /
+  `collectionShapesRoundTrip` / `writerNumberReading` / `numericInputReaderCensus` / `rawNumericInputSilence` / `errorMessageSurfaceCensus` /
+  `namedEscapeHatchReachable` / `plaintextExposureClassification` (機微でない —— 自分の広告成果の金額) / `mutateScopeCensus` (`mutate` へ) /
+  `dataOrigin` の件数 (sample 17 / local 40 / remote 22) / オントロジーの文書 (再生成)。
+- **検査**: `a8netRewards.test.ts` (値ごと)・`a8netRewardsOnScreen.test.ts` (jsdom 8 件 —— 空の状態 / 足すと合計が動く / 状態を変える / 消す /
+  入力の誤りで入力を残す / 読めない行を外して × が効く / 読める行が無ければ `—` / 物・配列・200,000 字の欄でも投げない)・
+  `webShimSnapshotBranches.test.ts` +2・e2e の `demoMix` suite +2 (9 → 11・全 suite 750 件)。
+- **対照 7 方向すべて鳴る**: A 読める行が無くても金額を刷る / B 状態の変更を保存しない / C 読めない行の断りを描かない / D プログラム名の天井を外す /
+  E 追加の後に欄を空にしない / F 入力の誤りを出さない / G ブラウザ版の枝を消す (G は 1 度目鳴らず、検査を足した)。
+- **変異検査**: `a8netRewards.ts` は 1 度目 98.88% (生存 1 —— `n !== null && n >= 0` の null の判定が等価: `null >= 0` は真で返すのも null)。
+  形ごと消して (`finiteNumberOf(v) ?? -1` → 1 つの比較) **100.00% (Killed 87)**。`mutate` へ入れた (372 → 373)。
+- **実機**: FULL 12,329,051 B / LITE 3,741,688 B (main から両方 +7,884 B)。`perf` OK (LITE DCL 256 ms / heap 8.3 MB・FULL DCL 573 ms / heap 30.6 MB)。
+  スマホ幅 (412×915・LITE) で A8.net の画面を開いて横あふれ 0・console エラー 0・「更新」を押すと「ローカル」。`e2e` / `e2e:lite` の結果はこの節の末尾の行。
+- **見つけて直していない物**: ブラウザ版で「更新」を押すと赤い失敗が出る `local` の画面が 5 つ在る (KPI / 資金調達レーダー / Linux / Skills / 書類スタジオ) ——
+  `docs/REMAINING_WORK.md` の先頭の節に実測を残した。次の PR の候補。
+- **実機の検査 (最終コード)**: `e2e` **750 件 ❌ 0**・`e2e:lite` **750 件 ❌ 0** (`demoMix` 11 件)。`smoke:app` / `e2e:ollama` は回していない —— 主プロセスが返すのは空の土台だけで、Ollama の経路は触っていない (デスクトップ版の A8.net の画面は開いていない)。
+
 ## 直近の作業 (2026-11-19) — 実機の検査 (e2e) を、端末内の記録になった画面に合わせる + 登録 0 件の「改善提案」
 
 - **見つけ方**: 水耕栽培の変更 (#958) を main と合わせた後に実機の検査を回したら、`desktop` suite が士業の所で止まった。

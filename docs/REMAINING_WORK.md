@@ -1,5 +1,32 @@
 # Service Hub — 残りの作業手順書
 
+## A8.net の画面を「自分の成果の記録」へ (2026-11-19 · sample → local) —— 測って残した物
+
+- **やったこと**: A8.net の画面は同梱の見本 3 件を「内蔵サンプル」として並べるだけだった。A8.net にメディア会員向けの公開 API は無い
+  (成果は管理画面と CSV だけ) ので、つなぐのではなく**利用者が自分の成果を 1 件ずつ記録する**画面にした (発生月・プログラム名・報酬額・状態)。
+  確定 / 未確定 / 否認の合計と月ごとの表を出し、一覧で状態を変え、× で消せる。記録は端末の中 (collection `a8net-rewards`) だけに在り、A8.net へは何も送らない。
+  `SERVICE_DATA_ORIGIN.a8net` は `sample` → `local` (残る `sample` は **17 件**)。
+- **「更新」を押すと赤い失敗が出る `local` の画面が 5 つ在る (実機で測った・直していない)**: ブラウザ版 (LITE・412×915) で「更新」を押すと、
+  A8.net / 税金 / 投資信託 / 税理士 / 水耕栽培は「ローカル」になるが、**KPI / 資金調達レーダー / Linux / Skills / 書類スタジオ**は
+  「エラー」+「ブラウザ版では live fetch を行いません。同梱の snapshot を使用します。」+「表示中の数字は同梱のサンプルです（まだあなたのデータではありません）」と出る。
+  その 5 画面は `local` を名乗り「更新」ボタンを持つのに、`web-shim.ts` の `fetchSnapshot` に枝が無い (`not_implemented` へ落ちる)。
+  後ろの 1 文は、自分の記録を出している画面 (KPI) に対しては偽である。**次の PR の候補** —— 直す向きは 2 つ在り測ってから決める:
+  枝を足す (デスクトップ版の fetcher と同じ土台を返す) か、端末内の記録だけを出す画面から「更新」を外す。
+- **shim の harness で測った母集団**: `SERVICE_DATA_ORIGIN` が `local` の 40 サービスについて、ブラウザ版の `fetchSnapshot` を直接呼ぶと
+  **20 件が ok を返さない** (assistant / business / charts / docstudio / funding / grok / home / kpi / library / linux / mentor / overview / sales /
+  settings / skills / team / templates / village / vrio は `not_implemented`・ollama は `ollama_not-running`)。大半は「更新」ボタンを持たない画面か
+  `autoFetch` しない画面なので利用者には見えない —— 見えるのは上の 5 つ (vrio / grok は状態バーを持たない)。
+  だから検査 (`webShimSnapshotBranches.test.ts`) は「`local` はすべて ok」ではなく **A8.net の枝**と対照 1 件 (`sample` は `not_implemented`) に絞った。
+- **測っていない物**: デスクトップ版 (Electron) の A8.net の画面・`<input type="month">` を持たないブラウザ (Safari の旧版ほかは素のテキスト欄になる ——
+  入口は `YYYY-MM` を要求して断るので誤った月は入らないが、打ち方の案内は断りの文だけ)・CSV の取り込み (A8.net の成果 CSV の列は確かめていないので足していない)・
+  記録が数百件を超えたときの描画 (一覧は `useRowWindow` で窓にしている)・別のタブで同じ成果の状態を同時に変える場合 (状態の変更は `edit` で、
+  相手の行が消えていれば断る —— 中身を比べる口 `editIfUnchanged` は通していない。変えるのは状態の 1 欄だけなので他の欄を戻さない)。
+- **追加した後に残す欄**: 発生月と状態は残し、プログラム名と報酬額だけ空にする (同じ月の成果を続けて入れるため)。使い勝手は利用者に確かめていない。
+- **浮いた 🤖 ボタンが一覧の行の右端に重なる**: スマホ幅で、画面右下の AI コンシェルジュの入口が一覧の 1 行の右端 (× ボタンの近く) に重なる位置に来る。
+  全画面に共通の配置で、この PR では触っていない (スクロールすれば押せる)。
+- **Amazon アソシエイトも同じ形で実用化できる**: 公開 API (PA-API) は売上実績が要るので当面つなげない。成果の記録の型 (`a8netRewards.ts`) をそのまま写すのではなく、
+  2 つ目が要るときに共有へ出す (法則 `center-then-count-callers`)。
+
 ## 実機の検査を端末内の記録になった画面に合わせる (2026-11-19) —— 測って残した物
 
 - **やったこと**: 実機の検査 (`scripts/e2e/core.cjs`) の 6 suite (`desktop` / `dataOrigin` / `credential` / `kessanTax` / `demoMix` / `serviceAdvice`) が、
