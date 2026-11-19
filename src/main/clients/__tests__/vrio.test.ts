@@ -3,7 +3,7 @@ import { fetchVrioSnapshot } from '../vrio';
 import { VRIO_JOB_IDS, VRIO_TIER_IDS, VRIO_VERDICT_IDS } from '../../../shared/vrio';
 import { SNAPSHOT } from '../../../renderer/data/snapshot';
 
-describe('fetchVrioSnapshot (snapshot-only stub; 入力は画面の中だけ)', () => {
+describe('fetchVrioSnapshot (ローカル; 入力は画面の中だけ)', () => {
   it('網を叩かず、階層・職種・判定の台帳の見出しだけを返す (人の評価は持たない)', async () => {
     const fetchMock = vi.fn<typeof fetch>();
     const snap = await fetchVrioSnapshot({ token: 'unused', fetch: fetchMock });
