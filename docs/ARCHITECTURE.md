@@ -25,8 +25,8 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | IPC ハンドラ数 | 15 | `src/main/main.ts:213-432` |
 | client モジュール (fetcher + actions) | 79 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
-| 外部接続先ホスト | 34 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **21259** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| 外部接続先ホスト | 35 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
+| ユニットテスト | **21275** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` (**2026-09-01 の報告** —— 今のコードを測った物ではない。`docs/REMAINING_WORK.md` の「パス 494」) |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` (同上) |
@@ -34,7 +34,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod / dev) | 0 vulnerabilities (2026-09-10 実測。CI が `--omit=dev --audit-level=high` で毎回確認 —— dev 依存と moderate 以下を落とさないのは意図的で、理由は `ci.yml` の注記。**その外側は `lint:deps` のセキュリティの床 6 件**が受け持つ: 自分で押さえた版は道を問わず台帳に載り、緩めば落ちる) | `package-lock.json` |
 | 陰性対照つきゲート | 36 / 39 (`lint:malware` を足した · パス 510。残る 3 件は外部ツール 2 (`typecheck` / eslint) と `chain:verify` (対照は `integrityChainWitness.test.ts` が持つ)。★ 2026-09-25 (パス 467) に `lint:knowledge-refs` と `verify:orchestration` へ `--self-test` を付けた —— 2 本は「2026-08-25 に実物へ違反を植えて鳴ることを確認済み」という理由で免除されていたが、それは**母集団が非空のとき**の対照で、**空にする側**は 1 度も試されておらず、実測すると壊れた台帳も `rounds: []` も `org.secretaries` 削除も**すべて ✅ exit 0** だった。`lint:doi-prefix` は同じ理由で今も免除だが、空にする側は測っていない) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
-| `file:line` 参照数 | 705 | 自己検証 |
+| `file:line` 参照数 | 706 | 自己検証 |
 | 図の中の `file:line` 参照数 | 29 | 自己検証 (mermaid のクラス図・パス 180) |
 
 ### 統合フロー図
@@ -1785,7 +1785,7 @@ union を参照する。
 | `mutual-funds` | 投資信託 (snapshot + 銘柄の任意追加 = record store) | Bearer (将来 SBI/楽天証券) | ✅ | | (ローカル編集 — 保有銘柄の追加/削除 / 評価額 / 基準価額 / 分配金。試算の数値入力は `data/inputGuards.ts` 経由に統一 — 従来 `Number('30,000')` が NaN→0 に落ちていた) |
 | `quality` | 品質ダッシュボード (snapshot のみ) | none | ✅ | | (read-only — テスト件数 / Mutation スコア / 検証パイプライン / レビュー履歴) |
 | `microsoft-365` | Microsoft 365 (Outlook/OneDrive/Teams、snapshot) | OAuth (将来) | | | (read-only — メール / ファイル / 会議) |
-| `dropbox` | Dropbox (snapshot) | Bearer (将来) | | | (read-only — 最近のファイル / 共有 / 容量) |
+| `dropbox` | Dropbox | アクセストークン (Bearer) | | | (read-only — アカウント / 容量 / 最近のアイテム。トークンは App Console で作る自前アプリのもの・権限は読み取りだけ。書き込みは行わない) |
 | `salesforce` | Salesforce CRM (snapshot) | Bearer (将来) | | | (read-only — 商談 / リード / パイプライン) |
 | `charts` | 可視化 (折れ線 / 円 / レーダー) | none | ✅ | | (read-only — 座標計算は `data/charts.ts` の純関数、仮想データは `data/chartFixtures.ts`。外部ライブラリを入れず SVG を自前で組む〔ブラウザ版は CSP が厳しく外部ホストへ取りに行けない単一 HTML のため〕。図は壊れていても『それらしい図』が出るので、`data/chartSelfCheck.ts` の自己検査を画面にも出す — テストと同じ関数を呼ぶので画面とテストで判定がずれない) |
 | `cursor` | Cursor (AI コードエディタのチーム管理) | Bearer (Cursor Admin API) | | | (read-only — メンバー / 日次利用状況 / 当月支出。書き込みは行わない〔席の増減・上限変更は課金に直結するため〕。取れるのはチーム全体の集計で個人の作業内容ではない。受入率が 100% を超える日は Cursor 側の集計が噛み合っていないので `overCounted` で印を付けてそのまま出す。金額は請求通貨の米ドルのまま — 為替を当てて円換算するといつのレートか画面から追えなくなる) |
@@ -1876,10 +1876,10 @@ union を参照する。
 | talent | `judge-leader` | `{ flagged, candidate }` | flagged は失格条項の id 以外を落とし、candidate は 64 字で切る | `talent.ts:184-187` |
 | emotions | `clear-history` | `{ kind }` | kind は moods / analyses / all / 未指定 のみ意味を持つ (未指定は気分だけ) | `emotions.ts:367-381` |
 | docstudio | `list-collections` | (payload なし) | ctx.payload を読まない (同梱の書式目録を返すだけ) | `docstudio.ts:34-36` |
-| real-estate | `record-entry` | `{ note, amount }` | note は文字列必須・amount は任意の数値。**保存はしない** (persisted: false) | `real-estate.ts:87-90` |
-| real-estate | `advise` | 画面の集計 (RealEstateAdviceInput: 物件の行・月次 CF・平均利回り・入居率・しきい値) | shared/serviceAdvisor.ts の規則で提案を組む (パス 119)。読めない payload は断る。ブラウザ版の枝も同じ関数・同じ文面 | `real-estate.ts:87-90` |
-| mutual-funds | `record-entry` | `{ note, amount }` | 同上 | `mutual-funds.ts:90-93` |
-| mutual-funds | `advise` | 画面の集計 (MutualFundsAdviceInput: 銘柄の行・評価額・評価損益率・しきい値) | 同上 (規則) | `mutual-funds.ts:90-93` |
+| real-estate | `record-entry` | `{ note, amount }` | note は文字列必須・amount は任意の数値。**保存はしない** (persisted: false) | `real-estate.ts:75-78` |
+| real-estate | `advise` | 画面の集計 (RealEstateAdviceInput: 物件の行・月次 CF・平均利回り・入居率・しきい値) | shared/serviceAdvisor.ts の規則で提案を組む (パス 119)。読めない payload は断る。ブラウザ版の枝も同じ関数・同じ文面 | `real-estate.ts:75-78` |
+| mutual-funds | `record-entry` | `{ note, amount }` | 同上 | `mutual-funds.ts:75-78` |
+| mutual-funds | `advise` | 画面の集計 (MutualFundsAdviceInput: 銘柄の行・評価額・評価損益率・しきい値) | 同上 (規則) | `mutual-funds.ts:75-78` |
 | uber-eats | `record-entry` | `{ note, amount }` | 同上 | `uber-eats.ts:94-97` |
 | uber-eats | `advise` | 画面の集計 (UberEatsAdviceInput: 店舗・人気メニュー・平均評価) | 同上 (規則。画面が無いので今は呼ぶ物が無い) | `uber-eats.ts:94-97` |
 | demae-can | `record-entry` | `{ note, amount }` | 同上 | `demae-can.ts:89-92` |
@@ -1892,7 +1892,7 @@ union を参照する。
 | shopify | `sync-to-salesforce` | order + token + instanceUrl | **送り先が payload 由来**。https かつ salesforce.com / *.salesforce.com のみ (2026-08-23 まで https しか見ておらず、トークンと顧客情報が任意のホストへ届いた) | `shopify.ts:414-420` |
 | shopify | `sync-to-stripe` | order + token | 送り先は定数 (api.stripe.com) | `shopify.ts:414-420` |
 
-### 3.3 ネットワーク egress マトリクス (34 ホスト + ユーザー指定)
+### 3.3 ネットワーク egress マトリクス (35 ホスト + ユーザー指定)
 
 デスクトップ版の外部接続は **main プロセスからのみ** (renderer は CSP `connect-src 'self'`)。ブラウザ版は同じ宛先へ
 renderer が直接つなぐ (`src/renderer/data/saasWriteWeb.ts` / `src/shared/api/` の各クライアント / `src/renderer/network/ollamaWeb.ts` /
@@ -1947,6 +1947,7 @@ undici は CORS を実装しないので単体検査には映らず、CI の外�
 | linear (両ビルド。ブラウザ版はプロキシ経由 —— 開発環境から api.linear.app へ届かず、ブラウザ発の CORS は確かめていない) | `api.linear.app` | `POST /graphql` (本文は固定の照会 1 つ —— 利用者の名前と自分の担当の未完了の課題。変更の照会は無い) | 個人の API キー (`lin_api_…` はそのまま・それ以外は Bearer) | `src/shared/api/linear.ts:236-238` |
 | sentry (両ビルド。ブラウザ版はプロキシ経由 —— 開発環境から sentry.io へ届かず、ブラウザ発の CORS は確かめていない) | `sentry.io` | `GET /api/0/organizations/`・`GET /api/0/organizations/<slug>/issues/` (未解決だけ・21 件まで。slug は 1 つ目の照会の答えを形で確かめてから入れる。書き込みの照会は無い) | 個人のトークン (Bearer) | `src/shared/api/sentry.ts:283-289` |
 | discord (両ビルド。ブラウザ版はプロキシ経由 —— 開発環境から discord.com へ届かず、ブラウザ発の CORS は確かめていない) | `discord.com` | `GET /api/v10/users/@me/guilds?limit=21&with_counts=true` (ボットが参加しているサーバーの名前と参加人数だけ。メッセージは照会しない。書き込みの照会は無い) | ボットのトークン (`Authorization: Bot`) | `src/shared/api/discord.ts:128-131` |
+| dropbox (両ビルド。ブラウザ版はプロキシ経由 —— 開発環境から api.dropboxapi.com へ届かず、ブラウザ発の CORS は確かめていない) | `api.dropboxapi.com` | `POST /2/users/get_current_account`, `POST /2/users/get_space_usage`, `POST /2/files/list_folder` (ルート直下の先頭 20 件だけ。本文は固定の照会。書き込みの照会は無い) | アクセストークン (Bearer・App Console の自前アプリ、権限は読み取りだけ) | `src/shared/api/dropbox.ts` |
 | shopify→discord | `discord.com` | `POST` webhook (payload 由来。https + hostname 完全一致で絞る) | webhook URL | `shopify.ts:172-194` |
 | shopify→line | `api.line.me` | `POST /v2/bot/message/push` | Bearer | `shopify.ts:205-215` |
 | shopify→stripe | `api.stripe.com` | `POST /v1/customers` | Bearer | `shopify.ts:354-366` |
