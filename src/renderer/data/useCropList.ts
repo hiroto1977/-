@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useCollection } from './useCollection';
+import type { StoredRecord } from './store';
 import {
   HYDROPONIC_CROPS_COLLECTION,
   cropListFromRecords,
@@ -48,12 +49,13 @@ export function useCropList(): CropList {
   const changeCrops: ChangeCrops = async (change) => {
     // 当て直すと `change` は 2 度呼ばれうる —— 答えるのは最後に当てた一覧の結果。
     const last: { outcome?: CropChangeOutcome } = {};
-    const r = await cropCol.applyToLatest((current) => {
+    const step = (current: StoredRecord<HydroponicCropListRecord> | null): HydroponicCropListRecord | null => {
       const before = cropListFromRecords(current === null ? [] : [current]);
       const res = change(before);
       last.outcome = { ...res, before };
       return res.ok ? { crops: res.crops } : null;
-    });
+    };
+    const r = await cropCol.applyToLatest(step);
     if (r.status === 'unreadable') return null;
     if (r.status === 'busy') return 'busy';
     return last.outcome!;

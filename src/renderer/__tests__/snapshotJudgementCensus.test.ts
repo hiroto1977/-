@@ -230,7 +230,9 @@ const READS_STORE_FOR_JUDGEMENT = [
   'src/renderer/pages/KpiPage.tsx',
   'src/renderer/pages/ShopifyPage.tsx',
   'src/renderer/pages/TeamPage.tsx',
-  'src/renderer/pages/OverviewPage.tsx',
+  // 品目の一覧の変更 (パス 497)。2026-11-19 に経営サマリーの画面から部品へ出た ——
+  // 同じ欄を水耕栽培の運転管理の画面にも置くため。断りを出すのは部品の側である。
+  'src/renderer/components/CropListEditor.tsx',
   'src/renderer/components/ManualDataSection.tsx',
 ] as const;
 

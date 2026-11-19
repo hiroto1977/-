@@ -487,6 +487,11 @@ describe('removedCropLotsNote — 消した品目を使うロットが在ると�
     expect(removedCropLotsNote(-1)).toBeNull();
   });
 
+  it('★ 数えられない件数 (NaN・無限) では件数を言わない', () => {
+    expect(removedCropLotsNote(Number.NaN)).toBeNull();
+    expect(removedCropLotsNote(Number.POSITIVE_INFINITY)).toBeNull();
+  });
+
   it('★ 1 件でも在れば、件数と「予定日が出なくなる」「ロットは消えていない」を言う', () => {
     expect(removedCropLotsNote(1)).toBe(
       'この品目のロットが 1 件あります —— そのロットは定植・収穫の予定日が出なくなります（ロットは消えていません）。',

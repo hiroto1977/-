@@ -4067,6 +4067,31 @@ async function hydroponicsSuite(browser) {
   );
   ok(true, 'hydroponics: ★ ロットを削除できる');
 
+  // 10b. **品目をこの画面で増やす・減らす** (2026-11-19)。それまで欄は経営サマリーにだけ在り、
+  //      ロットを足す所で品目が足りない人は画面を移ることになっていた。
+  await page.locator('[data-crop-list-editor] summary').click();
+  await page.locator('[data-crop-list-editor] input[aria-label="品目名"]').fill('E2Eミズナ');
+  await page.locator('[data-crop-list-editor] button', { hasText: 'この品目を足す' }).click();
+  await page.waitForFunction(
+    () => {
+      const sel = document.querySelector('select[data-hydroponics-input="batch-crop"]');
+      return sel !== null && sel.options[sel.selectedIndex]?.textContent === 'E2Eミズナ';
+    },
+    undefined,
+    { timeout: 20000 },
+  );
+  ok(true, 'hydroponics: ★ この画面で足した品目が、ロットの品目に選ばれる');
+  await page.locator('[data-crop-list-editor] button[aria-label="E2Eミズナ を消す"]').click();
+  await page.waitForFunction(
+    () => {
+      const sel = document.querySelector('select[data-hydroponics-input="batch-crop"]');
+      return sel !== null && sel.options.length > 0 && ![...sel.options].some((o) => o.textContent === 'E2Eミズナ');
+    },
+    undefined,
+    { timeout: 20000 },
+  );
+  ok(true, 'hydroponics: ★ この画面で消した品目が、ロットの品目の選択肢から消える');
+
   // 11. **養蜂** (2026-11-18) —— 同じ画面の上の切り替えから開く。産物は増やせて、減らせる。
   await page.locator('[data-farm-view="beekeeping"]').click();
   await page.waitForSelector('[data-bee-products] li', { timeout: 20000 });
@@ -5913,7 +5938,7 @@ function installWaitMarginRecorder(browser) {
     ['demoMix', demoMixSuite, 10],
     ['paperAccount', paperAccountSuite, 13],
     ['serviceAdvice', serviceAdviceSuite, 15],
-    ['hydroponics', hydroponicsSuite, 32],
+    ['hydroponics', hydroponicsSuite, 34],
     ['parameters', parameterSuite, 11],
     ['writeCeiling', writeCeilingSuite, 9],
     ['aiCeiling', aiCeilingSuite, 10],

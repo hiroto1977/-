@@ -309,6 +309,7 @@ export function resolveCropFrom(list: readonly HydroponicCrop[], id: unknown): H
  * 出なくなる (表は「見つかりません」と出す)。**黙って予定日だけ消えないように、消した所で言う。**
  */
 export function removedCropLotsNote(lots: number): string | null {
-  if (lots <= 0) return null;
+  // 数えられない件数 (NaN・無限) では件数を言わない —— 「NaN 件あります」と刷らない。
+  if (!Number.isFinite(lots) || lots <= 0) return null;
   return `この品目のロットが ${lots} 件あります —— そのロットは定植・収穫の予定日が出なくなります（ロットは消えていません）。`;
 }

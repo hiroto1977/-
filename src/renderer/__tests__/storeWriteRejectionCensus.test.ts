@@ -128,6 +128,13 @@ const WRITE_SOURCES: readonly WriteSource[] = [
     resultType: 'LatestForm',
     methods: ['applyToLatest', 'save'],
   },
+  {
+    // 水耕栽培の品目の一覧 (2026-11-19)。増減する欄が 2 画面に出るので、読み書きを hook に寄せた。
+    hook: 'useCropList',
+    definedIn: 'src/renderer/data/useCropList.ts',
+    resultType: 'CropList',
+    methods: ['changeCrops'],
+  },
 ];
 
 /**
@@ -145,6 +152,9 @@ const WRAPPER_SITES: Readonly<Record<string, string>> = {
   'src/renderer/data/useLatestForm.ts :: col.addIfLatest(latestTokenOf(st.base), data)':
     'useLatestForm の save が書く (パス 500)。拒否は save の約束へそのまま返るので、WRITE_SOURCES の ' +
     'useLatestForm の行が、それを呼ぶ所 (経営サマリーの 3 つの欄・運転の設定) を辿る。',
+  'src/renderer/data/useCropList.ts :: cropCol.applyToLatest(step)':
+    'useCropList の changeCrops が書く (品目の一覧の増減 · 2026-11-19)。拒否は changeCrops の約束へそのまま返るので、' +
+    'WRITE_SOURCES の useCropList の行が、それを呼ぶ所 (品目を増やす・減らす欄 `CropListEditor`) を辿る。',
   'src/renderer/data/useLatestForm.ts :: col.applyToLatest(change)':
     'useLatestForm の applyToLatest が書く (書式を選んだ瞬間の保存 · パス 500)。拒否の返り方は save と同じ。',
 };
