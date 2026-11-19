@@ -92,6 +92,7 @@
     "verify:packaged-fuses": "node scripts/verify-packaged-fuses.cjs --self-test && node scripts/verify-packaged-fuses.cjs",
     "smoke": "xvfb-run -a electron --no-sandbox scripts/screenshot.cjs",
     "test": "vitest run",
+    "test:council": "python3 local-ai/council/test_health_topic_cooldown.py",
     "test:cov": "vitest run src/main --coverage --coverage.include=src/main/** --coverage.reporter=text --coverage.reporter=json-summary",
     "test:property": "vitest run src/main/__tests__/property.test.ts",
     "test:watch": "vitest",
