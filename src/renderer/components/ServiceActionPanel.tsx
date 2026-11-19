@@ -3,7 +3,7 @@ import { MAX_RECORD_NOTE_CHARS, type RecordEntryServiceId } from '../../shared/r
 import { parseTimestamp } from '../../shared/isoDate';
 import { charsOverCeiling, clampToCeiling, clampedCeilingNote } from '../../shared/inputCeiling';
 import type { ActionData } from '../../shared/actionData';
-import type { AdviceInputFor } from '../../shared/serviceAdvisor';
+import { adviceNotReadyNote, type AdviceInputFor } from '../../shared/serviceAdvisor';
 import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { Section } from './StatusBar';
 import { parseAmountInput, sanitizeNote } from './serviceActionUtils';
@@ -96,6 +96,11 @@ export function ServiceActionPanel<S extends RecordEntryServiceId>({ serviceId, 
   const error = recordError(state);
   const advice = adviceResult(state);
   const adviseFailed = adviceError(state);
+  /**
+   * 提案の元になる一覧がまだ 1 件も無い —— 押す前に言い、押せなくする (2026-11-19)。
+   * 押させてから読み取りの断り (内部の欄名の文) を赤く出していた。文は shared が 1 つ持つ。
+   */
+  const adviseNotReady = adviceNotReadyNote(serviceId, adviseInput);
 
   async function submitRecord() {
     const cleanNote = sanitizeNote(note);
@@ -219,13 +224,19 @@ export function ServiceActionPanel<S extends RecordEntryServiceId>({ serviceId, 
 
       {/* advise */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8, marginBottom: 8 }}>
-        <button type="button" onClick={() => void advGuard.run(submitAdvise)} disabled={advBusy} style={buttonStyle}>
+        <button type="button" onClick={() => void advGuard.run(submitAdvise)} disabled={advBusy || adviseNotReady !== null} style={buttonStyle}>
           {advBusy ? '生成中…' : '💡 改善提案'}
         </button>
         <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>
           画面の数字から規則で組み立てます (AI ではありません。Phase 6 で LLM 接続)
         </span>
       </div>
+
+      {adviseNotReady !== null && (
+        <div data-advise-not-ready style={{ ...feedbackStyle, color: 'var(--text-mute)' }}>
+          {adviseNotReady}
+        </div>
+      )}
 
       {/* 提案の失敗は提案の側に出す —— 記録の確認を消さない (パス 192)。 */}
       {adviseFailed && (

@@ -836,6 +836,42 @@ export type AdviceOutcome =
   | { readonly ok: false; readonly message: string };
 
 /**
+ * 提案の元になる一覧が**まだ 1 件も無い**ときに、画面が押す前に言う文 (2026-11-19)。在れば null。
+ *
+ * 不動産と投資信託は 2026-11-19 から端末内の登録だけを出す (同梱の見本は無い)。それまでは
+ * 見本 4 件が必ず在ったので空の一覧は届かなかったが、今は何も登録していない人が「改善提案」を
+ * 押すと、読み取りの断り (「properties は配列 (1〜500 件) で指定してください」) が赤い失敗として
+ * 出ていた —— 利用者が直せる事を、内部の欄名で述べていた。断りは押す前に、利用者の言葉で言う。
+ *
+ * 判定は「一覧が空の配列か」だけ。配列でない・行の中身が読めないなどの形の誤りは
+ * ここでは述べない (読み取りの関門 `parse*AdviceInput` が今までどおり断る)。空の一覧を
+ * 読み取りが断る組と、ここが文を返す組が同じであることは `serviceAdvisor.test.ts` が突き合わせる。
+ */
+const ADVICE_EMPTY_ROWS: Readonly<Record<RecordEntryServiceId, { readonly field: string; readonly note: string } | null>> = {
+  'real-estate': {
+    field: 'properties',
+    note: '物件がまだ登録されていません。上の欄から 1 件登録すると、その数字から改善提案を組み立てます。',
+  },
+  'mutual-funds': {
+    field: 'holdings',
+    note: '銘柄がまだ登録されていません。上の欄から 1 件登録すると、その数字から改善提案を組み立てます。',
+  },
+  'uber-eats': {
+    field: 'stores',
+    note: '店舗の数字がまだ無いため、改善提案を組み立てられません。',
+  },
+  // 出前館の提案は月次の件数から組むので、一覧 (配達エリア) が空でも組める。
+  'demae-can': null,
+};
+
+export function adviceNotReadyNote(serviceId: RecordEntryServiceId, raw: unknown): string | null {
+  const need = ADVICE_EMPTY_ROWS[serviceId];
+  if (need === null || !isObject(raw)) return null;
+  const rows = raw[need.field];
+  return Array.isArray(rows) && rows.length === 0 ? need.note : null;
+}
+
+/**
  * サービス id と生の payload から提案を組む。読めない payload は `{ ok: false, message }`
  * (main は throw に、ブラウザ版は `action_failed` に変える —— 文面は同じ)。
  */
