@@ -28,7 +28,7 @@ const inputStyle: React.CSSProperties = {
 export function SkillsPage() {
   /** どの実行形態か (パス 161)。分かるまでは null —— 実行形態に依る文を出さない。 */
   const buildKind = useBuildKind();
-  const { data, source, status, errorMessage, errorKind, refresh, isConfigured } = useServiceData(
+  const { data, source, payloadIsMock, status, errorMessage, errorKind, refresh, isConfigured } = useServiceData(
     'skills',
     SNAPSHOT.skills,
   );
@@ -80,6 +80,8 @@ export function SkillsPage() {
       <StatusBar
         serviceId="skills"
         source={source}
+        // ブラウザ版は `~/.claude/skills` を読めず、取得しても空の一覧が返る (`isMock`)。緑の「ローカル」を付けない。
+        payloadIsMock={payloadIsMock}
         status={status}
         errorMessage={errorMessage}
         errorKind={errorKind}
