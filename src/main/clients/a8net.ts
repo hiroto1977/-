@@ -1,25 +1,24 @@
-import { createSnapshotStub } from './snapshotStub';
+import type { FetchContext } from './types';
+import { buildA8netSnapshot, type A8netSnapshot } from '../../shared/a8netSnapshot';
 
 /**
- * A8.net (a8.net) — アフィリエイト ASP (snapshot 専用)。
+ * A8.net (a8.net) — アフィリエイト ASP。
  *
- * A8.net の成果/レポートは管理画面・CSV ベースで一般公開 REST API がない
- * ため、本ファイルは `LIVE_FETCHERS` invariant を満たす static stub。実際の
- * ページは `SNAPSHOT.a8net` を直接描画する。将来レポート連携を配線する際は、
- * この fetcher 内で同じ shape を返却する。
+ * A8.net の成果レポートは管理画面と CSV だけで、メディア会員向けの公開 REST API は無い。
+ * このアプリは A8.net へつながず、成果は利用者が自分で記録する —— 記録は renderer の
+ * record store (collection `a8net-rewards`) に在り、ページが自分の記録だけから集計する。
+ * 本 fetcher が返すのは見本を持たない空の土台だけ (組み立ては `shared/a8netSnapshot.ts` の
+ * `buildA8netSnapshot`、ブラウザ版の web-shim も同じ関数を呼ぶ)。資格情報も通信も
+ * 使わないので `LOCAL_SERVICES` に載り、`SERVICE_DATA_ORIGIN` は 'local' (2026-11-19)。
  */
 
-export interface A8netSnapshot {
-  items: { id: string; name: string }[];
+export type { A8netSnapshot };
+
+export async function fetchA8netSnapshotImpl(_ctx: FetchContext): Promise<A8netSnapshot> {
+  return buildA8netSnapshot();
 }
 
-// Stryker disable next-line all
-const STUB: A8netSnapshot = {
-  items: [
-    { id: 'a8-4001', name: '[確定] 動画配信サービス 登録 — ¥1,200' },
-    { id: 'a8-4002', name: '[確定] クレジットカード発行 — ¥3,000' },
-    { id: 'a8-4003', name: '[保留] 格安SIM 申込 — ¥1,500' },
-  ],
-};
-
-export const fetchA8netSnapshot = createSnapshotStub<A8netSnapshot>(STUB);
+// Stryker disable next-line BlockStatement
+export async function fetchA8netSnapshot(ctx: FetchContext): Promise<A8netSnapshot> {
+  return fetchA8netSnapshotImpl(ctx);
+}
