@@ -26,7 +26,7 @@ const perCoreColor = (n: number | null): string | undefined =>
   n === null ? undefined : n >= 100 ? 'var(--danger)' : n >= 70 ? 'var(--warning)' : 'var(--success)';
 
 export function LinuxPage() {
-  const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
+  const { data, source, payloadIsMock, status, errorMessage, refresh, isConfigured } = useServiceData(
     'linux',
     SNAPSHOT.linux,
   );
@@ -37,6 +37,8 @@ export function LinuxPage() {
       <StatusBar
         serviceId="linux"
         source={source}
+        // ブラウザ版は端末を読めず、取得しても同梱の値が返る (`isMock`)。そのとき緑の「ローカル」を付けない。
+        payloadIsMock={payloadIsMock}
         status={status}
         errorMessage={errorMessage}
         isConfigured={isConfigured}

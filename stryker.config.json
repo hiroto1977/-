@@ -148,6 +148,7 @@
     "src/renderer/data/inputGuards.ts",
     "src/renderer/data/investments.ts",
     "src/renderer/data/a8netRewards.ts",
+    "src/renderer/data/browserBundledFetch.ts",
     "src/renderer/data/kessanImport.ts",
     "src/renderer/data/kpiActuals.ts",
     "src/renderer/data/kpiActualsCsv.ts",

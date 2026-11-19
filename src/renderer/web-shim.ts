@@ -19,7 +19,8 @@
  *                                **この行を読んで「ブラウザ版はどこにも預からない」と
  *                                判断してはいけない。**
  *   - fetchSnapshot()          → サービスごとに分岐する (stocks / hydroponics /
- *                                ollama / emotions …)。実装の無い物だけが
+ *                                ollama / emotions …)。同梱の内容しか返せない 7 画面は
+ *                                その写しに isMock を重ねて返す (2026-11-19)。実装の無い物だけが
  *                                "not_implemented" に落ち、ページはそこで
  *                                SNAPSHOT[id] (同梱の静的スナップショット) へ戻る。
  *                                2026-09-23 (パス 427) に訂正: 「常に
@@ -213,6 +214,7 @@ import {
 import { inspectStoredProxyConfig, fetchViaProxy, PROXY_UNVERIFIED_MESSAGE } from './network/proxy';
 import { deviceStoreFailureMessage } from './data/deviceStoreFailure';
 import { liveRead, canLiveRead } from './network/liveRead';
+import { bundledPayloadForBrowser, servesBundledInBrowser } from './data/browserBundledFetch';
 import { AI_PROVIDERS, ANTHROPIC_FAST_MODEL } from '../shared/ai/providers';
 import {
   configForProvider,
@@ -1531,6 +1533,17 @@ const unguarded = {
         boot: { detection: 'unavailable' },
         keysConfigured: { hibp: Boolean(keys.hibp), vt: Boolean(keys.vt) },
       }) as ActionResult<T>;
+    }
+    /*
+     * 同梱の内容しか返せない画面 (事業ダッシュボード / 書類スタジオ / 資金調達レーダー / KPI /
+     * Linux / Skills / テンプレート —— `data/browserBundledFetch.ts`)。
+     * ここが無いまま `not_implemented` へ落ちると、「更新」を押すたびに赤い「エラー」と
+     * 「ブラウザ版では live fetch を行いません」が出た (2026-11-19 実測)。返す中身は
+     * `isMock: true` を名乗るので、画面は注記か「同梱データ」の札を出す。
+     */
+    if (serviceId !== undefined && servesBundledInBrowser(serviceId)) {
+      const mod = (await import('./data/snapshot')) as unknown as { SNAPSHOT: Readonly<Record<string, unknown>> };
+      return ok(bundledPayloadForBrowser(serviceId, mod.SNAPSHOT)) as ActionResult<T>;
     }
     // 資格情報 (と必要ならプロキシ) が揃っていれば、読み取りも実データにする。
     // ここが `not_implemented` を返し続けていたせいで、キーを入れても画面は

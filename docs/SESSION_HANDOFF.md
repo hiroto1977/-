@@ -7,6 +7,22 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-11-19 · 続き 2) — ブラウザ版の「更新」で赤い失敗が出る 7 画面を直した
+
+- **症状**: ブラウザ版で「更新」を押すと、赤い「エラー」と「ブラウザ版では live fetch を行いません。同梱の snapshot を使用します。」と
+  「表示中の数字は同梱のサンプルです（まだあなたのデータではありません）」が出た。実機 (実 chromium) で `local` の全画面を押して数えると **7 画面**
+  (事業ダッシュボード / 書類スタジオ / 資金調達レーダー / KPI / Linux / Skills / テンプレート)。API キーを保存した事業ダッシュボードと Skills は開いただけで出た。
+- **原因**: `SERVICE_DATA_ORIGIN` が `local` の画面は「更新」が取得を呼ぶが、ブラウザ版の `web-shim.ts` の `fetchSnapshot` にその 7 つの枝が無く `not_implemented` へ落ちていた。
+- **直し**: `renderer/data/browserBundledFetch.ts` (一覧 7 件・判定・返す中身) を置き、shim の枝が同梱の内容の写しに `isMock: true` を重ねて返す。
+  Linux / Skills の画面は `payloadIsMock` を状態バーへ渡す (端末を読めていない取得に緑の「ローカル」を付けない —— 札は「同梱データ」)。
+- **検査**: `browserBundledFetch.test.ts` 7 件・`webShimSnapshotBranches.test.ts` +4・`browserRefreshReachable.test.ts` 5 件 (母集団を走査で導く)・
+  `bundledRefreshBadge.test.ts` 4 件 (jsdom で「更新」を押して札を読む)・e2e の `dataOrigin` suite +7 (11 → 18・全 suite 757 件)。
+- **対照 5 方向すべて鳴る**: A shim の枝を外す ❌5 / B Linux が札へ渡さない ❌1 / C Skills が札へ渡さない ❌1 / D `isMock` を重ねない ❌8 / E 一覧から kpi を外す ❌4。
+- **変異検査**: `browserBundledFetch.ts` 100.00% (Killed 4 —— 一覧は読み込み時に決まる値なので測る変異体は 4 つだけ)。`mutate` へ入れた (373 → 374)。
+- **実機**: FULL 12,329,410 B / LITE 3,742,047 B (両方 +359 B)。結果はこの節の末尾の行。
+- **残した物**: `docs/REMAINING_WORK.md` の先頭の節 (事業ダッシュボードと KPI の緑の札・`remote` の画面の同じ落ち方・Ollama の的外れな 1 文)。
+- **実機の検査 (最終コード)**: `perf` OK (LITE DCL 258 ms / heap 8.3 MB・FULL DCL 561 ms / heap 30.4 MB)・`e2e` **757 件 ❌ 0**・`e2e:lite` **757 件 ❌ 0** (`dataOrigin` 18 件)。`smoke:app` / `e2e:ollama` は回していない —— 主プロセスも Ollama の経路も触っていない。
+
 ## 直近の作業 (2026-11-19 · 続き) — A8.net の画面を「自分の成果を記録して合計を見る」画面へ (sample → local)
 
 - **なぜ**: A8.net の画面は同梱の見本 3 件 (「[確定] 動画配信サービス 登録」ほか) を並べるだけで、利用者の成果を 1 件も扱えなかった。

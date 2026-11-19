@@ -24,6 +24,8 @@ import { buildComplianceSnapshot } from '../../shared/complianceSnapshot';
 import { buildA8netSnapshot } from '../../shared/a8netSnapshot';
 import { SERVICE_IDS } from '../../shared/serviceId';
 import { originOf } from '../../shared/dataOrigin';
+import { BROWSER_BUNDLED_FETCH_SERVICES } from '../data/browserBundledFetch';
+import { SNAPSHOT } from '../data/snapshot';
 
 /** 金庫の中身をテストごとに差し替える。 */
 const tokens = new Map<string, string>();
@@ -355,5 +357,54 @@ describe('A8.net — 端末内の記録の土台を返す分岐 (2026-11-19)', (
     const r = await hub.fetchSnapshot(sample!);
     expect(r.ok).toBe(false);
     expect(r.code).toBe('not_implemented');
+  });
+});
+
+/**
+ * **同梱の内容しか返せない 7 画面も、ブラウザ版の「更新」は失敗にしない** (2026-11-19)。
+ *
+ * 実測 (直す前・実 chromium で「更新」を押す): 事業ダッシュボード / 書類スタジオ / 資金調達レーダー /
+ * KPI / Linux / Skills / テンプレートは `not_implemented` へ落ち、赤い「エラー」と
+ * 「ブラウザ版では live fetch を行いません」と「表示中の数字は同梱のサンプルです」が出た。
+ * 返す物は同梱の内容の写しで、**必ず `isMock: true` を名乗る** (画面が注記か「同梱データ」の札を出す)。
+ */
+describe('同梱の内容を返す分岐 —— 7 画面 (2026-11-19)', () => {
+  const snapshots = SNAPSHOT as unknown as Readonly<Record<string, Record<string, unknown>>>;
+
+  it('★ 7 サービスとも ok で、同梱の内容に isMock: true を重ねた物を返す', async () => {
+    const hub = await loadHub();
+    expect(BROWSER_BUNDLED_FETCH_SERVICES.length).toBe(7);
+    for (const id of BROWSER_BUNDLED_FETCH_SERVICES) {
+      const snap = await hub.fetchSnapshot(id);
+      expect(snap.ok, `${id}: ${snap.code ?? ''} ${snap.message ?? ''}`).toBe(true);
+      expect(snap.data, id).toEqual({ ...snapshots[id], isMock: true });
+    }
+  });
+
+  it('★ 端末を読めない Linux / Skills も、取ってきた物として名乗らない (isMock: true)', async () => {
+    const hub = await loadHub();
+    const linux = await hub.fetchSnapshot('linux');
+    expect(linux.data?.isMock).toBe(true);
+    const skills = await hub.fetchSnapshot('skills');
+    expect(skills.data).toEqual({ items: [], isMock: true });
+  });
+
+  it('鍵を保存していても同じ答え (事業ダッシュボード・Skills は鍵が在ると開いただけで取得する)', async () => {
+    tokens.set('business', 'sk-ant-test');
+    tokens.set('skills', 'sk-ant-test');
+    const hub = await loadHub();
+    for (const id of ['business', 'skills']) {
+      const snap = await hub.fetchSnapshot(id);
+      expect(snap.ok, id).toBe(true);
+      expect(snap.data?.isMock, id).toBe(true);
+    }
+  });
+
+  it('返す物は写し —— 2 度呼ぶと別の物で、書き換えても同梱の内容は動かない', async () => {
+    const hub = await loadHub();
+    const a = await hub.fetchSnapshot('kpi');
+    const b = await hub.fetchSnapshot('kpi');
+    expect(a.data).not.toBe(b.data);
+    expect(a.data).not.toBe(snapshots.kpi);
   });
 });

@@ -1223,6 +1223,39 @@ async function dataOriginSuite(browser) {
     'KPI: 「外部連携なし」は出さない',
   );
 
+  // local: 同梱の内容しか返せない 7 画面。「更新」を押しても失敗にしない (2026-11-19)。
+  //
+  // 直す前は `web-shim.ts` の `fetchSnapshot` に枝が無く、押すたびに赤い「エラー」と
+  // 「ブラウザ版では live fetch を行いません」と「表示中の数字は同梱のサンプルです」が出た。
+  // 返す中身は `isMock: true` を名乗る (`data/browserBundledFetch.ts`)。札は画面ごとの扱いに従う ——
+  // 札へ渡す画面 (資金調達レーダー / Linux / Skills) は「同梱データ」、自分の注記で言う画面
+  // (事業ダッシュボード / KPI) と数字を持たない画面 (書類スタジオ / テンプレート) は「ローカル」
+  // (デスクトップ版と同じ —— `mockPayloadPolicy.test.ts` の台帳)。
+  // **端末を読めていない Linux / Skills に緑の「ローカル」を付けない。**
+  for (const [hash, name, want] of [
+    ['#business', '事業ダッシュボード', 'ローカル'],
+    ['#docstudio', '書類スタジオ', 'ローカル'],
+    ['#funding', '資金調達レーダー', '同梱データ'],
+    ['#kpi', 'KPI', 'ローカル'],
+    ['#linux', 'Linux', '同梱データ'],
+    ['#skills', 'Skills', '同梱データ'],
+    ['#templates', 'テンプレート', 'ローカル'],
+  ]) {
+    await gotoService(page, hash, '.status-bar');
+    await page.locator('.status-bar button', { hasText: /^更新$/ }).first().click();
+    // 取得が終わるまで待つ (札が「スナップショット」「読込中…」のどちらでもなくなる)。
+    await page.waitForFunction(() => {
+      const t = (document.querySelector('.status-bar .badge')?.textContent ?? '').trim();
+      return t !== '' && t !== 'スナップショット' && t !== '読込中…';
+    }, undefined, { timeout: 15000 });
+    const got = ((await page.textContent('.status-bar .badge')) ?? '').trim();
+    const bar = (await page.locator('.status-bar').innerText()).replace(/\s+/g, ' ');
+    ok(
+      got === want && !bar.includes('live fetch を行いません') && !bar.includes('同梱のサンプルです'),
+      `${name}: ★ 「更新」を押しても失敗にせず、札は「${want}」 (実際 "${got}" / ${JSON.stringify(bar.slice(0, 80))})`,
+    );
+  }
+
   // remote: GitHub。更新ボタンが出て、未取得なら「サンプル（未連携）」。
   //
   // **「スナップショット」ではない。** 2026-08-19 (#783) に言葉を変えた ——
@@ -6049,7 +6082,7 @@ function installWaitMarginRecorder(browser) {
     ['desktop', desktopSuite, 67],
     ['manualData', manualDataSuite, 19],
     // 2026-11-19: 「内蔵サンプル」の標本を不動産へ移し、士業 (端末内の記録) が見本を名乗らないことを足した = +2
-    ['dataOrigin', dataOriginSuite, 11],
+    ['dataOrigin', dataOriginSuite, 18],
     ['credential', credentialSuite, 8],
     ['businessComparison', businessComparisonSuite, 13],
     ['kessanTax', kessanTaxSuite, 34],
