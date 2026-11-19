@@ -22,6 +22,7 @@ import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { PARAMETER_OVERRIDES_COLLECTION, useParameters } from '../../data/parameterOverrides';
 import { KPI_ACTUALS_COLLECTION } from '../../data/kpiActuals';
+import { HOLDINGS_COLLECTION, PROPERTIES_COLLECTION } from '../../data/investments';
 import { BALANCE_SHEET_COLLECTION } from '../../data/balanceSheet';
 import { MEMBERS_COLLECTION } from '../../data/members';
 import { WORK_ASSIGNMENTS_COLLECTION } from '../../../shared/workAssignment';
@@ -381,18 +382,48 @@ describe('改善提案 — 台帳のしきい値が、画面が渡す payload �
     hub().invoke = FAILING_INVOKE;
   });
 
+  /**
+   * 助言の材料は利用者の登録だけ (2026-11-19 のローカル完結バッチ 3 で同梱の
+   * 見本は外れた)。かつて見本だった 4 件・4 銘柄と同じ数字を**自分の登録として**
+   * record store へ置き、しきい値の効き方だけを見る。
+   */
+  async function seedProperties(): Promise<void> {
+    const rows = [
+      { name: '渋谷区マンション 1LDK', type: '区分所有', monthlyRent: 168_000, purchasePrice: 42_000_000, occupied: true, monthlyExpenses: 168_000, monthlyLoan: 412_000 },
+      { name: '横浜市戸建て', type: '一棟', monthlyRent: 235_000, purchasePrice: 45_400_000, occupied: true, monthlyExpenses: 0, monthlyLoan: 0 },
+      { name: '大阪市ワンルーム', type: '区分所有', monthlyRent: 72_000, purchasePrice: 15_700_000, occupied: false, monthlyExpenses: 0, monthlyLoan: 0 },
+      { name: '札幌市アパート 6 戸', type: '一棟', monthlyRent: 420_000, purchasePrice: 62_000_000, occupied: true, monthlyExpenses: 0, monthlyLoan: 0 },
+    ];
+    for (const r of rows) await getRecordStore().insert(PROPERTIES_COLLECTION, r);
+  }
+
+  async function seedHoldings(): Promise<void> {
+    const rows = [
+      { code: '0331C152', name: 'eMAXIS Slim 米国株式 (S&P500)', valuation: 3_241_360, acquisitionCost: 2_800_000, ytdReturnPct: 14.2 },
+      { code: '03313187', name: 'eMAXIS Slim 全世界株式 (オール・カントリー)', valuation: 2_437_260, acquisitionCost: 2_180_000, ytdReturnPct: 11.8 },
+      { code: '0331C129', name: 'eMAXIS Slim 先進国債券インデックス', valuation: 697_840, acquisitionCost: 680_000, ytdReturnPct: 3.4 },
+      { code: '64311074', name: 'ひふみプラス', valuation: 1_863_680, acquisitionCost: 1_520_000, ytdReturnPct: 8.7 },
+    ];
+    for (const r of rows) await getRecordStore().insert(HOLDINGS_COLLECTION, r);
+  }
+
   it('対照: 不動産の既定は差 1.0 pt で、渋谷 (4.8% / 平均 6.2%) を低利回りと名指しする', async () => {
+    await seedProperties();
     await mount(RealEstatePage);
+    // 錠は置いた記録の行 —— 届いた描画で payload の材料も揃っている。
+    await waitForText(text, '渋谷区マンション 1LDK');
     await clickButton('改善提案');
-    await waitForText(text, '根拠: 4 物件 (同梱の見本 4 件を含む)・月次 CF ¥243,000・平均表面利回り 6.2%・入居率 75%');
+    await waitForText(text, '根拠: 4 物件 (すべて利用者の入力)・月次 CF ¥243,000・平均表面利回り 6.2%・入居率 75%');
     await waitForText(text, '低利回り物件の見直し: 渋谷区マンション 1LDK');
     await waitForText(text, '(差のしきい値 1.0 pt)');
     expect(text()).not.toContain('提案の取得に失敗');
   });
 
   it('差を 3 pt に上げれば同じ画面が「ばらつきは小さい」と言い、文言もその値を言う', async () => {
+    await seedProperties();
     await seed({ 'advisor.yieldGapPt': 3 });
     await mount(RealEstatePage);
+    await waitForText(text, '渋谷区マンション 1LDK');
     await clickButton('改善提案');
     await waitForText(text, '利回りのばらつきは小さい');
     await waitForText(text, 'しきい値 3.0 pt 未満');
@@ -400,16 +431,20 @@ describe('改善提案 — 台帳のしきい値が、画面が渡す payload �
   });
 
   it('対照: 投資信託の既定は 50% で、S&P500 (39.3%) は集中ではない', async () => {
+    await seedHoldings();
     await mount(MutualFundsPage);
+    await waitForText(text, 'eMAXIS Slim 米国株式 (S&P500)');
     await clickButton('改善提案');
-    await waitForText(text, '根拠: 4 銘柄 (同梱の見本 4 件を含む)・評価額 ¥8,240,140・評価損益率 14.8%');
+    await waitForText(text, '根拠: 4 銘柄 (すべて利用者の入力)・評価額 ¥8,240,140・評価損益率 14.8%');
     await waitForText(text, '分散の状況');
     await waitForText(text, '(しきい値 50.0% 未満)');
   });
 
   it('比率を 30% に下げれば同じ画面が「集中リスク」と言い、文言もその値を言う', async () => {
+    await seedHoldings();
     await seed({ 'advisor.concentrationShare': 0.3 });
     await mount(MutualFundsPage);
+    await waitForText(text, 'eMAXIS Slim 米国株式 (S&P500)');
     await clickButton('改善提案');
     await waitForText(text, '集中リスク: eMAXIS Slim 米国株式 (S&P500)');
     await waitForText(text, '(しきい値 30.0%)');

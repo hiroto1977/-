@@ -87,6 +87,8 @@ import { buildHydroponicsSnapshot } from '../shared/hydroponicsControl';
 import { buildShigyoSnapshot } from '../shared/shigyoTypes';
 import { buildTaxSnapshot } from '../shared/taxSnapshot';
 import { buildComplianceSnapshot } from '../shared/complianceSnapshot';
+import { buildRealEstateSnapshot } from '../shared/realEstateSnapshot';
+import { buildMutualFundsSnapshot } from '../shared/mutualFundsSnapshot';
 import { PROFESSIONAL_IDS } from './data/professionalMap';
 import { MAX_ANALYZE_TEXT_CHARS } from '../shared/emotionsLimits';
 import { clampToCeiling, countChars, refusedCeilingNote } from '../shared/inputCeiling';
@@ -1387,6 +1389,26 @@ const unguarded = {
      */
     if (serviceId === 'compliance') {
       return ok(buildComplianceSnapshot()) as ActionResult<T>;
+    }
+    /*
+     * 不動産投資 (2026-11-19)。返すのは見本を持たない空の土台だけで、
+     * **デスクトップ版と同じ関数**を呼ぶ (`shared/realEstateSnapshot.ts` の
+     * `buildRealEstateSnapshot`)。物件は record store (IndexedDB) に在り、
+     * 画面が自分の物件だけから集計する (税務試算と同じ形)。
+     * ここが無いまま `not_implemented` へ落ちると、取得のたびに「未実装」の
+     * エラーが画面に出る (士業と同じ壊れ方)。
+     */
+    if (serviceId === 'real-estate') {
+      return ok(buildRealEstateSnapshot()) as ActionResult<T>;
+    }
+    /*
+     * 投資信託 (2026-11-19)。返すのは見本を持たない空の土台だけで、
+     * **デスクトップ版と同じ関数**を呼ぶ (`shared/mutualFundsSnapshot.ts` の
+     * `buildMutualFundsSnapshot`)。保有は record store (IndexedDB) に在り、
+     * 画面が自分の保有だけから集計する (不動産と同じ形)。
+     */
+    if (serviceId === 'mutual-funds') {
+      return ok(buildMutualFundsSnapshot()) as ActionResult<T>;
     }
     /*
      * コネクター / 自動化 (2026-11-19)。カタログは shared/connectors が正で

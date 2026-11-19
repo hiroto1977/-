@@ -208,7 +208,9 @@ describe('資格情報の札と逃げ口は、保管層と同じことを言う'
     expect(credentialUseOf('github')).not.toBe('none');
     expect(unusedStoredCredentials(['github'])).toEqual([]);
     // 針が的に当たることの標本: 読み手のいないサービスなら掃除の節に出る。
-    const orphan = (['asana', 'discord', 'dropbox', 'line'] as const).find(
+    // (asana / discord / dropbox / line は取得が鍵を読むようになり 'none' を卒業したので、
+    // 今も 'none' の salesforce が標本になる。2026-11-19。)
+    const orphan = (['asana', 'discord', 'dropbox', 'line', 'salesforce'] as const).find(
       (id) => credentialUseOf(id) === 'none',
     );
     expect(orphan, '読み手のいないサービスが 1 つも無い (走査が空虚)').toBeTruthy();

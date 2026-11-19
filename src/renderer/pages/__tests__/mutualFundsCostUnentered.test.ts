@@ -35,7 +35,8 @@ import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { MutualFundsPage } from '../MutualFundsPage';
 import { SNAPSHOT } from '../../data/snapshot';
-import { _resetRecordStoreForTests } from '../../data/store';
+import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
+import { HOLDINGS_COLLECTION } from '../../data/investments';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { jpy } from '../../../shared/formatters';
 import { adviseService } from '../../../shared/serviceAdvisor';
@@ -130,6 +131,25 @@ async function addHolding(name: string, valuation: string, cost: string): Promis
 
 const demo = SNAPSHOT.mutualFunds.portfolio;
 
+/**
+ * かつての同梱見本 4 銘柄と同じ数字を、**利用者の登録として** record store へ置く
+ * (2026-11-19 のローカル完結バッチ 3 で見本は外れ、画面は空から始まる)。
+ * 合計は評価額 ¥8,240,140・取得原価 ¥7,180,000・評価損益率 14.8%。
+ */
+async function seedDemoHoldings(): Promise<void> {
+  const rows = [
+    { code: '0331C152', name: 'eMAXIS Slim 米国株式 (S&P500)', valuation: 3_241_360, acquisitionCost: 2_800_000, ytdReturnPct: 14.2 },
+    { code: '03313187', name: 'eMAXIS Slim 全世界株式 (オール・カントリー)', valuation: 2_437_260, acquisitionCost: 2_180_000, ytdReturnPct: 11.8 },
+    { code: '0331C129', name: 'eMAXIS Slim 先進国債券インデックス', valuation: 697_840, acquisitionCost: 680_000, ytdReturnPct: 3.4 },
+    { code: '64311074', name: 'ひふみプラス', valuation: 1_863_680, acquisitionCost: 1_520_000, ytdReturnPct: 8.7 },
+  ];
+  for (const r of rows) await getRecordStore().insert(HOLDINGS_COLLECTION, r);
+}
+
+const SEEDED_TOTAL_VALUATION = 8_240_140;
+const SEEDED_TOTAL_COST = 7_180_000;
+const SEEDED_GAIN_PCT = 14.8;
+
 beforeEach(async () => {
   _resetRecordStoreForTests();
   _resetCollectionSubscribersForTests();
@@ -162,22 +182,26 @@ afterEach(async () => {
 });
 
 describe('投資信託 — 取得額を入力していない銘柄を「評価額と同額 (損益 0)」とみなさない', () => {
-  it('対照: 見本だけなら取得原価 ¥7,180,000・評価損益率 14.8% で、注記は無い', async () => {
+  it('対照: 登録だけなら取得原価 ¥7,180,000・評価損益率 14.8% で、注記は無い', async () => {
+    await seedDemoHoldings();
     await mount();
-    expect(stat('取得原価')).toContain(jpy(demo.totalCostBasis));
-    expect(stat('評価損益率')).toContain(`${demo.unrealizedGainPct.toFixed(1)}%`);
+    // 保管層の読み込みが済んでから読む (フォームの出現だけでは集計はまだ空)。
+    await waitForText(text, 'eMAXIS Slim 米国株式 (S&P500)');
+    expect(stat('取得原価')).toContain(jpy(SEEDED_TOTAL_COST));
+    expect(stat('評価損益率')).toContain(`${SEEDED_GAIN_PCT.toFixed(1)}%`);
     expect(text()).not.toContain('取得額未入力');
   });
 
   it('★ 取得額を空欄で足しても、取得原価と評価損益率は動かず、注記が除外を言う', async () => {
+    await seedDemoHoldings();
     await mount();
     await addHolding('E2Eファンド', '300000', '');
     // 評価額 (全銘柄) には入る
-    expect(stat('評価額')).toContain(jpy(demo.totalValuation + 300_000));
+    expect(stat('評価額')).toContain(jpy(SEEDED_TOTAL_VALUATION + 300_000));
     // 取得原価・評価損益率は「取得額が分かる銘柄」だけ —— 旧: ¥7,480,000 / 14.2%
-    expect(stat('取得原価')).toContain(jpy(demo.totalCostBasis));
-    expect(stat('取得原価')).not.toContain(jpy(demo.totalCostBasis + 300_000));
-    expect(stat('評価損益率')).toContain(`${demo.unrealizedGainPct.toFixed(1)}%`);
+    expect(stat('取得原価')).toContain(jpy(SEEDED_TOTAL_COST));
+    expect(stat('取得原価')).not.toContain(jpy(SEEDED_TOTAL_COST + 300_000));
+    expect(stat('評価損益率')).toContain(`${SEEDED_GAIN_PCT.toFixed(1)}%`);
     expect(stat('評価損益率')).not.toContain('14.2%');
     await waitForText(text, `取得額未入力 1 銘柄 (評価額 ${jpy(300_000)}) は取得原価・評価損益・評価損益率・トータルリターンに含めていません`);
   });
@@ -191,12 +215,13 @@ describe('投資信託 — 取得額を入力していない銘柄を「評価�
     expect(byPlaceholder('空欄=自動計算').value).toBe('300000');
   });
 
-  it('★ 改善提案の「含み益」も薄まらない (根拠の評価損益率が見本のまま)', async () => {
+  it('★ 改善提案の「含み益」も薄まらない (根拠の評価損益率が登録のまま)', async () => {
+    await seedDemoHoldings();
     await mount();
     await addHolding('E2Eファンド', '300000', '');
     await clickButton('改善提案');
-    await waitForText(text, `含み益 ${demo.unrealizedGainPct.toFixed(1)}%`);
-    await waitForText(text, `評価損益率 ${demo.unrealizedGainPct.toFixed(1)}%`);
+    await waitForText(text, `含み益 ${SEEDED_GAIN_PCT.toFixed(1)}%`);
+    await waitForText(text, `評価損益率 ${SEEDED_GAIN_PCT.toFixed(1)}%`);
     expect(text()).not.toContain('含み益 14.2%');
   });
 

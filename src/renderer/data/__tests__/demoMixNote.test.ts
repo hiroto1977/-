@@ -6,8 +6,9 @@
  * 自分の物件・銘柄の数字が読めない** —— 見本が桁で勝つので、自分の分は
  * 合計の中で見えなくなり、実測では符号まで逆になっていた。
  *
- * ここは実物の snapshot を母集団に使う (数を写さない): 見本の件数・金額が
- * 変われば、この検査が期待する数字も一緒に動く。
+ * 母集団は旧同梱見本と同じ数字の合成データ (2026-11-19 のローカル完結
+ * バッチ 3 で画面の同梱見本は外れたが、混ざった場合の断りの文面そのものは
+ * 純関数として残るので、ここで完結させて固定する)。
  */
 import { describe, expect, it } from 'vitest';
 import {
@@ -19,18 +20,17 @@ import {
   type PortfolioHolding,
   type PortfolioProperty,
 } from '../investments';
-import { SNAPSHOT } from '../snapshot';
 import { jpy } from '../../../shared/formatters';
 
-/** 実物の見本 (snapshot) の物件を集計の shape で。 */
-const demoProps: PortfolioProperty[] = SNAPSHOT.realEstate.properties.map((p) => ({
-  monthlyRent: p.monthlyRent,
-  purchasePrice: p.purchasePrice,
-  occupied: p.occupied,
-  demo: true,
-}));
-const baseExpenses = SNAPSHOT.realEstate.monthlyCashflow.operatingExpenses;
-const baseLoan = SNAPSHOT.realEstate.monthlyCashflow.mortgagePayment;
+/** 見本の物件 (旧同梱見本と同じ数字) を集計の shape で。 */
+const demoProps: PortfolioProperty[] = [
+  { monthlyRent: 168_000, purchasePrice: 42_000_000, occupied: true },
+  { monthlyRent: 235_000, purchasePrice: 45_400_000, occupied: true },
+  { monthlyRent: 72_000, purchasePrice: 15_700_000, occupied: false },
+  { monthlyRent: 420_000, purchasePrice: 62_000_000, occupied: true },
+].map((p) => ({ ...p, demo: true }));
+const baseExpenses = 168_000;
+const baseLoan = 412_000;
 
 /** 自分の物件 1 件 —— 家賃 9 万・取得 2,000 万・運営費 3 万・返済 5.5 万。 */
 const mine: PortfolioProperty = {
@@ -130,13 +130,13 @@ describe('demoMixNote — 不動産', () => {
   });
 });
 
-/** 実物の見本 (snapshot) の銘柄。取得額は銘柄別に持たないので一括の原価で見る。 */
-const demoHoldings: PortfolioHolding[] = SNAPSHOT.mutualFunds.holdings.map((h) => ({
-  valuation: h.valuation,
+/** 見本の銘柄 (旧同梱見本と同じ数字)。取得額は銘柄別に持たないので一括の原価で見る。 */
+const demoHoldings: PortfolioHolding[] = [3_241_360, 2_437_260, 697_840, 1_863_680].map((valuation) => ({
+  valuation,
   acquisitionCost: null,
   demo: true,
 }));
-const baseCost = SNAPSHOT.mutualFunds.portfolio.totalCostBasis;
+const baseCost = 7_180_000;
 /** 自分の銘柄 1 件 —— 評価額 10 万・取得 9.5 万 (= +5.3%)。 */
 const myHolding: PortfolioHolding = { valuation: 100_000, acquisitionCost: 95_000, demo: false };
 

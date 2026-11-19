@@ -1,17 +1,22 @@
 import type { ActionContext, ActionMap, FetchContext } from './types';
 import type { ActionData } from '../../shared/actionData';
+import { buildMutualFundsSnapshot, type MutualFundsSnapshot } from '../../shared/mutualFundsSnapshot';
 import { countChars } from '../../shared/inputCeiling';
 import { MAX_RECORD_NOTE_CHARS } from '../../shared/recordEntryLimits';
 import { adviseService } from '../../shared/serviceAdvisor';
 
 /**
- * 投資信託 — 投資ポートフォリオ (snapshot 専用)。
+ * 投資信託 — 投資ポートフォリオ。
  *
  * SBI / 楽天証券 等の証券会社 API は要パートナー認証で本プロジェクトでは
- * 未配線。このファイルは `LIVE_FETCHERS` invariant を満たすための static
- * stub。実際のページは `SNAPSHOT.mutualFunds` を直接描画するため、refresh
- * ボタンでネットワーク呼び出しは発生しない。将来証券会社 API を配線する
- * 際は、この fetcher 内で同じ shape を返却する。
+ * 未配線 (基準価額は利用者の手入力)。保有の実データは renderer の
+ * record store に在り、ページが自分の保有だけから集計する。本 fetcher が
+ * 返すのは見本を持たない空の土台だけ (組み立ては
+ * `shared/mutualFundsSnapshot.ts` の `buildMutualFundsSnapshot`、
+ * ブラウザ版の web-shim も同じ関数を呼ぶ)。資格情報も通信も使わないので
+ * `LOCAL_SERVICES` に載り、`SERVICE_DATA_ORIGIN` は 'local'
+ * (2026-11-19、ローカル完結バッチ 3)。将来証券会社 API を配線する際は、
+ * この fetcher 内で同じ shape を返却する。
  *
  * **メモの天井は「文字」で数える** (2026-09-13 · パス 195) —— 画面が「2,000 字まで」と
  * 刷る数と同じ単位。`note.length` は UTF-16 のコード単位なので、絵文字や BMP 外の
@@ -22,39 +27,10 @@ import { adviseService } from '../../shared/serviceAdvisor';
  *  それを pragma の理由として数え、「理由の無い pragma」が黙って減る。実測で 4 → 3。)
  */
 
-export interface MutualFundsSnapshot {
-  readonly holdings: ReadonlyArray<{
-    readonly code: string;
-    readonly name: string;
-    readonly units: number;
-    readonly navPerUnit: number;
-    readonly valuation: number;
-    readonly ytdReturnPct: number;
-    /** ユーザーが手動で付けたタグ (任意。`undefined` の銘柄ではバッジ非表示)。 */
-    readonly userTag?: string;
-  }>;
-  readonly portfolio: {
-    readonly totalValuation: number;
-    readonly totalCostBasis: number;
-    readonly unrealizedGain: number;
-    readonly unrealizedGainPct: number;
-  };
-  readonly recentDividends: ReadonlyArray<{
-    readonly code: string;
-    readonly amount: number;
-    readonly paidAt: string;
-  }>;
-}
-
-// Stryker disable next-line all
-const STUB: MutualFundsSnapshot = {
-  holdings: [],
-  portfolio: { totalValuation: 0, totalCostBasis: 0, unrealizedGain: 0, unrealizedGainPct: 0 },
-  recentDividends: [],
-};
+export type { MutualFundsSnapshot };
 
 export async function fetchMutualFundsSnapshotImpl(_ctx: FetchContext): Promise<MutualFundsSnapshot> {
-  return STUB;
+  return buildMutualFundsSnapshot();
 }
 
 // Stryker disable next-line BlockStatement

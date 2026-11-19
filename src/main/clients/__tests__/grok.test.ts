@@ -2,8 +2,8 @@ import { describe, expect, it, vi } from 'vitest';
 import { fetchGrokSnapshot } from '../grok';
 import { AI_PROVIDERS } from '../../../shared/ai/providers';
 
-describe('fetchGrokSnapshot (snapshot-only stub; 鍵は assistant スロット)', () => {
-  it('網を叩かず、提供者の台帳から導いた見本だけを返す', async () => {
+describe('fetchGrokSnapshot (台帳から導くローカル fetcher; 鍵は assistant スロット)', () => {
+  it('網を叩かず、提供者の台帳から導いた土台だけを返す', async () => {
     const fetchMock = vi.fn<typeof fetch>();
     const snap = await fetchGrokSnapshot({ token: 'unused', fetch: fetchMock });
     expect(fetchMock).not.toHaveBeenCalled();

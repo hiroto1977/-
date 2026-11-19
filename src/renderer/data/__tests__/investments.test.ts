@@ -17,7 +17,6 @@ import {
   PROPERTY_FORM_SPECS,
 } from '../investments';
 import { guardNumber } from '../inputGuards';
-import { SNAPSHOT } from '../snapshot';
 import {
   RETURN_ENTRY_CEILING_PCT,
   RETURN_FLOOR_PCT,
@@ -121,9 +120,22 @@ describe('parsePropertyEntry (不動産の任意追加)', () => {
 });
 
 describe('computeRealEstatePortfolio', () => {
-  const base = SNAPSHOT.realEstate;
+  // 固定具は手元の合成データ (2026-11-19 以前は同梱 SNAPSHOT の見本 4 件を
+  // そのまま使っていたが、画面が空から始まるようになったので、純関数の
+  // 不変条件はここで完結させる。数字は旧見本と同じ組み合わせ)。
+  const base = {
+    properties: [
+      { id: 're-001', name: '渋谷区マンション 1LDK', type: '区分所有', monthlyRent: 168_000, occupied: true, yieldPct: 4.8, purchasePrice: 42_000_000 },
+      { id: 're-002', name: '横浜市戸建て', type: '一棟', monthlyRent: 235_000, occupied: true, yieldPct: 6.2, purchasePrice: 45_400_000 },
+      { id: 're-003', name: '大阪市ワンルーム', type: '区分所有', monthlyRent: 72_000, occupied: false, yieldPct: 5.5, purchasePrice: 15_700_000 },
+      { id: 're-004', name: '札幌市アパート 6 戸', type: '一棟', monthlyRent: 420_000, occupied: true, yieldPct: 8.1, purchasePrice: 62_000_000 },
+    ],
+    monthlyCashflow: { grossRent: 823_000, operatingExpenses: 168_000, mortgagePayment: 412_000, netCashflow: 243_000 },
+    portfolioYield: 6.15,
+    occupancyRate: 0.75,
+  };
 
-  it('snapshot 行のみ → snapshot に手書きされた集計値と完全一致 (不変条件)', () => {
+  it('固定具の行のみ → 固定具に手書きされた集計値と完全一致 (不変条件)', () => {
     const p = computeRealEstatePortfolio(
       base.properties,
       base.monthlyCashflow.operatingExpenses,
@@ -326,8 +338,15 @@ describe('parseHoldingEntry (投資信託の任意追加)', () => {
     expect(() => parseHoldingEntry({ ...valid, code: 'AB C' })).toThrow('銘柄コード');
   });
 
-  it('snapshot の評価額の慣習 (1万口あたり基準価額) を再現する', () => {
-    for (const h of SNAPSHOT.mutualFunds.holdings) {
+  it('評価額の慣習 (1万口あたり基準価額) を再現する', () => {
+    // 旧同梱見本と同じ組み合わせの合成データ (SNAPSHOT は空から始まる)。
+    const holdings = [
+      { units: 1_240_000, navPerUnit: 26_140, valuation: 3_241_360 },
+      { units: 980_000, navPerUnit: 24_870, valuation: 2_437_260 },
+      { units: 520_000, navPerUnit: 13_420, valuation: 697_840 },
+      { units: 320_000, navPerUnit: 58_240, valuation: 1_863_680 },
+    ];
+    for (const h of holdings) {
       expect(fundValuation(h.units, h.navPerUnit)).toBe(h.valuation);
     }
   });
@@ -477,12 +496,27 @@ describe('parseHoldingEntry (投資信託の任意追加)', () => {
 });
 
 describe('computeFundPortfolio', () => {
-  const base = SNAPSHOT.mutualFunds;
+  // 固定具は手元の合成データ (2026-11-19 以前は同梱 SNAPSHOT の見本 4 銘柄を
+  // そのまま使っていたが、画面が空から始まるようになったので、純関数の
+  // 不変条件はここで完結させる。数字は旧見本と同じ組み合わせ)。
+  const base = {
+    holdings: [
+      { code: '0331C152', name: 'eMAXIS Slim 米国株式 (S&P500)', units: 1_240_000, navPerUnit: 26_140, valuation: 3_241_360, ytdReturnPct: 14.2 },
+      { code: '03313187', name: 'eMAXIS Slim 全世界株式 (オール・カントリー)', units: 980_000, navPerUnit: 24_870, valuation: 2_437_260, ytdReturnPct: 11.8 },
+      { code: '0331C129', name: 'eMAXIS Slim 先進国債券インデックス', units: 520_000, navPerUnit: 13_420, valuation: 697_840, ytdReturnPct: 3.4 },
+      { code: '64311074', name: 'ひふみプラス', userTag: '積立中', units: 320_000, navPerUnit: 58_240, valuation: 1_863_680, ytdReturnPct: 8.7 },
+    ],
+    portfolio: { totalValuation: 8_240_140, totalCostBasis: 7_180_000, unrealizedGain: 1_060_140, unrealizedGainPct: 14.8 },
+    recentDividends: [
+      { code: '0331C152', amount: 12_400, paidAt: '2026-03-20' },
+      { code: '64311074', amount: 8_900, paidAt: '2026-02-15' },
+    ],
+  };
   /** 見本の行 (銘柄別の取得額は持たない)。 */
   const demoRows = base.holdings.map((h) => ({ valuation: h.valuation, acquisitionCost: null, demo: true }));
   const user = (valuation: number, acquisitionCost: number | null) => ({ valuation, acquisitionCost, demo: false });
 
-  it('snapshot 行のみ → snapshot に手書きされた portfolio と完全一致 (不変条件)', () => {
+  it('固定具の行のみ → 固定具に手書きされた portfolio と完全一致 (不変条件)', () => {
     const p = computeFundPortfolio(demoRows, base.portfolio.totalCostBasis);
     expect(p.totalValuation).toBe(base.portfolio.totalValuation);
     expect(p.totalCostBasis).toBe(base.portfolio.totalCostBasis);

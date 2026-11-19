@@ -47,7 +47,7 @@ const EXPECTED: ReadonlyArray<readonly [ServiceId, CredentialUse]> = [
   ['charts', 'none'],
   ['quality', 'none'],
   ['microsoft-365', 'fetch'],
-  ['dropbox', 'none'],
+  ['dropbox', 'fetch'],
   ['salesforce', 'none'],
   ['discord', 'fetch'],
   ['asana', 'fetch'],
@@ -110,7 +110,7 @@ const EXPECTED: ReadonlyArray<readonly [ServiceId, CredentialUse]> = [
 const AUDITED_UNUSED: readonly ServiceId[] = [
   // 'asana' は 2026-11-18 に抜けた —— 取得が鍵を読むようになった (`main/clients/asana.ts`)。
   // 'discord' は 2026-11-18 に抜けた —— 取得が鍵を読むようになった (`main/clients/discord.ts`)。
-  'dropbox',
+  // 'dropbox' は 2026-11-19 に抜けた —— 取得が鍵を読むようになった (`main/clients/dropbox.ts`)。
   // 'line' は 2026-11-18 に抜けた —— 取得が鍵を読むようになった (`main/clients/line.ts`)。
   // 'linear' は 2026-11-18 に抜けた —— 取得が鍵を読むようになった (`main/clients/linear.ts`)。
   'salesforce',
@@ -134,10 +134,10 @@ describe('SERVICE_CREDENTIAL_USE', () => {
 
   it('3 分類の件数を固定する', () => {
     const count = (u: CredentialUse) => EXPECTED.filter(([, v]) => v === u).length;
-    expect(count('fetch')).toBe(21);
+    expect(count('fetch')).toBe(22);
     // shopify が `action` → `none` (パス 452)。
     expect(count('action')).toBe(7);
-    expect(count('none')).toBe(51);
+    expect(count('none')).toBe(50);
   });
 
   it('監査で見つかった 9 件は none のままである', () => {
@@ -151,7 +151,7 @@ describe('credentialUseOf', () => {
   it('宣言された値を返す', () => {
     expect(credentialUseOf('github')).toBe('fetch');
     expect(credentialUseOf('security')).toBe('action');
-    expect(credentialUseOf('dropbox')).toBe('none');
+    expect(credentialUseOf('dropbox')).toBe('fetch');
   });
 
   it('未知の id は none に倒す (預からない側が安全)', () => {
@@ -175,16 +175,16 @@ describe('collectsCredential', () => {
 
 describe('unusedStoredCredentials', () => {
   it('保存済みのうち読み手のいないものだけを返す', () => {
-    expect(unusedStoredCredentials(['github', 'dropbox', 'security', 'salesforce'])).toEqual([
-      'dropbox',
+    expect(unusedStoredCredentials(['github', 'shopify', 'security', 'salesforce'])).toEqual([
+      'shopify',
       'salesforce',
     ]);
   });
 
   it('順序は入力のまま (画面の並びを勝手に変えない)', () => {
-    expect(unusedStoredCredentials(['salesforce', 'dropbox', 'shopify'])).toEqual([
+    expect(unusedStoredCredentials(['salesforce', 'quality', 'shopify'])).toEqual([
       'salesforce',
-      'dropbox',
+      'quality',
       'shopify',
     ]);
   });
