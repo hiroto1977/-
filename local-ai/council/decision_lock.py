@@ -184,9 +184,18 @@ def _clause_tail(sentence, end):
             cut = i
     return rest[:cut]
 
+# 「IV更新の取消と実施」のように、取消の語が並列の肯定動詞（と実施・や再開 など）に続くなら、
+# 取消は行為を否定していない。近くに取消の語があるだけでは否定に倒さない（節の中の係り方で見る）。
+_COORD_POSITIVE = re.compile(
+    r"^[^、。\n]{0,8}?(?:取消|取り消し|取り消|撤回|中止|破棄|停止)(?:し)?"
+    r"(?:と|や|および|及び|・|または|か|も)[^、。\n]{0,4}?"
+    r"(?:実施|実行|再開|着手|導入|開始|適用|進め|更新|再実装)")
+
 def _repudiated(sentence, start, end):
     """この一致が、同じ節の中で否定・破棄・無効・抵触されているなら命令ではない。"""
     after = _clause_tail(sentence, end)
+    if _COORD_POSITIVE.match(after):
+        return False
     if re.search(r"(無効|破棄|取消|禁止|取りやめ|中止)(ではない|でない|じゃない)", after[:24]):
         return False
     if re.match(r"\s*(しなければ|しなければならない|する必要|しなくては)", after):
@@ -340,10 +349,56 @@ def _bare_unlock_lock(sent, start, frag, default_id):
         return "datacrypto-0927-cancel"
     return default_id
 
+# 主語のない言い換え（llama7B-stop が locked のあいだ、保存前の決定文だけ）。
+# 決定文か議題（context）に停止対象（llama7B / 固定停止 など）が出ているときに限り、
+# 名指しの無い「再構築や起動を実行」「自動再起動設定」「再起動スケジュール」「停止解除」も
+# 停止対象への命令として扱う。文が別のサービスだけを名指ししているときは対象外。
+_SUBJECTLESS = re.compile(
+    r"(?:再構築|再起動|起動|立ち上げ|再開|復旧)(?:や|と|・|または|および|及び)?"
+    r"(?:再構築|再起動|起動|立ち上げ|再開|復旧)?(?:を|は|も)?"
+    r"(?:実行|実施|行う|行い|行います|試み|試す|進め)"
+    r"|自動(?:再起動|起動|再構築|復旧|再実行)"
+    r"|(?:再構築|再起動|起動)を?自動(?:実行|化)"
+    r"|(?:再起動|起動|再構築|再開)(?:の)?(?:スケジュール|計画|予定|タイミング)"
+    r"|(?:固定停止|停止)(?:を|の)?解除"
+    r"|llama7B[^、。\n]{0,6}?を解除",
+    re.I)
+_OTHER_SERVICE = re.compile(
+    r"OpenWebUI|Open\s*WebUI|LiteLLM|Ollama|LocalAI|llama-swap|llama1\.5B|llama3B|(?<![0-9.])1\.5B|(?<![0-9])3B(?![A-Za-z0-9])", re.I)
+_CRYPTO_WORD = re.compile(r"dataCrypto|データ暗号|IV|nonce|ノンス|getRandomValues|09:27", re.I)
+
+def _subjectless_dead(sent, start, end):
+    if _repudiated(sent, start, end):
+        return True
+    after = _clause_tail(sent, end)
+    if re.match(r"[^、。\n]{0,8}?(?:は|も)?(?:ない|無い|なし|ません|しない|せず|しないこと)", after):
+        return True
+    # 「データ再構築」「インデックスの再構築」のように、対象がサービスでないものは命令にしない。
+    if re.search(r"(?:データ|DB|インデックス|キャッシュ|資料|文書|報告書)(?:の)?$", sent[max(0, start - 8):start], re.I):
+        return True
+    return False
+
+def _subjectless_orders(sent, lock, topic):
+    if _OTHER_SERVICE.search(sent) and not re.search(r"llama7B|固定停止|(?<![0-9A-Za-z.])7B", sent, re.I):
+        return []
+    if _CRYPTO_WORD.search(sent):
+        return []
+    out = []
+    for m in _SUBJECTLESS.finditer(sent):
+        if _subjectless_dead(sent, m.start(), m.end()):
+            continue
+        out.append({
+            "lid": lock["id"], "fam": "llama", "start": m.start(), "end": m.end(),
+            "frag": m.group(0), "hit": _hit(lock, m.group(0), topic), "placed": False,
+        })
+    return out
+
 def _sentence_orders(sent, topic, joined=None, doc_anchor=False):
     orders = []
     seen = set()
     by_id = {L["id"]: L for L in locks()}
+    if not topic and doc_anchor and "llama7B-stop" in by_id:
+        orders.extend(_subjectless_orders(sent, by_id["llama7B-stop"], topic))
     for L in by_id.values():
         for rx in _patterns(L, topic):
             for m in rx.finditer(sent):
@@ -507,12 +562,13 @@ def _join_bypass(sent, nxt):
             break
     return cat if crossed else sent
 
-def _collect(text, topic):
-    """残った命令の [(名前, 理由, 該当)]。空なら記録・受理してよい。"""
+def _collect(text, topic, context=""):
+    """残った命令の [(名前, 理由, 該当)]。空なら記録・受理してよい。
+    context は議題の見出しなど。停止対象の名指しの有無（doc_anchor）にだけ使い、それ自体は検査しない。"""
     text = normalize(text)
     active = []
     sents = _sentences(text)
-    doc_anchor = _ANCHOR.search(text) is not None
+    doc_anchor = _ANCHOR.search(text) is not None or _ANCHOR.search(normalize(context or "")) is not None
     for i, sent in enumerate(sents):
         nxt = sents[i + 1] if i + 1 < len(sents) else ""
         joined = _join_bypass(sent, nxt)
@@ -533,9 +589,10 @@ def _collect(text, topic):
         hits.append(o["hit"])
     return hits
 
-def check(decision):
-    """決定文が固定決定を覆すなら [(名前, 理由, 該当箇所)]。否定・破棄・維持は違反にしない。"""
-    return _collect(decision, topic=False)
+def check(decision, context=""):
+    """決定文が固定決定を覆すなら [(名前, 理由, 該当箇所)]。否定・破棄・維持は違反にしない。
+    context（議題）に停止対象があれば、主語のない再起動・再構築・停止解除の言い換えも命令として見る。"""
+    return _collect(decision, topic=False, context=context)
 
 def check_topic(topic):
     """議題が固定決定の復活・覆しを求めるなら [(名前, 理由, 該当箇所)]。
@@ -579,7 +636,7 @@ def commit_decision(dec, *, decisions_path, rejected_path, topic="", summary="",
     import advice_guard
     import syntax_forms_guard
     blob = "\n".join(p for p in (dec or "", summary or "", review or "") if p)
-    hits = list(check(blob))
+    hits = list(check(blob, context=topic or ""))
     for h in advice_guard.check(blob):
         hits.append(h)
     for h in syntax_forms_guard.check(blob):

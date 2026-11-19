@@ -340,14 +340,14 @@ def session():
         if free_mb() < MIN_FREE_MB and p not in (ex, P["coo"]): log_sys(f"空きメモリ不足のため {p['name']} を省略"); continue
         outs.append(speak(p, instr))
     dec, summ = outs[-2], outs[-1]
-    hits = guard_check(dec)
+    hits = guard_check(dec + "\n" + summ, topic)              # COO総括も同じ検査に掛ける（総括だけに残る命令を通さない）
     if hits:                                                   # 助言と矛盾 → 却下を記録し、役員にやり直させる（1回）
         reject_log(topic, dec, hits, False)
         STATE["transcript"].append({"id": "claude" if "claude" in P else "coo", "role": "助言ガード", "model": "guard",
                                     "text": "この決定は助言またはCEO固定決定と食い違うため記録しません。やり直してください: " + " / ".join(hits)})
         dec = speak(ex, "役員として、前の決定は相談役の助言またはCEO固定決定と食い違うため却下されました。理由: " + " / ".join(hits) +
                     "。固定決定と助言に従い『決定:』1〜2文と『次のアクション:』箇条書き3つ以内を書き直してください。llama7Bは起動せず、dataCrypto/IV更新には触らず、asやwhileをMamoriに足さないこと。パーサが通している浅い const { … } = と for (const … of …) は消さないこと。")
-        hits2 = guard_check(dec)
+        hits2 = guard_check(dec, topic)
         if hits2:
             reject_log(topic, dec, hits2, True)
             STATE.update(status=f"待機中（決定は助言/固定決定と矛盾のため不記録・次回まで最大{INTERVAL}秒）", updated=now(), speaking=None)
@@ -381,11 +381,12 @@ def session():
     if src == "CEOの指示": thread_log("COO", summ)
     STATE.update(status=f"待機中（次回まで最大{INTERVAL}秒）", updated=now(), speaking=None)
 
-def guard_check(dec):
-    """助言・固定決定・通る2形の消去と食い違う決定なら違反リストを返す（空なら記録してよい）。"""
+def guard_check(dec, topic=""):
+    """助言・固定決定・通る2形の消去と食い違う決定なら違反リストを返す（空なら記録してよい）。
+    topic は停止対象の名指しの有無にだけ使う（主語のない言い換えの検出）。"""
     hits = []
     if LOCK_ON:
-        hits.extend(f"{n}: {why}（該当: {frag}）" for n, why, frag in decision_lock.check(dec))
+        hits.extend(f"{n}: {why}（該当: {frag}）" for n, why, frag in decision_lock.check(dec, context=topic))
     if GUARD_ON:
         hits.extend(f"{n}: {why}（該当: {frag}）" for n, why, frag in advice_guard.check(dec))
     hits.extend(f"{n}: {why}（該当: {frag}）" for n, why, frag in syntax_forms_guard.check(dec))
