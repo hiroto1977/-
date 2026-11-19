@@ -19,6 +19,8 @@ import { rereadModule } from '../../shared/__tests__/rereadModule';
 // 依存先を先頭で読み込んでおく (検査の中で初めて評価すると、依存先の値まで
 // 「その検査が覆った」と数えられる —— rereadModule.ts の docblock・パス 495)。
 import '../web-shim';
+import { buildTaxSnapshot } from '../../shared/taxSnapshot';
+import { buildComplianceSnapshot } from '../../shared/complianceSnapshot';
 
 /** 金庫の中身をテストごとに差し替える。 */
 const tokens = new Map<string, string>();
@@ -298,5 +300,28 @@ describe('stocks — 保存したウォッチリストの 3 つの状態 (パス
     expect(snap.data?.stored).toBe('saved');
     expect((snap.data?.watchlist as { symbol: string }[]).map((w) => w.symbol)).toEqual(['AAPL']);
     expect(snap.data?.storedNote).toBeNull();
+  });
+});
+
+describe('ローカル完結バッチ 2 — 台帳・標識・土台を返す分岐 (2026-11-19)', () => {
+  it('tax — 試算メニューの台帳がデスクトップ版 (shared の組み立て) と一致する', async () => {
+    const hub = await loadHub();
+    const snap = await hub.fetchSnapshot('tax');
+    expect(snap.ok, snap.message).toBe(true);
+    expect(snap.data).toEqual(buildTaxSnapshot());
+  });
+
+  it('compliance — 確証済み知識の台帳を指す標識が一致する', async () => {
+    const hub = await loadHub();
+    const snap = await hub.fetchSnapshot('compliance');
+    expect(snap.ok, snap.message).toBe(true);
+    expect(snap.data).toEqual(buildComplianceSnapshot());
+  });
+
+  it('connectors — 空の土台を返す (カタログは shared/connectors が正)', async () => {
+    const hub = await loadHub();
+    const snap = await hub.fetchSnapshot('connectors');
+    expect(snap.ok, snap.message).toBe(true);
+    expect(snap.data).toEqual({ items: [] });
   });
 });

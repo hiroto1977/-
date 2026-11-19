@@ -9,22 +9,26 @@ import { useCollection } from '../data/useCollection';
 import { changedRecordNote, vanishedRecordNote } from '../data/readCollectionNow';
 import { fireReported } from '../data/deviceStoreFailure';
 import type { ServiceId } from '../../shared/serviceId';
-import type { ShigyoSnapshot, ShigyoConsultationStatus } from '../../shared/shigyoTypes';
+import type { ShigyoSnapshot, ShigyoConsultationStatus, ShigyoDocument } from '../../shared/shigyoTypes';
 import { jpy } from '../../shared/formatters';
 import { clampToCeiling, countChars } from '../../shared/inputCeiling';
 import { PROFESSIONAL_MAP, otherProfessionals, isProfessionalId } from '../data/professionalMap';
 import { docsForProfessional } from '../data/businessTriage';
 import { displayField } from '../../shared/apiResponse';
-import { MAX_CONSULTATION_TOPIC_CHARS, MAX_CONTACT_NAME_CHARS, MAX_CONTACT_FIRM_CHARS, MAX_CONTACT_PHONE_CHARS, MAX_CONTACT_EMAIL_LEN } from '../data/shigyoDirectory';
+import { MAX_CONSULTATION_TOPIC_CHARS, MAX_CONTACT_NAME_CHARS, MAX_CONTACT_FIRM_CHARS, MAX_CONTACT_PHONE_CHARS, MAX_CONTACT_EMAIL_LEN, MAX_DOCUMENT_TITLE_CHARS } from '../data/shigyoDirectory';
 import {
   SHIGYO_CONTACTS_COLLECTION,
   SHIGYO_CONSULTATIONS_COLLECTION,
+  SHIGYO_DOCUMENTS_COLLECTION,
   CONSULTATION_STATUSES,
+  DOCUMENT_DIRECTIONS,
   parseShigyoContact,
   parseShigyoConsultation,
+  parseShigyoDocument,
   contactToForm,
   type ShigyoContactEntry,
   type ShigyoConsultationEntry,
+  type ShigyoDocumentEntry,
   shigyoDemoMixNote,
 } from '../data/shigyoDirectory';
 
@@ -46,8 +50,9 @@ function exclusiveSummary(text: string): string {
     : text;
 }
 
-const EMPTY_CONTACT_FORM = { name: '', firm: '', phone: '', email: '' };
+const EMPTY_CONTACT_FORM = { name: '', firm: '', phone: '', email: '', monthlyFee: '', outstandingInvoice: '' };
 const EMPTY_CONSULTATION_FORM = { date: '', topic: '', status: '相談予約' as ShigyoConsultationStatus };
+const EMPTY_DOCUMENT_FORM: { date: string; title: string; direction: ShigyoDocument['direction'] } = { date: '', title: '', direction: 'received' };
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -103,16 +108,29 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
     serviceId,
     snapshot,
   );
-  const { pendingDocuments, monthlyFee, outstandingInvoice } = data;
   const profile = isProfessionalId(serviceId) ? PROFESSIONAL_MAP[serviceId] : null;
   const others = isProfessionalId(serviceId) ? otherProfessionals(serviceId) : [];
   // 書類スタジオで作れる、この士業に関わる書式 (仕分け表の逆引き)。
   const docs = useMemo(() => (isProfessionalId(serviceId) ? docsForProfessional(serviceId) : []), [serviceId]);
 
-  // ユーザー登録の連絡先・相談履歴 (record store 永続化・端末内)。8 士業で
+  // ユーザー登録の連絡先・相談履歴・書類 (record store 永続化・端末内)。8 士業で
   // コレクションを共有し、serviceId で自分のページの分だけを表示する。
   const contactsCol = useCollection<ShigyoContactEntry>(SHIGYO_CONTACTS_COLLECTION);
   const consultationsCol = useCollection<ShigyoConsultationEntry>(SHIGYO_CONSULTATIONS_COLLECTION);
+  const documentsCol = useCollection<ShigyoDocumentEntry>(SHIGYO_DOCUMENTS_COLLECTION);
+
+  /**
+   * 月次サマリの金額は**自分の連携先の合算** (2026-11-18)。
+   *
+   * 土台 (snapshot / fetcher) は金額を持たない (どちらも `buildShigyoSnapshot`) ので、
+   * 土台の値はそのまま足しておく —— 合計の出所は自分の記録だけになる。
+   * 古い記録は金額の欄が無いので 0 として扱い、非有限・負の値は合計へ入れない
+   * (壊れた保存値で見出しに NaN を刷らない)。
+   */
+  const yenOf = (v: number | undefined): number => (typeof v === 'number' && Number.isFinite(v) && v > 0 ? v : 0);
+  const myContacts = contactsCol.records.filter((r) => r.data.serviceId === serviceId);
+  const monthlyFee = data.monthlyFee + myContacts.reduce((s, r) => s + yenOf(r.data.monthlyFee), 0);
+  const outstandingInvoice = data.outstandingInvoice + myContacts.reduce((s, r) => s + yenOf(r.data.outstandingInvoice), 0);
   const [contactForm, setContactForm] = useState(EMPTY_CONTACT_FORM);
   const [contactError, setContactError] = useState<string>();
   /**
@@ -123,6 +141,8 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
   const editingContactId = editingContact === null ? null : editingContact.id;
   const [consultForm, setConsultForm] = useState(EMPTY_CONSULTATION_FORM);
   const [consultError, setConsultError] = useState<string>();
+  const [docForm, setDocForm] = useState(EMPTY_DOCUMENT_FORM);
+  const [docError, setDocError] = useState<string>();
   const submit = useSubmitGuard();
 
   /** デモ (snapshot) 行 + ユーザー行の結合。 */
@@ -137,12 +157,13 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
     [data.contacts, contactsCol.records, serviceId],
   );
   /**
-   * 見出しの「連携 N 名 · 顧問料 ¥X/月」に見本が混ざっていることの断り
-   * (パス 187)。文面は `data/shigyoDirectory.ts` が 1 か所で持つ。
+   * 見出しの「連携 N 名」に見本が混ざっていることの断り (パス 187)。
+   * 文面は `data/shigyoDirectory.ts` が 1 か所で持つ。顧問料は自分の合算に
+   * なったので、断りは数の内訳だけを述べる (2026-11-18)。
    */
   const mixNote = useMemo(
-    () => shigyoDemoMixNote(data.contacts.length, contacts.length - data.contacts.length, jpy(monthlyFee)),
-    [data.contacts.length, contacts.length, monthlyFee],
+    () => shigyoDemoMixNote(data.contacts.length, contacts.length - data.contacts.length),
+    [data.contacts.length, contacts.length],
   );
 
   const recentConsultations = useMemo(() => {
@@ -155,6 +176,18 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
     // 新しい相談が上に来るよう日付降順 (同日は元の順を保つ安定ソート)。
     return combined.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
   }, [data.recentConsultations, consultationsCol.records, serviceId]);
+
+  /** 書類も土台 + 自分の記録の結合 (土台は空)。新しい物が上に来るよう日付降順。 */
+  const pendingDocuments = useMemo(
+    () =>
+      [
+        ...data.pendingDocuments.map((d) => ({ ...d, rowId: d.id, user: false as const })),
+        ...documentsCol.records
+          .filter((r) => r.data.serviceId === serviceId)
+          .map((r) => ({ ...r.data, rowId: r.id, user: true as const })),
+      ].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0)),
+    [data.pendingDocuments, documentsCol.records, serviceId],
+  );
 
   async function onSaveContact() {
     try {
@@ -208,6 +241,17 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
       setConsultForm(EMPTY_CONSULTATION_FORM);
     } catch (e) {
       setConsultError(e instanceof Error ? e.message : '入力エラー');
+    }
+  }
+
+  async function onAddDocument() {
+    try {
+      const parsed = parseShigyoDocument({ serviceId, ...docForm });
+      setDocError(undefined);
+      await documentsCol.add(parsed);
+      setDocForm(EMPTY_DOCUMENT_FORM);
+    } catch (e) {
+      setDocError(e instanceof Error ? e.message : '入力エラー');
     }
   }
 
@@ -421,6 +465,8 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
             ['事務所 (任意)', 'firm', '例: 山田会計事務所'],
             ['電話 (任意)', 'phone', '03-xxxx-xxxx'],
             ['メール (任意)', 'email', 'you@example.com'],
+            ['月次顧問料 (円・任意)', 'monthlyFee', '例: 33000'],
+            ['未払い請求額 (円・任意)', 'outstandingInvoice', '例: 0'],
           ] as const).map(([label, key, ph]) => (
             <label key={key} style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
               {label}
@@ -462,6 +508,7 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
                 <th style={thStyle}>氏名</th>
                 <th style={thStyle}>事務所</th>
                 <th style={thStyle}>連絡先</th>
+                <th style={thStyle}>顧問料/月</th>
                 <th style={thStyle} />
               </tr>
             </thead>
@@ -479,6 +526,12 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
                   <td style={tdStyle}>{displayField(c.firm, MAX_CONTACT_FIRM_CHARS)}</td>
                   <td style={{ ...tdStyle, fontSize: 11, color: 'var(--text-mute)' }}>
                     {displayField(c.email, MAX_CONTACT_EMAIL_LEN)}{c.phone ? ` · ${displayField(c.phone, MAX_CONTACT_PHONE_CHARS)}` : ''}
+                  </td>
+                  <td style={{ ...tdStyle, fontSize: 11, color: 'var(--text-mute)' }}>
+                    {c.user && yenOf(c.monthlyFee) > 0 ? jpy(c.monthlyFee) : '—'}
+                    {c.user && yenOf(c.outstandingInvoice) > 0 && (
+                      <div style={{ color: 'var(--warning)' }}>未払い {jpy(c.outstandingInvoice)}</div>
+                    )}
                   </td>
                   <td style={tdStyle}>
                     {c.user && (
@@ -596,8 +649,43 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
       </Section>
 
       <Section title="やり取り中の書類" count={pendingDocuments.length}>
+        <div className="field-grid" style={{ marginBottom: 10 }}>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            日付
+            <input
+              type="date"
+              value={docForm.date}
+              onChange={(e) => setDocForm((f) => ({ ...f, date: e.target.value }))}
+              style={inputStyle}
+            />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            書類名
+            <input
+              type="text"
+              value={docForm.title}
+              placeholder="例: 4 月度 試算表"
+              onChange={(e) => setDocForm((f) => ({ ...f, title: e.target.value }))}
+              style={{ ...inputStyle, width: 220 }}
+            />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            方向
+            <select
+              value={docForm.direction}
+              onChange={(e) => setDocForm((f) => ({ ...f, direction: e.target.value as ShigyoDocument['direction'] }))}
+              style={{ ...inputStyle, width: 110 }}
+            >
+              {DOCUMENT_DIRECTIONS.map((d) => (
+                <option key={d} value={d}>{d === 'sent' ? '送付' : '受領'}</option>
+              ))}
+            </select>
+          </label>
+          <button type="button" onClick={() => void submit.run(onAddDocument)} disabled={submit.busy}>＋ 書類を記録</button>
+        </div>
+        {docError && <div style={{ color: 'var(--danger)', fontSize: 12, marginBottom: 8 }}>{docError}</div>}
         {pendingDocuments.length === 0 ? (
-          <div style={{ fontSize: 12, color: 'var(--text-mute)' }}>未処理の書類はありません</div>
+          <div style={{ fontSize: 12, color: 'var(--text-mute)' }}>未処理の書類はありません — 上のフォームから記録できます</div>
         ) : (
           <table style={tableStyle}>
             <thead>
@@ -610,19 +698,26 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
             </thead>
             <tbody>
               {pendingDocuments.map((d) => (
-                <tr key={d.id}>
+                <tr key={d.rowId}>
                   <td style={tdStyle}>{d.direction === 'sent' ? '📤 送付' : '📥 受領'}</td>
-                  <td style={tdStyle}>{d.title}</td>
-                  <td style={tdNum}>{d.date}</td>
+                  <td style={tdStyle}>{displayField(d.title, MAX_DOCUMENT_TITLE_CHARS)}</td>
+                  <td style={tdNum}>{displayField(d.date)}</td>
                   <td style={tdStyle}>
-                    <button
-                      type="button"
-                      onClick={() => navigateTo('docstudio', { query: d.title })}
-                      title="書類スタジオの書式検索にこの題名を入れて開きます"
-                      style={{ fontSize: 11 }}
-                    >
-                      書類スタジオで探す →
-                    </button>
+                    <span style={{ display: 'inline-flex', gap: 6 }}>
+                      <button
+                        type="button"
+                        onClick={() => navigateTo('docstudio', { query: d.title })}
+                        title="書類スタジオの書式検索にこの題名を入れて開きます"
+                        style={{ fontSize: 11 }}
+                      >
+                        書類スタジオで探す →
+                      </button>
+                      {d.user && (
+                        <button type="button" onClick={() => fireReported(documentsCol.remove(d.rowId))} style={{ fontSize: 11, color: 'var(--danger)' }}>
+                          削除
+                        </button>
+                      )}
+                    </span>
                   </td>
                 </tr>
               ))}

@@ -26,7 +26,7 @@ const EXPECTED: ReadonlyArray<readonly [ServiceId, DataOrigin]> = [
   ['emotions', 'local'],
   ['ollama', 'local'],
   ['grok', 'sample'],
-  ['vrio', 'sample'],
+  ['vrio', 'local'],
   ['kpi', 'local'],
   ['stocks', 'local'],
   ['business', 'local'],
@@ -40,7 +40,7 @@ const EXPECTED: ReadonlyArray<readonly [ServiceId, DataOrigin]> = [
   ['demae-can', 'sample'],
   ['real-estate', 'sample'],
   ['mutual-funds', 'sample'],
-  ['charts', 'sample'],
+  ['charts', 'local'],
   ['quality', 'sample'],
   ['microsoft-365', 'remote'],
   ['dropbox', 'sample'],
@@ -53,15 +53,15 @@ const EXPECTED: ReadonlyArray<readonly [ServiceId, DataOrigin]> = [
   ['stripe', 'remote'],
   ['line', 'remote'],
   ['storage', 'sample'],
-  ['tax-accountant', 'sample'],
-  ['mentor', 'sample'],
-  ['labor-consultant', 'sample'],
-  ['lawyer', 'sample'],
-  ['judicial-scrivener', 'sample'],
-  ['admin-scrivener', 'sample'],
-  ['sme-consultant', 'sample'],
-  ['patent-attorney', 'sample'],
-  ['cpa', 'sample'],
+  ['tax-accountant', 'local'],
+  ['mentor', 'local'],
+  ['labor-consultant', 'local'],
+  ['lawyer', 'local'],
+  ['judicial-scrivener', 'local'],
+  ['admin-scrivener', 'local'],
+  ['sme-consultant', 'local'],
+  ['patent-attorney', 'local'],
+  ['cpa', 'local'],
   ['base', 'remote'],
   ['netsea', 'sample'],
   ['super-delivery', 'sample'],
@@ -71,18 +71,18 @@ const EXPECTED: ReadonlyArray<readonly [ServiceId, DataOrigin]> = [
   ['moneyforward', 'sample'],
   ['amazon', 'sample'],
   ['amazon-associates', 'sample'],
-  ['sales', 'sample'],
-  ['team', 'sample'],
+  ['sales', 'local'],
+  ['team', 'local'],
   ['youtube', 'remote'],
-  ['overview', 'sample'],
+  ['overview', 'local'],
   ['coconala', 'sample'],
   ['tiktok', 'sample'],
-  ['tax', 'sample'],
+  ['tax', 'local'],
   ['funding', 'local'],
   ['freee', 'remote'],
-  ['connectors', 'sample'],
+  ['connectors', 'local'],
   ['linux', 'local'],
-  ['compliance', 'sample'],
+  ['compliance', 'local'],
   ['obsidian', 'sample'],
   ['docker', 'sample'],
   ['assistant', 'local'],
@@ -104,8 +104,8 @@ describe('SERVICE_DATA_ORIGIN', () => {
 
   it('3 分類の件数を固定する — 片方向に倒れた表を検出する', () => {
     const count = (o: DataOrigin) => EXPECTED.filter(([, v]) => v === o).length;
-    expect(count('sample')).toBe(39);
-    expect(count('local')).toBe(19);
+    expect(count('sample')).toBe(22);
+    expect(count('local')).toBe(36);
     expect(count('remote')).toBe(21);
   });
 });
@@ -114,7 +114,7 @@ describe('originOf', () => {
   it('宣言された値を返す', () => {
     expect(originOf('github')).toBe('remote');
     expect(originOf('kpi')).toBe('local');
-    expect(originOf('tax-accountant')).toBe('sample');
+    expect(originOf('tax-accountant')).toBe('local');
   });
 
   it('未知の id は sample に倒す (取得を試みない側が安全)', () => {

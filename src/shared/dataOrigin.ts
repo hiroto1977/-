@@ -20,7 +20,7 @@ import type { ServiceId } from './serviceId';
  * 分類は判断ではなく、ソースツリーから機械的に決まる規則にしている
  * (`scripts/lint-data-origin.cjs` が双方向で照合する):
  *
- * - `sample` — fetcher が stub (`createSnapshotStub` / `createShigyoFetcher` /
+ * - `sample` — fetcher が stub (`createSnapshotStub` /
  *   `return STUB`)。I/O は一切無い。画面は同梱データを出す。
  * - `local`  — stub ではなく `LOCAL_SERVICES` に載っている。OS・ファイル・
  *   レコードストアから導出し、資格情報を必要としない。
@@ -64,7 +64,10 @@ export const SERVICE_DATA_ORIGIN: Record<ServiceId, DataOrigin> = {
   'demae-can': 'sample',
   'real-estate': 'sample',
   'mutual-funds': 'sample',
-  charts: 'sample',
+  // 2026-11-19: 図の台帳と自己検査は端末内で完結する (座標計算は renderer の純関数、
+  // 見本データは「仮想データ」と明示した検証用)。fetcher はサービスのメタ情報を返す。
+  // それまでは同梱の見本だった。
+  charts: 'local',
   quality: 'sample',
   'microsoft-365': 'remote',
   dropbox: 'sample',
@@ -83,14 +86,17 @@ export const SERVICE_DATA_ORIGIN: Record<ServiceId, DataOrigin> = {
   // 2026-11-18: アカウントの情報と今月の配信数を LINE から読む (`shared/api/line.ts`)。それまでは同梱の見本だった。
   line: 'remote',
   storage: 'sample',
-  'tax-accountant': 'sample',
-  'labor-consultant': 'sample',
-  lawyer: 'sample',
-  'judicial-scrivener': 'sample',
-  'admin-scrivener': 'sample',
-  'sme-consultant': 'sample',
-  'patent-attorney': 'sample',
-  cpa: 'sample',
+  // 2026-11-18: 端末内の record store に登録した連絡先・相談・書類・顧問料が正
+  // (`renderer/data/shigyoDirectory.ts`)。fetcher は見本を持たない空の土台を返す
+  // (`shared/shigyoTypes.ts` の `buildShigyoSnapshot`)。それまでは同梱の見本だった。
+  'tax-accountant': 'local',
+  'labor-consultant': 'local',
+  lawyer: 'local',
+  'judicial-scrivener': 'local',
+  'admin-scrivener': 'local',
+  'sme-consultant': 'local',
+  'patent-attorney': 'local',
+  cpa: 'local',
   base: 'remote',
   netsea: 'sample',
   'super-delivery': 'sample',
@@ -100,21 +106,37 @@ export const SERVICE_DATA_ORIGIN: Record<ServiceId, DataOrigin> = {
   moneyforward: 'sample',
   amazon: 'sample',
   'amazon-associates': 'sample',
-  sales: 'sample',
-  team: 'sample',
-  mentor: 'sample',
+  // 2026-11-19: 売上は renderer の record store (`sales-entries`) が正で、fetcher は
+  // 空の土台を返す。それまでは同梱の見本だった。
+  sales: 'local',
+  // 2026-11-19: メンバーは renderer の record store (`team-members`) が正で、fetcher は
+  // 空の土台を返す。それまでは同梱の見本だった。
+  team: 'local',
+  // 2026-11-19: 記録は renderer の record store (`mentor-sessions`) が正で、fetcher は
+  // 聞き取りの問いの台帳だけを返す。それまでは同梱の見本だった。
+  mentor: 'local',
   grok: 'sample',
-  vrio: 'sample',
+  // 2026-11-19: 判定は画面の入力から shared の純関数が作り、fetcher は階層・職種・
+  // 判定の台帳の見出しだけを返す。それまでは同梱の見本だった。
+  vrio: 'local',
   youtube: 'remote',
-  overview: 'sample',
+  // 2026-11-19: 集約は renderer 側 (record store + 純粋関数) で、fetcher は空の土台を
+  // 返す。それまでは同梱の見本だった。
+  overview: 'local',
   coconala: 'sample',
   tiktok: 'sample',
-  tax: 'sample',
+  // 2026-11-19: 試算は画面の入力から shared の純粋計算がその場で出し、fetcher は
+  // 試算メニューの台帳だけを返す。それまでは同梱の見本だった。
+  tax: 'local',
   funding: 'local',
   freee: 'remote',
-  connectors: 'sample',
+  // 2026-11-19: カタログは shared/connectors が正で renderer が描画し、実行結果は
+  // record store に残る。fetcher は空の土台を返す。それまでは同梱の見本だった。
+  connectors: 'local',
   linux: 'local',
-  compliance: 'sample',
+  // 2026-11-19: 実データは renderer の確証済み制度知識 (complianceKnowledge) で、
+  // fetcher は台帳を指す標識だけを返す。それまでは同梱の見本だった。
+  compliance: 'local',
   obsidian: 'sample',
   docker: 'sample',
   assistant: 'local',

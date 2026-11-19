@@ -1,5 +1,64 @@
 # Service Hub — 残りの作業手順書
 
+## 分析・内部画面 9 件のローカル化 (2026-11-19 · ローカル完結バッチ 2) で測って残した物
+
+- **やったこと**: charts / sales / team / mentor / vrio / overview / tax / compliance / connectors の
+  9 件を `sample` から `local` へ移した。9 件とも既に `LOCAL_SERVICES` に載り、画面は record store /
+  純粋計算 / 確証済み知識で動いていた —— `sample` だったのは fetcher のモジュールが stub マーカー
+  (`createSnapshotStub` 等) を含んでいたためだけ (`lint:data-origin` の導出規則)。fetcher を
+  「毎回組み立てる土台」に書き換えた: sales / team / overview / connectors は空の土台 `{items: []}`、
+  mentor / vrio は shared の `buildMentorSnapshot` / `buildVrioSnapshot`、charts はモジュール内の
+  `buildChartsSnapshot` (renderer の SNAPSHOT は main から import できないので値はここに持ち、
+  ずれは charts.test が突き合わせる)。tax / compliance は自分の id で `useServiceData` を呼ぶため、
+  組み立てを shared (`taxSnapshot.ts` / `complianceSnapshot.ts`) へ出し、ブラウザ版 web-shim にも
+  同じ関数を呼ぶ分岐を足した (connectors も分岐あり。無いとブラウザ版で更新が
+  `not_implemented` エラーになる —— 士業と同じ壊れ方)。
+- **quality は `sample` のまま据え置いた**: 画面の数値は初期フェーズに手で書いた静的な台帳で実態と
+  乖離している (テスト数 1175 と書いて実数は 21129)。記録上の計画は `scripts/quality-report.cjs` の
+  生成物を取り込むことだが、それはビルド成果物でパッケージ済みアプリの実行時には存在しない。
+  宣言だけ `local` に倒すと、古い手書きの数を「端末の実データ」と偽ることになる。実データ化は
+  別作業 (実行時に測れる物の設計が要る)。
+- **storage も `sample` のまま据え置いた**: 画面は一般的な Windows PC のイラスト値を出し、サイドバーも
+  「この PC は読み取らない」と開示している。実データ化には main での OS ディスク / プロセス走査という
+  別機能が要る (クライアントのコメントで Phase 6 と明記)。測れない欄を 0 で返すと偽の測定値を
+  主張することになる (`stubOriginAgreement` が名指しする害そのもの)。
+- **床を 2 つ実態へ合わせた**: sample が 22 件になったので `sampleOriginDisclosure` の走査の床を
+  30 → 20 へ、`stubOriginAgreement` の inert の床を 30 → 20 へ下げた (実測 inert 22 / fresh 36 /
+  network 21 で、宣言 sample 22 / local 36 / remote 21 と一致)。どちらも「分類が壊れて 0 に倒れたら
+  鳴る」ための床で、実態より上に置くと正しい変更で落ちる。
+- **バッチ 1 の残件を 1 つ拾った**: `useServiceData.test.ts` の sample の標本が士業
+  (tax-accountant / lawyer) のままで、バッチ 1 の `local` 化以降この 2 件は落ちていた
+  (pristine な main でも再現を確認)。標本を今も sample の docker / obsidian へ差し替えた。
+- **残る sample は 22 件**: 外部 API・本人操作が前提のもの (dropbox / salesforce / shopify /
+  amazon 系 / 卸 3 件 / ai-blogkun / moneyforward / uber-eats / demae-can / tiktok / coconala /
+  obsidian / docker / real-estate / mutual-funds / grok) と、上記の quality / storage。
+
+## 士業 8 画面のローカル化 (2026-11-18) で測って残した物
+
+- **やったこと**: 士業 8 画面 (税理士 / 公認会計士 / 社労士 / 弁護士 / 司法書士 / 行政書士 / 中小企業診断士 / 弁理士) を
+  同梱見本 (`sample`) から端末内の記録 (`local`) へ移した。土台は見本を持たない空の snapshot
+  (`shared/shigyoTypes.ts` の `buildShigyoSnapshot` —— 主プロセスの `createShigyoLocalFetcher` と
+  ブラウザ版の web-shim が同じ関数を呼ぶ。水耕栽培と同じ形)。SNAPSHOT の見本行 (架空の専門家・
+  顧問料・書類) は全て外した。パス 187 が残した「月次顧問料には自分の額が無い」は、
+  連携先ごとの顧問料・未払い請求額を `ShigyoContactEntry` に足して解消した (画面の合計は自分の
+  連携先の合算。古い記録は欄が無いので 0 として扱い、形は `opt(num)`)。書類は新しい
+  collection `shigyo-documents` (追加と削除のみ) に置き、`shigyo-consultations` と同じく
+  中身で機微な記録として平文バックアップの確認に数える。
+- **BusinessPage の横断 KPI が変わる**: 士業顧問料の合計は SNAPSHOT の見本 (7 件ぶん ¥154,000) を
+  数えていた。見本を外したので 0 になる —— 自分の連携先を登録すれば、その合算は ShigyoConsole 側の
+  見出しに出る。横断 KPI に自分の合算を出すなら、record store を読む口が要る (画面ごとに読む形は既にある)。
+- **書類は編集が無い**: 追加と削除だけ (相談履歴の状態変更に相当する手も無い)。題名を直すには
+  消して足し直す。編集が要るなら相談の `editIfUnchanged` と同じ形で足す。
+- **見本が混ざる断り (`shigyoDemoMixNote`) は数の内訳だけになった**: 顧問料の主張は落とした
+  (自分の額を見本だと言わないため)。土台が見本を持たない以上、この断りが画面に出ることは無いが、
+  混ぜる側の形 (一覧の結合) が残るので文も残してある。
+- **0 倒しが 2 件増えた (ShigyoConsole 1 → 3・全体 285 → 287)**: 増えたのは `yenOf`
+  (顧問料の欄が無い古い記録と不正な値を 0 と読む —— 欄は任意で「未登録 = 0」が宣言した
+  意味なので、読めない物を黙って別の数に倒す欠陥ではない) と、書類を日付の新しい順に
+  並べる比較子の `: 0` (同じ日付なら 0)。どちらも正しい 0。
+- **実機の確認はしていない**: 専用 e2e suite は無く、jsdom の検査と全画面の走査が見る範囲。
+  デスクトップ版で「更新」を押したときの取得 (空の土台が返る) は単体検査まで。
+
 ## 受信の検疫・見張り番 (2026-11-16) で測って残した物
 
 - **見張り番の費用**: `blob_limit_kb: 64` で CLAUDE.md を読まない形にした (空の文脈 564,384 → 106,169 token)。省エネ版の試運転 (40 スレッド) は
@@ -20226,7 +20285,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/zero-fold-census.cjs。npm run lint:zero-fold は check だけ) -->
-合計 **112 ファイル / 285 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **112 ファイル / 287 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
@@ -20259,6 +20318,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/shared/tradeTax.ts` | 4 |
 | `src/shared/waterCyclePlanner.ts` | 4 |
 | `src/main/clients/kpi.ts` | 3 |
+| `src/renderer/components/ShigyoConsole.tsx` | 3 |
 | `src/renderer/data/backup.ts` | 3 |
 | `src/renderer/data/charts.ts` | 3 |
 | `src/renderer/data/financialStatements.ts` | 3 |
@@ -20303,7 +20363,6 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/main/oauth.ts` | 1 |
 | `src/main/userPresence.ts` | 1 |
 | `src/renderer/components/RealtimeTicker.tsx` | 1 |
-| `src/renderer/components/ShigyoConsole.tsx` | 1 |
 | `src/renderer/data/assistantContext.ts` | 1 |
 | `src/renderer/data/balanceSheet.ts` | 1 |
 | `src/renderer/data/cashPlan.ts` | 1 |
@@ -32907,7 +32966,7 @@ src/shared/ のモジュール                                        138
 「読んだ結果」か `未読 (…)` のどちらかで、読んでいない物に「対称だろう」とは書かない。
 
 <!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/shared-judgement-census.cjs。npm run lint:shared-judgement は check だけ) -->
-shared **195** モジュール / 両ビルドが import **106** / うち否定で答えられる **54**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
+shared **197** モジュール / 両ビルドが import **108** / うち否定で答えられる **54**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
 
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |
@@ -32950,7 +33009,7 @@ shared **195** モジュール / 両ビルドが import **106** / うち否定�
 | `privateTarget` | 0 | 1 | 対称 (実測・パス 524 で読んだ) —— 母集団に入ったのはパス 524 (T-076) で `scanTarget.ts` が `looksInternalHostname` の中で `isPrivateOrReservedTarget` を呼ぶようになったため。 main が `privateTarget` を直に import する所は **0 件**で、main の閉包に入るのは `scanTarget` → `privateTarget` の 1 辺だけ。しかも `looksInternalHostname` の呼び手は `describeScanUrlRisk` の中だけで、その読み手は `SecurityPage.tsx` (renderer) だけなので、 **否定のあとの動作は越境しない** (main の `validateScanUrl` はこの関数を通らない)。 他の読み手 (`renderer/network/proxy.ts` は断る・`imageUrlGate.ts` は描かない) は どちらも renderer の中で完結する。警告であって関門ではない点は `scanTarget` の判定と同じ |
 | `promptInjection` | 2 | 1 | 対称 (実測・パス 552 · T-216) —— 否定で答えるのは `detectPromptInjection` (当たった規則か null) と `promptInjectionRefusal` (断りの文か null)。読み手は 3 か所: main の `emotions.ts` (鍵の門の前で throw)・main の `skills.ts` (SKILL.md を読んだ直後で throw)・ブラウザ版 `web-shim.ts` の `callEmotionsAnalyze` (`vault.getToken` の前で `err`)。throw と `err` は IPC の床 (`withFloor` / main の catch) で同じ `action_failed` + 文 になるので、**利用者が読む答えは両ビルドで同じ** (`webShimOutboundGate` と `emotions.test.ts` が同じ標本で確かめる)。skills はデスクトップ版にしか無いので 3 か所目は片側だけ |
 | `radarPlot` | 0 | 2 | **欠陥だった → パス 268 で直した** (実測) —— 否定で答える 2 つのうち `isPlottableScore` は renderer だけ (memberCare.ts)、`omittedRadarNote` は**両ビルドが呼ぶ**。`null` / 文字列の扱いは**関数の側では対称**だった (main の SVG は ⚠ の `<text>` を図の中へ書き、画面は ⚠ の `<div>` を図の下に出す)。**非対称は 1 段上に在った** —— 同じ `export-svg` action の実装が 2 つ在り、ブラウザ版は画面の `<svg>` を DOM から掻き取っていた。掻き取れるのは `<svg>` 要素だけで、⚠ の断り・標題・部署・評価時点・凡例はその**外側**に在る。実測 (jsdom・旧経路): `{ ok: true, bytes: 244, hasTitle: false, hasDept: false, hasDate: false, hasWarn: false, hasName: false }` —— しかも未評価の軸を持つ人が居る入力で**成功**していた (デスクトップ版は `score must be integer 1-5: 0` で断る)。組み立てを `shared/teamRadarSvg.ts` へ移し、両ビルドが同じ関数を通す。★ なお `omittedRadarNote` が非 `null` を返す枝は **`export-svg` の口からは到達しない** —— 上流の `validateTeamRadarState` が 5 軸すべて整数 1-5 を要求するので、未評価の形は図に届く前に断られる (両ビルドで同じ)。画面の ⚠ は下書きを直接読むので今日も出る |
-| `readNumeric` | 0 | 15 | 非対称は起きない (実測・パス 272) —— パス 80 で規則を 1 つにした所だが、**閉包で main へ繋がる道は `hydroponicCrops` 経由の 1 本だけ** (実測)。その鎖の main 側の入口 `buildHydroponicsSnapshot` は 2 つの定数表を射影するだけで、この数の読み取りを 1 度も呼ばない。★ renderer 側では 25 以上の呼び手が在るが、**片側しか呼ばない判定に非対称は宿らない** |
+| `readNumeric` | 0 | 16 | 非対称は起きない (実測・パス 272) —— パス 80 で規則を 1 つにした所だが、**閉包で main へ繋がる道は `hydroponicCrops` 経由の 1 本だけ** (実測)。その鎖の main 側の入口 `buildHydroponicsSnapshot` は 2 つの定数表を射影するだけで、この数の読み取りを 1 度も呼ばない。★ renderer 側では 25 以上の呼び手が在るが、**片側しか呼ばない判定に非対称は宿らない** |
 | `rfc2822` | 1 | 1 | 対称 (実測・2026-09-19 パス 321) —— `buildRfc2822` / `isSafeHeaderValue` を shared の 1 つに畳み、両ビルドは同じ関数を re-export する (`refusalTwins` が `===` で留める —— 写しが再び生えれば落ちる)。断り (`RFC2822_HEADER_UNSAFE` の throw) の後の動作は両ビルドとも「上がった Error をそのまま呼び出し側へ」: main は `createDraft` / shopify の `syncToGmail` が投げて IPC の `err()` へ、ブラウザ版は `createGmailDraft` が投げて `invoke` の `withFloor` へ。到達は shared/api/google.ts の `gmailDraftInit` 経由 (両ビルド + shopify) と re-export の 2 本 |
 | `safeFilename` | 2 | 3 | 対称 (実測・2026-10-24 · T-177) —— isSafeFilename が no と言ったあとの動作は 4 つの消費者で同じ 「その名前では書かない・開かない」: ライブラリの put と FSA の書き込み (renderer) は filename が不正です で投げ、書き出しの関門 isSafeExportPath は false・開く関門 shellTargetOrNull は null (main は呼び手が err に変える)。黙って別の名前へ直す消費者は無い (直すと検査した名前と作る名前が別になる)。 |
 | `savingsPlanning` | 0 | 1 | 非対称は起きない (実測・パス 272) —— 到達の鎖は main → 4 クライアント → `serviceAdvisor` → `mutualFundsMetrics` → ここ。ところが `serviceAdvisor` が `mutualFundsMetrics` から取るのは定数 2 つと述語 2 つ (`isImpossibleReturnPct` / `isAboveEntryCeilingPct` —— パス 493j で 2 → 4) だけで、**`isPlannableRate` / `isPlannableYears` はどの述語の中からも呼ばれない** (2 つの述語はどちらも 1 行の比較)。この 2 つを呼ぶのは `mutualFundsMetrics` 自身の将来評価額の計算で、そこは `serviceAdvisor` が import していない。**module の import の辺は在るが、call の辺が無い** —— main はこの問いを発しない。 |

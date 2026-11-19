@@ -52,7 +52,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | id | 配置 | 出所 | 資格情報 | local | OAuth | 士業 | デスクトップの action | ブラウザ版の action | デスクトップだけ |
 |---|---|---|---|:---:|:---:|:---:|---|---|---|
 | `a8net` | integrations | sample | none | ✅ |  |  | — | — | — |
-| `admin-scrivener` | professionals | sample | none | ✅ |  | ✅ | — | — | — |
+| `admin-scrivener` | professionals | local | none | ✅ |  | ✅ | — | — | — |
 | `ai-blogkun` | integrations | sample | none | ✅ |  |  | — | — | — |
 | `amazon` | integrations | sample | none | ✅ |  |  | — | — | — |
 | `amazon-associates` | integrations | sample | none | ✅ |  |  | — | — | — |
@@ -63,12 +63,12 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `business` | featured | local | action | ✅ |  |  | `advise` `export-dashboard` `export-dashboard-md` | `advise` `export-dashboard` `export-dashboard-md` | — |
 | `calendar` | integrations | remote | fetch |  | ✅ |  | `create-event` | `create-event` | — |
 | `canva` | integrations | remote | fetch |  | ✅ |  | `create-folder` | `create-folder` | — |
-| `charts` | tools | sample | none | ✅ |  |  | — | — | — |
+| `charts` | tools | local | none | ✅ |  |  | — | — | — |
 | `cloudflare` | tools | remote | fetch |  |  |  | `create-dns-record` `purge-cache` | `create-dns-record` `purge-cache` | — |
 | `coconala` | integrations | sample | none | ✅ |  |  | — | — | — |
-| `compliance` | tools | sample | none | ✅ |  |  | — | — | — |
-| `connectors` | tools | sample | none | ✅ |  |  | — | — | — |
-| `cpa` | professionals | sample | none | ✅ |  | ✅ | — | — | — |
+| `compliance` | tools | local | none | ✅ |  |  | — | — | — |
+| `connectors` | tools | local | none | ✅ |  |  | — | — | — |
+| `cpa` | professionals | local | none | ✅ |  | ✅ | — | — | — |
 | `cursor` | integrations | remote | fetch |  |  |  | — | — | — |
 | `demae-can` | consumed | sample | none | ✅ |  |  | `advise` `record-entry` | `advise` `record-entry` | — |
 | `discord` | integrations | remote | fetch |  |  |  | — | — | — |
@@ -84,15 +84,15 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `grok` | tools | sample | none | ✅ |  |  | — | — | — |
 | `home` | featured | local | none | ✅ |  |  | — | — | — |
 | `hydroponics` | tools | local | none | ✅ |  |  | — | — | — |
-| `judicial-scrivener` | professionals | sample | none | ✅ |  | ✅ | — | — | — |
+| `judicial-scrivener` | professionals | local | none | ✅ |  | ✅ | — | — | — |
 | `kpi` | tools | local | none | ✅ |  |  | — | — | — |
-| `labor-consultant` | professionals | sample | none | ✅ |  | ✅ | — | — | — |
-| `lawyer` | professionals | sample | none | ✅ |  | ✅ | — | — | — |
+| `labor-consultant` | professionals | local | none | ✅ |  | ✅ | — | — | — |
+| `lawyer` | professionals | local | none | ✅ |  | ✅ | — | — | — |
 | `library` | featured | local | none | ✅ |  |  | — | — | — |
 | `line` | integrations | remote | fetch |  |  |  | — | — | — |
 | `linear` | integrations | remote | fetch |  |  |  | — | — | — |
 | `linux` | tools | local | none | ✅ |  |  | — | — | — |
-| `mentor` | tools | sample | none | ✅ |  |  | — | — | — |
+| `mentor` | tools | local | none | ✅ |  |  | — | — | — |
 | `microsoft-365` | integrations | remote | fetch |  | ✅ |  | `create-event` `send-mail` | `create-event` `send-mail` | — |
 | `moneyforward` | integrations | sample | none | ✅ |  |  | — | — | — |
 | `mutual-funds` | tools | sample | none | ✅ |  |  | `advise` `record-entry` | `advise` `record-entry` | — |
@@ -100,11 +100,11 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `notion` | integrations | remote | fetch |  | ✅ |  | `create-page` | `create-page` | — |
 | `obsidian` | tools | sample | none | ✅ |  |  | — | — | — |
 | `ollama` | tools | local | none | ✅ |  |  | `chat` | `chat` | — |
-| `overview` | featured | sample | none | ✅ |  |  | — | — | — |
-| `patent-attorney` | professionals | sample | none | ✅ |  | ✅ | — | — | — |
+| `overview` | featured | local | none | ✅ |  |  | — | — | — |
+| `patent-attorney` | professionals | local | none | ✅ |  | ✅ | — | — | — |
 | `quality` | tools | sample | none | ✅ |  |  | — | — | — |
 | `real-estate` | tools | sample | none | ✅ |  |  | `advise` `record-entry` | `advise` `record-entry` | — |
-| `sales` | featured | sample | none | ✅ |  |  | — | — | — |
+| `sales` | featured | local | none | ✅ |  |  | — | — | — |
 | `salesforce` | integrations | sample | none |  |  |  | — | — | — |
 | `security` | tools | local | action | ✅ |  |  | `check-email-breach` `scan-url` | `check-email-breach` `scan-url` | — |
 | `sentry` | integrations | remote | fetch |  |  |  | — | — | — |
@@ -112,29 +112,29 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `shopify` | integrations | sample | none | ✅ |  |  | `sync-to-discord` `sync-to-gmail` `sync-to-line` `sync-to-notion` `sync-to-salesforce` `sync-to-slack` `sync-to-stripe` | — | `sync-to-discord` `sync-to-gmail` `sync-to-line` `sync-to-notion` `sync-to-salesforce` `sync-to-slack` `sync-to-stripe` |
 | `skills` | tools | local | action | ✅ |  |  | `run-skill` | — | `run-skill` |
 | `slack` | integrations | remote | fetch |  | ✅ |  | `send-message` | `send-message` | — |
-| `sme-consultant` | professionals | sample | none | ✅ |  | ✅ | — | — | — |
+| `sme-consultant` | professionals | local | none | ✅ |  | ✅ | — | — | — |
 | `stocks` | tools | local | action | ✅ |  |  | `advise` `backtest` `compare-strategies` `export-dashboard` `export-dashboard-md` `register-ticker` `unregister-ticker` | `advise` `compare-strategies` `export-dashboard` `export-dashboard-md` `register-ticker` `unregister-ticker` | `backtest` |
 | `storage` | tools | sample | none | ✅ |  |  | — | — | — |
 | `stripe` | integrations | remote | fetch |  |  |  | — | — | — |
 | `super-delivery` | integrations | sample | none | ✅ |  |  | — | — | — |
 | `talent` | tools | local | none | ✅ |  |  | `judge-leader` `save-state` | `judge-leader` `save-state` | — |
-| `tax` | tools | sample | none | ✅ |  |  | — | — | — |
-| `tax-accountant` | professionals | sample | none | ✅ |  | ✅ | — | — | — |
-| `team` | featured | sample | none | ✅ |  |  | — | — | — |
+| `tax` | tools | local | none | ✅ |  |  | — | — | — |
+| `tax-accountant` | professionals | local | none | ✅ |  | ✅ | — | — | — |
+| `team` | featured | local | none | ✅ |  |  | — | — | — |
 | `teamradar` | featured | local | action | ✅ |  |  | `export-svg` `save-state` | `export-svg` `save-state` | — |
 | `templates` | featured | local | none | ✅ |  |  | `export-template` | `export-template` | — |
 | `tiktok` | integrations | sample | none | ✅ |  |  | — | — | — |
 | `topseller` | integrations | sample | none | ✅ |  |  | — | — | — |
 | `uber-eats` | consumed | sample | none | ✅ |  |  | `advise` `record-entry` | `advise` `record-entry` | — |
 | `village` | featured | local | none | ✅ |  |  | — | — | — |
-| `vrio` | tools | sample | none | ✅ |  |  | — | — | — |
+| `vrio` | tools | local | none | ✅ |  |  | — | — | — |
 | `wordpress` | integrations | remote | fetch |  | ✅ |  | `create-post-draft` | `create-post-draft` | — |
 | `youtube` | integrations | remote | fetch |  |  |  | — | — | — |
 
 集計:
 
 - 配置: おすすめ 12 / 士業連携 8 / 分析・ツール 24 / 外部サービス連携 33 / 消費されるだけ 2
-- 出所: remote 21 / local 19 / sample 39
+- 出所: remote 21 / local 36 / sample 22
 - 資格情報の読み手 — fetch 21 / action 7 / none 51
 - LOCAL_SERVICES 56 / OAuth 10 / action を持つ 27 / デスクトップだけの action 10
 

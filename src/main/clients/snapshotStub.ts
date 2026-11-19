@@ -16,7 +16,8 @@ import type { FetchContext } from './types';
  * の 1 行に集約する。返す fetcher はネットワーク I/O を持たず、常に同じ stub を
  * 返す。実データは renderer 側で `SNAPSHOT[id]` を直接描画する。
  *
- * (士業 7 種は同種だが ShigyoSnapshot 専用の `createShigyoFetcher` を使う。)
+ * (士業 8 種は同種の構造だが、端末内の土台を返す専用の
+ * `createShigyoLocalFetcher` (`shigyo.ts`) を使う。)
  */
 export function createSnapshotStub<T>(stub: T): (ctx: FetchContext) => Promise<T> {
   // Stryker disable next-line BlockStatement

@@ -21,7 +21,7 @@
  * - 封緘済み (`__enc`) の中身は見られないので、呼び出し側が先に除ける。
  */
 import { SALES_CHANNELS } from './sales';
-import { CONSULTATION_STATUSES } from './shigyoDirectory';
+import { CONSULTATION_STATUSES, DOCUMENT_DIRECTIONS } from './shigyoDirectory';
 import { METRIC_UNITS } from './overviewOverrides';
 import { ROLE_ORDER } from '../../shared/team';
 import { isCalendarDate, isCalendarDateOrMonth } from '../../shared/isoDate';
@@ -133,8 +133,10 @@ const FIELD_SHAPES: Readonly<Record<string, CollectionShape>> = {
   }),
   // 読む側 (`settingsFromRecord`) が欄ごとに既定へ倒すので、ここは入れ物の形だけ。
   'bank-submission-settings': shape({ profile: opt(rec), format: opt(rec) }),
-  'shigyo-contacts': shape({ serviceId: str, name: str, firm: opt(str), phone: opt(str), email: opt(str) }),
+  // monthlyFee / outstandingInvoice は 2026-11-18 に後から足した欄 —— 古い記録には無いので opt。
+  'shigyo-contacts': shape({ serviceId: str, name: str, firm: opt(str), phone: opt(str), email: opt(str), monthlyFee: opt(num), outstandingInvoice: opt(num) }),
   'shigyo-consultations': shape({ serviceId: str, date: calendarDate, topic: str, status: oneOf(() => CONSULTATION_STATUSES) }),
+  'shigyo-documents': shape({ serviceId: str, title: str, direction: oneOf(() => DOCUMENT_DIRECTIONS), date: calendarDate }),
   // 専属カウンセラー (パス 551): 入れ子 (answers / checkins / relations) の中身は `shared/mentor.ts` の
   // `sanitizeMentorSession` が読むときに項目ごとに落とす (形で行ごと捨てると復元で記録を失う)。
   'mentor-sessions': shape({ member: str, answers: rec, checkins: arr, relations: arr, shareWithTeam: bool }),
@@ -333,6 +335,11 @@ export const SENSITIVE_BY_CONTENT: Readonly<Record<string, { readonly fields: re
     fields: ['topic', 'date', 'serviceId'],
     why: '「いつ・どの士業に・何を相談したか」の記録。欄の名前に個人情報の手がかりは無いが、'
       + '相続・解雇・破産などの相談テーマがそのまま入るので、持ち出せば連絡先より機微になりうる。',
+  },
+  'shigyo-documents': {
+    fields: ['title', 'date', 'serviceId'],
+    why: '「いつ・どの士業と・何の書類をやり取りしたか」の記録。書類名には相続・登記・契約など'
+      + '相談の中身そのものが入りうるので、相談記録と同じく持ち出すときに数える。',
   },
   'mentor-sessions': {
     fields: ['answers', 'checkins', 'relations', 'member'],

@@ -272,7 +272,7 @@ const ENTRY_POINTS: readonly EntryPoint[] = [
   { label: 'furusatoOneStopEligibility', args: [3, 5], call: (a, b) => furusatoOneStopEligibility(a!, false, b!) },
   { label: 'calcLifeInsuranceDeduction', args: [80_000, 80_000, 80_000, 100_000], call: (a, b, c, d) => calcLifeInsuranceDeduction({ general: a!, medical: b!, pension: c!, generalOld: d! }) },
   { label: 'restoreResultMessage', args: [5, 0], call: (a, b) => restoreResultMessage(MERGE_PLAN, a!, b!) },
-  { label: 'shigyoDemoMixNote', args: [2, 3], call: (a, b) => shigyoDemoMixNote(a!, b!, '¥50,000') },
+  { label: 'shigyoDemoMixNote', args: [2, 3], call: (a, b) => shigyoDemoMixNote(a!, b!) },
   {
     label: 'computeBudgetVarianceFromFundamentals',
     args: [1_000_000, 600_000, 1_200_000, 700_000],
@@ -460,7 +460,7 @@ describe('非有限な入力を入口に当てる (出てくる物は有限か�
       Number.NaN,
       0,
     )).not.toContain('NaN');
-    expect(shigyoDemoMixNote(Number.NaN, 2, '¥1')).toBeNull();
+    expect(shigyoDemoMixNote(Number.NaN, 2)).toBeNull();
   });
 
   it('パス 205: `Math.max(0, …)` の天井は NaN だけを落とす (±Infinity は天井へ丸める約束)', () => {

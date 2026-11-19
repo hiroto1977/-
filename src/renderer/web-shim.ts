@@ -84,6 +84,10 @@ import {
 } from '../shared/advisorQuestionLimits';
 import { MAX_ADVISOR_ACTION_ITEMS, MAX_ADVISOR_ITEM_CHARS, MAX_ADVISOR_RATIONALE_CHARS, MAX_ADVISOR_RECOMMENDATIONS, MAX_ADVISOR_RISK_FACTORS } from '../shared/advisorResponseLimits';
 import { buildHydroponicsSnapshot } from '../shared/hydroponicsControl';
+import { buildShigyoSnapshot } from '../shared/shigyoTypes';
+import { buildTaxSnapshot } from '../shared/taxSnapshot';
+import { buildComplianceSnapshot } from '../shared/complianceSnapshot';
+import { PROFESSIONAL_IDS } from './data/professionalMap';
 import { MAX_ANALYZE_TEXT_CHARS } from '../shared/emotionsLimits';
 import { clampToCeiling, countChars, refusedCeilingNote } from '../shared/inputCeiling';
 import {
@@ -1353,6 +1357,44 @@ const unguarded = {
      */
     if (serviceId === 'hydroponics') {
       return ok(buildHydroponicsSnapshot()) as ActionResult<T>;
+    }
+    /*
+     * 士業 8 画面 (2026-11-18)。返すのは見本を持たない空の土台だけで、
+     * **デスクトップ版と同じ関数**を呼ぶ (`shared/shigyoTypes.ts` の
+     * `buildShigyoSnapshot`)。連絡先・相談・書類・顧問料は record store
+     * (IndexedDB) に在り、画面が直接読むのでここには入れない (水耕栽培と同じ)。
+     * ここが無いまま `not_implemented` へ落ちると、取得のたびに「未実装」の
+     * エラーになり、土台も同梱見本のままになる。
+     */
+    if ((PROFESSIONAL_IDS as readonly string[]).includes(serviceId ?? '')) {
+      return ok(buildShigyoSnapshot()) as ActionResult<T>;
+    }
+    /*
+     * 税務試算 (2026-11-19)。返すのは試算メニューの台帳だけで、
+     * **デスクトップ版と同じ関数**を呼ぶ (`shared/taxSnapshot.ts` の
+     * `buildTaxSnapshot`)。実際の数値はページが入力から純粋計算で出す。
+     * ここが無いまま `not_implemented` へ落ちると、更新のたびに「未実装」の
+     * エラーが画面に出る (士業と同じ壊れ方)。
+     */
+    if (serviceId === 'tax') {
+      return ok(buildTaxSnapshot()) as ActionResult<T>;
+    }
+    /*
+     * コンプライアンス (2026-11-19)。返すのは確証済み知識の台帳を指す標識だけで、
+     * **デスクトップ版と同じ関数**を呼ぶ (`shared/complianceSnapshot.ts` の
+     * `buildComplianceSnapshot`)。制度事実そのものは renderer の
+     * complianceKnowledge が持ち、ページが集計して描く。
+     */
+    if (serviceId === 'compliance') {
+      return ok(buildComplianceSnapshot()) as ActionResult<T>;
+    }
+    /*
+     * コネクター / 自動化 (2026-11-19)。カタログは shared/connectors が正で
+     * renderer が直接描くので、返すのは空の土台だけ (デスクトップ版の
+     * fetcher と同じ形)。実行結果は record store に残り、ページが直接読む。
+     */
+    if (serviceId === 'connectors') {
+      return ok({ items: [] }) as ActionResult<T>;
     }
     // ollama はブラウザ版でも **実際にローカルへ接続する**。Ollama は既定で
     // CORS ヘッダを返さないため、失敗時は「未起動」と「OLLAMA_ORIGINS 未設定」を

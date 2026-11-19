@@ -49,23 +49,7 @@ const LEDGER: Partial<Record<ServiceId, string>> = {
   'demae-can': 'サイドバーに項が無い (同上)',
   'real-estate': 'records — 物件は利用者が追加し、同梱の 4 件は初期表示だけ (パス 54 / 119)',
   'mutual-funds': 'records — 銘柄は利用者が追加する (パス 122 / 123)',
-  'tax-accountant': 'records — 士業 CRM。顧問料・相談履歴は利用者の記録',
-  cpa: 'records — 同上',
-  'labor-consultant': 'records — 同上',
-  lawyer: 'records — 同上',
-  'judicial-scrivener': 'records — 同上',
-  'admin-scrivener': 'records — 同上',
-  'sme-consultant': 'records — 同上',
-  'patent-attorney': 'records — 同上',
-  tax: 'records — 試算の入力は利用者のもの。説明も「概算」と述べている',
   grok: 'derived — 画面は assistant/providers (保管した鍵と既定の提供者) から状態を読み、質問は assistant/chat へ送る。同梱の見本は 1 件も出さない (fetcher は LIVE_FETCHERS の invariant を満たす stub)',
-  mentor: 'records — 画面は記録ストア (mentor-sessions) と team-members から作る。fetcher が返すのは聞き取りの問いの台帳だけで、人の記録の見本は 1 件も持たない。説明は「端末内」と述べている (パス 551)',
-  vrio: 'derived — 画面は利用者がその場で選ぶ点数と Yes / No から判定を作る。fetcher が返すのは階層・職種・判定の id の台帳だけで、人の評価の見本は 1 件も持たない。開いた直後の値は画面が「記入例」の札で名乗り、値を変えると外す。説明は「入力は画面の中だけ」と述べている',
-  sales: 'derived — 画面は記録ストアから作る。実測でバッジも出ない。説明は「ローカル保存・実データ」',
-  team: 'derived — 同上 (メンバーはプランと記録から)',
-  overview: 'derived — 同上。説明は「実データ集約」',
-  compliance: 'verified — 同梱しているのは確証済みの制度知識で、見本ではない (出典リンク付き)',
-  connectors: 'verified — 同梱しているのはコネクタの台帳そのもの (カタログが成果物)',
 };
 
 const SAMPLE_IDS = (Object.keys(SERVICE_DATA_ORIGIN) as ServiceId[]).filter(
@@ -115,8 +99,11 @@ describe('見本のサービスは、サイドバーでもそう述べる (パ�
     expect(DISCLOSES.test('エラー監視 — issues / performance / releases')).toBe(false);
   });
 
-  it('走査が生きている (sample の項が 30 件以上ある)', () => {
+  it('走査が生きている (sample の項が 20 件以上ある)', () => {
     // 分類が壊れて 0 件になると、上の検査が無条件に通る。
-    expect(SAMPLE_IDS.length).toBeGreaterThanOrEqual(30);
+    // 下限は実態に合わせて置く: 2026-11-19 のローカル完結バッチ 1・2 で
+    // 士業 8 件と分析・内部画面 9 件が 'local' へ移り、残る sample は
+    // 外部連携待ち・別機能待ちの 22 件。
+    expect(SAMPLE_IDS.length).toBeGreaterThanOrEqual(20);
   });
 });

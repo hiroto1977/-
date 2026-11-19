@@ -187,6 +187,12 @@ const LEDGER: readonly { file: string; handler: string; kind: 'export' | 'apply-
     why: '連絡先の行を編集の欄へ写すだけで、保管層へは書かない。保存は編集の欄の値 (利用者が見て直した値) を行ごと書く —— 利用者が確かめた値で、保管層の記録について何かを決めるのではない。',
   },
   {
+    file: 'src/renderer/components/ShigyoConsole.tsx',
+    handler: '<onClick>→navigateTo',
+    kind: 'show',
+    why: '書類の行の「書類スタジオで開く」—— 書類名を検索の種として書類スタジオの画面へ移るだけ。渡すのは画面の表に出ている書類名そのもので、保管層へは書かず、記録について何かを決めるのでもない。',
+  },
+  {
     file: 'src/renderer/pages/MentorPage.tsx',
     handler: 'onAnswer',
     kind: 'apply-shown',
