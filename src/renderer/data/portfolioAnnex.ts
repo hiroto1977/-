@@ -109,5 +109,8 @@ export function annexOriginNote(origin: 'sample' | 'local' | 'remote'): string {
   if (origin === 'sample') {
     return '⚠ この保有明細は、このアプリに同梱された見本データです。利用者が登録した実際の保有ではありません。決算の数字として転記しないでください。';
   }
+  if (origin === 'local') {
+    return '保有明細はこの端末に登録された値です。決算に用いる前に、証券会社・登記等の原本と突き合わせてください。';
+  }
   return '保有明細は投資サービスが取得した値です。決算に用いる前に、証券会社・登記等の原本と突き合わせてください。';
 }

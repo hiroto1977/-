@@ -54,18 +54,20 @@ const GOOD = {
 };
 
 /**
- * **錠は構造で取る** —— 「自分の物件は 1 件」は見本が混ざっていることの断りで、
- * 控えが届いたときだけ出る。文面 (「月次経費」など) で待つと、直す前でも直した後でも
- * 通る空の検査になったり、見出しや案内文に先に当たったりする (パス 442 / 376 の罠)。
+ * **錠は構造で取る** —— 置いた控えの行が一覧に出るまで待つ。文面 (「月次経費」
+ * など) で待つと、直す前でも直した後でも通る空の検査になったり、見出しや
+ * 案内文に先に当たったりする (パス 442 / 376 の罠)。
+ * (2026-11-19 までは見本混入の断り「自分の物件は 1 件」が錠だった。見本が
+ * 外れてその断りは無くなったので、一覧の行そのものを錠にする。)
  */
-async function mount(): Promise<void> {
+async function mount(rowName = '一棟目'): Promise<void> {
   const def = SERVICES.find((s) => s.id === 'real-estate');
   if (!def) throw new Error('real-estate service missing');
   root = createRoot(container);
   await act(async () => {
     root!.render(createElement(def.page));
   });
-  await waitForText(() => scope()?.textContent ?? '', '自分の物件は 1 件');
+  await waitForText(text, rowName);
 }
 
 const scope = (): HTMLElement | null => container.querySelector('[data-portfolio-scope]');
@@ -156,8 +158,7 @@ describe('保管した物件の欄が数として読めないとき、画面が�
 
   it('★ 断りが出ても一覧の行は残る (行ごと落とすと家賃も入居率も消える)', async () => {
     await getRecordStore().insert(PROPERTIES_COLLECTION, { ...GOOD, name: '経費の読めない物件', monthlyExpenses: '20000' });
-    await mount();
-    await waitForText(() => container.textContent ?? '', '経費の読めない物件');
+    await mount('経費の読めない物件');
     expect(text()).toContain('経費の読めない物件');
   });
 });

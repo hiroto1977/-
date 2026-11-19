@@ -22,9 +22,12 @@ import type { LineSnapshot } from '../../shared/api/line';
 import type { LinearSnapshot } from '../../shared/api/linear';
 import type { SentrySnapshot } from '../../shared/api/sentry';
 import type { DiscordSnapshot } from '../../shared/api/discord';
+import type { DropboxSnapshot } from '../../shared/api/dropbox';
 import { buildHydroponicsSnapshot } from '../../shared/hydroponicsControl';
 import { buildMentorSnapshot } from '../../shared/mentor';
 import { buildGrokSnapshot } from '../../shared/grokSnapshot';
+import { buildRealEstateSnapshot } from '../../shared/realEstateSnapshot';
+import { buildMutualFundsSnapshot } from '../../shared/mutualFundsSnapshot';
 import { buildVrioSnapshot } from '../../shared/vrio';
 
 /**
@@ -482,52 +485,16 @@ export const SNAPSHOT = {
     ] as { area: string; orders: number; revenue: number }[],
   },
 
-  realEstate: {
-    // Snapshot-only. Real-world integration would pull from REIT data
-    // feeds (J-REIT XBRL, 楽待 API 等); for now the page surfaces a
-    // hand-curated portfolio shape so the dashboard is meaningful.
-    properties: [
-      { id: 're-001', name: '渋谷区マンション 1LDK', type: '区分所有', monthlyRent: 168_000, occupied: true, yieldPct: 4.8, purchasePrice: 42_000_000 },
-      { id: 're-002', name: '横浜市戸建て', type: '一棟', monthlyRent: 235_000, occupied: true, yieldPct: 6.2, purchasePrice: 45_400_000 },
-      { id: 're-003', name: '大阪市ワンルーム', type: '区分所有', monthlyRent: 72_000, occupied: false, yieldPct: 5.5, purchasePrice: 15_700_000 },
-      { id: 're-004', name: '札幌市アパート 6 戸', type: '一棟', monthlyRent: 420_000, occupied: true, yieldPct: 8.1, purchasePrice: 62_000_000 },
-    ] as { id: string; name: string; type: string; monthlyRent: number; occupied: boolean; yieldPct: number; purchasePrice: number }[],
-    // Numbers below are internally consistent: grossRent = 入居中 3 物件
-    // の実家賃 (168+235+420=823k)。空室の大阪 72k は除外して実収入で算出。
-    // netCashflow = 823k − 168k − 412k = 243k。
-    monthlyCashflow: {
-      grossRent: 823_000,
-      operatingExpenses: 168_000,
-      mortgagePayment: 412_000,
-      netCashflow: 243_000,
-    },
-    // portfolioYield = 個別 yieldPct の単純平均: (4.8+6.2+5.5+8.1)/4 = 6.15。
-    portfolioYield: 6.15,
-    // by-property 入居率: 3/4 物件入居 (札幌アパート 6 戸は 1 物件としてカウント)。
-    occupancyRate: 0.75,
-  },
+  // 不動産投資: 物件は利用者が端末内に登録する (record store)。同梱の見本は
+  // 持たず、土台は主プロセス・ブラウザ版と同じ `buildRealEstateSnapshot` に
+  // 寄せる (2026-11-19・ローカル完結バッチ 3。それまでは見本 4 件が集計に混ざっていた)。
+  realEstate: buildRealEstateSnapshot(),
 
-  mutualFunds: {
-    // Snapshot-only. A future live integration could call SBI / 楽天証券
-    // for holdings, but for now the page renders an illustrative holdings
-    // view to validate UI flow.
-    holdings: [
-      { code: '0331C152', name: 'eMAXIS Slim 米国株式 (S&P500)', units: 1_240_000, navPerUnit: 26_140, valuation: 3_241_360, ytdReturnPct: 14.2 },
-      { code: '03313187', name: 'eMAXIS Slim 全世界株式 (オール・カントリー)', units: 980_000, navPerUnit: 24_870, valuation: 2_437_260, ytdReturnPct: 11.8 },
-      { code: '0331C129', name: 'eMAXIS Slim 先進国債券インデックス', units: 520_000, navPerUnit: 13_420, valuation: 697_840, ytdReturnPct: 3.4 },
-      { code: '64311074', name: 'ひふみプラス', userTag: '積立中', units: 320_000, navPerUnit: 58_240, valuation: 1_863_680, ytdReturnPct: 8.7 },
-    ] as { code: string; name: string; units: number; navPerUnit: number; valuation: number; ytdReturnPct: number; userTag?: string }[],
-    portfolio: {
-      totalValuation: 8_240_140,
-      totalCostBasis: 7_180_000,
-      unrealizedGain: 1_060_140,
-      unrealizedGainPct: 14.8,
-    },
-    recentDividends: [
-      { code: '0331C152', amount: 12_400, paidAt: '2026-03-20' },
-      { code: '64311074', amount: 8_900, paidAt: '2026-02-15' },
-    ] as { code: string; amount: number; paidAt: string }[],
-  },
+  // 投資信託: 保有は利用者が端末内に登録する (record store、基準価額は手入力)。
+  // 同梱の見本は持たず、土台は主プロセス・ブラウザ版と同じ
+  // `buildMutualFundsSnapshot` に寄せる (2026-11-19・ローカル完結バッチ 3。
+  // それまでは見本 4 銘柄が集計に混ざっていた)。
+  mutualFunds: buildMutualFundsSnapshot(),
 
   charts: {
     // 可視化サービスのメタ情報。実際の系列は data/chartFixtures.ts の
@@ -592,14 +559,23 @@ export const SNAPSHOT = {
     count: 3,
   },
 
+  // 見本 (トークンを登録するまでの表示)。形は実物 (`shared/api/dropbox.ts` の `DropboxSnapshot`) と同じ 1 つ ——
+  // 画面の型はこの見本から推論されるので、`as DropboxSnapshot` で実物と同じ幅 (`number | null` ほか) にする (パス 410)。
   dropbox: {
-    items: [
-      { id: 'f-1', name: '📁 Q3-report.xlsx · 2026-05-18 · 共有 3 名' },
-      { id: 'f-2', name: '📁 marketing-assets/ · 142 ファイル · 4.2 GB' },
-      { id: 'f-3', name: '📁 contracts-signed.pdf · 2026-05-15' },
-    ] as { id: string; name: string }[],
-    count: 3,
-  },
+    accountName: '見本 太郎',
+    email: 'sample@example.com',
+    accountRead: true as boolean,
+    usedBytes: 4_800_000_000 as number | null,
+    allocatedBytes: 15_000_000_000 as number | null,
+    spaceRead: true as boolean,
+    entries: [
+      { id: 'id:sample1', name: 'Q3-report.xlsx', kind: 'file', sizeBytes: 248_000, modified: '2026-11-16' },
+      { id: 'id:sample2', name: 'marketing-assets', kind: 'folder', sizeBytes: null, modified: '2026-11-15' },
+      { id: 'id:sample3', name: 'contracts-signed.pdf', kind: 'file', sizeBytes: 1_240_000, modified: '2026-11-14' },
+    ],
+    entriesRead: true as boolean,
+    hasMore: false as boolean,
+  } as DropboxSnapshot,
 
   salesforce: {
     items: [

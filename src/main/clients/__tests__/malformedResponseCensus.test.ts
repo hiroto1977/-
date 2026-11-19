@@ -58,12 +58,13 @@ const RAW_TYPE_ERROR = /Cannot read propert|is not a function|is not iterable|of
 /**
  * 実際に `ctx.fetch` を呼ぶ fetcher の台帳 (2026-09-14 実測・**双方向**)。
  *
- * 残り 62 は同梱の見本をそのまま返すか (投資・士業・食事宅配ほか)、
+ * 残りは同梱の見本をそのまま返すか (投資・士業・食事宅配ほか)、
  * 資格情報の形で先に断る (`atlassian` / `youtube`)。**増えても減っても
  * ここを直す** —— 直さないと census が何も駆動していない状態で緑になる。
+ * (dropbox は 2026-11-19 のバッチ 3 で stub から実 fetcher になった。)
  */
 const NETWORK_FETCHERS = [
-  'asana', 'base', 'calendar', 'canva', 'cloudflare', 'cursor', 'discord', 'drive', 'freee',
+  'asana', 'base', 'calendar', 'canva', 'cloudflare', 'cursor', 'discord', 'drive', 'dropbox', 'freee',
   'github', 'gmail', 'line', 'linear', 'microsoft-365', 'notion', 'ollama', 'sentry', 'slack', 'stripe', 'wordpress',
 ] as const;
 

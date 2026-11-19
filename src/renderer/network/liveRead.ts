@@ -41,6 +41,7 @@ import { fetchLineSnapshotWith } from '../../shared/api/line';
 import { fetchLinearSnapshotWith } from '../../shared/api/linear';
 import { fetchSentrySnapshotWith } from '../../shared/api/sentry';
 import { fetchDiscordSnapshotWith } from '../../shared/api/discord';
+import { fetchDropboxSnapshotWith } from '../../shared/api/dropbox';
 import { lookup } from '../../shared/lookup';
 
 /** 通信手段。`fetchSnapshot` と同じく JSON として読めた本体を返す。 */
@@ -94,8 +95,12 @@ interface LiveReader {
  *
  * `discord` (2026-11-18): ボットが参加しているサーバーの一覧 (読み取りだけ・GET 1 つ)。同じくプロキシを通す ——
  * `discord.com` へもこの開発環境からは届かない。プロキシの許可リストに `discord.com` を足して使う。
+ *
+ * `dropbox` (2026-11-19): アカウント・容量・最近のアイテム (読み取りだけ・POST 3 つ)。同じくプロキシを通す ——
+ * `api.dropboxapi.com` へもこの開発環境からは届かない。プロキシの許可リストに `api.dropboxapi.com` を足して使う。
+ * トークンは利用者が Dropbox App Console で作る自前アプリのもの (権限は読み取りだけ)。
  */
-export const LIVE_READERS: Readonly<Record<string, LiveReader>> = { cursor: { read: (jsonFetch, token, nowMs) => fetchCursorSnapshotWith(jsonFetch, token, nowMs, DEFAULT_USAGE_DAYS) }, stripe: { read: (jsonFetch, token) => fetchStripeSnapshotWith(jsonFetch, token) }, asana: { read: (jsonFetch, token) => fetchAsanaSnapshotWith(jsonFetch, token) }, line: { read: (jsonFetch, token) => fetchLineSnapshotWith(jsonFetch, token) }, linear: { read: (jsonFetch, token) => fetchLinearSnapshotWith(jsonFetch, token) }, sentry: { read: (jsonFetch, token) => fetchSentrySnapshotWith(jsonFetch, token) }, discord: { read: (jsonFetch, token) => fetchDiscordSnapshotWith(jsonFetch, token) } };
+export const LIVE_READERS: Readonly<Record<string, LiveReader>> = { cursor: { read: (jsonFetch, token, nowMs) => fetchCursorSnapshotWith(jsonFetch, token, nowMs, DEFAULT_USAGE_DAYS) }, stripe: { read: (jsonFetch, token) => fetchStripeSnapshotWith(jsonFetch, token) }, asana: { read: (jsonFetch, token) => fetchAsanaSnapshotWith(jsonFetch, token) }, line: { read: (jsonFetch, token) => fetchLineSnapshotWith(jsonFetch, token) }, linear: { read: (jsonFetch, token) => fetchLinearSnapshotWith(jsonFetch, token) }, sentry: { read: (jsonFetch, token) => fetchSentrySnapshotWith(jsonFetch, token) }, discord: { read: (jsonFetch, token) => fetchDiscordSnapshotWith(jsonFetch, token) }, dropbox: { read: (jsonFetch, token) => fetchDropboxSnapshotWith(jsonFetch, token) } };
 
 /** 読み取りの結果。失敗しても「なぜ実データでないか」を必ず言葉で返す。 */
 export type LiveReadResult =

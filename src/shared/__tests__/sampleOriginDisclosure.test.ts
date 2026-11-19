@@ -47,9 +47,6 @@ const DISCLOSES = /snapshot|模擬データ|仮想データ|同梱|見本|サン
 const LEDGER: Partial<Record<ServiceId, string>> = {
   'uber-eats': 'サイドバーに項が無い (BusinessPage が snapshot を直接読む。sidebarCoverage.test.ts の台帳)',
   'demae-can': 'サイドバーに項が無い (同上)',
-  'real-estate': 'records — 物件は利用者が追加し、同梱の 4 件は初期表示だけ (パス 54 / 119)',
-  'mutual-funds': 'records — 銘柄は利用者が追加する (パス 122 / 123)',
-  grok: 'derived — 画面は assistant/providers (保管した鍵と既定の提供者) から状態を読み、質問は assistant/chat へ送る。同梱の見本は 1 件も出さない (fetcher は LIVE_FETCHERS の invariant を満たす stub)',
 };
 
 const SAMPLE_IDS = (Object.keys(SERVICE_DATA_ORIGIN) as ServiceId[]).filter(
@@ -99,11 +96,12 @@ describe('見本のサービスは、サイドバーでもそう述べる (パ�
     expect(DISCLOSES.test('エラー監視 — issues / performance / releases')).toBe(false);
   });
 
-  it('走査が生きている (sample の項が 20 件以上ある)', () => {
+  it('走査が生きている (sample の項が 15 件以上ある)', () => {
     // 分類が壊れて 0 件になると、上の検査が無条件に通る。
     // 下限は実態に合わせて置く: 2026-11-19 のローカル完結バッチ 1・2 で
-    // 士業 8 件と分析・内部画面 9 件が 'local' へ移り、残る sample は
-    // 外部連携待ち・別機能待ちの 22 件。
-    expect(SAMPLE_IDS.length).toBeGreaterThanOrEqual(20);
+    // 士業 8 件と分析・内部画面 9 件が 'local' へ移り 22 件、バッチ 3 で
+    // grok・不動産・投資信託が 'local'、dropbox が 'remote' へ移り、
+    // 残る sample は外部連携待ち・別機能待ちの 18 件。
+    expect(SAMPLE_IDS.length).toBeGreaterThanOrEqual(15);
   });
 });

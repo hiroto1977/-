@@ -75,13 +75,13 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `docker` | tools | sample | none | ✅ |  |  | — | — | — |
 | `docstudio` | featured | local | none | ✅ |  |  | `list-collections` | — | `list-collections` |
 | `drive` | integrations | remote | fetch |  | ✅ |  | `create-folder` | `create-folder` | — |
-| `dropbox` | integrations | sample | none |  |  |  | — | — | — |
+| `dropbox` | integrations | remote | fetch |  |  |  | — | — | — |
 | `emotions` | tools | local | action | ✅ |  |  | `analyze-text` `clear-history` `log-mood` | `analyze-text` `clear-history` `log-mood` | — |
 | `freee` | integrations | remote | fetch |  | ✅ |  | — | — | — |
 | `funding` | tools | local | none | ✅ |  |  | — | — | — |
 | `github` | integrations | remote | fetch |  |  |  | `create-issue` | `create-issue` | — |
 | `gmail` | integrations | remote | fetch |  | ✅ |  | `create-draft` | `create-draft` | — |
-| `grok` | tools | sample | none | ✅ |  |  | — | — | — |
+| `grok` | tools | local | none | ✅ |  |  | — | — | — |
 | `home` | featured | local | none | ✅ |  |  | — | — | — |
 | `hydroponics` | tools | local | none | ✅ |  |  | — | — | — |
 | `judicial-scrivener` | professionals | local | none | ✅ |  | ✅ | — | — | — |
@@ -95,7 +95,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `mentor` | tools | local | none | ✅ |  |  | — | — | — |
 | `microsoft-365` | integrations | remote | fetch |  | ✅ |  | `create-event` `send-mail` | `create-event` `send-mail` | — |
 | `moneyforward` | integrations | sample | none | ✅ |  |  | — | — | — |
-| `mutual-funds` | tools | sample | none | ✅ |  |  | `advise` `record-entry` | `advise` `record-entry` | — |
+| `mutual-funds` | tools | local | none | ✅ |  |  | `advise` `record-entry` | `advise` `record-entry` | — |
 | `netsea` | integrations | sample | none | ✅ |  |  | — | — | — |
 | `notion` | integrations | remote | fetch |  | ✅ |  | `create-page` | `create-page` | — |
 | `obsidian` | tools | sample | none | ✅ |  |  | — | — | — |
@@ -103,7 +103,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `overview` | featured | local | none | ✅ |  |  | — | — | — |
 | `patent-attorney` | professionals | local | none | ✅ |  | ✅ | — | — | — |
 | `quality` | tools | sample | none | ✅ |  |  | — | — | — |
-| `real-estate` | tools | sample | none | ✅ |  |  | `advise` `record-entry` | `advise` `record-entry` | — |
+| `real-estate` | tools | local | none | ✅ |  |  | `advise` `record-entry` | `advise` `record-entry` | — |
 | `sales` | featured | local | none | ✅ |  |  | — | — | — |
 | `salesforce` | integrations | sample | none |  |  |  | — | — | — |
 | `security` | tools | local | action | ✅ |  |  | `check-email-breach` `scan-url` | `check-email-breach` `scan-url` | — |
@@ -134,8 +134,8 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 集計:
 
 - 配置: おすすめ 12 / 士業連携 8 / 分析・ツール 24 / 外部サービス連携 33 / 消費されるだけ 2
-- 出所: remote 21 / local 36 / sample 22
-- 資格情報の読み手 — fetch 21 / action 7 / none 51
+- 出所: remote 22 / local 39 / sample 18
+- 資格情報の読み手 — fetch 22 / action 7 / none 50
 - LOCAL_SERVICES 56 / OAuth 10 / action を持つ 27 / デスクトップだけの action 10
 
 ## 4. facet の公理と例外

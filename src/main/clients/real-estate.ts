@@ -1,17 +1,22 @@
 import type { ActionContext, ActionMap, FetchContext } from './types';
 import type { ActionData } from '../../shared/actionData';
+import { buildRealEstateSnapshot, type RealEstateSnapshot } from '../../shared/realEstateSnapshot';
 import { countChars } from '../../shared/inputCeiling';
 import { MAX_RECORD_NOTE_CHARS } from '../../shared/recordEntryLimits';
 import { adviseService } from '../../shared/serviceAdvisor';
 
 /**
- * 不動産投資 — 投資ポートフォリオ (snapshot 専用)。
+ * 不動産投資 — 投資ポートフォリオ。
  *
- * 公開 REST API は限定的 (J-REIT XBRL / 楽待 API は要パートナー契約)。
- * このファイルは `LIVE_FETCHERS` invariant を満たすための static stub。
- * 実際のページは `SNAPSHOT.realEstate` を直接描画するため、refresh ボタン
- * でネットワーク呼び出しは発生しない。将来 broker / REIT データソースを
- * 配線する際は、この fetcher 内で同じ shape を返却する。
+ * 公開 REST API は限定的 (J-REIT XBRL / 楽待 API は要パートナー契約) なので
+ * 外部連携はしない。物件の実データは renderer の record store に在り、
+ * ページが自分の物件だけから集計する。本 fetcher が返すのは見本を持たない
+ * 空の土台だけ (組み立ては `shared/realEstateSnapshot.ts` の
+ * `buildRealEstateSnapshot`、ブラウザ版の web-shim も同じ関数を呼ぶ)。
+ * 資格情報も通信も使わないので `LOCAL_SERVICES` に載り、
+ * `SERVICE_DATA_ORIGIN` は 'local' (2026-11-19、ローカル完結バッチ 3)。
+ * 将来 broker / REIT データソースを配線する際は、この fetcher 内で
+ * 同じ shape を返却する。
  *
  * **メモの天井は「文字」で数える** (2026-09-13 · パス 195) —— 画面が「2,000 字まで」と
  * 刷る数と同じ単位。`note.length` は UTF-16 のコード単位なので、絵文字や BMP 外の
@@ -22,36 +27,10 @@ import { adviseService } from '../../shared/serviceAdvisor';
  *  それを pragma の理由として数え、「理由の無い pragma」が黙って減る。実測で 4 → 3。)
  */
 
-export interface RealEstateSnapshot {
-  readonly properties: ReadonlyArray<{
-    readonly id: string;
-    readonly name: string;
-    readonly type: string;
-    readonly monthlyRent: number;
-    readonly occupied: boolean;
-    readonly yieldPct: number;
-    readonly purchasePrice: number;
-  }>;
-  readonly monthlyCashflow: {
-    readonly grossRent: number;
-    readonly operatingExpenses: number;
-    readonly mortgagePayment: number;
-    readonly netCashflow: number;
-  };
-  readonly portfolioYield: number;
-  readonly occupancyRate: number;
-}
-
-// Stryker disable next-line all
-const STUB: RealEstateSnapshot = {
-  properties: [],
-  monthlyCashflow: { grossRent: 0, operatingExpenses: 0, mortgagePayment: 0, netCashflow: 0 },
-  portfolioYield: 0,
-  occupancyRate: 0,
-};
+export type { RealEstateSnapshot };
 
 export async function fetchRealEstateSnapshotImpl(_ctx: FetchContext): Promise<RealEstateSnapshot> {
-  return STUB;
+  return buildRealEstateSnapshot();
 }
 
 // Stryker disable next-line BlockStatement
