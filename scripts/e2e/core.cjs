@@ -1267,15 +1267,56 @@ async function dataOriginSuite(browser) {
   // ここは **e2e が CI に無いあいだに 4 日ぶん古いまま**になっていた
   // (2026-08-23 に走らせて発覚)。正しいアプリに対して赤を出す検査は、
   // 検査が無いより悪い —— 赤を無視する習慣がつく。
+  //
+  // **ブラウザ版は GitHub の実データを読めない** (2026-11-19 · `shared/browserFetchReach.ts`)。
+  // 連携先 22 画面のうち、ブラウザ版から読めるのは 8 つ (Stripe ほか)。残る 14 (GitHub ほか) は
+  // 直す前、「更新」を押すと赤い「エラー」+「表示中の数字は同梱のサンプルです」+
+  // 「ブラウザ版では live fetch を行いません」を出した (資格情報を保存していると開いただけで出た)。
+  // いまは「更新」を出さず、押す前から灰色の案内を 1 つ出す。
+  const UNSUPPORTED_NOTE = 'ブラウザ版では、この画面の実データを取得できません';
   await gotoService(page, '#github', '.status-bar');
+  await page.waitForSelector('.status-bar [data-fetch-unsupported]', { timeout: 15000 });
   ok(
-    (await page.locator('.status-bar button', { hasText: '更新' }).count()) === 1,
-    'GitHub: 更新ボタンを出す',
+    (await page.locator('.status-bar button', { hasText: /^更新$/ }).count()) === 0
+      && ((await page.textContent('.status-bar [data-fetch-unsupported]')) ?? '').includes(UNSUPPORTED_NOTE),
+    'GitHub: ★ 「更新」を出さず、「ブラウザ版では取得できません」の案内を押す前から出す',
   );
   const ghBadge = (await page.textContent('.status-bar .badge')) ?? '';
   ok(
     ghBadge.trim() === 'サンプル（未連携）',
     `GitHub: 未取得は「サンプル（未連携）」(実際 "${ghBadge.trim()}")`,
+  );
+
+  // 資格情報を保存していると、画面は開いただけで取得する。その答え (この版では取得しない) を失敗にしない。
+  await page.evaluate(() => window.serviceHub.setToken('github', 'e2e-not-a-real-token'));
+  await gotoService(page, '#kpi', '.status-bar');
+  await gotoService(page, '#github', '.status-bar');
+  await page.waitForSelector('.status-bar [data-fetch-unsupported]', { timeout: 15000 });
+  // 取得の答えが届くまで待つ: 鍵が在ると設定ボタンの札が「トークン更新」に替わる (保存を読み終えた印)。
+  await page.waitForFunction(
+    () => Array.from(document.querySelectorAll('.status-bar button')).some((b) => (b.textContent ?? '').includes('トークン更新')),
+    undefined,
+    { timeout: 15000 },
+  );
+  const ghBar = (await page.locator('.status-bar').innerText()).replace(/\s+/g, ' ');
+  const ghBadgeSaved = ((await page.textContent('.status-bar .badge')) ?? '').trim();
+  ok(
+    ghBadgeSaved === 'サンプル（未連携）'
+      && (await page.locator('.status-bar [data-fetch-unsupported]').count()) === 1
+      && (await page.locator('.status-bar [data-fetch-error]').count()) === 0
+      && !ghBar.includes('live fetch を行いません')
+      && !ghBar.includes('同梱のサンプルです'),
+    `GitHub: ★ 資格情報を保存して開いても、赤い失敗を出さない (札 "${ghBadgeSaved}" / ${JSON.stringify(ghBar.slice(0, 90))})`,
+  );
+  await page.evaluate(() => window.serviceHub.clearToken('github'));
+
+  // 対照: ブラウザ版から読める連携先 (Stripe) には「更新」が在り、案内は出ない。
+  await gotoService(page, '#stripe', '.status-bar');
+  await page.waitForSelector('.status-bar button', { timeout: 15000 });
+  ok(
+    (await page.locator('.status-bar button', { hasText: /^更新$/ }).count()) === 1
+      && (await page.locator('.status-bar [data-fetch-unsupported]').count()) === 0,
+    'Stripe: 対照 —— ブラウザ版から読める連携先には「更新」が在り、案内は出ない',
   );
 
   ok(errs.length === 0, `取得元の表示: ページエラー 0 (実際 ${errs.length})`);
@@ -6082,7 +6123,7 @@ function installWaitMarginRecorder(browser) {
     ['desktop', desktopSuite, 67],
     ['manualData', manualDataSuite, 19],
     // 2026-11-19: 「内蔵サンプル」の標本を不動産へ移し、士業 (端末内の記録) が見本を名乗らないことを足した = +2
-    ['dataOrigin', dataOriginSuite, 18],
+    ['dataOrigin', dataOriginSuite, 20],
     ['credential', credentialSuite, 8],
     ['businessComparison', businessComparisonSuite, 13],
     ['kessanTax', kessanTaxSuite, 34],

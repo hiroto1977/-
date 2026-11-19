@@ -23,6 +23,9 @@
  *                                その写しに isMock を重ねて返す (2026-11-19)。実装の無い物だけが
  *                                "not_implemented" に落ち、ページはそこで
  *                                SNAPSHOT[id] (同梱の静的スナップショット) へ戻る。
+ *                                連携先のうちブラウザ版から読めない 14 画面 (GitHub ほか) は、
+ *                                同じ code に「この版では取得できません」の 1 文を載せて返す
+ *                                (`shared/browserFetchReach.ts` —— 画面は失敗として出さない)。
  *                                2026-09-23 (パス 427) に訂正: 「常に
  *                                not_implemented を返す」は偽
  *   - invoke('templates', 'export-template', …)
@@ -70,6 +73,9 @@
 
 import { readFailureBody } from '../shared/httpLimits';
 import { WEB_BUILD_SUFFIX } from '../shared/buildDestinations';
+import { browserFetchUnsupportedNote } from '../shared/browserFetchReach';
+import { originOf } from '../shared/dataOrigin';
+import type { ServiceId } from '../shared/serviceId';
 import { TEMPLATE_CATALOG_FOR_WEB, renderTemplateForWeb } from './web-templates';
 import {
   normalizeTemplateParams,
@@ -1569,6 +1575,15 @@ const unguarded = {
       // 取れない理由をそのまま返す。ページは snapshot へ落ちるが、
       // 「なぜ実データでないか」は画面に出る。
       return err<T>(res.code, res.message);
+    }
+    /*
+     * 連携先の画面のうち、ブラウザ版から読む実装が無い物 (GitHub ほか 14 画面 —— `shared/browserFetchReach.ts`)。
+     * 落ちる code は下と同じ `not_implemented` だが、文は読んで分かる 1 文にする。取得の hook はこの code を
+     * 失敗ではなく「この実行形態では取得しない」として持ち、画面は赤い「エラー」を出さない (2026-11-19)。
+     */
+    if (serviceId !== undefined) {
+      const unsupported = browserFetchUnsupportedNote('browser', originOf(serviceId as ServiceId), serviceId);
+      if (unsupported !== null) return err('not_implemented', unsupported) as ActionResult<T>;
     }
     return err(
       'not_implemented',

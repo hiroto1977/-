@@ -1643,9 +1643,15 @@ export const LAWS: readonly Law[] = [
     id: 'snapshot-parity',
     family: 'dual-build',
     name: '両ビルドのスナップショットは同じ形',
-    statement: '同じサービスの fetchSnapshot が両ビルドで同じ欄を返す。ブラウザ版だけ not_implemented で「エラー」と出さない。',
-    provenance: ['dataOrigin.ts の docblock', 'パス 309'],
-    enforcedBy: [test(T.renderer('webShimSnapshotParity')), test(T.renderer('webShimSnapshotBranches'))],
+    statement: '同じサービスの fetchSnapshot が両ビルドで同じ欄を返す。ブラウザ版だけ not_implemented で「エラー」と出さない —— 取得できない画面 (連携先 14) は、押す前から「この版では取得できません」と灰色で言い、「更新」を出さない。',
+    provenance: ['dataOrigin.ts の docblock', 'パス 309', '2026-11-19 (#962・連携先 14 画面)'],
+    enforcedBy: [
+      test(T.renderer('webShimSnapshotParity')),
+      test(T.renderer('webShimSnapshotBranches')),
+      test(T.renderer('browserRefreshReachable')),
+      test(T.renderer('browserRemoteFetchReach')),
+      test(T.shared('browserFetchReach')),
+    ],
   },
   {
     id: 'both-builds-real-browser',
