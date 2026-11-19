@@ -301,3 +301,14 @@ export function findCrop(list: readonly HydroponicCrop[], id: unknown): Hydropon
 export function resolveCropFrom(list: readonly HydroponicCrop[], id: unknown): HydroponicCrop {
   return findCrop(list, id) ?? list[0] ?? DEFAULT_CROP_LIST[0]!;
 }
+
+/**
+ * 消した品目を使うロットが在るときに添える文 (無ければ `null` —— 何も添えない)。
+ *
+ * 品目を消してもロットは残る。残ったロットは品目を引けないので、定植・収穫の予定日が
+ * 出なくなる (表は「見つかりません」と出す)。**黙って予定日だけ消えないように、消した所で言う。**
+ */
+export function removedCropLotsNote(lots: number): string | null {
+  if (lots <= 0) return null;
+  return `この品目のロットが ${lots} 件あります —— そのロットは定植・収穫の予定日が出なくなります（ロットは消えていません）。`;
+}

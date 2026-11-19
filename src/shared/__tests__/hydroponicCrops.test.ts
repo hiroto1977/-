@@ -30,6 +30,7 @@ import {
   restoreBuiltinCrops,
   findCrop,
   resolveCropFrom,
+  removedCropLotsNote,
   type CropDraft,
   type CropNumericField,
 } from '../hydroponicCrops';
@@ -480,6 +481,22 @@ describe('findCrop / resolveCropFrom', () => {
  * 組み立て直されるので変異体が覆われ、測られる (assistant.ts と同じ手)。
  * 上の `toEqual` と同じ主張を、測られる形でもう 1 度置く。
  */
+describe('removedCropLotsNote — 消した品目を使うロットが在るときに添える文', () => {
+  it('ロットが無ければ何も添えない (0 件・負)', () => {
+    expect(removedCropLotsNote(0)).toBeNull();
+    expect(removedCropLotsNote(-1)).toBeNull();
+  });
+
+  it('★ 1 件でも在れば、件数と「予定日が出なくなる」「ロットは消えていない」を言う', () => {
+    expect(removedCropLotsNote(1)).toBe(
+      'この品目のロットが 1 件あります —— そのロットは定植・収穫の予定日が出なくなります（ロットは消えていません）。',
+    );
+    expect(removedCropLotsNote(3)).toBe(
+      'この品目のロットが 3 件あります —— そのロットは定植・収穫の予定日が出なくなります（ロットは消えていません）。',
+    );
+  });
+});
+
 describe('表の static 変異体を測る (動的 import で読み直す)', () => {
   it('見出し・範囲・文言・接頭辞・id の形が写しと一致する', async () => {
     const m = await rereadModule<typeof import('../hydroponicCrops')>(import.meta.url, '../hydroponicCrops');
