@@ -233,9 +233,9 @@ describe('LIVE_READERS — 読み直して static 変異体を届かせる', () 
     return rereadModule<typeof import('../liveRead')>(import.meta.url, '../liveRead');
   };
 
-  it('★ 表に載っているのは cursor / stripe / asana / line / linear / sentry / discord だけ (増減に気付く)', async () => {
+  it('★ 表に載っているのは cursor / stripe / asana / line / linear / sentry / discord / dropbox だけ (増減に気付く)', async () => {
     const m = await fresh();
-    expect(Object.keys(m.LIVE_READERS)).toEqual(['cursor', 'stripe', 'asana', 'line', 'linear', 'sentry', 'discord']);
+    expect(Object.keys(m.LIVE_READERS)).toEqual(['cursor', 'stripe', 'asana', 'line', 'linear', 'sentry', 'discord', 'dropbox']);
     expect(m.canLiveRead('cursor')).toBe(true);
     expect(m.canLiveRead('stripe')).toBe(true);
     expect(m.canLiveRead('asana')).toBe(true);
@@ -243,6 +243,7 @@ describe('LIVE_READERS — 読み直して static 変異体を届かせる', () 
     expect(m.canLiveRead('linear')).toBe(true);
     expect(m.canLiveRead('sentry')).toBe(true);
     expect(m.canLiveRead('discord')).toBe(true);
+    expect(m.canLiveRead('dropbox')).toBe(true);
     expect(m.canLiveRead('github')).toBe(false);
   });
 
@@ -275,6 +276,45 @@ describe('LIVE_READERS — 読み直して static 変異体を届かせる', () 
       ['https://api.stripe.com/v1/balance', { headers: { Authorization: 'Bearer rk_test_example' } }],
       ['https://api.stripe.com/v1/charges?limit=10', { headers: { Authorization: 'Bearer rk_test_example' } }],
     ]);
+  });
+
+  /*
+   * Dropbox (2026-11-19): 読み取りは shared の `fetchDropboxSnapshotWith` を通り、プロキシ経由の
+   * 通信手段と保管庫の鍵が**そのまま**届く (送り先は api.dropboxapi.com の 3 つだけ・すべて POST)。
+   */
+  it('★ dropbox の read が、渡した通信手段と鍵でアカウント・容量・一覧を読む', async () => {
+    const m = await fresh();
+    const jsonFetch = vi
+      .fn<(url: string, init: RequestInit) => Promise<unknown>>()
+      .mockResolvedValueOnce({ account_id: 'dbid:AAH', name: { display_name: '山田 太郎' }, email: 'a@example.com' })
+      .mockResolvedValueOnce({ used: 4800, allocation: { '.tag': 'individual', allocated: 15000 } })
+      .mockResolvedValueOnce({
+        entries: [{ '.tag': 'file', id: 'id:1', name: 'a.pdf', size: 1200, server_modified: '2026-11-16T12:00:00Z' }],
+        has_more: false,
+      });
+    const res = await m.liveRead('dropbox', {
+      readCredential: () => Promise.resolve('sl.test_example'),
+      getProxyJsonFetch: () => Promise.resolve(jsonFetch),
+      now: () => 0,
+    });
+    expect(res.ok).toBe(true);
+    if (res.ok) {
+      const data = res.data as { accountName: string; usedBytes: number | null; entries: readonly unknown[] };
+      expect(data.accountName).toBe('山田 太郎');
+      expect(data.usedBytes).toBe(4800);
+      expect(data.entries).toHaveLength(1);
+    }
+    expect(jsonFetch.mock.calls.map((c) => c[0])).toEqual([
+      'https://api.dropboxapi.com/2/users/get_current_account',
+      'https://api.dropboxapi.com/2/users/get_space_usage',
+      'https://api.dropboxapi.com/2/files/list_folder',
+    ]);
+    for (const [, init] of jsonFetch.mock.calls) {
+      expect((init as RequestInit).method).toBe('POST');
+      expect(((init as RequestInit).headers as Record<string, string>).Authorization).toBe('Bearer sl.test_example');
+    }
+    // 一覧の本文はルート直下の固定の照会だけ (利用者の入力は入らない)。
+    expect(JSON.parse(String(jsonFetch.mock.calls[2]![1].body))).toEqual({ path: '', recursive: false, limit: 20 });
   });
 
   it('stripe: 鍵が無ければ通信手段を取りに行かず「未登録」と答える', async () => {

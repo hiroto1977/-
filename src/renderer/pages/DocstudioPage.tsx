@@ -9,6 +9,14 @@ import {
   buildPortfolioAnnex,
 } from '../data/portfolioAnnex';
 import { SERVICE_DATA_ORIGIN } from '../../shared/dataOrigin';
+import {
+  HOLDINGS_COLLECTION,
+  PROPERTIES_COLLECTION,
+  normalizeHolding,
+  normalizeProperty,
+  type HoldingEntry,
+  type PropertyEntry,
+} from '../data/investments';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 import {
@@ -769,6 +777,10 @@ interface KessanPage {
  * 値の入れ物は 1 つのまま —— 分けたのは紙だけで、数字はどの紙も同じ科目残高から組む。
  */
 function KessanSheets({ values, fields, sheet }: { values: Values; fields: readonly DocField[]; sheet: KessanSheet }) {
+  // 参考別紙の保有明細は、投資信託・不動産の画面と同じ record store から読む
+  // (2026-11-19 のローカル完結バッチ 3 以前は同梱 SNAPSHOT の見本だった)。
+  const fundCol = useCollection<HoldingEntry>(HOLDINGS_COLLECTION);
+  const propCol = useCollection<PropertyEntry>(PROPERTIES_COLLECTION);
   // 1 点ずつ出すときも値は同じ 1 つの科目残高から組む（連結を切らない）。
   const show = (id: Exclude<KessanSheet, 'all'>) => sheet === 'all' || sheet === id;
   const inc = incomeTotals(values);
@@ -870,14 +882,14 @@ function KessanSheets({ values, fields, sheet }: { values: Values; fields: reado
      * **投資ポートフォリオを参考の別紙として併記する** (パス 329・依頼「計算書類4点にポートフォリオも併記する様にして」)。
      *
      * 計算書類の**中には入れない** —— 4 点は会社法 435 条 2 項の様式で、保有明細はその様式に無い。
-     * さらに出所 (`mutual-funds` / `real-estate`) は `SERVICE_DATA_ORIGIN` が **`sample`** と
-     * 言うとおり同梱の見本で、利用者の実データではない。`shared/dataOrigin.ts` は自分で
-     * 「決算書類・申告書類へ流れる数字を扱うアプリで、これは単なる表示崩れでは済まない」と書いている。
-     * だから紙は分け、**紙の上で 3 つ言う**: 計算書類ではないこと・数字の出所・基準の違い。
+     * 出所 (`mutual-funds` / `real-estate`) は利用者が端末内に登録した保有 (record store、
+     * `SERVICE_DATA_ORIGIN` は 'local') で、各画面の集計と同じ実データである。
+     * それでも決算書類へ流れる数字なので、紙は分け、**紙の上で 3 つ言う**:
+     * 計算書類ではないこと・数字の出所・基準の違い。
      */
     const annex = buildPortfolioAnnex(
-      SNAPSHOT.mutualFunds.holdings,
-      SNAPSHOT.realEstate.properties,
+      fundCol.records.map((r) => normalizeHolding(r.data)),
+      propCol.records.map((r) => normalizeProperty(r.data)),
       values,
     );
     // 出所は 2 サービスぶん在る。**どちらかが見本なら見本として断る** (緩い方に倒さない)。

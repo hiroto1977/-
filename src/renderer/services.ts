@@ -326,7 +326,7 @@ export const SERVICES: ServiceDefinition[] = [
     id: 'dropbox',
     label: 'Dropbox',
     icon: 'DB',
-    description: 'ファイル保管 — 最近のファイル / 共有リンク / 容量 (snapshot)',
+    description: 'ファイル保管 — アカウント / 容量 / 最近のアイテム (読み取り専用・トークンを登録すると実データ)',
     page: DropboxPage,
     category: 'integrations',
   },

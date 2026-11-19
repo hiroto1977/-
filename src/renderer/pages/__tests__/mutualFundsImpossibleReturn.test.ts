@@ -51,7 +51,6 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { MutualFundsPage } from '../MutualFundsPage';
-import { SNAPSHOT } from '../../data/snapshot';
 import { getRecordStore, _resetRecordStoreForTests } from '../../data/store';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { HOLDINGS_COLLECTION } from '../../data/investments';
@@ -164,8 +163,23 @@ async function seedHolding(name: string, ytdReturnPct: number): Promise<void> {
   });
 }
 
-/** 見本 4 銘柄の年初来リターン (画面と同じ出所から取る —— 数を写さない)。 */
-const demoYtd = (): number[] => SNAPSHOT.mutualFunds.holdings.map((h) => h.ytdReturnPct);
+/**
+ * かつての同梱見本 4 銘柄と同じ数字を、**利用者の登録として** record store へ置く
+ * (2026-11-19 のローカル完結バッチ 3 で見本は外れ、画面は空から始まる)。
+ * 各検査はこの土台に、復元の道で入る異常な 1 件を足して読む。
+ */
+async function seedDemoHoldings(): Promise<void> {
+  const rows = [
+    { code: '0331C152', name: 'eMAXIS Slim 米国株式 (S&P500)', valuation: 3_241_360, acquisitionCost: 2_800_000, ytdReturnPct: 14.2 },
+    { code: '03313187', name: 'eMAXIS Slim 全世界株式 (オール・カントリー)', valuation: 2_437_260, acquisitionCost: 2_180_000, ytdReturnPct: 11.8 },
+    { code: '0331C129', name: 'eMAXIS Slim 先進国債券インデックス', valuation: 697_840, acquisitionCost: 680_000, ytdReturnPct: 3.4 },
+    { code: '64311074', name: 'ひふみプラス', valuation: 1_863_680, acquisitionCost: 1_520_000, ytdReturnPct: 8.7 },
+  ];
+  for (const r of rows) await getRecordStore().insert(HOLDINGS_COLLECTION, r);
+}
+
+/** 登録した 4 銘柄の年初来リターン。 */
+const demoYtd = (): number[] => [14.2, 11.8, 3.4, 8.7];
 
 beforeEach(async () => {
   _resetRecordStoreForTests();
@@ -200,6 +214,7 @@ afterEach(async () => {
 
 describe('投資信託 — 在り得ない年初来リターン (元本超の損失)', () => {
   it('★ 一覧のセルは ⛔ を付け、実在の大損 (赤) と同じ顔にしない', async () => {
+    await seedDemoHoldings();
     await seedHolding('復元ファンド', -250);
     await mount('復元ファンド');
     const cell = ytdCell('復元ファンド');
@@ -207,13 +222,14 @@ describe('投資信託 — 在り得ない年初来リターン (元本超の損
     expect(cell.getAttribute('title')).toContain('在り得ない値');
     expect(cell.getAttribute('title')).toContain('元本を超えて失うことはありません');
     expect(cell.style.color).not.toBe('var(--danger)'); // 意味色のトークン (実在の損失の赤) は付けない
-    // 対照: 見本の行は今までどおり符号つき・⛔ なし
+    // 対照: 登録の行は今までどおり符号つき・⛔ なし
     const demo = ytdCell('ひふみプラス');
     expect(demo.textContent?.trim()).toBe('+8.7%');
     expect(demo.textContent).not.toContain('⛔');
   });
 
   it('★ リスク (標準偏差) は在り得ない値を除いた 4 銘柄で取り、除いた数を言う', async () => {
+    await seedDemoHoldings();
     await seedHolding('復元ファンド', -250);
     await mount('復元ファンド');
     const clean = calcStdDev(demoYtd());
@@ -228,6 +244,7 @@ describe('投資信託 — 在り得ない年初来リターン (元本超の損
   });
 
   it('★ 改善提案は在り得ない値を「最低」と名指しせず、名指しして断る', async () => {
+    await seedDemoHoldings();
     await seedHolding('復元ファンド', -250);
     await mount('復元ファンド');
     await clickButton('改善提案');
@@ -248,6 +265,7 @@ describe('投資信託 — 在り得ない年初来リターン (元本超の損
   });
 
   it('対照: 下限ちょうど (−100% = 全額失った) は在りうるので、赤・集約・比較に今までどおり入る', async () => {
+    await seedDemoHoldings();
     await seedHolding('全損ファンド', -100);
     await mount('全損ファンド');
     const cell = ytdCell('全損ファンド');
@@ -262,8 +280,9 @@ describe('投資信託 — 在り得ない年初来リターン (元本超の損
     expect(adviceText()).not.toContain('在り得ない値');
   });
 
-  it('対照: 見本 4 銘柄だけなら、除外の注記も ⛔ の印も出ない', async () => {
-    await mount('同梱の見本');
+  it('対照: 登録 4 銘柄だけなら、除外の注記も ⛔ の印も出ない', async () => {
+    await seedDemoHoldings();
+    await mount('ひふみプラス');
     await waitForText(text, `入力された ${demoYtd().length} 銘柄の母標準偏差です。`);
     expect(text()).not.toContain('在り得ない値');
     expect(container.querySelector('[data-impossible-returns]')).toBeNull();
@@ -272,6 +291,7 @@ describe('投資信託 — 在り得ない年初来リターン (元本超の損
 
 describe('投資信託 — 入力時の上端 (1000%) を超える年初来リターン (パス 493j)', () => {
   it('★ 一覧のセルは緑の「+」ではなく ⚠ を付け、確かめる値だと言う (値そのものは刷り続ける)', async () => {
+    await seedDemoHoldings();
     await seedHolding('急騰ファンド', 1500);
     await mount('急騰ファンド');
     const cell = ytdCell('急騰ファンド');
@@ -280,7 +300,7 @@ describe('投資信託 — 入力時の上端 (1000%) を超える年初来リ�
     expect(cell.style.color).toBe('var(--warning)'); // 緑 (測った良い値) にしない
     expect(cell.getAttribute('title')).toContain(`入力時の範囲 (上端 ${RETURN_ENTRY_CEILING_PCT}%) の外の値です`);
     expect(cell.getAttribute('title')).toContain('リスク (標準偏差) には入れています');
-    // 対照: 見本の行は今までどおり緑の「+」・印なし
+    // 対照: 登録の行は今までどおり緑の「+」・印なし
     const demo = ytdCell('ひふみプラス');
     expect(demo.textContent?.trim()).toBe('+8.7%');
     expect(demo.hasAttribute('data-above-entry-ceiling-row')).toBe(false);
@@ -288,6 +308,7 @@ describe('投資信託 — 入力時の上端 (1000%) を超える年初来リ�
   });
 
   it('★ リスク (標準偏差) はその値を入れたまま取り、範囲の外の件数を言う', async () => {
+    await seedDemoHoldings();
     await seedHolding('急騰ファンド', 1500);
     await mount('急騰ファンド');
     const withAbove = calcStdDev([...demoYtd(), 1500]);
@@ -301,6 +322,7 @@ describe('投資信託 — 入力時の上端 (1000%) を超える年初来リ�
   });
 
   it('★ 改善提案は範囲の外だと名指しし、比較には入れたまま語る', async () => {
+    await seedDemoHoldings();
     await seedHolding('急騰ファンド', 1500);
     await mount('急騰ファンド');
     await clickButton('改善提案');
@@ -312,6 +334,7 @@ describe('投資信託 — 入力時の上端 (1000%) を超える年初来リ�
   });
 
   it('対照: 上端ちょうど (書き手が受ける 1000%) は範囲の中 —— 緑の「+」・印も断りも出ない', async () => {
+    await seedDemoHoldings();
     await seedHolding('十倍ファンド', RETURN_ENTRY_CEILING_PCT);
     await mount('十倍ファンド');
     const cell = ytdCell('十倍ファンド');

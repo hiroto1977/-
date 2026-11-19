@@ -13,7 +13,8 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
-import { _resetRecordStoreForTests } from '../../data/store';
+import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
+import { HOLDINGS_COLLECTION, PROPERTIES_COLLECTION } from '../../data/investments';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { _resetNavigationIntentForTests, navigateTo } from '../../navigate';
 import { waitForText } from '../../__tests__/jsdomWait';
@@ -448,17 +449,28 @@ describe('書類スタジオ — 計算書類は 1 点 1 枚 (パス 323)', () =
   });
 
   it('★ 参考の紙は 3 つ断る: 計算書類でない / 数字の出所 / 基準の違い', async () => {
+    // 別紙の明細は利用者の登録 (record store) から来る —— 1 件ずつ置いてから開く。
+    await getRecordStore().insert(HOLDINGS_COLLECTION, {
+      code: 'MINE0001', name: '自分の銘柄', valuation: 100_000, acquisitionCost: 95_000, ytdReturnPct: 4,
+    });
+    await getRecordStore().insert(PROPERTIES_COLLECTION, {
+      name: '自分の物件', type: '区分所有', monthlyRent: 90_000, purchasePrice: 20_000_000, occupied: true,
+      monthlyExpenses: 30_000, monthlyLoan: 55_000,
+    });
     navigateTo('docstudio', { doc: 'kessan' });
     await mount();
+    // 錠は置いた登録の行 —— 届いた描画で別紙の表も一緒に出る。
+    await waitForText(() => container.textContent ?? '', '自分の銘柄');
     const annex = container.querySelector('[data-kessan-page="portfolio"]');
     expect(annex).not.toBeNull();
     const text = annex?.textContent ?? '';
     expect(text).toContain('会社法435条2項の計算書類');
     expect(text).toContain('含まれません');
-    // 出所は sample (同梱の見本) なので、実データと取り違えない断りが出る
-    expect(annex?.querySelector('[data-annex-origin]')?.getAttribute('data-annex-origin')).toBe('sample');
-    expect(text).toContain('見本データです');
-    expect(text).toContain('転記しないでください');
+    // 出所は local (利用者が端末内に登録した保有) なので、原本との突き合わせを促す断りが出る
+    // (2026-11-19 のローカル完結バッチ 3 で投資信託・不動産の同梱見本が外れるまでは sample だった)
+    expect(annex?.querySelector('[data-annex-origin]')?.getAttribute('data-annex-origin')).toBe('local');
+    expect(text).toContain('原本と突き合わせてください');
+    expect(text).not.toContain('見本データです');
     // 時価 / 取得価額 と 簿価 は基準が違う
     expect(annex?.querySelector('[data-annex-basis]')).not.toBeNull();
     expect(text).toContain('基準が違うため差が出るのが通常');

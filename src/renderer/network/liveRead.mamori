@@ -37,6 +37,7 @@ extern pure { fetchLineSnapshotWith } from "../../shared/api/line";
 extern pure { fetchLinearSnapshotWith } from "../../shared/api/linear";
 extern pure { fetchSentrySnapshotWith } from "../../shared/api/sentry";
 extern pure { fetchDiscordSnapshotWith } from "../../shared/api/discord";
+extern pure { fetchDropboxSnapshotWith } from "../../shared/api/dropbox";
 extern pure { lookup } from "../../shared/lookup";
 
 /// 通信手段。`fetchSnapshot` と同じく JSON として読めた本体を返す。
@@ -87,6 +88,10 @@ interface LiveReader {
 ///
 /// `discord` (2026-11-18): ボットが参加しているサーバーの一覧 (読み取りだけ・GET 1 つ)。同じくプロキシを通す ——
 /// `discord.com` へもこの開発環境からは届かない。プロキシの許可リストに `discord.com` を足して使う。
+///
+/// `dropbox` (2026-11-19): アカウント・容量・最近のアイテム (読み取りだけ・POST 3 つ)。同じくプロキシを通す ——
+/// `api.dropboxapi.com` へもこの開発環境からは届かない。プロキシの許可リストに `api.dropboxapi.com` を足して使う。
+/// トークンは利用者が Dropbox App Console で作る自前アプリのもの (権限は読み取りだけ)。
 export const LIVE_READERS: Readonly<Record<string, LiveReader>> = {
   cursor: {
     read: (jsonFetch, token, nowMs) => fetchCursorSnapshotWith(jsonFetch, token, nowMs, DEFAULT_USAGE_DAYS),
@@ -108,6 +113,9 @@ export const LIVE_READERS: Readonly<Record<string, LiveReader>> = {
   },
   discord: {
     read: (jsonFetch, token) => fetchDiscordSnapshotWith(jsonFetch, token),
+  },
+  dropbox: {
+    read: (jsonFetch, token) => fetchDropboxSnapshotWith(jsonFetch, token),
   },
 };
 

@@ -33,8 +33,8 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { MutualFundsPage } from '../MutualFundsPage';
-import { SNAPSHOT } from '../../data/snapshot';
-import { _resetRecordStoreForTests } from '../../data/store';
+import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
+import { HOLDINGS_COLLECTION } from '../../data/investments';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { calcStdDev } from '../../../shared/mutualFundsMetrics';
 import { adviseService } from '../../../shared/serviceAdvisor';
@@ -135,8 +135,22 @@ async function addHolding(name: string, valuation: string, ytd: string): Promise
   await waitForText(text, name);
 }
 
-/** 見本 4 銘柄の年初来リターン (画面と同じ出所から取る —— 数を写さない)。 */
-const demoYtd = (): number[] => SNAPSHOT.mutualFunds.holdings.map((h) => h.ytdReturnPct);
+/**
+ * かつての同梱見本 4 銘柄と同じ数字を、**利用者の登録として** record store へ置く
+ * (2026-11-19 のローカル完結バッチ 3 で見本は外れ、画面は空から始まる)。
+ */
+async function seedDemoHoldings(): Promise<void> {
+  const rows = [
+    { code: '0331C152', name: 'eMAXIS Slim 米国株式 (S&P500)', valuation: 3_241_360, acquisitionCost: 2_800_000, ytdReturnPct: 14.2 },
+    { code: '03313187', name: 'eMAXIS Slim 全世界株式 (オール・カントリー)', valuation: 2_437_260, acquisitionCost: 2_180_000, ytdReturnPct: 11.8 },
+    { code: '0331C129', name: 'eMAXIS Slim 先進国債券インデックス', valuation: 697_840, acquisitionCost: 680_000, ytdReturnPct: 3.4 },
+    { code: '64311074', name: 'ひふみプラス', valuation: 1_863_680, acquisitionCost: 1_520_000, ytdReturnPct: 8.7 },
+  ];
+  for (const r of rows) await getRecordStore().insert(HOLDINGS_COLLECTION, r);
+}
+
+/** 登録した 4 銘柄の年初来リターン。 */
+const demoYtd = (): number[] => [14.2, 11.8, 3.4, 8.7];
 
 beforeEach(async () => {
   _resetRecordStoreForTests();
@@ -171,6 +185,7 @@ afterEach(async () => {
 
 describe('投資信託 — 年初来リターンを入力していない銘柄を 0% として扱わない', () => {
   it('★ 空欄で足した銘柄は一覧で「—」(色なし・未入力の title) で、「+0.0%」ではない', async () => {
+    await seedDemoHoldings();
     await mount();
     await addHolding('E2Eファンド', '300000', '');
     const cell = ytdCell('E2Eファンド');
@@ -185,8 +200,9 @@ describe('投資信託 — 年初来リターンを入力していない銘柄�
   });
 
   it('★ リスク (標準偏差) は入力された 4 銘柄だけで取り、注記が「未入力 1 銘柄は除外」と言う', async () => {
+    await seedDemoHoldings();
     await mount();
-    // 対照: 足す前は見本 4 銘柄で、除外の注記は無い
+    // 対照: 足す前は登録 4 銘柄で、除外の注記は無い
     await waitForText(text, '入力された 4 銘柄の母標準偏差です。');
     expect(text()).not.toContain('除外');
     await addHolding('E2Eファンド', '300000', '');
@@ -199,10 +215,11 @@ describe('投資信託 — 年初来リターンを入力していない銘柄�
   });
 
   it('★ 改善提案は入力していない銘柄を「最低」と名指ししない (パス 119 の null の枝が画面から届く)', async () => {
+    await seedDemoHoldings();
     await mount();
     await addHolding('E2Eファンド', '300000', '');
     await clickButton('改善提案');
-    await waitForText(text, '根拠: 5 銘柄 (同梱の見本 4 件を含む)');
+    await waitForText(text, '根拠: 5 銘柄 (すべて利用者の入力)');
     await waitForText(text, '年初来の牽引役: eMAXIS Slim 米国株式 (S&P500)');
     await waitForText(text, '最低は eMAXIS Slim 先進国債券インデックス の 3.4%');
     expect(text()).not.toContain('最低は E2Eファンド');
@@ -211,6 +228,7 @@ describe('投資信託 — 年初来リターンを入力していない銘柄�
   });
 
   it('対照: 測った 0% を入れれば「+0.0%」と刷り、標準偏差に入り、改善提案も 0.0% の銘柄として比べる', async () => {
+    await seedDemoHoldings();
     await mount();
     await addHolding('E2Eファンド', '300000', '0');
     expect(ytdCell('E2Eファンド').textContent?.trim()).toBe('+0.0%');

@@ -488,13 +488,14 @@ describe('useServiceData — sample サービス (取得先が無い画面)', ()
   it('トークンが保存済みでも自動取得しない (押さずに画面が空になる経路を塞ぐ)', async () => {
     let calls = 0;
     setHub({
-      listConfigured: async () => ['dropbox'],
+      listConfigured: async () => ['docker'],
       fetchSnapshot: async () => {
         calls += 1;
         return { ok: true, data: { files: [] } } as FetchResult<unknown>;
       },
     });
-    const h = setup('dropbox', { files: [{ name: '見積書.pdf' }] });
+    // 標本は今も 'sample' のものを使う (dropbox は 2026-11-19 のバッチ 3 で 'remote' 化した)。
+    const h = setup('docker', { files: [{ name: '見積書.pdf' }] });
     await h.mount();
     expect(calls).toBe(0);
     expect(h.ref.current.isConfigured).toBe(true); // 資格情報の有無は今までどおり見える

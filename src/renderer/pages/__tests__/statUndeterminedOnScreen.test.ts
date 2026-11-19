@@ -20,8 +20,25 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
-import { _resetRecordStoreForTests } from '../../data/store';
+import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
+import { HOLDINGS_COLLECTION } from '../../data/investments';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
+import { waitForText } from '../../__tests__/jsdomWait';
+
+/**
+ * かつての同梱見本 4 銘柄と同じ数字を、**利用者の登録として** record store へ置く
+ * (2026-11-19 のローカル完結バッチ 3 で見本は外れ、画面は空から始まる)。
+ * CAGR の対照は「測れる土台」が要るので、この検査だけ播く。
+ */
+async function seedDemoHoldings(): Promise<void> {
+  const rows = [
+    { code: '0331C152', name: 'eMAXIS Slim 米国株式 (S&P500)', valuation: 3_241_360, acquisitionCost: 2_800_000, ytdReturnPct: 14.2 },
+    { code: '03313187', name: 'eMAXIS Slim 全世界株式 (オール・カントリー)', valuation: 2_437_260, acquisitionCost: 2_180_000, ytdReturnPct: 11.8 },
+    { code: '0331C129', name: 'eMAXIS Slim 先進国債券インデックス', valuation: 697_840, acquisitionCost: 680_000, ytdReturnPct: 3.4 },
+    { code: '64311074', name: 'ひふみプラス', valuation: 1_863_680, acquisitionCost: 1_520_000, ytdReturnPct: 8.7 },
+  ];
+  for (const r of rows) await getRecordStore().insert(HOLDINGS_COLLECTION, r);
+}
 
 const UNDETERMINED = '—';
 
@@ -150,7 +167,9 @@ describe('投資信託 — 「—」のタイルに色を付けない', () => {
   });
 
   it('★ 対照: 保有年数を入れれば CAGR は % で出て、色が戻る', async () => {
+    await seedDemoHoldings();
     await mount('mutual-funds');
+    await waitForText(() => (container.textContent ?? '').replace(/\s+/g, ' '), 'ひふみプラス');
     await act(async () => {
       changeInput(numInput('保有年数'), '5');
     });

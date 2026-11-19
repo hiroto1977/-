@@ -33,9 +33,26 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { SERVICES } from '../../services';
-import { _resetRecordStoreForTests } from '../../data/store';
+import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
+import { HOLDINGS_COLLECTION } from '../../data/investments';
 import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
 import { waitForText } from '../../__tests__/jsdomWait';
+
+/**
+ * かつての同梱見本 4 銘柄と同じ数字を、**利用者の登録として** record store へ置く
+ * (2026-11-19 のローカル完結バッチ 3 で見本は外れ、画面は空から始まる)。
+ * ただし分配金は登録の道が無いので土台は空のまま —— トータルリターンと CAGR は
+ * 分配金なしの数字になる (旧見本では分配金 ¥21,300 が入って 15.06% / 2.85% だった)。
+ */
+async function seedDemoHoldings(): Promise<void> {
+  const rows = [
+    { code: '0331C152', name: 'eMAXIS Slim 米国株式 (S&P500)', valuation: 3_241_360, acquisitionCost: 2_800_000, ytdReturnPct: 14.2 },
+    { code: '03313187', name: 'eMAXIS Slim 全世界株式 (オール・カントリー)', valuation: 2_437_260, acquisitionCost: 2_180_000, ytdReturnPct: 11.8 },
+    { code: '0331C129', name: 'eMAXIS Slim 先進国債券インデックス', valuation: 697_840, acquisitionCost: 680_000, ytdReturnPct: 3.4 },
+    { code: '64311074', name: 'ひふみプラス', valuation: 1_863_680, acquisitionCost: 1_520_000, ytdReturnPct: 8.7 },
+  ];
+  for (const r of rows) await getRecordStore().insert(HOLDINGS_COLLECTION, r);
+}
 
 beforeAll(() => {
   (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
@@ -130,11 +147,13 @@ afterEach(async () => {
 
 describe('投資信託 — ⛔ の率から答えを作らない (パス 207)', () => {
   it('★ 対照: 既定値ではすべての答えが出て、断りは出ない', async () => {
+    await seedDemoHoldings();
     await mountPage();
+    await waitForText(text, 'ひふみプラス');
     // **標本つきの対照** —— 下の検査は「消えること」を見るので、まず在ることを確かめる。
     const t = tiles();
     expect(t.get('実質コスト率 (年率)')).toBe('1.2%');
-    expect(t.get('年率換算 (CAGR)')).toBe('2.85%');
+    expect(t.get('年率換算 (CAGR)')).toBe('2.79%'); // 分配金なし (旧見本は分配金込みで 2.85%)
     expect(t.get('将来評価額')).toBe('¥12,174,135');
     expect(t.get('目標達成に必要な毎月積立額')).toBe('¥71,711');
     expect(t.get('72の法則 (資産倍増)')).toBe('約 24 年');
@@ -144,7 +163,9 @@ describe('投資信託 — ⛔ の率から答えを作らない (パス 207)', 
   });
 
   it('★ 信託報酬が上限超過なら、実質コストの 3 欄すべてを出さず欄を名指しする', async () => {
+    await seedDemoHoldings();
     await mountPage();
+    await waitForText(text, 'ひふみプラス');
     const els = await typeField('信託報酬 (%)', '999999999');
     expect(els[0]?.getAttribute('data-guard')).toBe('fatal');
     const t = tiles();
@@ -157,7 +178,7 @@ describe('投資信託 — ⛔ の率から答えを作らない (パス 207)', 
     // 「現在 999999999」と入力値を引くので、本文全体ではなくタイルを見る。)
     for (const v of t.values()) expect(v).not.toMatch(/999999999/);
     // 読んでいない節は黙らせない (CAGR は保有年数だけを読む)。
-    expect(t.get('年率換算 (CAGR)')).toBe('2.85%');
+    expect(t.get('年率換算 (CAGR)')).toBe('2.79%'); // 分配金なし (旧見本は分配金込みで 2.85%)
   });
 
   it('★ 隠れコストが上限超過でも同じ欄が断り、名指しは隠れコスト側', async () => {
@@ -199,12 +220,14 @@ describe('投資信託 — ⛔ の率から答えを作らない (パス 207)', 
   });
 
   it('★ 保有年数が上限超過なら CAGR を出さない (パス 198 の取り残し)', async () => {
+    await seedDemoHoldings();
     await mountPage();
+    await waitForText(text, 'ひふみプラス');
     await typeField('保有年数', '999999999');
     const t = tiles();
     expect(t.get('年率換算 (CAGR)')).toBe('—');
     // トータルリターンは年数に依らないので残る (隣の測れている数字まで隠さない)。
-    expect(t.get('トータルリターン')).toBe('15.06%');
+    expect(t.get('トータルリターン')).toBe('14.77%'); // 分配金なし (旧見本は分配金込みで 15.06%)
     await waitForText(text, '年率換算 (CAGR) は算定していません');
     await waitForText(text, '保有年数は 100 年以下で');
   });
