@@ -415,8 +415,11 @@ async function desktopSuite(browser) {
   await page.getByPlaceholder('例: 山田 太郎').fill('E2E会計士');
   await page.getByRole('button', { name: /を追加/ }).click();
   await page.waitForSelector('text=E2E会計士', { timeout: 15000 });
-  ok(await has('連携 2 名'), 'shigyo: 追加でヘッダ連携数が 2 名');
-  await page.locator('input[type="date"]').fill('2026-07-25');
+  // 士業の画面は 2026-11-18 から端末内の記録だけを出す (同梱の見本の連携先は無い) ——
+  // 足した 1 名がそのまま見出しの数になる。それまでは見本 1 名 + 自分 1 名 = 2 名だった。
+  ok(await has('連携 1 名'), 'shigyo: 追加でヘッダ連携数が 1 名 (同梱の見本は数えない)');
+  // 日付の欄は 2 つ在る (相談日・書類の日付)。欄はラベルで名指しする。
+  await page.getByLabel('相談日').fill('2026-07-25');
   await page.getByPlaceholder('例: 決算前の節税相談').fill('E2E相談');
   await page.getByRole('button', { name: '＋ 相談を記録' }).click();
   await page.waitForSelector('select[aria-label="相談ステータスを変更"]', { timeout: 15000 });
@@ -1152,23 +1155,41 @@ async function dataOriginSuite(browser) {
   collectErrors(page, errs);
   await page.addInitScript(() => localStorage.setItem('servicehub.plan', 'enterprise'));
 
-  // sample: 税理士。士業 CRM の数字が残り、更新ボタンが無いこと。
-  await page.goto(FILE + '#tax-accountant', { waitUntil: 'domcontentloaded' });
+  // sample: 不動産投資。同梱の見本の数字が残り、更新ボタンが無いこと。
+  //
+  // ここは 2026-11-18 まで税理士の画面だった。士業 8 画面はその日から端末内の記録だけを
+  // 出す (`SERVICE_DATA_ORIGIN` が `local`) ので、「内蔵サンプル」の標本ではなくなった ——
+  // **e2e が CI に無いあいだに 1 日ぶん古いまま**になっていた (2026-11-19 に走らせて発覚)。
+  // 標本は demoMix suite が「同梱の見本 4 件」を見ている画面に揃える (見本でなくなる日は
+  // そちらも一緒に鳴る)。
+  await page.goto(FILE + '#real-estate', { waitUntil: 'domcontentloaded' });
   await setupVault(page);
   await page.waitForSelector('.status-bar', { timeout: 30000 });
   const badge = (await page.textContent('.status-bar .badge')) ?? '';
-  ok(badge.trim() === '内蔵サンプル', `税理士: バッジが「内蔵サンプル」(実際 "${badge.trim()}")`);
+  ok(badge.trim() === '内蔵サンプル', `不動産: バッジが「内蔵サンプル」(実際 "${badge.trim()}")`);
   ok(
     (await page.locator('.status-bar .badge.ok').count()) === 0,
-    '税理士: 緑 (ライブ) バッジを出さない',
+    '不動産: 緑 (ライブ) バッジを出さない',
   );
   ok(
     (await page.locator('.status-bar button', { hasText: '更新' }).count()) === 0,
-    '税理士: 更新ボタンを出さない (押すと空になる経路そのものを消す)',
+    '不動産: 更新ボタンを出さない (押すと空になる経路そのものを消す)',
   );
   ok(
     (await page.locator('[data-sample-note]').count()) === 1,
-    '税理士: 「外部連携なし」の断り書きを出す',
+    '不動産: 「外部連携なし」の断り書きを出す',
+  );
+
+  // local (端末内の記録): 税理士。見本を名乗らず、「外部連携なし」の断りも出さない。
+  await gotoService(page, '#tax-accountant', '.status-bar');
+  const localBadge = (await page.textContent('.status-bar .badge')) ?? '';
+  ok(
+    ['スナップショット', 'ローカル'].includes(localBadge.trim()),
+    `税理士: 端末内の記録なので「内蔵サンプル」ではなく手元の札を出す (実際 "${localBadge.trim()}")`,
+  );
+  ok(
+    (await page.locator('[data-sample-note]').count()) === 0,
+    '税理士: 「外部連携なし」は出さない (記録は端末内に在る)',
   );
 
   // local: KPI。更新ボタンは出る (取得先が手元にある)。
@@ -3523,11 +3544,22 @@ async function demoMixSuite(browser) {
   ok(await page.locator('[data-fund-cost-user-only]').count() === 0, 'demoMix: 自分の銘柄が 0 件なら元本の断りは出ない');
   ok((await body()).includes('を元本とし'), 'demoMix: 対照 — 元本の説明そのものは在る (節が消えたのではない)');
 
-  // --- 士業: 見出しの「連携 N 名 / 顧問料」の出所 ---
+  // --- 士業: 見出しの「連携 N 名 / 顧問料」に見本が混ざらない ---
+  //
+  // 2026-11-18 から士業の画面は端末内の記録だけを出す (同梱の見本の連携先・顧問料は無い)。
+  // それまではここで「月次顧問料 ¥33,000 は同梱の見本です」の断りを見ていた —— 混ざる物が
+  // 無くなったので、見るのは**混ざっていないこと** (0 名・¥0・断りなし) である。
   await page.goto(FILE + '#/tax-accountant', { waitUntil: 'domcontentloaded' });
-  await page.waitForSelector('[data-shigyo-demo-mix]', { timeout: 30000 });
-  note = (await page.locator('[data-shigyo-demo-mix]').textContent()) ?? '';
-  ok(note.includes('月次顧問料 ¥33,000 は同梱の見本です'), 'demoMix: ★ 士業 — 顧問料が見本の値だと言う');
+  await page.waitForFunction(
+    () => (document.querySelector('.status-bar')?.textContent ?? '').includes('連携 0 名'),
+    undefined,
+    { timeout: 30000 },
+  );
+  ok(
+    ((await page.locator('.status-bar').textContent()) ?? '').includes('顧問料 ¥0/月')
+      && (await page.locator('[data-shigyo-demo-mix]').count()) === 0,
+    'demoMix: ★ 士業 — 記録が無ければ 連携 0 名・顧問料 ¥0 で、見本の断りも出ない (見本を混ぜていない)',
+  );
 
   ok(errs.length === 0, `demoMix: コンソールエラー 0 件 (${errs.join(' | ')})`);
   await ctx.close();
@@ -5911,7 +5943,8 @@ function installWaitMarginRecorder(browser) {
     // パス 566-C で +1 (財務データへのマージ復元が T-227 の確認を出すことを見る)
     ['desktop', desktopSuite, 67],
     ['manualData', manualDataSuite, 19],
-    ['dataOrigin', dataOriginSuite, 9],
+    // 2026-11-19: 「内蔵サンプル」の標本を不動産へ移し、士業 (端末内の記録) が見本を名乗らないことを足した = +2
+    ['dataOrigin', dataOriginSuite, 11],
     ['credential', credentialSuite, 8],
     ['businessComparison', businessComparisonSuite, 13],
     ['kessanTax', kessanTaxSuite, 34],
