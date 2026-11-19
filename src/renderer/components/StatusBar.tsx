@@ -6,6 +6,7 @@ import type { ServiceId } from '../../preload/bridgeTypes';
 import type { ErrorKind, Source, Status } from '../hooks/useServiceData';
 import { useBuildKind } from '../hooks/useBuildKind';
 import { browserFetchUnsupportedNote } from '../../shared/browserFetchReach';
+import { fetchNeedsCredentialNote } from '../../shared/fetchNeedsCredential';
 // 画像 URL のスキーム検証は 1 箇所だけに置く（2026-07 監査・多層防御）。
 // 3 つ目の呼び出し元が出たら components/ の共有ユーティリティへ切り出す。
 import { safeRemoteImageSrc } from '../../shared/imageUrlGate';
@@ -203,6 +204,22 @@ export function StatusBar({
   const cannotFetchHere = browserFetchUnsupportedNote(buildKind, origin, serviceId);
   const unsupportedNote = cannotFetchHere ?? (status === 'unsupported' ? errorMessage : undefined);
 
+  /*
+   * **資格情報が無い連携先の画面は、押す前にそう言う** (2026-11-19 · `shared/fetchNeedsCredential.ts`)。
+   *
+   * 連携先 22 画面はどれも取得に資格情報を使うので、無いまま「更新」を押すと橋は必ず断る。直す前は「更新」が在り、
+   * 押すと赤い「エラー」+「表示中の数字は同梱のサンプルです」+「資格情報が未登録です…」(デスクトップ版は
+   * 「トークン未設定」) が出た。まだ登録していないのは故障ではないので、**「更新」を出さず**、灰色の案内を 1 つ出す。
+   * 登録の欄 (`tokenUi`) は今までどおり出る —— 保存するとこの行の判定 (`configured`) が変わり、「更新」が出る。
+   *
+   * この実行形態では取得できない画面 (上の `cannotFetchHere`) には出さない —— そちらの案内が先に答えている。
+   * 失敗の文が出ている間 (期限切れ・保管庫の施錠など) も文は出さない —— 赤い文が理由を言っている。
+   */
+  const needsCredential =
+    serviceId !== undefined && cannotFetchHere === null
+      ? fetchNeedsCredentialNote(origin, credentialUseOf(serviceId), tokenUi !== undefined, configured)
+      : null;
+
   const saveToken = async () => {
     if (!serviceId || !window.serviceHub) return;
     setCredentialError(undefined);
@@ -283,7 +300,7 @@ export function StatusBar({
           {configured ? <button onClick={clearToken}>削除</button> : null}
         </span>
       ) : null}
-      {onRefresh && isRefreshable(origin) && cannotFetchHere === null ? (
+      {onRefresh && isRefreshable(origin) && cannotFetchHere === null && needsCredential === null ? (
         <button onClick={onRefresh} disabled={status === 'loading'}>
           {status === 'loading' ? '更新中…' : '更新'}
         </button>
@@ -308,6 +325,12 @@ export function StatusBar({
         // 失敗ではない案内 (この実行形態では取得しない)。赤にしない。文は橋が返した物でもありうるので 1 行に畳む。
         <span data-fetch-unsupported style={{ fontSize: 11, color: 'var(--text-mute)' }}>
           {externalTextOnOneLine(unsupportedNote)}
+        </span>
+      ) : null}
+      {needsCredential !== null && status !== 'error' ? (
+        // 失敗ではない案内 (まだ資格情報を登録していない)。赤にしない。
+        <span data-fetch-needs-credential style={{ fontSize: 11, color: 'var(--text-mute)' }}>
+          {needsCredential}
         </span>
       ) : null}
       {errorMessage && status !== 'unsupported' ? (

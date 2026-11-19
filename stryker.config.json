@@ -289,6 +289,7 @@
     "src/shared/escape.ts",
     "src/shared/linkSpoof.ts",
     "src/shared/externalUrlGate.ts",
+    "src/shared/fetchNeedsCredential.ts",
     "src/shared/financialHealthBands.ts",
     "src/shared/formatters.ts",
     "src/shared/funding.ts",
