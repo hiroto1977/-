@@ -40,7 +40,7 @@
 - **検査**: `renderer/__tests__/chartLabelsJapanese.test.ts` 6 件 (レーダーの 15 軸・事業ごとの 17 指標・手で置ける欄・同梱の 10 事業の名前に英字が無い・針の標本・レーダーと事業ごとの図が同じ指標を同じ名前で呼ぶ)・
   `business.test.ts` に 1 件 (主プロセスの側の事業の名前)。**対照 7 方向すべて鳴る** (レーダーの軸 ❌3 / 事業ごとの指標 ❌3 / 手で置ける欄 ❌2 / 同梱の事業名 ❌1 / 主プロセスの事業名 ❌2 / ヒントの文 ❌2 / 経営レポート ❌2 —— 中身の md5 で元へ戻したことを確かめた)。
 - **変異検査** (触った `mutate` の 11 本 —— 文字列だけを変えた): 11 本とも **100.00%** (Killed 2,354 / Timeout 2 / 生存 0 / 未到達 0・並列 2・53 分 52 秒 —— `main/clients/business.ts`・`businessAxonometric` / `financialCsv` / `financialDiagnosis` / `financialRatios` / `financialReport` / `managementHighlights` / `managementReport` / `overviewOverrides`・`shared/managementScorecard` / `parameters`)。後片付け済み。
-- **検証**: `typecheck` 緑・`npm test` __TESTS__・`verify:all` 39 ゲート exit 0。出荷物が動いたので実機も回した (最終コード):
+- **検証**: `typecheck` 緑・`npm test` **1,340 ファイル / 29,300 件 ❌ 0**・`verify:all` 39 ゲート exit 0。出荷物が動いたので実機も回した (最終コード):
   FULL **12,344,458 B** / LITE **3,757,095 B** (両方 +755 B)・`perf` OK (LITE DCL 331 ms / heap 8.3 MB・FULL DCL 645 ms / heap 30.4 MB)・`e2e` **774 件 ❌ 0**・`e2e:lite` **774 件 ❌ 0**。
   スマホ幅 (412px) で経営サマリー・事業ダッシュボード・経営指標の 3 画面を開いて確かめた: 図の中の英字 0・図の外へはみ出す字 0・横のはみ出し無し・console エラー 0。
   `smoke:app` / `e2e:ollama` は回していない (主プロセスで変えたのは事業の名前 4 つだけ・Ollama の経路は触っていない)。
