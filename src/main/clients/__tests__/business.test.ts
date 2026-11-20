@@ -2168,6 +2168,14 @@ describe('BUSINESS_CATEGORIES — 読み直して static 変異体を届かせ�
     ]);
   });
 
+  it('★ label に英字が無い (事業の名前はグラフの中にも出る · 2026-11-20)', async () => {
+    const c = await fresh();
+    const latin = /[A-Za-z]/;
+    // 針が的に当たる標本: 直す前の名前は拾う
+    expect(latin.test('OEM / ODM')).toBe(true);
+    expect(c.map((x) => x.label).filter((l) => latin.test(l))).toEqual([]);
+  });
+
   /*
    * **取り違えても数字は出る。** だから検査でしか気付けない。
    */
