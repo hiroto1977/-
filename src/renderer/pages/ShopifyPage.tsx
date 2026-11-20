@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
+import { LabeledField } from '../components/LabeledField';
 import { useServiceData } from '../hooks/useServiceData';
 import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
@@ -53,7 +54,8 @@ function OrderToSalesForm() {
     }
     try {
       await add(entry);
-      setMsg(`売上集計に記録しました (${entry.amount.toLocaleString('ja-JP')} 円)。KPI にも反映されます。`);
+      // 何を記録したかを 1 行で言う (日付は空なら今日になる —— 入った日付を見せる)。
+      setMsg(`売上集計に記録しました: ${entry.date} · ${entry.note ?? ''} · ${entry.amount.toLocaleString('ja-JP')} 円。KPI にも反映されます。`);
       setName('');
       setTotal('');
     } catch (e) {
@@ -63,13 +65,19 @@ function OrderToSalesForm() {
 
   return (
     <div>
-      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
-        <input value={date} placeholder="YYYY-MM-DD (任意)" onChange={(e) => setDate(e.target.value)} style={{ ...inputStyle, width: 140 }} />
-        <input value={name} placeholder="注文名 (#1001)" onChange={(e) => setName(e.target.value)} style={{ ...inputStyle, width: 130 }} />
-        <input value={total} placeholder="金額 (¥12,000)" onChange={(e) => setTotal(e.target.value)} style={{ ...inputStyle, width: 130 }} />
+      <div data-shopify-form style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+        <LabeledField label="注文日 (空なら今日)">
+          <input type="date" value={date} placeholder="YYYY-MM-DD (任意)" onChange={(e) => setDate(e.target.value)} style={{ ...inputStyle, width: 150 }} />
+        </LabeledField>
+        <LabeledField label="注文名">
+          <input value={name} placeholder="注文名 (#1001)" onChange={(e) => setName(e.target.value)} style={{ ...inputStyle, width: 130 }} />
+        </LabeledField>
+        <LabeledField label="金額 (円)">
+          <input inputMode="numeric" value={total} placeholder="金額 (¥12,000)" onChange={(e) => setTotal(e.target.value)} style={{ ...inputStyle, width: 130 }} />
+        </LabeledField>
         <button type="button" onClick={() => void submit.run(onRecord)} disabled={submit.busy}>売上集計に記録</button>
       </div>
-      {msg && <div style={{ color: 'var(--success)', fontSize: 12, marginTop: 6 }}>{msg}</div>}
+      {msg && <div role="status" data-shopify-notice style={{ color: 'var(--success)', fontSize: 12, marginTop: 6, overflowWrap: 'anywhere' }}>{msg}</div>}
       {err && <div style={{ color: 'var(--danger)', fontSize: 12, marginTop: 6 }}>{err}</div>}
     </div>
   );
