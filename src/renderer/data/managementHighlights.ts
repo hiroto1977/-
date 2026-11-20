@@ -265,7 +265,7 @@ export function buildManagementHighlights(
     out.push({
       severity: 'warning',
       category: '財政状態',
-      message: `貸借対照表の基準日 (${monthText(fresh.asOfMonth)}) が実績の最新期 (${monthText(fresh.latestPeriod)}) より ${fresh.monthsBehind} か月古く、総資産回転率・現金化サイクル・資金ランウェイは別の期の数字を割っています。新しい貸借対照表を入力してください。`,
+      message: `貸借対照表の基準日 (${monthText(fresh.asOfMonth)}) が実績の最新期 (${monthText(fresh.latestPeriod)}) より ${fresh.monthsBehind} か月古く、総資産回転率・現金化日数・資金ランウェイは別の期の数字を割っています。新しい貸借対照表を入力してください。`,
     });
   }
   // **先の側も同じだけ壊れる。** 隔たりの害は符号ではなく大きさで決まるのに、
@@ -277,7 +277,7 @@ export function buildManagementHighlights(
     out.push({
       severity: 'warning',
       category: '財政状態',
-      message: `貸借対照表の基準日 (${monthText(fresh.asOfMonth)}) が実績の最新期 (${monthText(fresh.latestPeriod)}) より ${-fresh.monthsBehind} か月**後**です。総資産回転率・現金化サイクル・資金ランウェイは別の期の数字を割っています。基準日か実績の期の入力を確かめてください。`,
+      message: `貸借対照表の基準日 (${monthText(fresh.asOfMonth)}) が実績の最新期 (${monthText(fresh.latestPeriod)}) より ${-fresh.monthsBehind} か月**後**です。総資産回転率・現金化日数・資金ランウェイは別の期の数字を割っています。基準日か実績の期の入力を確かめてください。`,
     });
   }
 

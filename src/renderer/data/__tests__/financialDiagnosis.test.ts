@@ -100,12 +100,12 @@ describe('diagnoseFinancials', () => {
       ordinaryMargin: '経常利益率が低め。営業外損益も含めた採算を確認。',
       netMargin: '当期純利益率が低め。特別損益・税負担も含め最終利益を確認。',
       laborShare: '労働分配率が高め。付加価値に対する人件費の水準に注意。',
-      ebitdaMargin: 'EBITDAマージンが低め。償却前の稼ぐ力を確認。',
+      ebitdaMargin: '償却前営業利益率が低め。償却前の稼ぐ力を確認。',
       receivablesTurnover: '売上債権回転率が低め。回収サイトの長期化に注意。',
       inventoryTurnover: '棚卸資産回転率が低め。在庫の滞留に注意。',
-      ccc: 'CCC（現金化日数）が長め。回収・在庫・支払のサイト最適化を検討。',
-      roa: 'ROA が低め。総資産に対する収益性（資産効率）を確認。',
-      roe: 'ROE が低め。自己資本に対する収益性を確認。',
+      ccc: '現金化日数が長め。回収・在庫・支払のサイト最適化を検討。',
+      roa: '総資産利益率が低め。総資産に対する収益性（資産効率）を確認。',
+      roe: '自己資本利益率が低め。自己資本に対する収益性を確認。',
     };
     for (const [key, hint] of Object.entries(HINTS)) {
       const d = diagnoseFinancials([axis(key, key, 10)]);

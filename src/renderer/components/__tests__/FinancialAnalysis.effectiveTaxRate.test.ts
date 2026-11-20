@@ -31,7 +31,7 @@ function render(effectiveTaxRate?: number): string {
 
 /** 指標の表の NOPAT 行の値 (営業利益そのものは損益計算書にも出るので、行で読む)。 */
 function nopatShown(html: string): string {
-  const m = /NOPAT \(税引後営業利益\)<\/span><span[^>]*>([^<]*)<\/span>/.exec(html);
+  const m = /税引後営業利益<\/span><span[^>]*>([^<]*)<\/span>/.exec(html);
   if (!m) throw new Error('NOPAT row not found');
   return m[1]!;
 }
@@ -43,8 +43,8 @@ describe('FinancialAnalysis — 実効税率', () => {
 
   it('NOPAT と ROIC が指標の表に出る', () => {
     const html = render();
-    expect(html).toContain('NOPAT (税引後営業利益)');
-    expect(html).toContain('ROIC');
+    expect(html).toContain('税引後営業利益');
+    expect(html).toContain('投下資本利益率');
   });
 
   it('省略時は既定の率、渡せばその率で NOPAT が変わる', () => {

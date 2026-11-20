@@ -127,7 +127,7 @@ describe('buildManagementScorecard', () => {
     // CCC 0日 → band(90,0,90)=100; 回転率 1.5 → band(1.5,0,1.5)=100 → 平均 100
     const r = buildManagementScorecard({ cashConversionDays: 0, assetTurnover: 1.5 });
     const eff = r.categories.find((c) => c.category === 'efficiency')!;
-    expect(eff.components.map((c) => c.label)).toEqual(['CCC', '総資産回転率']);
+    expect(eff.components.map((c) => c.label)).toEqual(['現金化日数', '総資産回転率']);
     expect(eff.score).toBe(100);
   });
 

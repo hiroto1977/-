@@ -112,7 +112,7 @@ describe('経営サマリー — 売上 0 の控え', () => {
     // タイルの副題ごと当てる (この文面が実際に在ることは下の対照が示す)。
     expect(t).toContain('営業利益率 —');
     expect(t).toContain('粗利率 —');
-    expect(t).toContain('償却前営業利益・マージン —');
+    expect(t).toContain('売上に対して —');
     expect(t).not.toContain('営業利益率 0.0%');
     expect(t).not.toContain('粗利率 0.0%');
   });

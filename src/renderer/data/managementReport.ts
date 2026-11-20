@@ -125,7 +125,7 @@ export function buildManagementReport(
     lines.push(`- 売上高: ${yen(k.revenue)}`);
     lines.push(`- 営業利益: ${yen(k.operatingProfit)} (営業利益率 ${pct(k.operatingMarginPct)})`);
     lines.push(`- 売上総利益: ${yen(k.grossProfit)} (粗利率 ${pct(k.grossMarginPct)})`);
-    lines.push(`- EBITDA: ${yen(k.ebitda)} (マージン ${pct(k.ebitdaMarginPct)})`);
+    lines.push(`- 償却前営業利益: ${yen(k.ebitda)} (売上に対して ${pct(k.ebitdaMarginPct)})`);
     lines.push(`- 損益分岐点: ${Number.isFinite(k.bep) ? yen(k.bep) : '—'} / 安全余裕率 ${pct(k.safetyMargin)}`);
     if (k.revenueGrowthPct !== null) lines.push(`- 前期比成長率: ${k.revenueGrowthPct}%`);
     if (k.yoy !== null && k.yoy.revenueYoYPct !== null) {
@@ -166,7 +166,7 @@ export function buildManagementReport(
     const bsUnreadable = unreadableBalanceSheetSheetNote(overview.balanceSheetUnreadableFields);
     if (bsUnreadable !== null) lines.push(`- ⚠ ${bsUnreadable}`);
     lines.push(`- 自己資本比率: ${pctOrDash(fp.equityRatioPct)} / 流動比率: ${pctOrDash(fp.currentRatioPct)}`);
-    lines.push(`- ROA: ${pctOrDash(fp.roaPct)} / ROE: ${pctOrDash(fp.roePct)}`);
+    lines.push(`- 総資産利益率: ${pctOrDash(fp.roaPct)} / 自己資本利益率: ${pctOrDash(fp.roePct)}`);
     if (fp.insolvent) lines.push('- ⚠ 純資産がマイナス (債務超過) です。');
     lines.push('');
   }

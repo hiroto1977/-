@@ -22,13 +22,13 @@ const COLUMNS: { readonly key: keyof FinancialRatios; readonly label: string }[]
   { key: 'netMarginPct', label: '当期純利益率(%)' },
   { key: 'netProfit', label: '当期純利益(円)' },
   { key: 'laborSharePct', label: '労働分配率(%)' },
-  { key: 'ebitda', label: 'EBITDA(円)' },
-  { key: 'ebitdaMarginPct', label: 'EBITDAマージン(%)' },
+  { key: 'ebitda', label: '償却前営業利益(円)' },
+  { key: 'ebitdaMarginPct', label: '償却前営業利益率(%)' },
   { key: 'receivablesTurnover', label: '売上債権回転率(倍)' },
   { key: 'inventoryTurnover', label: '棚卸資産回転率(倍)' },
-  { key: 'cccDays', label: 'CCC(日)' },
-  { key: 'roaPct', label: 'ROA(%)' },
-  { key: 'roePct', label: 'ROE(%)' },
+  { key: 'cccDays', label: '現金化日数(日)' },
+  { key: 'roaPct', label: '総資産利益率(%)' },
+  { key: 'roePct', label: '自己資本利益率(%)' },
 ];
 
 /**

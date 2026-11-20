@@ -49,7 +49,7 @@ describe('buildManagementReport', () => {
     });
     expect(md).toContain('## 財政状態 (BS)');
     expect(md).toContain('自己資本比率: 50%');
-    expect(md).toContain('ROA: 10%');
+    expect(md).toContain('総資産利益率: 10%');
   });
 
   it('includes the cashflow section when accounting data is present', () => {
@@ -356,7 +356,7 @@ describe('buildManagementReport — exhaustive mutation coverage', () => {
         '- 売上高: ¥1,000,000',
         '- 営業利益: ¥250,000 (営業利益率 25.0%)',
         '- 売上総利益: ¥600,000 (粗利率 60.0%)',
-        '- EBITDA: ¥300,000 (マージン 30.0%)',
+        '- 償却前営業利益: ¥300,000 (売上に対して 30.0%)',
         '- 損益分岐点: ¥800,000 / 安全余裕率 20.0%',
         '- 前期比成長率: 15%',
         '- 前年同月比 (YoY): +10% (2026-05 vs 2025-05)',
@@ -365,7 +365,7 @@ describe('buildManagementReport — exhaustive mutation coverage', () => {
         '## 財政状態 (BS)',
         '',
         '- 自己資本比率: 50% / 流動比率: 200%',
-        '- ROA: 10% / ROE: 20%',
+        '- 総資産利益率: 10% / 自己資本利益率: 20%',
         '',
         '## 資金繰り (CF)',
         '',
@@ -465,7 +465,7 @@ describe('buildManagementReport — exhaustive mutation coverage', () => {
     const md = buildManagementReport(
       ov({ fp: { equityRatioPct: null, currentRatioPct: null, roaPct: null, roePct: null, insolvent: false } }), sc, [], '2026-05-31', MANUAL);
     expect(md).toContain('- 自己資本比率: — / 流動比率: —');
-    expect(md).toContain('- ROA: — / ROE: —');
+    expect(md).toContain('- 総資産利益率: — / 自己資本利益率: —');
   });
 
   it('omits runway / shortfall lines when null while keeping the CF section', () => {
@@ -500,7 +500,7 @@ describe('buildManagementReport — exhaustive mutation coverage', () => {
       const md = report({ kpiActuals: noRev });
       expect(md).toContain('- 営業利益: ¥-3,000,000 (営業利益率 —)');
       expect(md).toContain('- 売上総利益: ¥0 (粗利率 —)');
-      expect(md).toContain('- EBITDA: ¥-3,000,000 (マージン —)');
+      expect(md).toContain('- 償却前営業利益: ¥-3,000,000 (売上に対して —)');
       expect(md).toContain('- 損益分岐点: — / 安全余裕率 —');
       expect(md).toContain('対象期間の売上高が 0 のため');
       // **0.0% を刷らない** (書面 §1 と同じ規則)
@@ -805,7 +805,7 @@ describe('読み直して測る — 深刻さの印と整形関数', () => {
   it('★ 整数の比率は読み直しても数字 + % (財政状態の 4 欄)', async () => {
     const md = await freshMd({ balanceSheet: { ...BS } });
     expect(md).toContain('- 自己資本比率: 50% / 流動比率: 200%');
-    expect(md).toContain('- ROA: 10% / ROE: 20%');
+    expect(md).toContain('- 総資産利益率: 10% / 自己資本利益率: 20%');
   });
 
   it('対照: 標本の側 — 印も整形も、この 4 本が見ている文字がレポートに実在する', async () => {

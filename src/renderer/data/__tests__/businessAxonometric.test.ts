@@ -81,7 +81,7 @@ describe('INDICATORS', () => {
     expect(INDICATORS.map((i) => i.label)).toEqual([
       '自己資本比率', '流動比率', '固定長期適合率', '借入金月商倍率', '債務償還年数',
       '営業利益率', '経常利益率', '当期純利益率', '当期純利益', '労働分配率',
-      'EBITDA', 'EBITDAマージン', '売上債権回転率', '棚卸資産回転率', 'CCC', 'ROA', 'ROE',
+      '償却前営業利益', '償却前営業利益率', '売上債権回転率', '棚卸資産回転率', '現金化日数', '総資産利益率', '自己資本利益率',
     ]);
   });
 
@@ -104,7 +104,7 @@ describe('INDICATORS', () => {
   });
 
   it('findIndicator は知らないキーに undefined を返す', () => {
-    expect(findIndicator('roe')?.label).toBe('ROE');
+    expect(findIndicator('roe')?.label).toBe('自己資本利益率');
     expect(findIndicator('nope')).toBeUndefined();
     // プロトタイプ由来の名前を「知っている指標」と答えない。
     expect(findIndicator('toString')).toBeUndefined();
