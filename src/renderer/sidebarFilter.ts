@@ -42,15 +42,16 @@ export function scoreService(service: SearchableService, query: string): number 
   const q = query.trim().toLowerCase();
   if (q === '') return SCORE_NONE;
   const label = service.label.toLowerCase();
-  const english = (service.english ?? '').toLowerCase();
+  // 英語を持たない物は `undefined` のまま比べる (空文字へ倒さない —— 倒した値が何かに一致する余地を作らない)。
+  const english = service.english?.toLowerCase();
   const id = service.id.toLowerCase();
   const desc = service.description.toLowerCase();
 
   if (label === q || english === q) return SCORE_LABEL_EXACT;
   if (id === q) return SCORE_ID_EXACT;
-  if (label.startsWith(q) || english.startsWith(q)) return SCORE_LABEL_PREFIX;
+  if (label.startsWith(q) || english?.startsWith(q) === true) return SCORE_LABEL_PREFIX;
   if (id.startsWith(q)) return SCORE_ID_PREFIX;
-  if (label.includes(q) || english.includes(q)) return SCORE_LABEL_INCLUDES;
+  if (label.includes(q) || english?.includes(q) === true) return SCORE_LABEL_INCLUDES;
   if (id.includes(q)) return SCORE_ID_INCLUDES;
   if (desc.includes(q)) return SCORE_DESC_INCLUDES;
   return SCORE_NONE;
