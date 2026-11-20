@@ -21,6 +21,7 @@ import {
   duplicateActualMessage,
   duplicateActualsNote,
   kpiNumbersReadable,
+  kpiUnitText,
   readableKpiRows,
   unreadableKpiRowsNote,
   findDuplicateActuals,
@@ -37,6 +38,8 @@ import { CSV_BOM } from '../data/csv';
 import { useRowWindow } from '../data/useRowWindow';
 import { KpiImprovementPanel } from '../components/KpiImprovementPanel';
 import { RowWindowMore } from '../components/RowWindowMore';
+import { LabeledField } from '../components/LabeledField';
+import { UndoBar } from '../components/UndoBar';
 import { budgetComparedRangeLabel, budgetUnmatchedNote, KPI_BUDGETS_COLLECTION, computeBudgetVariance } from '../data/budgetVariance';
 import {
   MANUAL_OVERRIDES_COLLECTION,
@@ -394,6 +397,31 @@ function UnitBars({ units }: { units: Unit[] }) {
 
 // --- Real-data actuals panel ------------------------------------------
 
+/**
+ * 入力欄の見た目 (3 つの欄で同じ)。幅だけ呼ぶ側が足す。
+ * 関数にしない —— 枠の色を見る検査 (`controlsCensus`) は字面の物を読む (関数の戻りは読めない)。
+ */
+const INPUT_STYLE = {
+  background: 'var(--bg)',
+  border: '1px solid var(--control-border)',
+  borderRadius: 10,
+  color: 'var(--text)',
+  padding: '6px 8px',
+  fontSize: 13,
+} as const;
+
+/**
+ * 実績・予算の 1 件を知らせの文へ入れる 1 行 (記録した・消した・元に戻した)。
+ *
+ * 一覧の行と同じ読み方をする —— 保管した値は型から読み、天井を通す (消した行は
+ * 選別していない素の行なので、期や事業名が文字列でないことも、極端に長いことも在る)。
+ */
+function kpiRowLine(e: KpiActual): string {
+  const period = displayField(e.period);
+  const unit = displayField(kpiUnitText(e), MAX_KPI_UNIT_CHARS);
+  return `${period === '' ? '期間不明' : period} · ${unit === '' ? '事業名なし' : unit} · 売上高 ${kpiAmountText(e.revenue)}`;
+}
+
 const EMPTY_FORM = { period: '', unit: '', revenue: '', cogs: '', advertising: '', sga: '', depreciation: '', laborCost: '' };
 
 function ActualsPanel() {
@@ -401,6 +429,10 @@ function ActualsPanel() {
   const { records: salesRecords } = useCollection<SalesEntry>(SALES_COLLECTION);
   const [form, setForm] = useState(EMPTY_FORM);
   const [error, setError] = useState<string>();
+  /** うまく行った知らせ (記録した・元に戻した)。断りの文 (`error`) とは別に持つ。 */
+  const [notice, setNotice] = useState<string>();
+  /** 「×」で消した直前の 1 件 (「元に戻す」の控え)。保存はしない。 */
+  const [undo, setUndo] = useState<KpiActual | null>(null);
   const [importMonth, setImportMonth] = useState('');
   const submit = useSubmitGuard();
   /*
@@ -463,6 +495,8 @@ function ActualsPanel() {
   }
 
   async function onImportCsv(file: File) {
+    setNotice(undefined);
+    setUndo(null);
     // 読む前に大きさで断る (`data/importFile.ts`)。読んでからでは落ちるのが先。
     let text: string;
     try {
@@ -500,6 +534,12 @@ function ActualsPanel() {
   }
 
   async function onAdd() {
+    setNotice(undefined);
+    // 月は選ぶ欄なので、空のときは形式の話をしない (選べば必ず YYYY-MM になる)。
+    if (form.period === '') {
+      setError('期間 (月) を選んでください。');
+      return;
+    }
     try {
       const parsed = parseKpiActual(form);
       // 同じ (期間, 事業) は 1 件 —— 2 件目を入れると合算される (パス 124)。訂正は × で消してから。
@@ -514,28 +554,49 @@ function ActualsPanel() {
         return;
       }
       setError(undefined);
+      setUndo(null);
       await add(parsed);
+      setNotice(`記録しました: ${kpiRowLine(parsed)}`);
       setForm(EMPTY_FORM);
     } catch (e) {
       setError(e instanceof Error ? e.message : '入力エラー');
     }
   }
 
-  const field = (key: keyof typeof EMPTY_FORM, placeholder: string) => (
-    <input
-      value={form[key]}
-      placeholder={placeholder}
-      onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
-      style={{
-        background: 'var(--bg)',
-        border: '1px solid var(--control-border)',
-        borderRadius: 10,
-        color: 'var(--text)',
-        padding: '6px 8px',
-        fontSize: 13,
-        width: key === 'period' || key === 'unit' ? 110 : 100,
-      }}
-    />
+  /** 行の「×」。消した行は「元に戻す」のために取っておく (直前の 1 件だけ)。 */
+  async function onRemove(id: string, stored: KpiActual) {
+    setError(undefined);
+    setNotice(undefined);
+    await remove(id);
+    setUndo(stored);
+  }
+
+  /**
+   * 「元に戻す」。追加と同じ判定を通す —— 消した後に同じ期・事業の行が入っていたら、
+   * 戻すと 2 件になって合算される (パス 124)。そのときは戻さずに言う。
+   */
+  async function onUndo() {
+    if (undo === null) return;
+    const stored = await readCollectionNow<KpiActual>(KPI_ACTUALS_COLLECTION);
+    if (stored === null) {
+      setError(unreadableForJudgementNote('KPI 実績の一覧'));
+      return;
+    }
+    if (hasSamePeriodUnit(stored, undo)) {
+      setError(duplicateActualMessage('実績', undo));
+      setUndo(null);
+      return;
+    }
+    await add(undo);
+    setNotice(`元に戻しました: ${kpiRowLine(undo)}`);
+    setUndo(null);
+  }
+
+  const set = (key: keyof typeof EMPTY_FORM) => (e: { target: { value: string } }) =>
+    setForm((f) => ({ ...f, [key]: e.target.value }));
+  /** 金額の欄 (数字のキーボードを出す)。欄の中の薄い字は例で、名前は欄の上に出す。 */
+  const amountField = (key: keyof typeof EMPTY_FORM, placeholder: string) => (
+    <input value={form[key]} placeholder={placeholder} inputMode="numeric" onChange={set(key)} style={{ ...INPUT_STYLE, width: 110 }} />
   );
 
   return (
@@ -559,15 +620,19 @@ function ActualsPanel() {
           </button>
         </div>
       )}
-      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
-        {field('period', 'YYYY-MM')}
-        {field('unit', '事業名')}
-        {field('revenue', '売上高')}
-        {field('cogs', '売上原価')}
-        {field('advertising', '広告費')}
-        {field('sga', '販管費')}
-        {field('depreciation', '減価償却費')}
-        {field('laborCost', '人件費(任意)')}
+      <div data-kpi-form="actuals" style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+        <LabeledField label="期間 (月)">
+          <input type="month" value={form.period} placeholder="YYYY-MM" onChange={set('period')} style={{ ...INPUT_STYLE, width: 150 }} />
+        </LabeledField>
+        <LabeledField label="事業名">
+          <input value={form.unit} placeholder="事業名" onChange={set('unit')} style={{ ...INPUT_STYLE, width: 120 }} />
+        </LabeledField>
+        <LabeledField label="売上高 (円)">{amountField('revenue', '売上高')}</LabeledField>
+        <LabeledField label="売上原価 (円)">{amountField('cogs', '売上原価')}</LabeledField>
+        <LabeledField label="広告費 (円)">{amountField('advertising', '広告費')}</LabeledField>
+        <LabeledField label="販管費 (円)">{amountField('sga', '販管費')}</LabeledField>
+        <LabeledField label="減価償却費 (円)">{amountField('depreciation', '減価償却費')}</LabeledField>
+        <LabeledField label="人件費 (円・任意)">{amountField('laborCost', '人件費(任意)')}</LabeledField>
         <button type="button" onClick={() => void submit.run(onAdd)} disabled={submit.busy}>追加</button>
       </div>
       <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginTop: 8 }}>
@@ -590,6 +655,7 @@ function ActualsPanel() {
         </span>
       </div>
       {error && <div style={{ color: 'var(--danger)', fontSize: 12, marginTop: 6 }}>{error}</div>}
+      {notice && <div role="status" data-kpi-notice="actuals" style={{ color: 'var(--success)', fontSize: 12, marginTop: 6 }}>{notice}</div>}
 
       {duplicateNote !== null && (
         <p role="alert" style={{ color: 'var(--warning)', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
@@ -605,6 +671,9 @@ function ActualsPanel() {
         <p role="alert" data-unreadable-sales-dates style={{ color: 'var(--warning)', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
           {unreadableSalesNote}
         </p>
+      )}
+      {undo !== null && (
+        <UndoBar mark="actuals" line={kpiRowLine(undo)} busy={submit.busy} onUndo={() => fireReported(submit.run(onUndo))} />
       )}
       {records.length > 0 ? (
         <>
@@ -651,7 +720,7 @@ function ActualsPanel() {
                     <td style={{ padding: '4px 8px', textAlign: 'right' }}>{kpiAmountText(r.data.revenue)}</td>
                     <td style={{ padding: '4px 8px', textAlign: 'right' }}>{m === null ? DASH : safeYen(m.operatingProfit)}</td>
                     <td style={{ padding: '4px 8px' }}>
-                      <button type="button" onClick={() => { setError(undefined); fireReported(remove(r.id)); }} aria-label="削除">×</button>
+                      <button type="button" onClick={() => fireReported(submit.run(() => onRemove(r.id, r.data)))} aria-label="削除">×</button>
                     </td>
                   </tr>
                 );
@@ -662,7 +731,7 @@ function ActualsPanel() {
         </>
       ) : (
         <p style={{ color: 'var(--text-mute)', fontSize: 13, marginTop: 12 }}>
-          実績を入力すると、ローカルに保存され KPI が実データで再計算されます。
+          実績を入れると、この端末だけに保存され、ここの数字が自分の実績で計算されます。
         </p>
       )}
     </div>
@@ -676,6 +745,9 @@ function BudgetPanel() {
   const { records: actuals } = useCollection<KpiActual>(KPI_ACTUALS_COLLECTION);
   const [form, setForm] = useState(EMPTY_FORM);
   const [error, setError] = useState<string>();
+  const [notice, setNotice] = useState<string>();
+  /** 「×」で消した直前の 1 件 (「元に戻す」の控え)。保存はしない。 */
+  const [undo, setUndo] = useState<KpiActual | null>(null);
 
   const variance = useMemo(
     () => computeBudgetVariance(budgets.map((r) => r.data), actuals.map((r) => r.data)),
@@ -691,6 +763,11 @@ function BudgetPanel() {
   const unreadableNote = useMemo(() => unreadableKpiRowsNote('予算', readable), [readable]);
 
   async function onAdd() {
+    setNotice(undefined);
+    if (form.period === '') {
+      setError('期間 (月) を選んでください。');
+      return;
+    }
     try {
       const parsed = parseKpiActual(form);
       // 同じ (期間, 事業) は 1 件 —— 2 件目を入れると合算される (パス 124)。訂正は × で消してから。
@@ -709,24 +786,46 @@ function BudgetPanel() {
         return;
       }
       setError(undefined);
+      setUndo(null);
       await add(parsed);
+      setNotice(`予算を記録しました: ${kpiRowLine(parsed)}`);
       setForm(EMPTY_FORM);
     } catch (e) {
       setError(e instanceof Error ? e.message : '入力エラー');
     }
   }
 
-  const field = (key: keyof typeof EMPTY_FORM, placeholder: string) => (
-    <input
-      value={form[key]}
-      placeholder={placeholder}
-      onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
-      style={{
-        background: 'var(--bg)', border: '1px solid var(--control-border)', borderRadius: 10,
-        color: 'var(--text)', padding: '6px 8px', fontSize: 13,
-        width: key === 'period' || key === 'unit' ? 110 : 100,
-      }}
-    />
+  /** 行の「×」。消した行は「元に戻す」のために取っておく (直前の 1 件だけ)。 */
+  async function onRemove(id: string, stored: KpiActual) {
+    setError(undefined);
+    setNotice(undefined);
+    await remove(id);
+    setUndo(stored);
+  }
+
+  /** 「元に戻す」。追加と同じ判定を通す (同じ期・事業の予算が入っていたら戻さずに言う)。 */
+  async function onUndo() {
+    if (undo === null) return;
+    const stored = await readCollectionNow<KpiActual>(KPI_BUDGETS_COLLECTION);
+    if (stored === null) {
+      setError(unreadableForJudgementNote('KPI 予算の一覧'));
+      return;
+    }
+    if (hasSamePeriodUnit(stored, undo)) {
+      setError(duplicateActualMessage('予算', undo));
+      setUndo(null);
+      await reload();
+      return;
+    }
+    await add(undo);
+    setNotice(`元に戻しました: ${kpiRowLine(undo)}`);
+    setUndo(null);
+  }
+
+  const set = (key: keyof typeof EMPTY_FORM) => (e: { target: { value: string } }) =>
+    setForm((f) => ({ ...f, [key]: e.target.value }));
+  const amountField = (key: keyof typeof EMPTY_FORM, placeholder: string) => (
+    <input value={form[key]} placeholder={placeholder} inputMode="numeric" onChange={set(key)} style={{ ...INPUT_STYLE, width: 110 }} />
   );
 
   return (
@@ -735,17 +834,22 @@ function BudgetPanel() {
         予算 (計画) を実績と<strong>同じ期 (YYYY-MM)</strong> で入力すると、経営サマリーに予算実績差異 (BVA)・達成率が
         表示されます。達成率は<strong>予算と実績の両方が在る期だけ</strong>で算定します（片側しか無い月は対象外）。
       </p>
-      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
-        {field('period', 'YYYY-MM')}
-        {field('unit', '事業名')}
-        {field('revenue', '売上高(予算)')}
-        {field('cogs', '売上原価')}
-        {field('advertising', '広告費')}
-        {field('sga', '販管費')}
-        {field('depreciation', '減価償却費')}
+      <div data-kpi-form="budgets" style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+        <LabeledField label="期間 (月)">
+          <input type="month" value={form.period} placeholder="YYYY-MM" onChange={set('period')} style={{ ...INPUT_STYLE, width: 150 }} />
+        </LabeledField>
+        <LabeledField label="事業名">
+          <input value={form.unit} placeholder="事業名" onChange={set('unit')} style={{ ...INPUT_STYLE, width: 120 }} />
+        </LabeledField>
+        <LabeledField label="売上高の予算 (円)">{amountField('revenue', '売上高(予算)')}</LabeledField>
+        <LabeledField label="売上原価 (円)">{amountField('cogs', '売上原価')}</LabeledField>
+        <LabeledField label="広告費 (円)">{amountField('advertising', '広告費')}</LabeledField>
+        <LabeledField label="販管費 (円)">{amountField('sga', '販管費')}</LabeledField>
+        <LabeledField label="減価償却費 (円)">{amountField('depreciation', '減価償却費')}</LabeledField>
         <button type="button" onClick={() => void submit.run(onAdd)} disabled={submit.busy}>予算を追加</button>
       </div>
       {error && <div style={{ color: 'var(--danger)', fontSize: 12, marginTop: 6 }}>{error}</div>}
+      {notice && <div role="status" data-kpi-notice="budgets" style={{ color: 'var(--success)', fontSize: 12, marginTop: 6 }}>{notice}</div>}
 
       {variance === null && budgets.length > 0 && actuals.length > 0 && (
         <p role="alert" style={{ color: 'var(--warning)', fontSize: 12, marginTop: 8, lineHeight: 1.6 }}>
@@ -781,6 +885,9 @@ function BudgetPanel() {
           {unreadableNote}
         </p>
       )}
+      {undo !== null && (
+        <UndoBar mark="budgets" line={kpiRowLine(undo)} busy={submit.busy} onUndo={() => fireReported(submit.run(onUndo))} />
+      )}
       {budgets.length > 0 ? (
         <>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
@@ -800,7 +907,7 @@ function BudgetPanel() {
                 <td style={{ padding: '4px 8px' }}>{displayField(r.data.unit, MAX_KPI_UNIT_CHARS)}</td>
                 <td style={{ padding: '4px 8px', textAlign: 'right' }}>{kpiAmountText(r.data.revenue)}</td>
                 <td style={{ padding: '4px 8px' }}>
-                  <button type="button" onClick={() => { setError(undefined); fireReported(remove(r.id)); }} aria-label="削除">×</button>
+                  <button type="button" onClick={() => fireReported(submit.run(() => onRemove(r.id, r.data)))} aria-label="削除">×</button>
                 </td>
               </tr>
             ))}
@@ -825,6 +932,9 @@ function BalanceSheetPanel() {
   const { records, add, remove } = useCollection<BalanceSheet>(BALANCE_SHEET_COLLECTION);
   const [form, setForm] = useState(EMPTY_BS);
   const [error, setError] = useState<string>();
+  const [notice, setNotice] = useState<string>();
+  /** 「×」で消した直前の 1 件 (「元に戻す」の控え)。保存はしない。 */
+  const [undo, setUndo] = useState<BalanceSheet | null>(null);
 
   // 「現在」の 1 件は**基準日**で選ぶ (入力した順ではない —— パス 127。それまでは最後に入力した
   // 控えを使い、古い基準日を後から入れると経営サマリー・書面 §4・計算書類が古い方を「現在」とした)。
@@ -849,28 +959,54 @@ function BalanceSheetPanel() {
   // 隣で言う** —— 「借入なし」と「入力していない」を同じ顔で出さないため。
   const insights = useMemo(() => (read ? computeBalanceSheetInsights(read) : undefined), [read]);
 
+  /**
+   * 知らせの文に入れる 1 行。基準日は型から読み、天井を通す (消した控えは選別していない
+   * 素の行で、復元で入った基準日は文字列でないことも極端に長いことも在る)。
+   */
+  const bsLine = (e: BalanceSheet): string => {
+    const asOf = displayField(balanceSheetAsOfKey(e.asOf));
+    return asOf === '' ? '基準日なし' : `基準日 ${asOf}`;
+  };
+
   async function onAdd() {
+    setNotice(undefined);
+    // 基準日は選ぶ欄なので、空のときは形式の話をしない。
+    if (form.asOf === '') {
+      setError('基準日を選んでください。');
+      return;
+    }
     try {
       const parsed = parseBalanceSheet(form);
       setError(undefined);
+      setUndo(null);
       await add(parsed);
+      setNotice(`保存しました: ${bsLine(parsed)}`);
       setForm(EMPTY_BS);
     } catch (e) {
       setError(e instanceof Error ? e.message : '入力エラー');
     }
   }
 
-  const field = (key: keyof typeof EMPTY_BS, placeholder: string) => (
-    <input
-      value={form[key]}
-      placeholder={placeholder}
-      onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
-      style={{
-        background: 'var(--bg)', border: '1px solid var(--control-border)', borderRadius: 10,
-        color: 'var(--text)', padding: '6px 8px', fontSize: 13,
-        width: key === 'asOf' ? 120 : 110,
-      }}
-    />
+  /** 行の「×」。消した控えは「元に戻す」のために取っておく (直前の 1 件だけ)。 */
+  async function onRemove(id: string, stored: BalanceSheet) {
+    setError(undefined);
+    setNotice(undefined);
+    await remove(id);
+    setUndo(stored);
+  }
+
+  async function onUndo() {
+    if (undo === null) return;
+    await add(undo);
+    setNotice(`元に戻しました: ${bsLine(undo)}`);
+    setUndo(null);
+  }
+
+  const set = (key: keyof typeof EMPTY_BS) => (e: { target: { value: string } }) =>
+    setForm((f) => ({ ...f, [key]: e.target.value }));
+  /** 金額の欄 (数字のキーボードを出す)。 */
+  const amountField = (key: keyof typeof EMPTY_BS, placeholder: string) => (
+    <input value={form[key]} placeholder={placeholder} inputMode="numeric" onChange={set(key)} style={{ ...INPUT_STYLE, width: 120 }} />
   );
 
   return (
@@ -888,21 +1024,27 @@ function BalanceSheetPanel() {
         空欄を「借入なし」と読むと、どの利用者にも「実質無借金」という都合の良い答えが出てしまうためです。
         <strong>借入が無いなら 0 と入力してください。</strong>
       </p>
-      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
-        {field('asOf', '基準日')}
-        {field('currentAssets', '流動資産')}
-        {field('cash', '現預金')}
-        {field('inventory', '棚卸資産')}
-        {field('accountsReceivable', '売上債権')}
-        {field('fixedAssets', '固定資産')}
-        {field('currentLiabilities', '流動負債')}
-        {field('accountsPayable', '仕入債務')}
-        {field('fixedLiabilities', '固定負債')}
-        {field('interestBearingDebt', '有利子負債')}
-        {field('netIncome', '当期純利益')}
+      <div data-kpi-form="bs" style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+        <LabeledField label="基準日">
+          <input type="date" value={form.asOf} placeholder="基準日" onChange={set('asOf')} style={{ ...INPUT_STYLE, width: 150 }} />
+        </LabeledField>
+        <LabeledField label="流動資産 (円)">{amountField('currentAssets', '流動資産')}</LabeledField>
+        <LabeledField label="うち現預金 (円)">{amountField('cash', '現預金')}</LabeledField>
+        <LabeledField label="うち棚卸資産 (円)">{amountField('inventory', '棚卸資産')}</LabeledField>
+        <LabeledField label="うち売上債権 (円)">{amountField('accountsReceivable', '売上債権')}</LabeledField>
+        <LabeledField label="固定資産 (円)">{amountField('fixedAssets', '固定資産')}</LabeledField>
+        <LabeledField label="流動負債 (円)">{amountField('currentLiabilities', '流動負債')}</LabeledField>
+        <LabeledField label="うち仕入債務 (円)">{amountField('accountsPayable', '仕入債務')}</LabeledField>
+        <LabeledField label="固定負債 (円)">{amountField('fixedLiabilities', '固定負債')}</LabeledField>
+        <LabeledField label="うち有利子負債 (円)">{amountField('interestBearingDebt', '有利子負債')}</LabeledField>
+        {/* 当期純利益は赤字 (マイナス) も入る。数字だけのキーボードには「−」が無い端末が在るので、ふつうのキーボードのままにする。 */}
+        <LabeledField label="当期純利益 (円・赤字は −)">
+          <input value={form.netIncome} placeholder="当期純利益" onChange={set('netIncome')} style={{ ...INPUT_STYLE, width: 120 }} />
+        </LabeledField>
         <button type="button" onClick={() => void submit.run(onAdd)} disabled={submit.busy}>BS を保存</button>
       </div>
       {error && <div style={{ color: 'var(--danger)', fontSize: 12, marginTop: 6 }}>{error}</div>}
+      {notice && <div role="status" data-kpi-notice="bs" style={{ color: 'var(--success)', fontSize: 12, marginTop: 6 }}>{notice}</div>}
 
       {/*
         * **倒した欄をこの画面でも述べる** (2026-09-24 · パス 445)。
@@ -973,6 +1115,9 @@ function BalanceSheetPanel() {
           {choiceNote}
         </p>
       )}
+      {undo !== null && (
+        <UndoBar mark="bs" line={bsLine(undo)} busy={submit.busy} onUndo={() => fireReported(submit.run(onUndo))} />
+      )}
       {bsRows.length > 0 && (
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12, marginTop: 8 }}>
           <thead>
@@ -987,12 +1132,13 @@ function BalanceSheetPanel() {
           <tbody>
             {bsWindow.visible.map((r) => (
               <tr key={r.id} data-bs-row={r.id === latest?.id ? 'current' : 'other'} style={{ borderTop: '1px solid var(--border)' }}>
-                <td style={{ padding: '4px 8px' }}>{balanceSheetAsOfKey(r.data.asOf) || '基準日なし'}</td>
+                {/* 天井を通す —— 復元で入った基準日は長さを見ていない (保管した自由文の天井・パス 419 の家系)。 */}
+                <td style={{ padding: '4px 8px' }}>{displayField(balanceSheetAsOfKey(r.data.asOf)) || '基準日なし'}</td>
                 <td style={{ padding: '4px 8px', color: 'var(--text-mute)' }}>{parseTimestamp(r.createdAt)?.toLocaleString('ja-JP') ?? '時刻不明'}</td>
                 <td style={{ padding: '4px 8px', textAlign: 'right' }}>{safeYen(computeBalanceSheetMetrics(normalizeBalanceSheet(r.data)).netAssets)}</td>
                 <td style={{ padding: '4px 8px' }}>{r.id === latest?.id ? '使用中' : ''}</td>
                 <td style={{ padding: '4px 8px' }}>
-                  <button type="button" onClick={() => { setError(undefined); fireReported(remove(r.id)); }} aria-label="削除">×</button>
+                  <button type="button" onClick={() => fireReported(submit.run(() => onRemove(r.id, r.data)))} aria-label="削除">×</button>
                 </td>
               </tr>
             ))}

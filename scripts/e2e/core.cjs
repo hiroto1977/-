@@ -233,6 +233,13 @@ async function desktopSuite(browser) {
   // (パス 123 までの版はダブルクリックで 2 行になり、2 件目も黙って通って売上高が合算されていた)
   await gotoService(page, '#kpi', 'input[placeholder="YYYY-MM"]');
   const dupFormBox = page.locator('input[placeholder="YYYY-MM"]').first().locator('xpath=ancestor::div[1]');
+  // 2026-11-20: 欄の名前は欄の上に出る (薄い字だけにしない)。期間は月を選ぶ欄。
+  const kpiLabels = await page.locator('[data-kpi-form="actuals"] label > span').allTextContents();
+  const kpiPeriodType = await page.locator('[data-kpi-form="actuals"] input').first().getAttribute('type');
+  ok(
+    kpiLabels.length === 8 && kpiLabels[0] === '期間 (月)' && kpiLabels[2] === '売上高 (円)' && kpiPeriodType === 'month',
+    `KPI: ★ 実績の 8 欄は名前を持ち、期間は月を選ぶ欄 (名前 ${kpiLabels.length} 個・型 ${kpiPeriodType})`,
+  );
   const dupForm = [
     ['YYYY-MM', '2026-02'],
     ['事業名', 'E2E重複'],
@@ -246,6 +253,9 @@ async function desktopSuite(browser) {
   await dupFormBox.getByRole('button', { name: '追加' }).first().dblclick();
   await page.waitForSelector('tbody tr:has-text("E2E重複")', { timeout: 15000 });
   await page.waitForFunction(() => document.querySelector('input[placeholder="YYYY-MM"]').value === '', undefined, { timeout: 15000 });
+  await page.waitForSelector('[data-kpi-notice="actuals"]', { timeout: 15000 });
+  const kpiNotice = await page.locator('[data-kpi-notice="actuals"]').textContent();
+  ok(/^記録しました: 2026-02 · E2E重複 · 売上高 /.test(kpiNotice ?? ''), `KPI: ★ 記録すると、何を記録したかを言う (実際 "${(kpiNotice ?? '').slice(0, 60)}")`);
   // 2 度目の入力 (7 欄を埋める間に、旧版の 2 件目の保存が在れば終わっている)
   for (const [ph, v] of dupForm) await page.locator(`input[placeholder="${ph}"]`).first().fill(v);
   const dupRows = page.locator('tbody tr', { hasText: 'E2E重複' });
@@ -254,6 +264,14 @@ async function desktopSuite(browser) {
   await dupFormBox.getByRole('button', { name: '追加' }).first().click();
   await page.waitForFunction(() => document.body.textContent.includes('既に入力されています'), undefined, { timeout: 15000 });
   ok((await dupRows.count()) === 1, 'KPI: ★ 同じ期・事業の 2 件目は断られ、1 件のまま (訂正の案内つき)');
+  await dupRows.first().getByRole('button', { name: '削除' }).click();
+  await page.waitForFunction(() => !Array.from(document.querySelectorAll('tbody tr')).some((tr) => tr.textContent.includes('E2E重複')), undefined, { timeout: 15000 });
+  // 2026-11-20: 「×」の直後は「元に戻す」で戻せる (実績は 7〜8 欄を打ち直さずに済む)。
+  await page.waitForSelector('[data-undo-bar="actuals"]', { timeout: 15000 });
+  await page.locator('[data-undo-bar="actuals"]').getByRole('button', { name: '元に戻す' }).click();
+  await page.waitForSelector('tbody tr:has-text("E2E重複")', { timeout: 15000 });
+  const kpiUndoGone = (await page.locator('[data-undo-bar="actuals"]').count()) === 0;
+  ok((await dupRows.count()) === 1 && kpiUndoGone, `KPI: ★ 消した実績を「元に戻す」で戻せる (行 ${await dupRows.count()}・知らせが消えた ${kpiUndoGone})`);
   await dupRows.first().getByRole('button', { name: '削除' }).click();
   await page.waitForFunction(() => !Array.from(document.querySelectorAll('tbody tr')).some((tr) => tr.textContent.includes('E2E重複')), undefined, { timeout: 15000 });
 
@@ -6222,7 +6240,7 @@ function installWaitMarginRecorder(browser) {
     // desktop: パス 493q で +2 (制度判定の年齢に読めない値を打つと判定を断る・直すと戻る)
     // パス 566-C で +1 (財務データへのマージ復元が T-227 の確認を出すことを見る)
     // 2026-11-20: 売上集計の入力欄 (日付の選ぶ欄・記録した知らせ・今月の売上・行を直す) で +5・消した行を元に戻すで +1
-    ['desktop', desktopSuite, 73],
+    ['desktop', desktopSuite, 76],
     ['manualData', manualDataSuite, 19],
     // 2026-11-19: 「内蔵サンプル」の標本を不動産へ移し、士業 (端末内の記録) が見本を名乗らないことを足した = +2
     ['dataOrigin', dataOriginSuite, 21],
