@@ -209,6 +209,10 @@ const NO_LOCAL_READER: Readonly<Record<string, { readonly writers: readonly stri
     writers: ['parseAssignment'],
     why: '業務の割当の下書き (週の時間) を、そのまま書き手へ渡す (書き手は readEntryNumber で読み、空欄は断る)',
   },
+  'renderer/pages/ShopifyPage.tsx': {
+    writers: ['orderToSalesEntry'],
+    why: '注文の金額の下書きを、そのまま書き手へ渡す (書き手は readEntryNumber で読み、読めない・0 以下なら記録しない)',
+  },
   'renderer/pages/A8netPage.tsx': {
     writers: ['parseA8netReward'],
     why: '成果の下書き (報酬額) を、そのまま書き手へ渡す (書き手は readEntryNumber で読み、空欄は断る)',

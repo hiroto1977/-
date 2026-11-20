@@ -229,7 +229,8 @@ describe('VoiceCommandBar — インタラクション', () => {
         emitFinal('githubにイシューを作って');
         await Promise.resolve();
       });
-      expect(container.textContent).toContain('GitHub');
+      expect(container.textContent).toContain('ギットハブ');
+      expect(container.textContent).not.toContain('「github」');
     });
   });
 

@@ -1168,7 +1168,7 @@ export function KpiPage() {
   return (
     <div>
       <StatusBar
-        who="KPI / BEP ダッシュボード"
+        who="経営指標・損益分岐点"
         serviceId="kpi"
         source={source}
         status={status}

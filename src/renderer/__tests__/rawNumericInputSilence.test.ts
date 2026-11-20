@@ -186,6 +186,11 @@ const DRAFT_LEDGER: Readonly<Record<string, DraftRow>> = Object.freeze({
     writer: 'parseSalesEntry',
     why: '「追加」を押したときに読み、1 以上の整数でなければ断る (保存しない)',
   },
+  'shopify|金額 (円)': {
+    file: 'renderer/pages/ShopifyPage.tsx',
+    writer: 'orderToSalesEntry',
+    why: '「売上集計に記録」を押したときに読み、読めない・0 以下なら断る (保存しない)',
+  },
   'kpi|売上高 (円)': {
     file: 'renderer/pages/KpiPage.tsx',
     writer: 'parseKpiActual',

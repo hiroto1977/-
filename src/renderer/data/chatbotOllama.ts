@@ -89,7 +89,7 @@ export function chatbotOllamaModel(override: unknown, installed: readonly unknow
  * 選べる場所 (Ollama の画面の一覧) を言う (法則 `escape-hatch-stays-open`)。
  */
 export const CHATBOT_OLLAMA_ESCAPE =
-  '入っているモデルは「Ollama」の画面で確かめられます。';
+  '入っているモデルは「オラマ」の画面で確かめられます。';
 
 /**
  * 端末内のモデルが答えなかったことを述べる 1 文。
@@ -130,7 +130,7 @@ export function ollamaRefusalNote(message: unknown): string {
  *
  * コンシェルジュは、規則で解釈できない質問を Ollama へ回す。デスクトップ版の送り先は
  * 主プロセスが固定する loopback (`127.0.0.1:11434`) だが、**ブラウザ版は利用者が
- * 「Ollama」の画面で設定した任意のホスト** (https なら公開ホストも通る —
+ * 「オラマ」の画面で設定した任意のホスト** (https なら公開ホストも通る —
  * `isAllowedOllamaBase`) へ送る。AI 監査 (パス 511) が実物の widget で再現した:
  * 送り先が `https://gpu.example.com` でも、画面は送る前に何も言わず、答えには
  * 「Ollama (ローカル LLM)」、断りには「端末内のモデル」と名乗っていた —— 打った文が

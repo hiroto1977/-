@@ -21,7 +21,7 @@ describe('buildBusinessOverview', () => {
       members: [{ role: 'owner' }, { role: 'admin' }],
     });
 
-    expect(o.plan).toEqual({ tier: 'business', label: 'Business', audience: '中小企業・チーム' });
+    expect(o.plan).toEqual({ tier: 'business', label: 'ビジネス', audience: '中小企業・チーム' });
 
     expect(o.sales.totalAmount).toBe(100000);
     expect(o.sales.totalOrders).toBe(20);

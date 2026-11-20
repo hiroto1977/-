@@ -154,7 +154,7 @@ describe('コンシェルジュ — 引用と #channel を持つ発話は確認�
     const dialog = await openWidget();
     await ask(dialog, SLACK_QUOTED);
     const confirm = await waitForElement(() => confirmOf(dialog), '実行確認');
-    expect(confirm.textContent, 'サービス名と action を名乗っていない').toContain('「Slack」で');
+    expect(confirm.textContent, 'サービス名と action を名乗っていない').toContain('「スラック」で');
     expect(confirm.textContent).toContain('「send-message」');
     const rows = previewRows(confirm);
     expect(rows, '送る内容が 2 欄並んでいない').toHaveLength(2);

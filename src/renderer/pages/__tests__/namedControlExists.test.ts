@@ -231,9 +231,9 @@ const LEDGER: readonly Row[] = [
       '同じ断りの「書き換えられた内容から始め直すなら」の側 (パス 499)。一覧の行 (利用者が足した行) ごとの「編集」ボタンで、'
       + '押すと今の中身が欄に入り、比較の基準もその行へ移る。3 つの画面の断りが同じ名前を名指しするので 3 つとも並べる。',
   },
-  { name: 'KPI / BEP', kind: 'screen-label', why: '画面の名前。`namedEscapeHatchReachable.test.ts` が `SERVICES` のラベルと突き合わせる。' },
+  { name: '経営指標・損益分岐点', kind: 'screen-label', why: '画面の名前。`namedEscapeHatchReachable.test.ts` が `SERVICES` のラベルと突き合わせる。' },
   {
-    name: 'Ollama',
+    name: 'オラマ',
     kind: 'screen-label',
     why:
       '画面の名前 (2026-09-24 · パス 449)。AI コンシェルジュの自由質問にモデルを選ぶ口は無いので、' +

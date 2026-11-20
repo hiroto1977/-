@@ -124,8 +124,8 @@ describe('ollamaRefusalNote — 断りは原因を運び、逃げ口を名指し
     expect(ollamaRefusalNote('key=sk-ant-abcdefghijklmnop')).not.toContain('sk-ant-abcdefghijklmnop');
   });
 
-  it('逃げ口は「Ollama」の画面を名指しする (この widget に選ぶ口は無い)', () => {
-    expect(CHATBOT_OLLAMA_ESCAPE).toContain('Ollama');
+  it('逃げ口は「オラマ」の画面を名指しする (この widget に選ぶ口は無い)', () => {
+    expect(CHATBOT_OLLAMA_ESCAPE).toContain('「オラマ」の画面');
   });
 });
 

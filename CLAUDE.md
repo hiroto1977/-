@@ -1040,9 +1040,9 @@ npm run dev              # Vite + Electron, hot reload (desktop dev)
 npm run build:web        # → dist/standalone.html (browser build; runs inline-html.cjs)
 npm run build:web:lite   # → dist/standalone-lite.html (~2MB モバイル版・学術コーパス非搭載)
 npm run e2e              # Playwright 実機 E2E (desktop/phone/tablet)。e2e:lite で LITE 版を検証
-                         #   **39 suite / 実測 769 件** (FULL・LITE とも・2026-11-20 の実測 —— KPI / BEP の入力欄 (欄の名前・記録した知らせ・消した実績を元に戻す) で desktop suite +3・売上集計の入力欄 (日付の選ぶ欄・記録した知らせ・今月の売上・行を直す・消した行を元に戻す) で desktop suite +6・資格情報が無い連携先の画面が「更新」の代わりに案内を出して dataOrigin suite +1・ブラウザ版で実データを読めない連携先の画面が「更新」の代わりに案内を出して dataOrigin suite +2・同梱の内容を返す 7 画面の「更新」をブラウザ版で通して dataOrigin suite +7・A8.net の画面が端末内の成果の記録になって demoMix suite +2・士業・不動産・投資信託の画面が端末内の記録になった後の検査の引き直しで dataOrigin suite +2・demoMix 10 → 9・serviceAdvice 15 → 17・水耕栽培の画面で品目を増やす・減らすで hydroponics suite +2・資金調達レーダーの申請書類の下書きで desktop suite +4・スマホ幅で右が切れて見えない要素・横へ動かさないと見えない要素の全画面の走査で opened suite +8・養蜂・養殖で hydroponics suite +8・2026-11-11: 窓を閉じた直後の「開いて」が消えないことで village suite +1・2026-11-07: 入力欄の固定で village suite +1・2026-11-06: 会話の場面で village suite +5・2026-11-05: 旧 UI (サイドバー・ドロワー・浮いた窓) の廃止で shell suite −27・design 32→20・controls 63→61・opened 155→135。777 は 2026-10-29 まで)。床は「黙って縮んだら落とす」ための物で、
+                         #   **39 suite / 実測 774 件** (FULL・LITE とも・2026-11-20 の実測 —— チームと Shopify の入力欄 (欄の名前・招待した / 記録した知らせ・消したメンバーを元に戻す) で desktop suite +5・KPI / BEP の入力欄 (欄の名前・記録した知らせ・消した実績を元に戻す) で desktop suite +3・売上集計の入力欄 (日付の選ぶ欄・記録した知らせ・今月の売上・行を直す・消した行を元に戻す) で desktop suite +6・資格情報が無い連携先の画面が「更新」の代わりに案内を出して dataOrigin suite +1・ブラウザ版で実データを読めない連携先の画面が「更新」の代わりに案内を出して dataOrigin suite +2・同梱の内容を返す 7 画面の「更新」をブラウザ版で通して dataOrigin suite +7・A8.net の画面が端末内の成果の記録になって demoMix suite +2・士業・不動産・投資信託の画面が端末内の記録になった後の検査の引き直しで dataOrigin suite +2・demoMix 10 → 9・serviceAdvice 15 → 17・水耕栽培の画面で品目を増やす・減らすで hydroponics suite +2・資金調達レーダーの申請書類の下書きで desktop suite +4・スマホ幅で右が切れて見えない要素・横へ動かさないと見えない要素の全画面の走査で opened suite +8・養蜂・養殖で hydroponics suite +8・2026-11-11: 窓を閉じた直後の「開いて」が消えないことで village suite +1・2026-11-07: 入力欄の固定で village suite +1・2026-11-06: 会話の場面で village suite +5・2026-11-05: 旧 UI (サイドバー・ドロワー・浮いた窓) の廃止で shell suite −27・design 32→20・controls 63→61・opened 155→135。777 は 2026-10-29 まで)。床は「黙って縮んだら落とす」ための物で、
                          #   **表に書くのは実測値ただ 1 つ、床は `floorOf()` が導く** (実測の 85%・切り捨て・最低 1。
-                         #   合計の床は実測合計の 85% = **653**)。2026-09-20 (パス 346) まで表は
+                         #   合計の床は実測合計の 85% = **657**)。2026-09-20 (パス 346) まで表は
                          #   **床と `// 実測 N` の 2 つを手書き**で持っており、実測すると 3 つの文がずれていた ——
                          #   `paperAccount` は注記 10 に対し実物 13 で、**その床 8 は実測の 62%** (5 件減っても鳴らない)、
                          #   `theme` の床 10 は 71%、runner の docblock は「実測 (合計 395 件) の 85%」と
@@ -1963,6 +1963,10 @@ The browser target adds: `web-shim.ts` (a `window.serviceHub` polyfill imported 
   クラウドへ置く控えは**暗号文だけ** (`renderer/data/encryptedCopy.ts` —— 書いたら読み戻して確かめる・パスフレーズは保存しない)。
   クラウドから取得した内容を端末に保存しない —— 止まっている間に見せる「最後に取得できた内容」はメモリだけで、施錠で消す
   (`renderer/data/lastGoodFetch.ts`)。
+- **画面の名前と印は日本語で書く** (2026-11-20 · 利用者の依頼「全てを日本語表記で」)。`renderer/services.ts` の `label` は
+  カタカナか日本語・`icon` は日本語の 1 文字か絵文字。名前に残してよい英字は台帳 (`screenNamesJapanese.test.ts` の `KEPT_LATIN` —— いまは「AI」だけ)。
+  画面を名指しする文 (「X」の画面) は `SERVICES` の名前をそのまま書く。図・グラフの中の字も日本語にする (建物の図の階は「1階」)。
+  日本語にしない物: URL・メールアドレス・コマンド・単位・相手のサービスが決めた鍵の形。まだ英字が残る所は `docs/REMAINING_WORK.md`。
 - **対照を回すまで、検査は信用しない。** 守っている物を実際に壊し、狙った項目が
   落ちることを見る。**鳴らない対照は「合格」ではなく「その検査についての報せ」である。**
 

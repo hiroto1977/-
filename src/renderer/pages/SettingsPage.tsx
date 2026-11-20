@@ -117,7 +117,7 @@ const SLOTS: readonly CredentialSlot[] = [
     description: 'GitHub サービスで使用。github.com/settings/tokens で発行 (ghp_ で始まる)。',
     placeholder: 'ghp_...',
     helpUrl: 'https://github.com/settings/tokens',
-    desktopScreen: 'GitHub',
+    desktopScreen: 'ギットハブ',
   },
   {
     vaultKey: 'notion',
@@ -126,7 +126,7 @@ const SLOTS: readonly CredentialSlot[] = [
     description: 'Notion サービスで使用。notion.so/profile/integrations で発行 (secret_ で始まる)。',
     placeholder: 'secret_...',
     helpUrl: 'https://www.notion.so/profile/integrations',
-    desktopScreen: 'Notion',
+    desktopScreen: 'ノーション',
   },
   {
     vaultKey: 'slack',
@@ -135,7 +135,7 @@ const SLOTS: readonly CredentialSlot[] = [
     description: 'Slack サービスで使用。api.slack.com/apps で発行 (xoxp- で始まる)。',
     placeholder: 'xoxp-...',
     helpUrl: 'https://api.slack.com/apps',
-    desktopScreen: 'Slack',
+    desktopScreen: 'スラック',
   },
   {
     vaultKey: 'wordpress',
@@ -143,7 +143,7 @@ const SLOTS: readonly CredentialSlot[] = [
     label: 'WordPress.com Bearer',
     description: 'WordPress.com サービスで使用。',
     placeholder: 'Bearer token',
-    desktopScreen: 'WordPress.com',
+    desktopScreen: 'ワードプレス',
   },
   {
     vaultKey: 'atlassian',
@@ -153,7 +153,7 @@ const SLOTS: readonly CredentialSlot[] = [
       'Atlassian (Jira) 課題作成で使用。JSON 形式で保存: {"email":"you@example.com","token":"<APIトークン>","site":"https://your-team.atlassian.net"}。id.atlassian.com で API トークンを発行。',
     placeholder: '{"email":"...","token":"...","site":"https://...atlassian.net"}',
     helpUrl: 'https://id.atlassian.com/manage-profile/security/api-tokens',
-    desktopScreen: 'Atlassian',
+    desktopScreen: 'アトラシアン',
   },
   {
     vaultKey: 'canva',
@@ -162,7 +162,7 @@ const SLOTS: readonly CredentialSlot[] = [
     description: 'Canva フォルダ作成で使用。Canva Developers で Connect API のアクセストークンを発行。',
     placeholder: 'Bearer token',
     helpUrl: 'https://www.canva.com/developers/',
-    desktopScreen: 'Canva',
+    desktopScreen: 'キャンバ',
   },
   {
     vaultKey: 'cloudflare',
@@ -171,7 +171,7 @@ const SLOTS: readonly CredentialSlot[] = [
     description: 'Cloudflare DNS / キャッシュ操作で使用。dash.cloudflare.com の My Profile → API Tokens で Zone 編集権限のトークンを発行。',
     placeholder: 'Cloudflare API token',
     helpUrl: 'https://dash.cloudflare.com/profile/api-tokens',
-    desktopScreen: 'Cloudflare',
+    desktopScreen: 'クラウドフレア',
   },
   {
     vaultKey: 'security',
@@ -181,7 +181,7 @@ const SLOTS: readonly CredentialSlot[] = [
       'メール漏洩チェック (HIBP) と URL スキャン (VirusTotal) で使用。JSON 形式で保存: {"hibp":"<HIBPキー>","vt":"<VirusTotalキー>"}。どちらか一方だけでも可。',
     placeholder: '{"hibp":"...","vt":"..."}',
     helpUrl: 'https://haveibeenpwned.com/API/Key',
-    desktopScreen: 'Security',
+    desktopScreen: 'セキュリティ',
   },
 ];
 

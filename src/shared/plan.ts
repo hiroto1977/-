@@ -39,7 +39,7 @@ export const PLAN_ORDER: readonly PlanTier[] = ['free', 'pro', 'business', 'ente
 export const PLANS: Readonly<Record<PlanTier, PlanDefinition>> = {
   free: {
     id: 'free',
-    label: 'Free',
+    label: 'フリー',
     audience: '個人事業主・お試し',
     maxServices: 5,
     maxSeats: 1,
@@ -48,7 +48,7 @@ export const PLANS: Readonly<Record<PlanTier, PlanDefinition>> = {
   },
   pro: {
     id: 'pro',
-    label: 'Pro',
+    label: 'プロ',
     audience: '個人〜小規模事業者',
     maxServices: 15,
     maxSeats: 3,
@@ -57,7 +57,7 @@ export const PLANS: Readonly<Record<PlanTier, PlanDefinition>> = {
   },
   business: {
     id: 'business',
-    label: 'Business',
+    label: 'ビジネス',
     audience: '中小企業・チーム',
     maxServices: 40,
     maxSeats: 25,
@@ -73,7 +73,7 @@ export const PLANS: Readonly<Record<PlanTier, PlanDefinition>> = {
   },
   enterprise: {
     id: 'enterprise',
-    label: 'Enterprise',
+    label: 'エンタープライズ',
     audience: '大企業・全機能',
     maxServices: Infinity,
     maxSeats: Infinity,

@@ -281,6 +281,13 @@ async function desktopSuite(browser) {
   await page.getByPlaceholder('メールアドレス').fill('e2e-dup@example.com');
   await page.getByRole('button', { name: '招待', exact: true }).click();
   await page.waitForSelector('tbody tr:has-text("e2e-dup@example.com")', { timeout: 15000 });
+  // 2026-11-20: 招待の欄に名前が在り (欄の上)、招待すると誰を入れたかを 1 行で言う。
+  const memberLabels = (await page.locator('[data-member-form] label > span').allTextContents()).join('/');
+  const memberEmailType = await page.getByPlaceholder('メールアドレス').getAttribute('type');
+  ok(memberLabels === '氏名/メールアドレス/役割' && memberEmailType === 'email', `team: ★ 招待の欄は 3 つとも名前を持ち、メールの欄はメール用 (名前 ${memberLabels}・型 ${memberEmailType})`);
+  await page.waitForSelector('[data-member-notice]', { timeout: 15000 });
+  const memberNotice = ((await page.locator('[data-member-notice]').textContent()) ?? '').trim();
+  ok(memberNotice === '招待しました: E2E太郎 (e2e-dup@example.com) · メンバー', `team: ★ 招待すると、誰を入れたかを 1 行で言う (実際「${memberNotice}」)`);
   await page.getByPlaceholder('氏名').fill('E2E太郎 (再)');
   await page.getByPlaceholder('メールアドレス').fill('e2e-dup@example.com');
   await page.getByRole('button', { name: '招待', exact: true }).click();
@@ -288,6 +295,16 @@ async function desktopSuite(browser) {
   const dupMembers = page.locator('tbody tr', { hasText: 'e2e-dup@example.com' });
   const dupMemberRows = await dupMembers.count();
   ok(dupMemberRows === 1, `team: ★ 同じメールアドレスの 2 度目は断られ、1 行のまま (実際 ${dupMemberRows} 行)`);
+  // 2026-11-20: 「×」の直後は「元に戻す」で直前の 1 人を戻せる (戻した知らせが出てから数える)。
+  await dupMembers.first().getByRole('button', { name: '削除' }).click();
+  await page.waitForSelector('[data-undo-bar="members"]', { timeout: 15000 });
+  const memberGoneRows = await dupMembers.count();
+  await page.locator('[data-undo-bar="members"]').getByRole('button', { name: '元に戻す' }).click();
+  await page.waitForFunction(() => (document.querySelector('[data-member-notice]')?.textContent ?? '').includes('元に戻しました'), undefined, { timeout: 15000 });
+  await page.waitForSelector('tbody tr:has-text("e2e-dup@example.com")', { timeout: 15000 });
+  const memberBackRows = await dupMembers.count();
+  const memberUndoBars = await page.locator('[data-undo-bar="members"]').count();
+  ok(memberGoneRows === 0 && memberBackRows === 1 && memberUndoBars === 0, `team: ★ 消したメンバーを「元に戻す」で戻せる (消した後 ${memberGoneRows} 行・戻した後 ${memberBackRows} 行・知らせ ${memberUndoBars})`);
   while ((await dupMembers.count()) > 0) {
     const before = await page.locator('tbody tr').count();
     await dupMembers.first().getByRole('button', { name: '削除' }).click();
@@ -300,6 +317,12 @@ async function desktopSuite(browser) {
   await page.getByPlaceholder('金額 (¥12,000)').fill('12000');
   await page.getByRole('button', { name: '売上集計に記録', exact: true }).click();
   await page.waitForFunction(() => document.body.textContent.includes('売上集計に記録しました'), undefined, { timeout: 15000 });
+  // 2026-11-20: 記録の欄に名前が在り (欄の上)、記録すると入った日付・注文名・金額を 1 行で言う。
+  const shopifyLabels = (await page.locator('[data-shopify-form] label > span').allTextContents()).join('/');
+  const shopifyDateType = await page.locator('[data-shopify-form] input').first().getAttribute('type');
+  ok(shopifyLabels === '注文日 (空なら今日)/注文名/金額 (円)' && shopifyDateType === 'date', `shopify: ★ 記録の欄は 3 つとも名前を持ち、注文日は日付を選ぶ欄 (名前 ${shopifyLabels}・型 ${shopifyDateType})`);
+  const shopifyNotice = ((await page.locator('[data-shopify-notice]').textContent()) ?? '').trim();
+  ok(/^売上集計に記録しました: \d{4}-\d{2}-\d{2} · Shopify #E2E-DUP · 12,000 円。/.test(shopifyNotice), `shopify: ★ 記録すると、入った日付・注文名・金額を 1 行で言う (実際「${shopifyNotice}」)`);
   await page.getByPlaceholder('注文名 (#1001)').fill('#E2E-DUP');
   await page.getByPlaceholder('金額 (¥12,000)').fill('12000');
   await page.getByRole('button', { name: '売上集計に記録', exact: true }).click();
@@ -6240,7 +6263,7 @@ function installWaitMarginRecorder(browser) {
     // desktop: パス 493q で +2 (制度判定の年齢に読めない値を打つと判定を断る・直すと戻る)
     // パス 566-C で +1 (財務データへのマージ復元が T-227 の確認を出すことを見る)
     // 2026-11-20: 売上集計の入力欄 (日付の選ぶ欄・記録した知らせ・今月の売上・行を直す) で +5・消した行を元に戻すで +1
-    ['desktop', desktopSuite, 76],
+    ['desktop', desktopSuite, 81],
     ['manualData', manualDataSuite, 19],
     // 2026-11-19: 「内蔵サンプル」の標本を不動産へ移し、士業 (端末内の記録) が見本を名乗らないことを足した = +2
     ['dataOrigin', dataOriginSuite, 21],
