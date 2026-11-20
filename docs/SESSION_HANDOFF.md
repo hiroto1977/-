@@ -7,6 +7,176 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-11-19 · 続き 4) — 資格情報が無い連携先 22 画面の「更新」を、案内に替えた
+
+- **症状**: 連携先の画面で、資格情報を入れずに「更新」を押すと、札が赤い「エラー」になり、「表示中の数字は同梱のサンプルです」と
+  「資格情報が未登録です。登録すると実データに切り替わります。」(デスクトップ版は「トークン未設定」) が出た。前の節 (続き 3) が測って残した物 ——
+  ブラウザ版で実データを読める 8 画面 (Cursor / Stripe / Asana / LINE / Linear / Sentry / Discord / Dropbox)。デスクトップ版は連携先 22 画面すべてが同じ扱いだった。
+- **原因**: 連携先 22 画面はどれも取得に資格情報を使う (`SERVICE_CREDENTIAL_USE` が `fetch` · 主プロセスの `LOCAL_SERVICES` に連携先は 1 つも無い)。
+  資格情報が無ければ橋は必ず `not_configured` を返す。押せば必ず断られる「更新」を出しておいて、押したら赤で言う形だった。まだ登録していないのは故障ではない。
+- **直し** (`shared/fetchNeedsCredential.ts` の判定 1 つ・状態バーだけが読む):
+  - 連携先 × 取得に資格情報を使う × 登録の欄が在る × 未登録 のとき、状態バーは**「更新」を出さず**、灰色の案内を 1 つ出す
+    (「資格情報を登録すると、実データに切り替わります。表示しているのは見本です。」· `[data-fetch-needs-credential]`)。札は「サンプル（未連携）」のまま。登録の欄は出たまま。
+  - 登録すると、状態バー自身の覚え (`changedHere` · パス 427) で判定が変わり、その場で「更新」が出て取得が 1 度走る。消すと元へ戻る。
+  - 失敗の文が出ている間 (登録済みだったのに断られた —— 期限切れ・保管庫の施錠ほか) は灰色の案内を重ねない。赤い文が理由を言う。
+  - ブラウザ版で実データを読めない 14 画面は、続き 3 の案内 (「この版では取得できません」) が先に答える —— 案内は 1 つだけ。
+  - 登録の欄を渡さない呼び出し・端末内の画面 (AI の鍵が任意の画面)・`serviceId` の無い帯は今までどおり。
+  - 取得の hook (`useServiceData`) と橋 (主プロセス / `web-shim.ts`) は変えていない。
+- **画面の側の前提**: 判定は、画面が状態バーへ渡す 3 つ (登録の欄 `tokenSetup`・登録済みか `isConfigured`・「更新」の口 `onRefresh`) が揃って働く。
+  連携先 22 画面は 3 つとも渡している (走査で確かめた)。`remoteScreensNeedCredential.test.ts` が 22 画面を実際に描くので、渡し忘れた画面は名指しで落ちる。
+- **検査**: `shared/__tests__/fetchNeedsCredential.test.ts` 9 件 (判定の全組み合わせ 36 通りのうち返すのは 1 通り・実物の台帳で連携先が全部対象になること)・
+  `components/__tests__/statusBarNeedsCredential.test.ts` 14 件 (両方の実行形態で: 出す / 登録すると替わる / 消すと戻る・失敗の文と重ねない・対照 4)・
+  `pages/__tests__/remoteScreensNeedCredential.test.ts` 33 件 (デスクトップ版 22 画面 + ブラウザ版の読める 8 画面を資格情報なしで実際に描く・対照 2)・
+  `remoteScreensBrowserNotice.test.ts` の対照 1 件を新しい動きへ (デスクトップ版の GitHub は、資格情報を保存済みなら「更新」が在る)・
+  e2e の `dataOrigin` suite +1 (20 → 21・全 suite 760 件 —— Stripe: 無い間は案内 / 保存すると「更新」)。
+  既存の検査で落ちたのは上の対照 1 件だけだった (状態バーに関わる 244 ファイル / 2,217 件を回して確かめた)。
+- **対照 9 方向すべて鳴る** (件数は実測): A 「更新」を出したまま ❌35 / B 案内を出さない ❌34 / C 失敗の文の上にも案内を重ねる ❌1 / D 登録済みかを見ない ❌9 /
+  E 登録の欄の有無を見ない ❌3 / F 取得元を見ない ❌2 / G 資格情報の使い道を見ない ❌2 / H 状態バーの覚えではなく親の古い値で判定する ❌4 /
+  I 「この版では取得できません」の画面にも重ねる ❌1。復帰は中身の md5 で確かめた。
+- **測って残した物**: `docs/REMAINING_WORK.md` の先頭の節 (登録済みの一覧を読めなかったときも「登録すると…」と言う・開いた直後の一瞬・
+  9 画面は `errorKind` を渡していない・ブラウザ版は登録の後にプロキシも要る)。
+- **検査の結果**: `npm test` 1,331 ファイル / 29,046 件・`verify:all` 39 ゲート exit 0 (`verify:arch` のユニットテスト数 21368 → 21391・`mutate` 375 → 376・
+  `lint:shared-judgement` の census を再生成 —— shared 202 → 203)。
+- **変異検査**: `fetchNeedsCredential.ts` 100.00% (Killed 14)。生存 0・未到達 0 (19 分)。`mutate` へ入れた。
+- **実機の検査 (最終コード)**: FULL 12,330,669 B / LITE 3,743,306 B (両方 +393 B)・`perf` OK (LITE DCL 303 ms / heap 8.1 MB・FULL DCL 602 ms / heap 30.4 MB)・
+  `e2e` **760 件 ❌ 0**・`e2e:lite` **760 件 ❌ 0** (`dataOrigin` 21 件)。スマホ幅 (412×915 · LITE) で読める 8 画面を開いて、案内が出て「更新」と赤い文が無いことを見た。
+  `smoke:app` / `e2e:ollama` / `e2e:portal` は回していない —— 主プロセスも Ollama の経路も触っていない。
+
+## 直近の作業 (2026-11-19 · 続き 3) — ブラウザ版で実データを読めない連携先 14 画面の「更新」を、案内に替えた
+
+- **症状**: ブラウザ版の連携先の画面 (GitHub ほか) で「更新」を押すと、赤い「エラー」+「表示中の数字は同梱のサンプルです」+
+  「ブラウザ版では live fetch を行いません。同梱の snapshot を使用します。」が出た。実機 (実 chromium · LITE · 412×915) で連携先 22 画面を押して数えると、
+  **14 画面** (GitHub / WordPress / Atlassian / Notion / Google Drive / Calendar / Gmail / Slack / Canva / Cloudflare / Microsoft 365 / BASE / YouTube / freee) がこの文、
+  残る 8 画面 (Cursor / Stripe / Asana / LINE / Linear / Sentry / Discord / Dropbox) は「資格情報が未登録です。登録すると実データに切り替わります。」だった。
+  14 画面は資格情報を保存していると開いただけで出る (鍵が在ると自動で取得する)。
+- **原因**: ブラウザ版 (単一 HTML) から実データを読めるのは `network/liveRead.ts` の `LIVE_READERS` の 8 つだけ。残る 14 は取得がデスクトップ版の主プロセスに在り、
+  橋 (`web-shim.ts`) は `not_implemented` を返す。取得の hook (`useServiceData`) はそれを失敗 (`error`) として持っていた —— 取得できないのは仕様で、故障ではない。
+- **直し** (3 か所が同じ判定と同じ 1 文を読む —— `shared/browserFetchReach.ts`):
+  - 画面 (`StatusBar`): ブラウザ版 × 連携先 × 読めないサービスのとき、**「更新」を出さず**、押す前から灰色の案内を 1 つ出す
+    (「ブラウザ版では、この画面の実データを取得できません（取得はデスクトップ版の機能です）。表示しているのは見本です。」)。札は「サンプル（未連携）」のまま。
+    実行形態が分かるまで (`useBuildKind` が `null`) は今までどおり。資格情報の欄は残す (11 画面は書き込みの操作に使う)。
+  - 橋 (`web-shim.ts`): その 14 画面には同じ 1 文で `not_implemented` を返す (連携先でない画面の落ち先の文は変えていない)。
+  - hook (`useServiceData`): `not_implemented` は新しい状態 **`unsupported`** として持つ (`error` にしない・見本と取得元は触らない・最後に取得できた内容を出しも消しもしない)。
+    状態バーは `unsupported` の文を灰色の同じ枠 (`[data-fetch-unsupported]`) に出し、赤い文 (`[data-fetch-error]`) と「同梱のサンプルです」は出さない。
+- **一覧の写し**: 読める 8 つの一覧 (`BROWSER_LIVE_READ_SERVICES`) は `LIVE_READERS` の鍵の写し。`StatusBar` は `renderer/network/` を取り込めない
+  (社外向けポータルの束に網の経路を入れない —— `portalBundleClosure.test.ts`) ので shared に置き、`browserRemoteFetchReach.test.ts` が両方向に結ぶ。
+- **検査**: `shared/__tests__/browserFetchReach.test.ts` 9 件・`renderer/__tests__/browserRemoteFetchReach.test.ts` 7 件 (実物の shim)・
+  `components/__tests__/statusBarFetchUnsupported.test.ts` 10 件・`pages/__tests__/remoteScreensBrowserNotice.test.ts` 16 件 (14 画面を資格情報つきで実際に描く)・
+  `useServiceData.test.ts` +5・e2e の `dataOrigin` suite +2 (18 → 20・全 suite 759 件)。
+- **対照 7 方向すべて鳴る**: A 橋の枝を外す ❌2 / B hook が失敗として持つ ❌18 / C 状態バーが「更新」を出したまま ❌18 / D 案内を赤い文のまま出す ❌16 /
+  E 実行形態を見ない ❌7 / F 一覧から stripe を外す ❌7 / G 押す前の案内を出さない ❌18 (件数は実測)。
+- **測って残した物**: `docs/REMAINING_WORK.md` の先頭の節 (読める 8 画面の「未登録」も赤い「エラー」で出る・BASE / YouTube / freee はブラウザ版で資格情報の使い道が無い・
+  Google 3 画面と Microsoft 365 は自分の注記と案内が重なる・Ollama の的外れな 1 文)。
+- **検査の結果**: `npm test` 1,328 ファイル / 28,990 件・`verify:all` 39 ゲート exit 0 (`verify:arch` のユニットテスト数 21334 → 21368・`mutate` 374 → 375・
+  `lint:shared-judgement` の census を再生成 —— shared 201 → 202)。変異検査と実機の結果はこの節の末尾の行。
+- **変異検査**: `useServiceData.ts` 100.00% (Killed 109)・`browserFetchReach.ts` 100.00% (Killed 15)。生存 0・未到達 0 (18 分)。`browserFetchReach.ts` を `mutate` へ入れた。
+- **実機の検査 (最終コード)**: FULL 12,330,276 B / LITE 3,742,913 B (両方 +866 B)・`perf` OK (LITE DCL 297 ms / heap 8.3 MB・FULL DCL 596 ms / heap 30.4 MB)・
+  `e2e` **759 件 ❌ 0**・`e2e:lite` **759 件 ❌ 0** (`dataOrigin` 20 件)。`smoke:app` / `e2e:ollama` / `e2e:portal` は回していない —— 主プロセスも Ollama の経路も触っていない。
+
+## 直近の作業 (2026-11-19 · 続き 2) — ブラウザ版の「更新」で赤い失敗が出る 7 画面を直した
+
+- **症状**: ブラウザ版で「更新」を押すと、赤い「エラー」と「ブラウザ版では live fetch を行いません。同梱の snapshot を使用します。」と
+  「表示中の数字は同梱のサンプルです（まだあなたのデータではありません）」が出た。実機 (実 chromium) で `local` の全画面を押して数えると **7 画面**
+  (事業ダッシュボード / 書類スタジオ / 資金調達レーダー / KPI / Linux / Skills / テンプレート)。API キーを保存した事業ダッシュボードと Skills は開いただけで出た。
+- **原因**: `SERVICE_DATA_ORIGIN` が `local` の画面は「更新」が取得を呼ぶが、ブラウザ版の `web-shim.ts` の `fetchSnapshot` にその 7 つの枝が無く `not_implemented` へ落ちていた。
+- **直し**: `renderer/data/browserBundledFetch.ts` (一覧 7 件・判定・返す中身) を置き、shim の枝が同梱の内容の写しに `isMock: true` を重ねて返す。
+  Linux / Skills の画面は `payloadIsMock` を状態バーへ渡す (端末を読めていない取得に緑の「ローカル」を付けない —— 札は「同梱データ」)。
+- **検査**: `browserBundledFetch.test.ts` 7 件・`webShimSnapshotBranches.test.ts` +4・`browserRefreshReachable.test.ts` 5 件 (母集団を走査で導く)・
+  `bundledRefreshBadge.test.ts` 4 件 (jsdom で「更新」を押して札を読む)・e2e の `dataOrigin` suite +7 (11 → 18・全 suite 757 件)。
+- **対照 5 方向すべて鳴る**: A shim の枝を外す ❌5 / B Linux が札へ渡さない ❌1 / C Skills が札へ渡さない ❌1 / D `isMock` を重ねない ❌8 / E 一覧から kpi を外す ❌4。
+- **変異検査**: `browserBundledFetch.ts` 100.00% (Killed 4 —— 一覧は読み込み時に決まる値なので測る変異体は 4 つだけ)。`mutate` へ入れた (373 → 374)。
+- **実機**: FULL 12,329,410 B / LITE 3,742,047 B (両方 +359 B)。結果はこの節の末尾の行。
+- **残した物**: `docs/REMAINING_WORK.md` の先頭の節 (事業ダッシュボードと KPI の緑の札・`remote` の画面の同じ落ち方・Ollama の的外れな 1 文)。
+- **実機の検査 (最終コード)**: `perf` OK (LITE DCL 258 ms / heap 8.3 MB・FULL DCL 561 ms / heap 30.4 MB)・`e2e` **757 件 ❌ 0**・`e2e:lite` **757 件 ❌ 0** (`dataOrigin` 18 件)。`smoke:app` / `e2e:ollama` は回していない —— 主プロセスも Ollama の経路も触っていない。
+
+## 直近の作業 (2026-11-19 · 続き) — A8.net の画面を「自分の成果を記録して合計を見る」画面へ (sample → local)
+
+- **なぜ**: A8.net の画面は同梱の見本 3 件 (「[確定] 動画配信サービス 登録」ほか) を並べるだけで、利用者の成果を 1 件も扱えなかった。
+  A8.net にメディア会員向けの公開 API は無いので、接続ではなく**端末内の記録**にした (士業・不動産・投資信託と同じ「sample → local」の形)。
+- **画面**: 発生月 (`<input type="month">`)・プログラム名 (60 文字まで)・報酬額 (0〜1 億円の整数)・状態 (未確定 / 確定 / 否認) を入れて「＋ 成果を記録」。
+  タイル 3 枚 (確定 / 未確定 / 否認の合計と件数)・月ごとの表 (新しい月が先)・一覧 (状態を `<select>` で変える・× で消す)。
+  状態バーは `A8.net · 確定 ¥X / 未確定 ¥Y`。記録が無いときは案内 (`A8NET_EMPTY_NOTE` —— 端末の中だけに保存し A8.net へ何も送らないと言う)。
+- **判定は `renderer/data/a8netRewards.ts` の 1 か所**: 書き手 `parseA8netReward` (報酬額は `readEntryNumber` —— 空欄を 0 円にせず断る)・
+  集計 `summarizeA8netRewards` (合計・件数・月の表を**同じ「読める行」だけ**から取り、外した件数を返す —— 法則 `one-subset-per-answer`)・
+  断り `unreadableA8netRewardsNote` (逃げ口は同じ画面の一覧の ×)。読める行が 1 件も無いときタイルの金額は `—` (¥0 と刷らない)。
+- **土台は 3 か所が同じ関数を呼ぶ**: `shared/a8netSnapshot.ts` の `buildA8netSnapshot()` (見本を持たない空の土台) を、主プロセスの fetcher・
+  ブラウザ版の `web-shim.ts`・renderer の `SNAPSHOT.a8net` が呼ぶ。
+- **形の表は緩く置いた**: `'a8net-rewards': { month: str, program: str, amount: num, status: str }` —— 発生月や状態の綴りが崩れた行を復元で捨てない
+  (金額は本物なので)。読めない行は合計から外して件数を言い、一覧に出すので × で消せる。
+- **登録した台帳** (新しい collection・書き手・画面を足すと鳴る物): `collectionShapes` / `BACKUP_COLLECTION_RECORD_LIMITS` / `collectionSamples` /
+  `collectionShapesRoundTrip` / `writerNumberReading` / `numericInputReaderCensus` / `rawNumericInputSilence` / `errorMessageSurfaceCensus` /
+  `namedEscapeHatchReachable` / `plaintextExposureClassification` (機微でない —— 自分の広告成果の金額) / `mutateScopeCensus` (`mutate` へ) /
+  `dataOrigin` の件数 (sample 17 / local 40 / remote 22) / オントロジーの文書 (再生成)。
+- **検査**: `a8netRewards.test.ts` (値ごと)・`a8netRewardsOnScreen.test.ts` (jsdom 8 件 —— 空の状態 / 足すと合計が動く / 状態を変える / 消す /
+  入力の誤りで入力を残す / 読めない行を外して × が効く / 読める行が無ければ `—` / 物・配列・200,000 字の欄でも投げない)・
+  `webShimSnapshotBranches.test.ts` +2・e2e の `demoMix` suite +2 (9 → 11・全 suite 750 件)。
+- **対照 7 方向すべて鳴る**: A 読める行が無くても金額を刷る / B 状態の変更を保存しない / C 読めない行の断りを描かない / D プログラム名の天井を外す /
+  E 追加の後に欄を空にしない / F 入力の誤りを出さない / G ブラウザ版の枝を消す (G は 1 度目鳴らず、検査を足した)。
+- **変異検査**: `a8netRewards.ts` は 1 度目 98.88% (生存 1 —— `n !== null && n >= 0` の null の判定が等価: `null >= 0` は真で返すのも null)。
+  形ごと消して (`finiteNumberOf(v) ?? -1` → 1 つの比較) **100.00% (Killed 87)**。`mutate` へ入れた (372 → 373)。
+- **実機**: FULL 12,329,051 B / LITE 3,741,688 B (main から両方 +7,884 B)。`perf` OK (LITE DCL 256 ms / heap 8.3 MB・FULL DCL 573 ms / heap 30.6 MB)。
+  スマホ幅 (412×915・LITE) で A8.net の画面を開いて横あふれ 0・console エラー 0・「更新」を押すと「ローカル」。`e2e` / `e2e:lite` の結果はこの節の末尾の行。
+- **見つけて直していない物**: ブラウザ版で「更新」を押すと赤い失敗が出る `local` の画面が 5 つ在る (KPI / 資金調達レーダー / Linux / Skills / 書類スタジオ) ——
+  `docs/REMAINING_WORK.md` の先頭の節に実測を残した。次の PR の候補。
+- **実機の検査 (最終コード)**: `e2e` **750 件 ❌ 0**・`e2e:lite` **750 件 ❌ 0** (`demoMix` 11 件)。`smoke:app` / `e2e:ollama` は回していない —— 主プロセスが返すのは空の土台だけで、Ollama の経路は触っていない (デスクトップ版の A8.net の画面は開いていない)。
+
+## 直近の作業 (2026-11-19) — 実機の検査 (e2e) を、端末内の記録になった画面に合わせる + 登録 0 件の「改善提案」
+
+- **見つけ方**: 水耕栽培の変更 (#958) を main と合わせた後に実機の検査を回したら、`desktop` suite が士業の所で止まった。
+  士業 8 画面 (#951)・不動産と投資信託 (#959) は端末内の記録だけを出すようになり、Dropbox (#959) は読み取り専用で実データを取得するようになったが、
+  実機の検査 (`scripts/e2e/core.cjs`) は同梱の見本が在る前提のままだった —— e2e は CI が既定では回さないので、main で古いまま誰も気付かなかった。
+- **洗い出し**: 39 suite を 1 つずつ別々に回した (1 つが止まっても残りを見るため)。2 度回した —— #951 の後 (古い suite 3 つ) と、作業中に main へ入った #959 の後 (古い suite 6 つ)。
+  どちらの回も残りの suite は緑だった。
+- **アプリの側の欠陥が 1 件出た (#959 の後)**: 不動産・投資信託の画面で、何も登録していない状態で「💡 改善提案」を押すと、
+  赤い失敗「改善提案の取得に失敗: real-estate.advise: properties は配列 (1〜500 件) で指定してください」が出た。見本 4 件が在った頃は空の一覧が届かなかった。
+  **直し**: `shared/serviceAdvisor.ts` の `adviceNotReadyNote(serviceId, input)` が、一覧が空の配列のときだけ文を返す
+  (「物件がまだ登録されていません。上の欄から 1 件登録すると、その数字から改善提案を組み立てます。」)。`ServiceActionPanel` は押す前にその文を出し、ボタンを押せなくする
+  (`data-advise-not-ready`)。形の誤り (配列でない・行が読めない) は今までどおり読み取りの関門が断る。文を返す組と、読み取りが空の一覧を断る組が同じであることは
+  `serviceAdvisor.test.ts` が突き合わせる (出前館は一覧が空でも組めるので文を出さない)。対照 2 方向とも鳴る (文を返さない ❌3 / ボタンを押せるままにする ❌1)。
+  `serviceActionConcurrency.test.ts` は物件を 1 件置いてから描く形にした (記録と提案の干渉を見る検査は、提案が押せる状態から始める)。
+- **検査の直し (6 suite)**:
+  - `desktop` —— 士業は「連携 1 名」・相談日の欄をラベルで名指し。不動産は 0 物件・月次CF ¥0 から始まり、足すと ¥100,000・編集で ¥150,000。
+    投資信託は評価額 ¥300,000・取得原価 ¥0 のまま・auto 切替で ¥400,000 (見本 4 件の合計に足した数字だった)。合計は状態バーの見出しで読む。
+  - `dataOrigin` —— 「内蔵サンプル」の標本をストレージ (この PC は読み取らないと名乗る画面) へ。税理士が見本を名乗らないことを足した (9 → **11** 件)。
+  - `credential` —— 「読み手のいない資格情報」の標本を Dropbox から Salesforce へ。
+  - `kessanTax` —— 参考の別紙は端末内の登録を載せる。先に自分の銘柄を 1 件登録し、出所が `local` であること・その銘柄が紙に載ることを見る。
+  - `demoMix` —— 「合計に見本が混ざる断り」から「見本を混ぜていない」へ書き直した (0 から始まる・自分の記録がそのまま合計・断りは出ない)。10 → **9** 件。
+  - `serviceAdvice` —— 登録 0 件では押す前に言う (不動産・投資信託)。足した自分の物件・銘柄について提案が語ることを見る。15 → **17** 件。
+  - 全 suite **748** 件・床 **635** (`SUITE_TABLE`・`e2eSuiteFloors.test.ts`・CLAUDE.md を揃えた)。
+- **検査の側の対照は回していない (正直に書く)**: 書き直した実機の主張を壊して鳴らす対照 (アプリを見本つきへ戻して組み直す) は回していない。
+  在るのは逆向きの実測 —— 見本が在る前提の旧い検査は、今のアプリに対して落ちた。アプリの直し (改善提案の断り) の対照は単体と jsdom で回した。
+- **最終の実測 (2026-11-19 · main の #959 を取り込んだ後)**: `npm test` 1319 ファイル / 28,884 件 ❌ 0・`verify:all` の 39 ゲート緑・
+  `perf` OK (LITE DCL 229 ms / heap 8.3 MB・FULL DCL 575 ms / heap 30.4 MB)・`e2e` **748 件 ❌ 0**・`e2e:lite` **748 件 ❌ 0** (表の実測値とのずれ 0)。
+  変異検査: `shared/serviceAdvisor.ts` **100.00% (887 killed・生存 0)**。出荷物: FULL 12,321,167 B / LITE 3,733,804 B (両方 +762 B —— 登録 0 件の断りの文と判定)。
+  ★ 全件の単体検査は 1 度 1 件落ちた —— `demoMix` の `ok(true, …)` の直前が自前の待ちの関数で、`e2eSuiteFloors` の決まり (直前は投げる `page.waitFor…`) に合わなかった。
+  条件を `ok()` に入れる形へ直した (その後に、実機の検査の本と記録を読む検査 42 ファイル / 727 件と `demoMix` suite を両ビルドで回し直して緑。全件の単体検査は CI に委ねた)。
+- 測って残した物は `docs/REMAINING_WORK.md` の「実機の検査を端末内の記録になった画面に合わせる」。
+
+## 直近の作業 (2026-11-19) — 水耕栽培の運転管理の画面で、品目を増やす・減らす
+
+- 利用者の依頼 (スマホでロットの品目の選択肢を開いた画面の写真つき): 「品目をこの画面で増減出来る様にして」。
+- **それまで**: 品目を増やす・減らす欄は経営サマリーの「水耕栽培の試算」の中にだけ在った。運転管理の画面 (ロットを足す所) の品目の選択肢に足したい品目が無い人は、
+  画面を移って探すことになっていた。
+- **直し**: 欄を部品 `src/renderer/components/CropListEditor.tsx` に出し、経営サマリーと水耕栽培の運転管理 (ロットの品目の選択の上) の両方に置いた。
+  一覧の読み書きは hook `src/renderer/data/useCropList.ts` の 1 つ (保管層の今の最新に当てる `applyToLatest` —— 経営サマリーの画面に書かれていた物をそのまま移した)。
+  運転管理の画面では、足した品目をそのままロットの品目に選ぶ。消した品目を使うロットが在れば、消した所で件数と「予定日が出なくなる・ロットは消えていない」を言う
+  (`shared/hydroponicCrops.ts` の `removedCropLotsNote` —— 数えるのは消した品目のロットだけ)。欄は一覧が保管層から届いてから出す (足す欄の初期値を自分の品目から写すため)。
+- **経営サマリーの側の答えは変わらない**: 文面・aria-label・足した後の文 (「足して品目に選びました。試算に使うには設定を保存してください。」) は同じ。
+  変わったのは二重押しの守りが欄の中の 1 つになったこと (設定の保存のボタンとは別の守りになった —— 2 つは別の記録を書く)。
+- **途中で検査が捕まえた物 (どれも設計どおり)**: `rawNumericInputSilence` (下書きの欄の台帳 —— 書き手を呼ぶファイルが部品へ移り、運転管理の画面に 8 欄が増えた)・
+  `snapshotJudgementCensus` (断りを出すのは部品の側になった)・`storeWriteRejectionCensus` (hook が返す書き込みの口は `WRITE_SOURCES` と `WRAPPER_SITES` に登録して辿る)・
+  `nonFiniteEntryPoints` (`removedCropLotsNote` が有限かを見ていなかった —— NaN・無限では件数を言わない形へ)。
+- 検査: `src/renderer/pages/__tests__/hydroponicsCropEditor.test.ts` 7 件 (実物の保管層と画面で、実際に打って押す)。対照 5 方向すべて鳴る
+  (足した品目を選ばない / ロットの文を渡さない / 件数を全ロットで数える / 部品が文を添えない / 一覧が届く前に出す)。うち 2 つは 1 度目に鳴らず、検査を足して鳴らせた。
+  変異検査: `shared/hydroponicCrops.ts` **100.00% (245 killed)**。実機: `hydroponics` suite 32 → **34** 件・全 suite **745** 件・床 **633**。
+- スマホ幅 (412px) で欄を開いて品目を足した姿を検査用の Chromium で測った: 画面からはみ出す物 0・24px 未満の押す目標 0。見出しは本文の色で少し太くした
+  (薄い小さな字だと、品目を選ぶ欄のすぐ上に在っても見落とす)。
+- **最終の実測 (2026-11-19)**: `npm test` 1318 ファイル / 28,834 件 ❌ 0・`verify:all` の 39 ゲート緑・`perf` OK (LITE DCL 257 ms / heap 8.3 MB・FULL DCL 519 ms / heap 30.4 MB)・
+  `e2e` **745 件 ❌ 0**・`e2e:lite` **745 件 ❌ 0**。出荷物: FULL 12,315,691 B / LITE 3,728,328 B (FULL +1,124 B・LITE +1,092 B —— 運転管理の画面に欄を置いた分と消したときの文。
+  LITE は天井 4,000,000 B まで 271,672 B・警告線 3,400,000 B は超えたまま)。
+- **main を取り込んだ後 (同日)**: main に士業 8 画面・分析 9 画面のローカル完結と依存の更新が先に入っていたので取り込んだ (ぶつかったのは `docs/ARCHITECTURE.md` のユニットテスト数だけ)。
+  取り込み後: `npm test` 1318 ファイル / 28,860 件 ❌ 0・`verify:all` の 39 ゲート緑。上の出荷物の大きさと実機の数字は取り込み前の物である。
+
 ## 直近の作業 (2026-11-18 · 続き 7) — 資金調達レーダーに「申請書類の下書き」を足した
 
 - 利用者の依頼: 「資金調達レーダーで全ての事業や業種を踏まえ必要な情報を入力する事で補助金や助成金の申請書類のテンプレートを作ってくれる仕様にして」。

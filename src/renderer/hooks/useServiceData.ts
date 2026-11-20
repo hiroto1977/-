@@ -5,7 +5,14 @@ import { reportDeviceStoreFailure } from '../data/deviceStoreFailure';
 import { forgetFetch, lastGoodFetch, rememberFetch, staleDataNote } from '../data/lastGoodFetch';
 
 export type Source = 'snapshot' | 'live';
-export type Status = 'idle' | 'loading' | 'error';
+/**
+ * 取得の状態。
+ *
+ * `unsupported` は「この実行形態では、この画面の取得を行わない」(橋が `not_implemented` を返した)。
+ * **失敗ではない** —— 画面は赤い「エラー」を出さず、取得元の札 (「サンプル（未連携）」ほか) のまま、
+ * `errorMessage` に入った案内を灰色で出す (2026-11-19 · `shared/browserFetchReach.ts`)。
+ */
+export type Status = 'idle' | 'loading' | 'error' | 'unsupported';
 export type ErrorKind = 'auth' | 'rate_limit' | 'network' | 'unknown';
 
 export interface ServiceState<T> {
@@ -140,6 +147,14 @@ export function useServiceData<T>(
       setStatus('idle');
       // クラウドから取得した内容だけを覚える (見本・端末の記録は `rememberFetch` が断る)。
       rememberFetch(serviceId, result.data);
+    } else if (result.code === 'not_implemented') {
+      /*
+       * この実行形態では、この画面の取得を行わない (ブラウザ版の連携先 14 画面ほか)。失敗ではないので
+       * 'error' にしない —— 直す前は、押すたびに赤い「エラー」と「表示中の数字は同梱のサンプルです」が出た
+       * (2026-11-19 実測)。画面に出ている内容 (見本) は触らない。案内の文は橋が返した物をそのまま持つ。
+       */
+      setStatus('unsupported');
+      setErrorMessage(result.message);
     } else if (result.code === 'not_configured') {
       // 資格情報が無い: その資格情報で取得した内容は見せ続けない。
       forgetFetch(serviceId);

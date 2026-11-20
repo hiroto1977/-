@@ -938,7 +938,7 @@ export function RealEstatePage() {
         </table>
         {userProps.length > 0 && (
           <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 6, lineHeight: 1.6 }}>
-            ※ 追加した {userProps.length} 物件の家賃・経費・返済を含めて再計算しています (デモ物件の経費・返済は既定値)。
+            ※ 追加した {userProps.length} 物件の家賃・経費・返済を含めて再計算しています。
           </div>
         )}
       </Section>

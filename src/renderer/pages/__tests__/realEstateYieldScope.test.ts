@@ -58,6 +58,31 @@ async function mountPage(waitFor: string): Promise<void> {
   await waitForText(() => scopeBox()?.textContent ?? '', waitFor);
 }
 
+/** 範囲の箱が出ない場面 (述べることが無い) では、画面全体の文で待つ。 */
+async function mountPageOnText(waitFor: string): Promise<void> {
+  const def = SERVICES.find((s) => s.id === 'real-estate');
+  if (!def) throw new Error('real-estate service missing');
+  root = createRoot(container);
+  await act(async () => {
+    root!.render(createElement(def.page));
+  });
+  await waitForText(text, waitFor);
+}
+
+/**
+ * かつての同梱見本 4 件と同じ数字を、**利用者の登録として** record store へ置く
+ * (2026-11-19 のローカル完結バッチ 3 で見本は外れ、画面は空から始まる)。
+ */
+async function seedDemoProperties(): Promise<void> {
+  const rows = [
+    { name: '渋谷区マンション 1LDK', type: '区分所有', monthlyRent: 168_000, purchasePrice: 42_000_000, occupied: true, monthlyExpenses: 168_000, monthlyLoan: 412_000 },
+    { name: '横浜市戸建て', type: '一棟', monthlyRent: 235_000, purchasePrice: 45_400_000, occupied: true, monthlyExpenses: 0, monthlyLoan: 0 },
+    { name: '大阪市ワンルーム', type: '区分所有', monthlyRent: 72_000, purchasePrice: 15_700_000, occupied: false, monthlyExpenses: 0, monthlyLoan: 0 },
+    { name: '札幌市アパート 6 戸', type: '一棟', monthlyRent: 420_000, purchasePrice: 62_000_000, occupied: true, monthlyExpenses: 0, monthlyLoan: 0 },
+  ];
+  for (const r of rows) await getRecordStore().insert(PROPERTIES_COLLECTION, r);
+}
+
 /** 画面の文字 (改行・連続空白を畳んだもの)。 */
 const text = (): string => (container.textContent ?? '').replace(/\s+/g, ' ');
 const scopeBox = (): HTMLElement | null => container.querySelector('[data-portfolio-scope]');
@@ -95,12 +120,14 @@ describe('不動産投資 — 測れない物件と平均の分母', () => {
    * この検査の言いたいことは「**利回りの**断りが出ない」なので、
    * 見るのはその文面に絞る (箱の有無ではなく、中の主張)。
    */
-  it('★ 対照: 全件そろっていれば利回りの断りは出ない (snapshot だけ)', async () => {
-    await mountPage('見本');
+  it('★ 対照: 全件そろっていれば利回りの断りは出ない (登録だけ)', async () => {
+    await seedDemoProperties();
+    await mountPageOnText('札幌市アパート 6 戸');
     expect(text()).not.toContain('表面利回りの平均から外して');
     expect(text()).not.toContain('家賃が読めないため');
-    // 箱は在る —— 合計に見本が混ざっているので、そのことは述べる。
-    await waitForText(() => scopeBox()?.textContent ?? '', '見本');
+    // 述べることが無いので、範囲の箱そのものが出ない (見本が混ざっていた頃は
+    // 混入の断りで常に出ていた)。
+    expect(scopeBox()).toBeNull();
   });
 
   it('★ 取得価格の欄が読めない物件を足すと、外したことを画面が述べる', async () => {
@@ -135,10 +162,10 @@ describe('不動産投資 — 測れない物件と平均の分母', () => {
 
   it('★ 対照: 取得価格も家賃も在る物件を足しても利回りの断りは出ない', async () => {
     await getRecordStore().insert(PROPERTIES_COLLECTION, { name: 'そろった物件', type: '区分', monthlyRent: 90_000, purchasePrice: 20_000_000, occupied: true, monthlyExpenses: 0, monthlyLoan: 0 });
-    await mountPage('自分の物件は 1 件');
+    await mountPageOnText('そろった物件');
     expect(text()).not.toContain('表面利回りの平均から外して');
-    // 自分の物件が 1 件在るので、合計との差を述べる (パス 187)。
-    await waitForText(() => scopeBox()?.textContent ?? '', '自分の物件は 1 件');
+    // 測れない物が無いので、範囲の箱は出ない。
+    expect(scopeBox()).toBeNull();
   });
 
   /**
@@ -162,7 +189,7 @@ describe('不動産投資 — 測れない物件と平均の分母', () => {
 
   it('★ 対照: 価格が読める行は利回りを % で刷る (標本が在ることの確認)', async () => {
     await getRecordStore().insert(PROPERTIES_COLLECTION, { name: 'そろった物件', type: '区分', monthlyRent: 90_000, purchasePrice: 20_000_000, occupied: true, monthlyExpenses: 0, monthlyLoan: 0 });
-    await mountPage('自分の物件は 1 件');
+    await mountPageOnText('そろった物件');
     const row = Array.from(container.querySelectorAll('tr')).find((tr) =>
       (tr.querySelector('td')?.textContent ?? '').includes('そろった物件'),
     );

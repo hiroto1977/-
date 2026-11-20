@@ -124,8 +124,12 @@ const FUND_ROW: DraftRow = {
   writer: 'parseHoldingEntry',
   why: '「追加」を押したときに書き手が読み、読めない欄を名指しして断る (保存しない)',
 };
+/**
+ * 品目を増やす欄は部品 (`CropListEditor`) が持ち、経営サマリーと水耕栽培の運転管理の 2 画面に
+ * 出る (2026-11-19 —— それまでは経営サマリーの画面の中に書かれていた)。
+ */
 const CROP_ROW: DraftRow = {
-  file: 'renderer/pages/OverviewPage.tsx',
+  file: 'renderer/components/CropListEditor.tsx',
   writer: 'parseCropNumber',
   why: '品目の「追加」を押したときに読む (読めなければ NaN → `addCrop` の `cropIssues` が欄を名指しして断る)',
 };
@@ -151,6 +155,14 @@ const DRAFT_LEDGER: Readonly<Record<string, DraftRow>> = Object.freeze({
   'overview|養液 pH 下限': CROP_ROW,
   'overview|養液 pH 上限': CROP_ROW,
   'overview|パネル穴数 (株/枚)': CROP_ROW,
+  'hydroponics|育苗日数 (日)': CROP_ROW,
+  'hydroponics|定植後日数 (日)': CROP_ROW,
+  'hydroponics|収穫重量 (g/株)': CROP_ROW,
+  'hydroponics|養液 EC 下限 (mS/cm)': CROP_ROW,
+  'hydroponics|養液 EC 上限 (mS/cm)': CROP_ROW,
+  'hydroponics|養液 pH 下限': CROP_ROW,
+  'hydroponics|養液 pH 上限': CROP_ROW,
+  'hydroponics|パネル穴数 (株/枚)': CROP_ROW,
   'hydroponics|養液 EC (mS/cm)': READING_ROW,
   'hydroponics|養液 pH': READING_ROW,
   'hydroponics|養液温度 (℃)': READING_ROW,
@@ -159,6 +171,11 @@ const DRAFT_LEDGER: Readonly<Record<string, DraftRow>> = Object.freeze({
   'hydroponics|CO₂ 濃度 (ppm)': READING_ROW,
   'hydroponics|溶存酸素 (mg/L)': READING_ROW,
   'hydroponics|養液タンク液位 (%)': READING_ROW,
+  'a8net|報酬額': {
+    file: 'renderer/pages/A8netPage.tsx',
+    writer: 'parseA8netReward',
+    why: '「＋ 成果を記録」を押したときに読み、0 以上の整数でなければ断る (保存しない・空欄は 0 円にしない)',
+  },
   'hydroponics|パネル枚数': {
     file: 'renderer/pages/HydroponicsPage.tsx',
     writer: 'parseBatch',

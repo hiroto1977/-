@@ -5,7 +5,8 @@ import { UNDETERMINED } from '../components/Stat';
 import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
 import { useLatestForm, type LatestForm } from '../data/useLatestForm';
-import { busyLatestNote, unreadableForJudgementNote } from '../data/readCollectionNow';
+import { CropListEditor } from '../components/CropListEditor';
+import { useCropList, type ChangeCrops } from '../data/useCropList';
 import { ChangedLatestNote, LatestFormLoading } from '../components/ChangedLatestNote';
 import { fireReported } from '../data/deviceStoreFailure';
 import {
@@ -43,15 +44,12 @@ import { BALANCE_SHEET_COLLECTION, balanceSheetOrNull, currentBalanceSheet, spli
 import { MEMBERS_COLLECTION, type Member } from '../data/members';
 import {
   HYDROPONICS_COLLECTION,
-  HYDROPONIC_CROPS_COLLECTION,
-  cropListFromRecords,
   economicsFromSetup,
   hydroponicsBusinessUnit,
   hydroponicsSetupForm,
   lowPotassiumFromSetup,
   resolveCrop,
   type HydroSetupFieldKey,
-  type HydroponicCropListRecord,
   type HydroponicsSetup,
   type HydroponicsSetupForm,
 } from '../data/hydroponicsSetup';
@@ -73,18 +71,7 @@ import {
   type LowPotassiumParams,
 } from '../../shared/hydroponics';
 import {
-  CROP_FIELD_LABELS,
-  CROP_NUMERIC_FIELDS,
-  DEFAULT_CROP_LIST,
-  addCrop,
   findCrop,
-  isBuiltinCropId,
-  missingBuiltinCrops,
-  parseCropNumber,
-  removeCrop,
-  restoreBuiltinCrops,
-  type CropListChange,
-  type CropNumericField,
 } from '../../shared/hydroponicCrops';
 import { cropIdText, READING_FIELD_SPECS } from '../../shared/hydroponicsControl';
 import { GuardedNumber } from '../components/GuardedNumber';
@@ -364,19 +351,6 @@ const TARGET_SPECS = refusingSpecs('judgement', {
   target: { label: '目標営業利益 (円)', kind: 'money', allowEmpty: true, allowZero: true, min: -1e13 },
 } as const satisfies Record<string, NumSpec>);
 
-/** 品目の入力欄の文字列 (品目名 + 数値の欄)。 */
-type CropDraftForm = Record<'label' | CropNumericField, string>;
-
-/** 選んでいる品目の値を入力欄へ写す (似た品目から少し変えて足すのが普通の使い方)。 */
-function cropDraftFrom(c: HydroponicCrop): CropDraftForm {
-  const draft = { label: '' } as CropDraftForm;
-  for (const f of CROP_NUMERIC_FIELDS) draft[f] = String(c[f]);
-  return draft;
-}
-
-/** 品目の一覧の変更の結果。**当てた一覧** (`before`) も返す —— 消した品目の名前はそこから引く。 */
-type CropChangeOutcome = CropListChange & { readonly before: readonly HydroponicCrop[] };
-
 const cropFieldLabel: React.CSSProperties = {
   fontSize: 11, color: 'var(--text-mute)', display: 'flex', flexDirection: 'column', gap: 2,
 };
@@ -422,7 +396,7 @@ interface HydroponicsPanelProps {
    * (パス 497 / 500)。読めなければ `null`・別の保存と重なり続けたら `'busy'`。表示に使う
    * `crops` (購読の写し) には当てない。
    */
-  changeCrops: (change: (current: readonly HydroponicCrop[]) => CropListChange) => Promise<CropChangeOutcome | 'busy' | null>;
+  changeCrops: ChangeCrops;
 }
 
 function HydroponicsPanel(props: HydroponicsPanelProps) {
@@ -456,59 +430,7 @@ function HydroponicsPanelForm({ setup, crops, lowKParams, changeCrops }: Hydropo
   // 選んだ品目が消されていれば先頭へ寄せる。select の value と試算の品目を
   // 必ず同じにするため、以降は `crop.id` を使う。
   const crop = resolveCrop(cropId, crops);
-  const [draft, setDraft] = useState<CropDraftForm>(() => cropDraftFrom(crop));
-  const [cropNotice, setCropNotice] = useState<string | null>(null);
-  const missingBuiltins = missingBuiltinCrops(crops);
   const savedCrop = current === null ? undefined : findCrop(crops, current.cropId);
-
-  /**
-   * 一覧の増減を**今の一覧**に当てて保存し、当てる前と後の一覧を返す。断られたら文言を出して
-   * null (投げない)。
-   *
-   * ★ 今の一覧は保管層から読み直す (パス 497)。品目の一覧は**まるごと 1 記録**で、変更の
-   * たびに 1 件足して最新を採用する —— 購読の写し (`crops`) に当てていた頃は、別のタブで
-   * 足した品目を知らないまま一覧を丸ごと書き、**その品目が消えた** (lost update・実測)。
-   */
-  const applyCrops = async (
-    change: (current: readonly HydroponicCrop[]) => CropListChange,
-  ): Promise<CropChangeOutcome & { ok: true } | null> => {
-    const r = await changeCrops(change);
-    if (r === null) {
-      setCropNotice(unreadableForJudgementNote('品目の一覧', '今の品目の一覧'));
-      return null;
-    }
-    if (r === 'busy') {
-      setCropNotice(busyLatestNote('品目の一覧'));
-      return null;
-    }
-    if (!r.ok) {
-      setCropNotice(r.issues.join('。'));
-      return null;
-    }
-    return r;
-  };
-  const onAddCrop = async () => {
-    const done = await applyCrops((current) => addCrop(current, {
-      ...draft,
-      ...Object.fromEntries(CROP_NUMERIC_FIELDS.map((f) => [f, parseCropNumber(draft[f])])),
-    }));
-    if (done === null) return;
-    const added = done.crops[done.crops.length - 1]!;
-    setCropId(added.id);
-    setSaved(false);
-    setDraft((d) => ({ ...d, label: '' }));
-    setCropNotice(`「${added.label}」を足して品目に選びました。試算に使うには設定を保存してください。`);
-  };
-  const onRemoveCrop = async (id: string) => {
-    const done = await applyCrops((current) => removeCrop(current, id));
-    if (done === null) return;
-    // 名前は**当てた一覧**から引く (画面の写しの行ではない —— 消したのはそちらの品目である)。
-    setCropNotice(`「${findCrop(done.before, id)?.label ?? id}」を消しました。`);
-  };
-  const onRestoreCrops = async () => {
-    if ((await applyCrops(restoreBuiltinCrops)) === null) return;
-    setCropNotice('参考値の品目を戻しました。');
-  };
 
   /**
    * 設備と費用を保存する。**「保存しました」は保存できてから出す** ——
@@ -601,73 +523,16 @@ function HydroponicsPanelForm({ setup, crops, lowKParams, changeCrops }: Hydropo
         </div>
       </div>
 
-      <details style={{ marginBottom: 10 }}>
-        <summary style={{ fontSize: 12, color: 'var(--text-mute)', cursor: 'pointer' }}>
-          品目を増やす・減らす（現在 {crops.length} 品目）
-        </summary>
-        <div style={{ padding: '8px 0 0', display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <p style={{ color: 'var(--text-mute)', fontSize: 11, lineHeight: 1.6, margin: 0 }}>
-            参考値の {DEFAULT_CROP_LIST.length} 品目は出発点です。自分の品目を足し、使わない品目は消せます
-            （最後の 1 品目は消せません）。値は桁と形だけ確かめます — 正しさは実測で置き換えてください。
-          </p>
-          <ul style={{ margin: 0, paddingLeft: 18, fontSize: 12, lineHeight: 1.9 }}>
-            {crops.map((c) => (
-              <li key={c.id}>
-                {c.label}
-                <span style={{ color: 'var(--text-mute)', fontSize: 11 }}>
-                  {isBuiltinCropId(c.id) ? '（参考値）' : '（追加）'}
-                  育苗 {c.nurseryDays} 日・定植後 {c.growOutDays} 日・{c.harvestWeightG} g/株・パネル {c.plantsPerPanel} 穴
-                </span>{' '}
-                <button
-                  type="button"
-                  disabled={submit.busy || crops.length <= 1}
-                  aria-label={`${c.label} を消す`}
-                  onClick={() => fireReported(submit.run(() => onRemoveCrop(c.id)))}
-                  style={{ fontSize: 11 }}
-                >
-                  消す
-                </button>
-              </li>
-            ))}
-          </ul>
-          {missingBuiltins.length > 0 && (
-            <div>
-              <button type="button" onClick={() => fireReported(submit.run(onRestoreCrops))} disabled={submit.busy} style={{ fontSize: 11 }}>
-                参考値の品目を戻す（{missingBuiltins.map((c) => c.label).join('・')}）
-              </button>
-            </div>
-          )}
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end' }}>
-            <label style={cropFieldLabel}>
-              品目名
-              <input
-                type="text"
-                value={draft.label}
-                aria-label="品目名"
-                onChange={(e) => setDraft((d) => ({ ...d, label: e.target.value }))}
-                style={{ ...settingsInput, width: 150 }}
-              />
-            </label>
-            {CROP_NUMERIC_FIELDS.map((f) => (
-              <label key={f} style={cropFieldLabel}>
-                {CROP_FIELD_LABELS[f]}
-                <input
-                  type="text"
-                  inputMode="decimal"
-                  value={draft[f]}
-                  aria-label={CROP_FIELD_LABELS[f]}
-                  onChange={(e) => setDraft((d) => ({ ...d, [f]: e.target.value }))}
-                  style={settingsInput}
-                />
-              </label>
-            ))}
-            <button type="button" onClick={() => fireReported(submit.run(onAddCrop))} disabled={submit.busy}>
-              この品目を足す
-            </button>
-          </div>
-          {cropNotice && <div role="status" style={{ fontSize: 12, lineHeight: 1.6 }}>{cropNotice}</div>}
-        </div>
-      </details>
+      <CropListEditor
+        crops={crops}
+        changeCrops={changeCrops}
+        seed={crop}
+        onAdded={(added) => {
+          setCropId(added.id);
+          setSaved(false);
+          return `「${added.label}」を足して品目に選びました。試算に使うには設定を保存してください。`;
+        }}
+      />
 
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 10 }}>
         {field('floorAreaSqm')}
@@ -830,31 +695,9 @@ export function OverviewPage() {
   // 水耕栽培: 最新の 1 件を採用する (貸借対照表と同じ扱い)。品目の一覧は
   // 別 collection に持つ (増減のたびに設定の履歴を増やさない)。
   const hydroForm = useLatestForm<HydroponicsSetup, HydroponicsSetupForm>(HYDROPONICS_COLLECTION, hydroponicsSetupForm);
-  const cropCol = useCollection<HydroponicCropListRecord>(HYDROPONIC_CROPS_COLLECTION);
+  const cropList = useCropList();
+  const { crops, changeCrops } = cropList;
   const hydroSetup = hydroForm.latest?.data ?? null;
-  const crops = useMemo(() => cropListFromRecords(cropCol.records), [cropCol.records]);
-  /*
-   * 品目の一覧の変更は**今の最新**に当てる (パス 497)。一覧は「最新の 1 件を採用する」ので、
-   * 写し (`crops`) に当てて丸ごと書くと、別のタブで足した品目を知らないまま上書きして消す。
-   * パス 497 は読み直してから素の `add` で書いており、**読み直しと書き込みの間**に入った変更は
-   * まだ消えた —— 今は比べて足すまでが 1 つの取引 (`applyToLatest`・パス 500)。挟まれたら当て直す。
-   * 断られたときは写しも読み直す (断った理由の品目が画面に見えるように —— `applyToLatest` が読み直す)。
-   */
-  const changeCrops = async (
-    change: (current: readonly HydroponicCrop[]) => CropListChange,
-  ): Promise<CropChangeOutcome | 'busy' | null> => {
-    // 当て直すと `change` は 2 度呼ばれうる —— 答えるのは最後に当てた一覧の結果。
-    const last: { outcome?: CropChangeOutcome } = {};
-    const r = await cropCol.applyToLatest((current) => {
-      const before = cropListFromRecords(current === null ? [] : [current]);
-      const res = change(before);
-      last.outcome = { ...res, before };
-      return res.ok ? { crops: res.crops } : null;
-    });
-    if (r.status === 'unreadable') return null;
-    if (r.status === 'busy') return 'busy';
-    return last.outcome!;
-  };
   // 台帳の数値パラメータ (設定画面で上書きできる)。試算の関数へ引数で渡す —
   // 台帳を読む大域の状態は置かない (`shared/parameters.ts`)。
   const { values: paramValues } = useParameters();
@@ -1781,7 +1624,7 @@ export function OverviewPage() {
         <HydroponicsPanel
           setup={hydroForm}
           crops={crops}
-          cropsReady={!cropCol.loading}
+          cropsReady={!cropList.loading}
           lowKParams={lowKParams}
           changeCrops={changeCrops}
         />

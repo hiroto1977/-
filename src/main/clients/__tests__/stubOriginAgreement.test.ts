@@ -130,9 +130,11 @@ describe('dataOrigin ⇄ fetcher の一致 (外側の証人)', () => {
     // 2026-11-19 実測: inert 22 / fresh 36 / network 21 (計 79) —— ローカル完結
     // バッチ 1・2 で士業 8 件と分析・内部画面 9 件の fetcher が「モジュール定数」から
     // 「毎回組み立てる土台」へ変わり、inert は残る sample 22 件とちょうど一致する。
+    // バッチ 3 で grok・不動産・投資信託が fresh へ、dropbox が network へ移り、
+    // inert 18 / fresh 39 / network 22 (計 79) になる。
     // electron の mock 変更などで**全部が network に倒れる**と上の 2 本は
     // 空配列を比べるだけの空の検査になるので、各バケツに床を置く。
-    expect(n('inert')).toBeGreaterThanOrEqual(20);
+    expect(n('inert')).toBeGreaterThanOrEqual(15);
     expect(n('fresh')).toBeGreaterThanOrEqual(10);
     expect(n('network')).toBeGreaterThanOrEqual(10);
     expect(n('inert') + n('fresh') + n('network')).toBe(SERVICE_IDS.length);

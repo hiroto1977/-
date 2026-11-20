@@ -19,9 +19,13 @@
  *                                **この行を読んで「ブラウザ版はどこにも預からない」と
  *                                判断してはいけない。**
  *   - fetchSnapshot()          → サービスごとに分岐する (stocks / hydroponics /
- *                                ollama / emotions …)。実装の無い物だけが
+ *                                ollama / emotions …)。同梱の内容しか返せない 7 画面は
+ *                                その写しに isMock を重ねて返す (2026-11-19)。実装の無い物だけが
  *                                "not_implemented" に落ち、ページはそこで
  *                                SNAPSHOT[id] (同梱の静的スナップショット) へ戻る。
+ *                                連携先のうちブラウザ版から読めない 14 画面 (GitHub ほか) は、
+ *                                同じ code に「この版では取得できません」の 1 文を載せて返す
+ *                                (`shared/browserFetchReach.ts` —— 画面は失敗として出さない)。
  *                                2026-09-23 (パス 427) に訂正: 「常に
  *                                not_implemented を返す」は偽
  *   - invoke('templates', 'export-template', …)
@@ -69,6 +73,9 @@
 
 import { readFailureBody } from '../shared/httpLimits';
 import { WEB_BUILD_SUFFIX } from '../shared/buildDestinations';
+import { browserFetchUnsupportedNote } from '../shared/browserFetchReach';
+import { originOf } from '../shared/dataOrigin';
+import type { ServiceId } from '../shared/serviceId';
 import { TEMPLATE_CATALOG_FOR_WEB, renderTemplateForWeb } from './web-templates';
 import {
   normalizeTemplateParams,
@@ -87,6 +94,9 @@ import { buildHydroponicsSnapshot } from '../shared/hydroponicsControl';
 import { buildShigyoSnapshot } from '../shared/shigyoTypes';
 import { buildTaxSnapshot } from '../shared/taxSnapshot';
 import { buildComplianceSnapshot } from '../shared/complianceSnapshot';
+import { buildRealEstateSnapshot } from '../shared/realEstateSnapshot';
+import { buildA8netSnapshot } from '../shared/a8netSnapshot';
+import { buildMutualFundsSnapshot } from '../shared/mutualFundsSnapshot';
 import { PROFESSIONAL_IDS } from './data/professionalMap';
 import { MAX_ANALYZE_TEXT_CHARS } from '../shared/emotionsLimits';
 import { clampToCeiling, countChars, refusedCeilingNote } from '../shared/inputCeiling';
@@ -210,6 +220,7 @@ import {
 import { inspectStoredProxyConfig, fetchViaProxy, PROXY_UNVERIFIED_MESSAGE } from './network/proxy';
 import { deviceStoreFailureMessage } from './data/deviceStoreFailure';
 import { liveRead, canLiveRead } from './network/liveRead';
+import { bundledPayloadForBrowser, servesBundledInBrowser } from './data/browserBundledFetch';
 import { AI_PROVIDERS, ANTHROPIC_FAST_MODEL } from '../shared/ai/providers';
 import {
   configForProvider,
@@ -1389,6 +1400,35 @@ const unguarded = {
       return ok(buildComplianceSnapshot()) as ActionResult<T>;
     }
     /*
+     * 不動産投資 (2026-11-19)。返すのは見本を持たない空の土台だけで、
+     * **デスクトップ版と同じ関数**を呼ぶ (`shared/realEstateSnapshot.ts` の
+     * `buildRealEstateSnapshot`)。物件は record store (IndexedDB) に在り、
+     * 画面が自分の物件だけから集計する (税務試算と同じ形)。
+     * ここが無いまま `not_implemented` へ落ちると、取得のたびに「未実装」の
+     * エラーが画面に出る (士業と同じ壊れ方)。
+     */
+    if (serviceId === 'real-estate') {
+      return ok(buildRealEstateSnapshot()) as ActionResult<T>;
+    }
+    /*
+     * 投資信託 (2026-11-19)。返すのは見本を持たない空の土台だけで、
+     * **デスクトップ版と同じ関数**を呼ぶ (`shared/mutualFundsSnapshot.ts` の
+     * `buildMutualFundsSnapshot`)。保有は record store (IndexedDB) に在り、
+     * 画面が自分の保有だけから集計する (不動産と同じ形)。
+     */
+    if (serviceId === 'mutual-funds') {
+      return ok(buildMutualFundsSnapshot()) as ActionResult<T>;
+    }
+    /*
+     * A8.net (2026-11-19)。返すのは見本を持たない空の土台だけで、
+     * **デスクトップ版と同じ関数**を呼ぶ (`shared/a8netSnapshot.ts` の
+     * `buildA8netSnapshot`)。成果は record store (IndexedDB) に利用者が記録し、
+     * 画面が自分の記録だけから集計する (投資信託と同じ形)。
+     */
+    if (serviceId === 'a8net') {
+      return ok(buildA8netSnapshot()) as ActionResult<T>;
+    }
+    /*
      * コネクター / 自動化 (2026-11-19)。カタログは shared/connectors が正で
      * renderer が直接描くので、返すのは空の土台だけ (デスクトップ版の
      * fetcher と同じ形)。実行結果は record store に残り、ページが直接読む。
@@ -1500,6 +1540,17 @@ const unguarded = {
         keysConfigured: { hibp: Boolean(keys.hibp), vt: Boolean(keys.vt) },
       }) as ActionResult<T>;
     }
+    /*
+     * 同梱の内容しか返せない画面 (事業ダッシュボード / 書類スタジオ / 資金調達レーダー / KPI /
+     * Linux / Skills / テンプレート —— `data/browserBundledFetch.ts`)。
+     * ここが無いまま `not_implemented` へ落ちると、「更新」を押すたびに赤い「エラー」と
+     * 「ブラウザ版では live fetch を行いません」が出た (2026-11-19 実測)。返す中身は
+     * `isMock: true` を名乗るので、画面は注記か「同梱データ」の札を出す。
+     */
+    if (serviceId !== undefined && servesBundledInBrowser(serviceId)) {
+      const mod = (await import('./data/snapshot')) as unknown as { SNAPSHOT: Readonly<Record<string, unknown>> };
+      return ok(bundledPayloadForBrowser(serviceId, mod.SNAPSHOT)) as ActionResult<T>;
+    }
     // 資格情報 (と必要ならプロキシ) が揃っていれば、読み取りも実データにする。
     // ここが `not_implemented` を返し続けていたせいで、キーを入れても画面は
     // 永久に同梱サンプルのままだった (Cursor に架空の 3 人が出続けていた)。
@@ -1524,6 +1575,15 @@ const unguarded = {
       // 取れない理由をそのまま返す。ページは snapshot へ落ちるが、
       // 「なぜ実データでないか」は画面に出る。
       return err<T>(res.code, res.message);
+    }
+    /*
+     * 連携先の画面のうち、ブラウザ版から読む実装が無い物 (GitHub ほか 14 画面 —— `shared/browserFetchReach.ts`)。
+     * 落ちる code は下と同じ `not_implemented` だが、文は読んで分かる 1 文にする。取得の hook はこの code を
+     * 失敗ではなく「この実行形態では取得しない」として持ち、画面は赤い「エラー」を出さない (2026-11-19)。
+     */
+    if (serviceId !== undefined) {
+      const unsupported = browserFetchUnsupportedNote('browser', originOf(serviceId as ServiceId), serviceId);
+      if (unsupported !== null) return err('not_implemented', unsupported) as ActionResult<T>;
     }
     return err(
       'not_implemented',

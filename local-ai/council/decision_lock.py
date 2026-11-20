@@ -4,6 +4,11 @@
 意図規則（保存前・議題取り込みの共通）:
 文は「。」と改行で区切り、文の中は読点で節に分ける。
 節の中の禁止行為は、その節の残りで否定・破棄・無効・抵触・取消されていないときだけ命令とする。
+禁止行為が同じ節で防止の動詞の目的語なら、命令ではない。
+防止は、を防ぐ（防ぐためを含む）、防止、抑止、阻止、させない、させず、禁止する、禁じる。
+防止が、ない・しない・解除・やめ・不要・ことなくなら、防止は生きておらず命令は残る。
+「再起動して防ぐ」のように行為自体を命じてから防ぐのは、目的語ではないので命令のまま。
+同じ節の後ろに、別の再起動・起動・停止解除が残っていれば、それが勝つ。
 より後ろの節にある抵触・取りやめ・中止、または同じ行為の否定は、それより前の命令を取り消す。
 破棄・無効は、その節が同じ行為・同じロック対象・「その／それ」を名指しするときだけ前の命令を取り消す。
 別件（椅子の購入、予算の解除など）の破棄は、前の解除命令を取り消さない。
@@ -191,8 +196,129 @@ _COORD_POSITIVE = re.compile(
     r"(?:と|や|および|及び|・|または|か|も)[^、。\n]{0,4}?"
     r"(?:実施|実行|再開|着手|導入|開始|適用|進め|更新|再実装)")
 
+# 禁止行為の直後だけを見る。16字の窓に「防ぐ」を足すと「再起動して防ぐ」まで命令でなくなる。
+_PREVENT_GOVERN = re.compile(
+    r"^(?:[をはも]|の)?(?:未然に|確実に|徹底的に|事前に|あらかじめ)?[「『\"']?"
+    r"(?:防止|抑止|阻止|禁止|禁じ|禁ず|させ(?:ない|ず|ぬ)|"
+    r"防(?:ぐ|ぎ(?!ません)|げ(?!ない|ず|ません)|いだ|いで))"
+)
+_RESTART_ACT = re.compile(
+    r"再構築|再起動|立ち上げ|再開|(?<!ダウン)ロード(?![ァ-ヶーA-Za-z])|開始|起動"
+)
+_OTHER_ACT = re.compile(r"再実装|作り直|書き直|再生成|開き直|実装|着手|改修|更新")
+_ACT = re.compile(
+    r"再構築|再起動|立ち上げ|再実装|作り直|書き直|再生成|開き直|再開|実装|着手|改修|更新|"
+    r"(?<!ダウン)ロード(?![ァ-ヶーA-Za-z])|開始|起動"
+)
+_COMMAND_INFL = re.compile(
+    r"^(?:[をはも])?(?:して|する|します|しろ|せよ|させる|させろ|させよ|し(?!ない|ません|ず))"
+)
+_UNLOCK = re.compile(r"固定停止を解除|停止を解除|停止解除|ロックを?解除|防止を解除|防止解除")
+_REVIVE = re.compile(r"(?:ではな|でない|じゃない|しない|せず|しません|するな(?!ら)|せぬ)")
+
+def _clause_from(sentence, pos):
+    rest = sentence[pos:]
+    cut = len(rest)
+    for sep in "、,，。\n":
+        i = rest.find(sep)
+        if 0 <= i < cut:
+            cut = i
+    return rest[:cut]
+
+def _prevention_withdrawn(rest):
+    """防止の語の直後が、その防止を否定・解除・やめ・不要にしている。"""
+    if not rest:
+        return False
+    if re.match(r"(?:ない|ず(?!る)|ぬ(?!る)|ません|られない|られません)", rest):
+        return True
+    if re.match(r"(?:は|も)?(?:しない|せず|しません|するな(?!ら)|せぬ)", rest):
+        return True
+    if re.match(r"(?:することなく|する事なく|しないまま|しないで|せずに|ことなく|事なく)", rest):
+        return True
+    direct = re.match(r"(?:を|は|が|も)?(?:解除|やめ|止め|中止|撤回|取りやめ|取り消|取消|不要)", rest)
+    if direct and not _REVIVE.match(rest[direct.end():]):
+        return True
+    lifted = re.search(
+        r"(?:設定|策|措置)(?:を|は|も)?(?:解除|やめ|止め|中止|撤回|取りやめ|取り消|取消|不要)",
+        rest,
+    )
+    if lifted and not _REVIVE.match(rest[lifted.end():]):
+        return True
+    return False
+
+def _live_prevention(sentence, act_end):
+    """act_end で終わる行為が、同じ節の直後で生きた防止の目的語なら True。"""
+    rest = _clause_from(sentence, act_end)
+    m = _PREVENT_GOVERN.match(rest)
+    if not m:
+        return False
+    tail = re.sub(r"^[」』\"']+", "", rest[m.end():])
+    return not _prevention_withdrawn(tail)
+
+def _negated_tail(tail):
+    t = tail or ""
+    if re.match(r"(?:[をはも])?(?:しない|しません|せず|するな(?!ら)|せぬ)", t):
+        return True
+    if re.match(r"(?:[をはも])?(?:行わない|行いません|行わず)", t):
+        return True
+    if re.match(r"(?:ない|ぬ(?!る))", t):
+        return True
+    if re.match(r"させ(?:ない|ず|ぬ)", t):
+        return True
+    return False
+
+def _skipped_act(sentence, act_end):
+    if _live_prevention(sentence, act_end):
+        return True
+    return _negated_tail(_clause_from(sentence, act_end))
+
+def _later_unlock(sentence, pos):
+    rest = _clause_from(sentence, pos)
+    m = _UNLOCK.search(rest)
+    if not m:
+        return False
+    return _REVIVE.match(rest[m.end():]) is None
+
+def _later_blocks(sentence, pos):
+    """防止の後ろ、同じ節に、別の再起動・起動・改修・停止解除が残っている。"""
+    rest_end = pos + len(_clause_from(sentence, pos))
+    for m in _RESTART_ACT.finditer(sentence, pos, rest_end):
+        if not _skipped_act(sentence, m.end()):
+            return True
+    for m in _OTHER_ACT.finditer(sentence, pos, rest_end):
+        if _skipped_act(sentence, m.end()):
+            continue
+        if _COMMAND_INFL.match(_clause_from(sentence, m.end())):
+            return True
+    return _later_unlock(sentence, pos)
+
+def _act_prevented(sentence, start, end):
+    """一致した禁止行為が、同じ節で生きた防止の目的語なら True（命令ではない）。
+
+    一致の中に命じられた別の行為がある、または同じ節の後ろに再起動・停止解除が残るなら False。
+    名詞が一致の端で切れていても、直後が「を防ぐ」ならその一致自体が目的語。
+    """
+    blocking = False
+    neutralized = 0
+    for m in _ACT.finditer(sentence, start, end):
+        if _live_prevention(sentence, m.end()):
+            neutralized += 1
+            if _later_blocks(sentence, m.end()):
+                blocking = True
+            continue
+        edge = m.start() == start or m.end() == end
+        if edge or _COMMAND_INFL.match(_clause_from(sentence, m.end())):
+            blocking = True
+    if blocking:
+        return False
+    if neutralized:
+        return True
+    if _live_prevention(sentence, end) and not _later_blocks(sentence, end):
+        return True
+    return False
+
 def _repudiated(sentence, start, end):
-    """この一致が、同じ節の中で否定・破棄・無効・抵触されているなら命令ではない。"""
+    """この一致が、同じ節の中で否定・破棄・無効・抵触・防止されているなら命令ではない。"""
     after = _clause_tail(sentence, end)
     if _COORD_POSITIVE.match(after):
         return False
@@ -200,6 +326,8 @@ def _repudiated(sentence, start, end):
         return False
     if re.match(r"\s*(しなければ|しなければならない|する必要|しなくては)", after):
         return False
+    if _act_prevented(sentence, start, end):
+        return True
     if re.match(r"な(?!い|る|っ)", after):
         return True
     if re.match(r"ない|ぬ(?!る)", after):
@@ -353,6 +481,7 @@ def _bare_unlock_lock(sent, start, frag, default_id):
 # 決定文か議題（context）に停止対象（llama7B / 固定停止 など）が出ているときに限り、
 # 名指しの無い「再構築や起動を実行」「自動再起動設定」「再起動スケジュール」「停止解除」も
 # 停止対象への命令として扱う。文が別のサービスだけを名指ししているときは対象外。
+# 「再起動を防がない」「防止をやめて再起動」は防止ではなく、停止対象があるときだけ命令にする。
 _SUBJECTLESS = re.compile(
     r"(?:再構築|再起動|起動|立ち上げ|再開|復旧)(?:や|と|・|または|および|及び)?"
     r"(?:再構築|再起動|起動|立ち上げ|再開|復旧)?(?:を|は|も)?"
@@ -363,6 +492,13 @@ _SUBJECTLESS = re.compile(
     r"|(?:固定停止|停止)(?:を|の)?解除"
     r"|llama7B[^、。\n]{0,6}?を解除",
     re.I)
+# 防止の否定・取りやめ。生きた「を防ぐ」には当てない（がない・解除・やめて があるときだけ）。
+_NEGATED_PREVENT = re.compile(
+    r"(?:再構築|再起動|立ち上げ|再開|起動)を防(?:がない|げない|ぎません|がず|がぬ)"
+    r"|(?:再構築|再起動|立ち上げ|再開|起動)は防(?:がない|げない|ぎません)"
+    r"|防止を(?:やめ|止め|解除|中止)(?:して|て)?[、,]?(?:再構築|再起動|立ち上げ|再開|起動)"
+    r"|(?:再構築|再起動|立ち上げ|再開|起動)の?防止を(?:解除|やめ|止め|中止)"
+)
 _OTHER_SERVICE = re.compile(
     r"OpenWebUI|Open\s*WebUI|LiteLLM|Ollama|LocalAI|llama-swap|llama1\.5B|llama3B|(?<![0-9.])1\.5B|(?<![0-9])3B(?![A-Za-z0-9])", re.I)
 _CRYPTO_WORD = re.compile(r"dataCrypto|データ暗号|IV|nonce|ノンス|getRandomValues|09:27", re.I)
@@ -384,13 +520,14 @@ def _subjectless_orders(sent, lock, topic):
     if _CRYPTO_WORD.search(sent):
         return []
     out = []
-    for m in _SUBJECTLESS.finditer(sent):
-        if _subjectless_dead(sent, m.start(), m.end()):
-            continue
-        out.append({
-            "lid": lock["id"], "fam": "llama", "start": m.start(), "end": m.end(),
-            "frag": m.group(0), "hit": _hit(lock, m.group(0), topic), "placed": False,
-        })
+    for rx in (_SUBJECTLESS, _NEGATED_PREVENT):
+        for m in rx.finditer(sent):
+            if _subjectless_dead(sent, m.start(), m.end()):
+                continue
+            out.append({
+                "lid": lock["id"], "fam": "llama", "start": m.start(), "end": m.end(),
+                "frag": m.group(0), "hit": _hit(lock, m.group(0), topic), "placed": False,
+            })
     return out
 
 def _sentence_orders(sent, topic, joined=None, doc_anchor=False):

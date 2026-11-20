@@ -216,6 +216,13 @@ const VERDICTS = {
     + '`linearIntakeNote` → null / `linearScopeNote` → null / `viewerRead` `issuesRead` の false) の'
     + '**消費者はどれも LinearPage 1 つだけ**で、その画面は両ビルドで同じ 1 本のソースである。'
     + '読めなかった優先度と期限は「読めません」・読めなかった一覧と断りは ⚠ の 1 文で、どちらのビルドでも同じ文になる',
+  'api/dropbox':
+    '対称 (実測・2026-11-19) —— 両ビルドが同じ `fetchDropboxSnapshotWith` を呼び (main は clients/dropbox.ts、'
+    + 'ブラウザ版は network/liveRead.ts)、否定を返す物 (`normalizeDropboxAccount` の read → false / '
+    + '`normalizeDropboxSpace` の usedBytes・allocatedBytes → null と read → false / `normalizeDropboxEntries` の read → false / '
+    + '`dropboxModifiedDate` → null / `dropboxUsagePct` → null / `dropboxIntakeNote` → null) の'
+    + '**消費者はどれも DropboxPage 1 つだけ**で、その画面は両ビルドで同じ 1 本のソースである。'
+    + '読めなかった容量は「容量不明」・アカウントは「アカウント名不明」・読めなかった照会は ⚠ の 1 文で名指しし、どちらのビルドでも同じ文になる',
   'api/sentry':
     '対称 (実測・2026-11-18) —— 両ビルドが同じ `fetchSentrySnapshotWith` を呼び (main は clients/sentry.ts、'
     + 'ブラウザ版は network/liveRead.ts)、否定を返す物 (`sentryLevel` → null / `sentryCount` → null / `lastSeen` の null / '

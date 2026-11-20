@@ -101,6 +101,11 @@ export const SAMPLES: Readonly<Record<string, Sample>> = {
     required: ['member', 'title', 'hoursPerWeek'],
     optional: ['note'],
   },
+  'a8net-rewards': {
+    good: { month: '2026-11', program: '動画配信サービス 登録', amount: 1200, status: 'confirmed' },
+    required: ['month', 'program', 'amount', 'status'],
+    optional: [],
+  },
   'realestate-properties': {
     good: { name: 'A', type: 'apartment', monthlyRent: 100, purchasePrice: 1000, occupied: true, monthlyExpenses: 1, monthlyLoan: 2 },
     required: ['name', 'type', 'monthlyRent', 'purchasePrice', 'occupied'],

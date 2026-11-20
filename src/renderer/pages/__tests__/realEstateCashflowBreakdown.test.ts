@@ -109,7 +109,7 @@ describe('不動産投資 — 月次キャッシュフロー内訳は、出た�
       monthlyExpenses: 20_000.6,
       monthlyLoan: 30_000.7,
     });
-    await mountPage('自分の物件は 1 件');
+    await mountPage('端数の物件');
     const c = breakdownCells();
     const rent = yenOf(c['家賃収入 (実績、空室除外)']);
     const expenses = yenOf(c['運営費用']);
@@ -125,11 +125,20 @@ describe('不動産投資 — 月次キャッシュフロー内訳は、出た�
     await waitForText(text, `月次キャッシュフロー${c['純キャッシュフロー']}`);
   });
 
-  it('対照: 整数の円だけなら、今までどおり合う (見本 4 件のみ)', async () => {
-    await mountPage('見本');
+  it('対照: 整数の円だけなら、今までどおり合う (登録 4 件のみ)', async () => {
+    // かつての同梱見本 4 件と同じ数字を、利用者の登録として置く
+    // (2026-11-19 のローカル完結バッチ 3 で見本は外れ、画面は空から始まる)。
+    const rows = [
+      { name: '渋谷区マンション 1LDK', type: '区分所有', monthlyRent: 168_000, purchasePrice: 42_000_000, occupied: true, monthlyExpenses: 168_000, monthlyLoan: 412_000 },
+      { name: '横浜市戸建て', type: '一棟', monthlyRent: 235_000, purchasePrice: 45_400_000, occupied: true, monthlyExpenses: 0, monthlyLoan: 0 },
+      { name: '大阪市ワンルーム', type: '区分所有', monthlyRent: 72_000, purchasePrice: 15_700_000, occupied: false, monthlyExpenses: 0, monthlyLoan: 0 },
+      { name: '札幌市アパート 6 戸', type: '一棟', monthlyRent: 420_000, purchasePrice: 62_000_000, occupied: true, monthlyExpenses: 0, monthlyLoan: 0 },
+    ];
+    for (const r of rows) await getRecordStore().insert(PROPERTIES_COLLECTION, r);
+    await mountPage('札幌市アパート 6 戸');
     const c = breakdownCells();
     const [rent, expenses, loan, net] = LABELS.map((l) => yenOf(c[l]));
     expect(rent! + expenses! + loan!).toBe(net);
-    for (const l of LABELS) expect(c[l], l).not.toContain('.'); // 見本は整数の円
+    for (const l of LABELS) expect(c[l], l).not.toContain('.'); // 登録は整数の円
   });
 });

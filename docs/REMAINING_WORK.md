@@ -1,5 +1,154 @@
 # Service Hub — 残りの作業手順書
 
+## 資格情報が無い連携先 22 画面の「更新」を案内に替えて、測って残した物 (2026-11-19)
+
+- **やったこと**: 連携先 (`remote`) の 22 画面は、どれも取得に資格情報を使う (`credentialUse` が `fetch`)。資格情報が無いまま「更新」を押すと橋は必ず断り、
+  画面は赤い「エラー」+「表示中の数字は同梱のサンプルです」+「資格情報が未登録です…」(デスクトップ版は「トークン未設定」) を出していた。
+  いまは資格情報が無い間「更新」を出さず、灰色の案内を 1 つ出す (「資格情報を登録すると、実データに切り替わります。表示しているのは見本です。」——
+  `shared/fetchNeedsCredential.ts`)。登録の欄は出たまま。登録するとその場で「更新」が出て取得が走る。両ビルドに効く。
+- **取得の hook と橋は変えていない**: `not_configured` は今も `error` + 種別 `auth`。登録済みなのに断られる場合 (期限切れ・保管庫の施錠・壊れた保存値) は
+  赤い文が今までどおり出る (そのとき灰色の案内は重ねない・「更新」は出さない)。「未登録」の赤い文が出うる道は、画面が自分で再取得する所
+  (書き込みの操作の後 —— 連携先では Notion / Drive / Calendar / Microsoft 365 の 4 画面) に残る。その操作自体に資格情報が要るので未登録では届かない見立てだが、実機では確かめていない。
+- **登録済みの一覧を読めなかったときも「登録すると…」と言う (測った・直していない)**: 取得の hook は、一覧 (`listConfigured`) が投げたとき
+  `isConfigured` を `false` にして端末の保存の知らせ (`reportDeviceStoreFailure`) を出す。状態バーが受け取るのは真偽だけなので、
+  「読めなかった」と「登録していない」を見分けられず、案内は「登録すると…」になり「更新」は出ない。直す前は「更新」を押すと橋の理由 (保管ファイルが読めない等) が赤で出た。
+  いまその理由は端末の保存の知らせと、登録し直そうとしたときの断りにだけ出る。分けるなら hook が 3 つ目の状態 (分からない) を返し、22 画面がそれを渡す。
+- **開いた直後の一瞬**: 登録済みの画面でも、一覧の答えが届くまでの間は案内が出て「更新」が無い (届いた時点で替わる)。直す前も同じ間、設定ボタンの札は未登録の札だった。
+  実機で何 ms かは測っていない。
+- **9 画面は `errorKind` を状態バーへ渡していない (測った・直していない)**: Dropbox / Discord / Asana / Linear / Sentry / Stripe / LINE / BASE / Cursor は、
+  登録済みで断られたとき (期限切れほか) の札が「認証エラー」ではなく「エラー」になり、登録の欄も自動では開かない。残る 13 画面は渡している。
+- **ブラウザ版の読める 8 画面は、登録の後にプロキシも要る**: 案内は「登録すると実データに切り替わります」と言うが、ブラウザ版ではプロキシの登録も要る
+  (8 画面とも自分の注記でそう述べている)。プロキシが無いまま登録すると、取得は「プロキシが必要です」の赤い文になる (これは今までどおり)。
+- **測っていない物**: デスクトップ版 (Electron) の実機・社外向けポータル (`e2e:portal`)・案内の文の読みやすさ (利用者に確かめていない)。
+
+## ブラウザ版で実データを読めない連携先 14 画面の「更新」を案内に替えて、測って残した物 (2026-11-19)
+
+- **やったこと**: ブラウザ版の連携先 22 画面のうち、実データを読めない 14 画面 (GitHub / WordPress / Atlassian / Notion / Google Drive / Calendar / Gmail / Slack / Canva /
+  Cloudflare / Microsoft 365 / BASE / YouTube / freee) は、「更新」を押すと赤い「エラー」+「表示中の数字は同梱のサンプルです」+
+  「ブラウザ版では live fetch を行いません。同梱の snapshot を使用します。」を出していた (資格情報を保存していると開いただけで出た)。
+  いまは「更新」を出さず、押す前から灰色の案内を 1 つ出す (`shared/browserFetchReach.ts` —— 橋・hook・状態バーが同じ判定と同じ 1 文を読む)。
+  取得の hook は `not_implemented` を失敗ではなく `unsupported` として持つ。
+- **読める 8 画面の「未登録」は赤い「エラー」で出ていた (同日の次の作業で直した —— 上の節)**: Cursor / Stripe / Asana / LINE / Linear / Sentry / Discord / Dropbox で
+  資格情報を入れずに「更新」を押すと、札が「エラー」になり、「表示中の数字は同梱のサンプルです」と「資格情報が未登録です。登録すると実データに切り替わります。」が赤で出る。
+  デスクトップ版の連携先も同じ扱い (`not_configured` は `error` + 種別 `auth`)。画面が `errorKind` を状態バーへ渡していれば札は「認証エラー」になり入力欄が開くが、
+  実測ではこの 8 画面とも「エラー」だった (渡していない)。「まだ登録していない」を赤で言うのが適切かは決めていない —— 変えるなら両ビルドに効く
+  (`not_configured` には期限切れ・保管庫の施錠・壊れた保存値も入るので、未登録だけを分けるには橋の code を分ける必要が在る)。
+- **BASE / YouTube / freee は、ブラウザ版で資格情報の使い道が無い (測った・直していない)**: 14 画面のうち 11 は書き込みの操作 (Issue の作成・下書きの作成ほか) に
+  資格情報を使うが、この 3 画面はブラウザ版に読み取りも書き込みも無い (`web-shim.ts` の `invoke` に枝が 0 件)。それでも資格情報の欄は出る。
+  案内 (「取得はデスクトップ版の機能です」) は出るようになったが、欄そのものは隠していない (デスクトップ版の「読み手のいない保管先へ書かせない」= パス 455 の裏返し)。
+- **Google 3 画面と Microsoft 365 は、同じ事を 2 か所で言う**: この 4 画面は自分の注記 (「実データの取得はデスクトップ版の機能です…」) を前から持つ。
+  状態バーの案内と内容は矛盾しないが、同じ事実が 2 度出る (どちらかへ寄せるかは決めていない)。
+- **Ollama の画面**: 起動していないと「エラー」+「● Not running」の下に「表示中の数字は同梱のサンプルです（まだあなたのデータではありません）」が出る (前の節のまま・直していない)。
+- **写しが 1 つ増えた**: 読める連携先の一覧 (`BROWSER_LIVE_READ_SERVICES` · 8 件) は `LIVE_READERS` の鍵の写しである。`StatusBar` は社外向けポータルにも入るので
+  `renderer/network/` を取り込めない。両方向の一致は `browserRemoteFetchReach.test.ts` が見る (読める連携先を足すときは 2 か所に足す)。
+- **測っていない物**: デスクトップ版 (Electron) の連携先の画面 (主プロセスは触っていない —— 実在するサービスに主プロセスが `not_implemented` を返す道は今日無い —— 取得の表は全サービスを持つ)・
+  社外向けポータル (状態バーが `useBuildKind` を読むようになった。ポータルの画面に連携先は無いので案内は出ない見立てだが、実機の `e2e:portal` は回していない)・
+  案内の文の読みやすさ (利用者に確かめていない)。
+
+## ブラウザ版の「更新」で赤い失敗が出る 7 画面を直して、測って残した物 (2026-11-19)
+
+- **やったこと**: ブラウザ版で「更新」を押すと赤い「エラー」+「ブラウザ版では live fetch を行いません」+「表示中の数字は同梱のサンプルです」が出る画面を直した。
+  下の A8.net の節は「5 つ」と書いたが、`local` の全画面で押し直すと **7 つ**だった (事業ダッシュボード / 書類スタジオ / 資金調達レーダー / KPI / Linux / Skills / テンプレート ——
+  前回の探りは 12 画面しか押しておらず、事業ダッシュボードとテンプレートを押していなかった)。事業ダッシュボードと Skills は API キーを保存していると**開いただけで**出た
+  (鍵が在ると自動で取得する)。
+- **直し**: `web-shim.ts` の `fetchSnapshot` に枝を 1 つ足した。7 画面は同梱の内容 (`SNAPSHOT[id]`) の写しに `isMock: true` を重ねて返す
+  (`renderer/data/browserBundledFetch.ts`)。5 つ (business / docstudio / funding / kpi / templates) はデスクトップ版の fetcher も同梱の値を返して `isMock` を名乗る。
+  2 つ (linux / skills) はデスクトップ版が端末を読む画面で、ブラウザ版は読めないので同梱の内容 (Linux は見本の値・Skills は空の一覧) しか返せない ——
+  **緑の「ローカル」を付けないよう**、Linux と Skills の画面が `payloadIsMock` を状態バーへ渡し、札は「同梱データ」になる。
+- **札は画面ごとの既存の扱いのまま**: 資金調達レーダー / Linux / Skills は「同梱データ」。事業ダッシュボード / KPI は自分の注記 (「模擬データ表示中」) で言い、
+  書類スタジオ / テンプレートは数字を持たないので、札は「ローカル」(デスクトップ版と同じ —— `mockPayloadPolicy.test.ts` の台帳)。
+  **事業ダッシュボードと KPI の緑の「ローカル」は、同梱の値に対して付いている** (注記は出ているが札は緑) —— デスクトップ版も同じで、この PR では変えていない。
+  札も「同梱データ」に揃えるなら、2 画面が `payloadIsMock` を渡し、台帳を `notice` から `badge` へ移す (両ビルドに効く)。
+- **母集団の機械**: `browserRefreshReachable.test.ts` が、サイドバーの画面のうち取得の hook の `refresh` を状態バーへ渡している `local` の画面を走査で導き
+  (実測 20 画面・床 15)、実物の shim が `not_implemented` を返さないことを見る。**見えない物**: 状態バーを子の部品が描く画面 (士業 8 画面) は綴りが画面のファイルに無いので入らない。
+- **`remote` の画面は直していない (測っていない)**: ブラウザ版で実データを読めるのは `LIVE_READERS` の 7 サービスだけで、それ以外の `remote` の画面
+  (GitHub ほか) は資格情報を保存して「更新」を押すと同じ `not_implemented` へ落ちる。画面ごとに「実データの取得はデスクトップ版の機能です」の断りが在るかは数えていない。
+- **Ollama の画面**: 起動していないと「エラー」+「● Not running」が出る (これは正しい) が、その下に「表示中の数字は同梱のサンプルです（まだあなたのデータではありません）」も出る。
+  Ollama の画面に同梱の数字は無いので、この 1 文は的外れである (直していない)。
+- **`local` で枝の無いサービスは 12 残る** (assistant / charts / grok / home / library / mentor / overview / sales / settings / team / village / vrio)。
+  10 は状態バーを持たず、ライブラリと設定は自前の読み直しを「更新」に渡すので、利用者には失敗が見えない (実機で確かめた)。
+- **測っていない物**: デスクトップ版 (Electron) の 7 画面 (主プロセスは触っていない)・Linux の画面でブラウザが実際に知れる値 (論理コア数など) を出すこと (見本と実測が混ざるので足していない)。
+
+## A8.net の画面を「自分の成果の記録」へ (2026-11-19 · sample → local) —— 測って残した物
+
+- **やったこと**: A8.net の画面は同梱の見本 3 件を「内蔵サンプル」として並べるだけだった。A8.net にメディア会員向けの公開 API は無い
+  (成果は管理画面と CSV だけ) ので、つなぐのではなく**利用者が自分の成果を 1 件ずつ記録する**画面にした (発生月・プログラム名・報酬額・状態)。
+  確定 / 未確定 / 否認の合計と月ごとの表を出し、一覧で状態を変え、× で消せる。記録は端末の中 (collection `a8net-rewards`) だけに在り、A8.net へは何も送らない。
+  `SERVICE_DATA_ORIGIN.a8net` は `sample` → `local` (残る `sample` は **17 件**)。
+- **「更新」を押すと赤い失敗が出る `local` の画面が 5 つ在る (実機で測った・直していない)**: ブラウザ版 (LITE・412×915) で「更新」を押すと、
+  A8.net / 税金 / 投資信託 / 税理士 / 水耕栽培は「ローカル」になるが、**KPI / 資金調達レーダー / Linux / Skills / 書類スタジオ**は
+  「エラー」+「ブラウザ版では live fetch を行いません。同梱の snapshot を使用します。」+「表示中の数字は同梱のサンプルです（まだあなたのデータではありません）」と出る。
+  その 5 画面は `local` を名乗り「更新」ボタンを持つのに、`web-shim.ts` の `fetchSnapshot` に枝が無い (`not_implemented` へ落ちる)。
+  後ろの 1 文は、自分の記録を出している画面 (KPI) に対しては偽である。**次の PR の候補** —— 直す向きは 2 つ在り測ってから決める:
+  枝を足す (デスクトップ版の fetcher と同じ土台を返す) か、端末内の記録だけを出す画面から「更新」を外す。
+- **shim の harness で測った母集団**: `SERVICE_DATA_ORIGIN` が `local` の 40 サービスについて、ブラウザ版の `fetchSnapshot` を直接呼ぶと
+  **20 件が ok を返さない** (assistant / business / charts / docstudio / funding / grok / home / kpi / library / linux / mentor / overview / sales /
+  settings / skills / team / templates / village / vrio は `not_implemented`・ollama は `ollama_not-running`)。大半は「更新」ボタンを持たない画面か
+  `autoFetch` しない画面なので利用者には見えない —— 見えるのは上の 5 つ (vrio / grok は状態バーを持たない)。
+  だから検査 (`webShimSnapshotBranches.test.ts`) は「`local` はすべて ok」ではなく **A8.net の枝**と対照 1 件 (`sample` は `not_implemented`) に絞った。
+- **測っていない物**: デスクトップ版 (Electron) の A8.net の画面・`<input type="month">` を持たないブラウザ (Safari の旧版ほかは素のテキスト欄になる ——
+  入口は `YYYY-MM` を要求して断るので誤った月は入らないが、打ち方の案内は断りの文だけ)・CSV の取り込み (A8.net の成果 CSV の列は確かめていないので足していない)・
+  記録が数百件を超えたときの描画 (一覧は `useRowWindow` で窓にしている)・別のタブで同じ成果の状態を同時に変える場合 (状態の変更は `edit` で、
+  相手の行が消えていれば断る —— 中身を比べる口 `editIfUnchanged` は通していない。変えるのは状態の 1 欄だけなので他の欄を戻さない)。
+- **追加した後に残す欄**: 発生月と状態は残し、プログラム名と報酬額だけ空にする (同じ月の成果を続けて入れるため)。使い勝手は利用者に確かめていない。
+- **浮いた 🤖 ボタンが一覧の行の右端に重なる**: スマホ幅で、画面右下の AI コンシェルジュの入口が一覧の 1 行の右端 (× ボタンの近く) に重なる位置に来る。
+  全画面に共通の配置で、この PR では触っていない (スクロールすれば押せる)。
+- **Amazon アソシエイトも同じ形で実用化できる**: 公開 API (PA-API) は売上実績が要るので当面つなげない。成果の記録の型 (`a8netRewards.ts`) をそのまま写すのではなく、
+  2 つ目が要るときに共有へ出す (法則 `center-then-count-callers`)。
+
+## 実機の検査を端末内の記録になった画面に合わせる (2026-11-19) —— 測って残した物
+
+- **やったこと**: 実機の検査 (`scripts/e2e/core.cjs`) の 6 suite (`desktop` / `dataOrigin` / `credential` / `kessanTax` / `demoMix` / `serviceAdvice`) が、
+  士業 (#951)・不動産と投資信託と Dropbox (#959) の変更の後も同梱の見本が在る前提のままだった。39 suite を 1 つずつ回して洗い出し、今の画面に合わせた。
+  下の「士業 8 画面のローカル化」の節の「実機の確認はしていない」は、`desktop` suite の士業の段 (追加・相談の記録・状態の変更・他の士業へ漏れない) については済んだ。
+- **アプリの欠陥を 1 件直した**: 登録が 0 件の不動産・投資信託で「改善提案」を押すと内部の欄名の赤い失敗が出た。押す前に言ってボタンを押せなくした
+  (`adviceNotReadyNote`)。Uber Eats の文 (「店舗の数字がまだ無いため…」) は今日届く道が無い (店舗は同梱の見本で必ず在る) —— 見本が外れた日のために置いた。
+- **e2e は CI が既定では回さない** (`run-e2e` の札か手動) —— だから main の実機の検査は、画面を変えた PR が回さなければ古びる。今回は 2 つの PR (#951 / #959) の後に
+  合わせて 6 suite が古くなっていた。画面の文言や見本を動かす PR は、動かした画面の suite だけでも `SERVICE_HUB_E2E_ONLY=<suite>` で回す。
+  1 つの suite が止まると後ろの suite は走らないので、洗い出すときは suite を 1 つずつ別々に回す (39 suite で約 12 分)。
+- **「内蔵サンプル」の標本はストレージ、「読み手のいない資格情報」の標本は Salesforce**: どちらも当面は見本のままの画面を選んだ。
+  その画面を実データへ移す日は、標本をまた移す (残る `sample` は下の「投資・連携 4 件の実用化」の節の 18 件)。
+- **書き直した実機の主張の対照は回していない**: アプリを書き換えて組み直す対照 (見本を戻す) は回していない。在るのは逆向きの実測だけ
+  (見本が在る前提の旧い検査は今のアプリで落ちた)。
+- **デスクトップ版 (Electron) の士業・不動産・投資信託の画面は見ていない**: 実機の検査はブラウザ版の 2 つ (FULL / LITE) だけを開く。
+- **士業の書類の欄 (やり取り中の書類) は実機で押していない**: `desktop` suite が押すのは連携先と相談まで。書類の追加と削除は jsdom の検査が見る範囲。
+- **投資信託の「積立シミュレーション」ほかの試算の数字は、登録 0 件でも既定の入力から出る** (¥12,174,135 など) —— 見本ではなく画面の入力欄の既定値からの計算だが、
+  何も登録していない人が自分の数字と取り違えないかは測っていない。
+
+## 投資・連携 4 件の実用化 (2026-11-19 · ローカル完結バッチ 3) で測って残した物
+
+- **やったこと**: grok / real-estate / mutual-funds を `sample` から `local` へ、dropbox を
+  `sample` から `remote` へ移した。宣言は **remote 22 / local 39 / sample 18** (計 79)。
+  - **grok**: 画面は元々 provider の実状態で動いていたのに fetcher だけ stub だった。台帳
+    (`shared/aiProvidersCatalog`) 由来の土台を `shared/grokSnapshot.ts` の `buildGrokSnapshot`
+    に出し、vrio と同じ形 (async fetcher + web-shim 分岐 + SNAPSHOT 共有) にした。xAI の
+    API キーは使わない (本人が API キー方式を見送った判断のまま。鍵が無ければ画面は
+    今までどおり状態を正直に出す)。
+  - **real-estate / mutual-funds**: 見出し集計は元々 record store の自分の登録から純関数で
+    導かれていたが、同梱見本 (物件 4 件 / 銘柄 4 件) が土台に混ざっていた。土台の組み立てを
+    `shared/realEstateSnapshot.ts` / `shared/mutualFundsSnapshot.ts` へ出し (空の土台)、
+    見本を外した。合計は自分の登録そのままになり、見本混ざりの断りは出なくなる。
+    書類スタジオの参考別紙も SNAPSHOT の見本から record store の登録へ配線し直した。
+    BusinessPage の横断 KPI (不動産の取得価格合計) は見本ぶんが消えて 0 起点になる
+    (バッチ 1 の士業顧問料と同じ扱い)。
+  - **dropbox**: 読み取り専用の LIVE 連携を新設 (`shared/api/dropbox.ts`、Dropbox API v2 の
+    POST 3 照会: アカウント / 容量 / 最近のアイテム)。main は薄い入口、ブラウザ版は
+    liveRead (`.mamori` を編集し再生成、能力台帳に externals を 1 行追加) 経由でプロキシを
+    通す。`credentialUse` は 'fetch'。書き込みは持たない。
+- **dropbox の残りは本人の 1 回だけの操作**: Dropbox App Console で自前アプリを作成し
+  (権限は `account_info.read` / `files.metadata.read` の読み取りだけ)、発行される
+  アクセストークンを Dropbox 画面のトークン欄 (Vault) に登録する。ブラウザ版では
+  プロキシの許可リストに `api.dropboxapi.com` も要る。トークンが無い間は見本 + 未接続
+  バッジで、実データと取り違える表示にはならない。
+- **床を 2 つ実態へ合わせた**: sample が 18 件になったので `sampleOriginDisclosure` の床を
+  20 → 15 へ、`stubOriginAgreement` の inert の床を 20 → 15 へ下げた (実測 inert 18 /
+  fresh 39 / network 22 で、宣言 sample 18 / local 39 / remote 22 と一致)。
+  mutation-scope の bare pragma 台帳も追随した (real-estate / mutual-funds の STUB 撤去で各 4 → 3)。
+- **残る sample は 18 件**: 原理的に繋げないもの (uber-eats / demae-can / tiktok /
+  moneyforward / ai-blogkun / 卸 3 件)、資格情報・本人操作が前提のもの (salesforce /
+  amazon 系 / a8net / coconala / shopify (ストア削除済み))、別機能が前提のもの
+  (quality / storage / obsidian / docker — Electron の main 機能が要る Phase 6 側)。
+
 ## 分析・内部画面 9 件のローカル化 (2026-11-19 · ローカル完結バッチ 2) で測って残した物
 
 - **やったこと**: charts / sales / team / mentor / vrio / overview / tax / compliance / connectors の
@@ -82,6 +231,18 @@
   検査の不足 (途中の `www.`・後ろだけ一致する名前・`mailto:` の行き先・`.` の無い行き先・差出人の後ろに続く字・`xhttp://`・空のホスト・件名と本文のつなぎ目) は標本を足した。
   ★ 差出人の読みは振る舞いを 1 つ強くした: `表示名 <アドレス>` の後ろに字が続く形・前に別の `<…>` が在る形でも、最後の `<アドレス>` と表示名を比べる (以前は比べずに通していた)。
   2 度目 **99.76% (生存 1 —— 件名と本文のつなぎ目)** → 標本を足して 3 度目に `inboundWatch.ts` を単独で測り直し、3 本とも `mutate` へ入れた (357 → 360)。
+
+## 水耕栽培の運転管理の画面で品目を増やす・減らす —— 測って残した物 (2026-11-19)
+
+- **何を足したか**: 運転管理の画面の「栽培ロット」の節 (ロットの品目の選択の上) に「品目を増やす・減らす」。経営サマリーの試算の欄と同じ部品 (`CropListEditor`) で、
+  同じ 1 つの記録 (`hydroponics-crops`) を読み書きする。
+- **残した物 (測った)**:
+  - **品目を消しても、その品目のロットは残る**。残ったロットは品目を引けないので予定日が出ず、表は「(id — 見つかりません)」と出す。運転管理の画面では消した所でそう言うが、
+    **経営サマリーの側から消したときは言わない** (あちらはロットを読んでいない)。参考値の品目は「参考値の品目を戻す」で戻り、ロットの予定日も戻る。
+    利用者が足した品目は、消すと同じ id では戻せない (足し直すと新しい id になる) —— そのロットの予定日は戻らない。消す前に断る形 (ロットが在る品目は消せない) にはしていない。
+  - **品目の中身を直す口は無い** (足すか消すかだけ)。育苗日数を直したいときは、似た品目を足して古い方を消すことになる (ロットは古い id を指したまま)。
+  - 実機で確かめたのは「足すとロットの品目に選ばれる」「消すと選択肢から消える」の 2 件。ロットの在る品目を消したときの文は jsdom の検査だけ。
+  - スマホ幅 (412px) で欄を開いた姿は、検査用の Chromium で 1 度測っただけ (実機の `opened` suite は欄を閉じたまま測る)。
 
 ## 養蜂・養殖 (海水魚・淡水魚) を水耕栽培の画面へ足して、測って残した物 (2026-11-18)
 
@@ -32954,7 +33115,7 @@ src/shared/ のモジュール                                        138
 「読んだ結果」か `未読 (…)` のどちらかで、読んでいない物に「対称だろう」とは書かない。
 
 <!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/shared-judgement-census.cjs。npm run lint:shared-judgement は check だけ) -->
-shared **197** モジュール / 両ビルドが import **108** / うち否定で答えられる **54**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
+shared **203** モジュール / 両ビルドが import **112** / うち否定で答えられる **55**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
 
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |
@@ -32965,12 +33126,13 @@ shared **197** モジュール / 両ビルドが import **108** / うち否定�
 | `api/asana` | 1 | 3 | 対称 (実測・2026-11-18) —— 両ビルドが同じ `fetchAsanaSnapshotWith` を呼び (main は clients/asana.ts、ブラウザ版は network/liveRead.ts)、否定を返す物 (`asanaDue` の dueOn → null と dueRead の false / `asanaIntakeNote` → null / `asanaScopeNote` → null / `meRead` `tasksAsked` `tasksRead` の false / `buildAsanaSnapshot` に渡す null = 照会しなかった) の**消費者はどれも AsanaPage 1 つだけ**で、その画面は両ビルドで同じ 1 本のソースである。読めなかった期限は「期限が読めません」・読めなかった一覧は ⚠ の 1 文で、どちらのビルドでも同じ文になる |
 | `api/cloudflare` | 1 | 1 | 対称 (実測・2026-09-19 パス 321) —— 欄の判定 (`checkDnsRecord` / `checkPurge`)・本文・URL・封筒 (`readCloudflareEnvelope`: `success !== true` を断る) を両ビルドが同じ関数で通る。それまで封筒の条件は main が falsy・ブラウザ版が `!== true` と違い、文も 「unknown Cloudflare error」/「unknown error」で割れていた (`CLOUDFLARE_UNKNOWN_ERROR` の 1 つへ)。断りの後は両ビルドとも投げる: main は serviceId つきの FetchError `cloudflare <message>`、ブラウザ版は Error `Cloudflare: <message>` —— 運び方 (例外の型) だけが流儀。main の読み (user / zones) も同じ封筒の判定と `CLOUDFLARE_API` を通る |
 | `api/cursor` | 1 | 3 | 対称 (実測・パス 250 / パス 263 で 1 → 3 に増えた) —— 両ビルドが同じ `fetchCursorSnapshotWith` を呼び (main は clients/cursor.ts、ブラウザ版は network/liveRead.ts)、否定を返す 3 つ (`acceptRateOf` → null / `buildCursorSnapshot` の totals 3 欄 → null / `cursorIntakeNote` → null) の**消費者はどれも CursorPage 1 つだけ**で、その画面は両ビルドで同じ 1 本の ソースである (renderer は 1 つ)。パス 263 で足した `readRows` の `read: false` は**このモジュールの外へ出ない** (`normalizeMembers` / `normalizeUsage` / `normalizeSpend` が `state` に畳んでから返す)。応答の上限も MAX_PROXY_RESPONSE_BYTES = MAX_HTTP_RESPONSE_BYTES で 1 つ |
+| `api/dropbox` | 1 | 3 | 対称 (実測・2026-11-19) —— 両ビルドが同じ `fetchDropboxSnapshotWith` を呼び (main は clients/dropbox.ts、ブラウザ版は network/liveRead.ts)、否定を返す物 (`normalizeDropboxAccount` の read → false / `normalizeDropboxSpace` の usedBytes・allocatedBytes → null と read → false / `normalizeDropboxEntries` の read → false / `dropboxModifiedDate` → null / `dropboxUsagePct` → null / `dropboxIntakeNote` → null) の**消費者はどれも DropboxPage 1 つだけ**で、その画面は両ビルドで同じ 1 本のソースである。読めなかった容量は「容量不明」・アカウントは「アカウント名不明」・読めなかった照会は ⚠ の 1 文で名指しし、どちらのビルドでも同じ文になる |
 | `api/line` | 1 | 3 | 対称 (実測・2026-11-18) —— 両ビルドが同じ `fetchLineSnapshotWith` を呼び (main は clients/line.ts、ブラウザ版は network/liveRead.ts)、否定を返す物 (`lineCount` → null / `lineChatMode` → null / `normalizeLineQuota` の quotaType・quotaLimit の null / `normalizeLineUsage` → null / `lineIntakeNote` → null) の**消費者はどれも LinePage 1 つだけ**で、その画面は両ビルドで同じ 1 本のソースである。読めなかった通数は「読めません」・読めなかった物は ⚠ の 1 文で名指しし、どちらのビルドでも同じ文になる |
 | `api/linear` | 1 | 3 | 対称 (実測・2026-11-18) —— 両ビルドが同じ `fetchLinearSnapshotWith` を呼び (main は clients/linear.ts、ブラウザ版は network/liveRead.ts)、否定を返す物 (`linearPriority` → null / `linearDue` の dueDate → null と dueRead の false / `linearIntakeNote` → null / `linearScopeNote` → null / `viewerRead` `issuesRead` の false) の**消費者はどれも LinearPage 1 つだけ**で、その画面は両ビルドで同じ 1 本のソースである。読めなかった優先度と期限は「読めません」・読めなかった一覧と断りは ⚠ の 1 文で、どちらのビルドでも同じ文になる |
 | `api/sentry` | 1 | 3 | 対称 (実測・2026-11-18) —— 両ビルドが同じ `fetchSentrySnapshotWith` を呼び (main は clients/sentry.ts、ブラウザ版は network/liveRead.ts)、否定を返す物 (`sentryLevel` → null / `sentryCount` → null / `lastSeen` の null / `sentryIntakeNote` → null / `sentryScopeNote` → null / `orgsRead` `issuesAsked` `issuesRead` の false) の**消費者はどれも SentryPage 1 つだけ**で、その画面は両ビルドで同じ 1 本のソースである。読めなかった重大度・発生回数・最終発生日は「読めません」・読めなかった一覧は ⚠ の 1 文で、どちらのビルドでも同じ文になる |
 | `api/slack` | 1 | 1 | 対称 (実測・2026-09-18 オントロジーの組み直し) —— `readSlackPost` の `ok: false` (Slack は HTTP 200 でも失敗を返す) を両ビルドが**投げて**断る: main は FetchError `slack <error>`、ブラウザ版は Error `Slack: <error>`。運び方 (例外の型) だけが流儀で、条件と error の綴りは 1 つ。`ts` の無い ok:true は `requireString` が両ビルドで同じ文で投げる (main はそれまで '' に倒していた —— 揃えたときに要求する側へ)。消費者は main の sendMessage と saasWriteWeb の sendSlackMessage の 2 つだけ |
 | `api/stripe` | 1 | 3 | 対称 (実測・2026-11-18) —— 両ビルドが同じ `fetchStripeSnapshotWith` を呼び (main は clients/stripe.ts、ブラウザ版は network/liveRead.ts)、否定を返す物 (`stripeCreatedDate` → null / 金額の null / `normalizeStripeBalance` の livemode → null / `stripeIntakeNote` → null / `balanceRead` `chargesRead` の false) の**消費者はどれも StripePage 1 つだけ**で、その画面は両ビルドで同じ 1 本のソースである。読めなかった金額は「金額不明」・読めなかった一覧は ⚠ の 1 文で、どちらのビルドでも同じ文になる |
-| `apiResponse` | 15 | 20 | 対称 (実測・2026-09-26 パス 482 で数え直した) —— このモジュールが母集団に入ったのは、`apiNumberOf` (第三者が文字列で返す数の読み手) を足して「否定で答えられる」述語が増えたため (パス 416)。**両ビルドの食い違いは無い** —— ただし**2026-09-23 に書いた理由は 2 か所で古びていた**: 「renderer がこのモジュールから直接読むのは `parseJsonText` と `displayField` の 2 種類だけ」「`null` を返す読み手に両ビルドが届く道は `shared/api/*.ts` ただ 1 つ」と書いたが、パス 442 / 443 から renderer は **`finiteNumberOf` も直接読む** (保管した販売記録と KPI 実績の金額を読む漏斗)。**それでも割れないのは、問うている値が別だから**である —— renderer の `finiteNumberOf` が読むのは **renderer 自身の保管層** (IndexedDB の販売記録・KPI 実績。main はこの保管層を読まない) の値で、「no」のあとの動作 (行を落として件数を述べる) は renderer にしか無い。main 側の読み手は `src/main/clients/` の第三者の応答を読む main 専用の経路で、**ブラウザ版はそれらのクライアントを 1 行も読み込まない** (パス 262 / 412 で実測)。**同じ値を両ビルドが問う形**は `shared/api/*.ts` (cursor ほか) を通る物だけで、そこは実装が 1 つなので「no のあとの動作」も 1 つしかない。`parseJsonText` は `null` を返さず**投げる**・`displayField` は `null` を返さない (非文字列は空文字・長すぎる値は天井 + `…`) ので、この 2 つは「no」と言う枝そのものを持たない。★ **読み手はここに並べない —— 名前だけでなく種類も** —— 2026-09-23 の文は名前を並べるのをやめて「2 種類だけ」と**種類**を並べたが、種類が 1 つ増えた日に同じく偽になった。数は左の列が数え、この欄は**なぜ対称なのか** (誰の値を問うているか) だけを述べる。つまり非対称になりうる組が今日 0 件である |
+| `apiResponse` | 15 | 22 | 対称 (実測・2026-09-26 パス 482 で数え直した) —— このモジュールが母集団に入ったのは、`apiNumberOf` (第三者が文字列で返す数の読み手) を足して「否定で答えられる」述語が増えたため (パス 416)。**両ビルドの食い違いは無い** —— ただし**2026-09-23 に書いた理由は 2 か所で古びていた**: 「renderer がこのモジュールから直接読むのは `parseJsonText` と `displayField` の 2 種類だけ」「`null` を返す読み手に両ビルドが届く道は `shared/api/*.ts` ただ 1 つ」と書いたが、パス 442 / 443 から renderer は **`finiteNumberOf` も直接読む** (保管した販売記録と KPI 実績の金額を読む漏斗)。**それでも割れないのは、問うている値が別だから**である —— renderer の `finiteNumberOf` が読むのは **renderer 自身の保管層** (IndexedDB の販売記録・KPI 実績。main はこの保管層を読まない) の値で、「no」のあとの動作 (行を落として件数を述べる) は renderer にしか無い。main 側の読み手は `src/main/clients/` の第三者の応答を読む main 専用の経路で、**ブラウザ版はそれらのクライアントを 1 行も読み込まない** (パス 262 / 412 で実測)。**同じ値を両ビルドが問う形**は `shared/api/*.ts` (cursor ほか) を通る物だけで、そこは実装が 1 つなので「no のあとの動作」も 1 つしかない。`parseJsonText` は `null` を返さず**投げる**・`displayField` は `null` を返さない (非文字列は空文字・長すぎる値は天井 + `…`) ので、この 2 つは「no」と言う枝そのものを持たない。★ **読み手はここに並べない —— 名前だけでなく種類も** —— 2026-09-23 の文は名前を並べるのをやめて「2 種類だけ」と**種類**を並べたが、種類が 1 つ増えた日に同じく偽になった。数は左の列が数え、この欄は**なぜ対称なのか** (誰の値を問うているか) だけを述べる。つまり非対称になりうる組が今日 0 件である |
 | `assistantLimits` | 6 | 7 | 対称 (実測・パス 252) —— latestTurnTooLong の 4 つの消費者 (main の chat / chatAll、ブラウザ版の callAssistantChat / callAssistantChatAll) がすべて 1 つずつ断り、文面も inputTooLongMessage 1 つ。**ただし system の天井の単位が割れていた** —— main は `.slice(0, MAX_SYSTEM)` (コード単位)・ブラウザ版は `clampToCeiling` (文字)。絵文字 50,000 字の system で main 30,000 字 / ブラウザ版 50,000 字。パス 252 で直した |
 | `atlassianSite` | 1 | 1 | **非対称だった → パス 248 で直した** (述語は共有・欄の天井は main だけ) |
 | `buildDestinations` | 0 | 14 | 対称 —— というより **main はこのモジュールの問いを 1 度も発しない** (実測・2026-09-25 パス 455 / 457 で数え直した)。母集団に入ったのは `credentialSlotUnreadNote` (`string | null`) を足したためだが、**`src/main` / `src/preload` からの直の import は 0 件**で、走査に映ったのは*閉包*の 1 辺だけ —— `shared/paperAccount.ts:69` の `import type { BuildKind }` である。**型だけの辺**なのでビルドの時点で消え、`paperAccount` はこのモジュールの値を 1 つも読まない (export を 1 つずつ走査して 0 件)。しかも `paperAccount` を読む main 側の物は**検査 1 本だけ** (`main/clients/__tests__/paperAccountReality.test.ts`) で出荷コードではない。したがって「否定で答えたあとの動作」が両ビルドで割れる道は**原理的に無い** —— このモジュールは逆に、**実行形態ごとに別の答えを出すために在る** (読み手の数は左の列が数える。`null` は「ブラウザ版には言うことが無い」という答えである)。その答えの正しさは `pages/__tests__/{googleOAuthPasteBuildGate,credentialSlotBuildGate,proxySectionBuildGate}.test.ts` と `components/__tests__/{googleConnectCardBuildGate,exportActionsBuildGate}.test.ts` が両方の実行形態を実際に描いて留める (パス 457 で足した `googleLiveScopeNote` / `googleSignInUnsupportedNote` はブラウザ版が**実際に外へ送る**ことを述べる側なので、逆向きの証拠も `renderer/__tests__/browserSendClaimCensus.test.ts` が持つ。パス 458 の `exportCopyLabel` も同じ形 —— ブラウザ版の書き出しが返す `path` はファイル名だけなので、「保存場所」と名乗る札を実行形態ごとに分ける。パス 459 の `proxyRequiredNote` は**ブラウザ版でだけ言う**側で (main は各サービスへ直接つなぐので、そこで「Worker を建てろ」と言うと偽の前提になる)、実際に描くのは `components/ProxyRequiredNote.tsx` 1 つ・振る舞いは `pages/__tests__/proxyRequiredOnScreen.test.ts` が 3 つの実行形態で見る)。 **パス 460 でこのモジュールは 2 つ目の役目を持った** —— 実行形態の**身元**そのもの (`WEB_BUILD_SUFFIX` / `isWebBuildVersion`)。それまで身元は「橋が名乗った版と完全に一致するか」で決まり、綴りは `web-shim.ts` (作る側) と `runtimeMode.ts` (比べる側) に分かれていた —— 実測で、作る側だけを 1 つ上の版にすると **19,048 件すべて緑のままブラウザ版がデスクトップ版を名乗り、保管庫を解錠する唯一の入口 (ロック画面) が出なくなる**。判定はここに 1 つ置き、両側が読む。**main は今もこのモジュールを 1 行も import しない** (実測: `src/main` / `src/preload` から `buildDestinations` / `WEB_BUILD_SUFFIX` / `isWebBuildVersion` への参照は 0 件) ので、上の判定は変わらない。身元の安定は `renderer/__tests__/buildSentinelStability.test.ts` が振る舞いで、綴りが 1 つであることは `renderer/__tests__/versionNamingCensus.test.ts` が両方向で留める。 |
@@ -32985,11 +33147,11 @@ shared **197** モジュール / 両ビルドが import **108** / うち否定�
 | `funding` | 1 | 2 | 一部読んだ (パス 265) —— 否定で答える 2 つのうち、`fundingLinkSource` は **両ビルドが同じ実装を読む** (画面が 1 つしか無いので、文言も判定も共有)。ただし `sample` を作れるのは**デスクトップ版だけ**である —— ブラウザ版の web-shim は funding に枝を持たず `not_implemented` を返すので、画面は同梱の 控え (`accountingSource: 'none'`) を見続ける。**意図した非対称**で、その原因はデスクトップの fetcher が見本の Map を渡すこと (Phase 6 の 実 API 差込みまで) のほうに在る。もう 1 つ (`isSpecifiedIncome` 系の判定) は未読 |
 | `headerValue` | 0 | 1 | 対称 (パス 296 で**そう作った**) —— 「`Headers` がこの値を受理するか」の規則で、境界を越えるのは `shared/tokenInput.ts` 経由の 1 本だけ。そこは実測で**同一の 1 行**: main が `return { ok: false, code: 'invalid_token', message: checked.message }` (main/main.ts:348-350)、ブラウザ版も同じ code と同じ message (web-shim.ts:1154-1155)。残る 2 つの読み手は越境しない —— `shared/proxyEndpoint.ts` の消費者は renderer だけ (network/proxy.ts / SettingsPage.tsx。aiEndpoint の行が同じ事実を既に述べている)、`parseProxyEnvelope` は renderer にしか無い。この pass の前は**規則が 3 通りに割れていた** —— 応答側は Latin1 を見て (パス 295)、資格情報の入口は C0/DEL だけ、共有秘密は型と長さだけ。1 つに寄せた |
 | `httpLimits` | 10 | 8 | 対称 (実測・パス 282 で総当たりにした) —— 呼び出し側の網は両ビルドに在る (パス 249 で訂正。ブラウザ版は webShimTimeouts.test.ts)。 ★ パス 248 は「手で選んだ 3 経路だけで母集団の総当たりではない」と**自分で認めていた**。パス 282 でその総当たりをやったら、**認めていた穴の中に生きた欠陥が 1 件**在った —— `main/main.ts` の `app:checkUpdate` が `AbortSignal.timeout(10_000)` という**裸の数**で、ブラウザ版の同じ口 (`web-shim.ts` の `checkUpdate` → `timedFetch`) は `DEFAULT_HTTP_TIMEOUT_MS` (30 秒) を読んでいた。**同じ問いに 3 倍違う締切**で、遅い回線で先に諦めるのは「新しい版が出た」を受けて実際に更新できる**デスクトップ版**の側だった。しかも同じ関数の 3 行下の注記が 2026-08-31 に**本文の上限**の同じ食い違いを直したときのもので、そこに「同じ問いに答えが 2 つある状態を残さない —— 実行対象が違うだけで判断が変わる理由が無い」と書いてある —— **その直しは 1 行手前で止まっていた**。 直しと同時に `shared/__tests__/deadlineCensus.test.ts` が母集団を走査する: 締切を作る 4 形 (`AbortSignal.timeout` / `withBodyDeadline` / `withTimeout` / `timeoutMs`) の時間の引数が**名前**であること (値の一致は要求しない —— `AI_CHAT_TIMEOUT_MS` の 2 分のように意図して違う締切は在る。名前が付いていれば理由が定義の隣に書ける)。実測 24 呼び出し・裸の数 0 件・例外の台帳 0 件 |
-| `hydroponicCrops` | 0 | 5 | 非対称は起きない (実測・パス 272) —— **到達の鎖を端まで辿った**: main → `clients/hydroponics.ts` → `hydroponicsControl` → `hydroponicCrops` → {`hydroponics`, `readNumeric`}。main が import するのは **`buildHydroponicsSnapshot` 1 つだけ**で (`clients/hydroponics.ts:1` — 残りは再輸出と型)、その関数の本体は `READING_FIELDS.map(...)` と `DEFAULT_CROP_LIST.map(...)` の **2 つの射影しか無い** (実測。否定で答える関数を 1 つも呼ばない)。つまり **main 側はこのモジュールの問いを 1 度も発しない** —— `hydroponicsControl` (パス 268) と同じ形。2026-09-23 (パス 420) に renderer 側の読み手が 3 → 4 になった (`data/hydroponicsLog.ts` が `CROP_ID_RE` を読み、ロットの `cropId` が**参照先と同じ形**であることを要求する) が、**main の側は 1 つも増えていない** —— 実測で `cropIdText` / `MAX_CROP_ID_CHARS` の `src/main/` からの参照は **0 件**である。 |
-| `hydroponics` | 0 | 3 | 非対称は起きない (実測・パス 272) —— `hydroponicCrops` と同じ鎖の先に在る (main → clients/hydroponics.ts → hydroponicsControl → hydroponicCrops → ここ)。main が import する `buildHydroponicsSnapshot` は 2 つの定数表を射影するだけで、この鎖の否定で答える関数を 1 つも呼ばない (実測) |
+| `hydroponicCrops` | 0 | 7 | 非対称は起きない (実測・パス 272) —— **到達の鎖を端まで辿った**: main → `clients/hydroponics.ts` → `hydroponicsControl` → `hydroponicCrops` → {`hydroponics`, `readNumeric`}。main が import するのは **`buildHydroponicsSnapshot` 1 つだけ**で (`clients/hydroponics.ts:1` — 残りは再輸出と型)、その関数の本体は `READING_FIELDS.map(...)` と `DEFAULT_CROP_LIST.map(...)` の **2 つの射影しか無い** (実測。否定で答える関数を 1 つも呼ばない)。つまり **main 側はこのモジュールの問いを 1 度も発しない** —— `hydroponicsControl` (パス 268) と同じ形。2026-09-23 (パス 420) に renderer 側の読み手が 3 → 4 になった (`data/hydroponicsLog.ts` が `CROP_ID_RE` を読み、ロットの `cropId` が**参照先と同じ形**であることを要求する) が、**main の側は 1 つも増えていない** —— 実測で `cropIdText` / `MAX_CROP_ID_CHARS` の `src/main/` からの参照は **0 件**である。 |
+| `hydroponics` | 0 | 5 | 非対称は起きない (実測・パス 272) —— `hydroponicCrops` と同じ鎖の先に在る (main → clients/hydroponics.ts → hydroponicsControl → hydroponicCrops → ここ)。main が import する `buildHydroponicsSnapshot` は 2 つの定数表を射影するだけで、この鎖の否定で答える関数を 1 つも呼ばない (実測) |
 | `hydroponicsControl` | 1 | 6 | 非対称は起きない (実測・パス 268) —— 否定で答える 7 つ (`readingFromStored` / `batchFromStored` / `batchSchedule` / `nextSolutionChange` / `lowPotassiumSwitchDate` / `latestReading` / `isBatchState`) の**消費者は renderer だけ** (hydroponicsLog.ts / HydroponicsPage.tsx —— **左の数は importer 全体を数えるので、この 2 本より多い**。2026-09-23 (パス 421) に 5 → 6 になったのは `OverviewPage.tsx` が `cropIdText` を読んだためで、それは `null` を返さないので 7 つには入らない)。main が import するのは `buildHydroponicsSnapshot` と型 2 つだけで、その関数は READING_FIELD_SPECS / DEFAULT_* / DEFAULT_CROP_LIST を**射影する純関数** (否定で答える関数を 1 つも呼ばない —— 実測)。測定記録とロットは業務レコード (IndexedDB) に在り main は触らないので、**main 側がこの問いを 1 度も発しない** |
-| `inputCeiling` | 14 | 57 | 対称 (実測・パス 281 で測り直した) —— 天井と床の判定そのもの (countChars / clampToCeiling / atLeastChars / moreThanChars)。否定 (false) はどのビルドでも「天井を超えていない」「床を満たさない」の 1 つの意味しか持たず、**動作を決めるのは呼ぶ側**である。 ★ **パス 281 の訂正**: ここには「呼ぶ側の対称性は ceilingUnitCensus.test.ts が母集団で見る (両方向の台帳)」と書いてあった —— **その検査は呼ぶ側の対称性を見ていない**。あちらが数えるのは「文字で数えると宣言した定数が `.length` の比較か`.slice(` の引数に現れる」箇所、つまり**単位**であって、ビルド間の非対称ではない(あちらの冒頭が自分で「数えていなかったのは単位である」と述べている)。`controlChars` (パス 280) と同じ「別の物へ預けた」形。 ★ 実測 (パス 281): 4 つの述語のうち**ビルドの境を越えるのは 2 つだけ** —— `countChars` と `clampToCeiling` は main (assistant / skills / emotions / ollama / templates) と web-shim の両側から呼ばれる。`atLeastChars` / `moreThanChars` は**main からも web-shim からも 1 度も呼ばれない** (2026-09-23 · パス 422 に再実測して 0 件)。 ★ **パス 422 の訂正**: ここには「呼び手は `renderer/security/vault.ts` **1 ファイルだけ**」と書いてあった —— **今日の実測は 9 ファイル**である (入口の天井が `.length` から `moreThanChars` へ移った分)。**判定は変わらない**が、散文が名前を並べていたので数が動いた日に偽になった (パス 419 / 421 と同じ家系)。**左の数は importer 全体を数える** —— 名前を並べるのをやめ、非対称かどうかを決める事実 (main 側の呼び出しが 0 件であること) だけを書く。デスクトップ版にマスターパスワードは無く、記録の入口は renderer 側にしか無いので、**この 2 つに main 側の双子が存在しない**。越える 2 つについては天井の定数が `shared/` に 1 つずつ在り、**同じ定数を両側が読む** (ollama の prompt/system は `shared/ollama.ts`・assistant は `shared/assistantLimits.ts`・emotions は `shared/emotionsLimits.ts`)。数の一致は `ceilingLiteralCensus` が、単位の一致は `ceilingUnitCensus` が見る |
-| `isoDate` | 8 | 37 | 対称 (実測・パス 256) —— 負で答える関数は 8 つだが、**両ビルドが呼んでいるのは 2 つだけ** (main/preload 側の消費者を機械的に数えた): (1) `isCalendarDate` + `calendarDateMessage` —— main/clients/emotions.ts:212 と renderer/data/emotionsWeb.ts:177 が**同一の行**で投げる (`throw new Error(calendarDateMessage('date'))`)。 (2) `isoDateFromTimestamp` —— main/clients/stocks.ts:776 と renderer/data/stocksWatchlistWeb.ts:194 がともに `?? ''` で空文字に倒す。いずれも**見本のローソク生成の中**で、入力は `Date.now()` ± 日数なので `null` の枠は実質到達しない。 残り 6 つ (`parseIsoDate` / `isCalendarMonth` / `isCalendarDateOrMonth` / `parseTimestamp` / `addIsoDays` / `isoDaysBetween`) は **main/preload 側の消費者が 0 件** なので、ビルド間の非対称は**原理的に起きない**。 ★ **2026-09-22 (パス 394) に 9 つ目 `isoMonthOf` が増えた** —— 消費者は `main/clients/freee.ts` **だけ** (renderer は 0 件) なので、こちらも非対称は起きない (**片方のビルドしか呼ばない**)。ブラウザ版の bundle からは tree-shaking で落ちることを 両方組んで実測した (+0 B)。上の「負で答える関数は 8 つ」はこの行が足された時点の数で、**今は 9 つ**である。 ★ 台帳の粒度について: この台帳は**モジュール**単位で「両ビルドがimport」を数えるが、非対称が宿るのは**両ビルドが呼ぶ関数**だけである。isoDate はその差が最も大きい例 (33 のimport元・負で答える 8 関数・境界を越えるのは 2 つ)。 ★ **2026-09-22 (パス 410) に 10 個目 `displayDateOf` が増え、main 側の import 元が 3 → 8 になった** (`drive` / `github` / `microsoft-365` / `notion` / `wordpress` の 5 client を日付の読みへ寄せた)。**これは非対称ではなく、設計した対である** —— 境界 (main の client) が `string | null` へ正規化し、画面 (renderer) が同じ module の `dateText` でその `null` に**理由を与える** (「日付が読めません」)。`displayDateOf` を呼ぶのは main 側と `shared/ollama.ts` だけ、`dateText` を呼ぶのは画面だけで、**同じ関数が両側で違う扱いを受ける形は 1 つも無い** (実測)。`dateText` は `string | null` を受けて必ず文字列を返すので、そもそも否定で答えない。 ★ **2026-09-27 (パス 493) に 11 個目 `isTimestampMs` が増え、renderer 側の import 元が 29 → 30 になった** —— 読み手は `shared/emotionsShape.ts` の `isAnalysisEntry` (main の `emotions.ts` とブラウザ版の `emotionsWeb.ts` が**同じ 1 つの述語**として呼ぶ) と、ブラウザ版だけが持つ記録の保管層 `renderer/data/store.ts`。否定の答え (時刻が範囲外) は両ビルドとも「その要素・その記録を落とす」に倒れるので非対称は無い (実測)。 |
+| `inputCeiling` | 14 | 58 | 対称 (実測・パス 281 で測り直した) —— 天井と床の判定そのもの (countChars / clampToCeiling / atLeastChars / moreThanChars)。否定 (false) はどのビルドでも「天井を超えていない」「床を満たさない」の 1 つの意味しか持たず、**動作を決めるのは呼ぶ側**である。 ★ **パス 281 の訂正**: ここには「呼ぶ側の対称性は ceilingUnitCensus.test.ts が母集団で見る (両方向の台帳)」と書いてあった —— **その検査は呼ぶ側の対称性を見ていない**。あちらが数えるのは「文字で数えると宣言した定数が `.length` の比較か`.slice(` の引数に現れる」箇所、つまり**単位**であって、ビルド間の非対称ではない(あちらの冒頭が自分で「数えていなかったのは単位である」と述べている)。`controlChars` (パス 280) と同じ「別の物へ預けた」形。 ★ 実測 (パス 281): 4 つの述語のうち**ビルドの境を越えるのは 2 つだけ** —— `countChars` と `clampToCeiling` は main (assistant / skills / emotions / ollama / templates) と web-shim の両側から呼ばれる。`atLeastChars` / `moreThanChars` は**main からも web-shim からも 1 度も呼ばれない** (2026-09-23 · パス 422 に再実測して 0 件)。 ★ **パス 422 の訂正**: ここには「呼び手は `renderer/security/vault.ts` **1 ファイルだけ**」と書いてあった —— **今日の実測は 9 ファイル**である (入口の天井が `.length` から `moreThanChars` へ移った分)。**判定は変わらない**が、散文が名前を並べていたので数が動いた日に偽になった (パス 419 / 421 と同じ家系)。**左の数は importer 全体を数える** —— 名前を並べるのをやめ、非対称かどうかを決める事実 (main 側の呼び出しが 0 件であること) だけを書く。デスクトップ版にマスターパスワードは無く、記録の入口は renderer 側にしか無いので、**この 2 つに main 側の双子が存在しない**。越える 2 つについては天井の定数が `shared/` に 1 つずつ在り、**同じ定数を両側が読む** (ollama の prompt/system は `shared/ollama.ts`・assistant は `shared/assistantLimits.ts`・emotions は `shared/emotionsLimits.ts`)。数の一致は `ceilingLiteralCensus` が、単位の一致は `ceilingUnitCensus` が見る |
+| `isoDate` | 8 | 40 | 対称 (実測・パス 256) —— 負で答える関数は 8 つだが、**両ビルドが呼んでいるのは 2 つだけ** (main/preload 側の消費者を機械的に数えた): (1) `isCalendarDate` + `calendarDateMessage` —— main/clients/emotions.ts:212 と renderer/data/emotionsWeb.ts:177 が**同一の行**で投げる (`throw new Error(calendarDateMessage('date'))`)。 (2) `isoDateFromTimestamp` —— main/clients/stocks.ts:776 と renderer/data/stocksWatchlistWeb.ts:194 がともに `?? ''` で空文字に倒す。いずれも**見本のローソク生成の中**で、入力は `Date.now()` ± 日数なので `null` の枠は実質到達しない。 残り 6 つ (`parseIsoDate` / `isCalendarMonth` / `isCalendarDateOrMonth` / `parseTimestamp` / `addIsoDays` / `isoDaysBetween`) は **main/preload 側の消費者が 0 件** なので、ビルド間の非対称は**原理的に起きない**。 ★ **2026-09-22 (パス 394) に 9 つ目 `isoMonthOf` が増えた** —— 消費者は `main/clients/freee.ts` **だけ** (renderer は 0 件) なので、こちらも非対称は起きない (**片方のビルドしか呼ばない**)。ブラウザ版の bundle からは tree-shaking で落ちることを 両方組んで実測した (+0 B)。上の「負で答える関数は 8 つ」はこの行が足された時点の数で、**今は 9 つ**である。 ★ 台帳の粒度について: この台帳は**モジュール**単位で「両ビルドがimport」を数えるが、非対称が宿るのは**両ビルドが呼ぶ関数**だけである。isoDate はその差が最も大きい例 (33 のimport元・負で答える 8 関数・境界を越えるのは 2 つ)。 ★ **2026-09-22 (パス 410) に 10 個目 `displayDateOf` が増え、main 側の import 元が 3 → 8 になった** (`drive` / `github` / `microsoft-365` / `notion` / `wordpress` の 5 client を日付の読みへ寄せた)。**これは非対称ではなく、設計した対である** —— 境界 (main の client) が `string | null` へ正規化し、画面 (renderer) が同じ module の `dateText` でその `null` に**理由を与える** (「日付が読めません」)。`displayDateOf` を呼ぶのは main 側と `shared/ollama.ts` だけ、`dateText` を呼ぶのは画面だけで、**同じ関数が両側で違う扱いを受ける形は 1 つも無い** (実測)。`dateText` は `string | null` を受けて必ず文字列を返すので、そもそも否定で答えない。 ★ **2026-09-27 (パス 493) に 11 個目 `isTimestampMs` が増え、renderer 側の import 元が 29 → 30 になった** —— 読み手は `shared/emotionsShape.ts` の `isAnalysisEntry` (main の `emotions.ts` とブラウザ版の `emotionsWeb.ts` が**同じ 1 つの述語**として呼ぶ) と、ブラウザ版だけが持つ記録の保管層 `renderer/data/store.ts`。否定の答え (時刻が範囲外) は両ビルドとも「その要素・その記録を落とす」に倒れるので非対称は無い (実測)。 |
 | `mentor` | 1 | 6 | 非対称は起きない (実測・パス 551) —— 否定で答えるのは `sanitizeMentorSession` (読めない保存値は null) と、`mediationPlan` の `steps: null` (同意が揃わない) の 2 つで、**読み手は renderer だけ** (MentorPage.tsx と、パス 555 で足した data/mentorRoster.ts · TeamPage.tsx · WorkloadShareTable.tsx)。main が import するのは `buildMentorSnapshot` と型 `MentorSnapshot` だけ (main/clients/mentor.ts) で、それは null を返さない。危機の判定は renderer の `counseling.ts` を 注入で受けるので、この module 自身は判定を持たない |
 | `mutualFundsMetrics` | 0 | 2 | 対称 (実測・パス 272) —— main の到達は `serviceAdvisor` 経由 (4 クライアント: real-estate / mutual-funds / uber-eats / demae-can)。`serviceAdvisor` がこのモジュールから取るのは**4 つ** (`serviceAdvisor.ts:37`): 定数 `RETURN_FLOOR_PCT` / `RETURN_ENTRY_CEILING_PCT` と述語 `isImpossibleReturnPct` / `isAboveEntryCeilingPct` (どちらも 1 行の比較。2026-09-27 · パス 493j に 2 → 4 —— 上端の外を「捨てずに言う」断りのため)。**2 つの述語は確かに越境する** —— `adviseService` の中で `isImpossibleReturnPct` は真の枝 (:586 警告を組む) と偽の枝 (:607 測れる集合から外す) の両方、`isAboveEntryCeilingPct` は真の枝 (:598 断りを組む) だけが使われる (偽の枝は何もしない —— 値は比較に残る)。だが**否定のあとの動作は両ビルドで同じ 1 つの実装の中に在る** —— `adviseService` が返す助言の*中身*を形づくるだけで `ok: false` を作らず、同じオブジェクトが両ビルドへ返る (`serviceAdvisor` の判定はパス 268 で対称と実測済み)。★ この行は **module 単位の到達と call 単位の到達が違う**ことの例である (`isoDate` の ★ と同じ話)。 |
 | `ollamaCore` | 0 | 0 | **非対称だった → パス 248 で直した** (許可経路の台帳を読むのは renderer だけ) |
@@ -32997,7 +33159,7 @@ shared **197** モジュール / 両ビルドが import **108** / うち否定�
 | `privateTarget` | 0 | 1 | 対称 (実測・パス 524 で読んだ) —— 母集団に入ったのはパス 524 (T-076) で `scanTarget.ts` が `looksInternalHostname` の中で `isPrivateOrReservedTarget` を呼ぶようになったため。 main が `privateTarget` を直に import する所は **0 件**で、main の閉包に入るのは `scanTarget` → `privateTarget` の 1 辺だけ。しかも `looksInternalHostname` の呼び手は `describeScanUrlRisk` の中だけで、その読み手は `SecurityPage.tsx` (renderer) だけなので、 **否定のあとの動作は越境しない** (main の `validateScanUrl` はこの関数を通らない)。 他の読み手 (`renderer/network/proxy.ts` は断る・`imageUrlGate.ts` は描かない) は どちらも renderer の中で完結する。警告であって関門ではない点は `scanTarget` の判定と同じ |
 | `promptInjection` | 2 | 1 | 対称 (実測・パス 552 · T-216) —— 否定で答えるのは `detectPromptInjection` (当たった規則か null) と `promptInjectionRefusal` (断りの文か null)。読み手は 3 か所: main の `emotions.ts` (鍵の門の前で throw)・main の `skills.ts` (SKILL.md を読んだ直後で throw)・ブラウザ版 `web-shim.ts` の `callEmotionsAnalyze` (`vault.getToken` の前で `err`)。throw と `err` は IPC の床 (`withFloor` / main の catch) で同じ `action_failed` + 文 になるので、**利用者が読む答えは両ビルドで同じ** (`webShimOutboundGate` と `emotions.test.ts` が同じ標本で確かめる)。skills はデスクトップ版にしか無いので 3 か所目は片側だけ |
 | `radarPlot` | 0 | 2 | **欠陥だった → パス 268 で直した** (実測) —— 否定で答える 2 つのうち `isPlottableScore` は renderer だけ (memberCare.ts)、`omittedRadarNote` は**両ビルドが呼ぶ**。`null` / 文字列の扱いは**関数の側では対称**だった (main の SVG は ⚠ の `<text>` を図の中へ書き、画面は ⚠ の `<div>` を図の下に出す)。**非対称は 1 段上に在った** —— 同じ `export-svg` action の実装が 2 つ在り、ブラウザ版は画面の `<svg>` を DOM から掻き取っていた。掻き取れるのは `<svg>` 要素だけで、⚠ の断り・標題・部署・評価時点・凡例はその**外側**に在る。実測 (jsdom・旧経路): `{ ok: true, bytes: 244, hasTitle: false, hasDept: false, hasDate: false, hasWarn: false, hasName: false }` —— しかも未評価の軸を持つ人が居る入力で**成功**していた (デスクトップ版は `score must be integer 1-5: 0` で断る)。組み立てを `shared/teamRadarSvg.ts` へ移し、両ビルドが同じ関数を通す。★ なお `omittedRadarNote` が非 `null` を返す枝は **`export-svg` の口からは到達しない** —— 上流の `validateTeamRadarState` が 5 軸すべて整数 1-5 を要求するので、未評価の形は図に届く前に断られる (両ビルドで同じ)。画面の ⚠ は下書きを直接読むので今日も出る |
-| `readNumeric` | 0 | 16 | 非対称は起きない (実測・パス 272) —— パス 80 で規則を 1 つにした所だが、**閉包で main へ繋がる道は `hydroponicCrops` 経由の 1 本だけ** (実測)。その鎖の main 側の入口 `buildHydroponicsSnapshot` は 2 つの定数表を射影するだけで、この数の読み取りを 1 度も呼ばない。★ renderer 側では 25 以上の呼び手が在るが、**片側しか呼ばない判定に非対称は宿らない** |
+| `readNumeric` | 0 | 17 | 非対称は起きない (実測・パス 272) —— パス 80 で規則を 1 つにした所だが、**閉包で main へ繋がる道は `hydroponicCrops` 経由の 1 本だけ** (実測)。その鎖の main 側の入口 `buildHydroponicsSnapshot` は 2 つの定数表を射影するだけで、この数の読み取りを 1 度も呼ばない。★ renderer 側では 25 以上の呼び手が在るが、**片側しか呼ばない判定に非対称は宿らない** |
 | `rfc2822` | 1 | 1 | 対称 (実測・2026-09-19 パス 321) —— `buildRfc2822` / `isSafeHeaderValue` を shared の 1 つに畳み、両ビルドは同じ関数を re-export する (`refusalTwins` が `===` で留める —— 写しが再び生えれば落ちる)。断り (`RFC2822_HEADER_UNSAFE` の throw) の後の動作は両ビルドとも「上がった Error をそのまま呼び出し側へ」: main は `createDraft` / shopify の `syncToGmail` が投げて IPC の `err()` へ、ブラウザ版は `createGmailDraft` が投げて `invoke` の `withFloor` へ。到達は shared/api/google.ts の `gmailDraftInit` 経由 (両ビルド + shopify) と re-export の 2 本 |
 | `safeFilename` | 2 | 3 | 対称 (実測・2026-10-24 · T-177) —— isSafeFilename が no と言ったあとの動作は 4 つの消費者で同じ 「その名前では書かない・開かない」: ライブラリの put と FSA の書き込み (renderer) は filename が不正です で投げ、書き出しの関門 isSafeExportPath は false・開く関門 shellTargetOrNull は null (main は呼び手が err に変える)。黙って別の名前へ直す消費者は無い (直すと検査した名前と作る名前が別になる)。 |
 | `savingsPlanning` | 0 | 1 | 非対称は起きない (実測・パス 272) —— 到達の鎖は main → 4 クライアント → `serviceAdvisor` → `mutualFundsMetrics` → ここ。ところが `serviceAdvisor` が `mutualFundsMetrics` から取るのは定数 2 つと述語 2 つ (`isImpossibleReturnPct` / `isAboveEntryCeilingPct` —— パス 493j で 2 → 4) だけで、**`isPlannableRate` / `isPlannableYears` はどの述語の中からも呼ばれない** (2 つの述語はどちらも 1 行の比較)。この 2 つを呼ぶのは `mutualFundsMetrics` 自身の将来評価額の計算で、そこは `serviceAdvisor` が import していない。**module の import の辺は在るが、call の辺が無い** —— main はこの問いを発しない。 |

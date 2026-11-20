@@ -13,14 +13,13 @@ import { useLatestForm } from '../data/useLatestForm';
 import { BeekeepingPanel } from '../components/BeekeepingPanel';
 import { AquaculturePanel } from '../components/AquaculturePanel';
 import { ChangedLatestNote } from '../components/ChangedLatestNote';
+import { CropListEditor } from '../components/CropListEditor';
+import { useCropList } from '../data/useCropList';
 import { SNAPSHOT } from '../data/snapshot';
 import { localIsoDate } from '../../shared/localDate';
 import {
-  HYDROPONIC_CROPS_COLLECTION,
-  cropListFromRecords,
   HYDROPONICS_COLLECTION,
   HYDROPONICS_DEFAULTS,
-  type HydroponicCropListRecord,
   type HydroponicsSetup,
 } from '../data/hydroponicsSetup';
 import { latestRecord } from '../data/latestRecord';
@@ -65,7 +64,7 @@ import {
   type ReadingField,
   type TaskSeverity,
 } from '../../shared/hydroponicsControl';
-import { findCrop } from '../../shared/hydroponicCrops';
+import { findCrop, removedCropLotsNote } from '../../shared/hydroponicCrops';
 
 /**
  * 水耕栽培 — **運転管理**の画面 (2026-09-13 · パス 194)。
@@ -218,9 +217,9 @@ function HydroponicsOperations() {
     controlFormFrom,
   );
   const setupCol = useCollection<HydroponicsSetup>(HYDROPONICS_COLLECTION);
-  const cropCol = useCollection<HydroponicCropListRecord>(HYDROPONIC_CROPS_COLLECTION);
-
-  const crops = useMemo(() => cropListFromRecords(cropCol.records), [cropCol.records]);
+  // 品目の一覧。この画面でも増やす・減らすができる (ロットを足す所 —— 経営サマリーの欄と同じ部品)。
+  const cropList = useCropList();
+  const { crops } = cropList;
   const setup = useMemo(
     () => latestRecord(setupCol.records)?.data ?? HYDROPONICS_DEFAULTS,
     [setupCol.records],
@@ -727,6 +726,26 @@ function HydroponicsOperations() {
           </p>
         )}
 
+        {/*
+          **品目はここで増やす・減らす** (2026-11-19)。それまでこの欄は経営サマリーの試算の中に
+          だけ在り、ロットを足そうとして品目が無い人は画面を移って探すことになっていた。
+          一覧が保管層から届くまでは出さない —— 届く前の一覧は参考値の品目である。
+        */}
+        {!cropList.loading && crops.length > 0 && (
+          <div style={{ marginTop: 12 }}>
+            <CropListEditor
+              crops={crops}
+              changeCrops={cropList.changeCrops}
+              seed={findCrop(crops, batchCropId) ?? crops[0]!}
+              onAdded={(added) => {
+                // 足した品目をロットの品目に選ぶ (足した直後に使うのが普通なので)。
+                setBatchForm((f) => ({ ...f, cropId: added.id }));
+                return `「${added.label}」を足して、下のロットの品目に選びました。`;
+              }}
+              removedNote={(id) => removedCropLotsNote(batches.items.filter((b) => b.cropId === id).length)}
+            />
+          </div>
+        )}
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 12 }}>
           <label style={{ fontSize: 12 }}>
             ロット名
@@ -822,7 +841,7 @@ function HydroponicsOperations() {
           data-hydroponics-save="batch"
           // 品目の一覧が届くまで足さない —— 届く前の一覧 (参考値) の品目でロットを作ると、
           // 自分の一覧に無い品目のロットになりうる (パス 500)。
-          disabled={batchGuard.busy || cropCol.loading || charsOverCeiling(batchForm.id, MAX_BATCH_ID_CHARS) > 0}
+          disabled={batchGuard.busy || cropList.loading || charsOverCeiling(batchForm.id, MAX_BATCH_ID_CHARS) > 0}
           onClick={() => void batchGuard.run(saveBatch)}
           style={{ marginTop: 10 }}
         >

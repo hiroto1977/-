@@ -69,6 +69,8 @@ import { fetchStripeSnapshot } from '../../../main/clients/stripe';
 import { StripePage } from '../StripePage';
 import { fetchWordPressSnapshot } from '../../../main/clients/wordpress';
 import { WordPressPage } from '../WordPressPage';
+import { fetchDropboxSnapshot } from '../../../main/clients/dropbox';
+import { DropboxPage } from '../DropboxPage';
 
 const BIG = 'x'.repeat(200_000);
 
@@ -315,6 +317,18 @@ const SWEEPS: readonly Sweep[] = [
     page: async () => WordPressPage,
     landed: 'xxxxxxxxxx',
   },
+  {
+    id: 'dropbox',
+    token: 't',
+    bodies: [
+      { account_id: 'dbid:1', name: { display_name: BIG }, email: BIG },
+      { used: 100, allocation: { '.tag': 'individual', allocated: 2000 } },
+      { entries: [{ '.tag': 'file', id: 'id:1', name: BIG, size: 10, server_modified: '2026-01-01T00:00:00Z' }], has_more: false },
+    ],
+    load: async (c) => fetchDropboxSnapshot(c as never),
+    page: async () => DropboxPage,
+    landed: 'xxxxxxxxxx',
+  },
 ];
 
 describe('第三者の応答が画面を膨らませない (パス 415)', () => {
@@ -367,6 +381,7 @@ const ROLE: Readonly<Record<string, string>> = {
   'linear.ts': 'swept-here',
   'sentry.ts': 'swept-here',
   'discord.ts': 'swept-here',
+  'dropbox.ts': 'swept-here',
   'wordpress.ts': 'swept-here',
   'cloudflare.ts': 'swept-elsewhere: thirdPartyFieldCeiling.test.ts → clients/cloudflare (パス 411)',
   'github.ts': 'swept-elsewhere: thirdPartyFieldCeiling.test.ts → clients/github (パス 411)',

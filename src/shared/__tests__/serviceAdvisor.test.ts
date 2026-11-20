@@ -21,6 +21,7 @@ import {
   MAX_ADVICE_ROWS,
   MUTUAL_FUNDS_ADVISOR_DISCLAIMER,
   REAL_ESTATE_ADVISOR_DISCLAIMER,
+  adviceNotReadyNote,
   adviseDemaeCan,
   adviseMutualFunds,
   adviseRealEstate,
@@ -703,6 +704,54 @@ describe('adviseService — main の 4 action とブラウザ版が通る 1 つ�
       expect(bad).toEqual({ ok: false, message: `${id}.advise: ${firstField[id]}` });
       expect(adviseService(id, undefined)).toEqual({ ok: false, message: `${id}.advise: 提案の元になる数字 (画面の集計) が payload にありません` });
     }
+  });
+
+  it('★ 一覧がまだ 1 件も無いときは、押す前に言う文を返す (内部の欄名で断らせない · 2026-11-19)', () => {
+    // 不動産・投資信託は端末内の登録だけを出すので、何も登録していない人の一覧は空である。
+    expect(adviceNotReadyNote('real-estate', { ...RE_SAMPLE, properties: [] })).toBe(
+      '物件がまだ登録されていません。上の欄から 1 件登録すると、その数字から改善提案を組み立てます。',
+    );
+    expect(adviceNotReadyNote('mutual-funds', { ...MF_SAMPLE, holdings: [] })).toBe(
+      '銘柄がまだ登録されていません。上の欄から 1 件登録すると、その数字から改善提案を組み立てます。',
+    );
+    expect(adviceNotReadyNote('uber-eats', { ...UE_SAMPLE, stores: [] })).toBe(
+      '店舗の数字がまだ無いため、改善提案を組み立てられません。',
+    );
+    // 出前館は一覧 (配達エリア) が空でも月次の件数から組める —— 文は出さない。
+    expect(adviceNotReadyNote('demae-can', { ...DC_SAMPLE, topAreas: [] })).toBeNull();
+  });
+
+  it('一覧が 1 件でも在れば文は出さない・形の誤りはここでは述べない (読み取りの関門が断る)', () => {
+    const inputs = { 'real-estate': RE_SAMPLE, 'mutual-funds': MF_SAMPLE, 'uber-eats': UE_SAMPLE, 'demae-can': DC_SAMPLE } as const;
+    for (const id of RECORD_ENTRY_SERVICE_IDS) {
+      expect(adviceNotReadyNote(id, inputs[id]), id).toBeNull();
+      // 物でない・一覧の欄が無い・配列でない —— 「登録されていません」とは言わない (登録の有無は分からない)。
+      for (const malformed of [undefined, null, 'x', 42, [], {}, { properties: 'x', holdings: 'x', stores: 'x' }, { properties: { length: 0 }, holdings: { length: 0 }, stores: { length: 0 } }]) {
+        expect(adviceNotReadyNote(id, malformed), `${id} ${JSON.stringify(malformed)}`).toBeNull();
+      }
+    }
+    // 1 件だけの一覧 (境目): 文は出ない。
+    expect(adviceNotReadyNote('real-estate', { ...RE_SAMPLE, properties: RE_SAMPLE.properties.slice(0, 1) })).toBeNull();
+    // 別のサービスの欄が空でも、自分の欄で決める。
+    expect(adviceNotReadyNote('real-estate', { ...RE_SAMPLE, holdings: [], stores: [] })).toBeNull();
+    expect(adviceNotReadyNote('mutual-funds', { ...MF_SAMPLE, properties: [], stores: [] })).toBeNull();
+    expect(adviceNotReadyNote('uber-eats', { ...UE_SAMPLE, properties: [], holdings: [] })).toBeNull();
+  });
+
+  it('★ 文を返す組と、読み取りが空の一覧を断る組は同じ (規則を 2 か所に持たない)', () => {
+    const inputs = { 'real-estate': RE_SAMPLE, 'mutual-funds': MF_SAMPLE, 'uber-eats': UE_SAMPLE, 'demae-can': DC_SAMPLE } as const;
+    const rowsField = { 'real-estate': 'properties', 'mutual-funds': 'holdings', 'uber-eats': 'stores', 'demae-can': 'topAreas' } as const;
+    const noted: string[] = [];
+    const refused: string[] = [];
+    for (const id of RECORD_ENTRY_SERVICE_IDS) {
+      const empty = { ...inputs[id], [rowsField[id]]: [] };
+      if (adviceNotReadyNote(id, empty) !== null) noted.push(id);
+      const out = adviseService(id, empty);
+      if (!out.ok && out.message === `${id}.advise: ${rowsField[id]} は配列 (1〜500 件) で指定してください`) refused.push(id);
+    }
+    expect(noted).toEqual(refused);
+    // 走査が空虚でない: 断る組は 3 つ在り、出前館は断らない。
+    expect([...refused].sort()).toEqual(['mutual-funds', 'real-estate', 'uber-eats']);
   });
 
   it('入口の答えは規則関数の答えと同じ物 (別の写しを作らない)', () => {

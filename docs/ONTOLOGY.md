@@ -51,7 +51,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 
 | id | 配置 | 出所 | 資格情報 | local | OAuth | 士業 | デスクトップの action | ブラウザ版の action | デスクトップだけ |
 |---|---|---|---|:---:|:---:|:---:|---|---|---|
-| `a8net` | integrations | sample | none | ✅ |  |  | — | — | — |
+| `a8net` | integrations | local | none | ✅ |  |  | — | — | — |
 | `admin-scrivener` | professionals | local | none | ✅ |  | ✅ | — | — | — |
 | `ai-blogkun` | integrations | sample | none | ✅ |  |  | — | — | — |
 | `amazon` | integrations | sample | none | ✅ |  |  | — | — | — |
@@ -75,13 +75,13 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `docker` | tools | sample | none | ✅ |  |  | — | — | — |
 | `docstudio` | featured | local | none | ✅ |  |  | `list-collections` | — | `list-collections` |
 | `drive` | integrations | remote | fetch |  | ✅ |  | `create-folder` | `create-folder` | — |
-| `dropbox` | integrations | sample | none |  |  |  | — | — | — |
+| `dropbox` | integrations | remote | fetch |  |  |  | — | — | — |
 | `emotions` | tools | local | action | ✅ |  |  | `analyze-text` `clear-history` `log-mood` | `analyze-text` `clear-history` `log-mood` | — |
 | `freee` | integrations | remote | fetch |  | ✅ |  | — | — | — |
 | `funding` | tools | local | none | ✅ |  |  | — | — | — |
 | `github` | integrations | remote | fetch |  |  |  | `create-issue` | `create-issue` | — |
 | `gmail` | integrations | remote | fetch |  | ✅ |  | `create-draft` | `create-draft` | — |
-| `grok` | tools | sample | none | ✅ |  |  | — | — | — |
+| `grok` | tools | local | none | ✅ |  |  | — | — | — |
 | `home` | featured | local | none | ✅ |  |  | — | — | — |
 | `hydroponics` | tools | local | none | ✅ |  |  | — | — | — |
 | `judicial-scrivener` | professionals | local | none | ✅ |  | ✅ | — | — | — |
@@ -95,7 +95,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `mentor` | tools | local | none | ✅ |  |  | — | — | — |
 | `microsoft-365` | integrations | remote | fetch |  | ✅ |  | `create-event` `send-mail` | `create-event` `send-mail` | — |
 | `moneyforward` | integrations | sample | none | ✅ |  |  | — | — | — |
-| `mutual-funds` | tools | sample | none | ✅ |  |  | `advise` `record-entry` | `advise` `record-entry` | — |
+| `mutual-funds` | tools | local | none | ✅ |  |  | `advise` `record-entry` | `advise` `record-entry` | — |
 | `netsea` | integrations | sample | none | ✅ |  |  | — | — | — |
 | `notion` | integrations | remote | fetch |  | ✅ |  | `create-page` | `create-page` | — |
 | `obsidian` | tools | sample | none | ✅ |  |  | — | — | — |
@@ -103,7 +103,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `overview` | featured | local | none | ✅ |  |  | — | — | — |
 | `patent-attorney` | professionals | local | none | ✅ |  | ✅ | — | — | — |
 | `quality` | tools | sample | none | ✅ |  |  | — | — | — |
-| `real-estate` | tools | sample | none | ✅ |  |  | `advise` `record-entry` | `advise` `record-entry` | — |
+| `real-estate` | tools | local | none | ✅ |  |  | `advise` `record-entry` | `advise` `record-entry` | — |
 | `sales` | featured | local | none | ✅ |  |  | — | — | — |
 | `salesforce` | integrations | sample | none |  |  |  | — | — | — |
 | `security` | tools | local | action | ✅ |  |  | `check-email-breach` `scan-url` | `check-email-breach` `scan-url` | — |
@@ -134,8 +134,8 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 集計:
 
 - 配置: おすすめ 12 / 士業連携 8 / 分析・ツール 24 / 外部サービス連携 33 / 消費されるだけ 2
-- 出所: remote 21 / local 36 / sample 22
-- 資格情報の読み手 — fetch 21 / action 7 / none 51
+- 出所: remote 22 / local 40 / sample 17
+- 資格情報の読み手 — fetch 22 / action 7 / none 50
 - LOCAL_SERVICES 56 / OAuth 10 / action を持つ 27 / デスクトップだけの action 10
 
 ## 4. facet の公理と例外
@@ -304,7 +304,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `browser-cannot-exceed-desktop` | **ブラウザ版はデスクトップの許可表を超えない** — ブラウザ版の invoke の if 連鎖に在ってデスクトップの LIVE_ACTIONS に無い操作は 0。走査が字面を全部説明できることを別に確かめる。 | dualBuildActionSurface の docblock (2026-08-23) | 検査 `src/__tests__/dualBuildActionSurface.test.ts`<br>検査 `src/shared/__tests__/ontologyFacets.test.ts` |
 | `desktop-only-reasons-by-kind` | **デスクトップ限定の操作は種類つきの台帳** — 「デスクトップ版の機能です」と説明して穴を仕様として固定しない。理由は種類 (needs-main-only-facility / dead-action …) で書き、dead-action は画面から呼ばれていてはならない。 | パス 274 / パス 275 | 検査 `src/renderer/__tests__/webShimCredentials.test.ts`<br>検査 `src/shared/__tests__/ontologyFacets.test.ts` |
 | `bridge-methods-match` | **bridge の口は preload と web-shim で同じ集合** — 15 の口は preload の型・main のハンドラ・web-shim の実装で同じ名前。片方にだけ生えた口は「在るが繋がっていない」。 | パス 318 / ARCHITECTURE §1.4 | 検査 `src/preload/__tests__/bridgeContract.test.ts`<br>検査 `src/preload/__tests__/bridgeStatic.test.ts`<br>検査 `src/renderer/__tests__/webShimBridge.test.ts`<br>ゲート `npm run verify:arch` |
-| `snapshot-parity` | **両ビルドのスナップショットは同じ形** — 同じサービスの fetchSnapshot が両ビルドで同じ欄を返す。ブラウザ版だけ not_implemented で「エラー」と出さない。 | dataOrigin.ts の docblock / パス 309 | 検査 `src/renderer/__tests__/webShimSnapshotParity.test.ts`<br>検査 `src/renderer/__tests__/webShimSnapshotBranches.test.ts` |
+| `snapshot-parity` | **両ビルドのスナップショットは同じ形** — 同じサービスの fetchSnapshot が両ビルドで同じ欄を返す。ブラウザ版だけ not_implemented で「エラー」と出さない —— 取得できない画面 (連携先 14) は、押す前から「この版では取得できません」と灰色で言い、「更新」を出さない。資格情報が無い連携先の画面 (両ビルドの 22) も同じ —— 押せば必ず断られる「更新」を出さず、「登録すると実データに切り替わります」と灰色で言う。 | dataOrigin.ts の docblock / パス 309 / 2026-11-19 (#962・連携先 14 画面) / 2026-11-19 (資格情報が無い連携先 22 画面) | 検査 `src/renderer/__tests__/webShimSnapshotParity.test.ts`<br>検査 `src/renderer/__tests__/webShimSnapshotBranches.test.ts`<br>検査 `src/renderer/__tests__/browserRefreshReachable.test.ts`<br>検査 `src/renderer/__tests__/browserRemoteFetchReach.test.ts`<br>検査 `src/shared/__tests__/browserFetchReach.test.ts`<br>検査 `src/shared/__tests__/fetchNeedsCredential.test.ts` |
 | `both-builds-real-browser` | **実機は両ビルド** — 実ブラウザでしか見えない退行 (CORS・no-cors・起動) が在る。e2e は FULL と LITE を両方通し、e2e:ollama はスタブ Ollama + 実 chromium。 | パス 230 / パス 304 / パス 305 | 実機 `npm run e2e`<br>実機 `npm run e2e:lite`<br>実機 `npm run e2e:ollama`<br>CI `.github/workflows/e2e.yml` |
 
 ### 知識と出典 (3)
