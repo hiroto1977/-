@@ -671,7 +671,7 @@ export function App() {
             * 「価格不明」「在庫不明」(パス 410) と同じで、**空欄ではなく理由を名乗る。**
             */}
           <div className="sidebar-version">
-            {version ? `v${version}` : '版不明'} · build: ALL-ACCESS
+            {version ? `v${version}` : '版不明'} · 全機能版
           </div>
         </div>
       </aside>

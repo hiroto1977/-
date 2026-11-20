@@ -409,7 +409,7 @@ export function TeamPage() {
       <div style={{ maxWidth: 460, padding: 8 }}>
         <Section title="チーム管理">
           <p style={{ color: 'var(--text-mute)', fontSize: 13 }}>
-            複数メンバーでの利用は <strong>{requiredPlan ? PLANS[requiredPlan].label : 'Business'}</strong> プラン以上で有効になります。
+            複数メンバーでの利用は <strong>{requiredPlan ? PLANS[requiredPlan].label : 'ビジネス'}</strong> プラン以上で有効になります。
             現在の <strong>{planDef.label}</strong> プランはシート数 {planDef.maxSeats}（{planDef.audience}）です。
             左下のプラン選択でアップグレードすると、メンバーの招待と権限管理が利用できます。
           </p>

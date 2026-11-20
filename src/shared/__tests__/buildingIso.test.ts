@@ -98,14 +98,14 @@ describe('checkFloorFit — 室が外形を埋めているか', () => {
 describe('buildIsoModel — 分解アイソメの組み立て', () => {
   const floors: FloorSpec[] = [
     {
-      name: '1F',
+      name: '1階',
       rooms: [
         { x1: 0, y1: 0, x2: 12, y2: 12.5, name: '栽培室', kind: 'workshop' },
         { x1: 0, y1: 12.5, x2: 12, y2: 18, name: '直売', kind: 'retail' },
       ],
     },
     {
-      name: '2F',
+      name: '2階',
       rooms: [{ x1: 0, y1: 0, x2: 12, y2: 18, name: '事務', kind: 'other' }],
     },
   ];
@@ -113,8 +113,8 @@ describe('buildIsoModel — 分解アイソメの組み立て', () => {
   it('階数ぶんのプレートを返す', () => {
     const m = buildIsoModel(12, 18, floors, OPT);
     expect(m.floors).toHaveLength(2);
-    expect(m.floors[0]?.name).toBe('1F');
-    expect(m.floors[1]?.name).toBe('2F');
+    expect(m.floors[0]?.name).toBe('1階');
+    expect(m.floors[1]?.name).toBe('2階');
   });
 
   it('上階は floorGapPx ぶん持ち上がる', () => {
@@ -147,7 +147,7 @@ describe('buildIsoModel — 分解アイソメの組み立て', () => {
   it('補助線は階の継ぎ目ごとに 3 本', () => {
     const m = buildIsoModel(12, 18, floors, OPT);
     expect(m.leaders).toHaveLength(3);
-    const three = buildIsoModel(12, 18, [...floors, { name: '3F', rooms: [] }], OPT);
+    const three = buildIsoModel(12, 18, [...floors, { name: '3階', rooms: [] }], OPT);
     expect(three.leaders).toHaveLength(6);
   });
 
@@ -156,7 +156,7 @@ describe('buildIsoModel — 分解アイソメの組み立て', () => {
   });
 
   it('どこか 1 階でも隙間があれば allFit=false', () => {
-    const broken: FloorSpec[] = [{ name: '1F', rooms: floors[0]?.rooms ?? [] }, { name: '2F', rooms: [] }];
+    const broken: FloorSpec[] = [{ name: '1階', rooms: floors[0]?.rooms ?? [] }, { name: '2階', rooms: [] }];
     const m = buildIsoModel(12, 18, broken, OPT);
     expect(m.floors[0]?.fits).toBe(true);
     expect(m.floors[1]?.fits).toBe(false);
@@ -165,8 +165,8 @@ describe('buildIsoModel — 分解アイソメの組み立て', () => {
 
   it('階ごとの奥行 (セットバック) を反映する', () => {
     const setback: FloorSpec[] = [
-      { name: '1F', rooms: floors[0]?.rooms ?? [] },
-      { name: '2F', depthM: 14, rooms: [{ x1: 0, y1: 0, x2: 12, y2: 14, name: 'S', kind: 'other' }] },
+      { name: '1階', rooms: floors[0]?.rooms ?? [] },
+      { name: '2階', depthM: 14, rooms: [{ x1: 0, y1: 0, x2: 12, y2: 14, name: 'S', kind: 'other' }] },
     ];
     const m = buildIsoModel(12, 18, setback, OPT);
     expect(m.floors[1]?.outlineSqm).toBe(168);
@@ -203,7 +203,7 @@ describe('buildSchematicFloors — 算定値から模式プランを導く', () 
 
   it('1 階に作業場を全幅で敷き、残りを直売と機械室に割る', () => {
     const f = buildSchematicFloors(BASE);
-    expect(f[0]?.name).toBe('1F');
+    expect(f[0]?.name).toBe('1階');
     expect(f[0]?.rooms.map((r) => r.kind)).toEqual(['workshop', 'retail', 'water']);
     expect(f[0]?.rooms[0]?.y2).toBeCloseTo(12.5, 5); // 150 / 12
   });
@@ -216,7 +216,7 @@ describe('buildSchematicFloors — 算定値から模式プランを導く', () 
   it('上階は建築面積ぶんずつ積み、端数は最上階に回す', () => {
     const f = buildSchematicFloors(BASE);
     // 384 = 216 + 168 → 2F 満床 / 3F は 168 ㎡
-    expect(f.map((x) => x.name)).toEqual(['1F', '2F', '3F']);
+    expect(f.map((x) => x.name)).toEqual(['1階', '2階', '3階']);
     expect(f[1]?.depthM).toBe(18);
     expect(f[2]?.depthM).toBe(14);
   });
@@ -235,7 +235,7 @@ describe('buildSchematicFloors — 算定値から模式プランを導く', () 
   });
 
   it('上階ゼロなら 1 階だけ', () => {
-    expect(buildSchematicFloors({ ...BASE, upperFloorsSqm: 0 }).map((f) => f.name)).toEqual(['1F']);
+    expect(buildSchematicFloors({ ...BASE, upperFloorsSqm: 0 }).map((f) => f.name)).toEqual(['1階']);
   });
 
   it('寸法が無ければ何も返さない', () => {
@@ -246,7 +246,7 @@ describe('buildSchematicFloors — 算定値から模式プランを導く', () 
   it('上階が過大でも 8 層で打ち切る (無限ループにしない)', () => {
     const f = buildSchematicFloors({ ...BASE, upperFloorsSqm: 100000 });
     expect(f).toHaveLength(8);
-    expect(f[7]?.name).toBe('8F');
+    expect(f[7]?.name).toBe('8階');
   });
 
   it('負の入力は 0 に丸める', () => {
@@ -279,7 +279,7 @@ describe('変異を落とすための境界・同一性の検査', () => {
   it('原点から離れた室でも面積は差で求める (和との取り違えを検出)', () => {
     const m = buildIsoModel(12, 18, [
       {
-        name: '1F',
+        name: '1階',
         rooms: [
           { x1: 0, y1: 0, x2: 6, y2: 18, name: 'W', kind: 'other' },
           { x1: 6, y1: 0, x2: 12, y2: 6, name: 'NE', kind: 'other' },
@@ -297,8 +297,8 @@ describe('変異を落とすための境界・同一性の検査', () => {
 
   it('補助線は上下階の同じ隅を実際に結ぶ', () => {
     const floors: FloorSpec[] = [
-      { name: '1F', rooms: [{ x1: 0, y1: 0, x2: 12, y2: 18, name: 'A', kind: 'other' }] },
-      { name: '2F', rooms: [{ x1: 0, y1: 0, x2: 12, y2: 18, name: 'B', kind: 'other' }] },
+      { name: '1階', rooms: [{ x1: 0, y1: 0, x2: 12, y2: 18, name: 'A', kind: 'other' }] },
+      { name: '2階', rooms: [{ x1: 0, y1: 0, x2: 12, y2: 18, name: 'B', kind: 'other' }] },
     ];
     const m = buildIsoModel(12, 18, floors, OPT);
     expect(m.leaders).toHaveLength(3);
@@ -335,10 +335,10 @@ describe('変異を落とすための境界・同一性の検査', () => {
   it('残余を使い切ったら止まる (0 で止まらないと空フロアが積まれる)', () => {
     // ちょうど 1 フロアぶん → 2F だけ。残余 0 で確実に停止する
     const exact = buildSchematicFloors({ widthM: 12, depthM: 18, workshopSqm: 150, groundOtherSqm: 66, upperFloorsSqm: 216 });
-    expect(exact.map((x) => x.name)).toEqual(['1F', '2F']);
+    expect(exact.map((x) => x.name)).toEqual(['1階', '2階']);
     // わずかな端数は 0.1 ㎡ 単位に丸めたうえで 1 層に載せる
     const frac = buildSchematicFloors({ widthM: 12, depthM: 18, workshopSqm: 150, groundOtherSqm: 66, upperFloorsSqm: 216.1 });
-    expect(frac.map((x) => x.name)).toEqual(['1F', '2F', '3F']);
+    expect(frac.map((x) => x.name)).toEqual(['1階', '2階', '3階']);
     expect(frac.map((x) => x.depthM)).toEqual([undefined, 18, 0]);
   });
 });

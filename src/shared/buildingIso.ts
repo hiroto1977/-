@@ -321,7 +321,7 @@ export function buildSchematicFloors(input: SchematicInput): FloorSpec[] {
     ground.push({ x1: split, y1: workshopDepth, x2: w, y2: d, name: '機械室・付属', kind: 'water' });
   }
 
-  const floors: FloorSpec[] = [{ name: '1F', rooms: ground }];
+  const floors: FloorSpec[] = [{ name: '1階', rooms: ground }];
 
   // 残余は 0.1 ㎡ 単位に丸めてから回す。許容誤差 (> 0.05) で判定すると浮動小数の
   // 残差でちょうど境界に乗ることがなく、`>` と `>=` を区別できない変異が残る。
@@ -333,7 +333,7 @@ export function buildSchematicFloors(input: SchematicInput): FloorSpec[] {
     const area = Math.min(remaining, footprint);
     const fd = round1(area / w);
     floors.push({
-      name: `${level}F`,
+      name: `${level}階`,
       depthM: fd,
       rooms: [{ x1: 0, y1: 0, x2: w, y2: fd, name: `${level}F 事務・店舗等`, kind: 'other' }],
     });

@@ -101,7 +101,7 @@ describe('buildSchematic — 載せた上階の床は 1F を数えない (1F は
   it('★ 1F だけが depthM を持たず、上階は全部が数で持つ', () => {
     for (const far of [0, 200, 600, 800, 1300]) {
       const floors = buildSchematicFloors({ ...base, upperFloorsSqm: upperFor(far) });
-      expect(floors[0]?.name, `${far}%`).toBe('1F');
+      expect(floors[0]?.name, `${far}%`).toBe('1階');
       expect(floors[0]?.depthM, `${far}%: 1F が奥行を持つと、載せた上階の床に 1F が混ざる`).toBeUndefined();
       expect(Object.hasOwn(floors[0] ?? {}, 'depthM'), `${far}%`).toBe(false);
       for (const upper of floors.slice(1)) {

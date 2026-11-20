@@ -157,7 +157,7 @@ describe('版が分かっていないときに数を名乗らない', () => {
    * サイドバーの版は直す前 `{version ? `v${version}` : 'v0.1.0'}` で、
    * 橋の `getVersion` が落ちると**その直書きが残り続ける** ——
    * 実測 (2026-09-25 · 直す前 · reject する橋で実物の App を描く):
-   * サイドバーは永久に `v0.1.0` と言い、`build: ALL-ACCESS` も並ぶ。
+   * サイドバーは永久に `v0.1.0` と言い、`全機能版` も並ぶ。
    * 版を上げた日には、動いているどの版に対しても偽になる。
    */
   it('★ 橋の getVersion が落ちたら、版の数ではなく理由を出す', async () => {
@@ -182,17 +182,17 @@ describe('版が分かっていないときに数を名乗らない', () => {
     /*
      * 錠は**版の札そのものが出ること**ではなく、シェルが出ること ——
      * `App` は `browserMode` / `vaultUnlocked` が決まるまで「読み込み中…」を出すので、
-     * `build: ALL-ACCESS` は判定が終わったときにだけ現れる。
+     * `全機能版` は判定が終わったときにだけ現れる。
      * 主張したい物 (版の数を名乗らないこと) で待つと、待ちが主張を飲み込む (パス 379)。
      */
-    await waitForText(() => host.textContent ?? '', 'build: ALL-ACCESS');
+    await waitForText(() => host.textContent ?? '', '全機能版');
     const text = host.textContent ?? '';
     // 版の札そのものは出ている (隠したのではなく、数の代わりに理由を出す)。
-    expect(text).toContain('build: ALL-ACCESS');
+    expect(text).toContain('全機能版');
     expect(text).toContain('版不明');
     // 版の数を名乗らない。針が的に当たることは標本で示す。
     expect(text).not.toMatch(/v\d+\.\d+\.\d+/);
-    expect('v0.1.0 · build: ALL-ACCESS').toMatch(/v\d+\.\d+\.\d+/);
+    expect('v0.1.0 · 全機能版').toMatch(/v\d+\.\d+\.\d+/);
     await act(async () => {
       root.unmount();
     });
