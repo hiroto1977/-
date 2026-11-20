@@ -12,6 +12,7 @@
  *   - 「今月の売上」を先頭に出す。今月の記録が無ければ「—」と理由 (0 円とは言わない)
  *   - 月ごとの推移に前月比を出す (暦の 1 つ前の月と比べる。その月の記録が無ければ「—」)
  *   - 明細の行に「直す」が在る。別の画面で書き換えられていた・消されていたときは、書かずに言って入力を残す
+ *   - 「×」で消した直後は「元に戻す」が出る (「直す」と「×」は隣り合うので、押し間違いを戻せるようにする)
  */
 import 'fake-indexeddb/auto';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -171,6 +172,24 @@ describe('入力欄', () => {
     expect((field('メモ') as HTMLInputElement).value).toBe('');
     expect((field('日付') as HTMLInputElement).value).toBe('2026-11-18');
     expect((field('販売先') as HTMLSelectElement).value).toBe('base');
+  });
+
+  it('★ 日付が空なら「日付を選んでください」と言い、記録しない (形式の話をしない)', async () => {
+    await mount();
+    typeInto(field('日付'), '');
+    typeInto(field('売上金額 (円)'), '1000');
+    typeInto(field('注文の数 (件)'), '1');
+    await press('追加');
+    await waitForText(text, '日付を選んでください。');
+    expect(text()).not.toContain('YYYY-MM-DD 形式');
+    expect(await stored()).toEqual([]);
+    expect(container.querySelector('[data-sales-notice]')).toBeNull();
+    // 入力は残る (日付を選べば、そのまま記録できる)。
+    expect((field('売上金額 (円)') as HTMLInputElement).value).toBe('1000');
+    typeInto(field('日付'), '2026-11-17');
+    await press('追加');
+    await waitForElement(() => container.querySelector('[data-sales-notice]'), '記録した知らせ');
+    expect(await stored()).toEqual([{ date: '2026-11-17', channel: 'amazon', amount: 1000, orders: 1 }]);
   });
 
   it('対照: 金額が空なら断り、記録しない (知らせも出さない)', async () => {
@@ -386,5 +405,165 @@ describe('明細の行を直す', () => {
     });
     await settleUntilAsync(async () => (await stored()).length === 1, '1 行だけ残る');
     expect(labels().filter((l) => l === '直す')).toHaveLength(1);
+  });
+});
+
+describe('消した行を元に戻す', () => {
+  const undoBar = (): Element | null => container.querySelector('[data-sales-undo]');
+  /** `note` を持つ行の「×」を押す。 */
+  async function pressDelete(rowText: string): Promise<void> {
+    const row = Array.from(container.querySelectorAll('tbody tr')).find((tr) => (tr.textContent ?? '').includes(rowText));
+    const del = row?.querySelector<HTMLButtonElement>('button[aria-label="削除"]');
+    if (!del) throw new Error(`「${rowText}」の行に「×」が無い`);
+    await act(async () => {
+      del.click();
+    });
+  }
+
+  it('★ 「×」で消すと、何を消したかと「元に戻す」が出る。押すと同じ中身が戻り、戻したことを言う', async () => {
+    await seed([NOV, OCT]);
+    await mount('￥43,000');
+    expect(undoBar()).toBeNull();
+    await pressDelete('まとめ買い');
+    const bar = await waitForElement(undoBar, '消した知らせ');
+    expect(bar.querySelector('span')?.textContent).toBe('消しました: 2026-11-02 · Amazon · ￥31,000');
+    expect(await stored()).toEqual([OCT]);
+    // 知らせは一覧 (明細) の中に出る —— 押した所の近く。
+    expect(bar.parentElement?.querySelector('table')).not.toBeNull();
+
+    await press('元に戻す');
+    const notice = await waitForElement(() => container.querySelector('[data-sales-notice]'), '戻した知らせ');
+    expect(notice.textContent).toBe('元に戻しました: 2026-11-02 · Amazon · ￥31,000');
+    expect((await stored()).sort((a, b) => a.date.localeCompare(b.date))).toEqual([OCT, NOV]);
+    expect(undoBar()).toBeNull();
+    expect(labels()).not.toContain('元に戻す');
+  });
+
+  it('★ 最後の 1 件を消しても「元に戻す」は出る (記録が無いときの案内と並ぶ)', async () => {
+    await seed([NOV]);
+    await mount('まとめ買い');
+    await pressDelete('まとめ買い');
+    await waitForElement(undoBar, '消した知らせ');
+    expect(container.querySelector('[data-sales-empty]')).not.toBeNull();
+    await press('元に戻す');
+    await settleUntilAsync(async () => (await stored()).length === 1, '1 件が戻る');
+    expect(await stored()).toEqual([NOV]);
+  });
+
+  it('★ 「元に戻す」を続けて 2 度押しても、戻るのは 1 件', async () => {
+    await seed([NOV]);
+    await mount('まとめ買い');
+    await pressDelete('まとめ買い');
+    await waitForElement(undoBar, '消した知らせ');
+    const b = button('元に戻す');
+    await act(async () => {
+      b.click();
+      b.click();
+    });
+    await waitForElement(() => container.querySelector('[data-sales-notice]'), '戻した知らせ');
+    expect(await stored()).toEqual([NOV]);
+  });
+
+  it('★ 直している最中の行を消すと、修正をやめる。元に戻すと、打ちかけの値ではなく消した中身が戻る', async () => {
+    await seed([NOV]);
+    await mount('まとめ買い');
+    await press('直す');
+    await settleUntil(() => labels().includes('更新'), '「更新」が出る');
+    typeInto(field('売上金額 (円)'), '99999');
+    await pressDelete('まとめ買い');
+    await waitForElement(undoBar, '消した知らせ');
+    await settleUntil(() => labels().includes('追加'), '「追加」へ戻る');
+    expect(labels()).not.toContain('更新');
+    expect(labels()).not.toContain('やめる');
+    expect((field('売上金額 (円)') as HTMLInputElement).value).toBe('');
+    expect((field('日付') as HTMLInputElement).value).toBe('2026-11-18');
+    await press('元に戻す');
+    await settleUntilAsync(async () => (await stored()).length === 1, '1 件が戻る');
+    expect(await stored()).toEqual([NOV]);
+  });
+
+  it('対照: 別の行を直している間に消しても、修正は続く', async () => {
+    await seed([NOV, OCT]);
+    await mount('￥43,000');
+    const edit = Array.from(container.querySelectorAll('tbody tr'))
+      .find((tr) => (tr.textContent ?? '').includes('まとめ買い'))
+      ?.querySelectorAll('button')[0];
+    await act(async () => {
+      (edit as HTMLButtonElement).click();
+    });
+    await settleUntil(() => labels().includes('更新'), '「更新」が出る');
+    await pressDelete('2026-10-03');
+    await waitForElement(undoBar, '消した知らせ');
+    expect(labels()).toContain('更新');
+    expect((field('メモ') as HTMLInputElement).value).toBe('まとめ買い');
+  });
+
+  it('★ 次に記録すると「元に戻す」は消える (古い 1 件を後から入れ直さない)', async () => {
+    await seed([NOV, OCT]);
+    await mount('￥43,000');
+    await pressDelete('まとめ買い');
+    await waitForElement(undoBar, '消した知らせ');
+    typeInto(field('売上金額 (円)'), '500');
+    typeInto(field('注文の数 (件)'), '1');
+    await press('追加');
+    await waitForElement(() => container.querySelector('[data-sales-notice]'), '記録した知らせ');
+    expect(undoBar()).toBeNull();
+    expect(labels()).not.toContain('元に戻す');
+  });
+
+  it('対照: 入力が断られた (金額が空) だけなら「元に戻す」は残る', async () => {
+    await seed([NOV, OCT]);
+    await mount('￥43,000');
+    await pressDelete('まとめ買い');
+    await waitForElement(undoBar, '消した知らせ');
+    await press('追加');
+    await waitForText(text, '売上金額が未入力です');
+    expect(undoBar()).not.toBeNull();
+  });
+
+  it('★ 消せなかったとき (保存先が断った) は「元に戻す」を出さない —— 行は残っている', async () => {
+    await seed([NOV]);
+    await mount('まとめ買い');
+    const refused = new Error('quota');
+    refused.name = 'QuotaExceededError';
+    const spy = vi.spyOn(getRecordStore(), 'remove').mockRejectedValue(refused);
+    try {
+      await pressDelete('まとめ買い');
+      await settleUntil(() => spy.mock.calls.length === 1, '削除を 1 度試みる');
+      // 断られた後の描画を 1 度待つ (知らせが出るなら、ここまでに出ている)。
+      await act(async () => {
+        await Promise.resolve();
+      });
+      expect(undoBar()).toBeNull();
+      expect(await stored()).toEqual([NOV]);
+      expect(text()).toContain('まとめ買い');
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
+  it('★ 読めない行 (日付が 20 万字) を消した知らせは天井に収まる。元に戻すと全文のまま戻る', async () => {
+    const long = 'x'.repeat(200_000);
+    const broken = { date: long, channel: 'amazon', amount: 1200, orders: 1, note: '読めない行' } as SalesEntry;
+    await seed([broken, OCT]);
+    await mount('読めない行');
+    await pressDelete('読めない行');
+    const bar = await waitForElement(undoBar, '消した知らせ');
+    const line = bar.querySelector('span')?.textContent ?? '';
+    expect(line.length).toBeLessThan(400);
+    expect(line.startsWith(`消しました: ${'x'.repeat(256)}…`)).toBe(true);
+    await press('元に戻す');
+    await settleUntilAsync(async () => (await stored()).length === 2, '2 件に戻る');
+    expect((await stored()).find((e) => e.note === '読めない行')?.date).toBe(long);
+    expect((container.querySelector('[data-sales-notice]')?.textContent ?? '').length).toBeLessThan(400);
+  });
+
+  it('対照: 販売先・日付が読めない行は「不明」と言う (物を文へ流さない)', async () => {
+    const broken = { date: 42, channel: 'nowhere', amount: 'x', orders: 1, note: '壊れた行' } as unknown as SalesEntry;
+    await seed([broken, OCT]);
+    await mount('壊れた行');
+    await pressDelete('壊れた行');
+    const bar = await waitForElement(undoBar, '消した知らせ');
+    expect(bar.querySelector('span')?.textContent).toBe('消しました: 日付不明 · 販売先不明 · —');
   });
 });

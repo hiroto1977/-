@@ -31,17 +31,19 @@ export function previousMonth(month: string): string | null {
 
 /** 前の額に対する増減 (%)。前の額が無い・0 以下なら `null` (割れない)。 */
 export function changePct(amount: number, prev: number | null): number | null {
-  if (prev === null) return null;
-  if (!(prev > 0)) return null;
-  return ((amount - prev) / prev) * 100;
+  // 「無い」は数でない値に置く —— 下の 1 つの門 (0 より大きいか) が、無い・0・負・数でない値をまとめて断る。
+  const base = prev ?? Number.NaN;
+  if (!(base > 0)) return null;
+  return ((amount - base) / base) * 100;
 }
 
 /** 増減の文字 (「+158%」「-12%」「±0%」)。`null` は「—」。 */
 export function changePctText(pct: number | null): string {
   if (pct === null) return '—';
   const rounded = Math.round(pct);
-  if (rounded === 0) return '±0%';
-  return rounded > 0 ? `+${rounded}%` : `${rounded}%`;
+  // 負の数は自分の符号を持つ。0 は「±」(-0 も 0 と刷られる)。
+  const sign = rounded > 0 ? '+' : rounded < 0 ? '' : '±';
+  return `${sign}${rounded}%`;
 }
 
 /** `2026-11` → `2026年11月`。月として読めなければそのまま返す。 */
@@ -54,7 +56,7 @@ export function monthLabel(month: string): string {
 }
 
 const amountOf = (months: readonly MonthTotal[], month: string | null): number | null => {
-  if (month === null) return null;
+  // `month` が無い (前の月を作れなかった) ときは、どの行にも当たらない。
   const hit = months.find((m) => m.month === month);
   return hit === undefined ? null : hit.amount;
 };

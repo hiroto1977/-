@@ -62,9 +62,16 @@ const CHANNEL_COLOR: Record<SalesChannel, string> = {
 
 const EMPTY = { date: '', channel: 'amazon' as SalesChannel, amount: '', orders: '', note: '' };
 
-/** 保存した 1 件を 1 行で言う (「記録しました」「直しました」の後ろに付ける)。 */
-function savedLine(e: SalesEntry): string {
-  return `${e.date} · ${CHANNEL_LABEL[e.channel]} · ${yen.format(e.amount)}`;
+/**
+ * 1 件を 1 行で言う (「記録しました」「直しました」「消しました」の後ろに付ける)。
+ *
+ * 消した行は保管した行で、型を検めずに届く (復元・古い版) —— 欄ごとに型から読み、
+ * 日付は表示の天井を通す (読めない欄は「不明」と言う)。入力から作った行なら、読める値がそのまま出る。
+ */
+function entryLine(e: SalesEntry): string {
+  const date = displayField(e.date);
+  const channel = isSalesChannel(e.channel) ? CHANNEL_LABEL[e.channel] : '販売先不明';
+  return `${date === '' ? '日付不明' : date} · ${channel} · ${salesAmountText(e.amount)}`;
 }
 
 /**
@@ -136,6 +143,8 @@ export function SalesPage() {
   const [error, setError] = useState<string>();
   const submit = useSubmitGuard();
   const [notice, setNotice] = useState<string>();
+  /** 「×」で消した直後の 1 件。「元に戻す」が入れ直す (次に記録・修正・取り込みをすると消える)。 */
+  const [undo, setUndo] = useState<SalesEntry | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const entries = useMemo(() => records.map((r) => r.data), [records]);
@@ -191,9 +200,15 @@ export function SalesPage() {
 
   async function onSave() {
     try {
+      // 日付は選ぶ欄なので、読めないのは空のときだけ —— 形式の話ではなく「選んでください」と言う。
+      if (form.date === '') {
+        setError('日付を選んでください。');
+        return;
+      }
       const parsed = parseSalesEntry(form);
       setError(undefined);
       setNotice(undefined);
+      setUndo(null);
       if (editing !== null) {
         // 重ね書きは欄を消せない —— メモを消した修正は、空の文字で上書きする (読む側は空をメモなしと読む)。
         const patch: SalesEntry =
@@ -212,10 +227,10 @@ export function SalesPage() {
           setError(vanishedRecordNote('直していた記録', '入力は残してあります。新しい記録として入れるなら「追加」を押してください。'));
           return;
         }
-        setNotice(`直しました: ${savedLine(parsed)}`);
+        setNotice(`直しました: ${entryLine(parsed)}`);
       } else {
         await add(parsed);
-        setNotice(`記録しました: ${savedLine(parsed)}`);
+        setNotice(`記録しました: ${entryLine(parsed)}`);
       }
       setForm((f) => ({ ...EMPTY, channel: f.channel, date: f.date }));
     } catch (e) {
@@ -229,6 +244,7 @@ export function SalesPage() {
     setEditing({ id, base: stored });
     setError(undefined);
     setNotice(undefined);
+    setUndo(null);
     // 入力欄は一覧より上に在る。スマホでは画面の外なので、見える所へ運ぶ。
     formRef.current?.scrollIntoView?.({ block: 'start' });
   }
@@ -237,6 +253,32 @@ export function SalesPage() {
     setEditing(null);
     setForm((f) => ({ ...EMPTY, channel: f.channel, date: localIsoDate() }));
     setError(undefined);
+  }
+
+  /**
+   * 一覧の「×」: その行を消し、消した 1 件を「元に戻す」に取っておく。
+   *
+   * 「直す」と「×」は隣り合う (スマホでは押し間違える)。確認の窓で止める代わりに、消した後で戻せるようにする。
+   * 消せなかったとき (保存先が断った) は取っておかない —— 理由は画面上端の知らせが言う。
+   */
+  async function onRemove(id: string, stored: SalesEntry) {
+    setError(undefined);
+    setNotice(undefined);
+    await remove(id);
+    setUndo(stored);
+    // 直している最中の行を消したら、修正をやめる (消した行を「更新」で探しに行かない)。
+    if (editing?.id === id) {
+      setEditing(null);
+      setForm((f) => ({ ...EMPTY, channel: f.channel, date: localIsoDate() }));
+    }
+  }
+
+  /** 「元に戻す」: 消した 1 件を入れ直す。入れられなかったら取っておいたまま (もう一度押せる)。 */
+  async function onUndo() {
+    if (undo === null) return;
+    await add(undo);
+    setNotice(`元に戻しました: ${entryLine(undo)}`);
+    setUndo(null);
   }
 
   function onExport() {
@@ -253,6 +295,7 @@ export function SalesPage() {
   async function onImportFile(file: File) {
     setError(undefined);
     setNotice(undefined);
+    setUndo(null);
     // 読む前に大きさで断る (`data/importFile.ts`)。読んでからでは落ちるのが先。
     let text: string;
     try {
@@ -325,6 +368,18 @@ export function SalesPage() {
     minWidth: 0,
     boxSizing: 'border-box',
   } as const;
+
+  // 消した直後の知らせ。一覧の上に出す (押した所の近く)。最後の 1 件を消したときは、空の案内の上に出す。
+  const undoBar = undo !== null && (
+    <div
+      role="status"
+      data-sales-undo
+      style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', fontSize: 12, margin: '8px 0' }}
+    >
+      <span style={{ overflowWrap: 'anywhere' }}>消しました: {entryLine(undo)}</span>
+      <button type="button" onClick={() => fireReported(submit.run(onUndo))} disabled={submit.busy}>元に戻す</button>
+    </div>
+  );
 
   return (
     <div>
@@ -428,9 +483,12 @@ export function SalesPage() {
       </Section>
 
       {entries.length === 0 ? (
-        <p data-sales-empty style={{ color: 'var(--text-mute)', fontSize: 13, marginTop: 12, lineHeight: 1.7 }}>
-          まだ記録がありません。上の欄に 1 件入れると、ここに「今月の売上」「販売先ごとの内訳」「月ごとの推移」が出ます。
-        </p>
+        <>
+          {undoBar}
+          <p data-sales-empty style={{ color: 'var(--text-mute)', fontSize: 13, marginTop: 12, lineHeight: 1.7 }}>
+            まだ記録がありません。上の欄に 1 件入れると、ここに「今月の売上」「販売先ごとの内訳」「月ごとの推移」が出ます。
+          </p>
+        </>
       ) : (
         <>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '12px 0' }}>
@@ -517,6 +575,7 @@ export function SalesPage() {
           )}
 
           <Section title="明細" count={records.length}>
+            {undoBar}
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
                 <tr style={{ textAlign: 'left', color: 'var(--text-mute)' }}>
@@ -549,7 +608,7 @@ export function SalesPage() {
                     <td style={{ padding: '4px 6px', textAlign: 'right' }}>{finiteNumberOf(r.data.orders) ?? DASH}</td>
                     <td style={{ padding: '4px 6px', whiteSpace: 'nowrap', textAlign: 'right' }}>
                       <button type="button" onClick={() => onStartEdit(r.id, r.data)} style={{ marginRight: 6 }}>直す</button>
-                      <button type="button" onClick={() => fireReported(remove(r.id))} aria-label="削除">×</button>
+                      <button type="button" onClick={() => fireReported(onRemove(r.id, r.data))} aria-label="削除">×</button>
                     </td>
                   </tr>
                 ))}

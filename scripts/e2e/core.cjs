@@ -358,6 +358,20 @@ async function desktopSuite(browser) {
     editedRows === 1 && editedText.includes('5,000') && !editedText.includes('4,321') && (await page.getByRole('button', { name: '追加', exact: true }).count()) === 1,
     `sales: ★ 「更新」で同じ行が書き換わる (行は増えない・ボタンは「追加」へ戻る) — 実際 ${editedRows} 行 "${editedText}"`,
   );
+  // 「直す」と「×」は隣り合う —— 消した直後は「元に戻す」で戻せる (直す前: 消したら入れ直すほか無かった)。
+  await editRow.first().getByRole('button', { name: '削除' }).click();
+  await page.waitForSelector('[data-sales-undo]', { timeout: 15000 });
+  const undoText = ((await page.locator('[data-sales-undo] span').first().innerText()) || '').trim();
+  const goneRows = await editRow.count();
+  await page.locator('[data-sales-undo]').getByRole('button', { name: '元に戻す', exact: true }).click();
+  await page.waitForSelector('tbody tr:has-text("E2E-EDIT")', { timeout: 15000 });
+  const backRows = await editRow.count();
+  const backText = backRows === 1 ? (await editRow.first().innerText()).replace(/\s+/g, ' ') : '';
+  ok(
+    undoText.startsWith('消しました: ') && undoText.endsWith('5,000') && goneRows === 0 && backRows === 1 && backText.includes('5,000') &&
+      (await page.locator('[data-sales-undo]').count()) === 0,
+    `sales: ★ 「×」で消した直後は「元に戻す」で同じ行が戻る — 知らせ ${JSON.stringify(undoText)} · 消した後 ${goneRows} 行 · 戻した後 ${backRows} 行 "${backText}"`,
+  );
   while ((await editRow.count()) > 0) {
     const before = await page.locator('tbody tr').count();
     await editRow.first().getByRole('button', { name: '削除' }).click();
@@ -6207,8 +6221,8 @@ function installWaitMarginRecorder(browser) {
   const SUITE_TABLE = [
     // desktop: パス 493q で +2 (制度判定の年齢に読めない値を打つと判定を断る・直すと戻る)
     // パス 566-C で +1 (財務データへのマージ復元が T-227 の確認を出すことを見る)
-    // 2026-11-20: 売上集計の入力欄 (日付の選ぶ欄・記録した知らせ・今月の売上・行を直す) で +5
-    ['desktop', desktopSuite, 72],
+    // 2026-11-20: 売上集計の入力欄 (日付の選ぶ欄・記録した知らせ・今月の売上・行を直す) で +5・消した行を元に戻すで +1
+    ['desktop', desktopSuite, 73],
     ['manualData', manualDataSuite, 19],
     // 2026-11-19: 「内蔵サンプル」の標本を不動産へ移し、士業 (端末内の記録) が見本を名乗らないことを足した = +2
     ['dataOrigin', dataOriginSuite, 21],
