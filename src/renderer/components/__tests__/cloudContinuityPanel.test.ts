@@ -49,7 +49,7 @@ describe('事業継続のパネル', () => {
     expect(row).toContain(github?.entrusted ?? 'x');
     expect(row).toContain(github?.whenDown ?? 'x');
     expect(row).toContain(github?.meanwhile ?? 'x');
-    expect(row).toContain('資格情報を預けている画面: GitHub');
+    expect(row).toContain('資格情報を預けている画面: ギットハブ');
     expect(text()).not.toContain('資格情報を預けているクラウドはありません');
     expect(container.querySelector('[data-continuity-unreadable]')).toBeNull();
   });

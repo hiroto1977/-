@@ -341,6 +341,6 @@ describe('KPI の断りの文 — 値ごと留める (パス 501)', () => {
     expect(duplicateActualsOverviewNote([])).toBeNull();
     const note = duplicateActualsOverviewNote([{ period: '2026-04', unit: '全社', count: 2 }]);
     expect(note).toContain('1 組重複');
-    expect(note).toContain('「KPI / BEP」の画面');
+    expect(note).toContain('「経営指標・損益分岐点」の画面');
   });
 });

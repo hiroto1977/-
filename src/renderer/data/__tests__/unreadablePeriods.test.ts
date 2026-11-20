@@ -138,7 +138,7 @@ describe('断りの文 — 落としたことを言う', () => {
     expect(note).toContain('3 件');
     // **サイドバーの綴りで指さす** —— 「KPI 実績」という画面は存在しない (パス 425)。
     // 実在するかどうかは `namedEscapeHatchReachable.test.ts` が SERVICES と突き合わせる。
-    expect(note).toContain('「KPI / BEP」の画面');
+    expect(note).toContain('「経営指標・損益分岐点」の画面');
     expect(note).not.toContain('「KPI 実績」の画面');
     expect(note).toContain('一覧の ×');
     expect(unreadablePeriodOverviewNote(0)).toBeNull();

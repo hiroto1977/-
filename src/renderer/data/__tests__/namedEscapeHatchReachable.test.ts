@@ -230,10 +230,20 @@ const LEDGER: readonly Row[] = [
       + '不備から生まれる物ではなく、書き出しの結末 (`libraryCopy === "saved"`) から生まれるため。',
   },
   {
+    fn: 'buildManagementHighlights',
+    file: 'src/renderer/data/managementHighlights.ts',
+    kinds: ['other-screen'],
+    why:
+      '**記録の不備ではなく未入力についての文** (2026-11-20) —— 貸借対照表の内数 (棚卸資産・売上債権・仕入債務) が'
+      + '未入力のとき、入力する画面を名前で指す。2026-11-20 までは「KPI ページ」と書いており (画面の名前そのものではないので'
+      + 'この走査に映らなかった)、画面の名前を日本語へ替えたときに「経営指標・損益分岐点」の画面と名指しする形へ直した。'
+      + '標本を持たないのは、保管した行が壊れているから出る文ではなく、欄がまだ無いから出る文のため。',
+  },
+  {
     fn: 'CHATBOT_OLLAMA_ESCAPE',
     file: 'src/renderer/data/chatbotOllama.ts',
     kinds: ['other-screen'],
-    why: '**記録ではなくモデルについての文** —— AI コンシェルジュに行き先を選ぶ口が無いので、導入済みの一覧が出る「Ollama」の画面を名乗る (パス 449)。',
+    why: '**記録ではなくモデルについての文** —— AI コンシェルジュに行き先を選ぶ口が無いので、導入済みの一覧が出る「オラマ」の画面を名乗る (パス 449)。',
   },
   {
     fn: 'unreadableA8netRewardsNote',
@@ -525,9 +535,10 @@ describe('「X」の画面 の X は実在するラベル (パス 425)', () => {
 
   it('★ 針は標本に当たる (綴り違いで黙る検査でないこと)', () => {
     const grab = (s: string) => [...s.matchAll(SCREEN_RE)].map((m) => m[1]);
-    expect(grab('「KPI / BEP」の画面の一覧に出ています')).toEqual(['KPI / BEP']);
+    expect(grab('「経営指標・損益分岐点」の画面の一覧に出ています')).toEqual(['経営指標・損益分岐点']);
     expect(grab('「売上集計」の画面で記録を追加すると')).toEqual(['売上集計']);
     expect(LABELS.has('KPI 実績'), '2026-09-23 まで名指ししていた綴り —— 実在しない').toBe(false);
-    expect(LABELS.has('KPI / BEP')).toBe(true);
+    expect(LABELS.has('KPI / BEP'), '2026-11-20 まで画面名だった綴り —— 日本語の名前へ替えた').toBe(false);
+    expect(LABELS.has('経営指標・損益分岐点')).toBe(true);
   });
 });

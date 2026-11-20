@@ -1503,7 +1503,7 @@ export function OverviewPage() {
           <p role="alert" style={{ color: 'var(--warning)', fontSize: 13, lineHeight: 1.6 }}>
             予算と実績で<strong>期 (YYYY-MM) が 1 つも重なっていない</strong>ため、達成率を算定できません
             （予算 {overview.budgetAlignment.budgetOnlyPeriods.length} か月・実績{' '}
-            {overview.budgetAlignment.actualOnlyPeriods.length} か月）。KPI ページで、実績と同じ月の予算を入力してください。
+            {overview.budgetAlignment.actualOnlyPeriods.length} か月）。「経営指標・損益分岐点」の画面で、実績と同じ月の予算を入力してください。
           </p>
         </Section>
       )}
@@ -1512,7 +1512,7 @@ export function OverviewPage() {
         <Section title="予算実績差異 (BVA)">
           <p style={{ color: 'var(--text-mute)', fontSize: 12, lineHeight: 1.6, marginBottom: 12 }}>
             予算 (計画) と実績の差異・達成率です。突き合わせたのは<strong>予算と実績の両方が在る期</strong>だけで、
-            {`${budgetComparedRangeLabel(overview.budget.alignment)}分です。`}予算は KPI ページで入力できます。
+            {`${budgetComparedRangeLabel(overview.budget.alignment)}分です。`}予算は「経営指標・損益分岐点」の画面で入力できます。
           </p>
           {budgetScopeSentence(overview.budget.alignment) !== null && (
             <p role="alert" style={{ color: 'var(--warning)', fontSize: 12, lineHeight: 1.6, marginBottom: 12 }}>

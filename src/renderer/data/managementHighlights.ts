@@ -311,7 +311,7 @@ export function buildManagementHighlights(
       out.push({
         severity: 'warning',
         category: '運転資金',
-        message: `貸借対照表の${stocks.blank.join('・')}が未入力のため、現金化サイクル (CCC) と運転資本を算定していません。KPI ページの貸借対照表に入力してください。`,
+        message: `貸借対照表の${stocks.blank.join('・')}が未入力のため、現金化サイクル (CCC) と運転資本を算定していません。「経営指標・損益分岐点」の画面の貸借対照表に入力してください。`,
       });
     }
     if (stocks.unreadable.length > 0) {

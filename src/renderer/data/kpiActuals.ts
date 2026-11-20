@@ -267,7 +267,7 @@ export function unreadablePeriodNote(kind: string, dropped: number): string | nu
 export function unreadablePeriodOverviewNote(dropped: number): string | null {
   // 画面側と同じ肯定形 (`undefined` / NaN は言わない)。
   if (!(Number.isFinite(dropped) && dropped > 0)) return null;
-  return `実績・予算のうち ${dropped} 件は期 (YYYY-MM) が読めないため、集計・期間・成長率のすべてから除いています。バックアップの復元や古い版で入った控えの可能性があります（その行は「KPI / BEP」の画面の一覧に出ています —— 一覧の × で消せます）。`;
+  return `実績・予算のうち ${dropped} 件は期 (YYYY-MM) が読めないため、集計・期間・成長率のすべてから除いています。バックアップの復元や古い版で入った控えの可能性があります（その行は「経営指標・損益分岐点」の画面の一覧に出ています —— 一覧の × で消せます）。`;
 }
 
 /** 同じことを、相手に渡る書面・レポート向けの 1 文で。 */
@@ -1181,7 +1181,7 @@ export function duplicateActualsNote(kind: ActualKind, groups: readonly Duplicat
  */
 export function duplicateActualsOverviewNote(groups: readonly DuplicateActualGroup[]): string | null {
   if (groups.length === 0) return null;
-  return `同じ期・事業の実績が ${groups.length} 組重複しており（${listGroups(groups)}）、この画面の金額はその合算値です。「KPI / BEP」の画面で余分な行を消してください。`;
+  return `同じ期・事業の実績が ${groups.length} 組重複しており（${listGroups(groups)}）、この画面の金額はその合算値です。「経営指標・損益分岐点」の画面で余分な行を消してください。`;
 }
 
 /** 書面 §1 と経営レポートの但し書き (**相手に渡る面**)。無ければ null。 */
