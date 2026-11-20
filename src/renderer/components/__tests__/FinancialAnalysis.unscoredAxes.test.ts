@@ -69,7 +69,7 @@ describe('財務分析 — 算定できなかった軸の扱い', () => {
     const html = render(SERVICE);
     expect(html).toContain('data-unscored-axes');
     expect(html).toContain('未評価の 2 軸');
-    expect(html).toContain('棚卸資産回転率・CCC');
+    expect(html).toContain('棚卸資産回転率・現金化日数');
     expect(html).toContain('総合スコア・カテゴリ平均・強み／要改善のいずれからも除いています');
   });
 
@@ -89,7 +89,7 @@ describe('財務分析 — 算定できなかった軸の扱い', () => {
 
   it('★ 未評価の軸はラベルに印を付ける (頂点が無い理由が図の中で読める)', () => {
     const html = render(SERVICE);
-    expect(html).toContain('CCC（未評価）');
+    expect(html).toContain('現金化日数（未評価）');
     expect(html).toContain('棚卸資産回転率（未評価）');
     expect(render(GOODS)).not.toContain('（未評価）');
   });

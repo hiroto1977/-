@@ -245,26 +245,26 @@ const RATIO_ROWS: { key: keyof FinancialRatios; label: string; unit: string; mon
   { key: 'netMarginPct', label: '当期純利益率', unit: '%' },
   { key: 'netProfit', label: '当期純利益', unit: '', money: true },
   { key: 'laborSharePct', label: '労働分配率', unit: '%' },
-  { key: 'ebitda', label: 'EBITDA', unit: '', money: true },
-  { key: 'ebitdaMarginPct', label: 'EBITDAマージン', unit: '%' },
+  { key: 'ebitda', label: '償却前営業利益', unit: '', money: true },
+  { key: 'ebitdaMarginPct', label: '償却前営業利益率', unit: '%' },
   { key: 'receivablesTurnover', label: '売上債権回転率', unit: '倍' },
   { key: 'inventoryTurnover', label: '棚卸資産回転率', unit: '倍' },
-  { key: 'cccDays', label: 'CCC', unit: '日' },
-  { key: 'roaPct', label: 'ROA', unit: '%' },
-  { key: 'roePct', label: 'ROE', unit: '%' },
+  { key: 'cccDays', label: '現金化日数', unit: '日' },
+  { key: 'roaPct', label: '総資産利益率', unit: '%' },
+  { key: 'roePct', label: '自己資本利益率', unit: '%' },
   // NOPAT / ROIC は round 68 から計算していたが表に無かった (計算しているのに出していない)。
   // 実効税率 (台帳 `finance.effectiveTaxRate`) は NOPAT と当期純利益の両方に効く (パス 493 から)。
-  { key: 'nopat', label: 'NOPAT (税引後営業利益)', unit: '', money: true },
-  { key: 'roicPct', label: 'ROIC', unit: '%' },
+  { key: 'nopat', label: '税引後営業利益', unit: '', money: true },
+  { key: 'roicPct', label: '投下資本利益率', unit: '%' },
 ];
 
 const BAR_OPTIONS: { key: keyof FinancialRatios; label: string; unit: string }[] = [
   { key: 'operatingMarginPct', label: '営業利益率', unit: '%' },
   { key: 'equityRatioPct', label: '自己資本比率', unit: '%' },
-  { key: 'roePct', label: 'ROE', unit: '%' },
-  { key: 'roaPct', label: 'ROA', unit: '%' },
-  { key: 'ebitdaMarginPct', label: 'EBITDAマージン', unit: '%' },
-  { key: 'cccDays', label: 'CCC', unit: '日' },
+  { key: 'roePct', label: '自己資本利益率', unit: '%' },
+  { key: 'roaPct', label: '総資産利益率', unit: '%' },
+  { key: 'ebitdaMarginPct', label: '償却前営業利益率', unit: '%' },
+  { key: 'cccDays', label: '現金化日数', unit: '日' },
 ];
 
 const cardStyle: CSSProperties = {
@@ -1140,12 +1140,12 @@ export function FinancialAnalysis({
         `deriveBusinessFinancials` が売上債権 = 月商 ×1.5・棚卸 = 月次原価 ×1・
         仕入債務 = 月次原価 ×1.2 と置くので、比は約分されて事業に依らず一定になる
         (実測 2026-09-07: 高収益SaaS / 薄利小売 / 赤字製造 / 零細 のどれでも
-         売上債権回転率 8 倍・棚卸資産回転率 12 倍・CCC 39.5 日)。
+         売上債権回転率 8 倍・棚卸資産回転率 12 倍・現金化日数 39.5 日)。
         **どの事業でも同じ値が出るのだから、事業を見比べる材料にはならない。**
         黙って並べると「3 軸が揃っている」ことを実測の一致として読まれるので明記する。
       */}
       <div style={{ fontSize: 11, color: 'var(--warning)', marginTop: 4 }}>
-        ※ 運転資本の 3 指標（売上債権回転率・棚卸資産回転率・CCC）は、概算の置き方
+        ※ 運転資本の 3 指標（売上債権回転率・棚卸資産回転率・現金化日数）は、概算の置き方
         （売上債権 = 月商 ×1.5／棚卸 = 月次原価 ×1／仕入債務 = 月次原価 ×1.2）から
         <strong>どの事業でも同じ値（8 倍・12 倍・39.5 日）になります</strong>。
         事業間の比較には使えません（総合スコアにはこの 3 軸も含まれています）。

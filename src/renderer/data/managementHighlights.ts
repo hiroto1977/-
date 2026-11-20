@@ -265,7 +265,7 @@ export function buildManagementHighlights(
     out.push({
       severity: 'warning',
       category: '財政状態',
-      message: `貸借対照表の基準日 (${monthText(fresh.asOfMonth)}) が実績の最新期 (${monthText(fresh.latestPeriod)}) より ${fresh.monthsBehind} か月古く、総資産回転率・現金化サイクル・資金ランウェイは別の期の数字を割っています。新しい貸借対照表を入力してください。`,
+      message: `貸借対照表の基準日 (${monthText(fresh.asOfMonth)}) が実績の最新期 (${monthText(fresh.latestPeriod)}) より ${fresh.monthsBehind} か月古く、総資産回転率・現金化日数・資金ランウェイは別の期の数字を割っています。新しい貸借対照表を入力してください。`,
     });
   }
   // **先の側も同じだけ壊れる。** 隔たりの害は符号ではなく大きさで決まるのに、
@@ -277,7 +277,7 @@ export function buildManagementHighlights(
     out.push({
       severity: 'warning',
       category: '財政状態',
-      message: `貸借対照表の基準日 (${monthText(fresh.asOfMonth)}) が実績の最新期 (${monthText(fresh.latestPeriod)}) より ${-fresh.monthsBehind} か月**後**です。総資産回転率・現金化サイクル・資金ランウェイは別の期の数字を割っています。基準日か実績の期の入力を確かめてください。`,
+      message: `貸借対照表の基準日 (${monthText(fresh.asOfMonth)}) が実績の最新期 (${monthText(fresh.latestPeriod)}) より ${-fresh.monthsBehind} か月**後**です。総資産回転率・現金化日数・資金ランウェイは別の期の数字を割っています。基準日か実績の期の入力を確かめてください。`,
     });
   }
 
@@ -311,22 +311,22 @@ export function buildManagementHighlights(
       out.push({
         severity: 'warning',
         category: '運転資金',
-        message: `貸借対照表の${stocks.blank.join('・')}が未入力のため、現金化サイクル (CCC) と運転資本を算定していません。「経営指標・損益分岐点」の画面の貸借対照表に入力してください。`,
+        message: `貸借対照表の${stocks.blank.join('・')}が未入力のため、現金化日数と運転資本を算定していません。「経営指標・損益分岐点」の画面の貸借対照表に入力してください。`,
       });
     }
     if (stocks.unreadable.length > 0) {
       out.push({
         severity: 'warning',
         category: '運転資金',
-        message: `貸借対照表の${stocks.unreadable.join('・')}が数として読めないため、現金化サイクル (CCC) と運転資本を算定していません。設定の「形式の合わないレコード」から消して入れ直してください。`,
+        message: `貸借対照表の${stocks.unreadable.join('・')}が数として読めないため、現金化日数と運転資本を算定していません。設定の「形式の合わないレコード」から消して入れ直してください。`,
       });
     }
   }
   if (wc && wc.ccc !== null) {
     if (wc.ccc > 60) {
-      out.push({ severity: 'warning', category: '運転資金', message: `CCC が ${wc.ccc} 日と長く、運転資金の負担が大きい状態です。` });
+      out.push({ severity: 'warning', category: '運転資金', message: `現金化日数が ${wc.ccc} 日と長く、運転資金の負担が大きい状態です。` });
     } else if (wc.ccc <= 0) {
-      out.push({ severity: 'good', category: '運転資金', message: `CCC が ${wc.ccc} 日で、仕入の支払より先に回収できています。` });
+      out.push({ severity: 'good', category: '運転資金', message: `現金化日数が ${wc.ccc} 日で、仕入の支払より先に回収できています。` });
     }
   }
 

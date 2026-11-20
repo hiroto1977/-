@@ -142,7 +142,7 @@ export function buildManagementScorecard(m: ManagementMetricsInput): ManagementS
 
   const efficiency: { label: string; score: number }[] = [];
   // CCC は短いほど良い (反転): 0日→100, 90日→0。マイナス(調達超過)は 100 にクランプ。
-  if (m.cashConversionDays !== undefined) efficiency.push({ label: 'CCC', score: band(90 - m.cashConversionDays, 0, 90) });
+  if (m.cashConversionDays !== undefined) efficiency.push({ label: '現金化日数', score: band(90 - m.cashConversionDays, 0, 90) });
   if (m.assetTurnover !== undefined) efficiency.push({ label: '総資産回転率', score: band(m.assetTurnover, 0, 1.5) });
 
   const categories: CategoryScore[] = [

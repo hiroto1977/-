@@ -363,13 +363,13 @@ describe('buildManagementHighlights — 利益トレンド / 生産性 / 運転�
       balanceSheet: { asOf: '2026-05-31', currentAssets: 3_000_000, inventory: 1_000_000, accountsReceivable: 2_000_000, fixedAssets: 0, currentLiabilities: 100_000, accountsPayable: 50_000, fixedLiabilities: 0, netIncome: 0 },
     });
     expect(long.workingCapital!.ccc).toBe(133);
-    expect(cat(buildManagementHighlights(long), '運転資金')).toMatchObject({ severity: 'warning', message: expect.stringContaining('CCC') });
+    expect(cat(buildManagementHighlights(long), '運転資金')).toMatchObject({ severity: 'warning', message: expect.stringContaining('現金化日数') });
     // 低い債権/棚卸・高い仕入債務 → CCC <= 0
     const neg = buildBusinessOverview({
       plan: 'pro', sales: [], kpiActuals: [kpi()], members: [],
       balanceSheet: { asOf: '2026-05-31', currentAssets: 900_000, inventory: 0, accountsReceivable: 0, fixedAssets: 0, currentLiabilities: 800_000, accountsPayable: 800_000, fixedLiabilities: 0, netIncome: 0 },
     });
-    expect(cat(buildManagementHighlights(neg), '運転資金')).toMatchObject({ severity: 'good', message: expect.stringContaining('CCC') });
+    expect(cat(buildManagementHighlights(neg), '運転資金')).toMatchObject({ severity: 'good', message: expect.stringContaining('現金化日数') });
   });
 
   it('flags a short cash runway as critical (< 6mo) and a medium one as warning (< 12mo)', () => {
@@ -440,7 +440,7 @@ describe('buildManagementHighlights — exact boundaries & null guards (direct o
     expect(f?.message).toContain('2026年8月');
     expect(f?.message).toContain('89 か月');
     expect(f?.message).toContain('総資産回転率');
-    expect(f?.message).toContain('現金化サイクル');
+    expect(f?.message).toContain('現金化日数');
     expect(f?.message).toContain('資金ランウェイ');
   });
 
@@ -690,7 +690,7 @@ describe('運転資金: 未入力の欄を名前で述べる', () => {
     ).find((x) => x.message.includes('未入力'));
     expect(h).toMatchObject({ severity: 'warning', category: '運転資金' });
     expect(h!.message).toContain('売上債権・仕入債務');
-    expect(h!.message).toContain('現金化サイクル');
+    expect(h!.message).toContain('現金化日数');
   });
 
   it('★ 対照: 埋まっていれば所見を出さない (毎回出る雑音にしない)', () => {
@@ -821,7 +821,7 @@ describe('buildManagementHighlights — 変異検査が教えた所 (パス 501)
       {
         severity: 'warning',
         category: '運転資金',
-        message: '貸借対照表の棚卸資産が数として読めないため、現金化サイクル (CCC) と運転資本を算定していません。設定の「形式の合わないレコード」から消して入れ直してください。',
+        message: '貸借対照表の棚卸資産が数として読めないため、現金化日数と運転資本を算定していません。設定の「形式の合わないレコード」から消して入れ直してください。',
       },
     ]);
   });
@@ -831,7 +831,7 @@ describe('buildManagementHighlights — 変異検査が教えた所 (パス 501)
       mkOv({ wc: { ccc: null, missingStocks: ['棚卸資産', '売上債権'] }, unreadable: ['棚卸資産', '売上債権'] }),
     );
     expect(c(hs, '運転資金').map((h) => h.message)).toEqual([
-      '貸借対照表の棚卸資産・売上債権が数として読めないため、現金化サイクル (CCC) と運転資本を算定していません。設定の「形式の合わないレコード」から消して入れ直してください。',
+      '貸借対照表の棚卸資産・売上債権が数として読めないため、現金化日数と運転資本を算定していません。設定の「形式の合わないレコード」から消して入れ直してください。',
     ]);
   });
 
@@ -840,8 +840,8 @@ describe('buildManagementHighlights — 変異検査が教えた所 (パス 501)
       mkOv({ wc: { ccc: null, missingStocks: ['売上債権', '棚卸資産'] }, unreadable: ['棚卸資産'] }),
     );
     expect(c(hs, '運転資金').map((h) => h.message)).toEqual([
-      '貸借対照表の売上債権が未入力のため、現金化サイクル (CCC) と運転資本を算定していません。「経営指標・損益分岐点」の画面の貸借対照表に入力してください。',
-      '貸借対照表の棚卸資産が数として読めないため、現金化サイクル (CCC) と運転資本を算定していません。設定の「形式の合わないレコード」から消して入れ直してください。',
+      '貸借対照表の売上債権が未入力のため、現金化日数と運転資本を算定していません。「経営指標・損益分岐点」の画面の貸借対照表に入力してください。',
+      '貸借対照表の棚卸資産が数として読めないため、現金化日数と運転資本を算定していません。設定の「形式の合わないレコード」から消して入れ直してください。',
     ]);
   });
 

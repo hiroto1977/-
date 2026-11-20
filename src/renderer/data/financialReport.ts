@@ -26,13 +26,13 @@ const ROWS: { readonly key: keyof FinancialRatios; readonly label: string; reado
   { key: 'netMarginPct', label: '当期純利益率', unit: '%' },
   { key: 'netProfit', label: '当期純利益', unit: '円', money: true },
   { key: 'laborSharePct', label: '労働分配率', unit: '%' },
-  { key: 'ebitda', label: 'EBITDA', unit: '円', money: true },
-  { key: 'ebitdaMarginPct', label: 'EBITDAマージン', unit: '%' },
+  { key: 'ebitda', label: '償却前営業利益', unit: '円', money: true },
+  { key: 'ebitdaMarginPct', label: '償却前営業利益率', unit: '%' },
   { key: 'receivablesTurnover', label: '売上債権回転率', unit: '倍' },
   { key: 'inventoryTurnover', label: '棚卸資産回転率', unit: '倍' },
-  { key: 'cccDays', label: 'CCC', unit: '日' },
-  { key: 'roaPct', label: 'ROA', unit: '%' },
-  { key: 'roePct', label: 'ROE', unit: '%' },
+  { key: 'cccDays', label: '現金化日数', unit: '日' },
+  { key: 'roaPct', label: '総資産利益率', unit: '%' },
+  { key: 'roePct', label: '自己資本利益率', unit: '%' },
 ];
 
 const TREND_TEXT: Record<MarginTrend['direction'], string> = { up: '改善傾向', flat: '横ばい', down: '悪化傾向' };

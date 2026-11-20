@@ -47,7 +47,7 @@ describe('FinancialAnalysis — 既定の水準で採点したことを言う', 
       units: [UNIT], radarBands: collapsed('equityRatio', 'laborShare', 'roe'),
     }));
     expect(html).toContain('data-default-band-axes="3"');
-    for (const label of ['自己資本比率', '労働分配率', 'ROE']) expect(html).toContain(label);
+    for (const label of ['自己資本比率', '労働分配率', '自己資本利益率']) expect(html).toContain(label);
   });
 
   it('倒し込みは残す — 断りを出しても格付けは刷り続ける (⛔ 1 件で節全体を黙らせない)', () => {

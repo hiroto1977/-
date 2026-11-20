@@ -7,6 +7,45 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-11-20 · 続き 5) — グラフと図の中の英字を日本語にした (日本語表記の 2 回目)
+
+- **依頼**: 「写真やイラスト内の文字も含め全てを日本語表記で表示して」の続き (1 回目は下の節 —— PR #969 でマージ済み)。
+- **直す前 (実測 · LITE の全 77 画面を描いて図の中の字を数えた)**: 図の中の英字は経営サマリーだけに残っていた —— 財務の略語 4 つ (レーダーの軸の `EBITDA` / `CCC` / `ROA` / `ROE`) と、
+  事業の名前に入った英字 5 語 (`EC` / `OEM` / `ODM` / `PPC` / `SNS` —— 事業ごとの図に 13 回ずつ)。同じ指標が場所ごとに 4 通りの日本語で呼ばれてもいた
+  (「CCC（現金化日数）」「現金化サイクル (CCC)」「CCC (現金回収日数)」「キャッシュ化速度 (CCC)」)。
+- **直した後 (言葉は 1 つずつ)**:
+
+  | 直す前 | 直した後 |
+  | --- | --- |
+  | EBITDA | 償却前営業利益 |
+  | EBITDAマージン | 償却前営業利益率 |
+  | CCC | 現金化日数 |
+  | ROA | 総資産利益率 |
+  | ROE | 自己資本利益率 |
+  | ROIC | 投下資本利益率 |
+  | NOPAT (税引後営業利益) | 税引後営業利益 |
+  | EC / ネットショップ | ネットショップ |
+  | OEM / ODM | 製造委託 (自社ブランド) |
+  | PPC アフィリエイト | 広告出稿型アフィリエイト |
+  | SNS 運用 | ソーシャルメディア運用 |
+
+  - **図と、その隣の表・札**: `components/FinancialAnalysis.tsx` (指標の表・棒グラフの選択肢)・`data/financialRatios.ts` (レーダーの 15 軸)・`data/businessAxonometric.ts` (事業ごとの図の 17 指標)・
+    `data/overviewOverrides.ts` (手で置ける欄)・`shared/managementScorecard.ts`・`pages/OverviewPage.tsx` / `pages/KpiPage.tsx` の札。
+  - **同じ画面の文**: `data/financialDiagnosis.ts` (改善のヒント)・`data/managementHighlights.ts` (運転資金の所見)・`shared/parameters.ts` (財務診断の水準の名前)。
+  - **事業の名前**: `main/clients/business.ts` と `renderer/data/snapshot.ts` (同梱の 10 事業)。
+  - **書き出す紙のうち 3 つ**: 財務レポート (`financialReport.ts`)・CSV の見出し (`financialCsv.ts`)・経営レポート (`managementReport.ts`) も同じ言葉へ (ヒントの文が同じ紙に入るので、表だけ略語のままだと 1 枚の中で呼び名が割れる)。
+- **経営サマリーの札の副題**: 「償却前営業利益・マージン 23%」→「営業利益 + 減価償却費・売上に対して 23%」(名前と副題が同じ語の繰り返しになるため)。
+- **検査が教えた 1 件**: `overviewOverrides.test.ts` の対照は文面の `includes('営業利益率')` で「上書きした欄そのものは数えない」を見ていた。「償却前営業利益率」は「営業利益率」を**部分文字列として含む**ので、
+  名前を変えた瞬間に落ちた (製品ではなく針の誤り)。名前の一覧と path で照合する形へ直し、隣の比率が数えられている標本を添えた。
+- **検査**: `renderer/__tests__/chartLabelsJapanese.test.ts` 6 件 (レーダーの 15 軸・事業ごとの 17 指標・手で置ける欄・同梱の 10 事業の名前に英字が無い・針の標本・レーダーと事業ごとの図が同じ指標を同じ名前で呼ぶ)・
+  `business.test.ts` に 1 件 (主プロセスの側の事業の名前)。**対照 7 方向すべて鳴る** (レーダーの軸 ❌3 / 事業ごとの指標 ❌3 / 手で置ける欄 ❌2 / 同梱の事業名 ❌1 / 主プロセスの事業名 ❌2 / ヒントの文 ❌2 / 経営レポート ❌2 —— 中身の md5 で元へ戻したことを確かめた)。
+- **変異検査** (触った `mutate` の 11 本 —— 文字列だけを変えた): 11 本とも **100.00%** (Killed 2,354 / Timeout 2 / 生存 0 / 未到達 0・並列 2・53 分 52 秒 —— `main/clients/business.ts`・`businessAxonometric` / `financialCsv` / `financialDiagnosis` / `financialRatios` / `financialReport` / `managementHighlights` / `managementReport` / `overviewOverrides`・`shared/managementScorecard` / `parameters`)。後片付け済み。
+- **検証**: `typecheck` 緑・`npm test` **1,340 ファイル / 29,300 件 ❌ 0**・`verify:all` 39 ゲート exit 0。出荷物が動いたので実機も回した (最終コード):
+  FULL **12,344,458 B** / LITE **3,757,095 B** (両方 +755 B)・`perf` OK (LITE DCL 331 ms / heap 8.3 MB・FULL DCL 645 ms / heap 30.4 MB)・`e2e` **774 件 ❌ 0**・`e2e:lite` **774 件 ❌ 0**。
+  スマホ幅 (412px) で経営サマリー・事業ダッシュボード・経営指標の 3 画面を開いて確かめた: 図の中の英字 0・図の外へはみ出す字 0・横のはみ出し無し・console エラー 0。
+  `smoke:app` / `e2e:ollama` は回していない (主プロセスで変えたのは事業の名前 4 つだけ・Ollama の経路は触っていない)。
+- **まだ英字が残る所 (次の回)** は `docs/REMAINING_WORK.md` の先頭の節。
+
 ## 直近の作業 (2026-11-20 · 続き 4) — 画面の名前と印を日本語にした (日本語表記の 1 回目)
 
 - **依頼**: 「写真やイラスト内の文字も含め全てを日本語表記で表示して」。範囲を訊くと「印と画面名の両方」。変更が大きいので数回に分ける —— これは 1 回目。

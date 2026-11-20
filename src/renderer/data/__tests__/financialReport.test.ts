@@ -37,8 +37,8 @@ describe('buildFinancialReportMarkdown', () => {
     expect(md).toContain('| 効率性 |');
     // 17 指標 + 2 ヘッダ行 (指標|値 と区切り) のうち主要なものを確認
     expect(md).toContain('| 自己資本比率 |');
-    expect(md).toContain('| ROE |');
-    expect(md).toContain('| CCC |');
+    expect(md).toContain('| 自己資本利益率 |');
+    expect(md).toContain('| 現金化日数 |');
   });
 
   it('reflects the margin trend and keeps the disclaimer', () => {
@@ -71,7 +71,7 @@ describe('buildFinancialReportMarkdown', () => {
       '## 要改善（一般情報）',
       '- 売上債権回転率が低め。回収サイトの長期化に注意。',
       '- 棚卸資産回転率が低め。在庫の滞留に注意。',
-      '- CCC（現金化日数）が長め。回収・在庫・支払のサイト最適化を検討。',
+      '- 現金化日数が長め。回収・在庫・支払のサイト最適化を検討。',
       '',
       '## 主要財務指標',
       '',
@@ -87,13 +87,13 @@ describe('buildFinancialReportMarkdown', () => {
       '| 当期純利益率 | 13.7% |',
       '| 当期純利益 | 1,649,088 円 |',
       '| 労働分配率 | 39.5% |',
-      '| EBITDA | 2,760,000 円 |',
-      '| EBITDAマージン | 23% |',
+      '| 償却前営業利益 | 2,760,000 円 |',
+      '| 償却前営業利益率 | 23% |',
       '| 売上債権回転率 | 8倍 |',
       '| 棚卸資産回転率 | 12倍 |',
-      '| CCC | 39.5日 |',
-      '| ROA | 17.2% |',
-      '| ROE | 34.4% |',
+      '| 現金化日数 | 39.5日 |',
+      '| 総資産利益率 | 17.2% |',
+      '| 自己資本利益率 | 34.4% |',
       '',
       '---',
       '※ 本レポートは概算データに基づく一般情報であり、財務助言ではありません。',
@@ -102,11 +102,11 @@ describe('buildFinancialReportMarkdown', () => {
   });
 
   it('null の指標は値欄を — で描画する (fmtValue の null ガード)', () => {
-    // 売上0 → 多くの比率が null。CCC 行が「| CCC | — |」になることを確認。
+    // 売上0 → 多くの比率が null。CCC 行が「| 現金化日数 | — |」になることを確認。
     // `if (v == null) return '—'` の条件を false 固定 / '—' を空に変える mutant を殺す。
     const zeroRatios = computeFinancialRatios(deriveBusinessFinancials({ revenue: 0, variableCost: 0, fixedCost: 0, profit: 0, profitMargin: 0 }));
     const mdNull = buildFinancialReportMarkdown({ label: 'Z', ratios: zeroRatios, diagnosis, trend, generatedAt: new Date(2026, 5, 2, 12) });
-    expect(mdNull).toContain('| CCC | — |');
+    expect(mdNull).toContain('| 現金化日数 | — |');
   });
 
   it('deltaPct=0 は +0pt ではなく 0pt (> 0 と >= 0 を区別)', () => {
@@ -169,7 +169,7 @@ describe('buildFinancialReportMarkdown', () => {
     expect(mdTax.endsWith(section)).toBe(true);
     // 既存出力 (md) の指標表までは不変: 新セクションを除けば従来レポートと一致。
     expect(mdTax.startsWith('# 財務分析レポート — EC事業')).toBe(true);
-    expect(mdTax).toContain('| ROE | 34.4% |');
+    expect(mdTax).toContain('| 自己資本利益率 | 34.4% |');
   });
 
   it('黒字 (ordinaryProfit>0) は中小法人の区分注記を出す (欠損分岐の > / <= 境界も撃墜)', () => {
