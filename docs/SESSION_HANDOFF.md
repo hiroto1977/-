@@ -36,7 +36,7 @@
   別の綴りへ変えて当て直した)。
 - **変異検査** (`sidebarFilter.ts` —— `mutate` の対象): 1 度目 98.21% (生存 1 = 英語を持たない物を空文字へ倒す `?? ''` の字面)。倒さずに `undefined` のまま
   比べる形へ直して **100.00% (Killed 63 / 生存 0 / 未到達 0)**。
-- **検証 (最終コード)**: `typecheck` 緑・`npm test` と `verify:all` (39 ゲート) は下の PR の記述を参照・FULL 12,347,799 B / LITE 3,760,436 B (両方 +3,341 B ——
+- **検証 (最終コード)**: `typecheck` 緑・`npm test` 1,341 ファイル / 29,326 件 ❌ 0・`verify:all` 39 ゲート 0 件落ち (`verify:arch` のユニットテスト数を 21519 → 21545 へ)・FULL 12,347,799 B / LITE 3,760,436 B (両方 +3,341 B ——
   英語の名前 77 個・説明の添え書き・部品と検索)・`perf` OK (LITE DCL 393 ms / heap 8.3 MB・FULL DCL 717 ms / heap 30.4 MB)・
   `e2e` 774 件 ❌ 0・`e2e:lite` 774 件 ❌ 0・スマホ幅 (412px) とパソコン幅 (1280px) で 7 画面の見出しを測って切れ 0・横のはみ出し無し・console エラー 0。
   `smoke:app` / `e2e:ollama` は回していない (主プロセスも Ollama の経路も触っていない)。整合性チェーン block #529 (`build-landing.cjs`)。
