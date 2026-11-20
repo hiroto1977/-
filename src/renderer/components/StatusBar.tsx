@@ -6,7 +6,7 @@ import type { ServiceId } from '../../preload/bridgeTypes';
 import type { ErrorKind, Source, Status } from '../hooks/useServiceData';
 import { useBuildKind } from '../hooks/useBuildKind';
 import { browserFetchUnsupportedNote } from '../../shared/browserFetchReach';
-import { fetchNeedsCredentialNote } from '../../shared/fetchNeedsCredential';
+import { fetchNeedsCredentialNote, reentryFixesFetch } from '../../shared/fetchNeedsCredential';
 // 画像 URL のスキーム検証は 1 箇所だけに置く（2026-07 監査・多層防御）。
 // 3 つ目の呼び出し元が出たら components/ の共有ユーティリティへ切り出す。
 import { safeRemoteImageSrc } from '../../shared/imageUrlGate';
@@ -129,9 +129,13 @@ export function StatusBar({
 
   // When the live fetch fails with an auth error, drop straight into
   // the token re-entry mode — the most common recovery action.
+  // 開くのは、入れ直すと直る画面だけ (取得に資格情報を使う画面 —— `reentryFixesFetch`)。
+  const reenter =
+    serviceId !== undefined &&
+    reentryFixesFetch(credentialUseOf(serviceId), tokenUi !== undefined, errorKind === 'auth');
   useEffect(() => {
-    if (errorKind === 'auth' && tokenUi) setEditing(true);
-  }, [errorKind, tokenUi]);
+    if (reenter) setEditing(true);
+  }, [reenter]);
 
   useEffect(() => {
     if (!serviceId) return;
@@ -252,7 +256,7 @@ export function StatusBar({
   };
 
   const editButtonLabel =
-    errorKind === 'auth' ? '再認証' : configured ? 'トークン更新' : tokenUi?.label ?? 'トークン設定';
+    reenter ? '再認証' : configured ? 'トークン更新' : tokenUi?.label ?? 'トークン設定';
 
   // avatarUrl は第三者 API（GitHub / Slack / Google …）由来。許可スキーム外・認証情報つき・
   // **内側を向いた送り先 (loopback / プライベート帯)** なら `undefined` になり <img> ごと

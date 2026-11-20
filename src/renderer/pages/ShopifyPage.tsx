@@ -76,7 +76,7 @@ function OrderToSalesForm() {
 }
 
 export function ShopifyPage() {
-  const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
+  const { data, source, status, errorMessage, errorKind, refresh, isConfigured } = useServiceData(
     'shopify',
     SNAPSHOT.shopify,
   );
@@ -89,6 +89,7 @@ export function ShopifyPage() {
         source={source}
         status={status}
         errorMessage={errorMessage}
+        errorKind={errorKind}
         isConfigured={isConfigured}
         onRefresh={refresh}
         who={<>Shopify · {count} 件</>}

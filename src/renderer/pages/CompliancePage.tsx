@@ -26,7 +26,7 @@ const SOURCE_TYPE_LABEL: Record<string, string> = {
 const OFFICIAL = new Set(['government', 'municipality']);
 
 export function CompliancePage() {
-  const { source, status, errorMessage, refresh, isConfigured } = useServiceData(
+  const { source, status, errorMessage, errorKind, refresh, isConfigured } = useServiceData(
     'compliance',
     SNAPSHOT.compliance,
   );
@@ -41,6 +41,7 @@ export function CompliancePage() {
         source={source}
         status={status}
         errorMessage={errorMessage}
+        errorKind={errorKind}
         isConfigured={isConfigured}
         onRefresh={refresh}
         who={<>確証済み制度知識 · {report.confirmed} 件</>}

@@ -167,7 +167,7 @@ function Tile({ label, value, sub, accent }: { label: string; value: string; sub
 export function StocksPage() {
   /** どの実行形態か (パス 161)。分かるまでは null —— 実行形態に依る文を出さない。 */
   const buildKind = useBuildKind();
-  const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData<StocksSnapshot>(
+  const { data, source, status, errorMessage, errorKind, refresh, isConfigured } = useServiceData<StocksSnapshot>(
     'stocks',
     SNAPSHOT.stocks,
   );
@@ -419,6 +419,7 @@ export function StocksPage() {
         source={source}
         status={status}
         errorMessage={errorMessage}
+        errorKind={errorKind}
         isConfigured={isConfigured}
         onRefresh={refresh}
         tokenSetup={{ label: 'Anthropic API キー', placeholder: 'sk-ant-…' }}

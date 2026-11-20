@@ -4,7 +4,7 @@ import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 
 export function NetseaPage() {
-  const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
+  const { data, source, status, errorMessage, errorKind, refresh, isConfigured } = useServiceData(
     'netsea',
     SNAPSHOT.netsea,
   );
@@ -17,6 +17,7 @@ export function NetseaPage() {
         source={source}
         status={status}
         errorMessage={errorMessage}
+        errorKind={errorKind}
         isConfigured={isConfigured}
         onRefresh={refresh}
         who={<>NETSEA · {items.length} 件</>}

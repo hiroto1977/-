@@ -681,7 +681,7 @@ function FoodDeliverySection() {
 export function BusinessPage() {
   /** どの実行形態か (パス 161)。分かるまでは null —— 実行形態に依る文を出さない。 */
   const buildKind = useBuildKind();
-  const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData<BusinessSnapshot>(
+  const { data, source, status, errorMessage, errorKind, refresh, isConfigured } = useServiceData<BusinessSnapshot>(
     'business',
     SNAPSHOT.business,
   );
@@ -827,6 +827,7 @@ export function BusinessPage() {
         source={source}
         status={status}
         errorMessage={errorMessage}
+        errorKind={errorKind}
         isConfigured={isConfigured}
         onRefresh={refresh}
         tokenSetup={{ label: 'Anthropic API キー', placeholder: 'sk-ant-…' }}

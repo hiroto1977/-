@@ -146,7 +146,7 @@ const MF_READS = {
 
 
 export function MutualFundsPage() {
-  const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
+  const { data, source, status, errorMessage, errorKind, refresh, isConfigured } = useServiceData(
     'mutual-funds',
     SNAPSHOT.mutualFunds,
   );
@@ -434,6 +434,7 @@ export function MutualFundsPage() {
         source={source}
         status={status}
         errorMessage={errorMessage}
+        errorKind={errorKind}
         isConfigured={isConfigured}
         onRefresh={refresh}
         who={<>投資信託 · {holdings.length} 銘柄 / 評価額 {jpy(portfolio.totalValuation)}</>}

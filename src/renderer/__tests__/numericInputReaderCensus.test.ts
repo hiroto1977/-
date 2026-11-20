@@ -213,6 +213,10 @@ const NO_LOCAL_READER: Readonly<Record<string, { readonly writers: readonly stri
     writers: ['parseA8netReward'],
     why: '成果の下書き (報酬額) を、そのまま書き手へ渡す (書き手は readEntryNumber で読み、空欄は断る)',
   },
+  'renderer/pages/SalesPage.tsx': {
+    writers: ['parseSalesEntry'],
+    why: '売上の下書き (売上金額・注文の数) を、そのまま書き手へ渡す (書き手は readEntryNumber で読み、空欄は断る)。2026-11-20 に欄へ数字のキーボードを出す印を足して母集団に入った',
+  },
   'renderer/pages/HydroponicsPage.tsx': {
     writers: ['parseReading', 'parseBatch', 'parseControlRecord'],
     why: '測定・ロット・運転設定の下書きを、そのまま書き手へ渡す (運転設定は関門 HYDROPONICS_CONTROL_SPECS も通る)',

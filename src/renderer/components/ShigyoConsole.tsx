@@ -104,7 +104,7 @@ export interface ShigyoConsoleProps {
  * 事業仕分けマップから serviceId で引く。
  */
 export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: ShigyoConsoleProps) {
-  const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
+  const { data, source, status, errorMessage, errorKind, refresh, isConfigured } = useServiceData(
     serviceId,
     snapshot,
   );
@@ -262,6 +262,7 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
         source={source}
         status={status}
         errorMessage={errorMessage}
+        errorKind={errorKind}
         isConfigured={isConfigured}
         onRefresh={refresh}
         who={<>{label} · 連携 {contacts.length} 名 · 顧問料 {jpy(monthlyFee)}/月</>}

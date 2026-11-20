@@ -305,6 +305,79 @@ async function desktopSuite(browser) {
     await page.waitForFunction((n) => document.querySelectorAll('tbody tr').length < n, before, { timeout: 15000 });
   }
 
+  // 2026-11-20: 売上集計の入力欄 —— 見出しつきの欄・日付は選ぶ欄で今日から・記録した知らせ・今月の売上・行を直す。
+  // (直す前: 日付は「YYYY-MM-DD」と書かれた文字の欄・欄の名前は薄い字だけ・打ち間違えた行は消して入れ直すほか無かった)
+  const salesField = (label) => page.locator('[data-sales-form] label', { hasText: label }).locator('input, select');
+  const salesDateType = await salesField('日付').getAttribute('type');
+  const salesDate = await salesField('日付').inputValue();
+  ok(
+    salesDateType === 'date' && /^\d{4}-\d{2}-\d{2}$/.test(salesDate),
+    `sales: ★ 日付は選ぶ欄で、今日の日付から始まる (type=${salesDateType} · value=${salesDate})`,
+  );
+  await salesField('売上金額 (円)').fill('4321');
+  await salesField('注文の数 (件)').fill('2');
+  await salesField('メモ').fill('E2E-EDIT');
+  await page.getByRole('button', { name: '追加', exact: true }).click();
+  await page.waitForSelector('[data-sales-notice]', { timeout: 15000 });
+  const salesNotice = (await page.locator('[data-sales-notice]').innerText()).trim();
+  ok(
+    salesNotice.startsWith(`記録しました: ${salesDate} · `) && salesNotice.endsWith('4,321'),
+    `sales: ★ 記録すると、何を記録したかを 1 行で言う — 実際 ${JSON.stringify(salesNotice)}`,
+  );
+  await page.waitForSelector('tbody tr:has-text("E2E-EDIT")', { timeout: 15000 });
+  // タイルは構造で引く (見出しの div → 値の div → 添え書きの div)。
+  const monthTile = await page.evaluate(() => {
+    for (const el of Array.from(document.querySelectorAll('div'))) {
+      const first = el.firstElementChild;
+      if (first === null || el.children.length < 2 || first.children.length > 0) continue;
+      const label = (first.textContent || '').trim();
+      if (!label.startsWith('今月の売上')) continue;
+      return { label, value: (el.children[1].textContent || '').trim(), sub: el.children[2] ? (el.children[2].textContent || '').trim() : '' };
+    }
+    return null;
+  });
+  ok(
+    monthTile !== null && /^今月の売上 \(\d{4}年\d{1,2}月\)$/.test(monthTile.label) && /\d/.test(monthTile.value) && monthTile.sub !== '',
+    `sales: ★ 「今月の売上」を月の名前つきで出し、先月との比べを添える — 実際 ${JSON.stringify(monthTile)}`,
+  );
+  const editRow = page.locator('tbody tr', { hasText: 'E2E-EDIT' });
+  await editRow.first().getByRole('button', { name: '直す', exact: true }).click();
+  await page.getByRole('button', { name: '更新', exact: true }).waitFor({ timeout: 15000 });
+  const loadedAmount = await salesField('売上金額 (円)').inputValue();
+  const loadedNote = await salesField('メモ').inputValue();
+  ok(
+    loadedAmount === '4321' && loadedNote === 'E2E-EDIT' && (await page.getByRole('button', { name: 'やめる', exact: true }).count()) === 1,
+    `sales: ★ 「直す」でその行が欄に入り、「更新」と「やめる」が出る (金額 ${loadedAmount} · メモ ${loadedNote})`,
+  );
+  await salesField('売上金額 (円)').fill('5000');
+  await page.getByRole('button', { name: '更新', exact: true }).click();
+  await page.waitForFunction(() => (document.querySelector('[data-sales-notice]')?.textContent || '').startsWith('直しました'), undefined, { timeout: 15000 });
+  const editedRows = await editRow.count();
+  const editedText = editedRows === 1 ? (await editRow.first().innerText()).replace(/\s+/g, ' ') : '';
+  ok(
+    editedRows === 1 && editedText.includes('5,000') && !editedText.includes('4,321') && (await page.getByRole('button', { name: '追加', exact: true }).count()) === 1,
+    `sales: ★ 「更新」で同じ行が書き換わる (行は増えない・ボタンは「追加」へ戻る) — 実際 ${editedRows} 行 "${editedText}"`,
+  );
+  // 「直す」と「×」は隣り合う —— 消した直後は「元に戻す」で戻せる (直す前: 消したら入れ直すほか無かった)。
+  await editRow.first().getByRole('button', { name: '削除' }).click();
+  await page.waitForSelector('[data-sales-undo]', { timeout: 15000 });
+  const undoText = ((await page.locator('[data-sales-undo] span').first().innerText()) || '').trim();
+  const goneRows = await editRow.count();
+  await page.locator('[data-sales-undo]').getByRole('button', { name: '元に戻す', exact: true }).click();
+  await page.waitForSelector('tbody tr:has-text("E2E-EDIT")', { timeout: 15000 });
+  const backRows = await editRow.count();
+  const backText = backRows === 1 ? (await editRow.first().innerText()).replace(/\s+/g, ' ') : '';
+  ok(
+    undoText.startsWith('消しました: ') && undoText.endsWith('5,000') && goneRows === 0 && backRows === 1 && backText.includes('5,000') &&
+      (await page.locator('[data-sales-undo]').count()) === 0,
+    `sales: ★ 「×」で消した直後は「元に戻す」で同じ行が戻る — 知らせ ${JSON.stringify(undoText)} · 消した後 ${goneRows} 行 · 戻した後 ${backRows} 行 "${backText}"`,
+  );
+  while ((await editRow.count()) > 0) {
+    const before = await page.locator('tbody tr').count();
+    await editRow.first().getByRole('button', { name: '削除' }).click();
+    await page.waitForFunction((n) => document.querySelectorAll('tbody tr').length < n, before, { timeout: 15000 });
+  }
+
   // パス 127: 貸借対照表は基準日で「現在」を選ぶ (旧: 最後に入力した控え —— 古い基準日を後から入れると、そちらを現在として使い、一覧も無かった)
   await gotoService(page, '#kpi', 'input[placeholder="基準日"]');
   const bsFill = async (rows) => {
@@ -6148,7 +6221,8 @@ function installWaitMarginRecorder(browser) {
   const SUITE_TABLE = [
     // desktop: パス 493q で +2 (制度判定の年齢に読めない値を打つと判定を断る・直すと戻る)
     // パス 566-C で +1 (財務データへのマージ復元が T-227 の確認を出すことを見る)
-    ['desktop', desktopSuite, 67],
+    // 2026-11-20: 売上集計の入力欄 (日付の選ぶ欄・記録した知らせ・今月の売上・行を直す) で +5・消した行を元に戻すで +1
+    ['desktop', desktopSuite, 73],
     ['manualData', manualDataSuite, 19],
     // 2026-11-19: 「内蔵サンプル」の標本を不動産へ移し、士業 (端末内の記録) が見本を名乗らないことを足した = +2
     ['dataOrigin', dataOriginSuite, 21],

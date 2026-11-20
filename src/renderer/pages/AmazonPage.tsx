@@ -4,7 +4,7 @@ import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 
 export function AmazonPage() {
-  const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
+  const { data, source, status, errorMessage, errorKind, refresh, isConfigured } = useServiceData(
     'amazon',
     SNAPSHOT.amazon,
   );
@@ -17,6 +17,7 @@ export function AmazonPage() {
         source={source}
         status={status}
         errorMessage={errorMessage}
+        errorKind={errorKind}
         isConfigured={isConfigured}
         onRefresh={refresh}
         who={<>Amazon · {items.length} 件</>}

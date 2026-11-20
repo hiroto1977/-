@@ -80,7 +80,7 @@ const codeBox: React.CSSProperties = {
 };
 
 export function ConnectorsPage() {
-  const { source, status, errorMessage, refresh, isConfigured } = useServiceData(
+  const { source, status, errorMessage, errorKind, refresh, isConfigured } = useServiceData(
     'connectors',
     SNAPSHOT.connectors,
   );
@@ -158,6 +158,7 @@ export function ConnectorsPage() {
         source={source}
         status={status}
         errorMessage={errorMessage}
+        errorKind={errorKind}
         isConfigured={isConfigured}
         onRefresh={refresh}
         who={

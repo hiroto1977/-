@@ -175,6 +175,18 @@ const LEDGER: readonly { file: string; handler: string; kind: 'export' | 'apply-
     why: '画面に出している販売記録の一覧をそのまま CSV にする。書き出すのは利用者が今見ている表で、保管層へは書かない。',
   },
   {
+    file: 'src/renderer/pages/SalesPage.tsx',
+    handler: '<onClick>→onStartEdit',
+    kind: 'show',
+    why: '販売記録の行を入力の欄へ写すだけで、保管層へは書かない。保存は `editIfUnchanged` —— 写した時の中身と保管層の今の中身を比べてから書くので、写しが古ければ書かずに断る。',
+  },
+  {
+    file: 'src/renderer/pages/SalesPage.tsx',
+    handler: '<onClick>→fireReported',
+    kind: 'apply-shown',
+    why: '「×」は行の id で消す (写しで判定しない)。行の中身は「元に戻す」のための控えに取るだけで、戻すのは利用者が消す直前に見ていた中身そのものである。保管層に何が在るかを写しで決めてはいない。',
+  },
+  {
     file: 'src/renderer/pages/DocstudioPage.tsx',
     handler: '<onApply>→applyImport',
     kind: 'apply-shown',

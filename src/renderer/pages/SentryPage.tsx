@@ -18,7 +18,7 @@ import { sentryIntakeNote, sentryIssueMeta, sentryIssueTitle, sentryScopeNote } 
  *   実行形態がまだ分からない間も述べない —— `useBuildKind` と同じ天秤)。
  */
 export function SentryPage() {
-  const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
+  const { data, source, status, errorMessage, errorKind, refresh, isConfigured } = useServiceData(
     'sentry',
     SNAPSHOT.sentry,
   );
@@ -34,6 +34,7 @@ export function SentryPage() {
         source={source}
         status={status}
         errorMessage={errorMessage}
+        errorKind={errorKind}
         isConfigured={isConfigured}
         onRefresh={refresh}
         who={

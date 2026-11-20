@@ -176,6 +176,16 @@ const DRAFT_LEDGER: Readonly<Record<string, DraftRow>> = Object.freeze({
     writer: 'parseA8netReward',
     why: '「＋ 成果を記録」を押したときに読み、0 以上の整数でなければ断る (保存しない・空欄は 0 円にしない)',
   },
+  'sales|売上金額 (円)': {
+    file: 'renderer/pages/SalesPage.tsx',
+    writer: 'parseSalesEntry',
+    why: '「追加」を押したときに読み、0 以上の数でなければ断る (保存しない・空欄は 0 円にしない)',
+  },
+  'sales|注文の数 (件)': {
+    file: 'renderer/pages/SalesPage.tsx',
+    writer: 'parseSalesEntry',
+    why: '「追加」を押したときに読み、1 以上の整数でなければ断る (保存しない)',
+  },
   'hydroponics|パネル枚数': {
     file: 'renderer/pages/HydroponicsPage.tsx',
     writer: 'parseBatch',

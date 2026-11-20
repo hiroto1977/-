@@ -196,7 +196,7 @@ function uniqueId(name: string, existing: string[]): string {
 export function TeamRadarPage() {
   /** どの実行形態か (パス 161)。分かるまでは null —— 実行形態に依る文を出さない。 */
   const buildKind = useBuildKind();
-  const { data, source, payloadIsMock, status, errorMessage, refresh } = useServiceData<TeamRadarSnapshot>(
+  const { data, source, payloadIsMock, status, errorMessage, errorKind, refresh } = useServiceData<TeamRadarSnapshot>(
     'teamradar',
     SNAPSHOT.teamradar,
   );
@@ -486,6 +486,7 @@ export function TeamRadarPage() {
         payloadIsMock={payloadIsMock}
         status={status}
         errorMessage={errorMessage}
+        errorKind={errorKind}
         isConfigured
         onRefresh={refresh}
       />

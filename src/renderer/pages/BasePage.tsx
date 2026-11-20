@@ -5,7 +5,7 @@ import { useServiceData } from '../hooks/useServiceData';
 import { jpy } from '../../shared/formatters';
 
 export function BasePage() {
-  const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
+  const { data, source, status, errorMessage, errorKind, refresh, isConfigured } = useServiceData(
     'base',
     SNAPSHOT.base,
   );
@@ -18,6 +18,7 @@ export function BasePage() {
         source={source}
         status={status}
         errorMessage={errorMessage}
+        errorKind={errorKind}
         isConfigured={isConfigured}
         onRefresh={refresh}
         who={<>BASE · {items.length} 件</>}

@@ -1,5 +1,44 @@
 # Service Hub — 残りの作業手順書
 
+## 売上集計の画面をわかりやすく・直せる・戻せるようにして、測って残した物 (2026-11-20)
+
+- **やったこと**: 売上集計の入力欄に見出しを付け (日付は選ぶ欄で今日から)、記録した知らせ・「今月の売上」と先月比・月ごとの推移の前月比・
+  明細の「直す」・「×」の後の「元に戻す」を足した。言葉を平らにした (チャネル → 販売先・IndexedDB を出さない)。経緯は `docs/SESSION_HANDOFF.md` の先頭の節。
+- **「元に戻す」は直前の 1 件だけ**: 続けて 2 件消すと、戻せるのは後の 1 件。画面を離れる・次に記録 / 修正 / 取り込みをすると消える (画面の状態に持つだけで、保存していない)。
+  戻した行は新しい行として入る (id と作成時刻が新しい) —— 中身は同じだが、明細の並びでは先頭に来る。
+- **戻すのは「消す直前に画面に出ていた中身」**: 控えは画面の一覧の行から取る (保管層を読み直さない)。別のタブがその行を書き換え、その知らせが届く前に「×」を押すと、
+  戻るのは書き換える前の中身になる (知らせは別のタブへも配られるので窓は短い)。台帳 `snapshotJudgementCensus` に理由つきで載せた。
+- **「×」は記録・修正と同じ二重押しの守りを通る**: 保存の最中に押した「×」は捨てられる (押し直せば消える)。
+- **他の記録の画面の「×」は今までどおり** (確認も「元に戻す」も無い): KPI / BEP (実績・予算・貸借対照表の 3 か所) とチーム。投資信託・不動産・士業の連絡先などの削除は別の形のボタンで、数えていない。
+- **日付の断りの文は 2 つ在る**: 画面は日付が空のとき「日付を選んでください。」と言う。`parseSalesEntry` の「日付は YYYY-MM-DD 形式で入力してください」は
+  CSV の取り込みと共有なのでそのまま (選ぶ欄からは、空のとき以外そこへ届かない)。
+- **「チャネル」の語は他の所に残る**: 経営サマリー・書面・Shopify の画面と、`parseSalesEntry` の断り「チャネルが不正です」(画面の選択肢からは届かない・CSV の取り込みで出る)。
+  CSV の列名 (`channel`) は変えていない (書き出したファイルを読み戻せなくなる)。
+- **期間で絞る口は無い**: 「今月の売上」と月ごとの推移は出るが、明細を月で絞る・期間を指定する操作子は足していない。明細は全件 (窓つき)。
+- **日付の選ぶ欄の見た目は端末のブラウザが決める**: 実機 (e2e · chromium) では型と値だけを見た。スマホ幅のスクリーンショットは撮った (横のはみ出し無し) が、
+  Android の実物の日付の窓は確かめていない。
+- **KPI / BEP と Shopify の入力欄は今までどおり** (見出しは無く、欄の中の薄い字だけ)。同じ直し方が当てはまるが、このパスでは触っていない。
+- **画面の検査の巻き添え**: `salesFormOnScreen.test.ts` は、1 件が待ち切れて落ちると後ろの検査も落ちる (待ちの上限 5 秒が検査の制限と同じで、
+  時間切れにされた検査の待ちが裏で回り続けて次の検査に混ざる)。対照で 7〜24 件落ちた。緑のときは起きないので直していない (落ちたときは最初の 1 件を読む)。
+- **前月比・先月比**: 比べる月が 0 円以下なら「—」(割れない)。返品で月の合計が負になった月との比は出さない。
+
+## 取得の失敗の種類を全画面で状態バーへ渡して、測って残した物 (2026-11-19)
+
+- **やったこと**: 状態バーの札は失敗の種類で決まる (「認証エラー」「レート制限」・どちらでもなければ「エラー」)。種類は取得の hook が返すが、
+  状態バーへは画面が 1 つずつ渡す。実測 (jsdom · 実物の全画面 · 取得を 429 / 資格情報なしで断らせる) で、取得する 50 画面のうち 32 画面
+  (連携先 9 + 端末内 23) の札が「エラー」だった。40 か所 (39 画面 + 士業の共通部品) へ `errorKind={errorKind}` を足し、50 画面すべてが種類を言うようにした。
+  渡し忘れは `renderer/__tests__/statusBarErrorKindCensus.test.ts` (構文木) と `pages/__tests__/fetchFailureBadgeOnScreen.test.ts` (実物の画面) が見る。
+- **登録の欄を開くのは「入れ直すと直る」画面だけにした** (`shared/fetchNeedsCredential.ts` の `reentryFixesFetch`): 認証で断られたとき、状態バーは登録の欄を自動で開き
+  ボタンを「再認証」と呼んでいた。欄が AI の鍵 (使い道が `action` —— 株式・事業ダッシュボード・スキル・セキュリティ・感情ログ) の画面では、取得はその鍵を使わないので、
+  開かない・「再認証」と呼ばない (札は「認証エラー」のまま)。スキル・セキュリティ・感情ログは今まで開いていた —— 答えが変わるのは、取得が 401 相当で断られたときだけで、
+  その 3 画面の取得は端末内の読みなので、実際にそこへ届く道が在るかは測っていない。
+- **失敗の種類は文面から決めている (測った・直していない)**: `useServiceData` の `classifyError` は橋が返した文を正規表現で読む (`401` / `unauthorized` / `429` / `403` + `rate` ほか)。
+  橋が種類を欄として返す形ではないので、文面を変えると札が「エラー」へ戻る。プロキシが要るのに無い (ブラウザ版の読める 8 画面) は「エラー」のまま —— 文は理由を言うが、札は種類を言わない。
+- **`home` は取得するが状態バーを持たない**: ホームは `useServiceData('home', …)` を呼ぶ (開くと取得が 1 度走る) が、失敗を出す面を持たない。取得が断られても画面は見本のまま何も言わない。
+  ホームの取得は端末内の読みなので、断られる道が在るかは測っていない。
+- **実機では測っていない**: 札の文字は jsdom で実物の画面を描いて読んだ。実 chromium (e2e) には、取得を 429 / 401 で断らせる場面を足していない
+  (ブラウザ版で連携先の取得を通すにはプロキシが要り、端末内の画面の取得は断られない)。デスクトップ版 (Electron) の実機も回していない。
+
 ## 資格情報が無い連携先 22 画面の「更新」を案内に替えて、測って残した物 (2026-11-19)
 
 - **やったこと**: 連携先 (`remote`) の 22 画面は、どれも取得に資格情報を使う (`credentialUse` が `fetch`)。資格情報が無いまま「更新」を押すと橋は必ず断り、
@@ -15,7 +54,7 @@
   いまその理由は端末の保存の知らせと、登録し直そうとしたときの断りにだけ出る。分けるなら hook が 3 つ目の状態 (分からない) を返し、22 画面がそれを渡す。
 - **開いた直後の一瞬**: 登録済みの画面でも、一覧の答えが届くまでの間は案内が出て「更新」が無い (届いた時点で替わる)。直す前も同じ間、設定ボタンの札は未登録の札だった。
   実機で何 ms かは測っていない。
-- **9 画面は `errorKind` を状態バーへ渡していない (測った・直していない)**: Dropbox / Discord / Asana / Linear / Sentry / Stripe / LINE / BASE / Cursor は、
+- **9 画面は `errorKind` を状態バーへ渡していない (測った・同日の次の作業で直した —— 上の節)**: Dropbox / Discord / Asana / Linear / Sentry / Stripe / LINE / BASE / Cursor は、
   登録済みで断られたとき (期限切れほか) の札が「認証エラー」ではなく「エラー」になり、登録の欄も自動では開かない。残る 13 画面は渡している。
 - **ブラウザ版の読める 8 画面は、登録の後にプロキシも要る**: 案内は「登録すると実データに切り替わります」と言うが、ブラウザ版ではプロキシの登録も要る
   (8 画面とも自分の注記でそう述べている)。プロキシが無いまま登録すると、取得は「プロキシが必要です」の赤い文になる (これは今までどおり)。
@@ -20434,7 +20473,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/zero-fold-census.cjs。npm run lint:zero-fold は check だけ) -->
-合計 **112 ファイル / 287 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **113 ファイル / 288 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
@@ -20527,6 +20566,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/renderer/data/portfolioAnnex.ts` | 1 |
 | `src/renderer/data/profitSensitivity.ts` | 1 |
 | `src/renderer/data/recordShapeAudit.ts` | 1 |
+| `src/renderer/data/salesTrend.ts` | 1 |
 | `src/renderer/data/shopifyImport.ts` | 1 |
 | `src/renderer/data/teamRadarDraft.ts` | 1 |
 | `src/renderer/data/trendAlerts.ts` | 1 |
@@ -33151,7 +33191,7 @@ shared **203** モジュール / 両ビルドが import **112** / うち否定�
 | `hydroponics` | 0 | 5 | 非対称は起きない (実測・パス 272) —— `hydroponicCrops` と同じ鎖の先に在る (main → clients/hydroponics.ts → hydroponicsControl → hydroponicCrops → ここ)。main が import する `buildHydroponicsSnapshot` は 2 つの定数表を射影するだけで、この鎖の否定で答える関数を 1 つも呼ばない (実測) |
 | `hydroponicsControl` | 1 | 6 | 非対称は起きない (実測・パス 268) —— 否定で答える 7 つ (`readingFromStored` / `batchFromStored` / `batchSchedule` / `nextSolutionChange` / `lowPotassiumSwitchDate` / `latestReading` / `isBatchState`) の**消費者は renderer だけ** (hydroponicsLog.ts / HydroponicsPage.tsx —— **左の数は importer 全体を数えるので、この 2 本より多い**。2026-09-23 (パス 421) に 5 → 6 になったのは `OverviewPage.tsx` が `cropIdText` を読んだためで、それは `null` を返さないので 7 つには入らない)。main が import するのは `buildHydroponicsSnapshot` と型 2 つだけで、その関数は READING_FIELD_SPECS / DEFAULT_* / DEFAULT_CROP_LIST を**射影する純関数** (否定で答える関数を 1 つも呼ばない —— 実測)。測定記録とロットは業務レコード (IndexedDB) に在り main は触らないので、**main 側がこの問いを 1 度も発しない** |
 | `inputCeiling` | 14 | 58 | 対称 (実測・パス 281 で測り直した) —— 天井と床の判定そのもの (countChars / clampToCeiling / atLeastChars / moreThanChars)。否定 (false) はどのビルドでも「天井を超えていない」「床を満たさない」の 1 つの意味しか持たず、**動作を決めるのは呼ぶ側**である。 ★ **パス 281 の訂正**: ここには「呼ぶ側の対称性は ceilingUnitCensus.test.ts が母集団で見る (両方向の台帳)」と書いてあった —— **その検査は呼ぶ側の対称性を見ていない**。あちらが数えるのは「文字で数えると宣言した定数が `.length` の比較か`.slice(` の引数に現れる」箇所、つまり**単位**であって、ビルド間の非対称ではない(あちらの冒頭が自分で「数えていなかったのは単位である」と述べている)。`controlChars` (パス 280) と同じ「別の物へ預けた」形。 ★ 実測 (パス 281): 4 つの述語のうち**ビルドの境を越えるのは 2 つだけ** —— `countChars` と `clampToCeiling` は main (assistant / skills / emotions / ollama / templates) と web-shim の両側から呼ばれる。`atLeastChars` / `moreThanChars` は**main からも web-shim からも 1 度も呼ばれない** (2026-09-23 · パス 422 に再実測して 0 件)。 ★ **パス 422 の訂正**: ここには「呼び手は `renderer/security/vault.ts` **1 ファイルだけ**」と書いてあった —— **今日の実測は 9 ファイル**である (入口の天井が `.length` から `moreThanChars` へ移った分)。**判定は変わらない**が、散文が名前を並べていたので数が動いた日に偽になった (パス 419 / 421 と同じ家系)。**左の数は importer 全体を数える** —— 名前を並べるのをやめ、非対称かどうかを決める事実 (main 側の呼び出しが 0 件であること) だけを書く。デスクトップ版にマスターパスワードは無く、記録の入口は renderer 側にしか無いので、**この 2 つに main 側の双子が存在しない**。越える 2 つについては天井の定数が `shared/` に 1 つずつ在り、**同じ定数を両側が読む** (ollama の prompt/system は `shared/ollama.ts`・assistant は `shared/assistantLimits.ts`・emotions は `shared/emotionsLimits.ts`)。数の一致は `ceilingLiteralCensus` が、単位の一致は `ceilingUnitCensus` が見る |
-| `isoDate` | 8 | 40 | 対称 (実測・パス 256) —— 負で答える関数は 8 つだが、**両ビルドが呼んでいるのは 2 つだけ** (main/preload 側の消費者を機械的に数えた): (1) `isCalendarDate` + `calendarDateMessage` —— main/clients/emotions.ts:212 と renderer/data/emotionsWeb.ts:177 が**同一の行**で投げる (`throw new Error(calendarDateMessage('date'))`)。 (2) `isoDateFromTimestamp` —— main/clients/stocks.ts:776 と renderer/data/stocksWatchlistWeb.ts:194 がともに `?? ''` で空文字に倒す。いずれも**見本のローソク生成の中**で、入力は `Date.now()` ± 日数なので `null` の枠は実質到達しない。 残り 6 つ (`parseIsoDate` / `isCalendarMonth` / `isCalendarDateOrMonth` / `parseTimestamp` / `addIsoDays` / `isoDaysBetween`) は **main/preload 側の消費者が 0 件** なので、ビルド間の非対称は**原理的に起きない**。 ★ **2026-09-22 (パス 394) に 9 つ目 `isoMonthOf` が増えた** —— 消費者は `main/clients/freee.ts` **だけ** (renderer は 0 件) なので、こちらも非対称は起きない (**片方のビルドしか呼ばない**)。ブラウザ版の bundle からは tree-shaking で落ちることを 両方組んで実測した (+0 B)。上の「負で答える関数は 8 つ」はこの行が足された時点の数で、**今は 9 つ**である。 ★ 台帳の粒度について: この台帳は**モジュール**単位で「両ビルドがimport」を数えるが、非対称が宿るのは**両ビルドが呼ぶ関数**だけである。isoDate はその差が最も大きい例 (33 のimport元・負で答える 8 関数・境界を越えるのは 2 つ)。 ★ **2026-09-22 (パス 410) に 10 個目 `displayDateOf` が増え、main 側の import 元が 3 → 8 になった** (`drive` / `github` / `microsoft-365` / `notion` / `wordpress` の 5 client を日付の読みへ寄せた)。**これは非対称ではなく、設計した対である** —— 境界 (main の client) が `string | null` へ正規化し、画面 (renderer) が同じ module の `dateText` でその `null` に**理由を与える** (「日付が読めません」)。`displayDateOf` を呼ぶのは main 側と `shared/ollama.ts` だけ、`dateText` を呼ぶのは画面だけで、**同じ関数が両側で違う扱いを受ける形は 1 つも無い** (実測)。`dateText` は `string | null` を受けて必ず文字列を返すので、そもそも否定で答えない。 ★ **2026-09-27 (パス 493) に 11 個目 `isTimestampMs` が増え、renderer 側の import 元が 29 → 30 になった** —— 読み手は `shared/emotionsShape.ts` の `isAnalysisEntry` (main の `emotions.ts` とブラウザ版の `emotionsWeb.ts` が**同じ 1 つの述語**として呼ぶ) と、ブラウザ版だけが持つ記録の保管層 `renderer/data/store.ts`。否定の答え (時刻が範囲外) は両ビルドとも「その要素・その記録を落とす」に倒れるので非対称は無い (実測)。 |
+| `isoDate` | 8 | 42 | 対称 (実測・パス 256) —— 負で答える関数は 8 つだが、**両ビルドが呼んでいるのは 2 つだけ** (main/preload 側の消費者を機械的に数えた): (1) `isCalendarDate` + `calendarDateMessage` —— main/clients/emotions.ts:212 と renderer/data/emotionsWeb.ts:177 が**同一の行**で投げる (`throw new Error(calendarDateMessage('date'))`)。 (2) `isoDateFromTimestamp` —— main/clients/stocks.ts:776 と renderer/data/stocksWatchlistWeb.ts:194 がともに `?? ''` で空文字に倒す。いずれも**見本のローソク生成の中**で、入力は `Date.now()` ± 日数なので `null` の枠は実質到達しない。 残り 6 つ (`parseIsoDate` / `isCalendarMonth` / `isCalendarDateOrMonth` / `parseTimestamp` / `addIsoDays` / `isoDaysBetween`) は **main/preload 側の消費者が 0 件** なので、ビルド間の非対称は**原理的に起きない**。 ★ **2026-09-22 (パス 394) に 9 つ目 `isoMonthOf` が増えた** —— 消費者は `main/clients/freee.ts` **だけ** (renderer は 0 件) なので、こちらも非対称は起きない (**片方のビルドしか呼ばない**)。ブラウザ版の bundle からは tree-shaking で落ちることを 両方組んで実測した (+0 B)。上の「負で答える関数は 8 つ」はこの行が足された時点の数で、**今は 9 つ**である。 ★ 台帳の粒度について: この台帳は**モジュール**単位で「両ビルドがimport」を数えるが、非対称が宿るのは**両ビルドが呼ぶ関数**だけである。isoDate はその差が最も大きい例 (33 のimport元・負で答える 8 関数・境界を越えるのは 2 つ)。 ★ **2026-09-22 (パス 410) に 10 個目 `displayDateOf` が増え、main 側の import 元が 3 → 8 になった** (`drive` / `github` / `microsoft-365` / `notion` / `wordpress` の 5 client を日付の読みへ寄せた)。**これは非対称ではなく、設計した対である** —— 境界 (main の client) が `string | null` へ正規化し、画面 (renderer) が同じ module の `dateText` でその `null` に**理由を与える** (「日付が読めません」)。`displayDateOf` を呼ぶのは main 側と `shared/ollama.ts` だけ、`dateText` を呼ぶのは画面だけで、**同じ関数が両側で違う扱いを受ける形は 1 つも無い** (実測)。`dateText` は `string | null` を受けて必ず文字列を返すので、そもそも否定で答えない。 ★ **2026-09-27 (パス 493) に 11 個目 `isTimestampMs` が増え、renderer 側の import 元が 29 → 30 になった** —— 読み手は `shared/emotionsShape.ts` の `isAnalysisEntry` (main の `emotions.ts` とブラウザ版の `emotionsWeb.ts` が**同じ 1 つの述語**として呼ぶ) と、ブラウザ版だけが持つ記録の保管層 `renderer/data/store.ts`。否定の答え (時刻が範囲外) は両ビルドとも「その要素・その記録を落とす」に倒れるので非対称は無い (実測)。 |
 | `mentor` | 1 | 6 | 非対称は起きない (実測・パス 551) —— 否定で答えるのは `sanitizeMentorSession` (読めない保存値は null) と、`mediationPlan` の `steps: null` (同意が揃わない) の 2 つで、**読み手は renderer だけ** (MentorPage.tsx と、パス 555 で足した data/mentorRoster.ts · TeamPage.tsx · WorkloadShareTable.tsx)。main が import するのは `buildMentorSnapshot` と型 `MentorSnapshot` だけ (main/clients/mentor.ts) で、それは null を返さない。危機の判定は renderer の `counseling.ts` を 注入で受けるので、この module 自身は判定を持たない |
 | `mutualFundsMetrics` | 0 | 2 | 対称 (実測・パス 272) —— main の到達は `serviceAdvisor` 経由 (4 クライアント: real-estate / mutual-funds / uber-eats / demae-can)。`serviceAdvisor` がこのモジュールから取るのは**4 つ** (`serviceAdvisor.ts:37`): 定数 `RETURN_FLOOR_PCT` / `RETURN_ENTRY_CEILING_PCT` と述語 `isImpossibleReturnPct` / `isAboveEntryCeilingPct` (どちらも 1 行の比較。2026-09-27 · パス 493j に 2 → 4 —— 上端の外を「捨てずに言う」断りのため)。**2 つの述語は確かに越境する** —— `adviseService` の中で `isImpossibleReturnPct` は真の枝 (:586 警告を組む) と偽の枝 (:607 測れる集合から外す) の両方、`isAboveEntryCeilingPct` は真の枝 (:598 断りを組む) だけが使われる (偽の枝は何もしない —— 値は比較に残る)。だが**否定のあとの動作は両ビルドで同じ 1 つの実装の中に在る** —— `adviseService` が返す助言の*中身*を形づくるだけで `ok: false` を作らず、同じオブジェクトが両ビルドへ返る (`serviceAdvisor` の判定はパス 268 で対称と実測済み)。★ この行は **module 単位の到達と call 単位の到達が違う**ことの例である (`isoDate` の ★ と同じ話)。 |
 | `ollamaCore` | 0 | 0 | **非対称だった → パス 248 で直した** (許可経路の台帳を読むのは renderer だけ) |

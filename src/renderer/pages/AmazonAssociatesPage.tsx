@@ -4,7 +4,7 @@ import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
 
 export function AmazonAssociatesPage() {
-  const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
+  const { data, source, status, errorMessage, errorKind, refresh, isConfigured } = useServiceData(
     'amazon-associates',
     SNAPSHOT['amazon-associates'],
   );
@@ -17,6 +17,7 @@ export function AmazonAssociatesPage() {
         source={source}
         status={status}
         errorMessage={errorMessage}
+        errorKind={errorKind}
         isConfigured={isConfigured}
         onRefresh={refresh}
         who={<>Amazon アソシエイト · {items.length} 件</>}

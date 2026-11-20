@@ -18,7 +18,7 @@ import { cursorIntakeNote, type CursorSectionState } from '../../shared/api/curs
  * 素性は `snapshot.intake` が持ち、数字は読めなければ `null` で来る。
  */
 export function CursorPage() {
-  const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
+  const { data, source, status, errorMessage, errorKind, refresh, isConfigured } = useServiceData(
     'cursor',
     SNAPSHOT.cursor,
   );
@@ -45,6 +45,7 @@ export function CursorPage() {
         source={source}
         status={status}
         errorMessage={errorMessage}
+        errorKind={errorKind}
         isConfigured={isConfigured}
         onRefresh={refresh}
         who={

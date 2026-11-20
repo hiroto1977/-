@@ -202,7 +202,7 @@ export function HydroponicsPage() {
 }
 
 function HydroponicsOperations() {
-  const { data, source, status, errorMessage, refresh } = useServiceData('hydroponics', SNAPSHOT.hydroponics);
+  const { data, source, status, errorMessage, errorKind, refresh } = useServiceData('hydroponics', SNAPSHOT.hydroponics);
 
   const readingCol = useCollection<HydroponicReadingRecord>(HYDROPONICS_READINGS_COLLECTION);
   const batchCol = useCollection<CultivationBatchRecord>(HYDROPONICS_BATCHES_COLLECTION);
@@ -450,6 +450,7 @@ function HydroponicsOperations() {
         source={source}
         status={status}
         errorMessage={errorMessage}
+        errorKind={errorKind}
         onRefresh={refresh}
       />
 

@@ -101,7 +101,33 @@ const LEDGER: readonly Row[] = [
   },
   { name: '接続テスト', kind: 'same-screen-control', renderedIn: 'src/renderer/pages/OllamaPage.tsx', why: '同じ Ollama 画面の疎通確認ボタン —— 文も同じ画面の案内文なので、押す所は目の前に在る。' },
   { name: '暗号化パスワード', kind: 'same-screen-control', renderedIn: 'src/renderer/components/BackupPanel.tsx', why: '同じ部品の入力欄 (placeholder がその綴りを出す)。' },
-  { name: '更新', kind: 'same-screen-control', renderedIn: 'src/renderer/components/StatusBar.tsx', why: '全サービス画面が載せる共通の取得ボタン —— freee の空状態がそれを名指しする。' },
+  {
+    name: '更新',
+    kind: 'same-screen-control',
+    renderedIn: ['src/renderer/components/StatusBar.tsx', 'src/renderer/pages/SalesPage.tsx'],
+    why:
+      '全サービス画面が載せる共通の取得ボタン —— freee の空状態がそれを名指しする。'
+      + '売上集計の画面 (2026-11-20) は同じ綴りを別の口に使う: 一覧の「直す」で行を読み込んでいる間、保存のボタンの label が「更新」になる。'
+      + '案内の文と、書き換えられていたときの断り (もう一度押せば上書き) がそれを名指しする —— 断りが出た時点で編集の相手は外れていないので、label はこの綴りのままである。',
+  },
+  {
+    name: '直す',
+    kind: 'same-screen-control',
+    renderedIn: 'src/renderer/pages/SalesPage.tsx',
+    why: '売上集計の明細の行ごとのボタン (2026-11-20)。書き換えられていたときの断りの「書き換えられた内容から始め直すなら」の側が名指しする —— 押すと今の中身が欄に入り、比べる基準もその行へ移る。',
+  },
+  {
+    name: '追加',
+    kind: 'same-screen-control',
+    renderedIn: 'src/renderer/pages/SalesPage.tsx',
+    why: '売上集計の記録のボタン (2026-11-20)。欄の上の案内と、直していた行が消されていたときの断りが名指しする —— 断りを出すと編集の相手は外れるので、同じボタンの label はこの綴りへ戻っている。',
+  },
+  {
+    name: 'やめる',
+    kind: 'same-screen-control',
+    renderedIn: 'src/renderer/pages/SalesPage.tsx',
+    why: '売上集計の、行を直している間だけ出る取り消しのボタン (2026-11-20)。同じ時にだけ出る案内の文が名指しする。',
+  },
   {
     name: '削除',
     kind: 'same-screen-control',
