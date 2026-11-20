@@ -335,7 +335,7 @@ export function buildSchematicFloors(input: SchematicInput): FloorSpec[] {
     floors.push({
       name: `${level}階`,
       depthM: fd,
-      rooms: [{ x1: 0, y1: 0, x2: w, y2: fd, name: `${level}F 事務・店舗等`, kind: 'other' }],
+      rooms: [{ x1: 0, y1: 0, x2: w, y2: fd, name: `${level}階 事務・店舗等`, kind: 'other' }],
     });
     remaining = round1(remaining - area);
     level += 1;
