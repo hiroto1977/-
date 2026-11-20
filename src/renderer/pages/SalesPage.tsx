@@ -608,7 +608,7 @@ export function SalesPage() {
                     <td style={{ padding: '4px 6px', textAlign: 'right' }}>{finiteNumberOf(r.data.orders) ?? DASH}</td>
                     <td style={{ padding: '4px 6px', whiteSpace: 'nowrap', textAlign: 'right' }}>
                       <button type="button" onClick={() => onStartEdit(r.id, r.data)} style={{ marginRight: 6 }}>直す</button>
-                      <button type="button" onClick={() => fireReported(onRemove(r.id, r.data))} aria-label="削除">×</button>
+                      <button type="button" onClick={() => fireReported(submit.run(() => onRemove(r.id, r.data)))} aria-label="削除">×</button>
                     </td>
                   </tr>
                 ))}

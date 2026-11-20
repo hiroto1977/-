@@ -20451,7 +20451,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/zero-fold-census.cjs。npm run lint:zero-fold は check だけ) -->
-合計 **112 ファイル / 287 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **113 ファイル / 288 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
@@ -20544,6 +20544,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/renderer/data/portfolioAnnex.ts` | 1 |
 | `src/renderer/data/profitSensitivity.ts` | 1 |
 | `src/renderer/data/recordShapeAudit.ts` | 1 |
+| `src/renderer/data/salesTrend.ts` | 1 |
 | `src/renderer/data/shopifyImport.ts` | 1 |
 | `src/renderer/data/teamRadarDraft.ts` | 1 |
 | `src/renderer/data/trendAlerts.ts` | 1 |
