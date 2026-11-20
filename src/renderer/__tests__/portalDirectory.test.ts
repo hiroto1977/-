@@ -269,6 +269,24 @@ describe('ポータルの入口 (既定のサイドバーの画面)', () => {
     return btn;
   }
 
+  it('★ 画面の名前は「日本語 (英語)」で出る: サイドバーの項・上部の見出し・ポータルの一覧 (2026-11-20)', async () => {
+    await mountLegacy('#home');
+    // サイドバーの項: 名前の後ろに英語のかっこ (英語の側は .name-en の中)。
+    const item = await waitForElement(
+      () => container.querySelector<HTMLElement>('.sidebar-nav .sidebar-item[data-service-id="team"]'),
+      'サイドバーのチーム管理',
+    );
+    expect(item.textContent).toContain('チーム管理 (Team)');
+    expect(item.querySelector('.name-en')?.textContent).toBe(' (Team)');
+    // 上部の見出し: 同じ形。英語は見出しの中の別の span (2 行目へ送るため)。
+    expect(h1()).toBe('ホーム (Home)');
+    expect(container.querySelector('.topbar h1 .name-en')?.textContent).toBe(' (Home)');
+    // ポータルの一覧 (社内): 札の名前も同じ形。
+    await openLegacyDirectory();
+    const card = container.querySelector('.content [data-portal-screen="github"] strong');
+    expect(card?.textContent).toBe('ギットハブ (GitHub)');
+  });
+
   it('★ サイドバーの「ポータル」を押すと、画面の場所に社内ポータルの一覧が出る (サイドバーは残る)', async () => {
     await mountLegacy('#home');
     expect(container.querySelector('[data-village-shell]')).toBeNull();
