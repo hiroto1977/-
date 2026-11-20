@@ -272,7 +272,7 @@ describe('ポータルの入口 (既定のサイドバーの画面)', () => {
   it('★ サイドバーの「ポータル」を押すと、画面の場所に社内ポータルの一覧が出る (サイドバーは残る)', async () => {
     await mountLegacy('#home');
     expect(container.querySelector('[data-village-shell]')).toBeNull();
-    expect(h1()).toBe('ホーム');
+    expect(h1()).toBe('ホーム (Home)');
     const btn = await openLegacyDirectory();
     expect(h1()).toBe('社内ポータル');
     expect(btn.getAttribute('aria-current')).toBe('page');
@@ -306,7 +306,7 @@ describe('ポータルの入口 (既定のサイドバーの画面)', () => {
     await selectPortal('partner');
     await click(container.querySelector<HTMLButtonElement>('[data-portal-screen="compliance"]')!);
     await settleUntil(() => container.querySelector('.content [data-portal-directory]') === null, '一覧が閉じる');
-    expect(h1()).toBe(SERVICES.find((s) => s.id === 'compliance')!.label);
+    expect(h1()).toBe('コンプライアンス (Compliance)');
     expect(activeItem()).toBe('compliance');
     expect(btn.getAttribute('aria-current')).toBeNull();
     expect(location.hash).toBe('#compliance');
@@ -318,7 +318,7 @@ describe('ポータルの入口 (既定のサイドバーの画面)', () => {
     await openLegacyDirectory();
     await click(container.querySelector<HTMLButtonElement>('.sidebar-nav .sidebar-item[data-service-id="home"]')!);
     await settleUntil(() => container.querySelector('.content [data-portal-directory]') === null, '一覧が閉じる');
-    expect(h1()).toBe('ホーム');
+    expect(h1()).toBe('ホーム (Home)');
     expect(location.hash).toBe('#home');
   });
 
@@ -331,7 +331,7 @@ describe('ポータルの入口 (既定のサイドバーの画面)', () => {
     root = null;
     await mountLegacy('#portal/admin');
     expect(container.querySelector('[data-portal-directory]')).toBeNull();
-    expect(h1()).toBe('ホーム');
+    expect(h1()).toBe('ホーム (Home)');
   });
 
   it('★ 画面を選んだ直後の「開いて」は消えない: 遅れて届いた自分の書き込みの反響は、状態を動かさない', async () => {
@@ -344,7 +344,7 @@ describe('ポータルの入口 (既定のサイドバーの画面)', () => {
       window.dispatchEvent(new HashChangeEvent('hashchange'));
     });
     await settleUntil(() => activeItem() === 'docstudio', '書類スタジオへ移る');
-    expect(h1()).toBe(SERVICES.find((s) => s.id === 'docstudio')!.label);
+    expect(h1()).toBe('書類スタジオ (Document Studio)');
     expect(location.hash).toBe('#docstudio');
   });
 
@@ -360,6 +360,6 @@ describe('ポータルの入口 (既定のサイドバーの画面)', () => {
       window.dispatchEvent(new HashChangeEvent('hashchange'));
     });
     await settleUntil(() => container.querySelector('.content [data-portal-directory]') === null, '画面へ戻る');
-    expect(h1()).toBe('ホーム');
+    expect(h1()).toBe('ホーム (Home)');
   });
 });
