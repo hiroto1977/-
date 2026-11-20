@@ -23,6 +23,7 @@ import { ShellPartBoundary } from './components/ShellPartBoundary';
 import { DeviceStoreFailureBanner } from './components/DeviceStoreFailureBanner';
 import { BestAnswersIndicator } from './components/BestAnswersIndicator';
 import { VillageShell } from './components/VillageShell';
+import { ServiceName } from './components/ServiceName';
 import { currentShellMode } from './shellMode';
 import { useChatDocked, useMediaQuery } from './chatDock';
 import {
@@ -94,7 +95,7 @@ function scrollElementToTop(el: HTMLElement, behavior: ScrollBehavior): void {
 
 /** 画面へ渡す最小の欄 (`shellContext.ts` の理由: `HomePage` は `SERVICES` を読めない)。 */
 function toShellService(s: ServiceDefinition): ShellService {
-  return { id: s.id, label: s.label, icon: s.icon, description: s.description };
+  return { id: s.id, label: s.label, english: s.english, icon: s.icon, description: s.description };
 }
 
 // Sidebar-order index per service id. The plan cap (`maxServices`) gates
@@ -468,7 +469,7 @@ export function App() {
         style={unlocked ? undefined : { opacity: 0.5 }}
       >
         <span className="icon" aria-hidden="true">{service.icon}</span>
-        <span>{service.label}</span>
+        <span><ServiceName label={service.label} english={service.english} /></span>
         <span className="sidebar-item-controls">
           {!unlocked && (
             <span style={{ fontSize: 11 }} aria-label="locked">
@@ -726,7 +727,7 @@ export function App() {
               <span className="topbar-icon" aria-hidden="true">
                 {active.icon}
               </span>
-              <h1>{active.label}</h1>
+              <h1><ServiceName label={active.label} english={active.english} /></h1>
               <span className="chip crumb">
                 <span aria-hidden="true">{CATEGORY_EMOJI[active.category]}</span>
                 {CATEGORY_LABEL[active.category]}

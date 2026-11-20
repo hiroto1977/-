@@ -12,6 +12,12 @@
 export interface SearchableService {
   readonly id: string;
   readonly label: string;
+  /**
+   * 名前に添える英語 (`services.ts` の `english`)。名前と同じ重みで探す ——
+   * 「google」で グーグルドライブ (Google Drive) が、「bep」で 経営指標・損益分岐点 (KPI / BEP) が見つかる。
+   * 持たない物 (検査の標本など) は名前だけで探す。
+   */
+  readonly english?: string;
   readonly description: string;
 }
 
@@ -29,20 +35,22 @@ const SCORE_NONE = 0;
 /**
  * サービスとクエリの一致スコアを返す。0 は不一致。
  * 空 / 空白のみのクエリは常に 0 (呼び出し側が null フォールバックする)。
- * 判定は label / id / description を大文字小文字無視で行う。
+ * 判定は label / english / id / description を大文字小文字無視で行う。
+ * 英語の名前 (`english`) は名前 (`label`) と同じ段で見る。
  */
 export function scoreService(service: SearchableService, query: string): number {
   const q = query.trim().toLowerCase();
   if (q === '') return SCORE_NONE;
   const label = service.label.toLowerCase();
+  const english = (service.english ?? '').toLowerCase();
   const id = service.id.toLowerCase();
   const desc = service.description.toLowerCase();
 
-  if (label === q) return SCORE_LABEL_EXACT;
+  if (label === q || english === q) return SCORE_LABEL_EXACT;
   if (id === q) return SCORE_ID_EXACT;
-  if (label.startsWith(q)) return SCORE_LABEL_PREFIX;
+  if (label.startsWith(q) || english.startsWith(q)) return SCORE_LABEL_PREFIX;
   if (id.startsWith(q)) return SCORE_ID_PREFIX;
-  if (label.includes(q)) return SCORE_LABEL_INCLUDES;
+  if (label.includes(q) || english.includes(q)) return SCORE_LABEL_INCLUDES;
   if (id.includes(q)) return SCORE_ID_INCLUDES;
   if (desc.includes(q)) return SCORE_DESC_INCLUDES;
   return SCORE_NONE;

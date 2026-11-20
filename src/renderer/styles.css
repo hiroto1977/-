@@ -949,6 +949,10 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   border-radius: 999px;
   background: var(--gradient);
 }
+/* 画面の名前に添える英語 (「ギットハブ (GitHub)」の括弧の側)。色は周りの字を継ぐ —— 名前は塗りの上にも
+   載るので、薄い色にすると塗りごとに対比を測り直すことになる。小さくするだけにする。 */
+.name-en { font-size: 0.86em; font-weight: 400; }
+
 .sidebar-item .icon {
   width: var(--icon-size);
   height: var(--icon-size);

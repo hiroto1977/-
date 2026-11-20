@@ -16,6 +16,8 @@ import type { ServiceId } from '../shared/serviceId';
 export interface ShellService {
   id: ServiceId;
   label: string;
+  /** 名前に添える英語 (`services.ts` の `english`)。 */
+  english: string;
   icon: string;
   description: string;
 }

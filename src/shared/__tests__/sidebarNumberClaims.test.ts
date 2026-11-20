@@ -62,7 +62,10 @@ interface Claim {
 // 鍵は `ServiceId` —— 綴りを間違えた id は tsc が止める (走査を待たずに落ちる)。
 const LEDGER: Partial<Record<ServiceId, readonly Claim[]>> = {
   home: [{ text: 'ボタン 1 つで', why: '言い回し (操作が 1 回という意味で、数えられる量ではない)' }],
-  security: [{ text: 'ノートン 360', why: '製品名' }],
+  security: [
+    { text: 'ノートン 360', why: '製品名' },
+    { text: 'Norton 360', why: '製品名 (日本語の名前に添えた英語)' },
+  ],
   ollama: [
     {
       text: 'デスクトップ版は 127.0.0.1 固定 / ブラウザ版は接続先を指定',
@@ -93,7 +96,10 @@ const LEDGER: Partial<Record<ServiceId, readonly Claim[]>> = {
     { text: '50 メガバイト', measure: () => `${MAX_BYTES / 1024 / 1024} メガバイト`, why: '保存の総量上限' },
     { text: '100 件', measure: () => String(MAX_ITEMS), why: '保存の件数上限' },
   ],
+  settings: [{ text: 'AES-GCM-256', why: '暗号方式の名前 (日本語「暗号化」に添えた英語)' }],
   quality: [{ text: '1 画面で', why: '言い回し' }],
+  netsea: [{ text: 'B2B', why: '業態の呼び名 (日本語「事業者向け」に添えた英語)' }],
+  'super-delivery': [{ text: 'B2B', why: '業態の呼び名 (日本語「事業者向け」に添えた英語)' }],
   village: [{ text: '143 体', measure: () => String(villageBodies()), why: '村人の総数 (orchestration/registry.json から)' }],
   docstudio: [{ text: '59 書式', measure: () => String(STUDIO_TEMPLATES.length), why: '経営書類の書式の数' }],
   talent: [{ text: '達成確率100%', why: '規則の名前 (talent.ts「達成確率100%キープの法則」。100 は割合の天井)' }],

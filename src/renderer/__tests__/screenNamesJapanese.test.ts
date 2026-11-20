@@ -14,12 +14,20 @@
  * 「AI」だけは残した —— 日本語の文でもこの 2 文字で書くのが通例で、カタカナ (エーアイ) の方が
  * 読みにくい。台帳に無い英字が名前に入れば落ち、台帳の語が名前から消えても落ちる。
  *
- * ## 画面の説明 (2026-11-20 · 日本語表記の 3 回目)
+ * ## 英語は、日本語の後ろにかっこで添える (2026-11-20 · 利用者の依頼「全て日本語と英語を併記して」)
  *
- * 説明 (サイドバーの項に指を置くと出る文・上部の帯・ホームの札・AI への案内に入る文) は、
- * 直す前 77 件のうち **47 件が英字を含んでいた** (`Jira / Confluence / Compass`・`(snapshot)`・
- * `Phase 6 で API 接続`・`CRM`・`B2B` …)。直した後に残る英字は「AI」と「pH」だけ
- * (pH は酸性度の単位の記号 —— 単位は日本語にしない)。
+ * 利用者は続けて「全て日本語と英語を併記して」と依頼し、形は「名前と用語に英語を添える」を選んだ
+ * (例:「ギットハブ (GitHub)」「自己資本利益率 (ROE)」。説明の文そのものは日本語のまま)。
+ *
+ * - **画面の名前**: `label` は日本語のまま、英語は別の欄 `english` に持ち、描く所で
+ *   「ギットハブ (GitHub)」と並べる (`components/ServiceName.tsx`)。文の中で画面を名指しするときは
+ *   `label` だけを書くので、名指しの文は 1 つも変わらない。
+ * - **画面の説明**: 直す前は 77 件のうち 47 件が英字をそのまま含んでいた (`Jira / Confluence / Compass`・
+ *   `(snapshot)`・`Phase 6 で API 接続`・`CRM`・`B2B` …)。直した後は、サービス名と専門用語を
+ *   「ジラ (Jira)」「顧客管理 (CRM)」の形で書く。
+ *
+ * 規則は 1 つ —— **英字は、日本語の語の直後の半角かっこの中にだけ書き、そのかっこの中は英語だけ**。
+ * かっこの外に残してよいのは「AI」と「pH」(酸性度の単位の記号) だけである。
  *
  * 説明の中で他の画面を名指しする所は、その画面の名前と同じ綴りで書く
  * (「キャンバ」「ギットハブ」…)。名前を変えた日に説明だけが古びないよう、下で突き合わせる。
@@ -41,7 +49,16 @@ const KEPT_LATIN: Readonly<Record<string, string>> = {
   AI: '日本語の文でも「AI」と書くのが通例で、カタカナ (エーアイ) の方が読みにくい。',
 };
 
-/** 説明に残してよい英字の語と、その理由。 */
+/**
+ * 「日本語 (English)」の英語の側 —— 日本語の語 (空白でも開きかっこでもない字) の直後の半角かっこで、
+ * 中身は英数字と空白と `. / -` だけ。**英語で始まる** (数字だけ・記号だけのかっこは英語の添え書きではない)。
+ */
+const ENGLISH_GLOSS = /(?<=[^\s(]) ?\([A-Za-z][A-Za-z0-9 ./-]*\)/g;
+
+/** 添え書きのかっこを落とした残り。ここに英字が残っていれば、かっこの外に英語を書いている。 */
+const withoutGloss = (s: string): string => s.replace(ENGLISH_GLOSS, '');
+
+/** 説明のかっこの外に残してよい英字の語と、その理由。 */
 const KEPT_LATIN_IN_DESCRIPTION: Readonly<Record<string, string>> = {
   AI: '日本語の文でも「AI」と書くのが通例で、カタカナ (エーアイ) の方が読みにくい。',
   pH: '酸性度の単位の記号。単位は日本語にしない (水耕栽培の測定の欄も同じ記号で書く)。',
@@ -90,16 +107,16 @@ describe('画面の名前と印は日本語で書く', () => {
     for (const [w, why] of Object.entries(KEPT_LATIN)) expect(why.length, `${w}: 理由が無い`).toBeGreaterThan(10);
   });
 
-  it('★ 説明に残る英字は、台帳の語だけ (両方向)', () => {
+  it('★ 説明の英字は、日本語の後ろのかっこの中にだけ在る (かっこの外は台帳の語だけ・両方向)', () => {
     const used = new Set<string>();
     const bad: string[] = [];
     for (const s of SERVICES) {
-      for (const w of latinOf(s.description)) {
+      for (const w of latinOf(withoutGloss(s.description))) {
         if (Object.hasOwn(KEPT_LATIN_IN_DESCRIPTION, w)) used.add(w);
         else bad.push(`${s.id}: 「${s.description}」の ${w}`);
       }
     }
-    expect(bad, '台帳に無い英字が画面の説明に入っている').toEqual([]);
+    expect(bad, '英語は「日本語 (English)」の形で書く —— かっこの外に英字が在る').toEqual([]);
     expect(
       Object.keys(KEPT_LATIN_IN_DESCRIPTION).filter((w) => !used.has(w)),
       '台帳の語がどの説明にも無い (台帳から外す)',
@@ -125,10 +142,47 @@ describe('画面の名前と印は日本語で書く', () => {
     expect(missing).toEqual([]);
   });
 
-  it('★ 針は標本に当たる (直す前の説明を拾う)', () => {
-    expect(latinOf('Jira / Confluence / Compass')).toEqual(['Jira', 'Confluence', 'Compass']);
-    expect(latinOf('アフィリエイト ASP の成果・レポート (snapshot)')).toEqual(['ASP', 'snapshot']);
-    expect(latinOf('課題管理 (ジラ) / 文書 (コンフルエンス) / 部品の一覧 (コンパス)')).toEqual([]);
+  it('★ 添え書きは実際に在る (どの説明にも英語が無ければ、上の規則は何も見ていない)', () => {
+    const glossed = SERVICES.filter((s) => (s.description.match(ENGLISH_GLOSS) ?? []).length > 0);
+    expect(glossed.length).toBeGreaterThanOrEqual(20);
+  });
+
+  it('★ 針は標本に当たる (かっこの外の英語を拾い、添え書きは拾わない)', () => {
+    const outside = (d: string): string[] => latinOf(withoutGloss(d));
+    // 直す前の説明: 英語がそのまま書いてある。
+    expect(outside('Jira / Confluence / Compass')).toEqual(['Jira', 'Confluence', 'Compass']);
+    // ★ 針が見るのは形だけ: 「レポート (snapshot)」は日本語の後ろの英語のかっこなので添え書きとして通る。
+    //    その英語が前の語の訳になっているかは、この針には分からない (書く人が確かめる)。
+    expect(outside('アフィリエイト ASP の成果・レポート (snapshot)')).toEqual(['ASP']);
+    // 行頭のかっこ・空白の後ろのかっこは、日本語に添えた物ではない。
+    expect(outside('(snapshot)')).toEqual(['snapshot']);
+    // かっこの中に日本語が混ざる物は添え書きではない。
+    expect(outside('連携の鍵 (API キー)')).toEqual(['API']);
+    // 直した後の形。
+    expect(outside('ジラ (Jira) / コンフルエンス (Confluence) / コンパス (Compass)')).toEqual([]);
+    expect(outside('ノートン 360 (Norton 360) の検出')).toEqual([]);
+    expect(outside('商品企画を進めるか見送るか (GO / NO-GO) の判定')).toEqual([]);
+    expect(outside('水耕栽培の毎日の測定 (電気伝導度 / pH / 温度ほか)')).toEqual(['pH']);
+  });
+
+  it('★ どの画面も英語の名前を持ち、その中身は英語だけ', () => {
+    const bad = SERVICES.filter((s) => !/^[A-Za-z0-9][A-Za-z0-9 ./-]*$/.test(s.english)).map((s) => `${s.id}: 「${s.english}」`);
+    expect(bad).toEqual([]);
+  });
+
+  it('★ 英語の名前は画面ごとに違う', () => {
+    const names = SERVICES.map((s) => s.english.toLowerCase());
+    expect(names.filter((n, i) => names.indexOf(n) !== i)).toEqual([]);
+  });
+
+  it('★ 英語の名前でも探せる (名前と同じ重みで見る)', () => {
+    const first = (q: string): string | undefined => filterServices(SERVICES, q)?.[0]?.id;
+    expect(first('Google Drive')).toBe('drive');
+    expect(first('bep')).toBe('kpi');
+    expect(first('tax accountant')).toBe('tax-accountant');
+    expect(first('Document Studio')).toBe('docstudio');
+    // 「google」は名前の頭に持つ 2 画面が、一覧の順で並ぶ。
+    expect(filterServices(SERVICES, 'google')?.slice(0, 2).map((s) => s.id)).toEqual(['drive', 'calendar']);
   });
 
   it('★ 針は標本に当たる (直す前の名前と印を拾う・日本語は拾わない)', () => {
