@@ -45,6 +45,7 @@
   (`submit.run` に通した)・`snapshotJudgementCensus` —— 行を欄へ写す「直す」と、行の中身を控えに取る「×」が母集団に入った (理由つきで 2 行)・
   `zeroFoldCensus` —— 棒の幅の 0 除算の守り 1 件 (`salesTrend.ts`) で母集団が 287 → 288 (表を再生成)。
   ★ この 3 つは画面の検査だけを回していた間は見えなかった。
+  門の側でも 1 つ: `lint:shared-judgement` —— `isoDate` を読む renderer のファイルが 40 → 42 (`salesTrend.ts` と `SalesPage.tsx`)。判定 (main 側の消費者) は変わらないので表を再生成した。
 - **検証**: `typecheck` 緑・`npm test` **1,335 ファイル / 29,246 件 ❌ 0**・`verify:all` 39 ゲート exit 0。出荷物が動いたので実機も回した (最終コード): FULL **12,337,282 B** / LITE **3,749,919 B**・`perf` OK (LITE DCL 288 ms / heap 8.1 MB・FULL DCL 537 ms / heap 30.6 MB)・`e2e` **766 件 ❌ 0**・`e2e:lite` **766 件 ❌ 0**。`smoke:app` / `e2e:ollama` は回していない (主プロセスも Ollama の経路も触っていない)。★ 全件の検査は 2 度コンテナの再起動で途切れた (1 度目は変異検査の並列 3・2 度目は全件の検査の最中 —— 原因は確かめていない)。3 度目は並列を 3 に落として完走した。
 - **測って残した物**は `docs/REMAINING_WORK.md` の先頭の節。
 - この節と 1 つ前の節 (続き 5 · 取得の失敗の種類) は同じ PR #967 に入っている。
