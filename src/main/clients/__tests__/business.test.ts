@@ -1260,7 +1260,7 @@ describe('renderBusinessDashboardHtml', () => {
   function fakeSnap(over: Partial<BusinessOpsSnapshot> = {}): BusinessOpsSnapshot {
     const unit: BusinessUnit = {
       id: 'ec',
-      label: 'EC / ネットショップ',
+      label: 'ネットショップ',
       description: 'desc',
       trafficKind: 'session',
       current: {
@@ -2155,16 +2155,16 @@ describe('BUSINESS_CATEGORIES — 読み直して static 変異体を届かせ�
   it('★ label (利用者が選ぶ選択肢)', async () => {
     const c = await fresh();
     expect(c.map((x) => x.label)).toEqual([
-      'EC / ネットショップ',
+      'ネットショップ',
       'ドロップシッピング',
-      'OEM / ODM',
+      '製造委託 (自社ブランド)',
       '自社ブログ',
       'ブログアフィリエイト',
-      'PPC アフィリエイト',
+      '広告出稿型アフィリエイト',
       '動画制作 (受託)',
       '動画投稿 (自社チャンネル)',
       '動画配信 (有料広告)',
-      'SNS 運用',
+      'ソーシャルメディア運用',
     ]);
   });
 

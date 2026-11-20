@@ -99,13 +99,13 @@ export const INDICATORS: readonly IndicatorSpec[] = [
   { key: 'netMargin', label: '当期純利益率', unit: '%', higherIsBetter: true, additive: false, value: (r) => r.netMarginPct },
   { key: 'netProfit', label: '当期純利益', unit: '円', higherIsBetter: true, additive: true, value: (r) => r.netProfit },
   { key: 'laborShare', label: '労働分配率', unit: '%', higherIsBetter: false, additive: false, value: (r) => r.laborSharePct },
-  { key: 'ebitda', label: 'EBITDA', unit: '円', higherIsBetter: true, additive: true, value: (r) => r.ebitda },
-  { key: 'ebitdaMargin', label: 'EBITDAマージン', unit: '%', higherIsBetter: true, additive: false, value: (r) => r.ebitdaMarginPct },
+  { key: 'ebitda', label: '償却前営業利益', unit: '円', higherIsBetter: true, additive: true, value: (r) => r.ebitda },
+  { key: 'ebitdaMargin', label: '償却前営業利益率', unit: '%', higherIsBetter: true, additive: false, value: (r) => r.ebitdaMarginPct },
   { key: 'receivablesTurnover', label: '売上債権回転率', unit: '倍', higherIsBetter: true, additive: false, value: (r) => r.receivablesTurnover },
   { key: 'inventoryTurnover', label: '棚卸資産回転率', unit: '倍', higherIsBetter: true, additive: false, value: (r) => r.inventoryTurnover },
-  { key: 'ccc', label: 'CCC', unit: '日', higherIsBetter: false, additive: false, value: (r) => r.cccDays },
-  { key: 'roa', label: 'ROA', unit: '%', higherIsBetter: true, additive: false, value: (r) => r.roaPct },
-  { key: 'roe', label: 'ROE', unit: '%', higherIsBetter: true, additive: false, value: (r) => r.roePct },
+  { key: 'ccc', label: '現金化日数', unit: '日', higherIsBetter: false, additive: false, value: (r) => r.cccDays },
+  { key: 'roa', label: '総資産利益率', unit: '%', higherIsBetter: true, additive: false, value: (r) => r.roaPct },
+  { key: 'roe', label: '自己資本利益率', unit: '%', higherIsBetter: true, additive: false, value: (r) => r.roePct },
 ];
 
 /** キーから指標定義を引く。知らないキーは undefined。 */
@@ -228,7 +228,7 @@ export type CompositionKey = 'revenue' | 'netProfit' | 'ebitda' | 'laborCost';
 export const COMPOSITION_LABELS: Readonly<Record<CompositionKey, string>> = {
   revenue: '売上高',
   netProfit: '当期純利益',
-  ebitda: 'EBITDA',
+  ebitda: '償却前営業利益',
   laborCost: '人件費',
 };
 

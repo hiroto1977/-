@@ -1012,11 +1012,11 @@ function BalanceSheetPanel() {
   return (
     <div>
       <p style={{ color: 'var(--text-mute)', fontSize: 12, marginBottom: 8, lineHeight: 1.6 }}>
-        貸借対照表 (最新時点) を入力すると、自己資本比率・流動比率・ROA・ROE などが経営サマリーに表示され、
+        貸借対照表 (最新時点) を入力すると、自己資本比率・流動比率・総資産利益率・自己資本利益率 などが経営サマリーに表示され、
         スコアカードの安全性に自己資本比率が加点されます。
         <br />
         現預金・棚卸資産・売上債権・仕入債務は内数で、<strong>空欄にすると 0 円ではなく「未入力」として扱い、
-        当座比率・現金化サイクル (CCC)・運転資本は算定しません</strong>。
+        当座比率・現金化日数・運転資本は算定しません</strong>。
         本当に 0 円のとき (現金商売で売上債権が無い等) は 0 と入力してください。
         <br />
         有利子負債 (借入金・社債など利息の付く負債) は固定負債・流動負債の内数です。
@@ -1064,8 +1064,8 @@ function BalanceSheetPanel() {
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '12px 0' }}>
           <Tile label="自己資本比率" value={metrics.equityRatioPct === null ? '—' : `${metrics.equityRatioPct}%`} sub={`純資産 ${safeYen(metrics.netAssets)}`} />
           <Tile label="流動比率" value={metrics.currentRatioPct === null ? '—' : `${metrics.currentRatioPct}%`} />
-          <Tile label="ROA" value={metrics.roaPct === null ? '—' : `${metrics.roaPct}%`} />
-          <Tile label="ROE" value={metrics.roePct === null ? '—' : `${metrics.roePct}%`} />
+          <Tile label="総資産利益率" value={metrics.roaPct === null ? '—' : `${metrics.roaPct}%`} />
+          <Tile label="自己資本利益率" value={metrics.roePct === null ? '—' : `${metrics.roePct}%`} />
         </div>
       )}
       {insights && (
@@ -1205,7 +1205,7 @@ export function KpiPage() {
         <KpiImprovementPanel />
       </Section>
 
-      <Section title="財政状態入力 — 貸借対照表 (ROA/ROE/自己資本比率/流動比率)">
+      <Section title="財政状態入力 — 貸借対照表 (総資産利益率/自己資本利益率/自己資本比率/流動比率)">
         <BalanceSheetPanel />
       </Section>
 

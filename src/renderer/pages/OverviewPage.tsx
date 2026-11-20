@@ -1357,9 +1357,9 @@ export function OverviewPage() {
                 sub={`粗利率 ${pct1OrDash(overview.kpi.grossMarginPct)}`}
               />
               <Tile
-                label="EBITDA"
+                label="償却前営業利益"
                 value={yen.format(overview.kpi.ebitda)}
-                sub={`償却前営業利益・マージン ${pct1OrDash(overview.kpi.ebitdaMarginPct)}`}
+                sub={`営業利益 + 減価償却費・売上に対して ${pct1OrDash(overview.kpi.ebitdaMarginPct)}`}
               />
               <Tile label="限界利益率" value={pct1OrDash(overview.kpi.contributionRatio)} sub="高いほど固定費を回収しやすい" />
               <Tile label="損益分岐点 (BEP)" {...bepTile(overview.kpi)} />
@@ -1833,13 +1833,13 @@ export function OverviewPage() {
             <Tile label="自己資本比率" value={pctOrDash(overview.financialPosition.equityRatioPct)} sub="高いほど安全 (目安40%以上)" />
             <Tile label="流動比率" value={pctOrDash(overview.financialPosition.currentRatioPct)} sub="目安200%以上" />
             <Tile label="当座比率" value={pctOrDash(overview.financialPosition.quickRatioPct)} sub="目安100%以上" />
-            <Tile label="ROA (総資産利益率)" value={pctOrDash(overview.financialPosition.roaPct)} />
-            <Tile label="ROE (自己資本利益率)" value={pctOrDash(overview.financialPosition.roePct)} />
+            <Tile label="総資産利益率" value={pctOrDash(overview.financialPosition.roaPct)} />
+            <Tile label="自己資本利益率" value={pctOrDash(overview.financialPosition.roePct)} />
             <Tile label="固定比率" value={pctOrDash(overview.financialPosition.fixedRatioPct)} sub="目安100%以下" />
           </div>
           {overview.workingCapital && (
             <>
-              <div style={{ fontSize: 12, color: 'var(--text-mute)', margin: '12px 0 4px' }}>運転資金 (CCC)</div>
+              <div style={{ fontSize: 12, color: 'var(--text-mute)', margin: '12px 0 4px' }}>運転資金 (現金化日数)</div>
               {/* 回転日数は**期間の長さ**で決まる。何か月分の実績で出したのかを書かないと
                   1 年分の回転日数として読まれる (`workingCapital.ts` 冒頭の実測表)。 */}
               <div style={{ fontSize: 11, color: 'var(--text-mute)', margin: '0 0 6px' }}>
@@ -1859,7 +1859,7 @@ export function OverviewPage() {
               )}
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 <Tile
-                  label="CCC (現金回収日数)"
+                  label="現金化日数"
                   value={overview.workingCapital.ccc === null ? '—' : `${overview.workingCapital.ccc} 日`}
                   accent={overview.workingCapital.ccc === null ? undefined : overview.workingCapital.ccc <= 0 ? 'var(--success)' : overview.workingCapital.ccc <= 60 ? '#3ec98a' : 'var(--warning)'}
                   sub="短い(マイナス)ほど資金繰りが楽"

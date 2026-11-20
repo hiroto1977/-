@@ -643,7 +643,7 @@ export function parameterDefinitions() {
   },
   // --- 財務 ---------------------------------------------------------------
   {
-    id: 'finance.effectiveTaxRate', feature: '財務', label: '実効税率 (NOPAT・税引後の試算)', unit: '%', scale: 100,
+    id: 'finance.effectiveTaxRate', feature: '財務', label: '実効税率 (税引後営業利益・税引後の試算)', unit: '%', scale: 100,
     defaultValue: DEFAULT_EFFECTIVE_TAX_RATE, min: 0, max: 1, kind: 'assumption',
     note: '中小法人の目安 30%。実績の税負担率が分かれば置き換える',
   },
@@ -811,12 +811,12 @@ export function parameterDefinitions() {
     defaultValue: RADAR_AXIS_BANDS.laborShare.good, min: -1_000, max: 1_000, kind: 'threshold',
   },
   {
-    id: 'financeHealth.ebitdaMarginBad', feature: '財務診断', label: 'EBITDAマージン: 0 点の水準', unit: '%',
+    id: 'financeHealth.ebitdaMarginBad', feature: '財務診断', label: '償却前営業利益率: 0 点の水準', unit: '%',
     defaultValue: RADAR_AXIS_BANDS.ebitdaMargin.bad, min: -1_000, max: 1_000, kind: 'threshold',
     note: '線形に採点し両端の外は 0 / 100 に丸める。0 点と 100 点が同じ値なら既定の水準に戻る',
   },
   {
-    id: 'financeHealth.ebitdaMarginGood', feature: '財務診断', label: 'EBITDAマージン: 100 点の水準', unit: '%',
+    id: 'financeHealth.ebitdaMarginGood', feature: '財務診断', label: '償却前営業利益率: 100 点の水準', unit: '%',
     defaultValue: RADAR_AXIS_BANDS.ebitdaMargin.good, min: -1_000, max: 1_000, kind: 'threshold',
   },
   {
@@ -838,30 +838,30 @@ export function parameterDefinitions() {
     defaultValue: RADAR_AXIS_BANDS.inventoryTurnover.good, min: 0, max: 10_000, kind: 'threshold',
   },
   {
-    id: 'financeHealth.cccBad', feature: '財務診断', label: 'CCC (現金化日数): 0 点の水準', unit: '日',
+    id: 'financeHealth.cccBad', feature: '財務診断', label: '現金化日数: 0 点の水準', unit: '日',
     defaultValue: RADAR_AXIS_BANDS.ccc.bad, min: -3_650, max: 3_650, kind: 'threshold',
     note: '線形に採点し両端の外は 0 / 100 に丸める。0 点と 100 点が同じ値なら既定の水準に戻る',
   },
   {
-    id: 'financeHealth.cccGood', feature: '財務診断', label: 'CCC (現金化日数): 100 点の水準', unit: '日',
+    id: 'financeHealth.cccGood', feature: '財務診断', label: '現金化日数: 100 点の水準', unit: '日',
     defaultValue: RADAR_AXIS_BANDS.ccc.good, min: -3_650, max: 3_650, kind: 'threshold',
   },
   {
-    id: 'financeHealth.roaBad', feature: '財務診断', label: 'ROA: 0 点の水準', unit: '%',
+    id: 'financeHealth.roaBad', feature: '財務診断', label: '総資産利益率: 0 点の水準', unit: '%',
     defaultValue: RADAR_AXIS_BANDS.roa.bad, min: -1_000, max: 1_000, kind: 'threshold',
     note: '線形に採点し両端の外は 0 / 100 に丸める。0 点と 100 点が同じ値なら既定の水準に戻る',
   },
   {
-    id: 'financeHealth.roaGood', feature: '財務診断', label: 'ROA: 100 点の水準', unit: '%',
+    id: 'financeHealth.roaGood', feature: '財務診断', label: '総資産利益率: 100 点の水準', unit: '%',
     defaultValue: RADAR_AXIS_BANDS.roa.good, min: -1_000, max: 1_000, kind: 'threshold',
   },
   {
-    id: 'financeHealth.roeBad', feature: '財務診断', label: 'ROE: 0 点の水準', unit: '%',
+    id: 'financeHealth.roeBad', feature: '財務診断', label: '自己資本利益率: 0 点の水準', unit: '%',
     defaultValue: RADAR_AXIS_BANDS.roe.bad, min: -1_000, max: 1_000, kind: 'threshold',
     note: '線形に採点し両端の外は 0 / 100 に丸める。0 点と 100 点が同じ値なら既定の水準に戻る',
   },
   {
-    id: 'financeHealth.roeGood', feature: '財務診断', label: 'ROE: 100 点の水準', unit: '%',
+    id: 'financeHealth.roeGood', feature: '財務診断', label: '自己資本利益率: 100 点の水準', unit: '%',
     defaultValue: RADAR_AXIS_BANDS.roe.good, min: -1_000, max: 1_000, kind: 'threshold',
   },
   // --- 消費税 (申告・納付) --------------------------------------------------

@@ -52,14 +52,14 @@ export const OVERRIDABLE_FIELDS: readonly OverridableField[] = [
   { path: 'kpi.revenue', label: '売上高', section: '損益', unit: 'yen' },
   { path: 'kpi.grossProfit', label: '売上総利益', section: '損益', unit: 'yen', derivedFrom: ['kpi.revenue'] },
   { path: 'kpi.operatingProfit', label: '営業利益', section: '損益', unit: 'yen', derivedFrom: ['kpi.revenue'] },
-  { path: 'kpi.ebitda', label: 'EBITDA', section: '損益', unit: 'yen', derivedFrom: ['kpi.operatingProfit'] },
+  { path: 'kpi.ebitda', label: '償却前営業利益', section: '損益', unit: 'yen', derivedFrom: ['kpi.operatingProfit'] },
   { path: 'kpi.bep', label: '損益分岐点売上高', section: '損益', unit: 'yen' },
   { path: 'kpi.safetyMargin', label: '安全余裕率', section: '損益', unit: 'pct', derivedFrom: ['kpi.revenue', 'kpi.bep'] },
 
   // --- 比率 ---
   { path: 'kpi.grossMarginPct', label: '売上総利益率', section: '比率', unit: 'pct', derivedFrom: ['kpi.revenue', 'kpi.grossProfit'] },
   { path: 'kpi.operatingMarginPct', label: '営業利益率', section: '比率', unit: 'pct', derivedFrom: ['kpi.revenue', 'kpi.operatingProfit'] },
-  { path: 'kpi.ebitdaMarginPct', label: 'EBITDA マージン', section: '比率', unit: 'pct', derivedFrom: ['kpi.revenue', 'kpi.ebitda'] },
+  { path: 'kpi.ebitdaMarginPct', label: '償却前営業利益率', section: '比率', unit: 'pct', derivedFrom: ['kpi.revenue', 'kpi.ebitda'] },
   { path: 'kpi.cogsRatioPct', label: '原価率', section: '比率', unit: 'pct', derivedFrom: ['kpi.revenue'] },
   { path: 'kpi.sgaRatioPct', label: '販管費率', section: '比率', unit: 'pct', derivedFrom: ['kpi.revenue'] },
   { path: 'kpi.advertisingRatioPct', label: '広告費比率', section: '比率', unit: 'pct', derivedFrom: ['kpi.revenue'] },
@@ -86,14 +86,14 @@ export const OVERRIDABLE_FIELDS: readonly OverridableField[] = [
   { path: 'financialPosition.equityRatioPct', label: '自己資本比率', section: '財政状態', unit: 'pct', derivedFrom: ['financialPosition.totalAssets', 'financialPosition.netAssets'] },
   { path: 'financialPosition.currentRatioPct', label: '流動比率', section: '財政状態', unit: 'pct' },
   { path: 'financialPosition.quickRatioPct', label: '当座比率', section: '財政状態', unit: 'pct' },
-  { path: 'financialPosition.roaPct', label: 'ROA', section: '財政状態', unit: 'pct', derivedFrom: ['kpi.operatingProfit', 'financialPosition.totalAssets'] },
-  { path: 'financialPosition.roePct', label: 'ROE', section: '財政状態', unit: 'pct', derivedFrom: ['kpi.operatingProfit', 'financialPosition.netAssets'] },
+  { path: 'financialPosition.roaPct', label: '総資産利益率', section: '財政状態', unit: 'pct', derivedFrom: ['kpi.operatingProfit', 'financialPosition.totalAssets'] },
+  { path: 'financialPosition.roePct', label: '自己資本利益率', section: '財政状態', unit: 'pct', derivedFrom: ['kpi.operatingProfit', 'financialPosition.netAssets'] },
 
   // --- 運転資金 ---
   { path: 'workingCapital.dso', label: '売上債権回転日数', section: '運転資金', unit: 'days' },
   { path: 'workingCapital.dio', label: '棚卸資産回転日数', section: '運転資金', unit: 'days' },
   { path: 'workingCapital.dpo', label: '仕入債務回転日数', section: '運転資金', unit: 'days' },
-  { path: 'workingCapital.ccc', label: 'キャッシュ化速度 (CCC)', section: '運転資金', unit: 'days', derivedFrom: ['workingCapital.dso', 'workingCapital.dio', 'workingCapital.dpo'] },
+  { path: 'workingCapital.ccc', label: '現金化日数', section: '運転資金', unit: 'days', derivedFrom: ['workingCapital.dso', 'workingCapital.dio', 'workingCapital.dpo'] },
   { path: 'workingCapital.workingCapital', label: '運転資金', section: '運転資金', unit: 'yen' },
 
   // --- 資金繰り ---

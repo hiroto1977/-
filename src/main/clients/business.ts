@@ -84,7 +84,7 @@ export interface BusinessCategoryDef {
 export const BUSINESS_CATEGORIES: readonly BusinessCategoryDef[] = [
   {
     id: 'ec',
-    label: 'EC / ネットショップ',
+    label: 'ネットショップ',
     description: 'Shopify / BASE / STORES などでの自社 EC 運営',
     baseRevenue: 3_200_000,
     variableRatio: 0.55,
@@ -110,7 +110,7 @@ export const BUSINESS_CATEGORIES: readonly BusinessCategoryDef[] = [
   },
   {
     id: 'oem-odm',
-    label: 'OEM / ODM',
+    label: '製造委託 (自社ブランド)',
     description: '製造委託で自社ブランド製品を作る BtoB / DtoC',
     baseRevenue: 5_400_000,
     variableRatio: 0.48,
@@ -149,7 +149,7 @@ export const BUSINESS_CATEGORIES: readonly BusinessCategoryDef[] = [
   },
   {
     id: 'ppc-affiliate',
-    label: 'PPC アフィリエイト',
+    label: '広告出稿型アフィリエイト',
     description: '有料広告で送客し成果報酬を取る短期回収型',
     baseRevenue: 2_800_000,
     variableRatio: 0.70,
@@ -201,7 +201,7 @@ export const BUSINESS_CATEGORIES: readonly BusinessCategoryDef[] = [
   },
   {
     id: 'sns-ops',
-    label: 'SNS 運用',
+    label: 'ソーシャルメディア運用',
     description: 'X / Instagram / TikTok のオーガニック+広告運用',
     baseRevenue: 760_000,
     variableRatio: 0.42,

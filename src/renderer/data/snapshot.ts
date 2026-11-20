@@ -1397,7 +1397,7 @@ export const SNAPSHOT = {
       units: [
         {
           id: "ec",
-          label: "EC / ネットショップ",
+          label: "ネットショップ",
           description: "Shopify / BASE / STORES などでの自社 EC 運営",
           trafficKind: "session",
           current: { revenue: 2449859, variableCost: 1347422, fixedCost: 600000, totalCost: 1947422, profit: 502437, profitMargin: 20.508812956174214, traffic: 16901, conversion: 372, conversionRatePct: 2.2010531921188092, aov: 6586, roas: 4.341207578592003, contentOutput: 8 },
@@ -1431,7 +1431,7 @@ export const SNAPSHOT = {
         },
         {
           id: "oem-odm",
-          label: "OEM / ODM",
+          label: "製造委託 (自社ブランド)",
           description: "製造委託で自社ブランド製品を作る BtoB / DtoC",
           trafficKind: "project",
           current: { revenue: 6829538, variableCost: 3278178, fixedCost: 1400000, totalCost: 4678178, profit: 2151360, profitMargin: 31.500813085746067, traffic: 15, conversion: 5, conversionRatePct: 33.33333333333333, aov: 1365908, roas: 0, contentOutput: 3 },
@@ -1482,7 +1482,7 @@ export const SNAPSHOT = {
         },
         {
           id: "ppc-affiliate",
-          label: "PPC アフィリエイト",
+          label: "広告出稿型アフィリエイト",
           description: "有料広告で送客し成果報酬を取る短期回収型",
           trafficKind: "impression",
           current: { revenue: 3431056, variableCost: 2401739, fixedCost: 150000, totalCost: 2551739, profit: 879317, profitMargin: 25.628173949944273, traffic: 3187116, conversion: 38245, conversionRatePct: 1.1999877004790538, aov: 90, roas: 1.389349181758007, contentOutput: 60 },
@@ -1550,7 +1550,7 @@ export const SNAPSHOT = {
         },
         {
           id: "sns-ops",
-          label: "SNS 運用",
+          label: "ソーシャルメディア運用",
           description: "X / Instagram / TikTok のオーガニック+広告運用",
           trafficKind: "impression",
           current: { revenue: 641338, variableCost: 269362, fixedCost: 220000, totalCost: 489362, profit: 151976, profitMargin: 23.696709067605536, traffic: 1563670, conversion: 4378, conversionRatePct: 0.27998234921690635, aov: 146, roas: 2.124502553232014, contentOutput: 90 },

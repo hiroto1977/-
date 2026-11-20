@@ -311,22 +311,22 @@ export function buildManagementHighlights(
       out.push({
         severity: 'warning',
         category: '運転資金',
-        message: `貸借対照表の${stocks.blank.join('・')}が未入力のため、現金化サイクル (CCC) と運転資本を算定していません。「経営指標・損益分岐点」の画面の貸借対照表に入力してください。`,
+        message: `貸借対照表の${stocks.blank.join('・')}が未入力のため、現金化日数と運転資本を算定していません。「経営指標・損益分岐点」の画面の貸借対照表に入力してください。`,
       });
     }
     if (stocks.unreadable.length > 0) {
       out.push({
         severity: 'warning',
         category: '運転資金',
-        message: `貸借対照表の${stocks.unreadable.join('・')}が数として読めないため、現金化サイクル (CCC) と運転資本を算定していません。設定の「形式の合わないレコード」から消して入れ直してください。`,
+        message: `貸借対照表の${stocks.unreadable.join('・')}が数として読めないため、現金化日数と運転資本を算定していません。設定の「形式の合わないレコード」から消して入れ直してください。`,
       });
     }
   }
   if (wc && wc.ccc !== null) {
     if (wc.ccc > 60) {
-      out.push({ severity: 'warning', category: '運転資金', message: `CCC が ${wc.ccc} 日と長く、運転資金の負担が大きい状態です。` });
+      out.push({ severity: 'warning', category: '運転資金', message: `現金化日数が ${wc.ccc} 日と長く、運転資金の負担が大きい状態です。` });
     } else if (wc.ccc <= 0) {
-      out.push({ severity: 'good', category: '運転資金', message: `CCC が ${wc.ccc} 日で、仕入の支払より先に回収できています。` });
+      out.push({ severity: 'good', category: '運転資金', message: `現金化日数が ${wc.ccc} 日で、仕入の支払より先に回収できています。` });
     }
   }
 

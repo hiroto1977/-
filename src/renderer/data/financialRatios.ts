@@ -313,11 +313,11 @@ export function radarAxes(r: FinancialRatios, bands: RadarBands = RADAR_AXIS_BAN
     { key: 'ordinaryMargin', label: '経常利益率', unit: '%', raw: r.ordinaryMarginPct, score: axisScore(r.ordinaryMarginPct, 'ordinaryMargin', bands) },
     { key: 'netMargin', label: '当期純利益率', unit: '%', raw: r.netMarginPct, score: axisScore(r.netMarginPct, 'netMargin', bands) },
     { key: 'laborShare', label: '労働分配率', unit: '%', raw: r.laborSharePct, score: axisScore(r.laborSharePct, 'laborShare', bands) },
-    { key: 'ebitdaMargin', label: 'EBITDAマージン', unit: '%', raw: r.ebitdaMarginPct, score: axisScore(r.ebitdaMarginPct, 'ebitdaMargin', bands) },
+    { key: 'ebitdaMargin', label: '償却前営業利益率', unit: '%', raw: r.ebitdaMarginPct, score: axisScore(r.ebitdaMarginPct, 'ebitdaMargin', bands) },
     { key: 'receivablesTurnover', label: '売上債権回転率', unit: '倍', raw: r.receivablesTurnover, score: axisScore(r.receivablesTurnover, 'receivablesTurnover', bands) },
     { key: 'inventoryTurnover', label: '棚卸資産回転率', unit: '倍', raw: r.inventoryTurnover, score: axisScore(r.inventoryTurnover, 'inventoryTurnover', bands) },
-    { key: 'ccc', label: 'CCC', unit: '日', raw: r.cccDays, score: axisScore(r.cccDays, 'ccc', bands) },
-    { key: 'roa', label: 'ROA', unit: '%', raw: r.roaPct, score: axisScore(r.roaPct, 'roa', bands) },
-    { key: 'roe', label: 'ROE', unit: '%', raw: r.roePct, score: axisScore(r.roePct, 'roe', bands) },
+    { key: 'ccc', label: '現金化日数', unit: '日', raw: r.cccDays, score: axisScore(r.cccDays, 'ccc', bands) },
+    { key: 'roa', label: '総資産利益率', unit: '%', raw: r.roaPct, score: axisScore(r.roaPct, 'roa', bands) },
+    { key: 'roe', label: '自己資本利益率', unit: '%', raw: r.roePct, score: axisScore(r.roePct, 'roe', bands) },
   ];
 }
