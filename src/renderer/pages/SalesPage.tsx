@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, type ReactNode } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Section } from '../components/StatusBar';
 import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
@@ -30,6 +30,7 @@ import { SALES_CSV_COLUMNS, salesToCsv, salesFromCsv } from '../data/salesCsv';
 import { CSV_BOM } from '../data/csv';
 import { useRowWindow } from '../data/useRowWindow';
 import { RowWindowMore } from '../components/RowWindowMore';
+import { LabeledField } from '../components/LabeledField';
 import { changedRecordNote, readCollectionNow, unreadableForJudgementNote, vanishedRecordNote } from '../data/readCollectionNow';
 import {
   MANUAL_OVERRIDES_COLLECTION,
@@ -88,16 +89,6 @@ function entryToForm(e: SalesEntry): typeof EMPTY {
     orders: orders === null ? '' : String(orders),
     note: salesNoteText(e),
   };
-}
-
-/** 入力欄 1 つ分の見出しつきの枠 (見出しは欄の名前になる)。 */
-function Field({ label, children }: { label: string; children: ReactNode }) {
-  return (
-    <label style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0 }}>
-      <span style={{ fontSize: 12, color: 'var(--text-mute)' }}>{label}</span>
-      {children}
-    </label>
-  );
 }
 
 function Tile({ label, value, sub, wide }: { label: string; value: string; sub?: string; wide?: boolean }) {
@@ -394,7 +385,7 @@ export function SalesPage() {
           data-sales-form
           style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 8, alignItems: 'end' }}
         >
-          <Field label="日付">
+          <LabeledField label="日付">
             <input
               type="date"
               value={form.date}
@@ -402,8 +393,8 @@ export function SalesPage() {
               onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))}
               style={inputStyle}
             />
-          </Field>
-          <Field label="販売先">
+          </LabeledField>
+          <LabeledField label="販売先">
             <select
               value={form.channel}
               onChange={(e) => setForm((f) => ({ ...f, channel: e.target.value as SalesChannel }))}
@@ -413,8 +404,8 @@ export function SalesPage() {
                 <option key={c} value={c}>{CHANNEL_LABEL[c]}</option>
               ))}
             </select>
-          </Field>
-          <Field label="売上金額 (円)">
+          </LabeledField>
+          <LabeledField label="売上金額 (円)">
             <input
               value={form.amount}
               placeholder="売上金額"
@@ -422,8 +413,8 @@ export function SalesPage() {
               onChange={(e) => setForm((f) => ({ ...f, amount: e.target.value }))}
               style={inputStyle}
             />
-          </Field>
-          <Field label="注文の数 (件)">
+          </LabeledField>
+          <LabeledField label="注文の数 (件)">
             <input
               value={form.orders}
               placeholder="注文件数"
@@ -431,15 +422,15 @@ export function SalesPage() {
               onChange={(e) => setForm((f) => ({ ...f, orders: e.target.value }))}
               style={inputStyle}
             />
-          </Field>
-          <Field label="メモ">
+          </LabeledField>
+          <LabeledField label="メモ">
             <input
               value={form.note}
               placeholder="メモ (任意)"
               onChange={(e) => setForm((f) => ({ ...f, note: e.target.value }))}
               style={inputStyle}
             />
-          </Field>
+          </LabeledField>
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
             <button type="button" className="primary" onClick={() => void submit.run(onSave)} disabled={submit.busy}>
               {editing === null ? '追加' : '更新'}

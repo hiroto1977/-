@@ -169,6 +169,12 @@ const LEDGER: readonly { file: string; handler: string; kind: 'export' | 'apply-
     why: '画面に出している KPI 実績の一覧をそのまま CSV にする。書き出すのは利用者が今見ている表で、保管層へは書かない。',
   },
   {
+    file: 'src/renderer/pages/KpiPage.tsx',
+    handler: '<onClick>→fireReported',
+    kind: 'apply-shown',
+    why: '実績・予算・貸借対照表の「×」は行の id で消す (写しで判定しない)。行の中身は「元に戻す」のための控えに取るだけで、戻すのは利用者が消す直前に見ていた中身そのものである。実績と予算は、戻すときに保管層を読み直して同じ期・事業が在れば戻さない (追加と同じ判定)。',
+  },
+  {
     file: 'src/renderer/pages/SalesPage.tsx',
     handler: 'onExport',
     kind: 'export',
