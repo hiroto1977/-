@@ -1963,6 +1963,10 @@ The browser target adds: `web-shim.ts` (a `window.serviceHub` polyfill imported 
   クラウドへ置く控えは**暗号文だけ** (`renderer/data/encryptedCopy.ts` —— 書いたら読み戻して確かめる・パスフレーズは保存しない)。
   クラウドから取得した内容を端末に保存しない —— 止まっている間に見せる「最後に取得できた内容」はメモリだけで、施錠で消す
   (`renderer/data/lastGoodFetch.ts`)。
+- **画面の名前と印は日本語で書く** (2026-11-20 · 利用者の依頼「全てを日本語表記で」)。`renderer/services.ts` の `label` は
+  カタカナか日本語・`icon` は日本語の 1 文字か絵文字。名前に残してよい英字は台帳 (`screenNamesJapanese.test.ts` の `KEPT_LATIN` —— いまは「AI」だけ)。
+  画面を名指しする文 (「X」の画面) は `SERVICES` の名前をそのまま書く。図・グラフの中の字も日本語にする (建物の図の階は「1階」)。
+  日本語にしない物: URL・メールアドレス・コマンド・単位・相手のサービスが決めた鍵の形。まだ英字が残る所は `docs/REMAINING_WORK.md`。
 - **対照を回すまで、検査は信用しない。** 守っている物を実際に壊し、狙った項目が
   落ちることを見る。**鳴らない対照は「合格」ではなく「その検査についての報せ」である。**
 

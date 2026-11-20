@@ -7,6 +7,34 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-11-20 · 続き 4) — 画面の名前と印を日本語にした (日本語表記の 1 回目)
+
+- **依頼**: 「写真やイラスト内の文字も含め全てを日本語表記で表示して」。範囲を訊くと「印と画面名の両方」。変更が大きいので数回に分ける —— これは 1 回目。
+- **直す前 (実測)**: 77 画面のうち、サイドバーとトップバーの印 (四角の中の字) は **74 個が英字 2 文字** (`SH` / `TM` / `KP` …)、画面の名前は **44 個が英字を含んでいた**
+  (`Shopify` / `GitHub` / `Stocks` / `KPI / BEP` …)。枠には `Free` / `Pro` / `Business` / `Enterprise` と `build: ALL-ACCESS`、建物の図には `1F` / `2F 事務・店舗等`。
+- **直した後**:
+  - **印** (`renderer/services.ts` の `icon`): 日本語の 1 文字か絵文字 (家 / 売 / 店 / 株 / 🐧 / 🏡 …)。英字は 0。
+  - **画面の名前** (`label`): カタカナか日本語 (ショッピファイ / ギットハブ / 株式 / セキュリティ / 経営指標・損益分岐点 …)。**残した英字は「AI」だけ**
+    (AI アシスタント / AIの村 / AIブログくん —— 日本語の文でもこの 2 文字で書くのが通例)。
+  - **画面を名指しする文** も同じ名前へ (名指しした先が実在しないと探せない · パス 425): `data/chatbotOllama.ts` (「オラマ」の画面)・`data/kpiActuals.ts`・
+    `data/managementHighlights.ts`・`pages/OverviewPage.tsx` (「経営指標・損益分岐点」の画面)・`pages/KpiPage.tsx`・`pages/SettingsPage.tsx` の `desktopScreen` 8 件。
+  - **枠の語**: プランの名前 (`shared/plan.ts`) を フリー / プロ / ビジネス / エンタープライズ・`build: ALL-ACCESS` を「全機能版」(`App.tsx`)。
+  - **図の中の字** (`shared/buildingIso.ts`): 階の名前を `1F` → 「1階」・部屋の名前を `2F 事務・店舗等` → 「2階 事務・店舗等」。
+- **探す口は残っている**: サイドバーの検索は名前のほかに id (`github` / `shopify` …) と説明も見るので、英語の綴りで打っても今までどおり見つかる。
+  音声コマンドは別の表 (`SERVICE_ALIASES`) を読むので変わらない。**見つからなくなった綴りが 2 つ在る** (`google` → ドライブ / カレンダー・`bep` → 経営指標) —— 残作業に書いた。
+- **README と文書の門**: `README.md` の分類ごとの一覧を新しい名前へ。`lint:docs` の別名の台帳 (`README_LABEL_ALIASES`) は 3 行 → 1 行
+  (`KPI / BEP` と `Connectors / Hooks` の行は、名前が斜線を持たなくなった / 変わったので要らなくなった)。
+- **検査**: `renderer/__tests__/screenNamesJapanese.test.ts` 6 件 —— 印に英字が無い・印は 2 文字以内・名前に残る英字は台帳の語だけ (両方向)・針の標本・名前は画面ごとに違う・
+  英語の id で探せる。名前に依っていた検査と台帳を新しい名前へ (`namedEscapeHatchReachable` に `buildManagementHighlights` の行・`namedControlExists` の `screen-label` 2 行 ほか)。
+- **変異検査** (触った `mutate` の 4 本 —— 文字列だけを変えた): `plan.ts` / `kpiActuals.ts` / `managementHighlights.ts` / `buildingIso.ts` とも **100.00%** (Killed 1,119 / Timeout 1 / 生存 0 / 未到達 0・1,243 変異体・並列 2)。
+  1 度目は背景実行の時間の上限 (30 分) で止まり、途中までの結果を引き継いで回し直した (同じコードなので引き継ぎは有効・後片付け済み)。
+- **検証**: `typecheck` 緑・`npm test` **1,339 ファイル / 29,293 件 ❌ 0**・`verify:all` 39 ゲート exit 0。出荷物が動いたので実機も回した (最終コード):
+  FULL **12,343,703 B** / LITE **3,756,340 B** (両方 +663 B)・`perf` OK (LITE DCL 335 ms / heap 8.3 MB・FULL DCL 636 ms / heap 30.4 MB)・`e2e` **774 件 ❌ 0**・`e2e:lite` **774 件 ❌ 0**。
+  スマホ幅 (412px) で撮って確かめた: トップバーの印が日本語・図の階が「1階 / 2階」・横のはみ出し無し・console エラー 0。
+  `smoke:app` / `e2e:ollama` は回していない (主プロセスの取得・Ollama の経路は触っていない —— `main/clients` は 1 行も変えていない)。
+- **まだ英字が残る所 (次の回)** は `docs/REMAINING_WORK.md` の先頭の節。
+- この節は PR #969 (下書き) に入っている (1 つ前の節 = チームと Shopify と同じ PR)。
+
 ## 直近の作業 (2026-11-20 · 続き 3) — チームと Shopify の入力欄に名前を付け、消したメンバーを戻せるようにした
 
 - **依頼**: 「続けて」。KPI / BEP の直し (1 つ前の節) が「測って残した物」に挙げていた 2 つ —— Shopify の入力欄とチームの「×」—— へ、同じ直し方を当てた。
