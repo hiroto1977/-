@@ -380,11 +380,21 @@ export function countNumericEntries(names: readonly string[]): number {
   return names.filter((n) => /^\d+$/.test(n)).length;
 }
 
+/**
+ * `/proc/mounts` の読みの上限 (バイト)。カーネルが生成するマウント表は通常
+ * 数 KB で、1 MiB は桁違いに大きい (法則 `size-gate-before-parse` · 設定ファイル
+ * の読みと同じ値)。procfs の `stat` は大きさを 0 と報告するので門は通常素通り
+ * するが、形は他の読みと揃え、実ファイルに差し替わった場合も上限なしで開かない。
+ */
+export const MAX_PROC_MOUNTS_BYTES = 1 * 1024 * 1024;
+
 // /proc/mounts の読み取りだけ (薄いアダプタ)。linux 以外と読めない場合は null。
+// 読む前に `stat` で断る (上限を超えたら読まずに null = ルートだけに倒す)。
 // Stryker disable all
 function readProcMountsText(platform: string): string | null {
   if (platform !== 'linux') return null;
   try {
+    if (fs.statSync('/proc/mounts').size > MAX_PROC_MOUNTS_BYTES) return null;
     return fs.readFileSync('/proc/mounts', 'utf8');
   } catch {
     return null;

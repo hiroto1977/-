@@ -102,6 +102,27 @@ const LEDGER: readonly Row[] = [
     cap: 'MAX_MANIFEST_BYTES',
     why: '起動時の自己検算: 入口 (package.json の main) を検める読み。大きすぎれば読まずに断る (パス 566-D · T-228)',
   },
+  {
+    file: 'src/main/clients/obsidian.ts',
+    needle: "return fs.readFileSync(file, 'utf8')",
+    gate: 'fs.statSync(file).size > maxBytes',
+    cap: 'MAX_OBSIDIAN_CONFIG_BYTES',
+    why: '設定系の 4 読み (obsidian.json / プラグイン一覧 / .git/config / .gitattributes) がこの 1 関数 (readTextWithinCap) を通る。Obsidian / Git が書くファイルで大きさの保証は無い (devEnv と同じ集約形)',
+  },
+  {
+    file: 'src/main/clients/obsidian.ts',
+    needle: "size <= MAX_NOTE_BYTES) return fs.readFileSync(file, 'utf8')",
+    gate: 'size <= MAX_NOTE_BYTES',
+    cap: 'MAX_NOTE_BYTES',
+    why: 'ノート本文: 呼び出し側が stat した大きさを渡し、上限以下は丸ごと、超えたら先頭 MAX_NOTE_BYTES だけを読む (門は既存 · 台帳への登録のみ)',
+  },
+  {
+    file: 'src/main/clients/storage.ts',
+    needle: "fs.readFileSync('/proc/mounts', 'utf8')",
+    gate: "fs.statSync('/proc/mounts').size > MAX_PROC_MOUNTS_BYTES",
+    cap: 'MAX_PROC_MOUNTS_BYTES',
+    why: '/proc/mounts: カーネル生成のマウント表。procfs の stat は大きさを 0 と報告するが、読む前に大きさで断る形を他の読みと揃える',
+  },
 ];
 
 function shippedSources(): string[] {

@@ -398,6 +398,8 @@ export function buildObsidianSnapshot(r: RawObsidianReadings): ObsidianSnapshot 
 const MAX_WALK_ENTRIES = 20_000;
 const MAX_NOTES_READ = 5_000;
 const MAX_NOTE_BYTES = 1024 * 1024;
+/** 設定系ファイル (obsidian.json / プラグイン一覧 / .git/config / .gitattributes) の読みの上限。 */
+const MAX_OBSIDIAN_CONFIG_BYTES = 1 * 1024 * 1024;
 const SKIP_DIRS = new Set(['.obsidian', '.git', '.trash', 'node_modules']);
 
 function obsidianConfigPath(platform: string, home: string): string {
@@ -409,6 +411,22 @@ function obsidianConfigPath(platform: string, home: string): string {
     return path.join(appData, 'obsidian', 'obsidian.json');
   }
   return path.join(home, '.config', 'obsidian', 'obsidian.json');
+}
+
+/**
+ * 読む前に `stat` で断る (法則 `size-gate-before-parse` · devEnv の `readFileOrNull`
+ * と同じ形で、設定系の 4 読みをこの 1 関数に集約する)。ここが読むのはアプリが
+ * 書いていないファイル (Obsidian / Git が書く) なので大きさの保証は無い。
+ * 上限を超えた物と `stat` が答えられない物は読まず、呼び出し側の「無かった」と
+ * 同じ `null` に倒す (呼び出し側はどれも `null` を「取れなかった」として扱う)。
+ */
+function readTextWithinCap(file: string, maxBytes: number = MAX_OBSIDIAN_CONFIG_BYTES): string | null {
+  try {
+    if (fs.statSync(file).size > maxBytes) return null;
+    return fs.readFileSync(file, 'utf8');
+  } catch {
+    return null;
+  }
 }
 
 function readNoteContent(file: string, size: number): string {
@@ -425,7 +443,9 @@ function readNoteContent(file: string, size: number): string {
 
 function readPluginList(file: string): string[] {
   try {
-    const parsed: unknown = JSON.parse(fs.readFileSync(file, 'utf8'));
+    const text = readTextWithinCap(file);
+    if (text === null) return [];
+    const parsed: unknown = JSON.parse(text);
     if (Array.isArray(parsed)) return parsed.filter((x): x is string => typeof x === 'string');
     if (parsed !== null && typeof parsed === 'object') {
       return Object.entries(parsed as Record<string, unknown>)
@@ -455,14 +475,9 @@ export function readObsidianVault(): RawObsidianReadings {
     gitPluginEnabled: false,
   };
   const home = os.homedir();
-  let candidates: VaultCandidate[] = [];
-  try {
-    candidates = parseObsidianConfig(
-      fs.readFileSync(obsidianConfigPath(os.platform(), home), 'utf8'),
-    );
-  } catch {
-    return notFound;
-  }
+  const configText = readTextWithinCap(obsidianConfigPath(os.platform(), home));
+  if (configText === null) return notFound;
+  const candidates = parseObsidianConfig(configText);
   const chosen = chooseVault(candidates);
   if (chosen === null) return notFound;
   const vaultPath = chosen.path;
@@ -528,23 +543,17 @@ export function readObsidianVault(): RawObsidianReadings {
   let lastSyncIso = '';
   let gitCrypt = false;
   if (hasGit) {
-    try {
-      gitRemote = redactRemoteUrl(parseGitRemote(fs.readFileSync(path.join(gitDir, 'config'), 'utf8')));
-    } catch {
-      gitRemote = '';
-    }
+    const gitConfigText = readTextWithinCap(path.join(gitDir, 'config'));
+    gitRemote = gitConfigText === null ? '' : redactRemoteUrl(parseGitRemote(gitConfigText));
     try {
       lastSyncIso = fs.statSync(path.join(gitDir, 'FETCH_HEAD')).mtime.toISOString();
     } catch {
       lastSyncIso = '';
     }
-    try {
-      gitCrypt =
-        fs.existsSync(path.join(gitDir, 'git-crypt')) ||
-        fs.readFileSync(path.join(vaultPath, '.gitattributes'), 'utf8').includes('git-crypt');
-    } catch {
-      gitCrypt = false;
-    }
+    // existsSync と readTextWithinCap はどちらも例外を投げない (門の中で倒す)
+    gitCrypt =
+      fs.existsSync(path.join(gitDir, 'git-crypt')) ||
+      (readTextWithinCap(path.join(vaultPath, '.gitattributes')) ?? '').includes('git-crypt');
   }
 
   const dotObsidian = path.join(vaultPath, '.obsidian');
