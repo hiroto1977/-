@@ -384,6 +384,18 @@ const REVIEWED_OUTSIDE_SENDS = [
       + '自己検算が止めていれば CDP は開かない (= 空) ので、答えが無いことも「止まった」側として読む。',
   },
   {
+    file: 'zero-trust-gateway/src/layer3_fido2/page.js',
+    needle: 'fetch(url, init)',
+    guard:
+      '入口の部品 (本体のアプリとは別の物) の、利用者が押す画面 (2026-11-21)。送り先は `target(path)` ='
+      + ' `new URL(path, location.href)` で、`path` はこのファイルに字面で書いた 7 つ (`session`・'
+      + '`webauthn/…` の 4 つ・`../token`・`../resource/ping`) だけ —— 画面の在る入口の中へしか向かない。'
+      + 'ブラウザが CSP の `connect-src \'self\'` で同じオリジン以外を断り、`credentials: \'omit\'` と'
+      + ' `redirect: \'error\'` で cookie も転送も通さない。載せるのは DPoP の証明 (公開鍵と署名) と、'
+      + '`../resource/ping` だけに 5 分の許可 (メモリにだけ置く)。字面の道が実在の道であることは'
+      + ' `zero-trust-gateway/tests/layer3/test_l3_page.py` が見る。',
+  },
+  {
     file: 'scripts/knowledge-autopilot.cjs',
     needle: 'fetchImpl(current',
     guard:

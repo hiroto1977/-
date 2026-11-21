@@ -59,10 +59,32 @@ describe('言語の網羅 — 見張りが無い言語を作らない (threat: T
   });
 
   it('★ 新しい依存の生態系の定義ファイルが入ると落ちる (threat: T-187)', () => {
-    for (const mf of ['requirements.txt', 'go.mod', 'pom.xml', 'Gemfile.lock', 'composer.lock']) {
+    for (const mf of ['go.mod', 'pom.xml', 'Gemfile.lock', 'composer.lock']) {
       const r = run(registry, [`vendor/${mf}`]);
       expect(r.problems.some((p) => p.includes('台帳の ecosystems に載っていない')), mf).toBe(true);
     }
+  });
+
+  it('★ PyPI は台帳に在る —— 2 本目の一覧が黙って増えないことは lint:deps の規則 12 が見る (2026-11-21)', () => {
+    // 生態系が台帳に載った後は、同じ生態系の定義ファイルが増えてもこの門は鳴らない (言語と同じ)。
+    expect(run(registry, ['vendor/requirements.txt']).problems).toEqual([]);
+    // 対照: 台帳から pypi の行を消すと、実物の一覧で落ちる。
+    const g = clone();
+    g.ecosystems = g.ecosystems.filter((e) => e.id !== 'pypi');
+    expect(run(g, ['zero-trust-gateway/requirements.txt']).problems.some((p) => p.includes('台帳の ecosystems に載っていない'))).toBe(true);
+    // 増えた一覧を名指しするのは、一覧の台帳 (PYPI_LOCKS) との両方向の突き合わせ。
+    const locks = req('../../../scripts/lib/pypi-locks.cjs') as {
+      PYPI_LOCKS: string[];
+      trackedPypiManifests: (files: string[]) => string[];
+      checkPypiLedger: (tracked: string[], ledger?: string[]) => string[];
+    };
+    const tracked = locks.trackedPypiManifests(['zero-trust-gateway/requirements.txt', 'vendor/requirements.txt', 'vendor/notes.txt']);
+    expect(tracked).toEqual(['vendor/requirements.txt', 'zero-trust-gateway/requirements.txt']);
+    const problems = locks.checkPypiLedger(tracked);
+    expect(problems).toHaveLength(1);
+    expect(problems[0]).toContain('vendor/requirements.txt');
+    expect(locks.checkPypiLedger(['zero-trust-gateway/requirements.txt'])).toEqual([]);
+    expect(locks.checkPypiLedger([])).toHaveLength(locks.PYPI_LOCKS.length);
   });
 
   it('★ 台帳から今在る言語の行を消すと落ちる (網が無いまま増えた形)', () => {

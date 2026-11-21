@@ -331,11 +331,14 @@ class LoopTest(unittest.TestCase):
             "local-ai/council/advice_guard.py",
             "local-ai/council/company_link.py",
             "local-ai/council/web/company.js",
-            "local-ai/council/web/index.html",
             "local-ai/start-all.sh",
         ):
             committed = subprocess.check_output(["git", "show", f"origin/main:{rel}"], cwd=REPO)
             self.assertEqual(open(os.path.join(REPO, rel), "rb").read(), committed, rel)
+        # index.html はひな型ボタンを足したので origin/main とは一致しない。ボタンと書き出し先だけ見る。
+        html = _text(os.path.join(REPO, "local-ai/council/web/index.html"))
+        self.assertIn('id="share-template"', html)
+        self.assertIn("/api/template/export", html)
         diff = subprocess.check_output(["git", "diff", "origin/main", "--", "local-ai/council/council.py"], cwd=REPO).decode("utf-8")
         for line in diff.splitlines():
             if line.startswith("+") and not line.startswith("+++"):

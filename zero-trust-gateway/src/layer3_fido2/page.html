@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>二重確認 (Two-step sign-in)</title>
+<style>@@STYLE@@</style>
+</head>
+<body>
+<main>
+  <h1>二重確認 (Two-step sign-in)</h1>
+  <p class="lead">物理キー (Security key) とスマホのパスキー (Passkey) の 2 つで、本人だと確かめます。</p>
+
+  <p id="msg" class="msg" role="status" aria-live="polite">準備しています…</p>
+
+  <section aria-labelledby="h-state">
+    <h2 id="h-state">いまの状態</h2>
+    <p id="state" class="state" data-strength="unknown">まだ調べていません</p>
+    <button type="button" id="btn-state">状態を見る</button>
+  </section>
+
+  <section aria-labelledby="h-verify">
+    <h2 id="h-verify">確認する</h2>
+    <p>物理キーかスマホで 1 つ確認し、2 分以内にもう 1 つで確認してください。2 つそろうと「強い認証」になります。</p>
+    <button type="button" id="btn-verify" class="primary">確認する</button>
+  </section>
+
+  <section aria-labelledby="h-register">
+    <h2 id="h-register">認証器を登録する</h2>
+    <fieldset>
+      <legend>登録するもの</legend>
+      <label class="choice"><input type="radio" name="kind" value="hardware_key" checked> 物理キー (Security key)</label>
+      <label class="choice"><input type="radio" name="kind" value="phone_passkey"> スマホのパスキー (Passkey)</label>
+    </fieldset>
+    <label for="code">登録コード (Enrollment code)</label>
+    <input id="code" type="password" autocomplete="off" spellcheck="false" maxlength="256">
+    <p class="hint">はじめての登録のときだけ入れます。管理者から別の方法で受け取ったコードです。2 つ目からは、強い認証を済ませてから登録します。</p>
+    <button type="button" id="btn-register">登録する</button>
+  </section>
+
+  <section aria-labelledby="h-try">
+    <h2 id="h-try">つながりを確かめる</h2>
+    <p>強い認証のあと、5 分だけ使える許可 (Token) をもらって、守られた道を 1 回通します。許可そのものは画面に出しません。</p>
+    <button type="button" id="btn-try">許可をもらって試す</button>
+  </section>
+
+  <section aria-labelledby="h-key">
+    <h2 id="h-key">この端末の鍵 (Device key)</h2>
+    <p>この画面は、この端末の中だけで使う鍵を作り、確認の結果をその鍵に結び付けます。鍵はこの端末から出ません。</p>
+    <p>鍵の指紋: <code id="key-id">—</code></p>
+    <button type="button" id="btn-forget" class="danger">この端末の鍵を消す</button>
+  </section>
+</main>
+<script>@@SCRIPT@@</script>
+</body>
+</html>

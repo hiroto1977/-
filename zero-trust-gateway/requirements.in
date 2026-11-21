@@ -1,0 +1,10 @@
+# 人が書くのはこのファイル。固定した一覧 (requirements.txt) は次で作り直す:
+#   uv pip compile requirements.in --generate-hashes --python-version 3.12 -o requirements.txt
+fastapi
+pydantic>=2
+cryptography
+httpx2
+pytest
+hypothesis
+webauthn
+cbor2

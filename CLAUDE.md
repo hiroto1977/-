@@ -1574,6 +1574,11 @@ npm run lint:deps          # 依存の供給網 (本番依存の閉包 3 件 —
                            #   ある** (2026-10-19 · パス 532 · T-122 —— 規則 2 は lockfile の dev フラグで
                            #   閉包を決めるので、`src/` が import する devDependency は閉包に現れず、
                            #   単一 HTML へ畳み込まれても緑だった。`electron` だけは実行時提供の台帳)
+                           #   **規則 12: 固定した PyPI の一覧** (2026-11-21) —— `zero-trust-gateway/requirements.txt` の
+                           #   どの行も「名前==版」+ `--hash=sha256:` で、版の範囲・URL・`-r` / `-e`・取得元の差し替え
+                           #   (`--index-url` ほか) は落とす。追跡している PyPI の定義 (requirements.txt / pyproject.toml /
+                           #   uv.lock ほか) と台帳 `PYPI_LOCKS` (`scripts/lib/pypi-locks.cjs`) は両方向。同じ読み手を
+                           #   毎日の脅威ウォッチが使い、OSV へ ecosystem PyPI で引く
                            #   **`package.json` は鎖には入れない** —— 全履歴 12 コミットで
                            #   「安定資産」の基準 (パス 347) を満たさないので、門で形を見る
 npm run lint:storage       # ブラウザに残す物の台帳 (IndexedDB 4 / Cache Storage 1 /
@@ -1975,6 +1980,15 @@ The browser target adds: `web-shim.ts` (a `window.serviceHub` polyfill imported 
   `label` だけ。説明 (`description`) のサービス名と専門用語は「ジラ (Jira)」「顧客管理 (CRM)」の形 —— 英字は日本語の語の直後の半角かっこの中にだけ書き、
   そのかっこの中は英語だけ (`screenNamesJapanese.test.ts`)。新しい画面を足したら `english` も書く。グラフ・表・本文の用語は順に同じ形へ
   (`docs/REMAINING_WORK.md`)。
+- **`zero-trust-gateway/` は本体のアプリと別の物** (2026-11-21)。自社の API の前に置く 6 層の入口の部品 (Python) で、`src/` からも
+  配る HTML からも読まない。検査は `cd zero-trust-gateway && python -m pytest` (依存は `requirements.txt` に版とハッシュで固定 ——
+  足すときは `requirements.in` を書き換えて `uv pip compile --generate-hashes` で作り直す)。CI は ci.yml の 1 ステップで回す。
+  秘密を書かない・ファイアウォールと停止スイッチは既定が dry-run・層は `src/layerN_*/` に分ける・層ごとに検査を付ける
+  (`zero-trust-gateway/README.md`)。**既定のままでは、トークンを 1 枚も出さない** (認証器も登録コードの置き場も空) —— 意図した動き。
+  第 3 層 (WebAuthn · 2026-11-21) の認証の状態は端末の鍵 (DPoP の鍵の指紋) に結び付け、クッキーや合言葉を配らない。
+  利用者が押す画面 (`GET /auth/` · `src/layer3_fido2/page.{html,css,js}`) は外の物を読まない 1 枚で、CSP は中身のハッシュだけを許す ——
+  画面へ字を出すのは `textContent` だけ・鍵は取り出せない形・許可はメモリだけ (`tests/layer3/test_l3_page.py` が見る)。
+  守りを足したら、対照 (壊して検査が落ちる) を回す。
 - **対照を回すまで、検査は信用しない。** 守っている物を実際に壊し、狙った項目が
   落ちることを見る。**鳴らない対照は「合格」ではなく「その検査についての報せ」である。**
 

@@ -39,7 +39,10 @@ const tw = req('../../../scripts/threat-watch.cjs') as {
   HOT_UNMAPPED: number;
   getJson: (io: unknown, url: string, init?: unknown) => Promise<{ ok: boolean; why?: string }>;
   inventoryFromLock: (lock: unknown) => { name: string; version: string; dev: boolean }[] | null;
-  runThreatWatch: (a: { lock: unknown; map: unknown; now: string; io: unknown }) => Promise<Watch>;
+  inventoryFromRequirements: (text: unknown) => { name: string; version: string; dev: boolean; ecosystem: string }[] | null;
+  PYPI_LOCKS: string[];
+  readPypiLocks: () => { file: string; text: string | null }[];
+  runThreatWatch: (a: { lock: unknown; map: unknown; now: string; io: unknown; pypi?: { file: string; text: string | null }[] }) => Promise<Watch>;
   renderWatch: (w: Watch, map: unknown) => string;
   watchActionable: (w: Partial<Watch>) => number;
 };
@@ -108,7 +111,7 @@ function world(over: Record<string, (url: string, init: Call['init']) => Respons
     return json({}, 404);
   };
   const run = () => tw.runThreatWatch({ lock: LOCK, map: MAP, now: NOW, io: { fetchImpl, sleep: async () => {} } });
-  return { calls, run };
+  return { calls, run, fetchImpl };
 }
 
 describe('脅威ウォッチ — 悪用中の脆弱性と弱点の種類を毎日突き合わせる (threat: T-164)', () => {
@@ -193,6 +196,62 @@ describe('脅威ウォッチ — 悪用中の脆弱性と弱点の種類を毎�
       const w = await tw.runThreatWatch({ lock: {}, map: MAP, now: NOW, io: { fetchImpl: world().run as never, sleep: async () => {} } });
       expect(w.problems).toHaveLength(1);
       expect(tw.inventoryFromLock({})).toBeNull();
+    });
+  });
+
+  describe('PyPI の固定した一覧 (zero-trust-gateway/requirements.txt) も同じ照会に載る', () => {
+    const HASH = `    --hash=sha256:${'a'.repeat(64)}`;
+    const PINNED = `# 注記\nfastapi==0.165.0 \\\n${HASH}\n    # via -r requirements.in\nlodash==4.17.20 \\\n${HASH}\n`;
+    const runWith = (pypi: { file: string; text: string | null }[]) => {
+      const w = world();
+      return { calls: w.calls, run: () => tw.runThreatWatch({ lock: LOCK, map: MAP, now: NOW, io: { fetchImpl: w.fetchImpl, sleep: async () => {} }, pypi }) };
+    };
+    it('★ 実物の一覧は全部読め、どの依存も ecosystem PyPI・版つき', () => {
+      const locks = tw.readPypiLocks();
+      expect(locks.map((l) => l.file)).toEqual(tw.PYPI_LOCKS);
+      expect(tw.PYPI_LOCKS).toContain('zero-trust-gateway/requirements.txt');
+      const inv = tw.inventoryFromRequirements(locks[0]?.text);
+      expect(inv).not.toBeNull();
+      expect((inv ?? []).length).toBeGreaterThanOrEqual(10);
+      expect((inv ?? []).every((p) => p.ecosystem === 'PyPI' && /^[0-9]/.test(p.version) && p.dev === false)).toBe(true);
+      expect((inv ?? []).map((p) => p.name)).toEqual(expect.arrayContaining(['fastapi', 'cryptography', 'pydantic']));
+    });
+
+    it('★ OSV へは ecosystem PyPI で引く (npm の依存は npm のまま)', async () => {
+      const { calls, run } = runWith([{ file: 'gw/requirements.txt', text: PINNED }]);
+      const w = await run();
+      expect(w.problems).toEqual([]);
+      const queries = calls
+        .filter((c) => c.url === tw.FEEDS.osvBatch)
+        .flatMap((c) => (JSON.parse(c.init.body as string) as { queries: { package: { name: string; ecosystem: string }; version: string }[] }).queries);
+      expect(queries.filter((q) => q.package.ecosystem === 'PyPI').map((q) => `${q.package.name}@${q.version}`).sort()).toEqual(['fastapi@0.165.0', 'lodash@4.17.20']);
+      expect(queries.filter((q) => q.package.ecosystem === 'npm').map((q) => q.package.name).sort()).toEqual(['devonly', 'electron', 'lodash']);
+    });
+
+    it('★ PyPI の依存に当たった勧告は、npm の物と見分けの付く名前で載る', async () => {
+      const w = await runWith([{ file: 'gw/requirements.txt', text: PINNED }]).run();
+      expect(w.exploited).toHaveLength(1);
+      expect(w.exploited[0]?.packages.sort()).toEqual(['PyPI:lodash@4.17.20', 'lodash@4.17.20']);
+    });
+
+    it('★ 読めない一覧は problems (0 件と混ぜない)・npm の照会は続ける', async () => {
+      for (const text of [null, 'requests>=2\n', '--index-url https://example.invalid/simple\n', 'fastapi==0.165.0\n']) {
+        const w = await runWith([{ file: 'gw/requirements.txt', text }]).run();
+        expect(w.problems).toHaveLength(1);
+        expect(w.problems[0]).toContain('gw/requirements.txt');
+        expect(w.exploited).toHaveLength(1);
+      }
+      expect(tw.inventoryFromRequirements('requests>=2\n')).toBeNull();
+      expect(tw.inventoryFromRequirements(null)).toBeNull();
+    });
+
+    it('一覧を渡さなければ今までどおり (npm だけ)', async () => {
+      const { calls, run } = world();
+      await run();
+      const ecosystems = calls
+        .filter((c) => c.url === tw.FEEDS.osvBatch)
+        .flatMap((c) => (JSON.parse(c.init.body as string) as { queries: { package: { ecosystem: string } }[] }).queries.map((q) => q.package.ecosystem));
+      expect(new Set(ecosystems)).toEqual(new Set(['npm']));
     });
   });
 

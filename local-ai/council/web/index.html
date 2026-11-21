@@ -7,6 +7,7 @@ button{font:inherit;cursor:pointer;border:2px solid var(--wood2);background:#fff
 #hud{position:fixed;left:10px;top:10px;background:var(--pane);border:3px solid #c9a46a;border-radius:14px;padding:8px 12px;max-width:min(470px,calc(100vw - 20px));font-size:13px;box-shadow:0 3px 0 #0002}
 #hud .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.pill{border-radius:99px;padding:1px 9px;color:#fff;font-weight:bold;font-size:12px;background:#4caf50}.pill.meet{background:#e53935}.pill.err{background:#888}
 #topic{margin-top:4px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;white-space:pre-wrap}#meta{font-size:11px;opacity:.75;margin-top:3px}
+#share-out{font-size:11px;margin-top:4px;word-break:break-all}
 #cams{margin-top:6px;display:flex;gap:5px;flex-wrap:wrap}#cams button{font-size:12px;padding:2px 7px}
 #side{position:fixed;right:10px;top:10px;width:350px;max-height:calc(100vh - 200px);display:flex;flex-direction:column;background:var(--wood);border:6px solid var(--wood2);border-radius:12px;color:#fff8e7;box-shadow:0 4px 0 #0003}
 #tabs{display:flex;gap:4px;padding:6px}#tabs button{flex:1;font-size:12px;background:#a87a4c;color:#fff8e7;border-color:var(--wood2)}#tabs button.on{background:#fff3d6;color:var(--ink)}
@@ -30,7 +31,8 @@ button{font:inherit;cursor:pointer;border:2px solid var(--wood2);background:#fff
 </style></head><body>
 <div id="hud"><div class="row"><span id="pill" class="pill">読み込み中</span><b>ローカルAI組織の村</b><span id="clock" class="sm"></span></div>
 <div id="topic"></div><div id="meta"></div>
-<div id="cams"><button data-cam="all">🗺 全体</button><button data-cam="hall">🏛 会議ホール</button><button data-cam="speaker">🎤 発言者を追う</button><button data-cam="free" class="on">✋ 自由</button><button id="toggle">📋 パネル</button></div></div>
+<div id="cams"><button data-cam="all">🗺 全体</button><button data-cam="hall">🏛 会議ホール</button><button data-cam="speaker">🎤 発言者を追う</button><button data-cam="free" class="on">✋ 自由</button><button id="share-template" type="button">ひな型を書き出す</button><button id="toggle">📋 パネル</button></div>
+<div id="share-out" class="sm"></div></div>
 <div id="side"><div id="tabs"><button data-tab="board" class="on">📌 掲示板</button><button data-tab="people">👥 住民</button><button data-tab="prof">🪪 プロフィール</button></div><div id="pane"></div></div>
 <div id="labels"></div>
 <div id="chat"><div id="log"></div><div id="meet" hidden></div><div id="form"><select id="to"><option value="">組織全体へ（COOが会議）</option></select>
@@ -358,4 +360,20 @@ if(window.__ST){setTimeout(()=>{window.__p0=Object.fromEntries(Object.entries(ag
 loop();addEventListener('resize',()=>{C.aspect=innerWidth/innerHeight;C.updateProjectionMatrix();R.setSize(innerWidth,innerHeight)});
 window.__perf=()=>({res:curRes,base:baseRes,soft:SOFT,shadow:R.shadowMap.enabled,calls:R.info.render.calls});
 </script>
-<script type="module" src="/company.js"></script></body></html>
+<script type="module" src="/company.js"></script>
+<script>
+document.getElementById("share-template").addEventListener("click", function () {
+  var out = document.getElementById("share-out");
+  out.textContent = "書き出しています…";
+  fetch("/api/template/export", {method: "POST", headers: {"Content-Type": "application/json"}, body: "{}"}).then(function (r) {
+    return r.json().then(function (j) { return {ok: r.ok, body: j}; });
+  }).then(function (x) {
+    if (!x.ok || !x.body || !x.body.path) {
+      out.textContent = (x.body && x.body.error) ? x.body.error : "書き出せませんでした";
+      return;
+    }
+    out.textContent = "保存しました: " + x.body.path;
+  }).catch(function () { out.textContent = "書き出せませんでした"; });
+});
+</script>
+</body></html>

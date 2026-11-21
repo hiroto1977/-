@@ -100,6 +100,24 @@ export default tseslint.config(
     },
   },
   {
+    // zero-trust-gateway の画面 (ブラウザで走る 1 枚)。使う大域だけを並べ、no-undef は残す (綴りの誤りを捕まえる)。
+    files: ['zero-trust-gateway/src/**/*.js'],
+    languageOptions: {
+      globals: {
+        window: 'readonly',
+        document: 'readonly',
+        navigator: 'readonly',
+        crypto: 'readonly',
+        indexedDB: 'readonly',
+        fetch: 'readonly',
+        TextEncoder: 'readonly',
+        URL: 'readonly',
+        btoa: 'readonly',
+        atob: 'readonly',
+      },
+    },
+  },
+  {
     // 村のページと移動テスト。ブラウザ大域と Node のテストランナーを両方許可する。
     files: ['local-ai/council/**/*.{js,mjs}'],
     languageOptions: {
