@@ -1,9 +1,17 @@
-import { describe, expect, it, vi } from 'vitest';
+import * as fs from 'node:fs';
+import * as os from 'node:os';
+import * as path from 'node:path';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   buildStorageSnapshot,
   classifyFolderCategory,
+  countNumericEntries,
+  diskCandidatesFor,
   fetchStorageSnapshot,
+  measureDir,
   parseProcMounts,
+  trashDirFor,
+  WALK_ENTRY_BUDGET,
   CACHE_CLEANUP_MIN_BYTES,
   DOWNLOADS_CLEANUP_MIN_BYTES,
   LARGE_FOLDER_MIN_BYTES,
@@ -334,5 +342,115 @@ describe('fetchStorageSnapshot (live)', () => {
     expect(snap.performance.fragmentationPct).toBeNull();
     expect(snap.performance.startupSec).toBeNull();
     expect(snap.performance.memoryTotalGb).toBeGreaterThan(0);
+  });
+});
+
+describe('measureDir (実ツリーのフィクスチャ)', () => {
+  const roots: string[] = [];
+  const makeTree = (): string => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'storage-measure-'));
+    roots.push(root);
+    fs.writeFileSync(path.join(root, 'a.txt'), 'abc');
+    fs.mkdirSync(path.join(root, 'sub'));
+    fs.writeFileSync(path.join(root, 'sub', 'b.txt'), '12345');
+    fs.writeFileSync(path.join(root, 'sub', 'c.txt'), 'xy');
+    return root;
+  };
+  afterEach(() => {
+    for (const r of roots.splice(0)) fs.rmSync(r, { recursive: true, force: true });
+  });
+
+  it('ファイルの合計サイズと件数を数える', () => {
+    const root = makeTree();
+    expect(measureDir(root, { remaining: 100 })).toEqual({
+      sizeBytes: 10,
+      fileCount: 3,
+      truncated: false,
+    });
+  });
+
+  it('シンボリックリンクを辿らない', () => {
+    const root = makeTree();
+    fs.symlinkSync(path.join(root, 'a.txt'), path.join(root, 'link-file'));
+    fs.symlinkSync(path.join(root, 'sub'), path.join(root, 'link-dir'));
+    expect(measureDir(root, { remaining: 100 })).toEqual({
+      sizeBytes: 10,
+      fileCount: 3,
+      truncated: false,
+    });
+  });
+
+  it('予算が尽きたら truncated を立てて打ち切る', () => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'storage-budget-'));
+    roots.push(root);
+    fs.writeFileSync(path.join(root, 'a.txt'), 'aaaa');
+    fs.writeFileSync(path.join(root, 'b.txt'), 'bbbb');
+    expect(measureDir(root, { remaining: 1 })).toEqual({
+      sizeBytes: 4,
+      fileCount: 1,
+      truncated: true,
+    });
+    expect(measureDir(root, { remaining: 0 })).toEqual({
+      sizeBytes: 0,
+      fileCount: 0,
+      truncated: true,
+    });
+  });
+
+  it('存在しないディレクトリは 0 を返す', () => {
+    expect(
+      measureDir(path.join(os.tmpdir(), 'storage-no-such-dir-xyz'), { remaining: 10 }),
+    ).toEqual({ sizeBytes: 0, fileCount: 0, truncated: false });
+  });
+
+  it('走査予算の上限は固定されている', () => {
+    expect(WALK_ENTRY_BUDGET).toBe(60_000);
+  });
+});
+
+describe('diskCandidatesFor', () => {
+  it('linux では /proc/mounts の解析結果を使う', () => {
+    const mounts = '/dev/sda1 / ext4 rw 0 0\n/dev/sdb1 /data ext4 rw 0 0\n';
+    expect(diskCandidatesFor('linux', '/home/u', mounts)).toEqual(parseProcMounts(mounts));
+  });
+
+  it('linux で mounts を読めなかったらルートだけに倒す', () => {
+    expect(diskCandidatesFor('linux', '/home/u', null)).toEqual([
+      { mount: '/', label: 'システム' },
+    ]);
+  });
+
+  it('linux 以外ではルートとホームを候補にする', () => {
+    expect(diskCandidatesFor('darwin', '/Users/u', null)).toEqual([
+      { mount: '/', label: 'システム' },
+      { mount: '/Users/u', label: 'ホーム' },
+    ]);
+  });
+
+  it('ホームがルートそのものなら候補を重ねない', () => {
+    expect(diskCandidatesFor('darwin', '/', null)).toEqual([
+      { mount: '/', label: 'システム' },
+    ]);
+  });
+});
+
+describe('trashDirFor', () => {
+  it('linux は ~/.local/share/Trash/files', () => {
+    expect(trashDirFor('linux', '/home/u')).toBe('/home/u/.local/share/Trash/files');
+  });
+
+  it('darwin は ~/.Trash', () => {
+    expect(trashDirFor('darwin', '/Users/u')).toBe('/Users/u/.Trash');
+  });
+
+  it('対象の無い OS では null', () => {
+    expect(trashDirFor('win32', 'C:\\Users\\u')).toBeNull();
+  });
+});
+
+describe('countNumericEntries', () => {
+  it('数値名だけを数える', () => {
+    expect(countNumericEntries(['1', '42', 'self', 'thread-self', '007'])).toBe(3);
+    expect(countNumericEntries([])).toBe(0);
   });
 });

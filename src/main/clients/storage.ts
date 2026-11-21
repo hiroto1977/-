@@ -291,17 +291,25 @@ export function buildStorageSnapshot(r: RawStorageReadings): StorageSnapshot {
 }
 
 /**
- * fs / os からホストの実ストレージ情報を読み取る (薄いアダプタ)。
+ * ホストの実ストレージ情報を読み取る層。
  *
- * 値は実行ホストによって変わるため決定論的に変異を撃墜できない
- * (= linux.ts の readSystem と同じ理由) ため mutation から除外する。
+ * 値そのものは実行ホストによって変わるため、fs / os の転記だけを行う薄い
+ * アダプタは mutation から除外する (= linux.ts の readSystem と同じ理由)。
+ * ただし**判断はアダプタに置かない**: 走査の段取り (measureDir) と候補の
+ * 決定 (diskCandidatesFor / trashDirFor / countNumericEntries) は、入力が
+ * 決まれば結果が決まるので純関数として測る側に置く。
  * 走査はエントリ数の上限で打ち切り、打ち切ったら `truncated` を立てる
  * (小さい方へ黙って倒さない)。
  */
-// Stryker disable all
-const WALK_ENTRY_BUDGET = 60_000;
+export const WALK_ENTRY_BUDGET = 60_000;
 
-function measureDir(
+/**
+ * ディレクトリツリーを再帰測定する。実 fs を読むが、結果はツリーの中身
+ * だけで決まるため、一時ディレクトリのフィクスチャで留められる。
+ * シンボリックリンクは辿らない (循環と二重数えを避ける)。
+ * 予算は呼び出し側が共有し、全フォルダ通算で打ち切る。
+ */
+export function measureDir(
   root: string,
   budget: { remaining: number },
 ): { sizeBytes: number; fileCount: number; truncated: boolean } {
@@ -341,24 +349,54 @@ function measureDir(
   return { sizeBytes, fileCount, truncated };
 }
 
-export function readStorageReadings(): RawStorageReadings {
-  const platform = os.platform();
-  const home = os.homedir();
-
-  const disks: RawDiskReading[] = [];
-  const diskCandidates: { mount: string; label: string }[] = [];
+/**
+ * ディスク候補の決定 (純関数)。`procMountsText` は /proc/mounts の中身で、
+ * 読めなかった場合は null —— そのときはルートだけに倒す (候補を捏造しない)。
+ */
+export function diskCandidatesFor(
+  platform: string,
+  home: string,
+  procMountsText: string | null,
+): { mount: string; label: string }[] {
   if (platform === 'linux') {
-    try {
-      diskCandidates.push(...parseProcMounts(fs.readFileSync('/proc/mounts', 'utf8')));
-    } catch {
-      diskCandidates.push({ mount: '/', label: 'システム' });
-    }
-  } else {
-    const root = path.parse(home).root;
-    diskCandidates.push({ mount: root, label: 'システム' });
-    if (home !== root) diskCandidates.push({ mount: home, label: 'ホーム' });
+    if (procMountsText !== null) return [...parseProcMounts(procMountsText)];
+    return [{ mount: '/', label: 'システム' }];
   }
-  for (const c of diskCandidates) {
+  const root = path.parse(home).root;
+  const candidates = [{ mount: root, label: 'システム' }];
+  if (home !== root) candidates.push({ mount: home, label: 'ホーム' });
+  return candidates;
+}
+
+/** ゴミ箱ディレクトリの決定 (純関数)。対象の無い OS では null。 */
+export function trashDirFor(platform: string, home: string): string | null {
+  if (platform === 'linux') return path.join(home, '.local', 'share', 'Trash', 'files');
+  if (platform === 'darwin') return path.join(home, '.Trash');
+  return null;
+}
+
+/** 数値名のエントリ数 (純関数)。/proc のプロセス数の数え方。 */
+export function countNumericEntries(names: readonly string[]): number {
+  return names.filter((n) => /^\d+$/.test(n)).length;
+}
+
+// /proc/mounts の読み取りだけ (薄いアダプタ)。linux 以外と読めない場合は null。
+// Stryker disable all
+function readProcMountsText(platform: string): string | null {
+  if (platform !== 'linux') return null;
+  try {
+    return fs.readFileSync('/proc/mounts', 'utf8');
+  } catch {
+    return null;
+  }
+}
+// Stryker restore all
+
+// statfs の転記だけ (薄いアダプタ)。読めないマウントと空きの無いものは載せない。
+// Stryker disable all
+function readDiskReadings(candidates: { mount: string; label: string }[]): RawDiskReading[] {
+  const disks: RawDiskReading[] = [];
+  for (const c of candidates) {
     try {
       const st = fs.statfsSync(c.mount);
       const totalBytes = st.blocks * st.bsize;
@@ -373,8 +411,13 @@ export function readStorageReadings(): RawStorageReadings {
       /* 読めないマウントは載せない */
     }
   }
+  return disks;
+}
+// Stryker restore all
 
-  const budget = { remaining: WALK_ENTRY_BUDGET };
+// ホーム直下の列挙だけ (薄いアダプタ)。測定の段取りは measureDir が持つ。
+// Stryker disable all
+function readFolderReadings(home: string, budget: { remaining: number }): RawFolderReading[] {
   const folders: RawFolderReading[] = [];
   try {
     for (const entry of fs.readdirSync(home, { withFileTypes: true })) {
@@ -392,38 +435,49 @@ export function readStorageReadings(): RawStorageReadings {
   } catch {
     /* ホームが読めなければフォルダ一覧は空 */
   }
-
-  let trashSizeBytes: number | null = null;
-  const trashDir =
-    platform === 'linux'
-      ? path.join(home, '.local', 'share', 'Trash', 'files')
-      : platform === 'darwin'
-        ? path.join(home, '.Trash')
-        : null;
-  if (trashDir !== null && fs.existsSync(trashDir)) {
-    trashSizeBytes = measureDir(trashDir, budget).sizeBytes;
-  }
-
-  let processCount: number | null = null;
-  if (platform === 'linux') {
-    try {
-      processCount = fs.readdirSync('/proc').filter((n) => /^\d+$/.test(n)).length;
-    } catch {
-      processCount = null;
-    }
-  }
-
-  return {
-    platform,
-    disks,
-    folders,
-    trashSizeBytes,
-    totalMemBytes: os.totalmem(),
-    freeMemBytes: os.freemem(),
-    processCount,
-  };
+  return folders;
 }
 // Stryker restore all
+
+// ゴミ箱の有無の確認と測定の呼び出しだけ (薄いアダプタ)。無ければ null。
+// Stryker disable all
+function readTrashSizeBytes(
+  platform: string,
+  home: string,
+  budget: { remaining: number },
+): number | null {
+  const trashDir = trashDirFor(platform, home);
+  if (trashDir === null || !fs.existsSync(trashDir)) return null;
+  return measureDir(trashDir, budget).sizeBytes;
+}
+// Stryker restore all
+
+// /proc の列挙だけ (薄いアダプタ)。linux 以外と読めない場合は null。
+// Stryker disable all
+function readProcessCount(platform: string): number | null {
+  if (platform !== 'linux') return null;
+  try {
+    return countNumericEntries(fs.readdirSync('/proc'));
+  } catch {
+    return null;
+  }
+}
+// Stryker restore all
+
+export function readStorageReadings(): RawStorageReadings {
+  const platform = os.platform();
+  const home = os.homedir();
+  const budget = { remaining: WALK_ENTRY_BUDGET };
+  return {
+    platform,
+    disks: readDiskReadings(diskCandidatesFor(platform, home, readProcMountsText(platform))),
+    folders: readFolderReadings(home, budget),
+    trashSizeBytes: readTrashSizeBytes(platform, home, budget),
+    totalMemBytes: os.totalmem(),
+    freeMemBytes: os.freemem(),
+    processCount: readProcessCount(platform),
+  };
+}
 
 export async function fetchStorageSnapshot(_ctx: FetchContext): Promise<StorageSnapshot> {
   return buildStorageSnapshot(readStorageReadings());

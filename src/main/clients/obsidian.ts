@@ -127,7 +127,7 @@ export function parseObsidianConfig(text: string): VaultCandidate[] {
     if (typeof rec.path !== 'string' || rec.path === '') continue;
     out.push({
       path: rec.path,
-      ts: typeof rec.ts === 'number' ? rec.ts : 0,
+      ts: typeof rec.ts === 'number' && Number.isFinite(rec.ts) ? rec.ts : 0,
       open: rec.open === true,
     });
   }

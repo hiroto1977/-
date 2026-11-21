@@ -58,6 +58,11 @@ describe('parseObsidianConfig', () => {
     ]);
   });
 
+  it('falls back to 0 for a non-finite ts (JSON の 1e999 は Infinity になる)', () => {
+    const text = '{"vaults":{"a":{"path":"/v/one","ts":1e999}}}';
+    expect(parseObsidianConfig(text)).toEqual([{ path: '/v/one', ts: 0, open: false }]);
+  });
+
   it('returns [] for broken JSON or missing vaults', () => {
     expect(parseObsidianConfig('{oops')).toEqual([]);
     expect(parseObsidianConfig('{}')).toEqual([]);
