@@ -247,7 +247,7 @@ export function WatchPage() {
               type="text"
               value={itemForm.from}
               aria-label="相手の名前"
-              placeholder="例: 取引先 A 社のご担当者"
+              placeholder="例: A 社の方"
               onChange={(e) => setItemForm({ ...itemForm, from: e.target.value })}
               style={INPUT}
             />
