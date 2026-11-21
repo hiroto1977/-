@@ -111,33 +111,43 @@ def probe_headers(name):
         return {"Authorization": "Bearer " + KEY}
     return {}
 
-def probe_ok(port, path, headers=None, timeout=None):
-    """127.0.0.1 の機能経路が 2xx のときだけ稼働。待受だけでは稼働にしない。"""
+_LAMP_STATES = ("healthy", "degraded", "down")
+
+def probe_outcome(port, path, headers=None, timeout=None):
+    """1 回の GET だけを見る。2xx は healthy、状態符号が返った非 2xx は degraded、応答が無いときは down。
+    待受が開いているかは別の接続では見ない。黙ったまま時間切れになる相手も down。"""
     timeout = PROBE_TIMEOUT if timeout is None else timeout
     if isinstance(port, bool) or not isinstance(port, int) or not 1 <= port <= 65535:
-        return False
+        return "down"
     if not isinstance(path, str) or not path.startswith("/") or "://" in path or re.search(r"[\x00-\x20]", path):
-        return False
+        return "down"
     req = urllib.request.Request(
         f"http://127.0.0.1:{port}{path}",
         headers={"Connection": "close", **(headers or {})},
         method="GET")
     try:
         with _OPENER.open(req, timeout=timeout) as r:
-            return 200 <= int(getattr(r, "status", 0)) < 300
+            code = int(getattr(r, "status", 0))
+            if 200 <= code < 300:
+                return "healthy"
+            return "degraded"
     except Exception:
-        return False
+        return "down"
 
-def service_snapshot(timeout=None):
-    """名前 → 機能経路が 2xx か。並列。時間内に答えが無ければ停止。"""
+def probe_ok(port, path, headers=None, timeout=None):
+    """127.0.0.1 の機能経路が 2xx のときだけ稼働。待受だけでは稼働にしない。"""
+    return probe_outcome(port, path, headers, timeout) == "healthy"
+
+def service_report(timeout=None):
+    """名前 → healthy / degraded / down。サービスごとに GET は 1 回。時間内に答えが無ければ down。"""
     timeout = PROBE_TIMEOUT if timeout is None else timeout
     items = list(SERVICES.items())
     result = {}
     lock = threading.Lock()
     def one(name, port, path):
-        ok = probe_ok(port, path, probe_headers(name), timeout)
+        state = probe_outcome(port, path, probe_headers(name), timeout)
         with lock:
-            result[name] = True if ok is True else False
+            result[name] = state if state in _LAMP_STATES else "down"
     threads = []
     for name, (port, path) in items:
         t = threading.Thread(target=one, args=(name, port, path), daemon=True)
@@ -145,7 +155,11 @@ def service_snapshot(timeout=None):
     end = time.monotonic() + timeout + 1.0
     for t in threads:
         t.join(max(0.0, end - time.monotonic()))
-    return {name: True if result.get(name) is True else False for name, _ in items}
+    return {name: result[name] if result.get(name) in _LAMP_STATES else "down" for name, _ in items}
+
+def service_snapshot(timeout=None):
+    """名前 → 機能経路が 2xx か。healthy のときだけ True。中身は service_report の同じ GET。"""
+    return {name: state == "healthy" for name, state in service_report(timeout).items()}
 
 def log_sys(msg):
     with open(os.path.join(HERE, "logs", "system.log"), "a") as f: f.write(f"{now()} {msg}\n")
@@ -500,8 +514,10 @@ def thread_log(who, text):
 def api_state():
     dp = os.path.join(HERE, "decisions.md")
     decs = [d.strip() for d in open(dp, encoding="utf-8").read().split("\n## ") if d.strip()][-5:] if os.path.exists(dp) else []
+    report = service_report()
     return {k: STATE[k] for k in ("status", "topic", "updated", "speaking", "exec")} | {"free_mb": free_mb(), "transcript": STATE["transcript"][-8:],
-            "services": service_snapshot(), "decisions": decs, "chat": CHAT[-12:], "pending": len(PENDING), "user": USER,
+            "services": {name: state == "healthy" for name, state in report.items()}, "service_state": report,
+            "decisions": decs, "chat": CHAT[-12:], "pending": len(PENDING), "user": USER,
             "claude": {"status": claude_status(), "calls_last_hour": sum(1 for t in _CL["calls"] if time.time() - t < 3600), "max_per_hour": CLAUDE_MAX_HOUR},
             "advice": [l.strip()[2:][:600] for l in advice_lines() if l.strip().startswith("- ")][-5:],
             "company": {k: COMPANY.st.get(k) for k in ("linked", "name", "scale", "last_fetch", "error", "demo", "fictional", "label")},
