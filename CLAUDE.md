@@ -1969,6 +1969,12 @@ The browser target adds: `web-shim.ts` (a `window.serviceHub` polyfill imported 
   財務の指標は略語で書かず、決めた 1 つの名前で呼ぶ (償却前営業利益 / 償却前営業利益率 / 現金化日数 / 総資産利益率 / 自己資本利益率 / 投下資本利益率 / 税引後営業利益 ——
   図へ出る名前の一覧は `chartLabelsJapanese.test.ts` が見る)。
   日本語にしない物: URL・メールアドレス・コマンド・単位・相手のサービスが決めた鍵の形。まだ英字が残る所は `docs/REMAINING_WORK.md`。
+- **英語は、日本語の後ろにかっこで添える** (2026-11-20 · 利用者の依頼「全て日本語と英語を併記して」—— 名前と用語に添える・文は日本語のまま)。
+  画面の名前は `label` (日本語) と `english` (英語) の 2 欄で持ち、名前そのものを出す所 (サイドバーの項・上部の見出し・一覧の札) は
+  `components/ServiceName.tsx` で「ギットハブ (GitHub)」と描く (字だけの所は `serviceName.ts` の `nameWithEnglish`)。文の中で画面を名指しするときは
+  `label` だけ。説明 (`description`) のサービス名と専門用語は「ジラ (Jira)」「顧客管理 (CRM)」の形 —— 英字は日本語の語の直後の半角かっこの中にだけ書き、
+  そのかっこの中は英語だけ (`screenNamesJapanese.test.ts`)。新しい画面を足したら `english` も書く。グラフ・表・本文の用語は順に同じ形へ
+  (`docs/REMAINING_WORK.md`)。
 - **対照を回すまで、検査は信用しない。** 守っている物を実際に壊し、狙った項目が
   落ちることを見る。**鳴らない対照は「合格」ではなく「その検査についての報せ」である。**
 

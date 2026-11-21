@@ -7,6 +7,7 @@ import type { ServiceId } from '../../shared/serviceId';
 import { exportSavedNote, exportWarning } from '../data/exportOutcome';
 import { externalTextOnOneLine } from '../data/assistantMarkdown';
 import { StartGuide } from '../components/StartGuide';
+import { ServiceName } from '../components/ServiceName';
 
 interface HomeSnapshot {
   greeting: string;
@@ -258,7 +259,7 @@ function JumpChip({ service, glyph }: { service: ShellService; glyph?: string })
       onClick={() => navigateTo(service.id)}
     >
       {glyph ? <span aria-hidden="true">{glyph}</span> : null}
-      {service.label}
+      <ServiceName label={service.label} english={service.english} />
     </button>
   );
 }

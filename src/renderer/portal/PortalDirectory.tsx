@@ -21,6 +21,7 @@ import {
 } from '../../shared/portal';
 import { isServiceId, type ServiceId } from '../../shared/serviceId';
 import { CATEGORY_LABEL, SERVICES, type ServiceCategory } from '../services';
+import { ServiceName } from '../components/ServiceName';
 import { PortalScreenView } from './PortalScreenView';
 
 const CATEGORY_ORDER: readonly ServiceCategory[] = ['featured', 'professionals', 'tools', 'integrations'];
@@ -94,7 +95,7 @@ export function PortalDirectory({
               <div style={GRID}>
                 {items.map((s) => (
                   <button key={s.id} type="button" data-portal-screen={s.id} style={CARD} onClick={() => open(s.id)}>
-                    <strong style={{ fontSize: 13 }}>{s.label}</strong>
+                    <strong style={{ fontSize: 13 }}><ServiceName label={s.label} english={s.english} /></strong>
                     <span style={MUTED}>{s.description}</span>
                   </button>
                 ))}

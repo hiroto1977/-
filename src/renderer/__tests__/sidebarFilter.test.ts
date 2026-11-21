@@ -120,3 +120,52 @@ describe('filterServices — 関連度ランキング', () => {
     expect(filterServices(S, 'git')?.map((s) => s.id)).toEqual(['github']);
   });
 });
+
+/**
+ * 英語の名前 (`english`) は、名前 (`label`) と同じ段で探す (2026-11-20)。
+ *
+ * 画面の名前は日本語で、英語は別の欄に持つ (「ギットハブ (GitHub)」)。英語で打った人が
+ * 名前の一致として見つけられるように、3 つの段 (完全一致・前方一致・部分一致) のどれでも
+ * 名前と同じ点を付ける。id がその語を含まない標本で確かめる (id の段と取り違えないため)。
+ */
+describe('scoreService — 英語の名前は名前と同じ段', () => {
+  const en = (english: string): SearchableService => ({ id: 'x', label: '日本語の名前', english, description: 'z' });
+
+  it('英語の完全一致 = 名前の完全一致 (100)', () => {
+    expect(scoreService(en('Foo'), 'foo')).toBe(100);
+  });
+  it('英語の前方一致 = 名前の前方一致 (80)', () => {
+    expect(scoreService(en('Foobar'), 'foo')).toBe(80);
+  });
+  it('英語の部分一致 = 名前の部分一致 (50)', () => {
+    expect(scoreService(en('zFoo'), 'foo')).toBe(50);
+  });
+  it('大文字小文字を無視する', () => {
+    expect(scoreService(en('FOO'), 'foo')).toBe(100);
+    expect(scoreService(en('foo'), 'FOO')).toBe(100);
+  });
+  it('段の順序は変わらない: 英語の前方一致 (80) は id の完全一致 (90) より低く、id の前方一致 (70) より高い', () => {
+    expect(scoreService({ id: 'foo', label: 'L', english: 'Foobar', description: 'z' }, 'foo')).toBe(90);
+    expect(scoreService({ id: 'foobar', label: 'L', english: 'Foobar', description: 'z' }, 'foo')).toBe(80);
+    // 英語の部分一致 (50) は id の前方一致 (70) より低く、id の部分一致 (40) より高い。
+    expect(scoreService({ id: 'foobar', label: 'L', english: 'zFoo', description: 'z' }, 'foo')).toBe(70);
+    expect(scoreService({ id: 'zfoo', label: 'L', english: 'zFoo', description: 'z' }, 'foo')).toBe(50);
+  });
+  it('英語を持たない物は、名前・id・説明だけで探す (空の英語は何にも一致しない)', () => {
+    expect(scoreService({ id: 'x', label: 'L', description: 'z' }, 'foo')).toBe(0);
+    expect(scoreService({ id: 'x', label: 'L', english: '', description: 'z' }, 'foo')).toBe(0);
+    // 英語が無くても説明の一致は今までどおり。
+    expect(scoreService({ id: 'x', label: 'L', description: 'zfoo' }, 'foo')).toBe(20);
+  });
+  it('英語に無い語は、名前の段では拾わない (説明の段へ落ちる)', () => {
+    expect(scoreService({ id: 'x', label: 'L', english: 'Bar', description: 'has foo' }, 'foo')).toBe(20);
+  });
+  it('filterServices: 英語の名前で絞り込める', () => {
+    const list: SearchableService[] = [
+      { id: 'a', label: 'ギットハブ', english: 'GitHub', description: 'z' },
+      { id: 'b', label: '税理士', english: 'Tax Accountant', description: 'z' },
+    ];
+    expect(filterServices(list, 'github')?.map((s) => s.id)).toEqual(['a']);
+    expect(filterServices(list, 'accountant')?.map((s) => s.id)).toEqual(['b']);
+  });
+});

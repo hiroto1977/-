@@ -66,6 +66,12 @@ const CATEGORY_ORDER = ['featured', 'professionals', 'tools', 'integrations'];
  * 件数の突き合わせ (`countEntries`) は**別の数え方のまま残す** ——
  * 同じ走査で両方を出すと、突き合わせが「自分と自分の一致」になって何も守らない。
  */
+/** 「ギットハブ (GitHub)」。英語が空か名前と同じなら名前だけ (`src/renderer/serviceName.ts` と同じ形)。 */
+function nameWithEnglish(label, english) {
+  const en = String(english ?? '').trim();
+  return en === '' || en === String(label).trim() ? label : `${label} (${en})`;
+}
+
 function parseServices() {
   return parseServicesFromText(fs.readFileSync(SERVICES_TS, 'utf8'));
 }
@@ -90,7 +96,9 @@ function parseServicesFromText(source) {
       problems.push(`services.ts:${line} の項 (${rec.id ?? 'id 不明'}) に ${missing.join(' / ')} が無い`);
       continue;
     }
-    out.push({ id: rec.id, label: rec.label, icon: rec.icon, description: rec.description, category: rec.category });
+    // 名前に添える英語 (services.ts の `english`・2026-11-20)。欄が無い項は名前だけで出す。
+    const english = readQuotedField(body, 'english');
+    out.push({ id: rec.id, label: rec.label, english: english ?? '', icon: rec.icon, description: rec.description, category: rec.category });
   }
   if (problems.length > 0) {
     throw new Error(`SERVICES の項を読み切れません:\n  ${problems.join('\n  ')}`);
@@ -371,7 +379,7 @@ function buildHtml(services, tests) {
   // 各カードはフル版の該当サービスへのディープリンク (#<id>)。タップで直接開く。
   const card = (s) => `
         <a class="card" href="./app.html#${esc(s.id)}"><span class="chip" aria-hidden="true">${esc(s.icon)}</span>
-          <div class="card-body"><h3>${esc(s.label)}</h3><p>${esc(s.description)}</p></div></a>`;
+          <div class="card-body"><h3>${esc(nameWithEnglish(s.label, s.english))}</h3><p>${esc(s.description)}</p></div></a>`;
   const section = (c) => `
       <section class="cat" aria-labelledby="cat-${c}">
         <h2 id="cat-${c}">${esc(CATEGORY_LABEL[c])} <span class="count">${counts[c]}</span></h2>

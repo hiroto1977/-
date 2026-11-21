@@ -62,7 +62,10 @@ interface Claim {
 // 鍵は `ServiceId` —— 綴りを間違えた id は tsc が止める (走査を待たずに落ちる)。
 const LEDGER: Partial<Record<ServiceId, readonly Claim[]>> = {
   home: [{ text: 'ボタン 1 つで', why: '言い回し (操作が 1 回という意味で、数えられる量ではない)' }],
-  security: [{ text: 'Norton 360', why: '製品名' }],
+  security: [
+    { text: 'ノートン 360', why: '製品名' },
+    { text: 'Norton 360', why: '製品名 (日本語の名前に添えた英語)' },
+  ],
   ollama: [
     {
       text: 'デスクトップ版は 127.0.0.1 固定 / ブラウザ版は接続先を指定',
@@ -74,16 +77,13 @@ const LEDGER: Partial<Record<ServiceId, readonly Claim[]>> = {
   kpi: [
     { text: '11 指標', measure: () => String(Object.keys(SNAPSHOT.kpi.aggregate.kpi).length), why: 'KPI の算出欄の数' },
     { text: '6 事業', why: '模擬データの事業数 (main の MOCK_UNITS。ブラウザ版は利用者の記録から作るので固定ではない)' },
-    { text: 'Phase 6', why: '行程の名前' },
   ],
-  stocks: [{ text: 'Phase 7', why: '行程の名前' }],
   mentor: [
     { text: '1 人に 1 人', why: '専属 (1 対 1) の言い回し。測る数ではない' },
     { text: '週 1', measure: () => `週 ${CHECKIN_INTERVAL_DAYS / 7}`, why: 'チェックインの間隔 (CHECKIN_INTERVAL_DAYS = 7 日を週で言う)' },
   ],
   business: [
     { text: '10 事業', measure: () => String(BUSINESS_CATEGORY_IDS.length), why: '事業カテゴリの数' },
-    { text: 'Phase 6', why: '行程の名前' },
   ],
   teamradar: [
     { text: '1-5 評価', measure: () => `${SCORE_MIN}-${SCORE_MAX} 評価`, why: '評点の範囲' },
@@ -93,14 +93,13 @@ const LEDGER: Partial<Record<ServiceId, readonly Claim[]>> = {
     { text: '8 種類', measure: () => String(SNAPSHOT.templates.templates.length), why: 'テンプレートの数' },
   ],
   library: [
-    { text: '50 MB', measure: () => `${MAX_BYTES / 1024 / 1024} MB`, why: '保存の総量上限' },
+    { text: '50 メガバイト', measure: () => `${MAX_BYTES / 1024 / 1024} メガバイト`, why: '保存の総量上限' },
     { text: '100 件', measure: () => String(MAX_ITEMS), why: '保存の件数上限' },
   ],
-  settings: [{ text: 'AES-GCM-256', why: '暗号方式の名前' }],
+  settings: [{ text: 'AES-GCM-256', why: '暗号方式の名前 (日本語「暗号化」に添えた英語)' }],
   quality: [{ text: '1 画面で', why: '言い回し' }],
-  netsea: [{ text: 'B2B', why: '業態の呼び名' }],
-  'super-delivery': [{ text: 'B2B', why: '業態の呼び名' }],
-  youtube: [{ text: 'API v3', why: 'API の版' }],
+  netsea: [{ text: 'B2B', why: '業態の呼び名 (日本語「事業者向け」に添えた英語)' }],
+  'super-delivery': [{ text: 'B2B', why: '業態の呼び名 (日本語「事業者向け」に添えた英語)' }],
   village: [{ text: '143 体', measure: () => String(villageBodies()), why: '村人の総数 (orchestration/registry.json から)' }],
   docstudio: [{ text: '59 書式', measure: () => String(STUDIO_TEMPLATES.length), why: '経営書類の書式の数' }],
   talent: [{ text: '達成確率100%', why: '規則の名前 (talent.ts「達成確率100%キープの法則」。100 は割合の天井)' }],

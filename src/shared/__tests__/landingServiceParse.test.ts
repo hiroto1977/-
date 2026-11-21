@@ -137,3 +137,39 @@ describe('抽出は欄の並びと注記に依らない (パス 162 の対照)',
     );
   });
 });
+
+/**
+ * 名前に添える英語 (2026-11-20 · 「全て日本語と英語を併記して」)。
+ *
+ * ランディングのカードの見出しも、アプリの中と同じ「ギットハブ (GitHub)」の形で出す。
+ * 英語は `services.ts` の `english` 欄から読む (欄が無い項は名前だけ)。
+ */
+describe('ランディングのカードは「日本語 (英語)」で名前を出す', () => {
+  const { buildHtml } = req('../../../scripts/build-landing.cjs') as {
+    buildHtml: (services: unknown[], tests: number) => string;
+  };
+  const parsedWithEnglish = (): { id: string; label: string; english?: string }[] => parseServices();
+
+  it('★ 実物: どの項も英語の名前を読めている', () => {
+    const blank = parsedWithEnglish().filter((s) => (s.english ?? '') === '').map((s) => s.id);
+    expect(blank).toEqual([]);
+  });
+
+  it('★ 実物: 組んだ HTML の見出しに「ギットハブ (GitHub)」が出る', () => {
+    const html = buildHtml(parseServices(), 1);
+    expect(html).toContain('<h3>ギットハブ (GitHub)</h3>');
+    expect(html).toContain('<h3>税理士 (Tax Accountant)</h3>');
+  });
+
+  it('対照: 英語の欄が無い項は、名前だけ (空のかっこを出さない)', () => {
+    const [only] = parseServicesFromText(wrap(COMPLETE)) as { english?: string }[];
+    expect(only?.english).toBe('');
+  });
+
+  it('対照: 英語の欄は、欄の並びに依らず読める', () => {
+    const [a] = parseServicesFromText(
+      wrap("  { category: 'tools', english: 'Alpha', page: P, description: 'd', icon: 'AA', label: 'あ', id: 'a' },"),
+    ) as { english?: string }[];
+    expect(a?.english).toBe('Alpha');
+  });
+});

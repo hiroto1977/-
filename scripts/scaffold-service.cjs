@@ -311,6 +311,7 @@ insertBefore(
   `  {
     id: '${id}',
     label: '${label}',
+    english: '${label}',
     icon: '${icon}',
     description: 'TODO: fill in a one-line description',
     page: ${pascal}Page,

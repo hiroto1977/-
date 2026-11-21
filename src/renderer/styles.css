@@ -949,6 +949,10 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   border-radius: 999px;
   background: var(--gradient);
 }
+/* 画面の名前に添える英語 (「ギットハブ (GitHub)」の括弧の側)。色は周りの字を継ぐ —— 名前は塗りの上にも
+   載るので、薄い色にすると塗りごとに対比を測り直すことになる。小さくするだけにする。 */
+.name-en { font-size: 0.86em; font-weight: 400; }
+
 .sidebar-item .icon {
   width: var(--icon-size);
   height: var(--icon-size);
@@ -1022,7 +1026,7 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
-  padding: 0 20px;
+  padding: 4px 20px;
   gap: 12px;
   min-width: 0;
   overflow: hidden;
@@ -1048,11 +1052,15 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
   margin: 0;
   font-weight: var(--fw-title);
   letter-spacing: var(--ls-title);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  /* 画面の名前は「日本語 (英語)」(2026-11-20)。1 行に並べて「…」で切ると、長い名前は英語の側が読めない
+     (実測: 1280px の 3 列で見出しの幅は 198〜245px、スマホ幅で 178px)。日本語を 1 行目・英語を 2 行目に
+     分け、どちらも切らずに折り返す。 */
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.2;
   min-width: 0;
 }
+.topbar h1 .name-en { display: block; font-size: 12px; letter-spacing: 0; }
 .topbar .crumb { flex: none; }
 /* 説明は残りの幅だけを使う (flex-basis 0) —— 題名より先に縮む。以前は題名と説明が幅に比例して
    縮み、3 列で画面が狭くなると題名のほうが「設…」まで削られた (2026-09-26 撮影で実測)。 */
@@ -1429,6 +1437,8 @@ button.chip:hover { border-color: var(--accent); background: var(--accent-soft);
 }
 @media (max-width: 640px) {
   .topbar .description, .topbar .crumb { display: none; } /* タイトル+音声ボタンを優先 */
+  /* 見出しが 2 段 (日本語 / 英語) になるので、上下に少し余白を足す (この幅では左右の余白だけだった)。 */
+  .topbar { padding-top: 6px; padding-bottom: 6px; }
   .content { padding: 12px 12px calc(96px + env(safe-area-inset-bottom)); }
 }
 

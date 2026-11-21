@@ -4457,6 +4457,14 @@
       "leafCount": 222,
       "note": "update integrity-chain.cjs",
       "hash": "4aad3474d0ce449d942c18cd59b0147cdfa9051d32bb439cd38a291f3393e6a8"
+    },
+    {
+      "index": 529,
+      "prevHash": "4aad3474d0ce449d942c18cd59b0147cdfa9051d32bb439cd38a291f3393e6a8",
+      "merkleRoot": "0ce58c1fda921941d41eb31dc75747e856cab8a36d4d8014651a43786c8b82ec",
+      "leafCount": 222,
+      "note": "update build-landing.cjs",
+      "hash": "445c29caac3d83b819616cd30edd5a0d919f33891f0750a2b107462ae04c9e2e"
     }
   ],
   "tipManifest": {
@@ -4489,7 +4497,7 @@
     "orchestration/knowledge-context.cjs": "2e31acac95ced213b569fe3e467e66f4aff3106c93188ee79d056d1481a022c3",
     "orchestration/knowledge-graph.cjs": "80ae371234e84801b392f27b10d8a5f84d86be41ad97b334892dfce746185242",
     "scripts/build-integrity-manifest.cjs": "fe222161e6b4e1357d1e6bc0b3b49e813260fc199ea2b0faca9683a66ef7f506",
-    "scripts/build-landing.cjs": "e711ee615dc7322011470de0cdc5f5241014808d665c7e3b35232db71ae65e19",
+    "scripts/build-landing.cjs": "dbec54bc77092334ae24bfa32a17e6b6cc9b686e93f7da088c9405567ca8eece",
     "scripts/build-mamori-verify.cjs": "dda6a0576faa0c42e1bde3c1779b0f0146956de2624875a119af10c1e8c6a3b6",
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "d385ddfc52ec74abf184207bfbb1ac655e730db2b7c6d7e758e35e67e79a5737",
