@@ -214,3 +214,7 @@ class SoftAuthenticator:
 
 def challenge_of(options: dict[str, Any]) -> bytes:
     return b64url_decode(options["challenge"])
+
+
+def new_key_p256() -> Any:
+    return ec.generate_private_key(ec.SECP256R1())

@@ -4,6 +4,8 @@
 #   single … どちらか片方だけ (そろう前・そろわなかった)
 #   none   … 確認が無い / 12 時間を過ぎた
 #
+# 1 回の確認は、1 組にしか数えない。そろった時点で 2 つの確認は使い切る —— 次に「そろった」と言えるのは、
+# 新しい確認が 2 つ来たときだけ (追加の確認を、片方の押し直しだけで済ませない)。
 # クッキーや合言葉は配らない。次の要求で同じ鍵の証明 (DPoP) を出せた相手だけが、この控えに当たる。
 from __future__ import annotations
 
@@ -47,7 +49,10 @@ class AuthnSessions:
 
     @staticmethod
     def _latest(entry: _Entry) -> float:
-        return max(at for _, at in entry.seen.values())
+        times = [at for _, at in entry.seen.values()]
+        if entry.strong_at is not None:
+            times.append(entry.strong_at)
+        return max(times)
 
     def _make_room(self, now: float) -> None:
         if len(self._entries) < self._max:
@@ -73,12 +78,13 @@ class AuthnSessions:
         if len(times) == len(KINDS) and max(times) - min(times) <= PAIR_WINDOW_SECONDS:
             entry.strong_at = now
             entry.pair = tuple(entry.seen[k][0] for k in KINDS)
+            entry.seen = {}
             return _state(subject, "strong", now)
         return _state(subject, "single", now)
 
     def state(self, jkt: str, *, now: float) -> AuthnState | None:
         entry = self._entries.get(jkt)
-        if entry is None or not entry.seen:
+        if entry is None:
             return None
         if entry.strong_at is not None and -_FUTURE_SKEW_SECONDS <= now - entry.strong_at <= STRONG_MAX_AGE_SECONDS:
             return _state(entry.subject, "strong", entry.strong_at)
@@ -106,6 +112,6 @@ class AuthnSessions:
             if credential_id in entry.pair:
                 entry.strong_at, entry.pair = None, ()
             count += 1
-            if not entry.seen:
+            if not entry.seen and entry.strong_at is None:
                 del self._entries[jkt]
         return count
