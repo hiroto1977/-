@@ -75,7 +75,7 @@
     let pair = null;
     try {
       pair = await withStore('readonly', (store) => store.get(KEY_NAME));
-    } catch (_) {
+    } catch {
       persisted = false;
     }
     if (!pair || !pair.privateKey || !pair.publicKey) {
@@ -84,7 +84,7 @@
       if (persisted) {
         try {
           await withStore('readwrite', (store) => store.put(pair, KEY_NAME));
-        } catch (_) {
+        } catch {
           persisted = false;
         }
       }
@@ -105,7 +105,7 @@
     if (!ok) return;
     try {
       await withStore('readwrite', (store) => store.delete(KEY_NAME));
-    } catch (_) {
+    } catch {
       // 置き場が読めない端末では、もともとメモリにしか無い。
     }
     device = null;
@@ -153,8 +153,8 @@
     let data = null;
     try {
       data = await response.json();
-    } catch (_) {
-      data = null;
+    } catch {
+      // 本文が JSON でない (断りの応答など)。data は null のまま。
     }
     return { status: response.status, data };
   }
