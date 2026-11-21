@@ -1,11 +1,13 @@
 # 第 5 層: DPoP の証明。条件を 1 つずつ外して、どれも断ることを確かめる。
 from __future__ import annotations
 
+import string
+
 import pytest
 
 from helpers import BASE, NOW, forge, make_proof, new_key
 from layer5_ephemeral.dpop import DpopError, verify_dpop_proof
-from layer5_ephemeral.jose import jwk_from_public_key, jwk_thumbprint
+from layer5_ephemeral.jose import JoseError, b64url_decode, b64url_encode, jwk_from_public_key, jwk_thumbprint
 from layer5_ephemeral.replay import ReplayCache
 
 URL = f"{BASE}/resource/ping"
@@ -155,3 +157,23 @@ def test_同じ鍵が_2_度出る_JSON_は断る() -> None:
 
     token = f'{part("{\"typ\":\"dpop+jwt\",\"typ\":\"x\"}")}.{part("{}")}.{part("sig")}'
     assert refused(token) == "malformed"
+
+
+def test_同じ中身の別の綴り_は断る() -> None:
+    # 1 バイトの base64url は 2 文字で、2 文字目の下 4 ビットは捨てられる。
+    # "AA" と "AB" は同じ 1 バイトに戻るが、正しい綴りは "AA" だけ。
+    assert b64url_decode("AA") == b"\x00"
+    assert b64url_encode(b"\x00") == "AA"
+    for other in ("AB", "AC", "AP"):
+        with pytest.raises(JoseError):
+            b64url_decode(other)
+    # 署名の最後の 1 文字を、同じバイト列に戻る別の字に替えた証明も通さない
+    # (通すと、1 つの証明から「見た目の違う同じ証明」を作れる)。
+    alphabet = string.ascii_uppercase + string.ascii_lowercase + string.digits + "-_"
+    proof = make_proof(new_key("p256"))
+    tail = alphabet.index(proof[-1])
+    # P-256 の署名は 64 バイト = 86 文字で、最後の 1 文字は下 4 ビットが余り。
+    assert len(proof.rsplit(".", 1)[1]) == 86 and tail % 16 == 0
+    twin = proof[:-1] + alphabet[tail + 1]
+    assert refused(twin) == "malformed"
+

@@ -15,6 +15,7 @@ from layer6_soar.audit_log import (
     SecretInAudit,
     fingerprint,
     main,
+    record_hash,
     verify_file,
 )
 
@@ -63,6 +64,23 @@ def test_途中の行の抜き取りを見つける(tmp_path: Path) -> None:
     path.write_text("".join(rows), encoding="utf-8")
     result = verify_file(path)
     assert (result.ok, result.broken_at) == (False, 2)
+
+
+def test_前の行を名乗る欄だけを書き換え_ハッシュを作り直しても見つける(tmp_path: Path) -> None:
+    # 行のハッシュは「本当の前の行」から作るので、欄の prev_hash が偽でもハッシュは合わせられる。
+    # 欄そのものを前の行と突き合わせる検査が要る (欄が偽のまま残ると、行だけを読む道具が騙される)。
+    path = tmp_path / "audit.jsonl"
+    fill(path)
+    rows = lines(path)
+    real_prev = json.loads(rows[1])["hash"]
+    row = json.loads(rows[2])
+    body = {k: v for k, v in row.items() if k != "hash"}
+    body["prev_hash"] = "0" * 64
+    forged = {**body, "hash": record_hash(real_prev, body)}
+    rows[2] = json.dumps(forged, sort_keys=True, separators=(",", ":"), ensure_ascii=False) + "\n"
+    path.write_text("".join(rows), encoding="utf-8")
+    result = verify_file(path)
+    assert (result.ok, result.broken_at, result.reason) == (False, 3, "前の行とつながらない")
 
 
 def test_行の入れ替えを見つける(tmp_path: Path) -> None:
