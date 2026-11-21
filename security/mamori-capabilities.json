@@ -147,6 +147,7 @@
         "pure ../../shared/api/dropbox: fetchDropboxSnapshotWith",
         "pure ../../shared/api/line: fetchLineSnapshotWith",
         "pure ../../shared/api/linear: fetchLinearSnapshotWith",
+        "pure ../../shared/api/quality: fetchQualitySnapshotWith",
         "pure ../../shared/api/sentry: fetchSentrySnapshotWith",
         "pure ../../shared/api/stripe: fetchStripeSnapshotWith",
         "pure ../../shared/lookup: lookup"
