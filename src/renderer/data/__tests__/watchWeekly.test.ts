@@ -262,10 +262,13 @@ describe('buildWatchWeeklyReport (週次レポート)', () => {
   it('★ 前の週が 0・未入力なら増減の率は null (0% と混ぜない)', () => {
     const r = buildWatchWeeklyReport([
       { week: '2026-11-16', xPosts: 5, xFollowers: 10, adClicks: 7 },
-      { week: '2026-11-09', xPosts: 0, adClicks: 7 },
+      { week: '2026-11-09', xPosts: 0, adClicks: 7, gaSessions: 40 },
     ]);
     const row = (key: string) => r?.rows.find((x) => x.key === key);
     expect(row('xPosts')).toMatchObject({ current: 5, previous: 0, changePct: null });
+    // 今週だけ未入力 (前の週は在る) —— 「100% 減った」とは言わない。
+    expect(row('gaSessions')).toMatchObject({ current: null, previous: 40, changePct: null });
+    expect(r?.moves).toEqual([]);
     expect(row('xFollowers')).toMatchObject({ current: 10, previous: null, changePct: null });
     expect(row('adClicks')).toMatchObject({ current: 7, previous: 7, changePct: 0 });
     expect(row('gaUsers')).toMatchObject({ current: null, previous: null, changePct: null });

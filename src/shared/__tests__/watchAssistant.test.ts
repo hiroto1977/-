@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { rereadModule } from './rereadModule';
 import {
   MAX_WATCH_BODY_CHARS,
   MAX_WATCH_DEADLINES,
@@ -306,10 +307,10 @@ describe('並びと理由', () => {
   });
 
   it('★ 見えない字 (文字の向きを変える印) は、見える形で出す', () => {
-    const line = watchLine(item({ subject: '請求‮書' }));
-    expect(line).not.toContain('‮');
+    const line = watchLine(item({ subject: '請求\u202e書' }));
+    expect(line).not.toContain('\u202e');
     expect(line).toContain('\\u202e');
-    expect(watchFromText(item({ from: 'A‮B' }))).toBe('A\\u202eB');
+    expect(watchFromText(item({ from: 'A\u202eB' }))).toBe('A\\u202eB');
   });
 
   it('相手の名前: 未入力なら「相手の名前なし」・天井は 60 字', () => {
@@ -523,13 +524,128 @@ describe('返信の下書き', () => {
   });
 
   it('★ 相手の名前・件名の見えない字は、下書きでも見える形にする', () => {
-    const d = draftWatchReply(item({ source: 'mail', from: 'A‮B', subject: 'S‮T' }), 'thanks');
-    expect(d?.text).not.toContain('‮');
+    const d = draftWatchReply(item({ source: 'mail', from: 'A\u202eB', subject: 'S\u202eT' }), 'thanks');
+    expect(d?.text).not.toContain('\u202e');
     expect(d?.text).toContain('A\\u202eB 様');
     expect(d?.text).toContain('件名: Re: S\\u202eT');
   });
 
   it('下書きに添える 1 文', () => {
     expect(watchDraftNote(3)).toBe('【 】の箇所が 3 か所あります。書き換えてから、ご自身で送ってください。');
+  });
+});
+
+/**
+ * **モジュール直下の値 (表・決まった文・正規表現・直下の関数) を、読み直して留める。**
+ *
+ * 上の検査は先頭の静的 import で値を読む。変異検査は変異体を検査ファイルの `beforeAll` で有効にするので、
+ * 読み込みの時点で評価が済んだ直下の値には届かない (`rereadModule.ts` の docblock)。ここで読み直し、
+ * 値を持つ export を全部字面 (スナップショット) と比べ、直下の正規表現と表を使う関数は読み直した側で呼ぶ。
+ */
+describe('見張りアシスタント: モジュール直下の値 (読み直して留める)', () => {
+  const reread = () => rereadModule<typeof import('../watchAssistant')>(import.meta.url, '../watchAssistant');
+
+  it('★ 値を持つ export は 20 個で、すべて字面と一致する', async () => {
+    const mod = await reread();
+    const values = Object.fromEntries(
+      Object.entries(mod)
+        .filter(([, value]) => typeof value !== 'function')
+        .sort(([x], [y]) => (x < y ? -1 : 1)),
+    );
+    expect(Object.keys(values)).toEqual([
+      'MAX_WATCH_BODY_CHARS',
+      'MAX_WATCH_DEADLINES',
+      'MAX_WATCH_FROM_CHARS',
+      'MAX_WATCH_ITEMS',
+      'MAX_WATCH_LINE_CHARS',
+      'MAX_WATCH_SUBJECT_CHARS',
+      'WATCH_DEADLINE_WORDS',
+      'WATCH_DIGEST_EMPTY_NOTE',
+      'WATCH_MEETING_WORDS',
+      'WATCH_MONEY_WORDS',
+      'WATCH_NO_REPLY_FOR_CALENDAR',
+      'WATCH_OWNER_NOTE',
+      'WATCH_PRIORITIES',
+      'WATCH_PRIORITY_LABEL',
+      'WATCH_PRIVACY_NOTE',
+      'WATCH_REPLY_INTENTS',
+      'WATCH_REPLY_INTENT_LABEL',
+      'WATCH_REPLY_WORDS',
+      'WATCH_SOURCES',
+      'WATCH_TEXT_SOURCES',
+      'WATCH_TEXT_SOURCE_LABEL',
+      'WATCH_URGENT_WORDS',
+    ].sort((x, y) => (x < y ? -1 : 1)));
+    expect(values).toMatchSnapshot();
+  });
+
+  it('入口: 前後の空白を落とす・文字列でない欄は空として扱う (読み直した側)', async () => {
+    const mod = await reread();
+    expect(mod.parseWatchItem({ source: 'mail', from: '  山田  ', subject: ' 件名 ', body: '  本文  ' })).toEqual({
+      source: 'mail',
+      from: '山田',
+      subject: '件名',
+      body: '本文',
+    });
+    expect(mod.parseWatchItem({ source: 'mail', from: 42, subject: null, body: '本文' })).toEqual({
+      source: 'mail',
+      from: '',
+      subject: '',
+      body: '本文',
+    });
+  });
+
+  it('金額の表記 (¥ の後ろ・円の前のどちらも数字が要る・間の空白は有っても無くてもよい)', async () => {
+    const mod = await reread();
+    const money = (body: string) => mod.readWatchSignals(item({ body })).money;
+    for (const body of ['A ¥100 B', 'A ¥ 100 B', 'A 100円 B', 'A 100 円 B']) expect(money(body), body).toBe(true);
+    for (const body of ['A ¥ のみ B', 'A ¥x B', '千円札', 'A x 円 B', '円高']) expect(money(body), body).toBe(false);
+  });
+
+  it('期限らしき表記 (3 つの形を、数字の桁ごと全部拾う)', async () => {
+    const mod = await reread();
+    const deadlines = (body: string) => mod.readWatchSignals(item({ body })).deadlines;
+    expect(deadlines('A 2026-11-25 B')).toEqual(['2026-11-25']);
+    expect(deadlines('A 2026/11/25 B')).toEqual(['2026/11/25']);
+    expect(deadlines('A 11月25日 B')).toEqual(['11月25日']);
+    expect(deadlines('A 11/25 B')).toEqual(['11/25']);
+    // 数字でない並びは拾わない。
+    expect(deadlines('A xxxx-xx-xx B yy月zz日 C aa/bb D')).toEqual([]);
+  });
+
+  it('語の表を引く関数 (急ぎ・返事・日程・お金) は、読み直した側でも同じ表を見る', async () => {
+    const mod = await reread();
+    expect(mod.readWatchSignals(item({ body: '至急お願いします。ご確認ください。会議の請求書です。' }))).toEqual({
+      urgent: true,
+      needsReply: true,
+      meeting: true,
+      money: true,
+      deadlines: [],
+    });
+    expect(mod.readWatchSignals(item({ body: 'こんにちは。' }))).toEqual(NONE);
+  });
+
+  it('返信の下書き: 方向 5 つ × メール・スラックの全文と、書き換える箇所の数', async () => {
+    const mod = await reread();
+    const drafts = Object.fromEntries(
+      mod.WATCH_REPLY_INTENTS.flatMap((intent) =>
+        (['mail', 'slack'] as const).map((source) => [
+          `${source}/${intent}`,
+          mod.draftWatchReply(item({ source, from: '山田', subject: 'お見積り' }), intent),
+        ]),
+      ),
+    );
+    expect(Object.keys(drafts)).toHaveLength(10);
+    expect(drafts).toMatchSnapshot();
+    // 相手の名前が無ければ: メールは「ご担当者 様」・スラックは呼びかけを書かない。
+    expect(mod.draftWatchReply(item({ source: 'mail', from: '', subject: '' }), 'thanks')?.text).toContain('ご担当者 様');
+    expect(mod.draftWatchReply(item({ source: 'slack', from: '' }), 'thanks')?.text).toBe('ご連絡ありがとうございます。\n共有ありがとうございます。確認しました。');
+  });
+
+  it('平日の要約: 曜日の名前と群の見出し (読み直した側)', async () => {
+    const mod = await reread();
+    const digest = mod.buildWatchDigest([item({ from: '山田', subject: '【至急】確認', body: '至急です。' })], '2026-11-20');
+    expect(digest?.text).toMatchSnapshot();
+    expect(mod.buildWatchDigest([], '2026-11-20')).toBeNull();
   });
 });

@@ -76,6 +76,7 @@ export interface WatchWeekEntry extends Record<string, unknown> {
 /** その日を含む週の月曜日。読めなければ null。 */
 export function weekStartOf(iso: unknown): string | null {
   const weekday = isoWeekday(iso);
+  // Stryker disable next-line ConditionalExpression: 等価 —— 曜日が読めない日付は下の addIsoDays も null を返す (型の絞り込みのためだけに在る)
   if (weekday === null) return null;
   // 月曜 (1) なら 0 日・日曜 (0) なら 6 日戻る。
   return addIsoDays(iso, -((weekday + 6) % 7));
@@ -98,7 +99,9 @@ export function parseWatchWeek(input: { week?: unknown } & Partial<Record<WatchM
     const read = readEntryNumber(input[m.key]);
     if (read.kind === 'blank') continue;
     const label = `${WATCH_NUMBER_SOURCE_LABEL[m.source]}の${m.label}`;
-    if (read.kind !== 'number' || !Number.isInteger(read.value) || read.value < 0 || read.value > MAX_WATCH_METRIC) {
+    // Stryker disable next-line ConditionalExpression: 等価 —— 消しても下の行が Number.isInteger(undefined) で同じ文を出す (型の絞り込みのためだけに在る)
+    if (read.kind !== 'number') throw new Error(metricRangeRefusal(label));
+    if (!Number.isInteger(read.value) || read.value < 0 || read.value > MAX_WATCH_METRIC) {
       throw new Error(metricRangeRefusal(label));
     }
     values[m.key] = read.value;
@@ -265,12 +268,14 @@ export function buildWatchWeeklyReport(rows: readonly WatchWeekEntry[], week?: s
   }
   const unreadable = countUnreadableWatchWeeks(rows);
   const latest = [...byWeek.keys()].sort().pop();
-  const target = week ?? latest;
-  if (target === undefined || !byWeek.has(target)) return null;
+  // 記録が 1 件も無ければ `latest` は undefined で、Map はその鍵を持たない (下の 1 行で null になる)。
+  const target = (week ?? latest) as string;
+  const targetRow = byWeek.get(target);
+  if (targetRow === undefined) return null;
   // `target` は暦に在る日 (`byWeek` の鍵) なので、7 日前は必ず求まる。
   const previousWeek = addIsoDays(target, -7) as string;
   const hasPrevious = byWeek.has(previousWeek);
-  const cur = valuesOf(byWeek.get(target));
+  const cur = valuesOf(targetRow);
   const prev = valuesOf(byWeek.get(previousWeek));
 
   const metricRows: WatchMetricRow[] = WATCH_METRICS.map((m) => ({
@@ -285,11 +290,13 @@ export function buildWatchWeeklyReport(rows: readonly WatchWeekEntry[], week?: s
   const rates = ratesOf(cur, prev);
 
   const moves = metricRows
-    .flatMap((r) =>
-      r.changePct !== null && Math.abs(r.changePct) >= WATCH_MOVE_THRESHOLD_PCT
+    .flatMap((r) => {
+      // Stryker disable next-line ConditionalExpression: 等価 —— null は下の Math.abs で 0 になり、しきい値に届かない (型の絞り込みのためだけに在る)
+      if (r.changePct === null) return [];
+      return Math.abs(r.changePct) >= WATCH_MOVE_THRESHOLD_PCT
         ? [{ size: Math.abs(r.changePct), text: `${WATCH_NUMBER_SOURCE_LABEL[r.source]}の${r.label}が前の週より ${signedPct(r.changePct)} (${num(r.previous as number)} → ${num(r.current as number)} ${r.unit})` }]
-        : [],
-    )
+        : [];
+    })
     .sort((a, b) => b.size - a.size)
     .slice(0, MAX_WATCH_MOVES)
     .map((m) => m.text);

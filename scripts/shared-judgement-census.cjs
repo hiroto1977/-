@@ -530,6 +530,13 @@ const VERDICTS = {
     + '**読み手は renderer の VrioPage.tsx だけ**。main が import するのは `buildVrioSnapshot` と型 `VrioSnapshot` だけ '
     + '(main/clients/vrio.ts) で、それは id の一覧を返し null を返さない。ブラウザ版の読み手も同じ画面 1 枚 '
     + '(data/snapshot.ts は `buildVrioSnapshot` だけ) なので、「no のあとの動作」は 1 か所にしか無い',
+  watchAssistant:
+    '非対称は起きない (実測・2026-11-21) —— 否定で答えるのは `parseWatchItem` の `ok: false` (欄が読めない・長すぎる)・'
+    + '`buildWatchDigest` の null (材料が 0 件)・`draftWatchReply` の null (予定には返信しない) の 3 つで、'
+    + '**読み手は renderer の WatchPage.tsx だけ** (data/watchWeekly.ts が読むのは曜日を出す `isoWeekday` だけで、それは null を返さない)。'
+    + 'main が import するのは `buildWatchSnapshot` と型 `WatchSnapshot` だけ (main/clients/watch.ts) で、それは材料の種類と'
+    + '返信の向きの一覧を返し null を返さない。ブラウザ版の読み手も同じ画面 1 枚 (data/snapshot.ts は `buildWatchSnapshot` だけ) '
+    + 'なので、「no のあとの動作」は 1 か所にしか無い',
   team:
     '非対称は起きない (実測・パス 551) —— この module が母集団に入ったのは `shared/mentor.ts` が '
     + '型 `Role` を import したため (型だけの辺・値は 1 つも読まない)。否定で答える `isRole` / `can` / '

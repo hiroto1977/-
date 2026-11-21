@@ -216,9 +216,9 @@ const WEEKDAY_NAMES = ['日', '月', '火', '水', '木', '金', '土'] as const
 export function isoWeekday(iso: unknown): number | null {
   const p = parseIsoDate(iso);
   if (p === null || p.day === null) return null;
-  const days = Math.round(utcMsFromParts(p.year, p.month, p.day) / 86_400_000);
-  // 1970-01-01 (0 日目) は木曜 (4)。負の日数でも 0〜6 に収まるよう 11 (= 7 + 4) を足す。
-  return ((days % 7) + 11) % 7;
+  // 曜日は暦の計算に任せる (日数を自分で割って余りを取る形は、割り算を掛け算に替えても 7 の余りが変わらず、
+  // 検査で見分けられない)。`utcMsFromParts` は UTC の 0 時なので、読むのも UTC の曜日。
+  return new Date(utcMsFromParts(p.year, p.month, p.day)).getUTCDay();
 }
 
 export interface WatchDigestEntry {
@@ -370,7 +370,7 @@ export const WATCH_NO_REPLY_FOR_CALENDAR = '予定には返信の下書きを作
  */
 export function draftWatchReply(item: WatchItem, intent: WatchReplyIntent): WatchReplyDraft | null {
   if (item.source === 'calendar') return null;
-  const from = item.from === '' ? '' : displayField(item.from, MAX_WATCH_FROM_CHARS);
+  const from = displayField(item.from, MAX_WATCH_FROM_CHARS);
   let text: string;
   if (item.source === 'mail') {
     const subject = item.subject === '' ? '【件名】' : `Re: ${displayField(item.subject, MAX_WATCH_SUBJECT_CHARS)}`;
