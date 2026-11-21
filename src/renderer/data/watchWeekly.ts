@@ -99,12 +99,12 @@ export function parseWatchWeek(input: { week?: unknown } & Partial<Record<WatchM
     const read = readEntryNumber(input[m.key]);
     if (read.kind === 'blank') continue;
     const label = `${WATCH_NUMBER_SOURCE_LABEL[m.source]}の${m.label}`;
-    // Stryker disable next-line ConditionalExpression: 等価 —— 消しても下の行が Number.isInteger(undefined) で同じ文を出す (型の絞り込みのためだけに在る)
-    if (read.kind !== 'number') throw new Error(metricRangeRefusal(label));
-    if (!Number.isInteger(read.value) || read.value < 0 || read.value > MAX_WATCH_METRIC) {
+    // Stryker disable next-line ConditionalExpression: 等価 —— 読めない入力は value を持たず、Number.isInteger(undefined) も false なので下の行が同じ文を出す (型の絞り込みのためだけに在る)
+    const value = read.kind === 'number' ? read.value : Number.NaN;
+    if (!Number.isInteger(value) || value < 0 || value > MAX_WATCH_METRIC) {
       throw new Error(metricRangeRefusal(label));
     }
-    values[m.key] = read.value;
+    values[m.key] = value;
   }
   if (Object.keys(values).length === 0) {
     throw new Error('数字が 1 つも入っていません（分かる数字だけで構いません。0 のときは 0 と入力してください）');
