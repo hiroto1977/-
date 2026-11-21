@@ -91,9 +91,21 @@ Three.js（`web/vendor` に同梱、ビルド不要）のボクセル風の村�
 - 動作確認用に `?selftest=1` を付けると、住民の移動数を数えて `@CFO` に話しかけます
 - 既定のカメラは「✋ 自由」です。村が大きくなっても自動では引きません。画面端にマウスを寄せるか WASD／矢印でスクロールして見て回ります（チャット入力中のキーは無効）。ミニマップをクリックしても移動できます。「🗺 全体」を押したときだけ引きます。スマホの指では、上下のスワイプで村（注視点）との距離が変わります（上で近づき、下で離れます）。2本指のピンチも距離を変えます（広げると近づき、狭めると離れます）。横へのスワイプは視点の回転です。マウスのドラッグ回転とホイールのズームはこれまでのままです。
 
+## ひな型の書き出し（共有）
+
+村の役割・建物の配置・議長と相談役の設定・会議の間隔・コネクタの種類・画面の初期設定だけを JSON にして、端末の中へ書き出します。ネットワークへは出しません。秘密、会議録、助言、チャット、企業の数値、個人の名前とメールは入れません。設定に秘密らしい値が混ざっているときは、ファイルを作らずに断ります。
+
+```bash
+python3 local-ai/council/village_template.py share --root local-ai/council
+python3 local-ai/council/village_template.py export --root local-ai/council --out /tmp/village-template.json
+python3 local-ai/council/village_template.py import --file /tmp/village-template.json --dest /tmp/my-village
+```
+
+中身の違う村へ上書きするときは `import --confirm` が要ります。同じひな型をもう一度取り込んでも、設定ファイルは書き直しません。画面の「ひな型を書き出す」は `POST /api/template/export` を呼び、`exports/village-template.json` の保存先を表示します。テスト: `python3 test_village_template.py`。
+
 ## 安全のための制限
 - できることは、このディレクトリへのファイル書き込みと読み取り専用の確認だけです。git push や外部への送信はしません
-- サーバーは 127.0.0.1 だけで待ち受け、POST はループバックかつ同一オリジンの JSON のみ受け付けます（4KB以下、本文500字まで）
+- サーバーは 127.0.0.1 だけで待ち受け、POST はループバックかつ同一オリジンの JSON のみ受け付けます（チャットは 4KB 以下・本文 500 字まで。ひな型の取り込みだけ 256KB までで、受け取った JSON は実行しません）
 - 画面上の文字はすべて textContent で表示し、HTMLとしては解釈しません
 - 空きメモリが `COUNCIL_MIN_FREE_MB`（既定1500MB）未満なら回を飛ばし、1回の呼び出しは `COUNCIL_TIMEOUT` 秒（既定240）で打ち切ります
 - 小さいモデルなので、内容は参考程度です（事実の誤りや中国語の混入があります）

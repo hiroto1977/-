@@ -50,6 +50,7 @@ import advice_guard
 import decision_lock
 import syntax_forms_guard
 import decision_loop
+import village_template
 GUARD_ON = os.environ.get("COUNCIL_ADVICE_GUARD", "1") != "0"          # 0で助言ガードを無効化
 GUARD_LLM = os.environ.get("COUNCIL_ADVICE_GUARD_LLM", "0") == "1"     # 1で検証モデル(fast)にも矛盾確認させる（メモリ節約のため既定は無効）
 LOCK_ON = os.environ.get("COUNCIL_DECISION_LOCK", "1") != "0"          # 0で固定決定ロックを無効化（通常は使わない）
@@ -514,7 +515,7 @@ class H(BaseHTTPRequestHandler):
     def send(self, b, ct, code=200):
         self.send_response(code); self.send_header("Content-Type", ct); self.send_header("Content-Length", str(len(b)))
         self.send_header("X-Content-Type-Options", "nosniff"); self.end_headers(); self.wfile.write(b)
-    def js(self, o): self.send(json.dumps(o, ensure_ascii=False).encode(), "application/json; charset=utf-8")
+    def js(self, o, code=200): self.send(json.dumps(o, ensure_ascii=False).encode(), "application/json; charset=utf-8", code)
     def do_GET(self):
         path = self.path.split("?")[0]
         if path == "/api/state": return self.js(api_state())
@@ -536,6 +537,25 @@ class H(BaseHTTPRequestHandler):
            or self.headers.get("Content-Type", "").split(";")[0] != "application/json":
             return self.send(b"forbidden", "text/plain", 403)
         n = int(self.headers.get("Content-Length", "0") or 0)
+        path = self.path.split("?")[0]
+        if path in ("/api/template/export", "/api/template/import"):
+            limit = 4096 if path == "/api/template/export" else 262144
+            if n > limit: return self.send(b"too large", "text/plain", 413)
+            try: body = json.loads(self.rfile.read(n) or b"{}")
+            except Exception: return self.send(b"bad", "text/plain", 400)
+            if not isinstance(body, dict): return self.send(b"bad", "text/plain", 400)
+            try:
+                if path == "/api/template/export":
+                    out = village_template.api_export(HERE, body)
+                else:
+                    out = village_template.api_import(HERE, body)
+            except village_template.SecretRejected:
+                return self.js({"ok": False, "error": "ひな型に秘密らしい値が含まれているため書き出しませんでした"}, 409)
+            except village_template.OverwriteRefused:
+                return self.js({"ok": False, "error": "確認なしでは既存の村の設定を上書きしません"}, 409)
+            except village_template.TemplateError:
+                return self.js({"ok": False, "error": "ひな型を受け付けませんでした"}, 400)
+            return self.js(out)
         if n > 4096: return self.send(b"too large", "text/plain", 413)
         if self.path == "/api/company/refresh":
             try: d = json.loads(self.rfile.read(n) or b"{}")
