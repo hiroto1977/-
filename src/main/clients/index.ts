@@ -280,6 +280,7 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'hydroponics',
   'charts',
   'quality',
+  // ストレージ最適化: Electron main の fs/os でディスク・フォルダ・メモリを実測。認証不要。
   'storage',
   // 士業: 個別の専門家連携で公式 API なし、永続的に snapshot-only。
   'tax-accountant',

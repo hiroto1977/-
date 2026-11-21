@@ -85,7 +85,10 @@ export const SERVICE_DATA_ORIGIN: Record<ServiceId, DataOrigin> = {
   stripe: 'remote',
   // 2026-11-18: アカウントの情報と今月の配信数を LINE から読む (`shared/api/line.ts`)。それまでは同梱の見本だった。
   line: 'remote',
-  storage: 'sample',
+  // 2026-11-21: ディスク使用量・大容量フォルダ・メモリを Electron main の
+  // `fs.statfs` / フォルダ走査 / `os` で実測する (`main/clients/storage.ts`)。
+  // 測れない指標 (断片化率・起動時間) は null (算定不能) で返す。それまでは同梱の見本だった。
+  storage: 'local',
   // 2026-11-18: 端末内の record store に登録した連絡先・相談・書類・顧問料が正
   // (`renderer/data/shigyoDirectory.ts`)。fetcher は見本を持たない空の土台を返す
   // (`shared/shigyoTypes.ts` の `buildShigyoSnapshot`)。それまでは同梱の見本だった。

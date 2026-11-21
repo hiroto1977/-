@@ -774,6 +774,13 @@ export const SNAPSHOT = {
       runningProcesses: 142,
       memoryUsedGb: 11.2,
       memoryTotalGb: 16.0,
+    } as {
+      // live 側 (clients/storage.ts) は測れない指標を null (算定不能) で返す
+      fragmentationPct: number | null;
+      startupSec: number | null;
+      runningProcesses: number | null;
+      memoryUsedGb: number;
+      memoryTotalGb: number;
     },
     recommendations: [
       'Cドライブの使用率 75.6% — 「Windows.old」削除 (32 GB 解放) を最優先で実施推奨',
