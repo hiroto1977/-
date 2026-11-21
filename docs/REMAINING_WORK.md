@@ -4,9 +4,12 @@
 
 本体のアプリとは別の物 (自社の API の入口の部品)。在る物・守っている規則は `zero-trust-gateway/README.md`。
 
-- **第 3 層 (WebAuthn) は在るが、実物で試していない** (2026-11-21 に作った) —— 検査はソフトで作った認証器で通している。残り:
-  1. **利用者が押す画面が無い** (在るのは API だけ)。ブラウザで `navigator.credentials.create / get` を呼び、DPoP の鍵 (取り出せない鍵) を作って
-     証明を付けるページが要る。
+- **第 3 層 (WebAuthn) は在るが、実物で試していない** (2026-11-21 に作った) —— 検査はソフトで作った認証器で、画面 (`/auth/`) はブラウザ (Chromium) の
+  試験用の認証器で通している。残り:
+  1. **画面のブラウザでの通しは手で回している** (CI では回していない)。pytest が見るのは出す物の形と書き方の決まりまで。回すなら e2e.yml の
+     ような手動の流れに、Python の入口 (ASGI の起動役) と Chromium の試験用の認証器を足す形になる —— 起動役 (`uvicorn` など) は
+     まだ `requirements.txt` に無い。Chromium の試験用の物理キーは登録のたびに新しい自作の証明書を作るので、物理キーの**登録**はブラウザで通せない
+     (登録済みの状態を用意して、確認だけを通した)。
   2. **実物の物理キーとスマホで、登録と確認を通す。** 物理キーの発行元の証明書 (`ATTESTATION_ROOTS_FILE`) と機種の一覧 (`ALLOWED_AAGUIDS`) は、
      使う機種の公開の値を置く (置くまで、物理キーは 1 本も登録できない)。FIDO の機種の台帳 (MDS) から自動で引く仕組みは無い。
   3. **スマホのパスキーは機種の証明を取らない** (同期されるパスキーは証明を出さない)。登録のときの端末を信用する前提 —— 登録コードを渡す道と、
@@ -20621,7 +20624,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/zero-fold-census.cjs。npm run lint:zero-fold は check だけ) -->
-合計 **113 ファイル / 288 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **116 ファイル / 294 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
@@ -20653,6 +20656,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/shared/taxSocialInsurance.ts` | 4 |
 | `src/shared/tradeTax.ts` | 4 |
 | `src/shared/waterCyclePlanner.ts` | 4 |
+| `src/main/clients/docker.ts` | 3 |
 | `src/main/clients/kpi.ts` | 3 |
 | `src/renderer/components/ShigyoConsole.tsx` | 3 |
 | `src/renderer/data/backup.ts` | 3 |
@@ -20664,6 +20668,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/shared/payroll.ts` | 3 |
 | `src/shared/securityRange.ts` | 3 |
 | `src/shared/taxConsumptionBusiness.ts` | 3 |
+| `src/main/clients/storage.ts` | 2 |
 | `src/renderer/App.tsx` | 2 |
 | `src/renderer/components/AxonometricCharts.tsx` | 2 |
 | `src/renderer/components/RecordShapeAuditPanel.tsx` | 2 |
@@ -20695,6 +20700,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/main/clients/cloudflare.ts` | 1 |
 | `src/main/clients/devEnv.ts` | 1 |
 | `src/main/clients/emotions.ts` | 1 |
+| `src/main/clients/obsidian.ts` | 1 |
 | `src/main/clients/ollama.ts` | 1 |
 | `src/main/oauth.ts` | 1 |
 | `src/main/userPresence.ts` | 1 |
