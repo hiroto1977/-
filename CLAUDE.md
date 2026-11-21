@@ -1986,6 +1986,8 @@ The browser target adds: `web-shim.ts` (a `window.serviceHub` polyfill imported 
   秘密を書かない・ファイアウォールと停止スイッチは既定が dry-run・層は `src/layerN_*/` に分ける・層ごとに検査を付ける
   (`zero-trust-gateway/README.md`)。**既定のままでは、トークンを 1 枚も出さない** (認証器も登録コードの置き場も空) —— 意図した動き。
   第 3 層 (WebAuthn · 2026-11-21) の認証の状態は端末の鍵 (DPoP の鍵の指紋) に結び付け、クッキーや合言葉を配らない。
+  利用者が押す画面 (`GET /auth/` · `src/layer3_fido2/page.{html,css,js}`) は外の物を読まない 1 枚で、CSP は中身のハッシュだけを許す ——
+  画面へ字を出すのは `textContent` だけ・鍵は取り出せない形・許可はメモリだけ (`tests/layer3/test_l3_page.py` が見る)。
   守りを足したら、対照 (壊して検査が落ちる) を回す。
 - **対照を回すまで、検査は信用しない。** 守っている物を実際に壊し、狙った項目が
   落ちることを見る。**鳴らない対照は「合格」ではなく「その検査についての報せ」である。**

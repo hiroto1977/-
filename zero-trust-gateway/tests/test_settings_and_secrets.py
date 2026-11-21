@@ -83,7 +83,7 @@ JWS = re.compile(r"eyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}")
 LONG_LITERAL = re.compile(r"""["'][A-Za-z0-9+/_-]{40,}={0,2}["']""")
 # 名前が秘密を指す代入に、空でない文字列を直に書いた形。
 ASSIGNED = re.compile(r"""(?i)\b\w*(password|passwd|secret|api_?key|private_?key)\w*\s*=\s*["'][^"']{6,}["']""")
-SCANNED_SUFFIXES = {".py", ".md", ".txt", ".in", ".ini", ".nft", ".example", ".toml", ".yml", ".json"}
+SCANNED_SUFFIXES = {".py", ".js", ".html", ".css", ".md", ".txt", ".in", ".ini", ".nft", ".example", ".toml", ".yml", ".json"}
 
 
 def findings(text: str) -> list[str]:

@@ -1,0 +1,84 @@
+:root {
+  color-scheme: light dark;
+  --bg: #f7f7f5;
+  --panel: #ffffff;
+  --text: #1c1c1a;
+  --muted: #55554f;
+  --line: #7a7a72;
+  --accent: #1d4ed8;
+  --on-accent: #ffffff;
+  --danger: #b42318;
+  --ok: #1a7f37;
+  --warn: #9a5b00;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141413;
+    --panel: #1f1f1d;
+    --text: #f1f1ec;
+    --muted: #c4c4bc;
+    --line: #8d8d84;
+    --accent: #8fb0ff;
+    --on-accent: #0b1020;
+    --danger: #ff8a7a;
+    --ok: #6fd38a;
+    --warn: #f0b860;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Hiragino Sans", "Noto Sans JP", sans-serif;
+  line-height: 1.7;
+}
+main { max-width: 34rem; margin: 0 auto; padding: 16px; }
+h1 { font-size: 1.4rem; margin: 0.5rem 0; }
+h2 { font-size: 1.1rem; margin: 0 0 0.5rem; }
+section {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 16px;
+  margin: 16px 0;
+}
+p { margin: 0 0 0.75rem; overflow-wrap: anywhere; }
+.lead, .hint { color: var(--muted); }
+.hint { font-size: 0.9rem; }
+.msg { min-height: 1.7em; font-weight: 600; }
+.msg[data-tone="error"] { color: var(--danger); }
+.msg[data-tone="ok"] { color: var(--ok); }
+.state { font-weight: 600; }
+.state[data-strength="strong"] { color: var(--ok); }
+.state[data-strength="single"] { color: var(--warn); }
+fieldset { border: 1px solid var(--line); border-radius: 8px; margin: 0 0 12px; padding: 8px 12px; }
+legend { padding: 0 4px; }
+.choice { display: flex; align-items: center; gap: 8px; min-height: 44px; }
+label { display: block; }
+input[type="password"] {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px;
+  font: inherit;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+input[type="radio"] { width: 20px; height: 20px; margin: 0; }
+button {
+  min-height: 44px;
+  padding: 8px 16px;
+  font: inherit;
+  color: var(--text);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  cursor: pointer;
+}
+button.primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+button.danger { color: var(--danger); border-color: var(--danger); }
+button:disabled { opacity: 0.55; cursor: not-allowed; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+code { overflow-wrap: anywhere; }
