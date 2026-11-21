@@ -30,6 +30,7 @@ import { buildRealEstateSnapshot } from '../../shared/realEstateSnapshot';
 import { buildMutualFundsSnapshot } from '../../shared/mutualFundsSnapshot';
 import { buildA8netSnapshot } from '../../shared/a8netSnapshot';
 import { buildVrioSnapshot } from '../../shared/vrio';
+import { buildWatchSnapshot } from '../../shared/watchAssistant';
 
 /**
  * 見本の画像は **インライン (`data:`) にする**。
@@ -1141,6 +1142,7 @@ export const SNAPSHOT = {
 
   /** VRIO 分析: 階層・職種・判定の台帳の見出しだけ。評価と企画の中身は画面の入力に在り、ここには持たない。 */
   vrio: buildVrioSnapshot(),
+  watch: buildWatchSnapshot(),
 
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)
 

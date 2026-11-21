@@ -42,6 +42,7 @@ const NO_FAILURE_BADGE: Readonly<Record<string, 'no-status-bar' | 'bar-without-f
   mentor: 'no-status-bar',
   grok: 'no-status-bar',
   vrio: 'no-status-bar',
+  watch: 'no-status-bar',
   library: 'bar-without-fetch',
   settings: 'bar-without-fetch',
 };
@@ -100,10 +101,10 @@ const labels = (): string[] =>
   Array.from(container.querySelectorAll('.status-bar button')).map((b) => (b.textContent ?? '').trim());
 
 describe('取得が断られたときの札', () => {
-  it('母集団: 取得して札を出す画面は 50・見本の画面は 15・札を出さない画面は 12 (合わせてサイドバーの全画面)', () => {
+  it('母集団: 取得して札を出す画面は 50・見本の画面は 15・札を出さない画面は 13 (合わせてサイドバーの全画面)', () => {
     expect(FETCHING).toHaveLength(50);
     expect(SAMPLE).toHaveLength(15);
-    expect(Object.keys(NO_FAILURE_BADGE)).toHaveLength(12);
+    expect(Object.keys(NO_FAILURE_BADGE)).toHaveLength(13);
     expect(FETCHING.length + SAMPLE.length + Object.keys(NO_FAILURE_BADGE).length).toBe(SERVICES.length);
     for (const id of Object.keys(NO_FAILURE_BADGE)) expect(SERVICES.some((s) => s.id === id), id).toBe(true);
   });

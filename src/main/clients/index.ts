@@ -77,6 +77,7 @@ import { fetchHydroponicsSnapshot } from './hydroponics';
 import { fetchMentorSnapshot } from './mentor';
 import { fetchGrokSnapshot } from './grok';
 import { fetchVrioSnapshot } from './vrio';
+import { fetchWatchSnapshot } from './watch';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import { SERVICE_IDS, type ServiceId } from '../../shared/serviceId';
@@ -163,6 +164,7 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   mentor: fetchMentorSnapshot,
   grok: fetchGrokSnapshot,
   vrio: fetchVrioSnapshot,
+  watch: fetchWatchSnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
@@ -265,6 +267,8 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'grok',
   // VRIO 分析: 算定と判定は shared/vrio.ts の純関数、入力は画面の中だけ。認証・通信・保存なし。
   'vrio',
+  // 見張りアシスタント: 要約と下書きは shared/watchAssistant.ts の純関数、週ごとの数字は renderer の record store。認証・通信なし。
+  'watch',
   'templates',
   'library',
   'settings',

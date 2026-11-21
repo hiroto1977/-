@@ -47,6 +47,7 @@ import { FREE_CONNECTOR_REGISTRY } from '../../../shared/connectors/freeConnecto
 import { addCheckIn, answerQuestion, emptyMentorSession, setRelation } from '../../../shared/mentor';
 import { parseAssignment } from '../../../shared/workAssignment';
 import { parseA8netReward } from '../a8netRewards';
+import { parseWatchWeek } from '../watchWeekly';
 
 /** IndexedDB / バックアップと同じ往復 (structured clone は NaN を残すが、バックアップ JSON は null にする)。 */
 const viaJson = (v: unknown): Record<string, unknown> => JSON.parse(JSON.stringify(v)) as Record<string, unknown>;
@@ -216,6 +217,11 @@ describe('書く側の出力 → collectionShapes (往復)', () => {
   it('work-assignments: 実物の書き手 (parseAssignment) の出力', () => {
     roundTrips('work-assignments', parseAssignment({ member: 'a@example.com', title: '月次決算', hoursPerWeek: '8' }), 'no-note');
     roundTrips('work-assignments', parseAssignment({ member: 'a@example.com', title: '月次決算', hoursPerWeek: '2.5', note: '締め日まで' }), 'note');
+  });
+
+  it('watch-weekly: 実物の書き手 (parseWatchWeek) の出力', () => {
+    roundTrips('watch-weekly', parseWatchWeek({ week: '2026-11-18', xPosts: '12', adCost: '30,000', gaSessions: 2400 }), 'some');
+    roundTrips('watch-weekly', parseWatchWeek({ week: '2026-11-16', xFollowers: 0 }), 'zero');
   });
 
   it('a8net-rewards: 実物の書き手 (parseA8netReward) の出力', () => {

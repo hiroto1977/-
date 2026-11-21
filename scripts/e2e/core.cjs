@@ -3854,6 +3854,58 @@ async function demoMixSuite(browser) {
     `demoMix: ★ A8.net — 記録した自分の成果がそのまま合計になり、状態を「確定」に変えると確定報酬へ移る — 実際 ${JSON.stringify(a8Tile)}`,
   );
 
+  // --- 見張りアシスタント: 貼り付けた文から要約と下書きを、週ごとの数字から週次レポートを作る ---
+  //
+  // 2026-11-21: この画面は端末の外へ出す口を持たない (送信も投稿もしない)。貼り付けた文は画面の中だけに在り、
+  // 週ごとの数字は端末の record store に置く。同じ週の 2 件目は断る。
+  await page.goto(FILE + '#/watch', { waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('[data-watch-owner-note]', { timeout: 30000 });
+  ok(
+    ((await page.locator('[data-watch-owner-note]').textContent()) ?? '').includes('送信も投稿もしません')
+      && (await page.locator('[data-watch-item]').count()) === 0
+      && (await page.locator('[data-watch-week]').count()) === 0,
+    'demoMix: ★ 見張りアシスタント — 開いた直後は材料も週の記録も 0 件で、送信も投稿もしないと断っている',
+  );
+  await page.locator('input[aria-label="相手の名前"]').fill('E2E商事');
+  await page.locator('input[aria-label="件名"]').fill('お見積りの件');
+  await page.locator('textarea[aria-label="本文"]').fill('至急ご確認ください。11月25日までにお願いします。');
+  await page.getByRole('button', { name: '＋ 材料を渡す' }).click();
+  await page.waitForSelector('[data-watch-item]', { timeout: 15000 });
+  await page.locator('[data-watch-digest]').click();
+  await page.waitForSelector('[data-watch-answer-text]', { timeout: 15000 });
+  const watchDigest = (await page.locator('[data-watch-answer-text]').first().textContent()) ?? '';
+  ok(
+    watchDigest.includes('【平日の要約】') && watchDigest.includes('■ 至急 (1 件)') && watchDigest.includes('E2E商事 — お見積りの件'),
+    `demoMix: ★ 見張りアシスタント — 渡した文が「至急」として平日の要約に並ぶ — 実際 ${JSON.stringify(watchDigest.slice(0, 160))}`,
+  );
+  await page.locator('button[aria-label="「お見積りの件」への返信の下書きを作る"]').click();
+  await page.waitForFunction(() => document.querySelectorAll('[data-watch-answer-text]').length === 2, undefined, { timeout: 15000 });
+  const watchDraft = (await page.locator('[data-watch-answer-text]').nth(1).textContent()) ?? '';
+  ok(
+    watchDraft.includes('件名: Re: お見積りの件') && watchDraft.includes('E2E商事 様') && watchDraft.includes('【自分の名前】'),
+    `demoMix: ★ 見張りアシスタント — 返信の下書きは宛名と件名を入れ、書き換える箇所を【 】で残す — 実際 ${JSON.stringify(watchDraft.slice(0, 120))}`,
+  );
+  await page.locator('input[aria-label="週の日付"]').fill('2026-11-18');
+  await page.locator('input[aria-label="エックス (X)の投稿数"]').fill('12');
+  await page.getByRole('button', { name: '＋ この週を記録' }).click();
+  await page.waitForSelector('[data-watch-week-saved]', { timeout: 15000 });
+  // 同じ週 (月曜にそろえて 2026-11-16) の 2 件目は断る。
+  await page.locator('input[aria-label="エックス (X)の投稿数"]').fill('99');
+  await page.getByRole('button', { name: '＋ この週を記録' }).click();
+  await page.waitForSelector('[data-watch-week-error]', { timeout: 15000 });
+  const watchRefusal = (await page.locator('[data-watch-week-error]').textContent()) ?? '';
+  await page.locator('[data-watch-report]').click();
+  await page.waitForFunction(() => document.querySelectorAll('[data-watch-answer-text]').length === 3, undefined, { timeout: 15000 });
+  const watchReport = (await page.locator('[data-watch-answer-text]').nth(2).textContent()) ?? '';
+  const watchWeeks = await page.locator('[data-watch-week]').count();
+  ok(
+    watchRefusal.includes('2026-11-16 の週は記録済みです')
+      && watchWeeks === 1
+      && watchReport.includes('【週次レポート】2026-11-16 の週')
+      && watchReport.includes('・投稿数: 12 件'),
+    `demoMix: ★ 見張りアシスタント — 週の数字は月曜にそろえて 1 件だけ入り (同じ週の 2 件目は断る)、週次レポートに出る — 実際 ${watchWeeks} 件 / ${JSON.stringify(watchReport.slice(0, 120))}`,
+  );
+
   ok(errs.length === 0, `demoMix: コンソールエラー 0 件 (${errs.join(' | ')})`);
   await ctx.close();
 }
@@ -6291,7 +6343,8 @@ function installWaitMarginRecorder(browser) {
     ['talent', talentSuite, 14],
     ['teamRadar', teamRadarSuite, 17],
     // 2026-11-19: 不動産・投資信託・士業が端末内の記録だけになり、「見本が混ざる断り」から「見本を混ぜていない」へ書き直した = 9
-    ['demoMix', demoMixSuite, 11],
+    // 2026-11-21: 見張りアシスタント (要約・下書き・週次レポート・同じ週の 2 件目を断る) で +4
+    ['demoMix', demoMixSuite, 15],
     ['paperAccount', paperAccountSuite, 13],
     // 2026-11-19: 登録が 0 件のとき押す前に言う (不動産・投資信託) を足した = +2
     ['serviceAdvice', serviceAdviceSuite, 17],

@@ -40,6 +40,7 @@ import { hasCollectionShape } from '../collectionShapes';
 import { auditRecordShapes } from '../recordShapeAudit';
 import { MEMBERS_COLLECTION } from '../members';
 import { A8NET_REWARDS_COLLECTION } from '../a8netRewards';
+import { WATCH_WEEKLY_COLLECTION } from '../watchWeekly';
 import { SALES_COLLECTION } from '../sales';
 import { KPI_ACTUALS_COLLECTION } from '../kpiActuals';
 import { BALANCE_SHEET_COLLECTION } from '../balanceSheet';
@@ -87,6 +88,8 @@ const KPI_BAD_AMOUNT = { period: '2026-04', unit: 'A', revenue: null, cogs: 0, a
 const KPI_OK = { period: '2026-04', unit: 'A', revenue: 1, cogs: 0, advertising: 0, sga: 0, depreciation: 0 };
 const MEMBER_OK = { name: '山田', email: 'a@example.com', role: 'member' };
 // 発生月が読めない成果 —— 形の表は発生月を文字列としてだけ見るので通る (読み手が合計から外す)。
+const WATCH_WEEK_OK = { week: '2026-11-16', xPosts: 12 };
+const WATCH_WEEK_BAD = { week: 'bad', xPosts: 12 };
 const A8NET_BAD_MONTH = { month: 'bad', program: '案件', amount: 1000, status: 'confirmed' };
 // 貸借対照表の欄が数でない —— 形の表 (`currentAssets: num`) が断る側 (パス 444)。
 // **内数 ≦ 親項目** (`recordRelations.ts`) も同時に満たす必要があるので、
@@ -244,6 +247,22 @@ const LEDGER: readonly Row[] = [
     file: 'src/renderer/data/chatbotOllama.ts',
     kinds: ['other-screen'],
     why: '**記録ではなくモデルについての文** —— AI コンシェルジュに行き先を選ぶ口が無いので、導入済みの一覧が出る「オラマ」の画面を名乗る (パス 449)。',
+  },
+  {
+    fn: 'unreadableWatchWeeksNote',
+    file: 'src/renderer/data/watchWeekly.ts',
+    kinds: ['list-x'],
+    collection: WATCH_WEEKLY_COLLECTION,
+    sample: WATCH_WEEK_BAD,
+    why: '週の日付が読めない記録は形の表を通る (`week: str`) ので、復元でも落ちず見張りアシスタントの画面の一覧に出ていて × で消せる。一覧は読めない行も並べる。',
+  },
+  {
+    fn: 'duplicateWatchWeekMessage',
+    file: 'src/renderer/data/watchWeekly.ts',
+    kinds: ['list-x'],
+    collection: WATCH_WEEKLY_COLLECTION,
+    sample: WATCH_WEEK_OK,
+    why: '同じ週の 2 件目を断るときの文。既に在る週の記録は形の表を通る正しい行で、同じ画面の「記録した週」の一覧に出ていて × で消せる。',
   },
   {
     fn: 'unreadableA8netRewardsNote',

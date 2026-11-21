@@ -122,6 +122,7 @@ export const SERVICE_DATA_ORIGIN: Record<ServiceId, DataOrigin> = {
   // 2026-11-19: 判定は画面の入力から shared の純関数が作り、fetcher は階層・職種・
   // 判定の台帳の見出しだけを返す。それまでは同梱の見本だった。
   vrio: 'local',
+  watch: 'local',
   youtube: 'remote',
   // 2026-11-19: 集約は renderer 側 (record store + 純粋関数) で、fetcher は空の土台を
   // 返す。それまでは同梱の見本だった。

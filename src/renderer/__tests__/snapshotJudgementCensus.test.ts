@@ -175,6 +175,12 @@ const LEDGER: readonly { file: string; handler: string; kind: 'export' | 'apply-
     why: '実績・予算・貸借対照表の「×」は行の id で消す (写しで判定しない)。行の中身は「元に戻す」のための控えに取るだけで、戻すのは利用者が消す直前に見ていた中身そのものである。実績と予算は、戻すときに保管層を読み直して同じ期・事業が在れば戻さない (追加と同じ判定)。',
   },
   {
+    file: 'src/renderer/pages/WatchPage.tsx',
+    handler: 'onReport',
+    kind: 'show',
+    why: '画面に出している週ごとの数字から週次レポートの文を組んで見せるだけで、保管層へは書かない。同じ週が既に在るかの判定 (`onSaveWeek`) は `readCollectionNow` で保管層を読み直す。',
+  },
+  {
     file: 'src/renderer/pages/SalesPage.tsx',
     handler: 'onExport',
     kind: 'export',
@@ -258,6 +264,8 @@ const READS_STORE_FOR_JUDGEMENT = [
   // 同じ欄を水耕栽培の運転管理の画面にも置くため。断りを出すのは部品の側である。
   'src/renderer/components/CropListEditor.tsx',
   'src/renderer/components/ManualDataSection.tsx',
+  // 見張りアシスタントの週ごとの数字: 同じ週の 2 件目を断る (2026-11-21)。
+  'src/renderer/pages/WatchPage.tsx',
 ] as const;
 
 describe('判定と書き込みの相手は購読の写しではなく保管層 (パス 384 / 497)', () => {
