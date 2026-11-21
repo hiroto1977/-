@@ -31,7 +31,7 @@ class StaticAuthn:
     def __init__(self, state: AuthnState | None) -> None:
         self.state = state
 
-    def current(self, headers: Mapping[str, str]) -> AuthnState | None:
+    def current(self, headers: Mapping[str, str], *, jkt: str, now: float) -> AuthnState | None:
         return self.state
 
 
