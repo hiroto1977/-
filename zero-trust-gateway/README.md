@@ -37,7 +37,9 @@ python3.12 -m venv .venv
 .venv/bin/python -m pytest
 ```
 
-依存は `requirements.txt` に版とハッシュで固定しています。足すときは `requirements.in` を書き換えて、
+リポジトリの CI (`.github/workflows/ci.yml`) も同じ手順で回します。
+
+依存は `requirements.txt` に版とハッシュで固定しています (一覧の形は `npm run lint:deps` の規則 12 が見て、毎日の弱点チェックが OSV へ照会します)。足すときは `requirements.in` を書き換えて、
 `uv pip compile requirements.in --generate-hashes --python-version 3.12 -o requirements.txt` で作り直します。
 
 ## 道具
