@@ -163,9 +163,9 @@ describe('workflow の構造 — 書き方の揺れでゲートを迂回でき�
     expect(gate.structureProblems('x.yml', `${HEAD}      - uses: actions/checkout@${'c'.repeat(40)} # v1\n`)).toEqual([]);
   });
 
-  it('★ 実物の workflow 7 本は新しい構造の規則を通る (今 0 件)', () => {
+  it('★ 実物の workflow 8 本は新しい構造の規則を通る (今 0 件)', () => {
     const dir = path.join(__dirname, '../../../.github/workflows');
-    for (const f of ['ci.yml', 'pages.yml', 'release.yml', 'mutation.yml', 'e2e.yml', 'dependency-audit.yml', 'knowledge-auto.yml']) {
+    for (const f of ['ci.yml', 'pages.yml', 'release.yml', 'mutation.yml', 'e2e.yml', 'dependency-audit.yml', 'knowledge-auto.yml', 'gateway-browser.yml']) {
       const text = readOriginalSource(path.join(dir, f));
       expect(gate.structureProblems(f, text), f).toEqual([]);
     }

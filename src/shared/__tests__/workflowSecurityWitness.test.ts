@@ -92,7 +92,7 @@ describe('lint:workflow-security — 外側の証人', () => {
 });
 
 /*
- * **実物の 7 本の workflow は、GitHub 自身の action も SHA で固定し、checkout は資格情報を残さない**
+ * **実物の 8 本の workflow は、GitHub 自身の action も SHA で固定し、checkout は資格情報を残さない**
  * (2026-10-15 · パス 522 · threat: T-056 / T-057)。実測 (直す前): `actions/*` の 30 か所はすべて
  * 版のタグ (`@v5` —— GitHub が動かす major タグ) で、checkout 10 か所はどれも既定の
  * `persist-credentials: true` のまま `npm ci` と組み立てへ `GITHUB_TOKEN` を残していた。
@@ -104,11 +104,11 @@ describe('実物の workflow — actions/* の SHA 固定と checkout の persis
   const files = readdirSync(dir).filter((f) => f.endsWith('.yml')).sort();
   const texts = files.map((f) => [f, readFileSync(path.join(dir, f), 'utf8')] as const);
 
-  it('走査が生きている (workflow は 7 本)', () => {
-    expect(files).toHaveLength(7);
+  it('走査が生きている (workflow は 8 本)', () => {
+    expect(files).toHaveLength(8);
   });
 
-  it('★ 実物の 7 workflow は actions/* を全部 40 桁の SHA で固定し、版を注記に残す (threat: T-057)', () => {
+  it('★ 実物の 8 workflow は actions/* を全部 40 桁の SHA で固定し、版を注記に残す (threat: T-057)', () => {
     let seen = 0;
     for (const [f, text] of texts) {
       for (const line of text.split('\n')) {
@@ -122,7 +122,7 @@ describe('実物の workflow — actions/* の SHA 固定と checkout の persis
     expect(seen).toBeGreaterThanOrEqual(30);
   });
 
-  it('★ 実物の checkout 11 か所はすべて persist-credentials: false (threat: T-056)', () => {
+  it('★ 実物の checkout 12 か所はすべて persist-credentials: false (threat: T-056)', () => {
     let seen = 0;
     for (const [f, text] of texts) {
       const lines = text.split('\n');
@@ -134,10 +134,10 @@ describe('実物の workflow — actions/* の SHA 固定と checkout の persis
         expect(step, `${f}:${i + 1} の checkout`).toMatch(/persist-credentials:\s*false/);
       });
     }
-    expect(seen).toBe(11);
+    expect(seen).toBe(12);
   });
 
-  it('★ 7 本の workflow と dependabot.yml は整合性チェーンの保護対象 (threat: T-058)', () => {
+  it('★ 8 本の workflow と dependabot.yml は整合性チェーンの保護対象 (threat: T-058)', () => {
     const chain = req('../../../scripts/integrity-chain.cjs') as { PROTECTED: readonly string[] };
     for (const f of files) expect(chain.PROTECTED, f).toContain(`.github/workflows/${f}`);
     expect(chain.PROTECTED).toContain('.github/dependabot.yml');
@@ -414,7 +414,7 @@ describe('lint:workflow-security — ローカル action と run: の本文 (thr
   it('★ 実物の workflow にローカル action・docker://・危険な run: は 0 件 (走査が生きている)', () => {
     const dir = path.resolve(__dirname, '../../../.github');
     const all = readdirSync(path.join(dir, 'workflows')).filter((f) => f.endsWith('.yml'));
-    expect(all).toHaveLength(7);
+    expect(all).toHaveLength(8);
     for (const f of all) {
       const t = readFileSync(path.join(dir, 'workflows', f), 'utf8');
       expect(t, f).not.toMatch(/^\s*-?\s*uses:\s*(\.\/|docker:\/\/)/m);

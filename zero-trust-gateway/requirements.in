@@ -8,3 +8,5 @@ pytest
 hypothesis
 webauthn
 cbor2
+# 第 3 層の画面をブラウザで通す検査が、入口を手元で動かすのに使う (tests/browser)。
+uvicorn
