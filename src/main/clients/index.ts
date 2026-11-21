@@ -279,7 +279,6 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   // 水耕栽培の運転管理: 台帳は shared に在り、記録は renderer の record store。認証・通信なし。
   'hydroponics',
   'charts',
-  'quality',
   'storage',
   // 士業: 個別の専門家連携で公式 API なし、永続的に snapshot-only。
   'tax-accountant',

@@ -155,7 +155,6 @@ const PRAGMA_BARE = {
   'src/main/clients/linux.ts':                   1,
   'src/main/clients/mutual-funds.ts':            3,
   'src/main/clients/ollama.ts':                  1,
-  'src/main/clients/quality.ts':                 2,
   'src/main/clients/real-estate.ts':             3,
   'src/main/clients/settings.ts':                2,
   'src/main/clients/shopify.ts':                 2,

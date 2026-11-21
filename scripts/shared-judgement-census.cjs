@@ -229,6 +229,13 @@ const VERDICTS = {
     + '`sentryIntakeNote` → null / `sentryScopeNote` → null / `orgsRead` `issuesAsked` `issuesRead` の false) の'
     + '**消費者はどれも SentryPage 1 つだけ**で、その画面は両ビルドで同じ 1 本のソースである。'
     + '読めなかった重大度・発生回数・最終発生日は「読めません」・読めなかった一覧は ⚠ の 1 文で、どちらのビルドでも同じ文になる',
+  'api/quality':
+    '対称 (実測・2026-11-21) —— 両ビルドが同じ `fetchQualitySnapshotWith` を呼び (main は clients/quality.ts、'
+    + 'ブラウザ版は network/liveRead.ts)、否定を返す物 (`readWorkflowRun` → null = 履歴なし / '
+    + '`countTestFiles` → null = trees 応答が truncated で数えない / `parseQualityReport` の読めなかった行 → null / '
+    + '`readQualityReport` → null = QUALITY.md が読めない / 日付の `displayDateOf` → null) の'
+    + '**消費者はどれも QualityPage 1 つだけ**で、その画面は両ビルドで同じ 1 本のソースである。'
+    + '読めなかった項目は「—」・履歴が無ければ「履歴なし」・実測が読めなければ「取得できませんでした」の 1 文で、どちらのビルドでも同じ文になる',
   safeFilename:
     '対称 (実測・2026-10-24 · T-177) —— isSafeFilename が no と言ったあとの動作は 4 つの消費者で同じ '
     + '「その名前では書かない・開かない」: ライブラリの put と FSA の書き込み (renderer) は filename が不正です で投げ、'

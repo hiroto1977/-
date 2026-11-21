@@ -46,7 +46,7 @@ const EXPECTED: ReadonlyArray<readonly [ServiceId, CredentialUse]> = [
   ['real-estate', 'none'],
   ['mutual-funds', 'none'],
   ['charts', 'none'],
-  ['quality', 'none'],
+  ['quality', 'fetch'],
   ['microsoft-365', 'fetch'],
   ['dropbox', 'fetch'],
   ['salesforce', 'none'],
@@ -135,10 +135,10 @@ describe('SERVICE_CREDENTIAL_USE', () => {
 
   it('3 分類の件数を固定する', () => {
     const count = (u: CredentialUse) => EXPECTED.filter(([, v]) => v === u).length;
-    expect(count('fetch')).toBe(22);
+    expect(count('fetch')).toBe(23);
     // shopify が `action` → `none` (パス 452)。
     expect(count('action')).toBe(7);
-    expect(count('none')).toBe(51);
+    expect(count('none')).toBe(50);
   });
 
   it('監査で見つかった 9 件は none のままである', () => {
@@ -183,9 +183,9 @@ describe('unusedStoredCredentials', () => {
   });
 
   it('順序は入力のまま (画面の並びを勝手に変えない)', () => {
-    expect(unusedStoredCredentials(['salesforce', 'quality', 'shopify'])).toEqual([
+    expect(unusedStoredCredentials(['salesforce', 'uber-eats', 'shopify'])).toEqual([
       'salesforce',
-      'quality',
+      'uber-eats',
       'shopify',
     ]);
   });

@@ -32,6 +32,7 @@ export const BROWSER_LIVE_READ_SERVICES: readonly string[] = Object.freeze([
   'dropbox',
   'line',
   'linear',
+  'quality',
   'sentry',
   'stripe',
 ]);

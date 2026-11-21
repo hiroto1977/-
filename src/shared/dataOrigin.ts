@@ -68,7 +68,9 @@ export const SERVICE_DATA_ORIGIN: Record<ServiceId, DataOrigin> = {
   // 見本データは「仮想データ」と明示した検証用)。fetcher はサービスのメタ情報を返す。
   // それまでは同梱の見本だった。
   charts: 'local',
-  quality: 'sample',
+  // 2026-11-21: このリポジトリ自身の品質状態を GitHub API から読む (`shared/api/quality.ts`)。
+  // それまでは裏付けのない見本の数字 (手書きのテスト件数・レビュー深刻度・成果物サイズ) を返していた。
+  quality: 'remote',
   'microsoft-365': 'remote',
   dropbox: 'remote',
   salesforce: 'sample',

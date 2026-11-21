@@ -42,6 +42,7 @@ import { fetchLinearSnapshotWith } from '../../shared/api/linear';
 import { fetchSentrySnapshotWith } from '../../shared/api/sentry';
 import { fetchDiscordSnapshotWith } from '../../shared/api/discord';
 import { fetchDropboxSnapshotWith } from '../../shared/api/dropbox';
+import { fetchQualitySnapshotWith } from '../../shared/api/quality';
 import { lookup } from '../../shared/lookup';
 
 /** 通信手段。`fetchSnapshot` と同じく JSON として読めた本体を返す。 */
@@ -99,8 +100,13 @@ interface LiveReader {
  * `dropbox` (2026-11-19): アカウント・容量・最近のアイテム (読み取りだけ・POST 3 つ)。同じくプロキシを通す ——
  * `api.dropboxapi.com` へもこの開発環境からは届かない。プロキシの許可リストに `api.dropboxapi.com` を足して使う。
  * トークンは利用者が Dropbox App Console で作る自前アプリのもの (権限は読み取りだけ)。
+ *
+ * `quality` (2026-11-21): このリポジトリ自身の品質状態 (最新コミット・CI / 変異検査の最新実行・
+ * テストファイル数・PR 件数とレビュー状態・`docs/QUALITY.md` の実測) を GitHub API から読む
+ * (読み取りだけ・GET のみ)。同じくプロキシを通す。プロキシの許可リストに `api.github.com` を足して使う。
+ * トークンは GitHub の PAT (このリポジトリの読み取り)。
  */
-export const LIVE_READERS: Readonly<Record<string, LiveReader>> = { cursor: { read: (jsonFetch, token, nowMs) => fetchCursorSnapshotWith(jsonFetch, token, nowMs, DEFAULT_USAGE_DAYS) }, stripe: { read: (jsonFetch, token) => fetchStripeSnapshotWith(jsonFetch, token) }, asana: { read: (jsonFetch, token) => fetchAsanaSnapshotWith(jsonFetch, token) }, line: { read: (jsonFetch, token) => fetchLineSnapshotWith(jsonFetch, token) }, linear: { read: (jsonFetch, token) => fetchLinearSnapshotWith(jsonFetch, token) }, sentry: { read: (jsonFetch, token) => fetchSentrySnapshotWith(jsonFetch, token) }, discord: { read: (jsonFetch, token) => fetchDiscordSnapshotWith(jsonFetch, token) }, dropbox: { read: (jsonFetch, token) => fetchDropboxSnapshotWith(jsonFetch, token) } };
+export const LIVE_READERS: Readonly<Record<string, LiveReader>> = { cursor: { read: (jsonFetch, token, nowMs) => fetchCursorSnapshotWith(jsonFetch, token, nowMs, DEFAULT_USAGE_DAYS) }, stripe: { read: (jsonFetch, token) => fetchStripeSnapshotWith(jsonFetch, token) }, asana: { read: (jsonFetch, token) => fetchAsanaSnapshotWith(jsonFetch, token) }, line: { read: (jsonFetch, token) => fetchLineSnapshotWith(jsonFetch, token) }, linear: { read: (jsonFetch, token) => fetchLinearSnapshotWith(jsonFetch, token) }, sentry: { read: (jsonFetch, token) => fetchSentrySnapshotWith(jsonFetch, token) }, discord: { read: (jsonFetch, token) => fetchDiscordSnapshotWith(jsonFetch, token) }, dropbox: { read: (jsonFetch, token) => fetchDropboxSnapshotWith(jsonFetch, token) }, quality: { read: (jsonFetch, token) => fetchQualitySnapshotWith(jsonFetch, token) } };
 
 /** 読み取りの結果。失敗しても「なぜ実データでないか」を必ず言葉で返す。 */
 export type LiveReadResult =
