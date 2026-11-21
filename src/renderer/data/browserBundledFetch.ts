@@ -7,12 +7,16 @@
  * (2026-11-19 実測: 事業ダッシュボード / 書類スタジオ / 資金調達レーダー / KPI / Linux / Skills /
  * テンプレートの 7 画面。事業ダッシュボードと Skills は API キーを保存すると開いただけで出た)。
  *
- * この 7 つは、ブラウザ版では**同梱の内容しか返せない**:
+ * この 10 つは、ブラウザ版では**同梱の内容しか返せない**:
  *
  *   - business / docstudio / funding / kpi / templates —— デスクトップ版の fetcher も同梱の値を
  *     組み立てて返し、自分で `isMock: true` を名乗る。ブラウザ版も同じ中身 (`SNAPSHOT[id]`) を返す。
- *   - linux / skills —— デスクトップ版は端末 (OS の情報・`~/.claude/skills`) を読む。ブラウザ版は
+ *   - linux / skills / storage / obsidian / docker —— デスクトップ版は端末 (OS の情報・
+ *     `~/.claude/skills`・ディスク・Obsidian の Vault・Docker Engine) を読む。ブラウザ版は
  *     単一 HTML で動くので端末を読めない。返せるのは同梱の内容 (Linux は見本の値・Skills は空の一覧) だけ。
+ *     storage / obsidian / docker は 2026-11-21 の第4弾で 'local' 化したときに、この一覧へ足した
+ *     (足さないまま 'local' にすると「更新」が `not_implemented` へ落ちる ——
+ *     `browserRefreshReachable.test.ts` が鳴らした)。
  *
  * **返す物は必ず `isMock: true` を名乗る** —— 画面はそれを読んで注記か「同梱データ」の札を出す
  * (`shared/dataOrigin.ts` の `describeOrigin`: 緑の札は「実際に取ってきた」時だけ)。
@@ -28,6 +32,9 @@ export const BROWSER_BUNDLED_FETCH_SERVICES: readonly string[] = Object.freeze([
   'linux',
   'skills',
   'templates',
+  'docker',
+  'obsidian',
+  'storage',
 ]);
 
 /** ブラウザ版の取得が同梱の内容を返すサービスか。 */

@@ -60,6 +60,8 @@ const LEDGER: readonly Row[] = [
     why: 'discord.com に絞り、POST 先は u.href (パス 325 で生から変えた)' },
   { file: 'src/main/clients/shopify.ts', needle: 'new URL(instanceUrl)', kind: 'pin',
     why: '*.salesforce.com に絞り、要求 URL は base.origin から組む' },
+  { file: 'src/main/clients/docker.ts', needle: 'new URL(dockerHost.replace(', kind: 'internal',
+    why: '運用者の環境変数 DOCKER_HOST (tcp://…) を接続先の host / port に解くための再解析 (2026-11-21・第4弾)。外から来る値ではなく、解析後の値は Engine API への接続パラメタにだけ使う' },
   { file: 'src/main/fileRequestGate.ts', needle: 'parsed = new URL(url)', kind: 'predicate',
     why: '返すのは真偽だけ (dist/ の中の file: か) —— T-140。解析後の protocol / host / pathname で判定し、生の文字列は使わない' },
   { file: 'src/main/userPresence.ts', needle: 'parsed = new URL(url);', kind: 'predicate',
@@ -237,7 +239,7 @@ describe('value-gate は解析後の値を返す (振る舞いで確かめる)',
    * (このリポジトリが繰り返し直してきた形)。行が増減したらここが鳴り、
    * 書き換えるときに「どの種類が増えたのか」を読むことになる。
    */
-  it('★ 種類ごとの行数は実測どおり (台帳 39 行が 40 か所を覆う)', () => {
+  it('★ 種類ごとの行数は実測どおり (台帳 40 行が 41 か所を覆う)', () => {
     const byKind = (k: Row['kind']): number => LEDGER.filter((r) => r.kind === k).length;
     expect({
       'value-gate': byKind('value-gate'),
@@ -245,10 +247,10 @@ describe('value-gate は解析後の値を返す (振る舞いで確かめる)',
       pin: byKind('pin'),
       internal: byKind('internal'),
       display: byKind('display'),
-    }).toEqual({ 'value-gate': 11, predicate: 12, pin: 4, internal: 5, display: 7 });
-    expect(LEDGER).toHaveLength(39);
+    }).toEqual({ 'value-gate': 11, predicate: 12, pin: 4, internal: 6, display: 7 });
+    expect(LEDGER).toHaveLength(40);
     // web-shim の同じ綴りの 2 行が 1 行の台帳に対応するので、か所は台帳より 1 多い。
-    expect(SITES).toHaveLength(40);
+    expect(SITES).toHaveLength(41);
     expect(VALUE_GATE_BEHAVIOR.length).toBeGreaterThanOrEqual(5);
   });
 });

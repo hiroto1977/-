@@ -96,10 +96,10 @@ export function DockerPage() {
                   {img.repo}:{img.tag}
                 </td>
                 <td>{img.sizeMb}</td>
-                <td>{img.critical}</td>
-                <td>{img.high}</td>
-                <td>{img.medium}</td>
-                <td>{img.low}</td>
+                <td>{img.critical ?? '—'}</td>
+                <td>{img.high ?? '—'}</td>
+                <td>{img.medium ?? '—'}</td>
+                <td>{img.low ?? '—'}</td>
                 <td>{img.source}</td>
               </tr>
             ))}
