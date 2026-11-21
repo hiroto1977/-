@@ -41,6 +41,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const ROOT = path.resolve(__dirname, '..');
+const { PYPI_LOCKS, parsePinnedRequirements } = require('./lib/pypi-locks.cjs');
 
 const FEEDS = Object.freeze({
   osvBatch: 'https://api.osv.dev/v1/querybatch',
@@ -134,6 +135,26 @@ function inventoryFromLock(lock) {
   return list.length === 0 ? null : list;
 }
 
+/**
+ * 固定した requirements.txt → `[{ name, version, dev, ecosystem: 'PyPI' }]`。npm と同じく毎日 OSV へ引く。
+ * 読み手は `scripts/lib/pypi-locks.cjs` の 1 つ (供給網の門 `lint:deps` の規則 12 と同じ関数)。
+ * 読めない行が 1 つでも在れば null を返す —— 読めない行を飛ばして「0 件の勧告」と言わない。
+ */
+function inventoryFromRequirements(text) {
+  const parsed = parsePinnedRequirements(text);
+  if (parsed.problems.length > 0) return null;
+  const seen = new Map();
+  for (const e of parsed.entries) {
+    seen.set(`${e.name}@${e.version}`, { name: e.name, version: e.version, dev: false, ecosystem: 'PyPI' });
+  }
+  return [...seen.values()].sort((a, b) => a.name.localeCompare(b.name) || a.version.localeCompare(b.version));
+}
+
+/** OSV へ渡す生態系の名前。npm の在庫は欄を持たない。 */
+const ecosystemOf = (p) => p.ecosystem ?? 'npm';
+/** 報告に出す名前。npm は今までどおり `名前@版`、それ以外は生態系を頭に付ける。 */
+const packageLabel = (p) => (ecosystemOf(p) === 'npm' ? `${p.name}@${p.version}` : `${ecosystemOf(p)}:${p.name}@${p.version}`);
+
 /** OSV の詳細 1 件 → 我々が使う欄だけ。 */
 function parseVuln(v) {
   if (v === null || typeof v !== 'object' || typeof v.id !== 'string') return null;
@@ -199,7 +220,7 @@ async function lookupOsv(io, inventory) {
   for (let i = 0; i < inventory.length; i += BATCH_SIZE) {
     const slice = inventory.slice(i, i + BATCH_SIZE);
     const body = JSON.stringify({
-      queries: slice.map((p) => ({ package: { name: p.name, ecosystem: 'npm' }, version: p.version })),
+      queries: slice.map((p) => ({ package: { name: p.name, ecosystem: ecosystemOf(p) }, version: p.version })),
     });
     const r = await getJson(io, FEEDS.osvBatch, { method: 'POST', body, headers: { 'content-type': 'application/json' } });
     const results = r.ok ? r.value?.results : null;
@@ -208,11 +229,11 @@ async function lookupOsv(io, inventory) {
       return { vulns: [], affects, problems };
     }
     results.forEach((res, j) => {
-      if (res?.next_page_token) problems.push(`OSV の応答が複数頁に分かれました: ${slice[j].name}@${slice[j].version} は先頭の頁だけ`);
+      if (res?.next_page_token) problems.push(`OSV の応答が複数頁に分かれました: ${packageLabel(slice[j])} は先頭の頁だけ`);
       for (const v of Array.isArray(res?.vulns) ? res.vulns : []) {
         if (typeof v?.id !== 'string' || !VULN_ID_RE.test(v.id)) continue;
         const list = affects.get(v.id) ?? [];
-        list.push(`${slice[j].name}@${slice[j].version}`);
+        list.push(packageLabel(slice[j]));
         affects.set(v.id, list);
       }
     });
@@ -302,11 +323,17 @@ function analyze({ inventory, vulns, affects, kev, epss, map, now, windowDays = 
   const stackKev = recent
     .filter((e) => STACK_RE.test(`${e.vendor} ${e.product}`))
     .map((e) => ({ cve: e.cve, product: `${e.vendor} ${e.product}`.trim(), name: e.name, dateAdded: e.dateAdded }));
-  const electron = inventory.find((p) => p.name === 'electron')?.version ?? null;
+  const npm = inventory.filter((p) => ecosystemOf(p) === 'npm');
+  const electron = npm.find((p) => p.name === 'electron')?.version ?? null;
 
   return {
     window: { from, to: now, days: windowDays, kevEntries: recent.length, kevReleased: kev.released },
-    inventory: { total: inventory.length, prod: inventory.filter((p) => !p.dev).length, electron },
+    inventory: {
+      total: inventory.length,
+      prod: npm.filter((p) => !p.dev).length,
+      pypi: inventory.length - npm.length,
+      electron,
+    },
     findings: { total: findings.length },
     exploited,
     likely,
@@ -324,12 +351,18 @@ function realIo() {
 }
 
 /** 全体の実行。`io = { fetchImpl, sleep }`。測れなかったことは `problems` に入れる (0 件にしない)。 */
-async function runThreatWatch({ lock, map, now, io }) {
+async function runThreatWatch({ lock, map, now, io, pypi = [] }) {
   const problems = [];
   const empty = { exploited: [], likely: [], trend: [], gaps: [], hotGaps: [], naSeen: [], stackKev: [] };
   const inventory = inventoryFromLock(lock);
   if (inventory === null) {
     return { ...empty, notes: [], problems: ['package-lock.json の packages を読めませんでした (走査の不具合)'] };
+  }
+  // PyPI の一覧 (`[{ file, text }]`)。読めない一覧は「測れなかった」と言い、npm の側は続ける。
+  for (const lockFile of pypi) {
+    const more = inventoryFromRequirements(lockFile?.text);
+    if (more === null) problems.push(`${lockFile?.file ?? '(名前の無い一覧)'} を読めませんでした (PyPI の依存は照会していません)`);
+    else inventory.push(...more);
   }
   const [osv, kevRes] = [await lookupOsv(io, inventory), await getJson(io, FEEDS.kev)];
   problems.push(...osv.problems);
@@ -357,7 +390,7 @@ function renderWatch(watch, map) {
   }
   const w = watch.window;
   L.push(
-    `照会した依存 ${watch.inventory.total} 件 (出荷側 ${watch.inventory.prod})・` +
+    `照会した依存 ${watch.inventory.total} 件 (出荷側 ${watch.inventory.prod}${watch.inventory.pypi > 0 ? `・PyPI ${watch.inventory.pypi}` : ''})・` +
       `CISA KEV 配信 ${w.kevReleased || '(日付不明)'}・窓 ${w.from}〜${w.to} (${w.days} 日間に追加 ${w.kevEntries} 件)・` +
       `Electron ${watch.inventory.electron ?? '(不明)'}`,
     '',
@@ -412,6 +445,17 @@ function renderWatch(watch, map) {
 /** 要対応の件数: 当たっている KEV + 急増しているのに表に無い種類。 */
 function watchActionable(watch) {
   return (watch.exploited?.length ?? 0) + (watch.hotGaps?.length ?? 0);
+}
+
+/** 追跡している PyPI の一覧を読む。読めないファイルは text: null で渡す (下で「読めなかった」になる)。 */
+function readPypiLocks() {
+  return PYPI_LOCKS.map((file) => {
+    try {
+      return { file, text: fs.readFileSync(path.join(ROOT, file), 'utf8') };
+    } catch {
+      return { file, text: null };
+    }
+  });
 }
 
 function readJson(rel) {
@@ -554,6 +598,7 @@ async function main(argv) {
     map,
     now: new Date().toISOString().slice(0, 10),
     io: realIo(),
+    pypi: readPypiLocks(),
   });
   console.log(renderWatch(watch, map));
   for (const p of watch.problems) console.error(`⚠ ${p}`);
@@ -571,6 +616,9 @@ module.exports = {
   getJson,
   indexMap,
   inventoryFromLock,
+  inventoryFromRequirements,
+  PYPI_LOCKS,
+  readPypiLocks,
   parseKev,
   parseVuln,
   realIo,

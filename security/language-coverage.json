@@ -45,7 +45,7 @@
     {
       "id": "python",
       "status": "present",
-      "what": "local-ai/orchestrator の .py（LiteLLM の振り分けと多段デモ）と、MCP の uvx 起動子。ソースは lint:python が危険な呼び出しを見る。uvx は lint:mcp-servers。依存の定義ファイルはまだ無いので PyPI の OSV は生態系の行を足さない",
+      "what": "local-ai/orchestrator の .py（LiteLLM の振り分けと多段デモ）・zero-trust-gateway の .py（自社の API の入口の部品と検査 —— 本体のアプリには入らない）・MCP の uvx 起動子。ソースは lint:python が危険な呼び出しを見る。uvx は lint:mcp-servers。依存は生態系 pypi の行が見る",
       "scanners": [
         "scripts/lint-python.cjs",
         "scripts/lint-mcp-servers.cjs"
@@ -78,6 +78,15 @@
         "scripts/threat-watch.cjs",
         "scripts/lint-dependencies.cjs",
         "scripts/audit-floors.cjs"
+      ]
+    },
+    {
+      "id": "pypi",
+      "what": "zero-trust-gateway/requirements.txt (版と sha256 のハッシュで固定した一覧)。毎日 OSV (ecosystem PyPI) と CISA KEV に突き合わせ、門が「名前==版 + ハッシュ」以外の行 (版の範囲・URL・取得元の差し替え) と、台帳 PYPI_LOCKS に無い定義ファイルを落とす",
+      "scanners": [
+        "scripts/threat-watch.cjs",
+        "scripts/lint-dependencies.cjs",
+        "scripts/lib/pypi-locks.cjs"
       ]
     },
     {

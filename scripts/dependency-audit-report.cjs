@@ -54,7 +54,7 @@ const { execFileSync } = require('node:child_process');
 
 const { probeFloors } = require('./audit-floors.cjs');
 const { auditPins, FAILING: PIN_FAILING } = require('./audit-pinned-action-shas.cjs');
-const { runThreatWatch, renderWatch, watchActionable, realIo } = require('./threat-watch.cjs');
+const { runThreatWatch, renderWatch, watchActionable, realIo, readPypiLocks } = require('./threat-watch.cjs');
 const { evolverDigest, renderDigestMarker } = require('./lib/threat-watch-digest.cjs');
 const { analyzePosture, renderPosture } = require('./security-posture.cjs');
 const { analyzeCrownJewels, renderCrownJewels, realExists } = require('./crown-jewels.cjs');
@@ -434,6 +434,7 @@ async function main(argv) {
     map,
     now: generatedAt,
     io: realIo(),
+    pypi: readPypiLocks(),
   });
   const report = buildReport({
     all: runAudit([]),

@@ -77,7 +77,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { builtinModules } = require('node:module');
 const { stripComments } = require('./lib/strip-non-code.cjs');
-const { reportTrackedCrossCheck, crossCheckSuffix } = require('./lib/tracked-cross-check.cjs');
+const { reportTrackedCrossCheck, crossCheckSuffix, gitLsFilesOrNull } = require('./lib/tracked-cross-check.cjs');
+const { PYPI_LOCKS, parsePinnedRequirements, trackedPypiManifests, checkPypiLedger } = require('./lib/pypi-locks.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 
@@ -700,6 +701,41 @@ function checkShippedImports({ imports, pkg }, runtimeProvided = RUNTIME_PROVIDE
 }
 
 /**
+ * 規則 12: 固定した PyPI の一覧 (2026-11-21)。
+ *
+ * このリポジトリに Python の依存 (zero-trust-gateway/requirements.txt) が入った日に足した。
+ * npm の側は lockfile の `resolved` と `integrity` を規則 4 / 5 が見る。PyPI の側の同じ守りは
+ * 「版を `==` で固定し、`--hash=sha256:` を必ず付ける」こと —— `pip install --require-hashes` は、
+ * 一覧に無いハッシュの配布物を入れない。取得元を替える行 (`--index-url` ほか)・版の範囲・URL は、
+ * 読み手 (`scripts/lib/pypi-locks.cjs`) が「読めない行」として返すので、ここでそのまま落とす。
+ *
+ * `locks` は `[{ file, text }]`、`tracked` は追跡している PyPI の定義の一覧 (git が使えなければ null)。
+ * 台帳 (`PYPI_LOCKS`) との突き合わせは両方向 —— 追跡しているのに台帳に無い一覧は、毎日の脅威ウォッチが
+ * 照会しないまま増える。
+ */
+function checkPypiLocks(locks, tracked) {
+  const problems = [];
+  if (tracked !== null) problems.push(...checkPypiLedger(tracked, locks.map((l) => l.file)));
+  for (const { file, text } of locks) {
+    for (const p of parsePinnedRequirements(text).problems) problems.push(`${file}: ${p}`);
+  }
+  return problems;
+}
+
+/** 台帳の一覧を実物から読む。読めないファイルは text: null (規則 12 が「読めません」と言う)。 */
+function readPypiLocks(root = REPO_ROOT, ledger = PYPI_LOCKS) {
+  const locks = ledger.map((file) => {
+    try {
+      return { file, text: fs.readFileSync(path.join(root, file), 'utf8') };
+    } catch {
+      return { file, text: null };
+    }
+  });
+  const files = gitLsFilesOrNull(root);
+  return { locks, tracked: files === null ? null : trackedPypiManifests(files) };
+}
+
+/**
  * lockfile + 実物 (`root` の node_modules) を合わせて評価する —— `main` が使う唯一の入口。
  * CI は必ず `npm ci` の後なので node_modules が読めなければ走査の故障として床で断る。
  * 手元で未インストール (`checked === 0` かつ CI でない) なら実物の確認を飛ばし、lockfile の旗だけを見る。
@@ -708,13 +744,14 @@ function checkRepo({ lock, pkg, root = REPO_ROOT, ci = false }) {
   const scan = scanInstalledInstallCode(lock, root);
   const installed = scan.checked === 0 && !ci ? null : scan;
   const shipped = shippedBareImports(root);
-  return { problems: evaluate({ lock, pkg, installed, shipped }), scan, shipped };
+  const pypi = readPypiLocks(root);
+  return { problems: evaluate({ lock, pkg, installed, shipped, pypi }), scan, shipped, pypi };
 }
 
 /** 実物を確かめた件数の床 (実測 599 / 648)。node_modules が丸ごと読めない・一部しか読めない走査を「問題なし」と読まない。 */
 const MIN_INSTALLED_CHECKED = 300;
 
-function evaluate({ lock, pkg, installConfigs = presentInstallConfigs(), strykerConfig = readStrykerConfig(), installed = null, shipped = null }) {
+function evaluate({ lock, pkg, installConfigs = presentInstallConfigs(), strykerConfig = readStrykerConfig(), installed = null, shipped = null, pypi = null }) {
   const problems = [];
   const packages = lock?.packages;
   if (packages === null || typeof packages !== 'object') {
@@ -809,6 +846,9 @@ function evaluate({ lock, pkg, installConfigs = presentInstallConfigs(), stryker
 
   // 11. 出荷される src/ が import する外部パッケージ (主入口 `checkRepo` が走査を渡す)。
   if (shipped) problems.push(...checkShippedImports({ imports: shipped, pkg }));
+
+  // 12. 固定した PyPI の一覧 (主入口 `checkRepo` が実物を渡す)。
+  if (pypi) problems.push(...checkPypiLocks(pypi.locks, pypi.tracked));
 
   // package.json の宣言と閉包の食い違い (宣言だけ消して lockfile に残る形)。
   const declared = Object.keys(pkg?.dependencies ?? {});
@@ -1026,6 +1066,37 @@ function selfTest() {
   }
 
   {
+    // 規則 12: 固定した PyPI の一覧 (2026-11-21)。
+    const H = `    --hash=sha256:${'a'.repeat(64)}`;
+    const good = `# 注記\nfastapi==0.165.0 \\\n${H} \\\n${H}\n    # via -r requirements.in\npydantic==2.14.4 ; python_version >= "3.12" \\\n${H}\n`;
+    const F = 'gw/requirements.txt';
+    const pypiCases = [
+      ['版とハッシュで固定した一覧は通る', [{ file: F, text: good }], [F], 0],
+      ['★ 版の範囲 (>=) は鳴る (行が読めない + ハッシュの付け先が無い)', [{ file: F, text: `requests>=2 \\\n${H}\n` }], [F], 2],
+      ['★ ハッシュの無い依存は鳴る', [{ file: F, text: 'requests==2.0.0\n' }], [F], 1],
+      ['★ 取得元を替える行は鳴る', [{ file: F, text: `--index-url https://example.invalid/simple\n${good}` }], [F], 1],
+      ['★ URL から入れる行は鳴る', [{ file: F, text: `pkg @ https://example.invalid/pkg.whl\n${good}` }], [F], 1],
+      ['★ 別の一覧を読み込む行 (-r) は鳴る', [{ file: F, text: `-r other.txt\n${good}` }], [F], 1],
+      ['★ sha256 でないハッシュは鳴る', [{ file: F, text: 'a==1 \\\n    --hash=md5:abc\n' }], [F], 2],
+      ['★ 空の一覧は鳴る (0 件で通さない)', [{ file: F, text: '# 何も無い\n' }], [F], 1],
+      ['★ 読めない一覧は鳴る', [{ file: F, text: null }], [F], 1],
+      ['★ 追跡しているのに台帳に無い定義は鳴る', [{ file: F, text: good }], [F, 'other/pyproject.toml'], 1],
+      ['★ 台帳に在るのに追跡されていなければ鳴る (逆向き)', [{ file: F, text: good }], [], 1],
+      ['git が使えなければ突き合わせを飛ばす (中身は見る)', [{ file: F, text: good }], null, 0],
+    ];
+    for (const [label, locks, tracked, want] of pypiCases) {
+      const got = checkPypiLocks(locks, tracked).length;
+      const ok = got === want;
+      if (!ok) bad++;
+      console.log(`  ${ok ? '✓' : '✗'} ${label}: ${got} 件 (期待 ${want})`);
+    }
+    const names = trackedPypiManifests(['a/requirements.txt', 'b/requirements.in', 'c/pyproject.toml', 'd/uv.lock', 'requirements.txt', 'e/notes.txt']);
+    const namesOk = names.length === 4 && !names.includes('b/requirements.in');
+    if (!namesOk) bad++;
+    console.log(`  ${namesOk ? '✓' : '✗'} 追跡している PyPI の定義を名前で拾う: ${names.length} 件`);
+  }
+
+  {
     // 規則 10: stryker.config.json のコードを選ぶ欄 (threat: T-026)。
     const strykerCases = [
       ['今日の実物の形 (npm 名だけ) は通る', { testRunner: 'vitest', reporters: ['clear-text', 'json'] }, 0],
@@ -1106,7 +1177,7 @@ function main(argv) {
   const lock = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'package-lock.json'), 'utf8'));
   const pkg = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'package.json'), 'utf8'));
   const inCi = process.env.CI === 'true' || process.env.CI === '1';
-  const { problems, scan: installed, shipped } = checkRepo({ lock, pkg, ci: inCi });
+  const { problems, scan: installed, shipped, pypi } = checkRepo({ lock, pkg, ci: inCi });
   // 2 つ目の数え方: 追跡されている出荷 src は、どれも走査に出る (パス 472 / 532)。
   const cross = reportTrackedCrossCheck(
     shipped.walked.map((f) => path.relative(REPO_ROOT, f)), SHIPPED_CROSS_CHECK, REPO_ROOT, 'lint:deps');
@@ -1133,6 +1204,11 @@ function main(argv) {
     `自分のインストール時コード ${ownLifecycle.length} 件 / 台帳 ${Object.keys(OWN_INSTALL_SCRIPTS).length}、` +
       `インストール時に読まれる設定 ${configs.length} 件 / 台帳 ${Object.keys(INSTALL_CONFIG_ALLOW).length} ` +
       `(見る名前 ${INSTALL_CONFIG_FILES.length})`,
+  );
+  const pinned = pypi.locks.reduce((n, l) => n + parsePinnedRequirements(l.text).entries.length, 0);
+  console.log(
+    `PyPI の固定した一覧 ${pypi.locks.length} 本 / 依存 ${pinned} 件 (版とハッシュ) · ` +
+      (pypi.tracked === null ? '追跡との突き合わせは未実施 (git が使えない)' : `追跡している定義 ${pypi.tracked.length} 件と台帳を突き合わせ済み`),
   );
   for (const f of staleFloors()) {
     console.warn(
@@ -1165,6 +1241,7 @@ module.exports = {
   parseVersion,
   cmpVersion,
   rangeFloor,
+  checkPypiLocks, readPypiLocks,
   checkOwnLifecycle, lifecycleHooksPresent, checkInstallConfigs, presentInstallConfigs,
   checkStrykerCodePicking, isLocalSpecifier, readStrykerConfig,
   OWN_INSTALL_SCRIPTS, INSTALL_CONFIG_ALLOW, INSTALL_CONFIG_FILES, LIFECYCLE_KEYS,
