@@ -53,7 +53,7 @@ const EXPECTED: ReadonlyArray<readonly [ServiceId, DataOrigin]> = [
   ['shopify', 'sample'],
   ['stripe', 'remote'],
   ['line', 'remote'],
-  ['storage', 'sample'],
+  ['storage', 'local'],
   ['tax-accountant', 'local'],
   ['mentor', 'local'],
   ['labor-consultant', 'local'],
@@ -84,8 +84,8 @@ const EXPECTED: ReadonlyArray<readonly [ServiceId, DataOrigin]> = [
   ['connectors', 'local'],
   ['linux', 'local'],
   ['compliance', 'local'],
-  ['obsidian', 'sample'],
-  ['docker', 'sample'],
+  ['obsidian', 'local'],
+  ['docker', 'local'],
   ['assistant', 'local'],
   ['docstudio', 'local'],
   ['cursor', 'remote'],
@@ -105,8 +105,8 @@ describe('SERVICE_DATA_ORIGIN', () => {
 
   it('3 分類の件数を固定する — 片方向に倒れた表を検出する', () => {
     const count = (o: DataOrigin) => EXPECTED.filter(([, v]) => v === o).length;
-    expect(count('sample')).toBe(16);
-    expect(count('local')).toBe(41);
+    expect(count('sample')).toBe(13);
+    expect(count('local')).toBe(44);
     expect(count('remote')).toBe(23);
   });
 });

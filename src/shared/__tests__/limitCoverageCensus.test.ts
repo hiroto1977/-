@@ -45,7 +45,10 @@ function walk(dir: string, out: string[]): void {
 const LIMIT_EXPORT = /^export const ((?:MAX|MIN)_[A-Z0-9_]+)\b/gm;
 
 /** 名前で参照されていない上限と、その理由 (空が正常。増えたら理由を書く・消えたら行を消す)。 */
-const UNREFERENCED: Readonly<Record<string, string>> = {};
+const UNREFERENCED: Readonly<Record<string, string>> = {
+  MAX_STATS_CONTAINERS:
+    'Docker の stats を取りに行く稼働中コンテナの上限 (2026-11-21・第4弾)。効く場所は Engine API を読む薄いアダプタの中 (実 socket / http を使う領域で `Stryker disable` の対象) —— 単体検査は純関数側 (buildDockerSnapshot) だけを見るので、名前で参照する検査を置けない。上限が無いと、稼働中コンテナの数だけ stats の逐次要求が増える。',
+};
 
 describe('安全上限の census', () => {
   const files: string[] = [];

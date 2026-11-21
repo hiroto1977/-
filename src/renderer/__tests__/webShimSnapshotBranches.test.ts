@@ -361,19 +361,20 @@ describe('A8.net — 端末内の記録の土台を返す分岐 (2026-11-19)', (
 });
 
 /**
- * **同梱の内容しか返せない 7 画面も、ブラウザ版の「更新」は失敗にしない** (2026-11-19)。
+ * **同梱の内容しか返せない 10 画面も、ブラウザ版の「更新」は失敗にしない** (2026-11-19 に 7 画面で始め、
+ * 2026-11-21 の第4弾で storage / obsidian / docker が 'local' 化したのに合わせて 10 画面へ)。
  *
  * 実測 (直す前・実 chromium で「更新」を押す): 事業ダッシュボード / 書類スタジオ / 資金調達レーダー /
  * KPI / Linux / Skills / テンプレートは `not_implemented` へ落ち、赤い「エラー」と
  * 「ブラウザ版では live fetch を行いません」と「表示中の数字は同梱のサンプルです」が出た。
  * 返す物は同梱の内容の写しで、**必ず `isMock: true` を名乗る** (画面が注記か「同梱データ」の札を出す)。
  */
-describe('同梱の内容を返す分岐 —— 7 画面 (2026-11-19)', () => {
+describe('同梱の内容を返す分岐 —— 10 画面 (2026-11-19)', () => {
   const snapshots = SNAPSHOT as unknown as Readonly<Record<string, Record<string, unknown>>>;
 
-  it('★ 7 サービスとも ok で、同梱の内容に isMock: true を重ねた物を返す', async () => {
+  it('★ 10 サービスとも ok で、同梱の内容に isMock: true を重ねた物を返す', async () => {
     const hub = await loadHub();
-    expect(BROWSER_BUNDLED_FETCH_SERVICES.length).toBe(7);
+    expect(BROWSER_BUNDLED_FETCH_SERVICES.length).toBe(10);
     for (const id of BROWSER_BUNDLED_FETCH_SERVICES) {
       const snap = await hub.fetchSnapshot(id);
       expect(snap.ok, `${id}: ${snap.code ?? ''} ${snap.message ?? ''}`).toBe(true);

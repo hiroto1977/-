@@ -4485,18 +4485,18 @@
     {
       "index": 532,
       "prevHash": "a33c545cf64790300e5b93e78a728b841dd6b937ebc4cb64ad1c39ce8f8d4dcd",
-      "merkleRoot": "9d68d4d92ee173d1d115f166f3d411216b62bf79c4081b6c5c6753274d772c63",
+      "merkleRoot": "0849a281aa26a0139c0fd20efbd793b2f9aa85bfc7078d09ac975d00c10e48c0",
       "leafCount": 222,
-      "note": "update mamori-capabilities.json,liveRead.mamori,liveRead.ts",
-      "hash": "46ceafeb73d009d87c7f457547d55ca1af8b970087b6b881989add73df8ac74e"
+      "note": "update eslint.config.js",
+      "hash": "16c72a7381010860093f15303a66d82b06cf3552605dd46405a6106cdf458e75"
     },
     {
       "index": 533,
-      "prevHash": "46ceafeb73d009d87c7f457547d55ca1af8b970087b6b881989add73df8ac74e",
-      "merkleRoot": "59c08be7695ef42defff8a268b2aa42ddb340e2ac45888d57b91178304576a2c",
+      "prevHash": "16c72a7381010860093f15303a66d82b06cf3552605dd46405a6106cdf458e75",
+      "merkleRoot": "21b3822086f8dfc5a9b4ce715ad4c9fe7763e86704786cd498c3b5ff8f72912e",
       "leafCount": 222,
-      "note": "update integrity-chain.cjs",
-      "hash": "0a812501a39591c04dc9eb38290bb1161387ba639c054d157d38106c59039006"
+      "note": "update integrity-chain.cjs,mamori-capabilities.json,liveRead.mamori,liveRead.ts",
+      "hash": "7829b37747db01925289fb35e65082537b3d8e18c22af4853fe6ab5173cb2d68"
     }
   ],
   "tipManifest": {
@@ -4524,7 +4524,7 @@
     "docs/PROXY_EXAMPLE.md": "c2f4987d6e53a3cbfae921dcc33582522abb4c587b519795296e3b3dc4edd06b",
     "docs/SECURITY_CHAIN.md": "e6f2886fbab792b4c4ec27ee8849a8642d1b28576c05e3ca627f2daea05cda29",
     "electron-builder.json": "087285ed5b1adf1d1a99c5c47b00bdab70338cacff2687988fb3316787af1917",
-    "eslint.config.js": "d265c7992f429e9b5cd13ba3e4fb687b0527196a482e5ba8f78816a0944ae383",
+    "eslint.config.js": "cac3ed588482bba2a379adb9ae88168a871d9cf277e68f5545ec363013e57bd1",
     "launcher/ServiceHubを開く.bat": "83d4b252a777556d3830acc7e226cd009fea006bb3c47fb677ab57ecaeb9da82",
     "orchestration/knowledge-context.cjs": "2e31acac95ced213b569fe3e467e66f4aff3106c93188ee79d056d1481a022c3",
     "orchestration/knowledge-graph.cjs": "80ae371234e84801b392f27b10d8a5f84d86be41ad97b334892dfce746185242",

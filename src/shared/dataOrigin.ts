@@ -87,7 +87,10 @@ export const SERVICE_DATA_ORIGIN: Record<ServiceId, DataOrigin> = {
   stripe: 'remote',
   // 2026-11-18: アカウントの情報と今月の配信数を LINE から読む (`shared/api/line.ts`)。それまでは同梱の見本だった。
   line: 'remote',
-  storage: 'sample',
+  // 2026-11-21: ディスク使用量・大容量フォルダ・メモリを Electron main の
+  // `fs.statfs` / フォルダ走査 / `os` で実測する (`main/clients/storage.ts`)。
+  // 測れない指標 (断片化率・起動時間) は null (算定不能) で返す。それまでは同梱の見本だった。
+  storage: 'local',
   // 2026-11-18: 端末内の record store に登録した連絡先・相談・書類・顧問料が正
   // (`renderer/data/shigyoDirectory.ts`)。fetcher は見本を持たない空の土台を返す
   // (`shared/shigyoTypes.ts` の `buildShigyoSnapshot`)。それまでは同梱の見本だった。
@@ -143,8 +146,8 @@ export const SERVICE_DATA_ORIGIN: Record<ServiceId, DataOrigin> = {
   // 2026-11-19: 実データは renderer の確証済み制度知識 (complianceKnowledge) で、
   // fetcher は台帳を指す標識だけを返す。それまでは同梱の見本だった。
   compliance: 'local',
-  obsidian: 'sample',
-  docker: 'sample',
+  obsidian: 'local', // 2026-11-21 第4弾: Vault の実ファイル集計 (Obsidian 設定→Vault→Markdown 走査) を配線
+  docker: 'local', // 2026-11-21 第4弾: Docker Engine API (unix socket) の読み取り専用集計を配線
   assistant: 'local',
   docstudio: 'local',
   cursor: 'remote',

@@ -8,6 +8,7 @@
 #   POST /auth/webauthn/register/options ・ /register/verify         … 認証器の登録
 #   POST /auth/webauthn/authenticate/options ・ /authenticate/verify … 確認
 #   GET  /auth/session           … いまの認証の強さ
+#   GET  /auth/                  … 利用者が押す画面 (登録と確認。1 枚の HTML で、外の物を読まない)
 #
 # 認証の強さを答える口 (AuthnProvider) の既定は第 3 層 (WebAuthn)。認証器が 1 つも登録されていない間は
 # 「誰も認証済みでない」と答えるので、既定のままではトークンは 1 枚も出ない (迷ったら断る)。
@@ -24,11 +25,12 @@ from typing import Protocol
 
 from fastapi import FastAPI, Request
 from fastapi.concurrency import run_in_threadpool
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 
 from contracts import AttestationResult, AuthnState, Notifier, RiskDecision, SecurityEvent
 from layer1_mtd.runner import CommandRunner
 from layer3_fido2.enrollment import EnrollmentBook
+from layer3_fido2.page import build_page
 from layer3_fido2.service import CounterRegression, WebAuthnService
 from layer3_fido2.store import CredentialStore
 from layer3_fido2.verify import Refused, RpConfig, load_attestation_roots
@@ -488,6 +490,7 @@ def create_app(
     notifier: Notifier | None = None,
 ) -> FastAPI:
     gateway = Gateway(settings, authn=authn, clock=clock, runner=runner, notifier=notifier)
+    page_body, page_headers = build_page()
     app = FastAPI(title="zero-trust-gateway", docs_url=None, redoc_url=None, openapi_url=None)
     app.state.gateway = gateway
     denied = {"WWW-Authenticate": "DPoP", "Cache-Control": "no-store"}
@@ -542,5 +545,10 @@ def create_app(
         status, body = gateway.auth_session(request, gateway.clock())
         headers = {"Cache-Control": "no-store"} if status == 200 else denied
         return JSONResponse(body, status_code=status, headers=headers)
+
+    @app.get("/auth/")
+    def auth_page() -> Response:
+        # 秘密を持たない静的な 1 枚。画面が叩く道 (上の 5 つと /token) は、どれも DPoP の証明が要る。
+        return Response(content=page_body, media_type="text/html; charset=utf-8", headers=page_headers)
 
     return app

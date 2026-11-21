@@ -101,9 +101,9 @@ const labels = (): string[] =>
   Array.from(container.querySelectorAll('.status-bar button')).map((b) => (b.textContent ?? '').trim());
 
 describe('取得が断られたときの札', () => {
-  it('母集団: 取得して札を出す画面は 51・見本の画面は 14・札を出さない画面は 13 (合わせてサイドバーの全画面)', () => {
-    expect(FETCHING).toHaveLength(51);
-    expect(SAMPLE).toHaveLength(14);
+  it('母集団: 取得して札を出す画面は 54・見本の画面は 11・札を出さない画面は 13 (合わせてサイドバーの全画面)', () => {
+    expect(FETCHING).toHaveLength(54);
+    expect(SAMPLE).toHaveLength(11);
     expect(Object.keys(NO_FAILURE_BADGE)).toHaveLength(13);
     expect(FETCHING.length + SAMPLE.length + Object.keys(NO_FAILURE_BADGE).length).toBe(SERVICES.length);
     for (const id of Object.keys(NO_FAILURE_BADGE)) expect(SERVICES.some((s) => s.id === id), id).toBe(true);

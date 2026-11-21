@@ -279,6 +279,7 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   // 水耕栽培の運転管理: 台帳は shared に在り、記録は renderer の record store。認証・通信なし。
   'hydroponics',
   'charts',
+  // ストレージ最適化: Electron main の fs/os でディスク・フォルダ・メモリを実測。認証不要。
   'storage',
   // 士業: 個別の専門家連携で公式 API なし、永続的に snapshot-only。
   'tax-accountant',
@@ -336,11 +337,11 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'linux',
   // コンプライアンス: 確証済み知識の表示のみ。実データは renderer。認証不要。
   'compliance',
-  // Obsidian: ローカル Vault (Markdown) の可視化。認証不要。fetcher は現状 stub で、
-  // 実 Vault の fs 読み取りは未配線 (`dataOrigin.ts` では 'sample')。
+  // Obsidian: ローカル Vault (Markdown) の可視化。認証不要。Obsidian の設定から
+  // Vault を特定し、ノート数・語数・タグ・内部リンクと Git 連携を集計する (Phase 6)。
   'obsidian',
-  // Docker: ローカル Docker Engine の可視化。認証不要。fetcher は現状 stub で、
-  // 実 Engine の socket 読み取りは未配線 (`dataOrigin.ts` では 'sample')。
+  // Docker: ローカル Docker Engine の可視化。認証不要。Engine API を unix socket
+  // 経由で読み取り専用に集計する (Phase 6)。CLI は起動しない (サブプロセス禁止)。
   'docker',
   // AI アシスタント: ページ表示は認証不要 (会話は Anthropic キー設定時のみ)。
   'assistant',
