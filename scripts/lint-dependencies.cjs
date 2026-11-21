@@ -725,13 +725,11 @@ function checkPypiLocks(locks, tracked) {
 /** 台帳の一覧を実物から読む。読めないファイルは text: null (規則 12 が「読めません」と言う)。 */
 function readPypiLocks(root = REPO_ROOT, ledger = PYPI_LOCKS) {
   const locks = ledger.map((file) => {
-    let text = null;
     try {
-      text = fs.readFileSync(path.join(root, file), 'utf8');
+      return { file, text: fs.readFileSync(path.join(root, file), 'utf8') };
     } catch {
-      text = null;
+      return { file, text: null };
     }
-    return { file, text };
   });
   const files = gitLsFilesOrNull(root);
   return { locks, tracked: files === null ? null : trackedPypiManifests(files) };
