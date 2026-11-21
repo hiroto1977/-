@@ -139,3 +139,50 @@ def test_env_example_は_名前だけ_値は秘密でない既定値だけ() -> 
 
 def test_本物の_env_は追跡しない() -> None:
     assert ".env" in (ROOT / ".gitignore").read_text(encoding="utf-8").splitlines()
+
+
+# ---- 第 3 層の設定 ----
+def test_RP_の名前は_空なら_公開の_URL_から決まる() -> None:
+    s = load_settings(REQUIRED)
+    assert (s.rp_id, s.webauthn_origin) == ("gw.example.test", BASE)
+    assert (s.allowed_aaguids, s.attestation_roots_file, s.credentials_file, s.enrollment_file) == ((), None, None, None)
+
+
+def test_RP_の名前は_画面のホストか_その親のドメインだけ() -> None:
+    s = load_settings({**REQUIRED, "RP_ID": "example.test", "RP_ORIGIN": "https://login.example.test/"})
+    assert (s.rp_id, s.webauthn_origin) == ("example.test", "https://login.example.test")
+    assert load_settings({**REQUIRED, "RP_ORIGIN": "https://login.example.test"}).rp_id == "login.example.test"
+
+
+@pytest.mark.parametrize(
+    "over",
+    [
+        {"RP_ID": "evil.test"},
+        {"RP_ID": "test"},
+        {"RP_ID": "ample.test"},
+        {"RP_ORIGIN": "http://gw.example.test"},
+        {"RP_ORIGIN": "https://gw.example.test/login"},
+        {"RP_ORIGIN": "https://user@gw.example.test"},
+        {"ALLOWED_AAGUIDS": "not-a-uuid"},
+        {"ALLOWED_AAGUIDS": "11111111-2222-4333-8444-555555555555,AAAAAAAA-BBBB-4CCC-8DDD-EEEEEEEEEEEE"},
+    ],
+)
+def test_読めない第_3_層の設定では起動しない(over: dict[str, str]) -> None:
+    with pytest.raises(SettingsError):
+        load_settings({**REQUIRED, **over})
+
+
+def test_機種の一覧と_ファイルの置き場を読む() -> None:
+    s = load_settings(
+        {
+            **REQUIRED,
+            "ALLOWED_AAGUIDS": "11111111-2222-4333-8444-555555555555, aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee ,",
+            "ATTESTATION_ROOTS_FILE": "/etc/zt/roots.pem",
+            "CREDENTIALS_FILE": "/var/lib/zt/credentials.json",
+            "ENROLLMENT_FILE": "/var/lib/zt/enroll.jsonl",
+        }
+    )
+    assert s.allowed_aaguids == ("11111111-2222-4333-8444-555555555555", "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee")
+    assert (str(s.attestation_roots_file), str(s.credentials_file), str(s.enrollment_file)) == (
+        "/etc/zt/roots.pem", "/var/lib/zt/credentials.json", "/var/lib/zt/enroll.jsonl",
+    )

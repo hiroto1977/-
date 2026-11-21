@@ -63,10 +63,13 @@ class WebAuthnService:
         return self.sessions.state(jkt, now=now)
 
     # ---- 登録 ----
-    def _may_register(self, jkt: str, kind: Kind, enrollment_code: object, now: float) -> tuple[str, str]:
+    def _may_register(
+        self, jkt: str, enrollment_code: object, now: float, *, trust_strong: bool
+    ) -> tuple[str, str]:
         state = self.sessions.state(jkt, now=now)
         if (
-            state is not None
+            trust_strong
+            and state is not None
             and state.strength == "strong"
             and now - state.verified_at.timestamp() <= RECENT_STRONG_SECONDS
         ):
@@ -85,13 +88,20 @@ class WebAuthnService:
             raise Refused("kind_already_registered")
 
     def begin_registration(
-        self, jkt: str, kind: object, *, enrollment_code: object = None, now: float
+        self,
+        jkt: str,
+        kind: object,
+        *,
+        enrollment_code: object = None,
+        now: float,
+        trust_strong: bool = True,
     ) -> dict[str, Any]:
+        # trust_strong=False: 呼び手が「この端末のセッションは重くしてある」と言うとき。登録コードだけを見る。
         if kind not in KINDS:
             raise Refused("bad_kind")
         if kind == "hardware_key" and not self.rp.hardware_ready:
             raise Refused("hardware_not_configured")
-        subject, via = self._may_register(jkt, kind, enrollment_code, now)  # type: ignore[arg-type]
+        subject, via = self._may_register(jkt, enrollment_code, now, trust_strong=trust_strong)
         self._check_room(subject, kind, via)  # type: ignore[arg-type]
         try:
             handle = self.store.user_handle(subject)

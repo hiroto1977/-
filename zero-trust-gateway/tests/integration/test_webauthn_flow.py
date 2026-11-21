@@ -127,9 +127,9 @@ def test_登録コードから_2_つの認証器を登録し_確認して_トー
     assert (ok.status_code, ok.json()) == (200, {"ok": True, "subject": "alice"})
     assert verify_file(w.audit_path).ok is True
     assert [a for a in w.actions() if a[2] == "ok"] == [
-        ("anonymous", "authn.register.options", "ok"),
+        ("alice", "authn.register.options", "ok"),
         ("alice", "authn.register.hardware_key", "ok"),
-        ("anonymous", "authn.register.options", "ok"),
+        ("alice", "authn.register.options", "ok"),
         ("alice", "authn.register.phone_passkey", "ok"),
         ("alice", "authn.verify.hardware_key", "ok"),
         ("alice", "authn.verify.phone_passkey", "ok"),
@@ -335,3 +335,80 @@ def test_おとりの鍵は_第_3_層の道でも見る(tmp_path: Path) -> None:
     r = w.client().post(f"{AUTH}/authenticate/options", content=b"{}", headers={"DPoP": proof, "X-Api-Key": canary})
     assert r.status_code == 401
     assert w.notifier.sent[-1][0] == "おとりの鍵が使われました"
+
+
+def test_重くしたセッションでは_強い認証だけを根拠に認証器を足せない(tmp_path: Path) -> None:
+    w = World(tmp_path)
+    w.enroll()
+    w.strong()
+    spare = SoftAuthenticator()
+    for raise_to in ("require_step_up", "freeze"):
+        w.gateway.sessions.touch(w.session(), "alice")
+        getattr(w.gateway.sessions, raise_to)(w.session(), "risk")
+        r = w.register(spare, "phone_passkey", None)
+        assert (r.status_code, r.json()) == (403, {"error": "forbidden"}), raise_to
+        assert w.actions()[-1] == ("alice", "authn.register_options.not_allowed", "denied")
+    assert len(w.gateway.webauthn.store.for_subject("alice")) == 2
+
+
+def test_落ち着いたセッションなら_強い認証の直後に予備を足せる(tmp_path: Path) -> None:
+    w = World(tmp_path)
+    w.enroll()
+    w.strong()
+    assert w.register(SoftAuthenticator(), "phone_passkey", None).json() == {"registered": "phone_passkey"}
+    assert len(w.gateway.webauthn.store.for_subject("alice")) == 3
+
+
+def test_発行を止めている間は_認証器も足せない(tmp_path: Path) -> None:
+    halt = tmp_path / "issuance.halt"
+    w = World(tmp_path, issuance_halt_file=halt)
+    code = w.code()
+    halt.write_text("manual\n", encoding="utf-8")
+    r = w.register(w.phone, "phone_passkey", code)
+    assert (r.status_code, r.json()) == (403, {"error": "forbidden"})
+    assert w.actions()[-1][1] == "authn.register_options.issuance_halted"
+    halt.unlink()
+    assert w.register(w.phone, "phone_passkey", code).status_code == 200
+
+
+def test_入口は_1_度に_1_つずつ通す(tmp_path: Path) -> None:
+    # 使い捨ての番号を「見た・控えた」の間に、別の要求が割り込めないこと。
+    import threading
+
+    w = World(tmp_path)
+    w.enroll()
+    w.strong()
+    held: list[bool] = []
+    original = w.gateway.replay.check_and_store
+
+    def watched(key: str, *, now: float, expires_at: float) -> bool:
+        def probe() -> None:
+            got = w.gateway.lock.acquire(blocking=False)
+            if got:
+                w.gateway.lock.release()
+            held.append(not got)
+
+        other = threading.Thread(target=probe)
+        other.start()
+        other.join()
+        return original(key, now=now, expires_at=expires_at)
+
+    w.gateway.replay.check_and_store = watched  # type: ignore[method-assign]
+    token = w.token().json()["access_token"]
+    assert w.ping(token).status_code == 200
+    assert w.strength().status_code == 200
+    assert w.post(f"{AUTH}/authenticate/options").status_code == 200
+    assert len(held) == 4 and all(held)
+
+
+def test_長さを名乗らない大きな本文も_途中で読むのをやめて_413(tmp_path: Path) -> None:
+    w = World(tmp_path)
+
+    def chunks():  # type: ignore[no-untyped-def]
+        for _ in range(MAX_BODY_BYTES // 1024 + 1):
+            yield b"x" * 1024
+
+    proof = make_proof(w.key, method="POST", url=f"{BASE}{AUTH}/authenticate/verify", now=w.now)
+    r = w.client().post(f"{AUTH}/authenticate/verify", content=chunks(), headers={"DPoP": proof})
+    assert "content-length" not in r.request.headers
+    assert (r.status_code, r.json()) == (413, {"error": "too_large"})

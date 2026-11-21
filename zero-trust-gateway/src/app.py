@@ -76,11 +76,6 @@ class AuthnProvider(Protocol):
     def current(self, headers: Mapping[str, str], *, jkt: str, now: float) -> AuthnState | None: ...
 
 
-class DenyAllAuthn:
-    def current(self, headers: Mapping[str, str], *, jkt: str, now: float) -> AuthnState | None:
-        return None
-
-
 class _Sessions:
     # 第 6 層へ渡す「止める口」。トークンのセッション (第 4 層) と、認証の状態 (第 3 層) の両方を止める。
     def __init__(self, store: SessionStore, webauthn: WebAuthnService) -> None:
@@ -400,11 +395,21 @@ class Gateway:
         actor = known.subject if known is not None else "anonymous"
         ip = request.client.host if request.client is not None else None
         try:
+            if name.startswith("register") and self.issuance.halted():
+                # 発行を止めている間は、認証器も足させない。
+                raise Refused("issuance_halted")
             if name == "register_options":
+                # 追加の確認待ち・凍結・取り消しのセッションでは、強い認証だけを根拠に足させない。
+                calm = known is None or self.sessions.state(session_id_for(known.subject, jkt)) == "active"
                 options = self.webauthn.begin_registration(
-                    jkt, body.get("kind"), enrollment_code=body.get("enrollment_code"), now=now
+                    jkt,
+                    body.get("kind"),
+                    enrollment_code=body.get("enrollment_code"),
+                    now=now,
+                    trust_strong=calm,
                 )
-                self.record(now, actor=actor, action="authn.register.options", target=path, result="ok")
+                subject = options["user"]["name"]
+                self.record(now, actor=subject, action="authn.register.options", target=path, result="ok")
                 return 200, options
             if name == "register_verify":
                 added = self.webauthn.finish_registration(jkt, body.get("credential"), now=now)
