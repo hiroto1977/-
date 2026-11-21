@@ -1045,7 +1045,7 @@ export const SNAPSHOT = {
       { id: 'i2', repo: 'postgres', tag: '16-alpine', sizeMb: 238, critical: 0, high: 1, medium: 3, low: 11, source: 'Docker Hub' },
       { id: 'i3', repo: 'redis', tag: '7-alpine', sizeMb: 41, critical: 0, high: 0, medium: 1, low: 4, source: 'Docker Hub' },
       { id: 'i4', repo: 'node', tag: '22-bookworm-slim', sizeMb: 196, critical: 0, high: 0, medium: 4, low: 18, source: 'Docker Hub' },
-    ] as { id: string; repo: string; tag: string; sizeMb: number; critical: number; high: number; medium: number; low: number; source: string }[],
+    ] as { id: string; repo: string; tag: string; sizeMb: number; critical: number | null; high: number | null; medium: number | null; low: number | null; source: string }[],
     security: [
       { id: 's1', item: 'rootless モードで実行', status: 'ok', detail: 'デーモンを非 root で稼働させ権限昇格リスクを低減' },
       { id: 's2', item: 'イメージ脆弱性スキャン (Trivy)', status: 'ok', detail: 'GitHub Actions で push 毎に Trivy スキャン、CRITICAL/HIGH をゲート' },

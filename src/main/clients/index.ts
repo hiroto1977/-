@@ -341,8 +341,8 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   // Obsidian: ローカル Vault (Markdown) の可視化。認証不要。Obsidian の設定から
   // Vault を特定し、ノート数・語数・タグ・内部リンクと Git 連携を集計する (Phase 6)。
   'obsidian',
-  // Docker: ローカル Docker Engine の可視化。認証不要。fetcher は現状 stub で、
-  // 実 Engine の socket 読み取りは未配線 (`dataOrigin.ts` では 'sample')。
+  // Docker: ローカル Docker Engine の可視化。認証不要。Engine API を unix socket
+  // 経由で読み取り専用に集計する (Phase 6)。CLI は起動しない (サブプロセス禁止)。
   'docker',
   // AI アシスタント: ページ表示は認証不要 (会話は Anthropic キー設定時のみ)。
   'assistant',

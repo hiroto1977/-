@@ -145,7 +145,7 @@ export const SERVICE_DATA_ORIGIN: Record<ServiceId, DataOrigin> = {
   // fetcher は台帳を指す標識だけを返す。それまでは同梱の見本だった。
   compliance: 'local',
   obsidian: 'local', // 2026-11-21 第4弾: Vault の実ファイル集計 (Obsidian 設定→Vault→Markdown 走査) を配線
-  docker: 'sample',
+  docker: 'local', // 2026-11-21 第4弾: Docker Engine API (unix socket) の読み取り専用集計を配線
   assistant: 'local',
   docstudio: 'local',
   cursor: 'remote',
