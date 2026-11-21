@@ -144,7 +144,7 @@ export const SERVICE_DATA_ORIGIN: Record<ServiceId, DataOrigin> = {
   // 2026-11-19: 実データは renderer の確証済み制度知識 (complianceKnowledge) で、
   // fetcher は台帳を指す標識だけを返す。それまでは同梱の見本だった。
   compliance: 'local',
-  obsidian: 'sample',
+  obsidian: 'local', // 2026-11-21 第4弾: Vault の実ファイル集計 (Obsidian 設定→Vault→Markdown 走査) を配線
   docker: 'sample',
   assistant: 'local',
   docstudio: 'local',
