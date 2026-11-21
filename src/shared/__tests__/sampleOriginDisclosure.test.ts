@@ -96,12 +96,13 @@ describe('見本のサービスは、サイドバーでもそう述べる (パ�
     expect(DISCLOSES.test('エラー監視 — issues / performance / releases')).toBe(false);
   });
 
-  it('走査が生きている (sample の項が 15 件以上ある)', () => {
+  it('走査が生きている (sample の項が 12 件以上ある)', () => {
     // 分類が壊れて 0 件になると、上の検査が無条件に通る。
     // 下限は実態に合わせて置く: 2026-11-19 のローカル完結バッチ 1・2 で
     // 士業 8 件と分析・内部画面 9 件が 'local' へ移り 22 件、バッチ 3 で
-    // grok・不動産・投資信託が 'local'、dropbox が 'remote' へ移り、
-    // 残る sample は外部連携待ち・別機能待ちの 18 件。
-    expect(SAMPLE_IDS.length).toBeGreaterThanOrEqual(15);
+    // grok・不動産・投資信託が 'local'、dropbox が 'remote' へ移り 18 件、
+    // 2026-11-21 の第4弾で storage・obsidian・docker が 'local' へ移り、
+    // 残る sample は外部連携待ち・別機能待ちの 14 件。
+    expect(SAMPLE_IDS.length).toBeGreaterThanOrEqual(12);
   });
 });

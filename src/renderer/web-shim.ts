@@ -1542,7 +1542,7 @@ const unguarded = {
     }
     /*
      * 同梱の内容しか返せない画面 (事業ダッシュボード / 書類スタジオ / 資金調達レーダー / KPI /
-     * Linux / Skills / テンプレート —— `data/browserBundledFetch.ts`)。
+     * Linux / Skills / テンプレート / Docker / Obsidian / Storage —— `data/browserBundledFetch.ts`)。
      * ここが無いまま `not_implemented` へ落ちると、「更新」を押すたびに赤い「エラー」と
      * 「ブラウザ版では live fetch を行いません」が出た (2026-11-19 実測)。返す中身は
      * `isMock: true` を名乗るので、画面は注記か「同梱データ」の札を出す。

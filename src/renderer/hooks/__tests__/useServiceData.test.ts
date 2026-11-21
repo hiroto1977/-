@@ -473,8 +473,9 @@ describe('useServiceData — sample サービス (取得先が無い画面)', ()
         return { ok: true, data: { contacts: [], monthlyFee: 0 } } as FetchResult<unknown>;
       },
     });
-    // 標本は今も 'sample' のものを使う (士業は 2026-11-19 のバッチ 1 で 'local' 化した)。
-    const h = setup('docker', { contacts: [{ name: '顧問税理士' }], monthlyFee: 33000 });
+    // 標本は今も 'sample' のものを使う (士業は 2026-11-19 のバッチ 1 で、docker は
+    // 2026-11-21 の第4弾で 'local' 化したので、標本を coconala へ移した)。
+    const h = setup('coconala', { contacts: [{ name: '顧問税理士' }], monthlyFee: 33000 });
     await h.mount();
     await h.refresh();
     expect(calls).toBe(0); // IPC そのものを呼ばない
@@ -488,14 +489,15 @@ describe('useServiceData — sample サービス (取得先が無い画面)', ()
   it('トークンが保存済みでも自動取得しない (押さずに画面が空になる経路を塞ぐ)', async () => {
     let calls = 0;
     setHub({
-      listConfigured: async () => ['docker'],
+      listConfigured: async () => ['coconala'],
       fetchSnapshot: async () => {
         calls += 1;
         return { ok: true, data: { files: [] } } as FetchResult<unknown>;
       },
     });
-    // 標本は今も 'sample' のものを使う (dropbox は 2026-11-19 のバッチ 3 で 'remote' 化した)。
-    const h = setup('docker', { files: [{ name: '見積書.pdf' }] });
+    // 標本は今も 'sample' のものを使う (dropbox は 2026-11-19 のバッチ 3 で 'remote' 化、
+    // docker は 2026-11-21 の第4弾で 'local' 化したので、標本を coconala へ移した)。
+    const h = setup('coconala', { files: [{ name: '見積書.pdf' }] });
     await h.mount();
     expect(calls).toBe(0);
     expect(h.ref.current.isConfigured).toBe(true); // 資格情報の有無は今までどおり見える
@@ -506,7 +508,8 @@ describe('useServiceData — sample サービス (取得先が無い画面)', ()
 
   it('ブラウザ版の not_implemented でエラー表示にならない', async () => {
     setHub(errHub('not_implemented', 'ブラウザ版では live fetch を行いません。'));
-    const h = setup('obsidian', { contacts: [] });
+    // 標本は今も 'sample' のものを使う (obsidian は 2026-11-21 の第4弾で 'local' 化した)。
+    const h = setup('tiktok', { contacts: [] });
     await h.mount();
     await h.refresh();
     expect(h.ref.current.status).toBe('idle'); // 取得先が無いだけで、異常ではない
