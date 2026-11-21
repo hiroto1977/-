@@ -106,6 +106,11 @@ export const SAMPLES: Readonly<Record<string, Sample>> = {
     required: ['month', 'program', 'amount', 'status'],
     optional: [],
   },
+  'watch-weekly': {
+    good: { week: '2026-11-16', xPosts: 12, xImpressions: 15000, adCost: 30000, gaSessions: 2400 },
+    required: ['week'],
+    optional: ['xPosts', 'xImpressions', 'xEngagements', 'xFollowers', 'adCost', 'adImpressions', 'adClicks', 'adConversions', 'gaUsers', 'gaSessions', 'gaPageviews', 'gaConversions'],
+  },
   'realestate-properties': {
     good: { name: 'A', type: 'apartment', monthlyRent: 100, purchasePrice: 1000, occupied: true, monthlyExpenses: 1, monthlyLoan: 2 },
     required: ['name', 'type', 'monthlyRent', 'purchasePrice', 'occupied'],

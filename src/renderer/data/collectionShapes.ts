@@ -156,6 +156,23 @@ const FIELD_SHAPES: Readonly<Record<string, CollectionShape>> = {
   // 読み手 (`summarizeA8netRewards`) が合計から外して件数を言い、一覧の × で消せる。形で落とすと
   // 復元で行ごと消え、利用者が消す手を失う (業務の割当と同じ判断)。
   'a8net-rewards': shape({ month: str, program: str, amount: num, status: str }),
+  // 見張りアシスタントの週ごとの数字 (2026-11-21): 週は**文字列としてだけ**見る —— 読めない綴りの行は
+  // 読み手 (`buildWatchWeeklyReport`) がレポートから外して件数を言い、一覧の × で消せる。数字は入力した欄だけを持つ。
+  'watch-weekly': shape({
+    week: str,
+    xPosts: opt(num),
+    xImpressions: opt(num),
+    xEngagements: opt(num),
+    xFollowers: opt(num),
+    adCost: opt(num),
+    adImpressions: opt(num),
+    adClicks: opt(num),
+    adConversions: opt(num),
+    gaUsers: opt(num),
+    gaSessions: opt(num),
+    gaPageviews: opt(num),
+    gaConversions: opt(num),
+  }),
   'mutualfund-holdings': shape({
     code: opt(str),
     name: str,

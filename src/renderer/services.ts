@@ -75,6 +75,7 @@ import { MentorPage } from './pages/MentorPage';
 import { GrokPage } from './pages/GrokPage';
 import { HydroponicsPage } from './pages/HydroponicsPage';
 import { VrioPage } from './pages/VrioPage';
+import { WatchPage } from './pages/WatchPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -814,6 +815,15 @@ export const SERVICES: ServiceDefinition[] = [
     icon: '強',
     description: '従業員の評価 (階層ウェイト × 職種の観点・昇格ゲート・育成の一手) と、商品企画を進めるか見送るか (GO / NO-GO) の判定 (入力は画面の中だけ)',
     page: VrioPage,
+    category: 'tools',
+  },
+  {
+    id: 'watch',
+    label: '見張りアシスタント',
+    english: 'Watch Assistant',
+    icon: '見',
+    description: 'メール・予定・スラック (Slack)・エックス (X)・グーグル広告 (Google Ads)・アナリティクス (Google Analytics) の内容から、平日の要約・返信の下書き・週次レポートを作る (貼り付けと手入力・送信はしない)',
+    page: WatchPage,
     category: 'tools',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
