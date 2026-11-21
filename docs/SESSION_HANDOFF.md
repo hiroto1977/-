@@ -34,7 +34,7 @@
   ブラウザで 4 (`jti` が短い・`htu` の道が違う・`clientDataJSON` を落とす・ハッシュの無いスクリプトをブラウザが実際に止める)。
 - **門**: `lint:network-targets` が画面の `fetch` を「`src` の外の網の口」として捕まえた (設計どおり) —— `REVIEWED_OUTSIDE_SENDS` に理由つきで載せ、
   外側の証人 `networkTargetWitness.test.ts` の件数を 9 → 10 へ。`eslint` が画面の大域 (window ほか) と `catch (_)` を捕まえた ——
-  `eslint.config.js` に画面だけの大域の一覧を足し (`no-undef` は残す)、`catch {}` にした。
+  `eslint.config.js` に画面だけの大域の一覧を足し (`no-undef` は残す)、`catch {}` にした。`eslint.config.js` は保護対象なので整合性チェーン block **#532**。
 - **検証 (最終コード)**: pytest 429 件 ❌ 0・`typecheck` 緑・`npm test` 1,345 ファイル / 29,459 件 ❌ 0・`verify:all` 39 ゲート 0 件落ち。
   **出荷物は動いていない** (`src/` を 1 行も触っていない) ので、本体のビルドと実機 (perf / e2e) は回していない。
 - **残り** (`docs/REMAINING_WORK.md`): 実物の物理キーとスマホでの通し・画面のブラウザでの通しを CI に載せる (起動役が要る)・第 1 層の待ち受け・第 2 層。
