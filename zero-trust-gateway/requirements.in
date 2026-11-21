@@ -6,3 +6,5 @@ cryptography
 httpx2
 pytest
 hypothesis
+webauthn
+cbor2
