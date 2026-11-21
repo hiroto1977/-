@@ -1984,7 +1984,9 @@ The browser target adds: `web-shim.ts` (a `window.serviceHub` polyfill imported 
   配る HTML からも読まない。検査は `cd zero-trust-gateway && python -m pytest` (依存は `requirements.txt` に版とハッシュで固定 ——
   足すときは `requirements.in` を書き換えて `uv pip compile --generate-hashes` で作り直す)。CI は ci.yml の 1 ステップで回す。
   秘密を書かない・ファイアウォールと停止スイッチは既定が dry-run・層は `src/layerN_*/` に分ける・層ごとに検査を付ける
-  (`zero-trust-gateway/README.md`)。**第 3 層 (WebAuthn) が無いので、既定のままではトークンを 1 枚も出さない** —— 意図した動き。
+  (`zero-trust-gateway/README.md`)。**既定のままでは、トークンを 1 枚も出さない** (認証器も登録コードの置き場も空) —— 意図した動き。
+  第 3 層 (WebAuthn · 2026-11-21) の認証の状態は端末の鍵 (DPoP の鍵の指紋) に結び付け、クッキーや合言葉を配らない。
+  守りを足したら、対照 (壊して検査が落ちる) を回す。
 - **対照を回すまで、検査は信用しない。** 守っている物を実際に壊し、狙った項目が
   落ちることを見る。**鳴らない対照は「合格」ではなく「その検査についての報せ」である。**
 
