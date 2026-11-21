@@ -4500,6 +4500,14 @@
       "leafCount": 225,
       "note": "update gateway-browser.yml,eslint.config.js,integrity-chain.cjs,auth_page.cjs,serve.py",
       "hash": "8c7ca499b94de0fd1b70e078282ce5719f2bf878690de07b30dd103ab61f9ad0"
+    },
+    {
+      "index": 534,
+      "prevHash": "8c7ca499b94de0fd1b70e078282ce5719f2bf878690de07b30dd103ab61f9ad0",
+      "merkleRoot": "fa53638437c3eb5231239b9d84199c3dfd5fc5e8749ed36d344b27d23dfdf3ff",
+      "leafCount": 225,
+      "note": "update gateway-browser.yml",
+      "hash": "fe0072765b1f9f3969350f07f19cc55e50ad4fe51b55ad7ad6edc566b412c92b"
     }
   ],
   "tipManifest": {
@@ -4516,7 +4524,7 @@
     ".github/workflows/ci.yml": "b48c49988e338eb3adad939fb10783dc29043f83a8b29edb41986c1657ad473f",
     ".github/workflows/dependency-audit.yml": "c089648472bc7879701a996aeba69a6ff5dcb55e8efa2e0d996e4d9a9c3ee026",
     ".github/workflows/e2e.yml": "d6036acc5fe97d17fad5799144470b140bedfbb56934de4949517b038640be60",
-    ".github/workflows/gateway-browser.yml": "2d935b69fba1737a054fb3f96f5f1403e385b937d49ba95bbc2b89d8aabe8f35",
+    ".github/workflows/gateway-browser.yml": "9f4eeae9a8bae07fc12e966094047a493d19ca49a7592fd98d9afb45d870a349",
     ".github/workflows/knowledge-auto.yml": "fcd9a876356278d4b347fe53df4cbee0733f1884fe0786eb42ba01f51d1a2834",
     ".github/workflows/mutation.yml": "fc3fa01fc8775ef8e0b9751ea414b254536770d5e858f6516e5b8dfe1fa60fe0",
     ".github/workflows/pages.yml": "72dd545faa7edc54d3332d19f87b24212df2cd3be3178812d5561e2722603cec",

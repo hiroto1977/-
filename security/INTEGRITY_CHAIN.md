@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 534
+- ブロック数: 535
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `8c7ca499b94de0fd1b70e078282ce5719f2bf878690de07b30dd103ab61f9ad0`
+- 末尾(tip)ハッシュ: `fe0072765b1f9f3969350f07f19cc55e50ad4fe51b55ad7ad6edc566b412c92b`
 - 保護対象: 225 ファイル
 
 ## ブロック
@@ -547,6 +547,7 @@
 | 531 | `f225c15c987f4afc` | `f7c9caae96edae98` | `a33c545cf6479030` | update ci.yml |
 | 532 | `0849a281aa26a013` | `a33c545cf6479030` | `16c72a7381010860` | update eslint.config.js |
 | 533 | `e28a7a58e9ca04d2` | `16c72a7381010860` | `8c7ca499b94de0fd` | update gateway-browser.yml,eslint.config.js,integrity-chain.cjs,auth_page.cjs,serve.py |
+| 534 | `fa53638437c3eb52` | `8c7ca499b94de0fd` | `fe0072765b1f9f39` | update gateway-browser.yml |
 
 ## 保護対象ファイル
 

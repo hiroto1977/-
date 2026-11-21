@@ -96,6 +96,7 @@ def test_prepare_makes_new_values_every_time(tmp_path: Path) -> None:
         "node scripts/verify-e2e-playwright-pin.cjs --self-test && node scripts/verify-e2e-playwright-pin.cjs",
         'ZT_PYTHON="$RUNNER_TEMP/zt-venv/bin/python" node zero-trust-gateway/tests/browser/auth_page.cjs',
         "persist-credentials: false",
+        "runs-on: ubuntu-24.04",
     ],
 )
 def test_workflow_runs_the_driver_on_gateway_changes(needle: str) -> None:
