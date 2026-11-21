@@ -90,6 +90,8 @@ const LEDGER: readonly Row[] = [
       + '**別の画面**の操作子なので、2026-09-27 (パス 499) に同じ画面の種類から移した (名指しする画面が描いているかを問う ★ が、'
       + 'ライブラリの画面にその綴りが無いことを見つけた)。',
   },
+  { name: '材料を渡す', kind: 'same-screen-control', renderedIn: 'src/renderer/pages/WatchPage.tsx', why: '見張りアシスタントの、材料がまだ無いときの案内が名指しする (実物の label は「＋ 材料を渡す」で、名指しはその後方一致)。文は shared が組み、押す所は同じ画面に在る。' },
+  { name: '週次レポートを作る', kind: 'same-screen-control', renderedIn: 'src/renderer/pages/WatchPage.tsx', why: '見張りアシスタントの、答えがまだ無いときの案内が名指しする。同じ画面の週ごとの数字の節のボタン。' },
   { name: 'SVG を保存', kind: 'same-screen-control', renderedIn: 'src/renderer/pages/TeamRadarPage.tsx', why: 'チームレーダーの書き出しボタン (実物の label は「SVG を保存 (Canva 用)」で、名指しはその前方一致)。' },
   { name: 'チーム情報を保存', kind: 'same-screen-control', renderedIn: 'src/renderer/pages/TeamRadarPage.tsx', why: '同じ画面の保存ボタン。文は shared の状態モジュールが組むが、出る先はこの画面である。' },
   { name: 'もう一度確認', kind: 'same-screen-control', renderedIn: 'src/renderer/security/LockScreen.tsx', why: '24 語の控えを確かめ直すボタン。文は保管庫が組み、押す所は施錠画面に在る。' },

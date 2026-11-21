@@ -138,6 +138,11 @@ const READING_ROW: DraftRow = {
   writer: 'parseReading',
   why: '「記録」を押したときに読み、読めない欄を名指しして断る (保存しない)',
 };
+const WATCH_ROW: DraftRow = {
+  file: 'renderer/pages/WatchPage.tsx',
+  writer: 'parseWatchWeek',
+  why: '「＋ この週を記録」を押したときに読み、0 以上の整数でなければ欄を名指しして断る (保存しない・空欄は 0 にせず未入力として持つ)',
+};
 
 const DRAFT_LEDGER: Readonly<Record<string, DraftRow>> = Object.freeze({
   'real-estate|(placeholder) 金額 (任意)': AMOUNT_ROW,
@@ -171,6 +176,18 @@ const DRAFT_LEDGER: Readonly<Record<string, DraftRow>> = Object.freeze({
   'hydroponics|CO₂ 濃度 (ppm)': READING_ROW,
   'hydroponics|溶存酸素 (mg/L)': READING_ROW,
   'hydroponics|養液タンク液位 (%)': READING_ROW,
+  'watch|エックス (X)の投稿数': WATCH_ROW,
+  'watch|エックス (X)の表示回数': WATCH_ROW,
+  'watch|エックス (X)の反応数': WATCH_ROW,
+  'watch|エックス (X)のフォロワー数': WATCH_ROW,
+  'watch|グーグル広告 (Google Ads)の広告費': WATCH_ROW,
+  'watch|グーグル広告 (Google Ads)の表示回数': WATCH_ROW,
+  'watch|グーグル広告 (Google Ads)のクリック数': WATCH_ROW,
+  'watch|グーグル広告 (Google Ads)の成果数': WATCH_ROW,
+  'watch|アナリティクス (Google Analytics)の利用者数': WATCH_ROW,
+  'watch|アナリティクス (Google Analytics)の訪問数': WATCH_ROW,
+  'watch|アナリティクス (Google Analytics)のページ表示数': WATCH_ROW,
+  'watch|アナリティクス (Google Analytics)の成果数': WATCH_ROW,
   'a8net|報酬額': {
     file: 'renderer/pages/A8netPage.tsx',
     writer: 'parseA8netReward',

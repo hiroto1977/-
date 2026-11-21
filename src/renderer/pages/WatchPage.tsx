@@ -436,7 +436,7 @@ export function WatchPage() {
                 <div data-watch-answer-text style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', fontSize: 13, lineHeight: 1.7 }}>{a.text}</div>
                 {a.note !== undefined && <p style={{ ...MUTED, margin: '6px 0 0' }}>{a.note}</p>}
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', marginTop: 6 }}>
-                  <button type="button" onClick={() => fireReported(onCopy(a))} aria-label={`「${a.title}」をコピー`}>
+                  <button type="button" onClick={() => fireReported(submit.run(() => onCopy(a)))} aria-label={`「${a.title}」をコピー`}>
                     コピー
                   </button>
                   {copied?.id === a.id && (

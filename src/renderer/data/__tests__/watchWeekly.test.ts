@@ -17,7 +17,6 @@ import {
   duplicateWatchWeekMessage,
   hasWatchWeek,
   parseWatchWeek,
-  signedPct,
   unreadableWatchWeeksNote,
   watchMetricOf,
   weekStartOf,
@@ -177,13 +176,6 @@ describe('保管値の読みと、同じ週の判定', () => {
     expect(unreadableWatchWeeksNote(2)).toBe(
       '週の日付が読めない記録が 2 件あります。レポートには入れていません。その行も下の一覧に出ています —— 一覧の × で消して、入れ直してください。',
     );
-  });
-
-  it('増減の率の書き方', () => {
-    expect(signedPct(12.5)).toBe('+12.5%');
-    expect(signedPct(-3)).toBe('-3.0%');
-    expect(signedPct(0)).toBe('+0.0%');
-    expect(signedPct(100)).toBe('+100.0%');
   });
 });
 

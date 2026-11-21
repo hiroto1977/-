@@ -31,6 +31,7 @@ const EXPECTED: ReadonlyArray<readonly [ServiceId, CredentialUse]> = [
   ['ollama', 'none'],
   ['grok', 'none'],
   ['vrio', 'none'],
+  ['watch', 'none'],
   ['kpi', 'none'],
   ['stocks', 'action'],
   ['business', 'action'],
@@ -137,7 +138,7 @@ describe('SERVICE_CREDENTIAL_USE', () => {
     expect(count('fetch')).toBe(22);
     // shopify が `action` → `none` (パス 452)。
     expect(count('action')).toBe(7);
-    expect(count('none')).toBe(50);
+    expect(count('none')).toBe(51);
   });
 
   it('監査で見つかった 9 件は none のままである', () => {

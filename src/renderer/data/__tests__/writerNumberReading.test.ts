@@ -63,6 +63,7 @@ import { fundValuation, parseHoldingEntry, parsePropertyEntry } from '../investm
 import { parseCropNumber } from '../../../shared/hydroponicCrops';
 import { parseAssignment } from '../../../shared/workAssignment';
 import { parseA8netReward } from '../a8netRewards';
+import { WATCH_METRIC_KEYS, parseWatchWeek } from '../watchWeekly';
 import { parseGoal } from '../kpiImprovementStore';
 import { parseAmountInput } from '../../components/serviceActionUtils';
 import { parseNumericInput } from '../eligibility';
@@ -280,6 +281,18 @@ probes.push({
   pick: get('amount'),
   blank: { refuse: true },
 });
+// 見張りアシスタントの週ごとの数字 (12 欄・どれも任意)。空欄は「未入力」として欄ごと持たせない ——
+// 1 つも入っていない週は断るので、隣の欄に 1 を置いて当てる。
+for (const key of WATCH_METRIC_KEYS) {
+  const other = key === 'xPosts' ? 'adCost' : 'xPosts';
+  probes.push({
+    writer: 'parseWatchWeek',
+    field: key,
+    write: (s) => attempt(() => parseWatchWeek({ week: '2026-11-16', [other]: '1', [key]: s })),
+    pick: get(key),
+    blank: { value: undefined },
+  });
+}
 // 月次改善の輪: 目標の営業利益率。空欄は断る (0% を目標にしない)。範囲は 0% より大きく 100% 未満。
 probes.push({
   writer: 'parseGoal',
@@ -486,6 +499,8 @@ const WRITER_LEDGER: Readonly<Record<string, LedgerRow>> = {
   parseMember: { kind: 'no-numbers', why: 'チームの氏名・メール・役割だけを読む' },
   parseAssignment: { kind: 'numbers', why: '業務の割当の週の時間 (パス 556)' },
   parseA8netReward: { kind: 'numbers', why: 'A8.net の成果の報酬額 (円・0 以上の整数)' },
+  parseWatchWeek: { kind: 'numbers', why: '見張りアシスタントの週ごとの数字 (投稿数・広告費・訪問数ほか 12 欄・0 以上の整数・どれも任意)' },
+  parseWatchItem: { kind: 'no-numbers', why: '見張りアシスタントへ渡す文 (種類・相手の名前・件名・本文) を文字列のまま読む。数の欄は無い' },
   parseGoal: { kind: 'numbers', why: '月次改善の輪の目標の営業利益率 (0% より大きく 100% 未満)' },
   parseCycle: {
     kind: 'no-numbers',

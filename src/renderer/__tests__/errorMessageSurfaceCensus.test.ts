@@ -119,6 +119,7 @@ const LEDGER: Readonly<Record<string, { readonly sites: number; readonly source:
   'src/renderer/data/stocksWatchlistWeb.ts': { sites: 1, source: 'platform', note: '3 状態の理由 (パス 309)' },
   'src/renderer/hooks/useServiceData.ts': { sites: 1, source: 'invoke', note: 'IPC が reject した場合の受け皿' },
   'src/renderer/network/liveRead.ts': { sites: 2, source: 'network' },
+  'src/renderer/pages/WatchPage.tsx': { sites: 2, source: 'ownThrow', note: '`parseWatchItem` (shared/watchAssistant.ts) と `parseWatchWeek` (data/watchWeekly.ts) の定数の断りだけを捕まえる (try は書き手 1 つずつを包む)' },
   'src/renderer/pages/A8netPage.tsx': { sites: 1, source: 'ownThrow', note: '`parseA8netReward` (data/a8netRewards.ts) の定数の断りだけを捕まえる (try は書き手 1 つを包む)' },
   'src/renderer/pages/AssistantPage.tsx': { sites: 2, source: 'ownThrow', note: '`setToken` の戻りと端末内の簡易応答' },
   'src/renderer/pages/BusinessPage.tsx': { sites: 2, source: 'invoke' },

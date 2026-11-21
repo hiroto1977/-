@@ -107,7 +107,11 @@ export const SAMPLES: Readonly<Record<string, Sample>> = {
     optional: [],
   },
   'watch-weekly': {
-    good: { week: '2026-11-16', xPosts: 12, xImpressions: 15000, adCost: 30000, gaSessions: 2400 },
+    good: {
+      week: '2026-11-16', xPosts: 12, xImpressions: 15000, xEngagements: 450, xFollowers: 1020,
+      adCost: 30000, adImpressions: 50000, adClicks: 1000, adConversions: 20,
+      gaUsers: 1800, gaSessions: 2400, gaPageviews: 6000, gaConversions: 48,
+    },
     required: ['week'],
     optional: ['xPosts', 'xImpressions', 'xEngagements', 'xFollowers', 'adCost', 'adImpressions', 'adClicks', 'adConversions', 'gaUsers', 'gaSessions', 'gaPageviews', 'gaConversions'],
   },

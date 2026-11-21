@@ -173,7 +173,7 @@ export const MAX_WATCH_MOVES = 5;
 const num = (n: number): string => n.toLocaleString('ja-JP');
 
 /** 増減の率を「+12.5%」「-3.0%」と書く。 */
-export function signedPct(n: number): string {
+function signedPct(n: number): string {
   return `${n >= 0 ? '+' : '-'}${Math.abs(n).toFixed(1)}%`;
 }
 
