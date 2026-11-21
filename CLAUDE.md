@@ -11,7 +11,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Service Hub — a Japanese-facing business dashboard exposing **79 services** through a unified,
+Service Hub — a Japanese-facing business dashboard exposing **80 services** through a unified,
 category-grouped sidebar (おすすめ / 士業連携 / 分析・ツール / 外部サービス連携). **Not every service has a sidebar
 entry of its own**: `uber-eats` and `demae-can` are consumed inside the Business Dashboard instead
 (`BusinessPage.tsx` reads their snapshots directly). That split is a reasoned, bidirectional ledger in
@@ -1521,7 +1521,7 @@ npm run lint:test-coverage # サービスごとに `<id>.test.ts` が在り、**
                            #   直書きした action は検査を素通りする)、`ACTIONS` を export する
                            #   クライアントは全部 `LIVE_ACTIONS` に載る (逆向き)。
                            #   **action を持たないサービスは許される** —— 2026-09-15 実測で
-                           #   **79 のうち 51 が action を 1 つも登録していない** (ゲートの
+                           #   **80 のうち 52 が action を 1 つも登録していない** (ゲートの
                            #   self-test にも「テストはあるが action 0 件 → 0 件鳴る」が在る)。
                            #   2026-09-15 まで、この行は「every service must have a test +
                            #   an action registered」と書かれていた —— **後半は偽**で、

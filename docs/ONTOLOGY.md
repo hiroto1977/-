@@ -47,7 +47,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `document` **文書** | ARCHITECTURE の file:line と live metric・CLAUDE.md の数・REMAINING_WORK の生成ブロック。散文で述べた規則は落ちないので、数は機械が持つ。 | `docs/ARCHITECTURE.md`<br>`CLAUDE.md`<br>`docs/SESSION_HANDOFF.md`<br>`docs/REMAINING_WORK.md`<br>`docs/ONTOLOGY.md` | `scripts/verify-architecture.cjs`<br>`scripts/cross-doc-consistency.cjs`<br>`src/shared/__tests__/ontologyDoc.test.ts` |
 | `workflow` **CI の workflow** | permissions 明示・第三者 action の SHA 固定・pull_request_target 禁止。週次の依存監査は常設 Issue 1 つ。 | `.github/workflows/ci.yml`<br>`.github/workflows/e2e.yml`<br>`.github/workflows/dependency-audit.yml`<br>`.github/workflows/release.yml` | `scripts/lint-workflow-security.cjs`<br>`src/shared/__tests__/workflowSecurityWitness.test.ts`<br>`src/shared/__tests__/dependencyAuditWorkflow.test.ts` |
 
-## 3. サービスの facet 行列 (79)
+## 3. サービスの facet 行列 (80)
 
 | id | 配置 | 出所 | 資格情報 | local | OAuth | 士業 | デスクトップの action | ブラウザ版の action | デスクトップだけ |
 |---|---|---|---|:---:|:---:|:---:|---|---|---|
@@ -128,15 +128,16 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `uber-eats` | consumed | sample | none | ✅ |  |  | `advise` `record-entry` | `advise` `record-entry` | — |
 | `village` | featured | local | none | ✅ |  |  | — | — | — |
 | `vrio` | tools | local | none | ✅ |  |  | — | — | — |
+| `watch` | tools | local | none | ✅ |  |  | — | — | — |
 | `wordpress` | integrations | remote | fetch |  | ✅ |  | `create-post-draft` | `create-post-draft` | — |
 | `youtube` | integrations | remote | fetch |  |  |  | — | — | — |
 
 集計:
 
-- 配置: おすすめ 12 / 士業連携 8 / 分析・ツール 24 / 外部サービス連携 33 / 消費されるだけ 2
-- 出所: remote 22 / local 40 / sample 17
-- 資格情報の読み手 — fetch 22 / action 7 / none 50
-- LOCAL_SERVICES 56 / OAuth 10 / action を持つ 27 / デスクトップだけの action 10
+- 配置: おすすめ 12 / 士業連携 8 / 分析・ツール 25 / 外部サービス連携 33 / 消費されるだけ 2
+- 出所: remote 22 / local 41 / sample 17
+- 資格情報の読み手 — fetch 22 / action 7 / none 51
+- LOCAL_SERVICES 57 / OAuth 10 / action を持つ 27 / デスクトップだけの action 10
 
 ## 4. facet の公理と例外
 

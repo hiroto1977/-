@@ -21,9 +21,9 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 
 | 軸 | 値 | 出典 |
 |---|---:|---|
-| サービス数 | 79 | `src/shared/serviceId.ts:9-43` |
+| サービス数 | 80 | `src/shared/serviceId.ts:9-43` |
 | IPC ハンドラ数 | 15 | `src/main/main.ts:213-432` |
-| client モジュール (fetcher + actions) | 79 | `src/main/clients/index.ts:44-83` |
+| client モジュール (fetcher + actions) | 80 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 35 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
 | ユニットテスト | **21545** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
@@ -1769,6 +1769,7 @@ union を参照する。
 | `hydroponics` | 水耕栽培 — 運転管理 (測定の判定 / 今日やること / 栽培ロットの日程) | none | ✅ | | (read-only — fetcher は「何を測るか」の台帳だけを返す。測定・ロット・設定は端末内の record store。組み立ては `src/shared/hydroponicsControl.ts` に 1 つ) |
 | `mentor` | 専属カウンセラー — メンバー 1 人に 1 人の相談役 (聞き取り / 週 1 のチェックイン / 関係の仲介 / 助言) | none | ✅ | | (read-only — fetcher は聞き取りの問いの台帳だけを返す。記録は端末内の record store `mentor-sessions`。判断は `src/shared/mentor.ts` に 1 つ。AI へ送るのは本人の記録と相談文だけで、画面が送る前に断る) |
 | `grok` | Grok (xAI) — 接続状態の確認と直接の質問 (AI 提供者 Grok の窓) | none | ✅ | | (read-only — fetcher は提供者の台帳から導いた見本だけを返す。鍵と既定の提供者は `assistant` スロット (エージェント設定)・質問は `assistant/chat` の `provider: 'grok'`。画面は送る前に送り先を名乗る) |
+| `watch` | 見張りアシスタント — 貼り付けたメール・スラック・予定の文から平日の要約と返信の下書きを、週ごとの数字 (エックス・広告・アナリティクス) から週次レポートを作る | none | ✅ | | (read-only — fetcher は見張る先と返信の方向の一覧だけを返す。貼り付けた文は画面の中にだけ在り、保存も送信もしない。週ごとの数字は record store の `watch-weekly`。読み取り・要約・下書きは `src/shared/watchAssistant.ts`、レポートは `src/renderer/data/watchWeekly.ts`) |
 | `vrio` | VRIO 分析 — 従業員の評価 (階層のウェイト × 職種の観点・昇格の推奨ゲート・育成の一手) と、商品企画の GO / NO-GO 判定 | none | ✅ | | (read-only — fetcher は階層・職種・判定の id の台帳だけを返す。点数と Yes / No は画面の中にだけ在り、保存も送信もしない。算定・ゲート・判定の分岐は `src/shared/vrio.ts` に 1 つ) |
 | `stocks` | Stocks (local mock) | Bearer (Anthropic, advisor のみ) | ✅ | | `register-ticker`, `unregister-ticker`, `backtest`, `compare-strategies`, `advise`, `export-dashboard`, `export-dashboard-md` (永続化済み、Phase 7 で broker 接続) |
 | `business` | 事業ダッシュボード (10 categories) | none | ✅ | | `advise`, `export-dashboard`, `export-dashboard-md` (EC / dropship / OEM/ODM / blog / blog-affiliate / PPC-affiliate / video-production / video-upload / video-distribution / sns-ops, Phase 6 で 実 API 接続) |
