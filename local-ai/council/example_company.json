@@ -1,0 +1,5 @@
+{"_note": "架空の企業データ（デモ用）。実在の企業とは無関係です。金額の単位は円。",
+ "name": "（架空）みどり村工業株式会社",
+ "metrics": {"revenue": 1200000000, "operating_income": 80000000, "net_income": 50000000,
+  "total_assets": 900000000, "net_assets": 400000000, "liabilities": 500000000, "cash": 150000000,
+  "employees": 85, "partners": 40}}

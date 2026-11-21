@@ -1,0 +1,51 @@
+---
+collection: academic
+id: bizlaw-civil-procedure
+category: "business-law"
+category_ja: "ビジネス法務"
+title: "民事訴訟法"
+as_of: "2026-06"
+source_count: 3
+authoritative: true
+tags:
+  - collection/academic
+  - academic/business-law
+  - knowledge/verified
+aliases:
+  - "民事訴訟法"
+---
+
+# 民事訴訟法
+
+> [!info] コレクション: [[学術概念]] ・ 区分: ビジネス法務 ・ asOf: 2026-06 ・ 出典: 3件（うち権威ある出典 ✓）
+
+## 概要
+民事訴訟法は、私法上の権利義務をめぐる紛争を裁判所が裁き、原告と被告の主張・立証を経て判決により解決する民事訴訟の手続を定める手続法である。管轄・当事者・訴状による訴えの提起・口頭弁論・証拠調べ・判決を規律し、判決が確定すると同一事項の蒸し返しを封じる既判力が生じる。判決の基礎となる事実と証拠の収集・提出を当事者の権能・責任とする弁論主義、手続の開始や審判対象の設定を当事者に委ねる処分権主義といった当事者主義を基本原理とする。判決に対しては控訴・上告で不服を申し立てられ、少額訴訟などの特則も置く。現行法は明治23年(1890)制定・大正15年(1926)改正の旧法を全面改正した平成8年(1996)法律第109号で、1998年1月1日に施行され手続の迅速化・利用しやすさを図った。令和4年(2022)改正は訴訟手続のIT化・デジタル化(オンライン申立て、ウェブ会議による口頭弁論、訴訟記録の電子化)を導入した。所管は法務省、手続は裁判所で行われる。
+
+## 提唱者・初出
+民事訴訟法（平成8年法律第109号、1996年制定・1998年施行）／法務省・裁判所
+
+## 出典
+- [e-Gov法令検索 民事訴訟法（平成8年法律第109号）](https://laws.e-gov.go.jp/law/408AC0000000109/) `公的`
+- [裁判所 改正民訴法等で変わる民事訴訟手続の概要（IT化）](https://www.courts.go.jp/saiban/minjidejitaruka/minso_gaiyou/index.html) `公的`
+- [コトバンク 民事訴訟法](https://kotobank.jp/word/%E6%B0%91%E4%BA%8B%E8%A8%B4%E8%A8%9F%E6%B3%95-140038) `リファレンス`
+
+## 関連概念
+- [[bizlaw-civil-preservation|民事保全法]] — 出典を共有
+- [[bizlaw-civil-rehabilitation|民事再生（民事再生法）]] — 出典を共有
+- [[bizlaw-corporate-veil-piercing-doctrine|法人格否認の法理——親子会社間の責任追及と株主有限責任の例外]] — 出典を共有
+- [[bizlaw-defamation|名誉毀損（刑法230条・民法709条/723条）]] — 出典を共有
+- [[bizlaw-fiduciary-duty-loyalty-care|受託者義務——忠実義務・善管注意義務と取締役の責任]] — 出典を共有
+- [[bizlaw-haishin-akuisha|背信的悪意者（不動産登記の第三者対抗）]] — 出典を共有
+- [[bizlaw-hoteijichijoken|法定地上権（民法388条）]] — 出典を共有
+- [[bizlaw-labor-tribunal|労働審判法（労働審判制度）]] — 出典を共有
+- [[bizlaw-lay-judge-act|裁判員法（裁判員の参加する刑事裁判に関する法律）]] — 出典を共有
+- [[labor-tribunal|労働審判制度（労働審判法）]] — 出典を共有
+
+## 関連
+- コレクション: [[学術概念]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

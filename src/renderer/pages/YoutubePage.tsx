@@ -1,0 +1,79 @@
+import { parseTimestamp } from '../../shared/isoDate';
+import { SNAPSHOT } from '../data/snapshot';
+import { DataList } from '../components/DataList';
+import { Section, StatusBar } from '../components/StatusBar';
+import { useServiceData } from '../hooks/useServiceData';
+
+const num = new Intl.NumberFormat('ja-JP');
+
+/** 数として読めなければ「不明」と言う (0 と混ぜない · パス 416)。 */
+const countText = (n: number | null): string => (n === null ? '不明' : num.format(n));
+
+/** 公開日。読めない値を「Invalid Date」と刷らない (パス 185)。 */
+function youtubePublished(publishedAt: string | undefined): string | undefined {
+  if (!publishedAt) return undefined;
+  return parseTimestamp(publishedAt)?.toLocaleDateString('ja-JP') ?? '公開日が読めません';
+}
+
+function Tile({ label, value }: { label: string; value: string }) {
+  return (
+    <div style={{
+      background: 'var(--bg-elev)',
+      border: '1px solid var(--border)',
+      borderRadius: 8,
+      padding: '12px 16px',
+      flex: 1,
+      minWidth: 140,
+    }}>
+      <div style={{ fontSize: 11, color: 'var(--text-mute)', marginBottom: 4 }}>{label}</div>
+      <div style={{ fontSize: 20, fontWeight: 600 }}>{value}</div>
+    </div>
+  );
+}
+
+export function YoutubePage() {
+  const { data, source, status, errorMessage, errorKind, refresh, isConfigured } = useServiceData(
+    'youtube',
+    SNAPSHOT.youtube,
+  );
+  const { channel, recentVideos } = data;
+
+  return (
+    <div>
+      <StatusBar
+        serviceId="youtube"
+        source={source}
+        status={status}
+        errorMessage={errorMessage}
+        errorKind={errorKind}
+        isConfigured={isConfigured}
+        onRefresh={refresh}
+        who={<>YouTube{channel.title ? ` · ${channel.title}` : ''}</>}
+        tokenSetup={{ label: 'API キー + チャンネル ID', placeholder: '{"apiKey":"...","channelId":"UC..."}' }}
+      />
+
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '12px 0' }}>
+        {/*
+          * **読めなかったことを画面が言う** (2026-09-22 · パス 416)。
+          * 直す前は `Number(x ?? 0)` だったので、読めない値は `NaN` として、
+          * 欠けた値は `0` として刷られた —— 前者は壊れて見えるが、
+          * **後者は「登録者 0 人」という事実の主張**になる (法則 `blank-states-its-reason`)。
+          */}
+        <Tile label="登録者数" value={countText(channel.subscribers)} />
+        <Tile label="総再生回数" value={countText(channel.views)} />
+        <Tile label="動画本数" value={countText(channel.videos)} />
+      </div>
+
+      <Section title="最近の動画" count={recentVideos.length}>
+        <DataList
+          items={recentVideos.map((v) => ({
+            key: v.videoId,
+            title: v.title,
+            meta: youtubePublished(v.publishedAt),
+            href: v.url,
+          }))}
+        />
+      </Section>
+    </div>
+  );
+}

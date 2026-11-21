@@ -3,15 +3,16 @@ import { Section, StatusBar } from '../components/StatusBar';
 import { Stat } from '../components/Stat';
 import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
+import { wrapColumns } from '../components/wrapColumns';
 
 const VERDICT_COLOR: Record<string, string> = {
-  要修正: '#ef4444',
-  'マージ可': '#fbbf24',
-  'マージ推奨': '#22c55e',
+  要修正: 'var(--danger)',
+  'マージ可': 'var(--warning)',
+  'マージ推奨': 'var(--success)',
 };
 
 export function QualityPage() {
-  const { data, source, status, errorMessage, refresh, isConfigured } = useServiceData(
+  const { data, source, status, errorMessage, errorKind, refresh, isConfigured } = useServiceData(
     'quality',
     SNAPSHOT.quality,
   );
@@ -26,13 +27,14 @@ export function QualityPage() {
         source={source}
         status={status}
         errorMessage={errorMessage}
+        errorKind={errorKind}
         isConfigured={isConfigured}
         onRefresh={refresh}
         who={<>品質ダッシュボード · commit {latestCommit} · Mutation {mutation.score.toFixed(2)}%</>}
       />
 
       <Section title="主要指標" count={4}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: wrapColumns(4, 150), gap: 12, marginBottom: 16 }}>
           <Stat label="ユニットテスト (静的)" value={unitTests.staticCount.toLocaleString()} />
           <Stat label="ユニットテスト (実行時)" value={unitTests.runtimeCount.toLocaleString()} />
           <Stat
@@ -57,7 +59,7 @@ export function QualityPage() {
               <tr key={v.name}>
                 <td style={tdStyle}>{v.name}</td>
                 <td style={tdStyle}>
-                  <span style={{ color: v.status === 'pass' ? '#22c55e' : '#ef4444', fontWeight: 600 }}>
+                  <span style={{ color: v.status === 'pass' ? 'var(--success)' : 'var(--danger)', fontWeight: 600 }}>
                     {v.status === 'pass' ? '● pass' : '× fail'}
                   </span>
                 </td>
@@ -72,10 +74,10 @@ export function QualityPage() {
           <thead>
             <tr>
               <th style={thStyle}>PR</th>
-              <th style={thStyle}>Round</th>
-              <th style={thNum}>🔴 BLOCKING</th>
-              <th style={thNum}>🟡 SHOULD-FIX</th>
-              <th style={thNum}>🟢 NIT</th>
+              <th style={thStyle}>ラウンド</th>
+              <th style={thNum}>🔴 要修正</th>
+              <th style={thNum}>🟡 修正推奨</th>
+              <th style={thNum}>🟢 軽微</th>
               <th style={thStyle}>判定</th>
             </tr>
           </thead>
@@ -99,7 +101,7 @@ export function QualityPage() {
       </Section>
 
       <Section title="成果物サイズ" count={2}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: wrapColumns(2, 200), gap: 12 }}>
           <Stat label="standalone.html" value={`${artifactSizes.standaloneHtmlKb} KB`} />
           <Stat label="dist-electron/main.js" value={`${artifactSizes.electronMainKb} KB`} />
         </div>

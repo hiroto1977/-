@@ -1,0 +1,246 @@
+import type { ServiceId } from './serviceId';
+
+/**
+ * 画面に出ている数字が **どこから来たのか** をサービス単位で宣言する。
+ *
+ * これが無かった時に起きていたこと (2026-08 監査):
+ * `useServiceData` は fetch が成功したら無条件に `setData(result.data)` +
+ * `setSource('live')` していた。ところが公式 API 未配線のサービスは
+ * `createSnapshotStub` / `createShigyoFetcher` が返す **空の stub** を成功として
+ * 返すため、「更新」を押すと画面が同梱 snapshot から空へ置き換わり、しかも
+ * バッジは緑の「ライブ」になった。士業ページなら顧問料・未払請求・連絡先・
+ * 相談履歴が 0 件になり、それが最新の実データであるかのように見える。
+ * 決算書類・申告書類へ流れる数字を扱うアプリで、これは単なる表示崩れでは
+ * 済まない。
+ *
+ * ブラウザ版 (`web-shim.ts`) では同じサービスが `not_implemented` を返すため、
+ * 取得先が無いだけなのに「エラー」と出ていた。どちらも「取得しない」ことを
+ * 型として持っていなかったのが原因。
+ *
+ * 分類は判断ではなく、ソースツリーから機械的に決まる規則にしている
+ * (`scripts/lint-data-origin.cjs` が双方向で照合する):
+ *
+ * - `sample` — fetcher が stub (`createSnapshotStub` /
+ *   `return STUB`)。I/O は一切無い。画面は同梱データを出す。
+ * - `local`  — stub ではなく `LOCAL_SERVICES` に載っている。OS・ファイル・
+ *   レコードストアから導出し、資格情報を必要としない。
+ * - `remote` — stub ではなく `LOCAL_SERVICES` に無い。利用者の資格情報で
+ *   外部 API を叩く。
+ *
+ * 総和型 `Record<ServiceId, DataOrigin>` にしているので、`SERVICE_IDS` へ
+ * サービスを足すと **tsc がここの記入漏れを弾く**。`LIVE_FETCHERS` のような
+ * モジュール読込時 throw は置いていない: 型で漏れが出ない場所に実行時の
+ * 番犬を足しても観測差が無く、mutation テストで殺せない番犬が残るだけ。
+ */
+export type DataOrigin = 'remote' | 'local' | 'sample';
+
+export const SERVICE_DATA_ORIGIN: Record<ServiceId, DataOrigin> = {
+  home: 'local',
+  village: 'local',
+  github: 'remote',
+  wordpress: 'remote',
+  atlassian: 'remote',
+  notion: 'remote',
+  drive: 'remote',
+  calendar: 'remote',
+  gmail: 'remote',
+  slack: 'remote',
+  canva: 'remote',
+  skills: 'local',
+  security: 'local',
+  cloudflare: 'remote',
+  emotions: 'local',
+  ollama: 'local',
+  kpi: 'local',
+  stocks: 'local',
+  business: 'local',
+  teamradar: 'local',
+  talent: 'local',
+  hydroponics: 'local',
+  templates: 'local',
+  library: 'local',
+  settings: 'local',
+  'uber-eats': 'sample',
+  'demae-can': 'sample',
+  'real-estate': 'local',
+  'mutual-funds': 'local',
+  // 2026-11-19: 図の台帳と自己検査は端末内で完結する (座標計算は renderer の純関数、
+  // 見本データは「仮想データ」と明示した検証用)。fetcher はサービスのメタ情報を返す。
+  // それまでは同梱の見本だった。
+  charts: 'local',
+  quality: 'sample',
+  'microsoft-365': 'remote',
+  dropbox: 'remote',
+  salesforce: 'sample',
+  // 2026-11-18: ボットが参加しているサーバーの一覧を Discord から読む (`shared/api/discord.ts`)。それまでは同梱の見本だった。
+  discord: 'remote',
+  // 2026-11-18: 自分の担当の未完了タスクを Asana から読む (`shared/api/asana.ts`)。それまでは同梱の見本だった。
+  asana: 'remote',
+  // 2026-11-18: 自分の担当の未完了の課題を Linear から読む (`shared/api/linear.ts`)。それまでは同梱の見本だった。
+  linear: 'remote',
+  // 2026-11-18: 未解決の問題を Sentry から読む (`shared/api/sentry.ts`)。それまでは同梱の見本だった。
+  sentry: 'remote',
+  shopify: 'sample',
+  // 2026-11-18: 残高と最近の入金を Stripe から読む (`shared/api/stripe.ts`)。それまでは同梱の見本だった。
+  stripe: 'remote',
+  // 2026-11-18: アカウントの情報と今月の配信数を LINE から読む (`shared/api/line.ts`)。それまでは同梱の見本だった。
+  line: 'remote',
+  // 2026-11-21: ディスク使用量・大容量フォルダ・メモリを Electron main の
+  // `fs.statfs` / フォルダ走査 / `os` で実測する (`main/clients/storage.ts`)。
+  // 測れない指標 (断片化率・起動時間) は null (算定不能) で返す。それまでは同梱の見本だった。
+  storage: 'local',
+  // 2026-11-18: 端末内の record store に登録した連絡先・相談・書類・顧問料が正
+  // (`renderer/data/shigyoDirectory.ts`)。fetcher は見本を持たない空の土台を返す
+  // (`shared/shigyoTypes.ts` の `buildShigyoSnapshot`)。それまでは同梱の見本だった。
+  'tax-accountant': 'local',
+  'labor-consultant': 'local',
+  lawyer: 'local',
+  'judicial-scrivener': 'local',
+  'admin-scrivener': 'local',
+  'sme-consultant': 'local',
+  'patent-attorney': 'local',
+  cpa: 'local',
+  base: 'remote',
+  netsea: 'sample',
+  'super-delivery': 'sample',
+  topseller: 'sample',
+  // 2026-11-19: 成果は renderer の record store (`a8net-rewards`) に利用者が記録した物が正で、
+  // fetcher は見本を持たない空の土台を返す (`shared/a8netSnapshot.ts` の `buildA8netSnapshot`)。
+  // A8.net にメディア会員向けの公開 API は無いので、つなぐ先は無い。それまでは同梱の見本だった。
+  a8net: 'local',
+  'ai-blogkun': 'sample',
+  moneyforward: 'sample',
+  amazon: 'sample',
+  'amazon-associates': 'sample',
+  // 2026-11-19: 売上は renderer の record store (`sales-entries`) が正で、fetcher は
+  // 空の土台を返す。それまでは同梱の見本だった。
+  sales: 'local',
+  // 2026-11-19: メンバーは renderer の record store (`team-members`) が正で、fetcher は
+  // 空の土台を返す。それまでは同梱の見本だった。
+  team: 'local',
+  // 2026-11-19: 記録は renderer の record store (`mentor-sessions`) が正で、fetcher は
+  // 聞き取りの問いの台帳だけを返す。それまでは同梱の見本だった。
+  mentor: 'local',
+  grok: 'local',
+  // 2026-11-19: 判定は画面の入力から shared の純関数が作り、fetcher は階層・職種・
+  // 判定の台帳の見出しだけを返す。それまでは同梱の見本だった。
+  vrio: 'local',
+  watch: 'local',
+  youtube: 'remote',
+  // 2026-11-19: 集約は renderer 側 (record store + 純粋関数) で、fetcher は空の土台を
+  // 返す。それまでは同梱の見本だった。
+  overview: 'local',
+  coconala: 'sample',
+  tiktok: 'sample',
+  // 2026-11-19: 試算は画面の入力から shared の純粋計算がその場で出し、fetcher は
+  // 試算メニューの台帳だけを返す。それまでは同梱の見本だった。
+  tax: 'local',
+  funding: 'local',
+  freee: 'remote',
+  // 2026-11-19: カタログは shared/connectors が正で renderer が描画し、実行結果は
+  // record store に残る。fetcher は空の土台を返す。それまでは同梱の見本だった。
+  connectors: 'local',
+  linux: 'local',
+  // 2026-11-19: 実データは renderer の確証済み制度知識 (complianceKnowledge) で、
+  // fetcher は台帳を指す標識だけを返す。それまでは同梱の見本だった。
+  compliance: 'local',
+  obsidian: 'local', // 2026-11-21 第4弾: Vault の実ファイル集計 (Obsidian 設定→Vault→Markdown 走査) を配線
+  docker: 'local', // 2026-11-21 第4弾: Docker Engine API (unix socket) の読み取り専用集計を配線
+  assistant: 'local',
+  docstudio: 'local',
+  cursor: 'remote',
+};
+
+/** 宣言された取得元。未知の id は最も慎重な側 (`sample`) に寄せる。 */
+export function originOf(id: ServiceId): DataOrigin {
+  if (!Object.hasOwn(SERVICE_DATA_ORIGIN, id)) return 'sample';
+  return SERVICE_DATA_ORIGIN[id];
+}
+
+/**
+ * 取得を試みる意味があるか。`sample` は取得先が存在しないので、押せば必ず
+ * 「空の成功」か「未実装エラー」のどちらかにしかならない。呼ばないのが正しい。
+ */
+export function isRefreshable(origin: DataOrigin): boolean {
+  return origin !== 'sample';
+}
+
+export interface OriginLabel {
+  /** バッジ文字列。 */
+  readonly text: string;
+  /** 緑 (ok) を出すのは「実際に取ってきた」時だけ。 */
+  readonly tone: 'ok' | 'neutral';
+}
+
+/**
+ * バッジ表示。`source` は `useServiceData` の状態 (取得済みか否か)。
+ *
+ * `sample` は取得の有無に関係なく常に「内蔵サンプル」。外部にも手元にも
+ * 取得先が無い画面で「スナップショット」と出すと、更新すれば新しくなると
+ * 読めてしまうため、言葉を分けている。
+ *
+ * **`remote` の未取得は「サンプル（未連携）」と言い切る。** ここは以前
+ * 「スナップショット」と出していたが、それは *実データをある時点で写した
+ * もの* と読める。実際に出ているのは同梱の作り物 — Cursor の画面なら
+ * 佐藤健・鈴木彩・田中悠という**架空の 3 人**とその利用額である。氏名と
+ * メールの形をしている分、実在の同僚と受け取られる余地があった
+ * (実際にそう問われて気付いた)。連携していないことを言葉に出す。
+ */
+export function describeOrigin(
+  origin: DataOrigin,
+  source: 'snapshot' | 'live',
+  payloadIsMock = false,
+): OriginLabel {
+  if (origin === 'sample') return { text: '内蔵サンプル', tone: 'neutral' };
+  /*
+   * **取ってきた中身が「同梱データ」を名乗っているなら、緑にしない** (2026-09-06)。
+   *
+   * `tone: 'ok'` は上の注記どおり「実際に取ってきた」時だけの色である。ところが
+   * `main/clients/funding.ts` の `fetchFundingSnapshot` は `MOCK_ITEMS` と
+   * `MOCK_ACCOUNTING` から組み立てた値 (期首残高 300 万円も固定) を返し、
+   * 自ら `isMock: true` を立てている —— それでも「更新」を押すと `source` が
+   * `live` になるので、バッジは**緑の「ローカル」**になっていた。資金調達の画面が
+   * 出すのは補助金・融資の一覧、キャッシュランウェイ、債務償還年数、そして
+   * 特定収入割合 (消費税の計算に関わる) で、どれも「取ってきた実績」に見える。
+   *
+   * 中身が自分を同梱データだと言っているなら、画面もそう言う。
+   */
+  if (source === 'live' && payloadIsMock) return { text: '同梱データ', tone: 'neutral' };
+  if (origin === 'remote' && source === 'snapshot') {
+    return { text: 'サンプル（未連携）', tone: 'neutral' };
+  }
+  if (source === 'snapshot') return { text: 'スナップショット', tone: 'neutral' };
+  if (origin === 'local') return { text: 'ローカル', tone: 'ok' };
+  return { text: 'ライブ', tone: 'ok' };
+}
+
+/**
+ * **取得に失敗したときに、画面の数字が何なのかを言う 1 行。**
+ *
+ * 上の `describeOrigin` は言葉を慎重に選んだが (「スナップショット」を
+ * 「サンプル（未連携）」へ改めた経緯が直前に書いてある)、**その札は
+ * 1 枠しか無いバッジに出る**。`StatusBar` は `status === 'error'` のとき
+ * バッジを「認証エラー」等に差し替えるので、**取得が失敗したまさにその時に
+ * 取得元の宣言が消えていた** (2026-09-06 実測)。画面の下には
+ * `SNAPSHOT[id]` の同梱データ —— つまり架空の数字 —— がそのまま並んでおり、
+ * 残る手掛かりは `401 Bad credentials` のような機械の文だけだった。
+ *
+ * 言葉はここに置く (取得元の言い回しを 2 か所に散らさない)。返すのは
+ * バッジではなく**別枠の 1 行**で、バッジは従来どおり状態を出す。
+ *
+ * `loading` では出さない —— すぐ決まるので、点滅する警告は邪魔になる。
+ * だから引数は `failed` (= `status === 'error'`) だけを受け取る。
+ * 取得しない画面 (`isRefreshable` が false) も `null` を返す ——
+ * あちらは常設の注記が同梱データだと書いており、二重に言う必要が無い。
+ */
+export function staleDataNote(
+  origin: DataOrigin,
+  source: 'snapshot' | 'live',
+  failed: boolean,
+): string | null {
+  if (!failed) return null;
+  if (!isRefreshable(origin)) return null;
+  return source === 'snapshot'
+    ? '表示中の数字は同梱のサンプルです（まだあなたのデータではありません）'
+    : '表示中の数字は前回取得できた内容です（今回の更新は反映されていません）';
+}

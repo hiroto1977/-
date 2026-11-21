@@ -1,0 +1,648 @@
+/** @vitest-environment jsdom */
+/**
+ * 経営サマリーの水耕栽培パネル — 品目の増減と入力欄の番人を**実物の record
+ * store** (fake-indexeddb) を通して確かめる。純粋関数の検査
+ * (`hydroponicCrops.test.ts`) は一覧の増減の規則を、ここは「押したら保存され、
+ * 読み直しても残り、select に出る」を見る。
+ *
+ * 最新の 1 件を採用する読み方 (`latestRecord`) もここで実機同様に通る:
+ * 2 回目の保存が画面に出なければ落ちる (旧い読み方は末尾 = 最古を「最新」と
+ * していたので、2 回目から画面が動かなかった)。
+ */
+import 'fake-indexeddb/auto';
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { act, createElement } from 'react';
+import { createRoot, type Root } from 'react-dom/client';
+import { SERVICES } from '../../services';
+import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
+import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
+import {
+  HYDROPONICS_COLLECTION,
+  HYDROPONIC_CROPS_COLLECTION,
+  HYDROPONICS_DEFAULTS,
+  type HydroponicCropListRecord,
+  type HydroponicsSetup,
+} from '../../data/hydroponicsSetup';
+import { KPI_ACTUALS_COLLECTION, type KpiActual } from '../../data/kpiActuals';
+import { latestRecord } from '../../data/latestRecord';
+import { waitForElement, waitForText } from '../../__tests__/jsdomWait';
+
+beforeAll(() => {
+  (globalThis as unknown as { serviceHub: unknown }).serviceHub = {
+    getVersion: () => Promise.resolve('0.1.0-web'),
+    listConfigured: () => Promise.resolve([]),
+    fetchSnapshot: () => Promise.resolve({ ok: false, code: 'x', message: 'x' }),
+    invoke: () => Promise.resolve({ ok: false, code: 'x', message: 'x' }),
+    openExternal: () => Promise.resolve(),
+    oauthSupported: () => Promise.resolve(false),
+    setToken: () => Promise.resolve(),
+    clearToken: () => Promise.resolve(),
+  };
+});
+
+/** React の onChange を発火させる (native setter を通さないと React が拾わない)。 */
+function changeInput(input: HTMLInputElement, value: string): void {
+  const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set;
+  if (!setter) throw new Error('HTMLInputElement value setter not found');
+  setter.call(input, value);
+  input.dispatchEvent(new Event('input', { bubbles: true }));
+}
+
+let container: HTMLDivElement;
+let root: Root | null = null;
+
+/** 画面ぜんぶの文。 */
+const screenText = (): string => container.textContent ?? '';
+
+/** この画面の既定の錠 —— 水耕栽培のパネルが在ること。 */
+const PANEL = '品目を増やす・減らす';
+
+/**
+ * 画面を描き、`waitFor` の文が出るまで**条件で**待つ
+ * (法則 `wait-for-condition-not-ticks`)。
+ *
+ * 2026-09-21 (パス 385) まで固定回数 (6 周) で待っており、周回数を 0 にすると
+ * **17 件が落ちた**。落ちる形は 2 つで、どちらも**待てる印が画面に在った**:
+ *
+ * - **置いた設定が届いていない** —— 保存レコードが無い間、画面は
+ *   「栽培設備と費用を入力すると…載せます」だけを刷り、`低カリウム栽培（腎臓病の方向け）`
+ *   の節と `損益分岐点売上高 (月)` / `損益分岐点 (BEP)` のタイルは**存在しない**。
+ *   錠はそのタイルの見出しそのもの (`tileText()` が探す当の文字列)。
+ * - **押した結果が届いていない** —— 品目の追加・削除は IndexedDB へ書くので、
+ *   `[role="status"]` の「『ミズナ』を足して品目に選びました」が出るまで一覧は動かない。
+ *
+ * 台帳はこの家系を `setup-flush` (「落ちるのは主張ではなく**操作**の側で、
+ * 固定回数が待ちではなく**状態遷移の流し込み**として効いている ——
+ * **条件で待っても、遷移が起きていなければ待てない**」) と説明していたが、
+ * **それは偽だった** —— 遷移は起きていて、ただ待っていなかっただけである
+ * (パス 383 に続いて 4 度目。分類は「見た形」であって「測った原因」ではない)。
+ */
+async function mountOverview(waitFor: string = PANEL): Promise<void> {
+  const def = SERVICES.find((s) => s.id === 'overview');
+  if (!def) throw new Error('overview service missing');
+  root = createRoot(container);
+  await act(async () => {
+    root!.render(createElement(def.page));
+  });
+  await waitForText(screenText, waitFor);
+}
+
+async function unmountOverview(): Promise<void> {
+  if (root) {
+    await act(async () => {
+      root!.unmount();
+    });
+    root = null;
+  }
+}
+
+const q = {
+  labelInput: () => container.querySelector<HTMLInputElement>('input[aria-label="品目名"]')!,
+  numInput: (label: string) => container.querySelector<HTMLInputElement>(`input[aria-label="${label}"]`)!,
+  select: () => container.querySelector<HTMLSelectElement>('select[aria-label="品目"]')!,
+  options: () => Array.from(q.select().options).map((o) => ({ value: o.value, label: o.textContent })),
+  button: (text: string) => {
+    const b = Array.from(container.querySelectorAll('button')).find((el) => el.textContent === text);
+    if (!b) throw new Error(`button "${text}" not found`);
+    return b;
+  },
+  removeButton: (label: string) => container.querySelector<HTMLButtonElement>(`button[aria-label="${label} を消す"]`)!,
+  status: () => container.querySelector('[role="status"]')?.textContent ?? '',
+};
+
+/**
+ * **押すだけ。** 押した後に何が出るかは `it` ごとに違うので、待つのは呼び手の
+ * 仕事である (パス 378)。押した結果が保管層へ行く操作は、呼び手が
+ * `[role="status"]` の文か一覧の件数で待つ。
+ */
+async function click(el: HTMLElement): Promise<void> {
+  await act(async () => {
+    el.click();
+  });
+}
+
+/** 押した結果が `[role="status"]` に出るまで待つ。 */
+async function waitForStatus(needle: string): Promise<void> {
+  await waitForText(() => q.status(), needle);
+}
+
+async function savedCropLists(): Promise<readonly HydroponicCropListRecord[]> {
+  const list = await getRecordStore().list<HydroponicCropListRecord>(HYDROPONIC_CROPS_COLLECTION);
+  return list.map((r) => r.data);
+}
+
+beforeEach(async () => {
+  _resetRecordStoreForTests();
+  _resetCollectionSubscribersForTests();
+  await new Promise<void>((resolve) => {
+    const req = indexedDB.deleteDatabase('business-hub-data');
+    req.onsuccess = () => resolve();
+    req.onerror = () => resolve();
+    req.onblocked = () => resolve();
+  });
+  container = document.createElement('div');
+  document.body.appendChild(container);
+});
+
+afterEach(async () => {
+  await unmountOverview();
+  document.body.removeChild(container);
+});
+
+describe('経営サマリー — 水耕栽培の品目の増減', () => {
+  it('初期表示は参考値の 5 品目で、どれも消せる (5 > 1)', async () => {
+    await mountOverview();
+    expect(q.options().map((o) => o.value)).toEqual(['leaf-lettuce', 'frill-lettuce', 'romaine', 'baby-leaf', 'basil']);
+    await waitForText(() => container.textContent ?? '', '品目を増やす・減らす（現在 5 品目）');
+    expect(q.removeButton('リーフレタス').disabled).toBe(false);
+    expect(await savedCropLists()).toEqual([]);
+  });
+
+  it('品目名を入れて足すと保存され、select に出て、選択も切り替わる', async () => {
+    await mountOverview();
+    // 数値の欄は選んでいる品目 (リーフレタス) の値が写っている
+    expect(q.numInput('定植後日数 (日)').value).toBe('10');
+    await act(async () => { changeInput(q.labelInput(), 'ミズナ'); });
+    await act(async () => { changeInput(q.numInput('定植後日数 (日)'), '20'); });
+    await click(q.button('この品目を足す'));
+    await waitForStatus('「ミズナ」を足して品目に選びました');
+
+    const saved = await savedCropLists();
+    expect(saved).toHaveLength(1);
+    expect(saved[0]!.crops).toHaveLength(6);
+    expect(saved[0]!.crops[5]).toMatchObject({ id: 'custom-1', label: 'ミズナ', growOutDays: 20, nurseryDays: 24 });
+    expect(q.options().map((o) => o.label)).toContain('ミズナ');
+    expect(q.select().value).toBe('custom-1');
+    expect(screenText()).toContain('現在 6 品目');
+  });
+
+  it('形が通らなければ保存せず、欄ごとの指摘を出す', async () => {
+    await mountOverview();
+    await act(async () => { changeInput(q.numInput('定植後日数 (日)'), '0'); });
+    await click(q.button('この品目を足す'));
+    // 断りの側にも待てる印が在る —— 欄ごとの指摘そのもの。
+    await waitForStatus('品目名を入力してください');
+    expect(await savedCropLists()).toEqual([]);
+    expect(q.status()).toContain('定植後日数 (日) は 1〜365 の整数で入力してください');
+    expect(q.options()).toHaveLength(5);
+  });
+
+  it('2 回目の保存が画面に出る (最新 = createdAt 最大。末尾を最新と読むと 1 回目で止まる)', async () => {
+    await mountOverview();
+    await act(async () => { changeInput(q.labelInput(), 'ミズナ'); });
+    await click(q.button('この品目を足す'));
+    await waitForStatus('「ミズナ」を足して品目に選びました');
+    await act(async () => { changeInput(q.labelInput(), 'ホウレンソウ'); });
+    await click(q.button('この品目を足す'));
+    await waitForStatus('「ホウレンソウ」を足して品目に選びました');
+
+    const saved = await getRecordStore().list<HydroponicCropListRecord>(HYDROPONIC_CROPS_COLLECTION);
+    expect(saved).toHaveLength(2);
+    expect(latestRecord(saved)!.data.crops.map((c) => c.label)).toContain('ホウレンソウ');
+    expect(q.options().map((o) => o.label)).toEqual([
+      'リーフレタス', 'フリルレタス', 'ロメインレタス', 'ベビーリーフ', 'バジル', 'ミズナ', 'ホウレンソウ',
+    ]);
+  });
+
+  it('消すと保存され、select から消える。読み直しても残る', async () => {
+    await mountOverview();
+    await click(q.removeButton('ロメインレタス'));
+    await waitForStatus('「ロメインレタス」を消しました');
+    expect(q.options().map((o) => o.value)).toEqual(['leaf-lettuce', 'frill-lettuce', 'baby-leaf', 'basil']);
+    expect(screenText()).toContain('参考値の品目を戻す（ロメインレタス）');
+
+    await unmountOverview();
+    // 読み直しの錠は**保存が届いた件数** —— 既定の 5 品目では 4 にならない。
+    await mountOverview('品目を増やす・減らす（現在 4 品目）');
+    expect(q.options().map((o) => o.value)).toEqual(['leaf-lettuce', 'frill-lettuce', 'baby-leaf', 'basil']);
+  });
+
+  it('参考値の品目を戻せる', async () => {
+    await mountOverview();
+    await click(q.removeButton('バジル'));
+    await waitForStatus('「バジル」を消しました');
+    await click(q.removeButton('ベビーリーフ'));
+    await waitForStatus('「ベビーリーフ」を消しました');
+    // 戻すボタンは 2 件消したあとに現れる —— **在るのを待ってから押す**
+    // (`q.button` は無ければ投げるので、待たずに掴むと「押す側」で落ちる)。
+    const restore = await waitForElement(
+      () => Array.from(container.querySelectorAll('button')).find(
+        (el) => el.textContent === '参考値の品目を戻す（ベビーリーフ・バジル）',
+      ) ?? null,
+      '「参考値の品目を戻す（ベビーリーフ・バジル）」ボタン',
+    );
+    await click(restore);
+    await waitForStatus('参考値の品目を戻しました');
+    expect(q.options().map((o) => o.value)).toEqual(['leaf-lettuce', 'frill-lettuce', 'romaine', 'baby-leaf', 'basil']);
+  });
+
+  it('最後の 1 品目は消せない (ボタンが無効になり、一覧は空にならない)', async () => {
+    await mountOverview();
+    for (const label of ['リーフレタス', 'フリルレタス', 'ロメインレタス', 'ベビーリーフ']) {
+      await click(q.removeButton(label));
+      await waitForStatus(`「${label}」を消しました`);
+    }
+    expect(q.options().map((o) => o.value)).toEqual(['basil']);
+    const last = q.removeButton('バジル');
+    expect(last.disabled).toBe(true);
+    await click(last);
+    expect(q.options().map((o) => o.value)).toEqual(['basil']);
+    const saved = await getRecordStore().list<HydroponicCropListRecord>(HYDROPONIC_CROPS_COLLECTION);
+    expect(latestRecord(saved)!.data.crops).toHaveLength(1);
+    expect(saved.every((r) => r.data.crops.length >= 1)).toBe(true);
+  });
+
+  it('足した品目を選んで設定を保存すると、設定レコードにその id が乗る', async () => {
+    await mountOverview();
+    await act(async () => { changeInput(q.labelInput(), 'ミズナ'); });
+    await click(q.button('この品目を足す'));
+    await waitForStatus('「ミズナ」を足して品目に選びました');
+    await click(q.button('保存して経営サマリーへ反映'));
+    await waitForText(screenText, '保存しました。経営サマリーに反映されています。');
+    const setups = await getRecordStore().list<HydroponicsSetup>(HYDROPONICS_COLLECTION);
+    expect(setups).toHaveLength(1);
+    expect(setups[0]!.data.cropId).toBe('custom-1');
+  });
+
+  it('保存した設定の品目を消すと、先頭で試算している旨を出す', async () => {
+    await mountOverview();
+    await act(async () => { changeInput(q.labelInput(), 'ミズナ'); });
+    await click(q.button('この品目を足す'));
+    await waitForStatus('「ミズナ」を足して品目に選びました');
+    await click(q.button('保存して経営サマリーへ反映'));
+    await waitForText(screenText, '保存しました。経営サマリーに反映されています。');
+    await click(q.removeButton('ミズナ'));
+    await waitForText(screenText, '保存した設定の品目「custom-1」は一覧にありません。先頭の品目（リーフレタス）で試算しています。');
+  });
+});
+
+/**
+ * **低カリウム栽培は健康に直結する。測っていない値で「低カリウム」と名乗らせない。**
+ * (2026-09-08)
+ *
+ * `assessLowPotassium` は未測定を `null` で返すが、**画面が本当に数字を出さないことは
+ * 誰も測っていなかった** (パス 51 の対照で判明: 枠の条件を常に真にしても検査は 1 つも
+ * 落ちなかった)。腎機能が落ちた方はこの数字で食べる量を決めるので、
+ * 「未測定なのに削減率が出る」状態が画面に届かないことを実物の画面で留める。
+ */
+describe('経営サマリー — 低カリウム栽培 (未測定で数字を出さない)', () => {
+  /**
+   * 低カリウムとして扱うが、カリウムは測っていない控え。
+   * **出荷値 (`HYDROPONICS_DEFAULTS`) から作る** —— 欄名を手で写すと、
+   * 存在しない欄を埋めた見本ができる (このセッションで実際にやらかした)。
+   */
+  const unmeasured: HydroponicsSetup = {
+    ...HYDROPONICS_DEFAULTS,
+    lowPotassium: true,
+    switchDaysBeforeHarvest: 8,
+    measuredPotassiumMgPer100g: 0,
+  };
+
+  const text = (): string => (container.textContent ?? '').replace(/\s+/g, ' ');
+
+  it('★ 未測定なら削減率も食べられる量も出さず、実測を促す', async () => {
+    await getRecordStore().insert(HYDROPONICS_COLLECTION, unmeasured);
+    // 節そのものが**置いた設定が届いた印**である (保存が無いと存在しない)。
+    await mountOverview('低カリウム栽培（腎臓病の方向け）');
+    const t = text();
+    expect(t).toContain('低カリウム栽培（腎臓病の方向け）');
+    // 直す前の実装なら「通常品 200 mg/100g 比 −100.0%」が出ていた形
+    expect(t).not.toContain('比 −100.0%');
+    expect(t).not.toContain('実測カリウム 0 mg/100g');
+    expect(t).not.toContain('の方が食べられる量');
+  });
+
+  it('★ 対照: 実測を入れれば削減率と食べられる量が出る', async () => {
+    await getRecordStore().insert(HYDROPONICS_COLLECTION, {
+      ...unmeasured, measuredPotassiumMgPer100g: 100,
+    });
+    // 錠は**この it が真に見たい値** —— ラベルは先に出て、算定された率は後から来る。
+    await mountOverview('比 −50.0%');
+    const t = text();
+    expect(t).toContain('100 mg/100g');
+    expect(t).toContain('の方が食べられる量');
+    expect(t).toContain('比 −50.0%');
+  });
+});
+
+describe('経営サマリー — 水耕栽培の設備入力の番人 (黙って 0 にしない)', () => {
+  const guardMessage = (label: string): string => {
+    const input = q.numInput(label);
+    return input.parentElement?.textContent ?? '';
+  };
+
+  /** 実測値の欄は「低カリウム栽培として扱う」を入れたときだけ出る。 */
+  const enableLowK = async (): Promise<void> => {
+    const label = Array.from(container.querySelectorAll('label')).find((el) => el.textContent?.includes('低カリウム栽培として扱う'));
+    const box = label?.querySelector<HTMLInputElement>('input[type="checkbox"]');
+    if (!box) throw new Error('low-K checkbox not found');
+    await click(box);
+    // 錠は「入れたことで現れる欄」—— 実測値の入力欄。
+    await waitForElement(
+      () => container.querySelector<HTMLInputElement>('input[aria-label="実測カリウム (mg/100g)"]'),
+      '実測カリウム (mg/100g) の欄',
+    );
+  };
+
+  it('読めない値は fatal の文言を出し、aria-invalid が立つ (保存は断る)', async () => {
+    await mountOverview();
+    await act(async () => { changeInput(q.numInput('床面積 (m²)'), '百'); });
+    expect(q.numInput('床面積 (m²)').getAttribute('aria-invalid')).toBe('true');
+    // 欄の文は画面の扱いどおりに「保存できません」と言う (パス 493l)。直す前は
+    // 「0 ㎡ として計算されています」と言いながら、下の保存はこの値を断っていた
+    expect(guardMessage('床面積 (m²)')).toContain('「百」を数値として読み取れません。直すまで保存できません。');
+    expect(guardMessage('床面積 (m²)')).not.toContain('として計算されています');
+    await click(q.button('保存して経営サマリーへ反映'));
+    // **パス 214 で「保存すると 0 で入る」から「保存しない」へ変えた。** この検査は
+    // 見出しにまで `(保存すると 0 で入る)` と書いて**欠陥を期待値として固定していた** ——
+    // 床面積が測れないまま 0 で保存されると、経営サマリーが `営業利益 −￥6,000,000` を
+    // 出し、それが金融機関等提出用の書面まで届く。パス 213 の `teamPayroll.test.ts` と
+    // **同じ形を 2 パス連続で踏んだ**。⛔ の欄が在れば書かない (`refusedSave.test.ts`)。
+    const setups = await getRecordStore().list<HydroponicsSetup>(HYDROPONICS_COLLECTION);
+    expect(setups).toEqual([]);
+    // パス 214 が残した「文言の 0 の句はこの欄について既に正しくない」はパス 493l で閉じた ——
+    // 宣言が「⛔ の間は保存を断る」を持ち (`refusingSpecs('save')`)、関門がそれに従って文を選ぶ。
+  });
+
+  it('単位語つき (10万) は単位を外すよう促す', async () => {
+    await mountOverview();
+    await act(async () => { changeInput(q.numInput('人件費 (円/月)'), '10万'); });
+    expect(guardMessage('人件費 (円/月)')).toContain('単位付きのため読み取れません');
+  });
+
+  it('全角の数字は読める (以前は Number() が NaN にして 0 で計算していた)', async () => {
+    await mountOverview();
+    await act(async () => { changeInput(q.numInput('床面積 (m²)'), '１００'); });
+    expect(q.numInput('床面積 (m²)').getAttribute('aria-invalid')).toBeNull();
+    await click(q.button('保存して経営サマリーへ反映'));
+    await waitForText(screenText, '保存しました。経営サマリーに反映されています。');
+    const setups = await getRecordStore().list<HydroponicsSetup>(HYDROPONICS_COLLECTION);
+    expect(setups[0]!.data.floorAreaSqm).toBe(100);
+  });
+
+  it('★ 費用の空欄は「保存すると 0 円 として記録されます」と述べ、そのとおり 0 で保存される (パス 493l)', async () => {
+    await mountOverview();
+    await act(async () => { changeInput(q.numInput('地代家賃 (円/月)'), ''); });
+    expect(q.numInput('地代家賃 (円/月)').getAttribute('data-guard-outcome')).toBe('savedAsZero');
+    expect(guardMessage('地代家賃 (円/月)')).toContain('未入力です。保存すると 0 円 として記録されます。');
+    await click(q.button('保存して経営サマリーへ反映'));
+    await waitForText(screenText, '保存しました。経営サマリーに反映されています。');
+    const setups = await getRecordStore().list<HydroponicsSetup>(HYDROPONICS_COLLECTION);
+    expect(setups[0]!.data.rentYenPerMonth, '「0 として記録」と言った値が 0 で保存されていない').toBe(0);
+  });
+
+  it('試算が意味を失う欄は 0 を断り、費用の 0 は通す', async () => {
+    await mountOverview();
+    await act(async () => { changeInput(q.numInput('販売単価 (円/株)'), '0'); });
+    expect(guardMessage('販売単価 (円/株)')).toContain('0 円 では計算できません。');
+    await act(async () => { changeInput(q.numInput('地代家賃 (円/月)'), '0'); });
+    expect(q.numInput('地代家賃 (円/月)').getAttribute('data-guard')).toBe('ok');
+  });
+
+  it('実測値は 0 も未入力も黙って通す (0 = 未測定 が仕様)', async () => {
+    await mountOverview();
+    await enableLowK();
+    await act(async () => { changeInput(q.numInput('実測カリウム (mg/100g)'), ''); });
+    expect(q.numInput('実測カリウム (mg/100g)').getAttribute('data-guard')).toBe('ok');
+    await act(async () => { changeInput(q.numInput('実測カリウム (mg/100g)'), '0'); });
+    expect(q.numInput('実測カリウム (mg/100g)').getAttribute('data-guard')).toBe('ok');
+  });
+
+  it('切替日数は日の単位で言う (kWh/kg や mg/L を借りない)', async () => {
+    await mountOverview();
+    // 単位語は桁の尋ねに出る。読めない値の文は単位ではなく結果 (保存できない) を言う (パス 493l)
+    await act(async () => { changeInput(q.numInput('電力原単位 (kWh/kg)'), '150'); });
+    expect(guardMessage('電力原単位 (kWh/kg)')).toContain('150 kWh/kg は想定の範囲を超えています。');
+    await act(async () => { changeInput(q.numInput('電力原単位 (kWh/kg)'), 'abc'); });
+    expect(guardMessage('電力原単位 (kWh/kg)')).toContain('「abc」を数値として読み取れません。直すまで保存できません。');
+    await enableLowK();
+    await act(async () => { changeInput(q.numInput('切替 (収穫前・日)'), '4000'); });
+    expect(guardMessage('切替 (収穫前・日)')).toContain('4,000 日 は想定の範囲を超えています。');
+    await act(async () => { changeInput(q.numInput('切替 (収穫前・日)'), '7.5'); });
+    expect(guardMessage('切替 (収穫前・日)')).toContain('整数で入力してください（現在 7.5）');
+  });
+});
+
+/**
+ * **切替日を入力していないだけで「切替時期が範囲外」と警告しない (パス 67)。**
+ *
+ * `assessLowPotassium` は `switchWindowOk: days >= min && days <= max` で、
+ * 未入力は `?? 0` を経て 0 になり `0 >= 7` が偽 —— **入力していないことが
+ * 「範囲外」として琥珀色で警告**されていた。カリウムをきちんと実測している人
+ * (削減率が出ている人) でも出る。
+ *
+ * **同じ関数は既にこの形を 2 回直している** ——
+ * `potassiumMgPer100g` (「未測定は null。0 に倒すと削減率が 100% になる」) と
+ * `reductionPct` (「『削減なし』と『比べられない』は別のこと」)。
+ * `switchWindowOk` だけが倒れていた。
+ *
+ * しかも 0 は**この欄自身が `allowZero: false` で拒否する値**である ——
+ * 画面が、フォームなら受け付けない値を表示していた。
+ */
+describe('経営サマリー 低カリウム — 切替日が未入力', () => {
+  const enableLowK2 = async (): Promise<void> => {
+    const label = Array.from(container.querySelectorAll('label')).find((el) =>
+      el.textContent?.includes('低カリウム栽培として扱う'),
+    );
+    const box = label?.querySelector<HTMLInputElement>('input[type="checkbox"]');
+    if (!box) throw new Error('low-K checkbox not found');
+    await click(box);
+    await waitForElement(
+      () => container.querySelector<HTMLInputElement>('input[aria-label="切替 (収穫前・日)"]'),
+      '切替 (収穫前・日) の欄',
+    );
+  };
+
+  /** 「切替 (収穫前)」タイルの値と副文を読む。 */
+  function switchTile(): { value: string; sub: string } | null {
+    for (const box of Array.from(container.querySelectorAll('div'))) {
+      const kids = Array.from(box.children);
+      if (kids.length < 2) continue;
+      if ((kids[0]?.textContent ?? '').trim() !== '切替 (収穫前)') continue;
+      return {
+        value: (kids[1]?.textContent ?? '').trim(),
+        sub: (kids[2]?.textContent ?? '').trim(),
+      };
+    }
+    return null;
+  }
+
+  it('★ 未入力を「0 日」と刷らず、「範囲外」とも言わない', async () => {
+    await mountOverview();
+    await enableLowK2();
+    // 切替日を空にする (= 未入力)。実測カリウムは入れておく —— **実測している人
+    // でも警告が出ていた**ことを留めるため。
+    await act(async () => { changeInput(q.numInput('実測カリウム (mg/100g)'), '120'); });
+    await act(async () => { changeInput(q.numInput('切替 (収穫前・日)'), ''); });
+    // 空欄は「未設定」—— 欄は保存を断らず、「算定していない」と述べる (パス 493l・`absent: 'null'`)。
+    // 0 を受け付けない欄の空欄は断るのが既定だが、ここは空欄が正当な状態 (パス 67) なので宣言が決める
+    const field = q.numInput('切替 (収穫前・日)');
+    expect(field.getAttribute('data-guard-outcome')).toBe('notComputed');
+    expect(field.parentElement?.textContent ?? '').toContain('未入力です。この欄を使う値は算定していません。');
+    await click(q.button('保存して経営サマリーへ反映'));
+    // 「切替 (収穫前)」タイルは**保存レコードが在るときだけ**出る —— それが錠。
+    await waitForText(screenText, '切替 (収穫前)');
+    const t = switchTile();
+    expect(t).not.toBeNull();
+    // 直す前は '0 日' + 「目安は 7〜10 日です」(琥珀色) だった
+    expect(t!.value).toBe('未設定');
+    expect(t!.sub).toContain('入力してください');
+    expect(t!.sub).not.toContain('目安は 7〜10 日です');
+  });
+
+  it('★ 対照: 範囲内を入れれば数で出て、警告は出ない', async () => {
+    await mountOverview();
+    await enableLowK2();
+    await act(async () => { changeInput(q.numInput('実測カリウム (mg/100g)'), '120'); });
+    await act(async () => { changeInput(q.numInput('切替 (収穫前・日)'), '8'); });
+    await click(q.button('保存して経営サマリーへ反映'));
+    // 「切替 (収穫前)」タイルは**保存レコードが在るときだけ**出る —— それが錠。
+    await waitForText(screenText, '切替 (収穫前)');
+    const t = switchTile();
+    expect(t!.value).toBe('8 日');
+    expect(t!.sub).toContain('範囲内');
+  });
+
+  it('★ 対照: 本物の範囲外は今も警告する (警告そのものが生きている)', async () => {
+    await mountOverview();
+    await enableLowK2();
+    await act(async () => { changeInput(q.numInput('実測カリウム (mg/100g)'), '120'); });
+    await act(async () => { changeInput(q.numInput('切替 (収穫前・日)'), '20'); });
+    await click(q.button('保存して経営サマリーへ反映'));
+    // 「切替 (収穫前)」タイルは**保存レコードが在るときだけ**出る —— それが錠。
+    await waitForText(screenText, '切替 (収穫前)');
+    const t = switchTile();
+    expect(t!.value).toBe('20 日');
+    expect(t!.sub).toContain('目安は');
+    expect(t!.sub).not.toContain('入力してください');
+  });
+});
+
+
+/**
+ * **損益分岐点が「存在しない」ことを、金額の形で刷らない。** (2026-09-08 · パス 84)
+ *
+ * `computeKpiMetrics` は限界利益が 0 以下のとき `bep = Infinity` を返す ——
+ * *どれだけ売っても固定費を回収できない*、事業として最も重い状態の印である
+ * (`data/kpiActuals.ts` の `finiteBep` に経緯)。パス 59 は KPI 画面の**グラフ**が
+ * これを 0 に倒していたのを直したが、**経営サマリーのタイルは見ていなかった**:
+ *
+ * | タイル | 直す前 | 理由の説明 |
+ * | --- | --- | --- |
+ * | 損益分岐点 (BEP) | `∞` | 無し |
+ * | **損益分岐点売上高 (月)** | **`￥∞`** | 無し |
+ * | 損益分岐の出荷株数 (月) | `—` | **有り** |
+ *
+ * **規準は同じ行の 1 つ左のタイルに在った。** 同じ限界利益 ≤ 0 を
+ * 「—」+「単価が株あたり変動費以下です。何株売っても固定費を回収できません。」と
+ * 答えている。`￥∞` は金額として読める形で、しかも ∞ は「無限に安全」と
+ * 読み違えられる —— 実際は正反対である。
+ *
+ * 実測 (`estimateEconomics` を通した値): 単価 10 円・変動費 17 円/株 で
+ * **月商 ￥884,781** と **`￥∞`** が同じ行に並んでいた。
+ */
+describe('経営サマリー — 損益分岐点が存在しない事業 (∞ を金額として刷らない)', () => {
+  /** 単価 10 円 < 株あたり変動費 17 円 (種 3 + 液肥 2 + 包材 12)。限界利益は負。 */
+  const belowVariableCost: HydroponicsSetup = { ...HYDROPONICS_DEFAULTS, unitPriceYen: 10 };
+  /** 変動費が売上を超える期。BEP は存在しない (パス 59 の LOSS と同じ形)。 */
+  const lossPeriod: KpiActual = {
+    period: '2026-08', unit: '全社',
+    revenue: 1_000_000, cogs: 1_200_000, advertising: 0, sga: 300_000, depreciation: 0,
+  };
+  /** 限界利益が在る期 (対照)。BEP = 固定費 30 万 ÷ 限界利益率 60% = 50 万。 */
+  const okPeriod: KpiActual = {
+    period: '2026-08', unit: '全社',
+    revenue: 1_000_000, cogs: 400_000, advertising: 0, sga: 300_000, depreciation: 0,
+  };
+
+  const REASON = '限界利益が 0 以下です。どれだけ売っても固定費を回収できません。';
+
+  /**
+   * タイル 1 枚の文字列 (見出し + 値 + 補足)。
+   * **見つからなければ投げる** —— 枠が消えたときに「∞ が無い」で受かる形を作らない。
+   */
+  const tileText = (label: string): string => {
+    const head = Array.from(container.querySelectorAll('div'))
+      .find((el) => el.children.length === 0 && el.textContent === label);
+    const box = head?.parentElement;
+    if (!box) throw new Error(`tile "${label}" not found`);
+    return (box.textContent ?? '').replace(/\s+/g, ' ');
+  };
+
+  it('★ 水耕栽培: 損益分岐点売上高は「—」と理由 (￥∞ と刷らない)', async () => {
+    await getRecordStore().insert(HYDROPONICS_COLLECTION, belowVariableCost);
+    // タイルは**保存レコードが届いてから**生える —— `tileText` が探す当の見出しが錠。
+    await mountOverview('損益分岐点売上高 (月)');
+    const t = tileText('損益分岐点売上高 (月)');
+    expect(t).toContain('—');
+    expect(t).toContain(REASON);
+    // 直す前の形。∞ は「無限に安全」と読めるが、これは最も危ない側である。
+    expect(t).not.toContain('∞');
+    // **隣のタイルと同じ答え方であること** —— 規準はそこに在った。
+    expect(tileText('損益分岐の出荷株数 (月)')).toContain('何株売っても固定費を回収できません');
+  });
+
+  it('★ 対照: 単価が変動費を上回れば損益分岐点売上高は金額で出る (理由は出ない)', async () => {
+    await getRecordStore().insert(HYDROPONICS_COLLECTION, HYDROPONICS_DEFAULTS);
+    // 値は既定と同じでも、**保存レコードが在ること**がタイルを生やす条件である。
+    await mountOverview('損益分岐点売上高 (月)');
+    const t = tileText('損益分岐点売上高 (月)');
+    expect(t).toMatch(/￥[\d,]+/);
+    expect(t).not.toContain('—');
+    expect(t).not.toContain(REASON);
+  });
+
+  it('★ KPI 実績: 損益分岐点 (BEP) も「—」と理由 (∞ と刷らない)', async () => {
+    await getRecordStore().insert(KPI_ACTUALS_COLLECTION, lossPeriod);
+    await mountOverview('損益分岐点 (BEP)');
+    const t = tileText('損益分岐点 (BEP)');
+    expect(t).toContain('—');
+    expect(t).toContain(REASON);
+    expect(t).not.toContain('∞');
+    // 同じ節の安全余裕率は元から「—」。**2 つのタイルが同じ状態を同じ形で言う。**
+    expect(tileText('安全余裕率')).toContain('—');
+  });
+
+  /**
+   * **同じ規則が書面には検査として在り、画面には無かった。**
+   * `overviewBankSheet.test.ts` の「★ 書面に NaN / Infinity が 1 つも出ない」は
+   * `q.sheet()` の中だけを見ている —— 書面を組み立てている**画面そのもの**は
+   * 誰も見ておらず、そこに `￥∞` が出ていた。画面側にも床を置く。
+   *
+   * ただし床は**同じ厳しさでは張れない**: `NaN` と `Infinity` (綴り) は
+   * このページでつねに誤りだが、**`∞` には正しい用途が 1 つ在る** ——
+   * 席数の上限が無い契約の「メンバー / シート 0 / ∞（残り 無制限）」で、
+   * ここでの ∞ は「無制限」という**正しい**意味である
+   * (最初にページ全体で `∞` を禁じたら、この 1 件が鳴った)。
+   *
+   * そこで `∞` は**台帳として数える**: 正しい 1 件を名指しで留め、
+   * 2 件目が黙って増えないことを見る。数を動かすには理由を書く必要がある。
+   */
+  it('★ 画面に NaN / Infinity は 1 つも無く、∞ は「無制限」の 1 件だけ', async () => {
+    await getRecordStore().insert(HYDROPONICS_COLLECTION, belowVariableCost);
+    await getRecordStore().insert(KPI_ACTUALS_COLLECTION, lossPeriod);
+    // **2 つの collection が別々に届く** —— 水耕の設定と KPI 実績で、
+    // タイルもそれぞれ別に生える。片方だけ待つと他方の枠がまだ無い。
+    await mountOverview('損益分岐点売上高 (月)');
+    await waitForText(screenText, '損益分岐点 (BEP)');
+    const t = (container.textContent ?? '').replace(/\s+/g, ' ');
+    // 節そのものが出ている (枠が消えたときに「無い」で受からないように)
+    expect(t).toContain('損益分岐点売上高 (月)');
+    expect(t).toContain('損益分岐点 (BEP)');
+    // 綴りの Infinity / NaN は用途が無い。
+    expect(t).not.toMatch(/NaN|Infinity/);
+    // 正しい ∞ は席数の上限だけ。**その 1 件を名指しで留める。**
+    expect(t).toContain('メンバー / シート');
+    expect(t).toContain('残り 無制限');
+    expect((t.match(/∞/g) ?? []).length).toBe(1);
+  });
+
+  it('★ 対照: 限界利益が在れば BEP は金額で出る (理由は出ない)', async () => {
+    await getRecordStore().insert(KPI_ACTUALS_COLLECTION, okPeriod);
+    await mountOverview('損益分岐点 (BEP)');
+    const t = tileText('損益分岐点 (BEP)');
+    expect(t).toMatch(/￥[\d,]+/);
+    expect(t).not.toContain(REASON);
+    expect(tileText('安全余裕率')).toMatch(/\d/);
+  });
+});

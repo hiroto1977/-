@@ -1,0 +1,317 @@
+/**
+ * 経営サマリーの数値 → 書類スタジオの計算書類 (科目残高) への取り込み。
+ *
+ * 経営サマリーが持つのは KPI 実績 (売上高 / 売上原価 / 広告宣伝費 / 販管費 /
+ * 減価償却費 / 人件費) と貸借対照表の**合計値** (流動資産・現預金・売掛金・
+ * 棚卸資産・固定資産・流動負債・買掛金・固定負債・有利子負債・当期純利益)、
+ * それに提出者情報 (商号・決算期)。計算書類は 56 科目の残高から組むので、
+ * ここでは**内訳の無い額を「その他」の科目に置き、置いた理由を注記に残す**。
+ * 数字を作ることはしない — 出所が無い科目 (資本金・役員報酬・地代家賃…) は
+ * 触らず、利用者が入れた値をそのまま残す。
+ *
+ * 唯一の逆算は繰越利益剰余金 (期首)。貸借対照表の合計値だけからは純資産の
+ * 内訳が分からないので、資産合計 − 負債 − 資本金等 − 当期純利益 を期首の
+ * 繰越利益剰余金に置いて貸借を合わせる。逆算したことは行の出所と注記で示す。
+ */
+import { readableKpiRows, unreadableKpiRowsSheetNote, type KpiActual } from './kpiActuals';
+import { utcMsFromParts } from '../../shared/isoDate';
+import type { BalanceSheet } from './balanceSheet';
+import type { SubmissionProfile } from './bankSubmission';
+import { ACCOUNTS, amountOf, balanceTotals, incomeTotals } from './statementAccounts';
+
+export interface KessanImportInput {
+  readonly kpiActuals: readonly KpiActual[];
+  /** 最新の貸借対照表。未入力なら null。 */
+  readonly balanceSheet: BalanceSheet | null;
+  /** 提出者情報 (商号・決算期)。 */
+  readonly profile: SubmissionProfile;
+  /** 書類スタジオに今入っている計算書類の値。取り込まない科目はそのまま残す。 */
+  readonly existing: Readonly<Record<string, string>>;
+}
+
+export interface KessanImportRow {
+  /** 計算書類の入力欄のキー (科目 or 会社名・事業年度・期首残高)。 */
+  readonly k: string;
+  readonly label: string;
+  /** 入力欄へ書く文字列 (金額は整数の文字列)。 */
+  readonly value: string;
+  /** どこから来た値か。 */
+  readonly source: string;
+}
+
+export interface KessanImportResult {
+  readonly rows: readonly KessanImportRow[];
+  /** 置き方・逆算の説明。取り込んだ後に利用者が直すべき点。 */
+  readonly notes: readonly string[];
+  /** 出所が無くて取り込まなかった物。 */
+  readonly skipped: readonly string[];
+  /** 損益の集計に使った KPI の期 (`YYYY-MM`)。KPI が無ければ null。 */
+  readonly window: { readonly from: string; readonly to: string } | null;
+  /** 取り込み後の値 (既存 + 取り込む行)。 */
+  readonly values: Record<string, string>;
+}
+
+export const PERIOD_RE = /^(\d{4})-(0[1-9]|1[0-2])$/;
+
+/** `YYYY-MM` を 12 か月さかのぼった月 (事業年度の始まり)。読めなければ null。 */
+export function fiscalYearWindow(fiscalYearEnd: string): { from: string; to: string } | null {
+  const m = PERIOD_RE.exec(fiscalYearEnd);
+  if (!m) return null;
+  const year = Number(m[1]);
+  const month = Number(m[2]);
+  // 決算月の翌月から 12 か月 = 前年の翌月が期首。
+  const fromYear = month === 12 ? year : year - 1;
+  const fromMonth = month === 12 ? 1 : month + 1;
+  return { from: `${fromYear}-${String(fromMonth).padStart(2, '0')}`, to: fiscalYearEnd };
+}
+
+/**
+ * 事業年度の月数。**「1 年分か」を判定する所が同じ数を読む。**
+ *
+ * 2026-09-07 まで `bankSubmission.ts` の `periodScopeNote` が `months === 12` と
+ * 直接書いており、`docImports.ts` の事業計画書は**月数を数えてすらいなかった**
+ * (下の `buildBusinessPlanImport` の経緯)。判定する所が増えるたびに数字を写すと、
+ * 片方だけ動いたときに 2 つの書類が「1 年分」の意味で食い違う。
+ *
+ * 関数にしてあるのは、module 直下の `const` が読み込み時に評価される静的な値になり、
+ * 変異検査の届かない場所へ出るため (`stryker.config.json` の `_commentIgnoreStatic`)。
+ */
+export function fiscalYearMonths(): number {
+  return 12;
+}
+
+/** `YYYY-MM` → 「2026年3月」。呼ぶ側が正規表現で確かめた期だけを渡す。 */
+export function monthLabel(period: string): string {
+  const m = PERIOD_RE.exec(period)!;
+  return `${Number(m[1])}年${Number(m[2])}月`;
+}
+
+/** 事業年度（自）「2025年4月1日」。 */
+export function firstDayLabel(period: string): string {
+  return `${monthLabel(period)}1日`;
+}
+
+/** 事業年度（至）「2026年3月31日」。 */
+export function lastDayLabel(period: string): string {
+  const m = PERIOD_RE.exec(period)!;
+  // **翌月 1 日の 1 日前** = 当月末日。`day: 0` を `utcMsFromParts` に渡すと
+  // 繰り下がりが 2000 年の暦で解決され、2 月が閏年のずれで 3/1 になる
+  // (経緯は `shared/isoDate.ts` の `utcMsFromParts`)。
+  const y = Number(m[1]);
+  const mo = Number(m[2]);
+  // 12 月は月に 13 を渡す。`Date.UTC` が翌年 1 月へ繰り上げ、`utcMsFromParts` が年を
+  // `y` へ差し替えるので**年は 1 年手前**になるが、求めるのは 1 月 1 日の前日の**日**で、
+  // それは年に依らず 12 月 31 日 = 31。だから 12 月だけ `y + 1` を渡す分岐は外から
+  // 見える答えを 1 つも変えない (全 4 桁の年 × 12 か月で旧い形と一致を実測。
+  // 変異検査でも、その分岐を外す / `y + 1` を `y - 1` にする変異体が 12 月の検査を
+  // 足しても殺せなかった)。年を渡し分ける形は、年が効いているように読めるので消した。
+  const last = new Date(utcMsFromParts(y, mo + 1, 1) - 86_400_000).getUTCDate();
+  return `${monthLabel(period)}${last}日`;
+}
+
+/** 科目の表示名。ここで使うキーはすべて ACCOUNTS にある定数。 */
+const nameOf = (k: string): string => ACCOUNTS.find((a) => a.k === k)!.name;
+
+/** 経営サマリーの値を計算書類の入力欄へ写す。 */
+export function buildKessanImport(input: KessanImportInput): KessanImportResult {
+  const rows: KessanImportRow[] = [];
+  const notes: string[] = [];
+  const skipped: string[] = [];
+  const amount = (k: string, value: number, source: string): void => {
+    rows.push({ k, label: nameOf(k), value: String(Math.round(value)), source });
+  };
+
+  // ── 提出者情報 ──────────────────────────────────────────────────────
+  if (input.profile.companyName !== '') {
+    rows.push({ k: 'company', label: '会社名', value: input.profile.companyName, source: '提出者情報' });
+  } else {
+    skipped.push('会社名: 提出者情報の商号が未設定 (経営サマリー → 金融機関等提出用の書式 → 提出者情報)');
+  }
+
+  // ── 損益: KPI 実績を事業年度で切り出す ───────────────────────────────
+  /*
+   * **期が読める行だけを通す** (2026-09-22 · パス 393)。
+   *
+   * ここは 2026-09-22 まで、事業年度の枝だけが**文字列の大小だけ**で切り出していた
+   * (`r.period >= fy.from && r.period <= fy.to`)。下の `else` の枝と、兄弟の
+   * `docImports.ts` の事業計画書 (`valid.filter(...)`) は先に選別していたので、
+   * **同じ形の 3 か所のうち 1 か所だけが選別を落としていた**。
+   *
+   * 文字列の大小は `YYYY-MM` の形を要求しないので、**窓に入るが読めない**形が
+   * 通る。実測 (`fy = 2025-04〜2026-03`) で 6 形 ——
+   * `'2025-6'` / `'2025-13'` / `'2025-06-15'` / `'2025-99'` / `'2025-1x'` / `'2026-00'`。
+   *
+   * 効くのは**いちばん重い紙**である。実測 (読める 1 件 100 万 + `'2025-6'` の
+   * 1 件 900 万):
+   *
+   * | 面 | 売上高 |
+   * | --- | --- |
+   * | **計算書類 (損益計算書)** | **10,000,000** —— 読めない 1 行で 10 倍 |
+   * | 事業計画書 | 1,000,000 (選別している) |
+   * | 経営サマリー | 1,000,000 (`readableKpiRows`) |
+   *
+   * しかもその行の出所は `KPI 実績 (2025年4月〜2026年3月)` と**事業年度の窓を
+   * 名乗る** —— その窓のどの月にも無い行を含んでいる。注記も棚卸と雑費の 2 件だけで、
+   * 混ぜたことを 1 文も言っていなかった。
+   *
+   * 漏斗は `readableKpiRows` の 1 つ (パス 225 / 443) —— **ここで選別を書き直さない**。
+   * 落とした件数は下で `unreadableKpiRowsSheetNote` が述べる (相手に渡る紙なので、
+   * 画面向けではなく書面向けの 1 文・パス 392 と同じ向き)。
+   */
+  const readable = readableKpiRows(input.kpiActuals);
+  const periods = readable.rows.map((r) => r.period).sort();
+  const fy = fiscalYearWindow(input.profile.fiscalYearEnd);
+  let window: { from: string; to: string } | null = null;
+  let selected: readonly KpiActual[] = [];
+  if (periods.length > 0) {
+    const fyRows = fy === null ? null : { window: fy, rows: readable.rows.filter((r) => r.period >= fy.from && r.period <= fy.to) };
+    if (fyRows !== null && fyRows.rows.length > 0) {
+      window = fyRows.window;
+      selected = fyRows.rows;
+    } else {
+      window = { from: periods[0]!, to: periods[periods.length - 1]! };
+      selected = readable.rows;
+      notes.push(
+        fy === null
+          ? `決算期が未設定のため、KPI 実績の全期間 (${monthLabel(window.from)}〜${monthLabel(window.to)}) を合算した。提出者情報で決算期を入れると事業年度で切り出せる。`
+          : `決算期 (${monthLabel(fy.to)}期) の 12 か月に KPI 実績が無いため、入力済みの全期間 (${monthLabel(window.from)}〜${monthLabel(window.to)}) を合算した。`,
+      );
+    }
+  }
+  /*
+   * 落とした行を紙が述べる (パス 393)。**黙って除くと売上高が小さく出て利用者は
+   * 気づけない** —— 逆に除かないと 10 倍になる (上の経緯)。どちらにしても
+   * 「何件を除いたか」は紙に要る。文は書面・レポート向けの 1 つ
+   * (`unreadableKpiRowsSheetNote`) で、経営サマリー・金融機関等提出用の書面・
+   * 経営レポートと**同じ文**である。
+   */
+  const unreadableNote = unreadableKpiRowsSheetNote(readable);
+  if (unreadableNote !== null) notes.push(unreadableNote);
+  // 事業年度の欄: KPI を切り出した範囲 (無ければ決算期そのもの)。決算期どおりなら出所は提出者情報。
+  const range = window ?? fy;
+  if (range !== null) {
+    const source = range === fy ? '提出者情報の決算期' : 'KPI 実績の期';
+    rows.push({ k: 'fyStart', label: '事業年度（自）', value: firstDayLabel(range.from), source });
+    rows.push({ k: 'fyEnd', label: '事業年度（至）', value: lastDayLabel(range.to), source });
+  }
+
+  let pretax = 0;
+  if (selected.length > 0) {
+    const kpiSource = `KPI 実績 (${monthLabel(window!.from)}〜${monthLabel(window!.to)})`;
+    const sum = (pick: (r: KpiActual) => number | undefined): number =>
+      selected.reduce((acc, r) => acc + (pick(r) ?? 0), 0);
+    const revenue = sum((r) => r.revenue);
+    const cogs = sum((r) => r.cogs);
+    const advertising = sum((r) => r.advertising);
+    const sga = sum((r) => r.sga);
+    const depreciation = sum((r) => r.depreciation);
+    const laborCost = sum((r) => r.laborCost);
+    amount('sales', revenue, kpiSource);
+    amount('purchases', cogs, kpiSource);
+    notes.push('売上原価は当期商品仕入高に置いた。期首・期末の商品棚卸高は入っていないので、棚卸があるなら分けること。');
+    amount('advertising', advertising, kpiSource);
+    amount('depreciation', depreciation, kpiSource);
+    if (laborCost > 0) amount('salaries', laborCost, kpiSource);
+    const otherSga = sga - laborCost;
+    if (otherSga < 0) {
+      notes.push('人件費が販管費を超えているため、人件費以外の販管費は 0 とした。KPI 実績の販管費と人件費を確かめること。');
+      amount('miscSga', 0, kpiSource);
+    } else {
+      amount('miscSga', otherSga, kpiSource);
+      notes.push('人件費以外の販管費は内訳が無いので雑費に置いた。役員報酬・地代家賃・支払手数料などの科目へ振り分け直すこと。');
+    }
+    pretax = revenue - cogs - advertising - sga - depreciation;
+  } else {
+    skipped.push('損益 (売上高・売上原価・販管費): KPI 実績が未入力');
+  }
+
+  // ── 貸借対照表: 合計値を「その他」の科目に置く ─────────────────────
+  const bs = input.balanceSheet;
+  if (bs !== null) {
+    const bsSource = `貸借対照表 (${bs.asOf} 時点)`;
+    /**
+     * 貸借対照表の**内数の任意欄**を科目残高へ。未入力 (`undefined`) は 0 として
+     * 積む —— 計算書類は貸借が一致しないと出せないので、欄を空けたままにはできない。
+     * ただし**必ず注記に残す**: そうしないと「0 と実測した」と「入れていない」が
+     * 出来上がった書類の上で見分けられなくなる (同じ判断の別の形は
+     * `workingCapital.ts` —— あちらは印刷ではなく比率なので算定不能にできる)。
+     */
+    const inner = (v: number | undefined, label: string, account: string): number => {
+      if (v !== undefined) return v;
+      notes.push(`貸借対照表に${label}が無いので${account}は 0 とした。`);
+      return 0;
+    };
+    const cash = inner(bs.cash, '現預金', '現金及び預金');
+    const receivable = inner(bs.accountsReceivable, '売上債権', '売掛金');
+    const inventory = inner(bs.inventory, '棚卸資産', '棚卸資産');
+    const payable = inner(bs.accountsPayable, '仕入債務', '買掛金');
+    amount('cash', cash, bsSource);
+    amount('accountsReceivable', receivable, bsSource);
+    amount('inventory', inventory, bsSource);
+    const otherCurrent = bs.currentAssets - cash - receivable - inventory;
+    if (otherCurrent < 0) {
+      notes.push('現預金・売掛金・棚卸資産の合計が流動資産を超えているため、その他の流動資産は 0 とした。貸借対照表の内訳を確かめること。');
+      amount('otherCurrentAsset', 0, bsSource);
+    } else {
+      amount('otherCurrentAsset', otherCurrent, bsSource);
+    }
+    amount('otherFixedAsset', bs.fixedAssets, bsSource);
+    notes.push('固定資産は内訳が無いのでその他の固定資産に置いた。建物・機械装置・土地などへ振り分け、減価償却累計額を入れること。');
+    amount('accountsPayable', payable, bsSource);
+    // **有利子負債も同じ扱い。** 未入力を黙って 0 にすると、出来上がった貸借対照表は
+    // 「借入金ゼロ」を断言する —— しかも `interestBearingDebt` の入力欄はどの画面にも
+    // 無い (実測 2026-09-07・`data/balanceSheet.ts` の申し送り) ので、画面から入れた
+    // 利用者の控えでは**常に**未入力である。下の分け方の注記は `debt > 0` のときだけで
+    // よい (分け方の説明なので) が、**0 に倒したこと自体は必ず残す**。
+    const debt = inner(bs.interestBearingDebt, '有利子負債', '借入金');
+    const longTerm = Math.min(debt, bs.fixedLiabilities);
+    const shortTerm = debt - longTerm;
+    amount('longTermDebt', longTerm, bsSource);
+    amount('shortTermDebt', shortTerm, bsSource);
+    if (debt > 0) notes.push('有利子負債は固定負債に収まる分を長期借入金、残りを短期借入金に置いた。返済期限で分け直すこと。');
+    const otherCurrentLiability = bs.currentLiabilities - payable - shortTerm;
+    if (otherCurrentLiability < 0) {
+      notes.push('買掛金と短期借入金の合計が流動負債を超えているため、その他の流動負債は 0 とした。');
+      amount('otherCurrentLiability', 0, bsSource);
+    } else {
+      amount('otherCurrentLiability', otherCurrentLiability, bsSource);
+    }
+    amount('otherFixedLiability', bs.fixedLiabilities - longTerm, bsSource);
+
+    // 法人税等: 営業利益 (KPI) と当期純利益 (貸借対照表) の差。差が正のときだけ。
+    if (selected.length > 0) {
+      const tax = pretax - bs.netIncome;
+      if (tax > 0) {
+        amount('incomeTax', tax, '逆算 (KPI の営業利益 − 貸借対照表の当期純利益)');
+        notes.push('法人税、住民税及び事業税は KPI 実績の営業利益と貸借対照表の当期純利益の差から逆算した。営業外損益・特別損益があるなら直すこと。');
+      } else {
+        notes.push('貸借対照表の当期純利益が KPI 実績の営業利益以上なので、法人税等は逆算していない (営業外収益などを入れること)。');
+      }
+    }
+  } else {
+    skipped.push('資産・負債 (現預金・売掛金・買掛金・借入金…): 貸借対照表が未入力');
+  }
+
+  // ── 取り込み後の値。貸借は繰越利益剰余金 (期首) で合わせる ─────────
+  const values: Record<string, string> = { ...input.existing };
+  for (const r of rows) values[r.k] = r.value;
+  if (bs !== null) {
+    const income = incomeTotals(values);
+    const totals = balanceTotals(
+      values,
+      { retainedEarningsOpening: 0, dividends: amountOf(values, 'dividends'), reserveTransfer: amountOf(values, 'reserveTransfer') },
+      income.netIncome,
+    );
+    const opening = Math.round(totals.difference);
+    rows.push({
+      k: 'retainedEarningsOpening',
+      label: '繰越利益剰余金（期首残高）',
+      value: String(opening),
+      source: '逆算 (資産合計 − 負債 − 資本金等 − 当期純利益 + 配当 + 積立)',
+    });
+    values.retainedEarningsOpening = String(opening);
+    notes.push('繰越利益剰余金 (期首残高) は貸借を合わせるための逆算値。資本金・資本剰余金・利益準備金を入れ直したら、もう一度取り込むこと。');
+  }
+
+  return { rows, notes, skipped, window, values };
+}

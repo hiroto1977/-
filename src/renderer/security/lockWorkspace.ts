@@ -1,0 +1,179 @@
+// 生成物 —— src/renderer/security/lockWorkspace.mamori から Mamori のコンパイラが組んだ。手で編集しない (`npm run mamori:build`)。
+// 言語の仕様は docs/MAMORI.md。生成物が元と食い違えば src/shared/mamori/__tests__/mamoriGenerated.test.ts が落ちる。
+/**
+ * 施錠の中身を **1 つの名前**にする。
+ *
+ * ## なぜ関数に出すのか (2026-08-23 実測)
+ *
+ * 自動施錠の値打ちは **鍵をメモリから落とすこと**で、画面を隠すことではない。
+ * ところがその 2 つは `App.tsx` の `onLock` に**並べて書いてあるだけ**だった:
+ *
+ * ```tsx
+ * onLock: () => {
+ *   getVault().lock();       // ← これが本体
+ *   setVaultUnlocked(false); // ← これは見た目
+ * }
+ * ```
+ *
+ * 実測で前者だけ消すと、**10,381 件の検査が全部緑のまま通り**、型検査も通った。
+ * つまり「画面は施錠、鍵は生きたまま」へ退化しても誰も気づけない。そうなると
+ * 施錠は演出になり、施錠後に XSS や拡張から `getToken` を呼べば資格情報は
+ * 全部読める —— `webauthn.ts` の `verifyBiometric` を fail-closed に畳んだのと
+ * 同じ「所持の演出」を、こちらは作ってしまう形。
+ *
+ * ## 名前を作っても、迂回されていた (2026-09-06 実測)
+ *
+ * 上の門は作った。**が、利用者が実際に押す施錠はここを通っていなかった。**
+ * `SettingsPage.tsx` の「Vault を今すぐロック」は、門が消したはずの形を
+ * そのまま持っていた:
+ *
+ * ```tsx
+ * function lockNow() {
+ *   getVault().lock();  // ← 本体
+ *   onLocked();         // ← 見た目 (= setLocked(true)、このページの中だけ)
+ * }
+ * ```
+ *
+ * 実測した中身は 3 段で悪い:
+ *
+ *  1. **門の迂回** —— production で `getVault().lock()` を呼ぶのは
+ *     `lockWorkspace.ts` の外ではここ **1 か所だけ**だった。門は在るのに、
+ *     一番目立つ施錠がそこを通らない。誰も「全ての施錠経路が門を通ること」を
+ *     測っていなかった (= 名簿を作る物が名簿に載っていない、今日の型)。
+ *  2. **アプリは施錠されない** —— `App.tsx` の `vaultUnlocked` は
+ *     **マウント時に 1 度だけ**読む。`onLocked` は設定ページの局所状態を
+ *     立てるだけなので、**ロック画面は出ない**。サイドバーで他のページへ
+ *     移れば見た目は解錠のまま、資格情報の読み出しだけが
+ *     「Vault がロックされています」で落ちる (`getToken` 側はこれを飲むので
+ *     **「トークン未設定」と区別が付かない** —— `vault.ts` の `requireKey`
+ *     の注記にある通り)。画面が言う
+ *     「再度使うにはマスターパスワード入力が必要です」も**誰も要求しない**。
+ *  3. **他のタブに届かない** —— 画面の文面は
+ *     「**席を離れる前に**押すと…即座に遮断します」。ところが鍵は JS 文脈ごとに
+ *     持つので、同じ保管庫を開いた別のタブは**生きた鍵を持ったまま**残る。
+ *     そのタブの自動施錠が落ちるのは hidden 5 分 / 放置 15 分の後で、
+ *     席を離れた直後がまさに空白になる。
+ *
+ * ## 直し方 —— 見た目を呼び出し側の仕事から外す
+ *
+ * `onLocked` を引数で受けている限り、**局所状態を立てるだけのコールバック**を
+ * 渡せてしまう (2 がまさにそれ)。そこで通知を**購読**にし、引数を無くした:
+ * 画面へ知らせるのは `App.tsx` が 1 度だけ登録する購読の仕事で、
+ * 施錠を起こす側は「施錠する」以外を書けない。
+ *
+ * 迂回そのものは型では止められないので、**名簿を測る**検査を置いた
+ * (`__tests__/lockPathCensus.test.ts`) —— production で `.lock()` を呼べるのは
+ * このファイルだけ。標本つき (許可外のファイルに同じ行が有れば鳴る)。
+ *
+ * 明示的な施錠と自動施錠は**別**にした:
+ *
+ *  - `lockWorkspace()`  … この文脈だけ。自動施錠が使う。タブが hidden に
+ *    なるのは「同じアプリの別のタブへ移った」時でもあるので、これを配ると
+ *    **利用者が今使っているタブを施錠してしまう**。
+ *  - `lockEverywhere()` … 利用者が押した施錠。意図は「アプリを閉じる」なので
+ *    同じ保管庫を開いた全てのタブへ配る。
+ *
+ * 配る道は `BroadcastChannel`。**実測 (2026-09-06, 実 Chromium)**:
+ * `file://` の 2 文書間でも届き、送った文書自身には返らない (輪にならない)。
+ * `postMessage` の直後に `close()` しても相手には届く。無い環境では黙って
+ * 諦める —— そのタブは自分の自動施錠で落ちる。
+ *
+ * ## Mamori で書いてある (2026-11-05 · MG-040)
+ *
+ * 元は TypeScript。`try / finally` は 0.20 の `finally` で書く (鍵を落としてから知らせる順序・他のタブへ配る順序は `finally` が保つ)。
+ * **Mamori にはモジュール直下の `let` が無い** (状態を持つ構文は足していない) ので、購読の入れ物と共有の 1 本の道 (`BroadcastChannel`) の
+ * **状態**は、判断を持たない `lockWorkspaceHost.ts` が持つ。Mamori に残るのは「何をどの順序でするか」(鍵を落とす → 知らせる・自分を施錠する → 配る・
+ * 受けたら自分だけ施錠する) —— 守りの値打ちはそこにある。鍵を落とす `getVault().lock()` は生成物の中に残る
+ * (`lockPathCensus` が名簿で見ているのは、この生成物である)。
+ */
+
+import { getVault } from './vault';
+import { hostSubscribe, hostUnsubscribe, hostListeners, hostResetListeners, hostSharedChannel, hostResetChannel, hostOnMessage } from './lockWorkspaceHost';
+
+/**
+ * 施錠を配る道の名前。受け手 (`startLockRelay`) と送り手で共有する。
+ * 検査が**線の上を直接見る**ために公開している。送り手と受け手が食い違う心配は無い —— 両方この 1 つの定数を読む。
+ */
+export const LOCK_CHANNEL = "servicehub.lock";
+
+/** 配る合図。値を見て分岐するので、他の用途と混ざらない。 */
+export const LOCK_MESSAGE = "lock";
+
+/**
+ * 施錠されたことの通知を購読する。戻り値を呼ぶと解除。
+ * **画面を施錠表示にするのはここだけの仕事**。施錠を起こす側にコールバックを渡させると、局所状態を立てるだけの物を渡せてしまう。
+ */
+export function subscribeWorkspaceLocked(cb: () => void): () => void {
+  hostSubscribe(cb);
+  return () => {
+  hostUnsubscribe(cb);
+};
+}
+
+/** テスト用: 購読を空にし、共有の道も閉じる。閉じてから捨てる (閉じずに捨てると `onmessage` を付けたままの受け口が残る)。 */
+export function _resetLockSubscribersForTests(): void {
+  hostResetListeners();
+  hostResetChannel();
+}
+
+function notifyLocked(): void {
+  for (const cb of hostListeners()) {
+    cb();
+  }
+}
+
+/**
+ * この JS 文脈の鍵を落として、画面へ知らせる。
+ * **鍵を落としてから**知らせる。順序に意味があり、購読側が投げても鍵は既に落ちている。
+ */
+export function lockWorkspace(): void {
+  try {
+    getVault().lock();
+  } finally {
+    notifyLocked();
+  }
+}
+
+/**
+ * 他のタブへ「施錠して」と伝える。**この文脈は施錠しない。**
+ * ハードリセットのために公開している: あの場面で `lockEverywhere()` を使うと、購読している `App` がこのタブを即座にロック画面へ差し替え、
+ * 設定ページが unmount して結果を報せられない。届かない環境では黙って諦める。
+ */
+export function announceLockToOtherTabs(): void {
+  const channel = hostSharedChannel(LOCK_CHANNEL);
+  if (channel !== null) {
+    channel.postMessage(LOCK_MESSAGE);
+  }
+}
+
+/**
+ * 利用者が押した施錠 —— 同じ保管庫を開いている**他のタブも**施錠する。
+ * 自分の文脈を先に施錠する。`finally` にしたのは、自分の施錠が投げても他のタブへは伝えたいから。
+ */
+export function lockEverywhere(): void {
+  try {
+    lockWorkspace();
+  } finally {
+    announceLockToOtherTabs();
+  }
+}
+
+/**
+ * 他のタブからの施錠要求を受ける。戻り値を呼ぶと解除。
+ * 受けたら `lockWorkspace()` (この文脈だけ) を呼ぶ —— `lockEverywhere()` を呼ぶと配り合いになる。
+ */
+export function startLockRelay(): () => void {
+  const channel = hostSharedChannel(LOCK_CHANNEL);
+  if (channel === null) return () => {
+
+};
+  hostOnMessage(channel, (data: unknown) => {
+  if (data === LOCK_MESSAGE) {
+    lockWorkspace();
+  }
+});
+  // **閉じない** —— 送信も同じ 1 本を使うので、閉じると以後配れなくなる。
+  return () => {
+  hostOnMessage(channel, null);
+};
+}

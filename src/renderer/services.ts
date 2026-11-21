@@ -20,11 +20,62 @@ import { TeamRadarPage } from './pages/TeamRadarPage';
 import { TemplatesPage } from './pages/TemplatesPage';
 import { LibraryPage } from './pages/LibraryPage';
 import { SettingsPage } from './pages/SettingsPage';
-import { UberEatsPage } from './pages/UberEatsPage';
-import { DemaeCanPage } from './pages/DemaeCanPage';
 import { RealEstatePage } from './pages/RealEstatePage';
 import { MutualFundsPage } from './pages/MutualFundsPage';
 import { QualityPage } from './pages/QualityPage';
+import { Microsoft365Page } from './pages/Microsoft365Page';
+import { DropboxPage } from './pages/DropboxPage';
+import { SalesforcePage } from './pages/SalesforcePage';
+import { DiscordPage } from './pages/DiscordPage';
+import { AsanaPage } from './pages/AsanaPage';
+import { LinearPage } from './pages/LinearPage';
+import { SentryPage } from './pages/SentryPage';
+import { ShopifyPage } from './pages/ShopifyPage';
+import { StripePage } from './pages/StripePage';
+import { LinePage } from './pages/LinePage';
+import { StoragePage } from './pages/StoragePage';
+import { TaxAccountantPage } from './pages/TaxAccountantPage';
+import { LaborConsultantPage } from './pages/LaborConsultantPage';
+import { LawyerPage } from './pages/LawyerPage';
+import { JudicialScrivenerPage } from './pages/JudicialScrivenerPage';
+import { AdminScrivenerPage } from './pages/AdminScrivenerPage';
+import { SmeConsultantPage } from './pages/SmeConsultantPage';
+import { PatentAttorneyPage } from './pages/PatentAttorneyPage';
+import { CpaPage } from './pages/CpaPage';
+import { BasePage } from './pages/BasePage';
+import { NetseaPage } from './pages/NetseaPage';
+import { SuperDeliveryPage } from './pages/SuperDeliveryPage';
+import { TopsellerPage } from './pages/TopsellerPage';
+import { A8netPage } from './pages/A8netPage';
+import { AiBlogkunPage } from './pages/AiBlogkunPage';
+import { MoneyforwardPage } from './pages/MoneyforwardPage';
+import { AmazonPage } from './pages/AmazonPage';
+import { AmazonAssociatesPage } from './pages/AmazonAssociatesPage';
+import { SalesPage } from './pages/SalesPage';
+import { TeamPage } from './pages/TeamPage';
+import { YoutubePage } from './pages/YoutubePage';
+import { OverviewPage } from './pages/OverviewPage';
+import { CoconalaPage } from './pages/CoconalaPage';
+import { TiktokPage } from './pages/TiktokPage';
+import { TaxPage } from './pages/TaxPage';
+import { FundingPage } from './pages/FundingPage';
+import { FreeePage } from './pages/FreeePage';
+import { ConnectorsPage } from './pages/ConnectorsPage';
+import { LinuxPage } from './pages/LinuxPage';
+import { CompliancePage } from './pages/CompliancePage';
+import { ObsidianPage } from './pages/ObsidianPage';
+import { DockerPage } from './pages/DockerPage';
+import { AssistantPage } from './pages/AssistantPage';
+import { VillagePage } from './pages/VillagePage';
+import { DocstudioPage } from './pages/DocstudioPage';
+import { CursorPage } from './pages/CursorPage';
+import { ChartsPage } from './pages/ChartsPage';
+import { TalentPage } from './pages/TalentPage';
+import { MentorPage } from './pages/MentorPage';
+import { GrokPage } from './pages/GrokPage';
+import { HydroponicsPage } from './pages/HydroponicsPage';
+import { VrioPage } from './pages/VrioPage';
+import { WatchPage } from './pages/WatchPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -32,13 +83,20 @@ import type { ServiceId } from '../shared/serviceId';
 export type { ServiceId };
 
 /** Sidebar grouping. Pages in `featured` are shown prominently in an
- *  always-expanded section; `tools` and `integrations` are collapsed by
- *  default to reduce overwhelm for non-technical users. */
-export type ServiceCategory = 'featured' | 'tools' | 'integrations';
+ *  always-expanded section; `professionals` groups the 8 士業 advisors
+ *  (also always expanded — they are the business-support entry point);
+ *  `tools` and `integrations` are collapsed by default to reduce
+ *  overwhelm for non-technical users. */
+export type ServiceCategory = 'featured' | 'professionals' | 'tools' | 'integrations';
 
 export interface ServiceDefinition {
   id: ServiceId;
   label: string;
+  /**
+   * 名前に添える英語 (2026-11-20)。画面では「ギットハブ (GitHub)」のように、日本語の名前の後ろに
+   * かっこで出す (`serviceName.ts`)。文の中で画面を名指しするときは `label` だけを書く。
+   */
+  english: string;
   icon: string;
   description: string;
   page: ComponentType;
@@ -47,6 +105,7 @@ export interface ServiceDefinition {
 
 export const CATEGORY_LABEL: Record<ServiceCategory, string> = {
   featured: 'おすすめ',
+  professionals: '士業連携',
   tools: '分析・ツール',
   integrations: '外部サービス連携',
 };
@@ -55,217 +114,716 @@ export const SERVICES: ServiceDefinition[] = [
   {
     id: 'home',
     label: 'ホーム',
-    icon: 'HM',
+    english: 'Home',
+    icon: '家',
     description: 'ボタン 1 つで成果物を作る・誰でも使えるランチャー',
     page: HomePage,
     category: 'featured',
   },
   {
     id: 'github',
-    label: 'GitHub',
-    icon: 'GH',
-    description: 'リポジトリ・PR・Issue・CI を表示',
+    label: 'ギットハブ',
+    english: 'GitHub',
+    icon: 'ギ',
+    description: 'リポジトリ・変更の提案 (PR)・課題 (Issue)・自動検査 (CI) を表示',
     page: GithubPage,
     category: 'integrations',
   },
   {
     id: 'wordpress',
-    label: 'WordPress.com',
-    icon: 'WP',
+    label: 'ワードプレス',
+    english: 'WordPress.com',
+    icon: 'ワ',
     description: 'サイト一覧・投稿・ドメインを管理',
     page: WordPressPage,
     category: 'integrations',
   },
   {
     id: 'atlassian',
-    label: 'Atlassian',
-    icon: 'AT',
-    description: 'Jira / Confluence / Compass',
+    label: 'アトラシアン',
+    english: 'Atlassian',
+    icon: 'ア',
+    description: 'ジラ (Jira) / コンフルエンス (Confluence) / コンパス (Compass)',
     page: AtlassianPage,
     category: 'integrations',
   },
   {
     id: 'notion',
-    label: 'Notion',
-    icon: 'NO',
+    label: 'ノーション',
+    english: 'Notion',
+    icon: 'ノ',
     description: 'ページ・データベース・検索',
     page: NotionPage,
     category: 'integrations',
   },
   {
     id: 'drive',
-    label: 'Google Drive',
-    icon: 'GD',
+    label: 'グーグルドライブ',
+    english: 'Google Drive',
+    icon: 'ド',
     description: '最近のファイルと検索',
     page: DrivePage,
     category: 'integrations',
   },
   {
     id: 'calendar',
-    label: 'Google Calendar',
-    icon: 'GC',
+    label: 'グーグルカレンダー',
+    english: 'Google Calendar',
+    icon: '暦',
     description: '予定の表示と作成',
     page: CalendarPage,
     category: 'integrations',
   },
   {
     id: 'gmail',
-    label: 'Gmail',
-    icon: 'GM',
+    label: 'ジーメール',
+    english: 'Gmail',
+    icon: 'メ',
     description: 'スレッド・ドラフト・ラベル',
     page: GmailPage,
     category: 'integrations',
   },
   {
     id: 'slack',
-    label: 'Slack',
-    icon: 'SL',
-    description: 'チャンネル・メッセージ・Canvas',
+    label: 'スラック',
+    english: 'Slack',
+    icon: 'ス',
+    description: 'チャンネル・メッセージ・キャンバス (Canvas)',
     page: SlackPage,
     category: 'integrations',
   },
   {
     id: 'canva',
-    label: 'Canva',
-    icon: 'CV',
+    label: 'キャンバ',
+    english: 'Canva',
+    icon: 'キ',
     description: 'デザイン・フォルダ・コメント',
     page: CanvaPage,
     category: 'integrations',
   },
+  // 実行形態に依らない書き方にする (パス 161) —— サイドバーの説明は静的な台帳なので
+  // 実行形態で切り替えられない。ブラウザ版は一覧を読めないので、そこを明示する。
+  // (パス 161 ではこの注記を `icon:` と `description:` の**間**に置いて
+  //  landingServiceParse.test.ts を落とした —— 当時のランディングの抽出は
+  //  6 欄の**連続**を要求していた。パス 162 で欄を 1 つずつ読む形に直したので、
+  //  今はどこに注記を置いても・欄をどう並べても落ちない。)
   {
     id: 'skills',
-    label: 'Skills',
-    icon: 'SK',
-    description: '~/.claude/skills 一覧 + Anthropic API 経由で実行',
+    label: 'スキル',
+    english: 'Skills',
+    icon: '技',
+    description: 'スキル一覧 + アンソロピック (Anthropic) の AI で実行（一覧の読み取りはデスクトップ版のみ）',
     page: SkillsPage,
     category: 'tools',
   },
   {
     id: 'security',
-    label: 'Security',
-    icon: 'SC',
-    description: 'Norton 360 検出 + HIBP 漏洩照会 + VirusTotal URL スキャン',
+    label: 'セキュリティ',
+    english: 'Security',
+    icon: '守',
+    description: 'ノートン 360 (Norton 360) の検出 + メールアドレスの漏えい照会 (HIBP) + リンクの安全検査 (VirusTotal)',
     page: SecurityPage,
     category: 'tools',
   },
   {
     id: 'cloudflare',
-    label: 'Cloudflare',
-    icon: 'CF',
-    description: 'ゾーン一覧 + DNS レコード作成 + キャッシュパージ',
+    label: 'クラウドフレア',
+    english: 'Cloudflare',
+    icon: '雲',
+    description: 'ゾーン一覧 + 名前解決 (DNS) の設定の作成 + キャッシュの消去',
     page: CloudflarePage,
     category: 'tools',
   },
   {
     id: 'emotions',
-    label: 'Emotions',
-    icon: 'EM',
-    description: '気分ログ + Claude API でテキスト感情分析',
+    label: '感情ログ',
+    english: 'Emotions',
+    icon: '心',
+    description: '気分ログ + クロード (Claude) の AI で文章の感情を分析',
     page: EmotionsPage,
     category: 'tools',
   },
   {
     id: 'ollama',
-    label: 'Ollama',
-    icon: 'OL',
-    description: 'ローカル LLM (127.0.0.1 固定 + CVE 検知 + 厳格 sanitize)',
+    label: 'オラマ',
+    english: 'Ollama',
+    icon: 'オ',
+    description: '手元で動く言語モデル (Local LLM) — デスクトップ版は 127.0.0.1 固定 / ブラウザ版は接続先を指定 + 既知の弱点 (CVE) の検知 + 入力の厳格な無害化',
     page: OllamaPage,
     category: 'tools',
   },
   {
     id: 'kpi',
-    label: 'KPI / BEP',
-    icon: 'KP',
-    description: '損益分岐点 + 8 指標 × 6 事業 (模擬データ — Phase 6 で API 接続)',
+    label: '経営指標・損益分岐点',
+    english: 'KPI / BEP',
+    icon: '指',
+    description: '損益分岐点 (BEP) ほか 11 指標 × 6 事業 (模擬データ) + 実績と予算の記録',
     page: KpiPage,
     category: 'tools',
   },
   {
     id: 'stocks',
-    label: 'Stocks',
-    icon: 'ST',
-    description: '株式分析 + 売買シグナル + ペーパートレード (模擬データ — Phase 7 で broker 接続)',
+    label: '株式',
+    english: 'Stocks',
+    icon: '株',
+    description: '株式分析 + 売買シグナル + ペーパートレード (模擬データ — 証券会社との接続は今後)',
     page: StocksPage,
     category: 'tools',
   },
   {
     id: 'business',
     label: '事業ダッシュボード',
-    icon: 'BZ',
-    description: 'EC / dropship / OEM / blog / affiliate / video / SNS — 10 事業の経営支援 (Phase 6 で実 API 接続)',
+    english: 'Business Dashboard',
+    icon: '事',
+    description: 'ネットショップ (EC) / ドロップシッピング / 製造委託 (OEM) / ブログ / アフィリエイト / 動画 / ソーシャルメディア (SNS) — 10 事業の経営支援 (模擬データ — 実データとの接続は今後)',
     page: BusinessPage,
     category: 'featured',
   },
   {
     id: 'teamradar',
     label: 'チームレーダー',
-    icon: 'TR',
-    description: '営業チーム強み・弱みシート — 1-5 評価 × 5 軸 × N 人 + SVG 出力で Canva 連動',
+    english: 'Team Radar',
+    icon: 'レ',
+    description: '営業チーム強み・弱みシート — 1-5 評価 × 5 軸 × 人数分 + 画像 (SVG) の書き出しでキャンバ (Canva) と連動',
     page: TeamRadarPage,
     category: 'featured',
   },
   {
     id: 'templates',
     label: 'テンプレート',
-    icon: 'TP',
-    description: 'Canva 連動 8 種類のテンプレート — プレゼン / 名刺 / SNS / チラシ / 証明書 / 請求書 / 履歴書 (SVG 出力)',
+    english: 'Templates',
+    icon: '型',
+    description: 'キャンバ (Canva) 連動 8 種類のテンプレート — プレゼン / 名刺 / ソーシャルメディア (SNS) / チラシ / 証明書 / 請求書 / 履歴書 — 画像 (SVG) で書き出し',
     page: TemplatesPage,
     category: 'featured',
   },
   {
     id: 'library',
     label: 'ライブラリ',
-    icon: 'LB',
-    description: '作成したファイルの保管庫 (ブラウザ IndexedDB · 50 MB / 100 件)',
+    english: 'Library',
+    icon: '庫',
+    description: '作成したファイルの保管庫 (ブラウザの中に保存 · 50 メガバイト / 100 件)',
     page: LibraryPage,
     category: 'featured',
   },
   {
     id: 'settings',
     label: '設定',
-    icon: 'SE',
-    description: 'API キー / マスターパスワード — AES-GCM-256 で暗号化保管',
+    english: 'Settings',
+    icon: '設',
+    description: '連携の鍵 (API key) / マスターパスワード — 暗号化 (AES-GCM-256) して保管',
     page: SettingsPage,
     category: 'featured',
   },
-  {
-    id: 'uber-eats',
-    label: 'Uber Eats',
-    icon: 'UE',
-    description: 'フードデリバリー — 売上 / 注文数 / 評価を一覧',
-    page: UberEatsPage,
-    category: 'tools',
-  },
-  {
-    id: 'demae-can',
-    label: '出前館',
-    icon: 'DM',
-    description: 'フードデリバリー — 受注 / 配達ステータス / 月次集計',
-    page: DemaeCanPage,
-    category: 'tools',
-  },
+  // Uber Eats / 出前館 はサイドバーから「事業ダッシュボード」へ統合した
+  // (BusinessPage の FoodDeliverySection)。SERVICE_IDS / クライアント /
+  // snapshot / テストはデータ源として温存している (不変条件維持)。
   {
     id: 'real-estate',
     label: '不動産投資',
-    icon: 'RE',
-    description: '物件 / 賃貸キャッシュフロー / 利回りを一括把握',
+    english: 'Real Estate',
+    icon: '不',
+    description: '物件を任意追加 / 賃貸キャッシュフロー / 利回り・返済余裕率 (DSCR)・内部収益率 (IRR)',
     page: RealEstatePage,
     category: 'tools',
   },
   {
     id: 'mutual-funds',
     label: '投資信託',
-    icon: 'MF',
-    description: 'ファンド評価額 / 基準価額 / 分配金履歴',
+    english: 'Mutual Funds',
+    icon: '投',
+    description: '銘柄を任意追加 / 評価額・損益 / 積立・貯蓄シミュレーション',
     page: MutualFundsPage,
     category: 'tools',
   },
   {
     id: 'quality',
     label: '品質ダッシュボード',
-    icon: 'QA',
-    description: 'テスト件数 / Mutation スコア / レビュー履歴 / CI 状況を 1 画面で',
+    english: 'Quality Dashboard',
+    icon: '質',
+    description: 'テスト件数 / 変異検査 (Mutation) のスコア / レビュー履歴 / 自動検査 (CI) の状況を 1 画面で (見本)',
     page: QualityPage,
+    category: 'tools',
+  },
+  {
+    id: 'microsoft-365',
+    label: 'マイクロソフト 365',
+    english: 'Microsoft 365',
+    icon: 'マ',
+    description: 'アウトルック (Outlook) / ワンドライブ (OneDrive) / チームズ (Teams) — メール / ファイル / 会議',
+    page: Microsoft365Page,
+    category: 'integrations',
+  },
+  {
+    id: 'dropbox',
+    label: 'ドロップボックス',
+    english: 'Dropbox',
+    icon: '箱',
+    description: 'ファイル保管 — アカウント / 容量 / 最近のアイテム (読み取り専用・トークンを登録すると実データ)',
+    page: DropboxPage,
+    category: 'integrations',
+  },
+  {
+    id: 'salesforce',
+    label: 'セールスフォース',
+    english: 'Salesforce',
+    icon: 'セ',
+    description: '顧客管理 (CRM) — リード / 商談 / 連絡先 / パイプライン (見本)',
+    page: SalesforcePage,
+    category: 'integrations',
+  },
+  {
+    id: 'discord',
+    label: 'ディスコード',
+    english: 'Discord',
+    icon: 'デ',
+    description: 'チャット — ボットが参加しているサーバーの一覧 (読み取り専用・鍵を登録すると実データ)',
+    page: DiscordPage,
+    category: 'integrations',
+  },
+  {
+    id: 'asana',
+    label: 'アサナ',
+    english: 'Asana',
+    icon: 'タ',
+    description: 'タスク管理 — 自分の担当の未完了タスク (読み取り専用・鍵を登録すると実データ)',
+    page: AsanaPage,
+    category: 'integrations',
+  },
+  {
+    id: 'linear',
+    label: 'リニア',
+    english: 'Linear',
+    icon: '課',
+    description: '課題管理 — 自分の担当の未完了の課題 (読み取り専用・鍵を登録すると実データ)',
+    page: LinearPage,
+    category: 'integrations',
+  },
+  {
+    id: 'sentry',
+    label: 'セントリー',
+    english: 'Sentry',
+    icon: '監',
+    description: 'エラー監視 — 未解決の問題の一覧 (読み取り専用・鍵を登録すると実データ)',
+    page: SentryPage,
+    category: 'integrations',
+  },
+  {
+    id: 'shopify',
+    label: 'ショッピファイ',
+    english: 'Shopify',
+    icon: '店',
+    description: 'ネットショップ (EC) — 注文 / 売上 / 商品 / 顧客 (見本・記録は手入力)',
+    page: ShopifyPage,
+    category: 'integrations',
+  },
+  {
+    id: 'stripe',
+    label: 'ストライプ',
+    english: 'Stripe',
+    icon: '決',
+    description: '決済 — 残高 / 最近の入金 (読み取り専用・鍵を登録すると実データ)',
+    page: StripePage,
+    category: 'integrations',
+  },
+  {
+    id: 'line',
+    label: 'ライン',
+    english: 'LINE',
+    icon: 'ラ',
+    description: '公式アカウント — アカウントの情報と今月の配信数 (読み取り専用・鍵を登録すると実データ)',
+    page: LinePage,
+    category: 'integrations',
+  },
+  {
+    id: 'storage',
+    label: 'ストレージ最適化',
+    english: 'Storage',
+    icon: '容',
+    description: 'ストレージの見方とクリーンアップ手順 + パフォーマンス指標 (見本・この端末は読み取らない)',
+    page: StoragePage,
+    category: 'tools',
+  },
+  // ── 士業連携 (professionals): 8 士業を専用カテゴリに集約。各ページは
+  //    共通 CRM (ShigyoConsole) + 担当領域ナビ (professionalMap.ts の
+  //    事業仕分け) を表示する。並びは 会計税務 → 労務 → 法務 → 登記・
+  //    許認可 → 経営 → 知財 の相談フロー順。
+  {
+    id: 'tax-accountant',
+    label: '税理士',
+    english: 'Tax Accountant',
+    icon: '税',
+    description: '記帳代行 / 確定申告 / 月次決算 / 節税相談・インボイス',
+    page: TaxAccountantPage,
+    category: 'professionals',
+  },
+  {
+    id: 'cpa',
+    label: '公認会計士',
+    english: 'CPA',
+    icon: '会',
+    description: '財務諸表監査 / 決算の信頼性 / 内部統制 / 資金調達支援',
+    page: CpaPage,
+    category: 'professionals',
+  },
+  {
+    id: 'labor-consultant',
+    label: '社労士',
+    english: 'Labor Consultant',
+    icon: '労',
+    description: '社会保険手続 / 給与計算 / 就業規則 / 労務相談',
+    page: LaborConsultantPage,
+    category: 'professionals',
+  },
+  {
+    id: 'lawyer',
+    label: '弁護士',
+    english: 'Lawyer',
+    icon: '弁',
+    description: '契約書レビュー / 紛争対応 / 法務顧問',
+    page: LawyerPage,
+    category: 'professionals',
+  },
+  {
+    id: 'judicial-scrivener',
+    label: '司法書士',
+    english: 'Judicial Scrivener',
+    icon: '司',
+    description: '商業登記 / 不動産登記 / 相続手続',
+    page: JudicialScrivenerPage,
+    category: 'professionals',
+  },
+  {
+    id: 'admin-scrivener',
+    label: '行政書士',
+    english: 'Administrative Scrivener',
+    icon: '行',
+    description: '許認可申請 / 在留資格 / 補助金',
+    page: AdminScrivenerPage,
+    category: 'professionals',
+  },
+  {
+    id: 'sme-consultant',
+    label: '中小企業診断士',
+    english: 'SME Consultant',
+    icon: '診',
+    description: '経営診断 / 補助金申請 / 事業計画',
+    page: SmeConsultantPage,
+    category: 'professionals',
+  },
+  {
+    id: 'patent-attorney',
+    label: '弁理士',
+    english: 'Patent Attorney',
+    icon: '許',
+    description: '特許 / 商標 / 意匠出願 / 知財コンサル',
+    page: PatentAttorneyPage,
+    category: 'professionals',
+  },
+  {
+    id: 'base',
+    label: 'ベイス',
+    english: 'BASE',
+    icon: 'ベ',
+    description: 'ネットショップの商品・在庫・公開状態 (公式の連携・実データ)',
+    page: BasePage,
+    category: 'integrations',
+  },
+  {
+    id: 'netsea',
+    label: 'ネッシー',
+    english: 'NETSEA',
+    icon: 'ネ',
+    description: '事業者向け (B2B) の卸・仕入れマーケットプレイス (見本)',
+    page: NetseaPage,
+    category: 'integrations',
+  },
+  {
+    id: 'super-delivery',
+    label: 'スーパーデリバリー',
+    english: 'Super Delivery',
+    icon: '卸',
+    description: '事業者向け (B2B) の卸売仕入れサイト (見本)',
+    page: SuperDeliveryPage,
+    category: 'integrations',
+  },
+  {
+    id: 'topseller',
+    label: 'トップセラー',
+    english: 'TopSeller',
+    icon: 'ト',
+    description: 'ドロップシッピング卸 (見本)',
+    page: TopsellerPage,
+    category: 'integrations',
+  },
+  {
+    id: 'a8net',
+    label: 'エーハチネット',
+    english: 'A8.net',
+    icon: 'エ',
+    description: 'アフィリエイトの成果の記録と月ごとの合計 (この端末に保存・手入力)',
+    page: A8netPage,
+    category: 'integrations',
+  },
+  {
+    id: 'ai-blogkun',
+    label: 'AIブログくん',
+    english: 'AI Blog-kun',
+    icon: 'ブ',
+    description: 'AI 自動ブログ生成サービス (見本)',
+    page: AiBlogkunPage,
+    category: 'integrations',
+  },
+  {
+    id: 'moneyforward',
+    label: 'マネーフォワード',
+    english: 'Money Forward',
+    icon: '金',
+    description: 'クラウド会計・請求・確定申告 (見本)',
+    page: MoneyforwardPage,
+    category: 'integrations',
+  },
+  {
+    id: 'amazon',
+    label: 'アマゾン',
+    english: 'Amazon',
+    icon: '通',
+    description: '出品者の注文・在庫・売上 (見本)',
+    page: AmazonPage,
+    category: 'integrations',
+  },
+  {
+    id: 'amazon-associates',
+    label: 'アマゾン アソシエイト',
+    english: 'Amazon Associates',
+    icon: '紹',
+    description: 'アフィリエイト成果レポート (見本)',
+    page: AmazonAssociatesPage,
+    category: 'integrations',
+  },
+  {
+    id: 'sales',
+    label: '売上集計',
+    english: 'Sales',
+    icon: '売',
+    description: 'アマゾン (Amazon) / ショッピファイ (Shopify) / ベイス (BASE) など販売チャネル横断の売上集計 (この端末に保存・実データ)',
+    page: SalesPage,
+    category: 'featured',
+  },
+  {
+    id: 'team',
+    label: 'チーム管理',
+    english: 'Team',
+    icon: '員',
+    description: 'メンバー・権限管理 (オーナー/管理者/メンバー) — プランのシート上限と連動',
+    page: TeamPage,
+    category: 'featured',
+  },
+  {
+    id: 'youtube',
+    label: 'ユーチューブ',
+    english: 'YouTube',
+    icon: '動',
+    description: 'チャンネル統計・最近の動画 (ユーチューブ公式の連携・実データ)',
+    page: YoutubePage,
+    category: 'integrations',
+  },
+  {
+    id: 'overview',
+    label: '経営サマリー',
+    english: 'Overview',
+    icon: '経',
+    description: '売上・経営指標 (KPI)・チーム・プランを横断した経営概況 (実データ集約)',
+    page: OverviewPage,
+    category: 'featured',
+  },
+  {
+    id: 'coconala',
+    label: 'ココナラ',
+    english: 'Coconala',
+    icon: 'コ',
+    description: 'スキルマーケットの出品・受注・評価 (見本)',
+    page: CoconalaPage,
+    category: 'integrations',
+  },
+  {
+    id: 'tiktok',
+    label: 'ティックトック',
+    english: 'TikTok',
+    icon: 'テ',
+    description: '投稿・広告・フォロワーの運用サマリー (見本)',
+    page: TiktokPage,
+    category: 'integrations',
+  },
+  {
+    id: 'tax',
+    label: '税務試算',
+    english: 'Tax Estimate',
+    icon: '算',
+    description: '所得税/住民税/消費税/手取りの概算 + 節税案内 + 公式ツール導線 (納付は手動)',
+    page: TaxPage,
+    category: 'tools',
+  },
+  {
+    id: 'funding',
+    label: '資金調達レーダー',
+    english: 'Funding Radar',
+    icon: '資',
+    description: '補助金/助成金/融資/公庫/給付金/クラウドファンディングを会計・株式連携で可視化 (レーダー/折れ線/円/棒)',
+    page: FundingPage,
+    category: 'tools',
+  },
+  {
+    id: 'freee',
+    label: 'フリー会計',
+    english: 'freee',
+    icon: 'フ',
+    description: 'フリー会計 (freee) の取引から月次の営業キャッシュフローを取得 (資金調達レーダーに連携・実データ)',
+    page: FreeePage,
+    category: 'integrations',
+  },
+  {
+    id: 'connectors',
+    label: 'コネクター / 自動化',
+    english: 'Connectors',
+    icon: '連',
+    description: '無料(認証不要)のローカル連携カタログとプラグインを一覧・ドライラン',
+    page: ConnectorsPage,
+    category: 'tools',
+  },
+  {
+    id: 'linux',
+    label: 'リナックス',
+    english: 'Linux',
+    icon: '🐧',
+    description: 'システムモニター — 基本ソフト (OS)/カーネル/処理装置 (CPU)/メモリ/負荷/稼働時間 (この端末の実値・読み取り専用)',
+    page: LinuxPage,
+    category: 'tools',
+  },
+  {
+    id: 'compliance',
+    label: 'コンプライアンス',
+    english: 'Compliance',
+    icon: '法',
+    description: '法務/税務/労務の確証済み制度知識を分野別に表示 (一次情報で裏取り・出典リンク付き)',
+    page: CompliancePage,
+    category: 'tools',
+  },
+  {
+    id: 'obsidian',
+    label: 'オブシディアン',
+    english: 'Obsidian',
+    icon: '知',
+    description: '手元の知識ベース (Vault) の運用設計 — ギットハブ (GitHub) 連携・暗号化の指針 (見本)',
+    page: ObsidianPage,
+    category: 'tools',
+  },
+  {
+    id: 'docker',
+    label: 'ドッカー',
+    english: 'Docker',
+    icon: '器',
+    description: 'コンテナ/イメージ・脆弱性の検査・イメージ置き場 (GHCR) との連携の可視化 (見本)',
+    page: DockerPage,
+    category: 'tools',
+  },
+  {
+    id: 'assistant',
+    label: 'AI アシスタント',
+    english: 'AI Assistant',
+    icon: '助',
+    description: 'クロード (Claude) を頭脳に確証済みナレッジと全サービスを統合 — 質問・助言・表/成果物の生成',
+    page: AssistantPage,
+    category: 'featured',
+  },
+  {
+    id: 'village',
+    label: 'AIの村',
+    english: 'AI Village',
+    icon: '🏡',
+    description: 'AI 組織 143 体が働く様子をどうぶつの森風に可視化 — 画面に話しかけて対話できる',
+    page: VillagePage,
+    category: 'featured',
+  },
+  {
+    id: 'docstudio',
+    label: '書類スタジオ',
+    english: 'Document Studio',
+    icon: '🗂',
+    description: '契約・経理・人事・組織・規程・社内・通知・事業計画 59 書式＋電子定款＋就業規則 — 入力→交付前チェック（無効リスク検出）→印刷 / ファイル保存 (PDF)',
+    page: DocstudioPage,
+    category: 'featured',
+  },
+  {
+    id: 'cursor',
+    label: 'カーソル',
+    english: 'Cursor',
+    icon: 'カ',
+    description: 'AI コードエディタのチーム管理 — メンバー / 利用状況 / 支出',
+    page: CursorPage,
+    category: 'integrations',
+  },
+  {
+    id: 'charts',
+    label: '可視化',
+    english: 'Charts',
+    icon: '図',
+    description: '折れ線・円・レーダーで数値を可視化 (仮想データ + 自己検査つき)',
+    page: ChartsPage,
+    category: 'tools',
+  },
+  {
+    id: 'talent',
+    label: '人材育成',
+    english: 'Talent',
+    icon: '育',
+    description: '組織病の診断・登用判定・達成確率100%キープ・育成ロードマップ',
+    page: TalentPage,
+    category: 'tools',
+  },
+  {
+    id: 'mentor',
+    label: '専属カウンセラー',
+    english: 'Mentor',
+    icon: '相',
+    description: 'メンバー 1 人に 1 人の相談役 — 聞き取り・週 1 のチェックイン・関係の仲介・その人に合う助言 (端末内・同意した集計だけチームへ)',
+    page: MentorPage,
+    category: 'tools',
+  },
+  {
+    id: 'hydroponics',
+    label: '水耕栽培・養蜂・養殖',
+    english: 'Hydroponics / Beekeeping / Aquaculture',
+    icon: '水',
+    description: '水耕栽培の毎日の測定 (電気伝導度 / pH / 温度ほか) → 判定 → 今日やること・日程。養蜂と養殖 (海水魚・淡水魚) は、種類を自由に増減して収支を概算',
+    page: HydroponicsPage,
+    category: 'tools',
+  },
+  {
+    id: 'grok',
+    label: 'グロック',
+    english: 'Grok',
+    icon: 'グ',
+    description: 'エックスエーアイ (xAI) の対話 AI — 接続状態の確認と直接の質問 (鍵と既定の提供者は AI アシスタントのエージェント設定)',
+    page: GrokPage,
+    category: 'tools',
+  },
+  {
+    id: 'vrio',
+    label: 'ブリオ分析',
+    english: 'VRIO',
+    icon: '強',
+    description: '従業員の評価 (階層ウェイト × 職種の観点・昇格ゲート・育成の一手) と、商品企画を進めるか見送るか (GO / NO-GO) の判定 (入力は画面の中だけ)',
+    page: VrioPage,
+    category: 'tools',
+  },
+  {
+    id: 'watch',
+    label: '見張りアシスタント',
+    english: 'Watch Assistant',
+    icon: '見',
+    description: 'メール・予定・スラック (Slack)・エックス (X)・グーグル広告 (Google Ads)・アナリティクス (Google Analytics) の内容から、平日の要約・返信の下書き・週次レポートを作る (貼り付けと手入力・送信はしない)',
+    page: WatchPage,
     category: 'tools',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE

@@ -33,7 +33,7 @@
  * Notes:
  *   - This is purely a LOCAL analysis of the existing mutation report.
  *     There is no API call; the "API connection" is a separate
- *     deferred contract (see ARCHITECTURE.md §5.5).
+ *     deferred contract (see ARCHITECTURE.md §5.3).
  *   - Run `npm run mutate` first to refresh the report.
  */
 'use strict';

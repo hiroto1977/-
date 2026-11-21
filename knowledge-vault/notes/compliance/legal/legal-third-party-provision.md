@@ -1,0 +1,52 @@
+---
+collection: compliance
+id: legal-third-party-provision
+category: "legal"
+category_ja: "法務"
+title: "個人データの第三者提供の制限"
+as_of: "2026-06"
+source_count: 4
+authoritative: true
+tags:
+  - collection/compliance
+  - compliance/legal
+  - knowledge/verified
+aliases:
+  - "個人データの第三者提供の制限"
+---
+
+# 個人データの第三者提供の制限
+
+> [!info] コレクション: [[法務・税務・労務]] ・ 区分: 法務 ・ asOf: 2026-06 ・ 出典: 4件（うち権威ある出典 ✓）
+
+## 概要
+個人データを第三者に提供するには原則あらかじめ本人の同意が必要で、オプトアウトによる提供は個人情報保護委員会への届出を要し（要配慮個人情報はオプトアウト不可）、第三者提供では確認・記録の作成および保存義務が課される。実務で効くのは「第三者に当たらない3類型」で、①利用目的の達成に必要な範囲内の委託、②合併その他の事由による事業の承継、③共同利用は、いずれも第三者提供に当たらないため本人の同意を要しない。ただし共同利用は、共同利用する旨・データの項目・共同利用者の範囲・利用目的・管理責任者の氏名等をあらかじめ本人に通知するか本人が容易に知り得る状態に置くことが条件で、後から範囲を広げることはできない。委託の場合は同意が要らない代わりに委託先の監督義務がかかる。外国にある第三者への提供は別の規律になる。
+
+## 所管・根拠
+所管: 個人情報保護委員会（個人情報保護法）
+
+## 出典
+- [個人情報保護委員会 オプトアウト届出](https://www.ppc.go.jp/personalinfo/legal/optout/) `公的`
+- [個人情報保護委員会 第三者提供時の確認・記録義務](https://www.ppc.go.jp/personalinfo/legal/guidelines_thirdparty/) `公的`
+- [個人情報保護委員会 ガイドライン（通則編・第三者提供の制限）](https://www.ppc.go.jp/personalinfo/legal/guidelines_tsusoku/) `公的`
+- [個人情報保護委員会 ガイドライン（外国にある第三者への提供編）](https://www.ppc.go.jp/personalinfo/legal/guidelines_offshore/) `公的`
+
+## 関連概念
+- [[legal-sensitive-personal-info|要配慮個人情報の取扱い]] — 語彙が近い
+- [[legal-optout-provision|オプトアウトによる個人データの第三者提供（個人情報保護法27条2項）]] — 語彙が近い
+- [[bizlaw-anonymized-info|匿名加工情報・仮名加工情報（個人情報保護法）]] — 出典を共有
+- [[bizlaw-appi|個人情報保護法（個人情報の保護に関する法律）]] — 出典を共有
+- [[bizlaw-pipa-optout-third-party|個人情報保護法のオプトアウト第三者提供]] — 出典を共有
+- [[legal-anonymized-info|匿名加工情報（個人情報保護法）]] — 出典を共有
+- [[legal-appi-breach-report|個人情報の漏えい等報告・本人通知の義務]] — 出典を共有
+- [[legal-cross-border-data|外国にある第三者への個人データ提供の制限（個人情報保護法28条）]] — 出典を共有
+- [[legal-data-subject-rights|保有個人データに関する本人の権利]] — 出典を共有
+- [[legal-joint-use-data|個人データの共同利用（個人情報保護法27条5項3号）]] — 出典を共有
+
+## 関連
+- コレクション: [[法務・税務・労務]]
+- ヴォルト入口: [[Home]]
+- オーケストレーション連携: [[AI_ORCHESTRATION_CONTEXT]]
+
+---
+*このノートはリポジトリの確証済み知識データ（`src/renderer/data/*Knowledge.ts` ほか）から `npm run vault:build` で自動生成されています。直接編集しないでください（編集は本体データ側に行い再生成する）。*

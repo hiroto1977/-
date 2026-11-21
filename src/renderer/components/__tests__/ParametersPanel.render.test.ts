@@ -1,0 +1,628 @@
+/** @vitest-environment jsdom */
+/**
+ * 数値パラメータの設定画面 — 実物の record store (fake-indexeddb) を通して
+ * 「入れて保存すると残り、既定に戻すと消え、通らない値は保存できない」を見る。
+ */
+import 'fake-indexeddb/auto';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { act, createElement } from 'react';
+import { createRoot, type Root } from 'react-dom/client';
+import { ParametersPanel, matchesParameterQuery } from '../ParametersPanel';
+import { PARAMETER_OVERRIDES_COLLECTION, type ParameterOverrideRecord } from '../../data/parameterOverrides';
+import { _resetRecordStoreForTests, getRecordStore } from '../../data/store';
+import { _resetCollectionSubscribersForTests } from '../../data/useCollection';
+import { PARAMETERS, PARAMETER_BY_ID, parameterFeatures } from '../../../shared/parameters';
+import { settleUntil, waitForText } from '../../__tests__/jsdomWait';
+import { subscribeDeviceStoreFailure } from '../../data/deviceStoreFailure';
+
+(globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+
+function changeInput(input: HTMLInputElement, value: string): void {
+  const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set;
+  if (!setter) throw new Error('HTMLInputElement value setter not found');
+  setter.call(input, value);
+  input.dispatchEvent(new Event('input', { bubbles: true }));
+}
+
+let container: HTMLDivElement;
+let root: Root | null = null;
+
+const DAYS = '年間の稼働日数';
+const STD = '消費税率 (標準)';
+
+const q = {
+  rows: () => Array.from(container.querySelectorAll<HTMLElement>('[data-parameter]')),
+  row: (id: string) => {
+    const el = container.querySelector<HTMLElement>(`[data-parameter="${id}"]`);
+    if (!el) throw new Error(`row ${id} not found`);
+    return el;
+  },
+  input: (label: string) => {
+    const el = container.querySelector<HTMLInputElement>(`input[aria-label="${label}"]`);
+    if (!el) throw new Error(`input "${label}" not found`);
+    return el;
+  },
+  button: (label: string) => {
+    const el = container.querySelector<HTMLButtonElement>(`button[aria-label="${label}"]`);
+    if (!el) throw new Error(`button "${label}" not found`);
+    return el;
+  },
+  buttonByText: (text: string) => {
+    const b = Array.from(container.querySelectorAll('button')).find((el) => el.textContent === text);
+    if (!b) throw new Error(`button "${text}" not found`);
+    return b;
+  },
+  header: () => container.querySelector('[data-overridden-count]')?.textContent ?? '',
+  alertIn: (id: string) => q.row(id).querySelector('[role="alert"]')?.textContent ?? '',
+};
+
+async function type(label: string, value: string): Promise<void> {
+  await act(async () => {
+    changeInput(q.input(label), value);
+  });
+}
+
+/** 押すだけ。**待つのは呼び手が、自分が見たい物で待つ**。 */
+async function click(el: HTMLElement): Promise<void> {
+  await act(async () => {
+    el.click();
+  });
+}
+
+/**
+ * 上書きの件数が `n` になるまで待つ (見出しの `[data-overridden-count]`)。
+ *
+ * 見出しは**保存された上書き**から出るので、これは「書き込みが解決した」印である
+ * (打っただけでは動かない —— この検査自身が下でそう主張している)。
+ */
+async function waitForOverrides(n: number): Promise<void> {
+  await settleUntil(
+    () => q.header() === `上書き ${n} / ${PARAMETERS.length} 件`,
+    `上書きが ${n} 件になる (いま ${JSON.stringify(q.header())})`,
+  );
+}
+
+/**
+ * 保存を押して、**保存が済んだ印**が出るまで待つ。
+ *
+ * 印は「同じ値になったので保存ボタンが押せなくなる」 —— 件数が変わらない保存
+ * (既定と同じ値を置き直す等) でも効くので、見出しの件数より広く使える。
+ */
+/**
+ * 押して、**書き込みが済むまで**待つ。
+ *
+ * ★ 2026-09-27 (パス 493k) まで印は「保存が押せなくなる」だけだった。ところが保存ボタンは
+ * `busy || unchanged || issue` で押せなくなる —— **押した瞬間の busy でも立つ**ので、書き込みが
+ * 終わる前に待ちが明ける。負荷の下で 1 度落ちた (365 を保存して 360 を読んだ)。書き込みを 150 ms
+ * 遅らせると毎回落ちる (下の ★ の検査がそれを留める)。印は「既定に戻す」が押せること ——
+ * `busy || !overridden` なので、busy が明け (= 書き込みを await し終え)、上書きが画面に届いた印である。
+ */
+async function save(label: string): Promise<void> {
+  await click(q.button(`${label} を保存`));
+  await settleUntil(
+    () => q.button(`${label} を保存`).disabled && !q.button(`${label} を既定に戻す`).disabled,
+    `「${label} を保存」が押せなくなり、「既定に戻す」が押せる (書き込みが済んだ印)`,
+  );
+}
+
+async function stored(): Promise<readonly ParameterOverrideRecord[]> {
+  const list = await getRecordStore().list<ParameterOverrideRecord>(PARAMETER_OVERRIDES_COLLECTION);
+  return list.map((r) => r.data);
+}
+
+/**
+ * 台帳を読み終えるまで**条件で**待って描く (2026-09-21 · パス 380)。
+ *
+ * ここは 2026-09-21 まで固定 8 周の `settle()` だった —— 周回数を 0 にすると
+ * 見出しが「読み込み中…」のままで 11 件落ちる
+ * (`npm run audit:tick-sensitivity` の実測)。後ろに在るのは IndexedDB の読みである。
+ */
+async function mount(): Promise<void> {
+  root = createRoot(container);
+  await act(async () => {
+    root!.render(createElement(ParametersPanel));
+  });
+  await settleUntil(() => q.header().startsWith('上書き'), '台帳を読み終えて件数が出る');
+}
+
+beforeEach(async () => {
+  _resetRecordStoreForTests();
+  _resetCollectionSubscribersForTests();
+  await new Promise<void>((resolve) => {
+    const req = indexedDB.deleteDatabase('business-hub-data');
+    req.onsuccess = () => resolve();
+    req.onerror = () => resolve();
+    req.onblocked = () => resolve();
+  });
+  container = document.createElement('div');
+  document.body.appendChild(container);
+  await mount();
+});
+
+afterEach(async () => {
+  if (root) {
+    await act(async () => {
+      root!.unmount();
+    });
+    root = null;
+  }
+  document.body.removeChild(container);
+  vi.restoreAllMocks();
+});
+
+describe('数値パラメータの設定画面', () => {
+  it('台帳の全件を機能ごとに並べ、既定を画面の値で見せる', () => {
+    expect(q.rows().map((r) => r.dataset.parameter)).toEqual(PARAMETERS.map((p) => p.id));
+    const text = container.textContent ?? '';
+    for (const f of parameterFeatures()) expect(text).toContain(f);
+    expect(q.input(DAYS).value).toBe('365');
+    expect(q.input(STD).value).toBe('10'); // 0.1 ではなく %
+    expect(q.header()).toBe(`上書き 0 / ${PARAMETERS.length} 件`);
+    // 既定値と出典が行に出る。
+    expect(q.row('payroll.commutePublicTransportCap').textContent).toContain('既定 150000円');
+    expect(q.row('payroll.commutePublicTransportCap').textContent).toContain('所得税法施行令');
+    expect(q.row('hydroponics.daysPerYear').textContent).toContain('前提');
+  });
+
+  it('変えていなければ保存は押せず、上書きが無ければ既定に戻すも押せない', () => {
+    expect(q.button(`${DAYS} を保存`).disabled).toBe(true);
+    expect(q.button(`${DAYS} を既定に戻す`).disabled).toBe(true);
+    expect(q.buttonByText('すべて既定に戻す').disabled).toBe(true);
+  });
+
+  it('値を入れて保存すると残り、上書き中の印と件数が出る', async () => {
+    await type(DAYS, '300');
+    expect(q.button(`${DAYS} を保存`).disabled).toBe(false);
+    await save(DAYS);
+    await waitForOverrides(1);
+    expect(await stored()).toEqual([{ values: { 'hydroponics.daysPerYear': 300 } }]);
+    expect(q.row('hydroponics.daysPerYear').dataset.overridden).toBe('true');
+    expect(q.row('hydroponics.daysPerYear').textContent).toContain('上書き中');
+    expect(q.header()).toBe(`上書き 1 / ${PARAMETERS.length} 件`);
+    expect(q.input(DAYS).value).toBe('300');
+    // 保存した値と同じなので、もう一度は押せない。
+    expect(q.button(`${DAYS} を保存`).disabled).toBe(true);
+    expect(q.button(`${DAYS} を既定に戻す`).disabled).toBe(false);
+  });
+
+  it('% の欄は画面の値で入れて内部値で保存する (12 → 0.12)', async () => {
+    await type(STD, '12');
+    await save(STD);
+    await waitForOverrides(1);
+    expect(await stored()).toEqual([{ values: { 'tax.consumptionStandardRate': 0.12 } }]);
+    expect(q.input(STD).value).toBe('12');
+  });
+
+  it('通らない値は指摘を出し、保存できない (範囲外・数でない・整数でない)', async () => {
+    await type(DAYS, '0');
+    expect(q.alertIn('hydroponics.daysPerYear')).toBe('1日 以上で入力してください');
+    expect(q.input(DAYS).getAttribute('aria-invalid')).toBe('true');
+    expect(q.button(`${DAYS} を保存`).disabled).toBe(true);
+
+    await type(DAYS, 'abc');
+    expect(q.alertIn('hydroponics.daysPerYear')).toBe('数値で入力してください');
+    expect(q.button(`${DAYS} を保存`).disabled).toBe(true);
+
+    await type(DAYS, '10.5');
+    expect(q.alertIn('hydroponics.daysPerYear')).toBe('整数で入力してください');
+
+    await type(DAYS, '367');
+    expect(q.alertIn('hydroponics.daysPerYear')).toBe('366日 以下で入力してください');
+
+    // 全角は読める (黙って 0 にしない)。
+    await type(DAYS, '３００');
+    expect(q.alertIn('hydroponics.daysPerYear')).toBe('');
+    expect(q.input(DAYS).getAttribute('aria-invalid')).toBe('false');
+    expect(q.button(`${DAYS} を保存`).disabled).toBe(false);
+    expect(await stored()).toEqual([]);
+  });
+
+  it('★ 数字の間に区切りが入った値は保存できない (2026-09-06 まで別の数として通っていた)', async () => {
+    // 台帳の値は画面全体の計算に効く。'3,00' は旧実装では 300 と読めていたので、
+    // 「入れたつもりの数」と「保存された数」が黙って食い違う経路だった。
+    await type(DAYS, '3,00');
+    expect(q.alertIn('hydroponics.daysPerYear')).toBe('数値で入力してください');
+    expect(q.input(DAYS).getAttribute('aria-invalid')).toBe('true');
+    expect(q.button(`${DAYS} を保存`).disabled).toBe(true);
+
+    // 対照: 3 桁区切りが正しい値は読める (桁区切り自体を拒んだのではない)
+    await type(DAYS, '300');
+    expect(q.alertIn('hydroponics.daysPerYear')).toBe('');
+    expect(q.input(DAYS).getAttribute('aria-invalid')).toBe('false');
+    expect(q.button(`${DAYS} を保存`).disabled).toBe(false);
+    expect(await stored()).toEqual([]);
+  });
+
+  it('既定に戻すと保存から消え、入力欄も既定の表示へ戻る', async () => {
+    await type(DAYS, '300');
+    await save(DAYS);
+    await waitForOverrides(1);
+    await click(q.button(`${DAYS} を既定に戻す`));
+    await waitForOverrides(0);
+    expect(await stored()).toEqual([{ values: {} }]);
+    expect(q.row('hydroponics.daysPerYear').dataset.overridden).toBe('false');
+    expect(q.input(DAYS).value).toBe('365');
+    expect(q.header()).toBe(`上書き 0 / ${PARAMETERS.length} 件`);
+  });
+
+  it('★ 保存の待ちは書き込みの完了まで待つ (押した瞬間の busy で明けない —— 遅い書き込みで対照)', async () => {
+    await type(DAYS, '360');
+    await save(DAYS);
+    await waitForOverrides(1);
+    // 2 度目の書き込みを遅らせる。印が busy で立つ待ち方だと、ここで古い 360 を読む (毎回)。
+    // 行は既に在るので、2 度目は「最新がまだ読んだ行のその版なら置き換える」口を通る (パス 500)。
+    const store = getRecordStore();
+    const realReplace = store.replaceLatestIfUnchanged.bind(store);
+    const slow = vi.spyOn(store, 'replaceLatestIfUnchanged').mockImplementation((async (
+      collection: string,
+      expected: unknown,
+      data: unknown,
+    ) => {
+      await new Promise<void>((resolve) => setTimeout(resolve, 150));
+      return realReplace(collection, expected as never, data as never);
+    }) as typeof store.replaceLatestIfUnchanged);
+    try {
+      await type(DAYS, '365');
+      await save(DAYS);
+      expect(slow).toHaveBeenCalledTimes(1); // 遅らせた書き込みを本当に通った (この検査が空でない)
+      expect(await stored()).toEqual([{ values: { 'hydroponics.daysPerYear': 365 } }]);
+    } finally {
+      slow.mockRestore();
+    }
+  });
+
+  it('既定と同じ値を保存しても「上書き」として残る (既定が改正で動いても置いた値は動かない)', async () => {
+    await type(DAYS, '360');
+    await save(DAYS);
+    await waitForOverrides(1);
+    await type(DAYS, '365');
+    // **件数は 1 のままなので、見出しでは待てない** —— 保存が済んだ印で待つ。
+    await save(DAYS);
+    expect(await stored()).toEqual([{ values: { 'hydroponics.daysPerYear': 365 } }]);
+    expect(q.row('hydroponics.daysPerYear').dataset.overridden).toBe('true');
+  });
+
+  it('すべて既定に戻すは確認してから消し、断れば何も変えない', async () => {
+    await type(DAYS, '300');
+    await save(DAYS);
+    await type(STD, '12');
+    await save(STD);
+    await waitForOverrides(2);
+    expect(q.header()).toBe(`上書き 2 / ${PARAMETERS.length} 件`);
+
+    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
+    await click(q.buttonByText('すべて既定に戻す'));
+    expect(confirm).toHaveBeenCalledWith('上書きした 2 件をすべて既定に戻します。よろしいですか？');
+    expect(q.header()).toBe(`上書き 2 / ${PARAMETERS.length} 件`);
+    expect(await stored()).toEqual([{ values: { 'hydroponics.daysPerYear': 300, 'tax.consumptionStandardRate': 0.12 } }]);
+
+    confirm.mockReturnValue(true);
+    await click(q.buttonByText('すべて既定に戻す'));
+    await waitForOverrides(0);
+    expect(q.header()).toBe(`上書き 0 / ${PARAMETERS.length} 件`);
+    expect(await stored()).toEqual([{ values: {} }]);
+    expect(q.input(DAYS).value).toBe('365');
+    expect(q.input(STD).value).toBe('10');
+    expect(q.buttonByText('すべて既定に戻す').disabled).toBe(true);
+  });
+
+  it('検索で絞り込める (名前・機能・出典・id)。当たらなければその旨', async () => {
+    await type('パラメータを検索', 'DSCR');
+    expect(q.rows().map((r) => r.dataset.parameter)).toEqual([
+      'realEstate.dscrDangerThreshold',
+      'realEstate.dscrCautionThreshold',
+    ]);
+    await waitForText(() => container.textContent ?? '', '不動産');
+    expect(container.textContent).not.toContain('水耕栽培');
+
+    await type('パラメータを検索', '所得税法施行令');
+    expect(q.rows().map((r) => r.dataset.parameter)).toEqual(['payroll.commutePublicTransportCap']);
+
+    await type('パラメータを検索', 'zzz');
+    expect(q.rows()).toEqual([]);
+    await waitForText(() => container.textContent ?? '', '該当するパラメータはありません');
+
+    await type('パラメータを検索', '');
+    expect(q.rows().length).toBe(PARAMETERS.length);
+  });
+
+  /**
+   * **題名どおり失敗を起こす** (2026-09-27 · パス 493k)。それまでのこの検査は書き込みを 1 度も
+   * 失敗させておらず、「例外のまま上がらず」を確かめていなかった —— 実際に失敗させると
+   * **未処理の reject** になった (vitest が Unhandled Rejection で run ごと落とす)。
+   */
+  it('★ 保存の失敗は例外のまま上がらず、知らせへ届き、ボタンが戻る (busy が解ける)', async () => {
+    const published: string[] = [];
+    const unsubscribe = subscribeDeviceStoreFailure((f) => {
+      if (f) published.push(f.message);
+    });
+    const store = getRecordStore();
+    // 書き込みの口はパス 500 から「比べて書く」2 つ (行が無ければ足す・在れば最新がまだその版なら置き換える)。
+    const failInsert = vi.spyOn(store, 'insertIfLatest').mockRejectedValue(new Error('QuotaExceededError (検査)'));
+    const failUpdate = vi.spyOn(store, 'replaceLatestIfUnchanged').mockRejectedValue(new Error('QuotaExceededError (検査)'));
+    try {
+      await type(DAYS, '300');
+      await click(q.button(`${DAYS} を保存`));
+      // busy が解けると「保存」はまた押せる (値は保存されていないので unchanged ではない)。
+      await settleUntil(() => !q.button(`${DAYS} を保存`).disabled, `「${DAYS} を保存」がまた押せる (busy が解けた)`);
+      expect(failInsert.mock.calls.length + failUpdate.mock.calls.length).toBeGreaterThan(0); // 本当に失敗を通った
+      expect(published.length).toBeGreaterThan(0); // 画面全体の知らせへ届いた
+      expect(q.button(`${DAYS} を既定に戻す`).disabled).toBe(true); // 上書きの印は付かない (保存されたと読めない)
+      expect(q.row('hydroponics.daysPerYear').dataset.overridden).toBe('false');
+    } finally {
+      failInsert.mockRestore();
+      failUpdate.mockRestore();
+      unsubscribe();
+    }
+  });
+
+  /**
+   * **保存の前の読みが断られても、知らせへ届く** (2026-09-27 · パス 493o)。
+   *
+   * `mutate` は保存の前に保管層を**直に**読む (最新の 1 件に重ねるため)。その読みは
+   * `useCollection` の入口を通らないので、断られても報されなかった —— パス 493k の行の `run` は
+   * 失敗を何でも落としたので、**画面に 1 文も出ずに消えた** (押せていないのと見分けが付かない)。
+   * 今は読みも報せ、行は `fireReported` (報せた失敗だけを落とす) で受け止める。
+   */
+  it('★ 保存の前の読みが断られても知らせへ届き、未処理の拒否にもならない', async () => {
+    const published: { op: string; where: string }[] = [];
+    const unsubscribe = subscribeDeviceStoreFailure((f) => {
+      if (f) published.push({ op: f.op, where: f.where });
+    });
+    const unhandled: unknown[] = [];
+    const onUnhandled = (r: unknown): void => {
+      unhandled.push(r);
+    };
+    process.on('unhandledRejection', onUnhandled);
+    const store = getRecordStore();
+    const failList = vi.spyOn(store, 'list').mockRejectedValue(new Error('QuotaExceededError (検査・読み)'));
+    try {
+      await type(DAYS, '300');
+      await click(q.button(`${DAYS} を保存`));
+      await settleUntil(
+        () => published.some((p) => p.op === 'save' && p.where === PARAMETER_OVERRIDES_COLLECTION),
+        '保存の前の読みの失敗が知らせへ届く',
+      );
+      await settleUntil(() => !q.button(`${DAYS} を保存`).disabled, `「${DAYS} を保存」がまた押せる (busy が解けた)`);
+      await new Promise<void>((r) => setTimeout(r, 0));
+      expect(unhandled).toEqual([]);
+      expect(q.row('hydroponics.daysPerYear').dataset.overridden).toBe('false');
+    } finally {
+      failList.mockRestore();
+      process.off('unhandledRejection', onUnhandled);
+      unsubscribe();
+    }
+  });
+});
+
+/**
+ * **別の画面の保存と重なり続けて書かなかった** (2026-09-28 · パス 500)。
+ *
+ * 保存は「最新がまだ読んだ行のその版なら置き換える」ので、読んでから書くまでの間に別の画面が書き続けると
+ * (上限まで挟まれ続けると) 何も書かずに断る。**端末の保存の失敗ではない** —— 画面上端の知らせ
+ * (「この端末に保存できませんでした」と再読込を勧める) へは流さず、押した所のそばで言う。
+ */
+describe('重なり続けて書かなかったときの断り (パス 500)', () => {
+  function interleaveForever(): () => void {
+    const store = getRecordStore();
+    const insertSpy = vi.spyOn(store, 'insertIfLatest').mockImplementation((async (collection: string) => {
+      const [current] = await store.list(collection);
+      return { status: 'changed', current: current ?? null };
+    }) as typeof store.insertIfLatest);
+    const updateSpy = vi.spyOn(store, 'replaceLatestIfUnchanged').mockImplementation((async (collection: string) => {
+      const [current] = await store.list(collection);
+      return { status: 'changed', current: current ?? null };
+    }) as typeof store.replaceLatestIfUnchanged);
+    return () => {
+      insertSpy.mockRestore();
+      updateSpy.mockRestore();
+    };
+  }
+
+  it('★ 行の保存は、その行のそばで断り、上書きの印を付けず、画面上端の知らせは出さない', async () => {
+    const published: string[] = [];
+    const unsubscribe = subscribeDeviceStoreFailure((f) => {
+      if (f) published.push(f.message);
+    });
+    const restore = interleaveForever();
+    try {
+      await type(DAYS, '300');
+      await click(q.button(`${DAYS} を保存`));
+      await settleUntil(
+        () => container.querySelector('[data-parameter-busy="hydroponics.daysPerYear"]') !== null,
+        '行のそばに「重なり続けました」の断りが出る',
+      );
+      expect(q.alertIn('hydroponics.daysPerYear')).toContain('重なり続けました');
+      expect(published, '端末の保存の失敗として報せている').toEqual([]);
+      expect(q.row('hydroponics.daysPerYear').dataset.overridden).toBe('false');
+      expect(await stored()).toEqual([]);
+      // 入力は残る —— もう 1 度押せる。
+      expect(q.input(DAYS).value).toBe('300');
+      await settleUntil(() => !q.button(`${DAYS} を保存`).disabled, `「${DAYS} を保存」がまた押せる`);
+    } finally {
+      restore();
+      unsubscribe();
+    }
+  });
+
+  it('★ 「すべて既定に戻す」も、押した所のそばで断る (未処理の拒否にしない)', async () => {
+    await type(DAYS, '300');
+    await save(DAYS);
+    await waitForOverrides(1);
+    const unhandled: unknown[] = [];
+    const onUnhandled = (r: unknown): void => {
+      unhandled.push(r);
+    };
+    process.on('unhandledRejection', onUnhandled);
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
+    const restore = interleaveForever();
+    try {
+      await click(q.buttonByText('すべて既定に戻す'));
+      await settleUntil(
+        () => container.querySelector('[data-parameter-busy="all"]') !== null,
+        '「すべて既定に戻す」のそばに断りが出る',
+      );
+      expect(container.querySelector('[data-parameter-busy="all"]')?.textContent ?? '').toContain('重なり続けました');
+      await new Promise<void>((r) => setTimeout(r, 0));
+      expect(unhandled).toEqual([]);
+      // 何も消していない。
+      expect(await stored()).toEqual([{ values: { 'hydroponics.daysPerYear': 300 } }]);
+    } finally {
+      restore();
+      confirmSpy.mockRestore();
+      process.off('unhandledRejection', onUnhandled);
+    }
+  });
+});
+
+describe('matchesParameterQuery', () => {
+  const def = PARAMETER_BY_ID.get('payroll.commutePublicTransportCap')!;
+  it('空の検索語は全件', () => {
+    expect(matchesParameterQuery(def, '')).toBe(true);
+    expect(matchesParameterQuery(def, '   ')).toBe(true);
+  });
+  it('id・名前・機能・出典・注記のどれかに、大文字小文字を無視して当たる', () => {
+    expect(matchesParameterQuery(def, 'PAYROLL')).toBe(true); // id
+    expect(matchesParameterQuery(def, '通勤手当')).toBe(true); // label
+    expect(matchesParameterQuery(def, '給与')).toBe(true); // feature
+    expect(matchesParameterQuery(def, '施行令')).toBe(true); // source
+    expect(matchesParameterQuery(PARAMETER_BY_ID.get('hydroponics.daysPerYear')!, '休業日')).toBe(true); // note
+    expect(matchesParameterQuery(def, 'DSCR')).toBe(false);
+  });
+  it('出典も注記も無い定義でも落ちない', () => {
+    expect(matchesParameterQuery({ ...def, source: undefined, note: undefined }, '通勤')).toBe(true);
+    expect(matchesParameterQuery({ ...def, source: undefined, note: undefined }, '施行令')).toBe(false);
+  });
+});
+
+/**
+ * 欄と欄の順序 (パス 221)。
+ *
+ * `parameterIssue` は 1 欄ずつしか見ないので、2026-09-13 まで「良好の下限 40 /
+ * 注意の下限 60」はそのまま保存でき、45 点の軸が「良好」として刷られていた。
+ */
+describe('隣の欄と矛盾する値は保存させない (パス 221)', () => {
+  const GOOD = '軸の評価「良好」の下限';
+  const WARN = '軸の評価「注意」の下限';
+  const T1 = '法人事業税の所得段階の境目 (下)';
+  const T2 = '法人事業税の所得段階の境目 (上)';
+
+  it('「良好」の下限を「注意」の下限より下げると保存が押せず、理由が出る', async () => {
+    await type(GOOD, '40'); // 既定の「注意」の下限は 45
+    expect(q.button(`${GOOD} を保存`).disabled).toBe(true);
+    const alert = q.alertIn('financeHealth.levelGoodMin');
+    expect(alert).toContain(WARN);
+    expect(alert).toContain('注意の帯が空になり');
+    expect(await stored()).toEqual([]);
+  });
+
+  it('逆側の欄でも鳴る (「注意」の下限を「良好」の下限より上げる)', async () => {
+    await type(WARN, '80'); // 既定の「良好」の下限は 70
+    expect(q.button(`${WARN} を保存`).disabled).toBe(true);
+    expect(q.alertIn('financeHealth.levelWarnMin')).toContain('注意の帯が空になり');
+  });
+
+  it('順序を保つ値なら保存できる (対照 — 断りが全部を止めていないこと)', async () => {
+    await type(GOOD, '60'); // 「注意」の下限 45 以上なので通る
+    expect(q.button(`${GOOD} を保存`).disabled).toBe(false);
+    await save(GOOD);
+    await waitForOverrides(1);
+    expect(await stored()).toEqual([{ values: { 'financeHealth.levelGoodMin': 60 } }]);
+  });
+
+  it('法人事業税の段の境目も同じ関門を通る (負の課税標準を作らせない)', async () => {
+    await type(T2, '4000000');
+    expect(q.button(`${T2} を保存`).disabled).toBe(false); // 既定の下は 400 万 → 等しいので通る
+    await type(T2, '3000000');
+    expect(q.button(`${T2} を保存`).disabled).toBe(true);
+    expect(q.alertIn('corporate.businessTaxTier2Limit')).toContain('マイナス');
+  });
+
+  it('範囲の断りが先に出る (順序の断りで上書きしない)', async () => {
+    await type(T1, '-1');
+    expect(q.alertIn('corporate.businessTaxTier1Limit')).toContain('以上で入力してください');
+  });
+
+  it('順序を持たない欄は今までどおり保存できる (対照)', async () => {
+    await type(DAYS, '300');
+    expect(q.button(`${DAYS} を保存`).disabled).toBe(false);
+  });
+});
+
+describe('すでに保存されている矛盾を画面上部で言う (パス 221)', () => {
+  /**
+   * 関門を通らずに上書きを置く (古い版で保存した記録・復元したバックアップと
+   * 同じ形)。画面の `set` を通すと `parameterOrderIssueFor` に止められるので、
+   * ここは record store へ直に書く。
+   */
+  async function seed(values: Record<string, number>): Promise<void> {
+    await act(async () => {
+      root!.unmount();
+    });
+    root = null;
+    await getRecordStore().insert<ParameterOverrideRecord>(PARAMETER_OVERRIDES_COLLECTION, { values });
+    await mount();
+  }
+
+  it('矛盾が無ければ断りを出さない (対照)', () => {
+    expect(container.querySelector('[data-parameter-order-issues]')).toBeNull();
+  });
+
+  it('逆順の上書きが保存されていたら、件数と理由を刷る', async () => {
+    await seed({ 'financeHealth.levelWarnMin': 60, 'financeHealth.levelGoodMin': 40 });
+    const el = container.querySelector<HTMLElement>('[data-parameter-order-issues]');
+    expect(el).not.toBeNull();
+    expect(el!.dataset.parameterOrderIssues).toBe('1');
+    expect(el!.getAttribute('role')).toBe('alert');
+    expect(el!.textContent).toContain('保存されている値が矛盾しています');
+    expect(el!.textContent).toContain('(60点)');
+    expect(el!.textContent).toContain('(40点)');
+  });
+
+  it('検索で絞っても消えない (直す欄が画面外に在るときこそ要る)', async () => {
+    await seed({ 'financeHealth.levelWarnMin': 60, 'financeHealth.levelGoodMin': 40 });
+    await type('パラメータを検索', '通勤手当');
+    expect(q.rows().length).toBe(1);
+    expect(container.querySelector('[data-parameter-order-issues]')).not.toBeNull();
+  });
+});
+
+/**
+ * 0 点の水準と 100 点の水準が同じ組 (パス 222)。
+ *
+ * 等しいと `financialRatios.axisBand` が既定の帯へ黙って倒すので、**上書きが
+ * 1 度も効かない**。2026-09-13 まで画面のどこにもその事実が出ていなかった。
+ */
+describe('0 点と 100 点の水準が同じ上書きを保存させない (パス 222)', () => {
+  const BAD = '自己資本比率: 0 点の水準';
+  const GOOD = '自己資本比率: 100 点の水準';
+
+  it('0 点の水準を 100 点の水準と同じにすると保存が押せず、効かない理由が出る', async () => {
+    await type(BAD, '50'); // 既定の 100 点の水準は 50
+    expect(q.button(`${BAD} を保存`).disabled).toBe(true);
+    const alert = q.alertIn('financeHealth.equityRatioBad');
+    expect(alert).toContain(GOOD);
+    expect(alert).toContain('既定の水準で採点されます');
+    expect(alert).toContain('効きません');
+    expect(await stored()).toEqual([]);
+  });
+
+  it('逆側の欄でも鳴る', async () => {
+    await type(GOOD, '0'); // 既定の 0 点の水準は 0
+    expect(q.button(`${GOOD} を保存`).disabled).toBe(true);
+    expect(q.alertIn('financeHealth.equityRatioGood')).toContain('効きません');
+  });
+
+  it('向きを逆にするのは通す (軸ごとに高い方が良い / 低い方が良いが変わる)', async () => {
+    await type(BAD, '99');
+    expect(q.button(`${BAD} を保存`).disabled).toBe(false);
+    await save(BAD);
+    await waitForOverrides(1);
+    expect(await stored()).toEqual([{ values: { 'financeHealth.equityRatioBad': 99 } }]);
+  });
+
+  it('等しくない値は今までどおり保存できる (対照)', async () => {
+    await type(BAD, '10');
+    expect(q.button(`${BAD} を保存`).disabled).toBe(false);
+  });
+});

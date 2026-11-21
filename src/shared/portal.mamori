@@ -1,0 +1,193 @@
+//! portal — ポータル (対象者ごとの入口) の台帳と、入口の関門 (2026-11-11)。
+//!
+//! 企業のポータルは対象者で分かれる: **社内** (従業員)・**パートナー** (取引先)・**カスタマー** (顧客)。
+//! このアプリの 78 の画面は社内の仕事の道具なので、**社外向けのポータルに出す画面は、ここに名指しで
+//! 書いた物だけ**にする。書いていない画面は社内だけ —— 新しい画面を足しても、ここへ足すまで社外には出ない
+//! (失敗は閉じる向き)。
+//!
+//! ## 何を守るか
+//!
+//! 社外の人へ配る単一 HTML (`dist/portal-partner.html` / `dist/portal-customer.html`) に、社内の画面を
+//! 開く道が残らないこと。画面を開く口 (`renderer/portal/PortalScreenView.tsx`) と、社外向けの橋
+//! (`renderer/portal/portalShim.ts`) は、この関門が作る印 `VettedPortalScreen` を持つ値しか受けない。
+//! 関門を通していない文字列 (URL のハッシュ・保存値・会話の出力) を渡すと `tsc` が断る。
+//!
+//! 「HTML に社内の画面が**入っていない**」こと自体は関門では守れない (入っていれば別の道で開ける) ので、
+//! 取り込みの閉包を `src/renderer/portal/__tests__/portalBundleClosure.test.ts` が別に数える。
+//!
+//! ## Mamori で書いてある
+//!
+//! 新しく書いた module で、元になる TypeScript は無い。生成物 `portal.ts` を手で直さない
+//! (`npm run mamori:build`)。
+
+use { isServiceId } from "./serviceId";
+
+/// ポータルの画面を指す印。値は `<ポータル>/<画面>` (例 `partner/docstudio`)。関門 `portalScreenOrNull` だけが作る。
+export vetted VettedPortalScreen = "portal-screen";
+
+export type PortalId = 'internal' | 'partner' | 'customer';
+
+/// 並べる順 (社内 → パートナー → カスタマー)。
+export const PORTAL_IDS: readonly PortalId[] = ['internal', 'partner', 'customer'];
+
+export interface PortalDefinition {
+  readonly id: PortalId;
+  readonly label: string;
+  /// 誰のための入口か。
+  readonly audience: string;
+  /// 何が在るか (1 文)。
+  readonly summary: string;
+  /// どう届けるか (このアプリはサーバを持たないので、社外向けは別の単一 HTML を配る)。
+  readonly delivery: string;
+}
+
+export const PORTALS: readonly PortalDefinition[] = [
+  {
+    id: 'internal',
+    label: '社内ポータル',
+    audience: '従業員',
+    summary: '業務で使うすべての画面 (経営・会計・人事・士業連携・外部サービス連携・AI) の入口。',
+    delivery: 'このアプリそのもの。保管庫を解錠した人だけが使う。',
+  },
+  {
+    id: 'partner',
+    label: 'パートナーポータル',
+    audience: '取引先 (外注先・代理店・仕入先)',
+    summary: '取引のガイドラインとお知らせ、発注・納品・検収・契約の書式、取引に関わる制度の知識。',
+    delivery: '取引先へ配る単一 HTML (dist/portal-partner.html)。社内の画面も保管庫も入れない。',
+  },
+  {
+    id: 'customer',
+    label: 'カスタマーポータル',
+    audience: '顧客 (製品・サービスの利用者)',
+    summary: 'お知らせ、取扱説明書、よくある質問、お問い合わせ先。',
+    delivery: '顧客へ配る単一 HTML (dist/portal-customer.html)。社内の画面も保管庫も入れない。',
+  },
+];
+
+/// 画面の種類。`service` はアプリの画面 (ServiceId)、`published` は会社が載せる情報の頁。
+export type PortalScreenKind = 'service' | 'published';
+
+export interface PortalScreen {
+  readonly id: string;
+  readonly kind: PortalScreenKind;
+  readonly label: string;
+  /// なぜこの対象者に出すのか (社外へ出す判断の理由)。
+  readonly why: string;
+}
+
+/// パートナーポータルに出す画面 (名指し)。
+export const PARTNER_SCREENS: readonly PortalScreen[] = [
+  {
+    id: 'guidelines',
+    kind: 'published',
+    label: 'お知らせ・取引ガイドライン',
+    why: '発注から検収・支払までの流れ、連絡先、お知らせを取引先へ 1 か所で伝える。',
+  },
+  {
+    id: 'docstudio',
+    kind: 'service',
+    label: '書類スタジオ',
+    why: '発注書・納品書・検収書・業務委託契約・秘密保持契約などの書式を、取引先の端末の中だけで作って交付前に検める。',
+  },
+  {
+    id: 'compliance',
+    kind: 'service',
+    label: 'コンプライアンス',
+    why: '下請法・フリーランス新法・インボイス制度など、取引に関わる制度の確証済みの知識を出典つきで読む。',
+  },
+];
+
+/// カスタマーポータルに出す画面 (名指し)。アプリの画面は 1 つも出さない —— どれも社内の仕事の道具である。
+export const CUSTOMER_SCREENS: readonly PortalScreen[] = [
+  {
+    id: 'notices',
+    kind: 'published',
+    label: 'お知らせ',
+    why: '製品・サービスの変更や休業日を顧客へ伝える。',
+  },
+  {
+    id: 'manuals',
+    kind: 'published',
+    label: '取扱説明書・資料',
+    why: '製品の説明書と資料の置き場所を顧客へ示す。',
+  },
+  {
+    id: 'faq',
+    kind: 'published',
+    label: 'よくある質問',
+    why: '問い合わせの前に、顧客が自分で答えを見つけられるようにする。',
+  },
+  {
+    id: 'contact',
+    kind: 'published',
+    label: 'お問い合わせ',
+    why: '窓口の連絡先と受付時間、問い合わせのときに伝えてほしいことを示す。',
+  },
+];
+
+export fn isPortalId(v: unknown) -> v is PortalId {
+  return v === 'internal' || v === 'partner' || v === 'customer';
+}
+
+/// 社外向けのポータルに名指しで出す画面。社内ポータルは一覧を持たない (アプリのすべての画面)。
+export fn externalPortalScreens(portal: PortalId) -> readonly PortalScreen[] {
+  switch (portal) {
+    case 'partner':
+      return PARTNER_SCREENS;
+    case 'customer':
+      return CUSTOMER_SCREENS;
+    default:
+      return [];
+  }
+}
+
+/// そのポータルで開いてよい画面なら印つきの値、駄目なら `null`。
+///
+/// - 社内: アプリの画面 (ServiceId) ならどれでも。
+/// - パートナー / カスタマー: 上の一覧に名指しで在る画面だけ。
+/// - 知らないポータル・文字列でない値・一覧に無い画面は `null` (閉じる向き)。
+export gate fn portalScreenOrNull(portal: unknown, screen: unknown) -> VettedPortalScreen | null {
+  if (typeof portal !== 'string' || typeof screen !== 'string') {
+    return null;
+  }
+  if (portal === 'internal') {
+    if (!isServiceId(screen)) {
+      return null;
+    }
+    return mint VettedPortalScreen('internal/' + screen);
+  }
+  if (portal !== 'partner' && portal !== 'customer') {
+    return null;
+  }
+  for (const s of externalPortalScreens(portal)) {
+    if (s.id === screen) {
+      return mint VettedPortalScreen(portal + '/' + s.id);
+    }
+  }
+  return null;
+}
+
+export interface PortalScreenRef {
+  readonly portal: PortalId;
+  readonly screen: string;
+  readonly kind: PortalScreenKind;
+}
+
+/// 印つきの値を、ポータル・画面・種類へ読み戻す。印は関門だけが作るので、形は必ず `<ポータル>/<画面>`。
+export fn portalScreenRef(v: VettedPortalScreen) -> PortalScreenRef {
+  const cut = v.indexOf('/');
+  const portal = v.slice(0, cut);
+  const screen = v.slice(cut + 1);
+  if (portal === 'partner' || portal === 'customer') {
+    for (const s of externalPortalScreens(portal)) {
+      if (s.id === screen) {
+        return { portal, screen, kind: s.kind };
+      }
+    }
+  }
+  if (portal === 'internal' && isServiceId(screen)) {
+    return { portal, screen, kind: 'service' };
+  }
+  throw new Error('印つきのポータルの画面が台帳に無い: ' + v);
+}

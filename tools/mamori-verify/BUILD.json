@@ -1,0 +1,11 @@
+{
+  "tool": "mamori-verify",
+  "rustc": "rustc 1.97.0 (2d8144b78 2026-07-07)",
+  "target": "wasm32-unknown-unknown",
+  "files": {
+    "tools/mamori-verify/Cargo.lock": "f411490133e7966ba7bf182b6a9e8ad2ee55145a8cf4327ea9888fe7031b5fd6",
+    "tools/mamori-verify/Cargo.toml": "4a4692e0d9a46fde13003c4abccb15e45b51f28b48cc6a12d0242de9d6eb097a",
+    "tools/mamori-verify/dist/mamori_verify.wasm": "c5cdf0455f2497b045e90ce75e026a4c636276ded5827409222c80a9e7e982de",
+    "tools/mamori-verify/src/lib.rs": "01a1200be960d3c227ee8225da251c1944de2077b22d7ab1a6b02c62bdb1e4de"
+  }
+}

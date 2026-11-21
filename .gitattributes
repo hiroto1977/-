@@ -1,0 +1,8 @@
+# PR の diff で折り畳む物 (linguist-generated) は、ここに載せた生成物だけ (2026-10-28 · threat: T-210)。
+# 生成元: knowledge-vault/ = npm run vault:build · knowledge-graph/ = npm run graph:build · docs/ONTOLOGY.md = npm run ontology:md
+# src/ · scripts/ · .github/ · security/ · 整合性チェーンの保護対象は覆わない —— 折り畳まれた差分はレビューで見えない。
+# 属性は linguist-generated だけ (diff / merge の属性でレビューの見え方を変えない)。
+# 台帳との両方向の一致は src/shared/__tests__/gitattributesGenerated.test.ts が見る。
+knowledge-vault/** linguist-generated
+knowledge-graph/** linguist-generated
+docs/ONTOLOGY.md linguist-generated
