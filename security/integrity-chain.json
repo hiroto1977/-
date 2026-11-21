@@ -15,6 +15,7 @@
     ".github/workflows/ci.yml",
     ".github/workflows/dependency-audit.yml",
     ".github/workflows/e2e.yml",
+    ".github/workflows/gateway-browser.yml",
     ".github/workflows/knowledge-auto.yml",
     ".github/workflows/mutation.yml",
     ".github/workflows/pages.yml",
@@ -223,7 +224,9 @@
     "tools/mamori-verify/src/lib.rs",
     "vite.config.ts",
     "vitest.audit.config.ts",
-    "vitest.config.ts"
+    "vitest.config.ts",
+    "zero-trust-gateway/tests/browser/auth_page.cjs",
+    "zero-trust-gateway/tests/browser/serve.py"
   ],
   "blocks": [
     {
@@ -4489,6 +4492,14 @@
       "leafCount": 222,
       "note": "update eslint.config.js",
       "hash": "16c72a7381010860093f15303a66d82b06cf3552605dd46405a6106cdf458e75"
+    },
+    {
+      "index": 533,
+      "prevHash": "16c72a7381010860093f15303a66d82b06cf3552605dd46405a6106cdf458e75",
+      "merkleRoot": "e28a7a58e9ca04d2c5b4596993c063d9896af7b24966d706e56df6e82739fb33",
+      "leafCount": 225,
+      "note": "update gateway-browser.yml,eslint.config.js,integrity-chain.cjs,auth_page.cjs,serve.py",
+      "hash": "8c7ca499b94de0fd1b70e078282ce5719f2bf878690de07b30dd103ab61f9ad0"
     }
   ],
   "tipManifest": {
@@ -4505,6 +4516,7 @@
     ".github/workflows/ci.yml": "b48c49988e338eb3adad939fb10783dc29043f83a8b29edb41986c1657ad473f",
     ".github/workflows/dependency-audit.yml": "c089648472bc7879701a996aeba69a6ff5dcb55e8efa2e0d996e4d9a9c3ee026",
     ".github/workflows/e2e.yml": "d6036acc5fe97d17fad5799144470b140bedfbb56934de4949517b038640be60",
+    ".github/workflows/gateway-browser.yml": "2d935b69fba1737a054fb3f96f5f1403e385b937d49ba95bbc2b89d8aabe8f35",
     ".github/workflows/knowledge-auto.yml": "fcd9a876356278d4b347fe53df4cbee0733f1884fe0786eb42ba01f51d1a2834",
     ".github/workflows/mutation.yml": "fc3fa01fc8775ef8e0b9751ea414b254536770d5e858f6516e5b8dfe1fa60fe0",
     ".github/workflows/pages.yml": "72dd545faa7edc54d3332d19f87b24212df2cd3be3178812d5561e2722603cec",
@@ -4516,7 +4528,7 @@
     "docs/PROXY_EXAMPLE.md": "c2f4987d6e53a3cbfae921dcc33582522abb4c587b519795296e3b3dc4edd06b",
     "docs/SECURITY_CHAIN.md": "e6f2886fbab792b4c4ec27ee8849a8642d1b28576c05e3ca627f2daea05cda29",
     "electron-builder.json": "087285ed5b1adf1d1a99c5c47b00bdab70338cacff2687988fb3316787af1917",
-    "eslint.config.js": "cac3ed588482bba2a379adb9ae88168a871d9cf277e68f5545ec363013e57bd1",
+    "eslint.config.js": "4996638a13e6755c59dc9d38c193b985add84a0bf3c5039a299533b84cdd1e1f",
     "launcher/ServiceHubを開く.bat": "83d4b252a777556d3830acc7e226cd009fea006bb3c47fb677ab57ecaeb9da82",
     "orchestration/knowledge-context.cjs": "2e31acac95ced213b569fe3e467e66f4aff3106c93188ee79d056d1481a022c3",
     "orchestration/knowledge-graph.cjs": "80ae371234e84801b392f27b10d8a5f84d86be41ad97b334892dfce746185242",
@@ -4526,7 +4538,7 @@
     "scripts/checksum-release.cjs": "0888446396e8be4a6f5b153371b8f760f35c7d92fa1936bba54edee9874d5002",
     "scripts/inject-pwa.cjs": "d385ddfc52ec74abf184207bfbb1ac655e730db2b7c6d7e758e35e67e79a5737",
     "scripts/inline-html.cjs": "b090b3bf8c417e9f7a42fb3bd80e13a1440f401f658c7a0138383dedb48e8a78",
-    "scripts/integrity-chain.cjs": "33192507abba92c5683372f0d0d737b538ff5658d42b5e71d0e5977d9dd19150",
+    "scripts/integrity-chain.cjs": "90fb526d5dfc603d2ad3b551a5a1a1ea109d891afd588062d36b021de52bd3af",
     "scripts/knowledge-autopilot.cjs": "ee8f7ae4a4ad29dda6c02f83c113c45fa1648522f807e711aa86b7746f372968",
     "scripts/lib/artifact-freshness.cjs": "add621dfe55e0eab31354f0d6979c9c67b513ed8b8348b9137ca7fa53dd569c1",
     "scripts/lib/json-for-script.cjs": "cb79bf1fb2f3c10c6854ec16d9c12bb0695dee5561751333db4531545702fd70",
@@ -4713,6 +4725,8 @@
     "tools/mamori-verify/src/lib.rs": "01a1200be960d3c227ee8225da251c1944de2077b22d7ab1a6b02c62bdb1e4de",
     "vite.config.ts": "be7089bad650fda5406b2b3a33e70db81f45e17c0b3414c92c4b8b7d4a38cc22",
     "vitest.audit.config.ts": "2461afaaddfa15b7a4520cca93807db66b7ebb3db25e46db4dac38b0002a7978",
-    "vitest.config.ts": "66e089fec0f1ee8fcff09d91c596baceaaae588e3e04c67822f4b4780b4d64f9"
+    "vitest.config.ts": "66e089fec0f1ee8fcff09d91c596baceaaae588e3e04c67822f4b4780b4d64f9",
+    "zero-trust-gateway/tests/browser/auth_page.cjs": "e42eaefed3a863ed95fa3130ba26ff4fa661af3123adc4c5edddda083e207369",
+    "zero-trust-gateway/tests/browser/serve.py": "bb2d4a288de7221cd46d9dcfe120ed6a56da1cf511015c18a082180856609557"
   }
 }

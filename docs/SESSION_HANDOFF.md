@@ -7,6 +7,31 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-11-21) — 第 3 層の画面を、本物のブラウザで通す検査を CI へ
+
+- **依頼**: PR #977 (画面) をマージした後の「続けて」。残りのうち「ブラウザでの通しを自動の検査に入れる」を作った。
+- **作った物**: `zero-trust-gateway/tests/browser/serve.py` (入口を 127.0.0.1 で起こす。試しの登録コード 2 つ・登録済みの物理キーの鍵・
+  どの認証器とも合わない自作の発行元の証明書を、空の一時ディレクトリにその場で作る。本物の `load_settings` と `create_app` を通し、
+  抜け道を作らない) と `tests/browser/auth_page.cjs` (Playwright。Chromium の試験用の認証器 2 つ —— 物理キー (usb) と
+  スマホのパスキー (internal・同期する) —— で、強い認証の前の許可が断られる → パスキーの登録 → 物理キーの 2 台目は断られる →
+  物理キーで 1 つ → スマホで 2 つ → 読み直しても残る → 許可で守られた道を通る → スマホ幅で横に切れない → 鍵を消すとやり直し・
+  許可も出ない、まで 15 段)。ブラウザの記録の誤り・警告は、理由を書いた 2 つ (RS256 を並べない警告・断る段の 401/403) の外は落とす。
+- **CI**: `.github/workflows/gateway-browser.yml` —— `zero-trust-gateway/**` を触ったときだけ (Chromium を落とすので毎回は走らせない)。
+  playwright は e2e.yml と同じ版・同じ integrity の確かめ (`verify-e2e-playwright-pin.cjs`)、Python の依存は `--require-hashes`。
+  起動役 `uvicorn` を `requirements.in` / `requirements.txt` へ足した (増えたのは uvicorn と click だけ・h11 は既に在った)。
+- **形の検査**: `tests/layer3/test_l3_browser_harness.py` (14 件) —— 画面のボタンと選択肢を全部押す (両方向)・状態 3 つを全部確かめる・
+  コードと鍵を刷らない・一時ディレクトリを消す・外へ出ない・入口は本物の設定の読みを通す・控えにはコードのハッシュと公開鍵だけ・
+  workflow の配線と playwright の版が e2e と同じ。秘密の走査 (`test_settings_and_secrets.py`) に `.cjs` を足した。
+- **対照**: ブラウザの検査 7 方向のうち 6 方向が狙った段で落ちた (DPoP の ath を落とす / 読み込むたびに鍵を作り直す / 登録後に欄を空にしない /
+  状態の札を取り違える / 見た目のハッシュを外す (CSP 違反) / 横にはみ出す)。**鍵を消しても許可を残す形は鳴らない** —— 「試す」は毎回
+  新しい許可をもらってから使うので、残った許可は使われない (外から見えない = 等価・`test_l3_page.py` が字面で留める)。
+  形の検査の対照 6 方向はすべて狙った 1 件で落ちた。
+- **守り**: 新しい workflow と、それが走らせる 2 本を整合性チェーンの保護対象と CODEOWNERS へ (ほかの workflow 7 本と同じ扱い)。
+  eslint に `zero-trust-gateway/tests/browser/**/*.cjs` の節 (no-undef は残す)。workflow の本数を数える検査 2 本を 7 → 8 本へ
+  (`workflowSecurityWitness` / `workflowStructureGate` —— 全件の 1 回目で 3 件落ちて気付いた。数を写した検査は、足した日に鳴る)。
+- **門**: `typecheck` 緑・`npm test` 1,345 ファイル / 29,459 件 (1 回目の 3 件は上の本数・直して当該ファイル 83 件緑)・`verify:all` 39 ゲート exit 0・
+  `chain:verify` 緑 (block #533)・gateway の pytest 443 件・ブラウザの検査 15 段すべて ok。出荷物は動かしていないので e2e は回していない。
+
 ## 直近の作業 (2026-11-21) — `zero-trust-gateway/` の第 3 層に、利用者が押す画面 (`GET /auth/`)
 
 - **依頼**: PR #975 (第 3 層) をマージした後の「続けて」。残りのうち機械が無くても作れる「利用者が押す画面」を作った。

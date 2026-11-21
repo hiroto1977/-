@@ -286,6 +286,11 @@ const PROTECTED = [
   '.github/workflows/mutation.yml',
   '.github/workflows/knowledge-auto.yml',
   '.github/workflows/dependency-audit.yml',
+  // 2026-11-21 · zero-trust-gateway の第 3 層の画面を本物のブラウザで通す workflow と、それが走らせる本 (閉包)。
+  // 本を弱めれば (段を消す・断りを受け流す) 画面が壊れても CI は緑のまま —— その変更を鎖に映す。
+  '.github/workflows/gateway-browser.yml',
+  'zero-trust-gateway/tests/browser/auth_page.cjs',
+  'zero-trust-gateway/tests/browser/serve.py',
   '.github/dependabot.yml',
   // 上の workflow が `run:` で直接起こす本 (閉包)。どれも**CI が何を測り・何を報せるかを決める**:
   //   mutate-changed.cjs          push 側の変異検査の**対象**を選ぶ。黙って空にすれば門は測らずに緑

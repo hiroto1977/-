@@ -69,6 +69,19 @@ python3.12 -m venv .venv
 
 リポジトリの CI (`.github/workflows/ci.yml`) も同じ手順で回します。
 
+第 3 層の画面 (`/auth/`) は、本物のブラウザ (Chromium) でも通します。入口を手元の 127.0.0.1 だけで起こし
+(`tests/browser/serve.py` —— 試しの登録コード・登録済みの鍵・発行元の証明書はその場で作り、終わったら消す)、
+画面のボタンを利用者と同じ順に押して、画面の文と状態を確かめます。
+
+```
+# playwright (と Chromium) が要る。リポジトリの直下で:
+ZT_PYTHON=zero-trust-gateway/.venv/bin/python node zero-trust-gateway/tests/browser/auth_page.cjs
+```
+
+CI では `.github/workflows/gateway-browser.yml` が、`zero-trust-gateway/` を触ったときだけ同じものを回します
+(Chromium を落とすので、毎回は走らせない)。この検査が画面のボタンを全部押すこと・秘密を刷らないこと・入口に抜け道を作らないことは、
+`tests/layer3/test_l3_browser_harness.py` が pytest で見ます。
+
 依存は `requirements.txt` に版とハッシュで固定しています (一覧の形は `npm run lint:deps` の規則 12 が見て、毎日の弱点チェックが OSV へ照会します)。足すときは `requirements.in` を書き換えて、
 `uv pip compile requirements.in --generate-hashes --python-version 3.12 -o requirements.txt` で作り直します。
 
@@ -98,8 +111,9 @@ ISSUANCE_HALT_FILE=/var/lib/zt/issuance.halt PYTHONPATH=src python -m layer6_soa
 - **知らせ (通知) はメモリに溜めるだけ。** 送り先 (Webhook ほか) が決まってから足す。
 - **nftables のルールは、本物のサーバーでまだ試していない。**
 - **第 3 層は、実物の物理キーとスマホでまだ試していない。** 検査はソフトで作った認証器で、画面はブラウザ (Chromium) の試験用の認証器で通している。
-- **画面のブラウザでの通しは、手で回している (CI では回していない)。** pytest が見るのは、出す物の形と書き方の決まり (CSP のハッシュ・外の物を読まない・叩く道が実在する ほか) まで。
-  Chromium の試験用の物理キーは登録のたびに新しい自作の証明書を作るので、物理キーの登録は「知らない発行元」として断られる (正しい動き)。物理キーでの確認は、登録済みの状態を用意して通した。
+- **画面のブラウザでの通しは、`zero-trust-gateway/` を触ったときだけ CI で回る** (`gateway-browser.yml`)。ほかの変更では走らない。
+  Chromium の試験用の物理キーは登録のたびに新しい自作の証明書を作るので、物理キーの**登録が通る形**はブラウザで試せない (入口は「知らない発行元」として正しく断る)。
+  ブラウザの検査は、登録済みの物理キーを用意して確認を通し、物理キーの登録は「断られる」側だけを通す。
 - **画面は `PUBLIC_BASE_URL` の下の `/auth/` で、https で開く。** 別の名前で開くと、DPoP の証明の宛先と WebAuthn のオリジンが合わずに断られる。
 - **画面が受け付ける署名の方式は ES256 と EdDSA だけ。** Chrome は「RS256 が無い」と警告を出す。RS256 しか使えない古い認証器は登録できない。
 - **スマホのパスキーは、機種の証明を取らない** (同期されるパスキーは証明を出さないため)。登録のときの端末は信用する前提になる ——
