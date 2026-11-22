@@ -2,7 +2,7 @@
 """ローカルAI組織（村）デーモン。リポジトリのAI組織(registry.json)を縮小移植し、
 COO→役員→部長→担当→秘書 の順でローカルLLMが議論する（標準ライブラリのみ）。
 行動はこのディレクトリ内へのファイル書き込みと読み取り専用チェックに限定。外部送信・git操作はしない。"""
-import json, os, re, shutil, subprocess, tempfile, threading, time, datetime, urllib.request, difflib, collections
+import json, os, re, shutil, subprocess, tempfile, threading, time, datetime, unicodedata, urllib.request, difflib, collections
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -232,6 +232,55 @@ def sub_items(text):
 def _rstate():
     try: return json.load(open(RSTATE, encoding="utf-8"))
     except Exception: return {}
+LEGACY_REMAINING = "/workspace/repo-analysis/docs/REMAINING_WORK.md"
+# 題名「残りの作業手順書」は文書名なので印にしない。節（## 以上）と行だけを見る。
+_REMAINING_MARKERS = ("未着手", "残", "別パス", "測って残した", "移さなかった", "TODO")
+_BULLET_RE = re.compile(r"^(?:[-*]|\d+[.)])\s+\S")
+
+def repo_remaining_path():
+    """このファイルからリポジトリ根の docs/REMAINING_WORK.md。HERE を差し替えてもここは動かない。"""
+    here = os.path.dirname(os.path.abspath(__file__))
+    return os.path.normpath(os.path.join(here, "..", "..", "docs", "REMAINING_WORK.md"))
+
+def remaining_work_path():
+    """COUNCIL_REMAINING_WORK が在ればそれだけ。無ければリポジトリの docs、さらに無ければ旧パス。
+    明示したパスが無いときは、別のファイルへ黙って落ちない。"""
+    override = os.environ.get("COUNCIL_REMAINING_WORK", "").strip()
+    if override:
+        return override if os.path.isfile(override) else None
+    rel = repo_remaining_path()
+    if rel and os.path.isfile(rel):
+        return rel
+    legacy = LEGACY_REMAINING
+    if legacy and os.path.isfile(legacy):
+        return legacy
+    return None
+
+def _marks_remaining(text):
+    return any(m in (text or "") for m in _REMAINING_MARKERS)
+
+def _is_bullet(s):
+    """番号の全角は判定だけ畳む。議題に出す字は呼び出し側の元の行。"""
+    return _BULLET_RE.match(unicodedata.normalize("NFKC", s or "")) is not None
+
+def unfinished_work_items(text):
+    """ファイル順（新しい節が上）で、残作業の印が付いた節か行の箇条書きだけを集める。
+    閉じた穴だけの行は集めない。印は見出し（## 以上）か、その行自身。"""
+    items, stack = [], []
+    for line in (text or "").splitlines():
+        s = line.strip()
+        hm = re.match(r"^(#{2,})\s+\S", s)
+        if hm:
+            level = len(hm.group(1))
+            stack = [h for h in stack if h[0] < level]
+            stack.append((level, _marks_remaining(s)))
+            continue
+        if not s or not _is_bullet(s) or s.startswith("- [済]") or s.startswith("* [済]"):
+            continue
+        if any(flag for _, flag in stack) or _marks_remaining(s):
+            items.append(s)
+    return items
+
 def refuse_topic(src, topic):
     """固定決定または助言ガードに反する議題なら理由リスト。
     status が locked の間は、CEOの丁寧な言い換えでも文言では解除できない。"""
@@ -297,10 +346,22 @@ def pick_topic():
         if pick: return pick
     down, h = health_summary()
     if down: return "サービス健全性", f"ローカルAIサービスが停止中: {', '.join(down)}（{h}）。原因と復旧・予防策。固定停止のサービスは起動しないこと。"
-    rw = "/workspace/repo-analysis/docs/REMAINING_WORK.md"
-    if os.path.exists(rw):
-        items = [l.strip() for l in open(rw, encoding="utf-8").read().split("\n## ")[0].splitlines() if l.strip().startswith(("-", "*"))]
-        if items: return "リポジトリ残作業", "Service Hubの残作業: " + items[ROT[0] % len(items)][:300]
+    path = remaining_work_path()
+    if path:
+        try:
+            with open(path, encoding="utf-8") as f:
+                text = f.read()
+        except OSError:
+            text = ""
+        items = unfinished_work_items(text)
+        n = len(items)
+        if n:
+            # 却下された行は飛ばす。健全性の議題には替えない（全部却下のときだけ、下の予備へ落ちる）。
+            start = ROT[0] % n
+            for k in range(n):
+                item = items[(start + k) % n]
+                got = accept("リポジトリ残作業", "Service Hubの残作業: " + item[:300])
+                if got: return got
     return "サービス健全性", f"ローカルAI環境の改善（{h}）。固定停止のサービスは起動・再構築しないこと。"
 
 
