@@ -78,7 +78,7 @@ export function WordPressPage() {
         }}
       />
 
-      <Section title="Sites" count={sites.length}>
+      <Section title="サイト (Sites)" count={sites.length}>
         <DataList
           items={sites.map((site) => ({
             key: String(site.blogId),
@@ -91,7 +91,7 @@ export function WordPressPage() {
       </Section>
 
       <Section
-        title="Actions"
+        title="操作 (Actions)"
         action={
           <button onClick={() => setShowForm((v) => !v)}>
             {showForm ? '閉じる' : '投稿の下書きを作成'}
@@ -163,7 +163,7 @@ export function WordPressPage() {
         * 刷っている利用者にも同じ文を出していた (しかも「アップグレードが必要」と、
         * 既に払っている人に言う)。判定と文面は `data/wordpressMcpAccess.ts` が持つ。
         */}
-      <Section title="MCP Access">
+      <Section title="外部ツールの接続 (MCP Access)">
         <div className="empty" data-mcp-access={access.kind}>
           {access.text}
         </div>

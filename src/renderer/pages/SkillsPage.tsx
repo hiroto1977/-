@@ -108,7 +108,7 @@ export function SkillsPage() {
         }}
       />
 
-      <Section title="Skills" count={items.length}>
+      <Section title="スキル (Skills)" count={items.length}>
         {items.length === 0 ? (
           <div className="empty">
             {/*
@@ -161,7 +161,7 @@ export function SkillsPage() {
       </Section>
 
       <Section
-        title="Run"
+        title="実行 (Run)"
         action={
           <button onClick={() => setShowForm((v) => !v)} disabled={runnable.length === 0}>
             {showForm ? '閉じる' : 'スキル実行'}

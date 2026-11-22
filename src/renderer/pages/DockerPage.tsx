@@ -34,7 +34,7 @@ export function DockerPage() {
         }
       />
 
-      <Section title="Engine 概要">
+      <Section title="エンジン (Engine) の概要">
         <table className="kv-table">
           <tbody>
             <tr>
@@ -107,7 +107,7 @@ export function DockerPage() {
         </table>
       </Section>
 
-      <Section title="セキュリティ (GitHub 連携)" count={security.length}>
+      <Section title="セキュリティ — ギットハブ (GitHub) 連携" count={security.length}>
         <ul className="check-list">
           {security.map((c) => (
             <li key={c.id}>

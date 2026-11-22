@@ -537,7 +537,7 @@ function FoodDeliverySection() {
   const cellNum: CSSProperties = { ...cell, textAlign: 'right', fontVariantNumeric: 'tabular-nums' };
   const summaryStyle: CSSProperties = { cursor: 'pointer', fontSize: 12, color: 'var(--accent-strong)', marginTop: 10 };
   return (
-    <Section title="フードデリバリー (Uber Eats / 出前館)" count={2}>
+    <Section title="フードデリバリー — ウーバーイーツ (Uber Eats)・出前館" count={2}>
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12 }}>
         <Tile
           label="今月換算 GMV (総注文額)"
@@ -1251,7 +1251,7 @@ function CrossServiceKpis() {
   const totalAssets = investmentValuation + realEstateAssets;
 
   return (
-    <Section title="業務操作 横断 KPI (フードデリバリー × 投資 × 士業)" count={5}>
+    <Section title="業務操作 横断の重要指標 (KPI) — フードデリバリー × 投資 × 士業" count={5}>
       {/*
         金額は**この画面で 1 つの流儀**にする (2026-09-08 · パス 99)。
 

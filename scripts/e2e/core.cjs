@@ -134,7 +134,7 @@ async function desktopSuite(browser) {
   // 不動産: 追加 → KPI 反映 → 編集 → 自動反映 → 削除で復帰
   await page.goto(FILE + '#real-estate', { waitUntil: 'domcontentloaded' });
   await setupVault(page);
-  await page.waitForSelector('text=ポートフォリオ KPI', { timeout: 30000 });
+  await page.waitForSelector('text=ポートフォリオの重要指標 (KPI)', { timeout: 30000 });
   const has = async (s) => (await page.locator('body').textContent()).includes(s);
   /** 状態バーの見出し (件数と合計) —— 合計は 1 か所で読む (本文の別の数字に当てない)。 */
   const headline = async () => ((await page.locator('.status-bar').textContent()) ?? '');
@@ -911,7 +911,7 @@ async function phoneSuite(browser) {
   await page.addInitScript(() => localStorage.setItem('servicehub.plan', 'enterprise'));
   await page.goto(FILE + '#real-estate', { waitUntil: 'domcontentloaded' });
   await setupVault(page);
-  await page.waitForSelector('text=ポートフォリオ KPI', { timeout: 30000 });
+  await page.waitForSelector('text=ポートフォリオの重要指標 (KPI)', { timeout: 30000 });
   ok(await noHScroll(page), 'phone: real-estate 横スクロールなし');
   const fontPx = await page
     .locator('.field-grid input')
@@ -3990,7 +3990,7 @@ async function serviceAdviceSuite(browser) {
 
   await page.goto(FILE + '#/real-estate', { waitUntil: 'domcontentloaded' });
   await setupVault(page);
-  await page.waitForSelector('text=ポートフォリオ KPI', { timeout: 30000 });
+  await page.waitForSelector('text=ポートフォリオの重要指標 (KPI)', { timeout: 30000 });
   const body = async () => (await page.locator('body').textContent()) ?? '';
 
   /** 物件を 1 件足す (表に出るまで待つ)。 */
@@ -4064,7 +4064,7 @@ async function serviceAdviceSuite(browser) {
   //    直す前は 1 つの `result` を共有していたので、記録の確認が出た後に提案を押すと
   //    確認が消え、提案の後に記録すると提案が消えた (どちらも成功しているのに片方だけ)。
   //    jsdom でも留めてあるが、実機の 1 枚の画面で「両方同時に見える」ことを見る。
-  await gotoService(page, '#/real-estate', 'text=ポートフォリオ KPI');
+  await gotoService(page, '#/real-estate', 'text=ポートフォリオの重要指標 (KPI)');
   await page.getByPlaceholder('メモ (例: 売上記録 / 修繕費発生)').fill('E2E 業務メモ');
   await page.getByRole('button', { name: 'メモを記録' }).click();
   await page.waitForSelector('[data-record-feedback]', { timeout: 20000 });

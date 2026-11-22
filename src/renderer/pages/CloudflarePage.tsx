@@ -149,7 +149,7 @@ export function CloudflarePage() {
         }}
       />
 
-      <Section title="Zones" count={zones.length}>
+      <Section title="ゾーン (Zones)" count={zones.length}>
         <DataList
           items={zones.map((z) => ({
             key: z.id,
@@ -164,7 +164,7 @@ export function CloudflarePage() {
       </Section>
 
       <Section
-        title="DNS レコード作成"
+        title="名前解決の記録 (DNS record) を作成"
         action={
           <button onClick={() => setShowDns((v) => !v)} disabled={zones.length === 0}>
             {showDns ? '閉じる' : '作成'}

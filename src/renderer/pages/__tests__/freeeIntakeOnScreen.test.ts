@@ -111,7 +111,7 @@ describe('freee 会計連携の画面 (カバレッジ 33.33% だった側 · �
   it('★ 走査が実物に当たる: 月次が在るとグラフと明細が出る (見本では出ない枝)', async () => {
     await mount();
     // 見本 (`SNAPSHOT.freee.monthly` は空) では出ない節が出ている。
-    await waitForText(() => container.textContent ?? '', '月次キャッシュフロー (収入 / 支出 / 営業CF)');
+    await waitForText(() => container.textContent ?? '', '月次キャッシュフロー (収入 / 支出 / 営業キャッシュフロー)');
     await waitForText(() => container.textContent ?? '', '月次明細');
     expect(container.textContent).not.toContain('アクセストークンを設定して「更新」を押すと');
     // 棒グラフ: 2 か月 × (収入・支出) の 4 本 + 凡例の見本 2 本 + 枠 1。

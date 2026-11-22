@@ -126,7 +126,7 @@ export function CalendarPage() {
 
       <GoogleConnectCard serviceId="calendar" onConnected={refresh} />
 
-      <Section title="Calendars" count={calendars.length}>
+      <Section title="カレンダー (Calendars)" count={calendars.length}>
         <DataList
           items={calendars.map((c) => ({
             key: c.id,
@@ -136,7 +136,7 @@ export function CalendarPage() {
         />
       </Section>
 
-      <Section title="Upcoming Events" count={events.length}>
+      <Section title="今後の予定 (Upcoming Events)" count={events.length}>
         <DataList
           items={events.map((e) => ({
             key: e.id,
@@ -148,7 +148,7 @@ export function CalendarPage() {
       </Section>
 
       <Section
-        title="Actions"
+        title="操作 (Actions)"
         action={
           <button onClick={() => setShowForm((v) => !v)}>
             {showForm ? '閉じる' : '予定を作成'}

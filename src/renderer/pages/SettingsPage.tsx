@@ -1216,7 +1216,7 @@ export function SettingsPage() {
         パスワードを知らない人が IndexedDB を読み取っても復号できません。共用 PC では使わないでください。
       </div>
 
-      <Section title="見た目 (デザイン: すっきり / かわいい · 配色: ライト / ダーク / OS に合わせる)" count={DESIGN_CHOICES.length + THEME_CHOICES.length}>
+      <Section title="見た目 (デザイン: すっきり / かわいい · 配色: ライト / ダーク / 端末の設定に合わせる)" count={DESIGN_CHOICES.length + THEME_CHOICES.length}>
         <ThemeSection />
       </Section>
 
@@ -1244,7 +1244,7 @@ export function SettingsPage() {
         <ParametersPanel />
       </Section>
 
-      <Section title="API キーとトークン" count={SLOTS.length}>
+      <Section title="接続の鍵 (API key) とトークン" count={SLOTS.length}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(380px, 100%), 1fr))', gap: 12 }} key={refreshKey}>
           {SLOTS.map((s) => (
             <CredentialRow key={s.vaultKey} slot={s} onChange={() => setRefreshKey((k) => k + 1)} />
@@ -1262,11 +1262,11 @@ export function SettingsPage() {
         </div>
       </Section>
 
-      <Section title="Google OAuth (Phase C)" count={1}>
+      <Section title="グーグル (Google) の認可 (OAuth)" count={1}>
         <GoogleOAuthSection />
       </Section>
 
-      <Section title="Vault 管理" count={3}>
+      <Section title="保管庫 (Vault) の管理" count={3}>
         <VaultControls />
       </Section>
 

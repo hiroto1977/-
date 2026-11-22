@@ -105,7 +105,7 @@ export function GmailPage() {
 
       <GoogleConnectCard serviceId="gmail" onConnected={refresh} />
 
-      <Section title="Inbox" count={threads.length}>
+      <Section title="受信トレイ (Inbox)" count={threads.length}>
         <DataList
           items={threads.map((t) => ({
             key: t.id,
@@ -163,7 +163,7 @@ export function GmailPage() {
       </Section>
 
       <Section
-        title="Actions"
+        title="操作 (Actions)"
         action={
           <button onClick={() => setShowForm((v) => !v)}>
             {showForm ? '閉じる' : '下書きを作成'}

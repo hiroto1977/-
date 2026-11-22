@@ -85,7 +85,7 @@ export function DrivePage() {
 
       <GoogleConnectCard serviceId="drive" onConnected={refresh} />
 
-      <Section title="Recent Files" count={files.length}>
+      <Section title="最近のファイル (Recent Files)" count={files.length}>
         <DataList
           items={files.map((f) => ({
             key: f.id,
@@ -97,7 +97,7 @@ export function DrivePage() {
       </Section>
 
       <Section
-        title="Actions"
+        title="操作 (Actions)"
         action={
           <button onClick={() => setShowForm((v) => !v)}>
             {showForm ? '閉じる' : 'フォルダ作成'}

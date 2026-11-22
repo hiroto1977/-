@@ -133,7 +133,7 @@ export function FreeePage() {
         </Section>
       ) : (
         <>
-          <Section title="月次キャッシュフロー (収入 / 支出 / 営業CF)">
+          <Section title="月次キャッシュフロー (収入 / 支出 / 営業キャッシュフロー)">
             <CashflowChart data={live} />
           </Section>
 

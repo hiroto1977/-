@@ -91,7 +91,7 @@ export function SlackPage() {
         tokenSetup={{ label: 'User/Bot トークン', placeholder: 'xoxp-… or xoxb-…' }}
       />
 
-      <Section title="Channels" count={channels.length}>
+      <Section title="チャンネル (Channels)" count={channels.length}>
         <DataList
           items={channels.map((c) => ({
             key: c.id,
@@ -147,7 +147,7 @@ export function SlackPage() {
       </Section>
 
       <Section
-        title="Actions"
+        title="操作 (Actions)"
         action={
           <button onClick={() => setShowForm((v) => !v)}>
             {showForm ? '閉じる' : 'メッセージ送信'}

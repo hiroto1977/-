@@ -188,7 +188,7 @@ describe('Cloudflare の DNS content — 壊れたレコードを公開しない
     await mount(CloudflarePage);
     const opener = (): HTMLButtonElement | undefined => {
       const heads = [...container.querySelectorAll('*')].filter(
-        (el) => el.children.length === 0 && el.textContent?.trim() === 'DNS レコード作成',
+        (el) => el.children.length === 0 && el.textContent?.trim() === '名前解決の記録 (DNS record) を作成',
       );
       const section = heads[0]?.closest('section') ?? heads[0]?.parentElement?.parentElement ?? null;
       return [...(section?.querySelectorAll('button') ?? [])].find(

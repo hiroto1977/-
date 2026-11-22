@@ -23,7 +23,7 @@ export function NetseaPage() {
         who={<>NETSEA · {items.length} 件</>}
       />
 
-      <Section title="Items" count={items.length}>
+      <Section title="商品 (Items)" count={items.length}>
         <DataList
           items={items.map((it) => ({
             key: it.id,

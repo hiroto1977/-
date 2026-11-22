@@ -113,7 +113,7 @@ export function GrokPage() {
 
   return (
     <div>
-      <Section title="Grok (xAI)">
+      <Section title="グロック (Grok) — エックスエーアイ社 (xAI)">
         <p data-grok-status={status.kind} style={{ fontSize: 13, lineHeight: 1.7, margin: '0 0 8px' }}>
           {status.text}
         </p>
@@ -123,7 +123,7 @@ export function GrokPage() {
         </p>
       </Section>
 
-      <Section title="Grok に質問する">
+      <Section title="グロック (Grok) に質問する">
         <AiEgressNotice subject={{ what: 'この画面で入力した質問', recipients }} />
         <textarea
           aria-label="Grok への質問"

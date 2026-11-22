@@ -228,7 +228,7 @@ export function Microsoft365Page() {
         <DataList items={items.map((it) => ({ key: it.id, title: it.name }))} empty="データなし" />
       </Section>
 
-      <Section title="Outlook メール (直近)" count={messages.length}>
+      <Section title="アウトルック (Outlook) のメール — 直近" count={messages.length}>
         <DataList
           items={messages.map((m) => ({
             key: m.id,
