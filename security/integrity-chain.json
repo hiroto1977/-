@@ -4540,6 +4540,14 @@
       "leafCount": 225,
       "note": "update 00-project.mdc,manifest.webmanifest,PROXY_EXAMPLE.md,integrity-chain.cjs,mamori-capabilities.json,oauth.mamori",
       "hash": "54a122837dfa586c229bea6608d8872eb4dd16af4120142483337d61295efb41"
+    },
+    {
+      "index": 539,
+      "prevHash": "54a122837dfa586c229bea6608d8872eb4dd16af4120142483337d61295efb41",
+      "merkleRoot": "d5a2c2c540321418e9f6eaf2438c01905f392d491265a836bd1f7e900d8a0a48",
+      "leafCount": 225,
+      "note": "update PROXY_EXAMPLE.md",
+      "hash": "1245bff5d3c8d6e2527d842f921a9f40632a9a43920b8a990cbaf36da2583532"
     }
   ],
   "tipManifest": {
@@ -4565,7 +4573,7 @@
     "assets/manifest.webmanifest": "0d13d8ff06d45964d50132609b9c03cd56e5b7c93e27ecd9bf4f538a7e147fb0",
     "assets/og.png": "1fcc1b3974eec00de79ab6d37272f39529905a3448017dc24ee0f03e979b7282",
     "assets/sw.js": "0320f925b8da1242c0aa3783e332a8abb87323331767aeebcab7dab309f6189d",
-    "docs/PROXY_EXAMPLE.md": "a855470bd627c105fe4f5ac826f4384ca4e3965d1528011d7494e44040308a02",
+    "docs/PROXY_EXAMPLE.md": "4b12aad240af8439c0595682dabc59ab74c7d5eb3c3faf640f36011c0d5db980",
     "docs/SECURITY_CHAIN.md": "e6f2886fbab792b4c4ec27ee8849a8642d1b28576c05e3ca627f2daea05cda29",
     "electron-builder.json": "087285ed5b1adf1d1a99c5c47b00bdab70338cacff2687988fb3316787af1917",
     "eslint.config.js": "4996638a13e6755c59dc9d38c193b985add84a0bf3c5039a299533b84cdd1e1f",
