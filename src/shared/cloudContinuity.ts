@@ -125,10 +125,10 @@ export const CLOUD_PROVIDERS: readonly CloudProvider[] = [
   },
   {
     id: 'google',
-    label: 'Google (Drive / カレンダー / Gmail / YouTube)',
+    label: 'Google (Drive / カレンダー / Gmail / YouTube / アナリティクス)',
     kind: 'data',
-    services: ['drive', 'calendar', 'gmail', 'youtube'],
-    entrusted: 'ファイル・予定・メール・チャンネルの統計。',
+    services: ['drive', 'calendar', 'gmail', 'youtube', 'google-analytics'],
+    entrusted: 'ファイル・予定・メール・チャンネルの統計・サイトの訪問者数と流入元 (アナリティクスは読むだけ)。',
     whenDown: CLOUD_DATA_WHEN_DOWN,
     meanwhile: CLOUD_DATA_MEANWHILE,
   },

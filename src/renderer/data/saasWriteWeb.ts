@@ -37,12 +37,15 @@ import {
   checkCalendarEvent,
   checkDriveFolder,
   checkGmailDraft,
+  checkSheetExport,
   createCalendarEventRequest,
   createDriveFolderRequest,
   createGmailDraftRequest,
+  createSheetRequest,
   parseCreatedDraft,
   parseCreatedDriveFolder,
   parseCreatedEvent,
+  parseCreatedSheet,
 } from '../../shared/api/google';
 import {
   ATLASSIAN_CREDS_MESSAGES,
@@ -338,6 +341,26 @@ export async function createDriveFolder(
   const res = await createDriveFolderRequest(folder, token, transport);
   await ensureOk(res, 'Drive API');
   return parseCreatedDriveFolder(await readJson(res, 'Google Drive API'));
+}
+
+// --- Google Sheets: export-sheet (drive の OAuth・CORS → プロキシ) ------------
+
+export interface ExportGoogleSheetInput {
+  title?: unknown;
+  columns?: unknown;
+  rows?: unknown;
+}
+
+export async function exportGoogleSheet(
+  input: ExportGoogleSheetInput,
+  token: string,
+  transport: Transport,
+): Promise<ActionData<'drive/export-sheet'>> {
+  // 欄の判定・URL・要求・応答の読みは shared/api/google.ts の 1 つ (main も同じ関数)。
+  const sheet = checkSheetExport(input);
+  const res = await createSheetRequest(sheet, token, transport);
+  await ensureOk(res, 'Sheets API');
+  return parseCreatedSheet(await readJson(res, 'Google Sheets API'));
 }
 
 // --- WordPress.com: create-post-draft (Bearer, CORS → プロキシ) -----------

@@ -133,6 +133,7 @@ const ROLE: Readonly<Record<string, 'created-response' | 'own-input'>> = {
   'google.ts parseCreatedDriveFolder': 'created-response',
   'google.ts parseCreatedEvent': 'created-response',
   'google.ts parseCreatedDraft': 'created-response',
+  'google.ts parseCreatedSheet': 'created-response',
   'microsoft365.ts parseCreatedGraphEvent': 'created-response',
   'notion.ts parseCreatedPage': 'created-response',
   'quality.ts parseQualityReport': 'own-input',

@@ -32,6 +32,7 @@ import { buildMutualFundsSnapshot } from '../../shared/mutualFundsSnapshot';
 import { buildA8netSnapshot } from '../../shared/a8netSnapshot';
 import { buildVrioSnapshot } from '../../shared/vrio';
 import { buildWatchSnapshot } from '../../shared/watchAssistant';
+import { buildGoogleAnalyticsSample } from './googleAnalyticsSample';
 
 /**
  * 見本の画像は **インライン (`data:`) にする**。
@@ -1133,6 +1134,9 @@ export const SNAPSHOT = {
   /** VRIO 分析: 階層・職種・判定の台帳の見出しだけ。評価と企画の中身は画面の入力に在り、ここには持たない。 */
   vrio: buildVrioSnapshot(),
   watch: buildWatchSnapshot(),
+
+  // 架空の見本 (連携するまで出す)。形は実物と同じ正規化の関数で組む (googleAnalyticsSample.ts)。
+  'google-analytics': buildGoogleAnalyticsSample(),
 
   // SCAFFOLD:ADD_SNAPSHOT_SLICE_BELOW (scaffold inserts new service slices before `canva:` ↓)
 

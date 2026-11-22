@@ -92,6 +92,7 @@ const LEDGER: readonly Row[] = [
   },
   { name: '材料を渡す', kind: 'same-screen-control', renderedIn: 'src/renderer/pages/WatchPage.tsx', why: '見張りアシスタントの、材料がまだ無いときの案内が名指しする (実物の label は「＋ 材料を渡す」で、名指しはその後方一致)。文は shared が組み、押す所は同じ画面に在る。' },
   { name: '週次レポートを作る', kind: 'same-screen-control', renderedIn: 'src/renderer/pages/WatchPage.tsx', why: '見張りアシスタントの、答えがまだ無いときの案内が名指しする。同じ画面の週ごとの数字の節のボタン。' },
+  { name: '表示', kind: 'same-screen-control', renderedIn: 'src/renderer/pages/GoogleAnalyticsPage.tsx', why: 'グーグルアナリティクスの画面の、プロパティを選ぶ前の案内が名指しする。同じ節のプロパティ ID の欄の隣のボタン (2026-11-22)。' },
   { name: 'SVG を保存', kind: 'same-screen-control', renderedIn: 'src/renderer/pages/TeamRadarPage.tsx', why: 'チームレーダーの書き出しボタン (実物の label は「SVG を保存 (Canva 用)」で、名指しはその前方一致)。' },
   { name: 'チーム情報を保存', kind: 'same-screen-control', renderedIn: 'src/renderer/pages/TeamRadarPage.tsx', why: '同じ画面の保存ボタン。文は shared の状態モジュールが組むが、出る先はこの画面である。' },
   { name: 'もう一度確認', kind: 'same-screen-control', renderedIn: 'src/renderer/security/LockScreen.tsx', why: '24 語の控えを確かめ直すボタン。文は保管庫が組み、押す所は施錠画面に在る。' },
@@ -243,6 +244,8 @@ const LEDGER: readonly Row[] = [
   },
   { name: 'チーム管理', kind: 'screen-label', why: '専属カウンセラーの画面が、メンバーが 1 人も居ないときに登録の場所として名指しする画面の名前 (パス 551)。`SERVICES` のラベル (team) と突き合わせる。' },
   { name: '売上集計', kind: 'screen-label', why: '同じく画面の名前で、同じ検査が `SERVICES` と突き合わせる。' },
+  { name: 'グーグルドライブ', kind: 'screen-label', why: '売上集計の画面が、Google にまだ接続していないときにスプレッドシートへの書き出しの前に接続する場所として名指しする画面の名前 (2026-11-22)。`SERVICES` のラベル (drive) と突き合わせる。' },
+  { name: 'スプレッドシートに書き出す', kind: 'same-screen-control', renderedIn: 'src/renderer/pages/SalesPage.tsx', why: '売上集計の画面の書き出しの断りが、押す前に何が起きるかを言うために名指しする。同じ節のボタン (2026-11-22)。' },
   { name: '専属カウンセラー', kind: 'screen-label', why: '画面の名前 (2026-10-29 · パス 555)。「ひとりひとりの負担」の表 (`WorkloadShareTable`) が、まだ誰の記録も無いときにチェックインと同意の場所として名指しする。`SERVICES` のラベル (mentor) と突き合わせる。' },
   {
     name: 'ライブラリ',

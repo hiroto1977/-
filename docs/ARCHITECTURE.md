@@ -21,12 +21,12 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 
 | 軸 | 値 | 出典 |
 |---|---:|---|
-| サービス数 | 80 | `src/shared/serviceId.ts:9-43` |
+| サービス数 | 81 | `src/shared/serviceId.ts:9-43` |
 | IPC ハンドラ数 | 15 | `src/main/main.ts:213-432` |
-| client モジュール (fetcher + actions) | 80 | `src/main/clients/index.ts:44-83` |
-| OAuth 対応サービス | 10 (drive / calendar / gmail / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
-| 外部接続先ホスト | 35 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **21821** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| client モジュール (fetcher + actions) | 81 | `src/main/clients/index.ts:44-83` |
+| OAuth 対応サービス | 11 (drive / calendar / gmail / google-analytics / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
+| 外部接続先ホスト | 38 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
+| ユニットテスト | **21891** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` (**2026-09-01 の報告** —— 今のコードを測った物ではない。`docs/REMAINING_WORK.md` の「パス 494」) |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` (同上) |
@@ -34,7 +34,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod / dev) | 0 vulnerabilities (2026-09-10 実測。CI が `--omit=dev --audit-level=high` で毎回確認 —— dev 依存と moderate 以下を落とさないのは意図的で、理由は `ci.yml` の注記。**その外側は `lint:deps` のセキュリティの床 6 件**が受け持つ: 自分で押さえた版は道を問わず台帳に載り、緩めば落ちる) | `package-lock.json` |
 | 陰性対照つきゲート | 36 / 39 (`lint:malware` を足した · パス 510。残る 3 件は外部ツール 2 (`typecheck` / eslint) と `chain:verify` (対照は `integrityChainWitness.test.ts` が持つ)。★ 2026-09-25 (パス 467) に `lint:knowledge-refs` と `verify:orchestration` へ `--self-test` を付けた —— 2 本は「2026-08-25 に実物へ違反を植えて鳴ることを確認済み」という理由で免除されていたが、それは**母集団が非空のとき**の対照で、**空にする側**は 1 度も試されておらず、実測すると壊れた台帳も `rounds: []` も `org.secretaries` 削除も**すべて ✅ exit 0** だった。`lint:doi-prefix` は同じ理由で今も免除だが、空にする側は測っていない) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
-| `file:line` 参照数 | 708 | 自己検証 |
+| `file:line` 参照数 | 713 | 自己検証 |
 | 図の中の `file:line` 参照数 | 29 | 自己検証 (mermaid のクラス図・パス 180) |
 
 ### 統合フロー図
@@ -67,7 +67,7 @@ flowchart LR
 
   subgraph EXT["External (HTTPS only, 12 hosts allowlisted)"]
     APIS[api.github.com<br/>api.notion.com<br/>api.canva.com<br/>... 9 SaaS APIs]
-    GOOG[accounts.google.com<br/>oauth2.googleapis.com<br/>www.googleapis.com<br/>gmail.googleapis.com]
+    GOOG[accounts.google.com<br/>oauth2.googleapis.com<br/>www.googleapis.com<br/>gmail.googleapis.com<br/>sheets.googleapis.com]
     LOC[127.0.0.1:11434<br/>Ollama, hardcoded]
   end
 
@@ -1755,9 +1755,10 @@ union を参照する。
 | `wordpress` | WordPress.com | Bearer | | | `create-post-draft` |
 | `atlassian` | Atlassian | Basic + site URL (JSON blob) | | | `create-issue` |
 | `notion` | Notion | Bearer | | | `create-page` |
-| `drive` | Google Drive | OAuth PKCE / Bearer | | ✅ | `create-folder` |
+| `drive` | Google Drive | OAuth PKCE / Bearer | | ✅ | `create-folder`, `export-sheet` |
 | `calendar` | Google Calendar | OAuth PKCE / Bearer | | ✅ | `create-event` |
 | `gmail` | Gmail | OAuth PKCE / Bearer | | ✅ | `create-draft` |
+| `google-analytics` | グーグルアナリティクス (Google Analytics 4) | OAuth PKCE (`analytics.readonly`) / Bearer | | ✅ | `run-report` (読み取りだけ —— 選んだプロパティ・期間の訪問者数と流入元。プロパティの一覧は取得が読む) |
 | `slack` | Slack | Bearer (user token) | | | `send-message` |
 | `canva` | Canva | Bearer | | | `create-folder` |
 | `skills` | Skills (local) | Bearer (Anthropic) | ✅ | | `run-skill` |
@@ -1842,9 +1843,11 @@ union を参照する。
 | wordpress | `create-post-draft` | `{ siteId, title, content?, status? }` | **共有台帳 `WORDPRESS_POST_FIELDS`** を共有の `checkPost` が読む (型・長さ。`status` は台帳の一覧 (draft / publish / pending / private) 以外を reject —— publish も指定できるので画面の断りは「下書き**または**公開」) + URL (`wordpressPostsPath`・siteId は `encodeURIComponent`)・要求 (`wordpressPostInit`)・応答の読み (`parseCreatedPost`) も共有 —— 両ビルドが同じ関数を通る (2026-09-18)。宣言は main の CreatePostDraftPayload | `src/shared/api/wordpress.ts:110-174` |
 | atlassian | `create-issue` | `{ projectKey, summary, description?, issueType? }` | **共有台帳 `ATLASSIAN_ISSUE_FIELDS`** を共有の `checkJiraIssue` が読む (型・長さ。issueType は空なら Task) + ADF・Basic 認証 (`basicAuthorization` —— UTF-8 を通す)・要求 (`jiraIssueInit`)・応答の読み (`parseCreatedJiraIssue`) も共有 —— 両ビルドが同じ関数を通る (2026-09-19)。site URL の https only + *.atlassian.net allowlist は呼び手の parseAtlassianToken (main / ブラウザ版。断りの運び方が違うので残す —— パス 284)。宣言は main の CreateJiraIssuePayload | `src/shared/api/atlassian.ts:126-218` |
 | notion | `create-page` | `{ parentPageId, title, body? }` | **共有台帳 `NOTION_PAGE_FIELDS`** を共有の `checkPage` が読む (型・長さ。それ以上の形式検証なし — API 4xx で対処) + 要求 (`notionPageInit`)・応答の読み (`parseCreatedPage`) も共有 —— 両ビルドが同じ関数を通る (2026-09-18)。宣言は main の CreatePagePayload | `src/shared/api/notion.ts:90-150` |
-| drive | `create-folder` | `{ name, parentId? }` | **共有台帳 `DRIVE_FOLDER_FIELDS`** を共有の `checkDriveFolder` が読む (型・長さ。それ以上は Google API 側で検証) + 要求 (`driveFolderInit`)・応答の読み (`parseCreatedDriveFolder` —— `webViewLink` が無ければフォルダの URL を組む) も共有 (2026-09-18)。宣言は main の CreateFolderPayload | `src/shared/api/google.ts:211-305` |
-| calendar | `create-event` | `{ summary, start, end, description?, location?, timeZone? }` | **共有台帳 `CALENDAR_EVENT_FIELDS`** を共有の `checkCalendarEvent` が読む (型・長さ。RFC3339 は API 側。timeZone の既定は端末の物 = 共有の `defaultTimeZone` 1 つ) + 要求 (`calendarEventInit`)・応答の読み (`parseCreatedEvent`) も共有 (2026-09-18)。宣言は main の CreateEventPayload | `src/shared/api/google.ts:312-392` |
-| gmail | `create-draft` | `{ to, subject, body? }` | **共有台帳 `GMAIL_DRAFT_FIELDS`** を共有の `checkGmailDraft` が読む (型・長さ・`to` の CR/LF を 1 行の欄として reject) + RFC 2822 の組み立て (`buildRfc2822` —— 二重の備えの isSafeHeaderValue はその中)・base64url・要求 (`gmailDraftInit`)・応答の読み (`parseCreatedDraft` —— `message.id` が無ければ断る) も共有 —— 両ビルドと shopify の `sync-to-gmail` が同じ関数を通る (2026-09-19)。宣言は main の CreateDraftPayload | `src/shared/api/google.ts:398-459` |
+| drive | `create-folder` | `{ name, parentId? }` | **共有台帳 `DRIVE_FOLDER_FIELDS`** を共有の `checkDriveFolder` が読む (型・長さ。それ以上は Google API 側で検証) + 要求 (`driveFolderInit`)・応答の読み (`parseCreatedDriveFolder` —— `webViewLink` が無ければフォルダの URL を組む) も共有 (2026-09-18)。宣言は main の CreateFolderPayload | `src/shared/api/google.ts:213-310` |
+| drive | `export-sheet` | `{ title, columns, rows }` (売上集計の画面が読める売上の記録を表にして渡す) | **共有台帳 `DRIVE_SHEET_FIELDS` (表題) + `checkSheetTable` (列 8・行 500・文字列のセル 1,500・1 セル 256 字・見出し 50 字の天井。セルは文字列・有限の数・null だけ)** を共有の `checkSheetExport` が読む + 要求 (`sheetExportInit` —— セルは `stringValue` / `numberValue` だけで `formulaValue` を組まない = 数式インジェクションを書けない)・応答の読み (`parseCreatedSheet` —— `spreadsheetUrl` は外へ開く関門で正規化してから docs.google.com の https に限る) も共有 (2026-11-22)。宣言は main の ExportSheetPayload | `src/shared/api/google.ts:313-417` |
+| google-analytics | `run-report` | `{ propertyId, days }` | **読み取りだけ**。共有の `checkGaReportRequest` が読む (プロパティ ID は数字だけ 1〜15 桁・`properties/` の接頭辞は外す・道へは `encodeURIComponent` も通す / 期間は 7・28・90 のどれか)。照会の本文 (`gaDailyUsersRequestInit` / `gaChannelsRequestInit`)・応答の読み (`buildGaReport` —— 読めない数は null で「不明」、期間の訪問者数は `totals` だけ) も共有 —— 両ビルドが同じ関数を通る (2026-11-22)。宣言は main の RunReportPayload | `src/shared/api/googleAnalytics.ts` |
+| calendar | `create-event` | `{ summary, start, end, description?, location?, timeZone? }` | **共有台帳 `CALENDAR_EVENT_FIELDS`** を共有の `checkCalendarEvent` が読む (型・長さ。RFC3339 は API 側。timeZone の既定は端末の物 = 共有の `defaultTimeZone` 1 つ) + 要求 (`calendarEventInit`)・応答の読み (`parseCreatedEvent`) も共有 (2026-09-18)。宣言は main の CreateEventPayload | `src/shared/api/google.ts:419-508` |
+| gmail | `create-draft` | `{ to, subject, body? }` | **共有台帳 `GMAIL_DRAFT_FIELDS`** を共有の `checkGmailDraft` が読む (型・長さ・`to` の CR/LF を 1 行の欄として reject) + RFC 2822 の組み立て (`buildRfc2822` —— 二重の備えの isSafeHeaderValue はその中)・base64url・要求 (`gmailDraftInit`)・応答の読み (`parseCreatedDraft` —— `message.id` が無ければ断る) も共有 —— 両ビルドと shopify の `sync-to-gmail` が同じ関数を通る (2026-09-19)。宣言は main の CreateDraftPayload | `src/shared/api/google.ts:510-571` |
 | slack | `send-message` | `{ channel, text }` | **共有台帳 `SLACK_MESSAGE_FIELDS`** を共有の `checkMessage` が読む (型・長さ) + 要求 (`slackMessageInit`)・応答の読み (`readSlackPost` —— `ok: true` に `ts` が無ければ断る。main は 2026-09-18 まで '' に倒していた) も共有。宣言は main の SendMessagePayload | `src/shared/api/slack.ts:118-175` |
 | canva | `create-folder` | `{ name, parentFolderId? }` | **共有台帳 `CANVA_FOLDER_FIELDS`** を共有の `checkFolder` が読む (型・長さ。親は省略なら root) + 要求 (`canvaFolderInit`)・応答の読み (`parseCreatedFolder`) も共有 (2026-09-18)。宣言は main の CreateFolderPayload | `src/shared/api/canva.ts:124-175` |
 | skills | `run-skill` | `{ id, prompt }` | **`isSafeSkillName(id)`** + path containment。**`id` は一覧が出した `SkillEntry.id` (フォルダ名・ファイル名) で、画面に出ている題 (`label` = frontmatter の `name:`) ではない** —— パス 179 までここが題を受け取っており、題と実体が違うスキルは実行できない / **別のスキルの定義が送られる**。**`prompt` は `MAX_ASSISTANT_CONTENT_CHARS` 超を断る** (パス 112 まで天井なし)。**応答は `capAssistantReply` で 10 万字に打ち切り注記を残す** (パス 113 まで byte の天井だけ)。**`model` / `maxTokens` は payload から受けない** (2026-08-23 — 有料 API のパラメータをレンダラーに握らせない。定数 `SKILLS_MAX_TOKENS`) | `skills.ts:205-492` |
@@ -1893,7 +1896,7 @@ union を参照する。
 | shopify | `sync-to-salesforce` | order + token + instanceUrl | **送り先が payload 由来**。https かつ salesforce.com / *.salesforce.com のみ (2026-08-23 まで https しか見ておらず、トークンと顧客情報が任意のホストへ届いた) | `shopify.ts:414-420` |
 | shopify | `sync-to-stripe` | order + token | 送り先は定数 (api.stripe.com) | `shopify.ts:414-420` |
 
-### 3.3 ネットワーク egress マトリクス (35 ホスト + ユーザー指定)
+### 3.3 ネットワーク egress マトリクス (38 ホスト + ユーザー指定)
 
 デスクトップ版の外部接続は **main プロセスからのみ** (renderer は CSP `connect-src 'self'`)。ブラウザ版は同じ宛先へ
 renderer が直接つなぐ (`src/renderer/data/saasWriteWeb.ts` / `src/shared/api/` の各クライアント / `src/renderer/network/ollamaWeb.ts` /
@@ -1922,6 +1925,7 @@ undici は CORS を実装しないので単体検査には映らず、CI の外�
 | atlassian | `*.atlassian.net` (https only) | `GET /rest/api/3/project/search` (main) / `POST /rest/api/3/issue` (両ビルドが共有の関数を通る) | Basic | `atlassian.ts:77-106` + `src/shared/api/atlassian.ts:202-208` |
 | notion | `api.notion.com` | `POST /v1/search` (main) / `POST /v1/pages` (両ビルドが共有の関数を通る) | Bearer | `notion.ts:43-60` + `src/shared/api/notion.ts:133-139` |
 | drive | `www.googleapis.com`, `drive.google.com` | `GET /drive/v3/files` (main) / `POST /drive/v3/files` (両ビルドが共有の関数を通る) | Bearer | `drive.ts:30-70` + `src/shared/api/google.ts:248-254` |
+| drive (売上の書き出し) | `sheets.googleapis.com` | `POST /v4/spreadsheets?fields=spreadsheetId,spreadsheetUrl,properties.title` (売上集計の画面の「スプレッドシートに書き出す」。利用者が確認した時だけ。両ビルドが共有の関数を通る・ブラウザ版はプロキシ経由) | Bearer (Drive の OAuth スコープ `auth/drive` が覆う) | `drive.ts:106-118` + `src/shared/api/google.ts:383-389` |
 | calendar | `www.googleapis.com` | `GET /calendar/v3/users/me/calendarList`, `events` (`GET` main / `POST` は両ビルドが共有の関数を通る) | Bearer | `calendar.ts:33-70` + `src/shared/api/google.ts:340-346` |
 | gmail | `gmail.googleapis.com` | `GET /messages`, `GET /messages/{id}` (main) / `POST /drafts` (両ビルドと shopify が共有の関数を通る) | Bearer | `gmail.ts:29-46` + `src/shared/api/google.ts:406-412` |
 | slack | `slack.com` | `GET /api/conversations.list`, `team.info` (main) / `POST /chat.postMessage` (両ビルドが共有の関数を通る) | Bearer | `slack.ts:53-70` + `src/shared/api/slack.ts:151-157` |
@@ -1949,6 +1953,7 @@ undici は CORS を実装しないので単体検査には映らず、CI の外�
 | sentry (両ビルド。ブラウザ版はプロキシ経由 —— 開発環境から sentry.io へ届かず、ブラウザ発の CORS は確かめていない) | `sentry.io` | `GET /api/0/organizations/`・`GET /api/0/organizations/<slug>/issues/` (未解決だけ・21 件まで。slug は 1 つ目の照会の答えを形で確かめてから入れる。書き込みの照会は無い) | 個人のトークン (Bearer) | `src/shared/api/sentry.ts:283-289` |
 | discord (両ビルド。ブラウザ版はプロキシ経由 —— 開発環境から discord.com へ届かず、ブラウザ発の CORS は確かめていない) | `discord.com` | `GET /api/v10/users/@me/guilds?limit=21&with_counts=true` (ボットが参加しているサーバーの名前と参加人数だけ。メッセージは照会しない。書き込みの照会は無い) | ボットのトークン (`Authorization: Bot`) | `src/shared/api/discord.ts:128-131` |
 | dropbox (両ビルド。ブラウザ版はプロキシ経由 —— 開発環境から api.dropboxapi.com へ届かず、ブラウザ発の CORS は確かめていない) | `api.dropboxapi.com` | `POST /2/users/get_current_account`, `POST /2/users/get_space_usage`, `POST /2/files/list_folder` (ルート直下の先頭 20 件だけ。本文は固定の照会。書き込みの照会は無い) | アクセストークン (Bearer・App Console の自前アプリ、権限は読み取りだけ) | `src/shared/api/dropbox.ts` |
+| google-analytics (両ビルド。ブラウザ版はプロキシ経由 —— 開発環境から Google の API へ届かず、ブラウザ発の CORS は確かめていない) | `analyticsadmin.googleapis.com`, `analyticsdata.googleapis.com` | `GET /v1beta/accountSummaries?pageSize=200` (見られるプロパティの一覧) / `POST /v1beta/properties/{id}:runReport` を 2 回 (日ごとの訪問者数・流入元のチャネル。id は数字だけを確かめて符号化。本文は固定の照会と期間の 3 択だけ。書き込みの照会は無い) | Bearer (OAuth `analytics.readonly` か貼ったアクセストークン) | `src/shared/api/googleAnalytics.ts` |
 | shopify→discord | `discord.com` | `POST` webhook (payload 由来。https + hostname 完全一致で絞る) | webhook URL | `shopify.ts:172-194` |
 | shopify→line | `api.line.me` | `POST /v2/bot/message/push` | Bearer | `shopify.ts:205-215` |
 | shopify→stripe | `api.stripe.com` | `POST /v1/customers` | Bearer | `shopify.ts:354-366` |

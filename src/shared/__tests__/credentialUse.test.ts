@@ -22,6 +22,7 @@ const EXPECTED: ReadonlyArray<readonly [ServiceId, CredentialUse]> = [
   ['drive', 'fetch'],
   ['calendar', 'fetch'],
   ['gmail', 'fetch'],
+  ['google-analytics', 'fetch'],
   ['slack', 'fetch'],
   ['canva', 'fetch'],
   ['skills', 'action'],
@@ -135,7 +136,7 @@ describe('SERVICE_CREDENTIAL_USE', () => {
 
   it('3 分類の件数を固定する', () => {
     const count = (u: CredentialUse) => EXPECTED.filter(([, v]) => v === u).length;
-    expect(count('fetch')).toBe(23);
+    expect(count('fetch')).toBe(24); // google-analytics (2026-11-22)
     // shopify が `action` → `none` (パス 452)。
     expect(count('action')).toBe(7);
     expect(count('none')).toBe(50);

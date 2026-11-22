@@ -72,6 +72,7 @@ function refreshesOnSuccess(src: string): boolean {
 const SHOWS_WHAT_IT_CREATED: Readonly<Record<string, { readonly shows: boolean; readonly why: string }>> = {
   'NotionPage.tsx': { shows: true, why: '並べるのは Notion の検索結果 (最近のページ)。作ったページはそこに入る' },
   'CalendarPage.tsx': { shows: true, why: '並べるのは Upcoming Events (timeMin=now の 10 件)。作った予定はそこに入る' },
+  'SalesPage.tsx': { shows: false, why: '並べるのは端末の売上の記録。スプレッドシートへ書き出しても Google 側に表が増えるだけで、この画面の一覧は変わらない' },
   'DrivePage.tsx': { shows: true, why: '並べるのは Recent Files (modifiedTime 降順・種別で絞っていない)。フォルダも file なので先頭に入る' },
   'Microsoft365Page.tsx': { shows: true, why: 'メール送信・予定作成の後に一覧を取り直す (2026-09-12 以前から呼んでいた唯一の画面)' },
   'SlackPage.tsx': { shows: false, why: '並べるのはチャンネル。送ったメッセージはチャンネルの一覧を変えない' },

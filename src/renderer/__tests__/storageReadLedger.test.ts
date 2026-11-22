@@ -88,6 +88,11 @@ const LEDGER: Record<string, LedgerEntry> = {
     keys: ['servicehub.encryptedCopy.last'],
     why: '入口 (readLocalJson) を通す。控えの目印を読めなければ loadCopyMarker が readable: false を返し、画面は「最新」とも「古い」とも言わず、確かめられないと言う (2026-11-11)。壊れた目印は readCopyMarker が「無い」へ倒す —— 控えを書き直せば戻る。',
   },
+  'src/renderer/data/googleAnalyticsProperty.ts': {
+    policy: 'three-state',
+    keys: ['servicehub.googleAnalytics.propertyId'],
+    why: '入口 (readLocalString) を通す。読めなければ「覚えていない」として一覧の先頭のプロパティで描き、画面がその理由を言う (2026-11-22)。形の違う保存値は gaPropertyIdOrNull が「覚えていない」へ倒す —— 画面から選び直せる。',
+  },
   'src/renderer/theme.ts': {
     policy: 'three-state',
     keys: ['servicehub.theme', 'servicehub.design'],

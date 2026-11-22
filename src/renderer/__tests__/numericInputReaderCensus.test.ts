@@ -179,6 +179,8 @@ export function numericInputFiles(): NumericInputFile[] {
  */
 const READER_LEDGER: Readonly<Record<string, string>> = {
   guardNumber: 'inputGuards.guardNumber → readNumeric (関門そのもの)',
+  gaPropertyIdOrNull:
+    'shared/api/googleAnalytics.ts (2026-11-22)。**数量ではなく識別子**なので readNumeric を通さない —— 全角・桁区切り・単位を数に読み替えると別のプロパティを指すため、`^[0-9]{1,15}$` だけを受けて読めない形は断る (画面は断りの文を出す)',
   n: 'OverviewPage の別名 = readNumberOr0 → readNumeric',
   num: 'TaxPage / WelfareSchemeCard の局所ヘルパ。どちらも readNumeric を読む',
   parseAmountInput: 'components/serviceActionUtils.ts。中身を readNumeric へ委ねた (パス 375)',

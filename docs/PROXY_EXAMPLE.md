@@ -34,7 +34,7 @@ X-Proxy-Auth: <optional-shared-secret>
 }
 ```
 
-## 2. Cloudflare Worker 実装 (433 行)
+## 2. Cloudflare Worker 実装 (436 行)
 
 `workers.cloudflare.com/dashboard` で **Create Worker** → 下記コードを貼り
 付け → **Deploy**。`worker.dev` の URL を Settings → BYO プロキシに登録。
@@ -67,6 +67,9 @@ const UPSTREAM_ALLOWLIST = new Set([
   // Atlassian (Jira) は自分のサイト host も必要: 例 'your-team.atlassian.net'
   'www.googleapis.com',      // Google カレンダー / Drive
   'gmail.googleapis.com',    // Gmail 下書き
+  'sheets.googleapis.com',   // Google スプレッドシート (売上の書き出し)
+  'analyticsadmin.googleapis.com', // グーグルアナリティクス (プロパティの一覧・読み取りだけ)
+  'analyticsdata.googleapis.com',  // グーグルアナリティクス (訪問者数・流入元・読み取りだけ)
   'public-api.wordpress.com',// WordPress.com 下書き
   'api.canva.com',           // Canva フォルダ
   'api.cloudflare.com',      // Cloudflare DNS / キャッシュ
@@ -288,7 +291,7 @@ function timingSafeEqualStr(a, b) {
  * **平文 http を拒む** (2026-09-20 · パス 345)。この Worker が上流へ送る要求には
  * 利用者の `Authorization` がそのまま載る。2026-09-20 まで `http:` を通しており、
  * 実測で `http://api.notion.com/v1/x` は `null` (通す) を返した。
- * 許可リストの 10 ホストはすべて https の公開 SaaS で、**平文で呼ぶ正当な用途は無い**
+ * 許可リストの 11 ホストはすべて https の公開 SaaS で、**平文で呼ぶ正当な用途は無い**
  * (LAN / loopback はクライアント側の `isPrivateOrReservedTarget` が別に拒む)。
  *
  * 順序は「具体的な理由が先」。許可リスト外の `http://evil.example` には

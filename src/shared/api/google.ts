@@ -4,10 +4,13 @@ import { displayField, optionalString, requireChild, requireObject, requireStrin
 import {
   CALENDAR_EVENT_FIELDS,
   DRIVE_FOLDER_FIELDS,
+  DRIVE_SHEET_FIELDS,
   GMAIL_DRAFT_FIELDS,
+  checkSheetTable,
   checkWriteFields,
   describeWriteFieldFailure,
 } from '../writeFieldLimits';
+import { externalUrlOrNull } from '../externalUrlGate';
 import { utf8ToBase64Url } from '../base64';
 import { buildRfc2822 } from '../rfc2822';
 
@@ -15,6 +18,8 @@ import { buildRfc2822 } from '../rfc2822';
 export const GOOGLE_DRIVE_API = 'https://www.googleapis.com/drive/v3';
 export const GOOGLE_CALENDAR_API = 'https://www.googleapis.com/calendar/v3';
 export const GMAIL_API = 'https://gmail.googleapis.com/gmail/v1';
+/** スプレッドシートの作成 (`drive/export-sheet`)。Drive の OAuth スコープ (`auth/drive`) がこの API も覆う。 */
+export const GOOGLE_SHEETS_API = 'https://sheets.googleapis.com/v4';
 const DRIVE = GOOGLE_DRIVE_API;
 const CALENDAR = GOOGLE_CALENDAR_API;
 const GMAIL = GMAIL_API;
@@ -303,6 +308,112 @@ export function parseCreatedDriveFolder(body: unknown): CreatedDriveFolder {
     name: displayField(requireString(o, 'name', 'Google Drive API')),
     url: optionalString(o, 'webViewLink') ?? driveFolderUrl(id),
   };
+}
+
+// --- Sheets: 新しいスプレッドシートの作成 (POST /v4/spreadsheets) ---------------
+/*
+ * **売上の記録を、利用者の Drive に新しいスプレッドシートとして書き出す** (2026-11-22 · `drive/export-sheet`)。
+ * 両ビルドが同じ関数を通る (`checkSheetExport` → `sheetExportInit` → `parseCreatedSheet`)。
+ *
+ * ★ **セルには `stringValue` / `numberValue` しか書かない (数式は書けない)**。`userEnteredValue.formulaValue` を
+ *   1 度も組まないので、`=IMPORTXML(...)` / `=HYPERLINK(...)` で始まるメモも**文字のまま**表に残る
+ *   (表計算の数式インジェクション)。CSV の書き出しが先頭に `'` を足して打ち消すのと同じ問いへの、
+ *   API での答えである (`stringValue` は Sheets が式として解釈しない)。
+ * ★ 応答は**作った表だけ**を返させる (`fields=`) —— 既定では送った表の中身まで返り、上限つきの読みに当たる。
+ */
+
+/** 作成の照会。`fields` で応答を 3 欄に絞る。 */
+export const SHEETS_CREATE_PATH = '/spreadsheets?fields=spreadsheetId,spreadsheetUrl,properties.title';
+
+/** 作った表を開く URL の先頭 (解析・正規化した後の綴りと比べる)。 */
+export const SHEETS_URL_PREFIX = 'https://docs.google.com/spreadsheets/';
+
+/** 1 セル: 文字列・有限の数・空 (`null`)。 */
+export type SheetCell = string | number | null;
+
+export interface SheetExportFields {
+  readonly title?: unknown;
+  readonly columns?: unknown;
+  readonly rows?: unknown;
+}
+
+export interface CheckedSheetExport {
+  readonly title: string;
+  readonly columns: readonly string[];
+  readonly rows: readonly (readonly SheetCell[])[];
+}
+
+/** 表題と表を共有台帳 (`DRIVE_SHEET_FIELDS` / `checkSheetTable`) で断る。 */
+export function checkSheetExport(input: SheetExportFields): CheckedSheetExport {
+  const bad = checkWriteFields(input, DRIVE_SHEET_FIELDS);
+  if (bad !== null) throw new Error(describeWriteFieldFailure(bad));
+  const tableProblem = checkSheetTable(input.columns, input.rows);
+  if (tableProblem !== null) throw new Error(tableProblem);
+  return {
+    title: String(input.title).trim(),
+    columns: input.columns as readonly string[],
+    rows: input.rows as readonly (readonly SheetCell[])[],
+  };
+}
+
+/**
+ * 1 セルの `userEnteredValue`。**文字列は必ず `stringValue`** —— `=` で始まっても式にはならない。
+ * 空のセルは値を持たない (`{}`)。
+ */
+export function sheetCellValue(cell: SheetCell): Record<string, unknown> {
+  if (cell === null) return {};
+  if (typeof cell === 'string') return { userEnteredValue: { stringValue: cell } };
+  return { userEnteredValue: { numberValue: cell } };
+}
+
+/** 要求の組み立て (`drive/export-sheet`)。1 行目が見出し、続けて行。 */
+export function sheetExportInit(sheet: CheckedSheetExport, token: string): RequestInit {
+  const rowData = [sheet.columns, ...sheet.rows].map((row) => ({ values: row.map(sheetCellValue) }));
+  return {
+    method: 'POST',
+    headers: jsonBody(token),
+    body: JSON.stringify({
+      properties: { title: sheet.title },
+      sheets: [{ data: [{ startRow: 0, startColumn: 0, rowData }] }],
+    }),
+  };
+}
+
+/** ブラウザ版の口: 送って `Response` を返す。 */
+export async function createSheetRequest(
+  sheet: CheckedSheetExport,
+  token: string,
+  transport: GoogleTransport,
+): Promise<Response> {
+  return transport(`${GOOGLE_SHEETS_API}${SHEETS_CREATE_PATH}`, sheetExportInit(sheet, token));
+}
+
+export interface CreatedSheet {
+  readonly id: string;
+  readonly title: string;
+  readonly url: string;
+}
+
+/**
+ * 応答の `spreadsheetId` / `spreadsheetUrl` を**形を確かめて**取る。
+ *
+ * URL は外へ開く関門 (`externalUrlOrNull`) で**解析・正規化してから**先頭を比べる —— 正規化した綴りなので、
+ * `https://docs.google.com@evil.example/` (userinfo) や大文字・既定ポート・`\` は比べる前に解けている。
+ * docs.google.com の https でなければ**押せるリンクとして渡さず断る**。
+ */
+export function parseCreatedSheet(body: unknown): CreatedSheet {
+  const o = requireObject(body, 'Google Sheets API');
+  const id = displayField(requireString(o, 'spreadsheetId', 'Google Sheets API'));
+  const vetted = externalUrlOrNull(requireString(o, 'spreadsheetUrl', 'Google Sheets API'));
+  if (vetted === null || !vetted.startsWith(SHEETS_URL_PREFIX)) {
+    throw new Error('Google Sheets API の応答の spreadsheetUrl が docs.google.com の https ではありません');
+  }
+  const props = o.properties;
+  const title =
+    typeof props === 'object' && props !== null && !Array.isArray(props)
+      ? displayField(optionalString(props as Record<string, unknown>, 'title') ?? '')
+      : '';
+  return { id, title, url: vetted };
 }
 
 // --- Calendar: 予定の作成 (POST /calendar/v3/calendars/primary/events) ------

@@ -123,6 +123,8 @@ export const SERVICE_CREDENTIAL_USE: Record<ServiceId, CredentialUse> = {
   grok: 'none',
   vrio: 'none',
   watch: 'none',
+  // 2026-11-22: 取得 (プロパティの一覧) とレポートの照会の両方が鍵を読む。
+  'google-analytics': 'fetch',
   youtube: 'fetch',
   overview: 'none',
   coconala: 'none',

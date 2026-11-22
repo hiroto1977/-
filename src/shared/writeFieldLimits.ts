@@ -302,6 +302,82 @@ export const DRIVE_FOLDER_FIELDS = {
   parentId: id(false),
 } satisfies Readonly<Record<string, WriteRule>>;
 
+/**
+ * **`drive/export-sheet` (売上の記録を新しいスプレッドシートへ書き出す) の欄と天井**
+ * (2026-11-22)。
+ *
+ * 表題 (`title`) は他の題名と同じ規則。表 (`columns` と `rows`) は文字列の欄ではないので
+ * {@link checkSheetTable} が別に見る (Shopify の明細と同じ「特別扱いの表」の置き方)。
+ *
+ * ## 天井の決め方 (この app の安全上限。Google Sheets の仕様上の上限は主張しない)
+ *
+ * | 天井 | 値 | なぜ |
+ * | --- | ---: | --- |
+ * | 列 {@link MAX_SHEET_COLUMNS} | 8 | 売上の書き出しは 5 列。余裕を持たせたが、表を広げる用途は持たない |
+ * | 行 {@link MAX_SHEET_ROWS} | 500 | 見出しを除く行。下の文字列の天井と合わせて決めた |
+ * | 文字列のセル {@link MAX_SHEET_STRING_CELLS} | 1,500 | **出力インターセプター (`outboundContentGate.ts`) は 1 回に検める文字列を 2,000 個までとし、超えた本文を「読めない」として断る**。表題 1 + 見出し 8 + セル 1,500 で必ずその下に収め、断るのはこちらの文 (理由を言える) にする |
+ * | 1 セル {@link MAX_SHEET_CELL_CHARS} | 256 | 売上のメモの入口は 200 文字 (`MAX_SALES_NOTE_CHARS`)。題名と同じ天井 |
+ * | 見出し {@link MAX_SHEET_HEADER_CHARS} | 50 | 1 行の短い名前 |
+ *
+ * **切らずに断る** —— 501 行目以降を黙って落として作ると、利用者は全部を書き出したと思う。
+ */
+export const DRIVE_SHEET_FIELDS = {
+  title: title(true),
+} satisfies Readonly<Record<string, WriteRule>>;
+
+/** 書き出す表の列の天井。 */
+export const MAX_SHEET_COLUMNS = 8;
+/** 書き出す表の行の天井 (見出しを除く)。 */
+export const MAX_SHEET_ROWS = 500;
+/** 文字列のセルの数の天井 (出力インターセプターの 2,000 個の下に収める)。 */
+export const MAX_SHEET_STRING_CELLS = 1500;
+/** 1 セルの文字数の天井。 */
+export const MAX_SHEET_CELL_CHARS = 256;
+/** 見出し 1 つの文字数の天井。 */
+export const MAX_SHEET_HEADER_CHARS = 50;
+
+const sheetHeader: WriteFieldRule = { required: true, max: MAX_SHEET_HEADER_CHARS, multiline: false };
+const sheetCell: WriteFieldRule = { required: false, max: MAX_SHEET_CELL_CHARS, multiline: true };
+
+/**
+ * 書き出す表を検め、断るなら理由の文を返す (`null` = 通す)。
+ *
+ * - `columns`: 1〜{@link MAX_SHEET_COLUMNS} 個の、空でない 1 行の文字列
+ * - `rows`: 配列で {@link MAX_SHEET_ROWS} 行まで。1 行は**列と同じ数**のセルの配列
+ * - セル: 文字列 (改行可・{@link MAX_SHEET_CELL_CHARS} 文字まで)・有限の数・`null` (空のセル) のどれか
+ * - 文字列のセルは合わせて {@link MAX_SHEET_STRING_CELLS} 個まで
+ *
+ * 数でも文字列でもない値 (物・真偽値・`NaN`) は**断る** —— 文字列へ直して送ると、利用者が
+ * 入れた物と違う物 (`[object Object]` / `NaN`) が相手の表に残る。
+ */
+export function checkSheetTable(columns: unknown, rows: unknown): string | null {
+  if (!Array.isArray(columns) || columns.length === 0) return 'columns は 1 つ以上の見出しの配列で指定してください';
+  if (columns.length > MAX_SHEET_COLUMNS) return `columns は ${MAX_SHEET_COLUMNS} 列以内で指定してください`;
+  for (const [i, c] of columns.entries()) {
+    const bad = checkWriteField(c, sheetHeader);
+    if (bad !== null) return describeWriteFieldFailure({ field: `columns[${i}]`, problem: bad, rule: sheetHeader });
+  }
+  if (!Array.isArray(rows)) return 'rows は行の配列で指定してください';
+  if (rows.length > MAX_SHEET_ROWS) return `rows は ${MAX_SHEET_ROWS} 行以内で指定してください (いま ${rows.length} 行)`;
+  let strings = 0;
+  for (const [r, row] of rows.entries()) {
+    if (!Array.isArray(row)) return `rows[${r}] はセルの配列で指定してください`;
+    if (row.length !== columns.length) return `rows[${r}] のセルの数が見出しの数 (${columns.length}) と違います`;
+    for (const [c, cell] of row.entries()) {
+      const at = `rows[${r}][${c}]`;
+      // `Number.isFinite` は数でない値 (文字列を含む) をすべて偽と答える —— 型で先に分けなくてよい。
+      if (cell === null || Number.isFinite(cell)) continue;
+      // `NaN` / `Infinity` も物・真偽値と同じく断る (文字列へ直して送ると、相手の表に `NaN` が残る)。
+      if (typeof cell !== 'string') return `${at} は文字列・有限の数・null のどれかで指定してください`;
+      strings += 1;
+      const bad = checkWriteField(cell, sheetCell);
+      if (bad !== null) return describeWriteFieldFailure({ field: at, problem: bad, rule: sheetCell });
+    }
+  }
+  if (strings > MAX_SHEET_STRING_CELLS) return `文字列のセルは ${MAX_SHEET_STRING_CELLS} 個以内で指定してください (いま ${strings} 個)`;
+  return null;
+}
+
 /** `canva/create-folder` の欄。 */
 export const CANVA_FOLDER_FIELDS = {
   name: title(true),

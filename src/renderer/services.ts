@@ -76,6 +76,7 @@ import { GrokPage } from './pages/GrokPage';
 import { HydroponicsPage } from './pages/HydroponicsPage';
 import { VrioPage } from './pages/VrioPage';
 import { WatchPage } from './pages/WatchPage';
+import { GoogleAnalyticsPage } from './pages/GoogleAnalyticsPage';
 // SCAFFOLD:ADD_PAGE_IMPORT_ABOVE
 import type { ComponentType } from 'react';
 import type { ServiceId } from '../shared/serviceId';
@@ -825,6 +826,15 @@ export const SERVICES: ServiceDefinition[] = [
     description: 'メール・予定・スラック (Slack)・エックス (X)・グーグル広告 (Google Ads)・アナリティクス (Google Analytics) の内容から、平日の要約・返信の下書き・週次レポートを作る (貼り付けと手入力・送信はしない)',
     page: WatchPage,
     category: 'tools',
+  },
+  {
+    id: 'google-analytics',
+    label: 'グーグルアナリティクス',
+    english: 'Google Analytics',
+    icon: '析',
+    description: '訪問者数とどこから来たか (読み取りだけ)',
+    page: GoogleAnalyticsPage,
+    category: 'integrations',
   },
   // SCAFFOLD:ADD_SERVICE_ENTRY_ABOVE
 ];

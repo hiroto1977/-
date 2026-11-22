@@ -78,6 +78,7 @@ import { fetchMentorSnapshot } from './mentor';
 import { fetchGrokSnapshot } from './grok';
 import { fetchVrioSnapshot } from './vrio';
 import { fetchWatchSnapshot } from './watch';
+import { fetchGoogleAnalyticsSnapshot, ACTIONS as GOOGLEANALYTICS_ACTIONS } from './google-analytics';
 // SCAFFOLD:ADD_FETCHER_IMPORT_ABOVE
 import type { ActionMap, FetchContext } from './types';
 import { SERVICE_IDS, type ServiceId } from '../../shared/serviceId';
@@ -165,6 +166,7 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   grok: fetchGrokSnapshot,
   vrio: fetchVrioSnapshot,
   watch: fetchWatchSnapshot,
+  'google-analytics': fetchGoogleAnalyticsSnapshot,
   // SCAFFOLD:ADD_FETCHER_ENTRY_ABOVE
 };
 
@@ -378,6 +380,7 @@ export const LIVE_ACTIONS: Partial<Record<ServiceId, ActionMap>> = {
   docstudio: DOCSTUDIO_ACTIONS,
   cursor: CURSOR_ACTIONS,
   talent: TALENT_ACTIONS,
+  'google-analytics': GOOGLEANALYTICS_ACTIONS,
   // SCAFFOLD:ADD_ACTIONS_ENTRY_ABOVE
 };
 

@@ -54,7 +54,7 @@ interface Row {
 }
 
 /**
- * ブラウザ版から**実際に第三者のサーバへ送る** 15 の道 (2026-09-25 実測)。
+ * ブラウザ版から**実際に第三者のサーバへ送る** 16 の道 (2026-11-22 に `drive/export-sheet` を足した) (2026-09-25 実測)。
  *
  * `readCapped` は writer ではなく本文の読み手なので母集団の外 (走査も呼び手で判定する)。
  */
@@ -66,6 +66,7 @@ const LEDGER: readonly Row[] = [
   { writer: 'createCalendarEvent', service: 'calendar', action: 'create-event', screen: 'src/renderer/pages/CalendarPage.tsx' },
   { writer: 'createGmailDraft', service: 'gmail', action: 'create-draft', screen: 'src/renderer/pages/GmailPage.tsx' },
   { writer: 'createDriveFolder', service: 'drive', action: 'create-folder', screen: 'src/renderer/pages/DrivePage.tsx' },
+  { writer: 'exportGoogleSheet', service: 'drive', action: 'export-sheet', screen: 'src/renderer/pages/SalesPage.tsx' },
   { writer: 'createWordPressPostDraft', service: 'wordpress', action: 'create-post-draft', screen: 'src/renderer/pages/WordPressPage.tsx' },
   { writer: 'createCanvaFolder', service: 'canva', action: 'create-folder', screen: 'src/renderer/pages/CanvaPage.tsx' },
   { writer: 'createCloudflareDnsRecord', service: 'cloudflare', action: 'create-dns-record', screen: 'src/renderer/pages/CloudflarePage.tsx' },
@@ -162,7 +163,12 @@ describe('ブラウザ版が実際に送る action の母集団 (パス 457)', (
 
   it('★ GOOGLE_BROWSER_SEND は web-shim.ts の振り分けと一致する (両方向)', () => {
     const shim = stripComments(read('src/renderer/web-shim.ts'));
-    const googleRows = LEDGER.filter((r) => Object.hasOwn(GOOGLE_BROWSER_SEND, r.service));
+    // 表が言うのは「Google の接続カードを載せた画面が、その画面で送る物」。`drive/export-sheet` は
+    // 売上集計の画面から送り、カードを載せないので表の外 (送る前の断りは売上集計の画面が自分で言う ——
+    // `pages/__tests__/thirdPartyEgressDisclosed.test.ts`)。
+    const googleRows = LEDGER.filter(
+      (r) => Object.hasOwn(GOOGLE_BROWSER_SEND, r.service) && read(r.screen).includes('<GoogleConnectCard'),
+    );
     expect(googleRows.map((r) => r.service).sort()).toEqual(Object.keys(GOOGLE_BROWSER_SEND).sort());
     for (const r of googleRows) {
       const id = r.service as GoogleServiceId;
