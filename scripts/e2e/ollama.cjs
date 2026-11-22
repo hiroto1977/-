@@ -10,9 +10,13 @@
  *   1. 未起動          → 起動手順が出る
  *   2. 起動 + CORS 未許可 → 「起動は検出、あとは OLLAMA_ORIGINS」と出る
  *   3. 起動 + CORS 許可   → 実モデル一覧とバージョンが出て、案内は消える
- *   3b. チャット送信      → ブラウザから /api/chat へ実 HTTP で往復し応答が出る
- *      (画面に入力欄があるだけでは「使える」ことにならないので、ここまで見る。
- *       POST + JSON は CORS プリフライトを起こすため、スタブも OPTIONS に応答する)
+ *   3b. チャット送信      → ブラウザからこの端末の中継役 (LiteLLM · 127.0.0.1:4000) へ
+ *      実 HTTP で往復し、応答が出る (画面に入力欄があるだけでは「使える」ことにならない)。
+ *      ★ 2026-11 にこの画面のチャットは `ollama/chat` (Ollama の /api/chat を直接) から
+ *      `assistant/chat` (用途 assistant → 中継役 → 届かなければ Anthropic) へ移った。
+ *      その移行を留める検査は src/ に在り、この harness だけが古い道 (/api/chat) を待って
+ *      ❌ を出していた (2026-11-22 · 実測)。中継役の代役を立て、アプリの橋で接続先を保存して通す。
+ *      POST + JSON は CORS プリフライトを起こすので、代役も OPTIONS に応答する
  *
  * 2 と 1 を取り違えると「壊れている」と誤解されるため、切り分けが効いていることを
  * ここで固定する (単体テストは src/renderer/network/__tests__/ollamaWeb.test.ts)。
@@ -85,6 +89,33 @@ function ollamaStub(withCors){
         const last=(p.messages||[]).slice(-1)[0]||{};
         res.writeHead(200,{...h,'content-type':'application/json'});
         res.end(JSON.stringify({message:{role:'assistant',content:`STUB_REPLY:${last.content||''}`},total_duration:1234567}));
+      });
+      return;
+    }
+    res.writeHead(404,h);res.end('nf');
+  });
+}
+// この端末の中継役 (LiteLLM) の代役。OpenAI 互換の /v1/chat/completions だけを持つ。
+// 受けた要求を控え、どのモデル名 (用途の別名) で来たかを検査が読む。
+const GATEWAY_PORT=4000;
+const gatewayRequests=[];
+function gatewayStub(){
+  return http.createServer((req,res)=>{
+    const h={
+      'access-control-allow-origin':'*',
+      'access-control-allow-methods':'POST,OPTIONS',
+      'access-control-allow-headers':'content-type,authorization',
+    };
+    if(req.method==='OPTIONS'){res.writeHead(204,h);res.end();return;}
+    if(req.url==='/v1/chat/completions'&&req.method==='POST'){
+      let body='';req.on('data',c=>{body+=c;});
+      req.on('end',()=>{
+        let p;
+        try{p=JSON.parse(body||'{}');}catch{p={};}
+        gatewayRequests.push(p);
+        const last=(p.messages||[]).filter(m=>m.role==='user').slice(-1)[0]||{};
+        res.writeHead(200,{...h,'content-type':'application/json'});
+        res.end(JSON.stringify({choices:[{message:{role:'assistant',content:`STUB_REPLY:${last.content||''}`}}]}));
       });
       return;
     }
@@ -185,20 +216,29 @@ async function unlockAndOpenOllama(page){
 
     // --- ケース3b: 実際にチャットを送って応答が返る ---
     // 画面にチャット欄があるだけでは「使える」ことにならない。ブラウザから
-    // 実 HTTP (プリフライト含む) で /api/chat まで往復することをここで固定する。
+    // 実 HTTP (プリフライト含む) で、この端末の中継役まで往復することをここで固定する。
+    // 接続先はアシスタントの「エージェント設定」が保存するのと同じ形で、アプリの橋から入れる。
+    const gateway=gatewayStub();
+    await new Promise(r=>gateway.listen(GATEWAY_PORT,'127.0.0.1',r));
     try{
+      const saved=await page.evaluate(()=>window.serviceHub.setToken('assistant',JSON.stringify({compatUrl:'http://127.0.0.1:4000/v1'})));
+      if(!saved||!saved.ok) throw new Error('接続先を保存できませんでした: '+JSON.stringify(saved));
       await page.getByRole('button',{name:'送信'}).first().click();
       const card=page.locator('.card').filter({has:page.locator('textarea')}).first();
       await card.locator('textarea').waitFor({timeout:15000});
       await card.locator('select').selectOption('llama3.2:latest');
       await card.locator('textarea').fill('E2Eテスト');
       await card.locator('button.primary').click();
-      await page.waitForTimeout(3000);
-      const after=await page.evaluate(()=>document.body.innerText);
-      const replied=/STUB_REPLY:E2Eテスト/.test(after);
-      console.log(`${replied?'✅':'❌'} チャット送信: ブラウザから /api/chat へ往復して応答を表示`);
-      if(!replied){fail++;console.log('   body抜粋:',after.replace(/\s+/g,' ').slice(0,400));}
+      // 応答が出るのを待つ (固定の時間ではなく、出るか 15 秒で諦めるか)。
+      const replied=await page.waitForFunction(()=>/STUB_REPLY:E2Eテスト/.test(document.body.innerText),null,{timeout:15000}).then(()=>true,()=>false);
+      // 用途 assistant の別名はコードから読む (写さない)。
+      const alias=/assistant: '([^']+)'/.exec(fs.readFileSync(path.join(__dirname,'..','..','src','shared','ai','localGateway.ts'),'utf8'))[1];
+      const viaGateway=gatewayRequests.length===1 && gatewayRequests[0].model===alias;
+      const ok=replied&&viaGateway;
+      console.log(`${ok?'✅':'❌'} チャット送信: ブラウザからこの端末の中継役へ往復して応答を表示 (応答=${replied} 中継役へ用途の別名で 1 回=${viaGateway})`);
+      if(!ok){fail++;const after=await page.evaluate(()=>document.body.innerText);console.log('   body抜粋:',after.replace(/\s+/g,' ').slice(0,400),'\n   中継役が受けた要求:',JSON.stringify(gatewayRequests).slice(0,300));}
     }catch(e){fail++;console.log('❌ チャット送信: 例外',e.message);}
+    await new Promise(r=>gateway.close(r));
     await ctx.close();
   }
   await new Promise(r=>withCors.close(r));
