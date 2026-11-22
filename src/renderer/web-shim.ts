@@ -206,6 +206,7 @@ import {
   createCalendarEvent,
   createGmailDraft,
   createDriveFolder,
+  exportGoogleSheet,
   createWordPressPostDraft,
   createCanvaFolder,
   createMicrosoftEvent,
@@ -1943,6 +1944,9 @@ const unguarded = {
     }
     if (serviceId === 'drive' && action === 'create-folder') {
       return (await runProxyBearer('drive', (t, tok) => createDriveFolder(payload, tok, t))) as ActionResult<T>;
+    }
+    if (serviceId === 'drive' && action === 'export-sheet') {
+      return (await runProxyBearer('drive', (t, tok) => exportGoogleSheet(payload, tok, t))) as ActionResult<T>;
     }
     if (serviceId === 'wordpress' && action === 'create-post-draft') {
       return (await runProxyBearer('wordpress', (t, tok) => createWordPressPostDraft(payload, tok, t))) as ActionResult<T>;

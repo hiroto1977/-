@@ -112,6 +112,7 @@ export interface ActionDataMap {
   'demae-can/record-entry': RecordEntryResult<'demae-can'>;
   'docstudio/list-collections': readonly DocstudioCollection[];
   'drive/create-folder': { id: string; name: string; url: string };
+  'drive/export-sheet': { id: string; title: string; url: string };
   'emotions/analyze-text': AnalysisEntryShape;
   'emotions/clear-history': { moods: number; analyses: number };
   'emotions/log-mood': { date: string; score: number };

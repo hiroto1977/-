@@ -1,7 +1,19 @@
 import { jsonFetch, type ActionContext, type ActionMap, type FetchContext } from './types';
 import { displayDateOf } from '../../shared/isoDate';
 import { displayField, objectRows } from '../../shared/apiResponse';
-import { DRIVE_CREATE_FOLDER_PATH, GOOGLE_DRIVE_API, checkDriveFolder, driveFolderInit, parseCreatedDriveFolder } from '../../shared/api/google';
+import {
+  DRIVE_CREATE_FOLDER_PATH,
+  GOOGLE_DRIVE_API,
+  GOOGLE_SHEETS_API,
+  SHEETS_CREATE_PATH,
+  checkDriveFolder,
+  checkSheetExport,
+  driveFolderInit,
+  parseCreatedDriveFolder,
+  parseCreatedSheet,
+  sheetExportInit,
+  type SheetCell,
+} from '../../shared/api/google';
 import type { ActionData } from '../../shared/actionData';
 
 interface DriveFile {
@@ -81,6 +93,31 @@ async function createFolder(
   return parseCreatedDriveFolder(res);
 }
 
+/**
+ * `export-sheet` の payload の宣言。売上集計の画面が売上の記録を表にして渡す。
+ * 欄の判定は shared の `checkSheetExport` (表題は `DRIVE_SHEET_FIELDS`・表は `checkSheetTable`)。
+ */
+export interface ExportSheetPayload {
+  title: string;
+  columns: string[];
+  rows: SheetCell[][];
+}
+
+async function exportSheet(
+  ctx: ActionContext,
+): Promise<ActionData<'drive/export-sheet'>> {
+  // 欄の判定・URL・要求・応答の読みは shared/api/google.ts の 1 つ (ブラウザ版も同じ関数 · 2026-11-22)。
+  // Drive の OAuth スコープ (`auth/drive`) がスプレッドシートの作成も覆うので、資格情報は drive の物を使う。
+  const sheet = checkSheetExport(ctx.payload);
+  const res = await jsonFetch<Record<string, unknown>>(
+    `${GOOGLE_SHEETS_API}${SHEETS_CREATE_PATH}`,
+    sheetExportInit(sheet, ctx.token),
+    { fetch: ctx.fetch, serviceId: 'drive' },
+  );
+  return parseCreatedSheet(res);
+}
+
 export const ACTIONS: ActionMap = {
   'create-folder': createFolder,
+  'export-sheet': exportSheet,
 };

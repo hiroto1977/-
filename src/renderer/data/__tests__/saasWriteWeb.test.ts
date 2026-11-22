@@ -8,6 +8,7 @@ import {
   createCalendarEvent,
   createGmailDraft,
   createDriveFolder,
+  exportGoogleSheet,
   createWordPressPostDraft,
   createCanvaFolder,
   createCloudflareDnsRecord,
@@ -650,6 +651,28 @@ describe('createDriveFolder', () => {
   });
 });
 
+describe('exportGoogleSheet (2026-11-22)', () => {
+  it('POSTs to sheets.googleapis.com and returns the docs.google.com link', async () => {
+    const transport = vi.fn().mockResolvedValue(
+      jsonResponse(200, { spreadsheetId: 's1', spreadsheetUrl: 'https://docs.google.com/spreadsheets/d/s1/edit', properties: { title: '売上' } }),
+    );
+    const res = await exportGoogleSheet({ title: ' 売上 ', columns: ['日付', 'メモ'], rows: [['2026-11-01', '=1+1']] }, 'tok', transport);
+    expect(res).toEqual({ id: 's1', title: '売上', url: 'https://docs.google.com/spreadsheets/d/s1/edit' });
+    const [url, init] = transport.mock.calls[0]!;
+    expect(url).toBe('https://sheets.googleapis.com/v4/spreadsheets?fields=spreadsheetId,spreadsheetUrl,properties.title');
+    expect(init.method).toBe('POST');
+    expect(headersOf(init)).toEqual({ Authorization: 'Bearer tok', 'Content-Type': 'application/json' });
+    expect(JSON.stringify(bodyOf(init))).not.toContain('formulaValue');
+  });
+  it('refuses a broken table before sending and surfaces API errors', async () => {
+    const transport = vi.fn();
+    await expect(exportGoogleSheet({ title: 'T', columns: ['a'], rows: [[{}]] }, 'tok', transport)).rejects.toThrow(/rows\[0\]\[0\]/);
+    expect(transport).not.toHaveBeenCalled();
+    transport.mockResolvedValue(jsonResponse(403, {}));
+    await expect(exportGoogleSheet({ title: 'T', columns: ['a'], rows: [] }, 'tok', transport)).rejects.toThrow(/Sheets API 403/);
+  });
+});
+
 describe('createWordPressPostDraft', () => {
   it('POSTs the exact endpoint/headers/body, defaults to draft', async () => {
     const transport = vi.fn().mockResolvedValue(jsonResponse(200, { ID: 9, URL: 'u', title: 'T' }));
@@ -1168,6 +1191,7 @@ describe('★ 壊れた 200 の応答を成功として返さない (パス 261)
     ],
     ['createGmailDraft', (t) => createGmailDraft({ to: 'a@b.co', subject: 'S', body: 'B' }, 'tok', t)],
     ['createDriveFolder', (t) => createDriveFolder({ name: 'N' }, 'tok', t)],
+    ['exportGoogleSheet', (t) => exportGoogleSheet({ title: 'T', columns: ['a'], rows: [[1]] }, 'tok', t)],
     [
       'createWordPressPostDraft',
       (t) => createWordPressPostDraft({ siteId: 'x.wordpress.com', title: 'T', content: 'C' }, 'tok', t),
@@ -1337,6 +1361,7 @@ describe('★ 応答が読めない・失敗したときの断りは、相手の
     ],
     ['createGmailDraft', 'Gmail API', (t) => createGmailDraft({ to: 'a@b.co', subject: 'S', body: 'B' }, 'tok', t)],
     ['createDriveFolder', 'Google Drive API', (t) => createDriveFolder({ name: 'N' }, 'tok', t)],
+    ['exportGoogleSheet', 'Google Sheets API', (t) => exportGoogleSheet({ title: 'T', columns: ['a'], rows: [[1]] }, 'tok', t)],
     [
       'createWordPressPostDraft',
       'WordPress.com API',

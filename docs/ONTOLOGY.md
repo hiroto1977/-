@@ -74,7 +74,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `discord` | integrations | remote | fetch |  |  |  | — | — | — |
 | `docker` | tools | local | none | ✅ |  |  | — | — | — |
 | `docstudio` | featured | local | none | ✅ |  |  | `list-collections` | — | `list-collections` |
-| `drive` | integrations | remote | fetch |  | ✅ |  | `create-folder` | `create-folder` | — |
+| `drive` | integrations | remote | fetch |  | ✅ |  | `create-folder` `export-sheet` | `create-folder` `export-sheet` | — |
 | `dropbox` | integrations | remote | fetch |  |  |  | — | — | — |
 | `emotions` | tools | local | action | ✅ |  |  | `analyze-text` `clear-history` `log-mood` | `analyze-text` `clear-history` `log-mood` | — |
 | `freee` | integrations | remote | fetch |  | ✅ |  | — | — | — |

@@ -4524,6 +4524,14 @@
       "leafCount": 225,
       "note": "update integrity-chain.cjs,mamori-capabilities.json,liveRead.mamori,liveRead.ts",
       "hash": "d353002756ab4c8e6c16c2c0546642818d5f4d03197a0503c7f4eecb42b746bb"
+    },
+    {
+      "index": 537,
+      "prevHash": "d353002756ab4c8e6c16c2c0546642818d5f4d03197a0503c7f4eecb42b746bb",
+      "merkleRoot": "9d46f42dbab12d5388930e25beca74f7c7f533f78a35abd9c824688b892c950e",
+      "leafCount": 225,
+      "note": "update PROXY_EXAMPLE.md,actionTier.mamori,actionTier.ts,writeFieldLimits.ts",
+      "hash": "e406e10ba81751c48d77b278a3535f4561c2d8965a0938ead9834252a6e70c32"
     }
   ],
   "tipManifest": {
@@ -4549,7 +4557,7 @@
     "assets/manifest.webmanifest": "4d8ba3d15d9b96430047cd506dd3451d7de1fbe53557cb91de648921a686a612",
     "assets/og.png": "1fcc1b3974eec00de79ab6d37272f39529905a3448017dc24ee0f03e979b7282",
     "assets/sw.js": "0320f925b8da1242c0aa3783e332a8abb87323331767aeebcab7dab309f6189d",
-    "docs/PROXY_EXAMPLE.md": "c2f4987d6e53a3cbfae921dcc33582522abb4c587b519795296e3b3dc4edd06b",
+    "docs/PROXY_EXAMPLE.md": "f7f5e11d52a9c7c08f30279e3bbafa21f827f23f0be5ab00fd2afc4431e691be",
     "docs/SECURITY_CHAIN.md": "e6f2886fbab792b4c4ec27ee8849a8642d1b28576c05e3ca627f2daea05cda29",
     "electron-builder.json": "087285ed5b1adf1d1a99c5c47b00bdab70338cacff2687988fb3316787af1917",
     "eslint.config.js": "4996638a13e6755c59dc9d38c193b985add84a0bf3c5039a299533b84cdd1e1f",
@@ -4675,8 +4683,8 @@
     "src/renderer/security/webauthnHost.ts": "2b0551725058a6b28c83d670f245807627cced0912192ba069ac80fdcabdf26a",
     "src/renderer/vettedSinks.mamori": "a7c70e8bf41114af58db79417c568db1b86188d6150f24c0ebc4ddc63ddb69c0",
     "src/renderer/vettedSinks.ts": "2baf1e62dd999ee86db87918fd5ff719d06b7e64c5214e4c91508e8aaef7ee7b",
-    "src/shared/actionTier.mamori": "11f45e6362b62913d8b8cca2525add9840b53575a7895242f1fb285c76b279f7",
-    "src/shared/actionTier.ts": "4d4969d745496697158e55030f9d56d137cb44747c6706d99e48258c2fa60fde",
+    "src/shared/actionTier.mamori": "14c57cc74abd3d10c12a79b805cb19e3bb8df6f960080a562f887089edabe04d",
+    "src/shared/actionTier.ts": "6c2941b83ed584dbd5aa621c83e67eb97b25d2d62d8a971b906ef132787938fe",
     "src/shared/advisorQuestionLimits.ts": "b1ade2abbfc367eb188ef16ba8e0c5b6327fe696e95cab2944df9f36de84b755",
     "src/shared/ai/chat.ts": "45dffbd7d58af2256be92f58f9798df8872bfd7ef0ba7856765983b2bcc7778e",
     "src/shared/ai/credentials.ts": "1ee0701e99942049b4d9570bacb2937be4b8ae7db9cc2b781c96596a726e6368",
@@ -4741,7 +4749,7 @@
     "src/shared/versionOrder.ts": "2a70283bc54f74023e9e4a6f002d2678440d9cfcffeb5ac60fc047ee8b604d37",
     "src/shared/vetted.mamori": "508da455004485581a8d5de5eb00ac218038eb91407721927c46a43a20c983fc",
     "src/shared/vetted.ts": "bcd3559513bda46db5cefebf0bd58fa72cd2fc44e345dcf8824cb2ef89044919",
-    "src/shared/writeFieldLimits.ts": "321322d9817665544a8dac005c1ed9812d8305c110a0fbe7e331675b5a35c066",
+    "src/shared/writeFieldLimits.ts": "50380933d1ac02fe85abcf8256001ba837116b87b7e8a474fc853532ec756478",
     "tools/mamori-verify/BUILD.json": "2285ed3e73dd7b7b3efa0ca13a59a069099790231440af8f5fc0c09d0281bcdf",
     "tools/mamori-verify/Cargo.lock": "f411490133e7966ba7bf182b6a9e8ad2ee55145a8cf4327ea9888fe7031b5fd6",
     "tools/mamori-verify/Cargo.toml": "4a4692e0d9a46fde13003c4abccb15e45b51f28b48cc6a12d0242de9d6eb097a",

@@ -79,6 +79,7 @@ const LEDGER: readonly Row[] = [
   { key: 'calendar/create-event', rendered: 'src/shared/buildDestinations.ts', via: 'own', why: 'パス 457 の `googleLiveScopeNote` が取得と送信を言い分けたうえで前提を述べる (Drive / Calendar / Gmail の 3 画面が共有するカード)' },
   { key: 'gmail/create-draft', rendered: 'src/shared/buildDestinations.ts', via: 'own', why: '同じカード (`googleLiveScopeNote`)' },
   { key: 'drive/create-folder', rendered: 'src/shared/buildDestinations.ts', via: 'own', why: '同じカード (`googleLiveScopeNote`)' },
+  { key: 'drive/export-sheet', rendered: 'src/renderer/pages/SalesPage.tsx', via: 'shared', why: '売上集計の画面の書き出しの節の先頭。Google の接続カードを載せない画面なので、共有の部品で前提を言う' },
   { key: 'microsoft-365/send-mail', rendered: 'src/renderer/pages/Microsoft365Page.tsx', via: 'own', why: '2026-08 から「メール送信と予定作成はブラウザ版でも動きます —— プロキシ設定が要ります（設定ページ）」と述べる。直す向きをアプリ自身が持っていた当の文' },
   { key: 'microsoft-365/create-event', rendered: 'src/renderer/pages/Microsoft365Page.tsx', via: 'own', why: '同じ 1 文が両方の action を覆う' },
 ];

@@ -81,6 +81,7 @@ const WEB_TWINS: Readonly<Record<string, Twin>> = {
   'demae-can/advise': { file: WEB_SHIM, inline: true },
   'demae-can/record-entry': { file: WEB_SHIM, inline: true },
   'drive/create-folder': { file: 'renderer/data/saasWriteWeb.ts', fn: 'createDriveFolder' },
+  'drive/export-sheet': { file: 'renderer/data/saasWriteWeb.ts', fn: 'exportGoogleSheet' },
   'emotions/analyze-text': { file: WEB_SHIM, fn: 'callEmotionsAnalyze' },
   'emotions/clear-history': { file: 'renderer/data/emotionsWeb.ts', fn: 'clearHistory' },
   'emotions/log-mood': { file: 'renderer/data/emotionsWeb.ts', fn: 'logMood' },

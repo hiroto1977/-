@@ -41,7 +41,7 @@ const PAGES = path.resolve(__dirname, '..');
  * 組み立ては `shared/api/security.ts` に在り、`main/clients/security.ts` は
  * `HIBP_API` / `VIRUSTOTAL_API` を import して使う (パス 321 で寄せた)。
  */
-const PII_EGRESS_MARKS: readonly RegExp[] = [/\bHIBP_API\b/, /\bVIRUSTOTAL_API\b/];
+const PII_EGRESS_MARKS: readonly RegExp[] = [/\bHIBP_API\b/, /\bVIRUSTOTAL_API\b/, /\bGOOGLE_SHEETS_API\b/];
 
 /** 「送る」と言っている綴り。どれか 1 つが受け手の名前の近くに在ること。 */
 const SENDS = /送信され|送信します|送られ|送ります/;
@@ -64,6 +64,12 @@ const LEDGER: Readonly<Record<string, Row>> = {
     recipient: 'Have I Been Pwned',
     sends: '利用者が入力したメールアドレス',
     control: 'placeholder="your@example.com"',
+  },
+  // 2026-11-22: 売上の記録 (事業の数字とメモ) を Google のスプレッドシートとして書き出す。
+  'drive/export-sheet': {
+    recipient: 'Google',
+    sends: '利用者の売上の記録 (日付・販売先・金額・注文の数・メモ)',
+    control: 'data-sheet-export-button',
   },
   'security/scan-url': {
     recipient: 'VirusTotal',

@@ -243,6 +243,8 @@ const LEDGER: readonly Row[] = [
   },
   { name: 'チーム管理', kind: 'screen-label', why: '専属カウンセラーの画面が、メンバーが 1 人も居ないときに登録の場所として名指しする画面の名前 (パス 551)。`SERVICES` のラベル (team) と突き合わせる。' },
   { name: '売上集計', kind: 'screen-label', why: '同じく画面の名前で、同じ検査が `SERVICES` と突き合わせる。' },
+  { name: 'グーグルドライブ', kind: 'screen-label', why: '売上集計の画面が、Google にまだ接続していないときにスプレッドシートへの書き出しの前に接続する場所として名指しする画面の名前 (2026-11-22)。`SERVICES` のラベル (drive) と突き合わせる。' },
+  { name: 'スプレッドシートに書き出す', kind: 'same-screen-control', renderedIn: 'src/renderer/pages/SalesPage.tsx', why: '売上集計の画面の書き出しの断りが、押す前に何が起きるかを言うために名指しする。同じ節のボタン (2026-11-22)。' },
   { name: '専属カウンセラー', kind: 'screen-label', why: '画面の名前 (2026-10-29 · パス 555)。「ひとりひとりの負担」の表 (`WorkloadShareTable`) が、まだ誰の記録も無いときにチェックインと同意の場所として名指しする。`SERVICES` のラベル (mentor) と突き合わせる。' },
   {
     name: 'ライブラリ',
