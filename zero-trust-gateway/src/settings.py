@@ -34,6 +34,11 @@ class Settings:
     issuance_halt_file: Path | None = None
     firewall_execute: bool = False
     attestation_mode: AttestationMode = "off"
+    # 第 2 層 (端末の健康の証明)。信頼する発行元 (守りのソフトの管理サービス) の公開鍵と、隔離の控え。
+    device_health_issuers_file: Path | None = None
+    quarantine_file: Path | None = None
+    health_max_signature_age_hours: int = 72
+    health_max_patch_age_days: int = 45
     # 第 3 層 (WebAuthn)。rp_id と webauthn_origin は、空なら PUBLIC_BASE_URL から決める。
     rp_id: str = ""
     webauthn_origin: str = ""
@@ -65,6 +70,10 @@ class Settings:
             raise SettingsError("RISK_STEP_UP < RISK_FREEZE (どちらも 0 より大きく 1 以下)")
         if self.attestation_mode not in ("off", "report", "enforce"):
             raise SettingsError("ATTESTATION_MODE は off / report / enforce")
+        if not 1 <= self.health_max_signature_age_hours <= 24 * 30:
+            raise SettingsError("HEALTH_MAX_SIGNATURE_AGE_HOURS は 1〜720")
+        if not 1 <= self.health_max_patch_age_days <= 365:
+            raise SettingsError("HEALTH_MAX_PATCH_AGE_DAYS は 1〜365")
 
     @property
     def issuer(self) -> str:
@@ -133,4 +142,8 @@ def load_settings(env: Mapping[str, str]) -> Settings:
         attestation_roots_file=_path(env, "ATTESTATION_ROOTS_FILE"),
         credentials_file=_path(env, "CREDENTIALS_FILE"),
         enrollment_file=_path(env, "ENROLLMENT_FILE"),
+        device_health_issuers_file=_path(env, "DEVICE_HEALTH_ISSUERS_FILE"),
+        quarantine_file=_path(env, "QUARANTINE_FILE"),
+        health_max_signature_age_hours=int(_number(env, "HEALTH_MAX_SIGNATURE_AGE_HOURS", 72, int)),
+        health_max_patch_age_days=int(_number(env, "HEALTH_MAX_PATCH_AGE_DAYS", 45, int)),
     )

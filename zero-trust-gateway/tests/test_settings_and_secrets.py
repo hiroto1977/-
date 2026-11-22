@@ -76,6 +76,8 @@ ENV_DEFAULTS_ALLOWED = {
     "BLOCK_TIMEOUT_HOURS": "24",
     "BLOCK_RATE_LIMIT_PER_MIN": "20",
     "FIREWALL_EXECUTE": "false",
+    "HEALTH_MAX_SIGNATURE_AGE_HOURS": "72",
+    "HEALTH_MAX_PATCH_AGE_DAYS": "45",
 }
 PEM = re.compile("-----" + "BEGIN [A-Z ]*PRIVATE KEY")
 JWS = re.compile(r"eyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}")
