@@ -132,9 +132,12 @@ describe('dataOrigin ⇄ fetcher の一致 (外側の証人)', () => {
     // 「毎回組み立てる土台」へ変わり、inert は残る sample 22 件とちょうど一致する。
     // バッチ 3 で grok・不動産・投資信託が fresh へ、dropbox が network へ移り、
     // inert 18 / fresh 39 / network 22 (計 79) になる。
+    // バッチ 4 (Phase 6) で storage・obsidian・docker が fresh へ移り、inert は
+    // 残る sample 14 件と一致する (総数 80、watch 追加後)。床は inert の実測に
+    // 合わせて 12 へ (崩壊検出が目的なので実測より少し下に置く)。
     // electron の mock 変更などで**全部が network に倒れる**と上の 2 本は
     // 空配列を比べるだけの空の検査になるので、各バケツに床を置く。
-    expect(n('inert')).toBeGreaterThanOrEqual(15);
+    expect(n('inert')).toBeGreaterThanOrEqual(12);
     expect(n('fresh')).toBeGreaterThanOrEqual(10);
     expect(n('network')).toBeGreaterThanOrEqual(10);
     expect(n('inert') + n('fresh') + n('network')).toBe(SERVICE_IDS.length);

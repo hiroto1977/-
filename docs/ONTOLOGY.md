@@ -72,7 +72,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `cursor` | integrations | remote | fetch |  |  |  | — | — | — |
 | `demae-can` | consumed | sample | none | ✅ |  |  | `advise` `record-entry` | `advise` `record-entry` | — |
 | `discord` | integrations | remote | fetch |  |  |  | — | — | — |
-| `docker` | tools | sample | none | ✅ |  |  | — | — | — |
+| `docker` | tools | local | none | ✅ |  |  | — | — | — |
 | `docstudio` | featured | local | none | ✅ |  |  | `list-collections` | — | `list-collections` |
 | `drive` | integrations | remote | fetch |  | ✅ |  | `create-folder` | `create-folder` | — |
 | `dropbox` | integrations | remote | fetch |  |  |  | — | — | — |
@@ -98,7 +98,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `mutual-funds` | tools | local | none | ✅ |  |  | `advise` `record-entry` | `advise` `record-entry` | — |
 | `netsea` | integrations | sample | none | ✅ |  |  | — | — | — |
 | `notion` | integrations | remote | fetch |  | ✅ |  | `create-page` | `create-page` | — |
-| `obsidian` | tools | sample | none | ✅ |  |  | — | — | — |
+| `obsidian` | tools | local | none | ✅ |  |  | — | — | — |
 | `ollama` | tools | local | none | ✅ |  |  | `chat` | `chat` | — |
 | `overview` | featured | local | none | ✅ |  |  | — | — | — |
 | `patent-attorney` | professionals | local | none | ✅ |  | ✅ | — | — | — |
@@ -114,7 +114,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `slack` | integrations | remote | fetch |  | ✅ |  | `send-message` | `send-message` | — |
 | `sme-consultant` | professionals | local | none | ✅ |  | ✅ | — | — | — |
 | `stocks` | tools | local | action | ✅ |  |  | `advise` `backtest` `compare-strategies` `export-dashboard` `export-dashboard-md` `register-ticker` `unregister-ticker` | `advise` `compare-strategies` `export-dashboard` `export-dashboard-md` `register-ticker` `unregister-ticker` | `backtest` |
-| `storage` | tools | sample | none | ✅ |  |  | — | — | — |
+| `storage` | tools | local | none | ✅ |  |  | — | — | — |
 | `stripe` | integrations | remote | fetch |  |  |  | — | — | — |
 | `super-delivery` | integrations | sample | none | ✅ |  |  | — | — | — |
 | `talent` | tools | local | none | ✅ |  |  | `judge-leader` `save-state` | `judge-leader` `save-state` | — |
@@ -135,7 +135,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 集計:
 
 - 配置: おすすめ 12 / 士業連携 8 / 分析・ツール 25 / 外部サービス連携 33 / 消費されるだけ 2
-- 出所: remote 22 / local 41 / sample 17
+- 出所: remote 22 / local 44 / sample 14
 - 資格情報の読み手 — fetch 22 / action 7 / none 51
 - LOCAL_SERVICES 57 / OAuth 10 / action を持つ 27 / デスクトップだけの action 10
 

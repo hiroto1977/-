@@ -11,7 +11,7 @@ import { SERVICE_IDS, isServiceId } from '../../../shared/serviceId';
 const SNAPSHOTS = SNAPSHOT as unknown as Readonly<Record<string, Record<string, unknown>>>;
 
 describe('ブラウザ版の取得が同梱の内容を返すサービス', () => {
-  it('一覧を値ごと留める (7 件)', () => {
+  it('一覧を値ごと留める (10 件)', () => {
     expect([...BROWSER_BUNDLED_FETCH_SERVICES]).toEqual([
       'business',
       'docstudio',
@@ -20,6 +20,9 @@ describe('ブラウザ版の取得が同梱の内容を返すサービス', () =
       'linux',
       'skills',
       'templates',
+      'docker',
+      'obsidian',
+      'storage',
     ]);
     expect(Object.isFrozen(BROWSER_BUNDLED_FETCH_SERVICES)).toBe(true);
   });

@@ -1,6 +1,6 @@
 import { SNAPSHOT } from '../data/snapshot';
 import { Section, StatusBar } from '../components/StatusBar';
-import { Stat } from '../components/Stat';
+import { Stat, UNDETERMINED } from '../components/Stat';
 import { tableStyle, thStyle, thNum, tdStyle, tdNum } from '../components/tableStyles';
 import { useServiceData } from '../hooks/useServiceData';
 import { wrapColumns } from '../components/wrapColumns';
@@ -88,15 +88,30 @@ export function StoragePage() {
         <div style={{ display: 'grid', gridTemplateColumns: wrapColumns(4, 150), gap: 12, marginBottom: 8 }}>
           <Stat
             label="フラグメント率 (HDD)"
-            value={`${performance.fragmentationPct.toFixed(1)}%`}
-            positive={performance.fragmentationPct < 10}
+            value={
+              performance.fragmentationPct === null
+                ? UNDETERMINED
+                : `${performance.fragmentationPct.toFixed(1)}%`
+            }
+            positive={
+              performance.fragmentationPct === null ? undefined : performance.fragmentationPct < 10
+            }
           />
           <Stat
             label="起動時間"
-            value={`${performance.startupSec} 秒`}
-            positive={performance.startupSec <= 25}
+            value={
+              performance.startupSec === null ? UNDETERMINED : `${performance.startupSec} 秒`
+            }
+            positive={performance.startupSec === null ? undefined : performance.startupSec <= 25}
           />
-          <Stat label="実行中プロセス" value={performance.runningProcesses.toLocaleString()} />
+          <Stat
+            label="実行中プロセス"
+            value={
+              performance.runningProcesses === null
+                ? UNDETERMINED
+                : performance.runningProcesses.toLocaleString()
+            }
+          />
           <Stat
             label="メモリ使用率"
             value={`${memoryUsagePct.toFixed(0)}% (${performance.memoryUsedGb.toFixed(1)} / ${performance.memoryTotalGb.toFixed(0)} GB)`}
@@ -131,8 +146,8 @@ export function StoragePage() {
           </tbody>
         </table>
         <div style={{ fontSize: 11, color: 'var(--text-mute)', marginTop: 8, lineHeight: 1.5 }}>
-          ※ 現フェーズでは手動操作ガイドのみ。Phase 6 で Electron main プロセス
-          経由のワンクリック実行に対応予定です。
+          ※ 本サービスは読み取り専用です。クリーンアップの実行は行わず、
+          実測した容量に基づく手動操作ガイドのみを表示します。
         </div>
       </Section>
 
@@ -170,7 +185,7 @@ export function StoragePage() {
         <div style={{ marginTop: 12, padding: 10, background: 'rgba(251, 191, 36, 0.08)', border: '1px solid var(--warning)', borderRadius: 6, fontSize: 11, color: 'var(--warning)', lineHeight: 1.5 }}>
           📚 参考: NEC LAVIE FAQ「ストレージを最適化して PC のパフォーマンスを向上させる」
           (https://faq.nec-lavie.jp/fa/qa/web/knowledge21797.html)。
-          Phase 6 で `os` / `fs` API 経由の実 OS 統計取得に切替予定です。
+          ディスク・フォルダ・メモリは `os` / `fs` API 経由の実測値です（デスクトップ版）。
         </div>
       </Section>
     </div>

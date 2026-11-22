@@ -42,6 +42,7 @@ import type { YoutubeSnapshot } from '../youtube';
 import type { Microsoft365Snapshot } from '../microsoft-365';
 import type { NotionSnapshot } from '../notion';
 import type { StocksSnapshot } from '../stocks';
+import type { StorageSnapshot } from '../storage';
 import type { WordPressSnapshot } from '../wordpress';
 import type { CursorSnapshot } from '../../../shared/api/cursor';
 import { SNAPSHOT } from '../../../renderer/data/snapshot';
@@ -106,6 +107,17 @@ describe('見本の nullable 欄は実物と同じ幅である (型で照合)', 
     expect(true).toBe(true);
   });
 
+  it('第4弾 (Phase 6) で広げた storage の 3 欄 — 測れない指標は null (算定不能)', () => {
+    // 断片化率・起動時間はこの環境では測定手段が無く、プロセス数は OS により
+    // 数えられないことがある。0 に倒すと「測った結果 0」という事実の主張に
+    // なるので、実物は `number | null` で返し画面は「—」と出す (linux の
+    // load と同じ規律)。見本も同じ幅でなければ画面が null を踏む。
+    sameWidth<SameNullability<typeof SNAPSHOT.storage.performance.fragmentationPct, StorageSnapshot['performance']['fragmentationPct']>>(true);
+    sameWidth<SameNullability<typeof SNAPSHOT.storage.performance.startupSec, StorageSnapshot['performance']['startupSec']>>(true);
+    sameWidth<SameNullability<typeof SNAPSHOT.storage.performance.runningProcesses, StorageSnapshot['performance']['runningProcesses']>>(true);
+    expect(true).toBe(true);
+  });
+
   it('★ 対照が効くことの標本 —— 狭い型は `SameWidth` が false と言う', () => {
     // 狭い見本 (client が広げたのに見本が数のまま) は false —— これが落ちる形。
     sameWidth<SameWidth<SameNullability<number, number | null>, false>>(true);
@@ -148,6 +160,10 @@ const NULLABLE_LEDGER: Readonly<Record<string, string>> = {
   'youtube.ts YoutubeSnapshot.views': 'SNAPSHOT.youtube.channel.views',
   'youtube.ts YoutubeSnapshot.videos': 'SNAPSHOT.youtube.channel.videos',
   'stocks.ts StocksSnapshot.storedNote': 'SNAPSHOT.stocks.storedNote',
+  // 第4弾 (Phase 6) —— storage の性能指標のうち測定手段が無い物は null。
+  'storage.ts StorageSnapshot.fragmentationPct': 'SNAPSHOT.storage.performance.fragmentationPct',
+  'storage.ts StorageSnapshot.startupSec': 'SNAPSHOT.storage.performance.startupSec',
+  'storage.ts StorageSnapshot.runningProcesses': 'SNAPSHOT.storage.performance.runningProcesses',
   'wordpress.ts WordPressSnapshot.lastUpdated': 'SNAPSHOT.wordpress.sites[number].lastUpdated',
   'cursor.ts CursorSnapshot.members': 'SNAPSHOT.cursor.totals.members',
   'cursor.ts CursorSnapshot.activeDays': 'SNAPSHOT.cursor.totals.activeDays',

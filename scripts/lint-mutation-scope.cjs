@@ -162,7 +162,6 @@ const PRAGMA_BARE = {
   'src/main/clients/skills.ts':                  3,
   'src/main/clients/snapshotStub.ts':            1,
   'src/main/clients/stocks.ts':                  8,
-  'src/main/clients/storage.ts':                 2,
   'src/main/clients/uber-eats.ts':               4,
   'src/main/oauth.ts':                           2,
   'src/renderer/data/cloudBackup.ts':            1,
@@ -436,6 +435,24 @@ const KNOWN_UNMEASURED = {
     + ' 書き出しの id と図の不在) を留めて 有効 1,497 / Killed 1,071 / 生存 330 / 未到達 96 ='
     + ' 総合 71.54% / 覆われた分 76.45%。** 同日の起点は 58.69% / 未到達 266 で、'
     + ' **未到達は 96 まで下がった**。残るのは主に画面の文言。',
+
+  // 2026-11-21 追加 (第4弾: storage / obsidian / docker の local 化)。
+  // ホストの実物を相手にする 3 本のうち、storage.ts は mutate に載せて
+  // アダプタを薄く保つ形に直した。残る 2 本は輸送・走査の層が厚く、
+  // 入力がホストの状態そのものなので、ここでは「測っていない」と明示する。
+  // 読み取った値の解釈と整形はどちらのファイルでも純関数側に寄せてあり、
+  // そちらは通常の単体テストが留めている。輸送・走査側に判断を足すなら、
+  // その時点で mutate へ載せること。
+  'src/main/clients/docker.ts':
+    'Docker Engine API の輸送層 (接続先の探索・GET・応答の収集)。入力がホストの'
+    + ' Docker Engine の有無と状態そのもので、決定論的に変異を撃墜できない。'
+    + ' 応答の解釈 (状態・ポート・統計の換算) と整形は純関数群と'
+    + ' buildDockerSnapshot に在り docker.test.ts が留める。',
+  'src/main/clients/obsidian.ts':
+    '実 Vault の走査層 (設定の特定・.md の収集・上限での打ち切り・プラグイン'
+    + ' 一覧の読み)。入力がホストのファイルツリーそのもので、決定論的に変異を'
+    + ' 撃墜できない。本文の解析 (タグ・内部リンク・語数) と整形は純関数群と'
+    + ' buildObsidianSnapshot に在り obsidian.test.ts が留める。',
 };
 
 /**

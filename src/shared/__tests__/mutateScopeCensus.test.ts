@@ -84,6 +84,8 @@ type Kind = 'data' | 'measure-next';
 /** 分母の外に在る「判断を持っていそうな物」の台帳。 */
 const LEDGER: Readonly<Record<string, { kind: Kind; why: string }>> = {
   'src/main/clients/talent.ts': { kind: 'measure-next', why: '人材の採用判定と育成計画を組む fetcher。判断を持つので入れる側だが、未測定。' },
+  'src/main/clients/docker.ts': { kind: 'measure-next', why: 'Docker Engine API の応答を正規化する fetcher (2026-11-21・第4弾で local 化)。未検出と述べる判断・公開ポートの警告・脆弱性は未スキャンと述べる判断を持つ。判断を持つので入れる側だが、未測定。' },
+  'src/main/clients/obsidian.ts': { kind: 'measure-next', why: 'Obsidian の Vault を特定しノート・タグ・内部リンクを集計する fetcher (2026-11-21・第4弾で local 化)。未検出の理由を述べ、読めない値を捏造しない判断を持つ。判断を持つので入れる側だが、未測定。' },
   'src/renderer/cloud/cloudProviderAdapter.ts': { kind: 'measure-next', why: '同期計画を実 I/O へ写す薄いラッパ。純粋核 (cloudSync.ts) は分母に在るが、写す側が外。' },
   'src/renderer/data/aiCredentialFields.ts': { kind: 'data', why: 'エージェント設定の入力欄の表 (ラベルと placeholder の宣言)。「読める欄は書ける」の判定は data/__tests__/aiCredentialFields.test.ts が母集団 (AI_CREDENTIAL_STRING_KEYS) と両方向で、描画は pages/__tests__/aiCredentialFieldsWritable.test.ts が実物の DOM で見る。' },
   'src/renderer/data/goalCoach.ts': { kind: 'measure-next', why: 'ゴールコーチの純ロジック。目標の逆算・批判的な見直し・1 日の予定の組み立て・危機の言葉を渡さない門を決める。判断を持つので入れる側だが、未測定。' },

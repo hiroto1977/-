@@ -20639,7 +20639,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/zero-fold-census.cjs。npm run lint:zero-fold は check だけ) -->
-合計 **113 ファイル / 288 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **116 ファイル / 294 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
@@ -20671,6 +20671,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/shared/taxSocialInsurance.ts` | 4 |
 | `src/shared/tradeTax.ts` | 4 |
 | `src/shared/waterCyclePlanner.ts` | 4 |
+| `src/main/clients/docker.ts` | 3 |
 | `src/main/clients/kpi.ts` | 3 |
 | `src/renderer/components/ShigyoConsole.tsx` | 3 |
 | `src/renderer/data/backup.ts` | 3 |
@@ -20682,6 +20683,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/shared/payroll.ts` | 3 |
 | `src/shared/securityRange.ts` | 3 |
 | `src/shared/taxConsumptionBusiness.ts` | 3 |
+| `src/main/clients/storage.ts` | 2 |
 | `src/renderer/App.tsx` | 2 |
 | `src/renderer/components/AxonometricCharts.tsx` | 2 |
 | `src/renderer/components/RecordShapeAuditPanel.tsx` | 2 |
@@ -20713,6 +20715,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/main/clients/cloudflare.ts` | 1 |
 | `src/main/clients/devEnv.ts` | 1 |
 | `src/main/clients/emotions.ts` | 1 |
+| `src/main/clients/obsidian.ts` | 1 |
 | `src/main/clients/ollama.ts` | 1 |
 | `src/main/oauth.ts` | 1 |
 | `src/main/userPresence.ts` | 1 |
