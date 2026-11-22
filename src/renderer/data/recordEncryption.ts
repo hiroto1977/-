@@ -236,9 +236,11 @@ export async function enableEncryption(password: string): Promise<void> {
   if (!meetsPasswordPolicy(password)) {
     throw new Error(`記録を暗号化するパスフレーズは ${MIN_PASSWORD_LENGTH} 文字以上で設定してください（保管庫のパスワードと同じ下限です）`);
   }
-  if (isEncryptionEnabled()) throw new Error('暗号化は既に有効です');
-  // **「無効」と「読めない」は別物。** 上の門は前者しか見ていない。
+  // **「無効」と「読めない」は別物。** 下の門は前者しか見ていない。
+  // 読めないかを先に確かめる —— 後に置くと、下の門が呼んだ `loadMeta` の
+  // 結果に寄りかかり、ここが自分で読み直しているかを誰も確かめられない。
   assertMetaWritable();
+  if (isEncryptionEnabled()) throw new Error('暗号化は既に有効です');
 
   const salt = randomSaltB64();
   // 回数を**明示して**導出し、同じ値を meta に書き残す (パス 239)。

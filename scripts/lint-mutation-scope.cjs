@@ -169,7 +169,7 @@ const PRAGMA_BARE = {
   'src/renderer/data/emotionsWeb.ts':            1,
   'src/renderer/data/managementHighlights.ts':   1,
   'src/renderer/data/stocksAnalysisWeb.ts':      4,
-  'src/renderer/data/store.ts':                  2,
+  'src/renderer/data/store.ts':                  1,
   'src/renderer/hooks/useServiceData.ts':        2,
   'src/renderer/library/library.ts':             1,
   'src/renderer/plan/internalLicense.ts':        1,

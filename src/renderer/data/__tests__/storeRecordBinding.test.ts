@@ -106,3 +106,22 @@ describe('★ 保管層を通したレコード単位の改ざん検知', () => 
     expect((await store.get(a.id))?.data).toEqual({ amount: 1_000_000, note: 'A 社 (直した)' });
   });
 });
+
+describe('★ 最新を比べて書く 2 つの口も、書いた行の名前に結び付ける', () => {
+  it('insertIfLatest で足した行は、暗号化していても読み戻せる', async () => {
+    const store = getRecordStore();
+    store.configureCipher(await createPassphraseRecordCipher('pw', randomSaltB64()));
+    const res = await store.insertIfLatest('sales-entries', null, { amount: 5, note: 'C 社' });
+    expect(res.status).toBe('saved');
+    if (res.status !== 'saved') return;
+    expect(isSealedData((await rawRows())[0]!.data)).toBe(true);
+    expect((await store.get(res.record.id))?.data).toEqual({ amount: 5, note: 'C 社' });
+  });
+
+  it('replaceLatestIfUnchanged で置き換えた行は、暗号化していても読み戻せる', async () => {
+    const { store, b } = await encryptedStore();
+    const res = await store.replaceLatestIfUnchanged('sales-entries', { id: b.id, updatedAt: b.updatedAt }, { amount: 99, note: 'B 社' });
+    expect(res.status).toBe('saved');
+    expect((await store.get(b.id))?.data).toEqual({ amount: 99, note: 'B 社' });
+  });
+});

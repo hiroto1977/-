@@ -256,13 +256,27 @@ export function buildDbSecurityReport(input: DbSecurityInputs): DbSecurityReport
   for (const c of checks) {
     if (c.ok) score += c.weight;
   }
+  return { checks, score, grade: gradeForScore(score), ...partitionChecks(checks) };
+}
+
+/**
+ * 項目を「直せる物」と「この版に無い物」に分ける。
+ *
+ * 2026-11-22 に 7 項目すべてが作られたので、今の `CHECK_SPECS` では
+ * `unavailable` は常に空で `maxAchievableScore` は 100 になる。それでも
+ * 分ける規則は残す —— 将来まだ作っていない保護を項目として足したとき、
+ * 画面は「この版に無い保護」として別に並べ、到達しうる最大点を正直に
+ * 言う必要がある。規則が今のデータで観測できないので、関数として出して
+ * 合成した項目で検査する。
+ */
+export function partitionChecks(checks: readonly SecurityCheck[]): Pick<DbSecurityReport, 'findings' | 'actionable' | 'unavailable' | 'maxAchievableScore'> {
   const findings = checks.filter((c) => !c.ok).sort((a, b2) => b2.weight - a.weight);
   // **直せるものと、直せないものを分ける。** 混ぜて重み順に並べると、
-  // この版に無い保護 (重み 75) が上を占め、今できる事が下に埋まる。
+  // この版に無い保護が上を占め、今できる事が下に埋まる。
   const actionable = findings.filter((c) => c.availability === 'available');
   const unavailable = findings.filter((c) => c.availability === 'not-built');
   const maxAchievableScore = checks
     .filter((c) => c.availability === 'available')
     .reduce((acc, c) => acc + c.weight, 0);
-  return { checks, score, grade: gradeForScore(score), findings, actionable, unavailable, maxAchievableScore };
+  return { findings, actionable, unavailable, maxAchievableScore };
 }

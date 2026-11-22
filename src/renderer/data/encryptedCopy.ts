@@ -237,6 +237,7 @@ export async function downloadEncryptedCopy(input: {
     return { ok: false, message: `控えを組めませんでした (${failureText(e)})。` };
   }
   const mismatch = await verifyCopyText(text, passphrase, records.length);
+  // Stryker disable next-line ConditionalExpression,ObjectLiteral,BooleanLiteral,StringLiteral: 組んだ直後の文字列を同じパスフレーズで開くので、今日の serialize / parse では食い違わない (到達しない防御)。フォルダへ書く側の同じ判定は「途中で切れたファイル」で実際に届き、そちらは検査が留めている。
   if (mismatch !== null) return { ok: false, message: mismatch.replace('書いた控えを読み戻しましたが', '組んだ控えを確かめましたが') };
   try {
     save(filename, new Blob([text], { type: 'application/json' }));

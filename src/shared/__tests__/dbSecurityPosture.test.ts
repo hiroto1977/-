@@ -6,7 +6,9 @@ import {
   GRADE_A_MIN,
   GRADE_B_MIN,
   GRADE_C_MIN,
+  partitionChecks,
   type DbSecurityInputs,
+  type SecurityCheck,
 } from '../dbSecurityPosture';
 
 const allOn: DbSecurityInputs = {
@@ -244,5 +246,40 @@ describe('直せるものと、直せないものを分ける', () => {
     const r = buildDbSecurityReport(allOff);
     const weights = r.actionable.map((c) => c.weight);
     expect([...weights].sort((a, b) => b - a)).toEqual(weights);
+  });
+});
+
+describe('★ 分ける規則は、この版に無い観点を足した日にも働く (partitionChecks)', () => {
+  // 今の CHECK_SPECS は 7 つとも available なので、規則は実物では観測できない。
+  // 合成した項目で当てる。
+  const mk = (id: string, ok: boolean, weight: number, availability: SecurityCheck['availability']): SecurityCheck => ({
+    id, label: id, severity: 'high', weight, ok, recommendation: id, availability,
+  });
+  const checks = [
+    mk('a-ok', true, 30, 'available'),
+    mk('a-ng', false, 20, 'available'),
+    mk('n-ng', false, 40, 'not-built'),
+    mk('n-ok', true, 10, 'not-built'),
+  ];
+
+  it('未達だけが findings に入り、重み降順に並ぶ', () => {
+    expect(partitionChecks(checks).findings.map((c) => c.id)).toEqual(['n-ng', 'a-ng']);
+  });
+
+  it('直せる未達だけが actionable、無い未達だけが unavailable', () => {
+    const p = partitionChecks(checks);
+    expect(p.actionable.map((c) => c.id)).toEqual(['a-ng']);
+    expect(p.unavailable.map((c) => c.id)).toEqual(['n-ng']);
+  });
+
+  it('到達しうる最大点は available な観点だけの重み合計 (達成の有無に依らない)', () => {
+    expect(partitionChecks(checks).maxAchievableScore).toBe(50);
+  });
+
+  it('対照: 全部が available なら最大点は全重み・unavailable は空', () => {
+    const all = checks.map((c) => ({ ...c, availability: 'available' as const }));
+    const p = partitionChecks(all);
+    expect(p.maxAchievableScore).toBe(100);
+    expect(p.unavailable).toEqual([]);
   });
 });

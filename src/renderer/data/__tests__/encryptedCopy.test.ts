@@ -17,6 +17,7 @@ import {
   recordsFingerprint,
   verifyCopyText,
   writeEncryptedCopy,
+  downloadEncryptedCopy,
   type CopyFolder,
   type CopyMarker,
 } from '../encryptedCopy';
@@ -408,5 +409,89 @@ describe('書く → 読み戻す → 確かめる → 覚える', () => {
     };
     const res = await writeEncryptedCopy({ records: [rec('a', 1)], passphrase: PASS, confirm: PASS, folder, now: NOW });
     expect(res).toEqual({ ok: false, message: '控えを書けませんでした (plain string failure)。' });
+  }, 30_000);
+});
+
+describe('ダウンロードで渡す (保存先フォルダを選べない端末)', () => {
+  function saver() {
+    const saved: { filename: string; type: string; text: string }[] = [];
+    return {
+      saved,
+      save: (filename: string, blob: Blob) => {
+        saved.push({ filename, type: blob.type, text: '' });
+        void blob.text().then((t) => (saved[saved.length - 1]!.text = t));
+      },
+    };
+  }
+  const NAME = 'service-hub-copy-2026-11-11-encrypted.json';
+
+  it('★ 組んだ控えを確かめてから渡し、目印を置き、端末の外へ移すよう言う', async () => {
+    const s = saver();
+    const records = [rec('a', 10), rec('b', 20)];
+    const res = await downloadEncryptedCopy({ records, passphrase: PASS, confirm: PASS, save: s.save, now: NOW });
+    expect(res.ok).toBe(true);
+    if (!res.ok) return;
+    expect(s.saved.map((x) => [x.filename, x.type])).toEqual([[NAME, 'application/json']]);
+    expect(res.marker).toEqual({ at: NOW.getTime(), count: 2, fingerprint: await recordsFingerprint(records), filename: NAME });
+    expect(res.markerSaved).toBe(true);
+    expect(res.message).toBe(
+      `2 件の記録を暗号化して ${NAME} としてダウンロードしました (渡す前に、そのパスフレーズで開けることを確かめました)。`
+        + 'ダウンロードしたファイルは端末の中にあります —— Google ドライブなど端末の外へ移すと、端末が壊れても戻せます。',
+    );
+    expect(loadCopyMarker().marker).toEqual(res.marker);
+  }, 30_000);
+
+  it('今日の日付が読めなければ断り、何も渡さない', async () => {
+    const s = saver();
+    const res = await downloadEncryptedCopy({ records: [rec('a', 1)], passphrase: PASS, confirm: PASS, save: s.save, now: new Date(Number.NaN) });
+    expect(res).toEqual({ ok: false, message: '今日の日付を読めないので、控えの名前を決められません。' });
+    expect(s.saved).toEqual([]);
+    expect(loadCopyMarker().marker).toBeNull();
+  });
+
+  it('断る条件では何も渡さない', async () => {
+    const s = saver();
+    const res = await downloadEncryptedCopy({ records: [], passphrase: PASS, confirm: PASS, save: s.save, now: NOW });
+    expect(res).toEqual({ ok: false, message: encryptedCopyRefusal(0, PASS, PASS) });
+    expect(s.saved).toEqual([]);
+  });
+
+  it('控えを組めなければ理由を言い、何も渡さない', async () => {
+    const s = saver();
+    const bad = { ...rec('a', 1), data: { amount: 1n } } as unknown as StoredRecord;
+    const res = await downloadEncryptedCopy({ records: [bad], passphrase: PASS, confirm: PASS, save: s.save, now: NOW });
+    expect(res.ok).toBe(false);
+    expect(res.message.startsWith('控えを組めませんでした (')).toBe(true);
+    expect(res.message.endsWith(')。')).toBe(true);
+    expect(res.message.length).toBeGreaterThan('控えを組めませんでした ()。'.length);
+    expect(s.saved).toEqual([]);
+    expect(loadCopyMarker().marker).toBeNull();
+  }, 30_000);
+
+  it('★ 渡せなかったら理由を言い、目印は前のまま', async () => {
+    localStorage.setItem(ENCRYPTED_COPY_MARKER_KEY, JSON.stringify(MARKER));
+    const res = await downloadEncryptedCopy({
+      records: [rec('a', 1)], passphrase: PASS, confirm: PASS, now: NOW,
+      save: () => { throw new Error('download blocked'); },
+    });
+    expect(res).toEqual({ ok: false, message: '控えをダウンロードできませんでした (download blocked)。' });
+    expect(loadCopyMarker().marker).toEqual(MARKER);
+  }, 30_000);
+
+  it('目印を覚えられなかったら、渡せたことと覚えられなかったことの両方を言う', async () => {
+    const s = saver();
+    const original = Storage.prototype.setItem;
+    Storage.prototype.setItem = () => {
+      throw new DOMException('quota', 'QuotaExceededError');
+    };
+    try {
+      const res = await downloadEncryptedCopy({ records: [rec('a', 1)], passphrase: PASS, confirm: PASS, save: s.save, now: NOW });
+      expect(res.ok).toBe(true);
+      if (!res.ok) return;
+      expect(res.markerSaved).toBe(false);
+      expect(res.message).toContain('戻せます。 ただし、控えた時刻を端末に覚えられませんでした (');
+    } finally {
+      Storage.prototype.setItem = original;
+    }
   }, 30_000);
 });

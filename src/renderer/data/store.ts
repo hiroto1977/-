@@ -388,7 +388,7 @@ class IndexedDBRecordStore implements RecordStore {
      */
     // Stryker disable next-line BlockStatement
     void settled.then(() => {
-      // Stryker disable next-line ConditionalExpression
+      // Stryker disable next-line ConditionalExpression,CallExpression: 掃除を止めても地図が育つだけで観測できる差が無い (上の注記どおり等価)。
       if (this.perId.get(id) === settled) this.perId.delete(id);
     });
     return started;
