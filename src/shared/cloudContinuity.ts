@@ -91,7 +91,7 @@ export const CLOUD_PROVIDERS: readonly CloudProvider[] = [
     id: 'github',
     label: 'GitHub',
     kind: 'data',
-    services: ['github'],
+    services: ['github', 'quality'],
     entrusted: 'リポジトリ・Issue・プルリクエスト。',
     whenDown: CLOUD_DATA_WHEN_DOWN,
     meanwhile: CLOUD_DATA_MEANWHILE,

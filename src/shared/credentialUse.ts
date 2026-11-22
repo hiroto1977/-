@@ -64,7 +64,8 @@ export const SERVICE_CREDENTIAL_USE: Record<ServiceId, CredentialUse> = {
   'real-estate': 'none',
   'mutual-funds': 'none',
   charts: 'none',
-  quality: 'none',
+  // 2026-11-21: 取得が鍵を読むようになった (`main/clients/quality.ts` → `shared/api/quality.ts`)。
+  quality: 'fetch',
   'microsoft-365': 'fetch',
   // 2026-11-19: 取得が鍵を読むようになった (`main/clients/dropbox.ts` → `shared/api/dropbox.ts`)。
   dropbox: 'fetch',

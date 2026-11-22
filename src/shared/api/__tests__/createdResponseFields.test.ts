@@ -135,6 +135,7 @@ const ROLE: Readonly<Record<string, 'created-response' | 'own-input'>> = {
   'google.ts parseCreatedDraft': 'created-response',
   'microsoft365.ts parseCreatedGraphEvent': 'created-response',
   'notion.ts parseCreatedPage': 'created-response',
+  'quality.ts parseQualityReport': 'own-input',
   'security.ts parseSecurityKeys': 'own-input',
   'wordpress.ts parseCreatedPost': 'created-response',
 };
