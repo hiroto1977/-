@@ -1082,7 +1082,7 @@ export function AssistantPage() {
                       key={s.id}
                       type="button"
                       onClick={() => navigateTo(s.id as ServiceId)}
-                      style={{ fontSize: 11, borderRadius: 999, padding: '3px 10px' }}
+                      style={{ fontSize: 11, borderRadius: 999, padding: '3px 10px', minHeight: 24 }}
                       title={s.description}
                     >
                       ↗ {s.label}を開く
@@ -1103,7 +1103,7 @@ export function AssistantPage() {
             type="button"
             onClick={() => void send(s)}
             disabled={busy}
-            style={{ fontSize: 11, borderRadius: 999, padding: '3px 10px' }}
+            style={{ fontSize: 11, borderRadius: 999, padding: '3px 10px', minHeight: 24 }}
           >
             {s}
           </button>

@@ -1289,29 +1289,29 @@ async function dataOriginSuite(browser) {
   collectErrors(page, errs);
   await page.addInitScript(() => localStorage.setItem('servicehub.plan', 'enterprise'));
 
-  // sample: ストレージ。同梱の見本を出し、更新ボタンが無いこと。
+  // sample: ネッシー (卸の仕入れ)。同梱の見本を出し、更新ボタンが無いこと。
   //
   // ここは 2026-11-18 まで税理士の画面だった。士業 8 画面はその日から、不動産・投資信託は
   // 2026-11-19 から端末内の記録だけを出す (`SERVICE_DATA_ORIGIN` が `local`) ので、
   // 「内蔵サンプル」の標本ではなくなった —— **e2e が CI に無いあいだに古いまま**になっていた
-  // (2026-11-19 に走らせて発覚)。標本は「この PC は読み取らない」と名乗る画面にした ——
-  // 実データにするには主プロセスでのディスクの走査という別の機能が要り、当面は見本のままである。
-  await page.goto(FILE + '#storage', { waitUntil: 'domcontentloaded' });
+  // (2026-11-19 に走らせて発覚)。次の標本にしたストレージも 2026-11-21 に実データ (`local`) へ変わり、
+  // 同じ形で古びた (2026-11-22 に走らせて発覚)。いまは `SERVICE_DATA_ORIGIN` が `sample` の卸の画面を使う。
+  await page.goto(FILE + '#netsea', { waitUntil: 'domcontentloaded' });
   await setupVault(page);
   await page.waitForSelector('.status-bar', { timeout: 30000 });
   const badge = (await page.textContent('.status-bar .badge')) ?? '';
-  ok(badge.trim() === '内蔵サンプル', `ストレージ: バッジが「内蔵サンプル」(実際 "${badge.trim()}")`);
+  ok(badge.trim() === '内蔵サンプル', `ネッシー: バッジが「内蔵サンプル」(実際 "${badge.trim()}")`);
   ok(
     (await page.locator('.status-bar .badge.ok').count()) === 0,
-    'ストレージ: 緑 (ライブ) バッジを出さない',
+    'ネッシー: 緑 (ライブ) バッジを出さない',
   );
   ok(
     (await page.locator('.status-bar button', { hasText: '更新' }).count()) === 0,
-    'ストレージ: 更新ボタンを出さない (押すと空になる経路そのものを消す)',
+    'ネッシー: 更新ボタンを出さない (押すと空になる経路そのものを消す)',
   );
   ok(
     (await page.locator('[data-sample-note]').count()) === 1,
-    'ストレージ: 「外部連携なし」の断り書きを出す',
+    'ネッシー: 「外部連携なし」の断り書きを出す',
   );
 
   // local (端末内の記録): 税理士。見本を名乗らず、「外部連携なし」の断りも出さない。
