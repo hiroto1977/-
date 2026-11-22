@@ -96,9 +96,9 @@ const labels = (): string[] =>
   Array.from(container.querySelectorAll('.status-bar button')).map((b) => (b.textContent ?? '').trim());
 
 describe('資格情報が無い連携先の画面', () => {
-  it('母集団は 23 画面で、どれもサイドバーに画面を持つ。ブラウザ版で読めるのはそのうち 9', () => {
-    expect(REMOTE).toHaveLength(23);
-    expect(READABLE_IN_BROWSER).toHaveLength(9);
+  it('母集団は 24 画面で、どれもサイドバーに画面を持つ。ブラウザ版で読めるのはそのうち 10', () => {
+    expect(REMOTE).toHaveLength(24); // google-analytics (2026-11-22)
+    expect(READABLE_IN_BROWSER).toHaveLength(10);
     for (const id of REMOTE) expect(SERVICES.some((s) => s.id === id), id).toBe(true);
   });
 

@@ -87,6 +87,7 @@ const WEB_TWINS: Readonly<Record<string, Twin>> = {
   'emotions/log-mood': { file: 'renderer/data/emotionsWeb.ts', fn: 'logMood' },
   'github/create-issue': { file: 'renderer/data/saasWriteWeb.ts', fn: 'createGithubIssue' },
   'gmail/create-draft': { file: 'renderer/data/saasWriteWeb.ts', fn: 'createGmailDraft' },
+  'google-analytics/run-report': { file: WEB_SHIM, fn: 'readGoogleAnalyticsReport' },
   'mutual-funds/advise': { file: WEB_SHIM, inline: true },
   'mutual-funds/record-entry': { file: WEB_SHIM, inline: true },
   'notion/create-page': { file: 'renderer/data/saasWriteWeb.ts', fn: 'createNotionPage' },

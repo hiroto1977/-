@@ -68,6 +68,8 @@ const UPSTREAM_ALLOWLIST = new Set([
   'www.googleapis.com',      // Google カレンダー / Drive
   'gmail.googleapis.com',    // Gmail 下書き
   'sheets.googleapis.com',   // Google スプレッドシート (売上の書き出し)
+  'analyticsadmin.googleapis.com', // グーグルアナリティクス (プロパティの一覧・読み取りだけ)
+  'analyticsdata.googleapis.com',  // グーグルアナリティクス (訪問者数・流入元・読み取りだけ)
   'public-api.wordpress.com',// WordPress.com 下書き
   'api.canva.com',           // Canva フォルダ
   'api.cloudflare.com',      // Cloudflare DNS / キャッシュ

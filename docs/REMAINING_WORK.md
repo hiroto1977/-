@@ -24,6 +24,40 @@
    (段階は台帳で `external-write`)。`e2e` / `perf` の実機の連鎖はこの作業では回していない。
 6. 変異検査 (`npm run audit:mutate-changed`) は回していない —— `writeFieldLimits.ts` / `shared/api/google.ts` は `mutate` に載っている。
 
+## グーグルアナリティクス (Google Analytics) の画面を足して、残した物 (2026-11-22)
+
+作った物: サイドバー「外部サービス連携」に **グーグルアナリティクス (Google Analytics)** (81 サービス目)。**読み取りだけ**。
+訪問者数 (期間の合計と日ごとの数・折れ線) と、どこから来たか (既定のチャネルグループ別のセッション数・訪問者数・割合。
+名前は「自然検索 (Organic Search)」の形) を、期間 7 / 28 / 90 日で出す。
+
+- 取得 (`fetchSnapshot`) は見られるプロパティの一覧 (`GET analyticsadmin.googleapis.com/v1beta/accountSummaries`)。
+  レポートは action `google-analytics/run-report` (`{ propertyId, days }` → `POST analyticsdata.googleapis.com/v1beta/properties/{id}:runReport` を 2 回)。
+  判定と正規化は `src/shared/api/googleAnalytics.ts` の 1 つで、両ビルドが同じ関数を通る (ブラウザ版は利用者のプロキシ経由 ——
+  取得は `LIVE_READERS`・レポートは `web-shim.ts` の `runProxyBearer`)。
+- プロパティ ID は数字だけ (`properties/` の接頭辞は外す)。秘密ではないので資格情報と別に localStorage
+  `servicehub.googleAnalytics.propertyId` に覚える (デスクトップ版の Google の資格情報の枠には主プロセスが OAuth の TokenSet を書くので、
+  アトラシアンのように JSON へ混ぜられない)。「すべてのデータを削除」が消す。
+- 読めない数は「不明」と出し 0 と刷らない。期間の訪問者数は GA4 の `totals` だけを使う (日ごとの数を足すと 2 日来た人を 2 人と数える)。
+
+残した物:
+
+1. **本物の Google で 1 度も試していない**。この開発環境から Google の API へは届かない。検査は GA4 の公開の応答の形に合わせた
+   偽の応答で通している。特に、データの無い期間で GA4 が `rows` を省く形 (見出しだけ返る) と、`totals` の形は実物で確かめること。
+2. **利用者がやること**: (デスクトップ版) 環境変数 `GOOGLE_OAUTH_CLIENT_ID` を設定した上で画面の「ブラウザで認証」を押す
+   (Google Cloud Console で「Google Analytics Data API」と「Google Analytics Admin API」を有効にする)。または OAuth のアクセストークン
+   (`analytics.readonly`) を貼る (約 1 時間で切れる)。プロパティは一覧から選ぶか、管理画面の「プロパティの詳細」の数字を入れて「表示」。
+   (ブラウザ版) 設定ページの「BYO プロキシ」を登録し、Worker の許可リストに `analyticsadmin.googleapis.com` と
+   `analyticsdata.googleapis.com` を足す (`docs/PROXY_EXAMPLE.md` の見本には足してある)。
+3. **一覧は 200 件まで** (`pageSize=200`・続き (`nextPageToken`) は読まない)。一覧に無いプロパティも ID を入れれば読める。
+4. **日ごとの表は GA4 が返した日だけ**。訪問の無かった日は GA4 が行を省くので、図と一覧から抜ける (0 として埋めていない)。
+5. **プロパティの時間帯**: 日付は GA4 がプロパティの時間帯で返す値のまま出す (端末の時間帯へ直していない)。
+6. **書き込み・設定の変更・目標 (コンバージョン)・ページ別の表は持たない** —— 依頼の範囲 (訪問者数と流入元) だけ。
+7. **変異検査は測っていない** —— `src/shared/api/googleAnalytics.ts` は `mutateScopeCensus` の `measure-next` に載せた
+   (単体・jsdom の検査と対照 7 方向は在る)。測るなら `npx stryker run --mutate src/shared/api/googleAnalytics.ts`。
+8. **e2e / perf の実機の連鎖は回していない** (この変更の作業の範囲外)。出荷物 (両ビルド) は動いている。
+9. **見本は値だけで持つ** (`renderer/data/googleAnalyticsSample.ts`) —— 社外向けポータルの閉包に入るので `shared/api/` を読めない。
+   実物の正規化と同じ値になることは `data/__tests__/googleAnalyticsSample.test.ts` が突き合わせる。
+
 ## 感染した端末を通さない仕組み (zero-trust-gateway 第 2 層) で残した物 (2026-11-22)
 
 1. **実物の守りのソフトとつないでいない**。検査は自作の署名鍵で作った証明だけ。使う EDR / 端末管理の製品が、端末の鍵 (DPoP の jkt)
@@ -8619,7 +8653,7 @@ loopback 以外の平文 http を必ず弾く**。LAN を名前で絞らない�
 
 ## 現状（2026-08-17 実測）
 
-- [x] **80 サービス**の UI + スナップショット表示（おすすめ / 士業連携 / 分析・ツール / 外部サービス連携）
+- [x] **81 サービス**の UI + スナップショット表示（おすすめ / 士業連携 / 分析・ツール / 外部サービス連携）
 - [x] 全 75 サービスのライブフェッチャー（`LIVE_FETCHERS` は総和型。欠けたら起動時に落ちる）
 - [x] write アクション（`LIVE_ACTIONS`）+ `lint:test-coverage` が全サービスのテストとアクションを強制
 - [x] OAuth 2.0 + PKCE code flow — **10 プロバイダ配線済み**
@@ -33371,7 +33405,7 @@ src/shared/ のモジュール                                        138
 「読んだ結果」か `未読 (…)` のどちらかで、読んでいない物に「対称だろう」とは書かない。
 
 <!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/shared-judgement-census.cjs。npm run lint:shared-judgement は check だけ) -->
-shared **205** モジュール / 両ビルドが import **114** / うち否定で答えられる **57**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
+shared **206** モジュール / 両ビルドが import **115** / うち否定で答えられる **58**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
 
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |
@@ -33383,6 +33417,7 @@ shared **205** モジュール / 両ビルドが import **114** / うち否定�
 | `api/cloudflare` | 1 | 1 | 対称 (実測・2026-09-19 パス 321) —— 欄の判定 (`checkDnsRecord` / `checkPurge`)・本文・URL・封筒 (`readCloudflareEnvelope`: `success !== true` を断る) を両ビルドが同じ関数で通る。それまで封筒の条件は main が falsy・ブラウザ版が `!== true` と違い、文も 「unknown Cloudflare error」/「unknown error」で割れていた (`CLOUDFLARE_UNKNOWN_ERROR` の 1 つへ)。断りの後は両ビルドとも投げる: main は serviceId つきの FetchError `cloudflare <message>`、ブラウザ版は Error `Cloudflare: <message>` —— 運び方 (例外の型) だけが流儀。main の読み (user / zones) も同じ封筒の判定と `CLOUDFLARE_API` を通る |
 | `api/cursor` | 1 | 3 | 対称 (実測・パス 250 / パス 263 で 1 → 3 に増えた) —— 両ビルドが同じ `fetchCursorSnapshotWith` を呼び (main は clients/cursor.ts、ブラウザ版は network/liveRead.ts)、否定を返す 3 つ (`acceptRateOf` → null / `buildCursorSnapshot` の totals 3 欄 → null / `cursorIntakeNote` → null) の**消費者はどれも CursorPage 1 つだけ**で、その画面は両ビルドで同じ 1 本の ソースである (renderer は 1 つ)。パス 263 で足した `readRows` の `read: false` は**このモジュールの外へ出ない** (`normalizeMembers` / `normalizeUsage` / `normalizeSpend` が `state` に畳んでから返す)。応答の上限も MAX_PROXY_RESPONSE_BYTES = MAX_HTTP_RESPONSE_BYTES で 1 つ |
 | `api/dropbox` | 1 | 3 | 対称 (実測・2026-11-19) —— 両ビルドが同じ `fetchDropboxSnapshotWith` を呼び (main は clients/dropbox.ts、ブラウザ版は network/liveRead.ts)、否定を返す物 (`normalizeDropboxAccount` の read → false / `normalizeDropboxSpace` の usedBytes・allocatedBytes → null と read → false / `normalizeDropboxEntries` の read → false / `dropboxModifiedDate` → null / `dropboxUsagePct` → null / `dropboxIntakeNote` → null) の**消費者はどれも DropboxPage 1 つだけ**で、その画面は両ビルドで同じ 1 本のソースである。読めなかった容量は「容量不明」・アカウントは「アカウント名不明」・読めなかった照会は ⚠ の 1 文で名指しし、どちらのビルドでも同じ文になる |
+| `api/googleAnalytics` | 1 | 5 | 対称 (実測・2026-11-22) —— 取得は両ビルドが同じ `fetchGoogleAnalyticsSnapshotWith` を (main は clients/google-analytics.ts、ブラウザ版は network/liveRead.ts)、`run-report` は同じ `checkGaReportRequest` → `fetchGoogleAnalyticsReportWith` を (main は clients/google-analytics.ts、ブラウザ版は data/saasWriteWeb.ts の runGoogleAnalyticsReport) 呼ぶ。断り (`checkGaReportRequest` が投げる 2 文) はどちらのビルドでも同じ文で、画面はそれを `res.message` として 1 行で出す。否定を返す物 (`gaPropertyIdOrNull` / `gaPeriodOrNull` / `gaDateOf` → null・数の null・`…Read` の false・`gaReportIntakeNote` → null) の消費者は GoogleAnalyticsPage と、端末の記憶を読む data/googleAnalyticsProperty.ts (読めない値を「覚えていない」へ倒す) だけで、どちらも両ビルドで同じ 1 本のソースである。読めなかった数は「不明」・読めなかった表は ⚠ の 1 文 |
 | `api/line` | 1 | 3 | 対称 (実測・2026-11-18) —— 両ビルドが同じ `fetchLineSnapshotWith` を呼び (main は clients/line.ts、ブラウザ版は network/liveRead.ts)、否定を返す物 (`lineCount` → null / `lineChatMode` → null / `normalizeLineQuota` の quotaType・quotaLimit の null / `normalizeLineUsage` → null / `lineIntakeNote` → null) の**消費者はどれも LinePage 1 つだけ**で、その画面は両ビルドで同じ 1 本のソースである。読めなかった通数は「読めません」・読めなかった物は ⚠ の 1 文で名指しし、どちらのビルドでも同じ文になる |
 | `api/linear` | 1 | 3 | 対称 (実測・2026-11-18) —— 両ビルドが同じ `fetchLinearSnapshotWith` を呼び (main は clients/linear.ts、ブラウザ版は network/liveRead.ts)、否定を返す物 (`linearPriority` → null / `linearDue` の dueDate → null と dueRead の false / `linearIntakeNote` → null / `linearScopeNote` → null / `viewerRead` `issuesRead` の false) の**消費者はどれも LinearPage 1 つだけ**で、その画面は両ビルドで同じ 1 本のソースである。読めなかった優先度と期限は「読めません」・読めなかった一覧と断りは ⚠ の 1 文で、どちらのビルドでも同じ文になる |
 | `api/quality` | 1 | 3 | 対称 (実測・2026-11-21) —— 両ビルドが同じ `fetchQualitySnapshotWith` を呼び (main は clients/quality.ts、ブラウザ版は network/liveRead.ts)、否定を返す物 (`readWorkflowRun` → null = 履歴なし / `countTestFiles` → null = trees 応答が truncated で数えない / `parseQualityReport` の読めなかった行 → null / `readQualityReport` → null = QUALITY.md が読めない / 日付の `displayDateOf` → null) の**消費者はどれも QualityPage 1 つだけ**で、その画面は両ビルドで同じ 1 本のソースである。読めなかった項目は「—」・履歴が無ければ「履歴なし」・実測が読めなければ「取得できませんでした」の 1 文で、どちらのビルドでも同じ文になる |
@@ -33408,7 +33443,7 @@ shared **205** モジュール / 両ビルドが import **114** / うち否定�
 | `hydroponics` | 0 | 5 | 非対称は起きない (実測・パス 272) —— `hydroponicCrops` と同じ鎖の先に在る (main → clients/hydroponics.ts → hydroponicsControl → hydroponicCrops → ここ)。main が import する `buildHydroponicsSnapshot` は 2 つの定数表を射影するだけで、この鎖の否定で答える関数を 1 つも呼ばない (実測) |
 | `hydroponicsControl` | 1 | 6 | 非対称は起きない (実測・パス 268) —— 否定で答える 7 つ (`readingFromStored` / `batchFromStored` / `batchSchedule` / `nextSolutionChange` / `lowPotassiumSwitchDate` / `latestReading` / `isBatchState`) の**消費者は renderer だけ** (hydroponicsLog.ts / HydroponicsPage.tsx —— **左の数は importer 全体を数えるので、この 2 本より多い**。2026-09-23 (パス 421) に 5 → 6 になったのは `OverviewPage.tsx` が `cropIdText` を読んだためで、それは `null` を返さないので 7 つには入らない)。main が import するのは `buildHydroponicsSnapshot` と型 2 つだけで、その関数は READING_FIELD_SPECS / DEFAULT_* / DEFAULT_CROP_LIST を**射影する純関数** (否定で答える関数を 1 つも呼ばない —— 実測)。測定記録とロットは業務レコード (IndexedDB) に在り main は触らないので、**main 側がこの問いを 1 度も発しない** |
 | `inputCeiling` | 14 | 58 | 対称 (実測・パス 281 で測り直した) —— 天井と床の判定そのもの (countChars / clampToCeiling / atLeastChars / moreThanChars)。否定 (false) はどのビルドでも「天井を超えていない」「床を満たさない」の 1 つの意味しか持たず、**動作を決めるのは呼ぶ側**である。 ★ **パス 281 の訂正**: ここには「呼ぶ側の対称性は ceilingUnitCensus.test.ts が母集団で見る (両方向の台帳)」と書いてあった —— **その検査は呼ぶ側の対称性を見ていない**。あちらが数えるのは「文字で数えると宣言した定数が `.length` の比較か`.slice(` の引数に現れる」箇所、つまり**単位**であって、ビルド間の非対称ではない(あちらの冒頭が自分で「数えていなかったのは単位である」と述べている)。`controlChars` (パス 280) と同じ「別の物へ預けた」形。 ★ 実測 (パス 281): 4 つの述語のうち**ビルドの境を越えるのは 2 つだけ** —— `countChars` と `clampToCeiling` は main (assistant / skills / emotions / ollama / templates) と web-shim の両側から呼ばれる。`atLeastChars` / `moreThanChars` は**main からも web-shim からも 1 度も呼ばれない** (2026-09-23 · パス 422 に再実測して 0 件)。 ★ **パス 422 の訂正**: ここには「呼び手は `renderer/security/vault.ts` **1 ファイルだけ**」と書いてあった —— **今日の実測は 9 ファイル**である (入口の天井が `.length` から `moreThanChars` へ移った分)。**判定は変わらない**が、散文が名前を並べていたので数が動いた日に偽になった (パス 419 / 421 と同じ家系)。**左の数は importer 全体を数える** —— 名前を並べるのをやめ、非対称かどうかを決める事実 (main 側の呼び出しが 0 件であること) だけを書く。デスクトップ版にマスターパスワードは無く、記録の入口は renderer 側にしか無いので、**この 2 つに main 側の双子が存在しない**。越える 2 つについては天井の定数が `shared/` に 1 つずつ在り、**同じ定数を両側が読む** (ollama の prompt/system は `shared/ollama.ts`・assistant は `shared/assistantLimits.ts`・emotions は `shared/emotionsLimits.ts`)。数の一致は `ceilingLiteralCensus` が、単位の一致は `ceilingUnitCensus` が見る |
-| `isoDate` | 8 | 43 | 対称 (実測・パス 256) —— 負で答える関数は 8 つだが、**両ビルドが呼んでいるのは 2 つだけ** (main/preload 側の消費者を機械的に数えた): (1) `isCalendarDate` + `calendarDateMessage` —— main/clients/emotions.ts:212 と renderer/data/emotionsWeb.ts:177 が**同一の行**で投げる (`throw new Error(calendarDateMessage('date'))`)。 (2) `isoDateFromTimestamp` —— main/clients/stocks.ts:776 と renderer/data/stocksWatchlistWeb.ts:194 がともに `?? ''` で空文字に倒す。いずれも**見本のローソク生成の中**で、入力は `Date.now()` ± 日数なので `null` の枠は実質到達しない。 残り 6 つ (`parseIsoDate` / `isCalendarMonth` / `isCalendarDateOrMonth` / `parseTimestamp` / `addIsoDays` / `isoDaysBetween`) は **main/preload 側の消費者が 0 件** なので、ビルド間の非対称は**原理的に起きない**。 ★ **2026-09-22 (パス 394) に 9 つ目 `isoMonthOf` が増えた** —— 消費者は `main/clients/freee.ts` **だけ** (renderer は 0 件) なので、こちらも非対称は起きない (**片方のビルドしか呼ばない**)。ブラウザ版の bundle からは tree-shaking で落ちることを 両方組んで実測した (+0 B)。上の「負で答える関数は 8 つ」はこの行が足された時点の数で、**今は 9 つ**である。 ★ 台帳の粒度について: この台帳は**モジュール**単位で「両ビルドがimport」を数えるが、非対称が宿るのは**両ビルドが呼ぶ関数**だけである。isoDate はその差が最も大きい例 (33 のimport元・負で答える 8 関数・境界を越えるのは 2 つ)。 ★ **2026-09-22 (パス 410) に 10 個目 `displayDateOf` が増え、main 側の import 元が 3 → 8 になった** (`drive` / `github` / `microsoft-365` / `notion` / `wordpress` の 5 client を日付の読みへ寄せた)。**これは非対称ではなく、設計した対である** —— 境界 (main の client) が `string | null` へ正規化し、画面 (renderer) が同じ module の `dateText` でその `null` に**理由を与える** (「日付が読めません」)。`displayDateOf` を呼ぶのは main 側と `shared/ollama.ts` だけ、`dateText` を呼ぶのは画面だけで、**同じ関数が両側で違う扱いを受ける形は 1 つも無い** (実測)。`dateText` は `string | null` を受けて必ず文字列を返すので、そもそも否定で答えない。 ★ **2026-09-27 (パス 493) に 11 個目 `isTimestampMs` が増え、renderer 側の import 元が 29 → 30 になった** —— 読み手は `shared/emotionsShape.ts` の `isAnalysisEntry` (main の `emotions.ts` とブラウザ版の `emotionsWeb.ts` が**同じ 1 つの述語**として呼ぶ) と、ブラウザ版だけが持つ記録の保管層 `renderer/data/store.ts`。否定の答え (時刻が範囲外) は両ビルドとも「その要素・その記録を落とす」に倒れるので非対称は無い (実測)。 |
+| `isoDate` | 8 | 44 | 対称 (実測・パス 256) —— 負で答える関数は 8 つだが、**両ビルドが呼んでいるのは 2 つだけ** (main/preload 側の消費者を機械的に数えた): (1) `isCalendarDate` + `calendarDateMessage` —— main/clients/emotions.ts:212 と renderer/data/emotionsWeb.ts:177 が**同一の行**で投げる (`throw new Error(calendarDateMessage('date'))`)。 (2) `isoDateFromTimestamp` —— main/clients/stocks.ts:776 と renderer/data/stocksWatchlistWeb.ts:194 がともに `?? ''` で空文字に倒す。いずれも**見本のローソク生成の中**で、入力は `Date.now()` ± 日数なので `null` の枠は実質到達しない。 残り 6 つ (`parseIsoDate` / `isCalendarMonth` / `isCalendarDateOrMonth` / `parseTimestamp` / `addIsoDays` / `isoDaysBetween`) は **main/preload 側の消費者が 0 件** なので、ビルド間の非対称は**原理的に起きない**。 ★ **2026-09-22 (パス 394) に 9 つ目 `isoMonthOf` が増えた** —— 消費者は `main/clients/freee.ts` **だけ** (renderer は 0 件) なので、こちらも非対称は起きない (**片方のビルドしか呼ばない**)。ブラウザ版の bundle からは tree-shaking で落ちることを 両方組んで実測した (+0 B)。上の「負で答える関数は 8 つ」はこの行が足された時点の数で、**今は 9 つ**である。 ★ 台帳の粒度について: この台帳は**モジュール**単位で「両ビルドがimport」を数えるが、非対称が宿るのは**両ビルドが呼ぶ関数**だけである。isoDate はその差が最も大きい例 (33 のimport元・負で答える 8 関数・境界を越えるのは 2 つ)。 ★ **2026-09-22 (パス 410) に 10 個目 `displayDateOf` が増え、main 側の import 元が 3 → 8 になった** (`drive` / `github` / `microsoft-365` / `notion` / `wordpress` の 5 client を日付の読みへ寄せた)。**これは非対称ではなく、設計した対である** —— 境界 (main の client) が `string | null` へ正規化し、画面 (renderer) が同じ module の `dateText` でその `null` に**理由を与える** (「日付が読めません」)。`displayDateOf` を呼ぶのは main 側と `shared/ollama.ts` だけ、`dateText` を呼ぶのは画面だけで、**同じ関数が両側で違う扱いを受ける形は 1 つも無い** (実測)。`dateText` は `string | null` を受けて必ず文字列を返すので、そもそも否定で答えない。 ★ **2026-09-27 (パス 493) に 11 個目 `isTimestampMs` が増え、renderer 側の import 元が 29 → 30 になった** —— 読み手は `shared/emotionsShape.ts` の `isAnalysisEntry` (main の `emotions.ts` とブラウザ版の `emotionsWeb.ts` が**同じ 1 つの述語**として呼ぶ) と、ブラウザ版だけが持つ記録の保管層 `renderer/data/store.ts`。否定の答え (時刻が範囲外) は両ビルドとも「その要素・その記録を落とす」に倒れるので非対称は無い (実測)。 |
 | `mentor` | 1 | 6 | 非対称は起きない (実測・パス 551) —— 否定で答えるのは `sanitizeMentorSession` (読めない保存値は null) と、`mediationPlan` の `steps: null` (同意が揃わない) の 2 つで、**読み手は renderer だけ** (MentorPage.tsx と、パス 555 で足した data/mentorRoster.ts · TeamPage.tsx · WorkloadShareTable.tsx)。main が import するのは `buildMentorSnapshot` と型 `MentorSnapshot` だけ (main/clients/mentor.ts) で、それは null を返さない。危機の判定は renderer の `counseling.ts` を 注入で受けるので、この module 自身は判定を持たない |
 | `mutualFundsMetrics` | 0 | 2 | 対称 (実測・パス 272) —— main の到達は `serviceAdvisor` 経由 (4 クライアント: real-estate / mutual-funds / uber-eats / demae-can)。`serviceAdvisor` がこのモジュールから取るのは**4 つ** (`serviceAdvisor.ts:37`): 定数 `RETURN_FLOOR_PCT` / `RETURN_ENTRY_CEILING_PCT` と述語 `isImpossibleReturnPct` / `isAboveEntryCeilingPct` (どちらも 1 行の比較。2026-09-27 · パス 493j に 2 → 4 —— 上端の外を「捨てずに言う」断りのため)。**2 つの述語は確かに越境する** —— `adviseService` の中で `isImpossibleReturnPct` は真の枝 (:586 警告を組む) と偽の枝 (:607 測れる集合から外す) の両方、`isAboveEntryCeilingPct` は真の枝 (:598 断りを組む) だけが使われる (偽の枝は何もしない —— 値は比較に残る)。だが**否定のあとの動作は両ビルドで同じ 1 つの実装の中に在る** —— `adviseService` が返す助言の*中身*を形づくるだけで `ok: false` を作らず、同じオブジェクトが両ビルドへ返る (`serviceAdvisor` の判定はパス 268 で対称と実測済み)。★ この行は **module 単位の到達と call 単位の到達が違う**ことの例である (`isoDate` の ★ と同じ話)。 |
 | `ollamaCore` | 0 | 0 | **非対称だった → パス 248 で直した** (許可経路の台帳を読むのは renderer だけ) |

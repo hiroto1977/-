@@ -233,9 +233,10 @@ describe('LIVE_READERS — 読み直して static 変異体を届かせる', () 
     return rereadModule<typeof import('../liveRead')>(import.meta.url, '../liveRead');
   };
 
-  it('★ 表に載っているのは cursor / stripe / asana / line / linear / sentry / discord / dropbox / quality だけ (増減に気付く)', async () => {
+  it('★ 表に載っているのは cursor / stripe / asana / line / linear / sentry / discord / dropbox / quality / google-analytics だけ (増減に気付く)', async () => {
     const m = await fresh();
-    expect(Object.keys(m.LIVE_READERS)).toEqual(['cursor', 'stripe', 'asana', 'line', 'linear', 'sentry', 'discord', 'dropbox', 'quality']);
+    expect(Object.keys(m.LIVE_READERS)).toEqual(['cursor', 'stripe', 'asana', 'line', 'linear', 'sentry', 'discord', 'dropbox', 'quality', 'google-analytics']);
+    expect(m.canLiveRead('google-analytics')).toBe(true);
     expect(m.canLiveRead('cursor')).toBe(true);
     expect(m.canLiveRead('stripe')).toBe(true);
     expect(m.canLiveRead('asana')).toBe(true);

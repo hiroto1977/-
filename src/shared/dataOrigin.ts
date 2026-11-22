@@ -128,6 +128,8 @@ export const SERVICE_DATA_ORIGIN: Record<ServiceId, DataOrigin> = {
   // 判定の台帳の見出しだけを返す。それまでは同梱の見本だった。
   vrio: 'local',
   watch: 'local',
+  // 2026-11-22: 見られるプロパティの一覧とレポートを GA4 から読む (`shared/api/googleAnalytics.ts`)。
+  'google-analytics': 'remote',
   youtube: 'remote',
   // 2026-11-19: 集約は renderer 側 (record store + 純粋関数) で、fetcher は空の土台を
   // 返す。それまでは同梱の見本だった。

@@ -87,6 +87,7 @@ export const SERVICE_IDS = [
   'grok',
   'vrio',
   'watch',
+  'google-analytics',
   // SCAFFOLD:ADD_SERVICE_ID_ABOVE
 ] as const;
 

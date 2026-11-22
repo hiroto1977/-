@@ -282,6 +282,7 @@ const PROXY_WRITES: Readonly<Record<string, Record<string, unknown>>> = {
   'cloudflare/purge-cache': { zoneId: 'z', purgeEverything: true },
   'drive/create-folder': { name: 'n' },
   'drive/export-sheet': { title: 't', columns: ['a'], rows: [[1]] },
+  'google-analytics/run-report': { propertyId: '123', days: 28 },
   'gmail/create-draft': { to: 'a@b.c', subject: 's' },
   'microsoft-365/create-event': { subject: 's', start: '2026-09-15T10:00:00', end: '2026-09-15T11:00:00' },
   'microsoft-365/send-mail': { to: 'a@b.c', subject: 's', body: 'b' },

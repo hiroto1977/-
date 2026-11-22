@@ -337,6 +337,9 @@ const NOT_GUARDED_BY_STATE: Readonly<Record<string, string>> = {
   'src/renderer/components/VoiceCommandBar.tsx::performIntent':
     '押して起きる送信ではない —— 音声認識の確定した 1 発話ごとに 1 度呼ばれる (発話が送信の単位)。' +
     '同じ発話が 2 度届く道は認識器の側に無く、画面のボタンは認識の開始/停止だけを切り替える。',
+  'src/renderer/pages/GoogleAnalyticsPage.tsx::GoogleAnalyticsPage':
+    '押して起きる送信ではない —— 選んだプロパティと期間が変わったときに効果 (useEffect) が 1 度だけ読む照会で、' +
+    '段階は `read` (書き込まない・外へ利用者の文を送らない)。重なった照会は `requestSeq` が古い答えを捨てる。',
   'src/renderer/pages/VillagePage.tsx::handleUtterance':
     '会話の 1 発話 = 1 送信。文字の欄 (VoiceFooter) は送った瞬間に欄を空にし、ボタンは `!text.trim()` で押せなくなるので' +
     '同じ文は 2 度送れない。マイクの経路は認識器が確定した発話ごとに 1 度呼ぶ (上の VoiceCommandBar と同じ)。',

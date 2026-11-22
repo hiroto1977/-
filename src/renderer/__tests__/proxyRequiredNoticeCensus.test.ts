@@ -76,6 +76,7 @@ const LEDGER: readonly Row[] = [
   { key: 'cloudflare/purge-cache', rendered: 'src/renderer/pages/CloudflarePage.tsx', via: 'shared', why: 'パージフォームの先頭。同上の理由で自前の文では満たせない' },
   { key: 'security/check-email-breach', rendered: 'src/renderer/pages/SecurityPage.tsx', via: 'shared', why: '既存の開示 (経路に誰が居るか) の直後・入力欄の前。開示は「経由する」で、前提の「要る」は別に要る' },
   { key: 'security/scan-url', rendered: 'src/renderer/pages/SecurityPage.tsx', via: 'shared', why: '同上。実測ではこの action だけ VirusTotal の鍵が先に断るが、鍵を入れればプロキシの壁に当たる' },
+  { key: 'google-analytics/run-report', rendered: 'src/renderer/pages/GoogleAnalyticsPage.tsx', via: 'shared', why: '2026-11-22 の読み取り専用の照会。書き込みではないがプロキシを通るので、プロパティ ID の欄より前で前提と許可リストに足すホストを述べる' },
   { key: 'calendar/create-event', rendered: 'src/shared/buildDestinations.ts', via: 'own', why: 'パス 457 の `googleLiveScopeNote` が取得と送信を言い分けたうえで前提を述べる (Drive / Calendar / Gmail の 3 画面が共有するカード)' },
   { key: 'gmail/create-draft', rendered: 'src/shared/buildDestinations.ts', via: 'own', why: '同じカード (`googleLiveScopeNote`)' },
   { key: 'drive/create-folder', rendered: 'src/shared/buildDestinations.ts', via: 'own', why: '同じカード (`googleLiveScopeNote`)' },

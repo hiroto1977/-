@@ -167,6 +167,7 @@ import type { ExportSinks, SinkOutcome } from './data/exportOutcome';
 import { filenameFromTitle } from '../shared/safeFilename';
 import { chatOllama, loadEndpointSetting, probeOllama } from './network/ollamaWeb';
 import { parseJsonText } from '../shared/apiResponse';
+import { checkGaReportRequest, fetchGoogleAnalyticsReportWith } from '../shared/api/googleAnalytics';
 import {
   registerSymbol,
   unregisterSymbol,
@@ -293,6 +294,33 @@ async function getProxyTransport(): Promise<Transport> {
     withBodyDeadline(DEFAULT_HTTP_TIMEOUT_MS, init.signal, (signal) =>
       fetchViaProxy(url, { ...init, signal }, cfg),
     );
+}
+
+/**
+ * プロキシの通信手段を「JSON として読めた本体を返す」読み手に包む。取得 (`liveRead`) と
+ * 読み取りの action (グーグルアナリティクスの `run-report` · 2026-11-22) が同じ 1 つを通る。
+ * 2xx でなければ投げる。**読む所で切る** (パス 330) —— 上限が「渡した transport がプロキシだから
+ * 既に切れている」に依っていた形をやめる。
+ */
+function proxyJsonReader(transport: Transport, label: string): (url: string, init: RequestInit) => Promise<unknown> {
+  return async (url, init) => {
+    const r = await transport(url, init);
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return parseJsonText(await readCappedText(r, label), label);
+  };
+}
+
+/**
+ * グーグルアナリティクスの `run-report` のブラウザ版の双子 (読み取りだけ · 2026-11-22)。
+ * 欄の判定・照会・応答の読みは shared の 1 つ (main の clients/google-analytics.ts も同じ関数)。網へ出る前に断る。
+ */
+async function readGoogleAnalyticsReport(
+  payload: Record<string, unknown>,
+  token: string,
+  transport: Transport,
+): Promise<ActionData<'google-analytics/run-report'>> {
+  const req = checkGaReportRequest(payload);
+  return fetchGoogleAnalyticsReportWith(proxyJsonReader(transport, 'google-analytics'), token, req.propertyId, req.days);
 }
 
 /** Bearer トークン + プロキシが必要な create 系アクションの共通処理。
@@ -1560,16 +1588,7 @@ const unguarded = {
         // 壊れた TokenSet は null にする。liveRead は null を「未登録」として
         // 扱うので、送らずに「登録すると実データになる」と案内が出る。
         readCredential: (id) => vault.getToken(id).then((t) => (t === null ? null : bearerFromStoredToken(t))),
-        getProxyJsonFetch: async () => {
-          const transport = await getProxyTransport();
-          return async (url, init) => {
-            const r = await transport(url, init);
-            if (!r.ok) throw new Error(`HTTP ${r.status}`);
-            // 読む所で切る (パス 330) —— 上限が「渡した transport がプロキシだから
-            // 既に切れている」に依っていた形をやめる。
-            return parseJsonText(await readCappedText(r, serviceId), serviceId);
-          };
-        },
+        getProxyJsonFetch: async () => proxyJsonReader(await getProxyTransport(), serviceId),
         now: () => Date.now(),
       });
       if (res.ok) return ok(res.data) as ActionResult<T>;
@@ -1947,6 +1966,10 @@ const unguarded = {
     }
     if (serviceId === 'drive' && action === 'export-sheet') {
       return (await runProxyBearer('drive', (t, tok) => exportGoogleSheet(payload, tok, t))) as ActionResult<T>;
+    }
+    // グーグルアナリティクス: 選んだプロパティ・期間のレポート (読み取りだけ・CORS → プロキシ · 2026-11-22)。
+    if (serviceId === 'google-analytics' && action === 'run-report') {
+      return (await runProxyBearer('google-analytics', (t, tok) => readGoogleAnalyticsReport(payload, tok, t))) as ActionResult<T>;
     }
     if (serviceId === 'wordpress' && action === 'create-post-draft') {
       return (await runProxyBearer('wordpress', (t, tok) => createWordPressPostDraft(payload, tok, t))) as ActionResult<T>;

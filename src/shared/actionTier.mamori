@@ -83,6 +83,7 @@ export const ACTION_TIER: Readonly<Record<string, Tier>> = {
   'talent/judge-leader': 'read',
   'assistant/providers': 'read',
   'docstudio/list-collections': 'read',
+  'google-analytics/run-report': 'read',
 };
 
 export fn tierOfAction(serviceId: string, action: string) -> Tier {
