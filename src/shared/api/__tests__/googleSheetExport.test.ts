@@ -60,6 +60,8 @@ describe('入口 checkSheetExport / checkSheetTable', () => {
     expect(checkSheetTable([], [])).toBe('columns は 1 つ以上の見出しの配列で指定してください');
     expect(checkSheetTable('日付', [])).toBe('columns は 1 つ以上の見出しの配列で指定してください');
     expect(checkSheetTable(Array(MAX_SHEET_COLUMNS + 1).fill('x'), [])).toBe(`columns は ${MAX_SHEET_COLUMNS} 列以内で指定してください`);
+    // 境目: ちょうど上限の列数は通る (`>` を `>=` にすると、ここが断られる)
+    expect(checkSheetTable(Array(MAX_SHEET_COLUMNS).fill('x'), [])).toBeNull();
     expect(checkSheetTable(['日付', 42], [])).toBe('columns[1] は文字列で指定してください');
     expect(checkSheetTable(COLUMNS, 'x')).toBe('rows は行の配列で指定してください');
     expect(checkSheetTable(COLUMNS, ['x'])).toBe('rows[0] はセルの配列で指定してください');
@@ -171,12 +173,20 @@ describe('応答 parseCreatedSheet', () => {
     const { properties: _drop, ...noTitle } = ok;
     expect(parseCreatedSheet(noTitle).title).toBe('');
     expect(parseCreatedSheet({ ...ok, properties: ['x'] }).title).toBe('');
+    // properties が null でも、表題の無い物でも、投げずに空の表題へ倒す
+    expect(parseCreatedSheet({ ...ok, properties: null }).title).toBe('');
+    expect(parseCreatedSheet({ ...ok, properties: {} }).title).toBe('');
   });
 
   it('★ id / url が無い・文字列でなければ断る', () => {
     expect(thrownMessage(() => parseCreatedSheet(null))).toContain('Google Sheets API');
-    expect(thrownMessage(() => parseCreatedSheet({ ...ok, spreadsheetId: undefined }))).toContain('spreadsheetId');
-    expect(thrownMessage(() => parseCreatedSheet({ ...ok, spreadsheetUrl: 42 }))).toContain('spreadsheetUrl');
+    // 断りの文は、どの相手のどの欄かを言う (文を丸ごと留める —— 相手の名前が抜けても通る形にしない)
+    expect(thrownMessage(() => parseCreatedSheet({ ...ok, spreadsheetId: undefined }))).toBe(
+      'Google Sheets API の応答に spreadsheetId (非空の文字列) がありません (処理したことを確認できません)',
+    );
+    expect(thrownMessage(() => parseCreatedSheet({ ...ok, spreadsheetUrl: 42 }))).toBe(
+      'Google Sheets API の応答に spreadsheetUrl (非空の文字列) がありません (処理したことを確認できません)',
+    );
   });
 
   it('★ docs.google.com の https でない URL は、押せるリンクとして返さない', () => {
