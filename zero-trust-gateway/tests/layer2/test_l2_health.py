@@ -18,7 +18,7 @@ from layer2_zkp_attest.health import (
     load_issuers,
     verify_health_report,
 )
-from layer2_zkp_attest.quarantine import QuarantineBook, QuarantineError, SeenAlerts, verify_alert
+from layer2_zkp_attest.quarantine import QuarantineBook, QuarantineError, SeenAlerts, main as quarantine_main, verify_alert
 from layer5_ephemeral.jose import b64url_encode, jwk_from_public_key, jwk_thumbprint, sign_compact
 
 ISS = "https://edr.example.test"
@@ -349,3 +349,37 @@ def test_鍵の指紋の見本は本物の形() -> None:
     # 統合検査が使う指紋の作り方 (DPoP の鍵の指紋と同じ関数) が動くこと。
     key = new_key()
     assert len(jwk_thumbprint(jwk_from_public_key(key.public_key()))) == 43
+
+
+# ---- 管理者の道具 ----
+def test_管理者の道具で_隔離の一覧と解除ができ_退役した鍵は戻らない(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    path = tmp_path / "quarantine.json"
+    book = QuarantineBook(path)
+    book.bind("jkt-1", "laptop-0042", "alice")
+    book.quarantine(subject="alice", device_id="laptop-0042", reason="alert", now=NOW)
+    assert quarantine_main([str(path), "list"]) == 0
+    out = capsys.readouterr().out
+    assert "利用者 1 人 / 端末 1 台 / 退役した鍵 1 本" in out and "利用者: alice" in out and "端末: laptop-0042" in out
+    assert quarantine_main([str(path), "clear", "--subject", "alice"]) == 0
+    assert quarantine_main([str(path), "clear", "--device", "laptop-0042"]) == 0
+    assert quarantine_main([str(path), "clear", "--device", "laptop-0042"]) == 1
+    assert QuarantineBook(path).snapshot() == {"subjects": (), "devices": (), "keys": ("jkt-1",)}
+
+
+@pytest.mark.parametrize(
+    "argv",
+    [[], ["x"], ["x", "list", "extra"], ["x", "clear"], ["x", "clear", "--subject"], ["x", "clear", "--all", "a"],
+     ["x", "clear", "--subject", ""], ["x", "wipe"]],
+)
+def test_管理者の道具は_読めない指示を断る(tmp_path: Path, argv: list[str]) -> None:
+    if len(argv) > 0:
+        argv = [str(tmp_path / "q.json"), *argv[1:]]
+    assert quarantine_main(argv) == 2
+    assert not (tmp_path / "q.json").exists()
+
+
+def test_管理者の道具は_壊れた控えを直さずに断る(tmp_path: Path) -> None:
+    path = tmp_path / "q.json"
+    path.write_text("broken", encoding="utf-8")
+    assert quarantine_main([str(path), "list"]) == 1
+    assert path.read_text(encoding="utf-8") == "broken"

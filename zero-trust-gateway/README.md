@@ -121,11 +121,20 @@ PYTHONPATH=src python -m layer6_soar.audit_log verify /var/lib/zt/audit.jsonl
 # 最初の認証器を登録するための、1 回きりの登録コードを作る (コードは 1 度だけ表示・15 分で切れる・ファイルに残るのはハッシュ)
 PYTHONPATH=src python -m layer3_fido2.enrollment new --subject alice --file /var/lib/zt/enroll.jsonl
 
+# 隔離の控えを見る・解く (ゲートウェイを止めてから。退役した端末の鍵は戻さない)
+PYTHONPATH=src python -m layer2_zkp_attest.quarantine /var/lib/zt/quarantine.json list
+PYTHONPATH=src python -m layer2_zkp_attest.quarantine /var/lib/zt/quarantine.json clear --subject alice
+
 # 停止スイッチ (既定は dry-run)
 ISSUANCE_HALT_FILE=/var/lib/zt/issuance.halt PYTHONPATH=src python -m layer6_soar.killswitch --level 1
 ```
 
 ## 知っておく限界
+
+- **健康の証明を出せるのは、守りのソフトの管理サービスだけ。** 画面 (`/auth/`) はブラウザの中で動くので健康の証明を持てず、
+  `ATTESTATION_MODE=enforce` の間は画面の「許可をもらって試す」も断られる。証明は、端末の守りのソフト (またはその手先) が
+  `/token` を呼ぶ道具へ渡す形で付ける。どの守りのソフトが「署名つきの健康の証明」を出せるかは、製品ごとに確かめが要る。
+- **動いている間の隔離の控えは、ゲートウェイのメモリが正。** 管理者の道具で解くときは、ゲートウェイを止めてから。
 
 - **記録の「末尾の切り落とし」は、このファイルの中だけでは分からない。** 鎖の先頭 (件数とハッシュ) を別の場所へ控えて、
   検算のときに渡す必要が在る。控える仕組みはまだ無い (手で控える)。

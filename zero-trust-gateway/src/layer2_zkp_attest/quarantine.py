@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import json
 import os
+import sys
 import tempfile
 import threading
 from collections.abc import Callable
@@ -208,3 +209,42 @@ class QuarantineBook:
                 "devices": tuple(sorted(self._devices)),
                 "keys": tuple(sorted(self._keys)),
             }
+
+
+def main(argv: list[str]) -> int:
+    # 管理者の道具。ゲートウェイを止めてから使う (動いている間は、ゲートウェイがメモリの控えで上書きする)。
+    #   python -m layer2_zkp_attest.quarantine <QUARANTINE_FILE> list
+    #   python -m layer2_zkp_attest.quarantine <QUARANTINE_FILE> clear --subject <利用者> | --device <端末>
+    # 解くのは利用者と端末の隔離だけ。退役した端末の鍵は戻さない (感染していた間に使われた疑いは消えない)。
+    usage = "使い方: <QUARANTINE_FILE> list | <QUARANTINE_FILE> clear (--subject <利用者> | --device <端末>)"
+    if len(argv) < 2:
+        print(usage, file=sys.stderr)
+        return 2
+    path, command, rest = Path(argv[0]), argv[1], argv[2:]
+    try:
+        book = QuarantineBook(path)
+    except QuarantineError as err:
+        print(str(err), file=sys.stderr)
+        return 1
+    if command == "list" and rest == []:
+        snap = book.snapshot()
+        print(f"利用者 {len(snap['subjects'])} 人 / 端末 {len(snap['devices'])} 台 / 退役した鍵 {len(snap['keys'])} 本")
+        for name in snap["subjects"]:
+            print(f"  利用者: {name}")
+        for name in snap["devices"]:
+            print(f"  端末: {name}")
+        return 0
+    if command == "clear" and len(rest) == 2 and rest[0] in ("--subject", "--device") and rest[1] != "":
+        subject = rest[1] if rest[0] == "--subject" else None
+        device = rest[1] if rest[0] == "--device" else None
+        if not book.clear(subject=subject, device_id=device):
+            print("その名前は隔離の控えにありません", file=sys.stderr)
+            return 1
+        print("隔離を解きました (退役した端末の鍵はそのままです)")
+        return 0
+    print(usage, file=sys.stderr)
+    return 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(main(sys.argv[1:]))
