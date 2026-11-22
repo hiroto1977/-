@@ -37,6 +37,7 @@ import type { JudgeResult, TalentState } from './talent';
 import type { TeamRadarState } from './teamRadarState';
 import type { BusinessAdvisorResponse } from './businessAdvisor';
 import type { RecordEntryResult } from './recordEntryLimits';
+import type { GaReport } from './api/googleAnalytics';
 import type {
   AdvisorResponse as StockAdvisorResponse,
   BacktestSummary,
@@ -117,6 +118,7 @@ export interface ActionDataMap {
   'emotions/log-mood': { date: string; score: number };
   'github/create-issue': { number: number; url: string; title: string };
   'gmail/create-draft': { id: string; messageId: string };
+  'google-analytics/run-report': GaReport;
   'microsoft-365/create-event': { id: string; subject: string; webLink: string };
   'microsoft-365/send-mail': { ok: true; to: string; subject: string };
   'mutual-funds/advise': ServiceAdvisorResponse;

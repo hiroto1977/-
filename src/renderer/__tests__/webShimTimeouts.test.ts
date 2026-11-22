@@ -281,6 +281,7 @@ const PROXY_WRITES: Readonly<Record<string, Record<string, unknown>>> = {
   'cloudflare/create-dns-record': { zoneId: 'z', type: 'A', name: 'a.example', content: '203.0.113.1' },
   'cloudflare/purge-cache': { zoneId: 'z', purgeEverything: true },
   'drive/create-folder': { name: 'n' },
+  'google-analytics/run-report': { propertyId: '123', days: 28 },
   'gmail/create-draft': { to: 'a@b.c', subject: 's' },
   'microsoft-365/create-event': { subject: 's', start: '2026-09-15T10:00:00', end: '2026-09-15T11:00:00' },
   'microsoft-365/send-mail': { to: 'a@b.c', subject: 's', body: 'b' },

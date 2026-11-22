@@ -34,7 +34,7 @@ X-Proxy-Auth: <optional-shared-secret>
 }
 ```
 
-## 2. Cloudflare Worker 実装 (433 行)
+## 2. Cloudflare Worker 実装 (435 行)
 
 `workers.cloudflare.com/dashboard` で **Create Worker** → 下記コードを貼り
 付け → **Deploy**。`worker.dev` の URL を Settings → BYO プロキシに登録。
@@ -67,6 +67,8 @@ const UPSTREAM_ALLOWLIST = new Set([
   // Atlassian (Jira) は自分のサイト host も必要: 例 'your-team.atlassian.net'
   'www.googleapis.com',      // Google カレンダー / Drive
   'gmail.googleapis.com',    // Gmail 下書き
+  'analyticsadmin.googleapis.com', // グーグルアナリティクス (プロパティの一覧・読み取りだけ)
+  'analyticsdata.googleapis.com',  // グーグルアナリティクス (訪問者数・流入元・読み取りだけ)
   'public-api.wordpress.com',// WordPress.com 下書き
   'api.canva.com',           // Canva フォルダ
   'api.cloudflare.com',      // Cloudflare DNS / キャッシュ

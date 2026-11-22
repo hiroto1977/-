@@ -142,6 +142,7 @@ const SERVICE_ALIASES: Readonly<Record<ServiceId, readonly string[]>> = {
   atlassian: ['atlassian', 'あとらしあん', 'jira', 'じら', 'confluence', 'こんふるえんす'],
   notion: ['notion', 'のーしょん'],
   drive: ['googledrive', 'gどらいぶ', 'どらいぶ', 'drive', 'ぐーぐるどらいぶ'],
+  'google-analytics': ['googleanalytics', 'ぐーぐるあなりてぃくす', 'あなりてぃくす', 'analytics', 'ga4', 'あくせす解析', 'ほうもんしゃすう', '訪問者数'],
   calendar: ['googlecalendar', 'かれんだー', 'calendar', '予定', 'よてい', 'すけじゅーる'],
   gmail: ['gmail', 'じーめーる', 'めーる', 'mail', 'メール'],
   slack: ['slack', 'すらっく'],

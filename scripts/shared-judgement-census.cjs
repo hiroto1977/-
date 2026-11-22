@@ -216,6 +216,14 @@ const VERDICTS = {
     + '`linearIntakeNote` → null / `linearScopeNote` → null / `viewerRead` `issuesRead` の false) の'
     + '**消費者はどれも LinearPage 1 つだけ**で、その画面は両ビルドで同じ 1 本のソースである。'
     + '読めなかった優先度と期限は「読めません」・読めなかった一覧と断りは ⚠ の 1 文で、どちらのビルドでも同じ文になる',
+  'api/googleAnalytics':
+    '対称 (実測・2026-11-22) —— 取得は両ビルドが同じ `fetchGoogleAnalyticsSnapshotWith` を (main は clients/google-analytics.ts、'
+    + 'ブラウザ版は network/liveRead.ts)、`run-report` は同じ `checkGaReportRequest` → `fetchGoogleAnalyticsReportWith` を '
+    + '(main は clients/google-analytics.ts、ブラウザ版は data/saasWriteWeb.ts の runGoogleAnalyticsReport) 呼ぶ。'
+    + '断り (`checkGaReportRequest` が投げる 2 文) はどちらのビルドでも同じ文で、画面はそれを `res.message` として 1 行で出す。'
+    + '否定を返す物 (`gaPropertyIdOrNull` / `gaPeriodOrNull` / `gaDateOf` → null・数の null・`…Read` の false・`gaReportIntakeNote` → null) の'
+    + '消費者は GoogleAnalyticsPage と、端末の記憶を読む data/googleAnalyticsProperty.ts (読めない値を「覚えていない」へ倒す) だけで、'
+    + 'どちらも両ビルドで同じ 1 本のソースである。読めなかった数は「不明」・読めなかった表は ⚠ の 1 文',
   'api/dropbox':
     '対称 (実測・2026-11-19) —— 両ビルドが同じ `fetchDropboxSnapshotWith` を呼び (main は clients/dropbox.ts、'
     + 'ブラウザ版は network/liveRead.ts)、否定を返す物 (`normalizeDropboxAccount` の read → false / '

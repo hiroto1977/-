@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 537
+- ブロック数: 538
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `d353002756ab4c8e6c16c2c0546642818d5f4d03197a0503c7f4eecb42b746bb`
+- 末尾(tip)ハッシュ: `65747ad6431ec32f72a38040133afc7fbedca18dfa7c111db89d87abad68be53`
 - 保護対象: 225 ファイル
 
 ## ブロック
@@ -550,6 +550,7 @@
 | 534 | `fa53638437c3eb52` | `8c7ca499b94de0fd` | `fe0072765b1f9f39` | update gateway-browser.yml |
 | 535 | `e7f44ffe30a2255c` | `fe0072765b1f9f39` | `ad71f74963de63eb` | update recordCipher.ts |
 | 536 | `6ae602c56b0f3d26` | `ad71f74963de63eb` | `d353002756ab4c8e` | update integrity-chain.cjs,mamori-capabilities.json,liveRead.mamori,liveRead.ts |
+| 537 | `2775755fca4c019f` | `d353002756ab4c8e` | `65747ad6431ec32f` | update 00-project.mdc,manifest.webmanifest,PROXY_EXAMPLE.md,integrity-chain.cjs,mamori-capabilities.json,oauth.mamori |
 
 ## 保護対象ファイル
 

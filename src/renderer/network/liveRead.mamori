@@ -39,6 +39,7 @@ extern pure { fetchSentrySnapshotWith } from "../../shared/api/sentry";
 extern pure { fetchDiscordSnapshotWith } from "../../shared/api/discord";
 extern pure { fetchDropboxSnapshotWith } from "../../shared/api/dropbox";
 extern pure { fetchQualitySnapshotWith } from "../../shared/api/quality";
+extern pure { fetchGoogleAnalyticsSnapshotWith } from "../../shared/api/googleAnalytics";
 extern pure { lookup } from "../../shared/lookup";
 
 /// 通信手段。`fetchSnapshot` と同じく JSON として読めた本体を返す。
@@ -98,6 +99,10 @@ interface LiveReader {
 /// テストファイル数・PR 件数とレビュー状態・`docs/QUALITY.md` の実測) を GitHub API から読む
 /// (読み取りだけ・GET のみ)。同じくプロキシを通す。プロキシの許可リストに `api.github.com` を足して使う。
 /// トークンは GitHub の PAT (このリポジトリの読み取り)。
+///
+/// `google-analytics` (2026-11-22): 見られるプロパティの一覧 (読み取りだけ・GET 1 つ)。同じくプロキシを通す ——
+/// `analyticsadmin.googleapis.com` へもこの開発環境からは届かない。選んだプロパティのレポート
+/// (`analyticsdata.googleapis.com`) は `run-report` が同じプロキシで読む。プロキシの許可リストに 2 つとも足して使う。
 export const LIVE_READERS: Readonly<Record<string, LiveReader>> = {
   cursor: {
     read: (jsonFetch, token, nowMs) => fetchCursorSnapshotWith(jsonFetch, token, nowMs, DEFAULT_USAGE_DAYS),
@@ -125,6 +130,9 @@ export const LIVE_READERS: Readonly<Record<string, LiveReader>> = {
   },
   quality: {
     read: (jsonFetch, token) => fetchQualitySnapshotWith(jsonFetch, token),
+  },
+  'google-analytics': {
+    read: (jsonFetch, token) => fetchGoogleAnalyticsSnapshotWith(jsonFetch, token),
   },
 };
 

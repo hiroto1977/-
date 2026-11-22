@@ -62,11 +62,12 @@ const RAW_TYPE_ERROR = /Cannot read propert|is not a function|is not iterable|of
  * 資格情報の形で先に断る (`atlassian` / `youtube`)。**増えても減っても
  * ここを直す** —— 直さないと census が何も駆動していない状態で緑になる。
  * (dropbox は 2026-11-19 のバッチ 3 で stub から実 fetcher になった。
- * quality は 2026-11-21 の最小案で stub から実 fetcher になった。)
+ * quality は 2026-11-21 の最小案で stub から実 fetcher になった。
+ * google-analytics は 2026-11-22 に足した —— プロパティの一覧を読む。)
  */
 const NETWORK_FETCHERS = [
   'asana', 'base', 'calendar', 'canva', 'cloudflare', 'cursor', 'discord', 'drive', 'dropbox', 'freee',
-  'github', 'gmail', 'line', 'linear', 'microsoft-365', 'notion', 'ollama', 'quality', 'sentry', 'slack', 'stripe', 'wordpress',
+  'github', 'gmail', 'google-analytics', 'line', 'linear', 'microsoft-365', 'notion', 'ollama', 'quality', 'sentry', 'slack', 'stripe', 'wordpress',
 ] as const;
 
 /** 壊れた 200 を返す fetch。どの URL でも同じ本文。 */

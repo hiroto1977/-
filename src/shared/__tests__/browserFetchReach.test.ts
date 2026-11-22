@@ -21,12 +21,13 @@ const REMOTE = Object.entries(SERVICE_DATA_ORIGIN)
   .sort();
 
 describe('ブラウザ版から読める連携先の一覧', () => {
-  it('9 件を値ごと留める (凍結・昇順)', () => {
+  it('10 件を値ごと留める (凍結・昇順)', () => {
     expect([...BROWSER_LIVE_READ_SERVICES]).toEqual([
       'asana',
       'cursor',
       'discord',
       'dropbox',
+      'google-analytics',
       'line',
       'linear',
       'quality',

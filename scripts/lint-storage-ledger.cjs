@@ -196,6 +196,8 @@ const STORES = {
   'servicehub.ollama.port': { medium: 'localstorage', holds: 'Ollama の待ち受けポート', backedUp: false },
   'servicehub.theme': { medium: 'localstorage', holds: '配色の選択 (ライト / ダーク / OS に合わせる)', backedUp: false },
   'servicehub.design': { medium: 'localstorage', holds: 'デザインの選択 (すっきり / かわいい)', backedUp: false },
+  // グーグルアナリティクスの画面で最後に選んだプロパティ ID (数字だけ・秘密ではない · 2026-11-22)。
+  'servicehub.googleAnalytics.propertyId': { medium: 'localstorage', holds: 'グーグルアナリティクスで最後に選んだプロパティ ID (数字だけ)', backedUp: false },
   // 暗号化した控えの目印 (いつ・何件・記録の指紋・ファイル名)。記録の中身もパスフレーズも入らない (2026-11-11 · docs/CLOUD_CONTINUITY.md)。
   'servicehub.encryptedCopy.last': { medium: 'localstorage', holds: '暗号化した控えの目印 (書いた時刻・件数・記録の指紋・ファイル名)', backedUp: false },
   // チームレーダーの保存状態 (部署名・メンバーの氏名・軸ごとの 1〜5 評価・付箋)。第三者の人事評価
@@ -255,10 +257,10 @@ const INDIRECT_SITES = [
   {
     file: 'src/renderer/data/localWrite.ts',
     expr: 'key',
-    keys: ['servicehub.docstudio.v1', 'servicehub.teamradar.draft.v1', 'chatbot-requests', 'google-client-id', 'servicehub.theme', 'servicehub.design', 'coach-state', 'servicehub.encryptedCopy.last'],
+    keys: ['servicehub.docstudio.v1', 'servicehub.teamradar.draft.v1', 'chatbot-requests', 'google-client-id', 'servicehub.theme', 'servicehub.design', 'coach-state', 'servicehub.encryptedCopy.last', 'servicehub.googleAnalytics.propertyId'],
     why:
       '成否を返す共通の入口 (書き 2026-09-06・読み 2026-09-12 パス 160)。鍵は呼び出し元の定数で、通るのは書類スタジオの'
-      + '差込値・Team Radar の下書き・チャットの要望 (2026-09-06)・Google のクライアント ID (書きはパス 155・読みはパス 310)・配色の選択 (パス 317・`theme.ts`)・デザインの選択 (2026-09-26・`theme.ts`)・ゴールコーチの目標 (`coachStore.ts`)・暗号化した控えの目印 (2026-11-11・`encryptedCopy.ts`) の 8 つ。'
+      + '差込値・Team Radar の下書き・チャットの要望 (2026-09-06)・Google のクライアント ID (書きはパス 155・読みはパス 310)・配色の選択 (パス 317・`theme.ts`)・デザインの選択 (2026-09-26・`theme.ts`)・ゴールコーチの目標 (`coachStore.ts`)・暗号化した控えの目印 (2026-11-11・`encryptedCopy.ts`)・グーグルアナリティクスのプロパティ ID (2026-11-22・`googleAnalyticsProperty.ts`) の 9 つ。'
       + '**新しい呼び出し元を足したら、その鍵をここへ書く** —— `writeLocalJson(key, …)` は鍵を組み立てないので、台帳が唯一の一覧になる。'
       + '2026-09-17 (パス 310) まで後の 2 つが書かれておらず、直接の getItem が同じ鍵を名乗っていたので誰も鳴らなかった ——'
       + ' Google の読みを入口へ寄せた瞬間に「実在しない保存先」として出た。規則 10 が入口の呼び出しから鍵を解いて突き合わせる。',

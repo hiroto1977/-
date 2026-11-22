@@ -30,6 +30,7 @@ export const BROWSER_LIVE_READ_SERVICES: readonly string[] = Object.freeze([
   'cursor',
   'discord',
   'dropbox',
+  'google-analytics',
   'line',
   'linear',
   'quality',

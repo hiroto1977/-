@@ -338,7 +338,7 @@ describe('伏字の網羅 — 母集団は「預かっているサービス」(�
     readonly sample: string;
   }
 
-  // 預かる 30 サービスすべてに 1 行。**足りなければ下の突き合わせが鳴る。**
+  // 預かる 31 サービスすべてに 1 行。**足りなければ下の突き合わせが鳴る。**
   const HELD_FORMATS: readonly Held[] = [
     { service: 'github', issuer: 'GitHub 細粒度 PAT', carrier: 'prefix', sample: `github_pat_${FILL}_${FILL}${FILL}` },
     { service: 'quality', issuer: 'GitHub 細粒度 PAT', carrier: 'prefix', sample: `github_pat_${FILL}_${FILL}${FILL}` },
@@ -347,6 +347,8 @@ describe('伏字の網羅 — 母集団は「預かっているサービス」(�
     { service: 'calendar', issuer: 'Google アクセストークン', carrier: 'prefix', sample: `ya29.${FILL}${FILL}` },
     { service: 'gmail', issuer: 'Google 更新トークン', carrier: 'prefix', sample: `1//0e${FILL}${FILL}` },
     { service: 'youtube', issuer: 'Google API キー', carrier: 'prefix', sample: `AIzaSy${FILL}` },
+    // グーグルアナリティクス (2026-11-22)。Google の OAuth アクセストークン (`ya29.`) で、接頭辞は伏字の表に前から在る。
+    { service: 'google-analytics', issuer: 'Google アクセストークン (analytics.readonly)', carrier: 'prefix', sample: `ya29.a0${FILL}${FILL}` },
     {
       service: 'microsoft-365',
       issuer: 'Microsoft Graph (JWT)',
@@ -420,7 +422,7 @@ describe('伏字の網羅 — 母集団は「預かっているサービス」(�
    * `shpat_` / `shpss_` は上の `PREFIXED` が母集団に依らず留めており、
    * 既に保存した人の値や第三者が本文に反射した値には今日も掛かる。
    */
-  it('★ 預かる 30 サービスすべてに行が在り、余計な行が無い', () => {
+  it('★ 預かる 31 サービスすべてに行が在り、余計な行が無い', () => {
     const listed = HELD_FORMATS.map((f) => f.service);
     expect([...listed].sort()).toEqual([...HELD_SERVICES].sort());
   });

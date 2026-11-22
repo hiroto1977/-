@@ -79,7 +79,7 @@ describe('Enter / Escape を読む口は 1 つ (母集団は実装から)', () =
     expect(rawKeyLines(readOriginalSource(path.join(REPO, HOME))).length).toBeGreaterThanOrEqual(2);
   });
 
-  it('keydown を読む画面が判定を通っている (14 か所の読み手)', () => {
+  it('keydown を読む画面が判定を通っている (15 か所の読み手)', () => {
     const readers = files.filter((f) =>
       /import \{[^}]*\b(?:isSubmitEnter|isCancelEscape)\b[^}]*\} from '[^']*keyIntent';/.test(
         stripComments(readOriginalSource(path.join(REPO, f))),
@@ -90,6 +90,7 @@ describe('Enter / Escape を読む口は 1 つ (母集団は実装から)', () =
         'src/renderer/App.tsx',
         'src/renderer/components/useDialogFocus.ts', // パス 506: dialog の Esc (閉じる / 取り消す) を 1 つの hook が読む
         'src/renderer/pages/BusinessPage.tsx',
+        'src/renderer/pages/GoogleAnalyticsPage.tsx', // 2026-11-22: プロパティ ID の欄の Enter で「表示」
         'src/renderer/pages/SettingsPage.tsx',
         'src/renderer/pages/StocksPage.tsx',
         'src/renderer/pages/VillagePage.tsx', // パス 504: 村の街区のカード (role=button の div) の Enter / Space
@@ -99,7 +100,7 @@ describe('Enter / Escape を読む口は 1 つ (母集団は実装から)', () =
     const calls = readers
       .map((f) => stripComments(readOriginalSource(path.join(REPO, f))))
       .reduce((n, src) => n + (src.match(/\b(?:isSubmitEnter|isCancelEscape)\(e\)/g) ?? []).length, 0);
-    expect(calls).toBe(14);
+    expect(calls).toBe(15);
   });
 
   it('免除の台帳は両方向 (今日 0 件 —— 行を足すなら、そのファイルが実際に素で比べていること)', () => {

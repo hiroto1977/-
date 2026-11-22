@@ -108,6 +108,7 @@ const LEDGER: Readonly<Record<string, { kind: Kind; why: string }>> = {
   'src/renderer/theme.ts': { kind: 'measure-next', why: '配色の解決と適用 (パス 317)。OS 追随の停止まで持つ。' },
   'src/shared/api/cloudflare.ts': { kind: 'measure-next', why: '**資格情報を使う書き込み口**。DNS レコードとキャッシュ削除の欄を検める。2026-09-20 (パス 357): ad-hoc の報告は生存 21 件だったが `audit:survivors` で **21/21 が偽** (既存の検査が全部殺す)。全掃引で確かめてから入れる。' },
   'src/shared/api/dropbox.ts': { kind: 'measure-next', why: '**資格情報を使う読み取り口** (2026-11-19 · ローカル完結バッチ 3 で新設)。アカウント・容量・最近のアイテムの応答を正規化し、読めない値を 0 に倒さない判断を持つ。両ビルドが同じ関数を通る。全掃引で確かめてから入れる。' },
+  'src/shared/api/googleAnalytics.ts': { kind: 'measure-next', why: '**資格情報を使う読み取り口** (2026-11-22)。プロパティ ID と期間の関門・2 つの報告の正規化・読めない数を「不明」に倒す判断を持ち、両ビルドが同じ実装を通る。単体と jsdom の検査と対照 6 方向は在るが、変異検査は未測定。' },
   'src/shared/api/microsoft365.ts': { kind: 'measure-next', why: '**資格情報を使う書き込み口**。両ビルドが 1 つの実装を通る (パス 274) のに未測定。2026-09-20 (パス 357): ad-hoc の報告は生存 9 件だったが `audit:survivors` で **9/9 が偽**。全掃引で確かめてから入れる。' },
   'src/shared/api/quality.ts': { kind: 'measure-next', why: '**資格情報を使う読み取り口** (2026-11-21 · quality 最小案で新設)。GitHub API の応答と `docs/QUALITY.md` の実測表を正規化し、読めない値を 0 に倒さない判断を持つ。両ビルドが同じ関数を通る。全掃引で確かめてから入れる。' },
   'src/shared/api/security.ts': { kind: 'measure-next', why: '**資格情報を使う書き込み口** (HIBP / VirusTotal)。両ビルドが同じ関数を通る (パス 321)。2026-09-20 (パス 357): ad-hoc の報告は生存 5 件だったが `audit:survivors` で **5/5 が偽**。全掃引で確かめてから入れる。' },

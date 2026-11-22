@@ -876,6 +876,10 @@ const DEP_EXCLUSIONS = {
   'src/shared/api/quality.ts':
     'サービス API のアダプタ (読み取りだけ・GET 8 つ)。送り先のホストは定数 1 つで lint:network-targets の台帳が見ており、'
     + '上限・打ち切りは httpLimits (保護対象) が持つ。',
+  // 2026-11-22: `liveRead.ts` (保護対象) がグーグルアナリティクスの読み取り (プロパティの一覧) を足したので閉包に出た。上の dropbox などと同じ class。
+  'src/shared/api/googleAnalytics.ts':
+    'サービス API のアダプタ (読み取りだけ・GET 1 つ + レポートの POST 2 つ)。送り先のホストは定数 2 つで lint:network-targets の台帳が見ており、'
+    + '上限・打ち切りは httpLimits (保護対象) が持つ。',
 };
 
 /** 相対 import を実ファイルへ解決する (拡張子省略に対応)。解決できなければ null。 */
@@ -1048,6 +1052,7 @@ const EXCLUSION_KINDS = {
   'src/shared/api/discord.ts': { kind: 'guarded-by', guardedBy: ['src/shared/httpLimits.ts'] },
   'src/shared/api/dropbox.ts': { kind: 'guarded-by', guardedBy: ['src/shared/httpLimits.ts'] },
   'src/shared/api/quality.ts': { kind: 'guarded-by', guardedBy: ['src/shared/httpLimits.ts'] },
+  'src/shared/api/googleAnalytics.ts': { kind: 'guarded-by', guardedBy: ['src/shared/httpLimits.ts'] },
 };
 
 /**
