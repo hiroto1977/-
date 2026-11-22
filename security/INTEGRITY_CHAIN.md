@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 533
+- ブロック数: 534
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `16c72a7381010860093f15303a66d82b06cf3552605dd46405a6106cdf458e75`
+- 末尾(tip)ハッシュ: `7829b37747db01925289fb35e65082537b3d8e18c22af4853fe6ab5173cb2d68`
 - 保護対象: 222 ファイル
 
 ## ブロック
@@ -546,6 +546,7 @@
 | 530 | `316b8929f2642515` | `445c29caac3d83b8` | `f7c9caae96edae98` | update 00-project.mdc,manifest.webmanifest |
 | 531 | `f225c15c987f4afc` | `f7c9caae96edae98` | `a33c545cf6479030` | update ci.yml |
 | 532 | `0849a281aa26a013` | `a33c545cf6479030` | `16c72a7381010860` | update eslint.config.js |
+| 533 | `21b3822086f8dfc5` | `16c72a7381010860` | `7829b37747db0192` | update integrity-chain.cjs,mamori-capabilities.json,liveRead.mamori,liveRead.ts |
 
 ## 保護対象ファイル
 
