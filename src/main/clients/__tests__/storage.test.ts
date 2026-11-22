@@ -1,4 +1,5 @@
 import * as fs from 'node:fs';
+import * as net from 'node:net';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -82,6 +83,56 @@ describe('parseProcMounts', () => {
       { mount: '/data', label: 'data' },
     ]);
   });
+
+  it('keeps every real filesystem type in the REAL_FS table', () => {
+    const types = [
+      'ext2',
+      'ext3',
+      'ext4',
+      'xfs',
+      'btrfs',
+      'f2fs',
+      'vfat',
+      'exfat',
+      'ntfs',
+      'ntfs3',
+      'zfs',
+    ];
+    const text = types.map((t, i) => `/dev/sd${i} /mnt/${t} ${t} rw 0 0`).join('\n');
+    expect(parseProcMounts(text).map((m) => m.mount)).toEqual(types.map((t) => `/mnt/${t}`));
+  });
+
+  it('tolerates leading whitespace and repeated spaces between fields', () => {
+    const text = [
+      '  /dev/sda1 /lead ext4 rw 0 0',
+      '/dev/sda2 /wide  ext4 rw 0 0',
+      '\t/dev/sda3 /tabbed ext4 rw 0 0',
+    ].join('\n');
+    expect(parseProcMounts(text)).toEqual([
+      { mount: '/lead', label: 'lead' },
+      { mount: '/wide', label: 'wide' },
+      { mount: '/tabbed', label: 'tabbed' },
+    ]);
+  });
+
+  it('accepts a line with exactly three fields', () => {
+    expect(parseProcMounts('dev /mnt3 ext4')).toEqual([{ mount: '/mnt3', label: 'mnt3' }]);
+  });
+
+  it('decodes the \\011 (tab) escape in mount points as well as \\040', () => {
+    expect(parseProcMounts('/dev/sdb1 /media/Tab\\011Name ext4 rw 0 0')).toEqual([
+      { mount: '/media/Tab\tName', label: 'Tab\tName' },
+    ]);
+  });
+
+  it('excludes snap mounts even when they carry a real filesystem type', () => {
+    const text = [
+      '/dev/sda1 / ext4 rw 0 0',
+      '/dev/loop0 /snap/core/123 ext4 ro 0 0',
+      '/dev/loop1 /snap ext4 ro 0 0',
+    ].join('\n');
+    expect(parseProcMounts(text)).toEqual([{ mount: '/', label: 'システム' }]);
+  });
 });
 
 describe('buildStorageSnapshot — disks', () => {
@@ -157,6 +208,61 @@ describe('buildStorageSnapshot — largeFolders', () => {
     });
     expect(snap.largeFolders.map((f) => f.path)).toEqual(['/h/a', '/h/b']);
   });
+
+  it('keeps ascending path order when the input is already sorted', () => {
+    const snap = buildStorageSnapshot({
+      ...base,
+      folders: [
+        folder({ path: '/h/a', sizeBytes: 2 * GiB }),
+        folder({ path: '/h/b', sizeBytes: 2 * GiB }),
+      ],
+    });
+    expect(snap.largeFolders.map((f) => f.path)).toEqual(['/h/a', '/h/b']);
+  });
+
+  it('orders three or more size ties strictly by path', () => {
+    const snap = buildStorageSnapshot({
+      ...base,
+      folders: [
+        folder({ path: '/h/c', sizeBytes: 2 * GiB }),
+        folder({ path: '/h/a', sizeBytes: 2 * GiB }),
+        folder({ path: '/h/b', sizeBytes: 2 * GiB }),
+      ],
+    });
+    expect(snap.largeFolders.map((f) => f.path)).toEqual(['/h/a', '/h/b', '/h/c']);
+  });
+
+  it('keeps input order for folders with identical path and size (stable tie)', () => {
+    const snap = buildStorageSnapshot({
+      ...base,
+      folders: [
+        folder({ path: '/h/x', sizeBytes: 2 * GiB, fileCount: 3 }),
+        folder({ path: '/h/x', sizeBytes: 2 * GiB, fileCount: 5 }),
+      ],
+    });
+    expect(snap.largeFolders.map((f) => f.fileCount)).toEqual([3, 5]);
+  });
+
+  it('sorts a long list of size ties by path before capping at the top N', () => {
+    const paths = Array.from({ length: 40 }, (_, i) => `/h/p${String(i).padStart(2, '0')}`);
+    const snap = buildStorageSnapshot({
+      ...base,
+      folders: [...paths].reverse().map((p) => folder({ path: p, sizeBytes: 2 * GiB })),
+    });
+    expect(snap.largeFolders.map((f) => f.path)).toEqual(paths.slice(0, 8));
+  });
+
+  it('does not let below-minimum folders into the list when few folders qualify', () => {
+    const snap = buildStorageSnapshot({
+      ...base,
+      folders: [
+        folder({ path: '/h/big', sizeBytes: 2 * GiB }),
+        folder({ path: '/h/small1', sizeBytes: 5 * MiB }),
+        folder({ path: '/h/small2', sizeBytes: 1 * MiB }),
+      ],
+    });
+    expect(snap.largeFolders.map((f) => f.path)).toEqual(['/h/big']);
+  });
 });
 
 describe('buildStorageSnapshot — cleanupTasks', () => {
@@ -180,6 +286,20 @@ describe('buildStorageSnapshot — cleanupTasks', () => {
     expect(snap.cleanupTasks[0]?.howTo).toContain('/h/.cache2');
   });
 
+  it('joins multiple cache folder paths with the separator in the cache howTo', () => {
+    const half = CACHE_CLEANUP_MIN_BYTES / 2;
+    const snap = buildStorageSnapshot({
+      ...base,
+      folders: [
+        folder({ path: '/h/.cache', sizeBytes: half, category: 'cache' }),
+        folder({ path: '/h/.cache2', sizeBytes: half, category: 'cache' }),
+      ],
+    });
+    expect(snap.cleanupTasks[0]?.howTo).toBe(
+      '/h/.cache / /h/.cache2: 対象アプリを終了してから中身を削除してください（フォルダ自体は削除しないこと）',
+    );
+  });
+
   it('skips cache cleanup below the minimum', () => {
     const snap = buildStorageSnapshot({
       ...base,
@@ -193,7 +313,7 @@ describe('buildStorageSnapshot — cleanupTasks', () => {
   it('proposes trash cleanup only when measured and at least the minimum', () => {
     const withTrash = buildStorageSnapshot({ ...base, trashSizeBytes: TRASH_CLEANUP_MIN_BYTES });
     expect(withTrash.cleanupTasks).toMatchObject([
-      { id: 'trash', potentialFreeMb: 1, difficulty: 'safe' },
+      { id: 'trash', potentialFreeMb: 1, difficulty: 'safe', executable: false },
     ]);
     expect(buildStorageSnapshot({ ...base, trashSizeBytes: null }).cleanupTasks).toEqual([]);
     expect(buildStorageSnapshot({ ...base, trashSizeBytes: 0 }).cleanupTasks).toEqual([]);
@@ -211,8 +331,11 @@ describe('buildStorageSnapshot — cleanupTasks', () => {
       ],
     });
     expect(snap.cleanupTasks).toMatchObject([
-      { id: 'downloads', potentialFreeMb: 0, difficulty: 'caution' },
+      { id: 'downloads', potentialFreeMb: 0, difficulty: 'caution', executable: false },
     ]);
+    expect(snap.cleanupTasks[0]?.howTo).toBe(
+      '/h/Downloads: 中身は利用者のファイルです。内容を確認し、不要な物だけを削除してください（解放できる量は内容によります）',
+    );
     const below = buildStorageSnapshot({
       ...base,
       folders: [
@@ -269,6 +392,18 @@ describe('buildStorageSnapshot — performance', () => {
     expect(snap.performance.memoryUsedGb).toBe(0);
     expect(snap.recommendations.some((r) => r.includes('メモリ使用率'))).toBe(false);
   });
+
+  it('keeps the memory usage rate at 0 when total memory is 0, even with used memory present', () => {
+    // 合成境界: totalMemGb = 0 のとき使用率は定義できないので 0 に倒す (ガードが
+    // 落ちると usedMemGb / 0 = Infinity になり、メモリ警告が誤って出る)。
+    const snap = buildStorageSnapshot({ ...base, totalMemBytes: 0, freeMemBytes: -1 * GiB });
+    expect(snap.performance.memoryTotalGb).toBe(0);
+    expect(snap.performance.memoryUsedGb).toBe(1);
+    expect(snap.recommendations).toEqual([
+      'ディスク・メモリに大きな問題は見つかりませんでした',
+      'フラグメント率と起動時間は、この環境では測定手段が無いため表示していません（測っていない値を 0 とは表示しません）',
+    ]);
+  });
 });
 
 describe('buildStorageSnapshot — recommendations', () => {
@@ -295,6 +430,16 @@ describe('buildStorageSnapshot — recommendations', () => {
     });
     expect(snap.recommendations).toContain('最も大きいフォルダは /h/.cache（2.0 GB）です');
     expect(snap.recommendations).toContain('キャッシュが 2.0 GB あります。クリーンアップ候補です');
+  });
+
+  it('recommends cache cleanup at exactly the downloads threshold (boundary inclusive)', () => {
+    const snap = buildStorageSnapshot({
+      ...base,
+      folders: [
+        folder({ path: '/h/.cache', sizeBytes: DOWNLOADS_CLEANUP_MIN_BYTES, category: 'cache' }),
+      ],
+    });
+    expect(snap.recommendations).toContain('キャッシュが 1.0 GB あります。クリーンアップ候補です');
   });
 
   it('warns on memory at exactly 80%, silent at 79%', () => {
@@ -403,6 +548,25 @@ describe('measureDir (実ツリーのフィクスチャ)', () => {
     ).toEqual({ sizeBytes: 0, fileCount: 0, truncated: false });
   });
 
+  it('通常ファイルでもディレクトリでもないエントリ (ソケット) は数えない', async () => {
+    const root = makeTree();
+    const server = net.createServer();
+    await new Promise<void>((resolve) => {
+      server.listen(path.join(root, 'entry.sock'), resolve);
+    });
+    try {
+      expect(measureDir(root, { remaining: 100 })).toEqual({
+        sizeBytes: 10,
+        fileCount: 3,
+        truncated: false,
+      });
+    } finally {
+      await new Promise<void>((resolve) => {
+        server.close(() => resolve());
+      });
+    }
+  });
+
   it('走査予算の上限は固定されている', () => {
     expect(WALK_ENTRY_BUDGET).toBe(60_000);
   });
@@ -452,5 +616,9 @@ describe('countNumericEntries', () => {
   it('数値名だけを数える', () => {
     expect(countNumericEntries(['1', '42', 'self', 'thread-self', '007'])).toBe(3);
     expect(countNumericEntries([])).toBe(0);
+  });
+
+  it('数字を含むが数値名ではない名前は数えない (正規表現の両端の錨)', () => {
+    expect(countNumericEntries(['123abc', 'abc123', '12a3', 'a0', '0'])).toBe(1);
   });
 });
