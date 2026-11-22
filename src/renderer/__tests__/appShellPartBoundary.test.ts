@@ -232,6 +232,7 @@ const LEDGER: Record<string, { readonly where: Where; readonly why: string }> = 
   ShellPartBoundary: { where: 'boundary', why: '画面の外の部品を 1 つずつ囲む境界そのもの' },
   'ShellContext.Provider': { where: 'provider', why: '値を配るだけで自分では何も描かない (投げる描画を持たない)' },
   LockScreen: { where: 'page-boundary', why: '「ロック画面」の境界に入る (パス 136 以前から)' },
+  RecordUnlockScreen: { where: 'page-boundary', why: '「記録の鍵」の境界に入る (2026-11-21 · 業務記録を暗号化した端末で、鍵を開くまで殻の代わりに出す)' },
   PageComponent: { where: 'page-boundary', why: '選んだ画面そのもの' },
   ManualDataSection: { where: 'page-boundary', why: '画面ごとの手入力欄 (画面と同じ枠で落ちる)' },
   PortalDirectory: { where: 'page-boundary', why: 'ポータルの一覧 (社内 / パートナー / カスタマー) —— 画面の場所に出るので、画面と同じ境界に入る (2026-11-11)' },
@@ -281,8 +282,8 @@ describe('App.tsx が描く部品は、どれも境界の中に在る (走査・
   const code = stripComments(readOriginalSource(APP));
   const found = scan(code);
 
-  it('★ 走査は空でない (実測 14 種 —— 増えたら台帳を読み直す)', () => {
-    expect(new Set(found.map((f) => f.name)).size).toBe(14);
+  it('★ 走査は空でない (実測 15 種 —— 増えたら台帳を読み直す)', () => {
+    expect(new Set(found.map((f) => f.name)).size).toBe(15);
   });
 
   it('★ 描く部品と台帳は両方向に一致する (新しい部品は理由と居場所を書くまで落ちる)', () => {

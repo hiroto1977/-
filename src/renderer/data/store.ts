@@ -149,6 +149,13 @@ export interface RecordStore {
   /** Dump every record across all collections (newest-first). For backup.
    *  Returns records **as stored** (encrypted payloads stay encrypted). */
   exportAll(): Promise<readonly StoredRecord[]>;
+  /**
+   * 全件を**開いて**返す (封緘は今の鍵で開く・平文はそのまま)。暗号化した控え / パスワード付きの
+   * バックアップが使う (2026-11-21)。封緘のまま控えに入れると、記録の鍵の salt はこの端末にしか無いので
+   * **端末を失った日に控えから戻せない** —— 控えは控えのパスフレーズで暗号化し直すので、ここで開いてよい。
+   * 鍵が無い (施錠中) なら封緘を開けずに投げる。
+   */
+  exportAllOpened(): Promise<readonly StoredRecord[]>;
   /** Restore records from a backup. `replace` clears the store first; the
    *  default merges (existing ids are overwritten). Returns the count
    *  imported. */
@@ -381,7 +388,7 @@ class IndexedDBRecordStore implements RecordStore {
      */
     // Stryker disable next-line BlockStatement
     void settled.then(() => {
-      // Stryker disable next-line ConditionalExpression
+      // Stryker disable next-line ConditionalExpression,CallExpression: 掃除を止めても地図が育つだけで観測できる差が無い (上の注記どおり等価)。
       if (this.perId.get(id) === settled) this.perId.delete(id);
     });
     return started;
@@ -402,7 +409,7 @@ class IndexedDBRecordStore implements RecordStore {
     const ts = monotonicNow();
     const id = uuid();
     // Store the (possibly encrypted) payload; return the plaintext to the caller.
-    const storedData = await this.cipher.encrypt(data);
+    const storedData = await this.cipher.encrypt(data, { collection, id });
     await withDb(async (db) => {
       const tx = db.transaction(STORE, 'readwrite');
       tx.objectStore(STORE).add({ id, collection, createdAt: ts, updatedAt: ts, data: storedData });
@@ -432,7 +439,7 @@ class IndexedDBRecordStore implements RecordStore {
       rows.map(async (data) => {
         const ts = monotonicNow();
         const id = uuid();
-        const stored = { id, collection, createdAt: ts, updatedAt: ts, data: await this.cipher.encrypt(data) };
+        const stored = { id, collection, createdAt: ts, updatedAt: ts, data: await this.cipher.encrypt(data, { collection, id }) };
         const plain: StoredRecord<T> = { id, collection, createdAt: ts, updatedAt: ts, data };
         return { stored, plain };
       }),
@@ -492,7 +499,7 @@ class IndexedDBRecordStore implements RecordStore {
     if (!isPlainJsonObject(data)) throw new Error('data はプレーンなオブジェクトである必要があります');
     const id = uuid();
     const now = monotonicNow();
-    const storedData = await this.cipher.encrypt(data);
+    const storedData = await this.cipher.encrypt(data, { collection, id });
     type Decided = { readonly added: StoredRecord } | { readonly latest: StoredRecord | null };
     const decided = await withDb(async (db) => {
       const tx = db.transaction(STORE, 'readwrite');
@@ -531,7 +538,7 @@ class IndexedDBRecordStore implements RecordStore {
     }
     const current = decided.latest;
     if (current === null) return { status: 'changed', current: null };
-    return { status: 'changed', current: { ...current, data: (await this.cipher.decrypt(current.data)) as T } };
+    return { status: 'changed', current: { ...current, data: (await this.cipher.decrypt(current.data, current)) as T } };
   }
 
   /**
@@ -567,7 +574,8 @@ class IndexedDBRecordStore implements RecordStore {
     if (!isPlainJsonObject(data)) throw new Error('data はプレーンなオブジェクトである必要があります');
     return this.serialize(expected.id, async (): Promise<LatestInsert<T>> => {
       const now = monotonicNow();
-      const storedData = await this.cipher.encrypt(data);
+      // 置き換えるのは目印の行 (`sameLatest` が id を比べる) なので、その id へ結び付ける。
+      const storedData = await this.cipher.encrypt(data, { collection, id: expected.id });
       type Decided = { readonly replaced: StoredRecord } | { readonly latest: StoredRecord | null };
       const decided = await withDb(async (db) => {
         const tx = db.transaction(STORE, 'readwrite');
@@ -613,7 +621,7 @@ class IndexedDBRecordStore implements RecordStore {
       }
       const current = decided.latest;
       if (current === null) return { status: 'changed', current: null };
-      return { status: 'changed', current: { ...current, data: (await this.cipher.decrypt(current.data)) as T } };
+      return { status: 'changed', current: { ...current, data: (await this.cipher.decrypt(current.data, current)) as T } };
     });
   }
 
@@ -698,7 +706,7 @@ class IndexedDBRecordStore implements RecordStore {
   ): Promise<StoredRecord<T> | null> {
     const mergedData = { ...existing.data, ...patch };
     const updatedAt = monotonicNow();
-    const storedData = await this.cipher.encrypt(mergedData);
+    const storedData = await this.cipher.encrypt(mergedData, existing);
     // **書く直前にもう一度だけ在ることを確かめる。**
     //
     // id ごとの鎖は `update` と `remove` を並べるが、**全件を入れ替える
@@ -734,7 +742,7 @@ class IndexedDBRecordStore implements RecordStore {
       req.onerror = () => reject(req.error ?? new Error('get failed'));
     }));
     if (!rec) return null;
-    const data = (await this.cipher.decrypt(rec.data)) as T;
+    const data = (await this.cipher.decrypt(rec.data, rec)) as T;
     return { ...rec, data };
   }
 
@@ -761,7 +769,7 @@ class IndexedDBRecordStore implements RecordStore {
     out.sort((a, b) => b.createdAt - a.createdAt);
     // Decrypt each payload through the active cipher.
     for (const rec of out) {
-      (rec as { data: unknown }).data = await this.cipher.decrypt(rec.data);
+      (rec as { data: unknown }).data = await this.cipher.decrypt(rec.data, rec);
     }
     return out;
   }
@@ -821,6 +829,13 @@ class IndexedDBRecordStore implements RecordStore {
     return all;
   }
 
+  async exportAllOpened(): Promise<readonly StoredRecord[]> {
+    const raw = await this.exportAll();
+    const out: StoredRecord[] = [];
+    for (const rec of raw) out.push({ ...rec, data: await this.cipher.decrypt(rec.data, rec) });
+    return out;
+  }
+
   /**
    * 復元。**平文で入ってきたレコードは現在の cipher で封緘してから入れる。**
    *
@@ -851,7 +866,7 @@ class IndexedDBRecordStore implements RecordStore {
     const valid = dedupeById(records.filter(importableRecordGate(this.acceptsSealedRecords())));
     const prepared = await Promise.all(
       valid.map(async (rec) =>
-        isSealedData(rec.data) ? rec : { ...rec, data: await this.cipher.encrypt(rec.data) },
+        isSealedData(rec.data) ? rec : { ...rec, data: await this.cipher.encrypt(rec.data, rec) },
       ),
     );
     let written = 0;
@@ -951,8 +966,8 @@ class IndexedDBRecordStore implements RecordStore {
       await this.serialize(rec.id, async () => {
         const current = await this.readRawRow(rec.id);
         if (!current) return; // 移行中に消された → 復活させない
-        const plain = await reader.decrypt(current.data);
-        const sealed = await this.cipher.encrypt(plain);
+        const plain = await reader.decrypt(current.data, current);
+        const sealed = await this.cipher.encrypt(plain, current);
         await withDb(async (db2) => {
           const tx = db2.transaction(STORE, 'readwrite');
           tx.objectStore(STORE).put({ ...current, data: sealed });

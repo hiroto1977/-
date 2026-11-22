@@ -18,6 +18,7 @@ import { IDENTITY_CIPHER, createPassphraseRecordCipher } from './recordCipher';
 import { deriveAesKey, sealWithKey, openWithKey, randomSaltB64, isSealed, type Sealed } from '../security/dataCrypto';
 import { describeStorageError } from './localWrite';
 import { LEGACY_KDF_ITERATIONS, PBKDF2_ITERATIONS } from '../../shared/cryptoParams';
+import { MIN_PASSWORD_LENGTH, meetsPasswordPolicy } from '../security/vault';
 
 // 内部キー/既知平文。save↔load・seal↔compare で同じ定数を使い round-trip するため、
 // 値そのものを変える StringLiteral mutation は外部から観測できず equivalent。
@@ -204,14 +205,42 @@ export function isEncryptionEnabled(): boolean {
 }
 
 /**
+ * 記録を今読めるか —— 暗号化していないか、していて鍵がメモリに在るか (2026-11-21)。
+ *
+ * 暗号化を有効にした端末は、起動のたびにパスフレーズで鍵を作り直すまで封緘を開けない
+ * (鍵はメモリだけ)。画面はこれが偽の間、記録を読む画面を出さずに解錠の画面を出す
+ * (`RecordUnlockScreen`)。読めないまま画面を出すと、どの画面も「暗号化されたレコードです」で投げる。
+ */
+export function isRecordStoreUnlocked(): boolean {
+  return !isEncryptionEnabled() || getRecordStore().acceptsSealedRecords();
+}
+
+/**
+ * 記録の鍵をメモリから落とす (施錠のとき)。暗号化していなければ何もしない。
+ *
+ * 保管庫を施錠しても記録の鍵が残っていれば、施錠の画面の裏で記録は読めるままになる。
+ * 施錠 (`lockWorkspace` の購読) からこれを呼び、解錠の画面へ戻す。
+ */
+export function lockRecordEncryption(): void {
+  getRecordStore().configureCipher(IDENTITY_CIPHER);
+}
+
+/**
  * 暗号化を有効化する。salt+KCV を生成し、既存レコードを封緘して保存。
  * 既に有効な場合は例外。
  */
 export async function enableEncryption(password: string): Promise<void> {
   if (password.length === 0) throw new Error('パスフレーズを入力してください');
-  if (isEncryptionEnabled()) throw new Error('暗号化は既に有効です');
-  // **「無効」と「読めない」は別物。** 上の門は前者しか見ていない。
+  // 下限は保管庫・暗号化バックアップと同じ 1 つ (`meetsPasswordPolicy` —— 文字で数える)。
+  // 記録の鍵はこのパスフレーズからしか作れず、封緘は端末に残るので、短い合言葉は総当たりで開く。
+  if (!meetsPasswordPolicy(password)) {
+    throw new Error(`記録を暗号化するパスフレーズは ${MIN_PASSWORD_LENGTH} 文字以上で設定してください（保管庫のパスワードと同じ下限です）`);
+  }
+  // **「無効」と「読めない」は別物。** 下の門は前者しか見ていない。
+  // 読めないかを先に確かめる —— 後に置くと、下の門が呼んだ `loadMeta` の
+  // 結果に寄りかかり、ここが自分で読み直しているかを誰も確かめられない。
   assertMetaWritable();
+  if (isEncryptionEnabled()) throw new Error('暗号化は既に有効です');
 
   const salt = randomSaltB64();
   // 回数を**明示して**導出し、同じ値を meta に書き残す (パス 239)。

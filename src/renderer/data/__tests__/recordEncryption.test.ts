@@ -9,7 +9,10 @@ import {
   enableEncryption,
   unlockEncryption,
   disableEncryption,
+  isRecordStoreUnlocked,
+  lockRecordEncryption,
 } from '../recordEncryption';
+import { MIN_PASSWORD_LENGTH } from '../../security/vault';
 
 const LS_KEY = 'servicehub.recordEncryption';
 
@@ -99,7 +102,7 @@ describe('recordEncryption lifecycle', () => {
     const store = getRecordStore();
     const rec = await store.insert('sales', { amount: 100 });
 
-    await enableEncryption('pw-123');
+    await enableEncryption('pw-123-long-enough');
     expect(isEncryptionEnabled()).toBe(true);
 
     // at-rest payload is now sealed; plaintext no longer present
@@ -110,14 +113,14 @@ describe('recordEncryption lifecycle', () => {
   });
 
   it('rejects enabling twice', async () => {
-    await enableEncryption('pw');
-    await expect(enableEncryption('pw')).rejects.toThrow(/既に有効/);
+    await enableEncryption('pw-twelve-chars');
+    await expect(enableEncryption('pw-twelve-chars')).rejects.toThrow(/既に有効/);
   });
 
   it('unlock with the correct passphrase reattaches the cipher (new session)', async () => {
     const store = getRecordStore();
     const rec = await store.insert('sales', { amount: 7 });
-    await enableEncryption('pw-123');
+    await enableEncryption('pw-123-long-enough');
 
     // simulate a fresh session: store forgot the key
     _resetRecordStoreForTests();
@@ -125,18 +128,18 @@ describe('recordEncryption lifecycle', () => {
     // without unlock, sealed data can't be read
     await expect(fresh.get(rec.id)).rejects.toThrow(/暗号化/);
 
-    expect(await unlockEncryption('pw-123')).toBe(true);
+    expect(await unlockEncryption('pw-123-long-enough')).toBe(true);
     expect((await getRecordStore().get<{ amount: number }>(rec.id))!.data).toEqual({ amount: 7 });
   });
 
   it('unlock with the wrong passphrase returns false (no lockout, no corruption)', async () => {
     await getRecordStore().insert('sales', { amount: 1 });
-    await enableEncryption('right');
+    await enableEncryption('right-passphrase');
     _resetRecordStoreForTests();
 
     expect(await unlockEncryption('wrong')).toBe(false);
     // correct one still works afterwards
-    expect(await unlockEncryption('right')).toBe(true);
+    expect(await unlockEncryption('right-passphrase')).toBe(true);
   });
 
   it('unlock is a no-op (true) when encryption is not enabled', async () => {
@@ -146,9 +149,9 @@ describe('recordEncryption lifecycle', () => {
   it('disable decrypts everything back to plaintext and clears meta', async () => {
     const store = getRecordStore();
     const rec = await store.insert('sales', { amount: 42 });
-    await enableEncryption('pw');
+    await enableEncryption('pw-twelve-chars');
 
-    expect(await disableEncryption('pw')).toBe(true);
+    expect(await disableEncryption('pw-twelve-chars')).toBe(true);
     expect(isEncryptionEnabled()).toBe(false);
 
     // payload is plaintext again, readable with the identity cipher
@@ -160,7 +163,7 @@ describe('recordEncryption lifecycle', () => {
   it('disable with a wrong passphrase returns false and keeps data encrypted', async () => {
     const store = getRecordStore();
     await store.insert('sales', { amount: 1 });
-    await enableEncryption('right');
+    await enableEncryption('right-passphrase');
 
     expect(await disableEncryption('wrong')).toBe(false);
     expect(isEncryptionEnabled()).toBe(true);
@@ -178,7 +181,7 @@ describe('recordEncryption lifecycle', () => {
   });
 
   it('treats tampered meta (bad enabled / salt / kcv) as disabled', async () => {
-    await enableEncryption('pw');
+    await enableEncryption('pw-twelve-chars');
     const valid = JSON.parse(localStorage.getItem(LS_KEY)!);
     // enabled !== true
     localStorage.setItem(LS_KEY, JSON.stringify({ ...valid, enabled: false }));
@@ -195,16 +198,16 @@ describe('recordEncryption lifecycle', () => {
   });
 
   it('rejects a passphrase whose KCV decrypts to the wrong plaintext (content check)', async () => {
-    await enableEncryption('pw');
+    await enableEncryption('pw-twelve-chars');
     const valid = JSON.parse(localStorage.getItem(LS_KEY)!);
     // 同じ鍵で別平文を封緘し kcv を差し替える → 復号は成功するが内容が KCV と不一致。
-    const key = await deriveAesKey('pw', valid.salt);
+    const key = await deriveAesKey('pw-twelve-chars', valid.salt);
     const wrongKcv = await sealWithKey(key, 'NOT-THE-KCV');
     localStorage.setItem(LS_KEY, JSON.stringify({ ...valid, kcv: wrongKcv }));
     _resetRecordStoreForTests();
     // unlock / disable とも内容不一致を検知して false (catch ではなく `!== KCV` 経路)。
-    expect(await unlockEncryption('pw')).toBe(false);
-    expect(await disableEncryption('pw')).toBe(false);
+    expect(await unlockEncryption('pw-twelve-chars')).toBe(false);
+    expect(await disableEncryption('pw-twelve-chars')).toBe(false);
   });
 
   /*
@@ -229,16 +232,16 @@ describe('recordEncryption lifecycle', () => {
     ['salt が base64 として読めない', '###'],
     ['salt が記号だけ', '@@@@'],
   ])('%s でも throw せず false (解錠も解除も呼べる)', async (_label, badSalt) => {
-    await enableEncryption('pw');
+    await enableEncryption('pw-twelve-chars');
     const valid = JSON.parse(localStorage.getItem(LS_KEY)!);
     localStorage.setItem(LS_KEY, JSON.stringify({ ...valid, salt: badSalt }));
     _resetRecordStoreForTests();
-    await expect(unlockEncryption('pw')).resolves.toBe(false);
-    await expect(disableEncryption('pw')).resolves.toBe(false);
+    await expect(unlockEncryption('pw-twelve-chars')).resolves.toBe(false);
+    await expect(disableEncryption('pw-twelve-chars')).resolves.toBe(false);
   });
 
   it('空パスフレーズでも throw せず false', async () => {
-    await enableEncryption('pw');
+    await enableEncryption('pw-twelve-chars');
     _resetRecordStoreForTests();
     await expect(unlockEncryption('')).resolves.toBe(false);
     await expect(disableEncryption('')).resolves.toBe(false);
@@ -405,7 +408,7 @@ describe('封緘したままのバックアップは他の端末で開けない 
     await store2.importAll(backup, { replace: true });
 
     // 同じパスフレーズを知っていても読めない。
-    await expect(store2.list('sales')).rejects.toThrow(/復号に失敗/);
+    await expect(store2.list('sales')).rejects.toThrow(/別の鍵/);
   });
 
   it('先に暗号化を解除してから書き出せば、他の端末でも開ける (逃げ道)', async () => {
@@ -552,27 +555,75 @@ describe('短い salt でも利用者はやり直せる (パス 237)', () => {
     ['1 バイト', 'AA=='],
     ['床の 1 つ下 (15 バイト)', zeros(15)],
   ])('%s は解錠も解除も false (throw しない)', async (_label, shortSalt) => {
-    await enableEncryption('pw');
+    await enableEncryption('pw-twelve-chars');
     const valid = JSON.parse(localStorage.getItem(LS_KEY)!) as Record<string, unknown>;
     localStorage.setItem(LS_KEY, JSON.stringify({ ...valid, salt: shortSalt }));
     _resetRecordStoreForTests();
-    await expect(unlockEncryption('pw')).resolves.toBe(false);
-    await expect(disableEncryption('pw')).resolves.toBe(false);
+    await expect(unlockEncryption('pw-twelve-chars')).resolves.toBe(false);
+    await expect(disableEncryption('pw-twelve-chars')).resolves.toBe(false);
   });
 
   it('★ 短い salt に差し替えられても、元の salt を新しい値で潰さない', async () => {
-    await enableEncryption('pw');
+    await enableEncryption('pw-twelve-chars');
     const valid = JSON.parse(localStorage.getItem(LS_KEY)!) as Record<string, unknown>;
     const tampered = JSON.stringify({ ...valid, salt: '' });
     localStorage.setItem(LS_KEY, tampered);
     // メタは読めている (typeof salt === 'string') ので「既に有効」で断る
-    await expect(enableEncryption('pw')).rejects.toThrow('暗号化は既に有効です');
+    await expect(enableEncryption('pw-twelve-chars')).rejects.toThrow('暗号化は既に有効です');
     expect(localStorage.getItem(LS_KEY)).toBe(tampered);
   });
 
   it('床ちょうどの salt なら解錠できる (関門が全部を落としていない)', async () => {
-    await enableEncryption('pw');
+    await enableEncryption('pw-twelve-chars');
     _resetRecordStoreForTests();
-    await expect(unlockEncryption('pw')).resolves.toBe(true);
+    await expect(unlockEncryption('pw-twelve-chars')).resolves.toBe(true);
+  });
+});
+
+describe('★ 記録の解錠と施錠 (画面の門が読む)', () => {
+  beforeEach(async () => {
+    localStorage.clear();
+    _resetRecordStoreForTests();
+    await clearIdb();
+  });
+
+  it('★ 下限より短いパスフレーズでは暗号化しない (保管庫と同じ下限・文字で数える)', async () => {
+    const short = 'a'.repeat(MIN_PASSWORD_LENGTH - 1);
+    await expect(enableEncryption(short)).rejects.toThrow(new RegExp(`${MIN_PASSWORD_LENGTH} 文字以上`));
+    expect(isEncryptionEnabled()).toBe(false);
+    // 絵文字 6 個は 12 コード単位だが 6 文字 —— 文字で数えるので断る
+    await expect(enableEncryption('😀'.repeat(6))).rejects.toThrow(/文字以上/);
+    // 対照: ちょうど下限なら暗号化する
+    await enableEncryption('a'.repeat(MIN_PASSWORD_LENGTH));
+    expect(isEncryptionEnabled()).toBe(true);
+  });
+
+  it('暗号化していなければ、記録はいつでも読める', () => {
+    expect(isRecordStoreUnlocked()).toBe(true);
+    lockRecordEncryption();
+    expect(isRecordStoreUnlocked()).toBe(true);
+  });
+
+  it('★ 暗号化した端末は、新しい起動では鍵を作り直すまで読めない', async () => {
+    await enableEncryption('pw-twelve-chars');
+    expect(isRecordStoreUnlocked()).toBe(true); // 有効にした直後は鍵がメモリに在る
+    _resetRecordStoreForTests(); // 次の起動
+    expect(isRecordStoreUnlocked()).toBe(false);
+    expect(await unlockEncryption('wrong-passphrase')).toBe(false);
+    expect(isRecordStoreUnlocked()).toBe(false);
+    expect(await unlockEncryption('pw-twelve-chars')).toBe(true);
+    expect(isRecordStoreUnlocked()).toBe(true);
+  });
+
+  it('★ 施錠すると鍵がメモリから落ち、記録は読めなくなる', async () => {
+    const store = getRecordStore();
+    const rec = await store.insert('sales', { amount: 5 });
+    await enableEncryption('pw-twelve-chars');
+    expect((await store.get(rec.id))?.data).toEqual({ amount: 5 });
+    lockRecordEncryption();
+    expect(isRecordStoreUnlocked()).toBe(false);
+    await expect(store.get(rec.id)).rejects.toThrow(/暗号化/);
+    expect(await unlockEncryption('pw-twelve-chars')).toBe(true);
+    expect((await store.get(rec.id))?.data).toEqual({ amount: 5 });
   });
 });

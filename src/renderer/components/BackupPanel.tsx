@@ -50,8 +50,12 @@ export function BackupPanel() {
     setErr(undefined);
     setMsg(undefined);
     try {
-      const records = await getRecordStore().exportAll();
       const encrypted = passphrase.length > 0;
+      // パスワード付きなら記録を開いてから控えのパスワードで暗号化し直す (2026-11-21) —— 封緘のまま入れると、
+      // 記録の鍵の salt はこの端末にしか無いので、端末を失った日にこの控えから戻せない。
+      // パスワード無しなら封緘のまま (平文で書き出さない —— 下の警告がそれを言う)。
+      const store = getRecordStore();
+      const records = encrypted ? await store.exportAllOpened() : await store.exportAll();
       // 平文なら、何が入るかを言ってから書く (パス 130)。個人情報の記録が無ければ確認しない。
       if (!encrypted) {
         const notice = plaintextBackupConfirmMessage(plaintextExposure(records));
@@ -199,12 +203,7 @@ export function BackupPanel() {
           できるので、順序を先に知らせる。逃げ道は在る (先に暗号化を解除すると
           全レコードが平文に戻り、そのバックアップは他の端末でも開ける)。
 
-          **今この警告は描画されない。** レコード暗号化を有効にする口が
-          UI に無く (`enableEncryption` の呼び出し元は 0)、
-          `isEncryptionEnabled()` は常に false のため。配線された日に効く
-          備えとして先に置いてある —— 配線してから気付くと、
-          気付く場所が「復元できなかった」になる。
-          詳細は `docs/REMAINING_WORK.md`。
+          2026-11-21 に有効化の画面 (設定の「業務記録の暗号化」) を配線したので、この警告は描画される。
         */}
         {isEncryptionEnabled() && (
           <p
@@ -218,16 +217,13 @@ export function BackupPanel() {
               color: 'var(--text)',
             }}
           >
-            <strong>⚠️ レコード暗号化が有効です</strong>
+            <strong>⚠️ 業務記録の暗号化が有効です</strong>
             <br />
-            このまま書き出すと、レコードは封緘されたまま入ります。
-            <strong>他の端末では復元できません</strong> —— 鍵の導出に必要な salt は
-            この端末のブラウザ内にあり、バックアップに含まれないためです
-            （同じパスフレーズを入力しても復号に失敗します）。
+            <strong>暗号化パスワードを入れて書き出すと</strong>、記録を開いてからそのパスワードで暗号化し直すので、
+            他の端末でもそのパスワードで復元できます。
             <br />
-            端末移行のためにバックアップを取るなら、
-            <strong>先に「レコード暗号化」を解除</strong>してから書き出してください。
-            この端末での災害復旧のためだけなら、このままで問題ありません。
+            パスワードを入れずに書き出すと、記録は封緘されたまま入り、<strong>他の端末では復元できません</strong>
+            （鍵の導出に必要な salt はこの端末のブラウザ内にあり、バックアップに含まれないため）。
           </p>
         )}
         <button type="button" onClick={() => void submit.run(onBackup)} disabled={submit.busy}>バックアップを書き出す</button>

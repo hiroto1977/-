@@ -397,3 +397,6 @@
 # PR の diff で折り畳む物を決めるファイル (2026-10-28 · threat: T-210) —— 1 行で守りの変更を見えなくできる。
 /.gitattributes @hiroto1977
 /src/renderer/__tests__/aiReplyInert.test.ts @hiroto1977
+# zero-trust-gateway の第 3 層の画面をブラウザで通す検査の本 (2026-11-21) —— 段を消すと、画面が壊れても CI は緑のまま。
+/zero-trust-gateway/tests/browser/auth_page.cjs @hiroto1977
+/zero-trust-gateway/tests/browser/serve.py @hiroto1977

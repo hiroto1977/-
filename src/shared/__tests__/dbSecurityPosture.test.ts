@@ -6,7 +6,9 @@ import {
   GRADE_A_MIN,
   GRADE_B_MIN,
   GRADE_C_MIN,
+  partitionChecks,
   type DbSecurityInputs,
+  type SecurityCheck,
 } from '../dbSecurityPosture';
 
 const allOn: DbSecurityInputs = {
@@ -144,13 +146,12 @@ describe('buildDbSecurityReport', () => {
 /*
  * 2026-08-25 —— **直せるものと、直せないものを分ける。**
  *
- * 7 観点のうち 5 つは、この版に仕組みが無いものだった (重み 75/100):
- * レコード暗号化 (エンジンはあるが有効化画面が無い)、レコードの改ざん検知
- * (未実装)、クラウドバックアップ 3 種 (送信路が 1 つも無い)。
+ * 7 観点のうち 5 つは、この版に仕組みが無いものだった (重み 75/100): 到達しうる最大点は 25 で、
+ * すべて正しく設定した利用者にも「25 / 100 · D」が出ていた。
  *
- * つまり**到達しうる最大点は 25** で、すべて正しく設定した利用者にも
- * 「25 / 100 · D」が出る。しかも改善候補は重み降順なので、**直せない 5 件が
- * 上を占め、今できる 2 件が下に埋まっていた**。
+ * 2026-11-21 に 5 つとも作った (記録の暗号化の画面・記録に結び付けた封緘・暗号化した控えの観測)。
+ * いまは 7 観点すべてが利用者に直せる。区分 (`not-built`) の仕組みは残し、ここでは
+ * 「今は直せない物が 1 つも無い」ことと「どの助言も実在する画面を指す」ことを留める。
  */
 describe('直せるものと、直せないものを分ける', () => {
   const allOff = {
@@ -168,91 +169,117 @@ describe('直せるものと、直せないものを分ける', () => {
     for (const c of r.unavailable) expect(c.availability).toBe('not-built');
   });
 
-  it('この版で直せるのは自動ロックとマスターパスワードだけ', () => {
+  it('★ 今の版に、利用者に直せない観点は無い (7 つとも直せる)', () => {
     const r = buildDbSecurityReport(allOff);
-    expect(r.actionable.map((c) => c.id).sort()).toEqual(['auto-lock', 'master-password']);
+    expect(r.unavailable).toEqual([]);
+    expect(r.actionable.map((c) => c.id).sort()).toEqual([
+      'auto-lock',
+      'backup-configured',
+      'backup-encrypted',
+      'backup-fresh',
+      'encryption',
+      'integrity',
+      'master-password',
+    ]);
   });
 
-  /*
-   * **到達しうる最大点を報告する。** これを出さずに「25 / 100 · D」とだけ
-   * 見せると、すべて設定した利用者が「自分の設定が悪い」と読む。
-   */
-  it('到達しうる最大点は available な観点の重み合計', () => {
+  it('到達しうる最大点は available な観点の重み合計 (今は 100)', () => {
     const r = buildDbSecurityReport(allOff);
-    expect(r.maxAchievableScore).toBe(25);
+    expect(r.maxAchievableScore).toBe(100);
     const avail = r.checks.filter((c) => c.availability === 'available');
     expect(avail.reduce((a, c) => a + c.weight, 0)).toBe(r.maxAchievableScore);
   });
 
-  it('できることを全部やると、到達しうる最大点になる', () => {
-    const r = buildDbSecurityReport({ ...allOff, autoLockEnabled: true, masterPasswordSet: true });
+  it('できることを全部やると、到達しうる最大点 (A) になる', () => {
+    const r = buildDbSecurityReport({
+      encryptionEnabled: true,
+      masterPasswordSet: true,
+      integrityVerified: true,
+      autoLockEnabled: true,
+      cloudBackup: { configuredSinks: ['encrypted-copy'], lastBackupAgeDays: 0, encryptedBackup: true },
+    });
     expect(r.score).toBe(r.maxAchievableScore);
+    expect(r.grade).toBe('A');
     expect(r.actionable).toEqual([]);
-    expect(r.unavailable.length).toBe(5);
   });
 
   /*
-   * **従えない助言を出さない。** 「設定で〜を有効化してください」は、
-   * その設定が存在するときだけ言ってよい。
+   * **従えない助言を出さない。** 「設定で〜」は、その画面が実在するときだけ言ってよい。
+   * 実在は `securityDiagnosisFixes.test.ts` が設定画面を描いて確かめる (ここは名指しの形だけ)。
    */
-  /*
-   * **「悪い文面が無いこと」ではなく「良い文面が有ること」を見る。**
-   *
-   * 最初はこう書いていた:
-   *
-   *   expect(rec).not.toMatch(/設定で.*を有効化してください|構成してください/)
-   *
-   * 対照 (直す前の文面へ戻す) を回したら**鳴らなかった**。実物は
-   * 「設定でレコード暗号化を有効化**し**、…封緘してください」であって
-   * 「有効化**してください**」ではない —— **文面ではなく、自分の記憶の
-   * 言い換えに対して正規表現を書いていた**。どの文面でも通る空の検査だった。
-   *
-   * 不在の検査は、綴りを 1 つ外すだけで黙る。**在ることの検査は、
-   * 無ければ必ず鳴る。** 主張は肯定形で書く。
-   */
-  it('★ この版に無い保護の助言は、「無い」ことを明言している', () => {
+  it('★ 直す画面を持つ観点の助言は、その画面を「」で名指しする', () => {
     const r = buildDbSecurityReport(allOff);
-    for (const c of r.unavailable) {
-      expect(c.recommendation, `${c.id} が「この版には無い」と言っていない`).toMatch(
-        /ありません|未接続/,
-      );
-      expect(c.recommendation.length).toBeGreaterThan(20);
-    }
+    const named = (id: string) => r.checks.find((c) => c.id === id)!.recommendation;
+    expect(named('encryption')).toContain('設定の「業務記録の暗号化」');
+    expect(named('integrity')).toContain('業務記録の暗号化');
+    expect(named('backup-configured')).toContain('設定の「暗号化した控え」');
+    expect(named('backup-fresh')).toContain('設定の「暗号化した控え」');
   });
 
   /*
-   * **不在の検査には、標本を添える。**
-   *
-   * 下の `not.toMatch` は、綴りが 1 つ違えば黙る。実際 2026-08-25 に、
-   * 記憶の言い換え (「有効化**してください**」) で書いたせいで**どの文面でも
-   * 通る空の検査**になっていた —— 実物は「有効化**し**、」である。
-   *
-   * 手で対照を回せば分かるが、**回さなければ分からない**。標本をここに
-   * 置いて、CI が毎回「この規則は当たるのか」を確かめる。
+   * **不在の検査には、標本を添える。** 以前の誘導文 (存在しない設定へ誘導した物) と、
+   * 2026-08-25〜2026-11-21 の「この版には無い」の文が、今の助言に戻っていないこと。
    */
   const OLD_WORDINGS = [
     '設定でレコード暗号化を有効化し、マスターパスワードで封緘してください。',
     'Drive / Dropbox / OneDrive 等のバックアップ先を構成してください (消失対策)。',
+    '業務レコードは平文で保存されています。有効化する画面はまだありません (暗号化エンジンは実装済み・配線待ち)。',
+    'クラウド同期はこの版では未接続です (送信路が未実装)。',
+    'レコード単位の改ざん検知はこの版にはありません。',
   ];
-  const MISLEADING = /設定でレコード暗号化を有効化|バックアップ先を構成してください/;
+  const STALE = /設定でレコード暗号化を有効化|バックアップ先を構成してください|画面はまだありません|この版では未接続|この版にはありません/;
 
   it('★ この検査自体が空でない (実際に使っていた文面に当たる)', () => {
     for (const w of OLD_WORDINGS) {
-      expect(w, '規則が実物の文面に当たらない — 綴りを実物から取り直すこと').toMatch(MISLEADING);
+      expect(w, '規則が実物の文面に当たらない — 綴りを実物から取り直すこと').toMatch(STALE);
     }
   });
 
-  /* 併せて、実際に使っていた誘導文が戻ってきたら鳴らす (綴りは実物から取る)。 */
-  it('存在しない設定へ誘導する古い文面が戻っていない', () => {
+  it('古い文面 (存在しない設定への誘導・「この版に無い」) が戻っていない', () => {
     const r = buildDbSecurityReport(allOff);
-    for (const c of r.unavailable) {
-      expect(c.recommendation, `${c.id} が存在しない設定へ誘導している`).not.toMatch(MISLEADING);
+    for (const c of r.checks) {
+      expect(c.recommendation, `${c.id} が古い文面を出している`).not.toMatch(STALE);
     }
   });
 
   it('重み降順の並びは分けたあとも保たれる', () => {
     const r = buildDbSecurityReport(allOff);
-    const weights = r.unavailable.map((c) => c.weight);
+    const weights = r.actionable.map((c) => c.weight);
     expect([...weights].sort((a, b) => b - a)).toEqual(weights);
+  });
+});
+
+describe('★ 分ける規則は、この版に無い観点を足した日にも働く (partitionChecks)', () => {
+  // 今の CHECK_SPECS は 7 つとも available なので、規則は実物では観測できない。
+  // 合成した項目で当てる。
+  const mk = (id: string, ok: boolean, weight: number, availability: SecurityCheck['availability']): SecurityCheck => ({
+    id, label: id, severity: 'high', weight, ok, recommendation: id, availability,
+  });
+  const checks = [
+    mk('a-ok', true, 30, 'available'),
+    mk('a-ng', false, 20, 'available'),
+    mk('n-ng', false, 40, 'not-built'),
+    mk('n-ok', true, 10, 'not-built'),
+  ];
+
+  it('未達だけが findings に入り、重み降順に並ぶ', () => {
+    expect(partitionChecks(checks).findings.map((c) => c.id)).toEqual(['n-ng', 'a-ng']);
+  });
+
+  it('直せる未達だけが actionable、無い未達だけが unavailable', () => {
+    const p = partitionChecks(checks);
+    expect(p.actionable.map((c) => c.id)).toEqual(['a-ng']);
+    expect(p.unavailable.map((c) => c.id)).toEqual(['n-ng']);
+  });
+
+  it('到達しうる最大点は available な観点だけの重み合計 (達成の有無に依らない)', () => {
+    expect(partitionChecks(checks).maxAchievableScore).toBe(50);
+  });
+
+  it('対照: 全部が available なら最大点は全重み・unavailable は空', () => {
+    const all = checks.map((c) => ({ ...c, availability: 'available' as const }));
+    const p = partitionChecks(all);
+    expect(p.maxAchievableScore).toBe(100);
+    expect(p.unavailable).toEqual([]);
   });
 });

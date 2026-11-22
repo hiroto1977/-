@@ -76,6 +76,8 @@ ENV_DEFAULTS_ALLOWED = {
     "BLOCK_TIMEOUT_HOURS": "24",
     "BLOCK_RATE_LIMIT_PER_MIN": "20",
     "FIREWALL_EXECUTE": "false",
+    "HEALTH_MAX_SIGNATURE_AGE_HOURS": "72",
+    "HEALTH_MAX_PATCH_AGE_DAYS": "45",
 }
 PEM = re.compile("-----" + "BEGIN [A-Z ]*PRIVATE KEY")
 JWS = re.compile(r"eyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}")
@@ -83,7 +85,7 @@ JWS = re.compile(r"eyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}")
 LONG_LITERAL = re.compile(r"""["'][A-Za-z0-9+/_-]{40,}={0,2}["']""")
 # 名前が秘密を指す代入に、空でない文字列を直に書いた形。
 ASSIGNED = re.compile(r"""(?i)\b\w*(password|passwd|secret|api_?key|private_?key)\w*\s*=\s*["'][^"']{6,}["']""")
-SCANNED_SUFFIXES = {".py", ".js", ".html", ".css", ".md", ".txt", ".in", ".ini", ".nft", ".example", ".toml", ".yml", ".json"}
+SCANNED_SUFFIXES = {".py", ".js", ".cjs", ".html", ".css", ".md", ".txt", ".in", ".ini", ".nft", ".example", ".toml", ".yml", ".json"}
 
 
 def findings(text: str) -> list[str]:

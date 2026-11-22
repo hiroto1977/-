@@ -68,6 +68,10 @@ const SINKS: Record<string, { nameFrom: NameFrom; why: string }> = {
     nameFrom: 'literal',
     why: '`service-hub-backup-${localIsoDate()}${suffix}.json` —— 変数は日付と 2 択の接尾辞だけ。',
   },
+  'src/renderer/components/EncryptedCopyPanel.tsx': {
+    nameFrom: 'built',
+    why: '暗号化した控えのダウンロード (2026-11-21)。名前は `encryptedCopyFilename(localIsoDate(now))` —— 暦に在る日付だけを通す関門を持つ組み立て (`data/encryptedCopy.ts`)。',
+  },
   'src/renderer/components/FinancialAnalysis.tsx': {
     nameFrom: 'stored',
     why: '`financial-report-${unit.id}-…` と `statement-…-${unit.id}-…`。id は記録層の無検査キャスト由来。届く先は a.download だけ (画面の文にも実ファイル書き込みにも入らない) ので UA の消毒が最後の関門になる —— 実測して分類した。',

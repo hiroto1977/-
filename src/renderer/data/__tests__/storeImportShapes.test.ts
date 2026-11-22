@@ -48,7 +48,7 @@ describe('importAll — 中身の形', () => {
 
   it('★ 封緘済みの中身は見られないので封筒だけで通す (暗号化バックアップを落とさない)', async () => {
     const cipher = await createPassphraseRecordCipher('pw', randomSaltB64());
-    const sealedBad = await cipher.encrypt(BAD); // 中身は形違いだが封緘済み
+    const sealedBad = await cipher.encrypt(BAD, { collection: SALES_COLLECTION, id: 'sealed' }); // 中身は形違いだが封緘済み
     const store = getRecordStore();
     store.configureCipher(cipher);
     expect(await store.importAll([rec('sealed', SALES_COLLECTION, sealedBad as unknown as Record<string, unknown>)])).toBe(1);

@@ -105,6 +105,26 @@ def handle_event(event: SecurityEvent, deps: SoarDeps) -> PlaybookOutcome:
         deps.notifier.notify("端末の証明に失敗しました", "端末の調査が要ります")
         run.steps.append("notify")
         run.needs_human = True
+    elif kind == "device_compromised":
+        # 守りのソフトが感染を報せた。その人のセッションを全部止め、人を呼ぶ (隔離は第 2 層が控える)。
+        if event.subject is not None:
+            count = deps.sessions.revoke_subject(event.subject)
+            run.steps.append(f"sessions:revoked:{count}")
+        _record(deps, event, run, "device.compromised", "denied")
+        deps.notifier.notify(
+            "感染した端末からのアクセスを止めました",
+            f"利用者: {event.subject or '不明'} / 端末: {event.detail.get('device_id', '不明')}。端末の調査と駆除が要ります",
+        )
+        run.steps.append("notify")
+        run.needs_human = True
+    elif kind == "device_cleared":
+        # 隔離を解いた。止めたセッションは戻さない (利用者は新しい端末の鍵で強い認証からやり直す)。
+        _record(deps, event, run, "device.cleared", "ok")
+        deps.notifier.notify(
+            "端末の隔離を解きました",
+            f"利用者: {event.subject or '不明'} / 端末: {event.detail.get('device_id', '不明')}",
+        )
+        run.steps.append("notify")
     elif kind == "audit_chain_broken":
         # 記録そのものが信用できないので、鎖へは書かない。発行を止めて人を呼ぶ。
         deps.issuance.halt("audit_chain_broken")

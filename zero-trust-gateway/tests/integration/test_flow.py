@@ -169,7 +169,7 @@ def test_証明が無い_壊れている要求には出さない(tmp_path: Path)
 def test_端末の証明が_enforce_の間は_第_2_層が無いので出さない(tmp_path: Path) -> None:
     w = World(tmp_path, attestation_mode="enforce")
     assert w.get_token().status_code == 401
-    assert w.actions()[-1] == ("alice", "token.attestation", "denied")
+    assert w.actions()[-1] == ("alice", "token.attestation.report_missing", "denied")
 
 
 @pytest.mark.parametrize("header", ["X-API-Key", "Authorization"])

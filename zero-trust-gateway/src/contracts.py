@@ -26,6 +26,8 @@ class AttestationResult(_Frozen):
     mode: Literal["off", "report", "enforce"]
     passed: bool
     device_id: str | None = None
+    # 通らなかった規則の名前 (自由文ではない)。
+    reasons: tuple[str, ...] = ()
 
 
 class RiskDecision(_Frozen):
@@ -41,6 +43,8 @@ EventKind = Literal[
     "risk_freeze",
     "counter_regression",
     "attestation_failed",
+    "device_compromised",
+    "device_cleared",
     "audit_chain_broken",
     "knock_rejected",
 ]

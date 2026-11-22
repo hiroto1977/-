@@ -7,6 +7,68 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-11-22) — 感染した端末・アカウントを通さない (zero-trust-gateway 第 2 層)
+
+- **依頼**: 「ウイルスに感染しているアカウントからのアクセスを事前検知してアクセスをさせない様にする仕組みを構築」。
+- **作った物** (`zero-trust-gateway/src/layer2_zkp_attest/`): `health.py` —— 守りのソフト (EDR・端末管理) の管理サービスが署名した
+  端末の健康の証明 (`device-health+jwt`) を `/token` の前に検める (本人と DPoP の鍵に結び付き・10 分以内・状態 8 欄の全部)。
+  `quarantine.py` —— 隔離の控え (ファイルに残す・読めなければ起動しない)・署名つきの知らせ (`POST /device-health/alerts`)・
+  鍵の退役 (解いても戻さない)・管理者の道具 (`python -m layer2_zkp_attest.quarantine <file> list|clear`)。
+  入口 (`app.py`) は隔離をモードに依らず、発行と守られた道の両方で見る。第 6 層に `device_compromised` / `device_cleared`。
+- **検査**: gateway 509 件 (第 2 層 + 流れ)。対照 10 方向すべて落ちた。
+- **限界**: 守りのソフトが乗っ取られて嘘を言うと見分けられない (TPM の証明は後)。画面 (`/auth/`) は健康の証明を持てないので、
+  `enforce` の間は画面からはトークンが出ない。どの EDR 製品が署名つきの証明を出せるかは未確認。
+
+## 直近の作業 (2026-11-22) — セキュリティ診断の「この版に無い保護」5 件を作った
+
+- **依頼**: セキュリティ画面の写真 3 枚 (グレード D・25/100・「この版に無い保護 — 5 件」) と「上記の問題を解決して」。
+- **作った物 (3 つ)**:
+  1. **業務記録の暗号化の画面** `components/RecordEncryptionPanel.tsx` (設定) —— パスフレーズ 2 回で有効化 / 正しいパスフレーズで解除。
+     下限は保管庫と同じ `meetsPasswordPolicy` (12 文字・文字で数える) を `enableEncryption` が断る。
+     **記録の鍵を開く画面** `security/RecordUnlockScreen.tsx` —— `App` は `isRecordStoreUnlocked()` が偽の間、殻の代わりにこれを出す。
+     施錠 (`subscribeWorkspaceLocked`) で `lockRecordEncryption()` が鍵を落とす。逃げ口は「すべてのデータを削除してやり直す」(設定と同じ橋)。
+  2. **レコード単位の改ざん検知** —— `data/recordCipher.ts` は封緘する平文に記録の collection と id を入れる (`{v:2,c,i,d}`)。
+     GCM が書き換えを、結び付けが別の記録からの写し替えを止める (`RecordTamperedError`)。`RecordCipher` の encrypt / decrypt は
+     `RecordBinding` を取り、`store.ts` の 11 か所が読んでいる行の名前を渡す。**記録を丸ごと消す・古い封緘へ戻す形は検知しない**。
+     結び付けの無い封緘は受けない (有効化の画面が無かったので古い封緘は無い)。
+  3. **暗号化した控えの観測とスマホ対応** —— 診断の控え 3 観点は「クラウド同期はこの版に無い」と言い続けていたが、2026-11-11 から
+     暗号化した控え (`data/encryptedCopy.ts`) が在った。`dbPosture.ts` の `encryptedCopyPostureInputs` が目印から組む。
+     保存先フォルダに対応しないブラウザ (Android の Chrome) 向けに `downloadEncryptedCopy` (渡す前にそのパスフレーズで開けることを確かめる)。
+- **見つけて直した欠陥**: 記録を暗号化したまま控えを取ると、封緘のまま入るので**端末を失った日に控えから戻せない** (salt は端末にしか無い)。
+  `store.exportAllOpened()` を足し、暗号化した控えとパスワード付きバックアップは記録を開いてから控えのパスフレーズで入れる。
+- **診断**: 7 観点すべて `available`・到達しうる最大は 100 点。札は測れない物を名乗る (控えを端末の外へ移したかは見えない)。
+- **対照**: 10 方向すべて狙った検査で落ちた (結び付けの照合を外す / 保管層が別の名前を渡す / 改ざん検知を false 固定 / 控えの入力を空固定 /
+  施錠で鍵を落とさない / 起動の門を外す / 控えに封緘のまま入れる / パスフレーズの下限を外す / ダウンロードで目印を置かない /
+  暗号化を not-built へ戻す)。
+- **変異検査**: 6 本とも 100.00% (初回 96.89% —— ダウンロードの失敗の道・診断の分ける規則 (`partitionChecks`)・最新を比べて書く 2 口の結び付けに検査を足した)。
+- **門**: `npm test` (7 件の台帳を新しい物に合わせて直した後) 緑・`verify:all` 39 ゲート緑・`chain:append` block #535 (`recordCipher.ts`)。
+- **残り**: `docs/REMAINING_WORK.md` の 2026-11-22 の項 (改ざんした 1 件で一覧ごと読めなくなる・保管庫のパスワードと別のパスフレーズ)。
+
+## 直近の作業 (2026-11-21) — 第 3 層の画面を、本物のブラウザで通す検査を CI へ
+
+- **依頼**: PR #977 (画面) をマージした後の「続けて」。残りのうち「ブラウザでの通しを自動の検査に入れる」を作った。
+- **作った物**: `zero-trust-gateway/tests/browser/serve.py` (入口を 127.0.0.1 で起こす。試しの登録コード 2 つ・登録済みの物理キーの鍵・
+  どの認証器とも合わない自作の発行元の証明書を、空の一時ディレクトリにその場で作る。本物の `load_settings` と `create_app` を通し、
+  抜け道を作らない) と `tests/browser/auth_page.cjs` (Playwright。Chromium の試験用の認証器 2 つ —— 物理キー (usb) と
+  スマホのパスキー (internal・同期する) —— で、強い認証の前の許可が断られる → パスキーの登録 → 物理キーの 2 台目は断られる →
+  物理キーで 1 つ → スマホで 2 つ → 読み直しても残る → 許可で守られた道を通る → スマホ幅で横に切れない → 鍵を消すとやり直し・
+  許可も出ない、まで 15 段)。ブラウザの記録の誤り・警告は、理由を書いた 2 つ (RS256 を並べない警告・断る段の 401/403) の外は落とす。
+- **CI**: `.github/workflows/gateway-browser.yml` —— `zero-trust-gateway/**` を触ったときだけ (Chromium を落とすので毎回は走らせない)。
+  playwright は e2e.yml と同じ版・同じ integrity の確かめ (`verify-e2e-playwright-pin.cjs`)、Python の依存は `--require-hashes`。
+  起動役 `uvicorn` を `requirements.in` / `requirements.txt` へ足した (増えたのは uvicorn と click だけ・h11 は既に在った)。
+- **形の検査**: `tests/layer3/test_l3_browser_harness.py` (14 件) —— 画面のボタンと選択肢を全部押す (両方向)・状態 3 つを全部確かめる・
+  コードと鍵を刷らない・一時ディレクトリを消す・外へ出ない・入口は本物の設定の読みを通す・控えにはコードのハッシュと公開鍵だけ・
+  workflow の配線と playwright の版が e2e と同じ。秘密の走査 (`test_settings_and_secrets.py`) に `.cjs` を足した。
+- **対照**: ブラウザの検査 7 方向のうち 6 方向が狙った段で落ちた (DPoP の ath を落とす / 読み込むたびに鍵を作り直す / 登録後に欄を空にしない /
+  状態の札を取り違える / 見た目のハッシュを外す (CSP 違反) / 横にはみ出す)。**鍵を消しても許可を残す形は鳴らない** —— 「試す」は毎回
+  新しい許可をもらってから使うので、残った許可は使われない (外から見えない = 等価・`test_l3_page.py` が字面で留める)。
+  形の検査の対照 6 方向はすべて狙った 1 件で落ちた。
+- **守り**: 新しい workflow と、それが走らせる 2 本を整合性チェーンの保護対象と CODEOWNERS へ (ほかの workflow 7 本と同じ扱い)。
+  eslint に `zero-trust-gateway/tests/browser/**/*.cjs` の節 (no-undef は残す)。workflow の本数を数える検査 2 本を 7 → 8 本へ
+  (`workflowSecurityWitness` / `workflowStructureGate` —— 全件の 1 回目で 3 件落ちて気付いた。数を写した検査は、足した日に鳴る)。
+- **門**: `typecheck` 緑・`npm test` 1,345 ファイル / 29,459 件 (1 回目の 3 件は上の本数・直して当該ファイル 83 件緑)・`verify:all` 39 ゲート exit 0・
+  `chain:verify` 緑 (block #533)・gateway の pytest 443 件・ブラウザの検査 15 段すべて ok。出荷物は動かしていないので e2e は回していない。
+
 ## 直近の作業 (2026-11-21) — `zero-trust-gateway/` の第 3 層に、利用者が押す画面 (`GET /auth/`)
 
 - **依頼**: PR #975 (第 3 層) をマージした後の「続けて」。残りのうち機械が無くても作れる「利用者が押す画面」を作った。

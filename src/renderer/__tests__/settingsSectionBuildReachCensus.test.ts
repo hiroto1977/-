@@ -111,6 +111,12 @@ const LEDGER: readonly Row[] = [
     why: 'パスワード変更と施錠は保管庫の操作なのでブラウザ版だけ。2026-09-09 (パス 137) から isBrowserBuild で出し分けており、すべてのデータを削除だけが橋を通って両ビルドで働く。',
   },
   {
+    tag: 'RecordEncryptionPanel',
+    reach: 'both',
+    declaredIn: 'components/RecordEncryptionPanel.tsx',
+    why: '端末の記録 (IndexedDB の記録の保管層・両ビルド共通) をパスフレーズの鍵で封緘する (2026-11-21)。鍵の目印 (salt・KCV) は localStorage、鍵はメモリだけ。保管庫にも橋にも触れない。',
+  },
+  {
     tag: 'EncryptedCopyPanel',
     reach: 'both',
     declaredIn: 'components/EncryptedCopyPanel.tsx',

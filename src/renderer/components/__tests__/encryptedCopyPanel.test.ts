@@ -18,6 +18,7 @@ import { getRecordStore } from '../../data/store';
 import { isEncryptedBackup, parseBackupFile } from '../../data/backup';
 import { ENCRYPTED_COPY_MARKER_KEY } from '../../data/encryptedCopy';
 import { MAX_BACKUP_IMPORT_BYTES } from '../../data/importFile';
+import { enableEncryption } from '../../data/recordEncryption';
 
 const folder = vi.hoisted(() => ({
   supported: true,
@@ -236,24 +237,103 @@ describe('暗号化した控えのパネル', () => {
     expect(folder.textReads).toBe(1);
   }, 40_000);
 
-  it('保存先フォルダが未設定なら、設定する場所を名指しし、書く口を出さない', async () => {
+  it('保存先フォルダが未設定なら、設定する場所を名指しし、フォルダへ書く口の代わりにダウンロードの口を出す', async () => {
     folder.hasHandle = false;
     await seed(1);
     await mount('never');
     const note = await waitForElement(() => container.querySelector('[data-copy-folder="none"]'), '未設定の文');
     expect(note.textContent).toContain('「PC のフォルダに同期」');
+    expect(note.textContent).toContain('「ダウンロードで控えを渡す」');
     expect(container.querySelector('[data-copy-write]')).toBeNull();
-    expect(container.querySelector('[data-copy-passphrase]')).toBeNull();
+    expect(container.querySelector('[data-copy-download]')).not.toBeNull();
   });
 
-  it('保存先フォルダに対応していないブラウザでは、働く道 (書き出して置く) を名指しする', async () => {
+  it('保存先フォルダに対応していないブラウザ (Android の Chrome ほか) では、ダウンロードで渡す道を名指しする', async () => {
     folder.supported = false;
     await seed(1);
     await mount('never');
     const note = await waitForElement(() => container.querySelector('[data-copy-folder="unsupported"]'), '非対応の文');
-    expect(note.textContent).toContain('「バックアップ / 復元」');
+    expect(note.textContent).toContain('「ダウンロードで控えを渡す」');
     expect(container.querySelector('[data-copy-write]')).toBeNull();
+    expect(container.querySelector('[data-copy-download]')).not.toBeNull();
   });
+
+  /** ダウンロードを捕まえる (`<a download>` を押した瞬間の名前と中身)。 */
+  function captureDownloads() {
+    const got: { name: string; blob: Blob }[] = [];
+    const blobs = new Map<string, Blob>();
+    let n = 0;
+    const createSpy = vi.spyOn(URL, 'createObjectURL').mockImplementation((b) => {
+      const url = `blob:test-${(n += 1)}`;
+      blobs.set(url, b as Blob);
+      return url;
+    });
+    const revokeSpy = vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => undefined);
+    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function (this: HTMLAnchorElement) {
+      got.push({ name: this.download, blob: blobs.get(this.href)! });
+    });
+    return { got, restore: () => [createSpy, revokeSpy, clickSpy].forEach((sp) => sp.mockRestore()) };
+  }
+
+  it('★ ダウンロードで渡すと、暗号文の控えが保存され、鮮度が「最新」に変わる', async () => {
+    folder.supported = false;
+    await seed(2);
+    await mount('never');
+    const dl = captureDownloads();
+    try {
+      const pass = await waitForElement(() => container.querySelector<HTMLInputElement>('[data-copy-passphrase]'), 'パスフレーズの欄');
+      const confirm = container.querySelector<HTMLInputElement>('[data-copy-passphrase-confirm]')!;
+      type(pass, PASS);
+      type(confirm, PASS);
+      await press(container.querySelector<HTMLButtonElement>('[data-copy-download]')!);
+      await settleUntil(() => result('ok') !== null || result('error') !== null, 'ダウンロードの結果の文', { timeoutMs: 20_000 });
+      expect(result('error')).toBeNull();
+      expect(result('ok')?.textContent).toContain('端末の外へ移すと');
+      expect(dl.got).toHaveLength(1);
+      expect(dl.got[0]!.name).toMatch(/^service-hub-copy-\d{4}-\d{2}-\d{2}-encrypted\.json$/);
+      const text = await dl.got[0]!.blob.text();
+      expect(isEncryptedBackup(text)).toBe(true);
+      expect(text).not.toContain('123456');
+      expect((await parseBackupFile(text, PASS)).records).toHaveLength(2);
+      await waitForElement(() => container.querySelector('[data-copy-freshness="current"]'), '鮮度が最新');
+      expect(localStorage.getItem(ENCRYPTED_COPY_MARKER_KEY)).not.toBeNull();
+    } finally {
+      dl.restore();
+    }
+  }, 40_000);
+
+  it('★ ダウンロードでも、2 つの欄が合わなければ渡さず、目印も置かない', async () => {
+    folder.supported = false;
+    await seed(1);
+    await mount('never');
+    const dl = captureDownloads();
+    try {
+      const pass = await waitForElement(() => container.querySelector<HTMLInputElement>('[data-copy-passphrase]'), 'パスフレーズの欄');
+      type(pass, PASS);
+      type(container.querySelector<HTMLInputElement>('[data-copy-passphrase-confirm]')!, PASS + 'x');
+      await press(container.querySelector<HTMLButtonElement>('[data-copy-download]')!);
+      await waitForElement(() => result('error'), '断りの文');
+      expect(dl.got).toHaveLength(0);
+      expect(localStorage.getItem(ENCRYPTED_COPY_MARKER_KEY)).toBeNull();
+    } finally {
+      dl.restore();
+    }
+  });
+
+  it('★ 業務記録を暗号化していても、控えには記録を開いて入れる (端末を失っても控えのパスフレーズで戻せる)', async () => {
+    await seed(1);
+    await enableEncryption('record-key-passphrase');
+    await mount('never');
+    const { pass, confirm, button } = await fields();
+    type(pass, PASS);
+    type(confirm, PASS);
+    await press(button);
+    await waitForElement(() => result('ok'), '書けた文', { timeoutMs: 20_000 });
+    const [, text] = [...folder.files.entries()][0] ?? ['', ''];
+    const restored = (await parseBackupFile(text, PASS)).records;
+    expect(restored).toHaveLength(1);
+    expect(restored[0]!.data).toMatchObject({ amount: 123_456 }); // 封緘のままではなく、開いた中身
+  }, 40_000);
 
   it('保存先フォルダの設定を読めなければ、未設定と言わず、読めないと言う', async () => {
     folder.loadThrows = true;

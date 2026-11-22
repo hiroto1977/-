@@ -4,10 +4,10 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 533
+- ブロック数: 536
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `16c72a7381010860093f15303a66d82b06cf3552605dd46405a6106cdf458e75`
-- 保護対象: 222 ファイル
+- 末尾(tip)ハッシュ: `ad71f74963de63eb17447e787b1601a4a09717b99b4c8fa34dfc9c0a91f4e0de`
+- 保護対象: 225 ファイル
 
 ## ブロック
 
@@ -546,6 +546,9 @@
 | 530 | `316b8929f2642515` | `445c29caac3d83b8` | `f7c9caae96edae98` | update 00-project.mdc,manifest.webmanifest |
 | 531 | `f225c15c987f4afc` | `f7c9caae96edae98` | `a33c545cf6479030` | update ci.yml |
 | 532 | `0849a281aa26a013` | `a33c545cf6479030` | `16c72a7381010860` | update eslint.config.js |
+| 533 | `e28a7a58e9ca04d2` | `16c72a7381010860` | `8c7ca499b94de0fd` | update gateway-browser.yml,eslint.config.js,integrity-chain.cjs,auth_page.cjs,serve.py |
+| 534 | `fa53638437c3eb52` | `8c7ca499b94de0fd` | `fe0072765b1f9f39` | update gateway-browser.yml |
+| 535 | `e7f44ffe30a2255c` | `fe0072765b1f9f39` | `ad71f74963de63eb` | update recordCipher.ts |
 
 ## 保護対象ファイル
 
@@ -562,6 +565,7 @@
 - `.github/workflows/ci.yml`
 - `.github/workflows/dependency-audit.yml`
 - `.github/workflows/e2e.yml`
+- `.github/workflows/gateway-browser.yml`
 - `.github/workflows/knowledge-auto.yml`
 - `.github/workflows/mutation.yml`
 - `.github/workflows/pages.yml`
@@ -771,3 +775,5 @@
 - `vite.config.ts`
 - `vitest.audit.config.ts`
 - `vitest.config.ts`
+- `zero-trust-gateway/tests/browser/auth_page.cjs`
+- `zero-trust-gateway/tests/browser/serve.py`

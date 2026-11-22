@@ -1,15 +1,38 @@
 # Service Hub — 残りの作業手順書
 
+## 感染した端末を通さない仕組み (zero-trust-gateway 第 2 層) で残した物 (2026-11-22)
+
+1. **実物の守りのソフトとつないでいない**。検査は自作の署名鍵で作った証明だけ。使う EDR / 端末管理の製品が、端末の鍵 (DPoP の jkt)
+   に結び付けた署名つきの証明を出せるか (出せなければ、間に立つ小さな発行役が要る) を確かめる。
+2. **TPM の測定値の証明はまだ** (ARCHITECTURE_V2.md §3.2)。守りのソフトそのものが乗っ取られると、今の形では見分けられない。
+3. **画面 (`/auth/`) は健康の証明を付けられない**。`enforce` の間、画面の「許可をもらって試す」は断られる (意図した動き)。
+4. **知らせの送り先 (人への通知) は記録だけ** —— 第 6 層の `LogNotifier` のまま (前からの残り)。
+
+## セキュリティ診断の 5 件を作って、測って残した物 (2026-11-22)
+
+1. **改ざんした記録が 1 件あると、その collection の一覧ごと読めなくなる**。`store.list()` は 1 件の `RecordTamperedError` で
+   投げるので、画面は境界の文に置き換わる (黙って飛ばすと改ざんが見えなくなるので、今は大きく落とす側)。
+   直すなら、読めない 1 件を名指しして残りを出し、点検パネル (`RecordShapeAuditPanel`) から消せるようにする (逃げ口)。
+2. **記録の鍵のパスフレーズは保管庫のマスターパスワードと別**で、ブラウザ版は開くたびに 2 つ打つ。保管庫の主鍵 (master-wrap) から
+   記録の鍵を作れば 1 つで済み、パスワード変更・24 語の復旧にも追随するが、`vault.ts` は Mamori の生成物 (`vault.mamori`) なので
+   鍵を外へ出す口を足すのは別の作業。
+3. **検知しない形**: 記録を丸ごと消す・同じ記録の古い封緘へ戻す (巻き戻し)。記録の外に台帳 (件数・最新の更新時刻の封緘) が要る。
+4. **ダウンロードした控えが端末の外へ移ったかは見えない**。診断の札がそう名乗る (控えた日だけを数える)。
+5. **変異検査は 6 本とも 100.00%** (2026-11-22)。初回は 96.89% (`encryptedCopy.ts` 89.95% / `dbSecurityPosture.ts` 90.14% ほか)。ダウンロードで渡す口の失敗の道 (日付・組めない・渡せない・目印) に検査を足し、診断の「直せる / 無い」を分ける規則は今のデータで観測できないので `partitionChecks` として出して合成した項目で当てた。最新を比べて書く 2 つの口 (`insertIfLatest` / `replaceLatestIfUnchanged`) の結び付けにも検査を足した。到達しない防御 1 つ (ダウンロードの前の確かめの食い違い) と等価 1 つ (`perId` の掃除) は理由つきの pragma。
+
 ## `zero-trust-gateway/` を足して、測って残した物 (2026-11-21)
 
 本体のアプリとは別の物 (自社の API の入口の部品)。在る物・守っている規則は `zero-trust-gateway/README.md`。
 
 - **第 3 層 (WebAuthn) は在るが、実物で試していない** (2026-11-21 に作った) —— 検査はソフトで作った認証器で、画面 (`/auth/`) はブラウザ (Chromium) の
   試験用の認証器で通している。残り:
-  1. **画面のブラウザでの通しは手で回している** (CI では回していない)。pytest が見るのは出す物の形と書き方の決まりまで。回すなら e2e.yml の
-     ような手動の流れに、Python の入口 (ASGI の起動役) と Chromium の試験用の認証器を足す形になる —— 起動役 (`uvicorn` など) は
-     まだ `requirements.txt` に無い。Chromium の試験用の物理キーは登録のたびに新しい自作の証明書を作るので、物理キーの**登録**はブラウザで通せない
-     (登録済みの状態を用意して、確認だけを通した)。
+  1. **画面のブラウザでの通しは、`zero-trust-gateway/` を触ったときだけ CI で回る** (2026-11-21 · `gateway-browser.yml` ·
+     `tests/browser/`)。Chromium の試験用の物理キーは登録のたびに新しい自作の証明書を作るので、物理キーの**登録が通る形**は
+     ブラウザで試せない (登録済みの状態を用意して確認を通し、登録は「断られる」側だけを通す)。画面の CSS を変えて見た目が崩れる形は、
+     横のはみ出しとブラウザの記録の誤り (CSP 違反を含む) だけを見る —— 撮った絵を比べる検査は無い。
+     **runner は ubuntu-24.04 に固定した** —— `ubuntu-latest` は 26.04 へ移り、固定した playwright 1.56.1 は
+     26.04 の chromium を入れられない (2026-11-21 の最初の実行で実測)。**同じ理由で `e2e.yml` (`ubuntu-latest`) も今は落ちるはず** ——
+     手動起動・ラベル起動だけなので誰も気付いていない。直すなら同じく版を固定するか、playwright を上げて integrity の台帳を測り直す。
   2. **実物の物理キーとスマホで、登録と確認を通す。** 物理キーの発行元の証明書 (`ATTESTATION_ROOTS_FILE`) と機種の一覧 (`ALLOWED_AAGUIDS`) は、
      使う機種の公開の値を置く (置くまで、物理キーは 1 本も登録できない)。FIDO の機種の台帳 (MDS) から自動で引く仕組みは無い。
   3. **スマホのパスキーは機種の証明を取らない** (同期されるパスキーは証明を出さない)。登録のときの端末を信用する前提 —— 登録コードを渡す道と、
@@ -33335,7 +33358,7 @@ shared **204** モジュール / 両ビルドが import **113** / うち否定�
 | `credentialTtl` | 1 | 1 | 対称 (実測 · 2026-10-28 · T-213) —— 保存した資格情報の有効時間。`storedCredentialExpired` は両保管層 (`main/secrets.ts` / `renderer/security/vault.ts`) が同じ引数で呼び、否定 (期限切れ) のあとは両側とも**復号せずに消して「未設定」と混ぜない理由を返す** (secrets は reason 'expired'・vault は `takeExpiredNotice`)。違うのは OAuth の TokenSet の扱いだけで、それは意図した非対称 (デスクトップ版は更新トークンを持つので認可サーバの期限に従わせ、ブラウザ版の貼り付け式は accessToken だけなので一律に掛ける) —— `secretsCredentialTtl.test.ts` / `vaultCredentialTtl.test.ts` が両側を留める。 |
 | `depreciation` | 0 | 1 | 非対称は起きない (実測・パス 281 で理由を書き直した) —— 結論は変わらないが、**パス 272 が書いた理由は偽だった**。 ★ 旧い行はこう述べていた: 「到達の鎖は `taxCalc.ts` 1 本だけで、`taxCalc.ts` を import する main / preload のファイルは 0 件 (実測)。税の計算は画面 (renderer) だけが読む。main 側がこのモジュールの問いを1 度も発しない」。前半 (`src/main` / `src/preload` の中に直の import が 0 件) は**真**だが、後半は**偽** —— 実測した鎖は `main/clients/funding.ts` → `shared/funding.ts` → `taxCalc.ts` → ここ で、**`shared/funding.ts` を 1 枚はさんで main へ繋がっている**。**1 ホップで測って閉包について述べていた** —— この本は到達を閉包で見る(パス 268 でそう直した) ので、この行が母集団に在ること自体が反証である(到達していなければ行は存在しない)。 ★ 正しい理由は**辺の中身**である: 鎖の 2 つの辺はどちらも**定数だけ**を持ち出す —— `funding.ts` が `taxCalc` から取るのは `CONSUMPTION_TAX_STANDARD` 1 つ、`taxCalc` が ここ から取るのは `SME_*` の 5 定数で、`taxCalc` はこのモジュールの**関数を 1 つも呼ばない** (`isSchedulableLife` / `straightLineAnnual` の呼び手は `RealEstatePage.tsx` = renderer だけ)。だから main 側は否定で答える問いを発しない。`controlChars` (パス 280) と同じ形 —— **読まれてはいたが、足りなかった**。 到達の鎖と辺の名前は `shared/__tests__/judgementReachEdges.test.ts` が両方向に留める (経路が変わる・名前が増える・定数が関数に化ける、のどれでも鳴る) |
 | `emotionsLimits` | 1 | 5 | 対称 (実測・パス 254) —— analyze-text の門は両ビルドとも `countChars(text) > MAX_ANALYZE_TEXT_CHARS` (main/clients/emotions.ts:313 / web-shim.ts:733)、log-mood の note も同じ形 (emotions.ts:220 / emotionsWeb.ts:172)。packAnalyzeText の否定 (included === 0) の消費者も GmailPage / SlackPage の両方が 押せなくする。**ただし予算を積む単位が割れていた** —— 門は文字で測るのに packAnalyzeText は `row.length` (コード単位)。絵文字 10 個の件名 600 行で 2,617 字送った時点で 362 行を落とし、画面は「5000 字までのため」と **成り立たない理由**を述べていた。パス 254 で countChars へ直した |
-| `eraseReport` | 1 | 4 | 意図した非対称 (実測・パス 252) —— 報告の型と文面は共有で、否定 (allDeleted が偽) の扱いも 両ビルドで同じ (残った物を名指し・「データは残っています」・再読込/再起動をしない)。**消す順序だけが逆向き**: ブラウザ版は保管庫を最後 (記録が平文の IndexedDB なので「保管庫だけ新しく記録は前の人の物」を避ける)、デスクトップ版はトークンを先頭。デスクトップ版は atRest.ts の封筒 1 組でトークンも状態ファイルも同じ強さなのでその非対称が起きず、process が途中で死んだときに残るのは「遠隔から使えるトークン」か「局所で読める記録」かの選択になる。前者のほうが重いのでトークンを先に消す。理由を desktopEraseTargets へ書いた |
+| `eraseReport` | 1 | 5 | 意図した非対称 (実測・パス 252) —— 報告の型と文面は共有で、否定 (allDeleted が偽) の扱いも 両ビルドで同じ (残った物を名指し・「データは残っています」・再読込/再起動をしない)。**消す順序だけが逆向き**: ブラウザ版は保管庫を最後 (記録が平文の IndexedDB なので「保管庫だけ新しく記録は前の人の物」を避ける)、デスクトップ版はトークンを先頭。デスクトップ版は atRest.ts の封筒 1 組でトークンも状態ファイルも同じ強さなのでその非対称が起きず、process が途中で死んだときに残るのは「遠隔から使えるトークン」か「局所で読める記録」かの選択になる。前者のほうが重いのでトークンを先に消す。理由を desktopEraseTargets へ書いた |
 | `externalUrlGate` | 3 | 6 | 閉じている (実測・パス 241 で 3 経路 → パス 291 で 4 経路) —— 否定 (`null`) の扱いは 4 経路すべてで「開かない」の 1 つ: main.ts の `app:openExternal` と setWindowOpenHandler、ブラウザ版 web-shim の同名の polyfill、そしてパス 291 で足した `oauth.ts` の authorize URL (投げて中断する)。 ★ **その 4 本目に twin は無い** —— ブラウザ版の `authorize` は `not_supported` を返すだけで、貼り付け式 PKCE (`renderer/oauth/pkce.ts`) は URL を画面に出し**利用者が自分で開く**ので、「この authorize URL を外部ブラウザへ渡してよいか」という問いを発するのは main だけ。だから非対称になりようがない (`depreciation` の「問いを発しない」と同じ形だが、あちらは辺が定数だけ・こちらは片側の実装が存在しない)。★ **パス 298 で 4 → 6 経路。** 足した 2 つは画面の `<a>` で、プラットフォームが自分で辿る属性 (`EligibilityChecker` / `WelfareSchemeCard`)。それまで台帳の生の値を属性に置いており、React のクリック handler で打ち消しても中クリックや右クリックの「新しいタブで開く」は関門の外だった (「調べた物と使われる物が別」—— パス 291 / 295 / 296 と同じ家系)。否定の扱いは**両方とも同じ 1 つ** —— link を描かずに ⚠ の文を出す。この 2 つは renderer だけの経路だが、main 側に双子は在りようがない (デスクトップ版も同じ renderer を描く) ので非対称ではない。母集団は `shared/__tests__/followableUrlCensus.test.ts` が両方向に留める |
 | `freeeIntake` | 1 | 5 | 意図した非対称 (実測・パス 268) —— 否定で答える 3 つ (`dealIntakeNote` / `dealIntakeSheetNote` / `dealIntakeImportNote`) の**消費者は renderer だけ** (FreeePage / bankSubmission / docImports)。main が import するのは `NO_DEAL_INTAKE` と型だけで、**負で答える 3 関数の呼び出しは src/main・src/preload で実測 0 件**。ただし非対称は 1 段上に在る —— 落ちた件数を数える `FreeeDealIntake` を**作れるのは main の freee.ts だけ**で、ブラウザ版に freee の live 読みは無い (読むのは cursor だけ)。だからブラウザ版の 3 つの消費者は常に `NO_DEAL_INTAKE` を見て `null` を返す (注記が出ない)。**原因は「判定の非対称」ではなく「クライアントの不在」**で、funding (パス 265) と同じ形である |
 | `funding` | 1 | 2 | 一部読んだ (パス 265) —— 否定で答える 2 つのうち、`fundingLinkSource` は **両ビルドが同じ実装を読む** (画面が 1 つしか無いので、文言も判定も共有)。ただし `sample` を作れるのは**デスクトップ版だけ**である —— ブラウザ版の web-shim は funding に枝を持たず `not_implemented` を返すので、画面は同梱の 控え (`accountingSource: 'none'`) を見続ける。**意図した非対称**で、その原因はデスクトップの fetcher が見本の Map を渡すこと (Phase 6 の 実 API 差込みまで) のほうに在る。もう 1 つ (`isSpecifiedIncome` 系の判定) は未読 |

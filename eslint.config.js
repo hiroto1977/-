@@ -118,6 +118,25 @@ export default tseslint.config(
     },
   },
   {
+    // zero-trust-gateway の画面をブラウザで通す検査 (Node + Playwright)。document / window は
+    // page.evaluate / waitForFunction へ渡す関数の中 (ブラウザ側で走る) だけで使う。no-undef は残す。
+    files: ['zero-trust-gateway/tests/browser/**/*.cjs'],
+    languageOptions: {
+      globals: {
+        require: 'readonly',
+        process: 'readonly',
+        __dirname: 'readonly',
+        console: 'readonly',
+        setTimeout: 'readonly',
+        document: 'readonly',
+        window: 'readonly',
+      },
+    },
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
+    },
+  },
+  {
     // 村のページと移動テスト。ブラウザ大域と Node のテストランナーを両方許可する。
     files: ['local-ai/council/**/*.{js,mjs}'],
     languageOptions: {

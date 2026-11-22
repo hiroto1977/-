@@ -23,8 +23,12 @@ export interface DbSecurityInputs {
   readonly integrityVerified: boolean;
   /** 自動ロック (アイドル/タブ非表示) が有効か。 */
   readonly autoLockEnabled: boolean;
+  /**
+   * 端末の外への控え。名前は歴史的 (クラウド同期を想定していた頃の物) で、2026-11-21 から
+   * 中身は暗号化した控え (`data/encryptedCopy.ts`) の目印から組む (`renderer/data/dbPosture.ts`)。
+   */
   readonly cloudBackup: {
-    /** 構成済みのクラウドストレージ (例: ['drive','dropbox','onedrive'])。 */
+    /** 控えを書いた道 (例: ['encrypted-copy'])。1 度も書いていなければ空。 */
     readonly configuredSinks: readonly string[];
     /** 直近バックアップからの経過日数 (null = 未実施)。 */
     readonly lastBackupAgeDays: number | null;
@@ -52,6 +56,9 @@ export type Severity = 'critical' | 'high' | 'medium';
  * 診断は「あなたの設定が悪い」と読まれるが、実際に足りていないのは
  * **アプリの機能**である。**直せないものを混ぜて並べると、利用者は一覧
  * ごと信じなくなる。** 分けて出せるように、観点ごとに持たせる。
+ *
+ * 2026-11-21 に 5 つとも作った (記録の暗号化の画面・記録に結び付けた封緘・暗号化した控えの観測)。
+ * 今は 7 観点すべてが `available` で、到達しうる最大は 100 点。区分は次に足す観点のために残す。
  */
 export type Availability =
   /** 利用者が設定で変えられる。 */
@@ -125,27 +132,13 @@ const CHECK_SPECS: Readonly<Record<string, CheckSpec>> = {
     severity: 'critical',
     weight: 30,
     /*
-     * **勧める先が存在しないなら、そう書く。**
-     *
-     * 2026-08-25 まで、ここは「設定でレコード暗号化を有効化し」と書いて
-     * いた。**その設定は無い** —— `enableEncryption` の呼び出し元は
-     * テストを除いて 0 で、`isEncryptionEnabled()` は常に false である
-     * (エンジン・KCV・再暗号化まで実装済みで、画面だけが未配線)。
-     *
-     * この項目は critical・重み 30 で**改善候補の先頭に出る**。
-     * つまり利用者は「いちばん重要」と示された対処を探しに行き、
-     * **見つけられない**。同日に直した「バックアップを書き出してください
-     * (そのバックアップにトークンは入らない)」と同じ形で、
-     * **従えない助言は、助言が無いより悪い** —— 探す時間を奪ったうえ、
-     * 他の助言まで当てにならないものに見せる。
-     *
-     * 配線は機能追加であり、持ち主が決めることなので勝手に作らない。
-     * 代わりに**現状と、今できること**を書く。
+     * 2026-11-21 に有効化の画面を配線した (設定の「業務記録の暗号化」・`RecordEncryptionPanel`)。
+     * それまでは「有効化する画面はまだありません」と書いていた (エンジンは在り、画面だけが未配線だった)。
      */
     recommendation:
-      '業務レコードは平文で保存されています。有効化する画面はまだありません (暗号化エンジンは実装済み・配線待ち)。' +
-      '当面は、機微なレコードをこの端末に置かないか、バックアップをパスワード付きで書き出してください。',
-    availability: 'not-built',
+      '設定の「業務記録の暗号化」でパスフレーズ (12 文字以上) を決めて有効にしてください。' +
+      'パスフレーズは保存しません —— 忘れると記録は開けないので、暗号化した控えと併せて使ってください。',
+    availability: 'available',
   },
   'master-password': {
     id: 'master-password',
@@ -163,14 +156,19 @@ const CHECK_SPECS: Readonly<Record<string, CheckSpec>> = {
     // 未実装なのは**レコード単位の改ざん検知**のほうである。
     // 「有効化してください」は、片方は既に有効・片方は存在しない、という
     // どちらの意味でも従えない助言だった。
-    label: 'レコードの改ざん検知',
+    label: 'レコードの改ざん検知 (書き換え・写し替え)',
     severity: 'high',
     weight: 15,
+    /*
+     * 2026-11-21: 暗号化した記録は、封緘の中に記録の collection と id を入れて封じる
+     * (`data/recordCipher.ts`)。GCM が書き換えを、結び付けが別の記録からの写し替えを止める。
+     * だからこの観点は暗号化が有効なら満たされる。**検知しない形を札で名乗る** ——
+     * 記録を丸ごと消す・同じ記録の古い封緘へ戻す形は見えない (記録の外の台帳が要る)。
+     */
     recommendation:
-      'レコード単位の改ざん検知はこの版にはありません。' +
-      'なお書き出したバックアップは SHA-256 で必ず破損検知されます (鍵の無いハッシュなので改ざん検知ではありません —— ' +
-      '改ざんに備えるならパスワードを付けて暗号化してください)。',
-    availability: 'not-built',
+      '業務記録の暗号化を有効にすると、記録ごとの封緘で書き換えと別の記録からの写し替えを検知します。' +
+      '記録を丸ごと消す・同じ記録の古い中身へ戻す形は検知しません。',
+    availability: 'available',
   },
   'auto-lock': {
     id: 'auto-lock',
@@ -180,42 +178,41 @@ const CHECK_SPECS: Readonly<Record<string, CheckSpec>> = {
     recommendation: 'アイドル/タブ非表示での自動ロックを有効化してください。',
     availability: 'available',
   },
+  /*
+   * **控えの 3 観点は、暗号化した控え (`data/encryptedCopy.ts`) を見る** (2026-11-21)。
+   *
+   * 2026-11-11 に「暗号化した控え」(書いて読み戻して確かめる・端末が目印を覚える) が入ったのに、
+   * この診断は「クラウド同期はこの版に無い」と言い続け、3 観点を常に未達・直せない物として出していた。
+   * 控えを保存先フォルダ (クラウドと同期しているフォルダにすれば提供者が持つのは暗号文だけ) か
+   * ダウンロードで書いた目印から測る。**端末の外へ移したかはアプリには見えない** ので札にそう書く。
+   */
   'backup-configured': {
     id: 'backup-configured',
-    // **クラウド同期はこの版に存在しない。** 送信路の実装が 1 つも無い
-    // ことは 2026-08-22 に実測済みで、`CloudSyncPanel` は偽の成功を出さない
-    // よう直してある。診断の側だけが「構成してください」と言い続けていた。
-    label: 'クラウドバックアップ構成',
+    label: '暗号化した控え (保存先フォルダ / ダウンロード)',
     severity: 'medium',
     weight: 10,
     recommendation:
-      'クラウド同期はこの版では未接続です (送信路が未実装)。消失対策としては、' +
-      '設定の「バックアップ / 復元」からファイルを書き出して端末の外へ保管してください。',
-    availability: 'not-built',
+      '設定の「暗号化した控え」で控えを書いてください。保存先をクラウドと同期しているフォルダにするか、' +
+      'ダウンロードしたファイルを端末の外 (クラウドのドライブなど) へ移すと、端末が壊れても戻せます。',
+    availability: 'available',
   },
   'backup-fresh': {
     id: 'backup-fresh',
-    // **札が範囲を落としていた。** ここが見ているのは `cloudBackup` の
-    // 経過日数だけで、`BackupPanel` の手動書き出しは数えていない。
-    // 「バックアップ鮮度」「直近が古い/未実施」と書くと、**毎日きちんと
-    // 書き出している利用者にも「未実施」と告げる**ことになる。
-    label: `クラウドバックアップ鮮度 (${MAX_BACKUP_AGE_DAYS}日以内)`,
+    label: `暗号化した控えの鮮度 (${MAX_BACKUP_AGE_DAYS}日以内)`,
     severity: 'medium',
     weight: 10,
-    recommendation:
-      'クラウド同期はこの版では未接続のため、常に未実施として表示されます。' +
-      '手動で書き出したバックアップはこの項目には数えられません。',
-    availability: 'not-built',
+    recommendation: `最後の控えから ${MAX_BACKUP_AGE_DAYS} 日を過ぎたか、まだ控えていません。設定の「暗号化した控え」で書き直してください。`,
+    availability: 'available',
   },
   'backup-encrypted': {
     id: 'backup-encrypted',
-    label: 'クラウドバックアップの暗号化',
+    label: '控えの暗号化',
     severity: 'high',
     weight: 10,
     recommendation:
-      'クラウド同期はこの版では未接続です。手元で書き出すバックアップは、' +
-      '設定の「バックアップ / 復元」でパスワードを入れれば AES-GCM で暗号化されます。',
-    availability: 'not-built',
+      '控えはパスフレーズで AES-GCM 暗号化して書き、そのパスフレーズで開けることを確かめてから「書けた」と言います。' +
+      'まだ 1 度も控えていないので満たしていません。',
+    availability: 'available',
   },
 };
 
@@ -259,13 +256,27 @@ export function buildDbSecurityReport(input: DbSecurityInputs): DbSecurityReport
   for (const c of checks) {
     if (c.ok) score += c.weight;
   }
+  return { checks, score, grade: gradeForScore(score), ...partitionChecks(checks) };
+}
+
+/**
+ * 項目を「直せる物」と「この版に無い物」に分ける。
+ *
+ * 2026-11-22 に 7 項目すべてが作られたので、今の `CHECK_SPECS` では
+ * `unavailable` は常に空で `maxAchievableScore` は 100 になる。それでも
+ * 分ける規則は残す —— 将来まだ作っていない保護を項目として足したとき、
+ * 画面は「この版に無い保護」として別に並べ、到達しうる最大点を正直に
+ * 言う必要がある。規則が今のデータで観測できないので、関数として出して
+ * 合成した項目で検査する。
+ */
+export function partitionChecks(checks: readonly SecurityCheck[]): Pick<DbSecurityReport, 'findings' | 'actionable' | 'unavailable' | 'maxAchievableScore'> {
   const findings = checks.filter((c) => !c.ok).sort((a, b2) => b2.weight - a.weight);
   // **直せるものと、直せないものを分ける。** 混ぜて重み順に並べると、
-  // この版に無い保護 (重み 75) が上を占め、今できる事が下に埋まる。
+  // この版に無い保護が上を占め、今できる事が下に埋まる。
   const actionable = findings.filter((c) => c.availability === 'available');
   const unavailable = findings.filter((c) => c.availability === 'not-built');
   const maxAchievableScore = checks
     .filter((c) => c.availability === 'available')
     .reduce((acc, c) => acc + c.weight, 0);
-  return { checks, score, grade: gradeForScore(score), findings, actionable, unavailable, maxAchievableScore };
+  return { findings, actionable, unavailable, maxAchievableScore };
 }

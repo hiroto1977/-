@@ -16,6 +16,7 @@ import {
   loadCopyMarker,
   recordsFingerprint,
   writeEncryptedCopy,
+  downloadEncryptedCopy,
   type CopyFolder,
   type CopyFreshness,
 } from '../data/encryptedCopy';
@@ -58,6 +59,19 @@ function folderOf(handle: FileSystemDirectoryHandle): CopyFolder {
   };
 }
 
+/** ブラウザのダウンロードで渡す (`BackupPanel` の書き出しと同じ形)。 */
+function saveByDownload(filename: string, blob: Blob): void {
+  const url = URL.createObjectURL(blob);
+  try {
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}
+
 export function EncryptedCopyPanel() {
   const [folder, setFolder] = useState<FolderState>({ state: 'loading' });
   const [freshness, setFreshness] = useState<Freshness>({ state: 'loading' });
@@ -69,6 +83,7 @@ export function EncryptedCopyPanel() {
 
   const measure = useCallback(async () => {
     try {
+      // 鮮度は id と更新時刻だけで決まる —— 開かずに封筒で数える (施錠中の解錠も要らない)。
       const records = await getRecordStore().exportAll();
       const loaded = loadCopyMarker();
       if (!loaded.readable) {
@@ -109,12 +124,34 @@ export function EncryptedCopyPanel() {
     setErr(undefined);
     let records;
     try {
-      records = await getRecordStore().exportAll();
+      records = await getRecordStore().exportAllOpened();
     } catch {
       setErr('端末の記録を読めなかったので、控えを書いていません。');
       return;
     }
     const copied = await writeEncryptedCopy({ records, passphrase, confirm, folder: folderOf(handle) });
+    if (!copied.ok) {
+      setErr(copied.message);
+      return;
+    }
+    setMsg(copied.message);
+    setPassphrase('');
+    setConfirm('');
+    await measure();
+  }
+
+  /** ダウンロードで渡す (保存先フォルダに対応していない・未設定のとき)。 */
+  async function onDownload() {
+    setMsg(undefined);
+    setErr(undefined);
+    let records;
+    try {
+      records = await getRecordStore().exportAllOpened();
+    } catch {
+      setErr('端末の記録を読めなかったので、控えを渡していません。');
+      return;
+    }
+    const copied = await downloadEncryptedCopy({ records, passphrase, confirm, save: saveByDownload });
     if (!copied.ok) {
       setErr(copied.message);
       return;
@@ -156,44 +193,49 @@ export function EncryptedCopyPanel() {
 
       {folder.state === 'unsupported' && (
         <div data-copy-folder="unsupported" style={{ ...MUTED, marginTop: 8 }}>
-          このブラウザは保存先フォルダに対応していません。「バックアップ / 復元」でパスワードを指定して書き出し、
-          そのファイルをクラウドと同期しているフォルダへ置いてください。
+          このブラウザは保存先フォルダに対応していません。下の「ダウンロードで控えを渡す」で暗号化した控えを保存し、
+          そのファイルを Google ドライブなど端末の外へ移してください。
         </div>
       )}
       {folder.state === 'none' && (
         <div data-copy-folder="none" style={{ ...MUTED, marginTop: 8 }}>
           保存先フォルダが未設定です。この画面の「PC のフォルダに同期」でフォルダを設定すると、ここから控えを書けます。
+          フォルダを使わずに、下の「ダウンロードで控えを渡す」でも控えを残せます。
         </div>
       )}
       {folder.state === 'unreadable' && (
         <div data-copy-folder="unreadable" role="alert" style={{ ...MUTED, marginTop: 8 }}>
-          保存先フォルダの設定を読めなかったので、控えを書けません。
+          保存先フォルダの設定を読めなかったので、フォルダへは書けません。下の「ダウンロードで控えを渡す」は使えます。
         </div>
       )}
       {folder.state === 'ready' && (
-        <div data-copy-folder="ready" style={{ marginTop: 10 }}>
-          <div style={MUTED}>保存先フォルダ: {folder.handle.name}</div>
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', marginTop: 6 }}>
-            <input
-              type="password"
-              autoComplete="new-password"
-              data-copy-passphrase
-              aria-label="控えのパスフレーズ"
-              value={passphrase}
-              placeholder="パスフレーズ（12 文字以上）"
-              onChange={(e) => setPassphrase(e.target.value)}
-              style={FIELD}
-            />
-            <input
-              type="password"
-              autoComplete="new-password"
-              data-copy-passphrase-confirm
-              aria-label="控えのパスフレーズ（確認）"
-              value={confirm}
-              placeholder="パスフレーズ（確認）"
-              onChange={(e) => setConfirm(e.target.value)}
-              style={FIELD}
-            />
+        <div data-copy-folder="ready" style={{ ...MUTED, marginTop: 8 }}>
+          保存先フォルダ: {folder.handle.name}
+        </div>
+      )}
+      {folder.state !== 'loading' && (
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', marginTop: 6 }}>
+          <input
+            type="password"
+            autoComplete="new-password"
+            data-copy-passphrase
+            aria-label="控えのパスフレーズ"
+            value={passphrase}
+            placeholder="パスフレーズ（12 文字以上）"
+            onChange={(e) => setPassphrase(e.target.value)}
+            style={FIELD}
+          />
+          <input
+            type="password"
+            autoComplete="new-password"
+            data-copy-passphrase-confirm
+            aria-label="控えのパスフレーズ（確認）"
+            value={confirm}
+            placeholder="パスフレーズ（確認）"
+            onChange={(e) => setConfirm(e.target.value)}
+            style={FIELD}
+          />
+          {folder.state === 'ready' ? (
             <button
               type="button"
               data-copy-write
@@ -205,7 +247,11 @@ export function EncryptedCopyPanel() {
             >
               暗号化した控えを書く
             </button>
-          </div>
+          ) : (
+            <button type="button" data-copy-download disabled={submit.busy} onClick={() => void submit.run(onDownload)}>
+              ダウンロードで控えを渡す
+            </button>
+          )}
         </div>
       )}
 

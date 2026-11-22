@@ -9,6 +9,11 @@
 #   POST /auth/webauthn/authenticate/options ・ /authenticate/verify … 確認
 #   GET  /auth/session           … いまの認証の強さ
 #   GET  /auth/                  … 利用者が押す画面 (登録と確認。1 枚の HTML で、外の物を読まない)
+#   POST /device-health/alerts   … 守りのソフトの管理サービスからの「感染した / 片付いた」の知らせ (署名つき)
+#
+# 第 2 層 (端末の健康): トークンを求める要求は `Device-Health` ヘッダに、守りのソフトが出した署名つきの
+# 健康の証明を付ける (ATTESTATION_MODE=enforce なら必須)。感染を報せた利用者・端末は隔離の控えに入り、
+# 控えに在る間はモードに依らずトークンを出さず、守られた道も通さない。
 #
 # 認証の強さを答える口 (AuthnProvider) の既定は第 3 層 (WebAuthn)。認証器が 1 つも登録されていない間は
 # 「誰も認証済みでない」と答えるので、既定のままではトークンは 1 枚も出ない (迷ったら断る)。
@@ -29,6 +34,8 @@ from fastapi.responses import JSONResponse, Response
 
 from contracts import AttestationResult, AuthnState, Notifier, RiskDecision, SecurityEvent
 from layer1_mtd.runner import CommandRunner
+from layer2_zkp_attest.health import HealthError, HealthPolicy, load_issuers, verify_health_report
+from layer2_zkp_attest.quarantine import QuarantineBook, SeenAlerts, verify_alert
 from layer3_fido2.enrollment import EnrollmentBook
 from layer3_fido2.page import build_page
 from layer3_fido2.service import CounterRegression, WebAuthnService
@@ -148,6 +155,14 @@ class Gateway:
             disable_authenticator=self.webauthn.disable_authenticator,
         )
         self._events: dict[str, deque[RequestEvent]] = {}
+        # 第 2 層。
+        self.health_issuers = load_issuers(settings.device_health_issuers_file)
+        self.health_policy = HealthPolicy(
+            max_signature_age_hours=settings.health_max_signature_age_hours,
+            max_patch_age_days=settings.health_max_patch_age_days,
+        )
+        self.quarantine = QuarantineBook(settings.quarantine_file)
+        self.seen_alerts = SeenAlerts()
 
     # ---- 小さな道具 ----
     def at(self, now: float) -> datetime:
@@ -161,10 +176,101 @@ class Gateway:
             actor=actor, action=action, target=target, result=result, at=self.at(now)  # type: ignore[arg-type]
         )
 
-    def attestation(self) -> AttestationResult:
-        # 第 2 層がまだ無い。off 以外では「通っていない」と答える (enforce なら発行しない)。
+    def attestation(
+        self, headers: Mapping[str, str], *, subject: str | None, jkt: str, ip: str | None, now: float
+    ) -> AttestationResult:
+        # 第 2 層: 端末の健康の証明を検める。off なら見ない。
         mode = self.settings.attestation_mode
-        return AttestationResult(mode=mode, passed=mode == "off")
+        if mode == "off":
+            return AttestationResult(mode=mode, passed=True)
+        report = headers.get("device-health")
+        if subject is None:
+            # 認証済みでない相手 (発行は必ず断られる)。証明は本人に結び付けられないので見ない。
+            return AttestationResult(mode=mode, passed=False, reasons=("no_subject",))
+        if report is None:
+            return AttestationResult(mode=mode, passed=False, reasons=("report_missing",))
+        try:
+            verdict = verify_health_report(
+                report,
+                issuers=self.health_issuers,
+                audience=self.settings.issuer,
+                subject=subject,
+                jkt=jkt,
+                now=now,
+                policy=self.health_policy,
+            )
+        except HealthError as err:
+            if err.code in ("bad_signature", "unknown_key", "wrong_device_key", "wrong_subject"):
+                # 偽物か、別の端末・別の人の証明の使い回し。人に見てもらう。
+                handle_event(
+                    SecurityEvent(
+                        kind="attestation_failed", at=self.at(now), source_ip=ip, subject=subject,
+                        detail={"reason": err.code},
+                    ),
+                    self.soar,
+                )
+            return AttestationResult(mode=mode, passed=False, reasons=(err.code,))
+        if verdict.infected:
+            self.contain(subject=subject, device_id=verdict.device_id, reason="report", ip=ip, now=now, jkt=jkt)
+        elif verdict.passed:
+            self.quarantine.bind(jkt, verdict.device_id, subject)
+        return AttestationResult(
+            mode=mode, passed=verdict.passed, device_id=verdict.device_id, reasons=verdict.reasons
+        )
+
+    def contain(
+        self,
+        *,
+        subject: str | None,
+        device_id: str | None,
+        reason: str,
+        ip: str | None,
+        now: float,
+        jkt: str | None = None,
+    ) -> None:
+        # 感染の報せ: 利用者と端末を隔離し、その端末の鍵を退役させ、その人たちのセッションを止める。
+        self.quarantine.quarantine(subject=subject, device_id=device_id, reason=reason, now=now, jkt=jkt)
+        targets = set(self.quarantine.device_subjects(device_id)) if device_id is not None else set()
+        if subject is not None:
+            targets.add(subject)
+        detail = {"device_id": device_id} if device_id is not None else {}
+        if not targets:
+            handle_event(
+                SecurityEvent(kind="device_compromised", at=self.at(now), source_ip=ip, detail=detail), self.soar
+            )
+        for target in sorted(targets):
+            handle_event(
+                SecurityEvent(
+                    kind="device_compromised", at=self.at(now), source_ip=ip, subject=target, detail=detail
+                ),
+                self.soar,
+            )
+
+    def device_alert(self, raw: bytes, ip: str | None, now: float) -> tuple[int, dict[str, object]]:
+        with self.lock:
+            try:
+                body = json_object(raw)
+                alert = verify_alert(
+                    body.get("alert"),
+                    issuers=self.health_issuers,
+                    audience=self.settings.issuer,
+                    now=now,
+                    seen=self.seen_alerts,
+                )
+            except (JoseError, HealthError) as err:
+                code = err.code if isinstance(err, HealthError) else "malformed"
+                self.record(now, actor="anonymous", action=f"device.alert.{code}", target="/device-health/alerts", result="denied")
+                return 401, _UNAUTHORIZED
+            if alert.event == "infected":
+                self.contain(subject=alert.subject, device_id=alert.device_id, reason="alert", ip=ip, now=now)
+                return 202, {"quarantined": True}
+            self.quarantine.clear(subject=alert.subject, device_id=alert.device_id)
+            detail = {"device_id": alert.device_id} if alert.device_id is not None else {}
+            handle_event(
+                SecurityEvent(kind="device_cleared", at=self.at(now), source_ip=ip, subject=alert.subject, detail=detail),
+                self.soar,
+            )
+            return 202, {"quarantined": False}
 
     # ---- おとりの鍵 ----
     def canary_touched(self, headers: Mapping[str, str], ip: str | None, now: float) -> bool:
@@ -257,6 +363,10 @@ class Gateway:
         except AuthError as err:
             self._failed(authorization, path, ip, err.code, now)
             return None
+        if self.quarantine.blocks(subject=claims.subject, jkt=claims.jkt):
+            # 隔離中の利用者・端末。トークンが期限内でも通さない (知らせが届いた瞬間から止める)。
+            self.record(now, actor=claims.subject, action="request.quarantined", target=path, result="denied")
+            return None
         self.sessions.touch(claims.session_id, claims.subject)
         token = parse_dpop_authorization(authorization)
         state = self.sessions.state(claims.session_id)
@@ -335,12 +445,26 @@ class Gateway:
         else:
             # 認証済みでない相手には点数を付けない (下の check_issuance が必ず断る)。
             risk = RiskDecision(session_id=session_id, score=0.0, action="allow")
+        attestation = self.attestation(
+            headers, subject=authn.subject if authn is not None else None, jkt=proof.jkt, ip=ip, now=now
+        )
+        if authn is not None and self.quarantine.blocks(subject=subject, jkt=proof.jkt):
+            # 隔離中 (感染の知らせ・この要求の健康の証明)。モードに依らず出さない。
+            # 健康の証明を見た後に問う —— 証明が感染を報せた要求も、ここで同じ答えになる。
+            self.record(now, actor=subject, action="token.quarantined", target="/token", result="denied")
+            return 403, _FORBIDDEN
+        if not attestation.passed and attestation.mode != "off":
+            reason = attestation.reasons[0] if attestation.reasons else "unknown"
+            if attestation.mode == "report":
+                # 記録だけ (止めない)。どの端末が足りていないかを、enforce にする前に知るため。
+                self.record(now, actor=subject, action=f"attestation.report.{reason}", target="/token", result="ok")
         try:
-            check_issuance(
-                authn, risk, self.attestation(), now=now, halted=self.issuance.halted()
-            )
+            check_issuance(authn, risk, attestation, now=now, halted=self.issuance.halted())
         except IssuanceRefused as err:
-            self.record(now, actor=subject, action=f"token.{err.code}", target="/token", result="denied")
+            code = err.code
+            if code == "attestation" and attestation.reasons:
+                code = f"attestation.{attestation.reasons[0]}"
+            self.record(now, actor=subject, action=f"token.{code}", target="/token", result="denied")
             status = 503 if err.code == "issuance_halted" else 403 if err.code == "risk" else 401
             body = {"error": "unavailable"} if status == 503 else {"error": "forbidden"} if status == 403 else _UNAUTHORIZED
             return status, body
@@ -539,6 +663,15 @@ def create_app(
 
     for name in _AUTH_PATHS:
         _auth_route(name)
+
+    @app.post("/device-health/alerts")
+    async def device_alert(request: Request) -> JSONResponse:
+        raw = await _read_body(request)
+        if raw is None:
+            return JSONResponse({"error": "too_large"}, status_code=413, headers=denied)
+        ip = request.client.host if request.client is not None else None
+        status, body = await run_in_threadpool(gateway.device_alert, raw, ip, gateway.clock())
+        return JSONResponse(body, status_code=status, headers={"Cache-Control": "no-store"})
 
     @app.get("/auth/session")
     def auth_session(request: Request) -> JSONResponse:

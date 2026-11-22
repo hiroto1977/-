@@ -10,6 +10,8 @@ import { PortalDirectory } from './portal/PortalDirectory';
 import { ManualDataSection } from './components/ManualDataSection';
 import { pushRecent, toggleFavorite, keepKnown, RECENTS_MAX } from './recents';
 import { LockScreen } from './security/LockScreen';
+import { RecordUnlockScreen } from './security/RecordUnlockScreen';
+import { isRecordStoreUnlocked, lockRecordEncryption } from './data/recordEncryption';
 import { isBrowserBuild } from './runtimeMode';
 import { getVault } from './security/vault';
 import { startAutoLock } from './security/autoLock';
@@ -181,6 +183,8 @@ export function App() {
   // browser mode and Vault status, switch to a concrete boolean.
   const [vaultUnlocked, setVaultUnlocked] = useState<boolean | null>(null);
   const [browserMode, setBrowserMode] = useState<boolean | null>(null);
+  // 業務記録を暗号化した端末では、記録の鍵を開くまで殻を出さない (`RecordUnlockScreen`)。
+  const [recordsUnlocked, setRecordsUnlocked] = useState<boolean>(() => isRecordStoreUnlocked());
 
   useEffect(() => {
     let cancelled = false;
@@ -234,6 +238,9 @@ export function App() {
     const unsubscribe = subscribeWorkspaceLocked(() => {
       // 施錠したら、クラウドから取得して覚えていた内容も消す (`data/lastGoodFetch.ts` —— メモリだけの覚え)。
       forgetAllFetches();
+      // 記録の鍵も落とす —— 施錠の画面の裏で記録が読めるままにしない (`lockRecordEncryption`)。
+      lockRecordEncryption();
+      setRecordsUnlocked(isRecordStoreUnlocked());
       setVaultUnlocked(false);
     });
     const stopRelay = startLockRelay();
@@ -434,6 +441,15 @@ export function App() {
     return (
       <PageErrorBoundary label="ロック画面">
         <LockScreen onUnlocked={() => setVaultUnlocked(true)} />
+      </PageErrorBoundary>
+    );
+  }
+
+  // 業務記録を暗号化した端末: 記録の鍵を開くまで、記録を読む画面を出さない (出すとどの画面も封緘を開けずに投げる)。
+  if (!recordsUnlocked) {
+    return (
+      <PageErrorBoundary label="記録の鍵">
+        <RecordUnlockScreen onUnlocked={() => setRecordsUnlocked(true)} />
       </PageErrorBoundary>
     );
   }

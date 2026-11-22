@@ -14,7 +14,10 @@ import { webcrypto } from 'node:crypto';
 if (!('subtle' in globalThis.crypto)) {
   Object.defineProperty(globalThis, 'crypto', { value: webcrypto, configurable: true });
 }
-import { currentDbSecurityInputs } from '../dbPosture';
+import { currentDbSecurityInputs, encryptedCopyPostureInputs } from '../dbPosture';
+import { ENCRYPTED_COPY_MARKER_KEY } from '../encryptedCopy';
+import { enableEncryption } from '../recordEncryption';
+import { _resetRecordStoreForTests } from '../store';
 import { _resetAutoLockActiveForTests, startAutoLock, type AutoLockHandle } from '../../security/autoLock';
 import { buildDbSecurityReport } from '../../../shared/dbSecurityPosture';
 import * as vaultModule from '../../security/vault';
@@ -64,21 +67,64 @@ describe('currentDbSecurityInputs — 自動ロック', () => {
   });
 });
 
-describe('currentDbSecurityInputs — 観測していない項目', () => {
-  it('整合性の常時検証は未配線なので false のまま', () => {
-    expect(currentDbSecurityInputs().integrityVerified).toBe(false);
+describe('currentDbSecurityInputs — 改ざん検知と控え (2026-11-21 から観測する)', () => {
+  const DAY = 86_400_000;
+  const NOW = Date.UTC(2026, 10, 21, 12);
+  const marker = (at: number) => ({ at, count: 3, fingerprint: 'a'.repeat(64), filename: 'service-hub-copy-2026-11-19-encrypted.json' });
+
+  it('暗号化していなければ、改ざん検知も満たさない', () => {
+    const i = currentDbSecurityInputs(NOW);
+    expect(i.encryptionEnabled).toBe(false);
+    expect(i.integrityVerified).toBe(false);
   });
 
-  it('クラウド同期は永続化されないので構成シンクは実際に 0 件', () => {
-    const { cloudBackup } = currentDbSecurityInputs();
-    expect(cloudBackup.configuredSinks).toEqual([]);
-    expect(cloudBackup.lastBackupAgeDays).toBeNull();
-    expect(cloudBackup.encryptedBackup).toBe(false);
+  it('★ 記録を暗号化すると、改ざん検知も満たす (封緘が記録に結び付くため)', async () => {
+    _resetRecordStoreForTests();
+    await enableEncryption('pw-twelve-chars');
+    try {
+      const i = currentDbSecurityInputs(NOW);
+      expect(i.encryptionEnabled).toBe(true);
+      expect(i.integrityVerified).toBe(true);
+      const r = buildDbSecurityReport(i);
+      expect(r.checks.find((c) => c.id === 'integrity')!.ok).toBe(true);
+      expect(r.checks.find((c) => c.id === 'encryption')!.ok).toBe(true);
+    } finally {
+      localStorage.clear();
+      _resetRecordStoreForTests();
+    }
   });
 
-  it('暗号化とマスターパスワードは同じ観測から導く', () => {
-    const i = currentDbSecurityInputs();
-    expect(i.masterPasswordSet).toBe(i.encryptionEnabled);
+  it('控えを 1 度も書いていなければ、控えの 3 観点は満たさない', () => {
+    expect(currentDbSecurityInputs(NOW).cloudBackup).toEqual({ configuredSinks: [], lastBackupAgeDays: null, encryptedBackup: false });
+  });
+
+  it('★ 暗号化した控えの目印があれば、書いた道・経過日数・暗号化を答える', () => {
+    localStorage.setItem(ENCRYPTED_COPY_MARKER_KEY, JSON.stringify(marker(NOW - 2 * DAY - 1000)));
+    const { cloudBackup } = currentDbSecurityInputs(NOW);
+    expect(cloudBackup).toEqual({ configuredSinks: ['encrypted-copy'], lastBackupAgeDays: 2, encryptedBackup: true });
+    const r = buildDbSecurityReport({ ...currentDbSecurityInputs(NOW) });
+    for (const id of ['backup-configured', 'backup-fresh', 'backup-encrypted']) {
+      expect(r.checks.find((c) => c.id === id)!.ok, id).toBe(true);
+    }
+  });
+
+  it('★ 8 日前の控えは鮮度だけを外す (書いた事実と暗号化は残る)', () => {
+    localStorage.setItem(ENCRYPTED_COPY_MARKER_KEY, JSON.stringify(marker(NOW - 8 * DAY)));
+    const r = buildDbSecurityReport(currentDbSecurityInputs(NOW));
+    expect(r.checks.find((c) => c.id === 'backup-fresh')!.ok).toBe(false);
+    expect(r.checks.find((c) => c.id === 'backup-configured')!.ok).toBe(true);
+    expect(r.checks.find((c) => c.id === 'backup-encrypted')!.ok).toBe(true);
+  });
+
+  it('時計が戻って目印が未来でも、経過日数は負にしない', () => {
+    expect(encryptedCopyPostureInputs(marker(NOW + 5 * DAY), NOW).lastBackupAgeDays).toBe(0);
+  });
+
+  it('壊れた目印は「控えた」と言わない', () => {
+    localStorage.setItem(ENCRYPTED_COPY_MARKER_KEY, '{broken');
+    expect(currentDbSecurityInputs(NOW).cloudBackup.configuredSinks).toEqual([]);
+    localStorage.setItem(ENCRYPTED_COPY_MARKER_KEY, JSON.stringify({ ...marker(NOW), fingerprint: 'x' }));
+    expect(currentDbSecurityInputs(NOW).cloudBackup.encryptedBackup).toBe(false);
   });
 });
 
