@@ -392,6 +392,7 @@ const ROLE: Readonly<Record<string, string>> = {
   //   掃いている検査が読むのはその共有側である (client を直接は読まない)。
   'ollama.ts': 'swept-elsewhere: ollamaModelMetaOnScreen.test.ts → shared/ollama (パス 407 / 408)',
   'security.ts': '画面へ出る第三者の文字列を持たない (VirusTotal / HIBP の答えは件数と判定で、文言は shared/api/security.ts の定数)',
+  'quality.ts': '画面へ出る第三者の文字列は fetcher (shared/api/quality.ts) が境界で畳む —— コミットは短縮 SHA 7 字・日付は表示日・ワークフローの状態と結論は GitHub の固定語彙だけ・URL は displayField。生の文字列は画面に出ない (単位テストで留める)',
   'shopify.ts': 'fetchShopifySnapshot は STUB を返し網を読まない (書き込みの応答はパス 414 の createdResponseFields が見る)',
   'business.ts': '網の口は助言 1 本で、応答は capAssistantReply と advisorResponseLimits が切る (一覧は注入された局所の source)',
   'kpi.ts': 'source.fetch() は注入された局所の読み (網の口ではない)',

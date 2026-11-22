@@ -872,6 +872,10 @@ const DEP_EXCLUSIONS = {
   'src/shared/api/dropbox.ts':
     'サービス API のアダプタ (読み取りだけ・POST 3 つ)。送り先のホストは定数 1 つで lint:network-targets の台帳が見ており、'
     + '上限・打ち切りは httpLimits (保護対象) が持つ。',
+  // 2026-11-21: `liveRead.ts` (保護対象) が quality の読み取りを足したので閉包に出た。上の dropbox などと同じ class。
+  'src/shared/api/quality.ts':
+    'サービス API のアダプタ (読み取りだけ・GET 8 つ)。送り先のホストは定数 1 つで lint:network-targets の台帳が見ており、'
+    + '上限・打ち切りは httpLimits (保護対象) が持つ。',
 };
 
 /** 相対 import を実ファイルへ解決する (拡張子省略に対応)。解決できなければ null。 */
@@ -1043,6 +1047,7 @@ const EXCLUSION_KINDS = {
   'src/shared/api/sentry.ts': { kind: 'guarded-by', guardedBy: ['src/shared/httpLimits.ts'] },
   'src/shared/api/discord.ts': { kind: 'guarded-by', guardedBy: ['src/shared/httpLimits.ts'] },
   'src/shared/api/dropbox.ts': { kind: 'guarded-by', guardedBy: ['src/shared/httpLimits.ts'] },
+  'src/shared/api/quality.ts': { kind: 'guarded-by', guardedBy: ['src/shared/httpLimits.ts'] },
 };
 
 /**

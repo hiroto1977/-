@@ -21,7 +21,7 @@ const REMOTE = Object.entries(SERVICE_DATA_ORIGIN)
   .sort();
 
 describe('ブラウザ版から読める連携先の一覧', () => {
-  it('8 件を値ごと留める (凍結・昇順)', () => {
+  it('9 件を値ごと留める (凍結・昇順)', () => {
     expect([...BROWSER_LIVE_READ_SERVICES]).toEqual([
       'asana',
       'cursor',
@@ -29,6 +29,7 @@ describe('ブラウザ版から読める連携先の一覧', () => {
       'dropbox',
       'line',
       'linear',
+      'quality',
       'sentry',
       'stripe',
     ]);
