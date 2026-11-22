@@ -782,7 +782,7 @@ export function TeamRadarPage() {
           </div>
         </Section>
 
-        <Section title="メンバーケア / 評価支援 (1on1)" count={members.length}>
+        <Section title="メンバーケア / 評価支援 — 個別面談 (one-on-one)" count={members.length}>
           <div style={{ background: 'var(--bg-elev)', border: '1px solid var(--border)', borderRadius: 10, padding: 16 }}>
             <p style={{ fontSize: 13, margin: '0 0 12px' }}>{teamCare.summary}</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>

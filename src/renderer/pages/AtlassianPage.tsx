@@ -97,7 +97,7 @@ export function AtlassianPage() {
         }}
       />
 
-      <Section title="Jira Projects" count={jiraProjects.length}>
+      <Section title="ジラのプロジェクト (Jira Projects)" count={jiraProjects.length}>
         <DataList
           items={jiraProjects.map((p) => ({
             key: p.key,
@@ -111,7 +111,7 @@ export function AtlassianPage() {
       </Section>
 
       <Section
-        title="Actions"
+        title="操作 (Actions)"
         action={
           <button onClick={() => setShowForm((v) => !v)}>
             {showForm ? '閉じる' : 'Issue を作成'}
@@ -186,7 +186,7 @@ export function AtlassianPage() {
         ) : null}
       </Section>
 
-      <Section title="Confluence & Compass">
+      <Section title="コンフルエンス (Confluence) とコンパス (Compass)">
         <div className="empty">
           現在の Basic auth + <code>read:jira-work</code> / <code>write:jira-work</code> スコープでは
           Jira のみ操作可能（一覧表示と Issue 作成は実装済み）。Confluence・Compass を扱うには

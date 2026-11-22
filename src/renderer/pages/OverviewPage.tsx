@@ -1581,7 +1581,7 @@ export function OverviewPage() {
       )}
 
       {debtService && (
-        <Section title="返済余力 (DSCR) — 会計CF × 資金調達の同時連携">
+        <Section title="返済余力 (DSCR) — 会計のキャッシュフロー × 資金調達の同時連携">
           <p style={{ color: 'var(--text-mute)', fontSize: 12, lineHeight: 1.6, marginBottom: 12 }}>
             会計連携 (freee) の月次営業CF と、資金調達レーダーの月次返済額を突合した返済余力です。
             DSCR が 1.0 以上なら営業CF で返済を賄えています。<strong>※ 概算であり財務助言ではありません。</strong>

@@ -78,6 +78,9 @@ function ok(cond, label) {
 
 /** いま描いている画面の字と地の対比を測る。割った行が在れば、何が・どの色でを 2 つまで刷る。 */
 async function contrastOk(page, label) {
+  // 画面へ入る動き (`.page-enter` の fade) の途中で測ると、字が地へ溶けた色を読む (2026-11-22 · 実測:
+  // 濃い字 #1f1e1c が透けて #d5d4d4 に見え「割った 248 行」と出た)。動きが終わるのを待ってから測る。
+  await page.evaluate(() => Promise.all(document.getAnimations().map((a) => a.finished.catch(() => undefined))));
   const rows = await page.evaluate(CONTRAST);
   const bad = violationsOf(rows);
   const detail = bad.length === 0 ? '' : ' — ' + groupViolations(rows).slice(0, 2).map((g) => `${g.k} ×${g.n}「${String(g.sample).slice(0, 20)}」${g.ratio.toFixed(2)}:1`).join(' / ');

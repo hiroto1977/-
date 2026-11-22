@@ -128,7 +128,7 @@ export function GoogleConnectCard({ serviceId, onConnected }: GoogleConnectCardP
   };
 
   return (
-    <Section title="かんたん接続 (Google ワークスペース共通)">
+    <Section title="かんたん接続 — グーグル (Google) のワークスペース共通">
       <div className="card" style={{ gap: 10 }}>
         {signInUnsupported !== null ? (
           /*

@@ -112,7 +112,7 @@ export function ShopifyPage() {
          */
       />
 
-      <Section title="注文を売上集計に記録 (→ KPI に反映)">
+      <Section title="注文を売上集計に記録 (→ 重要指標に反映)">
         <OrderToSalesForm />
       </Section>
 

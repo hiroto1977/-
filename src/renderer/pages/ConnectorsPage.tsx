@@ -392,7 +392,7 @@ export function ConnectorsPage() {
 
       {/* MCP コネクタ — AI エージェント (Claude / ChatGPT 等) との連携 */}
       <Section
-        title="MCP コネクタ (AI エージェント連携)"
+        title="外部ツールの接続口 (MCP) — AI エージェント連携"
         count={mcpConnectorCounts().total}
       >
         <p style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.7, marginTop: 0 }}>

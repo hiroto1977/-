@@ -1193,7 +1193,7 @@ export function KpiPage() {
         </div>
       )}
 
-      <Section title="実績入力 — ローカル保存 (実データで KPI 再計算)">
+      <Section title="実績入力 — この端末に保存 (実データで重要指標を再計算)">
         <ActualsPanel />
       </Section>
 
@@ -1241,7 +1241,7 @@ export function KpiPage() {
         <Tile label="営業利益" value={yen.format(selected.kpi.operatingProfit)} sub={`営業レバレッジ ${selected.kpi.operatingLeverage.toFixed(2)}x`} />
       </div>
 
-      <Section title="時系列推移 — 売上 vs BEP vs 営業利益 (直近 30 期)">
+      <Section title="時系列推移 — 売上・損益分岐点・営業利益 (直近 30 期)">
         <TimeSeriesChart unit={selected} />
       </Section>
 

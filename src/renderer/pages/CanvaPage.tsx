@@ -79,7 +79,7 @@ export function CanvaPage() {
         }}
       />
 
-      <Section title="Recent Designs" count={designs.length}>
+      <Section title="最近のデザイン (Recent Designs)" count={designs.length}>
         <DataList
           items={designs.map((d) => ({
             key: d.id,
@@ -91,7 +91,7 @@ export function CanvaPage() {
         />
       </Section>
 
-      <Section title="Brand Kits" count={brandKits.length}>
+      <Section title="ブランドキット (Brand Kits)" count={brandKits.length}>
         <DataList
           items={brandKits.map((b) => ({
             key: b.id,
@@ -102,7 +102,7 @@ export function CanvaPage() {
       </Section>
 
       <Section
-        title="Actions"
+        title="操作 (Actions)"
         action={
           <button onClick={() => setShowForm((v) => !v)}>
             {showForm ? '閉じる' : 'フォルダ作成'}

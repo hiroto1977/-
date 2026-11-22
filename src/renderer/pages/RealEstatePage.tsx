@@ -795,7 +795,7 @@ export function RealEstatePage() {
         who={<>不動産投資 · {properties.length} 物件 / 月次 CF {jpy(portfolio.netCashflow)}</>}
       />
 
-      <Section title="ポートフォリオ KPI" count={4}>
+      <Section title="ポートフォリオの重要指標 (KPI)" count={4}>
         <div className="stat-grid" style={{ marginBottom: 16 }}>
           <Stat label="月次キャッシュフロー" value={jpy(portfolio.netCashflow)} positive={portfolio.netCashflow >= 0} />
           <Stat label="ポートフォリオ利回り" value={pct1OrDash(portfolio.portfolioYield)} />
@@ -944,7 +944,7 @@ export function RealEstatePage() {
         )}
       </Section>
 
-      <Section title="レバレッジ試算 (CCR・イールドギャップ)">
+      <Section title="レバレッジ試算 — 自己資金配当率 (CCR)・イールドギャップ">
         <div style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 10 }}>
           自己資金回収率 (CCR) と イールドギャップ (実質利回り − ローン金利) の目安です。
           イールドギャップがプラスなら借入が収益にプラスに働きます (正レバレッジ)。
@@ -993,7 +993,7 @@ export function RealEstatePage() {
         )}
       </Section>
 
-      <Section title="精緻化指標 (NOI 利回り・DSCR・損益分岐入居率)">
+      <Section title="精緻化指標 — 営業純収益 (NOI) の利回り・返済余力 (DSCR)・損益分岐入居率">
         <div style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 10 }}>
           上の試算入力に想定入居率を加え、空室損を控除した NOI ベースで評価します。
           DSCR は NOI ÷ 年間返済額で、<strong>{fmtDscr(dscrT.danger)} 未満は危険水域</strong>、{fmtDscr(dscrT.caution)} 以上が目安。
@@ -1019,7 +1019,7 @@ export function RealEstatePage() {
         )}
       </Section>
 
-      <Section title="NPV / IRR (割引キャッシュフロー試算)">
+      <Section title="正味現在価値 (NPV)・内部収益率 (IRR) — 割引キャッシュフロー試算">
         <div style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 10 }}>
           自己資金を初期投資 (マイナス)、各年の返済後CF、最終年に売却ネット手取りを加えた
           キャッシュフロー列から NPV (割引率指定) と IRR (二分法で概算) を求めます。

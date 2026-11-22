@@ -528,6 +528,37 @@ describe('LIVE_READERS — 読み直して static 変異体を届かせる', () 
   });
 
   /*
+   * 品質 (2026-11-21): 読み取りは shared の `fetchQualitySnapshotWith` を通り、プロキシ経由の
+   * 通信手段と保管庫の鍵が**そのまま**届く (送り先は api.github.com だけ・すべて GET)。
+   * 2026-11-22 まで表の `quality` の項目を通る検査が無く、main の変異検査で
+   * `quality: {}` と `read: () => undefined` の 2 つが生き残っていた (99.05% < 99.8)。
+   */
+  it('★ quality の read が、渡した通信手段と鍵で GitHub から読む', async () => {
+    const m = await fresh();
+    const jsonFetch = vi.fn<(url: string, init: RequestInit) => Promise<unknown>>(async (url) =>
+      url.endsWith('/commits/main')
+        ? { sha: 'ca6693e0000', commit: { committer: { date: '2026-11-21T00:00:00Z' } } }
+        : url.includes('/search/issues')
+          ? { total_count: 0 }
+          : {},
+    );
+    const res = await m.liveRead('quality', {
+      readCredential: () => Promise.resolve('github_pat_example'),
+      getProxyJsonFetch: () => Promise.resolve(jsonFetch),
+      now: () => 0,
+    });
+    expect(res.ok, JSON.stringify(res)).toBe(true);
+    if (res.ok) expect((res.data as { latestCommit: { sha: string } }).latestCommit.sha).toBe('ca6693e');
+    const calls = jsonFetch.mock.calls;
+    expect(calls.length).toBeGreaterThanOrEqual(8);
+    for (const [url, init] of calls) {
+      expect(url.startsWith('https://api.github.com/')).toBe(true);
+      expect((init as RequestInit).method ?? 'GET').toBe('GET');
+      expect(JSON.stringify((init as RequestInit).headers)).toContain('github_pat_example');
+    }
+  });
+
+  /*
    * 項目が `{}` に潰れると `read` が無くなる。`liveRead` はそこまで進んでから
    * 落ちるので、**呼び出しの最後まで通して**確かめる。
    */

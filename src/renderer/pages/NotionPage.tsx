@@ -80,7 +80,7 @@ export function NotionPage() {
       />
 
       {pages.length > 0 ? (
-        <Section title="Recent Pages" count={pages.length}>
+        <Section title="最近のページ (Recent Pages)" count={pages.length}>
           <DataList
             items={pages.map((p) => ({
               key: p.id,
@@ -91,7 +91,7 @@ export function NotionPage() {
           />
         </Section>
       ) : (
-        <Section title="Teamspaces">
+        <Section title="チームスペース (Teamspaces)">
           <div className="empty">
             {note}
             <br />
@@ -101,7 +101,7 @@ export function NotionPage() {
       )}
 
       <Section
-        title="Actions"
+        title="操作 (Actions)"
         action={
           <button onClick={() => setShowForm((v) => !v)}>
             {showForm ? '閉じる' : 'ページを作成'}

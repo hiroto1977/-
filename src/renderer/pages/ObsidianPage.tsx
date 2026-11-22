@@ -33,7 +33,7 @@ export function ObsidianPage() {
         }
       />
 
-      <Section title="Vault 概要">
+      <Section title="保管庫 (Vault) の概要">
         <table className="kv-table">
           <tbody>
             <tr>
@@ -56,7 +56,7 @@ export function ObsidianPage() {
         </table>
       </Section>
 
-      <Section title="セキュリティ (GitHub 連携)" count={security.length}>
+      <Section title="セキュリティ — ギットハブ (GitHub) 連携" count={security.length}>
         <ul className="check-list">
           {security.map((c) => (
             <li key={c.id}>

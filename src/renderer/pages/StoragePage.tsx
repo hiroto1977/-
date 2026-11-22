@@ -151,7 +151,7 @@ export function StoragePage() {
         </div>
       </Section>
 
-      <Section title="容量が大きいフォルダ TOP" count={largeFolders.length}>
+      <Section title="容量が大きいフォルダ (上位)" count={largeFolders.length}>
         <table style={tableStyle}>
           <thead>
             <tr>

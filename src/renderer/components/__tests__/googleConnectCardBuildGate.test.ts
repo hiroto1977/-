@@ -149,7 +149,7 @@ describe('Google のカード: 実行形態ごとの門 (パス 457)', () => {
     // ② 設定ページの貼り付け式 (パス 454 が実行形態で門を置いた当の節)
     expect(r).toContain('設定ページの Google OAuth');
     const settings = readOriginalSource(path.join(REPO_ROOT, 'src/renderer/pages/SettingsPage.tsx'));
-    expect(settings).toContain("Section title=\"Google OAuth (Phase C)\"");
+    expect(settings).toContain("Section title=\"グーグル (Google) の認可 (OAuth)\"");
   });
 
   it('★ 逃げ口を閉じない —— 方法 B とトークンの案内はブラウザ版でも残る', async () => {

@@ -178,7 +178,7 @@ export function SecurityPage() {
         }}
       />
 
-      <Section title="Norton 360">
+      <Section title="ノートン (Norton 360)">
         <div className="card" style={{ gap: 6 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             {/*
@@ -299,7 +299,7 @@ export function SecurityPage() {
       </Section>
 
       <Section
-        title="URL スキャン (VirusTotal)"
+        title="リンク先 (URL) の検査 — ウイルストータル (VirusTotal)"
         action={
           <button onClick={() => setShowScan((v) => !v)} disabled={!keysConfigured.vt}>
             {showScan ? '閉じる' : 'スキャン'}
@@ -459,7 +459,7 @@ export function SecurityPage() {
         )}
       </Section>
 
-      <Section title="データベース・セキュリティ診断 (ローカル IndexedDB レコードストア)">
+      <Section title="データベース・セキュリティ診断 — この端末の記録の保管庫 (IndexedDB)">
         <div style={{ display: 'grid', gridTemplateColumns: wrapColumns(3, 170), gap: 12, marginBottom: 10 }}>
           <div style={statCardStyle}>
             <div style={statLabelStyle}>セキュリティ・グレード</div>

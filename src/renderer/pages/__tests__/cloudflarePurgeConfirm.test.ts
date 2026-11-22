@@ -172,7 +172,7 @@ describe('Cloudflare の書き込み操作 (カバレッジ 38.98% だった側 
   it('★ 走査が実物に当たる: ゾーンが 1 つ在り、2 つのフォームが開ける', async () => {
     await mount();
     await waitForText(() => container.textContent ?? '', 'example.com');
-    await waitForText(() => container.textContent ?? '', 'DNS レコード作成');
+    await waitForText(() => container.textContent ?? '', '名前解決の記録 (DNS record) を作成');
     await waitForText(() => container.textContent ?? '', 'キャッシュパージ');
     // ゾーンが在るので押せる (0 件なら disabled)。
     expect(buttons('パージ')[0]!.disabled).toBe(false);

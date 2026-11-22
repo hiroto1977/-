@@ -537,7 +537,7 @@ export function FundingPage() {
             <PieChart data={live} />
           </Section>
 
-          <Section title="④ 棒グラフ — 種別別 確定額 vs パイプライン">
+          <Section title="④ 棒グラフ — 種別別 確定額 対 見込み額">
             <BarChart data={live} />
           </Section>
 

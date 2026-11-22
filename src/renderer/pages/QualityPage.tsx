@@ -92,7 +92,7 @@ export function QualityPage() {
           : ''}
       </p>
 
-      <Section title="現在の状態 (GitHub から取得)" count={3}>
+      <Section title="ギットハブ (GitHub) から取得した現在の状態" count={3}>
         <table style={tableStyle}>
           <thead>
             <tr>

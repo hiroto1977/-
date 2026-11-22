@@ -71,7 +71,7 @@ export function GithubPage() {
         tokenSetup={{ label: 'PAT を設定', placeholder: 'ghp_… (repo, read:user)' }}
       />
 
-      <Section title="Pull Requests" count={pullRequests.length}>
+      <Section title="プルリクエスト (Pull Requests)" count={pullRequests.length}>
         <DataList
           items={pullRequests.map((pr) => ({
             key: String(pr.number),
@@ -84,7 +84,7 @@ export function GithubPage() {
       </Section>
 
       <Section
-        title="Actions"
+        title="操作 (Actions)"
         action={
           <button onClick={() => setShowForm((v) => !v)}>
             {showForm ? '閉じる' : 'Issue を作成'}
