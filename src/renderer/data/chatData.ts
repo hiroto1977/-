@@ -133,6 +133,14 @@ function spanFilter(span: DataSpan, today: string, latest: string | null): { rea
   }
 }
 
+/** 問いに、端末の記録から答える。今日が暦に無い日付なら、期間の付かない形 (最後の月) で答える。 */
+export function answerDataQuestion(q: DataQuestion, snap: DataSnapshot): DataAnswer {
+  const today = isCalendarDate(snap.today) ? snap.today : null;
+  const span: DataSpan = today === null && q.span !== 'all' ? 'latest' : q.span;
+  const day = today ?? '1970-01-01';
+  return q.topic === 'sales' ? answerSales(span, snap.sales, day) : answerProfit(span, snap.kpi, day);
+}
+
 const UNREADABLE = (what: string): string =>
   `⚠ この端末に保存した${what}を読めませんでした。記録が 0 件という意味ではありません。画面を開き直してから、もう一度聞いてください。`;
 
@@ -198,12 +206,4 @@ function answerProfit(span: DataSpan, rows: readonly KpiActual[] | null, today: 
     text: `📈 ${filter.label}の営業利益は ${jpy(op)} で、${verdict}（売上 ${jpy(f.revenue)}）。${dropped}`,
     suggestions: ['今月の売上は？', '経営指標・損益分岐点を開いて'],
   };
-}
-
-/** 問いに、端末の記録から答える。今日が暦に無い日付なら、期間の付かない形 (最後の月) で答える。 */
-export function answerDataQuestion(q: DataQuestion, snap: DataSnapshot): DataAnswer {
-  const today = isCalendarDate(snap.today) ? snap.today : null;
-  const span: DataSpan = today === null && q.span !== 'all' ? 'latest' : q.span;
-  const day = today ?? '1970-01-01';
-  return q.topic === 'sales' ? answerSales(span, snap.sales, day) : answerProfit(span, snap.kpi, day);
 }
