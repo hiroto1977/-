@@ -13,7 +13,7 @@ import type { ShigyoSnapshot, ShigyoConsultationStatus, ShigyoDocument } from '.
 import { jpy } from '../../shared/formatters';
 import { clampToCeiling, countChars } from '../../shared/inputCeiling';
 import { PROFESSIONAL_MAP, otherProfessionals, isProfessionalId } from '../data/professionalMap';
-import { docsForProfessional } from '../data/businessTriage';
+import { docEntriesForProfessional } from '../data/professionalDocMap';
 import { displayField } from '../../shared/apiResponse';
 import { MAX_CONSULTATION_TOPIC_CHARS, MAX_CONTACT_NAME_CHARS, MAX_CONTACT_FIRM_CHARS, MAX_CONTACT_PHONE_CHARS, MAX_CONTACT_EMAIL_LEN, MAX_DOCUMENT_TITLE_CHARS } from '../data/shigyoDirectory';
 import {
@@ -110,8 +110,8 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
   );
   const profile = isProfessionalId(serviceId) ? PROFESSIONAL_MAP[serviceId] : null;
   const others = isProfessionalId(serviceId) ? otherProfessionals(serviceId) : [];
-  // 書類スタジオで作れる、この士業に関わる書式 (仕分け表の逆引き)。
-  const docs = useMemo(() => (isProfessionalId(serviceId) ? docsForProfessional(serviceId) : []), [serviceId]);
+  // 書類スタジオで作れる、この士業が担当する書式 (事業仕分けの逆引きに担当仕分けを重ねたもの)。
+  const docs = useMemo(() => (isProfessionalId(serviceId) ? docEntriesForProfessional(serviceId) : []), [serviceId]);
 
   // ユーザー登録の連絡先・相談履歴・書類 (record store 永続化・端末内)。8 士業で
   // コレクションを共有し、serviceId で自分のページの分だけを表示する。
@@ -391,7 +391,9 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
       {profile != null && docs.length > 0 && (
         <Section title="書類スタジオで作る書類" count={docs.length}>
           <div style={{ fontSize: 12, color: 'var(--text)', marginBottom: 8, lineHeight: 1.6 }}>
-            この士業に関わる書式です。自社の分は書類スタジオで作れます (開くと書式ごとの事業仕分けと注意点が出ます)。
+            書類スタジオで作れる書類のうち、この士業が担当する書式です。「主担当」はこの士業が主に担う書類、
+            「副担当」は主担当を支える形で関わる書類で、担当の根拠も併せて出しています。
+            自社の分は書類スタジオで作れます (開くと書式ごとの事業仕分けと注意点が出ます)。
             計算書類は経営サマリーの数値から組めます。
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 10 }}>
@@ -419,6 +421,7 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
                   <th style={thStyle}>書類</th>
                   <th style={thStyle}>この士業との関わり</th>
                   <th style={thStyle}>自社分</th>
+                  <th style={thStyle}>担当</th>
                   <th style={thStyle}></th>
                 </tr>
               </thead>
@@ -428,6 +431,25 @@ export function ShigyoConsole({ serviceId, snapshot, label, disclaimer }: Shigyo
                     <td style={tdStyle}>{d.label}</td>
                     <td style={tdStyle}>{d.relation === 'exclusive' ? '他人のために業として行うと独占業務' : '相談先'}</td>
                     <td style={tdStyle}>{d.ownUse === 'ok' ? '自社で作れる' : '自社で作れる (手順に注意)'}</td>
+                    <td style={tdStyle}>
+                      <span
+                        title={d.role === 'primary' ? 'この士業が主に担う書類' : '主担当の士業を支える形で関わる書類'}
+                        style={{
+                          fontSize: 10,
+                          border: `1px solid ${d.role === 'primary' ? 'var(--info)' : 'var(--border)'}`,
+                          borderRadius: 999,
+                          padding: '1px 8px',
+                          color: d.role === 'primary' ? 'var(--info)' : 'var(--text-mute)',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {d.role === 'primary' ? '主担当' : '副担当'}
+                      </span>
+                      <div style={{ fontSize: 11, color: 'var(--text-mute)', lineHeight: 1.55, marginTop: 4 }}>
+                        {d.cat !== '' && <span>{d.cat} — </span>}
+                        {d.basis}
+                      </div>
+                    </td>
                     <td style={tdStyle}>
                       <button type="button" onClick={() => navigateTo('docstudio', { doc: d.doc })} style={{ fontSize: 11 }}>
                         書類スタジオで開く →
