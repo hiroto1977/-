@@ -2,6 +2,24 @@ import type { DbSecurityInputs } from '../../shared/dbSecurityPosture';
 import { isEncryptionEnabled } from './recordEncryption';
 import { isAutoLockActive } from '../security/autoLock';
 import { getVault } from '../security/vault';
+import { loadCopyMarker, type CopyMarker } from './encryptedCopy';
+import { MS_PER_DAY } from './backupPosture';
+
+/**
+ * 暗号化した控えの目印 → 診断の `cloudBackup` 入力 (純粋・2026-11-21)。
+ *
+ * 目印は控えを書いて確かめたときにだけ置かれる (`writeEncryptedCopy` / `downloadEncryptedCopy`)。
+ * 控えは必ずパスフレーズで暗号化して書くので、目印が在れば暗号化済み。経過日数は目印の時刻から数え、
+ * 時計が戻っていても負にしない。目印が読めないときは「無い」と同じに倒す (満たしたと言わない)。
+ */
+export function encryptedCopyPostureInputs(marker: CopyMarker | null, nowMs: number): DbSecurityInputs['cloudBackup'] {
+  if (marker === null) return { configuredSinks: [], lastBackupAgeDays: null, encryptedBackup: false };
+  return {
+    configuredSinks: ['encrypted-copy'],
+    lastBackupAgeDays: Math.max(0, Math.floor((nowMs - marker.at) / MS_PER_DAY)),
+    encryptedBackup: true,
+  };
+}
 
 /**
  * セキュリティ診断 (`buildDbSecurityReport`) への入力を **実測から**組み立てる。
@@ -17,14 +35,12 @@ import { getVault } from '../security/vault';
  * (定数へ戻してもテストは緑のままだった)。組み立てをここへ出して、
  * 「実測が入力に反映される」ことをテストで固定する。
  *
- * まだ観測していない項目は、観測していないと分かる形でここに残す:
+ * 2026-11-21 から 7 観点すべてを観測する:
  *
- * - `integrityVerified` — レコードストアの改ざん検知は常時検証が未配線。
- * - `cloudBackup` — クラウド同期パネルは現状デモ (永続化されない) ので、
- *   構成済みシンクは実際に 0 件。`configuredSinks: []` は嘘ではない。
- *
- * どちらも「無い」と「確認できない」を診断が区別できていない点は残課題として
- * `docs/REMAINING_WORK.md` に手順ごと書いた。
+ * - `integrityVerified` — 暗号化した記録は封緘が記録の名前に結び付く (`recordCipher.ts`) ので、
+ *   暗号化が有効なら書き換えと写し替えを読みで検知する。だから暗号化の有無と同じ。
+ * - `cloudBackup` — 暗号化した控えの目印 (`encryptedCopy.ts`) から組む
+ *   (`encryptedCopyPostureInputs`)。端末の外へ移したかはアプリには見えない。
  *
  * ## 診断が **見ていない** 保存先 (2026-08-23 実測)
  *
@@ -41,7 +57,7 @@ import { getVault } from '../security/vault';
  * `encryption`)。**範囲を広げたのではなく、範囲を書いた**だけなので、
  * これらを実際に封緘する話は別途必要。
  */
-export function currentDbSecurityInputs(): DbSecurityInputs {
+export function currentDbSecurityInputs(nowMs: number = Date.now()): DbSecurityInputs {
   const encrypted = isEncryptionEnabled();
   return {
     encryptionEnabled: encrypted,
@@ -79,8 +95,8 @@ export function currentDbSecurityInputs(): DbSecurityInputs {
      * 直す口は在る (設定の「Vault 管理」でパスワード変更)。
      */
     masterPasswordSet: encrypted || (getVault().isUnlocked() && getVault().passwordMeetsPolicy() !== false),
-    integrityVerified: false,
+    integrityVerified: encrypted,
     autoLockEnabled: isAutoLockActive(),
-    cloudBackup: { configuredSinks: [], lastBackupAgeDays: null, encryptedBackup: false },
+    cloudBackup: encryptedCopyPostureInputs(loadCopyMarker().marker, nowMs),
   };
 }

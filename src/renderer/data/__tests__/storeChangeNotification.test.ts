@@ -161,6 +161,12 @@ const LEDGER: readonly Row[] = [
     why: '読みだけ (バックアップの書き出し)。封緘済みの payload は封緘のまま返す。',
     run: (s) => s.exportAll(),
   },
+  {
+    name: 'exportAllOpened',
+    kind: 'silent',
+    why: '読みだけ (暗号化した控え・パスワード付きのバックアップ)。封緘は今の鍵で開いて返すが、保管層には書かない。',
+    run: (s) => s.exportAllOpened(),
+  },
 ];
 
 let fired = 0;

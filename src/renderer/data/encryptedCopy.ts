@@ -209,6 +209,58 @@ export async function writeEncryptedCopy(input: {
   };
 }
 
+/**
+ * 暗号化した控えを**ダウンロードで**渡す (保存先フォルダに対応していないブラウザ —— Android の Chrome ほか · 2026-11-21)。
+ *
+ * フォルダへ書けないので読み戻しはできない。代わりに**渡す前に**、組んだ控えをそのパスフレーズで開いて
+ * 件数が合うことを確かめる (打ち間違えたパスフレーズの控えを渡さない)。目印は渡した後に置く。
+ * ダウンロードしたファイルが端末の外へ移ったかはアプリには見えないので、結果の文がそれを言う。
+ */
+export async function downloadEncryptedCopy(input: {
+  readonly records: readonly StoredRecord[];
+  readonly passphrase: string;
+  readonly confirm: string;
+  /** 名前と中身を渡して保存させる (画面では `<a download>`)。投げたら渡せなかった。 */
+  readonly save: (filename: string, blob: Blob) => void;
+  readonly now?: Date;
+}): Promise<CopyResult> {
+  const { records, passphrase, confirm, save } = input;
+  const now = input.now ?? new Date();
+  const refusal = encryptedCopyRefusal(records.length, passphrase, confirm);
+  if (refusal !== null) return { ok: false, message: refusal };
+  const filename = encryptedCopyFilename(localIsoDate(now));
+  if (filename === null) return { ok: false, message: '今日の日付を読めないので、控えの名前を決められません。' };
+  let text: string;
+  try {
+    text = await serializeEncryptedBackup(records, passphrase, now);
+  } catch (e) {
+    return { ok: false, message: `控えを組めませんでした (${failureText(e)})。` };
+  }
+  const mismatch = await verifyCopyText(text, passphrase, records.length);
+  if (mismatch !== null) return { ok: false, message: mismatch.replace('書いた控えを読み戻しましたが', '組んだ控えを確かめましたが') };
+  try {
+    save(filename, new Blob([text], { type: 'application/json' }));
+  } catch (e) {
+    return { ok: false, message: `控えをダウンロードできませんでした (${failureText(e)})。` };
+  }
+  const marker: CopyMarker = {
+    at: now.getTime(),
+    count: records.length,
+    fingerprint: await recordsFingerprint(records),
+    filename,
+  };
+  const saved = writeLocalJson(ENCRYPTED_COPY_MARKER_KEY, marker);
+  const base =
+    `${records.length} 件の記録を暗号化して ${filename} としてダウンロードしました (渡す前に、そのパスフレーズで開けることを確かめました)。` +
+    'ダウンロードしたファイルは端末の中にあります —— Google ドライブなど端末の外へ移すと、端末が壊れても戻せます。';
+  return {
+    ok: true,
+    marker,
+    markerSaved: saved.ok,
+    message: saved.ok ? base : `${base} ただし、控えた時刻を端末に覚えられませんでした (${saved.message})。`,
+  };
+}
+
 function failureText(e: unknown): string {
   return redactForMessage(e instanceof Error ? e.message : String(e), ERROR_MESSAGE_MAX_CHARS);
 }

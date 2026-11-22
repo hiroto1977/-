@@ -68,7 +68,7 @@ describe('auditRecordShapes', () => {
 
   it('★ 封緘のまま返ってきた中身は判定しない (鍵が違うだけかもしれない — 素通しする cipher への備え)', async () => {
     const cipher = await createPassphraseRecordCipher('pw', randomSaltB64());
-    const sealed = await cipher.encrypt(BAD as unknown as Record<string, unknown>);
+    const sealed = await cipher.encrypt(BAD as unknown as Record<string, unknown>, { collection: SALES_COLLECTION, id: 's1' });
     const passthrough = {
       list: async (collection: string) =>
         collection === SALES_COLLECTION

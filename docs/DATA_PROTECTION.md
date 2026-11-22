@@ -21,7 +21,7 @@
 |---|---|---|
 | トークン暗号化 (Vault) | WebCrypto AES-GCM-256 + PBKDF2 60万回, 鍵 `extractable:false`, メモリ zero-out | 業界水準以上 |
 | OAuth トークン (Electron) | OS キーチェーン時は暗号化 / 無い時 `plain:base64` | 環境依存・要警告 |
-| 業務レコード (IndexedDB) | **平文 JSON** | 最優先の改善余地 |
+| 業務レコード (IndexedDB) | **既定は平文 JSON** —— 設定の「業務記録の暗号化」で AES-GCM に封緘できる (2026-11-21・記録の名前に結び付けて封じるので書き換えと写し替えも検知) | 既定のままでは最優先の改善余地 |
 | ブラウザに残る物の在庫 | 下の「在庫」節に**全件**。`npm run lint:storage` が台帳と突き合わせる | 2026-08-25 に補完 |
 | 通信 | 外部 SaaS の fetcher はすべて HTTPS（平文 http はローカル推論サーバ向けの経路のみ — `docs/SECURITY.md`） / `redactSecrets` でエラー時トークン秘匿 | 良好（網羅拡張余地） |
 | Electron 堅牢化 | `contextIsolation`+`nodeIntegration:false`+`sandbox`+CSP+IPC 入力検証 | 優良 |
@@ -110,7 +110,7 @@ GitHub Pages のユーザーリポジトリは `https://hiroto1977.github.io/<re
 | データベース | 中身 | 保護 | 立ち退き | バックアップ |
 |---|---|---|---|---|
 | `business-hub-vault` | API キー・トークン | **AES-GCM-256** (マスターパスワード由来の鍵 / PBKDF2-SHA-256 60 万回) | 消える | **入らない**（再登録が要る） |
-| `business-hub-data` | 業務レコード（売上・KPI・CRM・不動産・士業） | **平文 JSON**（レコード暗号化のエンジンは在るが**有効化する UI が無く** `isEncryptionEnabled()` は常に false） | 消える | **入る**（唯一） |
+| `business-hub-data` | 業務レコード（売上・KPI・CRM・不動産・士業） | **既定は平文 JSON**。設定の「業務記録の暗号化」(2026-11-21) で有効にすると `data` を AES-GCM で封緘し、封緘に記録の collection と id を入れて写し替えを検知する。鍵はパスフレーズから作りメモリだけ (起動のたび・施錠のたびに「業務記録の鍵を開く」で作り直す) | 消える | **入る**（唯一） |
 | `business-hub-library` | ライブラリの書類（blob） | **平文**。50 MB / 100 件を超えると**アプリ自身が古いものから消す**（画面に明記） | 消える | **入らない** |
 | `business-hub-preferences` | プロキシ設定（**共有秘密**を含む）/ 保存先フォルダの許可 | **平文** | 消える | **入らない** |
 
@@ -632,7 +632,7 @@ docblock にも最初から「入力値は localStorage に自動保存」と書
 
 | 優先 | 対策 | 主に効く脅威 | 備考 |
 |---|---|---|---|
-| 1 | ~~業務レコードを AES-GCM 暗号化~~ → **エンジン + 有効化/アンロック/解除のオーケストレーションまで実装済み** (`recordCipher.ts` + `recordEncryption.ts`: enable/unlock/disable, KCV 検証, `store.configureCipher`/`reencryptAll(from)`)。誤パスフレーズは false を返すだけ (ロックアウトしない)。残りは設定 UI/起動時アンロック画面の配線のみ | 漏洩 | 既定は平文(後方互換)。封緘後はキー無しで閲覧不可 |
+| 1 | ~~業務レコードを AES-GCM 暗号化~~ → **エンジン + 有効化/アンロック/解除のオーケストレーションまで実装済み** (`recordCipher.ts` + `recordEncryption.ts`: enable/unlock/disable, KCV 検証, `store.configureCipher`/`reencryptAll(from)`)。誤パスフレーズは false を返すだけ (ロックアウトしない)。**2026-11-21 に設定 UI (`RecordEncryptionPanel`) と起動時・施錠後の解錠画面 (`RecordUnlockScreen`) を配線し、封緘を記録の collection と id に結び付けた** (書き換え・写し替えの検知。記録を丸ごと消す・古い封緘へ戻す形は検知しない)。控え (暗号化した控え・パスワード付きバックアップ) には記録を開いてから控えのパスフレーズで入れる (封緘のまま入れると salt が端末にしか無く、端末を失った日に戻せない) | 漏洩 | 既定は平文(後方互換)。封緘後はキー無しで閲覧不可 |
 | 2 | Electron `secrets` の keychain 非依存パスフレーズ暗号化 + 未初期化警告 UI | 漏洩 | `plain:base64` フォールバック解消 |
 | 3 | ~~`secrets.json` の atomic write~~ → **実装済み** (`atomicWrite.ts`: fsync + dir fsync + `.prev` の控え (**最後に書けた内容** —— 2026-09-09 · パス 134 まで直前の内容で、消したトークンが残っていた) + temp 後始末、読取りは `.prev` フォールバック) | 消失 | 強制終了/電源断時のトークン破損・消失を防止 |
 | 4 | ~~CSV 一括取込のトランザクション化~~ → **実装済み** (`store.insertMany` = 単一 IndexedDB tx で全件 commit/全件 abort)。SalesPage/KpiPage の CSV 取込を per-row ループから `addMany` に置換。復元 (`importAll`) は元から単一 tx で atomic | 損壊 | 取込途中失敗での部分書込みを防止 |
