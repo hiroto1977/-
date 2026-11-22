@@ -4524,6 +4524,14 @@
       "leafCount": 225,
       "note": "update integrity-chain.cjs,mamori-capabilities.json,liveRead.mamori,liveRead.ts",
       "hash": "d353002756ab4c8e6c16c2c0546642818d5f4d03197a0503c7f4eecb42b746bb"
+    },
+    {
+      "index": 537,
+      "prevHash": "d353002756ab4c8e6c16c2c0546642818d5f4d03197a0503c7f4eecb42b746bb",
+      "merkleRoot": "6638a29fdc5bc5d3d6be5f7ac9c400529a16f13f1e9759003e6cf87094b486cc",
+      "leafCount": 225,
+      "note": "update ci.yml",
+      "hash": "7657995a9a4033f38a0f3cf5866c2a7140e5cb149ce5d55d4d25f39e73a1adda"
     }
   ],
   "tipManifest": {
@@ -4537,7 +4545,7 @@
     ".cursor/rules/20-gates.mdc": "821205069a9f0fae121e92be6826342bce6e765a34bea95c7ebc36c57b234da4",
     ".cursor/rules/30-conventions.mdc": "ecc268597f19300ff8c9e574d25ae92f34f6ddb9ec13776fb5162c32f6c0ba50",
     ".github/dependabot.yml": "5fb436726dc2b51f99162653885c40cafae5d57d6deb0f4f5b5449e6b202493f",
-    ".github/workflows/ci.yml": "b48c49988e338eb3adad939fb10783dc29043f83a8b29edb41986c1657ad473f",
+    ".github/workflows/ci.yml": "f9e7b94f3e4ebcebcf541fdef7bf533c218995a0a02d740097862f0314b411f3",
     ".github/workflows/dependency-audit.yml": "c089648472bc7879701a996aeba69a6ff5dcb55e8efa2e0d996e4d9a9c3ee026",
     ".github/workflows/e2e.yml": "d6036acc5fe97d17fad5799144470b140bedfbb56934de4949517b038640be60",
     ".github/workflows/gateway-browser.yml": "9f4eeae9a8bae07fc12e966094047a493d19ca49a7592fd98d9afb45d870a349",
