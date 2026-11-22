@@ -1,63 +1,33 @@
-import type { FetchContext } from './types';
+import { jsonFetch, type FetchContext } from './types';
+import { fetchQualitySnapshotWith, type QualitySnapshot } from '../../shared/api/quality';
 
 /**
- * 品質ダッシュボード — Service Hub の品質指標サービス (snapshot 専用)。
+ * 品質ダッシュボード — デスクトップ版の入口。**読み取りだけ** (2026-11-21)。
  *
- * 通常の業務サービスではなく、メタ情報 (ユニットテスト件数 / Mutation
- * スコア / レビューラウンド履歴 / CI 状況 / standalone HTML サイズ等)
- * を 1 画面で可視化する。
+ * このリポジトリ自身 (`hiroto1977/-`) の品質状態を GitHub API から読む:
+ * 最新コミット、CI / 変異検査の最新実行、テストファイル数、PR 件数と
+ * レビュー状態。それに `docs/QUALITY.md` の実測値 (mutation スコア・
+ * passing 数・coverage、生成時点つき) を重ねる。
+ * **判定と正規化は `src/shared/api/quality.ts` に置いてある** —— ブラウザ版は
+ * 利用者のプロキシ経由で同じモジュールを呼ぶ。ここに残しているのは
+ * 「main の `jsonFetch` を渡す」ことだけである。
  *
- * データソースは現状ハードコード snapshot。将来は `npm run quality:report`
- * (scripts/quality-report.cjs) の JSON を読み込んで動的更新する想定。
- * その時点で fetcher を実装に切り替える — 現在は LOCAL_SERVICES 扱いで
- * トークン不要、SNAPSHOT を直接描画。
+ * 通信は共通の `jsonFetch` を通す (締切・応答の大きさの天井・転送に
+ * 追随しない・失敗文の伏字)。使う照会はどれも封筒がオブジェクトの応答だけ
+ * —— 一覧が配列で返る pulls / reviews は使わず、件数は Search API の
+ * `total_count` で取る (理由は `shared/api/quality.ts` の冒頭)。
+ *
+ * 2026-11-20 まで、このファイルは同梱の見本をそのまま返す stub だった
+ * (`SERVICE_DATA_ORIGIN.quality === 'sample'`)。見本には手書きのテスト
+ * 件数・レビュー深刻度内訳・成果物サイズなど、裏付けのない数字が
+ * 実測のように並んでいたので、読めるものだけを読む形に置き換えた。
+ * トークンは GitHub の PAT (このリポジトリの読み取り) で、利用者が
+ * Vault に登録する (`github` サービスのスロットとは別)。
  */
 
-export interface ReviewRound {
-  readonly pr: number;
-  readonly round: number;
-  readonly verdict: '要修正' | 'マージ可' | 'マージ推奨';
-  readonly blocking: number;
-  readonly shouldFix: number;
-  readonly nit: number;
-}
+export type { QualitySnapshot, QualityReport, QualityWorkflowRun } from '../../shared/api/quality';
 
-export interface QualitySnapshot {
-  readonly unitTests: {
-    readonly staticCount: number;
-    readonly runtimeCount: number;
-  };
-  readonly mutation: {
-    readonly score: number;
-    readonly mutateModules: number;
-    readonly killed: number;
-    readonly threshold: number;
-  };
-  readonly verifications: ReadonlyArray<{ readonly name: string; readonly status: 'pass' | 'fail' }>;
-  readonly reviewHistory: ReadonlyArray<ReviewRound>;
-  readonly artifactSizes: {
-    readonly standaloneHtmlKb: number;
-    readonly electronMainKb: number;
-  };
-  readonly latestCommit: string;
-}
-
-// Stryker disable all
-const STUB: QualitySnapshot = {
-  unitTests: { staticCount: 0, runtimeCount: 0 },
-  mutation: { score: 0, mutateModules: 0, killed: 0, threshold: 99.8 },
-  verifications: [],
-  reviewHistory: [],
-  artifactSizes: { standaloneHtmlKb: 0, electronMainKb: 0 },
-  latestCommit: '',
-};
-// Stryker restore all
-
-export async function fetchQualitySnapshotImpl(_ctx: FetchContext): Promise<QualitySnapshot> {
-  return STUB;
-}
-
-// Stryker disable next-line BlockStatement
 export async function fetchQualitySnapshot(ctx: FetchContext): Promise<QualitySnapshot> {
-  return fetchQualitySnapshotImpl(ctx);
+  const fetchCtx = { fetch: ctx.fetch, serviceId: 'quality' };
+  return fetchQualitySnapshotWith((url, init) => jsonFetch<object>(url, init, fetchCtx), ctx.token);
 }

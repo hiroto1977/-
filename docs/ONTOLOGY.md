@@ -102,7 +102,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `ollama` | tools | local | none | ✅ |  |  | `chat` | `chat` | — |
 | `overview` | featured | local | none | ✅ |  |  | — | — | — |
 | `patent-attorney` | professionals | local | none | ✅ |  | ✅ | — | — | — |
-| `quality` | tools | sample | none | ✅ |  |  | — | — | — |
+| `quality` | tools | remote | fetch |  |  |  | — | — | — |
 | `real-estate` | tools | local | none | ✅ |  |  | `advise` `record-entry` | `advise` `record-entry` | — |
 | `sales` | featured | local | none | ✅ |  |  | — | — | — |
 | `salesforce` | integrations | sample | none |  |  |  | — | — | — |
@@ -135,9 +135,9 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 集計:
 
 - 配置: おすすめ 12 / 士業連携 8 / 分析・ツール 25 / 外部サービス連携 33 / 消費されるだけ 2
-- 出所: remote 22 / local 44 / sample 14
-- 資格情報の読み手 — fetch 22 / action 7 / none 51
-- LOCAL_SERVICES 57 / OAuth 10 / action を持つ 27 / デスクトップだけの action 10
+- 出所: remote 23 / local 44 / sample 13
+- 資格情報の読み手 — fetch 23 / action 7 / none 50
+- LOCAL_SERVICES 56 / OAuth 10 / action を持つ 27 / デスクトップだけの action 10
 
 ## 4. facet の公理と例外
 
