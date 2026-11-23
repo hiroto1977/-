@@ -205,7 +205,7 @@ export function ZebHubSimulatorPanel() {
   );
 
   return (
-    <Section title="防災オフグリッド ZEB 拠点の収支 — 利回り・回収年数・蓄電池の容量 (概算)">
+    <Section title="防災オフグリッドの省エネ建物 (ZEB) 拠点の収支 — 利回り・回収年数・蓄電池の容量 (概算)">
       <div style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 10 }}>
         ペロブスカイト太陽電池・大型蓄電池・水循環プラントを持つ 1 拠点の収支を試算します。電気は
         <strong>敷地内で使う → 同じエリアの自社拠点へ自己託送 → 市場へ売る</strong>の順に配り、蓄電池のうち
