@@ -36,7 +36,7 @@ export const ACTION_TIER: Readonly<Record<string, Tier>> = {
   'atlassian/create-issue': 'external-write',
   'wordpress/create-post-draft': 'external-write',
   'gmail/create-draft': 'external-write',
-  'drive/create-folder': 'external-write',
+  'drive/create-folder': 'external-write', 'drive/export-sheet': 'external-write',
   'canva/create-folder': 'external-write',
   'cloudflare/create-dns-record': 'external-write',
   'cloudflare/purge-cache': 'external-write',
@@ -83,6 +83,7 @@ export const ACTION_TIER: Readonly<Record<string, Tier>> = {
   'talent/judge-leader': 'read',
   'assistant/providers': 'read',
   'docstudio/list-collections': 'read',
+  'google-analytics/run-report': 'read',
 };
 
 export fn tierOfAction(serviceId: string, action: string) -> Tier {

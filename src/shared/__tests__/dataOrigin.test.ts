@@ -18,6 +18,7 @@ const EXPECTED: ReadonlyArray<readonly [ServiceId, DataOrigin]> = [
   ['drive', 'remote'],
   ['calendar', 'remote'],
   ['gmail', 'remote'],
+  ['google-analytics', 'remote'],
   ['slack', 'remote'],
   ['canva', 'remote'],
   ['skills', 'local'],
@@ -107,7 +108,7 @@ describe('SERVICE_DATA_ORIGIN', () => {
     const count = (o: DataOrigin) => EXPECTED.filter(([, v]) => v === o).length;
     expect(count('sample')).toBe(13);
     expect(count('local')).toBe(44);
-    expect(count('remote')).toBe(23);
+    expect(count('remote')).toBe(24); // google-analytics (2026-11-22)
   });
 });
 

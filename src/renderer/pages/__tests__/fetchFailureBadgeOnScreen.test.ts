@@ -101,8 +101,8 @@ const labels = (): string[] =>
   Array.from(container.querySelectorAll('.status-bar button')).map((b) => (b.textContent ?? '').trim());
 
 describe('取得が断られたときの札', () => {
-  it('母集団: 取得して札を出す画面は 54・見本の画面は 11・札を出さない画面は 13 (合わせてサイドバーの全画面)', () => {
-    expect(FETCHING).toHaveLength(54);
+  it('母集団: 取得して札を出す画面は 55・見本の画面は 11・札を出さない画面は 13 (合わせてサイドバーの全画面)', () => {
+    expect(FETCHING).toHaveLength(55); // google-analytics (2026-11-22)
     expect(SAMPLE).toHaveLength(11);
     expect(Object.keys(NO_FAILURE_BADGE)).toHaveLength(13);
     expect(FETCHING.length + SAMPLE.length + Object.keys(NO_FAILURE_BADGE).length).toBe(SERVICES.length);

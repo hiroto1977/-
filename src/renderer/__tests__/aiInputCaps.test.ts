@@ -234,9 +234,10 @@ const PAGE_CAPS: Readonly<Record<string, PageCap>> = {
     submitFn: 'send',
     constants: {
       MAX_OLLAMA_PROMPT_CHARS: {
-        reads: 1,
-        bypass: [],
-        why: '解釈できなかった入力が端末内モデルへ回る (`tryOllama`) —— 天井は Ollama の物',
+        reads: 2,
+        bypass: ['mic'],
+        why: '解釈できなかった入力が端末内モデルへ回る (`tryOllama`) —— 天井は Ollama の物。'
+          + '🎤 (2026-11-23) は欄の `disabled` を通らないので、`send` にも砦が要る',
         provenBy: PROVEN,
       },
     },

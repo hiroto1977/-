@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Section } from '../components/StatusBar';
 import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { useCollection } from '../data/useCollection';
@@ -32,6 +32,10 @@ import { useRowWindow } from '../data/useRowWindow';
 import { RowWindowMore } from '../components/RowWindowMore';
 import { LabeledField } from '../components/LabeledField';
 import { changedRecordNote, readCollectionNow, unreadableForJudgementNote, vanishedRecordNote } from '../data/readCollectionNow';
+import { planSalesSheet, droppedFromSheetNote, tooManyForSheetNote } from '../data/salesSheet';
+import { ProxyRequiredNote } from '../components/ProxyRequiredNote';
+import { externalTextOnOneLine } from '../data/assistantMarkdown';
+import type { ActionData } from '../../shared/actionData';
 import {
   MANUAL_OVERRIDES_COLLECTION,
   applyManualOverrides,
@@ -137,6 +141,25 @@ export function SalesPage() {
   /** 「×」で消した直後の 1 件。「元に戻す」が入れ直す (次に記録・修正・取り込みをすると消える)。 */
   const [undo, setUndo] = useState<SalesEntry | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  /** スプレッドシートへの書き出し。`configured` は Google ドライブの資格情報が在るか (分からなければ `null`)。 */
+  const sheetSubmit = useSubmitGuard();
+  const [driveConfigured, setDriveConfigured] = useState<boolean | null>(null);
+  const [sheetResult, setSheetResult] = useState<
+    { readonly kind: 'ok'; readonly message: string; readonly url: string } | { readonly kind: 'error'; readonly message: string }
+  >();
+  useEffect(() => {
+    let alive = true;
+    // 分からなければ押せるままにする (断りは送った後の答えが言う)。知っている「無い」だけで止める。
+    window.serviceHub
+      ?.listConfigured()
+      .then((ids) => {
+        if (alive) setDriveConfigured(ids.includes('drive'));
+      })
+      .catch(() => undefined);
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   const entries = useMemo(() => records.map((r) => r.data), [records]);
   // 明細の窓 (パス 538 · R-3): CSV で 20 万行まで入るので、全行を描くと画面が止まる。
@@ -281,6 +304,46 @@ export function SalesPage() {
     a.download = `sales-${localIsoDate()}.csv`;
     a.click();
     URL.revokeObjectURL(url);
+  }
+
+  /**
+   * 「スプレッドシートに書き出す」: 読める売上の記録を表にし、確かめてから Google へ送る。
+   * 送る先と中身は押す前に画面が言い (下の断り)、押した後にもう 1 度確認の窓で言う。
+   */
+  async function onExportSheet() {
+    setSheetResult(undefined);
+    // 書き出すのは**保管層の今の一覧** (パス 384 / 497) —— 画面の写しは一覧が届く前・別のタブで書いた後にずれる。
+    const stored = await readCollectionNow<SalesEntry>(SALES_COLLECTION);
+    if (stored === null) {
+      setSheetResult({ kind: 'error', message: unreadableForJudgementNote('売上の一覧') });
+      return;
+    }
+    const plan = planSalesSheet(stored, localIsoDate());
+    if (plan.kind === 'empty') {
+      setSheetResult({ kind: 'error', message: '書き出せる記録がありません。' });
+      return;
+    }
+    if (plan.kind === 'too-many') {
+      setSheetResult({ kind: 'error', message: tooManyForSheetNote(plan.count) });
+      return;
+    }
+    const dropped = droppedFromSheetNote(plan.dropped);
+    const ok = window.confirm(
+      `売上の記録 ${plan.payload.rows.length} 件 (日付・販売先・金額・注文の数・メモ) を Google に送信し、` +
+        `あなたの Google ドライブに新しいスプレッドシート「${plan.payload.title}」を作ります。よろしいですか？` +
+        (dropped === null ? '' : `\n${dropped}`),
+    );
+    if (!ok) return;
+    const res = await window.serviceHub.invoke<ActionData<'drive/export-sheet'>>('drive', 'export-sheet', { ...plan.payload });
+    if (res.ok) {
+      setSheetResult({
+        kind: 'ok',
+        message: `スプレッドシートを作りました (${plan.payload.rows.length} 件)。${dropped ?? ''}`,
+        url: res.data.url,
+      });
+    } else {
+      setSheetResult({ kind: 'error', message: externalTextOnOneLine(res.message) });
+    }
   }
 
   async function onImportFile(file: File) {
@@ -458,6 +521,47 @@ export function SalesPage() {
           <span style={{ fontSize: 11, color: 'var(--text-mute)', flex: '1 1 160px' }}>
             まとめて入れるときは、1 行目が {SALES_CSV_COLUMNS.join(',')} の CSV を取り込めます。
           </span>
+        </div>
+        <div data-sheet-export style={{ display: 'grid', gap: 6, marginTop: 12 }}>
+          <ProxyRequiredNote what="スプレッドシートの作成" />
+          <p style={{ color: 'var(--text-mute)', fontSize: 12, margin: 0, lineHeight: 1.6 }}>
+            「スプレッドシートに書き出す」を押すと、読める売上の記録 (日付・販売先・金額・注文の数・メモ) を Google に送信します。
+            送った記録で、あなたの Google ドライブに新しいスプレッドシートを作ります。送る前に件数を確かめます。
+          </p>
+          {driveConfigured === false && (
+            <p role="note" data-sheet-export-needs-drive style={{ color: 'var(--warning)', fontSize: 12, margin: 0, lineHeight: 1.6 }}>
+              まだ Google に接続していません。「グーグルドライブ」の画面で Google に接続してから押してください。
+            </p>
+          )}
+          <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              data-sheet-export-button
+              onClick={() => fireReported(sheetSubmit.run(onExportSheet))}
+              disabled={sheetSubmit.busy || entries.length === 0 || driveConfigured === false}
+            >
+              {sheetSubmit.busy ? '書き出し中…' : 'スプレッドシートに書き出す'}
+            </button>
+            {sheetResult?.kind === 'ok' && (
+              <span role="status" data-sheet-export-done style={{ color: 'var(--success)', fontSize: 12 }}>
+                {sheetResult.message}{' '}
+                <a
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    void window.serviceHub?.openExternal(sheetResult.url);
+                  }}
+                >
+                  スプレッドシートを開く
+                </a>
+              </span>
+            )}
+            {sheetResult?.kind === 'error' && (
+              <span role="alert" data-sheet-export-error style={{ color: 'var(--danger)', fontSize: 12 }}>
+                {sheetResult.message}
+              </span>
+            )}
+          </div>
         </div>
         {error && <div style={{ color: 'var(--danger)', fontSize: 12, marginTop: 6 }}>{error}</div>}
         {notice && <div role="status" data-sales-notice style={{ color: 'var(--success)', fontSize: 12, marginTop: 6 }}>{notice}</div>}

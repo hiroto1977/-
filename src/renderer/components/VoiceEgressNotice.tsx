@@ -4,7 +4,7 @@ import { voiceEgressNoticeLines, type VoiceEgressSubject } from '../../shared/vo
  * **マイクの声についての断り (画面側)。**
  *
  * 文面は `shared/voiceEgressNotice.ts` が 1 か所で持つ。ここは並べるだけ ——
- * マイクの入口は 2 つ (全画面の `VoiceCommandBar` と `VillagePage`) なので、
+ * マイクの入口は 3 つ (全画面の `VoiceCommandBar`・`VillagePage`・コンシェルジュの 🎤) なので、
  * CLAUDE.md の「視覚的な部品が 2 つ以上の画面で要るなら `components/` へ」に従う
  * (2026-09-09 · パス 108)。
  *

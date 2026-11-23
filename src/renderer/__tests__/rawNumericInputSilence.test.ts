@@ -188,6 +188,11 @@ const DRAFT_LEDGER: Readonly<Record<string, DraftRow>> = Object.freeze({
   'watch|アナリティクス (Google Analytics)の訪問数': WATCH_ROW,
   'watch|アナリティクス (Google Analytics)のページ表示数': WATCH_ROW,
   'watch|アナリティクス (Google Analytics)の成果数': WATCH_ROW,
+  'google-analytics|プロパティ ID': {
+    file: 'renderer/pages/GoogleAnalyticsPage.tsx',
+    writer: 'gaPropertyIdOrNull',
+    why: '数ではなく識別子 (数字だけ)。「表示」を押したときに読み、数字だけでなければ断りの文 (GA_PROPERTY_ID_REFUSAL) を出して照会も保存もしない (2026-11-22)',
+  },
   'a8net|報酬額': {
     file: 'renderer/pages/A8netPage.tsx',
     writer: 'parseA8netReward',

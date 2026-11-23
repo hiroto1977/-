@@ -195,6 +195,9 @@ type TokenResponse = TokenResponseFields;
 /// 出典: https://developer.atlassian.com/cloud/oauth/getting-started/implementing-oauth-3lo/
 /// https://developer.atlassian.com/cloud/jira/platform/scopes-for-oauth-2-3LO-and-forge-apps/
 /// read:jira-work = Jira の課題/プロジェクト読み取り (classic scope)。
+/// グーグルアナリティクス (Google Analytics 4) — Google と同じ認可サーバ。`analytics.readonly` だけを求める
+/// (GA4 Data API の runReport と Admin API の accountSummaries の読み取りに足りる。書き込みの権限は求めない)。
+/// 出典: https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport
 export const OAUTH_CONFIGS: Partial<Record<ServiceId, OAuthConfig>> = {
   drive: {
     authorizeUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
@@ -221,6 +224,13 @@ export const OAUTH_CONFIGS: Partial<Record<ServiceId, OAuthConfig>> = {
       'https://www.googleapis.com/auth/gmail.modify',
       'https://www.googleapis.com/auth/gmail.compose',
     ],
+    extraAuthParams: { access_type: 'offline', prompt: 'consent' },
+  },
+  'google-analytics': {
+    authorizeUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
+    tokenUrl: 'https://oauth2.googleapis.com/token',
+    clientId: hostEnv('GOOGLE_OAUTH_CLIENT_ID'),
+    scopes: ['https://www.googleapis.com/auth/analytics.readonly'],
     extraAuthParams: { access_type: 'offline', prompt: 'consent' },
   },
   freee: {

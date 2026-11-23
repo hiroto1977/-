@@ -124,6 +124,11 @@ const NO_FIELD_ON_SCREEN: Readonly<Record<string, { readonly why: string; readon
    * 見る。どの画面も 7 つの同期 action を呼んでいないので、欄が在りようがない。
    * 誰かがボタンを配線したら鳴る (下の「どの画面も呼んでいない」も併せて見る)。
    */
+  'DRIVE_SHEET_FIELDS.title': {
+    why: 'スプレッドシートの表題は利用者が打つのではなく、売上集計の画面が「売上の記録 (日付)」と組む。欄が在りようがないので貼り付けが切られる形も無い (天井は payload の関門のために在る)',
+    page: 'pages/SalesPage.tsx',
+    absent: 'value={sheetTitle}',
+  },
   'SHOPIFY_ORDER_FIELDS.id': { why: SHOPIFY_WHY, page: 'pages/ShopifyPage.tsx', absent: 'sync-to-' },
   'SHOPIFY_ORDER_FIELDS.name': { why: SHOPIFY_WHY, page: 'pages/ShopifyPage.tsx', absent: 'sync-to-' },
   'SHOPIFY_ORDER_FIELDS.customer': { why: SHOPIFY_WHY, page: 'pages/ShopifyPage.tsx', absent: 'sync-to-' },

@@ -107,6 +107,7 @@
     "src/renderer/data/cashflowDebtService.ts",
     "src/renderer/data/charts.ts",
     "src/renderer/data/chatCalc.ts",
+    "src/renderer/data/chatData.ts",
     "src/renderer/data/chatOrg.ts",
     "src/renderer/data/chatbot.ts",
     "src/renderer/data/cloudBackup.ts",

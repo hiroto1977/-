@@ -75,6 +75,7 @@ export const ERASE_LOCAL_STORAGE_KEYS: readonly string[] = [
   'servicehub.theme',
   'servicehub.design',
   'servicehub.encryptedCopy.last',
+  'servicehub.googleAnalytics.propertyId',
   'teamradar.state',
   'servicehub.talent.state.v1',
   'assistant-history',

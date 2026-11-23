@@ -171,8 +171,12 @@ export function parseProcMounts(text: string): ReadonlyArray<{ mount: string; la
   const seen = new Set<string>();
   for (const line of text.split('\n')) {
     const fields = line.trim().split(/\s+/);
+    // Stryker disable next-line ConditionalExpression: 3 フィールド未満の行は fields[2] が無く fstype が '' になるため REAL_FS の門で必ず落ち、門を外しても結果は変わらない (門は防御として要る)
     if (fields.length < 3) continue;
-    const mount = (fields[1] ?? '').replace(/\\040/g, ' ').replace(/\\011/g, '\t');
+    // Stryker disable next-line StringLiteral: 上の門で fields[1] の存在が保証されるため ?? '' の既定値には到達しない (noUncheckedIndexedAccess の型のために要る)
+    const rawMount = fields[1] ?? '';
+    const mount = rawMount.replace(/\\040/g, ' ').replace(/\\011/g, '\t');
+    // Stryker disable next-line StringLiteral: 上の門で fields[2] の存在が保証されるため ?? '' の既定値には到達しない (同上)
     const fstype = fields[2] ?? '';
     if (!REAL_FS.has(fstype)) continue;
     if (mount.startsWith('/snap/') || mount === '/snap') continue;
@@ -181,6 +185,22 @@ export function parseProcMounts(text: string): ReadonlyArray<{ mount: string; la
     out.push({ mount, label: mount === '/' ? 'システム' : path.basename(mount) || mount });
   }
   return out;
+}
+
+/**
+ * largeFolders の並び順: サイズの大きい順、同サイズは path の辞書順。
+ *
+ * 同サイズの向きを決める第 2 の戻り値 (1 か 0 か) は、ランタイムの sort
+ * (V8 の TimSort) が `< 0` の関係だけで並びを決めるため、並び結果からは
+ * 観測できない (入力パターンを変えたランダム対照 20,000 件で差分ゼロを
+ * 実測済み)。そのため第 2 条件の変異だけを、理由つきで測らない。
+ * サイズ差と第 1 条件の変異は通常どおり測る (同サイズ tie の検査が殺す)。
+ */
+function compareLargeFolders(a: RawFolderReading, b: RawFolderReading): number {
+  if (a.sizeBytes !== b.sizeBytes) return b.sizeBytes - a.sizeBytes;
+  if (a.path < b.path) return -1;
+  // Stryker disable next-line ConditionalExpression,EqualityOperator: 第 2 条件の戻り値 (1/0・>=・<=) は TimSort が < 0 の関係だけで決める並び結果に観測できない (関数の doc 参照)
+  return a.path > b.path ? 1 : 0;
 }
 
 /** 生の読み取り値から表示用スナップショットを組み立てる (純粋・決定論的)。 */
@@ -197,7 +217,7 @@ export function buildStorageSnapshot(r: RawStorageReadings): StorageSnapshot {
 
   const largeFolders = r.folders
     .filter((f) => f.sizeBytes >= LARGE_FOLDER_MIN_BYTES)
-    .sort((a, b) => b.sizeBytes - a.sizeBytes || (a.path < b.path ? -1 : a.path > b.path ? 1 : 0))
+    .sort(compareLargeFolders)
     .slice(0, LARGE_FOLDER_TOP_N)
     .map((f) => ({
       path: f.path,
@@ -219,6 +239,7 @@ export function buildStorageSnapshot(r: RawStorageReadings): StorageSnapshot {
       howTo: `${cacheFolders.map((f) => f.path).join(' / ')}: ${CACHE_TASK_HOWTO_SUFFIX}`,
     });
   }
+  // Stryker disable next-line ConditionalExpression: !== null を外しても、>= TRASH_CLEANUP_MIN_BYTES (正の下限) が null を 0 として弾くため条件全体の結果は変わらない
   if (r.trashSizeBytes !== null && r.trashSizeBytes >= TRASH_CLEANUP_MIN_BYTES) {
     cleanupTasks.push({
       id: 'trash',
@@ -332,6 +353,7 @@ export function measureDir(
       }
       budget.remaining -= 1;
       const full = path.join(dir, entry.name);
+      // Stryker disable next-line ConditionalExpression: Dirent の isFile()/isDirectory() はリンク自体の種別を見るため、シンボリックリンクは明示スキップを外してもどちらにも数えられない (多重の防御)
       if (entry.isSymbolicLink()) continue;
       if (entry.isDirectory()) {
         stack.push(full);
@@ -344,6 +366,7 @@ export function measureDir(
         }
       }
     }
+    // Stryker disable next-line ConditionalExpression: truncated が立つのは予算切れのときだけで、その後は内側ループ先頭の予算検査が必ず即 break するため、外側の break を外しても数える量は変わらない
     if (truncated) break;
   }
   return { sizeBytes, fileCount, truncated };
@@ -477,6 +500,7 @@ function readProcessCount(platform: string): number | null {
 export function readStorageReadings(): RawStorageReadings {
   const platform = os.platform();
   const home = os.homedir();
+  // Stryker disable next-line ObjectLiteral: 予算の初期値を消す変異は 60,000 エントリ超の実ツリーでしか観測できず検査として不相応 (予算切れで truncated が立つこと自体は walkDir の検査で固定済み)
   const budget = { remaining: WALK_ENTRY_BUDGET };
   return {
     platform,

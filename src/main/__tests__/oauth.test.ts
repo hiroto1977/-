@@ -675,7 +675,7 @@ describe('OAUTH_CONFIGS shape', () => {
     expect(cfg?.clientId).toBe('');
   });
 
-  it('registers exactly the ten OAuth-capable services and nothing else', () => {
+  it('registers exactly the eleven OAuth-capable services and nothing else', () => {
     // Kills the outer OBJECT_LITERAL mutation that would replace the
     // whole OAUTH_CONFIGS with {} — by inversion the assertion checks
     // we DO have every known entry. Also pins the count that
@@ -689,6 +689,7 @@ describe('OAUTH_CONFIGS shape', () => {
         'drive',
         'freee',
         'gmail',
+        'google-analytics',
         'microsoft-365',
         'notion',
         'slack',
@@ -2255,6 +2256,12 @@ describe('OAUTH_CONFIGS — 全サービス完全一致 (golden)', () => {
         'https://www.googleapis.com/auth/gmail.modify',
         'https://www.googleapis.com/auth/gmail.compose',
       ],
+      extraAuthParams: GOOGLE_EXTRA,
+    },
+    'google-analytics': {
+      authorizeUrl: GOOGLE_AUTH,
+      tokenUrl: GOOGLE_TOKEN,
+      scopes: ['https://www.googleapis.com/auth/analytics.readonly'],
       extraAuthParams: GOOGLE_EXTRA,
     },
     freee: {
