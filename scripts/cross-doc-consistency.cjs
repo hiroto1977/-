@@ -1229,12 +1229,20 @@ function checkNotInCiClaims(failures, claimOverride, workflowsOverride) {
  *
  * 数ではなく**名前の集合**を突き合わせる。数を数えるだけだと
  * 「1 件足して 1 件消した」が通ってしまうし、綴りが変わったことも見えない。
+ *
+ * ★ 2026-11-23 から行は**業務の区分** (サイドバーと同じ並び) で、区分は
+ * `src/renderer/data/businessArea.ts` の `SERVICE_AREA` が id ごとに持つ。
+ * `services.ts` の `category` 欄はもう README の行を決めない —— 名前は services.ts から、
+ * 区分は businessArea.ts から読み、id で結ぶ (区分を README 用に書き写さない)。
  */
 const README_CATEGORY_ROWS = [
-  { label: 'おすすめ', category: 'featured' },
-  { label: '士業連携', category: 'professionals' },
-  { label: '分析・ツール', category: 'tools' },
-  { label: '外部サービス連携', category: 'integrations' },
+  { label: 'フロントオフィス', category: 'front' },
+  { label: 'センターオフィス', category: 'center' },
+  { label: 'ミドルオフィス', category: 'middle' },
+  { label: 'バックオフィス', category: 'back' },
+  { label: '開発・製造・現場', category: 'field' },
+  { label: '経営・ガバナンス', category: 'management' },
+  { label: '共通基盤', category: 'platform' },
 ];
 
 /*
@@ -1254,12 +1262,23 @@ const README_LABEL_ALIASES = {
   'コネクター / 自動化': 'コネクター',
 };
 
-/** `services.ts` から category → label[] を作る。 */
-function sidebarLabelsByCategory(src) {
+/** `businessArea.ts` の `SERVICE_AREA` から id → 区分を作る (`base(` は共通基盤)。 */
+function areaById(areaSrc) {
   const out = {};
-  // `label: '…',` … `category: '…',` の順で並ぶ 1 エントリを 1 件とみなす。
-  for (const m of src.matchAll(/label: '([^']+)',[\s\S]{0,400}?category: '([a-z]+)',/g)) {
-    (out[m[2]] ??= []).push(m[1]);
+  for (const m of areaSrc.matchAll(/^\s*'?([a-z0-9-]+)'?:\s*(?:at\('([a-z]+)'|(base)\()/gm)) {
+    out[m[1]] = m[2] ?? 'platform';
+  }
+  return out;
+}
+
+/** `services.ts` の名前を `businessArea.ts` の区分で束ねる (区分 → label[])。 */
+function sidebarLabelsByCategory(src, areaSrc) {
+  const area = areaById(areaSrc);
+  const out = {};
+  // `id: '…',` の直後の `label: '…',` を 1 エントリとみなす。
+  for (const m of src.matchAll(/id: '([a-z0-9-]+)',\s*\n\s*label: '([^']+)',/g)) {
+    const a = area[m[1]];
+    if (a !== undefined) (out[a] ??= []).push(m[2]);
   }
   return out;
 }
@@ -1290,16 +1309,23 @@ function readmeCategoryRow(readme, label) {
  * (`checkCiGateCoverage` と同じ理由 — 実ファイルを壊さずに鳴らせるように)。
  * 戻り値は照合したカテゴリ数。
  */
-function checkReadmeCategories(failures, servicesOverride, readmeOverride) {
+function checkReadmeCategories(failures, servicesOverride, readmeOverride, areaOverride) {
   const FACT = 'README category breakdown';
   const servicesSrc =
     servicesOverride === undefined ? read(path.join(REPO_ROOT, 'src/renderer/services.ts')) : servicesOverride;
   const readme = readmeOverride === undefined ? read(path.join(REPO_ROOT, 'README.md')) : readmeOverride;
-  if (servicesSrc == null || readme == null) {
-    failures.push({ fact: FACT, reason: 'src/renderer/services.ts か README.md を読めない' });
+  // self-test は services と区分の表を 1 つの文字列に混ぜて渡す (各走査は自分の形しか拾わない)。
+  const areaSrc =
+    areaOverride !== undefined
+      ? areaOverride
+      : servicesOverride !== undefined
+        ? servicesOverride
+        : read(path.join(REPO_ROOT, 'src/renderer/data/businessArea.ts'));
+  if (servicesSrc == null || readme == null || areaSrc == null) {
+    failures.push({ fact: FACT, reason: 'src/renderer/services.ts か README.md か businessArea.ts を読めない' });
     return 0;
   }
-  const byCategory = sidebarLabelsByCategory(servicesSrc);
+  const byCategory = sidebarLabelsByCategory(servicesSrc, areaSrc);
   let checked = 0;
   for (const { label, category } of README_CATEGORY_ROWS) {
     const actual = byCategory[category];
@@ -1307,7 +1333,7 @@ function checkReadmeCategories(failures, servicesOverride, readmeOverride) {
       // 走査が死んで 0 件になったのを「違反なし」と読まない。
       failures.push({
         fact: FACT,
-        reason: `services.ts から category '${category}' を 1 件も拾えない — 走査が壊れている`,
+        reason: `services.ts × businessArea.ts から区分 '${category}' を 1 件も拾えない — 走査が壊れている`,
       });
       continue;
     }
@@ -1462,57 +1488,69 @@ function selfTest() {
    * 鳴ってしまい、**何を確かめたのか分からない対照**になる (最初にそう書いた)。
    */
   {
-    const svc = (label, category) =>
-      `  {\n    id: 'x',\n    label: '${label}',\n    category: '${category}',\n  },\n`;
+    let svcN = 0;
+    const svc = (label, area) => {
+      const id = `x${++svcN}`;
+      const placed = area === 'platform' ? `base('data', 'x。')` : `at('${area}', 'x。')`;
+      return `  {\n    id: '${id}',\n    label: '${label}',\n    category: 'tools',\n  },\n  ${id}: ${placed},\n`;
+    };
     const row = (label, n, items) => `| **${label}** (${n}) | ${items.join(' / ')} |\n`;
     /*
-     * 分析・ツール以外の 3 カテゴリは常に揃っている雛形。
+     * 経営・ガバナンス以外の 6 区分は常に揃っている雛形。
      * 短縮の台帳 (`README_LABEL_ALIASES`) の 1 件もここに入れる —— 実物と同じく
      * **README 側は前半だけ**を書いており、これが鳴らないことで
      * 「短縮が効いている」を肯定形で確かめている。
      */
     const OTHERS_SRC =
-      svc('ホーム', 'featured') +
-      svc('コネクター / 自動化', 'featured') +
-      svc('税理士', 'professionals') +
-      svc('GitHub', 'integrations');
+      svc('ホーム', 'platform') +
+      svc('コネクター / 自動化', 'platform') +
+      svc('税理士', 'back') +
+      svc('GitHub', 'field') +
+      svc('ショッピファイ', 'front') +
+      svc('ジーメール', 'center') +
+      svc('弁護士', 'middle');
+    const FRONT_MIDDLE_MD =
+      row('フロントオフィス', 1, ['ショッピファイ']) +
+      row('センターオフィス', 1, ['ジーメール']) +
+      row('ミドルオフィス', 1, ['弁護士']);
     const OTHERS_MD =
-      '| **おすすめ** (常時表示, 2) | ホーム / コネクター |\n' +
-      '| **士業連携** (1) | 税理士 — 各ページに「担当領域 (事業仕分け)」ナビ |\n' +
-      row('外部サービス連携', 1, ['GitHub']);
+      '| **共通基盤** (データ・AI・守り, 2) | ホーム / コネクター |\n' +
+      '| **バックオフィス** (1) | 税理士 — 各ページに「担当領域 (事業仕分け)」ナビ |\n' +
+      row('開発・製造・現場', 1, ['GitHub']) +
+      FRONT_MIDDLE_MD;
     /** [ラベル, tools のサービス, tools の README 行, 期待件数] */
     const catCases = [
       [
         '★ サイドバーに在って README に無い (2026-08-25 の 可視化 / Cursor)',
-        svc('KPI', 'tools') + svc('可視化', 'tools'),
-        row('分析・ツール', 1, ['KPI']),
+        svc('KPI', 'management') + svc('可視化', 'management'),
+        row('経営・ガバナンス', 1, ['KPI']),
         1,
       ],
-      ['揃っていれば鳴らない', svc('KPI', 'tools'), row('分析・ツール', 1, ['KPI']), 0],
+      ['揃っていれば鳴らない', svc('KPI', 'management'), row('経営・ガバナンス', 1, ['KPI']), 0],
       [
         '★ 数だけ直して列挙を直さなかったら鳴る',
-        svc('KPI', 'tools') + svc('可視化', 'tools'),
-        row('分析・ツール', 2, ['KPI']),
+        svc('KPI', 'management') + svc('可視化', 'management'),
+        row('経営・ガバナンス', 2, ['KPI']),
         2, // 宣言 2 件 vs 列挙 1 件 + 可視化 が無い
       ],
       [
         '★ 1 件足して 1 件消しても鳴る (数を数えるだけの検査は通してしまう)',
-        svc('KPI', 'tools') + svc('可視化', 'tools'),
-        row('分析・ツール', 2, ['KPI', 'Docker']),
+        svc('KPI', 'management') + svc('可視化', 'management'),
+        row('経営・ガバナンス', 2, ['KPI', 'Docker']),
         2, // 可視化 が無い + Docker がサイドバーに無い
       ],
-      ['前後の空白は同一とみなす (表の整形では鳴らない)', svc('可視化', 'tools'), row('分析・ツール', 1, ['可視化 ']), 0],
+      ['前後の空白は同一とみなす (表の整形では鳴らない)', svc('可視化', 'management'), row('経営・ガバナンス', 1, ['可視化 ']), 0],
       [
         '★ 別綴りは鳴る',
-        svc('可視化', 'tools'),
-        row('分析・ツール', 1, ['視覚化']),
+        svc('可視化', 'management'),
+        row('経営・ガバナンス', 1, ['視覚化']),
         2, // 可視化 が無い + 視覚化 がサイドバーに無い
       ],
-      ['★ README に行が無ければ鳴る', svc('KPI', 'tools'), '(分析・ツールの行が無い)\n', 1],
+      ['★ README に行が無ければ鳴る', svc('KPI', 'management'), '(経営・ガバナンスの行が無い)\n', 1],
       [
         '★ 走査が死んで 0 件になったのを「違反なし」と読まない',
         '', // tools が 1 件も無い
-        row('分析・ツール', 1, ['KPI']),
+        row('経営・ガバナンス', 1, ['KPI']),
         1,
       ],
     ];
@@ -1528,11 +1566,13 @@ function selfTest() {
     for (const [label, s, r, expected] of [
       [
         '★ 短縮の左辺がサイドバーから消えたら鳴る',
-        svc('ホーム', 'featured') + svc('税理士', 'professionals') + svc('GitHub', 'integrations') + svc('KPI', 'tools'),
-        '| **おすすめ** (常時表示, 1) | ホーム |\n' +
-          '| **士業連携** (1) | 税理士 |\n' +
-          row('外部サービス連携', 1, ['GitHub']) +
-          row('分析・ツール', 1, ['KPI']),
+        svc('ホーム', 'platform') + svc('税理士', 'back') + svc('GitHub', 'field') + svc('KPI', 'management') +
+          svc('ショッピファイ', 'front') + svc('ジーメール', 'center') + svc('弁護士', 'middle'),
+        '| **共通基盤** (データ・AI・守り, 1) | ホーム |\n' +
+          '| **バックオフィス** (1) | 税理士 |\n' +
+          row('開発・製造・現場', 1, ['GitHub']) +
+          row('経営・ガバナンス', 1, ['KPI']) +
+          FRONT_MIDDLE_MD,
         1, // コネクター / 自動化 の 1 件が宙に浮く
       ],
       ['services.ts が読めなければ鳴る', null, OTHERS_MD, 1],
@@ -1914,7 +1954,7 @@ function main() {
 
   console.log(
     `Checked ${factCount} cross-doc facts against canonical source + ${gateCount} verify:all gate(s) against ci.yml` +
-      ` + README ${catCount} カテゴリの内訳を services.ts と照合` +
+      ` + README ${catCount} 区分の内訳を services.ts × businessArea.ts と照合` +
       ` + 出荷物検査 ${pubCount} 件が pages.yml でも公開前に走ることを照合` +
       ` + e2e.yml のビルド順 ${orderCount} 件 (dist/ を掃除する側が後ろに来ていないこと)`,
       `+ 変異スコアの鮮度 ${freshCount} 件 (doc の点数が stryker の break 閾値を下回っていないこと)` +

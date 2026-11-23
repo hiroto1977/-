@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createRequire } from 'node:module';
+import { AREA_LABEL, AREA_ORDER, areaOf } from '../../renderer/data/businessArea';
+import { readOriginalSource } from './originalSource';
 
 const req = createRequire(import.meta.url);
 const { parseServices, parseServicesFromText, countEntries } = req('../../../scripts/build-landing.cjs') as {
@@ -171,5 +173,56 @@ describe('ランディングのカードは「日本語 (英語)」で名前を�
       wrap("  { category: 'tools', english: 'Alpha', page: P, description: 'd', icon: 'AA', label: 'あ', id: 'a' },"),
     ) as { english?: string }[];
     expect(a?.english).toBe('Alpha');
+  });
+});
+
+/**
+ * 業務の区分 (2026-11-23 · 「業務仕分けして適材適所に配置」)。
+ *
+ * ランディングの節はサイドバーと同じ業務の区分で、区分・見出し・並びは
+ * `src/renderer/data/businessArea.ts` が持つ (`.cjs` は `.ts` を読めないので原文から読む)。
+ * 書き写さないので、ここでは**原文から読んだ物が実物の表と一致する**ことを見る。
+ */
+describe('ランディングは業務の区分で並ぶ', () => {
+  const { buildHtml, selfCheck, parseBusinessAreasFromText } = req('../../../scripts/build-landing.cjs') as {
+    buildHtml: (services: unknown[], tests: number) => string;
+    selfCheck: (html: string, services: unknown[], entryCount: number) => void;
+    parseBusinessAreasFromText: (text: string) => {
+      order: string[];
+      label: Record<string, string>;
+      areaOf: Record<string, string>;
+    };
+  };
+  const parsed = parseBusinessAreasFromText(readOriginalSource('src/renderer/data/businessArea.ts'));
+
+  it('★ 原文から読んだ並び・見出し・置き場所が、実物の表と一致する', () => {
+    expect(parsed.order).toEqual([...AREA_ORDER]);
+    expect(parsed.label).toEqual({ ...AREA_LABEL });
+    for (const s of parseServices()) {
+      expect(parsed.areaOf[s.id], s.id).toBe(areaOf(s.id as never).area);
+    }
+  });
+
+  it('★ 組んだ HTML の節は区分の順で、各カードは自分の区分の節に入る', () => {
+    const html = buildHtml(parseServices(), 1);
+    const ids = [...html.matchAll(/<h2 id="cat-([a-z]+)">/g)].map((m) => m[1]);
+    expect(ids).toEqual(AREA_ORDER.filter((a) => parseServices().some((s) => areaOf(s.id as never).area === a)));
+    for (const s of parseServices()) {
+      const area = areaOf(s.id as never).area;
+      const start = html.indexOf(`<h2 id="cat-${area}">`);
+      const next = html.indexOf('<h2 id="cat-', start + 1);
+      const sectionHtml = html.slice(start, next === -1 ? undefined : next);
+      expect(sectionHtml, s.id).toContain(`href="./app.html#${s.id}"`);
+    }
+    expect(html).toContain(`>${AREA_LABEL.front} <span class="count">`);
+  });
+
+  it('対照: 区分の無い画面は selfCheck が名指しで落とす', () => {
+    const services = [...parseServices(), { id: 'zz-unplaced', label: 'Z', english: '', icon: 'Z', description: 'd', category: 'tools' }];
+    expect(() => selfCheck('', services, services.length)).toThrow(/区分が無い画面: zz-unplaced/);
+  });
+
+  it('対照: 表が読めない原文は 0 件にせず落ちる', () => {
+    expect(() => parseBusinessAreasFromText('// 空')).toThrow(/走査が壊れている/);
   });
 });
