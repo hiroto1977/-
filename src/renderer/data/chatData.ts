@@ -21,6 +21,14 @@ import { jpy } from '../../shared/formatters';
 import { isCalendarDate } from '../../shared/isoDate';
 import { readableSalesRows, type SalesEntry } from './sales';
 import {
+  balanceSheetAsOfKey,
+  currentBalanceSheet,
+  normalizeBalanceSheet,
+  unreadableBalanceSheetField,
+  type BalanceSheetRecordLike,
+} from './balanceSheet';
+import type { Member } from './members';
+import {
   computeKpiMetrics,
   readableKpiRows,
   summarizeFundamentals,
@@ -28,7 +36,7 @@ import {
 } from './kpiActuals';
 
 /** 聞かれている物。 */
-export type DataTopic = 'sales' | 'profit';
+export type DataTopic = 'sales' | 'profit' | 'cash' | 'members';
 
 /** 聞かれている期間。`latest` は「記録の在る最後の月」(期間を言わなかったとき)。 */
 export type DataSpan = 'this-month' | 'last-month' | 'this-year' | 'all' | 'latest';
@@ -42,6 +50,9 @@ export interface DataQuestion {
 export interface DataSnapshot {
   readonly sales: readonly SalesEntry[] | null;
   readonly kpi: readonly KpiActual[] | null;
+  /** 貸借対照表の控え (行ごと —— どれが「現在」かは基準日と入力した時刻で決まる)。 */
+  readonly balanceSheets: readonly BalanceSheetRecordLike[] | null;
+  readonly members: readonly Member[] | null;
   /** 今日 (`YYYY-MM-DD`・利用者の暦)。今月・先月はここから決める。 */
   readonly today: string;
 }
@@ -59,9 +70,13 @@ export interface DataAnswer {
 const SALES_WORDS: readonly string[] = ['売上', '売り上げ', 'うりあげ', 'ウリアゲ', '注文', '受注'];
 /** 利益の語。 */
 const PROFIT_WORDS: readonly string[] = ['利益', 'もうけ', '儲け', 'モウケ', '黒字', '赤字'];
+/** 手元のお金の語 (貸借対照表の現預金)。「資金調達」は別の画面なので語に入れない。 */
+const CASH_WORDS: readonly string[] = ['現預金', '現金', '預金', '手元資金', '手持ち'];
+/** 人数の語 (チーム管理のメンバー)。 */
+const MEMBER_WORDS: readonly string[] = ['メンバー', 'めんばー', '従業員', '社員', 'スタッフ', '何人', 'なんにん', '人数'];
 /** 問いの印。これが無く、期間の語も無ければ問いとは読まない (「売上を開いて」は画面の案内のまま)。 */
 const QUESTION_WORDS: readonly string[] = [
-  'いくら', 'どれくらい', 'どのくらい', 'どれぐらい', '何件', 'なんけん', '何円',
+  'いくら', 'どれくらい', 'どのくらい', 'どれぐらい', '何件', 'なんけん', '何円', '何人', 'なんにん',
   '教えて', 'おしえて', '知りたい', 'しりたい', '?', '？', 'ですか', 'でしたか', 'どう',
 ];
 /** 期間の語 (先に当たった物を採る —— 「先月」は「月」を含むので順序が要る)。 */
@@ -84,7 +99,15 @@ const hasAny = (text: string, words: readonly string[]): boolean => words.some((
 export function parseDataQuestion(raw: string): DataQuestion | null {
   const text = raw;
   if (hasAny(text, ['開いて', 'ひらいて', '開け', '移動'])) return null;
-  const topic: DataTopic | null = hasAny(text, PROFIT_WORDS) ? 'profit' : hasAny(text, SALES_WORDS) ? 'sales' : null;
+  const topic: DataTopic | null = hasAny(text, PROFIT_WORDS)
+    ? 'profit'
+    : hasAny(text, SALES_WORDS)
+      ? 'sales'
+      : hasAny(text, CASH_WORDS)
+        ? 'cash'
+        : hasAny(text, MEMBER_WORDS)
+          ? 'members'
+          : null;
   if (topic === null) return null;
   const found = SPAN_WORDS.find(([, words]) => hasAny(text, words));
   const span: DataSpan = found === undefined ? 'latest' : found[0];
@@ -145,7 +168,16 @@ export function answerDataQuestion(q: DataQuestion, snap: DataSnapshot): DataAns
   const today = isCalendarDate(snap.today) ? snap.today : null;
   // 今日が読めないときの期間は「最後の月」か「合計」だけ —— どちらも今日を読まないので、生の値を渡してよい。
   const span: DataSpan = today === null && q.span !== 'all' ? 'latest' : q.span;
-  return q.topic === 'sales' ? answerSales(span, snap.sales, snap.today) : answerProfit(span, snap.kpi, snap.today);
+  switch (q.topic) {
+    case 'sales':
+      return answerSales(span, snap.sales, snap.today);
+    case 'profit':
+      return answerProfit(span, snap.kpi, snap.today);
+    case 'cash':
+      return answerCash(snap.balanceSheets);
+    case 'members':
+      return answerMembers(snap.members);
+  }
 }
 
 const UNREADABLE = (what: string): string =>
@@ -207,4 +239,36 @@ function answerProfit(span: DataSpan, rows: readonly KpiActual[] | null, today: 
     ...base,
     text: `📈 ${filter.label}の営業利益は ${jpy(op)} で、${verdict}（売上 ${jpy(f.revenue)}）。${dropped}`,
   };
+}
+
+/**
+ * 手元の現預金。**期間は聞かれても使わない** —— 貸借対照表はある日の残高なので、
+ * 「現在」として使う控え (基準日の新しい物) の値を、その基準日つきで言う。
+ */
+function answerCash(rows: DataSnapshot['balanceSheets']): DataAnswer {
+  const base = { topic: 'cash' as const, screen: 'kpi' as ServiceId };
+  if (rows === null) return { ...base, text: UNREADABLE('貸借対照表') };
+  const current = currentBalanceSheet(rows);
+  if (current === null) {
+    return { ...base, text: '💴 貸借対照表がまだ 1 件もありません。「経営指標・損益分岐点」の画面で入力すると答えられます。' };
+  }
+  const bs = normalizeBalanceSheet(current.data);
+  const asOf = balanceSheetAsOfKey(current.data.asOf);
+  const when = asOf === '' ? '基準日の書かれていない控え' : `基準日 ${asOf} の控え`;
+  if (bs.cash === undefined) {
+    const why = unreadableBalanceSheetField('cash', bs.unreadableFields) ? '数として読めません' : 'まだ入力されていません';
+    return { ...base, text: `💴 ${when}では、現預金が${why}。「経営指標・損益分岐点」の画面の貸借対照表で入れると答えられます。` };
+  }
+  return { ...base, text: `💴 手元の現預金は ${jpy(bs.cash)} です（${when}）。` };
+}
+
+/** チームの人数と、そのうちのオーナーの数。 */
+function answerMembers(rows: readonly Member[] | null): DataAnswer {
+  const base = { topic: 'members' as const, screen: 'team' as ServiceId };
+  if (rows === null) return { ...base, text: UNREADABLE('チームのメンバー') };
+  if (rows.length === 0) {
+    return { ...base, text: '👥 チームのメンバーはまだ登録されていません。「チーム管理」の画面で招待すると答えられます。' };
+  }
+  const owners = rows.filter((m) => m.role === 'owner').length;
+  return { ...base, text: `👥 チームのメンバーは ${rows.length} 人です（うちオーナー ${owners} 人）。` };
 }
