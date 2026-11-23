@@ -605,6 +605,8 @@ describe('KIND 表と正規表現の static 変異体を測る (動的 import �
     ec: 'mS/cm', ph: 'pH', age: '歳',
     // 2026-11-18: 養蜂の群数と、養殖の尾数
     hives: '群', fishCount: '尾',
+    // 2026-11-23: 防災 ZEB 拠点の収支
+    kw: 'kW', kwh: 'kWh', kwhPerKwDay: 'kWh/kW/日', yenPerKwh: '円/kWh',
   } as const satisfies Record<NumSpec['kind'], string>;
   /** 桁を尋ねる既定。`null` は**種類としては尋ねない** —— 上限は欄の spec が持つ (暦の月・年・団体・戸)。 */
   const SANE = {
@@ -616,6 +618,7 @@ describe('KIND 表と正規表現の static 変異体を測る (動的 import �
     // 養液の EC / pH は上限を欄の spec (測定の妥当範囲) が持つので、種類としては尋ねない
     ec: null, ph: null, age: 120,
     hives: 10000, fishCount: 10000000,
+    kw: 100000, kwh: 1000000, kwhPerKwDay: 10, yenPerKwh: 1000,
   } as const satisfies Record<NumSpec['kind'], number | null>;
   type Kind = keyof typeof UNITS;
   const KINDS = Object.keys(UNITS) as Kind[];

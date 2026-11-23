@@ -20720,7 +20720,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 定義が在る構文上の量である。**訂正ではなく、別の量への置き換え。**
 
 <!-- zero-fold-census:begin — scripts/zero-fold-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/zero-fold-census.cjs。npm run lint:zero-fold は check だけ) -->
-合計 **116 ファイル / 294 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
+合計 **117 ファイル / 297 件**（構文上の数。正しい 0 と本物の欠陥の両方を含む）
 
 | ファイル | 構文上の 0 倒し |
 | --- | ---: |
@@ -20764,6 +20764,7 @@ aov: totalOrders > 0 ? totalAmount / totalOrders : 0,
 | `src/shared/payroll.ts` | 3 |
 | `src/shared/securityRange.ts` | 3 |
 | `src/shared/taxConsumptionBusiness.ts` | 3 |
+| `src/shared/zebHubFinance.ts` | 3 |
 | `src/main/clients/storage.ts` | 2 |
 | `src/renderer/App.tsx` | 2 |
 | `src/renderer/components/AxonometricCharts.tsx` | 2 |
@@ -33405,7 +33406,7 @@ src/shared/ のモジュール                                        138
 「読んだ結果」か `未読 (…)` のどちらかで、読んでいない物に「対称だろう」とは書かない。
 
 <!-- shared-judgement-census:begin — scripts/shared-judgement-census.cjs が生成する。手で編集しない (再生成は引数なしの node scripts/shared-judgement-census.cjs。npm run lint:shared-judgement は check だけ) -->
-shared **206** モジュール / 両ビルドが import **115** / うち否定で答えられる **58**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
+shared **208** モジュール / 両ビルドが import **115** / うち否定で答えられる **58**（うち未読 **0**）。これは分母であって欠陥の一覧ではない。
 
 | shared モジュール | main | renderer | 判定 |
 | --- | ---: | ---: | --- |
