@@ -38,10 +38,31 @@ const OG_IMAGE = SITE_URL + 'og.png';
 const LANDING_BG = '#0f1117';
 const DESC = 'を 1 つのサイドバー UI に統合した業務支援ダッシュボード。Electron デスクトップ版とブラウザ単体 HTML 版、どちらでも動きます。';
 
-// サイドバー (services.ts の CATEGORY_LABEL) と同じ並び。services.ts に新カテゴリを
-// 足したらここにも追加する — 忘れると selfCheck の unknown-category 検査が落とす。
-const CATEGORY_LABEL = { featured: 'おすすめ', professionals: '士業連携', tools: '分析・ツール', integrations: '外部サービス連携' };
-const CATEGORY_ORDER = ['featured', 'professionals', 'tools', 'integrations'];
+/*
+ * 並びはサイドバーと同じ**業務の区分** (2026-11-23)。区分・見出し・並び順は
+ * `src/renderer/data/businessArea.ts` が 1 か所で持つので、ここには書き写さず原文から読む
+ * (`.cjs` は `.ts` を require できない)。読めない・区分の無い画面が在れば selfCheck が落とす。
+ */
+const BUSINESS_AREA_TS = path.join(ROOT, 'src/renderer/data/businessArea.ts');
+
+/** businessArea.ts の原文から {order, label, areaOf} を読む。 */
+function parseBusinessAreasFromText(text) {
+  const orderM = text.match(/export const AREA_ORDER[^=]*=\s*\[([^\]]*)\]/);
+  const order = orderM ? [...orderM[1].matchAll(/'([a-z]+)'/g)].map((m) => m[1]) : [];
+  const labelBlock = text.match(/export const AREA_LABEL[^=]*=\s*\{([^}]*)\}/);
+  const label = {};
+  if (labelBlock) for (const m of labelBlock[1].matchAll(/^\s*([a-z]+):\s*'([^']+)'/gm)) label[m[1]] = m[2];
+  const areaOf = {};
+  for (const m of text.matchAll(/^\s*'?([a-z0-9-]+)'?:\s*(?:at\('([a-z]+)'|(base)\()/gm)) areaOf[m[1]] = m[2] ?? 'platform';
+  if (order.length === 0 || Object.keys(label).length === 0 || Object.keys(areaOf).length === 0) {
+    throw new Error('businessArea.ts から AREA_ORDER / AREA_LABEL / SERVICE_AREA を読めない — 走査が壊れている');
+  }
+  return { order, label, areaOf };
+}
+
+function parseBusinessAreas() {
+  return parseBusinessAreasFromText(fs.readFileSync(BUSINESS_AREA_TS, 'utf8'));
+}
 
 /**
  * services.ts の SERVICES 配列から {id,label,icon,description,category} を抽出。
@@ -228,8 +249,8 @@ function lineNumberAt(source, index) {
 /** SERVICES 配列の category: 出現数 (parse 漏れ検知の基準)。 */
 function countEntries() {
   const text = fs.readFileSync(SERVICES_TS, 'utf8');
-  const cats = CATEGORY_ORDER.join('|');
-  return (text.match(new RegExp(`^\\s*category:\\s*'(?:${cats})'`, 'gm')) || []).length;
+  // 区分の名前は数えない (並びは businessArea.ts が持つ) —— 行頭の `category: '…'` の項を数える。
+  return (text.match(/^\s*category:\s*'[a-z]+'/gm) || []).length;
 }
 
 /** src 配下の *.test.ts の静的 it( 件数。 */
@@ -365,8 +386,9 @@ function buildOgSvg(count) {
 
 function buildHtml(services, tests) {
   const mutated = countMutatedModules();
-  const byCat = (c) => services.filter((s) => s.category === c);
-  const counts = Object.fromEntries(CATEGORY_ORDER.map((c) => [c, byCat(c).length]));
+  const areas = parseBusinessAreas();
+  const byCat = (c) => services.filter((s) => areas.areaOf[s.id] === c);
+  const counts = Object.fromEntries(areas.order.map((c) => [c, byCat(c).length]));
   const total = services.length;
   const description = `${total} のサービス${DESC}`;
   // `<` escaped so a future value containing `</script>` can't terminate the
@@ -382,7 +404,7 @@ function buildHtml(services, tests) {
           <div class="card-body"><h3>${esc(nameWithEnglish(s.label, s.english))}</h3><p>${esc(s.description)}</p></div></a>`;
   const section = (c) => `
       <section class="cat" aria-labelledby="cat-${c}">
-        <h2 id="cat-${c}">${esc(CATEGORY_LABEL[c])} <span class="count">${counts[c]}</span></h2>
+        <h2 id="cat-${c}">${esc(areas.label[c] ?? c)} <span class="count">${counts[c]}</span></h2>
         <div class="grid">${byCat(c).map(card).join('')}</div></section>`;
   const year = new Date().getFullYear();
   return `<!doctype html>
@@ -473,7 +495,7 @@ function buildHtml(services, tests) {
     <div class="metric"><div class="num">2</div><div class="lbl">実行形態</div></div>
   </div></div>
   <main class="wrap" id="main">
-${CATEGORY_ORDER.map(section).join('')}
+${areas.order.filter((c) => counts[c] > 0).map(section).join('')}
   </main>
   <div class="features"><div class="wrap"><h2>仕組み</h2><div class="fgrid">
     <div class="feat"><h3>🔐 Credential Vault</h3><p>API トークンを AES-GCM-256 + PBKDF2 (60 万回) で暗号化保管。鍵はメモリのみ・非抽出。</p></div>
@@ -494,9 +516,10 @@ ${CATEGORY_ORDER.map(section).join('')}
 }
 
 function selfCheck(html, services, entryCount) {
-  const unknown = [...new Set(services.map((s) => s.category))].filter((c) => !CATEGORY_ORDER.includes(c));
-  if (unknown.length > 0) {
-    throw new Error(`unknown categor(y/ies) in services.ts: ${unknown.join(', ')} — CATEGORY_LABEL / CATEGORY_ORDER に追加してください`);
+  const areas = parseBusinessAreas();
+  const unplaced = services.filter((s) => !areas.order.includes(areas.areaOf[s.id])).map((s) => s.id);
+  if (unplaced.length > 0) {
+    throw new Error(`業務の区分が無い画面: ${unplaced.join(', ')} — businessArea.ts の SERVICE_AREA に置き場所を書いてください`);
   }
   if (services.length !== entryCount) {
     // 2 つの数え方は**別の走査**である (パス 162 でもそこは崩していない):
@@ -546,6 +569,6 @@ function main() {
 // `buildHtml` / `selfCheck` / `buildChoiceNote` も出す (パス 480) —— 公開した版が入口から
 // 辿れるかは**組んだ HTML を見ないと言えない**。ソースを grep すると「href の綴りが在る」
 // しか分からず、注記の中の言及でも満たされる (法則 mention-vs-declaration)。
-module.exports = { parseServices, parseServicesFromText, countEntries, buildHtml, selfCheck, buildChoiceNote };
+module.exports = { parseServices, parseServicesFromText, parseBusinessAreasFromText, countEntries, buildHtml, selfCheck, buildChoiceNote };
 
 if (require.main === module) main();
