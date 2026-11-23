@@ -25,6 +25,10 @@ import { EMOTION_MARKERS, replyTo, type ChatReply } from '../data/chatbot';
 import { coachTurn, isSafeForCoach, personaOf, type CoachState } from '../data/goalCoach';
 import { clearCoachState, loadCoachState, saveCoachState } from '../data/coachStore';
 import { localIsoDate } from '../../shared/localDate';
+import { answerDataQuestion, parseDataQuestion } from '../data/chatData';
+import { readCollectionNow } from '../data/readCollectionNow';
+import { SALES_COLLECTION, type SalesEntry } from '../data/sales';
+import { KPI_ACTUALS_COLLECTION, type KpiActual } from '../data/kpiActuals';
 import { buildOrgIndex, type RawOrg, type RawTeam } from '../data/chatOrg';
 import { CAPABILITIES } from '../data/voiceCapabilities';
 import { isExecutableIntent, type VoiceIntent } from '../data/voiceCommand';
@@ -91,6 +95,9 @@ const isFeatureRequest = (v: unknown): v is FeatureRequest => isRecord(v) && typ
  * `routedThrough` は「🪪 …」の札として素で描くので、物が 1 つ入るとこの部品が投げる。
  * この部品は画面の境界の外に居るので、直す前はそれで**アプリ全体が白くなった**。
  */
+/** 記録から答えた返事の札 (外へ送っていないことを名乗る)。 */
+export const DATA_ANSWER_LABEL = 'この端末の記録から計算 (外へは送っていません)';
+
 const HISTORY_READERS: ChatFieldReaders<ChatMessage> = { routedThrough: storedLabel };
 
 function loadHistory(): ChatMessage[] {
@@ -529,6 +536,25 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
     if (reply.kind === 'request') {
       const stored = recordRequest(text);
       if (!stored.ok) storeNote = `\n\n⚠ ただし、この端末に記録できませんでした。${stored.message}`;
+    }
+
+    // 自分の記録についての問い (「今月の売上は？」「利益はいくら？」) は、端末の記録から数字で答える
+    // (`data/chatData.ts`)。画面の案内・画面の説明・解釈不能に読まれた発話だけを取る —— 危機の言葉・
+    // 計算・操作・要望は上の経路が先に答える。**外へは送らない** (保存してある数字の足し算)。
+    const dataQuestion =
+      reply.kind === 'navigate' || reply.kind === 'service-info' || reply.kind === 'fallback'
+        ? parseDataQuestion(text)
+        : null;
+    if (dataQuestion !== null) {
+      setBusy(true);
+      const [sales, kpi] = await Promise.all([
+        readCollectionNow<SalesEntry>(SALES_COLLECTION),
+        readCollectionNow<KpiActual>(KPI_ACTUALS_COLLECTION),
+      ]);
+      setBusy(false);
+      const answer = answerDataQuestion(dataQuestion, { sales, kpi, today: localIsoDate() });
+      append({ role: 'bot', text: answer.text, routedThrough: DATA_ANSWER_LABEL });
+      return;
     }
 
     // 解釈不能のときだけ、Ollama 接続環境なら自由質問として LLM へ。

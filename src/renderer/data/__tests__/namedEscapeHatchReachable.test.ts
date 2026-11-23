@@ -233,6 +233,16 @@ const LEDGER: readonly Row[] = [
       + '不備から生まれる物ではなく、書き出しの結末 (`libraryCopy === "saved"`) から生まれるため。',
   },
   {
+    fn: 'answerDataQuestion',
+    file: 'src/renderer/data/chatData.ts',
+    kinds: ['other-screen'],
+    why:
+      '**記録の不備ではなく未入力についての文** (2026-11-22) —— コンシェルジュが「今月の売上は？」「利益は？」に答えるとき、'
+      + '記録がまだ無ければ記録を足す画面 (「売上集計」「経営指標・損益分岐点」) を名前で指す。読めない行を数えなかったときも'
+      + '件数を言うだけで、点検パネルや一覧の × は名指ししない。標本を持たないのは、保管した行が壊れているから出る文ではなく、'
+      + '記録がまだ無いから出る文のため。',
+  },
+  {
     fn: 'buildManagementHighlights',
     file: 'src/renderer/data/managementHighlights.ts',
     kinds: ['other-screen'],

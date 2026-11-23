@@ -481,6 +481,7 @@ type LedgerRow =
  */
 const WRITER_LEDGER: Readonly<Record<string, LedgerRow>> = {
   parseSalesEntry: { kind: 'numbers', why: '売上金額・注文件数' },
+  parseDataQuestion: { kind: 'no-numbers', why: 'コンシェルジュの発話を「何を・どの期間」の問いに読むだけで、数は読まない (金額は保存した記録から足す・2026-11-22)' },
   salesFromCsv: { kind: 'numbers', why: 'CSV の金額・注文件数を parseSalesEntry へ渡す (途中で読み直さないことを標本で見る)' },
   parseKpiActual: { kind: 'numbers', why: 'KPI 実績の金額 6 欄' },
   kpiActualsFromCsv: { kind: 'numbers', why: 'CSV の金額 6 欄を parseKpiActual へ渡す' },
