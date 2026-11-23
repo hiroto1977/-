@@ -121,13 +121,14 @@ describe('マイクを開く入口すべてに断りが在る (走査)', () => {
     expect(DRAWS_NOTICE.test('  <VoiceEgressNoticeXX subject={s} />'), '別の部品を断りと数えている').toBe(false);
   });
 
-  it('★ 走査が実物に当たっている (入口 2 つを見つけている)', () => {
+  it('★ 走査が実物に当たっている (入口 3 つを見つけている)', () => {
     const entries = rendererFiles()
       .filter((f) => opensMic(f, readOriginalSource(f)))
       .map((f) => path.relative(RENDERER, f));
-    // **標本が空なら何も検査していない。** 実測 2 件。
-    expect(entries.length, 'マイクを開く入口が見つからない (走査が壊れている)').toBeGreaterThanOrEqual(2);
+    // **標本が空なら何も検査していない。** 実測 3 件 (2026-11-23 にコンシェルジュの 🎤 が足された)。
+    expect(entries.length, 'マイクを開く入口が見つからない (走査が壊れている)').toBeGreaterThanOrEqual(3);
     expect(entries).toContain(path.join('components', 'VoiceCommandBar.tsx'));
+    expect(entries).toContain(path.join('components', 'ChatbotWidget.tsx'));
     expect(entries).toContain(path.join('pages', 'VillagePage.tsx'));
     // アダプタ自身は入口ではない (定義と使用を区別している)。
     expect(entries, 'アダプタを入口として数えている').not.toContain(
@@ -135,7 +136,7 @@ describe('マイクを開く入口すべてに断りが在る (走査)', () => {
     );
   });
 
-  it('★ マイクを開く所はすべて断りを描く (3 つ目が黙って増えない)', () => {
+  it('★ マイクを開く所はすべて断りを描く (4 つ目が黙って増えない)', () => {
     const missing: string[] = [];
     for (const f of rendererFiles()) {
       const src = readOriginalSource(f);
