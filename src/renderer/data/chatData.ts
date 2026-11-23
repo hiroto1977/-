@@ -51,7 +51,6 @@ export interface DataAnswer {
   readonly text: string;
   /** 詳しく見る画面。**勝手には開かない** —— 開くのは利用者がそう言ったとき。 */
   readonly screen: ServiceId;
-  readonly suggestions: readonly string[];
 }
 
 // --- 発話を問いに読む --------------------------------------------------------
@@ -83,8 +82,7 @@ const hasAny = (text: string, words: readonly string[]): boolean => words.some((
  * 「開いて」「ひらいて」が在れば問いとは読まない —— 開けと言われたら開く。
  */
 export function parseDataQuestion(raw: string): DataQuestion | null {
-  const text = raw.trim();
-  if (text === '') return null;
+  const text = raw;
   if (hasAny(text, ['開いて', 'ひらいて', '開け', '移動'])) return null;
   const topic: DataTopic | null = hasAny(text, PROFIT_WORDS) ? 'profit' : hasAny(text, SALES_WORDS) ? 'sales' : null;
   if (topic === null) return null;
@@ -111,8 +109,17 @@ function monthOf(today: string, back: number): string {
   return `${yy}-${String(mm).padStart(2, '0')}`;
 }
 
+/**
+ * 記録の在る最後の月 (`YYYY-MM` の綴りの最大)。呼び手は読める行が 1 件以上あるときだけ呼ぶ。
+ * 同じ月が 2 度あっても答えは変わらないので、比べ方の `>` と `>=` は等価である。
+ */
+function latestMonth(months: readonly string[]): string {
+  // Stryker disable next-line EqualityOperator: 同じ綴りの月どうしは、どちらを採っても同じ答え (等価変異)
+  return months.reduce((a, b) => (b > a ? b : a));
+}
+
 /** 期間に入るかを `YYYY-MM` で決める述語と、その期間の名前。 */
-function spanFilter(span: DataSpan, today: string, latest: string | null): { readonly inSpan: (month: string) => boolean; readonly label: string } | null {
+function spanFilter(span: DataSpan, today: string, latest: string): { readonly inSpan: (month: string) => boolean; readonly label: string } {
   switch (span) {
     case 'this-month': {
       const m = monthOf(today, 0);
@@ -129,16 +136,16 @@ function spanFilter(span: DataSpan, today: string, latest: string | null): { rea
     case 'all':
       return { inSpan: () => true, label: 'これまでの合計' };
     case 'latest':
-      return latest === null ? null : { inSpan: (x) => x === latest, label: `記録の在る最後の月 (${monthLabel(latest)})` };
+      return { inSpan: (x) => x === latest, label: `記録の在る最後の月 (${monthLabel(latest)})` };
   }
 }
 
 /** 問いに、端末の記録から答える。今日が暦に無い日付なら、期間の付かない形 (最後の月) で答える。 */
 export function answerDataQuestion(q: DataQuestion, snap: DataSnapshot): DataAnswer {
   const today = isCalendarDate(snap.today) ? snap.today : null;
+  // 今日が読めないときの期間は「最後の月」か「合計」だけ —— どちらも今日を読まないので、生の値を渡してよい。
   const span: DataSpan = today === null && q.span !== 'all' ? 'latest' : q.span;
-  const day = today ?? '1970-01-01';
-  return q.topic === 'sales' ? answerSales(span, snap.sales, day) : answerProfit(span, snap.kpi, day);
+  return q.topic === 'sales' ? answerSales(span, snap.sales, snap.today) : answerProfit(span, snap.kpi, snap.today);
 }
 
 const UNREADABLE = (what: string): string =>
@@ -146,26 +153,23 @@ const UNREADABLE = (what: string): string =>
 
 function answerSales(span: DataSpan, rows: readonly SalesEntry[] | null, today: string): DataAnswer {
   const base = { topic: 'sales' as const, screen: 'sales' as ServiceId };
-  if (rows === null) return { ...base, text: UNREADABLE('販売記録'), suggestions: ['売上集計を開いて'] };
+  if (rows === null) return { ...base, text: UNREADABLE('販売記録') };
   const readable = readableSalesRows(rows);
   if (readable.rows.length === 0) {
     const why = rows.length === 0
       ? '販売記録がまだ 1 件もありません。'
       : `販売記録は ${rows.length} 件ありますが、日付か金額が読めないため集計できません。`;
-    return { ...base, text: `📊 ${why}「売上集計」の画面で記録を追加すると答えられます。`, suggestions: ['売上集計を開いて'] };
+    return { ...base, text: `📊 ${why}「売上集計」の画面で記録を追加すると答えられます。` };
   }
   const months = readable.rows.map((e) => e.date.slice(0, 7));
-  const latest = months.reduce((a, b) => (b > a ? b : a));
-  const f = spanFilter(span, today, latest);
-  // `latest` は読める行が 1 件以上あるので必ず決まる。
-  const filter = f ?? { inSpan: () => true, label: 'これまでの合計' };
+  const latest = latestMonth(months);
+  const filter = spanFilter(span, today, latest);
   const inSpan = readable.rows.filter((e) => filter.inSpan(e.date.slice(0, 7)));
   const dropped = readable.dropped > 0 ? `\n（日付か金額が読めない ${readable.dropped} 件は数えていません）` : '';
   if (inSpan.length === 0) {
     return {
       ...base,
       text: `📊 ${filter.label}の販売記録はありません。最後の記録は ${monthLabel(latest)} です。${dropped}`,
-      suggestions: ['これまでの売上の合計は？', '売上集計を開いて'],
     };
   }
   const amount = inSpan.reduce((s, e) => s + e.amount, 0);
@@ -173,37 +177,34 @@ function answerSales(span: DataSpan, rows: readonly SalesEntry[] | null, today: 
   return {
     ...base,
     text: `📊 ${filter.label}の売上は ${jpy(amount)}（記録 ${inSpan.length} 件・注文 ${orders} 件）です。${dropped}`,
-    suggestions: span === 'last-month' ? ['今月の売上は？', '売上集計を開いて'] : ['先月の売上は？', '売上集計を開いて'],
   };
 }
 
 function answerProfit(span: DataSpan, rows: readonly KpiActual[] | null, today: string): DataAnswer {
   const base = { topic: 'profit' as const, screen: 'kpi' as ServiceId };
-  if (rows === null) return { ...base, text: UNREADABLE('実績 (KPI) の記録'), suggestions: ['経営指標・損益分岐点を開いて'] };
+  if (rows === null) return { ...base, text: UNREADABLE('実績 (KPI) の記録') };
   const readable = readableKpiRows(rows);
   if (readable.rows.length === 0) {
     const why = rows.length === 0
       ? '実績 (売上・原価・経費) の記録がまだ 1 件もありません。'
       : `実績の記録は ${rows.length} 件ありますが、期か金額が読めないため集計できません。`;
-    return { ...base, text: `📈 ${why}「経営指標・損益分岐点」の画面で月ごとの実績を入れると答えられます。`, suggestions: ['経営指標・損益分岐点を開いて'] };
+    return { ...base, text: `📈 ${why}「経営指標・損益分岐点」の画面で月ごとの実績を入れると答えられます。` };
   }
-  const latest = readable.rows.map((a) => a.period).reduce((a, b) => (b > a ? b : a));
-  const filter = spanFilter(span, today, latest) ?? { inSpan: () => true, label: 'これまでの合計' };
+  const latest = latestMonth(readable.rows.map((a) => a.period));
+  const filter = spanFilter(span, today, latest);
   const inSpan = readable.rows.filter((a) => filter.inSpan(a.period));
   const dropped = readable.dropped > 0 ? `\n（期か金額が読めない ${readable.dropped} 件は数えていません）` : '';
   if (inSpan.length === 0) {
     return {
       ...base,
       text: `📈 ${filter.label}の実績の記録はありません。最後の記録は ${monthLabel(latest)} です。${dropped}`,
-      suggestions: ['これまでの利益は？', '経営指標・損益分岐点を開いて'],
     };
   }
   const f = summarizeFundamentals(inSpan);
   const op = computeKpiMetrics(f).operatingProfit;
-  const verdict = op < 0 ? '赤字です' : '黒字です';
+  const verdict = op < 0 ? '赤字です' : op > 0 ? '黒字です' : '収支はちょうど 0 円です';
   return {
     ...base,
     text: `📈 ${filter.label}の営業利益は ${jpy(op)} で、${verdict}（売上 ${jpy(f.revenue)}）。${dropped}`,
-    suggestions: ['今月の売上は？', '経営指標・損益分岐点を開いて'],
   };
 }

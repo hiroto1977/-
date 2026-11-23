@@ -119,3 +119,71 @@ describe('answerDataQuestion — 利益', () => {
 it('monthLabel', () => {
   expect(monthLabel('2026-03')).toBe('2026年3月');
 });
+
+describe('語の表 —— 1 語ずつ効いている (変異検査が教えた標本)', () => {
+  it.each([
+    ['今月の売上は？', 'sales'], ['今月の売り上げは？', 'sales'], ['今月のうりあげは？', 'sales'], ['今月のウリアゲは？', 'sales'],
+    ['今月の注文は？', 'sales'], ['今月の受注は？', 'sales'],
+    ['今月の利益は？', 'profit'], ['今月のもうけは？', 'profit'], ['今月の儲けは？', 'profit'], ['今月のモウケは？', 'profit'],
+    ['今月は黒字？', 'profit'], ['今月は赤字？', 'profit'],
+  ] as const)('話題「%s」→ %s', (text, topic) => {
+    expect(parseDataQuestion(text)?.topic).toBe(topic);
+  });
+
+  it.each([
+    ['売上いくら', 'latest'], ['売上どれくらい', 'latest'], ['売上どのくらい', 'latest'], ['売上どれぐらい', 'latest'],
+    ['注文何件', 'latest'], ['注文なんけん', 'latest'], ['売上何円', 'latest'], ['売上教えて', 'latest'], ['売上おしえて', 'latest'],
+    ['売上知りたい', 'latest'], ['売上しりたい', 'latest'], ['売上?', 'latest'], ['売上？', 'latest'], ['売上ですか', 'latest'],
+    ['売上でしたか', 'latest'], ['売上どう', 'latest'],
+    ['先月売上', 'last-month'], ['せんげつ売上', 'last-month'], ['前月売上', 'last-month'],
+    ['今月売上', 'this-month'], ['こんげつ売上', 'this-month'],
+    ['今年売上', 'this-year'], ['ことし売上', 'this-year'], ['本年売上', 'this-year'], ['年間売上', 'this-year'],
+    ['累計売上', 'all'], ['合計売上', 'all'], ['全部売上', 'all'], ['ぜんぶ売上', 'all'], ['これまで売上', 'all'], ['全期間売上', 'all'],
+  ] as const)('印「%s」→ %s', (text, span) => {
+    expect(parseDataQuestion(text)?.span).toBe(span);
+  });
+
+  it.each(['今月の売上を開いて', '今月の売上をひらいて', '今月の売上画面を開け', '今月の売上へ移動'])(
+    '「%s」は開けと言っているので問いではない',
+    (text) => {
+      expect(parseDataQuestion(text)).toBeNull();
+    },
+  );
+});
+
+describe('答えの細部 (変異検査が教えた標本)', () => {
+  it('1 桁の月も今月として数える (2026-03)', () => {
+    const a = answerDataQuestion({ topic: 'sales', span: 'this-month' }, { sales: [sale('2026-03-01', 10)], kpi: [], today: '2026-03-05' });
+    expect(a.text).toBe('📊 今月 (2026年3月)の売上は ¥10（記録 1 件・注文 1 件）です。');
+  });
+
+  it('今年の名前', () => {
+    const a = answerDataQuestion({ topic: 'sales', span: 'this-year' }, { sales: [sale('2026-05-01', 10)], kpi: [], today: TODAY });
+    expect(a.text).toBe('📊 今年 (2026年)の売上は ¥10（記録 1 件・注文 1 件）です。');
+  });
+
+  it('★ 最後の月は並び順に依らず、綴りの最大を採る', () => {
+    const s = answerDataQuestion({ topic: 'sales', span: 'latest' }, {
+      sales: [sale('2026-09-01', 1), sale('2026-11-01', 2), sale('2026-10-01', 4)], kpi: [], today: TODAY,
+    });
+    expect(s.text).toContain('記録の在る最後の月 (2026年11月)の売上は ¥2');
+    const p = answerDataQuestion({ topic: 'profit', span: 'latest' }, {
+      sales: [], kpi: [kpi('2026-09', 1, 0, 0), kpi('2026-11', 2, 0, 0), kpi('2026-10', 4, 0, 0)], today: TODAY,
+    });
+    expect(p.text).toContain('記録の在る最後の月 (2026年11月)の営業利益は ¥2');
+  });
+
+  it('読めなかったときの文 (何を読めなかったかを名指しする)', () => {
+    expect(answerDataQuestion({ topic: 'sales', span: 'all' }, { sales: null, kpi: [], today: TODAY }).text).toBe(
+      '⚠ この端末に保存した販売記録を読めませんでした。記録が 0 件という意味ではありません。画面を開き直してから、もう一度聞いてください。',
+    );
+    expect(answerDataQuestion({ topic: 'profit', span: 'all' }, { sales: [], kpi: null, today: TODAY }).text).toBe(
+      '⚠ この端末に保存した実績 (KPI) の記録を読めませんでした。記録が 0 件という意味ではありません。画面を開き直してから、もう一度聞いてください。',
+    );
+  });
+
+  it('利益: 読めない行を数えず件数を言う・収支 0 は黒字とも赤字とも言わない', () => {
+    const a = answerDataQuestion({ topic: 'profit', span: 'all' }, { sales: [], kpi: [kpi('2026-10', 100, 40, 60), kpi('bad', 1, 0, 0)], today: TODAY });
+    expect(a.text).toBe('📈 これまでの合計の営業利益は ¥0 で、収支はちょうど 0 円です（売上 ¥100）。\n（期か金額が読めない 1 件は数えていません）');
+  });
+});
