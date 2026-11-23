@@ -13,6 +13,8 @@ import { createRoot, type Root } from 'react-dom/client';
 import { ChatbotWidget, DATA_ANSWER_LABEL } from '../ChatbotWidget';
 import { getRecordStore } from '../../data/store';
 import { SALES_COLLECTION } from '../../data/sales';
+import { BALANCE_SHEET_COLLECTION } from '../../data/balanceSheet';
+import { MEMBERS_COLLECTION } from '../../data/members';
 import { resetRecordStore } from '../../__tests__/recordStoreHarness';
 import { waitForElement, waitForText } from '../../__tests__/jsdomWait';
 import { localIsoDate } from '../../../shared/localDate';
@@ -88,6 +90,29 @@ describe('AI コンシェルジュ — 自分の記録についての問い', ()
     const el = await ask('利益はいくら？');
     await waitForText(() => el.textContent ?? '', 'まだ 1 件もありません');
     expect(el.textContent ?? '').toContain('「経営指標・損益分岐点」の画面');
+    expect(invoked).toEqual([]);
+  });
+
+  it('★ 現預金と人数も、保存した記録から答える (網へ出ない)', async () => {
+    await getRecordStore().insert(BALANCE_SHEET_COLLECTION, {
+      asOf: '2026-10-31', currentAssets: 5_000_000, cash: 3_210_000, fixedAssets: 0,
+      currentLiabilities: 0, fixedLiabilities: 0, netIncome: 0,
+    });
+    await getRecordStore().insert(MEMBERS_COLLECTION, { name: 'Aさん', email: 'a@example.com', role: 'owner' });
+    await getRecordStore().insert(MEMBERS_COLLECTION, { name: 'Bさん', email: 'b@example.com', role: 'member' });
+    const el = await ask('現預金はいくら？');
+    await waitForText(() => el.textContent ?? '', '¥3,210,000');
+    expect(el.textContent ?? '').toContain('基準日 2026-10-31 の控え');
+    // 同じ窓でもう 1 問 (打った文と同じ道)。
+    const input = el.querySelector('input')!;
+    const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!;
+    await act(async () => {
+      setter.call(input, 'メンバーは何人？');
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    const send = Array.from(el.querySelectorAll('button')).find((b) => b.textContent === '送信')!;
+    await act(async () => { send.dispatchEvent(new MouseEvent('click', { bubbles: true })); });
+    await waitForText(() => el.textContent ?? '', 'メンバーは 2 人です');
     expect(invoked).toEqual([]);
   });
 

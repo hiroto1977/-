@@ -26,7 +26,9 @@ import { coachTurn, isSafeForCoach, personaOf, type CoachState } from '../data/g
 import { clearCoachState, loadCoachState, saveCoachState } from '../data/coachStore';
 import { localIsoDate } from '../../shared/localDate';
 import { answerDataQuestion, parseDataQuestion } from '../data/chatData';
-import { readCollectionNow } from '../data/readCollectionNow';
+import { readCollectionNow, readRecordsNow } from '../data/readCollectionNow';
+import { BALANCE_SHEET_COLLECTION } from '../data/balanceSheet';
+import { MEMBERS_COLLECTION, type Member } from '../data/members';
 import { SALES_COLLECTION, type SalesEntry } from '../data/sales';
 import { KPI_ACTUALS_COLLECTION, type KpiActual } from '../data/kpiActuals';
 import { buildOrgIndex, type RawOrg, type RawTeam } from '../data/chatOrg';
@@ -567,12 +569,14 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
         : null;
     if (dataQuestion !== null) {
       setBusy(true);
-      const [sales, kpi] = await Promise.all([
+      const [sales, kpi, balanceSheets, members] = await Promise.all([
         readCollectionNow<SalesEntry>(SALES_COLLECTION),
         readCollectionNow<KpiActual>(KPI_ACTUALS_COLLECTION),
+        readRecordsNow<Record<string, unknown>>(BALANCE_SHEET_COLLECTION),
+        readCollectionNow<Member>(MEMBERS_COLLECTION),
       ]);
       setBusy(false);
-      const answer = answerDataQuestion(dataQuestion, { sales, kpi, today: localIsoDate() });
+      const answer = answerDataQuestion(dataQuestion, { sales, kpi, balanceSheets, members, today: localIsoDate() });
       append({ role: 'bot', text: answer.text, routedThrough: DATA_ANSWER_LABEL });
       return;
     }

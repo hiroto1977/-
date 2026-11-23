@@ -2,7 +2,8 @@
  * ポータルの一覧 (社内版の中の入口 · 2026-11-11)。
  *
  * 社内 / パートナー / カスタマーの 3 つを切り替え、**その対象者に出す画面だけ**を並べる。
- * - 社内: アプリのすべての画面 (分類ごと)。
+ * - 社内: アプリのすべての画面を**業務マップ**として並べる (2026-11-23) —— 6 つの業務区分と共通基盤
+ *   (`data/businessArea.ts`) ごとに、受け持つ業務・画面・人の確認が要る画面・外へ送る画面を 1 枚で見せる。
  * - パートナー / カスタマー: 台帳 `shared/portal.mamori` に名指しした画面だけ。ここで見えるのは、
  *   配る単一 HTML (`dist/portal-partner.html` / `dist/portal-customer.html`) に入る画面の下見である。
  *
@@ -20,11 +21,19 @@ import {
   type VettedPortalScreen,
 } from '../../shared/portal';
 import { isServiceId, type ServiceId } from '../../shared/serviceId';
-import { CATEGORY_LABEL, SERVICES, type ServiceCategory } from '../services';
+import { SERVICES } from '../services';
+import {
+  AREA_DUTY,
+  AREA_EMOJI,
+  AREA_LABEL,
+  AREA_ORDER,
+  LAYER_LABEL,
+  areaOf,
+  needsHumanApproval,
+  sendsOutside,
+} from '../data/businessArea';
 import { ServiceName } from '../components/ServiceName';
 import { PortalScreenView } from './PortalScreenView';
-
-const CATEGORY_ORDER: readonly ServiceCategory[] = ['featured', 'professionals', 'tools', 'integrations'];
 
 const GRID = { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 8 } as const;
 const CARD = { textAlign: 'left', padding: '10px 12px', minHeight: 44, display: 'grid', gap: 2 } as const;
@@ -84,25 +93,47 @@ export function PortalDirectory({
       )}
 
       {portal === 'internal' ? (
-        CATEGORY_ORDER.map((cat) => {
-          const items = SERVICES.filter((s) => s.category === cat);
-          if (items.length === 0) return null;
-          return (
-            <section key={cat} data-portal-category={cat} style={{ marginBottom: 16 }}>
-              <h3 style={{ fontSize: 13, margin: '0 0 6px' }}>
-                {CATEGORY_LABEL[cat]} <span style={MUTED}>{items.length} 画面</span>
-              </h3>
-              <div style={GRID}>
-                {items.map((s) => (
-                  <button key={s.id} type="button" data-portal-screen={s.id} style={CARD} onClick={() => open(s.id)}>
-                    <strong style={{ fontSize: 13 }}><ServiceName label={s.label} english={s.english} /></strong>
-                    <span style={MUTED}>{s.description}</span>
-                  </button>
-                ))}
-              </div>
-            </section>
-          );
-        })
+        <>
+          <p style={{ ...MUTED, margin: '0 0 12px' }} data-business-map-legend>
+            業務マップ —— 全社の業務を 6 つの区分と共通基盤に分けて並べています。
+            👤 は外へ書き込む・消すなど<strong>人の確認が要る</strong>操作のある画面、
+            📤 は端末の外 (外部サービス・AI) へ送る操作のある画面です。
+          </p>
+          {AREA_ORDER.map((area) => {
+            const items = SERVICES.filter((s) => areaOf(s.id).area === area);
+            if (items.length === 0) return null;
+            const approvals = items.filter((s) => needsHumanApproval(s.id)).length;
+            return (
+              <section key={area} data-portal-area={area} style={{ marginBottom: 16 }}>
+                <h3 style={{ fontSize: 13, margin: '0 0 2px' }}>
+                  <span aria-hidden="true">{AREA_EMOJI[area]} </span>
+                  {AREA_LABEL[area]} <span style={MUTED}>{items.length} 画面{approvals > 0 ? `・人の確認 ${approvals}` : ''}</span>
+                </h3>
+                <p style={{ ...MUTED, margin: '0 0 6px' }}>{AREA_DUTY[area]}</p>
+                <div style={GRID}>
+                  {items.map((s) => {
+                    const placed = areaOf(s.id);
+                    return (
+                      <button key={s.id} type="button" data-portal-screen={s.id} style={CARD} onClick={() => open(s.id)}>
+                        <span style={{ display: 'flex', gap: 4, alignItems: 'baseline', flexWrap: 'wrap' }}>
+                          <strong style={{ fontSize: 13 }}>
+                            <ServiceName label={s.label} english={s.english} />
+                          </strong>
+                          {needsHumanApproval(s.id) ? <span title="人の確認が要る操作がある" aria-label="人の確認が要る" data-needs-approval>👤</span> : null}
+                          {sendsOutside(s.id) ? <span title="端末の外へ送る操作がある" aria-label="外へ送る" data-sends-outside>📤</span> : null}
+                        </span>
+                        <span style={MUTED}>
+                          {placed.layer === undefined ? '' : `${LAYER_LABEL[placed.layer]} · `}
+                          {placed.why}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </section>
+            );
+          })}
+        </>
       ) : (
         <>
           <p style={{ ...MUTED, margin: '0 0 8px' }}>

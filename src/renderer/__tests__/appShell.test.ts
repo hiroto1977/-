@@ -16,6 +16,7 @@ import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 
 import { App } from '../App';
+import { SERVICES } from '../services';
 import { HomePage } from '../pages/HomePage';
 import { EMPTY_SHELL, useShell } from '../shellContext';
 import { _resetCollectionSubscribersForTests } from '../data/useCollection';
@@ -195,31 +196,39 @@ describe('シェル: 検索 (パス 322)', () => {
   });
 });
 
-describe('シェル: 分類の開閉 (パス 322)', () => {
+describe('シェル: 業務区分の開閉 (パス 322 · 2026-11-23 に業務区分へ)', () => {
   it('★ 見出しの aria-expanded と項目の有無が一致し、押すたびに反転する', async () => {
     await mount(createElement(App));
-    const head = q('.sidebar-group[data-category="tools"] .sidebar-group-head')!;
-    expect(head.getAttribute('aria-expanded'), '分析・ツールは既定で畳む').toBe('false');
-    expect(qa('.sidebar-group[data-category="tools"] .sidebar-item').length).toBe(0);
+    const head = q('.sidebar-group[data-area="field"] .sidebar-group-head')!;
+    expect(head.getAttribute('aria-expanded'), '開発・製造・現場は既定で畳む').toBe('false');
+    expect(qa('.sidebar-group[data-area="field"] .sidebar-item').length).toBe(0);
     expect(head.querySelector('.group-count')?.textContent).toMatch(/^\d+$/);
 
     await click(head, '見出し');
     expect(head.getAttribute('aria-expanded')).toBe('true');
-    expect(qa('.sidebar-group[data-category="tools"] .sidebar-item').length).toBe(
+    expect(qa('.sidebar-group[data-area="field"] .sidebar-item').length).toBe(
       Number(head.querySelector('.group-count')!.textContent),
     );
 
     await click(head, '見出し');
     expect(head.getAttribute('aria-expanded')).toBe('false');
-    expect(qa('.sidebar-group[data-category="tools"] .sidebar-item').length).toBe(0);
+    expect(qa('.sidebar-group[data-area="field"] .sidebar-item').length).toBe(0);
   });
 
-  it('おすすめは既定で開いていて、選んだ画面には aria-current=page が付く', async () => {
+  it('経営・ガバナンスは既定で開いていて、選んだ画面には aria-current=page が付く', async () => {
     await mount(createElement(App));
-    expect(q('.sidebar-group[data-category="featured"] .sidebar-group-head')?.getAttribute('aria-expanded')).toBe('true');
+    expect(q('.sidebar-group[data-area="management"] .sidebar-group-head')?.getAttribute('aria-expanded')).toBe('true');
     await click(sidebarItem('business'), 'business');
     expect(sidebarItem('business')?.getAttribute('aria-current')).toBe('page');
     expect(sidebarItem('home')?.getAttribute('aria-current')).toBeNull();
+  });
+
+  it('★ 業務区分の見出しは 7 つで、件数の合計がサイドバーの画面の数と一致する (1 画面 1 か所)', async () => {
+    await mount(createElement(App));
+    const heads = qa('.sidebar-group[data-area] .sidebar-group-head');
+    expect(heads.length).toBe(7);
+    const total = heads.reduce((n, h) => n + Number(h.querySelector('.group-count')!.textContent), 0);
+    expect(total).toBe(SERVICES.length);
   });
 });
 
@@ -383,7 +392,7 @@ describe('シェル: ドロワー (パス 322)', () => {
     await mount(createElement(App));
     await click(sidebarItem('business'), 'business');
     expect(q('.topbar-icon')?.textContent).toBe(sidebarItem('business')!.querySelector('.icon')!.textContent);
-    await waitForText(() => q('.topbar .crumb')?.textContent ?? '', 'おすすめ');
+    await waitForText(() => q('.topbar .crumb')?.textContent ?? '', '経営・ガバナンス');
     expect(q('.topbar .description')?.textContent?.length).toBeGreaterThan(0);
   });
 });

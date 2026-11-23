@@ -12,7 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Project
 
 Service Hub — a Japanese-facing business dashboard exposing **81 services** through a unified,
-category-grouped sidebar (おすすめ / 士業連携 / 分析・ツール / 外部サービス連携). **Not every service has a sidebar
+business-area sidebar (フロントオフィス / センターオフィス / ミドルオフィス / バックオフィス / 開発・製造・現場 / 経営・ガバナンス / 共通基盤 —— 2026-11-23 · `renderer/data/businessArea.ts` が全画面の置き場所を 1 か所で持つ). **Not every service has a sidebar
 entry of its own**: `uber-eats` and `demae-can` are consumed inside the Business Dashboard instead
 (`BusinessPage.tsx` reads their snapshots directly). That split is a reasoned, bidirectional ledger in
 `src/renderer/__tests__/sidebarCoverage.test.ts` — a service that silently loses its sidebar entry fails
@@ -1755,7 +1755,7 @@ Three TypeScript build contexts, kept separate via `tsconfig` project references
 - **`src/preload/`** — Context-isolated preload exposing a typed `window.serviceHub` bridge via
   `contextBridge.exposeInMainWorld`. The bridge type is re-declared globally in
   `src/shared/bridge.d.ts` so the renderer calls it without imports.
-- **`src/renderer/`** — React app. `App.tsx` renders the category-grouped sidebar from `SERVICES`
+- **`src/renderer/`** — React app. `App.tsx` renders the business-area sidebar from `SERVICES` (grouped by `areaOf` in `data/businessArea.ts`)
   (`services.ts`) and mounts the active page inside `components/PageErrorBoundary.tsx` (a render
   error stays inside that page's frame; the sidebar keeps working). The renderer never sees raw tokens —
   **the bridge exposes 15 methods and none of them returns a secret** (`storageProtection` returns counts and
