@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 540
+- ブロック数: 541
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `1245bff5d3c8d6e2527d842f921a9f40632a9a43920b8a990cbaf36da2583532`
+- 末尾(tip)ハッシュ: `521e8d57c99e85284c51272c6c01dac65878e2a14416cf77bc237a964666cdaf`
 - 保護対象: 225 ファイル
 
 ## ブロック
@@ -553,6 +553,7 @@
 | 537 | `9d46f42dbab12d53` | `d353002756ab4c8e` | `e406e10ba81751c4` | update PROXY_EXAMPLE.md,actionTier.mamori,actionTier.ts,writeFieldLimits.ts |
 | 538 | `2984cf7f48a929e2` | `e406e10ba81751c4` | `54a122837dfa586c` | update 00-project.mdc,manifest.webmanifest,PROXY_EXAMPLE.md,integrity-chain.cjs,mamori-capabilities.json,oauth.mamori |
 | 539 | `d5a2c2c540321418` | `54a122837dfa586c` | `1245bff5d3c8d6e2` | update PROXY_EXAMPLE.md |
+| 540 | `cc806913b7dc5547` | `1245bff5d3c8d6e2` | `521e8d57c99e8528` | update ci.yml |
 
 ## 保護対象ファイル
 
