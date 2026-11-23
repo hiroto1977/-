@@ -15,6 +15,7 @@ import {
   AREA_ORDER,
   LAYER_LABEL,
   SERVICE_AREA,
+  UNPLACED,
   areaOf,
   needsHumanApproval,
   sendsOutside,
@@ -64,6 +65,13 @@ describe('業務仕分けの表', () => {
     ['shopify', 'front'],
   ] as const)('代表: %s は %s', (id, area) => {
     expect(areaOf(id).area).toBe(area);
+  });
+
+  it('★ 表に無い id と prototype の鍵は「置き場所が決まっていない」へ倒れる', () => {
+    for (const k of ['__proto__', 'constructor', 'toString', 'no-such-screen']) {
+      expect(areaOf(k as never)).toBe(UNPLACED);
+    }
+    expect(UNPLACED).toEqual({ area: 'platform', layer: 'governance', why: '置き場所がまだ決まっていない画面。' });
   });
 
   it('代表: 共通基盤の層', () => {

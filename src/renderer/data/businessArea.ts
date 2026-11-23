@@ -22,6 +22,7 @@
 
 import type { ServiceId } from '../../shared/serviceId';
 import { ACTION_TIER, CONFIRMED_TIERS, OUTBOUND_TIERS } from '../../shared/actionTier';
+import { lookup } from '../../shared/lookup';
 
 /** 業務の区分 (6 つ) と、どの業務にも共通の基盤。 */
 export type BusinessArea = 'front' | 'center' | 'middle' | 'back' | 'field' | 'management' | 'platform';
@@ -182,9 +183,15 @@ export const SERVICE_AREA: Readonly<Record<ServiceId, AreaPlacement>> = {
   quality: base('governance', 'アプリの品質と監査の状態を見る。'),
 };
 
+/**
+ * 表に無い id (型の外から来た値) の置き場所。prototype の鍵 (`__proto__` ほか) で引いても
+ * prototype の値を返さないよう、表は `lookup` で引き、無ければこれへ倒す。
+ */
+export const UNPLACED: AreaPlacement = { area: 'platform', layer: 'governance', why: '置き場所がまだ決まっていない画面。' };
+
 /** その画面の置き場所。 */
 export function areaOf(id: ServiceId): AreaPlacement {
-  return SERVICE_AREA[id];
+  return lookup(SERVICE_AREA, id) ?? UNPLACED;
 }
 
 /** その画面に、人の確認が要る操作 (外へ書き込む・消す・資格情報を書く) が在るか。`ACTION_TIER` から導く。 */
