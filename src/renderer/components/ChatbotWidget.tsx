@@ -57,6 +57,8 @@ import { externalTextOnOneLine } from '../data/assistantMarkdown';
 import { useBuildKind } from '../hooks/useBuildKind';
 import { loadEndpointSetting } from '../network/ollamaWeb';
 import { AiEgressNotice } from './AiEgressNotice';
+import { VoiceEgressNotice } from './VoiceEgressNotice';
+import { isSpeechRecognitionSupported, startSpeechRecognition, type SpeechSessionHandle } from '../voice/speechAdapter';
 import { AI_EGRESS_RECIPIENT_ANTHROPIC } from '../../shared/aiEgressNotice';
 import { CeilingNotice } from './CeilingNotice';
 import { useDialogFocus } from './useDialogFocus';
@@ -408,6 +410,17 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
   const [clearOffer, setClearOffer] = useState<readonly FeatureRequest[] | null>(null);
   const listRef = useRef<HTMLDivElement | null>(null);
   /*
+   * 話しかけて入力する (2026-11-23)。押している間に聞き取り、書き起こしを入力欄へ出し、
+   * 言い終えたら (確定したら) そのまま送る —— 打つのと同じ `send` を通るので、危機の言葉・
+   * 操作の確認・記録の問い・AI へ回す判定はどれも打った文と同じ道を通る。
+   * 非対応のブラウザではボタンを出さない (押しても何も起きないボタンを置かない)。
+   */
+  const micSupported = useMemo(() => isSpeechRecognitionSupported(), []);
+  const [listening, setListening] = useState(false);
+  const [micError, setMicError] = useState<string | null>(null);
+  const micRef = useRef<SpeechSessionHandle | null>(null);
+  useEffect(() => () => micRef.current?.abort(), []);
+  /*
    * 開いた窓の焦点 (パス 506): 浮いた窓は開いたら入力欄へ・Esc で閉じる・閉じたら 🤖 へ戻す。確認の alertdialog 2 つも
    * 同じ hook で、焦点は**取り消す側**の操作子へ (印 `data-dialog-initial`)・Esc = 取り消し・消えたら押した物へ戻す。
    * 列 (docked) は窓ではないので運ばない (`open` は列では立たない)。
@@ -606,6 +619,34 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
     }
   };
 
+  const toggleMic = () => {
+    if (listening) {
+      micRef.current?.stop();
+      return;
+    }
+    setMicError(null);
+    const handle = startSpeechRecognition({
+      onTranscript: (text, isFinal) => {
+        setInput(text);
+        if (isFinal) {
+          micRef.current?.stop();
+          void send(text);
+        }
+      },
+      onError: (message) => setMicError(externalTextOnOneLine(message)),
+      onEnd: () => {
+        micRef.current = null;
+        setListening(false);
+      },
+    });
+    if (handle === null) {
+      setMicError('このブラウザでは音声入力を使えません。文字で入力してください。');
+      return;
+    }
+    micRef.current = handle;
+    setListening(true);
+  };
+
   const panel = (
     <div
       className={docked ? 'concierge docked' : 'concierge floating'}
@@ -785,6 +826,14 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
           {ollamaEgressNote}
         </p>
       )}
+      {micSupported ? (
+        <VoiceEgressNotice subject={{ transcriptStaysLocal: false }} compact />
+      ) : null}
+      {micError !== null ? (
+        <p className="concierge-egress" role="alert" data-mic-error>
+          ⚠ {micError}
+        </p>
+      ) : null}
       <form
         className="concierge-form"
         onSubmit={(e) => {
@@ -805,6 +854,20 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
           読み上げの名前は「送信」を含めない —— 列は画面と並んで常に在るので、画面の側の「送信」
           (例: AI アシスタント) と同じ名前だと、名前で押す人 (と e2e の getByRole) がどちらか決められない。
         */}
+        {micSupported ? (
+          <button
+            type="button"
+            className={listening ? 'primary' : 'ghost'}
+            onClick={toggleMic}
+            disabled={busy && !listening}
+            aria-pressed={listening}
+            aria-label={listening ? '話しかけをやめる' : 'コンシェルジュに話しかける'}
+            title={listening ? '聞き取りをやめる' : '押して話しかける (言い終えると送ります)'}
+            data-concierge-mic
+          >
+            {listening ? '⏹' : '🎤'}
+          </button>
+        ) : null}
         <button
           type="submit"
           className="primary"
