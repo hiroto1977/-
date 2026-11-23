@@ -20,6 +20,8 @@ import { App } from '../App';
 import { _resetCollectionSubscribersForTests } from '../data/useCollection';
 import { _resetNavigationIntentForTests, navigateTo } from '../navigate';
 import { SERVICES } from '../services';
+import { AREA_ORDER, areaOf } from '../data/businessArea';
+import type { ServiceId } from '../../shared/serviceId';
 import { CUSTOMER_SCREENS, PARTNER_SCREENS } from '../../shared/portal';
 import { CUSTOMER_CONTENT, PARTNER_CONTENT } from '../portal/portalContent';
 import { resetRecordStore } from './recordStoreHarness';
@@ -129,6 +131,30 @@ describe('ポータルの入口 (村の殻)', () => {
     // サイドバーに在った画面が、過不足なく並ぶ。
     expect(screenIds().slice().sort()).toEqual(SERVICES.map((s) => s.id).sort());
     expect(location.hash).toBe('#portal/internal');
+  });
+
+  it('★ 社内ポータルは業務マップ: 6 区分と共通基盤に分かれ、印は ACTION_TIER から導かれる', async () => {
+    await mount('#village');
+    await openDirectory();
+    expect(container.querySelector('[data-business-map-legend]')).not.toBeNull();
+    const areas = Array.from(container.querySelectorAll<HTMLElement>('[data-portal-area]'));
+    expect(areas.map((a) => a.getAttribute('data-portal-area'))).toEqual([...AREA_ORDER]);
+    for (const a of areas) {
+      const area = a.getAttribute('data-portal-area') as (typeof AREA_ORDER)[number];
+      const ids = Array.from(a.querySelectorAll<HTMLElement>('[data-portal-screen]')).map((b) => b.getAttribute('data-portal-screen') ?? '');
+      expect(ids.length, `${area} が空`).toBeGreaterThan(0);
+      for (const id of ids) expect(areaOf(id as ServiceId).area, `${id} の置き場所`).toBe(area);
+    }
+    const card = (id: string): HTMLElement => container.querySelector<HTMLElement>(`[data-portal-screen="${id}"]`)!;
+    // github は外へ書き込む (人の確認 + 外へ送る)・assistant は AI へ送るだけ・kpi は端末の中だけ。
+    expect(card('github').querySelector('[data-needs-approval]')).not.toBeNull();
+    expect(card('github').querySelector('[data-sends-outside]')).not.toBeNull();
+    expect(card('assistant').querySelector('[data-needs-approval]')).toBeNull();
+    expect(card('assistant').querySelector('[data-sends-outside]')).not.toBeNull();
+    expect(card('kpi').querySelector('[data-needs-approval]')).toBeNull();
+    expect(card('kpi').querySelector('[data-sends-outside]')).toBeNull();
+    // 共通基盤のカードは層を名乗る。
+    expect(card('library').textContent).toContain('データ基盤');
   });
 
   it('★ パートナーポータル: 台帳に名指しした画面だけが並ぶ (社内の画面は 1 つも出ない)', async () => {

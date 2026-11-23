@@ -1,6 +1,7 @@
 import { onNavigate } from './navigate';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { SERVICES, CATEGORY_LABEL, type ServiceCategory, type ServiceDefinition, type ServiceId } from './services';
+import { SERVICES, type ServiceDefinition, type ServiceId } from './services';
+import { AREA_EMOJI, AREA_LABEL, AREA_ORDER, LAYER_LABEL, areaOf, type BusinessArea } from './data/businessArea';
 import { ShellContext, type ShellService, type ShellState } from './shellContext';
 import { isServiceId } from '../shared/serviceId';
 import { filterServices } from './sidebarFilter';
@@ -48,21 +49,11 @@ export const DRAWER_QUERY = '(max-width: 768px)';
 /** 設定画面と同じ判定 (`runtimeMode.ts` · パス 137) —— 片方だけ写すとデスクトップ版に保管庫の操作が出る。 */
 const detectBrowserMode = isBrowserBuild;
 
-const COLLAPSED_BY_DEFAULT: ReadonlySet<ServiceCategory> = new Set<ServiceCategory>([
-  'tools',
-  'integrations',
-]);
-
-/** 分類の見出しに添える絵文字 (パス 322)。文字は `CATEGORY_LABEL` が持つ —— ここは飾りだけ。 */
-const CATEGORY_EMOJI: Readonly<Record<ServiceCategory, string>> = {
-  featured: '⭐',
-  professionals: '⚖️',
-  tools: '🧰',
-  integrations: '🔗',
-};
-
-/** 分類の並び (サイドバーの上から下へ)。 */
-const CATEGORY_ORDER = ['featured', 'professionals', 'tools', 'integrations'] as const;
+/**
+ * 既定で畳む業務区分 (2026-11-23)。サイドバーは業務の区分 (`data/businessArea.ts`) で並ぶ。
+ * 開発・製造・現場は使う人が限られるので畳んでおく —— 開いた画面の区分は選んだときに開く。
+ */
+const COLLAPSED_BY_DEFAULT: ReadonlySet<BusinessArea> = new Set<BusinessArea>(['field']);
 
 /** 「先頭へ戻る」ボタンを出す縦スクロール量 (px)。 */
 const SCROLL_TOP_THRESHOLD = 320;
@@ -172,12 +163,9 @@ export function App() {
   /** サイドバーがドロワーになる幅 (`DRAWER_QUERY` —— CSS の media 規則と同じ数であることは `drawerKeyboard.test.ts` が見る)。 */
   const drawerLayout = useMediaQuery(DRAWER_QUERY);
   const { plan, setPlan, internalUnlocked } = usePlan();
-  const [collapsed, setCollapsed] = useState<Record<ServiceCategory, boolean>>({
-    featured: false,
-    professionals: COLLAPSED_BY_DEFAULT.has('professionals'),
-    tools: COLLAPSED_BY_DEFAULT.has('tools'),
-    integrations: COLLAPSED_BY_DEFAULT.has('integrations'),
-  });
+  const [collapsed, setCollapsed] = useState<Record<BusinessArea, boolean>>(
+    () => Object.fromEntries(AREA_ORDER.map((a) => [a, COLLAPSED_BY_DEFAULT.has(a)])) as Record<BusinessArea, boolean>,
+  );
 
   // Browser-mode lock state. Initially `null` (unknown) — once we detect
   // browser mode and Vault status, switch to a concrete boolean.
@@ -274,7 +262,7 @@ export function App() {
     // Auto-expand the group containing the destination so it's visible.
     const def = SERVICES.find((s) => s.id === target);
     if (def) {
-      setCollapsed((prev) => ({ ...prev, [def.category]: false }));
+      setCollapsed((prev) => ({ ...prev, [areaOf(def.id).area]: false }));
     }
     setNavOpen(false); // ページ内リンク遷移でもモバイルのドロワーを閉じる
   }), []);
@@ -369,20 +357,15 @@ export function App() {
   useEffect(() => saveIds(FAVORITES_KEY, favorites), [favorites]);
 
   const grouped = useMemo(() => {
-    const out: Record<ServiceCategory, typeof SERVICES> = {
-      featured: [],
-      professionals: [],
-      tools: [],
-      integrations: [],
-    };
-    for (const s of SERVICES) out[s.category].push(s);
+    const out = Object.fromEntries(AREA_ORDER.map((a) => [a, [] as ServiceDefinition[]])) as Record<BusinessArea, ServiceDefinition[]>;
+    for (const s of SERVICES) out[areaOf(s.id).area].push(s);
     return out;
   }, []);
 
   // 検索クエリでの絞り込み結果。null = 非検索 (カテゴリ別表示)。
   const filtered = useMemo(() => filterServices(SERVICES, query), [query]);
 
-  function toggle(cat: ServiceCategory) {
+  function toggle(cat: BusinessArea) {
     setCollapsed((prev) => ({ ...prev, [cat]: !prev[cat] }));
   }
 
@@ -391,7 +374,7 @@ export function App() {
     setPortal(null); // 画面を選んだら、ポータルの一覧は閉じる (同じ画面を選び直したときも)
     setActiveId(id);
     const def = SERVICES.find((s) => s.id === id);
-    if (def) setCollapsed((prev) => ({ ...prev, [def.category]: false }));
+    if (def) setCollapsed((prev) => ({ ...prev, [areaOf(def.id).area]: false }));
     setNavOpen(false);
   }
 
@@ -628,23 +611,23 @@ export function App() {
                   {recentServices.map(renderItem)}
                 </div>
               )}
-              {CATEGORY_ORDER.map((cat) => {
+              {AREA_ORDER.map((cat) => {
                 const items = grouped[cat];
                 if (items.length === 0) return null;
                 const isCollapsed = collapsed[cat];
                 return (
-                  <div key={cat} className="sidebar-group" data-category={cat}>
+                  <div key={cat} className="sidebar-group" data-area={cat}>
                     <button
                       type="button"
                       className="sidebar-group-head"
                       onClick={() => toggle(cat)}
                       aria-expanded={!isCollapsed}
-                      title={isCollapsed ? `${CATEGORY_LABEL[cat]} を開く` : `${CATEGORY_LABEL[cat]} を畳む`}
+                      title={isCollapsed ? `${AREA_LABEL[cat]} を開く` : `${AREA_LABEL[cat]} を畳む`}
                     >
                       <span className="group-emoji" aria-hidden="true">
-                        {CATEGORY_EMOJI[cat]}
+                        {AREA_EMOJI[cat]}
                       </span>
-                      <span>{CATEGORY_LABEL[cat]}</span>
+                      <span>{AREA_LABEL[cat]}</span>
                       <span className="group-count" aria-label={`${items.length} 件`}>
                         {items.length}
                       </span>
@@ -745,8 +728,12 @@ export function App() {
               </span>
               <h1><ServiceName label={active.label} english={active.english} /></h1>
               <span className="chip crumb">
-                <span aria-hidden="true">{CATEGORY_EMOJI[active.category]}</span>
-                {CATEGORY_LABEL[active.category]}
+                <span aria-hidden="true">{AREA_EMOJI[areaOf(active.id).area]}</span>
+                {AREA_LABEL[areaOf(active.id).area]}
+                {(() => {
+                  const layer = areaOf(active.id).layer;
+                  return layer === undefined ? null : ` · ${LAYER_LABEL[layer]}`;
+                })()}
               </span>
               <span className="description">{active.description}</span>
             </>
