@@ -159,6 +159,30 @@ export const DEFAULT_ZEB_HUB_INPUT: ZebHubInput = {
   ],
 };
 
+/**
+ * 初年度に小さく始める拠点の初期値 —— 2 階建てのコンテナハウス 1 棟 (2026-11-23)。
+ * 20 フィートのコンテナ 4 台 (1 階 2 台・2 階 2 台・延床 約 60 ㎡) を 1 台 600 万円と置いた**仮の値**で、
+ * 見積もりを取ったら入れ直す (相場の目安は「1 台で工事費込み少なくとも約 500 万円」)。
+ * 太陽電池は屋根に置ける 5 kW (本格拠点と同じ 1 kW あたりの単価)・蓄電池は小型の 30 kWh (20 万円/kWh・固定費なし)、
+ * 雨水はトイレと散水だけに使うのでタンク 100 万円。1 拠点だけなので自己託送はしない。
+ * 小さい蓄電池で止めない負荷を賄うため、使える容量の半分を災害用に取り置く。
+ */
+export const CONTAINER_START_ZEB_HUB_INPUT: ZebHubInput = {
+  ...DEFAULT_ZEB_HUB_INPUT,
+  buildingCost: 24_000_000,
+  pvCost: 6_000_000,
+  waterPlantCost: 1_000_000,
+  batteryFixedCost: 0,
+  batteryCostPerKwh: 200_000,
+  batteryKwh: 30,
+  pvKw: 5,
+  baseLoadKwhPerDay: 40,
+  criticalLoadKwhPerDay: 10,
+  reserveShare: 0.5,
+  selfWheelingSameArea: false,
+  pvReplacementCost: 1_500_000,
+};
+
 /* ─────────────────────────  入力の検め  ───────────────────────── */
 
 type NumberKey = { [K in keyof ZebHubInput]: ZebHubInput[K] extends number ? K : never }[keyof ZebHubInput];

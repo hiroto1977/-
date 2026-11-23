@@ -6,6 +6,7 @@ import { RefusedFieldsNote } from './RefusedFieldsNote';
 import { readNumberOr0, refusalLabels, refusedFields, refusingSpecs, type NumSpec } from '../data/inputGuards';
 import {
   COST_COMPONENT_LABEL,
+  CONTAINER_START_ZEB_HUB_INPUT,
   DEFAULT_ZEB_HUB_INPUT as D,
   chooseBatterySize,
   simulateZebHub,
@@ -25,6 +26,39 @@ import { simulateOutage, solarProfileKw, type OutageResult } from '../../shared/
 
 /** 比べる蓄電池の容量 (標準自律用 550 kWh 〜 市場取引ハイブリッド用 2,000 kWh)。 */
 export const ZEB_BATTERY_CANDIDATES_KWH: readonly number[] = [0, 550, 1000, 1500, 2000];
+
+/** 初年度のコンテナハウスで比べる蓄電池の容量 (小型)。 */
+export const CONTAINER_BATTERY_CANDIDATES_KWH: readonly number[] = [0, 30, 60, 100, 150];
+
+/** 試算する規模。初年度はコンテナハウスで小さく始め、業績に応じて本格拠点へ広げる。 */
+export type ZebScale = 'container' | 'standard';
+
+export interface ZebScaleSpec {
+  readonly label: string;
+  /** 欄に無い前提 (蓄電池の単価・取り置きの割合・貼り替えの費用ほか) と、欄の初期値。 */
+  readonly base: ZebHubInput;
+  readonly batteryCandidatesKwh: readonly number[];
+  readonly note: string;
+}
+
+export const ZEB_SCALES: Readonly<Record<ZebScale, ZebScaleSpec>> = {
+  container: {
+    label: '初年度 (2 階建てコンテナハウス)',
+    base: CONTAINER_START_ZEB_HUB_INPUT,
+    batteryCandidatesKwh: CONTAINER_BATTERY_CANDIDATES_KWH,
+    note:
+      '建物は 20 フィートのコンテナ 4 台 (1 台 600 万円) と置いた仮の値です。屋根の太陽電池 5 kW・小型の蓄電池 30 kWh・' +
+      'トイレと散水用の雨水タンクで、飲み水は水道を使います。見積もりを取ったら金額を入れ直してください。',
+  },
+  standard: {
+    label: '本格拠点 (延床 400 坪)',
+    base: D,
+    batteryCandidatesKwh: ZEB_BATTERY_CANDIDATES_KWH,
+    note: '業績に応じて広げた先の、標準の拠点です。',
+  },
+};
+
+export const ZEB_SCALE_ORDER: readonly ZebScale[] = ['container', 'standard'];
 
 const SPECS = refusingSpecs('judgement', {
   pvKw: { label: '発電の定格 (kW)', kind: 'kw', allowZero: false },
@@ -120,33 +154,40 @@ const outageText = (r: OutageResult): string =>
 
 const pctText = (share: number): string => String(Math.round(share * 1000) / 10);
 
-const INITIAL: Readonly<Record<FieldKey, string>> = {
-  pvKw: String(D.pvKw),
-  yieldPerKw: String(Math.round(D.specificYieldKwhPerKwDay * 100) / 100),
-  batteryKwh: String(D.batteryKwh),
-  baseLoad: String(D.baseLoadKwhPerDay),
-  criticalLoad: String(D.criticalLoadKwhPerDay),
-  gridPrice: String(D.gridPurchasePrice),
-  wheelingValue: String(D.wheelingValue),
-  marketPrice: String(D.marketSalePrice),
-  spread: String(D.arbitrageSpread),
-  otherRevenue: String(D.otherRevenuePerYear),
-  buildingCost: String(D.buildingCost),
-  pvCost: String(D.pvCost),
-  waterCost: String(D.waterPlantCost),
-  discountPct: pctText(D.discountRate),
+/** 規模の初期値から欄の初期値を組む。 */
+export function initialZebFields(b: ZebHubInput): Record<FieldKey, string> {
+  return {
+  pvKw: String(b.pvKw),
+  yieldPerKw: String(Math.round(b.specificYieldKwhPerKwDay * 100) / 100),
+  batteryKwh: String(b.batteryKwh),
+  baseLoad: String(b.baseLoadKwhPerDay),
+  criticalLoad: String(b.criticalLoadKwhPerDay),
+  gridPrice: String(b.gridPurchasePrice),
+  wheelingValue: String(b.wheelingValue),
+  marketPrice: String(b.marketSalePrice),
+  spread: String(b.arbitrageSpread),
+  otherRevenue: String(b.otherRevenuePerYear),
+  buildingCost: String(b.buildingCost),
+  pvCost: String(b.pvCost),
+  waterCost: String(b.waterPlantCost),
+  discountPct: pctText(b.discountRate),
   pvSubsidyPct: '66.7',
   batterySubsidyPct: '33.3',
   batterySubsidyCap: '60000000',
   minAutonomyHours: '24',
   refrigeration: '0',
 };
+}
 
 /** 画面の欄から計算の入力を組む (欄に無い前提は標準値のまま)。 */
-export function zebInputFromFields(fields: Readonly<Record<FieldKey, string>>, sameArea: boolean): ZebHubInput {
+export function zebInputFromFields(
+  fields: Readonly<Record<FieldKey, string>>,
+  sameArea: boolean,
+  base: ZebHubInput = D,
+): ZebHubInput {
   const n = (k: FieldKey): number => readNumberOr0(fields[k]);
   return {
-    ...D,
+    ...base,
     pvKw: n('pvKw'),
     specificYieldKwhPerKwDay: n('yieldPerKw'),
     batteryKwh: n('batteryKwh'),
@@ -182,19 +223,27 @@ const irrText = (r: number | null): string => (r === null ? '算定できませ�
 const hoursText = (h: number | null): string => (h === null ? '—' : `${Math.round(h)} 時間`);
 
 export function ZebHubSimulatorPanel() {
-  const [fields, setFields] = useState<Record<FieldKey, string>>({ ...INITIAL });
-  const [sameArea, setSameArea] = useState(D.selfWheelingSameArea);
+  const [scale, setScale] = useState<ZebScale>('container');
+  const spec = ZEB_SCALES[scale];
+  const base = spec.base;
+  const [fields, setFields] = useState<Record<FieldKey, string>>(() => initialZebFields(base));
+  const [sameArea, setSameArea] = useState(base.selfWheelingSameArea);
+  const chooseScale = (next: ZebScale) => {
+    setScale(next);
+    setFields(initialZebFields(ZEB_SCALES[next].base));
+    setSameArea(ZEB_SCALES[next].base.selfWheelingSameArea);
+  };
   const set = (k: FieldKey) => (value: string) => setFields((prev) => ({ ...prev, [k]: value }));
 
   const refused = refusedFields(SPECS, fields);
-  const input = useMemo(() => zebInputFromFields(fields, sameArea), [fields, sameArea]);
+  const input = useMemo(() => zebInputFromFields(fields, sameArea, base), [fields, sameArea, base]);
   const errors = refused.length > 0 ? [] : zebHubInputErrors(input);
   const ready = refused.length === 0 && errors.length === 0;
   const result = useMemo(() => (ready ? simulateZebHub(input) : null), [ready, input]);
   const sizes = useMemo(
     () =>
-      ready ? chooseBatterySize(input, ZEB_BATTERY_CANDIDATES_KWH, readNumberOr0(fields.minAutonomyHours)) : null,
-    [ready, input, fields.minAutonomyHours],
+      ready ? chooseBatterySize(input, spec.batteryCandidatesKwh, readNumberOr0(fields.minAutonomyHours)) : null,
+    [ready, input, spec, fields.minAutonomyHours],
   );
 
   const firstNet = result?.years[0]?.net ?? null;
@@ -209,11 +258,29 @@ export function ZebHubSimulatorPanel() {
       <div style={{ fontSize: 12, color: 'var(--text-mute)', lineHeight: 1.6, marginBottom: 10 }}>
         ペロブスカイト太陽電池・大型蓄電池・水循環プラントを持つ 1 拠点の収支を試算します。電気は
         <strong>敷地内で使う → 同じエリアの自社拠点へ自己託送 → 市場へ売る</strong>の順に配り、蓄電池のうち
-        災害用の取り置き分 (使える容量の {pctText(D.reserveShare)}%) は平時の取引に使いません。ペロブスカイトは
-        {D.pvReplacementIntervalYears} 年ごとに貼り替え、蓄電池は {D.batteryLifeYears} 年で取り替える費用を入れています。
+        災害用の取り置き分 (使える容量の {pctText(base.reserveShare)}%) は平時の取引に使いません。ペロブスカイトは
+        {base.pvReplacementIntervalYears} 年ごとに貼り替え、蓄電池は {base.batteryLifeYears} 年で取り替える費用を入れています。
         補助率と上限は<strong>公募要領で確かめて入れ直してください</strong> (同じ費用に 2 つの補助金は重ねません)。
         <strong>※ 概算であり、設計・法務・税務・投資の助言ではありません。</strong>
       </div>
+      <div role="radiogroup" aria-label="試算する規模" style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 6 }}>
+        {ZEB_SCALE_ORDER.map((k) => (
+          <button
+            key={k}
+            type="button"
+            role="radio"
+            aria-checked={scale === k}
+            className={scale === k ? 'primary' : 'ghost'}
+            onClick={() => chooseScale(k)}
+            data-zeb-scale={k}
+          >
+            {ZEB_SCALES[k].label}
+          </button>
+        ))}
+      </div>
+      <p style={{ fontSize: 12, color: 'var(--text-mute)', marginTop: 0 }} data-zeb-scale-note>
+        {spec.note} 規模を切り替えると、欄は選んだ規模の初期値に戻ります。
+      </p>
       <div className="field-grid" style={{ marginBottom: 12 }}>
         {FIELD_ORDER.map((k) => (
           <GuardedNumber key={k} spec={SPECS[k]} value={fields[k]} onChange={set(k)} width={150} />
@@ -243,7 +310,7 @@ export function ZebHubSimulatorPanel() {
             <Stat label="補助金" value={jpyWhole(result.subsidy.total)} />
             <Stat label="補助後の投資" value={jpyWhole(result.netInvestment)} />
             <Stat label="1 年目の純収支" value={jpyWhole(firstNet)} positive={firstNet >= 0} />
-            <Stat label={`正味現在価値 (${D.horizonYears} 年)`} value={jpyWhole(result.npv)} positive={result.npv >= 0} />
+            <Stat label={`正味現在価値 (${base.horizonYears} 年)`} value={jpyWhole(result.npv)} positive={result.npv >= 0} />
             <Stat label="内部収益率" value={irrText(result.irr)} />
             <Stat label="投資回収年数" value={yearsText(result.paybackYears)} />
             <Stat label="災害時の持ち時間 (取り置き分)" value={hoursText(result.reserveAutonomyHours)} />
