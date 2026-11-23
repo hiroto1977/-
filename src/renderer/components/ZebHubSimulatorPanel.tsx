@@ -47,8 +47,9 @@ export const ZEB_SCALES: Readonly<Record<ZebScale, ZebScaleSpec>> = {
     base: CONTAINER_START_ZEB_HUB_INPUT,
     batteryCandidatesKwh: CONTAINER_BATTERY_CANDIDATES_KWH,
     note:
-      '建物は 20 フィートのコンテナ 4 台 (1 台 600 万円) と置いた仮の値です。屋根の太陽電池 5 kW・小型の蓄電池 30 kWh・' +
-      'トイレと散水用の雨水タンクで、飲み水は水道を使います。見積もりを取ったら金額を入れ直してください。',
+      '建物は 20 フィートのコンテナ 4 台 (1 台 600 万円) と置いた仮の値です。ペロブスカイトを屋根 (4 kW) と壁 (8 kW) の両方に貼り、' +
+      '壁は屋根の 65% しか発電しない前提です。小型の蓄電池 30 kWh と、' +
+      'トイレと散水用の雨水タンクを置き、飲み水は水道を使います。見積もりを取ったら金額を入れ直してください。',
   },
   standard: {
     label: '本格拠点 (延床 400 坪)',

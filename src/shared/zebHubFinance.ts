@@ -163,24 +163,27 @@ export const DEFAULT_ZEB_HUB_INPUT: ZebHubInput = {
  * 初年度に小さく始める拠点の初期値 —— 2 階建てのコンテナハウス 1 棟 (2026-11-23)。
  * 20 フィートのコンテナ 4 台 (1 階 2 台・2 階 2 台・延床 約 60 ㎡) を 1 台 600 万円と置いた**仮の値**で、
  * 見積もりを取ったら入れ直す (相場の目安は「1 台で工事費込み少なくとも約 500 万円」)。
- * 太陽電池は屋根に置ける 5 kW (本格拠点と同じ 1 kW あたりの単価)・蓄電池は小型の 30 kWh (20 万円/kWh・固定費なし)、
+ * 太陽電池はペロブスカイトを屋根と壁の両方に貼る: 屋根 約 30 ㎡ で 4 kW・南と東西の壁 (窓と扉を除く 約 57 ㎡) で 8 kW、
+ * 計 12 kW (1 ㎡ 約 150 W と置いた仮の値・本格拠点と同じ 1 kW あたりの単価)。壁は立っているので屋根の 65% しか発電しないと置き、
+ * 1 kW あたりの発電量は (4 × 3.21 + 8 × 3.21 × 0.65) ÷ 12 ≒ 2.46 kWh/kW/日。蓄電池は小型の 30 kWh (20 万円/kWh・固定費なし)、
  * 雨水はトイレと散水だけに使うのでタンク 100 万円。1 拠点だけなので自己託送はしない。
  * 小さい蓄電池で止めない負荷を賄うため、使える容量の半分を災害用に取り置く。
  */
 export const CONTAINER_START_ZEB_HUB_INPUT: ZebHubInput = {
   ...DEFAULT_ZEB_HUB_INPUT,
   buildingCost: 24_000_000,
-  pvCost: 6_000_000,
+  pvCost: 14_400_000,
   waterPlantCost: 1_000_000,
   batteryFixedCost: 0,
   batteryCostPerKwh: 200_000,
   batteryKwh: 30,
-  pvKw: 5,
+  pvKw: 12,
+  specificYieldKwhPerKwDay: 2.46,
   baseLoadKwhPerDay: 40,
   criticalLoadKwhPerDay: 10,
   reserveShare: 0.5,
   selfWheelingSameArea: false,
-  pvReplacementCost: 1_500_000,
+  pvReplacementCost: 3_600_000,
 };
 
 /* ─────────────────────────  入力の検め  ───────────────────────── */

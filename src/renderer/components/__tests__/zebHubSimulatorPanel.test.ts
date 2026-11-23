@@ -65,10 +65,10 @@ async function chooseScale(k: ZebScale): Promise<void> {
 }
 
 describe('初年度 (コンテナハウス) の規模', () => {
-  it('★ 開いた時は初年度のコンテナハウスで、初期費用 3,700 万円と仮の値である断りを出す', async () => {
+  it('★ 開いた時は初年度のコンテナハウスで、初期費用 4,540 万円と仮の値である断りを出す', async () => {
     await waitForText(text, '初期費用 (補助前)');
     expect(container.querySelector('[data-zeb-scale="container"]')?.getAttribute('aria-checked')).toBe('true');
-    expect(text()).toContain(jpyWhole(37_000_000));
+    expect(text()).toContain(jpyWhole(45_400_000));
     expect(container.querySelector('[data-zeb-scale-note]')?.textContent).toContain('仮の値');
     // 1 拠点だけなので自己託送はしない前提で始まる。
     expect(container.querySelector('[data-zeb-cross-area]')).not.toBeNull();
@@ -102,8 +102,11 @@ describe('初年度 (コンテナハウス) の規模', () => {
     expect(input.batteryFixedCost).toBe(0);
     expect(input.reserveShare).toBe(0.5);
     expect(input.selfWheelingSameArea).toBe(false);
-    // 補助率は欄の 66.7% / 33.3% (仮置き) —— 補助後の投資は 3,100 万円。
-    expect(Math.round(simulateZebHub(input).netInvestment)).toBe(31_000_000);
+    // ペロブスカイトは屋根 4 kW + 壁 8 kW。壁は屋根の 65% しか発電しない。
+    expect(input.pvKw).toBe(12);
+    expect(input.specificYieldKwhPerKwDay).toBeCloseTo((4 * (379 / 118) + 8 * (379 / 118) * 0.65) / 12, 2);
+    // 補助率は欄の 66.7% / 33.3% (仮置き): 45,400,000 − (14,400,000 × 0.667 + 6,000,000 × 0.333)。
+    expect(Math.round(simulateZebHub(input).netInvestment)).toBe(33_797_200);
   });
 });
 
