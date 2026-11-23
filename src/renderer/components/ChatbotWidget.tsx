@@ -62,7 +62,7 @@ import { isSpeechRecognitionSupported, startSpeechRecognition, type SpeechSessio
 import { AI_EGRESS_RECIPIENT_ANTHROPIC } from '../../shared/aiEgressNotice';
 import { CeilingNotice } from './CeilingNotice';
 import { useDialogFocus } from './useDialogFocus';
-import { charsOverCeiling } from '../../shared/inputCeiling';
+import { charsOverCeiling, refusedCeilingNote } from '../../shared/inputCeiling';
 import type { ActionData } from '../../shared/actionData';
 
 /** チャット履歴 1 件。 */
@@ -519,6 +519,13 @@ export function ChatbotWidget({ docked = false, onCollapse }: ChatbotWidgetProps
   const send = async (raw: string) => {
     const text = raw.trim();
     if (!text || busy) return;
+    // 🎤 は送信ボタンの `disabled` を通らないので、天井はここでも断る (打った文は欄が先に断る)。
+    // 黙って切らず、入力欄に全文を残して理由を言う。
+    if (charsOverCeiling(text, MAX_OLLAMA_PROMPT_CHARS) > 0) {
+      setInput(text);
+      append({ role: 'bot', text: `⚠ ${refusedCeilingNote('話しかけた文', text, MAX_OLLAMA_PROMPT_CHARS)}` });
+      return;
+    }
     setInput('');
     append({ role: 'user', text });
 

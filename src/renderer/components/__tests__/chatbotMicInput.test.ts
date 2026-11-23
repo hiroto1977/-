@@ -16,6 +16,7 @@ import { SALES_COLLECTION } from '../../data/sales';
 import { resetRecordStore } from '../../__tests__/recordStoreHarness';
 import { waitForElement, waitForText } from '../../__tests__/jsdomWait';
 import { localIsoDate } from '../../../shared/localDate';
+import { MAX_OLLAMA_PROMPT_CHARS } from '../../../shared/ollama';
 
 if (!('scrollTo' in Element.prototype)) {
   (Element.prototype as unknown as Record<string, unknown>).scrollTo = () => {};
@@ -111,7 +112,7 @@ describe('AI コンシェルジュ — 話しかけて入力する', () => {
     const month = localIsoDate().slice(0, 7);
     await getRecordStore().insert(SALES_COLLECTION, { date: `${month}-03`, channel: 'shopify', amount: 4_200, orders: 2 });
     const el = await openWidget();
-    const mic = await waitForElement<HTMLButtonElement>(() => el.querySelector('[data-concierge-mic]'), '🎤 のボタン');
+    const mic = await waitForElement(() => el.querySelector<HTMLButtonElement>('[data-concierge-mic]'), '🎤 のボタン');
     expect(mic.getAttribute('aria-label')).toBe('コンシェルジュに話しかける');
     await act(async () => { mic.dispatchEvent(new MouseEvent('click', { bubbles: true })); });
     const rec = instances[0]!;
@@ -139,7 +140,7 @@ describe('AI コンシェルジュ — 話しかけて入力する', () => {
   it('もう一度押すと聞き取りをやめ、送らない', async () => {
     installSpeech();
     const el = await openWidget();
-    const mic = await waitForElement<HTMLButtonElement>(() => el.querySelector('[data-concierge-mic]'), '🎤 のボタン');
+    const mic = await waitForElement(() => el.querySelector<HTMLButtonElement>('[data-concierge-mic]'), '🎤 のボタン');
     await act(async () => { mic.dispatchEvent(new MouseEvent('click', { bubbles: true })); });
     const rec = instances[0]!;
     await act(async () => { speak(rec, '量子力学', false); });
@@ -152,10 +153,22 @@ describe('AI コンシェルジュ — 話しかけて入力する', () => {
   it('聞き取りの失敗は理由を出す', async () => {
     installSpeech();
     const el = await openWidget();
-    const mic = await waitForElement<HTMLButtonElement>(() => el.querySelector('[data-concierge-mic]'), '🎤 のボタン');
+    const mic = await waitForElement(() => el.querySelector<HTMLButtonElement>('[data-concierge-mic]'), '🎤 のボタン');
     await act(async () => { mic.dispatchEvent(new MouseEvent('click', { bubbles: true })); });
     await act(async () => { instances[0]!.onerror?.({ error: 'not-allowed' }); });
     expect(el.querySelector('[data-mic-error]')).not.toBeNull();
+  });
+
+  it('★ 長すぎる話しかけは送らず、全文を入力欄に残して理由を言う', async () => {
+    installSpeech();
+    const el = await openWidget();
+    const mic = await waitForElement(() => el.querySelector<HTMLButtonElement>('[data-concierge-mic]'), '🎤 のボタン');
+    await act(async () => { mic.dispatchEvent(new MouseEvent('click', { bubbles: true })); });
+    const long = 'あ'.repeat(MAX_OLLAMA_PROMPT_CHARS + 1);
+    await act(async () => { speak(instances[0]!, long, true); });
+    await waitForText(() => el.textContent ?? '', '話しかけた文');
+    expect(el.querySelector('input')!.value).toBe(long);
+    expect(invoked).toEqual([]);
   });
 
   it('対照: 非対応のブラウザでは 🎤 も声の断りも出さない', async () => {
