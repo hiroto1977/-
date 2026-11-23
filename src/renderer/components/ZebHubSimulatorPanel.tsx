@@ -13,6 +13,7 @@ import {
   type ZebHubInput,
 } from '../../shared/zebHubFinance';
 import { jpyWhole } from '../../shared/formatters';
+import { simulateOutage, solarProfileKw, type OutageResult } from '../../shared/zebHubEms';
 
 /**
  * 防災オフグリッド ZEB 拠点の収支 (2026-11-23)。
@@ -44,6 +45,7 @@ const SPECS = refusingSpecs('judgement', {
   batterySubsidyPct: { label: '蓄電池の補助率 (%)', kind: 'percent', max: 100 },
   batterySubsidyCap: { label: '蓄電池の補助の上限 (円)', kind: 'money' },
   minAutonomyHours: { label: '災害時に要る持ち時間 (h)', kind: 'hours', sane: 720 },
+  refrigeration: { label: '冷凍冷蔵の消費 (kWh/日)', kind: 'kwh', allowZero: true },
 } as const satisfies Record<string, NumSpec>);
 
 type FieldKey = keyof typeof SPECS;
@@ -67,7 +69,54 @@ const FIELD_ORDER: readonly FieldKey[] = [
   'batterySubsidyPct',
   'batterySubsidyCap',
   'minAutonomyHours',
+  'refrigeration',
 ];
+
+/** 停電の持ち時間を見る長さ (時間)。災害のあと 3 日を自力で持つことを目安にする。 */
+export const OUTAGE_HOURS = 72;
+/** 停電の始まりの時刻 —— 日の入り (18 時)。翌朝まで発電が無い、いちばん厳しい始まり方。 */
+export const OUTAGE_START_HOUR = 18;
+/** 1 日の消費のうち、止めない負荷と冷凍冷蔵を除いた残りを 空調 : 店舗・EV に分ける比 (標準拠点の 45 : 35)。 */
+const HVAC_SHARE_OF_REST = 45 / 80;
+
+export interface OutageView {
+  /** 晴れの日の発電があり、取り置き分だけが残っているとき (平時の取引で回す分を使い切った夜)。 */
+  readonly reserveOnly: OutageResult;
+  /** 雨や曇りが続き発電が無く、満充電から始めたとき。 */
+  readonly noSun: OutageResult;
+}
+
+/**
+ * 夕方 6 時に停電したときの持ち時間を、2 つの始まり方で出す。蓄電池が無ければ null。
+ * 負荷の段は 止めない負荷 / 冷凍冷蔵 / 空調 / 店舗・EV —— 1 日の消費から前の 2 つを引いた残りを 45 : 35 で分ける。
+ */
+export function outageView(input: ZebHubInput, refrigerationKwhPerDay: number): OutageView | null {
+  if (!(input.batteryKwh > 0)) return null;
+  const rest = Math.max(0, input.baseLoadKwhPerDay - input.criticalLoadKwhPerDay - refrigerationKwhPerDay);
+  const tierLoadKw = {
+    0: input.criticalLoadKwhPerDay / 24,
+    1: refrigerationKwhPerDay / 24,
+    2: (rest * HVAC_SHARE_OF_REST) / 24,
+    3: (rest * (1 - HVAC_SHARE_OF_REST)) / 24,
+  };
+  const profile = solarProfileKw(input.pvKw * input.specificYieldKwhPerKwDay);
+  const fromDusk = [...profile.slice(OUTAGE_START_HOUR), ...profile.slice(0, OUTAGE_START_HOUR)];
+  const run = (startSoc: number, pvKwByHour: readonly number[]): OutageResult =>
+    simulateOutage({
+      batteryKwh: input.batteryKwh,
+      startSoc,
+      tierLoadKw,
+      pvKwByHour,
+      roundTripEfficiency: input.roundTripEfficiency,
+      maxHours: OUTAGE_HOURS,
+    });
+  // 使えない底 (1 − 深さ) + 災害用の取り置き分。
+  const reserveSoc = 1 - input.usableDepth + input.usableDepth * input.reserveShare;
+  return { reserveOnly: run(reserveSoc, fromDusk), noSun: run(1, [0]) };
+}
+
+const outageText = (r: OutageResult): string =>
+  r.survived ? `${OUTAGE_HOURS} 時間以上 (止めない負荷は最後まで動く)` : `${r.criticalHours} 時間`;
 
 const pctText = (share: number): string => String(Math.round(share * 1000) / 10);
 
@@ -90,11 +139,12 @@ const INITIAL: Readonly<Record<FieldKey, string>> = {
   batterySubsidyPct: '33.3',
   batterySubsidyCap: '60000000',
   minAutonomyHours: '24',
+  refrigeration: '0',
 };
 
 /** 画面の欄から計算の入力を組む (欄に無い前提は標準値のまま)。 */
-export function zebInputFromFields(v: Readonly<Record<FieldKey, string>>, sameArea: boolean): ZebHubInput {
-  const n = (k: FieldKey): number => readNumberOr0(v[k]);
+export function zebInputFromFields(fields: Readonly<Record<FieldKey, string>>, sameArea: boolean): ZebHubInput {
+  const n = (k: FieldKey): number => readNumberOr0(fields[k]);
   return {
     ...D,
     pvKw: n('pvKw'),
@@ -148,6 +198,11 @@ export function ZebHubSimulatorPanel() {
   );
 
   const firstNet = result?.years[0]?.net ?? null;
+  const loadsFit = readNumberOr0(fields.criticalLoad) + readNumberOr0(fields.refrigeration) <= readNumberOr0(fields.baseLoad);
+  const outage = useMemo(
+    () => (ready && loadsFit ? outageView(input, readNumberOr0(fields.refrigeration)) : null),
+    [ready, loadsFit, input, fields.refrigeration],
+  );
 
   return (
     <Section title="防災オフグリッド ZEB 拠点の収支 — 利回り・回収年数・蓄電池の容量 (概算)">
@@ -206,6 +261,28 @@ export function ZebHubSimulatorPanel() {
             <p role="note" style={{ fontSize: 12, color: 'var(--warning)' }} data-zeb-no-payback>
               ⚠️ この前提では投資を回収できません。電気の収支だけでは建物の費用を賄えないことが多いので、
               建物の使い道 (店舗・賃料・養殖や栽培の売上・EV 充電) の年間純収入を「ほかの年間純収入」に入れて確かめてください。
+            </p>
+          )}
+
+          <h3 style={{ fontSize: 13, margin: '12px 0 6px' }}>停電の間に止めない負荷を動かせる時間</h3>
+          {!loadsFit ? (
+            <p role="alert" style={{ fontSize: 12, color: 'var(--danger)' }} data-zeb-outage-loads>
+              止めない負荷と冷凍冷蔵の合計が 1 日の消費を超えています。数字を確かめてください。
+            </p>
+          ) : outage === null ? (
+            <p style={{ fontSize: 12, color: 'var(--warning)' }} data-zeb-outage-none>
+              蓄電池が無いため、夜の停電では止めない負荷を動かせません。
+            </p>
+          ) : (
+            <p style={{ fontSize: 12, color: 'var(--text)', lineHeight: 1.7 }} data-zeb-outage>
+              夕方 {OUTAGE_START_HOUR} 時に停電した場合 ({OUTAGE_HOURS} 時間まで):
+              <br />・晴れの日の発電があり、取り置き分だけが残っているとき: <strong>{outageText(outage.reserveOnly)}</strong>
+              <br />・雨や曇りが続いて発電が無く、満充電から始めたとき: <strong>{outageText(outage.noSun)}</strong>
+              <br />
+              <span style={{ color: 'var(--text-mute)' }}>
+                自立運転に入ると店舗・EV 充電はすぐ止め、残量 60% で空調、30% で冷凍冷蔵を止めます。
+                止めない負荷 (水循環ポンプ・殺菌灯・通信) は残量 5% まで動かします。晴れの日の発電は季節と向きを入れない目安です。
+              </span>
             </p>
           )}
 

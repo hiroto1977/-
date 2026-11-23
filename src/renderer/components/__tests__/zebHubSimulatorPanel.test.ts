@@ -2,7 +2,7 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { ZEB_BATTERY_CANDIDATES_KWH, ZebHubSimulatorPanel, zebInputFromFields } from '../ZebHubSimulatorPanel';
+import { OUTAGE_HOURS, ZEB_BATTERY_CANDIDATES_KWH, ZebHubSimulatorPanel, outageView, zebInputFromFields } from '../ZebHubSimulatorPanel';
 import { DEFAULT_ZEB_HUB_INPUT as D } from '../../../shared/zebHubFinance';
 import { jpyWhole } from '../../../shared/formatters';
 import { waitForText } from '../../__tests__/jsdomWait';
@@ -90,6 +90,26 @@ describe('防災 ZEB 拠点の収支の節', () => {
     expect(container.querySelector('[data-zeb-battery-choice]')?.textContent).toContain('賄える候補はありません');
   });
 
+  it('★ 停電の持ち時間: 晴れ (取り置き分から) と 雨 (満充電から・発電なし) の 2 つを出す', () => {
+    const box = container.querySelector('[data-zeb-outage]')?.textContent ?? '';
+    expect(box).toContain('夕方 18 時に停電した場合');
+    expect(box).toContain('取り置き分だけが残っているとき: 72 時間以上');
+    expect(box).toMatch(/発電が無く、満充電から始めたとき: \d+ 時間/);
+    expect(box).toContain('止めない負荷');
+  });
+
+  it('★ 蓄電池が無ければ、夜の停電では止めない負荷を動かせないと言う', async () => {
+    await typeInto('蓄電池の容量 (kWh)', '0');
+    expect(container.querySelector('[data-zeb-outage]')).toBeNull();
+    expect(container.querySelector('[data-zeb-outage-none]')).not.toBeNull();
+  });
+
+  it('★ 止めない負荷と冷凍冷蔵の合計が 1 日の消費を超えると、計算せずに断る', async () => {
+    await typeInto('冷凍冷蔵の消費 (kWh/日)', '500');
+    expect(container.querySelector('[data-zeb-outage]')).toBeNull();
+    expect(container.querySelector('[data-zeb-outage-loads]')?.textContent).toContain('1 日の消費を超えています');
+  });
+
   it('確かめることの一覧を出す (系統連系・保安・消防・上水と中水の分離・濃縮水)', () => {
     const checks = container.querySelector('[data-zeb-checks]')?.textContent ?? '';
     for (const word of ['系統連系', '電気主任技術者', '消防法', '吐水口空間', '濃縮水']) expect(checks).toContain(word);
@@ -118,6 +138,7 @@ describe('画面の欄から計算の入力を組む', () => {
         batterySubsidyPct: '50',
         batterySubsidyCap: '30000000',
         minAutonomyHours: '24',
+        refrigeration: '0',
       },
       false,
     );
@@ -145,5 +166,45 @@ describe('画面の欄から計算の入力を組む', () => {
     // 欄に無い前提は標準値のまま
     expect(input.reserveShare).toBe(D.reserveShare);
     expect(input.pvReplacementIntervalYears).toBe(D.pvReplacementIntervalYears);
+  });
+});
+
+describe('停電の持ち時間の計算', () => {
+  it('★ 蓄電池が無ければ null', () => {
+    expect(outageView({ ...D, batteryKwh: 0 }, 0)).toBeNull();
+  });
+
+  it('★ 標準の拠点 (550 kWh) は、発電が無くても負荷を絞って 72 時間持つ', () => {
+    const v = outageView(D, 20)!;
+    expect(v.noSun.survived).toBe(true);
+    expect(v.reserveOnly.survived).toBe(true);
+  });
+
+  it('★ 小さい蓄電池: 晴れの日は取り置き分からでも持ち、発電が無ければ満充電でも尽きる', () => {
+    const v = outageView({ ...D, batteryKwh: 300 }, 20)!;
+    expect(v.reserveOnly.survived).toBe(true);
+    expect(v.reserveOnly.hours).toHaveLength(OUTAGE_HOURS);
+    expect(v.reserveOnly.hours[0]!.socStart).toBeCloseTo(1 - D.usableDepth + D.usableDepth * D.reserveShare);
+    // 夕方 6 時から始めるので、最初の時間は発電が無く、翌朝 6 時台から発電する
+    expect(v.reserveOnly.hours[0]!.pvKw).toBe(0);
+    expect(v.reserveOnly.hours[11]!.pvKw).toBe(0);
+    expect(v.reserveOnly.hours[13]!.pvKw).toBeGreaterThan(0);
+    expect(v.noSun.hours.every((h) => h.pvKw === 0)).toBe(true);
+    expect(v.noSun.hours[0]!.socStart).toBe(1);
+    expect(v.noSun.survived).toBe(false);
+  });
+
+  it('★ 蓄電池を大きくすると、発電が無いときの持ち時間が延びる', () => {
+    const small = outageView({ ...D, batteryKwh: 300 }, 20)!.noSun.criticalHours;
+    const big = outageView({ ...D, batteryKwh: 450 }, 20)!.noSun.criticalHours;
+    expect(big).toBeGreaterThan(small);
+  });
+
+  it('★ 冷凍冷蔵を差し引いた残りを 空調 45 : 店舗 35 に分ける', () => {
+    const v = outageView({ ...D, baseLoadKwhPerDay: 175, criticalLoadKwhPerDay: 95 }, 0)!;
+    // 満充電の最初の時間は店舗・EV を止め、空調は動かす
+    const h0 = v.noSun.hours[0]!;
+    expect(h0.tiers).toEqual([0, 1, 2]);
+    expect(h0.loadKw).toBeCloseTo((95 + 0 + 80 * (45 / 80)) / 24);
   });
 });

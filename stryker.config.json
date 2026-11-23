@@ -110,6 +110,7 @@
     "src/renderer/data/chatData.ts",
     "src/renderer/data/businessArea.ts",
     "src/shared/zebHubFinance.ts",
+    "src/shared/zebHubEms.ts",
     "src/renderer/data/chatOrg.ts",
     "src/renderer/data/chatbot.ts",
     "src/renderer/data/cloudBackup.ts",
