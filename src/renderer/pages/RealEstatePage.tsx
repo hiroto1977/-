@@ -30,6 +30,7 @@ import {
 } from '../data/investments';
 import { DASH, jpy, pctOrDash } from '../../shared/formatters';
 import { GuardedNumber } from '../components/GuardedNumber';
+import { ZebHubSimulatorPanel } from '../components/ZebHubSimulatorPanel';
 import { refusalLabels, refusalNote, refusedFields, refusingSpecs, readNumberOr0, readNumberOrNull, type NumSpec } from '../data/inputGuards';
 import { useParameters } from '../data/parameterOverrides';
 import { advisorThresholds, dscrThresholds, effluentStandards, zoningRules } from '../../shared/parameters';
@@ -1477,6 +1478,7 @@ export function RealEstatePage() {
           放流を伴う場合は必ず自治体の環境部局に確認してください。濃縮廃液を捨てずに再利用すれば、これらの規制の多くを回避できます。
         </div>
       </Section>
+      <ZebHubSimulatorPanel />
     </div>
   );
 }

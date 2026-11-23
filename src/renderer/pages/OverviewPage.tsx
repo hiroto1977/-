@@ -290,7 +290,7 @@ const HYDRO_SPECS = refusingSpecs('save', {
   usableRatioPct: { label: '栽培に使える割合 (%)', kind: 'percent', allowZero: false, max: 100 },
   yieldRatePct: { label: '歩留まり (%)', kind: 'percent', allowZero: false, max: 100 },
   unitPriceYen: { label: '販売単価 (円/株)', kind: 'money', allowZero: false, sane: 10_000 },
-  electricityYenPerKwh: { label: '電力単価 (円/kWh)', kind: 'money', sane: 200 },
+  electricityYenPerKwh: { label: '電力単価 (円/kWh)', kind: 'yenPerKwh', sane: 200 },
   energyIntensityKwhPerKg: { label: '電力原単位 (kWh/kg)', kind: 'energy' },
   seedYenPerPlant: { label: '種苗費 (円/株)', kind: 'money', sane: 1_000 },
   nutrientYenPerPlant: { label: '肥料・養液 (円/株)', kind: 'money', sane: 1_000 },

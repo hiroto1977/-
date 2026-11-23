@@ -106,7 +106,12 @@ export type NumKind =
   | 'age' // 歳（整数）
   // 養蜂・養殖の概算が足した 2 種 (2026-11-18)。
   | 'hives' // 群（整数）—— 蜜蜂の群の数
-  | 'fishCount'; // 尾（整数）—— 魚の数
+  | 'fishCount' // 尾（整数）—— 魚の数
+  // 防災 ZEB 拠点の収支 (2026-11-23)。
+  | 'kw' // kW (発電の定格)
+  | 'kwh' // kWh (蓄電池の容量・1 日の消費)
+  | 'kwhPerKwDay' // kWh/kW/日 (1 kW あたりの 1 日の発電量)
+  | 'yenPerKwh'; // 円/kWh (電気の単価)
 
 export interface NumSpec {
   readonly label: string;
@@ -239,6 +244,12 @@ const KIND: Record<NumKind, KindRule> = {
   // 「0 人 として記録されます」と嘘の単位を言う (上の days / energy と同じ理由)。
   hives: { unit: '群', negativeIsFatal: true, integer: true, sane: 10000 },
   fishCount: { unit: '尾', negativeIsFatal: true, integer: true, sane: 10000000 },
+  // 防災 ZEB 拠点の収支が足した 4 種 (2026-11-23)。`energy` (kWh/kg) と `money` (円) を借りると
+  // 断りの文が嘘の単位を言う (上の days / energy と同じ理由)。
+  kw: { unit: 'kW', negativeIsFatal: true, sane: 100000 },
+  kwh: { unit: 'kWh', negativeIsFatal: true, sane: 1000000 },
+  kwhPerKwDay: { unit: 'kWh/kW/日', negativeIsFatal: true, sane: 10 },
+  yenPerKwh: { unit: '円/kWh', negativeIsFatal: true, sane: 1000 },
 };
 
 /**
