@@ -2,8 +2,17 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { OUTAGE_HOURS, ZEB_BATTERY_CANDIDATES_KWH, ZebHubSimulatorPanel, outageView, zebInputFromFields } from '../ZebHubSimulatorPanel';
-import { DEFAULT_ZEB_HUB_INPUT as D } from '../../../shared/zebHubFinance';
+import {
+  CONTAINER_BATTERY_CANDIDATES_KWH,
+  OUTAGE_HOURS,
+  ZEB_BATTERY_CANDIDATES_KWH,
+  ZebHubSimulatorPanel,
+  initialZebFields,
+  outageView,
+  zebInputFromFields,
+  type ZebScale,
+} from '../ZebHubSimulatorPanel';
+import { CONTAINER_START_ZEB_HUB_INPUT as C, DEFAULT_ZEB_HUB_INPUT as D, simulateZebHub } from '../../../shared/zebHubFinance';
 import { jpyWhole } from '../../../shared/formatters';
 import { waitForText } from '../../__tests__/jsdomWait';
 
@@ -47,7 +56,65 @@ async function typeInto(label: string, value: string): Promise<void> {
   });
 }
 
-describe('防災 ZEB 拠点の収支の節', () => {
+async function chooseScale(k: ZebScale): Promise<void> {
+  const button = container.querySelector<HTMLButtonElement>(`[data-zeb-scale="${k}"]`);
+  expect(button, k).toBeTruthy();
+  await act(async () => {
+    button!.click();
+  });
+}
+
+describe('初年度 (コンテナハウス) の規模', () => {
+  it('★ 開いた時は初年度のコンテナハウスで、初期費用 4,540 万円と仮の値である断りを出す', async () => {
+    await waitForText(text, '初期費用 (補助前)');
+    expect(container.querySelector('[data-zeb-scale="container"]')?.getAttribute('aria-checked')).toBe('true');
+    expect(text()).toContain(jpyWhole(45_400_000));
+    expect(container.querySelector('[data-zeb-scale-note]')?.textContent).toContain('仮の値');
+    // 1 拠点だけなので自己託送はしない前提で始まる。
+    expect(container.querySelector('[data-zeb-cross-area]')).not.toBeNull();
+  });
+
+  it('★ 蓄電池の比べは小型の候補で出す', () => {
+    const rows = [...container.querySelectorAll('[data-zeb-battery-row]')].map((r) => Number(r.getAttribute('data-zeb-battery-row')));
+    expect(rows).toEqual([...CONTAINER_BATTERY_CANDIDATES_KWH]);
+  });
+
+  it('★ 店舗と賃貸の純収入 (年 500 万円) を入れると回収年数が出る', async () => {
+    await typeInto('ほかの年間純収入 (円/年)', '5000000');
+    expect(container.querySelector('[data-zeb-no-payback]')).toBeNull();
+    const payback = [...container.querySelectorAll('.stat-grid > div')].find((s) => s.textContent?.includes('投資回収年数'));
+    expect(payback?.textContent).toMatch(/\d+(\.\d)? 年/);
+  });
+
+  it('★ 規模を切り替えると欄は選んだ規模の初期値へ戻り、戻すとまた初年度の値になる', async () => {
+    await typeInto('ほかの年間純収入 (円/年)', '5000000');
+    await chooseScale('standard');
+    expect(field('建築本体 (円)').value).toBe(String(D.buildingCost));
+    expect(field('ほかの年間純収入 (円/年)').value).toBe('0');
+    expect(text()).toContain(jpyWhole(702_300_000));
+    await chooseScale('container');
+    expect(field('建築本体 (円)').value).toBe(String(C.buildingCost));
+  });
+
+  it('★ 欄に無い前提 (蓄電池の単価・取り置き) は規模の値を使う', () => {
+    const input = zebInputFromFields(initialZebFields(C), C.selfWheelingSameArea, C);
+    expect(input.batteryCostPerKwh).toBe(200_000);
+    expect(input.batteryFixedCost).toBe(0);
+    expect(input.reserveShare).toBe(0.5);
+    expect(input.selfWheelingSameArea).toBe(false);
+    // ペロブスカイトは屋根 4 kW + 壁 8 kW。壁は屋根の 65% しか発電しない。
+    expect(input.pvKw).toBe(12);
+    expect(input.specificYieldKwhPerKwDay).toBeCloseTo((4 * (379 / 118) + 8 * (379 / 118) * 0.65) / 12, 2);
+    // 補助率は欄の 66.7% / 33.3% (仮置き): 45,400,000 − (14,400,000 × 0.667 + 6,000,000 × 0.333)。
+    expect(Math.round(simulateZebHub(input).netInvestment)).toBe(33_797_200);
+  });
+});
+
+describe('防災 ZEB 拠点の収支の節 (本格拠点)', () => {
+  beforeEach(async () => {
+    await chooseScale('standard');
+  });
+
   it('★ 標準の拠点: 初期費用と補助後の投資が計算どおりに出て、回収できないことを言う', async () => {
     await waitForText(text, '初期費用 (補助前)');
     expect(text()).toContain(jpyWhole(702_300_000));
