@@ -63,6 +63,7 @@ import { fundValuation, parseHoldingEntry, parsePropertyEntry } from '../investm
 import { parseCropNumber } from '../../../shared/hydroponicCrops';
 import { parseAssignment } from '../../../shared/workAssignment';
 import { parseA8netReward } from '../a8netRewards';
+import { parseUnmannedStore, parseVendingMachine } from '../vendingBusiness';
 import { WATCH_METRIC_KEYS, parseWatchWeek } from '../watchWeekly';
 import { parseGoal } from '../kpiImprovementStore';
 import { parseAmountInput } from '../../components/serviceActionUtils';
@@ -281,6 +282,24 @@ probes.push({
   pick: get('amount'),
   blank: { refuse: true },
 });
+// 自販機と無人販売店舗 (2026-11-24): 売上・客数・ロス率。空欄は 0 にせず断る (0 と「未入力」は別の事実)。
+probes.push({
+  writer: 'parseVendingMachine',
+  field: 'monthlyRevenue',
+  write: (s) => attempt(() => parseVendingMachine({ name: 'M', placement: 'office', monthlyRevenue: s, operational: true, needsRestock: false })),
+  pick: get('monthlyRevenue'),
+  blank: { refuse: true },
+});
+const STORE = { name: 'S', monthlyRevenue: '1000', monthlyCustomers: '10', lossRatePct: '1' } as const;
+for (const key of ['monthlyRevenue', 'monthlyCustomers', 'lossRatePct'] as const) {
+  probes.push({
+    writer: 'parseUnmannedStore',
+    field: key,
+    write: (s) => attempt(() => parseUnmannedStore({ ...STORE, [key]: s })),
+    pick: get(key),
+    blank: { refuse: true },
+  });
+}
 // 見張りアシスタントの週ごとの数字 (12 欄・どれも任意)。空欄は「未入力」として欄ごと持たせない ——
 // 1 つも入っていない週は断るので、隣の欄に 1 を置いて当てる。
 for (const key of WATCH_METRIC_KEYS) {
@@ -500,6 +519,8 @@ const WRITER_LEDGER: Readonly<Record<string, LedgerRow>> = {
   parseMember: { kind: 'no-numbers', why: 'チームの氏名・メール・役割だけを読む' },
   parseAssignment: { kind: 'numbers', why: '業務の割当の週の時間 (パス 556)' },
   parseA8netReward: { kind: 'numbers', why: 'A8.net の成果の報酬額 (円・0 以上の整数)' },
+  parseVendingMachine: { kind: 'numbers', why: '自販機 1 台の月の売上 (円・0 以上の整数)。名前は文字列・設置場所は許可リスト・稼働と補充は真偽値' },
+  parseUnmannedStore: { kind: 'numbers', why: '無人販売店舗の月の売上・客数 (0 以上の整数) とロス率 (0〜100 %)' },
   parseWatchWeek: { kind: 'numbers', why: '見張りアシスタントの週ごとの数字 (投稿数・広告費・訪問数ほか 12 欄・0 以上の整数・どれも任意)' },
   parseWatchItem: { kind: 'no-numbers', why: '見張りアシスタントへ渡す文 (種類・相手の名前・件名・本文) を文字列のまま読む。数の欄は無い' },
   parseGoal: { kind: 'numbers', why: '月次改善の輪の目標の営業利益率 (0% より大きく 100% 未満)' },

@@ -156,6 +156,10 @@ const FIELD_SHAPES: Readonly<Record<string, CollectionShape>> = {
   // 読み手 (`summarizeA8netRewards`) が合計から外して件数を言い、一覧の × で消せる。形で落とすと
   // 復元で行ごと消え、利用者が消す手を失う (業務の割当と同じ判断)。
   'a8net-rewards': shape({ month: str, program: str, amount: num, status: str }),
+  // 自販機と無人販売店舗の記録 (2026-11-24 · PR #795 の作り直し)。名前と設置場所は文字列としか見ない ——
+  // 知らない設置場所の行も復元で落とさず、画面の一覧に出して × で消せるようにする。
+  'vending-machines': shape({ name: str, placement: str, monthlyRevenue: num, operational: bool, needsRestock: bool }),
+  'unmanned-stores': shape({ name: str, monthlyRevenue: num, monthlyCustomers: num, lossRatePct: num }),
   // 見張りアシスタントの週ごとの数字 (2026-11-21): 週は**文字列としてだけ**見る —— 読めない綴りの行は
   // 読み手 (`buildWatchWeeklyReport`) がレポートから外して件数を言い、一覧の × で消せる。数字は入力した欄だけを持つ。
   'watch-weekly': shape({

@@ -40,6 +40,7 @@ import { hasCollectionShape } from '../collectionShapes';
 import { auditRecordShapes } from '../recordShapeAudit';
 import { MEMBERS_COLLECTION } from '../members';
 import { A8NET_REWARDS_COLLECTION } from '../a8netRewards';
+import { VENDING_MACHINES_COLLECTION } from '../vendingBusiness';
 import { WATCH_WEEKLY_COLLECTION } from '../watchWeekly';
 import { SALES_COLLECTION } from '../sales';
 import { KPI_ACTUALS_COLLECTION } from '../kpiActuals';
@@ -91,6 +92,7 @@ const MEMBER_OK = { name: '山田', email: 'a@example.com', role: 'member' };
 const WATCH_WEEK_OK = { week: '2026-11-16', xPosts: 12 };
 const WATCH_WEEK_BAD = { week: 'bad', xPosts: 12 };
 const A8NET_BAD_MONTH = { month: 'bad', program: '案件', amount: 1000, status: 'confirmed' };
+const VENDING_BAD_PLACEMENT = { name: '本社1階', placement: 'rooftop', monthlyRevenue: 1000, operational: true, needsRestock: false };
 // 貸借対照表の欄が数でない —— 形の表 (`currentAssets: num`) が断る側 (パス 444)。
 // **内数 ≦ 親項目** (`recordRelations.ts`) も同時に満たす必要があるので、
 // 壊す欄以外は 0 にしておく (親を壊すと内数との関係でも落ち、原因が 2 つになる)。
@@ -281,6 +283,14 @@ const LEDGER: readonly Row[] = [
     collection: A8NET_REWARDS_COLLECTION,
     sample: A8NET_BAD_MONTH,
     why: '発生月が読めない成果は形の表を通る (`month: str`) ので、復元でも落ちず A8.net の画面の一覧に出ていて × で消せる。一覧は読めない行も並べる (2026-11-19)。',
+  },
+  {
+    fn: 'unreadableVendingNote',
+    file: 'src/renderer/data/vendingBusiness.ts',
+    kinds: ['list-x'],
+    collection: VENDING_MACHINES_COLLECTION,
+    sample: VENDING_BAD_PLACEMENT,
+    why: '知らない設置場所の自販機は形の表を通る (`placement: str`) ので、復元でも落ちず事業ダッシュボードの自販機の一覧に出ていて × で消せる。一覧は読めない行も並べる (2026-11-24)。',
   },
   {
     fn: 'duplicateMemberMessage',
