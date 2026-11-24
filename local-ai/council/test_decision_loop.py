@@ -326,6 +326,7 @@ class LoopTest(unittest.TestCase):
             self.assertEqual(on_rej, want_rej, topic)
             self.assertFalse(on_dec and on_rej, topic)
             self.assertEqual(state["exclusive"], not (on_dec and on_rej))
+        # index.html は機械室のランプで変わる。閉ループが触らないファイルだけを origin/main と突き合わせる。
         for rel in (
             "local-ai/council/locked_decisions.md",
             "local-ai/council/advice_guard.py",

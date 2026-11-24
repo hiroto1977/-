@@ -22,7 +22,7 @@ button{font:inherit;cursor:pointer;border:2px solid var(--wood2);background:#fff
 #mini{position:fixed;right:10px;bottom:10px;width:170px;height:170px;border-radius:50%;border:5px solid var(--wood2);background:#7cc95a;cursor:crosshair;box-shadow:0 3px 0 #0003}
 .lab{position:fixed;left:0;top:0;font-size:11px;background:#fff;border-radius:8px;padding:0 6px;pointer-events:none;white-space:nowrap;border:2px solid #888;will-change:transform}
 .lab.t-COO{border-color:#d4a106;font-weight:bold}.lab.t-役員{border-color:#8e24aa;font-weight:bold}.lab.t-秘書{border-color:#ec407a}.lab.t-管理職{border-color:#1e88e5}.lab.t-一般職{border-color:#43a047}.lab.me{border-color:#b8860b;font-weight:bold;background:#fff4c2}
-.lab.off{background:#ccc;color:#555}.lab.sel{background:#ffeb3b}
+.lab.off{background:#ccc;color:#555}.lab.warn{background:#fff3e0;color:#e65100;border-color:#ef6c00}.lab.sel{background:#ffeb3b}
 .bub{position:fixed;left:0;top:0;max-width:220px;font-size:12px;line-height:1.35;background:#fff;border-radius:12px;padding:5px 8px;border:2px solid #333;pointer-events:none;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;will-change:transform;box-shadow:0 2px 0 #0002}
 .bub.think{color:#777;font-style:italic}
 #toggle{display:none}
@@ -95,7 +95,7 @@ const FL=[0xff6f91,0xffd54f,0xffffff,0xba68c8,0xff8a65];
 const free=(x,z)=>{const r=Math.hypot(x,z);for(const g of [14,25,37])if(Math.abs(r-g)<1.6)return false;return !(Math.abs(x)<3&&z<-5&&z>-14)};
 for(let i=0;i<420;i++){const a=rnd()*Math.PI*2,r=i%3?39+rnd()*5:6+rnd()*6,x=Math.cos(a)*r,z=Math.sin(a)*r;if(!free(x,z))continue;
   sbox(.12,.35,.12,0x388e3c,x,.17,z,null,0,false);sbox(.32,.22,.32,FL[i%5],x,.42,z,null,0,false)}
-for(let i=0;i<70;i++){const a=i*2.4+rnd()*.3,r=46+(i%6)*2.6,x=Math.cos(a)*r,z=Math.sin(a)*r;if(Math.hypot(x+38,z-38)<10)continue;const h=1.6+rnd()*1.4;
+for(let i=0;i<70;i++){const a=i*2.4+rnd()*.3,r=46+(i%6)*2.6,x=Math.cos(a)*r,z=Math.sin(a)*r;if(Math.hypot(x,z+46)<16)continue;const h=1.6+rnd()*1.4;
   sbox(.6,h,.6,0x7a5230,x,h/2,z);sbox(2.4,1.6,2.4,i%4?0x3f9a3f:0x5cb85c,x,h+.6,z);sbox(1.4,1,1.4,i%4?0x4caf50:0x7bd17b,x,h+1.8,z)}
 for(let i=0;i<40;i++){const a=i/40*Math.PI*2;if(SPOKES.some(s=>Math.abs(Math.atan2(Math.sin(a-s),Math.cos(a-s)))<.12))continue;
   const x=Math.cos(a)*5.6,z=Math.sin(a)*5.6;sbox(.18,.7,.18,0xf5f5f5,x,.35,z);sbox(.12,.12,.9,0xf5f5f5,x,.55,z,null,-a)}
@@ -105,8 +105,9 @@ const NL=[];for(const [x,z] of [[6,6],[-6,6],[6,-6],[-6,-6]]){const l=new THREE.
 sbox(4.2,.3,2.6,0xa0703c,0,1.1,0);sbox(.5,1,.5,0x6b4423,0,.5,0);for(const [x,z] of [[-4.4,-4.4],[4.4,-4.4],[-4.4,4.4],[4.4,4.4]])sbox(.6,4.4,.6,0xfafafa,x,2.2,z);
 for(const s of [-4.4,4.4]){sbox(9.4,.4,.5,0xc62828,0,4.5,s);sbox(.5,.4,9.4,0xc62828,s,4.5,0)}for(const x of [-2,0,2])sbox(.5,.6,.5,lampMat,x,3.9,-4.4,null,0,false);
 sbox(4,2.5,.3,0x7a5230,7.5,2.5,-5.5);sbox(.3,2,.3,0x4a3018,5.7,.8,-5.5);sbox(.3,2,.3,0x4a3018,9.3,.8,-5.5);sbox(3.4,1.8,.1,0xfff8e7,7.5,2.6,-5.33,null,0,false);
-// 機械室
-sbox(15,.3,11,0x9e9e9e,-40,.15,40,null,0,false);sbox(15,3,.3,0x777777,-40,1.5,34.5);sbox(.3,3,11,0x777777,-47.5,1.5,40);for(let i=0;i<4;i++)sbox(1.2,2.2,.8,0x546e7a,-45+i*3.3,1.1,44.5);
+// 機械室は注視点の奥（画面上側の中央）。チャットは左下、掲示板は右なので、そこには置かない。
+const MX=0,MZ=-46;
+sbox(18,.3,14,0x9e9e9e,MX,.15,MZ,null,0,false);sbox(18,3.2,.35,0x777777,MX,1.6,MZ-6.6);sbox(.35,3.2,14,0x777777,MX-9,1.6,MZ);for(let i=0;i<4;i++)sbox(1.4,2.4,.9,0x546e7a,MX-6+i*4,1.2,MZ+4.2);
 // 家（扉・窓・煙突つき）
 const DEPT={coo:0xffc107,cfo:0xff8a65,chro:0x64b5f6,cso:0x81c784,cio:0xffd54f,cqo:0xba68c8},DOOR={};
 function house(id,x,z,s,roof){const ry=Math.atan2(-x,-z),pm=new THREE.Matrix4().compose(V(x,z),new THREE.Quaternion().setFromEuler(new THREE.Euler(0,ry,0)),new THREE.Vector3(1,1,1));
@@ -141,6 +142,15 @@ function mkChar(key,p,x,z,o={}){const g=new THREE.Group(),s=o.scale||1,dc=o.dept
     tier:t,big:t==='COO'||t==='役員'||key==='me',desk:!!o.desk,dept:o.deptId,speed:2+rnd()*.6,bubUntil:0,bw:0,bh:0}}
 function say(A,text,ms,think=false){A.bub.textContent=text;A.bub.classList.toggle('think',think);A.bub.style.display='block';A.bw=A.bub.offsetWidth;A.bh=A.bub.offsetHeight;A.bubUntil=Date.now()+ms}
 const toSel=$('to');let SEATS=[];for(let i=0;i<10;i++){const a=i/10*Math.PI*2;SEATS.push(V(Math.cos(a)*3,Math.sin(a)*2.3))}
+function mkLamp(name,x,z){const g=new THREE.Group();
+  box(.32,3.4,.32,0x37474f,0,1.7,0,g);
+  const headMat=new THREE.MeshLambertMaterial({color:0x9e9e9e,emissive:0x000000});
+  const head=box(1.35,1.35,1.35,headMat,0,3.85,0,g,false);
+  box(1.7,.2,1.7,0x263238,0,4.65,0,g,false);
+  g.position.set(x,0,z);g.userData.key='s:'+name;S.add(g);
+  const lab=document.createElement('div');lab.className='lab t-svc';lab.textContent=name;labels.appendChild(lab);
+  const bub=document.createElement('div');bub.className='bub';bub.style.display='none';labels.appendChild(bub);
+  agents['s:'+name]={key:'s:'+name,p:{name},g,body:head,lamp:head,home:V(x,z),lab,bub,path:[],goal:null,state:'idle',timer:0,inside:0,up:false,health:'down',speaking:false,svc:true,big:false,desk:false,speed:0,bubUntil:0,bw:0,bh:0}}
 function build(org,st){ORG=org;const ppl=org.people;
   house('coo',0,-8,1.3,0xffc107);mkChar('coo',by('coo'),2.2,-8.5,{tier:'COO',dept:0xffc107,deptId:'coo',label:'COO（全社統括）'});
   const ex=ppl.filter(p=>p.tier==='役員');
@@ -159,8 +169,8 @@ function build(org,st){ORG=org;const ppl=org.people;
   const cl=ppl.find(p=>p.id==='claude');if(cl){const A=mkChar('claude',cl,-4.5,4.5,{tier:'議長',deptId:'coo',label:'Claude（議長）',scale:1.05});A.big=true}
   const gk=ppl.find(p=>p.id==='grok');if(gk){const A=mkChar('grok',gk,4.5,4.5,{tier:'相談役',deptId:'coo',label:'Grok（相談役）',scale:1.05});A.big=true}
   mkChar('me',{name:org.user},0,2.8,{tier:'CEO',shirt:0xffffff,label:org.user+'（CEO・あなた）'});agents.me.g.rotation.y=Math.PI;
-  Object.keys(st.services).forEach((s,i)=>mkChar('s:'+s,{name:s},-45+(i%4)*3.3,38+Math.floor(i/4)*3.5,{svc:true,scale:.7,shirt:0x90a4ae}));
-  applyServiceHealth(agents,st.services,mat);
+  Object.keys(st.services).forEach((s,i)=>{const col=i%4,row=Math.floor(i/4);mkLamp(s,MX-6+col*4,MZ-1.2+row*3.6)});
+  applyServiceHealth(agents,st.service_state||st.services,mat);
   flush();renderPeople();function by(id){return ppl.find(p=>p.id===id)}}
 // ---- 1日のスケジュール（東京時間） ----
 const hourJST=()=>Q.has('hour')?+Q.get('hour'):+new Intl.DateTimeFormat('en',{hour:'numeric',hourCycle:'h23',timeZone:'Asia/Tokyo'}).format(new Date());
@@ -190,7 +200,7 @@ async function poll(){try{
   if(meet&&st.speaking&&agents[st.speaking]&&(!last||last.id!==st.speaking)){const A=agents[st.speaking];if(!(A.called>Date.now())&&(!(A.bubUntil>Date.now())||!A.bub.classList.contains('think')))say(A,'（考え中…）',8000,true)}
   renderMeeting(st);
   const mine=st.chat.filter(c=>c.who===st.user).pop();if(mine&&agents.me&&agents.me.lastSaid!==mine.text){agents.me.lastSaid=mine.text;say(agents.me,mine.text,15000)}
-  applyServiceHealth(agents,st.services,mat);
+  applyServiceHealth(agents,st.service_state||st.services,mat);
   if(st.claude&&agents.claude){const cs=st.claude.status,t='Claude（議長）'+(cs==='利用可'?'':'・'+cs);if(agents.claude.lab.textContent!==t)agents.claude.lab.textContent=t;agents.claude.lab.classList.toggle('off',cs!=='利用可')}
   if(agents.grok&&agents.grok.lab.textContent!=='Grok（相談役）')agents.grok.lab.textContent='Grok（相談役）'
   if(tab==='prof'&&selected&&Date.now()-profAt>15000)renderProfile(selected);
@@ -308,7 +318,7 @@ function tint(){const h=hourJST(),day=h>=6&&h<17,dusk=h===17||h===18||h===5;cons
 const clock=new THREE.Clock(),v=new THREE.Vector3(),pv=new THREE.Vector3();let frames=0,fpsT=0,fpsN=0,lowFps=0;
 window.__ST=Q.has('selftest');
 function update(A,dt,T,list){
-  if(A.svc){A.g.rotation.z=A.up?0:1.4;A.g.position.y=A.up?0:.3;return}
+  if(A.svc){A.g.rotation.z=0;A.g.position.y=0;return}
   if(A.key==='me')return;
   if(A.called>Date.now()){A.g.visible=true;if(A.state==='inside'){A.g.position.copy(DOOR[A.dept]||A.home);A.state='pause'}A.g.lookAt(C.position.x,0,C.position.z);A.g.position.y=0;A.head.rotation.z=Math.sin(T*4)*.08;return}
   A.head.rotation.z=0;
@@ -325,7 +335,7 @@ const placed=[];function sty(e,k,v){if(e['_'+k]!==v){e['_'+k]=v;if(k==='tf')e.st
 const ovl=(a,b)=>a[0]<b[2]&&a[2]>b[0]&&a[1]<b[3]&&a[3]>b[1];
 function overlay(){placed.length=0;const now=Date.now(),list=[];
   for(const A of Object.values(agents)){if(A.bub.style.display==='block'&&now>A.bubUntil){A.bub.style.display='none'}
-    pv.copy(A.g.position);pv.y+=(A.svc?2.2:3.2)*A.g.scale.x;pv.project(C);const on=pv.z<1&&Math.abs(pv.x)<1.1&&Math.abs(pv.y)<1.1&&A.g.visible;
+    pv.copy(A.g.position);pv.y+=(A.svc?5.1:3.2)*A.g.scale.x;pv.project(C);const on=pv.z<1&&Math.abs(pv.x)<1.1&&Math.abs(pv.y)<1.1&&A.g.visible;
     const dist=C.position.distanceTo(A.g.position),pri=(A.key===selected?5:0)+(A.speaking?4:0)+(A.bubUntil>now?3:0)+(A.big?2:0)+(dist<30?1:0);
     list.push({A,on,x:(pv.x+1)/2*innerWidth,y:(1-pv.y)/2*innerHeight,pri,dist})}
   list.sort((a,b)=>b.pri-a.pri||a.dist-b.dist);
