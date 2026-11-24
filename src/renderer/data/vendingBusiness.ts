@@ -92,7 +92,7 @@ function readWhole(v: unknown, label: string, unit: string, max: number): number
   const range = `${label}は 0 以上 ${max.toLocaleString('ja-JP')} ${unit}以下の整数で入力してください`;
   const read = readEntryNumber(v);
   if (read.kind === 'blank') throw new Error(`${label}が未入力です（0 なら 0 と入力してください）`);
-  if (read.kind !== 'number') throw new Error(range);
+  if (read.kind !== 'number') throw new Error(`${label}を数として読めません（数字だけで入力してください）`);
   if (!Number.isInteger(read.value) || read.value < 0 || read.value > max) throw new Error(range);
   return read.value;
 }
@@ -125,9 +125,8 @@ export function parseUnmannedStore(input: {
   const monthlyCustomers = readWhole(input.monthlyCustomers, '月の客数', '人', MAX_STORE_MONTHLY_CUSTOMERS);
   const loss = readEntryNumber(input.lossRatePct);
   if (loss.kind === 'blank') throw new Error('ロス率が未入力です（無いなら 0 と入力してください）');
-  if (loss.kind !== 'number' || !(loss.value >= 0 && loss.value <= 100)) {
-    throw new Error('ロス率は 0 以上 100 以下の % で入力してください');
-  }
+  if (loss.kind !== 'number') throw new Error('ロス率を数として読めません（数字だけで入力してください）');
+  if (!(loss.value >= 0 && loss.value <= 100)) throw new Error('ロス率は 0 以上 100 以下の % で入力してください');
   return { name, monthlyRevenue, monthlyCustomers, lossRatePct: loss.value };
 }
 

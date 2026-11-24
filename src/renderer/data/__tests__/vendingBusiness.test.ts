@@ -41,14 +41,19 @@ describe('parseVendingMachine', () => {
 
   it('負・小数・指数・上限超えは断る', () => {
     const range = new Error(`月の売上は 0 以上 ${MAX_VENDING_MONTHLY_YEN.toLocaleString('ja-JP')} 円以下の整数で入力してください`);
-    for (const bad of ['-1', '1.5', '1e3', String(MAX_VENDING_MONTHLY_YEN + 1), 'abc']) {
+    for (const bad of ['-1', '1.5', String(MAX_VENDING_MONTHLY_YEN + 1)]) {
       expect(() => parseVendingMachine({ ...base, monthlyRevenue: bad }), bad).toThrow(range);
+    }
+    const unreadable = new Error('月の売上を数として読めません（数字だけで入力してください）');
+    for (const bad of ['1e3', 'abc', '12万']) {
+      expect(() => parseVendingMachine({ ...base, monthlyRevenue: bad }), bad).toThrow(unreadable);
     }
     expect(parseVendingMachine({ ...base, monthlyRevenue: String(MAX_VENDING_MONTHLY_YEN) }).monthlyRevenue).toBe(MAX_VENDING_MONTHLY_YEN);
   });
 
   it('名前の空・長すぎ、知らない設置場所、真偽値でない状態は断る', () => {
     expect(() => parseVendingMachine({ ...base, name: '  ' })).toThrow(new Error('台の名前が未入力です'));
+    expect(() => parseVendingMachine({ ...base, name: 42 })).toThrow(new Error('台の名前が未入力です'));
     expect(() => parseVendingMachine({ ...base, name: 'あ'.repeat(MAX_VENDING_NAME_CHARS + 1) })).toThrow(new Error(`台の名前は ${MAX_VENDING_NAME_CHARS} 文字以内で入力してください`));
     expect(parseVendingMachine({ ...base, name: '😀'.repeat(MAX_VENDING_NAME_CHARS) }).name).toHaveLength(MAX_VENDING_NAME_CHARS * 2);
     expect(() => parseVendingMachine({ ...base, placement: 'rooftop' })).toThrow(new Error('設置場所を選んでください'));
@@ -62,6 +67,13 @@ describe('parseUnmannedStore', () => {
 
   it('売上・客数・ロス率を読む (ロス率は小数を許す)', () => {
     expect(parseUnmannedStore(base)).toEqual({ name: '駅前', monthlyRevenue: 420_000, monthlyCustomers: 600, lossRatePct: 2.5 });
+  });
+
+  it('店の名前と売上の断りは、その欄を名指しする', () => {
+    expect(() => parseUnmannedStore({ ...base, name: '' })).toThrow(new Error('店の名前が未入力です'));
+    expect(() => parseUnmannedStore({ ...base, monthlyRevenue: '-1' })).toThrow(
+      new Error(`月の売上は 0 以上 ${MAX_VENDING_MONTHLY_YEN.toLocaleString('ja-JP')} 円以下の整数で入力してください`),
+    );
   });
 
   it('空欄は断り、0 は通す', () => {
@@ -81,7 +93,7 @@ describe('parseUnmannedStore', () => {
     const msg = new Error('ロス率は 0 以上 100 以下の % で入力してください');
     expect(() => parseUnmannedStore({ ...base, lossRatePct: '100.1' })).toThrow(msg);
     expect(() => parseUnmannedStore({ ...base, lossRatePct: '-0.1' })).toThrow(msg);
-    expect(() => parseUnmannedStore({ ...base, lossRatePct: 'x' })).toThrow(msg);
+    expect(() => parseUnmannedStore({ ...base, lossRatePct: 'x' })).toThrow(new Error('ロス率を数として読めません（数字だけで入力してください）'));
     expect(parseUnmannedStore({ ...base, lossRatePct: '100' }).lossRatePct).toBe(100);
   });
 });
@@ -151,16 +163,23 @@ describe('summarizeVendingBusiness', () => {
       { ...machine(), monthlyRevenue: '100000' } as unknown as VendingMachineEntry,
       { ...machine(), operational: 'yes' } as unknown as VendingMachineEntry,
       { ...machine(), name: 42 } as unknown as VendingMachineEntry,
+      { ...machine(), needsRestock: 'x' } as unknown as VendingMachineEntry,
     ];
-    const storesIn = [store(), { ...store(), lossRatePct: 120 } as UnmannedStoreEntry, { ...store(), monthlyCustomers: -1 } as UnmannedStoreEntry];
+    const storesIn = [
+      store(),
+      { ...store(), lossRatePct: 120 } as UnmannedStoreEntry,
+      { ...store(), monthlyCustomers: -1 } as UnmannedStoreEntry,
+      { ...store(), monthlyRevenue: '1' } as unknown as UnmannedStoreEntry,
+      { ...store(), name: 7 } as unknown as UnmannedStoreEntry,
+    ];
     const s = summarizeVendingBusiness(rows, storesIn);
     expect(s.machines.readable).toBe(1);
-    expect(s.machines.unreadable).toBe(4);
+    expect(s.machines.unreadable).toBe(5);
     expect(s.machines.revenue).toBe(100_000);
     expect(s.machines.operatingRate).toBe(1);
     expect(s.machines.byPlacement).toEqual([{ placement: 'office', machines: 1, revenue: 100_000 }]);
     expect(s.stores.readable).toBe(1);
-    expect(s.stores.unreadable).toBe(2);
+    expect(s.stores.unreadable).toBe(4);
     expect(s.stores.revenue).toBe(400_000);
   });
 });
@@ -172,6 +191,9 @@ describe('読みと断り', () => {
     expect(vendingAmountOf('5')).toBeNull();
     expect(vendingAmountOf(Number.NaN)).toBeNull();
     expect(lossRateOf(100)).toBe(100);
+    expect(lossRateOf(0)).toBe(0);
+    expect(lossRateOf('5')).toBeNull();
+    expect(lossRateOf(null)).toBeNull();
     expect(lossRateOf(100.01)).toBeNull();
     expect(lossRateOf(-0.01)).toBeNull();
   });
