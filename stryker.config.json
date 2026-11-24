@@ -152,6 +152,7 @@
     "src/renderer/data/inputGuards.ts",
     "src/renderer/data/investments.ts",
     "src/renderer/data/a8netRewards.ts",
+    "src/renderer/data/vendingBusiness.ts",
     "src/renderer/data/watchWeekly.ts",
     "src/renderer/data/browserBundledFetch.ts",
     "src/renderer/data/kessanImport.ts",
