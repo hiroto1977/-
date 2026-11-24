@@ -9,6 +9,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 API = os.environ.get("COUNCIL_API", "http://127.0.0.1:4000/v1/chat/completions")
 KEY = open(os.path.expanduser("~/litellm/master_key")).read().strip()
 INTERVAL = int(os.environ.get("COUNCIL_INTERVAL", "600"))
+# 予備の「サービス健全性」を、変化が無いのに毎回開かない。既定は 6 時間。
+HEALTH_TOPIC_COOLDOWN = int(os.environ.get("COUNCIL_HEALTH_TOPIC_COOLDOWN", "21600"))
 MIN_FREE_MB = int(os.environ.get("COUNCIL_MIN_FREE_MB", "1500"))
 HEAVY_FREE_MB = int(os.environ.get("COUNCIL_HEAVY_FREE_MB", "5500"))   # 4B/6Bモデルを使う最低空きメモリ
 HEAVY = {"yi-1.5-6b", "qwen3-4b", "minicpm3-4b"}
@@ -148,6 +150,28 @@ def service_snapshot(timeout=None):
         t.join(max(0.0, end - time.monotonic()))
     return {name: True if result.get(name) is True else False for name, _ in items}
 
+def _material(snapshot, locked):
+    """固定停止を除いた稼働の真偽。比較と保存に使う。ロック中の llama7B の上下は変化にしない。"""
+    if not isinstance(snapshot, dict):
+        return {}
+    out = {}
+    for name, ok in snapshot.items():
+        if not isinstance(name, str) or name in locked:
+            continue
+        out[name] = True if ok is True else False
+    return out
+
+def health_view():
+    """停止一覧・表示文・固定停止を除いた稼働。プローブは 1 回。"""
+    up = service_snapshot()
+    locked = decision_lock.forced_down_services() if LOCK_ON else set()
+    down = [n for n, ok in up.items() if not ok and n not in locked]
+    fixed = [n for n in locked if n in up and not up[n]]
+    parts = [f"空きメモリ {free_mb()}MB"]
+    if fixed: parts.append("固定停止: " + ", ".join(fixed))
+    parts.append("停止中: " + (", ".join(down) if down else "なし"))
+    return down, " / ".join(parts), _material(up, locked)
+
 def log_sys(msg):
     with open(os.path.join(HERE, "logs", "system.log"), "a") as f: f.write(f"{now()} {msg}\n")
 
@@ -202,14 +226,8 @@ def persona(p):
     return s
 
 def health_summary():
-    up = service_snapshot()
-    locked = decision_lock.forced_down_services() if LOCK_ON else set()
-    down = [n for n, ok in up.items() if not ok and n not in locked]
-    fixed = [n for n in locked if n in up and not up[n]]
-    parts = [f"空きメモリ {free_mb()}MB"]
-    if fixed: parts.append("固定停止: " + ", ".join(fixed))
-    parts.append("停止中: " + (", ".join(down) if down else "なし"))
-    return down, " / ".join(parts)
+    down, text, _material_snap = health_view()
+    return down, text
 
 KEYWORDS = {"cfo": "財務 税 資金 融資 キャッシュ 会計", "chro": "人事 給与 労務 採用 社会保険 人件費", "cso": "戦略 経営 分析 予測 予算 KPI 成長 レポート",
             "cio": "投資 資産 為替 不動産 投信 株 貯蓄", "cqo": "品質 テスト セキュリティ 監査 CI バグ 検証 メモリ サービス 停止 Mamori lint 言語"}
@@ -220,6 +238,8 @@ def pick_exec(topic):
     return best
 
 RSTATE = os.path.join(HERE, "recurring_state.json")   # 継続議題の進捗（実行時ファイル）
+HEALTH_STATE = os.path.join(HERE, "health_topic_state.json")  # 直近の健全性会議の時刻と稼働
+INBOX = os.path.join(HERE, "inbox.md")
 REC_RE = re.compile(r"^- \[(?:〜|~|継続[:：])\s*(?:(\d{4}-\d{2}-\d{2})\s+)?(\d{1,2}:\d{2})\]\s*(.+)$")
 def _deadline(date_s, hm):
     h, m = map(int, hm.split(":")); n = datetime.datetime.now()
@@ -281,6 +301,64 @@ def unfinished_work_items(text):
             items.append(s)
     return items
 
+def _read_health_state():
+    """('missing'|'ok'|'corrupt', 中身または None)。欠落は履歴なし。壊れは会議を開かない側。"""
+    try:
+        with open(HEALTH_STATE, encoding="utf-8") as f:
+            data = json.load(f)
+    except FileNotFoundError:
+        return "missing", None
+    except Exception:
+        return "corrupt", None
+    if not isinstance(data, dict):
+        return "corrupt", None
+    at_raw = data.get("at")
+    if isinstance(at_raw, bool) or not isinstance(at_raw, (int, float)):
+        return "corrupt", None
+    at = float(at_raw)
+    if at != at or abs(at) == float("inf"):
+        return "corrupt", None
+    snap = data.get("snapshot")
+    if not isinstance(snap, dict):
+        return "corrupt", None
+    norm = {}
+    for name, ok in snap.items():
+        if not isinstance(name, str) or not isinstance(ok, bool):
+            return "corrupt", None
+        norm[name] = ok
+    return "ok", {"at": at, "snapshot": norm}
+
+def _write_health_state(payload):
+    tmp = HEALTH_STATE + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(payload, f, ensure_ascii=False, sort_keys=True)
+        f.write("\n")
+    os.replace(tmp, HEALTH_STATE)
+
+def _remember_health_topic(material):
+    """書けたら True。書けないときは議題にしない（書けないまま毎回開くのを避ける）。"""
+    locked = decision_lock.forced_down_services() if LOCK_ON else set()
+    try:
+        _write_health_state({"at": time.time(), "snapshot": _material(material, locked)})
+        return True
+    except Exception as ex:
+        log_sys(f"健全性の状態を書けないため議題にしない: {ex!r}")
+        return False
+
+def _health_topic_allowed(material):
+    """(開いてよいか, 理由)。壊れたファイルは開かない。固定停止サービスだけの差は変化にしない。"""
+    kind, state = _read_health_state()
+    if kind == "missing":
+        return True, "履歴なし"
+    if kind != "ok":
+        return False, "状態ファイルが壊れている"
+    locked = decision_lock.forced_down_services() if LOCK_ON else set()
+    if _material(state["snapshot"], locked) != _material(material, locked):
+        return True, "スナップショットが変わった"
+    if time.time() - state["at"] >= HEALTH_TOPIC_COOLDOWN:
+        return True, "冷却が明けた"
+    return False, "冷却中"
+
 def refuse_topic(src, topic):
     """固定決定または助言ガードに反する議題なら理由リスト。
     status が locked の間は、CEOの丁寧な言い換えでも文言では解除できない。"""
@@ -309,7 +387,7 @@ def pick_topic():
         got = accept("CEOの指示", text)
         if got: return got
         thread_log("COO", "固定決定に反するため議題を受け付けませんでした: " + text[:120] + "（解除は locked_decisions.md の status を unlocked に）")
-    inbox = os.path.join(HERE, "inbox.md")
+    inbox = INBOX
     if os.path.exists(inbox):
         lines = open(inbox, encoding="utf-8").read().splitlines(); changed = False; pick = None
         for i, l in enumerate(lines):
@@ -344,8 +422,24 @@ def pick_topic():
                 lines[i] = l.replace("- ", "- [済] ", 1); changed = True; pick = ("受信箱", s[2:])
         if changed: open(inbox, "w", encoding="utf-8").write("\n".join(lines) + "\n")
         if pick: return pick
-    down, h = health_summary()
-    if down: return "サービス健全性", f"ローカルAIサービスが停止中: {', '.join(down)}（{h}）。原因と復旧・予防策。固定停止のサービスは起動しないこと。"
+    down, h, material = health_view()
+    kind, _saved = _read_health_state()
+    if kind == "corrupt":
+        # ゴミを「変化」と読まない。会議は開かず、今の稼働を基準に書き直す。
+        if _remember_health_topic(material):
+            log_sys("健全性の状態ファイルが壊れていたため、会議は開かず基準だけ書き直した")
+        due, why = False, "状態ファイルが壊れている"
+    else:
+        due, why = _health_topic_allowed(material)
+    if down:
+        # 停止中は残作業より先。冷却中は会議自体を開かない。
+        if due and _remember_health_topic(material):
+            return "サービス健全性", f"ローカルAIサービスが停止中: {', '.join(down)}（{h}）。原因と復旧・予防策。固定停止のサービスは起動しないこと。"
+        if due:
+            why = "状態を書けない"
+        if kind != "corrupt":
+            log_sys(f"サービス健全性は議題にしない（{why}）")
+        return None
     path = remaining_work_path()
     if path:
         try:
@@ -362,11 +456,22 @@ def pick_topic():
                 item = items[(start + k) % n]
                 got = accept("リポジトリ残作業", "Service Hubの残作業: " + item[:300])
                 if got: return got
-    return "サービス健全性", f"ローカルAI環境の改善（{h}）。固定停止のサービスは起動・再構築しないこと。"
+    # 予備の健全性議題も、変化が無い間 (冷却中) は開かない。
+    if due and _remember_health_topic(material):
+        return "サービス健全性", f"ローカルAI環境の改善（{h}）。固定停止のサービスは起動・再構築しないこと。"
+    if due:
+        why = "状態を書けない"
+    if kind != "corrupt":
+        log_sys(f"サービス健全性は議題にしない（{why}）")
+    return None
 
 
 def session():
-    src, topic = pick_topic(); ROT[0] += 1
+    picked = pick_topic()
+    if picked is None:
+        STATE.update(status=f"待機中（議題なし・サービス健全性は見送り・次回まで最大{INTERVAL}秒）", topic="", updated=now(), speaking=None)
+        return
+    src, topic = picked; ROT[0] += 1
     ex = P[pick_exec(topic)]
     mgrs = kids(ex["id"], "管理職"); mgr = mgrs[ROT[0] % len(mgrs)]
     staff = kids(mgr["id"], "一般職"); st = staff[ROT[0] % len(staff)]

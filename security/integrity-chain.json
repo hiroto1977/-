@@ -4564,6 +4564,14 @@
       "leafCount": 225,
       "note": "update build-landing.cjs",
       "hash": "c507bacfcc0502f304e287bc1a52c042d7f5d551421c42f6b0f0ddb83315e975"
+    },
+    {
+      "index": 542,
+      "prevHash": "c507bacfcc0502f304e287bc1a52c042d7f5d551421c42f6b0f0ddb83315e975",
+      "merkleRoot": "68848d3228ac1f3d533f52454f18fc30388a6eb0fa118b58242d2270a3acd7d4",
+      "leafCount": 225,
+      "note": "update ci.yml",
+      "hash": "c098ff9dcbbf0429e3d34240fda408bf49dd5dca0504fdaf3f7534c31e485567"
     }
   ],
   "tipManifest": {
@@ -4577,7 +4585,7 @@
     ".cursor/rules/20-gates.mdc": "821205069a9f0fae121e92be6826342bce6e765a34bea95c7ebc36c57b234da4",
     ".cursor/rules/30-conventions.mdc": "ecc268597f19300ff8c9e574d25ae92f34f6ddb9ec13776fb5162c32f6c0ba50",
     ".github/dependabot.yml": "5fb436726dc2b51f99162653885c40cafae5d57d6deb0f4f5b5449e6b202493f",
-    ".github/workflows/ci.yml": "f9e7b94f3e4ebcebcf541fdef7bf533c218995a0a02d740097862f0314b411f3",
+    ".github/workflows/ci.yml": "786376f2959342d487f9e6b8b0fa16422829e2c7faf7b3c0010ae647487c9d1d",
     ".github/workflows/dependency-audit.yml": "c089648472bc7879701a996aeba69a6ff5dcb55e8efa2e0d996e4d9a9c3ee026",
     ".github/workflows/e2e.yml": "d6036acc5fe97d17fad5799144470b140bedfbb56934de4949517b038640be60",
     ".github/workflows/gateway-browser.yml": "9f4eeae9a8bae07fc12e966094047a493d19ca49a7592fd98d9afb45d870a349",

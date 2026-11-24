@@ -4,5 +4,7 @@ user_thread.md
 decisions.md
 __pycache__/
 recurring_state.json
+health_topic_state.json
+health_topic_state.json.tmp
 execution_log.jsonl
 loop_state.json

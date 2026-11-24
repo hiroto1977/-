@@ -102,11 +102,16 @@ class PickTopicRemainingTest(unittest.TestCase):
         self.c.PENDING.clear()
         self.c.ROT[0] = 0
         self.lock_before = open(LOCK_FILE, "rb").read()
-        self.health = mock.patch.object(self.c, "health_summary", return_value=([], "空きメモリ 9999MB / 停止中: なし"))
+        self.health = mock.patch.object(self.c, "health_view", return_value=([], "空きメモリ 9999MB / 停止中: なし", {}))
         self.health.start()
+        # 健全性議題の冷却の状態も一時の置き場へ (実物の council の置き場に書かない)。
+        self._health_state, self._inbox = self.c.HEALTH_STATE, self.c.INBOX
+        self.c.HEALTH_STATE = os.path.join(self.tmp, "health_topic_state.json")
+        self.c.INBOX = os.path.join(self.tmp, "inbox.md")
 
     def tearDown(self):
         self.health.stop()
+        self.c.HEALTH_STATE, self.c.INBOX = self._health_state, self._inbox
         after = open(LOCK_FILE, "rb").read()
         self.c.HERE = self._here
         self.c.ADVICE = self._advice
@@ -301,7 +306,7 @@ class PickTopicRemainingTest(unittest.TestCase):
         self.assertIn("受信箱の未着手", topic)
         self.assertIn("[済]", open(inbox, encoding="utf-8").read())
         self.health.stop()
-        self.health = mock.patch.object(self.c, "health_summary", return_value=(["Ollama"], "停止中: Ollama"))
+        self.health = mock.patch.object(self.c, "health_view", return_value=(["Ollama"], "停止中: Ollama", {"Ollama": False}))
         self.health.start()
         src, topic = self.pick()
         self.assertEqual(src, "サービス健全性")
