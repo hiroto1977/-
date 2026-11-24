@@ -98,6 +98,17 @@ jobs:
           "$RUNNER_TEMP/zt-venv/bin/pip" install --quiet --disable-pip-version-check --only-binary=:all: --require-hashes -r zero-trust-gateway/requirements.txt
           cd zero-trust-gateway
           "$RUNNER_TEMP/zt-venv/bin/python" -m pytest
+      # 評議会の固定決定ロック。vitest は .py を走らせない。
+      # 手元と同じく council ディレクトリで python3 に直接渡す（working-directory は門が断る）。
+      - name: Council decision lock tests
+        run: |
+          cd local-ai/council
+          python3 test_decision_lock.py
+          python3 test_lock_prevention.py
+          python3 test_lock_paraphrase.py
+          python3 test_lock_iv_coord.py
+      # 村議会の健全性議題の冷却 (変化が無いときは開かない)。標準ライブラリだけ。
+      - run: npm run test:council
       - run: npm run lint:repo-size
       - run: npm run lint:deps
       - run: npm run lint:mcp-servers
