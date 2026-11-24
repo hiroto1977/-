@@ -10,6 +10,7 @@ import { AiEgressNotice } from '../components/AiEgressNotice';
 import { AI_EGRESS_RECIPIENT_ANTHROPIC, remoteOnly } from '../../shared/aiEgressNotice';
 import { sumShigyoMonthlyFees } from '../../shared/shigyoTypes';
 import { summarizeFoodDelivery } from '../data/foodDelivery';
+import { VendingBusinessPanel } from '../components/VendingBusinessPanel';
 import { exportSavedNote, exportWarning } from '../data/exportOutcome';
 import { MAX_ADVISOR_QUESTION_CHARS } from '../../shared/advisorQuestionLimits';
 import { CeilingNotice } from '../components/CeilingNotice';
@@ -890,6 +891,7 @@ export function BusinessPage() {
       </Section>
 
       <FoodDeliverySection />
+      <VendingBusinessPanel />
 
       {focusedUnit && (
         <Section title="詳細ビュー" count={1}>

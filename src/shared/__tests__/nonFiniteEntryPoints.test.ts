@@ -127,6 +127,7 @@ import { computeRunwayMonths } from '../../renderer/data/accounting';
 import { restoreResultMessage, type RestorePlan } from '../../renderer/data/backup';
 import { computeBudgetVarianceFromFundamentals } from '../../renderer/data/budgetVariance';
 import { noBreakEvenNote, unreadablePeriodNote, unreadablePeriodSheetNote } from '../../renderer/data/kpiActuals';
+import { unreadableVendingNote } from '../../renderer/data/vendingBusiness';
 import { requiredRevenueForTarget } from '../../renderer/data/profitSensitivity';
 import { shigyoDemoMixNote } from '../../renderer/data/shigyoDirectory';
 import { villageSummary } from '../../renderer/data/villageData';
@@ -235,6 +236,8 @@ const ENTRY_POINTS: readonly EntryPoint[] = [
   // 期が読めず除いた件数の断り (パス 225)。非有限・未定義は「言うことが無い」と同じ null。
   { label: 'unreadablePeriodNote', args: [2], call: (a) => unreadablePeriodNote('実績', a!) },
   { label: 'unreadablePeriodSheetNote', args: [2], call: (a) => unreadablePeriodSheetNote(a!) },
+  // 自販機・無人店舗の読めない行の件数の断り (2026-11-24)。非有限は「言うことが無い」と同じ null。
+  { label: 'unreadableVendingNote', args: [2, 1], call: (a, b) => unreadableVendingNote(a!, b!) },
   { label: 'floorTaxableThousand', args: [1_234_567], call: (a) => floorTaxableThousand(a!) },
   { label: 'calcBaseIncomeTax', args: [5_000_000], call: (a) => calcBaseIncomeTax(a!) },
   { label: 'marginalIncomeTaxRate', args: [5_000_000], call: (a) => marginalIncomeTaxRate(a!) },

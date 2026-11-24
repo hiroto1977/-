@@ -99,6 +99,9 @@ export const BACKUP_COLLECTION_RECORD_LIMITS: Readonly<Record<string, number>> =
   'mutualfund-holdings': 2_000,
   // A8.net の成果の記録 (2026-11-19): 一覧は窓を掛けるが、集計は全行を読む。月 100 件 × 数年より十分広い天井。
   'a8net-rewards': 20_000,
+  // 自販機と無人販売店舗の記録 (2026-11-24): 1 台・1 店に 1 行。数千台の運営より十分広い天井。
+  'vending-machines': 10_000,
+  'unmanned-stores': 5_000,
   // 見張りアシスタントの週ごとの数字 (2026-11-21): 週に 1 行。数十年ぶんより十分広い天井。
   'watch-weekly': 5_000,
   'realestate-properties': 2_000,

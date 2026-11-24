@@ -198,6 +198,26 @@ const DRAFT_LEDGER: Readonly<Record<string, DraftRow>> = Object.freeze({
     writer: 'parseA8netReward',
     why: '「＋ 成果を記録」を押したときに読み、0 以上の整数でなければ断る (保存しない・空欄は 0 円にしない)',
   },
+  'business|自販機の月の売上': {
+    file: 'renderer/components/VendingBusinessPanel.tsx',
+    writer: 'parseVendingMachine',
+    why: '「＋ 自販機を記録」を押したときに読み、0 以上の整数でなければ断る (保存しない・空欄は 0 円にしない)',
+  },
+  'business|無人店舗の月の売上': {
+    file: 'renderer/components/VendingBusinessPanel.tsx',
+    writer: 'parseUnmannedStore',
+    why: '「＋ 無人店舗を記録」を押したときに読み、0 以上の整数でなければ断る (保存しない・空欄は 0 円にしない)',
+  },
+  'business|無人店舗の月の客数': {
+    file: 'renderer/components/VendingBusinessPanel.tsx',
+    writer: 'parseUnmannedStore',
+    why: '「＋ 無人店舗を記録」を押したときに読み、0 以上の整数でなければ断る (空欄は 0 人にしない)',
+  },
+  'business|無人店舗のロス率': {
+    file: 'renderer/components/VendingBusinessPanel.tsx',
+    writer: 'parseUnmannedStore',
+    why: '「＋ 無人店舗を記録」を押したときに読み、0〜100 の % でなければ断る (空欄は 0% にしない)',
+  },
   'sales|売上金額 (円)': {
     file: 'renderer/pages/SalesPage.tsx',
     writer: 'parseSalesEntry',

@@ -106,6 +106,16 @@ export const SAMPLES: Readonly<Record<string, Sample>> = {
     required: ['month', 'program', 'amount', 'status'],
     optional: [],
   },
+  'vending-machines': {
+    good: { name: '本社1階 飲料', placement: 'office', monthlyRevenue: 85000, operational: true, needsRestock: false },
+    required: ['name', 'placement', 'monthlyRevenue', 'operational', 'needsRestock'],
+    optional: [],
+  },
+  'unmanned-stores': {
+    good: { name: '駅前 無人店', monthlyRevenue: 420000, monthlyCustomers: 600, lossRatePct: 2.5 },
+    required: ['name', 'monthlyRevenue', 'monthlyCustomers', 'lossRatePct'],
+    optional: [],
+  },
   'watch-weekly': {
     good: {
       week: '2026-11-16', xPosts: 12, xImpressions: 15000, xEngagements: 450, xFollowers: 1020,

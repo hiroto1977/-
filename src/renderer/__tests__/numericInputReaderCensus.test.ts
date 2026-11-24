@@ -219,6 +219,10 @@ const NO_LOCAL_READER: Readonly<Record<string, { readonly writers: readonly stri
     writers: ['parseA8netReward'],
     why: '成果の下書き (報酬額) を、そのまま書き手へ渡す (書き手は readEntryNumber で読み、空欄は断る)',
   },
+  'renderer/components/VendingBusinessPanel.tsx': {
+    writers: ['parseVendingMachine', 'parseUnmannedStore'],
+    why: '自販機と無人店舗の下書き (売上・客数・ロス率) を、そのまま書き手へ渡す (書き手は readEntryNumber で読み、空欄は断る)',
+  },
   'renderer/pages/SalesPage.tsx': {
     writers: ['parseSalesEntry'],
     why: '売上の下書き (売上金額・注文の数) を、そのまま書き手へ渡す (書き手は readEntryNumber で読み、空欄は断る)。2026-11-20 に欄へ数字のキーボードを出す印を足して母集団に入った',

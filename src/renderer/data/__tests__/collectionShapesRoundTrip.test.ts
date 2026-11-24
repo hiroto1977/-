@@ -47,6 +47,7 @@ import { FREE_CONNECTOR_REGISTRY } from '../../../shared/connectors/freeConnecto
 import { addCheckIn, answerQuestion, emptyMentorSession, setRelation } from '../../../shared/mentor';
 import { parseAssignment } from '../../../shared/workAssignment';
 import { parseA8netReward } from '../a8netRewards';
+import { parseUnmannedStore, parseVendingMachine } from '../vendingBusiness';
 import { parseWatchWeek } from '../watchWeekly';
 
 /** IndexedDB / バックアップと同じ往復 (structured clone は NaN を残すが、バックアップ JSON は null にする)。 */
@@ -227,6 +228,13 @@ describe('書く側の出力 → collectionShapes (往復)', () => {
   it('a8net-rewards: 実物の書き手 (parseA8netReward) の出力', () => {
     roundTrips('a8net-rewards', parseA8netReward({ month: '2026-11', program: '動画配信サービス 登録', amount: '1,200', status: 'pending' }), 'pending');
     roundTrips('a8net-rewards', parseA8netReward({ month: '2026-10', program: 'P', amount: 0, status: 'rejected' }), 'zero');
+  });
+
+  it('vending-machines / unmanned-stores: 実物の書き手 (parseVendingMachine / parseUnmannedStore) の出力', () => {
+    roundTrips('vending-machines', parseVendingMachine({ name: '本社1階', placement: 'office', monthlyRevenue: '85,000', operational: true, needsRestock: false }), 'office');
+    roundTrips('vending-machines', parseVendingMachine({ name: '駅', placement: 'station', monthlyRevenue: 0, operational: false, needsRestock: true }), 'stopped');
+    roundTrips('unmanned-stores', parseUnmannedStore({ name: '駅前', monthlyRevenue: '420000', monthlyCustomers: '600', lossRatePct: '2.5' }), 'store');
+    roundTrips('unmanned-stores', parseUnmannedStore({ name: '空', monthlyRevenue: 0, monthlyCustomers: 0, lossRatePct: 0 }), 'zero');
   });
 
   /**
