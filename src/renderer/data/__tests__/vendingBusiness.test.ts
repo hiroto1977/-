@@ -6,6 +6,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import {
+  MAX_STORE_MONTHLY_CUSTOMERS,
   MAX_VENDING_MONTHLY_YEN,
   MAX_VENDING_NAME_CHARS,
   lossRateOf,
@@ -67,6 +68,13 @@ describe('parseUnmannedStore', () => {
     expect(() => parseUnmannedStore({ ...base, monthlyCustomers: '' })).toThrow(new Error('月の客数が未入力です（0 なら 0 と入力してください）'));
     expect(() => parseUnmannedStore({ ...base, lossRatePct: '' })).toThrow(new Error('ロス率が未入力です（無いなら 0 と入力してください）'));
     expect(parseUnmannedStore({ ...base, lossRatePct: '0', monthlyCustomers: '0' })).toMatchObject({ lossRatePct: 0, monthlyCustomers: 0 });
+  });
+
+  it('客数の上限: ちょうどは通し、+1 は断る', () => {
+    expect(parseUnmannedStore({ ...base, monthlyCustomers: String(MAX_STORE_MONTHLY_CUSTOMERS) }).monthlyCustomers).toBe(MAX_STORE_MONTHLY_CUSTOMERS);
+    expect(() => parseUnmannedStore({ ...base, monthlyCustomers: String(MAX_STORE_MONTHLY_CUSTOMERS + 1) })).toThrow(
+      new Error(`月の客数は 0 以上 ${MAX_STORE_MONTHLY_CUSTOMERS.toLocaleString('ja-JP')} 人以下の整数で入力してください`),
+    );
   });
 
   it('ロス率は 0〜100 の外を断る (境界は通す)', () => {
@@ -171,6 +179,7 @@ describe('読みと断り', () => {
   it('外した行が無ければ断りは null、在れば件数と逃げ口 (一覧の ×) を言う', () => {
     expect(unreadableVendingNote(0, 0)).toBeNull();
     expect(unreadableVendingNote(Number.NaN, 0)).toBeNull();
+    expect(unreadableVendingNote(Number.POSITIVE_INFINITY, 1.5)).toBeNull();
     expect(unreadableVendingNote(2, 0)).toBe('項目のいずれかが読めない記録が 自販機 2 台 あります。集計には入れていません。その行も下の一覧に出ています —— 一覧の × で消して、入れ直してください。');
     expect(unreadableVendingNote(1, 3)).toContain('自販機 1 台・無人店舗 3 店');
   });

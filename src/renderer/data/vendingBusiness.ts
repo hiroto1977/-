@@ -273,10 +273,11 @@ export function summarizeVendingBusiness(
  * そこに出ている (形の表は名前と設置場所を文字列としか見ないので、復元でも落ちない)。
  */
 export function unreadableVendingNote(machines: number, stores: number): string | null {
-  // `> 0` で受けるので非有限 (NaN) も「外した行は無い」側へ落ち、文に NaN を刷らない。
+  // 正の整数だけを数として言う —— 非有限 (NaN / Infinity) は「外した行は無い」側へ落ち、文に NaN を刷らない。
+  const counted = (n: number): boolean => Number.isInteger(n) && n > 0;
   const parts: string[] = [];
-  if (machines > 0) parts.push(`自販機 ${machines} 台`);
-  if (stores > 0) parts.push(`無人店舗 ${stores} 店`);
+  if (counted(machines)) parts.push(`自販機 ${machines} 台`);
+  if (counted(stores)) parts.push(`無人店舗 ${stores} 店`);
   if (parts.length === 0) return null;
   return `項目のいずれかが読めない記録が ${parts.join('・')} あります。集計には入れていません。その行も下の一覧に出ています —— 一覧の × で消して、入れ直してください。`;
 }

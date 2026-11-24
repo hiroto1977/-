@@ -110,9 +110,14 @@ export function VendingBusinessPanel() {
     setStoreForm(EMPTY_STORE);
   }
 
-  /** 稼働・補充の状態を書き換える。相手が消えていれば黙らずに言う。 */
-  async function onToggle(rowId: string, patch: Partial<Pick<VendingMachineEntry, 'operational' | 'needsRestock'>>) {
-    const saved = await machines.edit(rowId, patch);
+  /** 稼働・補充の状態を書き換える (その 1 欄だけを書く)。相手が消えていれば黙らずに言う。 */
+  async function onToggle(rowId: string, field: 'operational' | 'needsRestock', value: boolean) {
+    if (field === 'operational') {
+      const saved = await machines.edit(rowId, { operational: value });
+      if (!saved) setMachineError(vanishedRecordNote('この自販機', '一覧を読み直しました。'));
+      return;
+    }
+    const saved = await machines.edit(rowId, { needsRestock: value });
     if (!saved) setMachineError(vanishedRecordNote('この自販機', '一覧を読み直しました。'));
   }
 
@@ -265,7 +270,7 @@ export function VendingBusinessPanel() {
                       type="checkbox"
                       checked={operational}
                       aria-label={`自販機「${name}」は稼働中`}
-                      onChange={(e) => fireReported(onToggle(r.id, { operational: e.target.checked }))}
+                      onChange={(e) => fireReported(onToggle(r.id, 'operational', e.target.checked))}
                     />
                     稼働中
                   </label>
@@ -274,7 +279,7 @@ export function VendingBusinessPanel() {
                       type="checkbox"
                       checked={restock}
                       aria-label={`自販機「${name}」は補充が要る`}
-                      onChange={(e) => fireReported(onToggle(r.id, { needsRestock: e.target.checked }))}
+                      onChange={(e) => fireReported(onToggle(r.id, 'needsRestock', e.target.checked))}
                     />
                     補充が要る
                   </label>
