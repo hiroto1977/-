@@ -241,10 +241,39 @@ export function staleDataNote(
   origin: DataOrigin,
   source: 'snapshot' | 'live',
   failed: boolean,
+  snapshotHasNumbers = true,
 ): string | null {
   if (!failed) return null;
   if (!isRefreshable(origin)) return null;
-  return source === 'snapshot'
+  if (source === 'live') return '表示中の数字は前回取得できた内容です（今回の更新は反映されていません）';
+  return snapshotHasNumbers
     ? '表示中の数字は同梱のサンプルです（まだあなたのデータではありません）'
-    : '表示中の数字は前回取得できた内容です（今回の更新は反映されていません）';
+    : NO_SAMPLE_NUMBERS_NOTE;
 }
+
+/**
+ * 取得に失敗し、しかも同梱の見本が数字を 1 つも持たない画面の 1 行 (2026-11-25)。
+ *
+ * それまで上の関数は失敗したら無条件に「表示中の数字は同梱のサンプルです」と言っていた。
+ * ところが取得できる画面 (`remote` / `local`) の見本の多くは**空の土台** (配列は空・数は 0) で、
+ * 画面に並ぶ数字はそもそも無い。Ollama は起動していないと「● Not running」の下にこの 1 行を出し、
+ * 読んだ人は存在しない見本の数字を探すことになった (`docs/REMAINING_WORK.md` が 2026-11-19 から残していた)。
+ */
+export const NO_SAMPLE_NUMBERS_NOTE = '取得できなかったため、表示できる数字はありません（この画面は同梱の見本の数字を持ちません）';
+
+/**
+ * 取得できる画面のうち、**同梱の見本 (`SNAPSHOT[id]`) が数字を 1 つも持たない**物 (2026-11-25 実測 31 件)。
+ *
+ * 「数字を持つ」は、空でない配列か 0 でない有限の数がどこかに在ること。文字列は数えない
+ * (Notion の「参加中のチームスペースなし」のような空の状態の案内は見本の数字ではない)。
+ *
+ * `StatusBar` は社外向けポータルにも入るので `SNAPSHOT` を取り込めず、ここに写しを持つ。
+ * 写しと実物の一致は `renderer/__tests__/snapshotSampleNumbers.test.ts` が両方向に見る
+ * (見本に数字を足した・空にした日はそこが名指しで落ちる)。
+ */
+export const SNAPSHOT_WITHOUT_SAMPLE_NUMBERS: ReadonlySet<ServiceId> = new Set<ServiceId>([
+  'home', 'notion', 'skills', 'security', 'cloudflare', 'emotions', 'ollama', 'kpi', 'library', 'settings',
+  'real-estate', 'mutual-funds', 'quality', 'tax-accountant', 'labor-consultant', 'lawyer', 'judicial-scrivener',
+  'admin-scrivener', 'sme-consultant', 'patent-attorney', 'cpa', 'a8net', 'sales', 'team', 'grok', 'overview',
+  'tax', 'funding', 'freee', 'connectors', 'compliance',
+]);

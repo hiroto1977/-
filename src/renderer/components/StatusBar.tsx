@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { professionalsForService } from '../data/businessTriage';
-import { describeOrigin, isRefreshable, originOf, staleDataNote } from '../../shared/dataOrigin';
+import { SNAPSHOT_WITHOUT_SAMPLE_NUMBERS, describeOrigin, isRefreshable, originOf, staleDataNote } from '../../shared/dataOrigin';
 import { collectsCredential, credentialUseOf } from '../../shared/credentialUse';
 import type { ServiceId } from '../../preload/bridgeTypes';
 import type { ErrorKind, Source, Status } from '../hooks/useServiceData';
@@ -190,7 +190,12 @@ export function StatusBar({
    * バッジとは別の枠で出す。文面は `shared/dataOrigin.ts` が持つ
    * (取得元の言い回しを 2 か所に散らさない)。
    */
-  const staleNote = staleDataNote(origin, source, status === 'error');
+  const staleNote = staleDataNote(
+    origin,
+    source,
+    status === 'error',
+    serviceId === undefined || !SNAPSHOT_WITHOUT_SAMPLE_NUMBERS.has(serviceId),
+  );
 
   /*
    * **この実行形態では取得できない画面は、押す前にそう言う** (2026-11-19 · `shared/browserFetchReach.ts`)。
