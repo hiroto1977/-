@@ -148,7 +148,7 @@ const UNSAMPLED_REGEX_LEDGER: Record<string, string> = {
     '針はソースの字面 (`label: \'積立年数\'` と `max: 80`) を当てに行く。標本未付',
   'src/renderer/components/__tests__/FinancialAnalysis.ctEligibility.test.ts:113':
     'パス 9 の「使えない方式を最有利にしない」。針は HTML の構造つきで、標本未付',
-  'src/renderer/components/__tests__/StatusBar.render.test.ts:249':
+  'src/renderer/components/__tests__/StatusBar.render.test.ts:250':
     '針は `\\d+ 件` (件数そのもの) で、綴りではなく形を見ている',
   'src/renderer/data/__tests__/stocksAnalysisWeb.test.ts:1143':
     '針は検査自身が注入した見出し (`## 偽の見出し`)。main 側 business.test.ts:1988 の双子',
