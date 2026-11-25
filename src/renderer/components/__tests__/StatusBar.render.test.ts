@@ -10,6 +10,7 @@ import { describe, expect, it, beforeAll } from 'vitest';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { StatusBar, Section } from '../StatusBar';
+import { NO_SAMPLE_NUMBERS_NOTE } from '../../../shared/dataOrigin';
 
 beforeAll(() => {
   // renderToStaticMarkup では useEffect は動かないが、型整合のために最小スタブを設定。
@@ -352,6 +353,15 @@ describe('StatusBar — エラーのときも数字の出どころを言う', ()
     const html = render({ source: 'live', status: 'error', errorMessage: 'fetch failed' });
     expect(html).toContain('表示中の数字は前回取得できた内容です（今回の更新は反映されていません）');
     expect(html).not.toContain('同梱のサンプル');
+  });
+
+  it('★ 見本が数字を持たない画面 (Ollama) は「同梱のサンプル」と言わず、数字が無いと言う (2026-11-25)', () => {
+    const html = render({ serviceId: 'ollama', status: 'error', errorMessage: 'connect ECONNREFUSED' });
+    expect(html).toContain('data-stale-note');
+    expect(html).toContain(NO_SAMPLE_NUMBERS_NOTE);
+    expect(html).not.toContain('同梱のサンプルです');
+    // 対照: 見本の数字を持つ画面 (GitHub) は今までどおり同梱のサンプルだと言う。
+    expect(render({ serviceId: 'github', status: 'error' })).toContain('表示中の数字は同梱のサンプルです');
   });
 
   it('★ レート制限でも出す (エラーの種別で消えない)', () => {
