@@ -134,14 +134,19 @@ export function GoogleAnalyticsPage() {
 
       <Section title="プロパティと期間">
         <div className="card" style={{ gap: 10 }}>
+          {/*
+            選択肢は「名前 · アカウント · ID」と長いので、select の既定の幅は最長の選択肢の幅になり
+            スマホ幅で画面の右へはみ出す (2026-11-24 実測: 412px で +27px)。折り返しを許し、
+            select は残りの幅に収める (選んだ文字は欄の中で切れて見えるが、選択肢の一覧では全文が出る)。
+          */}
           {data.properties.length > 0 && (
-            <label style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 13 }}>
+            <label style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center', fontSize: 13 }}>
               見られるプロパティ
               <select
                 aria-label="見られるプロパティ"
                 value={propertyId ?? ''}
                 onChange={(e) => choose(e.target.value)}
-                style={inputStyle}
+                style={{ ...inputStyle, flex: '1 1 200px', minWidth: 0, maxWidth: '100%' }}
               >
                 {propertyId === null && <option value="">選んでください</option>}
                 {propertyId !== null && !data.properties.some((p) => p.id === propertyId) && (
