@@ -11,7 +11,7 @@
  * | 画面 | 操作 | 直す前 | 直した後 |
  * | --- | --- | ---: | ---: |
  * | **Canva** | フォルダ作成 | **400,451** | **965** |
- * | **GitHub** | Issue を作成 | **200,338** | **595** |
+ * | **GitHub** | 課題 (Issue) を作成 | **200,338** | **595** |
  *
  * 背骨は**振る舞い**で、欄ごとの台帳は `shared/api/__tests__/createdResponseFields.test.ts`
  * が持つ (法則 `mention-vs-declaration`: 天井の定数が在ることは、その欄が通ることではない)。
@@ -130,7 +130,7 @@ describe('書き込みの結果が画面に載るとき (パス 414)', () => {
       payload: { owner: 'o', repo: 'r', title: 'x' },
       fetch: replying({ number: 1, html_url: 'https://github.com/o/r/issues/1', title: BIG }),
     } as never);
-    const t = await drive('github', GithubPage, SNAPSHOT.github, data, 'Issue を作成', (c) => {
+    const t = await drive('github', GithubPage, SNAPSHOT.github, data, '課題 (Issue) を作成', (c) => {
       setInput(byPlaceholder(c, 'owner (e.g. octocat)'), 'o');
       setInput(byPlaceholder(c, 'repo'), 'r');
       setInput(byPlaceholder(c, 'Issue title'), 't');

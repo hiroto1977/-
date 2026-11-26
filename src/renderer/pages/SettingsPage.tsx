@@ -2224,7 +2224,7 @@ export function GoogleOAuthSection() {
       {/*
         **押す前に言う。** `start()` / `complete()` が断るだけだと、利用者は
         Client ID を発行し Cloud Console を往復したあとに「読まない」と知る。
-        働く操作子 (`GoogleConnectCard` の「Google でサインイン」) もこの文が名指しする。
+        働く操作子 (`GoogleConnectCard` の「グーグル (Google) でサインイン」) もこの文が名指しする。
       */}
       {vaultUnread !== null && (
         <div
@@ -2313,7 +2313,7 @@ export function GoogleOAuthSection() {
           />
           <div style={{ display: 'flex', gap: 6 }}>
             <button type="button" onClick={complete} disabled={busy} style={btn('accent', busy)}>
-              {busy ? '交換中…' : 'token を取得して保存'}
+              {busy ? '交換中…' : 'トークンを取得して保存'}
             </button>
             <button
               type="button"

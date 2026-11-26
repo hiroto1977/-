@@ -80,7 +80,7 @@ const SCREENS: readonly Screen[] = [
     action: 'send-message', field: 'text',
   },
   {
-    id: 'github', toggle: 'Issue を作成',
+    id: 'github', toggle: '課題 (Issue) を作成',
     required: [['owner', 'octocat'], ['repo', 'hello'], ['Issue title', 'バグ']],
     body: 'Body', max: GITHUB_ISSUE_FIELDS.body!.max, submit: '作成',
     action: 'create-issue', field: 'body',
@@ -98,7 +98,7 @@ const SCREENS: readonly Screen[] = [
     action: 'create-page', field: 'body',
   },
   {
-    id: 'atlassian', toggle: 'Issue を作成',
+    id: 'atlassian', toggle: '課題 (Issue) を作成',
     required: [['プロジェクト Key', 'KAN'], ['Summary', '不具合']],
     body: 'Description', max: ATLASSIAN_ISSUE_FIELDS.description.max, submit: '作成',
     action: 'create-issue', field: 'description',

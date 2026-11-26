@@ -181,7 +181,7 @@ describe('売上集計 — 保存が断られても宙に浮かせない', () =>
   });
 
   it('★ 取り込みの保存が断られたら、取り込みの欄が「1 件も入っていない」と言い、ファイルの欄を空にする (選び直せる)', async () => {
-    await mount(SalesPage, 'CSV インポート');
+    await mount(SalesPage, '表のファイル (CSV) を取り込む');
     failStore('insertMany');
     const rows = [
       { date: '2026-05-01', channel: 'amazon' as const, amount: 200, orders: 2, note: '取り込み一' },
@@ -197,7 +197,7 @@ describe('売上集計 — 保存が断られても宙に浮かせない', () =>
   });
 
   it('対照: 断られなければ同じ手順で取り込まれ、失敗の文は出ない', async () => {
-    await mount(SalesPage, 'CSV インポート');
+    await mount(SalesPage, '表のファイル (CSV) を取り込む');
     await pickCsv(salesToCsv([{ date: '2026-05-01', channel: 'amazon', amount: 200, orders: 2, note: '対照の取り込み' }]));
     await waitForText(text, '1 件を取り込みました');
     expect(text()).not.toContain('1 件も取り込んでいません');
@@ -244,7 +244,7 @@ describe('KPI / BEP — 3 つの一覧の × と取り込み', () => {
   });
 
   it('★ 実績の取り込みの保存が断られたら、取り込みの欄が言う', async () => {
-    await mount(KpiPage, 'CSV インポート');
+    await mount(KpiPage, '表のファイル (CSV) を取り込む');
     failStore('insertMany');
     await pickCsv(
       kpiActualsToCsv([

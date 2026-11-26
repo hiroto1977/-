@@ -215,7 +215,7 @@ export function pasteOAuthUnreadNote(kind: BuildKind): string | null {
     ? 'デスクトップ版はここで保存した資格情報を読みません'
       + '（保存先はブラウザ版の保管庫で、デスクトップ版のトークンは別のファイルに在ります）。'
       + 'しかもこの保管庫を読む画面がデスクトップ版には無いため、保存した値を画面から消すこともできません。'
-      + 'Drive・カレンダー・Gmail の各画面にある「Google でサインイン」ボタンから認証してください'
+      + 'Drive・カレンダー・Gmail の各画面にある「グーグル (Google) でサインイン」ボタンから認証してください'
       + '（そちらは更新トークンも保存するので、期限が切れたあとも自動で繋ぎ直します）。'
     : null;
 }
@@ -419,7 +419,7 @@ export function googleLiveScopeNote(kind: BuildKind, serviceId: GoogleServiceId)
  * | 方法 A（推奨・恒久） | 出る |
  * | Google Cloud Console への手順 3 段 | 出る |
  * | クライアント ID の欄 | 出る |
- * | Google でサインイン | 出る・打てば押せる |
+ * | グーグル (Google) でサインイン | 出る・打てば押せる |
  * | 押した結果 | **ブラウザ版では OAuth フローを実行しません** |
  * | localStorage | クライアント ID は**実際に保存される** |
  *

@@ -1061,7 +1061,7 @@ export function FinancialAnalysis({
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, flexWrap: 'wrap', gap: 8 }}>
           <div style={{ fontSize: 13, fontWeight: 700 }}>🧮 {selected.unit.label} の財務指標一覧（15指標）</div>
           <button onClick={onExportCsv} style={{ padding: '4px 10px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 999, color: 'var(--text)', cursor: 'pointer', fontSize: 12 }}>
-            ⬇ 全事業の指標をCSVで書き出し
+            ⬇ 全事業の指標を表のファイル (CSV) で書き出し
           </button>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(180px, 100%), 1fr))', gap: '4px 16px' }}>
@@ -1102,7 +1102,7 @@ export function FinancialAnalysis({
             {scopeLabel}で表示
           </label>
           <button onClick={onExportStatement} style={{ padding: '4px 10px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 999, color: 'var(--text)', cursor: 'pointer', fontSize: 12 }}>
-            ⬇ この諸表をCSV
+            ⬇ この諸表を表のファイル (CSV) で書き出し
           </button>
         </div>
         {stmtTab === 'pl' && <StatementTable lines={buildIncomeStatement(stmtFin)} />}

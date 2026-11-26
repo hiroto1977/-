@@ -427,13 +427,13 @@ export function WelfareSchemeCard() {
           type="button"
           onClick={() => downloadMarkdown(employeeExplanationMarkdown(result), 'employee-explanation.md')}
         >
-          📄 従業員向け説明資料 (.md)
+          📄 従業員向け説明資料 (Markdown)
         </button>
         <button
           type="button"
           onClick={() => downloadMarkdown(consentFormMarkdown(result), 'salary-change-consent.md')}
         >
-          ✍ 給与変更 同意書 (.md)
+          ✍ 給与変更 同意書 (Markdown)
         </button>
         <button
           type="button"
@@ -455,7 +455,7 @@ export function WelfareSchemeCard() {
             )
           }
         >
-          📐 福利厚生規程ひな形 (.md)
+          📐 福利厚生規程ひな形 (Markdown)
         </button>
       </div>
 

@@ -32,7 +32,7 @@
  * ## 直した形 (ここで押す)
  *
  * `useBuildKind()` で問い、デスクトップ版と**分かったときだけ** `start()` が断り、
- * 断りは働く道 (`GoogleConnectCard` の「Google でサインイン」・3 画面に在る) を
+ * 断りは働く道 (`GoogleConnectCard` の「グーグル (Google) でサインイン」・3 画面に在る) を
  * 名指しする。ブラウザ版の答えは 1 文字も変えない。
  *
  * ★ **`complete()` 側の門は床であって、今日の働く門ではない (正直に書く)。**
@@ -169,10 +169,10 @@ describe('Google OAuth の貼り付け節は、この端末が読まない保管
 
   it('★ 断りが名指しする操作子は実在する', async () => {
     const note = pasteOAuthUnreadNote('desktop') as string;
-    expect(note).toContain('「Google でサインイン」ボタン');
+    expect(note).toContain('「グーグル (Google) でサインイン」ボタン');
     // 名乗られる側 —— 3 画面が載せる `GoogleConnectCard` のボタンの綴り。
     const card = readOriginalSource('src/renderer/components/GoogleConnectCard.tsx');
-    expect(card).toContain('Google でサインイン');
+    expect(card).toContain('グーグル (Google) でサインイン');
     for (const page of ['DrivePage', 'CalendarPage', 'GmailPage']) {
       expect(readOriginalSource(`src/renderer/pages/${page}.tsx`)).toContain('<GoogleConnectCard');
     }

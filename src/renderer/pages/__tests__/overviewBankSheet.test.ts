@@ -239,7 +239,7 @@ describe('経営サマリー — 金融機関等提出用の書面', () => {
       markedWhilePrinting = document.body.classList.contains('ds-printing');
     });
     try {
-      await click(q.button('印刷 / PDF に保存'));
+      await click(q.button('印刷 / 文書ファイル (PDF) に保存'));
       expect(window.print).toHaveBeenCalledTimes(1);
       expect(markedWhilePrinting).toBe(true);
       window.dispatchEvent(new Event('afterprint'));

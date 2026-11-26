@@ -9,7 +9,7 @@
  * | --- | --- |
  * | 方法 A（推奨・恒久）の手順 3 段 | 出る |
  * | クライアント ID の欄 | 出る |
- * | Google でサインイン | 出る・打てば押せる |
+ * | グーグル (Google) でサインイン | 出る・打てば押せる |
  * | 押した結果 | **ブラウザ版では OAuth フローを実行しません** |
  * | localStorage | クライアント ID は**実際に保存される** |
  * | 末尾の主張 | **ライブ接続（実データ取得・送信）はデスクトップ版の機能で、…** |
@@ -103,7 +103,7 @@ const text = (): string => (container.textContent ?? '').replace(/\s+/g, ' ');
 const field = (): HTMLInputElement | null =>
   container.querySelector<HTMLInputElement>('[aria-label="Google OAuth クライアント ID"]');
 const signInButton = (): HTMLButtonElement | undefined =>
-  [...container.querySelectorAll('button')].find((b) => (b.textContent ?? '').includes('Google でサインイン'));
+  [...container.querySelectorAll('button')].find((b) => (b.textContent ?? '').includes('グーグル (Google) でサインイン'));
 const refusal = (): string | null => {
   const el = container.querySelector('[data-google-signin-unsupported]');
   return el === null ? null : (el.textContent ?? '').replace(/\s+/g, ' ');

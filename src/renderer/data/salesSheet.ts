@@ -58,5 +58,5 @@ export function droppedFromSheetNote(dropped: number): string | null {
 
 /** 天井を超えたときの断り。 */
 export function tooManyForSheetNote(count: number): string {
-  return `スプレッドシートへ一度に書き出せるのは ${MAX_SHEET_ROWS} 件までです (いま ${count} 件)。すべてを書き出すときは「CSV エクスポート」を使ってください。`;
+  return `スプレッドシートへ一度に書き出せるのは ${MAX_SHEET_ROWS} 件までです (いま ${count} 件)。すべてを書き出すときは「表のファイル (CSV) に書き出す」を使ってください。`;
 }

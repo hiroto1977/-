@@ -2,7 +2,7 @@
 /**
  * **一覧から感情分析へ送るボタンを 2 度押しても、送るのは 1 回** (2026-09-27 · パス 493h)。
  *
- * `SlackPage` と `GmailPage` の「Emotions で分析」は、押すと一覧を 1 つの本文にまとめて
+ * `SlackPage` と `GmailPage` の「感情ログで分析」は、押すと一覧を 1 つの本文にまとめて
  * `emotions/analyze-text` へ送る。その action は **有料の Anthropic API を呼び**
  * (`main/clients/emotions.ts` の `analyzeText` —— `x-api-key` を載せた POST)、
  * 結果を **Emotions の履歴へ保存する** (`store.analyses.unshift(entry)`)。
@@ -89,7 +89,7 @@ function stubHub(serviceId: 'slack' | 'gmail'): void {
 
 function analyzeButton(): HTMLButtonElement | undefined {
   return Array.from(container.querySelectorAll('button')).find((b) =>
-    (b.textContent ?? '').includes('Emotions で分析'),
+    (b.textContent ?? '').includes('感情ログで分析'),
   ) as HTMLButtonElement | undefined;
 }
 
@@ -106,7 +106,7 @@ async function mount(serviceId: 'slack' | 'gmail'): Promise<HTMLButtonElement> {
   return waitForElement(() => {
     const b = analyzeButton();
     return b && !b.disabled ? b : null;
-  }, `${serviceId} の「Emotions で分析」が押せる`);
+  }, `${serviceId} の「感情ログで分析」が押せる`);
 }
 
 function click(el: HTMLElement): void {
@@ -142,7 +142,7 @@ afterEach(async () => {
   container.remove();
 });
 
-describe.each(['slack', 'gmail'] as const)('%s の「Emotions で分析」は押している間 1 回しか送らない', (serviceId) => {
+describe.each(['slack', 'gmail'] as const)('%s の「感情ログで分析」は押している間 1 回しか送らない', (serviceId) => {
   it('★ 押す → 描き直す → もう 1 度押す (人のダブルクリック) で、送るのは 1 回', async () => {
     const button = await mount(serviceId);
     await act(async () => {
@@ -179,7 +179,7 @@ describe.each(['slack', 'gmail'] as const)('%s の「Emotions で分析」は押
     const again = await waitForElement(() => {
       const b = analyzeButton();
       return b && !b.disabled ? b : null;
-    }, '返事の後に「Emotions で分析」がまた押せる');
+    }, '返事の後に「感情ログで分析」がまた押せる');
     expect(alerts).toHaveLength(1);
     expect(alerts[0]).toContain('Emotions タブに結果を保存しました');
     await act(async () => {
@@ -199,7 +199,7 @@ describe.each(['slack', 'gmail'] as const)('%s の「Emotions で分析」は押
     await waitForElement(() => {
       const b = analyzeButton();
       return b && !b.disabled ? b : null;
-    }, '失敗の後に「Emotions で分析」がまた押せる');
+    }, '失敗の後に「感情ログで分析」がまた押せる');
     expect(alerts).toEqual(['感情分析失敗: 一時的に失敗']);
   });
 });

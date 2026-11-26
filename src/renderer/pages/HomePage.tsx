@@ -231,7 +231,7 @@ function ActionCard({ action }: { action: QuickAction }) {
             </button>
             {action.openUrl && (
               <button type="button" className="ghost" onClick={openCanva}>
-                Canva で編集する
+                キャンバ (Canva) で編集する
               </button>
             )}
             {action.detailsService && (
@@ -332,7 +332,7 @@ export function HomePage() {
         <div className="home-step">
           <span className="home-step-num" aria-hidden="true">3</span>
           <p>
-            必要なら <strong>「Canva で編集する」</strong> を押し、開いた Canva にファイルをドラッグ&amp;ドロップする
+            必要なら <strong>「キャンバ (Canva) で編集する」</strong> を押し、開いた Canva にファイルをドラッグ&amp;ドロップする
           </p>
         </div>
       </section>

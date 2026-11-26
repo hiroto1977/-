@@ -997,7 +997,7 @@ export function TeamRadarPage() {
               fontSize: 12,
             }}
           >
-            {exportBusy ? '出力中…' : 'SVG を保存 (Canva 用)'}
+            {exportBusy ? '出力中…' : 'キャンバ (Canva) 用の画像 (SVG) を保存'}
           </button>
           {saveMsg && (
             <span style={{ fontSize: 11, color: 'var(--text-mute)' }}>{saveMsg}</span>

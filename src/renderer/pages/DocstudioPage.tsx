@@ -1988,7 +1988,7 @@ export function DocstudioPage() {
             onClick={printDoc}
             style={{ marginLeft: fatalCount > 0 ? 8 : 'auto', fontSize: 13, padding: '9px 14px' }}
           >
-            🖨 印刷 / PDF 保存
+            🖨 印刷 / 文書ファイル (PDF) に保存
           </button>
         </div>
       </div>

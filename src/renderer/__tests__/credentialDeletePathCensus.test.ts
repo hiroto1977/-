@@ -135,7 +135,7 @@ const LITERAL_WRITERS: readonly (Row & { readonly file: string })[] = [
     file: 'src/renderer/pages/AssistantPage.tsx',
     slot: 'assistant',
     kind: 'own-control',
-    why: '同じ画面の「API キーを削除」。上の台帳と同じ行。',
+    why: '同じ画面の「接続の鍵 (API key) を削除」。上の台帳と同じ行。',
   },
   {
     file: 'src/renderer/pages/SettingsPage.tsx',

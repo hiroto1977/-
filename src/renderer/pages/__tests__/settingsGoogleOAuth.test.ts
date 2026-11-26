@@ -253,7 +253,7 @@ describe('Google OAuth の節 (カバレッジ 0% だった側 · パス 157)', 
     await startFlow();
     const paste = await pasteField();
     await type(paste, '4/0AbCdEfGhIjKlMn');
-    await click(button('token を取得して保存'));
+    await click(button('トークンを取得して保存'));
     expect(text()).toContain('認可コードだけ');
     expect(text()).toContain('URL 全体');
   });
@@ -263,7 +263,7 @@ describe('Google OAuth の節 (カバレッジ 0% だった側 · パス 157)', 
     await startFlow();
     const paste = await pasteField();
     await type(paste, 'http://localhost/?code=4%2F0Ab');
-    await click(button('token を取得して保存'));
+    await click(button('トークンを取得して保存'));
     expect(text()).toContain('state がありません');
     expect(text()).toContain('CSRF');
   });
@@ -271,7 +271,7 @@ describe('Google OAuth の節 (カバレッジ 0% だった側 · パス 157)', 
   it('空欄で押すと、求める物 (URL 全体) を言う', async () => {
     await mount();
     await startFlow();
-    await click(button('token を取得して保存'));
+    await click(button('トークンを取得して保存'));
     expect(text()).toContain('URL 全体');
   });
 
@@ -282,7 +282,7 @@ describe('Google OAuth の節 (カバレッジ 0% だった側 · パス 157)', 
     await startFlow();
     const paste = await pasteField();
     await type(paste, 'http://localhost/?code=4%2F0Ab&state=not-the-one');
-    await click(button('token を取得して保存'));
+    await click(button('トークンを取得して保存'));
     expect(text()).toContain('state が一致しません');
     // **token エンドポイントへは行かない。**
     expect(fetchSpy).not.toHaveBeenCalled();
@@ -308,9 +308,9 @@ describe('Google OAuth の節 (カバレッジ 0% だった側 · パス 157)', 
     expect(saved).not.toBeNull();
     const paste = await pasteField();
     await type(paste, `http://localhost/?code=4%2F0Ab&state=${encodeURIComponent(saved!.state)}`);
-    await click(button('token を取得して保存'));
+    await click(button('トークンを取得して保存'));
     // ボタンは押せる状態に戻っている (`finally` の setBusy(false) が飛んでいない)。
-    expect(button('token を取得して保存').disabled).toBe(false);
+    expect(button('トークンを取得して保存').disabled).toBe(false);
     expect(text()).toContain('invalid_grant');
     expect(readPkceSession()).toBeNull();
   });

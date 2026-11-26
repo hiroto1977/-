@@ -389,7 +389,7 @@ export function TemplatesPage() {
               fontSize: 12,
             }}
           >
-            {busy ? '出力中…' : 'SVG を保存 (Canva 用)'}
+            {busy ? '出力中…' : 'キャンバ (Canva) 用の画像 (SVG) を保存'}
           </button>
           <button
             onClick={resetDefaults}
