@@ -108,7 +108,7 @@ describe('書き出しの結果に、収まらなかった先が出る', () => {
   it('★ テンプレート: フォルダの許可が切れていると、保存した旨と一緒に理由が出る', async () => {
     stubHub({ ...SAVED, folderCopy: 'permission' });
     await mount('templates');
-    await click(buttonByText('SVG を保存'));
+    await click(buttonByText('画像 (SVG) を保存'));
     expect(warningText()).toContain(FOLDER_PERMISSION_TEXT);
     // 出来上がった物への案内は残す (警告で置き換えてしまうと、書き出した物に辿れない)
     await waitForText(() => container.textContent ?? '', '保存しました');
@@ -117,13 +117,13 @@ describe('書き出しの結果に、収まらなかった先が出る', () => {
   it('★ テンプレート: ライブラリに残せなかったことも出る', async () => {
     stubHub({ ...SAVED, libraryCopy: 'failed' });
     await mount('templates');
-    await click(buttonByText('SVG を保存'));
+    await click(buttonByText('画像 (SVG) を保存'));
     expect(warningText()).toContain(LIBRARY_FAILED_TEXT);
   });
 
   it('対照: テンプレート — 3 か所とも収まったら警告は出ない', async () => {
     await mount('templates');
-    await click(buttonByText('SVG を保存'));
+    await click(buttonByText('画像 (SVG) を保存'));
     await waitForText(() => container.textContent ?? '', '保存しました');
     expect(warningText()).toBeNull();
   });
@@ -148,7 +148,7 @@ describe('書き出しの結果に、収まらなかった先が出る', () => {
   it('対照: フォルダ未設定 (off) では警告を出さない —— 連携していない人に毎回出さない', async () => {
     stubHub({ ...SAVED, folderCopy: 'off' });
     await mount('templates');
-    await click(buttonByText('SVG を保存'));
+    await click(buttonByText('画像 (SVG) を保存'));
     expect(warningText()).toBeNull();
   });
 });

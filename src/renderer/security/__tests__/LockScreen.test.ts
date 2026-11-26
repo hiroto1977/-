@@ -672,7 +672,7 @@ describe('リカバリーキーのダウンロード', () => {
     };
     try {
       await toMnemonicView();
-      await click(buttonSaying('ダウンロード'));
+      await click(buttonSaying('テキストファイル (txt) で保存'));
 
       expect(created).toHaveLength(1);
       expect(created[0]!.type).toContain('text/plain');

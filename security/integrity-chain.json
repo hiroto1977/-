@@ -4572,6 +4572,14 @@
       "leafCount": 225,
       "note": "update ci.yml",
       "hash": "c098ff9dcbbf0429e3d34240fda408bf49dd5dca0504fdaf3f7534c31e485567"
+    },
+    {
+      "index": 543,
+      "prevHash": "c098ff9dcbbf0429e3d34240fda408bf49dd5dca0504fdaf3f7534c31e485567",
+      "merkleRoot": "eeeec079d65b6e8a8e18f2098307bbd7e7791ab9ae961e2c643730580a3043d2",
+      "leafCount": 225,
+      "note": "update LockScreen.tsx",
+      "hash": "d21bb73e4cce7064fa726256c538512b51b3e80f596d1cd01352ab5f7178e2c9"
     }
   ],
   "tipManifest": {
@@ -4697,7 +4705,7 @@
     "src/renderer/oauth/pkceSession.mamori": "13bf8ef081c012d3bb20704adf127c2e69a1a26f0f34347d65828e428ab73692",
     "src/renderer/oauth/pkceSession.ts": "fbbf852525057786299ce393498fb49e61aa559b62e6f79728f795ccef21e28c",
     "src/renderer/oauth/pkceSessionHost.ts": "35fbe3aba3010a1e9cc4b3c91d51f0c1ea2353c314c146155330c7922b6f1141",
-    "src/renderer/security/LockScreen.tsx": "4f3a02693303a44619b1c8a857ada3f634b316e77ac7b74791a62f9c5b84874d",
+    "src/renderer/security/LockScreen.tsx": "6350f61118ebd84a33e704c682a211dbc696072bfae0d52d14571e44995b24cf",
     "src/renderer/security/autoLock.mamori": "61f63d191273e1d5cdba900c5e8163e1bb06f0fdc7d134e8f6c2d76add8a8a8a",
     "src/renderer/security/autoLock.ts": "321856125794b5f66532a184b9db6055af0c047882dcfb1b31e8b05e48dec22a",
     "src/renderer/security/autoLockHost.ts": "39842f7e296ddf2130596db174a11123ee8b9311840e404b69f5dce38d9af79c",

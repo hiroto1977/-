@@ -31,8 +31,11 @@ import { SERVICES } from '../../services';
 import { settleUntil } from '../../__tests__/jsdomWait';
 import { stripComments } from '../../../shared/__tests__/stripNonCode';
 
-/** `「X」` のあとが UI 要素を名乗る語。 */
-const NAMED = /「([^」]{1,24})」(ボタン|タブ|欄|パネル|の画面|を押|から消せ|で消)/g;
+/**
+ * `「X」` のあとが UI 要素を名乗る語。名前の長さの天井は 32 字 —— 2026-11-27 にボタンの字を
+ * 「日本語 (英語)」にしたので名前が伸びた (「キャンバ (Canva) 用の画像 (SVG) を保存」は 27 字。24 字のままだと走査から漏れた)。
+ */
+const NAMED = /「([^」]{1,32})」(ボタン|タブ|欄|パネル|の画面|を押|から消せ|で消)/g;
 
 type Kind =
   /** 設定画面の中の操作子 —— 実物の設定画面を描いて綴りを探す。 */
@@ -93,7 +96,7 @@ const LEDGER: readonly Row[] = [
   { name: '材料を渡す', kind: 'same-screen-control', renderedIn: 'src/renderer/pages/WatchPage.tsx', why: '見張りアシスタントの、材料がまだ無いときの案内が名指しする (実物の label は「＋ 材料を渡す」で、名指しはその後方一致)。文は shared が組み、押す所は同じ画面に在る。' },
   { name: '週次レポートを作る', kind: 'same-screen-control', renderedIn: 'src/renderer/pages/WatchPage.tsx', why: '見張りアシスタントの、答えがまだ無いときの案内が名指しする。同じ画面の週ごとの数字の節のボタン。' },
   { name: '表示', kind: 'same-screen-control', renderedIn: 'src/renderer/pages/GoogleAnalyticsPage.tsx', why: 'グーグルアナリティクスの画面の、プロパティを選ぶ前の案内が名指しする。同じ節のプロパティ ID の欄の隣のボタン (2026-11-22)。' },
-  { name: 'SVG を保存', kind: 'same-screen-control', renderedIn: 'src/renderer/pages/TeamRadarPage.tsx', why: 'チームレーダーの書き出しボタン (実物の label は「キャンバ (Canva) 用の画像 (SVG) を保存」で、名指しはその前方一致)。' },
+  { name: 'キャンバ (Canva) 用の画像 (SVG) を保存', kind: 'same-screen-control', renderedIn: 'src/renderer/pages/TeamRadarPage.tsx', why: 'チームレーダーの書き出しボタン (テンプレートの画面も同じ綴りのボタンを持つ)。' },
   { name: 'チーム情報を保存', kind: 'same-screen-control', renderedIn: 'src/renderer/pages/TeamRadarPage.tsx', why: '同じ画面の保存ボタン。文は shared の状態モジュールが組むが、出る先はこの画面である。' },
   { name: 'もう一度確認', kind: 'same-screen-control', renderedIn: 'src/renderer/security/LockScreen.tsx', why: '24 語の控えを確かめ直すボタン。文は保管庫が組み、押す所は施錠画面に在る。' },
   {

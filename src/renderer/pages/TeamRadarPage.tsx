@@ -519,7 +519,7 @@ export function TeamRadarPage() {
         }}
       >
         {/* 実行形態で書き出し先が違う (パス 161)。文面は shared/buildDestinations.ts。 */}
-        <strong>Canva 連動:</strong> 「SVG を保存」ボタンで書き出します。
+        <strong>Canva 連動:</strong> 「キャンバ (Canva) 用の画像 (SVG) を保存」ボタンで書き出します。
         {buildKind !== null && (
           <span data-export-destination>
             {' '}{exportDestinationNote(buildKind, DESKTOP_PATHS.teamRadarSvg)}

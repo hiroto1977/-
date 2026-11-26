@@ -11,8 +11,8 @@
  * | Business | 保存先: `~/.local/business-hub/data/business-dashboard.{html,md}` |
  * | Stocks | 銘柄を登録すると `~/.local/business-hub/state.json` に永続化されます |
  * | Stocks | 出力先は `~/.local/business-hub/data/dashboard.html` |
- * | Team Radar | 「SVG を保存」で `~/.local/business-hub/data/team-radar.svg` に書き出されます |
- * | Templates | 「SVG を保存」で `~/.local/business-hub/data/templates/<id>.svg` に出力します |
+ * | Team Radar | 「キャンバ (Canva) 用の画像 (SVG) を保存」で `~/.local/business-hub/data/team-radar.svg` に書き出されます |
+ * | Templates | 「キャンバ (Canva) 用の画像 (SVG) を保存」で `~/.local/business-hub/data/templates/<id>.svg` に出力します |
  * | Skills | `~/.claude/skills` / 「ディレクトリを作って SKILL.md を置いてください」 |
  *
  * **ブラウザ版はそこへ 1 バイトも書かない。** `data/exportOutcome.ts` の冒頭が
