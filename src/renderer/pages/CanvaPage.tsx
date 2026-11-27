@@ -10,6 +10,7 @@ import { CANVA_FOLDER_FIELDS } from '../../shared/writeFieldLimits';
 import type { ActionData } from '../../shared/actionData';
 import { ProxyRequiredNote } from '../components/ProxyRequiredNote';
 import { externalTextOnOneLine } from '../data/assistantMarkdown';
+import { liveLink } from '../data/sampleLinks';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -86,7 +87,7 @@ export function CanvaPage() {
             title: d.title,
             meta: `${d.pageCount} ページ · 更新 ${ts(d.updatedAt)}`,
             thumbnailUrl: d.thumbnailUrl,
-            href: d.viewUrl,
+            href: liveLink(source, d.viewUrl),
           }))}
         />
       </Section>

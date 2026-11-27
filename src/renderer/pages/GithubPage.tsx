@@ -9,6 +9,7 @@ import { CeilingNotice } from '../components/CeilingNotice';
 import { charsOverCeiling } from '../../shared/inputCeiling';
 import type { ActionData } from '../../shared/actionData';
 import { externalTextOnOneLine } from '../data/assistantMarkdown';
+import { liveLink } from '../data/sampleLinks';
 
 
 export function GithubPage() {
@@ -78,7 +79,7 @@ export function GithubPage() {
             title: `#${pr.number} ${pr.title}`,
             meta: `${pr.state}${pr.draft ? ' · draft' : ''} · ${pr.head} → ${pr.base} · 更新 ${dateText(pr.updatedAt)}`,
             badge: pr.draft ? 'draft' : pr.state,
-            href: pr.htmlUrl,
+            href: liveLink(source, pr.htmlUrl),
           }))}
         />
       </Section>
