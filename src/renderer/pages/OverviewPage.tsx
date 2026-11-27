@@ -1,3 +1,4 @@
+import { RefreshAllPanel } from '../components/RefreshAllPanel';
 import { useEffect, useMemo, useState } from 'react';
 import { navigateTo, takeNavigationIntent } from '../navigate';
 import { Section } from '../components/StatusBar';
@@ -1003,6 +1004,7 @@ export function OverviewPage() {
 
   return (
     <div>
+      <RefreshAllPanel />
       <div style={{ display: 'flex', justifyContent: 'flex-end', flexWrap: 'wrap', gap: 6, marginBottom: 10 }}>
         <button
           type="button"
