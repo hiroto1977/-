@@ -70,7 +70,7 @@ function field(): HTMLInputElement {
 
 function signInButton(): HTMLButtonElement {
   const b = Array.from(container.querySelectorAll('button')).find((x) =>
-    (x.textContent ?? '').includes('Google でサインイン'),
+    (x.textContent ?? '').includes('グーグル (Google) でサインイン'),
   );
   if (!b) throw new Error('サインインのボタンが見つからない');
   return b as HTMLButtonElement;

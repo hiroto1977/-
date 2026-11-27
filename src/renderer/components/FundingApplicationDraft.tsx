@@ -1,7 +1,7 @@
 /**
  * 補助金・助成金の**申請書類の下書き**を作る欄 (2026-11-18)。
  *
- * 事業者の情報・申請する制度・計画の中身・経費を入れると、下書きを画面に出し、Markdown で保存 / コピーできる。
+ * 事業者の情報・申請する制度・計画の中身・経費を入れると、下書きを画面に出し、マークダウン (Markdown) で保存 / コピーできる。
  * 組み立てと判定は `data/fundingApplication.ts` の純関数で、ここは入力と表示だけを持つ。
  *
  * 表示で気をつけている点:
@@ -386,7 +386,7 @@ export function FundingApplicationDraft(): ReactElement {
         要件を満たすこと・採択や支給を保証するものでもありません。
       </p>
       <p data-application-privacy style={noteStyle}>
-        ここに入れた内容は<strong>保存されず、端末の外へも送りません</strong>。この画面を離れると消えるので、必要なら先に「Markdown で保存」か「コピー」をしてください。
+        ここに入れた内容は<strong>保存されず、端末の外へも送りません</strong>。この画面を離れると消えるので、必要なら先に「マークダウン (Markdown) で保存」か「コピー」をしてください。
       </p>
 
       <div style={groupTitleStyle}>1. 申請する制度</div>
@@ -596,7 +596,7 @@ export function FundingApplicationDraft(): ReactElement {
       )}
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', marginBottom: 12 }}>
         <button type="button" className="primary" data-save-application disabled={draft === null} onClick={downloadDraft}>
-          Markdown で保存
+          マークダウン (Markdown) で保存
         </button>
         <button type="button" className="soft" data-copy-application disabled={draft === null} onClick={() => void copyDraft()}>
           コピー
@@ -608,7 +608,7 @@ export function FundingApplicationDraft(): ReactElement {
         )}
         {copied === 'failed' && (
           <span role="alert" data-application-copy-failed style={{ fontSize: 12, color: 'var(--danger)' }}>
-            コピーできませんでした。「Markdown で保存」を使ってください。
+            コピーできませんでした。「マークダウン (Markdown) で保存」を使ってください。
           </span>
         )}
       </div>

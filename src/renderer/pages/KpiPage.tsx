@@ -636,9 +636,9 @@ function ActualsPanel() {
         <button type="button" onClick={() => void submit.run(onAdd)} disabled={submit.busy}>追加</button>
       </div>
       <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginTop: 8 }}>
-        <button type="button" onClick={onExportCsv} disabled={records.length === 0}>CSV エクスポート</button>
+        <button type="button" onClick={onExportCsv} disabled={records.length === 0}>表のファイル (CSV) に書き出す</button>
         <label style={{ fontSize: 13, cursor: 'pointer', color: 'var(--accent-strong)' }}>
-          CSV インポート
+          表のファイル (CSV) を取り込む
           <input
             type="file"
             accept=".csv,text/csv"
@@ -1041,7 +1041,7 @@ function BalanceSheetPanel() {
         <LabeledField label="当期純利益 (円・赤字は −)">
           <input value={form.netIncome} placeholder="当期純利益" onChange={set('netIncome')} style={{ ...INPUT_STYLE, width: 120 }} />
         </LabeledField>
-        <button type="button" onClick={() => void submit.run(onAdd)} disabled={submit.busy}>BS を保存</button>
+        <button type="button" onClick={() => void submit.run(onAdd)} disabled={submit.busy}>貸借対照表 (BS) を保存</button>
       </div>
       {error && <div style={{ color: 'var(--danger)', fontSize: 12, marginTop: 6 }}>{error}</div>}
       {notice && <div role="status" data-kpi-notice="bs" style={{ color: 'var(--success)', fontSize: 12, marginTop: 6 }}>{notice}</div>}

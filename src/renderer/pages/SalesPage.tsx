@@ -504,9 +504,9 @@ export function SalesPage() {
           </div>
         </div>
         <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap', marginTop: 12 }}>
-          <button type="button" onClick={() => fileRef.current?.click()}>CSV インポート</button>
+          <button type="button" onClick={() => fileRef.current?.click()}>表のファイル (CSV) を取り込む</button>
           <button type="button" onClick={onExport} disabled={entries.length === 0}>
-            CSV エクスポート
+            表のファイル (CSV) に書き出す
           </button>
           <input
             ref={fileRef}

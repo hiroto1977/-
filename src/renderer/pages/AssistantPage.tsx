@@ -981,7 +981,7 @@ export function AssistantPage() {
                 disabled={credsBusy}
                 onClick={() => void clearAgentCreds()}
               >
-                API キーを削除
+                接続の鍵 (API key) を削除
               </button>
             )}
             <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{credsMessage}</span>

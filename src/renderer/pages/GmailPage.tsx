@@ -148,7 +148,7 @@ export function GmailPage() {
             }
             disabled={analyzeGuard.busy || analyzeBatch.included < 1}
           >
-            Emotions で分析
+            感情ログで分析
           </button>
         }
       >

@@ -8,7 +8,7 @@
  * - 空欄は断らず、下書きに「（未記入）」と書いて件数を述べる
  * - 読めない数・範囲の外の数・長すぎる文が在る間は、下書きを出さず、保存もコピーもできない (直す欄を名指しする)
  * - 画面に出ていない欄 (個人事業主の資本金・助成金の補助率) は、下書きを止めない
- * - 「Markdown で保存」で落ちる中身は、画面の下書きと同じ物・名前に利用者の入力は入らない
+ * - 「マークダウン (Markdown) で保存」で落ちる中身は、画面の下書きと同じ物・名前に利用者の入力は入らない
  */
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, createElement } from 'react';
@@ -403,7 +403,7 @@ describe('申請書類の下書きの欄 — 経費', () => {
 });
 
 describe('申請書類の下書きの欄 — 保存とコピー', () => {
-  it('★ 「Markdown で保存」で落ちる中身は下書きそのもの・名前に入力は入らない', async () => {
+  it('★ 「マークダウン (Markdown) で保存」で落ちる中身は下書きそのもの・名前に入力は入らない', async () => {
     await type('事業者名', '見本商店');
     await click(saveButton());
     expect(downloads.length).toBe(1);
@@ -432,6 +432,6 @@ describe('申請書類の下書きの欄 — 保存とコピー', () => {
     clipboardFails = true;
     await click(copyButton());
     expect(q('[data-application-copied]')).toBeNull();
-    expect(need('[data-application-copy-failed]').textContent).toBe('コピーできませんでした。「Markdown で保存」を使ってください。');
+    expect(need('[data-application-copy-failed]').textContent).toBe('コピーできませんでした。「マークダウン (Markdown) で保存」を使ってください。');
   });
 });

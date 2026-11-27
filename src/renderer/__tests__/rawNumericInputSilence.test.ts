@@ -291,47 +291,47 @@ const DRAFT_LEDGER: Readonly<Record<string, DraftRow>> = Object.freeze({
   'kpi|流動資産 (円)': {
     file: 'renderer/pages/KpiPage.tsx',
     writer: 'parseBalanceSheet',
-    why: '「BS を保存」を押したときに読み、0 以上の数でなければ断る (保存しない・必須の欄の空欄は 0 円にしない)',
+    why: '「貸借対照表 (BS) を保存」を押したときに読み、0 以上の数でなければ断る (保存しない・必須の欄の空欄は 0 円にしない)',
   },
   'kpi|固定資産 (円)': {
     file: 'renderer/pages/KpiPage.tsx',
     writer: 'parseBalanceSheet',
-    why: '「BS を保存」を押したときに読み、0 以上の数でなければ断る (保存しない・必須の欄の空欄は 0 円にしない)',
+    why: '「貸借対照表 (BS) を保存」を押したときに読み、0 以上の数でなければ断る (保存しない・必須の欄の空欄は 0 円にしない)',
   },
   'kpi|流動負債 (円)': {
     file: 'renderer/pages/KpiPage.tsx',
     writer: 'parseBalanceSheet',
-    why: '「BS を保存」を押したときに読み、0 以上の数でなければ断る (保存しない・必須の欄の空欄は 0 円にしない)',
+    why: '「貸借対照表 (BS) を保存」を押したときに読み、0 以上の数でなければ断る (保存しない・必須の欄の空欄は 0 円にしない)',
   },
   'kpi|固定負債 (円)': {
     file: 'renderer/pages/KpiPage.tsx',
     writer: 'parseBalanceSheet',
-    why: '「BS を保存」を押したときに読み、0 以上の数でなければ断る (保存しない・必須の欄の空欄は 0 円にしない)',
+    why: '「貸借対照表 (BS) を保存」を押したときに読み、0 以上の数でなければ断る (保存しない・必須の欄の空欄は 0 円にしない)',
   },
   'kpi|うち現預金 (円)': {
     file: 'renderer/pages/KpiPage.tsx',
     writer: 'parseBalanceSheet',
-    why: '「BS を保存」を押したときに読む内数の欄。空欄は 0 円ではなく「未入力」として持ち、数でなければ断る (保存しない)',
+    why: '「貸借対照表 (BS) を保存」を押したときに読む内数の欄。空欄は 0 円ではなく「未入力」として持ち、数でなければ断る (保存しない)',
   },
   'kpi|うち棚卸資産 (円)': {
     file: 'renderer/pages/KpiPage.tsx',
     writer: 'parseBalanceSheet',
-    why: '「BS を保存」を押したときに読む内数の欄。空欄は 0 円ではなく「未入力」として持ち、数でなければ断る (保存しない)',
+    why: '「貸借対照表 (BS) を保存」を押したときに読む内数の欄。空欄は 0 円ではなく「未入力」として持ち、数でなければ断る (保存しない)',
   },
   'kpi|うち売上債権 (円)': {
     file: 'renderer/pages/KpiPage.tsx',
     writer: 'parseBalanceSheet',
-    why: '「BS を保存」を押したときに読む内数の欄。空欄は 0 円ではなく「未入力」として持ち、数でなければ断る (保存しない)',
+    why: '「貸借対照表 (BS) を保存」を押したときに読む内数の欄。空欄は 0 円ではなく「未入力」として持ち、数でなければ断る (保存しない)',
   },
   'kpi|うち仕入債務 (円)': {
     file: 'renderer/pages/KpiPage.tsx',
     writer: 'parseBalanceSheet',
-    why: '「BS を保存」を押したときに読む内数の欄。空欄は 0 円ではなく「未入力」として持ち、数でなければ断る (保存しない)',
+    why: '「貸借対照表 (BS) を保存」を押したときに読む内数の欄。空欄は 0 円ではなく「未入力」として持ち、数でなければ断る (保存しない)',
   },
   'kpi|うち有利子負債 (円)': {
     file: 'renderer/pages/KpiPage.tsx',
     writer: 'parseBalanceSheet',
-    why: '「BS を保存」を押したときに読む内数の欄。空欄は 0 円ではなく「未入力」として持ち、数でなければ断る (保存しない)',
+    why: '「貸借対照表 (BS) を保存」を押したときに読む内数の欄。空欄は 0 円ではなく「未入力」として持ち、数でなければ断る (保存しない)',
   },
   'hydroponics|パネル枚数': {
     file: 'renderer/pages/HydroponicsPage.tsx',

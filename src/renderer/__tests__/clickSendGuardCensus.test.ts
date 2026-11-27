@@ -18,7 +18,7 @@ import { stripNonCode } from '../../shared/__tests__/stripNonCode';
  * 名前つき handler だけを数え、docblock に「外部サービスへ書く入口は**今も規則の外**
  * … 母集団としてはまだ数えていない」と書いて残していた。その外側を 2026-09-27 に
  * 測ると `invoke` の呼び出しは **42 か所**あり、**2 か所が関門を 1 つも持っていなかった** ——
- * `SlackPage` と `GmailPage` の「Emotions で分析」(有料の Anthropic API を呼び、
+ * `SlackPage` と `GmailPage` の「感情ログで分析」(有料の Anthropic API を呼び、
  * 結果を Emotions の履歴へ保存する)。どちらも `onClick={async () => { … }}` と
  * **その場に書いた** handler で、**名前つき handler しか見ない走査には構造的に映らない**。
  * 振る舞いは `pages/__tests__/emotionsAnalyzeDoubleSubmit.test.ts` が実物を押して留める。
@@ -376,7 +376,7 @@ describe('押して外へ送る操作は、押している間 2 度目を送ら�
     expect(count('submit-guard'), 'useSubmitGuard を通る属性').toBeGreaterThanOrEqual(4);
     expect(count('busy-condition'), 'Enter キーの経路').toBeGreaterThanOrEqual(4);
     expect(count('busy-reentry'), '入口で戻る経路').toBeGreaterThanOrEqual(1);
-    // 標本: 直した 2 画面の「Emotions で分析」は、その場に書いた handler のまま関門を通る。
+    // 標本: 直した 2 画面の「感情ログで分析」は、その場に書いた handler のまま関門を通る。
     for (const page of ['SlackPage.tsx', 'GmailPage.tsx']) {
       const inline = sites.filter((s) => s.file.endsWith(`/${page}`) && s.handler === '(inline)');
       expect(inline, `${page} のその場の送信が走査に無い`).toHaveLength(1);

@@ -196,7 +196,7 @@ describe('入力欄の名前と形', () => {
     await waitForText(text, '期間 (月) を選んでください。');
     await press('予算を追加');
     await settleUntil(() => text().split('期間 (月) を選んでください。').length - 1 === 2, '予算の欄も同じ文を出す');
-    await press('BS を保存');
+    await press('貸借対照表 (BS) を保存');
     await waitForText(text, '基準日を選んでください。');
     expect(await storedOf(KPI_ACTUALS_COLLECTION)).toEqual([]);
     expect(await storedOf(KPI_BUDGETS_COLLECTION)).toEqual([]);
@@ -229,7 +229,7 @@ describe('記録した知らせ', () => {
   it('★ 貸借対照表を保存すると、基準日つきで「保存しました」と言う', async () => {
     await mount();
     fill('bs', { '基準日': '2026-03-31', '流動資産 (円)': '1000000', '固定資産 (円)': '500000', '流動負債 (円)': '300000', '固定負債 (円)': '200000', '当期純利益 (円・赤字は −)': '-100000' });
-    await press('BS を保存');
+    await press('貸借対照表 (BS) を保存');
     await settleUntil(() => notice('bs') !== '', '貸借対照表の知らせ');
     expect(notice('bs')).toBe('保存しました: 基準日 2026-03-31');
     const saved = await storedOf<BalanceSheet>(BALANCE_SHEET_COLLECTION);

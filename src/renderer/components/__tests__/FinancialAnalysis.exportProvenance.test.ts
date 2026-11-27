@@ -89,7 +89,7 @@ describe('財務分析の CSV 書き出し — 概算の断りが中に残る', 
 
   it('★ 諸表 CSV を押すと、画面と同じ断り書きが中に入る', () => {
     render(units);
-    clickButton('この諸表をCSV');
+    clickButton('この諸表を表のファイル (CSV) で書き出し');
     expect(downloads).toHaveLength(1);
     const csv = downloads[0]!;
     for (const note of statementEstimateNotes()) expect(csv).toContain(note);
@@ -101,14 +101,14 @@ describe('財務分析の CSV 書き出し — 概算の断りが中に残る', 
 
   it('★ 諸表 CSV は対象 (事業名 + 書類名) も中に持つ — ファイル名に頼らない', () => {
     render(units);
-    clickButton('この諸表をCSV');
+    clickButton('この諸表を表のファイル (CSV) で書き出し');
     expect(downloads[0]).toContain('対象: A事業・単体・損益計算書');
   });
 
   it('★ 書類を切り替えると、対象の書類名も追随する', () => {
     render(units);
     clickButton('貸借対照表');
-    clickButton('この諸表をCSV');
+    clickButton('この諸表を表のファイル (CSV) で書き出し');
     expect(downloads[0]).toContain('対象: A事業・単体・貸借対照表');
     // 表の中身も貸借対照表になっている (タブだけ変わって中身が変わらない、を防ぐ標本)。
     expect(downloads[0]).toContain('資産合計,');
@@ -116,7 +116,7 @@ describe('財務分析の CSV 書き出し — 概算の断りが中に残る', 
 
   it('★ 指標 CSV も断り書きと、サンプルを何件含むかを中に持つ', () => {
     render(units);
-    clickButton('全事業の指標をCSVで書き出し');
+    clickButton('全事業の指標を表のファイル (CSV) で書き出し');
     expect(downloads).toHaveLength(1);
     for (const note of statementEstimateNotes()) expect(downloads[0]).toContain(note);
     expect(downloads[0]).toContain('対象: 全事業 2 件（うちサンプル 1 件）');

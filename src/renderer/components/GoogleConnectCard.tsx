@@ -184,7 +184,7 @@ export function GoogleConnectCard({ serviceId, onConnected }: GoogleConnectCardP
             aria-label="Google OAuth クライアント ID"
           />
           <button className="primary" onClick={signIn} disabled={signingIn || !clientId.trim()}>
-            {signingIn ? 'サインイン中…' : '🔐 Google でサインイン'}
+            {signingIn ? 'サインイン中…' : '🔐 グーグル (Google) でサインイン'}
           </button>
         </div>
           </>

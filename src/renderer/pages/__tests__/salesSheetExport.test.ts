@@ -210,7 +210,7 @@ describe('スプレッドシートに書き出す', () => {
     await press(button());
     const err = await waitForElement(() => container.querySelector('[data-sheet-export-error]'), '断りの文');
     expect(err.textContent).toContain(`${MAX_SHEET_ROWS} 件まで`);
-    expect(err.textContent).toContain('CSV エクスポート');
+    expect(err.textContent).toContain('表のファイル (CSV) に書き出す');
     expect(confirm).not.toHaveBeenCalled();
     expect(bridge.invoke).not.toHaveBeenCalled();
   });

@@ -114,7 +114,7 @@ export function AtlassianPage() {
         title="操作 (Actions)"
         action={
           <button onClick={() => setShowForm((v) => !v)}>
-            {showForm ? '閉じる' : 'Issue を作成'}
+            {showForm ? '閉じる' : '課題 (Issue) を作成'}
           </button>
         }
       >

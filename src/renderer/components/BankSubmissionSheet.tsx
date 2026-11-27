@@ -205,7 +205,7 @@ export function BankSubmissionPanel({
       <div className="bank-toolbar">
         <div className="bank-toolbar-row">
           <button type="button" onClick={onClose}>経営サマリーへ戻る</button>
-          <button type="button" className="bank-print" onClick={() => printDocument()}>印刷 / PDF に保存</button>
+          <button type="button" className="bank-print" onClick={() => printDocument()}>印刷 / 文書ファイル (PDF) に保存</button>
           <span className="bank-hint">A4 縦で書面だけを印刷します。PDF にするには印刷先で「PDF に保存」を選びます。</span>
         </div>
         {!form.ready ? (

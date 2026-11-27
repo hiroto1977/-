@@ -972,7 +972,7 @@ export function BusinessPage() {
               fontSize: 12,
             }}
           >
-            {exportBusy ? '出力中…' : 'HTML を保存'}
+            {exportBusy ? '出力中…' : 'ウェブページ (HTML) を保存'}
           </button>
           <button
             type="button"
@@ -988,7 +988,7 @@ export function BusinessPage() {
               fontSize: 12,
             }}
           >
-            Markdown を保存
+            マークダウン (Markdown) を保存
           </button>
           {/* 実行形態で書き出し先が違う (パス 161)。文面は shared/buildDestinations.ts。 */}
           {buildKind !== null && (

@@ -142,7 +142,7 @@ export function GrokPage() {
             disabled={busy || submit.busy || grok?.configured !== true}
             onClick={() => fireReported(submit.run(onAsk))}
           >
-            {busy ? '考え中…' : 'Grok に送る'}
+            {busy ? '考え中…' : 'グロック (Grok) に送る'}
           </button>
         </div>
         {crisisHeld !== null && <CrisisHeldNotice text={crisisHeld} />}

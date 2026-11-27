@@ -2,7 +2,7 @@
 /**
  * **一覧から感情分析へ送る 2 画面を押す** (2026-09-12 · パス 156)。
  *
- * `GmailPage` (36.36%) と `SlackPage` (37.93%) の「Emotions で分析」は
+ * `GmailPage` (36.36%) と `SlackPage` (37.93%) の「感情ログで分析」は
  * どちらも 1 度も走ったことがなかった。両方とも一覧を全件 join して送るので
  * **本文の長さを利用者が決められない** —— 5000 字を超えると `analyze-text` は
  * 断るが、出るのは英語の生の例外文だけで打てる手が無い。
@@ -74,9 +74,9 @@ async function mount(serviceId: 'gmail' | 'slack'): Promise<void> {
 
 function analyzeButton(): HTMLButtonElement {
   const b = Array.from(container.querySelectorAll('button')).find((x) =>
-    (x.textContent ?? '').includes('Emotions で分析'),
+    (x.textContent ?? '').includes('感情ログで分析'),
   );
-  if (!b) throw new Error('「Emotions で分析」のボタンが見つからない');
+  if (!b) throw new Error('「感情ログで分析」のボタンが見つからない');
   return b as HTMLButtonElement;
 }
 

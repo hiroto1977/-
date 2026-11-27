@@ -496,7 +496,7 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
               📋 クリップボードにコピー
             </button>
             <button type="button" onClick={downloadMnemonic} style={{ ...buttonStyle, flex: 1, background: 'var(--bg-elev)' }}>
-              💾 .txt でダウンロード
+              💾 テキストファイル (txt) で保存
             </button>
           </div>
 
@@ -543,7 +543,7 @@ export function LockScreen({ onUnlocked }: { onUnlocked: () => void }) {
               opacity: mnemonicAcknowledged ? 1 : 0.5,
             }}
           >
-            記録完了 — Service Hub を開始
+            記録完了 — サービスハブ (Service Hub) を開始
           </button>
         </div>
       </div>

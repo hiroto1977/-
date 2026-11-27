@@ -35,7 +35,7 @@ import { stripComments } from '../../shared/__tests__/stripNonCode';
  * **この走査の外** —— `clickSendGuardCensus.test.ts` (2026-09-27 · パス 493h) が
  * `serviceHub.invoke` の呼び出し 1 つ 1 つから、それを起こす属性と守りを数える。
  * ★ 2026-09-27 まで、ここは「母集団としてはまだ数えていない」と書いて残していた ——
- * 測ると 42 か所のうち **2 か所が関門を持たなかった** (Slack / Gmail の「Emotions で分析」)。
+ * 測ると 42 か所のうち **2 か所が関門を持たなかった** (Slack / Gmail の「感情ログで分析」)。
  * どちらも `onClick={async () => …}` とその場に書いた handler で、**この走査の
  * 「同じファイルで宣言された名前つきの handler」という線の外**に在った。
  *

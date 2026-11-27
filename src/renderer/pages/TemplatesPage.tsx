@@ -168,7 +168,7 @@ export function TemplatesPage() {
         }}
       >
         {/* 実行形態で書き出し先が違う (パス 161)。文面は shared/buildDestinations.ts。 */}
-        <strong>Canva 連動:</strong> パラメータを編集 → 「SVG を保存」でベクター画像を出力します。
+        <strong>Canva 連動:</strong> パラメータを編集 → 「キャンバ (Canva) 用の画像 (SVG) を保存」でベクター画像を出力します。
         {buildKind !== null && (
           <span data-export-destination>
             {' '}{exportDestinationNote(buildKind, DESKTOP_PATHS.templateSvg)}
@@ -389,7 +389,7 @@ export function TemplatesPage() {
               fontSize: 12,
             }}
           >
-            {busy ? '出力中…' : 'SVG を保存 (Canva 用)'}
+            {busy ? '出力中…' : 'キャンバ (Canva) 用の画像 (SVG) を保存'}
           </button>
           <button
             onClick={resetDefaults}

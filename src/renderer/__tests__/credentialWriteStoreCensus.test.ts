@@ -123,7 +123,7 @@ const LEDGER: readonly Row[] = [
       '`GoogleOAuthSection` の 4 本 (`drive` / `calendar` / `gmail` / `google-access`)。'
       + 'デスクトップ版には読む物も消す物も無いので、`useBuildKind()` で問い、'
       + 'デスクトップ版と分かったときだけ `start()` が書く前に断り、働く道'
-      + '(`GoogleConnectCard` の「Google でサインイン」) を名指しする。',
+      + '(`GoogleConnectCard` の「グーグル (Google) でサインイン」) を名指しする。',
   },
 ];
 
