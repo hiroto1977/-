@@ -10,6 +10,7 @@ import { jiraBrowseUrl } from '../../shared/atlassianLinks';
 import type { ActionData } from '../../shared/actionData';
 import { ProxyRequiredNote } from '../components/ProxyRequiredNote';
 import { externalTextOnOneLine } from '../data/assistantMarkdown';
+import { liveLink } from '../data/sampleLinks';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -87,7 +88,7 @@ export function AtlassianPage() {
           )
         }
         right={
-          site ? (
+          site && source === 'live' ? (
             <button onClick={() => window.serviceHub?.openExternal(site.url)}>サイトを開く</button>
           ) : null
         }
@@ -105,7 +106,7 @@ export function AtlassianPage() {
             meta: `${p.projectTypeKey} · ${p.style}`,
             /* リンクの形は `shared/atlassianLinks.ts` が 1 つ持つ (パス 181)。
                ここは `/jira/projects/...` という**他のどこにも無い形**を組んでいた。 */
-            href: site ? jiraBrowseUrl(site.url, p.key) : undefined,
+            href: site ? liveLink(source, jiraBrowseUrl(site.url, p.key)) : undefined,
           }))}
         />
       </Section>

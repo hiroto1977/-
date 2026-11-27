@@ -10,6 +10,7 @@ import { charsOverCeiling } from '../../shared/inputCeiling';
 import { DRIVE_FOLDER_FIELDS } from '../../shared/writeFieldLimits';
 import type { ActionData } from '../../shared/actionData';
 import { externalTextOnOneLine } from '../data/assistantMarkdown';
+import { liveLink } from '../data/sampleLinks';
 
 const TYPE_LABEL: Record<string, string> = {
   'application/vnd.google-apps.document': 'Doc',
@@ -91,7 +92,7 @@ export function DrivePage() {
             key: f.id,
             title: f.title,
             meta: `${TYPE_LABEL[f.mimeType] ?? f.mimeType} · 更新 ${dateText(f.modifiedTime)}`,
-            href: f.viewUrl,
+            href: liveLink(source, f.viewUrl),
           }))}
         />
       </Section>

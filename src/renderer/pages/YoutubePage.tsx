@@ -3,6 +3,7 @@ import { SNAPSHOT } from '../data/snapshot';
 import { DataList } from '../components/DataList';
 import { Section, StatusBar } from '../components/StatusBar';
 import { useServiceData } from '../hooks/useServiceData';
+import { liveLink } from '../data/sampleLinks';
 
 const num = new Intl.NumberFormat('ja-JP');
 
@@ -70,7 +71,7 @@ export function YoutubePage() {
             key: v.videoId,
             title: v.title,
             meta: youtubePublished(v.publishedAt),
-            href: v.url,
+            href: liveLink(source, v.url),
           }))}
         />
       </Section>

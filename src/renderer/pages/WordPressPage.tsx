@@ -11,6 +11,7 @@ import { mcpAccessNote } from '../data/wordpressMcpAccess';
 import type { ActionData } from '../../shared/actionData';
 import { ProxyRequiredNote } from '../components/ProxyRequiredNote';
 import { externalTextOnOneLine } from '../data/assistantMarkdown';
+import { liveLink } from '../data/sampleLinks';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -85,7 +86,7 @@ export function WordPressPage() {
             title: site.name,
             meta: `${site.url} · platform: ${site.platform} · 最終更新 ${dateText(site.lastUpdated)}`,
             badge: site.paidPlan ? 'paid' : 'free',
-            href: site.url,
+            href: liveLink(source, site.url),
           }))}
         />
       </Section>

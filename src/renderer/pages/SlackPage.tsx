@@ -13,6 +13,7 @@ import { analyzeBatchNote, packAnalyzeText } from '../../shared/emotionsLimits';
 import { useSubmitGuard } from '../hooks/useSubmitGuard';
 import { ProxyRequiredNote } from '../components/ProxyRequiredNote';
 import { externalTextOnOneLine } from '../data/assistantMarkdown';
+import { liveLink } from '../data/sampleLinks';
 
 const inputStyle: React.CSSProperties = {
   background: 'var(--bg)',
@@ -98,7 +99,7 @@ export function SlackPage() {
             title: `#${c.name}`,
             meta: c.purpose,
             badge: c.isArchived ? 'archived' : 'active',
-            href: c.permalink,
+            href: liveLink(source, c.permalink),
           }))}
         />
       </Section>
