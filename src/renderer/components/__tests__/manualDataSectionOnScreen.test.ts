@@ -153,6 +153,22 @@ describe('手入力の欄 — 開いて押す (パス 170)', () => {
     expect((field('事業名') as HTMLInputElement).value).toBe('');
   });
 
+  it('★ 「🍽 飲食店」を押すと事業名と区分が入り、売上を入れて追加すると飲食店が並ぶ (2026-11-27)', async () => {
+    await mount('overview');
+    await open();
+    await click(button('🍽 飲食店'));
+    expect((field('事業名') as HTMLInputElement).value).toBe('飲食店');
+    expect((field('区分') as HTMLInputElement).value).toBe('飲食店');
+    // 押しただけでは記録を作らない (売上は利用者の数字を入れる)
+    expect(container.querySelectorAll('[data-business-unit]')).toHaveLength(0);
+    await type(field('月次の売上高') as HTMLInputElement, '3000000');
+    await click(button('事業を追加'));
+    await settleUntil(() => container.querySelectorAll('[data-business-unit]').length === 1, '飲食店が一覧に出る');
+    expect(container.querySelector('[data-business-unit] strong')?.textContent).toBe('飲食店');
+    // 区分の欄の候補にも飲食店が在る
+    expect(container.querySelector('#business-category-presets option[value="飲食店"]')).not.toBeNull();
+  });
+
   it('★ 事業名が空なら断り、1 件も足さない', async () => {
     await mount('sales');
     await open();

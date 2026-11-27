@@ -158,7 +158,7 @@ const PINNED: readonly PinnedReach[] = [
   {
     verdict: 'mutualFundsMetrics',
     chain: [
-      'src/main/clients/demae-can.ts',
+      'src/main/clients/mutual-funds.ts',
       'src/shared/serviceAdvisor.ts',
       'src/shared/mutualFundsMetrics.ts',
     ],
@@ -176,7 +176,7 @@ const PINNED: readonly PinnedReach[] = [
   {
     verdict: 'savingsPlanning',
     chain: [
-      'src/main/clients/demae-can.ts',
+      'src/main/clients/mutual-funds.ts',
       'src/shared/serviceAdvisor.ts',
       'src/shared/mutualFundsMetrics.ts',
       'src/shared/savingsPlanning.ts',

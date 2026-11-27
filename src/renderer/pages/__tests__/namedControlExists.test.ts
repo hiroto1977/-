@@ -95,6 +95,7 @@ const LEDGER: readonly Row[] = [
   },
   { name: '材料を渡す', kind: 'same-screen-control', renderedIn: 'src/renderer/pages/WatchPage.tsx', why: '見張りアシスタントの、材料がまだ無いときの案内が名指しする (実物の label は「＋ 材料を渡す」で、名指しはその後方一致)。文は shared が組み、押す所は同じ画面に在る。' },
   { name: '週次レポートを作る', kind: 'same-screen-control', renderedIn: 'src/renderer/pages/WatchPage.tsx', why: '見張りアシスタントの、答えがまだ無いときの案内が名指しする。同じ画面の週ごとの数字の節のボタン。' },
+  { name: '事業を追加', kind: 'same-screen-control', renderedIn: 'src/renderer/components/ManualDataSection.tsx', why: '事業のよく使う型 (飲食店) の札の隣の案内が名指しする。同じ節の追加ボタン (2026-11-27)。' },
   { name: '表示', kind: 'same-screen-control', renderedIn: 'src/renderer/pages/GoogleAnalyticsPage.tsx', why: 'グーグルアナリティクスの画面の、プロパティを選ぶ前の案内が名指しする。同じ節のプロパティ ID の欄の隣のボタン (2026-11-22)。' },
   { name: 'キャンバ (Canva) 用の画像 (SVG) を保存', kind: 'same-screen-control', renderedIn: 'src/renderer/pages/TeamRadarPage.tsx', why: 'チームレーダーの書き出しボタン (テンプレートの画面も同じ綴りのボタンを持つ)。' },
   { name: 'チーム情報を保存', kind: 'same-screen-control', renderedIn: 'src/renderer/pages/TeamRadarPage.tsx', why: '同じ画面の保存ボタン。文は shared の状態モジュールが組むが、出る先はこの画面である。' },

@@ -191,8 +191,6 @@ describe('画面と検証が同じ天井を読む (パス 167)', () => {
       files: [
         'src/renderer/components/ServiceActionPanel.tsx',
         'src/renderer/components/serviceActionUtils.ts',
-        'src/main/clients/uber-eats.ts',
-        'src/main/clients/demae-can.ts',
         'src/main/clients/real-estate.ts',
         'src/main/clients/mutual-funds.ts',
         'src/renderer/web-shim.ts',

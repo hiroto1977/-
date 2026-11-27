@@ -107,8 +107,6 @@ export const SERVICE_AREA: Readonly<Record<ServiceId, AreaPlacement>> = {
   line: at('center', 'お客様とメッセージでやり取りする。'),
   calendar: at('center', '予定を調整する。'),
   sales: at('center', '受けた注文と売上を記録する (受注処理)。'),
-  'uber-eats': at('center', '出前の注文を受ける (事業ダッシュボードが読む)。'),
-  'demae-can': at('center', '出前の注文を受ける (事業ダッシュボードが読む)。'),
 
   // ── ミドルオフィス: 契約・法務・審査・仕入
   compliance: at('middle', '取引に関わる法令を確かめる。'),

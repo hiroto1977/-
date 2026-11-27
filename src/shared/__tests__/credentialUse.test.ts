@@ -42,8 +42,6 @@ const EXPECTED: ReadonlyArray<readonly [ServiceId, CredentialUse]> = [
   ['templates', 'none'],
   ['library', 'none'],
   ['settings', 'none'],
-  ['uber-eats', 'none'],
-  ['demae-can', 'none'],
   ['real-estate', 'none'],
   ['mutual-funds', 'none'],
   ['charts', 'none'],
@@ -139,7 +137,7 @@ describe('SERVICE_CREDENTIAL_USE', () => {
     expect(count('fetch')).toBe(24); // google-analytics (2026-11-22)
     // shopify が `action` → `none` (パス 452)。
     expect(count('action')).toBe(7);
-    expect(count('none')).toBe(50);
+    expect(count('none')).toBe(48);
   });
 
   it('監査で見つかった 9 件は none のままである', () => {
@@ -184,9 +182,9 @@ describe('unusedStoredCredentials', () => {
   });
 
   it('順序は入力のまま (画面の並びを勝手に変えない)', () => {
-    expect(unusedStoredCredentials(['salesforce', 'uber-eats', 'shopify'])).toEqual([
+    expect(unusedStoredCredentials(['salesforce', 'kpi', 'shopify'])).toEqual([
       'salesforce',
-      'uber-eats',
+      'kpi',
       'shopify',
     ]);
   });

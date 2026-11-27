@@ -1,11 +1,11 @@
 /**
- * `record-entry` が受け取る入力の上限 —— **両ビルド・4 サービスで 1 つだけ持つ。**
+ * `record-entry` が受け取る入力の上限 —— **両ビルド・2 サービスで 1 つだけ持つ。**
  *
  * ## なぜ要るか (2026-08-23)
  *
- * `record-entry` は uber-eats / demae-can / real-estate / mutual-funds の
- * 4 つが持つ同じ形の action で、同じ上限 (note 1-2000 字) を **5 か所に
- * 別々に書いていた**:
+ * `record-entry` は (2026-11-27 以降) real-estate / mutual-funds の
+ * 2 つが持つ同じ形の action で、2026-08-23 の時点では uber-eats / demae-can を含む 4 つが、
+ * 同じ上限 (note 1-2000 字) を **5 か所に別々に書いていた**:
  *
  * ```
  *   main/clients/uber-eats.ts      `p.note.length > 2000`   ← 字面
@@ -39,8 +39,6 @@ export const MAX_RECORD_NOTE_CHARS = 2000;
  * `satisfies` で `ServiceId` に留める —— id を打ち間違えると `tsc` が落ちる。
  */
 export const RECORD_ENTRY_SERVICE_IDS = [
-  'uber-eats',
-  'demae-can',
   'real-estate',
   'mutual-funds',
 ] as const satisfies readonly ServiceId[];

@@ -50,7 +50,7 @@ describe('立ち位置は 2 つの宣言から導く', () => {
     const assist = SERVICE_IDS.filter(
       (id) => SERVICE_DATA_ORIGIN[id] !== 'remote' && owners.has(id) && !Object.hasOwn(OUTBOUND_NOT_THIRD_PARTY, id),
     );
-    expect(assist.length).toBeGreaterThanOrEqual(10);
+    expect(assist.length).toBeGreaterThanOrEqual(9);
     for (const id of assist) expect(continuityClassOf(id), id).toBe('cloud-assist');
   });
 

@@ -47,7 +47,7 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `document` **文書** | ARCHITECTURE の file:line と live metric・CLAUDE.md の数・REMAINING_WORK の生成ブロック。散文で述べた規則は落ちないので、数は機械が持つ。 | `docs/ARCHITECTURE.md`<br>`CLAUDE.md`<br>`docs/SESSION_HANDOFF.md`<br>`docs/REMAINING_WORK.md`<br>`docs/ONTOLOGY.md` | `scripts/verify-architecture.cjs`<br>`scripts/cross-doc-consistency.cjs`<br>`src/shared/__tests__/ontologyDoc.test.ts` |
 | `workflow` **CI の workflow** | permissions 明示・第三者 action の SHA 固定・pull_request_target 禁止。週次の依存監査は常設 Issue 1 つ。 | `.github/workflows/ci.yml`<br>`.github/workflows/e2e.yml`<br>`.github/workflows/dependency-audit.yml`<br>`.github/workflows/release.yml` | `scripts/lint-workflow-security.cjs`<br>`src/shared/__tests__/workflowSecurityWitness.test.ts`<br>`src/shared/__tests__/dependencyAuditWorkflow.test.ts` |
 
-## 3. サービスの facet 行列 (81)
+## 3. サービスの facet 行列 (79)
 
 | id | 配置 | 出所 | 資格情報 | local | OAuth | 士業 | デスクトップの action | ブラウザ版の action | デスクトップだけ |
 |---|---|---|---|:---:|:---:|:---:|---|---|---|
@@ -70,7 +70,6 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `connectors` | tools | local | none | ✅ |  |  | — | — | — |
 | `cpa` | professionals | local | none | ✅ |  | ✅ | — | — | — |
 | `cursor` | integrations | remote | fetch |  |  |  | — | — | — |
-| `demae-can` | consumed | sample | none | ✅ |  |  | `advise` `record-entry` | `advise` `record-entry` | — |
 | `discord` | integrations | remote | fetch |  |  |  | — | — | — |
 | `docker` | tools | local | none | ✅ |  |  | — | — | — |
 | `docstudio` | featured | local | none | ✅ |  |  | `list-collections` | — | `list-collections` |
@@ -126,7 +125,6 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 | `templates` | featured | local | none | ✅ |  |  | `export-template` | `export-template` | — |
 | `tiktok` | integrations | sample | none | ✅ |  |  | — | — | — |
 | `topseller` | integrations | sample | none | ✅ |  |  | — | — | — |
-| `uber-eats` | consumed | sample | none | ✅ |  |  | `advise` `record-entry` | `advise` `record-entry` | — |
 | `village` | featured | local | none | ✅ |  |  | — | — | — |
 | `vrio` | tools | local | none | ✅ |  |  | — | — | — |
 | `watch` | tools | local | none | ✅ |  |  | — | — | — |
@@ -135,10 +133,10 @@ import の許可表は `scripts/check-import-boundaries.cjs` の `ALLOW` と一�
 
 集計:
 
-- 配置: おすすめ 12 / 士業連携 8 / 分析・ツール 25 / 外部サービス連携 34 / 消費されるだけ 2
-- 出所: remote 24 / local 44 / sample 13
-- 資格情報の読み手 — fetch 24 / action 7 / none 50
-- LOCAL_SERVICES 56 / OAuth 11 / action を持つ 28 / デスクトップだけの action 10
+- 配置: おすすめ 12 / 士業連携 8 / 分析・ツール 25 / 外部サービス連携 34 / 消費されるだけ 0
+- 出所: remote 24 / local 44 / sample 11
+- 資格情報の読み手 — fetch 24 / action 7 / none 48
+- LOCAL_SERVICES 54 / OAuth 11 / action を持つ 26 / デスクトップだけの action 10
 
 ## 4. facet の公理と例外
 

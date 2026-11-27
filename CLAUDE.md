@@ -11,18 +11,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Service Hub — a Japanese-facing business dashboard exposing **81 services** through a unified,
-business-area sidebar (フロントオフィス / センターオフィス / ミドルオフィス / バックオフィス / 開発・製造・現場 / 経営・ガバナンス / 共通基盤 —— 2026-11-23 · `renderer/data/businessArea.ts` が全画面の置き場所を 1 か所で持つ). **Not every service has a sidebar
-entry of its own**: `uber-eats` and `demae-can` are consumed inside the Business Dashboard instead
-(`BusinessPage.tsx` reads their snapshots directly). That split is a reasoned, bidirectional ledger in
-`src/renderer/__tests__/sidebarCoverage.test.ts` — a service that silently loses its sidebar entry fails
+Service Hub — a Japanese-facing business dashboard exposing **79 services** through a unified,
+business-area sidebar (フロントオフィス / センターオフィス / ミドルオフィス / バックオフィス / 開発・製造・現場 / 経営・ガバナンス / 共通基盤 —— 2026-11-23 · `renderer/data/businessArea.ts` が全画面の置き場所を 1 か所で持つ). **Every service has a sidebar entry of its own**
+(2026-11-27: the two screen-less, sample-only food-delivery services `uber-eats` / `demae-can` were removed at the user's
+request, so the exceptions ledger is now empty). The bidirectional ledger in
+`src/renderer/__tests__/sidebarCoverage.test.ts` still guards it — a service that silently loses its sidebar entry fails
 CI (it would also become impossible to delete its saved credentials from the UI), and an id that is
 still in the ledger while back on the sidebar fails too. Services span third-party SaaS
 (GitHub, WordPress.com, Atlassian, Notion, Google Drive / Calendar / Gmail, Slack, Canva,
 Microsoft 365, Dropbox, Salesforce, Discord, Asana, Linear, Sentry, Shopify, Stripe, LINE), local
 tools (Skills, Security, Cloudflare, Emotions, Ollama, KPI, Stocks, Storage), business operations
-(Home, Business Dashboard, Team Radar, Templates, Library, Settings, Quality), food delivery
-(Uber Eats, 出前館), investment (Real Estate 不動産投資, Mutual Funds 投資信託) and eight 士業
+(Home, Business Dashboard, Team Radar, Templates, Library, Settings, Quality), investment (Real Estate 不動産投資, Mutual Funds 投資信託) and eight 士業
 professional integrations (税理士 / 公認会計士 / 社労士 / 弁護士 / 司法書士 / 行政書士 / 中小企業診断士 / 弁理士)
 with a verified 事業仕分け duty map (`professionalMap.ts`) and a local-first CRM.
 
@@ -1521,7 +1520,7 @@ npm run lint:test-coverage # サービスごとに `<id>.test.ts` が在り、**
                            #   直書きした action は検査を素通りする)、`ACTIONS` を export する
                            #   クライアントは全部 `LIVE_ACTIONS` に載る (逆向き)。
                            #   **action を持たないサービスは許される** —— 2026-09-15 実測で
-                           #   **81 のうち 52 が action を 1 つも登録していない** (ゲートの
+                           #   **79 のうち 52 が action を 1 つも登録していない** (ゲートの
                            #   self-test にも「テストはあるが action 0 件 → 0 件鳴る」が在る)。
                            #   2026-09-15 まで、この行は「every service must have a test +
                            #   an action registered」と書かれていた —— **後半は偽**で、
@@ -1776,7 +1775,7 @@ bridge. Three parallel maps in `src/main/clients/index.ts` are keyed by `Service
 
 - `LIVE_FETCHERS` — a **total** `Record<ServiceId, fetcher>`. A runtime invariant at module load
   throws if any `ServiceId` is missing an entry, so a forgotten service crashes loudly at app start
-  rather than on first click. Note: many entries are static stubs (investment, 士業, food delivery)
+  rather than on first click. Note: many entries are static stubs (investment, 士業)
   that just satisfy the invariant and return `SNAPSHOT[id]` directly — only the SaaS clients do real
   network I/O.
 - `LOCAL_SERVICES` — services whose fetcher reads local resources and needs no saved credentials

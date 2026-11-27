@@ -4,9 +4,9 @@
 > 仕組みの全体像は [[SECURITY_CHAIN]] / `docs/SECURITY_CHAIN.md` を参照。
 
 - アルゴリズム: `sha256`
-- ブロック数: 544
+- ブロック数: 546
 - 先頭(genesis)ハッシュ: `773e7442591bb2286a73553c29b46d049e5f92927a69c38e7075d89496d15ec9`
-- 末尾(tip)ハッシュ: `d21bb73e4cce7064fa726256c538512b51b3e80f596d1cd01352ab5f7178e2c9`
+- 末尾(tip)ハッシュ: `c59a4403928bf25c8dd1044ffd452286397f5daf1d29674c342180f08f45f77e`
 - 保護対象: 225 ファイル
 
 ## ブロック
@@ -557,6 +557,8 @@
 | 541 | `2479e1069e3b5a10` | `521e8d57c99e8528` | `c507bacfcc0502f3` | update build-landing.cjs |
 | 542 | `68848d3228ac1f3d` | `c507bacfcc0502f3` | `c098ff9dcbbf0429` | update ci.yml |
 | 543 | `eeeec079d65b6e8a` | `c098ff9dcbbf0429` | `d21bb73e4cce7064` | update LockScreen.tsx |
+| 544 | `6e6d9304113a09db` | `d21bb73e4cce7064` | `cbe8b49798d8b1a6` | update actionTier.mamori,actionTier.ts |
+| 545 | `f7991fa054d209e2` | `cbe8b49798d8b1a6` | `c59a4403928bf25c` | update 00-project.mdc |
 
 ## 保護対象ファイル
 

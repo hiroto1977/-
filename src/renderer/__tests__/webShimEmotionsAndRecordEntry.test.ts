@@ -7,7 +7,7 @@
  *    実測 (2026-09-06) では**未到達の変異体が 18 件**残っていた。文面が 1 か所だけ違う
  *    (中身が JSON でないときに本文の頭 80 字を伏字つきで見せる) ので、そこも留める。
  *
- * 2. `record-entry` は 4 サービス (Uber Eats / 出前館 / 不動産 / 投資信託) が共有する
+ * 2. `record-entry` は 2 サービス (不動産 / 投資信託) が共有する
  *    ステートレスな検証で、**`persisted: false` を返す契約**を持つ。この印を読み落とすと
  *    「保存されないメモを保存したことにする」—— チャットボットの分類器がまさにその事故
  *    (2026-08 監査) を防ぐために `persisted` を見ている。ここも未到達 19 件だった。
@@ -153,7 +153,7 @@ describe('emotions/analyze-text — 応答の壊れ方', () => {
 });
 
 describe('record-entry — 受け付けたが保存はしない、を正しく名乗る', () => {
-  const SERVICES = ['uber-eats', 'demae-can', 'real-estate', 'mutual-funds'];
+  const SERVICES = ['real-estate', 'mutual-funds'];
 
   it.each(SERVICES)('★ %s: note があれば ok を返し、persisted は false', async (service) => {
     const hub = await loadHub();
@@ -167,16 +167,16 @@ describe('record-entry — 受け付けたが保存はしない、を正しく�
 
   it('★ note が空なら弾く', async () => {
     const hub = await loadHub();
-    const r = await hub.invoke('uber-eats', 'record-entry', { note: '' });
+    const r = await hub.invoke('real-estate', 'record-entry', { note: '' });
     expect(r.ok).toBe(false);
     expect(r.message).toContain('note は 1-');
   });
 
   it('★ note が上限ちょうどは通り、1 字超えると弾く (境界)', async () => {
     const hub = await loadHub();
-    const okRes = await hub.invoke('uber-eats', 'record-entry', { note: 'あ'.repeat(MAX_RECORD_NOTE_CHARS) });
+    const okRes = await hub.invoke('real-estate', 'record-entry', { note: 'あ'.repeat(MAX_RECORD_NOTE_CHARS) });
     expect(okRes.ok, okRes.message).toBe(true);
-    const tooLong = await hub.invoke('uber-eats', 'record-entry', {
+    const tooLong = await hub.invoke('real-estate', 'record-entry', {
       note: 'あ'.repeat(MAX_RECORD_NOTE_CHARS + 1),
     });
     expect(tooLong.ok).toBe(false);
@@ -185,16 +185,16 @@ describe('record-entry — 受け付けたが保存はしない、を正しく�
 
   it('★ note が文字列でないなら弾く', async () => {
     const hub = await loadHub();
-    const r = await hub.invoke('uber-eats', 'record-entry', { note: 42 });
+    const r = await hub.invoke('real-estate', 'record-entry', { note: 42 });
     expect(r.ok).toBe(false);
   });
 
   it('★ amount は無くてよいが、数値でないなら弾く', async () => {
     const hub = await loadHub();
-    expect((await hub.invoke('uber-eats', 'record-entry', { note: 'a' })).ok).toBe(true);
-    expect((await hub.invoke('uber-eats', 'record-entry', { note: 'a', amount: 1200 })).ok).toBe(true);
+    expect((await hub.invoke('real-estate', 'record-entry', { note: 'a' })).ok).toBe(true);
+    expect((await hub.invoke('real-estate', 'record-entry', { note: 'a', amount: 1200 })).ok).toBe(true);
     for (const bad of ['1200', Number.NaN, Number.POSITIVE_INFINITY, null]) {
-      const r = await hub.invoke('uber-eats', 'record-entry', { note: 'a', amount: bad });
+      const r = await hub.invoke('real-estate', 'record-entry', { note: 'a', amount: bad });
       expect(r.ok, `amount=${String(bad)}`).toBe(false);
       expect(r.message).toContain('amount は finite');
     }

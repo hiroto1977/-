@@ -1,8 +1,8 @@
 /**
  * Shared "改善提案" advisor response shape.
  *
- * Used by snapshot-only business services (uber-eats / demae-can /
- * real-estate / mutual-funds) to return structured advice + a mandatory
+ * Used by investment services (real-estate /
+ * mutual-funds) to return structured advice + a mandatory
  * legal disclaimer. **Investment-domain services (real-estate /
  * mutual-funds) MUST include "投資助言ではありません" in `disclaimer`** —
  * the test suite enforces this regex.

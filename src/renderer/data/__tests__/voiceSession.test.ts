@@ -29,7 +29,7 @@ const CAP: AvailableCapabilities = {
     github: ['create-issue'],
     slack: ['send-message'],
     calendar: ['create-event'],
-    'uber-eats': ['record-entry', 'advise'],
+    'real-estate': ['record-entry', 'advise'],
   },
 };
 

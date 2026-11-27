@@ -38,7 +38,7 @@ describe('ブラウザ版の取得が同梱の内容を返すサービス', () =
 
   it('判定は一覧のサービスだけを受ける (他のサービス・prototype の鍵・空文字は受けない)', () => {
     for (const id of BROWSER_BUNDLED_FETCH_SERVICES) expect(servesBundledInBrowser(id), id).toBe(true);
-    for (const id of ['github', 'a8net', 'tax', 'uber-eats', '', 'constructor', '__proto__', 'KPI', 'kpi ']) {
+    for (const id of ['github', 'a8net', 'tax', 'netsea', '', 'constructor', '__proto__', 'KPI', 'kpi ']) {
       expect(servesBundledInBrowser(id), JSON.stringify(id)).toBe(false);
     }
   });

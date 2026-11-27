@@ -109,8 +109,6 @@ export interface ActionDataMap {
   'canva/create-folder': { id: string; name: string };
   'cloudflare/create-dns-record': { id: string; name: string; type: string };
   'cloudflare/purge-cache': { id: string; purged: 'all' | number };
-  'demae-can/advise': ServiceAdvisorResponse;
-  'demae-can/record-entry': RecordEntryResult<'demae-can'>;
   'docstudio/list-collections': readonly DocstudioCollection[];
   'drive/create-folder': { id: string; name: string; url: string };
   'drive/export-sheet': { id: string; title: string; url: string };
@@ -151,8 +149,6 @@ export interface ActionDataMap {
   'teamradar/export-svg': ExportFileResult;
   'teamradar/save-state': TeamRadarState;
   'templates/export-template': ExportFileResult;
-  'uber-eats/advise': ServiceAdvisorResponse;
-  'uber-eats/record-entry': RecordEntryResult<'uber-eats'>;
   'wordpress/create-post-draft': { id: number; url: string; title: string };
 }
 

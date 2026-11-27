@@ -262,7 +262,7 @@ export const CLOUD_PROVIDERS: readonly CloudProvider[] = [
     id: 'ai',
     label: 'AI の提供者 (Anthropic / OpenAI / Google / xAI / 利用者が設定した互換 API)',
     kind: 'assist',
-    services: ['assistant', 'skills', 'emotions', 'stocks', 'business', 'uber-eats', 'demae-can', 'real-estate', 'mutual-funds'],
+    services: ['assistant', 'skills', 'emotions', 'stocks', 'business', 'real-estate', 'mutual-funds'],
     slots: ['anthropic'],
     entrusted: '預けている記録はありません。質問のたびに、質問文と添えた文脈を送ります。',
     whenDown:

@@ -4,7 +4,7 @@
  * Pages compose their own tables (different columns / conditional cells
  * / aggregate rows), so we export constants rather than a `<Table>`
  * component — composition is the right abstraction here. Used by
- * UberEatsPage / DemaeCanPage / RealEstatePage / MutualFundsPage.
+ * RealEstatePage / MutualFundsPage.
  */
 import type { CSSProperties } from 'react';
 

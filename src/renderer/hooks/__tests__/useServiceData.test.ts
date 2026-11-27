@@ -10,6 +10,7 @@ import {
 } from '../../data/deviceStoreFailure';
 import { forgetAllFetches, lastGoodFetch, rememberFetch, staleDataNote } from '../../data/lastGoodFetch';
 import type { FetchResult, ServiceId } from '../../../preload/bridgeTypes';
+import { publishFetched } from '../../data/fetchBroadcast';
 
 // React 18 の act() 警告を抑止。
 (globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -1003,6 +1004,63 @@ describe('クラウドが止まったとき —— 最後に取得できた内�
     await h.refresh();
     expect(h.ref.current.data).toEqual({ v: 1 });
     expect(h.ref.current.errorMessage).toBe('fetch failed');
+    h.unmount();
+  });
+});
+
+/*
+ * **「連携をまとめて取り直す」が取った内容は、開いている画面へそのまま届く** (2026-11-27)。
+ * まとめて取る側 (`data/refreshAll.ts`) は `publishFetched` で知らせ、この hook は自分の連携先の
+ * 知らせだけを受けて「取れた」状態へ揃える —— 前の失敗の文と種類を消し、鍵が在ることにする。
+ */
+describe('useServiceData — まとめて取り直した内容を受ける', () => {
+  async function publish(id: ServiceId, data: unknown): Promise<void> {
+    await act(async () => {
+      publishFetched(id, data);
+    });
+  }
+
+  it('★ 前の失敗を消し、取れた内容・live・idle・鍵ありへ揃える', async () => {
+    setHub(errHub('fetch_failed', 'boom'));
+    const h = setup('github', { v: 1 });
+    await h.mount();
+    await h.refresh();
+    expect(h.ref.current.status).toBe('error');
+    expect(h.ref.current.errorMessage).toBeDefined();
+    expect(h.ref.current.errorKind).toBeDefined();
+    expect(h.ref.current.isConfigured).toBe(false);
+    await publish('github', { v: 7 });
+    expect(h.ref.current.data).toEqual({ v: 7 });
+    expect(h.ref.current.source).toBe('live');
+    expect(h.ref.current.status).toBe('idle');
+    expect(h.ref.current.errorMessage).toBeUndefined();
+    expect(h.ref.current.errorKind).toBeUndefined();
+    expect(h.ref.current.isConfigured).toBe(true);
+    h.unmount();
+  });
+
+  it('★ 取れた内容が見本を名乗れば見本の印を立て、名乗らなければ下ろす', async () => {
+    setHub(okHub({ v: 1 }));
+    const h = setup('github', { v: 1 });
+    await h.mount();
+    expect(h.ref.current.payloadIsMock).toBe(false);
+    await publish('github', { v: 2, isMock: true });
+    expect(h.ref.current.payloadIsMock).toBe(true);
+    await publish('github', { v: 3 });
+    expect(h.ref.current.payloadIsMock).toBe(false);
+    h.unmount();
+  });
+
+  it('★ 連携先を替えたら、新しい連携先の知らせを受け、前の連携先の知らせは受けない', async () => {
+    setHub(okHub({ v: 1 }));
+    const h = setup('github', { v: 1 });
+    await h.mount();
+    await h.rerender('slack');
+    await publish('github', { v: 5 });
+    expect(h.ref.current.source).toBe('snapshot');
+    await publish('slack', { v: 6 });
+    expect(h.ref.current.data).toEqual({ v: 6 });
+    expect(h.ref.current.source).toBe('live');
     h.unmount();
   });
 });

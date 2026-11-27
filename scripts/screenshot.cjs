@@ -17,10 +17,9 @@ const path = require('node:path');
 // 手書きの固定リストだった頃は 22 件しか対象にしておらず、新規サービスを
 // scaffold しても smoke の網に入らなかった。
 //
-// SERVICE_IDS（74 件）ではなく services.ts（72 件）を使うのは、
-// uber-eats / demae-can のように **サイドバー項目を持たない** サービスが
-// あるため。この 2 つは BusinessPage が内部で消費する snapshot 専用で、
-// 独立したページが無い（＝スクリーンショットの対象になりえない）。
+// SERVICE_IDS ではなく services.ts を使うのは、サイドバー項目を持たない
+// サービスが現れたとき、独立したページが無い（＝スクリーンショットの対象に
+// なりえない）物を数えないため。2026-11-27 以降は両者が一致する。
 function loadSidebarServiceIds() {
   const file = path.join(__dirname, '..', 'src', 'renderer', 'services.ts');
   const text = fsSync.readFileSync(file, 'utf8');

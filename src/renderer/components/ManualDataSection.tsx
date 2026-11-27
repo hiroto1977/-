@@ -24,6 +24,7 @@ import {
   BUSINESS_CATEGORY_MAX,
   BUSINESS_NAME_MAX,
   BUSINESS_NOTE_MAX,
+  BUSINESS_PRESETS,
   BUSINESS_UNITS_COLLECTION,
   findBusinessName,
   parseBusinessUnit,
@@ -285,6 +286,25 @@ function BusinessUnits({
           </button>
         </div>
       ))}
+      <div data-business-presets style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center', fontSize: 12 }}>
+        <span style={{ color: 'var(--text-muted)' }}>よく使う事業:</span>
+        {BUSINESS_PRESETS.map((p) => (
+          <button
+            key={p.name}
+            type="button"
+            className="chip"
+            onClick={() => setDraft((d) => ({ ...d, name: p.name, category: p.category }))}
+          >
+            {p.icon} {p.name}
+          </button>
+        ))}
+        <span style={{ color: 'var(--text-muted)' }}>押すと事業名と区分が入ります。月次の売上高を入れて「事業を追加」を押してください。</span>
+      </div>
+      <datalist id="business-category-presets">
+        {BUSINESS_PRESETS.map((p) => (
+          <option key={p.category} value={p.category} />
+        ))}
+      </datalist>
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
         <input
           type="text"
@@ -297,6 +317,7 @@ function BusinessUnits({
         <input
           type="text"
           aria-label="区分"
+          list="business-category-presets"
           placeholder="区分 (任意)"
           value={draft.category}
           onChange={(e) => setDraft((d) => ({ ...d, category: e.target.value }))}

@@ -261,7 +261,7 @@ describe('ollama — 繋がらないことは認証の問題ではない', () =>
 describe('分岐が無いサービス', () => {
   it('ブラウザ版で読めないサービスは not_implemented と言う (黙って空を返さない)', async () => {
     const hub = await loadHub();
-    const snap = await hub.fetchSnapshot('uber-eats');
+    const snap = await hub.fetchSnapshot('netsea');
     expect(snap.ok).toBe(false);
     expect(snap.code).toBe('not_implemented');
     expect(snap.message).toContain('snapshot');

@@ -27,7 +27,7 @@
  * 承認の口を閉じるだけで、実行できない物は実行されない。
  */
 import { describe, expect, it } from 'vitest';
-import { readOriginalDir, readOriginalSource } from './originalSource';
+import { readOriginalSource } from './originalSource';
 import path from 'node:path';
 import {
   FIELD_PHRASES,
@@ -73,7 +73,7 @@ function guardText(serviceId: string): string {
 describe('台帳と許可表が食い違わない (どちらの向きにも)', () => {
   it('★ 走査が実物に当たっている (許可表が読めている)', () => {
     const pairs = voiceActionPairs();
-    expect(pairs.length, '許可表から 1 組も取れていない').toBeGreaterThanOrEqual(7);
+    expect(pairs.length, '許可表から 1 組も取れていない').toBeGreaterThanOrEqual(5);
     expect(pairs.map(([s, a]) => `${s}/${a}`)).toContain('slack/send-message');
   });
 
@@ -160,16 +160,6 @@ describe('台帳の必須項目が実装と一致する', () => {
       const page = id === 'real-estate' ? 'RealEstatePage.tsx' : 'MutualFundsPage.tsx';
       expect(read(`renderer/pages/${page}`)).toContain('<ServiceActionPanel');
       expect(VOICE_WRITE_REQUIREMENTS.find((r) => r.serviceId === id)?.screenInput).toBe(true);
-    }
-    // **uber-eats / demae-can はどちらも無い** —— `ServiceActionPanel` の注記は
-    // 4 サービスを挙げているが、載っているのは 2 つだった (実測)。
-    const mounted = readOriginalDir(path.join(SRC, 'renderer/pages'))
-      .filter((f) => f.endsWith('.tsx'))
-      .map((f) => read(`renderer/pages/${f}`))
-      .join('\n');
-    for (const id of ['uber-eats', 'demae-can'] as const) {
-      expect(mounted, `${id} の入力欄が増えたら台帳を直す`).not.toContain(`serviceId="${id}"`);
-      expect(VOICE_WRITE_REQUIREMENTS.find((r) => r.serviceId === id)?.screenInput).toBe(false);
     }
   });
 });
@@ -340,7 +330,7 @@ describe('断りの文面', () => {
   });
 
   it('★ 画面に入力欄が無いときは「開いて入力」と言わない (無い物を案内しない)', () => {
-    const msg = voiceWriteRefusalMessage('Uber Eats', 'record-entry', {
+    const msg = voiceWriteRefusalMessage('入力欄の無い画面', 'record-entry', {
       kind: 'missing-fields',
       missing: ['note'],
       screenInput: false,
@@ -416,15 +406,15 @@ describe('台帳の行は serviceId と action の両方で引く (変異検査�
     expect(voiceWriteRefusal('real-estate', 'send-message', { channel: '#a', text: 'b' })).toEqual({ kind: 'unknown-action' });
   });
 
-  it('★ 同じ action の行が 4 つ並ぶ record-entry は、その serviceId の行を返す (先頭の行ではない)', () => {
-    // real-estate (画面の入力欄あり) が先頭、uber-eats (入力欄なし) は 3 行目。`r.action === action` だけで引くと先頭に当たる。
-    const r = voiceWriteRefusal('uber-eats', 'record-entry', {});
+  it('★ 同じ action の行が 2 つ並ぶ record-entry は、その serviceId の行を返す (先頭の行ではない)', () => {
+    // real-estate が先頭、mutual-funds は 2 行目。`r.action === action` だけで引くと先頭に当たる。
+    const r = voiceWriteRefusal('mutual-funds', 'record-entry', {});
     expect(r).not.toBeNull();
     if (r === null || r.kind !== 'missing-fields') throw new Error('note の欠けが断られていない');
-    expect(r.screenInput).toBe(false);
-    expect(voiceWriteRequirement('uber-eats', 'record-entry')?.serviceId).toBe('uber-eats');
+    expect(r.screenInput).toBe(true);
+    expect(voiceWriteRequirement('mutual-funds', 'record-entry')?.serviceId).toBe('mutual-funds');
     expect(voiceWriteRequirement(undefined, 'record-entry')).toBeNull();
-    expect(voiceWriteRequirement('uber-eats', undefined)).toBeNull();
+    expect(voiceWriteRequirement('mutual-funds', undefined)).toBeNull();
   });
 });
 
@@ -435,7 +425,7 @@ describe('揃っていても、台帳の天井を外れた値は確認の前に�
     }
     expect(voiceWriteRequirement('slack', 'send-message')?.fields).toBe(SLACK_MESSAGE_FIELDS_REF());
     expect(voiceWriteRequirement('real-estate', 'record-entry')?.fields).toBe(RECORD_ENTRY_NOTE_FIELDS);
-    // record-entry の天井は recordEntryLimits の 1 つ (main の 4 つの handler と web-shim が断る数)。
+    // record-entry の天井は recordEntryLimits の 1 つ (main の 2 つの handler と web-shim が断る数)。
     expect(RECORD_ENTRY_NOTE_FIELDS.note).toEqual({ required: true, max: MAX_RECORD_NOTE_CHARS, multiline: true });
   });
 
@@ -469,7 +459,7 @@ describe('揃っていても、台帳の天井を外れた値は確認の前に�
     expect(msg).toContain('実行しません');
     expect(msg).toContain('画面を開いて入力してください');
     if (r === null || r.kind !== 'invalid-field') throw new Error('天井を超えた note が断られていない');
-    const noScreen = voiceWriteRefusalMessage('Uber Eats', 'record-entry', { ...r, screenInput: false });
+    const noScreen = voiceWriteRefusalMessage('入力欄の無い画面', 'record-entry', { ...r, screenInput: false });
     expect(noScreen).toContain('画面にも入力欄がありません');
     expect(noScreen).not.toContain('画面を開いて');
   });

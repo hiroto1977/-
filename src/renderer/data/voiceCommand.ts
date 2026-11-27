@@ -165,8 +165,6 @@ const SERVICE_ALIASES: Readonly<Record<ServiceId, readonly string[]>> = {
   templates: ['テンプレート', 'てんぷれーと', 'templates', '雛形', 'ひながた', 'template'],
   library: ['ライブラリ', 'らいぶらり', 'library', '資料', 'しりょう'],
   settings: ['設定', 'せってい', 'settings', 'こんふぃぐ', 'setting'],
-  'uber-eats': ['ubereats', 'うーばーいーつ', 'うーばー'],
-  'demae-can': ['出前館', 'でまえかん', 'でまえ', 'demaecan'],
   'real-estate': ['不動産投資', 'ふどうさんとうし', '不動産', 'ふどうさん', 'realestate'],
   'mutual-funds': ['投資信託', 'とうししんたく', 'ふぁんど', 'mutualfunds', '信託', 'しんたく'],
   quality: ['品質ダッシュボード', '品質', 'ひんしつ', 'quality', 'くおりてぃ'],

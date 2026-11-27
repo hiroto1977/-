@@ -1067,7 +1067,7 @@ describe('デスクトップ版だけの操作は、ブラウザ版では実行�
  * (4 つ目の危険な口が生えても何も言わない)。そこで**総当たり**で固定する。
  *
  * 75 サービス × 42 行動名を全部 `invoke` して、`action_not_found` 以外を
- * 返した組を集める。それがブラウザ版の実際の面である。**44 組ちょうど**
+ * 返した組を集める。それがブラウザ版の実際の面である。**40 組ちょうど**
  * (2026-09-09 · パス 119 で advise ×4 が増え、2026-09-15 · パス 274 で
  * `microsoft-365/send-mail` が増えた)。
  *
@@ -1103,7 +1103,7 @@ const BROWSER_SURFACE: readonly string[] = [
   'business/advise', 'business/export-dashboard', 'business/export-dashboard-md',
   'calendar/create-event', 'canva/create-folder',
   'cloudflare/create-dns-record', 'cloudflare/purge-cache',
-  'demae-can/advise', 'demae-can/record-entry', 'drive/create-folder',
+  'drive/create-folder',
   'emotions/analyze-text', 'emotions/clear-history', 'emotions/log-mood',
   'github/create-issue', 'gmail/create-draft',
   'microsoft-365/create-event', 'microsoft-365/send-mail',
@@ -1115,11 +1115,11 @@ const BROWSER_SURFACE: readonly string[] = [
   'stocks/export-dashboard-md', 'stocks/register-ticker', 'stocks/unregister-ticker',
   'talent/judge-leader', 'talent/save-state',
   'teamradar/export-svg', 'teamradar/save-state',
-  'templates/export-template', 'uber-eats/advise', 'uber-eats/record-entry', 'wordpress/create-post-draft',
+  'templates/export-template', 'wordpress/create-post-draft',
 ];
 
 describe('ブラウザ版の面は、この組ちょうど (総当たりで固定)', () => {
-  it('処理される (service, action) は 44 組ちょうど', async () => {
+  it('処理される (service, action) は 40 組ちょうど', async () => {
     stored = null; // 鍵の有無に依らず「処理されるか」だけを見る
     const hub = await loadShim();
     const handled: string[] = [];

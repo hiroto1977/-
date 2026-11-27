@@ -30,12 +30,9 @@ import { resetRecordStore } from './recordStoreHarness';
 /**
  * 実測 2026-09-12: サイドバーの画面は **73**。減ったら走査が痩せたので落とす。
  *
- * **`SERVICE_IDS` は 75 で、サイドバーは 73 である。** 差の 2 つ
- * (`uber-eats` / `demae-can`) は fetcher・`dataOrigin`('sample')・`SNAPSHOT` の
- * データまで在るが**画面が無い** —— `docs/ARCHITECTURE.md` が
- * 「画面が無いので今は呼ぶ物が無い」と明記している意図的な未完成である。
- * その関係は `sidebarCoverage.test.ts` が**理由つき・双方向の台帳**で既に留めている
- * (ここは「描ける画面の数」だけを見る)。
+ * 画面を持たなかった `uber-eats` / `demae-can` は 2026-11-27 に利用者の依頼で取り除いた。
+ * 今は全サービスがサイドバーに居る (関係は `sidebarCoverage.test.ts` が双方向に留める。
+ * ここは「描ける画面の数」だけを見る)。
  */
 const SERVICE_FLOOR = 73;
 

@@ -34,6 +34,15 @@ export const BUSINESS_NOTE_MAX = 200;
  */
 export const BUSINESS_AMOUNT_MAX = 1e13;
 
+/**
+ * **よく使う事業の型** —— 押すと事業名と区分の欄に入る (2026-11-27 · 利用者の依頼「飲食店も追加して」)。
+ * 入るのは欄だけで、記録は「追加」を押すまで作らない。売上・費用は利用者が自分の数字を入れる
+ * (見本の数字は混ぜない)。区分の欄の候補にも同じ一覧を出す。
+ */
+export const BUSINESS_PRESETS: readonly { readonly name: string; readonly category: string; readonly icon: string }[] = [
+  { name: '飲食店', category: '飲食店', icon: '🍽' },
+];
+
 /** 保存する事業 1 件。id はレコードストアが採番する。 */
 export interface BusinessUnitInput extends Record<string, unknown> {
   readonly name: string;

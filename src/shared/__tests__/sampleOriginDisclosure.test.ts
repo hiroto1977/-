@@ -44,10 +44,7 @@ import type { ServiceId } from '../serviceId';
 const DISCLOSES = /snapshot|模擬データ|仮想データ|同梱|見本|サンプル/;
 
 /** 述べなくてよい理由。**空文字は許さない** (無言の除外を作らない)。 */
-const LEDGER: Partial<Record<ServiceId, string>> = {
-  'uber-eats': 'サイドバーに項が無い (BusinessPage が snapshot を直接読む。sidebarCoverage.test.ts の台帳)',
-  'demae-can': 'サイドバーに項が無い (同上)',
-};
+const LEDGER: Partial<Record<ServiceId, string>> = {};
 
 const SAMPLE_IDS = (Object.keys(SERVICE_DATA_ORIGIN) as ServiceId[]).filter(
   (id) => SERVICE_DATA_ORIGIN[id] === 'sample',
@@ -103,6 +100,6 @@ describe('見本のサービスは、サイドバーでもそう述べる (パ�
     // grok・不動産・投資信託が 'local'、dropbox が 'remote' へ移り 18 件、
     // 2026-11-21 の第4弾で storage・obsidian・docker が 'local' へ移り、
     // 残る sample は外部連携待ち・別機能待ちの 14 件。
-    expect(SAMPLE_IDS.length).toBeGreaterThanOrEqual(12);
+    expect(SAMPLE_IDS.length).toBeGreaterThanOrEqual(11);
   });
 });

@@ -5,36 +5,25 @@
  * 1. **文が言う数字は入力の数字である** —— 入力を変えれば文が変わり、見本の数字を写した
  *    固定文 (「6.15%」「大阪市ワンルームが空室」「+14.8%」) はどこにも残っていない。
  * 2. 読めない payload は断る (何も無い所から提案を作らない)。文面は両ビルドで同じ。
- * 3. 免責は投資系 / 店舗系で片ごとに固有の言い回しを持つ。
+ * 3. 免責は不動産・投資信託で片ごとに固有の言い回しを持つ。
  */
 import { describe, expect, it } from 'vitest';
 import {
-  ADVISOR_AOV_SPREAD_RATIO,
-  ADVISOR_CANCELLATION_RATE_REF,
   ADVISOR_CONCENTRATION_SHARE,
-  ADVISOR_RATING_GAP_PT,
-  ADVISOR_STORE_REVENUE_SPREAD_RATIO,
   ADVISOR_YIELD_GAP_PT,
   DEFAULT_ADVISOR_THRESHOLDS,
-  FOOD_ADVISOR_DISCLAIMER,
   MAX_ADVICE_NAME_CHARS,
   MAX_ADVICE_ROWS,
   MUTUAL_FUNDS_ADVISOR_DISCLAIMER,
   REAL_ESTATE_ADVISOR_DISCLAIMER,
   adviceNotReadyNote,
-  adviseDemaeCan,
   adviseMutualFunds,
   adviseRealEstate,
   adviseService,
-  adviseUberEats,
-  parseDemaeCanAdviceInput,
   parseMutualFundsAdviceInput,
   parseRealEstateAdviceInput,
-  parseUberEatsAdviceInput,
-  type DemaeCanAdviceInput,
   type MutualFundsAdviceInput,
   type RealEstateAdviceInput,
-  type UberEatsAdviceInput,
 } from '../serviceAdvisor';
 import { RECORD_ENTRY_SERVICE_IDS } from '../recordEntryLimits';
 
@@ -61,31 +50,6 @@ const MF_SAMPLE: MutualFundsAdviceInput = {
   ],
   totalValuation: 8_240_140,
   unrealizedGainPct: 14.8,
-};
-
-const UE_SAMPLE: UberEatsAdviceInput = {
-  stores: [
-    { name: 'Shibuya 本店', orders: 142, revenue: 285_400, rating: 4.7 },
-    { name: 'Shinjuku 東口店', orders: 98, revenue: 196_800, rating: 4.5 },
-    { name: 'Ikebukuro West', orders: 76, revenue: 152_300, rating: 4.6 },
-  ],
-  topItems: [
-    { name: 'スパイシーチキンバーガー', sold: 89, revenue: 71_200 },
-    { name: 'クラシックチーズバーガー', sold: 67, revenue: 50_250 },
-    { name: 'ガーリックフライ (L)', sold: 124, revenue: 49_600 },
-  ],
-  avgRating: 4.6,
-};
-
-const DC_SAMPLE: DemaeCanAdviceInput = {
-  monthOrders: 612,
-  cancellationRate: 0.018,
-  topAreas: [
-    { area: '渋谷区', orders: 178, revenue: 362_400 },
-    { area: '新宿区', orders: 134, revenue: 273_600 },
-    { area: '世田谷区', orders: 89, revenue: 181_200 },
-  ],
-  deliveringOrders: 1,
 };
 
 const titles = (r: { recommendations: readonly { title: string }[] }): string[] => r.recommendations.map((x) => x.title);
@@ -441,135 +405,6 @@ describe('投資信託の提案 — 画面の数字から組む', () => {
   });
 });
 
-describe('Uber Eats の提案 — 画面の数字から組む', () => {
-  it('見本と同じ数字なら: 売上 1.9 倍の開き・評価は横並び・人気はガーリックフライ', () => {
-    const r = adviseUberEats(UE_SAMPLE);
-    expect(r.recommendations).toEqual([
-      {
-        title: '店舗別売上の平準化',
-        rationale:
-          '売上の最大は Shibuya 本店 (¥285,400)、最小は Ikebukuro West (¥152,300) で 1.9 倍の開きがあります (しきい値 1.5 倍)。上位店舗の運用を他店舗へ展開してください。',
-      },
-      {
-        title: '評価は横並び',
-        rationale: '最低は Shinjuku 東口店 の 4.5 で、平均 4.6 との差 0.1 pt はしきい値 0.2 pt 未満です。',
-      },
-      {
-        title: '人気メニューの横展開: ガーリックフライ (L)',
-        rationale: 'ガーリックフライ (L) は 124 食 (¥49,600) で最多です。全店舗で前面に出してください。',
-      },
-    ]);
-    expect(r.basis).toBe('3 店舗・メニュー 3 品・平均評価 4.6');
-    expect(r.disclaimer).toBe(FOOD_ADVISOR_DISCLAIMER);
-    expect(r.phase).toBe('rules');
-    expect(r.notForRealMoney).toBe(true);
-  });
-
-  it('差が小さい / 売上 0 の店舗 / 平均評価なし / 評価の底上げ / メニューなし の枝', () => {
-    const flat = adviseUberEats({
-      stores: [
-        { name: 'A', orders: 10, revenue: 100_000, rating: 4.0 },
-        { name: 'B', orders: 10, revenue: 80_000, rating: 4.5 },
-      ],
-      topItems: [],
-      avgRating: 4.25,
-    });
-    expect(flat.recommendations).toEqual([
-      {
-        title: '店舗間の売上差は小さい',
-        rationale: '最大 A (¥100,000) と最小 B (¥80,000) の差は 1.3 倍で、しきい値 1.5 倍未満です。',
-      },
-      {
-        title: '評価の底上げ: A',
-        rationale: 'A の評価 4.0 は平均 4.3 を 0.3 pt 下回ります (しきい値 0.2 pt)。配達時間と包装の改善を優先してください。',
-      },
-      { title: '人気メニューは未入力', rationale: 'メニュー別の販売数が無いため、横展開の候補は挙げません。' },
-    ]);
-    expect(flat.basis).toBe('2 店舗・メニュー 0 品・平均評価 4.3');
-    const zero = adviseUberEats({
-      stores: [
-        { name: 'A', orders: 0, revenue: 0, rating: 4.0 },
-        { name: 'B', orders: 10, revenue: 80_000, rating: 4.5 },
-      ],
-      topItems: [],
-      avgRating: null,
-    });
-    expect(zero.recommendations[0]).toEqual({
-      title: '店舗別売上の比較は未算定',
-      rationale: '売上が 0 の店舗 (A) があるため、店舗間の倍率は出しません。',
-    });
-    expect(zero.recommendations[1]).toEqual({
-      title: '評価の比較は未算定',
-      rationale: '平均評価が読めないため、店舗ごとの評価の比較はしません。',
-    });
-    expect(zero.basis).toBe('2 店舗・メニュー 0 品・平均評価 —');
-    // 境界: 倍率 = しきい値 は「平準化」(以上)。
-    const edge = adviseUberEats({
-      stores: [{ name: 'A', orders: 1, revenue: 150_000, rating: 4 }, { name: 'B', orders: 1, revenue: 100_000, rating: 4 }],
-      topItems: [],
-      avgRating: 4,
-    });
-    expect(edge.recommendations[0]?.title).toBe('店舗別売上の平準化');
-    expect(edge.recommendations[1]?.title).toBe('評価は横並び');
-  });
-});
-
-describe('出前館の提案 — 画面の数字から組む', () => {
-  it('見本と同じ数字なら: キャンセル率 1.8% の維持・客単価は均一・配達中 1 件', () => {
-    const r = adviseDemaeCan(DC_SAMPLE);
-    expect(r.recommendations).toEqual([
-      {
-        title: 'キャンセル率 1.8% の維持',
-        rationale: '月次キャンセル率 1.8% は基準 3.0% (出典なし・置き値) 以下です。継続観測してください。',
-      },
-      {
-        title: '客単価は地域間で均一',
-        rationale: '客単価は最高 新宿区 ¥2,042 / 最低 渋谷区 ¥2,036 で、差は 1.0 倍 (しきい値 1.2 倍未満) です。',
-      },
-      { title: '配達中 1 件の監視', rationale: '配達中の注文が 1 件あります。最優先で監視し、遅延を未然に防いでください。' },
-    ]);
-    expect(r.basis).toBe('月次 612 件・地域 3 か所・配達中 1 件');
-    expect(r.disclaimer).toBe(FOOD_ADVISOR_DISCLAIMER);
-    expect(r.phase).toBe('rules');
-  });
-
-  it('キャンセル率の改善 / 未入力、地域格差 / 未算定、配達中なし の枝', () => {
-    const bad = adviseDemaeCan({
-      monthOrders: 10,
-      cancellationRate: 0.05,
-      topAreas: [
-        { area: 'X', orders: 10, revenue: 30_000 },
-        { area: 'Y', orders: 10, revenue: 20_000 },
-        { area: 'Z', orders: 0, revenue: 0 },
-      ],
-      deliveringOrders: 0,
-    });
-    expect(bad.recommendations).toEqual([
-      {
-        title: 'キャンセル率 5.0% の改善',
-        rationale: '月次キャンセル率 5.0% は基準 3.0% (出典なし・置き値) を上回ります。受付から調理開始までの確認と、在庫切れ時の即時反映を見直してください。',
-      },
-      {
-        title: '客単価の地域格差: X と Y',
-        rationale: '客単価は最高 X ¥3,000 / 最低 Y ¥2,000 で 1.5 倍の開きがあります (しきい値 1.2 倍)。X の高単価メニューを Y でも展開してください。',
-      },
-      { title: '配達中の注文なし', rationale: '配達中の注文はありません。' },
-    ]);
-    expect(bad.basis).toBe('月次 10 件・地域 3 か所・配達中 0 件');
-    const none = adviseDemaeCan({ monthOrders: 0, cancellationRate: null, topAreas: [{ area: 'X', orders: 0, revenue: 0 }], deliveringOrders: 0 });
-    expect(none.recommendations[0]).toEqual({
-      title: 'キャンセル率は未入力',
-      rationale: '月次キャンセル率が読めないため、基準との比較はしません。',
-    });
-    expect(none.recommendations[1]).toEqual({
-      title: '客単価の地域比較は未算定',
-      rationale: '注文のある地域が 0 か所のため、地域間の客単価は比べません。',
-    });
-    // 境界: 率 = 基準 は「維持」(上回らない)。
-    expect(adviseDemaeCan({ ...DC_SAMPLE, cancellationRate: ADVISOR_CANCELLATION_RATE_REF }).recommendations[0]?.title).toBe('キャンセル率 3.0% の維持');
-  });
-});
-
 describe('読み取り — 読めない payload は断る (文面は両ビルドで同じ)', () => {
   const RE = 'real-estate.advise';
 
@@ -647,49 +482,15 @@ describe('読み取り — 読めない payload は断る (文面は両ビルド
     const mf = parseMutualFundsAdviceInput(MF_SAMPLE);
     expect(mf.ok && mf.value).toEqual({ ...MF_SAMPLE, thresholds: DEFAULT_ADVISOR_THRESHOLDS });
 
-    expect(parseUberEatsAdviceInput({})).toEqual({ ok: false, message: 'uber-eats.advise: stores は配列 (1〜500 件) で指定してください' });
-    const ueStore = (patch: Record<string, unknown>) => parseUberEatsAdviceInput({ ...UE_SAMPLE, stores: [{ ...UE_SAMPLE.stores[0], ...patch }] });
-    expect(ueStore({ name: '' })).toEqual({ ok: false, message: 'uber-eats.advise: stores[0].name は 1〜64 文字で指定してください' });
-    expect(ueStore({ orders: 'x' })).toEqual({ ok: false, message: 'uber-eats.advise: stores[0].orders は有限の数値で指定してください' });
-    expect(ueStore({ revenue: 'x' })).toEqual({ ok: false, message: 'uber-eats.advise: stores[0].revenue は有限の数値で指定してください' });
-    expect(ueStore({ rating: 'x' })).toEqual({ ok: false, message: 'uber-eats.advise: stores[0].rating は有限の数値で指定してください' });
-    expect(parseUberEatsAdviceInput({ ...UE_SAMPLE, stores: [0] })).toEqual({ ok: false, message: 'uber-eats.advise: stores[0] はオブジェクトで指定してください' });
-    expect(parseUberEatsAdviceInput({ ...UE_SAMPLE, topItems: 'x' })).toEqual({ ok: false, message: 'uber-eats.advise: topItems は配列 (0〜500 件) で指定してください' });
-    const ueItem = (patch: Record<string, unknown>) => parseUberEatsAdviceInput({ ...UE_SAMPLE, topItems: [{ ...UE_SAMPLE.topItems[0], ...patch }] });
-    expect(ueItem({ name: '' })).toEqual({ ok: false, message: 'uber-eats.advise: topItems[0].name は 1〜64 文字で指定してください' });
-    expect(ueItem({ sold: 'x' })).toEqual({ ok: false, message: 'uber-eats.advise: topItems[0].sold は有限の数値で指定してください' });
-    expect(ueItem({ revenue: 'x' })).toEqual({ ok: false, message: 'uber-eats.advise: topItems[0].revenue は有限の数値で指定してください' });
-    expect(parseUberEatsAdviceInput({ ...UE_SAMPLE, topItems: [null] })).toEqual({ ok: false, message: 'uber-eats.advise: topItems[0] はオブジェクトで指定してください' });
-    expect(parseUberEatsAdviceInput({ ...UE_SAMPLE, avgRating: 'x' })).toEqual({ ok: false, message: 'uber-eats.advise: avgRating は有限の数値か null で指定してください' });
-    const emptyItems = parseUberEatsAdviceInput({ ...UE_SAMPLE, topItems: [] });
-    expect(emptyItems.ok && emptyItems.value.topItems).toEqual([]);
-    const ue = parseUberEatsAdviceInput(UE_SAMPLE);
-    expect(ue.ok && ue.value).toEqual(UE_SAMPLE);
-
-    expect(parseDemaeCanAdviceInput({})).toEqual({ ok: false, message: 'demae-can.advise: monthOrders は有限の数値で指定してください' });
-    expect(parseDemaeCanAdviceInput({ ...DC_SAMPLE, cancellationRate: 'x' })).toEqual({ ok: false, message: 'demae-can.advise: cancellationRate は有限の数値か null で指定してください' });
-    expect(parseDemaeCanAdviceInput({ ...DC_SAMPLE, topAreas: {} })).toEqual({ ok: false, message: 'demae-can.advise: topAreas は配列 (0〜500 件) で指定してください' });
-    const dcArea = (patch: Record<string, unknown>) => parseDemaeCanAdviceInput({ ...DC_SAMPLE, topAreas: [{ ...DC_SAMPLE.topAreas[0], ...patch }] });
-    expect(dcArea({ area: '' })).toEqual({ ok: false, message: 'demae-can.advise: topAreas[0].area は 1〜64 文字で指定してください' });
-    expect(dcArea({ orders: 'x' })).toEqual({ ok: false, message: 'demae-can.advise: topAreas[0].orders は有限の数値で指定してください' });
-    expect(dcArea({ revenue: 'x' })).toEqual({ ok: false, message: 'demae-can.advise: topAreas[0].revenue は有限の数値で指定してください' });
-    expect(parseDemaeCanAdviceInput({ ...DC_SAMPLE, topAreas: ['x'] })).toEqual({ ok: false, message: 'demae-can.advise: topAreas[0] はオブジェクトで指定してください' });
-    expect(parseDemaeCanAdviceInput({ ...DC_SAMPLE, deliveringOrders: 'x' })).toEqual({ ok: false, message: 'demae-can.advise: deliveringOrders は有限の数値で指定してください' });
-    const dc = parseDemaeCanAdviceInput(DC_SAMPLE);
-    expect(dc.ok && dc.value).toEqual(DC_SAMPLE);
-    const dcNull = parseDemaeCanAdviceInput({ ...DC_SAMPLE, cancellationRate: null, topAreas: [] });
-    expect(dcNull.ok && dcNull.value.cancellationRate).toBeNull();
   });
 });
 
-describe('adviseService — main の 4 action とブラウザ版が通る 1 つの入口', () => {
-  it('4 サービスすべてで、読めれば提案・読めなければ断りの文面 (id 込み)', () => {
-    const inputs = { 'real-estate': RE_SAMPLE, 'mutual-funds': MF_SAMPLE, 'uber-eats': UE_SAMPLE, 'demae-can': DC_SAMPLE } as const;
+describe('adviseService — main の 2 action とブラウザ版が通る 1 つの入口', () => {
+  it('2 サービスすべてで、読めれば提案・読めなければ断りの文面 (id 込み)', () => {
+    const inputs = { 'real-estate': RE_SAMPLE, 'mutual-funds': MF_SAMPLE } as const;
     const firstField = {
       'real-estate': 'properties は配列 (1〜500 件) で指定してください',
       'mutual-funds': 'holdings は配列 (1〜500 件) で指定してください',
-      'uber-eats': 'stores は配列 (1〜500 件) で指定してください',
-      'demae-can': 'monthOrders は有限の数値で指定してください',
     } as const;
     for (const id of RECORD_ENTRY_SERVICE_IDS) {
       const good = adviseService(id, inputs[id]);
@@ -714,15 +515,10 @@ describe('adviseService — main の 4 action とブラウザ版が通る 1 つ�
     expect(adviceNotReadyNote('mutual-funds', { ...MF_SAMPLE, holdings: [] })).toBe(
       '銘柄がまだ登録されていません。上の欄から 1 件登録すると、その数字から改善提案を組み立てます。',
     );
-    expect(adviceNotReadyNote('uber-eats', { ...UE_SAMPLE, stores: [] })).toBe(
-      '店舗の数字がまだ無いため、改善提案を組み立てられません。',
-    );
-    // 出前館は一覧 (配達エリア) が空でも月次の件数から組める —— 文は出さない。
-    expect(adviceNotReadyNote('demae-can', { ...DC_SAMPLE, topAreas: [] })).toBeNull();
   });
 
   it('一覧が 1 件でも在れば文は出さない・形の誤りはここでは述べない (読み取りの関門が断る)', () => {
-    const inputs = { 'real-estate': RE_SAMPLE, 'mutual-funds': MF_SAMPLE, 'uber-eats': UE_SAMPLE, 'demae-can': DC_SAMPLE } as const;
+    const inputs = { 'real-estate': RE_SAMPLE, 'mutual-funds': MF_SAMPLE } as const;
     for (const id of RECORD_ENTRY_SERVICE_IDS) {
       expect(adviceNotReadyNote(id, inputs[id]), id).toBeNull();
       // 物でない・一覧の欄が無い・配列でない —— 「登録されていません」とは言わない (登録の有無は分からない)。
@@ -735,12 +531,11 @@ describe('adviseService — main の 4 action とブラウザ版が通る 1 つ�
     // 別のサービスの欄が空でも、自分の欄で決める。
     expect(adviceNotReadyNote('real-estate', { ...RE_SAMPLE, holdings: [], stores: [] })).toBeNull();
     expect(adviceNotReadyNote('mutual-funds', { ...MF_SAMPLE, properties: [], stores: [] })).toBeNull();
-    expect(adviceNotReadyNote('uber-eats', { ...UE_SAMPLE, properties: [], holdings: [] })).toBeNull();
   });
 
   it('★ 文を返す組と、読み取りが空の一覧を断る組は同じ (規則を 2 か所に持たない)', () => {
-    const inputs = { 'real-estate': RE_SAMPLE, 'mutual-funds': MF_SAMPLE, 'uber-eats': UE_SAMPLE, 'demae-can': DC_SAMPLE } as const;
-    const rowsField = { 'real-estate': 'properties', 'mutual-funds': 'holdings', 'uber-eats': 'stores', 'demae-can': 'topAreas' } as const;
+    const inputs = { 'real-estate': RE_SAMPLE, 'mutual-funds': MF_SAMPLE } as const;
+    const rowsField = { 'real-estate': 'properties', 'mutual-funds': 'holdings' } as const;
     const noted: string[] = [];
     const refused: string[] = [];
     for (const id of RECORD_ENTRY_SERVICE_IDS) {
@@ -750,47 +545,38 @@ describe('adviseService — main の 4 action とブラウザ版が通る 1 つ�
       if (!out.ok && out.message === `${id}.advise: ${rowsField[id]} は配列 (1〜500 件) で指定してください`) refused.push(id);
     }
     expect(noted).toEqual(refused);
-    // 走査が空虚でない: 断る組は 3 つ在り、出前館は断らない。
-    expect([...refused].sort()).toEqual(['mutual-funds', 'real-estate', 'uber-eats']);
+    // 走査が空虚でない: 断る組は 2 つとも在る。
+    expect([...refused].sort()).toEqual(['mutual-funds', 'real-estate']);
   });
 
   it('入口の答えは規則関数の答えと同じ物 (別の写しを作らない)', () => {
     expect(adviseService('real-estate', RE_SAMPLE)).toEqual({ ok: true, data: adviseRealEstate({ ...RE_SAMPLE, thresholds: DEFAULT_ADVISOR_THRESHOLDS }) });
     expect(adviseService('mutual-funds', MF_SAMPLE)).toEqual({ ok: true, data: adviseMutualFunds({ ...MF_SAMPLE, thresholds: DEFAULT_ADVISOR_THRESHOLDS }) });
-    expect(adviseService('uber-eats', UE_SAMPLE)).toEqual({ ok: true, data: adviseUberEats(UE_SAMPLE) });
-    expect(adviseService('demae-can', DC_SAMPLE)).toEqual({ ok: true, data: adviseDemaeCan(DC_SAMPLE) });
   });
 
   it('しきい値の既定は定数そのもの (写しではない)', () => {
     expect(DEFAULT_ADVISOR_THRESHOLDS).toEqual({ yieldGapPt: ADVISOR_YIELD_GAP_PT, concentrationShare: ADVISOR_CONCENTRATION_SHARE });
     expect(ADVISOR_YIELD_GAP_PT).toBe(1.0);
     expect(ADVISOR_CONCENTRATION_SHARE).toBe(0.5);
-    expect(ADVISOR_STORE_REVENUE_SPREAD_RATIO).toBe(1.5);
-    expect(ADVISOR_RATING_GAP_PT).toBe(0.2);
-    expect(ADVISOR_CANCELLATION_RATE_REF).toBe(0.03);
-    expect(ADVISOR_AOV_SPREAD_RATIO).toBe(1.2);
     expect(MAX_ADVICE_ROWS).toBe(500);
     expect(MAX_ADVICE_NAME_CHARS).toBe(64);
   });
 
-  it('免責 — 投資系は「投資助言ではありません」、店舗系は「店舗運営上の助言ではありません」、どれも規則で組んだと言う', () => {
+  it('免責 — どちらも「投資助言ではありません」と規則で組んだと言う', () => {
     expect(REAL_ESTATE_ADVISOR_DISCLAIMER).toBe(
       '本提案は画面の数字から規則で組み立てた教育目的の参考情報であり、投資助言ではありません。実際の投資判断はファイナンシャルアドバイザー・税理士・宅建士の確認を経てご自身の責任で行ってください。Phase 6 で実 LLM 推論を接続します。',
     );
     expect(MUTUAL_FUNDS_ADVISOR_DISCLAIMER).toBe(
       '本提案は画面の数字から規則で組み立てた教育目的の参考情報であり、投資助言ではありません。実際の投資判断はファイナンシャルアドバイザーの確認を経てご自身の責任で行ってください。Phase 6 で実 LLM 推論を接続します。',
     );
-    expect(FOOD_ADVISOR_DISCLAIMER).toBe(
-      '本提案は画面の数字から規則で組み立てた参考情報であり、店舗運営上の助言ではありません。実際の経営判断はオーナー・専門家の責任で行ってください。Phase 6 で実 LLM 推論を接続します。',
-    );
-    for (const d of [REAL_ESTATE_ADVISOR_DISCLAIMER, MUTUAL_FUNDS_ADVISOR_DISCLAIMER, FOOD_ADVISOR_DISCLAIMER]) {
+    for (const d of [REAL_ESTATE_ADVISOR_DISCLAIMER, MUTUAL_FUNDS_ADVISOR_DISCLAIMER]) {
       expect(d).not.toContain('静的 snapshot');
       expect(d).not.toContain('テンプレート');
     }
   });
 
   it('提案は必ず 3 本で、題名と根拠は空でない', () => {
-    for (const r of [adviseRealEstate(RE_SAMPLE), adviseMutualFunds(MF_SAMPLE), adviseUberEats(UE_SAMPLE), adviseDemaeCan(DC_SAMPLE)]) {
+    for (const r of [adviseRealEstate(RE_SAMPLE), adviseMutualFunds(MF_SAMPLE)]) {
       expect(titles(r)).toHaveLength(3);
       for (const x of r.recommendations) {
         expect(x.title.length).toBeGreaterThan(0);

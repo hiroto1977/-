@@ -122,7 +122,7 @@ describe('連携先の画面の取得 (実物の shim)', () => {
 
   it('対照: 連携先でない画面 (同梱の見本のまま) は、案内の文ではなく今までの文で落ちる', async () => {
     const hub = await loadHub();
-    const r = await hub.fetchSnapshot('uber-eats');
+    const r = await hub.fetchSnapshot('netsea');
     expect(r.code).toBe('not_implemented');
     expect(r.message).not.toBe(BROWSER_FETCH_UNSUPPORTED_NOTE);
     expect(r.message ?? '').toContain('live fetch を行いません');

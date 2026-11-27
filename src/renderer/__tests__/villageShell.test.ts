@@ -193,12 +193,10 @@ describe('村の殻 (?ui=village)', () => {
     await waitForElement(() => container.querySelector('[data-village-window="tax-accountant"]'), '進むで開き直した窓');
   });
 
-  it('★ 知らない行き先・サイドバーに居ないサービスは無視する (窓は開かない)', async () => {
+  it('★ 知らない行き先は無視する (窓は開かない)', async () => {
     await mount('?ui=village');
     await waitForElement(() => container.querySelector('[data-village-shell]'), '村の殻');
     await act(async () => { window.dispatchEvent(new CustomEvent('servicehub:navigate', { detail: 'no-such-page' })); });
-    expect(container.querySelector('[data-village-hall]')).toBeNull();
-    await act(async () => { navigateTo('uber-eats'); });
     expect(container.querySelector('[data-village-hall]')).toBeNull();
   });
 });

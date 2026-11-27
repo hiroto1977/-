@@ -60,8 +60,6 @@ export const SERVICE_DATA_ORIGIN: Record<ServiceId, DataOrigin> = {
   templates: 'local',
   library: 'local',
   settings: 'local',
-  'uber-eats': 'sample',
-  'demae-can': 'sample',
   'real-estate': 'local',
   'mutual-funds': 'local',
   // 2026-11-19: 図の台帳と自己検査は端末内で完結する (座標計算は renderer の純関数、

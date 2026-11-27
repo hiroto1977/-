@@ -458,7 +458,7 @@ const VERDICTS = {
     + 'main が import する `buildHydroponicsSnapshot` は 2 つの定数表を射影するだけで、'
     + 'この鎖の否定で答える関数を 1 つも呼ばない (実測)',
   mutualFundsMetrics:
-    '対称 (実測・パス 272) —— main の到達は `serviceAdvisor` 経由 (4 クライアント: real-estate / mutual-funds / uber-eats / demae-can)。`serviceAdvisor` がこのモジュールから取るのは**4 つ** (`serviceAdvisor.ts:37`): 定数 `RETURN_FLOOR_PCT` / `RETURN_ENTRY_CEILING_PCT` と述語 `isImpossibleReturnPct` / `isAboveEntryCeilingPct` (どちらも 1 行の比較。2026-09-27 · パス 493j に 2 → 4 —— 上端の外を「捨てずに言う」断りのため)。**2 つの述語は確かに越境する** —— `adviseService` の中で `isImpossibleReturnPct` は真の枝 (:586 警告を組む) と偽の枝 (:607 測れる集合から外す) の両方、`isAboveEntryCeilingPct` は真の枝 (:598 断りを組む) だけが使われる (偽の枝は何もしない —— 値は比較に残る)。だが**否定のあとの動作は両ビルドで同じ 1 つの実装の中に在る** —— `adviseService` が返す助言の*中身*を形づくるだけで `ok: false` を作らず、同じオブジェクトが両ビルドへ返る (`serviceAdvisor` の判定はパス 268 で対称と実測済み)。★ この行は **module 単位の到達と call 単位の到達が違う**ことの例である (`isoDate` の ★ と同じ話)。',
+    '対称 (実測・パス 272) —— main の到達は `serviceAdvisor` 経由 (2 クライアント: real-estate / mutual-funds。2026-11-27 まで uber-eats / demae-can を含む 4 つ)。`serviceAdvisor` がこのモジュールから取るのは**4 つ** (`serviceAdvisor.ts:37`): 定数 `RETURN_FLOOR_PCT` / `RETURN_ENTRY_CEILING_PCT` と述語 `isImpossibleReturnPct` / `isAboveEntryCeilingPct` (どちらも 1 行の比較。2026-09-27 · パス 493j に 2 → 4 —— 上端の外を「捨てずに言う」断りのため)。**2 つの述語は確かに越境する** —— `adviseService` の中で `isImpossibleReturnPct` は真の枝 (:586 警告を組む) と偽の枝 (:607 測れる集合から外す) の両方、`isAboveEntryCeilingPct` は真の枝 (:598 断りを組む) だけが使われる (偽の枝は何もしない —— 値は比較に残る)。だが**否定のあとの動作は両ビルドで同じ 1 つの実装の中に在る** —— `adviseService` が返す助言の*中身*を形づくるだけで `ok: false` を作らず、同じオブジェクトが両ビルドへ返る (`serviceAdvisor` の判定はパス 268 で対称と実測済み)。★ この行は **module 単位の到達と call 単位の到達が違う**ことの例である (`isoDate` の ★ と同じ話)。',
   readNumeric:
     '非対称は起きない (実測・パス 272) —— パス 80 で規則を 1 つにした所だが、'
     + '**閉包で main へ繋がる道は `hydroponicCrops` 経由の 1 本だけ** (実測)。'
@@ -523,8 +523,7 @@ const VERDICTS = {
   serviceAdvisor:
     '対称 (実測・パス 268) —— 否定で答えるのは `adviseService` (`ok: false`) と、'
     + 'その中でだけ呼ばれる 4 つの `parse*AdviceInput` (**外部の消費者は 0 件**)。'
-    + '`adviseService` は main の 4 クライアント (real-estate / mutual-funds / '
-    + 'uber-eats / demae-can) とブラウザ版の web-shim が呼び、**否定のあとの動作は'
+    + '`adviseService` は main の 2 クライアント (real-estate / mutual-funds) とブラウザ版の web-shim が呼び、**否定のあとの動作は'
     + '同じ 1 行に畳まれる**: main は `throw new Error(r.message)` → '
     + "action:invoke の catch が `{code:'action_failed', message: safeErrorMessage(err)}`、"
     + "ブラウザ版は `err('action_failed', r.message)`。`safeErrorMessage` の中身は "

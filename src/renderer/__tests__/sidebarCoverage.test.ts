@@ -29,10 +29,16 @@ import { SNAPSHOT } from '../data/snapshot';
  * 例外は台帳で固定する。**双方向** —— 台帳にあるのにサイドバーへ出ていれば
  * それも落とす (「もう例外ではない」ことに気付けるように)。
  */
-const SIDEBAR_LESS: Readonly<Record<string, string>> = {
-  'uber-eats': 'BusinessPage が snapshot を内部消費するだけで、独立した画面を持たない',
-  'demae-can': '同上 (出前館)。BusinessPage の中で使う',
-};
+/*
+ * 2026-11-27: 画面を持たなかった 2 つのサービス (`uber-eats` / `demae-can`) を利用者の依頼で
+ * 取り除いたので、今は**全サービスがサイドバーに出て、台帳は空**である。空でも仕組み
+ * (双方向の突き合わせ) は生きていて、次に画面を持たないサービスが生まれたらここへ理由つきで足す。
+ */
+const SIDEBAR_LESS: Readonly<Record<string, string>> = {};
+
+/** 台帳の id のうち、散文が名指ししていない物 (散文が台帳の例外を 1 つずつ名指しする検査の判定)。 */
+const unnamedIds = (ledger: Readonly<Record<string, string>>, prose: string): string[] =>
+  Object.keys(ledger).filter((id) => !prose.includes(`\`${id}\``));
 
 describe('サイドバーは SERVICE_IDS を覆う', () => {
   const sidebar = new Set<string>(SERVICES.map((s) => s.id));
@@ -107,23 +113,33 @@ describe('サイドバーは SERVICE_IDS を覆う', () => {
    * ここで散文に台帳の id を名指しさせ、その名指しを走査する。
    * 例外が 3 つ目になれば、この検査が「散文が言っていない」と落とす。
    */
-  it('★ CLAUDE.md の散文が台帳の例外を 1 つずつ名指ししている', () => {
+  it('★ CLAUDE.md の散文が台帳の例外を 1 つずつ名指ししている (台帳が空なら「全部サイドバーに出る」と言う)', () => {
     const claudeMd = readOriginalSource(path.resolve(__dirname, '../../../CLAUDE.md'));
     // 走査が実物に当たっていること (空のファイルで通らない)。数は写さず実物から組む ——
     // 2026-11-17 まで `78` と直書きで、サービスを 1 つ足すたびにこの行だけが落ちていた。
     expect(claudeMd).toContain(`exposing **${SERVICE_IDS.length} services**`);
-    expect(claudeMd, 'サイドバーに出ない物が在るという断りが消えた').toContain(
-      'Not every service has a sidebar',
-    );
-    const unnamed = Object.keys(SIDEBAR_LESS).filter((id) => !claudeMd.includes(`\`${id}\``));
-    expect(unnamed, 'CLAUDE.md が名指ししていない例外があります').toEqual([]);
+    if (Object.keys(SIDEBAR_LESS).length === 0) {
+      expect(claudeMd, '台帳が空なのに「全サービスがサイドバーに出る」という言い方が消えた').toContain(
+        'Every service has a sidebar entry',
+      );
+      expect(claudeMd, '台帳が空なのに「サイドバーに出ない物が在る」と言っている').not.toContain(
+        'Not every service has a sidebar',
+      );
+    } else {
+      expect(claudeMd, 'サイドバーに出ない物が在るという断りが消えた').toContain(
+        'Not every service has a sidebar',
+      );
+    }
+    expect(unnamedIds(SIDEBAR_LESS, claudeMd), 'CLAUDE.md が名指ししていない例外があります').toEqual([]);
   });
 
-  it('★ 対照: 走査は名指しの欠落を拾う (綴り違いで黙っていない)', () => {
-    // 標本 —— 台帳に在る id が散文から抜けた形。
-    const sample = 'exposing **76 services** ... Not every service has a sidebar entry: `uber-eats` only.';
-    const unnamed = Object.keys(SIDEBAR_LESS).filter((id) => !sample.includes(`\`${id}\``));
-    expect(unnamed).toEqual(['demae-can']);
+  it('★ 対照: 走査は名指しの欠落を拾う (綴り違いで黙っていない・合成の台帳で確かめる)', () => {
+    // 標本 —— 台帳に在る id が散文から抜けた形。実物の台帳は空なので、合成の台帳を使う。
+    const ledger = { 'sample-a': '理由 A', 'sample-b': '理由 B' };
+    const sample = 'Not every service has a sidebar entry: `sample-a` only.';
+    expect(unnamedIds(ledger, sample)).toEqual(['sample-b']);
+    expect(unnamedIds(ledger, 'sample-a sample-b (引用符なしは名指しと数えない)')).toEqual(['sample-a', 'sample-b']);
+    expect(unnamedIds({}, sample)).toEqual([]);
   });
 });
 

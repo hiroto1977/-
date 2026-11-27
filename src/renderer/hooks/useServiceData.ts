@@ -3,6 +3,7 @@ import type { FetchResult, ServiceId } from '../../preload/bridgeTypes';
 import { isRefreshable, originOf, type DataOrigin } from '../../shared/dataOrigin';
 import { reportDeviceStoreFailure } from '../data/deviceStoreFailure';
 import { forgetFetch, lastGoodFetch, rememberFetch, staleDataNote } from '../data/lastGoodFetch';
+import { subscribeFetched } from '../data/fetchBroadcast';
 
 export type Source = 'snapshot' | 'live';
 /**
@@ -168,6 +169,26 @@ export function useServiceData<T>(
       setErrorKind(classifyError(result.message));
     }
   }, [serviceId]);
+
+  /*
+   * 「まとめて取り直す」(2026-11-27 · `data/refreshAll.ts`) が画面の外で取った内容を受け取る。
+   * 取れた内容は、この画面で更新を押して取れた内容と同じ扱いにする。新しい札を置くので、
+   * 先に始まっていた取得が遅れて返っても、この新しい内容を上書きしない。
+   */
+  useEffect(
+    () =>
+      subscribeFetched(serviceId, (next) => {
+        latest.current = {};
+        setData(next as T);
+        setSource('live');
+        setPayloadIsMock(declaresMock(next));
+        setStatus('idle');
+        setErrorMessage(undefined);
+        setErrorKind(undefined);
+        setIsConfigured(true);
+      }),
+    [serviceId],
+  );
 
   // Check whether a token exists for this service, and auto-refresh once
   // on mount if it does — saves a click and matches what the user expects

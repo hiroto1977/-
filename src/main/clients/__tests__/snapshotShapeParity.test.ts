@@ -38,8 +38,6 @@ const { shapeDiff } = await import('../../../shared/__tests__/shapeDiff');
 const SNAPSHOT_KEY: Readonly<Record<string, string>> = {
   'mutual-funds': 'mutualFunds',
   'real-estate': 'realEstate',
-  'uber-eats': 'uberEats',
-  'demae-can': 'demaeCan',
   'tax-accountant': 'taxAccountant',
   'labor-consultant': 'laborConsultant',
   'judicial-scrivener': 'judicialScrivener',
