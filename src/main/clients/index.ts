@@ -21,8 +21,6 @@ import { fetchHomeSnapshot } from './home';
 import { fetchVillageSnapshot } from './village';
 import { fetchLibrarySnapshot } from './library';
 import { fetchSettingsSnapshot } from './settings';
-import { fetchUberEatsSnapshot, ACTIONS as UBER_EATS_ACTIONS } from './uber-eats';
-import { fetchDemaeCanSnapshot, ACTIONS as DEMAE_CAN_ACTIONS } from './demae-can';
 import { fetchRealEstateSnapshot, ACTIONS as REAL_ESTATE_ACTIONS } from './real-estate';
 import { fetchMutualFundsSnapshot, ACTIONS as MUTUAL_FUNDS_ACTIONS } from './mutual-funds';
 import { fetchChartsSnapshot } from './charts';
@@ -109,8 +107,6 @@ export const LIVE_FETCHERS: Record<ServiceId, (ctx: FetchContext) => Promise<unk
   templates: fetchTemplatesSnapshot,
   library: fetchLibrarySnapshot,
   settings: fetchSettingsSnapshot,
-  'uber-eats': fetchUberEatsSnapshot,
-  'demae-can': fetchDemaeCanSnapshot,
   'real-estate': fetchRealEstateSnapshot,
   'mutual-funds': fetchMutualFundsSnapshot,
   charts: fetchChartsSnapshot,
@@ -274,8 +270,6 @@ export const LOCAL_SERVICES: ReadonlySet<ServiceId> = new Set<ServiceId>([
   'templates',
   'library',
   'settings',
-  'uber-eats',
-  'demae-can',
   'real-estate',
   'mutual-funds',
   // 水耕栽培の運転管理: 台帳は shared に在り、記録は renderer の record store。認証・通信なし。
@@ -370,8 +364,6 @@ export const LIVE_ACTIONS: Partial<Record<ServiceId, ActionMap>> = {
   business: BUSINESS_ACTIONS,
   teamradar: TEAMRADAR_ACTIONS,
   templates: TEMPLATES_ACTIONS,
-  'uber-eats': UBER_EATS_ACTIONS,
-  'demae-can': DEMAE_CAN_ACTIONS,
   'real-estate': REAL_ESTATE_ACTIONS,
   'mutual-funds': MUTUAL_FUNDS_ACTIONS,
   shopify: SHOPIFY_ACTIONS,

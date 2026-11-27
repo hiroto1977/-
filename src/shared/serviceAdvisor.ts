@@ -110,46 +110,8 @@ export type MutualFundsAdviceInput = {
   readonly thresholds?: AdvisorThresholds;
 };
 
-export type UberEatsAdviceStore = {
-  readonly name: string;
-  readonly orders: number;
-  readonly revenue: number;
-  readonly rating: number;
-};
-
-export type UberEatsAdviceItem = {
-  readonly name: string;
-  readonly sold: number;
-  readonly revenue: number;
-};
-
-export type UberEatsAdviceInput = {
-  readonly stores: readonly UberEatsAdviceStore[];
-  readonly topItems: readonly UberEatsAdviceItem[];
-  /** 平均評価。読めなければ null。 */
-  readonly avgRating: number | null;
-};
-
-export type DemaeCanAdviceArea = {
-  readonly area: string;
-  readonly orders: number;
-  readonly revenue: number;
-};
-
-export type DemaeCanAdviceInput = {
-  /** 月次の注文件数。 */
-  readonly monthOrders: number;
-  /** 月次キャンセル率 (0..1)。読めなければ null。 */
-  readonly cancellationRate: number | null;
-  readonly topAreas: readonly DemaeCanAdviceArea[];
-  /** 「配達中」の注文件数。 */
-  readonly deliveringOrders: number;
-};
-
 /** サービス id → 画面が渡す入力の形 (`ServiceActionPanel` が `adviseInput` の型に使う)。 */
 export interface AdviceInputMap {
-  readonly 'uber-eats': UberEatsAdviceInput;
-  readonly 'demae-can': DemaeCanAdviceInput;
   readonly 'real-estate': RealEstateAdviceInput;
   readonly 'mutual-funds': MutualFundsAdviceInput;
 }
@@ -309,78 +271,6 @@ export function parseMutualFundsAdviceInput(raw: unknown): Parsed<MutualFundsAdv
   const t = readThresholds(root.value['thresholds'], tag);
   if (!t.ok) return t;
   return { ok: true, value: { holdings, totalValuation: total.value, unrealizedGainPct: gain.value, thresholds: t.value } };
-}
-
-export function parseUberEatsAdviceInput(raw: unknown): Parsed<UberEatsAdviceInput> {
-  const tag = 'uber-eats.advise';
-  const root = readRoot(raw, tag);
-  if (!root.ok) return root;
-  const storeRows = readRows(root.value['stores'], tag, 'stores', 1);
-  if (!storeRows.ok) return storeRows;
-  const stores: UberEatsAdviceStore[] = [];
-  for (let i = 0; i < storeRows.value.length; i += 1) {
-    const f = `stores[${i}]`;
-    const row = readRow(storeRows.value[i], tag, f);
-    if (!row.ok) return row;
-    const name = readName(row.value['name'], tag, `${f}.name`);
-    if (!name.ok) return name;
-    const orders = readFinite(row.value['orders'], tag, `${f}.orders`);
-    if (!orders.ok) return orders;
-    const revenue = readFinite(row.value['revenue'], tag, `${f}.revenue`);
-    if (!revenue.ok) return revenue;
-    const rating = readFinite(row.value['rating'], tag, `${f}.rating`);
-    if (!rating.ok) return rating;
-    stores.push({ name: name.value, orders: orders.value, revenue: revenue.value, rating: rating.value });
-  }
-  const itemRows = readRows(root.value['topItems'], tag, 'topItems', 0);
-  if (!itemRows.ok) return itemRows;
-  const topItems: UberEatsAdviceItem[] = [];
-  for (let i = 0; i < itemRows.value.length; i += 1) {
-    const f = `topItems[${i}]`;
-    const row = readRow(itemRows.value[i], tag, f);
-    if (!row.ok) return row;
-    const name = readName(row.value['name'], tag, `${f}.name`);
-    if (!name.ok) return name;
-    const sold = readFinite(row.value['sold'], tag, `${f}.sold`);
-    if (!sold.ok) return sold;
-    const revenue = readFinite(row.value['revenue'], tag, `${f}.revenue`);
-    if (!revenue.ok) return revenue;
-    topItems.push({ name: name.value, sold: sold.value, revenue: revenue.value });
-  }
-  const avg = readFiniteOrNull(root.value['avgRating'], tag, 'avgRating');
-  if (!avg.ok) return avg;
-  return { ok: true, value: { stores, topItems, avgRating: avg.value } };
-}
-
-export function parseDemaeCanAdviceInput(raw: unknown): Parsed<DemaeCanAdviceInput> {
-  const tag = 'demae-can.advise';
-  const root = readRoot(raw, tag);
-  if (!root.ok) return root;
-  const monthOrders = readFinite(root.value['monthOrders'], tag, 'monthOrders');
-  if (!monthOrders.ok) return monthOrders;
-  const cancel = readFiniteOrNull(root.value['cancellationRate'], tag, 'cancellationRate');
-  if (!cancel.ok) return cancel;
-  const areaRows = readRows(root.value['topAreas'], tag, 'topAreas', 0);
-  if (!areaRows.ok) return areaRows;
-  const topAreas: DemaeCanAdviceArea[] = [];
-  for (let i = 0; i < areaRows.value.length; i += 1) {
-    const f = `topAreas[${i}]`;
-    const row = readRow(areaRows.value[i], tag, f);
-    if (!row.ok) return row;
-    const area = readName(row.value['area'], tag, `${f}.area`);
-    if (!area.ok) return area;
-    const orders = readFinite(row.value['orders'], tag, `${f}.orders`);
-    if (!orders.ok) return orders;
-    const revenue = readFinite(row.value['revenue'], tag, `${f}.revenue`);
-    if (!revenue.ok) return revenue;
-    topAreas.push({ area: area.value, orders: orders.value, revenue: revenue.value });
-  }
-  const delivering = readFinite(root.value['deliveringOrders'], tag, 'deliveringOrders');
-  if (!delivering.ok) return delivering;
-  return {
-    ok: true,
-    value: { monthOrders: monthOrders.value, cancellationRate: cancel.value, topAreas, deliveringOrders: delivering.value },
-  };
 }
 
 // --- 文の部品 (数字の刷り方は画面のタイルと同じ桁) ---------------------------------
@@ -671,165 +561,7 @@ export function adviseMutualFunds(input: MutualFundsAdviceInput): ServiceAdvisor
   };
 }
 
-export function adviseUberEats(input: UberEatsAdviceInput): ServiceAdvisorResponse {
-  const stores = input.stores;
-  const recommendations: Recommendation[] = [];
-
-  // 1. 店舗別売上のばらつき —— 最大 ÷ 最小。
-  const top = maxBy(stores, (s) => s.revenue);
-  const bottom = minBy(stores, (s) => s.revenue);
-  if (top === null || bottom === null) {
-    // 読み取りが 1 店舗以上を保証するので来ない。来たら「未算定」で断る (作り話をしない)。
-    recommendations.push({ title: '店舗別売上の比較は未算定', rationale: '店舗が読めないため、店舗間の倍率は出しません。' });
-  } else if (bottom.revenue <= 0) {
-    recommendations.push({
-      title: '店舗別売上の比較は未算定',
-      rationale: `売上が 0 の店舗 (${bottom.name}) があるため、店舗間の倍率は出しません。`,
-    });
-  } else {
-    const ratio = round1(top.revenue / bottom.revenue);
-    if (ratio >= ADVISOR_STORE_REVENUE_SPREAD_RATIO) {
-      recommendations.push({
-        title: '店舗別売上の平準化',
-        rationale:
-          `売上の最大は ${top.name} (${jpy(top.revenue)})、最小は ${bottom.name} (${jpy(bottom.revenue)}) で ${ratio.toFixed(1)} 倍の開きがあります` +
-          ` (しきい値 ${ADVISOR_STORE_REVENUE_SPREAD_RATIO.toFixed(1)} 倍)。上位店舗の運用を他店舗へ展開してください。`,
-      });
-    } else {
-      recommendations.push({
-        title: '店舗間の売上差は小さい',
-        rationale:
-          `最大 ${top.name} (${jpy(top.revenue)}) と最小 ${bottom.name} (${jpy(bottom.revenue)}) の差は ${ratio.toFixed(1)} 倍で、` +
-          `しきい値 ${ADVISOR_STORE_REVENUE_SPREAD_RATIO.toFixed(1)} 倍未満です。`,
-      });
-    }
-  }
-
-  // 2. 評価 —— 平均 (画面の値) を最も下回る店舗。
-  const lowest = minBy(stores, (s) => s.rating);
-  if (input.avgRating === null || lowest === null) {
-    recommendations.push({
-      title: '評価の比較は未算定',
-      rationale: '平均評価が読めないため、店舗ごとの評価の比較はしません。',
-    });
-  } else {
-    const gap = round1(input.avgRating - lowest.rating);
-    if (gap >= ADVISOR_RATING_GAP_PT) {
-      recommendations.push({
-        title: `評価の底上げ: ${lowest.name}`,
-        rationale:
-          `${lowest.name} の評価 ${lowest.rating.toFixed(1)} は平均 ${input.avgRating.toFixed(1)} を ${gap.toFixed(1)} pt 下回ります` +
-          ` (しきい値 ${ADVISOR_RATING_GAP_PT.toFixed(1)} pt)。配達時間と包装の改善を優先してください。`,
-      });
-    } else {
-      recommendations.push({
-        title: '評価は横並び',
-        rationale:
-          `最低は ${lowest.name} の ${lowest.rating.toFixed(1)} で、平均 ${input.avgRating.toFixed(1)} との差 ${gap.toFixed(1)} pt は` +
-          `しきい値 ${ADVISOR_RATING_GAP_PT.toFixed(1)} pt 未満です。`,
-      });
-    }
-  }
-
-  // 3. 人気メニュー —— 最多販売の品。
-  const item = maxBy(input.topItems, (i) => i.sold);
-  if (item === null) {
-    recommendations.push({
-      title: '人気メニューは未入力',
-      rationale: 'メニュー別の販売数が無いため、横展開の候補は挙げません。',
-    });
-  } else {
-    recommendations.push({
-      title: `人気メニューの横展開: ${item.name}`,
-      rationale: `${item.name} は ${item.sold} 食 (${jpy(item.revenue)}) で最多です。全店舗で前面に出してください。`,
-    });
-  }
-
-  return {
-    recommendations,
-    basis: `${stores.length} 店舗・メニュー ${input.topItems.length} 品・平均評価 ${input.avgRating === null ? '—' : input.avgRating.toFixed(1)}`,
-    disclaimer: FOOD_ADVISOR_DISCLAIMER,
-    notForRealMoney: true,
-    phase: 'rules',
-  };
-}
-
-export function adviseDemaeCan(input: DemaeCanAdviceInput): ServiceAdvisorResponse {
-  const recommendations: Recommendation[] = [];
-
-  // 1. キャンセル率 —— 置き値の基準と比べる (基準は出典なしと言う)。
-  if (input.cancellationRate === null) {
-    recommendations.push({
-      title: 'キャンセル率は未入力',
-      rationale: '月次キャンセル率が読めないため、基準との比較はしません。',
-    });
-  } else {
-    const rate = share1(input.cancellationRate);
-    const ref = share1(ADVISOR_CANCELLATION_RATE_REF);
-    if (input.cancellationRate > ADVISOR_CANCELLATION_RATE_REF) {
-      recommendations.push({
-        title: `キャンセル率 ${rate} の改善`,
-        rationale: `月次キャンセル率 ${rate} は基準 ${ref} (出典なし・置き値) を上回ります。受付から調理開始までの確認と、在庫切れ時の即時反映を見直してください。`,
-      });
-    } else {
-      recommendations.push({
-        title: `キャンセル率 ${rate} の維持`,
-        rationale: `月次キャンセル率 ${rate} は基準 ${ref} (出典なし・置き値) 以下です。継続観測してください。`,
-      });
-    }
-  }
-
-  // 2. 客単価の地域格差 —— 注文のある地域だけで最高と最低。
-  const withOrders = input.topAreas.filter((a) => a.orders > 0);
-  const aov = (a: DemaeCanAdviceArea): number => a.revenue / a.orders;
-  const high = maxBy(withOrders, aov);
-  const low = minBy(withOrders, aov);
-  if (high === null || low === null || withOrders.length < 2) {
-    recommendations.push({
-      title: '客単価の地域比較は未算定',
-      rationale: `注文のある地域が ${withOrders.length} か所のため、地域間の客単価は比べません。`,
-    });
-  } else {
-    const ratio = round1(aov(high) / aov(low));
-    const figures = `客単価は最高 ${high.area} ${jpy(Math.round(aov(high)))} / 最低 ${low.area} ${jpy(Math.round(aov(low)))}`;
-    if (ratio >= ADVISOR_AOV_SPREAD_RATIO) {
-      recommendations.push({
-        title: `客単価の地域格差: ${high.area} と ${low.area}`,
-        rationale:
-          `${figures} で ${ratio.toFixed(1)} 倍の開きがあります (しきい値 ${ADVISOR_AOV_SPREAD_RATIO.toFixed(1)} 倍)。` +
-          `${high.area} の高単価メニューを ${low.area} でも展開してください。`,
-      });
-    } else {
-      recommendations.push({
-        title: '客単価は地域間で均一',
-        rationale: `${figures} で、差は ${ratio.toFixed(1)} 倍 (しきい値 ${ADVISOR_AOV_SPREAD_RATIO.toFixed(1)} 倍未満) です。`,
-      });
-    }
-  }
-
-  // 3. 配達中の注文 —— 件数をそのまま言う。
-  if (input.deliveringOrders > 0) {
-    recommendations.push({
-      title: `配達中 ${input.deliveringOrders} 件の監視`,
-      rationale: `配達中の注文が ${input.deliveringOrders} 件あります。最優先で監視し、遅延を未然に防いでください。`,
-    });
-  } else {
-    recommendations.push({
-      title: '配達中の注文なし',
-      rationale: '配達中の注文はありません。',
-    });
-  }
-
-  return {
-    recommendations,
-    basis: `月次 ${input.monthOrders} 件・地域 ${input.topAreas.length} か所・配達中 ${input.deliveringOrders} 件`,
-    disclaimer: FOOD_ADVISOR_DISCLAIMER,
-    notForRealMoney: true,
-    phase: 'rules',
-  };
-}
-
-// --- 入口 (main の 4 action とブラウザ版の枝が通る 1 つ) ----------------------------
+// --- 入口 (main の 2 action とブラウザ版の枝が通る 1 つ) ----------------------------
 
 export type AdviceOutcome =
   | { readonly ok: true; readonly data: ServiceAdvisorResponse }
@@ -856,12 +588,6 @@ const ADVICE_EMPTY_ROWS: Readonly<Record<RecordEntryServiceId, { readonly field:
     field: 'holdings',
     note: '銘柄がまだ登録されていません。上の欄から 1 件登録すると、その数字から改善提案を組み立てます。',
   },
-  'uber-eats': {
-    field: 'stores',
-    note: '店舗の数字がまだ無いため、改善提案を組み立てられません。',
-  },
-  // 出前館の提案は月次の件数から組むので、一覧 (配達エリア) が空でも組める。
-  'demae-can': null,
 };
 
 export function adviceNotReadyNote(serviceId: RecordEntryServiceId, raw: unknown): string | null {
@@ -885,15 +611,7 @@ export function adviseService(serviceId: RecordEntryServiceId, raw: unknown): Ad
       const p = parseMutualFundsAdviceInput(raw);
       return p.ok ? { ok: true, data: adviseMutualFunds(p.value) } : p;
     }
-    case 'uber-eats': {
-      const p = parseUberEatsAdviceInput(raw);
-      return p.ok ? { ok: true, data: adviseUberEats(p.value) } : p;
-    }
-    case 'demae-can': {
-      const p = parseDemaeCanAdviceInput(raw);
-      return p.ok ? { ok: true, data: adviseDemaeCan(p.value) } : p;
-    }
-    // Stryker disable next-line all: 網羅性検査の到達不能 default (型で 4 つを処理済み)。
+    // Stryker disable next-line all: 網羅性検査の到達不能 default (型で 2 つを処理済み)。
     default: {
       const exhaustive: never = serviceId;
       return exhaustive;

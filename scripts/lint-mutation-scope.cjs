@@ -148,7 +148,6 @@ const MIN_PRAGMAS_SEEN = 400;
  */
 const PRAGMA_BARE = {
   'src/main/clients/business.ts':                6,
-  'src/main/clients/demae-can.ts':               4,
   'src/main/clients/github.ts':                  2,
   'src/main/clients/home.ts':                    2,
   'src/main/clients/library.ts':                 2,
@@ -161,7 +160,6 @@ const PRAGMA_BARE = {
   'src/main/clients/skills.ts':                  3,
   'src/main/clients/snapshotStub.ts':            1,
   'src/main/clients/stocks.ts':                  8,
-  'src/main/clients/uber-eats.ts':               4,
   'src/main/oauth.ts':                           2,
   'src/renderer/data/cloudBackup.ts':            1,
   'src/renderer/data/emotionsWeb.ts':            1,

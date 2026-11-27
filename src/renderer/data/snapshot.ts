@@ -448,47 +448,6 @@ export const SNAPSHOT = {
     warnings: [] as string[],
   },
 
-  uberEats: {
-    // Snapshot-only (no LIVE_FETCHERS entry yet). Eats Merchants API
-    // requires partner approval; until that's wired, the page renders
-    // synthetic-but-realistic store performance data.
-    stores: [
-      { id: 'store-shibuya', name: 'Shibuya 本店', orders: 142, revenue: 285_400, rating: 4.7, openRate: 0.98 },
-      { id: 'store-shinjuku', name: 'Shinjuku 東口店', orders: 98, revenue: 196_800, rating: 4.5, openRate: 0.95 },
-      { id: 'store-ikebukuro', name: 'Ikebukuro West', orders: 76, revenue: 152_300, rating: 4.6, openRate: 0.97 },
-    ] as { id: string; name: string; orders: number; revenue: number; rating: number; openRate: number }[],
-    topItems: [
-      { name: 'スパイシーチキンバーガー', sold: 89, revenue: 71_200 },
-      { name: 'クラシックチーズバーガー', sold: 67, revenue: 50_250 },
-      { name: 'ガーリックフライ (L)', sold: 124, revenue: 49_600 },
-    ] as { name: string; sold: number; revenue: number }[],
-    weekRevenue: 634_500,
-    weekOrders: 316,
-    avgRating: 4.6,
-  },
-
-  demaeCan: {
-    // Snapshot-only — 出前館 has no public REST API; data here is
-    // illustrative of the operational dashboard shape.
-    orders: [
-      { id: 'DC-20260518-001', customer: '田中様', items: 3, total: 2_450, status: '配達中', area: '渋谷区' },
-      { id: 'DC-20260518-002', customer: '佐藤様', items: 2, total: 1_780, status: '調理中', area: '新宿区' },
-      { id: 'DC-20260518-003', customer: '鈴木様', items: 5, total: 4_120, status: '配達完了', area: '世田谷区' },
-      { id: 'DC-20260518-004', customer: '高橋様', items: 1, total: 980, status: '受付済み', area: '中野区' },
-    ] as { id: string; customer: string; items: number; total: number; status: string; area: string }[],
-    monthSummary: {
-      orders: 612,
-      revenue: 1_245_300,
-      avgOrderValue: 2_035,
-      cancellationRate: 0.018,
-    },
-    topAreas: [
-      { area: '渋谷区', orders: 178, revenue: 362_400 },
-      { area: '新宿区', orders: 134, revenue: 273_600 },
-      { area: '世田谷区', orders: 89, revenue: 181_200 },
-    ] as { area: string; orders: number; revenue: number }[],
-  },
-
   // 不動産投資: 物件は利用者が端末内に登録する (record store)。同梱の見本は
   // 持たず、土台は主プロセス・ブラウザ版と同じ `buildRealEstateSnapshot` に
   // 寄せる (2026-11-19・ローカル完結バッチ 3。それまでは見本 4 件が集計に混ざっていた)。

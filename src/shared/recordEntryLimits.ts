@@ -39,8 +39,6 @@ export const MAX_RECORD_NOTE_CHARS = 2000;
  * `satisfies` で `ServiceId` に留める —— id を打ち間違えると `tsc` が落ちる。
  */
 export const RECORD_ENTRY_SERVICE_IDS = [
-  'uber-eats',
-  'demae-can',
   'real-estate',
   'mutual-funds',
 ] as const satisfies readonly ServiceId[];

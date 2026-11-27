@@ -9,8 +9,6 @@ const VOICE_ACTIONS: AvailableCapabilities['actions'] = {
   github: ['create-issue'],
   slack: ['send-message'],
   calendar: ['create-event'],
-  'uber-eats': ['record-entry'],
-  'demae-can': ['record-entry'],
   'real-estate': ['record-entry'],
   'mutual-funds': ['record-entry'],
 };

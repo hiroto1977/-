@@ -29,8 +29,6 @@ export const SERVICE_IDS = [
   'templates',
   'library',
   'settings',
-  'uber-eats',
-  'demae-can',
   'real-estate',
   'mutual-funds',
   'quality',

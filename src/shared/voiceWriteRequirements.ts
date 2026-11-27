@@ -115,8 +115,6 @@ export const VOICE_WRITE_REQUIREMENTS: readonly VoiceWriteRequirement[] = [
   requirement('calendar', 'create-event', CALENDAR_EVENT_FIELDS, true),
   requirement('real-estate', 'record-entry', RECORD_ENTRY_NOTE_FIELDS, true),
   requirement('mutual-funds', 'record-entry', RECORD_ENTRY_NOTE_FIELDS, true),
-  requirement('uber-eats', 'record-entry', RECORD_ENTRY_NOTE_FIELDS, false),
-  requirement('demae-can', 'record-entry', RECORD_ENTRY_NOTE_FIELDS, false),
 ];
 
 export function voiceWriteRequirement(

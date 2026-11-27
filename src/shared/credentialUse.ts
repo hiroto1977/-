@@ -59,8 +59,6 @@ export const SERVICE_CREDENTIAL_USE: Record<ServiceId, CredentialUse> = {
   templates: 'none',
   library: 'none',
   settings: 'none',
-  'uber-eats': 'none',
-  'demae-can': 'none',
   'real-estate': 'none',
   'mutual-funds': 'none',
   charts: 'none',
