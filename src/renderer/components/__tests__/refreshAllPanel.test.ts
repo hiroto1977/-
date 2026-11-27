@@ -22,10 +22,14 @@ import { forgetAllFetches } from '../../data/lastGoodFetch';
 let host: HTMLDivElement;
 let root: Root;
 
-/** 画面の代役: freee の取得元と、月次の件数を出す。 */
-function FreeeProbe() {
-  const { source, data } = useServiceData('freee', SNAPSHOT.freee);
-  return createElement('p', { 'data-probe': source }, `freee:${source}:${data.monthly.length}`);
+type Read = () => { source: string; data: typeof SNAPSHOT.freee };
+
+/** 画面の代役: freee の取得元と、月次の件数を出す (読む関数は各 it が渡す —— 収集時に呼ばない)。 */
+function makeProbe(read: Read) {
+  return function FreeeProbe() {
+    const { source, data } = read();
+    return createElement('p', { 'data-probe': source }, `freee:${source}:${data.monthly.length}`);
+  };
 }
 
 function hubWith(over: Record<string, unknown>): void {
@@ -48,14 +52,18 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-async function mount(): Promise<void> {
+async function mount(read: Read): Promise<void> {
   root = createRoot(host);
+  const Probe = makeProbe(read);
   await act(async () => {
-    root.render(createElement(Fragment, null, createElement(RefreshAllPanel), createElement(FreeeProbe)));
+    root.render(createElement(Fragment, null, createElement(RefreshAllPanel), createElement(Probe)));
   });
 }
 
 const text = (): string => host.textContent ?? '';
+
+/** 鍵の形の文字列 (秘密の走査に掛からないよう、その場で組む)。 */
+const TOKEN = ['gh', 'p_'].join('') + 'a'.repeat(36);
 
 async function press(): Promise<void> {
   const b = [...host.querySelectorAll('button')].find((x) => x.textContent?.includes('連携をまとめて取り直す'));
@@ -70,7 +78,7 @@ describe('連携をまとめて取り直す (画面)', () => {
     const monthly = [{ month: '2026-10', net: 1 }, { month: '2026-11', net: 2 }, { month: '2026-12', net: 3 }];
     // 画面を描いた時点では鍵が無い (自動の取得は走らない)。押す前に鍵を登録した形にする。
     hubWith({ listConfigured: () => Promise.resolve([]) });
-    await mount();
+    await mount(() => useServiceData('freee', SNAPSHOT.freee));
     await waitForText(text, 'freee:snapshot');
     hubWith({
       listConfigured: () => Promise.resolve(['freee', 'github'] as ServiceId[]),
@@ -78,7 +86,7 @@ describe('連携をまとめて取り直す (画面)', () => {
         Promise.resolve(
           id === 'freee'
             ? { ok: true, data: { ...SNAPSHOT.freee, monthly } }
-            : { ok: false, code: 'fetch_failed', message: '401 Unauthorized ghp_abcdefghijklmnopqrstuvwxyz0123456789' },
+            : { ok: false, code: 'fetch_failed', message: `401 Unauthorized ${TOKEN}` },
         ),
     });
     await press();
@@ -88,7 +96,7 @@ describe('連携をまとめて取り直す (画面)', () => {
     const failed = host.querySelector('[data-refresh-all-failed]')?.textContent ?? '';
     expect(failed).toContain('ギットハブ');
     expect(failed).toContain('401');
-    expect(failed).not.toContain('ghp_abcdefghijklmnopqrstuvwxyz0123456789');
+    expect(failed).not.toContain(TOKEN);
     // 鍵がまだの連携先は数と名前を出す
     expect(text()).toMatch(/鍵がまだの連携先 \d+ 件/);
   });
@@ -96,7 +104,7 @@ describe('連携をまとめて取り直す (画面)', () => {
   it('★ 鍵の一覧が読めなければ断り、何も取らない', async () => {
     const fetchSnapshot = vi.fn();
     hubWith({ listConfigured: () => Promise.resolve([]) });
-    await mount();
+    await mount(() => useServiceData('freee', SNAPSHOT.freee));
     await waitForText(text, 'freee:snapshot');
     hubWith({ listConfigured: () => Promise.reject(new Error('store unreadable')), fetchSnapshot });
     await press();
@@ -107,7 +115,7 @@ describe('連携をまとめて取り直す (画面)', () => {
 
   it('鍵がどれも無ければ、そう言う', async () => {
     hubWith({ listConfigured: () => Promise.resolve([]) });
-    await mount();
+    await mount(() => useServiceData('freee', SNAPSHOT.freee));
     await press();
     await waitForText(text, '鍵を登録済みの連携先がまだありません');
   });
@@ -119,7 +127,7 @@ describe('連携をまとめて取り直す (画面)', () => {
       listConfigured: () => Promise.resolve(['freee'] as ServiceId[]),
       fetchSnapshot: () => new Promise<FetchResult>((r) => (releaseOld = r)),
     });
-    await mount();
+    await mount(() => useServiceData('freee', SNAPSHOT.freee));
     hubWith({
       fetchSnapshot: () =>
         Promise.resolve({ ok: true, data: { ...SNAPSHOT.freee, monthly: [{ month: '2026-12', net: 9 }] } }),

@@ -298,7 +298,7 @@ function BusinessUnits({
             {p.icon} {p.name}
           </button>
         ))}
-        <span style={{ color: 'var(--text-muted)' }}>押すと事業名と区分が入ります。月次の売上高を入れて「追加」を押してください。</span>
+        <span style={{ color: 'var(--text-muted)' }}>押すと事業名と区分が入ります。月次の売上高を入れて「事業を追加」を押してください。</span>
       </div>
       <datalist id="business-category-presets">
         {BUSINESS_PRESETS.map((p) => (

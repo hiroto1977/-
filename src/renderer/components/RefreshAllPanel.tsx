@@ -11,6 +11,7 @@ import type { ServiceId } from '../../preload/bridgeTypes';
 import { SERVICES } from '../services';
 import { refreshAllConnected, type RefreshAllResult } from '../data/refreshAll';
 import { ERROR_MESSAGE_MAX_CHARS, redactForMessage } from '../../shared/redact';
+import { externalTextOnOneLine } from '../data/assistantMarkdown';
 
 const nameOf = (id: ServiceId): string => SERVICES.find((s) => s.id === id)?.label ?? id;
 
@@ -62,7 +63,7 @@ export function RefreshAllPanel() {
             <ul data-refresh-all-failed style={{ margin: '4px 0 0', paddingLeft: 18 }}>
               {failed.map((r) => (
                 <li key={r.id}>
-                  {nameOf(r.id)}: {redactForMessage(r.message ?? '', ERROR_MESSAGE_MAX_CHARS)}
+                  {nameOf(r.id)}: {externalTextOnOneLine(redactForMessage(r.message ?? '', ERROR_MESSAGE_MAX_CHARS))}
                 </li>
               ))}
             </ul>

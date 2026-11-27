@@ -30,8 +30,8 @@ import { SNAPSHOT } from '../data/snapshot';
  * それも落とす (「もう例外ではない」ことに気付けるように)。
  */
 const SIDEBAR_LESS: Readonly<Record<string, string>> = {
-  'uber-eats': 'BusinessPage が snapshot を内部消費するだけで、独立した画面を持たない',
-  'demae-can': '同上 (出前館)。BusinessPage の中で使う',
+  'uber-eats': '見本しか持たず資格情報も読まない (`credentialUse` が none)。事業ダッシュボードの集計からも外した (2026-11-27 · 利用者の依頼) —— 飲食の数字は自分の事業の記録 (飲食店) で持つ',
+  'demae-can': '同上 (出前館)。画面も、事業ダッシュボードの集計も持たない',
 };
 
 describe('サイドバーは SERVICE_IDS を覆う', () => {

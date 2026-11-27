@@ -19,6 +19,7 @@ import { SERVICE_IDS } from '../../shared/serviceId';
 import { originOf } from '../../shared/dataOrigin';
 import { rememberFetch } from './lastGoodFetch';
 import { publishFetched } from './fetchBroadcast';
+import { ERROR_MESSAGE_MAX_CHARS, redactForMessage } from '../../shared/redact';
 
 /** 1 件の結果。`message` は取れなかったときの橋の文 (取れたときは無い)。 */
 export interface RefreshAllRow {
@@ -52,7 +53,7 @@ async function fetchOne(hub: RefreshAllHub, id: ServiceId): Promise<RefreshAllRo
   try {
     result = await hub.fetchSnapshot(id);
   } catch (e) {
-    return { id, outcome: 'failed', message: e instanceof Error ? e.message : String(e) };
+    return { id, outcome: 'failed', message: redactForMessage(e instanceof Error ? e.message : String(e), ERROR_MESSAGE_MAX_CHARS) };
   }
   if (result.ok) {
     rememberFetch(id, result.data);

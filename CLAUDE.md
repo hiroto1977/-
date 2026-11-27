@@ -13,8 +13,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Service Hub — a Japanese-facing business dashboard exposing **81 services** through a unified,
 business-area sidebar (フロントオフィス / センターオフィス / ミドルオフィス / バックオフィス / 開発・製造・現場 / 経営・ガバナンス / 共通基盤 —— 2026-11-23 · `renderer/data/businessArea.ts` が全画面の置き場所を 1 か所で持つ). **Not every service has a sidebar
-entry of its own**: `uber-eats` and `demae-can` are consumed inside the Business Dashboard instead
-(`BusinessPage.tsx` reads their snapshots directly). That split is a reasoned, bidirectional ledger in
+entry of its own**: `uber-eats` and `demae-can` hold sample data only and have no screen
+(2026-11-27: also removed from the Business Dashboard totals at the user's request). That split is a reasoned, bidirectional ledger in
 `src/renderer/__tests__/sidebarCoverage.test.ts` — a service that silently loses its sidebar entry fails
 CI (it would also become impossible to delete its saved credentials from the UI), and an id that is
 still in the ledger while back on the sidebar fails too. Services span third-party SaaS
