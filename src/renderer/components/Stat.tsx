@@ -1,7 +1,7 @@
 /**
  * KPI Stat card — single-value tile used in business dashboards.
  *
- * Used by UberEatsPage / DemaeCanPage / RealEstatePage / MutualFundsPage
+ * Used by RealEstatePage / MutualFundsPage
  * to render the "今週の売上 / 月次キャッシュフロー / 評価損益" grid at
  * the top of each page. Optional `positive` flips the color (green when
  * true, red when false) for gain/loss style values; leave undefined for

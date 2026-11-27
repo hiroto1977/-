@@ -4580,6 +4580,22 @@
       "leafCount": 225,
       "note": "update LockScreen.tsx",
       "hash": "d21bb73e4cce7064fa726256c538512b51b3e80f596d1cd01352ab5f7178e2c9"
+    },
+    {
+      "index": 544,
+      "prevHash": "d21bb73e4cce7064fa726256c538512b51b3e80f596d1cd01352ab5f7178e2c9",
+      "merkleRoot": "6e6d9304113a09db0e62fd5f32ab0cd724938b1f93e45ddb063e216cba31215d",
+      "leafCount": 225,
+      "note": "update actionTier.mamori,actionTier.ts",
+      "hash": "cbe8b49798d8b1a6bbdcc92c7e8eb600a36b0beee6ad570da328f2bbfdc3a521"
+    },
+    {
+      "index": 545,
+      "prevHash": "cbe8b49798d8b1a6bbdcc92c7e8eb600a36b0beee6ad570da328f2bbfdc3a521",
+      "merkleRoot": "f7991fa054d209e2491b7884022a2865364d7f65c965edd6a7a0930ffdb7fc49",
+      "leafCount": 225,
+      "note": "update 00-project.mdc",
+      "hash": "c59a4403928bf25c8dd1044ffd452286397f5daf1d29674c342180f08f45f77e"
     }
   ],
   "tipManifest": {
@@ -4588,7 +4604,7 @@
     ".claude/agents/scout.md": "78db2996e39470b38ec29df5a10791a49f65d04594fbe4d77b739770f9330bef",
     ".claude/mcp-on-demand/grok.json": "8fbec1f49d1b9d7b0e92e7f69cb69ad70dd868633da71161e0765ba1c64fa5c2",
     ".claude/settings.json": "f3add3b9e10ff80d5c7e4877232164abcdb5dad3f2a4e7ba2d6a17cd54284a42",
-    ".cursor/rules/00-project.mdc": "9bcd27dfa67072aca2b4270ae9bf9bd844dcd141e2cf8558545b12e3d07a7af6",
+    ".cursor/rules/00-project.mdc": "a597032c94583cd1216a5ae0b8fb79315cdfbd64d06f336bd26f70a13ac88821",
     ".cursor/rules/10-boundaries.mdc": "14c2aad731d81125a16c07a78ded8098126642432fdd36aea50dce409e706972",
     ".cursor/rules/20-gates.mdc": "821205069a9f0fae121e92be6826342bce6e765a34bea95c7ebc36c57b234da4",
     ".cursor/rules/30-conventions.mdc": "ecc268597f19300ff8c9e574d25ae92f34f6ddb9ec13776fb5162c32f6c0ba50",
@@ -4731,8 +4747,8 @@
     "src/renderer/security/webauthnHost.ts": "2b0551725058a6b28c83d670f245807627cced0912192ba069ac80fdcabdf26a",
     "src/renderer/vettedSinks.mamori": "a7c70e8bf41114af58db79417c568db1b86188d6150f24c0ebc4ddc63ddb69c0",
     "src/renderer/vettedSinks.ts": "2baf1e62dd999ee86db87918fd5ff719d06b7e64c5214e4c91508e8aaef7ee7b",
-    "src/shared/actionTier.mamori": "4eb7e16c8c974bdb4c61e0bcdd22b57f261426cdc07b9076ff7e2009985426ca",
-    "src/shared/actionTier.ts": "0c2cd5bddeba0cc8d01d4ff2abed85fc17bdbc740e470bc11a5466e93ad4ea60",
+    "src/shared/actionTier.mamori": "8127001681194888a181190948d119e3ae5159c7cead2f4ce4aca209a7e794ce",
+    "src/shared/actionTier.ts": "b034aab20166976ff4dd23cbf8cdb7afc37ad63131f2f02fdc01559f0e9ad85d",
     "src/shared/advisorQuestionLimits.ts": "b1ade2abbfc367eb188ef16ba8e0c5b6327fe696e95cab2944df9f36de84b755",
     "src/shared/ai/chat.ts": "45dffbd7d58af2256be92f58f9798df8872bfd7ef0ba7856765983b2bcc7778e",
     "src/shared/ai/credentials.ts": "1ee0701e99942049b4d9570bacb2937be4b8ae7db9cc2b781c96596a726e6368",

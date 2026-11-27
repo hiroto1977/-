@@ -1,5 +1,5 @@
 /**
- * **業務操作パネルの「改善提案」を、画面の数字から規則で組み立てる —— 両ビルド・4 サービスで 1 つ。**
+ * **業務操作パネルの「改善提案」を、画面の数字から規則で組み立てる —— 両ビルド・2 サービスで 1 つ。**
  * (2026-09-09 · パス 119)
  *
  * ## なぜ要るか
@@ -10,14 +10,13 @@
  * 利用者が自分の物件・銘柄を足しても提案は見本について語り、画面のタイル (平均利回り・評価損益率) と
  * **別の数字を言う** (パス 61 の「同じ画面に 2 つの数字」の形)。ブラウザ版には双子が無く
  * `action_not_found` (「AI 提案の取得に失敗」)。ラベルは「AI」と言うが、中身は AI でも計算でもなかった。
- * uber-eats / demae-can の advise は画面が無く誰も呼べないまま、同じ固定文を持っていた。
  *
  * ## 直し方 —— 数字は画面から受け取り、文は数字から組む
  *
  * - 画面は自分が刷っている集計 (物件の行・月次 CF・平均利回り、銘柄の行・評価額・評価損益率) を
  *   **payload で渡す**。ここは受け取った数字だけで文を組む —— 数字を写した文は 1 つも持たない。
  *   だから提案が言う数字は、画面が刷っている数字と**構成上**一致する。
- * - main の 4 つの action とブラウザ版の枝は、どちらも {@link adviseService} を通す (判定と文面は 1 つ)。
+ * - main の 2 つの action とブラウザ版の枝は、どちらも {@link adviseService} を通す (判定と文面は 1 つ)。
  * - 受け取れない payload (無い・形が違う・0 件) は**断る**。何も無い所から提案を作らない (パス 65 の教訓)。
  * - しきい値 (低利回りと呼ぶ差・集中と呼ぶ比率) は `parameters.ts` の台帳に載せ、画面が
  *   `useParameters()` で読んで payload の `thresholds` に載せる。既定はこのモジュールの定数。
@@ -42,14 +41,6 @@ import { RETURN_ENTRY_CEILING_PCT, RETURN_FLOOR_PCT, isAboveEntryCeilingPct, isI
 export const ADVISOR_YIELD_GAP_PT = 1.0;
 /** 1 銘柄の評価額比率 (0..1) がこの値以上なら「集中」と呼ぶ。 */
 export const ADVISOR_CONCENTRATION_SHARE = 0.5;
-/** 店舗別売上の最大 ÷ 最小 がこの倍率以上なら「ばらつき」と呼ぶ (画面が無いので台帳には載せない)。 */
-export const ADVISOR_STORE_REVENUE_SPREAD_RATIO = 1.5;
-/** 店舗の評価が平均をこの差以上下回る店舗を名指しする (同上)。 */
-export const ADVISOR_RATING_GAP_PT = 0.2;
-/** キャンセル率の比較基準 (0..1)。**出典なし・置き値** —— 自社の実績で置き換える物 (同上)。 */
-export const ADVISOR_CANCELLATION_RATE_REF = 0.03;
-/** 地域別の客単価の最高 ÷ 最低 がこの倍率以上なら「格差」と呼ぶ (同上)。 */
-export const ADVISOR_AOV_SPREAD_RATIO = 1.2;
 
 export interface AdvisorThresholds {
   readonly yieldGapPt: number;
@@ -119,10 +110,6 @@ export interface AdviceInputMap {
 export type AdviceInputFor<S extends RecordEntryServiceId> = AdviceInputMap[S];
 
 // --- 免責 (文面は 1 か所) ------------------------------------------------------
-
-export const FOOD_ADVISOR_DISCLAIMER =
-  '本提案は画面の数字から規則で組み立てた参考情報であり、店舗運営上の助言ではありません。' +
-  '実際の経営判断はオーナー・専門家の責任で行ってください。Phase 6 で実 LLM 推論を接続します。';
 
 export const REAL_ESTATE_ADVISOR_DISCLAIMER =
   '本提案は画面の数字から規則で組み立てた教育目的の参考情報であり、投資助言ではありません。実際の投資判断は' +

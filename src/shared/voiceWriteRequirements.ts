@@ -11,7 +11,7 @@
  * | `slack/send-message` | `channel` · `text` | `{}` |
  * | `github/create-issue` | `owner` · `repo` · `title` | `{}` |
  * | `calendar/create-event` | `summary` · `start` · `end` | `{}` |
- * | `uber-eats` · `demae-can` · `real-estate` · `mutual-funds` の `record-entry` | `note` | `{}` |
+ * | `real-estate` · `mutual-funds` の `record-entry` | `note` | `{}` |
  *
  * `VoiceIntent.params` は「将来拡張用; 現状は最小限」と書かれた欄で、
  * **`parseVoiceCommand` は一度も設定しない**。だから
@@ -84,14 +84,12 @@ export interface VoiceWriteRequirement {
    * その操作を**画面から**行えるか (実測)。
    * `slack` / `github` / `calendar` は各画面に入力欄が在り、
    * `real-estate` / `mutual-funds` は `ServiceActionPanel` が載っている。
-   * `uber-eats` / `demae-can` は **どちらも無い** ——
-   * `ServiceActionPanel` の注記は 4 サービスを挙げているが、載っているのは 2 つ。
    */
   readonly screenInput: boolean;
 }
 
 /**
- * `record-entry` の欄 (4 サービス共通)。天井は `recordEntryLimits.ts` の 1 つ (main の 4 つの
+ * `record-entry` の欄 (2 サービス共通)。天井は `recordEntryLimits.ts` の 1 つ (main の 2 つの
  * handler と web-shim が「note は 1-2000 文字」と断る当の数) で、本文なので改行を許す。
  */
 export const RECORD_ENTRY_NOTE_FIELDS: Readonly<Record<string, WriteFieldRule>> = {

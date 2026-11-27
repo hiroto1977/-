@@ -60,8 +60,7 @@ describe('professionalMap (士業 8 種の事業仕分け)', () => {
   });
 
   it('links every duty to a real, non-professional app service', () => {
-    // サイドバーに実在するサービスのみリンク可 (uber-eats / demae-can は
-    // SERVICE_IDS に居るがサイドバー非表示 = 遷移先ページが無い)。
+    // サイドバーに実在するサービスのみリンク可 (遷移先ページが無いサービスへは張らない)。
     const navigable = new Set(SERVICES.map((s) => s.id));
     for (const id of PROFESSIONAL_IDS) {
       for (const d of PROFESSIONAL_MAP[id].duties) {

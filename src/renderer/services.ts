@@ -316,9 +316,6 @@ export const SERVICES: ServiceDefinition[] = [
     page: SettingsPage,
     category: 'featured',
   },
-  // Uber Eats / 出前館 はサイドバーに出さず、2026-11-27 から事業ダッシュボードの集計からも外した
-  // (利用者の依頼 —— 見本の数字が全社合算に足されていた)。SERVICE_IDS / クライアント /
-  // snapshot / テストは温存している (不変条件維持)。
   {
     id: 'real-estate',
     label: '不動産投資',

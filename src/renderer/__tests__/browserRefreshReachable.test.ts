@@ -143,7 +143,7 @@ describe('「更新」を持つ端末内の画面は、ブラウザ版でも取�
 
   it('対照: 同梱の見本のままの画面 (sample) は not_implemented へ落ちる (shim が何でも ok を返すのではない)', async () => {
     const hub = await loadHub();
-    const r = await hub.fetchSnapshot('uber-eats');
+    const r = await hub.fetchSnapshot('netsea');
     expect(r.ok).toBe(false);
     expect(r.code).toBe('not_implemented');
   });

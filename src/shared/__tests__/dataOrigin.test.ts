@@ -38,8 +38,6 @@ const EXPECTED: ReadonlyArray<readonly [ServiceId, DataOrigin]> = [
   ['templates', 'local'],
   ['library', 'local'],
   ['settings', 'local'],
-  ['uber-eats', 'sample'],
-  ['demae-can', 'sample'],
   ['real-estate', 'local'],
   ['mutual-funds', 'local'],
   ['charts', 'local'],
@@ -106,7 +104,7 @@ describe('SERVICE_DATA_ORIGIN', () => {
 
   it('3 分類の件数を固定する — 片方向に倒れた表を検出する', () => {
     const count = (o: DataOrigin) => EXPECTED.filter(([, v]) => v === o).length;
-    expect(count('sample')).toBe(13);
+    expect(count('sample')).toBe(11);
     expect(count('local')).toBe(44);
     expect(count('remote')).toBe(24); // google-analytics (2026-11-22)
   });

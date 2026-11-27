@@ -21,12 +21,12 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 
 | 軸 | 値 | 出典 |
 |---|---:|---|
-| サービス数 | 81 | `src/shared/serviceId.ts:9-43` |
+| サービス数 | 79 | `src/shared/serviceId.ts:9-43` |
 | IPC ハンドラ数 | 15 | `src/main/main.ts:213-432` |
-| client モジュール (fetcher + actions) | 81 | `src/main/clients/index.ts:44-83` |
+| client モジュール (fetcher + actions) | 79 | `src/main/clients/index.ts:44-83` |
 | OAuth 対応サービス | 11 (drive / calendar / gmail / google-analytics / freee / microsoft-365 / slack / notion / canva / wordpress / atlassian) | `src/main/oauth.ts:103-255` |
 | 外部接続先ホスト | 38 (§3.3 の Host 欄に載る名前。うちローカル `127.0.0.1` 1 件。ユーザー指定の AI 互換 API は数に入らない) | §3.3 |
-| ユニットテスト | **22071** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
+| ユニットテスト | **22042** | `npm test` (静的 `it(` 数; `it.each` / テンプレート for ループ展開で実行時はさらに増える) |
 | 追跡行数（リポジトリ全体・下限） | **≥ 600000** | 自己検証（`git ls-files` 全ファイルの改行数合算。現在 ~650k。インライン化したブラウザ版 HTML（約 39 万行のビルド生成物）を追跡から外したため、100 万行台から実ソース基準の 65 万行台へ再設定した。なお生成物へのパス参照をこの表に書くと、ローカルでは実ファイルがあって通り CI の fresh checkout で落ちるため書かない） |
 | Mutation score (total) | **100.00%** | `docs/QUALITY.md` (**2026-09-01 の報告** —— 今のコードを測った物ではない。`docs/REMAINING_WORK.md` の「パス 494」) |
 | Mutation score (covered) | **100.00%** | `docs/QUALITY.md` (同上) |
@@ -34,7 +34,7 @@ standalone HTML (403 KB) はブラウザ単体で動作する。
 | `npm audit` (prod / dev) | 0 vulnerabilities (2026-09-10 実測。CI が `--omit=dev --audit-level=high` で毎回確認 —— dev 依存と moderate 以下を落とさないのは意図的で、理由は `ci.yml` の注記。**その外側は `lint:deps` のセキュリティの床 6 件**が受け持つ: 自分で押さえた版は道を問わず台帳に載り、緩めば落ちる) | `package-lock.json` |
 | 陰性対照つきゲート | 36 / 39 (`lint:malware` を足した · パス 510。残る 3 件は外部ツール 2 (`typecheck` / eslint) と `chain:verify` (対照は `integrityChainWitness.test.ts` が持つ)。★ 2026-09-25 (パス 467) に `lint:knowledge-refs` と `verify:orchestration` へ `--self-test` を付けた —— 2 本は「2026-08-25 に実物へ違反を植えて鳴ることを確認済み」という理由で免除されていたが、それは**母集団が非空のとき**の対照で、**空にする側**は 1 度も試されておらず、実測すると壊れた台帳も `rounds: []` も `org.secretaries` 削除も**すべて ✅ exit 0** だった。`lint:doi-prefix` は同じ理由で今も免除だが、空にする側は測っていない) | `package.json` |
 | 不変条件 (CI で fail-on-violation) | 16 | §8.1 |
-| `file:line` 参照数 | 713 | 自己検証 |
+| `file:line` 参照数 | 709 | 自己検証 |
 | 図の中の `file:line` 参照数 | 29 | 自己検証 (mermaid のクラス図・パス 180) |
 
 ### 統合フロー図
@@ -1781,8 +1781,6 @@ union を参照する。
 | `templates` | Canva 連動テンプレートギャラリー (8 種) | none | ✅ | | `export-template` (プレゼン / 名刺 / SNS / チラシ / 証明書 / 請求書 / 履歴書、SVG 出力) |
 | `library` | アプリ内ライブラリ (IndexedDB) | none | ✅ | | (read-only — ブラウザ版で全エクスポート結果を保管) |
 | `settings` | 設定 (API キー管理 + Vault + **数値パラメータ**) | none | ✅ | | (read-only — Vault で全 token を AES-GCM-256 で暗号化。数値パラメータは `components/ParametersPanel.tsx` — 台帳 `src/shared/parameters.ts` の 146 件〔法定値 / 参考値 / しきい値 / 前提〕を機能ごとに並べ、上書きは `parameter-overrides` collection の **1 レコード**を書き換える〔`data/parameterOverrides.ts`〕。下の「数値パラメータ」節) |
-| `uber-eats` | Uber Eats (フードデリバリー、snapshot のみ) | Bearer (Eats Merchants API、未配線) | ✅ | | (read-only — 店舗別売上 / 注文数 / 評価 / 人気メニュー) |
-| `demae-can` | 出前館 (フードデリバリー、snapshot のみ) | Bearer (公開 API 無し、scrape 想定) | ✅ | | (read-only — 進行中注文 / 月次サマリ / 人気エリア) |
 | `real-estate` | 不動産投資 (snapshot + 物件の任意追加 = record store) | Bearer (将来 REIT/楽待) | ✅ | | (ローカル編集 — 保有物件の追加/削除 / 月次キャッシュフロー / 利回り / 入居率。数値入力は `data/inputGuards.ts` + `components/GuardedNumber.tsx` で検査し、読み取れない入力が黙って 0 になるのを防ぐ) |
 | `mutual-funds` | 投資信託 (snapshot + 銘柄の任意追加 = record store) | Bearer (将来 SBI/楽天証券) | ✅ | | (ローカル編集 — 保有銘柄の追加/削除 / 評価額 / 基準価額 / 分配金。試算の数値入力は `data/inputGuards.ts` 経由に統一 — 従来 `Number('30,000')` が NaN→0 に落ちていた) |
 | `quality` | 品質ダッシュボード (snapshot のみ) | none | ✅ | | (read-only — テスト件数 / Mutation スコア / 検証パイプライン / レビュー履歴) |
@@ -1884,10 +1882,6 @@ union を参照する。
 | real-estate | `advise` | 画面の集計 (RealEstateAdviceInput: 物件の行・月次 CF・平均利回り・入居率・しきい値) | shared/serviceAdvisor.ts の規則で提案を組む (パス 119)。読めない payload は断る。ブラウザ版の枝も同じ関数・同じ文面 | `real-estate.ts:75-78` |
 | mutual-funds | `record-entry` | `{ note, amount }` | 同上 | `mutual-funds.ts:75-78` |
 | mutual-funds | `advise` | 画面の集計 (MutualFundsAdviceInput: 銘柄の行・評価額・評価損益率・しきい値) | 同上 (規則) | `mutual-funds.ts:75-78` |
-| uber-eats | `record-entry` | `{ note, amount }` | 同上 | `uber-eats.ts:94-97` |
-| uber-eats | `advise` | 画面の集計 (UberEatsAdviceInput: 店舗・人気メニュー・平均評価) | 同上 (規則。画面が無いので今は呼ぶ物が無い) | `uber-eats.ts:94-97` |
-| demae-can | `record-entry` | `{ note, amount }` | 同上 | `demae-can.ts:89-92` |
-| demae-can | `advise` | 画面の集計 (DemaeCanAdviceInput: 月次件数・キャンセル率・地域別・配達中) | 同上 | `demae-can.ts:89-92` |
 | shopify | `sync-to-slack` | order + token + channel | 送り先は定数 (slack.com)。token は Bearer として載る。必須欄は CONNECTORS の requiredFields が持つ | `shopify.ts:414-420` |
 | shopify | `sync-to-discord` | order + webhookUrl | **送り先が payload 由来**。https かつ hostname が discord.com のものだけ通す | `shopify.ts:414-420` |
 | shopify | `sync-to-line` | order + token + to | 送り先は定数 (api.line.me)。to は宛先 ID | `shopify.ts:414-420` |
@@ -2270,7 +2264,7 @@ $ npm run mutate:next -- --top=5
 per-file の kill / survived / no-cov / ignored / invalid は `docs/QUALITY.md` が
 Stryker の JSON レポート (reports/mutation 配下の生成物) から機械生成して持つ
 (`npm run quality:report`)。
-Stryker の対象 (`stryker.config.json` の `mutate`) は **383 ファイル**。
+Stryker の対象 (`stryker.config.json` の `mutate`) は **381 ファイル**。
 2026-10-26 に `renderer/data` の `aegisLang` と `aegisLangSafety` の 2 モジュール (外へ何も出さない小さな言語の実行系と、実行前の安全の走査・規則ベースの修復の提案 —— Python の原型 AegisLang の考え方だけを移した純ロジック) を足した —— 1 度目の測定は **88.65% (生存 154)** で、生存の大半は利用者に見せる日本語の断りの文を値で主張していない物 (文面を空にしても検査が落ちない) と、走査の上限の添字の等価変異だった。文面を全件そのまま留める検査と、境界・状態の検査を足し、等価な添字は走査の形ごと消して (sticky 正規表現・`indexOf`・`split` と `map`)、**100.00% (Killed 1,286 / 生存 0 / 未到達 0)**。残した 2 つの `Stryker disable` は理由つき (収束しない入力への保険の周回上限・空の編集を適用しても変わらない最適化)。
 2026-10-07 (パス 506) に `src/renderer/components/useDialogFocus.ts` (dialog の焦点の道 —— 開いたら印の操作子へ・Esc で閉じる / 取り消す・
 消えたら押した物へ戻す) を足した —— push した直後の CI で `mutateScopeCensus` が「同名の検査が在り 100 行以上なのに `mutate` の外」と

@@ -78,8 +78,6 @@ const WEB_TWINS: Readonly<Record<string, Twin>> = {
   'canva/create-folder': { file: 'renderer/data/saasWriteWeb.ts', fn: 'createCanvaFolder' },
   'cloudflare/create-dns-record': { file: 'renderer/data/saasWriteWeb.ts', fn: 'createCloudflareDnsRecord' },
   'cloudflare/purge-cache': { file: 'renderer/data/saasWriteWeb.ts', fn: 'purgeCloudflareCache' },
-  'demae-can/advise': { file: WEB_SHIM, inline: true },
-  'demae-can/record-entry': { file: WEB_SHIM, inline: true },
   'drive/create-folder': { file: 'renderer/data/saasWriteWeb.ts', fn: 'createDriveFolder' },
   'drive/export-sheet': { file: 'renderer/data/saasWriteWeb.ts', fn: 'exportGoogleSheet' },
   'emotions/analyze-text': { file: WEB_SHIM, fn: 'callEmotionsAnalyze' },
@@ -104,8 +102,6 @@ const WEB_TWINS: Readonly<Record<string, Twin>> = {
   'talent/judge-leader': { file: WEB_SHIM, inline: true },
   'talent/save-state': { file: WEB_SHIM, inline: true },
   'teamradar/save-state': { file: WEB_SHIM, inline: true },
-  'uber-eats/advise': { file: WEB_SHIM, inline: true },
-  'uber-eats/record-entry': { file: WEB_SHIM, inline: true },
   'wordpress/create-post-draft': { file: 'renderer/data/saasWriteWeb.ts', fn: 'createWordPressPostDraft' },
 };
 
@@ -238,9 +234,9 @@ describe('画面の invoke<T> は台帳の型を読む (母集団は走査で数
   it('★ 走査が実物に当たる (空の母集団で通っていない)', () => {
     // 読めない形を先に見る —— 読めなければ後の数はどれも「無い」ではなく「読めなかった」。
     expect(REG.unreadable, 'ACTIONS が読めない形の client (走査が黙って飛ばす)').toEqual([]);
-    expect(KEYS.length).toBeGreaterThanOrEqual(54);
+    expect(KEYS.length).toBeGreaterThanOrEqual(52);
     expect(KEYS).toContain('slack/send-message');
-    expect(REGISTERED.size).toBeGreaterThanOrEqual(54);
+    expect(REGISTERED.size).toBeGreaterThanOrEqual(52);
     expect(REGISTERED.get('slack/send-message')).toEqual({ file: 'slack.ts', handler: 'sendMessage' });
     // 計算された ACTIONS (shopify の CONNECTORS) も読めている (パス 117 まで黙って飛ばしていた)。
     expect(REGISTERED.get('shopify/sync-to-slack')).toEqual({ file: 'shopify.ts', handler: 'syncToSlack' });
@@ -390,13 +386,11 @@ describe('画面の invoke<T> は台帳の型を読む (母集団は走査で数
     ].join('\n');
     expect([...inlineDeclared(shim)].sort()).toEqual(
       [
-        'demae-can/record-entry',
         'mutual-funds/record-entry',
         'real-estate/record-entry',
         'stocks/register-ticker',
         'stocks/unregister-ticker',
         'talent/save-state',
-        'uber-eats/record-entry',
       ].sort(),
     );
     // 計算された ACTIONS: 表の行から (action, handler) を読む。字面の ACTIONS も読む。読めない形は null。

@@ -301,7 +301,7 @@ export const PROFESSIONAL_MAP: Record<ProfessionalId, ProfessionalProfile> = {
       },
       {
         title: '飲食・デリバリーの営業許可',
-        desc: 'フード事業 (Uber Eats / 出前館) に必要な飲食店営業許可 (食品衛生法55条) の申請書類。深夜 0〜6 時の酒類提供は公安委員会への届出 (風営法33条) も。',
+        desc: 'フード事業 (飲食店) に必要な飲食店営業許可 (食品衛生法55条) の申請書類。深夜 0〜6 時の酒類提供は公安委員会への届出 (風営法33条) も。',
         scope: 'exclusive',
         link: { serviceId: 'business', label: '事業ダッシュボード (フード)' },
       },

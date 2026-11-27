@@ -43,12 +43,12 @@ describe('連携をまとめて取り直す', () => {
     expect(SERVICE_IDS.filter((id) => originOf(id) === 'remote')).toEqual(remote);
     expect(remote).toContain('freee');
     expect(remote).not.toContain('sales'); // 端末の記録
-    expect(remote).not.toContain('uber-eats'); // 見本
+    expect(remote).not.toContain('netsea'); // 見本
   });
 
   it('★ 鍵を登録済みの連携先だけを取り、鍵がまだの物は名前だけ返す', async () => {
     const log: ServiceId[] = [];
-    const r = await refreshAllConnected(hub(['freee', 'github', 'sales', 'uber-eats'], {}, log));
+    const r = await refreshAllConnected(hub(['freee', 'github', 'sales', 'netsea'], {}, log));
     expect(r.rows.map((x) => x.id)).toEqual(['github', 'freee'].sort((a, b) => SERVICE_IDS.indexOf(a as ServiceId) - SERVICE_IDS.indexOf(b as ServiceId)));
     expect([...log].sort()).toEqual(['freee', 'github']);
     expect(r.notConfigured).not.toContain('freee');

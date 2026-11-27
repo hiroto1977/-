@@ -47,7 +47,6 @@
 | src/main/clients/canva.ts | 100.00 | 100.00 | 52 | 0 | 0 | 1 | 0 |
 | src/main/clients/cloudflare.ts | 100.00 | 100.00 | 45 | 0 | 0 | 1 | 0 |
 | src/main/clients/cursor.ts | 100.00 | 100.00 | 4 | 0 | 0 | 0 | 0 |
-| src/main/clients/demae-can.ts | 100.00 | 100.00 | 10 | 0 | 0 | 35 | 0 |
 | src/main/clients/devEnv.ts | 100.00 | 100.00 | 218 | 0 | 0 | 19 | 0 |
 | src/main/clients/drive.ts | 100.00 | 100.00 | 19 | 0 | 0 | 1 | 0 |
 | src/main/clients/emotions.ts | 100.00 | 100.00 | 231 | 0 | 0 | 1 | 0 |
@@ -78,7 +77,6 @@
 | src/main/clients/teamradar.ts | 100.00 | 100.00 | 89 | 0 | 0 | 2 | 0 |
 | src/main/clients/templates.ts | 100.00 | 100.00 | 183 | 0 | 0 | 0 | 0 |
 | src/main/clients/types.ts | 100.00 | 100.00 | 64 | 0 | 0 | 0 | 0 |
-| src/main/clients/uber-eats.ts | 100.00 | 100.00 | 10 | 0 | 0 | 34 | 0 |
 | src/main/clients/wordpress.ts | 100.00 | 100.00 | 47 | 0 | 0 | 1 | 0 |
 | src/main/clients/youtube.ts | 100.00 | 100.00 | 65 | 0 | 0 | 3 | 0 |
 | src/main/eraseAll.ts | 100.00 | 100.00 | 64 | 0 | 0 | 0 | 0 |

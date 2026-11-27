@@ -21,15 +21,10 @@ import { externalTextOnOneLine } from '../data/assistantMarkdown';
 /**
  * 業務操作パネル — record-entry / advise を実行する UI。
  *
- * **載っているのは 2 画面** (`RealEstatePage` / `MutualFundsPage`) —— この注記は
- * 2026-09-12 まで「uber-eats / demae-can / real-estate / mutual-funds の 4 つ」と
- * 書いていたが、実測では前の 2 つは**どの画面にもこのパネルを載せていない**
- * (パス 167 で訂正)。型 (`RecordEntryServiceId`) は 4 つを通す —— 台帳
- * `recordEntryLimits.ts` が持つ 4 サービスは `record-entry` / `advise` を**持つ**
- * 側の一覧で、「画面が在る」一覧ではない。この食い違いは
- * `shared/voiceWriteRequirements.ts` の `screenInput` が既に**測って**持っており
- * (uber-eats / demae-can は `false`)、音声から呼べない理由として使われている。
- * 注記だけが古かった。
+ * **載っているのは 2 画面** (`RealEstatePage` / `MutualFundsPage`)。型
+ * (`RecordEntryServiceId`) もこの 2 つだけを通す —— 台帳 `recordEntryLimits.ts` が持つ
+ * 2 サービスは `record-entry` / `advise` を**持つ**側の一覧である。
+ * (2026-11-27: 画面を持たなかった `uber-eats` / `demae-can` は利用者の依頼で取り除いた。)
  *
  * ## メモの天井は、画面が述べる (パス 167)
  *
@@ -72,9 +67,9 @@ import { externalTextOnOneLine } from '../data/assistantMarkdown';
  *   `action_not_found` だった。提案の `basis` (何件・どの数字から組んだか) も刷る。
  */
 export interface ServiceActionPanelProps<S extends RecordEntryServiceId> {
-  /** record-entry / advise を持つ 4 サービスに限る (台帳の鍵 `${RecordEntryServiceId}/record-entry` が全部在る)。 */
+  /** record-entry / advise を持つ 2 サービスに限る (台帳の鍵 `${RecordEntryServiceId}/record-entry` が全部在る)。 */
   readonly serviceId: S;
-  /** 例: "Uber Eats"。トースト / 表示用 */
+  /** 例: "不動産投資"。トースト / 表示用 */
   readonly serviceLabel: string;
   /** 提案の元になる数字 —— 画面が刷っている集計をそのまま渡す (提案が言う数字と画面の数字を一致させるため)。 */
   readonly adviseInput: AdviceInputFor<S>;

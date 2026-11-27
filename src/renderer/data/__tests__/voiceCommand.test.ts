@@ -27,8 +27,7 @@ const AVAILABLE: AvailableCapabilities = {
     github: ['create-issue'],
     slack: ['send-message'],
     calendar: ['create-event'],
-    'uber-eats': ['record-entry', 'advise'],
-    'demae-can': ['record-entry', 'advise'],
+    'real-estate': ['record-entry', 'advise'],
   },
 };
 
@@ -599,7 +598,7 @@ describe('requiresConfirmation', () => {
    * 「無確認で実行」に置く理由が無く、しかも `advise` は**有料 LLM API** を叩く。
    */
   it('見覚えのない action は既定で確認を要する (fail closed)', () => {
-    expect(requiresConfirmation({ kind: 'action', serviceId: 'uber-eats', action: 'advise', confidence: 0.9 })).toBe(true);
+    expect(requiresConfirmation({ kind: 'action', serviceId: 'real-estate', action: 'advise', confidence: 0.9 })).toBe(true);
   });
 
   /*
@@ -637,7 +636,7 @@ describe('requiresConfirmation', () => {
       { kind: 'action', serviceId: 'slack', action: '', confidence: 0.5 },
       { kind: 'navigate', serviceId: 'sales', action: 'delete', confidence: 0.7 },
       { kind: 'action', serviceId: 'github', action: 'create-issue', confidence: 0.9 },
-      { kind: 'action', serviceId: 'uber-eats', action: 'advise', confidence: 0.9 },
+      { kind: 'action', serviceId: 'real-estate', action: 'advise', confidence: 0.9 },
     ];
     for (const s of samples) {
       if (!requiresConfirmation(s)) expect(executable(s)).toBe(false);
@@ -648,7 +647,7 @@ describe('requiresConfirmation', () => {
   });
 
   it('record-entry requires confirmation (writes data)', () => {
-    expect(requiresConfirmation({ kind: 'action', serviceId: 'uber-eats', action: 'record-entry', confidence: 0.9 })).toBe(true);
+    expect(requiresConfirmation({ kind: 'action', serviceId: 'real-estate', action: 'record-entry', confidence: 0.9 })).toBe(true);
   });
 
   /*

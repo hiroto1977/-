@@ -108,14 +108,10 @@ const ROUTES: readonly (readonly [string, string, Route])[] = [
   ['cloudflare', 'purge-cache', { ok: false, code: 'not_configured', message: TOKEN_MISSING('cloudflare') }],
   ['security', 'scan-url', { ok: false, code: 'not_configured', message: 'VirusTotal API キーが未設定です (設定に {"vt":"...","hibp":"..."} の JSON で保存)' }],
   ['security', 'check-email-breach', { ok: false, code: 'not_configured', message: 'HIBP API キーが未設定です (設定に {"hibp":"...","vt":"..."} の JSON で保存)' }],
-  ['uber-eats', 'record-entry', { ok: false, code: 'action_failed', message: NOTE('uber-eats') }],
-  ['demae-can', 'record-entry', { ok: false, code: 'action_failed', message: NOTE('demae-can') }],
   ['real-estate', 'record-entry', { ok: false, code: 'action_failed', message: NOTE('real-estate') }],
   ['mutual-funds', 'record-entry', { ok: false, code: 'action_failed', message: NOTE('mutual-funds') }],
   // advise (パス 119): 画面の集計から規則で組む。空の payload は shared と同じ文面で断る
   // (Electron 版の action も同じ関数を通す —— 正しい payload の答えは serviceAdvisor.test.ts が持つ)。
-  ['uber-eats', 'advise', { ok: false, code: 'action_failed', message: 'uber-eats.advise: stores は配列 (1〜500 件) で指定してください' }],
-  ['demae-can', 'advise', { ok: false, code: 'action_failed', message: 'demae-can.advise: monthOrders は有限の数値で指定してください' }],
   ['real-estate', 'advise', { ok: false, code: 'action_failed', message: 'real-estate.advise: properties は配列 (1〜500 件) で指定してください' }],
   ['mutual-funds', 'advise', { ok: false, code: 'action_failed', message: 'mutual-funds.advise: holdings は配列 (1〜500 件) で指定してください' }],
   ['assistant', 'chat', { ok: false, code: 'action_failed', message: '最後の発話は user である必要があります' }],

@@ -52,9 +52,9 @@
  *                              → persist mood log in localStorage
  *   - invoke('emotions', 'analyze-text', …)
  *                              → Anthropic directly (Vault 'emotions' key)
- *   - invoke('<uber-eats|demae-can|real-estate|mutual-funds>', 'record-entry')
+ *   - invoke('<real-estate|mutual-funds>', 'record-entry')
  *                              → stateless validation (matches Electron)
- *   - invoke('<uber-eats|demae-can|real-estate|mutual-funds>', 'advise', <画面の集計>)
+ *   - invoke('<real-estate|mutual-funds>', 'advise', <画面の集計>)
  *                              → shared/serviceAdvisor.ts の規則で提案を組む
  *                                (Electron 版と同じ関数・同じ文面 — パス 119)
  *   - invoke('github', 'create-issue', …)

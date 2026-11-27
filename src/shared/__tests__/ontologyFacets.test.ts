@@ -84,9 +84,12 @@ describe('語彙は renderer の型と台帳に一致する', () => {
   it('「消費されるだけ」のサービスは sidebarCoverage の台帳と同じ集合 (双方向)', () => {
     const text = readOriginalSource(join(REPO_ROOT, 'src/renderer/__tests__/sidebarCoverage.test.ts'));
     const start = text.indexOf('const SIDEBAR_LESS');
-    const body = text.slice(start, text.indexOf('\n};', start));
+    // 空の台帳は 1 行 (`= {};`) で閉じる。その場合は次の `};` まで読まない (別の物の行を拾わない)。
+    const emptyDecl = /^const SIDEBAR_LESS[^\n]*= \{\};/m.test(text.slice(start));
+    const body = emptyDecl ? '' : text.slice(start, text.indexOf('\n};', start));
+    // 台帳は 2026-11-27 から空 (全サービスがサイドバーに出る)。宣言そのものが読めていることを見る。
+    expect(start, 'SIDEBAR_LESS の宣言が読めない').toBeGreaterThanOrEqual(0);
     const ledger = [...body.matchAll(/^\s*'([a-z0-9-]+)':\s*'/gm)].map((m) => m[1]!).sort();
-    expect(ledger.length).toBeGreaterThan(0);
     const consumed = gatherServiceFacets()
       .filter((f) => f.placement === 'consumed')
       .map((f) => f.id)
