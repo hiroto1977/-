@@ -8,6 +8,10 @@
  *
  * 直し (`data/sampleLinks.ts` の `liveLink`): 一覧の「開く」は、相手から実際に取れた内容のときだけ出す。
  * ここでは 7 画面を実際に描き、見本のときは「開く」が 1 つも無く、取れたときは在ることを見る (両方向)。
+ *
+ * **母集団は手で並べない** (2026-11-27 の 2 回目): 見本のどこかに `http(s)://` の文字列を持つサービスを
+ * `SNAPSHOT` から走査で導き、下の ROWS と両方向に突き合わせる。8 つ目の画面の見本が URL を持った日は
+ * 「ROWS に足して描いて確かめよ」と鳴る (足さずに通る道を作らない)。
  */
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
@@ -73,6 +77,25 @@ async function mount(row: Row, live: boolean): Promise<void> {
   });
 }
 
+/** 見本の値を歩いて、`http(s)://` で始まる文字列を集める。 */
+function urlsIn(v: unknown, acc: string[] = []): string[] {
+  if (typeof v === 'string') {
+    if (/^https?:\/\//i.test(v)) acc.push(v);
+  } else if (Array.isArray(v)) {
+    for (const x of v) urlsIn(x, acc);
+  } else if (v !== null && typeof v === 'object') {
+    for (const x of Object.values(v)) urlsIn(x, acc);
+  }
+  return acc;
+}
+
+/** 見本が URL を持つサービス (走査で導く)。 */
+const servicesWithSampleUrls = (): string[] =>
+  Object.entries(SNAPSHOT)
+    .filter(([, data]) => urlsIn(data).length > 0)
+    .map(([id]) => id)
+    .sort();
+
 const openButtons = (): string[] =>
   [...host.querySelectorAll('button')]
     .map((b) => (b.textContent ?? '').trim())
@@ -83,12 +106,32 @@ describe('見本の一覧から実在しないページを開かせない', () =
     await mount(row, false);
     await waitForText(() => host.textContent ?? '', row.marker);
     expect(openButtons()).toEqual([]);
+    // リンク (href) としても見本の URL を置かない。
+    const sample = new Set(urlsIn(row.data));
+    const hrefs = [...host.querySelectorAll('[href]')].map((el) => el.getAttribute('href') ?? '');
+    expect(hrefs.filter((h) => sample.has(h))).toEqual([]);
   });
 
   it.each(ROWS)('対照 $id: 相手から取れたときは「開く」が在る', async (row) => {
     await mount(row, true);
     await waitForText(() => host.textContent ?? '', '開く');
     expect(openButtons().length).toBeGreaterThan(0);
+  });
+
+  it('★ 母集団: 見本が URL を持つサービスは ROWS と一致する (両方向)', () => {
+    const derived = servicesWithSampleUrls();
+    const listed = ROWS.map((r) => r.id).sort();
+    expect(derived.length).toBeGreaterThanOrEqual(7); // 走査が空にならない床
+    expect(listed.filter((id) => !derived.includes(id))).toEqual([]); // ROWS に在るのに見本は URL を持たない
+    expect(derived.filter((id) => !listed.includes(id))).toEqual([]); // 見本が URL を持つのに描いて確かめていない
+  });
+
+  it('標本: URL の走査は入れ子と配列の中も拾い、URL でない文字列は拾わない', () => {
+    expect(urlsIn({ a: [{ b: 'https://x.example/1' }], c: 'http://y.example', d: 'not a url', e: 3 })).toEqual([
+      'https://x.example/1',
+      'http://y.example',
+    ]);
+    expect(urlsIn({ note: 'see https://x.example inside prose' })).toEqual([]);
   });
 
   it('liveLink は実データのときだけ URL を返す', () => {
