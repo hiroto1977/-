@@ -20,6 +20,24 @@ const ROOT = path.join(__dirname, '..');
 const SERVICES_TS = path.join(ROOT, 'src/renderer/services.ts');
 const OUT = path.join(ROOT, 'dist/landing.html');
 
+/**
+ * **原文の道** (2026-11-27)。変異検査 (Stryker) は検査を `.stryker-tmp/sandbox-<名前>/` の写しの中で走らせ、
+ * 測るファイル (`businessArea.ts` ほか) を計器入りに書き換える。この script は `.ts` を正規表現で読むので、
+ * 写しを読むと計器の綴りに当たって走査が壊れ、関係の無い検査 (ランディングの見出し) が dry run で落ちていた。
+ * 読むのは写しの外の原文 —— 写しの中で走っていなければ道は変わらない。書き出し (OUT) は写しのまま。
+ * 道の書き換えは `src/shared/__tests__/originalSource.ts` の `originalSourcePath` と同じ規則
+ * (`.cjs` は `.ts` を require できないので写し。一致は `landingServiceParse.test.ts` が標本で見る)。
+ */
+function originalSourcePath(absPath) {
+  return absPath.replace(/[\\/]\.stryker-tmp[\\/]sandbox-[^\\/]+(?=[\\/])/, '');
+}
+
+/** 原文を読む (写しの外に原文が無ければ写しを読む)。 */
+function readSourceText(absPath) {
+  const original = originalSourcePath(absPath);
+  return fs.readFileSync(fs.existsSync(original) ? original : absPath, 'utf8');
+}
+
 const SITE_URL = 'https://hiroto1977.github.io/-/';
 const REPO_URL = 'https://github.com/hiroto1977/-';
 const OG_IMAGE = SITE_URL + 'og.png';
@@ -61,7 +79,7 @@ function parseBusinessAreasFromText(text) {
 }
 
 function parseBusinessAreas() {
-  return parseBusinessAreasFromText(fs.readFileSync(BUSINESS_AREA_TS, 'utf8'));
+  return parseBusinessAreasFromText(readSourceText(BUSINESS_AREA_TS));
 }
 
 /**
@@ -94,7 +112,7 @@ function nameWithEnglish(label, english) {
 }
 
 function parseServices() {
-  return parseServicesFromText(fs.readFileSync(SERVICES_TS, 'utf8'));
+  return parseServicesFromText(readSourceText(SERVICES_TS));
 }
 
 /** 文字列から抽出する本体 (検査が対照を当てられるよう、ファイル読み込みと分けてある)。 */
@@ -248,7 +266,7 @@ function lineNumberAt(source, index) {
 
 /** SERVICES 配列の category: 出現数 (parse 漏れ検知の基準)。 */
 function countEntries() {
-  const text = fs.readFileSync(SERVICES_TS, 'utf8');
+  const text = readSourceText(SERVICES_TS);
   // 区分の名前は数えない (並びは businessArea.ts が持つ) —— 行頭の `category: '…'` の項を数える。
   return (text.match(/^\s*category:\s*'[a-z]+'/gm) || []).length;
 }
@@ -569,6 +587,6 @@ function main() {
 // `buildHtml` / `selfCheck` / `buildChoiceNote` も出す (パス 480) —— 公開した版が入口から
 // 辿れるかは**組んだ HTML を見ないと言えない**。ソースを grep すると「href の綴りが在る」
 // しか分からず、注記の中の言及でも満たされる (法則 mention-vs-declaration)。
-module.exports = { parseServices, parseServicesFromText, parseBusinessAreasFromText, countEntries, buildHtml, selfCheck, buildChoiceNote };
+module.exports = { originalSourcePath, parseServices, parseServicesFromText, parseBusinessAreasFromText, countEntries, buildHtml, selfCheck, buildChoiceNote };
 
 if (require.main === module) main();
