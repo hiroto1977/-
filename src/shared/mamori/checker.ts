@@ -243,6 +243,22 @@ const CONSTRUCTIBLE: ReadonlySet<string | null> = new Set(['RegExp', 'Error', 'T
  */
 const NAMESPACE_BUILTINS: ReadonlySet<string | null> = new Set(['Math', 'JSON']);
 const NEW_ONLY_BUILTINS: ReadonlySet<string | null> = new Set(['Promise', 'Map', 'Set', 'URL']);
+
+/**
+ * 組み込みの**値の欄** (関数でないメンバ) —— 呼ぶ形 (`Math.PI()` / `Number.EPSILON()` / `Array.length()`) は実行時に必ず投げる (0.54 · MG-094)。
+ *
+ * 0.53 までの検査器は、組み込みのメンバを直に呼ぶ形をどの欄でも受け取り、生成物を `tsc` が断っていた (2349 —— 守りが `tsc` の 1 層)。
+ * 載せるのは、メンバを絞っていない組み込み (`BUILTIN_MEMBERS` に無い物) の、`.` で書ける値の欄だけ:
+ * `Math` / `Number` の定数と、関数である組み込みの `length` / `name`。`JSON` に値の欄は無い。読む形 (`Math.PI` / `Math.PI.toFixed(2)`) は今までどおり。
+ * 表と実物 (検査を回す実行環境の組み込み) の一致は `mamoriV54.test.ts` が両方向に数える。
+ * 鍵は `identName` の結果 (名前でなければ null)、欄は呼ぶ側のメンバの名前 (メンバでなければ null) で引く —— 表は null を持たないので当たらない。
+ */
+const FUNCTION_VALUE_FIELDS: readonly string[] = ['length', 'name'];
+export const BUILTIN_VALUE_FIELDS: ReadonlyMap<string | null, ReadonlySet<string | null>> = new Map<string | null, ReadonlySet<string | null>>([
+  ['Math', new Set(['E', 'LN10', 'LN2', 'LOG10E', 'LOG2E', 'PI', 'SQRT1_2', 'SQRT2'])],
+  ['Number', new Set(['EPSILON', 'MAX_SAFE_INTEGER', 'MAX_VALUE', 'MIN_SAFE_INTEGER', 'MIN_VALUE', 'NaN', 'NEGATIVE_INFINITY', 'POSITIVE_INFINITY', ...FUNCTION_VALUE_FIELDS])],
+  ...['Set', 'Map', 'Promise', 'String', 'Boolean', 'Array'].map((n): [string, ReadonlySet<string | null>] => [n, new Set(FUNCTION_VALUE_FIELDS)]),
+]);
 /** 宣言しなくても使える組み込みの名前 (`identName` の結果をそのまま引ける型で持つ —— 中身は `PURE_GLOBALS`)。 */
 const ANY_BUILTIN: ReadonlySet<string | null> = PURE_GLOBALS;
 
@@ -1885,6 +1901,12 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
       // 名前を直に呼ぶ形: 宣言していない名前の検め (M6) だけを通す (印を受ける関数を呼ぶのは正しい使い方)。
       if (b === undefined && !isConstructibleBuiltin(callee, scopes)) checkExpr(callee, scopes, ctx);
       return;
+    }
+    // 組み込みの値の欄を呼ぶ形 (`Math.PI()` / `Array.length()` · 0.54 · MG-094) —— 実行時に必ず投げる。
+    // この module の名前で隠した同じ綴り (b が在る) は組み込みではないので、数えない。断った後も下の検め (組み込みのメンバは何も足さない) をそのまま通す。
+    const calledField = viaMember === null ? null : viaMember.prop;
+    if (b === undefined && BUILTIN_VALUE_FIELDS.get(name)?.has(calledField) === true) {
+      report('M6', callee.pos, `組み込みの ${name}.${calledField} は呼べません —— 値の欄で、関数ではありません (呼ぶと実行時に投げ、TypeScript も断ります)。読む形 (\`${name}.${calledField}\`) は書けます`);
     }
     calledMembers.add(callee);
     checkExpr(callee, scopes, ctx);
