@@ -96,15 +96,15 @@ const STRICTER: Readonly<Record<string, Refused>> = {
 
 /** 別の Mamori の module から `use` で引いた名前を構築する形 (クラスは引けないので、どれも構築できない)。 */
 const LIB = 'export fn helper() -> number {\n  return 1;\n}\nexport const K: number = 1;\nexport type Shape = { a: number };\nexport const F = () => 1;\n';
-const useFrom = (names: string, body: string): readonly File[] => [
+const importing = (names: string, body: string): readonly File[] => [
   { path: 'src/x/lib.mamori', source: LIB },
   { path: 'src/x/m0.mamori', source: `use { ${names} } from "./lib";\nexport fn t() -> number {\n  ${body}\n  return 0;\n}\n` },
 ];
 const FROM_OTHER_MODULE: Readonly<Record<string, { readonly files: readonly File[]; readonly diagnostics: readonly string[] }>> = {
-  '引いた関数': { files: useFrom('helper', 'const v = new helper();'), diagnostics: [at(3, 17, FROM_MAMORI('helper'))] },
-  '引いた直下の const (数)': { files: useFrom('K', 'const v = new K();'), diagnostics: [at(3, 17, FROM_MAMORI('K'))] },
-  '引いた直下の const (arrow)': { files: useFrom('F', 'const v = new F();'), diagnostics: [at(3, 17, FROM_MAMORI('F'))] },
-  '型だけで引いた型': { files: useFrom('type Shape', 'const v = new Shape();'), diagnostics: [at(3, 17, FROM_MAMORI('Shape'))] },
+  '引いた関数': { files: importing('helper', 'const v = new helper();'), diagnostics: [at(3, 17, FROM_MAMORI('helper'))] },
+  '引いた直下の const (数)': { files: importing('K', 'const v = new K();'), diagnostics: [at(3, 17, FROM_MAMORI('K'))] },
+  '引いた直下の const (arrow)': { files: importing('F', 'const v = new F();'), diagnostics: [at(3, 17, FROM_MAMORI('F'))] },
+  '型だけで引いた型': { files: importing('type Shape', 'const v = new Shape();'), diagnostics: [at(3, 17, FROM_MAMORI('Shape'))] },
 };
 
 /** 今までどおり受け取る形。 */
@@ -152,7 +152,7 @@ describe('Mamori 0.50: 構築できない名前を new の相手にさせない 
     }
     expect(Object.keys(FROM_OTHER_MODULE).length).toBeGreaterThanOrEqual(4);
     // 対照: 同じ名前を呼ぶ形は通る (引いた関数は呼べる)
-    expect(compileFiles(useFrom('helper', 'const v = helper();')).diagnostics).toEqual([]);
+    expect(compileFiles(importing('helper', 'const v = helper();')).diagnostics).toEqual([]);
   });
 
   it('★ 局所の名前が外のクラスを運ぶ形は、TypeScript は通すが Mamori は断る (TypeScript より厳しい側 —— 宣言した名前を直に構築する)', () => {
