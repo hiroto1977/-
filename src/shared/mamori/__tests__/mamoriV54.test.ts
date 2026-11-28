@@ -101,9 +101,8 @@ const ACCEPTED: Readonly<Record<string, readonly [string, string?]>> = {
   '添字の先を呼ぶ': ['return xs[0]();', 'xs: (() => number)[]'],
 };
 
-/** 測って残した形 (Mamori は今も受け取り、TypeScript が断る): [本体, TypeScript の番号]。 */
+/** 測って残した形 (Mamori は今も受け取り、TypeScript が断る): [本体, TypeScript の番号]。連なりの 2 段目 (`Math.max.length()`) は 0.55 (MG-095) が断るようにした —— `mamoriV55.test.ts`。 */
 const LEFT_TO_TSC: Readonly<Record<string, readonly [string, number]>> = {
-  '関数の欄の値の欄を呼ぶ (連なりの 2 段目)': ['return Math.max.length();', 2349],
   '値の欄を局所の名前へ写してから呼ぶ': ['const f = Math.PI; return f();', 2349],
   '在りもしない欄を呼ぶ': ['return Math.nope();', 2339],
   '在りもしない欄を読む': ['return Number.nope;', 2339],
@@ -181,7 +180,7 @@ describe('Mamori 0.54: 組み込みの値の欄を呼ばせない (MG-094)', () 
     expect(regexp[0]).toContain('[M6] RegExp.length は使えません');
   });
 
-  it('測って残した形: 連なりの 2 段目・局所の名前へ写した欄・在りもしない欄は、今も TypeScript だけが断る', () => {
+  it('測って残した形: 局所の名前へ写した欄・在りもしない欄は、今も TypeScript だけが断る', () => {
     const codes = tsCodesByName(Object.fromEntries(Object.entries(LEFT_TO_TSC).map(([name, [body]]) => [name, tsFn(body)])));
     for (const [name, [body, code]] of Object.entries(LEFT_TO_TSC)) {
       expect(compile(fn(body)).ok, name).toBe(true);

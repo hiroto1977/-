@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.54"
+    "version": "0.55"
   },
   "constructs": {
     "class": {
@@ -5545,6 +5545,53 @@
       "report": {
         "pr": 1007,
         "summary": "直す側だけの周 (穴探しは止めたまま)。MG-092 / MG-093 が残した 1 つを閉じた: 隠れていない組み込みの値の欄 (`Math` / `Number` の定数・関数である組み込みの `length` / `name`) を直に呼ぶ形 (`Math.PI()` / `Array.length()`) を、検査器 (M6) で断る。0.53 までは受け取り、生成物を tsc が断っていた (2349 —— 守りが tsc の 1 層)。読む形と、関数の欄を呼ぶ形は今までどおり。表 (`BUILTIN_VALUE_FIELDS`) と実物の組み込みの一致は、検査が両方向に数える。対照の 1 回目は 16 方向のうち 1 つ (断った後の return) が鳴らず、答えが変わらない書き方だったので外した。変異検査の 1 回目は 94.74% (生存 1 —— 型の絞り込みのためだけの条件) で、条件を無くす形に直して 100% (15 killed・表の 5 行は static なので測らず、対照 9 方向と実物との照合で見た)。実物の 46 本は書き換えなしで通り、生成物は不変。残り: 連なりの 2 段目の値の欄を呼ぶ形 (`Math.max.length()`)・局所の名前へ写してから呼ぶ形・在りもしない欄 (`Math.nope()`) は検査器が通す (tsc が断る)。"
+      }
+    },
+    {
+      "id": "MG-095",
+      "date": "2026-11-28",
+      "kind": "probe",
+      "target": "language",
+      "pickedBy": "brief",
+      "briefPick": "probe:language",
+      "version": "0.55",
+      "features": [],
+      "added": [],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "隠れていない組み込みの関数の欄の `length` / `name` を呼ぶ (`Math.max.length()` / `Math.max.name()` / `JSON.stringify.length()` / `Array.from.name()` / `String.raw.name()` / `Promise.resolve.length()`)・`?.` で読んで呼ぶ (`Math.max?.length()`)・括弧で包む (`(Math.max).length()`)・文字列の鍵の添字で読む (`Math.max[\"length\"]()`)・文の位置・引数の中・arrow の中・呼んだ結果のメンバを読む。0.54 は受け取り、生成物を tsc が 2349 で断っていた。0.55 は最後の欄の場所で断る (M6)",
+          "result": "refused"
+        },
+        {
+          "tried": "3 段目・4 段目まで辿って呼ぶ (`Math.max.name.length()` / `Math.max.toString.name()` / `Number.MAX_VALUE.toFixed.length()` / `Set.name.length()`)・数の在りもしない欄 (`Math.PI.length()` —— tsc は 2339)・メンバを絞った組み込みの使える欄から辿る (`Object.keys.length()` / `URL.canParse.name()`)。0.54 は受け取っていた。0.55 は断る",
+          "result": "refused"
+        },
+        {
+          "tried": "宣言なしで使える組み込みの 1 つずつについて、Mamori がメンバとして読ませる欄を実物 (node) から全部引き、その先の `length()` / `name()` を 1 つずつ書く —— 1 つ残らず断る。実物の側は、読ませる欄から辿れる値の閉包 (原型へ届く 3 つの欄は辿らない) に、呼べる `length` / `name` を持つ値が 1 つも無いことを数える",
+          "result": "refused"
+        },
+        {
+          "tried": "断った形に別の誤りを重ねる (`Math.max.length(Nope)` / `Math.max.length(Math.min.name())` / `Error.name.length()`) —— 断りは呼ぶ形ごとに 1 度で、引数の誤りと、メンバを絞った組み込みの欄そのものの断りは 1 度ずつ並ぶ",
+          "result": "refused"
+        },
+        {
+          "tried": "対照: 読む形 (`Math.max.length` / `Math.max.name.length`)・辿った先のメソッドを呼ぶ形 (`Math.max.name.toUpperCase()` / `Math.max.length.toFixed(2)` / `Math.max.toString()`)・引数や局所の名前で隠した同じ綴り・呼び出しの結果や添字の先から辿る連なり (`make().f.length()` / `xs[0].f.name()`) は 0.54 と同じく受け取り、生成物は変わらない。直下の欄を呼ぶ形 (`Array.length()` / `Math.PI()`)・メンバを絞った組み込み (`RegExp.length()`)・宣言していない名前 (`Nope.max.length()`) は前の文のまま 1 度だけ断る",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 15,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/checker.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 1008,
+        "summary": "直す側だけの周 (穴探しは止めたまま)。MG-094 が残した 1 つを閉じた: 隠れていない組み込みから `.` だけで 2 段以上辿った先の `length` / `name` を呼ぶ形 (`Math.max.length()` / `Array.from.name()` / `Math.max.name.length()`) を、検査器 (M6) で断る。0.54 までは受け取り、生成物を tsc が断っていた (2349 / 2339 —— 守りが tsc の 1 層)。見るのは連なりの頭 (隠れていない組み込みの名前) と最後の欄だけで、途中の欄の型は追わない —— 組み込みから辿れる先に呼べる length / name が 1 つも無いことを、検査が実物 (node) の閉包で数える。読む形と、辿った先のメソッドを呼ぶ形は今までどおり。最初の書き方は答えが変わらない変異を残す形だったので、測る前に書き直した。対照 15 方向は鳴り、変えた行の変異検査は 100% (19 killed)。実物の 46 本は書き換えなしで通り、生成物は不変。残り: 辿った先の欄を局所の名前へ写してから呼ぶ形・局所の名前の値の欄を呼ぶ形 (`xs.length()`)・辿った先の在りもしない欄 (`Math.max.nope()`) は検査器が通す (tsc が断る)。"
       }
     }
   ]
