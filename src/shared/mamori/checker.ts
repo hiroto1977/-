@@ -312,7 +312,7 @@ export interface ProjectTable {
   readonly sharedConsts: ReadonlyMap<string, ReadonlyMap<string, SharedConstKind>>;
   /**
    * モジュールの道 → その module が**型としてだけ**宣言した名前 (`type` / `interface` / `vetted`) の集まり (0.53 · MG-093)。
-   * 同じ名前の値 (fn・const) も export していれば載せない (TypeScript は型と値の同名を許す)。
+   * 同じ名前の値も export していれば載せない (TypeScript は型と値の同名を許す)。
    * `use { T }` と `type` を付けずに引いても、引いた名前は型でしかない —— 値の位置に書けない。
    */
   readonly typeNames: ReadonlyMap<string, ReadonlySet<string>>;
@@ -321,13 +321,15 @@ export interface ProjectTable {
 /** 型だけの名前の出どころ (`Binding.typeOnly`): `import` = `use type { … }` / `use { type … }` で引いた・`declared` = 引いた先の Mamori の module が型としてだけ宣言している。 */
 type TypeOnlyKind = 'import' | 'declared';
 
+/** 型だけの名前が値を持たない理由 (出どころごと)。表で引く —— 出どころの綴りを 2 つの枝で比べると、片方の綴りを替えても答えが変わらない。 */
+const TYPE_ONLY_WHY: Readonly<Record<TypeOnlyKind, (name: string) => string>> = {
+  import: (name) => `\`use type { … }\` / \`use { type … }\` で型だけ引いた名前です (生成物の import は実行時に消えます。値として使うなら \`type\` を外して \`use { ${name} }\` で引きます)`,
+  declared: () => '引いた先の Mamori の module が型 (type・interface・印) としてだけ宣言した名前です (型は実行時に在りません)',
+};
+
 /** 型だけの名前を値の位置に書いたときの断り (0.53 · MG-093)。 */
 function typeOnlyAsValue(name: string, kind: TypeOnlyKind): string {
-  const why =
-    kind === 'import'
-      ? `\`use type { … }\` / \`use { type … }\` で型だけ引いた名前です (生成物の import は実行時に消えます。値として使うなら \`type\` を外して \`use { ${name} }\` で引きます)`
-      : '引いた先の Mamori の module が型 (type・interface・印) としてだけ宣言した名前です (型は実行時に在りません)';
-  return `${name} は値の位置に書けません —— ${why}。呼ぶ・構築する・メンバを読む・渡す・返す・\`instanceof\` の右辺に置く形は、どれも TypeScript が断ります`;
+  return `${name} は値の位置に書けません —— ${TYPE_ONLY_WHY[kind](name)}。呼ぶ・構築する・メンバを読む・渡す・返す・\`instanceof\` の右辺に置く形は、どれも TypeScript が断ります`;
 }
 
 /** 同じブロックで同じ名前を 2 度宣言したときの断り (0.44 · MG-084)。 */
@@ -505,16 +507,16 @@ export function collectTable(modules: readonly { readonly file: string; readonly
 }
 
 /**
- * module が型としてだけ export した名前 (`ProjectTable.typeNames` の注記)。同じ名前の値 (fn・const) も export していれば除く。
+ * module が型としてだけ export した名前 (`ProjectTable.typeNames` の注記)。同じ名前の値も export していれば除く。
  * export していない同名の値 (`export type T = …; const T = …;`) は外から見えないので、引いた先では型でしかない。
- * `let` は export できず、クラスは `use` で引けないので、値の側に数えるのは fn と const だけ。
+ * 値の側は「export の旗を持つ、型でない宣言」(fn・const・class) —— 種類を並べずに旗で数える (`let` と use / extern は旗を持たない)。
  */
 function typeOnlyNames(module: Module): Set<string> {
   const types = new Set<string>();
   const values = new Set<string>();
   for (const it of module.items) {
     if (it.kind === 'type' || it.kind === 'interface' || it.kind === 'vetted') types.add(it.name);
-    else if ((it.kind === 'fn' || it.kind === 'const') && it.exported) values.add(it.name);
+    else if ((it as { readonly exported?: boolean }).exported === true) values.add((it as { readonly name: string }).name);
   }
   return new Set([...types].filter((n) => !values.has(n)));
 }
