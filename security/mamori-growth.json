@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.50"
+    "version": "0.51"
   },
   "constructs": {
     "class": {
@@ -5357,6 +5357,53 @@
       "report": {
         "pr": 1003,
         "summary": "直す側だけの周 (穴探しは止めたまま)。MG-089 が残した 1 つ目を閉じた: `new 名前(…)` の名前が構築できない物 (このモジュールの局所の名前・直下の fn / const / let・別の Mamori の module から `use` で引いた名前) を指す形を、検査器 (M6) で断る。0.49 までは受け取り、生成物を tsc が断っていた (2351 / 7009 / 18046 —— 守りが tsc の 1 層)。線引きは instanceof の右辺 (0.16) と同じで、構築できるのは隠れていない組み込み・このモジュールのクラス・Mamori の外から宣言した名前だけ。計算した鍵の結果 (0.12) と関数の結果を置いた直下の const (0.37) は、前の具体的な理由が先に答える。答えが変わった既存の検査は 1 形 (字面の鍵の結果を局所に置いて new する形)。実物の 46 本は書き換えなしで通り、生成物は変わらない。測って残した物: メンバの連なりの先が構築できない形 (`new o.C()`) と、構築できない組み込み (`new Math()` / `new JSON()`) は検査器が通し、tsc が断る (2351)。"
+      }
+    },
+    {
+      "id": "MG-091",
+      "date": "2026-11-28",
+      "kind": "probe",
+      "target": "language",
+      "pickedBy": "brief",
+      "briefPick": "probe:language",
+      "version": "0.51",
+      "features": [],
+      "added": [],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "名前空間の組み込みを構築する (`new Math()` / `new JSON()`) —— 引数つき・arrow の本体の中・throw の相手・モジュール直下の初期値・別の構築の引数の中。0.50 は受け取り、生成物を tsc (本物の lib) が断っていた (2351)。実行時は必ず TypeError。0.51 は名前の頭で断る (M6)",
+          "result": "refused"
+        },
+        {
+          "tried": "名前空間の組み込みを呼ぶ (`Math()` / `JSON()`) —— 引数つき・arrow の本体の中・直下の初期値・別の呼び出しの引数の中・結果のメンバを読む形。0.50 は受け取り、tsc が断っていた (2349)。実行時は必ず TypeError。0.51 は断る",
+          "result": "refused"
+        },
+        {
+          "tried": "構築するだけの組み込みを `new` を付けずに呼ぶ (`Promise(…)` / `Map()` / `Set()` / `URL(…)`・型引数つき)。0.50 は受け取り、tsc が断っていた (2348)。実行時は必ず TypeError。0.51 は断る",
+          "result": "refused"
+        },
+        {
+          "tried": "断った形の引数に別の誤りを置く (`new Math(Nope)` / `JSON(Nope)` / `Set(Nope)`) —— 断りの後ろに、引数の宣言していない名前が 1 度だけ並ぶ",
+          "result": "refused"
+        },
+        {
+          "tried": "対照: 名前空間のメンバを呼ぶ (`Math.abs(1)` / `JSON.stringify(1)`)・構築する (`new Map()` / `new Set()` / `new URL(…)` / `new Promise(…)`)・呼べる組み込みを呼ぶ (`Number` / `String` / `Boolean` / `Array` / `Error` / `RegExp`)・`new Number(1)` —— 0.50 と同じく受け取り、生成物は変わらない。この module の名前で隠した同じ綴り (引数・extern pure) は組み込みではないので通る。引数で隠した Math の構築 (0.50 の文) と Object の持ち出しは前の文のまま断る",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 9,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/checker.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 1004,
+        "summary": "直す側だけの周 (穴探しは止めたまま)。MG-090 が残した 1 つを閉じた: 呼ぶ形・構築する形のどちらかが実行時に必ず投げる組み込み —— 名前空間 (`Math` / `JSON`) を構築する・呼ぶ形と、構築するだけの物 (`Promise` / `Map` / `Set` / `URL`) を `new` なしで呼ぶ形 —— を、検査器 (M6) で断る。0.50 までは受け取り、生成物を tsc が断っていた (2351 / 2349 / 2348 —— 守りが tsc の 1 層)。表は 2 つ (NAMESPACE_BUILTINS / NEW_ONLY_BUILTINS) で、この module の名前で隠した同じ綴りは数えない。答えが変わった既存の検査は 1 形 (mamoriV37 の標本 `Map(IMPORTED)` を `RegExp(IMPORTED)` へ)。実物の 46 本は書き換えなしで通り、生成物は不変。変えた行の変異検査 100% (56 killed)。MG-090 の変異検査は `--mutate` を 2 度書いて最後の範囲しか測れていなかったので、その行も測り直した (生存 0)。残り: メンバの連なりの先 (`new o.C()`)・組み込みのメンバ越しの形は測っていない。"
       }
     }
   ]

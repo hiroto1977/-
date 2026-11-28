@@ -153,9 +153,10 @@ describe('0.37: 関数の結果を置いた直下の const は読めない (thre
       'const X = Math.max(make().length, 1);',
     ];
     for (const decl of nested) expect(reads(`${HELPERS}${ADDER}${decl}\n`), decl).toEqual(refused());
-    // 構築子と関数は別の表: `new Number(…)` / `Map(…)` は「呼び戻さない組み込み」ではない (引数はデータだけ)
+    // 構築子と関数は別の表: `new Number(…)` / `RegExp(…)` は「呼び戻さない組み込み」ではない (引数はデータだけ)。
+    // 関数の側の標本は 0.50 まで `Map(…)` だった —— `new` を付けない `Map(…)` は実行時に必ず投げるので、0.51 (MG-091) が呼び出しそのものを断る。
     expect(reads(`${HELPERS}const X = new Number(IMPORTED);\n`)).toEqual(refused());
-    expect(reads(`${HELPERS}const X = Map(IMPORTED);\n`)).toEqual(refused());
+    expect(reads(`${HELPERS}const X = RegExp(IMPORTED);\n`)).toEqual(refused());
     // 呼び戻す名前空間 (`JSON` / `Array` / `Promise`) はデータだけの引数なら読める・データでない引数なら読めない
     expect(reads(`${HELPERS}const X = JSON.parse("[1]");\n`)).toEqual([]);
     expect(reads(`${HELPERS}const X = JSON.stringify(IMPORTED);\n`)).toEqual(refused());
