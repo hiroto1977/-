@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.49"
+    "version": "0.50"
   },
   "constructs": {
     "class": {
@@ -5306,6 +5306,57 @@
       "report": {
         "pr": 938,
         "summary": "直す側だけの周 (穴探しは止めたまま)。`new 名前(…)` の名前についての断り (宣言していない名前・宣言より前の使用・sink の外の危ない口) の場所を、名前の直後の字句から名前の頭へ直した。parser が、名前を読んだ後の字句の場所を構築子の名前に付けていた (`{ name: ident(), pos: peek().pos }` —— 物の字面は左から評価される)。名前の後で改行すると、断りは次の行を指していた。名前を読む前に場所を取る 1 か所の直しで、受け入れる集合・断りの文・生成物は変わらない。既存の検査 4 本の期待値 (場所 6 か所) を名前の頭へ直し、新しい検査は、断りの場所から始まる原文が名前そのものであることを独立に検める。測って残した物: 構築できない名前 (局所の数・直下の関数) を new する形は検査器が通し、tsc が断る (2351 / 7009)。"
+      }
+    },
+    {
+      "id": "MG-090",
+      "date": "2026-11-28",
+      "kind": "probe",
+      "target": "language",
+      "pickedBy": "brief",
+      "briefPick": "probe:language",
+      "version": "0.50",
+      "features": [],
+      "added": [],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "局所の名前を構築する (`fn t(make: number)` の中の `new make()`) —— 引数 (数・関数の型・unknown)・局所の const / let / arrow・回す変数・束ねた例外・分割代入の束縛・arrow の引数・arrow の本体の中・throw の相手・型引数と引数つき。0.49 は受け取り、生成物を tsc が断っていた (2351 / 7009 / 18046)。0.50 は構築子の名前の頭で断る (M6)",
+          "result": "refused"
+        },
+        {
+          "tried": "直下の名前を構築する (`fn helper()` への `new helper()`) —— 直下の fn・自分自身・関門 (gate fn)・直下の const (数 / arrow)・直下の let・直下の初期値で前の fn を構築する形。0.49 は受け取り、tsc が断っていた (7009 / 2351)。0.50 は断る",
+          "result": "refused"
+        },
+        {
+          "tried": "組み込みの名前を局所の名前で隠して構築する (`fn t(Map: number)` の中の `new Map()`)。0.49 は受け取り、tsc が断っていた (2351)。0.50 は断る",
+          "result": "refused"
+        },
+        {
+          "tried": "別の Mamori の module から `use` で引いた名前を構築する (引いた関数・直下の const (数 / arrow)・型だけで引いた型)。クラスは `use` で引けないので、どれも構築できない。0.49 は受け取り、0.50 は断る (束縛に fromMamori の旗)",
+          "result": "refused"
+        },
+        {
+          "tried": "局所の名前が、宣言した外のクラスを運ぶ形 (`const C = Thing; new C()`・`fn t(C: typeof Thing)` の中の `new C()`)。TypeScript は通すが、検査器は局所の値の中身を追わないので 0.50 は断る (TypeScript より厳しい側 —— 宣言した名前を直に構築する)",
+          "result": "refused"
+        },
+        {
+          "tried": "対照: 隠れていない組み込み (`new Map<string, number>()`)・このモジュールのクラス・`extern pure` / 外の module から `use` で引いた名前・宣言した外の名前のメンバ (`new ns.Thing()`)・局所の名前や直下の fn を呼ぶ形 —— 0.49 と同じく受け取り、生成物は変わらない。計算した鍵の結果 (0.12)・関数の結果を置いた直下の const (0.37)・宣言より前の使用 (0.45)・宣言していない名前・sink の外の危ない口 (M2) は、前の文のまま断る",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 7,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/checker.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 1003,
+        "summary": "直す側だけの周 (穴探しは止めたまま)。MG-089 が残した 1 つ目を閉じた: `new 名前(…)` の名前が構築できない物 (このモジュールの局所の名前・直下の fn / const / let・別の Mamori の module から `use` で引いた名前) を指す形を、検査器 (M6) で断る。0.49 までは受け取り、生成物を tsc が断っていた (2351 / 7009 / 18046 —— 守りが tsc の 1 層)。線引きは instanceof の右辺 (0.16) と同じで、構築できるのは隠れていない組み込み・このモジュールのクラス・Mamori の外から宣言した名前だけ。計算した鍵の結果 (0.12) と関数の結果を置いた直下の const (0.37) は、前の具体的な理由が先に答える。答えが変わった既存の検査は 1 形 (字面の鍵の結果を局所に置いて new する形)。実物の 46 本は書き換えなしで通り、生成物は変わらない。測って残した物: メンバの連なりの先が構築できない形 (`new o.C()`) と、構築できない組み込み (`new Math()` / `new JSON()`) は検査器が通し、tsc が断る (2351)。"
       }
     }
   ]
