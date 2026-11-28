@@ -864,6 +864,11 @@ interface Binding {
    * 値の位置 (名前の式・呼ぶ側・`instanceof` の右辺) に書けない —— 0.52 までは受け取り、生成物を `tsc` が断っていた (1361 / 2693)。
    */
   readonly typeOnly?: TypeOnlyKind;
+  /**
+   * 組み込みの値の欄を初期値に置いた束縛か (0.56 · MG-096) —— 中身は、写した元の綴り (`Math.PI` / `Math から辿った先の .length`)。
+   * `const` のこの名前を呼ぶ形 (`const f = Math.PI; f()`) は実行時に必ず投げる。`let` は入れ直せるので、読むときに数えない (`constValueField`)。
+   */
+  readonly valueField?: string;
 }
 
 /**
@@ -1088,6 +1093,12 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
       declare(it.name, { vetted: null, authority: 'local' }, it.pos);
       localFns.set(it.name, table.fns.get(fnKey(file, it.name))!);
     }
+  }
+  // 組み込みの値の欄を写した直下の const (0.56 · MG-096)。直下の名前がすべて揃ってから、書いた順に見る ——
+  // 後ろで宣言した名前が組み込みと同じ綴りを隠す形と、前の const の別名 (`const G = F;`) を、関数の本体を検める前に決める。
+  for (const it of module.items) {
+    if (it.kind !== 'const') continue;
+    moduleScope.set(it.name, { ...moduleScope.get(it.name)!, valueField: copiedValueField(it.init, [moduleScope]) });
   }
 
   /**
@@ -1456,6 +1467,37 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
   }
 
   /**
+   * 式が、隠れていない組み込みの**値の欄**を読む形か —— 呼ぶ形 (0.54 / 0.55) と、const へ写す形 (0.56) が同じ 1 つの判定を読む。
+   * 直下の欄 (`Math.PI` / `Array.length`) は表 `BUILTIN_VALUE_FIELDS`、`.` で 2 段以上辿った先は `length` / `name` だけ (`Math.max.length`)。
+   * この module の名前で隠した同じ綴り (頭の名前に束縛が在る) は組み込みではないので、数えない。
+   */
+  function builtinValueField(e: Expr, scopes: readonly Map<string, Binding>[]): { readonly deep: boolean; readonly root: string | null; readonly field: string } | undefined {
+    if (e.kind !== 'member') return undefined;
+    const head = memberChainHead(e);
+    if (bindingOf(head, scopes) !== undefined) return undefined;
+    const root = identName(head);
+    if (BUILTIN_VALUE_FIELDS.get(identName(e.object))?.has(e.prop) === true) return { deep: false, root, field: e.prop };
+    return e.object.kind === 'member' && ANY_BUILTIN.has(root) && FUNCTION_VALUE_FIELD_NAMES.has(e.prop) ? { deep: true, root, field: e.prop } : undefined;
+  }
+
+  /** 呼べる束縛でないと分かっている const か —— 組み込みの値の欄を写した const の、写した元の綴り (0.56 · MG-096)。`let` は入れ直せるので数えない。 */
+  function constValueField(b: Binding | undefined): string | undefined {
+    return b?.mutable === true ? undefined : b?.valueField;
+  }
+
+  /**
+   * 初期値が運ぶ「組み込みの値の欄」の綴り (0.56 · MG-096)。組み込みの値の欄を直に読む形 (`Math.PI` / `Math.max.length`) と、
+   * それを写した const の別名 (`const g = f;`)。初期値の無い `let` (null) は何も運ばない。
+   */
+  function copiedValueField(init: Expr | null, scopes: readonly Map<string, Binding>[]): string | undefined {
+    if (init?.kind === 'ident') return constValueField(lookup(scopes, init.name));
+    if (init === null) return undefined;
+    const direct = builtinValueField(init, scopes);
+    if (direct === undefined) return undefined;
+    return direct.deep ? `${direct.root} から辿った先の .${direct.field}` : `${direct.root}.${direct.field}`;
+  }
+
+  /**
    * 名前を、いちばん内側でその名前を持つ (か、これから宣言する) ブロックで引く。そのブロックがまだ宣言の文に届いていなければ断りの文、
    * 届いているか、どのブロックも宣言しないなら undefined (0.45 · MG-085)。
    * 0.44 までは、宣言の文に届く前の名前は「無い物」として外側へ引きに行っていた —— 外側に同じ名前が在ると検査器はそちらを読み、
@@ -1589,7 +1631,7 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
         }
         // Stryker disable next-line OptionalChaining: const (= !mutable) は必ず初期値を持つので、init が null になるのは let だけで、そのとき !mutable が先に偽になり `?.` は評価されない (等価)
         const owned = !s.mutable && (s.init?.kind === 'object' || s.init?.kind === 'array');
-        bindLocal(own, s.name, { vetted: declared ?? carried, authority: 'local', mutable: s.mutable, numeric: s.type?.text === 'number' || (s.type === null && s.init !== null && isNumericKey(s.init, scopes)), owned, inert: s.init !== null && carriesInert(s.init, scopes), depth: loopDepth, readonlyTable: namesReadonlyTable(s.type), ...sharedAlias(s.init, scopes) }, s.pos);
+        bindLocal(own, s.name, { vetted: declared ?? carried, authority: 'local', mutable: s.mutable, numeric: s.type?.text === 'number' || (s.type === null && s.init !== null && isNumericKey(s.init, scopes)), owned, inert: s.init !== null && carriesInert(s.init, scopes), depth: loopDepth, readonlyTable: namesReadonlyTable(s.type), valueField: copiedValueField(s.init, scopes), ...sharedAlias(s.init, scopes) }, s.pos);
         return;
       }
       case 'destructure': {
@@ -1903,6 +1945,11 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
       if (refuseTypeOnly(callee.name, callee.pos, b)) return;
       // 関数の結果を置いた直下の const を直に呼ぶ形 (`ADD(x)`) —— 名前の枝を通らないので、ここで断る (0.37 · T-274)。
       if (b?.loadResult === true) refuseLoadResult(callee.name, callee.pos);
+      // 組み込みの値の欄を写した const を呼ぶ形 (`const f = Math.PI; f()` · 0.56 · MG-096) —— 実行時に必ず投げる。
+      const copied = constValueField(b);
+      if (copied !== undefined) {
+        report('M6', callee.pos, `${callee.name} は呼べません —— 組み込みの値の欄 (${copied}) を写した const で、関数ではありません (呼ぶと実行時に投げ、TypeScript も断ります)`);
+      }
       // 呼べない組み込みを呼ぶ形 (0.51 · MG-091) —— 名前空間 (`Math()`) と、構築するだけの物 (`Map()`)。どちらも実行時に必ず投げる。
       // この module の名前で隠した同じ綴り (b が在る) は組み込みではないので、数えない。
       if (b === undefined && NAMESPACE_BUILTINS.has(callee.name)) {
@@ -1917,18 +1964,15 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
       if (b === undefined && !isConstructibleBuiltin(callee, scopes)) checkExpr(callee, scopes, ctx);
       return;
     }
-    // 組み込みの値の欄を呼ぶ形 (`Math.PI()` / `Array.length()` · 0.54 · MG-094) —— 実行時に必ず投げる。
-    // この module の名前で隠した同じ綴り (b が在る) は組み込みではないので、数えない。断った後も下の検め (組み込みのメンバは何も足さない) をそのまま通す。
-    const calledField = viaMember === null ? null : viaMember.prop;
-    if (b === undefined && BUILTIN_VALUE_FIELDS.get(name)?.has(calledField) === true) {
-      report('M6', callee.pos, `組み込みの ${name}.${calledField} は呼べません —— 値の欄で、関数ではありません (呼ぶと実行時に投げ、TypeScript も断ります)。読む形 (\`${name}.${calledField}\`) は書けます`);
+    // 組み込みの値の欄を呼ぶ形 —— 実行時に必ず投げる。直下の欄 (`Math.PI()` / `Array.length()` · 0.54 · MG-094) と、
+    // `.` で 2 段以上辿った先の length / name (`Math.max.length()` · 0.55 · MG-095)。判定は `builtinValueField` の 1 つ。
+    // 断った後も下の検め (組み込みのメンバは何も足さない) をそのまま通す。
+    const called = builtinValueField(callee, scopes);
+    if (called?.deep === false) {
+      report('M6', callee.pos, `組み込みの ${called.root}.${called.field} は呼べません —— 値の欄で、関数ではありません (呼ぶと実行時に投げ、TypeScript も断ります)。読む形 (\`${called.root}.${called.field}\`) は書けます`);
     }
-    // 組み込みから `.` で 2 段以上辿った先の length / name を呼ぶ形 (`Math.max.length()` · 0.55 · MG-095) —— 実行時に必ず投げる。
-    // 頭が直下の名前 (`Array.length()`) は上の表が受け持つ。この module の名前で隠した同じ綴りは組み込みではないので、数えない。
-    const chainHead = memberChainHead(head);
-    const chainName = identName(chainHead);
-    if (head.kind === 'member' && ANY_BUILTIN.has(chainName) && bindingOf(chainHead, scopes) === undefined && FUNCTION_VALUE_FIELD_NAMES.has(calledField)) {
-      report('M6', callee.pos, `組み込みの ${chainName} から辿った先の \`.${calledField}\` は呼べません —— 関数の length / name は値の欄で、関数ではありません (呼ぶと実行時に投げ、TypeScript も断ります)`);
+    if (called?.deep === true) {
+      report('M6', callee.pos, `組み込みの ${called.root} から辿った先の \`.${called.field}\` は呼べません —— 関数の length / name は値の欄で、関数ではありません (呼ぶと実行時に投げ、TypeScript も断ります)`);
     }
     calledMembers.add(callee);
     checkExpr(callee, scopes, ctx);

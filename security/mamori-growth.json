@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.55"
+    "version": "0.56"
   },
   "constructs": {
     "class": {
@@ -5592,6 +5592,57 @@
       "report": {
         "pr": 1008,
         "summary": "直す側だけの周 (穴探しは止めたまま)。MG-094 が残した 1 つを閉じた: 隠れていない組み込みから `.` だけで 2 段以上辿った先の `length` / `name` を呼ぶ形 (`Math.max.length()` / `Array.from.name()` / `Math.max.name.length()`) を、検査器 (M6) で断る。0.54 までは受け取り、生成物を tsc が断っていた (2349 / 2339 —— 守りが tsc の 1 層)。見るのは連なりの頭 (隠れていない組み込みの名前) と最後の欄だけで、途中の欄の型は追わない —— 組み込みから辿れる先に呼べる length / name が 1 つも無いことを、検査が実物 (node) の閉包で数える。読む形と、辿った先のメソッドを呼ぶ形は今までどおり。最初の書き方は答えが変わらない変異を残す形だったので、測る前に書き直した。対照 15 方向は鳴り、変えた行の変異検査は 100% (19 killed)。実物の 46 本は書き換えなしで通り、生成物は不変。残り: 辿った先の欄を局所の名前へ写してから呼ぶ形・局所の名前の値の欄を呼ぶ形 (`xs.length()`)・辿った先の在りもしない欄 (`Math.max.nope()`) は検査器が通す (tsc が断る)。"
+      }
+    },
+    {
+      "id": "MG-096",
+      "date": "2026-11-28",
+      "kind": "probe",
+      "target": "language",
+      "pickedBy": "brief",
+      "briefPick": "probe:language",
+      "version": "0.56",
+      "features": [],
+      "added": [],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "隠れていない組み込みの直下の値の欄を const へ写してから呼ぶ (`const f = Math.PI; f()` / `const f = Number.EPSILON; f()` / `const f = Array.length; f()` / `const f = Set.name; f()`)・型を書いた const (`const f: number = Math.PI`)・呼べる型を名乗る const (`const f: number | (() => number) = Math.PI`)・括弧で包む。0.55 は受け取り、生成物を tsc が 2349 で断っていた。0.56 は呼んだ名前の場所で断る (M6)",
+          "result": "refused"
+        },
+        {
+          "tried": "辿った先の `length` / `name` を const へ写してから呼ぶ (`const f = Math.max.length; f()` / `const f = Math.max.name; f()` / `const f = Math.max.name.length; f()` / `const f = Object.keys.length; f()` / `const f = Math.max?.length; f()`)。0.55 は受け取っていた。0.56 は断る",
+          "result": "refused"
+        },
+        {
+          "tried": "const の別名を呼ぶ (`const g = f; g()`・別名の別名)・arrow の中や入れ子のブロックの中から呼ぶ・文の位置・引数の中・呼んだ結果のメンバを読む。0.56 はどれも断る",
+          "result": "refused"
+        },
+        {
+          "tried": "モジュール直下の const へ写して関数の中で呼ぶ (`const F = Math.PI;` と `F()`)・関数より後ろに書いた直下の const・直下の const の別名・直下の const を局所の const へ写して呼ぶ。0.56 はどれも断る",
+          "result": "refused"
+        },
+        {
+          "tried": "断った形に別の誤りを重ねる (`f(Nope)` / `f(g())` で g も写した const) —— 断りは呼ぶ形ごとに 1 度で、引数の誤りは 1 度ずつ並ぶ。宣言していない名前から写す形 (`const f = Nope.max.length; f()`) は、宣言していない名前の断り 1 つだけ",
+          "result": "refused"
+        },
+        {
+          "tried": "対照: 関数の欄を写して呼ぶ (`const f = Math.max; f(1, 2)`)・写した値を読む / メソッドを呼ぶ (`f.toFixed(2)`)・入れ直せる let (`let f: number | (() => number) = Math.PI; f = () => 1; f()`) とそれを写した const・内側のブロックで宣言し直した同じ名前・引数や局所の名前で隠した同じ綴り・呼び出しの結果や添字の先から読む欄は 0.55 と同じく受け取り、生成物は変わらない (TypeScript も通す)。呼ぶ形 (0.54 / 0.55) の断りは、判定を 1 つに寄せても前の文のまま 1 度だけ",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 21,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/checker.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 1009,
+        "summary": "直す側だけの周 (穴探しは止めたまま)。MG-094 / MG-095 が残した 1 つを閉じた: 隠れていない組み込みの値の欄 (直下の欄 `Math.PI` / `Array.length`・辿った先の `length` / `name`) を const へ写してから、その名前を呼ぶ形 (`const f = Math.PI; f()` / `const f = Math.max.length; f()`) を、検査器 (M6) で断る。0.55 までは受け取り、生成物を tsc が断っていた (2349 —— 守りが tsc の 1 層)。束縛が「初期値が運ぶ値の欄の綴り」を持ち、呼ぶ側の検めは const のときだけそれを読む (別名・モジュール直下の const・arrow の中も同じ)。let は呼べる値を入れ直せるので数えない。「式が組み込みの値の欄を読む形か」の判定は 1 つの関数に寄せ、呼ぶ形 (0.54 / 0.55) と写す形が同じ物を読む —— 前の版の答えと文は変わらない。変異検査の 1 回目は答えが変わらない条件を 1 つ残した (99%) ので、条件そのものを無くして測り直した (100% · 97 killed)。対照 21 方向は鳴る。実物の 46 本は書き換えなしで通り、生成物は不変。残り: let へ写してそのまま呼ぶ形・別の Mamori の module から use で引いた const を呼ぶ形・数の字面や数の引数を呼ぶ形・局所の名前の値の欄を写す形・式の中に置いた値の欄は検査器が通す (tsc が断る)。"
       }
     }
   ]
