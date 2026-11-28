@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.52"
+    "version": "0.53"
   },
   "constructs": {
     "class": {
@@ -5451,6 +5451,53 @@
       "report": {
         "pr": 1005,
         "summary": "直す側だけの周 (穴探しは止めたまま)。MG-090 / MG-091 が残した 1 つを閉じた: `new` の相手がメンバの連なり (`new o.C()` / `new Math.max()`) のとき、先頭の名前が局所の名前・別の Mamori の module から use で引いた名前・隠れていない組み込みなら、検査器 (M6) で断る。0.51 までは構築子の名前そのものしか見ず、連なりの先は受け取って生成物を tsc が断っていた (2351 / 7009 / 18046 / 2339 —— 守りが tsc の 1 層)。宣言した外の名前のメンバは今までどおり。node では URL.createObjectURL ほか 3 つの欄が構築できる (実測) ので、断りの文は「実行時に必ず投げる」と言わず、検査が 15 個の組み込みの欄を実物で数える (構築できる欄は Mamori がメンバとして使わせない物だけ)。TypeScript より厳しい側が 2 形 (外の名前を局所へ写して欄を構築・外の型の引数の欄を構築)。答えが変わった既存の検査は 0。実物の 46 本は書き換えなしで通り、生成物は不変。変えた行の変異検査 100% (32 killed)。残り: 外の module から型だけで引いた名前を値として使う形 (`new Host()` ほか · tsc 1361)・呼べない欄を呼ぶ形 (`Math.PI()`) は検査器が通す。"
+      }
+    },
+    {
+      "id": "MG-093",
+      "date": "2026-11-28",
+      "kind": "probe",
+      "target": "language",
+      "pickedBy": "brief",
+      "briefPick": "probe:language",
+      "version": "0.53",
+      "features": [],
+      "added": [],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "外の module から型だけで引いた名前 (`use type { Host } from \"./host\"` / `use { f, type Host }` / 別名つき) を値の位置に書く —— 構築する・呼ぶ・返す・メンバを読む / 呼ぶ / 構築する・局所へ写す・引数に渡す・instanceof の右辺・式の typeof・物や配列の項・展開・条件・添字・for…of・throw・分割代入・arrow の本体・引数の既定値・直下の初期値・mint の中 (25 形)。0.52 は受け取り、生成物を tsc が 1361 で断っていた。0.53 は名前の頭で断る (M6)",
+          "result": "refused"
+        },
+        {
+          "tried": "別の Mamori の module が型 (type・interface・印) としてだけ export した名前を、type を付けずに引いて値の位置に書く (`use { T } from \"./lib\"; return T;` / `T()` / `x instanceof T` / `T.x`)。0.52 は受け取り、tsc が 2693 で断っていた。0.53 は断る。型は export・同名の値は export していない名前も断る",
+          "result": "refused"
+        },
+        {
+          "tried": "Mamori の module の名前を型だけで引いて値の位置に書く (`use type { K }` の直下の const・型と値の同名・印)。0.52 は受け取っていた (0.24 の検査がこの形を仕様として留めていた)。0.53 は断る",
+          "result": "refused"
+        },
+        {
+          "tried": "断った形に別の誤りを重ねる (`Host(Nope)` / `new Host(Nope)` / `Host.x(Nope)` / `Nope instanceof Host`)・型だけで引いた名前が読むだけの表 / 関数の結果を置いた const のとき —— 断りは 1 つの名前に 1 度で、引数・左辺の誤りは 1 度ずつ並び、前からの断りは重ならない",
+          "result": "refused"
+        },
+        {
+          "tried": "対照: 型の位置 (引数・戻り値の型・型引数・typeof 名前)・値として引いた名前・型と値を同じ名前で export した名前は 0.52 と同じく受け取り、生成物は変わらない。この module の型の名前・Mamori の module から引いた型の構築 (0.50 の文)・外の名前への代入は前の文のまま断る",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 18,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/checker.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 1006,
+        "summary": "直す側だけの周 (穴探しは止めたまま)。MG-092 が残した 1 つを閉じた: 型だけの名前 (`use type { X }` / `use { type X }` で引いた名前と、別の Mamori の module が型としてだけ export した名前) を値の位置 (名前の式・名前を直に呼ぶ形・instanceof の右辺) に書く形を、検査器 (M6) で断る。0.52 までは受け取り、生成物を tsc が断っていた (1361 / 2693 —— 守りが tsc の 1 層)。型の位置と値として引いた名前は今までどおり。型と値を同じ名前で export した名前は型だけの名前に数えない。0.24 の検査 1 件がこの弱さを仕様として留めていたので断る側へ書き直した (答えが変わった既存の検査はこの 1 件)。変異検査の 1 回目は 97.37% (生存 2 —— どちらも答えが変わらない書き換えが残る形) で、形を直して 100% (65 killed)。出どころの綴りを 'import' と書いたら依存の門 (lint:deps) が import 文と数え違えたので 'imported' にした。実物の 46 本は書き換えなしで通り、生成物は不変。残り: Mamori の外の module から type を付けずに引いた名前が TypeScript の側で型でしかない形 (tsc 2693)・呼べない欄を呼ぶ形 (`Math.PI()`) は検査器が通す。"
       }
     }
   ]
