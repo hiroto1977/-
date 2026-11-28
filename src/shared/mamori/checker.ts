@@ -232,6 +232,19 @@ const BITWISE_OPS: ReadonlySet<string> = new Set(['|', '^', '&', '<<', '>>', '>>
 const CONSTRUCTIBLE: ReadonlySet<string | null> = new Set(['RegExp', 'Error', 'TypeError', 'RangeError', 'URL']);
 
 /**
+ * 組み込みのうち、**呼ぶ形・構築する形のどちらかが実行時に必ず投げる**物 (0.51 · MG-091)。
+ *
+ * - 名前空間 (`Math` / `JSON`): 構築子でも関数でもない —— `new Math()` も `Math()` も `TypeError` を投げる。使えるのはメンバだけ。
+ * - 構築するだけの物 (`Promise` / `Map` / `Set` / `URL`): `new` を付けずに呼ぶと `TypeError` を投げる。
+ *
+ * 0.50 までの検査器はどれも受け取り、生成物を `tsc` が断っていた (2351 / 2349 / 2348 —— 守りが `tsc` の 1 層)。
+ * 表に無い組み込み (`Number` / `String` / `Boolean` / `Array` / `RegExp` / `Error` ほか) は、呼ぶ形も構築する形も動く。
+ * 鍵は `identName` の結果 (名前でなければ null) で引く —— 表は null を持たないので当たらない。
+ */
+const NAMESPACE_BUILTINS: ReadonlySet<string | null> = new Set(['Math', 'JSON']);
+const NEW_ONLY_BUILTINS: ReadonlySet<string | null> = new Set(['Promise', 'Map', 'Set', 'URL']);
+
+/**
  * 組み込みのうち、**呼ぶ・構築する・メンバを直に使う**形でだけ名前で使える物 (2026-11-01 · MG-006 · threat: T-243)。
  *
  * `Object.freeze(Array)` / `Object.freeze(Promise)` / `Object.freeze(Math)` は 0.6 まで通り、**アプリ全体の組み込みの構築子を凍らせた**
@@ -1798,6 +1811,16 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
     if (callee.kind === 'ident') {
       // 関数の結果を置いた直下の const を直に呼ぶ形 (`ADD(x)`) —— 名前の枝を通らないので、ここで断る (0.37 · T-274)。
       if (b?.loadResult === true) refuseLoadResult(callee.name, callee.pos);
+      // 呼べない組み込みを呼ぶ形 (0.51 · MG-091) —— 名前空間 (`Math()`) と、構築するだけの物 (`Map()`)。どちらも実行時に必ず投げる。
+      // この module の名前で隠した同じ綴り (b が在る) は組み込みではないので、数えない。
+      if (b === undefined && NAMESPACE_BUILTINS.has(callee.name)) {
+        report('M6', callee.pos, `組み込みの ${callee.name} は呼べません —— 名前空間なので \`${callee.name}.m(…)\` とメンバを直に使う形だけです (呼ぶと実行時に投げ、TypeScript も断ります)`);
+        return;
+      }
+      if (b === undefined && NEW_ONLY_BUILTINS.has(callee.name)) {
+        report('M6', callee.pos, `組み込みの ${callee.name} は \`new\` を付けずに呼べません —— \`new ${callee.name}(…)\` と構築します (付けずに呼ぶと実行時に投げ、TypeScript も断ります)`);
+        return;
+      }
       // 名前を直に呼ぶ形: 宣言していない名前の検め (M6) だけを通す (印を受ける関数を呼ぶのは正しい使い方)。
       if (b === undefined && !isConstructibleBuiltin(callee, scopes)) checkExpr(callee, scopes, ctx);
       return;
@@ -2012,6 +2035,13 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
             e.args.forEach((x) => checkExpr(x, scopes, ctx));
             return;
           }
+        }
+        // 構築できない組み込み (名前空間) を `new` の相手にする形 (0.51 · MG-091) —— `new Math()` / `new JSON()` は実行時に必ず投げる。
+        // この module の名前で隠した同じ綴りは、上の 0.50 の断り (局所の名前) か、宣言した外の名前として扱う。
+        if (NAMESPACE_BUILTINS.has(identName(e.callee)) && bindingOf(e.callee, scopes) === undefined) {
+          report('M6', e.callee.pos, `組み込みの ${identName(e.callee)} は構築できません —— 名前空間なので \`${identName(e.callee)}.m(…)\` とメンバを直に使う形だけです (構築すると実行時に投げ、TypeScript も断ります)`);
+          e.args.forEach((x) => checkExpr(x, scopes, ctx));
+          return;
         }
         // 構築する形で名前を使うのは許す (`new RegExp(…)`)。値として持ち出す形は 'ident' の枝が断る。
         if (!isConstructibleBuiltin(e.callee, scopes) && bindingOf(e.callee, scopes)?.authority !== 'class') checkExpr(e.callee, scopes, ctx);
