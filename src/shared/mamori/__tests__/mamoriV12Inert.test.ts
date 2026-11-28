@@ -61,7 +61,8 @@ describe('0.12: 計算した鍵の結果は inert (threat: T-255)', () => {
     expect(diag('  const f = xs[0];\n  return f();')).toEqual([]);
     expect(diag('  return o["content-type"].length;')).toEqual([]);
     expect(diag('  const f = n === 0 ? xs[0] : xs[1];\n  return f();')).toEqual([]);
-    expect(diag('  const f = xs[0];\n  return new f();')).toEqual([]);
+    // 0.50 (MG-090): 局所の名前は `new` の相手にできない (字面の鍵の結果でも) —— 断りは「計算した鍵」ではなく「構築できない名前」のほう。
+    expect(diag('  const f = xs[0];\n  return new f();')).toEqual([expect.stringContaining('new の相手は組み込みか宣言した外の名前・このモジュールのクラスだけです')]);
     expect(diag('  const f = !xs[n];\n  return f;')).toEqual([]);
     const awaited = compile(`${PRE}export async fn go(xs: string[], n: number) -> unknown {\n  const f = await xs[0];\n  return f();\n}\n`);
     expect(awaited.diagnostics).toEqual([]);

@@ -1966,19 +1966,6 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
           e.args.forEach((x) => checkExpr(x, scopes, ctx));
           return;
         }
-        // 構築できない名前を `new` の相手にする形 (0.50 · MG-090) —— このモジュールの局所の名前 (引数・const / let・回す変数・束ねた例外・
-        // 直下の fn / const / let) と、Mamori の module から `use` で引いた名前 (関数・値・型)。0.49 までは受け取り、生成物を tsc が断っていた
-        // (2351 / 7009 —— 守りが tsc の 1 層)。`instanceof` の右辺 (0.16) と同じ線引きで、構築できるのは隠れていない組み込み・
-        // このモジュールのクラス・Mamori の外から宣言した名前 (`extern` / 外の module からの `use`) だけ。
-        {
-          const cb = bindingOf(e.callee, scopes);
-          const why = cb?.authority === 'local' ? 'このモジュールの局所の名前 (値・関数) で' : cb?.fromMamori === true ? '別の Mamori の module から `use` で引いた名前 (関数・値・型 —— クラスは `use` で引けません) で' : null;
-          if (why !== null) {
-            report('M6', e.callee.pos, `new の相手は組み込みか宣言した外の名前・このモジュールのクラスだけです —— ${identName(e.callee)} は${why}、構築できません (組み込みの名前を局所の名前で隠した形も同じ)`);
-            e.args.forEach((x) => checkExpr(x, scopes, ctx));
-            return;
-          }
-        }
         // 構築子の名前 (識別子でなければ null —— 表は null を持たないので当たらない。「識別子か」を別の条件に書くと、
         // その条件を常に真にしても答えが変わらない等価変異が残る)。
         if (ctx.sharedUntyped !== undefined && SHARED_COLLECTIONS.has(identName(e.callee))) {
@@ -2012,6 +1999,20 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
           return;
         }
         e.args.forEach((x) => refuseInert(x, scopes, '`new` の引数'));
+        // 構築できない名前を `new` の相手にする形 (0.50 · MG-090) —— このモジュールの局所の名前 (引数・const / let・回す変数・束ねた例外・
+        // 直下の fn / const / let) と、Mamori の module から `use` で引いた名前 (関数・値・型)。0.49 までは受け取り、生成物を tsc が断っていた
+        // (2351 / 7009 —— 守りが tsc の 1 層)。`instanceof` の右辺 (0.16) と同じ線引きで、構築できるのは隠れていない組み込み・
+        // このモジュールのクラス・Mamori の外から宣言した名前 (`extern` / 外の module からの `use`) だけ。
+        // 計算した鍵の結果 (0.12) は上の断りが先に答え、関数の結果を置いた直下の const (0.37) は名前の枝の断りに任せる (理由がより具体的)。
+        {
+          const cb = bindingOf(e.callee, scopes);
+          const why = cb?.loadResult === true ? null : cb?.authority === 'local' ? 'このモジュールの局所の名前 (値・関数) で、構築できません (組み込みの名前を局所の名前で隠した形も同じ)' : cb?.fromMamori === true ? '別の Mamori の module から `use` で引いた名前 (関数・値・型) で、構築できません (クラスは `use` で引けません)' : null;
+          if (why !== null) {
+            report('M6', e.callee.pos, `new の相手は組み込みか宣言した外の名前・このモジュールのクラスだけです —— ${identName(e.callee)} は${why}`);
+            e.args.forEach((x) => checkExpr(x, scopes, ctx));
+            return;
+          }
+        }
         // 構築する形で名前を使うのは許す (`new RegExp(…)`)。値として持ち出す形は 'ident' の枝が断る。
         if (!isConstructibleBuiltin(e.callee, scopes) && bindingOf(e.callee, scopes)?.authority !== 'class') checkExpr(e.callee, scopes, ctx);
         e.args.forEach((x) => checkExpr(x, scopes, ctx));
