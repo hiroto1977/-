@@ -318,12 +318,15 @@ export interface ProjectTable {
   readonly typeNames: ReadonlyMap<string, ReadonlySet<string>>;
 }
 
-/** 型だけの名前の出どころ (`Binding.typeOnly`): `import` = `use type { … }` / `use { type … }` で引いた・`declared` = 引いた先の Mamori の module が型としてだけ宣言している。 */
-type TypeOnlyKind = 'import' | 'declared';
+/**
+ * 型だけの名前の出どころ (`Binding.typeOnly`): `imported` = `use type { … }` / `use { type … }` で引いた・`declared` = 引いた先の Mamori の module が型としてだけ宣言している。
+ * (綴りを `imported` にしているのは、依存の門 `lint:deps` が「import の語 + 引用符」の並びを import 文として数えるため。)
+ */
+type TypeOnlyKind = 'imported' | 'declared';
 
 /** 型だけの名前が値を持たない理由 (出どころごと)。表で引く —— 出どころの綴りを 2 つの枝で比べると、片方の綴りを替えても答えが変わらない。 */
 const TYPE_ONLY_WHY: Readonly<Record<TypeOnlyKind, (name: string) => string>> = {
-  import: (name) => `\`use type { … }\` / \`use { type … }\` で型だけ引いた名前です (生成物の import は実行時に消えます。値として使うなら \`type\` を外して \`use { ${name} }\` で引きます)`,
+  imported: (name) => `\`use type { … }\` / \`use { type … }\` で型だけ引いた名前です (生成物の import は実行時に消えます。値として使うなら \`type\` を外して \`use { ${name} }\` で引きます)`,
   declared: () => '引いた先の Mamori の module が型 (type・interface・印) としてだけ宣言した名前です (型は実行時に在りません)',
 };
 
@@ -1014,7 +1017,7 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
         const readonlyTable = shared === 'readonly-table';
         const loadResult = shared === 'load-result';
         // 型だけの名前 (0.53 · MG-093): `type` を付けて引いた名前と、引いた先の Mamori の module が型としてだけ宣言した名前。値の位置に書けない。
-        const typeOnly: TypeOnlyKind | undefined = it.typeOnly || n.typeOnly ? 'import' : table.typeNames.get(target)?.has(n.name) === true ? 'declared' : undefined;
+        const typeOnly: TypeOnlyKind | undefined = it.typeOnly || n.typeOnly ? 'imported' : table.typeNames.get(target)?.has(n.name) === true ? 'declared' : undefined;
         // Stryker disable next-line StringLiteral: 上の注記のとおり等価 ('pure' は 'sink' / 'local' でないことだけを意味する)
         declare(n.alias ?? n.name, { vetted: null, authority: 'pure', fromMamori: exported !== undefined, sharedRegex: table.sharedRegex.get(target)?.get(n.name), untypedShared, readonlyTable, loadResult, typeOnly }, it.pos);
       }
