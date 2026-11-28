@@ -1152,7 +1152,7 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
         declare(n, { vetted: null, authority: it.authority }, it.pos);
       }
     } else if (it.kind === 'const') {
-      declare(it.name, { vetted: null, authority: 'local', numeric: it.type?.text === 'number' || isNumericKey(it.init, []), inert: carriesInert(it.init, [moduleScope]), sharedRegex: table.sharedRegex.get(file)!.get(it.name), untypedShared: it.type === null, readonlyTable: isReadonlyTableConst(it.type, it.init), loadResult: table.sharedConsts.get(file)!.get(it.name) === 'load-result', valueField: table.valueConsts.get(file)!.get(it.name) }, it.pos);
+      declare(it.name, { vetted: null, authority: 'local', numeric: it.type?.text === 'number' || isNumericKey(it.init, []), inert: carriesInert(it.init, [moduleScope]), sharedRegex: table.sharedRegex.get(file)!.get(it.name), untypedShared: it.type === null, readonlyTable: isReadonlyTableConst(it.type, it.init), valueField: table.valueConsts.get(file)!.get(it.name), loadResult: table.sharedConsts.get(file)!.get(it.name) === 'load-result' }, it.pos);
     } else if (it.kind === 'let') {
       declare(it.name, { vetted: null, authority: 'local', mutable: true, moduleLet: true, numeric: it.type.text === 'number', depth: 0, readonlyTable: isReadonlyTableConst(it.type, it.init) }, it.pos);
     } else if (it.kind === 'class') {
