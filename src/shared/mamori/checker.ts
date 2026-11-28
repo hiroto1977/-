@@ -261,6 +261,21 @@ export const BUILTIN_VALUE_FIELDS: ReadonlyMap<string | null, ReadonlySet<string
 ]);
 /** 宣言しなくても使える組み込みの名前 (`identName` の結果をそのまま引ける型で持つ —— 中身は `PURE_GLOBALS`)。 */
 const ANY_BUILTIN: ReadonlySet<string | null> = PURE_GLOBALS;
+/**
+ * 関数の値の欄の名前 (`length` / `name`) —— 呼ぶ側のメンバの名前 (メンバでなければ null) でそのまま引ける型で持つ (0.55 · MG-095)。
+ *
+ * 組み込みから `.` だけで 2 段以上辿った先 (`Math.max.length` / `Math.max.name.length` / `Number.MAX_VALUE.toFixed.name`) は、
+ * 関数・数・文字列のどれかで、その `length` / `name` は数・文字列 (か、無い) —— 呼ぶ形は実行時に必ず投げる。
+ * 0.54 が見たのは組み込みの名前の直下の欄だけで、2 段目からは受け取り、生成物を `tsc` が断っていた (2349 / 2339)。
+ * 実物 (検査を回す実行環境の組み込み) に、呼べる `length` / `name` が辿った先に無いことは `mamoriV55.test.ts` が数える。
+ */
+const FUNCTION_VALUE_FIELD_NAMES: ReadonlySet<string | null> = new Set(FUNCTION_VALUE_FIELDS);
+/** `.` だけで辿る連なり (`a.b.c`) の頭の式。頭が名前でない連なり (呼び出し・添字・字面から始まる) は、その式をそのまま返す。 */
+function memberChainHead(e: Expr): Expr {
+  let cur = e;
+  while (cur.kind === 'member') cur = cur.object;
+  return cur;
+}
 
 /**
  * 組み込みのうち、**呼ぶ・構築する・メンバを直に使う**形でだけ名前で使える物 (2026-11-01 · MG-006 · threat: T-243)。
@@ -1907,6 +1922,13 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
     const calledField = viaMember === null ? null : viaMember.prop;
     if (b === undefined && BUILTIN_VALUE_FIELDS.get(name)?.has(calledField) === true) {
       report('M6', callee.pos, `組み込みの ${name}.${calledField} は呼べません —— 値の欄で、関数ではありません (呼ぶと実行時に投げ、TypeScript も断ります)。読む形 (\`${name}.${calledField}\`) は書けます`);
+    }
+    // 組み込みから `.` で 2 段以上辿った先の length / name を呼ぶ形 (`Math.max.length()` · 0.55 · MG-095) —— 実行時に必ず投げる。
+    // 頭が直下の名前 (`Array.length()`) は上の表が受け持つ。この module の名前で隠した同じ綴りは組み込みではないので、数えない。
+    const chainHead = memberChainHead(head);
+    const chainName = identName(chainHead);
+    if (head.kind === 'member' && ANY_BUILTIN.has(chainName) && bindingOf(chainHead, scopes) === undefined && FUNCTION_VALUE_FIELD_NAMES.has(calledField)) {
+      report('M6', callee.pos, `組み込みの ${chainName} から辿った先の \`.${calledField}\` は呼べません —— 関数の length / name は値の欄で、関数ではありません (呼ぶと実行時に投げ、TypeScript も断ります)`);
     }
     calledMembers.add(callee);
     checkExpr(callee, scopes, ctx);
