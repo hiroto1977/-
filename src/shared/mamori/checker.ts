@@ -277,6 +277,67 @@ function memberChainHead(e: Expr): Expr {
   return cur;
 }
 
+/** 組み込みの値の欄を読む式の中身: 辿った先か (0.55)・頭の組み込みの名前・読んだ欄。 */
+interface ValueFieldRead {
+  readonly deep: boolean;
+  readonly root: string | null;
+  readonly field: string;
+}
+
+/**
+ * 式が、隠れていない組み込みの**値の欄**を読む形か —— 呼ぶ形 (0.54 / 0.55)・const へ写す形 (0.56)・module をまたいで運ぶ表 (0.57) が、同じ 1 つの判定を読む。
+ * 直下の欄 (`Math.PI` / `Array.length`) は表 `BUILTIN_VALUE_FIELDS`、`.` で 2 段以上辿った先は `length` / `name` だけ (`Math.max.length`)。
+ * `hidden` は「連なりの頭を、この module の名前が隠しているか」—— 隠した同じ綴りは組み込みではないので、数えない。
+ */
+function builtinValueFieldOf(e: Expr, hidden: (head: Expr) => boolean): ValueFieldRead | undefined {
+  if (e.kind !== 'member') return undefined;
+  const head = memberChainHead(e);
+  if (hidden(head)) return undefined;
+  const root = identName(head);
+  if (BUILTIN_VALUE_FIELDS.get(identName(e.object))?.has(e.prop) === true) return { deep: false, root, field: e.prop };
+  return e.object.kind === 'member' && ANY_BUILTIN.has(root) && FUNCTION_VALUE_FIELD_NAMES.has(e.prop) ? { deep: true, root, field: e.prop } : undefined;
+}
+
+/** 写した元の綴り (断りの文に置く): 直下の欄は `Math.PI`、辿った先は `Math から辿った先の .length`。 */
+function valueFieldText(read: ValueFieldRead): string {
+  return read.deep ? `${read.root} から辿った先の .${read.field}` : `${read.root}.${read.field}`;
+}
+
+/**
+ * 組み込みの値の欄を写した直下の const を集める (0.57 · MG-097) —— module の道 → const の名前 → 写した元の綴り。
+ * 初期値が値の欄を直に読む const (`const F = Math.PI;`) と、その別名 (`const G = F;` —— F は**前に書いた**同じ module の const か、`use` で引いた名前)。
+ * 別名は module をまたぐので、増えなくなるまで辿る。直下の `let` は入れ直せるので載せない。
+ */
+function collectValueConsts(modules: readonly { readonly file: string; readonly module: Module }[]): Map<string, Map<string, string | undefined>> {
+  const found = new Map(modules.map(({ file }): [string, Map<string, string | undefined>] => [file, new Map()]));
+  let grew = true;
+  while (grew) {
+    grew = false;
+    for (const { file, module } of modules) {
+      const names = found.get(file)!;
+      const declared = declaredNames(module);
+      // この module で読める名前 → 運ぶ綴り。`use` で引いた名前は先に全部、const は書いた順に足す (後ろの const は読み込みの時点でまだ無い)。
+      const seen = new Map<string | null, string | undefined>();
+      for (const it of module.items) {
+        if (it.kind !== 'use') continue;
+        const target = found.get(resolveUse(it.from, file));
+        for (const n of it.names) seen.set(n.alias ?? n.name, target?.get(n.name));
+      }
+      for (const it of module.items) {
+        if (it.kind !== 'const') continue;
+        const read = builtinValueFieldOf(it.init, (head) => declared.has(identName(head)));
+        const text = read === undefined ? seen.get(identName(it.init)) : valueFieldText(read);
+        seen.set(it.name, text);
+        if (text !== names.get(it.name)) {
+          names.set(it.name, text);
+          grew = true;
+        }
+      }
+    }
+  }
+  return found;
+}
+
 /**
  * 組み込みのうち、**呼ぶ・構築する・メンバを直に使う**形でだけ名前で使える物 (2026-11-01 · MG-006 · threat: T-243)。
  *
@@ -347,6 +408,11 @@ export interface ProjectTable {
    * `use { T }` と `type` を付けずに引いても、引いた名前は型でしかない —— 値の位置に書けない。
    */
   readonly typeNames: ReadonlyMap<string, ReadonlySet<string>>;
+  /**
+   * モジュールの道 → 直下の const の名前 → 写した元の組み込みの値の欄の綴り (0.57 · MG-097 · `collectValueConsts`)。
+   * その名前を呼ぶ形は実行時に必ず投げる。`use` で引いた先でも同じ扱いにするために持つ (0.56 は同じ module の中しか見ていなかった)。
+   */
+  readonly valueConsts: ReadonlyMap<string, ReadonlyMap<string, string | undefined>>;
 }
 
 /**
@@ -537,7 +603,7 @@ export function collectTable(modules: readonly { readonly file: string; readonly
       fns.set(fnKey(file, it.name), sig);
     }
   }
-  return { table: { vetted, vettedHome, markConsts: collectMarkConsts(modules, vetted), fns, exports, sharedRegex: collectSharedRegex(modules), sharedConsts: collectSharedConsts(modules, fns), typeNames }, diagnostics };
+  return { table: { vetted, vettedHome, markConsts: collectMarkConsts(modules, vetted), fns, exports, sharedRegex: collectSharedRegex(modules), sharedConsts: collectSharedConsts(modules, fns), typeNames, valueConsts: collectValueConsts(modules) }, diagnostics };
 }
 
 /**
@@ -1054,8 +1120,10 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
         const loadResult = shared === 'load-result';
         // 型だけの名前 (0.53 · MG-093): `type` を付けて引いた名前と、引いた先の Mamori の module が型としてだけ宣言した名前。値の位置に書けない。
         const typeOnly: TypeOnlyKind | undefined = it.typeOnly || n.typeOnly ? 'imported' : table.typeNames.get(target)?.has(n.name) === true ? 'declared' : undefined;
+        // 引いた先の、組み込みの値の欄を写した const (0.57 · MG-097) —— module をまたいでも同じ値で、呼べない。
+        const valueField = table.valueConsts.get(target)?.get(n.name);
         // Stryker disable next-line StringLiteral: 上の注記のとおり等価 ('pure' は 'sink' / 'local' でないことだけを意味する)
-        declare(n.alias ?? n.name, { vetted: null, authority: 'pure', fromMamori: exported !== undefined, sharedRegex: table.sharedRegex.get(target)?.get(n.name), untypedShared, readonlyTable, loadResult, typeOnly }, it.pos);
+        declare(n.alias ?? n.name, { vetted: null, authority: 'pure', fromMamori: exported !== undefined, sharedRegex: table.sharedRegex.get(target)?.get(n.name), untypedShared, readonlyTable, loadResult, typeOnly, valueField }, it.pos);
       }
     } else if (it.kind === 'extern') {
       if (it.from !== null) checkSpecifier(it.from, it.pos);
@@ -1084,7 +1152,7 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
         declare(n, { vetted: null, authority: it.authority }, it.pos);
       }
     } else if (it.kind === 'const') {
-      declare(it.name, { vetted: null, authority: 'local', numeric: it.type?.text === 'number' || isNumericKey(it.init, []), inert: carriesInert(it.init, [moduleScope]), sharedRegex: table.sharedRegex.get(file)!.get(it.name), untypedShared: it.type === null, readonlyTable: isReadonlyTableConst(it.type, it.init), loadResult: table.sharedConsts.get(file)!.get(it.name) === 'load-result' }, it.pos);
+      declare(it.name, { vetted: null, authority: 'local', numeric: it.type?.text === 'number' || isNumericKey(it.init, []), inert: carriesInert(it.init, [moduleScope]), sharedRegex: table.sharedRegex.get(file)!.get(it.name), untypedShared: it.type === null, readonlyTable: isReadonlyTableConst(it.type, it.init), loadResult: table.sharedConsts.get(file)!.get(it.name) === 'load-result', valueField: table.valueConsts.get(file)!.get(it.name) }, it.pos);
     } else if (it.kind === 'let') {
       declare(it.name, { vetted: null, authority: 'local', mutable: true, moduleLet: true, numeric: it.type.text === 'number', depth: 0, readonlyTable: isReadonlyTableConst(it.type, it.init) }, it.pos);
     } else if (it.kind === 'class') {
@@ -1093,12 +1161,6 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
       declare(it.name, { vetted: null, authority: 'local' }, it.pos);
       localFns.set(it.name, table.fns.get(fnKey(file, it.name))!);
     }
-  }
-  // 組み込みの値の欄を写した直下の const (0.56 · MG-096)。直下の名前がすべて揃ってから、書いた順に見る ——
-  // 後ろで宣言した名前が組み込みと同じ綴りを隠す形と、前の const の別名 (`const G = F;`) を、関数の本体を検める前に決める。
-  for (const it of module.items) {
-    if (it.kind !== 'const') continue;
-    moduleScope.set(it.name, { ...moduleScope.get(it.name)!, valueField: copiedValueField(it.init, [moduleScope]) });
   }
 
   /**
@@ -1466,21 +1528,12 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
     return undefined;
   }
 
-  /**
-   * 式が、隠れていない組み込みの**値の欄**を読む形か —— 呼ぶ形 (0.54 / 0.55) と、const へ写す形 (0.56) が同じ 1 つの判定を読む。
-   * 直下の欄 (`Math.PI` / `Array.length`) は表 `BUILTIN_VALUE_FIELDS`、`.` で 2 段以上辿った先は `length` / `name` だけ (`Math.max.length`)。
-   * この module の名前で隠した同じ綴り (頭の名前に束縛が在る) は組み込みではないので、数えない。
-   */
-  function builtinValueField(e: Expr, scopes: readonly Map<string, Binding>[]): { readonly deep: boolean; readonly root: string | null; readonly field: string } | undefined {
-    if (e.kind !== 'member') return undefined;
-    const head = memberChainHead(e);
-    if (bindingOf(head, scopes) !== undefined) return undefined;
-    const root = identName(head);
-    if (BUILTIN_VALUE_FIELDS.get(identName(e.object))?.has(e.prop) === true) return { deep: false, root, field: e.prop };
-    return e.object.kind === 'member' && ANY_BUILTIN.has(root) && FUNCTION_VALUE_FIELD_NAMES.has(e.prop) ? { deep: true, root, field: e.prop } : undefined;
+  /** `builtinValueFieldOf` を、いまの束縛で引く (連なりの頭の名前に束縛が在れば、隠した同じ綴り)。 */
+  function builtinValueField(e: Expr, scopes: readonly Map<string, Binding>[]): ValueFieldRead | undefined {
+    return builtinValueFieldOf(e, (head) => bindingOf(head, scopes) !== undefined);
   }
 
-  /** 呼べる束縛でないと分かっている const か —— 組み込みの値の欄を写した const の、写した元の綴り (0.56 · MG-096)。`let` は入れ直せるので数えない。 */
+  /** 呼べる束縛でないと分かっている const か —— 組み込みの値の欄を写した const (局所・直下・`use` で引いた名前) の、写した元の綴り (0.56 / 0.57)。`let` は入れ直せるので数えない。 */
   function constValueField(b: Binding | undefined): string | undefined {
     return b?.mutable === true ? undefined : b?.valueField;
   }
@@ -1493,8 +1546,7 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
     if (init?.kind === 'ident') return constValueField(lookup(scopes, init.name));
     if (init === null) return undefined;
     const direct = builtinValueField(init, scopes);
-    if (direct === undefined) return undefined;
-    return direct.deep ? `${direct.root} から辿った先の .${direct.field}` : `${direct.root}.${direct.field}`;
+    return direct === undefined ? undefined : valueFieldText(direct);
   }
 
   /**
