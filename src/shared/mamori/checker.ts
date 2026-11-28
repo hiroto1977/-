@@ -310,6 +310,24 @@ export interface ProjectTable {
    * - `load-result`: 初期値が、その場で走らせた関数の結果を含む const (0.37 · T-274 · `holdsLoadResult`)。名前は Mamori の中で読めない。
    */
   readonly sharedConsts: ReadonlyMap<string, ReadonlyMap<string, SharedConstKind>>;
+  /**
+   * モジュールの道 → その module が**型としてだけ**宣言した名前 (`type` / `interface` / `vetted`) の集まり (0.53 · MG-093)。
+   * 同じ名前の値 (fn・const) も export していれば載せない (TypeScript は型と値の同名を許す)。
+   * `use { T }` と `type` を付けずに引いても、引いた名前は型でしかない —— 値の位置に書けない。
+   */
+  readonly typeNames: ReadonlyMap<string, ReadonlySet<string>>;
+}
+
+/** 型だけの名前の出どころ (`Binding.typeOnly`): `import` = `use type { … }` / `use { type … }` で引いた・`declared` = 引いた先の Mamori の module が型としてだけ宣言している。 */
+type TypeOnlyKind = 'import' | 'declared';
+
+/** 型だけの名前を値の位置に書いたときの断り (0.53 · MG-093)。 */
+function typeOnlyAsValue(name: string, kind: TypeOnlyKind): string {
+  const why =
+    kind === 'import'
+      ? `\`use type { … }\` / \`use { type … }\` で型だけ引いた名前です (生成物の import は実行時に消えます。値として使うなら \`type\` を外して \`use { ${name} }\` で引きます)`
+      : '引いた先の Mamori の module が型 (type・interface・印) としてだけ宣言した名前です (型は実行時に在りません)';
+  return `${name} は値の位置に書けません —— ${why}。呼ぶ・構築する・メンバを読む・渡す・返す・\`instanceof\` の右辺に置く形は、どれも TypeScript が断ります`;
 }
 
 /** 同じブロックで同じ名前を 2 度宣言したときの断り (0.44 · MG-084)。 */
@@ -442,6 +460,7 @@ export function collectTable(modules: readonly { readonly file: string; readonly
   const fns = new Map<string, FnSignature>();
   const exports = new Map<string, Set<string>>();
   const exportedFnNames = new Set<string>();
+  const typeNames = new Map<string, Set<string>>();
   const diagnostics: MamoriDiagnostic[] = [];
   for (const { file, module } of modules) {
     for (const it of module.items) {
@@ -461,6 +480,7 @@ export function collectTable(modules: readonly { readonly file: string; readonly
     // 関数の外形が名乗る印も、その module で印として読める名前だけ (0.36 · T-270)。
     const marksHere = marksIn(file, module, vetted, vettedHome);
     exports.set(file, names);
+    typeNames.set(file, typeOnlyNames(module));
     for (const it of module.items) {
       // export の旗を持つのは名前のある宣言 (fn・const・type・interface・vetted) だけ —— use / extern は旗を持たず、`undefined` は export でない。
       // クラス (0.27) は載せない —— 他の Mamori の module から `use` で引けない (TypeScript の呼び手のための `export class`)。
@@ -481,7 +501,22 @@ export function collectTable(modules: readonly { readonly file: string; readonly
       fns.set(fnKey(file, it.name), sig);
     }
   }
-  return { table: { vetted, vettedHome, markConsts: collectMarkConsts(modules, vetted), fns, exports, sharedRegex: collectSharedRegex(modules), sharedConsts: collectSharedConsts(modules, fns) }, diagnostics };
+  return { table: { vetted, vettedHome, markConsts: collectMarkConsts(modules, vetted), fns, exports, sharedRegex: collectSharedRegex(modules), sharedConsts: collectSharedConsts(modules, fns), typeNames }, diagnostics };
+}
+
+/**
+ * module が型としてだけ export した名前 (`ProjectTable.typeNames` の注記)。同じ名前の値 (fn・const) も export していれば除く。
+ * export していない同名の値 (`export type T = …; const T = …;`) は外から見えないので、引いた先では型でしかない。
+ * `let` は export できず、クラスは `use` で引けないので、値の側に数えるのは fn と const だけ。
+ */
+function typeOnlyNames(module: Module): Set<string> {
+  const types = new Set<string>();
+  const values = new Set<string>();
+  for (const it of module.items) {
+    if (it.kind === 'type' || it.kind === 'interface' || it.kind === 'vetted') types.add(it.name);
+    else if ((it.kind === 'fn' || it.kind === 'const') && it.exported) values.add(it.name);
+  }
+  return new Set([...types].filter((n) => !values.has(n)));
 }
 
 /** 型の綴りが印の名前 (プロジェクトのどの印でも) か `typeof` を書いているか (0.36 · T-271)。`typeof` の相手は辿らず、広く取る。 */
@@ -788,6 +823,11 @@ interface Binding {
   readonly loadResult?: boolean;
   /** 読むだけの表か (0.35 · T-268)。型が `ReadonlyMap` / `ReadonlySet` を名指しする名前と、読むだけの直下の表。読む位置 (`TABLE_READ_MEMBERS`・`for … of`・展開・`new Map(表)`) にしか書けない。 */
   readonly readonlyTable?: boolean;
+  /**
+   * 型だけの名前か (0.53 · MG-093)。`use type { X }` / `use { type X }` で引いた名前と、引いた先の Mamori の module が型としてだけ宣言した名前。
+   * 値の位置 (名前の式・呼ぶ側・`instanceof` の右辺) に書けない —— 0.52 までは受け取り、生成物を `tsc` が断っていた (1361 / 2693)。
+   */
+  readonly typeOnly?: TypeOnlyKind;
 }
 
 /**
@@ -971,8 +1011,10 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
         const untypedShared = shared === 'untyped';
         const readonlyTable = shared === 'readonly-table';
         const loadResult = shared === 'load-result';
+        // 型だけの名前 (0.53 · MG-093): `type` を付けて引いた名前と、引いた先の Mamori の module が型としてだけ宣言した名前。値の位置に書けない。
+        const typeOnly: TypeOnlyKind | undefined = it.typeOnly || n.typeOnly ? 'import' : table.typeNames.get(target)?.has(n.name) === true ? 'declared' : undefined;
         // Stryker disable next-line StringLiteral: 上の注記のとおり等価 ('pure' は 'sink' / 'local' でないことだけを意味する)
-        declare(n.alias ?? n.name, { vetted: null, authority: 'pure', fromMamori: exported !== undefined, sharedRegex: table.sharedRegex.get(target)?.get(n.name), untypedShared, readonlyTable, loadResult }, it.pos);
+        declare(n.alias ?? n.name, { vetted: null, authority: 'pure', fromMamori: exported !== undefined, sharedRegex: table.sharedRegex.get(target)?.get(n.name), untypedShared, readonlyTable, loadResult, typeOnly }, it.pos);
       }
     } else if (it.kind === 'extern') {
       if (it.from !== null) checkSpecifier(it.from, it.pos);
@@ -1348,6 +1390,16 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
    */
   function refuseLoadResult(name: string, pos: Pos): void {
     report('M6', pos, `${name} は、関数の呼び出しの結果を置いたモジュール直下の const なので、Mamori の中では読めません —— 関数が返した物は、閉じ込めた配列・let・Map を呼び出しをまたいで持てるので、const と名乗る名前の後ろで関門の判定が変わります。状態を持つ物は型つきの \`let\` に置き (状態と名乗る)、決まった値は字面と組み込み (\`new Map(…)\` / \`Object.entries(…)\` ほか) だけで組みます`);
+  }
+
+  /**
+   * 型だけの名前を値の位置に書く形を断る (0.53 · MG-093)。断ったら true。値として読む形 (`checkExpr` の名前の枝 —— メンバの受け手・`new` の相手・引数・戻り値は
+   * どれもここを通る)・名前を直に呼ぶ形 (`checkCallee`)・`instanceof` の右辺 (`checkInstanceofRight`) の 3 か所から呼ぶ (後の 2 つは名前の枝を通らない)。
+   */
+  function refuseTypeOnly(name: string, pos: Pos, b: Binding | undefined): boolean {
+    if (b?.typeOnly === undefined) return false;
+    report('M6', pos, typeOnlyAsValue(name, b.typeOnly));
+    return true;
   }
 
   /** 名前の式ならその束縛、そうでなければ undefined (`f()()` / `a.b.c(…)` の頭は名前ではない)。 */
@@ -1811,6 +1863,8 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
       return;
     }
     if (callee.kind === 'ident') {
+      // 型だけの名前を直に呼ぶ形 (`Host()`) —— 名前の枝を通らないので、ここで断る (0.53 · MG-093)。
+      if (refuseTypeOnly(callee.name, callee.pos, b)) return;
       // 関数の結果を置いた直下の const を直に呼ぶ形 (`ADD(x)`) —— 名前の枝を通らないので、ここで断る (0.37 · T-274)。
       if (b?.loadResult === true) refuseLoadResult(callee.name, callee.pos);
       // 呼べない組み込みを呼ぶ形 (0.51 · MG-091) —— 名前空間 (`Math()`) と、構築するだけの物 (`Map()`)。どちらも実行時に必ず投げる。
@@ -1846,6 +1900,8 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
     const b = lookup(scopes, r.name);
     if (b === undefined) {
       if (!PURE_GLOBALS.has(r.name)) report('M6', r.pos, `宣言していない名前 ${r.name} —— 外の値は \`use\` / \`extern\` で宣言します (網・記憶・OS へ届く名前は暗黙に使えません)`);
+    } else if (refuseTypeOnly(r.name, r.pos, b)) {
+      // 型だけの名前 (0.53 · MG-093) —— 断りは上の呼び出しが出した。
     } else if (b.authority === 'sink') {
       report('M2', r.pos, `危ない口 ${r.name} (extern sink) は instanceof の右辺に置けません —— 危ない口は呼ぶ形でしか使えません`);
     } else if (b.authority === 'local') {
@@ -1871,6 +1927,8 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
           }
           return;
         }
+        // 型だけの名前を値として読む形 (0.53 · MG-093) —— メンバの受け手 (`Host.x`)・`new` の相手・引数・戻り値・入れ物の項はどれもここを通る。
+        if (refuseTypeOnly(e.name, e.pos, b)) return;
         if (b.authority === 'class') {
           report('M6', e.pos, `クラス ${e.name} は \`new ${e.name}(…)\` と \`x instanceof ${e.name}\` の相手にだけ使えます —— 値として持ち出す・メンバを使う・呼ぶ形は書けません (\`${e.name}.captureStackTrace\` のように、継いだ \`Error\` の静的なメンバへ届く)`);
           return;

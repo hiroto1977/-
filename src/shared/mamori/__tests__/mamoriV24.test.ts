@@ -63,9 +63,13 @@ describe('0.24: 名前ごとの型だけの import use { f, type X }', () => {
     expect(r.rules).toEqual([expect.stringContaining('Hidden を export していません')]);
   });
 
-  it('★ 破る⑤: 型だけで引いた値 (定数) を値の位置で使っても Mamori は来歴を変えない・生成物は tsc が断る形になる (type が付いたまま出る)', () => {
+  it('★ 破る⑤: 型だけで引いた値 (定数) を値の位置で使う形は、Mamori が断る (0.53 · MG-093 —— 0.52 までは受け取り、生成物を tsc だけが断っていた)', () => {
     const r = project([['src/x/a.mamori', A], ['src/x/c.mamori', 'use { type LIMIT } from "./a";\nexport fn go() -> number {\n  return LIMIT;\n}\n']]);
-    expect(r.output).toContain("import { type LIMIT } from './a';");
+    expect(r.rules).toEqual([expect.stringContaining('M6 LIMIT は値の位置に書けません')]);
+    // 対照: 同じ名前を型の位置 (typeof) に書く形は通り、type が付いたまま出る
+    const typed = project([['src/x/a.mamori', A], ['src/x/c.mamori', 'use { type LIMIT } from "./a";\nexport fn go(x: typeof LIMIT) -> number {\n  return x;\n}\n']]);
+    expect(typed.rules).toEqual([]);
+    expect(typed.output).toContain("import { type LIMIT } from './a';");
   });
 
   it('印の型を type で引いても、印は gate の mint でしか作れない・印を受ける口へ生の文字列は渡せない (M1 / M4 が効いたまま)', () => {
