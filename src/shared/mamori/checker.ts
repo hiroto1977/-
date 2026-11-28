@@ -243,6 +243,8 @@ const CONSTRUCTIBLE: ReadonlySet<string | null> = new Set(['RegExp', 'Error', 'T
  */
 const NAMESPACE_BUILTINS: ReadonlySet<string | null> = new Set(['Math', 'JSON']);
 const NEW_ONLY_BUILTINS: ReadonlySet<string | null> = new Set(['Promise', 'Map', 'Set', 'URL']);
+/** 宣言しなくても使える組み込みの名前 (`identName` の結果をそのまま引ける型で持つ —— 中身は `PURE_GLOBALS`)。 */
+const ANY_BUILTIN: ReadonlySet<string | null> = PURE_GLOBALS;
 
 /**
  * 組み込みのうち、**呼ぶ・構築する・メンバを直に使う**形でだけ名前で使える物 (2026-11-01 · MG-006 · threat: T-243)。
@@ -2042,6 +2044,33 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
           report('M6', e.callee.pos, `組み込みの ${identName(e.callee)} は構築できません —— 名前空間なので \`${identName(e.callee)}.m(…)\` とメンバを直に使う形だけです (構築すると実行時に投げ、TypeScript も断ります)`);
           e.args.forEach((x) => checkExpr(x, scopes, ctx));
           return;
+        }
+        // メンバの連なりを `new` の相手にする形 (0.52 · MG-092) —— `new o.C()` / `new Math.max()`。0.51 までは構築子の名前そのものしか見ておらず、
+        // 連なりの先は受け取って生成物を tsc が断っていた (2351 / 7009 / 18046 —— 守りが tsc の 1 層)。先頭の名前で線を引く (0.50 と同じ):
+        // 局所の名前・Mamori の module から引いた名前のメンバは構築できず、組み込み 15 個のメンバのうち Mamori で使える物に構築子は 1 つも無い (検査が実物で数える)。
+        // 宣言した外の名前のメンバ (`new ns.Thing()`) は今までどおり。関数の結果を置いた直下の const (0.37) は名前の枝の断りに任せる。
+        if (e.callee.kind === 'member') {
+          let head: Expr = e.callee;
+          while (head.kind === 'member') head = head.object;
+          const hb = bindingOf(head, scopes);
+          const name = identName(head);
+          const why =
+            hb === undefined
+              ? ANY_BUILTIN.has(name)
+                ? `組み込みの ${name} のメンバは構築できません —— Mamori で使える組み込みのメンバに構築子は在りません (TypeScript も断ります)`
+                : null
+              : hb.loadResult === true
+                ? null
+                : hb.authority === 'local'
+                  ? `new の相手は組み込みか宣言した外の名前・このモジュールのクラスだけです —— ${name} はこのモジュールの局所の名前 (値・関数) で、そのメンバは構築できません (宣言した外のクラスは \`new 名前(…)\` と直に構築します)`
+                  : hb.fromMamori === true
+                    ? `new の相手は組み込みか宣言した外の名前・このモジュールのクラスだけです —— ${name} は別の Mamori の module から \`use\` で引いた名前 (関数・値・型) で、そのメンバは構築できません (クラスは \`use\` で引けません)`
+                    : null;
+          if (why !== null) {
+            report('M6', head.pos, why);
+            e.args.forEach((x) => checkExpr(x, scopes, ctx));
+            return;
+          }
         }
         // 構築する形で名前を使うのは許す (`new RegExp(…)`)。値として持ち出す形は 'ident' の枝が断る。
         if (!isConstructibleBuiltin(e.callee, scopes) && bindingOf(e.callee, scopes)?.authority !== 'class') checkExpr(e.callee, scopes, ctx);
