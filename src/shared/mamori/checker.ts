@@ -738,6 +738,11 @@ interface Binding {
   /** `class` はこのモジュールで宣言した例外のクラス (0.27)。`new N(…)` と `x instanceof N` の相手にだけ使える。 */
   readonly authority: 'sink' | 'pure' | 'local' | 'class';
   /**
+   * この project の Mamori の module から `use` で引いた名前か (0.50 · MG-090)。クラスは `use` で引けない (export の表に載せない) ので、
+   * 引けるのは関数・直下の const・型だけ —— どれも構築できない。`new 名前(…)` の相手にできない。
+   */
+  readonly fromMamori?: boolean;
+  /**
    * 代入できるか。`let` だけが `true` を持ち、ほか (`const`・引数・回す変数・このモジュールの関数) は持たない
    * (2026-10-30 · パス 563)。0.1 は代入の相手が「このモジュールの名前か」しか見ておらず、`const` や引数への代入を
    * 変換後の `tsc` に任せていた —— Mamori の規則として断る (無い = 代入できない、で失敗は閉じる)。
@@ -952,7 +957,7 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
         const readonlyTable = shared === 'readonly-table';
         const loadResult = shared === 'load-result';
         // Stryker disable next-line StringLiteral: 上の注記のとおり等価 ('pure' は 'sink' / 'local' でないことだけを意味する)
-        declare(n.alias ?? n.name, { vetted: null, authority: 'pure', sharedRegex: table.sharedRegex.get(target)?.get(n.name), untypedShared, readonlyTable, loadResult }, it.pos);
+        declare(n.alias ?? n.name, { vetted: null, authority: 'pure', fromMamori: exported !== undefined, sharedRegex: table.sharedRegex.get(target)?.get(n.name), untypedShared, readonlyTable, loadResult }, it.pos);
       }
     } else if (it.kind === 'extern') {
       if (it.from !== null) checkSpecifier(it.from, it.pos);
@@ -1960,6 +1965,19 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
         if (refuseEarlyUse(e.callee, scopes, ctx)) {
           e.args.forEach((x) => checkExpr(x, scopes, ctx));
           return;
+        }
+        // 構築できない名前を `new` の相手にする形 (0.50 · MG-090) —— このモジュールの局所の名前 (引数・const / let・回す変数・束ねた例外・
+        // 直下の fn / const / let) と、Mamori の module から `use` で引いた名前 (関数・値・型)。0.49 までは受け取り、生成物を tsc が断っていた
+        // (2351 / 7009 —— 守りが tsc の 1 層)。`instanceof` の右辺 (0.16) と同じ線引きで、構築できるのは隠れていない組み込み・
+        // このモジュールのクラス・Mamori の外から宣言した名前 (`extern` / 外の module からの `use`) だけ。
+        {
+          const cb = bindingOf(e.callee, scopes);
+          const why = cb?.authority === 'local' ? 'このモジュールの局所の名前 (値・関数) で' : cb?.fromMamori === true ? '別の Mamori の module から `use` で引いた名前 (関数・値・型 —— クラスは `use` で引けません) で' : null;
+          if (why !== null) {
+            report('M6', e.callee.pos, `new の相手は組み込みか宣言した外の名前・このモジュールのクラスだけです —— ${identName(e.callee)} は${why}、構築できません (組み込みの名前を局所の名前で隠した形も同じ)`);
+            e.args.forEach((x) => checkExpr(x, scopes, ctx));
+            return;
+          }
         }
         // 構築子の名前 (識別子でなければ null —— 表は null を持たないので当たらない。「識別子か」を別の条件に書くと、
         // その条件を常に真にしても答えが変わらない等価変異が残る)。
