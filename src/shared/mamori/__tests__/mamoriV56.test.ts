@@ -201,4 +201,13 @@ describe('Mamori 0.56: 組み込みの値の欄を写した const を呼ばせ�
       expect(codes[name], name).toEqual(expected);
     }
   });
+
+  it('対照 (測って残した形): 別の Mamori の module から use で引いた const を呼ぶ形は、Mamori は今も受け取り、TypeScript が断る', () => {
+    const r = compileProject([
+      { path: 'src/x/m1.mamori', source: 'export const F: number = Math.PI;\n' },
+      { path: 'src/x/m0.mamori', source: 'use { F } from "./m1";\nexport fn t() -> unknown {\n  return F();\n}\n' },
+    ]);
+    expect(r.ok).toBe(true);
+    expect(tsCodesByName({ cross: 'declare const F: number;\nexport function t(): unknown { return F(); }' })['cross']).toEqual([2349]);
+  });
 });

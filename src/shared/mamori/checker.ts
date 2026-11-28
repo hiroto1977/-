@@ -1098,8 +1098,7 @@ export function checkModule(file: string, module: Module, project: ProjectTable)
   // 後ろで宣言した名前が組み込みと同じ綴りを隠す形と、前の const の別名 (`const G = F;`) を、関数の本体を検める前に決める。
   for (const it of module.items) {
     if (it.kind !== 'const') continue;
-    const copied = copiedValueField(it.init, [moduleScope]);
-    if (copied !== undefined) moduleScope.set(it.name, { ...moduleScope.get(it.name)!, valueField: copied });
+    moduleScope.set(it.name, { ...moduleScope.get(it.name)!, valueField: copiedValueField(it.init, [moduleScope]) });
   }
 
   /**
