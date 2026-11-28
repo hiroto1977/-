@@ -196,6 +196,23 @@ describe('Mamori 0.53: 型だけの名前を値の位置に書かせない (MG-0
     expect(compile(fn('return Nope instanceof Host;')).diagnostics).toEqual([at(3, 10, UNDECLARED('Nope')), at(3, 26, IMPORTED('Host'))]);
     // 同じ名前を 2 か所に書けば 2 度
     expect(compile(fn('return [Host, Host];')).diagnostics).toEqual([at(3, 11, IMPORTED('Host')), at(3, 17, IMPORTED('Host'))]);
+    // 型だけで引いた名前が、読むだけの表・関数の結果を置いた const でも、断りは型だけの名前の 1 つ (前からの断りを重ねない)
+    const STATEFUL = 'fn make() -> unknown {\n  return 1;\n}\nexport const BOOT = make();\nexport const TABLE: ReadonlyMap<string, number> = new Map([["a", 1]]);\n';
+    const stateful = (body: string): readonly File[] => [
+      { path: 'src/x/lib.mamori', source: STATEFUL },
+      { path: 'src/x/m0.mamori', source: `use type { BOOT, TABLE } from "./lib";\nexport fn t() -> unknown {\n  ${body}\n}\n` },
+    ];
+    expect(compileFiles(stateful('return TABLE;')).diagnostics).toEqual([at(3, 10, IMPORTED('TABLE'))]);
+    expect(compileFiles(stateful('return BOOT;')).diagnostics).toEqual([at(3, 10, IMPORTED('BOOT'))]);
+    expect(compileFiles(stateful('return BOOT();')).diagnostics).toEqual([at(3, 10, IMPORTED('BOOT'))]);
+    // 対照: 同じ 2 つを値として引けば、前からの断りが答える (読むだけの表を返す・関数の結果を置いた const を読む)
+    const asValue = compileFiles([
+      { path: 'src/x/lib.mamori', source: STATEFUL },
+      { path: 'src/x/m0.mamori', source: 'use { BOOT, TABLE } from "./lib";\nexport fn t() -> unknown {\n  return [TABLE, BOOT];\n}\n' },
+    ]).diagnostics;
+    expect(asValue).toHaveLength(2);
+    expect(asValue[0]).toContain('読むだけの表 TABLE');
+    expect(asValue[1]).toContain('関数の呼び出しの結果を置いたモジュール直下の const');
   });
 
   it('対照: 型の位置と、値として引いた名前は今までどおり通り、生成物の形も崩れない', () => {

@@ -96,6 +96,33 @@ Mamori では、その 2 つは**書けない**:
 - **測れなかった物を満点にしない**: 入力が読めない・母集団が空の基準は 0 点 (口を持つ .mamori が 0 本の A2 だけは『載せる物が無い』ので満点)。表の基準と実装の測り方は 1 対 1 で、検査 (`mamoriCompleteness.test.ts`) が両方向に見る。
 - **基準と床は私 (実装した側) の判断**で、実測が決めた物ではない。床を動かすときは表の `why` に理由を書く。今の実物は 1.0 を満たしていない (E1 89% / E2 88% が床の下) —— 足りない基準を埋めるのが次の作業で、`report` が一覧を出す。
 
+## 0.53 —— 型だけの名前を値の位置に書かせない (MG-093 · 2026-11-28)
+
+穴ではなく、守りの層を 1 つ足す周 (MG-092 が残した 1 つ)。型だけの名前には、実行時に値が無い。0.52 までの検査器は、その名前を値の位置に書く形を受け取り、
+生成物を `tsc` が断っていた (守りが `tsc` の 1 層)。0.53 は検査器 (M6) で断る:
+
+| 名前の出どころ | 形 | 0.52 | 同じ形の TypeScript (`isolatedModules`) | 0.53 |
+| --- | --- | --- | --- | --- |
+| `use type { Host } from "./host";` / `use { f, type Host } from "./host";` (外の module でも、Mamori の module でも) | `new Host()` / `Host()` / `return Host;` / `Host.x` / `x instanceof Host` ほか | 受け取る | 1361 (型で引いた名前は値として使えない) | **断る** (M6) |
+| 別の Mamori の module が型 (`type` / `interface` / 印) としてだけ export した名前を、`type` を付けずに引く (`use { T } from "./lib";`) | `return T;` / `T()` / `x instanceof T` | 受け取る | 2693 (型しか指さない名前を値として使った) | **断る** |
+| 型の位置 (引数・戻り値の型・型引数・`typeof 名前`) | `fn t(x: Host)` / `new Map<string, Host>()` / `x: typeof K` | 受け取る | — | 受け取る (今までどおり) |
+| 値として引いた名前 | `use { Host } from "./host";` → `new Host()` | 受け取る | — | 受け取る (今までどおり) |
+
+- **値の位置はすべて同じ 3 か所を通る**: 名前の式 (メンバの受け手・`new` の相手・引数・戻り値・入れ物の項・展開・条件・`for … of` の相手・投げる値・arrow の本体・引数の既定値・
+  モジュール直下の初期値・関門の `mint` の中)・名前を直に呼ぶ形・`instanceof` の右辺。検査は 25 形を場所と全文つきで断り、同じ形を TypeScript も断ることを測る。
+- **型と値を同じ名前で export した module の名前は、型だけの名前に数えない** (`export type Both = …; export const Both = …;` —— TypeScript は型と値の同名を許す)。
+  値の側を export していない同名 (`export type Half = …; const Half = …;`) は、引いた先では型でしかないので断る (2693)。
+- **断りの文は出どころで 2 つ**: `type` を付けて引いた名前には「`type` を外して引く」と直し方を言い、引いた先が型としてだけ宣言した名前には「型は実行時に在りません」と言う。
+- **断りは 1 つの名前に 1 度**。型だけで引いた名前が読むだけの表 (0.35)・関数の結果を置いた const (0.37) でも、前からの断りは重ねない。断った形の引数・左辺は今までどおり検める。
+  分割代入の相手だけは、外の名前としての前からの断り (メンバは分割代入で取り出せない) が同じ場所にもう 1 つ出る。
+- **より具体的な前の理由が先に答える**: この module の `type` / 印の名前を値として書く形は「宣言していない名前」・Mamori の module から引いた型を構築する形は 0.50 の文・外の名前への代入は前の文のまま。
+- **0.24 の検査が、この弱さを仕様として留めていた** —— 「型だけで引いた値 (定数) を値の位置で使っても Mamori は来歴を変えない・生成物は tsc が断る形になる」。断る側へ書き直した。
+- 実物の 46 本は書き換えなしで通り、生成物は 1 byte も変わらない (`mamori:check` は「生成物は最新」)。
+- 検査は `mamoriV53.test.ts` (型で引いた名前 25 形・Mamori の module の名前 11 形 —— どれも場所と全文つき・同じ 36 形を TypeScript も断る・断りを重ねず引数も検める 8 形とその対照・今までどおり通る 10 形・
+  前の文のまま 4 形・型と値の同名 4 形)。
+- **まだ見ていない物**: Mamori の外の module から `type` を付けずに引いた名前が、TypeScript の側で型でしかない形 (`use { Shape } from "./host";` → `return Shape;`) は、検査器から外の module の中が見えないので通す
+  (`tsc` が 2693 で断る)。呼べない欄を呼ぶ形 (`Math.PI()` / `o.C()`) も検査器は通す (2349 —— `docs/REMAINING_WORK.md` の「MG-093」)。
+
 ## 0.52 —— メンバの連なりの先を `new` の相手にさせない (MG-092 · 2026-11-28)
 
 穴ではなく、守りの層を 1 つ足す周 (MG-090 / MG-091 が残した 1 つ)。0.51 までの検査器は、構築子の名前そのもの (`new o()` / `new Math()`) しか見ていなかった。
@@ -1371,14 +1398,14 @@ T-234 (`sinkTyped*` の文脈と印の型の判定)・T-232 (`RegExp.$1`)・`.co
 - 戦いのデータは `security/mamori-arena/corpus.json` に残し、`mamoriArena.test.ts` が毎回再生する (学習データ)。
 - 侵入役の新手を AI に書かせる段は、安全装置に止められた。迂回せず、新手は人が追加する (`*.attack.mamori`)。
 
-## 文法 (0.52)
+## 文法 (0.53)
 
 ```
 module    := header* item*
 header    := '//!' 行                         生成物の先頭の docblock になる
 item      := doc* ( use | reexport | extern | vetted | type | interface | class | const | let | fn )
 doc       := '///' 行                         項目の docblock になる
-use       := 'use' 'type'? '{' ('type'? name ('alias' name)?) (',' …)* '}' 'from' 文字列 ';'   (名前ごとの `type` は 'use type' でないときだけ · 0.24)
+use       := 'use' 'type'? '{' ('type'? name ('alias' name)?) (',' …)* '}' 'from' 文字列 ';'   (名前ごとの `type` は 'use type' でないときだけ · 0.24。型だけで引いた名前は値の位置に書けない · 0.53)
            | 'use' 'default' name 'from' 文字列 ';'
 reexport  := 'export' '{' ('type'? name) (',' …)* '}' ('from' 文字列)? ';'      (from つきは相対の Mamori module の export だけ・from なしは use で引いた名前だけ・口 (extern) は出せない · 0.25)
 extern    := 'extern' ('sink' | 'pure') '{' name (',' name)* '}' 'from' 文字列 ';'
