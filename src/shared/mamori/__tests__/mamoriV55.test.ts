@@ -99,9 +99,9 @@ const ACCEPTED: Readonly<Record<string, readonly [string, string?]>> = {
   '添字の先から辿って呼ぶ': ['return xs[0].f.name();', 'xs: { f: { name: () => string } }[]'],
 };
 
-/** 測って残した形 (Mamori は今も受け取り、TypeScript が断る): [本体, 引数, TypeScript の番号]。 */
+/** 測って残した形 (Mamori は今も受け取り、TypeScript が断る): [本体, 引数, TypeScript の番号]。const へ写してから呼ぶ形 (`const f = Math.max.length; f()`) は 0.56 (MG-096) が断るようにした —— `mamoriV56.test.ts`。 */
 const LEFT_TO_TSC: Readonly<Record<string, readonly [string, string, number]>> = {
-  '辿った先の欄を局所の名前へ写してから呼ぶ': ['const f = Math.max.length; return f();', '', 2349],
+  '辿った先の欄を let へ写してから呼ぶ': ['let f = Math.max.length; return f();', '', 2349],
   '局所の配列の length を呼ぶ': ['return xs.length();', 'xs: number[]', 2349],
   '辿った先の在りもしない欄を呼ぶ': ['return Math.max.nope();', '', 2339],
 };
@@ -208,7 +208,7 @@ describe('Mamori 0.55: 組み込みから辿った先の length / name を呼ば
     expect(error[1]).toContain(':2:15: [M6] Error.name は使えません');
   });
 
-  it('測って残した形: 局所の名前へ写した欄・局所の名前の length・辿った先の在りもしない欄は、今も TypeScript だけが断る', () => {
+  it('測って残した形: let へ写した欄・局所の名前の length・辿った先の在りもしない欄は、今も TypeScript だけが断る', () => {
     const codes = tsCodesByName(Object.fromEntries(Object.entries(LEFT_TO_TSC).map(([name, [body, params]]) => [name, tsFn(body, params)])));
     for (const [name, [body, params, code]] of Object.entries(LEFT_TO_TSC)) {
       expect(compile(fn(body, params)).ok, name).toBe(true);
