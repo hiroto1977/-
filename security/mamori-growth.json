@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.51"
+    "version": "0.52"
   },
   "constructs": {
     "class": {
@@ -5404,6 +5404,53 @@
       "report": {
         "pr": 1004,
         "summary": "直す側だけの周 (穴探しは止めたまま)。MG-090 が残した 1 つを閉じた: 呼ぶ形・構築する形のどちらかが実行時に必ず投げる組み込み —— 名前空間 (`Math` / `JSON`) を構築する・呼ぶ形と、構築するだけの物 (`Promise` / `Map` / `Set` / `URL`) を `new` なしで呼ぶ形 —— を、検査器 (M6) で断る。0.50 までは受け取り、生成物を tsc が断っていた (2351 / 2349 / 2348 —— 守りが tsc の 1 層)。表は 2 つ (NAMESPACE_BUILTINS / NEW_ONLY_BUILTINS) で、この module の名前で隠した同じ綴りは数えない。答えが変わった既存の検査は 1 形 (mamoriV37 の標本 `Map(IMPORTED)` を `RegExp(IMPORTED)` へ)。実物の 46 本は書き換えなしで通り、生成物は不変。変えた行の変異検査 100% (56 killed)。MG-090 の変異検査は `--mutate` を 2 度書いて最後の範囲しか測れていなかったので、その行も測り直した (生存 0)。残り: メンバの連なりの先 (`new o.C()`)・組み込みのメンバ越しの形は測っていない。"
+      }
+    },
+    {
+      "id": "MG-092",
+      "date": "2026-11-28",
+      "kind": "probe",
+      "target": "language",
+      "pickedBy": "brief",
+      "briefPick": "probe:language",
+      "version": "0.52",
+      "features": [],
+      "added": [],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "先頭が局所の名前のメンバの連なりを構築する (`new o.C()`) —— 引数の欄・2 段の欄・局所の const / let・文字列の length・直下の const / fn・束ねた例外・組み込みを隠した引数・別の構築の引数の中・型引数つき。0.51 は受け取り、生成物を tsc (本物の lib) が断っていた (2351 / 2339 / 18046)。0.52 は先頭の名前の頭で断る (M6)",
+          "result": "refused"
+        },
+        {
+          "tried": "先頭が隠れていない組み込みのメンバの連なりを構築する (`new Math.max()` / `new Math.PI()` / `new JSON.parse(…)` / `new Promise.resolve(…)` ほか・15 個の総当たり)。0.51 は受け取り、tsc が断っていた (7009 / 2351 / 2339)。0.52 は断る",
+          "result": "refused"
+        },
+        {
+          "tried": "別の Mamori の module から use で引いた名前 (関数・数の const・arrow の const・型) のメンバを構築する (`new K.C()`)。0.51 は受け取っていた。0.52 は断る",
+          "result": "refused"
+        },
+        {
+          "tried": "断った形の引数に別の誤りを置く (`new o.C(Nope)` / `new Math.max(Nope)` / `new K.C(Nope)`) —— 断りの後ろに、引数の宣言していない名前が 1 度だけ並ぶ",
+          "result": "refused"
+        },
+        {
+          "tried": "対照: 宣言した外の名前のメンバ (`new ns.Thing()`・2 段・型引数つき・外の module からの use・extern で宣言した Math) とメンバを呼ぶ形は 0.51 と同じく受け取り、生成物は変わらない。先頭が宣言していない名前・sink の外の危ない口・関数の結果を置いた直下の const・このモジュールのクラス・`.prototype` は前の文のまま断る",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 10,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/checker.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 1005,
+        "summary": "直す側だけの周 (穴探しは止めたまま)。MG-090 / MG-091 が残した 1 つを閉じた: `new` の相手がメンバの連なり (`new o.C()` / `new Math.max()`) のとき、先頭の名前が局所の名前・別の Mamori の module から use で引いた名前・隠れていない組み込みなら、検査器 (M6) で断る。0.51 までは構築子の名前そのものしか見ず、連なりの先は受け取って生成物を tsc が断っていた (2351 / 7009 / 18046 / 2339 —— 守りが tsc の 1 層)。宣言した外の名前のメンバは今までどおり。node では URL.createObjectURL ほか 3 つの欄が構築できる (実測) ので、断りの文は「実行時に必ず投げる」と言わず、検査が 15 個の組み込みの欄を実物で数える (構築できる欄は Mamori がメンバとして使わせない物だけ)。TypeScript より厳しい側が 2 形 (外の名前を局所へ写して欄を構築・外の型の引数の欄を構築)。答えが変わった既存の検査は 0。実物の 46 本は書き換えなしで通り、生成物は不変。変えた行の変異検査 100% (32 killed)。残り: 外の module から型だけで引いた名前を値として使う形 (`new Host()` ほか · tsc 1361)・呼べない欄を呼ぶ形 (`Math.PI()`) は検査器が通す。"
       }
     }
   ]
