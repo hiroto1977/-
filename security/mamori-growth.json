@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.53"
+    "version": "0.54"
   },
   "constructs": {
     "class": {
@@ -5498,6 +5498,53 @@
       "report": {
         "pr": 1006,
         "summary": "直す側だけの周 (穴探しは止めたまま)。MG-092 が残した 1 つを閉じた: 型だけの名前 (`use type { X }` / `use { type X }` で引いた名前と、別の Mamori の module が型としてだけ export した名前) を値の位置 (名前の式・名前を直に呼ぶ形・instanceof の右辺) に書く形を、検査器 (M6) で断る。0.52 までは受け取り、生成物を tsc が断っていた (1361 / 2693 —— 守りが tsc の 1 層)。型の位置と値として引いた名前は今までどおり。型と値を同じ名前で export した名前は型だけの名前に数えない。0.24 の検査 1 件がこの弱さを仕様として留めていたので断る側へ書き直した (答えが変わった既存の検査はこの 1 件)。変異検査の 1 回目は 97.37% (生存 2 —— どちらも答えが変わらない書き換えが残る形) で、形を直して 100% (65 killed)。出どころの綴りを 'import' と書いたら依存の門 (lint:deps) が import 文と数え違えたので 'imported' にした。実物の 46 本は書き換えなしで通り、生成物は不変。残り: Mamori の外の module から type を付けずに引いた名前が TypeScript の側で型でしかない形 (tsc 2693)・呼べない欄を呼ぶ形 (`Math.PI()`) は検査器が通す。"
+      }
+    },
+    {
+      "id": "MG-094",
+      "date": "2026-11-28",
+      "kind": "probe",
+      "target": "language",
+      "pickedBy": "brief",
+      "briefPick": "probe:language",
+      "version": "0.54",
+      "features": [],
+      "added": [],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "隠れていない組み込みの定数を直に呼ぶ (`Math.PI()` / `Math.E(1)` / `Math.SQRT1_2()` / `Number.MAX_SAFE_INTEGER()` / `Number.NaN()` / `Number.EPSILON()`)・括弧で包む (`(Math.PI)()`)・`?.` で読んで呼ぶ (`Math?.PI()`)・文の位置・引数の中・arrow の中・呼んだ結果のメンバを読む。0.53 は受け取り、生成物を tsc が 2349 で断っていた。0.54 は欄の場所で断る (M6)",
+          "result": "refused"
+        },
+        {
+          "tried": "関数である組み込みの `length` / `name` を直に呼ぶ (`Array.length()` / `String.name()` / `Number.length()` / `Promise.length()` / `Map.name()` / `Set.length()` / `Boolean.name()`)。0.53 は受け取り、tsc が 2349 で断っていた。0.54 は断る",
+          "result": "refused"
+        },
+        {
+          "tried": "宣言なしで使える組み込みの 1 つずつについて、実物 (node) の `.` で書ける欄を全部引き、Mamori がメンバとして読ませる欄を 1 つずつ呼ぶ形にする —— 関数でない欄は 1 つ残らず断り、関数の欄は断らない (表と実物の両方向)",
+          "result": "refused"
+        },
+        {
+          "tried": "断った形に別の誤りを重ねる (`Math.PI(Nope)` / `Array.length(Math.E())`) —— 断りは欄ごとに 1 度で、引数の誤りは 1 度ずつ並ぶ",
+          "result": "refused"
+        },
+        {
+          "tried": "対照: 値の欄を読む形 (`Math.PI` / `Math.PI.toFixed(2)` / `Array.length`)・関数の欄を呼ぶ形 (`Math.max(1, 2)` / `JSON.stringify(1)`)・引数や局所の名前で隠した同じ綴り・呼び出しの結果や添字の先を呼ぶ形は 0.53 と同じく受け取り、生成物は変わらない。メンバを絞った組み込み (`Object.length()` / `RegExp.length()`)・名前空間を呼ぶ形 (`Math()`)・宣言していない名前は前の文のまま断る",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 16,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/checker.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 1007,
+        "summary": "直す側だけの周 (穴探しは止めたまま)。MG-092 / MG-093 が残した 1 つを閉じた: 隠れていない組み込みの値の欄 (`Math` / `Number` の定数・関数である組み込みの `length` / `name`) を直に呼ぶ形 (`Math.PI()` / `Array.length()`) を、検査器 (M6) で断る。0.53 までは受け取り、生成物を tsc が断っていた (2349 —— 守りが tsc の 1 層)。読む形と、関数の欄を呼ぶ形は今までどおり。表 (`BUILTIN_VALUE_FIELDS`) と実物の組み込みの一致は、検査が両方向に数える。対照の 1 回目は 16 方向のうち 1 つ (断った後の return) が鳴らず、答えが変わらない書き方だったので外した。変異検査の 1 回目は 94.74% (生存 1 —— 型の絞り込みのためだけの条件) で、条件を無くす形に直して 100% (15 killed・表の 5 行は static なので測らず、対照 9 方向と実物との照合で見た)。実物の 46 本は書き換えなしで通り、生成物は不変。残り: 連なりの 2 段目の値の欄を呼ぶ形 (`Math.max.length()`)・局所の名前へ写してから呼ぶ形・在りもしない欄 (`Math.nope()`) は検査器が通す (tsc が断る)。"
       }
     }
   ]
