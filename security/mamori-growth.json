@@ -2,7 +2,7 @@
   "$comment": "言語を育てる輪 (Mamori) の台帳。npm run mamori:grow -- brief|record|status。構文の判断 (feature = 足す候補 / rewrite = 言語に置かず書き直す / added = 足した) は検出器 (scripts/mamori-growth.cjs の DETECTORS) と両方向に一致する。周は record だけが足す (手で書かない)。",
   "cadenceDays": 7,
   "language": {
-    "version": "0.56"
+    "version": "0.57"
   },
   "constructs": {
     "class": {
@@ -5643,6 +5643,53 @@
       "report": {
         "pr": 1009,
         "summary": "直す側だけの周 (穴探しは止めたまま)。MG-094 / MG-095 が残した 1 つを閉じた: 隠れていない組み込みの値の欄 (直下の欄 `Math.PI` / `Array.length`・辿った先の `length` / `name`) を const へ写してから、その名前を呼ぶ形 (`const f = Math.PI; f()` / `const f = Math.max.length; f()`) を、検査器 (M6) で断る。0.55 までは受け取り、生成物を tsc が断っていた (2349 —— 守りが tsc の 1 層)。束縛が「初期値が運ぶ値の欄の綴り」を持ち、呼ぶ側の検めは const のときだけそれを読む (別名・モジュール直下の const・arrow の中も同じ)。let は呼べる値を入れ直せるので数えない。「式が組み込みの値の欄を読む形か」の判定は 1 つの関数に寄せ、呼ぶ形 (0.54 / 0.55) と写す形が同じ物を読む —— 前の版の答えと文は変わらない。変異検査の 1 回目は答えが変わらない条件を 1 つ残した (99%) ので、条件そのものを無くして測り直した (100% · 97 killed)。対照 21 方向は鳴る。実物の 46 本は書き換えなしで通り、生成物は不変。残り: let へ写してそのまま呼ぶ形・別の Mamori の module から use で引いた const を呼ぶ形・数の字面や数の引数を呼ぶ形・局所の名前の値の欄を写す形・式の中に置いた値の欄は検査器が通す (tsc が断る)。"
+      }
+    },
+    {
+      "id": "MG-097",
+      "date": "2026-11-28",
+      "kind": "probe",
+      "target": "language",
+      "pickedBy": "brief",
+      "briefPick": "probe:language",
+      "version": "0.57",
+      "features": [],
+      "added": [],
+      "rewrite": [],
+      "ported": [],
+      "probes": [
+        {
+          "tried": "組み込みの値の欄を写した const を、別の Mamori の module から use で引いて呼ぶ (`export const F: number = Math.PI;` と `use { F } from \"./m1\"; F()`・型を書いていない `export const F = Math.max.length;`)。0.56 は受け取り、生成物を tsc が 2349 で断っていた。0.57 は呼んだ名前の場所で断る (M6)",
+          "result": "refused"
+        },
+        {
+          "tried": "別名を付けて引く (`use { F alias G }` と `G()`)・引いた名前を局所の const へ写して呼ぶ (`const g = F; g()`)・直下の const へ写して呼ぶ (`const G: number = F;` と `G()`)・arrow の中から呼ぶ。0.56 は受け取っていた。0.57 は断る",
+          "result": "refused"
+        },
+        {
+          "tried": "3 つの module をまたぐ別名の連なり (`m2` の `A` → `m1` の `export const B = A;` → `m0` の `B()`)・別名を付けて引いた名前を直下の const へ写して出す形・use を const より後ろに書いた module・引く側の module を先に並べる (並び順を変える)。0.57 はどれも断る",
+          "result": "refused"
+        },
+        {
+          "tried": "断った形に別の誤りを重ねる (`F(F())`・export していない const を引いて呼ぶ) —— 断りは呼ぶ形ごとに 1 度で、export していない名前の断りは前の文のまま 1 度並ぶ。後ろに書いた const の別名 (`const G = F; const F = Math.PI;`) は、宣言より前で使う形 (0.46) の断り 1 つだけ",
+          "result": "refused"
+        },
+        {
+          "tried": "対照: 関数の欄を写した const を引いて呼ぶ (`export const F = Math.max;` と `F(1, 2)`)・引いた値を読む・同じ名前の const を持つ別の module から引く・引いた先で別の名前の const が値の欄を写している・別名と同じ綴りの const・Mamori でない module から引いた名前・直下の名前 (extern / fn・後ろで宣言した物も) で隠した同じ綴り・互いに写し合う 2 つの module は 0.56 と同じく受け取る。同じ module の中の答え (0.56) は、同じ表から読んでも前の文のまま",
+          "result": "refused"
+        }
+      ],
+      "threats": [],
+      "controls": 24,
+      "mutation": {
+        "files": [
+          "src/shared/mamori/checker.ts"
+        ],
+        "score": 100
+      },
+      "report": {
+        "pr": 1010,
+        "summary": "直す側だけの周 (穴探しは止めたまま)。MG-096 が残した 1 つを閉じた: 組み込みの値の欄を写した const (`export const F: number = Math.PI;`) を、別の Mamori の module から use で引いて呼ぶ形 (`F()`) を、検査器 (M6) で断る。0.56 までは同じ module の中だけを見ており、引いた先では受け取って、生成物を tsc が断っていた (2349 —— 守りが tsc の 1 層)。写した元の綴りを project の表 (`valueConsts`) で運び、同じ module の直下の const も use で引いた名前も同じ表から読む (0.56 が検査器の中で直下の const を 1 巡していた段は表に置き換えた —— 答えと文は不変)。別名は module をまたいで増えなくなるまで辿り、module の並び順に依らない。後ろに書いた const の別名は運ばない。判定は前からの 1 つの関数で、隠した同じ綴りかどうかを、検査器の中では束縛で・表を集める側では直下で宣言した名前で引く。対照 24 方向は鳴り、変えた行の変異検査は 100% (killed 89 · timeout 4 · 生存 0)。実物の 46 本は書き換えなしで通り、生成物は不変。残り: let へ写してそのまま呼ぶ形・数の字面や数の引数を呼ぶ形・局所の名前の値の欄を写す形・Mamori でない module の const は検査器が通す (tsc が断る)。"
       }
     }
   ]

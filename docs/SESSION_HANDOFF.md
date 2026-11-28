@@ -7,6 +7,21 @@
 >
 > 大幅な変更を加えた時は **このファイルも合わせて更新** してください。
 
+## 直近の作業 (2026-11-28) — MG-097: 値の欄を写した const を module をまたいでも呼ばせない · Mamori 0.57
+
+- **直す側だけ**の周 (穴を探して試す作業は止めたまま)。選んだのは `docs/REMAINING_WORK.md` の「MG-096」が残した 1 つ: 別の Mamori の module から `use` で引いた const を呼ぶ形。
+- 測ると、`export const F: number = Math.PI;` を `use { F } from "./m1";` で引いて `F()` と呼ぶ形・引いた名前を const へ写して呼ぶ形は通っていた (0.56 の検査器は受け取り、`tsc` が 2349 で断る)。
+- 直し (`checker.ts`): project の表に `valueConsts` (module の道 → const の名前 → 写した元の綴り · `collectValueConsts`) を足した。直下の const の束縛も、`use` で引いた名前の束縛も、この表から `valueField` を読む。
+  0.56 が検査器の中で直下の const を 1 巡していた段は表に置き換えた (答えと文は不変)。別名は module をまたいで増えなくなるまで辿り、module の並び順に依らない。後ろに書いた const の別名は運ばない。
+  判定は `builtinValueFieldOf` の 1 つ (「隠した同じ綴りか」を、検査器の中では束縛で・表を集める側では `declaredNames` で引く)。
+- **踏んだ罠**: 直下の const を宣言する行の末尾へ欄を足したら、`npm test` の `threatAblation.test.ts` が落ちた —— 台帳 `security/threat-ablations.json` の A-647 (T-274) が、その行の末尾の綴り
+  (`loadResult: … === 'load-result' }, it.pos);`) を目印にしている。欄を `loadResult` の前へ置いて目印を残した。**`checker.ts` の既存の行を書き換えたら、`threatAblation.test.ts` を先に回す** (Mamori の検査だけでは映らない)。
+- 検証: `mamoriV57.test.ts` 6 件 (断る 13 形の場所と全文・同じ形を TypeScript も断る・引数の検め・通る 11 形・後ろの const の別名・export していない const)。
+  対照 24 方向は鳴る。変えた行の変異検査 100% (killed 89 · timeout 4 · 生存 0・行を直した後の 1 行も 100%)。`mamoriV56.test.ts` の「測って残した形」から module をまたぐ形を外した。
+- 締め: `npm test` **1378 ファイル / 30,058 件 ❌ 0**・`audit:verify-keep-going` 39 / 39 (検査数の表は 22103 → 22108 へ先に直した)・`chain:verify` 緑 (block #555 / #556 —— `checker.ts`)。
+  両ビルドは **12,459,825 B / 3,872,462 B で不変** (両方を組んで見た) ので実機は回していない。
+- 残した物は `docs/REMAINING_WORK.md` の「MG-097」—— `let` へ写してそのまま呼ぶ形・数の字面や数の引数を呼ぶ形・局所の名前の値の欄を写す形・Mamori でない module の const は、今も `tsc` だけが断る。
+
 ## 直近の作業 (2026-11-28) — MG-096: 組み込みの値の欄を写した const を呼ばせない · Mamori 0.56
 
 - **直す側だけ**の周 (穴を探して試す作業は止めたまま)。選んだのは `docs/REMAINING_WORK.md` の「MG-094」「MG-095」が残した 1 つ: 値の欄を局所の名前へ写してから呼ぶ形 (`const f = Math.PI; f()`)。

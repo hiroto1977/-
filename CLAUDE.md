@@ -1959,7 +1959,7 @@ The browser target adds: `web-shim.ts` (a `window.serviceHub` polyfill imported 
   **型だけの名前を値の位置に書かない** (0.53 · MG-093) —— `use type { X }` / `use { type X }` で引いた名前と、別の Mamori の module が型 (type・interface・印) としてだけ export した名前は、呼ぶ・構築する・メンバを読む・渡す・返す・`instanceof` の右辺に置く形に書けない (`return Host;`・`new Host()`)。値として使う名前は `type` を付けずに引く。型の位置 (`x: Host`・`typeof K`) には今までどおり書ける。
   **組み込みの値の欄を呼ばない** (0.54 · MG-094) —— `Math.PI()` / `Number.EPSILON()` / `Array.length()` は実行時に必ず投げる。定数と、関数である組み込みの `length` / `name` は読むだけ (`Math.PI` / `Math.PI.toFixed(2)`)。この module の名前で隠した同じ綴りは組み込みではない。
   **組み込みから辿った先の `length` / `name` を呼ばない** (0.55 · MG-095) —— `Math.max.length()` / `Array.from.name()` / `Math.max.name.length()` は実行時に必ず投げる。読む形 (`Math.max.length`) と、辿った先のメソッドを呼ぶ形 (`Math.max.name.toUpperCase()`) は書ける。
-  **組み込みの値の欄を写した const を呼ばない** (0.56 · MG-096) —— `const f = Math.PI; f()` / `const f = Math.max.length; f()` は実行時に必ず投げる (別名 `const g = f;`・モジュール直下の const も同じ)。関数の欄を写して呼ぶ形 (`const f = Math.max; f(1, 2)`) と、写した値を読む形 (`f.toFixed(2)`) は書ける。
+  **組み込みの値の欄を写した const を呼ばない** (0.56 · MG-096) —— `const f = Math.PI; f()` / `const f = Math.max.length; f()` は実行時に必ず投げる (別名 `const g = f;`・モジュール直下の const も同じ)。関数の欄を写して呼ぶ形 (`const f = Math.max; f(1, 2)`) と、写した値を読む形 (`f.toFixed(2)`) は書ける。別の Mamori の module から `use` で引いた同じ const も呼べない (0.57 · MG-097)。
 - **Mamori に関わる作業が終わる度に、言語の現在の完成度と次の作業の提案を利用者へ伝える** (2026-11-01 の依頼)。
   `npm run mamori:grow -- report` を走らせ、その出力 (版・守りの壁の移行率・構文の数・次の提案の順位) を報告の最後に付ける。
   数は出力をそのまま使い、散文へ書き写さない。出力には完成度の基準 (5 視点 × 15 基準・1.0 の条件は全基準が床以上 · `security/mamori-completeness.json`) の採点も載る —— 報告では合格した基準の数と床の下の基準を伝える (視点の平均 % は満点になりやすい基準に引き上げられる)。提案には先に塞ぐ道 (台帳の risk) を添える。週 1 の予約の指示文
