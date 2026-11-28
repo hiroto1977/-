@@ -15,10 +15,11 @@
   全社合算への算入・横断の重要指標の欄。どれも見本の数字を事業の売上へ足していた。使い手の居なくなった集計
   `data/foodDelivery.ts` (と検査) は消した。続けて利用者の依頼 (「完全に消して」) で、2 つのサービスそのもの
   (`SERVICE_IDS`・クライアント・見本・音声の台帳ほか) も消した (81 → 79 サービス・PR #1000)。
-- **変異検査の門で見つけた罠 (直していない)**: `businessArea.ts` を Stryker で測ると、ランディングの検査
-  (「組んだ HTML の見出しに『ギットハブ (GitHub)』が出る」) が dry run で落ちる —— ビルド script が計装済みの
-  `businessArea.ts` を正規表現で読むため。週次の全掃引でも同じことが起きうる。このパスの変更 (文字列 1 つ) は
-  検査そのものが鳴るので、`useServiceData.ts` / `businessUnits.ts` だけを測った (**どちらも 100.00%**)。
+- **変異検査の門で見つけた罠 → 直した (2026-11-27 の 3 回目)**: `businessArea.ts` を Stryker で測ると、ランディングの検査
+  (「組んだ HTML の見出しに『ギットハブ (GitHub)』が出る」) が dry run で落ちていた —— `scripts/build-landing.cjs` が計装済みの
+  写しを正規表現で読んでいたため (直す前に再現した: `There were failed tests in the initial test run`)。script は
+  `.stryker-tmp/sandbox-<名前>/` を外した原文の道を読む (`readSourceText`・書き出しは写しのまま)。道の書き換えは検査側の
+  `originalSourcePath` の写しなので、`landingServiceParse.test.ts` が同じ標本を両方へ通す (対照: script の正規表現を壊すと 4 件落ちる)。
 
 ## 見本の一覧から実在しないページを開かせない (2026-11-27 · 利用者の報告: Canva の 404)
 

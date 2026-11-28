@@ -1,16 +1,46 @@
 import { describe, expect, it } from 'vitest';
 import { createRequire } from 'node:module';
 import { AREA_LABEL, AREA_ORDER, areaOf } from '../../renderer/data/businessArea';
-import { readOriginalSource } from './originalSource';
+import { originalSourcePath as tsOriginalSourcePath, readOriginalSource } from './originalSource';
 
 const req = createRequire(import.meta.url);
-const { parseServices, parseServicesFromText, countEntries } = req('../../../scripts/build-landing.cjs') as {
+const { originalSourcePath, parseServices, parseServicesFromText, countEntries } = req('../../../scripts/build-landing.cjs') as {
   parseServices: () => { id: string; label: string; icon: string; description: string; category: string }[];
   parseServicesFromText: (
     source: string,
   ) => { id: string; label: string; icon: string; description: string; category: string }[];
   countEntries: () => number;
+  originalSourcePath: (absPath: string) => string;
 };
+
+/**
+ * **変異検査の写しの中でも原文を読む** (2026-11-27)。
+ *
+ * Stryker は `businessArea.ts` を計器入りに書き換えた写し (`.stryker-tmp/sandbox-<名前>/`) で検査を走らせる。
+ * ランディングの script はその `.ts` を正規表現で読むので、写しを読むと走査が壊れ、
+ * 「見出しに『ギットハブ (GitHub)』が出る」検査が dry run で落ちていた (週次の全掃引でも同じ)。
+ * script は原文の道へ戻して読む —— その道の書き換えは検査側の `originalSourcePath` の写しなので、
+ * 同じ標本を両方へ通して答えが割れないことを見る (写しは**パリティで縛る**)。
+ */
+describe('ランディングの script は変異検査の写しの外の原文を読む', () => {
+  const SAMPLES = [
+    '/repo/.stryker-tmp/sandbox-abc123/src/renderer/data/businessArea.ts',
+    '/repo/.stryker-tmp/sandbox-x/src/renderer/services.ts',
+    'C:\\repo\\.stryker-tmp\\sandbox-q\\src\\renderer\\services.ts',
+    '/repo/src/renderer/services.ts',
+    '/repo/.stryker-tmp/not-a-sandbox/src/x.ts',
+    '/repo/.stryker-tmp/sandbox-abc',
+  ];
+
+  it.each(SAMPLES)('★ %s: script と検査側の道の書き換えが同じ答えを出す', (p) => {
+    expect(originalSourcePath(p)).toBe(tsOriginalSourcePath(p));
+  });
+
+  it('標本が両方の向きを含む (写しの道は書き換わり、写しでない道はそのまま)', () => {
+    expect(originalSourcePath(SAMPLES[0]!)).toBe('/repo/src/renderer/data/businessArea.ts');
+    expect(originalSourcePath(SAMPLES[3]!)).toBe(SAMPLES[3]);
+  });
+});
 
 /**
  * ランディングの自己検証を **`npm test` でも回す**。
