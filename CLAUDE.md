@@ -1955,6 +1955,7 @@ The browser target adds: `web-shim.ts` (a `window.serviceHub` polyfill imported 
   **arrow の引数の既定値で、自分・右の引数を使わない** (0.48 · MG-088) —— `(a: number = b, b: number = 1) => …`・`(a: number = a) => …`・既定値の中の arrow から使う形も書けない。読めるのは左の引数と外の名前 (`(a: number = 1, b: number = a) => …`)。
   **`new` の相手にできるのは、組み込み・このモジュールのクラス・Mamori の外から宣言した名前だけ** (0.50 · MG-090) —— 引数・局所の const / let・直下の fn / const / let・別の Mamori の module から `use` で引いた名前は構築できない (`fn t(make: number)` の中の `new make()`・`new helper()`)。宣言した外のクラスは、局所の名前へ写さず直に構築する (`new Thing()`)。
   **名前空間の組み込み (`Math` / `JSON`) は呼ばず・構築せず、メンバだけを使う。`Promise` / `Map` / `Set` / `URL` は `new` を付けて構築する** (0.51 · MG-091) —— `Math()`・`new JSON()`・`Map()` は実行時に必ず投げる。この module の名前で隠した同じ綴り (引数・`extern pure` で宣言した名前) は組み込みではない。
+  **`new` の相手にメンバの連なりを書けるのは、先頭が宣言した外の名前のときだけ** (0.52 · MG-092) —— 局所の名前・別の Mamori の module から引いた名前・組み込みのメンバは構築できない (`new o.C()`・`new Math.max()`)。宣言した外のクラスのメンバは、局所の名前へ写さず直に構築する (`new ns.Thing()`)。
 - **Mamori に関わる作業が終わる度に、言語の現在の完成度と次の作業の提案を利用者へ伝える** (2026-11-01 の依頼)。
   `npm run mamori:grow -- report` を走らせ、その出力 (版・守りの壁の移行率・構文の数・次の提案の順位) を報告の最後に付ける。
   数は出力をそのまま使い、散文へ書き写さない。出力には完成度の基準 (5 視点 × 15 基準・1.0 の条件は全基準が床以上 · `security/mamori-completeness.json`) の採点も載る —— 報告では合格した基準の数と床の下の基準を伝える (視点の平均 % は満点になりやすい基準に引き上げられる)。提案には先に塞ぐ道 (台帳の risk) を添える。週 1 の予約の指示文
